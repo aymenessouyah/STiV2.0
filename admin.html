@@ -88,6 +88,32 @@
     font-size: 21px; font-weight: 900; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   }
   .entete-txt h1 svg { vertical-align: -4px; filter: drop-shadow(1.5px 1.5px 0 rgba(244,81,30,.4)); }
+  .badge-temoin-examen {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #e3f6e8; color: #177245;
+    border: 1.5px solid #177245; border-radius: 999px;
+    padding: 3px 10px; font-size: 11px; font-weight: 900;
+    box-shadow: 1.5px 1.5px 0 #177245;
+    letter-spacing: .15px; cursor: pointer;
+    transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .badge-temoin-examen:hover {
+    transform: translateY(-1px);
+    background: #d0f0d9;
+  }
+  .badge-temoin-examen.verrouille {
+    background: #fde2e6; color: #c0392b;
+    border-color: #c0392b;
+    box-shadow: 1.5px 1.5px 0 #c0392b;
+    animation: pulseTemoinExamen 1.8s infinite ease-in-out;
+  }
+  .badge-temoin-examen.verrouille:hover {
+    background: #f9cbd2;
+  }
+  @keyframes pulseTemoinExamen {
+    0%, 100% { box-shadow: 1.5px 1.5px 0 #c0392b, 0 0 0 0 rgba(192, 57, 43, 0.35); }
+    50% { box-shadow: 1.5px 1.5px 0 #c0392b, 0 0 0 5px rgba(192, 57, 43, 0); }
+  }
   .badge-admin-gold {
     display: inline-flex; align-items: center; gap: 4px;
     background: linear-gradient(120deg, #fff3b0, #ffd54f); color: #6d4c00;
@@ -392,6 +418,7 @@
     .entete img { width: 40px; height: 40px; border-radius: 10px; }
     .entete-txt h1 { font-size: 16.5px; gap: 6px; }
     .entete-txt h1 svg { width: 20px; height: 20px; }
+    .badge-temoin-examen { font-size: 10px; padding: 2px 7px; }
     .badge-admin-gold { font-size: 10px; padding: 2px 7px; }
     .sous { display: none; }
 
@@ -1008,11 +1035,12 @@
         <h1>
           <svg id="svg-logo-tb-admin" width="25" height="25" viewBox="0 0 24 24" fill="none" aria-hidden="true" title="🟢 En ligne"><rect id="svg-logo-tb-rect" x="2.5" y="2.5" width="19" height="19" rx="5" stroke="#23201a" stroke-width="2" fill="#177245"/><path id="svg-logo-tb-bars" d="M7.5 16.5v-4.5M12 16.5V8M16.5 16.5V5.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
           <span id="titre-tb-admin" style="color:#177245;transition:color .25s ease" title="🟢 En ligne">Tableau de bord STI V2.0</span>
+          <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">🟢 Accès ouvert</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v102</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v103</span>
           <span class="badge-supabase" id="badge-supabase-quota" title="Espace disponible dans la base Supabase (Quota 500 Mo) — cliquer pour voir le détail">🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v102)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v103)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
       </div>
     </div>
     <div class="barre-util">
@@ -2254,7 +2282,7 @@
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=102"></script>
-<script src="assets/js/admin.js?v=102"></script>
+<script src="assets/js/config.js?v=103"></script>
+<script src="assets/js/admin.js?v=103"></script>
 </body>
 </html>

@@ -614,6 +614,13 @@
             recevoirAlerteSecuriteLive(p.payload);
           }
         })
+        .on("broadcast", { event: "sec_config" }, function (p) {
+          if (p && p.payload && typeof p.payload === "object") {
+            cfgSecuriteAdmin = Object.assign(cfgSecuriteAdmin, p.payload);
+            try { localStorage.setItem("sti-sec-config", JSON.stringify(cfgSecuriteAdmin)); } catch (e) {}
+            if (typeof majUiConfigSecurite === "function") majUiConfigSecurite();
+          }
+        })
         .subscribe();
     } catch (e) {}
     majBoutonNotif();
@@ -5528,6 +5535,7 @@
   var btnSecCard = document.getElementById("btn-securite-card");
   var badgeSecTop = document.getElementById("badge-sec-top");
   var badgeStatutVerrou = document.getElementById("sec-statut-verrou-badge");
+  var badgeTemoinExamen = document.getElementById("badge-temoin-examen");
   var selVerrouCible = document.getElementById("sec-verrou-cible");
   var selPageAutorisee = document.getElementById("sec-page-autorisee");
   var inpMotifVerrou = document.getElementById("sec-motif-verrou");
@@ -5647,6 +5655,20 @@
         badgeStatutVerrou.style.color = "#177245";
         badgeStatutVerrou.style.borderColor = "#177245";
         badgeStatutVerrou.textContent = "🟢 Accès ouvert";
+      }
+    }
+    if (badgeTemoinExamen) {
+      if (cfgSecuriteAdmin.verrouActif) {
+        var cTxtTop = cfgSecuriteAdmin.verrouCible === "*" ? "Global" : cfgSecuriteAdmin.verrouCible;
+        badgeTemoinExamen.classList.add("verrouille");
+        badgeTemoinExamen.textContent = "🔒 Mode Examen : Verrouillé (" + cTxtTop + ")";
+        badgeTemoinExamen.title = "🔒 Accès verrouillé en Mode Examen (" + cTxtTop + ")" +
+          (cfgSecuriteAdmin.pageAutorisee ? " · Page autorisée : " + cfgSecuriteAdmin.pageAutorisee : " · Verrouillage total") +
+          " — Cliquer pour gérer ou déverrouiller";
+      } else {
+        badgeTemoinExamen.classList.remove("verrouille");
+        badgeTemoinExamen.textContent = "🟢 Accès ouvert";
+        badgeTemoinExamen.title = "🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen";
       }
     }
     if (btnSecCard) {
@@ -5775,6 +5797,16 @@
   }
   if (btnSecTop) btnSecTop.addEventListener("click", ouvrirModalSecurite);
   if (btnSecCard) btnSecCard.addEventListener("click", ouvrirModalSecurite);
+  if (badgeTemoinExamen) {
+    badgeTemoinExamen.addEventListener("click", ouvrirModalSecurite);
+    badgeTemoinExamen.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        ouvrirModalSecurite();
+      }
+    });
+  }
+  majUiConfigSecurite();
   var btnFermerSec = document.getElementById("btn-fermer-securite");
   var btnFermerSecX = document.getElementById("btn-fermer-securite-x");
   if (btnFermerSec) btnFermerSec.addEventListener("click", fermerModalSecurite);
