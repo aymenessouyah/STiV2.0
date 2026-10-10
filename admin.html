@@ -308,7 +308,8 @@
     cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
   }
   .noeud-abonne:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #f4511e; }
-  .noeud-abonne.nd-actif { background: #e3f6e8; }
+  .noeud-abonne.nd-en_ligne { background: #e3f6e8; border-color: #177245; }
+  .noeud-abonne.nd-actif { background: #ede9fe; }
   .noeud-abonne.nd-gold { background: linear-gradient(135deg, #fff6b8 0%, #ffe478 100%); }
   .noeud-abonne.nd-en_attente { background: #f5ead2; }
   .noeud-abonne.nd-exclu { background: #fde2e6; }
@@ -363,9 +364,11 @@
   tbody tr { cursor: pointer; transition: background .15s ease; }
   tbody tr:hover { background: #fdf6e9; }
 
-  /* Coloration de chaque ligne du tableau des abonnés selon l'état */
-  #tb-abonnes tr.row-actif { background: #e3f6e8; }
-  #tb-abonnes tr.row-actif:hover { background: #d2eedb; }
+  /* Coloration de chaque ligne du tableau des abonnés selon l'état (En ligne = vert, Actif = mauve, Gold = doré) */
+  #tb-abonnes tr.row-en_ligne { background: #e3f6e8; }
+  #tb-abonnes tr.row-en_ligne:hover { background: #d2eedb; }
+  #tb-abonnes tr.row-actif { background: #ede9fe; }
+  #tb-abonnes tr.row-actif:hover { background: #ddd6fe; }
   #tb-abonnes tr.row-gold { background: linear-gradient(90deg, #fff6b8 0%, #ffe478 100%); background-color: #ffef99; }
   #tb-abonnes tr.row-gold:hover { background: linear-gradient(90deg, #ffed8a 0%, #ffd94a 100%); background-color: #ffe36e; }
   #tb-abonnes tr.row-en_attente { background: #f5ead2; }
@@ -463,7 +466,7 @@
     border-radius: 6px; padding: 1px 6px; font-size: 10.5px; font-weight: 800; margin: 3px 4px 0 0;
   }
   .st { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; }
-  .st.actif { background: rgba(23,114,69,.12); color: #177245; }
+  .st.actif { background: rgba(109,40,217,.14); color: #6d28d9; border: 1px solid rgba(109,40,217,.28); }
   .st.gold { background: linear-gradient(120deg, #fff3c4, #ffd54f); color: #6d4c00; border: 1.5px solid #d4a017; box-shadow: 1px 1px 0 #23201a; }
   .st.en_attente { background: rgba(180,125,9,.14); color: #b47d09; }
   .st.suspendu { background: rgba(122,111,93,.14); color: #7a6f5d; }
@@ -1006,10 +1009,10 @@
           <svg id="svg-logo-tb-admin" width="25" height="25" viewBox="0 0 24 24" fill="none" aria-hidden="true" title="🟢 En ligne"><rect id="svg-logo-tb-rect" x="2.5" y="2.5" width="19" height="19" rx="5" stroke="#23201a" stroke-width="2" fill="#177245"/><path id="svg-logo-tb-bars" d="M7.5 16.5v-4.5M12 16.5V8M16.5 16.5V5.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
           <span id="titre-tb-admin" style="color:#177245;transition:color .25s ease" title="🟢 En ligne">Tableau de bord STI V2.0</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v101</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v102</span>
           <span class="badge-supabase" id="badge-supabase-quota" title="Espace disponible dans la base Supabase (Quota 500 Mo) — cliquer pour voir le détail">🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v101)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v102)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
       </div>
     </div>
     <div class="barre-util">
@@ -1086,7 +1089,7 @@
   <div class="stats" id="stats">
     <div class="stat" data-filtre="en_ligne" title="Cliquer pour filtrer les élèves en ligne"><b id="s-enligne" style="color:#177245">0</b><small>🟢 En ligne</small></div>
     <div class="stat" data-filtre="*" title="Cliquer pour afficher tous les abonnés"><b id="s-total">0</b><small>👥 Abonnés</small></div>
-    <div class="stat" data-filtre="actif" title="Cliquer pour filtrer les abonnés actifs"><b id="s-actifs" style="color:#177245">0</b><small>✅ Actifs</small></div>
+    <div class="stat" data-filtre="actif" title="Cliquer pour filtrer les abonnés actifs"><b id="s-actifs" style="color:#6d28d9">0</b><small>🟣 Actifs</small></div>
     <div class="stat" data-filtre="en_attente" title="Cliquer pour filtrer les demandes en attente"><b id="s-attente" style="color:#b47d09">0</b><small>⏳ En attente</small></div>
     <div class="stat" data-filtre="*" title="Total des connexions enregistrées"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
   </div>
@@ -2251,7 +2254,7 @@
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=101"></script>
-<script src="assets/js/admin.js?v=101"></script>
+<script src="assets/js/config.js?v=102"></script>
+<script src="assets/js/admin.js?v=102"></script>
 </body>
 </html>

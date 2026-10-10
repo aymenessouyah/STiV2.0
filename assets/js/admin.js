@@ -1608,7 +1608,8 @@
         var nd = document.createElement("div");
         var isG = estGold(p);
         var estNdGold = isG && p.statut === "actif";
-        nd.className = "noeud-abonne " + (estNdGold ? "nd-gold" : ("nd-" + (p.statut || "en_attente")));
+        var estOnNd = estEnLigne(p.id);
+        nd.className = "noeud-abonne " + (estOnNd ? "nd-en_ligne" : (estNdGold ? "nd-gold" : ("nd-" + (p.statut || "en_attente"))));
         nd.title = "Cliquer pour ouvrir la fiche récapitulative complète de cet élève";
         nd.addEventListener("click", function () { ouvrirFicheEleve(p); });
 
@@ -1715,7 +1716,8 @@
     liste.forEach(function (p) {
       var tr = document.createElement("tr");
       var estLigneGold = estGold(p) && p.statut === "actif";
-      tr.className = estLigneGold ? "row-gold" : ("row-" + (p.statut || "en_attente"));
+      var estOnLigne = estEnLigne(p.id);
+      tr.className = estOnLigne ? "row-en_ligne" : (estLigneGold ? "row-gold" : ("row-" + (p.statut || "en_attente")));
       tr.title = "Cliquer pour voir toutes ses connexions et durées par semaine";
       tr.addEventListener("click", function () { detail(p); });
 

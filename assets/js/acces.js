@@ -5563,7 +5563,7 @@
   };
 
   /* =====================================================================
-     🐞 MODE « CHASSE AUX ERREURS (DÉBOGAGE BAC STI) » (v101)
+     🐞 MODE « CHASSE AUX ERREURS (DÉBOGAGE BAC STI) » (v102)
      10 défis officiels × 3 erreurs classiques du Bac = 30 pièges à corriger
      ===================================================================== */
   var STI_DEBUG_DEFIS = window.STI_DEBUG_DEFIS = [
