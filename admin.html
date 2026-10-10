@@ -207,14 +207,15 @@
     background: #fde2e6; color: #c0392b; box-shadow: 3.5px 3.5px 0 #c0392b;
   }
 
-  /* ── 2) Mise en page principale : Tableau Kanban 4 colonnes (Contrôle, Pédagogie, Statistiques, Sécurité) OU Barre latérale gauche ── */
+  /* ── 2) Mise en page principale : Répertoire intelligent, Tableau Kanban 4 colonnes OU Barre latérale gauche ── */
   .layout-admin {
     display: grid;
     grid-template-columns: 268px minmax(0, 1fr);
     gap: 18px;
     align-items: start;
   }
-  .layout-admin.mode-kanban-top {
+  .layout-admin.mode-kanban-top,
+  .layout-admin.mode-repertoire-top {
     grid-template-columns: 1fr;
     gap: 16px;
   }
@@ -242,6 +243,144 @@
     padding: 14px;
     background: #f3ead9;
     box-shadow: 5px 5px 0 #23201a;
+  }
+  .layout-admin.mode-repertoire-top .sidebar-admin {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    background: linear-gradient(145deg, #fffdf7 0%, #f3ead9 100%);
+    box-shadow: 5px 5px 0 #23201a;
+  }
+
+  /* Barre d'explorateur du Répertoire intelligent (4 familles & 22 outils) */
+  .repertoire-explorer-bar {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    background: #fffdf7;
+    border: 2px solid #23201a;
+    border-radius: 14px;
+    padding: 10px 12px;
+    box-shadow: 3px 3px 0 #23201a;
+  }
+  .layout-admin.mode-repertoire-top .repertoire-explorer-bar {
+    display: flex;
+  }
+  .rep-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .rep-breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 900;
+    color: #23201a;
+  }
+  .rep-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 220px;
+    max-width: 420px;
+  }
+  .rep-search-wrap input {
+    width: 100%;
+    border: 2px solid #23201a;
+    border-radius: 999px;
+    padding: 6px 13px;
+    font-size: 12px;
+    font-weight: 800;
+    background: #fff;
+    color: #23201a;
+    outline: none;
+  }
+  .rep-search-wrap input:focus {
+    border-color: #f4511e;
+    box-shadow: 0 0 0 2px rgba(244,81,30,.2);
+  }
+  .rep-smart-chips {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .rep-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 2px solid #23201a;
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 900;
+    background: #f3ead9;
+    color: #23201a;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #23201a;
+    transition: transform .1s ease, background .12s ease;
+  }
+  .rep-chip:hover {
+    transform: translate(-1px, -1px);
+    background: #fffdf7;
+  }
+  .rep-chip.actif {
+    background: #23201a;
+    color: #ffd54f;
+    border-color: #f4511e;
+    box-shadow: 2px 2px 0 #f4511e;
+  }
+  .rep-chip .cnt {
+    background: rgba(255,255,255,.85);
+    color: #23201a;
+    border-radius: 999px;
+    padding: 0 6px;
+    font-size: 10px;
+    font-weight: 900;
+  }
+  .rep-dossiers-grid {
+    display: contents;
+  }
+  .layout-admin.mode-repertoire-top .rep-dossiers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .layout-admin.mode-repertoire-top .nav-famille-items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+    gap: 7px;
+  }
+  .nav-famille.dossier-replie .nav-famille-items {
+    display: none !important;
+  }
+  .nav-famille.rep-cache {
+    display: none !important;
+  }
+  .nav-side-btn.rep-outil-cache {
+    display: none !important;
+  }
+  .nav-famille-titre {
+    cursor: pointer;
+    user-select: none;
+  }
+  .nav-famille-caret {
+    display: inline-block;
+    font-size: 11px;
+    transition: transform .18s ease;
+    margin-left: 5px;
+  }
+  .nav-famille.dossier-replie .nav-famille-caret {
+    transform: rotate(-90deg);
   }
   .sidebar-familles-tabs {
     display: none;
@@ -416,6 +555,172 @@
   .kb-card.kb-c-gold    { border-left-color: #d97706; background: linear-gradient(120deg, #fffdf0, #fff4bd); }
   .kb-card.kb-c-attente { border-left-color: #b47d09; background: #fdf8ec; }
   .kb-card.kb-c-exclu   { border-left-color: #c0392b; background: #fff5f6; }
+
+  /* ── Répertoire intelligent des Abonnés (Dossiers intelligents + Arborescence Lycée / Classe / A-Z) ── */
+  .repertoire-abonnes {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .repertoire-abonnes.visible {
+    display: flex;
+  }
+  .rep-ab-toolbar {
+    background: #fffdf7;
+    border: 2.5px solid #23201a;
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 4px 4px 0 #23201a;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .rep-smart-folders {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
+    gap: 8px;
+  }
+  .rep-sf-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    border: 2px solid #23201a;
+    background: #f9f1e3;
+    color: #23201a;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    box-shadow: 2.5px 2.5px 0 #23201a;
+    transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+  }
+  .rep-sf-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3.5px 3.5px 0 #f4511e;
+    background: #fffdf7;
+  }
+  .rep-sf-card.actif {
+    background: linear-gradient(120deg, #23201a 0%, #3d362b 100%);
+    color: #ffd54f;
+    border-color: #f4511e;
+    box-shadow: 3px 3px 0 #f4511e;
+  }
+  .rep-sf-left {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+  }
+  .rep-sf-ico {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .rep-sf-lbl {
+    font-size: 11.5px;
+    font-weight: 900;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rep-sf-cnt {
+    background: #23201a;
+    color: #fffdf7;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .rep-sf-card.actif .rep-sf-cnt {
+    background: #f4511e;
+    color: #fff;
+  }
+  .rep-ab-subbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 6px;
+    border-top: 1.5px dashed rgba(35,32,26,.2);
+  }
+  .rep-az-bar {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .rep-az-btn {
+    border: 1.5px solid #23201a;
+    border-radius: 7px;
+    background: #f3ead9;
+    color: #23201a;
+    font-size: 10.5px;
+    font-weight: 900;
+    padding: 3px 6px;
+    cursor: pointer;
+  }
+  .rep-az-btn.actif {
+    background: #f4511e;
+    color: #fff;
+    border-color: #23201a;
+  }
+  .rep-tree-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .rep-folder {
+    background: #fffdf7;
+    border: 2.5px solid #23201a;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 4px 4px 0 rgba(35,32,26,.85);
+  }
+  .rep-folder-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    background: linear-gradient(120deg, #f3ead9 0%, #fff8eb 100%);
+    border-bottom: 2px solid #23201a;
+    cursor: pointer;
+    user-select: none;
+  }
+  .rep-folder.replie .rep-folder-head {
+    border-bottom: none;
+  }
+  .rep-folder.replie .rep-folder-body {
+    display: none;
+  }
+  .rep-folder-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 900;
+    color: #23201a;
+    flex-wrap: wrap;
+  }
+  .rep-folder-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .rep-folder-body {
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+    gap: 10px;
+    background: #faf4e8;
+  }
   .nav-side-gauche {
     display: inline-flex;
     align-items: center;
@@ -1291,14 +1596,14 @@
           <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">🟢 Accès ouvert</span>
           <span class="badge-temoin-reseau" id="badge-temoin-reseau" title="État de la connexion réseau du tableau de bord">🟢 En ligne</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v106</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v107</span>
           <span class="badge-supabase" id="badge-supabase-quota" title="Espace disponible dans la base Supabase (Quota 500 Mo) — cliquer pour voir le détail">🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v106)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v107)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
       </div>
     </div>
     <div class="barre-util">
-      <button class="btn-util" id="btn-toggle-disposition" type="button" title="Basculer entre le Tableau Kanban (4 colonnes) et la Barre latérale à gauche" style="background:#fff3b0;border-color:#23201a;color:#23201a">🗂️ <span class="lbl-pc" id="lbl-toggle-disp">Vue : Barre gauche</span><span class="lbl-mob">Layout</span></button>
+      <button class="btn-util" id="btn-toggle-disposition" type="button" title="Basculer entre le Répertoire intelligent, le Tableau Kanban (4 colonnes) et la Barre latérale à gauche" style="background:#fff3b0;border-color:#23201a;color:#23201a">📁 <span class="lbl-pc" id="lbl-toggle-disp">Disposition : Répertoire intelligent</span><span class="lbl-mob">Répertoire</span></button>
       <a class="btn-util" href="index.html">🏠 <span class="lbl-pc">Accueil du site</span><span class="lbl-mob">Site</span></a>
       <a class="btn-util" href="carte-visite.html" title="Ouvrir et partager la carte de visite électronique avec QR code">🪪 <span class="lbl-pc">Carte visite</span><span class="lbl-mob">Carte</span></a>
       <button class="btn-util" id="btn-refresh" type="button">🔄 <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
@@ -1306,28 +1611,55 @@
     </div>
   </header>
 
-  <!-- 2. MISE EN PAGE : Tableau Kanban des 4 familles (Contrôle, Pédagogie, Statistiques, Sécurité) + Contenu -->
-  <div class="layout-admin mode-kanban-top" id="layout-admin-root">
-    <aside class="sidebar-admin" aria-label="Tableau Kanban des 4 familles du tableau de bord">
-      <!-- Onglets rapides mobile pour basculer entre les 4 colonnes Kanban -->
-      <div class="sidebar-familles-tabs" role="tablist" aria-label="Colonnes Kanban">
+  <!-- 2. MISE EN PAGE : Répertoire intelligent / Tableau Kanban des 4 familles (Contrôle, Pédagogie, Statistiques, Sécurité) + Contenu -->
+  <div class="layout-admin mode-repertoire-top" id="layout-admin-root">
+    <aside class="sidebar-admin" aria-label="Répertoire intelligent des 4 familles du tableau de bord">
+      <!-- Barre d'explorateur du Répertoire intelligent (Recherche + Dossiers intelligents + Plier/Déplier) -->
+      <div class="repertoire-explorer-bar" id="repertoire-explorer-bar">
+        <div class="rep-top-row">
+          <div class="rep-breadcrumb">
+            <span>📁 Répertoire intelligent STI</span>
+            <span style="color:#f4511e">▸</span>
+            <span id="rep-current-folder-lbl" style="color:#177245">Tous les dossiers (4 familles · 22 outils)</span>
+          </div>
+          <div class="rep-search-wrap">
+            <input type="search" id="inp-search-repertoire-outils" placeholder="🔎 Trouver un outil (ex: appel, flash, examen, quiz, csv, gold)…" aria-label="Rechercher un outil dans le répertoire" />
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" class="rep-chip" id="btn-rep-expand-all" title="Déplier les 4 dossiers">📂 Tout déplier</button>
+            <button type="button" class="rep-chip" id="btn-rep-collapse-all" title="Replier les 4 dossiers">📁 Tout replier</button>
+          </div>
+        </div>
+        <div class="rep-smart-chips" role="tablist" aria-label="Filtres de dossiers intelligents">
+          <button type="button" class="rep-chip actif" data-rep-filter="all">📂 Tous les dossiers <span class="cnt">22</span></button>
+          <button type="button" class="rep-chip" data-rep-filter="live" title="Outils temps réel &amp; éléments ayant une alerte ou activité en cours">⚡ En direct &amp; Urgences <span class="cnt" id="rep-cnt-live">7</span></button>
+          <button type="button" class="rep-chip" data-rep-filter="controle">📁 1. Contrôle <span class="cnt">6</span></button>
+          <button type="button" class="rep-chip" data-rep-filter="pedagogie">📁 2. Pédagogie <span class="cnt">6</span></button>
+          <button type="button" class="rep-chip" data-rep-filter="statistiques">📁 3. Statistiques <span class="cnt">6</span></button>
+          <button type="button" class="rep-chip" data-rep-filter="securite">📁 4. Sécurité <span class="cnt">4</span></button>
+        </div>
+      </div>
+
+      <!-- Onglets rapides mobile pour basculer entre les 4 familles -->
+      <div class="sidebar-familles-tabs" role="tablist" aria-label="Dossiers des 4 familles">
         <button type="button" class="tab-famille-mob actif" data-f-tab="controle">🎛️ Contrôle</button>
         <button type="button" class="tab-famille-mob" data-f-tab="pedagogie">🎓 Pédagogie</button>
         <button type="button" class="tab-famille-mob" data-f-tab="statistiques">📊 Stats</button>
         <button type="button" class="tab-famille-mob" data-f-tab="securite">🛡️ Sécurité</button>
       </div>
 
-      <!-- COLONNE KANBAN 1 : CONTRÔLE -->
+      <div class="rep-dossiers-grid">
+      <!-- DOSSIER INTELLIGENT 1 : CONTRÔLE -->
       <div class="nav-famille f-controle mob-visible" data-famille="controle">
-        <div class="nav-famille-titre"><span>🎛️ 1. Contrôle</span><span class="nav-famille-badge">6 cartes</span></div>
+        <div class="nav-famille-titre" title="Cliquer pour plier ou déplier ce dossier"><span><span class="ico-dossier">📂</span> 🎛️ 1. Contrôle</span><span><span class="nav-famille-badge">6 outils</span><span class="nav-famille-caret">▾</span></span></div>
         <div class="nav-famille-items">
-          <button type="button" class="nav-side-btn" data-scroll-to="sec-abonnes">
-            <span class="nav-side-gauche"><span class="nav-side-ico">👥</span><span>Liste &amp; Kanban Abonnés</span></span>
+          <button type="button" class="nav-side-btn" data-scroll-to="sec-abonnes" data-live-tool="1">
+            <span class="nav-side-gauche"><span class="nav-side-ico">👥</span><span>Répertoire &amp; Liste Abonnés</span></span>
           </button>
-          <button type="button" class="nav-side-btn" id="btn-appel-top" title="Feuille d'appel &amp; présence automatique du jour par classe">
+          <button type="button" class="nav-side-btn" id="btn-appel-top" data-live-tool="1" title="Feuille d'appel &amp; présence automatique du jour par classe">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#e3f6e8">📋</span><span>Appel / Présence</span></span>
           </button>
-          <button type="button" class="nav-side-btn" id="btn-controle" title="Lancer un contrôle ou sujet chronométré avec minuteur">
+          <button type="button" class="nav-side-btn" id="btn-controle" data-live-tool="1" title="Lancer un contrôle ou sujet chronométré avec minuteur">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff3b0">⏱️</span><span>Contrôle chronométré</span></span>
           </button>
           <button type="button" class="nav-side-btn" id="btn-side-lycees" title="Ajouter, renommer ou supprimer des lycées">
@@ -1342,22 +1674,22 @@
         </div>
       </div>
 
-      <!-- COLONNE KANBAN 2 : PÉDAGOGIE -->
+      <!-- DOSSIER INTELLIGENT 2 : PÉDAGOGIE -->
       <div class="nav-famille f-pedagogie" data-famille="pedagogie">
-        <div class="nav-famille-titre"><span>🎓 2. Pédagogie</span><span class="nav-famille-badge">6 cartes</span></div>
+        <div class="nav-famille-titre" title="Cliquer pour plier ou déplier ce dossier"><span><span class="ico-dossier">📂</span> 🎓 2. Pédagogie</span><span><span class="nav-famille-badge">6 outils</span><span class="nav-famille-caret">▾</span></span></div>
         <div class="nav-famille-items">
-          <button type="button" class="nav-side-btn" id="btn-messenger-top" title="Ouvrir la messagerie directe Messenger STI avec les candidats">
+          <button type="button" class="nav-side-btn" id="btn-messenger-top" data-live-tool="1" title="Ouvrir la messagerie directe Messenger STI avec les candidats">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff3e0">💬</span><span>Messenger STI</span></span>
             <span id="badge-msn-top" style="display:none;background:#ffd54f;color:#23201a;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a">0</span>
           </button>
           <button type="button" class="nav-side-btn" id="btn-msg-classe" title="Envoyer une annonce écran, WhatsApp ou dictée vocale à une classe">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#ffe0b2">📢</span><span>Message par classe</span></span>
           </button>
-          <button type="button" class="nav-side-btn" id="btn-flash-top" title="Lancer une Question Flash / Sondage Live en classe">
+          <button type="button" class="nav-side-btn" id="btn-flash-top" data-live-tool="1" title="Lancer une Question Flash / Sondage Live en classe">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff8e1">⚡</span><span>Question Flash Live</span></span>
           </button>
           <button type="button" id="btn-flash-quiz" style="display:none" aria-hidden="true"></button>
-          <button type="button" class="nav-side-btn" id="btn-mains-top" title="File d'attente des élèves ayant levé la main en TP">
+          <button type="button" class="nav-side-btn" id="btn-mains-top" data-live-tool="1" title="File d'attente des élèves ayant levé la main en TP">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#ede9fe">🙋‍♂️</span><span>Mains levées (TP)</span></span>
             <span id="badge-mains-top" style="display:none;background:#6d28d9;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a">0</span>
           </button>
@@ -1370,9 +1702,9 @@
         </div>
       </div>
 
-      <!-- COLONNE KANBAN 3 : STATISTIQUES -->
+      <!-- DOSSIER INTELLIGENT 3 : STATISTIQUES -->
       <div class="nav-famille f-statistiques" data-famille="statistiques">
-        <div class="nav-famille-titre"><span>📊 3. Statistiques</span><span class="nav-famille-badge">6 cartes</span></div>
+        <div class="nav-famille-titre" title="Cliquer pour plier ou déplier ce dossier"><span><span class="ico-dossier">📂</span> 📊 3. Statistiques</span><span><span class="nav-famille-badge">6 outils</span><span class="nav-famille-caret">▾</span></span></div>
         <div class="nav-famille-items">
           <button type="button" class="nav-side-btn" id="btn-palmares-top" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff3b0">🏆</span><span>Palmarès &amp; Podium</span></span>
@@ -1395,11 +1727,11 @@
         </div>
       </div>
 
-      <!-- COLONNE KANBAN 4 : SÉCURITÉ -->
+      <!-- DOSSIER INTELLIGENT 4 : SÉCURITÉ -->
       <div class="nav-famille f-securite" data-famille="securite">
-        <div class="nav-famille-titre"><span>🛡️ 4. Sécurité</span><span class="nav-famille-badge">4 cartes</span></div>
+        <div class="nav-famille-titre" title="Cliquer pour plier ou déplier ce dossier"><span><span class="ico-dossier">📂</span> 🛡️ 4. Sécurité</span><span><span class="nav-famille-badge">4 outils</span><span class="nav-famille-caret">▾</span></span></div>
         <div class="nav-famille-items">
-          <button type="button" class="nav-side-btn" id="btn-securite-top" title="Centre de Sécurité : Mode Examen / Verrouillage, Anti-partage, Éjection F12 &amp; Journal d'alertes">
+          <button type="button" class="nav-side-btn" id="btn-securite-top" data-live-tool="1" title="Centre de Sécurité : Mode Examen / Verrouillage, Anti-partage, Éjection F12 &amp; Journal d'alertes">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fde2e6">🛡️</span><span>Centre de Sécurité</span></span>
             <span id="badge-sec-top" style="display:none;background:#c0392b;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a">0</span>
           </button>
@@ -1413,6 +1745,7 @@
             <span class="nav-side-gauche"><span class="nav-side-ico">💾</span><span>Backup complet JSON</span></span>
           </button>
         </div>
+      </div>
       </div>
     </aside>
 
@@ -1437,6 +1770,7 @@
       <h2 style="margin:0">👥 Liste des Abonnés <span id="note-tri" style="font-size:11px;color:#7a6f5d;font-weight:700"></span></h2>
       <div class="choix-vue-abonnes" role="tablist" aria-label="Mode d'affichage des abonnés">
         <button type="button" class="btn-vue actif" id="btn-vue-liste" data-vue="liste" title="Afficher le tableau détaillé complet">📋 Liste détaillée</button>
+        <button type="button" class="btn-vue" id="btn-vue-repertoire" data-vue="repertoire" title="Afficher sous forme de Répertoire intelligent (Dossiers intelligents + Arborescence par Lycée/Classe/A-Z)">📁 Répertoire intelligent</button>
         <button type="button" class="btn-vue" id="btn-vue-kanban" data-vue="kanban" title="Afficher sous forme de Tableau Kanban par statut (glisser-déposer)">🗂️ Tableau Kanban</button>
         <button type="button" class="btn-vue" id="btn-vue-noeuds" data-vue="noeuds" title="Afficher sous forme de nœuds (Nom, Prénom, Classe, État)">🔵 Nœuds</button>
       </div>
@@ -1472,6 +1806,64 @@
 
   <!-- Bandeau affiché dès qu'une classe est appelée/sélectionnée : effectif de la classe + nombre en ligne -->
   <div class="bandeau-classe" id="bandeau-classe-active" role="status" aria-live="polite"></div>
+
+  <!-- Affichage en Répertoire intelligent (Dossiers intelligents automatiques + Arborescence par Classe/Lycée/A-Z) -->
+  <div class="repertoire-abonnes" id="repertoire-abonnes" aria-label="Répertoire intelligent des abonnés">
+    <div class="rep-ab-toolbar">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <div style="font-size:13px;font-weight:900;color:#23201a">📁 Dossiers intelligents automatiques <span style="font-size:11px;color:#7a6f5d;font-weight:700">(filtrage intelligent en temps réel)</span></div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <label for="sel-rep-group" style="font-size:11.5px;font-weight:900;color:#5a5244">🗂️ Grouper par :</label>
+          <select id="sel-rep-group" style="border:1.5px solid #23201a;border-radius:999px;padding:4px 10px;font-size:11.5px;font-weight:800;background:#fff;color:#23201a">
+            <option value="classe">🏫 Dossiers par Classe</option>
+            <option value="lycee_classe">🏛️ Lycée ➔ Classe</option>
+            <option value="az">🔤 Répertoire Alphabétique (A–Z)</option>
+          </select>
+          <button type="button" class="rep-az-btn" id="btn-rep-ab-openall" title="Déplier tous les dossiers d'élèves">📂 Tout déplier</button>
+          <button type="button" class="rep-az-btn" id="btn-rep-ab-closeall" title="Replier tous les dossiers d'élèves">📁 Tout replier</button>
+        </div>
+      </div>
+      <div class="rep-smart-folders" id="rep-smart-folders">
+        <button type="button" class="rep-sf-card actif" data-sf="all">
+          <span class="rep-sf-left"><span class="rep-sf-ico">📂</span><span class="rep-sf-lbl">Tous les élèves</span></span>
+          <span class="rep-sf-cnt" id="sf-cnt-all">0</span>
+        </button>
+        <button type="button" class="rep-sf-card" data-sf="online">
+          <span class="rep-sf-left"><span class="rep-sf-ico">🟢</span><span class="rep-sf-lbl">Connectés maintenant</span></span>
+          <span class="rep-sf-cnt" id="sf-cnt-online" style="background:#177245">0</span>
+        </button>
+        <button type="button" class="rep-sf-card" data-sf="attente">
+          <span class="rep-sf-left"><span class="rep-sf-ico">⏳</span><span class="rep-sf-lbl">À valider</span></span>
+          <span class="rep-sf-cnt" id="sf-cnt-attente" style="background:#b47d09">0</span>
+        </button>
+        <button type="button" class="rep-sf-card" data-sf="gold">
+          <span class="rep-sf-left"><span class="rep-sf-ico">👑</span><span class="rep-sf-lbl">Comptes Gold</span></span>
+          <span class="rep-sf-cnt" id="sf-cnt-gold" style="background:#d97706">0</span>
+        </button>
+        <button type="button" class="rep-sf-card" data-sf="assidus">
+          <span class="rep-sf-left"><span class="rep-sf-ico">🔥</span><span class="rep-sf-lbl">Assidus (≥ 30 min)</span></span>
+          <span class="rep-sf-cnt" id="sf-cnt-assidus" style="background:#6d28d9">0</span>
+        </button>
+        <button type="button" class="rep-sf-card" data-sf="inactifs">
+          <span class="rep-sf-left"><span class="rep-sf-ico">💤</span><span class="rep-sf-lbl">Inactifs (0 min)</span></span>
+          <span class="rep-sf-cnt" id="sf-cnt-inactifs" style="background:#6b7280">0</span>
+        </button>
+        <button type="button" class="rep-sf-card" data-sf="topquiz">
+          <span class="rep-sf-left"><span class="rep-sf-ico">🏆</span><span class="rep-sf-lbl">Top Quiz (≥ 70%)</span></span>
+          <span class="rep-sf-cnt" id="sf-cnt-topquiz" style="background:#15803d">0</span>
+        </button>
+        <button type="button" class="rep-sf-card" data-sf="fragiles">
+          <span class="rep-sf-left"><span class="rep-sf-ico">⚠️</span><span class="rep-sf-lbl">Fragiles Quiz (&lt; 50%)</span></span>
+          <span class="rep-sf-cnt" id="sf-cnt-fragiles" style="background:#c0392b">0</span>
+        </button>
+      </div>
+      <div class="rep-ab-subbar">
+        <div class="rep-az-bar" id="rep-az-bar" aria-label="Index alphabétique"></div>
+        <div id="rep-ab-summary" style="font-size:11.5px;font-weight:800;color:#5a5244"></div>
+      </div>
+    </div>
+    <div class="rep-tree-container" id="rep-tree-container"></div>
+  </div>
 
   <!-- Affichage en Tableau Kanban (5 colonnes par statut avec Glisser-Déposer) -->
   <div class="kanban-abonnes" id="kanban-abonnes" aria-label="Tableau Kanban des abonnés">
@@ -2734,30 +3126,137 @@
     var layoutRoot = document.getElementById("layout-admin-root");
     var btnToggleDisp = document.getElementById("btn-toggle-disposition");
     var lblToggleDisp = document.getElementById("lbl-toggle-disp");
+    var modesDisp = ["repertoire", "kanban", "sidebar"];
+    var modeDispCourant = "repertoire";
+
     function majDispositionFamilles(mode) {
       if (!layoutRoot) return;
-      var estKanbanTop = mode !== "sidebar";
-      layoutRoot.classList.toggle("mode-kanban-top", estKanbanTop);
+      if (modesDisp.indexOf(mode) === -1) mode = "repertoire";
+      modeDispCourant = mode;
+      layoutRoot.classList.toggle("mode-repertoire-top", mode === "repertoire");
+      layoutRoot.classList.toggle("mode-kanban-top", mode === "kanban");
       if (lblToggleDisp) {
-        lblToggleDisp.textContent = estKanbanTop ? "Vue : Barre gauche" : "Vue : Kanban 4 col.";
+        if (mode === "repertoire") lblToggleDisp.textContent = "Disposition : Répertoire intelligent";
+        else if (mode === "kanban") lblToggleDisp.textContent = "Disposition : Kanban 4 col.";
+        else lblToggleDisp.textContent = "Disposition : Barre gauche";
       }
-      try { localStorage.setItem("sti-admin-layout-familles", estKanbanTop ? "kanban" : "sidebar"); } catch (e) {}
+      try { localStorage.setItem("sti-admin-layout-familles", mode); } catch (e) {}
     }
     try {
       var dispSauv = localStorage.getItem("sti-admin-layout-familles");
-      if (dispSauv === "sidebar") majDispositionFamilles("sidebar");
+      if (dispSauv === "sidebar" || dispSauv === "kanban" || dispSauv === "repertoire") {
+        majDispositionFamilles(dispSauv);
+      } else {
+        majDispositionFamilles("repertoire");
+      }
     } catch (e) {}
     if (btnToggleDisp && layoutRoot) {
       btnToggleDisp.addEventListener("click", function () {
-        var actuellementKanban = layoutRoot.classList.contains("mode-kanban-top");
-        majDispositionFamilles(actuellementKanban ? "sidebar" : "kanban");
+        var idx = modesDisp.indexOf(modeDispCourant);
+        var suivant = modesDisp[(idx + 1) % modesDisp.length];
+        majDispositionFamilles(suivant);
       });
+    }
+
+    /* Pliage / dépliage des 4 dossiers intelligents + Recherche & Filtres de dossiers */
+    function majIconeDossier(box) {
+      var ico = box.querySelector(".ico-dossier");
+      if (ico) ico.textContent = box.classList.contains("dossier-replie") ? "📁" : "📂";
+    }
+    document.querySelectorAll(".nav-famille").forEach(function (box) {
+      var titre = box.querySelector(".nav-famille-titre");
+      if (titre) {
+        titre.addEventListener("click", function () {
+          box.classList.toggle("dossier-replie");
+          majIconeDossier(box);
+        });
+      }
+    });
+    var btnRepExpandAll = document.getElementById("btn-rep-expand-all");
+    var btnRepCollapseAll = document.getElementById("btn-rep-collapse-all");
+    if (btnRepExpandAll) {
+      btnRepExpandAll.addEventListener("click", function () {
+        document.querySelectorAll(".nav-famille").forEach(function (box) {
+          box.classList.remove("dossier-replie");
+          majIconeDossier(box);
+        });
+      });
+    }
+    if (btnRepCollapseAll) {
+      btnRepCollapseAll.addEventListener("click", function () {
+        document.querySelectorAll(".nav-famille").forEach(function (box) {
+          box.classList.add("dossier-replie");
+          majIconeDossier(box);
+        });
+      });
+    }
+
+    var inpSearchRepOutils = document.getElementById("inp-search-repertoire-outils");
+    var lblRepBreadcrumb = document.getElementById("rep-current-folder-lbl");
+    var repFiltreDossier = "all";
+
+    function filtrerRepertoireOutils() {
+      var q = inpSearchRepOutils ? String(inpSearchRepOutils.value || "").trim().toLowerCase() : "";
+      var nbOutilsVis = 0;
+      var nbDossiersVis = 0;
+      document.querySelectorAll(".nav-famille[data-famille]").forEach(function (box) {
+        var fam = box.getAttribute("data-famille");
+        var famOk = (repFiltreDossier === "all" || repFiltreDossier === "live" || repFiltreDossier === fam);
+        if (!famOk) {
+          box.classList.add("rep-cache");
+          return;
+        }
+        var nbDansFamille = 0;
+        box.querySelectorAll(".nav-side-btn").forEach(function (btn) {
+          var txt = (btn.textContent || "") + " " + (btn.getAttribute("title") || "");
+          var matchQ = !q || txt.toLowerCase().indexOf(q) !== -1;
+          var matchLive = repFiltreDossier !== "live" || btn.getAttribute("data-live-tool") === "1";
+          var vis = matchQ && matchLive;
+          btn.classList.toggle("rep-outil-cache", !vis);
+          if (vis) {
+            nbDansFamille++;
+            nbOutilsVis++;
+          }
+        });
+        box.classList.toggle("rep-cache", nbDansFamille === 0);
+        if (nbDansFamille > 0) {
+          nbDossiersVis++;
+          if (q) {
+            box.classList.remove("dossier-replie");
+            majIconeDossier(box);
+          }
+        }
+      });
+      if (lblRepBreadcrumb) {
+        var mapNoms = {
+          all: "Tous les dossiers",
+          live: "En direct & Urgences",
+          controle: "Dossier 1. Contrôle",
+          pedagogie: "Dossier 2. Pédagogie",
+          statistiques: "Dossier 3. Statistiques",
+          securite: "Dossier 4. Sécurité"
+        };
+        lblRepBreadcrumb.textContent = (mapNoms[repFiltreDossier] || "Répertoire") + " (" + nbDossiersVis + " dossier(s) · " + nbOutilsVis + " outil(s))";
+      }
+    }
+
+    document.querySelectorAll(".rep-chip[data-rep-filter]").forEach(function (chip) {
+      chip.addEventListener("click", function () {
+        repFiltreDossier = chip.getAttribute("data-rep-filter") || "all";
+        document.querySelectorAll(".rep-chip[data-rep-filter]").forEach(function (c) {
+          c.classList.toggle("actif", c === chip);
+        });
+        filtrerRepertoireOutils();
+      });
+    });
+    if (inpSearchRepOutils) {
+      inpSearchRepOutils.addEventListener("input", filtrerRepertoireOutils);
     }
   })();
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=106"></script>
-<script src="assets/js/admin.js?v=106"></script>
+<script src="assets/js/config.js?v=107"></script>
+<script src="assets/js/admin.js?v=107"></script>
 </body>
 </html>

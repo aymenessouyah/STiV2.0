@@ -1336,23 +1336,31 @@
   var btnActiverLot = document.getElementById("btn-activer-lot");
   var btnExportCsv = document.getElementById("btn-export-csv");
   var btnVueListe = document.getElementById("btn-vue-liste");
+  var btnVueRepertoire = document.getElementById("btn-vue-repertoire");
   var btnVueKanban = document.getElementById("btn-vue-kanban");
   var btnVueNoeuds = document.getElementById("btn-vue-noeuds");
+  var repertoireAbonnes = document.getElementById("repertoire-abonnes");
   var kanbanAbonnes = document.getElementById("kanban-abonnes");
   var grilleNoeuds = document.getElementById("grille-noeuds-abonnes");
   var wrapTableAbonnes = document.getElementById("wrap-table-abonnes");
-  var modeVueAbonnes = "liste";
+  var modeVueAbonnes = "repertoire";
+  var repSmartFilter = "all";
+  var repLettreFilter = "*";
+  var repGroupMode = "classe";
+  var repDossiersReplies = {};
   try {
     var vSauv = localStorage.getItem("sti-admin-vue-abonnes");
-    if (vSauv === "noeuds" || vSauv === "liste" || vSauv === "kanban") modeVueAbonnes = vSauv;
+    if (vSauv === "noeuds" || vSauv === "liste" || vSauv === "kanban" || vSauv === "repertoire") modeVueAbonnes = vSauv;
   } catch (e) {}
 
   function appliquerModeVueAbonnes(nvMode) {
-    modeVueAbonnes = (nvMode === "noeuds" || nvMode === "kanban") ? nvMode : "liste";
+    modeVueAbonnes = (nvMode === "noeuds" || nvMode === "kanban" || nvMode === "repertoire") ? nvMode : "liste";
     try { localStorage.setItem("sti-admin-vue-abonnes", modeVueAbonnes); } catch (e) {}
     if (btnVueListe) btnVueListe.classList.toggle("actif", modeVueAbonnes === "liste");
+    if (btnVueRepertoire) btnVueRepertoire.classList.toggle("actif", modeVueAbonnes === "repertoire");
     if (btnVueKanban) btnVueKanban.classList.toggle("actif", modeVueAbonnes === "kanban");
     if (btnVueNoeuds) btnVueNoeuds.classList.toggle("actif", modeVueAbonnes === "noeuds");
+    if (repertoireAbonnes) repertoireAbonnes.classList.toggle("visible", modeVueAbonnes === "repertoire");
     if (kanbanAbonnes) kanbanAbonnes.classList.toggle("visible", modeVueAbonnes === "kanban");
     if (grilleNoeuds) grilleNoeuds.classList.toggle("visible", modeVueAbonnes === "noeuds");
     if (wrapTableAbonnes) wrapTableAbonnes.style.display = modeVueAbonnes === "liste" ? "" : "none";
@@ -1361,6 +1369,12 @@
   if (btnVueListe) {
     btnVueListe.addEventListener("click", function () {
       appliquerModeVueAbonnes("liste");
+      rendAbonnes();
+    });
+  }
+  if (btnVueRepertoire) {
+    btnVueRepertoire.addEventListener("click", function () {
+      appliquerModeVueAbonnes("repertoire");
       rendAbonnes();
     });
   }
@@ -1374,6 +1388,48 @@
     btnVueNoeuds.addEventListener("click", function () {
       appliquerModeVueAbonnes("noeuds");
       rendAbonnes();
+    });
+  }
+
+  /* Événements du Répertoire intelligent des Abonnés */
+  var selRepGroup = document.getElementById("sel-rep-group");
+  if (selRepGroup) {
+    selRepGroup.addEventListener("change", function () {
+      repGroupMode = selRepGroup.value || "classe";
+      repDossiersReplies = {};
+      rendAbonnes();
+    });
+  }
+  document.querySelectorAll("#rep-smart-folders .rep-sf-card[data-sf]").forEach(function (cardSf) {
+    cardSf.addEventListener("click", function () {
+      repSmartFilter = cardSf.getAttribute("data-sf") || "all";
+      document.querySelectorAll("#rep-smart-folders .rep-sf-card[data-sf]").forEach(function (c) {
+        c.classList.toggle("actif", c === cardSf);
+      });
+      rendAbonnes();
+    });
+  });
+  var btnRepAbOpenAll = document.getElementById("btn-rep-ab-openall");
+  var btnRepAbCloseAll = document.getElementById("btn-rep-ab-closeall");
+  if (btnRepAbOpenAll) {
+    btnRepAbOpenAll.addEventListener("click", function () {
+      repDossiersReplies = {};
+      document.querySelectorAll("#rep-tree-container .rep-folder").forEach(function (f) {
+        f.classList.remove("replie");
+        var ic = f.querySelector(".rep-f-ico");
+        if (ic) ic.textContent = "📂";
+      });
+    });
+  }
+  if (btnRepAbCloseAll) {
+    btnRepAbCloseAll.addEventListener("click", function () {
+      document.querySelectorAll("#rep-tree-container .rep-folder").forEach(function (f) {
+        var k = f.getAttribute("data-folder-key");
+        if (k) repDossiersReplies[k] = true;
+        f.classList.add("replie");
+        var ic = f.querySelector(".rep-f-ico");
+        if (ic) ic.textContent = "📁";
+      });
     });
   }
 
@@ -1694,6 +1750,319 @@
     tb.innerHTML = "";
     if (grilleNoeuds) grilleNoeuds.innerHTML = "";
     appliquerModeVueAbonnes(modeVueAbonnes);
+
+    /* Fonction utilitaire : moyenne Quiz en % pour un abonné */
+    function moyQuizPourAbonne(uid) {
+      var rq = quizParUser[uid] || {};
+      var cles = Object.keys(rq);
+      if (!cles.length) return null;
+      var sPct = 0;
+      var n = 0;
+      cles.forEach(function (k) {
+        var sc = rq[k];
+        if (sc && sc.total > 0) {
+          sPct += Math.round((sc.note / sc.total) * 100);
+          n++;
+        }
+      });
+      return n > 0 ? Math.round(sPct / n) : null;
+    }
+
+    /* Rendu du Répertoire intelligent des abonnés (Dossiers intelligents + Arborescence par Classe/Lycée/A-Z) */
+    if (repertoireAbonnes) {
+      var sfCounts = {
+        all: liste.length,
+        online: 0,
+        attente: 0,
+        gold: 0,
+        assidus: 0,
+        inactifs: 0,
+        topquiz: 0,
+        fragiles: 0
+      };
+      function matchSmartFolder(p, sfKey) {
+        var onL = estEnLigne(p.id);
+        var isG = estGold(p) && p.statut === "actif";
+        var dur = dureePourAbonne(p.id);
+        var mQuiz = moyQuizPourAbonne(p.id);
+        if (sfKey === "online") return onL;
+        if (sfKey === "attente") return p.statut === "en_attente";
+        if (sfKey === "gold") return isG;
+        if (sfKey === "assidus") return dur >= 1800;
+        if (sfKey === "inactifs") return dur === 0;
+        if (sfKey === "topquiz") return mQuiz !== null && mQuiz >= 70;
+        if (sfKey === "fragiles") return mQuiz !== null && mQuiz < 50;
+        return true;
+      }
+      liste.forEach(function (p) {
+        if (matchSmartFolder(p, "online")) sfCounts.online++;
+        if (matchSmartFolder(p, "attente")) sfCounts.attente++;
+        if (matchSmartFolder(p, "gold")) sfCounts.gold++;
+        if (matchSmartFolder(p, "assidus")) sfCounts.assidus++;
+        if (matchSmartFolder(p, "inactifs")) sfCounts.inactifs++;
+        if (matchSmartFolder(p, "topquiz")) sfCounts.topquiz++;
+        if (matchSmartFolder(p, "fragiles")) sfCounts.fragiles++;
+      });
+      Object.keys(sfCounts).forEach(function (k) {
+        var elSf = document.getElementById("sf-cnt-" + k);
+        if (elSf) elSf.textContent = String(sfCounts[k]);
+      });
+
+      var listeSf = liste.filter(function (p) {
+        return matchSmartFolder(p, repSmartFilter);
+      });
+
+      /* Barre d'index alphabétique A-Z */
+      var azBar = document.getElementById("rep-az-bar");
+      var lettresDispo = {};
+      listeSf.forEach(function (p) {
+        var nomRef = (nomPrenomTexte(p) || contact(p) || "?").trim();
+        var l0 = (nomRef.charAt(0) || "#").toUpperCase();
+        if (!/[A-Z]/.test(l0)) l0 = "#";
+        lettresDispo[l0] = (lettresDispo[l0] || 0) + 1;
+      });
+      if (repLettreFilter !== "*" && !lettresDispo[repLettreFilter]) {
+        repLettreFilter = "*";
+      }
+      if (azBar) {
+        azBar.innerHTML = "";
+        var btnToutAz = document.createElement("button");
+        btnToutAz.type = "button";
+        btnToutAz.className = "rep-az-btn" + (repLettreFilter === "*" ? " actif" : "");
+        btnToutAz.textContent = "Tout (" + listeSf.length + ")";
+        btnToutAz.addEventListener("click", function () {
+          repLettreFilter = "*";
+          rendAbonnes();
+        });
+        azBar.appendChild(btnToutAz);
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("").forEach(function (lt) {
+          if (!lettresDispo[lt]) return;
+          var bL = document.createElement("button");
+          bL.type = "button";
+          bL.className = "rep-az-btn" + (repLettreFilter === lt ? " actif" : "");
+          bL.textContent = lt + " (" + lettresDispo[lt] + ")";
+          bL.addEventListener("click", function () {
+            repLettreFilter = lt;
+            rendAbonnes();
+          });
+          azBar.appendChild(bL);
+        });
+      }
+
+      var listeRepFinale = listeSf.filter(function (p) {
+        if (repLettreFilter === "*") return true;
+        var nomRef = (nomPrenomTexte(p) || contact(p) || "?").trim();
+        var l0 = (nomRef.charAt(0) || "#").toUpperCase();
+        if (!/[A-Z]/.test(l0)) l0 = "#";
+        return l0 === repLettreFilter;
+      });
+
+      /* Regroupement en dossiers intelligents */
+      var groupesMap = {};
+      var ordreGroupes = [];
+      listeRepFinale.forEach(function (p) {
+        var cl = (p.classe || "Sans classe").trim();
+        var ly = lyceePropre(p);
+        var nomRef = (nomPrenomTexte(p) || contact(p) || "?").trim();
+        var l0 = (nomRef.charAt(0) || "#").toUpperCase();
+        if (!/[A-Z]/.test(l0)) l0 = "#";
+
+        var gKey = cl;
+        var gTitre = "🏫 Classe " + cl;
+        var gSous = "🏛️ " + ly;
+        if (repGroupMode === "lycee_classe") {
+          gKey = ly + " ▸ " + cl;
+          gTitre = "🏛️ " + ly + " ▸ 🏫 " + cl;
+          gSous = "";
+        } else if (repGroupMode === "az") {
+          gKey = "Lettre " + l0;
+          gTitre = "🔤 Répertoire — Lettre " + l0;
+          gSous = "";
+        }
+        if (!groupesMap[gKey]) {
+          groupesMap[gKey] = {
+            key: gKey,
+            titre: gTitre,
+            sous: gSous,
+            classe: repGroupMode === "az" ? "" : cl,
+            items: []
+          };
+          ordreGroupes.push(gKey);
+        }
+        groupesMap[gKey].items.push(p);
+      });
+
+      ordreGroupes.sort(function (a, b) {
+        return a.localeCompare(b, "fr", { numeric: true });
+      });
+
+      var repSummary = document.getElementById("rep-ab-summary");
+      if (repSummary) {
+        repSummary.textContent = "📁 " + ordreGroupes.length + " dossier(s) · 👥 " + listeRepFinale.length + " élève(s) affiché(s)";
+      }
+
+      var treeCont = document.getElementById("rep-tree-container");
+      if (treeCont) {
+        treeCont.innerHTML = "";
+        if (!ordreGroupes.length) {
+          treeCont.innerHTML = "<div style='text-align:center;color:#7a6f5d;padding:22px;background:#fffdf7;border:2px dashed #23201a;border-radius:16px;font-weight:800'>Aucun élève dans ce dossier intelligent.</div>";
+        } else {
+          ordreGroupes.forEach(function (gk) {
+            var grp = groupesMap[gk];
+            var nbOnG = 0;
+            var nbGoldG = 0;
+            var nbAttG = 0;
+            var sumDurG = 0;
+            grp.items.forEach(function (pr) {
+              if (estEnLigne(pr.id)) nbOnG++;
+              if (estGold(pr) && pr.statut === "actif") nbGoldG++;
+              if (pr.statut === "en_attente") nbAttG++;
+              sumDurG += dureePourAbonne(pr.id);
+            });
+            var moyDurG = grp.items.length ? Math.round(sumDurG / grp.items.length) : 0;
+
+            var folderDiv = document.createElement("div");
+            var estReplie = !!repDossiersReplies[gk];
+            folderDiv.className = "rep-folder" + (estReplie ? " replie" : "");
+            folderDiv.setAttribute("data-folder-key", gk);
+
+            var fHead = document.createElement("div");
+            fHead.className = "rep-folder-head";
+
+            var fTitle = document.createElement("div");
+            fTitle.className = "rep-folder-title";
+            fTitle.innerHTML =
+              "<span class='rep-f-ico' style='font-size:16px'>" + (estReplie ? "📁" : "📂") + "</span>" +
+              "<span>" + echHtml(grp.titre) + "</span>" +
+              (grp.sous ? ("<span style='font-size:11.5px;color:#6b6152;font-weight:800'>(" + echHtml(grp.sous) + ")</span>") : "") +
+              "<span class='bc-pill effectif' style='padding:2px 8px;font-size:11px'>👥 " + grp.items.length + "</span>" +
+              "<span class='bc-pill online' style='padding:2px 8px;font-size:11px'>🟢 " + nbOnG + " en ligne</span>" +
+              (nbGoldG ? ("<span class='bc-pill' style='padding:2px 8px;font-size:11px;background:#fff3b0;border-color:#d97706;color:#7a5200'>👑 " + nbGoldG + " Gold</span>") : "") +
+              "<span class='bc-pill' style='padding:2px 8px;font-size:11px'>⏱️ Moy. " + fmtDuree(moyDurG) + "</span>";
+
+            var fActs = document.createElement("div");
+            fActs.className = "rep-folder-actions";
+            if (grp.classe) {
+              function addFolderAct(lblTxt, cbFn, bgCol) {
+                var bA = document.createElement("button");
+                bA.type = "button";
+                bA.className = "act";
+                bA.style.cssText = "padding:3px 9px;font-size:11px;" + (bgCol || "");
+                bA.textContent = lblTxt;
+                bA.addEventListener("click", function (ev) {
+                  ev.stopPropagation();
+                  cbFn();
+                });
+                fActs.appendChild(bA);
+              }
+              addFolderAct("📋 Appel", function () {
+                var selAp = document.getElementById("appel-sel-classe");
+                var btnAp = document.getElementById("btn-appel-top");
+                if (btnAp) btnAp.click();
+                if (selAp) {
+                  selAp.value = grp.classe;
+                  selAp.dispatchEvent(new Event("change"));
+                }
+              }, "background:#e3f6e8;color:#177245;border-color:#177245;");
+              addFolderAct("📣 Message", function () {
+                var selMc = document.getElementById("msg-classe-cible");
+                var btnMc = document.getElementById("btn-msg-classe");
+                if (btnMc) btnMc.click();
+                if (selMc) selMc.value = grp.classe;
+              }, "background:#fff3e0;color:#d84315;border-color:#d84315;");
+              addFolderAct("⚡ Flash", function () {
+                var selFl = document.getElementById("flash-cible");
+                var btnFl = document.getElementById("btn-flash-top");
+                if (btnFl) btnFl.click();
+                if (selFl) selFl.value = grp.classe;
+              }, "background:#fff8e1;color:#b45309;border-color:#b45309;");
+            }
+            if (nbAttG > 0) {
+              var bActLotDossier = document.createElement("button");
+              bActLotDossier.type = "button";
+              bActLotDossier.className = "act";
+              bActLotDossier.style.cssText = "padding:3px 9px;font-size:11px;background:#177245;color:#fff;border-color:#23201a;";
+              bActLotDossier.textContent = "✅ Activer (" + nbAttG + ")";
+              bActLotDossier.addEventListener("click", function (ev) {
+                ev.stopPropagation();
+                grp.items.forEach(function (prAtt) {
+                  if (prAtt.statut === "en_attente") changeStatut(prAtt, "actif");
+                });
+              });
+              fActs.appendChild(bActLotDossier);
+            }
+
+            fHead.append(fTitle, fActs);
+            fHead.addEventListener("click", function () {
+              var repl = folderDiv.classList.toggle("replie");
+              repDossiersReplies[gk] = repl;
+              var ic = folderDiv.querySelector(".rep-f-ico");
+              if (ic) ic.textContent = repl ? "📁" : "📂";
+            });
+
+            var fBody = document.createElement("div");
+            fBody.className = "rep-folder-body";
+
+            grp.items.forEach(function (p) {
+              var isG = estGold(p);
+              var onL = estEnLigne(p.id);
+              var cardCls = "kb-c-attente";
+              if (p.statut === "exclu") cardCls = "kb-c-exclu";
+              else if (onL) cardCls = "kb-c-enligne";
+              else if (isG && p.statut === "actif") cardCls = "kb-c-gold";
+              else if (p.statut === "actif") cardCls = "kb-c-actif";
+
+              var itemCard = document.createElement("div");
+              itemCard.className = "kb-card " + cardCls;
+              itemCard.style.cursor = "pointer";
+              itemCard.title = "Cliquer pour ouvrir la fiche récapitulative complète de cet élève";
+              itemCard.addEventListener("click", function () { ouvrirFicheEleve(p); });
+
+              var nomAff = nomPrenomTexte(p) || contact(p);
+              var secSem = dureePourAbonne(p.id);
+              var mQ = moyQuizPourAbonne(p.id);
+              var pgOn = (enLigneMap[p.id] && enLigneMap[p.id].page) || "site";
+
+              itemCard.innerHTML =
+                "<div style='display:flex;justify-content:space-between;align-items:flex-start;gap:6px'>" +
+                  "<strong style='font-size:12.5px;font-weight:900;color:#23201a;line-height:1.25'>" + (isG ? "👑 " : "") + echHtml(nomAff) + "</strong>" +
+                  "<span class='badge-classe' style='flex-shrink:0'>🏫 " + echHtml(p.classe || "—") + "</span>" +
+                "</div>" +
+                "<div style='font-size:11px;font-weight:700;color:#5a5244;display:flex;flex-wrap:wrap;gap:6px;align-items:center'>" +
+                  (onL ? ("<span style='color:#177245;font-weight:900'>🟢 " + echHtml(pgOn) + "</span>") : ("<span>" + echHtml(contact(p)) + "</span>")) +
+                  "<span>· ⏱️ " + fmtDuree(secSem) + "</span>" +
+                  (mQ !== null ? ("<span class='badge-quiz' style='margin:0'>🎯 Quiz " + mQ + "%</span>") : "") +
+                "</div>";
+
+              var actRow = document.createElement("div");
+              actRow.style.cssText = "display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;";
+              function addRepBtn(txt, fn, tit) {
+                var b = document.createElement("button");
+                b.type = "button";
+                b.className = "act";
+                b.style.cssText = "padding:2px 7px;font-size:10.5px;";
+                b.textContent = txt;
+                if (tit) b.title = tit;
+                b.addEventListener("click", function (e) { e.stopPropagation(); fn(); });
+                actRow.appendChild(b);
+              }
+              addRepBtn("📊 Fiche", function () { ouvrirFicheEleve(p); }, "Ouvrir la fiche élève");
+              addRepBtn("📩 Msg", function () { ouvrirMessageCandidat(p, ""); }, "Envoyer un message");
+              addRepBtn("🏫", function () { ouvrirAffectation(p); }, "Changer Lycée / Classe");
+              if (p.statut !== "actif") addRepBtn("✅", function () { changeStatut(p, "actif"); }, "Activer");
+              addRepBtn("👑", function () { basculerGold(p); }, isG ? "Retirer Gold" : "Accorder Gold");
+              if (p.statut !== "exclu") addRepBtn("⛔", function () { changeStatut(p, "exclu"); }, "Exclure");
+              itemCard.appendChild(actRow);
+
+              fBody.appendChild(itemCard);
+            });
+
+            folderDiv.append(fHead, fBody);
+            treeCont.appendChild(folderDiv);
+          });
+        }
+      }
+    }
 
     /* Rendu du Tableau Kanban des abonnés (5 colonnes par statut) */
     if (kanbanAbonnes) {
