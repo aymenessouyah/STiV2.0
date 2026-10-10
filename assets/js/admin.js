@@ -1336,22 +1336,26 @@
   var btnActiverLot = document.getElementById("btn-activer-lot");
   var btnExportCsv = document.getElementById("btn-export-csv");
   var btnVueListe = document.getElementById("btn-vue-liste");
+  var btnVueKanban = document.getElementById("btn-vue-kanban");
   var btnVueNoeuds = document.getElementById("btn-vue-noeuds");
+  var kanbanAbonnes = document.getElementById("kanban-abonnes");
   var grilleNoeuds = document.getElementById("grille-noeuds-abonnes");
   var wrapTableAbonnes = document.getElementById("wrap-table-abonnes");
   var modeVueAbonnes = "liste";
   try {
     var vSauv = localStorage.getItem("sti-admin-vue-abonnes");
-    if (vSauv === "noeuds" || vSauv === "liste") modeVueAbonnes = vSauv;
+    if (vSauv === "noeuds" || vSauv === "liste" || vSauv === "kanban") modeVueAbonnes = vSauv;
   } catch (e) {}
 
   function appliquerModeVueAbonnes(nvMode) {
-    modeVueAbonnes = nvMode === "noeuds" ? "noeuds" : "liste";
+    modeVueAbonnes = (nvMode === "noeuds" || nvMode === "kanban") ? nvMode : "liste";
     try { localStorage.setItem("sti-admin-vue-abonnes", modeVueAbonnes); } catch (e) {}
     if (btnVueListe) btnVueListe.classList.toggle("actif", modeVueAbonnes === "liste");
+    if (btnVueKanban) btnVueKanban.classList.toggle("actif", modeVueAbonnes === "kanban");
     if (btnVueNoeuds) btnVueNoeuds.classList.toggle("actif", modeVueAbonnes === "noeuds");
+    if (kanbanAbonnes) kanbanAbonnes.classList.toggle("visible", modeVueAbonnes === "kanban");
     if (grilleNoeuds) grilleNoeuds.classList.toggle("visible", modeVueAbonnes === "noeuds");
-    if (wrapTableAbonnes) wrapTableAbonnes.style.display = modeVueAbonnes === "noeuds" ? "none" : "";
+    if (wrapTableAbonnes) wrapTableAbonnes.style.display = modeVueAbonnes === "liste" ? "" : "none";
   }
   appliquerModeVueAbonnes(modeVueAbonnes);
   if (btnVueListe) {
@@ -1360,10 +1364,49 @@
       rendAbonnes();
     });
   }
+  if (btnVueKanban) {
+    btnVueKanban.addEventListener("click", function () {
+      appliquerModeVueAbonnes("kanban");
+      rendAbonnes();
+    });
+  }
   if (btnVueNoeuds) {
     btnVueNoeuds.addEventListener("click", function () {
       appliquerModeVueAbonnes("noeuds");
       rendAbonnes();
+    });
+  }
+
+  /* Glisser-déposer (Drag & Drop) sur les colonnes du Tableau Kanban des abonnés */
+  if (kanbanAbonnes) {
+    kanbanAbonnes.querySelectorAll(".kb-col[data-kb-target]").forEach(function (colEl) {
+      colEl.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        colEl.classList.add("drag-over");
+      });
+      colEl.addEventListener("dragleave", function () {
+        colEl.classList.remove("drag-over");
+      });
+      colEl.addEventListener("drop", function (e) {
+        e.preventDefault();
+        colEl.classList.remove("drag-over");
+        var uidDrag = e.dataTransfer ? e.dataTransfer.getData("text/plain") : "";
+        var cibleCol = colEl.getAttribute("data-kb-target");
+        if (!uidDrag || !cibleCol) return;
+        var pCible = null;
+        profils.forEach(function (pr) { if (pr.id === uidDrag) pCible = pr; });
+        if (!pCible) return;
+        if (cibleCol === "gold") {
+          if (!estGold(pCible)) basculerGold(pCible);
+          if (pCible.statut !== "actif") changeStatut(pCible, "actif");
+        } else if (cibleCol === "actif" || cibleCol === "en_ligne") {
+          if (pCible.statut !== "actif") changeStatut(pCible, "actif");
+        } else if (cibleCol === "en_attente") {
+          if (pCible.statut !== "en_attente") changeStatut(pCible, "en_attente");
+        } else if (cibleCol === "exclu") {
+          if (pCible.statut !== "exclu") changeStatut(pCible, "exclu");
+        }
+      });
     });
   }
 
@@ -1651,6 +1694,106 @@
     tb.innerHTML = "";
     if (grilleNoeuds) grilleNoeuds.innerHTML = "";
     appliquerModeVueAbonnes(modeVueAbonnes);
+
+    /* Rendu du Tableau Kanban des abonnés (5 colonnes par statut) */
+    if (kanbanAbonnes) {
+      var kbLists = {
+        attente: document.getElementById("kb-list-attente"),
+        enligne: document.getElementById("kb-list-enligne"),
+        actif: document.getElementById("kb-list-actif"),
+        gold: document.getElementById("kb-list-gold"),
+        exclu: document.getElementById("kb-list-exclu")
+      };
+      var kbCnts = {
+        attente: 0,
+        enligne: 0,
+        actif: 0,
+        gold: 0,
+        exclu: 0
+      };
+      Object.keys(kbLists).forEach(function (k) {
+        if (kbLists[k]) kbLists[k].innerHTML = "";
+      });
+
+      liste.forEach(function (p) {
+        var isG = estGold(p);
+        var onL = estEnLigne(p.id);
+        var colKey = "attente";
+        var cardCls = "kb-c-attente";
+        if (p.statut === "exclu") {
+          colKey = "exclu";
+          cardCls = "kb-c-exclu";
+        } else if (onL) {
+          colKey = "enligne";
+          cardCls = "kb-c-enligne";
+        } else if (isG && p.statut === "actif") {
+          colKey = "gold";
+          cardCls = "kb-c-gold";
+        } else if (p.statut === "actif") {
+          colKey = "actif";
+          cardCls = "kb-c-actif";
+        }
+        kbCnts[colKey]++;
+
+        var card = document.createElement("div");
+        card.className = "kb-card " + cardCls;
+        card.draggable = true;
+        card.title = "Glisser-déposer vers une autre colonne ou cliquer pour ouvrir la fiche élève";
+        card.addEventListener("dragstart", function (e) {
+          if (e.dataTransfer) e.dataTransfer.setData("text/plain", p.id);
+        });
+        card.addEventListener("click", function () { ouvrirFicheEleve(p); });
+
+        var nomAff = nomPrenomTexte(p) || contact(p);
+        var secSem = dureePourAbonne(p.id);
+        var pgOn = (enLigneMap[p.id] && enLigneMap[p.id].page) || "site";
+        card.innerHTML =
+          "<div style='display:flex;justify-content:space-between;align-items:flex-start;gap:6px'>" +
+            "<strong style='font-size:12.5px;font-weight:900;color:#23201a;line-height:1.25'>" + (isG ? "👑 " : "") + echHtml(nomAff) + "</strong>" +
+            "<span class='badge-classe' style='flex-shrink:0'>" + echHtml(p.classe || "—") + "</span>" +
+          "</div>" +
+          "<div style='font-size:11px;font-weight:700;color:#5a5244'>" +
+            (onL ? ("<span style='color:#177245;font-weight:900'>🟢 " + echHtml(pgOn) + "</span> · ") : "") +
+            "⏱️ " + fmtDuree(secSem) +
+          "</div>";
+
+        var actRow = document.createElement("div");
+        actRow.style.cssText = "display:flex;gap:4px;flex-wrap:wrap;margin-top:2px;";
+        function addKbBtn(txt, fn, tit) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "act";
+          b.style.cssText = "padding:2px 6px;font-size:10.5px;";
+          b.textContent = txt;
+          if (tit) b.title = tit;
+          b.addEventListener("click", function (e) { e.stopPropagation(); fn(); });
+          actRow.appendChild(b);
+        }
+        addKbBtn("📊", function () { ouvrirFicheEleve(p); }, "Fiche élève");
+        addKbBtn("📩", function () { ouvrirMessageCandidat(p, ""); }, "Message direct");
+        if (p.statut !== "actif") addKbBtn("✅", function () { changeStatut(p, "actif"); }, "Activer");
+        addKbBtn("👑", function () { basculerGold(p); }, isG ? "Retirer Gold" : "Accorder Gold");
+        if (p.statut !== "exclu") addKbBtn("⛔", function () { changeStatut(p, "exclu"); }, "Exclure");
+        card.appendChild(actRow);
+
+        if (kbLists[colKey]) kbLists[colKey].appendChild(card);
+      });
+
+      var mapCntIds = {
+        attente: "kb-cnt-attente",
+        enligne: "kb-cnt-enligne",
+        actif: "kb-cnt-actif",
+        gold: "kb-cnt-gold",
+        exclu: "kb-cnt-exclu"
+      };
+      Object.keys(mapCntIds).forEach(function (k) {
+        var elC = document.getElementById(mapCntIds[k]);
+        if (elC) elC.textContent = String(kbCnts[k]);
+        if (kbLists[k] && !kbCnts[k]) {
+          kbLists[k].innerHTML = "<div style='text-align:center;color:#7a6f5d;font-size:11px;font-weight:700;padding:18px 6px;border:1.5px dashed rgba(35,32,26,.2);border-radius:10px'>Aucune carte</div>";
+        }
+      });
+    }
 
     if (!liste.length) {
       var trVide = document.createElement("tr");

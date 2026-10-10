@@ -207,12 +207,16 @@
     background: #fde2e6; color: #c0392b; box-shadow: 3.5px 3.5px 0 #c0392b;
   }
 
-  /* ── 2) Mise en page principale : Barre de navigation à gauche (4 familles) + Contenu à droite ── */
+  /* ── 2) Mise en page principale : Tableau Kanban 4 colonnes (Contrôle, Pédagogie, Statistiques, Sécurité) OU Barre latérale gauche ── */
   .layout-admin {
     display: grid;
-    grid-template-columns: 262px minmax(0, 1fr);
+    grid-template-columns: 268px minmax(0, 1fr);
     gap: 18px;
     align-items: start;
+  }
+  .layout-admin.mode-kanban-top {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
   .sidebar-admin {
     position: sticky;
@@ -228,40 +232,66 @@
     flex-direction: column;
     gap: 11px;
   }
+  .layout-admin.mode-kanban-top .sidebar-admin {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(220px, 1fr));
+    gap: 12px;
+    padding: 14px;
+    background: #f3ead9;
+    box-shadow: 5px 5px 0 #23201a;
+  }
   .sidebar-familles-tabs {
     display: none;
   }
   .nav-famille {
     background: #f9f1e3;
-    border: 2px solid #23201a;
-    border-radius: 14px;
-    padding: 9px;
+    border: 2.5px solid #23201a;
+    border-radius: 16px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
+    box-shadow: 3.5px 3.5px 0 rgba(35,32,26,.85);
   }
+  .nav-famille.f-controle { background: #eefaf1; border-top: 6px solid #177245; }
+  .nav-famille.f-pedagogie { background: #fff8ec; border-top: 6px solid #d97706; }
+  .nav-famille.f-statistiques { background: #f5f2ff; border-top: 6px solid #6d28d9; }
+  .nav-famille.f-securite { background: #fff1f3; border-top: 6px solid #c0392b; }
+
   .nav-famille-titre {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 900;
     text-transform: uppercase;
-    letter-spacing: .7px;
-    padding: 4px 8px;
-    border-radius: 8px;
-    border: 1.5px solid #23201a;
+    letter-spacing: .6px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 2px solid #23201a;
     color: #23201a;
+    box-shadow: 2px 2px 0 #23201a;
   }
-  .nav-famille.f-controle .nav-famille-titre { background: #e3f6e8; color: #135d37; border-color: #177245; }
-  .nav-famille.f-pedagogie .nav-famille-titre { background: #fff3e0; color: #b45309; border-color: #d97706; }
-  .nav-famille.f-statistiques .nav-famille-titre { background: #ede9fe; color: #5b21b6; border-color: #6d28d9; }
-  .nav-famille.f-securite .nav-famille-titre { background: #fde2e6; color: #a61b29; border-color: #c0392b; }
+  .nav-famille-badge {
+    background: #23201a;
+    color: #fffdf7;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 900;
+  }
+  .nav-famille.f-controle .nav-famille-titre { background: #c8f0d4; color: #0f5230; }
+  .nav-famille.f-pedagogie .nav-famille-titre { background: #ffe4b5; color: #8c3b00; }
+  .nav-famille.f-statistiques .nav-famille-titre { background: #ddd6fe; color: #4c1d95; }
+  .nav-famille.f-securite .nav-famille-titre { background: #f9cbd2; color: #8f1421; }
 
   .nav-famille-items {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 7px;
   }
   .nav-side-btn {
     display: flex;
@@ -272,20 +302,25 @@
     text-align: left;
     background: #fffdf7;
     color: #23201a;
-    border: 1.8px solid #23201a;
-    border-radius: 10px;
-    padding: 7px 10px;
+    border: 2px solid #23201a;
+    border-left-width: 5px;
+    border-radius: 11px;
+    padding: 8px 10px;
     font-size: 12.2px;
     font-weight: 800;
     font-family: inherit;
     cursor: pointer;
     text-decoration: none;
-    box-shadow: 2px 2px 0 #23201a;
+    box-shadow: 2.5px 2.5px 0 #23201a;
     transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
   }
+  .nav-famille.f-controle .nav-side-btn { border-left-color: #177245; }
+  .nav-famille.f-pedagogie .nav-side-btn { border-left-color: #d97706; }
+  .nav-famille.f-statistiques .nav-side-btn { border-left-color: #6d28d9; }
+  .nav-famille.f-securite .nav-side-btn { border-left-color: #c0392b; }
   .nav-side-btn:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 3px 3px 0 #f4511e;
+    transform: translate(-1.5px, -1.5px);
+    box-shadow: 4px 4px 0 #f4511e;
     background: #fff9ec;
     color: #f4511e;
   }
@@ -293,8 +328,94 @@
     background: linear-gradient(120deg, #fff0dc, #ffe0b8);
     border-color: #f4511e;
     color: #d84315;
-    box-shadow: 2.5px 2.5px 0 #f4511e;
+    box-shadow: 3px 3px 0 #f4511e;
   }
+
+  /* ── Tableau Kanban des Abonnés par statut (Glisser-Déposer & Actions rapides) ── */
+  .kanban-abonnes {
+    display: none;
+    grid-template-columns: repeat(5, minmax(225px, 1fr));
+    gap: 12px;
+    overflow-x: auto;
+    padding: 4px 2px 12px;
+    margin-bottom: 16px;
+    align-items: start;
+  }
+  .kanban-abonnes.visible {
+    display: grid;
+  }
+  .kb-col {
+    background: #f3ead9;
+    border: 2.5px solid #23201a;
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 240px;
+    max-height: 580px;
+    box-shadow: 4px 4px 0 #23201a;
+    transition: background .15s ease, transform .15s ease;
+  }
+  .kb-col.drag-over {
+    background: #fff3b0;
+    transform: translateY(-2px);
+  }
+  .kb-col.kb-attente { background: #fbf4e4; border-top: 6px solid #b47d09; }
+  .kb-col.kb-enligne { background: #eaf9ee; border-top: 6px solid #177245; }
+  .kb-col.kb-actif   { background: #f3f0ff; border-top: 6px solid #6d28d9; }
+  .kb-col.kb-gold    { background: #fffbe0; border-top: 6px solid #d97706; }
+  .kb-col.kb-exclu   { background: #fff0f2; border-top: 6px solid #c0392b; }
+  .kb-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 2px solid #23201a;
+    font-size: 12px;
+    font-weight: 900;
+    background: #fffdf7;
+    box-shadow: 2px 2px 0 #23201a;
+  }
+  .kb-col-count {
+    background: #23201a;
+    color: #fffdf7;
+    border-radius: 999px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 900;
+  }
+  .kb-col-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    padding-right: 2px;
+    flex: 1;
+  }
+  .kb-card {
+    background: #fffdf7;
+    border: 2px solid #23201a;
+    border-left-width: 5px;
+    border-radius: 12px;
+    padding: 9px 10px;
+    box-shadow: 2.5px 2.5px 0 #23201a;
+    cursor: grab;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .kb-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3.5px 3.5px 0 #f4511e;
+  }
+  .kb-card.kb-c-enligne { border-left-color: #177245; background: #f2fbf5; }
+  .kb-card.kb-c-actif   { border-left-color: #6d28d9; background: #f8f6ff; }
+  .kb-card.kb-c-gold    { border-left-color: #d97706; background: linear-gradient(120deg, #fffdf0, #fff4bd); }
+  .kb-card.kb-c-attente { border-left-color: #b47d09; background: #fdf8ec; }
+  .kb-card.kb-c-exclu   { border-left-color: #c0392b; background: #fff5f6; }
   .nav-side-gauche {
     display: inline-flex;
     align-items: center;
@@ -317,13 +438,17 @@
     min-width: 0;
   }
   @media (max-width: 1040px) {
-    .layout-admin {
+    .layout-admin,
+    .layout-admin.mode-kanban-top {
       grid-template-columns: 1fr;
       gap: 12px;
     }
-    .sidebar-admin {
+    .sidebar-admin,
+    .layout-admin.mode-kanban-top .sidebar-admin {
       position: static;
       max-height: none;
+      display: flex;
+      flex-direction: column;
       padding: 10px;
       gap: 8px;
     }
@@ -1166,13 +1291,14 @@
           <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">🟢 Accès ouvert</span>
           <span class="badge-temoin-reseau" id="badge-temoin-reseau" title="État de la connexion réseau du tableau de bord">🟢 En ligne</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v105</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v106</span>
           <span class="badge-supabase" id="badge-supabase-quota" title="Espace disponible dans la base Supabase (Quota 500 Mo) — cliquer pour voir le détail">🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v105)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v106)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
       </div>
     </div>
     <div class="barre-util">
+      <button class="btn-util" id="btn-toggle-disposition" type="button" title="Basculer entre le Tableau Kanban (4 colonnes) et la Barre latérale à gauche" style="background:#fff3b0;border-color:#23201a;color:#23201a">🗂️ <span class="lbl-pc" id="lbl-toggle-disp">Vue : Barre gauche</span><span class="lbl-mob">Layout</span></button>
       <a class="btn-util" href="index.html">🏠 <span class="lbl-pc">Accueil du site</span><span class="lbl-mob">Site</span></a>
       <a class="btn-util" href="carte-visite.html" title="Ouvrir et partager la carte de visite électronique avec QR code">🪪 <span class="lbl-pc">Carte visite</span><span class="lbl-mob">Carte</span></a>
       <button class="btn-util" id="btn-refresh" type="button">🔄 <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
@@ -1180,23 +1306,23 @@
     </div>
   </header>
 
-  <!-- 2. MISE EN PAGE : Barre de navigation à gauche (4 familles) + Contenu principal à droite -->
-  <div class="layout-admin">
-    <aside class="sidebar-admin" aria-label="Menu de navigation du tableau de bord par familles">
-      <!-- Onglets rapides mobile pour basculer entre les 4 familles -->
-      <div class="sidebar-familles-tabs" role="tablist" aria-label="Familles d'outils">
+  <!-- 2. MISE EN PAGE : Tableau Kanban des 4 familles (Contrôle, Pédagogie, Statistiques, Sécurité) + Contenu -->
+  <div class="layout-admin mode-kanban-top" id="layout-admin-root">
+    <aside class="sidebar-admin" aria-label="Tableau Kanban des 4 familles du tableau de bord">
+      <!-- Onglets rapides mobile pour basculer entre les 4 colonnes Kanban -->
+      <div class="sidebar-familles-tabs" role="tablist" aria-label="Colonnes Kanban">
         <button type="button" class="tab-famille-mob actif" data-f-tab="controle">🎛️ Contrôle</button>
         <button type="button" class="tab-famille-mob" data-f-tab="pedagogie">🎓 Pédagogie</button>
         <button type="button" class="tab-famille-mob" data-f-tab="statistiques">📊 Stats</button>
         <button type="button" class="tab-famille-mob" data-f-tab="securite">🛡️ Sécurité</button>
       </div>
 
-      <!-- FAMILLE 1 : CONTRÔLE -->
+      <!-- COLONNE KANBAN 1 : CONTRÔLE -->
       <div class="nav-famille f-controle mob-visible" data-famille="controle">
-        <div class="nav-famille-titre"><span>🎛️ 1. Contrôle</span><span>Classes</span></div>
+        <div class="nav-famille-titre"><span>🎛️ 1. Contrôle</span><span class="nav-famille-badge">6 cartes</span></div>
         <div class="nav-famille-items">
           <button type="button" class="nav-side-btn" data-scroll-to="sec-abonnes">
-            <span class="nav-side-gauche"><span class="nav-side-ico">👥</span><span>Liste des abonnés</span></span>
+            <span class="nav-side-gauche"><span class="nav-side-ico">👥</span><span>Liste &amp; Kanban Abonnés</span></span>
           </button>
           <button type="button" class="nav-side-btn" id="btn-appel-top" title="Feuille d'appel &amp; présence automatique du jour par classe">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#e3f6e8">📋</span><span>Appel / Présence</span></span>
@@ -1216,9 +1342,9 @@
         </div>
       </div>
 
-      <!-- FAMILLE 2 : PÉDAGOGIE -->
+      <!-- COLONNE KANBAN 2 : PÉDAGOGIE -->
       <div class="nav-famille f-pedagogie" data-famille="pedagogie">
-        <div class="nav-famille-titre"><span>🎓 2. Pédagogie</span><span>Live &amp; TP</span></div>
+        <div class="nav-famille-titre"><span>🎓 2. Pédagogie</span><span class="nav-famille-badge">6 cartes</span></div>
         <div class="nav-famille-items">
           <button type="button" class="nav-side-btn" id="btn-messenger-top" title="Ouvrir la messagerie directe Messenger STI avec les candidats">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff3e0">💬</span><span>Messenger STI</span></span>
@@ -1244,9 +1370,9 @@
         </div>
       </div>
 
-      <!-- FAMILLE 3 : STATISTIQUES -->
+      <!-- COLONNE KANBAN 3 : STATISTIQUES -->
       <div class="nav-famille f-statistiques" data-famille="statistiques">
-        <div class="nav-famille-titre"><span>📊 3. Statistiques</span><span>Bilans</span></div>
+        <div class="nav-famille-titre"><span>📊 3. Statistiques</span><span class="nav-famille-badge">6 cartes</span></div>
         <div class="nav-famille-items">
           <button type="button" class="nav-side-btn" id="btn-palmares-top" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff3b0">🏆</span><span>Palmarès &amp; Podium</span></span>
@@ -1269,9 +1395,9 @@
         </div>
       </div>
 
-      <!-- FAMILLE 4 : SÉCURITÉ -->
+      <!-- COLONNE KANBAN 4 : SÉCURITÉ -->
       <div class="nav-famille f-securite" data-famille="securite">
-        <div class="nav-famille-titre"><span>🛡️ 4. Sécurité</span><span>Examen</span></div>
+        <div class="nav-famille-titre"><span>🛡️ 4. Sécurité</span><span class="nav-famille-badge">4 cartes</span></div>
         <div class="nav-famille-items">
           <button type="button" class="nav-side-btn" id="btn-securite-top" title="Centre de Sécurité : Mode Examen / Verrouillage, Anti-partage, Éjection F12 &amp; Journal d'alertes">
             <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fde2e6">🛡️</span><span>Centre de Sécurité</span></span>
@@ -1311,6 +1437,7 @@
       <h2 style="margin:0">👥 Liste des Abonnés <span id="note-tri" style="font-size:11px;color:#7a6f5d;font-weight:700"></span></h2>
       <div class="choix-vue-abonnes" role="tablist" aria-label="Mode d'affichage des abonnés">
         <button type="button" class="btn-vue actif" id="btn-vue-liste" data-vue="liste" title="Afficher le tableau détaillé complet">📋 Liste détaillée</button>
+        <button type="button" class="btn-vue" id="btn-vue-kanban" data-vue="kanban" title="Afficher sous forme de Tableau Kanban par statut (glisser-déposer)">🗂️ Tableau Kanban</button>
         <button type="button" class="btn-vue" id="btn-vue-noeuds" data-vue="noeuds" title="Afficher sous forme de nœuds (Nom, Prénom, Classe, État)">🔵 Nœuds</button>
       </div>
     </div>
@@ -1345,6 +1472,30 @@
 
   <!-- Bandeau affiché dès qu'une classe est appelée/sélectionnée : effectif de la classe + nombre en ligne -->
   <div class="bandeau-classe" id="bandeau-classe-active" role="status" aria-live="polite"></div>
+
+  <!-- Affichage en Tableau Kanban (5 colonnes par statut avec Glisser-Déposer) -->
+  <div class="kanban-abonnes" id="kanban-abonnes" aria-label="Tableau Kanban des abonnés">
+    <div class="kb-col kb-attente" data-kb-target="en_attente">
+      <div class="kb-col-head"><span>⏳ En attente</span><span class="kb-col-count" id="kb-cnt-attente">0</span></div>
+      <div class="kb-col-list" id="kb-list-attente"></div>
+    </div>
+    <div class="kb-col kb-enligne" data-kb-target="en_ligne">
+      <div class="kb-col-head"><span style="color:#177245">🟢 En ligne</span><span class="kb-col-count" id="kb-cnt-enligne" style="background:#177245">0</span></div>
+      <div class="kb-col-list" id="kb-list-enligne"></div>
+    </div>
+    <div class="kb-col kb-actif" data-kb-target="actif">
+      <div class="kb-col-head"><span style="color:#6d28d9">🟣 Actifs</span><span class="kb-col-count" id="kb-cnt-actif" style="background:#6d28d9">0</span></div>
+      <div class="kb-col-list" id="kb-list-actif"></div>
+    </div>
+    <div class="kb-col kb-gold" data-kb-target="gold">
+      <div class="kb-col-head"><span style="color:#b45309">👑 Comptes Gold</span><span class="kb-col-count" id="kb-cnt-gold" style="background:#d97706">0</span></div>
+      <div class="kb-col-list" id="kb-list-gold"></div>
+    </div>
+    <div class="kb-col kb-exclu" data-kb-target="exclu">
+      <div class="kb-col-head"><span style="color:#c0392b">⛔ Exclus</span><span class="kb-col-count" id="kb-cnt-exclu" style="background:#c0392b">0</span></div>
+      <div class="kb-col-list" id="kb-list-exclu"></div>
+    </div>
+  </div>
 
   <!-- Affichage en Nœuds (Nom, Prénom, Classe, État de l'abonné) -->
   <div class="grille-noeuds" id="grille-noeuds-abonnes" aria-label="Nœuds des abonnés"></div>
@@ -2579,11 +2730,34 @@
     relierBoutonSide("btn-side-classes", "btn-gerer-classes");
     relierBoutonSide("btn-side-export-csv", "btn-export-csv");
     relierBoutonSide("btn-side-backup-json", "btn-sec-backup-json");
+
+    var layoutRoot = document.getElementById("layout-admin-root");
+    var btnToggleDisp = document.getElementById("btn-toggle-disposition");
+    var lblToggleDisp = document.getElementById("lbl-toggle-disp");
+    function majDispositionFamilles(mode) {
+      if (!layoutRoot) return;
+      var estKanbanTop = mode !== "sidebar";
+      layoutRoot.classList.toggle("mode-kanban-top", estKanbanTop);
+      if (lblToggleDisp) {
+        lblToggleDisp.textContent = estKanbanTop ? "Vue : Barre gauche" : "Vue : Kanban 4 col.";
+      }
+      try { localStorage.setItem("sti-admin-layout-familles", estKanbanTop ? "kanban" : "sidebar"); } catch (e) {}
+    }
+    try {
+      var dispSauv = localStorage.getItem("sti-admin-layout-familles");
+      if (dispSauv === "sidebar") majDispositionFamilles("sidebar");
+    } catch (e) {}
+    if (btnToggleDisp && layoutRoot) {
+      btnToggleDisp.addEventListener("click", function () {
+        var actuellementKanban = layoutRoot.classList.contains("mode-kanban-top");
+        majDispositionFamilles(actuellementKanban ? "sidebar" : "kanban");
+      });
+    }
   })();
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=105"></script>
-<script src="assets/js/admin.js?v=105"></script>
+<script src="assets/js/config.js?v=106"></script>
+<script src="assets/js/admin.js?v=106"></script>
 </body>
 </html>
