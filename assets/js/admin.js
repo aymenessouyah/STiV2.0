@@ -211,7 +211,7 @@
     }).catch(function () {});
   }
 
-  /* Indicateur visuel En ligne (Vert) / Hors ligne (Rouge) sur le logo et le titre Tableau de bord STI V2.0 */
+  /* Indicateur visuel En ligne (Vert) / Hors ligne (Rouge) sur le logo, le titre Tableau de bord STI V2.0 et le témoin réseau */
   function majLogoReseauAdmin() {
     var enLigne = navigator.onLine !== false;
     var coul = enLigne ? "#177245" : "#c0392b";
@@ -220,12 +220,18 @@
     var bars = document.getElementById("svg-logo-tb-bars");
     var svg = document.getElementById("svg-logo-tb-admin");
     var titre = document.getElementById("titre-tb-admin");
+    var temoinRes = document.getElementById("badge-temoin-reseau");
     if (rect) rect.setAttribute("fill", coul);
     if (bars) bars.setAttribute("stroke", "#ffffff");
     if (svg) svg.setAttribute("title", info);
     if (titre) {
       titre.style.color = coul;
       titre.setAttribute("title", info);
+    }
+    if (temoinRes) {
+      temoinRes.classList.toggle("hors-ligne", !enLigne);
+      temoinRes.textContent = enLigne ? "🟢 En ligne" : "🔴 Hors ligne";
+      temoinRes.setAttribute("title", info);
     }
   }
   majLogoReseauAdmin();
@@ -685,8 +691,8 @@
     if (!b) return;
     var ok = ("Notification" in window) && Notification.permission === "granted";
     b.innerHTML = ok
-      ? '🔔 <span class="lbl-pc">Notifications (actives)</span><span class="lbl-mob">Alertes ✔</span>'
-      : '🔔 <span class="lbl-pc">Notifications</span><span class="lbl-mob">Alertes</span>';
+      ? '<span class="nav-side-gauche"><span class="nav-side-ico" style="background:#e3f6e8">🔔</span><span>Notifications (actives)</span></span>'
+      : '<span class="nav-side-gauche"><span class="nav-side-ico">🔔</span><span>Notifications</span></span>';
     b.classList.toggle("on", ok);
   }
 

@@ -68,26 +68,40 @@
   body {
     background: #f9f1e3; color: #23201a;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    padding: 20px 24px 44px; max-width: 1380px; margin: 0 auto;
+    padding: 18px 20px 44px; max-width: 1480px; margin: 0 auto;
   }
 
-  /* ── 1) En-tête supérieur (Identité + Barre d'outils rapide) ── */
+  /* ── 1) En-tête supérieur (Identité + Témoins d'état + Actions système) ── */
   .hero-admin {
     display: flex; align-items: center; justify-content: space-between;
-    gap: 16px; flex-wrap: wrap;
+    gap: 14px; flex-wrap: wrap;
     background: #fffdf7; border: 2.5px solid #23201a; border-radius: 20px;
-    padding: 16px 20px; margin-bottom: 16px;
+    padding: 14px 18px; margin-bottom: 16px;
     box-shadow: 5px 5px 0 #f4511e;
   }
-  .entete { display: flex; align-items: center; gap: 14px; }
+  .entete { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 280px; }
   .entete img {
     width: 54px; height: 54px; border-radius: 14px;
-    border: 2px solid #23201a; box-shadow: 3px 3px 0 #f4511e;
+    border: 2px solid #23201a; box-shadow: 3px 3px 0 #f4511e; flex-shrink: 0;
   }
   .entete-txt h1 {
-    font-size: 21px; font-weight: 900; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    font-size: 20.5px; font-weight: 900; display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
   }
   .entete-txt h1 svg { vertical-align: -4px; filter: drop-shadow(1.5px 1.5px 0 rgba(244,81,30,.4)); }
+  .badge-temoin-reseau {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #e3f6e8; color: #177245;
+    border: 1.5px solid #177245; border-radius: 999px;
+    padding: 3px 10px; font-size: 11px; font-weight: 900;
+    box-shadow: 1.5px 1.5px 0 #177245;
+    letter-spacing: .15px;
+    transition: background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .badge-temoin-reseau.hors-ligne {
+    background: #fde2e6; color: #c0392b;
+    border-color: #c0392b;
+    box-shadow: 1.5px 1.5px 0 #c0392b;
+  }
   .badge-temoin-examen {
     display: inline-flex; align-items: center; gap: 5px;
     background: #e3f6e8; color: #177245;
@@ -193,48 +207,161 @@
     background: #fde2e6; color: #c0392b; box-shadow: 3.5px 3.5px 0 #c0392b;
   }
 
-  /* ── 2) Grille des 4 Grands Boutons d'Action Principaux ── */
-  .actions-principales {
+  /* ── 2) Mise en page principale : Barre de navigation à gauche (4 familles) + Contenu à droite ── */
+  .layout-admin {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
+    grid-template-columns: 262px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
   }
-  @media (max-width: 980px) {
-    .actions-principales { grid-template-columns: repeat(2, 1fr); }
+  .sidebar-admin {
+    position: sticky;
+    top: 14px;
+    max-height: calc(100dvh - 28px);
+    overflow-y: auto;
+    background: #fffdf7;
+    border: 2.5px solid #23201a;
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow: 5px 5px 0 #23201a;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
   }
-  .carte-action {
-    display: flex; align-items: center; gap: 12px; text-align: left;
-    background: #fffdf7; color: #23201a; text-decoration: none;
-    border: 2.5px solid #23201a; border-radius: 16px; padding: 13px 15px;
-    cursor: pointer; font-family: inherit;
-    box-shadow: 4px 4px 0 rgba(35, 32, 26, 0.9);
-    transition: transform .14s ease, box-shadow .14s ease, background .15s ease;
+  .sidebar-familles-tabs {
+    display: none;
   }
-  .carte-action:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #f4511e;
+  .nav-famille {
+    background: #f9f1e3;
+    border: 2px solid #23201a;
+    border-radius: 14px;
+    padding: 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .nav-famille-titre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1.5px solid #23201a;
+    color: #23201a;
+  }
+  .nav-famille.f-controle .nav-famille-titre { background: #e3f6e8; color: #135d37; border-color: #177245; }
+  .nav-famille.f-pedagogie .nav-famille-titre { background: #fff3e0; color: #b45309; border-color: #d97706; }
+  .nav-famille.f-statistiques .nav-famille-titre { background: #ede9fe; color: #5b21b6; border-color: #6d28d9; }
+  .nav-famille.f-securite .nav-famille-titre { background: #fde2e6; color: #a61b29; border-color: #c0392b; }
+
+  .nav-famille-items {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .nav-side-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    background: #fffdf7;
+    color: #23201a;
+    border: 1.8px solid #23201a;
+    border-radius: 10px;
+    padding: 7px 10px;
+    font-size: 12.2px;
+    font-weight: 800;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 2px 2px 0 #23201a;
+    transition: transform .12s ease, box-shadow .12s ease, background .15s ease;
+  }
+  .nav-side-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #f4511e;
     background: #fff9ec;
+    color: #f4511e;
   }
-  .carte-action.on {
+  .nav-side-btn.on {
     background: linear-gradient(120deg, #fff0dc, #ffe0b8);
     border-color: #f4511e;
-    box-shadow: 5px 5px 0 #f4511e;
+    color: #d84315;
+    box-shadow: 2.5px 2.5px 0 #f4511e;
   }
-  .ca-ico {
-    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 21px; border: 2px solid #23201a;
-    box-shadow: 2px 2px 0 #23201a;
+  .nav-side-gauche {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
   }
-  .ca-ico.orange { background: linear-gradient(135deg, #ffab73, #f4511e); color: #fff; }
-  .ca-ico.or     { background: linear-gradient(135deg, #fff3b0, #ffb300); color: #23201a; }
-  .ca-ico.vert   { background: linear-gradient(135deg, #b9f0c9, #177245); color: #fff; }
-  .ca-ico.creme  { background: linear-gradient(135deg, #f9f1e3, #e4d4b8); color: #23201a; }
-
-  .ca-corps { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .ca-titre { font-size: 14px; font-weight: 900; color: #23201a; line-height: 1.2; }
-  .ca-desc  { font-size: 11.5px; font-weight: 700; color: #7a6f5d; line-height: 1.25; }
+  .nav-side-ico {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    border: 1.5px solid #23201a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    background: #f3ead9;
+  }
+  .contenu-admin {
+    min-width: 0;
+  }
+  @media (max-width: 1040px) {
+    .layout-admin {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .sidebar-admin {
+      position: static;
+      max-height: none;
+      padding: 10px;
+      gap: 8px;
+    }
+    .sidebar-familles-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .tab-famille-mob {
+      border: 2px solid #23201a;
+      background: #f3ead9;
+      color: #23201a;
+      border-radius: 10px;
+      padding: 6px 4px;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 2px 2px 0 #23201a;
+    }
+    .tab-famille-mob.actif {
+      background: #23201a;
+      color: #ffd54f;
+      border-color: #f4511e;
+      box-shadow: 2px 2px 0 #f4511e;
+    }
+    .nav-famille {
+      display: none;
+    }
+    .nav-famille.mob-visible {
+      display: flex;
+    }
+    .nav-famille-items {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+  }
 
   /* ── 3) Cartes Statistiques en direct (cliquables pour filtrer) ── */
   .stats {
@@ -418,12 +545,13 @@
     .entete img { width: 40px; height: 40px; border-radius: 10px; }
     .entete-txt h1 { font-size: 16.5px; gap: 6px; }
     .entete-txt h1 svg { width: 20px; height: 20px; }
+    .badge-temoin-reseau { font-size: 10px; padding: 2px 7px; }
     .badge-temoin-examen { font-size: 10px; padding: 2px 7px; }
     .badge-admin-gold { font-size: 10px; padding: 2px 7px; }
     .sous { display: none; }
 
     .barre-util {
-      display: grid; grid-template-columns: repeat(3, 1fr);
+      display: grid; grid-template-columns: repeat(4, 1fr);
       gap: 5px; width: 100%;
     }
     .lbl-pc { display: none; }
@@ -1027,7 +1155,7 @@
 </head>
 <body>
 
-  <!-- 1. EN-TÊTE SUPÉRIEUR : Identité + Boutons utilitaires rapides -->
+  <!-- 1. HEADER SUPÉRIEUR : Identité + Témoins nécessaires (Verrouillage, État en ligne, Admin Gold, Version, Niveau Supabase) -->
   <header class="hero-admin">
     <div class="entete">
       <img src="assets/icons/sti-icon-512.png" alt="Logo STI" />
@@ -1036,97 +1164,149 @@
           <svg id="svg-logo-tb-admin" width="25" height="25" viewBox="0 0 24 24" fill="none" aria-hidden="true" title="🟢 En ligne"><rect id="svg-logo-tb-rect" x="2.5" y="2.5" width="19" height="19" rx="5" stroke="#23201a" stroke-width="2" fill="#177245"/><path id="svg-logo-tb-bars" d="M7.5 16.5v-4.5M12 16.5V8M16.5 16.5V5.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
           <span id="titre-tb-admin" style="color:#177245;transition:color .25s ease" title="🟢 En ligne">Tableau de bord STI V2.0</span>
           <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">🟢 Accès ouvert</span>
+          <span class="badge-temoin-reseau" id="badge-temoin-reseau" title="État de la connexion réseau du tableau de bord">🟢 En ligne</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v104</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v105</span>
           <span class="badge-supabase" id="badge-supabase-quota" title="Espace disponible dans la base Supabase (Quota 500 Mo) — cliquer pour voir le détail">🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v104)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v105)</strong> · <strong id="sous-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
       </div>
     </div>
     <div class="barre-util">
       <a class="btn-util" href="index.html">🏠 <span class="lbl-pc">Accueil du site</span><span class="lbl-mob">Site</span></a>
       <a class="btn-util" href="carte-visite.html" title="Ouvrir et partager la carte de visite électronique avec QR code">🪪 <span class="lbl-pc">Carte visite</span><span class="lbl-mob">Carte</span></a>
-      <button class="btn-util" id="btn-messenger-top" type="button" title="Ouvrir la messagerie directe Messenger STI avec les candidats" style="background:#fff3e0;border-color:#f4511e;color:#d84315">💬 <span class="lbl-pc">Messenger</span><span class="lbl-mob">Chat</span> <span id="badge-msn-top" style="display:none;background:#ffd54f;color:#23201a;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util" id="btn-flash-top" type="button" title="Lancer une Question Flash / Sondage Live en classe" style="background:#fff8e1;border-color:#d97706;color:#b45309">⚡ <span class="lbl-pc">Question Flash</span><span class="lbl-mob">Flash</span></button>
-      <button class="btn-util" id="btn-mains-top" type="button" title="File d'attente des élèves ayant levé la main pour demander de l'aide en TP" style="background:#ede9fe;border-color:#6d28d9;color:#6d28d9">🙋‍♂️ <span class="lbl-pc">Mains levées</span><span class="lbl-mob">Aide</span> <span id="badge-mains-top" style="display:none;background:#6d28d9;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util" id="btn-palmares-top" type="button" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)" style="background:linear-gradient(120deg,#fff3b0,#ffd54f);border-color:#23201a;color:#6d4c00">🏆 <span class="lbl-pc">Palmarès</span><span class="lbl-mob">Top 3</span></button>
-      <button class="btn-util" id="btn-appel-top" type="button" title="Feuille d'appel &amp; présence automatique du jour par classe (Présents vs Absents)" style="background:#e3f6e8;border-color:#177245;color:#177245">📋 <span class="lbl-pc">Appel / Présence</span><span class="lbl-mob">Appel</span></button>
-      <button class="btn-util" id="btn-securite-top" type="button" title="Centre de Sécurité : Mode Examen / Verrouillage, Anti-partage, Éjection F12 &amp; Journal d'alertes" style="background:#fde2e6;border-color:#c0392b;color:#a61b29">🛡️ <span class="lbl-pc">Sécurité</span><span class="lbl-mob">Sécu</span> <span id="badge-sec-top" style="display:none;background:#c0392b;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util" id="btn-verrou-ecran-admin" type="button" title="Verrouiller instantanément l'écran du tableau de bord par code PIN quand vous vous déplacez en salle de classe">🔒 <span class="lbl-pc">Verrouiller</span><span class="lbl-mob">PIN</span></button>
-      <button class="btn-util" id="btn-readme-admin" type="button" title="Consulter la documentation complète de la plateforme (README)">📖 <span class="lbl-pc">README</span><span class="lbl-mob">README</span></button>
-      <button class="btn-util" id="btn-notif" type="button">🔔 <span class="lbl-pc">Notifications</span><span class="lbl-mob">Alertes</span></button>
       <button class="btn-util" id="btn-refresh" type="button">🔄 <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
       <button class="btn-util logout" id="btn-logout" type="button">🚪 <span class="lbl-pc">Déconnexion</span><span class="lbl-mob">Sortir</span></button>
     </div>
   </header>
 
-  <!-- 2. PREMIERS BOUTONS D'ACTION PÉDAGOGIQUE (cartes principales) -->
-  <section class="actions-principales" aria-label="Actions principales">
-    <button class="carte-action" id="btn-msg-classe" type="button">
-      <span class="ca-ico orange">📢</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Message par classe</span>
-        <span class="ca-desc">Annonce écran, WhatsApp &amp; dictée vocale</span>
-      </span>
-    </button>
+  <!-- 2. MISE EN PAGE : Barre de navigation à gauche (4 familles) + Contenu principal à droite -->
+  <div class="layout-admin">
+    <aside class="sidebar-admin" aria-label="Menu de navigation du tableau de bord par familles">
+      <!-- Onglets rapides mobile pour basculer entre les 4 familles -->
+      <div class="sidebar-familles-tabs" role="tablist" aria-label="Familles d'outils">
+        <button type="button" class="tab-famille-mob actif" data-f-tab="controle">🎛️ Contrôle</button>
+        <button type="button" class="tab-famille-mob" data-f-tab="pedagogie">🎓 Pédagogie</button>
+        <button type="button" class="tab-famille-mob" data-f-tab="statistiques">📊 Stats</button>
+        <button type="button" class="tab-famille-mob" data-f-tab="securite">🛡️ Sécurité</button>
+      </div>
 
-    <button class="carte-action" id="btn-flash-quiz" type="button">
-      <span class="ca-ico or">⚡</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Question Flash / Sondage</span>
-        <span class="ca-desc">QCM en direct sur les écrans &amp; résultats live</span>
-      </span>
-    </button>
+      <!-- FAMILLE 1 : CONTRÔLE -->
+      <div class="nav-famille f-controle mob-visible" data-famille="controle">
+        <div class="nav-famille-titre"><span>🎛️ 1. Contrôle</span><span>Classes</span></div>
+        <div class="nav-famille-items">
+          <button type="button" class="nav-side-btn" data-scroll-to="sec-abonnes">
+            <span class="nav-side-gauche"><span class="nav-side-ico">👥</span><span>Liste des abonnés</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-appel-top" title="Feuille d'appel &amp; présence automatique du jour par classe">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#e3f6e8">📋</span><span>Appel / Présence</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-controle" title="Lancer un contrôle ou sujet chronométré avec minuteur">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff3b0">⏱️</span><span>Contrôle chronométré</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-side-lycees" title="Ajouter, renommer ou supprimer des lycées">
+            <span class="nav-side-gauche"><span class="nav-side-ico">🏛️</span><span>Gérer Lycées</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-side-classes" title="Ajouter, renommer ou supprimer des classes">
+            <span class="nav-side-gauche"><span class="nav-side-ico">🏫</span><span>Gérer Classes</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-notif" title="Configurer les alertes sonores et notifications de nouvelles demandes">
+            <span class="nav-side-gauche"><span class="nav-side-ico">🔔</span><span>Notifications</span></span>
+          </button>
+        </div>
+      </div>
 
-    <button class="carte-action" id="btn-controle" type="button">
-      <span class="ca-ico or">⏱️</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Contrôle chronométré</span>
-        <span class="ca-desc">Lancer un quiz ou sujet avec minuteur</span>
-      </span>
-    </button>
+      <!-- FAMILLE 2 : PÉDAGOGIE -->
+      <div class="nav-famille f-pedagogie" data-famille="pedagogie">
+        <div class="nav-famille-titre"><span>🎓 2. Pédagogie</span><span>Live &amp; TP</span></div>
+        <div class="nav-famille-items">
+          <button type="button" class="nav-side-btn" id="btn-messenger-top" title="Ouvrir la messagerie directe Messenger STI avec les candidats">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff3e0">💬</span><span>Messenger STI</span></span>
+            <span id="badge-msn-top" style="display:none;background:#ffd54f;color:#23201a;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a">0</span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-msg-classe" title="Envoyer une annonce écran, WhatsApp ou dictée vocale à une classe">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#ffe0b2">📢</span><span>Message par classe</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-flash-top" title="Lancer une Question Flash / Sondage Live en classe">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff8e1">⚡</span><span>Question Flash Live</span></span>
+          </button>
+          <button type="button" id="btn-flash-quiz" style="display:none" aria-hidden="true"></button>
+          <button type="button" class="nav-side-btn" id="btn-mains-top" title="File d'attente des élèves ayant levé la main en TP">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#ede9fe">🙋‍♂️</span><span>Mains levées (TP)</span></span>
+            <span id="badge-mains-top" style="display:none;background:#6d28d9;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a">0</span>
+          </button>
+          <a class="nav-side-btn" href="bac-pratique.html" title="Ouvrir l'Atelier Bac Pratique noté sur 20">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#e3f6e8">🧪</span><span>Atelier Bac Pratique</span></span>
+          </a>
+          <button type="button" class="nav-side-btn" id="btn-readme-admin" title="Consulter la documentation complète de la plateforme (README)">
+            <span class="nav-side-gauche"><span class="nav-side-ico">📖</span><span>Documentation README</span></span>
+          </button>
+        </div>
+      </div>
 
-    <a class="carte-action" href="bac-pratique.html">
-      <span class="ca-ico vert">🧪</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Atelier Bac Pratique</span>
-        <span class="ca-desc">Sujets HTML/CSS/JS/SQL/PHP notés /20</span>
-      </span>
-    </a>
+      <!-- FAMILLE 3 : STATISTIQUES -->
+      <div class="nav-famille f-statistiques" data-famille="statistiques">
+        <div class="nav-famille-titre"><span>📊 3. Statistiques</span><span>Bilans</span></div>
+        <div class="nav-famille-items">
+          <button type="button" class="nav-side-btn" id="btn-palmares-top" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fff3b0">🏆</span><span>Palmarès &amp; Podium</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-stats" title="Classer les élèves les plus actifs en tête">
+            <span class="nav-side-gauche"><span class="nav-side-ico">📈</span><span>Trier par durée / accès</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" data-scroll-to="sec-resultats-quiz">
+            <span class="nav-side-gauche"><span class="nav-side-ico">📝</span><span>Résultats Quiz &amp; Bac</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" data-scroll-to="sec-suivi-messages">
+            <span class="nav-side-gauche"><span class="nav-side-ico">📨</span><span>Suivi lecture messages</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" data-scroll-to="sec-dernieres-connexions">
+            <span class="nav-side-gauche"><span class="nav-side-ico">🕒</span><span>Dernières connexions</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-side-export-csv" title="Exporter la liste des abonnés en Excel (CSV)">
+            <span class="nav-side-gauche"><span class="nav-side-ico">📥</span><span>Exporter Abonnés CSV</span></span>
+          </button>
+        </div>
+      </div>
 
-    <button class="carte-action" id="btn-securite-card" type="button">
-      <span class="ca-ico orange" style="background:linear-gradient(135deg,#fde2e6,#c0392b)">🛡️</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Sécurité &amp; Mode Examen</span>
-        <span class="ca-desc">Verrouillage classe, anti-partage, alertes F12 &amp; anti-triche</span>
-      </span>
-    </button>
+      <!-- FAMILLE 4 : SÉCURITÉ -->
+      <div class="nav-famille f-securite" data-famille="securite">
+        <div class="nav-famille-titre"><span>🛡️ 4. Sécurité</span><span>Examen</span></div>
+        <div class="nav-famille-items">
+          <button type="button" class="nav-side-btn" id="btn-securite-top" title="Centre de Sécurité : Mode Examen / Verrouillage, Anti-partage, Éjection F12 &amp; Journal d'alertes">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fde2e6">🛡️</span><span>Centre de Sécurité</span></span>
+            <span id="badge-sec-top" style="display:none;background:#c0392b;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a">0</span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-securite-card" title="Activer le Mode Examen, téléporter ou figer les écrans des élèves">
+            <span class="nav-side-gauche"><span class="nav-side-ico" style="background:#fde2e6">🚀</span><span>Mode Examen &amp; Écrans</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-verrou-ecran-admin" title="Verrouiller instantanément l'écran du tableau de bord par code PIN">
+            <span class="nav-side-gauche"><span class="nav-side-ico">🔒</span><span>Verrouiller écran (PIN)</span></span>
+          </button>
+          <button type="button" class="nav-side-btn" id="btn-side-backup-json" title="Télécharger une sauvegarde complète JSON de la base">
+            <span class="nav-side-gauche"><span class="nav-side-ico">💾</span><span>Backup complet JSON</span></span>
+          </button>
+        </div>
+      </div>
+    </aside>
 
-    <button class="carte-action" id="btn-stats" type="button">
-      <span class="ca-ico creme">📊</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Trier par durée / accès</span>
-        <span class="ca-desc">Classer les élèves les plus actifs en tête</span>
-      </span>
-    </button>
-  </section>
+    <main class="contenu-admin">
+      <div class="alerte-demande" id="alerte-attente">
+        <span id="alerte-attente-txt">🔔 Nouvelle(s) demande(s) d'inscription en attente !</span>
+      </div>
 
-  <div class="alerte-demande" id="alerte-attente">
-    <span id="alerte-attente-txt">🔔 Nouvelle(s) demande(s) d'inscription en attente !</span>
-  </div>
+      <!-- 3. COMPTEURS EN DIRECT (cliquables pour filtrer la liste) -->
+      <div class="stats" id="stats">
+        <div class="stat" data-filtre="en_ligne" title="Cliquer pour filtrer les élèves en ligne"><b id="s-enligne" style="color:#177245">0</b><small>🟢 En ligne</small></div>
+        <div class="stat" data-filtre="*" title="Cliquer pour afficher tous les abonnés"><b id="s-total">0</b><small>👥 Abonnés</small></div>
+        <div class="stat" data-filtre="actif" title="Cliquer pour filtrer les abonnés actifs"><b id="s-actifs" style="color:#6d28d9">0</b><small>🟣 Actifs</small></div>
+        <div class="stat" data-filtre="en_attente" title="Cliquer pour filtrer les demandes en attente"><b id="s-attente" style="color:#b47d09">0</b><small>⏳ En attente</small></div>
+        <div class="stat" data-filtre="*" title="Total des connexions enregistrées"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
+      </div>
 
-  <!-- 3. COMPTEURS EN DIRECT (cliquables pour filtrer la liste) -->
-  <div class="stats" id="stats">
-    <div class="stat" data-filtre="en_ligne" title="Cliquer pour filtrer les élèves en ligne"><b id="s-enligne" style="color:#177245">0</b><small>🟢 En ligne</small></div>
-    <div class="stat" data-filtre="*" title="Cliquer pour afficher tous les abonnés"><b id="s-total">0</b><small>👥 Abonnés</small></div>
-    <div class="stat" data-filtre="actif" title="Cliquer pour filtrer les abonnés actifs"><b id="s-actifs" style="color:#6d28d9">0</b><small>🟣 Actifs</small></div>
-    <div class="stat" data-filtre="en_attente" title="Cliquer pour filtrer les demandes en attente"><b id="s-attente" style="color:#b47d09">0</b><small>⏳ En attente</small></div>
-    <div class="stat" data-filtre="*" title="Total des connexions enregistrées"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
-  </div>
+      <div class="msg" id="msg"></div>
 
-  <div class="msg" id="msg"></div>
-
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:18px 0 10px">
+      <div id="sec-abonnes" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:14px 0 10px">
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
       <h2 style="margin:0">👥 Liste des Abonnés <span id="note-tri" style="font-size:11px;color:#7a6f5d;font-weight:700"></span></h2>
       <div class="choix-vue-abonnes" role="tablist" aria-label="Mode d'affichage des abonnés">
@@ -1189,7 +1369,7 @@
     </div>
   </div>
 
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:22px 0 10px">
+  <div id="sec-resultats-quiz" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:22px 0 10px">
     <h2 style="margin:0">🏆 Résultats des Quiz &amp; Atelier Bac Pratique</h2>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <select id="filtre-quiz-classe" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer les résultats de Quiz par classe">
@@ -1209,7 +1389,7 @@
     <button type="button" class="btn-outil" id="btn-voir-plus-quiz">➕ Voir plus</button>
   </div>
 
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:22px 0 10px">
+  <div id="sec-suivi-messages" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:22px 0 10px">
     <h2 style="margin:0">📨 Suivi de lecture des messages diffusés &amp; réponses des élèves <span id="resume-suivi-msg" style="font-size:12px;color:#7a6f5d;font-weight:800;margin-left:6px"></span></h2>
     <button type="button" class="btn-outil" id="btn-ouvrir-purge-msg" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer un message diffusé et son suivi de lecture/réponses">🗑️ Effacer par message…</button>
   </div>
@@ -1229,7 +1409,7 @@
     <button type="button" class="btn-outil" id="btn-voir-plus-suivi">➕ Voir plus</button>
   </div>
 
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:22px 0 10px">
+  <div id="sec-dernieres-connexions" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:22px 0 10px">
     <h2 style="margin:0">🕒 Dernières connexions (tous abonnés)</h2>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <select id="filtre-acces-classe" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer les dernières connexions par classe">
@@ -1246,6 +1426,8 @@
   </div>
   <div id="wrap-voir-plus-acces" style="display:none;text-align:center;margin:10px 0 4px">
     <button type="button" class="btn-outil" id="btn-voir-plus-acces">➕ Voir plus</button>
+  </div>
+    </main>
   </div>
 
   <!-- Boîte de suppression des connexions par mois cible -->
@@ -2364,11 +2546,44 @@
     }
     window.addEventListener("scroll", majBtnTop, { passive: true });
     majBtnTop();
+
+    /* Navigation latérale à gauche (4 familles : Contrôle, Pédagogie, Statistiques, Sécurité) */
+    document.querySelectorAll(".tab-famille-mob[data-f-tab]").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        var fam = tab.getAttribute("data-f-tab");
+        document.querySelectorAll(".tab-famille-mob[data-f-tab]").forEach(function (t) {
+          t.classList.toggle("actif", t === tab);
+        });
+        document.querySelectorAll(".nav-famille[data-famille]").forEach(function (box) {
+          box.classList.toggle("mob-visible", box.getAttribute("data-famille") === fam);
+        });
+      });
+    });
+
+    document.querySelectorAll(".nav-side-btn[data-scroll-to]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var idCible = btn.getAttribute("data-scroll-to");
+        var elCible = idCible ? document.getElementById(idCible) : null;
+        if (elCible) elCible.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    function relierBoutonSide(idSide, idCible) {
+      var bS = document.getElementById(idSide);
+      var bC = document.getElementById(idCible);
+      if (bS && bC) {
+        bS.addEventListener("click", function () { bC.click(); });
+      }
+    }
+    relierBoutonSide("btn-side-lycees", "btn-gerer-lycees");
+    relierBoutonSide("btn-side-classes", "btn-gerer-classes");
+    relierBoutonSide("btn-side-export-csv", "btn-export-csv");
+    relierBoutonSide("btn-side-backup-json", "btn-sec-backup-json");
   })();
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=104"></script>
-<script src="assets/js/admin.js?v=104"></script>
+<script src="assets/js/config.js?v=105"></script>
+<script src="assets/js/admin.js?v=105"></script>
 </body>
 </html>
