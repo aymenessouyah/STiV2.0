@@ -2747,6 +2747,42 @@
           <button
             type="button"
             class="filter-chip"
+            id="btnHomeExamenBlanc"
+            title="Lancer un Examen Blanc STI chronométré sur 20 points avec radar de compétences par chapitre"
+            style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
+          >
+            📝 Examen Blanc (/20)
+          </button>
+          <button
+            type="button"
+            class="filter-chip"
+            id="btnHomeConstructeur"
+            title="Constructeur visuel de Tableaux (rowspan/colspan), Formulaires + verif() JS et Flexbox CSS3"
+            style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
+          >
+            📋 Constructeur Table / Form / Flex
+          </button>
+          <button
+            type="button"
+            class="filter-chip sti-4si-only"
+            id="btnHomeSimPhpSql"
+            title="Simulateur interactif HTML <form> ➔ $_POST PHP ➔ INSERT SQL (Spécial 4e SI / Bac Pratique)"
+            style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
+          >
+            🔗 Form ➔ PHP ➔ SQL
+          </button>
+          <button
+            type="button"
+            class="filter-chip"
+            id="btnHomeMainLevee"
+            title="Lever la main pour demander de l'aide au professeur en salle de TP"
+            style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
+          >
+            🙋‍♂️ Lever la main (TP)
+          </button>
+          <button
+            type="button"
+            class="filter-chip"
             id="btnHomeMessenger"
             title="Ouvrir Messenger STI (Discuter en direct et envoyer des fichiers 📎)"
             style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
@@ -4256,6 +4292,30 @@
           } catch (e) {}
         };
         window.__stiMajBadgeDebug();
+        var btnHomeEb = document.getElementById("btnHomeExamenBlanc");
+        if (btnHomeEb) {
+          btnHomeEb.addEventListener("click", function () {
+            if (typeof window.ouvrirExamenBlancSTI === "function") window.ouvrirExamenBlancSTI();
+          });
+        }
+        var btnHomeCv = document.getElementById("btnHomeConstructeur");
+        if (btnHomeCv) {
+          btnHomeCv.addEventListener("click", function () {
+            if (typeof window.ouvrirConstructeurVisuelSTI === "function") window.ouvrirConstructeurVisuelSTI("table");
+          });
+        }
+        var btnHomeSim = document.getElementById("btnHomeSimPhpSql");
+        if (btnHomeSim) {
+          btnHomeSim.addEventListener("click", function () {
+            if (typeof window.ouvrirSimulateurFormPhpSqlSTI === "function") window.ouvrirSimulateurFormPhpSqlSTI();
+          });
+        }
+        var btnHomeMl = document.getElementById("btnHomeMainLevee");
+        if (btnHomeMl) {
+          btnHomeMl.addEventListener("click", function () {
+            if (typeof window.basculerMainLeveeSTI === "function") window.basculerMainLeveeSTI();
+          });
+        }
         var btnHomeMsn = document.getElementById("btnHomeMessenger");
         if (btnHomeMsn) {
           btnHomeMsn.addEventListener("click", function () {
@@ -4628,11 +4688,11 @@
       })();
     </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="assets/css/protection.css?v=103" />
-<script src="assets/js/protection.js?v=103" defer></script>
+<link rel="stylesheet" href="assets/css/protection.css?v=104" />
+<script src="assets/js/protection.js?v=104" defer></script>
 <!-- /Protection -->
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=103"></script>
-<script src="assets/js/acces.js?v=103"></script>
+<script src="assets/js/config.js?v=104"></script>
+<script src="assets/js/acces.js?v=104"></script>
 </body>
 </html>

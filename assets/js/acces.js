@@ -1194,6 +1194,43 @@
     });
     pan.appendChild(btnDebugPan);
 
+    var btnExamenBlancPan = document.createElement("button");
+    btnExamenBlancPan.type = "button";
+    btnExamenBlancPan.textContent = "📝 Examen Blanc STI (/20)";
+    btnExamenBlancPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
+    btnExamenBlancPan.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fermer();
+      if (window.ouvrirExamenBlancSTI) window.ouvrirExamenBlancSTI();
+    });
+    pan.appendChild(btnExamenBlancPan);
+
+    var btnConstructeurPan = document.createElement("button");
+    btnConstructeurPan.type = "button";
+    btnConstructeurPan.textContent = "📋 Constructeur Table / Form / Flex";
+    btnConstructeurPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:#fff;color:#23201a;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;cursor:pointer;";
+    btnConstructeurPan.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fermer();
+      if (window.ouvrirConstructeurVisuelSTI) window.ouvrirConstructeurVisuelSTI("table");
+    });
+    pan.appendChild(btnConstructeurPan);
+
+    var btnSimPhpSqlPan = document.createElement("button");
+    btnSimPhpSqlPan.type = "button";
+    btnSimPhpSqlPan.textContent = "🔗 Simulateur Form ➔ PHP ➔ SQL";
+    btnSimPhpSqlPan.hidden = !ok4SI;
+    btnSimPhpSqlPan.style.cssText = "display:" + (ok4SI ? "block" : "none") + ";width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:#eef2ff;color:#3730a3;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
+    btnSimPhpSqlPan.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fermer();
+      if (window.ouvrirSimulateurFormPhpSqlSTI) window.ouvrirSimulateurFormPhpSqlSTI();
+    });
+    pan.appendChild(btnSimPhpSqlPan);
+
     var btnBac = document.createElement("a");
     btnBac.id = "sti-btn-bac-pan";
     btnBac.href = cfg.RACINE + "bac-pratique.html";
@@ -1201,6 +1238,21 @@
     btnBac.hidden = !ok4SI;
     btnBac.style.cssText = "display:" + (ok4SI ? "block" : "none") + ";margin:6px 0 0 auto;border:1.5px solid #23201a;background:#f3ead9;color:#23201a;text-decoration:none;text-align:center;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;";
     pan.appendChild(btnBac);
+
+    var btnMainPan = document.createElement("button");
+    btnMainPan.id = "sti-btn-main-levee";
+    btnMainPan.type = "button";
+    var mainDejaLevee = false;
+    try { mainDejaLevee = localStorage.getItem("sti-main-levee") === "1"; } catch (e) {}
+    btnMainPan.textContent = mainDejaLevee ? "🙋‍♂️ Main levée (Cliquer pour baisser)" : "🙋‍♂️ Lever la main (Aide TP)";
+    btnMainPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #6d28d9;background:" + (mainDejaLevee ? "#6d28d9;color:#fff" : "#ede9fe;color:#6d28d9") + ";border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
+    btnMainPan.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fermer();
+      if (window.basculerMainLeveeSTI) window.basculerMainLeveeSTI();
+    });
+    pan.appendChild(btnMainPan);
 
     var btnProf = document.createElement("button");
     btnProf.type = "button";
@@ -2602,6 +2654,8 @@
                   if (!dernierSecCfg || Number(a.ts || 0) >= Number(dernierSecCfg.ts || 0)) dernierSecCfg = a;
                 } else if (a && a.type === "session_unique" && a.uid === uid) {
                   if (!dernierSessUnique || Number(a.ts || 0) >= Number(dernierSessUnique.ts || 0)) dernierSessUnique = a;
+                } else if (a && a.type === "main_levee" && a.uid === uid && a.action === "down" && a.parProf) {
+                  if (typeof window.__stiTraiterAcquittementMain === "function") window.__stiTraiterAcquittementMain(a);
                 } else if (estAnnoncePourMoi(a)) {
                   derniereAnnonce = a;
                 }
@@ -2642,6 +2696,11 @@
         })
         .on("broadcast", { event: "teleporter" }, function (p) {
           if (p && p.payload && typeof appliquerTeleportation === "function") appliquerTeleportation(p.payload);
+        })
+        .on("broadcast", { event: "main_levee" }, function (p) {
+          if (p && p.payload && p.payload.uid === uid && p.payload.action === "down") {
+            if (typeof window.__stiTraiterAcquittementMain === "function") window.__stiTraiterAcquittementMain(p.payload);
+          }
         })
         .subscribe();
     } catch (e) {}
@@ -2827,6 +2886,12 @@
     }
     var cLoc = lireCacheSessionLocal() || {};
     var maCl = currentClasse || cLoc.classe || "";
+    var finVerrouMs = Number((cfgSecurite && cfgSecurite.verrouFinMs) || 0);
+    if (cfgSecurite && cfgSecurite.verrouActif && finVerrouMs > 0 && Date.now() >= finVerrouMs) {
+      cfgSecurite.verrouActif = false;
+      cfgSecurite.verrouFinMs = 0;
+      try { localStorage.setItem("sti-sec-config", JSON.stringify(cfgSecurite)); } catch (e) {}
+    }
     var bloque = Boolean(
       cfgSecurite &&
       cfgSecurite.verrouActif &&
@@ -2850,6 +2915,16 @@
       btnPageAut =
         '<a href="' + esc(urlCible) + '" style="display:inline-block;margin:6px;background:linear-gradient(120deg,#177245,#2ecc71);color:#fff;border:2px solid #23201a;border-radius:999px;padding:12px 24px;font-weight:900;font-size:14px;text-decoration:none;box-shadow:3px 3px 0 #23201a">📝 Ouvrir l\'épreuve autorisée</a>';
     }
+    var blocChronoVerrou = "";
+    if (finVerrouMs > Date.now()) {
+      var rSec = Math.max(0, Math.round((finVerrouMs - Date.now()) / 1000));
+      var rMm = String(Math.floor(rSec / 60)).padStart(2, "0");
+      var rSs = String(rSec % 60).padStart(2, "0");
+      blocChronoVerrou =
+        '<div id="sti-verrou-countdown" style="display:inline-block;background:#fde2e6;border:1.5px solid #c0392b;border-radius:999px;padding:5px 14px;font-size:12.5px;font-weight:900;margin:0 4px 14px;color:#c0392b">' +
+          '⏱️ Déverrouillage auto dans : ' + rMm + ':' + rSs +
+        '</div><br>';
+    }
     var cibleTxt = cfgSecurite.verrouCible === "*" ? "Toutes les classes" : cfgSecurite.verrouCible;
     exOv.innerHTML =
       '<div style="max-width:480px;width:100%;background:#fffdf7;color:#23201a;border:3px solid #23201a;border-radius:22px;padding:26px 24px;text-align:center;box-shadow:7px 7px 0 #f4511e">' +
@@ -2858,9 +2933,10 @@
         '<p style="font-size:14px;line-height:1.55;color:#5a5244;margin:0 0 14px;font-weight:700">' +
           esc(cfgSecurite.motifVerrou || "L'accès à cette page est temporairement verrouillé par le professeur pendant la séance.") +
         '</p>' +
-        '<div style="display:inline-block;background:#f3ead9;border:1.5px solid #23201a;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:900;margin-bottom:16px;color:#c0392b">' +
+        '<div style="display:inline-block;background:#f3ead9;border:1.5px solid #23201a;border-radius:999px;padding:5px 14px;font-size:12px;font-weight:900;margin-bottom:10px;color:#c0392b">' +
           '🏫 Verrouillage actif pour : ' + esc(cibleTxt) +
         '</div><br>' +
+        blocChronoVerrou +
         btnPageAut +
         '<button type="button" id="sti-btn-verrou-out" style="display:inline-block;margin:6px;background:#fff;color:#c0392b;border:2px solid #23201a;border-radius:999px;padding:11px 20px;font-weight:900;font-size:13px;cursor:pointer;box-shadow:2px 2px 0 #23201a">🚪 Se déconnecter</button>' +
       '</div>';
@@ -2869,6 +2945,21 @@
       bOutV.addEventListener("click", function () { sortirImmediatement("#deconnecte"); });
     }
   }
+  setInterval(function () {
+    if (cfgSecurite && cfgSecurite.verrouActif && Number(cfgSecurite.verrouFinMs || 0) > 0) {
+      if (Date.now() >= Number(cfgSecurite.verrouFinMs)) {
+        appliquerVerrouExamen();
+      } else {
+        var elCd = document.getElementById("sti-verrou-countdown");
+        if (elCd) {
+          var rSec = Math.max(0, Math.round((Number(cfgSecurite.verrouFinMs) - Date.now()) / 1000));
+          var rMm = String(Math.floor(rSec / 60)).padStart(2, "0");
+          var rSs = String(rSec % 60).padStart(2, "0");
+          elCd.textContent = "⏱️ Déverrouillage auto dans : " + rMm + ":" + rSs;
+        }
+      }
+    }
+  }, 1000);
 
   function appliquerFiligraneNominatif() {
     var exWm = document.getElementById("sti-filigrane-nominatif");
@@ -5406,6 +5497,7 @@
         "</div>" +
         "<div style='display:flex;align-items:center;gap:6px;flex-wrap:wrap'>" +
           "<button type='button' id='sti-sb-run' style='border:2px solid #23201a;background:#2ecc9e;color:#1a1a2e;border-radius:999px;padding:5px 13px;font-weight:900;font-size:12px;cursor:pointer;box-shadow:2px 2px 0 #23201a'>▶ Exécuter</button>" +
+          "<button type='button' id='sti-sb-send-prof' title='Envoyer ce code HTML/CSS/JS au professeur dans Messenger STI' style='border:2px solid #23201a;background:linear-gradient(120deg,#ffd54f,#ffb300);color:#23201a;border-radius:999px;padding:5px 12px;font-weight:900;font-size:11.5px;cursor:pointer;box-shadow:2px 2px 0 #23201a'>📤 Envoyer au Prof</button>" +
           "<button type='button' id='sti-sb-reset' style='border:2px solid #23201a;background:#fff;color:#23201a;border-radius:999px;padding:5px 10px;font-weight:800;font-size:11.5px;cursor:pointer'>↺ Modèle</button>" +
           "<button type='button' id='sti-sb-full' style='border:2px solid #23201a;background:#fff;color:#23201a;border-radius:999px;padding:5px 10px;font-weight:800;font-size:11.5px;cursor:pointer'>⛶ Plein écran</button>" +
           "<button type='button' id='sti-sb-close' style='border:2px solid #23201a;background:#ff5d8f;color:#fff;border-radius:999px;padding:5px 11px;font-weight:900;font-size:12px;cursor:pointer'>✕ Fermer</button>" +
@@ -5525,6 +5617,69 @@
     });
 
     boite.querySelector("#sti-sb-run").addEventListener("click", executerCode);
+    var btnSendProfSb = boite.querySelector("#sti-sb-send-prof");
+    if (btnSendProfSb) {
+      btnSendProfSb.addEventListener("click", function () {
+        sauverEtat();
+        var docComplet = "<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n<meta charset=\"utf-8\">\n<title>Code Bac à sable STI</title>\n<style>\n" +
+          (codeState.css || "") +
+          "\n</style>\n</head>\n<body>\n" +
+          (codeState.html || "") +
+          "\n<script>\n" + (codeState.js || "") + "\n<\/script>\n</body>\n</html>";
+        var b64Html = "";
+        try {
+          b64Html = "data:text/html;charset=utf-8;base64," + btoa(unescape(encodeURIComponent(docComplet)));
+        } catch (e) {}
+        var fObj = b64Html ? {
+          nom: "code_bac_a_sable_sti.html",
+          type: "text/html",
+          taille: docComplet.length,
+          dataUrl: b64Html
+        } : null;
+        var resumeCode = "💻 [Code envoyé depuis le Bac à sable STI]\n" +
+          "HTML : " + (codeState.html || "").trim().slice(0, 180) + "\n" +
+          (codeState.js ? ("JS : " + codeState.js.trim().slice(0, 140)) : "");
+        var cLoc = lireCacheSessionLocal() || {};
+        var uidEl = currentUid || cLoc.id || "offline-user";
+        var nowIso = new Date().toISOString();
+        var rowMsg = {
+          user_id: uidEl,
+          page: "MSG_LU:libre",
+          lieu: JSON.stringify({ reponse: resumeCode, ts: nowIso, fichier: fObj || undefined }),
+          debut: nowIso,
+          fin: nowIso,
+          duree_sec: 0
+        };
+        if (navigator.onLine && uidEl !== "offline-user") {
+          sb.from("acces").insert(rowMsg).then(function (r) {
+            if (r && r.error) empilerHorsLigne(rowMsg);
+          });
+          try {
+            sb.channel("sti-diffusion").send({
+              type: "broadcast",
+              event: "lu",
+              payload: { msgId: "libre", uid: uidEl, ts: nowIso, reponse: resumeCode, fichier: fObj || undefined }
+            });
+          } catch (e) {}
+          fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
+            method: "POST",
+            body: JSON.stringify({
+              type: "lu",
+              msgId: "libre",
+              uid: uidEl,
+              ts: nowIso,
+              reponse: resumeCode,
+              fichier: fObj ? { nom: fObj.nom, type: fObj.type, taille: fObj.taille, depuisDb: true } : undefined
+            })
+          }).catch(function () {});
+        } else {
+          empilerHorsLigne(rowMsg);
+        }
+        btnSendProfSb.textContent = "✅ Envoyé au Prof !";
+        setTimeout(function () { btnSendProfSb.textContent = "📤 Envoyer au Prof"; }, 2800);
+        afficherToastSynchro("📤 Votre code HTML/CSS/JS a été envoyé au professeur dans Messenger STI !");
+      });
+    }
     boite.querySelector("#sti-sb-reset").addEventListener("click", function () {
       var t = STI_SANDBOX_TEMPLATES[selTpl.value] || STI_SANDBOX_TEMPLATES.form_bac;
       codeState.html = t.html;
@@ -5563,7 +5718,7 @@
   };
 
   /* =====================================================================
-     🐞 MODE « CHASSE AUX ERREURS (DÉBOGAGE BAC STI) » (v103)
+     🐞 MODE « CHASSE AUX ERREURS (DÉBOGAGE BAC STI) » (v104)
      10 défis officiels × 3 erreurs classiques du Bac = 30 pièges à corriger
      ===================================================================== */
   var STI_DEBUG_DEFIS = window.STI_DEBUG_DEFIS = [
@@ -6319,6 +6474,786 @@
     fond.addEventListener("click", function (e) { if (e.target === fond) fond.remove(); });
 
     chargerDefiCourant();
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     🙋‍♂️ 1. LEVER LA MAIN / DEMANDER DE L'AIDE EN TP
+     ══════════════════════════════════════════════════════════ */
+  function majPastilleMainLevee() {
+    if (estDansIframeModale()) return;
+    var active = false;
+    var motif = "";
+    try {
+      active = localStorage.getItem("sti-main-levee") === "1";
+      motif = localStorage.getItem("sti-main-levee-motif") || "Besoin d'aide en TP";
+    } catch (e) {}
+
+    var btnPan = document.getElementById("sti-btn-main-levee");
+    if (btnPan) {
+      btnPan.textContent = active ? "🙋‍♂️ Main levée (Cliquer pour baisser)" : "🙋‍♂️ Lever la main (Aide TP)";
+      btnPan.style.background = active ? "#6d28d9" : "#ede9fe";
+      btnPan.style.color = active ? "#fff" : "#6d28d9";
+    }
+
+    var badgeFlot = document.getElementById("sti-badge-main-flottant");
+    if (!active) {
+      if (badgeFlot) badgeFlot.remove();
+      return;
+    }
+    if (!badgeFlot && document.body) {
+      badgeFlot = document.createElement("button");
+      badgeFlot.id = "sti-badge-main-flottant";
+      badgeFlot.type = "button";
+      badgeFlot.className = "sti-no-print";
+      badgeFlot.style.cssText =
+        "position:fixed;left:16px;top:14px;z-index:2147483645;display:inline-flex;align-items:center;gap:6px;" +
+        "background:#6d28d9;color:#fff;border:2px solid #23201a;border-radius:999px;padding:6px 13px;" +
+        "font:900 12px/1.2 system-ui,'Segoe UI',sans-serif;cursor:pointer;box-shadow:3px 3px 0 #23201a;";
+      badgeFlot.title = "Motif : " + motif + " — Cliquer pour baisser la main";
+      badgeFlot.innerHTML = "🙋‍♂️ Main levée (en attente du prof) · <span style='text-decoration:underline'>Baisser</span>";
+      badgeFlot.addEventListener("click", function () {
+        if (window.basculerMainLeveeSTI) window.basculerMainLeveeSTI(true);
+      });
+      document.body.appendChild(badgeFlot);
+    }
+  }
+
+  function diffuserSignalMainLevee(action, motif) {
+    var cLoc = lireCacheSessionLocal() || {};
+    var uid = currentUid || cLoc.id || "offline-user";
+    var cl = currentClasse || cLoc.classe || "—";
+    var meta = cLoc.user_metadata || {};
+    var nomComplet = (((meta.prenom || "") + " " + (meta.nom || "")).trim()) || meta.phone || (cLoc.email || "").replace(/@tel\.sti\.tn$/i, "") || "Élève";
+    var nowIso = new Date().toISOString();
+    var payload = {
+      type: "main_levee",
+      action: action,
+      uid: uid,
+      nom: nomComplet,
+      classe: cl,
+      page: chemin || "index.html",
+      motif: motif || "Besoin d'aide en TP",
+      ts: nowIso
+    };
+    var row = {
+      user_id: uid,
+      page: "MAIN_LEVEE:" + uid,
+      lieu: JSON.stringify(payload),
+      debut: nowIso,
+      fin: nowIso,
+      duree_sec: 0
+    };
+    if (navigator.onLine && uid !== "offline-user") {
+      sb.from("acces").insert(row).then(function (r) {
+        if (r && r.error) empilerHorsLigne(row);
+      });
+      try {
+        sb.channel("sti-diffusion").send({ type: "broadcast", event: "main_levee", payload: payload });
+      } catch (e) {}
+      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      }).catch(function () {});
+    } else {
+      empilerHorsLigne(row);
+    }
+  }
+
+  window.__stiTraiterAcquittementMain = function () {
+    var etaitActive = false;
+    try { etaitActive = localStorage.getItem("sti-main-levee") === "1"; } catch (e) {}
+    if (!etaitActive) return;
+    try {
+      localStorage.removeItem("sti-main-levee");
+      localStorage.removeItem("sti-main-levee-motif");
+    } catch (e) {}
+    majPastilleMainLevee();
+    afficherToastSynchro("👨‍🏫 Le professeur a bien pris en compte votre demande d'aide !");
+  };
+
+  window.basculerMainLeveeSTI = function (forcerBaisser) {
+    var active = false;
+    try { active = localStorage.getItem("sti-main-levee") === "1"; } catch (e) {}
+    if (active || forcerBaisser) {
+      try {
+        localStorage.removeItem("sti-main-levee");
+        localStorage.removeItem("sti-main-levee-motif");
+      } catch (e) {}
+      majPastilleMainLevee();
+      diffuserSignalMainLevee("down", "");
+      afficherToastSynchro("🙋‍♂️ Vous avez baissé la main.");
+      return;
+    }
+
+    var exMod = document.getElementById("sti-modal-main-levee");
+    if (exMod) exMod.remove();
+    var fond = document.createElement("div");
+    fond.id = "sti-modal-main-levee";
+    fond.className = "sti-no-print";
+    fond.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(13,18,30,.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:14px;font:600 13px/1.45 system-ui,'Segoe UI',sans-serif;";
+    var boite = document.createElement("div");
+    boite.style.cssText = "background:#fffdf7;color:#23201a;border:3px solid #23201a;border-radius:20px;max-width:440px;width:100%;padding:20px;box-shadow:6px 6px 0 #6d28d9;color-scheme:light;";
+    boite.innerHTML =
+      "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:10px'>" +
+        "<strong style='font-size:16px;font-weight:900;color:#6d28d9'>🙋‍♂️ Lever la main (Demander de l'aide)</strong>" +
+        "<button type='button' id='sti-ml-close' style='border:2px solid #23201a;background:#c0392b;color:#fff;border-radius:10px;width:32px;height:30px;font-weight:900;cursor:pointer'>✕</button>" +
+      "</div>" +
+      "<p style='font-size:12.5px;color:#5a5244;margin:0 0 10px;font-weight:700'>Vous êtes ajouté(e) dans la file d'attente du professeur avec votre page actuelle (<code>" + esc(chemin || "index.html") + "</code>).</p>" +
+      "<label style='font-size:12px;font-weight:800;display:block;margin-bottom:4px'>💬 Sur quoi bloquez-vous ? (optionnel) :</label>" +
+      "<input id='sti-ml-motif' type='text' placeholder='Ex : Question 3 SQL, fonction verif() JS, connexion PHP…' style='width:100%;padding:9px 11px;border:2px solid #23201a;border-radius:10px;font-weight:700;font-size:13px;background:#fff;color:#23201a;margin-bottom:12px'>" +
+      "<div style='display:flex;gap:8px;justify-content:flex-end'>" +
+        "<button type='button' id='sti-ml-cancel' style='border:2px solid #23201a;background:#f3ead9;color:#23201a;border-radius:999px;padding:8px 14px;font-weight:800;cursor:pointer'>Annuler</button>" +
+        "<button type='button' id='sti-ml-submit' style='border:2px solid #23201a;background:#6d28d9;color:#fff;border-radius:999px;padding:8px 16px;font-weight:900;cursor:pointer;box-shadow:2px 2px 0 #23201a'>🙋‍♂️ Lever la main</button>" +
+      "</div>";
+    fond.appendChild(boite);
+    (document.body || document.documentElement).appendChild(fond);
+
+    var inpM = boite.querySelector("#sti-ml-motif");
+    setTimeout(function () { if (inpM) inpM.focus(); }, 40);
+    function validerMain() {
+      var m = (inpM && inpM.value.trim()) || ("Aide demandée sur " + (chemin || "TP"));
+      try {
+        localStorage.setItem("sti-main-levee", "1");
+        localStorage.setItem("sti-main-levee-motif", m);
+      } catch (e) {}
+      fond.remove();
+      majPastilleMainLevee();
+      diffuserSignalMainLevee("up", m);
+      afficherToastSynchro("🙋‍♂️ Main levée ! Le professeur a été notifié de votre position dans la file d'attente.");
+    }
+    boite.querySelector("#sti-ml-submit").addEventListener("click", validerMain);
+    if (inpM) inpM.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); validerMain(); } });
+    boite.querySelector("#sti-ml-close").addEventListener("click", function () { fond.remove(); });
+    boite.querySelector("#sti-ml-cancel").addEventListener("click", function () { fond.remove(); });
+    fond.addEventListener("click", function (e) { if (e.target === fond) fond.remove(); });
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", majPastilleMainLevee);
+  } else {
+    setTimeout(majPastilleMainLevee, 200);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     🔗 6. VISUALISEUR INTERACTIF HTML <form> ➔ $_POST PHP ➔ INSERT SQL
+     ══════════════════════════════════════════════════════════ */
+  window.ouvrirSimulateurFormPhpSqlSTI = function () {
+    var ex = document.getElementById("sti-sim-phpsql-modal");
+    if (ex) ex.remove();
+
+    var lignesTable = [
+      { cin: "14523698", nom: "Ben Ali Sami", classe: "4SI1", moyenne: "15.50" },
+      { cin: "09874123", nom: "Trabelsi Ines", classe: "4SI2", moyenne: "16.75" }
+    ];
+
+    var fond = document.createElement("div");
+    fond.id = "sti-sim-phpsql-modal";
+    fond.className = "sti-no-print";
+    fond.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(13,18,30,.82);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:12px;font:600 13px/1.45 system-ui,'Segoe UI',sans-serif;";
+
+    var boite = document.createElement("div");
+    boite.style.cssText = "background:#fffdf7;color:#23201a;border:3px solid #23201a;border-radius:20px;width:min(1120px,97vw);max-height:92vh;display:flex;flex-direction:column;box-shadow:7px 7px 0 #f4511e;overflow:hidden;color-scheme:light;";
+
+    boite.innerHTML =
+      "<div style='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:12px 16px;background:#f9f1e3;border-bottom:2.5px solid #23201a'>" +
+        "<div>" +
+          "<strong style='font-size:15.5px;font-weight:900;color:#23201a'>🔗 Visualiseur interactif : Formulaire HTML5 ➔ $_POST PHP ➔ INSERT SQL (Bac Pratique)</strong>" +
+          "<div style='font-size:11.5px;color:#5a5244;font-weight:700'>Modifiez les attributs <code>name=\"...\"</code> ou les valeurs saisies pour voir comment PHP les récupère et les insère dans MySQL.</div>" +
+        "</div>" +
+        "<button type='button' id='sti-sim-close' style='border:2px solid #23201a;background:#c0392b;color:#fff;border-radius:10px;padding:6px 12px;font-weight:900;font-size:12px;cursor:pointer'>✕ Fermer</button>" +
+      "</div>" +
+      "<div style='flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px'>" +
+        "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px'>" +
+          /* Colonne 1 : Formulaire HTML */
+          "<div style='background:#fff;border:2px solid #23201a;border-radius:14px;padding:12px;box-shadow:3px 3px 0 #23201a'>" +
+            "<div style='font-weight:900;font-size:13px;color:#d84315;margin-bottom:8px'>🌐 1. Formulaire HTML (<code>ajout.html</code>)</div>" +
+            "<div style='font-size:11.5px;background:#f3ead9;padding:6px 8px;border-radius:8px;margin-bottom:8px;font-family:monospace'>&lt;form method=\"<b>POST</b>\" action=\"<b>ajout.php</b>\"&gt;</div>" +
+            "<div style='display:grid;gap:7px'>" +
+              "<div><label style='font-size:11px;font-weight:800'>Attribut <code>name</code> du champ CIN : <input id='sim-n-cin' value='cin' style='width:85px;padding:2px 6px;border:1.5px solid #6d28d9;border-radius:6px;font-family:monospace;font-weight:900;color:#6d28d9'></label>" +
+              "<input id='sim-v-cin' value='12345678' placeholder='Valeur CIN (8 chiffres)' style='width:100%;margin-top:3px;padding:6px 8px;border:1.5px solid #23201a;border-radius:8px;font-weight:700'></div>" +
+              "<div><label style='font-size:11px;font-weight:800'>Attribut <code>name</code> du champ Nom : <input id='sim-n-nom' value='nom' style='width:85px;padding:2px 6px;border:1.5px solid #6d28d9;border-radius:6px;font-family:monospace;font-weight:900;color:#6d28d9'></label>" +
+              "<input id='sim-v-nom' value='Mansouri Yasmine' placeholder='Nom et Prénom' style='width:100%;margin-top:3px;padding:6px 8px;border:1.5px solid #23201a;border-radius:8px;font-weight:700'></div>" +
+              "<div style='display:grid;grid-template-columns:1fr 1fr;gap:6px'>" +
+                "<div><label style='font-size:11px;font-weight:800'><code>name</code> Classe : <input id='sim-n-cl' value='classe' style='width:65px;padding:2px 5px;border:1.5px solid #6d28d9;border-radius:6px;font-family:monospace;font-weight:900;color:#6d28d9'></label>" +
+                "<select id='sim-v-cl' style='width:100%;margin-top:3px;padding:6px;border:1.5px solid #23201a;border-radius:8px;font-weight:700'><option value='4SI1'>4SI1</option><option value='4SI2'>4SI2</option><option value='4SI3'>4SI3</option></select></div>" +
+                "<div><label style='font-size:11px;font-weight:800'><code>name</code> Moyenne : <input id='sim-n-moy' value='moyenne' style='width:68px;padding:2px 5px;border:1.5px solid #6d28d9;border-radius:6px;font-family:monospace;font-weight:900;color:#6d28d9'></label>" +
+                "<input id='sim-v-moy' value='17.25' style='width:100%;margin-top:3px;padding:6px 8px;border:1.5px solid #23201a;border-radius:8px;font-weight:700'></div>" +
+              "</div>" +
+              "<button type='button' id='sim-btn-submit' style='margin-top:4px;border:2px solid #23201a;background:linear-gradient(120deg,#177245,#2ecc71);color:#fff;border-radius:999px;padding:8px 14px;font-weight:900;cursor:pointer;box-shadow:2px 2px 0 #23201a'>🚀 Simuler le clic sur Submit (Envoyer vers ajout.php)</button>" +
+            "</div>" +
+          "</div>" +
+          /* Colonne 2 : Réception PHP $_POST */
+          "<div style='background:#17172e;color:#f5f3ff;border:2px solid #23201a;border-radius:14px;padding:12px;box-shadow:3px 3px 0 #23201a;display:flex;flex-direction:column'>" +
+            "<div style='font-weight:900;font-size:13px;color:#ffd23f;margin-bottom:6px'>🐘 2. Réception PHP (<code>ajout.php</code>)</div>" +
+            "<div id='sim-php-alerte' style='display:none;background:#fde2e6;color:#c0392b;border:1.5px solid #c0392b;border-radius:8px;padding:6px 8px;font-size:11.5px;font-weight:800;margin-bottom:6px'></div>" +
+            "<pre id='sim-php-code' style='flex:1;margin:0;background:#0f0f23;color:#8aff80;padding:10px;border-radius:10px;font:600 11.5px/1.5 ui-monospace,Consolas,monospace;overflow-x:auto;white-space:pre-wrap'></pre>" +
+          "</div>" +
+          /* Colonne 3 : Requête SQL & Table MySQL */
+          "<div style='background:#fff;border:2px solid #23201a;border-radius:14px;padding:12px;box-shadow:3px 3px 0 #23201a;display:flex;flex-direction:column'>" +
+            "<div style='font-weight:900;font-size:13px;color:#177245;margin-bottom:6px'>🗄️ 3. Requête SQL exécutée &amp; Table <code>eleve</code></div>" +
+            "<pre id='sim-sql-code' style='margin:0 0 8px;background:#0f0f23;color:#ffd23f;padding:9px;border-radius:10px;font:700 11.5px/1.45 ui-monospace,Consolas,monospace;white-space:pre-wrap'></pre>" +
+            "<div id='sim-sql-msg' style='font-size:11.5px;font-weight:800;padding:6px 8px;border-radius:8px;margin-bottom:8px;background:#e3f6e8;color:#177245'>✅ Prêt : cliquez sur « Simuler le clic sur Submit » pour insérer dans MySQL.</div>" +
+            "<div style='font-size:11.5px;font-weight:900;margin-bottom:4px'>📋 Contenu en direct de la table MySQL <code>eleve</code> :</div>" +
+            "<div style='overflow-x:auto'><table style='width:100%;border-collapse:collapse;font-size:11.5px'>" +
+              "<thead><tr style='background:#f3ead9'><th style='border:1px solid #23201a;padding:4px 6px'>🔑 cin</th><th style='border:1px solid #23201a;padding:4px 6px'>nom</th><th style='border:1px solid #23201a;padding:4px 6px'>classe</th><th style='border:1px solid #23201a;padding:4px 6px'>moyenne</th></tr></thead>" +
+              "<tbody id='sim-tb-eleve'></tbody>" +
+            "</table></div>" +
+          "</div>" +
+        "</div>" +
+      "</div>";
+
+    fond.appendChild(boite);
+    (document.body || document.documentElement).appendChild(fond);
+
+    var nCin = boite.querySelector("#sim-n-cin");
+    var vCin = boite.querySelector("#sim-v-cin");
+    var nNom = boite.querySelector("#sim-n-nom");
+    var vNom = boite.querySelector("#sim-v-nom");
+    var nCl = boite.querySelector("#sim-n-cl");
+    var vCl = boite.querySelector("#sim-v-cl");
+    var nMoy = boite.querySelector("#sim-n-moy");
+    var vMoy = boite.querySelector("#sim-v-moy");
+    var phpAlerte = boite.querySelector("#sim-php-alerte");
+    var phpCode = boite.querySelector("#sim-php-code");
+    var sqlCode = boite.querySelector("#sim-sql-code");
+    var sqlMsg = boite.querySelector("#sim-sql-msg");
+    var tbEleve = boite.querySelector("#sim-tb-eleve");
+
+    function peindreTable() {
+      tbEleve.innerHTML = "";
+      lignesTable.forEach(function (r) {
+        var tr = document.createElement("tr");
+        tr.innerHTML =
+          "<td style='border:1px solid #23201a;padding:4px 6px;font-family:monospace;font-weight:800'>" + esc(r.cin) + "</td>" +
+          "<td style='border:1px solid #23201a;padding:4px 6px'>" + esc(r.nom) + "</td>" +
+          "<td style='border:1px solid #23201a;padding:4px 6px;font-weight:800'>" + esc(r.classe) + "</td>" +
+          "<td style='border:1px solid #23201a;padding:4px 6px;font-weight:800;color:#177245'>" + esc(r.moyenne) + "</td>";
+        tbEleve.appendChild(tr);
+      });
+    }
+
+    function actualiserApercu() {
+      var nc = nCin.value.trim();
+      var nn = nNom.value.trim();
+      var ncl = nCl.value.trim();
+      var nm = nMoy.value.trim();
+      var vc = vCin.value;
+      var vn = vNom.value;
+      var vcl = vCl.value;
+      var vm = vMoy.value;
+
+      var erreursName = [];
+      if (nc !== "cin") erreursName.push("Le champ CIN a name=\"" + nc + "\" au lieu de \"cin\" ➔ $_POST['cin'] sera vide (Undefined array key) !");
+      if (nn !== "nom") erreursName.push("Le champ Nom a name=\"" + nn + "\" au lieu de \"nom\" ➔ $_POST['nom'] sera vide !");
+      if (ncl !== "classe") erreursName.push("La liste Classe a name=\"" + ncl + "\" au lieu de \"classe\" !");
+      if (nm !== "moyenne") erreursName.push("Le champ Moyenne a name=\"" + nm + "\" au lieu de \"moyenne\" !");
+
+      if (erreursName.length) {
+        phpAlerte.style.display = "block";
+        phpAlerte.textContent = "⚠️ Piège Bac détecté : " + erreursName.join(" | ");
+      } else {
+        phpAlerte.style.display = "none";
+      }
+
+      var valPostCin = (nc === "cin") ? vc : "NULL (Undefined key 'cin')";
+      var valPostNom = (nn === "nom") ? vn : "NULL (Undefined key 'nom')";
+      var valPostCl = (ncl === "classe") ? vcl : "NULL (Undefined key 'classe')";
+      var valPostMoy = (nm === "moyenne") ? vm : "0";
+
+      phpCode.textContent =
+        "<?php\n" +
+        "// 1. Tableau $_POST reçu par le serveur :\n" +
+        "// $_POST['" + (nc || "?") + "'] = \"" + vc + "\";\n" +
+        "// $_POST['" + (nn || "?") + "'] = \"" + vn + "\";\n\n" +
+        "$con = mysqli_connect('localhost', 'root', '', 'bd_bac');\n" +
+        "$cin     = $_POST['cin'];     // ➔ \"" + valPostCin + "\"\n" +
+        "$nom     = $_POST['nom'];     // ➔ \"" + valPostNom + "\"\n" +
+        "$classe  = $_POST['classe'];  // ➔ \"" + valPostCl + "\"\n" +
+        "$moyenne = $_POST['moyenne']; // ➔ " + valPostMoy + "\n\n" +
+        "$req = \"INSERT INTO eleve (cin, nom, classe, moyenne)\n" +
+        "        VALUES ('$cin', '$nom', '$classe', $moyenne)\";\n" +
+        "$res = mysqli_query($con, $req);\n" +
+        "if (mysqli_affected_rows($con) > 0) {\n" +
+        "    echo 'Insertion réussie !';\n" +
+        "}\n?>";
+
+      sqlCode.textContent =
+        "INSERT INTO eleve (cin, nom, classe, moyenne)\n" +
+        "VALUES ('" + (nc === "cin" ? vc : "") + "', '" + (nn === "nom" ? vn : "") + "', '" + (ncl === "classe" ? vcl : "") + "', " + (nm === "moyenne" ? (vm || "0") : "0") + ");";
+    }
+
+    [nCin, vCin, nNom, vNom, nCl, vCl, nMoy, vMoy].forEach(function (el) {
+      el.addEventListener("input", actualiserApercu);
+      el.addEventListener("change", actualiserApercu);
+    });
+
+    boite.querySelector("#sim-btn-submit").addEventListener("click", function () {
+      actualiserApercu();
+      if (nCin.value.trim() !== "cin" || nNom.value.trim() !== "nom" || nCl.value.trim() !== "classe" || nMoy.value.trim() !== "moyenne") {
+        sqlMsg.style.background = "#fde2e6";
+        sqlMsg.style.color = "#c0392b";
+        sqlMsg.textContent = "❌ Échec PHP : un attribut name=\"...\" HTML ne correspond pas à la clé $_POST['...'] attendue !";
+        return;
+      }
+      var c = vCin.value.trim();
+      var n = vNom.value.trim();
+      var cl = vCl.value.trim();
+      var m = vMoy.value.trim();
+      if (!/^\d{8}$/.test(c)) {
+        sqlMsg.style.background = "#fde2e6";
+        sqlMsg.style.color = "#c0392b";
+        sqlMsg.textContent = "❌ Contrainte SQL / JS : le CIN doit comporter exactement 8 chiffres.";
+        return;
+      }
+      if (lignesTable.some(function (x) { return x.cin === c; })) {
+        sqlMsg.style.background = "#fde2e6";
+        sqlMsg.style.color = "#c0392b";
+        sqlMsg.textContent = "❌ Erreur MySQL #1062 : Duplicate entry '" + c + "' for key 'PRIMARY' (ce CIN existe déjà !).";
+        return;
+      }
+      if (!n || isNaN(Number(m)) || Number(m) < 0 || Number(m) > 20) {
+        sqlMsg.style.background = "#fde2e6";
+        sqlMsg.style.color = "#c0392b";
+        sqlMsg.textContent = "❌ Erreur : vérifiez que le nom est rempli et que la moyenne est comprise entre 0 et 20.";
+        return;
+      }
+      lignesTable.push({ cin: c, nom: n, classe: cl, moyenne: Number(m).toFixed(2) });
+      peindreTable();
+      sqlMsg.style.background = "#e3f6e8";
+      sqlMsg.style.color = "#177245";
+      sqlMsg.textContent = "✅ mysqli_affected_rows($con) = 1 : l'élève « " + n + " » a été inséré dans la table MySQL !";
+    });
+
+    boite.querySelector("#sti-sim-close").addEventListener("click", function () { fond.remove(); });
+    fond.addEventListener("click", function (e) { if (e.target === fond) fond.remove(); });
+
+    peindreTable();
+    actualiserApercu();
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     📝 7. MODE « EXAMEN BLANC STI » (NOTE / 20 MULTI-CHAPITRES + RADAR)
+     ══════════════════════════════════════════════════════════ */
+  var BANQUE_EXAMEN_BLANC_STI = [
+    { chap: "HTML5", q: "Quel attribut HTML5 d'un champ <input> est indispensable pour que sa valeur soit envoyée au serveur PHP ?", opts: ["id", "name", "value", "class"], rep: 1, exp: "Seul l'attribut name='...' sert de clé dans $_POST['...'] ou $_GET['...']. L'attribut id sert pour le DOM JavaScript et le CSS." },
+    { chap: "HTML5", q: "Quelle balise HTML5 permet de proposer une liste d'autocomplétion associée à un champ <input list=\"...\"> ?", opts: ["<select>", "<datalist>", "<optgroup>", "<output>"], rep: 1, exp: "La balise <datalist id='...'> contient des <option value='...'> et se lie à un <input> via l'attribut list='...'." },
+    { chap: "HTML5", q: "Dans un tableau HTML, quel attribut permet de fusionner une cellule horizontalement sur 3 colonnes ?", opts: ["rowspan=\"3\"", "colspan=\"3\"", "span=\"3\"", "merge=\"3\""], rep: 1, exp: "colspan fusionne horizontalement plusieurs colonnes, tandis que rowspan fusionne verticalement plusieurs lignes." },
+    { chap: "HTML5", q: "Quel attribut d'une balise <form> déclenche une fonction JavaScript de validation juste avant l'envoi ?", opts: ["onclick", "onchange", "onsubmit=\"return verif()\"", "onload"], rep: 2, exp: "onsubmit=\"return verif()\" sur la balise <form> bloque l'envoi si la fonction verif() retourne false." },
+    { chap: "HTML5", q: "Quel type d'input HTML5 affiche un curseur de sélection numérique ?", opts: ["type=\"number\"", "type=\"range\"", "type=\"slider\"", "type=\"step\""], rep: 1, exp: "<input type=\"range\" min=\"...\" max=\"...\"> affiche un curseur glissant." },
+    { chap: "CSS3", q: "En CSS3 Flexbox, quelle propriété aligne les éléments enfants sur l'axe principal (horizontal en row) ?", opts: ["align-items", "justify-content", "flex-wrap", "align-content"], rep: 1, exp: "justify-content gère l'axe principal (space-between, center, space-around) et align-items gère l'axe secondaire." },
+    { chap: "CSS3", q: "Quel sélecteur CSS cible uniquement l'élément ayant l'identifiant id=\"entete\" ?", opts: [".entete", "#entete", "entete", "*entete"], rep: 1, exp: "Le dièse # cible un id unique, tandis que le point . cible une classe." },
+    { chap: "CSS3", q: "Quelle règle CSS3 est utilisée pour définir les étapes d'une animation nommée \"rebond\" ?", opts: ["@animation rebond", "@keyframes rebond", "@transition rebond", "@frames rebond"], rep: 1, exp: "@keyframes nom_animation { 0% {...} 100% {...} } définit les étapes d'une animation CSS3." },
+    { chap: "CSS3", q: "Quelle propriété CSS3 permet d'arrondir les coins d'une boîte ?", opts: ["box-shadow", "border-radius", "border-style", "corner-radius"], rep: 1, exp: "border-radius arrondit les angles d'un élément (ex: border-radius: 12px; ou 50% pour un cercle)." },
+    { chap: "CSS3", q: "Pour positionner un élément par rapport à son parent direct en position: absolute, quelle position doit avoir ce parent ?", opts: ["position: static", "position: relative", "position: inline", "position: block"], rep: 1, exp: "Un élément en position: absolute se place par rapport à son premier ancêtre non-static (généralement position: relative)." },
+    { chap: "JS", q: "En JavaScript, que renvoie \"Bac_STI\".indexOf(\"Z\") ?", opts: ["0", "false", "-1", "null"], rep: 2, exp: "indexOf() renvoie l'indice de la 1re occurrence (à partir de 0) ou -1 si la sous-chaîne est introuvable." },
+    { chap: "JS", q: "Quelle expression JavaScript extrait les 3 premiers caractères de la chaîne ch ?", opts: ["ch.substring(0, 3)", "ch.substring(1, 3)", "ch.charAt(0, 3)", "ch.slice(1, 4)"], rep: 0, exp: "ch.substring(debut, fin) extrait de l'indice 0 inclus jusqu'à l'indice 3 exclu (soit indices 0, 1 et 2)." },
+    { chap: "JS", q: "Comment vérifier en JavaScript qu'une chaîne ch contient uniquement des chiffres ?", opts: ["!isNaN(ch) && ch !== \"\"", "ch.isNumber()", "typeof ch === 'number'", "parseInt(ch) === true"], rep: 0, exp: "isNaN(ch) renvoie false si ch est numérique. On vérifie aussi que ch n'est pas vide." },
+    { chap: "JS", q: "Comment savoir si le bouton radio d'identifiant id=\"r1\" est coché en JavaScript ?", opts: ["document.getElementById('r1').value == true", "document.getElementById('r1').checked", "document.getElementById('r1').selected", "document.getElementById('r1').on"], rep: 1, exp: "La propriété booléenne .checked indique si un bouton radio ou une case à cocher (checkbox) est coché." },
+    { chap: "JS", q: "Quelle méthode de l'objet Date renvoie l'année sur 4 chiffres (ex. 2026) ?", opts: ["d.getYear()", "d.getFullYear()", "d.year()", "d.getAnnee()"], rep: 1, exp: "new Date().getFullYear() renvoie l'année complète sur 4 chiffres." },
+    { chap: "SQL", q: "Dans une requête SQL, quelle clause permet de filtrer le résultat d'une fonction d'agrégation comme COUNT(*) ou AVG() ?", opts: ["WHERE", "HAVING", "ORDER BY", "GROUP BY"], rep: 1, exp: "WHERE filtre les lignes avant regroupement ; HAVING filtre les groupes après GROUP BY sur les fonctions d'agrégation." },
+    { chap: "SQL", q: "Quel est l'ordre syntaxique exact des clauses dans une requête SELECT complète ?", opts: ["SELECT ➔ FROM ➔ WHERE ➔ GROUP BY ➔ HAVING ➔ ORDER BY", "SELECT ➔ WHERE ➔ FROM ➔ GROUP BY ➔ ORDER BY ➔ HAVING", "SELECT ➔ FROM ➔ GROUP BY ➔ WHERE ➔ HAVING ➔ ORDER BY", "SELECT ➔ FROM ➔ HAVING ➔ WHERE ➔ GROUP BY ➔ ORDER BY"], rep: 0, exp: "L'ordre impératif SQL est : SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ..." },
+    { chap: "SQL", q: "Quelle commande SQL permet d'ajouter une contrainte de clé étrangère sur une table existante ?", opts: ["UPDATE TABLE ... ADD FOREIGN KEY", "ALTER TABLE ... ADD CONSTRAINT ... FOREIGN KEY (...) REFERENCES ...", "MODIFY TABLE ... FOREIGN KEY", "INSERT CONSTRAINT FOREIGN KEY"], rep: 1, exp: "C'est une commande LDD : ALTER TABLE nom_table ADD CONSTRAINT fk_nom FOREIGN KEY (col) REFERENCES table_parente(pk);" },
+    { chap: "SQL", q: "Quelle fonction SQL permet d'obtenir l'année d'une colonne de type DATE ?", opts: ["DATE_YEAR(col)", "YEAR(col)", "GETYEAR(col)", "EXTRACT_YEAR(col)"], rep: 1, exp: "En MySQL, YEAR(date_col), MONTH(date_col) et DAY(date_col) extraient respectivement l'année, le mois et le jour." },
+    { chap: "SQL", q: "Quelle commande LMD permet de modifier la valeur d'un champ pour des lignes existantes d'une table ?", opts: ["ALTER TABLE", "MODIFY", "UPDATE nom_table SET col = val WHERE ...", "INSERT INTO"], rep: 2, exp: "UPDATE table SET colonne = nouvelle_valeur WHERE condition; modifie les enregistrements existants." },
+    { chap: "PHP", q: "Quelle fonction PHP MySQLi permet de parcourir ligne par ligne le résultat d'une requête SELECT sous forme de tableau associatif ?", opts: ["mysqli_query()", "mysqli_fetch_array($res) / mysqli_fetch_assoc($res)", "mysqli_num_rows($res)", "mysqli_affected_rows($con)"], rep: 1, exp: "while ($t = mysqli_fetch_array($res)) permet de lire chaque ligne retournée par un SELECT." },
+    { chap: "PHP", q: "Quelle fonction PHP MySQLi retourne le nombre de lignes trouvées par une requête SELECT ?", opts: ["mysqli_affected_rows($con)", "mysqli_num_rows($res)", "mysqli_count($res)", "count($res)"], rep: 1, exp: "mysqli_num_rows($res) s'utilise sur le résultat d'un SELECT, tandis que mysqli_affected_rows($con) s'utilise après INSERT/UPDATE/DELETE." },
+    { chap: "PHP", q: "En PHP, comment concatène-t-on deux chaînes de caractères $nom et $prenom avec un espace ?", opts: ["$nom + ' ' + $prenom", "$nom . ' ' . $prenom", "$nom & ' ' & $prenom", "concat($nom, $prenom)"], rep: 1, exp: "En PHP, l'opérateur de concaténation de chaînes est le point (.) et non le signe (+)." },
+    { chap: "PHP", q: "Quel est l'ordre exact des 4 paramètres de mysqli_connect() ?", opts: ["('localhost', 'bd', 'root', '')", "('localhost', 'root', '', 'nom_bd')", "('root', '', 'localhost', 'nom_bd')", "('nom_bd', 'localhost', 'root', '')"], rep: 1, exp: "mysqli_connect(serveur, utilisateur, mot_de_passe, base_de_donnees) : ex. mysqli_connect('localhost', 'root', '', 'bd_sti')." }
+  ];
+
+  window.ouvrirExamenBlancSTI = function () {
+    var ex = document.getElementById("sti-examen-blanc-modal");
+    if (ex) ex.remove();
+
+    var cLoc = lireCacheSessionLocal() || {};
+    var maCl = currentClasse || cLoc.classe || "";
+    var ok4SI = estAutorise4SI(maCl, estSessionAdminVerifiee());
+
+    var questions = BANQUE_EXAMEN_BLANC_STI.filter(function (q) {
+      if (!ok4SI && q.chap === "PHP") return false;
+      return true;
+    }).slice(0, 20);
+
+    var reponsesEleve = {};
+    var termine = false;
+    var debutMs = Date.now();
+    var dureeTotSec = 20 * 60;
+
+    var fond = document.createElement("div");
+    fond.id = "sti-examen-blanc-modal";
+    fond.className = "sti-no-print";
+    fond.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(13,18,30,.85);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:12px;font:600 13px/1.45 system-ui,'Segoe UI',sans-serif;";
+
+    var boite = document.createElement("div");
+    boite.style.cssText = "background:#fffdf7;color:#23201a;border:3px solid #23201a;border-radius:20px;width:min(920px,97vw);height:min(90vh,760px);display:flex;flex-direction:column;box-shadow:7px 7px 0 #f4511e;overflow:hidden;color-scheme:light;";
+
+    boite.innerHTML =
+      "<div style='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:12px 16px;background:#f9f1e3;border-bottom:2.5px solid #23201a'>" +
+        "<div style='display:flex;align-items:center;gap:10px;flex-wrap:wrap'>" +
+          "<strong style='font-size:16px;font-weight:900;color:#23201a'>📝 Examen Blanc STI (/20)</strong>" +
+          "<span style='background:#23201a;color:#ffd54f;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:900' id='sti-eb-timer'>⏱️ 20:00</span>" +
+          "<span style='font-size:12px;font-weight:800;color:#5a5244' id='sti-eb-prog'>0 / " + questions.length + " répondues</span>" +
+        "</div>" +
+        "<div style='display:flex;gap:8px;align-items:center'>" +
+          "<button type='button' id='sti-eb-submit' style='border:2px solid #23201a;background:linear-gradient(120deg,#177245,#2ecc71);color:#fff;border-radius:999px;padding:6px 14px;font-weight:900;font-size:12px;cursor:pointer;box-shadow:2px 2px 0 #23201a'>✅ Terminer &amp; Corriger (/20)</button>" +
+          "<button type='button' id='sti-eb-close' style='border:2px solid #23201a;background:#c0392b;color:#fff;border-radius:10px;padding:6px 12px;font-weight:900;font-size:12px;cursor:pointer'>✕</button>" +
+        "</div>" +
+      "</div>" +
+      "<div id='sti-eb-body' style='flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px'></div>";
+
+    fond.appendChild(boite);
+    (document.body || document.documentElement).appendChild(fond);
+
+    var bodyEl = boite.querySelector("#sti-eb-body");
+    var timerEl = boite.querySelector("#sti-eb-timer");
+    var progEl = boite.querySelector("#sti-eb-prog");
+    var btnSubmit = boite.querySelector("#sti-eb-submit");
+
+    var ivTimer = setInterval(function () {
+      if (termine) return;
+      var ecoule = Math.floor((Date.now() - debutMs) / 1000);
+      var rest = Math.max(0, dureeTotSec - ecoule);
+      var mm = String(Math.floor(rest / 60)).padStart(2, "0");
+      var ss = String(rest % 60).padStart(2, "0");
+      if (timerEl) timerEl.textContent = "⏱️ " + mm + ":" + ss;
+      if (rest <= 0) corrigerExamen();
+    }, 1000);
+
+    function peindreQuestions() {
+      bodyEl.innerHTML = "";
+      if (termine) {
+        var statsChap = {};
+        var totalBonnes = 0;
+        questions.forEach(function (q, idx) {
+          if (!statsChap[q.chap]) statsChap[q.chap] = { ok: 0, tot: 0 };
+          statsChap[q.chap].tot++;
+          if (reponsesEleve[idx] === q.rep) {
+            totalBonnes++;
+            statsChap[q.chap].ok++;
+          }
+        });
+        var note20 = Math.round((totalBonnes / questions.length) * 20 * 10) / 10;
+        var mention = note20 >= 16 ? "🌟 Très Bien" : (note20 >= 14 ? "👏 Bien" : (note20 >= 12 ? "👍 Assez Bien" : (note20 >= 10 ? "✅ Passable" : "💪 À renforcer")));
+
+        var bilanRadar = document.createElement("div");
+        bilanRadar.style.cssText = "background:linear-gradient(120deg,#fff3b0,#ffe0b2);border:2.5px solid #23201a;border-radius:16px;padding:14px 16px;box-shadow:4px 4px 0 #23201a;";
+        var barresHtml = Object.keys(statsChap).map(function (ch) {
+          var st = statsChap[ch];
+          var pct = Math.round((st.ok / st.tot) * 100);
+          var col = pct >= 75 ? "#177245" : (pct >= 50 ? "#d97706" : "#c0392b");
+          return "<div style='margin-top:6px'>" +
+            "<div style='display:flex;justify-content:space-between;font-size:12px;font-weight:900'><span>📌 Chapitre " + esc(ch) + "</span><span style='color:" + col + "'>" + st.ok + " / " + st.tot + " (" + pct + " %)</span></div>" +
+            "<div style='height:9px;background:#fff;border:1.5px solid #23201a;border-radius:999px;overflow:hidden;margin-top:2px'><div style='width:" + pct + "%;height:100%;background:" + col + "'></div></div>" +
+          "</div>";
+        }).join("");
+
+        bilanRadar.innerHTML =
+          "<div style='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px'>" +
+            "<div><strong style='font-size:18px;font-weight:900;color:#23201a'>🏆 Note finale : " + note20 + " / 20 (" + mention + ")</strong>" +
+            "<div style='font-size:12px;font-weight:800;color:#177245'>✅ Votre note et votre bilan par chapitre ont été enregistrés et transmis au professeur.</div></div>" +
+          "</div>" +
+          "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px'>" + barresHtml + "</div>";
+        bodyEl.appendChild(bilanRadar);
+      }
+
+      questions.forEach(function (q, idx) {
+        var card = document.createElement("div");
+        var repEl = reponsesEleve[idx];
+        var estOk = repEl === q.rep;
+        card.style.cssText = "background:#fff;border:2px solid " + (termine ? (estOk ? "#177245" : "#c0392b") : "#23201a") + ";border-radius:14px;padding:12px 14px;box-shadow:3px 3px 0 rgba(35,32,26,.12);";
+        var optsHtml = q.opts.map(function (opt, oIdx) {
+          var sel = repEl === oIdx;
+          var bg = sel ? "#ede9fe" : "#f9f1e3";
+          var bd = sel ? "#6d28d9" : "#23201a";
+          if (termine) {
+            if (oIdx === q.rep) { bg = "#e3f6e8"; bd = "#177245"; }
+            else if (sel && oIdx !== q.rep) { bg = "#fde2e6"; bd = "#c0392b"; }
+          }
+          return "<button type='button' data-q='" + idx + "' data-o='" + oIdx + "' style='text-align:left;padding:8px 11px;border:2px solid " + bd + ";background:" + bg + ";color:#23201a;border-radius:10px;font-weight:800;font-size:12.5px;cursor:" + (termine ? "default" : "pointer") + "'>" +
+            String.fromCharCode(65 + oIdx) + ". " + esc(opt) +
+          "</button>";
+        }).join("");
+
+        card.innerHTML =
+          "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:6px'>" +
+            "<span style='font-weight:900;font-size:13px'>Question " + (idx + 1) + " / " + questions.length + "</span>" +
+            "<span style='background:#f3ead9;border:1.5px solid #23201a;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:900'>" + esc(q.chap) + "</span>" +
+          "</div>" +
+          "<div style='font-size:13.5px;font-weight:800;margin-bottom:8px;color:#23201a'>" + esc(q.q) + "</div>" +
+          "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px'>" + optsHtml + "</div>" +
+          (termine ? ("<div style='margin-top:8px;padding:7px 10px;border-radius:8px;background:#f3ead9;font-size:12px;font-weight:700;color:#23201a'>💡 <b>Explication :</b> " + esc(q.exp) + "</div>") : "");
+
+        bodyEl.appendChild(card);
+      });
+
+      if (!termine) {
+        bodyEl.querySelectorAll("button[data-q]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            var qi = parseInt(b.getAttribute("data-q"), 10);
+            var oi = parseInt(b.getAttribute("data-o"), 10);
+            reponsesEleve[qi] = oi;
+            if (progEl) progEl.textContent = Object.keys(reponsesEleve).length + " / " + questions.length + " répondues";
+            peindreQuestions();
+          });
+        });
+      }
+    }
+
+    function corrigerExamen() {
+      if (termine) return;
+      termine = true;
+      clearInterval(ivTimer);
+      btnSubmit.style.display = "none";
+      var totalBonnes = 0;
+      questions.forEach(function (q, idx) {
+        if (reponsesEleve[idx] === q.rep) totalBonnes++;
+      });
+      var note20 = Math.round((totalBonnes / questions.length) * 20 * 10) / 10;
+      if (typeof window.enregistrerScoreQuizSTI === "function") {
+        window.enregistrerScoreQuizSTI("Examen Blanc STI", note20 + "/20 (" + totalBonnes + "/" + questions.length + ")", note20);
+      }
+      peindreQuestions();
+      bodyEl.scrollTop = 0;
+    }
+
+    btnSubmit.addEventListener("click", corrigerExamen);
+    function fermerEb() {
+      clearInterval(ivTimer);
+      fond.remove();
+    }
+    boite.querySelector("#sti-eb-close").addEventListener("click", fermerEb);
+    fond.addEventListener("click", function (e) { if (e.target === fond) fermerEb(); });
+
+    peindreQuestions();
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     📋 8. CONSTRUCTEUR VISUEL DE <table> (rowspan/colspan), <form> & FLEXBOX
+     ══════════════════════════════════════════════════════════ */
+  window.ouvrirConstructeurVisuelSTI = function (ongletInitial) {
+    var ex = document.getElementById("sti-constructeur-modal");
+    if (ex) ex.remove();
+
+    var tabActif = ongletInitial || "table";
+    var fond = document.createElement("div");
+    fond.id = "sti-constructeur-modal";
+    fond.className = "sti-no-print";
+    fond.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(13,18,30,.82);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:12px;font:600 13px/1.45 system-ui,'Segoe UI',sans-serif;";
+
+    var boite = document.createElement("div");
+    boite.style.cssText = "background:#fffdf7;color:#23201a;border:3px solid #23201a;border-radius:20px;width:min(1060px,97vw);height:min(88vh,740px);display:flex;flex-direction:column;box-shadow:7px 7px 0 #f4511e;overflow:hidden;color-scheme:light;";
+
+    boite.innerHTML =
+      "<div style='display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:11px 16px;background:#f9f1e3;border-bottom:2.5px solid #23201a'>" +
+        "<div style='display:flex;align-items:center;gap:8px;flex-wrap:wrap'>" +
+          "<strong style='font-size:15.5px;font-weight:900;color:#23201a'>📋 Constructeur Visuel HTML5 / CSS3</strong>" +
+          "<div id='sti-cv-tabs' style='display:flex;gap:5px;flex-wrap:wrap'>" +
+            "<button type='button' data-tab='table' style='border:2px solid #23201a;border-radius:999px;padding:4px 12px;font-weight:900;font-size:12px;cursor:pointer'>📐 Tableaux (rowspan / colspan)</button>" +
+            "<button type='button' data-tab='form' style='border:2px solid #23201a;border-radius:999px;padding:4px 12px;font-weight:900;font-size:12px;cursor:pointer'>📝 Formulaires &amp; verif() JS</button>" +
+            "<button type='button' data-tab='flex' style='border:2px solid #23201a;border-radius:999px;padding:4px 12px;font-weight:900;font-size:12px;cursor:pointer'>🎨 Flexbox CSS3</button>" +
+          "</div>" +
+        "</div>" +
+        "<button type='button' id='sti-cv-close' style='border:2px solid #23201a;background:#c0392b;color:#fff;border-radius:10px;padding:5px 12px;font-weight:900;font-size:12px;cursor:pointer'>✕ Fermer</button>" +
+      "</div>" +
+      "<div id='sti-cv-content' style='flex:1;overflow-y:auto;padding:14px'></div>";
+
+    fond.appendChild(boite);
+    (document.body || document.documentElement).appendChild(fond);
+
+    var contentEl = boite.querySelector("#sti-cv-content");
+
+    function majStyleOnglets() {
+      boite.querySelectorAll("#sti-cv-tabs button[data-tab]").forEach(function (b) {
+        var on = b.getAttribute("data-tab") === tabActif;
+        b.style.background = on ? "#f4511e" : "#fff";
+        b.style.color = on ? "#fff" : "#23201a";
+      });
+    }
+
+    function rendreOngletTable() {
+      contentEl.innerHTML =
+        "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px'>" +
+          "<div style='background:#fff;border:2px solid #23201a;border-radius:14px;padding:12px'>" +
+            "<div style='font-weight:900;font-size:13.5px;margin-bottom:8px'>⚙️ Configuration du tableau <code>&lt;table border=\"1\"&gt;</code></div>" +
+            "<div style='display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px'>" +
+              "<label style='font-size:12px;font-weight:800'>Modèle Bac : <select id='cv-tb-preset' style='padding:5px 8px;border:1.5px solid #23201a;border-radius:8px;font-weight:800'>" +
+                "<option value='facture'>🧾 Facture avec Total (colspan=\"2\")</option>" +
+                "<option value='horaire'>📅 Emploi du temps (rowspan=\"2\" + colspan=\"2\")</option>" +
+                "<option value='simple'>📊 Grille simple 3 × 3</option>" +
+              "</select></label>" +
+            "</div>" +
+            "<div style='font-size:12px;color:#5a5244;margin-bottom:8px;font-weight:700'>Cliquez sur une cellule de l'aperçu ci-dessous pour modifier son texte, son <code>colspan</code> (fusion horizontale) ou son <code>rowspan</code> (fusion verticale) :</div>" +
+            "<div id='cv-tb-preview' style='padding:10px;background:#f9f1e3;border:1.5px dashed #23201a;border-radius:10px;overflow-x:auto'></div>" +
+          "</div>" +
+          "<div style='background:#17172e;color:#f5f3ff;border:2px solid #23201a;border-radius:14px;padding:12px;display:flex;flex-direction:column'>" +
+            "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:8px'>" +
+              "<strong style='color:#ffd23f;font-size:13px'>📄 Code HTML5 généré en direct</strong>" +
+              "<button type='button' id='cv-tb-copy' style='border:1.5px solid #ffd23f;background:#ffd23f;color:#17172e;border-radius:999px;padding:4px 11px;font-weight:900;font-size:11.5px;cursor:pointer'>📋 Copier le HTML</button>" +
+            "</div>" +
+            "<pre id='cv-tb-code' style='flex:1;margin:0;background:#0f0f23;color:#8aff80;padding:10px;border-radius:10px;font:600 12px/1.5 ui-monospace,Consolas,monospace;overflow-x:auto;white-space:pre-wrap'></pre>" +
+          "</div>" +
+        "</div>";
+
+      var Modeles = {
+        facture: "<table border=\"1\">\n  <thead>\n    <tr>\n      <th>Article</th>\n      <th>Quantité</th>\n      <th>Prix (DT)</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Clavier USB</td>\n      <td>2</td>\n      <td>45</td>\n    </tr>\n    <tr>\n      <td colspan=\"2\"><b>Total à payer</b></td>\n      <td><b>45 DT</b></td>\n    </tr>\n  </tbody>\n</table>",
+        horaire: "<table border=\"1\">\n  <tr>\n    <th>Jour</th>\n    <th>8h - 10h</th>\n    <th>10h - 12h</th>\n  </tr>\n  <tr>\n    <td rowspan=\"2\"><b>Lundi</b></td>\n    <td colspan=\"2\">TP STI (Salle Labo 3)</td>\n  </tr>\n  <tr>\n    <td>Algorithmique</td>\n    <td>Base de données</td>\n  </tr>\n</table>",
+        simple: "<table border=\"1\">\n  <tr>\n    <th>Nom</th>\n    <th>Classe</th>\n    <th>Moyenne</th>\n  </tr>\n  <tr>\n    <td>Sami</td>\n    <td>4SI1</td>\n    <td>15.50</td>\n  </tr>\n</table>"
+      };
+      var sel = contentEl.querySelector("#cv-tb-preset");
+      var prev = contentEl.querySelector("#cv-tb-preview");
+      var codeEl = contentEl.querySelector("#cv-tb-code");
+      function majTable() {
+        var html = Modeles[sel.value] || Modeles.facture;
+        prev.innerHTML = html;
+        prev.querySelectorAll("table").forEach(function (t) {
+          t.style.cssText = "width:100%;border-collapse:collapse;background:#fff;";
+        });
+        prev.querySelectorAll("th,td").forEach(function (c) {
+          c.style.cssText = "border:2px solid #23201a;padding:8px 10px;text-align:center;";
+          if (c.hasAttribute("colspan") || c.hasAttribute("rowspan")) {
+            c.style.background = "#fff3b0";
+          }
+        });
+        codeEl.textContent = html;
+      }
+      sel.addEventListener("change", majTable);
+      contentEl.querySelector("#cv-tb-copy").addEventListener("click", function () {
+        if (navigator.clipboard) navigator.clipboard.writeText(codeEl.textContent);
+        afficherToastSynchro("📋 Code HTML du tableau copié !");
+      });
+      majTable();
+    }
+
+    function rendreOngletForm() {
+      contentEl.innerHTML =
+        "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px'>" +
+          "<div style='background:#fff;border:2px solid #23201a;border-radius:14px;padding:12px'>" +
+            "<div style='font-weight:900;font-size:13.5px;margin-bottom:8px'>📝 Cochez les champs à inclure dans votre formulaire + <code>verif()</code></div>" +
+            "<div style='display:grid;gap:6px;font-size:12.5px;font-weight:800'>" +
+              "<label><input type='checkbox' id='cv-f-cin' checked> 🔢 Champ CIN (8 chiffres exacts en JS)</label>" +
+              "<label><input type='checkbox' id='cv-f-nom' checked> 🔤 Champ Nom &amp; Prénom (non vide, alphabétique)</label>" +
+              "<label><input type='checkbox' id='cv-f-email' checked> 📧 Champ Email (contient @ et .)</label>" +
+              "<label><input type='checkbox' id='cv-f-sel' checked> 📋 Liste déroulante <code>&lt;select&gt;</code> (selectedIndex &gt; 0)</label>" +
+              "<label><input type='checkbox' id='cv-f-rad' checked> 🔘 Boutons Radio (<code>.checked</code>)</label>" +
+            "</div>" +
+          "</div>" +
+          "<div style='background:#17172e;color:#f5f3ff;border:2px solid #23201a;border-radius:14px;padding:12px;display:flex;flex-direction:column'>" +
+            "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:8px'>" +
+              "<strong style='color:#ffd23f;font-size:13px'>📄 Code HTML5 + Fonction <code>verif()</code> JS générés</strong>" +
+              "<button type='button' id='cv-f-copy' style='border:1.5px solid #ffd23f;background:#ffd23f;color:#17172e;border-radius:999px;padding:4px 11px;font-weight:900;font-size:11.5px;cursor:pointer'>📋 Copier tout</button>" +
+            "</div>" +
+            "<pre id='cv-f-code' style='flex:1;margin:0;background:#0f0f23;color:#8aff80;padding:10px;border-radius:10px;font:600 11.5px/1.45 ui-monospace,Consolas,monospace;overflow-x:auto;white-space:pre-wrap;max-height:420px'></pre>" +
+          "</div>" +
+        "</div>";
+
+      var codeEl = contentEl.querySelector("#cv-f-code");
+      function majFormCode() {
+        var cCin = contentEl.querySelector("#cv-f-cin").checked;
+        var cNom = contentEl.querySelector("#cv-f-nom").checked;
+        var cEm = contentEl.querySelector("#cv-f-email").checked;
+        var cSel = contentEl.querySelector("#cv-f-sel").checked;
+        var cRad = contentEl.querySelector("#cv-f-rad").checked;
+
+        var h = ["<form method=\"post\" action=\"ajout.php\" onsubmit=\"return verif()\">"];
+        var j = ["function verif() {"];
+        if (cCin) {
+          h.push("  <label>CIN :</label> <input type=\"text\" id=\"cin\" name=\"cin\" maxlength=\"8\"><br>");
+          j.push("  var cin = document.getElementById('cin').value;\n  if (cin.length !== 8 || isNaN(cin)) { alert('CIN : 8 chiffres obligatoires !'); return false; }");
+        }
+        if (cNom) {
+          h.push("  <label>Nom :</label> <input type=\"text\" id=\"nom\" name=\"nom\"><br>");
+          j.push("  var nom = document.getElementById('nom').value.trim();\n  if (nom === '') { alert('Veuillez saisir le nom !'); return false; }");
+        }
+        if (cEm) {
+          h.push("  <label>Email :</label> <input type=\"email\" id=\"email\" name=\"email\"><br>");
+          j.push("  var em = document.getElementById('email').value;\n  if (em.indexOf('@') === -1 || em.indexOf('.') === -1) { alert('Email invalide !'); return false; }");
+        }
+        if (cSel) {
+          h.push("  <label>Classe :</label>\n  <select id=\"classe\" name=\"classe\">\n    <option value=\"\">-- Choisir --</option>\n    <option value=\"4SI1\">4SI1</option>\n  </select><br>");
+          j.push("  if (document.getElementById('classe').selectedIndex === 0) { alert('Choisissez une classe !'); return false; }");
+        }
+        if (cRad) {
+          h.push("  <label>Niveau :</label>\n  <input type=\"radio\" id=\"r1\" name=\"niv\" value=\"3SI\"> 3e SI\n  <input type=\"radio\" id=\"r2\" name=\"niv\" value=\"4SI\"> 4e SI<br>");
+          j.push("  if (!document.getElementById('r1').checked && !document.getElementById('r2').checked) { alert('Cochez un niveau !'); return false; }");
+        }
+        h.push("  <input type=\"submit\" value=\"Envoyer\">\n  <input type=\"reset\" value=\"Annuler\">\n</form>");
+        j.push("  return true;\n}");
+        codeEl.textContent = h.join("\n") + "\n\n<script>\n" + j.join("\n") + "\n<\/script>";
+      }
+      contentEl.querySelectorAll("input[type='checkbox']").forEach(function (ck) {
+        ck.addEventListener("change", majFormCode);
+      });
+      contentEl.querySelector("#cv-f-copy").addEventListener("click", function () {
+        if (navigator.clipboard) navigator.clipboard.writeText(codeEl.textContent);
+        afficherToastSynchro("📋 Code Formulaire + verif() copié !");
+      });
+      majFormCode();
+    }
+
+    function rendreOngletFlex() {
+      contentEl.innerHTML =
+        "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px'>" +
+          "<div style='background:#fff;border:2px solid #23201a;border-radius:14px;padding:12px'>" +
+            "<div style='font-weight:900;font-size:13.5px;margin-bottom:8px'>🎨 Paramètres CSS3 Flexbox en direct</div>" +
+            "<div style='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px'>" +
+              "<label style='font-size:11.5px;font-weight:800'>flex-direction :<select id='cv-fx-dir' style='width:100%;padding:5px;border:1.5px solid #23201a;border-radius:8px;font-weight:800'><option value='row'>row</option><option value='row-reverse'>row-reverse</option><option value='column'>column</option><option value='column-reverse'>column-reverse</option></select></label>" +
+              "<label style='font-size:11.5px;font-weight:800'>justify-content :<select id='cv-fx-jc' style='width:100%;padding:5px;border:1.5px solid #23201a;border-radius:8px;font-weight:800'><option value='space-around'>space-around</option><option value='space-between'>space-between</option><option value='center'>center</option><option value='flex-start'>flex-start</option><option value='flex-end'>flex-end</option><option value='space-evenly'>space-evenly</option></select></label>" +
+              "<label style='font-size:11.5px;font-weight:800'>align-items :<select id='cv-fx-ai' style='width:100%;padding:5px;border:1.5px solid #23201a;border-radius:8px;font-weight:800'><option value='center'>center</option><option value='flex-start'>flex-start</option><option value='flex-end'>flex-end</option><option value='stretch'>stretch</option></select></label>" +
+              "<label style='font-size:11.5px;font-weight:800'>gap :<select id='cv-fx-gap' style='width:100%;padding:5px;border:1.5px solid #23201a;border-radius:8px;font-weight:800'><option value='12px'>12px</option><option value='4px'>4px</option><option value='24px'>24px</option></select></label>" +
+            "</div>" +
+            "<div id='cv-fx-stage' style='height:190px;background:#f9f1e3;border:2px dashed #23201a;border-radius:12px;padding:12px;display:flex'>" +
+              "<div style='background:#ffd23f;border:2px solid #23201a;border-radius:10px;padding:12px 16px;font-weight:900;box-shadow:2px 2px 0 #23201a'>1. HTML5</div>" +
+              "<div style='background:#4cc9f0;border:2px solid #23201a;border-radius:10px;padding:12px 16px;font-weight:900;box-shadow:2px 2px 0 #23201a'>2. CSS3</div>" +
+              "<div style='background:#8aff80;border:2px solid #23201a;border-radius:10px;padding:12px 16px;font-weight:900;box-shadow:2px 2px 0 #23201a'>3. JS</div>" +
+            "</div>" +
+          "</div>" +
+          "<div style='background:#17172e;color:#f5f3ff;border:2px solid #23201a;border-radius:14px;padding:12px;display:flex;flex-direction:column'>" +
+            "<strong style='color:#ffd23f;font-size:13px;margin-bottom:8px'>📄 Code CSS3 généré</strong>" +
+            "<pre id='cv-fx-code' style='flex:1;margin:0;background:#0f0f23;color:#8aff80;padding:10px;border-radius:10px;font:600 12.5px/1.55 ui-monospace,Consolas,monospace'></pre>" +
+          "</div>" +
+        "</div>";
+
+      var st = contentEl.querySelector("#cv-fx-stage");
+      var cd = contentEl.querySelector("#cv-fx-code");
+      var sDir = contentEl.querySelector("#cv-fx-dir");
+      var sJc = contentEl.querySelector("#cv-fx-jc");
+      var sAi = contentEl.querySelector("#cv-fx-ai");
+      var sGap = contentEl.querySelector("#cv-fx-gap");
+      function majFlex() {
+        st.style.flexDirection = sDir.value;
+        st.style.justifyContent = sJc.value;
+        st.style.alignItems = sAi.value;
+        st.style.gap = sGap.value;
+        cd.textContent =
+          ".conteneur {\n" +
+          "  display: flex;\n" +
+          "  flex-direction: " + sDir.value + ";\n" +
+          "  justify-content: " + sJc.value + ";\n" +
+          "  align-items: " + sAi.value + ";\n" +
+          "  gap: " + sGap.value + ";\n" +
+          "}";
+      }
+      [sDir, sJc, sAi, sGap].forEach(function (el) { el.addEventListener("change", majFlex); });
+      majFlex();
+    }
+
+    function afficherOngletCourant() {
+      majStyleOnglets();
+      if (tabActif === "form") rendreOngletForm();
+      else if (tabActif === "flex") rendreOngletFlex();
+      else rendreOngletTable();
+    }
+
+    boite.querySelectorAll("#sti-cv-tabs button[data-tab]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        tabActif = b.getAttribute("data-tab") || "table";
+        afficherOngletCourant();
+      });
+    });
+
+    boite.querySelector("#sti-cv-close").addEventListener("click", function () { fond.remove(); });
+    fond.addEventListener("click", function (e) { if (e.target === fond) fond.remove(); });
+
+    afficherOngletCourant();
   };
 
   /* ---------- 4. Bouton universel « ⬆ Haut » sur toutes les pages qui n'en ont pas déjà un ---------- */

@@ -621,6 +621,11 @@
             if (typeof majUiConfigSecurite === "function") majUiConfigSecurite();
           }
         })
+        .on("broadcast", { event: "main_levee" }, function (p) {
+          if (p && p.payload && typeof recevoirMainLeveeLive === "function") {
+            recevoirMainLeveeLive(p.payload);
+          }
+        })
         .subscribe();
     } catch (e) {}
     majBoutonNotif();
@@ -858,11 +863,13 @@
 
   var idsAccesParMsg = {};
   var listeAlertesSecurite = [];
+  var mainsLeveesMap = {};
   var cfgSecuriteAdmin = {
     type: "sec_config",
     verrouActif: false,
     verrouCible: "*",
     pageAutorisee: "",
+    verrouFinMs: 0,
     motifVerrou: "Épreuve ou contrôle en cours — l'accès aux cours est temporairement verrouillé par le professeur.",
     ejectDevtools: true,
     antiTricheOnglet: true,
@@ -954,10 +961,31 @@
     listeResultatsQuiz = [];
     idsAccesParMsg = {};
     var mapSecAlertes = {};
+    var mapMainsTmp = {};
 
     tousAcces.forEach(function (a) {
         var pg = a.page || "";
         if (pg === "SUPPR_ACCES") return;
+        if (pg.indexOf("MAIN_LEVEE:") === 0) {
+          try {
+            var ml = JSON.parse(a.lieu || "{}");
+            var uidMl = ml.uid || pg.slice(11) || a.user_id;
+            var tsMl = new Date(ml.ts || a.debut).getTime() || 0;
+            if (uidMl && (!mapMainsTmp[uidMl] || tsMl >= mapMainsTmp[uidMl].tsMs)) {
+              mapMainsTmp[uidMl] = {
+                uid: uidMl,
+                nom: ml.nom || "",
+                classe: ml.classe || "—",
+                page: ml.page || "site",
+                motif: ml.motif || "Besoin d'aide en TP",
+                ts: ml.ts || a.debut,
+                tsMs: tsMl,
+                active: ml.action !== "down"
+              };
+            }
+          } catch (e) {}
+          return;
+        }
         if (pg === "SEC_CONFIG") {
           try {
             var sc = JSON.parse(a.lieu || "{}");
@@ -1130,10 +1158,33 @@
               if (!cfgSecuriteAdmin.purgeAlertesTs || tsAlN > Number(cfgSecuriteAdmin.purgeAlertesTs)) {
                 if (!mapSecAlertes[obj.id]) mapSecAlertes[obj.id] = obj;
               }
+            } else if (obj && obj.type === "main_levee" && obj.uid) {
+              var tsMlN = new Date(obj.ts || (ev.time ? ev.time * 1000 : Date.now())).getTime() || 0;
+              if (!mapMainsTmp[obj.uid] || tsMlN >= mapMainsTmp[obj.uid].tsMs) {
+                mapMainsTmp[obj.uid] = {
+                  uid: obj.uid,
+                  nom: obj.nom || "",
+                  classe: obj.classe || "—",
+                  page: obj.page || "site",
+                  motif: obj.motif || "Besoin d'aide en TP",
+                  ts: obj.ts || new Date(tsMlN).toISOString(),
+                  tsMs: tsMlN,
+                  active: obj.action !== "down"
+                };
+              }
             }
           } catch (e) {}
         });
       }
+
+      mainsLeveesMap = {};
+      Object.keys(mapMainsTmp).forEach(function (u) {
+        var it = mapMainsTmp[u];
+        /* Garder uniquement les mains levées actives des dernières 3 heures */
+        if (it && it.active && (Date.now() - it.tsMs < 3 * 3600 * 1000)) {
+          mainsLeveesMap[u] = it;
+        }
+      });
 
       listeAlertesSecurite = Object.keys(mapSecAlertes).map(function (k) { return mapSecAlertes[k]; }).filter(function (al) {
         var tAl = new Date(al.ts).getTime() || 0;
@@ -1159,6 +1210,7 @@
           pg === "SUPPR_ACCES" ||
           pg.indexOf("SEC_ALERTE:") === 0 ||
           pg.indexOf("SEC_SESS:") === 0 ||
+          pg.indexOf("MAIN_LEVEE:") === 0 ||
           pg.indexOf("MSG_ENVOI:") === 0 ||
           pg.indexOf("MSG_LU:") === 0 ||
           pg.indexOf("FLASH_Q:") === 0 ||
@@ -1207,6 +1259,8 @@
       if (typeof majListeHistoFlash === "function") majListeHistoFlash();
       if (typeof majUiConfigSecurite === "function") majUiConfigSecurite();
       if (typeof rendAlertesSecurite === "function") rendAlertesSecurite();
+      if (typeof rendMainsLevees === "function") rendMainsLevees();
+      if (typeof rendPalmares === "function") rendPalmares();
       rendAcces();
       calculerQuotaSupabase(tous, tousAcces, window.__stiCountProfils, window.__stiCountAcces);
       if (!estHorsLigne) verifierNouvellesDemandes();
@@ -1690,6 +1744,18 @@
           meta.appendChild(bPauseNd);
         }
 
+        if (mainsLeveesMap && mainsLeveesMap[p.id] && mainsLeveesMap[p.id].active) {
+          var bMainNd = document.createElement("span");
+          bMainNd.style.cssText = "background:#ede9fe;color:#6d28d9;border:1.5px solid #6d28d9;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:900;cursor:pointer;";
+          bMainNd.textContent = "🙋‍♂️ Main levée";
+          bMainNd.title = "Motif : " + (mainsLeveesMap[p.id].motif || "Aide TP") + " (" + (mainsLeveesMap[p.id].page || "site") + ") — Cliquer pour acquitter";
+          bMainNd.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (typeof acquitterMainLevee === "function") acquitterMainLevee(p.id);
+          });
+          meta.appendChild(bMainNd);
+        }
+
         var barreAct = document.createElement("div");
         barreAct.className = "noeud-actions";
         function btnNd(txt, fn, cls, tit) {
@@ -1767,6 +1833,17 @@
         bP.style.cssText = "display:inline-block;margin-left:5px;padding:1px 7px;border-radius:999px;font-size:10.5px;font-weight:900;border:1.5px solid #c0392b;background:#fde2e6;color:#c0392b;";
         bP.textContent = "⏸️ Écran figé";
         ligneIdentite.appendChild(bP);
+      }
+      if (mainsLeveesMap && mainsLeveesMap[p.id] && mainsLeveesMap[p.id].active) {
+        var bMain = document.createElement("span");
+        bMain.style.cssText = "display:inline-block;margin-left:5px;padding:1px 8px;border-radius:999px;font-size:10.5px;font-weight:900;border:1.5px solid #6d28d9;background:#ede9fe;color:#6d28d9;cursor:pointer;";
+        bMain.textContent = "🙋‍♂️ Main levée (" + (mainsLeveesMap[p.id].page || "TP") + ")";
+        bMain.title = "Motif : " + (mainsLeveesMap[p.id].motif || "Besoin d'aide") + " — Cliquer pour marquer comme vu (✅ Passé voir)";
+        bMain.addEventListener("click", function (e) {
+          e.stopPropagation();
+          if (typeof acquitterMainLevee === "function") acquitterMainLevee(p.id);
+        });
+        ligneIdentite.appendChild(bMain);
       }
       var apInfoLigne = appareilsPourUser(p.id);
       if (apInfoLigne.dernier) {
@@ -5538,6 +5615,7 @@
   var badgeTemoinExamen = document.getElementById("badge-temoin-examen");
   var selVerrouCible = document.getElementById("sec-verrou-cible");
   var selPageAutorisee = document.getElementById("sec-page-autorisee");
+  var selDureeVerrou = document.getElementById("sec-duree-verrou");
   var inpMotifVerrou = document.getElementById("sec-motif-verrou");
   var btnSecVerrouiller = document.getElementById("btn-sec-verrouiller");
   var btnSecDeverrouiller = document.getElementById("btn-sec-deverrouiller");
@@ -5643,13 +5721,28 @@
     if (inpPinAdmin) {
       try { inpPinAdmin.value = localStorage.getItem("sti-admin-pin") || "2026"; } catch (e) {}
     }
+    var finVerrouMs = Number(cfgSecuriteAdmin.verrouFinMs || 0);
+    var txtChronoVerrou = "";
+    if (cfgSecuriteAdmin.verrouActif && finVerrouMs > 0) {
+      var restSecV = Math.max(0, Math.round((finVerrouMs - Date.now()) / 1000));
+      if (restSecV <= 0) {
+        /* Expiration automatique du minuteur de Mode Examen */
+        cfgSecuriteAdmin.verrouActif = false;
+        cfgSecuriteAdmin.verrouFinMs = 0;
+        try { localStorage.setItem("sti-sec-config", JSON.stringify(cfgSecuriteAdmin)); } catch (e) {}
+      } else {
+        var mmV = String(Math.floor(restSecV / 60)).padStart(2, "0");
+        var ssV = String(restSecV % 60).padStart(2, "0");
+        txtChronoVerrou = " · ⏱️ " + mmV + ":" + ssV;
+      }
+    }
     if (badgeStatutVerrou) {
       if (cfgSecuriteAdmin.verrouActif) {
         var cTxt = cfgSecuriteAdmin.verrouCible === "*" ? "Global" : cfgSecuriteAdmin.verrouCible;
         badgeStatutVerrou.style.background = "#fde2e6";
         badgeStatutVerrou.style.color = "#c0392b";
         badgeStatutVerrou.style.borderColor = "#c0392b";
-        badgeStatutVerrou.textContent = "🔒 Verrouillé (" + cTxt + ")";
+        badgeStatutVerrou.textContent = "🔒 Verrouillé (" + cTxt + txtChronoVerrou + ")";
       } else {
         badgeStatutVerrou.style.background = "#e3f6e8";
         badgeStatutVerrou.style.color = "#177245";
@@ -5661,8 +5754,8 @@
       if (cfgSecuriteAdmin.verrouActif) {
         var cTxtTop = cfgSecuriteAdmin.verrouCible === "*" ? "Global" : cfgSecuriteAdmin.verrouCible;
         badgeTemoinExamen.classList.add("verrouille");
-        badgeTemoinExamen.textContent = "🔒 Mode Examen : Verrouillé (" + cTxtTop + ")";
-        badgeTemoinExamen.title = "🔒 Accès verrouillé en Mode Examen (" + cTxtTop + ")" +
+        badgeTemoinExamen.textContent = "🔒 Mode Examen : Verrouillé (" + cTxtTop + txtChronoVerrou + ")";
+        badgeTemoinExamen.title = "🔒 Accès verrouillé en Mode Examen (" + cTxtTop + txtChronoVerrou + ")" +
           (cfgSecuriteAdmin.pageAutorisee ? " · Page autorisée : " + cfgSecuriteAdmin.pageAutorisee : " · Verrouillage total") +
           " — Cliquer pour gérer ou déverrouiller";
       } else {
@@ -5675,6 +5768,19 @@
       btnSecCard.classList.toggle("on", Boolean(cfgSecuriteAdmin.verrouActif));
     }
   }
+
+  setInterval(function () {
+    if (cfgSecuriteAdmin && cfgSecuriteAdmin.verrouActif && Number(cfgSecuriteAdmin.verrouFinMs || 0) > 0) {
+      if (Date.now() >= Number(cfgSecuriteAdmin.verrouFinMs)) {
+        sauvegarderEtDiffuserConfigSecurite({
+          verrouActif: false,
+          verrouFinMs: 0
+        }, "⏰ Fin du minuteur d'examen : l'accès aux cours a été déverrouillé automatiquement.");
+      } else {
+        majUiConfigSecurite();
+      }
+    }
+  }, 1000);
 
   function sauvegarderEtDiffuserConfigSecurite(nvPartiel, messageToast) {
     cfgSecuriteAdmin = Object.assign({}, cfgSecuriteAdmin, nvPartiel || {}, {
@@ -5821,20 +5927,24 @@
     btnSecVerrouiller.addEventListener("click", function () {
       var cible = selVerrouCible ? selVerrouCible.value : "*";
       var pgAut = selPageAutorisee ? selPageAutorisee.value : "";
+      var dureeMin = selDureeVerrou ? (parseInt(selDureeVerrou.value, 10) || 0) : 0;
+      var finMsV = dureeMin > 0 ? (Date.now() + dureeMin * 60000) : 0;
       var motif = inpMotifVerrou ? inpMotifVerrou.value.trim() : "";
       sauvegarderEtDiffuserConfigSecurite({
         verrouActif: true,
         verrouCible: cible,
         pageAutorisee: pgAut,
+        verrouFinMs: finMsV,
         motifVerrou: motif || "Épreuve ou contrôle en cours — l'accès aux cours est temporairement verrouillé par le professeur."
-      }, "🔒 Mode Examen / Verrouillage activé en direct (" + (cible === "*" ? "Toutes les classes" : cible) + ") !");
+      }, "🔒 Mode Examen / Verrouillage activé en direct (" + (cible === "*" ? "Toutes les classes" : cible) + (dureeMin > 0 ? " · " + dureeMin + " min" : "") + ") !");
     });
   }
 
   if (btnSecDeverrouiller) {
     btnSecDeverrouiller.addEventListener("click", function () {
       sauvegarderEtDiffuserConfigSecurite({
-        verrouActif: false
+        verrouActif: false,
+        verrouFinMs: 0
       }, "🔓 Verrouillage désactivé : tous les écrans des élèves sont déverrouillés.");
     });
   }
@@ -6249,6 +6359,420 @@
       a.remove();
       URL.revokeObjectURL(url);
       msg("📥 Feuille d'appel exportée en Excel (CSV).", "ok");
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     🙋‍♂️ FILE D'ATTENTE DES MAINS LEVÉES (DEMANDES D'AIDE EN TP)
+     ══════════════════════════════════════════════════════════ */
+  var modalMains = document.getElementById("modal-mains-levees");
+  var btnMainsTop = document.getElementById("btn-mains-top");
+  var badgeMainsTop = document.getElementById("badge-mains-top");
+  var spanNbMains = document.getElementById("mains-nb-attente");
+  var tbMainsLevees = document.getElementById("tb-mains-levees");
+  var btnFermerMains = document.getElementById("btn-fermer-mains");
+  var btnFermerMainsX = document.getElementById("btn-fermer-mains-x");
+  var btnAcquitterToutesMains = document.getElementById("btn-acquitter-toutes-mains");
+
+  function obtenirListeMainsLevees() {
+    return Object.keys(mainsLeveesMap || {}).map(function (u) {
+      return mainsLeveesMap[u];
+    }).filter(function (m) {
+      return Boolean(m && m.active);
+    }).sort(function (a, b) {
+      return (Number(a.tsMs || 0) - Number(b.tsMs || 0));
+    });
+  }
+
+  function acquitterMainLevee(uid, silencieux) {
+    if (!uid) return;
+    var nowIso = new Date().toISOString();
+    var payload = {
+      type: "main_levee",
+      action: "down",
+      uid: uid,
+      parProf: true,
+      ts: nowIso
+    };
+    if (mainsLeveesMap && mainsLeveesMap[uid]) {
+      mainsLeveesMap[uid].active = false;
+      mainsLeveesMap[uid].tsMs = Date.now();
+    }
+    if (adminUid) {
+      sb.from("acces").insert({
+        user_id: adminUid,
+        page: "MAIN_LEVEE:" + uid,
+        lieu: JSON.stringify(payload),
+        duree_sec: 0
+      }).then(function () {});
+    }
+    try {
+      sb.channel("sti-diffusion").send({ type: "broadcast", event: "main_levee", payload: payload });
+    } catch (e) {}
+    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    }).catch(function () {});
+    rendMainsLevees();
+    rendAbonnes();
+    if (!silencieux) msg("✅ Demande d'aide traitée (main baissée).", "ok");
+  }
+
+  function recevoirMainLeveeLive(pl) {
+    if (!pl || !pl.uid) return;
+    var tsMs = new Date(pl.ts || Date.now()).getTime() || Date.now();
+    if (pl.action === "down") {
+      if (mainsLeveesMap[pl.uid]) {
+        mainsLeveesMap[pl.uid].active = false;
+        mainsLeveesMap[pl.uid].tsMs = tsMs;
+      }
+      rendMainsLevees();
+      rendAbonnes();
+      return;
+    }
+    var etaitDejaActive = Boolean(mainsLeveesMap[pl.uid] && mainsLeveesMap[pl.uid].active);
+    mainsLeveesMap[pl.uid] = {
+      uid: pl.uid,
+      nom: pl.nom || "",
+      classe: pl.classe || "—",
+      page: pl.page || "site",
+      motif: pl.motif || "Besoin d'aide en TP",
+      ts: pl.ts || new Date(tsMs).toISOString(),
+      tsMs: tsMs,
+      active: true
+    };
+    rendMainsLevees();
+    rendAbonnes();
+    if (!etaitDejaActive) {
+      var mapP = {};
+      profils.forEach(function (p) { mapP[p.id] = p; });
+      var pEl = mapP[pl.uid];
+      var nomEl = pEl ? (nomPrenomTexte(pEl) || contact(pEl)) : (pl.nom || "Un élève");
+      afficherNotifSysteme("🙋‍♂️ Main levée en TP — " + nomEl + " (" + (pl.classe || "—") + ")", (pl.motif || "Besoin d'aide") + " · " + (pl.page || "site"));
+      msg("🙋‍♂️ " + nomEl + " (" + (pl.classe || "—") + ") demande de l'aide : « " + (pl.motif || "TP") + " »", "ok");
+    }
+  }
+
+  function rendMainsLevees() {
+    var listeM = obtenirListeMainsLevees();
+    if (spanNbMains) spanNbMains.textContent = String(listeM.length);
+    if (badgeMainsTop) {
+      badgeMainsTop.style.display = listeM.length > 0 ? "inline-block" : "none";
+      badgeMainsTop.textContent = String(listeM.length);
+    }
+    if (!tbMainsLevees) return;
+    tbMainsLevees.innerHTML = "";
+    if (!listeM.length) {
+      var tr0 = document.createElement("tr");
+      var td0 = document.createElement("td");
+      td0.colSpan = 6;
+      td0.style.cssText = "text-align:center;color:#7a6f5d;padding:16px;font-weight:800;";
+      td0.textContent = "✅ Aucune main levée en attente pour le moment.";
+      tr0.appendChild(td0);
+      tbMainsLevees.appendChild(tr0);
+      return;
+    }
+    var mapP = {};
+    profils.forEach(function (p) { mapP[p.id] = p; });
+
+    listeM.forEach(function (m, idx) {
+      var p = mapP[m.uid] || null;
+      var tr = document.createElement("tr");
+      var tdOrd = document.createElement("td");
+      tdOrd.className = "col-nowrap";
+      tdOrd.innerHTML = "<span style='display:inline-block;background:#6d28d9;color:#fff;border-radius:999px;padding:2px 9px;font-weight:900;font-size:11.5px'>#" + (idx + 1) + "</span>";
+
+      var tdEl = document.createElement("td");
+      var nomAff = p ? (nomPrenomTexte(p) || contact(p)) : (m.nom || m.uid);
+      var clAff = (p && p.classe) || m.classe || "—";
+      tdEl.innerHTML = "<strong>" + echHtml(nomAff) + "</strong> <span class='badge-classe'>" + echHtml(clAff) + "</span>";
+
+      var tdPg = document.createElement("td");
+      tdPg.className = "col-wrap";
+      tdPg.innerHTML = "<code>" + echHtml(m.page || "site") + "</code>";
+
+      var tdMotif = document.createElement("td");
+      tdMotif.className = "col-wrap";
+      tdMotif.style.fontWeight = "800";
+      tdMotif.textContent = m.motif || "Besoin d'aide en TP";
+
+      var tdHr = document.createElement("td");
+      tdHr.className = "col-nowrap";
+      tdHr.textContent = fmtDate(m.ts);
+
+      var tdAct = document.createElement("td");
+      tdAct.className = "col-nowrap";
+      var bOk = document.createElement("button");
+      bOk.type = "button";
+      bOk.className = "act";
+      bOk.style.cssText = "background:#e3f6e8;color:#177245;border-color:#177245;font-weight:900;";
+      bOk.textContent = "✅ Passé voir";
+      bOk.addEventListener("click", function () { acquitterMainLevee(m.uid); });
+      tdAct.appendChild(bOk);
+
+      if (p) {
+        var bMsg = document.createElement("button");
+        bMsg.type = "button";
+        bMsg.className = "act";
+        bMsg.textContent = "💬";
+        bMsg.title = "Répondre dans Messenger STI";
+        bMsg.addEventListener("click", function () {
+          if (modalMains) modalMains.classList.remove("visible");
+          ouvrirMessengerAdmin(p.id, m.motif || "");
+        });
+        tdAct.appendChild(bMsg);
+      }
+
+      tr.append(tdOrd, tdEl, tdPg, tdMotif, tdHr, tdAct);
+      tbMainsLevees.appendChild(tr);
+    });
+  }
+
+  if (btnMainsTop) {
+    btnMainsTop.addEventListener("click", function () {
+      rendMainsLevees();
+      if (modalMains) modalMains.classList.add("visible");
+    });
+  }
+  [btnFermerMains, btnFermerMainsX].forEach(function (b) {
+    if (b) b.addEventListener("click", function () { if (modalMains) modalMains.classList.remove("visible"); });
+  });
+  if (modalMains) {
+    modalMains.addEventListener("click", function (e) { if (e.target === modalMains) modalMains.classList.remove("visible"); });
+  }
+  if (btnAcquitterToutesMains) {
+    btnAcquitterToutesMains.addEventListener("click", function () {
+      var listeM = obtenirListeMainsLevees();
+      listeM.forEach(function (m) { acquitterMainLevee(m.uid, true); });
+      msg("🧹 Toutes les mains levées ont été acquittées.", "ok");
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     🏆 PALMARÈS & PODIUM PAR CLASSE (QUIZ + FLASH + ASSIDUITÉ)
+     ══════════════════════════════════════════════════════════ */
+  var modalPalmares = document.getElementById("modal-palmares");
+  var btnPalmaresTop = document.getElementById("btn-palmares-top");
+  var selPalmaresClasse = document.getElementById("palmares-sel-classe");
+  var divPodiumGrid = document.getElementById("palmares-podium-grid");
+  var tbPalmares = document.getElementById("tb-palmares");
+  var btnFermerPalmares = document.getElementById("btn-fermer-palmares");
+  var btnFermerPalmaresX = document.getElementById("btn-fermer-palmares-x");
+  var btnPalmaresExportCsv = document.getElementById("btn-palmares-export-csv");
+
+  function calculerClassementPalmares() {
+    var clF = selPalmaresClasse ? selPalmaresClasse.value : "*";
+    var candidats = profils.filter(function (p) {
+      if (p.statut === "exclu") return false;
+      if (String(p.classe || "").toLowerCase() === "elevelabo3") return false;
+      if (clF && clF !== "*" && (p.classe || "—") !== clF) return false;
+      return true;
+    });
+
+    /* Comptage des bonnes réponses Flash par élève */
+    var flashOkParUid = {};
+    var flashTotParUid = {};
+    Object.keys(reponsesFlash || {}).forEach(function (fid) {
+      var reps = reponsesFlash[fid] || {};
+      Object.keys(reps).forEach(function (u) {
+        flashTotParUid[u] = (flashTotParUid[u] || 0) + 1;
+        if (reps[u] && reps[u].correct) {
+          flashOkParUid[u] = (flashOkParUid[u] || 0) + 1;
+        }
+      });
+    });
+
+    /* Moyenne sur 20 des Quiz par élève */
+    var notesQuizParUid = {};
+    (listeResultatsQuiz || []).forEach(function (r) {
+      if (!r || !r.uid) return;
+      var s20 = r.sur20;
+      if (typeof s20 !== "number") {
+        var m20 = String(r.note || "").match(/(\d+(?:[.,]\d+)?)\s*\/\s*20/);
+        if (m20) s20 = parseFloat(m20[1].replace(",", "."));
+      }
+      if (typeof s20 === "number" && !isNaN(s20)) {
+        if (!notesQuizParUid[r.uid]) notesQuizParUid[r.uid] = [];
+        notesQuizParUid[r.uid].push(s20);
+      }
+    });
+
+    var classement = candidats.map(function (p) {
+      var notes = notesQuizParUid[p.id] || [];
+      var moyQuiz = notes.length
+        ? Math.round((notes.reduce(function (a, b) { return a + b; }, 0) / notes.length) * 10) / 10
+        : null;
+      var nbFlashOk = flashOkParUid[p.id] || 0;
+      var nbFlashTot = flashTotParUid[p.id] || 0;
+      var secHebdo = Number((dureesSemaine && dureesSemaine[p.id]) || 0);
+      var ptsQuiz = moyQuiz != null ? Math.round(moyQuiz * 5) : 0;
+      var ptsFlash = nbFlashOk * 8;
+      var ptsAssiduite = Math.min(50, Math.floor(secHebdo / 300));
+      var scoreTotal = ptsQuiz + ptsFlash + ptsAssiduite;
+      return {
+        profil: p,
+        moyQuiz: moyQuiz,
+        nbQuiz: notes.length,
+        nbFlashOk: nbFlashOk,
+        nbFlashTot: nbFlashTot,
+        secHebdo: secHebdo,
+        scoreTotal: scoreTotal
+      };
+    }).sort(function (a, b) {
+      if (b.scoreTotal !== a.scoreTotal) return b.scoreTotal - a.scoreTotal;
+      if ((b.moyQuiz || 0) !== (a.moyQuiz || 0)) return (b.moyQuiz || 0) - (a.moyQuiz || 0);
+      return b.secHebdo - a.secHebdo;
+    });
+
+    return classement;
+  }
+
+  function rendPalmares() {
+    if (!tbPalmares || !divPodiumGrid) return;
+    var classement = calculerClassementPalmares();
+    divPodiumGrid.innerHTML = "";
+    tbPalmares.innerHTML = "";
+
+    var medailles = [
+      { ico: "🥇 1er", bg: "linear-gradient(135deg,#fff6b8,#ffd54f)", border: "#b47d09", col: "#5c3d00" },
+      { ico: "🥈 2e", bg: "linear-gradient(135deg,#f4f6f9,#d8dee9)", border: "#4c566a", col: "#2e3440" },
+      { ico: "🥉 3e", bg: "linear-gradient(135deg,#ffe5d0,#f4a261)", border: "#9c4a1a", col: "#5a2709" }
+    ];
+
+    classement.slice(0, 3).forEach(function (it, idx) {
+      var m = medailles[idx];
+      var p = it.profil;
+      var nom = nomPrenomTexte(p) || contact(p);
+      var card = document.createElement("div");
+      card.style.cssText = "background:" + m.bg + ";color:" + m.col + ";border:2.5px solid #23201a;border-radius:16px;padding:12px 14px;box-shadow:3.5px 3.5px 0 #23201a;display:flex;flex-direction:column;gap:4px;";
+      card.innerHTML =
+        "<div style='display:flex;justify-content:space-between;align-items:center'>" +
+          "<span style='font-size:16px;font-weight:900'>" + m.ico + "</span>" +
+          "<span style='background:#23201a;color:#fffdf7;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:900'>⭐ " + it.scoreTotal + " pts</span>" +
+        "</div>" +
+        "<div style='font-size:14px;font-weight:900;color:#23201a;margin-top:2px'>" + echHtml(nom) + "</div>" +
+        "<div style='font-size:11.5px;font-weight:800'>🏫 " + echHtml(p.classe || "—") + " · 📝 " + (it.moyQuiz != null ? (it.moyQuiz + "/20") : "—") + " · ⚡ " + it.nbFlashOk + " Flash</div>";
+      divPodiumGrid.appendChild(card);
+    });
+
+    if (!classement.length) {
+      var tr0 = document.createElement("tr");
+      var td0 = document.createElement("td");
+      td0.colSpan = 8;
+      td0.style.cssText = "text-align:center;color:#7a6f5d;padding:14px;font-weight:800;";
+      td0.textContent = "Aucun candidat trouvé pour cette sélection.";
+      tr0.appendChild(td0);
+      tbPalmares.appendChild(tr0);
+      return;
+    }
+
+    classement.forEach(function (it, idx) {
+      var p = it.profil;
+      var tr = document.createElement("tr");
+      var rangTxt = idx === 0 ? "🥇 1er" : (idx === 1 ? "🥈 2e" : (idx === 2 ? "🥉 3e" : ("#" + (idx + 1))));
+
+      var tdRg = document.createElement("td");
+      tdRg.className = "col-nowrap";
+      tdRg.style.fontWeight = "900";
+      tdRg.textContent = rangTxt;
+
+      var tdNom = document.createElement("td");
+      tdNom.style.fontWeight = "800";
+      tdNom.textContent = nomPrenomTexte(p) || contact(p);
+
+      var tdCl = document.createElement("td");
+      tdCl.className = "col-nowrap";
+      tdCl.innerHTML = "<span class='badge-classe'>" + echHtml(p.classe || "—") + "</span>";
+
+      var tdQz = document.createElement("td");
+      tdQz.className = "col-nowrap";
+      tdQz.style.fontWeight = "800";
+      tdQz.textContent = it.moyQuiz != null ? (it.moyQuiz + " / 20 (" + it.nbQuiz + ")") : "—";
+
+      var tdFl = document.createElement("td");
+      tdFl.className = "col-nowrap";
+      tdFl.textContent = it.nbFlashTot > 0 ? ("⚡ " + it.nbFlashOk + " / " + it.nbFlashTot) : "—";
+
+      var tdDr = document.createElement("td");
+      tdDr.className = "col-nowrap";
+      tdDr.textContent = fmtDuree(it.secHebdo);
+
+      var tdSc = document.createElement("td");
+      tdSc.className = "col-nowrap";
+      tdSc.innerHTML = "<strong style='color:#f4511e'>" + it.scoreTotal + " pts</strong>";
+
+      var tdFc = document.createElement("td");
+      tdFc.className = "col-nowrap";
+      var bF = document.createElement("button");
+      bF.type = "button";
+      bF.className = "act";
+      bF.textContent = "📊";
+      bF.title = "Ouvrir la fiche de l'élève";
+      bF.addEventListener("click", function () {
+        if (modalPalmares) modalPalmares.classList.remove("visible");
+        ouvrirFicheEleve(p);
+      });
+      tdFc.appendChild(bF);
+
+      tr.append(tdRg, tdNom, tdCl, tdQz, tdFl, tdDr, tdSc, tdFc);
+      tbPalmares.appendChild(tr);
+    });
+  }
+
+  function ouvrirModalPalmares() {
+    if (selPalmaresClasse) {
+      var valAct = (filtreClasse && filtreClasse !== "*") ? filtreClasse : (selPalmaresClasse.value || "*");
+      var classes = obtenirClassesActives();
+      selPalmaresClasse.innerHTML = '<option value="*">🌐 Toutes les classes</option>';
+      classes.forEach(function (c) {
+        var opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = "🏫 Classe " + c;
+        selPalmaresClasse.appendChild(opt);
+      });
+      selPalmaresClasse.value = valAct;
+    }
+    rendPalmares();
+    if (modalPalmares) modalPalmares.classList.add("visible");
+  }
+
+  if (btnPalmaresTop) btnPalmaresTop.addEventListener("click", ouvrirModalPalmares);
+  if (selPalmaresClasse) selPalmaresClasse.addEventListener("change", rendPalmares);
+  [btnFermerPalmares, btnFermerPalmaresX].forEach(function (b) {
+    if (b) b.addEventListener("click", function () { if (modalPalmares) modalPalmares.classList.remove("visible"); });
+  });
+  if (modalPalmares) {
+    modalPalmares.addEventListener("click", function (e) { if (e.target === modalPalmares) modalPalmares.classList.remove("visible"); });
+  }
+  if (btnPalmaresExportCsv) {
+    btnPalmaresExportCsv.addEventListener("click", function () {
+      var classement = calculerClassementPalmares();
+      var lignes = ['"Rang";"Nom";"Prenom";"Classe";"Moyenne Quiz (/20)";"Nb Quiz";"Flash reussis";"Duree hebdo";"Score STI (pts)"'];
+      classement.forEach(function (it, idx) {
+        var p = it.profil;
+        var cols = [
+          idx + 1,
+          p.nom || "—",
+          p.prenom || "—",
+          p.classe || "—",
+          it.moyQuiz != null ? String(it.moyQuiz).replace(".", ",") : "—",
+          it.nbQuiz,
+          it.nbFlashOk + "/" + it.nbFlashTot,
+          fmtDuree(it.secHebdo),
+          it.scoreTotal
+        ].map(function (v) { return '"' + String(v).replace(/"/g, '""') + '"'; });
+        lignes.push(cols.join(";"));
+      });
+      var blob = new Blob(["\uFEFF" + lignes.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "Palmares_STI_" + (selPalmaresClasse ? selPalmaresClasse.value : "Toutes") + ".csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      msg("📥 Palmarès STI exporté en Excel (CSV).", "ok");
     });
   }
 })();
