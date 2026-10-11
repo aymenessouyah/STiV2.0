@@ -683,9 +683,15 @@
       font-size: 11.5px !important;
     }
     html.sti-msn-mob-open .mob-bottom-nav,
+    body.sti-msn-mob-open .mob-bottom-nav,
+    #sti-messenger-admin.visible ~ .mob-bottom-nav,
+    #sti-messenger-admin.visible ~ #mob-bottom-nav,
+    body:has(#sti-messenger-admin.visible) .mob-bottom-nav,
     body:has(.modal-fond.visible) .mob-bottom-nav,
     body:has(#zone-detail.visible) .mob-bottom-nav {
       display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
     }
   }
 
@@ -1110,8 +1116,13 @@
       overscroll-behavior: none !important;
     }
     html.sti-msn-mob-open #btn-messenger-dock,
-    html.sti-msn-mob-open #btn-admin-to-top {
+    html.sti-msn-mob-open #btn-admin-to-top,
+    html.sti-msn-mob-open #mob-bottom-nav,
+    body.sti-msn-mob-open #mob-bottom-nav,
+    #sti-messenger-admin.visible ~ #mob-bottom-nav {
       display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
     }
     .msn-admin-win {
       top: var(--sti-vvt, 0px) !important;
@@ -1242,10 +1253,10 @@
           <span id="titre-tb-admin" style="color:#177245;transition:color .25s ease" title="🟢 En ligne">Tableau de bord STI V2.0</span>
           <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">🟢 Accès ouvert</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v116</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v117</span>
           <span class="badge-supabase" id="badge-supabase-quota" title="Espace disponible dans la base Supabase (Quota 500 Mo) — cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent">🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v116)</strong> · <strong id="sous-supabase-quota" style="color:#177245;cursor:pointer;text-decoration:underline dotted" title="Cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent Supabase">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v117)</strong> · <strong id="sous-supabase-quota" style="color:#177245;cursor:pointer;text-decoration:underline dotted" title="Cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent Supabase">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
       </div>
     </div>
     <div class="barre-util">
@@ -3133,10 +3144,69 @@
     }
 
     var mobNavChat = document.getElementById("mob-nav-chat");
+    var mobBottomNavEl = document.getElementById("mob-bottom-nav");
+    var msnWinInline = document.getElementById("sti-messenger-admin");
+    var bMsnTopInline = document.getElementById("btn-messenger-top");
+    var bMsnSbCloseInline = document.getElementById("msn-sb-close");
+    var bMsnHeadCloseInline = document.getElementById("msn-head-close");
+
+    function synchroniserBarreBasChatMobile() {
+      var chatOuvert = Boolean(msnWinInline && msnWinInline.classList.contains("visible"));
+      var modaleOuverte = Boolean(document.querySelector(".modal-fond.visible, #zone-detail.visible"));
+      document.documentElement.classList.toggle("sti-msn-mob-open", chatOuvert);
+      document.body.classList.toggle("sti-msn-mob-open", chatOuvert);
+      if (mobBottomNavEl) {
+        if (chatOuvert || modaleOuverte) {
+          mobBottomNavEl.style.setProperty("display", "none", "important");
+        } else {
+          mobBottomNavEl.style.removeProperty("display");
+        }
+      }
+    }
+
+    function ouvrirChatMobileFallback() {
+      if (msnWinInline && !msnWinInline.classList.contains("visible")) {
+        msnWinInline.classList.add("visible");
+      }
+      synchroniserBarreBasChatMobile();
+    }
+
+    function fermerChatMobileFallback() {
+      if (msnWinInline) {
+        msnWinInline.classList.remove("visible");
+        msnWinInline.classList.remove("mode-chat");
+      }
+      synchroniserBarreBasChatMobile();
+    }
+
     if (mobNavChat) {
       mobNavChat.addEventListener("click", function () {
-        var bMsnTop = document.getElementById("btn-messenger-top");
-        if (bMsnTop) bMsnTop.click();
+        if (bMsnTopInline) bMsnTopInline.click();
+        ouvrirChatMobileFallback();
+      });
+    }
+    if (bMsnTopInline) {
+      bMsnTopInline.addEventListener("click", function () {
+        setTimeout(ouvrirChatMobileFallback, 0);
+      });
+    }
+    if (bMsnSbCloseInline) {
+      bMsnSbCloseInline.addEventListener("click", function () {
+        setTimeout(fermerChatMobileFallback, 0);
+      });
+    }
+    if (bMsnHeadCloseInline) {
+      bMsnHeadCloseInline.addEventListener("click", function () {
+        setTimeout(fermerChatMobileFallback, 0);
+      });
+    }
+    if (typeof MutationObserver !== "undefined") {
+      var obsMobBar = new MutationObserver(synchroniserBarreBasChatMobile);
+      if (msnWinInline) {
+        obsMobBar.observe(msnWinInline, { attributes: true, attributeFilter: ["class"] });
+      }
+      document.querySelectorAll(".modal-fond, #zone-detail").forEach(function (elM) {
+        obsMobBar.observe(elM, { attributes: true, attributeFilter: ["class"] });
       });
     }
 
@@ -3239,7 +3309,7 @@
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=116"></script>
-<script src="assets/js/admin.js?v=116"></script>
+<script src="assets/js/config.js?v=117"></script>
+<script src="assets/js/admin.js?v=117"></script>
 </body>
 </html>

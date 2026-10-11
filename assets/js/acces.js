@@ -1763,6 +1763,15 @@
     var ouvert = Boolean(wEl || wAdm);
     var estMob = window.innerWidth <= 768;
     document.documentElement.classList.toggle("sti-msn-mob-open", Boolean(ouvert && estMob));
+    if (document.body) document.body.classList.toggle("sti-msn-mob-open", Boolean(ouvert && estMob));
+    var stiBarEl = document.getElementById("sti-bar");
+    if (stiBarEl) {
+      if (ouvert && estMob) {
+        stiBarEl.style.setProperty("display", "none", "important");
+      } else {
+        stiBarEl.style.removeProperty("display");
+      }
+    }
     if (ouvert && estMob && window.visualViewport) {
       document.documentElement.style.setProperty("--sti-vvh", Math.round(window.visualViewport.height) + "px");
       document.documentElement.style.setProperty("--sti-vvt", Math.round(window.visualViewport.offsetTop || 0) + "px");
@@ -1815,7 +1824,7 @@
       "}" +
       "@media (max-width:768px){" +
         "html.sti-msn-mob-open,html.sti-msn-mob-open body{overflow:hidden!important;overscroll-behavior:none!important}" +
-        "html.sti-msn-mob-open #sti-roue-wrap,html.sti-msn-mob-open #sti-badge-admin-flottant,html.sti-msn-mob-open #sti-btn-messenger-global,html.sti-msn-mob-open #sti-auto-to-top{display:none!important}" +
+        "html.sti-msn-mob-open #sti-bar,html.sti-msn-mob-open #sti-msn-bulle-eleve,html.sti-msn-mob-open #sti-msn-bulle-attention,html.sti-msn-mob-open #sti-roue-wrap,html.sti-msn-mob-open #sti-badge-admin-flottant,html.sti-msn-mob-open #sti-btn-messenger-global,html.sti-msn-mob-open #sti-auto-to-top{display:none!important;visibility:hidden!important;pointer-events:none!important}" +
         "#sti-badge-admin-flottant .sti-btn-msn-adm-side{display:none!important}" +
         "#sti-messenger-eleve,#sti-messenger-admin-site{" +
           "display:flex!important;flex-direction:column!important;" +

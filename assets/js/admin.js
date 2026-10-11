@@ -5566,7 +5566,16 @@
     if (!msnWin) return;
     var ouvert = msnWin.classList.contains("visible");
     var estMob = window.innerWidth <= 768;
-    document.documentElement.classList.toggle("sti-msn-mob-open", Boolean(ouvert && estMob));
+    document.documentElement.classList.toggle("sti-msn-mob-open", Boolean(ouvert));
+    if (document.body) document.body.classList.toggle("sti-msn-mob-open", Boolean(ouvert));
+    var mobNavEl = document.getElementById("mob-bottom-nav");
+    if (mobNavEl) {
+      if (ouvert) {
+        mobNavEl.style.setProperty("display", "none", "important");
+      } else {
+        mobNavEl.style.removeProperty("display");
+      }
+    }
     if (ouvert && estMob && window.visualViewport) {
       document.documentElement.style.setProperty("--sti-vvh", Math.round(window.visualViewport.height) + "px");
       document.documentElement.style.setProperty("--sti-vvt", Math.round(window.visualViewport.offsetTop || 0) + "px");
