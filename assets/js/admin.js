@@ -242,9 +242,15 @@
     c = c.replace(/[\s._\-]+/g, "");
     return c === "elevelabo3";
   }
+  function estProfilIssaouiAmel(p) {
+    if (!p) return false;
+    var txt = [p.nom || "", p.prenom || "", p.email || ""].join(" ").toLowerCase();
+    try { txt = txt.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
+    return txt.indexOf("issaoui") !== -1 && txt.indexOf("amel") !== -1;
+  }
   function estGold(p) {
     if (!p) return false;
-    if (estClasseProfLabo(p.classe)) return true;
+    if (estClasseProfLabo(p.classe) || estProfilIssaouiAmel(p)) return true;
     return Boolean(p.gold === true || /\|\s*GOLD$/i.test(p.lycee || ""));
   }
   function lyceePropre(p) {
@@ -292,7 +298,7 @@
   /* ---------- Configuration dynamique des Lycées et des Classes ---------- */
   var cfgEcoles = {
     lycees: ["Lycée Rafèha"],
-    classes: ["3eme SI1", "3eme SI2", "4eme SI1", "4eme SI2", "elevelabo3"],
+    classes: ["3eme SI1", "3eme SI2", "4eme SI1", "4eme SI2", "Prof", "elevelabo3"],
     supprLycees: [],
     supprClasses: [],
     ts: 0
@@ -321,11 +327,16 @@
     var suppr = cfgEcoles.supprClasses || [];
     var liste = (cfgEcoles.classes || []).filter(function (c) { return c && suppr.indexOf(c) === -1; });
     if (!liste.length) {
-      ["3eme SI1", "3eme SI2", "4eme SI1", "4eme SI2", "elevelabo3"].forEach(function (c) {
+      ["3eme SI1", "3eme SI2", "4eme SI1", "4eme SI2", "Prof", "elevelabo3"].forEach(function (c) {
         if (suppr.indexOf(c) === -1) liste.push(c);
       });
-    } else if (liste.indexOf("elevelabo3") === -1 && suppr.indexOf("elevelabo3") === -1) {
-      liste.push("elevelabo3");
+    } else {
+      if (liste.indexOf("Prof") === -1 && suppr.indexOf("Prof") === -1) {
+        liste.push("Prof");
+      }
+      if (liste.indexOf("elevelabo3") === -1 && suppr.indexOf("elevelabo3") === -1) {
+        liste.push("elevelabo3");
+      }
     }
     profils.forEach(function (p) {
       var c = p.classe || "";
@@ -922,6 +933,32 @@
     var adminIds = {};
     tous.forEach(function (p) { if (estAdminEmail(p.email)) adminIds[p.id] = true; });
     profils = tous.filter(function (p) { return !estAdminEmail(p.email); });
+
+    /* Promotion automatique permanente d'ISSAOUI Amel : classe "Prof" (au lieu de 3SI1) + statut 👑 Gold */
+    profils.forEach(function (p) {
+      if (estProfilIssaouiAmel(p)) {
+        var lycBase = lyceePropre(p);
+        if (!lycBase || lycBase === "—") lycBase = "Lycée Rafèha";
+        var nvLycGold = lycBase + "|GOLD";
+        var doitMajSb = (p.classe !== "Prof" || !/\|\s*GOLD$/i.test(p.lycee || "") || p.statut !== "actif");
+        p.classe = "Prof";
+        p.lycee = nvLycGold;
+        p.statut = "actif";
+        p.gold = true;
+        if (!estHorsLigne && doitMajSb && !window["__stiSyncIssaoui_" + p.id]) {
+          window["__stiSyncIssaoui_" + p.id] = true;
+          sb.from("profiles").update({
+            classe: "Prof",
+            lycee: nvLycGold,
+            statut: "actif"
+          }).eq("id", p.id).then(function () {
+            var sigProfGold = { type: "statut", uid: p.id, statut: "actif", gold: true, classe: "Prof", ts: Date.now() };
+            try { sb.channel("sti-diffusion").send({ type: "broadcast", event: "statut", payload: sigProfGold }); } catch (e) {}
+            fetch("https://ntfy.sh/" + CANAL_DIFFUSION, { method: "POST", body: JSON.stringify(sigProfGold) }).catch(function () {});
+          });
+        }
+      }
+    });
 
     /* 1) Charger en priorité la dernière configuration CFG_ECOLES (dont purgesMois, purgesQuizMois, purgesMsg) */
     tousAcces.forEach(function (a) {

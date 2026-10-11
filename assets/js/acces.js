@@ -86,10 +86,33 @@
     return /^elevelabo3(?:@|$)/i.test(em);
   }
 
-  function estGoldProfil(p) {
-    if (!p) return false;
-    if (estClasseProfLabo(p.classe, p.email)) return true;
-    return Boolean(p.gold === true || /\|\s*GOLD$/i.test(p.lycee || ""));
+  function estClasseEnseignantProf(classe) {
+    var c = String(classe || "").trim().toLowerCase();
+    try { c = c.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
+    c = c.replace(/[\s._\-]+/g, "");
+    return c === "prof" || c === "professeur" || c === "enseignant" || c === "enseignante";
+  }
+
+  function estProfilIssaouiAmel(p, meta) {
+    if (!p && !meta) return false;
+    var m = (meta || (p && p.user_metadata) || {});
+    var txt = [
+      (p && p.nom) || "",
+      (p && p.prenom) || "",
+      (p && p.email) || "",
+      m.nom || "",
+      m.prenom || "",
+      m.full_name || ""
+    ].join(" ").toLowerCase();
+    try { txt = txt.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
+    return txt.indexOf("issaoui") !== -1 && txt.indexOf("amel") !== -1;
+  }
+
+  function estGoldProfil(p, meta) {
+    if (!p && !meta) return false;
+    if (p && estClasseProfLabo(p.classe, p.email)) return true;
+    if (estProfilIssaouiAmel(p, meta)) return true;
+    return Boolean(p && (p.gold === true || /\|\s*GOLD$/i.test(p.lycee || "")));
   }
   function lyceePropre(p) {
     return ((p && p.lycee) || "—").replace(/\s*\|\s*GOLD$/i, "") || "—";
@@ -145,7 +168,7 @@
   })();
 
   function estAutorise4SI(classe, estAdmin) {
-    if (estAdmin || estAdminGlobal || estClasseProfLabo(classe)) return true;
+    if (estAdmin || estAdminGlobal || estClasseProfLabo(classe) || estClasseEnseignantProf(classe)) return true;
     var c = String(classe || "").trim().toUpperCase().replace(/[\s._\-]+/g, "");
     return /^4(E|ÈME|EME)?SI([1-5])?$/i.test(c);
   }
@@ -737,6 +760,12 @@
         return perm;
       }
       var c = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+      if (c && estProfilIssaouiAmel(c, c.user_metadata)) {
+        c.classe = "Prof";
+        c.gold = true;
+        c.statut = "actif";
+        c.isAdmin = false;
+      }
       if (c && estClasseProfLabo(c.classe, c.email)) {
         c.ts = Date.now();
         c.gold = true;
@@ -878,15 +907,28 @@
       }
       var st = rp.data.statut;
       if (st === "actif") {
+        if (estProfilIssaouiAmel(rp.data, user.user_metadata)) {
+          var lycPurAmel = lyceePropre(rp.data);
+          if (!lycPurAmel || lycPurAmel === "—") lycPurAmel = "Lycée Rafèha";
+          var nvLycAmel = lycPurAmel + "|GOLD";
+          if (rp.data.classe !== "Prof" || !/\|\s*GOLD$/i.test(rp.data.lycee || "")) {
+            sb.from("profiles").update({ classe: "Prof", lycee: nvLycAmel }).eq("id", user.id).then(function () {});
+          }
+          rp.data.classe = "Prof";
+          rp.data.lycee = nvLycAmel;
+          rp.data.gold = true;
+        }
         currentClasse = rp.data.classe || "";
         var isLaboP = estClasseProfLabo(currentClasse, user.email);
-        var isG = Boolean(isLaboP || estGoldProfil(rp.data));
+        var isG = Boolean(isLaboP || estGoldProfil(rp.data, user.user_metadata));
         appliquerModeGold(isG, rp.data);
         appliquerVerrou4SI(isLaboP ? "elevelabo3" : currentClasse, false);
         try {
           var objSess = {
             id: user.id,
             email: user.email,
+            nom: rp.data.nom || "",
+            prenom: rp.data.prenom || "",
             user_metadata: user.user_metadata || {},
             lycee: rp.data.lycee || "—",
             classe: rp.data.classe || (isLaboP ? "elevelabo3" : "—"),
@@ -915,9 +957,13 @@
     function entrer(profil) {
       var cacheFallback = lireCacheSessionLocal() || {};
       var p = (profil && (profil.classe || profil.lycee)) ? profil : cacheFallback;
+      if (estProfilIssaouiAmel(p, user.user_metadata)) {
+        p.classe = "Prof";
+        p.gold = true;
+      }
       currentClasse = (p && p.classe) || "";
       var isLaboP = estClasseProfLabo(currentClasse, user.email);
-      appliquerModeGold(Boolean(isLaboP || estGoldProfil(p)), p);
+      appliquerModeGold(Boolean(isLaboP || estGoldProfil(p, user.user_metadata)), p);
       appliquerVerrou4SI(isLaboP ? "elevelabo3" : currentClasse, false);
       var suiteEntree = function () {
         panneauCompte(user, p || {});
@@ -940,7 +986,7 @@
       }
     }, 2000);
 
-    sb.from("profiles").select("statut,lycee,classe").eq("id", user.id).maybeSingle().then(function (rp) {
+    sb.from("profiles").select("statut,lycee,classe,nom,prenom,email").eq("id", user.id).maybeSingle().then(function (rp) {
       clearTimeout(timerProfilOff);
       if (!rp || rp.error) {
         if (!dejaEntre) { dejaEntre = true; entrer(lireCacheSessionLocal() || {}); }
@@ -2759,7 +2805,21 @@
       if (ev.statut === "exclu") sortirImmediatement("#exclu");
       else if (ev.statut === "en_attente") sortirImmediatement("#attente");
       else if (ev.statut === "supprime" || ev.statut !== "actif") sortirImmediatement("#refuse");
-      else if (typeof ev.gold === "boolean") appliquerModeGold(ev.gold);
+      else {
+        if (typeof ev.gold === "boolean") appliquerModeGold(ev.gold);
+        if (ev.classe) {
+          currentClasse = ev.classe;
+          appliquerVerrou4SI(currentClasse, false);
+          try {
+            var cLoc = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+            if (cLoc) {
+              cLoc.classe = ev.classe;
+              if (typeof ev.gold === "boolean") cLoc.gold = ev.gold;
+              localStorage.setItem("sti-session-cache", JSON.stringify(cLoc));
+            }
+          } catch (e) {}
+        }
+      }
     }
 
     function estAnnoncePourMoi(a) {
