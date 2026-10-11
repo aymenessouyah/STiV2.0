@@ -1,223 +1,139 @@
-# 📚 STI By A'e — Le Web de A à Z (Version 2.0 · `v115`)
+# 📚 STI By A'e — Le Web de A à Z (Version 2.0 · `v120`)
 
-Plateforme éducative interactive dédiée aux **Sciences et Technologies de l'Informatique (STI)** :
-cours complets, leçons animées pas à pas, annexes officielles, flashcards 3D, bac à sable de code en direct, chasse aux erreurs (débogage Bac STI), simulateur visuel Form ➔ PHP ➔ SQL, constructeur visuel Tableaux/Formulaires/Flexbox, tableau blanc live, coffre de partage rapide de fichiers TP, messagerie temps réel avec pièces jointes, questions flash en direct, séries d'exercices, TP corrigés, quiz interactifs et épreuves pratiques en **HTML5, CSS3, JavaScript, SQL et PHP / MySQLi**.
+Plateforme éducative interactive dédiée aux **Sciences et Technologies de l'Informatique (STI — 3ème & 4ème SI)** :
+cours complets, leçons animées pas à pas, annexes officielles du Bac Tunisien, flashcards 3D, bac à sable de code en direct, écran partagé Énoncé + Code, simulateur SQL hors-ligne, laboratoire Chaînes & ASCII JavaScript, simulateur visuel Form ➔ PHP ➔ SQL, constructeur visuel Tableaux/Formulaires/Flexbox, chasse aux erreurs (débogage Bac STI), examen blanc chronométré `/20`, tableau blanc live, coffre de partage rapide de fichiers TP, boîte de réception et notation des copies TP, sondages QCM Live (mode Kahoot STI), messagerie temps réel avec pièces jointes, séries d'exercices, TP corrigés, quiz interactifs et épreuves pratiques en **HTML5, CSS3, JavaScript, SQL et PHP / MySQLi**.
 
-> **Auteur** : **Aymen Essouyah** (`By A'e`)  
-> **Version** : **V2.0 · `v115`** (PWA 100 % hors-ligne, Portail sécurisé, Mode Examen, Pack Sécurité Totale, Téléportation, Appel automatique, Tableau Blanc Live, Palmarès, Mains levées & Coffre de Partage Rapide TP)
-
----
-
-## ✨ Fonctionnalités principales de la Version 2.0
-
-### 🔐 1. Portail d'accès & Gestion des profils (`portail.html`)
-- **Identité visuelle unifiée** : thème sombre de l'accueil (`#0d1526` + halo orange + grille de points) avec animation dactylo **`STI`**.
-- **Double mode d'inscription et de connexion** :
-  - **Par e-mail** (avec validation par l'administrateur).
-  - **Par téléphone (`+216`)** avec saisie obligatoire du **Nom** et du **Prénom**, préfixe tunisien `+216 ` et validation par **code WhatsApp à 6 chiffres** (6 cases OTP individuelles).
-- **Protection Anti-Brute-Force** : blocage temporaire automatique de 60 secondes avec compte à rebours après 5 tentatives de connexion infructueuses.
-- **Sélection dynamique du lycée et de la classe** synchronisée avec la configuration de l'administrateur.
-- **Session permanente « Labo » (`elevelabo3`)** : tout poste connecté avec la classe `elevelabo3` conserve une session permanente illimitée sur le PC du laboratoire avec accès à tous les cours et projets (ainsi qu'au bouton `🚪 Déconnexion`), **mais sans aucun accès à `admin.html`**.
-- **Restriction automatique par niveau (`3ème SI` vs `4ème SI`)** :
-  - Les ressources **PHP / MySQLi**, l'**Atelier Bac Pratique** et le **Projet STI 0** (`projetsti0.pdf` et `ressources-projet-sti0.zip`) sont automatiquement masqués et verrouillés dès `0 ms` pour toutes les classes autres que **`4SI` (`4SI1` à `4SI5`)**, **`elevelabo3`** et le **Professeur (Admin)**.
+> **Auteur** : **Aymen Essouyah** (`By A'e`) — Lycée Rafèha  
+> **Version active** : **V2.0 · `v120`** (Application PWA 100 % hors-ligne, Portail sécurisé, Tableau de bord organisé par pôles pédagogiques, Pack Sécurité Totale & Bouclier Anti-IA)
 
 ---
 
-### 🎓 2. Outils d'étude, Révision interactive & Confort Élève (`index.html` & `assets/js/acces.js`)
-- **🃏 Mode « Flashcards Bac STI » en 3D réaliste (`Recto / Verso 3D`)** :
-  - Plus de **30 cartes de révision officielles** couvrant **HTML5, CSS3, JavaScript, SQL et PHP / MySQLi**.
-  - **Moteur physique 3D à 60 images/seconde (`requestAnimationFrame`)** : décollage de la carte au-dessus de la table, rotation en perspective trapézoïdale (`perspective(620px)`), tranche carton bristol épaisse, reflet lumineux et ombre portée dynamique au sol.
-  - Filtres par technologie, mode **« 🔁 À revoir uniquement »**, mélange aléatoire (`🔀`), navigation clavier (`Espace`, `Entrée`, `◀`, `▶`, `Échap`) et sauvegarde hors-ligne des cartes maîtrisées (`✅ Je maîtrise`).
+## ✨ 1. Portail d'accès, Inscription & Gestion des profils (`portail.html`)
+
+- **Identité visuelle unifiée** : thème sombre (`#0d1526` + halo orange + grille de points) avec animation dactylo **`STI`**.
+- **Modes d'inscription et de connexion** :
+  - **Par e-mail** ou **par téléphone (`+216 `)** avec saisie obligatoire du **Nom** et du **Prénom**, et validation par **code WhatsApp à 6 chiffres** (6 cases OTP individuelles).
+  - **Par Badge Laboratoire à 6 caractères (`🪪 Badge Labo`)** : connexion rapide en salle informatique pendant une séance de TP sans exposer le mot de passe personnel.
+- **Protection Anti-Brute-Force** : verrouillage temporaire automatique de 60 secondes avec compte à rebours après 5 tentatives de connexion infructueuses.
+- **Sélection dynamique du lycée et de la classe** synchronisée en temps réel avec la configuration du professeur.
+- **Session permanente « Labo » (`elevelabo3`)** : maintien automatique de la session sur les postes du laboratoire avec accès à tous les cours et bouton `🚪 Déconnexion`, **sans aucun accès à `admin.html`**.
+- **Profil Enseignant (`Prof`) & Restriction automatique par niveau (`3ème SI` vs `4ème SI`)** :
+  - Les ressources **PHP / MySQLi**, l'**Atelier Bac Pratique** et le **Projet STI 0** (`projetsti0.pdf` et `ressources-projet-sti0.zip`) sont automatiquement masqués et verrouillés dès `0 ms` pour toutes les classes autres que **`4SI` (`4SI1` à `4SI5`)**, **`Prof`**, **`elevelabo3`** et l'**Administrateur**.
+
+---
+
+## 🎓 2. Laboratoires Interactifs, Outils d'étude & Révision Élève (`index.html` & `assets/js/acces.js`)
+
+- **🗄️ Simulateur SQL Hors-ligne & Atelier Requêtes STI** :
+  - Moteur SQL relationnel embarqué **100 % hors-ligne** permettant d'exécuter de vraies requêtes **`SELECT`, `DISTINCT`, `WHERE`, `JOIN`, `GROUP BY`, `HAVING`, `ORDER BY`, `INSERT INTO`, `UPDATE`, `DELETE`** et fonctions (`COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `YEAR`, `MONTH`, `DAY`) sur **3 bases de données officielles du Bac Tunisien** (*Gestion Commerciale*, *Transport & Voyages*, *Club Sportif & Abonnements*).
+  - Inclut **8 défis SQL progressifs auto-corrigés** et l'envoi en 1 clic de la requête et du résultat au professeur (`📤 Envoyer au Prof`).
+- **🔤 Laboratoire Interactif « Chaînes & Code ASCII JavaScript » (Conforme Annexe Bac STI)** :
+  - Visualisation case par case de toute chaîne `ch` avec ses indices (`0` à `ch.length - 1`) et ses codes ASCII (`65 = 'A'`, `97 = 'a'`, `48 = '0'`).
+  - Testeur interactif utilisant exclusivement les propriétés et méthodes de l'**Annexe Officielle STI** : `ch.length`, `ch[i]`, `ch.indexOf(s)`, `ch.lastIndexOf(s)`, `ch.substring(d, f)`, `ch.toUpperCase()`, `ch.toLowerCase()`, `ch.trim()`, `ch.replace(a, b)`, `ch.charCodeAt(i)`, `String.fromCharCode(n)` et `T.length`.
+  - Générateur commenté des algorithmes classiques de contrôle de saisie du Bac STI (*`estAlpha(ch)`*, *`estChiffres(ch)` (CIN / Tél.)*, *extraction `Nom` / `Prénom`*, *validation d'e-mail*).
+- **🌗 Mode « Écran Partagé (Split-View) : Énoncé / Annexe + Éditeur de Code »** :
+  - Permet de travailler côte à côte avec l'**Énoncé de TP ou l'Annexe officielle STI** à gauche et l'**Éditeur de code multi-onglets (`HTML`, `CSS`, `JS`, `SQL / PHP`) + Aperçu live** à droite, avec remise directe de la copie au professeur (`📤 Rendre ma copie au Prof`).
 - **💻 Mini « Bac à sable » de code en direct (`HTML / CSS / JS`)** :
-  - Éditeur interactif **100 % hors-ligne** avec 3 onglets (**HTML**, **CSS**, **JavaScript**), aperçu instantané et **console JS intégrée** (`console.log` & erreurs d'exécution).
-  - Modèles Type Bac préchargés : *Formulaire HTML5 + contrôle `verif()`*, *Flexbox & `@keyframes` CSS3*, *Chaînes et fonctions JavaScript (`indexOf`, `substring`, `Date`)* et *Page vierge*.
-- **🐞 Mode « Chasse aux erreurs (Débogage Bac STI) »** :
-  - **10 défis officiels de débogage type Bac STI** (3 erreurs classiques par défi = **30 pièges du Bac**) :
-    - **HTML5** : `onsubmit="return verif()"`, `<datalist id="...">` relié à `list="..."`, même `name` sur les boutons `radio`, `colspan="3"`, `pattern="[0-9]{8}"`, `controls` sur `<audio>`.
-    - **CSS3** : `display: flex;`, sélecteur `.carte:hover`, `color`, `border-radius`, `@keyframes`, `transform: rotate(...)`.
-    - **JavaScript** : `.value` (au lieu de `.innerHTML`), `.length` (au lieu de `.size`), `if (isNaN(cin))`, `charAt(0)`, `.selectedIndex` sur `<select>`, `.checked` sur les radios.
-    - **SQL** : `PRIMARY KEY`, `CHECK (qte > 0)`, `REFERENCES Client(id_cl)` (avec `S`), `YEAR(date_cmd)`, `HAVING COUNT(*) >= 3` après `GROUP BY`, `ORDER BY total DESC`.
-    - **PHP & MySQLi** (réservés aux `4SI`, `elevelabo3` et Admin) : `$_POST["cin"]`, ordre `mysqli_query($con, $req)`, `mysqli_affected_rows($con)` après `INSERT`, ordre `mysqli_connect("localhost", "root", "", "bd_sport")`, `mysqli_num_rows($res)` et `mysqli_fetch_array($res)`.
-  - Diagnostic en direct des 3 erreurs (`🐞` → `✅`), indices progressifs (`💡 Indice 1/3`), corrigé expliqué et envoi automatique de la note `/20` au professeur (`🏆 Envoyer mon score`).
-- **💬 Messenger STI bidirectionnel avec pièces jointes (`📎`) sur 100 % des pages** :
-  - Fenêtre de discussion style Facebook Messenger accessible depuis toutes les pages du site (PC et mobile avec adaptation automatique au clavier virtuel).
-  - Envoi et réception bidirectionnels de messages texte, d'images (aperçu + téléchargement) et de documents/codes (`.pdf`, `.zip`, `.html`, `.css`, `.js`, `.sql`, `.php`, `.txt`), dictée vocale sans répétition et alerte sonore/visuelle en temps réel.
-- **⚡ Question Flash / Sondage Live en classe** :
-  - Réception en direct sur l'écran de l'élève des questions flash minutées lancées par le professeur (QCM `A/B/C/D`, `Vrai / Faux` ou `Réponse courte`), avec compte à rebours, envoi en 1 clic et affichage de la correction officielle.
-- **🔍 Recherche profonde globale (`Ctrl + K` ou `/`)** :
-  - Recherche instantanée à travers tous les chapitres, balises HTML5 (`<datalist>`, `<fieldset>`…), propriétés CSS3 (`flexbox`, `@keyframes`…), fonctions JS/PHP (`isNaN`, `mysqli_fetch_array`…) et commandes SQL (`FOREIGN KEY`, `GROUP BY`, `HAVING`…) avec ouverture directe de la section exacte.
-- **📍 Reprise automatique de lecture, 📝 Carnet de notes (`Alt + N`) & Bouton `⬆ Haut` universel** :
-  - Mémorisation automatique du dernier chapitre lu et du pourcentage d'avancement dans chaque cours.
-  - Prise de notes personnelle par cours, sauvegardée automatiquement hors-ligne et téléchargeable en fichier `.txt`.
-  - Bouton flottant **`⬆ Haut`** présent sur 100 % des pages du site.
+  - Éditeur interactif **100 % hors-ligne** avec modèles Type Bac préchargés, aperçu instantané, console JS intégrée et bouton **`📤 Envoyer mon code au Prof`**.
+- **📋 Constructeur Visuel de Tableaux (`rowspan` / `colspan`), Formulaires HTML5 & Flexbox CSS3** :
+  - Générateur visuel interactif produisant automatiquement le code HTML5/CSS3 propre et indenté pour les tableaux fusionnés, les formulaires avec validation et les mises en page Flexbox.
+- **🔗 Simulateur Visuel « Du Formulaire HTML vers PHP & MySQL (`$_POST` ➔ `mysqli_query`) »** :
+  - Animation pas à pas illustrant le cycle complet d'une application Web STI : saisie HTML ➔ contrôle JS `onsubmit="return verif()"` ➔ tableau `$_POST[...]` sur le serveur Apache/PHP ➔ exécution SQL `mysqli_query($con, $req)` ➔ retour `mysqli_affected_rows($con)` ou `mysqli_num_rows($res)`.
+- **🃏 Mode « Flashcards Bac STI » en 3D réaliste (`Recto / Verso 3D`)** :
+  - Plus de **30 cartes de révision officielles** (**HTML5, CSS3, JavaScript, SQL, PHP / MySQLi**) animées à 60 FPS (`requestAnimationFrame`, perspective 3D, filtres par module et suivi des cartes maîtrisées).
+- **🐞 Mode « Chasse aux erreurs (Débogage Bac STI) » & 📝 Examen Blanc Chronométré (`/20`)** :
+  - **10 défis officiels de débogage × 3 erreurs = 30 pièges classiques du Bac STI** avec diagnostic en direct (`🐞` ➔ `✅`), indices progressifs et corrigé détaillé.
+  - **Examen Blanc STI (`/20`)** : 20 questions QCM tirées aléatoirement par élève (4 par module), chronomètre de 20 minutes, copie détaillée et transmission automatique de la note au professeur.
+- **💬 Messenger STI bidirectionnel (`📎`), 🗂️ Coffre TP, 🙋‍♂️ Lever la main, 🏆 Palmarès & 🩺 Docteur STI** :
+  - Messagerie instantanée avec pièces jointes (images, `.pdf`, `.zip`, `.sql`, `.php`, `.html`, `.js`), dictée vocale sans répétition et masquage automatique de la barre inférieure sur mobile lors de l'ouverture du chat.
+  - Accès direct aux fichiers distribués par le professeur (**`🗂️ Coffre TP`**), bouton **`🙋‍♂️ Lever la main`** pour demander de l'aide en TP, consultation du **`🏆 Palmarès`** et outil d'auto-réparation du cache (**`🩺 Docteur STI`**).
+- **🔍 Recherche profonde globale (`Ctrl + K` ou `/`)**, **📍 Reprise automatique de lecture**, **📝 Carnet de notes (`Alt + N`)** et **bouton universel `⬆ Haut`**.
 
 ---
 
-### 📖 3. Cours interactifs, Animations & Projets Bac
+## 📖 3. Cours interactifs, Animations & Projets Bac
+
 - **🐘 Cours PHP (`cours/php.html`), `cours/PHP-recap.html` & `cours/php-mysqli.html`** :
-  - Bouton magique permanent **`🪄 PHP-recap ✨`** sous l'en-tête ouvrant la fiche récapitulative complète `cours/PHP-recap.html` en boîte modale plein écran.
-  - Bouton **`🎬`** dans l'en-tête ouvrant l'animation interactive du guichet Client / Serveur Apache / PHP / MySQL (avec bouton « Tournez-moi ! 🔄 » sur mobile portrait).
+  - Bouton permanent **`🪄 PHP-recap ✨`** ouvrant la fiche récapitulative complète en modale plein écran.
+  - Bouton **`🎬`** ouvrant l'animation interactive du guichet Client / Serveur Apache / PHP / MySQL (avec invitation « Tournez-moi ! 🔄 » sur mobile portrait).
   - Boîte interactive dédiée aux fonctions **PHP & MySQLi** (`cours/php-mysqli.html`).
 - **🗄️ Cours SQL (`cours/sql.html`) & Animation des contraintes (`cours/sql-contraintes.html`)** :
-  - Cours complet LDD / LMD avec bouton **`⚡ Voir l'animation : Effet des contraintes`** en fin de chapitre ouvrant `cours/sql-contraintes.html` en modale néo-brutaliste.
-  - Simulateur SQL interactif permettant de tester en direct l'effet de `PRIMARY KEY`, `FOREIGN KEY`, `ON DELETE CASCADE`, `UNIQUE`, `CHECK`, `NOT NULL`, `DEFAULT` et `AUTO_INCREMENT` avec journal SGBD.
-- **🎬 Leçons animées pas à pas** :
-  - **`cssanimee/`** : découverte visuelle et animée des balises HTML5 et propriétés CSS3 des annexes officielles.
-  - **`Positionnement-animee/`** : leçon animée pas à pas sur le positionnement CSS et Flexbox.
+  - Cours complet LDD / LMD avec bouton **`⚡ Voir l'animation : Effet des contraintes`** ouvrant le simulateur néo-brutaliste (`PRIMARY KEY`, `FOREIGN KEY`, `ON DELETE CASCADE`, `UNIQUE`, `CHECK`, `NOT NULL`, `DEFAULT`, `AUTO_INCREMENT`).
+- **🎬 Leçons animées pas à pas (`cssanimee/` & `Positionnement-animee/`)** :
+  - Découverte visuelle et animée des balises HTML5, des propriétés CSS3 des annexes officielles, du positionnement CSS et de Flexbox.
 - **🧪 Atelier Bac Pratique (`bac-pratique.html`) & Projet STI 0 (`projets/sti0/`)** :
-  - Épreuves pratiques complètes avec barème sur 20, correction guidée et téléchargement hors-ligne garanti de l'énoncé PDF (`projetsti0.pdf`) et de l'archive des ressources (`ressources-projet-sti0.zip`).
+  - Épreuves pratiques notées sur `/20` et téléchargement 100 % hors-ligne garanti de l'énoncé PDF (`projetsti0.pdf`) et de l'archive des ressources (`ressources-projet-sti0.zip`).
 - **🪪 Carte de visite numérique (`carte-visite.html`)** :
-  - Carte professionnelle interactive avec logo **AE** ; l'export contact (`.vcf`) et l'impression sont strictement réservés à l'administrateur.
+  - Carte professionnelle interactive avec logo **AE** (export `.vcf` et impression réservés à l'administrateur).
 
 ---
 
-### 📊 4. Tableau de bord Administrateur temps réel & Pilotage de classe (`admin.html`)
-- **Sécurité d'accès exclusive, Verrou anti-flash `0 ms`, Version & Jauge Supabase** :
-  - Accès à `admin.html` **strictement réservé au seul compte administrateur** avec protection immédiate dès `0 ms` avant le premier rendu.
-  - Affichage permanent de la version (`STI V2.0 · v112`) accompagné du **pourcentage et de l'espace restant en direct dans Supabase** (sur le quota de 500 Mo via `public.admin_taille_base()`).
-  - **🔒 Verrouillage rapide de l'écran Admin par code PIN (`#modal-verrou-ecran-admin`)** : permet au professeur de verrouiller l'écran du tableau de bord en 1 clic lorsqu'il circule dans les rangs.
-- **📋 Feuille d'appel & présence automatique du jour par classe (`#modal-appel-presence`)** :
-  - Croisement automatique des abonnés de la classe choisie avec les connexions du jour : liste claire des **`🟢 Présents`** (avec heure exacte de 1re connexion et appareil) et des **`🔴 Absents`**, prête à être **imprimée (`🖨️`)** ou **exportée en CSV (`📥`)**.
-- **🚀 Téléportation d'écran en direct & ⏸️ Pause écran individuel** :
-  - **🚀 Téléporter les écrans** : depuis `🛡️ Sécurité`, le professeur choisit une ressource (cours, TP, série d'exercices, quiz, Bac Pratique) et l'ouvre instantanément sur tous les postes des élèves de la classe cible.
-  - **⏸️ Pause écran individuel (`⏸️` / `▶️`)** : bouton direct sur chaque ligne et nœud d'abonné permettant de geler/dégeler instantanément l'écran d'un élève précis avec le message plein écran *« ⏸️ Écran mis en pause par M. Essouyah — Regardez le tableau ! »*.
-- **⚡ Question Flash / Sondage Live en classe** :
-  - Lancement en direct depuis `admin.html` **ou depuis n'importe quelle page du site** (où le bouton **`⚡`** remplace le bouton Imprimer `🖨️` pour l'administrateur) d'une question minutée avec réception instantanée des réponses des élèves, barres de progression par option (`A/B/C/D`, `Vrai/Faux` ou texte) et révélation de la bonne réponse.
-- **📺 Tableau Blanc Live du Prof (Diffusion d'un extrait de code ou corrigé en direct)** :
-  - Depuis `admin.html` (`📺 Tableau Blanc`) **ou depuis n'importe quelle page du site** (bouton flottant **`📺`** du dock Admin avec pré-remplissage automatique du code sélectionné), projection instantanée sur tous les écrans de la classe choisie (ou d'un élève individuel) d'un bloc de code numéroté (`SQL`, `PHP / MySQLi`, `JavaScript`, `HTML5 / CSS3`) accompagné des remarques du professeur, d'une option Lecture seule / Copie autorisée (`📋 Copier` / `💻 Bac à sable`), d'une réduction en vignette flottante et d'un arrêt à distance (`⏹️ Fermer chez les élèves`).
-- **Gestion complète des abonnés, des classes et des lycées** :
-  - L'administrateur n'apparaît jamais dans la liste des abonnés.
-  - Ajout, renommage (avec migration automatique des élèves) et suppression de **classes** et de **lycées** synchronisés sur tous les appareils.
-  - Affichage en direct de l'**effectif de la classe sélectionnée** et du **nombre d'élèves `🟢 En ligne`**.
-  - Deux modes d'affichage : **`📋 Liste détaillée`** (lignes colorées selon l'état : vert clair = actif, doré = 👑 Gold, beige = en attente, rose = exclu) et **`🔵 Nœuds`** compacts.
-  - Changement direct de la classe d'un abonné et actions rapides (**`✅ Activer`**, **`👑 Gold`**, **`⏸️ Pause`**, **`⏳ Attente`**, **`⛔ Exclure`**, **`🔑 Mot de passe`**, **`🗑️ Supprimer`**) avec **éjection en direct (`< 1 s`)**.
-- **📋 Fiche récapitulative individuelle par élève (`#modal-fiche-eleve`) & 📥 Exports CSV** :
-  - Bilan complet de l'élève : coordonnées, classe, statut, cumul hebdomadaire (du lundi 00h00 à aujourd'hui) et global, appareils utilisés (`#XXXX`), moyenne générale `/20`, historique des Quiz et Défis de débogage, messages lus/réponses, bouton `✕` fixe sur mobile et export CSV.
-- **Affichage compact & Purges ciblées** :
-  - Affichage par défaut des **5 premiers éléments** avec bouton **`➕ Voir plus`** pour le journal des connexions (incluant Lycée et Classe dans la colonne Candidat), le suivi de lecture des messages et les résultats des quiz.
-  - Boutons de nettoyage ciblé : **`🗑️ Effacer par mois…`** (connexions et quiz) et **`🗑️ Effacer par message…`** (suivi de lecture).
+## 📊 4. Tableau de bord Administrateur réorganisé & Pilotage de classe (`admin.html`)
+
+- **Organisation claire en 4 zones ergonomiques (PC & Mobile)** :
+  1. **En-tête supérieur épuré (`.hero-admin`)** : indicateur réseau temps réel (vert `#177245` en ligne / rouge `#c0392b` hors ligne), témoin de Mode Examen, version active, **jauge de quota Supabase (`500 Mo`) cliquable**, accès directs prioritaires avec pastilles live (`💬 Messenger`, `⚡ Question Flash`, `📋 Appel`, `🛡️ Sécurité`, `🙋‍♂️ Mains levées`, `🏆 Palmarès`, `🔄 Actualiser`) et tiroir **`⚙️ Système & Plus ▾`** (`🏠 Accueil`, `🪪 Carte visite`, `🩺 Forcer Maj Élèves`, `🔒 Verrouiller PIN`, `📖 README`, `🔔 Notifications`).
+  2. **Boîte à outils du Professeur classée en 3 Pôles thématiques par onglets (`.poles-tabs`)** :
+     - **📡 Pôle 1 — Séance & Direct (4 outils)** : *📢 Message par classe*, *📺 Tableau Blanc Live*, *🗂️ Coffre de Partage TP*, *🪪 Badges Labo (Classe)*.
+     - **📝 Pôle 2 — Évaluations & Corrections (5 outils)** : *⚡ Question Flash / Sondage*, *📊 Sondage QCM Live (Kahoot STI)*, *📥 Copies & TP rendus (/20)*, *🧮 Grille Devoirs (DC / DS + CSV Eduserv)*, *⏱️ Contrôle chronométré*.
+     - **🛡️ Pôle 3 — Classe, Sécurité & Suivi (3 outils)** : *🛡️ Sécurité & Mode Examen*, *🧪 Atelier Bac Pratique*, *📊 Trier par durée / accès*.
+  3. **5 Compteurs en direct (`#stats`) & Barre de navigation par sections (`#nav-sections-admin`)** : permet d'afficher la vue complète ou de filtrer/replier en 1 clic chacune des **4 grandes sections de données** :
+     - **👥 `1. Liste des Abonnés & Classes`** (`📋 Liste détaillée` ou `🔵 Nœuds`),
+     - **🏆 `2. Résultats des Quiz & Atelier Bac Pratique`**,
+     - **📨 `3. Suivi de lecture des messages & réponses des élèves`**,
+     - **🕒 `4. Dernières connexions (tous abonnés)`**.
+  4. **Ergonomie Mobile dédiée (`≤ 768px`)** : barre de navigation fixe au pouce en bas d'écran (`#mob-bottom-nav`), masquée automatiquement dès l'ouverture du Chat Messenger ou d'une fenêtre modale.
+- **✅ Confirmation systématique à 2 boutons (`Annuler` et `Confirmer`)** :
+  - Chaque opération de changement ou de suppression dans **Liste des Abonnés & Classes** et dans **Gestion des Lycées & des Classes** (*suppression de classe*, *suppression de lycée*, *suppression de candidat*, *renommage ou ajout de classe/lycée*, *changement de classe d'un candidat*, *changement de statut Actif / En attente / Exclu*, *bascule 👑 Gold*, *pause écran*, *activation groupée*) affiche une boîte de confirmation dédiée avec les **2 boutons `Annuler` et `Confirmer`**.
+- **📥 Boîte de Réception & Notation des Copies TP (`/20`), 🧮 Grille Devoirs (`DC / DS`) & 📄 Bulletin PDF (`A4`)** :
+  - Test en 1 clic du code rendu par un élève, attribution d'une note `/20` et d'une appréciation envoyées en direct sur son écran.
+  - Grille de barème par composante (*HTML `/4`*, *CSS `/4`*, *JS `/4`*, *SQL `/4`*, *PHP `/4`*) avec export CSV compatible Eduserv.
+  - Génération depuis la Fiche Élève d'un **Bulletin / Bilan Individuel PDF A4** officiel prêt à imprimer ou signer.
+- **🧹 Analyseur & Nettoyeur Intelligent du Quota Supabase (`500 Mo`)** :
+  - Détail visuel de l'espace occupé par catégorie et nettoyage ciblé en 1 clic des anciens journaux et pièces jointes sans jamais toucher aux comptes élèves ni aux notes récentes.
 
 ---
 
-### 🛡️ 5. Pack Sécurité Totale, Compte 👑 Gold, PDF & Verrouillage du code source
-- **📄 Documents PDF accessibles à tous & Compte 👑 Gold** :
-  - **Tous les liens et documents PDF (`.pdf` et `.pdf.html`) peuvent être ouverts, téléchargés et imprimés par tous les abonnés actifs** (même non-Gold).
-  - Le statut **👑 Gold** (accordé par l'administrateur, et actif par défaut pour l'Admin) débloque en plus la copie de texte/code, la capture d'écran et l'impression des pages de cours interactives.
-- **Verrouillage strict du code source pour 100 % des abonnés (`assets/js/protection.js`)** :
-  - Le clic droit, l'enregistrement de page (`Ctrl + S`), l'affichage du code source (`Ctrl + U`), les outils de développement (`F12`, `Ctrl + Shift + I / J / C / K`) et le bouclier **Anti-DevTools (`#sti-devtools-overlay`)** sont **bloqués pour 100 % des abonnés**, y compris les comptes **👑 Gold** et **`elevelabo3`** (seul l'administrateur strict est exempté).
-- **🛡️ Centre de Sécurité temps réel (`#modal-securite` dans `admin.html`)** :
-  1. **🔒 Mode Examen / Verrouillage par classe** : bloque l'accès aux cours pour une classe ou tout le site et maintient les élèves sur la seule page d'épreuve autorisée.
-  2. **🖥️ Plein Écran (`F11`) obligatoire en Mode Examen** : masque la barre d'adresse et les onglets du navigateur pendant l'épreuve et alerte le professeur en cas de sortie du plein écran.
-  3. **🚫 Anti-partage de compte (Session unique)** : 1 seule session simultanée par élève (déconnexion immédiate de l'ancien appareil avec `#partage`).
-  4. **⚡ Éjection auto Code Source (`3/3`)** : déconnexion immédiate (`#securite`) après 3 tentatives d'ouverture de `F12` / `Ctrl+U` / DevTools.
-  5. **📵 Anti-triche & Chronométrage exact des absences hors épreuve (`Alt+Tab` / ouverture d'application tierce)** : détecte chaque sortie d'onglet ou perte de focus pendant un Quiz, un Contrôle, l'Examen Blanc ou le Mode Examen, mesure en secondes la durée exacte d'absence et le cumul total, et déclenche une alerte critique en cas d'absence prolongée (`≥ 10 s` · Suspect IA Gemini / Claude / ChatGPT).
-  6. **🔀 Tirage aléatoire par élève (Sujets & QCM dynamiques anti-copie entre voisins)** : mélange automatiquement l'ordre des questions et l'ordre des propositions (`A, B, C, D`) différemment sur chaque poste (Questions Flash en direct, Examen Blanc `/20` et Quiz).
-  7. **🕵️‍♂️ Piège « Cheval de Troie » invisible au Copier (`Copy-Trap` Anti-Gemini / Claude / ChatGPT)** : injecte une consigne furtive et un filigrane invisible lors de la copie d'un énoncé afin d'obliger Gemini, Claude ou ChatGPT à glisser un identifiant témoin (`verif_sti_ae` / `sti_ctrl_94`) dans sa réponse, détectant ainsi à **100 %** l'usage d'une IA dès que l'élève colle ou tape ce code.
-  8. **📐 Anti-Écran partagé (`Split-screen < 80 %`) & 🌐 Anti-Traduction automatique (`translate="no"`)** : bloque l'affichage côte à côte avec une IA/antisèche pendant les épreuves et interdit à Google Translate de traduire et fausser les mots-clés `SELECT`, `WHERE`, `input`, `function`…
-  9. **🤖📋 Bouclier Anti-IA complet (Anti-ChatGPT · Anti-Gemini · Anti-Claude)** : bloque le collage (`paste`) et le glisser-déposer (`drop`) de blocs de texte/code externes ou porteurs de signatures DOM `Gemini`, `Claude` ou `ChatGPT`, bloque les extensions de frappe automatique (*Auto-Typers IA*), détecte et neutralise en direct les extensions latérales d'IA injectées dans la page (*Gemini*, *Claude*, *ChatGPT*, *Monica*, *Sider*, *Merlin*, *MaxAI*, *Harpa*) et injecte un piège sémantique Anti-Prompt sur les épreuves.
-  10. **🕵️ Filigrane nominatif anti-photo smartphone** : affiche en diagonale semi-transparente l'identité, la classe, l'empreinte d'appareil `#XXXX` et l'heure sur toutes les pages.
-  11. **📱 Identification d'appareil (`#XXXX`), Alerte multi-appareils (`≥ 3`), ⏳ Auto-déconnexion après inactivité (15–60 min) & 💾 Backup JSON complet** en 1 clic.
-- **Protection Anti-IA (`robots.txt` & balises `noai` / `noimageai`)** :
-  - Interdiction d'indexation et d'extraction par les robots et agents d'IA (`GPTBot`, `ChatGPT-User`, `OAI-SearchBot`, `ClaudeBot`, `Claude-Web`, `Claude-User`, `Claude-SearchBot`, `anthropic-ai`, `Google-Extended`, `GoogleOther`, `Google-CloudVertexBot`, `Gemini-Deep-Research`, `DeepSeekBot`, `GrokBot`, `CCBot`, `Bytespider`, etc.) sur toutes les pages.
+## 🛡️ 5. Pack Sécurité Totale, Compte 👑 Gold, PDF & Bouclier Anti-IA
+
+- **📄 Documents PDF accessibles à tous & Statut 👑 Gold** :
+  - **Tous les documents PDF (`.pdf` et `.pdf.html`) sont téléchargeables et imprimables par 100 % des abonnés actifs**.
+  - Le statut **👑 Gold** débloque en plus la copie de texte/code, la capture d'écran et l'impression des pages de cours interactives.
+- **Verrouillage strict du code source (`assets/js/protection.js`)** :
+  - Clic droit, `Ctrl + S`, `Ctrl + U`, `F12`, `Ctrl + Shift + I / J / C / K` et bouclier **Anti-DevTools** bloqués pour **100 % des abonnés** (y compris **👑 Gold** et **`elevelabo3`** ; seul l'administrateur strict est exempté), avec **éjection automatique (`3/3`)**.
+- **🛡️ Centre de Sécurité & Bouclier Anti-IA (`#modal-securite`)** :
+  - **Mode Examen / Verrouillage par classe** avec **minuteur d'auto-déverrouillage** (`30 min`, `45 min`, `1 h`, `1 h 30`, `2 h`), **Plein Écran (`F11`) obligatoire**, **Téléportation d'écran** et **Pause écran individuel**.
+  - **Session unique anti-partage de compte**, **chronométrage exact des sorties d'onglet (`Alt + Tab` ≥ 10 s)**, **Anti-Écran partagé (`Split-screen < 80 %`)** et **Anti-Traduction automatique (`translate="no"`)**.
+  - **🔀 Tirage aléatoire des QCM par élève** et **🕵️‍♂️ Piège « Cheval de Troie » au Copier (`Copy-Trap`)** détectant automatiquement les réponses générées par IA (`verif_sti_ae` / `sti_ctrl_94`).
+  - **🤖 Bouclier Anti-IA complet (Anti-ChatGPT · Anti-Gemini · Anti-Claude)** : blocage du collage/glisser-déposer externe, neutralisation des extensions latérales d'IA et des Auto-Typers, filigrane nominatif anti-photo smartphone (`#XXXX`) et sauvegarde complète **Backup JSON**.
 
 ---
 
-## 🗂️ Structure du projet
+## 🗂️ 6. Structure du projet
 
 ```text
 STI-Atelier-V2.0/
 │
-├── index.html                        # 🏠 Accueil — cours, recherche Ctrl+K, Flashcards 3D, Sandbox & Chasse aux erreurs
-├── portail.html                      # 🔐 Portail de connexion / inscription (e-mail, WhatsApp +216 & anti-brute-force)
-├── admin.html                        # 📊 Tableau de bord Admin temps réel, Appel, Sécurité, Flash & Messenger
-├── bac-pratique.html                 # 🧪 Atelier Épreuve Pratique Bac STI (réservé 4SI / Labo / Admin)
+├── index.html                        # 🏠 Accueil — cours, recherche Ctrl+K, laboratoires & outils interactifs
+├── portail.html                      # 🔐 Portail de connexion / inscription (e-mail, WhatsApp +216 & Badge Labo)
+├── admin.html                        # 📊 Tableau de bord Admin organisé en 3 pôles & 4 sections repliables
+├── bac-pratique.html                 # 🧪 Atelier Épreuve Pratique Bac STI (4SI / Prof / Labo / Admin)
 ├── carte-visite.html                 # 🪪 Carte de visite numérique AE (.vcf & impression réservés Admin)
-├── sw.js                             # ⚙️ Service Worker PWA (cache 100 % hors-ligne sti-atelier-v112)
+├── sw.js                             # ⚙️ Service Worker PWA (cache 100 % hors-ligne sti-atelier-v120)
 ├── manifest.webmanifest              # 📱 Manifeste d'installation PWA
-├── robots.txt                        # 🤖 Directives SEO & blocage des crawlers IA
+├── robots.txt                        # 🤖 Directives SEO & blocage des robots d'IA
 ├── sitemap.xml                       # 🗺️ Plan du site
 ├── README.md                         # 📄 Documentation complète du projet
 │
-├── assets/                           # 🎨 Ressources globales
-│   ├── css/
-│   │   ├── atelier.css               #   Thème principal « L'Atelier » (crème / orange / mode sombre)
-│   │   ├── atelier-pages.css         #   Styles des pages de cours et exercices
-│   │   ├── atelier-php.css           #   Styles spécifiques au module PHP
-│   │   └── protection.css            #   Verrous visuels anti-copie / anti-impression & exemption PDF
-│   ├── js/
-│   │   ├── config.js                 #   Configuration Supabase, RACINE & identifiant administrateur
-│   │   ├── portail.js                #   Inscription/connexion, OTP WhatsApp 6 cases, biométrie, labo3
-│   │   ├── acces.js                  #   Session, roue ⚙️, Flashcards 3D, Sandbox, Débogage, Messenger 📎, Sécurité
-│   │   ├── admin.js                  #   Tableau de bord, Appel, Sécurité, Téléportation, Pause, Flash, CSV
-│   │   ├── protection.js             #   Bouclier code source / Anti-DevTools & privilèges 👑 Gold / Admin / PDF
-│   │   └── supabase-umd.js           #   Client Supabase UMD local
-│   ├── fonts/                        #   Polices locales embarquées (Manrope, Baloo 2, JetBrains Mono)
-│   ├── fontawesome/                  #   Icônes Font Awesome locales
-│   ├── icons/                        #   Icônes PWA (192, 512) & favicon STI_by_AE.ico
-│   ├── images/                       #   Logos & QR code de contact (qr-code-site.png, qr-stiv2.png)
-│   ├── audio/                        #   Exemples audio HTML5
-│   └── video/                        #   Exemples vidéo HTML5
+├── assets/                           # 🎨 Ressources globales (CSS, JS, polices, icônes, médias)
+│   ├── css/                          #   atelier.css, atelier-pages.css, atelier-php.css, protection.css
+│   └── js/                           #   config.js, portail.js, acces.js, admin.js, protection.js, supabase-umd.js
 │
-├── cours/                            # 📖 Cours interactifs & Fiches récapitulatives
-│   ├── html5.html                    #   Cours HTML5 complet
-│   ├── css3.html                     #   Cours CSS3 complet (+ accès aux leçons animées)
-│   ├── javascript.html               #   Cours JavaScript
-│   ├── sql.html                      #   Cours SQL (+ bouton modale vers l'animation des contraintes)
-│   ├── sql-contraintes.html          #   Animation interactive néo-brutaliste : Effet des contraintes SQL
-│   ├── sql-bases-ldd-lmd-lcd.html    #   Bases de données : LDD, LMD, LCD
-│   ├── php.html                      #   Cours PHP (+ boutons 🪄 PHP-recap ✨, 🎬 Guichet & MySQLi)
-│   ├── PHP-recap.html                #   Fiche récapitulative PHP complète (intégrée en modale)
-│   ├── php-mysqli.html               #   Boîte interactive PHP & MySQLi
-│   ├── datalist.html                 #   Focus interactif sur <datalist>
-│   ├── fiche-revision-html5.html     #   Guide & fiche de révision HTML5
-│   └── annexe-fleuriste-html5.html   #   Exemple commenté « Le Fleuriste »
-│
+├── cours/                            # 📖 Cours interactifs & Fiches récapitulatives (HTML5, CSS3, JS, SQL, PHP)
 ├── cssanimee/                        # 🎬 Leçon animée 1 : Balises HTML5 & propriétés CSS3 des annexes
-│   └── index.html
-│
 ├── Positionnement-animee/            # 📐 Leçon animée 2 : Positionnement CSS & Flexbox pas à pas
-│   └── index.html
-│
-├── quiz/                             # 🎯 Quiz interactifs & Défis (avec remontée des notes à l'Admin)
-│   ├── html-css.html                 #   Quiz HTML5 / CSS3
-│   ├── javascript.html               #   Quiz JavaScript
-│   ├── sql.html                      #   Quiz SQL
-│   ├── php.html                      #   Quiz PHP (4SI)
-│   └── pp.html                       #   PHP Playground & défis interactifs (4SI)
-│
-├── exercices/                        # ✏️ Séries d'exercices & TP corrigés
-│   ├── series-exercices.html         #   Portail des séries d'exercices (filtré selon le niveau)
-│   ├── resume-fonctions-standards.html
-│   ├── html-css/                     #   Activités & TP HTML/CSS
-│   ├── javascript/                   #   TP JavaScript 1 → 5 + corrigés
-│   ├── sql/                          #   TP Bases de données & SQL + atelier 3 fenêtres
-│   └── php/                          #   TP PHP 1 → 4 + corrigés (4SI)
-│
-├── projets/                          # 🛠️ Projets pédagogiques complets
-│   ├── sti0/                         #   Projet STI 0 (énoncé PDF + archive ressources ZIP hors-ligne)
-│   ├── carte-bancaire/               #   TP Carte bancaire (énoncé + correction)
-│   ├── formulaire-inscription/       #   Formulaire d'inscription avancé
-│   ├── fleurs/                       #   Projet « Fleuriste » (HTML/CSS/JS + PHP)
-│   └── site-tunisie/                 #   Site vitrine Tunisie (Nord / Centre / Sud)
-│
+├── quiz/                             # 🎯 Quiz interactifs & Défis (HTML/CSS, JS, SQL, PHP)
+├── exercices/                        # ✏️ Séries d'exercices & TP corrigés par module
+├── projets/                          # 🛠️ Projets complets (STI 0, Carte bancaire, Formulaire, Fleurs, Tunisie)
 ├── documents/                        # 📄 Annexes officielles PDF & Cours complets imprimables par tous
-│   ├── annexes/
-│   └── complet/
-│
-└── tools/                            # 🔧 Administration & Base de données
-    └── supabase-schema.sql           #   Schéma SQL complet (tables, RLS blindé, triggers & fonctions RPC)
+└── tools/                            # 🔧 Schéma SQL Supabase (RLS blindé, triggers & fonctions RPC)
 ```
-
----
-
-## 🚀 Architecture & Mode 100 % Hors-ligne (`sti-atelier-v112`)
-
-1. **Service Worker (`sw.js`) sans aucun lien mort** :
-   - Pré-chargement automatique en tâche de fond de l'ensemble des fichiers du site (cours, animations, exercices, quiz, PDF, archives `.zip`, polices et icônes) avec résolution exacte des sous-dossiers (`/cssanimee/`, `/Positionnement-animee/`, etc.).
-   - Purge automatique des anciens fichiers `.html`, `.js` et `.css` lors des changements de version pour garantir l'application immédiate des mises à jour.
-   - Génération de `Blob` locaux (et Base64 embarqué pour `ressources-projet-sti0.zip`) permettant de télécharger les archives et sujets PDF même lorsque le PC du laboratoire est totalement déconnecté d'Internet.
-2. **Synchronisation différée automatique** :
-   - Les scores de quiz et de débogage, durées d'étude hebdomadaires, alertes de sécurité et réponses Messenger réalisés hors-ligne sont stockés dans `sti-offline-queue` et synchronisés automatiquement vers Supabase dès le retour de la connexion.
-3. **Base de données Supabase (`tools/supabase-schema.sql`)** :
-   - Tables `public.profiles` et `public.acces` sécurisées par Row-Level Security (RLS) avec trigger `trg_verrou_profil_securite` interdisant toute élévation de privilèges côté client (`statut`, `classe`, `|GOLD`, événements réservés à l'administrateur).
-   - Fonctions RPC d'administration (`admin_creer_abonne`, `admin_maj_statut`, `admin_changer_mdp`, `admin_supprimer_abonne`, `admin_taille_base`).
