@@ -1671,7 +1671,7 @@
     });
   }
 
-  /* Point 4 : Validation groupée (« Tout activer ») */
+  /* Point 4 : Validation groupée (« Tout activer ») avec confirmation Annuler / Confirmer */
   if (btnActiverLot) {
     btnActiverLot.addEventListener("click", function () {
       var cibles = obtenirListeFiltree().filter(function (p) { return p.statut === "en_attente"; });
@@ -1679,14 +1679,22 @@
         msg("ℹ️ Aucune demande en attente dans la sélection actuelle.", "ok");
         return;
       }
-      var ids = cibles.map(function (p) { return p.id; });
-      btnActiverLot.disabled = true;
-      sb.from("profiles").update({ statut: "actif" }).in("id", ids).then(function (r) {
-        btnActiverLot.disabled = false;
-        if (r.error) { msg("❌ " + r.error.message, "err"); return; }
-        cibles.forEach(function (p) { diffuserSignalStatut(p.id, "actif", estGold(p)); });
-        msg("✅ " + cibles.length + " abonné(s) activé(s) en un clic !", "ok");
-        charge(true);
+      demanderConfirmationOperation({
+        titre: "✅ Confirmer l'activation groupée ?",
+        htmlDesc: "Voulez-vous vraiment activer les <b>" + cibles.length + " candidat(s) en attente</b> de la sélection actuelle ?",
+        resumeTxt: "👥 Candidat(s) concerné(s) : " + cibles.slice(0, 6).map(function (p) { return nomPrenomTexte(p) || contact(p); }).join(" · ") + (cibles.length > 6 ? " …" : ""),
+        danger: false,
+        onConfirmer: function () {
+          var ids = cibles.map(function (p) { return p.id; });
+          btnActiverLot.disabled = true;
+          sb.from("profiles").update({ statut: "actif" }).in("id", ids).then(function (r) {
+            btnActiverLot.disabled = false;
+            if (r.error) { msg("❌ " + r.error.message, "err"); return; }
+            cibles.forEach(function (p) { diffuserSignalStatut(p.id, "actif", estGold(p)); });
+            msg("✅ " + cibles.length + " abonné(s) activé(s) !", "ok");
+            charge(true);
+          });
+        }
       });
     });
   }
@@ -1806,29 +1814,43 @@
     });
   }
 
-  function changerClasseDirecte(p, nvClasse) {
+  function changerClasseDirecte(p, nvClasse, selEl) {
     if (!p || !nvClasse) return;
+    var ancienneClasse = p.classe || "";
     if (nvClasse === "__autre") {
+      if (selEl) selEl.value = ancienneClasse;
       ouvrirAffectation(p);
       return;
     }
-    var patch = { classe: nvClasse };
-    majCacheLocalProfil(p.id, patch);
-    if (!navigator.onLine) {
-      empilerActionAdmin({ type: "profile_update", uid: p.id, patch: patch, gold: estGold(p) });
-      msg("📴 Hors-ligne : classe de " + contact(p) + " changée en « " + nvClasse + " ».", "ok");
-      majFiltreClasses();
-      rendAbonnes();
-      return;
-    }
-    sb.from("profiles").update(patch).eq("id", p.id).then(function (r) {
-      if (r && r.error) {
-        empilerActionAdmin({ type: "profile_update", uid: p.id, patch: patch, gold: estGold(p) });
-        msg("⚠️ Enregistré localement : " + contact(p) + " → " + nvClasse, "ok");
-        return;
+    if (nvClasse === ancienneClasse) return;
+    demanderConfirmationOperation({
+      titre: "🏫 Confirmer le changement de classe ?",
+      htmlDesc: "Voulez-vous changer la classe du candidat <b>" + echHtml(contact(p)) + "</b> de <b>« " + echHtml(ancienneClasse || "Aucune") + " »</b> vers <b>« " + echHtml(nvClasse) + " »</b> ?",
+      resumeTxt: "🏛️ Lycée : " + lyceePropre(p) + " · 🏫 Nouvelle classe : " + nvClasse,
+      danger: false,
+      onAnnuler: function () {
+        if (selEl) selEl.value = ancienneClasse;
+      },
+      onConfirmer: function () {
+        var patch = { classe: nvClasse };
+        majCacheLocalProfil(p.id, patch);
+        if (!navigator.onLine) {
+          empilerActionAdmin({ type: "profile_update", uid: p.id, patch: patch, gold: estGold(p) });
+          msg("📴 Hors-ligne : classe de " + contact(p) + " changée en « " + nvClasse + " ».", "ok");
+          majFiltreClasses();
+          rendAbonnes();
+          return;
+        }
+        sb.from("profiles").update(patch).eq("id", p.id).then(function (r) {
+          if (r && r.error) {
+            empilerActionAdmin({ type: "profile_update", uid: p.id, patch: patch, gold: estGold(p) });
+            msg("⚠️ Enregistré localement : " + contact(p) + " → " + nvClasse, "ok");
+            return;
+          }
+          msg("✅ Classe de " + contact(p) + " changée en « " + nvClasse + " ».", "ok");
+          charge(true);
+        });
       }
-      msg("✅ Classe de " + contact(p) + " changée en « " + nvClasse + " ».", "ok");
-      charge(true);
     });
   }
 
@@ -2166,7 +2188,7 @@
       selClLigne.addEventListener("change", function (e) {
         e.stopPropagation();
         if (!selClLigne.value) return;
-        changerClasseDirecte(p, selClLigne.value);
+        changerClasseDirecte(p, selClLigne.value, selClLigne);
       });
       tdL.appendChild(selClLigne);
 
@@ -3535,30 +3557,116 @@
     }).catch(function () {});
   }
 
+  /* ---------- Boîte modale universelle de confirmation d'opération (2 boutons : Annuler et Confirmer) ---------- */
+  var modalConfirmOp = document.getElementById("modal-confirm-op");
+  var elConfirmOpTitre = document.getElementById("confirm-op-titre");
+  var elConfirmOpDesc = document.getElementById("confirm-op-desc");
+  var elConfirmOpResume = document.getElementById("confirm-op-resume");
+  var btnAnnulerOp = document.getElementById("btn-annuler-op");
+  var btnConfirmerOp = document.getElementById("btn-confirmer-op");
+  var actionConfirmOp = null;
+  var actionAnnulerOp = null;
+
+  function fermerConfirmationOperation(estAnnule) {
+    if (modalConfirmOp) modalConfirmOp.classList.remove("visible");
+    var fnAnnul = actionAnnulerOp;
+    actionConfirmOp = null;
+    actionAnnulerOp = null;
+    if (estAnnule && typeof fnAnnul === "function") {
+      try { fnAnnul(); } catch (e) {}
+    }
+  }
+
+  function demanderConfirmationOperation(opts) {
+    if (!opts || typeof opts.onConfirmer !== "function") return;
+    if (!modalConfirmOp) {
+      opts.onConfirmer();
+      return;
+    }
+    actionConfirmOp = opts.onConfirmer;
+    actionAnnulerOp = opts.onAnnuler || null;
+    if (elConfirmOpTitre) elConfirmOpTitre.textContent = opts.titre || "⚠️ Confirmer cette opération ?";
+    if (elConfirmOpDesc) elConfirmOpDesc.innerHTML = opts.htmlDesc || "Voulez-vous confirmer ce changement ?";
+    if (elConfirmOpResume) {
+      if (opts.resumeTxt) {
+        elConfirmOpResume.style.display = "block";
+        elConfirmOpResume.textContent = opts.resumeTxt;
+      } else {
+        elConfirmOpResume.style.display = "none";
+        elConfirmOpResume.textContent = "";
+      }
+    }
+    if (btnConfirmerOp) {
+      btnConfirmerOp.className = opts.danger ? "btn-danger" : "btn-valider";
+      btnConfirmerOp.textContent = opts.btnLabel || (opts.danger ? "🗑️ Confirmer" : "✅ Confirmer");
+    }
+    modalConfirmOp.classList.add("visible");
+  }
+
+  if (btnAnnulerOp) {
+    btnAnnulerOp.addEventListener("click", function () {
+      fermerConfirmationOperation(true);
+    });
+  }
+  if (btnConfirmerOp) {
+    btnConfirmerOp.addEventListener("click", function () {
+      var fn = actionConfirmOp;
+      fermerConfirmationOperation(false);
+      if (typeof fn === "function") fn();
+    });
+  }
+  if (modalConfirmOp) {
+    modalConfirmOp.addEventListener("click", function (e) {
+      if (e.target === modalConfirmOp) fermerConfirmationOperation(true);
+    });
+  }
+
   function changeStatut(p, statut) {
-    sb.from("profiles").update({ statut: statut }).eq("id", p.id).then(function (r) {
-      if (r.error) { msg("❌ " + r.error.message, "err"); return; }
-      diffuserSignalStatut(p.id, statut, estGold(p));
-      msg("✅ " + contact(p) + " → " + LIB[statut], "ok");
-      charge(true);
+    if (!p) return;
+    var libSt = LIB[statut] || statut;
+    var estDanger = (statut === "exclu");
+    demanderConfirmationOperation({
+      titre: estDanger ? "⛔ Exclure ce candidat ?" : ("📌 Passer ce candidat en « " + libSt + " » ?"),
+      htmlDesc: "Voulez-vous vraiment changer le statut de <b>" + echHtml(contact(p)) + "</b> vers <b>« " + echHtml(libSt) + " »</b> ?",
+      resumeTxt: "🏫 Classe : " + (p.classe || "—") + " · Statut actuel : " + (LIB[p.statut] || p.statut),
+      danger: estDanger,
+      onConfirmer: function () {
+        sb.from("profiles").update({ statut: statut }).eq("id", p.id).then(function (r) {
+          if (r.error) { msg("❌ " + r.error.message, "err"); return; }
+          diffuserSignalStatut(p.id, statut, estGold(p));
+          msg("✅ " + contact(p) + " → " + libSt, "ok");
+          charge(true);
+        });
+      }
     });
   }
 
   function basculerGold(p) {
+    if (!p) return;
     var nvGold = !estGold(p);
     var baseLycee = lyceePropre(p);
     var nvLycee = nvGold ? (baseLycee + "|GOLD") : baseLycee;
     var nvStatut = nvGold ? "actif" : (p.statut === "en_attente" ? "actif" : p.statut);
-    sb.from("profiles").update({ lycee: nvLycee, statut: nvStatut }).eq("id", p.id).then(function (r) {
-      if (r.error) { msg("❌ " + r.error.message, "err"); return; }
-      diffuserSignalStatut(p.id, nvStatut, nvGold);
-      msg(
-        nvGold
-          ? "👑 " + contact(p) + " est maintenant Compte GOLD (capture d'écran & impression autorisées)."
-          : "🔒 " + contact(p) + " est repassé en compte standard (capture d'écran & impression bloquées).",
-        "ok"
-      );
-      charge(true);
+    demanderConfirmationOperation({
+      titre: nvGold ? "👑 Accorder le statut Gold ?" : "🔒 Retirer le statut Gold ?",
+      htmlDesc: nvGold
+        ? ("Voulez-vous passer <b>" + echHtml(contact(p)) + "</b> en <b>👑 Compte GOLD</b> (autorise la copie, la capture d'écran et l'impression des cours) ?")
+        : ("Voulez-vous retirer le statut <b>👑 Gold</b> de <b>" + echHtml(contact(p)) + "</b> et le repasser en compte standard ?"),
+      resumeTxt: "🏛️ Lycée : " + baseLycee + " · 🏫 Classe : " + (p.classe || "—"),
+      danger: !nvGold,
+      onConfirmer: function () {
+        sb.from("profiles").update({ lycee: nvLycee, statut: nvStatut }).eq("id", p.id).then(function (r) {
+          if (r.error) { msg("❌ " + r.error.message, "err"); return; }
+          diffuserSignalStatut(p.id, nvStatut, nvGold);
+          msg(
+            nvGold
+              ? "👑 " + contact(p) + " est maintenant Compte GOLD (capture d'écran & impression autorisées)."
+              : "🔒 " + contact(p) + " est repassé en compte standard (capture d'écran & impression bloquées).",
+            "ok"
+          );
+          charge(true);
+        });
+      }
     });
   }
 
@@ -3604,7 +3712,7 @@
     btnConfSuppr.textContent = "⏳ Suppression…";
     sb.rpc("admin_supprimer_abonne", { uid: p.id }).then(function (r) {
       btnConfSuppr.disabled = false;
-      btnConfSuppr.textContent = "🗑️ Oui, supprimer";
+      btnConfSuppr.textContent = "🗑️ Confirmer";
       modalSuppr.classList.remove("visible"); cibleSuppr = null;
       if (r.error) { msg("❌ " + r.error.message, "err"); return; }
       diffuserSignalStatut(p.id, "supprime", false);
@@ -3646,6 +3754,7 @@
   var btnGererLycees = document.getElementById("btn-gerer-lycees");
   var btnGererClasses = document.getElementById("btn-gerer-classes");
   var btnFermerEcoles = document.getElementById("btn-fermer-ecoles");
+  var btnAnnulerEcoles = document.getElementById("btn-annuler-ecoles");
 
   if (btnGererLycees) {
     btnGererLycees.addEventListener("click", function () {
@@ -3661,6 +3770,11 @@
   }
   if (btnFermerEcoles) {
     btnFermerEcoles.addEventListener("click", function () {
+      if (modalEcoles) modalEcoles.classList.remove("visible");
+    });
+  }
+  if (btnAnnulerEcoles) {
+    btnAnnulerEcoles.addEventListener("click", function () {
       if (modalEcoles) modalEcoles.classList.remove("visible");
     });
   }
@@ -3774,13 +3888,13 @@
     inp.style.cssText = "flex:1;min-width:140px;margin:0;padding:6px 10px;font-size:13px;font-weight:800;border:2px solid #f4511e;border-radius:8px;";
     var btns = document.createElement("div");
     btns.className = "ecole-btns";
-    var bSave = document.createElement("button");
-    bSave.type = "button";
-    bSave.textContent = "💾 Enregistrer";
-    bSave.style.cssText = "background:#177245;color:#fff;border-color:#23201a;";
     var bCancel = document.createElement("button");
     bCancel.type = "button";
-    bCancel.textContent = "✖";
+    bCancel.textContent = "Annuler";
+    var bSave = document.createElement("button");
+    bSave.type = "button";
+    bSave.textContent = "✅ Confirmer";
+    bSave.style.cssText = "background:#177245;color:#fff;border-color:#23201a;";
     bSave.addEventListener("click", function () {
       var nv = inp.value.trim();
       if (nv && nv !== valeurActuelle) {
@@ -3794,7 +3908,7 @@
       if (e.key === "Enter") { e.preventDefault(); bSave.click(); }
       if (e.key === "Escape") { e.preventDefault(); rendreListesEcoles(); }
     });
-    btns.append(bSave, bCancel);
+    btns.append(bCancel, bSave);
     rowEl.append(inp, btns);
     inp.focus();
     inp.select();
@@ -3803,23 +3917,37 @@
   function ajouterLyceeGlobal() {
     var nom = inpNvLycee ? inpNvLycee.value.trim() : "";
     if (!nom) return;
-    cfgEcoles.supprLycees = (cfgEcoles.supprLycees || []).filter(function (x) { return x !== nom; });
-    if (cfgEcoles.lycees.indexOf(nom) === -1) cfgEcoles.lycees.push(nom);
-    inpNvLycee.value = "";
-    sauvegarderCfgEcoles();
-    rendreListesEcoles();
-    msg("🏛️ Lycée « " + nom + " » ajouté.", "ok");
+    demanderConfirmationOperation({
+      titre: "🏛️ Confirmer l'ajout de ce lycée ?",
+      htmlDesc: "Voulez-vous ajouter le lycée <b>« " + echHtml(nom) + " »</b> à la liste des établissements ?",
+      danger: false,
+      onConfirmer: function () {
+        cfgEcoles.supprLycees = (cfgEcoles.supprLycees || []).filter(function (x) { return x !== nom; });
+        if (cfgEcoles.lycees.indexOf(nom) === -1) cfgEcoles.lycees.push(nom);
+        inpNvLycee.value = "";
+        sauvegarderCfgEcoles();
+        rendreListesEcoles();
+        msg("🏛️ Lycée « " + nom + " » ajouté.", "ok");
+      }
+    });
   }
 
   function ajouterClasseGlobale() {
     var nom = inpNvClasse ? inpNvClasse.value.trim() : "";
     if (!nom) return;
-    cfgEcoles.supprClasses = (cfgEcoles.supprClasses || []).filter(function (x) { return x !== nom; });
-    if (cfgEcoles.classes.indexOf(nom) === -1) cfgEcoles.classes.push(nom);
-    inpNvClasse.value = "";
-    sauvegarderCfgEcoles();
-    rendreListesEcoles();
-    msg("🏫 Classe « " + nom + " » ajoutée.", "ok");
+    demanderConfirmationOperation({
+      titre: "🏫 Confirmer l'ajout de cette classe ?",
+      htmlDesc: "Voulez-vous ajouter la classe <b>« " + echHtml(nom) + " »</b> à la liste des classes ?",
+      danger: false,
+      onConfirmer: function () {
+        cfgEcoles.supprClasses = (cfgEcoles.supprClasses || []).filter(function (x) { return x !== nom; });
+        if (cfgEcoles.classes.indexOf(nom) === -1) cfgEcoles.classes.push(nom);
+        inpNvClasse.value = "";
+        sauvegarderCfgEcoles();
+        rendreListesEcoles();
+        msg("🏫 Classe « " + nom + " » ajoutée.", "ok");
+      }
+    });
   }
 
   var btnAddLycee = document.getElementById("btn-add-lycee");
@@ -3830,64 +3958,108 @@
   if (inpNvClasse) inpNvClasse.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); ajouterClasseGlobale(); } });
 
   function renommerLyceeGlobal(ancien, nv) {
-    cfgEcoles.lycees = obtenirLyceesActifs().map(function (l) { return l === ancien ? nv : l; });
-    cfgEcoles.supprLycees = (cfgEcoles.supprLycees || []).filter(function (x) { return x !== nv; });
-    if (cfgEcoles.supprLycees.indexOf(ancien) === -1) cfgEcoles.supprLycees.push(ancien);
-
-    /* Mettre à jour tous les abonnés appartenant à ce lycée (en préservant |GOLD) */
     var cibles = profils.filter(function (p) { return lyceePropre(p) === ancien; });
-    cibles.forEach(function (p) {
-      var nvVal = estGold(p) ? (nv + "|GOLD") : nv;
-      majCacheLocalProfil(p.id, { lycee: nvVal });
-      if (navigator.onLine) {
-        sb.from("profiles").update({ lycee: nvVal }).eq("id", p.id).then(function () {});
-      } else {
-        empilerActionAdmin({ type: "profile_update", uid: p.id, patch: { lycee: nvVal }, gold: estGold(p) });
+    demanderConfirmationOperation({
+      titre: "🏛️ Confirmer le changement de nom du lycée ?",
+      htmlDesc: "Voulez-vous renommer le lycée <b>« " + echHtml(ancien) + " »</b> en <b>« " + echHtml(nv) + " »</b> ?",
+      resumeTxt: "👥 " + cibles.length + " candidat(s) rattaché(s) à ce lycée seront mis à jour automatiquement.",
+      danger: false,
+      onAnnuler: function () {
+        rendreListesEcoles();
+      },
+      onConfirmer: function () {
+        cfgEcoles.lycees = obtenirLyceesActifs().map(function (l) { return l === ancien ? nv : l; });
+        cfgEcoles.supprLycees = (cfgEcoles.supprLycees || []).filter(function (x) { return x !== nv; });
+        if (cfgEcoles.supprLycees.indexOf(ancien) === -1) cfgEcoles.supprLycees.push(ancien);
+
+        /* Mettre à jour tous les abonnés appartenant à ce lycée (en préservant |GOLD) */
+        cibles.forEach(function (p) {
+          var nvVal = estGold(p) ? (nv + "|GOLD") : nv;
+          majCacheLocalProfil(p.id, { lycee: nvVal });
+          if (navigator.onLine) {
+            sb.from("profiles").update({ lycee: nvVal }).eq("id", p.id).then(function () {});
+          } else {
+            empilerActionAdmin({ type: "profile_update", uid: p.id, patch: { lycee: nvVal }, gold: estGold(p) });
+          }
+        });
+        sauvegarderCfgEcoles();
+        rendreListesEcoles();
+        rendAbonnes();
+        msg("🏛️ Lycée « " + ancien + " » changé en « " + nv + " » (" + cibles.length + " élève(s) mis à jour).", "ok");
       }
     });
-    sauvegarderCfgEcoles();
-    rendreListesEcoles();
-    rendAbonnes();
-    msg("🏛️ Lycée « " + ancien + " » changé en « " + nv + " » (" + cibles.length + " élève(s) mis à jour).", "ok");
   }
 
   function supprimerLyceeGlobal(nom) {
-    cfgEcoles.lycees = obtenirLyceesActifs().filter(function (l) { return l !== nom; });
-    if (!cfgEcoles.supprLycees) cfgEcoles.supprLycees = [];
-    if (cfgEcoles.supprLycees.indexOf(nom) === -1) cfgEcoles.supprLycees.push(nom);
-    sauvegarderCfgEcoles();
-    rendreListesEcoles();
-    msg("🗑️ Lycée « " + nom + " » supprimé de la liste.", "ok");
+    var nbRattaches = profils.filter(function (p) { return lyceePropre(p) === nom; }).length;
+    demanderConfirmationOperation({
+      titre: "🗑️ Supprimer ce lycée ?",
+      htmlDesc: "Voulez-vous vraiment supprimer le lycée <b>« " + echHtml(nom) + " »</b> de la liste des établissements ?",
+      resumeTxt: nbRattaches > 0
+        ? ("⚠️ Attention : " + nbRattaches + " candidat(s) sont actuellement rattachés à ce lycée.")
+        : "Aucun candidat n'est rattaché à ce lycée.",
+      danger: true,
+      onConfirmer: function () {
+        cfgEcoles.lycees = obtenirLyceesActifs().filter(function (l) { return l !== nom; });
+        if (!cfgEcoles.supprLycees) cfgEcoles.supprLycees = [];
+        if (cfgEcoles.supprLycees.indexOf(nom) === -1) cfgEcoles.supprLycees.push(nom);
+        sauvegarderCfgEcoles();
+        rendreListesEcoles();
+        msg("🗑️ Lycée « " + nom + " » supprimé de la liste.", "ok");
+      }
+    });
   }
 
   function renommerClasseGlobale(ancienne, nv) {
-    cfgEcoles.classes = obtenirClassesActives().map(function (c) { return c === ancienne ? nv : c; });
-    cfgEcoles.supprClasses = (cfgEcoles.supprClasses || []).filter(function (x) { return x !== nv; });
-    if (cfgEcoles.supprClasses.indexOf(ancienne) === -1) cfgEcoles.supprClasses.push(ancienne);
-
-    /* Mettre à jour tous les abonnés appartenant à cette classe */
     var cibles = profils.filter(function (p) { return (p.classe || "—") === ancienne; });
-    cibles.forEach(function (p) {
-      majCacheLocalProfil(p.id, { classe: nv });
-      if (navigator.onLine) {
-        sb.from("profiles").update({ classe: nv }).eq("id", p.id).then(function () {});
-      } else {
-        empilerActionAdmin({ type: "profile_update", uid: p.id, patch: { classe: nv }, gold: estGold(p) });
+    demanderConfirmationOperation({
+      titre: "🏫 Confirmer le changement de nom de la classe ?",
+      htmlDesc: "Voulez-vous renommer la classe <b>« " + echHtml(ancienne) + " »</b> en <b>« " + echHtml(nv) + " »</b> ?",
+      resumeTxt: "👥 " + cibles.length + " candidat(s) de cette classe seront mis à jour automatiquement.",
+      danger: false,
+      onAnnuler: function () {
+        rendreListesEcoles();
+      },
+      onConfirmer: function () {
+        cfgEcoles.classes = obtenirClassesActives().map(function (c) { return c === ancienne ? nv : c; });
+        cfgEcoles.supprClasses = (cfgEcoles.supprClasses || []).filter(function (x) { return x !== nv; });
+        if (cfgEcoles.supprClasses.indexOf(ancienne) === -1) cfgEcoles.supprClasses.push(ancienne);
+
+        /* Mettre à jour tous les abonnés appartenant à cette classe */
+        cibles.forEach(function (p) {
+          majCacheLocalProfil(p.id, { classe: nv });
+          if (navigator.onLine) {
+            sb.from("profiles").update({ classe: nv }).eq("id", p.id).then(function () {});
+          } else {
+            empilerActionAdmin({ type: "profile_update", uid: p.id, patch: { classe: nv }, gold: estGold(p) });
+          }
+        });
+        sauvegarderCfgEcoles();
+        rendreListesEcoles();
+        rendAbonnes();
+        msg("🏫 Classe « " + ancienne + " » changée en « " + nv + " » (" + cibles.length + " élève(s) mis à jour).", "ok");
       }
     });
-    sauvegarderCfgEcoles();
-    rendreListesEcoles();
-    rendAbonnes();
-    msg("🏫 Classe « " + ancienne + " » changée en « " + nv + " » (" + cibles.length + " élève(s) mis à jour).", "ok");
   }
 
   function supprimerClasseGlobale(nom) {
-    cfgEcoles.classes = obtenirClassesActives().filter(function (c) { return c !== nom; });
-    if (!cfgEcoles.supprClasses) cfgEcoles.supprClasses = [];
-    if (cfgEcoles.supprClasses.indexOf(nom) === -1) cfgEcoles.supprClasses.push(nom);
-    sauvegarderCfgEcoles();
-    rendreListesEcoles();
-    msg("🗑️ Classe « " + nom + " » supprimée de la liste.", "ok");
+    var nbRattaches = profils.filter(function (p) { return (p.classe || "—") === nom; }).length;
+    demanderConfirmationOperation({
+      titre: "🗑️ Supprimer cette classe ?",
+      htmlDesc: "Voulez-vous vraiment supprimer la classe <b>« " + echHtml(nom) + " »</b> de la liste des classes ?",
+      resumeTxt: nbRattaches > 0
+        ? ("⚠️ Attention : " + nbRattaches + " candidat(s) sont actuellement affectés à la classe « " + nom + " ».")
+        : ("Aucun candidat n'est affecté à la classe « " + nom + " »."),
+      danger: true,
+      onConfirmer: function () {
+        cfgEcoles.classes = obtenirClassesActives().filter(function (c) { return c !== nom; });
+        if (!cfgEcoles.supprClasses) cfgEcoles.supprClasses = [];
+        if (cfgEcoles.supprClasses.indexOf(nom) === -1) cfgEcoles.supprClasses.push(nom);
+        sauvegarderCfgEcoles();
+        rendreListesEcoles();
+        msg("🗑️ Classe « " + nom + " » supprimée de la liste.", "ok");
+      }
+    });
   }
 
   /* ---------- Boîte modale : modifier Nom, Prénom, Lycée ou Classe d'un abonné particulier ---------- */
@@ -5918,14 +6090,25 @@
     if (!p || !p.id) return;
     var pauses = Object.assign({}, cfgSecuriteAdmin.pausesUids || {});
     var etaitPause = Boolean(pauses[p.id]);
-    if (etaitPause) delete pauses[p.id];
-    else pauses[p.id] = true;
     var nomEl = nomPrenomTexte(p) || contact(p);
-    sauvegarderEtDiffuserConfigSecurite({
-      pausesUids: pauses
-    }, etaitPause ? ("▶️ Écran de " + nomEl + " débloqué.") : ("⏸️ Écran de " + nomEl + " mis en pause en direct."));
-    rendAbonnes();
-    if (typeof rendAppelPresence === "function") rendAppelPresence();
+    demanderConfirmationOperation({
+      titre: etaitPause ? "▶️ Débloquer l'écran de ce candidat ?" : "⏸️ Figer l'écran de ce candidat ?",
+      htmlDesc: etaitPause
+        ? ("Voulez-vous reprendre l'écran de <b>" + echHtml(nomEl) + "</b> ?")
+        : ("Voulez-vous mettre en pause l'écran de <b>" + echHtml(nomEl) + "</b> en direct ?"),
+      resumeTxt: "🏫 Classe : " + (p.classe || "—"),
+      danger: !etaitPause,
+      onConfirmer: function () {
+        var pausesMaj = Object.assign({}, cfgSecuriteAdmin.pausesUids || {});
+        if (etaitPause) delete pausesMaj[p.id];
+        else pausesMaj[p.id] = true;
+        sauvegarderEtDiffuserConfigSecurite({
+          pausesUids: pausesMaj
+        }, etaitPause ? ("▶️ Écran de " + nomEl + " débloqué.") : ("⏸️ Écran de " + nomEl + " mis en pause en direct."));
+        rendAbonnes();
+        if (typeof rendAppelPresence === "function") rendAppelPresence();
+      }
+    });
   }
 
   function majUiConfigSecurite() {

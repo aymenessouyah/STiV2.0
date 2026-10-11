@@ -1253,10 +1253,10 @@
           <span id="titre-tb-admin" style="color:#177245;transition:color .25s ease" title="🟢 En ligne">Tableau de bord STI V2.0</span>
           <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">🟢 Accès ouvert</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v118</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v119</span>
           <span class="badge-supabase" id="badge-supabase-quota" title="Espace disponible dans la base Supabase (Quota 500 Mo) — cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent">🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v118)</strong> · <strong id="sous-supabase-quota" style="color:#177245;cursor:pointer;text-decoration:underline dotted" title="Cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent Supabase">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v119)</strong> · <strong id="sous-supabase-quota" style="color:#177245;cursor:pointer;text-decoration:underline dotted" title="Cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent Supabase">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
       </div>
     </div>
     <div class="barre-util">
@@ -1623,14 +1623,27 @@
     </div>
   </div>
 
-  <!-- Boîte de confirmation de suppression -->
+  <!-- Boîte universelle de confirmation d'opération (Classes, Lycées, Candidats) : toujours 2 boutons Annuler et Confirmer -->
+  <div class="modal-fond" id="modal-confirm-op" role="dialog" aria-modal="true" style="z-index:10600">
+    <div class="modal-boite" style="max-width:460px">
+      <h3 id="confirm-op-titre">⚠️ Confirmer cette opération ?</h3>
+      <p id="confirm-op-desc" style="font-size:13.5px;color:#23201a;line-height:1.5;margin-bottom:10px"></p>
+      <div class="resume-classe-modal" id="confirm-op-resume" style="display:none;margin-bottom:14px"></div>
+      <div class="modal-actions">
+        <button type="button" id="btn-annuler-op">Annuler</button>
+        <button type="button" class="btn-valider" id="btn-confirmer-op">✅ Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boîte de confirmation de suppression d'un candidat -->
   <div class="modal-fond" id="modal-suppr" role="dialog" aria-modal="true">
     <div class="modal-boite">
-      <h3>🗑️ Supprimer cet abonné ?</h3>
+      <h3>🗑️ Supprimer ce candidat ?</h3>
       <p>Supprimer définitivement <b id="suppr-cible"></b> ?<br />Son compte, son profil et tout son journal de connexions seront effacés.</p>
       <div class="modal-actions">
         <button type="button" id="btn-annuler-suppr">Annuler</button>
-        <button type="button" class="btn-danger" id="btn-confirmer-suppr">🗑️ Oui, supprimer</button>
+        <button type="button" class="btn-danger" id="btn-confirmer-suppr">🗑️ Confirmer</button>
       </div>
     </div>
   </div>
@@ -1643,7 +1656,7 @@
       <input type="text" id="inp-nouveau-mdp" placeholder="Nouveau mot de passe…" autocomplete="off" />
       <div class="modal-actions">
         <button type="button" id="btn-annuler-mdp">Annuler</button>
-        <button type="button" class="btn-valider" id="btn-confirmer-mdp">🔑 Enregistrer</button>
+        <button type="button" class="btn-valider" id="btn-confirmer-mdp">✅ Confirmer</button>
       </div>
     </div>
   </div>
@@ -1845,7 +1858,8 @@
       </div>
 
       <div class="modal-actions">
-        <button type="button" class="btn-valider" id="btn-fermer-ecoles">✅ Terminer</button>
+        <button type="button" id="btn-annuler-ecoles">Annuler</button>
+        <button type="button" class="btn-valider" id="btn-fermer-ecoles">✅ Confirmer</button>
       </div>
     </div>
   </div>
@@ -1876,7 +1890,7 @@
       <input type="text" id="aff-classe-autre" hidden placeholder="Saisir le nom de la nouvelle classe…" />
       <div class="modal-actions">
         <button type="button" id="btn-annuler-aff">Annuler</button>
-        <button type="button" class="btn-valider" id="btn-confirmer-aff">💾 Enregistrer</button>
+        <button type="button" class="btn-valider" id="btn-confirmer-aff">✅ Confirmer</button>
       </div>
     </div>
   </div>
@@ -3309,7 +3323,7 @@
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=118"></script>
-<script src="assets/js/admin.js?v=118"></script>
+<script src="assets/js/config.js?v=119"></script>
+<script src="assets/js/admin.js?v=119"></script>
 </body>
 </html>
