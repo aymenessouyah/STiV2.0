@@ -193,7 +193,68 @@
     background: #fde2e6; color: #c0392b; box-shadow: 3.5px 3.5px 0 #c0392b;
   }
 
-  /* ── 2) Grille des 4 Grands Boutons d'Action Principaux ── */
+  /* ── Organisation par Pôles & Cartes de Sections (v116) ── */
+  .poles-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .poles-tabs {
+    display: inline-flex; gap: 6px; flex-wrap: wrap;
+    background: #efe5d2; padding: 5px; border-radius: 999px;
+    border: 2px solid #23201a; box-shadow: 2.5px 2.5px 0 #23201a;
+  }
+  .pole-tab {
+    border: 0; background: transparent; color: #5a5244;
+    font: 900 12px/1 system-ui, 'Segoe UI', sans-serif;
+    padding: 7px 14px; border-radius: 999px; cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .pole-tab:hover { color: #23201a; background: rgba(255,255,255,.55); }
+  .pole-tab.actif {
+    background: #23201a; color: #ffd54f;
+    box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  }
+  .nav-sections-admin {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    background: #fffdf7; border: 2.5px solid #23201a; border-radius: 16px;
+    padding: 9px 12px; margin-bottom: 14px;
+    box-shadow: 3.5px 3.5px 0 rgba(35,32,26,.85);
+  }
+  .nav-sections-lbl {
+    font-size: 12px; font-weight: 900; color: #5a5244;
+    text-transform: uppercase; letter-spacing: .04em; margin-right: 4px;
+  }
+  .btn-sec-tab {
+    border: 2px solid #23201a; background: #f3ead9; color: #23201a;
+    border-radius: 999px; padding: 6px 13px; font-size: 12px; font-weight: 900;
+    cursor: pointer; transition: transform .12s ease, background .15s ease;
+  }
+  .btn-sec-tab:hover { background: #fff; transform: translateY(-1px); }
+  .btn-sec-tab.actif {
+    background: linear-gradient(125deg, #f4511e, #ff8a50); color: #fff;
+    box-shadow: 2px 2px 0 #23201a;
+  }
+  .carte-section-admin {
+    background: #fcf7ec; border: 2.5px solid #23201a; border-radius: 18px;
+    padding: 14px 16px; margin-bottom: 18px;
+    box-shadow: 4px 4px 0 rgba(35,32,26,.88);
+  }
+  .carte-section-admin.sec-repliee .corps-section-admin {
+    display: none !important;
+  }
+  .btn-replier-sec {
+    border: 1.5px solid #23201a; background: #fffdf7; color: #23201a;
+    border-radius: 999px; padding: 4px 10px; font-size: 11.5px; font-weight: 900;
+    cursor: pointer;
+  }
+  .sys-extra-item {
+    display: none !important;
+  }
+  body.sys-bar-ouverte .sys-extra-item {
+    display: inline-flex !important;
+  }
+
+  /* ── 2) Grille des Boutons d'Action Principaux ── */
   .actions-principales {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1181,40 +1242,59 @@
           <span id="titre-tb-admin" style="color:#177245;transition:color .25s ease" title="🟢 En ligne">Tableau de bord STI V2.0</span>
           <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">🟢 Accès ouvert</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v115</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v116</span>
           <span class="badge-supabase" id="badge-supabase-quota" title="Espace disponible dans la base Supabase (Quota 500 Mo) — cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent">🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v115)</strong> · <strong id="sous-supabase-quota" style="color:#177245;cursor:pointer;text-decoration:underline dotted" title="Cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent Supabase">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v116)</strong> · <strong id="sous-supabase-quota" style="color:#177245;cursor:pointer;text-decoration:underline dotted" title="Cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent Supabase">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
       </div>
     </div>
     <div class="barre-util">
-      <a class="btn-util mob-extra" href="index.html">🏠 <span class="lbl-pc">Accueil du site</span><span class="lbl-mob">Site</span></a>
-      <a class="btn-util mob-extra" href="carte-visite.html" title="Ouvrir et partager la carte de visite électronique avec QR code">🪪 <span class="lbl-pc">Carte visite</span><span class="lbl-mob">Carte</span></a>
+      <!-- 1. Accès directs prioritaires avec pastilles en temps réel -->
       <button class="btn-util" id="btn-messenger-top" type="button" title="Ouvrir la messagerie directe Messenger STI avec les candidats" style="background:#fff3e0;border-color:#f4511e;color:#d84315">💬 <span class="lbl-pc">Messenger</span><span class="lbl-mob">Chat</span> <span id="badge-msn-top" style="display:none;background:#ffd54f;color:#23201a;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
       <button class="btn-util" id="btn-flash-top" type="button" title="Lancer une Question Flash / Sondage Live en classe" style="background:#fff8e1;border-color:#d97706;color:#b45309">⚡ <span class="lbl-pc">Question Flash</span><span class="lbl-mob">Flash</span></button>
-      <button class="btn-util" id="btn-kahoot-top" type="button" title="Lancer un Sondage / Vote QCM A-B-C-D en direct avec graphique live (Mode Kahoot STI)" style="background:#f3e8ff;border-color:#7c3aed;color:#6d28d9">📊 <span class="lbl-pc">QCM Live</span><span class="lbl-mob">Kahoot</span> <span id="badge-kahoot-top" style="display:none;background:#7c3aed;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util" id="btn-tb-live-top" type="button" title="Tableau Blanc Live : projeter un extrait de code ou un corrigé en direct sur les écrans des élèves" style="background:#e0f2fe;border-color:#0284c7;color:#0369a1">📺 <span class="lbl-pc">Tableau Blanc</span><span class="lbl-mob">Code Live</span></button>
-      <button class="btn-util" id="btn-coffre-top" type="button" title="Coffre de Partage Rapide : distribuer un fichier (.zip, .sql, .html, .php, .pdf) à une classe" style="background:#fef3c7;border-color:#b45309;color:#92400e">🗂️ <span class="lbl-pc">Coffre TP</span><span class="lbl-mob">Fichiers</span> <span id="badge-coffre-top" style="display:none;background:#b45309;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util" id="btn-copies-top" type="button" title="Boîte de Réception &amp; Notation des TP et Copies rendus par les élèves (/20)" style="background:#dcfce7;border-color:#15803d;color:#166534">📥 <span class="lbl-pc">Copies TP</span><span class="lbl-mob">Copies</span> <span id="badge-copies-top" style="display:none;background:#15803d;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util mob-extra" id="btn-grille-devoirs-top" type="button" title="Calculatrice de Barème &amp; Grille de Correction Rapide pour Devoirs de Contrôle et Synthèse (Export CSV Eduserv)" style="background:#e0e7ff;border-color:#3730a3;color:#312e81">🧮 <span class="lbl-pc">Grille Devoirs</span><span class="lbl-mob">Devoirs</span></button>
-      <button class="btn-util mob-extra" id="btn-badges-labo-top" type="button" title="Générer et imprimer les Badges de Connexion Rapide au Laboratoire (Code 6 caractères par élève)" style="background:#fef3c7;border-color:#d97706;color:#92400e">🪪 <span class="lbl-pc">Badges Labo</span><span class="lbl-mob">Badges</span></button>
-      <button class="btn-util mob-extra" id="btn-force-update-eleves" type="button" title="Docteur STI : Forcer tous les écrans d'élèves connectés à vider leur vieux cache et recharger immédiatement la dernière version" style="background:#f0fdf4;border-color:#15803d;color:#166534">🩺 <span class="lbl-pc">Forcer Maj Élèves</span><span class="lbl-mob">Maj Élèves</span></button>
-      <button class="btn-util mob-extra" id="btn-mains-top" type="button" title="File d'attente des élèves ayant levé la main pour demander de l'aide en TP" style="background:#ede9fe;border-color:#6d28d9;color:#6d28d9">🙋‍♂️ <span class="lbl-pc">Mains levées</span><span class="lbl-mob">Aide</span> <span id="badge-mains-top" style="display:none;background:#6d28d9;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util mob-extra" id="btn-palmares-top" type="button" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)" style="background:linear-gradient(120deg,#fff3b0,#ffd54f);border-color:#23201a;color:#6d4c00">🏆 <span class="lbl-pc">Palmarès</span><span class="lbl-mob">Top 3</span></button>
       <button class="btn-util" id="btn-appel-top" type="button" title="Feuille d'appel &amp; présence automatique du jour par classe (Présents vs Absents)" style="background:#e3f6e8;border-color:#177245;color:#177245">📋 <span class="lbl-pc">Appel / Présence</span><span class="lbl-mob">Appel</span></button>
       <button class="btn-util" id="btn-securite-top" type="button" title="Centre de Sécurité : Mode Examen / Verrouillage, Anti-partage, Éjection F12 &amp; Journal d'alertes" style="background:#fde2e6;border-color:#c0392b;color:#a61b29">🛡️ <span class="lbl-pc">Sécurité</span><span class="lbl-mob">Sécu</span> <span id="badge-sec-top" style="display:none;background:#c0392b;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util mob-extra" id="btn-verrou-ecran-admin" type="button" title="Verrouiller instantanément l'écran du tableau de bord par code PIN quand vous vous déplacez en salle de classe">🔒 <span class="lbl-pc">Verrouiller</span><span class="lbl-mob">PIN</span></button>
-      <button class="btn-util mob-extra" id="btn-readme-admin" type="button" title="Consulter la documentation complète de la plateforme (README)">📖 <span class="lbl-pc">README</span><span class="lbl-mob">README</span></button>
-      <button class="btn-util mob-extra" id="btn-notif" type="button">🔔 <span class="lbl-pc">Notifications</span><span class="lbl-mob">Alertes</span></button>
-      <button class="btn-util mob-extra" id="btn-refresh" type="button">🔄 <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
+      <button class="btn-util mob-extra" id="btn-mains-top" type="button" title="File d'attente des élèves ayant levé la main pour demander de l'aide en TP" style="background:#ede9fe;border-color:#6d28d9;color:#6d28d9">🙋‍♂️ <span class="lbl-pc">Mains levées</span><span class="lbl-mob">Aide</span> <span id="badge-mains-top" style="display:none;background:#6d28d9;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
+      <button class="btn-util mob-extra" id="btn-palmares-top" type="button" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)" style="background:linear-gradient(120deg,#fff3b0,#ffd54f);border-color:#23201a;color:#6d4c00">🏆 <span class="lbl-pc">Palmarès</span><span class="lbl-mob">Top 3</span></button>
+      <button class="btn-util mob-extra" id="btn-refresh" type="button" title="Rafraîchir immédiatement toutes les données">🔄 <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
+
+      <!-- 2. Tiroir « ⚙️ Système & Plus » (évite l'encombrement de l'en-tête sur PC) -->
+      <button class="btn-util mob-extra" id="btn-toggle-sys-bar" type="button" title="Afficher ou masquer les outils système (Accueil, Carte visite, Docteur STI, PIN, README, Alertes)" style="background:#23201a;color:#ffd54f">⚙️ <span class="lbl-pc">Système &amp; Plus ▾</span><span class="lbl-mob">Plus ▾</span></button>
+
+      <a class="btn-util mob-extra sys-extra-item" href="index.html">🏠 <span class="lbl-pc">Accueil du site</span><span class="lbl-mob">Site</span></a>
+      <a class="btn-util mob-extra sys-extra-item" href="carte-visite.html" title="Ouvrir et partager la carte de visite électronique avec QR code">🪪 <span class="lbl-pc">Carte visite</span><span class="lbl-mob">Carte</span></a>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-force-update-eleves" type="button" title="Docteur STI : Forcer tous les écrans d'élèves connectés à vider leur vieux cache et recharger immédiatement la dernière version" style="background:#f0fdf4;border-color:#15803d;color:#166534">🩺 <span class="lbl-pc">Forcer Maj Élèves</span><span class="lbl-mob">Maj Élèves</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-verrou-ecran-admin" type="button" title="Verrouiller instantanément l'écran du tableau de bord par code PIN quand vous vous déplacez en salle de classe">🔒 <span class="lbl-pc">Verrouiller PIN</span><span class="lbl-mob">PIN</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-readme-admin" type="button" title="Consulter la documentation complète de la plateforme (README)">📖 <span class="lbl-pc">README</span><span class="lbl-mob">README</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-notif" type="button">🔔 <span class="lbl-pc">Notifications</span><span class="lbl-mob">Alertes</span></button>
+
+      <!-- Boutons relais invisibles conservés pour compatibilité JS (leurs actions sont sur les grandes cartes ci-dessous) -->
+      <button id="btn-kahoot-top" type="button" hidden aria-hidden="true"></button>
+      <button id="btn-tb-live-top" type="button" hidden aria-hidden="true"></button>
+      <button id="btn-coffre-top" type="button" hidden aria-hidden="true"></button>
+      <button id="btn-copies-top" type="button" hidden aria-hidden="true"></button>
+      <button id="btn-grille-devoirs-top" type="button" hidden aria-hidden="true"></button>
+      <button id="btn-badges-labo-top" type="button" hidden aria-hidden="true"></button>
+
       <button class="btn-util logout mob-extra" id="btn-logout" type="button">🚪 <span class="lbl-pc">Déconnexion</span><span class="lbl-mob">Sortir</span></button>
-      <button class="btn-util only-mob-flex" id="btn-mob-toggle-outils" type="button">🧰 Tous les outils &amp; actions (16) ▾</button>
+      <button class="btn-util only-mob-flex" id="btn-mob-toggle-outils" type="button">🧰 Tous les outils &amp; actions (12) ▾</button>
     </div>
   </header>
 
-  <!-- 2. PREMIERS BOUTONS D'ACTION PÉDAGOGIQUE (cartes principales) -->
-  <section class="actions-principales" aria-label="Actions principales">
-    <button class="carte-action" id="btn-msg-classe" type="button">
+  <!-- 2. CENTRE DE PILOTAGE PÉDAGOGIQUE ORGANISÉ EN 3 PÔLES THÉMATIQUES -->
+  <div class="poles-header">
+    <div style="font-size:13px;font-weight:900;color:#23201a">🧰 Boîte à outils du Professeur (filtrer par pôle) :</div>
+    <div class="poles-tabs" role="tablist" aria-label="Pôles d'actions du professeur">
+      <button type="button" class="pole-tab actif" data-pole="all">✨ Tout afficher (12)</button>
+      <button type="button" class="pole-tab" data-pole="seance">📡 1. Séance &amp; Direct (4)</button>
+      <button type="button" class="pole-tab" data-pole="eval">📝 2. Évaluations &amp; Corrections (5)</button>
+      <button type="button" class="pole-tab" data-pole="classe">🛡️ 3. Classe, Sécurité &amp; Suivi (3)</button>
+    </div>
+  </div>
+
+  <section class="actions-principales" id="grille-actions-principales" aria-label="Actions principales">
+    <!-- PÔLE 1 : SÉANCE & DIRECT (4 cartes) -->
+    <button class="carte-action" id="btn-msg-classe" data-pole-item="seance" type="button">
       <span class="ca-ico orange">📢</span>
       <span class="ca-corps">
         <span class="ca-titre">Message par classe</span>
@@ -1222,15 +1302,7 @@
       </span>
     </button>
 
-    <button class="carte-action" id="btn-flash-quiz" type="button">
-      <span class="ca-ico or">⚡</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Question Flash / Sondage</span>
-        <span class="ca-desc">QCM en direct sur les écrans &amp; résultats live</span>
-      </span>
-    </button>
-
-    <button class="carte-action" id="btn-tb-live-card" type="button">
+    <button class="carte-action" id="btn-tb-live-card" data-pole-item="seance" type="button">
       <span class="ca-ico" style="background:linear-gradient(135deg,#e0f2fe,#0284c7);color:#fff">📺</span>
       <span class="ca-corps">
         <span class="ca-titre">Tableau Blanc Live</span>
@@ -1238,39 +1310,15 @@
       </span>
     </button>
 
-    <button class="carte-action" id="btn-coffre-card" type="button">
+    <button class="carte-action" id="btn-coffre-card" data-pole-item="seance" type="button">
       <span class="ca-ico" style="background:linear-gradient(135deg,#fef3c7,#d97706);color:#fff">🗂️</span>
       <span class="ca-corps">
-        <span class="ca-titre">Coffre de Partage TP</span>
+        <span class="ca-titre">Coffre de Partage TP <span id="badge-coffre-top" style="display:none;background:#b45309;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:4px">0</span></span>
         <span class="ca-desc">Distribuer un fichier .zip, .sql, .html à une classe</span>
       </span>
     </button>
 
-    <button class="carte-action" id="btn-kahoot-card" type="button">
-      <span class="ca-ico" style="background:linear-gradient(135deg,#a855f7,#6d28d9);color:#fff">📊</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Sondage QCM Live (Kahoot)</span>
-        <span class="ca-desc">Vote A/B/C/D en direct &amp; graphique temps réel</span>
-      </span>
-    </button>
-
-    <button class="carte-action" id="btn-copies-card" type="button">
-      <span class="ca-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);color:#fff">📥</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Copies &amp; TP rendus</span>
-        <span class="ca-desc">Tester le code des élèves &amp; noter sur /20</span>
-      </span>
-    </button>
-
-    <button class="carte-action" id="btn-grille-devoirs-card" type="button">
-      <span class="ca-ico" style="background:linear-gradient(135deg,#4f46e5,#3730a3);color:#fff">🧮</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Grille Devoirs (DC / DS)</span>
-        <span class="ca-desc">Calculatrice de barème par partie &amp; CSV Eduserv</span>
-      </span>
-    </button>
-
-    <button class="carte-action" id="btn-badges-labo-card" type="button">
+    <button class="carte-action" id="btn-badges-labo-card" data-pole-item="seance" type="button">
       <span class="ca-ico" style="background:linear-gradient(135deg,#f59e0b,#b45309);color:#fff">🪪</span>
       <span class="ca-corps">
         <span class="ca-titre">Badges Labo (Classe)</span>
@@ -1278,7 +1326,40 @@
       </span>
     </button>
 
-    <button class="carte-action" id="btn-controle" type="button">
+    <!-- PÔLE 2 : ÉVALUATIONS & CORRECTIONS (5 cartes) -->
+    <button class="carte-action" id="btn-flash-quiz" data-pole-item="eval" type="button">
+      <span class="ca-ico or">⚡</span>
+      <span class="ca-corps">
+        <span class="ca-titre">Question Flash / Sondage</span>
+        <span class="ca-desc">Question rapide en direct &amp; réponses live</span>
+      </span>
+    </button>
+
+    <button class="carte-action" id="btn-kahoot-card" data-pole-item="eval" type="button">
+      <span class="ca-ico" style="background:linear-gradient(135deg,#a855f7,#6d28d9);color:#fff">📊</span>
+      <span class="ca-corps">
+        <span class="ca-titre">Sondage QCM Live (Kahoot) <span id="badge-kahoot-top" style="display:none;background:#7c3aed;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:4px">0</span></span>
+        <span class="ca-desc">Vote A/B/C/D en direct &amp; graphique temps réel</span>
+      </span>
+    </button>
+
+    <button class="carte-action" id="btn-copies-card" data-pole-item="eval" type="button">
+      <span class="ca-ico" style="background:linear-gradient(135deg,#22c55e,#15803d);color:#fff">📥</span>
+      <span class="ca-corps">
+        <span class="ca-titre">Copies &amp; TP rendus <span id="badge-copies-top" style="display:none;background:#15803d;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:4px">0</span></span>
+        <span class="ca-desc">Tester le code des élèves &amp; noter sur /20</span>
+      </span>
+    </button>
+
+    <button class="carte-action" id="btn-grille-devoirs-card" data-pole-item="eval" type="button">
+      <span class="ca-ico" style="background:linear-gradient(135deg,#4f46e5,#3730a3);color:#fff">🧮</span>
+      <span class="ca-corps">
+        <span class="ca-titre">Grille Devoirs (DC / DS)</span>
+        <span class="ca-desc">Calculatrice de barème par partie &amp; CSV Eduserv</span>
+      </span>
+    </button>
+
+    <button class="carte-action" id="btn-controle" data-pole-item="eval" type="button">
       <span class="ca-ico or">⏱️</span>
       <span class="ca-corps">
         <span class="ca-titre">Contrôle chronométré</span>
@@ -1286,15 +1367,8 @@
       </span>
     </button>
 
-    <a class="carte-action" href="bac-pratique.html">
-      <span class="ca-ico vert">🧪</span>
-      <span class="ca-corps">
-        <span class="ca-titre">Atelier Bac Pratique</span>
-        <span class="ca-desc">Sujets HTML/CSS/JS/SQL/PHP notés /20</span>
-      </span>
-    </a>
-
-    <button class="carte-action" id="btn-securite-card" type="button">
+    <!-- PÔLE 3 : CLASSE, SÉCURITÉ & SUIVI (3 cartes) -->
+    <button class="carte-action" id="btn-securite-card" data-pole-item="classe" type="button">
       <span class="ca-ico orange" style="background:linear-gradient(135deg,#fde2e6,#c0392b)">🛡️</span>
       <span class="ca-corps">
         <span class="ca-titre">Sécurité &amp; Mode Examen</span>
@@ -1302,7 +1376,15 @@
       </span>
     </button>
 
-    <button class="carte-action" id="btn-stats" type="button">
+    <a class="carte-action" href="bac-pratique.html" data-pole-item="classe">
+      <span class="ca-ico vert">🧪</span>
+      <span class="ca-corps">
+        <span class="ca-titre">Atelier Bac Pratique</span>
+        <span class="ca-desc">Sujets HTML/CSS/JS/SQL/PHP notés /20</span>
+      </span>
+    </a>
+
+    <button class="carte-action" id="btn-stats" data-pole-item="classe" type="button">
       <span class="ca-ico creme">📊</span>
       <span class="ca-corps">
         <span class="ca-titre">Trier par durée / accès</span>
@@ -1324,130 +1406,166 @@
     <div class="stat" id="stat-connexions" data-scroll-cible="sec-dernieres-connexions" title="Cliquer pour aller directement à Dernières connexions"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
   </div>
 
+  <!-- 4. BARRE D'ONGLETS DE NAVIGATION ENTRE LES 4 SECTIONS DE DONNÉES -->
+  <nav class="nav-sections-admin" id="nav-sections-admin" aria-label="Navigation entre les sections du tableau de bord">
+    <span class="nav-sections-lbl">📂 Afficher :</span>
+    <button type="button" class="btn-sec-tab actif" data-sec-cible="all">🗂️ Vue complète (4 sections)</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-abonnes">👥 1. Abonnés &amp; Classes</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-quiz">🏆 2. Quiz &amp; Bac Pratique</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-messages">📨 3. Messages &amp; Réponses</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-connexions">🕒 4. Dernières Connexions</button>
+  </nav>
+
   <div class="msg" id="msg"></div>
 
-  <div id="sec-abonnes" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:18px 0 10px;scroll-margin-top:14px">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <h2 style="margin:0">👥 Liste des Abonnés <span id="note-tri" style="font-size:11px;color:#7a6f5d;font-weight:700"></span></h2>
-      <div class="choix-vue-abonnes" role="tablist" aria-label="Mode d'affichage des abonnés">
-        <button type="button" class="btn-vue actif" id="btn-vue-liste" data-vue="liste" title="Afficher le tableau détaillé complet">📋 Liste détaillée</button>
-        <button type="button" class="btn-vue" id="btn-vue-noeuds" data-vue="noeuds" title="Afficher sous forme de cartes / nœuds (idéal sur mobile)">🔵 Nœuds</button>
+  <!-- SECTION 1 : LISTE DES ABONNÉS & GESTION DES CLASSES -->
+  <section class="carte-section-admin" id="bloc-sec-abonnes">
+    <div id="sec-abonnes" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:14px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2 style="margin:0">👥 1. Liste des Abonnés &amp; Classes <span id="note-tri" style="font-size:11px;color:#7a6f5d;font-weight:700"></span></h2>
+        <div class="choix-vue-abonnes" role="tablist" aria-label="Mode d'affichage des abonnés">
+          <button type="button" class="btn-vue actif" id="btn-vue-liste" data-vue="liste" title="Afficher le tableau détaillé complet">📋 Liste détaillée</button>
+          <button type="button" class="btn-vue" id="btn-vue-noeuds" data-vue="noeuds" title="Afficher sous forme de cartes / nœuds (idéal sur mobile)">🔵 Nœuds</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:800;color:#7a6f5d">
+        <span>📅 Période :</span>
+        <select id="sel-semaine" style="border:2px solid #23201a;border-radius:999px;padding:5px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12.5px"></select>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-abonnes">▾ Réduire</button>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#7a6f5d">
-      <span>📅 Période :</span>
-      <select id="sel-semaine" style="border:2px solid #23201a;border-radius:999px;padding:5px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12.5px"></select>
+
+    <div class="corps-section-admin">
+      <!-- Barre de recherche, filtres par lycée/classe/statut, gestion Lycées/Classes, validation groupée et export Excel/CSV -->
+      <div class="filtres-bar" id="filtres-bar-abonnes">
+        <input type="search" id="filtre-recherche" placeholder="🔎 Rechercher un élève (nom, prénom, tél., e-mail)…" />
+        <select id="filtre-lycee" class="mob-filtre-extra">
+          <option value="*">🏛️ Tous les lycées</option>
+        </select>
+        <select id="filtre-classe">
+          <option value="*">🏫 Toutes les classes</option>
+        </select>
+        <select id="filtre-statut">
+          <option value="*">📌 Tous les états</option>
+          <option value="en_ligne">🟢 En ligne maintenant</option>
+          <option value="actif">✅ Actifs</option>
+          <option value="gold">👑 Comptes Gold</option>
+          <option value="en_attente">⏳ En attente</option>
+          <option value="exclu">⛔ Exclus</option>
+        </select>
+        <button type="button" class="btn-outil vert" id="btn-activer-lot" title="Activer en un clic toutes les demandes en attente affichées">✅ Tout activer (0)</button>
+        <button type="button" class="btn-outil only-mob-flex" id="btn-mob-toggle-filtres" style="justify-content:center;background:#fff3e0;border-color:#f4511e;color:#d84315">⚙️ Lycées / Export ▾</button>
+        <button type="button" class="btn-outil mob-filtre-extra" id="btn-gerer-lycees" title="Ajouter, renommer/changer ou supprimer des lycées">🏛️ Gérer Lycées</button>
+        <button type="button" class="btn-outil mob-filtre-extra" id="btn-gerer-classes" title="Ajouter, renommer/changer ou supprimer des classes">🏫 Gérer Classes</button>
+        <button type="button" class="btn-outil mob-filtre-extra" id="btn-export-csv" title="Télécharger la liste filtrée au format Excel (CSV)">📥 Exporter Excel (CSV)</button>
+      </div>
+
+      <!-- Bandeau affiché dès qu'une classe est appelée/sélectionnée : effectif de la classe + nombre en ligne -->
+      <div class="bandeau-classe" id="bandeau-classe-active" role="status" aria-live="polite"></div>
+
+      <!-- Affichage en Nœuds (Nom, Prénom, Classe, État de l'abonné) -->
+      <div class="grille-noeuds" id="grille-noeuds-abonnes" aria-label="Nœuds des abonnés"></div>
+
+      <div class="table-wrap" id="wrap-table-abonnes">
+        <table>
+          <thead><tr><th>Nom &amp; Prénom</th><th>Contact (e-mail / tél.)</th><th>Lycée &amp; Classe</th><th class="only-mob">Actions</th><th>Connexions</th><th>Durée / semaine</th><th>Statut</th><th>Inscrit le</th><th class="only-pc">Actions</th></tr></thead>
+          <tbody id="tb-abonnes"></tbody>
+        </table>
+      </div>
+
+      <div id="zone-detail">
+        <h2 class="detail-titre">🕒 Connexions de <span id="detail-email"></span>
+          <button id="btn-fermer-detail" type="button">✖ Fermer</button>
+        </h2>
+        <div id="detail-semaines" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Début</th><th>Fin</th><th>Durée</th><th>Lieu</th><th>Page</th></tr></thead>
+            <tbody id="tb-detail"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Barre de recherche, filtres par lycée/classe/statut, gestion Lycées/Classes, validation groupée et export Excel/CSV -->
-  <div class="filtres-bar" id="filtres-bar-abonnes">
-    <input type="search" id="filtre-recherche" placeholder="🔎 Rechercher un élève (nom, prénom, tél., e-mail)…" />
-    <select id="filtre-lycee" class="mob-filtre-extra">
-      <option value="*">🏛️ Tous les lycées</option>
-    </select>
-    <select id="filtre-classe">
-      <option value="*">🏫 Toutes les classes</option>
-    </select>
-    <select id="filtre-statut">
-      <option value="*">📌 Tous les états</option>
-      <option value="en_ligne">🟢 En ligne maintenant</option>
-      <option value="actif">✅ Actifs</option>
-      <option value="gold">👑 Comptes Gold</option>
-      <option value="en_attente">⏳ En attente</option>
-      <option value="exclu">⛔ Exclus</option>
-    </select>
-    <button type="button" class="btn-outil vert" id="btn-activer-lot" title="Activer en un clic toutes les demandes en attente affichées">✅ Tout activer (0)</button>
-    <button type="button" class="btn-outil only-mob-flex" id="btn-mob-toggle-filtres" style="justify-content:center;background:#fff3e0;border-color:#f4511e;color:#d84315">⚙️ Lycées / Export ▾</button>
-    <button type="button" class="btn-outil mob-filtre-extra" id="btn-gerer-lycees" title="Ajouter, renommer/changer ou supprimer des lycées">🏛️ Gérer Lycées</button>
-    <button type="button" class="btn-outil mob-filtre-extra" id="btn-gerer-classes" title="Ajouter, renommer/changer ou supprimer des classes">🏫 Gérer Classes</button>
-    <button type="button" class="btn-outil mob-filtre-extra" id="btn-export-csv" title="Télécharger la liste filtrée au format Excel (CSV)">📥 Exporter Excel (CSV)</button>
-  </div>
-
-  <!-- Bandeau affiché dès qu'une classe est appelée/sélectionnée : effectif de la classe + nombre en ligne -->
-  <div class="bandeau-classe" id="bandeau-classe-active" role="status" aria-live="polite"></div>
-
-  <!-- Affichage en Nœuds (Nom, Prénom, Classe, État de l'abonné) -->
-  <div class="grille-noeuds" id="grille-noeuds-abonnes" aria-label="Nœuds des abonnés"></div>
-
-  <div class="table-wrap" id="wrap-table-abonnes">
-    <table>
-      <thead><tr><th>Nom &amp; Prénom</th><th>Contact (e-mail / tél.)</th><th>Lycée &amp; Classe</th><th class="only-mob">Actions</th><th>Connexions</th><th>Durée / semaine</th><th>Statut</th><th>Inscrit le</th><th class="only-pc">Actions</th></tr></thead>
-      <tbody id="tb-abonnes"></tbody>
-    </table>
-  </div>
-
-  <div id="zone-detail">
-    <h2 class="detail-titre">🕒 Connexions de <span id="detail-email"></span>
-      <button id="btn-fermer-detail" type="button">✖ Fermer</button>
-    </h2>
-    <div id="detail-semaines" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"></div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Début</th><th>Fin</th><th>Durée</th><th>Lieu</th><th>Page</th></tr></thead>
-        <tbody id="tb-detail"></tbody>
-      </table>
+  <!-- SECTION 2 : RÉSULTATS DES QUIZ & ATELIER BAC PRATIQUE -->
+  <section class="carte-section-admin" id="bloc-sec-quiz">
+    <div id="sec-resultats-quiz" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:16px">
+      <h2 style="margin:0">🏆 2. Résultats des Quiz &amp; Atelier Bac Pratique</h2>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <select id="filtre-quiz-classe" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer les résultats de Quiz par classe">
+          <option value="*">🏫 Toutes les classes</option>
+        </select>
+        <button type="button" class="btn-outil" id="btn-export-quiz-csv" title="Exporter les notes et résultats de Quiz au format Excel (CSV)">📥 Exporter Notes (CSV)</button>
+        <button type="button" class="btn-outil" id="btn-ouvrir-purge-quiz" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer les résultats de Quiz et Bac Pratique en choisissant le mois cible">🗑️ Effacer par mois…</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-quiz">▾ Réduire</button>
+      </div>
     </div>
-  </div>
-
-  <div id="sec-resultats-quiz" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:22px 0 10px;scroll-margin-top:16px">
-    <h2 style="margin:0">🏆 Résultats des Quiz &amp; Atelier Bac Pratique</h2>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <select id="filtre-quiz-classe" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer les résultats de Quiz par classe">
-        <option value="*">🏫 Toutes les classes</option>
-      </select>
-      <button type="button" class="btn-outil" id="btn-export-quiz-csv" title="Exporter les notes et résultats de Quiz au format Excel (CSV)">📥 Exporter Notes (CSV)</button>
-      <button type="button" class="btn-outil" id="btn-ouvrir-purge-quiz" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer les résultats de Quiz et Bac Pratique en choisissant le mois cible">🗑️ Effacer par mois…</button>
+    <div class="corps-section-admin">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Candidat (Nom, Prénom &amp; Contact)</th><th>Lycée / Classe</th><th>Épreuve / Quiz</th><th>Score / Note</th><th>Date</th></tr></thead>
+          <tbody id="tb-quiz"></tbody>
+        </table>
+      </div>
+      <div id="wrap-voir-plus-quiz" style="display:none;text-align:center;margin:10px 0 4px">
+        <button type="button" class="btn-outil" id="btn-voir-plus-quiz">➕ Voir plus</button>
+      </div>
     </div>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Candidat (Nom, Prénom &amp; Contact)</th><th>Lycée / Classe</th><th>Épreuve / Quiz</th><th>Score / Note</th><th>Date</th></tr></thead>
-      <tbody id="tb-quiz"></tbody>
-    </table>
-  </div>
-  <div id="wrap-voir-plus-quiz" style="display:none;text-align:center;margin:10px 0 4px">
-    <button type="button" class="btn-outil" id="btn-voir-plus-quiz">➕ Voir plus</button>
-  </div>
+  </section>
 
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:22px 0 10px">
-    <h2 style="margin:0">📨 Suivi de lecture des messages diffusés &amp; réponses des élèves <span id="resume-suivi-msg" style="font-size:12px;color:#7a6f5d;font-weight:800;margin-left:6px"></span></h2>
-    <button type="button" class="btn-outil" id="btn-ouvrir-purge-msg" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer un message diffusé et son suivi de lecture/réponses">🗑️ Effacer par message…</button>
-  </div>
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
-    <select id="sel-suivi-msg" style="border:2px solid #23201a;border-radius:10px;padding:7px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:13px;min-width:260px;max-width:100%">
-      <option value="">Aucun message diffusé pour le moment</option>
-    </select>
-    <div id="apercu-suivi-msg" style="font-size:13px;color:#23201a;background:#fffdf7;border:1.5px dashed #f4511e;border-radius:10px;padding:7px 12px;flex:1;min-width:220px;display:none"></div>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Candidat (Nom, Prénom &amp; Contact)</th><th>Lycée / Classe</th><th>État</th><th>💬 Réponse / Question de l'élève</th><th>Date</th><th>Action</th></tr></thead>
-      <tbody id="tb-suivi-msg"></tbody>
-    </table>
-  </div>
-  <div id="wrap-voir-plus-suivi" style="display:none;text-align:center;margin:10px 0 4px">
-    <button type="button" class="btn-outil" id="btn-voir-plus-suivi">➕ Voir plus</button>
-  </div>
-
-  <div id="sec-dernieres-connexions" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:22px 0 10px;scroll-margin-top:16px">
-    <h2 style="margin:0">🕒 Dernières connexions (tous abonnés)</h2>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <select id="filtre-acces-classe" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer les dernières connexions par classe">
-        <option value="*">🏫 Toutes les classes</option>
-      </select>
-      <button type="button" class="btn-outil" id="btn-ouvrir-purge-acces" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer les connexions en choisissant le mois cible">🗑️ Effacer par mois…</button>
+  <!-- SECTION 3 : SUIVI DE LECTURE DES MESSAGES DIFFUSÉS & RÉPONSES -->
+  <section class="carte-section-admin" id="bloc-sec-messages">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
+      <h2 style="margin:0">📨 3. Suivi de lecture des messages &amp; réponses des élèves <span id="resume-suivi-msg" style="font-size:12px;color:#7a6f5d;font-weight:800;margin-left:6px"></span></h2>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn-outil" id="btn-ouvrir-purge-msg" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer un message diffusé et son suivi de lecture/réponses">🗑️ Effacer par message…</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-messages">▾ Réduire</button>
+      </div>
     </div>
-  </div>
-  <div class="table-wrap" id="wrap-table-acces">
-    <table>
-      <thead><tr><th>Candidat (Nom, Prénom &amp; Contact — Lycée &amp; Classe)</th><th>Lycée &amp; Classe</th><th>Début</th><th>Durée</th><th>Appareil &amp; Lieu</th><th>Page</th></tr></thead>
-      <tbody id="tb-acces"></tbody>
-    </table>
-  </div>
-  <div id="wrap-voir-plus-acces" style="display:none;text-align:center;margin:10px 0 4px">
-    <button type="button" class="btn-outil" id="btn-voir-plus-acces">➕ Voir plus</button>
-  </div>
+    <div class="corps-section-admin">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+        <select id="sel-suivi-msg" style="border:2px solid #23201a;border-radius:10px;padding:7px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:13px;min-width:260px;max-width:100%">
+          <option value="">Aucun message diffusé pour le moment</option>
+        </select>
+        <div id="apercu-suivi-msg" style="font-size:13px;color:#23201a;background:#fffdf7;border:1.5px dashed #f4511e;border-radius:10px;padding:7px 12px;flex:1;min-width:220px;display:none"></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Candidat (Nom, Prénom &amp; Contact)</th><th>Lycée / Classe</th><th>État</th><th>💬 Réponse / Question de l'élève</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="tb-suivi-msg"></tbody>
+        </table>
+      </div>
+      <div id="wrap-voir-plus-suivi" style="display:none;text-align:center;margin:10px 0 4px">
+        <button type="button" class="btn-outil" id="btn-voir-plus-suivi">➕ Voir plus</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4 : DERNIÈRES CONNEXIONS (TOUS ABONNÉS) -->
+  <section class="carte-section-admin" id="bloc-sec-connexions">
+    <div id="sec-dernieres-connexions" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:16px">
+      <h2 style="margin:0">🕒 4. Dernières connexions (tous abonnés)</h2>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <select id="filtre-acces-classe" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer les dernières connexions par classe">
+          <option value="*">🏫 Toutes les classes</option>
+        </select>
+        <button type="button" class="btn-outil" id="btn-ouvrir-purge-acces" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer les connexions en choisissant le mois cible">🗑️ Effacer par mois…</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-connexions">▾ Réduire</button>
+      </div>
+    </div>
+    <div class="corps-section-admin">
+      <div class="table-wrap" id="wrap-table-acces">
+        <table>
+          <thead><tr><th>Candidat (Nom, Prénom &amp; Contact — Lycée &amp; Classe)</th><th>Lycée &amp; Classe</th><th>Début</th><th>Durée</th><th>Appareil &amp; Lieu</th><th>Page</th></tr></thead>
+          <tbody id="tb-acces"></tbody>
+        </table>
+      </div>
+      <div id="wrap-voir-plus-acces" style="display:none;text-align:center;margin:10px 0 4px">
+        <button type="button" class="btn-outil" id="btn-voir-plus-acces">➕ Voir plus</button>
+      </div>
+    </div>
+  </section>
 
   <!-- Boîte de suppression des connexions par mois cible -->
   <div class="modal-fond" id="modal-purge-acces" role="dialog" aria-modal="true">
@@ -3022,10 +3140,95 @@
       });
     }
 
+    /* Organisation v116 : Tiroir Système, Onglets de Pôles, Navigation par Sections & Repliage */
+    var btnSysBar = document.getElementById("btn-toggle-sys-bar");
+    if (btnSysBar) {
+      btnSysBar.addEventListener("click", function () {
+        var ouvSys = document.body.classList.toggle("sys-bar-ouverte");
+        btnSysBar.innerHTML = ouvSys
+          ? '⚙️ <span class="lbl-pc">Système &amp; Plus ▴</span><span class="lbl-mob">Moins ▴</span>'
+          : '⚙️ <span class="lbl-pc">Système &amp; Plus ▾</span><span class="lbl-mob">Plus ▾</span>';
+      });
+    }
+
+    document.querySelectorAll(".pole-tab[data-pole]").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        var pole = tab.getAttribute("data-pole") || "all";
+        document.querySelectorAll(".pole-tab[data-pole]").forEach(function (t) {
+          t.classList.toggle("actif", t === tab);
+        });
+        document.querySelectorAll("#grille-actions-principales [data-pole-item]").forEach(function (carte) {
+          var pItem = carte.getAttribute("data-pole-item");
+          carte.style.display = (pole === "all" || pItem === pole) ? "" : "none";
+        });
+      });
+    });
+
+    function afficherSectionCible(secId, defiler) {
+      var toutes = ["bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-messages", "bloc-sec-connexions"];
+      document.querySelectorAll(".btn-sec-tab[data-sec-cible]").forEach(function (b) {
+        b.classList.toggle("actif", b.getAttribute("data-sec-cible") === secId);
+      });
+      toutes.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (secId === "all" || secId === id) {
+          el.style.display = "";
+          if (secId === id) {
+            el.classList.remove("sec-repliee");
+            var btnRep = el.querySelector(".btn-replier-sec");
+            if (btnRep) btnRep.textContent = "▾ Réduire";
+          }
+        } else {
+          el.style.display = "none";
+        }
+      });
+      if (defiler && secId !== "all") {
+        var cible = document.getElementById(secId);
+        if (cible) cible.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    document.querySelectorAll(".btn-sec-tab[data-sec-cible]").forEach(function (btnSec) {
+      btnSec.addEventListener("click", function () {
+        afficherSectionCible(btnSec.getAttribute("data-sec-cible") || "all", false);
+      });
+    });
+
+    document.querySelectorAll(".btn-replier-sec[data-replier]").forEach(function (btnRep) {
+      btnRep.addEventListener("click", function () {
+        var idSec = btnRep.getAttribute("data-replier");
+        var secEl = idSec ? document.getElementById(idSec) : null;
+        if (!secEl) return;
+        var repliee = secEl.classList.toggle("sec-repliee");
+        btnRep.textContent = repliee ? "▸ Agrandir" : "▾ Réduire";
+      });
+    });
+
+    var statConnex = document.getElementById("stat-connexions");
+    if (statConnex) {
+      statConnex.addEventListener("click", function () {
+        var blocConn = document.getElementById("bloc-sec-connexions");
+        if (blocConn && blocConn.style.display === "none") {
+          afficherSectionCible("all", false);
+        }
+        if (blocConn) {
+          blocConn.classList.remove("sec-repliee");
+          var bRep = blocConn.querySelector(".btn-replier-sec");
+          if (bRep) bRep.textContent = "▾ Réduire";
+        }
+      });
+    }
+
     document.querySelectorAll("#mob-bottom-nav .mob-nav-btn[data-mob-scroll]").forEach(function (btnNav) {
       btnNav.addEventListener("click", function () {
         var idC = btnNav.getAttribute("data-mob-scroll");
+        afficherSectionCible("all", false);
         var elC = idC ? document.getElementById(idC) : null;
+        if (elC) {
+          var parentSec = elC.closest(".carte-section-admin");
+          if (parentSec) parentSec.classList.remove("sec-repliee");
+        }
         document.querySelectorAll("#mob-bottom-nav .mob-nav-btn[data-mob-scroll]").forEach(function (b) {
           b.classList.toggle("actif", b === btnNav);
         });
@@ -3036,7 +3239,7 @@
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=115"></script>
-<script src="assets/js/admin.js?v=115"></script>
+<script src="assets/js/config.js?v=116"></script>
+<script src="assets/js/admin.js?v=116"></script>
 </body>
 </html>
