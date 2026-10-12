@@ -82,7 +82,13 @@
   --pop-sm:2.5px 2.5px 0 rgba(0, 0, 0, 0.55);
   --pop:5px 5px 0 rgba(0, 0, 0, 0.35);
 }
-*,*::before,*::after{box-sizing:inherit}
+*,*::before,*::after{
+  box-sizing:inherit;
+  font-variant-ligatures:none !important;
+  -webkit-font-variant-ligatures:none !important;
+  font-feature-settings:"liga" 0, "calt" 0 !important;
+  -webkit-font-feature-settings:"liga" 0, "calt" 0 !important;
+}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{
   margin:0;
@@ -96,7 +102,13 @@ body{
   font-family:"Manrope", "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   line-height:1.55;
 }
-.mono{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+.mono, code, pre{
+  font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-ligatures:none !important;
+  -webkit-font-variant-ligatures:none !important;
+  font-feature-settings:"liga" 0, "calt" 0 !important;
+  -webkit-font-feature-settings:"liga" 0, "calt" 0 !important;
+}
 .wrap{max-width:1240px;margin:0 auto;padding:24px 18px 44px}
 .subject-head{
   display:flex;
@@ -647,11 +659,11 @@ $('copy').onclick=async()=>{
 render();
 </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../../assets/css/protection.css?v=136" />
-<script src="../../assets/js/protection.js?v=136" defer></script>
+<link rel="stylesheet" href="../../assets/css/protection.css?v=137" />
+<script src="../../assets/js/protection.js?v=137" defer></script>
 <!-- /Protection -->
 <script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=136"></script>
-<script src="../../assets/js/acces.js?v=136"></script>
+<script src="../../assets/js/config.js?v=137"></script>
+<script src="../../assets/js/acces.js?v=137"></script>
 </body>
 </html>
