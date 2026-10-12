@@ -395,8 +395,8 @@
     cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
   }
   .noeud-abonne:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #f4511e; }
-  .noeud-abonne.nd-en_ligne { background: #e3f6e8; border-color: #177245; }
-  .noeud-abonne.nd-actif { background: #ede9fe; }
+  .noeud-abonne.nd-en_ligne { background: #a7e8bd; border-color: #135d37; }
+  .noeud-abonne.nd-actif { background: #c4b5fd; border-color: #5b21b6; }
   .noeud-abonne.nd-gold { background: linear-gradient(135deg, #fff6b8 0%, #ffe478 100%); }
   .noeud-abonne.nd-en_attente { background: #f5ead2; }
   .noeud-abonne.nd-exclu { background: #fde2e6; }
@@ -475,11 +475,11 @@
   tbody tr { cursor: pointer; transition: background .15s ease; }
   tbody tr:hover { background: #fdf6e9; }
 
-  /* Coloration de chaque ligne du tableau des abonnés selon l'état (En ligne = vert, Actif = mauve, Gold = doré) */
-  #tb-abonnes tr.row-en_ligne { background: #e3f6e8; }
-  #tb-abonnes tr.row-en_ligne:hover { background: #d2eedb; }
-  #tb-abonnes tr.row-actif { background: #ede9fe; }
-  #tb-abonnes tr.row-actif:hover { background: #ddd6fe; }
+  /* Coloration de chaque ligne du tableau des abonnés selon l'état (En ligne = vert soutenu, Actif = mauve soutenu, Gold = doré) */
+  #tb-abonnes tr.row-en_ligne { background: #a7e8bd; }
+  #tb-abonnes tr.row-en_ligne:hover { background: #8ddba8; }
+  #tb-abonnes tr.row-actif { background: #c4b5fd; }
+  #tb-abonnes tr.row-actif:hover { background: #b19dfa; }
   #tb-abonnes tr.row-gold { background: linear-gradient(90deg, #fff6b8 0%, #ffe478 100%); background-color: #ffef99; }
   #tb-abonnes tr.row-gold:hover { background: linear-gradient(90deg, #ffed8a 0%, #ffd94a 100%); background-color: #ffe36e; }
   #tb-abonnes tr.row-en_attente { background: #f5ead2; }
@@ -603,8 +603,8 @@
       box-shadow: 2px 0 0 rgba(35,32,26,.16);
     }
     #wrap-table-abonnes th:first-child { background: #f3ead9; z-index: 3; }
-    #tb-abonnes tr.row-en_ligne td:first-child { background: #e3f6e8; }
-    #tb-abonnes tr.row-actif td:first-child { background: #ede9fe; }
+    #tb-abonnes tr.row-en_ligne td:first-child { background: #a7e8bd; }
+    #tb-abonnes tr.row-actif td:first-child { background: #c4b5fd; }
     #tb-abonnes tr.row-gold td:first-child { background: #ffe985; }
     #tb-abonnes tr.row-en_attente td:first-child { background: #f5ead2; }
     #tb-abonnes tr.row-exclu td:first-child { background: #fde2e6; }
@@ -704,7 +704,7 @@
     border-radius: 6px; padding: 1px 6px; font-size: 10.5px; font-weight: 800; margin: 3px 4px 0 0;
   }
   .st { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; }
-  .st.actif { background: rgba(109,40,217,.14); color: #6d28d9; border: 1px solid rgba(109,40,217,.28); }
+  .st.actif { background: #ede9fe; color: #4c1d95; border: 1.5px solid #5b21b6; }
   .st.gold { background: linear-gradient(120deg, #fff3c4, #ffd54f); color: #6d4c00; border: 1.5px solid #d4a017; box-shadow: 1px 1px 0 #23201a; }
   .st.en_attente { background: rgba(180,125,9,.14); color: #b47d09; }
   .st.suspendu { background: rgba(122,111,93,.14); color: #7a6f5d; }
@@ -1253,10 +1253,10 @@
           <span id="titre-tb-admin" style="color:#177245;transition:color .25s ease" title="🟢 En ligne">Tableau de bord STI V2.0</span>
           <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">🟢 Accès ouvert</span>
           <span class="badge-admin-gold">👑 Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v123</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v124</span>
           <span class="badge-supabase" id="badge-supabase-quota" title="Espace disponible dans la base Supabase (Quota 500 Mo) — cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent">🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v123)</strong> · <strong id="sous-supabase-quota" style="color:#177245;cursor:pointer;text-decoration:underline dotted" title="Cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent Supabase">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v124)</strong> · <strong id="sous-supabase-quota" style="color:#177245;cursor:pointer;text-decoration:underline dotted" title="Cliquer pour ouvrir l'Analyseur &amp; Nettoyeur Intelligent Supabase">🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
       </div>
     </div>
     <div class="barre-util">
@@ -3040,7 +3040,7 @@
   >⬆ Haut</button>
 
   <footer class="pied-admin-version">
-    Plateforme STI V2.0 © Aymen Essouyah — Lycée Raféha · <span id="pied-version-admin">🏷️ Version active : STI V2.0 (v123)</span> · <span id="pied-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo / 500 Mo)</span> · <button type="button" id="pied-readme-admin" style="border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">📖 README</button> · <button type="button" id="pied-haut-admin" style="border:1.5px solid #23201a;background:#f4511e;color:#fff;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">⬆ Haut</button>
+    Plateforme STI V2.0 © Aymen Essouyah — Lycée Raféha · <span id="pied-version-admin">🏷️ Version active : STI V2.0 (v124)</span> · <span id="pied-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo / 500 Mo)</span> · <button type="button" id="pied-readme-admin" style="border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">📖 README</button> · <button type="button" id="pied-haut-admin" style="border:1.5px solid #23201a;background:#f4511e;color:#fff;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">⬆ Haut</button>
   </footer>
 
   <!-- Barre de navigation rapide mobile fixe en bas d'écran (visible uniquement sur smartphone ≤ 768px) -->
@@ -3325,7 +3325,7 @@
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=123"></script>
-<script src="assets/js/admin.js?v=123"></script>
+<script src="assets/js/config.js?v=124"></script>
+<script src="assets/js/admin.js?v=124"></script>
 </body>
 </html>
