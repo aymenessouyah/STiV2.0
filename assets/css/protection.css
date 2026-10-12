@@ -116,64 +116,10 @@ body.sti-gold #sti-watermark {
   }
 }
 
-/* ── Bouclier Anti-Inspecteur / Code source (actif pour TOUS les abonnés, même Gold) ── */
-#sti-devtools-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 2147483647;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(16, 23, 40, 0.98);
-  backdrop-filter: blur(10px);
-}
+/* ── Bouclier Anti-Inspecteur / Code source (désactivation de l'overlay bloquant plein écran) ── */
+#sti-devtools-overlay,
 #sti-devtools-overlay.visible {
-  display: flex !important;
-}
-html.sti-admin-strict #sti-devtools-overlay {
   display: none !important;
-}
-html.sti-devtools-open:not(.sti-admin-strict) body > *:not(#sti-devtools-overlay):not(#sti-toast) {
-  filter: blur(18px) !important;
-  pointer-events: none !important;
-  user-select: none !important;
-}
-#sti-devtools-overlay .sti-dev-box {
-  max-width: 460px;
-  padding: 34px 30px;
-  border-radius: 20px;
-  background: #fffdf5;
-  border: 2px solid #f4511e;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-  text-align: center;
-  font-family: system-ui, "Segoe UI", sans-serif;
-  color: #101728;
-}
-#sti-devtools-overlay .sti-dev-ico {
-  font-size: 46px;
-}
-#sti-devtools-overlay .sti-dev-title {
-  margin: 12px 0 8px;
-  font-size: 20px;
-  font-weight: 800;
-}
-#sti-devtools-overlay .sti-dev-txt {
-  font-size: 14px;
-  line-height: 1.55;
-  color: #43506b;
-}
-#sti-devtools-overlay .sti-dev-btn {
-  margin-top: 18px;
-  padding: 11px 26px;
-  border: 2px solid #101728;
-  border-radius: 999px;
-  cursor: pointer;
-  background: linear-gradient(120deg, #f4511e, #ff8a50);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
-  box-shadow: 3px 3px 0 #101728;
 }
 
 /* ── Toast « contenu / code source protégé » ── */

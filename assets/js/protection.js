@@ -19,10 +19,40 @@
   /* 1) Détecte si l'utilisateur connecté est strictement l'Administrateur (aymenessouyah@gmail.com) */
   function estAdminStrict() {
     try {
+      if (window.__STI_ADMIN_STRICT === true) return true;
+      if (window.top && window.top !== window && window.top.__STI_ADMIN_STRICT === true) return true;
       var adminEmail = (
         (window.STI_AUTH && window.STI_AUTH.ADMIN) ||
         "aymenessouyah@gmail.com"
       ).trim().toLowerCase();
+
+      var cSess = null;
+      try {
+        cSess = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+      } catch (e) {}
+      if (cSess && cSess.isAdmin === true && String(cSess.email || "").trim().toLowerCase() === adminEmail) {
+        localStorage.setItem("sti-admin-gold", "1");
+        localStorage.setItem("sti-gold", "1");
+        window.__STI_ADMIN_STRICT = true;
+        return true;
+      }
+
+      /* Vérifier en priorité le jeton du projet STI V2.0 */
+      var cleProjet = "sb-vywujxmepvcbgedgmger-auth-token";
+      var valProjet = (localStorage.getItem(cleProjet) || "").toLowerCase();
+      if (valProjet && valProjet !== "null") {
+        if (valProjet.indexOf(adminEmail) !== -1) {
+          localStorage.setItem("sti-admin-gold", "1");
+          localStorage.setItem("sti-gold", "1");
+          window.__STI_ADMIN_STRICT = true;
+          return true;
+        }
+        if (valProjet.indexOf("@") !== -1 || valProjet.indexOf("access_token") !== -1) {
+          localStorage.removeItem("sti-admin-gold");
+          return false;
+        }
+      }
+
       var tokenAdmin = false;
       var tokenNonAdmin = false;
       for (var i = 0; i < localStorage.length; i++) {
@@ -39,21 +69,18 @@
           }
         }
       }
+      if (tokenAdmin) {
+        localStorage.setItem("sti-admin-gold", "1");
+        localStorage.setItem("sti-gold", "1");
+        window.__STI_ADMIN_STRICT = true;
+        return true;
+      }
       if (tokenNonAdmin) {
         localStorage.removeItem("sti-admin-gold");
         return false;
       }
-      if (tokenAdmin) {
-        localStorage.setItem("sti-admin-gold", "1");
-        localStorage.setItem("sti-gold", "1");
+      if (localStorage.getItem("sti-admin-gold") === "1" && (!cSess || cSess.isAdmin !== false)) {
         return true;
-      }
-      if (!navigator.onLine) {
-        var cSess = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
-        if (cSess && cSess.isAdmin === true && String(cSess.email || "").trim().toLowerCase() === adminEmail) {
-          localStorage.setItem("sti-admin-gold", "1");
-          return true;
-        }
       }
     } catch (e) {}
     return false;
@@ -346,76 +373,16 @@
   }
 
   /* ─────────────────────────────────────────────
-     6) Bouclier Anti-Inspecteur (actif pour 100 % des abonnés, y compris Gold)
+     6) Nettoyage de tout overlay résiduel (pas de fausse détection par taille de fenêtre / DPI / zoom)
      ───────────────────────────────────────────── */
-  var devOverlay = null;
-
-  function ensureDevOverlay() {
-    if (devOverlay) return devOverlay;
-    if (!document.body) return null;
-    devOverlay = document.createElement("div");
-    devOverlay.id = "sti-devtools-overlay";
-    devOverlay.innerHTML =
-      '<div class="sti-dev-box">' +
-      '<div class="sti-dev-ico" aria-hidden="true">\uD83D\uDEE1\uFE0F</div>' +
-      '<div class="sti-dev-title">Code source &amp; Inspecteur verrouillés</div>' +
-      '<div class="sti-dev-txt">L\u2019accès au code source et aux outils de développement est désactivé pour tous les abonnés. ' +
-      "Veuillez <b>fermer le panneau d\u2019inspection (F12 / \u2715)</b> pour reprendre immédiatement la consultation du cours.</div>" +
-      '<button type="button" class="sti-dev-btn">\uD83D\uDD04 Vérifier et reprendre</button>' +
-      "</div>";
-    devOverlay.querySelector(".sti-dev-btn").addEventListener("click", function () {
-      checkDevtools();
-      if (devOverlay.classList.contains("visible")) {
-        toast("\u26A0\uFE0F Fermez d\u2019abord le panneau d\u2019inspection du navigateur ( touches F12 ou bouton \u2715 ).", true);
-      }
-    });
-    document.body.appendChild(devOverlay);
-    return devOverlay;
-  }
-
   function checkDevtools() {
-    if (estAdminStrict()) {
-      if (devOverlay) devOverlay.classList.remove("visible");
-      if (document.documentElement) document.documentElement.classList.remove("sti-devtools-open");
-      return;
+    var exOv = document.getElementById("sti-devtools-overlay");
+    if (exOv) {
+      exOv.classList.remove("visible");
+      if (exOv.parentNode) exOv.parentNode.removeChild(exOv);
     }
-    /* Ne pas déclencher dans l'aperçu sandboxé ou sur appareil tactile pur */
-    if (window.origin === "null") return;
-    if (!window.matchMedia || !window.matchMedia("(pointer: fine)").matches) return;
-
-    var refWin = window;
-    if (window.self !== window.top) {
-      try {
-        if (window.top && window.top.innerWidth) {
-          refWin = window.top;
-        } else {
-          return;
-        }
-      } catch (e) {
-        return;
-      }
-    }
-
-    var w = Math.max(0, (refWin.outerWidth || 0) - (refWin.innerWidth || 0));
-    var h = Math.max(0, (refWin.outerHeight || 0) - (refWin.innerHeight || 0));
-    var ouvert = w > 180 || h > 180;
-
-    if (ouvert) {
-      if (!devtoolsEtaitOuvert) {
-        devtoolsEtaitOuvert = true;
-        signalerTentativeCodeSource("Ouverture du panneau d'inspection (DevTools)");
-      }
-      var ov = ensureDevOverlay();
-      if (ov) ov.classList.add("visible");
-      if (document.documentElement) document.documentElement.classList.add("sti-devtools-open");
-      try {
-        console.clear();
-        console.log("%c\uD83D\uDEE1\uFE0F Accès au code source interdit \u00A9 STI V2.0 - A. Essouyah", "color:#f4511e;font-size:18px;font-weight:bold;");
-      } catch (e) {}
-    } else {
-      devtoolsEtaitOuvert = false;
-      if (devOverlay) devOverlay.classList.remove("visible");
-      if (document.documentElement) document.documentElement.classList.remove("sti-devtools-open");
+    if (document.documentElement) {
+      document.documentElement.classList.remove("sti-devtools-open");
     }
   }
 
@@ -428,8 +395,6 @@
       installPrintBlock();
     }
     checkDevtools();
-    window.addEventListener("resize", checkDevtools);
-    setInterval(checkDevtools, 1000);
   }
 
   if (document.readyState === "loading") {
