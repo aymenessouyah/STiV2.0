@@ -26,6 +26,17 @@
   var currentUid = null;
   var currentClasse = "";
   var presenceMapSite = {};
+
+  /* Neutralisation immédiate de toute invite biométrique / WebAuthn / code de verrouillage d'écran
+     lors de la navigation entre les pages côté abonné */
+  try {
+    localStorage.removeItem("sti-bio");
+    sessionStorage.removeItem("sti-bio");
+    if (navigator.credentials) {
+      try { navigator.credentials.get = function () { return Promise.resolve(null); }; } catch (e) {}
+      try { navigator.credentials.create = function () { return Promise.resolve(null); }; } catch (e) {}
+    }
+  } catch (e) {}
   var ICO_META_MSN_SVG =
     "<svg width='20' height='20' viewBox='0 0 36 36' fill='none' aria-hidden='true' style='flex-shrink:0'>" +
       "<defs><linearGradient id='stiMetaMsnGrad' x1='0%' y1='100%' x2='100%' y2='0%'>" +
@@ -603,7 +614,7 @@
         sb.from("profiles").select("statut,lycee,classe,nom,prenom,email").eq("id", user.id).maybeSingle().then(function (rp) {
           if (!rp || rp.error || !rp.data) return;
           var st = rp.data.statut;
-          if (estProfilMrezguiaMeriem(rp.data, user.user_metadata) && (!st || st === "en_attente")) {
+          if ((estClasseProfLabo(rp.data.classe, user.email) || estProfilIssaouiAmel(rp.data, user.user_metadata) || estProfilMrezguiaMeriem(rp.data, user.user_metadata)) && (!st || st === "en_attente")) {
             st = "actif";
             rp.data.statut = "actif";
           }
@@ -854,15 +865,19 @@
         try { c = JSON.parse(sessionStorage.getItem("sti-session-cache") || "null"); } catch (e) {}
       }
       if (!c) {
+        try { c = JSON.parse(localStorage.getItem("sti-labo-badge-sess") || "null"); } catch (e) {}
+      }
+      if (!c) {
         c = lireCookieSessionFallback();
       }
       if (!c) {
         try {
+          var forceExit = localStorage.getItem("sti-force-exit");
           var tOffRec = parseInt(localStorage.getItem("sti-offline") || sessionStorage.getItem("sti-offline") || "0", 10);
           var credRec = JSON.parse(localStorage.getItem("sti-cred") || "null");
           var reRec = JSON.parse(localStorage.getItem("sti-reauth") || "null");
           var emRec = (credRec && credRec.email) || (reRec && reRec.e) || "";
-          if (tOffRec && (Date.now() - tOffRec < 30 * 86400000) && emRec) {
+          if (!forceExit && emRec && (!tOffRec || (Date.now() - tOffRec < 30 * 86400000))) {
             var isAdmRec = Boolean(credRec && credRec.isAdmin && emRec.trim().toLowerCase() === ADMIN_MAIL_STRICT);
             c = {
               id: isAdmRec ? "admin" : "abonne-local",
@@ -870,7 +885,7 @@
               statut: "actif",
               gold: Boolean(isAdmRec || localStorage.getItem("sti-gold") === "1"),
               isAdmin: isAdmRec,
-              ts: tOffRec
+              ts: tOffRec || Date.now()
             };
           }
         } catch (e) {}
@@ -878,10 +893,8 @@
       if (c && c.statut === "actif") {
         try {
           localStorage.removeItem("sti-force-exit");
-          if (!localStorage.getItem("sti-session-cache")) {
-            localStorage.setItem("sti-session-cache", JSON.stringify(c));
-            localStorage.setItem("sti-offline", String(c.ts || Date.now()));
-          }
+          c.ts = c.ts || Date.now();
+          ecrireCacheSessionLocal(c);
         } catch (e) {}
       }
       if (c && estProfilIssaouiAmel(c, c.user_metadata)) {
@@ -1075,7 +1088,7 @@
         return false;
       }
       var st = rp.data.statut;
-      if (estProfilMrezguiaMeriem(rp.data, user.user_metadata) && (!st || st === "en_attente")) {
+      if ((estClasseProfLabo(rp.data.classe, user.email) || estProfilIssaouiAmel(rp.data, user.user_metadata) || estProfilMrezguiaMeriem(rp.data, user.user_metadata)) && (!st || st === "en_attente")) {
         st = "actif";
         rp.data.statut = "actif";
       }

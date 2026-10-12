@@ -11,10 +11,15 @@
     }
   });
 
-  /* Si la classe "elevelabo3" a déjà été connectée une fois sur ce PC du labo,
-     ne plus jamais demander login ni mot de passe (sauf si déconnexion volontaire #deconnecte ou accès #admin) */
+  /* Neutralisation complète de WebAuthn / biométrie / code de verrouillage d'écran :
+     un abonné connecté ne doit JAMAIS avoir à saisir son empreinte, FaceID ou code de verrouillage à chaque changement de page */
   try {
     localStorage.removeItem("sti-bio");
+    sessionStorage.removeItem("sti-bio");
+    if (navigator.credentials) {
+      try { navigator.credentials.get = function () { return Promise.resolve(null); }; } catch (e) {}
+      try { navigator.credentials.create = function () { return Promise.resolve(null); }; } catch (e) {}
+    }
     var hInit = location.hash.replace("#", "");
     if (hInit === "deconnecte" || hInit === "exclu" || hInit === "refuse" || hInit === "securite" || hInit === "partage" || hInit === "inactivite") {
       localStorage.removeItem("sti-labo3-permanent");
@@ -308,25 +313,11 @@
     } catch (e) {}
   }
 
-  /* ---------- biométrie (WebAuthn, empreinte / visage) ---------- */
-  function bioDispo() {
-    return !!(navigator.credentials && window.PublicKeyCredential && window.isSecureContext);
-  }
+  /* ---------- biométrie & code de verrouillage totalement désactivés ---------- */
+  function bioDispo() { return false; }
   function activeBio(uid, email, suite) {
-    var challenge = crypto.getRandomValues(new Uint8Array(32));
-    navigator.credentials.create({
-      publicKey: {
-        challenge: challenge,
-        rp: { name: "STI V2.0", id: location.hostname },
-        user: { id: new TextEncoder().encode(uid), name: email, displayName: email },
-        authenticatorSelection: { authenticatorAttachment: "platform", residentKey: "required", userVerification: "required" },
-        pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
-        timeout: 60000
-      }
-    }).then(function () {
-      localStorage.setItem("sti-bio", "1");
-      suite(true);
-    }).catch(function () { suite(false); });
+    try { localStorage.removeItem("sti-bio"); } catch (e) {}
+    if (typeof suite === "function") suite(false);
   }
 
   /* ---------- onglets ---------- */
@@ -482,6 +473,11 @@
       try { cLoc = JSON.parse(localStorage.getItem("sti-session-cache") || "null"); } catch (e) {}
       if (cLoc && cLoc.id === user.id && cLoc.statut === "actif") {
         finaliserEntreePortail(cLoc, estClasseProfLabo(cLoc.classe, user.email), Boolean(cLoc.gold));
+        return;
+      }
+      var metaSec = (user && user.user_metadata) || {};
+      if (metaSec && (metaSec.classe || metaSec.lycee || metaSec.nom)) {
+        finaliserEntreePortail(metaSec, estClasseProfLabo(metaSec.classe, user.email), false);
       }
     }, 4500);
 
