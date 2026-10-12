@@ -384,3 +384,12 @@ header.topbar {
 .exo-card-wide {
   grid-column: 1 / -1;
 }
+
+/* Désactivation des ligatures (ex: != dans JetBrains Mono) */
+*, *::before, *::after, code, pre, kbd, samp, .mono {
+  font-variant-ligatures: none !important;
+  -webkit-font-variant-ligatures: none !important;
+  font-feature-settings: "liga" 0, "calt" 0 !important;
+  -webkit-font-feature-settings: "liga" 0, "calt" 0 !important;
+}
+

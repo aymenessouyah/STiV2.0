@@ -2627,10 +2627,10 @@
                 x="40"
                 y="278"
                 font-size="13"
-                fill="#c00"
+                fill="#4c1d95"
                 font-weight="bold"
               >
-                mysql_* est obsolète depuis PHP 5.5 — utiliser mysqli_* ou PDO.
+                Extension officielle du programme STI : mysqli_* (style procédural).
               </text>
 
               <rect
@@ -2648,7 +2648,7 @@
                 font-weight="bold"
                 fill="#4c1d95"
               >
-                🔧 Fonctions MySQL (style procédural)
+                🔧 Fonctions MySQLi (style procédural)
               </text>
               <text
                 x="40"
@@ -2657,8 +2657,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                int mysql_connect(string hostname, string username, string
-                password)
+                $cnx = mysqli_connect(string hostname, string username, string password, string nom_bd)
               </text>
               <text
                 x="40"
@@ -2667,7 +2666,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                int mysql_select_db(string nom_bd, [int lien_identificateur])
+                mysqli_select_db($cnx, string nom_bd)
               </text>
               <text
                 x="40"
@@ -2676,7 +2675,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                int mysql_query(string requete, [int lien_identificateur])
+                $res = mysqli_query($cnx, string requete)
               </text>
               <text
                 x="40"
@@ -2685,7 +2684,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                array mysql_fetch_array(int result, int result_type)
+                array mysqli_fetch_array($res) | int mysqli_num_rows($res)
               </text>
               <text
                 x="40"
@@ -2694,8 +2693,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                array mysql_fetch_row(int result) | array mysql_fetch_assoc(int
-                result)
+                array mysqli_fetch_row($res) | array mysqli_fetch_assoc($res)
               </text>
               <text
                 x="40"
@@ -2704,7 +2702,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                int mysql_affected_rows()
+                int mysqli_affected_rows($cnx) | mysqli_close($cnx)
               </text>
 
               <rect
@@ -2725,7 +2723,7 @@
                 ⚠️ Remarque sur SELECT
               </text>
               <text x="40" y="655" font-size="13" fill="#0d1117">
-                La requête SQL SELECT retourne une « Ressource » à exploiter
+                La requête SQL SELECT retourne un résultat à exploiter
                 avec :
               </text>
               <text
@@ -2735,7 +2733,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_fetch_row($result) → accès par indice
+                mysqli_fetch_row($result) → accès par indice
               </text>
               <text
                 x="40"
@@ -2744,7 +2742,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_fetch_array($result) → accès par indice ou nom du champ
+                mysqli_fetch_array($result) → accès par indice ou nom du champ
               </text>
               <text
                 x="40"
@@ -2753,7 +2751,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_fetch_assoc($result) → accès par nom du champ
+                mysqli_fetch_assoc($result) → accès par nom du champ
               </text>
               <text x="40" y="760" font-size="13" fill="#0d1117">
                 INSERT, UPDATE, DELETE retournent un booléen (True/False) ou
@@ -2794,7 +2792,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_connect($host,$user,$passwd) or die("erreur");
+                $cnx = mysqli_connect($host,$user,$passwd,$bdd) or die("erreur");
               </text>
               <text
                 x="40"
@@ -2803,7 +2801,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_select_db($bdd) or die("erreur BD");
+                $sql="INSERT INTO eleve VALUES ($i,'$nom','$prenom')";
               </text>
               <text
                 x="40"
@@ -2812,8 +2810,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                $sql="INSERT INTO eleve VALUES ($i,'$nom','$prenom')";
-                mysql_query($sql); ?&gt;
+                mysqli_query($cnx, $sql); ?&gt;
               </text>
             </svg>
             <div class="img-caption">
@@ -2908,8 +2905,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_connect($host,$user,$passwd) or die("erreur de
-                connexion");
+                $cnx = mysqli_connect($host,$user,$passwd,$bdd) or die("erreur de connexion");
               </text>
               <text
                 x="40"
@@ -2918,7 +2914,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_select_db($bdd) or die("erreur de connexion a la base");
+                // Connexion directe à la base de données $bdd
               </text>
               <text
                 x="40"
@@ -2945,7 +2941,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                $result = mysql_query($sql);
+                $result = mysqli_query($cnx, $sql);
               </text>
               <text
                 x="40"
@@ -2973,7 +2969,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                if(mysql_affected_rows($result)&gt;0) echo('insertion réussie');
+                if(mysqli_affected_rows($cnx)&gt;0) echo('insertion réussie');
               </text>
               <text
                 x="40"
@@ -2982,7 +2978,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_close(); ?&gt;&lt;/body&gt;&lt;/html&gt;
+                mysqli_close($cnx); ?&gt;&lt;/body&gt;&lt;/html&gt;
               </text>
 
               <rect
@@ -3037,7 +3033,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_connect($host,$user,$passwd) or die("erreur");
+                $cnx = mysqli_connect($host,$user,$passwd,$bdd) or die("erreur");
               </text>
               <text
                 x="40"
@@ -3046,7 +3042,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysql_select_db($bdd) or die("erreur BD");
+                // Sélection directe de la BD dans mysqli_connect
               </text>
               <text
                 x="40"
@@ -3064,7 +3060,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                $result = mysql_query($query);
+                $result = mysqli_query($cnx, $query);
               </text>
               <text
                 x="40"
@@ -3073,7 +3069,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                while($row = mysql_fetch_row($result)) {
+                while($row = mysqli_fetch_row($result)) {
               </text>
               <text
                 x="60"
@@ -3110,7 +3106,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                echo mysql_num_rows($result); mysql_close(); ?&gt;&lt;/table&gt;
+                echo mysqli_num_rows($result); mysqli_close($cnx); ?&gt;&lt;/table&gt;
               </text>
               <text
                 x="40"
@@ -3353,11 +3349,11 @@
       }
     </script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=137" />
-<script src="../assets/js/protection.js?v=137" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=138" />
+<script src="../assets/js/protection.js?v=138" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=137"></script>
-<script src="../assets/js/acces.js?v=137"></script>
+<script src="../assets/js/config.js?v=138"></script>
+<script src="../assets/js/acces.js?v=138"></script>
 </body>
 </html>

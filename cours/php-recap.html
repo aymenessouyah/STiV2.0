@@ -605,7 +605,7 @@ function run6(){
     [`${A} + ${bs}`,full?`<code>${fmt(x+b)}</code>`:(m?`<code>${fmt(x+b)}</code> + Warning`:'<span class=\'bd f\'>erreur</span>'),full?'+ est numérique : la chaîne est convertie en nombre':(m?'chaîne partiellement numérique : début lu, avertissement PHP':'chaîne non numérique : erreur ou avertissement selon la version de PHP, à éviter')],
     [`${A} . ${bs}`,`<code>string(&quot;${esc(a+bs)}&quot;)</code>`,'. est la concaténation : le nombre devient du texte'],
     [`${A} == ${bs}`,bd(full?x===b:a===String(bs)),full?'comparaison souple : conversion en nombre puis comparaison':'chaîne non numérique : comparée comme texte (PHP 8)'],
-    [`${A} === ${bs}`,bd(false),'comparaison stricte : types différents (string ≠ nombre)']
+    [`${A} === ${bs}`,bd(false),'comparaison stricte : types différents (string != nombre)']
   ];
   R.forEach((r,k)=>setTimeout(()=>{if(my!==tk6)return;const tr=document.createElement('tr');tr.innerHTML=`<td><code>${r[0]}</code></td><td>${r[1]}</td><td>${r[2]}</td>`;tr.style.animation='in .4s';tb.appendChild(tr)},k*450));
 }
@@ -699,10 +699,10 @@ document.getElementById('mathGo').onclick=()=>{const f=document.getElementById('
 document.getElementById('dateGo').onclick=()=>{const f=document.getElementById('dateFmt').value;const d={Y:2026,y:'26',m:'10',n:10,d:'09',j:9,H:'16',i:'50',s:'00'};let r='';for(let i=0;i<f.length;i++){const c=f[i];r+=Object.prototype.hasOwnProperty.call(d,c)?d[c]:c;}document.getElementById('dateOut').textContent='date("'+f+'") → '+r+' (exemple pédagogique)';};
 </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=137" />
-<script src="../assets/js/protection.js?v=137" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=138" />
+<script src="../assets/js/protection.js?v=138" defer></script>
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=137"></script>
-<script src="../assets/js/acces.js?v=137"></script>
+<script src="../assets/js/config.js?v=138"></script>
+<script src="../assets/js/acces.js?v=138"></script>
 </body>
 </html>
