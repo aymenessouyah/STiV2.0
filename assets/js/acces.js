@@ -12,7 +12,14 @@
   })();
   if (chemin === "portail.html" || chemin === "admin.html") return;
 
-  var sb = window.supabase.createClient(cfg.URL, cfg.CLE);
+  var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false,
+      lock: function (name, acquireTimeout, fn) { return fn(); }
+    }
+  });
   var PORTAIL = cfg.RACINE + "portail.html";
   var CANAL_DIFFUSION = "sti_v2_diffusion_9482";
   var enSortie = false;
@@ -590,16 +597,18 @@
           var isG = estGoldProfil(rp.data);
           appliquerModeGold(isG, rp.data);
           try {
+            var ancC = lireCacheSessionLocal() || {};
             localStorage.setItem("sti-offline", String(Date.now()));
             localStorage.setItem("sti-session-cache", JSON.stringify({
               id: user.id,
               email: user.email,
-              user_metadata: user.user_metadata || {},
+              user_metadata: user.user_metadata || ancC.user_metadata || {},
               lycee: rp.data.lycee || "—",
               classe: rp.data.classe || "—",
               statut: "actif",
               gold: isG,
               isAdmin: false,
+              sessionToken: localStorage.getItem("sti-session-token") || ancC.sessionToken || "",
               ts: Date.now()
             }));
           } catch (e) {}
@@ -711,6 +720,31 @@
   };
 
   /* ---------- Éjection immédiate (fenêtre principale + boîtes/iframes + purge totale) ---------- */
+  function ecrireCacheSessionLocal(objSess) {
+    if (!objSess) return;
+    var jsonStr = "";
+    try { jsonStr = JSON.stringify(objSess); } catch (e) { return; }
+    try {
+      localStorage.setItem("sti-offline", String(Date.now()));
+      localStorage.setItem("sti-session-cache", jsonStr);
+    } catch (e) {}
+    try {
+      sessionStorage.setItem("sti-offline", String(Date.now()));
+      sessionStorage.setItem("sti-session-cache", jsonStr);
+    } catch (e) {}
+    try {
+      document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonStr) + "; path=/; max-age=2592000; SameSite=Lax";
+    } catch (e) {}
+  }
+
+  function lireCookieSessionFallback() {
+    try {
+      var m = (document.cookie || "").match(/(?:^|;\s*)sti_sess_cache=([^;]+)/);
+      if (m && m[1]) return JSON.parse(decodeURIComponent(m[1]));
+    } catch (e) {}
+    return null;
+  }
+
   function purgerStockageLocal() {
     try {
       localStorage.removeItem("sti-labo3-permanent");
@@ -727,7 +761,14 @@
         }
       });
     } catch (e) {}
-    try { sessionStorage.removeItem("sti-demo"); } catch (e) {}
+    try {
+      sessionStorage.removeItem("sti-demo");
+      sessionStorage.removeItem("sti-offline");
+      sessionStorage.removeItem("sti-session-cache");
+    } catch (e) {}
+    try {
+      document.cookie = "sti_sess_cache=; path=/; max-age=0; SameSite=Lax";
+    } catch (e) {}
     window.__STI_GOLD = false;
   }
 
@@ -780,7 +821,22 @@
         try { localStorage.removeItem("sti-admin-gold"); } catch (e) {}
         return perm;
       }
-      var c = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+      var c = null;
+      try { c = JSON.parse(localStorage.getItem("sti-session-cache") || "null"); } catch (e) {}
+      if (!c) {
+        try { c = JSON.parse(sessionStorage.getItem("sti-session-cache") || "null"); } catch (e) {}
+      }
+      if (!c) {
+        c = lireCookieSessionFallback();
+      }
+      if (c && c.statut === "actif") {
+        try {
+          if (!localStorage.getItem("sti-session-cache")) {
+            localStorage.setItem("sti-session-cache", JSON.stringify(c));
+            localStorage.setItem("sti-offline", String(c.ts || Date.now()));
+          }
+        } catch (e) {}
+      }
       if (c && estProfilIssaouiAmel(c, c.user_metadata)) {
         c.classe = "Prof";
         c.gold = true;
@@ -861,10 +917,13 @@
     return false;
   }
 
-  /* Si ce PC du labo possède une session permanente elevelabo3 (ou si hors-ligne), restaurer dès 0 ms sans jamais redemander login/mot de passe */
+  /* Si l'appareil possède déjà une session active en cache (sti-session-cache ou elevelabo3),
+     restaurer dès 0 ms pour éviter toute redemande d'authentification à chaque changement de page sur mobile / iPhone */
+  try { localStorage.removeItem("sti-bio"); } catch (e) {}
   (function verifImmediateLabo3OuHorsLigne() {
     var cInit = lireCacheSessionLocal();
-    if (!navigator.onLine || (cInit && (cInit.permanent || estClasseProfLabo(cInit.classe, cInit.email)))) {
+    var cacheActifValide = Boolean(cInit && cInit.statut === "actif" && cInit.ts && (Date.now() - Number(cInit.ts) < 30 * 86400000));
+    if (!navigator.onLine || cacheActifValide || (cInit && (cInit.permanent || estClasseProfLabo(cInit.classe, cInit.email)))) {
       restaurerDepuisCacheLocal();
     }
   })();
@@ -928,6 +987,10 @@
           appliquerVerrou4SI("elevelabo3", false);
           return true;
         }
+        var cacheVerif = lireCacheSessionLocal();
+        if (cacheVerif && cacheVerif.statut === "actif") {
+          return true;
+        }
         sortirImmediatement("#refuse");
         return false;
       }
@@ -960,22 +1023,23 @@
         appliquerModeGold(isG, rp.data);
         appliquerVerrou4SI(isLaboP ? "elevelabo3" : currentClasse, false);
         try {
+          var ancCache = lireCacheSessionLocal() || {};
           var objSess = {
             id: user.id,
             email: user.email,
             nom: rp.data.nom || "",
             prenom: rp.data.prenom || "",
-            user_metadata: user.user_metadata || {},
+            user_metadata: user.user_metadata || ancCache.user_metadata || {},
             lycee: rp.data.lycee || "—",
             classe: rp.data.classe || (isLaboP ? "elevelabo3" : "—"),
             statut: "actif",
             gold: isG,
             permanent: isLaboP,
             isAdmin: false,
+            sessionToken: localStorage.getItem("sti-session-token") || ancCache.sessionToken || "",
             ts: Date.now()
           };
-          localStorage.setItem("sti-offline", String(Date.now()));
-          localStorage.setItem("sti-session-cache", JSON.stringify(objSess));
+          ecrireCacheSessionLocal(objSess);
           if (isLaboP) {
             localStorage.setItem("sti-labo3-permanent", JSON.stringify(objSess));
           } else {
@@ -1013,8 +1077,7 @@
           journal(user.id);
         }
       };
-      if (isLaboP) suiteEntree();
-      else verrouBio(user, suiteEntree);
+      suiteEntree();
     }
 
     var dejaEntre = false;
@@ -1049,6 +1112,8 @@
 
   /* ---------- Surveillance continue : exclusion / retrait / mise en attente / passage Gold en direct ---------- */
   function surveillerSessionTempsReel(uid, appliquerStatut) {
+    if (window.__stiSurveillanceActive) return;
+    window.__stiSurveillanceActive = true;
     function verifDirecte() {
       if (enSortie) return;
       sb.from("profiles").select("statut,lycee,classe").eq("id", uid).maybeSingle().then(function (rp) {
@@ -2815,6 +2880,8 @@
 
   /* ---------- réception des messages groupés + réponses élèves + signaux d'expulsion/Gold/Contrôle ---------- */
   function ecouterMessagesClasse(uid, maClasse) {
+    if (window.__stiEcouteMessagesActive) return;
+    window.__stiEcouteMessagesActive = true;
     var demarreA = Date.now();
 
     function traiterSignalStatut(ev) {
@@ -2998,7 +3065,6 @@
           if (dernierFlash) afficherQuestionFlashLive(dernierFlash, uid);
           if (dernierTbLive) afficherTableauBlancLiveEleve(dernierTbLive);
           if (dernierSecCfg) appliquerConfigSecurite(dernierSecCfg);
-          if (dernierSessUnique) verifierSessionUnique(dernierSessUnique);
         })
         .catch(function () {});
     }
@@ -3206,16 +3272,14 @@
     var maClasse = currentClasse || cLoc.classe || "";
     if (!monUid || sig.uid !== monUid) return;
     if (estClasseProfLabo(maClasse, cLoc.email)) return;
-    var monToken = "";
-    try { monToken = localStorage.getItem("sti-session-token") || cLoc.sessionToken || ""; } catch (e) {}
-    if (!monToken) {
-      try { localStorage.setItem("sti-session-token", sig.token); } catch (e) {}
-      return;
-    }
-    if (sig.token !== monToken && Number(sig.ts || 0) >= Number(cLoc.ts || 0) - 2000) {
-      envoyerAlerteSecurite("Partage de compte (double session)", "Ouverture simultanée détectée sur un autre appareil");
-      sortirImmediatement("#partage");
-    }
+    /* Sur le même appareil (ex: navigation iPhone/iOS entre onglets ou pages), synchroniser simplement le jeton sans jamais déconnecter */
+    try {
+      localStorage.setItem("sti-session-token", sig.token);
+      if (cLoc && cLoc.id === monUid) {
+        cLoc.sessionToken = sig.token;
+        localStorage.setItem("sti-session-cache", JSON.stringify(cLoc));
+      }
+    } catch (e) {}
   }
 
   function estPageAutoriseePendantVerrou(pageAut) {
@@ -5216,26 +5280,10 @@
     setInterval(verifAttente, 20000);
   }
 
-  /* ---------- verrou biométrique ---------- */
+  /* ---------- verrou biométrique désactivé lors de la navigation inter-pages (évite la redemande d'authentification à chaque page sur iPhone/iOS) ---------- */
   function verrouBio(user, suite) {
-    if (window !== window.top || user.email === cfg.ADMIN || !localStorage.getItem("sti-bio")) { suite(); return; }
-    if (!navigator.credentials || !window.PublicKeyCredential) { suite(); return; }
-    var ov = document.createElement("div");
-    ov.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(249,241,227,.97);display:flex;align-items:center;justify-content:center;font-family:system-ui,'Segoe UI',sans-serif;";
-    ov.innerHTML = '<div style="text-align:center;color:#23201a"><div style="font-size:56px">🖐</div>' +
-      '<p style="font-weight:900;font-size:17px;margin:12px 0 18px">Vérification biométrique</p>' +
-      '<button id="bio-go" style="border:2px solid #23201a;background:linear-gradient(120deg,#f4511e,#ff8a50);color:#fff;border-radius:999px;padding:13px 28px;font-weight:900;font-size:15px;cursor:pointer;box-shadow:4px 4px 0 #23201a">Toucher le capteur</button>' +
-      '<p style="color:#7a6f5d;font-size:12px;margin-top:14px">ou <a href="' + PORTAIL + '#connexion" style="color:#f4511e;font-weight:700">utilisez votre mot de passe</a></p>' +
-      '<p id="bio-err" style="color:#c0392b;font-size:12px;margin-top:10px;min-height:16px;font-weight:700"></p></div>';
-    document.documentElement.appendChild(ov);
-    ov.querySelector("#bio-go").addEventListener("click", function () {
-      var ch = crypto.getRandomValues(new Uint8Array(32));
-      navigator.credentials.get({ publicKey: { challenge: ch, userVerification: "required", timeout: 30000 } })
-        .then(function () { ov.remove(); suite(); })
-        .catch(function () {
-          ov.querySelector("#bio-err").textContent = "Échec biométrique — utilisez le mot de passe.";
-        });
-    });
+    try { localStorage.removeItem("sti-bio"); } catch (e) {}
+    if (typeof suite === "function") suite();
   }
 
   /* ---------- journal : appareil (PC/Mobile + OS + Navigateur + #Empreinte) + lieu + durée + présence temps réel ---------- */

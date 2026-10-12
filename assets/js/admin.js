@@ -9,7 +9,14 @@
 (function () {
   "use strict";
   var cfg = window.STI_AUTH;
-  var sb = window.supabase.createClient(cfg.URL, cfg.CLE);
+  var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false,
+      lock: function (name, acquireTimeout, fn) { return fn(); }
+    }
+  });
   var elMsg = document.getElementById("msg");
   function msg(t, c) { elMsg.textContent = t; elMsg.className = "msg" + (c ? " " + c : ""); }
   function echHtml(s) {

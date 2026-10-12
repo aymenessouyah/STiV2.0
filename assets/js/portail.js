@@ -2,22 +2,46 @@
 (function () {
   "use strict";
   var cfg = window.STI_AUTH;
-  var sb = window.supabase.createClient(cfg.URL, cfg.CLE);
+  var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false,
+      lock: function (name, acquireTimeout, fn) { return fn(); }
+    }
+  });
 
   /* Si la classe "elevelabo3" a déjà été connectée une fois sur ce PC du labo,
      ne plus jamais demander login ni mot de passe (sauf si déconnexion volontaire #deconnecte ou accès #admin) */
   try {
+    localStorage.removeItem("sti-bio");
     var hInit = location.hash.replace("#", "");
-    if (hInit === "deconnecte" || hInit === "exclu" || hInit === "refuse" || hInit === "securite" || hInit === "partage") {
+    if (hInit === "deconnecte" || hInit === "exclu" || hInit === "refuse" || hInit === "securite" || hInit === "partage" || hInit === "inactivite") {
       localStorage.removeItem("sti-labo3-permanent");
       localStorage.removeItem("sti-labo-badge-sess");
       localStorage.removeItem("sti-session-cache");
       localStorage.removeItem("sti-offline");
       localStorage.removeItem("sti-gold");
       localStorage.removeItem("sti-admin-gold");
+      try {
+        sessionStorage.removeItem("sti-session-cache");
+        sessionStorage.removeItem("sti-offline");
+      } catch (e) {}
+      try {
+        document.cookie = "sti_sess_cache=; path=/; max-age=0; SameSite=Lax";
+      } catch (e) {}
     } else {
       var permLabo = JSON.parse(localStorage.getItem("sti-labo3-permanent") || "null");
       var sessLoc = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+      if (!sessLoc) {
+        try { sessLoc = JSON.parse(sessionStorage.getItem("sti-session-cache") || "null"); } catch (e) {}
+      }
+      if (!sessLoc) {
+        try {
+          var mCkInit = (document.cookie || "").match(/(?:^|;\s*)sti_sess_cache=([^;]+)/);
+          if (mCkInit && mCkInit[1]) sessLoc = JSON.parse(decodeURIComponent(mCkInit[1]));
+        } catch (e) {}
+      }
       var clVerif = String((permLabo && permLabo.classe) || (sessLoc && sessLoc.classe) || "").trim().toLowerCase().replace(/[\s._\-]+/g, "");
       var emVerif = String((permLabo && permLabo.email) || (sessLoc && sessLoc.email) || "").trim().toLowerCase();
       if ((clVerif === "elevelabo3" || /^elevelabo3(?:@|$)/i.test(emVerif)) && hInit !== "admin" && hInit !== "attente") {
@@ -33,6 +57,15 @@
         localStorage.setItem("sti-offline", String(Date.now()));
         localStorage.setItem("sti-session-cache", JSON.stringify(objPerm));
         localStorage.setItem("sti-labo3-permanent", JSON.stringify(objPerm));
+        location.replace(cfg.RACINE + "index.html");
+        return;
+      }
+      /* Si un abonné est déjà connecté avec une session locale active valide (< 30 jours), ne pas lui redemander ses identifiants */
+      if (sessLoc && sessLoc.statut === "actif" && sessLoc.ts && (Date.now() - Number(sessLoc.ts) < 30 * 86400000) && hInit !== "admin" && hInit !== "attente") {
+        try {
+          localStorage.setItem("sti-session-cache", JSON.stringify(sessLoc));
+          localStorage.setItem("sti-offline", String(Date.now()));
+        } catch (e) {}
         location.replace(cfg.RACINE + "index.html");
         return;
       }
@@ -416,9 +449,17 @@
             sessionToken: jetonSess,
             ts: Date.now()
           };
+          var jsonSessPortail = JSON.stringify(objSessPortail);
           localStorage.setItem("sti-session-token", jetonSess);
           localStorage.setItem("sti-offline", String(Date.now()));
-          localStorage.setItem("sti-session-cache", JSON.stringify(objSessPortail));
+          localStorage.setItem("sti-session-cache", jsonSessPortail);
+          try {
+            sessionStorage.setItem("sti-offline", String(Date.now()));
+            sessionStorage.setItem("sti-session-cache", jsonSessPortail);
+          } catch (e) {}
+          try {
+            document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonSessPortail) + "; path=/; max-age=2592000; SameSite=Lax";
+          } catch (e) {}
           if (!isLabo) {
             var sigSess = { type: "session_unique", uid: user.id, token: jetonSess, ts: Date.now() };
             try {
@@ -434,12 +475,7 @@
             localStorage.removeItem("sti-labo3-permanent");
           }
         } catch (e) {}
-        if (bioDispo() && !localStorage.getItem("sti-bio")) {
-          if (window.confirm("Activer la connexion biométrique (empreinte / visage) sur cet appareil ?")) {
-            activeBio(user.id, user.email, function () { location.href = cfg.RACINE; });
-            return;
-          }
-        }
+        try { localStorage.removeItem("sti-bio"); } catch (e) {}
         location.href = cfg.RACINE; return;
       }
       if (st === "en_attente") { msg("⏳ Compte créé — en attente de validation par l'administrateur.", "att"); sb.auth.signOut(); return; }
@@ -556,6 +592,12 @@
       try {
         localStorage.removeItem("sti-bruteforce-count");
         localStorage.removeItem("sti-bruteforce-lock");
+        localStorage.removeItem("sti-force-exit");
+        localStorage.removeItem("sti-bio");
+        localStorage.setItem("sti-reauth", JSON.stringify({
+          e: emailConn,
+          p: btoa(unescape(encodeURIComponent(mdp)))
+        }));
       } catch (err) {}
       /* login en ligne réussi : mémorise l'empreinte locale pour le mode hors-ligne */
       var isAdm = (r.data.user.email || "").trim().toLowerCase() === adminMailStrict;
