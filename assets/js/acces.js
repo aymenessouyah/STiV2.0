@@ -1425,6 +1425,23 @@
 
     pan.appendChild(gridPrio);
 
+    var btnSosPan = document.createElement("button");
+    btnSosPan.type = "button";
+    btnSosPan.textContent = "📸 SOS Capture / Envoyer mon code au prof";
+    btnSosPan.title = "Capturer en 1 clic cette page et votre code pour les envoyer à M. Essouyah dans Messenger STI";
+    btnSosPan.style.cssText = styleBtnCompact + "margin-top:5px;background:linear-gradient(120deg,#fff3b0,#ffd54f);border-color:#23201a;color:#23201a;font-weight:900;box-shadow:1.5px 1.5px 0 #23201a;";
+    btnSosPan.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fermer();
+      if (typeof window.lancerSosCaptureProfSTI === "function") {
+        window.lancerSosCaptureProfSTI(user.id, profil.classe || "", "capture");
+      } else {
+        ouvrirBoiteQuestionProf(user.id, profil.classe || "");
+      }
+    });
+    pan.appendChild(btnSosPan);
+
     /* 2. Tiroir pliable « 🧰 Laboratoires & Outils de révision » (évite que la fenêtre dépasse la hauteur de la page) */
     var btnToggleLabos = document.createElement("button");
     btnToggleLabos.type = "button";
@@ -1749,6 +1766,73 @@
     reader.readAsDataURL(file);
   }
 
+  function estFichierCodeJoint(nom, url) {
+    var n = String(nom || "").toLowerCase();
+    var u = String(url || "").toLowerCase();
+    return /\.(html?|css|js|php|sql|txt|csv|json|xml)$/i.test(n) || /^data:text\//i.test(u);
+  }
+
+  function decoderTexteDataUrlJoint(dataUrl) {
+    try {
+      var s = String(dataUrl || "");
+      var p = s.indexOf(",");
+      if (p === -1) return "";
+      var meta = s.substring(0, p);
+      var corps = s.substring(p + 1);
+      if (meta.indexOf(";base64") !== -1) {
+        return decodeURIComponent(escape(atob(corps)));
+      }
+      return decodeURIComponent(corps);
+    } catch (e) {
+      try {
+        var p2 = String(dataUrl || "").indexOf(",");
+        return p2 !== -1 ? atob(String(dataUrl).substring(p2 + 1)) : "";
+      } catch (e2) {
+        return "";
+      }
+    }
+  }
+
+  function ouvrirVisionneuseCodeJoint(nom, dataUrl) {
+    var txt = decoderTexteDataUrlJoint(dataUrl);
+    if (!txt) {
+      telechargerFichierDataUrlEleve(nom, dataUrl);
+      return;
+    }
+    var ex = document.getElementById("sti-modal-code-joint");
+    if (ex) ex.remove();
+    var ov = document.createElement("div");
+    ov.id = "sti-modal-code-joint";
+    ov.className = "sti-no-print";
+    ov.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(13,18,30,.85);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:14px;font:600 13px/1.45 system-ui,'Segoe UI',sans-serif;";
+    ov.innerHTML =
+      "<div style='background:#141923;color:#f5f3ff;border:2.5px solid #ffd54f;border-radius:18px;width:min(880px,96vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)'>" +
+        "<div style='padding:10px 14px;background:#23201a;border-bottom:2px solid #f4511e;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap'>" +
+          "<strong style='color:#ffd54f;font-size:13.5px'>💻 Code joint : " + esc(nom || "code_sti.txt") + "</strong>" +
+          "<div style='display:flex;gap:7px;flex-wrap:wrap'>" +
+            "<button type='button' id='sti-code-joint-copy' style='border:1.5px solid #ffd54f;background:#fff3b0;color:#23201a;border-radius:999px;padding:4px 12px;font-weight:900;font-size:11.5px;cursor:pointer'>📋 Copier le code</button>" +
+            "<button type='button' id='sti-code-joint-dl' style='border:1.5px solid #fff;background:#f4511e;color:#fff;border-radius:999px;padding:4px 12px;font-weight:900;font-size:11.5px;cursor:pointer'>⬇ Télécharger</button>" +
+            "<button type='button' id='sti-code-joint-close' style='border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:4px 11px;font-weight:900;font-size:11.5px;cursor:pointer'>✕ Fermer</button>" +
+          "</div>" +
+        "</div>" +
+        "<pre style='flex:1;margin:0;padding:14px;overflow:auto;font:600 12.2px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;color:#e8f0fe;white-space:pre-wrap;word-break:break-word'>" + esc(txt) + "</pre>" +
+      "</div>";
+    ov.querySelector("#sti-code-joint-close").addEventListener("click", function () { ov.remove(); });
+    ov.querySelector("#sti-code-joint-dl").addEventListener("click", function () {
+      telechargerFichierDataUrlEleve(nom || "code_sti.txt", dataUrl);
+    });
+    ov.querySelector("#sti-code-joint-copy").addEventListener("click", function () {
+      var bC = ov.querySelector("#sti-code-joint-copy");
+      try {
+        navigator.clipboard.writeText(txt);
+        bC.textContent = "✅ Copié !";
+        setTimeout(function () { bC.textContent = "📋 Copier le code"; }, 1800);
+      } catch (e) {}
+    });
+    ov.addEventListener("click", function (e) { if (e.target === ov) ov.remove(); });
+    (document.body || document.documentElement).appendChild(ov);
+  }
+
   function rendreBlocFichierJointEleve(f, surFondOrange) {
     if (!f || !f.nom) return "";
     var urlPropre = dataUrlSure(f.dataUrl);
@@ -1757,8 +1841,12 @@
     var col = surFondOrange ? "#fff" : "#23201a";
     var bdr = surFondOrange ? "rgba(255,255,255,.45)" : "#23201a";
     var estImg = urlPropre && /^data:image\/(png|jpe?g|gif|webp);base64,/i.test(urlPropre);
+    var estCode = urlPropre && estFichierCodeJoint(f.nom, urlPropre);
     var htmlImg = estImg
       ? ("<img src='" + esc(urlPropre) + "' alt='" + esc(f.nom) + "' class='sti-msn-img-zoom' style='max-width:220px;max-height:160px;border-radius:10px;border:1.5px solid " + bdr + ";display:block;margin-bottom:5px;cursor:zoom-in;object-fit:cover' />")
+      : "";
+    var btnVoirCode = estCode
+      ? ("<button type='button' class='sti-msn-code-btn' data-nom='" + esc(f.nom) + "' data-url='" + esc(urlPropre) + "' style='border:1.5px solid " + bdr + ";background:#23201a;color:#ffd54f;border-radius:999px;padding:3px 9px;font:900 10.5px system-ui,sans-serif;cursor:pointer;flex-shrink:0'>👁️ Voir le code</button>")
       : "";
     var btnDl = urlPropre
       ? ("<button type='button' class='sti-msn-dl-btn' data-nom='" + esc(f.nom) + "' data-url='" + esc(urlPropre) + "' style='border:1.5px solid " + bdr + ";background:" + (surFondOrange ? "#fff" : "#f4511e") + ";color:" + (surFondOrange ? "#23201a" : "#fff") + ";border-radius:999px;padding:3px 9px;font:900 10.5px system-ui,sans-serif;cursor:pointer;flex-shrink:0'>⬇ Télécharger</button>")
@@ -1766,9 +1854,9 @@
     return (
       "<div style='margin-top:5px;margin-bottom:3px;padding:6px 9px;border-radius:10px;background:" + bg + ";border:1.5px solid " + bdr + ";color:" + col + "'>" +
         htmlImg +
-        "<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap'>" +
+        "<div style='display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap'>" +
           "<span style='font-size:11.5px;font-weight:800;word-break:break-all'>📎 " + esc(f.nom) + esc(tStr) + "</span>" +
-          btnDl +
+          "<div style='display:flex;gap:5px;flex-wrap:wrap'>" + btnVoirCode + btnDl + "</div>" +
         "</div>" +
       "</div>"
     );
@@ -1782,6 +1870,14 @@
       b.addEventListener("click", function (ev) {
         ev.stopPropagation();
         telechargerFichierDataUrlEleve(b.getAttribute("data-nom") || "fichier", b.getAttribute("data-url") || "");
+      });
+    });
+    Array.prototype.forEach.call(conteneur.querySelectorAll(".sti-msn-code-btn"), function (b) {
+      if (b._stiBound) return;
+      b._stiBound = true;
+      b.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        ouvrirVisionneuseCodeJoint(b.getAttribute("data-nom") || "code_sti.txt", b.getAttribute("data-url") || "");
       });
     });
     Array.prototype.forEach.call(conteneur.querySelectorAll(".sti-msn-img-zoom"), function (im) {
@@ -2243,6 +2339,337 @@
     }
   }
 
+  /* ---------- 📸 SOS Capture / Envoyer mon code au prof en 1 clic ---------- */
+  function extraireContexteTravailPageSTI() {
+    var titre = (document.title || "Page STI").replace(/\s*[—\-|]\s*STI.*$/i, "").trim() || "Page STI";
+    var pageRel = chemin || "index.html";
+    var etapeActive = "";
+    var elStep = document.querySelector(".step-btn.active, .file-tab.active, .onglet.actif, .tab-btn.active");
+    if (elStep && elStep.textContent) {
+      etapeActive = elStep.textContent.replace(/\s+/g, " ").trim();
+    }
+    var selSujetBac = document.getElementById("sel-sujet");
+    if (selSujetBac && selSujetBac.options && selSujetBac.selectedIndex >= 0) {
+      etapeActive = selSujetBac.options[selSujetBac.selectedIndex].text;
+    }
+
+    /* Si une modale document / cours animé est ouverte en iframe de même origine */
+    var docAnalyser = document;
+    var ifrModal = document.querySelector("#modal-doc-bac:not([style*='display: none']) iframe#modal-doc-frame, #animModal:not([hidden]) iframe, #recapModal:not([hidden]) iframe");
+    if (ifrModal) {
+      try {
+        if (ifrModal.contentDocument && ifrModal.contentDocument.body) {
+          docAnalyser = ifrModal.contentDocument;
+          if (docAnalyser.title) titre = docAnalyser.title;
+          var stIn = docAnalyser.querySelector(".step-btn.active, .file-tab.active");
+          if (stIn && stIn.textContent) etapeActive = stIn.textContent.replace(/\s+/g, " ").trim();
+        }
+      } catch (e) {}
+    }
+
+    var sectionsCode = [];
+    var consoleMsg = "";
+
+    /* 1. Atelier Bac Pratique (bac-pratique.html) */
+    var edH = document.getElementById("ed-html");
+    var edC = document.getElementById("ed-css");
+    var edJ = document.getElementById("ed-js");
+    var edS = document.getElementById("ed-sqlphp");
+    if (edH || edC || edJ || edS) {
+      if (edH && edH.value.trim()) sectionsCode.push({ titre: "index.html", code: edH.value.trim() });
+      if (edC && edC.value.trim()) sectionsCode.push({ titre: "style.css", code: edC.value.trim() });
+      if (edJ && edJ.value.trim()) sectionsCode.push({ titre: "controle.js", code: edJ.value.trim() });
+      if (edS && edS.value.trim()) sectionsCode.push({ titre: "sql & php", code: edS.value.trim() });
+      var cJs = document.getElementById("console-js");
+      if (cJs && cJs.textContent) consoleMsg = cJs.textContent.trim();
+    }
+
+    /* 2. Bac à sable HTML/CSS/JS (#sti-sandbox-modal) */
+    var sbModal = document.getElementById("sti-sandbox-modal");
+    if (sbModal) {
+      try {
+        var sbState = JSON.parse(localStorage.getItem("sti-sandbox-code-v1") || "null");
+        if (sbState) {
+          if (sbState.html) sectionsCode.push({ titre: "Bac à sable HTML", code: sbState.html });
+          if (sbState.css) sectionsCode.push({ titre: "Bac à sable CSS", code: sbState.css });
+          if (sbState.js) sectionsCode.push({ titre: "Bac à sable JS", code: sbState.js });
+        }
+      } catch (e) {}
+      var sbCons = document.getElementById("sti-sb-console");
+      if (sbCons && sbCons.textContent) consoleMsg = sbCons.textContent.trim();
+    }
+
+    /* 3. Autres éditeurs / textareas de travail sur la page */
+    if (!sectionsCode.length) {
+      var areas = docAnalyser.querySelectorAll("textarea");
+      Array.prototype.forEach.call(areas, function (ta, idx) {
+        if (!ta || !ta.value || !ta.value.trim()) return;
+        var idTa = (ta.id || ta.name || "").toLowerCase();
+        if (idTa.indexOf("msn") !== -1 || idTa.indexOf("qprof") !== -1 || idTa.indexOf("search") !== -1) return;
+        sectionsCode.push({
+          titre: ta.id || ta.name || ("Code #" + (idx + 1)),
+          code: ta.value.trim()
+        });
+      });
+    }
+
+    /* 4. Blocs de code visibles de la leçon ou correction pas à pas */
+    if (!sectionsCode.length) {
+      var blocsVisibles = docAnalyser.querySelectorAll(".code-body, .code-block, pre code, pre");
+      for (var b = 0; b < blocsVisibles.length; b++) {
+        var elB = blocsVisibles[b];
+        var csB = (docAnalyser.defaultView || window).getComputedStyle(elB);
+        if (csB && csB.display !== "none" && csB.visibility !== "hidden" && elB.textContent && elB.textContent.trim().length > 15) {
+          sectionsCode.push({
+            titre: etapeActive || "Extrait de la page",
+            code: elB.textContent.trim()
+          });
+          if (sectionsCode.length >= 2) break;
+        }
+      }
+    }
+
+    /* 5. Champs de formulaire saisis par l'élève */
+    var champsSaisis = [];
+    var inputs = docAnalyser.querySelectorAll("input[type='text'], input[type='email'], input[type='number'], input[type='tel'], input[type='date'], select");
+    Array.prototype.forEach.call(inputs, function (inp) {
+      var idI = (inp.id || inp.name || "").toLowerCase();
+      if (idI.indexOf("msn") !== -1 || idI.indexOf("search") !== -1 || idI === "sel-sujet") return;
+      var val = (inp.value || "").trim();
+      if (val) {
+        champsSaisis.push((inp.name || inp.id || "champ") + " = " + val);
+      }
+    });
+
+    return {
+      titre: titre,
+      page: pageRel,
+      etape: etapeActive,
+      sectionsCode: sectionsCode,
+      consoleMsg: consoleMsg,
+      champsSaisis: champsSaisis
+    };
+  }
+
+  function genererCaptureVisuelleSosSTI() {
+    var ctxInfo = extraireContexteTravailPageSTI();
+    var cLoc = lireCacheSessionLocal() || {};
+    var meta = cLoc.user_metadata || {};
+    var nomEleve = ((meta.prenom || "") + " " + (meta.nom || "")).trim() || cLoc.email || "Élève STI";
+    var classeEleve = currentClasse || cLoc.classe || "STI";
+
+    var cv = document.createElement("canvas");
+    var W = 900;
+    var H = 560;
+    cv.width = W;
+    cv.height = H;
+    var g = cv.getContext("2d");
+
+    /* Fond général crème Atelier */
+    g.fillStyle = "#f9f1e3";
+    g.fillRect(0, 0, W, H);
+
+    /* Bandeau d'en-tête sombre */
+    g.fillStyle = "#23201a";
+    g.fillRect(0, 0, W, 76);
+    g.fillStyle = "#f4511e";
+    g.fillRect(0, 73, W, 4);
+
+    /* Badge SOS */
+    g.fillStyle = "#f4511e";
+    g.fillRect(18, 16, 195, 28);
+    g.fillStyle = "#ffffff";
+    g.font = "900 13px system-ui, 'Segoe UI', sans-serif";
+    g.fillText("🆘 SOS CAPTURE & CODE STI", 28, 35);
+
+    /* Nom élève + Heure */
+    var dStr = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    g.fillStyle = "#ffd54f";
+    g.font = "800 13px system-ui, 'Segoe UI', sans-serif";
+    g.fillText("👤 " + nomEleve + " (" + classeEleve + ") · 🕒 " + dStr, 228, 35);
+
+    /* Page & étape */
+    g.fillStyle = "#fffdf7";
+    g.font = "700 12.5px system-ui, 'Segoe UI', sans-serif";
+    var sousTitre = "📍 Page : " + ctxInfo.page + " — " + ctxInfo.titre + (ctxInfo.etape ? (" · [" + ctxInfo.etape + "]") : "");
+    g.fillText(sousTitre.slice(0, 108), 18, 60);
+
+    /* Zone principale éditeur sombre */
+    var boxX = 18, boxY = 92, boxW = W - 36, boxH = 358;
+    g.fillStyle = "#141923";
+    g.fillRect(boxX, boxY, boxW, boxH);
+    g.strokeStyle = "#23201a";
+    g.lineWidth = 2.5;
+    g.strokeRect(boxX, boxY, boxW, boxH);
+
+    /* Barre de titre de la fenêtre de code */
+    g.fillStyle = "#1f2735";
+    g.fillRect(boxX + 2, boxY + 2, boxW - 4, 30);
+    g.fillStyle = "#ff5f56";
+    g.beginPath(); g.arc(boxX + 18, boxY + 17, 5, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#ffbd2e";
+    g.beginPath(); g.arc(boxX + 34, boxY + 17, 5, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#27c93f";
+    g.beginPath(); g.arc(boxX + 50, boxY + 17, 5, 0, Math.PI * 2); g.fill();
+
+    var ongletsTxt = ctxInfo.sectionsCode.length
+      ? ctxInfo.sectionsCode.map(function (s) { return s.titre; }).join("  |  ")
+      : (ctxInfo.etape || ctxInfo.titre);
+    g.fillStyle = "#ffd54f";
+    g.font = "800 12px ui-monospace, SFMono-Regular, Consolas, monospace";
+    g.fillText("💻 " + ongletsTxt.slice(0, 92), boxX + 70, boxY + 21);
+
+    /* Lignes de code à dessiner */
+    var lignesCode = [];
+    if (ctxInfo.sectionsCode.length) {
+      ctxInfo.sectionsCode.forEach(function (sec) {
+        if (ctxInfo.sectionsCode.length > 1) {
+          lignesCode.push("/* === " + sec.titre + " === */");
+        }
+        var raw = String(sec.code || "");
+        var d = 0;
+        for (var i = 0; i <= raw.length; i++) {
+          if (i === raw.length || raw[i] === "\n") {
+            var l = raw.substring(d, i).replace(/\r/g, "");
+            lignesCode.push(l);
+            d = i + 1;
+          }
+        }
+      });
+    } else {
+      lignesCode.push("// Page consultée : " + ctxInfo.titre);
+      lignesCode.push("// URL : " + ctxInfo.page);
+      if (ctxInfo.etape) lignesCode.push("// Étape active : " + ctxInfo.etape);
+    }
+
+    var maxLignes = 18;
+    var yCur = boxY + 52;
+    g.font = "600 12.2px ui-monospace, SFMono-Regular, Consolas, monospace";
+    for (var idx = 0; idx < Math.min(lignesCode.length, maxLignes); idx++) {
+      var ln = lignesCode[idx] || "";
+      /* Numéro de ligne */
+      g.fillStyle = "#64748b";
+      var numStr = (idx + 1 < 10 ? " " : "") + (idx + 1);
+      g.fillText(numStr, boxX + 12, yCur);
+
+      /* Couleur selon le contenu de la ligne */
+      var trimLn = ln.trim();
+      if (trimLn.indexOf("//") === 0 || trimLn.indexOf("/*") === 0 || trimLn.indexOf("--") === 0) {
+        g.fillStyle = "#94a3b8";
+      } else if (trimLn.indexOf("<") === 0 || trimLn.indexOf("</") !== -1) {
+        g.fillStyle = "#93c5fd";
+      } else if (/mysqli_|SELECT |INSERT |UPDATE |CREATE |FROM |WHERE /i.test(trimLn)) {
+        g.fillStyle = "#fda4af";
+      } else if (/function |var |return |if\s*\(|for\s*\(|alert\s*\(/i.test(trimLn)) {
+        g.fillStyle = "#fde047";
+      } else {
+        g.fillStyle = "#f1f5f9";
+      }
+      g.fillText(ln.slice(0, 102), boxX + 42, yCur);
+      yCur += 17;
+    }
+    if (lignesCode.length > maxLignes) {
+      g.fillStyle = "#fb923c";
+      g.fillText("… (+" + (lignesCode.length - maxLignes) + " autres lignes — utilisez « 💻 Joindre mon code » pour le fichier complet)", boxX + 42, yCur + 2);
+    }
+
+    /* Bandeau inférieur : Console / Champs saisis */
+    var footY = 462;
+    g.fillStyle = "#fffdf7";
+    g.fillRect(18, footY, W - 36, 82);
+    g.strokeStyle = "#23201a";
+    g.lineWidth = 2;
+    g.strokeRect(18, footY, W - 36, 82);
+
+    g.fillStyle = "#f4511e";
+    g.font = "900 12px system-ui, 'Segoe UI', sans-serif";
+    g.fillText("🖥️ ÉTAT DE LA CONSOLE / CHAMPS SAISIS SUR LA PAGE :", 30, footY + 22);
+
+    g.fillStyle = "#23201a";
+    g.font = "700 12px ui-monospace, SFMono-Regular, Consolas, monospace";
+    var infoBas1 = ctxInfo.consoleMsg
+      ? ("Console : " + ctxInfo.consoleMsg)
+      : (ctxInfo.champsSaisis.length ? ("Champs : " + ctxInfo.champsSaisis.join(" | ")) : "Aucune erreur console détectée sur cette page.");
+    var infoBas2 = ctxInfo.consoleMsg && ctxInfo.champsSaisis.length
+      ? ("Champs : " + ctxInfo.champsSaisis.join(" | "))
+      : (" Envoyé depuis : " + ctxInfo.page + (ctxInfo.etape ? (" (" + ctxInfo.etape + ")") : ""));
+    g.fillText(infoBas1.slice(0, 105), 30, footY + 46);
+    g.fillStyle = "#5a5244";
+    g.fillText(infoBas2.slice(0, 105), 30, footY + 68);
+
+    var dataUrl = cv.toDataURL("image/jpeg", 0.82);
+    var octets = Math.round((dataUrl.length - 22) * 0.75);
+    var slug = String(ctxInfo.page || "page").replace(/[^a-zA-Z0-9_-]/g, "_").replace(/_+/g, "_");
+    return {
+      ctx: ctxInfo,
+      fichier: {
+        nom: "sos_capture_" + slug + ".jpg",
+        type: "image/jpeg",
+        taille: octets,
+        dataUrl: dataUrl
+      }
+    };
+  }
+
+  function genererFichierCodeSosSTI() {
+    var ctxInfo = extraireContexteTravailPageSTI();
+    var lignes = [
+      "==========================================================",
+      "🆘 SOS CODE STI V2.0 — " + ctxInfo.titre,
+      "📍 Page : " + ctxInfo.page + (ctxInfo.etape ? (" (" + ctxInfo.etape + ")") : ""),
+      "🕒 Date : " + new Date().toLocaleString("fr-FR"),
+      "==========================================================",
+      ""
+    ];
+    if (ctxInfo.sectionsCode.length) {
+      ctxInfo.sectionsCode.forEach(function (s) {
+        lignes.push("--- [ " + s.titre + " ] ---");
+        lignes.push(s.code);
+        lignes.push("");
+      });
+    } else {
+      lignes.push("(Aucun éditeur de code modifié sur cette page)");
+    }
+    if (ctxInfo.consoleMsg) {
+      lignes.push("--- [ Console / Alertes ] ---");
+      lignes.push(ctxInfo.consoleMsg);
+      lignes.push("");
+    }
+    if (ctxInfo.champsSaisis.length) {
+      lignes.push("--- [ Champs du formulaire ] ---");
+      lignes.push(ctxInfo.champsSaisis.join("\n"));
+    }
+    var contenu = lignes.join("\n");
+    var b64 = "";
+    try {
+      b64 = "data:text/plain;charset=utf-8;base64," + btoa(unescape(encodeURIComponent(contenu)));
+    } catch (e) {}
+    var slug = String(ctxInfo.page || "code").replace(/[^a-zA-Z0-9_-]/g, "_").replace(/_+/g, "_");
+    return {
+      ctx: ctxInfo,
+      contenu: contenu,
+      fichier: {
+        nom: "sos_code_" + slug + ".txt",
+        type: "text/plain",
+        taille: contenu.length,
+        dataUrl: b64
+      }
+    };
+  }
+
+  window.lancerSosCaptureProfSTI = function (uid, maClasse, mode) {
+    var c = lireCacheSessionLocal() || {};
+    var u = uid || currentUid || c.id || "eleve";
+    var cl = maClasse || currentClasse || c.classe || "";
+    ouvrirBoiteQuestionProf(u, cl);
+    var win = document.getElementById("sti-messenger-eleve");
+    if (!win) return;
+    var sosBar = win.querySelector("#sti-msn-el-sosbar");
+    if (sosBar) sosBar.style.display = "flex";
+    var btnAct = win.querySelector(mode === "code" ? "#sti-sos-btn-code" : "#sti-sos-btn-cap");
+    if (btnAct) btnAct.click();
+  };
+
   function ouvrirBoiteQuestionProf(uid, maClasse, dernierMsgProfId) {
     installerStylesMessengerMobile();
     var exOld = document.getElementById("sti-modal-qprof");
@@ -2280,16 +2707,23 @@
           "</div>" +
         "</div>" +
         "<div id='sti-msn-el-feed' style='flex:1;overflow-y:auto;padding:12px;background:#f9f1e3;display:flex;flex-direction:column;gap:9px'></div>" +
+        "<div id='sti-msn-el-sosbar' style='display:none;flex-wrap:wrap;align-items:center;gap:5px;padding:7px 10px;background:linear-gradient(120deg,#fffbeb,#fef3c7);border-top:1.5px solid #23201a;font-size:11px;font-weight:900;color:#23201a'>" +
+          "<span style='color:#d84315;margin-right:2px'>🆘 SOS 1-clic :</span>" +
+          "<button type='button' id='sti-sos-btn-cap' style='border:1.5px solid #23201a;background:#f4511e;color:#fff;border-radius:999px;padding:3px 9px;font:900 10.8px system-ui,sans-serif;cursor:pointer'>📸 Capturer Page + Code</button>" +
+          "<button type='button' id='sti-sos-btn-code' style='border:1.5px solid #23201a;background:#23201a;color:#ffd54f;border-radius:999px;padding:3px 9px;font:900 10.8px system-ui,sans-serif;cursor:pointer'>💻 Joindre mon code</button>" +
+          "<button type='button' id='sti-sos-btn-photo' style='border:1.5px solid #23201a;background:#fff;color:#23201a;border-radius:999px;padding:3px 9px;font:800 10.8px system-ui,sans-serif;cursor:pointer'>🖼️ Photo / Écran</button>" +
+        "</div>" +
         "<div id='sti-msn-el-filebar' style='display:none;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#fff3e0;border-top:1.5px solid #f4511e;font-size:11.5px;font-weight:800;color:#23201a'>" +
           "<span id='sti-msn-el-filename' style='overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>📎 fichier</span>" +
           "<button type='button' id='sti-msn-el-fileclear' style='border:1px solid #23201a;background:#fff;color:#c0392b;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
         "</div>" +
-        "<form id='sti-msn-el-form' style='padding:9px 10px;background:#fffdf7;border-top:2px solid #23201a;display:flex;align-items:center;gap:6px;margin:0'>" +
+        "<form id='sti-msn-el-form' style='padding:9px 10px;background:#fffdf7;border-top:2px solid #23201a;display:flex;align-items:center;gap:5px;margin:0'>" +
           "<input type='file' id='sti-msn-el-file' style='display:none' accept='image/*,.pdf,.sql,.php,.html,.htm,.css,.js,.txt,.zip,.rar,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.json' />" +
-          "<button type='button' id='sti-msn-el-attach' title='Joindre un fichier ou une image (capture, code, PDF…)' style='width:35px;height:35px;border-radius:50%;border:1.8px solid #23201a;background:#fff3e0;color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center'>📎</button>" +
-          "<button type='button' id='sti-msn-el-mic' title='Dicter le message au micro' style='width:35px;height:35px;border-radius:50%;border:1.8px solid #23201a;background:#fff3e0;color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center'>🎙️</button>" +
-          "<input type='text' id='sti-msn-el-inp' placeholder='Écrire un message ou joindre un fichier…' autocomplete='off' style='flex:1;min-width:0;border:2px solid #23201a;border-radius:999px;padding:8px 12px;font:600 13px system-ui,sans-serif;background:#fff;color:#23201a;outline:none' />" +
-          "<button type='submit' title='Envoyer' style='width:38px;height:38px;border-radius:50%;border:2px solid #23201a;background:linear-gradient(120deg,#f4511e,#ff8a50);color:#fff;font-weight:900;font-size:14px;cursor:pointer;box-shadow:2px 2px 0 #23201a;flex-shrink:0'>➤</button>" +
+          "<button type='button' id='sti-msn-el-sos' title='📸 SOS Capture / Envoyer ma page ou mon code au professeur en 1 clic' style='width:34px;height:34px;border-radius:50%;border:1.8px solid #23201a;background:linear-gradient(135deg,#fff3b0,#ffd54f);color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:1.5px 1.5px 0 #23201a'>📸</button>" +
+          "<button type='button' id='sti-msn-el-attach' title='Joindre un fichier ou une image (capture, code, PDF…)' style='width:34px;height:34px;border-radius:50%;border:1.8px solid #23201a;background:#fff3e0;color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center'>📎</button>" +
+          "<button type='button' id='sti-msn-el-mic' title='Dicter le message au micro' style='width:34px;height:34px;border-radius:50%;border:1.8px solid #23201a;background:#fff3e0;color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center'>🎙️</button>" +
+          "<input type='text' id='sti-msn-el-inp' placeholder='Question, 📎 fichier ou 📸 SOS Capture…' autocomplete='off' style='flex:1;min-width:0;border:2px solid #23201a;border-radius:999px;padding:8px 11px;font:600 12.8px system-ui,sans-serif;background:#fff;color:#23201a;outline:none' />" +
+          "<button type='submit' title='Envoyer' style='width:37px;height:37px;border-radius:50%;border:2px solid #23201a;background:linear-gradient(120deg,#f4511e,#ff8a50);color:#fff;font-weight:900;font-size:14px;cursor:pointer;box-shadow:2px 2px 0 #23201a;flex-shrink:0'>➤</button>" +
         "</form>";
 
       (document.body || document.documentElement).appendChild(win);
@@ -2299,6 +2733,11 @@
       var fileNameEl = win.querySelector("#sti-msn-el-filename");
       var fileClearBtn = win.querySelector("#sti-msn-el-fileclear");
       var attachBtn = win.querySelector("#sti-msn-el-attach");
+      var sosBtn = win.querySelector("#sti-msn-el-sos");
+      var sosBar = win.querySelector("#sti-msn-el-sosbar");
+      var sosBtnCap = win.querySelector("#sti-sos-btn-cap");
+      var sosBtnCode = win.querySelector("#sti-sos-btn-code");
+      var sosBtnPhoto = win.querySelector("#sti-sos-btn-photo");
       var micBtn = win.querySelector("#sti-msn-el-mic");
       var txtInp = win.querySelector("#sti-msn-el-inp");
       var feedEl = win.querySelector("#sti-msn-el-feed");
@@ -2377,6 +2816,53 @@
       attachBtn.addEventListener("click", function () {
         if (fileInput) fileInput.click();
       });
+      if (sosBtn && sosBar) {
+        sosBtn.addEventListener("click", function () {
+          var estVis = sosBar.style.display === "flex";
+          if (!estVis) {
+            sosBar.style.display = "flex";
+            /* Génère immédiatement la capture de la page + code au 1er clic */
+            if (sosBtnCap) sosBtnCap.click();
+          } else {
+            sosBar.style.display = "none";
+          }
+        });
+      }
+      if (sosBtnCap) {
+        sosBtnCap.addEventListener("click", function () {
+          var resCap = genererCaptureVisuelleSosSTI();
+          fichierEnAttenteEleve = resCap.fichier;
+          majBarreFichierEleve();
+          var labelCtx = resCap.ctx.etape ? (resCap.ctx.page + " · " + resCap.ctx.etape) : resCap.ctx.page;
+          if (txtInp && !txtInp.value.trim()) {
+            txtInp.value = "🆘 [SOS sur " + labelCtx + "] Monsieur, j'ai besoin d'aide ici : ";
+          }
+          if (txtInp) txtInp.focus();
+        });
+      }
+      if (sosBtnCode) {
+        sosBtnCode.addEventListener("click", function () {
+          var resCode = genererFichierCodeSosSTI();
+          fichierEnAttenteEleve = resCode.fichier;
+          majBarreFichierEleve();
+          var labelCtx = resCode.ctx.etape ? (resCode.ctx.page + " · " + resCode.ctx.etape) : resCode.ctx.page;
+          if (txtInp && (!txtInp.value.trim() || txtInp.value.indexOf("🆘 [SOS sur ") === 0)) {
+            txtInp.value = "🆘 [Code sur " + labelCtx + "] Monsieur, voici mon code complet : ";
+          }
+          if (typeof window.__stiEnvoyerCopieTpAuProf === "function" && resCode.ctx.sectionsCode.length) {
+            window.__stiEnvoyerCopieTpAuProf({
+              typeTp: "SOS Code (" + labelCtx + ")",
+              codeComplet: resCode.contenu
+            });
+          }
+          if (txtInp) txtInp.focus();
+        });
+      }
+      if (sosBtnPhoto) {
+        sosBtnPhoto.addEventListener("click", function () {
+          if (fileInput) fileInput.click();
+        });
+      }
       fileInput.addEventListener("change", function () {
         if (fileInput.files && fileInput.files[0]) {
           selectionnerFichierEleve(fileInput.files[0]);
@@ -4430,7 +4916,7 @@
           try {
             var r = JSON.parse(a.lieu || "{}");
             if (r && (r.reponse || r.fichier)) {
-              fil.push({ de: "eleve", texte: r.reponse || "", fichier: r.fichier || null, ts: a.debut });
+              fil.push({ de: "eleve", texte: r.reponse || "", fichier: r.fichier || null, page: r.page || "", ts: a.debut });
             }
           } catch (e) {}
         }
@@ -4560,7 +5046,10 @@
         if (estProf) {
           return "<div style='align-self:flex-end;max-width:84%;background:linear-gradient(135deg,#f4511e,#ff7043);color:#fff;border:2px solid #23201a;border-radius:16px 16px 4px 16px;padding:8px 12px'>" + bt + bf + "<div style='font-size:10px;opacity:.88;text-align:right;margin-top:3px'>" + esc(fmtHeureMsn(m.ts)) + "</div></div>";
         }
-        return "<div style='align-self:flex-start;max-width:84%;background:#fff;color:#23201a;border:2px solid #23201a;border-radius:16px 16px 16px 4px;padding:8px 12px'>" + bt + bf + "<div style='font-size:10px;color:#6b6152;text-align:right;margin-top:3px'>" + esc(fmtHeureMsn(m.ts)) + "</div></div>";
+        var pageTag = m.page
+          ? ("<div style='margin-bottom:4px'><a href='" + esc(cfg.RACINE + String(m.page).replace(/^\/+/, "")) + "' style='display:inline-block;font-size:10px;font-weight:900;background:#fff3e0;color:#d84315;border:1px solid #f4511e;border-radius:999px;padding:1px 7px;text-decoration:none'>📍 Page : " + esc(m.page) + " ↗</a></div>")
+          : "";
+        return "<div style='align-self:flex-start;max-width:84%;background:#fff;color:#23201a;border:2px solid #23201a;border-radius:16px 16px 16px 4px;padding:8px 12px'>" + pageTag + bt + bf + "<div style='font-size:10px;color:#6b6152;text-align:right;margin-top:3px'>" + esc(fmtHeureMsn(m.ts)) + "</div></div>";
       }).join("");
       brancherActionsFichiersConteneur(elFeed);
       elFeed.scrollTop = elFeed.scrollHeight;

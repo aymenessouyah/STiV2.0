@@ -1214,10 +1214,12 @@
           if (a.id) idsAccesParMsg[cleCheck].push(a.id);
           var repTxt = "";
           var fichObj = null;
+          var pageOrig = "";
           try {
             var objL = JSON.parse(a.lieu || "{}");
             if (objL && objL.reponse) repTxt = objL.reponse;
             if (objL && objL.fichier && objL.fichier.nom) fichObj = objL.fichier;
+            if (objL && objL.page) pageOrig = objL.page;
           } catch (e) {}
           if (mid === "libre") {
             if (repTxt || fichObj) {
@@ -1226,7 +1228,8 @@
                 uid: a.user_id,
                 ts: a.debut,
                 reponse: repTxt || (fichObj ? ("📎 Fichier : " + fichObj.nom) : ""),
-                fichier: fichObj
+                fichier: fichObj,
+                page: pageOrig
               });
             }
           } else {
@@ -5042,6 +5045,72 @@
     reader.readAsDataURL(file);
   }
 
+  function estFichierCodeAdmin(nom, url) {
+    var n = String(nom || "").toLowerCase();
+    var u = String(url || "").toLowerCase();
+    return /\.(html?|css|js|php|sql|txt|csv|json|xml)$/i.test(n) || /^data:text\//i.test(u);
+  }
+
+  function decoderTexteDataUrlAdmin(dataUrl) {
+    try {
+      var s = String(dataUrl || "");
+      var p = s.indexOf(",");
+      if (p === -1) return "";
+      var meta = s.substring(0, p);
+      var corps = s.substring(p + 1);
+      if (meta.indexOf(";base64") !== -1) {
+        return decodeURIComponent(escape(atob(corps)));
+      }
+      return decodeURIComponent(corps);
+    } catch (e) {
+      try {
+        var p2 = String(dataUrl || "").indexOf(",");
+        return p2 !== -1 ? atob(String(dataUrl).substring(p2 + 1)) : "";
+      } catch (e2) {
+        return "";
+      }
+    }
+  }
+
+  function ouvrirVisionneuseCodeAdmin(nom, dataUrl) {
+    var txt = decoderTexteDataUrlAdmin(dataUrl);
+    if (!txt) {
+      telechargerFichierDataUrlAdmin(nom, dataUrl);
+      return;
+    }
+    var ex = document.getElementById("msn-modal-code-admin");
+    if (ex) ex.remove();
+    var ov = document.createElement("div");
+    ov.id = "msn-modal-code-admin";
+    ov.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(13,18,30,.85);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:14px;font:600 13px/1.45 system-ui,'Segoe UI',sans-serif;";
+    ov.innerHTML =
+      "<div style='background:#141923;color:#f5f3ff;border:2.5px solid #ffd54f;border-radius:18px;width:min(880px,96vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)'>" +
+        "<div style='padding:10px 14px;background:#23201a;border-bottom:2px solid #f4511e;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap'>" +
+          "<strong style='color:#ffd54f;font-size:13.5px'>💻 Code de l'élève : " + echHtml(nom || "code_sti.txt") + "</strong>" +
+          "<div style='display:flex;gap:7px;flex-wrap:wrap'>" +
+            "<button type='button' id='msn-code-adm-copy' style='border:1.5px solid #ffd54f;background:#fff3b0;color:#23201a;border-radius:999px;padding:4px 12px;font-weight:900;font-size:11.5px;cursor:pointer'>📋 Copier le code</button>" +
+            "<button type='button' id='msn-code-adm-dl' style='border:1.5px solid #fff;background:#f4511e;color:#fff;border-radius:999px;padding:4px 12px;font-weight:900;font-size:11.5px;cursor:pointer'>⬇ Télécharger</button>" +
+            "<button type='button' id='msn-code-adm-close' style='border:1.5px solid rgba(255,255,255,.5);background:rgba(255,255,255,.14);color:#fff;border-radius:999px;padding:4px 11px;font-weight:900;font-size:11.5px;cursor:pointer'>✕ Fermer</button>" +
+          "</div>" +
+        "</div>" +
+        "<pre style='flex:1;margin:0;padding:14px;overflow:auto;font:600 12.2px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;color:#e8f0fe;white-space:pre-wrap;word-break:break-word'>" + echHtml(txt) + "</pre>" +
+      "</div>";
+    ov.querySelector("#msn-code-adm-close").addEventListener("click", function () { ov.remove(); });
+    ov.querySelector("#msn-code-adm-dl").addEventListener("click", function () {
+      telechargerFichierDataUrlAdmin(nom || "code_sti.txt", dataUrl);
+    });
+    ov.querySelector("#msn-code-adm-copy").addEventListener("click", function () {
+      var bC = ov.querySelector("#msn-code-adm-copy");
+      try {
+        navigator.clipboard.writeText(txt);
+        bC.textContent = "✅ Copié !";
+        setTimeout(function () { bC.textContent = "📋 Copier le code"; }, 1800);
+      } catch (e) {}
+    });
+    ov.addEventListener("click", function (e) { if (e.target === ov) ov.remove(); });
+    (document.body || document.documentElement).appendChild(ov);
+  }
+
   function rendreBlocFichierJointAdmin(f, surFondOrange) {
     if (!f || !f.nom) return "";
     var urlPropre = dataUrlSureAdmin(f.dataUrl);
@@ -5050,8 +5119,12 @@
     var col = surFondOrange ? "#fff" : "#23201a";
     var bdr = surFondOrange ? "rgba(255,255,255,.45)" : "#23201a";
     var estImg = urlPropre && /^data:image\/(png|jpe?g|gif|webp);base64,/i.test(urlPropre);
+    var estCode = urlPropre && estFichierCodeAdmin(f.nom, urlPropre);
     var htmlImg = estImg
       ? ("<img src='" + echHtml(urlPropre) + "' alt='" + echHtml(f.nom) + "' class='msn-admin-img-zoom' style='max-width:210px;max-height:150px;border-radius:10px;border:1.5px solid " + bdr + ";display:block;margin-bottom:5px;cursor:zoom-in;object-fit:cover' />")
+      : "";
+    var btnVoirCode = estCode
+      ? ("<button type='button' class='msn-admin-code-btn' data-nom='" + echHtml(f.nom) + "' data-url='" + echHtml(urlPropre) + "' style='border:1.5px solid " + bdr + ";background:#23201a;color:#ffd54f;border-radius:999px;padding:3px 9px;font:900 10.5px system-ui,sans-serif;cursor:pointer;flex-shrink:0'>👁️ Voir le code</button>")
       : "";
     var btnDl = urlPropre
       ? ("<button type='button' class='msn-admin-dl-btn' data-nom='" + echHtml(f.nom) + "' data-url='" + echHtml(urlPropre) + "' style='border:1.5px solid " + bdr + ";background:" + (surFondOrange ? "#fff" : "#f4511e") + ";color:" + (surFondOrange ? "#23201a" : "#fff") + ";border-radius:999px;padding:3px 9px;font:900 10.5px system-ui,sans-serif;cursor:pointer;flex-shrink:0'>⬇ Télécharger</button>")
@@ -5059,9 +5132,9 @@
     return (
       "<div style='margin-top:5px;margin-bottom:2px;padding:6px 9px;border-radius:10px;background:" + bg + ";border:1.5px solid " + bdr + ";color:" + col + "'>" +
         htmlImg +
-        "<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap'>" +
+        "<div style='display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap'>" +
           "<span style='font-size:11.5px;font-weight:800;word-break:break-all'>📎 " + echHtml(f.nom) + echHtml(tStr) + "</span>" +
-          btnDl +
+          "<div style='display:flex;gap:5px;flex-wrap:wrap'>" + btnVoirCode + btnDl + "</div>" +
         "</div>" +
       "</div>"
     );
@@ -5075,6 +5148,14 @@
       b.addEventListener("click", function (ev) {
         ev.stopPropagation();
         telechargerFichierDataUrlAdmin(b.getAttribute("data-nom") || "fichier", b.getAttribute("data-url") || "");
+      });
+    });
+    Array.prototype.forEach.call(conteneur.querySelectorAll(".msn-admin-code-btn"), function (b) {
+      if (b._stiBound) return;
+      b._stiBound = true;
+      b.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        ouvrirVisionneuseCodeAdmin(b.getAttribute("data-nom") || "code_sti.txt", b.getAttribute("data-url") || "");
       });
     });
     Array.prototype.forEach.call(conteneur.querySelectorAll(".msn-admin-img-zoom"), function (im) {
@@ -5315,6 +5396,7 @@
           de: "eleve",
           texte: q.reponse || "",
           fichier: q.fichier || null,
+          page: q.page || "",
           ts: q.ts || new Date().toISOString(),
           ms: new Date(q.ts || 0).getTime() || 0,
           type: "question"
@@ -5770,11 +5852,19 @@
         var citEleve = it.enReponseA
           ? ("<div style='background:#f3ead9;border-left:3px solid #f4511e;border-radius:7px;padding:4px 8px;margin-bottom:5px;font-size:11px;color:#5a5244'>📢 En réponse à : « " + echHtml(it.enReponseA) + " »</div>")
           : "";
+        var estSos = (it.texte && it.texte.indexOf("🆘") === 0) || (it.fichier && /^sos_(capture|code)_/i.test(it.fichier.nom || ""));
+        var badgeSos = estSos
+          ? "<span style='display:inline-block;background:#c0392b;color:#fff;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;margin-left:5px'>🆘 SOS CAPTURE / CODE</span>"
+          : "";
+        var badgePage = it.page
+          ? ("<div style='margin-bottom:4px'><a href='" + echHtml(String(it.page).replace(/^\/+/, "")) + "' target='_blank' rel='noopener' style='display:inline-block;font-size:10px;font-weight:900;background:#fff3e0;color:#d84315;border:1px solid #f4511e;border-radius:999px;padding:1px 8px;text-decoration:none'>📍 Page : " + echHtml(it.page) + " ↗</a></div>")
+          : "";
         return (
           "<div style='display:flex;flex-direction:column;align-items:flex-start'>" +
             "<div style='display:flex;align-items:center;gap:6px;max-width:86%'>" +
               "<div style='background:#fff;color:#23201a;border:2px solid #23201a;border-radius:16px 16px 16px 4px;padding:8px 12px;font-size:12.5px;font-weight:700;box-shadow:2px 2px 0 rgba(35,32,26,.15);word-break:break-word'>" +
-                "<div style='font-size:10px;font-weight:900;color:#f4511e;margin-bottom:2px'>💬 " + echHtml(contact(p)) + "</div>" +
+                "<div style='font-size:10px;font-weight:900;color:#f4511e;margin-bottom:3px'>💬 " + echHtml(contact(p)) + badgeSos + "</div>" +
+                badgePage +
                 citEleve +
                 blocTexte +
                 blocFichier +
