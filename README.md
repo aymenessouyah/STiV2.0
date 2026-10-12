@@ -118,7 +118,7 @@ STI-Atelier-V2.0/
 ├── admin.html                        # 📊 Tableau de bord Admin organisé en 3 pôles & 4 sections repliables
 ├── bac-pratique.html                 # 🧪 Atelier Épreuve Pratique Bac STI (4SI / Prof / Labo / Admin)
 ├── carte-visite.html                 # 🪪 Carte de visite numérique AE (.vcf & impression réservés Admin)
-├── sw.js                             # ⚙️ Service Worker PWA (cache 100 % hors-ligne sti-atelier-v132)
+├── sw.js                             # ⚙️ Service Worker PWA (cache 100 % hors-ligne sti-atelier-v133)
 ├── manifest.webmanifest              # 📱 Manifeste d'installation PWA
 ├── robots.txt                        # 🤖 Directives SEO & blocage des robots d'IA
 ├── sitemap.xml                       # 🗺️ Plan du site

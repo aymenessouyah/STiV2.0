@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noai, noimageai">
+<link rel="icon" href="../../assets/icons/STI_by_AE.ico">
+<title>sondage.php : le parcours pas à pas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#f5f6f4; --panel:#ffffff; --ink:#1c2321; --muted:#5d6a66; --line:#d9ded9;
+  --accent:#0f766e; --accent-soft:#d6efea; --change:#b45309; --change-soft:#fde9c8;
+  --bad:#b42318; --bad-soft:#fde0dc; --good:#1b7f3b; --good-soft:#d9f2e0;
+  --code-bg:#fbfbf9; --code-dim:#9aa5a1; --code-ink:#26302d; --hl:#fff1b8; --hl-edge:#e0a800;
+  --k:#8a3ffc; --s:#0b6e4f; --v:#b4400a; --f:#0a58a8; --onaccent:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121715; --panel:#1b2220; --ink:#e7ece9; --muted:#9aa8a3; --line:#2e3935;
+    --accent:#4fd1c0; --accent-soft:#12413b; --change:#f5b04c; --change-soft:#4a3410;
+    --bad:#ff8a7a; --bad-soft:#4a1d18; --good:#7fdc98; --good-soft:#163a22;
+    --code-bg:#161c1a; --code-dim:#76847f; --code-ink:#dfe7e3; --hl:#4a3f10; --hl-edge:#f5b04c;
+    --k:#c4a1ff; --s:#7fdc98; --v:#ffa066; --f:#7ab8ff; --onaccent:#0b1412;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121715; --panel:#1b2220; --ink:#e7ece9; --muted:#9aa8a3; --line:#2e3935;
+  --accent:#4fd1c0; --accent-soft:#12413b; --change:#f5b04c; --change-soft:#4a3410;
+  --bad:#ff8a7a; --bad-soft:#4a1d18; --good:#7fdc98; --good-soft:#163a22;
+  --code-bg:#161c1a; --code-dim:#76847f; --code-ink:#dfe7e3; --hl:#4a3f10; --hl-edge:#f5b04c;
+  --k:#c4a1ff; --s:#7fdc98; --v:#ffa066; --f:#7ab8ff; --onaccent:#0b1412;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.5rem;margin:0 0 4px;font-weight:600}
+.sub{color:var(--muted);margin:0 0 16px;max-width:72ch}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tab{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:8px;font:inherit;font-size:.92rem;cursor:pointer;text-align:left}
+.tab small{display:block;color:var(--muted);font-size:.78rem}
+.tab[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.post{display:flex;flex-wrap:wrap;gap:6px 14px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.88rem}
+.post b{font-weight:500;color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.left{position:sticky;top:8px}
+@media (max-width:900px){.left{position:static}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.card h2{font-size:.95rem;font-weight:600;margin:0;padding:10px 14px;border-bottom:1px solid var(--line)}
+.right{display:flex;flex-direction:column;gap:16px}
+/* organigramme */
+.flow{padding:6px 6px 2px}
+.flow svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;padding:6px 14px 12px;font-size:.78rem;color:var(--muted)}
+.legend i{display:inline-block;width:22px;height:0;border-top:3px solid var(--accent);vertical-align:middle;margin-right:6px}
+.legend i.g{border-top:2px dashed var(--code-dim)}
+.edge{fill:none;stroke:var(--code-dim);stroke-width:2;stroke-dasharray:5 5;opacity:.75}
+.edge.on{stroke:var(--accent);stroke-width:3;stroke-dasharray:none;opacity:1}
+.edge.new{stroke-dasharray:1;animation:draw .9s ease-out forwards}
+.mk-g{fill:var(--code-dim)} .mk-o{fill:var(--accent)}
+.elab{fill:var(--muted);font-size:13px;font-weight:500}
+.elab.on{fill:var(--accent);font-weight:700;font-size:14px}
+.nd shape,.nd rect,.nd polygon{fill:var(--panel);stroke:var(--line);stroke-width:2;transition:fill .35s,stroke .35s}
+.nd text{fill:var(--muted);font-size:12.5px;transition:fill .35s}
+.nd.vis rect,.nd.vis polygon{stroke:var(--accent)}
+.nd.vis text{fill:var(--ink)}
+.nd.act rect,.nd.act polygon{fill:var(--accent-soft);stroke:var(--accent);stroke-width:3.5}
+.nd.act text{font-weight:600}
+.nd.good.vis rect{stroke:var(--good)} .nd.good.act rect{fill:var(--good-soft);stroke:var(--good)}
+.nd.bad.vis rect{stroke:var(--bad)} .nd.bad.act rect{fill:var(--bad-soft);stroke:var(--bad)}
+.nd.act rect,.nd.act polygon{animation:pulse 1.8s ease-in-out infinite}
+.token{fill:var(--change);stroke:var(--panel);stroke-width:2}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes pulse{0%,100%{stroke-width:3.5}50%{stroke-width:5.5}}
+@keyframes flash{0%{background:var(--change-soft)}100%{background:transparent}}
+@keyframes pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+/* explication */
+.explain{padding:14px}
+.explain .t{font-weight:600;font-size:1.05rem;margin:0 0 6px}
+.explain .d{margin:0;max-width:62ch}
+code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.85em;background:var(--accent-soft);padding:1px 5px;border-radius:4px}
+.cond{margin-top:10px;display:inline-block;font-size:.84rem;padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg)}
+.cond.yes{background:var(--good-soft);border-color:var(--good);color:var(--good)}
+.cond.no{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.snip{background:var(--code-bg);padding:6px 0;font-size:.8rem;line-height:1.55;color:var(--code-ink);overflow-x:auto}
+.ln{display:block;padding:1px 12px 1px 0;border-left:4px solid var(--hl-edge);background:var(--hl);white-space:pre-wrap;word-break:break-word}
+.ln.warn{background:var(--bad-soft);border-left-color:var(--bad)}
+.ln.fix{background:var(--good-soft);border-left-color:var(--good)}
+.ln.plain{background:transparent;border-left-color:transparent}
+.ln .n{display:inline-block;width:2.4em;text-align:right;margin-right:10px;color:var(--code-dim);user-select:none}
+.k{color:var(--k)} .s{color:var(--s)} .v{color:var(--v)} .f{color:var(--f)}
+.vars{display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px}
+.vars:empty::after{content:"Aucune variable pour l'instant";color:var(--muted);font-size:.85rem}
+.chip{font-size:.78rem;padding:2px 8px;border-radius:6px;border:1px solid var(--line);background:var(--bg)}
+.chip i{font-style:normal;color:var(--muted)}
+.chip.new{animation:pop .7s ease-out;border-color:var(--change);background:var(--change-soft)}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{padding:5px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--muted);font-weight:500}
+.dbwrap{overflow-x:auto}
+.dbname{padding:8px 14px 4px;font-size:.82rem;color:var(--muted)}
+tr.added{animation:flash 1.6s ease-out}
+td.upd{animation:flash 1.6s ease-out}
+tr.added td:first-child{box-shadow:inset 4px 0 0 var(--change)}
+.out{padding:14px}
+.browser{border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:10px 12px;min-height:44px;font-size:.92rem}
+.browser.good{border-color:var(--good);background:var(--good-soft);color:var(--good)}
+.browser.bad{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.browser.empty{color:var(--muted)}
+/* contrôles */
+.ctrl{position:sticky;bottom:0;margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;gap:8px;align-items:center;z-index:5}
+.btn{border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:.92rem;padding:8px 14px;border-radius:8px;cursor:pointer;min-height:40px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--onaccent)}
+.btn:disabled{opacity:.45;cursor:default}
+.prog{flex:1;min-width:140px;display:flex;gap:4px;align-items:center}
+.dot{flex:1;height:8px;border-radius:4px;background:var(--line);border:0;padding:0;cursor:pointer;transition:background .3s}
+.dot.done{background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.dot.cur{background:var(--accent)}
+.count{font-size:.85rem;color:var(--muted);min-width:5.5em;text-align:right}
+select{font:inherit;font-size:.88rem;padding:7px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.more{margin-top:16px}
+.more summary{cursor:pointer;padding:12px 14px;font-weight:600;font-size:.95rem}
+.more .bar{padding:8px 14px;display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.notes{padding:14px 18px}
+.notes h2{padding:0 0 8px;border:0}
+.notes ul{margin:0;padding-left:1.1em;max-width:80ch}
+.notes li{margin:6px 0}
+@media (prefers-reduced-motion: reduce){
+  .edge.new{animation:none;stroke-dasharray:none}
+  .nd.act rect,.nd.act polygon{animation:none}
+  tr.added,td.upd,.chip.new{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>sondage.php : le parcours pas à pas</h1>
+  <p class="sub">Choisissez un cas, puis suivez la flèche : la case allumée est l'étape en cours, les flèches vertes montrent le chemin déjà parcouru. Avancez avec les boutons, les flèches ← → du clavier ou la lecture automatique.</p>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="post mono" id="post"></div>
+
+  <div class="grid">
+    <div class="left">
+      <div class="card">
+        <h2>Le parcours du script</h2>
+        <div class="flow"><svg id="svg" viewBox="0 0 740 690" role="img" aria-label="Organigramme du script sondage.php"></svg></div>
+        <div class="legend"><span><i></i>chemin parcouru</span><span><i class="g"></i>chemin non emprunté</span></div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="card" aria-live="polite">
+        <div class="explain">
+          <p class="t" id="t"></p>
+          <p class="d" id="d"></p>
+          <span class="cond mono" id="cond" hidden></span>
+        </div>
+        <div class="snip mono" id="snip"></div>
+      </div>
+      <div class="card">
+        <h2>Variables PHP</h2>
+        <div class="vars mono" id="vars"></div>
+      </div>
+      <div class="card">
+        <h2>Base de données</h2>
+        <div class="dbname mono">participant</div>
+        <div class="dbwrap"><table id="tP" class="mono"></table></div>
+        <div class="dbname mono">reponse</div>
+        <div class="dbwrap"><table id="tR" class="mono"></table></div>
+      </div>
+      <div class="card">
+        <h2>Affichage dans le navigateur</h2>
+        <div class="out"><div class="browser empty" id="browser">(rien pour l'instant)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctrl">
+    <button class="btn" id="reset" title="Revenir au début">⟲ Début</button>
+    <button class="btn" id="prev">◀ Précédent</button>
+    <button class="btn primary" id="play">▶ Lecture</button>
+    <button class="btn" id="next">Suivant ▶</button>
+    <div class="prog" id="prog" aria-label="Progression"></div>
+    <span class="count mono" id="count"></span>
+    <label style="font-size:.85rem;color:var(--muted)">Vitesse
+      <select id="speed"><option value="6000">Lente</option><option value="4000" selected>Normale</option><option value="2400">Rapide</option></select>
+    </label>
+  </div>
+
+  <details class="card more">
+    <summary>Code corrigé complet (seule la ligne en vert change)</summary>
+    <div class="bar"><button class="btn" id="copy">Copier le code</button><span id="copied" style="font-size:.85rem;color:var(--good)" role="status"></span></div>
+    <div id="fixed" class="snip mono" style="max-height:560px;overflow:auto"></div>
+  </details>
+
+  <div class="card notes more">
+    <h2>À retenir et à corriger dans ce code</h2>
+    <ul>
+      <li><code>mysql_affected_rows($badge)</code> (ligne 27) : l'extension <code>mysql_*</code> a disparu depuis PHP 7. Il faut écrire <code>mysqli_affected_rows($badge)</code>, sinon l'erreur fatale « undefined function » apparaît (voir le cas 3).</li>
+      <li><code>mysqli_affected_rows</code> vaut <code>-1</code> seulement en cas d'erreur de la requête. Le test <code>!= -1</code> vérifie donc « pas d'erreur », pas « des lignes modifiées ». Après plusieurs <code>UPDATE</code>, il ne reflète que le dernier, et vaut <code>0</code> si la valeur n'a pas changé.</li>
+      <li>Injection SQL : <code>$mail</code> et <code>$mdp</code> sont collés tels quels dans les requêtes. Au minimum, les protéger avec <code>mysqli_real_escape_string($badge, $_POST['T1'])</code>, ou utiliser <code>mysqli_prepare</code> et <code>mysqli_stmt_bind_param</code> (style procédural).</li>
+      <li>Le mot de passe est stocké en clair : en pratique on utilise <code>password_hash</code> à l'inscription et <code>password_verify</code> à la connexion.</li>
+      <li><code>$req4</code> (ligne 24) est redondante : le participant vient d'être trouvé par <code>$req2</code>. Pour récupérer l'id après un <code>INSERT</code>, <code>mysqli_insert_id($badge)</code> évite le <code>SELECT</code> supplémentaire.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const CODE = [
+  [0,'include "connexion.php";'],
+  [0,'$mail = $_POST[\'T1\'];'],
+  [0,'$mdp = $_POST[\'T2\'];'],
+  [0,'$genre = $_POST[\'D1\'];'],
+  [0,'$R1 = $_POST[\'R1\']; $R2 = $_POST[\'R2\']; $R3 = $_POST[\'R3\'];'],
+  [0,''],
+  [0,'$req1 = mysqli_query($badge, "SELECT * FROM participant WHERE mail=\'$mail\'");'],
+  [0,'if (mysqli_num_rows($req1) != 0) {'],
+  [1,'$req2 = mysqli_query($badge, "SELECT * FROM participant WHERE mail=\'$mail\' AND mdp=\'$mdp\'");'],
+  [1,'if (mysqli_num_rows($req2) == 0) {'],
+  [2,'echo "Erreur d\'authentification !!!";'],
+  [1,'} else {'],
+  [2,'$ligne = mysqli_fetch_row($req2);'],
+  [2,'$participant = $ligne[0];'],
+  [2,'$req3 = mysqli_query($badge, "SELECT * FROM reponse WHERE idparticipant=\'$participant\' AND NumS=1 AND NumQ IN (1,2,3)");'],
+  [2,'if (mysqli_num_rows($req3) == 3) {'],
+  [3,'$req4 = mysqli_query($badge, "UPDATE reponse SET rep=\'$R1\' WHERE idparticipant=\'$participant\' AND NumS=1 AND NumQ=1");'],
+  [3,'$req5 = mysqli_query($badge, "UPDATE reponse SET rep=\'$R2\' WHERE idparticipant=\'$participant\' AND NumS=1 AND NumQ=2");'],
+  [3,'$req6 = mysqli_query($badge, "UPDATE reponse SET rep=\'$R3\' WHERE idparticipant=\'$participant\' AND NumS=1 AND NumQ=3");'],
+  [3,'if (mysqli_affected_rows($badge) != -1) {'],
+  [4,'echo "Mise à jour effectuée avec succès";'],
+  [3,'} else { echo "Mise à jour non effectuée !!!!"; }'],
+  [2,'} else {'],
+  [3,'$req4 = mysqli_query($badge, "SELECT * FROM participant WHERE idparticipant=\'$participant\'");'],
+  [3,'if (mysqli_num_rows($req4) != 0) {'],
+  [4,'$req5 = mysqli_query($badge, "INSERT INTO reponse VALUES (1,1,\'$participant\',\'$R1\'), (2,1,\'$participant\',\'$R2\'), (3,1,\'$participant\',\'$R3\')");'],
+  [4,'if (mysql_affected_rows($badge) != -1) {   // ⚠ mysql_ au lieu de mysqli_'],
+  [5,'echo "Participation au sondage effectuée avec succès";'],
+  [4,'} else { echo "Insertion non effectuée !!!!"; }'],
+  [3,'}'],
+  [2,'}'],
+  [1,'}'],
+  [0,'} else {'],
+  [1,'$req5 = mysqli_query($badge, "INSERT INTO participant (mail,mdp,genre) VALUES (\'$mail\',\'$mdp\',\'$genre\')");'],
+  [1,'$req = mysqli_query($badge, "SELECT idparticipant FROM participant WHERE mail=\'$mail\' AND mdp=\'$mdp\'");'],
+  [1,'$ligne = mysqli_fetch_row($req);'],
+  [1,'$new_participant = $ligne[0];'],
+  [1,'$req6 = mysqli_query($badge, "INSERT INTO reponse VALUES (1,1,\'$new_participant\',\'$R1\'), (2,1,\'$new_participant\',\'$R2\'), (3,1,\'$new_participant\',\'$R3\')");'],
+  [1,'if (mysqli_affected_rows($badge) != 0) {'],
+  [2,'echo "Inscription et participation au sondage effectuées avec succès";'],
+  [1,'} else { echo "Inscription et participation NON EFFECTUÉES !!!!"; }'],
+  [0,'}']
+];
+const FIX_LINE=26, FIX_TXT='if (mysqli_affected_rows($badge) != -1) {';
+
+/* Organigramme : noeuds et flèches */
+const NODES={
+  N0:{x:370,y:50, k:'box',t:['Réception du formulaire','mail, mdp, genre, R1 à R3']},
+  N1:{x:370,y:150,k:'dec',t:['Le mail existe','déjà ?']},
+  N2:{x:370,y:270,k:'dec',t:['Le mot de passe','est correct ?']},
+  N3:{x:370,y:390,k:'box',t:['Récupérer l\'id','du participant']},
+  N4:{x:370,y:510,k:'dec',t:['A déjà répondu','(3 réponses) ?']},
+  N5:{x:105,y:510,k:'box',t:['INSERT des','3 réponses']},
+  N6:{x:105,y:650,k:'box',out:'good',t:['Participation au sondage','effectuée avec succès']},
+  N7:{x:635,y:510,k:'box',t:['UPDATE des','3 réponses']},
+  N8:{x:635,y:650,k:'box',out:'good',t:['Mise à jour effectuée','avec succès']},
+  N10:{x:635,y:150,k:'box',t:['INSERT du','nouveau participant']},
+  N11:{x:635,y:230,k:'box',t:['Récupérer le','nouvel id']},
+  N12:{x:635,y:310,k:'box',t:['INSERT des','3 réponses']},
+  N13:{x:635,y:390,k:'box',out:'good',t:['Inscription et participation','effectuées avec succès']},
+  N20:{x:105,y:270,k:'box',out:'bad',t:['Erreur','d\'authentification']}
+};
+const EDGES={
+  E0:{f:'N0',t:'N1',p:'M370 77 L370 106'},
+  E1:{f:'N1',t:'N10',p:'M470 150 L538 150',l:'Non',lx:504,ly:140},
+  E2:{f:'N1',t:'N2',p:'M370 192 L370 226',l:'Oui',lx:388,ly:214},
+  E3:{f:'N2',t:'N20',p:'M270 270 L202 270',l:'Non',lx:236,ly:260},
+  E4:{f:'N2',t:'N3',p:'M370 312 L370 361',l:'Oui',lx:388,ly:342},
+  E5:{f:'N3',t:'N4',p:'M370 417 L370 466'},
+  E6:{f:'N4',t:'N5',p:'M270 510 L202 510',l:'Non',lx:236,ly:500},
+  E7:{f:'N4',t:'N7',p:'M470 510 L538 510',l:'Oui',lx:504,ly:500},
+  E8:{f:'N5',t:'N6',p:'M105 537 L105 621'},
+  E9:{f:'N7',t:'N8',p:'M635 537 L635 621'},
+  E10:{f:'N10',t:'N11',p:'M635 177 L635 201'},
+  E11:{f:'N11',t:'N12',p:'M635 257 L635 281'},
+  E12:{f:'N12',t:'N13',p:'M635 337 L635 361'}
+};
+
+const P0=[{id:1,mail:'sami@mail.tn',mdp:'1234',genre:'M'},{id:2,mail:'leila@mail.tn',mdp:'abcd',genre:'F'}];
+const R0=[{q:1,s:1,id:1,rep:'Oui'},{q:2,s:1,id:1,rep:'Non'},{q:3,s:1,id:1,rep:'Peut-être'}];
+
+const SCEN=[
+ {label:'1. Nouveau participant',sub:'mail inconnu',
+  post:{T1:'nina@mail.tn',T2:'0000',D1:'F',R1:'Oui',R2:'Oui',R3:'Non'},
+  steps:[
+   {node:'N0',lines:[0,1,2,3,4],t:'Réception des données',d:'Le formulaire envoie ses champs en <code>POST</code>. On les copie dans des variables : mail (T1), mot de passe (T2), genre (D1) et les trois réponses (R1, R2, R3).',vars:{'$mail':'nina@mail.tn','$mdp':'0000','$genre':'F','$R1':'Oui','$R2':'Oui','$R3':'Non'}},
+   {node:'N1',take:'E1',lines:[6,7,32],t:'Le mail existe-t-il déjà ?',d:'<code>$req1</code> cherche ce mail dans <code>participant</code> et ne trouve aucune ligne. La condition <code>!= 0</code> est fausse : on suit la flèche « Non », c\'est un nouveau participant.',vars:{'$req1':'0 ligne'},cond:['no','0 != 0 → faux → bloc else']},
+   {node:'N10',lines:[33],t:'Inscription : INSERT dans participant',d:'On crée le participant. <code>idparticipant</code> n\'est pas dans la requête : MySQL le génère (auto-incrément).',addP:{id:3,mail:'nina@mail.tn',mdp:'0000',genre:'F'}},
+   {node:'N11',lines:[34,35,36],t:'Récupérer l\'id généré',d:'Un <code>SELECT</code> retrouve la ligne qu\'on vient d\'ajouter. <code>mysqli_fetch_row</code> renvoie un tableau indexé : <code>$ligne[0]</code> est l\'<code>idparticipant</code>.',vars:{'$new_participant':'3'}},
+   {node:'N12',lines:[37],t:'Enregistrer les 3 réponses',d:'Un seul <code>INSERT</code> avec trois lignes de valeurs : (NumQ, NumS, idparticipant, rep). NumS = 1 car il s\'agit du sondage n°1.',addR:[{q:1,s:1,id:3,rep:'Oui'},{q:2,s:1,id:3,rep:'Oui'},{q:3,s:1,id:3,rep:'Non'}]},
+   {node:'N13',lines:[38,39],t:'Vérifier l\'insertion et afficher le message',d:'<code>mysqli_affected_rows</code> renvoie 3 (≠ 0) : succès.',cond:['yes','3 != 0 → vrai'],out:['good','Inscription et participation au sondage effectuées avec succès']}
+  ]},
+ {label:'2. Mauvais mot de passe',sub:'mail connu, mdp faux',
+  post:{T1:'sami@mail.tn',T2:'9999',D1:'M',R1:'Non',R2:'Non',R3:'Oui'},
+  steps:[
+   {node:'N0',lines:[0,1,2,3,4],t:'Réception des données',d:'Le mail est celui d\'un participant déjà inscrit, mais le mot de passe saisi est incorrect.',vars:{'$mail':'sami@mail.tn','$mdp':'9999','$genre':'M','$R1':'Non','$R2':'Non','$R3':'Oui'}},
+   {node:'N1',take:'E2',lines:[6,7],t:'Le mail existe-t-il déjà ?',d:'<code>$req1</code> trouve une ligne : on suit la flèche « Oui » vers la vérification du mot de passe.',vars:{'$req1':'1 ligne'},cond:['yes','1 != 0 → vrai']},
+   {node:'N2',take:'E3',lines:[8,9],t:'Le mot de passe est-il correct ?',d:'<code>$req2</code> cherche (mail ET mot de passe). Aucune ligne ne correspond à (sami@mail.tn, 9999) : on suit la flèche « Non ».',vars:{'$req2':'0 ligne'},cond:['no','0 == 0 → vrai → erreur']},
+   {node:'N20',lines:[10],t:'Authentification refusée',d:'On affiche l\'erreur et le script s\'arrête là. Aucune modification en base.',out:['bad','Erreur d\'authentification !!!']}
+  ]},
+ {label:'3. Première participation',sub:'inscrit, jamais répondu',
+  post:{T1:'leila@mail.tn',T2:'abcd',D1:'F',R1:'Non',R2:'Oui',R3:'Oui'},
+  steps:[
+   {node:'N0',lines:[0,1,2,3,4],t:'Réception des données',d:'Leïla est déjà dans <code>participant</code> mais n\'a encore aucune ligne dans <code>reponse</code>.',vars:{'$mail':'leila@mail.tn','$mdp':'abcd','$genre':'F','$R1':'Non','$R2':'Oui','$R3':'Oui'}},
+   {node:'N1',take:'E2',lines:[6,7],t:'Le mail existe-t-il déjà ?',d:'<code>$req1</code> renvoie 1 ligne : flèche « Oui ».',vars:{'$req1':'1 ligne'},cond:['yes','1 != 0 → vrai']},
+   {node:'N2',take:'E4',lines:[8,9,11],t:'Le mot de passe est-il correct ?',d:'<code>$req2</code> trouve (mail + mdp) : 1 ligne. Le test <code>== 0</code> est faux, donc flèche « Oui » : authentification réussie.',vars:{'$req2':'1 ligne'},cond:['yes','1 == 0 → faux → else']},
+   {node:'N3',lines:[12,13],t:'Récupérer l\'id du participant',d:'<code>mysqli_fetch_row($req2)</code> donne la ligne ; la colonne 0 est <code>idparticipant</code>.',vars:{'$participant':'2'}},
+   {node:'N4',take:'E6',lines:[14,15,22],t:'A-t-il déjà répondu au sondage ?',d:'<code>$req3</code> compte ses réponses pour NumS = 1 et NumQ ∈ {1,2,3} : 0 ligne. Ce n\'est pas 3, donc flèche « Non » : première participation.',vars:{'$req3':'0 ligne'},cond:['no','0 == 3 → faux → else']},
+   {node:'N5',lines:[23,24,25],t:'Insertion des 3 réponses',d:'Le script revérifie que le participant existe (<code>$req4</code>, redondant), puis fait l\'<code>INSERT</code> multi-lignes avec l\'id existant.',vars:{'$req4':'1 ligne'},addR:[{q:1,s:1,id:2,rep:'Non'},{q:2,s:1,id:2,rep:'Oui'},{q:3,s:1,id:2,rep:'Oui'}]},
+   {node:'N6',lines:[26],t:'⚠ Erreur : mysql_affected_rows',d:'La ligne appelle <code>mysql_affected_rows</code> au lieu de <code>mysqli_affected_rows</code>. Cette fonction n\'existe plus en PHP 7 et suivants : le script s\'arrête avec une erreur fatale <b>après</b> l\'insertion. Les données sont enregistrées, mais le message de succès n\'apparaît jamais.',out:['bad','Fatal error: Call to undefined function mysql_affected_rows()']},
+   {node:'N6',lines:[26,27],fix:true,t:'Après correction : mysqli_affected_rows',d:'Avec le bon nom de fonction, la valeur est 3 (≠ -1) : le test réussit et le message attendu s\'affiche.',cond:['yes','3 != -1 → vrai'],out:['good','Participation au sondage effectuée avec succès']}
+  ]},
+ {label:'4. Mise à jour',sub:'a déjà répondu',
+  post:{T1:'sami@mail.tn',T2:'1234',D1:'M',R1:'Non',R2:'Non',R3:'Oui'},
+  steps:[
+   {node:'N0',lines:[0,1,2,3,4],t:'Réception des données',d:'Sami a déjà répondu aux trois questions (Oui, Non, Peut-être). Il renvoie de nouvelles réponses.',vars:{'$mail':'sami@mail.tn','$mdp':'1234','$genre':'M','$R1':'Non','$R2':'Non','$R3':'Oui'}},
+   {node:'N1',take:'E2',lines:[6,7],t:'Le mail existe-t-il déjà ?',d:'<code>$req1</code> renvoie 1 ligne : flèche « Oui ».',vars:{'$req1':'1 ligne'},cond:['yes','1 != 0 → vrai']},
+   {node:'N2',take:'E4',lines:[8,9,11],t:'Le mot de passe est-il correct ?',d:'Mail et mot de passe correspondent : <code>$req2</code> renvoie 1 ligne, flèche « Oui ».',vars:{'$req2':'1 ligne'},cond:['yes','1 == 0 → faux → else']},
+   {node:'N3',lines:[12,13],t:'Récupérer l\'id du participant',d:'<code>$ligne[0]</code> contient <code>idparticipant</code>.',vars:{'$participant':'1'}},
+   {node:'N4',take:'E7',lines:[14,15],t:'A-t-il déjà répondu au sondage ?',d:'<code>$req3</code> trouve les 3 réponses de ce participant : 3 == 3, flèche « Oui ». Il faut <b>modifier</b> les réponses existantes, pas en créer de nouvelles.',vars:{'$req3':'3 lignes'},cond:['yes','3 == 3 → vrai']},
+   {node:'N7',lines:[16],t:'UPDATE de la question 1',d:'Seule la ligne (participant 1, NumS 1, NumQ 1) est ciblée par le <code>WHERE</code>.',updR:{id:1,q:1,rep:'Non'}},
+   {node:'N7',lines:[17],t:'UPDATE de la question 2',d:'Même principe pour NumQ = 2. La valeur reste « Non » : la ligne n\'est pas réellement modifiée.',updR:{id:1,q:2,rep:'Non'}},
+   {node:'N7',lines:[18],t:'UPDATE de la question 3',d:'NumQ = 3 passe de « Peut-être » à « Oui ».',updR:{id:1,q:3,rep:'Oui'}},
+   {node:'N8',lines:[19,20],t:'Message de confirmation',d:'<code>mysqli_affected_rows</code> ne concerne que le <b>dernier</b> UPDATE. Le test <code>!= -1</code> vérifie seulement l\'absence d\'erreur.',cond:['yes','1 != -1 → vrai'],out:['good','Mise à jour effectuée avec succès']}
+  ]}
+];
+
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function colorize(s){
+  return esc(s).replace(/(\/\/.*$)|("(?:[^"\\]|\\.)*")|(\$\w+)|(mysqli?_\w+)|\b(include|if|else|echo)\b/g,
+    (m,c,str,v,f,k)=> c?`<span style="color:var(--code-dim)">${c}</span>`: str?`<span class="s">${str}</span>`: v?`<span class="v">${v}</span>`: f?`<span class="f">${f}</span>`:`<span class="k">${k}</span>`);
+}
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let sc=0, step=0, timer=null;
+
+/* Onglets */
+const tabs=$('tabs');
+SCEN.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.className='tab';b.setAttribute('role','tab');
+  b.innerHTML=`${s.label}<small>${s.sub}</small>`;
+  b.onclick=()=>{stop();sc=i;step=0;render();};
+  tabs.appendChild(b);
+});
+
+/* Chemin parcouru */
+function pathState(s,i){
+  const seq=[];
+  for(let k=0;k<=i;k++){const n=s.steps[k].node; if(seq[seq.length-1]!==n)seq.push(n);}
+  const edges=new Set();
+  for(let k=1;k<seq.length;k++){
+    const id=Object.keys(EDGES).find(e=>EDGES[e].f===seq[k-1]&&EDGES[e].t===seq[k]);
+    if(id)edges.add(id);
+  }
+  const tk=s.steps[i].take; if(tk)edges.add(tk);
+  return {seq,edges};
+}
+
+/* Dessin de l'organigramme */
+function drawFlow(s,i){
+  const cur=pathState(s,i);
+  const prev=i>0?pathState(s,i-1).edges:new Set();
+  const st=s.steps[i];
+  let h='<defs>'+
+    '<marker id="mg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk-g" d="M0 0 L10 5 L0 10z"/></marker>'+
+    '<marker id="mo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="mk-o" d="M0 0 L10 5 L0 10z"/></marker></defs>';
+  let tokens='';
+  Object.entries(EDGES).forEach(([id,e])=>{
+    const on=cur.edges.has(id), nw=on&&!prev.has(id);
+    h+=`<path d="${e.p}" pathLength="1" class="edge${on?' on':''}${nw?' new':''}" marker-end="url(#${on?'mo':'mg'})"/>`;
+    if(e.l)h+=`<text x="${e.lx}" y="${e.ly}" text-anchor="middle" class="elab${on?' on':''}">${e.l}</text>`;
+    if(nw&&!reduce)tokens+=`<circle class="token" r="6"><animateMotion dur="0.9s" fill="freeze" path="${e.p}"/><animate attributeName="opacity" values="1;1;0" keyTimes="0;0.85;1" dur="1s" fill="freeze"/></circle>`;
+  });
+  Object.entries(NODES).forEach(([id,n])=>{
+    const vis=cur.seq.includes(id), act=st.node===id;
+    let cls='nd'+(vis?' vis':'')+(act?' act':'');
+    if(n.out){ cls+=' '+((act&&st.out)?st.out[0]:n.out); }
+    h+=`<g class="${cls}">`;
+    if(n.k==='dec')h+=`<polygon points="${n.x},${n.y-42} ${n.x+100},${n.y} ${n.x},${n.y+42} ${n.x-100},${n.y}"/>`;
+    else h+=`<rect x="${n.x-95}" y="${n.y-27}" width="190" height="54" rx="10"/>`;
+    n.t.forEach((line,k)=>{
+      const y=n.y+(k-(n.t.length-1)/2)*16+4.5;
+      h+=`<text x="${n.x}" y="${y}" text-anchor="middle">${esc(line)}</text>`;
+    });
+    h+='</g>';
+  });
+  $('svg').innerHTML=h+tokens;
+}
+
+/* État : variables, tables, sortie */
+function computeState(s,upTo){
+  const P=P0.map(x=>({...x})), R=R0.map(x=>({...x}));
+  const vars={}; let lastNew=[], lastUpd=null, newVars=[];
+  for(let i=0;i<=upTo;i++){
+    const st=s.steps[i], isLast=i===upTo;
+    if(isLast){lastNew=[];lastUpd=null;newVars=[];}
+    if(st.vars){Object.assign(vars,st.vars); if(isLast)newVars=Object.keys(st.vars);}
+    if(st.addP){P.push({...st.addP}); if(isLast)lastNew.push('P'+st.addP.id);}
+    if(st.addR){st.addR.forEach(r=>{R.push({...r}); if(isLast)lastNew.push('R'+r.id+'-'+r.q);});}
+    if(st.updR){const t=R.find(r=>r.id===st.updR.id&&r.q===st.updR.q); if(t){const ch=t.rep!==st.updR.rep; t.rep=st.updR.rep; if(isLast&&ch)lastUpd='R'+t.id+'-'+t.q;}}
+  }
+  let out=null; for(let i=upTo;i>=0;i--){ if(s.steps[i].out){out=s.steps[i].out;break;} }
+  return {P,R,vars,lastNew,lastUpd,newVars,out};
+}
+function tableHTML(cols,rows,isNew,isUpd){
+  let h='<tr>'+cols.map(c=>`<th>${c[0]}</th>`).join('')+'</tr>';
+  rows.forEach(r=>{
+    h+=`<tr class="${isNew&&isNew(r)?'added':''}">`+cols.map(c=>`<td class="${isUpd&&isUpd(r,c[1])?'upd':''}">${esc(String(r[c[1]]))}</td>`).join('')+'</tr>';
+  });
+  return h;
+}
+function lineHTML(i,txt,cls){
+  return `<span class="ln ${cls||''}" style="padding-left:${CODE[i][0]*2}ch"><span class="n">${i+1}</span>${colorize(txt)}</span>`;
+}
+
+function render(){
+  const s=SCEN[sc], st=s.steps[step];
+  [...tabs.children].forEach((b,i)=>b.setAttribute('aria-selected',i===sc));
+  $('post').innerHTML=Object.entries(s.post).map(([k,v])=>`<span><b>${k}</b>=${esc(v)}</span>`).join('');
+  drawFlow(s,step);
+  $('t').textContent=st.t; $('d').innerHTML=st.d;
+  const c=$('cond'); if(st.cond){c.hidden=false;c.className='cond mono '+st.cond[0];c.textContent=st.cond[1];}else c.hidden=true;
+  $('snip').innerHTML=st.lines.map(i=>{
+    if(i===FIX_LINE)return st.fix?lineHTML(i,FIX_TXT,'fix'):lineHTML(i,CODE[i][1],'warn');
+    return lineHTML(i,CODE[i][1]);
+  }).join('');
+  const state=computeState(s,step);
+  $('vars').innerHTML=Object.entries(state.vars).map(([k,v])=>`<span class="chip ${state.newVars.includes(k)?'new':''}"><span class="v">${k}</span> <i>=</i> ${esc(v)}</span>`).join('');
+  $('tP').innerHTML=tableHTML([['idparticipant','id'],['mail','mail'],['mdp','mdp'],['genre','genre']],state.P,r=>state.lastNew.includes('P'+r.id));
+  $('tR').innerHTML=tableHTML([['NumQ','q'],['NumS','s'],['idparticipant','id'],['rep','rep']],state.R,r=>state.lastNew.includes('R'+r.id+'-'+r.q),(r,k)=>k==='rep'&&state.lastUpd==='R'+r.id+'-'+r.q);
+  const b=$('browser');
+  if(state.out){b.className='browser '+state.out[0];b.textContent=state.out[1];}
+  else{b.className='browser empty';b.textContent="(rien pour l'instant)";}
+  const prog=$('prog'); prog.innerHTML='';
+  s.steps.forEach((_,i)=>{const d=document.createElement('button');d.className='dot'+(i<step?' done':'')+(i===step?' cur':'');d.setAttribute('aria-label','Étape '+(i+1));d.onclick=()=>{stop();step=i;render();};prog.appendChild(d);});
+  $('count').textContent=`${step+1} / ${s.steps.length}`;
+  $('prev').disabled=step===0;
+  $('next').disabled=step===s.steps.length-1;
+}
+
+function stop(){if(timer){clearInterval(timer);timer=null;}$('play').textContent='▶ Lecture';}
+function play(){
+  const s=SCEN[sc];
+  if(step===s.steps.length-1){step=0;render();}
+  $('play').textContent='⏸ Pause';
+  timer=setInterval(()=>{
+    if(step<s.steps.length-1){step++;render();}
+    if(step>=s.steps.length-1)stop();
+  },+$('speed').value);
+}
+$('play').onclick=()=>timer?stop():play();
+$('next').onclick=()=>{stop();if(step<SCEN[sc].steps.length-1){step++;render();}};
+$('prev').onclick=()=>{stop();if(step>0){step--;render();}};
+$('reset').onclick=()=>{stop();step=0;render();};
+$('speed').onchange=()=>{if(timer){stop();play();}};
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='SELECT')return;
+  if(e.key==='ArrowRight'){$('next').click();}
+  else if(e.key==='ArrowLeft'){$('prev').click();}
+  else if(e.key===' '&&e.target.tagName!=='BUTTON'&&e.target.tagName!=='SUMMARY'){e.preventDefault();$('play').click();}
+});
+
+/* Code corrigé complet */
+const fixedRows=[[0,'<?php']].concat(CODE.map((c,i)=>[c[0],i===FIX_LINE?FIX_TXT:c[1]])).concat([[0,'?>']]);
+const fx=$('fixed');
+fx.innerHTML=fixedRows.map(([ind,txt],k)=>{
+  const isFix=(k-1)===FIX_LINE;
+  return `<span class="ln ${isFix?'fix':'plain'}" style="padding-left:${ind*2}ch"><span class="n">${k+1}</span>${colorize(txt)}</span>`;
+}).join('');
+$('copy').onclick=async()=>{
+  const text=fixedRows.map(([ind,t])=>'  '.repeat(ind)+t).join('\n');
+  try{await navigator.clipboard.writeText(text);$('copied').textContent='Code copié';}
+  catch(e){const r=document.createRange();r.selectNodeContents(fx);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);$('copied').textContent='Sélectionné : faites Ctrl+C';}
+};
+
+render();
+</script>
+<!-- 🔒 Protection du contenu STI -->
+<link rel="stylesheet" href="../../assets/css/protection.css?v=133" />
+<script src="../../assets/js/protection.js?v=133" defer></script>
+<!-- /Protection -->
+<script src="../../assets/js/supabase-umd.js"></script>
+<script src="../../assets/js/config.js?v=133"></script>
+<script src="../../assets/js/acces.js?v=133"></script>
+</body>
+</html>
