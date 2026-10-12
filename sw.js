@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v138";
+var CACHE = "sti-atelier-v139";
 var SHELL = [
   "./",
   "./index.html",
@@ -366,6 +366,7 @@ var OFFLINE_LIST = [
   "./exercices/php/Tp4-php.html",
   "./exercices/php/DC6Sti2025-2026.rar",
   "./exercices/php/sondage-parcours-pas-a-pas.html",
+  "./exercices/php/statphpanimee.html",
   "./exercices/php/4STi-dc-6-2025-2026.pdf",
   "./exercices/php/4STi-dc-6-2025-2026.pdf.html",
   "./exercices/php/4STi-dc-6-2025-2026.pdf.assets/page-01.jpg",

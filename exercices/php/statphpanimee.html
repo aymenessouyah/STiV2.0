@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noai, noimageai" />
+    <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
+    <link rel="stylesheet" href="../../assets/fonts/fonts.css" />
+    <title>🎬 Exécution pas à pas — stats_sondage.php</title>
+    <style>
+      :root {
+        /* Thème identique à la page Exercices (series-exercices.html + atelier-pages.css) */
+        --bg: #f6eedc;
+        --bg-2: #fbf5e8;
+        --panel: #fffdf5;
+        --surface-2: #f1e6d0;
+        --ink: #101728;
+        --ink-soft: #3d3624;
+        --muted: #6b6250;
+        --border: #e2d3b4;
+        --border-strong: #d0bd97;
+        --edge: #101728;
+        --primary: #f4511e;
+        --primary-d: #c2410c;
+        --primary-soft: #ffe2d2;
+        --php: #2f4bc4;
+        --php-soft: #e6ebff;
+        --success: #177245;
+        --success-soft: #d9f2e0;
+        --warn: #c98a00;
+        --warn-soft: #fde9c8;
+        --code-bg: #101728;
+        --code-head: #182238;
+        --pop-sm: 2.5px 2.5px 0 var(--edge);
+        --pop: 4px 4px 0 rgba(16, 23, 40, 0.16);
+      }
+      :root[data-theme="dark"],
+      body.dark-mode {
+        --bg: #121722;
+        --bg-2: #171e2c;
+        --panel: #1b2333;
+        --surface-2: #232d42;
+        --ink: #f5efe2;
+        --ink-soft: #dfd5c0;
+        --muted: #a69d8a;
+        --border: #2e3a52;
+        --border-strong: #3d4c69;
+        --edge: #f5efe2;
+        --primary: #ff6a2b;
+        --primary-d: #ff8552;
+        --primary-soft: #3b241a;
+        --php: #7c93ff;
+        --php-soft: #1e294a;
+        --success: #7fdc98;
+        --success-soft: #163a22;
+        --warn: #f5b04c;
+        --warn-soft: #4a3410;
+        --code-bg: #0c121e;
+        --code-head: #141d2f;
+        --pop-sm: 2.5px 2.5px 0 rgba(0, 0, 0, 0.55);
+        --pop: 4px 4px 0 rgba(0, 0, 0, 0.35);
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        font-variant-ligatures: none !important;
+        -webkit-font-variant-ligatures: none !important;
+        font-feature-settings: "liga" 0, "calt" 0 !important;
+        -webkit-font-feature-settings: "liga" 0, "calt" 0 !important;
+      }
+      body {
+        margin: 0;
+        font-family: "Manrope", "IBM Plex Sans", system-ui, -apple-system,
+          "Segoe UI", sans-serif;
+        background-color: var(--bg);
+        background-image: radial-gradient(
+            circle,
+            rgba(16, 23, 40, 0.13) 1.15px,
+            transparent 1.15px
+          ),
+          linear-gradient(
+            180deg,
+            rgba(248, 168, 107, 0.3) 0%,
+            rgba(248, 168, 107, 0) 100%
+          );
+        background-repeat: repeat, no-repeat;
+        background-size: 23px 23px, 100% 480px;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        color: var(--ink);
+      }
+
+      header {
+        background: var(--panel);
+        color: var(--ink);
+        border-bottom: 2.5px solid var(--edge);
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.12rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      header h1 em {
+        font-style: normal;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.92em;
+        color: var(--php);
+        background: var(--php-soft);
+        border: 1.5px solid var(--php);
+        padding: 2px 9px;
+        border-radius: 999px;
+      }
+      header small {
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 0.76rem;
+      }
+
+      #timeline {
+        display: flex;
+        gap: 5px;
+        padding: 8px 20px;
+        background: var(--bg-2);
+        border-bottom: 2px solid var(--edge);
+      }
+      .seg {
+        flex: 1;
+        height: 22px;
+        background: var(--panel);
+        border: 1.5px solid var(--edge);
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.66rem;
+        font-weight: 800;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+      }
+      .seg:hover {
+        background: var(--primary-soft);
+        color: var(--ink);
+      }
+      .seg.done {
+        background: var(--primary-soft);
+        color: var(--primary-d);
+        border-color: var(--primary-d);
+      }
+      .seg.active {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--edge);
+        transform: scaleY(1.14);
+        box-shadow: 2px 2px 0 var(--edge);
+      }
+
+      main {
+        flex: 1;
+        display: flex;
+        gap: 12px;
+        padding: 12px;
+        overflow: hidden;
+      }
+
+      /* ---------- FLUX ---------- */
+      #flow {
+        width: 220px;
+        flex-shrink: 0;
+        background: var(--panel);
+        border-radius: 14px;
+        border: 2px solid var(--edge);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: var(--pop);
+      }
+      #flow h3 {
+        margin: 0;
+        padding: 10px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--ink);
+        background: var(--surface-2);
+        text-align: center;
+        border-bottom: 2px solid var(--edge);
+        letter-spacing: 0.03em;
+      }
+      #flow-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 12px;
+        position: relative;
+        scroll-behavior: smooth;
+      }
+      .fnode {
+        position: relative;
+        border: 2px solid var(--border-strong);
+        border-radius: 10px;
+        padding: 9px 6px;
+        margin-bottom: 34px;
+        text-align: center;
+        font-size: 0.73rem;
+        font-weight: 800;
+        background: var(--bg-2);
+        color: var(--ink);
+        transition: 0.3s;
+      }
+      .fnode small {
+        display: block;
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 0.62rem;
+        margin-top: 2px;
+      }
+      .fnode::after {
+        content: "▼";
+        position: absolute;
+        bottom: -26px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--muted);
+        font-size: 0.9rem;
+        transition: 0.3s;
+      }
+      .fnode:last-child {
+        margin-bottom: 0;
+      }
+      .fnode:last-child::after {
+        content: "";
+      }
+      .fnode.done {
+        border-color: var(--success);
+        background: var(--success-soft);
+        color: var(--success);
+      }
+      .fnode.done::after {
+        color: var(--success);
+      }
+      .fnode.active {
+        border-color: var(--edge);
+        background: var(--primary-soft);
+        color: var(--ink);
+        transform: scale(1.04);
+        box-shadow: 3px 3px 0 var(--primary);
+        animation: pulse 1.5s infinite;
+        z-index: 2;
+      }
+      .fnode.loop {
+        border-style: dashed;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 3px 3px 0 var(--primary);
+        }
+        50% {
+          box-shadow: 4px 4px 0 var(--edge);
+        }
+      }
+
+      /* ---------- CODE ---------- */
+      #code-panel {
+        flex: 1.25;
+        min-width: 0;
+        background: var(--code-bg);
+        border: 2px solid var(--edge);
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: var(--pop);
+      }
+      .code-head {
+        background: var(--code-head);
+        color: #f6eedc;
+        padding: 8px 14px;
+        font-size: 0.76rem;
+        font-weight: 800;
+        border-bottom: 2px solid var(--edge);
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      #code-view {
+        flex: 1;
+        overflow: auto;
+        padding: 10px 0;
+        position: relative;
+        font-family: "JetBrains Mono", Consolas, Monaco, monospace;
+        font-size: 12.5px;
+        line-height: 1.55;
+        scroll-behavior: smooth;
+      }
+      .line {
+        display: block;
+        padding: 0 12px;
+        white-space: pre;
+        color: #e2e8f0;
+        border-left: 4px solid transparent;
+        transition: background 0.3s;
+      }
+      .line.active {
+        background: rgba(244, 81, 30, 0.28);
+        border-left-color: #ff6a2b;
+        color: #fff;
+      }
+      .line.focus {
+        background: rgba(245, 158, 11, 0.38);
+        border-left-color: #fbbf24;
+      }
+      .ln {
+        color: #8a99ad;
+        display: inline-block;
+        width: 2.6em;
+        user-select: none;
+      }
+      .tok-com {
+        color: #7fdc98;
+        font-style: italic;
+      }
+      .tok-str {
+        color: #ffb48a;
+      }
+      .tok-var {
+        color: #7dd3fc;
+      }
+      .tok-kw {
+        color: #c4b5fd;
+        font-weight: 700;
+      }
+      .tok-fn {
+        color: #fde047;
+      }
+      .tok-num {
+        color: #bef264;
+      }
+      .tok-tag {
+        color: #94a3b8;
+      }
+
+      /* ---------- ANALYSE ---------- */
+      #right {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+      }
+      .card {
+        background: var(--panel);
+        border-radius: 14px;
+        padding: 13px 15px;
+        border: 2px solid var(--edge);
+        box-shadow: var(--pop);
+      }
+      .card h4 {
+        margin: 0 0 8px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--muted);
+      }
+      .badge {
+        display: inline-block;
+        background: var(--primary);
+        color: #fff;
+        border: 1.5px solid var(--edge);
+        font-size: 0.68rem;
+        font-weight: 800;
+        padding: 3px 10px;
+        border-radius: 999px;
+        margin-bottom: 6px;
+      }
+      #step-title {
+        margin: 0 0 6px;
+        color: var(--ink);
+        font-size: 1.02rem;
+        font-weight: 800;
+      }
+      #step-desc {
+        font-size: 0.86rem;
+        line-height: 1.55;
+        color: var(--ink-soft);
+        margin: 0;
+      }
+      #step-desc code {
+        font-family: "JetBrains Mono", Consolas, monospace;
+        background: var(--primary-soft);
+        border: 1px solid var(--border-strong);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .pop {
+        animation: pop 0.35s ease;
+      }
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .decision {
+        margin-top: 10px;
+        padding: 8px 10px;
+        background: var(--success-soft);
+        border: 1.5px solid var(--success);
+        border-left: 5px solid var(--success);
+        border-radius: 8px;
+        font-size: 0.78rem;
+        color: var(--ink);
+      }
+      .decision code {
+        font-family: "JetBrains Mono", Consolas, monospace;
+        background: var(--panel);
+        border: 1px solid var(--border-strong);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 0.74rem;
+        font-weight: 700;
+      }
+      .sql-q {
+        font-family: "JetBrains Mono", Consolas, monospace;
+        font-size: 0.73rem;
+        background: var(--php-soft);
+        border: 1.5px solid var(--php);
+        border-left: 5px solid var(--php);
+        padding: 8px 10px;
+        border-radius: 8px;
+        color: var(--ink);
+        white-space: pre-wrap;
+      }
+      .sql-r {
+        margin-top: 8px;
+        font-size: 0.78rem;
+        color: var(--ink);
+      }
+      .sql-r table {
+        border-collapse: collapse;
+        font-size: 0.74rem;
+        margin-top: 4px;
+      }
+      .sql-r th,
+      .sql-r td {
+        border: 1.5px solid var(--border-strong);
+        padding: 4px 10px;
+      }
+      .sql-r th {
+        background: var(--surface-2);
+        font-weight: 800;
+      }
+      .vchip {
+        display: inline-flex;
+        gap: 4px;
+        background: var(--code-bg);
+        color: #fff;
+        border: 1.5px solid var(--edge);
+        border-radius: 8px;
+        padding: 4px 9px;
+        margin: 3px 4px 0 0;
+        font-family: "JetBrains Mono", Consolas, monospace;
+        font-size: 0.71rem;
+      }
+      .vchip b {
+        color: #7dd3fc;
+        font-weight: 700;
+      }
+      .vchip span {
+        color: #bef264;
+      }
+      .vchip.new {
+        animation: flash 1.2s;
+      }
+      @keyframes flash {
+        0% {
+          background: var(--primary);
+        }
+        100% {
+          background: var(--code-bg);
+        }
+      }
+      .browser {
+        border: 2px solid var(--edge);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .browser-bar {
+        background: var(--surface-2);
+        border-bottom: 1.5px solid var(--edge);
+        padding: 6px 10px;
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .url {
+        flex: 1;
+        background: var(--panel);
+        border: 1.5px solid var(--border-strong);
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-family: "JetBrains Mono", monospace;
+        color: var(--ink);
+      }
+      #screen {
+        padding: 12px;
+        font-size: 0.78rem;
+        min-height: 70px;
+        background: var(--panel);
+        color: var(--ink);
+      }
+      #screen table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.72rem;
+        margin-top: 6px;
+      }
+      #screen th,
+      #screen td {
+        border: 1.5px solid var(--edge);
+        padding: 4px 6px;
+        text-align: center;
+      }
+      #screen th {
+        background: var(--primary-soft);
+        color: var(--ink);
+        font-weight: 800;
+      }
+      .done-flag {
+        margin-top: 8px;
+        background: var(--success-soft);
+        color: var(--success);
+        border: 1.5px solid var(--success);
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 0.74rem;
+        font-weight: 800;
+        text-align: center;
+      }
+      .empty {
+        color: var(--muted);
+        font-style: italic;
+        text-align: center;
+        padding: 12px 0;
+        font-size: 0.8rem;
+      }
+
+      footer {
+        background: var(--panel);
+        border-top: 2.5px solid var(--edge);
+        padding: 10px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      button {
+        border: 2px solid var(--edge);
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-family: inherit;
+        font-weight: 800;
+        cursor: pointer;
+        background: var(--bg-2);
+        color: var(--ink);
+        box-shadow: var(--pop-sm);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        font-size: 0.83rem;
+      }
+      button:hover:not(:disabled) {
+        transform: translate(-1.5px, -1.5px);
+        box-shadow: 4px 4px 0 var(--edge);
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      #btn-play {
+        background: var(--primary);
+        color: #fff;
+        min-width: 115px;
+      }
+      #counter {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: var(--muted);
+        min-width: 60px;
+        text-align: center;
+      }
+
+      @media (max-width: 900px) {
+        body {
+          height: auto;
+          min-height: 100vh;
+          overflow: auto;
+        }
+        main {
+          flex-direction: column;
+          overflow: visible;
+        }
+        #flow {
+          width: 100%;
+          max-height: 220px;
+        }
+        #code-panel {
+          max-height: 360px;
+        }
+        #right {
+          overflow: visible;
+        }
+        footer {
+          position: sticky;
+          bottom: 0;
+          z-index: 10;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🎬 Exécution pas à pas — <em>stats_sondage.php</em></h1>
+      <small
+        >⌨️ ← → naviguer • Espace lecture/pause • Début = recommencer</small
+      >
+    </header>
+    <nav id="timeline"></nav>
+
+    <main>
+      <aside id="flow">
+        <h3>Flux d'exécution</h3>
+        <div id="flow-scroll">
+          <div class="fnode">
+            🚀 Initialisation<small>connexion + $_POST</small>
+          </div>
+          <div class="fnode">
+            ❓ Sondage lancé ?<small>DateDebut &gt; aujourd'hui</small>
+          </div>
+          <div class="fnode">
+            ❓ Réponses reçues ?<small>table reponse</small>
+          </div>
+          <div class="fnode">
+            🔢 Total participants<small>COUNT DISTINCT</small>
+          </div>
+          <div class="fnode">
+            👩 Nombre de femmes<small>jointure + genre='F'</small>
+          </div>
+          <div class="fnode">
+            👨 Nombre d'hommes<small>jointure + genre='M'</small>
+          </div>
+          <div class="fnode">
+            🖨️ Affichage des totaux<small>echo &lt;p&gt;</small>
+          </div>
+          <div class="fnode">
+            🧾 En-tête du tableau<small>echo &lt;table&gt;</small>
+          </div>
+          <div class="fnode">
+            📋 Liste des questions<small>GROUP BY numq</small>
+          </div>
+          <div class="fnode loop">
+            🔁 Boucle — Question 1<small>$req2 → $row → %</small>
+          </div>
+          <div class="fnode loop">
+            🔁 Boucle — Question 2<small>idem</small>
+          </div>
+          <div class="fnode loop">
+            🔁 Boucle — Question 3<small>idem</small>
+          </div>
+          <div class="fnode">✅ Fin du script<small>&lt;/table&gt;</small></div>
+        </div>
+      </aside>
+
+      <section id="code-panel">
+        <div class="code-head">
+          <span class="dot" style="background: #ff5f56"></span
+          ><span class="dot" style="background: #ffbd2e"></span>
+          <span class="dot" style="background: #27c93f"></span>&nbsp;📄
+          stats_sondage.php — code complet
+        </div>
+        <div id="code-view"></div>
+      </section>
+
+      <section id="right">
+        <div class="card" id="expl-card">
+          <span class="badge" id="step-badge"></span>
+          <h2 id="step-title"></h2>
+          <p id="step-desc"></p>
+          <div class="decision" id="decision" style="display: none"></div>
+        </div>
+        <div class="card">
+          <h4>🗄️ Requête SQL &amp; résultat</h4>
+          <div id="sql-zone"></div>
+        </div>
+        <div class="card">
+          <h4>📊 Variables en mémoire</h4>
+          <div id="vars-zone"></div>
+        </div>
+        <div class="card">
+          <h4>🖥️ Page générée (vue utilisateur)</h4>
+          <div class="browser">
+            <div class="browser-bar">
+              <span class="dot" style="background: #ff5f56"></span>
+              <span class="dot" style="background: #ffbd2e"></span
+              ><span class="dot" style="background: #27c93f"></span>
+              <div class="url">localhost/sondage/stats_sondage.php</div>
+            </div>
+            <div id="screen"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <button id="btn-start">⏮ Début</button>
+      <button id="btn-prev">◀ Précédent</button>
+      <button id="btn-play">▶ Lecture</button>
+      <button id="btn-next">Suivant ▶</button>
+      <button id="btn-speed">1×</button>
+      <span id="counter"></span>
+    </footer>
+
+    <script>
+      /* ===================== CODE PHP FIDÈLE (93 lignes) ===================== */
+      const phpSource = `<?php
+include "connexion.php";
+
+$sondage = $_POST['D1'];
+$date = date("Y-m-d");
+
+// ① Le sondage est-il lancé ?
+$req = mysqli_query($badge, "SELECT * FROM Sondage
+        WHERE DateDebut > '$date' AND NumS = '$sondage'");
+if (mysqli_num_rows($req) != 0) {
+    echo "<b><i>Sondage non encore lancé !</i></b>";
+} else {
+    // ② Y a-t-il des participations ?
+    $req = mysqli_query($badge, "SELECT * FROM reponse
+            WHERE NumS = '$sondage'");
+    if (mysqli_num_rows($req) == 0) {
+        echo "<b><i>Aucune Participation enregistrée !</i></b>";
+    } else {
+        // ③ Nombre total de participants
+        $req = mysqli_query($badge, "SELECT count(DISTINCT idparticipant)
+                FROM reponse WHERE NumS = '$sondage'");
+        $ligne = mysqli_fetch_row($req);
+        $total_participant = $ligne[0];
+
+        // ④ Nombre de femmes
+        $req = mysqli_query($badge, "SELECT count(DISTINCT p.idparticipant)
+                FROM reponse r, participant p
+                WHERE r.idparticipant = p.idparticipant
+                  AND NumS = '$sondage' AND genre = 'F'");
+        $ligne = mysqli_fetch_row($req);
+        $nb_femmes = $ligne[0];
+
+        // ⑤ Nombre d'hommes
+        $req = mysqli_query($badge, "SELECT count(DISTINCT p.idparticipant)
+                FROM reponse r, participant p
+                WHERE r.idparticipant = p.idparticipant
+                  AND NumS = '$sondage' AND genre = 'M'");
+        $ligne = mysqli_fetch_row($req);
+        $nb_hommes = $ligne[0];
+
+        // ⑥ Affichage des totaux
+        echo '<p align="center">Statistiques du Sondage</p>
+              <p>Nombre Total des participants au Sondage : '.$total_participant.'</p>
+              <p>Nombre des femmes : '.$nb_femmes.'</p>
+              <p>Nombre des hommes : '.$nb_hommes.'</p>';
+
+        // ⑦ En-tête du tableau
+        echo '<table border="1" width="100%" id="table1">
+              <tr><td colspan="2">&nbsp;</td>
+                  <td colspan="3" align="center">Pourcentages</td></tr>
+              <tr><td>N°</td><td>Question</td>
+                  <td>"Oui"</td><td>"Non"</td><td>"Sans Avis"</td></tr>';
+
+        // ⑧ Liste des questions du sondage
+        $req = mysqli_query($badge, "SELECT q.NumQ, contenu
+                FROM reponse r, question q
+                WHERE r.numq = q.numq AND r.nums = '$sondage'
+                GROUP BY numq ORDER BY numq");
+
+        while ($ligne = mysqli_fetch_row($req)) {
+            $rep_Oui      = strval($ligne[0]).'O';
+            $rep_Non      = strval($ligne[0]).'N';
+            $rep_SansAvis = strval($ligne[0]).'S';
+
+            // --- Oui ---
+            $req2 = mysqli_query($badge, "SELECT count(rep) FROM reponse
+                     WHERE nums = '$sondage' AND rep = '$rep_Oui'");
+            $row = mysqli_fetch_row($req2);
+            $pourcentage_Oui = ($row[0] / $total_participant) * 100;
+
+            // --- Non ---
+            $req2 = mysqli_query($badge, "SELECT count(rep) FROM reponse
+                     WHERE nums = '$sondage' AND rep = '$rep_Non'");
+            $row = mysqli_fetch_row($req2);
+            $pourcentage_Non = ($row[0] / $total_participant) * 100;
+
+            // --- Sans avis ---
+            $req2 = mysqli_query($badge, "SELECT count(rep) FROM reponse
+                     WHERE nums = '$sondage' AND rep = '$rep_SansAvis'");
+            $row = mysqli_fetch_row($req2);
+            $pourcentage_SansAvis = ($row[0] / $total_participant) * 100;
+
+            // --- Ligne du tableau ---
+            echo '<tr><td>👀'.$ligne[0].'</td>
+                      <td>🎈'.$ligne[1].'</td>
+                      <td>'.round($pourcentage_Oui).' %</td>
+                      <td>'.round($pourcentage_Non).' %</td>
+                      <td>'.round($pourcentage_SansAvis).' %</td></tr>';
+        }
+        echo '</table>';
+    }
+}
+?>`.split("\n");
+
+      const R = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i); // plage de lignes (index 0)
+
+      /* ===================== ÉTAPES ===================== */
+      const steps = [
+        {
+          node: 0,
+          lines: R(0, 4),
+          title: "Initialisation & connexion",
+          desc: "<code>include</code> ouvre la connexion MySQL (<code>$badge</code>). On récupère le sondage choisi dans le formulaire (<code>$_POST['D1']</code>) et la date du jour.",
+          vars: [
+            ["$badge", "connexion OK"],
+            ["$sondage", "'S07'"],
+            ["$date", "'2024-06-10'"],
+          ],
+        },
+
+        {
+          node: 1,
+          lines: R(6, 11),
+          title: "Test ① — Le sondage a-t-il commencé ?",
+          desc: "On cherche un sondage S07 dont la date de début est dans le futur. <code>mysqli_num_rows</code> compte les lignes trouvées : 0 → le sondage est bien lancé, on entre dans le <code>else</code>.",
+          decision: {
+            cond: "mysqli_num_rows($req) != 0",
+            val: "0 != 0 → <b>FAUX</b>",
+            path: "✔ on continue dans le <b>else</b>",
+          },
+          sql: {
+            q: "SELECT * FROM Sondage\nWHERE DateDebut > '2024-06-10' AND NumS = 'S07'",
+            r: "<b>0 ligne</b> (S07 a débuté le 01/06/2024)",
+          },
+          vars: [["$req", "0 ligne"]],
+        },
+
+        {
+          node: 2,
+          lines: R(12, 17),
+          title: "Test ② — Des réponses existent-elles ?",
+          desc: "On compte les lignes de <code>reponse</code> pour ce sondage : 25. La condition <code>== 0</code> est fausse → des gens ont participé, on passe aux calculs.",
+          decision: {
+            cond: "mysqli_num_rows($req) == 0",
+            val: "25 == 0 → <b>FAUX</b>",
+            path: "✔ direction les statistiques",
+          },
+          sql: {
+            q: "SELECT * FROM reponse WHERE NumS = 'S07'",
+            r: "<b>25 lignes</b>",
+          },
+          vars: [["$req", "25 lignes"]],
+        },
+
+        {
+          node: 3,
+          lines: R(18, 22),
+          title: "Nombre total de participants",
+          desc: "<code>COUNT(DISTINCT idparticipant)</code> : un participant répond à plusieurs questions, donc apparaît sur plusieurs lignes. <code>DISTINCT</code> évite de le compter plusieurs fois. <code>mysqli_fetch_row</code> met le résultat dans <code>$ligne</code>, puis <code>$ligne[0]</code> dans <code>$total_participant</code>.",
+          sql: {
+            q: "SELECT count(DISTINCT idparticipant)\nFROM reponse WHERE NumS = 'S07'",
+            r: "<table><tr><th>count(…)</th></tr><tr><td><b>25</b></td></tr></table>",
+          },
+          vars: [
+            ["$ligne", "[25]"],
+            ["$total_participant", "25"],
+          ],
+        },
+
+        {
+          node: 4,
+          lines: R(24, 30),
+          title: "Nombre de femmes (jointure)",
+          desc: "Le genre est dans la table <code>participant</code>, pas dans <code>reponse</code> : il faut une jointure <code>r.idparticipant = p.idparticipant</code> pour filtrer sur <code>genre = 'F'</code>.",
+          sql: {
+            q: "SELECT count(DISTINCT p.idparticipant)\nFROM reponse r, participant p\nWHERE r.idparticipant = p.idparticipant\n  AND NumS='S07' AND genre='F'",
+            r: "<table><tr><th>count(…)</th></tr><tr><td><b>14</b></td></tr></table>",
+          },
+          vars: [
+            ["$ligne", "[14]"],
+            ["$nb_femmes", "14"],
+          ],
+        },
+
+        {
+          node: 5,
+          lines: R(32, 38),
+          title: "Nombre d'hommes",
+          desc: "Même requête avec <code>genre = 'M'</code>. Vérification : 14 + 11 = 25 ✔",
+          sql: {
+            q: "SELECT count(DISTINCT p.idparticipant)\nFROM reponse r, participant p\nWHERE … AND genre='M'",
+            r: "<table><tr><th>count(…)</th></tr><tr><td><b>11</b></td></tr></table> <i>14 + 11 = 25 ✔</i>",
+          },
+          vars: [
+            ["$ligne", "[11]"],
+            ["$nb_hommes", "11"],
+          ],
+        },
+
+        {
+          node: 6,
+          lines: R(40, 44),
+          title: "Affichage du résumé global",
+          desc: "Les <code>echo</code> envoient du HTML au navigateur. Les variables sont concaténées avec le point <code>.</code> Regardez l'écran simulé : la page se construit !",
+          out: `<p align="center"><b>Statistiques du Sondage</b></p><p>Nombre Total des participants au Sondage : <b>25</b></p><p>Nombre des femmes : <b>14</b></p><p>Nombre des hommes : <b>11</b></p>`,
+        },
+
+        {
+          node: 7,
+          lines: R(46, 51),
+          title: "Ouverture du tableau HTML",
+          desc: 'Génération de <code>&lt;table border="1"&gt;</code> et des lignes d\'en-tête : N°, Question, « Oui », « Non », « Sans Avis ».',
+          out: `<table><tr><th colspan="2"></th><th colspan="3">Pourcentages</th></tr><tr><th>N°</th><th>Question</th><th>"Oui"</th><th>"Non"</th><th>"Sans Avis"</th></tr>`,
+        },
+
+        {
+          node: 8,
+          lines: R(53, 57),
+          title: "Récupération de la liste des questions",
+          desc: "Jointure <code>reponse × question</code>, puis <code>GROUP BY numq</code> pour obtenir une seule ligne par question. Le <code>while</code> va parcourir ce résultat.",
+          sql: {
+            q: "SELECT q.NumQ, contenu\nFROM reponse r, question q\nWHERE r.numq = q.numq AND r.nums = 'S07'\nGROUP BY numq ORDER BY numq",
+            r: `<table><tr><th>NumQ</th><th>contenu</th></tr><tr><td>1</td><td>Êtes-vous satisfait de la formation ?</td></tr><tr><td>2</td><td>Recommanderiez-vous cette formation ?</td></tr><tr><td>3</td><td>Le rythme du cours vous convient-il ?</td></tr></table>`,
+          },
+          vars: [["$req", "3 questions"]],
+        },
+
+        {
+          node: 9,
+          lines: R(59, 62),
+          title: "🔁 Q1 — Entrée dans la boucle, codes de réponse",
+          desc: "<code>mysqli_fetch_row</code> renvoie la 1ʳᵉ question dans <code>$ligne</code>. On fabrique les codes par concaténation : <code>'1'.'O'</code> = <code>'1O'</code>, puis <code>'1N'</code>, <code>'1S'</code>. Ce sont les valeurs stockées dans la colonne <code>rep</code>.",
+          vars: [
+            ["$ligne", "[1,'Êtes-vous satisfait…']"],
+            ["$rep_Oui", "'1O'"],
+            ["$rep_Non", "'1N'"],
+            ["$rep_SansAvis", "'1S'"],
+          ],
+        },
+
+        {
+          node: 9,
+          lines: R(64, 68),
+          focus: [67, 68],
+          title: "🔁 Q1 — Calcul des « Oui » : $req2 → $row → %",
+          desc: "⚠️ Les trois lignes vont ensemble : <b>(1)</b> <code>$req2</code> exécute le COUNT ; <b>(2)</b> <code>$row = mysqli_fetch_row($req2)</code> récupère le résultat → <code>$row[0]</code> vaut 16 ; <b>(3)</b> seulement alors <code>$pourcentage_Oui = ($row[0] / $total_participant) * 100</code> = (16 / 25) * 100 = 64. Sans la ligne 68, <code>$row</code> serait indéfini et la ligne 69 provoquerait une erreur.",
+          sql: {
+            q: "SELECT count(rep) FROM reponse\nWHERE nums='S07' AND rep='1O'",
+            r: "<table><tr><th>count(rep)</th></tr><tr><td><b>16</b></td></tr></table> → (16 / 25) * 100 = <b>64</b>",
+          },
+          vars: [
+            ["$req2", "résultat COUNT"],
+            ["$row", "[16]"],
+            ["$pourcentage_Oui", "64"],
+          ],
+        },
+
+        {
+          node: 9,
+          lines: R(70, 80),
+          title: "🔁 Q1 — Calcul des « Non » et « Sans avis »",
+          desc: "Même schéma répété deux fois : <code>$req2</code> est réexécuté avec <code>'1N'</code> puis <code>'1S'</code>, <code>$row</code> est <b>écrasé</b> à chaque fois par le nouveau résultat (6 puis 3), et le pourcentage est calculé immédiatement après.",
+          sql: {
+            q: "… rep='1N'  → 6\n… rep='1S'  → 3",
+            r: "(6 / 25) * 100 = <b>24</b> • (3 / 25) * 100 = <b>12</b> &nbsp;<i>(64+24+12 = 100 ✔)</i>",
+          },
+          vars: [
+            ["$row", "[3]"],
+            ["$pourcentage_Non", "24"],
+            ["$pourcentage_SansAvis", "12"],
+          ],
+        },
+
+        {
+          node: 9,
+          lines: R(82, 87),
+          title: "🔁 Q1 — Émission de la ligne du tableau",
+          desc: "<code>round()</code> arrondit les pourcentages, puis le <code>echo</code> produit une ligne <code>&lt;tr&gt;</code> avec les emojis 👀 et 🎈. Fin de la 1ʳᵉ itération : retour à la condition du <code>while</code>.",
+          out: `<tr><td>👀 1</td><td>🎈 Êtes-vous satisfait de la formation ?</td><td>64 %</td><td>24 %</td><td>12 %</td></tr>`,
+        },
+
+        {
+          node: 10,
+          lines: R(59, 87),
+          title: "🔁 Q2 — Deuxième itération complète",
+          desc: "<code>mysqli_fetch_row($req)</code> renvoie la question 2 → les codes deviennent <code>'2O'</code>, <code>'2N'</code>, <code>'2S'</code>. Les 3 requêtes <code>$req2</code> donnent 18, 4, 3 → 72 % / 16 % / 12 %.",
+          sql: {
+            q: "rep='2O' → 18   rep='2N' → 4   rep='2S' → 3",
+            r: "<b>72 %</b> • <b>16 %</b> • <b>12 %</b>",
+          },
+          vars: [
+            ["$ligne", "[2,'Recommanderiez-vous…']"],
+            ["$rep_Oui", "'2O'"],
+            ["$row", "[3]"],
+            ["$pourcentage_Oui", "72"],
+            ["$pourcentage_Non", "16"],
+            ["$pourcentage_SansAvis", "12"],
+          ],
+          out: `<tr><td>👀 2</td><td>🎈 Recommanderiez-vous cette formation ?</td><td>72 %</td><td>16 %</td><td>12 %</td></tr>`,
+        },
+
+        {
+          node: 11,
+          lines: R(59, 87),
+          title: "🔁 Q3 — Troisième itération",
+          desc: "Question 3 : 14 Oui, 8 Non, 3 Sans avis → 56 % / 32 % / 12 %. Au tour suivant, <code>mysqli_fetch_row($req)</code> renvoie <code>false</code> : la condition du <code>while</code> devient fausse, on sort de la boucle.",
+          sql: {
+            q: "rep='3O' → 14   rep='3N' → 8   rep='3S' → 3",
+            r: "<b>56 %</b> • <b>32 %</b> • <b>12 %</b>",
+          },
+          vars: [
+            ["$ligne", "[3,'Le rythme du cours…']"],
+            ["$rep_Oui", "'3O'"],
+            ["$row", "[3]"],
+            ["$pourcentage_Oui", "56"],
+            ["$pourcentage_Non", "32"],
+            ["$pourcentage_SansAvis", "12"],
+          ],
+          out: `<tr><td>👀 3</td><td>🎈 Le rythme du cours vous convient-il ?</td><td>56 %</td><td>32 %</td><td>12 %</td></tr>`,
+        },
+
+        {
+          node: 12,
+          lines: R(88, 92),
+          title: "Clôture du tableau et fin du script",
+          desc: "<code>echo '&lt;/table&gt;'</code> ferme le tableau ; les accolades se referment ; la page HTML complète est envoyée au navigateur. 🎉",
+          vars: [["$ligne", "false (fin du while)"]],
+          out: `</table><div class="done-flag">✔ Script terminé — page complète envoyée</div>`,
+        },
+      ];
+
+      /* ===================== COLORATION ===================== */
+      function hl(code) {
+        const e = code
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+        const re =
+          /(&lt;\?php|\?&gt;)|(\/\/.*$)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(\$[A-Za-z_]\w*)|\b(if|else|while|echo|include)\b|\b(mysqli_query|mysqli_num_rows|mysqli_fetch_row|date|strval|round)\b|(\b\d+\b)/gm;
+        let out = "",
+          last = 0,
+          m;
+        while ((m = re.exec(e)) != null) {
+          out += e.slice(last, m.index);
+          const c = m[1]
+            ? "tok-tag"
+            : m[2]
+            ? "tok-com"
+            : m[3]
+            ? "tok-str"
+            : m[4]
+            ? "tok-var"
+            : m[5]
+            ? "tok-kw"
+            : m[6]
+            ? "tok-fn"
+            : "tok-num";
+          out += `<span class="${c}">${m[0]}</span>`;
+          last = m.index + m[0].length;
+        }
+        return out + e.slice(last);
+      }
+
+      /* ===================== CONSTRUCTION ===================== */
+      const codeView = document.getElementById("code-view");
+      phpSource.forEach((l, i) => {
+        const s = document.createElement("span");
+        s.className = "line";
+        s.id = "L" + i;
+        s.innerHTML =
+          `<span class="ln">${String(i + 1).padStart(2, "0")}</span>` +
+          hl(l || " ");
+        codeView.appendChild(s);
+      });
+      const tl = document.getElementById("timeline");
+      steps.forEach((s, i) => {
+        const d = document.createElement("div");
+        d.className = "seg";
+        d.textContent = i + 1;
+        d.title = s.title;
+        d.onclick = () => {
+          pause();
+          cur = i;
+          render();
+        };
+        tl.appendChild(d);
+      });
+      const flowScroll = document.getElementById("flow-scroll");
+      const flowNodes = [...flowScroll.querySelectorAll(".fnode")];
+
+      /* Scroll centré DANS un conteneur (sans faire bouger la page) */
+      function centerIn(container, el) {
+        if (!el) return;
+        container.scrollTo({
+          top: el.offsetTop - container.clientHeight / 2 + el.offsetHeight / 2,
+          behavior: "smooth",
+        });
+      }
+
+      /* ===================== MOTEUR ===================== */
+      let cur = 0,
+        playing = false,
+        timer = null,
+        spIdx = 0;
+      const SPEEDS = [1, 1.5, 2, 0.5],
+        BASE = 5000;
+
+      const varsUntil = (i) => {
+        const m = new Map();
+        for (let k = 0; k <= i; k++)
+          (steps[k].vars || []).forEach(([n, v]) => m.set(n, v));
+        return m;
+      };
+      const outUntil = (i) =>
+        steps
+          .slice(0, i + 1)
+          .map((s) => s.out || "")
+          .join("");
+
+      function render() {
+        const s = steps[cur];
+
+        // code
+        document
+          .querySelectorAll(".line")
+          .forEach((l) => l.classList.remove("active", "focus"));
+        s.lines.forEach((i) =>
+          document.getElementById("L" + i)?.classList.add("active")
+        );
+        (s.focus || []).forEach((i) =>
+          document.getElementById("L" + i)?.classList.add("focus")
+        );
+        const mid = s.lines[Math.floor(s.lines.length / 2)];
+        centerIn(codeView, document.getElementById("L" + mid));
+
+        // flux (auto-scroll)
+        flowNodes.forEach((n, i) => {
+          n.classList.toggle("active", i === s.node);
+          n.classList.toggle("done", i < s.node);
+        });
+        centerIn(flowScroll, flowNodes[s.node]);
+
+        // explication
+        const card = document.getElementById("expl-card");
+        card.classList.remove("pop");
+        void card.offsetWidth;
+        card.classList.add("pop");
+        document.getElementById("step-badge").textContent = `Étape ${
+          cur + 1
+        } / ${steps.length} • lignes ${s.lines[0] + 1}–${s.lines.at(-1) + 1}`;
+        document.getElementById("step-title").textContent = s.title;
+        document.getElementById("step-desc").innerHTML = s.desc;
+        const dec = document.getElementById("decision");
+        dec.style.display = s.decision ? "block" : "none";
+        if (s.decision)
+          dec.innerHTML = `⚖️ Condition : <code>${s.decision.cond}</code><br>Résultat : ${s.decision.val} &nbsp;${s.decision.path}`;
+
+        // sql
+        document.getElementById("sql-zone").innerHTML = s.sql
+          ? `<div class="sql-q">${s.sql.q.replace(
+              /</g,
+              "&lt;"
+            )}</div><div class="sql-r">➜ ${s.sql.r}</div>`
+          : `<div class="empty">Aucune requête à cette étape</div>`;
+
+        // variables
+        const changed = new Set((s.vars || []).map((v) => v[0])),
+          vars = varsUntil(cur);
+        document.getElementById("vars-zone").innerHTML = vars.size
+          ? [...vars]
+              .map(
+                ([n, v]) =>
+                  `<span class="vchip ${
+                    changed.has(n) ? "new" : ""
+                  }"><b>${n}</b>=<span>${v}</span></span>`
+              )
+              .join("")
+          : `<div class="empty">—</div>`;
+
+        // écran
+        document.getElementById("screen").innerHTML =
+          outUntil(cur) ||
+          `<div class="empty">(page vide pour l'instant)</div>`;
+
+        // timeline / boutons
+        [...tl.children].forEach((d, i) => {
+          d.classList.toggle("active", i === cur);
+          d.classList.toggle("done", i < cur);
+        });
+        document.getElementById("counter").textContent = `${cur + 1} / ${
+          steps.length
+        }`;
+        document.getElementById("btn-prev").disabled = cur === 0;
+        document.getElementById("btn-next").disabled = cur === steps.length - 1;
+      }
+
+      function next() {
+        if (cur < steps.length - 1) {
+          cur++;
+          render();
+        } else pause();
+      }
+      function prev() {
+        if (cur > 0) {
+          cur--;
+          render();
+        }
+      }
+      function pause() {
+        playing = false;
+        document.getElementById("btn-play").textContent = "▶ Lecture";
+        clearTimeout(timer);
+      }
+      function schedule() {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          if (cur < steps.length - 1) {
+            cur++;
+            render();
+            schedule();
+          } else pause();
+        }, BASE / SPEEDS[spIdx]);
+      }
+      function play() {
+        if (cur === steps.length - 1) {
+          cur = 0;
+          render();
+        }
+        playing = true;
+        document.getElementById("btn-play").textContent = "⏸ Pause";
+        schedule();
+      }
+
+      document.getElementById("btn-next").onclick = () => {
+        pause();
+        next();
+      };
+      document.getElementById("btn-prev").onclick = () => {
+        pause();
+        prev();
+      };
+      document.getElementById("btn-start").onclick = () => {
+        pause();
+        cur = 0;
+        render();
+      };
+      document.getElementById("btn-play").onclick = () =>
+        playing ? pause() : play();
+      document.getElementById("btn-speed").onclick = (e) => {
+        spIdx = (spIdx + 1) % SPEEDS.length;
+        e.target.textContent = SPEEDS[spIdx] + "×";
+        if (playing) schedule();
+      };
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") {
+          pause();
+          next();
+        } else if (e.key === "ArrowLeft") {
+          pause();
+          prev();
+        } else if (e.key === " ") {
+          e.preventDefault();
+          playing ? pause() : play();
+        } else if (e.key === "Home") {
+          pause();
+          cur = 0;
+          render();
+        }
+      });
+      render();
+    </script>
+    <!-- 🔒 Protection du contenu STI -->
+    <link rel="stylesheet" href="../../assets/css/protection.css?v=139" />
+    <script src="../../assets/js/protection.js?v=139" defer></script>
+    <!-- /Protection -->
+    <script src="../../assets/js/supabase-umd.js"></script>
+    <script src="../../assets/js/config.js?v=139"></script>
+    <script src="../../assets/js/acces.js?v=139"></script>
+  </body>
+</html>
