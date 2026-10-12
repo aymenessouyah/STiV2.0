@@ -645,23 +645,6 @@
             recevoirMainLeveeLive(p.payload);
           }
         })
-        .on("broadcast", { event: "labo3_sous_session" }, function (p) {
-          var pl = p && p.payload;
-          if (pl && pl.uid) {
-            sousSessionsLabo3Map[pl.uid] = {
-              uid: pl.uid,
-              nom: pl.nom || "",
-              prenom: pl.prenom || "",
-              classe: pl.classe || "—",
-              photo: pl.photo || "",
-              score: pl.score || 0,
-              mode: pl.mode || "📷 Reconnaissance faciale",
-              ts: Number(pl.ts || Date.now()),
-              active: pl.action !== "fermer" && Boolean(pl.nom || pl.prenom)
-            };
-            rendTable();
-          }
-        })
         .subscribe();
     } catch (e) {}
     majBoutonNotif();
@@ -900,7 +883,6 @@
   var idsAccesParMsg = {};
   var listeAlertesSecurite = [];
   var mainsLeveesMap = {};
-  var sousSessionsLabo3Map = {};
   var cfgSecuriteAdmin = {
     type: "sec_config",
     verrouActif: false,
@@ -1132,30 +1114,6 @@
           } catch (e) {}
           return;
         }
-        if (pg.indexOf("LABO3_VISAGE:") === 0) {
-          return;
-        }
-        if (pg.indexOf("LABO3_SESSION:") === 0) {
-          try {
-            var ssL = JSON.parse(a.lieu || "{}");
-            var uidSs = ssL.uid || pg.slice(14) || a.user_id;
-            var tsSs = Number(ssL.ts || new Date(a.debut).getTime() || 0);
-            if (uidSs && (!sousSessionsLabo3Map[uidSs] || tsSs >= sousSessionsLabo3Map[uidSs].ts)) {
-              sousSessionsLabo3Map[uidSs] = {
-                uid: uidSs,
-                nom: ssL.nom || "",
-                prenom: ssL.prenom || "",
-                classe: ssL.classe || "—",
-                photo: ssL.photo || "",
-                score: ssL.score || 0,
-                mode: ssL.mode || "📷 Reconnaissance faciale",
-                ts: tsSs,
-                active: ssL.action !== "fermer" && Boolean(ssL.nom || ssL.prenom)
-              };
-            }
-          } catch (e) {}
-          return;
-        }
         if (pg.indexOf("MAIN_LEVEE:") === 0) {
           try {
             var ml = JSON.parse(a.lieu || "{}");
@@ -1293,8 +1251,6 @@
             nomQ: nomQ,
             quiz: infoQ.quiz || nomQ,
             note: infoQ.note || "—",
-            eleveSousSession: infoQ.eleveSousSession || "",
-            classeSousSession: infoQ.classeSousSession || "",
             ts: tsQuiz
           });
         }
@@ -1463,8 +1419,6 @@
           pg.indexOf("COFFRE_TP") === 0 ||
           pg.indexOf("KAHOOT_") === 0 ||
           pg.indexOf("COPIE_") === 0 ||
-          pg.indexOf("LABO3_VISAGE:") === 0 ||
-          pg.indexOf("LABO3_SESSION:") === 0 ||
           pg.indexOf("SEC_ALERTE:") === 0 ||
           pg.indexOf("SEC_SESS:") === 0 ||
           pg.indexOf("MAIN_LEVEE:") === 0 ||
@@ -2128,14 +2082,6 @@
         bOn.textContent = "🟢 En ligne (" + pgOn + ")";
         ligneIdentite.appendChild(bOn);
       }
-      var ssAct = sousSessionsLabo3Map && sousSessionsLabo3Map[p.id];
-      if (ssAct && ssAct.active && (ssAct.nom || ssAct.prenom)) {
-        var bSs = document.createElement("span");
-        bSs.style.cssText = "display:inline-flex;align-items:center;gap:4px;margin-left:5px;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:900;border:1.5px solid #0284c7;background:#e0f2fe;color:#0369a1;";
-        bSs.textContent = "📷 Sous-session : " + ((ssAct.nom || "") + " " + (ssAct.prenom || "")).trim() + " (" + (ssAct.classe || "—") + ")";
-        bSs.title = "Élève identifié par reconnaissance faciale dans la session elevelabo3 (" + (ssAct.score || 96) + "%)";
-        ligneIdentite.appendChild(bSs);
-      }
       var estEnPause = Boolean(cfgSecuriteAdmin.pausesUids && cfgSecuriteAdmin.pausesUids[p.id]);
       if (estEnPause) {
         var bP = document.createElement("span");
@@ -2474,10 +2420,7 @@
       var p = mapProf[q.uid];
       var tr = document.createElement("tr");
       var nomEl = p ? contact(p) : q.uid;
-      if (q.eleveSousSession) {
-        nomEl = "📷 " + q.eleveSousSession + " [elevelabo3]";
-      }
-      var clEl = p ? (lyceePropre(p) + " · " + (q.classeSousSession || p.classe || "—")) : (q.classeSousSession || "—");
+      var clEl = p ? (lyceePropre(p) + " · " + (p.classe || "—")) : "—";
       [nomEl, clEl, "🏆 " + q.quiz, q.note, fmtDate(q.ts)].forEach(function (v, idx) {
         var td = document.createElement("td");
         if (idx === 0 || idx === 3) td.style.fontWeight = "800";
