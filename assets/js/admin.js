@@ -248,6 +248,14 @@
     try { txt = txt.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
     return txt.indexOf("issaoui") !== -1 && txt.indexOf("amel") !== -1;
   }
+  function estProfilMrezguiaMeriem(p) {
+    if (!p) return false;
+    var em = String(p.email || "").trim().toLowerCase();
+    if (em === "mrezguiameriem@gmail.com" || em.indexOf("mrezguiameriem@") === 0) return true;
+    var txt = [p.nom || "", p.prenom || "", em].join(" ").toLowerCase();
+    try { txt = txt.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
+    return txt.indexOf("mrezguiameriem") !== -1 || (txt.indexOf("mrezguia") !== -1 && txt.indexOf("meriem") !== -1);
+  }
   function estGold(p) {
     if (!p) return false;
     if (estClasseProfLabo(p.classe) || estProfilIssaouiAmel(p)) return true;
@@ -955,6 +963,22 @@
             var sigProfGold = { type: "statut", uid: p.id, statut: "actif", gold: true, classe: "Prof", ts: Date.now() };
             try { sb.channel("sti-diffusion").send({ type: "broadcast", event: "statut", payload: sigProfGold }); } catch (e) {}
             fetch("https://ntfy.sh/" + CANAL_DIFFUSION, { method: "POST", body: JSON.stringify(sigProfGold) }).catch(function () {});
+          });
+        }
+      }
+      if (estProfilMrezguiaMeriem(p)) {
+        var doitMajSbMeriem = (p.classe !== "Prof" || p.statut === "en_attente" || !p.statut);
+        p.classe = "Prof";
+        if (p.statut === "en_attente" || !p.statut) p.statut = "actif";
+        if (!estHorsLigne && doitMajSbMeriem && !window["__stiSyncMeriem_" + p.id]) {
+          window["__stiSyncMeriem_" + p.id] = true;
+          sb.from("profiles").update({
+            classe: "Prof",
+            statut: p.statut
+          }).eq("id", p.id).then(function () {
+            var sigProfMeriem = { type: "statut", uid: p.id, statut: p.statut, gold: estGold(p), classe: "Prof", ts: Date.now() };
+            try { sb.channel("sti-diffusion").send({ type: "broadcast", event: "statut", payload: sigProfMeriem }); } catch (e) {}
+            fetch("https://ntfy.sh/" + CANAL_DIFFUSION, { method: "POST", body: JSON.stringify(sigProfMeriem) }).catch(function () {});
           });
         }
       }

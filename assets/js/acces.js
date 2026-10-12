@@ -112,6 +112,23 @@
     return txt.indexOf("issaoui") !== -1 && txt.indexOf("amel") !== -1;
   }
 
+  function estProfilMrezguiaMeriem(p, meta) {
+    if (!p && !meta) return false;
+    var m = (meta || (p && p.user_metadata) || {});
+    var em = String((p && p.email) || m.email || "").trim().toLowerCase();
+    if (em === "mrezguiameriem@gmail.com" || em.indexOf("mrezguiameriem@") === 0) return true;
+    var txt = [
+      (p && p.nom) || "",
+      (p && p.prenom) || "",
+      em,
+      m.nom || "",
+      m.prenom || "",
+      m.full_name || ""
+    ].join(" ").toLowerCase();
+    try { txt = txt.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
+    return txt.indexOf("mrezguiameriem") !== -1 || (txt.indexOf("mrezguia") !== -1 && txt.indexOf("meriem") !== -1);
+  }
+
   function estGoldProfil(p, meta) {
     if (!p && !meta) return false;
     if (p && estClasseProfLabo(p.classe, p.email)) return true;
@@ -770,6 +787,11 @@
         c.statut = "actif";
         c.isAdmin = false;
       }
+      if (c && estProfilMrezguiaMeriem(c, c.user_metadata)) {
+        c.classe = "Prof";
+        if (!c.statut || c.statut === "en_attente") c.statut = "actif";
+        c.isAdmin = false;
+      }
       if (c && estClasseProfLabo(c.classe, c.email)) {
         c.ts = Date.now();
         c.gold = true;
@@ -910,6 +932,10 @@
         return false;
       }
       var st = rp.data.statut;
+      if (estProfilMrezguiaMeriem(rp.data, user.user_metadata) && (!st || st === "en_attente")) {
+        st = "actif";
+        rp.data.statut = "actif";
+      }
       if (st === "actif") {
         if (estProfilIssaouiAmel(rp.data, user.user_metadata)) {
           var lycPurAmel = lyceePropre(rp.data);
@@ -921,6 +947,12 @@
           rp.data.classe = "Prof";
           rp.data.lycee = nvLycAmel;
           rp.data.gold = true;
+        }
+        if (estProfilMrezguiaMeriem(rp.data, user.user_metadata)) {
+          if (rp.data.classe !== "Prof") {
+            sb.from("profiles").update({ classe: "Prof" }).eq("id", user.id).then(function () {});
+          }
+          rp.data.classe = "Prof";
         }
         currentClasse = rp.data.classe || "";
         var isLaboP = estClasseProfLabo(currentClasse, user.email);
@@ -964,6 +996,9 @@
       if (estProfilIssaouiAmel(p, user.user_metadata)) {
         p.classe = "Prof";
         p.gold = true;
+      }
+      if (estProfilMrezguiaMeriem(p, user.user_metadata)) {
+        p.classe = "Prof";
       }
       currentClasse = (p && p.classe) || "";
       var isLaboP = estClasseProfLabo(currentClasse, user.email);
