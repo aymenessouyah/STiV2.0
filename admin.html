@@ -882,202 +882,207 @@
   }
   .btn-edit-inline:hover { border-color: #f4511e; color: #f4511e; }
 
-  /* ---------- Fenêtre de discussion style Facebook Messenger (Prof ↔ Candidats) ---------- */
+  /* ---------- Fenêtre de discussion style Meta Messenger (Prof ↔ Candidats) ---------- */
   .msn-admin-win {
     position: fixed;
     right: 18px;
     bottom: 72px;
     z-index: 9850;
-    width: 680px;
+    width: 710px;
     max-width: calc(100vw - 24px);
-    height: 510px;
-    max-height: calc(100vh - 96px);
-    background: #fffdf7;
-    color: #23201a;
-    border: 2.5px solid #23201a;
-    border-radius: 20px;
-    box-shadow: 0 18px 46px rgba(0,0,0,.28), 5px 5px 0 #23201a;
+    height: 540px;
+    max-height: calc(100vh - 92px);
+    background: #ffffff;
+    color: #050505;
+    border: 1px solid rgba(0,0,0,.09);
+    border-radius: 18px;
+    box-shadow: 0 12px 38px rgba(0,0,0,.2), 0 2px 10px rgba(0,0,0,.08);
     display: none;
-    grid-template-columns: 235px 1fr;
+    grid-template-columns: 260px 1fr;
     overflow: hidden;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
   .msn-admin-win.visible {
     display: grid;
   }
   .msn-sidebar {
-    background: #f6efe2;
-    border-right: 2px solid #e2d5be;
+    background: #ffffff;
+    border-right: 1px solid #e4e6eb;
     display: flex;
     flex-direction: column;
     min-height: 0;
   }
   .msn-sb-head {
-    padding: 10px 12px;
-    background: #23201a;
-    color: #fff;
-    font-weight: 900;
-    font-size: 13px;
+    padding: 12px 14px 8px;
+    background: #ffffff;
+    color: #050505;
+    font-weight: 800;
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 6px;
   }
   .msn-sb-search {
-    padding: 8px;
-    border-bottom: 1.5px solid #e2d5be;
+    padding: 6px 10px 8px;
+    border-bottom: 1px solid #e4e6eb;
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
   .msn-sb-search input {
     width: 100%;
-    border: 1.5px solid #23201a;
+    border: none;
     border-radius: 999px;
-    padding: 5px 10px;
-    font-size: 12px;
-    font-weight: 700;
-    background: #fff;
-    color: #23201a;
+    padding: 7px 12px;
+    font-size: 12.5px;
+    font-weight: 500;
+    background: #f0f2f5;
+    color: #050505;
     outline: none;
+  }
+  .msn-sb-search input:focus {
+    box-shadow: 0 0 0 2px rgba(0,132,255,.25);
   }
   .msn-user-list {
     flex: 1;
     overflow-y: auto;
-    padding: 6px;
+    padding: 6px 8px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
   }
   .msn-user-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 8px;
-    border-radius: 12px;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
     cursor: pointer;
-    border: 1.5px solid transparent;
-    background: rgba(255,255,255,.55);
+    border: none;
+    background: transparent;
     text-align: left;
-    transition: background .12s, border-color .12s;
+    transition: background .12s;
   }
   .msn-user-item:hover {
-    background: #fff;
-    border-color: #d6c5a9;
+    background: #f0f2f5;
   }
   .msn-user-item.actif {
-    background: #fff3e0;
-    border-color: #f4511e;
-    box-shadow: 2px 2px 0 #23201a;
+    background: #e7f3ff;
   }
   .msn-user-item.non-lu {
-    background: linear-gradient(120deg, #fff3e0 0%, #ffe0b2 100%);
-    border-color: #f4511e;
-    box-shadow: 2px 2px 0 #d84315;
+    background: #f0f2f5;
   }
   .msn-tabs-bar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5px;
+    display: flex;
+    gap: 6px;
   }
   .msn-tab-btn {
-    border: 1.5px solid #23201a;
+    border: none;
     border-radius: 999px;
-    padding: 5px 8px;
-    font-size: 11px;
-    font-weight: 900;
-    background: #fff;
-    color: #23201a;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #f0f2f5;
+    color: #050505;
     cursor: pointer;
     text-align: center;
     white-space: nowrap;
+    transition: background .12s, color .12s;
+  }
+  .msn-tab-btn:hover {
+    background: #e4e6eb;
   }
   .msn-tab-btn.actif {
-    background: #f4511e;
-    color: #fff;
-    box-shadow: 1.5px 1.5px 0 #23201a;
+    background: #e7f3ff;
+    color: #0084ff;
   }
   @keyframes msnPulseGlow {
-    0%, 100% { box-shadow: 3px 3px 0 #23201a, 0 0 0 0 rgba(244,81,30,.75); transform: scale(1); }
-    50% { box-shadow: 3px 3px 0 #23201a, 0 0 0 11px rgba(244,81,30,0); transform: scale(1.05); }
+    0%, 100% { box-shadow: 0 6px 20px rgba(0,132,255,.45), 0 0 0 0 rgba(118,56,250,.75); transform: scale(1); }
+    50% { box-shadow: 0 8px 26px rgba(255,82,128,.55), 0 0 0 11px rgba(118,56,250,0); transform: scale(1.05); }
   }
   #btn-messenger-dock.alerte-nonlu,
   #btn-messenger-top.alerte-nonlu {
     animation: msnPulseGlow 1.5s infinite ease-in-out;
-    background: linear-gradient(125deg, #c0392b 0%, #f4511e 100%) !important;
+    background: linear-gradient(135deg, #0084ff 0%, #7638fa 52%, #ff5280 100%) !important;
     color: #fff !important;
-    border-color: #23201a !important;
+    border-color: rgba(255,255,255,.4) !important;
   }
   .msn-av {
     position: relative;
-    width: 34px;
-    height: 34px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #f4511e, #ff8a50);
+    background: linear-gradient(135deg, #0084ff, #7638fa);
     color: #fff;
-    font-weight: 900;
-    font-size: 12px;
+    font-weight: 800;
+    font-size: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid #23201a;
+    border: none;
     flex-shrink: 0;
   }
   .msn-av-dot {
     position: absolute;
-    right: -1px;
-    bottom: -1px;
-    width: 10px;
-    height: 10px;
+    right: 0;
+    bottom: 0;
+    width: 11px;
+    height: 11px;
     border-radius: 50%;
-    border: 1.5px solid #fff;
+    border: 2px solid #fff;
     background: #9ca3af;
   }
-  .msn-av-dot.online { background: #22c55e; }
+  .msn-av-dot.online { background: #31a24c; }
   .msn-u-meta {
     min-width: 0;
     flex: 1;
   }
   .msn-u-nom {
-    font-size: 12px;
-    font-weight: 900;
-    color: #23201a;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #050505;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .msn-user-item.non-lu .msn-u-nom {
+    font-weight: 800;
+  }
   .msn-u-sub {
-    font-size: 10.5px;
-    color: #6b6152;
-    font-weight: 700;
+    font-size: 11.5px;
+    color: #65676b;
+    font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .msn-u-badge {
-    background: #f4511e;
+    background: #0084ff;
     color: #fff;
-    font-size: 10px;
-    font-weight: 900;
-    padding: 1px 6px;
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 2px 7px;
     border-radius: 999px;
-    border: 1px solid #23201a;
+    border: none;
     flex-shrink: 0;
   }
   .msn-chat-col {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    background: #f3ead9;
+    background: #ffffff;
   }
   .msn-chat-head {
-    background: linear-gradient(125deg, #23201a 0%, #3a342a 55%, #f4511e 100%);
-    color: #fff;
-    padding: 9px 12px;
+    background: #ffffff;
+    color: #050505;
+    padding: 10px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    border-bottom: 2px solid #23201a;
+    border-bottom: 1px solid #e4e6eb;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04);
   }
   .msn-chat-feed {
     flex: 1;
@@ -1085,8 +1090,8 @@
     padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    background: radial-gradient(circle at 20% 20%, #fffdf7 0%, #f3ead9 100%);
+    gap: 6px;
+    background: #ffffff;
   }
   .msn-quote-bar {
     display: none;
@@ -1094,19 +1099,19 @@
     justify-content: space-between;
     gap: 8px;
     padding: 6px 12px;
-    background: #fff3e0;
-    border-top: 1.5px solid #f4511e;
+    background: #f0f2f5;
+    border-top: 1px solid #e4e6eb;
     font-size: 11.5px;
-    font-weight: 800;
-    color: #5a5244;
+    font-weight: 600;
+    color: #65676b;
   }
   .msn-chat-form {
-    padding: 9px 10px;
-    background: #fffdf7;
-    border-top: 2px solid #23201a;
+    padding: 8px 10px;
+    background: #ffffff;
+    border-top: 1px solid #e4e6eb;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
   }
   #msn-btn-back-mob,
   #msn-sb-close {
@@ -2955,34 +2960,38 @@
     </div>
   </div>
 
-  <!-- Fenêtre de discussion style Facebook Messenger (Prof ↔ Candidats) -->
+  <!-- Fenêtre de discussion style Meta Messenger (Prof ↔ Candidats) -->
   <button
     type="button"
     id="btn-messenger-dock"
     title="Ouvrir Messenger STI (Discussions en direct avec les candidats)"
-    style="position:fixed;left:18px;bottom:18px;z-index:9500;display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:999px;border:2.5px solid #23201a;background:linear-gradient(125deg,#23201a 0%,#f4511e 100%);color:#fff;font:900 13px/1 system-ui,'Segoe UI',sans-serif;cursor:pointer;box-shadow:3px 3px 0 #23201a,0 8px 20px rgba(0,0,0,.24)"
+    style="position:fixed;left:18px;bottom:18px;z-index:9500;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,.35);background:linear-gradient(135deg,#0084ff 0%,#7638fa 52%,#ff5280 100%);color:#fff;font:800 13px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(0,132,255,.36),0 2px 8px rgba(0,0,0,.18)"
   >
-    <span>💬 Messenger STI</span>
-    <span id="badge-msn-admin" style="display:none;background:#ffd54f;color:#23201a;font-size:11px;font-weight:900;padding:2px 7px;border-radius:999px;border:1.5px solid #23201a">0</span>
+    <svg width="20" height="20" viewBox="0 0 36 36" fill="none" aria-hidden="true" style="flex-shrink:0"><path d="M18 2C9.163 2 2 8.636 2 16.82c0 4.66 2.31 8.818 5.925 11.535.308.232.495.596.506.985l.102 3.076a1.28 1.28 0 0 0 1.796 1.132l3.433-1.515c.29-.128.613-.152.92-.069 1.057.285 2.174.436 3.318.436 8.837 0 16-6.636 16-14.82S26.837 2 18 2Z" fill="#fff" fill-opacity=".22"/><path d="m11.59 21.14 4.7-7.46a2.4 2.4 0 0 1 3.47-.64l3.74 2.8a.96.96 0 0 0 1.16-.01l5.05-3.83c.67-.51 1.55.3 1.1.99l-4.7 7.46a2.4 2.4 0 0 1-3.47.64l-3.74-2.8a.96.96 0 0 0-1.16.01l-5.05 3.83c-.67.51-1.55-.3-1.1-.99Z" fill="#fff"/></svg>
+    <span>Messenger STI</span>
+    <span id="badge-msn-admin" style="display:none;background:#e41e3f;color:#fff;font-size:11px;font-weight:800;padding:2px 7px;border-radius:999px;border:2px solid #fff">0</span>
   </button>
 
   <div class="msn-admin-win" id="sti-messenger-admin" aria-label="Messenger STI">
     <!-- Colonne gauche : liste des conversations candidats -->
     <div class="msn-sidebar">
       <div class="msn-sb-head">
-        <span>💬 Messenger STI</span>
+        <span style="display:flex;align-items:center;gap:8px">
+          <svg width="22" height="22" viewBox="0 0 36 36" fill="none" aria-hidden="true"><defs><linearGradient id="admMetaMsnG" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#0099FF"/><stop offset="52%" stop-color="#7638FA"/><stop offset="100%" stop-color="#FF5280"/></linearGradient></defs><path d="M18 2C9.163 2 2 8.636 2 16.82c0 4.66 2.31 8.818 5.925 11.535.308.232.495.596.506.985l.102 3.076a1.28 1.28 0 0 0 1.796 1.132l3.433-1.515c.29-.128.613-.152.92-.069 1.057.285 2.174.436 3.318.436 8.837 0 16-6.636 16-14.82S26.837 2 18 2Z" fill="url(#admMetaMsnG)"/><path d="m11.59 21.14 4.7-7.46a2.4 2.4 0 0 1 3.47-.64l3.74 2.8a.96.96 0 0 0 1.16-.01l5.05-3.83c.67-.51 1.55.3 1.1.99l-4.7 7.46a2.4 2.4 0 0 1-3.47.64l-3.74-2.8a.96.96 0 0 0-1.16.01l-5.05 3.83c-.67.51-1.55-.3-1.1-.99Z" fill="#fff"/></svg>
+          <span>Discussions</span>
+        </span>
         <div style="display:flex;align-items:center;gap:6px">
-          <button type="button" id="msn-btn-broadcast" style="border:1.5px solid #ffd54f;background:rgba(255,255,255,.15);color:#ffd54f;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:900;cursor:pointer" title="Diffuser une annonce à toute une classe">📢 Classe</button>
-          <button type="button" id="msn-sb-close" style="border:1.5px solid rgba(255,255,255,.65);background:rgba(255,255,255,.18);color:#fff;border-radius:8px;padding:3px 9px;font-size:12px;font-weight:900;cursor:pointer" title="Fermer Messenger STI">✕</button>
+          <button type="button" id="msn-btn-broadcast" style="border:none;background:#e7f3ff;color:#0084ff;border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer" title="Diffuser une annonce à toute une classe">📢 Classe</button>
+          <button type="button" id="msn-sb-close" style="border:none;background:#f0f2f5;color:#050505;border-radius:50%;width:30px;height:30px;font-size:13px;font-weight:700;cursor:pointer" title="Fermer Messenger STI">✕</button>
         </div>
       </div>
       <div class="msn-sb-search" style="display:flex;flex-direction:column;gap:6px">
+        <input type="search" id="msn-search-user" placeholder="🔎 Rechercher sur Messenger…" />
         <div class="msn-tabs-bar">
-          <button type="button" class="msn-tab-btn actif" id="msn-tab-nonlus" title="Afficher en priorité les messages non lus">🔴 Non lus (0)</button>
-          <button type="button" class="msn-tab-btn" id="msn-tab-tous" title="Afficher tous les candidats">👥 Tous</button>
+          <button type="button" class="msn-tab-btn actif" id="msn-tab-nonlus" title="Afficher en priorité les messages non lus">Non lus (0)</button>
+          <button type="button" class="msn-tab-btn" id="msn-tab-tous" title="Afficher tous les candidats">Tout</button>
         </div>
-        <input type="search" id="msn-search-user" placeholder="🔎 Chercher un candidat…" />
-        <select id="msn-filter-classe" style="width:100%;border:1.5px solid #23201a;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;background:#fff;color:#23201a;outline:none" title="Filtrer les candidats par classe">
+        <select id="msn-filter-classe" style="width:100%;border:none;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;background:#f0f2f5;color:#050505;outline:none" title="Filtrer les candidats par classe">
           <option value="*">🏫 Toutes les classes</option>
         </select>
       </div>
@@ -2992,44 +3001,44 @@
     <!-- Colonne droite : fil de discussion en bulles -->
     <div class="msn-chat-col">
       <div class="msn-chat-head">
-        <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1">
-          <button type="button" id="msn-btn-back-mob" style="border:1.5px solid rgba(255,255,255,.85);background:rgba(255,255,255,.22);color:#fff;border-radius:10px;padding:5px 11px;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap;flex-shrink:0" title="Retour à la liste des candidats">⬅ Candidats</button>
-          <div class="msn-av" id="msn-head-av">AE<span class="msn-av-dot" id="msn-head-dot"></span></div>
+        <div style="display:flex;align-items:center;gap:9px;min-width:0;flex:1">
+          <button type="button" id="msn-btn-back-mob" style="border:none;background:#f0f2f5;color:#0084ff;border-radius:999px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0" title="Retour à la liste des candidats">⬅ Discussions</button>
+          <div class="msn-av" id="msn-head-av" style="width:38px;height:38px">AE<span class="msn-av-dot" id="msn-head-dot"></span></div>
           <div id="msn-head-info-wrap" style="min-width:0;cursor:pointer" title="Toucher pour changer de candidat">
-            <div id="msn-head-nom" style="font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Sélectionnez un candidat</div>
-            <div id="msn-head-sub" style="font-size:10.5px;opacity:.92;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Discussion instantanée STI</div>
+            <div id="msn-head-nom" style="font-weight:700;font-size:14px;color:#050505;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Sélectionnez un candidat</div>
+            <div id="msn-head-sub" style="font-size:11px;color:#65676b;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Actif sur Messenger STI</div>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
-          <button type="button" id="msn-head-nonlus" style="border:1.5px solid #ffd54f;background:rgba(255,213,79,.2);color:#ffd54f;border-radius:8px;padding:3px 7px;font-size:11px;font-weight:900;cursor:pointer" title="Voir tous les messages non lus">🔴 Non lus</button>
-          <button type="button" id="msn-head-wa" style="display:none;border:1.5px solid rgba(255,255,255,.55);background:#25D366;color:#fff;border-radius:8px;padding:3px 7px;font-size:11px;font-weight:900;cursor:pointer" title="Envoyer aussi sur WhatsApp">📱</button>
-          <button type="button" id="msn-head-fiche" style="display:none;border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:3px 7px;font-size:11px;font-weight:900;cursor:pointer" title="Ouvrir la fiche bilan de ce candidat">📊</button>
-          <button type="button" id="msn-head-close" style="border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:3px 8px;font-size:12px;font-weight:900;cursor:pointer" title="Réduire / Fermer Messenger">✕</button>
+        <div style="display:flex;align-items:center;gap:5px;flex-shrink:0">
+          <button type="button" id="msn-head-nonlus" style="border:none;background:#e7f3ff;color:#0084ff;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer" title="Voir tous les messages non lus">🔴 Non lus</button>
+          <button type="button" id="msn-head-wa" style="display:none;border:none;background:#25D366;color:#fff;border-radius:50%;width:32px;height:32px;font-size:13px;font-weight:700;cursor:pointer" title="Envoyer aussi sur WhatsApp">📱</button>
+          <button type="button" id="msn-head-fiche" style="display:none;border:none;background:#f0f2f5;color:#0084ff;border-radius:50%;width:32px;height:32px;font-size:13px;font-weight:700;cursor:pointer" title="Ouvrir la fiche bilan de ce candidat">ℹ️</button>
+          <button type="button" id="msn-head-close" style="border:none;background:#f0f2f5;color:#0084ff;border-radius:50%;width:32px;height:32px;font-size:14px;font-weight:700;cursor:pointer" title="Réduire / Fermer Messenger">✕</button>
         </div>
       </div>
 
       <div class="msn-chat-feed" id="msn-chat-feed">
-        <div style="margin:auto;text-align:center;color:#6b6152;font-size:12.5px;font-weight:700;padding:18px">
-          👈 Cliquez sur un candidat dans la colonne de gauche (ou sur <b>📩</b> / <b>↩️ Répondre</b> dans le tableau) pour discuter en direct style Messenger.
+        <div style="margin:auto;text-align:center;color:#65676b;font-size:12.5px;font-weight:500;padding:18px">
+          👈 Cliquez sur un candidat dans la colonne de gauche (ou sur <b>📩</b> / <b>↩️ Répondre</b> dans le tableau) pour discuter en direct sur Messenger.
         </div>
       </div>
 
       <div class="msn-quote-bar" id="msn-admin-quote-bar">
-        <span id="msn-admin-quote-txt" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">↩️ En réponse à : « … »</span>
-        <button type="button" id="msn-admin-quote-clear" style="border:1px solid #23201a;background:#fff;color:#23201a;border-radius:999px;padding:1px 6px;font-size:10px;font-weight:900;cursor:pointer">✕</button>
+        <span id="msn-admin-quote-txt" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">↩️ Réponse à : « … »</span>
+        <button type="button" id="msn-admin-quote-clear" style="border:none;background:#e4e6eb;color:#050505;border-radius:50%;width:20px;height:20px;font-size:10px;font-weight:700;cursor:pointer">✕</button>
       </div>
 
-      <div id="msn-admin-file-bar" style="display:none;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#fff3e0;border-top:1.5px solid #f4511e;font-size:11.5px;font-weight:800;color:#23201a">
+      <div id="msn-admin-file-bar" style="display:none;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#e7f3ff;border-top:1px solid #b3d4fc;font-size:11.5px;font-weight:700;color:#0084ff">
         <span id="msn-admin-file-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">📎 fichier</span>
-        <button type="button" id="msn-admin-file-clear" style="border:1px solid #23201a;background:#fff;color:#c0392b;border-radius:999px;padding:1px 7px;font-size:10px;font-weight:900;cursor:pointer">✕</button>
+        <button type="button" id="msn-admin-file-clear" style="border:none;background:#ffffff;color:#e41e3f;border-radius:999px;padding:1px 7px;font-size:10px;font-weight:800;cursor:pointer">✕</button>
       </div>
 
       <form class="msn-chat-form" id="msn-chat-form">
         <input type="file" id="msn-chat-file" style="display:none" accept="image/*,.pdf,.sql,.php,.html,.htm,.css,.js,.txt,.zip,.rar,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.json" />
-        <button type="button" id="msn-btn-attach" style="border:1.5px solid #23201a;background:#fff3e0;color:#23201a;border-radius:50%;width:34px;height:34px;font-size:14px;cursor:pointer;flex-shrink:0" title="Joindre un fichier ou une image (capture, code, PDF, ZIP…)">📎</button>
-        <button type="button" id="msn-btn-mic" style="border:1.5px solid #23201a;background:#fff3e0;color:#23201a;border-radius:50%;width:34px;height:34px;font-size:14px;cursor:pointer;flex-shrink:0" title="Dicter le message au micro">🎙️</button>
-        <input type="text" id="msn-chat-inp" maxlength="600" placeholder="Écrivez un message ou joignez un fichier (📎)…" style="flex:1;min-width:0;border:2px solid #23201a;border-radius:999px;padding:7px 13px;font-size:12.5px;font-weight:700;background:#fff;color:#23201a;outline:none" />
-        <button type="submit" id="msn-btn-send" style="border:2px solid #23201a;background:linear-gradient(135deg,#f4511e,#ff8a50);color:#fff;border-radius:999px;padding:7px 14px;font-weight:900;font-size:12.5px;cursor:pointer;box-shadow:2px 2px 0 #23201a;flex-shrink:0">➤</button>
+        <button type="button" id="msn-btn-attach" style="border:none;background:transparent;color:#0084ff;border-radius:50%;width:34px;height:34px;font-size:17px;cursor:pointer;flex-shrink:0" title="Joindre une photo ou un fichier (📎)">🖼️</button>
+        <button type="button" id="msn-btn-mic" style="border:none;background:transparent;color:#0084ff;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;flex-shrink:0" title="Dicter le message au micro">🎙️</button>
+        <input type="text" id="msn-chat-inp" maxlength="600" placeholder="Aa" style="flex:1;min-width:0;border:none;border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:500;background:#f0f2f5;color:#050505;outline:none" />
+        <button type="submit" id="msn-btn-send" style="border:none;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;border-radius:50%;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0" title="Envoyer"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
       </form>
     </div>
   </div>
@@ -3329,6 +3338,6 @@
 
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=142"></script>
-<script src="assets/js/admin.js?v=142"></script>
+<script src="assets/js/admin.js?v=143"></script>
 </body>
 </html>

@@ -5501,15 +5501,15 @@
 
   function majOngletsMsnAdmin(nbNonLus, nbTous) {
     if (msnTabNonLus) {
-      msnTabNonLus.textContent = "🔴 Non lus (" + nbNonLus + ")";
+      msnTabNonLus.textContent = "Non lus (" + nbNonLus + ")";
       msnTabNonLus.classList.toggle("actif", msnModeFiltre === "nonlus");
     }
     if (msnTabTous) {
-      msnTabTous.textContent = "👥 Tous (" + nbTous + ")";
+      msnTabTous.textContent = "Tout (" + nbTous + ")";
       msnTabTous.classList.toggle("actif", msnModeFiltre === "tous");
     }
     if (msnHeadNonLus) {
-      msnHeadNonLus.textContent = nbNonLus > 0 ? ("🔴 Non lus (" + nbNonLus + ")") : "🔴 Non lus";
+      msnHeadNonLus.textContent = nbNonLus > 0 ? ("🔴 Non lus (" + nbNonLus + ")") : "Non lus";
       msnHeadNonLus.style.display = (msnUidActif || nbNonLus > 0) ? "inline-block" : "none";
     }
   }
@@ -5622,15 +5622,46 @@
     });
 
     msnUserList.innerHTML = "";
+
+    /* Bande horizontale « En ligne » style Meta Messenger */
+    var enLigneList = filtres.filter(function (it) { return it.online; });
+    if (enLigneList.length > 0 && !q) {
+      var strip = document.createElement("div");
+      strip.style.cssText = "display:flex;align-items:center;gap:10px;overflow-x:auto;padding:6px 4px 10px;border-bottom:1px solid #f0f2f5;margin-bottom:4px;scrollbar-width:none";
+      enLigneList.slice(0, 12).forEach(function (it) {
+        var bAv = document.createElement("button");
+        bAv.type = "button";
+        bAv.title = contact(it.p) + " (En ligne)";
+        bAv.style.cssText = "border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:50px;max-width:54px;flex-shrink:0";
+        var prenomCourt = (it.p.prenom || contact(it.p) || "").trim().split(/\s+/)[0] || "Élève";
+        bAv.innerHTML =
+          "<div style='position:relative;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,132,255,.25)'>" +
+            echHtml(initialesPourProfil(it.p)) +
+            "<span style='position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:#31a24c;border:2px solid #fff'></span>" +
+          "</div>" +
+          "<span style='font-size:10px;font-weight:600;color:#050505;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>" + echHtml(prenomCourt) + "</span>";
+        bAv.addEventListener("click", function () {
+          msnUidActif = it.p.id;
+          marquerLuAdminMsn(it.p.id);
+          definirCitationMessengerAdmin("");
+          if (msnWin) msnWin.classList.add("mode-chat");
+          peindreListeUsersMessengerAdmin();
+          peindreConversationMessengerAdmin();
+        });
+        strip.appendChild(bAv);
+      });
+      msnUserList.appendChild(strip);
+    }
+
     var aAfficher = filtres;
     if (msnModeFiltre === "nonlus" && !q) {
       var seulementNonLus = filtres.filter(function (it) { return it.nonRep > 0; });
       if (seulementNonLus.length > 0) {
         aAfficher = seulementNonLus;
         var enteteNL = document.createElement("div");
-        enteteNL.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;background:#fff3e0;border:1.5px solid #f4511e;border-radius:10px;font-size:11px;font-weight:900;color:#d84315;margin-bottom:3px";
-        enteteNL.innerHTML = "<span>🔴 " + totalNonRepondus + " message(s) non lu(s)</span>" +
-          "<button type='button' id='msn-btn-tout-lu' style='border:1px solid #23201a;background:#fff;color:#23201a;border-radius:999px;padding:2px 7px;font-size:10px;font-weight:900;cursor:pointer'>✓ Tout lu</button>";
+        enteteNL.style.cssText = "display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 10px;background:#e7f3ff;border-radius:10px;font-size:11px;font-weight:700;color:#0084ff;margin-bottom:4px";
+        enteteNL.innerHTML = "<span>🔵 " + totalNonRepondus + " non lu(s)</span>" +
+          "<button type='button' id='msn-btn-tout-lu' style='border:none;background:#ffffff;color:#0084ff;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:700;cursor:pointer'>✓ Tout lu</button>";
         msnUserList.appendChild(enteteNL);
         var btnToutLu = enteteNL.querySelector("#msn-btn-tout-lu");
         if (btnToutLu) {
@@ -5643,14 +5674,14 @@
         }
       } else {
         var msgAucunNL = document.createElement("div");
-        msgAucunNL.style.cssText = "padding:10px 8px;background:#e3f6e8;border:1.5px solid #177245;border-radius:10px;color:#177245;font-size:11px;font-weight:800;text-align:center;margin-bottom:4px";
-        msgAucunNL.innerHTML = "✅ Aucun message non lu · Affichage des conversations récentes";
+        msgAucunNL.style.cssText = "padding:8px 10px;background:#f0f2f5;border-radius:10px;color:#65676b;font-size:11px;font-weight:600;text-align:center;margin-bottom:4px";
+        msgAucunNL.innerHTML = "✓ Aucun message non lu · Discussions récentes";
         msnUserList.appendChild(msgAucunNL);
       }
     }
 
     if (!aAfficher.length) {
-      msnUserList.innerHTML += "<div style='padding:12px;text-align:center;color:#7a6f5d;font-size:11.5px;font-weight:700'>Aucun candidat trouvé.</div>";
+      msnUserList.innerHTML += "<div style='padding:12px;text-align:center;color:#65676b;font-size:11.5px;font-weight:600'>Aucun candidat trouvé.</div>";
       return;
     }
 
@@ -5661,16 +5692,16 @@
       row.className = "msn-user-item" + (p.id === msnUidActif ? " actif" : "") + (it.nonRep > 0 ? " non-lu" : "");
       var ini = initialesPourProfil(p);
       var subTxt = it.dernier
-        ? ((it.dernier.de === "prof" ? "Vous : " : "💬 ") + (it.dernier.texte || (it.dernier.fichier ? ("📎 " + it.dernier.fichier.nom) : "")))
-        : ((p.classe || "—") + " · " + (it.online ? "🟢 En ligne" : "Hors ligne"));
+        ? ((it.dernier.de === "prof" ? "Vous : " : "") + (it.dernier.texte || (it.dernier.fichier ? ("📎 " + it.dernier.fichier.nom) : "")))
+        : ((p.classe || "—") + " · " + (it.online ? "En ligne" : "Hors ligne"));
 
       row.innerHTML =
         "<div class='msn-av'>" + echHtml(ini) + "<span class='msn-av-dot" + (it.online ? " online" : "") + "'></span></div>" +
         "<div class='msn-u-meta'>" +
           "<div class='msn-u-nom'>" + echHtml(contact(p)) + "</div>" +
-          "<div class='msn-u-sub' style='color:" + (it.nonRep > 0 ? "#c0392b;font-weight:900" : "#6b6152") + "'>🏫 " + echHtml(p.classe || "—") + " · " + echHtml(subTxt) + "</div>" +
+          "<div class='msn-u-sub' style='color:" + (it.nonRep > 0 ? "#050505;font-weight:700" : "#65676b") + "'>" + echHtml(p.classe || "—") + " · " + echHtml(subTxt) + "</div>" +
         "</div>" +
-        (it.nonRep > 0 ? ("<span class='msn-u-badge' title='Message(s) non lu(s) de cet élève'>🔴 " + it.nonRep + "</span>") : "");
+        (it.nonRep > 0 ? ("<span class='msn-u-badge' title='Message(s) non lu(s) de cet élève'>" + it.nonRep + "</span>") : "");
 
       row.addEventListener("click", function () {
         msnUidActif = p.id;
@@ -5687,8 +5718,8 @@
     if (msnModeFiltre === "nonlus" && !q && nbCandidatsNonLus > 0 && filtres.length > aAfficher.length) {
       var btnVoirTous = document.createElement("button");
       btnVoirTous.type = "button";
-      btnVoirTous.style.cssText = "margin-top:6px;padding:8px 10px;border-radius:10px;border:1.5px dashed #23201a;background:#fff;color:#23201a;font-size:11.5px;font-weight:900;cursor:pointer;text-align:center";
-      btnVoirTous.textContent = "👥 Afficher tous les candidats (" + filtres.length + ")";
+      btnVoirTous.style.cssText = "margin-top:6px;padding:8px 10px;border-radius:10px;border:none;background:#f0f2f5;color:#0084ff;font-size:12px;font-weight:700;cursor:pointer;text-align:center";
+      btnVoirTous.textContent = "Afficher toutes les discussions (" + filtres.length + ")";
       btnVoirTous.addEventListener("click", function () {
         msnModeFiltre = "tous";
         peindreListeUsersMessengerAdmin();
@@ -5703,9 +5734,9 @@
     profils.forEach(function (x) { if (x.id === msnUidActif) p = x; });
 
     if (!p) {
-      if (msnHeadAv) msnHeadAv.innerHTML = "🔔";
-      if (msnHeadNom) msnHeadNom.textContent = "🔴 Messages non lus au départ";
-      if (msnHeadSub) msnHeadSub.textContent = "Cliquez sur un message pour répondre en direct";
+      if (msnHeadAv) msnHeadAv.innerHTML = "💬";
+      if (msnHeadNom) msnHeadNom.textContent = "Discussions non lues";
+      if (msnHeadSub) msnHeadSub.textContent = "Sélectionnez une conversation pour répondre en direct";
       if (msnHeadWa) msnHeadWa.style.display = "none";
       if (msnHeadFiche) msnHeadFiche.style.display = "none";
 
@@ -5729,27 +5760,27 @@
 
       if (cartesNonLus.length > 0) {
         msnChatFeed.innerHTML =
-          "<div style='background:linear-gradient(120deg,#fff3e0,#ffe0b2);border:2px solid #f4511e;border-radius:14px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;box-shadow:2px 2px 0 #23201a'>" +
-            "<div style='font-weight:900;font-size:13px;color:#c0392b'>🔴 " + cartesNonLus.length + " candidat(s) avec des messages non lus</div>" +
-            "<button type='button' id='msn-feed-tout-lu' style='border:1.5px solid #23201a;background:#fff;color:#23201a;border-radius:999px;padding:4px 11px;font-size:11px;font-weight:900;cursor:pointer'>✓ Tout marquer comme lu</button>" +
+          "<div style='background:#e7f3ff;border-radius:12px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap'>" +
+            "<div style='font-weight:700;font-size:13px;color:#0084ff'>🔵 " + cartesNonLus.length + " conversation(s) non lue(s)</div>" +
+            "<button type='button' id='msn-feed-tout-lu' style='border:none;background:#ffffff;color:#0084ff;border-radius:999px;padding:5px 12px;font-size:11.5px;font-weight:700;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08)'>✓ Tout marquer comme lu</button>" +
           "</div>" +
           cartesNonLus.map(function (it) {
             var c = it.cand;
             var txts = it.msgsNL.map(function (m) {
               var t = m.texte ? echHtml(m.texte) : "";
-              var f = m.fichier ? (" <span style='color:#d84315;font-weight:900'>[📎 " + echHtml(m.fichier.nom) + "]</span>") : "";
-              return "<div style='margin-top:4px;padding:6px 10px;background:#fffdf7;border-left:3px solid #f4511e;border-radius:8px;font-size:12.5px;color:#23201a;font-weight:800'>💬 " + (t || "Fichier joint") + f + "</div>";
+              var f = m.fichier ? (" <span style='color:#0084ff;font-weight:700'>[📎 " + echHtml(m.fichier.nom) + "]</span>") : "";
+              return "<div style='margin-top:5px;padding:7px 11px;background:#f0f2f5;border-radius:14px;font-size:13px;color:#050505;font-weight:500'>" + (t || "Pièce jointe") + f + "</div>";
             }).join("");
             return (
-              "<div class='msn-carte-nonlu' data-uid='" + echHtml(c.id) + "' style='background:#fff;border:2px solid #23201a;border-radius:14px;padding:11px 13px;box-shadow:3px 3px 0 #f4511e;cursor:pointer'>" +
+              "<div class='msn-carte-nonlu' data-uid='" + echHtml(c.id) + "' style='background:#ffffff;border:1px solid #e4e6eb;border-radius:14px;padding:12px 14px;box-shadow:0 2px 8px rgba(0,0,0,.05);cursor:pointer'>" +
                 "<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap'>" +
-                  "<div style='font-weight:900;font-size:13px;color:#23201a'>👤 " + echHtml(contact(c)) + "</div>" +
-                  "<span style='background:#c0392b;color:#fff;border:1.5px solid #23201a;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:900'>🔴 " + it.nbNL + " non lu(s) · " + echHtml(fmtHeureCourt(it.dernTs)) + "</span>" +
+                  "<div style='font-weight:700;font-size:13.5px;color:#050505'>" + echHtml(contact(c)) + "</div>" +
+                  "<span style='background:#0084ff;color:#fff;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700'>" + it.nbNL + " non lu(s) · " + echHtml(fmtHeureCourt(it.dernTs)) + "</span>" +
                 "</div>" +
-                "<div style='font-size:11px;font-weight:800;color:#5a5244;margin-top:3px'>🏫 Classe : <b style='color:#d84315'>" + echHtml(c.classe || "—") + "</b> · 🏛️ " + echHtml(lyceePropre(c)) + "</div>" +
+                "<div style='font-size:11.5px;font-weight:500;color:#65676b;margin-top:2px'>🏫 Classe : <b style='color:#0084ff'>" + echHtml(c.classe || "—") + "</b> · " + echHtml(lyceePropre(c)) + "</div>" +
                 txts +
                 "<div style='display:flex;justify-content:flex-end;gap:8px;margin-top:8px'>" +
-                  "<button type='button' class='msn-btn-ouvrir-nl' data-uid='" + echHtml(c.id) + "' style='border:1.5px solid #23201a;background:linear-gradient(120deg,#f4511e,#ff8a50);color:#fff;border-radius:999px;padding:5px 13px;font-size:11.5px;font-weight:900;cursor:pointer;box-shadow:1.5px 1.5px 0 #23201a'>💬 Ouvrir &amp; Répondre</button>" +
+                  "<button type='button' class='msn-btn-ouvrir-nl' data-uid='" + echHtml(c.id) + "' style='border:none;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer'>Ouvrir dans Messenger</button>" +
                 "</div>" +
               "</div>"
             );
@@ -5780,10 +5811,10 @@
       }
 
       msnChatFeed.innerHTML =
-        "<div style='margin:auto;text-align:center;color:#6b6152;font-size:12.5px;font-weight:700;padding:18px'>" +
-          "<div style='font-size:28px;margin-bottom:6px'>✅</div>" +
-          "<b style='color:#177245'>Aucun message non lu pour le moment.</b><br>" +
-          "👈 Choisissez un candidat dans la liste à gauche pour démarrer ou consulter une discussion." +
+        "<div style='margin:auto;text-align:center;color:#65676b;font-size:13px;font-weight:500;padding:24px'>" +
+          "<div style='width:56px;height:56px;border-radius:50%;background:#e7f3ff;color:#0084ff;font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px'>✓</div>" +
+          "<b style='color:#050505;font-size:15px'>Vous êtes à jour !</b><br>" +
+          "<span style='font-size:12px;color:#65676b'>Sélectionnez un élève à gauche pour démarrer une conversation Messenger.</span>" +
         "</div>";
       return;
     }
@@ -5794,7 +5825,7 @@
     }
     if (msnHeadNom) msnHeadNom.textContent = contact(p);
     if (msnHeadSub) {
-      msnHeadSub.textContent = (p.classe || "—") + " · " + lyceePropre(p) + " · " + (onL ? "🟢 En ligne" : "⚪ Hors ligne");
+      msnHeadSub.textContent = (onL ? "En ligne" : "Hors ligne") + " · " + (p.classe || "—") + " · " + lyceePropre(p);
     }
     var telP = telDeProfil(p);
     if (msnHeadWa) {
@@ -5812,66 +5843,99 @@
       };
     }
     if (msnChatInp) {
-      msnChatInp.placeholder = "Écrire à " + contact(p) + " ou joindre un fichier (📎)…";
+      msnChatInp.placeholder = "Aa";
     }
+
+    var iniCand = initialesPourProfil(p);
+    var carteProfilCand =
+      "<div style='display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 12px 10px'>" +
+        "<div style='position:relative;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,132,255,.25);margin-bottom:8px'>" +
+          echHtml(iniCand) +
+          "<span style='position:absolute;right:2px;bottom:2px;width:13px;height:13px;border-radius:50%;background:" + (onL ? "#31a24c" : "#9ca3af") + ";border:2px solid #fff'></span>" +
+        "</div>" +
+        "<div style='font-size:15px;font-weight:800;color:#050505'>" + echHtml(contact(p)) + "</div>" +
+        "<div style='font-size:11.5px;color:#65676b;margin-top:2px'>🏫 Classe : <b>" + echHtml(p.classe || "—") + "</b> · " + echHtml(lyceePropre(p)) + "</div>" +
+      "</div>";
 
     var fil = construireFilConversationAdmin(p);
     if (!fil.length) {
       msnChatFeed.innerHTML =
-        "<div style='margin:auto;text-align:center;color:#6b6152;font-size:12px;padding:18px;max-width:300px'>" +
-          "<div style='font-size:28px;margin-bottom:6px'>👋</div>" +
-          "<b>Démarrez la discussion avec " + echHtml(contact(p)) + "</b><br>" +
-          "<span style='color:#8a7f6d'>Votre message ou votre fichier joint (📎) s'affichera instantanément dans sa fenêtre Messenger.</span>" +
+        carteProfilCand +
+        "<div style='margin:auto;text-align:center;color:#65676b;font-size:12px;padding:12px 18px;max-width:300px'>" +
+          "Dites bonjour à <b>" + echHtml(contact(p)) + "</b> 👋 ou envoyez-lui un corrigé (🖼️)." +
         "</div>";
       return;
     }
 
-    msnChatFeed.innerHTML = fil.map(function (it, idx) {
+    var prevMs = 0;
+    msnChatFeed.innerHTML = carteProfilCand + fil.map(function (it, idx) {
       var estProf = it.de === "prof";
       var h = fmtHeureCourt(it.ts);
+      var curMs = it.ms || 0;
+      var sepTemps = "";
+      if (!prevMs || Math.abs(curMs - prevMs) > 15 * 60 * 1000) {
+        sepTemps = "<div style='text-align:center;font-size:10.5px;font-weight:600;color:#65676b;margin:6px 0 2px'>" + echHtml(h) + "</div>";
+      }
+      prevMs = curMs;
+
       var blocFichier = rendreBlocFichierJointAdmin(it.fichier, estProf);
+      var txtTrim = String(it.texte || "").trim();
+      var estJumbo = !it.fichier && !it.enReponseA && (txtTrim === "👍" || txtTrim === "❤️" || txtTrim === "👏" || txtTrim === "🔥" || txtTrim === "🎉" || txtTrim === "🙏");
       var blocTexte = it.texte
-        ? ("<div style='white-space:pre-wrap'>" + echHtml(it.texte) + "</div>")
+        ? (estJumbo
+            ? ("<div style='font-size:36px;line-height:1.1;padding:2px 0'>" + echHtml(txtTrim) + "</div>")
+            : ("<div style='white-space:pre-wrap;line-height:1.38'>" + echHtml(it.texte) + "</div>"))
         : "";
       if (estProf) {
         var citProf = it.enReponseA
-          ? ("<div style='background:rgba(0,0,0,.18);border-left:3px solid #ffd54f;border-radius:7px;padding:4px 8px;margin-bottom:5px;font-size:11px;opacity:.95'>↩️ « " + echHtml(it.enReponseA) + " »</div>")
-          : (!it.perso ? "<div style='font-size:10px;font-weight:900;color:#ffd54f;margin-bottom:3px'>📢 Annonce de classe</div>" : "");
-        var vuTxt = it.luTs ? ("✓✓ Lu (" + fmtHeureCourt(it.luTs) + ")") : "✓ Envoyé";
+          ? ("<div style='background:rgba(255,255,255,.18);border-left:3px solid rgba(255,255,255,.85);border-radius:8px;padding:4px 8px;margin-bottom:5px;font-size:11px;opacity:.95'>↩️ « " + echHtml(it.enReponseA) + " »</div>")
+          : (!it.perso ? "<div style='font-size:10px;font-weight:700;color:rgba(255,255,255,.9);margin-bottom:3px'>📢 Diffusion classe</div>" : "");
+        var vuTxt = it.luTs ? ("✓✓ Vu · " + fmtHeureCourt(it.luTs)) : "✓ Envoyé";
+        var styleProf = estJumbo
+          ? "max-width:82%;background:transparent;color:#050505;padding:2px 4px"
+          : "max-width:78%;background:linear-gradient(135deg,#0084ff 0%,#7638fa 55%,#ff5280 100%);color:#fff;border-radius:18px 18px 4px 18px;padding:8px 13px;font-size:13.5px;font-weight:500;box-shadow:0 1px 2px rgba(0,132,255,.2);word-break:break-word";
         return (
+          sepTemps +
           "<div style='display:flex;flex-direction:column;align-items:flex-end'>" +
-            "<div style='max-width:82%;background:linear-gradient(135deg,#f4511e,#ff7043);color:#fff;border:2px solid #23201a;border-radius:16px 16px 4px 16px;padding:8px 12px;font-size:12.5px;font-weight:700;box-shadow:2px 2px 0 rgba(35,32,26,.2);word-break:break-word'>" +
+            "<div style='" + styleProf + "'>" +
               citProf +
               blocTexte +
               blocFichier +
             "</div>" +
-            "<div style='font-size:10px;color:#6b6152;margin-top:2px;padding:0 4px;font-weight:800'>" + echHtml(h) + " · <span style='color:" + (it.luTs ? "#177245" : "#7a6f5d") + "'>" + echHtml(vuTxt) + "</span></div>" +
+            "<div style='font-size:10px;color:#65676b;margin-top:2px;padding:0 4px;font-weight:600'>" + echHtml(h) + " · <span style='color:" + (it.luTs ? "#0084ff" : "#65676b") + "'>" + echHtml(vuTxt) + "</span></div>" +
           "</div>"
         );
       } else {
         var citEleve = it.enReponseA
-          ? ("<div style='background:#f3ead9;border-left:3px solid #f4511e;border-radius:7px;padding:4px 8px;margin-bottom:5px;font-size:11px;color:#5a5244'>📢 En réponse à : « " + echHtml(it.enReponseA) + " »</div>")
+          ? ("<div style='background:rgba(0,0,0,.05);border-left:3px solid #0084ff;border-radius:8px;padding:4px 8px;margin-bottom:5px;font-size:11px;color:#65676b'>↩️ « " + echHtml(it.enReponseA) + " »</div>")
           : "";
         var estSos = (it.texte && it.texte.indexOf("🆘") === 0) || (it.fichier && /^sos_(capture|code)_/i.test(it.fichier.nom || ""));
         var badgeSos = estSos
-          ? "<span style='display:inline-block;background:#c0392b;color:#fff;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;margin-left:5px'>🆘 SOS CAPTURE / CODE</span>"
+          ? "<div style='margin-bottom:4px'><span style='display:inline-block;background:#e41e3f;color:#fff;border-radius:999px;padding:1px 8px;font-size:9.5px;font-weight:700'>🆘 SOS CAPTURE / CODE</span></div>"
           : "";
         var badgePage = it.page
-          ? ("<div style='margin-bottom:4px'><a href='" + echHtml(String(it.page).replace(/^\/+/, "")) + "' target='_blank' rel='noopener' style='display:inline-block;font-size:10px;font-weight:900;background:#fff3e0;color:#d84315;border:1px solid #f4511e;border-radius:999px;padding:1px 8px;text-decoration:none'>📍 Page : " + echHtml(it.page) + " ↗</a></div>")
+          ? ("<div style='margin-bottom:4px'><a href='" + echHtml(String(it.page).replace(/^\/+/, "")) + "' target='_blank' rel='noopener' style='display:inline-block;font-size:10.5px;font-weight:700;background:#e7f3ff;color:#0084ff;border-radius:999px;padding:2px 8px;text-decoration:none'>📍 " + echHtml(it.page) + " ↗</a></div>")
           : "";
+        var styleEleve = estJumbo
+          ? "background:transparent;color:#050505;padding:2px 4px"
+          : "background:#f0f2f5;color:#050505;border-radius:18px 18px 18px 4px;padding:8px 13px;font-size:13.5px;font-weight:500;word-break:break-word";
         return (
-          "<div style='display:flex;flex-direction:column;align-items:flex-start'>" +
-            "<div style='display:flex;align-items:center;gap:6px;max-width:86%'>" +
-              "<div style='background:#fff;color:#23201a;border:2px solid #23201a;border-radius:16px 16px 16px 4px;padding:8px 12px;font-size:12.5px;font-weight:700;box-shadow:2px 2px 0 rgba(35,32,26,.15);word-break:break-word'>" +
-                "<div style='font-size:10px;font-weight:900;color:#f4511e;margin-bottom:3px'>💬 " + echHtml(contact(p)) + badgeSos + "</div>" +
-                badgePage +
-                citEleve +
-                blocTexte +
-                blocFichier +
+          sepTemps +
+          "<div style='display:flex;align-items:flex-end;gap:7px'>" +
+            "<div style='width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:14px'>" + echHtml(iniCand) + "</div>" +
+            "<div style='display:flex;flex-direction:column;align-items:flex-start;max-width:80%'>" +
+              "<div style='display:flex;align-items:center;gap:6px'>" +
+                "<div style='" + styleEleve + "'>" +
+                  badgeSos +
+                  badgePage +
+                  citEleve +
+                  blocTexte +
+                  blocFichier +
+                "</div>" +
+                "<button type='button' class='msn-btn-quote-item' data-idx='" + idx + "' style='border:none;background:#f0f2f5;color:#65676b;border-radius:50%;width:26px;height:26px;font-size:11px;cursor:pointer;flex-shrink:0' title='Répondre à ce message'>↩️</button>" +
               "</div>" +
-              "<button type='button' class='msn-btn-quote-item' data-idx='" + idx + "' style='border:1.5px solid #23201a;background:#fff3e0;color:#d84315;border-radius:999px;padding:3px 7px;font-size:11px;font-weight:900;cursor:pointer;flex-shrink:0' title='Citer et répondre à ce message'>↩️</button>" +
+              "<div style='font-size:10px;color:#65676b;margin-top:2px;padding:0 4px;font-weight:500'>" + echHtml(h) + "</div>" +
             "</div>" +
-            "<div style='font-size:10px;color:#6b6152;margin-top:2px;padding:0 4px;font-weight:800'>" + echHtml(h) + "</div>" +
           "</div>"
         );
       }

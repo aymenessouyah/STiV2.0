@@ -1833,29 +1833,29 @@
     (document.body || document.documentElement).appendChild(ov);
   }
 
-  function rendreBlocFichierJointEleve(f, surFondOrange) {
+  function rendreBlocFichierJointEleve(f, surFondColore) {
     if (!f || !f.nom) return "";
     var urlPropre = dataUrlSure(f.dataUrl);
     var tStr = f.taille ? (" (" + fmtTailleFichierEleve(f.taille) + ")") : "";
-    var bg = surFondOrange ? "rgba(0,0,0,.18)" : "#f3ead9";
-    var col = surFondOrange ? "#fff" : "#23201a";
-    var bdr = surFondOrange ? "rgba(255,255,255,.45)" : "#23201a";
+    var bg = surFondColore ? "rgba(255,255,255,.16)" : "#e4e6eb";
+    var col = surFondColore ? "#fff" : "#050505";
+    var bdr = surFondColore ? "rgba(255,255,255,.32)" : "rgba(0,0,0,.1)";
     var estImg = urlPropre && /^data:image\/(png|jpe?g|gif|webp);base64,/i.test(urlPropre);
     var estCode = urlPropre && estFichierCodeJoint(f.nom, urlPropre);
     var htmlImg = estImg
-      ? ("<img src='" + esc(urlPropre) + "' alt='" + esc(f.nom) + "' class='sti-msn-img-zoom' style='max-width:220px;max-height:160px;border-radius:10px;border:1.5px solid " + bdr + ";display:block;margin-bottom:5px;cursor:zoom-in;object-fit:cover' />")
+      ? ("<img src='" + esc(urlPropre) + "' alt='" + esc(f.nom) + "' class='sti-msn-img-zoom' style='max-width:225px;max-height:165px;border-radius:14px;border:1px solid " + bdr + ";display:block;margin-bottom:6px;cursor:zoom-in;object-fit:cover' />")
       : "";
     var btnVoirCode = estCode
-      ? ("<button type='button' class='sti-msn-code-btn' data-nom='" + esc(f.nom) + "' data-url='" + esc(urlPropre) + "' style='border:1.5px solid " + bdr + ";background:#23201a;color:#ffd54f;border-radius:999px;padding:3px 9px;font:900 10.5px system-ui,sans-serif;cursor:pointer;flex-shrink:0'>👁️ Voir le code</button>")
+      ? ("<button type='button' class='sti-msn-code-btn' data-nom='" + esc(f.nom) + "' data-url='" + esc(urlPropre) + "' style='border:none;background:#050505;color:#fff;border-radius:999px;padding:4px 10px;font:700 10.5px system-ui,sans-serif;cursor:pointer;flex-shrink:0'>👁️ Voir le code</button>")
       : "";
     var btnDl = urlPropre
-      ? ("<button type='button' class='sti-msn-dl-btn' data-nom='" + esc(f.nom) + "' data-url='" + esc(urlPropre) + "' style='border:1.5px solid " + bdr + ";background:" + (surFondOrange ? "#fff" : "#f4511e") + ";color:" + (surFondOrange ? "#23201a" : "#fff") + ";border-radius:999px;padding:3px 9px;font:900 10.5px system-ui,sans-serif;cursor:pointer;flex-shrink:0'>⬇ Télécharger</button>")
+      ? ("<button type='button' class='sti-msn-dl-btn' data-nom='" + esc(f.nom) + "' data-url='" + esc(urlPropre) + "' style='border:none;background:" + (surFondColore ? "#ffffff" : "#0084ff") + ";color:" + (surFondColore ? "#0084ff" : "#ffffff") + ";border-radius:999px;padding:4px 10px;font:700 10.5px system-ui,sans-serif;cursor:pointer;flex-shrink:0'>⬇ Télécharger</button>")
       : "<span style='font-size:10px;opacity:.8'>⏳ Chargement…</span>";
     return (
-      "<div style='margin-top:5px;margin-bottom:3px;padding:6px 9px;border-radius:10px;background:" + bg + ";border:1.5px solid " + bdr + ";color:" + col + "'>" +
+      "<div style='margin-top:5px;margin-bottom:2px;padding:7px 10px;border-radius:14px;background:" + bg + ";border:1px solid " + bdr + ";color:" + col + "'>" +
         htmlImg +
         "<div style='display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap'>" +
-          "<span style='font-size:11.5px;font-weight:800;word-break:break-all'>📎 " + esc(f.nom) + esc(tStr) + "</span>" +
+          "<span style='font-size:11.5px;font-weight:700;word-break:break-all'>📎 " + esc(f.nom) + esc(tStr) + "</span>" +
           "<div style='display:flex;gap:5px;flex-wrap:wrap'>" + btnVoirCode + btnDl + "</div>" +
         "</div>" +
       "</div>"
@@ -2077,6 +2077,36 @@
     }
   }
 
+  var ICO_META_MSN_SVG =
+    "<svg width='20' height='20' viewBox='0 0 36 36' fill='none' aria-hidden='true' style='flex-shrink:0'>" +
+      "<defs><linearGradient id='stiMetaMsnGrad' x1='0%' y1='100%' x2='100%' y2='0%'>" +
+        "<stop offset='0%' stop-color='#0099FF'/>" +
+        "<stop offset='52%' stop-color='#7638FA'/>" +
+        "<stop offset='100%' stop-color='#FF5280'/>" +
+      "</linearGradient></defs>" +
+      "<path d='M18 2C9.163 2 2 8.636 2 16.82c0 4.66 2.31 8.818 5.925 11.535.308.232.495.596.506.985l.102 3.076a1.28 1.28 0 0 0 1.796 1.132l3.433-1.515c.29-.128.613-.152.92-.069 1.057.285 2.174.436 3.318.436 8.837 0 16-6.636 16-14.82S26.837 2 18 2Z' fill='url(#stiMetaMsnGrad)'/>" +
+      "<path d='m11.59 21.14 4.7-7.46a2.4 2.4 0 0 1 3.47-.64l3.74 2.8a.96.96 0 0 0 1.16-.01l5.05-3.83c.67-.51 1.55.3 1.1.99l-4.7 7.46a2.4 2.4 0 0 1-3.47.64l-3.74-2.8a.96.96 0 0 0-1.16.01l-5.05 3.83c-.67.51-1.55-.3-1.1-.99Z' fill='#fff'/>" +
+    "</svg>";
+
+  var ICO_META_SEND_SVG =
+    "<svg width='18' height='18' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><path d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/></svg>";
+
+  function estJumboEmojiMeta(txt) {
+    var s = String(txt || "").trim();
+    return s === "👍" || s === "❤️" || s === "😂" || s === "😮" || s === "😢" || s === "🙏" || s === "🔥" || s === "👏" || s === "🎉" || s === "✅";
+  }
+
+  function lireReactionsMessengerLocal() {
+    try { return JSON.parse(localStorage.getItem("sti-msn-reactions-v1") || "{}") || {}; } catch (e) { return {}; }
+  }
+  function sauverReactionMessengerLocal(cleMsg, emoji) {
+    if (!cleMsg) return;
+    var map = lireReactionsMessengerLocal();
+    if (map[cleMsg] === emoji) delete map[cleMsg];
+    else map[cleMsg] = emoji;
+    try { localStorage.setItem("sti-msn-reactions-v1", JSON.stringify(map)); } catch (e) {}
+  }
+
   function installerStylesMessengerMobile() {
     if (document.getElementById("sti-messenger-mob-css")) return;
     var st = document.createElement("style");
@@ -2084,22 +2114,32 @@
     st.textContent =
       "#sti-msn-adm-back,#sti-msn-adm-sb-close{display:none}" +
       "@keyframes stiMsnPulseGlow{" +
-        "0%,100%{box-shadow:3px 3px 0 #23201a,0 0 0 0 rgba(244,81,30,.85);transform:scale(1)}" +
-        "50%{box-shadow:3px 3px 0 #23201a,0 0 0 12px rgba(244,81,30,0);transform:scale(1.06)}" +
+        "0%,100%{box-shadow:0 6px 20px rgba(0,132,255,.45),0 0 0 0 rgba(118,56,250,.75);transform:scale(1)}" +
+        "50%{box-shadow:0 8px 26px rgba(255,82,128,.55),0 0 0 12px rgba(118,56,250,0);transform:scale(1.05)}" +
       "}" +
       "@keyframes stiMsnCalloutBounce{" +
         "0%,100%{transform:translateY(0)}" +
-        "50%{transform:translateY(-6px)}" +
+        "50%{transform:translateY(-5px)}" +
       "}" +
       "#sti-btn-messenger-global.sti-msn-alerte,#btnHomeMessenger.sti-msn-alerte{" +
         "animation:stiMsnPulseGlow 1.35s infinite ease-in-out!important;" +
-        "background:linear-gradient(125deg,#c0392b 0%,#f4511e 100%)!important;" +
-        "color:#fff!important;border-color:#23201a!important;" +
+        "background:linear-gradient(135deg,#0084ff 0%,#7638fa 52%,#ff5280 100%)!important;" +
+        "color:#fff!important;border-color:rgba(255,255,255,.4)!important;" +
       "}" +
       "#sti-msn-bulle-attention{" +
         "animation:stiMsnCalloutBounce 1.8s infinite ease-in-out;" +
       "}" +
-      /* Masquage automatique des boutons flottants dès qu'une boîte modale est ouverte pour ne jamais gêner les boutons Retour / Fermer */
+      ".sti-meta-icon-btn{width:34px;height:34px;border-radius:50%;border:none;background:transparent;color:#0084ff;display:inline-flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:background .15s,transform .12s;flex-shrink:0}" +
+      ".sti-meta-icon-btn:hover{background:#f0f2f5;transform:scale(1.06)}" +
+      ".sti-meta-msg-row{position:relative}" +
+      ".sti-meta-msg-actions{opacity:0;transition:opacity .15s;display:inline-flex;align-items:center;gap:3px;flex-shrink:0}" +
+      ".sti-meta-msg-row:hover .sti-meta-msg-actions,.sti-meta-msg-row:focus-within .sti-meta-msg-actions{opacity:1}" +
+      "@media (hover:none){.sti-meta-msg-actions{opacity:.85}}" +
+      ".sti-meta-react-bar{display:none;position:absolute;bottom:calc(100% + 4px);z-index:30;background:#ffffff;border:1px solid rgba(0,0,0,.08);border-radius:999px;padding:4px 8px;box-shadow:0 6px 20px rgba(0,0,0,.18);gap:4px;align-items:center}" +
+      ".sti-meta-react-bar.ouvert{display:inline-flex}" +
+      ".sti-meta-react-bar button{border:none;background:transparent;font-size:17px;cursor:pointer;padding:2px 4px;border-radius:50%;transition:transform .12s}" +
+      ".sti-meta-react-bar button:hover{transform:scale(1.28);background:#f0f2f5}" +
+      /* Masquage automatique des boutons flottants dès qu'une boîte modale est ouverte */
       "html.sti-modal-open #sti-btn-messenger-global," +
       "html.sti-modal-open #sti-msn-bulle-attention," +
       "html.sti-modal-open #sti-badge-admin-flottant," +
@@ -2107,7 +2147,6 @@
       "html.sti-modal-open #sti-auto-to-top{" +
         "display:none!important;pointer-events:none!important;" +
       "}" +
-      /* Décalage automatique au-dessus des barres ou boutons « ⬅ Retour au cours » situés en bas à gauche */
       "html.sti-has-bottom-bar #sti-btn-messenger-global{" +
         "bottom:72px!important;" +
       "}" +
@@ -2130,19 +2169,15 @@
         "#sti-msn-el-feed,#sti-msn-adm-users,#sti-msn-adm-feed{" +
           "flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important;touch-action:pan-y!important;" +
         "}" +
-        "#sti-msn-adm-back,#sti-msn-adm-sb-close{display:inline-flex!important;align-items:center;justify-content:center;min-height:36px!important;padding:6px 12px!important;font-size:13px!important}" +
+        "#sti-msn-adm-back,#sti-msn-adm-sb-close{display:inline-flex!important;align-items:center;justify-content:center;min-height:34px!important;padding:5px 11px!important;font-size:12.5px!important}" +
         "#sti-messenger-admin-site.mode-chat .sti-msn-adm-sb{display:none!important}" +
         "#sti-messenger-admin-site:not(.mode-chat) .sti-msn-adm-col{display:none!important}" +
         "#sti-msn-el-inp,#sti-msn-adm-inp,#sti-msn-adm-search{" +
-          "font-size:16px!important;padding:10px 14px!important;" +
+          "font-size:16px!important;" +
         "}" +
         "#sti-msn-el-form,#sti-msn-adm-form{" +
-          "padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px))!important;gap:7px!important;flex-shrink:0!important;" +
+          "padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px))!important;gap:6px!important;flex-shrink:0!important;" +
         "}" +
-        "#sti-msn-el-attach,#sti-msn-el-mic,#sti-msn-adm-attach,#sti-msn-adm-mic{" +
-          "width:40px!important;height:40px!important;font-size:17px!important;" +
-        "}" +
-        "#sti-msn-el-min,#sti-msn-el-close,#sti-msn-adm-close{width:36px!important;height:36px!important;font-size:15px!important}" +
         "#sti-btn-messenger-global{" +
           "left:10px!important;bottom:10px!important;padding:9px 13px!important;font-size:12px!important;" +
         "}" +
@@ -2685,45 +2720,67 @@
       win.id = "sti-messenger-eleve";
       win.className = "sti-no-print";
       win.style.cssText =
-        "position:fixed;right:16px;bottom:64px;z-index:2147483647;width:min(390px,calc(100vw - 24px));height:min(510px,80vh);" +
-        "background:#fffdf7;color:#23201a;color-scheme:light;border:2.5px solid #23201a;border-radius:20px;" +
-        "box-shadow:6px 6px 0 #f4511e,0 20px 50px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden;" +
-        "font:600 13px/1.42 system-ui,'Segoe UI',sans-serif;";
+        "position:fixed;right:16px;bottom:64px;z-index:2147483647;width:min(388px,calc(100vw - 20px));height:min(540px,82vh);" +
+        "background:#ffffff;color:#050505;color-scheme:light;border:1px solid rgba(0,0,0,.09);border-radius:18px;" +
+        "box-shadow:0 12px 36px rgba(0,0,0,.18),0 2px 10px rgba(0,0,0,.08);display:flex;flex-direction:column;overflow:hidden;" +
+        "font:500 13.5px/1.4 system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;";
 
       win.innerHTML =
-        "<div style='background:linear-gradient(120deg,#23201a,#3a3228);color:#fffdf7;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:2.5px solid #f4511e'>" +
-          "<div style='display:flex;align-items:center;gap:9px;min-width:0'>" +
-            "<div style='position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f4511e,#ff8a50);border:2px solid #fffdf7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0'>👨‍🏫" +
-              "<span style='position:absolute;right:-1px;bottom:-1px;width:10px;height:10px;border-radius:50%;background:#2ecc71;border:2px solid #23201a'></span>" +
+        "<div style='background:#ffffff;color:#050505;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #e4e6eb;box-shadow:0 1px 2px rgba(0,0,0,.04)'>" +
+          "<div style='display:flex;align-items:center;gap:10px;min-width:0'>" +
+            "<div style='position:relative;width:38px;height:38px;border-radius:50%;padding:2px;background:linear-gradient(135deg,#0099ff,#7638fa,#ff5280);display:flex;align-items:center;justify-content:center;flex-shrink:0'>" +
+              "<div style='width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;border:2px solid #fff'>AE</div>" +
+              "<span style='position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:#31a24c;border:2px solid #ffffff'></span>" +
             "</div>" +
             "<div style='min-width:0'>" +
-              "<div style='font-weight:900;font-size:13.5px;color:#fffdf7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>M. Aymen Essouyah</div>" +
-              "<div style='font-size:10.5px;color:#ffb27a;font-weight:700'>🟢 Messenger STI · Messages &amp; Fichiers</div>" +
+              "<div style='display:flex;align-items:center;gap:5px;font-weight:700;font-size:14px;color:#050505;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" +
+                "<span>M. Aymen Essouyah</span>" +
+                "<span title='Compte Professeur vérifié' style='display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:#0084ff;color:#fff;font-size:9px;font-weight:900;flex-shrink:0'>✓</span>" +
+              "</div>" +
+              "<div style='font-size:11.5px;color:#65676b;font-weight:500'>Actif maintenant · Messenger STI</div>" +
             "</div>" +
           "</div>" +
-          "<div style='display:flex;gap:6px;flex-shrink:0'>" +
-            "<button type='button' id='sti-msn-el-min' title='Réduire' style='width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.15);color:#fff;font-weight:900;cursor:pointer'>—</button>" +
-            "<button type='button' id='sti-msn-el-close' title='Fermer' style='width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.15);color:#fff;font-weight:900;cursor:pointer'>✕</button>" +
+          "<div style='display:flex;align-items:center;gap:4px;flex-shrink:0'>" +
+            "<button type='button' id='sti-msn-el-min' class='sti-meta-icon-btn' title='Réduire la discussion' style='color:#0084ff;font-weight:800;font-size:16px'>—</button>" +
+            "<button type='button' id='sti-msn-el-close' class='sti-meta-icon-btn' title='Fermer' style='color:#0084ff;font-weight:700;font-size:15px'>✕</button>" +
           "</div>" +
         "</div>" +
-        "<div id='sti-msn-el-feed' style='flex:1;overflow-y:auto;padding:12px;background:#f9f1e3;display:flex;flex-direction:column;gap:9px'></div>" +
-        "<div id='sti-msn-el-sosbar' style='display:none;flex-wrap:wrap;align-items:center;gap:5px;padding:7px 10px;background:linear-gradient(120deg,#fffbeb,#fef3c7);border-top:1.5px solid #23201a;font-size:11px;font-weight:900;color:#23201a'>" +
-          "<span style='color:#d84315;margin-right:2px'>🆘 SOS 1-clic :</span>" +
-          "<button type='button' id='sti-sos-btn-cap' style='border:1.5px solid #23201a;background:#f4511e;color:#fff;border-radius:999px;padding:3px 9px;font:900 10.8px system-ui,sans-serif;cursor:pointer'>📸 Capturer Page + Code</button>" +
-          "<button type='button' id='sti-sos-btn-code' style='border:1.5px solid #23201a;background:#23201a;color:#ffd54f;border-radius:999px;padding:3px 9px;font:900 10.8px system-ui,sans-serif;cursor:pointer'>💻 Joindre mon code</button>" +
-          "<button type='button' id='sti-sos-btn-photo' style='border:1.5px solid #23201a;background:#fff;color:#23201a;border-radius:999px;padding:3px 9px;font:800 10.8px system-ui,sans-serif;cursor:pointer'>🖼️ Photo / Écran</button>" +
+        "<div id='sti-msn-el-feed' style='flex:1;overflow-y:auto;padding:12px 12px 14px;background:#ffffff;display:flex;flex-direction:column;gap:6px'></div>" +
+        "<div id='sti-msn-el-sosbar' style='display:none;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;background:#f0f2f5;border-top:1px solid #e4e6eb;font-size:11.5px;font-weight:700;color:#050505'>" +
+          "<span style='color:#0084ff;font-weight:800'>📸 Partage rapide :</span>" +
+          "<button type='button' id='sti-sos-btn-cap' style='border:none;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;border-radius:999px;padding:4px 10px;font:700 11px system-ui,sans-serif;cursor:pointer'>📸 Capturer Page + Code</button>" +
+          "<button type='button' id='sti-sos-btn-code' style='border:none;background:#050505;color:#fff;border-radius:999px;padding:4px 10px;font:700 11px system-ui,sans-serif;cursor:pointer'>💻 Joindre mon code</button>" +
+          "<button type='button' id='sti-sos-btn-photo' style='border:1px solid #ced0d4;background:#fff;color:#050505;border-radius:999px;padding:4px 10px;font:600 11px system-ui,sans-serif;cursor:pointer'>🖼️ Photo / Écran</button>" +
         "</div>" +
-        "<div id='sti-msn-el-filebar' style='display:none;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#fff3e0;border-top:1.5px solid #f4511e;font-size:11.5px;font-weight:800;color:#23201a'>" +
+        "<div id='sti-msn-el-emojibar' style='display:none;align-items:center;justify-content:space-around;padding:6px 10px;background:#ffffff;border-top:1px solid #e4e6eb;font-size:20px'>" +
+          "<button type='button' class='sti-el-emo-pick' data-emo='👍' style='border:none;background:transparent;cursor:pointer;font-size:20px;padding:2px 5px'>👍</button>" +
+          "<button type='button' class='sti-el-emo-pick' data-emo='❤️' style='border:none;background:transparent;cursor:pointer;font-size:20px;padding:2px 5px'>❤️</button>" +
+          "<button type='button' class='sti-el-emo-pick' data-emo='😂' style='border:none;background:transparent;cursor:pointer;font-size:20px;padding:2px 5px'>😂</button>" +
+          "<button type='button' class='sti-el-emo-pick' data-emo='😮' style='border:none;background:transparent;cursor:pointer;font-size:20px;padding:2px 5px'>😮</button>" +
+          "<button type='button' class='sti-el-emo-pick' data-emo='🙏' style='border:none;background:transparent;cursor:pointer;font-size:20px;padding:2px 5px'>🙏</button>" +
+          "<button type='button' class='sti-el-emo-pick' data-emo='🔥' style='border:none;background:transparent;cursor:pointer;font-size:20px;padding:2px 5px'>🔥</button>" +
+          "<button type='button' class='sti-el-emo-pick' data-emo='👏' style='border:none;background:transparent;cursor:pointer;font-size:20px;padding:2px 5px'>👏</button>" +
+          "<button type='button' class='sti-el-emo-pick' data-emo='✅' style='border:none;background:transparent;cursor:pointer;font-size:20px;padding:2px 5px'>✅</button>" +
+        "</div>" +
+        "<div id='sti-msn-el-quotebar' style='display:none;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#f0f2f5;border-top:1px solid #e4e6eb;font-size:11.5px;color:#050505'>" +
+          "<span id='sti-msn-el-quotetxt' style='overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:#65676b'>↩️ Réponse à : …</span>" +
+          "<button type='button' id='sti-msn-el-quoteclear' style='border:none;background:#e4e6eb;color:#050505;border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;cursor:pointer'>✕</button>" +
+        "</div>" +
+        "<div id='sti-msn-el-filebar' style='display:none;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#e7f3ff;border-top:1px solid #b3d4fc;font-size:11.5px;font-weight:700;color:#0084ff'>" +
           "<span id='sti-msn-el-filename' style='overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>📎 fichier</span>" +
-          "<button type='button' id='sti-msn-el-fileclear' style='border:1px solid #23201a;background:#fff;color:#c0392b;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
+          "<button type='button' id='sti-msn-el-fileclear' style='border:none;background:#ffffff;color:#e41e3f;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:800;cursor:pointer'>✕</button>" +
         "</div>" +
-        "<form id='sti-msn-el-form' style='padding:9px 10px;background:#fffdf7;border-top:2px solid #23201a;display:flex;align-items:center;gap:5px;margin:0'>" +
+        "<form id='sti-msn-el-form' style='padding:8px 10px;background:#ffffff;border-top:1px solid #e4e6eb;display:flex;align-items:center;gap:4px;margin:0'>" +
           "<input type='file' id='sti-msn-el-file' style='display:none' accept='image/*,.pdf,.sql,.php,.html,.htm,.css,.js,.txt,.zip,.rar,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.json' />" +
-          "<button type='button' id='sti-msn-el-sos' title='📸 SOS Capture / Envoyer ma page ou mon code au professeur en 1 clic' style='width:34px;height:34px;border-radius:50%;border:1.8px solid #23201a;background:linear-gradient(135deg,#fff3b0,#ffd54f);color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:1.5px 1.5px 0 #23201a'>📸</button>" +
-          "<button type='button' id='sti-msn-el-attach' title='Joindre un fichier ou une image (capture, code, PDF…)' style='width:34px;height:34px;border-radius:50%;border:1.8px solid #23201a;background:#fff3e0;color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center'>📎</button>" +
-          "<button type='button' id='sti-msn-el-mic' title='Dicter le message au micro' style='width:34px;height:34px;border-radius:50%;border:1.8px solid #23201a;background:#fff3e0;color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center'>🎙️</button>" +
-          "<input type='text' id='sti-msn-el-inp' placeholder='Question, 📎 fichier ou 📸 SOS Capture…' autocomplete='off' style='flex:1;min-width:0;border:2px solid #23201a;border-radius:999px;padding:8px 11px;font:600 12.8px system-ui,sans-serif;background:#fff;color:#23201a;outline:none' />" +
-          "<button type='submit' title='Envoyer' style='width:37px;height:37px;border-radius:50%;border:2px solid #23201a;background:linear-gradient(120deg,#f4511e,#ff8a50);color:#fff;font-weight:900;font-size:14px;cursor:pointer;box-shadow:2px 2px 0 #23201a;flex-shrink:0'>➤</button>" +
+          "<button type='button' id='sti-msn-el-sos' class='sti-meta-icon-btn' title='📸 SOS Capture / Envoyer ma page ou mon code au professeur en 1 clic' style='color:#0084ff;font-size:17px'>📸</button>" +
+          "<button type='button' id='sti-msn-el-attach' class='sti-meta-icon-btn' title='Joindre une photo ou un fichier (📎)' style='color:#0084ff;font-size:17px'>🖼️</button>" +
+          "<button type='button' id='sti-msn-el-mic' class='sti-meta-icon-btn' title='Dicter le message au micro' style='color:#0084ff;font-size:16px'>🎙️</button>" +
+          "<div style='flex:1;min-width:0;display:flex;align-items:center;background:#f0f2f5;border-radius:999px;padding:2px 6px 2px 13px'>" +
+            "<input type='text' id='sti-msn-el-inp' placeholder='Aa' autocomplete='off' style='flex:1;min-width:0;border:none;padding:7px 4px;font:500 13.5px system-ui,sans-serif;background:transparent;color:#050505;outline:none' />" +
+            "<button type='button' id='sti-msn-el-emoji' title='Émojis &amp; réactions' style='border:none;background:transparent;font-size:17px;cursor:pointer;padding:4px;line-height:1'>😊</button>" +
+          "</div>" +
+          "<button type='button' id='sti-msn-el-thumb' class='sti-meta-icon-btn' title=\"Envoyer un J'aime 👍\" style='color:#0084ff;font-size:19px'>👍</button>" +
+          "<button type='submit' id='sti-msn-el-send' title='Envoyer' style='width:34px;height:34px;border-radius:50%;border:none;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0'>" + ICO_META_SEND_SVG + "</button>" +
         "</form>";
 
       (document.body || document.documentElement).appendChild(win);
@@ -2738,9 +2795,43 @@
       var sosBtnCap = win.querySelector("#sti-sos-btn-cap");
       var sosBtnCode = win.querySelector("#sti-sos-btn-code");
       var sosBtnPhoto = win.querySelector("#sti-sos-btn-photo");
+      var emojiBtn = win.querySelector("#sti-msn-el-emoji");
+      var emojiBar = win.querySelector("#sti-msn-el-emojibar");
+      var thumbBtn = win.querySelector("#sti-msn-el-thumb");
+      var quoteBarEl = win.querySelector("#sti-msn-el-quotebar");
+      var quoteClearEl = win.querySelector("#sti-msn-el-quoteclear");
       var micBtn = win.querySelector("#sti-msn-el-mic");
       var txtInp = win.querySelector("#sti-msn-el-inp");
       var feedEl = win.querySelector("#sti-msn-el-feed");
+
+      if (emojiBtn && emojiBar) {
+        emojiBtn.addEventListener("click", function () {
+          emojiBar.style.display = emojiBar.style.display === "flex" ? "none" : "flex";
+        });
+        Array.prototype.forEach.call(emojiBar.querySelectorAll(".sti-el-emo-pick"), function (bE) {
+          bE.addEventListener("click", function () {
+            var em = bE.getAttribute("data-emo") || "";
+            if (txtInp) {
+              txtInp.value = (txtInp.value || "") + em;
+              txtInp.focus();
+            }
+            emojiBar.style.display = "none";
+          });
+        });
+      }
+      if (quoteClearEl && quoteBarEl) {
+        quoteClearEl.addEventListener("click", function () {
+          win.removeAttribute("data-quote-txt");
+          quoteBarEl.style.display = "none";
+        });
+      }
+      if (thumbBtn) {
+        thumbBtn.addEventListener("click", function () {
+          if (txtInp) txtInp.value = "👍";
+          var fSub = win.querySelector("#sti-msn-el-form");
+          if (fSub) fSub.dispatchEvent(new Event("submit", { cancelable: true }));
+        });
+      }
 
       if (window.visualViewport) {
         window.visualViewport.addEventListener("resize", function () {
@@ -2912,16 +3003,21 @@
         if (inp) inp.value = "";
         fichierEnAttenteEleve = null;
         majBarreFichierEleve();
+        var quoteTxt = win.getAttribute("data-quote-txt") || "";
+        win.removeAttribute("data-quote-txt");
+        var qBar = win.querySelector("#sti-msn-el-quotebar");
+        if (qBar) qBar.style.display = "none";
 
         var tsNow = new Date().toISOString();
-        enregistrerMsgFilEleve(uid, { de: "eleve", texte: txt, fichier: fJoint, ts: tsNow });
+        enregistrerMsgFilEleve(uid, { de: "eleve", texte: txt, enReponseA: quoteTxt, fichier: fJoint, ts: tsNow });
         peindreFilMessengerEleve(uid);
 
         var cibleMsgId = win.getAttribute("data-reply-msgid") || "libre";
         win.removeAttribute("data-reply-msgid");
+        var txtFinal = quoteTxt ? ("↩️ « " + quoteTxt.slice(0, 70) + " »\n" + txt) : txt;
         var info = JSON.stringify({
           classe: maClasse || "*",
-          reponse: txt || (fJoint ? ("📎 Fichier joint : " + fJoint.nom) : ""),
+          reponse: txtFinal || (fJoint ? ("📎 Fichier joint : " + fJoint.nom) : ""),
           fichier: fJoint || undefined,
           page: chemin
         });
@@ -2941,7 +3037,7 @@
         }).catch(function () {
           empilerHorsLigne(ligneMsg);
         });
-        var repTexte = txt || (fJoint ? ("📎 Fichier joint : " + fJoint.nom) : "");
+        var repTexte = txtFinal || (fJoint ? ("📎 Fichier joint : " + fJoint.nom) : "");
         try {
           sb.channel("sti-diffusion").send({
             type: "broadcast",
@@ -2978,52 +3074,147 @@
     var feed = win.querySelector("#sti-msn-el-feed");
     if (!feed) return;
     var fil = lireFilMessengerEleve(uid);
+    var reactionsMap = lireReactionsMessengerLocal();
+
+    var introProfileHtml =
+      "<div style='display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 10px 16px;margin-bottom:4px'>" +
+        "<div style='position:relative;width:62px;height:62px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,#0099ff,#7638fa,#ff5280);margin-bottom:8px'>" +
+          "<div style='width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;border:2.5px solid #fff'>AE</div>" +
+          "<span style='position:absolute;right:2px;bottom:2px;width:13px;height:13px;border-radius:50%;background:#31a24c;border:2.5px solid #fff'></span>" +
+        "</div>" +
+        "<div style='font-weight:800;font-size:15.5px;color:#050505;display:flex;align-items:center;gap:5px'>" +
+          "<span>M. Aymen Essouyah</span>" +
+          "<span style='display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:#0084ff;color:#fff;font-size:9.5px;font-weight:900'>✓</span>" +
+        "</div>" +
+        "<div style='font-size:12px;color:#65676b;margin-top:2px'>Professeur STI · Lycée Raféha</div>" +
+        "<div style='font-size:11px;color:#8a8d91;margin-top:4px;background:#f0f2f5;padding:4px 12px;border-radius:999px'>Vous êtes connectés sur Messenger STI</div>" +
+      "</div>";
+
     if (!fil.length) {
-      feed.innerHTML =
-        "<div style='margin:auto;text-align:center;padding:20px;color:#7a6f5d;font-size:12px'>" +
-          "<div style='font-size:30px;margin-bottom:6px'>💬</div>" +
-          "<b>Discussion directe avec M. Essouyah</b><br>" +
-          "Posez votre question, répondez aux messages ou joignez un fichier (<b>📎</b>) ici comme sur Messenger." +
+      feed.innerHTML = introProfileHtml +
+        "<div style='text-align:center;padding:8px 16px;color:#65676b;font-size:12.5px'>" +
+          "Posez votre question, envoyez un <b>👍</b>, joignez un fichier (<b>🖼️</b>) ou utilisez <b>📸 SOS Capture</b> en 1 clic." +
         "</div>";
       return;
     }
-    feed.innerHTML = fil.map(function (m) {
+
+    var prevMs = 0;
+    feed.innerHTML = introProfileHtml + fil.map(function (m, idx) {
       var estProf = m.de === "prof";
-      var cit = m.enReponseA
-        ? ("<div style='font-size:11px;padding:4px 8px;margin-bottom:5px;border-radius:7px;background:rgba(0,0,0,.07);border-left:3px solid #f4511e;opacity:.9'>↩️ « " + esc(m.enReponseA) + " »</div>")
+      var curMs = new Date(m.ts || 0).getTime() || 0;
+      var sepTime = "";
+      if (!prevMs || Math.abs(curMs - prevMs) > 15 * 60 * 1000) {
+        sepTime = "<div style='text-align:center;font-size:11px;font-weight:600;color:#65676b;margin:8px 0 4px'>" + esc(fmtHeureMsn(m.ts)) + "</div>";
+      }
+      prevMs = curMs;
+
+      var cleMsg = m.id || ("el-" + idx + "-" + (m.ts || ""));
+      var maReac = reactionsMap[cleMsg] || "";
+      var badgeReac = maReac
+        ? ("<span class='sti-meta-reac-pill' data-mid='" + esc(cleMsg) + "' style='position:absolute;bottom:-9px;" + (estProf ? "right:8px" : "left:8px") + ";background:#ffffff;border:1px solid rgba(0,0,0,.1);border-radius:999px;padding:1px 6px;font-size:12px;box-shadow:0 2px 5px rgba(0,0,0,.15);cursor:pointer;z-index:2'>" + esc(maReac) + "</span>")
         : "";
-      var tagType = estProf
-        ? ("<div style='font-size:10px;font-weight:900;color:#d84315;margin-bottom:3px'>" + (m.perso ? "📩 M. Essouyah (Personnel)" : "📢 M. Essouyah (Classe)") + "</div>")
+
+      var cit = m.enReponseA
+        ? ("<div style='font-size:11.5px;padding:5px 9px;margin-bottom:5px;border-radius:10px;background:" + (estProf ? "rgba(0,0,0,.06)" : "rgba(255,255,255,.18)") + ";border-left:3px solid " + (estProf ? "#0084ff" : "#fff") + ";opacity:.92'>↩️ « " + esc(m.enReponseA) + " »</div>")
+        : "";
+      var tagType = estProf && !m.perso
+        ? "<div style='font-size:10px;font-weight:800;color:#0084ff;margin-bottom:2px'>📢 Annonce de classe</div>"
         : "";
       var blocFichier = rendreBlocFichierJointEleve(m.fichier, !estProf);
+      var estJumbo = !m.fichier && !m.enReponseA && estJumboEmojiMeta(m.texte);
       var blocTexte = m.texte
-        ? ("<div style='white-space:pre-wrap;font-weight:700;font-size:12.8px'>" + esc(m.texte) + "</div>")
+        ? (estJumbo
+            ? ("<div style='font-size:38px;line-height:1.1;padding:2px 4px'>" + esc(m.texte) + "</div>")
+            : ("<div style='white-space:pre-wrap;font-weight:500;font-size:13.5px;line-height:1.38;word-break:break-word'>" + esc(m.texte) + "</div>"))
         : "";
+
+      var barreActionsMsg =
+        "<div class='sti-meta-msg-actions' style='position:relative'>" +
+          "<button type='button' class='sti-meta-btn-react' data-mid='" + esc(cleMsg) + "' title='Réagir' style='border:none;background:#f0f2f5;color:#65676b;border-radius:50%;width:26px;height:26px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center'>😊</button>" +
+          "<button type='button' class='sti-meta-btn-reply' data-txt='" + esc((m.texte || (m.fichier ? m.fichier.nom : "")).slice(0, 90)) + "' title='Répondre' style='border:none;background:#f0f2f5;color:#65676b;border-radius:50%;width:26px;height:26px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center'>↩️</button>" +
+          "<div class='sti-meta-react-bar' data-bar-mid='" + esc(cleMsg) + "' style='" + (estProf ? "left:0" : "right:0") + "'>" +
+            "<button type='button' data-reac='❤️' data-mid='" + esc(cleMsg) + "'>❤️</button>" +
+            "<button type='button' data-reac='😂' data-mid='" + esc(cleMsg) + "'>😂</button>" +
+            "<button type='button' data-reac='😮' data-mid='" + esc(cleMsg) + "'>😮</button>" +
+            "<button type='button' data-reac='😢' data-mid='" + esc(cleMsg) + "'>😢</button>" +
+            "<button type='button' data-reac='🙏' data-mid='" + esc(cleMsg) + "'>🙏</button>" +
+            "<button type='button' data-reac='👍' data-mid='" + esc(cleMsg) + "'>👍</button>" +
+          "</div>" +
+        "</div>";
+
       if (estProf) {
-        return (
-          "<div style='display:flex;align-items:flex-end;gap:7px;max-width:88%;align-self:flex-start'>" +
-            "<div style='width:26px;height:26px;border-radius:50%;background:#23201a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0'>👨‍🏫</div>" +
-            "<div style='background:#ffffff;color:#23201a;border:2px solid #23201a;border-radius:16px 16px 16px 4px;padding:8px 12px;box-shadow:2px 2px 0 rgba(35,32,26,.18)'>" +
+        return sepTime +
+          "<div class='sti-meta-msg-row' style='display:flex;align-items:flex-end;gap:7px;max-width:90%;align-self:flex-start;margin-bottom:" + (maReac ? "10px" : "2px") + "'>" +
+            "<div style='position:relative;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;flex-shrink:0'>AE" +
+              "<span style='position:absolute;right:-1px;bottom:-1px;width:8px;height:8px;border-radius:50%;background:#31a24c;border:1.5px solid #fff'></span>" +
+            "</div>" +
+            "<div style='position:relative;" + (estJumbo ? "background:transparent;padding:0" : "background:#f0f2f5;color:#050505;border-radius:18px 18px 18px 4px;padding:8px 13px") + "' title='" + esc(fmtHeureMsn(m.ts)) + "'>" +
               tagType +
               cit +
               blocTexte +
               blocFichier +
-              "<div style='font-size:10px;color:#7a6f5d;text-align:right;margin-top:3px'>" + esc(fmtHeureMsn(m.ts)) + "</div>" +
+              badgeReac +
             "</div>" +
-          "</div>"
-        );
+            barreActionsMsg +
+          "</div>";
       }
-      return (
-        "<div style='display:flex;flex-direction:column;max-width:86%;align-self:flex-end'>" +
-          "<div style='background:linear-gradient(135deg,#f4511e,#ff7043);color:#fff;border:2px solid #23201a;border-radius:16px 16px 4px 16px;padding:8px 12px;box-shadow:2px 2px 0 #23201a'>" +
-            blocTexte +
-            blocFichier +
-            "<div style='font-size:10px;color:rgba(255,255,255,.88);text-align:right;margin-top:3px'>" + esc(fmtHeureMsn(m.ts)) + " · ✓✓</div>" +
+      var vuEstDernier = idx === fil.length - 1;
+      return sepTime +
+        "<div class='sti-meta-msg-row' style='display:flex;flex-direction:column;align-items:flex-end;max-width:90%;align-self:flex-end;margin-bottom:" + (maReac ? "10px" : "2px") + "'>" +
+          "<div style='display:flex;align-items:center;gap:6px'>" +
+            barreActionsMsg +
+            "<div style='position:relative;" + (estJumbo ? "background:transparent;padding:0" : "background:linear-gradient(135deg,#0084ff 0%,#7638fa 55%,#ff5280 100%);color:#ffffff;border-radius:18px 18px 4px 18px;padding:8px 13px;box-shadow:0 1px 2px rgba(0,0,0,.08)") + "' title='" + esc(fmtHeureMsn(m.ts)) + "'>" +
+              cit +
+              blocTexte +
+              blocFichier +
+              badgeReac +
+            "</div>" +
           "</div>" +
-        "</div>"
-      );
+          (vuEstDernier ? ("<div style='font-size:10px;color:#65676b;margin-top:3px;display:flex;align-items:center;gap:3px'><span style='display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;background:#0084ff;color:#fff;font-size:8px;font-weight:900'>✓</span> Envoyé · " + esc(fmtHeureMsn(m.ts)) + "</div>") : "") +
+        "</div>";
     }).join("");
+
     brancherActionsFichiersConteneur(feed);
+    Array.prototype.forEach.call(feed.querySelectorAll(".sti-meta-btn-react"), function (bR) {
+      bR.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var mid = bR.getAttribute("data-mid");
+        Array.prototype.forEach.call(feed.querySelectorAll(".sti-meta-react-bar"), function (bar) {
+          if (bar.getAttribute("data-bar-mid") === mid) bar.classList.toggle("ouvert");
+          else bar.classList.remove("ouvert");
+        });
+      });
+    });
+    Array.prototype.forEach.call(feed.querySelectorAll(".sti-meta-react-bar button[data-reac]"), function (bEm) {
+      bEm.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        sauverReactionMessengerLocal(bEm.getAttribute("data-mid"), bEm.getAttribute("data-reac"));
+        peindreFilMessengerEleve(uid);
+      });
+    });
+    Array.prototype.forEach.call(feed.querySelectorAll(".sti-meta-reac-pill"), function (pill) {
+      pill.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        sauverReactionMessengerLocal(pill.getAttribute("data-mid"), pill.textContent);
+        peindreFilMessengerEleve(uid);
+      });
+    });
+    Array.prototype.forEach.call(feed.querySelectorAll(".sti-meta-btn-reply"), function (bRep) {
+      bRep.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var qTxt = bRep.getAttribute("data-txt") || "";
+        if (!qTxt) return;
+        win.setAttribute("data-quote-txt", qTxt);
+        var qBar = win.querySelector("#sti-msn-el-quotebar");
+        var qSpan = win.querySelector("#sti-msn-el-quotetxt");
+        if (qBar && qSpan) {
+          qSpan.textContent = "↩️ Réponse à : « " + qTxt + " »";
+          qBar.style.display = "flex";
+        }
+        var inp = win.querySelector("#sti-msn-el-inp");
+        if (inp) inp.focus();
+      });
+    });
     feed.scrollTop = feed.scrollHeight;
   }
 
@@ -3036,11 +3227,11 @@
     b.className = "sti-no-print";
     b.title = "Ouvrir la discussion Messenger avec M. Essouyah";
     b.style.cssText =
-      "position:fixed;right:16px;bottom:68px;z-index:2147483646;width:50px;height:50px;border-radius:50%;" +
-      "border:2.5px solid #23201a;background:linear-gradient(135deg,#f4511e,#ff8a50);color:#fff;font-size:22px;" +
-      "display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:4px 4px 0 #23201a,0 10px 24px rgba(0,0,0,.28);";
-    b.innerHTML = "💬" + (nbNonLus > 0
-      ? ("<span style='position:absolute;top:-5px;right:-5px;background:#c0392b;color:#fff;border:2px solid #fff;border-radius:999px;padding:1px 6px;font:900 10.5px system-ui,sans-serif'>" + nbNonLus + "</span>")
+      "position:fixed;right:16px;bottom:68px;z-index:2147483646;width:54px;height:54px;border-radius:50%;" +
+      "border:2px solid #ffffff;background:linear-gradient(135deg,#0099ff 0%,#7638fa 52%,#ff5280 100%);color:#fff;font-size:22px;" +
+      "display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,132,255,.38),0 2px 8px rgba(0,0,0,.18);";
+    b.innerHTML = ICO_META_MSN_SVG.replace("width='20' height='20'", "width='28' height='28'") + (nbNonLus > 0
+      ? ("<span style='position:absolute;top:-4px;right:-4px;background:#e41e3f;color:#fff;border:2px solid #fff;border-radius:999px;padding:1px 6px;font:800 10.5px system-ui,sans-serif'>" + nbNonLus + "</span>")
       : "");
     b.addEventListener("click", function () {
       b.remove();
@@ -4691,14 +4882,15 @@
       ? "Ouvrir Messenger STI (Discuter en direct avec les candidats)"
       : "Ouvrir Messenger STI (Discuter avec M. Essouyah & envoyer des fichiers 📎)";
     btn.style.cssText =
-      "position:fixed;left:14px;bottom:14px;z-index:2147483645;display:inline-flex;align-items:center;gap:7px;" +
-      "padding:10px 15px;border-radius:999px;border:2.5px solid #23201a;" +
-      "background:linear-gradient(125deg,#23201a 0%,#f4511e 100%);color:#fff;" +
-      "font:900 12.5px/1 system-ui,'Segoe UI',sans-serif;cursor:pointer;" +
-      "box-shadow:3px 3px 0 #23201a,0 8px 20px rgba(0,0,0,.25);";
+      "position:fixed;left:14px;bottom:14px;z-index:2147483645;display:inline-flex;align-items:center;gap:8px;" +
+      "padding:10px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,.35);" +
+      "background:linear-gradient(135deg,#0084ff 0%,#7638fa 52%,#ff5280 100%);color:#fff;" +
+      "font:800 13px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;cursor:pointer;" +
+      "box-shadow:0 8px 24px rgba(0,132,255,.35),0 2px 8px rgba(0,0,0,.18);";
     btn.innerHTML =
-      "<span>💬 Messenger</span><span class='sti-lbl-msn-pc'>STI</span>" +
-      "<span id='sti-badge-msn-global' style='display:none;background:#ffd54f;color:#23201a;font-size:11px;font-weight:900;padding:2px 6px;border-radius:999px;border:1.5px solid #23201a'>0</span>";
+      ICO_META_MSN_SVG +
+      "<span>Messenger</span><span class='sti-lbl-msn-pc'>STI</span>" +
+      "<span id='sti-badge-msn-global' style='display:none;background:#e41e3f;color:#fff;font-size:11px;font-weight:800;padding:2px 6px;border-radius:999px;border:2px solid #fff'>0</span>";
     btn.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -4763,49 +4955,50 @@
     win.id = "sti-messenger-admin-site";
     win.className = "sti-no-print";
     win.style.cssText =
-      "position:fixed;left:14px;bottom:64px;z-index:2147483647;width:min(660px,calc(100vw - 24px));height:min(500px,82vh);" +
-      "background:#fffdf7;color:#23201a;color-scheme:light;border:2.5px solid #23201a;border-radius:20px;" +
-      "box-shadow:5px 5px 0 #23201a,0 18px 46px rgba(0,0,0,.32);display:grid;grid-template-columns:225px 1fr;overflow:hidden;" +
-      "font:700 12.5px/1.4 system-ui,'Segoe UI',sans-serif;";
+      "position:fixed;left:14px;bottom:64px;z-index:2147483647;width:min(680px,calc(100vw - 20px));height:min(530px,84vh);" +
+      "background:#ffffff;color:#050505;color-scheme:light;border:1px solid rgba(0,0,0,.09);border-radius:18px;" +
+      "box-shadow:0 12px 38px rgba(0,0,0,.2),0 2px 10px rgba(0,0,0,.08);display:grid;grid-template-columns:245px 1fr;overflow:hidden;" +
+      "font:500 13px/1.4 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;";
 
     win.innerHTML =
-      "<div class='sti-msn-adm-sb' style='background:#f6efe2;border-right:2px solid #e2d5be;display:flex;flex-direction:column;min-height:0'>" +
-        "<div style='padding:10px 12px;background:#23201a;color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:6px'>" +
-          "<span>💬 Messenger STI</span>" +
-          "<button type='button' id='sti-msn-adm-sb-close' style='border:1.5px solid rgba(255,255,255,.65);background:rgba(255,255,255,.18);color:#fff;border-radius:8px;padding:3px 9px;font-size:12px;font-weight:900;cursor:pointer'>✕</button>" +
+      "<div class='sti-msn-adm-sb' style='background:#ffffff;border-right:1px solid #e4e6eb;display:flex;flex-direction:column;min-height:0'>" +
+        "<div style='padding:12px 14px 8px;background:#ffffff;color:#050505;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:space-between;gap:6px'>" +
+          "<span style='display:flex;align-items:center;gap:8px'>" + ICO_META_MSN_SVG + "<span>Discussions</span></span>" +
+          "<button type='button' id='sti-msn-adm-sb-close' style='border:none;background:#f0f2f5;color:#050505;border-radius:50%;width:30px;height:30px;font-size:13px;font-weight:700;cursor:pointer'>✕</button>" +
         "</div>" +
-        "<div style='padding:8px;border-bottom:1.5px solid #e2d5be;display:flex;flex-direction:column;gap:6px'>" +
-          "<input type='search' id='sti-msn-adm-search' placeholder='🔎 Chercher un candidat…' style='width:100%;border:1.5px solid #23201a;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;background:#fff;color:#23201a;outline:none' />" +
-          "<select id='sti-msn-adm-classe' style='width:100%;border:1.5px solid #23201a;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;background:#fff;color:#23201a;outline:none'><option value=''>🏫 Toutes les classes</option></select>" +
+        "<div style='padding:6px 10px 8px;border-bottom:1px solid #e4e6eb;display:flex;flex-direction:column;gap:6px'>" +
+          "<input type='search' id='sti-msn-adm-search' placeholder='🔎 Rechercher sur Messenger…' style='width:100%;border:none;border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:500;background:#f0f2f5;color:#050505;outline:none' />" +
+          "<select id='sti-msn-adm-classe' style='width:100%;border:none;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;background:#e7f3ff;color:#0084ff;outline:none'><option value=''>🏫 Toutes les classes</option></select>" +
         "</div>" +
-        "<div id='sti-msn-adm-users' style='flex:1;overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:4px'>" +
-          "<div style='padding:14px;text-align:center;color:#7a6f5d'>Chargement des candidats…</div>" +
+        "<div id='sti-msn-adm-users' style='flex:1;overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:2px'>" +
+          "<div style='padding:14px;text-align:center;color:#65676b'>Chargement des discussions…</div>" +
         "</div>" +
       "</div>" +
-      "<div class='sti-msn-adm-col' style='display:flex;flex-direction:column;min-height:0;background:#f3ead9'>" +
-        "<div style='background:linear-gradient(125deg,#23201a 0%,#3a342a 55%,#f4511e 100%);color:#fff;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:2px solid #23201a'>" +
-          "<div id='sti-msn-adm-head-left' style='display:flex;align-items:center;gap:8px;min-width:0;cursor:pointer'>" +
-            "<button type='button' id='sti-msn-adm-back' style='border:1.5px solid rgba(255,255,255,.7);background:rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:4px 9px;font-size:11.5px;font-weight:900;cursor:pointer;white-space:nowrap;flex-shrink:0'>⬅ Candidats</button>" +
+      "<div class='sti-msn-adm-col' style='display:flex;flex-direction:column;min-height:0;background:#ffffff'>" +
+        "<div style='background:#ffffff;color:#050505;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #e4e6eb;box-shadow:0 1px 2px rgba(0,0,0,.04)'>" +
+          "<div id='sti-msn-adm-head-left' style='display:flex;align-items:center;gap:9px;min-width:0;cursor:pointer'>" +
+            "<button type='button' id='sti-msn-adm-back' style='border:none;background:#f0f2f5;color:#0084ff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0'>⬅ Discussions</button>" +
+            "<div style='position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0'>👤<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:#31a24c;border:2px solid #fff'></span></div>" +
             "<div style='min-width:0'>" +
-              "<div id='sti-msn-adm-nom' style='font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>Sélectionnez un candidat</div>" +
-              "<div id='sti-msn-adm-sub' style='font-size:10.5px;opacity:.92'>Discussion instantanée STI</div>" +
+              "<div id='sti-msn-adm-nom' style='font-weight:700;font-size:13.5px;color:#050505;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>Sélectionnez un candidat</div>" +
+              "<div id='sti-msn-adm-sub' style='font-size:11px;color:#65676b'>Actif sur Messenger STI</div>" +
             "</div>" +
           "</div>" +
-          "<button type='button' id='sti-msn-adm-close' style='border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.18);color:#fff;border-radius:8px;padding:3px 9px;font-size:12px;font-weight:900;cursor:pointer'>✕</button>" +
+          "<button type='button' id='sti-msn-adm-close' class='sti-meta-icon-btn' style='color:#0084ff;font-size:15px;font-weight:700'>✕</button>" +
         "</div>" +
-        "<div id='sti-msn-adm-feed' style='flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:radial-gradient(circle at 20% 20%,#fffdf7 0%,#f3ead9 100%)'>" +
-          "<div style='margin:auto;text-align:center;color:#6b6152;padding:18px'>👈 Choisissez un candidat pour ouvrir sa discussion.</div>" +
+        "<div id='sti-msn-adm-feed' style='flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px;background:#ffffff'>" +
+          "<div style='margin:auto;text-align:center;color:#65676b;padding:18px'>👈 Choisissez un candidat pour ouvrir sa discussion.</div>" +
         "</div>" +
-        "<div id='sti-msn-adm-filebar' style='display:none;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#fff3e0;border-top:1.5px solid #f4511e;font-size:11.5px;font-weight:800;color:#23201a'>" +
+        "<div id='sti-msn-adm-filebar' style='display:none;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#e7f3ff;border-top:1px solid #b3d4fc;font-size:11.5px;font-weight:700;color:#0084ff'>" +
           "<span id='sti-msn-adm-filename' style='overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>📎 fichier</span>" +
-          "<button type='button' id='sti-msn-adm-fileclear' style='border:1px solid #23201a;background:#fff;color:#c0392b;border-radius:999px;padding:1px 7px;font-size:10.5px;font-weight:900;cursor:pointer'>✕</button>" +
+          "<button type='button' id='sti-msn-adm-fileclear' style='border:none;background:#ffffff;color:#e41e3f;border-radius:999px;padding:1px 7px;font-size:10.5px;font-weight:800;cursor:pointer'>✕</button>" +
         "</div>" +
-        "<form id='sti-msn-adm-form' style='padding:9px 10px;background:#fffdf7;border-top:2px solid #23201a;display:flex;align-items:center;gap:6px;margin:0'>" +
+        "<form id='sti-msn-adm-form' style='padding:8px 10px;background:#ffffff;border-top:1px solid #e4e6eb;display:flex;align-items:center;gap:5px;margin:0'>" +
           "<input type='file' id='sti-msn-adm-file' style='display:none' accept='image/*,.pdf,.sql,.php,.html,.htm,.css,.js,.txt,.zip,.rar,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.json' />" +
-          "<button type='button' id='sti-msn-adm-attach' title='Joindre un fichier' style='width:34px;height:34px;border-radius:50%;border:1.8px solid #23201a;background:#fff3e0;color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0'>📎</button>" +
-          "<button type='button' id='sti-msn-adm-mic' title='Dicter au micro' style='width:34px;height:34px;border-radius:50%;border:1.8px solid #23201a;background:#fff3e0;color:#23201a;font-size:15px;cursor:pointer;flex-shrink:0'>🎙️</button>" +
-          "<input type='text' id='sti-msn-adm-inp' placeholder='Écrire un message ou joindre un fichier (📎)…' autocomplete='off' style='flex:1;min-width:0;border:2px solid #23201a;border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:700;background:#fff;color:#23201a;outline:none' />" +
-          "<button type='submit' style='border:2px solid #23201a;background:linear-gradient(135deg,#f4511e,#ff8a50);color:#fff;border-radius:999px;padding:7px 14px;font-weight:900;font-size:12.5px;cursor:pointer;box-shadow:2px 2px 0 #23201a;flex-shrink:0'>➤</button>" +
+          "<button type='button' id='sti-msn-adm-attach' class='sti-meta-icon-btn' title='Joindre une photo ou un fichier' style='color:#0084ff;font-size:17px'>🖼️</button>" +
+          "<button type='button' id='sti-msn-adm-mic' class='sti-meta-icon-btn' title='Dicter au micro' style='color:#0084ff;font-size:16px'>🎙️</button>" +
+          "<input type='text' id='sti-msn-adm-inp' placeholder='Aa' autocomplete='off' style='flex:1;min-width:0;border:none;border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:500;background:#f0f2f5;color:#050505;outline:none' />" +
+          "<button type='submit' style='width:34px;height:34px;border-radius:50%;border:none;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0'>" + ICO_META_SEND_SVG + "</button>" +
         "</form>" +
       "</div>";
 
@@ -4972,15 +5165,15 @@
         b.type = "button";
         var act = p.id === msnSiteUidActif;
         var nl = nbNonLusCandSite(p);
-        b.style.cssText = "display:flex;align-items:center;gap:8px;padding:9px 8px;border-radius:11px;cursor:pointer;border:1.5px solid " +
-          ((act || nl > 0) ? "#f4511e" : "transparent") + ";background:" + ((act || nl > 0) ? "#fff3e0" : "rgba(255,255,255,.65)") + ";text-align:left;width:100%";
+        b.style.cssText = "display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;border:none;background:" +
+          (act ? "#e7f3ff" : (nl > 0 ? "#f0f2f5" : "transparent")) + ";text-align:left;width:100%";
         b.innerHTML =
-          "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f4511e,#ff8a50);color:#fff;font-weight:900;font-size:11.5px;display:flex;align-items:center;justify-content:center;border:1.5px solid #23201a;flex-shrink:0'>👤</div>" +
+          "<div style='position:relative;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0'>👤<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:#31a24c;border:2px solid #fff'></span></div>" +
           "<div style='min-width:0;flex:1'>" +
-            "<div style='font-size:12px;font-weight:900;color:#23201a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(nomContactCand(p)) + "</div>" +
-            "<div style='font-size:10.5px;color:#6b6152;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>🏫 " + esc(p.classe || "—") + " · " + esc((p.lycee || "—").replace(/\s*\|\s*GOLD$/i, "")) + "</div>" +
+            "<div style='font-size:13px;font-weight:" + (nl > 0 ? "800" : "600") + ";color:#050505;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(nomContactCand(p)) + "</div>" +
+            "<div style='font-size:11px;color:" + (nl > 0 ? "#0084ff;font-weight:700" : "#65676b") + ";white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>🏫 " + esc(p.classe || "—") + " · " + esc((p.lycee || "—").replace(/\s*\|\s*GOLD$/i, "")) + "</div>" +
           "</div>" +
-          (nl > 0 ? ("<span style='background:#c0392b;color:#fff;border:1px solid #23201a;border-radius:999px;padding:1px 6px;font-size:10px;font-weight:900;flex-shrink:0'>🔴 " + nl + "</span>") : "");
+          (nl > 0 ? ("<span style='width:10px;height:10px;border-radius:50%;background:#0084ff;flex-shrink:0' title='" + nl + " non lu(s)'></span>") : "");
         b.addEventListener("click", function () {
           msnSiteUidActif = p.id;
           marquerLuAdmSite(p.id);
@@ -4997,8 +5190,8 @@
       var p = null;
       listeCand.forEach(function (x) { if (x.id === msnSiteUidActif) p = x; });
       if (!p) {
-        elNom.textContent = "🔴 Messages non lus au départ";
-        elSub.textContent = "Cliquez sur un message pour répondre";
+        elNom.textContent = "Messages non lus";
+        elSub.textContent = "Sélectionnez une discussion pour répondre";
         var cartesNL = [];
         listeCand.forEach(function (c) {
           var nl = nbNonLusCandSite(c);
@@ -5010,10 +5203,10 @@
         if (cartesNL.length > 0) {
           elFeed.innerHTML = cartesNL.map(function (it) {
             var txt = it.dern ? (it.dern.texte || (it.dern.fichier ? ("📎 " + it.dern.fichier.nom) : "")) : "";
-            return "<div class='sti-site-nl-card' data-uid='" + esc(it.c.id) + "' style='background:#fff;border:2px solid #23201a;border-radius:13px;padding:10px 12px;box-shadow:3px 3px 0 #f4511e;cursor:pointer'>" +
-              "<div style='display:flex;justify-content:space-between;align-items:center;gap:6px'><b>👤 " + esc(nomContactCand(it.c)) + "</b><span style='background:#c0392b;color:#fff;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:900'>🔴 " + it.nl + " non lu(s)</span></div>" +
-              "<div style='font-size:11px;color:#5a5244;margin-top:2px'>🏫 " + esc(it.c.classe || "—") + " · 🏛️ " + esc((it.c.lycee || "—").replace(/\s*\|\s*GOLD$/i, "")) + "</div>" +
-              "<div style='margin-top:5px;padding:5px 8px;background:#fffdf7;border-left:3px solid #f4511e;border-radius:6px;font-weight:800'>💬 " + esc(txt) + "</div>" +
+            return "<div class='sti-site-nl-card' data-uid='" + esc(it.c.id) + "' style='background:#f0f2f5;border:1px solid #e4e6eb;border-radius:14px;padding:11px 13px;cursor:pointer'>" +
+              "<div style='display:flex;justify-content:space-between;align-items:center;gap:6px'><b style='color:#050505'>👤 " + esc(nomContactCand(it.c)) + "</b><span style='background:#0084ff;color:#fff;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700'>" + it.nl + " non lu(s)</span></div>" +
+              "<div style='font-size:11px;color:#65676b;margin-top:2px'>🏫 " + esc(it.c.classe || "—") + " · 🏛️ " + esc((it.c.lycee || "—").replace(/\s*\|\s*GOLD$/i, "")) + "</div>" +
+              "<div style='margin-top:6px;padding:6px 10px;background:#ffffff;border-left:3px solid #0084ff;border-radius:8px;font-weight:600;color:#050505'>💬 " + esc(txt) + "</div>" +
             "</div>";
           }).join("");
           Array.prototype.forEach.call(elFeed.querySelectorAll(".sti-site-nl-card"), function (card) {
@@ -5029,27 +5222,27 @@
           });
           return;
         }
-        elFeed.innerHTML = "<div style='margin:auto;text-align:center;color:#6b6152;padding:18px'>✅ Aucun message non lu.<br>👈 Choisissez un candidat pour ouvrir sa discussion.</div>";
+        elFeed.innerHTML = "<div style='margin:auto;text-align:center;color:#65676b;padding:18px'>✅ Aucun message non lu.<br>👈 Choisissez un candidat pour ouvrir sa discussion.</div>";
         return;
       }
       elNom.textContent = nomContactCand(p);
       elSub.textContent = "🏫 " + (p.classe || "—") + " · 🏛️ " + (p.lycee || "—").replace(/\s*\|\s*GOLD$/i, "");
       var fil = construireFilCand(p.id);
       if (!fil.length) {
-        elFeed.innerHTML = "<div style='margin:auto;text-align:center;color:#6b6152;padding:18px'>👋 Démarrez la discussion avec <b>" + esc(nomContactCand(p)) + "</b>.</div>";
+        elFeed.innerHTML = "<div style='margin:auto;text-align:center;color:#65676b;padding:18px'>👋 Démarrez la discussion avec <b style='color:#050505'>" + esc(nomContactCand(p)) + "</b>.</div>";
         return;
       }
       elFeed.innerHTML = fil.map(function (m) {
         var estProf = m.de === "prof";
         var bf = rendreBlocFichierJointEleve(m.fichier, estProf);
-        var bt = m.texte ? ("<div style='white-space:pre-wrap'>" + esc(m.texte) + "</div>") : "";
+        var bt = m.texte ? ("<div style='white-space:pre-wrap;font-size:13.5px;line-height:1.38'>" + esc(m.texte) + "</div>") : "";
         if (estProf) {
-          return "<div style='align-self:flex-end;max-width:84%;background:linear-gradient(135deg,#f4511e,#ff7043);color:#fff;border:2px solid #23201a;border-radius:16px 16px 4px 16px;padding:8px 12px'>" + bt + bf + "<div style='font-size:10px;opacity:.88;text-align:right;margin-top:3px'>" + esc(fmtHeureMsn(m.ts)) + "</div></div>";
+          return "<div style='align-self:flex-end;max-width:84%;background:linear-gradient(135deg,#0084ff 0%,#7638fa 55%,#ff5280 100%);color:#fff;border-radius:18px 18px 4px 18px;padding:8px 13px'>" + bt + bf + "<div style='font-size:10px;opacity:.88;text-align:right;margin-top:3px'>" + esc(fmtHeureMsn(m.ts)) + "</div></div>";
         }
         var pageTag = m.page
-          ? ("<div style='margin-bottom:4px'><a href='" + esc(cfg.RACINE + String(m.page).replace(/^\/+/, "")) + "' style='display:inline-block;font-size:10px;font-weight:900;background:#fff3e0;color:#d84315;border:1px solid #f4511e;border-radius:999px;padding:1px 7px;text-decoration:none'>📍 Page : " + esc(m.page) + " ↗</a></div>")
+          ? ("<div style='margin-bottom:4px'><a href='" + esc(cfg.RACINE + String(m.page).replace(/^\/+/, "")) + "' style='display:inline-block;font-size:10px;font-weight:700;background:#e7f3ff;color:#0084ff;border-radius:999px;padding:2px 8px;text-decoration:none'>📍 Page : " + esc(m.page) + " ↗</a></div>")
           : "";
-        return "<div style='align-self:flex-start;max-width:84%;background:#fff;color:#23201a;border:2px solid #23201a;border-radius:16px 16px 16px 4px;padding:8px 12px'>" + pageTag + bt + bf + "<div style='font-size:10px;color:#6b6152;text-align:right;margin-top:3px'>" + esc(fmtHeureMsn(m.ts)) + "</div></div>";
+        return "<div style='align-self:flex-start;max-width:84%;background:#f0f2f5;color:#050505;border-radius:18px 18px 18px 4px;padding:8px 13px'>" + pageTag + bt + bf + "<div style='font-size:10px;color:#65676b;text-align:right;margin-top:3px'>" + esc(fmtHeureMsn(m.ts)) + "</div></div>";
       }).join("");
       brancherActionsFichiersConteneur(elFeed);
       elFeed.scrollTop = elFeed.scrollHeight;
