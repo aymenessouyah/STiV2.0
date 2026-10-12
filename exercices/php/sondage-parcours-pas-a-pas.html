@@ -464,7 +464,7 @@ const SCEN=[
    {node:'N10',lines:[33],t:'Inscription : INSERT dans participant',d:'On crée le participant. <code>idparticipant</code> n\'est pas dans la requête : MySQL le génère (auto-incrément).',addP:{id:3,mail:'nina@mail.tn',mdp:'0000',genre:'F'}},
    {node:'N11',lines:[34,35,36],t:'Récupérer l\'id généré',d:'Un <code>SELECT</code> retrouve la ligne qu\'on vient d\'ajouter. <code>mysqli_fetch_row</code> renvoie un tableau indexé : <code>$ligne[0]</code> est l\'<code>idparticipant</code>.',vars:{'$new_participant':'3'}},
    {node:'N12',lines:[37],t:'Enregistrer les 3 réponses',d:'Un seul <code>INSERT</code> avec trois lignes de valeurs : (NumQ, NumS, idparticipant, rep). NumS = 1 car il s\'agit du sondage n°1.',addR:[{q:1,s:1,id:3,rep:'Oui'},{q:2,s:1,id:3,rep:'Oui'},{q:3,s:1,id:3,rep:'Non'}]},
-   {node:'N13',lines:[38,39],t:'Vérifier l\'insertion et afficher le message',d:'<code>mysqli_affected_rows($badge)</code> renvoie 3 (≠ 0) : succès.',cond:['yes','3 != 0 → vrai'],out:['good','Inscription et participation au sondage effectuées avec succès']}
+   {node:'N13',lines:[38,39],t:'Vérifier l\'insertion et afficher le message',d:'<code>mysqli_affected_rows($badge)</code> renvoie 3 (<code>!= 0</code>) : succès.',cond:['yes','3 != 0 → vrai'],out:['good','Inscription et participation au sondage effectuées avec succès']}
   ]},
  {label:'2. Mauvais mot de passe',sub:'mail connu, mdp faux',
   post:{T1:'sami@mail.tn',T2:'9999',D1:'M',R1:'Non',R2:'Non',R3:'Oui'},
@@ -481,9 +481,9 @@ const SCEN=[
    {node:'N1',take:'E2',lines:[6,7],t:'Le mail existe-t-il déjà ?',d:'<code>$req1</code> renvoie 1 ligne : flèche « Oui ».',vars:{'$req1':'1 ligne'},cond:['yes','1 != 0 → vrai']},
    {node:'N2',take:'E4',lines:[8,9,11],t:'Le mot de passe est-il correct ?',d:'<code>$req2</code> trouve (mail + mdp) : 1 ligne. Le test <code>== 0</code> est faux, donc flèche « Oui » : authentification réussie.',vars:{'$req2':'1 ligne'},cond:['yes','1 == 0 → faux → else']},
    {node:'N3',lines:[12,13],t:'Récupérer l\'id du participant',d:'<code>mysqli_fetch_row($req2)</code> donne la ligne ; la colonne 0 est <code>idparticipant</code>.',vars:{'$participant':'2'}},
-   {node:'N4',take:'E6',lines:[14,15,22],t:'A-t-il déjà répondu au sondage ?',d:'<code>$req3</code> compte ses réponses pour NumS = 1 et NumQ ∈ {1,2,3} : 0 ligne. Ce n\'est pas 3, donc flèche « Non » : première participation.',vars:{'$req3':'0 ligne'},cond:['no','0 == 3 → faux → else']},
+   {node:'N4',take:'E6',lines:[14,15,22],t:'A-t-il déjà répondu au sondage ?',d:'<code>$req3</code> compte ses réponses pour NumS = 1 et NumQ IN (1,2,3) : 0 ligne. Ce n\'est pas 3, donc flèche « Non » : première participation.',vars:{'$req3':'0 ligne'},cond:['no','0 == 3 → faux → else']},
    {node:'N5',lines:[23,24,25],t:'Insertion des 3 réponses',d:'Le script vérifie que le participant existe (<code>$req4</code>), puis exécute l\'<code>INSERT</code> multi-lignes avec l\'id existant.',vars:{'$req4':'1 ligne'},addR:[{q:1,s:1,id:2,rep:'Non'},{q:2,s:1,id:2,rep:'Oui'},{q:3,s:1,id:2,rep:'Oui'}]},
-   {node:'N6',lines:[26,27],t:'Vérifier l\'insertion et afficher le message',d:'<code>mysqli_affected_rows($badge)</code> renvoie 3 (≠ -1) : le test réussit et le message attendu s\'affiche.',cond:['yes','3 != -1 → vrai'],out:['good','Participation au sondage effectuée avec succès']}
+   {node:'N6',lines:[26,27],t:'Vérifier l\'insertion et afficher le message',d:'<code>mysqli_affected_rows($badge)</code> renvoie 3 (<code>!= -1</code>) : le test réussit et le message attendu s\'affiche.',cond:['yes','3 != -1 → vrai'],out:['good','Participation au sondage effectuée avec succès']}
   ]},
  {label:'4. Mise à jour',sub:'a déjà répondu',
   post:{T1:'sami@mail.tn',T2:'1234',D1:'M',R1:'Non',R2:'Non',R3:'Oui'},
@@ -522,7 +522,7 @@ SCEN.forEach((s,i)=>{
 /* Chemin parcouru */
 function pathState(s,i){
   const seq=[];
-  for(let k=0;k<=i;k++){const n=s.steps[k].node; if(seq[seq.length-1]!==n)seq.push(n);}
+  for(let k=0;k<=i;k++){const n=s.steps[k].node; if(seq[seq.length-1]!=n)seq.push(n);}
   const edges=new Set();
   for(let k=1;k<seq.length;k++){
     const id=Object.keys(EDGES).find(e=>EDGES[e].f===seq[k-1]&&EDGES[e].t===seq[k]);
@@ -573,7 +573,7 @@ function computeState(s,upTo){
     if(st.vars){Object.assign(vars,st.vars); if(isLast)newVars=Object.keys(st.vars);}
     if(st.addP){P.push({...st.addP}); if(isLast)lastNew.push('P'+st.addP.id);}
     if(st.addR){st.addR.forEach(r=>{R.push({...r}); if(isLast)lastNew.push('R'+r.id+'-'+r.q);});}
-    if(st.updR){const t=R.find(r=>r.id===st.updR.id&&r.q===st.updR.q); if(t){const ch=t.rep!==st.updR.rep; t.rep=st.updR.rep; if(isLast&&ch)lastUpd='R'+t.id+'-'+t.q;}}
+    if(st.updR){const t=R.find(r=>r.id===st.updR.id&&r.q===st.updR.q); if(t){const ch=t.rep!=st.updR.rep; t.rep=st.updR.rep; if(isLast&&ch)lastUpd='R'+t.id+'-'+t.q;}}
   }
   let out=null; for(let i=upTo;i>=0;i--){ if(s.steps[i].out){out=s.steps[i].out;break;} }
   return {P,R,vars,lastNew,lastUpd,newVars,out};
@@ -630,7 +630,7 @@ document.addEventListener('keydown',e=>{
   if(e.target.tagName==='SELECT')return;
   if(e.key==='ArrowRight'){$('next').click();}
   else if(e.key==='ArrowLeft'){$('prev').click();}
-  else if(e.key===' '&&e.target.tagName!=='BUTTON'&&e.target.tagName!=='SUMMARY'){e.preventDefault();$('play').click();}
+  else if(e.key===' '&&e.target.tagName!='BUTTON'&&e.target.tagName!='SUMMARY'){e.preventDefault();$('play').click();}
 });
 
 /* Code complet (MySQLi) */
@@ -648,11 +648,11 @@ $('copy').onclick=async()=>{
 render();
 </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../../assets/css/protection.css?v=134" />
-<script src="../../assets/js/protection.js?v=134" defer></script>
+<link rel="stylesheet" href="../../assets/css/protection.css?v=135" />
+<script src="../../assets/js/protection.js?v=135" defer></script>
 <!-- /Protection -->
 <script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=134"></script>
-<script src="../../assets/js/acces.js?v=134"></script>
+<script src="../../assets/js/config.js?v=135"></script>
+<script src="../../assets/js/acces.js?v=135"></script>
 </body>
 </html>
