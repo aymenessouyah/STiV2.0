@@ -69,6 +69,15 @@
         location.replace(cfg.RACINE + "index.html");
         return;
       }
+      /* Sur Android / iPhone, si un jeton Supabase est déjà actif mais que le cache local a été vidé, restaurer sans redemander les identifiants */
+      if (hInit !== "admin" && hInit !== "attente") {
+        sb.auth.getSession().then(function (rsInit) {
+          var sInit = rsInit && rsInit.data ? rsInit.data.session : null;
+          if (sInit && sInit.user) {
+            verifierStatutEtEntrer(sInit.user);
+          }
+        }).catch(function () {});
+      }
     }
   } catch (e) {}
   try {
@@ -413,13 +422,77 @@
   }
 
   function verifierStatutEtEntrer(user) {
+    var entreeResolue = false;
+    function finaliserEntreePortail(profilData, isLabo, isG) {
+      if (entreeResolue) return;
+      entreeResolue = true;
+      try {
+        localStorage.removeItem("sti-admin-gold");
+        localStorage.removeItem("sti-force-exit");
+        localStorage.removeItem("sti-bio");
+        if (isG) localStorage.setItem("sti-gold", "1");
+        else localStorage.removeItem("sti-gold");
+        var jetonSess = "st_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+        var metaU = (user && user.user_metadata) || {};
+        var objSessPortail = {
+          id: user.id,
+          email: user.email,
+          nom: (profilData && profilData.nom) || metaU.nom || "",
+          prenom: (profilData && profilData.prenom) || metaU.prenom || "",
+          user_metadata: metaU,
+          lycee: (profilData && profilData.lycee) || metaU.lycee || "—",
+          classe: (profilData && profilData.classe) || metaU.classe || (isLabo ? "elevelabo3" : "—"),
+          statut: "actif",
+          gold: isG,
+          permanent: isLabo,
+          isAdmin: false,
+          sessionToken: jetonSess,
+          ts: Date.now()
+        };
+        var jsonSessPortail = JSON.stringify(objSessPortail);
+        localStorage.setItem("sti-session-token", jetonSess);
+        localStorage.setItem("sti-offline", String(Date.now()));
+        localStorage.setItem("sti-session-cache", jsonSessPortail);
+        try {
+          sessionStorage.setItem("sti-offline", String(Date.now()));
+          sessionStorage.setItem("sti-session-cache", jsonSessPortail);
+        } catch (e) {}
+        try {
+          document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonSessPortail) + "; path=/; max-age=2592000; SameSite=Lax";
+        } catch (e) {}
+        if (!isLabo) {
+          var sigSess = { type: "session_unique", uid: user.id, token: jetonSess, ts: Date.now() };
+          try {
+            sb.channel("sti-diffusion").send({ type: "broadcast", event: "session_unique", payload: sigSess });
+          } catch (e) {}
+          fetch("https://ntfy.sh/sti_v2_diffusion_9482", { method: "POST", body: JSON.stringify(sigSess) }).catch(function () {});
+        }
+        if (isLabo) {
+          localStorage.setItem("sti-labo3-permanent", jsonSessPortail);
+        } else {
+          localStorage.removeItem("sti-labo3-permanent");
+        }
+      } catch (e) {}
+      location.href = cfg.RACINE;
+    }
+
+    var timerSecoursProfil = setTimeout(function () {
+      if (entreeResolue) return;
+      var cLoc = null;
+      try { cLoc = JSON.parse(localStorage.getItem("sti-session-cache") || "null"); } catch (e) {}
+      if (cLoc && cLoc.id === user.id && cLoc.statut === "actif") {
+        finaliserEntreePortail(cLoc, estClasseProfLabo(cLoc.classe, user.email), Boolean(cLoc.gold));
+      }
+    }, 4500);
+
     sb.from("profiles").select("statut,lycee,classe,nom,prenom,phone").eq("id", user.id).maybeSingle().then(function (rp) {
+      clearTimeout(timerSecoursProfil);
+      if (entreeResolue) return;
       if (rp.error && estHorsLigne(rp.error)) {
         var cLoc = null;
         try { cLoc = JSON.parse(localStorage.getItem("sti-session-cache") || "null"); } catch (e) {}
         if (cLoc && cLoc.id === user.id && cLoc.statut === "actif") {
-          localStorage.setItem("sti-offline", String(Date.now()));
-          location.href = cfg.RACINE;
+          finaliserEntreePortail(cLoc, estClasseProfLabo(cLoc.classe, user.email), Boolean(cLoc.gold));
           return;
         }
         msg("❌ Hors-ligne : impossible de vérifier la validation de votre compte.", "err");
@@ -428,59 +501,20 @@
       var isLabo = estClasseProfLabo(rp.data && rp.data.classe, user && user.email);
       var st = (rp.data && rp.data.statut) || (isLabo ? "actif" : "");
       var isG = Boolean(isLabo || (rp.data && /\|\s*GOLD$/i.test(rp.data.lycee || "")));
-      try {
-        localStorage.removeItem("sti-admin-gold");
-        if (isG) localStorage.setItem("sti-gold", "1");
-        else localStorage.removeItem("sti-gold");
-      } catch (e) {}
       if (st === "actif") {
-        try {
-          var jetonSess = "st_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
-          var objSessPortail = {
-            id: user.id,
-            email: user.email,
-            user_metadata: user.user_metadata || {},
-            lycee: (rp.data && rp.data.lycee) || "—",
-            classe: (rp.data && rp.data.classe) || (isLabo ? "elevelabo3" : "—"),
-            statut: "actif",
-            gold: isG,
-            permanent: isLabo,
-            isAdmin: false,
-            sessionToken: jetonSess,
-            ts: Date.now()
-          };
-          var jsonSessPortail = JSON.stringify(objSessPortail);
-          localStorage.setItem("sti-session-token", jetonSess);
-          localStorage.setItem("sti-offline", String(Date.now()));
-          localStorage.setItem("sti-session-cache", jsonSessPortail);
-          try {
-            sessionStorage.setItem("sti-offline", String(Date.now()));
-            sessionStorage.setItem("sti-session-cache", jsonSessPortail);
-          } catch (e) {}
-          try {
-            document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonSessPortail) + "; path=/; max-age=2592000; SameSite=Lax";
-          } catch (e) {}
-          if (!isLabo) {
-            var sigSess = { type: "session_unique", uid: user.id, token: jetonSess, ts: Date.now() };
-            try {
-              sb.channel("sti-diffusion").send({ type: "broadcast", event: "session_unique", payload: sigSess });
-            } catch (e) {}
-            fetch("https://ntfy.sh/sti_v2_diffusion_9482", { method: "POST", body: JSON.stringify(sigSess) }).catch(function () {});
-          }
-          if (isLabo) {
-            localStorage.setItem("sti-labo3-permanent", JSON.stringify(objSessPortail));
-            location.href = cfg.RACINE;
-            return;
-          } else {
-            localStorage.removeItem("sti-labo3-permanent");
-          }
-        } catch (e) {}
-        try { localStorage.removeItem("sti-bio"); } catch (e) {}
-        location.href = cfg.RACINE; return;
+        finaliserEntreePortail(rp.data || {}, isLabo, isG);
+        return;
       }
       if (st === "en_attente") { msg("⏳ Compte créé — en attente de validation par l'administrateur.", "att"); sb.auth.signOut(); return; }
       if (st === "exclu") { msg("⛔ Vous êtes exclu. Contactez l'administrateur.", "err"); localStorage.removeItem("sti-offline"); localStorage.removeItem("sti-session-cache"); localStorage.removeItem("sti-cred"); localStorage.removeItem("sti-gold"); sb.auth.signOut(); return; }
       msg("⛔ Compte suspendu. Contactez l'administrateur.", "err"); sb.auth.signOut();
+    }).catch(function () {
+      clearTimeout(timerSecoursProfil);
+      var cLoc = null;
+      try { cLoc = JSON.parse(localStorage.getItem("sti-session-cache") || "null"); } catch (e) {}
+      if (cLoc && cLoc.id === user.id && cLoc.statut === "actif") {
+        finaliserEntreePortail(cLoc, estClasseProfLabo(cLoc.classe, user.email), Boolean(cLoc.gold));
+      }
     });
   }
 
@@ -533,10 +567,39 @@
       sha256(mdp).then(function (h) {
         if (cred && (cred.email === emailConn || cred.email === idConn) && cred.h === h) {
           var okAdmOff = Boolean(cred.isAdmin && String(cred.email || "").trim().toLowerCase() === adminMailStrict);
-          if (!okAdmOff) {
-            try { localStorage.removeItem("sti-admin-gold"); } catch (err) {}
-          }
-          localStorage.setItem("sti-offline", String(Date.now()));
+          try {
+            localStorage.removeItem("sti-force-exit");
+            localStorage.removeItem("sti-bio");
+            if (!okAdmOff) localStorage.removeItem("sti-admin-gold");
+            else localStorage.setItem("sti-admin-gold", "1");
+            localStorage.setItem("sti-reauth", JSON.stringify({
+              e: emailConn,
+              p: btoa(unescape(encodeURIComponent(mdp)))
+            }));
+            var cExist = JSON.parse(localStorage.getItem("sti-session-cache") || "null") || {};
+            var objOff = {
+              id: cExist.id || (okAdmOff ? "admin" : "abonne-local"),
+              email: emailConn,
+              nom: cExist.nom || "",
+              prenom: cExist.prenom || "",
+              lycee: cExist.lycee || "—",
+              classe: cExist.classe || "—",
+              statut: "actif",
+              gold: Boolean(okAdmOff || cExist.gold),
+              isAdmin: okAdmOff,
+              ts: Date.now()
+            };
+            var jsonOff = JSON.stringify(objOff);
+            localStorage.setItem("sti-offline", String(Date.now()));
+            localStorage.setItem("sti-session-cache", jsonOff);
+            try {
+              sessionStorage.setItem("sti-offline", String(Date.now()));
+              sessionStorage.setItem("sti-session-cache", jsonOff);
+            } catch (e) {}
+            try {
+              document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonOff) + "; path=/; max-age=2592000; SameSite=Lax";
+            } catch (e) {}
+          } catch (err) {}
           location.href = okAdmOff ? (cfg.RACINE + "admin.html") : cfg.RACINE;
         } else {
           msg("❌ Hors-ligne : identifiants non reconnus sur cet appareil (connectez-vous une 1re fois avec Internet).", "err");
@@ -545,7 +608,7 @@
     }
     var timerConnOff = setTimeout(function () {
       if (!connexionResolue) tenterConnexionLocaleHorsLigne();
-    }, 3500);
+    }, navigator.onLine ? 12000 : 1200);
     sb.auth.signInWithPassword({ email: emailConn, password: mdp }).then(function (r) {
       clearTimeout(timerConnOff);
       if (connexionResolue) return;
@@ -899,11 +962,21 @@
     };
     try {
       localStorage.removeItem("sti-admin-gold");
+      localStorage.removeItem("sti-force-exit");
+      localStorage.removeItem("sti-bio");
       if (sessObj.gold) localStorage.setItem("sti-gold", "1");
       else localStorage.removeItem("sti-gold");
+      var jsonBadge = JSON.stringify(sessObj);
       localStorage.setItem("sti-offline", String(Date.now()));
-      localStorage.setItem("sti-session-cache", JSON.stringify(sessObj));
-      localStorage.setItem("sti-labo-badge-sess", JSON.stringify(sessObj));
+      localStorage.setItem("sti-session-cache", jsonBadge);
+      localStorage.setItem("sti-labo-badge-sess", jsonBadge);
+      try {
+        sessionStorage.setItem("sti-offline", String(Date.now()));
+        sessionStorage.setItem("sti-session-cache", jsonBadge);
+      } catch (e) {}
+      try {
+        document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonBadge) + "; path=/; max-age=2592000; SameSite=Lax";
+      } catch (e) {}
     } catch (e) {}
     msg("✅ Badge Labo reconnu (" + ((sessObj.prenom || "") + " " + (sessObj.nom || "")).trim() + " · " + sessObj.classe + ") ! Ouverture…", "ok");
     setTimeout(function () {
