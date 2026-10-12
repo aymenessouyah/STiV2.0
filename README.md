@@ -1,10 +1,10 @@
-# 📚 STI By A'e — Le Web de A à Z (Version 2.0 · `v120`)
+# 📚 STI By A'e — Le Web de A à Z (Version 2.0 · `v121`)
 
 Plateforme éducative interactive dédiée aux **Sciences et Technologies de l'Informatique (STI — 3ème & 4ème SI)** :
 cours complets, leçons animées pas à pas, annexes officielles du Bac Tunisien, flashcards 3D, bac à sable de code en direct, écran partagé Énoncé + Code, simulateur SQL hors-ligne, laboratoire Chaînes & ASCII JavaScript, simulateur visuel Form ➔ PHP ➔ SQL, constructeur visuel Tableaux/Formulaires/Flexbox, chasse aux erreurs (débogage Bac STI), examen blanc chronométré `/20`, tableau blanc live, coffre de partage rapide de fichiers TP, boîte de réception et notation des copies TP, sondages QCM Live (mode Kahoot STI), messagerie temps réel avec pièces jointes, séries d'exercices, TP corrigés, quiz interactifs et épreuves pratiques en **HTML5, CSS3, JavaScript, SQL et PHP / MySQLi**.
 
 > **Auteur** : **Aymen Essouyah** (`By A'e`) — Lycée Rafèha  
-> **Version active** : **V2.0 · `v120`** (Application PWA 100 % hors-ligne, Portail sécurisé, Tableau de bord organisé par pôles pédagogiques, Pack Sécurité Totale & Bouclier Anti-IA)
+> **Version active** : **V2.0 · `v121`** (Application PWA 100 % hors-ligne, Portail sécurisé, Tableau de bord organisé par pôles pédagogiques, Pack Sécurité Totale & Bouclier Anti-IA)
 
 ---
 
@@ -118,7 +118,7 @@ STI-Atelier-V2.0/
 ├── admin.html                        # 📊 Tableau de bord Admin organisé en 3 pôles & 4 sections repliables
 ├── bac-pratique.html                 # 🧪 Atelier Épreuve Pratique Bac STI (4SI / Prof / Labo / Admin)
 ├── carte-visite.html                 # 🪪 Carte de visite numérique AE (.vcf & impression réservés Admin)
-├── sw.js                             # ⚙️ Service Worker PWA (cache 100 % hors-ligne sti-atelier-v120)
+├── sw.js                             # ⚙️ Service Worker PWA (cache 100 % hors-ligne sti-atelier-v121)
 ├── manifest.webmanifest              # 📱 Manifeste d'installation PWA
 ├── robots.txt                        # 🤖 Directives SEO & blocage des robots d'IA
 ├── sitemap.xml                       # 🗺️ Plan du site

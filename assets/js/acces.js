@@ -1148,7 +1148,11 @@
 
     var pan = document.createElement("div");
     pan.className = "sti-pan";
-    pan.style.cssText = "position:absolute;right:0;background:#fffdf7;border:2px solid #23201a;border-radius:16px;padding:13px 15px;box-shadow:5px 5px 0 rgba(244,81,30,.5);font:600 12px/1.5 system-ui,'Segoe UI',sans-serif;color:#23201a;width:252px;text-align:right;color-scheme:light;";
+    pan.style.cssText =
+      "position:absolute;right:0;background:#fffdf7;border:2px solid #23201a;border-radius:16px;" +
+      "padding:10px 12px;box-shadow:5px 5px 0 rgba(244,81,30,.5);font:600 11.5px/1.38 system-ui,'Segoe UI',sans-serif;" +
+      "color:#23201a;width:274px;max-width:calc(100vw - 72px);max-height:min(82dvh,calc(100vh - 28px));" +
+      "overflow-y:auto;overscroll-behavior:contain;text-align:right;color-scheme:light;";
     var affLogin = user.email || user.phone || "—";
     if (/@tel\.sti\.tn$/i.test(affLogin)) {
       var meta = user.user_metadata || {};
@@ -1165,213 +1169,175 @@
     var badgesMod = mods.map(function (m) {
       var ok = Boolean(vus[m]);
       if (ok) nbVus++;
-      return "<span style='display:inline-block;padding:1px 6px;margin:1px;border-radius:6px;font-size:10px;font-weight:800;border:1px solid #23201a;background:" +
+      return "<span style='display:inline-block;padding:1px 5px;margin:1px;border-radius:5px;font-size:9.5px;font-weight:800;border:1px solid #23201a;background:" +
         (ok ? "#e3f6e8;color:#177245" : "#f3ead9;color:#7a6f5d") + "'>" + m + (ok ? " ✔" : "") + "</span>";
     }).join("");
     var pctProg = Math.round((nbVus / mods.length) * 100);
 
     pan.innerHTML =
-      "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:1.5px solid #23201a;border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:900;margin-bottom:4px;box-shadow:1.5px 1.5px 0 #23201a'>👑 COMPTE GOLD</span><br>" +
-      "<span style='color:#7a6f5d;font-size:10px;text-transform:uppercase;letter-spacing:1px'>Mon Compte STI</span><br>" +
-      "<b style='font-size:12.5px'>" + esc(affLogin) + "</b><br>" +
-      "<span id='sti-pan-lycee' style='color:#7a6f5d;font-size:11.5px'>" + esc(lyceePropre(profil)) + " · " + esc(profil.classe || "—") + "</span>" +
-      "<div style='margin-top:8px;padding-top:7px;border-top:1px dashed #e2d5be;text-align:left'>" +
-      "<div style='display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:#23201a'><span>📈 Progression cours</span><span style='color:#f4511e'>" + pctProg + "%</span></div>" +
-      "<div style='margin-top:4px'>" + badgesMod + "</div>" +
-      "<div id='sti-ma-duree-sem' style='margin-top:5px;font-size:11px;font-weight:800;color:#177245'>⏱️ Cette semaine : calcul…</div>" +
+      "<div style='display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px'>" +
+        "<button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1.5px solid #23201a;background:#f3ead9;color:#23201a;border-radius:7px;padding:1px 7px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
+        "<div style='display:flex;align-items:center;gap:5px'>" +
+          "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:1.5px solid #23201a;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;box-shadow:1.5px 1.5px 0 #23201a'>👑 GOLD</span>" +
+          "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
+        "</div>" +
+      "</div>" +
+      "<div style='font-weight:900;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(affLogin) + "</div>" +
+      "<div id='sti-pan-lycee' style='color:#7a6f5d;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(lyceePropre(profil)) + " · " + esc(profil.classe || "—") + "</div>" +
+      "<div style='margin-top:6px;padding-top:6px;border-top:1px dashed #e2d5be;text-align:left'>" +
+        "<div style='display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:#23201a'><span>📈 Progression</span><span style='color:#f4511e'>" + pctProg + "%</span></div>" +
+        "<div style='margin-top:3px'>" + badgesMod + "</div>" +
+        "<div id='sti-ma-duree-sem' style='margin-top:4px;font-size:10.5px;font-weight:800;color:#177245'>⏱️ Cette semaine : calcul…</div>" +
       "</div>";
+
+    var styleBtnCompact = "display:flex;align-items:center;justify-content:center;gap:4px;width:100%;margin:0;border:1.5px solid #23201a;border-radius:8px;padding:5px 6px;font-weight:800;font-size:10.8px;line-height:1.15;cursor:pointer;text-align:center;box-sizing:border-box;";
+
+    /* 1. Grille compacte 2x2 des 4 actions rapides prioritaires */
+    var gridPrio = document.createElement("div");
+    gridPrio.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px;";
 
     var btnSearchPan = document.createElement("button");
     btnSearchPan.type = "button";
-    btnSearchPan.textContent = "🔍 Recherche rapide (Ctrl+K)";
-    btnSearchPan.style.cssText = "display:block;width:100%;margin:8px 0 0 auto;border:1.5px solid #23201a;background:linear-gradient(120deg,#fffdf7,#f3ead9);color:#23201a;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;cursor:pointer;";
+    btnSearchPan.textContent = "🔍 Recherche";
+    btnSearchPan.title = "Recherche globale rapide dans tous les cours (Ctrl+K)";
+    btnSearchPan.style.cssText = styleBtnCompact + "background:linear-gradient(120deg,#fffdf7,#f3ead9);color:#23201a;";
     btnSearchPan.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
       fermer();
       if (window.ouvrirRechercheGlobaleSTI) window.ouvrirRechercheGlobaleSTI("");
     });
-    pan.appendChild(btnSearchPan);
-
-    var btnNotesPan = document.createElement("button");
-    btnNotesPan.type = "button";
-    btnNotesPan.textContent = "📝 Mes notes de révision";
-    btnNotesPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:#fff;color:#23201a;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;cursor:pointer;";
-    btnNotesPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirCarnetNotesSTI) window.ouvrirCarnetNotesSTI();
-    });
-    pan.appendChild(btnNotesPan);
-
-    var btnFlashPan = document.createElement("button");
-    btnFlashPan.type = "button";
-    btnFlashPan.textContent = "🃏 Flashcards Bac (Recto/Verso)";
-    btnFlashPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:#fff;color:#23201a;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;cursor:pointer;";
-    btnFlashPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirFlashcardsSTI) window.ouvrirFlashcardsSTI("all");
-    });
-    pan.appendChild(btnFlashPan);
-
-    var btnSandboxPan = document.createElement("button");
-    btnSandboxPan.type = "button";
-    btnSandboxPan.textContent = "💻 Tester du code (Bac à sable)";
-    btnSandboxPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:#fff;color:#23201a;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;cursor:pointer;";
-    btnSandboxPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirSandboxSTI) window.ouvrirSandboxSTI();
-    });
-    pan.appendChild(btnSandboxPan);
-
-    var btnDebugPan = document.createElement("button");
-    btnDebugPan.type = "button";
-    btnDebugPan.textContent = "🐞 Chasse aux erreurs (Débogage)";
-    btnDebugPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:#fff5ee;color:#d84315;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
-    btnDebugPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirChasseErreursSTI) window.ouvrirChasseErreursSTI("all");
-    });
-    pan.appendChild(btnDebugPan);
-
-    var btnExamenBlancPan = document.createElement("button");
-    btnExamenBlancPan.type = "button";
-    btnExamenBlancPan.textContent = "📝 Examen Blanc STI (/20)";
-    btnExamenBlancPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
-    btnExamenBlancPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirExamenBlancSTI) window.ouvrirExamenBlancSTI();
-    });
-    pan.appendChild(btnExamenBlancPan);
-
-    var btnConstructeurPan = document.createElement("button");
-    btnConstructeurPan.type = "button";
-    btnConstructeurPan.textContent = "📋 Constructeur Table / Form / Flex";
-    btnConstructeurPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:#fff;color:#23201a;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;cursor:pointer;";
-    btnConstructeurPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirConstructeurVisuelSTI) window.ouvrirConstructeurVisuelSTI("table");
-    });
-    pan.appendChild(btnConstructeurPan);
-
-    var btnLaboSqlPan = document.createElement("button");
-    btnLaboSqlPan.type = "button";
-    btnLaboSqlPan.textContent = "🗄️ Labo SQL (Mini-phpMyAdmin)";
-    btnLaboSqlPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #0284c7;background:#e0f2fe;color:#0369a1;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
-    btnLaboSqlPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirSimulateurSqlSTI) window.ouvrirSimulateurSqlSTI();
-    });
-    pan.appendChild(btnLaboSqlPan);
-
-    var btnLaboAsciiPan = document.createElement("button");
-    btnLaboAsciiPan.type = "button";
-    btnLaboAsciiPan.textContent = "🔤 Chaînes & ASCII JS (Annexe)";
-    btnLaboAsciiPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #b45309;background:#fffbeb;color:#92400e;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
-    btnLaboAsciiPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirLaboChainesAsciiSTI) window.ouvrirLaboChainesAsciiSTI();
-    });
-    pan.appendChild(btnLaboAsciiPan);
-
-    var btnSimPhpSqlPan = document.createElement("button");
-    btnSimPhpSqlPan.type = "button";
-    btnSimPhpSqlPan.textContent = "🔗 Simulateur Form ➔ PHP ➔ SQL";
-    btnSimPhpSqlPan.hidden = !ok4SI;
-    btnSimPhpSqlPan.style.cssText = "display:" + (ok4SI ? "block" : "none") + ";width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:#eef2ff;color:#3730a3;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
-    btnSimPhpSqlPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirSimulateurFormPhpSqlSTI) window.ouvrirSimulateurFormPhpSqlSTI();
-    });
-    pan.appendChild(btnSimPhpSqlPan);
-
-    var btnBac = document.createElement("a");
-    btnBac.id = "sti-btn-bac-pan";
-    btnBac.href = cfg.RACINE + "bac-pratique.html";
-    btnBac.textContent = "🧪 Atelier Bac Pratique (/20)";
-    btnBac.hidden = !ok4SI;
-    btnBac.style.cssText = "display:" + (ok4SI ? "block" : "none") + ";margin:6px 0 0 auto;border:1.5px solid #23201a;background:#f3ead9;color:#23201a;text-decoration:none;text-align:center;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;";
-    pan.appendChild(btnBac);
+    gridPrio.appendChild(btnSearchPan);
 
     var btnCoffrePan = document.createElement("button");
     btnCoffrePan.id = "sti-btn-coffre-pan";
     btnCoffrePan.type = "button";
-    btnCoffrePan.textContent = "🗂️ Fichiers TP du Prof (0)";
-    btnCoffrePan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #b45309;background:#fef3c7;color:#92400e;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
+    btnCoffrePan.textContent = "🗂️ Fichiers TP (0)";
+    btnCoffrePan.title = "Coffre de Partage TP : télécharger les fichiers envoyés par le professeur";
+    btnCoffrePan.style.cssText = styleBtnCompact + "border-color:#b45309;background:#fef3c7;color:#92400e;font-weight:900;";
     btnCoffrePan.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
       fermer();
       if (window.ouvrirCoffreTpEleveSTI) window.ouvrirCoffreTpEleveSTI();
     });
-    pan.appendChild(btnCoffrePan);
-
-    var btnSplitPan = document.createElement("button");
-    btnSplitPan.type = "button";
-    btnSplitPan.textContent = "🌗 Écran Partagé (Énoncé + Code)";
-    btnSplitPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #0f766e;background:#ccfbf1;color:#115e59;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
-    btnSplitPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirEcranPartageEnonceCodeSTI) window.ouvrirEcranPartageEnonceCodeSTI();
-    });
-    pan.appendChild(btnSplitPan);
-
-    var btnDocPan = document.createElement("button");
-    btnDocPan.type = "button";
-    btnDocPan.textContent = "🩺 Diagnostic & Réparer (Docteur STI)";
-    btnDocPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #15803d;background:#dcfce7;color:#166534;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
-    btnDocPan.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      fermer();
-      if (window.ouvrirDocteurSTI) window.ouvrirDocteurSTI();
-    });
-    pan.appendChild(btnDocPan);
+    gridPrio.appendChild(btnCoffrePan);
 
     var btnMainPan = document.createElement("button");
     btnMainPan.id = "sti-btn-main-levee";
     btnMainPan.type = "button";
     var mainDejaLevee = false;
     try { mainDejaLevee = localStorage.getItem("sti-main-levee") === "1"; } catch (e) {}
-    btnMainPan.textContent = mainDejaLevee ? "🙋‍♂️ Main levée (Cliquer pour baisser)" : "🙋‍♂️ Lever la main (Aide TP)";
-    btnMainPan.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #6d28d9;background:" + (mainDejaLevee ? "#6d28d9;color:#fff" : "#ede9fe;color:#6d28d9") + ";border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;";
+    btnMainPan.textContent = mainDejaLevee ? "🙋‍♂️ Main levée" : "🙋‍♂️ Lever la main";
+    btnMainPan.title = "Demander de l'aide au professeur pendant le TP";
+    btnMainPan.style.cssText = styleBtnCompact + "border-color:#6d28d9;background:" + (mainDejaLevee ? "#6d28d9;color:#fff" : "#ede9fe;color:#6d28d9") + ";font-weight:900;";
     btnMainPan.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
       fermer();
       if (window.basculerMainLeveeSTI) window.basculerMainLeveeSTI();
     });
-    pan.appendChild(btnMainPan);
+    gridPrio.appendChild(btnMainPan);
 
     var btnProf = document.createElement("button");
     btnProf.type = "button";
-    btnProf.textContent = "💬 Écrire au professeur";
-    btnProf.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:#fff;color:#23201a;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;cursor:pointer;";
+    btnProf.textContent = "💬 Écrire au prof";
+    btnProf.title = "Ouvrir la discussion Messenger STI avec le professeur";
+    btnProf.style.cssText = styleBtnCompact + "background:#fff3e0;border-color:#f4511e;color:#d84315;font-weight:900;";
     btnProf.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
+      fermer();
       ouvrirBoiteQuestionProf(user.id, profil.classe || "");
     });
-    pan.appendChild(btnProf);
+    gridPrio.appendChild(btnProf);
+
+    pan.appendChild(gridPrio);
+
+    /* 2. Tiroir pliable « 🧰 Laboratoires & Outils de révision » (évite que la fenêtre dépasse la hauteur de la page) */
+    var btnToggleLabos = document.createElement("button");
+    btnToggleLabos.type = "button";
+    btnToggleLabos.textContent = "🧰 Laboratoires & Outils STI ▾";
+    btnToggleLabos.style.cssText = "display:block;width:100%;margin:6px 0 0;border:1.5px solid #23201a;background:#23201a;color:#ffd54f;border-radius:8px;padding:5px 8px;font-weight:900;font-size:11px;cursor:pointer;text-align:center;";
+
+    var gridLabos = document.createElement("div");
+    gridLabos.style.cssText = "display:none;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px;padding:6px;background:#f6efe2;border:1.5px dashed #23201a;border-radius:10px;";
+
+    btnToggleLabos.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var estOuv = gridLabos.style.display === "grid";
+      gridLabos.style.display = estOuv ? "none" : "grid";
+      btnToggleLabos.textContent = estOuv ? "🧰 Laboratoires & Outils STI ▾" : "🧰 Masquer les outils STI ▴";
+    });
+    pan.appendChild(btnToggleLabos);
+    pan.appendChild(gridLabos);
+
+    function ajouterOutilGrille(txt, titre, bgCss, fnClick) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = txt;
+      b.title = titre;
+      b.style.cssText = styleBtnCompact + bgCss;
+      b.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        fermer();
+        fnClick();
+      });
+      gridLabos.appendChild(b);
+      return b;
+    }
+
+    ajouterOutilGrille("🃏 Flashcards 3D", "Flashcards Bac Recto/Verso en 3D", "background:#fff;color:#23201a;", function () {
+      if (window.ouvrirFlashcardsSTI) window.ouvrirFlashcardsSTI("all");
+    });
+    ajouterOutilGrille("💻 Bac à sable", "Tester du code HTML / CSS / JS en direct", "background:#fff;color:#23201a;", function () {
+      if (window.ouvrirSandboxSTI) window.ouvrirSandboxSTI();
+    });
+    ajouterOutilGrille("🐞 Débogage", "Chasse aux erreurs (30 pièges du Bac STI)", "background:#fff5ee;color:#d84315;font-weight:900;", function () {
+      if (window.ouvrirChasseErreursSTI) window.ouvrirChasseErreursSTI("all");
+    });
+    ajouterOutilGrille("📝 Examen /20", "Simulateur d'Examen Blanc STI chronométré (/20)", "background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;font-weight:900;", function () {
+      if (window.ouvrirExamenBlancSTI) window.ouvrirExamenBlancSTI();
+    });
+    ajouterOutilGrille("🗄️ Labo SQL", "Simulateur SQL hors-ligne (SELECT, JOIN, GROUP BY…)", "border-color:#0284c7;background:#e0f2fe;color:#0369a1;font-weight:900;", function () {
+      if (window.ouvrirSimulateurSqlSTI) window.ouvrirSimulateurSqlSTI();
+    });
+    ajouterOutilGrille("🔤 ASCII & JS", "Laboratoire Chaînes & Code ASCII JavaScript (Annexe)", "border-color:#b45309;background:#fffbeb;color:#92400e;font-weight:900;", function () {
+      if (window.ouvrirLaboChainesAsciiSTI) window.ouvrirLaboChainesAsciiSTI();
+    });
+    ajouterOutilGrille("🌗 Écran Partagé", "Énoncé ou Annexe à gauche + Code à droite", "border-color:#0f766e;background:#ccfbf1;color:#115e59;font-weight:900;", function () {
+      if (window.ouvrirEcranPartageEnonceCodeSTI) window.ouvrirEcranPartageEnonceCodeSTI();
+    });
+    ajouterOutilGrille("📋 Constructeur", "Constructeur Visuel Tableaux / Formulaires / Flexbox", "background:#fff;color:#23201a;", function () {
+      if (window.ouvrirConstructeurVisuelSTI) window.ouvrirConstructeurVisuelSTI("table");
+    });
+    ajouterOutilGrille("📝 Mes notes", "Carnet de notes de révision personnelles (Alt+N)", "background:#fff;color:#23201a;", function () {
+      if (window.ouvrirCarnetNotesSTI) window.ouvrirCarnetNotesSTI();
+    });
+    ajouterOutilGrille("🩺 Docteur STI", "Diagnostic & réparation du cache hors-ligne", "border-color:#15803d;background:#dcfce7;color:#166534;font-weight:900;", function () {
+      if (window.ouvrirDocteurSTI) window.ouvrirDocteurSTI();
+    });
+
+    var btnSimPhpSqlPan = ajouterOutilGrille("🔗 Form➔PHP", "Simulateur Form HTML ➔ PHP $_POST ➔ MySQL", "background:#eef2ff;color:#3730a3;font-weight:900;", function () {
+      if (window.ouvrirSimulateurFormPhpSqlSTI) window.ouvrirSimulateurFormPhpSqlSTI();
+    });
+    btnSimPhpSqlPan.hidden = !ok4SI;
+    if (!ok4SI) btnSimPhpSqlPan.style.display = "none";
+
+    var btnBac = document.createElement("a");
+    btnBac.id = "sti-btn-bac-pan";
+    btnBac.href = cfg.RACINE + "bac-pratique.html";
+    btnBac.textContent = "🧪 Bac Pratique";
+    btnBac.title = "Atelier Épreuve Pratique Bac STI (/20)";
+    btnBac.hidden = !ok4SI;
+    btnBac.style.cssText = styleBtnCompact + "display:" + (ok4SI ? "flex" : "none") + ";background:#f3ead9;color:#23201a;text-decoration:none;";
+    gridLabos.appendChild(btnBac);
+
+    /* 3. Pied compact : Hors-ligne, Imprimer (si Gold) et Déconnexion */
+    var gridBas = document.createElement("div");
+    gridBas.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px;";
 
     var btnOff = document.createElement("button");
     btnOff.id = "sti-btn-precache";
@@ -1379,22 +1345,21 @@
     var dejaCache = false;
     try { dejaCache = localStorage.getItem("sti-precache-100") === "1"; } catch (e) {}
     btnOff.textContent = dejaCache
-      ? (navigator.onLine ? "✅ 100 % prêt hors-ligne" : "📴 Mode Hors-ligne actif")
-      : "📲 Télécharger 100 % hors-ligne";
-    btnOff.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #23201a;background:" +
-      (dejaCache ? "#e3f6e8;color:#177245" : "#fff;color:#23201a") +
-      ";border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;cursor:pointer;";
+      ? (navigator.onLine ? "✅ Prêt hors-ligne" : "📴 Hors-ligne")
+      : "📲 Hors-ligne";
+    btnOff.title = "Télécharger 100 % des cours pour travailler sans Internet";
+    btnOff.style.cssText = styleBtnCompact + "background:" + (dejaCache ? "#e3f6e8;color:#177245" : "#fff;color:#23201a") + ";";
     btnOff.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
       if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-        btnOff.textContent = "⏳ Téléchargement hors-ligne…";
+        btnOff.textContent = "⏳ Chargement…";
         navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL" });
       } else {
-        btnOff.textContent = "✅ Cache actif sur cet appareil";
+        btnOff.textContent = "✅ Cache actif";
       }
     });
-    pan.appendChild(btnOff);
+    gridBas.appendChild(btnOff);
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.addEventListener("message", function (evt) {
@@ -1402,11 +1367,11 @@
         var pct = evt.data.total ? Math.round((evt.data.done / evt.data.total) * 100) : 100;
         if (pct >= 100) {
           try { localStorage.setItem("sti-precache-100", "1"); } catch (e) {}
-          btnOff.textContent = "✅ 100 % prêt hors-ligne";
+          btnOff.textContent = "✅ Prêt hors-ligne";
           btnOff.style.background = "#e3f6e8";
           btnOff.style.color = "#177245";
         } else {
-          btnOff.textContent = "⏳ Hors-ligne : " + pct + " %";
+          btnOff.textContent = "⏳ " + pct + " %";
         }
       });
     }
@@ -1415,34 +1380,36 @@
     var btnImp = document.createElement("button");
     btnImp.id = "sti-btn-print-gold";
     btnImp.type = "button";
-    btnImp.textContent = estUserAdminStrict ? "⚡ Question Flash" : "🖨️ Imprimer";
-    btnImp.style.cssText = "display:" + ((isG || estUserAdminStrict) ? "block" : "none") + ";width:100%;margin:6px 0 0 auto;border:2px solid #23201a;background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;color-scheme:light;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11.5px;cursor:pointer;box-shadow:2px 2px 0 #23201a;";
+    btnImp.textContent = estUserAdminStrict ? "⚡ Flash" : "🖨️ Imprimer";
+    btnImp.style.cssText = styleBtnCompact + "display:" + ((isG || estUserAdminStrict) ? "flex" : "none") + ";border:1.5px solid #23201a;background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;font-weight:900;";
     btnImp.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
       if (estUserAdminStrict) ouvrirFlashAdminSurSite();
       else imprimerContenuGold();
     });
-    pan.appendChild(btnImp);
-
-    if (estClasseProfLabo(profil && profil.classe)) {
-      var badgePerm = document.createElement("div");
-      badgePerm.textContent = "🖥️ Poste Labo 3 · Session permanente";
-      badgePerm.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:1.5px solid #177245;background:#e3f6e8;color:#177245;text-align:center;border-radius:9px;padding:6px 10px;font-weight:900;font-size:11px;";
-      pan.appendChild(badgePerm);
-    }
+    gridBas.appendChild(btnImp);
 
     var out = document.createElement("button");
     out.id = "sti-out";
     out.type = "button";
     out.textContent = "🚪 Déconnexion";
-    out.style.cssText = "display:block;width:100%;margin:6px 0 0 auto;border:2px solid #23201a;background:#fff;color:#c0392b;color-scheme:light;border-radius:9px;padding:6px 10px;font-weight:800;font-size:11.5px;cursor:pointer;";
+    out.style.cssText = styleBtnCompact + ((isG || estUserAdminStrict) ? "grid-column:1 / -1;margin-top:0;" : "") + "border:1.5px solid #23201a;background:#fff;color:#c0392b;font-weight:900;";
     out.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
       sortirImmediatement("#deconnecte");
     });
-    pan.appendChild(out);
+    gridBas.appendChild(out);
+
+    pan.appendChild(gridBas);
+
+    if (estClasseProfLabo(profil && profil.classe)) {
+      var badgePerm = document.createElement("div");
+      badgePerm.textContent = "🖥️ Poste Labo 3 · Session permanente";
+      badgePerm.style.cssText = "display:block;width:100%;margin:5px 0 0 auto;border:1.5px solid #177245;background:#e3f6e8;color:#177245;text-align:center;border-radius:8px;padding:4px 8px;font-weight:900;font-size:10px;box-sizing:border-box;";
+      pan.appendChild(badgePerm);
+    }
 
     var porte = document.createElement("div");
     porte.className = "sti-wrap";
@@ -1470,8 +1437,20 @@
       pan.classList.remove("ouvert");
       porte.style.transform = "translateX(0)";
       btn.style.transform = "rotate(0deg)";
+      if (gridLabos && btnToggleLabos) {
+        gridLabos.style.display = "none";
+        btnToggleLabos.textContent = "🧰 Laboratoires & Outils STI ▾";
+      }
     }
     btn.addEventListener("click", function () { ouvert ? fermer() : ouvrir(); });
+    var btnCloseXPan = pan.querySelector("#sti-pan-close-x");
+    if (btnCloseXPan) {
+      btnCloseXPan.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        fermer();
+      });
+    }
 
     if (window === window.top && !sessionStorage.getItem("sti-demo")) {
       sessionStorage.setItem("sti-demo", "1");
