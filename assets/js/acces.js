@@ -25,6 +25,18 @@
   var enSortie = false;
   var currentUid = null;
   var currentClasse = "";
+  var ICO_META_MSN_SVG =
+    "<svg width='20' height='20' viewBox='0 0 36 36' fill='none' aria-hidden='true' style='flex-shrink:0'>" +
+      "<defs><linearGradient id='stiMetaMsnGrad' x1='0%' y1='100%' x2='100%' y2='0%'>" +
+        "<stop offset='0%' stop-color='#0099FF'/>" +
+        "<stop offset='52%' stop-color='#7638FA'/>" +
+        "<stop offset='100%' stop-color='#FF5280'/>" +
+      "</linearGradient></defs>" +
+      "<path d='M18 2C9.163 2 2 8.636 2 16.82c0 4.66 2.31 8.818 5.925 11.535.308.232.495.596.506.985l.102 3.076a1.28 1.28 0 0 0 1.796 1.132l3.433-1.515c.29-.128.613-.152.92-.069 1.057.285 2.174.436 3.318.436 8.837 0 16-6.636 16-14.82S26.837 2 18 2Z' fill='url(#stiMetaMsnGrad)'/>" +
+      "<path d='m11.59 21.14 4.7-7.46a2.4 2.4 0 0 1 3.47-.64l3.74 2.8a.96.96 0 0 0 1.16-.01l5.05-3.83c.67-.51 1.55.3 1.1.99l-4.7 7.46a2.4 2.4 0 0 1-3.47.64l-3.74-2.8a.96.96 0 0 0-1.16.01l-5.05 3.83c-.67.51-1.55-.3-1.1-.99Z' fill='#fff'/>" +
+    "</svg>";
+  var ICO_META_SEND_SVG =
+    "<svg width='18' height='18' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><path d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/></svg>";
 
   /* S'assurer que protection.css et protection.js sont chargés sur 100 % des pages (code source verrouillé pour tous les abonnés) */
   (function assurerProtectionActive() {
@@ -2076,20 +2088,6 @@
       document.documentElement.style.removeProperty("--sti-vvt");
     }
   }
-
-  var ICO_META_MSN_SVG =
-    "<svg width='20' height='20' viewBox='0 0 36 36' fill='none' aria-hidden='true' style='flex-shrink:0'>" +
-      "<defs><linearGradient id='stiMetaMsnGrad' x1='0%' y1='100%' x2='100%' y2='0%'>" +
-        "<stop offset='0%' stop-color='#0099FF'/>" +
-        "<stop offset='52%' stop-color='#7638FA'/>" +
-        "<stop offset='100%' stop-color='#FF5280'/>" +
-      "</linearGradient></defs>" +
-      "<path d='M18 2C9.163 2 2 8.636 2 16.82c0 4.66 2.31 8.818 5.925 11.535.308.232.495.596.506.985l.102 3.076a1.28 1.28 0 0 0 1.796 1.132l3.433-1.515c.29-.128.613-.152.92-.069 1.057.285 2.174.436 3.318.436 8.837 0 16-6.636 16-14.82S26.837 2 18 2Z' fill='url(#stiMetaMsnGrad)'/>" +
-      "<path d='m11.59 21.14 4.7-7.46a2.4 2.4 0 0 1 3.47-.64l3.74 2.8a.96.96 0 0 0 1.16-.01l5.05-3.83c.67-.51 1.55.3 1.1.99l-4.7 7.46a2.4 2.4 0 0 1-3.47.64l-3.74-2.8a.96.96 0 0 0-1.16.01l-5.05 3.83c-.67.51-1.55-.3-1.1-.99Z' fill='#fff'/>" +
-    "</svg>";
-
-  var ICO_META_SEND_SVG =
-    "<svg width='18' height='18' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><path d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/></svg>";
 
   function estJumboEmojiMeta(txt) {
     var s = String(txt || "").trim();
