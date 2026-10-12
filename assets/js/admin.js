@@ -617,6 +617,7 @@
             };
             majCompteurEnLigne();
             rendAbonnes();
+            if (typeof rafraichirMessengerAdmin === "function") rafraichirMessengerAdmin();
           }
         })
         .on("broadcast", { event: "quiz" }, function () {
@@ -5694,11 +5695,12 @@
       var subTxt = it.dernier
         ? ((it.dernier.de === "prof" ? "Vous : " : "") + (it.dernier.texte || (it.dernier.fichier ? ("📎 " + it.dernier.fichier.nom) : "")))
         : ((p.classe || "—") + " · " + (it.online ? "En ligne" : "Hors ligne"));
+      var dotColor = it.online ? "#31a24c" : "#8b5cf6";
 
       row.innerHTML =
         "<div class='msn-av'>" + echHtml(ini) + "<span class='msn-av-dot" + (it.online ? " online" : "") + "'></span></div>" +
         "<div class='msn-u-meta'>" +
-          "<div class='msn-u-nom'>" + echHtml(contact(p)) + "</div>" +
+          "<div class='msn-u-nom'><span style='display:inline-block;width:8.5px;height:8.5px;border-radius:50%;background:" + dotColor + ";margin-right:6px;vertical-align:middle' title='" + (it.online ? "En ligne" : "Hors ligne (abonné)") + "'></span>" + echHtml(contact(p)) + "</div>" +
           "<div class='msn-u-sub' style='color:" + (it.nonRep > 0 ? "#050505;font-weight:700" : "#65676b") + "'>" + echHtml(p.classe || "—") + " · " + echHtml(subTxt) + "</div>" +
         "</div>" +
         (it.nonRep > 0 ? ("<span class='msn-u-badge' title='Message(s) non lu(s) de cet élève'>" + it.nonRep + "</span>") : "");
@@ -5766,6 +5768,8 @@
           "</div>" +
           cartesNonLus.map(function (it) {
             var c = it.cand;
+            var onLC = estEnLigne(c.id);
+            var dotColC = onLC ? "#31a24c" : "#8b5cf6";
             var txts = it.msgsNL.map(function (m) {
               var t = m.texte ? echHtml(m.texte) : "";
               var f = m.fichier ? (" <span style='color:#0084ff;font-weight:700'>[📎 " + echHtml(m.fichier.nom) + "]</span>") : "";
@@ -5774,7 +5778,7 @@
             return (
               "<div class='msn-carte-nonlu' data-uid='" + echHtml(c.id) + "' style='background:#ffffff;border:1px solid #e4e6eb;border-radius:14px;padding:12px 14px;box-shadow:0 2px 8px rgba(0,0,0,.05);cursor:pointer'>" +
                 "<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap'>" +
-                  "<div style='font-weight:700;font-size:13.5px;color:#050505'>" + echHtml(contact(c)) + "</div>" +
+                  "<div style='font-weight:700;font-size:13.5px;color:#050505'><span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:" + dotColC + ";margin-right:6px;vertical-align:middle'></span>" + echHtml(contact(c)) + "</div>" +
                   "<span style='background:#0084ff;color:#fff;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700'>" + it.nbNL + " non lu(s) · " + echHtml(fmtHeureCourt(it.dernTs)) + "</span>" +
                 "</div>" +
                 "<div style='font-size:11.5px;font-weight:500;color:#65676b;margin-top:2px'>🏫 Classe : <b style='color:#0084ff'>" + echHtml(c.classe || "—") + "</b> · " + echHtml(lyceePropre(c)) + "</div>" +
@@ -5820,10 +5824,13 @@
     }
 
     var onL = estEnLigne(p.id);
+    var dotColHead = onL ? "#31a24c" : "#8b5cf6";
     if (msnHeadAv) {
       msnHeadAv.innerHTML = echHtml(initialesPourProfil(p)) + "<span class='msn-av-dot" + (onL ? " online" : "") + "' id='msn-head-dot'></span>";
     }
-    if (msnHeadNom) msnHeadNom.textContent = contact(p);
+    if (msnHeadNom) {
+      msnHeadNom.innerHTML = "<span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:" + dotColHead + ";margin-right:6px;vertical-align:middle'></span>" + echHtml(contact(p));
+    }
     if (msnHeadSub) {
       msnHeadSub.textContent = (onL ? "En ligne" : "Hors ligne") + " · " + (p.classe || "—") + " · " + lyceePropre(p);
     }
@@ -5851,9 +5858,9 @@
       "<div style='display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 12px 10px'>" +
         "<div style='position:relative;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,132,255,.25);margin-bottom:8px'>" +
           echHtml(iniCand) +
-          "<span style='position:absolute;right:2px;bottom:2px;width:13px;height:13px;border-radius:50%;background:" + (onL ? "#31a24c" : "#9ca3af") + ";border:2px solid #fff'></span>" +
+          "<span style='position:absolute;right:2px;bottom:2px;width:13px;height:13px;border-radius:50%;background:" + dotColHead + ";border:2px solid #fff'></span>" +
         "</div>" +
-        "<div style='font-size:15px;font-weight:800;color:#050505'>" + echHtml(contact(p)) + "</div>" +
+        "<div style='font-size:15px;font-weight:800;color:#050505'><span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:" + dotColHead + ";margin-right:6px;vertical-align:middle'></span>" + echHtml(contact(p)) + "</div>" +
         "<div style='font-size:11.5px;color:#65676b;margin-top:2px'>🏫 Classe : <b>" + echHtml(p.classe || "—") + "</b> · " + echHtml(lyceePropre(p)) + "</div>" +
       "</div>";
 

@@ -25,6 +25,7 @@
   var enSortie = false;
   var currentUid = null;
   var currentClasse = "";
+  var presenceMapSite = {};
   var ICO_META_MSN_SVG =
     "<svg width='20' height='20' viewBox='0 0 36 36' fill='none' aria-hidden='true' style='flex-shrink:0'>" +
       "<defs><linearGradient id='stiMetaMsnGrad' x1='0%' y1='100%' x2='100%' y2='0%'>" +
@@ -3846,6 +3847,14 @@
             window.__stiAfficherNoteCopieEleve(p.payload);
           }
         })
+        .on("broadcast", { event: "presence" }, function (p) {
+          if (p && p.payload && p.payload.uid) {
+            presenceMapSite[p.payload.uid] = Date.now();
+            if (typeof window.__stiRafraichirMessengerSite === "function") {
+              window.__stiRafraichirMessengerSite();
+            }
+          }
+        })
         .on("broadcast", { event: "force_update" }, function (p) {
           if (p && p.payload && typeof window.__stiExecuterForceUpdate === "function") {
             window.__stiExecuterForceUpdate(p.payload);
@@ -4976,7 +4985,7 @@
         "<div style='background:#ffffff;color:#050505;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #e4e6eb;box-shadow:0 1px 2px rgba(0,0,0,.04)'>" +
           "<div id='sti-msn-adm-head-left' style='display:flex;align-items:center;gap:9px;min-width:0;cursor:pointer'>" +
             "<button type='button' id='sti-msn-adm-back' style='border:none;background:#f0f2f5;color:#0084ff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0'>⬅ Discussions</button>" +
-            "<div style='position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0'>👤<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:#31a24c;border:2px solid #fff'></span></div>" +
+            "<div id='sti-msn-adm-head-av' style='position:relative;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0'>👤<span id='sti-msn-adm-head-dot' style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:#8b5cf6;border:2px solid #fff'></span></div>" +
             "<div style='min-width:0'>" +
               "<div id='sti-msn-adm-nom' style='font-weight:700;font-size:13.5px;color:#050505;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>Sélectionnez un candidat</div>" +
               "<div id='sti-msn-adm-sub' style='font-size:11px;color:#65676b'>Actif sur Messenger STI</div>" +
@@ -5140,6 +5149,28 @@
       return nb;
     }
 
+    function estEnLigneCandSite(uid) {
+      if (!uid) return false;
+      var tsP = Number(presenceMapSite[uid] || 0);
+      if (tsP && (Date.now() - tsP < 95000)) return true;
+      for (var i = 0; i < lignesAcces.length; i++) {
+        var a = lignesAcces[i];
+        if (a && a.user_id === uid) {
+          var tAct = new Date(a.fin || a.debut || 0).getTime();
+          if (!isNaN(tAct) && (Date.now() - tAct < 95000)) return true;
+        }
+      }
+      return false;
+    }
+
+    function initialesCandSite(p) {
+      if (!p) return "👤";
+      var np = ((p.prenom || "") + " " + (p.nom || "")).trim() || nomContactCand(p);
+      var m = np.match(/\S+/g) || [];
+      if (m.length >= 2) return (m[0][0] + m[1][0]).toUpperCase();
+      return np.substring(0, 2).toUpperCase();
+    }
+
     function peindreUsersSite() {
       var q = (elSearch.value || "").trim().toLowerCase();
       var clF = elClasse ? (elClasse.value || "").trim() : "";
@@ -5151,6 +5182,8 @@
       f.sort(function (a, b) {
         var na = nbNonLusCandSite(a), nb = nbNonLusCandSite(b);
         if (nb !== na) return nb - na;
+        var oa = estEnLigneCandSite(a.id), ob = estEnLigneCandSite(b.id);
+        if (oa !== ob) return oa ? -1 : 1;
         return nomContactCand(a).localeCompare(nomContactCand(b), "fr");
       });
       if (!f.length) {
@@ -5163,13 +5196,16 @@
         b.type = "button";
         var act = p.id === msnSiteUidActif;
         var nl = nbNonLusCandSite(p);
+        var onL = estEnLigneCandSite(p.id);
+        var dotColor = onL ? "#31a24c" : "#8b5cf6";
+        var ini = initialesCandSite(p);
         b.style.cssText = "display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;border:none;background:" +
           (act ? "#e7f3ff" : (nl > 0 ? "#f0f2f5" : "transparent")) + ";text-align:left;width:100%";
         b.innerHTML =
-          "<div style='position:relative;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0'>👤<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:#31a24c;border:2px solid #fff'></span></div>" +
+          "<div style='position:relative;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center;flex-shrink:0'>" + esc(ini) + "<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:" + dotColor + ";border:2px solid #fff'></span></div>" +
           "<div style='min-width:0;flex:1'>" +
-            "<div style='font-size:13px;font-weight:" + (nl > 0 ? "800" : "600") + ";color:#050505;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(nomContactCand(p)) + "</div>" +
-            "<div style='font-size:11px;color:" + (nl > 0 ? "#0084ff;font-weight:700" : "#65676b") + ";white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>🏫 " + esc(p.classe || "—") + " · " + esc((p.lycee || "—").replace(/\s*\|\s*GOLD$/i, "")) + "</div>" +
+            "<div style='font-size:13px;font-weight:" + (nl > 0 ? "800" : "600") + ";color:#050505;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'><span style='display:inline-block;width:8.5px;height:8.5px;border-radius:50%;background:" + dotColor + ";margin-right:6px;vertical-align:middle'></span>" + esc(nomContactCand(p)) + "</div>" +
+            "<div style='font-size:11px;color:" + (nl > 0 ? "#0084ff;font-weight:700" : "#65676b") + ";white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>🏫 " + esc(p.classe || "—") + " · " + (onL ? "En ligne" : "Hors ligne") + "</div>" +
           "</div>" +
           (nl > 0 ? ("<span style='width:10px;height:10px;border-radius:50%;background:#0084ff;flex-shrink:0' title='" + nl + " non lu(s)'></span>") : "");
         b.addEventListener("click", function () {
@@ -5187,7 +5223,9 @@
     function peindreConvSite() {
       var p = null;
       listeCand.forEach(function (x) { if (x.id === msnSiteUidActif) p = x; });
+      var elHeadAv = win.querySelector("#sti-msn-adm-head-av");
       if (!p) {
+        if (elHeadAv) elHeadAv.innerHTML = "💬";
         elNom.textContent = "Messages non lus";
         elSub.textContent = "Sélectionnez une discussion pour répondre";
         var cartesNL = [];
@@ -5201,8 +5239,10 @@
         if (cartesNL.length > 0) {
           elFeed.innerHTML = cartesNL.map(function (it) {
             var txt = it.dern ? (it.dern.texte || (it.dern.fichier ? ("📎 " + it.dern.fichier.nom) : "")) : "";
+            var onLC = estEnLigneCandSite(it.c.id);
+            var dotColC = onLC ? "#31a24c" : "#8b5cf6";
             return "<div class='sti-site-nl-card' data-uid='" + esc(it.c.id) + "' style='background:#f0f2f5;border:1px solid #e4e6eb;border-radius:14px;padding:11px 13px;cursor:pointer'>" +
-              "<div style='display:flex;justify-content:space-between;align-items:center;gap:6px'><b style='color:#050505'>👤 " + esc(nomContactCand(it.c)) + "</b><span style='background:#0084ff;color:#fff;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700'>" + it.nl + " non lu(s)</span></div>" +
+              "<div style='display:flex;justify-content:space-between;align-items:center;gap:6px'><b style='color:#050505'><span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:" + dotColC + ";margin-right:6px;vertical-align:middle'></span>" + esc(nomContactCand(it.c)) + "</b><span style='background:#0084ff;color:#fff;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700'>" + it.nl + " non lu(s)</span></div>" +
               "<div style='font-size:11px;color:#65676b;margin-top:2px'>🏫 " + esc(it.c.classe || "—") + " · 🏛️ " + esc((it.c.lycee || "—").replace(/\s*\|\s*GOLD$/i, "")) + "</div>" +
               "<div style='margin-top:6px;padding:6px 10px;background:#ffffff;border-left:3px solid #0084ff;border-radius:8px;font-weight:600;color:#050505'>💬 " + esc(txt) + "</div>" +
             "</div>";
@@ -5223,8 +5263,13 @@
         elFeed.innerHTML = "<div style='margin:auto;text-align:center;color:#65676b;padding:18px'>✅ Aucun message non lu.<br>👈 Choisissez un candidat pour ouvrir sa discussion.</div>";
         return;
       }
-      elNom.textContent = nomContactCand(p);
-      elSub.textContent = "🏫 " + (p.classe || "—") + " · 🏛️ " + (p.lycee || "—").replace(/\s*\|\s*GOLD$/i, "");
+      var onLP = estEnLigneCandSite(p.id);
+      var dotColP = onLP ? "#31a24c" : "#8b5cf6";
+      if (elHeadAv) {
+        elHeadAv.innerHTML = esc(initialesCandSite(p)) + "<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:" + dotColP + ";border:2px solid #fff'></span>";
+      }
+      elNom.innerHTML = "<span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:" + dotColP + ";margin-right:6px;vertical-align:middle'></span>" + esc(nomContactCand(p));
+      elSub.textContent = (onLP ? "En ligne" : "Hors ligne") + " · 🏫 " + (p.classe || "—") + " · 🏛️ " + (p.lycee || "—").replace(/\s*\|\s*GOLD$/i, "");
       var fil = construireFilCand(p.id);
       if (!fil.length) {
         elFeed.innerHTML = "<div style='margin:auto;text-align:center;color:#65676b;padding:18px'>👋 Démarrez la discussion avec <b style='color:#050505'>" + esc(nomContactCand(p)) + "</b>.</div>";
@@ -5294,6 +5339,11 @@
       peindreUsersSite();
       peindreConvSite();
     }
+    window.__stiRafraichirMessengerSite = function () {
+      if (!document.getElementById("sti-messenger-admin-site")) return;
+      peindreUsersSite();
+      peindreConvSite();
+    };
 
     try {
       var cAdm = JSON.parse(localStorage.getItem("sti-admin-cache") || "null");
