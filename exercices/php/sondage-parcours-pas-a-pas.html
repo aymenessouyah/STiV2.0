@@ -367,7 +367,6 @@ select{font:inherit;font-size:.86rem;font-weight:700;padding:6px 10px;border-rad
     <ul>
       <li><code>mysqli_affected_rows($badge)</code> (lignes 20, 27 et 39) : renvoie le nombre de lignes affectées par la dernière requête <code>INSERT</code> ou <code>UPDATE</code>, et vaut <code>-1</code> uniquement en cas d'erreur de la requête SQL.</li>
       <li>Après plusieurs <code>UPDATE</code> successifs, <code>mysqli_affected_rows($badge)</code> ne reflète que le dernier <code>UPDATE</code> exécuté (et vaut <code>0</code> si la nouvelle valeur est identique à l'ancienne). Le test <code>!= -1</code> vérifie donc qu'aucune erreur SQL ne s'est produite.</li>
-      <li>Injection SQL : en production, on protège les saisies avec <code>mysqli_real_escape_string($badge, $_POST['T1'])</code> ou une requête préparée (<code>mysqli_prepare</code>).</li>
       <li><code>$req4</code> (ligne 24) vérifie l'existence de <code>idparticipant</code> avant l'insertion des 3 réponses. Pour récupérer l'identifiant auto-incrémenté juste après un <code>INSERT</code>, on peut aussi utiliser <code>mysqli_insert_id($badge)</code>.</li>
     </ul>
   </div>
@@ -648,11 +647,11 @@ $('copy').onclick=async()=>{
 render();
 </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../../assets/css/protection.css?v=135" />
-<script src="../../assets/js/protection.js?v=135" defer></script>
+<link rel="stylesheet" href="../../assets/css/protection.css?v=136" />
+<script src="../../assets/js/protection.js?v=136" defer></script>
 <!-- /Protection -->
 <script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=135"></script>
-<script src="../../assets/js/acces.js?v=135"></script>
+<script src="../../assets/js/config.js?v=136"></script>
+<script src="../../assets/js/acces.js?v=136"></script>
 </body>
 </html>
