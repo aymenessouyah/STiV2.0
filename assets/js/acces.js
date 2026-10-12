@@ -45,6 +45,10 @@
         if (btnRet && cfg && cfg.RACINE && cfg.RACINE.indexOf("http") === 0) {
           btnRet.href = cfg.RACINE + "cours/css3.html#css-pas-a-pas";
         }
+        var btnRetTop = document.getElementById("retour-cours-top");
+        if (btnRetTop && cfg && cfg.RACINE && cfg.RACINE.indexOf("http") === 0) {
+          btnRetTop.href = cfg.RACINE + "cours/css3.html#css-pas-a-pas";
+        }
       } catch (e) {}
     }
     maj();
