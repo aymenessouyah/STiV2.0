@@ -938,10 +938,9 @@
         currentUid = cache.id || "admin";
         appliquerModeGold(true);
         appliquerVerrou4SI("Admin", true);
-        verrouBio({ id: currentUid, email: cache.email || ADMIN_MAIL_STRICT }, function () {
-          if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
-          if (navigator.onLine) synchroniserFileHorsLigne(false);
-        });
+        if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
+        if (navigator.onLine) synchroniserFileHorsLigne(false);
+        verrouBio({ id: currentUid, email: cache.email || ADMIN_MAIL_STRICT }, function () {});
         return true;
       }
       try {
@@ -958,15 +957,14 @@
       currentClasse = (cache && cache.classe) || (estLaboPerm ? "elevelabo3" : "");
       appliquerModeGold(Boolean(estLaboPerm || (cache && cache.gold)), cache || {});
       appliquerVerrou4SI(estLaboPerm ? "elevelabo3" : currentClasse, false);
-      verrouBio(fakeUser, function () {
-        panneauCompte(fakeUser, cache || {});
-        if (!dejaRestaureLocal) {
-          dejaRestaureLocal = true;
-          installerSuiviQuizAuto();
-          journal(fakeUser.id);
-        }
-        if (navigator.onLine) synchroniserFileHorsLigne(false);
-      });
+      panneauCompte(fakeUser, cache || {});
+      if (!dejaRestaureLocal) {
+        dejaRestaureLocal = true;
+        installerSuiviQuizAuto();
+        journal(fakeUser.id);
+      }
+      if (navigator.onLine) synchroniserFileHorsLigne(false);
+      verrouBio(fakeUser, function () {});
       return true;
     }
     return false;
@@ -1052,10 +1050,9 @@
       } catch (e) {}
       appliquerModeGold(true);
       appliquerVerrou4SI("Admin", true);
-      verrouBio(user, function () {
-        if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
-        journal(user.id);
-      });
+      if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
+      journal(user.id);
+      verrouBio(user, function () {});
       return;
     }
 
@@ -6095,7 +6092,9 @@
   /* ---------- Reconnaissance biométrique / code de verrouillage UNIQUEMENT à la 1re ouverture et à chaque nouvelle ouverture de l'application (jamais lors d'un changement de page) ---------- */
   function b64VersBufBio(b64) {
     try {
-      var bin = atob(b64);
+      var norm = String(b64 || "").replace(/-/g, "+").replace(/_/g, "/");
+      while (norm.length % 4) norm += "=";
+      var bin = atob(norm);
       var bytes = new Uint8Array(bin.length);
       for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
       return bytes.buffer;
@@ -6214,8 +6213,11 @@
             "<div style='font-size:18px;font-weight:800;color:#050505;margin-bottom:4px'>Reconnaissance à l'ouverture</div>" +
             "<div style='font-size:12.5px;color:#65676b;margin-bottom:14px'>Bon retour <b style='color:#050505'>" + esc(nomAff) + "</b>.<br>Confirmez votre identité (empreinte, Face ID ou code de verrouillage) une seule fois pour ouvrir STI V2.0.</div>" +
             "<div id='sti-bio-msg-err' style='display:none;background:#fde2e6;color:#c0392b;border-radius:10px;padding:7px 10px;font-size:12px;font-weight:700;margin-bottom:12px'></div>" +
-            "<button type='button' id='sti-btn-bio-unlock' style='width:100%;border:none;border-radius:999px;padding:12px 18px;background:linear-gradient(135deg,#0084ff 0%,#7638fa 55%,#ff5280 100%);color:#fff;font:800 14px system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,132,255,.32);margin-bottom:10px'>👆 Déverrouiller l'application</button>" +
-            "<button type='button' id='sti-btn-bio-switch' style='border:none;background:transparent;color:#65676b;font:600 12px system-ui,sans-serif;cursor:pointer;padding:4px 8px'>🔑 Se connecter avec un autre compte</button>" +
+            "<button type='button' id='sti-btn-bio-unlock' style='width:100%;border:none;border-radius:999px;padding:12px 18px;background:linear-gradient(135deg,#0084ff 0%,#7638fa 55%,#ff5280 100%);color:#fff;font:800 14px system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,132,255,.32);margin-bottom:8px'>👆 Déverrouiller l'application</button>" +
+            (estAdmBio
+              ? "<button type='button' id='sti-btn-bio-admin-go' style='width:100%;border:1.5px solid #177245;border-radius:999px;padding:10px 16px;background:#e3f6e8;color:#177245;font:800 13px system-ui,sans-serif;cursor:pointer;margin-bottom:8px'>🛠️ Accéder au Tableau de bord Admin</button>"
+              : "") +
+            "<button type='button' id='sti-btn-bio-switch' style='border:none;background:transparent;color:#65676b;font:600 12px system-ui,sans-serif;cursor:pointer;padding:4px 8px'>🔑 Ouvrir la page Portail de connexion</button>" +
           "</div>";
         (document.body || document.documentElement).appendChild(ov);
       }
@@ -6308,6 +6310,13 @@
       var btnUnlock = ov.querySelector("#sti-btn-bio-unlock");
       if (btnUnlock) {
         btnUnlock.onclick = function () { lancerPromptBio(true); };
+      }
+      var btnAdminGo = ov.querySelector("#sti-btn-bio-admin-go");
+      if (btnAdminGo) {
+        btnAdminGo.onclick = function () {
+          finOk();
+          location.href = cfg.RACINE + "admin.html";
+        };
       }
       var btnSwitch = ov.querySelector("#sti-btn-bio-switch");
       if (btnSwitch) {

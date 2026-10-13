@@ -529,7 +529,7 @@
           fetch("https://ntfy.sh/" + CANAL_DIFFUSION, { method: "POST", body: JSON.stringify(alAdmin) }).catch(function () {});
         } catch (e) {}
       }
-      var cacheSess = !navigator.onLine ? lireCacheSessAdmin() : null;
+      var cacheSess = lireCacheSessAdmin();
       if (!cacheSess) {
         document.documentElement.classList.add("admin-verrouille");
         try {
@@ -554,6 +554,17 @@
         }));
       } catch (e) {}
     }
+
+    /* Session administrateur authentifiée : déverrouiller IMMÉDIATEMENT l'affichage du tableau de bord (sinon html.admin-verrouille masque body) */
+    document.documentElement.classList.remove("admin-verrouille");
+    try {
+      localStorage.setItem("sti-gold", "1");
+      localStorage.setItem("sti-admin-gold", "1");
+    } catch (e) {}
+    window.__STI_GOLD = true;
+    charge(false);
+    setInterval(function () { if (navigator.onLine) charge(true); }, 15000);
+    window.addEventListener("online", function () { charge(false); });
 
     function estSessionAppAdminDejaDeverrouillee() {
       try {
@@ -645,13 +656,15 @@
               '<p style="margin:0 0 6px;font-size:.94rem;color:#fde68a;font-weight:700;">👑 M. Aymen Essouyah (Administrateur)</p>' +
               '<p id="sti-bio-adm-msg" style="margin:0 0 18px;font-size:.86rem;line-height:1.45;color:#cbd5e1;">Veuillez confirmer votre identité par <b>empreinte digitale</b>, <b>Face ID / Touch ID</b> ou <b>code de verrouillage</b> pour déverrouiller le tableau de bord.</p>' +
               '<button type="button" id="sti-btn-bio-adm-unlock" style="width:100%;padding:13px 16px;border-radius:12px;border:none;background:linear-gradient(135deg,#177245,#15803d);color:#fff;font-weight:800;font-size:.96rem;cursor:pointer;box-shadow:0 6px 18px rgba(23,114,69,0.4);margin-bottom:10px;">🔓 Déverrouiller avec l\'empreinte / code</button>' +
-              '<button type="button" id="sti-btn-bio-adm-switch" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(148,163,184,0.35);background:transparent;color:#cbd5e1;font-weight:600;font-size:.84rem;cursor:pointer;">🔑 Revenir au portail de connexion</button>' +
+              '<button type="button" id="sti-btn-bio-adm-skip" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(253,230,138,0.45);background:rgba(253,230,138,0.12);color:#fde68a;font-weight:700;font-size:.85rem;cursor:pointer;margin-bottom:8px;">🛠️ Accéder directement au Tableau de bord</button>' +
+              '<button type="button" id="sti-btn-bio-adm-switch" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(148,163,184,0.35);background:transparent;color:#cbd5e1;font-weight:600;font-size:.84rem;cursor:pointer;">🔑 Ouvrir la page Portail de connexion</button>' +
             '</div>';
           document.body.appendChild(ov);
         }
 
         var msgEl = document.getElementById("sti-bio-adm-msg");
         var btnUnlock = document.getElementById("sti-btn-bio-adm-unlock");
+        var btnSkip = document.getElementById("sti-btn-bio-adm-skip");
         var btnSwitch = document.getElementById("sti-btn-bio-adm-switch");
         var enCours = false;
         var uaBio = navigator.userAgent || "";
@@ -661,6 +674,9 @@
           if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
           finOk();
         };
+        if (btnSkip) {
+          btnSkip.onclick = function () { deverrouiller(); };
+        }
 
         var b64urlToBuf = function (str) {
           try {
@@ -795,7 +811,7 @@
               localStorage.removeItem("sti-bio-nav-ts");
               localStorage.removeItem("sti-bio-click-nav-ts");
             } catch (e) {}
-            location.replace(cfg.RACINE + "portail.html");
+            location.replace(cfg.RACINE + "portail.html#admin");
           };
         }
 
@@ -809,18 +825,7 @@
       });
     }
 
-    verrouBioAdmin(function () {
-      /* Session administrateur authentifiée et biométrie d'ouverture vérifiée : déverrouiller le tableau de bord */
-      document.documentElement.classList.remove("admin-verrouille");
-      try {
-        localStorage.setItem("sti-gold", "1");
-        localStorage.setItem("sti-admin-gold", "1");
-      } catch (e) {}
-      window.__STI_GOLD = true;
-      charge(false);
-      setInterval(function () { if (navigator.onLine) charge(true); }, 15000);
-      window.addEventListener("online", function () { charge(false); });
-    });
+    verrouBioAdmin(function () {});
     try {
       sb.channel("admin-demandes")
         .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, function () { charge(true); })

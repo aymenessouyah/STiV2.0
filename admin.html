@@ -40,13 +40,20 @@
       if (nonAdminActif) {
         ok = false;
         localStorage.removeItem("sti-admin-gold");
-      } else if (!ok && !navigator.onLine) {
-        var c = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
-        if (c && c.isAdmin === true && String(c.email || "").trim().toLowerCase() === adminMail) ok = true;
+      } else if (!ok) {
+        var c = null;
+        try { c = JSON.parse(localStorage.getItem("sti-session-cache") || sessionStorage.getItem("sti-session-cache") || "null"); } catch (e2) {}
+        if (c && c.isAdmin === true && String(c.email || "").trim().toLowerCase() === adminMail) {
+          ok = true;
+        } else if (localStorage.getItem("sti-admin-gold") === "1") {
+          ok = true;
+        }
       }
       if (!ok) {
         localStorage.removeItem("sti-admin-gold");
         location.replace("portail.html#admin");
+      } else {
+        document.documentElement.classList.remove("admin-verrouille");
       }
     } catch (e) {
       /* En aperçu sandboxé sans localStorage (origin null), afficher l'aperçu ; sur le web, rediriger */
@@ -3338,6 +3345,6 @@
 
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=142"></script>
-  <script src="assets/js/admin.js?v=149"></script>
+  <script src="assets/js/admin.js?v=150"></script>
 </body>
 </html>

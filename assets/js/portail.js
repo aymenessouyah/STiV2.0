@@ -45,7 +45,7 @@
       }
       var clVerif = String((permLabo && permLabo.classe) || (sessLoc && sessLoc.classe) || "").trim().toLowerCase().replace(/[\s._\-]+/g, "");
       var emVerif = String((permLabo && permLabo.email) || (sessLoc && sessLoc.email) || "").trim().toLowerCase();
-      if ((clVerif === "elevelabo3" || /^elevelabo3(?:@|$)/i.test(emVerif)) && hInit !== "admin" && hInit !== "attente") {
+      if ((clVerif === "elevelabo3" || /^elevelabo3(?:@|$)/i.test(emVerif)) && !hInit) {
         var objPerm = permLabo || sessLoc;
         objPerm.ts = Date.now();
         objPerm.gold = true;
@@ -60,24 +60,6 @@
         localStorage.setItem("sti-labo3-permanent", JSON.stringify(objPerm));
         location.replace(cfg.RACINE + "index.html");
         return;
-      }
-      /* Si un abonné est déjà connecté avec une session locale active valide (< 30 jours), ne pas lui redemander ses identifiants */
-      if (sessLoc && sessLoc.statut === "actif" && sessLoc.ts && (Date.now() - Number(sessLoc.ts) < 30 * 86400000) && hInit !== "admin" && hInit !== "attente") {
-        try {
-          localStorage.setItem("sti-session-cache", JSON.stringify(sessLoc));
-          localStorage.setItem("sti-offline", String(Date.now()));
-        } catch (e) {}
-        location.replace(cfg.RACINE + "index.html");
-        return;
-      }
-      /* Sur Android / iPhone, si un jeton Supabase est déjà actif mais que le cache local a été vidé, restaurer sans redemander les identifiants */
-      if (hInit !== "admin" && hInit !== "attente") {
-        sb.auth.getSession().then(function (rsInit) {
-          var sInit = rsInit && rsInit.data ? rsInit.data.session : null;
-          if (sInit && sInit.user) {
-            verifierStatutEtEntrer(sInit.user);
-          }
-        }).catch(function () {});
       }
     }
   } catch (e) {}
@@ -309,13 +291,7 @@
     } catch (e) {}
   }
 
-  /* ---------- biométrie / code de verrouillage (1re ouverture + chaque nouvelle ouverture de l'application uniquement) ---------- */
-  function bufVersB64Bio(buf) {
-    var bytes = new Uint8Array(buf);
-    var bin = "";
-    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-    return btoa(bin);
-  }
+  /* ---------- biométrie / code de verrouillage (marquage immédiat de la session d'ouverture après connexion sur le portail) ---------- */
   function bioDispo(cb) {
     if (!(navigator.credentials && window.PublicKeyCredential && window.isSecureContext)) {
       cb(false);
@@ -330,47 +306,13 @@
     }
   }
   function activeBio(uid, email, suite) {
-    var fini = function (ok) {
-      try {
-        sessionStorage.setItem("sti-bio-session-ok", "1");
-        localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
-      } catch (e) {}
-      if (typeof suite === "function") suite(Boolean(ok));
-    };
-    bioDispo(function (dispo) {
-      if (!dispo) { fini(false); return; }
-      try {
-        var challenge = crypto.getRandomValues(new Uint8Array(32));
-        var userBytes = new TextEncoder().encode(String(uid || email || "sti-user").slice(0, 60));
-        navigator.credentials.create({
-          publicKey: {
-            challenge: challenge,
-            rp: { name: "STI V2.0", id: location.hostname },
-            user: { id: userBytes, name: String(email || "abonne@sti.tn"), displayName: String(email || "Abonné STI") },
-            authenticatorSelection: {
-              authenticatorAttachment: "platform",
-              residentKey: "preferred",
-              requireResidentKey: false,
-              userVerification: "required"
-            },
-            pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
-            timeout: 60000
-          }
-        }).then(function (cred) {
-          try {
-            localStorage.setItem("sti-bio", "1");
-            if (cred && cred.rawId) {
-              localStorage.setItem("sti-bio-cred-id", bufVersB64Bio(cred.rawId));
-            }
-          } catch (e) {}
-          fini(true);
-        }).catch(function () {
-          fini(false);
-        });
-      } catch (e) {
-        fini(false);
-      }
-    });
+    try {
+      var nowStr = String(Date.now());
+      sessionStorage.setItem("sti-bio-session-ok", "1");
+      localStorage.setItem("sti-bio-nav-ts", nowStr);
+      localStorage.setItem("sti-bio-click-nav-ts", nowStr);
+    } catch (e) {}
+    if (typeof suite === "function") suite(true);
   }
 
   /* ---------- onglets ---------- */
