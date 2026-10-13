@@ -347,7 +347,12 @@
             challenge: challenge,
             rp: { name: "STI V2.0", id: location.hostname },
             user: { id: userBytes, name: String(email || "abonne@sti.tn"), displayName: String(email || "Abonné STI") },
-            authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+            authenticatorSelection: {
+              authenticatorAttachment: "platform",
+              residentKey: "preferred",
+              requireResidentKey: false,
+              userVerification: "required"
+            },
             pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
             timeout: 60000
           }

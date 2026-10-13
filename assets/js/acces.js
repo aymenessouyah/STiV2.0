@@ -6110,7 +6110,13 @@
         localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
         return true;
       }
-      /* Si la page vient d'être ouverte par un changement de page interne sur le même site (document.referrer de même origine ou transition < 25 s) */
+      /* Si la page vient d'être ouverte par un clic interne dans l'application (< 10 s, même avec rel="noopener" sur iPhone/Android) ou referrer du même site */
+      var clickNavTs = parseInt(localStorage.getItem("sti-bio-click-nav-ts") || "0", 10) || 0;
+      if (clickNavTs && (Date.now() - clickNavTs < 10000)) {
+        sessionStorage.setItem("sti-bio-session-ok", "1");
+        localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+        return true;
+      }
       var navTs = parseInt(localStorage.getItem("sti-bio-nav-ts") || "0", 10) || 0;
       var refMemeSite = Boolean(document.referrer && document.referrer.indexOf(location.origin) === 0);
       if (refMemeSite && navTs && (Date.now() - navTs < 30 * 60 * 1000)) {
@@ -6131,7 +6137,9 @@
       var majTsNav = function () {
         try {
           if (sessionStorage.getItem("sti-bio-session-ok") === "1") {
-            localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+            var now = String(Date.now());
+            localStorage.setItem("sti-bio-nav-ts", now);
+            localStorage.setItem("sti-bio-click-nav-ts", now);
           }
         } catch (e) {}
       };
@@ -6205,7 +6213,7 @@
         (document.body || document.documentElement).appendChild(ov);
       }
 
-      function lancerPromptBio() {
+      function lancerPromptBio(estClicUtilisateur) {
         if (bioVerifEnCours) return;
         bioVerifEnCours = true;
         var elErr = ov.querySelector("#sti-bio-msg-err");
@@ -6224,7 +6232,12 @@
                 challenge: chCreate,
                 rp: { name: "STI V2.0", id: location.hostname },
                 user: { id: uBytes, name: String(em || "abonne@sti.tn"), displayName: String(nomAff || "Abonné STI") },
-                authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+                authenticatorSelection: {
+                  authenticatorAttachment: "platform",
+                  residentKey: "preferred",
+                  requireResidentKey: false,
+                  userVerification: "required"
+                },
                 pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
                 timeout: 60000
               }
@@ -6239,8 +6252,8 @@
               finOk();
             }).catch(function () {
               bioVerifEnCours = false;
-              if (elErr) {
-                elErr.textContent = "Toucher « 👆 Déverrouiller l'application » et validez avec votre empreinte, Face ID ou code.";
+              if (estClicUtilisateur && elErr) {
+                elErr.textContent = "Touchez « 👆 Déverrouiller l'application » et validez avec votre empreinte, Face ID ou code.";
                 elErr.style.display = "block";
               }
             });
@@ -6256,7 +6269,7 @@
             navigator.credentials.get({
               publicKey: {
                 challenge: chGet,
-                allowCredentials: [{ type: "public-key", id: credBuf }],
+                allowCredentials: [{ type: "public-key", id: credBuf, transports: ["internal", "hybrid"] }],
                 userVerification: "required",
                 timeout: 60000
               }
@@ -6271,7 +6284,7 @@
                 creerCleBio();
                 return;
               }
-              if (elErr) {
+              if (estClicUtilisateur && elErr) {
                 elErr.textContent = "Touchez « 👆 Déverrouiller l'application » pour valider votre empreinte, Face ID ou code de verrouillage.";
                 elErr.style.display = "block";
               }
@@ -6287,13 +6300,16 @@
 
       var btnUnlock = ov.querySelector("#sti-btn-bio-unlock");
       if (btnUnlock) {
-        btnUnlock.onclick = function () { lancerPromptBio(); };
+        btnUnlock.onclick = function () { lancerPromptBio(true); };
       }
       var btnSwitch = ov.querySelector("#sti-btn-bio-switch");
       if (btnSwitch) {
         btnSwitch.onclick = function () { sortirImmediatement("#deconnecte"); };
       }
-      lancerPromptBio();
+      var estIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent || "") || (/Macintosh/i.test(navigator.userAgent || "") && navigator.maxTouchPoints > 1);
+      if (!estIOS) {
+        lancerPromptBio(false);
+      }
     }).catch(function () {
       finOk();
     });
