@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, noai, noimageai" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh; base-uri 'self'" />
+<link rel="icon" href="../assets/icons/STI_by_AE.ico" />
+<link rel="manifest" href="../manifest.webmanifest" />
+<meta property="og:title" content="STI V2.0 — Web Courses, Exercises & Quizzes Platform" />
+<meta property="og:description" content="Cours, annexes, exercices et quiz : HTML5, CSS3, JavaScript, SQL et PHP — Lycée Raféha." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="../assets/icons/sti-icon-512.png" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:image" content="../assets/icons/sti-icon-512.png" />
+<title>Sign In — STI V2.0 Platform</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0d1526;
+    --surface: #141f35;
+    --surface-2: #18243d;
+    --border: #26344f;
+    --edge: #f3e9d8;
+    --ink: #f3e9d8;
+    --muted: #a79b80;
+    --accent: #ff6a2b;
+    --accent-2: #ff9a5c;
+    --accent-soft: #2a1b10;
+    --term-bg: #070d19;
+    --pop-sm: 2.5px 2.5px 0 var(--edge);
+    --pop: 4px 4px 0 var(--edge);
+    --pop-lg: 7px 7px 0 var(--edge);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* Fond mode sombre identique à index.html (« L'Atelier » dark : #0d1526 + halo orange + grille de points) */
+  body {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 24px 18px; color: var(--ink);
+    font-family: "Manrope", "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    position: relative; overflow-x: hidden;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background: radial-gradient(
+      60% 44% at 70% -8%,
+      color-mix(in srgb, var(--accent) 14%, transparent),
+      transparent 70%
+    );
+  }
+  .bg-decor {
+    position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+  }
+  .bg-decor::after {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--edge) 17%, transparent) 1.15px,
+      transparent 1.15px
+    );
+    background-size: 23px 23px;
+    opacity: 1;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent 82%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent 82%);
+  }
+  .wrap-carte { position: relative; width: 100%; max-width: 450px; z-index: 1; }
+  .carte {
+    width: 100%; background: var(--surface);
+    border: 2.5px solid var(--edge); border-radius: 22px; padding: 30px 26px 24px;
+    box-shadow: var(--pop-lg);
+    animation: entree .45s cubic-bezier(.22,1,.36,1);
+    position: relative; overflow: hidden;
+  }
+  @keyframes entree { from { opacity: 0; transform: translateY(14px); } }
+  .carte::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 7px;
+    background: var(--accent); border-bottom: 2px solid var(--edge);
+  }
+  .entete {
+    text-align: center; margin-bottom: 20px; padding-top: 4px;
+  }
+  .halo {
+    display: inline-block; padding: 6px; border-radius: 22px;
+    background: var(--surface-2); border: 2px solid var(--edge);
+    box-shadow: var(--pop-sm);
+  }
+  .entete img {
+    width: 72px; height: 72px; border-radius: 16px; display: block;
+  }
+  .entete h1 {
+    margin-top: 12px; font-size: 34px; font-weight: 900;
+    letter-spacing: -0.03em; line-height: 1.05; color: var(--ink);
+  }
+  /* Tagline STI avec l'animation dactylo identique à index.html */
+  .dactylo-wrap {
+    display: flex; justify-content: center; align-items: center;
+    min-height: 24px; margin-top: 6px;
+  }
+  .dactylo-sti {
+    display: inline-block;
+    font-family: "Manrope", "Inter", system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .dactylo-sti .cursor {
+    color: var(--accent);
+    margin-left: 2px;
+    font-weight: 900;
+    animation: blink 1.1s step-end infinite;
+  }
+  .dactylo-sti .cursor.solid {
+    animation: none;
+    opacity: 1;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  .entete p {
+    color: var(--muted); font-size: 13px; font-weight: 600; margin-top: 8px;
+  }
+  .onglets {
+    display: flex; gap: 5px; margin-bottom: 8px; background: var(--bg);
+    padding: 5px; border-radius: 14px; border: 2px solid var(--edge);
+    box-shadow: var(--pop-sm);
+  }
+  .onglets button {
+    flex: 1; border: 2px solid transparent; background: transparent; color: var(--muted);
+    font-weight: 800; font-size: 12.5px; padding: 10px 4px; border-radius: 10px;
+    cursor: pointer; transition: all .18s ease;
+  }
+  .onglets button.actif {
+    background: var(--accent); color: #14100e;
+    border-color: var(--edge); box-shadow: 2.5px 2.5px 0 var(--edge);
+  }
+  .onglets button:hover:not(.actif) { color: var(--ink); transform: translateY(-1px); }
+  label {
+    display: block; font-weight: 800; color: var(--ink);
+    margin: 13px 0 5px; text-transform: uppercase; letter-spacing: .06em; font-size: 11px;
+  }
+  input[type=email], input[type=password], input[type=text], input[type=tel], select {
+    width: 100%; padding: 12.5px 14px; border-radius: 12px; border: 2px solid var(--edge);
+    background: var(--bg); color: var(--ink); font-size: 14.5px; font-weight: 600;
+    outline: none; transition: border-color .2s, box-shadow .2s;
+  }
+  input::placeholder { color: rgba(167, 155, 128, 0.65); }
+  input:focus, select:focus {
+    border-color: var(--accent); box-shadow: 3px 3px 0 var(--accent);
+  }
+  .ligne-captcha { display: flex; gap: 10px; align-items: center; margin-top: 5px; }
+  canvas {
+    border-radius: 12px; border: 2px solid var(--edge);
+    background: var(--term-bg); box-shadow: var(--pop-sm);
+  }
+  .rafraichir {
+    border: 2px solid var(--edge); background: var(--surface-2); color: var(--accent); border-radius: 12px;
+    width: 46px; height: 46px; font-size: 19px; cursor: pointer; box-shadow: var(--pop-sm);
+  }
+  .rafraichir:active, .btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--edge); }
+  .btn {
+    width: 100%; margin-top: 20px; border: 2px solid var(--edge); border-radius: 999px; padding: 14px;
+    background: linear-gradient(120deg, var(--accent), var(--accent-2)); color: #14100e; font-weight: 900;
+    font-size: 15px; letter-spacing: .2px; cursor: pointer; box-shadow: 4px 4px 0 var(--edge);
+    transition: transform .15s ease, box-shadow .15s ease;
+    position: relative; overflow: hidden;
+  }
+  .btn:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--edge); }
+  .btn:disabled { opacity: .5; cursor: wait; }
+  .msg { margin-top: 14px; font-size: 13px; font-weight: 800; text-align: center; min-height: 18px; }
+  .msg.ok { color: #5fe3a1; } .msg.err { color: #ff7a70; } .msg.att { color: #f2b532; }
+  .lien-admin { margin-top: 16px; text-align: center; }
+  .lien-admin a { color: var(--muted); font-size: 12px; font-weight: 700; text-decoration: none; border-bottom: 1px dotted var(--muted); }
+  .lien-admin a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .pied { margin-top: 14px; padding-top: 12px; border-top: 1.5px dashed var(--border); text-align: center; font-size: 11.5px; color: var(--muted); }
+  .qr-zone {
+    display: flex; align-items: center; gap: 14px; margin-top: 18px;
+    background: var(--surface-2); border: 2px dashed var(--edge); border-radius: 16px; padding: 12px 14px;
+    transition: transform .2s, border-color .2s;
+  }
+  .qr-zone:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .qr-zone img { width: 92px; height: 92px; border-radius: 12px; border: 2px solid var(--edge); box-shadow: var(--pop-sm); background: #fffdf5; flex-shrink: 0; }
+  .qr-zone b { color: var(--accent); font-size: 13.5px; }
+  .qr-zone span { color: var(--muted); font-size: 12px; }
+  .qr-site-pill {
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--bg); border: 1.5px solid var(--edge);
+    color: var(--ink) !important; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.2px !important; font-weight: 800; text-decoration: none;
+    word-break: break-all;
+  }
+  .qr-site-pill:hover { background: var(--accent); color: #14100e !important; }
+  .qr-liens-bas { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; align-items: center; }
+  .qr-btn-carte {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--surface); color: var(--ink); border: 1.5px solid var(--edge);
+    border-radius: 999px; padding: 3px 10px; font-size: 11.5px; font-weight: 800;
+    text-decoration: none; box-shadow: 2px 2px 0 var(--edge);
+  }
+  .qr-btn-carte:hover { border-color: var(--accent); color: var(--accent); }
+  form[hidden] { display: none; }
+  .canal { display: flex; gap: 8px; margin-bottom: 14px; }
+  .canal button {
+    flex: 1; border: 2px solid var(--edge); background: var(--bg); color: var(--ink);
+    border-radius: 999px; padding: 8px 6px; font-weight: 800; font-size: 12.5px; cursor: pointer;
+    box-shadow: var(--pop-sm); transition: transform .15s ease, background .2s ease;
+  }
+  .canal button.on { background: var(--accent); color: #14100e; }
+  .canal button:not(.on):hover { transform: translateY(-1px); }
+  #zone-code { animation: entree .5s both; }
+  .code-titre { background: var(--surface-2); border: 1.5px dashed var(--accent); border-radius: 12px; padding: 10px 12px; font-size: 13px; margin-bottom: 12px; color: var(--ink); }
+  .code-titre b { color: var(--accent); }
+  .btn-sec { background: var(--surface-2) !important; color: var(--ink) !important; margin-top: 8px; font-size: 13px !important; box-shadow: var(--pop-sm) !important; }
+  .otp-cases {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 8px 0 14px;
+  }
+  .otp-case {
+    width: 100%; height: 52px; padding: 0 !important; text-align: center;
+    font-size: 22px; font-weight: 900; color: var(--ink); background: var(--bg);
+    border: 2px solid var(--edge); border-radius: 12px;
+    box-shadow: var(--pop-sm);
+    transition: transform .15s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .otp-case:focus {
+    outline: none; border-color: var(--accent); background: var(--surface-2);
+    transform: translateY(-2px); box-shadow: 4px 4px 0 var(--accent);
+  }
+  .otp-case.rempli { background: var(--surface-2); border-color: var(--accent); }
+  .champ { position: relative; display: block; }
+  .champ .ico { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 15px; opacity: .85; pointer-events: none; }
+  .champ input { padding-left: 41px; }
+  ::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  @media (max-width: 480px) {
+    .carte { padding: 24px 18px 20px; border-radius: 20px; }
+    .dactylo-sti { font-size: 10px; letter-spacing: 0.1em; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg-decor" aria-hidden="true"></div>
+  <div class="wrap-carte">
+  <main class="carte">
+    <div class="entete">
+      <span class="halo"><img src="../assets/icons/sti-icon-512.png" alt="Logo STI" /></span>
+      <h1>STI</h1>
+      <div class="dactylo-wrap">
+        <small class="dactylo-sti" id="dactylo-sti">Computer Science & Information Technologies (STI)</small>
+      </div>
+      <p>Subscriber area — please sign in to continue.</p>
+    </div>
+
+    <div class="onglets" role="tablist">
+      <button id="tab-connexion" class="actif" type="button">🔐 Sign In</button>
+      <button id="tab-inscription" type="button">📝 Sign Up</button>
+      <button id="tab-oubli" type="button">🔑 Forgot</button>
+    </div>
+
+    <form id="f-connexion" autocomplete="on">
+      <label for="c-email">Email or WhatsApp number</label>
+      <span class="champ"><span class="ico">👤</span><input id="c-email" type="text" required placeholder="vous@exemple.tn ou +216 20 123 456" autocomplete="username" /></span>
+      <label for="c-mdp">Password</label>
+      <span class="champ"><span class="ico">🔒</span><input id="c-mdp" type="password" required placeholder="••••••••" /></span>
+      <label>Captcha — type the code above</label>
+      <div class="ligne-captcha">
+        <canvas id="captcha-canvas" width="150" height="46" aria-label="Code de vérification"></canvas>
+        <button id="captcha-refresh" class="rafraichir" type="button" title="Nouveau code">↻</button>
+      </div>
+      <input id="c-captcha" type="text" required placeholder="Code ci-dessus" autocomplete="off" />
+      <button class="btn" type="submit">🔐 Sign In</button>
+
+      <div style="margin-top:12px;padding-top:10px;border-top:1px dashed rgba(148,163,184,.28)">
+        <button type="button" id="btn-toggle-badge-labo" style="width:100%;background:rgba(255,255,255,.06);color:#fde68a;border:1.5px solid rgba(251,191,36,.45);border-radius:11px;padding:8px 10px;font:800 12px/1.3 system-ui,'Segoe UI',sans-serif;cursor:pointer">🪪 Au labo ? Connexion rapide par Code Badge (6 caractères)</button>
+        <div id="zone-badge-labo" hidden style="margin-top:8px;background:rgba(15,23,42,.75);border:1.5px solid rgba(251,191,36,.45);border-radius:12px;padding:10px">
+          <label for="inp-code-badge-labo" style="margin-top:0;color:#fde68a;font-size:11.5px">🔑 Code Badge Labo (remis par M. Essouyah) :</label>
+          <div style="display:flex;gap:6px;margin-top:4px">
+            <input id="inp-code-badge-labo" type="text" maxlength="8" placeholder="Ex : L8K4P2" autocomplete="off" style="margin:0;text-transform:uppercase;font:900 15px monospace;letter-spacing:.12em;text-align:center" />
+            <button type="button" id="btn-valider-badge-labo" style="background:linear-gradient(125deg,#d97706,#b45309);color:#fff;border:0;border-radius:10px;padding:0 14px;font-weight:900;font-size:12.5px;cursor:pointer;white-space:nowrap">⚡ Entrer</button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <form id="f-inscription" hidden autocomplete="on">
+      <div class="canal" role="tablist">
+        <button type="button" id="c-mail" class="on">📧 By Email</button>
+        <button type="button" id="c-tel">📱 By Phone</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <label for="i-nom">Last Name *</label>
+          <span class="champ"><span class="ico">👤</span><input id="i-nom" type="text" required placeholder="Votre nom" autocomplete="family-name" /></span>
+        </div>
+        <div>
+          <label for="i-prenom">First Name *</label>
+          <span class="champ"><span class="ico">👤</span><input id="i-prenom" type="text" required placeholder="Votre prénom" autocomplete="given-name" /></span>
+        </div>
+      </div>
+      <div id="zone-tel" hidden>
+        <label for="i-tel">WhatsApp Number</label>
+        <span class="champ"><span class="ico">📱</span><input id="i-tel" type="tel" value="+216 " placeholder="+216 20 123 456" autocomplete="tel" /></span>
+      </div>
+      <div id="zone-mail">
+        <label for="i-email">Email Address</label>
+        <span class="champ"><span class="ico">✉️</span><input id="i-email" type="email" placeholder="vous@exemple.tn" /></span>
+      </div>
+      <label for="i-lycee">High School</label>
+      <select id="i-lycee">
+        <option value="Lycée Rafèha" selected>Lycée Rafèha</option>
+        <option value="__autre">Autre lycée…</option>
+      </select>
+      <input id="i-lycee-autre" type="text" hidden placeholder="Nom de votre lycée" />
+      <label for="i-classe">Class</label>
+      <select id="i-classe">
+        <option value="3eme SI1" selected>3ème SI 1</option>
+        <option value="3eme SI2">3ème SI 2</option>
+        <option value="4eme SI1">4ème SI 1</option>
+        <option value="4eme SI2">4ème SI 2</option>
+        <option value="elevelabo3">elevelabo3</option>
+        <option value="__autre">Autre…</option>
+      </select>
+      <input id="i-classe-autre" type="text" hidden placeholder="Votre classe" />
+      <label for="i-mdp">Password (min. 6 characters)</label>
+      <span class="champ"><span class="ico">🔒</span><input id="i-mdp" type="password" required minlength="6" placeholder="••••••••" /></span>
+      <label for="i-mdp2">Confirmez le mot de passe</label>
+      <span class="champ"><span class="ico">🔒</span><input id="i-mdp2" type="password" required minlength="6" placeholder="••••••••" /></span>
+      <label>Captcha — type the code above</label>
+      <div class="ligne-captcha">
+        <canvas id="captcha-canvas2" width="150" height="46" aria-label="Code de vérification"></canvas>
+        <button id="captcha-refresh2" class="rafraichir" type="button" title="Nouveau code">↻</button>
+      </div>
+      <input id="i-captcha" type="text" required placeholder="Code ci-dessus" autocomplete="off" />
+      <button class="btn" type="submit">📝 S'inscrire</button>
+    </form>
+
+    <div id="zone-code" hidden>
+      <div class="code-titre">📨 Un code de confirmation a été envoyé au<br /><b id="code-cible"></b></div>
+      <label>Recopiez le code reçu (6 chiffres)</label>
+      <div class="otp-cases" id="otp-cases" role="group" aria-label="Code de confirmation à 6 chiffres">
+        <input class="otp-case" type="text" inputmode="numeric" maxlength="1" aria-label="Chiffre 1" autocomplete="one-time-code" />
+        <input class="otp-case" type="text" inputmode="numeric" maxlength="1" aria-label="Chiffre 2" />
+        <input class="otp-case" type="text" inputmode="numeric" maxlength="1" aria-label="Chiffre 3" />
+        <input class="otp-case" type="text" inputmode="numeric" maxlength="1" aria-label="Chiffre 4" />
+        <input class="otp-case" type="text" inputmode="numeric" maxlength="1" aria-label="Chiffre 5" />
+        <input class="otp-case" type="text" inputmode="numeric" maxlength="1" aria-label="Chiffre 6" />
+      </div>
+      <button class="btn" type="button" id="b-verif">✅ Confirmer mon inscription</button>
+      <button class="btn btn-sec" type="button" id="b-renvoi">🔁 Je n'ai rien reçu — renvoyer</button>
+    </div>
+
+    <form id="f-oubli" hidden>
+      <label for="o-email">Adresse e-mail du compte</label>
+      <span class="champ"><span class="ico">✉️</span><input id="o-email" type="email" required placeholder="vous@exemple.tn" /></span>
+      <button class="btn" type="submit">📨 Recevoir le lien de réinitialisation</button>
+    </form>
+
+    <div class="qr-zone">
+      <img src="../assets/images/qr-code-site.png?v=82" alt="QR code du site STI by AE" />
+      <div>
+        <b>📱 Scannez-moi !</b><br />
+        <span>Ouvrez la plateforme sur votre téléphone ou partagez l'accès.</span><br />
+        <span class="qr-site-pill">✨ Plateforme STI by AE · V2.0</span>
+        <div class="qr-liens-bas">
+          <a class="qr-btn-carte" href="carte-visite.html">🪪 Carte de visite &amp; Partager →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="msg" id="msg" role="status"></div>
+    <div class="lien-admin"><a id="lien-admin-portail" href="#admin">📊 Tableau de bord administrateur</a></div>
+    <div class="pied">Plateforme STI © A. Essouyah — Lycée Raféha · 🔒 Contenu protégé, IA interdite</div>
+  </main>
+  </div>
+
+<script src="../assets/js/supabase-umd.js"></script>
+<script src="../assets/js/config.js?v=142"></script>
+<script>
+  /* ================= Tagline STI : effet machine à écrire (dactylo) identique à index.html ================= */
+  (function () {
+    var tag = document.getElementById("dactylo-sti");
+    if (!tag || !tag.textContent) return;
+    var full = tag.textContent;
+    tag.style.minWidth = tag.getBoundingClientRect().width + "px";
+    var node = document.createTextNode("");
+    var bar = document.createElement("span");
+    bar.className = "cursor";
+    bar.setAttribute("aria-hidden", "true");
+    bar.textContent = "▌";
+    tag.textContent = "";
+    tag.appendChild(node);
+    tag.appendChild(bar);
+    var i = 0;
+    function retaper() {
+      bar.classList.add("solid");
+      if (i < full.length) {
+        i++;
+        node.nodeValue = full.slice(0, i);
+        setTimeout(retaper, 55);
+      } else {
+        bar.classList.remove("solid");
+        setTimeout(effacer, 2600);
+      }
+    }
+    function effacer() {
+      bar.classList.add("solid");
+      if (i > 0) {
+        i = Math.max(0, i - 2);
+        node.nodeValue = full.slice(0, i);
+        setTimeout(effacer, 26);
+      } else {
+        bar.classList.remove("solid");
+        setTimeout(retaper, 900);
+      }
+    }
+    retaper();
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden && !node.nodeValue && i === 0) retaper();
+    });
+  })();
+
+  if (!window.supabase) {
+    document.getElementById("msg").className = "msg err";
+    document.getElementById("msg").textContent = "❌ Le script Supabase n'a pas pu être chargé — rechargez la page.";
+  }
+</script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=142" />
+<script src="../assets/js/protection.js?v=142" defer></script>
+<script src="../assets/js/portail.js?v=150"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 (function () {
   "use strict";
   var cfg = window.STI_AUTH;
+  var racineNav = (cfg && cfg.RACINE_LANG) ? cfg.RACINE_LANG : cfg.RACINE;
   var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
     auth: {
       persistSession: true,
@@ -58,7 +59,7 @@
         localStorage.setItem("sti-offline", String(Date.now()));
         localStorage.setItem("sti-session-cache", JSON.stringify(objPerm));
         localStorage.setItem("sti-labo3-permanent", JSON.stringify(objPerm));
-        location.replace(cfg.RACINE + "index.html");
+        location.replace(racineNav + "index.html");
         return;
       }
     }
@@ -464,11 +465,11 @@
           sessionStorage.setItem("sti-bio-session-ok", "1");
           localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
         } catch (e) {}
-        location.href = cfg.RACINE;
+        location.href = racineNav;
         return;
       }
       activeBio(user.id, user.email, function () {
-        location.href = cfg.RACINE;
+        location.href = racineNav;
       });
     }
 
@@ -602,7 +603,7 @@
             } catch (e) {}
           } catch (err) {}
           activeBio(objOff.id, emailConn, function () {
-            location.href = okAdmOff ? (cfg.RACINE + "admin.html") : cfg.RACINE;
+            location.href = okAdmOff ? (racineNav + "admin.html") : racineNav;
           });
         } else {
           msg("❌ Hors-ligne : identifiants non reconnus sur cet appareil (connectez-vous une 1re fois avec Internet).", "err");
@@ -688,7 +689,7 @@
           }));
         } catch (err) {}
         activeBio(r.data.user.id, r.data.user.email, function () {
-          location.href = cfg.RACINE + "admin.html";
+          location.href = racineNav + "admin.html";
         });
         return;
       }

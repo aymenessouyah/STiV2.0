@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v157";
+var CACHE = "sti-atelier-v158";
 var SHELL = [
   "./",
   "./index.html",
@@ -18,6 +18,12 @@ var SHELL = [
   "./assets/css/protection.css",
   "./assets/css/tailwind.css",
   "./assets/js/config.js",
+  "./assets/js/i18n-en.js",
+  "./en/index.html",
+  "./en/portail.html",
+  "./en/admin.html",
+  "./en/bac-pratique.html",
+  "./en/exercices/series-exercices.html",
   "./assets/js/supabase-umd.js",
   "./assets/js/protection.js",
   "./assets/js/acces.js",
@@ -103,6 +109,12 @@ var OFFLINE_LIST = [
   "./assets/js/acces.js",
   "./assets/js/admin.js",
   "./assets/js/config.js",
+  "./assets/js/i18n-en.js",
+  "./en/index.html",
+  "./en/portail.html",
+  "./en/admin.html",
+  "./en/bac-pratique.html",
+  "./en/exercices/series-exercices.html",
   "./assets/js/portail.js",
   "./assets/js/protection.js",
   "./assets/js/supabase-umd.js",

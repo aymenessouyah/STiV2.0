@@ -20,7 +20,8 @@
       lock: function (name, acquireTimeout, fn) { return fn(); }
     }
   });
-  var PORTAIL = cfg.RACINE + "portail.html";
+  var RACINE_NAV = (cfg && cfg.RACINE_LANG) ? cfg.RACINE_LANG : cfg.RACINE;
+  var PORTAIL = RACINE_NAV + "portail.html";
   var CANAL_DIFFUSION = "sti_v2_diffusion_9482";
   var enSortie = false;
   var currentUid = null;
