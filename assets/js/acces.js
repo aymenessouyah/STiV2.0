@@ -2195,12 +2195,11 @@
           "padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px))!important;gap:6px!important;flex-shrink:0!important;" +
         "}" +
         "#sti-btn-messenger-global{" +
-          "left:10px!important;bottom:10px!important;padding:9px 13px!important;font-size:12px!important;" +
+          "left:10px!important;bottom:10px!important;width:42px!important;height:42px!important;padding:0!important;" +
         "}" +
         "html.sti-has-bottom-bar #sti-btn-messenger-global{" +
           "bottom:72px!important;" +
         "}" +
-        "#sti-btn-messenger-global .sti-lbl-msn-pc{display:none!important}" +
       "}";
     (document.head || document.documentElement).appendChild(st);
     if (!window.__stiModalWatchBound) {
@@ -2365,8 +2364,8 @@
     var b = document.getElementById("sti-badge-msn-global");
     if (nb > 0) {
       if (b) {
-        b.textContent = "🔔 " + nb;
-        b.style.display = "inline-block";
+        b.textContent = String(nb);
+        b.style.display = "inline-flex";
       }
       if (btnGlobal) btnGlobal.classList.add("sti-msn-alerte");
       if (btnHome) {
@@ -4906,15 +4905,13 @@
       ? "Ouvrir Messenger STI (Discuter en direct avec les candidats)"
       : "Ouvrir Messenger STI (Discuter avec M. Essouyah & envoyer des fichiers 📎)";
     btn.style.cssText =
-      "position:fixed;left:14px;bottom:14px;z-index:2147483645;display:inline-flex;align-items:center;gap:8px;" +
-      "padding:10px 16px;border-radius:999px;border:1.5px solid rgba(255,255,255,.35);" +
-      "background:linear-gradient(135deg,#0084ff 0%,#7638fa 52%,#ff5280 100%);color:#fff;" +
-      "font:800 13px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;cursor:pointer;" +
-      "box-shadow:0 8px 24px rgba(0,132,255,.35),0 2px 8px rgba(0,0,0,.18);";
+      "position:fixed;left:14px;bottom:14px;z-index:2147483645;width:46px;height:46px;padding:0;" +
+      "display:inline-flex;align-items:center;justify-content:center;border-radius:50%;" +
+      "border:2px solid #ffffff;background:#ffffff;color:#fff;cursor:pointer;" +
+      "box-shadow:0 6px 20px rgba(0,132,255,.38),0 2px 8px rgba(0,0,0,.22);transition:transform .15s ease;";
     btn.innerHTML =
-      ICO_META_MSN_SVG +
-      "<span>Messenger</span><span class='sti-lbl-msn-pc'>STI</span>" +
-      "<span id='sti-badge-msn-global' style='display:none;background:#e41e3f;color:#fff;font-size:11px;font-weight:800;padding:2px 6px;border-radius:999px;border:2px solid #fff'>0</span>";
+      ICO_META_MSN_SVG.replace("width='20' height='20'", "width='32' height='32'") +
+      "<span id='sti-badge-msn-global' style='display:none;position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;align-items:center;justify-content:center;background:#e41e3f;color:#fff;font:800 10.5px/1 system-ui,sans-serif;padding:0 5px;border-radius:999px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25)'>0</span>";
     btn.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
