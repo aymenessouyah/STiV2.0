@@ -224,5 +224,61 @@
         <a href="mailto:contact@exploretunisie.tn" class="lien-contact">Nous contacter</a>
     </footer>
 
+    <script>
+      window.__APP_OK = true;
+      (function () {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = "💻 Voir le code corrigé (index.html & style.css)";
+        btn.style.cssText = "position:fixed;left:14px;bottom:14px;z-index:99999;padding:9px 15px;border-radius:999px;border:2px solid #101728;background:#f2c14e;color:#0a3d55;font:800 12.5px/1 system-ui,-apple-system,sans-serif;cursor:pointer;box-shadow:3px 3px 0 #101728;";
+        var mod = document.createElement("div");
+        mod.style.cssText = "display:none;position:fixed;inset:0;z-index:100000;background:rgba(10,25,38,.86);padding:18px;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;";
+        mod.innerHTML =
+          '<div style="width:min(980px,96vw);max-height:90vh;background:#0f172a;color:#f8fafc;border:2px solid #f2c14e;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.6);">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;background:#1e293b;border-bottom:1px solid #334155;flex-wrap:wrap;">' +
+              '<div style="display:flex;gap:8px;">' +
+                '<button type="button" id="tab-html-exp" style="padding:7px 14px;border-radius:999px;border:none;background:#f2c14e;color:#0a3d55;font-weight:800;font-size:12.5px;cursor:pointer;">📄 index.html</button>' +
+                '<button type="button" id="tab-css-exp" style="padding:7px 14px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12.5px;cursor:pointer;">🎨 style.css</button>' +
+              '</div>' +
+              '<div style="display:flex;gap:8px;">' +
+                '<button type="button" id="close-code-exp" style="padding:6px 13px;border-radius:999px;border:1px solid #64748b;background:#334155;color:#fff;font-weight:800;font-size:12px;cursor:pointer;">✕ Fermer</button>' +
+              '</div>' +
+            '</div>' +
+            '<pre id="pre-code-exp" style="margin:0;padding:16px;overflow:auto;flex:1;font:500 12.5px/1.55 Consolas,ui-monospace,monospace;color:#e2e8f0;white-space:pre;"></pre>' +
+          '</div>';
+        document.body.appendChild(btn);
+        document.body.appendChild(mod);
+        var codeHtmlCache = "";
+        var codeCssCache = "";
+        var preEl = mod.querySelector("#pre-code-exp");
+        var bHtml = mod.querySelector("#tab-html-exp");
+        var bCss = mod.querySelector("#tab-css-exp");
+        function activerOnglet(type) {
+          if (type === "html") {
+            bHtml.style.background = "#f2c14e"; bHtml.style.color = "#0a3d55"; bHtml.style.border = "none";
+            bCss.style.background = "transparent"; bCss.style.color = "#e2e8f0"; bCss.style.border = "1px solid #64748b";
+            if (codeHtmlCache) { preEl.textContent = codeHtmlCache; return; }
+            fetch("index.html").then(function (r) { return r.text(); }).then(function (t) {
+              var idx = t.indexOf("<script>\n      window.__APP_OK");
+              codeHtmlCache = idx !== -1 ? (t.substring(0, idx).trim() + "\n\n</body>\n</html>") : t;
+              preEl.textContent = codeHtmlCache;
+            }).catch(function () { preEl.textContent = "Impossible de charger index.html"; });
+          } else {
+            bCss.style.background = "#f2c14e"; bCss.style.color = "#0a3d55"; bCss.style.border = "none";
+            bHtml.style.background = "transparent"; bHtml.style.color = "#e2e8f0"; bHtml.style.border = "1px solid #64748b";
+            if (codeCssCache) { preEl.textContent = codeCssCache; return; }
+            fetch("style.css").then(function (r) { return r.text(); }).then(function (t) {
+              codeCssCache = t;
+              preEl.textContent = codeCssCache;
+            }).catch(function () { preEl.textContent = "Impossible de charger style.css"; });
+          }
+        }
+        btn.onclick = function () { mod.style.display = "flex"; activerOnglet("html"); };
+        bHtml.onclick = function () { activerOnglet("html"); };
+        bCss.onclick = function () { activerOnglet("css"); };
+        mod.querySelector("#close-code-exp").onclick = function () { mod.style.display = "none"; };
+        mod.onclick = function (e) { if (e.target === mod) mod.style.display = "none"; };
+      })();
+    </script>
 </body>
 </html>
