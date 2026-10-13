@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Tunisie</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. En-tête du site -->
+    <header class="entete-site">
+        <h1 class="nom-agence">Explore Tunisie</h1>
+        <p class="slogan-agence">Découvrez la beauté de la Tunisie</p>
+    </header>
+
+    <!-- 2. Barre de navigation -->
+    <nav class="barre-navigation">
+        <ul class="liste-navigation">
+            <li><a href="#accueil" class="lien-navigation">Accueil</a></li>
+            <li><a href="#destinations" class="lien-navigation">Destinations</a></li>
+            <li><a href="#inscription" class="lien-navigation">Inscription</a></li>
+            <li><a href="#contact" class="lien-navigation">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main>
+
+        <!-- 3. Section de présentation -->
+        <section id="accueil" class="section-presentation">
+            <h2 class="titre-presentation">Explorez la Tunisie autrement</h2>
+            <p class="texte-presentation">
+                Avec Explore Tunisie, voyagez en toute sérénité : des circuits soigneusement
+                préparés, des guides locaux passionnés, des hébergements de charme et des
+                tarifs transparents. Du bleu de la Méditerranée à l'or du désert, vivez des
+                expériences authentiques, à votre rythme.
+            </p>
+        </section>
+
+        <!-- 4. Section des destinations touristiques -->
+        <section id="destinations" class="section-destinations">
+            <h2 class="titre-section">Nos destinations préférées</h2>
+
+            <div class="liste-destinations">
+
+                <article class="carte-destination">
+                    <span class="etiquette-offre">Offre spéciale</span>
+                    <img class="image-destination" src="images/sidi-bou-said.jpg" alt="Village blanc et bleu de Sidi Bou Saïd">
+                    <h3 class="titre-destination">Sidi Bou Saïd</h3>
+                    <p class="description-destination">
+                        Un village perché sur la falaise, aux maisons blanches, aux portes
+                        bleues et aux bougainvillées, face au golfe de Tunis.
+                    </p>
+                </article>
+
+                <article class="carte-destination">
+                    <img class="image-destination" src="images/sahara.jpg" alt="Dunes et caravane de dromadaires dans le Sahara">
+                    <h3 class="titre-destination">Le Sahara tunisien</h3>
+                    <p class="description-destination">
+                        Des dunes à perte de vue, des nuits sous les étoiles et des balades
+                        à dos de dromadaire autour de Douz et de Tozeur.
+                    </p>
+                </article>
+
+                <article class="carte-destination">
+                    <img class="image-destination" src="images/djerba.jpg" alt="Plage de sable fin et palmiers à Djerba">
+                    <h3 class="titre-destination">Djerba</h3>
+                    <p class="description-destination">
+                        L'île de la douceur : plages de sable fin, eaux turquoise, palmiers
+                        et petits villages traditionnels.
+                    </p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- 5. Section du formulaire d'inscription -->
+        <section id="inscription" class="section-inscription">
+            <h2 class="titre-section">Inscrivez-vous à notre prochain voyage</h2>
+
+            <form class="formulaire-inscription" action="#" method="post">
+
+                <fieldset class="groupe-champs">
+                    <legend class="titre-groupe">Informations personnelles</legend>
+
+                    <div class="ligne-champ">
+                        <label for="nom-prenom">Nom et prénom</label>
+                        <input type="text" id="nom-prenom" name="nom_prenom" class="champ-saisie">
+                    </div>
+
+                    <div class="ligne-champ">
+                        <label for="adresse-email">Adresse électronique</label>
+                        <input type="email" id="adresse-email" name="email" class="champ-saisie">
+                    </div>
+
+                    <div class="ligne-champ">
+                        <label for="date-depart">Date de départ souhaitée</label>
+                        <input type="date" id="date-depart" name="date_depart" class="champ-saisie">
+                    </div>
+                </fieldset>
+
+                <fieldset class="groupe-champs">
+                    <legend class="titre-groupe">Préférences de voyage</legend>
+
+                    <p class="question-groupe">Type de voyage :</p>
+                    <div class="ligne-choix">
+                        <input type="radio" id="voyage-individuel" name="type_voyage" value="individuel">
+                        <label for="voyage-individuel">Voyage individuel</label>
+                    </div>
+                    <div class="ligne-choix">
+                        <input type="radio" id="voyage-famille" name="type_voyage" value="famille">
+                        <label for="voyage-famille">Voyage en famille</label>
+                    </div>
+                    <div class="ligne-choix">
+                        <input type="radio" id="voyage-groupe" name="type_voyage" value="groupe">
+                        <label for="voyage-groupe">Voyage en groupe</label>
+                    </div>
+
+                    <p class="question-groupe">Activités souhaitées :</p>
+                    <div class="ligne-choix">
+                        <input type="checkbox" id="activite-monuments" name="activites" value="monuments">
+                        <label for="activite-monuments">Visite des monuments</label>
+                    </div>
+                    <div class="ligne-choix">
+                        <input type="checkbox" id="activite-desert" name="activites" value="desert">
+                        <label for="activite-desert">Excursion dans le désert</label>
+                    </div>
+                    <div class="ligne-choix">
+                        <input type="checkbox" id="activite-mer" name="activites" value="mer">
+                        <label for="activite-mer">Activités en bord de mer</label>
+                    </div>
+
+                    <div class="ligne-champ">
+                        <label for="destination-choisie">Destination</label>
+                        <select id="destination-choisie" name="destination" class="champ-saisie">
+                            <option value="sidi-bou-said">Sidi Bou Saïd</option>
+                            <option value="sahara">Le Sahara tunisien</option>
+                            <option value="djerba">Djerba</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="bouton-validation">Valider mon inscription</button>
+            </form>
+        </section>
+
+        <!-- 6. Gestion du débordement : overflow -->
+        <section id="circuits" class="section-circuits">
+            <h2 class="titre-section">Présentation de nos circuits</h2>
+
+            <div class="liste-blocs-circuits">
+
+                <div class="bloc-circuit bloc-circuit-hidden">
+                    <h3 class="titre-bloc-circuit">overflow : hidden</h3>
+                    <p>
+                        Nos circuits vous font découvrir la Tunisie sous toutes ses facettes.
+                        Le circuit « Cap Bon et Nord » vous mène de Tunis à Sidi Bou Saïd, puis
+                        vers les plages de Hammamet et de Kelibia. Le circuit « Sahara » relie
+                        Tozeur, Douz et Chott el-Jérid, avec une nuit sous tente au cœur des
+                        dunes. Le circuit « Île de Djerba » combine détente en bord de mer,
+                        visite de Houmt Souk et rencontre avec les artisans potiers de Guellala.
+                        Enfin, le circuit « Patrimoine » traverse Carthage, Dougga, Kairouan et
+                        El Jem pour un voyage à travers vingt-cinq siècles d'histoire.
+                    </p>
+                </div>
+
+                <div class="bloc-circuit bloc-circuit-auto">
+                    <h3 class="titre-bloc-circuit">overflow : auto</h3>
+                    <p>
+                        Nos circuits vous font découvrir la Tunisie sous toutes ses facettes.
+                        Le circuit « Cap Bon et Nord » vous mène de Tunis à Sidi Bou Saïd, puis
+                        vers les plages de Hammamet et de Kelibia. Le circuit « Sahara » relie
+                        Tozeur, Douz et Chott el-Jérid, avec une nuit sous tente au cœur des
+                        dunes. Le circuit « Île de Djerba » combine détente en bord de mer,
+                        visite de Houmt Souk et rencontre avec les artisans potiers de Guellala.
+                        Enfin, le circuit « Patrimoine » traverse Carthage, Dougga, Kairouan et
+                        El Jem pour un voyage à travers vingt-cinq siècles d'histoire.
+                    </p>
+                </div>
+
+                <div class="bloc-circuit bloc-circuit-scroll">
+                    <h3 class="titre-bloc-circuit">overflow : scroll</h3>
+                    <p>
+                        Nos circuits vous font découvrir la Tunisie sous toutes ses facettes.
+                        Le circuit « Cap Bon et Nord » vous mène de Tunis à Sidi Bou Saïd, puis
+                        vers les plages de Hammamet et de Kelibia. Le circuit « Sahara » relie
+                        Tozeur, Douz et Chott el-Jérid, avec une nuit sous tente au cœur des
+                        dunes. Le circuit « Île de Djerba » combine détente en bord de mer,
+                        visite de Houmt Souk et rencontre avec les artisans potiers de Guellala.
+                        Enfin, le circuit « Patrimoine » traverse Carthage, Dougga, Kairouan et
+                        El Jem pour un voyage à travers vingt-cinq siècles d'histoire.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 7. Section des informations supplémentaires -->
+        <section id="infos" class="section-infos">
+            <details class="rubrique-infos">
+                <summary class="titre-rubrique">Conditions et informations pratiques</summary>
+                <p>
+                    <strong>Réservation :</strong> toute réservation est confirmée après le
+                    versement d'un acompte de 30 %. L'annulation est gratuite jusqu'à 15 jours
+                    avant le départ.
+                </p>
+                <p>
+                    <strong>Horaires :</strong> l'agence vous accueille du lundi au vendredi,
+                    de 9h00 à 18h00, et le samedi de 9h00 à 13h00.
+                </p>
+                <p>
+                    <strong>Recommandations :</strong> munissez-vous d'un passeport valide,
+                    de vêtements légers, d'un chapeau et d'une protection solaire. Pour les
+                    excursions dans le désert, prévoyez aussi une tenue chaude pour la nuit.
+                </p>
+            </details>
+        </section>
+
+    </main>
+
+    <!-- 8. Pied de page -->
+    <footer id="contact" class="pied-page">
+        <p class="texte-pied-page">Explore Tunisie — Tous droits réservés</p>
+        <a href="mailto:contact@exploretunisie.tn" class="lien-contact">Nous contacter</a>
+    </footer>
+
+</body>
+</html>

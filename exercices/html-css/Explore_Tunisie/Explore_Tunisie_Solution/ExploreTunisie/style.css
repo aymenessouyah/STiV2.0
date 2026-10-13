@@ -1,0 +1,332 @@
+/* ==========================================================
+   Explore Tunisie - Feuille de style
+   Unités utilisées : px et % uniquement
+   ========================================================== */
+
+/* ---------- Règles générales ---------- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 150%;
+    color: #333333;
+    background-color: #f6f1e7;
+}
+
+section {
+    scroll-margin-top: 60px;
+}
+
+.titre-section {
+    margin: 0 0 25px 0;
+    text-align: center;
+    font-size: 28px;
+    color: #0e5a7d;
+}
+
+/* ---------- En-tête du site ---------- */
+.entete-site {
+    width: 100%;
+    height: 150px;
+    padding: 40px 20px;
+    background-color: #0e5a7d;
+    color: #ffffff;
+    text-align: center;
+}
+
+.nom-agence {
+    margin: 0;
+    font-size: 42px;
+}
+
+.slogan-agence {
+    margin: 8px 0 0 0;
+    font-size: 20px;
+    color: #f2c14e;
+}
+
+/* ---------- Barre de navigation ---------- */
+.barre-navigation {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: #0a3d55;
+}
+
+.liste-navigation {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+}
+
+.lien-navigation {
+    display: block;
+    padding: 15px 30px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.lien-navigation:hover {
+    background-color: #f2c14e;
+    color: #0a3d55;
+}
+
+.lien-navigation:focus {
+    outline: 3px solid #f2c14e;
+    background-color: #146b91;
+}
+
+/* ---------- Section de présentation ---------- */
+.section-presentation {
+    height: 400px;
+    padding: 90px 15%;
+    background-image: url("images/presentation.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: #ffffff;
+    text-align: center;
+}
+
+.titre-presentation {
+    margin: 0 0 20px 0;
+    font-size: 40px;
+    text-shadow: 2px 2px 6px #000000;
+}
+
+.texte-presentation {
+    margin: 0;
+    font-size: 20px;
+    text-shadow: 1px 1px 4px #000000;
+}
+
+/* ---------- Destinations touristiques ---------- */
+.section-destinations {
+    width: 90%;
+    margin: 0 auto;
+    padding: 50px 0 20px 0;
+}
+
+.liste-destinations {
+    display: flex;
+    justify-content: space-between;
+}
+
+.carte-destination {
+    position: relative;
+    width: 31%;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px #b9b09c;
+}
+
+.carte-destination:hover {
+    background-color: #fff6dc;
+    box-shadow: 0 10px 22px #8f8672;
+    transform: translateY(-8px);
+}
+
+.image-destination {
+    display: block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.titre-destination {
+    margin: 15px 0 8px 0;
+    font-size: 22px;
+    color: #0e5a7d;
+}
+
+.description-destination {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* Étiquette « Offre spéciale » */
+.etiquette-offre {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    padding: 5px 12px;
+    background-color: #c8102e;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 12px;
+}
+
+/* ---------- Formulaire d'inscription ---------- */
+.section-inscription {
+    padding: 40px 0;
+}
+
+.formulaire-inscription {
+    width: 60%;
+    margin: 0 auto;
+    padding: 25px;
+    background-color: #e9f4f8;
+    border: 2px solid #0e5a7d;
+    border-radius: 15px;
+}
+
+.groupe-champs {
+    margin: 0 0 20px 0;
+    padding: 15px 20px;
+    border: 1px solid #0e5a7d;
+    border-radius: 10px;
+}
+
+.titre-groupe {
+    padding: 0 10px;
+    font-weight: bold;
+    color: #0e5a7d;
+}
+
+.ligne-champ {
+    margin-bottom: 15px;
+}
+
+.ligne-champ label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.champ-saisie {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 16px;
+    border: 1px solid #8aa9b5;
+    border-radius: 6px;
+    background-color: #ffffff;
+}
+
+.champ-saisie:focus {
+    outline: none;
+    border: 2px solid #f2c14e;
+    background-color: #fffbe8;
+}
+
+.question-groupe {
+    margin: 10px 0 8px 0;
+    font-weight: bold;
+}
+
+.ligne-choix {
+    margin-bottom: 6px;
+}
+
+.bouton-validation {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #0e5a7d;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.bouton-validation:hover {
+    background-color: #c8102e;
+}
+
+/* ---------- Gestion du débordement : overflow ---------- */
+.section-circuits {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px 0 40px 0;
+}
+
+.liste-blocs-circuits {
+    display: flex;
+    justify-content: space-between;
+}
+
+.bloc-circuit {
+    width: 31%;
+    height: 180px;
+    padding: 12px 15px;
+    background-color: #ffffff;
+    border: 2px solid #0e5a7d;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.titre-bloc-circuit {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #c8102e;
+}
+
+.bloc-circuit p {
+    margin: 0;
+}
+
+.bloc-circuit-hidden {
+    overflow: hidden;
+}
+
+.bloc-circuit-auto {
+    overflow: auto;
+}
+
+.bloc-circuit-scroll {
+    overflow: scroll;
+}
+
+/* ---------- Conditions et informations pratiques ---------- */
+.section-infos {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.rubrique-infos {
+    padding: 15px 20px;
+    background-color: #e9f4f8;
+    border: 2px solid #0e5a7d;
+    border-radius: 10px;
+}
+
+.titre-rubrique {
+    padding: 8px 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #0e5a7d;
+    cursor: pointer;
+}
+
+.titre-rubrique:hover {
+    background-color: #f2c14e;
+    color: #0a3d55;
+}
+
+/* ---------- Pied de page ---------- */
+.pied-page {
+    margin-top: 50px;
+    padding: 25px 20px;
+    background-color: #0a3d55;
+    color: #ffffff;
+    text-align: center;
+}
+
+.texte-pied-page {
+    margin: 0 0 8px 0;
+}
+
+.lien-contact {
+    color: #f2c14e;
+}
