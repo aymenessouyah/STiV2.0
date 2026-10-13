@@ -11,15 +11,9 @@
     }
   });
 
-  /* Neutralisation complète de WebAuthn / biométrie / code de verrouillage d'écran :
-     un abonné connecté ne doit JAMAIS avoir à saisir son empreinte, FaceID ou code de verrouillage à chaque changement de page */
+  /* Si la classe "elevelabo3" a déjà été connectée une fois sur ce PC du labo,
+     ne plus jamais demander login ni mot de passe (sauf si déconnexion volontaire #deconnecte ou accès #admin) */
   try {
-    localStorage.removeItem("sti-bio");
-    sessionStorage.removeItem("sti-bio");
-    if (navigator.credentials) {
-      try { navigator.credentials.get = function () { return Promise.resolve(null); }; } catch (e) {}
-      try { navigator.credentials.create = function () { return Promise.resolve(null); }; } catch (e) {}
-    }
     var hInit = location.hash.replace("#", "");
     if (hInit === "deconnecte" || hInit === "exclu" || hInit === "refuse" || hInit === "securite" || hInit === "partage" || hInit === "inactivite") {
       localStorage.removeItem("sti-labo3-permanent");
@@ -28,9 +22,11 @@
       localStorage.removeItem("sti-offline");
       localStorage.removeItem("sti-gold");
       localStorage.removeItem("sti-admin-gold");
+      localStorage.removeItem("sti-bio-nav-ts");
       try {
         sessionStorage.removeItem("sti-session-cache");
         sessionStorage.removeItem("sti-offline");
+        sessionStorage.removeItem("sti-bio-session-ok");
       } catch (e) {}
       try {
         document.cookie = "sti_sess_cache=; path=/; max-age=0; SameSite=Lax";
@@ -313,11 +309,63 @@
     } catch (e) {}
   }
 
-  /* ---------- biométrie & code de verrouillage totalement désactivés ---------- */
-  function bioDispo() { return false; }
+  /* ---------- biométrie / code de verrouillage (1re ouverture + chaque nouvelle ouverture de l'application uniquement) ---------- */
+  function bufVersB64Bio(buf) {
+    var bytes = new Uint8Array(buf);
+    var bin = "";
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function bioDispo(cb) {
+    if (!(navigator.credentials && window.PublicKeyCredential && window.isSecureContext)) {
+      cb(false);
+      return;
+    }
+    if (typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === "function") {
+      PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+        .then(function (ok) { cb(Boolean(ok)); })
+        .catch(function () { cb(false); });
+    } else {
+      cb(true);
+    }
+  }
   function activeBio(uid, email, suite) {
-    try { localStorage.removeItem("sti-bio"); } catch (e) {}
-    if (typeof suite === "function") suite(false);
+    var fini = function (ok) {
+      try {
+        sessionStorage.setItem("sti-bio-session-ok", "1");
+        localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+      } catch (e) {}
+      if (typeof suite === "function") suite(Boolean(ok));
+    };
+    bioDispo(function (dispo) {
+      if (!dispo) { fini(false); return; }
+      try {
+        var challenge = crypto.getRandomValues(new Uint8Array(32));
+        var userBytes = new TextEncoder().encode(String(uid || email || "sti-user").slice(0, 60));
+        navigator.credentials.create({
+          publicKey: {
+            challenge: challenge,
+            rp: { name: "STI V2.0", id: location.hostname },
+            user: { id: userBytes, name: String(email || "abonne@sti.tn"), displayName: String(email || "Abonné STI") },
+            authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+            timeout: 60000
+          }
+        }).then(function (cred) {
+          try {
+            localStorage.setItem("sti-bio", "1");
+            if (cred && cred.rawId) {
+              localStorage.setItem("sti-bio-cred-id", bufVersB64Bio(cred.rawId));
+            }
+          } catch (e) {}
+          fini(true);
+        }).catch(function () {
+          fini(false);
+        });
+      } catch (e) {
+        fini(false);
+      }
+    });
   }
 
   /* ---------- onglets ---------- */
@@ -464,7 +512,17 @@
           localStorage.removeItem("sti-labo3-permanent");
         }
       } catch (e) {}
-      location.href = cfg.RACINE;
+      if (isLabo) {
+        try {
+          sessionStorage.setItem("sti-bio-session-ok", "1");
+          localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+        } catch (e) {}
+        location.href = cfg.RACINE;
+        return;
+      }
+      activeBio(user.id, user.email, function () {
+        location.href = cfg.RACINE;
+      });
     }
 
     var timerSecoursProfil = setTimeout(function () {
@@ -975,9 +1033,9 @@
       } catch (e) {}
     } catch (e) {}
     msg("✅ Badge Labo reconnu (" + ((sessObj.prenom || "") + " " + (sessObj.nom || "")).trim() + " · " + sessObj.classe + ") ! Ouverture…", "ok");
-    setTimeout(function () {
+    activeBio(sessObj.id, sessObj.email || sessObj.nom || "badge-labo", function () {
       location.replace(cfg.RACINE + "index.html");
-    }, 350);
+    });
   }
 
   function validerCodeBadgeLabo() {

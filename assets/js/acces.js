@@ -26,17 +26,6 @@
   var currentUid = null;
   var currentClasse = "";
   var presenceMapSite = {};
-
-  /* Neutralisation immédiate de toute invite biométrique / WebAuthn / code de verrouillage d'écran
-     lors de la navigation entre les pages côté abonné */
-  try {
-    localStorage.removeItem("sti-bio");
-    sessionStorage.removeItem("sti-bio");
-    if (navigator.credentials) {
-      try { navigator.credentials.get = function () { return Promise.resolve(null); }; } catch (e) {}
-      try { navigator.credentials.create = function () { return Promise.resolve(null); }; } catch (e) {}
-    }
-  } catch (e) {}
   var ICO_META_MSN_SVG =
     "<svg width='20' height='20' viewBox='0 0 36 36' fill='none' aria-hidden='true' style='flex-shrink:0'>" +
       "<defs><linearGradient id='stiMetaMsnGrad' x1='0%' y1='100%' x2='100%' y2='0%'>" +
@@ -793,6 +782,7 @@
       localStorage.removeItem("sti-cred");
       localStorage.removeItem("sti-gold");
       localStorage.removeItem("sti-admin-gold");
+      localStorage.removeItem("sti-bio-nav-ts");
       Object.keys(localStorage).forEach(function (k) {
         if (k.indexOf("sb-") === 0 || k.indexOf("supabase") !== -1) {
           localStorage.removeItem(k);
@@ -803,6 +793,7 @@
       sessionStorage.removeItem("sti-demo");
       sessionStorage.removeItem("sti-offline");
       sessionStorage.removeItem("sti-session-cache");
+      sessionStorage.removeItem("sti-bio-session-ok");
     } catch (e) {}
     try {
       document.cookie = "sti_sess_cache=; path=/; max-age=0; SameSite=Lax";
@@ -965,13 +956,15 @@
       currentClasse = (cache && cache.classe) || (estLaboPerm ? "elevelabo3" : "");
       appliquerModeGold(Boolean(estLaboPerm || (cache && cache.gold)), cache || {});
       appliquerVerrou4SI(estLaboPerm ? "elevelabo3" : currentClasse, false);
-      panneauCompte(fakeUser, cache || {});
-      if (!dejaRestaureLocal) {
-        dejaRestaureLocal = true;
-        installerSuiviQuizAuto();
-        journal(fakeUser.id);
-      }
-      if (navigator.onLine) synchroniserFileHorsLigne(false);
+      verrouBio(fakeUser, function () {
+        panneauCompte(fakeUser, cache || {});
+        if (!dejaRestaureLocal) {
+          dejaRestaureLocal = true;
+          installerSuiviQuizAuto();
+          journal(fakeUser.id);
+        }
+        if (navigator.onLine) synchroniserFileHorsLigne(false);
+      });
       return true;
     }
     return false;
@@ -979,7 +972,6 @@
 
   /* Si l'appareil possède déjà une session active en cache (sti-session-cache ou elevelabo3),
      restaurer dès 0 ms pour éviter toute redemande d'authentification à chaque changement de page sur mobile / iPhone */
-  try { localStorage.removeItem("sti-bio"); } catch (e) {}
   (function verifImmediateLabo3OuHorsLigne() {
     var cInit = lireCacheSessionLocal();
     var cacheActifValide = Boolean(cInit && cInit.statut === "actif" && cInit.ts && (Date.now() - Number(cInit.ts) < 30 * 86400000));
@@ -1170,7 +1162,7 @@
           journal(user.id);
         }
       };
-      suiteEntree();
+      verrouBio(user, suiteEntree);
     }
 
     var dejaEntre = false;
@@ -6096,10 +6088,215 @@
     setInterval(verifAttente, 20000);
   }
 
-  /* ---------- verrou biométrique désactivé lors de la navigation inter-pages (évite la redemande d'authentification à chaque page sur iPhone/iOS) ---------- */
+  /* ---------- Reconnaissance biométrique / code de verrouillage UNIQUEMENT à la 1re ouverture et à chaque nouvelle ouverture de l'application (jamais lors d'un changement de page) ---------- */
+  function b64VersBufBio(b64) {
+    try {
+      var bin = atob(b64);
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return bytes.buffer;
+    } catch (e) { return null; }
+  }
+  function bufVersB64Bio(buf) {
+    var bytes = new Uint8Array(buf);
+    var bin = "";
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function estSessionAppDejaDeverrouillee() {
+    if (window !== window.top) return true;
+    try {
+      if (sessionStorage.getItem("sti-bio-session-ok") === "1") {
+        localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+        return true;
+      }
+      /* Si la page vient d'être ouverte par un changement de page interne sur le même site (document.referrer de même origine ou transition < 25 s) */
+      var navTs = parseInt(localStorage.getItem("sti-bio-nav-ts") || "0", 10) || 0;
+      var refMemeSite = Boolean(document.referrer && document.referrer.indexOf(location.origin) === 0);
+      if (refMemeSite && navTs && (Date.now() - navTs < 30 * 60 * 1000)) {
+        sessionStorage.setItem("sti-bio-session-ok", "1");
+        localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+        return true;
+      }
+    } catch (e) { return true; }
+    return false;
+  }
+  function marquerSessionAppDeverrouillee() {
+    try {
+      sessionStorage.setItem("sti-bio-session-ok", "1");
+      localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+    } catch (e) {}
+    if (!window.__stiBioNavTrackBound) {
+      window.__stiBioNavTrackBound = true;
+      var majTsNav = function () {
+        try {
+          if (sessionStorage.getItem("sti-bio-session-ok") === "1") {
+            localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+          }
+        } catch (e) {}
+      };
+      window.addEventListener("pagehide", majTsNav);
+      window.addEventListener("beforeunload", majTsNav);
+      document.addEventListener("click", majTsNav, true);
+    }
+  }
+
+  var bioVerifEnCours = false;
+  var bioCallbacksAttente = [];
   function verrouBio(user, suite) {
-    try { localStorage.removeItem("sti-bio"); } catch (e) {}
-    if (typeof suite === "function") suite();
+    if (typeof suite === "function") bioCallbacksAttente.push(suite);
+    var finOk = function () {
+      marquerSessionAppDeverrouillee();
+      var ovEx = document.getElementById("sti-overlay-bio-open");
+      if (ovEx) ovEx.remove();
+      var cbs = bioCallbacksAttente.slice();
+      bioCallbacksAttente = [];
+      cbs.forEach(function (fn) {
+        try { fn(); } catch (e) {}
+      });
+    };
+    var cLoc = lireCacheSessionLocal() || {};
+    var cl = currentClasse || cLoc.classe || "";
+    var em = (user && user.email) || cLoc.email || "";
+    if (estClasseProfLabo(cl, em) || estSessionAdminVerifiee()) {
+      finOk();
+      return;
+    }
+    /* Si l'application a déjà été déverrouillée à l'ouverture, ne JAMAIS redemander lors des changements de page */
+    if (estSessionAppDejaDeverrouillee()) {
+      finOk();
+      return;
+    }
+    if (document.getElementById("sti-overlay-bio-open")) {
+      return;
+    }
+    if (!(navigator.credentials && window.PublicKeyCredential && window.isSecureContext)) {
+      finOk();
+      return;
+    }
+    var verifierDispo = typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === "function"
+      ? PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+      : Promise.resolve(true);
+
+    verifierDispo.then(function (dispo) {
+      if (!dispo) {
+        finOk();
+        return;
+      }
+      var ov = document.getElementById("sti-overlay-bio-open");
+      var nomAff = ((cLoc.prenom || "") + " " + (cLoc.nom || "")).trim() || em || "Abonné STI";
+      if (!ov) {
+        ov = document.createElement("div");
+        ov.id = "sti-overlay-bio-open";
+        ov.className = "sti-no-print";
+        ov.style.cssText =
+          "position:fixed;inset:0;z-index:2147483647;background:rgba(13,21,38,.94);backdrop-filter:blur(8px);" +
+          "display:flex;align-items:center;justify-content:center;padding:18px;" +
+          "font:700 14px/1.45 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;";
+        ov.innerHTML =
+          "<div style='max-width:410px;width:100%;background:#ffffff;color:#050505;border-radius:22px;padding:26px 22px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.45)'>" +
+            "<div style='width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa,#ff5280);color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 6px 18px rgba(0,132,255,.35)'>🔐</div>" +
+            "<div style='font-size:18px;font-weight:800;color:#050505;margin-bottom:4px'>Reconnaissance à l'ouverture</div>" +
+            "<div style='font-size:12.5px;color:#65676b;margin-bottom:14px'>Bon retour <b style='color:#050505'>" + esc(nomAff) + "</b>.<br>Confirmez votre identité (empreinte, Face ID ou code de verrouillage) une seule fois pour ouvrir STI V2.0.</div>" +
+            "<div id='sti-bio-msg-err' style='display:none;background:#fde2e6;color:#c0392b;border-radius:10px;padding:7px 10px;font-size:12px;font-weight:700;margin-bottom:12px'></div>" +
+            "<button type='button' id='sti-btn-bio-unlock' style='width:100%;border:none;border-radius:999px;padding:12px 18px;background:linear-gradient(135deg,#0084ff 0%,#7638fa 55%,#ff5280 100%);color:#fff;font:800 14px system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,132,255,.32);margin-bottom:10px'>👆 Déverrouiller l'application</button>" +
+            "<button type='button' id='sti-btn-bio-switch' style='border:none;background:transparent;color:#65676b;font:600 12px system-ui,sans-serif;cursor:pointer;padding:4px 8px'>🔑 Se connecter avec un autre compte</button>" +
+          "</div>";
+        (document.body || document.documentElement).appendChild(ov);
+      }
+
+      function lancerPromptBio() {
+        if (bioVerifEnCours) return;
+        bioVerifEnCours = true;
+        var elErr = ov.querySelector("#sti-bio-msg-err");
+        if (elErr) elErr.style.display = "none";
+
+        var credB64 = "";
+        try { credB64 = localStorage.getItem("sti-bio-cred-id") || ""; } catch (e) {}
+        var credBuf = credB64 ? b64VersBufBio(credB64) : null;
+
+        function creerCleBio() {
+          try {
+            var chCreate = crypto.getRandomValues(new Uint8Array(32));
+            var uBytes = new TextEncoder().encode(String((user && user.id) || cLoc.id || em || "sti-user").slice(0, 60));
+            navigator.credentials.create({
+              publicKey: {
+                challenge: chCreate,
+                rp: { name: "STI V2.0", id: location.hostname },
+                user: { id: uBytes, name: String(em || "abonne@sti.tn"), displayName: String(nomAff || "Abonné STI") },
+                authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+                pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+                timeout: 60000
+              }
+            }).then(function (cred) {
+              bioVerifEnCours = false;
+              try {
+                localStorage.setItem("sti-bio", "1");
+                if (cred && cred.rawId) {
+                  localStorage.setItem("sti-bio-cred-id", bufVersB64Bio(cred.rawId));
+                }
+              } catch (e) {}
+              finOk();
+            }).catch(function () {
+              bioVerifEnCours = false;
+              if (elErr) {
+                elErr.textContent = "Toucher « 👆 Déverrouiller l'application » et validez avec votre empreinte, Face ID ou code.";
+                elErr.style.display = "block";
+              }
+            });
+          } catch (e) {
+            bioVerifEnCours = false;
+            finOk();
+          }
+        }
+
+        if (credBuf) {
+          try {
+            var chGet = crypto.getRandomValues(new Uint8Array(32));
+            navigator.credentials.get({
+              publicKey: {
+                challenge: chGet,
+                allowCredentials: [{ type: "public-key", id: credBuf }],
+                userVerification: "required",
+                timeout: 60000
+              }
+            }).then(function () {
+              bioVerifEnCours = false;
+              finOk();
+            }).catch(function (err) {
+              bioVerifEnCours = false;
+              /* Si la clé n'est plus reconnue sur l'appareil, recréer la clé biométrique */
+              if (err && (err.name === "InvalidStateError" || err.name === "NotFoundError")) {
+                try { localStorage.removeItem("sti-bio-cred-id"); } catch (e) {}
+                creerCleBio();
+                return;
+              }
+              if (elErr) {
+                elErr.textContent = "Touchez « 👆 Déverrouiller l'application » pour valider votre empreinte, Face ID ou code de verrouillage.";
+                elErr.style.display = "block";
+              }
+            });
+          } catch (e) {
+            bioVerifEnCours = false;
+            creerCleBio();
+          }
+        } else {
+          creerCleBio();
+        }
+      }
+
+      var btnUnlock = ov.querySelector("#sti-btn-bio-unlock");
+      if (btnUnlock) {
+        btnUnlock.onclick = function () { lancerPromptBio(); };
+      }
+      var btnSwitch = ov.querySelector("#sti-btn-bio-switch");
+      if (btnSwitch) {
+        btnSwitch.onclick = function () { sortirImmediatement("#deconnecte"); };
+      }
+      lancerPromptBio();
+    }).catch(function () {
+      finOk();
+    });
   }
 
   /* ---------- journal : appareil (PC/Mobile + OS + Navigateur + #Empreinte) + lieu + durée + présence temps réel ---------- */
