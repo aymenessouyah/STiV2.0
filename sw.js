@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v152";
+var CACHE = "sti-atelier-v153";
 var SHELL = [
   "./",
   "./index.html",
@@ -319,6 +319,15 @@ var OFFLINE_LIST = [
   "./documents/complet/complet-4eme-si-resume.pdf.assets/page-13.jpg",
   "./documents/complet/complet-4eme-si-resume.pdf.assets/page-14.jpg",
   "./documents/complet/complet-4eme-si-resume.pdf.html",
+  "./exercices/html-css/Explore_Tunisie_Enonce.pdf",
+  "./exercices/html-css/Explore_Tunisie_Enonce.pdf.assets/page-01.jpg",
+  "./exercices/html-css/Explore_Tunisie_Enonce.pdf.assets/page-02.jpg",
+  "./exercices/html-css/Explore_Tunisie_Enonce.pdf.assets/page-03.jpg",
+  "./exercices/html-css/Explore_Tunisie_Enonce.pdf.assets/page-04.jpg",
+  "./exercices/html-css/Explore_Tunisie_Enonce.pdf.assets/page-05.jpg",
+  "./exercices/html-css/Explore_Tunisie_Enonce.pdf.assets/page-06.jpg",
+  "./exercices/html-css/Explore_Tunisie_Enonce.pdf.html",
+  "./exercices/html-css/ressources-explore-tunisie.zip",
   "./exercices/html-css/TP1-css.pdf",
   "./exercices/html-css/TP1-css.pdf.assets/page-01.jpg",
   "./exercices/html-css/TP1-css.pdf.html",
