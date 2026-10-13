@@ -938,10 +938,10 @@
         currentUid = cache.id || "admin";
         appliquerModeGold(true);
         appliquerVerrou4SI("Admin", true);
-        panneauCompte(
-          { id: currentUid, email: ADMIN_MAIL_STRICT, user_metadata: { nom: "Essouyah", prenom: "Aymen" } },
-          { nom: "Essouyah", prenom: "Aymen", classe: "Prof", lycee: "Lycée Raféha Mnihla|GOLD", gold: true, statut: "actif" }
-        );
+        try {
+          var rwAdm = document.getElementById("sti-roue-wrap");
+          if (rwAdm) rwAdm.remove();
+        } catch (e) {}
         if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
         if (navigator.onLine) synchroniserFileHorsLigne(false);
         verrouBio({ id: currentUid, email: cache.email || ADMIN_MAIL_STRICT }, function () {});
@@ -1054,10 +1054,10 @@
       } catch (e) {}
       appliquerModeGold(true);
       appliquerVerrou4SI("Admin", true);
-      panneauCompte(
-        user,
-        { nom: "Essouyah", prenom: "Aymen", classe: "Prof", lycee: "Lycée Raféha Mnihla|GOLD", gold: true, statut: "actif" }
-      );
+      try {
+        var rwAdm2 = document.getElementById("sti-roue-wrap");
+        if (rwAdm2) rwAdm2.remove();
+      } catch (e) {}
       if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
       journal(user.id);
       verrouBio(user, function () {});
@@ -1325,6 +1325,11 @@
   /* ---------- roue « mon compte » chic + Progression personnelle + Écrire au prof ---------- */
   function panneauCompte(user, profil) {
     if (estDansIframeModale()) return;
+    if (user && String(user.email || "").trim().toLowerCase() === ADMIN_MAIL_STRICT) {
+      var rwEx = document.getElementById("sti-roue-wrap");
+      if (rwEx) rwEx.remove();
+      return;
+    }
     var existWrap = document.getElementById("sti-roue-wrap");
     if (existWrap) existWrap.remove();
     var isG = estGoldProfil(profil);
@@ -5986,7 +5991,7 @@
     var cont = document.createElement("div");
     cont.id = "sti-badge-admin-flottant";
     cont.className = "sti-no-print";
-    cont.style.cssText = "position:fixed;right:10px;bottom:calc(50% + 34px);z-index:2147483645;display:flex;flex-direction:column;align-items:flex-end;gap:7px;";
+    cont.style.cssText = "position:fixed;right:10px;top:calc(50% - 78px);transform:translateY(-50%);z-index:2147483645;display:flex;flex-direction:column;align-items:flex-end;gap:8px;";
 
     var b = document.createElement("a");
     b.id = "sti-btn-admin-logo";
