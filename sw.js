@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v156";
+var CACHE = "sti-atelier-v157";
 var SHELL = [
   "./",
   "./index.html",
@@ -321,6 +321,12 @@ var OFFLINE_LIST = [
   "./documents/complet/complet-4eme-si-resume.pdf.html",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.docx",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.assets/page-01-v157.jpg",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.assets/page-02-v157.jpg",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.assets/page-03-v157.jpg",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.assets/page-04-v157.jpg",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.assets/page-05-v157.jpg",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.assets/page-06-v157.jpg",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.assets/page-01.jpg",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.assets/page-02.jpg",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.assets/page-03.jpg",
@@ -591,8 +597,8 @@ self.addEventListener("activate", function (evt) {
               for (var r of reqs) {
                 var rPath = "";
                 try { rPath = new URL(r.url).pathname; } catch (e) {}
-                /* Ne jamais copier les anciens .html, .js, .css ou .webmanifest d'une version précédente */
-                if (/\.(html|js|css|webmanifest)$/i.test(rPath) || rPath.slice(-1) === "/") {
+                /* Ne jamais copier les anciens .html, .js, .css, .webmanifest ou fichiers Explore_Tunisie d'une version précédente */
+                if (/\.(html|js|css|webmanifest)$/i.test(rPath) || rPath.indexOf("Explore_Tunisie") !== -1 || rPath.slice(-1) === "/") {
                   continue;
                 }
                 var deja = await nvCache.match(r, { ignoreSearch: true });
