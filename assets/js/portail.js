@@ -659,7 +659,9 @@
               document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonOff) + "; path=/; max-age=2592000; SameSite=Lax";
             } catch (e) {}
           } catch (err) {}
-          location.href = okAdmOff ? (cfg.RACINE + "admin.html") : cfg.RACINE;
+          activeBio(objOff.id, emailConn, function () {
+            location.href = okAdmOff ? (cfg.RACINE + "admin.html") : cfg.RACINE;
+          });
         } else {
           msg("❌ Hors-ligne : identifiants non reconnus sur cet appareil (connectez-vous une 1re fois avec Internet).", "err");
         }
@@ -743,7 +745,9 @@
             ts: Date.now()
           }));
         } catch (err) {}
-        location.href = cfg.RACINE + "admin.html";
+        activeBio(r.data.user.id, r.data.user.email, function () {
+          location.href = cfg.RACINE + "admin.html";
+        });
         return;
       }
       /* Compte non-admin (ex: elevelabo3@exemple.tn) : purger immédiatement tout vestige admin */

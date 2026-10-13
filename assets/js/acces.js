@@ -938,8 +938,10 @@
         currentUid = cache.id || "admin";
         appliquerModeGold(true);
         appliquerVerrou4SI("Admin", true);
-        if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
-        if (navigator.onLine) synchroniserFileHorsLigne(false);
+        verrouBio({ id: currentUid, email: cache.email || ADMIN_MAIL_STRICT }, function () {
+          if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
+          if (navigator.onLine) synchroniserFileHorsLigne(false);
+        });
         return true;
       }
       try {
@@ -1050,8 +1052,10 @@
       } catch (e) {}
       appliquerModeGold(true);
       appliquerVerrou4SI("Admin", true);
-      if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
-      journal(user.id);
+      verrouBio(user, function () {
+        if (window === window.top && !document.getElementById("sti-badge-admin-flottant")) badgeAdmin();
+        journal(user.id);
+      });
       return;
     }
 
@@ -6166,7 +6170,7 @@
     var cLoc = lireCacheSessionLocal() || {};
     var cl = currentClasse || cLoc.classe || "";
     var em = (user && user.email) || cLoc.email || "";
-    if (estClasseProfLabo(cl, em) || estSessionAdminVerifiee()) {
+    if (estClasseProfLabo(cl, em)) {
       finOk();
       return;
     }
@@ -6192,7 +6196,10 @@
         return;
       }
       var ov = document.getElementById("sti-overlay-bio-open");
-      var nomAff = ((cLoc.prenom || "") + " " + (cLoc.nom || "")).trim() || em || "Abonné STI";
+      var estAdmBio = String(em || "").trim().toLowerCase() === ADMIN_MAIL_STRICT || Boolean(cLoc.isAdmin);
+      var nomAff = estAdmBio
+        ? "M. Aymen Essouyah (Admin)"
+        : (((cLoc.prenom || "") + " " + (cLoc.nom || "")).trim() || em || "Abonné STI");
       if (!ov) {
         ov = document.createElement("div");
         ov.id = "sti-overlay-bio-open";
