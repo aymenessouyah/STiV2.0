@@ -5280,7 +5280,36 @@
     }, 900);
   }
 
+  function estAutoriseLaserSTI() {
+    if (estSessionAdminVerifiee()) return true;
+    var c = lireCacheSessionLocal() || {};
+    var em = String(c.email || "").trim().toLowerCase();
+    if (em === ADMIN_MAIL_STRICT) return true;
+    var cl = String(currentClasse || c.classe || "").trim();
+    if (estClasseEnseignantProf(cl)) return true;
+    if (estProfilIssaouiAmel(c) || estProfilMrezguiaMeriem(c)) return true;
+    return false;
+  }
+
+  function majVisibiliteLaserPcSTI() {
+    var btnL = document.getElementById("sti-btn-pc-laser");
+    var autorise = estAutoriseLaserSTI();
+    if (btnL) {
+      btnL.style.display = autorise ? "inline-flex" : "none";
+    }
+    if (!autorise && modeLaserSTI !== 0) {
+      modeLaserSTI = 0;
+      if (laserOverlayEl) laserOverlayEl.style.display = "none";
+      if (laserDotEl) laserDotEl.style.display = "none";
+      if (laserLineEl) laserLineEl.style.display = "none";
+    }
+  }
+
   function appliquerModeLaserSTI(nvMode) {
+    if (!estAutoriseLaserSTI()) {
+      majVisibiliteLaserPcSTI();
+      return;
+    }
     creerOverlayLaserSTI();
     modeLaserSTI = nvMode % 3;
     var btnL = document.getElementById("sti-btn-pc-laser");
@@ -6033,7 +6062,10 @@
 
   function installerOutilsPcWindowsSTI() {
     if (!estModePcWindowsSTI()) return;
-    if (document.getElementById("sti-pc-win-tools")) return;
+    if (document.getElementById("sti-pc-win-tools")) {
+      majVisibiliteLaserPcSTI();
+      return;
+    }
 
     if (!document.getElementById("sti-pc-win-tools-css")) {
       var st = document.createElement("style");
@@ -6102,14 +6134,14 @@
     var sep2 = document.createElement("span");
     sep2.style.cssText = "width:1.5px;height:18px;background:rgba(35,32,26,0.22);margin:0 2px;";
 
-    /* Bouton 4 : 🔴 Pointeur Laser & Guide-ligne */
+    /* Bouton 4 : 🔴 Pointeur Laser & Guide-ligne (réservé à aymenessouyah@gmail.com et Prof) */
     var btnLaser = document.createElement("button");
     btnLaser.type = "button";
     btnLaser.id = "sti-btn-pc-laser";
     btnLaser.innerHTML = "🔴 <span>Laser</span>";
     btnLaser.title = "Spécial Vidéo-projecteur : 1er clic = Pointeur Laser rouge | 2e clic = Règle lumineuse Guide-ligne | 3e clic = Désactiver (ou touche Échap)";
     btnLaser.style.cssText =
-      "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;" +
+      "display:" + (estAutoriseLaserSTI() ? "inline-flex" : "none") + ";align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;" +
       "background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
     btnLaser.onclick = function () {
       appliquerModeLaserSTI(modeLaserSTI + 1);
