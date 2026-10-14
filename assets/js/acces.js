@@ -5194,8 +5194,66 @@
   var laserDotEl = null;
   var laserLineEl = null;
 
+  function lireModeLaserStockeSTI() {
+    try {
+      var m = parseInt(localStorage.getItem("sti-pc-laser-mode") || "0", 10);
+      if (m === 1 || m === 2) return m;
+    } catch (e) {}
+    return 0;
+  }
+
+  function sauverModeLaserStockeSTI(m) {
+    try {
+      localStorage.setItem("sti-pc-laser-mode", String(m || 0));
+    } catch (e) {}
+  }
+
+  function majPosLaserGlobaleSTI(clientX, clientY) {
+    if (!modeLaserSTI) return;
+    try {
+      sessionStorage.setItem("sti-pc-laser-pos", Math.round(clientX) + "," + Math.round(clientY));
+    } catch (e) {}
+    if (modeLaserSTI === 1 && laserDotEl) {
+      laserDotEl.style.left = clientX + "px";
+      laserDotEl.style.top = clientY + "px";
+    } else if (modeLaserSTI === 2 && laserLineEl) {
+      laserLineEl.style.top = clientY + "px";
+    }
+  }
+
+  function ondeClicLaserGlobaleSTI(clientX, clientY) {
+    if (modeLaserSTI !== 1 || !laserOverlayEl) return;
+    var ring = document.createElement("div");
+    ring.style.cssText =
+      "position:fixed;left:" + clientX + "px;top:" + clientY + "px;width:14px;height:14px;border-radius:50%;" +
+      "border:3px solid #ef4444;transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:none;" +
+      "transition:transform 0.42s ease-out, opacity 0.42s ease-out;";
+    laserOverlayEl.appendChild(ring);
+    setTimeout(function () {
+      ring.style.transform = "translate(-50%,-50%) scale(3.4)";
+      ring.style.opacity = "0";
+    }, 15);
+    setTimeout(function () {
+      if (ring.parentNode) ring.parentNode.removeChild(ring);
+    }, 460);
+  }
+
+  /* Si cette page s'exécute à l'intérieur d'une iframe, relayer les mouvements/clics au parent pour que le laser suive partout */
+  if (window !== window.top) {
+    window.addEventListener("mousemove", function (e) {
+      try {
+        window.parent.postMessage({ __stiLaser: "move", x: e.clientX, y: e.clientY }, "*");
+      } catch (err) {}
+    }, { passive: true });
+    window.addEventListener("mousedown", function (e) {
+      try {
+        window.parent.postMessage({ __stiLaser: "down", x: e.clientX, y: e.clientY }, "*");
+      } catch (err) {}
+    }, { passive: true });
+  }
+
   function creerOverlayLaserSTI() {
-    if (laserOverlayEl && document.body.contains(laserOverlayEl)) return;
+    if (laserOverlayEl && document.body && document.body.contains(laserOverlayEl)) return;
     laserOverlayEl = document.createElement("div");
     laserOverlayEl.id = "sti-laser-overlay";
     laserOverlayEl.className = "sti-no-print";
@@ -5218,74 +5276,97 @@
       "box-shadow:0 0 0 9999px rgba(13,21,38,0.38), 0 0 18px rgba(245,158,11,0.65);" +
       "pointer-events:none;display:none;";
 
+    /* Restaurer la dernière position connue pour éviter tout saut lors d'un changement de page */
+    try {
+      var lastPos = (sessionStorage.getItem("sti-pc-laser-pos") || "").split(",");
+      if (lastPos.length === 2) {
+        var lx = parseFloat(lastPos[0]);
+        var ly = parseFloat(lastPos[1]);
+        if (!isNaN(lx) && !isNaN(ly)) {
+          laserDotEl.style.left = lx + "px";
+          laserDotEl.style.top = ly + "px";
+          laserLineEl.style.top = ly + "px";
+        }
+      }
+    } catch (e) {}
+
     laserOverlayEl.appendChild(laserDotEl);
     laserOverlayEl.appendChild(laserLineEl);
     (document.body || document.documentElement).appendChild(laserOverlayEl);
 
-    function majPosLaser(clientX, clientY) {
-      if (!modeLaserSTI) return;
-      if (modeLaserSTI === 1 && laserDotEl) {
-        laserDotEl.style.left = clientX + "px";
-        laserDotEl.style.top = clientY + "px";
-      } else if (modeLaserSTI === 2 && laserLineEl) {
-        laserLineEl.style.top = clientY + "px";
-      }
-    }
+    if (!window.__stiLaserListenersInstalled) {
+      window.__stiLaserListenersInstalled = true;
 
-    function ondeClicLaser(clientX, clientY) {
-      if (modeLaserSTI !== 1 || !laserOverlayEl) return;
-      var ring = document.createElement("div");
-      ring.style.cssText =
-        "position:fixed;left:" + clientX + "px;top:" + clientY + "px;width:14px;height:14px;border-radius:50%;" +
-        "border:3px solid #ef4444;transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:none;" +
-        "transition:transform 0.42s ease-out, opacity 0.42s ease-out;";
-      laserOverlayEl.appendChild(ring);
-      setTimeout(function () {
-        ring.style.transform = "translate(-50%,-50%) scale(3.4)";
-        ring.style.opacity = "0";
-      }, 15);
-      setTimeout(function () {
-        if (ring.parentNode) ring.parentNode.removeChild(ring);
-      }, 460);
-    }
+      window.addEventListener("mousemove", function (e) {
+        majPosLaserGlobaleSTI(e.clientX, e.clientY);
+      }, { passive: true });
 
-    window.addEventListener("mousemove", function (e) {
-      majPosLaser(e.clientX, e.clientY);
-    }, { passive: true });
+      window.addEventListener("mousedown", function (e) {
+        ondeClicLaserGlobaleSTI(e.clientX, e.clientY);
+      }, { passive: true });
 
-    window.addEventListener("mousedown", function (e) {
-      ondeClicLaser(e.clientX, e.clientY);
-    }, { passive: true });
-
-    window.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && modeLaserSTI !== 0) {
-        appliquerModeLaserSTI(0);
-      }
-    });
-
-    /* Suivre aussi la souris au-dessus des iframes de même origine (énoncés, cours, 2e vue) */
-    setInterval(function () {
-      if (!modeLaserSTI) return;
-      var frames = document.querySelectorAll("iframe");
-      for (var i = 0; i < frames.length; i++) {
-        try {
-          var f = frames[i];
-          if (f.contentWindow && !f.contentWindow.__stiLaserBound) {
-            f.contentWindow.__stiLaserBound = true;
-            (function (frEl) {
-              frEl.contentWindow.addEventListener("mousemove", function (ev) {
-                var r = frEl.getBoundingClientRect();
-                majPosLaser(r.left + ev.clientX, r.top + ev.clientY);
-              }, { passive: true });
-              frEl.contentWindow.addEventListener("mousedown", function (ev) {
-                var r = frEl.getBoundingClientRect();
-                ondeClicLaser(r.left + ev.clientX, r.top + ev.clientY);
-              }, { passive: true });
-            })(f);
+      /* Écouter les messages postMessage venant des iframes (même sandboxées) */
+      window.addEventListener("message", function (ev) {
+        if (!modeLaserSTI || !ev || !ev.data || !ev.data.__stiLaser) return;
+        var frames = document.querySelectorAll("iframe");
+        for (var i = 0; i < frames.length; i++) {
+          if (frames[i].contentWindow === ev.source) {
+            var r = frames[i].getBoundingClientRect();
+            var gx = r.left + (Number(ev.data.x) || 0);
+            var gy = r.top + (Number(ev.data.y) || 0);
+            if (ev.data.__stiLaser === "move") {
+              majPosLaserGlobaleSTI(gx, gy);
+            } else if (ev.data.__stiLaser === "down") {
+              ondeClicLaserGlobaleSTI(gx, gy);
+            }
+            break;
           }
-        } catch (e) {}
-      }
-    }, 900);
+        }
+      });
+
+      /* Synchroniser entre onglets/vues si localStorage change */
+      window.addEventListener("storage", function (ev) {
+        if (ev && ev.key === "sti-pc-laser-mode") {
+          var nv = parseInt(ev.newValue || "0", 10) || 0;
+          if (nv !== modeLaserSTI) {
+            appliquerModeLaserSTI(nv, true);
+          }
+        }
+      });
+
+      /* Suivre aussi la souris au-dessus de toutes les iframes (énoncés, cours, 2e vue, outils srcdoc) */
+      setInterval(function () {
+        if (!modeLaserSTI) return;
+        var frames = document.querySelectorAll("iframe");
+        for (var i = 0; i < frames.length; i++) {
+          var f = frames[i];
+          try {
+            if (f.contentWindow && f.contentDocument && !f.contentWindow.__stiLaserBound) {
+              f.contentWindow.__stiLaserBound = true;
+              (function (frEl) {
+                frEl.contentWindow.addEventListener("mousemove", function (ev) {
+                  var r = frEl.getBoundingClientRect();
+                  majPosLaserGlobaleSTI(r.left + ev.clientX, r.top + ev.clientY);
+                }, { passive: true });
+                frEl.contentWindow.addEventListener("mousedown", function (ev) {
+                  var r = frEl.getBoundingClientRect();
+                  ondeClicLaserGlobaleSTI(r.left + ev.clientX, r.top + ev.clientY);
+                }, { passive: true });
+              })(f);
+            }
+          } catch (e) {
+            /* Iframe sandboxée : injecter une seule fois le relais postMessage dans srcdoc si présent */
+            try {
+              var sdoc = f.getAttribute("srcdoc");
+              if (sdoc && sdoc.indexOf("__stiLaser") === -1) {
+                var relayScript = "<script>window.addEventListener('mousemove',function(e){parent.postMessage({__stiLaser:'move',x:e.clientX,y:e.clientY},'*')},{passive:true});window.addEventListener('mousedown',function(e){parent.postMessage({__stiLaser:'down',x:e.clientX,y:e.clientY},'*')});<\/script>";
+                f.setAttribute("srcdoc", sdoc + relayScript);
+              }
+            } catch (e2) {}
+          }
+        }
+      }, 350);
+    }
   }
 
   function estAutoriseLaserSTI() {
@@ -5299,13 +5380,28 @@
     return false;
   }
 
+  function majBoutonToggleLaserIndicateurSTI() {
+    var btnToggle = document.getElementById("sti-btn-pc-toggle");
+    var bar = document.getElementById("sti-pc-win-tools");
+    if (!btnToggle || !bar) return;
+    var ouvert = bar.classList.contains("sti-pc-tools-expanded");
+    var fleche = ouvert ? "◂" : "▸";
+    var icoLaser = modeLaserSTI === 1 ? " 🔴" : (modeLaserSTI === 2 ? " 📏" : "");
+    btnToggle.innerHTML = "🛠️" + icoLaser + " <span style='font-size:10px'>" + fleche + "</span>";
+  }
+
   function majVisibiliteLaserPcSTI() {
     var btnL = document.getElementById("sti-btn-pc-laser");
     var autorise = estAutoriseLaserSTI();
     if (btnL) {
       btnL.style.display = autorise ? "inline-flex" : "none";
     }
-    if (!autorise && modeLaserSTI !== 0) {
+    if (autorise) {
+      var stocke = lireModeLaserStockeSTI();
+      if (stocke !== modeLaserSTI) {
+        appliquerModeLaserSTI(stocke, true);
+      }
+    } else if (modeLaserSTI !== 0) {
       modeLaserSTI = 0;
       if (laserOverlayEl) laserOverlayEl.style.display = "none";
       if (laserDotEl) laserDotEl.style.display = "none";
@@ -5313,13 +5409,16 @@
     }
   }
 
-  function appliquerModeLaserSTI(nvMode) {
+  function appliquerModeLaserSTI(nvMode, nePasSauver) {
     if (!estAutoriseLaserSTI()) {
       majVisibiliteLaserPcSTI();
       return;
     }
     creerOverlayLaserSTI();
     modeLaserSTI = nvMode % 3;
+    if (!nePasSauver) {
+      sauverModeLaserStockeSTI(modeLaserSTI);
+    }
     var btnL = document.getElementById("sti-btn-pc-laser");
     if (modeLaserSTI === 0) {
       laserOverlayEl.style.display = "none";
@@ -5350,6 +5449,7 @@
         btnL.innerHTML = "📏 <span>Guide-ligne</span>";
       }
     }
+    majBoutonToggleLaserIndicateurSTI();
     var z = obtenirZoomActuelSTI();
     if (laserOverlayEl) {
       laserOverlayEl.style.zoom = z === 100 ? "" : ((10000 / z).toFixed(2) + "%");
@@ -6513,8 +6613,8 @@
     btnToggle.onclick = function (ev) {
       if (ev && ev.stopPropagation) ev.stopPropagation();
       var ouvert = bar.classList.toggle("sti-pc-tools-expanded");
-      btnToggle.innerHTML = ouvert ? "🛠️ <span style='font-size:10px'>◂</span>" : "🛠️ <span style='font-size:10px'>▸</span>";
       bar.style.padding = ouvert ? "4px 7px" : "3px";
+      majBoutonToggleLaserIndicateurSTI();
     };
 
     var btnPin = document.createElement("button");
@@ -6572,7 +6672,7 @@
     btnLaser.type = "button";
     btnLaser.id = "sti-btn-pc-laser";
     btnLaser.innerHTML = "🔴 <span>Laser</span>";
-    btnLaser.title = "Spécial Vidéo-projecteur : 1er clic = Pointeur Laser rouge | 2e clic = Règle lumineuse Guide-ligne | 3e clic = Désactiver (ou touche Échap)";
+    btnLaser.title = "Spécial Vidéo-projecteur : 1er clic = Pointeur Laser rouge | 2e clic = Règle lumineuse Guide-ligne | 3e clic = Désactiver (reste actif sur toutes les pages jusqu'à désactivation manuelle)";
     btnLaser.style.cssText =
       "display:" + (estAutoriseLaserSTI() ? "inline-flex" : "none") + ";align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;" +
       "background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
@@ -6636,6 +6736,10 @@
     var zInit = obtenirZoomActuelSTI();
     if (zInit !== 100) {
       appliquerZoomPageSTI(zInit);
+    }
+    var laserInit = lireModeLaserStockeSTI();
+    if (laserInit !== 0 && estAutoriseLaserSTI()) {
+      appliquerModeLaserSTI(laserInit, true);
     }
   }
 
