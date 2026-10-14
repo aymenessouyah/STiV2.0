@@ -4993,7 +4993,7 @@
     }
     /* Compenser le zoom sur les contrôles flottants pour qu'ils gardent une taille fixe à l'écran */
     var inv = z === 100 ? "" : ((10000 / z).toFixed(2) + "%");
-    var idsFlottants = ["sti-pc-win-tools", "sti-btn-messenger-global", "sti-roue-wrap", "sti-badge-admin-flottant", "sti-split-view-panel", "sti-laser-overlay"];
+    var idsFlottants = ["sti-pc-win-tools", "sti-btn-messenger-global", "sti-roue-wrap", "sti-badge-admin-flottant", "sti-split-view-panel", "sti-laser-overlay", "sti-sandbox-modal"];
     for (var i = 0; i < idsFlottants.length; i++) {
       var elF = document.getElementById(idsFlottants[i]);
       if (elF) elF.style.zoom = inv;
@@ -5529,6 +5529,452 @@
     }
   }
 
+  /* ---------- Outil 2 : 🧪 Bac à sable « Tester HTML / CSS / JS » instantané (▶️ Tester code) ---------- */
+  var MODELES_SANDBOX_STI = {
+    m1:
+      "<!DOCTYPE html>\n" +
+      "<html lang=\"fr\">\n" +
+      "<head>\n" +
+      "<meta charset=\"UTF-8\">\n" +
+      "<style>\n" +
+      "  body { font-family: 'Segoe UI', Arial, sans-serif; background: #fffdf7; padding: 14px; color: #1e293b; }\n" +
+      "  fieldset { border: 2px solid #23201a; border-radius: 10px; padding: 14px; background: #ffffff; }\n" +
+      "  legend { font-weight: bold; padding: 2px 10px; background: #101728; color: #ffd54f; border-radius: 6px; }\n" +
+      "  label { display: block; margin-top: 8px; font-weight: bold; font-size: 13px; }\n" +
+      "  input[type=text] { width: 95%; padding: 6px 8px; margin-top: 3px; border: 1.5px solid #475569; border-radius: 6px; }\n" +
+      "  .btns { margin-top: 12px; display: flex; gap: 8px; }\n" +
+      "  input[type=submit], input[type=reset] { padding: 7px 14px; font-weight: bold; border-radius: 6px; border: 1.5px solid #23201a; cursor: pointer; }\n" +
+      "  input[type=submit] { background: #177245; color: #fff; }\n" +
+      "</style>\n" +
+      "<script>\n" +
+      "function estAlpha(ch) {\n" +
+      "  ch = ch.toUpperCase();\n" +
+      "  for (var i = 0; i < ch.length; i++) {\n" +
+      "    if ((ch[i] < 'A' || ch[i] > 'Z') && ch[i] != ' ') {\n" +
+      "      return false;\n" +
+      "    }\n" +
+      "  }\n" +
+      "  return true;\n" +
+      "}\n\n" +
+      "function verif() {\n" +
+      "  var nom = document.getElementById('nom').value.trim();\n" +
+      "  var tel = document.getElementById('tel').value.trim();\n" +
+      "  var mail = document.getElementById('mail').value.trim();\n\n" +
+      "  if (nom.length < 3 || !estAlpha(nom)) {\n" +
+      "    alert('Le nom doit contenir au moins 3 lettres alphabetiques !');\n" +
+      "    return false;\n" +
+      "  }\n" +
+      "  if (tel.length != 8 || isNaN(tel) || Number(tel[0]) < 2) {\n" +
+      "    alert('Le telephone doit contenir 8 chiffres et commencer par 2..9 !');\n" +
+      "    return false;\n" +
+      "  }\n" +
+      "  var pAt = mail.indexOf('@');\n" +
+      "  var pPt = mail.lastIndexOf('.');\n" +
+      "  if (pAt < 1 || pPt <= pAt + 1 || pPt >= mail.length - 1) {\n" +
+      "    alert('Adresse e-mail invalide (exemple : eleve@sti.tn) !');\n" +
+      "    return false;\n" +
+      "  }\n" +
+      "  alert('Bravo ! Toutes les donnees sont valides.');\n" +
+      "  return true;\n" +
+      "}\n" +
+      "<\/script>\n" +
+      "</head>\n" +
+      "<body>\n" +
+      "  <form onsubmit=\"return verif()\">\n" +
+      "    <fieldset>\n" +
+      "      <legend>Inscription Candidat STI</legend>\n" +
+      "      <label>Nom et Prénom :</label>\n" +
+      "      <input type=\"text\" id=\"nom\" placeholder=\"Ex : Ahmed Tounsi\">\n" +
+      "      <label>Téléphone (8 chiffres) :</label>\n" +
+      "      <input type=\"text\" id=\"tel\" placeholder=\"Ex : 55123456\">\n" +
+      "      <label>E-mail :</label>\n" +
+      "      <input type=\"text\" id=\"mail\" placeholder=\"Ex : ahmed@sti.tn\">\n" +
+      "      <div class=\"btns\">\n" +
+      "        <input type=\"submit\" value=\"Vérifier (verif)\">\n" +
+      "        <input type=\"reset\" value=\"Annuler\">\n" +
+      "      </div>\n" +
+      "    </fieldset>\n" +
+      "  </form>\n" +
+      "</body>\n" +
+      "</html>",
+
+    m2:
+      "<!DOCTYPE html>\n" +
+      "<html lang=\"fr\">\n" +
+      "<head>\n" +
+      "<meta charset=\"UTF-8\">\n" +
+      "<style>\n" +
+      "  body { font-family: 'Segoe UI', Arial, sans-serif; background: #fffdf7; padding: 14px; }\n" +
+      "  fieldset { border: 2px solid #23201a; border-radius: 10px; padding: 14px; background: #fff; }\n" +
+      "  legend { font-weight: bold; padding: 2px 10px; background: #0284c7; color: #fff; border-radius: 6px; }\n" +
+      "  label { display: block; margin-top: 8px; font-weight: bold; font-size: 13px; }\n" +
+      "  input[type=text], select { width: 95%; padding: 6px; margin-top: 3px; border: 1.5px solid #475569; border-radius: 6px; }\n" +
+      "  .btn { margin-top: 12px; padding: 7px 14px; background: #f4511e; color: #fff; font-weight: bold; border: 1.5px solid #23201a; border-radius: 6px; cursor: pointer; }\n" +
+      "</style>\n" +
+      "<script>\n" +
+      "function verif() {\n" +
+      "  var cin = document.getElementById('cin').value.trim();\n" +
+      "  var ville = document.getElementById('ville').selectedIndex;\n" +
+      "  var r1 = document.getElementById('r1').checked;\n" +
+      "  var r2 = document.getElementById('r2').checked;\n\n" +
+      "  if (cin.length != 8 || isNaN(cin) || (cin[0] != '0' && cin[0] != '1')) {\n" +
+      "    alert('Le N° CIN doit contenir 8 chiffres et commencer par 0 ou 1 !');\n" +
+      "    return false;\n" +
+      "  }\n" +
+      "  if (ville == 0) {\n" +
+      "    alert('Veuillez choisir un gouvernorat dans la liste !');\n" +
+      "    return false;\n" +
+      "  }\n" +
+      "  if (!r1 && !r2) {\n" +
+      "    alert('Veuillez choisir votre section !');\n" +
+      "    return false;\n" +
+      "  }\n" +
+      "  alert('Formulaire CIN + Liste + Radio valide !');\n" +
+      "  return true;\n" +
+      "}\n" +
+      "<\/script>\n" +
+      "</head>\n" +
+      "<body>\n" +
+      "  <form onsubmit=\"return verif()\">\n" +
+      "    <fieldset>\n" +
+      "      <legend>Contrôle CIN, Liste &amp; Boutons radio</legend>\n" +
+      "      <label>N° CIN (8 chiffres commençant par 0 ou 1) :</label>\n" +
+      "      <input type=\"text\" id=\"cin\" placeholder=\"Ex : 09876543\">\n" +
+      "      <label>Gouvernorat :</label>\n" +
+      "      <select id=\"ville\">\n" +
+      "        <option value=\"\">-- Choisir un gouvernorat --</option>\n" +
+      "        <option value=\"Tunis\">Tunis</option>\n" +
+      "        <option value=\"Sfax\">Sfax</option>\n" +
+      "        <option value=\"Sousse\">Sousse</option>\n" +
+      "      </select>\n" +
+      "      <label>Section :</label>\n" +
+      "      <input type=\"radio\" name=\"sec\" id=\"r1\"> 4e Sciences de l'Informatique\n" +
+      "      <input type=\"radio\" name=\"sec\" id=\"r2\"> 3e Sciences de l'Informatique\n" +
+      "      <br>\n" +
+      "      <input type=\"submit\" class=\"btn\" value=\"Tester verif()\">\n" +
+      "    </fieldset>\n" +
+      "  </form>\n" +
+      "</body>\n" +
+      "</html>",
+
+    m3:
+      "<!DOCTYPE html>\n" +
+      "<html lang=\"fr\">\n" +
+      "<head>\n" +
+      "<meta charset=\"UTF-8\">\n" +
+      "<style>\n" +
+      "  body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; padding: 14px; }\n" +
+      "  h2 { color: #101728; text-align: center; text-transform: uppercase; letter-spacing: 1px; }\n" +
+      "  table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 3px 3px 0 #23201a; }\n" +
+      "  th, td { border: 2px solid #23201a; padding: 8px 10px; text-align: center; }\n" +
+      "  th { background: #101728; color: #ffd54f; }\n" +
+      "  tr:nth-child(even) { background: #fff8e1; }\n" +
+      "</style>\n" +
+      "</head>\n" +
+      "<body>\n" +
+      "  <h2>Barème Officiel Bac Pratique STI</h2>\n" +
+      "  <table>\n" +
+      "    <tr><th>Module</th><th>Contenu</th><th>Barème</th></tr>\n" +
+      "    <tr><td>HTML5 / CSS3</td><td>Formulaire &amp; Mise en forme</td><td>5 pts</td></tr>\n" +
+      "    <tr><td>JavaScript</td><td>Contrôle de saisie verif()</td><td>5 pts</td></tr>\n" +
+      "    <tr><td>BD / SQL / PHP</td><td>Base MySQL &amp; Scripts mysqli_*</td><td>10 pts</td></tr>\n" +
+      "  </table>\n" +
+      "</body>\n" +
+      "</html>",
+
+    m4:
+      "<!DOCTYPE html>\n" +
+      "<html lang=\"fr\">\n" +
+      "<head>\n" +
+      "<meta charset=\"UTF-8\">\n" +
+      "<style>\n" +
+      "  body { font-family: sans-serif; padding: 14px; }\n" +
+      "</style>\n" +
+      "<script>\n" +
+      "function verif() {\n" +
+      "  var ch = document.getElementById('ch').value.trim();\n" +
+      "  alert('Longueur de la chaine : ' + ch.length);\n" +
+      "  return false;\n" +
+      "}\n" +
+      "<\/script>\n" +
+      "</head>\n" +
+      "<body>\n" +
+      "  <form onsubmit=\"return verif()\">\n" +
+      "    <input type=\"text\" id=\"ch\" placeholder=\"Tapez une chaîne...\">\n" +
+      "    <input type=\"submit\" value=\"Tester\">\n" +
+      "  </form>\n" +
+      "</body>\n" +
+      "</html>"
+  };
+
+  function basculerSandboxCodeSTI(btnSb) {
+    var ex = document.getElementById("sti-sandbox-modal");
+    if (ex) {
+      ex.remove();
+      if (btnSb) {
+        btnSb.style.background = "#fffdf7";
+        btnSb.style.color = "#23201a";
+      }
+      return;
+    }
+
+    if (btnSb) {
+      btnSb.style.background = "#177245";
+      btnSb.style.color = "#ffffff";
+    }
+
+    var win = document.createElement("div");
+    win.id = "sti-sandbox-modal";
+    win.className = "sti-no-print";
+    win.style.cssText =
+      "position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(940px,95vw);height:min(600px,86vh);" +
+      "z-index:2147483644;background:#fffdf7;border:3px solid #23201a;border-radius:16px;" +
+      "box-shadow:8px 8px 0 #23201a, 0 22px 50px rgba(0,0,0,0.42);display:flex;flex-direction:column;overflow:hidden;" +
+      "font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#23201a;";
+
+    /* En-tête déplaçable */
+    var head = document.createElement("div");
+    head.style.cssText =
+      "display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px;" +
+      "background:#101728;color:#fffdf7;border-bottom:2px solid #f4511e;cursor:move;user-select:none;flex-shrink:0;flex-wrap:wrap;";
+
+    var titleBox = document.createElement("div");
+    titleBox.style.cssText = "display:flex;align-items:center;gap:8px;font-weight:900;font-size:13.5px;";
+    titleBox.innerHTML = '🧪 <span>Bac à sable STI — Tester HTML / CSS / JS en direct</span>';
+
+    var actionsHead = document.createElement("div");
+    actionsHead.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:wrap;";
+
+    var selMod = document.createElement("select");
+    selMod.style.cssText =
+      "padding:4px 8px;border-radius:7px;border:1.5px solid #475569;background:#1e293b;color:#ffd54f;" +
+      "font:800 11.5px/1.2 inherit;cursor:pointer;";
+    selMod.innerHTML =
+      '<option value="m1">⚡ Modèle 1 : Formulaire + verif() (Nom, Tél, Email)</option>' +
+      '<option value="m2">🔢 Modèle 2 : Contrôle CIN + Liste + Boutons radio</option>' +
+      '<option value="m3">🎨 Modèle 3 : Tableau &amp; Mise en forme CSS3</option>' +
+      '<option value="m4">📄 Modèle 4 : Squelette vierge HTML + JS</option>';
+
+    var btnRun = document.createElement("button");
+    btnRun.type = "button";
+    btnRun.innerHTML = "▶️ Exécuter";
+    btnRun.title = "Exécuter le code (ou Ctrl + Entrée)";
+    btnRun.style.cssText =
+      "padding:5px 11px;border-radius:7px;border:1.5px solid #22c55e;background:#177245;color:#fff;" +
+      "font:900 11.5px/1 inherit;cursor:pointer;";
+
+    var btnCopy = document.createElement("button");
+    btnCopy.type = "button";
+    btnCopy.textContent = "📋 Copier";
+    btnCopy.title = "Copier tout le code dans le presse-papiers";
+    btnCopy.style.cssText =
+      "padding:5px 9px;border-radius:7px;border:1px solid #475569;background:#1e293b;color:#fff;" +
+      "font:800 11.5px/1 inherit;cursor:pointer;";
+
+    var estMax = false;
+    var btnMax = document.createElement("button");
+    btnMax.type = "button";
+    btnMax.textContent = "⤢";
+    btnMax.title = "Agrandir / Réduire la fenêtre";
+    btnMax.style.cssText =
+      "padding:4px 8px;border-radius:7px;border:1px solid #475569;background:#1e293b;color:#fff;" +
+      "font:900 12px/1 inherit;cursor:pointer;";
+    btnMax.onclick = function () {
+      estMax = !estMax;
+      if (estMax) {
+        win.style.left = "50%";
+        win.style.top = "50%";
+        win.style.width = "96vw";
+        win.style.height = "90vh";
+        btnMax.textContent = "⤡";
+      } else {
+        win.style.width = "min(940px,95vw)";
+        win.style.height = "min(600px,86vh)";
+        btnMax.textContent = "⤢";
+      }
+    };
+
+    var btnClose = document.createElement("button");
+    btnClose.type = "button";
+    btnClose.textContent = "✕";
+    btnClose.title = "Fermer le Bac à sable";
+    btnClose.style.cssText =
+      "padding:4px 9px;border-radius:7px;border:none;background:#c0392b;color:#fff;" +
+      "font:900 12px/1 inherit;cursor:pointer;";
+    btnClose.onclick = function () { basculerSandboxCodeSTI(btnSb); };
+
+    actionsHead.appendChild(selMod);
+    actionsHead.appendChild(btnRun);
+    actionsHead.appendChild(btnCopy);
+    actionsHead.appendChild(btnMax);
+    actionsHead.appendChild(btnClose);
+    head.appendChild(titleBox);
+    head.appendChild(actionsHead);
+
+    /* Déplacement à la souris de l'en-tête */
+    (function () {
+      var drag = false, dx = 0, dy = 0;
+      head.addEventListener("mousedown", function (e) {
+        if (e.target.tagName === "BUTTON" || e.target.tagName === "SELECT") return;
+        drag = true;
+        var r = win.getBoundingClientRect();
+        win.style.transform = "none";
+        win.style.left = r.left + "px";
+        win.style.top = r.top + "px";
+        dx = e.clientX - r.left;
+        dy = e.clientY - r.top;
+      });
+      window.addEventListener("mousemove", function (e) {
+        if (!drag) return;
+        win.style.left = Math.max(4, Math.min(window.innerWidth - 120, e.clientX - dx)) + "px";
+        win.style.top = Math.max(4, Math.min(window.innerHeight - 60, e.clientY - dy)) + "px";
+      });
+      window.addEventListener("mouseup", function () { drag = false; });
+    })();
+
+    /* Corps en 2 colonnes : Éditeur de code à gauche | Aperçu + Journal alert() à droite */
+    var body = document.createElement("div");
+    body.style.cssText = "flex:1;display:grid;grid-template-columns:1.08fr 0.92fr;min-height:0;overflow:hidden;";
+
+    var leftCol = document.createElement("div");
+    leftCol.style.cssText = "display:flex;flex-direction:column;border-right:2px solid #23201a;min-height:0;background:#0f172a;";
+
+    var barCode = document.createElement("div");
+    barCode.style.cssText =
+      "display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:#1e293b;" +
+      "color:#cbd5e1;font-size:11.5px;font-weight:800;border-bottom:1px solid #334155;";
+    barCode.innerHTML =
+      '<span>📝 Code HTML5 + CSS3 + JavaScript STI</span>' +
+      '<span style="color:#94a3b8;">Raccourci : <b style="color:#ffd54f;">Ctrl + Entrée</b></span>';
+
+    var ta = document.createElement("textarea");
+    ta.id = "sti-sandbox-textarea";
+    ta.spellcheck = false;
+    ta.style.cssText =
+      "flex:1;width:100%;border:0;outline:none;resize:none;padding:12px;background:#0f172a;color:#f8fafc;" +
+      "font:500 12.5px/1.5 'JetBrains Mono','Fira Code',Consolas,monospace;font-variant-ligatures:none;";
+
+    leftCol.appendChild(barCode);
+    leftCol.appendChild(ta);
+
+    var rightCol = document.createElement("div");
+    rightCol.style.cssText = "display:flex;flex-direction:column;min-height:0;background:#ffffff;";
+
+    var barPrev = document.createElement("div");
+    barPrev.style.cssText =
+      "display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:#f3ead9;" +
+      "color:#23201a;font-size:11.5px;font-weight:800;border-bottom:1.5px solid #23201a;";
+    barPrev.innerHTML = '<span>👁️ Aperçu interactif en direct</span><span id="sti-sb-status" style="color:#177245;">● Prêt</span>';
+
+    var iframePrev = document.createElement("iframe");
+    iframePrev.id = "sti-sandbox-iframe";
+    iframePrev.style.cssText = "flex:1;width:100%;border:0;background:#fffdf7;min-height:0;";
+
+    var logBox = document.createElement("div");
+    logBox.id = "sti-sandbox-logs";
+    logBox.style.cssText =
+      "height:115px;border-top:2px solid #23201a;background:#101728;color:#e2e8f0;padding:7px 10px;" +
+      "font:600 12px/1.45 'JetBrains Mono',Consolas,monospace;overflow-y:auto;flex-shrink:0;";
+    logBox.innerHTML = '<div style="color:#94a3b8;font-size:11px;">🔔 Journal des <b>alert()</b> et erreurs JavaScript :</div>';
+
+    rightCol.appendChild(barPrev);
+    rightCol.appendChild(iframePrev);
+    rightCol.appendChild(logBox);
+
+    body.appendChild(leftCol);
+    body.appendChild(rightCol);
+    win.appendChild(head);
+    win.appendChild(body);
+    (document.body || document.documentElement).appendChild(win);
+
+    function ajouterLogSandbox(texte, type) {
+      var ligne = document.createElement("div");
+      var couleur = type === "err" ? "#f87171" : (type === "ok" ? "#4ade80" : "#ffd54f");
+      ligne.style.cssText = "margin-top:4px;padding:3px 6px;border-radius:5px;background:rgba(255,255,255,0.06);color:" + couleur + ";";
+      ligne.textContent = texte;
+      logBox.appendChild(ligne);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    window.addEventListener("message", function (ev) {
+      if (!ev || !ev.data || !ev.data.__stiSandboxMsg) return;
+      if (ev.data.kind === "alert") {
+        ajouterLogSandbox("🔔 alert(\"" + ev.data.msg + "\")", "alert");
+      } else if (ev.data.kind === "error") {
+        ajouterLogSandbox("❌ Erreur JS : " + ev.data.msg, "err");
+      }
+    });
+
+    function executerCodeSandbox() {
+      var code = ta.value || "";
+      try { localStorage.setItem("sti-sandbox-code", code); } catch (e) {}
+      logBox.innerHTML = '<div style="color:#94a3b8;font-size:11px;">🔔 Journal des <b>alert()</b> et erreurs JavaScript :</div>';
+
+      /* Injection d'un intercepteur non-bloquant pour alert() + erreurs JS dans l'aperçu */
+      var pontAlert =
+        "<script>" +
+        "window.onerror = function(msg, url, line) {" +
+        "  parent.postMessage({ __stiSandboxMsg: true, kind: 'error', msg: msg + (line ? ' (ligne ' + line + ')' : '') }, '*');" +
+        "};" +
+        "window.alert = function(m) {" +
+        "  parent.postMessage({ __stiSandboxMsg: true, kind: 'alert', msg: String(m) }, '*');" +
+        "  var b = document.getElementById('__sti_alert_banner');" +
+        "  if (!b) {" +
+        "    b = document.createElement('div');" +
+        "    b.id = '__sti_alert_banner';" +
+        "    b.style.cssText = 'position:sticky;top:0;z-index:9999;margin:0 0 10px 0;padding:9px 12px;border-radius:8px;border:2px solid #23201a;background:#fff3b0;color:#23201a;font:bold 13px system-ui,sans-serif;box-shadow:2px 2px 0 #23201a;display:flex;justify-content:space-between;align-items:center;';" +
+        "    document.body.insertBefore(b, document.body.firstChild);" +
+        "  }" +
+        "  b.innerHTML = '<span>🔔 <b>alert :</b> ' + String(m).replace(/</g,'&lt;') + '</span><button onclick=\"this.parentNode.remove()\" style=\"border:none;background:#23201a;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-weight:bold;\">OK</button>';" +
+        "};" +
+        "<\/script>";
+
+      var posHead = code.indexOf("<head>");
+      var htmlFinal = posHead !== -1
+        ? (code.substring(0, posHead + 6) + pontAlert + code.substring(posHead + 6))
+        : (pontAlert + code);
+
+      iframePrev.srcdoc = htmlFinal;
+      var stEl = document.getElementById("sti-sb-status");
+      if (stEl) {
+        stEl.textContent = "● Exécuté";
+        stEl.style.color = "#177245";
+      }
+    }
+
+    btnRun.onclick = executerCodeSandbox;
+    btnCopy.onclick = function () {
+      try {
+        navigator.clipboard.writeText(ta.value);
+        btnCopy.textContent = "✅ Copié !";
+        setTimeout(function () { btnCopy.textContent = "📋 Copier"; }, 1400);
+      } catch (e) {}
+    };
+
+    selMod.onchange = function () {
+      var m = MODELES_SANDBOX_STI[selMod.value] || MODELES_SANDBOX_STI.m1;
+      ta.value = m;
+      executerCodeSandbox();
+    };
+
+    ta.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        executerCodeSandbox();
+      }
+    });
+
+    var codeSauve = "";
+    try { codeSauve = localStorage.getItem("sti-sandbox-code") || ""; } catch (e) {}
+    ta.value = codeSauve.trim() ? codeSauve : MODELES_SANDBOX_STI.m1;
+    executerCodeSandbox();
+
+    var zPage = obtenirZoomActuelSTI();
+    if (zPage !== 100) {
+      win.style.zoom = (10000 / zPage).toFixed(2) + "%";
+    }
+  }
+
   function installerOutilsPcWindowsSTI() {
     if (!estModePcWindowsSTI()) return;
     if (document.getElementById("sti-pc-win-tools")) return;
@@ -5626,6 +6072,19 @@
       basculerSplitViewSTI(btnSplit);
     };
 
+    /* Bouton 2 : 🧪 Bac à sable « Tester HTML / CSS / JS » instantané (▶️ Tester code) */
+    var btnSandbox = document.createElement("button");
+    btnSandbox.type = "button";
+    btnSandbox.id = "sti-btn-pc-sandbox";
+    btnSandbox.innerHTML = "▶️ <span>Tester code</span>";
+    btnSandbox.title = "Ouvrir le Bac à sable STI pour tester en direct du code HTML5 / CSS3 / JavaScript (verif, alert…)";
+    btnSandbox.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnSandbox.onclick = function () {
+      basculerSandboxCodeSTI(btnSandbox);
+    };
+
     bar.appendChild(btnPin);
     bar.appendChild(sep);
     bar.appendChild(btnZoomOut);
@@ -5634,6 +6093,7 @@
     bar.appendChild(sep2);
     bar.appendChild(btnLaser);
     bar.appendChild(btnSplit);
+    bar.appendChild(btnSandbox);
     (document.body || document.documentElement).appendChild(bar);
 
     var zInit = obtenirZoomActuelSTI();
