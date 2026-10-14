@@ -1581,7 +1581,7 @@
     ajouterOutilGrille("📝 Examen /20", "Simulateur d'Examen Blanc STI chronométré (/20)", "background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;font-weight:900;", function () {
       if (window.ouvrirExamenBlancSTI) window.ouvrirExamenBlancSTI();
     });
-    ajouterOutilGrille("🗄️ Labo SQL", "Simulateur SQL hors-ligne (SELECT, JOIN, GROUP BY…)", "border-color:#0284c7;background:#e0f2fe;color:#0369a1;font-weight:900;", function () {
+    ajouterOutilGrille("🗄️ Labo SQL", "Simulateur SQL hors-ligne (SELECT, Jointure a.x=b.x, GROUP BY…)", "border-color:#0284c7;background:#e0f2fe;color:#0369a1;font-weight:900;", function () {
       if (window.ouvrirSimulateurSqlSTI) window.ouvrirSimulateurSqlSTI();
     });
     ajouterOutilGrille("🔤 ASCII & JS", "Laboratoire Chaînes & Code ASCII JavaScript (Annexe)", "border-color:#b45309;background:#fffbeb;color:#92400e;font-weight:900;", function () {
@@ -8138,7 +8138,7 @@
     { tech: "sql", badge: "🎬 Simulateur SQL", title: "Animation interactive : Voir l'effet des contraintes SQL", sub: "Simuler en direct CHAR vs VARCHAR, CHECK, ON UPDATE CASCADE et ON DELETE CASCADE / RESTRICT", url: "cours/sql-contraintes.html", kw: "simulateur animation contraintes char varchar check on update cascade on delete cascade restrict erreur 1451 3819 1406" },
     { tech: "sql", badge: "🗄️ SQL · LDD", title: "ALTER TABLE & DROP TABLE (Modifier ou supprimer une structure)", sub: "ADD COLUMN, MODIFY, CHANGE, DROP COLUMN, ADD CONSTRAINT, DROP TABLE, DROP DATABASE", url: "cours/sql.html#ldd-alter", kw: "alter table add modify change drop column constraint rename drop database" },
     { tech: "sql", badge: "🗄️ SQL · LMD", title: "INSERT INTO, UPDATE & DELETE (Mise à jour des données)", sub: "Insérer des lignes, modifier avec UPDATE ... SET ... WHERE, supprimer avec DELETE FROM", url: "cours/sql.html#lmd", kw: "insert into values update set where delete from lmd manipulation" },
-    { tech: "sql", badge: "🗄️ SQL · LMD", title: "SELECT, WHERE, ORDER BY, Jointures & Opérateurs SQL", sub: "Projection, restriction, DISTINCT, BETWEEN, IN, LIKE (% _), IS NULL, jointures entre tables", url: "cours/sql.html#lmd-aggr", kw: "select from where and or not distinct order by asc desc between in like null limit jointure inner join" },
+    { tech: "sql", badge: "🗄️ SQL · LMD", title: "SELECT, WHERE, ORDER BY, Jointures (a.x = b.x) & Opérateurs SQL", sub: "Projection, restriction, DISTINCT, BETWEEN, IN, LIKE (% _), IS NULL, jointure entre tables (WHERE a.x = b.x)", url: "cours/sql.html#lmd-jointure", kw: "select from where and or not distinct order by asc desc between in like null limit jointure" },
     { tech: "sql", badge: "🗄️ SQL · LMD", title: "Fonctions d'agrégation, GROUP BY & HAVING", sub: "COUNT(), SUM(), AVG(), MIN(), MAX(), regroupement GROUP BY et filtre HAVING", url: "cours/sql.html#lmd-aggr", kw: "count sum avg min max group by having agregation statistique" },
     { tech: "sql", badge: "🗄️ SQL · Fonctions", title: "Fonctions SQL sur les chaînes et les dates", sub: "CONCAT, LENGTH, UPPER, LOWER, SUBSTR, NOW(), CURDATE(), YEAR(), MONTH(), DAY(), DATEDIFF()", url: "cours/sql.html#lmd-strings", kw: "concat length char_length upper lower substr substring trim now curdate year month day datediff date_add" },
     { tech: "sql", badge: "🗄️ SQL · Fiche", title: "Fiche synthèse SQL : LDD, LMD, LCD commentés", sub: "Récapitulatif rapide de toutes les commandes SQL avec exemples", url: "cours/sql-bases-ldd-lmd-lcd.html", kw: "fiche recap sql ldd lmd lcd resume commandes" },
@@ -8629,7 +8629,7 @@
     { id: "s4", tech: "sql", badge: "🗄️ SQL", q: "Quelle est la différence entre WHERE et HAVING dans une requête SELECT ?", a: "WHERE filtre les lignes individuelles AVANT GROUP BY (sans fonction d'agrégation) ; HAVING filtre les groupes APRÈS GROUP BY (avec COUNT, SUM, AVG…).", code: "SELECT id_cl, COUNT(*) AS effectif\nFROM eleve\nWHERE age >= 17\nGROUP BY id_cl\nHAVING COUNT(*) >= 20;" },
     { id: "s5", tech: "sql", badge: "🗄️ SQL", q: "Comment ajouter une contrainte CHECK imposant que la note soit entre 0 et 20 avec ALTER TABLE ?", a: "ALTER TABLE eleve ADD CONSTRAINT chk_note CHECK (note BETWEEN 0 AND 20);", code: "ALTER TABLE eleve\nADD CONSTRAINT chk_note CHECK (note BETWEEN 0 AND 20);" },
     { id: "s6", tech: "sql", badge: "🗄️ SQL", q: "Quelle est la différence entre DELETE FROM table et DROP TABLE table ?", a: "DELETE FROM (LMD) supprime les enregistrements mais conserve la table ; DROP TABLE (LDD) détruit complètement la table et sa structure.", code: "DELETE FROM client WHERE ville = 'Sfax'; -- LMD\nDROP TABLE client;                       -- LDD" },
-    { id: "s7", tech: "sql", badge: "🗄️ SQL", q: "Comment écrire une jointure entre Client(cin, nom) et Location(id, cin, date_loc) ?", a: "Avec INNER JOIN ... ON ou dans le WHERE en égalisant la clé primaire et la clé étrangère.", code: "SELECT C.nom, L.date_loc\nFROM Client C\nINNER JOIN Location L ON C.cin = L.cin;" },
+    { id: "s7", tech: "sql", badge: "🗄️ SQL", q: "Comment écrire une jointure entre Client c (NCIN_Cli, nom_Cli) et Location l (id_location, NCIN_Cli, date_loc) ?", a: "En listant les 2 tables dans FROM et en égalisant l'attribut commun dans WHERE (forme a.x = b.x : c.NCIN_Cli = l.NCIN_Cli).", code: "SELECT c.nom_Cli, l.date_loc\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli;" },
 
     /* --- PHP & MySQLi (réservé 4SI / elevelabo3 / Admin) --- */
     { id: "p1", tech: "php", only4si: true, badge: "🐘 PHP", q: "Comment récupérer proprement un champ 'cin' envoyé en POST par un formulaire HTML ?", a: "On utilise le tableau superglobal $_POST['cin'] après avoir vérifié son existence avec isset().", code: "<?php\n$cin = $_POST['cin'];\n?>" },
@@ -11903,7 +11903,7 @@
           "<div id='sti-sql-exemples-bar' style='display:flex;gap:5px;flex-wrap:wrap'></div>" +
           "<textarea id='sti-sql-editor' rows='4' spellcheck='false' style='width:100%;font:700 13px/1.5 ui-monospace,Consolas,monospace;background:#0f172a;color:#38bdf8;border:2px solid #23201a;border-radius:12px;padding:10px;box-sizing:border-box'></textarea>" +
           "<div style='display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap'>" +
-            "<span style='font-size:11.5px;color:#64748b;font-weight:800'>💡 Supporte : SELECT, DISTINCT, WHERE, JOIN, GROUP BY, HAVING, ORDER BY, NOT IN, INSERT, UPDATE, DELETE</span>" +
+            "<span style='font-size:11.5px;color:#64748b;font-weight:800'>💡 Supporte : SELECT, DISTINCT, WHERE, Jointure (a.x = b.x), GROUP BY, HAVING, ORDER BY, NOT IN, INSERT, UPDATE, DELETE</span>" +
             "<button type='button' id='sti-sql-run' style='border:2px solid #23201a;border-radius:999px;padding:7px 18px;font-size:13px;font-weight:900;background:linear-gradient(125deg,#0284c7,#0369a1);color:#fff;cursor:pointer;box-shadow:2.5px 2.5px 0 #23201a'>▶ Exécuter la requête SQL</button>" +
           "</div>" +
           "<div id='sti-sql-res-zone' style='margin-top:4px'></div>" +

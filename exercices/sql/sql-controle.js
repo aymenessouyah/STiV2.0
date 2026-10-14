@@ -239,8 +239,8 @@ const questionsData = [
       },
       {
         id: "vf5",
-        text: "5. LEFT JOIN retourne uniquement les lignes correspondantes.",
-        correct: false,
+        text: "5. Une jointure sans condition WHERE a.x = b.x produit un produit cartésien.",
+        correct: true,
       },
     ],
   },
@@ -259,8 +259,8 @@ const questionsData = [
       {
         id: "ref2",
         text: "2. Que se passe-t-il requête7 si étudiant sans note ? Correction ?",
-        expectedKeywords: ["aucune note", "INNER JOIN"],
-        hint: "Les étudiants sans note sont exclus",
+        expectedKeywords: ["aucune note", "NOT IN"],
+        hint: "Les étudiants sans note sont exclus par WHERE E.Numetu = N.Numetu",
       },
       {
         id: "ref3",
@@ -313,7 +313,7 @@ function normalizeSql(sql) {
     " "
   );
   normalized = normalized.replace(
-    /\s+([a-z_][a-z0-9_]*)\s+([a-z_][a-z0-9_]*)(?=\s|,|$|\)|join)/gi,
+    /\s+([a-z_][a-z0-9_]*)\s+([a-z_][a-z0-9_]*)(?=\s|,|$|\))/gi,
     (match, table, alias) => {
       const sqlKeywords = [
         "select",
@@ -323,11 +323,6 @@ function normalizeSql(sql) {
         "order",
         "having",
         "limit",
-        "join",
-        "inner",
-        "left",
-        "right",
-        "on",
         "and",
         "or",
         "not",
@@ -339,12 +334,6 @@ function normalizeSql(sql) {
       if (sqlKeywords.includes(alias)) return match;
       return ` ${table} `;
     }
-  );
-
-  // 3. Supprimer les mots-clés optionnels des jointures
-  normalized = normalized.replace(
-    /\b(inner|outer|left|right|full|cross)\s+join\b/gi,
-    "join"
   );
 
   // 4. Supprimer ASC/DESC par défaut

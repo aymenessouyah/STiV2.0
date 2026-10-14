@@ -38941,8 +38941,9 @@ LIMIT 5;</textarea
                 <div class="text-white/40 font-bold text-sm text-center py-6">
                   👆 Clique sur <b class="text-[#B8F135]">EXÉCUTER</b> pour
                   lancer ta requête...<br /><span class="text-xs"
-                    >Astuce : essaie une jointure écrite FROM a, b WHERE a.cle =
-                    b.cle, ou un GROUP BY 🤖</span
+                    >Astuce : essaie une jointure écrite FROM Client c, Location
+                    l WHERE c.NCIN_Cli = l.NCIN_Cli (forme a.x = b.x), ou un
+                    GROUP BY 🤖</span
                   >
                 </div>
               </div>
@@ -40792,52 +40793,52 @@ LIMIT 5;</textarea
         {
           cat: "write",
           diff: "Difficile",
-          q: "Quelle précaution prendre avant un UPDATE avec jointure ?",
-          code: "-- Mise à jour croisée entre deux tables\nUPDATE Client c, NouvelleAdresse na\nSET c.ville = na.ville_officielle\nWHERE c.code_postal = na.code_postal;",
+          q: "Quelle précaution prendre avant un UPDATE avec jointure (a.x = b.x) ?",
+          code: "-- Mise à jour croisée entre deux tables (forme a.x = b.x)\nUPDATE Client c, Location l\nSET c.ville = 'Tunis'\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND l.id_location = 1;",
           answers: [
-            "Vérifier que la jointure ne duplique pas les lignes cibles",
+            "Vérifier que la jointure c.NCIN_Cli = l.NCIN_Cli ne duplique pas les lignes cibles",
             "Supprimer la clé étrangère de la table cible",
             "Désactiver la base de données",
             "Convertir les colonnes de jointure en VARCHAR",
           ],
           correct: 0,
           explain:
-            "Si plusieurs lignes de la table de référence correspondent à une même ligne cible, la valeur finale devient imprévisible : on vérifie donc la jointure avant. Un index sur la colonne de jointure accélère aussi l'opération.",
-          hint: "Relis la notion : Si plusieurs lignes de la table de référence correspondent à une même ligne cible, la valeur finale devient imprévisible : on vérifie donc la jointure avant.",
+            "Dans un UPDATE avec jointure (écrit UPDATE Client c, Location l ... WHERE c.NCIN_Cli = l.NCIN_Cli), il faut toujours vérifier la condition d'égalité a.x = b.x pour ne cibler que les lignes voulues.",
+          hint: "Relis la notion : Dans un UPDATE avec jointure (WHERE a.x = b.x), on vérifie toujours que la condition cible exactement les bonnes lignes.",
           id: 55,
         },
         {
           cat: "write",
           diff: "Difficile",
-          q: "Quelle syntaxe correspond à PostgreSQL ?",
-          code: "-- Deux écritures différentes pour un même besoin\n-- Écriture 1 : UPDATE Client c SET ... FROM NouvelleAdresse na WHERE ...\n-- Écriture 2 : UPDATE Client c, NouvelleAdresse na SET ... WHERE ...",
+          q: "Quelle syntaxe met correctement à jour la ville d'un client via une jointure (forme a.x = b.x) ?",
+          code: "-- Mettre à jour la ville du client ayant effectué la location n° 1\n-- Tables : Client c (NCIN_Cli, nom_Cli, ville) et Location l (id_location, NCIN_Cli, date_loc)",
           answers: [
-            "UPDATE Client AS c SET ville = na.ville_officielle FROM NouvelleAdresse AS na WHERE c.code_postal = na.code_postal;",
-            "UPDATE Client c, NouvelleAdresse na SET c.ville = na.ville_officielle WHERE c.code_postal = na.code_postal;",
-            "UPDATE Client, NouvelleAdresse SET ville = ville_officielle;",
-            "UPDATE Client SET ville = NouvelleAdresse.ville_officielle;",
+            "UPDATE Client c, Location l SET c.ville = 'Tunis' WHERE c.NCIN_Cli = l.NCIN_Cli AND l.id_location = 1;",
+            "UPDATE Client c, Location l SET c.ville = 'Tunis';",
+            "UPDATE Client SET ville = Location.ville;",
+            "UPDATE Client c WHERE l.id_location = 1;",
           ],
           correct: 0,
           explain:
-            "PostgreSQL place la seconde table dans une clause FROM, tandis que MySQL et SQL Server l'ajoutent après le nom de la table cible (UPDATE Client c, NouvelleAdresse na ... WHERE c.code_postal = na.code_postal). Les deux écritures relient les tables par la même condition d'égalité ; seule la place de la seconde table change.",
-          hint: "Relis la notion : PostgreSQL place la seconde table dans une clause FROM, tandis que MySQL et SQL Server l'ajoutent après le nom de la table cible (UPDATE Client c, NouvelleAdres",
+            "En SQL STI, la mise à jour croisée entre deux tables liste les deux tables après UPDATE (UPDATE Client c, Location l) et les relie dans le WHERE par la condition d'égalité sur l'attribut commun : WHERE c.NCIN_Cli = l.NCIN_Cli (forme a.x = b.x).",
+          hint: "Relis la notion : On liste les deux tables après UPDATE et on écrit la condition de jointure a.x = b.x dans le WHERE.",
           id: 56,
         },
         {
           cat: "write",
           diff: "Moyen",
-          q: "Que fait la condition na.code_postal = c.code_postal ?",
-          code: "-- Mettre à jour la ville des clients\n-- grâce à une table de référence des adresses\nUPDATE Client c, NouvelleAdresse na\nSET c.ville = na.ville_officielle\nWHERE c.code_postal = na.code_postal;",
+          q: "Que fait la condition c.NCIN_Cli = l.NCIN_Cli (forme a.x = b.x) dans cette requête ?",
+          code: "-- Mise à jour croisée entre Client c et Location l\nUPDATE Client c, Location l\nSET c.ville = 'Tunis'\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND l.id_location = 1;",
           answers: [
-            "Il associe chaque client à la nouvelle adresse portant le même code postal",
-            "Il crée une nouvelle table NouvelleAdresse",
-            "Il supprime les clients sans code postal",
-            "Il trie les clients par code postal",
+            "Elle relie chaque location au client possédant le même NCIN_Cli",
+            "Elle crée une nouvelle table Location",
+            "Elle supprime les clients sans location",
+            "Elle trie les clients par numéro de CIN",
           ],
           correct: 0,
           explain:
-            "Dans un UPDATE sur deux tables, la condition WHERE c.code_postal = na.code_postal donne la correspondance : pour chaque client, on retrouve la ligne de référence de même code postal afin d'en récupérer la ville officielle.",
-          hint: "Relis la notion : Dans un UPDATE sur deux tables, la condition WHERE c.code_postal = na.code_postal donne la correspondance : pour chaque client, on retrouve la ligne de référenc",
+            "La condition WHERE c.NCIN_Cli = l.NCIN_Cli (de la forme a.x = b.x) établit la jointure entre les deux tables sur leur attribut commun NCIN_Cli (clé primaire dans Client, clé étrangère dans Location).",
+          hint: "Relis la notion : La condition WHERE c.NCIN_Cli = l.NCIN_Cli (a.x = b.x) établit la correspondance entre les deux tables.",
           id: 57,
         },
         {
@@ -41777,98 +41778,98 @@ LIMIT 5;</textarea
         {
           cat: "lien",
           diff: "Facile",
-          q: "Que fait cette requête sur deux tables ?",
-          code: "SELECT *\nFROM Clients, Commandes\nWHERE Clients.id = Commandes.client_id;",
+          q: "Que fait cette requête de jointure (forme a.x = b.x) sur deux tables ?",
+          code: "SELECT c.nom_Cli, c.ville, l.id_location, l.date_loc\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli;",
           answers: [
-            "Elle retourne uniquement les lignes qui se correspondent dans les 2 tables",
-            "Elle garde toutes les lignes de la table de gauche",
-            "Elle garde toutes les lignes des 2 tables",
+            "Elle retourne uniquement les lignes qui se correspondent dans les 2 tables (c.NCIN_Cli = l.NCIN_Cli)",
+            "Elle garde toutes les lignes de la table Client même sans location",
+            "Elle garde toutes les lignes des 2 tables sans condition",
             "Elle mélange les lignes au hasard",
           ],
           correct: 0,
           explain:
-            "La condition du WHERE (Clients.id = Commandes.client_id) relie les deux tables : seules les lignes qui se correspondent sont gardées. C'est la jointure la plus courante, dite interne.",
-          hint: "Deux tables dans le FROM, la liaison dans le WHERE.",
+            "La condition du WHERE (c.NCIN_Cli = l.NCIN_Cli, de la forme a.x = b.x) relie les deux tables sur l'attribut commun NCIN_Cli : seules les lignes qui se correspondent sont gardées.",
+          hint: "Deux tables dans le FROM, l'égalité a.x = b.x dans le WHERE.",
           id: 119,
         },
         {
           cat: "lien",
           diff: "Moyen",
-          q: "Un client sans commande apparaît-il dans ce résultat ?",
-          code: "SELECT c.nom, cmd.id\nFROM Clients c, Commandes cmd\nWHERE c.id = cmd.client_id;",
+          q: "Un client qui n'a effectué aucune location apparaît-il dans ce résultat ?",
+          code: "SELECT c.nom_Cli, l.id_location\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli;",
           answers: [
             "Oui, avec NULL à droite",
-            "Non : aucune ligne de Commandes ne lui correspond",
+            "Non : aucune ligne de Location ne vérifie c.NCIN_Cli = l.NCIN_Cli pour ce client",
             "Oui, à condition d'ajouter DISTINCT",
-            "Oui, il apparaît avec un id égal à 0",
+            "Oui, il apparaît avec un id_location égal à 0",
           ],
           correct: 1,
           explain:
-            "La condition d'égalité ne garde que les correspondances : un client sans commande disparaît du résultat. Pour le conserver, il faut une jointure externe ou une sous-requête avec NOT EXISTS.",
-          hint: "Cherche côté Commandes une ligne qui correspond au client.",
+            "La condition d'égalité c.NCIN_Cli = l.NCIN_Cli (forme a.x = b.x) ne garde que les correspondances : un client sans location disparaît du résultat. Pour retrouver les clients sans location, on utilise une sous-requête avec NOT IN ou NOT EXISTS.",
+          hint: "Cherche dans Location une ligne où l.NCIN_Cli = c.NCIN_Cli.",
           id: 120,
         },
         {
           cat: "lien",
           diff: "Moyen",
-          q: "À quoi sert la condition de liaison entre deux tables ?",
-          code: "SELECT e.nom, d.nom AS dept\nFROM Employes e, Departements d\nWHERE e.dept_id = d.id;",
+          q: "À quoi sert la condition v.immat_Vehicule = l.immat_Vehicule (forme a.x = b.x) ?",
+          code: "SELECT v.marque, v.modele, l.date_loc\nFROM Vehicule v, Location l\nWHERE v.immat_Vehicule = l.immat_Vehicule;",
           answers: [
             "Au tri final du résultat",
-            "À relier chaque ligne de la 1re table à sa correspondance dans la 2de",
+            "À relier chaque ligne de la 1re table à sa correspondance dans la 2de (même attribut immat_Vehicule)",
             "À filtrer les groupes après regroupement",
             "À renommer les tables du FROM",
           ],
           correct: 1,
           explain:
-            "La condition de liaison (souvent clé étrangère d'un côté, clé primaire de l'autre) dit comment relier les lignes des deux tables. Les autres filtres s'ajoutent ensuite avec AND.",
-          hint: "Clé étrangère d'un côté, clé primaire de l'autre.",
+            "La condition de jointure a.x = b.x (ici v.immat_Vehicule = l.immat_Vehicule, clé primaire d'un côté et clé étrangère de même nom de l'autre) relie les lignes des deux tables. Les autres filtres s'ajoutent ensuite avec AND.",
+          hint: "Clé primaire et clé étrangère de même nom : a.x = b.x.",
           id: 121,
         },
         {
           cat: "lien",
           diff: "Difficile",
-          q: "Combien de lignes retourne ce produit de tables ?",
-          code: "-- A contient 3 lignes, B en contient 4\nSELECT *\nFROM A, B;   -- aucune condition !",
+          q: "Combien de lignes retourne cette requête si on oublie WHERE c.NCIN_Cli = l.NCIN_Cli ?",
+          code: "-- Client contient 3 lignes, Location en contient 4\nSELECT *\nFROM Client c, Location l;   -- aucune condition WHERE a.x = b.x !",
           answers: ["7 lignes", "12 lignes", "4 lignes", "3 lignes"],
           correct: 1,
           explain:
-            "Sans condition, chaque ligne de A est combinée à chaque ligne de B : c'est le produit cartésien, 3 × 4 = 12 lignes. Avec une condition d'égalité dans le WHERE, on obtient une vraie jointure.",
-          hint: "Sans condition : toutes les combinaisons possibles.",
+            "Sans la condition WHERE c.NCIN_Cli = l.NCIN_Cli (a.x = b.x), chaque ligne de Client est combinée à chaque ligne de Location : c'est le produit cartésien, 3 × 4 = 12 lignes. Avec WHERE a.x = b.x, on obtient la jointure.",
+          hint: "Sans condition WHERE a.x = b.x : toutes les combinaisons possibles (3 × 4).",
           id: 122,
         },
         {
           cat: "lien",
           diff: "Difficile",
-          q: "Que compare cette requête ?",
-          code: "SELECT e1.nom AS employe, e2.nom AS manager\nFROM Employes e1, Employes e2\nWHERE e1.manager_id = e2.id;",
+          q: "Comment relie-t-on les 3 tables Client c, Location l et Vehicule v ?",
+          code: "SELECT c.nom_Cli, v.marque, l.date_loc\nFROM Client c, Location l, Vehicule v\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND v.immat_Vehicule = l.immat_Vehicule;",
           answers: [
-            "Elle interroge deux bases de données différentes",
-            "Elle relie une table à elle-même grâce à deux alias",
-            "Elle relie la table sans aucune condition",
-            "Elle relie trois tables à la fois",
+            "Elle interroge trois bases de données différentes",
+            "Elle relie les 3 tables avec deux conditions de la forme a.x = b.x séparées par AND",
+            "Elle relie les tables sans aucune condition",
+            "Elle supprime les véhicules loués",
           ],
           correct: 1,
           explain:
-            "La même table apparaît deux fois dans le FROM avec deux alias différents (e1 et e2) : indispensable pour comparer une ligne à une autre ligne de la même table (employé / manager).",
-          hint: "Deux alias pour une seule table.",
+            "Pour joindre 3 tables (Client c, Location l, Vehicule v), on écrit deux égalités de la forme a.x = b.x dans le WHERE : c.NCIN_Cli = l.NCIN_Cli AND v.immat_Vehicule = l.immat_Vehicule.",
+          hint: "3 tables dans le FROM → 2 conditions a.x = b.x reliées par AND dans le WHERE.",
           id: 123,
         },
         {
           cat: "lien",
           diff: "Expert",
-          q: "Comment lister les clients qui n'ont AUCUNE commande ?",
-          code: "-- Objectif : les clients sans la moindre commande\nSELECT c.nom, c.id\nFROM Clients c\nWHERE NOT EXISTS (\n  SELECT 1 FROM Commandes cmd\n  WHERE cmd.client_id = c.id\n);",
+          q: "Comment lister les clients qui n'ont effectué AUCUNE location ?",
+          code: "-- Objectif : les clients sans la moindre location\nSELECT c.nom_Cli, c.NCIN_Cli\nFROM Client c\nWHERE NOT EXISTS (\n  SELECT 1 FROM Location l\n  WHERE l.NCIN_Cli = c.NCIN_Cli\n);",
           answers: [
-            "Écrire FROM Clients c, Commandes cmd WHERE c.id = cmd.client_id",
-            "Écrire la sous-requête NOT EXISTS proposée ci-contre",
-            "Ajouter DISTINCT devant la colonne nom",
-            "Trier par nom puis garder la première ligne",
+            "Écrire FROM Client c, Location l WHERE c.NCIN_Cli = l.NCIN_Cli",
+            "Écrire la sous-requête NOT EXISTS (ou NOT IN) avec l.NCIN_Cli = c.NCIN_Cli",
+            "Ajouter DISTINCT devant la colonne nom_Cli",
+            "Trier par nom_Cli puis garder la première ligne",
           ],
           correct: 1,
           explain:
-            "La condition d'égalité ne garde que les correspondances : les clients sans commande disparaissent. On les retrouve donc avec une sous-requête NOT EXISTS (SELECT 1 FROM Commandes cmd WHERE cmd.client_id = c.id) ou une jointure externe.",
-          hint: "Cherche les clients pour lesquels la sous-requête ne renvoie rien.",
+            "La condition d'égalité c.NCIN_Cli = l.NCIN_Cli (a.x = b.x) ne garde que les clients ayant au moins une location : les clients sans location disparaissent. On les retrouve donc avec une sous-requête NOT EXISTS (WHERE l.NCIN_Cli = c.NCIN_Cli) ou NOT IN.",
+          hint: "Cherche les clients pour lesquels aucune ligne de Location ne vérifie l.NCIN_Cli = c.NCIN_Cli.",
           id: 124,
         },
         {
@@ -42006,7 +42007,7 @@ LIMIT 5;</textarea
           cat: "adv",
           diff: "Expert",
           q: "Que fait EXISTS (SELECT ...) ?",
-          code: "SELECT * FROM Clients c WHERE EXISTS (SELECT 1 FROM Commandes o WHERE o.client_id=c.id);",
+          code: "SELECT * FROM Client c WHERE EXISTS (SELECT 1 FROM Location l WHERE l.NCIN_Cli = c.NCIN_Cli);",
           answers: [
             "Teste si la sous-requête retourne au moins une ligne",
             "Vérifie si une colonne existe",
@@ -42015,7 +42016,7 @@ LIMIT 5;</textarea
           ],
           correct: 0,
           explain:
-            "EXISTS est vrai dès qu'une ligne existe. Très optimisé : s'arrête au premier match.",
+            "EXISTS est vrai dès qu'une ligne existe dans Location avec l.NCIN_Cli = c.NCIN_Cli (forme a.x = b.x). Très optimisé : s'arrête au premier match.",
           hint: "EXISTS = existe-t-il au moins une ligne ?",
           id: 133,
         },
@@ -42122,17 +42123,17 @@ LIMIT 5;</textarea
           cat: "ddl",
           diff: "Expert",
           q: "Que fait une FOREIGN KEY ?",
-          code: "FOREIGN KEY (client_id) REFERENCES Clients(id)",
+          code: "FOREIGN KEY (NCIN_Cli) REFERENCES Client(NCIN_Cli)",
           answers: [
             "Elle rend une colonne unique",
-            "Elle lie une colonne à la clé primaire d'une autre table",
+            "Elle lie une colonne à la clé primaire de même nom d'une autre table",
             "Elle crée un index trié",
             "Elle empêche les NULL",
           ],
           correct: 1,
           explain:
-            "Clé étrangère = intégrité référentielle. Impossible d'avoir une commande pour un client inexistant !",
-          hint: "FOREIGN = étrangère, elle vient d'une autre table.",
+            "Clé étrangère = intégrité référentielle (NCIN_Cli dans Location pointe vers NCIN_Cli dans Client). Impossible d'avoir une location pour un client inexistant !",
+          hint: "FOREIGN = étrangère, elle référence la clé primaire de la table parente.",
           id: 141,
         },
       ];
@@ -43173,13 +43174,55 @@ LIMIT 5;</textarea
 
       /* ============ PLAYGROUND : MINI MOTEUR SQL ============ */
       const DB = {
+        Client: [
+          { NCIN_Cli: "12345678", nom_Cli: "Ali Ben Salah", ville: "Tunis" },
+          { NCIN_Cli: "87654321", nom_Cli: "Mouna Riahi", ville: "Sfax" },
+          { NCIN_Cli: "11223344", nom_Cli: "Karim Trabelsi", ville: "Sousse" },
+          { NCIN_Cli: "55667788", nom_Cli: "Sami Mejri", ville: "Tunis" },
+          { NCIN_Cli: "99887766", nom_Cli: "Leila Dridi", ville: "Bizerte" },
+        ],
+        Location: [
+          {
+            id_location: 1,
+            NCIN_Cli: "12345678",
+            immat_Vehicule: "145TU2020",
+            date_loc: "2024-03-10",
+            duree_loc: 3,
+          },
+          {
+            id_location: 2,
+            NCIN_Cli: "87654321",
+            immat_Vehicule: "198TU4510",
+            date_loc: "2024-05-02",
+            duree_loc: 5,
+          },
+          {
+            id_location: 3,
+            NCIN_Cli: "12345678",
+            immat_Vehicule: "145TU2020",
+            date_loc: "2024-06-15",
+            duree_loc: 2,
+          },
+          {
+            id_location: 4,
+            NCIN_Cli: "55667788",
+            immat_Vehicule: "210TU8890",
+            date_loc: "2024-07-20",
+            duree_loc: 4,
+          },
+        ],
+        Vehicule: [
+          { immat_Vehicule: "145TU2020", marque: "Peugeot", modele: "208" },
+          { immat_Vehicule: "198TU4510", marque: "Renault", modele: "Clio" },
+          { immat_Vehicule: "210TU8890", marque: "Kia", modele: "Rio" },
+        ],
         Employes: [
           {
             id: 1,
             nom: "Amine Ben Salem",
             poste: "Dev",
             salaire: 45000,
-            departement_id: 1,
+            id_dept: 1,
             embauche: "2021-03-15",
           },
           {
@@ -43187,7 +43230,7 @@ LIMIT 5;</textarea
             nom: "Youssef Trabelsi",
             poste: "Dev",
             salaire: 52000,
-            departement_id: 1,
+            id_dept: 1,
             embauche: "2020-07-01",
           },
           {
@@ -43195,7 +43238,7 @@ LIMIT 5;</textarea
             nom: "Mariem Gharbi",
             poste: "Marketing",
             salaire: 38000,
-            departement_id: 2,
+            id_dept: 2,
             embauche: "2022-01-10",
           },
           {
@@ -43203,7 +43246,7 @@ LIMIT 5;</textarea
             nom: "Moez Ben Amor",
             poste: "Marketing",
             salaire: 41000,
-            departement_id: 2,
+            id_dept: 2,
             embauche: "2021-11-20",
           },
           {
@@ -43211,7 +43254,7 @@ LIMIT 5;</textarea
             nom: "Emna Jlassi",
             poste: "RH",
             salaire: 36000,
-            departement_id: 3,
+            id_dept: 3,
             embauche: "2019-05-30",
           },
           {
@@ -43219,7 +43262,7 @@ LIMIT 5;</textarea
             nom: "Fares Mansouri",
             poste: "Dev",
             salaire: 60000,
-            departement_id: 1,
+            id_dept: 1,
             embauche: "2018-09-12",
           },
           {
@@ -43227,7 +43270,7 @@ LIMIT 5;</textarea
             nom: "Ines Khemiri",
             poste: "RH",
             salaire: 34000,
-            departement_id: 3,
+            id_dept: 3,
             embauche: "2023-02-01",
           },
           {
@@ -43235,14 +43278,14 @@ LIMIT 5;</textarea
             nom: "Sarra Bouzid",
             poste: "Marketing",
             salaire: 44000,
-            departement_id: 2,
+            id_dept: 2,
             embauche: "2020-12-05",
           },
         ],
         Departements: [
-          { id: 1, nom: "Tech", ville: "Paris" },
-          { id: 2, nom: "Marketing", ville: "Lyon" },
-          { id: 3, nom: "RH", ville: "Bordeaux" },
+          { id_dept: 1, nom: "Tech", ville: "Tunis" },
+          { id_dept: 2, nom: "Marketing", ville: "Sfax" },
+          { id_dept: 3, nom: "RH", ville: "Sousse" },
         ],
         Commandes: [
           {
@@ -43418,7 +43461,7 @@ LIMIT 5;</textarea
           const v = getVal(row, m[1].trim());
           const op = m[2];
           let r = parseVal(m[3]);
-          // Jointure a.cle = b.cle : le membre de droite peut être une colonne
+          // Jointure a.x = b.x : le membre de droite peut être une colonne
           if (
             typeof r === "string" &&
             /^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)?$/.test(r)
@@ -43495,7 +43538,7 @@ LIMIT 5;</textarea
               DB
             ).join(", ")}`
           );
-        // Jointure écrite « FROM a, b WHERE a.cle = b.cle » (sans mot-clé d'assemblage)
+        // Jointure écrite « FROM a, b WHERE a.x = b.x » (sans mot-clé d'assemblage)
         let rows = main.data.map((r) => ({ ...r })),
           leftCols = Object.keys(main.data[0] || {}),
           tablesLiees = [];
@@ -43755,16 +43798,16 @@ LIMIT 5;</textarea
       }
       const EXAMPLES = [
         {
-          label: "⭐ Tous les employés",
-          sql: "SELECT * FROM Employes LIMIT 5;",
+          label: "⭐ Tous les clients",
+          sql: "SELECT * FROM Client;",
         },
         {
-          label: "💰 Gros salaires triés",
-          sql: "SELECT nom, poste, salaire FROM Employes WHERE salaire > 40000 ORDER BY salaire DESC;",
+          label: "🔗 Jointure Client + Location (a.x = b.x)",
+          sql: "SELECT c.nom_Cli, c.ville, l.id_location, l.date_loc FROM Client c, Location l WHERE c.NCIN_Cli = l.NCIN_Cli;",
         },
         {
-          label: "🔗 Relier employés + départements",
-          sql: "SELECT Employes.nom, Departements.nom AS dept, Departements.ville FROM Employes, Departements WHERE Employes.departement_id = Departements.id;",
+          label: "🚗 Jointure Vehicule + Location (a.x = b.x)",
+          sql: "SELECT v.immat_Vehicule, v.marque, v.modele, l.date_loc FROM Vehicule v, Location l WHERE v.immat_Vehicule = l.immat_Vehicule;",
         },
         {
           label: "📊 Moyenne par catégorie",
@@ -43980,34 +44023,34 @@ LIMIT 5;</textarea
           tag: "JOINTURES",
           items: [
             {
-              t: "Deux tables, une condition",
-              d: "La forme à connaître par cœur.",
-              c: "SELECT c.nom, o.date\nFROM Clients c, Commandes o\nWHERE c.id = o.client_id;",
+              t: "Forme générale (a.x = b.x)",
+              d: "Deux tables liées par le même attribut x.",
+              c: "SELECT a.col1, b.col2\nFROM TableA a, TableB b\nWHERE a.x = b.x;",
             },
             {
-              t: "Alias des tables",
-              d: "c = Clients, o = Commandes.",
-              c: "SELECT c.nom, o.id\nFROM Clients c, Commandes o\nWHERE c.id = o.client_id\n  AND o.prix > 100;",
+              t: "Jointure Client & Location",
+              d: "c = Client, l = Location (c.NCIN_Cli = l.NCIN_Cli).",
+              c: "SELECT c.nom_Cli, c.ville, l.id_location, l.date_loc\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli;",
             },
             {
-              t: "Trois tables",
-              d: "Une condition par liaison.",
-              c: "SELECT c.nom, p.libelle\nFROM Clients c, Commandes o, Produits p\nWHERE c.id = o.client_id\n  AND o.produit_id = p.id;",
+              t: "Jointure + filtre (AND)",
+              d: "Condition a.x = b.x + filtre WHERE.",
+              c: "SELECT c.nom_Cli, l.id_location, l.date_loc\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND c.ville = 'Tunis';",
             },
             {
-              t: "Trouver les sans-correspondance",
-              d: "Clients sans commande.",
-              c: "SELECT c.nom\nFROM Clients c\nWHERE NOT EXISTS (\n  SELECT 1 FROM Commandes o\n  WHERE o.client_id = c.id\n);",
+              t: "Jointure Vehicule & Location",
+              d: "v = Vehicule, l = Location (v.immat_Vehicule = l.immat_Vehicule).",
+              c: "SELECT v.immat_Vehicule, v.marque, l.date_loc\nFROM Vehicule v, Location l\nWHERE v.immat_Vehicule = l.immat_Vehicule;",
             },
             {
-              t: "Une table reliée à elle-même",
-              d: "Deux alias, même table.",
-              c: "SELECT e.nom AS employe,\n  m.nom AS manager\nFROM Employes e, Employes m\nWHERE e.manager_id = m.id;",
+              t: "Jointure entre 3 tables",
+              d: "Deux égalités a.x = b.x reliées par AND.",
+              c: "SELECT c.nom_Cli, v.marque, l.date_loc\nFROM Client c, Location l, Vehicule v\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND v.immat_Vehicule = l.immat_Vehicule;",
             },
             {
-              t: "Sans condition",
-              d: "Produit cartésien (3×4=12).",
-              c: "SELECT *\nFROM Tailles, Couleurs;\n-- 3 x 4 = 12 lignes !",
+              t: "Clients sans location",
+              d: "Sous-requête NOT EXISTS (l.NCIN_Cli = c.NCIN_Cli).",
+              c: "SELECT c.nom_Cli\nFROM Client c\nWHERE NOT EXISTS (\n  SELECT 1 FROM Location l\n  WHERE l.NCIN_Cli = c.NCIN_Cli\n);",
             },
           ],
         },
@@ -44064,7 +44107,7 @@ LIMIT 5;</textarea
             {
               t: "EXISTS + INDEX",
               d: "Tester existence + accélérer.",
-              c: "-- Clients ayant commandé\nWHERE EXISTS (\n  SELECT 1 FROM Commandes o\n  WHERE o.client_id=c.id);\n\nCREATE INDEX idx_nom\nON Clients(nom);",
+              c: "-- Clients ayant au moins une location\nWHERE EXISTS (\n  SELECT 1 FROM Location l\n  WHERE l.NCIN_Cli = c.NCIN_Cli);\n\nCREATE INDEX idx_nom\nON Client(nom_Cli);",
             },
           ],
         },
@@ -44075,22 +44118,22 @@ LIMIT 5;</textarea
             {
               t: "CREATE TABLE",
               d: "Créer une table propre.",
-              c: "CREATE TABLE Clients (\n  id INT PRIMARY KEY,\n  nom VARCHAR(100) NOT NULL,\n  email VARCHAR(100) UNIQUE,\n  age INT CHECK (age>=0));",
+              c: "CREATE TABLE Client (\n  NCIN_Cli VARCHAR(8) PRIMARY KEY,\n  nom_Cli VARCHAR(30) NOT NULL,\n  ville VARCHAR(20) DEFAULT 'Tunis');",
             },
             {
               t: "ALTER TABLE",
               d: "Modifier la structure.",
-              c: "-- Ajouter\nALTER TABLE Clients\nADD ville VARCHAR(50);\n-- Supprimer\nALTER TABLE Clients\nDROP COLUMN ville;",
+              c: "-- Ajouter\nALTER TABLE Client\nADD COLUMN Tel_Cli VARCHAR(10);\n-- Supprimer\nALTER TABLE Client\nDROP COLUMN Adresse_Cli;",
             },
             {
               t: "DROP vs DELETE",
               d: "Ne confonds jamais !",
-              c: "-- Détruit la TABLE !\nDROP TABLE Archive;\n-- Supprime des LIGNES\nDELETE FROM Clients\nWHERE id = 42;\n-- Vide vite TOUTE la table\nTRUNCATE TABLE Logs;",
+              c: "-- Détruit la TABLE !\nDROP TABLE Client;\n-- Supprime des LIGNES\nDELETE FROM Location\nWHERE duree_loc = 0;",
             },
             {
               t: "Clés",
-              d: "PRIMARY + FOREIGN.",
-              c: "-- Primaire : unique, non null\nid INT PRIMARY KEY,\n-- Étrangère : lien d'intégrité\nFOREIGN KEY (client_id)\nREFERENCES Clients(id);",
+              d: "PRIMARY + FOREIGN (même attribut).",
+              c: "-- Primaire : unique, non null\nNCIN_Cli VARCHAR(8) PRIMARY KEY,\n-- Étrangère : lien d'intégrité\nFOREIGN KEY (NCIN_Cli)\nREFERENCES Client(NCIN_Cli);",
             },
           ],
         },
@@ -44160,7 +44203,7 @@ LIMIT 5;</textarea
       const TIPS = [
         "💡 <b>DISTINCT</b> supprime les doublons. SELECT DISTINCT ville = chaque ville une seule fois !",
         "⚠️ <b>DELETE sans WHERE</b> supprime TOUT. C'est le bouton rouge du SQL. Ne clique jamais dessus !",
-        "🔗 Une jointure s'écrit <b>FROM a, b</b> puis <b>WHERE a.cle = b.cle</b> : seules les lignes qui se correspondent restent.",
+        "🔗 Une jointure s'écrit <b>FROM a, b</b> puis <b>WHERE a.x = b.x</b> (ex. <code>c.NCIN_Cli = l.NCIN_Cli</code>) : seules les lignes qui se correspondent restent.",
         "📊 <b>WHERE</b> filtre les lignes, <b>HAVING</b> filtre les groupes. Retiens : H comme aHgrégat !",
         "⭐ <b>COUNT(*)</b> compte les lignes, <b>COUNT(col)</b> ignore les NULL. Piège classique !",
         "🚀 Un <b>INDEX</b>, c'est le sommaire d'un livre : ça accélère WHERE, les jointures et ORDER BY.",
@@ -44280,7 +44323,7 @@ LIMIT 5;</textarea
         const words = [
           "SELECT ★",
           "WHERE ★",
-          "WHERE a.cle = b.cle ★",
+          "WHERE a.x = b.x ★",
           "GROUP BY ★",
           "HAVING ★",
           "ORDER BY ★",

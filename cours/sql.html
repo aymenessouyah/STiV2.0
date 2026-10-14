@@ -812,10 +812,13 @@ html.dark .rel-box { border-color: #fff; box-shadow: 2px 2px 0 #000; }
         <div class="sub-links-container">
           <a href="#lmd-insert" class="sub-link">INSERT INTO (Cas multiples)</a>
           <a href="#lmd-update" class="sub-link">UPDATE simple & Nettoyage</a>
-          <a href="#lmd-update-join" class="sub-link">UPDATE avec Jointure</a>
+          <a href="#lmd-update-jointure" class="sub-link">UPDATE avec Jointure (a.x = b.x)</a>
           <a href="#lmd-delete" class="sub-link">DELETE</a>
           <a href="#lmd-select" class="sub-link"
             >SELECT, Clauses & Opérateurs</a
+          >
+          <a href="#lmd-jointure" class="sub-link"
+            >Jointure entre 2 tables (a.x = b.x)</a
           >
           <a href="#lmd-aggr" class="sub-link">Fonctions d'agrégation</a>
           <a href="#lmd-strings" class="sub-link">Fonctions de chaînes</a>
@@ -2018,34 +2021,41 @@ SET nom_colonne = SUBSTR(nom_colonne, 1, CHAR_LENGTH(nom_colonne) - 1)
 WHERE condition;</code></pre>
         </div>
 
-        <div class="card" id="lmd-update-join">
-          <h3>UPDATE avec Jointure (Mise à jour croisée entre tables)</h3>
+        <div class="card" id="lmd-update-jointure">
+          <h3>UPDATE avec Jointure (Mise à jour croisée entre 2 tables : <code>a.x = b.x</code>)</h3>
           <p>
             L'instruction <code>UPDATE</code> avec une jointure permet de mettre
-            à jour les données d'une table cible en récupérant des valeurs
-            issues d'une autre table liée (via une clé étrangère ou un
-            identifiant commun).
+            à jour les données d'une table cible en la reliant à une seconde
+            table dans la clause <code>WHERE</code> par l'égalité de la colonne
+            commune <code>a.x = b.x</code> (clé primaire et clé étrangère de
+            même nom).
           </p>
-          <pre><code>-- Exemple sous MySQL / SQL Server : Mettre à jour la ville des clients 
--- en fonction d'une table de référence des nouvelles adresses par code postal
-UPDATE Client c
-INNER JOIN NouvelleAdresse na ON c.code_postal = na.code_postal
-SET c.ville = na.ville_officielle;
+          <pre><code>-- Forme générale STI : lister les 2 tables et relier par WHERE a.x = b.x
+UPDATE TableA a, TableB b
+SET a.colonne = b.nouvelle_valeur
+WHERE a.x = b.x;
 
--- Exemple sous PostgreSQL (syntaxe avec la clause FROM) :
-UPDATE Client AS c
-SET ville = na.ville_officielle
-FROM NouvelleAdresse AS na
+-- Exemple 1 (tables du cours Client c et Location l reliées par c.NCIN_Cli = l.NCIN_Cli) :
+UPDATE Client c, Location l
+SET c.ville = 'Tunis'
+WHERE c.NCIN_Cli = l.NCIN_Cli
+  AND l.id_location = 1;
+
+-- Exemple 2 (mise à jour de la ville des clients selon une table NouvelleAdresse par code_postal) :
+UPDATE Client c, NouvelleAdresse na
+SET c.ville = na.ville_officielle
 WHERE c.code_postal = na.code_postal;</code></pre>
           <p><strong>Bonnes pratiques :</strong></p>
           <ul>
             <li>
-              Vérifiez toujours que la jointure ne duplique pas les lignes
-              cibles de manière inattendue pour éviter des comportements non
-              déterministes.
+              Écrivez toujours la condition d'égalité <code>a.x = b.x</code>
+              (ex. <code>c.NCIN_Cli = l.NCIN_Cli</code>) dans la clause
+              <code>WHERE</code> pour ne modifier que les lignes qui se
+              correspondent.
             </li>
             <li>
-              Utilisez des index sur les colonnes de jointure (comme les clés
+              Vérifiez que la jointure ne duplique pas les lignes cibles et
+              utilisez des index sur les colonnes de jointure (comme les clés
               étrangères) pour optimiser les performances de la requête.
             </li>
           </ul>
@@ -2115,6 +2125,153 @@ WHERE ville = 'Tunis';</code></pre>
               <strong>Réponse :</strong> le SGBD renvoie les noms correspondant
               à cette demande. La requête peut donc se lire comme une consigne
               adressée au gestionnaire de la BD.
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="lmd-jointure">
+          <h3>Jointure entre 2 tables (Syntaxe STI : <code>WHERE a.x = b.x</code>)</h3>
+          <p>
+            Lorsqu'une information est répartie entre deux tables liées par une
+            <strong>clé primaire</strong> et une <strong>clé étrangère de même nom</strong>
+            (attribut commun <code>x</code>), on utilise une
+            <strong>jointure</strong>. En SQL STI, la jointure s'écrit
+            <strong>toujours avec la clause <code>FROM TableA a, TableB b</code> et la condition d'égalité <code>WHERE a.x = b.x</code></strong> :
+          </p>
+
+          <pre><code>-- Forme générale d'une jointure entre 2 tables a et b sur l'attribut commun x :
+SELECT a.col1, b.col2
+FROM TableA a, TableB b
+WHERE a.x = b.x;
+
+-- Exemple 1 (2 tables : Client c et Location l reliées par c.NCIN_Cli = l.NCIN_Cli) :
+SELECT c.nom_Cli, c.ville, l.id_location, l.date_loc
+FROM Client c, Location l
+WHERE c.NCIN_Cli = l.NCIN_Cli;
+
+-- Exemple 2 (Jointure entre 2 tables + condition de filtrage supplémentaire avec AND) :
+SELECT c.nom_Cli, l.id_location, l.date_loc
+FROM Client c, Location l
+WHERE c.NCIN_Cli = l.NCIN_Cli
+  AND c.ville = 'Tunis';
+
+-- Exemple 3 (2 tables : Vehicule v et Location l reliées par v.immat_Vehicule = l.immat_Vehicule) :
+SELECT v.immat_Vehicule, v.marque, v.modele, l.date_loc
+FROM Vehicule v, Location l
+WHERE v.immat_Vehicule = l.immat_Vehicule;
+
+-- Exemple 4 (3 tables : Client c, Location l et Vehicule v) :
+SELECT c.nom_Cli, v.marque, v.modele, l.date_loc
+FROM Client c, Location l, Vehicule v
+WHERE c.NCIN_Cli = l.NCIN_Cli
+  AND v.immat_Vehicule = l.immat_Vehicule;</code></pre>
+
+          <div class="analogy-note">
+            <strong>Règle d'or de la jointure (<code>a.x = b.x</code>) :</strong>
+            <ul>
+              <li>
+                <b>Préfixez toujours</b> l'attribut commun avec l'alias de
+                chaque table (<code>c.NCIN_Cli = l.NCIN_Cli</code>) pour éviter
+                toute ambiguïté entre les deux tables.
+              </li>
+              <li>
+                Seules les lignes qui vérifient l'égalité
+                <code>a.x = b.x</code> apparaissent dans le résultat : un client
+                qui n'a aucune location dans la table <code>Location</code> ne
+                figure pas dans le résultat de la jointure.
+              </li>
+              <li>
+                Si vous oubliez la condition <code>WHERE a.x = b.x</code>, le
+                SGBD combine chaque ligne de <code>a</code> avec chaque ligne de
+                <code>b</code> (<b>produit cartésien</b> : <code>N_a × N_b</code>
+                lignes).
+              </li>
+            </ul>
+          </div>
+
+          <!-- Atelier interactif : Exemples animés de jointure entre 2 tables (a.x = b.x) -->
+          <div class="sql-janim-wrap" id="sql-jointure-anim-app">
+            <div class="sql-janim-header">
+              <div>
+                <span class="key-badge" style="background:var(--sun);color:#1a1a2e">🎬 ANIMATION INTERACTIVE PAS À PAS</span>
+                <h4 style="margin:6px 0 2px;font-size:1.12rem">Visualiser comment SQL exécute une jointure entre 2 tables (<code>WHERE a.x = b.x</code>)</h4>
+                <p style="margin:0;font-size:0.88rem;opacity:0.85">Choisissez un exemple puis lancez l'animation pour observer la comparaison ligne par ligne entre la <b>Table A (<code>a</code>)</b> et la <b>Table B (<code>b</code>)</b>.</p>
+              </div>
+            </div>
+
+            <!-- Choix des exemples animés -->
+            <div class="sql-janim-tabs" role="tablist" aria-label="Exemples animés de jointure">
+              <button type="button" class="sql-janim-tab active" data-jex="0">
+                🔗 Ex. 1 : <code>Client c, Location l</code> (<code>c.NCIN_Cli = l.NCIN_Cli</code>)
+              </button>
+              <button type="button" class="sql-janim-tab" data-jex="1">
+                🎯 Ex. 2 : Jointure + filtre <code>AND c.ville = 'Tunis'</code>
+              </button>
+              <button type="button" class="sql-janim-tab" data-jex="2">
+                🚗 Ex. 3 : <code>Vehicule v, Location l</code> (<code>v.immat_Vehicule = l.immat_Vehicule</code>)
+              </button>
+              <button type="button" class="sql-janim-tab" data-jex="3">
+                ⚠️ Ex. 4 : Oubli de <code>WHERE a.x = b.x</code> (Produit cartésien)
+              </button>
+            </div>
+
+            <!-- Requête SQL de l'exemple actif -->
+            <div class="sql-janim-query-bar">
+              <div class="sql-janim-qlabel">📝 Requête SQL exécutée :</div>
+              <div class="sql-janim-qcode" id="janim-sql-code"></div>
+            </div>
+
+            <!-- Barre de commandes de l'animation -->
+            <div class="sql-janim-controls">
+              <button type="button" class="sql-janim-btn primary" id="janim-btn-play">▶ Animer pas à pas</button>
+              <button type="button" class="sql-janim-btn" id="janim-btn-prev">◀ Précédent</button>
+              <button type="button" class="sql-janim-btn" id="janim-btn-next">Suivant ▶</button>
+              <button type="button" class="sql-janim-btn" id="janim-btn-reset">⏮ Début</button>
+              <button type="button" class="sql-janim-btn accent" id="janim-btn-all">⚡ Résultat final</button>
+              <label class="sql-janim-filter-chk" title="Parcourir uniquement les couples où a.x = b.x ou tous les couples (a, b)">
+                <input type="checkbox" id="janim-chk-only-match" />
+                <span>Aller directement aux correspondances (<code>a.x = b.x</code>)</span>
+              </label>
+              <span class="sql-janim-step-badge" id="janim-step-badge">Prêt · 0 / 9</span>
+            </div>
+
+            <!-- Bandeau de comparaison en direct a.x = b.x -->
+            <div class="sql-janim-comparator" id="janim-comparator">
+              Cliquez sur <b>▶ Animer pas à pas</b> ou <b>Suivant ▶</b> pour voir SQL comparer chaque ligne de la Table A avec chaque ligne de la Table B selon <code>a.x = b.x</code>.
+            </div>
+
+            <!-- Les 2 tables sources côte à côte -->
+            <div class="sql-janim-tables-grid">
+              <div class="sql-janim-tcard">
+                <div class="sql-janim-ttitle" id="janim-title-a">Table A : Client c</div>
+                <div class="table-wrap" style="margin:0">
+                  <table class="mini-table sql-janim-table" id="janim-table-a"></table>
+                </div>
+              </div>
+
+              <div class="sql-janim-bridge" id="janim-bridge" aria-hidden="true">
+                <div class="sql-janim-bridge-pill" id="janim-bridge-pill">a.x = b.x</div>
+                <div class="sql-janim-bridge-arrow" id="janim-bridge-arrow">⟷</div>
+                <small id="janim-bridge-sub">Test d'égalité</small>
+              </div>
+
+              <div class="sql-janim-tcard">
+                <div class="sql-janim-ttitle" id="janim-title-b">Table B : Location l</div>
+                <div class="table-wrap" style="margin:0">
+                  <table class="mini-table sql-janim-table" id="janim-table-b"></table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table résultat construite en direct -->
+            <div class="sql-janim-result-box">
+              <div class="sql-janim-rhead">
+                <strong id="janim-result-title">📊 Table Résultat de la jointure (0 ligne retenue)</strong>
+                <span id="janim-result-note" style="font-size:0.82rem;opacity:0.85">Seules les lignes validant le WHERE sont ajoutées ici.</span>
+              </div>
+              <div class="table-wrap" style="margin:0">
+                <table class="mini-table sql-janim-table" id="janim-table-res"></table>
+              </div>
             </div>
           </div>
         </div>
@@ -2480,6 +2637,615 @@ SELECT DATEDIFF(year, '2024/08/25', '2011/08/25'); -- Résultat : -13</code></pr
         });
       })();
     </script>
+    <style>
+      /* ===== Styles des exemples animés de jointure entre 2 tables (a.x = b.x) ===== */
+      .sql-janim-wrap {
+        margin-top: 1.25rem;
+        padding: 1.1rem;
+        border: 3px solid #1a1a2e;
+        border-radius: 20px;
+        background: color-mix(in srgb, var(--card) 92%, var(--mint));
+        box-shadow: 6px 6px 0 #1a1a2e;
+      }
+      html.dark .sql-janim-wrap {
+        border-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 6px 6px 0 #000000;
+      }
+      .sql-janim-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin: 0.85rem 0;
+      }
+      .sql-janim-tab {
+        border: 2.5px solid #1a1a2e;
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 12px;
+        padding: 0.45rem 0.78rem;
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 3px 3px 0 #1a1a2e;
+        transition: transform 0.12s ease, background 0.12s ease;
+      }
+      .sql-janim-tab:hover {
+        transform: translate(-1px, -1px);
+      }
+      .sql-janim-tab.active {
+        background: var(--sun);
+        color: #1a1a2e;
+      }
+      .sql-janim-query-bar {
+        background: #0f172a;
+        color: #f8fafc;
+        border: 2.5px solid #1a1a2e;
+        border-radius: 14px;
+        padding: 0.65rem 0.9rem;
+        margin-bottom: 0.75rem;
+      }
+      .sql-janim-qlabel {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #fbbf24;
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .sql-janim-qcode {
+        font-family: "JetBrains Mono", ui-monospace, Consolas, monospace;
+        font-size: 0.86rem;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        color: #e2e8f0;
+      }
+      .sql-janim-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.45rem;
+        margin-bottom: 0.75rem;
+      }
+      .sql-janim-btn {
+        border: 2.5px solid #1a1a2e;
+        background: var(--card);
+        color: var(--ink);
+        border-radius: 11px;
+        padding: 0.42rem 0.82rem;
+        font-family: inherit;
+        font-size: 0.82rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 3px 3px 0 #1a1a2e;
+      }
+      .sql-janim-btn.primary {
+        background: var(--mint);
+        color: #0b2e13;
+      }
+      .sql-janim-btn.accent {
+        background: var(--peach);
+        color: #1a1a2e;
+      }
+      .sql-janim-filter-chk {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0.25rem 0.55rem;
+        border-radius: 9px;
+        background: rgba(0, 0, 0, 0.06);
+      }
+      html.dark .sql-janim-filter-chk {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .sql-janim-step-badge {
+        margin-left: auto;
+        font-size: 0.8rem;
+        font-weight: 800;
+        padding: 0.3rem 0.7rem;
+        border-radius: 999px;
+        border: 2px solid #1a1a2e;
+        background: var(--sun);
+        color: #1a1a2e;
+      }
+      .sql-janim-comparator {
+        border: 2.5px solid #1a1a2e;
+        border-radius: 14px;
+        padding: 0.65rem 0.9rem;
+        margin-bottom: 0.85rem;
+        font-size: 0.88rem;
+        font-weight: 700;
+        background: var(--card);
+        transition: background 0.2s ease, border-color 0.2s ease;
+      }
+      .sql-janim-comparator.match {
+        background: #dcfce7;
+        color: #14532d;
+        border-color: #16a34a;
+      }
+      .sql-janim-comparator.nomatch {
+        background: #fee2e2;
+        color: #7f1d1d;
+        border-color: #dc2626;
+      }
+      .sql-janim-tables-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 0.65rem;
+        align-items: center;
+        margin-bottom: 0.9rem;
+      }
+      @media (max-width: 780px) {
+        .sql-janim-tables-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .sql-janim-tcard {
+        border: 2.5px solid #1a1a2e;
+        border-radius: 14px;
+        background: var(--card);
+        overflow: hidden;
+      }
+      .sql-janim-ttitle {
+        padding: 0.45rem 0.75rem;
+        font-weight: 800;
+        font-size: 0.85rem;
+        background: linear-gradient(120deg, var(--sky), var(--grape));
+        color: #ffffff;
+        border-bottom: 2px solid #1a1a2e;
+      }
+      .sql-janim-bridge {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.2rem;
+        padding: 0.5rem 0.65rem;
+        border: 2.5px solid #1a1a2e;
+        border-radius: 14px;
+        background: var(--card);
+        min-width: 120px;
+        text-align: center;
+        transition: transform 0.18s ease, background 0.18s ease;
+      }
+      .sql-janim-bridge.match {
+        background: #bbf7d0;
+        color: #14532d;
+        transform: scale(1.04);
+      }
+      .sql-janim-bridge.nomatch {
+        background: #fecaca;
+        color: #7f1d1d;
+      }
+      .sql-janim-bridge-pill {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        font-weight: 800;
+        padding: 0.2rem 0.5rem;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.08);
+      }
+      .sql-janim-bridge-arrow {
+        font-size: 1.35rem;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .sql-janim-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+      }
+      .sql-janim-table th,
+      .sql-janim-table td {
+        padding: 0.38rem 0.55rem;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+      }
+      .sql-janim-table tr.jrow-active-match td {
+        background: #bbf7d0 !important;
+        color: #14532d !important;
+        font-weight: 800;
+      }
+      .sql-janim-table tr.jrow-active-nomatch td {
+        background: #fecaca !important;
+        color: #7f1d1d !important;
+        font-weight: 700;
+      }
+      .sql-janim-table td.jcol-key {
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 800;
+        text-decoration: underline;
+      }
+      .sql-janim-result-box {
+        border: 2.5px solid #1a1a2e;
+        border-radius: 14px;
+        background: var(--card);
+        overflow: hidden;
+      }
+      .sql-janim-rhead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.5rem 0.8rem;
+        background: linear-gradient(120deg, #16a34a, #0d9488);
+        color: #ffffff;
+        border-bottom: 2px solid #1a1a2e;
+        font-size: 0.88rem;
+      }
+      @keyframes janimRowPop {
+        0% { background: #fef08a; transform: scale(0.98); }
+        100% { transform: scale(1); }
+      }
+      .sql-janim-table tr.jrow-new td {
+        animation: janimRowPop 0.45s ease;
+      }
+    </style>
+    <script>
+      /* ===== Contrôleur des exemples animés de jointure entre 2 tables (a.x = b.x) ===== */
+      (function () {
+        var app = document.getElementById("sql-jointure-anim-app");
+        if (!app) return;
+
+        var CLIENTS = [
+          { NCIN_Cli: "12345678", nom_Cli: "Ali Ben Salah", ville: "Tunis" },
+          { NCIN_Cli: "87654321", nom_Cli: "Mouna Riahi", ville: "Sfax" },
+          { NCIN_Cli: "11223344", nom_Cli: "Karim Trabelsi", ville: "Sousse" }
+        ];
+        var LOCATIONS = [
+          { id_location: 1, NCIN_Cli: "12345678", immat_Vehicule: "145TU2020", date_loc: "2024-03-10" },
+          { id_location: 2, NCIN_Cli: "87654321", immat_Vehicule: "198TU4510", date_loc: "2024-05-02" },
+          { id_location: 3, NCIN_Cli: "12345678", immat_Vehicule: "145TU2020", date_loc: "2024-06-15" }
+        ];
+        var VEHICULES = [
+          { immat_Vehicule: "145TU2020", marque: "Peugeot", modele: "208" },
+          { immat_Vehicule: "198TU4510", marque: "Renault", modele: "Clio" },
+          { immat_Vehicule: "210TU8890", marque: "Kia", modele: "Rio" }
+        ];
+
+        var SCENARIOS = [
+          {
+            titreA: "Table A : Client c (a)",
+            titreB: "Table B : Location l (b)",
+            aliasA: "c",
+            aliasB: "l",
+            cle: "NCIN_Cli",
+            exprCond: "c.NCIN_Cli = l.NCIN_Cli",
+            sql: "SELECT c.nom_Cli, c.ville, l.id_location, l.date_loc\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli;",
+            colsA: ["NCIN_Cli", "nom_Cli", "ville"],
+            colsB: ["id_location", "NCIN_Cli", "date_loc"],
+            rowsA: CLIENTS,
+            rowsB: LOCATIONS,
+            colsRes: [
+              { label: "c.nom_Cli", from: "A", k: "nom_Cli" },
+              { label: "c.ville", from: "A", k: "ville" },
+              { label: "l.id_location", from: "B", k: "id_location" },
+              { label: "l.date_loc", from: "B", k: "date_loc" }
+            ],
+            evalPair: function (a, b) {
+              var ok = a.NCIN_Cli === b.NCIN_Cli;
+              return {
+                ok: ok,
+                msg: ok
+                  ? "✔ Égalité vérifiée (a.x = b.x) : c.NCIN_Cli ('" + a.NCIN_Cli + "') = l.NCIN_Cli ('" + b.NCIN_Cli + "') → Ligne ajoutée au résultat (" + a.nom_Cli + ", location n°" + b.id_location + ") !"
+                  : "✘ Différent : c.NCIN_Cli ('" + a.NCIN_Cli + "') != l.NCIN_Cli ('" + b.NCIN_Cli + "') → Ce couple est ignoré."
+              };
+            }
+          },
+          {
+            titreA: "Table A : Client c (a)",
+            titreB: "Table B : Location l (b)",
+            aliasA: "c",
+            aliasB: "l",
+            cle: "NCIN_Cli",
+            exprCond: "c.NCIN_Cli = l.NCIN_Cli AND c.ville = 'Tunis'",
+            sql: "SELECT c.nom_Cli, c.ville, l.id_location, l.date_loc\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND c.ville = 'Tunis';",
+            colsA: ["NCIN_Cli", "nom_Cli", "ville"],
+            colsB: ["id_location", "NCIN_Cli", "date_loc"],
+            rowsA: CLIENTS,
+            rowsB: LOCATIONS,
+            colsRes: [
+              { label: "c.nom_Cli", from: "A", k: "nom_Cli" },
+              { label: "c.ville", from: "A", k: "ville" },
+              { label: "l.id_location", from: "B", k: "id_location" },
+              { label: "l.date_loc", from: "B", k: "date_loc" }
+            ],
+            evalPair: function (a, b) {
+              var okCle = a.NCIN_Cli === b.NCIN_Cli;
+              var okVille = a.ville === "Tunis";
+              var ok = okCle && okVille;
+              if (!okCle) {
+                return {
+                  ok: false,
+                  msg: "✘ Jointure non vérifiée : c.NCIN_Cli ('" + a.NCIN_Cli + "') != l.NCIN_Cli ('" + b.NCIN_Cli + "') → Couple ignoré."
+                };
+              }
+              if (!okVille) {
+                return {
+                  ok: false,
+                  msg: "✘ c.NCIN_Cli = l.NCIN_Cli ('" + a.NCIN_Cli + "') est vrai, MAIS c.ville ('" + a.ville + "') != 'Tunis' → Couple écarté par AND."
+                };
+              }
+              return {
+                ok: true,
+                msg: "✔ c.NCIN_Cli = l.NCIN_Cli ('" + a.NCIN_Cli + "') ET c.ville = 'Tunis' → Ligne retenue !"
+              };
+            }
+          },
+          {
+            titreA: "Table A : Vehicule v (a)",
+            titreB: "Table B : Location l (b)",
+            aliasA: "v",
+            aliasB: "l",
+            cle: "immat_Vehicule",
+            exprCond: "v.immat_Vehicule = l.immat_Vehicule",
+            sql: "SELECT v.immat_Vehicule, v.marque, v.modele, l.id_location, l.date_loc\nFROM Vehicule v, Location l\nWHERE v.immat_Vehicule = l.immat_Vehicule;",
+            colsA: ["immat_Vehicule", "marque", "modele"],
+            colsB: ["id_location", "immat_Vehicule", "date_loc"],
+            rowsA: VEHICULES,
+            rowsB: LOCATIONS,
+            colsRes: [
+              { label: "v.immat_Vehicule", from: "A", k: "immat_Vehicule" },
+              { label: "v.marque", from: "A", k: "marque" },
+              { label: "v.modele", from: "A", k: "modele" },
+              { label: "l.id_location", from: "B", k: "id_location" },
+              { label: "l.date_loc", from: "B", k: "date_loc" }
+            ],
+            evalPair: function (a, b) {
+              var ok = a.immat_Vehicule === b.immat_Vehicule;
+              return {
+                ok: ok,
+                msg: ok
+                  ? "✔ Égalité vérifiée (a.x = b.x) : v.immat_Vehicule ('" + a.immat_Vehicule + "') = l.immat_Vehicule ('" + b.immat_Vehicule + "') → Location n°" + b.id_location + " (" + a.marque + " " + a.modele + ") retenue !"
+                  : "✘ Différent : v.immat_Vehicule ('" + a.immat_Vehicule + "') != l.immat_Vehicule ('" + b.immat_Vehicule + "') → Couple ignoré."
+              };
+            }
+          },
+          {
+            titreA: "Table A : Client c (a)",
+            titreB: "Table B : Location l (b)",
+            aliasA: "c",
+            aliasB: "l",
+            cle: "NCIN_Cli",
+            exprCond: "AUCUN WHERE (Produit cartésien 3 × 3 = 9 lignes)",
+            sql: "-- ⚠️ Sans WHERE c.NCIN_Cli = l.NCIN_Cli : produit cartésien !\nSELECT c.nom_Cli, c.NCIN_Cli, l.id_location, l.NCIN_Cli\nFROM Client c, Location l;",
+            colsA: ["NCIN_Cli", "nom_Cli", "ville"],
+            colsB: ["id_location", "NCIN_Cli", "date_loc"],
+            rowsA: CLIENTS,
+            rowsB: LOCATIONS,
+            colsRes: [
+              { label: "c.nom_Cli", from: "A", k: "nom_Cli" },
+              { label: "c.NCIN_Cli", from: "A", k: "NCIN_Cli" },
+              { label: "l.id_location", from: "B", k: "id_location" },
+              { label: "l.NCIN_Cli", from: "B", k: "NCIN_Cli" }
+            ],
+            evalPair: function (a, b) {
+              var meme = a.NCIN_Cli === b.NCIN_Cli;
+              return {
+                ok: true,
+                msg: "⚠️ Sans WHERE a.x = b.x, SQL garde TOUTES les combinaisons (" + a.nom_Cli + " + location n°" + b.id_location + ")" + (meme ? " [correspondance réelle]" : " [FAUSSE association : '" + a.NCIN_Cli + "' != '" + b.NCIN_Cli + "' !]")
+              };
+            }
+          }
+        ];
+
+        var scenIdx = 0;
+        var pairs = [];
+        var stepIdx = -1;
+        var timer = null;
+
+        var elSql = document.getElementById("janim-sql-code");
+        var elTitleA = document.getElementById("janim-title-a");
+        var elTitleB = document.getElementById("janim-title-b");
+        var elTabA = document.getElementById("janim-table-a");
+        var elTabB = document.getElementById("janim-table-b");
+        var elTabRes = document.getElementById("janim-table-res");
+        var elResTitle = document.getElementById("janim-result-title");
+        var elComp = document.getElementById("janim-comparator");
+        var elBridge = document.getElementById("janim-bridge");
+        var elBridgePill = document.getElementById("janim-bridge-pill");
+        var elBridgeArrow = document.getElementById("janim-bridge-arrow");
+        var elBridgeSub = document.getElementById("janim-bridge-sub");
+        var elStepBadge = document.getElementById("janim-step-badge");
+        var btnPlay = document.getElementById("janim-btn-play");
+        var btnPrev = document.getElementById("janim-btn-prev");
+        var btnNext = document.getElementById("janim-btn-next");
+        var btnReset = document.getElementById("janim-btn-reset");
+        var btnAll = document.getElementById("janim-btn-all");
+        var chkOnlyMatch = document.getElementById("janim-chk-only-match");
+
+        function construirePairs() {
+          var sc = SCENARIOS[scenIdx];
+          var all = [];
+          for (var i = 0; i < sc.rowsA.length; i++) {
+            for (var j = 0; j < sc.rowsB.length; j++) {
+              var ev = sc.evalPair(sc.rowsA[i], sc.rowsB[j]);
+              all.push({
+                i: i,
+                j: j,
+                a: sc.rowsA[i],
+                b: sc.rowsB[j],
+                ok: ev.ok,
+                msg: ev.msg
+              });
+            }
+          }
+          if (chkOnlyMatch && chkOnlyMatch.checked) {
+            pairs = all.filter(function (p) { return p.ok; });
+          } else {
+            pairs = all;
+          }
+        }
+
+        function stopPlay() {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+          if (btnPlay) btnPlay.textContent = "▶ Animer pas à pas";
+        }
+
+        function renderSourceTable(el, cols, rows, cle, activeRowIdx, isMatch) {
+          var thead = "<thead><tr>";
+          for (var c = 0; c < cols.length; c++) {
+            var isK = cols[c] === cle;
+            thead += "<th>" + (isK ? "🔑 " : "") + cols[c] + "</th>";
+          }
+          thead += "</tr></thead><tbody>";
+          for (var r = 0; r < rows.length; r++) {
+            var cls = "";
+            if (r === activeRowIdx) {
+              cls = isMatch ? "jrow-active-match" : "jrow-active-nomatch";
+            }
+            thead += "<tr class='" + cls + "'>";
+            for (var k = 0; k < cols.length; k++) {
+              var colName = cols[k];
+              var tdCls = colName === cle ? "jcol-key" : "";
+              thead += "<td class='" + tdCls + "'>" + rows[r][colName] + "</td>";
+            }
+            thead += "</tr>";
+          }
+          thead += "</tbody>";
+          el.innerHTML = thead;
+        }
+
+        function renderState() {
+          var sc = SCENARIOS[scenIdx];
+          if (elSql) elSql.textContent = sc.sql;
+          if (elTitleA) elTitleA.textContent = sc.titreA;
+          if (elTitleB) elTitleB.textContent = sc.titreB;
+
+          var cur = (stepIdx >= 0 && stepIdx < pairs.length) ? pairs[stepIdx] : null;
+          renderSourceTable(elTabA, sc.colsA, sc.rowsA, sc.cle, cur ? cur.i : -1, cur ? cur.ok : false);
+          renderSourceTable(elTabB, sc.colsB, sc.rowsB, sc.cle, cur ? cur.j : -1, cur ? cur.ok : false);
+
+          if (!cur) {
+            elComp.className = "sql-janim-comparator";
+            elComp.innerHTML = "Prêt : cliquez sur <b>▶ Animer pas à pas</b> ou <b>Suivant ▶</b> pour observer la condition <code>" + sc.exprCond + "</code>.";
+            elBridge.className = "sql-janim-bridge";
+            elBridgePill.textContent = sc.aliasA + "." + sc.cle + " = " + sc.aliasB + "." + sc.cle;
+            elBridgeArrow.textContent = "⟷";
+            elBridgeSub.textContent = "En attente";
+            elStepBadge.textContent = "Début · 0 / " + pairs.length;
+          } else {
+            elComp.className = "sql-janim-comparator " + (cur.ok ? "match" : "nomatch");
+            elComp.textContent = cur.msg;
+            elBridge.className = "sql-janim-bridge " + (cur.ok ? "match" : "nomatch");
+            var valA = cur.a[sc.cle];
+            var valB = cur.b[sc.cle];
+            elBridgePill.textContent = "'" + valA + "' " + (valA === valB ? "=" : "!=") + " '" + valB + "'";
+            elBridgeArrow.textContent = cur.ok ? "✔" : "✘";
+            elBridgeSub.textContent = cur.ok ? "Ligne gardée !" : "Ignorée";
+            elStepBadge.textContent = "Étape " + (stepIdx + 1) + " / " + pairs.length;
+          }
+
+          /* Construire les lignes de résultat jusqu'à stepIdx */
+          var retenues = [];
+          for (var p = 0; p <= stepIdx && p < pairs.length; p++) {
+            if (pairs[p].ok) {
+              retenues.push({ pair: pairs[p], isNew: p === stepIdx });
+            }
+          }
+          elResTitle.textContent = "📊 Table Résultat de la jointure (" + retenues.length + " ligne" + (retenues.length > 1 ? "s" : "") + " retenue" + (retenues.length > 1 ? "s" : "") + ")";
+
+          var rHtml = "<thead><tr>";
+          for (var rc = 0; rc < sc.colsRes.length; rc++) {
+            rHtml += "<th>" + sc.colsRes[rc].label + "</th>";
+          }
+          rHtml += "</tr></thead><tbody>";
+          if (retenues.length === 0) {
+            rHtml += "<tr><td colspan='" + sc.colsRes.length + "' style='text-align:center;opacity:0.7;padding:0.75rem'>Aucune ligne retenue pour l'instant — lancez l'animation pour remplir le résultat.</td></tr>";
+          } else {
+            for (var rr = 0; rr < retenues.length; rr++) {
+              var item = retenues[rr];
+              rHtml += "<tr class='" + (item.isNew ? "jrow-new" : "") + "'>";
+              for (var cc = 0; cc < sc.colsRes.length; cc++) {
+                var colDef = sc.colsRes[cc];
+                var srcObj = colDef.from === "A" ? item.pair.a : item.pair.b;
+                rHtml += "<td>" + srcObj[colDef.k] + "</td>";
+              }
+              rHtml += "</tr>";
+            }
+          }
+          rHtml += "</tbody>";
+          elTabRes.innerHTML = rHtml;
+        }
+
+        function stepNext() {
+          if (stepIdx < pairs.length - 1) {
+            stepIdx++;
+            renderState();
+          } else {
+            stopPlay();
+          }
+        }
+
+        function togglePlay() {
+          if (timer) {
+            stopPlay();
+            return;
+          }
+          if (stepIdx >= pairs.length - 1) {
+            stepIdx = -1;
+          }
+          btnPlay.textContent = "⏸ Pause";
+          stepNext();
+          timer = setInterval(function () {
+            if (stepIdx < pairs.length - 1) {
+              stepNext();
+            } else {
+              stopPlay();
+            }
+          }, 1150);
+        }
+
+        var tabBtns = app.querySelectorAll(".sql-janim-tab");
+        Array.prototype.forEach.call(tabBtns, function (b) {
+          b.addEventListener("click", function () {
+            stopPlay();
+            Array.prototype.forEach.call(tabBtns, function (x) { x.classList.remove("active"); });
+            b.classList.add("active");
+            scenIdx = parseInt(b.getAttribute("data-jex") || "0", 10);
+            construirePairs();
+            stepIdx = -1;
+            renderState();
+          });
+        });
+
+        if (btnPlay) btnPlay.addEventListener("click", togglePlay);
+        if (btnNext) btnNext.addEventListener("click", function () { stopPlay(); stepNext(); });
+        if (btnPrev) btnPrev.addEventListener("click", function () {
+          stopPlay();
+          if (stepIdx >= 0) {
+            stepIdx--;
+            renderState();
+          }
+        });
+        if (btnReset) btnReset.addEventListener("click", function () {
+          stopPlay();
+          stepIdx = -1;
+          renderState();
+        });
+        if (btnAll) btnAll.addEventListener("click", function () {
+          stopPlay();
+          stepIdx = pairs.length - 1;
+          renderState();
+        });
+        if (chkOnlyMatch) chkOnlyMatch.addEventListener("change", function () {
+          stopPlay();
+          construirePairs();
+          stepIdx = -1;
+          renderState();
+        });
+
+        construirePairs();
+        renderState();
+      })();
+    </script>
     <script>
       /* ===== Thème : mode sombre, coloration SQL, copie, animations d'apparition ===== */
       (function () {
@@ -2498,7 +3264,7 @@ SELECT DATEDIFF(year, '2024/08/25', '2011/08/25'); -- Résultat : -13</code></pr
         });
 
         /* Coloration SQL (mêmes couleurs que le quiz), en un seul passage */
-        var KW = /^(SELECT|FROM|WHERE|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|DISTINCT|AS|AND|OR|NOT|IN|BETWEEN|LIKE|IS|NULL|UNION|ALL|CASE|WHEN|THEN|ELSE|END|WITH|EXISTS|CREATE|DATABASE|USE|TABLE|ALTER|ADD|COLUMN|MODIFY|DROP|DELETE|TRUNCATE|PRIMARY|KEY|FOREIGN|REFERENCES|CONSTRAINT|CHECK|DEFAULT|UNIQUE|INDEX|VIEW|ASC|DESC|INTO|VALUES|UPDATE|SET|JOIN|INNER|LEFT|RIGHT|ON|CASCADE|RESTRICT|RENAME|TO|ENABLE|DISABLE|KEYS|CURRENT_TIMESTAMP|INTERVAL|DAY|MONTH|YEAR|FOR|EACH|ROW)$/i;
+        var KW = /^(SELECT|FROM|WHERE|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|DISTINCT|AS|AND|OR|NOT|IN|BETWEEN|LIKE|IS|NULL|UNION|ALL|CASE|WHEN|THEN|ELSE|END|WITH|EXISTS|CREATE|DATABASE|USE|TABLE|ALTER|ADD|COLUMN|MODIFY|DROP|DELETE|TRUNCATE|PRIMARY|KEY|FOREIGN|REFERENCES|CONSTRAINT|CHECK|DEFAULT|UNIQUE|INDEX|VIEW|ASC|DESC|INTO|VALUES|UPDATE|SET|LEFT|RIGHT|CASCADE|RESTRICT|RENAME|TO|ENABLE|DISABLE|KEYS|CURRENT_TIMESTAMP|INTERVAL|DAY|MONTH|YEAR|FOR|EACH|ROW)$/i;
         var FN = /^(COUNT|AVG|SUM|MIN|MAX|CONCAT|LENGTH|SUBSTRING|SUBSTR|UPPER|LOWER|TRIM|LTRIM|RTRIM|REPLACE|ROUND|NOW|CURDATE|CURTIME|DATE|TIME|DATEDIFF|DATE_ADD|DATE_SUB|DATE_FORMAT|DAYOFWEEK|EXTRACT|IFNULL|COALESCE|ABS|FLOOR|CEIL|YEAR|MONTH|DAY)$/i;
         var TY = /^(INT|INTEGER|DECIMAL|NUMERIC|VARCHAR|CHAR|TEXT|TIMESTAMP|DATETIME|FLOAT|DOUBLE|BOOLEAN|BOOL|YEAR|DATE|TIME)$/i;
         function esc(t) { return t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }

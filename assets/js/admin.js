@@ -6919,8 +6919,8 @@
   var MODELES_TB_LIVE = {
     sql: {
       lang: "SQL",
-      titre: "Corrigé SQL — Jointure (JOIN), Agrégation (COUNT/SUM) & GROUP BY",
-      code: "SELECT C.Cin, C.Nom, COUNT(L.IdLoc) AS NbLocations, SUM(L.Montant) AS TotalPaye\nFROM CLIENT C\nINNER JOIN LOCATION L ON C.Cin = L.Cin\nWHERE YEAR(L.DateLoc) = 2026\nGROUP BY C.Cin, C.Nom\nHAVING COUNT(L.IdLoc) >= 2\nORDER BY TotalPaye DESC;",
+      titre: "Corrigé SQL — Jointure (WHERE a.x = b.x), Agrégation (COUNT/SUM) & GROUP BY",
+      code: "SELECT c.NCIN_Cli, c.nom_Cli, COUNT(l.id_location) AS NbLocations\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND YEAR(l.date_loc) = 2026\nGROUP BY c.NCIN_Cli, c.nom_Cli\nHAVING COUNT(l.id_location) >= 2\nORDER BY NbLocations DESC;",
       note: "Règle d'or SQL Bac STI : toute colonne présente dans SELECT (hors COUNT, SUM, AVG, MIN, MAX) doit obligatoirement figurer dans GROUP BY."
     },
     php: {

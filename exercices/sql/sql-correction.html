@@ -603,13 +603,11 @@
 
           <div class="correction-item">
             <div class="question-text">
-              5. LEFT JOIN retourne uniquement les lignes avec correspondances.
+              5. Une jointure sans condition WHERE a.x = b.x produit un produit cartésien.
             </div>
-            <div class="answer">❌ FAUX</div>
+            <div class="answer">✅ VRAI</div>
             <div class="explanation">
-              LEFT JOIN retourne <strong>toutes</strong> les lignes de la table
-              de gauche, même si aucune correspondance n'existe dans la table de
-              droite (valeurs NULL).
+              Sans condition d'égalité <strong>WHERE a.x = b.x</strong>, chaque ligne de la 1re table est combinée avec toutes les lignes de la 2e table (produit cartésien).
             </div>
           </div>
         </div>
@@ -649,9 +647,8 @@
               L'étudiant est exclu car il n'a pas de ligne dans NOTES
             </div>
             <div class="explanation">
-              La requête utilise une jointure implicite avec NOTES. Les
-              étudiants sans note n'apparaissent pas. Pour les inclure avec
-              moyenne NULL, utiliser <span class="keyword">LEFT JOIN</span>.
+              La requête utilise la jointure <span class="keyword">WHERE E.Numetu = N.Numetu</span> (forme <code>a.x = b.x</code>). Les
+              étudiants sans note n'apparaissent pas. Pour les lister séparément, utiliser une sous-requête avec <span class="keyword">NOT IN</span>.
             </div>
           </div>
 
