@@ -9552,4 +9552,111 @@
       });
     });
   }
+
+  /* ---------- Barre d'outils PC Windows sur admin.html : 📌 1er plan + 🔍 Zoom arrière / Zoom avant ---------- */
+  (function installerOutilsPcAdmin() {
+    if (window !== window.top) return;
+    var ua = navigator.userAgent || "";
+    if (/Android|iPhone|iPad|iPod|Mobile/i.test(ua)) return;
+    if (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) return;
+    if (document.getElementById("sti-pc-win-tools")) return;
+
+    var st = document.createElement("style");
+    st.textContent = "@media (max-width: 768px), print { #sti-pc-win-tools { display: none !important; } }";
+    document.head.appendChild(st);
+
+    var pipWinAdm = null;
+    function lireZ() {
+      try {
+        var z = parseInt(localStorage.getItem("sti-pc-zoom") || "100", 10);
+        if (z >= 60 && z <= 200) return z;
+      } catch (e) {}
+      return 100;
+    }
+    function appliquerZ(pct) {
+      var z = Math.max(60, Math.min(200, Math.round(pct / 10) * 10));
+      try { localStorage.setItem("sti-pc-zoom", String(z)); } catch (e) {}
+      document.body.style.zoom = z === 100 ? "" : (z + "%");
+      var barEl = document.getElementById("sti-pc-win-tools");
+      if (barEl) barEl.style.zoom = z === 100 ? "" : ((10000 / z).toFixed(2) + "%");
+      var lbl = document.getElementById("sti-pc-zoom-lbl");
+      if (lbl) lbl.textContent = z + "%";
+    }
+
+    var bar = document.createElement("div");
+    bar.id = "sti-pc-win-tools";
+    bar.style.cssText =
+      "position:fixed;left:14px;bottom:14px;z-index:2147483645;display:inline-flex;align-items:center;gap:4px;" +
+      "background:rgba(255,253,247,0.96);border:2px solid #23201a;border-radius:999px;padding:4px 7px;" +
+      "box-shadow:3px 3px 0 #23201a;font:800 12px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#23201a;";
+
+    var btnPin = document.createElement("button");
+    btnPin.type = "button";
+    btnPin.innerHTML = "📌 <span>1er plan</span>";
+    btnPin.title = "Garder le Tableau de bord STI V2.0 au 1er plan sur Windows";
+    btnPin.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:#101728;color:#fffdf7;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnPin.onclick = function () {
+      if (pipWinAdm && !pipWinAdm.closed) {
+        pipWinAdm.close();
+        pipWinAdm = null;
+        btnPin.style.background = "#101728";
+        btnPin.innerHTML = "📌 <span>1er plan</span>";
+        return;
+      }
+      if (window.documentPictureInPicture && typeof window.documentPictureInPicture.requestWindow === "function") {
+        window.documentPictureInPicture.requestWindow({ width: 620, height: 740 }).then(function (pw) {
+          pipWinAdm = pw;
+          btnPin.style.background = "#177245";
+          btnPin.innerHTML = "📌 <span>1er plan actif</span>";
+          pw.document.body.style.cssText = "margin:0;height:100vh;display:flex;flex-direction:column;background:#0d1526;";
+          pw.document.body.innerHTML = '<iframe src="' + location.href.replace(/"/g, "&quot;") + '" style="flex:1;width:100%;border:0;background:#f9f1e3;"></iframe>';
+          pw.addEventListener("pagehide", function () {
+            pipWinAdm = null;
+            btnPin.style.background = "#101728";
+            btnPin.innerHTML = "📌 <span>1er plan</span>";
+          });
+        }).catch(function () {
+          window.open(location.href, "STI_Admin_PremierPlan", "popup=yes,width=620,height=740");
+        });
+      } else {
+        window.open(location.href, "STI_Admin_PremierPlan", "popup=yes,width=620,height=740");
+      }
+    };
+
+    var sep = document.createElement("span");
+    sep.style.cssText = "width:1.5px;height:18px;background:rgba(35,32,26,0.22);margin:0 2px;";
+
+    var bOut = document.createElement("button");
+    bOut.type = "button";
+    bOut.textContent = "🔍−";
+    bOut.title = "Zoom arrière (−10 %)";
+    bOut.style.cssText = "padding:5px 8px;border-radius:999px;border:1.5px solid #23201a;background:#f3ead9;color:#23201a;font:900 11.5px/1 inherit;cursor:pointer;";
+    bOut.onclick = function () { appliquerZ(lireZ() - 10); };
+
+    var bLbl = document.createElement("button");
+    bLbl.type = "button";
+    bLbl.id = "sti-pc-zoom-lbl";
+    bLbl.textContent = lireZ() + "%";
+    bLbl.title = "Cliquer pour réinitialiser le zoom à 100 %";
+    bLbl.style.cssText = "padding:5px 7px;border-radius:999px;border:none;background:transparent;color:#23201a;font:900 11.5px/1 inherit;cursor:pointer;min-width:42px;text-align:center;";
+    bLbl.onclick = function () { appliquerZ(100); };
+
+    var bIn = document.createElement("button");
+    bIn.type = "button";
+    bIn.textContent = "🔍+";
+    bIn.title = "Zoom avant (+10 %)";
+    bIn.style.cssText = "padding:5px 8px;border-radius:999px;border:1.5px solid #23201a;background:#fff3b0;color:#23201a;font:900 11.5px/1 inherit;cursor:pointer;";
+    bIn.onclick = function () { appliquerZ(lireZ() + 10); };
+
+    bar.appendChild(btnPin);
+    bar.appendChild(sep);
+    bar.appendChild(bOut);
+    bar.appendChild(bLbl);
+    bar.appendChild(bIn);
+    document.body.appendChild(bar);
+    var z0 = lireZ();
+    if (z0 !== 100) appliquerZ(z0);
+  })();
 })();

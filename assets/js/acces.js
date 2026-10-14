@@ -1296,7 +1296,7 @@
     btnScore.type = "button";
     btnScore.className = "sti-no-print";
     btnScore.textContent = "🏆 Envoyer mon score au prof";
-    btnScore.style.cssText = "position:fixed;left:14px;bottom:14px;z-index:2147483645;border:2px solid #23201a;background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;border-radius:999px;padding:8px 14px;font:800 12px/1 system-ui,'Segoe UI',sans-serif;cursor:pointer;box-shadow:3px 3px 0 #23201a;";
+    btnScore.style.cssText = "position:fixed;left:14px;bottom:68px;z-index:2147483645;border:2px solid #23201a;background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;border-radius:999px;padding:8px 14px;font:800 12px/1 system-ui,'Segoe UI',sans-serif;cursor:pointer;box-shadow:3px 3px 0 #23201a;";
     btnScore.addEventListener("click", function () {
       var info = extraireScoreCourant();
       if (!info) {
@@ -4955,6 +4955,7 @@
       var c = lireCacheSessionLocal();
       var isAdm = estSessionAdminVerifiee();
       installerBoutonMessengerGlobal(isAdm, (c && c.id) || currentUid || "eleve", (c && c.classe) || currentClasse || "");
+      installerOutilsPcWindowsSTI();
     }
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", poser);
@@ -4962,6 +4963,248 @@
       poser();
     }
   })();
+
+  /* ---------- Barre d'outils PC Windows : 📌 1er plan (Always-on-Top) + 🔍 Zoom arrière / Zoom avant ---------- */
+  var pipWindowSTI = null;
+  var popupPremierPlanSTI = null;
+  var wakeLockSTI = null;
+
+  function estModePcWindowsSTI() {
+    if (window !== window.top) return false;
+    var ua = navigator.userAgent || "";
+    if (/Android|iPhone|iPad|iPod|Mobile/i.test(ua)) return false;
+    if (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) return false;
+    return true;
+  }
+
+  function obtenirZoomActuelSTI() {
+    try {
+      var z = parseInt(localStorage.getItem("sti-pc-zoom") || "100", 10);
+      if (z >= 60 && z <= 200) return z;
+    } catch (e) {}
+    return 100;
+  }
+
+  function appliquerZoomPageSTI(pct) {
+    var z = Math.max(60, Math.min(200, Math.round(pct / 10) * 10));
+    try { localStorage.setItem("sti-pc-zoom", String(z)); } catch (e) {}
+    if (document.body) {
+      document.body.style.zoom = z === 100 ? "" : (z + "%");
+    }
+    /* Compenser le zoom sur les contrôles flottants pour qu'ils gardent une taille fixe à l'écran */
+    var inv = z === 100 ? "" : ((10000 / z).toFixed(2) + "%");
+    var idsFlottants = ["sti-pc-win-tools", "sti-btn-messenger-global", "sti-roue-wrap", "sti-badge-admin-flottant"];
+    for (var i = 0; i < idsFlottants.length; i++) {
+      var elF = document.getElementById(idsFlottants[i]);
+      if (elF) elF.style.zoom = inv;
+    }
+    /* Appliquer aussi le zoom à l'intérieur d'une iframe d'énoncé / exercice ouverte */
+    try {
+      var iframes = document.querySelectorAll("#pdfFrame, #modal-doc-frame, #animFrame, #recapFrame");
+      for (var j = 0; j < iframes.length; j++) {
+        var fr = iframes[j];
+        if (fr && fr.contentDocument && fr.contentDocument.body) {
+          fr.contentDocument.body.style.zoom = z === 100 ? "" : (z + "%");
+        }
+      }
+    } catch (e) {}
+    var lbl = document.getElementById("sti-pc-zoom-lbl");
+    if (lbl) lbl.textContent = z + "%";
+  }
+
+  function activerWakeLockSTI() {
+    try {
+      if (navigator.wakeLock && typeof navigator.wakeLock.request === "function") {
+        navigator.wakeLock.request("screen").then(function (wl) {
+          wakeLockSTI = wl;
+        }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+
+  function basculerPremierPlanWindowsSTI(btnPin) {
+    activerWakeLockSTI();
+
+    /* Si une fenêtre 1er plan est déjà active, la refermer */
+    if (pipWindowSTI && !pipWindowSTI.closed) {
+      try { pipWindowSTI.close(); } catch (e) {}
+      pipWindowSTI = null;
+      if (btnPin) {
+        btnPin.style.background = "#101728";
+        btnPin.style.color = "#fffdf7";
+        btnPin.innerHTML = "📌 <span>1er plan</span>";
+      }
+      return;
+    }
+    if (popupPremierPlanSTI && !popupPremierPlanSTI.closed) {
+      try { popupPremierPlanSTI.focus(); } catch (e) {}
+      return;
+    }
+
+    /* Déterminer l'URL à afficher au 1er plan (l'énoncé ouvert en modale s'il y en a un, sinon la page actuelle) */
+    var urlCible = location.href;
+    try {
+      var frMod = document.querySelector("#pdfModal.open #pdfFrame, #modal-doc-bac:not([style*='display: none']) #modal-doc-frame");
+      if (frMod && frMod.src && frMod.src !== "about:blank") {
+        urlCible = frMod.src;
+      }
+    } catch (e) {}
+
+    /* 1. Chrome / Edge sur PC Windows : Document Picture-in-Picture (vraie fenêtre système Always-on-Top) */
+    if (window.documentPictureInPicture && typeof window.documentPictureInPicture.requestWindow === "function") {
+      window.documentPictureInPicture.requestWindow({ width: 580, height: 720 }).then(function (pipWin) {
+        pipWindowSTI = pipWin;
+        if (btnPin) {
+          btnPin.style.background = "#177245";
+          btnPin.style.color = "#ffffff";
+          btnPin.innerHTML = "📌 <span>1er plan actif</span>";
+        }
+        pipWin.document.title = "📌 STI V2.0 — 1er plan Windows";
+        pipWin.document.documentElement.style.cssText = "height:100%;margin:0;padding:0;";
+        pipWin.document.body.style.cssText = "height:100%;margin:0;padding:0;display:flex;flex-direction:column;background:#0d1526;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;overflow:hidden;";
+        pipWin.document.body.innerHTML =
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 12px;background:#101728;color:#fffdf7;border-bottom:2px solid #f4511e;flex-shrink:0;">' +
+            '<div style="font-weight:800;font-size:12px;display:flex;align-items:center;gap:6px;">📌 <span>STI V2.0 — Maintenu au 1er plan Windows</span></div>' +
+            '<div style="display:flex;align-items:center;gap:5px;">' +
+              '<button type="button" id="pip-z-out" title="Zoom arrière" style="border:1px solid #475569;background:#1e293b;color:#fff;border-radius:6px;padding:3px 8px;font-weight:900;font-size:12px;cursor:pointer;">🔍−</button>' +
+              '<button type="button" id="pip-z-rst" title="Réinitialiser le zoom (100%)" style="border:1px solid #475569;background:#1e293b;color:#ffd54f;border-radius:6px;padding:3px 7px;font-weight:800;font-size:11px;cursor:pointer;">100%</button>' +
+              '<button type="button" id="pip-z-in" title="Zoom avant" style="border:1px solid #475569;background:#1e293b;color:#fff;border-radius:6px;padding:3px 8px;font-weight:900;font-size:12px;cursor:pointer;">🔍+</button>' +
+              '<button type="button" id="pip-close" title="Fermer la fenêtre 1er plan" style="border:none;background:#c0392b;color:#fff;border-radius:6px;padding:4px 9px;font-weight:800;font-size:11.5px;cursor:pointer;">✕</button>' +
+            '</div>' +
+          '</div>' +
+          '<iframe id="pip-sti-frame" src="' + urlCible.replace(/"/g, "&quot;") + '" style="flex:1;width:100%;border:0;background:#fff;"></iframe>';
+
+        var zPip = obtenirZoomActuelSTI();
+        var frPip = pipWin.document.getElementById("pip-sti-frame");
+        var lblPip = pipWin.document.getElementById("pip-z-rst");
+        var majZoomPip = function (nvZ) {
+          zPip = Math.max(60, Math.min(200, Math.round(nvZ / 10) * 10));
+          if (lblPip) lblPip.textContent = zPip + "%";
+          try {
+            if (frPip && frPip.contentDocument && frPip.contentDocument.body) {
+              frPip.contentDocument.body.style.zoom = zPip === 100 ? "" : (zPip + "%");
+            }
+          } catch (e) {}
+        };
+        if (frPip) {
+          frPip.addEventListener("load", function () { majZoomPip(zPip); });
+        }
+        pipWin.document.getElementById("pip-z-out").onclick = function () { majZoomPip(zPip - 10); };
+        pipWin.document.getElementById("pip-z-rst").onclick = function () { majZoomPip(100); };
+        pipWin.document.getElementById("pip-z-in").onclick = function () { majZoomPip(zPip + 10); };
+        pipWin.document.getElementById("pip-close").onclick = function () { pipWin.close(); };
+
+        pipWin.addEventListener("pagehide", function () {
+          pipWindowSTI = null;
+          if (btnPin) {
+            btnPin.style.background = "#101728";
+            btnPin.style.color = "#fffdf7";
+            btnPin.innerHTML = "📌 <span>1er plan</span>";
+          }
+        });
+      }).catch(function () {
+        ouvrirPopupSecoursPremierPlan(urlCible);
+      });
+      return;
+    }
+
+    ouvrirPopupSecoursPremierPlan(urlCible);
+  }
+
+  function ouvrirPopupSecoursPremierPlan(urlCible) {
+    try {
+      var w = 560;
+      var h = Math.min(760, (window.screen && window.screen.availHeight ? window.screen.availHeight - 40 : 720));
+      var left = (window.screen && window.screen.availWidth) ? Math.max(0, window.screen.availWidth - w - 10) : 80;
+      popupPremierPlanSTI = window.open(
+        urlCible,
+        "STI_PremierPlan_Windows",
+        "popup=yes,width=" + w + ",height=" + h + ",left=" + left + ",top=20,resizable=yes,scrollbars=yes"
+      );
+      if (popupPremierPlanSTI) popupPremierPlanSTI.focus();
+    } catch (e) {}
+  }
+
+  function installerOutilsPcWindowsSTI() {
+    if (!estModePcWindowsSTI()) return;
+    if (document.getElementById("sti-pc-win-tools")) return;
+
+    if (!document.getElementById("sti-pc-win-tools-css")) {
+      var st = document.createElement("style");
+      st.id = "sti-pc-win-tools-css";
+      st.textContent =
+        "@media (max-width: 768px), print { #sti-pc-win-tools { display: none !important; } }" +
+        "#sti-pc-win-tools button:hover { transform: translateY(-1px); filter: brightness(1.06); }";
+      (document.head || document.documentElement).appendChild(st);
+    }
+
+    var bar = document.createElement("div");
+    bar.id = "sti-pc-win-tools";
+    bar.className = "sti-no-print";
+    bar.style.cssText =
+      "position:fixed;left:68px;bottom:14px;z-index:2147483645;display:inline-flex;align-items:center;gap:4px;" +
+      "background:rgba(255,253,247,0.96);border:2px solid #23201a;border-radius:999px;padding:4px 7px;" +
+      "box-shadow:3px 3px 0 #23201a;font:800 12px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#23201a;";
+
+    var btnPin = document.createElement("button");
+    btnPin.type = "button";
+    btnPin.id = "sti-btn-pc-pin";
+    btnPin.innerHTML = "📌 <span>1er plan</span>";
+    btnPin.title = "Garder l'application STI V2.0 au 1er plan sur Windows (par-dessus VS Code, XAMPP, Notepad++…)";
+    btnPin.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:#101728;color:#fffdf7;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnPin.onclick = function () { basculerPremierPlanWindowsSTI(btnPin); };
+
+    var sep = document.createElement("span");
+    sep.style.cssText = "width:1.5px;height:18px;background:rgba(35,32,26,0.22);margin:0 2px;";
+
+    var btnZoomOut = document.createElement("button");
+    btnZoomOut.type = "button";
+    btnZoomOut.textContent = "🔍−";
+    btnZoomOut.title = "Zoom arrière (−10 %)";
+    btnZoomOut.style.cssText =
+      "padding:5px 8px;border-radius:999px;border:1.5px solid #23201a;background:#f3ead9;color:#23201a;" +
+      "font:900 11.5px/1 inherit;cursor:pointer;";
+    btnZoomOut.onclick = function () {
+      appliquerZoomPageSTI(obtenirZoomActuelSTI() - 10);
+    };
+
+    var btnZoomLbl = document.createElement("button");
+    btnZoomLbl.type = "button";
+    btnZoomLbl.id = "sti-pc-zoom-lbl";
+    btnZoomLbl.textContent = obtenirZoomActuelSTI() + "%";
+    btnZoomLbl.title = "Cliquer pour réinitialiser le zoom à 100 %";
+    btnZoomLbl.style.cssText =
+      "padding:5px 7px;border-radius:999px;border:none;background:transparent;color:#23201a;" +
+      "font:900 11.5px/1 inherit;cursor:pointer;min-width:42px;text-align:center;";
+    btnZoomLbl.onclick = function () {
+      appliquerZoomPageSTI(100);
+    };
+
+    var btnZoomIn = document.createElement("button");
+    btnZoomIn.type = "button";
+    btnZoomIn.textContent = "🔍+";
+    btnZoomIn.title = "Zoom avant (+10 %)";
+    btnZoomIn.style.cssText =
+      "padding:5px 8px;border-radius:999px;border:1.5px solid #23201a;background:#fff3b0;color:#23201a;" +
+      "font:900 11.5px/1 inherit;cursor:pointer;";
+    btnZoomIn.onclick = function () {
+      appliquerZoomPageSTI(obtenirZoomActuelSTI() + 10);
+    };
+
+    bar.appendChild(btnPin);
+    bar.appendChild(sep);
+    bar.appendChild(btnZoomOut);
+    bar.appendChild(btnZoomLbl);
+    bar.appendChild(btnZoomIn);
+    (document.body || document.documentElement).appendChild(bar);
+
+    var zInit = obtenirZoomActuelSTI();
+    if (zInit !== 100) {
+      appliquerZoomPageSTI(zInit);
+    }
+  }
 
   /* Fenêtre Messenger STI multi-candidats pour l'Admin directement sur toutes les pages du site et des cours */
   var msnSiteUidActif = "";
