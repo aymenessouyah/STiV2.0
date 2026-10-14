@@ -6484,7 +6484,9 @@
       st.id = "sti-pc-win-tools-css";
       st.textContent =
         "@media (max-width: 768px), print { #sti-pc-win-tools, #sti-split-view-panel, #sti-laser-overlay { display: none !important; } }" +
-        "#sti-pc-win-tools button:hover { transform: translateY(-1px); filter: brightness(1.06); }";
+        "#sti-pc-win-tools button:hover { transform: translateY(-1px); filter: brightness(1.06); }" +
+        "#sti-pc-win-tools .sti-pc-tools-items { display: none; align-items: center; gap: 4px; }" +
+        "#sti-pc-win-tools.sti-pc-tools-expanded .sti-pc-tools-items { display: inline-flex; }";
       (document.head || document.documentElement).appendChild(st);
     }
 
@@ -6493,8 +6495,27 @@
     bar.className = "sti-no-print";
     bar.style.cssText =
       "position:fixed;left:68px;bottom:14px;z-index:2147483645;display:inline-flex;align-items:center;gap:4px;" +
-      "background:rgba(255,253,247,0.96);border:2px solid #23201a;border-radius:999px;padding:4px 7px;" +
-      "box-shadow:3px 3px 0 #23201a;font:800 12px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#23201a;";
+      "background:rgba(255,253,247,0.96);border:2px solid #23201a;border-radius:999px;padding:3px;" +
+      "box-shadow:3px 3px 0 #23201a;font:800 12px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#23201a;transition:all .18s ease;";
+
+    var btnToggle = document.createElement("button");
+    btnToggle.type = "button";
+    btnToggle.id = "sti-btn-pc-toggle";
+    btnToggle.innerHTML = "🛠️ <span style='font-size:10px'>▸</span>";
+    btnToggle.title = "Afficher / réduire les outils STI (1er plan, Zoom, Laser, 2 vues, Tester code, Console)";
+    btnToggle.style.cssText =
+      "display:inline-flex;align-items:center;gap:3px;padding:6px 10px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:#101728;color:#fffdf7;font:800 12px/1 inherit;cursor:pointer;white-space:nowrap;";
+
+    var itemsWrap = document.createElement("div");
+    itemsWrap.className = "sti-pc-tools-items";
+
+    btnToggle.onclick = function (ev) {
+      if (ev && ev.stopPropagation) ev.stopPropagation();
+      var ouvert = bar.classList.toggle("sti-pc-tools-expanded");
+      btnToggle.innerHTML = ouvert ? "🛠️ <span style='font-size:10px'>◂</span>" : "🛠️ <span style='font-size:10px'>▸</span>";
+      bar.style.padding = ouvert ? "4px 7px" : "3px";
+    };
 
     var btnPin = document.createElement("button");
     btnPin.type = "button";
@@ -6598,16 +6619,18 @@
       window.ouvrirConsoleNavigateurSTI(btnConsole);
     };
 
-    bar.appendChild(btnPin);
-    bar.appendChild(sep);
-    bar.appendChild(btnZoomOut);
-    bar.appendChild(btnZoomLbl);
-    bar.appendChild(btnZoomIn);
-    bar.appendChild(sep2);
-    bar.appendChild(btnLaser);
-    bar.appendChild(btnSplit);
-    bar.appendChild(btnSandbox);
-    bar.appendChild(btnConsole);
+    itemsWrap.appendChild(btnPin);
+    itemsWrap.appendChild(sep);
+    itemsWrap.appendChild(btnZoomOut);
+    itemsWrap.appendChild(btnZoomLbl);
+    itemsWrap.appendChild(btnZoomIn);
+    itemsWrap.appendChild(sep2);
+    itemsWrap.appendChild(btnLaser);
+    itemsWrap.appendChild(btnSplit);
+    itemsWrap.appendChild(btnSandbox);
+    itemsWrap.appendChild(btnConsole);
+    bar.appendChild(btnToggle);
+    bar.appendChild(itemsWrap);
     (document.body || document.documentElement).appendChild(bar);
 
     var zInit = obtenirZoomActuelSTI();
