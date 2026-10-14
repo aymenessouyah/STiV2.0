@@ -1439,7 +1439,7 @@
         "<button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1.5px solid #23201a;background:#f3ead9;color:#23201a;border-radius:7px;padding:1px 7px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
         "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:1.5px solid #23201a;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;box-shadow:1.5px 1.5px 0 #23201a'>👑 GOLD</span>" +
-          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.182</span>" +
+          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.183</span>" +
           "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
         "</div>" +
       "</div>" +
@@ -1694,7 +1694,7 @@
 
     var badgeVerRoue = document.createElement("div");
     badgeVerRoue.id = "sti-pan-version-foot";
-    badgeVerRoue.textContent = "STiV2.0.182";
+    badgeVerRoue.textContent = "STiV2.0.183";
     badgeVerRoue.style.cssText = "margin-top:5px;padding-top:4px;border-top:1px dashed #e2d5be;text-align:center;font-size:10px;font-weight:900;color:#7a6f5d;letter-spacing:.4px;";
     pan.appendChild(badgeVerRoue);
 
@@ -5216,15 +5216,9 @@
 
   function ouvrirPopupSecoursPremierPlan(urlCible) {
     try {
-      var w = 560;
-      var h = Math.min(760, (window.screen && window.screen.availHeight ? window.screen.availHeight - 40 : 720));
-      var left = (window.screen && window.screen.availWidth) ? Math.max(0, window.screen.availWidth - w - 10) : 80;
-      popupPremierPlanSTI = window.open(
-        urlCible,
-        "STI_PremierPlan_Windows",
-        "popup=yes,width=" + w + ",height=" + h + ",left=" + left + ",top=20,resizable=yes,scrollbars=yes"
-      );
-      if (popupPremierPlanSTI) popupPremierPlanSTI.focus();
+      if (typeof window.basculerPleinEcranSansAdressePC === "function") {
+        window.basculerPleinEcranSansAdressePC();
+      }
     } catch (e) {}
   }
 
@@ -6759,6 +6753,22 @@
       window.ouvrirConsoleNavigateurSTI(btnConsole);
     };
 
+    var btnFs = document.createElement("button");
+    btnFs.type = "button";
+    btnFs.id = "sti-btn-pc-fullscreen";
+    btnFs.innerHTML = (document.fullscreenElement || document.webkitFullscreenElement) ? "⛶ <span>Plein écran actif</span>" : "⛶ <span>Sans adresse</span>";
+    btnFs.title = "Masquer la barre d'adresse en haut sur PC (Mode Plein Écran application)";
+    btnFs.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:" + ((document.fullscreenElement || document.webkitFullscreenElement) ? "#177245" : "#fffdf7") + ";" +
+      "color:" + ((document.fullscreenElement || document.webkitFullscreenElement) ? "#ffffff" : "#23201a") + ";font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnFs.onclick = function () {
+      if (typeof window.basculerPleinEcranSansAdressePC === "function") {
+        window.basculerPleinEcranSansAdressePC(btnFs);
+      }
+    };
+
+    itemsWrap.appendChild(btnFs);
     itemsWrap.appendChild(btnPin);
     itemsWrap.appendChild(sep);
     itemsWrap.appendChild(btnZoomOut);

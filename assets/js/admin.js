@@ -9620,6 +9620,21 @@
       "background:rgba(255,253,247,0.96);border:2px solid #23201a;border-radius:999px;padding:4px 7px;" +
       "box-shadow:3px 3px 0 #23201a;font:800 12px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#23201a;";
 
+    var btnFsAdm = document.createElement("button");
+    btnFsAdm.type = "button";
+    btnFsAdm.id = "sti-btn-pc-fullscreen";
+    btnFsAdm.innerHTML = (document.fullscreenElement || document.webkitFullscreenElement) ? "⛶ <span>Plein écran actif</span>" : "⛶ <span>Sans adresse</span>";
+    btnFsAdm.title = "Masquer la barre d'adresse en haut sur PC (Mode Plein Écran application)";
+    btnFsAdm.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:" + ((document.fullscreenElement || document.webkitFullscreenElement) ? "#177245" : "#fffdf7") + ";" +
+      "color:" + ((document.fullscreenElement || document.webkitFullscreenElement) ? "#ffffff" : "#23201a") + ";font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnFsAdm.onclick = function () {
+      if (typeof window.basculerPleinEcranSansAdressePC === "function") {
+        window.basculerPleinEcranSansAdressePC(btnFsAdm);
+      }
+    };
+
     var btnPin = document.createElement("button");
     btnPin.type = "button";
     btnPin.innerHTML = "📌 <span>1er plan</span>";
@@ -9648,10 +9663,10 @@
             btnPin.innerHTML = "📌 <span>1er plan</span>";
           });
         }).catch(function () {
-          window.open(location.href, "STI_Admin_PremierPlan", "popup=yes,width=620,height=740");
+          if (typeof window.basculerPleinEcranSansAdressePC === "function") window.basculerPleinEcranSansAdressePC();
         });
       } else {
-        window.open(location.href, "STI_Admin_PremierPlan", "popup=yes,width=620,height=740");
+        if (typeof window.basculerPleinEcranSansAdressePC === "function") window.basculerPleinEcranSansAdressePC();
       }
     };
 
@@ -9763,6 +9778,7 @@
       if (clEl) clEl.onclick = function () { bSplit.click(); };
     };
 
+    bar.appendChild(btnFsAdm);
     bar.appendChild(btnPin);
     bar.appendChild(sep);
     bar.appendChild(bOut);
