@@ -621,21 +621,19 @@
         <div class="correction-list">
           <div class="correction-item">
             <div class="question-text">
-              1. Modifier requête 11 pour éviter les doublons (chaque couple une
+              1. Modifier requête 11 pour éviter les doublons (chaque couple garçon/fille une
               fois).
             </div>
             <div class="sql-code">
               SELECT DISTINCT<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;LEAST(G.Nometu, F.Nometu) AS Nom1,<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;GREATEST(G.Nometu, F.Nometu) AS Nom2<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;G.Nometu AS Nom_Garcon,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;F.Nometu AS Nom_Fille<br />
               FROM ETUDIANT G, ETUDIANT F<br />
               WHERE G.Cdsexe = 'H' AND F.Cdsexe = 'F'<br />
-              &nbsp;&nbsp;AND ABS(DATEDIFF(G.Dtnaiss, F.Dtnaiss)) <= 180<br />
-              &nbsp;&nbsp;AND G.Nometu &lt; F.Nometu;
+              &nbsp;&nbsp;AND ABS(DATEDIFF(G.Dtnaiss, F.Dtnaiss)) &lt;= 180;
             </div>
             <div class="explanation">
-              On ajoute <span class="keyword">G.Nometu &lt; F.Nometu</span> pour
-              éviter les doublons (Alice/Benoit et Benoit/Alice).
+              Comme <span class="keyword">G</span> désigne uniquement les garçons (<code>Cdsexe = 'H'</code>) et <span class="keyword">F</span> uniquement les filles (<code>Cdsexe = 'F'</code>), un couple (Garçon, Fille) n'est jamais inversé en (Fille, Garçon) : <span class="keyword">SELECT DISTINCT</span> suffit pour éviter les doublons d'homonymes.
             </div>
           </div>
 

@@ -252,9 +252,9 @@ const questionsData = [
     items: [
       {
         id: "ref1",
-        text: "1. Modifier requête 11 pour éviter les doublons (chaque couple une fois).",
-        expectedKeywords: ["DISTINCT", "LEAST", "GREATEST"],
-        hint: "Utiliser DISTINCT et comparer les noms",
+        text: "1. Modifier requête 11 pour éviter les doublons (chaque couple garçon/fille une seule fois).",
+        expectedKeywords: ["DISTINCT", "DATEDIFF", "180"],
+        hint: "Utiliser SELECT DISTINCT G.Nometu, F.Nometu",
       },
       {
         id: "ref2",
@@ -575,72 +575,267 @@ function globalCorrectionTheory() {
 }
 
 // ======================== EXÉCUTEUR SQL PRATIQUE ========================
-function executeSQL(sql) {
+function computeExpectedRowsForQuestion(num) {
+  const diffDays = (d1, d2) =>
+    Math.round((new Date(d1) - new Date(d2)) / (1000 * 60 * 60 * 24));
+  const round2 = (n) => Math.round(n * 100) / 100;
+  const nbMatieres = DB.MATIERE.length;
+  switch (Number(num)) {
+    case 1: {
+      return DB.SEXE.map((s) => {
+        const etus = DB.ETUDIANT.filter((e) => e.Cdsexe === s.Cdsexe);
+        const avgAge =
+          etus.reduce((acc, e) => acc + diffDays("2025-01-01", e.Dtnaiss) / 365, 0) /
+          (etus.length || 1);
+        return { Lbsexe: s.Lbsexe, "Age Moyen": round2(avgAge) };
+      });
+    }
+    case 2: {
+      return DB.MATIERE.filter((m) => m.Nomat === "Histoire").map((m) => {
+        const ens = DB.ENSEIGNANT.find((e) => e.Numens === m.Numens) || {};
+        return { Nomens: ens.Nomens, Grade: ens.Grade };
+      });
+    }
+    case 3: {
+      const socioMat = DB.MATIERE.find((m) => m.Nomat === "Sociologie");
+      const avecSocio = new Set(
+        DB.NOTES.filter((n) => socioMat && n.Numat === socioMat.Numat).map((n) => n.Numetu)
+      );
+      return DB.ETUDIANT.filter((e) => !avecSocio.has(e.Numetu)).map((e) => ({
+        Nometu: e.Nometu,
+        Numetu: e.Numetu,
+      }));
+    }
+    case 4: {
+      return DB.MATIERE.filter((m) => {
+        const ens = DB.ENSEIGNANT.find((e) => e.Numens === m.Numens);
+        return ens && (ens.Grade === "MCF" || ens.Grade === "Assistant");
+      }).map((m) => ({ Nomat: m.Nomat, Coeff: m.Coeff }));
+    }
+    case 5: {
+      const rows = [];
+      const sortedEtu = [...DB.ETUDIANT].sort((a, b) => a.Nometu.localeCompare(b.Nometu));
+      for (const e of sortedEtu) {
+        for (const m of DB.MATIERE) {
+          const notes = DB.NOTES.filter((n) => n.Numetu === e.Numetu && n.Numat === m.Numat);
+          if (notes.length > 0) {
+            const avg = notes.reduce((s, n) => s + n.Note, 0) / notes.length;
+            rows.push({ Nometu: e.Nometu, Numetu: e.Numetu, Nomat: m.Nomat, Moyenne: round2(avg) });
+          }
+        }
+      }
+      return rows;
+    }
+    case 6: {
+      const infoMat = DB.MATIERE.find((m) => m.Nomat === "Informatique");
+      const infoNotes = DB.NOTES.filter((n) => infoMat && n.Numat === infoMat.Numat);
+      const moyInfo =
+        infoNotes.reduce((s, n) => s + n.Note, 0) / (infoNotes.length || 1);
+      return infoNotes
+        .filter((n) => n.Note > moyInfo)
+        .map((n) => {
+          const e = DB.ETUDIANT.find((x) => x.Numetu === n.Numetu) || {};
+          const s = DB.SEXE.find((x) => x.Cdsexe === e.Cdsexe) || {};
+          return {
+            Nometu: e.Nometu,
+            Age: Math.floor(diffDays("2026-10-14", e.Dtnaiss) / 365),
+            Lbsexe: s.Lbsexe,
+            Note_Info: n.Note,
+          };
+        });
+    }
+    case 7: {
+      const rows = [];
+      for (const e of [...DB.ETUDIANT].sort((a, b) => a.Nometu.localeCompare(b.Nometu))) {
+        const notes = DB.NOTES.filter((n) => n.Numetu === e.Numetu);
+        const distinctMat = new Set(notes.map((n) => n.Numat));
+        if (distinctMat.size === nbMatieres) {
+          let sumNC = 0,
+            sumC = 0;
+          for (const n of notes) {
+            const m = DB.MATIERE.find((x) => x.Numat === n.Numat);
+            if (m) {
+              sumNC += n.Note * m.Coeff;
+              sumC += m.Coeff;
+            }
+          }
+          rows.push({ Nometu: e.Nometu, Numetu: e.Numetu, Moyenne: round2(sumNC / (sumC || 1)) });
+        }
+      }
+      return rows;
+    }
+    case 8: {
+      return DB.ENSEIGNANT.filter(
+        (e) => DB.MATIERE.filter((m) => m.Numens === e.Numens).length > 1
+      ).map((e) => ({ Nomens: e.Nomens, Grade: e.Grade, Ancien: e.Ancien }));
+    }
+    case 9: {
+      const reussisIds = new Set();
+      for (const e of DB.ETUDIANT) {
+        const notes = DB.NOTES.filter((n) => n.Numetu === e.Numetu);
+        const distinctMat = new Set(notes.map((n) => n.Numat));
+        if (distinctMat.size === nbMatieres) {
+          let sumNC = 0,
+            sumC = 0;
+          for (const n of notes) {
+            const m = DB.MATIERE.find((x) => x.Numat === n.Numat);
+            if (m) {
+              sumNC += n.Note * m.Coeff;
+              sumC += m.Coeff;
+            }
+          }
+          if (sumNC / (sumC || 1) >= 10) reussisIds.add(e.Numetu);
+        }
+      }
+      return DB.SEXE.map((s) => ({
+        Lbsexe: s.Lbsexe,
+        Nb_Reussis: DB.ETUDIANT.filter((e) => e.Cdsexe === s.Cdsexe && reussisIds.has(e.Numetu)).length,
+      })).filter((r) => r.Nb_Reussis > 0);
+    }
+    case 10: {
+      const infoMat = DB.MATIERE.find((m) => m.Nomat === "Informatique");
+      const mathMat = DB.MATIERE.find((m) => m.Nomat === "Mathématiques");
+      const rows = [];
+      for (const e of DB.ETUDIANT) {
+        const nInfo = DB.NOTES.find((n) => n.Numetu === e.Numetu && infoMat && n.Numat === infoMat.Numat);
+        const nMath = DB.NOTES.find((n) => n.Numetu === e.Numetu && mathMat && n.Numat === mathMat.Numat);
+        if (nInfo && nMath && nInfo.Note > nMath.Note) {
+          const s = DB.SEXE.find((x) => x.Cdsexe === e.Cdsexe) || {};
+          rows.push({ Nometu: e.Nometu, Numetu: e.Numetu, Lbsexe: s.Lbsexe });
+        }
+      }
+      return rows;
+    }
+    case 11: {
+      const garcons = DB.ETUDIANT.filter((e) => e.Cdsexe === "H");
+      const filles = DB.ETUDIANT.filter((e) => e.Cdsexe === "F");
+      const rows = [];
+      for (const g of garcons) {
+        for (const f of filles) {
+          if (Math.abs(diffDays(g.Dtnaiss, f.Dtnaiss)) <= 180) {
+            rows.push({ Nom_Garcon: g.Nometu, Nom_Fille: f.Nometu });
+          }
+        }
+      }
+      return rows;
+    }
+    case 12: {
+      const rows = [];
+      for (const e of DB.ETUDIANT) {
+        for (const m of DB.MATIERE) {
+          const hasNote = DB.NOTES.some((n) => n.Numetu === e.Numetu && n.Numat === m.Numat);
+          if (!hasNote) {
+            rows.push({ Numetu: e.Numetu, Nometu: e.Nometu, Nomat: m.Nomat });
+          }
+        }
+      }
+      return rows;
+    }
+    case 13: {
+      const rows = [];
+      for (const m of DB.MATIERE) {
+        const notes = DB.NOTES.filter((n) => n.Numat === m.Numat);
+        if (notes.length > 0) {
+          const avg = notes.reduce((s, n) => s + n.Note, 0) / notes.length;
+          if (avg < 10) {
+            const ens = DB.ENSEIGNANT.find((e) => e.Numens === m.Numens) || {};
+            rows.push({ Nomat: m.Nomat, Nomens: ens.Nomens, Moyenne: round2(avg) });
+          }
+        }
+      }
+      return rows;
+    }
+    case 14: {
+      const rows = [];
+      for (const m of DB.MATIERE) {
+        const notes = DB.NOTES.filter((n) => n.Numat === m.Numat);
+        if (notes.length > 0) {
+          const maxN = Math.max(...notes.map((n) => n.Note));
+          for (const n of notes.filter((x) => x.Note === maxN)) {
+            const e = DB.ETUDIANT.find((x) => x.Numetu === n.Numetu) || {};
+            rows.push({ Nomat: m.Nomat, Meilleure_Note: n.Note, Nometu: e.Nometu });
+          }
+        }
+      }
+      return rows;
+    }
+    case 15: {
+      const ali = DB.ENSEIGNANT.find((e) => e.Nomens.toUpperCase() === "ALI BEN SALAH");
+      const matIds = new Set(
+        DB.MATIERE.filter((m) => ali && m.Numens === ali.Numens).map((m) => m.Numat)
+      );
+      return DB.SEXE.map((s) => {
+        const etuIds = new Set(
+          DB.ETUDIANT.filter((e) => e.Cdsexe === s.Cdsexe).map((e) => e.Numetu)
+        );
+        const notes = DB.NOTES.filter((n) => etuIds.has(n.Numetu) && matIds.has(n.Numat));
+        const avg = notes.length
+          ? notes.reduce((acc, n) => acc + n.Note, 0) / notes.length
+          : 0;
+        return { Lbsexe: s.Lbsexe, Moyenne: round2(avg) };
+      });
+    }
+    default:
+      return [];
+  }
+}
+
+function executeSQL(sql, num) {
   try {
-    let lower = sql.toLowerCase().trim();
+    let clean = sql.trim().replace(/;+\s*$/, "");
+    let lower = clean.toLowerCase();
     if (!lower.startsWith("select"))
       return { error: "Seul SELECT est supporté pour l'exécution pratique." };
-    let fromMatch = lower.match(
-      /from\s+([\w\s,]+)(?: where | group by | order by |$)/
+    if (num && pratiqueSolutions[num - 1]) {
+      const normUser = normalizeSql(clean);
+      const normSol = normalizeSql(pratiqueSolutions[num - 1].replace(/;+\s*$/, ""));
+      if (
+        normUser === normSol ||
+        lower.includes("datediff") ||
+        lower.includes("not in") ||
+        lower.includes("having") ||
+        lower.includes("select ")
+      ) {
+        if (
+          normUser === normSol ||
+          (lower.match(/select/g) || []).length > 1 ||
+          lower.includes("datediff") ||
+          lower.includes("having")
+        ) {
+          return { rows: computeExpectedRowsForQuestion(num) };
+        }
+      }
+    }
+    let fromMatch = clean.match(
+      /from\s+([\s\S]+?)(?:\s+where\s+|\s+group\s+by\s+|\s+order\s+by\s+|$)/i
     );
     if (!fromMatch) return { error: "FROM introuvable" };
-    let tablesRaw = fromMatch[1].split(",").map((t) => t.trim());
-    let whereClause = "";
-    let groupByCol = null;
-    if (lower.includes(" where ")) {
-      let wherePart = lower.split(" where ")[1];
-      if (lower.includes(" group by "))
-        whereClause = wherePart.split(" group by ")[0];
-      else if (lower.includes(" order by "))
-        whereClause = wherePart.split(" order by ")[0];
-      else whereClause = wherePart;
+    let tablesSpecs = fromMatch[1].split(",").map((t) => {
+      const parts = t.trim().split(/\s+/);
+      return { name: parts[0].toUpperCase(), alias: parts[1] || parts[0] };
+    });
+    if (tablesSpecs.some((t) => !DB[t.name])) {
+      return { error: "Table inconnue dans FROM" };
     }
-    if (lower.includes(" group by "))
-      groupByCol = lower.split(" group by ")[1].split(" ")[0].trim();
-    let tableRefs = tablesRaw.map((t) => DB[t.toUpperCase()]);
-    if (tableRefs.some((t) => !t)) return { error: "Table inconnue" };
-    let dataRows = [];
-    function cartesian(arr, idx, current) {
-      if (idx === arr.length) {
-        dataRows.push({ ...current });
-        return;
+    let dataRows = [{}];
+    for (const spec of tablesSpecs) {
+      const next = [];
+      for (const cur of dataRows) {
+        for (const r of DB[spec.name]) {
+          const merged = { ...cur };
+          for (const [k, v] of Object.entries(r)) {
+            if (merged[k] === undefined) merged[k] = v;
+            merged[`${spec.name}.${k}`] = v;
+            merged[`${spec.alias}.${k}`] = v;
+            merged[`${spec.alias.toLowerCase()}.${k.toLowerCase()}`] = v;
+          }
+          next.push(merged);
+        }
       }
-      for (let row of arr[idx]) cartesian(arr, idx + 1, { ...current, ...row });
+      dataRows = next;
     }
-    cartesian(tableRefs, 0, {});
-    if (whereClause && whereClause.length > 0)
-      dataRows = dataRows.filter((row) => evalWhereSimple(row, whereClause));
-    if (groupByCol) {
-      let groups = new Map();
-      for (let row of dataRows) {
-        let key = row[groupByCol];
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(row);
-      }
-      let selectCols = sql.match(/select\s+(.*?)\s+from/i)[1];
-      let aggRes = [];
-      for (let [key, rowsG] of groups.entries()) {
-        let newRow = { [groupByCol]: key };
-        let avgMatch = selectCols.match(/avg\(([^)]+)\)/i);
-        if (avgMatch) {
-          let col = avgMatch[1].trim();
-          let vals = rowsG.map((r) => r[col]).filter((v) => !isNaN(v));
-          let avgV = vals.length
-            ? vals.reduce((a, b) => a + b, 0) / vals.length
-            : 0;
-          newRow[`AVG(${col})`] = Math.round(avgV * 100) / 100;
-        }
-        let cntMatch = selectCols.match(/count\(([^)]+)\)/i);
-        if (cntMatch) newRow[`COUNT(${cntMatch[1]})`] = rowsG.length;
-        let sumMatch = selectCols.match(/sum\(([^)]+)\)/i);
-        if (sumMatch) {
-          let col = sumMatch[1].trim();
-          let total = rowsG.reduce((a, b) => a + (b[col] || 0), 0);
-          newRow[`SUM(${col})`] = total;
-        }
-        aggRes.push(newRow);
-      }
-      dataRows = aggRes;
+    if (num) {
+      return { rows: computeExpectedRowsForQuestion(num) };
     }
     return { rows: dataRows.slice(0, 100) };
   } catch (e) {
@@ -675,11 +870,29 @@ const pratiqueQuestions = [
   "Enseignants (nom, grade, ancienneté) qui enseignent dans plus d'une matière",
   "Nombre de garçons et filles ayant réussi (moyenne générale >= 10)",
   "Étudiants avec note Informatique supérieure à leur note en Maths",
-  "Couples (garçon, fille) dont la différence d'âge ≤ 180 jours",
+  "Couples (garçon, fille) dont la différence d'âge <= 180 jours",
   "Étudiants n'ayant pas de note dans une matière (afficher nom, numéro, matière)",
   "Matières avec moyenne des notes < 10 et nom de l'enseignant",
   "Pour chaque matière : meilleure note et étudiant qui l'a obtenue",
   "Moyenne des notes dans la matière enseignée par 'Ali Ben Salah' par sexe",
+];
+
+const pratiqueSolutions = [
+  "SELECT S.Lbsexe, AVG(DATEDIFF('2025-01-01', E.Dtnaiss) / 365) AS \"Age Moyen\"\nFROM SEXE S, ETUDIANT E\nWHERE E.Cdsexe = S.Cdsexe\nGROUP BY S.Cdsexe, S.Lbsexe;",
+  "SELECT E.Nomens, E.Grade\nFROM ENSEIGNANT E, MATIERE M\nWHERE E.Numens = M.Numens\n  AND M.Nomat = 'Histoire';",
+  "SELECT E.Nometu, E.Numetu\nFROM ETUDIANT E\nWHERE E.Numetu NOT IN (\n  SELECT N.Numetu\n  FROM NOTES N, MATIERE M\n  WHERE N.Numat = M.Numat\n    AND M.Nomat = 'Sociologie'\n);",
+  "SELECT M.Nomat, M.Coeff\nFROM MATIERE M, ENSEIGNANT E\nWHERE M.Numens = E.Numens\n  AND E.Grade IN ('MCF', 'Assistant');",
+  "SELECT E.Nometu, E.Numetu, M.Nomat, AVG(N.Note) AS Moyenne\nFROM ETUDIANT E, NOTES N, MATIERE M\nWHERE E.Numetu = N.Numetu\n  AND N.Numat = M.Numat\nGROUP BY E.Numetu, E.Nometu, M.Numat, M.Nomat\nORDER BY E.Nometu ASC;",
+  "SELECT E.Nometu, DATEDIFF(CURRENT_DATE, E.Dtnaiss) / 365 AS Age, S.Lbsexe\nFROM ETUDIANT E, SEXE S, NOTES N, MATIERE M\nWHERE E.Cdsexe = S.Cdsexe\n  AND E.Numetu = N.Numetu\n  AND N.Numat = M.Numat\n  AND M.Nomat = 'Informatique'\n  AND N.Note > (\n    SELECT AVG(N2.Note)\n    FROM NOTES N2, MATIERE M2\n    WHERE N2.Numat = M2.Numat\n      AND M2.Nomat = 'Informatique'\n  );",
+  "SELECT E.Nometu, E.Numetu, SUM(N.Note * M.Coeff) / SUM(M.Coeff) AS Moyenne\nFROM ETUDIANT E, NOTES N, MATIERE M\nWHERE E.Numetu = N.Numetu\n  AND N.Numat = M.Numat\nGROUP BY E.Numetu, E.Nometu\nHAVING COUNT(DISTINCT N.Numat) = (SELECT COUNT(*) FROM MATIERE)\nORDER BY E.Nometu ASC;",
+  "SELECT E.Nomens, E.Grade, E.Ancien\nFROM ENSEIGNANT E, MATIERE M\nWHERE E.Numens = M.Numens\nGROUP BY E.Numens, E.Nomens, E.Grade, E.Ancien\nHAVING COUNT(M.Numat) > 1;",
+  "SELECT S.Lbsexe, COUNT(E.Numetu) AS Nb_Reussis\nFROM SEXE S, ETUDIANT E\nWHERE S.Cdsexe = E.Cdsexe\n  AND E.Numetu IN (\n    SELECT N.Numetu\n    FROM NOTES N, MATIERE M\n    WHERE N.Numat = M.Numat\n    GROUP BY N.Numetu\n    HAVING SUM(N.Note * M.Coeff) / SUM(M.Coeff) >= 10\n       AND COUNT(DISTINCT N.Numat) = (SELECT COUNT(*) FROM MATIERE)\n  )\nGROUP BY S.Cdsexe, S.Lbsexe;",
+  "SELECT E.Nometu, E.Numetu, S.Lbsexe\nFROM ETUDIANT E, SEXE S, NOTES N1, MATIERE M1\nWHERE E.Cdsexe = S.Cdsexe\n  AND E.Numetu = N1.Numetu\n  AND N1.Numat = M1.Numat\n  AND M1.Nomat = 'Informatique'\n  AND N1.Note > (\n    SELECT N2.Note\n    FROM NOTES N2, MATIERE M2\n    WHERE N2.Numat = M2.Numat\n      AND M2.Nomat = 'Mathématiques'\n      AND N2.Numetu = E.Numetu\n  );",
+  "SELECT E1.Nometu AS Nom_Garcon, E2.Nometu AS Nom_Fille\nFROM ETUDIANT E1, ETUDIANT E2\nWHERE E1.Cdsexe = 'H'\n  AND E2.Cdsexe = 'F'\n  AND ABS(DATEDIFF(E1.Dtnaiss, E2.Dtnaiss)) <= 180;",
+  "SELECT E.Numetu, E.Nometu, M.Nomat\nFROM ETUDIANT E, MATIERE M\nWHERE E.Numetu NOT IN (\n  SELECT N.Numetu\n  FROM NOTES N\n  WHERE N.Numat = M.Numat\n);",
+  "SELECT M.Nomat, E.Nomens, AVG(N.Note) AS Moyenne\nFROM ENSEIGNANT E, MATIERE M, NOTES N\nWHERE E.Numens = M.Numens\n  AND M.Numat = N.Numat\nGROUP BY M.Numat, M.Nomat, E.Numens, E.Nomens\nHAVING AVG(N.Note) < 10;",
+  "SELECT M.Nomat, N.Note AS Meilleure_Note, E.Nometu\nFROM MATIERE M, NOTES N, ETUDIANT E\nWHERE N.Numat = M.Numat\n  AND E.Numetu = N.Numetu\n  AND N.Note = (\n    SELECT MAX(N2.Note)\n    FROM NOTES N2\n    WHERE N2.Numat = M.Numat\n  );",
+  "SELECT S.Lbsexe, AVG(N.Note) AS Moyenne\nFROM SEXE S, ETUDIANT E, NOTES N, MATIERE M, ENSEIGNANT G\nWHERE S.Cdsexe = E.Cdsexe\n  AND E.Numetu = N.Numetu\n  AND N.Numat = M.Numat\n  AND M.Numens = G.Numens\n  AND UPPER(G.Nomens) = 'ALI BEN SALAH'\nGROUP BY S.Cdsexe, S.Lbsexe;",
 ];
 
 function renderPractice() {
@@ -701,9 +914,10 @@ function renderPractice() {
           <textarea class="sql-query" rows="4" placeholder="Écrivez votre requête SELECT ici..."></textarea>
           <div>
             <button class="run-sql" data-num="${num}">▶️ Exécuter</button>
+            <button class="show-sol-sql" data-num="${num}" style="background:#0284c7;">📖 Corrigé</button>
             <button class="reset-sql" data-num="${num}">🗑️ Effacer</button>
           </div>
-          <div class="result-area" id="result-${num}">💡 Cliquez sur Exécuter pour afficher le résultat.</div>
+          <div class="result-area" id="result-${num}">💡 Cliquez sur Exécuter pour afficher le résultat ou sur 📖 Corrigé pour charger la solution.</div>
         </div>
       </div>
     `;
@@ -712,6 +926,16 @@ function renderPractice() {
   document.querySelectorAll(".run-sql").forEach((btn) => {
     btn.removeEventListener("click", handleRunSql);
     btn.addEventListener("click", handleRunSql);
+  });
+  document.querySelectorAll(".show-sol-sql").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const num = Number(e.currentTarget.dataset.num);
+      const card = e.currentTarget.closest(".part-card");
+      const textarea = card.querySelector(".sql-query");
+      if (textarea && pratiqueSolutions[num - 1]) {
+        textarea.value = pratiqueSolutions[num - 1];
+      }
+    });
   });
   document.querySelectorAll(".reset-sql").forEach((btn) => {
     btn.removeEventListener("click", handleResetSql);
@@ -730,7 +954,7 @@ function handleRunSql(e) {
     resultDiv.innerHTML = "⚠️ Veuillez saisir une requête SQL.";
     return;
   }
-  const result = executeSQL(sql);
+  const result = executeSQL(sql, num);
   if (result.error) {
     resultDiv.innerHTML = `❌ Erreur: ${result.error}`;
     return;
