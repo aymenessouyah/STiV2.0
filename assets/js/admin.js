@@ -9650,11 +9650,96 @@
     bIn.style.cssText = "padding:5px 8px;border-radius:999px;border:1.5px solid #23201a;background:#fff3b0;color:#23201a;font:900 11.5px/1 inherit;cursor:pointer;";
     bIn.onclick = function () { appliquerZ(lireZ() + 10); };
 
+    var sep2 = document.createElement("span");
+    sep2.style.cssText = "width:1.5px;height:18px;background:rgba(35,32,26,0.22);margin:0 2px;";
+
+    /* 🔴 Pointeur Laser & Guide-ligne sur admin.html */
+    var modeLaserAdm = 0;
+    var ovLaserAdm = null;
+    var dotLaserAdm = null;
+    var lineLaserAdm = null;
+    var bLaser = document.createElement("button");
+    bLaser.type = "button";
+    bLaser.innerHTML = "🔴 <span>Laser</span>";
+    bLaser.title = "Spécial Vidéo-projecteur : 1er clic = Pointeur Laser rouge | 2e clic = Règle lumineuse Guide-ligne | 3e clic = Désactiver";
+    bLaser.style.cssText = "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    bLaser.onclick = function () {
+      if (!ovLaserAdm) {
+        ovLaserAdm = document.createElement("div");
+        ovLaserAdm.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:2147483646;overflow:hidden;display:none;";
+        dotLaserAdm = document.createElement("div");
+        dotLaserAdm.style.cssText = "position:fixed;left:-100px;top:-100px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle,#fff 0%,#ff2a2a 42%,rgba(239,68,68,0.88) 72%,rgba(239,68,68,0) 100%);box-shadow:0 0 14px 5px rgba(239,68,68,0.92),0 0 30px 10px rgba(220,38,38,0.55);transform:translate(-50%,-50%);pointer-events:none;display:none;";
+        lineLaserAdm = document.createElement("div");
+        lineLaserAdm.style.cssText = "position:fixed;left:0;right:0;top:-100px;height:36px;transform:translateY(-50%);background:rgba(255,235,59,0.22);border-top:2px solid #f59e0b;border-bottom:2px solid #f59e0b;box-shadow:0 0 0 9999px rgba(13,21,38,0.38),0 0 18px rgba(245,158,11,0.65);pointer-events:none;display:none;";
+        ovLaserAdm.appendChild(dotLaserAdm);
+        ovLaserAdm.appendChild(lineLaserAdm);
+        document.body.appendChild(ovLaserAdm);
+        window.addEventListener("mousemove", function (ev) {
+          if (modeLaserAdm === 1) { dotLaserAdm.style.left = ev.clientX + "px"; dotLaserAdm.style.top = ev.clientY + "px"; }
+          else if (modeLaserAdm === 2) { lineLaserAdm.style.top = ev.clientY + "px"; }
+        }, { passive: true });
+      }
+      modeLaserAdm = (modeLaserAdm + 1) % 3;
+      if (modeLaserAdm === 0) {
+        ovLaserAdm.style.display = "none"; dotLaserAdm.style.display = "none"; lineLaserAdm.style.display = "none";
+        bLaser.style.background = "#fffdf7"; bLaser.style.color = "#23201a"; bLaser.innerHTML = "🔴 <span>Laser</span>";
+      } else if (modeLaserAdm === 1) {
+        ovLaserAdm.style.display = "block"; dotLaserAdm.style.display = "block"; lineLaserAdm.style.display = "none";
+        bLaser.style.background = "#dc2626"; bLaser.style.color = "#fff"; bLaser.innerHTML = "🔴 <span>Laser actif</span>";
+      } else {
+        ovLaserAdm.style.display = "block"; dotLaserAdm.style.display = "none"; lineLaserAdm.style.display = "block";
+        bLaser.style.background = "#d97706"; bLaser.style.color = "#fff"; bLaser.innerHTML = "📏 <span>Guide-ligne</span>";
+      }
+    };
+
+    /* ◫ Mode Écran Scindé « Côte-à-côte » (2 vues) sur admin.html */
+    var splitAdm = null;
+    var bSplit = document.createElement("button");
+    bSplit.type = "button";
+    bSplit.innerHTML = "◫ <span>2 vues</span>";
+    bSplit.title = "Mode Écran Scindé Côte-à-côte : ouvrir une 2e vue à droite (Accueil, Bac Pratique, Cours…)";
+    bSplit.style.cssText = "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    bSplit.onclick = function () {
+      if (splitAdm) {
+        splitAdm.remove();
+        splitAdm = null;
+        document.documentElement.style.width = "";
+        bSplit.style.background = "#fffdf7"; bSplit.style.color = "#23201a"; bSplit.innerHTML = "◫ <span>2 vues</span>";
+        return;
+      }
+      bSplit.style.background = "#0284c7"; bSplit.style.color = "#fff"; bSplit.innerHTML = "◫ <span>2 vues actif</span>";
+      document.documentElement.style.width = "52vw";
+      splitAdm = document.createElement("div");
+      splitAdm.style.cssText = "position:fixed;top:0;right:0;bottom:0;width:48vw;z-index:2147483640;background:#fffdf7;border-left:3px solid #23201a;box-shadow:-6px 0 24px rgba(16,23,40,0.28);display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;";
+      splitAdm.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 10px;background:#101728;color:#fffdf7;border-bottom:2px solid #f4511e;">' +
+          '<select id="adm-split-sel" style="flex:1;padding:5px 8px;border-radius:8px;border:1.5px solid #475569;background:#1e293b;color:#fffdf7;font:800 12px/1.2 inherit;">' +
+            '<option value="' + RACINE + 'index.html">🏠 Accueil STI V2.0</option>' +
+            '<option value="' + RACINE + 'bac-pratique.html">🧪 Bac Pratique — Sujets &amp; Projets STI</option>' +
+            '<option value="' + RACINE + 'exercices/series-exercices.html">📚 Séries d\'exercices</option>' +
+            '<option value="' + RACINE + 'cours/javascript.html">⚡ Cours JavaScript</option>' +
+            '<option value="' + RACINE + 'cours/php.html">🐘 Cours PHP &amp; MySQLi</option>' +
+            '<option value="' + RACINE + 'cours/sql.html">🗄️ Cours SQL</option>' +
+          '</select>' +
+          '<button type="button" id="adm-split-close" style="border:none;background:#c0392b;color:#fff;border-radius:6px;padding:4px 9px;font-weight:900;font-size:11.5px;cursor:pointer;">✕</button>' +
+        '</div>' +
+        '<iframe id="adm-split-fr" src="' + RACINE + 'index.html" style="flex:1;width:100%;border:0;background:#fff;"></iframe>';
+      document.body.appendChild(splitAdm);
+      var selEl = document.getElementById("adm-split-sel");
+      var frEl = document.getElementById("adm-split-fr");
+      if (selEl && frEl) selEl.onchange = function () { frEl.src = selEl.value; };
+      var clEl = document.getElementById("adm-split-close");
+      if (clEl) clEl.onclick = function () { bSplit.click(); };
+    };
+
     bar.appendChild(btnPin);
     bar.appendChild(sep);
     bar.appendChild(bOut);
     bar.appendChild(bLbl);
     bar.appendChild(bIn);
+    bar.appendChild(sep2);
+    bar.appendChild(bLaser);
+    bar.appendChild(bSplit);
     document.body.appendChild(bar);
     var z0 = lireZ();
     if (z0 !== 100) appliquerZ(z0);

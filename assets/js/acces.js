@@ -4993,7 +4993,7 @@
     }
     /* Compenser le zoom sur les contrôles flottants pour qu'ils gardent une taille fixe à l'écran */
     var inv = z === 100 ? "" : ((10000 / z).toFixed(2) + "%");
-    var idsFlottants = ["sti-pc-win-tools", "sti-btn-messenger-global", "sti-roue-wrap", "sti-badge-admin-flottant"];
+    var idsFlottants = ["sti-pc-win-tools", "sti-btn-messenger-global", "sti-roue-wrap", "sti-badge-admin-flottant", "sti-split-view-panel", "sti-laser-overlay"];
     for (var i = 0; i < idsFlottants.length; i++) {
       var elF = document.getElementById(idsFlottants[i]);
       if (elF) elF.style.zoom = inv;
@@ -5125,6 +5125,410 @@
     } catch (e) {}
   }
 
+  /* ---------- Outil 4 : 🔴 Pointeur Laser & Projecteur de ligne (Spécial Vidéo-projecteur) ---------- */
+  var modeLaserSTI = 0; /* 0 = désactivé, 1 = Pointeur Laser rouge, 2 = Règle lumineuse Guide-ligne */
+  var laserOverlayEl = null;
+  var laserDotEl = null;
+  var laserLineEl = null;
+
+  function creerOverlayLaserSTI() {
+    if (laserOverlayEl && document.body.contains(laserOverlayEl)) return;
+    laserOverlayEl = document.createElement("div");
+    laserOverlayEl.id = "sti-laser-overlay";
+    laserOverlayEl.className = "sti-no-print";
+    laserOverlayEl.style.cssText =
+      "position:fixed;inset:0;pointer-events:none;z-index:2147483646;overflow:hidden;display:none;";
+
+    /* Pointeur Laser rouge lumineux */
+    laserDotEl = document.createElement("div");
+    laserDotEl.style.cssText =
+      "position:fixed;left:-100px;top:-100px;width:22px;height:22px;border-radius:50%;" +
+      "background:radial-gradient(circle, #ffffff 0%, #ff2a2a 42%, rgba(239,68,68,0.88) 72%, rgba(239,68,68,0) 100%);" +
+      "box-shadow:0 0 14px 5px rgba(239,68,68,0.92), 0 0 30px 10px rgba(220,38,38,0.55);" +
+      "transform:translate(-50%,-50%);pointer-events:none;display:none;";
+
+    /* Règle lumineuse horizontale Guide-ligne pour lire le code au projecteur */
+    laserLineEl = document.createElement("div");
+    laserLineEl.style.cssText =
+      "position:fixed;left:0;right:0;top:-100px;height:36px;transform:translateY(-50%);" +
+      "background:rgba(255,235,59,0.22);border-top:2px solid #f59e0b;border-bottom:2px solid #f59e0b;" +
+      "box-shadow:0 0 0 9999px rgba(13,21,38,0.38), 0 0 18px rgba(245,158,11,0.65);" +
+      "pointer-events:none;display:none;";
+
+    laserOverlayEl.appendChild(laserDotEl);
+    laserOverlayEl.appendChild(laserLineEl);
+    (document.body || document.documentElement).appendChild(laserOverlayEl);
+
+    function majPosLaser(clientX, clientY) {
+      if (!modeLaserSTI) return;
+      if (modeLaserSTI === 1 && laserDotEl) {
+        laserDotEl.style.left = clientX + "px";
+        laserDotEl.style.top = clientY + "px";
+      } else if (modeLaserSTI === 2 && laserLineEl) {
+        laserLineEl.style.top = clientY + "px";
+      }
+    }
+
+    function ondeClicLaser(clientX, clientY) {
+      if (modeLaserSTI !== 1 || !laserOverlayEl) return;
+      var ring = document.createElement("div");
+      ring.style.cssText =
+        "position:fixed;left:" + clientX + "px;top:" + clientY + "px;width:14px;height:14px;border-radius:50%;" +
+        "border:3px solid #ef4444;transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:none;" +
+        "transition:transform 0.42s ease-out, opacity 0.42s ease-out;";
+      laserOverlayEl.appendChild(ring);
+      setTimeout(function () {
+        ring.style.transform = "translate(-50%,-50%) scale(3.4)";
+        ring.style.opacity = "0";
+      }, 15);
+      setTimeout(function () {
+        if (ring.parentNode) ring.parentNode.removeChild(ring);
+      }, 460);
+    }
+
+    window.addEventListener("mousemove", function (e) {
+      majPosLaser(e.clientX, e.clientY);
+    }, { passive: true });
+
+    window.addEventListener("mousedown", function (e) {
+      ondeClicLaser(e.clientX, e.clientY);
+    }, { passive: true });
+
+    window.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modeLaserSTI !== 0) {
+        appliquerModeLaserSTI(0);
+      }
+    });
+
+    /* Suivre aussi la souris au-dessus des iframes de même origine (énoncés, cours, 2e vue) */
+    setInterval(function () {
+      if (!modeLaserSTI) return;
+      var frames = document.querySelectorAll("iframe");
+      for (var i = 0; i < frames.length; i++) {
+        try {
+          var f = frames[i];
+          if (f.contentWindow && !f.contentWindow.__stiLaserBound) {
+            f.contentWindow.__stiLaserBound = true;
+            (function (frEl) {
+              frEl.contentWindow.addEventListener("mousemove", function (ev) {
+                var r = frEl.getBoundingClientRect();
+                majPosLaser(r.left + ev.clientX, r.top + ev.clientY);
+              }, { passive: true });
+              frEl.contentWindow.addEventListener("mousedown", function (ev) {
+                var r = frEl.getBoundingClientRect();
+                ondeClicLaser(r.left + ev.clientX, r.top + ev.clientY);
+              }, { passive: true });
+            })(f);
+          }
+        } catch (e) {}
+      }
+    }, 900);
+  }
+
+  function appliquerModeLaserSTI(nvMode) {
+    creerOverlayLaserSTI();
+    modeLaserSTI = nvMode % 3;
+    var btnL = document.getElementById("sti-btn-pc-laser");
+    if (modeLaserSTI === 0) {
+      laserOverlayEl.style.display = "none";
+      laserDotEl.style.display = "none";
+      laserLineEl.style.display = "none";
+      document.documentElement.style.cursor = "";
+      if (btnL) {
+        btnL.style.background = "#fffdf7";
+        btnL.style.color = "#23201a";
+        btnL.innerHTML = "🔴 <span>Laser</span>";
+      }
+    } else if (modeLaserSTI === 1) {
+      laserOverlayEl.style.display = "block";
+      laserDotEl.style.display = "block";
+      laserLineEl.style.display = "none";
+      if (btnL) {
+        btnL.style.background = "#dc2626";
+        btnL.style.color = "#ffffff";
+        btnL.innerHTML = "🔴 <span>Laser actif</span>";
+      }
+    } else if (modeLaserSTI === 2) {
+      laserOverlayEl.style.display = "block";
+      laserDotEl.style.display = "none";
+      laserLineEl.style.display = "block";
+      if (btnL) {
+        btnL.style.background = "#d97706";
+        btnL.style.color = "#ffffff";
+        btnL.innerHTML = "📏 <span>Guide-ligne</span>";
+      }
+    }
+    var z = obtenirZoomActuelSTI();
+    if (laserOverlayEl) {
+      laserOverlayEl.style.zoom = z === 100 ? "" : ((10000 / z).toFixed(2) + "%");
+    }
+  }
+
+  /* ---------- Outil 6 : ◫ Mode Écran Scindé « Côte-à-côte » (2 vues simultanées) ---------- */
+  var splitViewActifSTI = false;
+  var splitRatioDroiteSTI = 48; /* % de largeur pour la vue de droite */
+
+  function genererHtmlAnnexeOfficielleSTI() {
+    return (
+      '<div style="padding:16px 18px;font:500 13.5px/1.55 system-ui,-apple-system,\'Segoe UI\',sans-serif;color:#1e293b;background:#fffdf7;min-height:100%;">' +
+        '<div style="background:#101728;color:#fffdf7;padding:12px 14px;border-radius:12px;border:2px solid #23201a;margin-bottom:14px;">' +
+          '<div style="font-weight:900;font-size:15px;color:#ffd54f;">📑 Aide-mémoire Officiel Bac STI (4e SI)</div>' +
+          '<div style="font-size:12px;color:#cbd5e1;margin-top:3px;">Fonctions et syntaxes strictement conformes à l\'annexe officielle de l\'épreuve pratique.</div>' +
+        '</div>' +
+
+        '<div style="background:#fff8e1;border:2px solid #23201a;border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:3px 3px 0 #23201a;">' +
+          '<div style="font-weight:900;font-size:13.5px;color:#b45309;margin-bottom:6px;">⚡ 1. JavaScript — Chaînes, Tableaux & Contrôles</div>' +
+          '<div style="font-family:monospace;font-size:12.5px;display:grid;gap:5px;color:#1e293b;">' +
+            '<div><b>ch.length</b> : longueur de la chaîne <code>ch</code></div>' +
+            '<div><b>ch[i]</b> : caractère à l\'indice <code>i</code> (de <code>0</code> à <code>ch.length - 1</code>)</div>' +
+            '<div><b>ch.substring(d, f)</b> : sous-chaîne de <code>d</code> inclus à <code>f</code> exclu</div>' +
+            '<div><b>ch.indexOf(s)</b> / <b>ch.lastIndexOf(s)</b> : 1re / dernière position (<code>-1</code> si absent)</div>' +
+            '<div><b>ch.trim()</b> : supprime les espaces au début et à la fin</div>' +
+            '<div><b>ch.toUpperCase()</b> / <b>ch.toLowerCase()</b> : majuscules / minuscules</div>' +
+            '<div><b>ch.replace(anc, nouv)</b> : remplace une sous-chaîne</div>' +
+            '<div><b>String.fromCharCode(code)</b> : caractère de code ASCII <code>code</code></div>' +
+            '<div><b>isNaN(x)</b> : vrai si <code>x</code> n\'est pas un nombre | <b>Number(ch)</b>, <b>parseInt(ch)</b>, <b>parseFloat(ch)</b></div>' +
+            '<div><b>Différent de</b> : toujours <code>!=</code> &nbsp;|&nbsp; <b>ET / OU / NON</b> : <code>&amp;&amp;</code> / <code>||</code> / <code>!</code></div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div style="background:#eef2ff;border:2px solid #23201a;border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:3px 3px 0 #23201a;">' +
+          '<div style="font-weight:900;font-size:13.5px;color:#3730a3;margin-bottom:6px;">🐘 2. PHP &amp; MySQLi (procédural)</div>' +
+          '<div style="font-family:monospace;font-size:12.5px;display:grid;gap:5px;color:#1e293b;">' +
+            '<div><b>$con = mysqli_connect("localhost", "root", "", "bd") ;</b></div>' +
+            '<div><b>$res = mysqli_query($con, $req) ;</b></div>' +
+            '<div><b>mysqli_num_rows($res)</b> : nombre de lignes retournées (<code>SELECT</code>)</div>' +
+            '<div><b>$t = mysqli_fetch_array($res)</b> : récupère une ligne (<code>$t[0]</code> ou <code>$t["col"]</code>)</div>' +
+            '<div><b>mysqli_affected_rows($con)</b> : lignes touchées (<code>INSERT</code> / <code>UPDATE</code> / <code>DELETE</code>)</div>' +
+            '<div><b>mysqli_close($con) ;</b> : ferme la connexion</div>' +
+            '<div><b>$_POST["nom"]</b> / <b>$_GET["nom"]</b> &nbsp;|&nbsp; <b>isset($x)</b> &nbsp;|&nbsp; <b>empty($x)</b></div>' +
+          '</div>' +
+        '</div>' +
+
+        '<div style="background:#ecfdf5;border:2px solid #23201a;border-radius:12px;padding:12px 14px;box-shadow:3px 3px 0 #23201a;">' +
+          '<div style="font-weight:900;font-size:13.5px;color:#065f46;margin-bottom:6px;">🗄️ 3. SQL — Requêtes &amp; Contraintes</div>' +
+          '<div style="font-family:monospace;font-size:12.5px;display:grid;gap:5px;color:#1e293b;">' +
+            '<div><b>SELECT</b> col <b>FROM</b> tab <b>WHERE</b> cond <b>GROUP BY</b> c <b>ORDER BY</b> c <b>ASC|DESC</b> ;</div>' +
+            '<div><b>INSERT INTO</b> tab (c1, c2) <b>VALUES</b> (\'v1\', \'v2\') ;</div>' +
+            '<div><b>UPDATE</b> tab <b>SET</b> c1 = \'v1\' <b>WHERE</b> cond ;</div>' +
+            '<div><b>DELETE FROM</b> tab <b>WHERE</b> cond ;</div>' +
+            '<div><b>ALTER TABLE</b> tab <b>ADD CONSTRAINT</b> pk <b>PRIMARY KEY</b> (id) ;</div>' +
+            '<div><b>ALTER TABLE</b> tab <b>ADD CONSTRAINT</b> fk <b>FOREIGN KEY</b> (idE) <b>REFERENCES</b> parent(idP) ;</div>' +
+            '<div><b>CHECK</b> (col <b>!=</b> \'\' <b>AND</b> col <b>BETWEEN</b> a <b>AND</b> b)</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function appliquerLargeurSplitSTI(pctDroite) {
+    splitRatioDroiteSTI = Math.max(28, Math.min(70, Math.round(pctDroite)));
+    var panel = document.getElementById("sti-split-view-panel");
+    if (!panel) return;
+    panel.style.width = splitRatioDroiteSTI + "vw";
+    document.documentElement.style.width = (100 - splitRatioDroiteSTI) + "vw";
+    document.documentElement.style.overflowX = "hidden";
+  }
+
+  function basculerSplitViewSTI(btnSplit) {
+    var ex = document.getElementById("sti-split-view-panel");
+    if (splitViewActifSTI && ex) {
+      ex.remove();
+      splitViewActifSTI = false;
+      document.documentElement.style.width = "";
+      document.documentElement.style.overflowX = "";
+      if (btnSplit) {
+        btnSplit.style.background = "#fffdf7";
+        btnSplit.style.color = "#23201a";
+        btnSplit.innerHTML = "◫ <span>2 vues</span>";
+      }
+      return;
+    }
+
+    splitViewActifSTI = true;
+    if (btnSplit) {
+      btnSplit.style.background = "#0284c7";
+      btnSplit.style.color = "#ffffff";
+      btnSplit.innerHTML = "◫ <span>2 vues actif</span>";
+    }
+
+    /* Si un énoncé est ouvert en modale, on peut le charger directement dans la 2e vue à droite */
+    var urlModaleOuverte = "";
+    try {
+      var frMod = document.querySelector("#pdfModal.open #pdfFrame, #modal-doc-bac:not([style*='display: none']) #modal-doc-frame");
+      if (frMod && frMod.src && frMod.src !== "about:blank") {
+        urlModaleOuverte = frMod.src;
+        var mPdf = document.getElementById("pdfModal");
+        if (mPdf && mPdf.classList.contains("open")) mPdf.classList.remove("open");
+        var mBac = document.getElementById("modal-doc-bac");
+        if (mBac && mBac.style.display !== "none") mBac.style.display = "none";
+      }
+    } catch (e) {}
+
+    var panel = document.createElement("div");
+    panel.id = "sti-split-view-panel";
+    panel.className = "sti-no-print";
+    panel.style.cssText =
+      "position:fixed;top:0;right:0;bottom:0;width:" + splitRatioDroiteSTI + "vw;z-index:2147483640;" +
+      "background:#fffdf7;border-left:3px solid #23201a;box-shadow:-6px 0 24px rgba(16,23,40,0.28);" +
+      "display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;";
+
+    /* Poignée verticale de redimensionnement gauche/droite */
+    var resizer = document.createElement("div");
+    resizer.title = "Glisser pour redimensionner les 2 vues";
+    resizer.style.cssText =
+      "position:absolute;left:-7px;top:0;bottom:0;width:12px;cursor:col-resize;z-index:5;" +
+      "display:flex;align-items:center;justify-content:center;";
+    resizer.innerHTML = '<span style="background:#23201a;color:#ffd54f;border-radius:6px;padding:6px 2px;font-size:10px;font-weight:900;box-shadow:1px 1px 0 #fff;">⋮</span>';
+
+    var enGlissement = false;
+    resizer.addEventListener("mousedown", function (e) {
+      e.preventDefault();
+      enGlissement = true;
+      var iframeDr = document.getElementById("sti-split-frame");
+      if (iframeDr) iframeDr.style.pointerEvents = "none";
+    });
+    window.addEventListener("mousemove", function (e) {
+      if (!enGlissement) return;
+      var pctDr = ((window.innerWidth - e.clientX) / window.innerWidth) * 100;
+      appliquerLargeurSplitSTI(pctDr);
+    });
+    window.addEventListener("mouseup", function () {
+      if (!enGlissement) return;
+      enGlissement = false;
+      var iframeDr = document.getElementById("sti-split-frame");
+      if (iframeDr) iframeDr.style.pointerEvents = "";
+    });
+
+    /* Barre supérieure de la 2e vue */
+    var header = document.createElement("div");
+    header.style.cssText =
+      "display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 10px;" +
+      "background:#101728;color:#fffdf7;border-bottom:2px solid #f4511e;flex-shrink:0;flex-wrap:wrap;";
+
+    var sel = document.createElement("select");
+    sel.id = "sti-split-select";
+    sel.style.cssText =
+      "flex:1;min-width:170px;padding:5px 8px;border-radius:8px;border:1.5px solid #475569;" +
+      "background:#1e293b;color:#fffdf7;font:800 12px/1.2 inherit;cursor:pointer;";
+
+    var optionsSplit = [
+      { val: "__ANNEXE__", label: "📑 Aide-mémoire Officiel STI (JS / PHP / SQL)" },
+      { val: RACINE + "bac-pratique.html", label: "🧪 Bac Pratique — Sujets & Projets STI" },
+      { val: RACINE + "exercices/series-exercices.html", label: "📚 Séries d'exercices (HTML, CSS, JS, PHP, SQL)" },
+      { val: RACINE + "cours/html5.html", label: "📄 Cours HTML5" },
+      { val: RACINE + "cours/css3.html", label: "🎨 Cours CSS3" },
+      { val: RACINE + "cours/javascript.html", label: "⚡ Cours JavaScript" },
+      { val: RACINE + "cours/php.html", label: "🐘 Cours PHP & MySQLi" },
+      { val: RACINE + "cours/php-mysqli.html", label: "🔌 Fonctions MySQLi" },
+      { val: RACINE + "cours/sql.html", label: "🗄️ Cours SQL" },
+      { val: RACINE + "cours/sql-contraintes.html", label: "🔒 Contraintes SQL" },
+      { val: RACINE + "index.html", label: "🏠 Accueil STI V2.0" }
+    ];
+    if (urlModaleOuverte) {
+      optionsSplit.unshift({ val: urlModaleOuverte, label: "📄 Énoncé / Document actif" });
+    }
+
+    for (var i = 0; i < optionsSplit.length; i++) {
+      var opt = document.createElement("option");
+      opt.value = optionsSplit[i].val;
+      opt.textContent = optionsSplit[i].label;
+      sel.appendChild(opt);
+    }
+
+    var ctrls = document.createElement("div");
+    ctrls.style.cssText = "display:inline-flex;align-items:center;gap:4px;";
+
+    var zSplit = 100;
+    var btnZOut = document.createElement("button");
+    btnZOut.type = "button";
+    btnZOut.textContent = "−";
+    btnZOut.title = "Zoom arrière sur la 2e vue";
+    btnZOut.style.cssText = "border:1px solid #475569;background:#1e293b;color:#fff;border-radius:6px;padding:3px 7px;font-weight:900;font-size:12px;cursor:pointer;";
+
+    var btnZLbl = document.createElement("button");
+    btnZLbl.type = "button";
+    btnZLbl.textContent = "100%";
+    btnZLbl.title = "Réinitialiser le zoom de la 2e vue";
+    btnZLbl.style.cssText = "border:1px solid #475569;background:#1e293b;color:#ffd54f;border-radius:6px;padding:3px 6px;font-weight:800;font-size:11px;cursor:pointer;";
+
+    var btnZIn = document.createElement("button");
+    btnZIn.type = "button";
+    btnZIn.textContent = "+";
+    btnZIn.title = "Zoom avant sur la 2e vue";
+    btnZIn.style.cssText = "border:1px solid #475569;background:#1e293b;color:#fff;border-radius:6px;padding:3px 7px;font-weight:900;font-size:12px;cursor:pointer;";
+
+    var btnFermerSplit = document.createElement("button");
+    btnFermerSplit.type = "button";
+    btnFermerSplit.textContent = "✕";
+    btnFermerSplit.title = "Fermer le mode 2 vues côte-à-côte";
+    btnFermerSplit.style.cssText = "border:none;background:#c0392b;color:#fff;border-radius:6px;padding:4px 9px;font-weight:900;font-size:11.5px;cursor:pointer;";
+    btnFermerSplit.onclick = function () { basculerSplitViewSTI(btnSplit); };
+
+    ctrls.appendChild(btnZOut);
+    ctrls.appendChild(btnZLbl);
+    ctrls.appendChild(btnZIn);
+    ctrls.appendChild(btnFermerSplit);
+
+    header.appendChild(sel);
+    header.appendChild(ctrls);
+
+    /* Corps de la 2e vue : soit l'Aide-mémoire Annexe STI, soit l'iframe de cours/énoncé */
+    var boxAnnexe = document.createElement("div");
+    boxAnnexe.id = "sti-split-annexe";
+    boxAnnexe.style.cssText = "flex:1;overflow-y:auto;display:none;";
+    boxAnnexe.innerHTML = genererHtmlAnnexeOfficielleSTI();
+
+    var frameDr = document.createElement("iframe");
+    frameDr.id = "sti-split-frame";
+    frameDr.style.cssText = "flex:1;width:100%;border:0;background:#fff;display:none;";
+
+    function appliquerZoomSplit(nvZ) {
+      zSplit = Math.max(60, Math.min(200, Math.round(nvZ / 10) * 10));
+      btnZLbl.textContent = zSplit + "%";
+      boxAnnexe.style.zoom = zSplit === 100 ? "" : (zSplit + "%");
+      try {
+        if (frameDr.contentDocument && frameDr.contentDocument.body) {
+          frameDr.contentDocument.body.style.zoom = zSplit === 100 ? "" : (zSplit + "%");
+        }
+      } catch (e) {}
+    }
+
+    btnZOut.onclick = function () { appliquerZoomSplit(zSplit - 10); };
+    btnZLbl.onclick = function () { appliquerZoomSplit(100); };
+    btnZIn.onclick = function () { appliquerZoomSplit(zSplit + 10); };
+    frameDr.addEventListener("load", function () {
+      if (zSplit !== 100) appliquerZoomSplit(zSplit);
+    });
+
+    function chargerCibleSplit(val) {
+      if (val === "__ANNEXE__") {
+        frameDr.style.display = "none";
+        boxAnnexe.style.display = "block";
+      } else {
+        boxAnnexe.style.display = "none";
+        frameDr.style.display = "block";
+        frameDr.src = val;
+      }
+    }
+
+    sel.onchange = function () { chargerCibleSplit(sel.value); };
+
+    panel.appendChild(resizer);
+    panel.appendChild(header);
+    panel.appendChild(boxAnnexe);
+    panel.appendChild(frameDr);
+    (document.body || document.documentElement).appendChild(panel);
+
+    appliquerLargeurSplitSTI(splitRatioDroiteSTI);
+    chargerCibleSplit(sel.value);
+
+    var zPage = obtenirZoomActuelSTI();
+    if (zPage !== 100) {
+      panel.style.zoom = (10000 / zPage).toFixed(2) + "%";
+    }
+  }
+
   function installerOutilsPcWindowsSTI() {
     if (!estModePcWindowsSTI()) return;
     if (document.getElementById("sti-pc-win-tools")) return;
@@ -5133,7 +5537,7 @@
       var st = document.createElement("style");
       st.id = "sti-pc-win-tools-css";
       st.textContent =
-        "@media (max-width: 768px), print { #sti-pc-win-tools { display: none !important; } }" +
+        "@media (max-width: 768px), print { #sti-pc-win-tools, #sti-split-view-panel, #sti-laser-overlay { display: none !important; } }" +
         "#sti-pc-win-tools button:hover { transform: translateY(-1px); filter: brightness(1.06); }";
       (document.head || document.documentElement).appendChild(st);
     }
@@ -5193,11 +5597,43 @@
       appliquerZoomPageSTI(obtenirZoomActuelSTI() + 10);
     };
 
+    var sep2 = document.createElement("span");
+    sep2.style.cssText = "width:1.5px;height:18px;background:rgba(35,32,26,0.22);margin:0 2px;";
+
+    /* Bouton 4 : 🔴 Pointeur Laser & Guide-ligne */
+    var btnLaser = document.createElement("button");
+    btnLaser.type = "button";
+    btnLaser.id = "sti-btn-pc-laser";
+    btnLaser.innerHTML = "🔴 <span>Laser</span>";
+    btnLaser.title = "Spécial Vidéo-projecteur : 1er clic = Pointeur Laser rouge | 2e clic = Règle lumineuse Guide-ligne | 3e clic = Désactiver (ou touche Échap)";
+    btnLaser.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnLaser.onclick = function () {
+      appliquerModeLaserSTI(modeLaserSTI + 1);
+    };
+
+    /* Bouton 6 : ◫ Mode Écran Scindé « Côte-à-côte » (2 vues) */
+    var btnSplit = document.createElement("button");
+    btnSplit.type = "button";
+    btnSplit.id = "sti-btn-pc-split";
+    btnSplit.innerHTML = "◫ <span>2 vues</span>";
+    btnSplit.title = "Mode Écran Scindé Côte-à-côte : ouvrir une 2e vue à droite (Énoncé, Cours ou Annexe officielle STI)";
+    btnSplit.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnSplit.onclick = function () {
+      basculerSplitViewSTI(btnSplit);
+    };
+
     bar.appendChild(btnPin);
     bar.appendChild(sep);
     bar.appendChild(btnZoomOut);
     bar.appendChild(btnZoomLbl);
     bar.appendChild(btnZoomIn);
+    bar.appendChild(sep2);
+    bar.appendChild(btnLaser);
+    bar.appendChild(btnSplit);
     (document.body || document.documentElement).appendChild(bar);
 
     var zInit = obtenirZoomActuelSTI();
