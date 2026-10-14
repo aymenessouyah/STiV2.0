@@ -5776,7 +5776,7 @@
     }
     if (msnHeadNonLus) {
       msnHeadNonLus.textContent = nbNonLus > 0 ? ("🔴 Non lus (" + nbNonLus + ")") : "Non lus";
-      msnHeadNonLus.style.display = (msnUidActif || nbNonLus > 0) ? "inline-block" : "none";
+      msnHeadNonLus.style.display = (!msnUidActif && nbNonLus > 0) ? "inline-block" : "none";
     }
   }
 
@@ -6253,17 +6253,28 @@
   }
 
   function fermerMessengerAdmin() {
+    if (!msnWin) msnWin = document.getElementById("sti-messenger-admin");
     if (!msnWin) return;
     msnWin.classList.remove("visible");
+    msnWin.classList.remove("mode-chat");
+    msnUidActif = "";
     synchroniserViewportMessengerAdmin();
   }
+  window.fermerMessengerAdmin = fermerMessengerAdmin;
 
   function ouvrirMessengerAdmin(pCible, texteCitation) {
+    if (!msnWin) msnWin = document.getElementById("sti-messenger-admin");
     if (!msnWin) return;
     var estMobile = window.innerWidth <= 768;
-    if (pCible && pCible.id) {
-      msnUidActif = pCible.id;
-      marquerLuAdminMsn(pCible.id);
+    var uidCible = "";
+    if (typeof pCible === "string" && pCible) {
+      uidCible = pCible;
+    } else if (pCible && pCible.id) {
+      uidCible = pCible.id;
+    }
+    if (uidCible) {
+      msnUidActif = uidCible;
+      marquerLuAdminMsn(uidCible);
       msnWin.classList.add("mode-chat");
     } else {
       /* Au départ : afficher d'abord les messages non lus (sans forcer l'ouverture d'un seul candidat) */
@@ -6282,6 +6293,7 @@
       setTimeout(function () { msnChatInp.focus(); }, 40);
     }
   }
+  window.ouvrirMessengerAdmin = ouvrirMessengerAdmin;
 
   function rafraichirMessengerAdmin() {
     peindreListeUsersMessengerAdmin();
@@ -6301,20 +6313,38 @@
   }
   if (btnMsnTop) {
     btnMsnTop.addEventListener("click", function () {
-      ouvrirMessengerAdmin(null, "");
+      if (msnWin && msnWin.classList.contains("visible")) {
+        fermerMessengerAdmin();
+      } else {
+        ouvrirMessengerAdmin(null, "");
+      }
     });
   }
   if (msnHeadClose) {
-    msnHeadClose.addEventListener("click", fermerMessengerAdmin);
+    msnHeadClose.addEventListener("click", function (ev) {
+      if (ev && ev.stopPropagation) ev.stopPropagation();
+      fermerMessengerAdmin();
+    });
   }
   var msnSbClose = document.getElementById("msn-sb-close");
   if (msnSbClose) {
-    msnSbClose.addEventListener("click", fermerMessengerAdmin);
+    msnSbClose.addEventListener("click", function (ev) {
+      if (ev && ev.stopPropagation) ev.stopPropagation();
+      fermerMessengerAdmin();
+    });
   }
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && msnWin && msnWin.classList.contains("visible")) {
+      fermerMessengerAdmin();
+    }
+  });
   if (msnBtnBackMob) {
     msnBtnBackMob.addEventListener("click", function (ev) {
       ev.stopPropagation();
+      msnUidActif = "";
       if (msnWin) msnWin.classList.remove("mode-chat");
+      peindreListeUsersMessengerAdmin();
+      peindreConversationMessengerAdmin();
       synchroniserViewportMessengerAdmin();
     });
   }
