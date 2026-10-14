@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v181";
+var CACHE = "sti-atelier-v182";
 var SHELL = [
   "./",
   "./index.html",
@@ -24,6 +24,7 @@ var SHELL = [
   "./assets/js/portail.js",
   "./assets/js/admin.js",
   "./assets/fonts/fonts.css",
+  "./assets/fontawesome/css/all.min.css",
   "./assets/icons/STI_by_AE.ico",
   "./assets/icons/sti-icon-192.png",
   "./assets/icons/sti-icon-512.png",
@@ -47,6 +48,45 @@ var SHELL = [
   "./cours/sql-contraintes.html",
   "./exercices/series-exercices.html",
   "./exercices/resume-fonctions-standards.html",
+  "./exercices/sql/Tp1-bd.html",
+  "./exercices/sql/tp1-ldd-animation.js",
+  "./exercices/sql/Tp2-bd.html",
+  "./exercices/sql/Tp2-Correction-bd.html",
+  "./exercices/sql/tp2-lmd-animation.js",
+  "./exercices/sql/Tp-GroupBy-bd.html",
+  "./exercices/sql/tp3-groupby-animation.js",
+  "./exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
+  "./exercices/sql/Tp4-correction-bd.html",
+  "./exercices/sql/tp-bd-animation.js",
+  "./exercices/sql/Tp-date-ssr-j-gp-bd.html",
+  "./exercices/sql/Tp-date-ssr-j-gp-correction-bd.html",
+  "./exercices/sql/tp-gesthotel-animation.js",
+  "./exercices/sql/sql.html",
+  "./exercices/sql/sql-correction.html",
+  "./exercices/sql/sql-controle.js",
+  "./exercices/sql/atelier_sql_3_fenetres.html",
+  "./exercices/javascript/Tp1-js.html",
+  "./exercices/javascript/Tp1-Correction-js.html",
+  "./exercices/javascript/Tp2-js.html",
+  "./exercices/javascript/Tp2-Correction-js.html",
+  "./exercices/javascript/Tp3-js.html",
+  "./exercices/javascript/Tp3-Correction-js.html",
+  "./exercices/javascript/Tp4-js.html",
+  "./exercices/javascript/Tp4-Correction-js.html",
+  "./exercices/javascript/Tp5-js.html",
+  "./exercices/javascript/Tp5-Correction-js.html",
+  "./exercices/php/Tp1-php.html",
+  "./exercices/php/Tp2-php.html",
+  "./exercices/php/Tp2-Correction-php.html",
+  "./exercices/php/Tp3-php.html",
+  "./exercices/php/Tp3-correction-php.html",
+  "./exercices/php/Tp4-php.html",
+  "./exercices/php/sondage-parcours-pas-a-pas.html",
+  "./exercices/php/statphpanimee.html",
+  "./exercices/html-css/box-shadow-text-shadow-css3.html",
+  "./exercices/html-css/emploi-temps/emploidutemps.html",
+  "./exercices/html-css/TP2/tp2corrposition.html",
+  "./exercices/html-css/TP2/style2.css",
   "./quiz/html-css.html",
   "./quiz/javascript.html",
   "./quiz/php.html",
@@ -531,7 +571,7 @@ async function prechargerSequentiel() {
     var cache = await caches.open(CACHE);
     var total = OFFLINE_LIST.length;
     var done = 0;
-    var batchSize = 3;
+    var batchSize = 6;
     for (var i = 0; i < total; i += batchSize) {
       var lot = OFFLINE_LIST.slice(i, i + batchSize);
       await Promise.allSettled(lot.map(async function (u) {
@@ -544,7 +584,7 @@ async function prechargerSequentiel() {
         } catch (e) {}
         done++;
       }));
-      if (done % 9 === 0 || done >= total) {
+      if (done % 12 === 0 || done >= total) {
         var clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
         for (var c of clients) {
           c.postMessage({ type: "STI_OFFLINE_PROGRESS", done: Math.min(done, total), total: total });
@@ -622,7 +662,7 @@ self.addEventListener("activate", function (evt) {
       await self.clients.claim();
       setTimeout(function () {
         prechargerSequentiel();
-      }, 2500);
+      }, 800);
     })()
   );
 });
@@ -640,6 +680,14 @@ async function chercherDansCache(req, url) {
   var m = await caches.match(req, { ignoreSearch: true });
   if (m) return m;
   if (url.origin === self.location.origin) {
+    try {
+      var decodedUrl = url.origin + decodeURIComponent(url.pathname);
+      var mDec = await caches.match(decodedUrl, { ignoreSearch: true });
+      if (mDec) return mDec;
+      var encodedUrl = url.origin + encodeURI(decodeURIComponent(url.pathname));
+      var mEnc = await caches.match(encodedUrl, { ignoreSearch: true });
+      if (mEnc) return mEnc;
+    } catch (e) {}
     if (url.pathname.slice(-1) === "/") {
       var mSubIdx = await caches.match(url.origin + url.pathname + "index.html", { ignoreSearch: true });
       if (mSubIdx) return mSubIdx;

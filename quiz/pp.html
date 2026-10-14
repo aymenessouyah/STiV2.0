@@ -10,7 +10,6 @@
 <link rel="stylesheet" href="../assets/fonts/fonts.css" />
 <link rel="stylesheet" href="../assets/fontawesome/css/all.min.css" />
 <link rel="stylesheet" href="../assets/css/tailwind.css" />
-<script src="https://cdn.tailwindcss.com"></script>
 <script>
 if (window.tailwind) tailwind.config = {
   theme: { extend: {
@@ -18,11 +17,48 @@ if (window.tailwind) tailwind.config = {
     fontFamily: { sans:['Inter','sans-serif'], mono:['JetBrains Mono','monospace'] }
   }}
 }
+if (!window.confetti) {
+  window.confetti = function () {};
+}
+if (!window.Chart) {
+  window.Chart = function (canvas, cfg) {
+    this.destroy = function () {};
+    try {
+      if (!canvas || !canvas.getContext) return;
+      var ctx = canvas.getContext("2d");
+      var w = (canvas.width = canvas.parentElement ? canvas.parentElement.clientWidth || 260 : 260);
+      var h = (canvas.height = canvas.parentElement ? canvas.parentElement.clientHeight || 180 : 180);
+      ctx.clearRect(0, 0, w, h);
+      var ds = (cfg && cfg.data && cfg.data.datasets && cfg.data.datasets[0]) || { data: [] };
+      var vals = ds.data || [];
+      var cols = ds.backgroundColor || ["#22c55e", "#ef4444"];
+      var labels = (cfg && cfg.data && cfg.data.labels) || [];
+      if (cfg && cfg.type === "doughnut") {
+        var tot = (vals[0] || 0) + (vals[1] || 0) || 1;
+        var ang = ((vals[0] || 0) / tot) * Math.PI * 2;
+        var cx = w / 2, cy = h / 2, r = Math.min(w, h) * 0.36;
+        ctx.lineWidth = r * 0.42;
+        ctx.beginPath(); ctx.strokeStyle = cols[1] || "#ef4444"; ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath(); ctx.strokeStyle = cols[0] || "#22c55e"; ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + ang); ctx.stroke();
+      } else {
+        var maxV = Math.max.apply(null, vals.concat([1]));
+        var n = vals.length || 1;
+        var bw = Math.max(14, Math.floor((w - 30) / n) - 8);
+        for (var i = 0; i < n; i++) {
+          var bh = Math.round(((vals[i] || 0) / maxV) * (h - 42));
+          var bx = 18 + i * (bw + 8);
+          var by = h - 22 - bh;
+          ctx.fillStyle = cols[i % cols.length] || "#22d3ee";
+          ctx.fillRect(bx, by, bw, bh);
+          ctx.fillStyle = "#94a3b8";
+          ctx.font = "10px Inter, sans-serif";
+          ctx.fillText(String(labels[i] || "").slice(0, 6), bx, h - 8);
+        }
+      }
+    } catch (e) {}
+  };
+}
 </script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 *{scroll-behavior:smooth}
 body{background:#070a18;color:#e6e9ff;font-family:Inter,sans-serif;overflow-x:hidden}
