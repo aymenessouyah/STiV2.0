@@ -6304,6 +6304,63 @@
       consoleLogsBufferSTI.pop(); /* éviter de dupliquer dans le buffer */
     }
 
+    function executerScriptInlineSansEval(docCible, winCible, codeJs) {
+      winCible.__stiConsErr = null;
+      winCible.__stiConsHasRes = false;
+      winCible.__stiConsRes = undefined;
+
+      /* Extraire la dernière ligne non vide pour capturer sa valeur de retour si c'est une expression */
+      var brut = String(codeJs || "").trim();
+      var posNl = brut.lastIndexOf("\n");
+      var avant = posNl === -1 ? "" : brut.substring(0, posNl + 1);
+      var dern = (posNl === -1 ? brut : brut.substring(posNl + 1)).trim();
+      while (dern.length > 0 && dern[dern.length - 1] === ";") {
+        dern = dern.substring(0, dern.length - 1).trim();
+      }
+      var estInstruction =
+        !dern ||
+        /^(var|let|const|function|if|for|while|do|switch|try|throw|return|break|continue)\b/.test(dern) ||
+        dern[dern.length - 1] === "}" ||
+        dern[0] === "{" ||
+        dern.indexOf("//") === 0;
+
+      var errSyntaxe = null;
+      var prevOnErr = winCible.onerror;
+      winCible.onerror = function (msg) {
+        errSyntaxe = msg;
+        return true;
+      };
+
+      function injecter(corps) {
+        var scr = docCible.createElement("script");
+        scr.textContent = "try {\n" + corps + "\n} catch (__stiE) { window.__stiConsErr = __stiE; }";
+        (docCible.head || docCible.documentElement || docCible.body).appendChild(scr);
+        scr.remove();
+      }
+
+      if (!estInstruction) {
+        injecter(avant + "window.__stiConsHasRes = true; window.__stiConsRes = (" + dern + ");");
+        if (errSyntaxe) {
+          errSyntaxe = null;
+          winCible.__stiConsErr = null;
+          winCible.__stiConsHasRes = false;
+          injecter(brut);
+        }
+      } else {
+        injecter(brut);
+      }
+
+      winCible.onerror = prevOnErr;
+
+      if (errSyntaxe) {
+        throw new Error(errSyntaxe);
+      }
+      if (winCible.__stiConsErr) {
+        throw winCible.__stiConsErr;
+      }
+      return { hasRes: Boolean(winCible.__stiConsHasRes), res: winCible.__stiConsRes };
+    }
+
     function executerCommandeConsole() {
       var cmd = inputCmd.value;
       if (!cmd || !cmd.trim()) return;
@@ -6314,13 +6371,17 @@
       try {
         /* Choisir le contexte d'exécution : iframe d'exercice/aperçu ouverte s'il y en a une, sinon window */
         var ctxWin = window;
+        var ctxDoc = document;
         try {
           var frActive = document.querySelector("#sti-split-preview, #sti-sb-frame, #sti-sandbox-iframe, #pdfModal.open #pdfFrame");
-          if (frActive && frActive.contentWindow) ctxWin = frActive.contentWindow;
+          if (frActive && frActive.contentWindow && frActive.contentDocument) {
+            ctxWin = frActive.contentWindow;
+            ctxDoc = frActive.contentDocument;
+          }
         } catch (e) {}
 
-        var res = ctxWin.eval(cmd);
-        var fmt = formaterValeurConsoleSTI(res);
+        var outExec = executerScriptInlineSansEval(ctxDoc, ctxWin, cmd);
+        var fmt = formaterValeurConsoleSTI(outExec.res);
         ajouterEntreeConsoleDOM("res", fmt.texte, fmt.couleur);
       } catch (err) {
         ajouterEntreeConsoleDOM("err", (err && err.name ? err.name + ": " : "Erreur: ") + (err && err.message ? err.message : String(err)));
