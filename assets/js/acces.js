@@ -39,6 +39,60 @@
   var ICO_META_SEND_SVG =
     "<svg width='18' height='18' viewBox='0 0 24 24' fill='currentColor' aria-hidden='true'><path d='M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'/></svg>";
 
+  /* Initialisation en tête de fichier de toutes les variables d'état partagées (évite tout undefined lors de la restauration synchrone 0 ms) */
+  var bioVerifEnCours = false;
+  var bioCallbacksAttente = [];
+  var CLE_CACHE_COFFRE = "sti-coffre-tp-cache-v1";
+  var CLE_COFFRE_VUS = "sti-coffre-tp-vus-v1";
+  var mapCoffreEleve = {};
+  var mapCoffreDelEleve = {};
+  var tsClearCoffreEleve = 0;
+  var fichierEnAttenteEleve = null;
+  var timerClignoteTitreMsn = null;
+  var titreOriginalPageMsn = "";
+  var timerControle = null;
+  var timerFlashEleve = null;
+  var dernierTbLiveIdFerme = "";
+  var nbSortiesOngletQuiz = 0;
+  var cumulAbsenceSec = 0;
+  var debutAbsenceOngletMs = 0;
+  var dernierBlurQuizTs = 0;
+  var etaitEnPleinEcran = false;
+  var nbSortiesPleinEcran = 0;
+  var dernierSplitAlerteTs = 0;
+  var pipWindowSTI = null;
+  var popupPremierPlanSTI = null;
+  var wakeLockSTI = null;
+  var modeLaserSTI = 0;
+  var laserOverlayEl = null;
+  var laserDotEl = null;
+  var laserLineEl = null;
+  var splitViewActifSTI = false;
+  var splitRatioDroiteSTI = 48;
+  var msnSiteUidActif = "";
+  var msnSiteFichier = null;
+  var cfgSecurite = {
+    verrouActif: false,
+    verrouCible: "*",
+    pageAutorisee: "",
+    motifVerrou: "Épreuve ou contrôle en cours — l'accès aux cours est temporairement verrouillé par le professeur.",
+    ejectDevtools: true,
+    antiTricheOnglet: true,
+    sessionUnique: true,
+    inactiviteActif: true,
+    inactiviteMin: 30,
+    alerteMultiAppareils: true,
+    antiCollageActif: true,
+    melangeQcmActif: true,
+    copyTrapActif: true,
+    pleinEcranExamen: true,
+    filigraneActif: true,
+    antiSplitScreen: true,
+    pausesUids: {},
+    dernierTeleport: null,
+    ts: 0
+  };
+
   /* S'assurer que protection.css et protection.js sont chargés sur 100 % des pages (code source verrouillé pour tous les abonnés) */
   (function assurerProtectionActive() {
     try {
@@ -5412,18 +5466,19 @@
       "flex:1;min-width:170px;padding:5px 8px;border-radius:8px;border:1.5px solid #475569;" +
       "background:#1e293b;color:#fffdf7;font:800 12px/1.2 inherit;cursor:pointer;";
 
+    var rSplit = (cfg && cfg.RACINE) ? cfg.RACINE : "./";
     var optionsSplit = [
       { val: "__ANNEXE__", label: "📑 Aide-mémoire Officiel STI (JS / PHP / SQL)" },
-      { val: RACINE + "bac-pratique.html", label: "🧪 Bac Pratique — Sujets & Projets STI" },
-      { val: RACINE + "exercices/series-exercices.html", label: "📚 Séries d'exercices (HTML, CSS, JS, PHP, SQL)" },
-      { val: RACINE + "cours/html5.html", label: "📄 Cours HTML5" },
-      { val: RACINE + "cours/css3.html", label: "🎨 Cours CSS3" },
-      { val: RACINE + "cours/javascript.html", label: "⚡ Cours JavaScript" },
-      { val: RACINE + "cours/php.html", label: "🐘 Cours PHP & MySQLi" },
-      { val: RACINE + "cours/php-mysqli.html", label: "🔌 Fonctions MySQLi" },
-      { val: RACINE + "cours/sql.html", label: "🗄️ Cours SQL" },
-      { val: RACINE + "cours/sql-contraintes.html", label: "🔒 Contraintes SQL" },
-      { val: RACINE + "index.html", label: "🏠 Accueil STI V2.0" }
+      { val: rSplit + "bac-pratique.html", label: "🧪 Bac Pratique — Sujets & Projets STI" },
+      { val: rSplit + "exercices/series-exercices.html", label: "📚 Séries d'exercices (HTML, CSS, JS, PHP, SQL)" },
+      { val: rSplit + "cours/html5.html", label: "📄 Cours HTML5" },
+      { val: rSplit + "cours/css3.html", label: "🎨 Cours CSS3" },
+      { val: rSplit + "cours/javascript.html", label: "⚡ Cours JavaScript" },
+      { val: rSplit + "cours/php.html", label: "🐘 Cours PHP & MySQLi" },
+      { val: rSplit + "cours/php-mysqli.html", label: "🔌 Fonctions MySQLi" },
+      { val: rSplit + "cours/sql.html", label: "🗄️ Cours SQL" },
+      { val: rSplit + "cours/sql-contraintes.html", label: "🔒 Contraintes SQL" },
+      { val: rSplit + "index.html", label: "🏠 Accueil STI V2.0" }
     ];
     if (urlModaleOuverte) {
       optionsSplit.unshift({ val: urlModaleOuverte, label: "📄 Énoncé / Document actif" });
@@ -7299,9 +7354,8 @@
     }
   }
 
-  var bioVerifEnCours = false;
-  var bioCallbacksAttente = [];
   function verrouBio(user, suite) {
+    if (!bioCallbacksAttente) bioCallbacksAttente = [];
     if (typeof suite === "function") bioCallbacksAttente.push(suite);
     var finOk = function () {
       marquerSessionAppDeverrouillee();
@@ -8449,7 +8503,7 @@
       label: "📋 Formulaire HTML5 + Contrôle JS verif() (Type Bac)",
       html: "<fieldset>\n  <legend>Inscription Club Robotique STI</legend>\n  <form onsubmit=\"return verif()\">\n    <label>Nom (lettres uniquement) :</label>\n    <input type=\"text\" id=\"nom\" value=\"Ali\">\n\n    <label>Âge (entre 14 et 22) :</label>\n    <input type=\"number\" id=\"age\" value=\"18\">\n\n    <label>Ville (<datalist>) :</label>\n    <input type=\"text\" id=\"ville\" list=\"lst_villes\" placeholder=\"Choisir ou saisir…\">\n    <datalist id=\"lst_villes\">\n      <option value=\"Sousse\">\n      <option value=\"Tunis\">\n      <option value=\"Sfax\">\n    </datalist>\n\n    <button type=\"submit\">✅ Valider l'inscription</button>\n  </form>\n  <p id=\"msg\"></p>\n</fieldset>",
       css: "body { font-family: system-ui, sans-serif; background: #fffdf7; padding: 14px; color: #1a1a2e; }\nfieldset { border: 2.5px solid #1a1a2e; border-radius: 14px; padding: 14px 18px; background: #fff; box-shadow: 4px 4px 0 #1a1a2e; max-width: 380px; }\nlegend { font-weight: 900; background: #ffd23f; border: 2px solid #1a1a2e; padding: 3px 10px; border-radius: 999px; }\nlabel { display: block; margin-top: 9px; font-weight: 700; font-size: 13px; }\ninput { width: 100%; padding: 7px 10px; margin-top: 3px; border: 2px solid #1a1a2e; border-radius: 8px; box-sizing: border-box; }\nbutton { margin-top: 12px; width: 100%; padding: 9px; border: 2px solid #1a1a2e; border-radius: 10px; background: #2ecc9e; font-weight: 900; cursor: pointer; box-shadow: 3px 3px 0 #1a1a2e; }\n#msg { font-weight: 800; margin-top: 10px; }",
-      js: "function alpha(ch) {\n  ch = ch.toUpperCase();\n  if (ch.length === 0) return false;\n  for (var i = 0; i < ch.length; i++) {\n    if (ch.charAt(i) < 'A' || ch.charAt(i) > 'Z') return false;\n  }\n  return true;\n}\n\nfunction verif() {\n  var nom = document.getElementById('nom').value.trim();\n  var age = document.getElementById('age').value;\n  var msg = document.getElementById('msg');\n\n  if (!alpha(nom)) {\n    msg.style.color = '#c0392b';\n    msg.textContent = '❌ Le nom doit contenir uniquement des lettres !';\n    console.log('Erreur : nom invalide (' + nom + ')');\n    return false;\n  }\n  if (age === '' || isNaN(age) || Number(age) < 14 || Number(age) > 22) {\n    msg.style.color = '#c0392b';\n    msg.textContent = '❌ Âge invalide (doit être entre 14 et 22) !';\n    return false;\n  }\n  msg.style.color = '#177245';\n  msg.textContent = '🎉 Bravo ' + nom + ' (' + age + ' ans), formulaire valide !';\n  console.log('Formulaire validé pour :', nom, age);\n  return false; // empêche le rechargement dans l'aperçu\n}"
+      js: "function alpha(ch) {\n  ch = ch.toUpperCase();\n  if (ch.length === 0) return false;\n  for (var i = 0; i < ch.length; i++) {\n    if (ch[i] < 'A' || ch[i] > 'Z') return false;\n  }\n  return true;\n}\n\nfunction verif() {\n  var nom = document.getElementById('nom').value.trim();\n  var age = document.getElementById('age').value;\n  var msg = document.getElementById('msg');\n\n  if (!alpha(nom)) {\n    msg.style.color = '#c0392b';\n    msg.textContent = '❌ Le nom doit contenir uniquement des lettres !';\n    console.log('Erreur : nom invalide (' + nom + ')');\n    return false;\n  }\n  if (age === '' || isNaN(age) || Number(age) < 14 || Number(age) > 22) {\n    msg.style.color = '#c0392b';\n    msg.textContent = '❌ Âge invalide (doit être entre 14 et 22) !';\n    return false;\n  }\n  msg.style.color = '#177245';\n  msg.textContent = '🎉 Bravo ' + nom + ' (' + age + ' ans), formulaire valide !';\n  console.log('Formulaire validé pour :', nom, age);\n  return false; // empêche le rechargement dans l'aperçu\n}"
     },
     css_flex: {
       label: "🎨 Flexbox & Animation CSS3 (@keyframes)",

@@ -9711,19 +9711,20 @@
       document.documentElement.style.width = "52vw";
       splitAdm = document.createElement("div");
       splitAdm.style.cssText = "position:fixed;top:0;right:0;bottom:0;width:48vw;z-index:2147483640;background:#fffdf7;border-left:3px solid #23201a;box-shadow:-6px 0 24px rgba(16,23,40,0.28);display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;";
+      var rAdm = (cfg && cfg.RACINE) ? cfg.RACINE : "./";
       splitAdm.innerHTML =
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 10px;background:#101728;color:#fffdf7;border-bottom:2px solid #f4511e;">' +
           '<select id="adm-split-sel" style="flex:1;padding:5px 8px;border-radius:8px;border:1.5px solid #475569;background:#1e293b;color:#fffdf7;font:800 12px/1.2 inherit;">' +
-            '<option value="' + RACINE + 'index.html">🏠 Accueil STI V2.0</option>' +
-            '<option value="' + RACINE + 'bac-pratique.html">🧪 Bac Pratique — Sujets &amp; Projets STI</option>' +
-            '<option value="' + RACINE + 'exercices/series-exercices.html">📚 Séries d\'exercices</option>' +
-            '<option value="' + RACINE + 'cours/javascript.html">⚡ Cours JavaScript</option>' +
-            '<option value="' + RACINE + 'cours/php.html">🐘 Cours PHP &amp; MySQLi</option>' +
-            '<option value="' + RACINE + 'cours/sql.html">🗄️ Cours SQL</option>' +
+            '<option value="' + rAdm + 'index.html">🏠 Accueil STI V2.0</option>' +
+            '<option value="' + rAdm + 'bac-pratique.html">🧪 Bac Pratique — Sujets &amp; Projets STI</option>' +
+            '<option value="' + rAdm + 'exercices/series-exercices.html">📚 Séries d\'exercices</option>' +
+            '<option value="' + rAdm + 'cours/javascript.html">⚡ Cours JavaScript</option>' +
+            '<option value="' + rAdm + 'cours/php.html">🐘 Cours PHP &amp; MySQLi</option>' +
+            '<option value="' + rAdm + 'cours/sql.html">🗄️ Cours SQL</option>' +
           '</select>' +
           '<button type="button" id="adm-split-close" style="border:none;background:#c0392b;color:#fff;border-radius:6px;padding:4px 9px;font-weight:900;font-size:11.5px;cursor:pointer;">✕</button>' +
         '</div>' +
-        '<iframe id="adm-split-fr" src="' + RACINE + 'index.html" style="flex:1;width:100%;border:0;background:#fff;"></iframe>';
+        '<iframe id="adm-split-fr" src="' + rAdm + 'index.html" style="flex:1;width:100%;border:0;background:#fff;"></iframe>';
       document.body.appendChild(splitAdm);
       var selEl = document.getElementById("adm-split-sel");
       var frEl = document.getElementById("adm-split-fr");
