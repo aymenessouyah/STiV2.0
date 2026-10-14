@@ -821,6 +821,8 @@ html.dark .rel-box { border-color: #fff; box-shadow: 2px 2px 0 #000; }
             >Jointure entre 2 tables (a.x = b.x)</a
           >
           <a href="#lmd-aggr" class="sub-link">Fonctions d'agrégation</a>
+          <a href="#lmd-groupby" class="sub-link">Clause GROUP BY (Cours &amp; Animé)</a>
+          <a href="#lmd-having" class="sub-link">Clause HAVING (Cours &amp; Animé)</a>
           <a href="#lmd-strings" class="sub-link">Fonctions de chaînes</a>
           <a href="#lmd-dates" class="sub-link">Fonctions de Date & Heure</a>
         </div>
@@ -2302,6 +2304,275 @@ Where pv_art = (SELECT max(pv_art) FROM articles);</code></pre>
           </ul>
         </div>
 
+        <!-- ===== 1. PARTIE GROUP BY (COURS + PARTIE ANIMÉE) ===== -->
+        <div class="card" id="lmd-groupby">
+          <h3>La clause <code>GROUP BY</code> : regrouper les lignes pour calculer par catégorie</h3>
+          <p>
+            Utilisée seule, une fonction d'agrégation (<code>COUNT</code>,
+            <code>SUM</code>, <code>AVG</code>, <code>MIN</code>,
+            <code>MAX</code>) résume <strong>toute la table en une seule ligne</strong>.
+            La clause <strong><code>GROUP BY</code></strong> découpe la table en
+            <strong>groupes (paquets)</strong> partageant la même valeur sur une
+            ou plusieurs colonnes, puis applique la fonction d'agrégation
+            <strong>à chaque groupe séparément</strong>.
+          </p>
+
+          <div
+            class="query-breakdown"
+            role="group"
+            aria-label="Étapes d'exécution d'un GROUP BY"
+            style="margin: 0.9rem 0"
+          >
+            <div class="query-step">
+              <span class="query-number">1</span><code>FROM / WHERE</code>
+              <strong>Sélectionner les lignes</strong>
+              <p>SQL lit la ou les tables (et applique <code>WHERE a.x = b.x</code> ou les filtres sur les lignes).</p>
+            </div>
+            <div class="query-step">
+              <span class="query-number">2</span><code>GROUP BY col</code>
+              <strong>Former les paquets</strong>
+              <p>Toutes les lignes ayant la même valeur de <code>col</code> sont rassemblées dans un même groupe.</p>
+            </div>
+            <div class="query-step">
+              <span class="query-number">3</span><code>SELECT col, COUNT(*)</code>
+              <strong>Calculer 1 ligne par groupe</strong>
+              <p>Les fonctions <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code> sont calculées pour chaque paquet.</p>
+            </div>
+          </div>
+
+          <pre><code>-- 1) Nombre de clients dans chaque ville (1 table) :
+SELECT ville, COUNT(*) AS nb_clients
+FROM Client
+GROUP BY ville;
+
+-- 2) Nombre de locations, total des jours et durée moyenne par client (table Location) :
+SELECT NCIN_Cli, COUNT(*) AS nb_loc, SUM(duree_loc) AS total_jours, AVG(duree_loc) AS duree_moy
+FROM Location
+GROUP BY NCIN_Cli;
+
+-- 3) Jointure (WHERE a.x = b.x) + GROUP BY sur 2 tables (Client c et Location l) :
+SELECT c.NCIN_Cli, c.nom_Cli, COUNT(l.id_location) AS nb_loc, SUM(l.duree_loc) AS total_jours
+FROM Client c, Location l
+WHERE c.NCIN_Cli = l.NCIN_Cli
+GROUP BY c.NCIN_Cli, c.nom_Cli
+ORDER BY total_jours DESC;</code></pre>
+
+          <div class="analogy-note">
+            <strong>Règle d'or STI du <code>GROUP BY</code> :</strong>
+            <ul>
+              <li>
+                Toute colonne placée dans le <code>SELECT</code> <b>en dehors</b>
+                d'une fonction d'agrégation (<code>COUNT</code>,
+                <code>SUM</code>, <code>AVG</code>, <code>MIN</code>,
+                <code>MAX</code>) <b>doit obligatoirement apparaître dans la clause <code>GROUP BY</code></b>.
+              </li>
+              <li>
+                Si vous affichez le numéro et le nom du client
+                (<code>SELECT c.NCIN_Cli, c.nom_Cli, COUNT(*)</code>), écrivez
+                les deux colonnes dans le regroupement :
+                <code>GROUP BY c.NCIN_Cli, c.nom_Cli</code>.
+              </li>
+            </ul>
+          </div>
+
+          <!-- Atelier interactif : Animation pas à pas de GROUP BY -->
+          <div class="sql-janim-wrap" id="sql-groupby-anim-app" style="background: color-mix(in srgb, var(--card) 92%, var(--sky));">
+            <div class="sql-janim-header">
+              <div>
+                <span class="key-badge" style="background:var(--sun);color:#1a1a2e">🎬 ANIMATION INTERACTIVE — GROUP BY</span>
+                <h4 style="margin:6px 0 2px;font-size:1.12rem">Observer comment <code>GROUP BY</code> rassemble les lignes en paquets et calcule les agrégats</h4>
+                <p style="margin:0;font-size:0.88rem;opacity:0.85">Choisissez un exemple et cliquez sur <b>▶ Animer pas à pas</b> pour voir chaque ligne rejoindre son groupe et mettre à jour <code>COUNT</code>, <code>SUM</code> et <code>AVG</code> en direct.</p>
+              </div>
+            </div>
+
+            <div class="sql-janim-tabs" role="tablist" aria-label="Exemples animés de GROUP BY">
+              <button type="button" class="sql-janim-tab active" data-gbex="0">
+                🏙️ Ex. 1 : <code>GROUP BY ville</code> (<code>COUNT(*)</code>)
+              </button>
+              <button type="button" class="sql-janim-tab" data-gbex="1">
+                🧮 Ex. 2 : <code>GROUP BY NCIN_Cli</code> (<code>COUNT, SUM, AVG</code>)
+              </button>
+              <button type="button" class="sql-janim-tab" data-gbex="2">
+                🔗 Ex. 3 : Jointure <code>c.NCIN_Cli = l.NCIN_Cli</code> + <code>GROUP BY</code>
+              </button>
+            </div>
+
+            <div class="sql-janim-query-bar">
+              <div class="sql-janim-qlabel">📝 Requête SQL avec GROUP BY :</div>
+              <div class="sql-janim-qcode" id="gbanim-sql-code"></div>
+            </div>
+
+            <div class="sql-janim-controls">
+              <button type="button" class="sql-janim-btn primary" id="gbanim-btn-play">▶ Animer pas à pas</button>
+              <button type="button" class="sql-janim-btn" id="gbanim-btn-prev">◀ Précédent</button>
+              <button type="button" class="sql-janim-btn" id="gbanim-btn-next">Suivant ▶</button>
+              <button type="button" class="sql-janim-btn" id="gbanim-btn-reset">⏮ Début</button>
+              <button type="button" class="sql-janim-btn accent" id="gbanim-btn-all">⚡ Résultat final</button>
+              <span class="sql-janim-step-badge" id="gbanim-step-badge">Prêt · 0 / 5</span>
+            </div>
+
+            <div class="sql-janim-comparator" id="gbanim-comparator">
+              Cliquez sur <b>▶ Animer pas à pas</b> pour voir SQL lire chaque ligne et la ranger dans le groupe correspondant à sa valeur de regroupement.
+            </div>
+
+            <div class="sql-gb-stage">
+              <div class="sql-janim-tcard">
+                <div class="sql-janim-ttitle" id="gbanim-title-src">📋 Lignes lues en entrée</div>
+                <div class="table-wrap" style="margin:0">
+                  <table class="mini-table sql-janim-table" id="gbanim-table-src"></table>
+                </div>
+              </div>
+
+              <div class="sql-janim-tcard">
+                <div class="sql-janim-ttitle" style="background: linear-gradient(120deg, var(--grape), #d946ef);">📦 Paquets formés par <code>GROUP BY</code> (calcul en direct)</div>
+                <div class="sql-gb-buckets" id="gbanim-buckets"></div>
+              </div>
+            </div>
+
+            <div class="sql-janim-result-box">
+              <div class="sql-janim-rhead">
+                <strong id="gbanim-result-title">📊 Table Résultat du GROUP BY (1 ligne par groupe)</strong>
+                <span style="font-size:0.82rem;opacity:0.85">Chaque groupe donne exactement 1 ligne résumée dans le résultat.</span>
+              </div>
+              <div class="table-wrap" style="margin:0">
+                <table class="mini-table sql-janim-table" id="gbanim-table-res"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== 2. PARTIE HAVING (COURS + PARTIE ANIMÉE) ===== -->
+        <div class="card" id="lmd-having">
+          <h3>La clause <code>HAVING</code> : filtrer les groupes après <code>GROUP BY</code></h3>
+          <p>
+            En SQL, il est <strong>interdit d'écrire une fonction d'agrégation dans la clause <code>WHERE</code></strong>
+            (écrire <code>WHERE COUNT(*) &gt;= 2</code> ou <code>WHERE AVG(duree_loc) &gt; 3</code> provoque une erreur),
+            car <code>WHERE</code> filtre les lignes individuelles <em>avant</em> que les groupes ne soient formés.
+            Pour filtrer les groupes sur le résultat de <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code> ou <code>MAX</code>,
+            on utilise la clause <strong><code>HAVING</code></strong> placée <strong>juste après <code>GROUP BY</code></strong>.
+          </p>
+
+          <div class="table-wrap">
+            <table class="mini-table">
+              <thead>
+                <tr>
+                  <th>Critère</th>
+                  <th>Clause <code>WHERE</code></th>
+                  <th>Clause <code>HAVING</code></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Sur quoi agit-elle ?</b></td>
+                  <td>Filtre les <b>lignes individuelles</b> (et fait la jointure <code>a.x = b.x</code>)</td>
+                  <td>Filtre les <b>groupes</b> créés par <code>GROUP BY</code></td>
+                </tr>
+                <tr>
+                  <td><b>Moment d'exécution</b></td>
+                  <td><b>Avant</b> <code>GROUP BY</code></td>
+                  <td><b>Après</b> <code>GROUP BY</code></td>
+                </tr>
+                <tr>
+                  <td><b>Fonctions <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code></b></td>
+                  <td><span class="no">✘ Interdit</span></td>
+                  <td><span class="ok">✔ Autorisé (c'est son rôle !)</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <pre><code>-- Ordre obligatoire des clauses dans une requête SELECT complète :
+SELECT c.NCIN_Cli, c.nom_Cli, COUNT(l.id_location) AS nb_loc, SUM(l.duree_loc) AS total_jours
+FROM Client c, Location l
+WHERE c.NCIN_Cli = l.NCIN_Cli          -- 1. Jointure (a.x = b.x) et filtre sur les lignes
+GROUP BY c.NCIN_Cli, c.nom_Cli         -- 2. Regroupement par client
+HAVING COUNT(l.id_location) >= 2       -- 3. Filtre sur les groupes (au moins 2 locations)
+ORDER BY total_jours DESC;             -- 4. Tri final du résultat
+
+-- Exemple 2 : Villes comptant au moins 2 clients
+SELECT ville, COUNT(*) AS nb_clients
+FROM Client
+GROUP BY ville
+HAVING COUNT(*) >= 2;
+
+-- Exemple 3 : Véhicules dont la durée moyenne de location est supérieure à 3 jours
+SELECT immat_Vehicule, AVG(duree_loc) AS duree_moyenne
+FROM Location
+GROUP BY immat_Vehicule
+HAVING AVG(duree_loc) > 3;</code></pre>
+
+          <div class="concept-return">
+            <strong>Astuce mémo STI :</strong>
+            <code>WHERE</code> trie les <b>ingrédients</b> avant de préparer les
+            paquets ; <code>GROUP BY</code> fabrique les <b>paquets</b> ;
+            <code>HAVING</code> pèse chaque paquet terminé et ne garde que ceux
+            qui respectent la condition (ex. <code>HAVING COUNT(*) &gt;= 2</code>).
+          </div>
+
+          <!-- Atelier interactif : Animation pas à pas de HAVING -->
+          <div class="sql-janim-wrap" id="sql-having-anim-app" style="background: color-mix(in srgb, var(--card) 92%, var(--peach));">
+            <div class="sql-janim-header">
+              <div>
+                <span class="key-badge" style="background:var(--sun);color:#1a1a2e">🎬 ANIMATION INTERACTIVE — HAVING</span>
+                <h4 style="margin:6px 0 2px;font-size:1.12rem">Visualiser comment <code>HAVING</code> teste chaque groupe après <code>GROUP BY</code></h4>
+                <p style="margin:0;font-size:0.88rem;opacity:0.85">Observez comment les groupes formés par <code>GROUP BY</code> sont inspectés un par un : seuls ceux qui vérifient la condition <code>HAVING</code> passent dans la table résultat finale.</p>
+              </div>
+            </div>
+
+            <div class="sql-janim-tabs" role="tablist" aria-label="Exemples animés de HAVING">
+              <button type="button" class="sql-janim-tab active" data-hvex="0">
+                🏙️ Ex. 1 : <code>GROUP BY ville HAVING COUNT(*) &gt;= 2</code>
+              </button>
+              <button type="button" class="sql-janim-tab" data-hvex="1">
+                ⏱️ Ex. 2 : <code>GROUP BY NCIN_Cli HAVING SUM(duree_loc) &gt;= 5</code>
+              </button>
+              <button type="button" class="sql-janim-tab" data-hvex="2">
+                🔗 Ex. 3 : Jointure (<code>a.x = b.x</code>) + <code>GROUP BY</code> + <code>HAVING AVG(l.duree_loc) &gt;= 4</code>
+              </button>
+            </div>
+
+            <div class="sql-janim-query-bar">
+              <div class="sql-janim-qlabel">📝 Requête SQL avec GROUP BY + HAVING :</div>
+              <div class="sql-janim-qcode" id="hvanim-sql-code"></div>
+            </div>
+
+            <div class="sql-janim-controls">
+              <button type="button" class="sql-janim-btn primary" id="hvanim-btn-play">▶ Animer pas à pas</button>
+              <button type="button" class="sql-janim-btn" id="hvanim-btn-prev">◀ Précédent</button>
+              <button type="button" class="sql-janim-btn" id="hvanim-btn-next">Suivant ▶</button>
+              <button type="button" class="sql-janim-btn" id="hvanim-btn-reset">⏮ Début</button>
+              <button type="button" class="sql-janim-btn accent" id="hvanim-btn-all">⚡ Résultat final</button>
+              <span class="sql-janim-step-badge" id="hvanim-step-badge">Prêt · 0 / 3</span>
+            </div>
+
+            <div class="sql-janim-comparator" id="hvanim-comparator">
+              Cliquez sur <b>▶ Animer pas à pas</b> pour voir SQL évaluer la condition <code>HAVING</code> sur chacun des groupes formés par <code>GROUP BY</code>.
+            </div>
+
+            <div class="sql-gb-stage">
+              <div class="sql-janim-tcard">
+                <div class="sql-janim-ttitle" style="background: linear-gradient(120deg, var(--grape), #2563eb);">① Groupes issus de <code>GROUP BY</code> (avant <code>HAVING</code>)</div>
+                <div class="sql-gb-buckets" id="hvanim-groups"></div>
+              </div>
+
+              <div class="sql-janim-tcard">
+                <div class="sql-janim-ttitle" style="background: linear-gradient(120deg, #ea580c, #dc2626);">② Filtre <code>HAVING</code> : Groupes gardés vs éliminés</div>
+                <div class="sql-gb-buckets" id="hvanim-decisions"></div>
+              </div>
+            </div>
+
+            <div class="sql-janim-result-box">
+              <div class="sql-janim-rhead">
+                <strong id="hvanim-result-title">③ Table Résultat finale après HAVING</strong>
+                <span style="font-size:0.82rem;opacity:0.85">Seuls les groupes validant la condition HAVING figurent dans le résultat.</span>
+              </div>
+              <div class="table-wrap" style="margin:0">
+                <table class="mini-table sql-janim-table" id="hvanim-table-res"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="card" id="lmd-strings">
           <h3>Fonctions de chaînes de caractères</h3>
           <ul>
@@ -2884,6 +3155,81 @@ SELECT DATEDIFF(year, '2024/08/25', '2011/08/25'); -- Résultat : -13</code></pr
       .sql-janim-table tr.jrow-new td {
         animation: janimRowPop 0.45s ease;
       }
+      .sql-gb-stage {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr);
+        gap: 0.75rem;
+        align-items: start;
+        margin-bottom: 0.9rem;
+      }
+      @media (max-width: 780px) {
+        .sql-gb-stage {
+          grid-template-columns: 1fr;
+        }
+      }
+      .sql-gb-buckets {
+        padding: 0.65rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+      }
+      .sql-gb-bucket {
+        border: 2.5px solid #1a1a2e;
+        border-radius: 12px;
+        padding: 0.55rem 0.75rem;
+        background: var(--bg);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      }
+      .sql-gb-bucket.active-bucket {
+        transform: scale(1.02);
+        box-shadow: 4px 4px 0 #1a1a2e;
+        border-color: #16a34a;
+        background: #dcfce7;
+        color: #14532d;
+      }
+      .sql-gb-bucket.hv-rejected {
+        background: #fee2e2;
+        color: #7f1d1d;
+        border-color: #dc2626;
+        opacity: 0.88;
+      }
+      .sql-gb-bucket-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        font-weight: 800;
+        font-size: 0.85rem;
+        margin-bottom: 0.35rem;
+      }
+      .sql-gb-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+      .sql-gb-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        border: 1.5px solid #1a1a2e;
+        background: var(--card);
+        color: var(--ink);
+        font-size: 0.76rem;
+        font-weight: 700;
+      }
+      .sql-gb-agg-pill {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.76rem;
+        font-weight: 800;
+        padding: 0.18rem 0.5rem;
+        border-radius: 8px;
+        background: var(--sun);
+        color: #1a1a2e;
+        border: 1.5px solid #1a1a2e;
+      }
     </style>
     <script>
       /* ===== Contrôleur des exemples animés de jointure entre 2 tables (a.x = b.x) ===== */
@@ -3244,6 +3590,547 @@ SELECT DATEDIFF(year, '2024/08/25', '2011/08/25'); -- Résultat : -13</code></pr
 
         construirePairs();
         renderState();
+      })();
+
+      /* ===== Contrôleur de l'animation interactive GROUP BY (#sql-groupby-anim-app) ===== */
+      (function () {
+        var app = document.getElementById("sql-groupby-anim-app");
+        if (!app) return;
+
+        var GB_SCENARIOS = [
+          {
+            sql: "SELECT ville, COUNT(*) AS nb_clients\nFROM Client\nGROUP BY ville;",
+            titleSrc: "📋 Table Client (5 lignes à regrouper par ville)",
+            groupKey: "ville",
+            groupLabel: "ville",
+            colsSrc: ["NCIN_Cli", "nom_Cli", "ville"],
+            rowsSrc: [
+              { NCIN_Cli: "12345678", nom_Cli: "Ali Ben Salah", ville: "Tunis" },
+              { NCIN_Cli: "87654321", nom_Cli: "Mouna Riahi", ville: "Sfax" },
+              { NCIN_Cli: "55667788", nom_Cli: "Sami Mejri", ville: "Tunis" },
+              { NCIN_Cli: "11223344", nom_Cli: "Karim Trabelsi", ville: "Sousse" },
+              { NCIN_Cli: "44556677", nom_Cli: "Ines Gharbi", ville: "Tunis" }
+            ],
+            itemText: function (r) {
+              return r.nom_Cli + " (" + r.NCIN_Cli + ")";
+            },
+            aggSummary: function (items) {
+              return "COUNT(*) = " + items.length;
+            },
+            colsRes: ["ville", "nb_clients"],
+            buildResRow: function (gKey, items) {
+              return { ville: gKey, nb_clients: items.length };
+            },
+            stepMsg: function (r, items) {
+              return "📦 Ligne lue : " + r.nom_Cli + " → ville = '" + r.ville + "' → rangée dans le paquet ['" + r.ville + "'] (COUNT(*) passe à " + items.length + ").";
+            }
+          },
+          {
+            sql: "SELECT NCIN_Cli, COUNT(*) AS nb_loc, SUM(duree_loc) AS total_jours, AVG(duree_loc) AS duree_moy\nFROM Location\nGROUP BY NCIN_Cli;",
+            titleSrc: "📋 Table Location (5 locations à regrouper par NCIN_Cli)",
+            groupKey: "NCIN_Cli",
+            groupLabel: "NCIN_Cli",
+            colsSrc: ["id_location", "NCIN_Cli", "duree_loc"],
+            rowsSrc: [
+              { id_location: 1, NCIN_Cli: "12345678", duree_loc: 3 },
+              { id_location: 2, NCIN_Cli: "87654321", duree_loc: 5 },
+              { id_location: 3, NCIN_Cli: "12345678", duree_loc: 5 },
+              { id_location: 4, NCIN_Cli: "55667788", duree_loc: 2 },
+              { id_location: 5, NCIN_Cli: "87654321", duree_loc: 3 }
+            ],
+            itemText: function (r) {
+              return "Loc n°" + r.id_location + " (" + r.duree_loc + " j)";
+            },
+            aggSummary: function (items) {
+              var sum = 0;
+              for (var i = 0; i < items.length; i++) sum += items[i].duree_loc;
+              var avg = Math.round((sum / items.length) * 100) / 100;
+              return "COUNT=" + items.length + " · SUM=" + sum + "j · AVG=" + avg + "j";
+            },
+            colsRes: ["NCIN_Cli", "nb_loc", "total_jours", "duree_moy"],
+            buildResRow: function (gKey, items) {
+              var sum = 0;
+              for (var i = 0; i < items.length; i++) sum += items[i].duree_loc;
+              var avg = Math.round((sum / items.length) * 100) / 100;
+              return { NCIN_Cli: gKey, nb_loc: items.length, total_jours: sum, duree_moy: avg };
+            },
+            stepMsg: function (r, items) {
+              var sum = 0;
+              for (var i = 0; i < items.length; i++) sum += items[i].duree_loc;
+              return "📦 Location n°" + r.id_location + " (" + r.duree_loc + " jours) → paquet NCIN_Cli = '" + r.NCIN_Cli + "' → COUNT = " + items.length + ", SUM = " + sum + " jours.";
+            }
+          },
+          {
+            sql: "SELECT c.NCIN_Cli, c.nom_Cli, COUNT(l.id_location) AS nb_loc, SUM(l.duree_loc) AS total_jours\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli\nGROUP BY c.NCIN_Cli, c.nom_Cli;",
+            titleSrc: "📋 Lignes après jointure WHERE c.NCIN_Cli = l.NCIN_Cli",
+            groupKey: "nom_Cli",
+            groupLabel: "c.NCIN_Cli, c.nom_Cli",
+            colsSrc: ["NCIN_Cli", "nom_Cli", "id_location", "duree_loc"],
+            rowsSrc: [
+              { NCIN_Cli: "12345678", nom_Cli: "Ali Ben Salah", id_location: 1, duree_loc: 3 },
+              { NCIN_Cli: "87654321", nom_Cli: "Mouna Riahi", id_location: 2, duree_loc: 5 },
+              { NCIN_Cli: "12345678", nom_Cli: "Ali Ben Salah", id_location: 3, duree_loc: 5 },
+              { NCIN_Cli: "55667788", nom_Cli: "Sami Mejri", id_location: 4, duree_loc: 2 },
+              { NCIN_Cli: "87654321", nom_Cli: "Mouna Riahi", id_location: 5, duree_loc: 3 }
+            ],
+            itemText: function (r) {
+              return "Loc n°" + r.id_location + " (" + r.duree_loc + " j)";
+            },
+            aggSummary: function (items) {
+              var sum = 0;
+              for (var i = 0; i < items.length; i++) sum += items[i].duree_loc;
+              return "COUNT = " + items.length + " · SUM = " + sum + " j";
+            },
+            colsRes: ["NCIN_Cli", "nom_Cli", "nb_loc", "total_jours"],
+            buildResRow: function (gKey, items) {
+              var sum = 0;
+              for (var i = 0; i < items.length; i++) sum += items[i].duree_loc;
+              return { NCIN_Cli: items[0].NCIN_Cli, nom_Cli: gKey, nb_loc: items.length, total_jours: sum };
+            },
+            stepMsg: function (r, items) {
+              var sum = 0;
+              for (var i = 0; i < items.length; i++) sum += items[i].duree_loc;
+              return "🔗+📦 Après jointure c.NCIN_Cli = l.NCIN_Cli : Loc n°" + r.id_location + " rejoint le groupe de " + r.nom_Cli + " (nb_loc = " + items.length + ", total_jours = " + sum + ").";
+            }
+          }
+        ];
+
+        var gbIdx = 0;
+        var gbStep = -1;
+        var gbTimer = null;
+
+        var elSql = document.getElementById("gbanim-sql-code");
+        var elTitleSrc = document.getElementById("gbanim-title-src");
+        var elTabSrc = document.getElementById("gbanim-table-src");
+        var elBuckets = document.getElementById("gbanim-buckets");
+        var elTabRes = document.getElementById("gbanim-table-res");
+        var elResTitle = document.getElementById("gbanim-result-title");
+        var elComp = document.getElementById("gbanim-comparator");
+        var elBadge = document.getElementById("gbanim-step-badge");
+        var btnPlay = document.getElementById("gbanim-btn-play");
+        var btnPrev = document.getElementById("gbanim-btn-prev");
+        var btnNext = document.getElementById("gbanim-btn-next");
+        var btnReset = document.getElementById("gbanim-btn-reset");
+        var btnAll = document.getElementById("gbanim-btn-all");
+
+        function stopGb() {
+          if (gbTimer) {
+            clearInterval(gbTimer);
+            gbTimer = null;
+          }
+          if (btnPlay) btnPlay.textContent = "▶ Animer pas à pas";
+        }
+
+        function renderGb() {
+          var sc = GB_SCENARIOS[gbIdx];
+          if (elSql) elSql.textContent = sc.sql;
+          if (elTitleSrc) elTitleSrc.textContent = sc.titleSrc;
+
+          /* Table source */
+          var sHtml = "<thead><tr>";
+          for (var c = 0; c < sc.colsSrc.length; c++) {
+            var isG = sc.colsSrc[c] === sc.groupKey;
+            sHtml += "<th>" + (isG ? "📦 " : "") + sc.colsSrc[c] + "</th>";
+          }
+          sHtml += "</tr></thead><tbody>";
+          for (var r = 0; r < sc.rowsSrc.length; r++) {
+            var cls = r === gbStep ? "jrow-active-match" : "";
+            sHtml += "<tr class='" + cls + "'>";
+            for (var k = 0; k < sc.colsSrc.length; k++) {
+              var col = sc.colsSrc[k];
+              sHtml += "<td class='" + (col === sc.groupKey ? "jcol-key" : "") + "'>" + sc.rowsSrc[r][col] + "</td>";
+            }
+            sHtml += "</tr>";
+          }
+          sHtml += "</tbody>";
+          elTabSrc.innerHTML = sHtml;
+
+          /* Construire les groupes jusqu'à gbStep */
+          var orderKeys = [];
+          var mapGroups = {};
+          for (var i = 0; i <= gbStep && i < sc.rowsSrc.length; i++) {
+            var row = sc.rowsSrc[i];
+            var gk = row[sc.groupKey];
+            if (!mapGroups[gk]) {
+              mapGroups[gk] = [];
+              orderKeys.push(gk);
+            }
+            mapGroups[gk].push(row);
+          }
+
+          var curRow = (gbStep >= 0 && gbStep < sc.rowsSrc.length) ? sc.rowsSrc[gbStep] : null;
+          if (!curRow) {
+            elComp.className = "sql-janim-comparator";
+            elComp.innerHTML = "Prêt : cliquez sur <b>▶ Animer pas à pas</b> ou <b>Suivant ▶</b> pour regrouper les lignes selon <code>GROUP BY " + sc.groupLabel + "</code>.";
+            elBadge.textContent = "Début · 0 / " + sc.rowsSrc.length;
+          } else {
+            var curGk = curRow[sc.groupKey];
+            elComp.className = "sql-janim-comparator match";
+            elComp.textContent = sc.stepMsg(curRow, mapGroups[curGk]);
+            elBadge.textContent = "Ligne " + (gbStep + 1) + " / " + sc.rowsSrc.length;
+          }
+
+          /* Affichage des paquets (buckets) */
+          if (orderKeys.length === 0) {
+            elBuckets.innerHTML = "<div style='padding:0.75rem;text-align:center;opacity:0.7;font-size:0.84rem'>Aucun paquet formé pour l'instant — lancez l'animation pour remplir les groupes.</div>";
+          } else {
+            var bHtml = "";
+            for (var b = 0; b < orderKeys.length; b++) {
+              var keyName = orderKeys[b];
+              var gItems = mapGroups[keyName];
+              var isAct = curRow && curRow[sc.groupKey] === keyName;
+              bHtml += "<div class='sql-gb-bucket " + (isAct ? "active-bucket" : "") + "'>";
+              bHtml += "<div class='sql-gb-bucket-head'><span>📦 Groupe <code>" + sc.groupKey + " = '" + keyName + "'</code></span><span class='sql-gb-agg-pill'>" + sc.aggSummary(gItems) + "</span></div>";
+              bHtml += "<div class='sql-gb-chips'>";
+              for (var m = 0; m < gItems.length; m++) {
+                bHtml += "<span class='sql-gb-chip'>• " + sc.itemText(gItems[m]) + "</span>";
+              }
+              bHtml += "</div></div>";
+            }
+            elBuckets.innerHTML = bHtml;
+          }
+
+          /* Table résultat */
+          elResTitle.textContent = "📊 Table Résultat du GROUP BY (" + orderKeys.length + " groupe" + (orderKeys.length > 1 ? "s" : "") + ")";
+          var rHtml = "<thead><tr>";
+          for (var rc = 0; rc < sc.colsRes.length; rc++) {
+            rHtml += "<th>" + sc.colsRes[rc] + "</th>";
+          }
+          rHtml += "</tr></thead><tbody>";
+          if (orderKeys.length === 0) {
+            rHtml += "<tr><td colspan='" + sc.colsRes.length + "' style='text-align:center;opacity:0.7;padding:0.75rem'>En attente du regroupement...</td></tr>";
+          } else {
+            for (var gr = 0; gr < orderKeys.length; gr++) {
+              var kName = orderKeys[gr];
+              var resObj = sc.buildResRow(kName, mapGroups[kName]);
+              var isNewGrp = curRow && curRow[sc.groupKey] === kName;
+              rHtml += "<tr class='" + (isNewGrp ? "jrow-new" : "") + "'>";
+              for (var cc = 0; cc < sc.colsRes.length; cc++) {
+                rHtml += "<td>" + resObj[sc.colsRes[cc]] + "</td>";
+              }
+              rHtml += "</tr>";
+            }
+          }
+          rHtml += "</tbody>";
+          elTabRes.innerHTML = rHtml;
+        }
+
+        function stepNextGb() {
+          var sc = GB_SCENARIOS[gbIdx];
+          if (gbStep < sc.rowsSrc.length - 1) {
+            gbStep++;
+            renderGb();
+          } else {
+            stopGb();
+          }
+        }
+
+        var tabBtns = app.querySelectorAll(".sql-janim-tab");
+        Array.prototype.forEach.call(tabBtns, function (b) {
+          b.addEventListener("click", function () {
+            stopGb();
+            Array.prototype.forEach.call(tabBtns, function (x) { x.classList.remove("active"); });
+            b.classList.add("active");
+            gbIdx = parseInt(b.getAttribute("data-gbex") || "0", 10);
+            gbStep = -1;
+            renderGb();
+          });
+        });
+
+        if (btnPlay) btnPlay.addEventListener("click", function () {
+          var sc = GB_SCENARIOS[gbIdx];
+          if (gbTimer) {
+            stopGb();
+            return;
+          }
+          if (gbStep >= sc.rowsSrc.length - 1) gbStep = -1;
+          btnPlay.textContent = "⏸ Pause";
+          stepNextGb();
+          gbTimer = setInterval(function () {
+            if (gbStep < sc.rowsSrc.length - 1) stepNextGb();
+            else stopGb();
+          }, 1150);
+        });
+        if (btnNext) btnNext.addEventListener("click", function () { stopGb(); stepNextGb(); });
+        if (btnPrev) btnPrev.addEventListener("click", function () {
+          stopGb();
+          if (gbStep >= 0) {
+            gbStep--;
+            renderGb();
+          }
+        });
+        if (btnReset) btnReset.addEventListener("click", function () {
+          stopGb();
+          gbStep = -1;
+          renderGb();
+        });
+        if (btnAll) btnAll.addEventListener("click", function () {
+          stopGb();
+          gbStep = GB_SCENARIOS[gbIdx].rowsSrc.length - 1;
+          renderGb();
+        });
+
+        renderGb();
+      })();
+
+      /* ===== Contrôleur de l'animation interactive HAVING (#sql-having-anim-app) ===== */
+      (function () {
+        var app = document.getElementById("sql-having-anim-app");
+        if (!app) return;
+
+        var HV_SCENARIOS = [
+          {
+            sql: "SELECT ville, COUNT(*) AS nb_clients\nFROM Client\nGROUP BY ville\nHAVING COUNT(*) >= 2;",
+            condLabel: "COUNT(*) >= 2",
+            colsRes: ["ville", "nb_clients"],
+            groups: [
+              {
+                keyLabel: "ville = 'Tunis'",
+                aggLabel: "COUNT(*) = 3",
+                members: ["Ali Ben Salah", "Sami Mejri", "Ines Gharbi"],
+                ok: true,
+                explain: "✔ Groupe 'Tunis' : COUNT(*) = 3 >= 2 → Condition HAVING vérifiée, le groupe est GARDÉ !",
+                resRow: { ville: "Tunis", nb_clients: 3 }
+              },
+              {
+                keyLabel: "ville = 'Sfax'",
+                aggLabel: "COUNT(*) = 1",
+                members: ["Mouna Riahi"],
+                ok: false,
+                explain: "✘ Groupe 'Sfax' : COUNT(*) = 1 (inférieur à 2) → Condition HAVING non vérifiée, le groupe est ÉLIMINÉ !",
+                resRow: { ville: "Sfax", nb_clients: 1 }
+              },
+              {
+                keyLabel: "ville = 'Sousse'",
+                aggLabel: "COUNT(*) = 2",
+                members: ["Karim Trabelsi", "Nour Mansouri"],
+                ok: true,
+                explain: "✔ Groupe 'Sousse' : COUNT(*) = 2 >= 2 → Condition HAVING vérifiée, le groupe est GARDÉ !",
+                resRow: { ville: "Sousse", nb_clients: 2 }
+              }
+            ]
+          },
+          {
+            sql: "SELECT NCIN_Cli, COUNT(*) AS nb_loc, SUM(duree_loc) AS total_jours\nFROM Location\nGROUP BY NCIN_Cli\nHAVING SUM(duree_loc) >= 5;",
+            condLabel: "SUM(duree_loc) >= 5",
+            colsRes: ["NCIN_Cli", "nb_loc", "total_jours"],
+            groups: [
+              {
+                keyLabel: "NCIN_Cli = '12345678'",
+                aggLabel: "SUM(duree_loc) = 8 j",
+                members: ["Loc n°1 (3 j)", "Loc n°3 (5 j)"],
+                ok: true,
+                explain: "✔ Client '12345678' : SUM(duree_loc) = 3 + 5 = 8 >= 5 → GARDÉ par HAVING !",
+                resRow: { NCIN_Cli: "12345678", nb_loc: 2, total_jours: 8 }
+              },
+              {
+                keyLabel: "NCIN_Cli = '55667788'",
+                aggLabel: "SUM(duree_loc) = 2 j",
+                members: ["Loc n°4 (2 j)"],
+                ok: false,
+                explain: "✘ Client '55667788' : SUM(duree_loc) = 2 (inférieur à 5) → ÉLIMINÉ par HAVING !",
+                resRow: { NCIN_Cli: "55667788", nb_loc: 1, total_jours: 2 }
+              },
+              {
+                keyLabel: "NCIN_Cli = '87654321'",
+                aggLabel: "SUM(duree_loc) = 6 j",
+                members: ["Loc n°2 (4 j)", "Loc n°5 (2 j)"],
+                ok: true,
+                explain: "✔ Client '87654321' : SUM(duree_loc) = 4 + 2 = 6 >= 5 → GARDÉ par HAVING !",
+                resRow: { NCIN_Cli: "87654321", nb_loc: 2, total_jours: 6 }
+              }
+            ]
+          },
+          {
+            sql: "SELECT c.NCIN_Cli, c.nom_Cli, AVG(l.duree_loc) AS duree_moy\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli\nGROUP BY c.NCIN_Cli, c.nom_Cli\nHAVING AVG(l.duree_loc) >= 4;",
+            condLabel: "AVG(l.duree_loc) >= 4",
+            colsRes: ["NCIN_Cli", "nom_Cli", "duree_moy"],
+            groups: [
+              {
+                keyLabel: "Ali Ben Salah (12345678)",
+                aggLabel: "AVG(duree_loc) = 4.5 j",
+                members: ["Loc n°1 (4 j)", "Loc n°3 (5 j)"],
+                ok: true,
+                explain: "✔ Groupe Ali Ben Salah : AVG(duree_loc) = 4.5 >= 4 → GARDÉ par HAVING !",
+                resRow: { NCIN_Cli: "12345678", nom_Cli: "Ali Ben Salah", duree_moy: 4.5 }
+              },
+              {
+                keyLabel: "Mouna Riahi (87654321)",
+                aggLabel: "AVG(duree_loc) = 2.5 j",
+                members: ["Loc n°2 (3 j)", "Loc n°5 (2 j)"],
+                ok: false,
+                explain: "✘ Groupe Mouna Riahi : AVG(duree_loc) = 2.5 < 4 → ÉLIMINÉ par HAVING !",
+                resRow: { NCIN_Cli: "87654321", nom_Cli: "Mouna Riahi", duree_moy: 2.5 }
+              },
+              {
+                keyLabel: "Sami Mejri (55667788)",
+                aggLabel: "AVG(duree_loc) = 5 j",
+                members: ["Loc n°4 (5 j)"],
+                ok: true,
+                explain: "✔ Groupe Sami Mejri : AVG(duree_loc) = 5 >= 4 → GARDÉ par HAVING !",
+                resRow: { NCIN_Cli: "55667788", nom_Cli: "Sami Mejri", duree_moy: 5 }
+              }
+            ]
+          }
+        ];
+
+        var hvIdx = 0;
+        var hvStep = -1;
+        var hvTimer = null;
+
+        var elSql = document.getElementById("hvanim-sql-code");
+        var elGroups = document.getElementById("hvanim-groups");
+        var elDecisions = document.getElementById("hvanim-decisions");
+        var elTabRes = document.getElementById("hvanim-table-res");
+        var elResTitle = document.getElementById("hvanim-result-title");
+        var elComp = document.getElementById("hvanim-comparator");
+        var elBadge = document.getElementById("hvanim-step-badge");
+        var btnPlay = document.getElementById("hvanim-btn-play");
+        var btnPrev = document.getElementById("hvanim-btn-prev");
+        var btnNext = document.getElementById("hvanim-btn-next");
+        var btnReset = document.getElementById("hvanim-btn-reset");
+        var btnAll = document.getElementById("hvanim-btn-all");
+
+        function stopHv() {
+          if (hvTimer) {
+            clearInterval(hvTimer);
+            hvTimer = null;
+          }
+          if (btnPlay) btnPlay.textContent = "▶ Animer pas à pas";
+        }
+
+        function renderHv() {
+          var sc = HV_SCENARIOS[hvIdx];
+          if (elSql) elSql.textContent = sc.sql;
+
+          /* Colonne 1 : Tous les groupes issus de GROUP BY */
+          var gHtml = "";
+          for (var i = 0; i < sc.groups.length; i++) {
+            var g = sc.groups[i];
+            var isCur = i === hvStep;
+            gHtml += "<div class='sql-gb-bucket " + (isCur ? "active-bucket" : "") + "'>";
+            gHtml += "<div class='sql-gb-bucket-head'><span>📦 " + g.keyLabel + "</span><span class='sql-gb-agg-pill'>" + g.aggLabel + "</span></div>";
+            gHtml += "<div class='sql-gb-chips'>";
+            for (var m = 0; m < g.members.length; m++) {
+              gHtml += "<span class='sql-gb-chip'>• " + g.members[m] + "</span>";
+            }
+            gHtml += "</div></div>";
+          }
+          elGroups.innerHTML = gHtml;
+
+          /* Bandeau d'état */
+          var curGrp = (hvStep >= 0 && hvStep < sc.groups.length) ? sc.groups[hvStep] : null;
+          if (!curGrp) {
+            elComp.className = "sql-janim-comparator";
+            elComp.innerHTML = "Prêt : cliquez sur <b>▶ Animer pas à pas</b> pour tester <code>HAVING " + sc.condLabel + "</code> sur chaque groupe formé par <code>GROUP BY</code>.";
+            elBadge.textContent = "Début · 0 / " + sc.groups.length;
+          } else {
+            elComp.className = "sql-janim-comparator " + (curGrp.ok ? "match" : "nomatch");
+            elComp.textContent = curGrp.explain;
+            elBadge.textContent = "Groupe " + (hvStep + 1) + " / " + sc.groups.length;
+          }
+
+          /* Colonne 2 : Décisions HAVING jusqu'à hvStep */
+          if (hvStep < 0) {
+            elDecisions.innerHTML = "<div style='padding:0.75rem;text-align:center;opacity:0.7;font-size:0.84rem'>En attente du test <code>HAVING " + sc.condLabel + "</code>...</div>";
+          } else {
+            var dHtml = "";
+            for (var j = 0; j <= hvStep && j < sc.groups.length; j++) {
+              var dj = sc.groups[j];
+              dHtml += "<div class='sql-gb-bucket " + (dj.ok ? "active-bucket" : "hv-rejected") + "'>";
+              dHtml += "<div class='sql-gb-bucket-head'><span>" + (dj.ok ? "✅ GARDÉ : " : "❌ ÉLIMINÉ : ") + dj.keyLabel + "</span><span class='sql-gb-agg-pill'>" + dj.aggLabel + "</span></div>";
+              dHtml += "<div style='font-size:0.78rem;font-weight:700'>" + (dj.ok ? "Vérifie HAVING " + sc.condLabel + " → passe dans le résultat" : "Ne vérifie pas HAVING " + sc.condLabel + " → rejeté") + "</div>";
+              dHtml += "</div>";
+            }
+            elDecisions.innerHTML = dHtml;
+          }
+
+          /* Table résultat finale après HAVING */
+          var kept = [];
+          for (var k = 0; k <= hvStep && k < sc.groups.length; k++) {
+            if (sc.groups[k].ok) {
+              kept.push({ g: sc.groups[k], isNew: k === hvStep });
+            }
+          }
+          elResTitle.textContent = "③ Table Résultat finale après HAVING (" + kept.length + " groupe" + (kept.length > 1 ? "s" : "") + " retenu" + (kept.length > 1 ? "s" : "") + ")";
+
+          var rHtml = "<thead><tr>";
+          for (var rc = 0; rc < sc.colsRes.length; rc++) {
+            rHtml += "<th>" + sc.colsRes[rc] + "</th>";
+          }
+          rHtml += "</tr></thead><tbody>";
+          if (kept.length === 0) {
+            rHtml += "<tr><td colspan='" + sc.colsRes.length + "' style='text-align:center;opacity:0.7;padding:0.75rem'>Aucun groupe retenu pour l'instant — lancez l'animation pour filtrer avec HAVING.</td></tr>";
+          } else {
+            for (var r = 0; r < kept.length; r++) {
+              var rowObj = kept[r].g.resRow;
+              rHtml += "<tr class='" + (kept[r].isNew ? "jrow-new" : "") + "'>";
+              for (var cc = 0; cc < sc.colsRes.length; cc++) {
+                rHtml += "<td>" + rowObj[sc.colsRes[cc]] + "</td>";
+              }
+              rHtml += "</tr>";
+            }
+          }
+          rHtml += "</tbody>";
+          elTabRes.innerHTML = rHtml;
+        }
+
+        function stepNextHv() {
+          var sc = HV_SCENARIOS[hvIdx];
+          if (hvStep < sc.groups.length - 1) {
+            hvStep++;
+            renderHv();
+          } else {
+            stopHv();
+          }
+        }
+
+        var tabBtns = app.querySelectorAll(".sql-janim-tab");
+        Array.prototype.forEach.call(tabBtns, function (b) {
+          b.addEventListener("click", function () {
+            stopHv();
+            Array.prototype.forEach.call(tabBtns, function (x) { x.classList.remove("active"); });
+            b.classList.add("active");
+            hvIdx = parseInt(b.getAttribute("data-hvex") || "0", 10);
+            hvStep = -1;
+            renderHv();
+          });
+        });
+
+        if (btnPlay) btnPlay.addEventListener("click", function () {
+          var sc = HV_SCENARIOS[hvIdx];
+          if (hvTimer) {
+            stopHv();
+            return;
+          }
+          if (hvStep >= sc.groups.length - 1) hvStep = -1;
+          btnPlay.textContent = "⏸ Pause";
+          stepNextHv();
+          hvTimer = setInterval(function () {
+            if (hvStep < sc.groups.length - 1) stepNextHv();
+            else stopHv();
+          }, 1250);
+        });
+        if (btnNext) btnNext.addEventListener("click", function () { stopHv(); stepNextHv(); });
+        if (btnPrev) btnPrev.addEventListener("click", function () {
+          stopHv();
+          if (hvStep >= 0) {
+            hvStep--;
+            renderHv();
+          }
+        });
+        if (btnReset) btnReset.addEventListener("click", function () {
+          stopHv();
+          hvStep = -1;
+          renderHv();
+        });
+        if (btnAll) btnAll.addEventListener("click", function () {
+          stopHv();
+          hvStep = HV_SCENARIOS[hvIdx].groups.length - 1;
+          renderHv();
+        });
+
+        renderHv();
       })();
     </script>
     <script>
