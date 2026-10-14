@@ -135,8 +135,7 @@
     <div class="title-container">
       <div class="db-logo">SQL</div>
       <h1>
-        Corrigé de la Série de Révision : Gestion d'un Hôtel (Gesthotel)[cite:
-        11]
+        Corrigé de la Série de Révision : Gestion d'un Hôtel (Gesthotel)
       </h1>
     </div>
 
@@ -240,7 +239,7 @@ GROUP BY type; </pre
       </li>
 
       <li>
-        <strong>Lister toutes les réservations du client C103 :</strong>
+        <strong>Lister toutes les réservations du client CL03 :</strong>
         <pre>
 SELECT * 
 FROM reservation 
@@ -250,8 +249,8 @@ WHERE numcl = 'CL03'; </pre
 
       <li>
         <strong
-          >Calculer le montant total de la facture en cours du client C103[cite:
-          11] :</strong
+          >Calculer le montant total de la facture en cours du client CL03
+          :</strong
         >
         <pre>
 SELECT numcl, SUM(prix * nbjours) AS facture 
@@ -278,12 +277,12 @@ AND DATE(dateDebut) <= DATE(NOW()); </pre
       <li>
         <strong
           >Donner le nombre de clients qui ont choisi les mêmes pensions que le
-          client CI02 :</strong
+          client CL02 :</strong
         >
         <pre>
 SELECT COUNT(DISTINCT numcl) AS nbrclient 
 FROM reservation 
-WHERE pension = (SELECT pension FROM reservation WHERE numcl = 'CL02'); </pre
+WHERE pension IN (SELECT pension FROM reservation WHERE numcl = 'CL02'); </pre
         >
       </li>
 
@@ -396,6 +395,7 @@ WHERE numch NOT IN (SELECT numch FROM reservation); </pre
     </ol>
 
     <div class="footer-page">4ème SI - Lycée Rafèha | Corrigé Gesthotel</div>
+    <script src="tp-gesthotel-animation.js"></script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../../assets/css/protection.css?v=142" />
 <script src="../../assets/js/protection.js?v=142" defer></script>
