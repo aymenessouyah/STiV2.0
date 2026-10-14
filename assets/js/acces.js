@@ -1437,8 +1437,9 @@
     pan.innerHTML =
       "<div style='display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px'>" +
         "<button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1.5px solid #23201a;background:#f3ead9;color:#23201a;border-radius:7px;padding:1px 7px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
-        "<div style='display:flex;align-items:center;gap:5px'>" +
+        "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:1.5px solid #23201a;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;box-shadow:1.5px 1.5px 0 #23201a'>👑 GOLD</span>" +
+          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.181</span>" +
           "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
         "</div>" +
       "</div>" +
@@ -1690,6 +1691,45 @@
       badgePerm.style.cssText = "display:block;width:100%;margin:5px 0 0 auto;border:1.5px solid #177245;background:#e3f6e8;color:#177245;text-align:center;border-radius:8px;padding:4px 8px;font-weight:900;font-size:10px;box-sizing:border-box;";
       pan.appendChild(badgePerm);
     }
+
+    var badgeVerRoue = document.createElement("div");
+    badgeVerRoue.id = "sti-pan-version-foot";
+    badgeVerRoue.textContent = "STiV2.0.181";
+    badgeVerRoue.style.cssText = "margin-top:5px;padding-top:4px;border-top:1px dashed #e2d5be;text-align:center;font-size:10px;font-weight:900;color:#7a6f5d;letter-spacing:.4px;";
+    pan.appendChild(badgeVerRoue);
+
+    (function majVersionRoueCandidat() {
+      function appliquerNumVer(num) {
+        if (!num) return;
+        var label = "STiV2.0." + num;
+        var hEl = document.getElementById("sti-pan-version-head");
+        var fEl = document.getElementById("sti-pan-version-foot");
+        if (hEl) hEl.textContent = label;
+        if (fEl) fEl.textContent = label;
+      }
+      if (window.caches && caches.keys) {
+        caches.keys().then(function (cles) {
+          var nums = [];
+          (cles || []).forEach(function (k) {
+            var m = String(k).match(/sti-atelier-v(\d+)/i);
+            if (m && m[1]) nums.push(parseInt(m[1], 10));
+          });
+          if (nums.length) {
+            nums.sort(function (a, b) { return b - a; });
+            appliquerNumVer(nums[0]);
+          }
+        }).catch(function () {});
+      }
+      if (typeof fetch === "function") {
+        fetch(cfg.RACINE + "sw.js", { cache: "no-store" })
+          .then(function (r) { return r && r.ok ? r.text() : ""; })
+          .then(function (txt) {
+            var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
+            if (m && m[1]) appliquerNumVer(parseInt(m[1], 10));
+          })
+          .catch(function () {});
+      }
+    })();
 
     var porte = document.createElement("div");
     porte.className = "sti-wrap";
