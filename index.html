@@ -2738,6 +2738,15 @@
           <button
             type="button"
             class="filter-chip"
+            id="btnHomeConsoleJs"
+            title="Ouvrir la Console JavaScript interactive du navigateur pour essayer du code JS en direct"
+            style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
+          >
+            🖥️ Console JS
+          </button>
+          <button
+            type="button"
+            class="filter-chip"
             id="btnHomeDebug"
             title="Mode Chasse aux erreurs (Débogage Bac STI : trouver et corriger les 3 erreurs classiques)"
             style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
@@ -4318,6 +4327,14 @@
             }
           });
         }
+        var btnHomeCons = document.getElementById("btnHomeConsoleJs");
+        if (btnHomeCons) {
+          btnHomeCons.addEventListener("click", function () {
+            if (typeof window.ouvrirConsoleNavigateurSTI === "function") {
+              window.ouvrirConsoleNavigateurSTI();
+            }
+          });
+        }
         var btnHomeDbg = document.getElementById("btnHomeDebug");
         if (btnHomeDbg) {
           btnHomeDbg.addEventListener("click", function () {
@@ -4768,6 +4785,6 @@
 <!-- /Protection -->
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=142"></script>
-<script src="assets/js/acces.js?v=167"></script>
+<script src="assets/js/acces.js?v=168"></script>
 </body>
 </html>

@@ -69,6 +69,10 @@
   var laserLineEl = null;
   var splitViewActifSTI = false;
   var splitRatioDroiteSTI = 48;
+  var consoleHistSTI = [];
+  var consoleHistIdxSTI = -1;
+  var consoleHookInstalleSTI = false;
+  var consoleLogsBufferSTI = [];
   var msnSiteUidActif = "";
   var msnSiteFichier = null;
   var cfgSecurite = {
@@ -1566,6 +1570,9 @@
     });
     ajouterOutilGrille("💻 Bac à sable", "Tester du code HTML / CSS / JS en direct", "background:#fff;color:#23201a;", function () {
       if (window.ouvrirSandboxSTI) window.ouvrirSandboxSTI();
+    });
+    ajouterOutilGrille("🖥️ Console JS", "Console interactive du navigateur pour tester JavaScript", "border-color:#0284c7;background:#f0f9ff;color:#0369a1;font-weight:900;", function () {
+      if (window.ouvrirConsoleNavigateurSTI) window.ouvrirConsoleNavigateurSTI();
     });
     ajouterOutilGrille("🐞 Débogage", "Chasse aux erreurs (30 pièges du Bac STI)", "background:#fff5ee;color:#d84315;font-weight:900;", function () {
       if (window.ouvrirChasseErreursSTI) window.ouvrirChasseErreursSTI("all");
@@ -5048,7 +5055,7 @@
     }
     /* Compenser le zoom sur les contrôles flottants pour qu'ils gardent une taille fixe à l'écran */
     var inv = z === 100 ? "" : ((10000 / z).toFixed(2) + "%");
-    var idsFlottants = ["sti-pc-win-tools", "sti-btn-messenger-global", "sti-roue-wrap", "sti-badge-admin-flottant", "sti-split-view-panel", "sti-laser-overlay", "sti-sandbox-modal"];
+    var idsFlottants = ["sti-pc-win-tools", "sti-btn-messenger-global", "sti-roue-wrap", "sti-badge-admin-flottant", "sti-split-view-panel", "sti-laser-overlay", "sti-sandbox-modal", "sti-browser-console-panel"];
     for (var i = 0; i < idsFlottants.length; i++) {
       var elF = document.getElementById(idsFlottants[i]);
       if (elF) elF.style.zoom = inv;
@@ -6060,6 +6067,314 @@
     }
   }
 
+  /* ---------- Console JavaScript interactive du navigateur (🖥️ Console) ---------- */
+  var consoleHistSTI = [];
+  var consoleHistIdxSTI = -1;
+  var consoleHookInstalleSTI = false;
+  var consoleLogsBufferSTI = [];
+
+  function formaterValeurConsoleSTI(val) {
+    if (val === undefined) return { texte: "undefined", couleur: "#94a3b8" };
+    if (val === null) return { texte: "null", couleur: "#94a3b8" };
+    if (typeof val === "string") return { texte: '"' + val + '"', couleur: "#fbbf24" };
+    if (typeof val === "number" || typeof val === "boolean") return { texte: String(val), couleur: "#60a5fa" };
+    if (typeof val === "function") return { texte: "ƒ " + (val.name || "anonyme") + "()", couleur: "#c084fc" };
+    try {
+      return { texte: JSON.stringify(val), couleur: "#34d399" };
+    } catch (e) {
+      return { texte: String(val), couleur: "#e2e8f0" };
+    }
+  }
+
+  function ajouterEntreeConsoleDOM(type, texte, couleurForcee) {
+    consoleLogsBufferSTI.push({ type: type, texte: texte, couleur: couleurForcee, ts: new Date().toLocaleTimeString("fr-FR") });
+    if (consoleLogsBufferSTI.length > 150) consoleLogsBufferSTI.shift();
+    var out = document.getElementById("sti-bcons-output");
+    if (!out) return;
+    var row = document.createElement("div");
+    var bg = "transparent";
+    var col = couleurForcee || "#e2e8f0";
+    var ico = "›";
+    if (type === "cmd") {
+      col = "#38bdf8";
+      ico = "❯";
+      bg = "rgba(56,189,248,0.06)";
+    } else if (type === "res") {
+      ico = "⬅";
+    } else if (type === "log") {
+      col = "#86efac";
+      ico = "🟢";
+    } else if (type === "warn") {
+      col = "#fde047";
+      ico = "⚠️";
+      bg = "rgba(250,204,21,0.08)";
+    } else if (type === "err") {
+      col = "#fca5a5";
+      ico = "❌";
+      bg = "rgba(239,68,68,0.14)";
+    } else if (type === "alert") {
+      col = "#ffd54f";
+      ico = "🔔 [alert]";
+      bg = "rgba(255,213,79,0.10)";
+    }
+    row.style.cssText =
+      "display:flex;align-items:flex-start;gap:8px;padding:5px 10px;border-bottom:1px solid rgba(148,163,184,0.14);" +
+      "background:" + bg + ";color:" + col + ";font:600 12.5px/1.45 'JetBrains Mono','Fira Code',Consolas,monospace;font-variant-ligatures:none;white-space:pre-wrap;word-break:break-word;";
+    var spIco = document.createElement("span");
+    spIco.style.cssText = "flex-shrink:0;opacity:0.9;user-select:none;";
+    spIco.textContent = ico;
+    var spTxt = document.createElement("span");
+    spTxt.style.cssText = "flex:1;";
+    spTxt.textContent = texte;
+    row.appendChild(spIco);
+    row.appendChild(spTxt);
+    out.appendChild(row);
+    out.scrollTop = out.scrollHeight;
+  }
+
+  function installerHookConsoleNavigateurSTI() {
+    if (consoleHookInstalleSTI) return;
+    consoleHookInstalleSTI = true;
+    var origLog = console.log;
+    var origWarn = console.warn;
+    var origErr = console.error;
+
+    function argsVersTexte(args) {
+      var res = [];
+      for (var i = 0; i < args.length; i++) {
+        var a = args[i];
+        if (typeof a === "object" && a !== null) {
+          try { res.push(JSON.stringify(a)); } catch (e) { res.push(String(a)); }
+        } else {
+          res.push(String(a));
+        }
+      }
+      return res.join(" ");
+    }
+
+    console.log = function () {
+      ajouterEntreeConsoleDOM("log", argsVersTexte(arguments));
+      if (origLog) origLog.apply(console, arguments);
+    };
+    console.warn = function () {
+      ajouterEntreeConsoleDOM("warn", argsVersTexte(arguments));
+      if (origWarn) origWarn.apply(console, arguments);
+    };
+    console.error = function () {
+      ajouterEntreeConsoleDOM("err", argsVersTexte(arguments));
+      if (origErr) origErr.apply(console, arguments);
+    };
+    window.addEventListener("error", function (ev) {
+      if (ev && ev.message) {
+        ajouterEntreeConsoleDOM("err", ev.message + (ev.lineno ? " (ligne " + ev.lineno + ")" : ""));
+      }
+    });
+  }
+
+  window.ouvrirConsoleNavigateurSTI = function (btnDeclencheur) {
+    installerHookConsoleNavigateurSTI();
+    var btnBar = btnDeclencheur || document.getElementById("sti-btn-pc-console");
+    var ex = document.getElementById("sti-browser-console-panel");
+    if (ex) {
+      ex.remove();
+      if (btnBar) {
+        btnBar.style.background = "#fffdf7";
+        btnBar.style.color = "#23201a";
+      }
+      return;
+    }
+
+    if (btnBar) {
+      btnBar.style.background = "#0284c7";
+      btnBar.style.color = "#ffffff";
+    }
+
+    var panel = document.createElement("div");
+    panel.id = "sti-browser-console-panel";
+    panel.className = "sti-no-print";
+    panel.style.cssText =
+      "position:fixed;left:0;right:0;bottom:66px;height:min(340px,52vh);z-index:2147483644;" +
+      "background:#0f172a;color:#f8fafc;border-top:3px solid #38bdf8;box-shadow:0 -10px 30px rgba(0,0,0,0.45);" +
+      "display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;";
+
+    /* Poignée supérieure pour agrandir/réduire la hauteur de la console */
+    var dragTop = document.createElement("div");
+    dragTop.title = "Glisser verticalement pour redimensionner la console";
+    dragTop.style.cssText =
+      "height:6px;background:#1e293b;cursor:ns-resize;display:flex;align-items:center;justify-content:center;flex-shrink:0;";
+    dragTop.innerHTML = '<span style="width:42px;height:3px;border-radius:999px;background:#64748b;display:block;"></span>';
+    (function () {
+      var enDragH = false;
+      dragTop.addEventListener("mousedown", function (e) { e.preventDefault(); enDragH = true; });
+      window.addEventListener("mousemove", function (e) {
+        if (!enDragH) return;
+        var nvH = Math.max(180, Math.min(window.innerHeight - 90, window.innerHeight - e.clientY - 66));
+        panel.style.height = nvH + "px";
+      });
+      window.addEventListener("mouseup", function () { enDragH = false; });
+    })();
+
+    /* Barre d'en-tête avec exemples rapides STI */
+    var head = document.createElement("div");
+    head.style.cssText =
+      "display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;" +
+      "background:#1e293b;border-bottom:1px solid #334155;flex-wrap:wrap;flex-shrink:0;";
+
+    var leftHead = document.createElement("div");
+    leftHead.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:wrap;";
+    leftHead.innerHTML =
+      '<strong style="font-size:12.5px;color:#38bdf8;margin-right:4px;">🖥️ Console JavaScript du navigateur</strong>' +
+      '<button type="button" data-js-snip="var ch = &quot;Bac STI 2026&quot;;\nconsole.log(&quot;Longueur =&quot;, ch.length, &quot;| 1er car =&quot;, ch[0]);\nch.toUpperCase();" style="border:1px solid #475569;background:#0f172a;color:#e2e8f0;border-radius:6px;padding:3px 8px;font:700 11px inherit;cursor:pointer;">⚡ ch.length / ch[i]</button>' +
+      '<button type="button" data-js-snip="var ch = &quot;eleve@sti.tn&quot;;\nvar p = ch.indexOf(&quot;@&quot;);\nconsole.log(&quot;Position @ =&quot;, p, &quot;| Domaine =&quot;, ch.substring(p + 1, ch.length));" style="border:1px solid #475569;background:#0f172a;color:#e2e8f0;border-radius:6px;padding:3px 8px;font:700 11px inherit;cursor:pointer;">✂️ indexOf &amp; substring</button>' +
+      '<button type="button" data-js-snip="var tel = &quot;55123456&quot;;\nconsole.log(&quot;8 chiffres ?&quot;, tel.length == 8 &amp;&amp; !isNaN(tel));" style="border:1px solid #475569;background:#0f172a;color:#e2e8f0;border-radius:6px;padding:3px 8px;font:700 11px inherit;cursor:pointer;">🔢 isNaN &amp; Number</button>' +
+      '<button type="button" data-js-snip="console.log(&quot;Code 65 =&quot;, String.fromCharCode(65), &quot;| Code de A =&quot;, &quot;A&quot;.charCodeAt(0));" style="border:1px solid #475569;background:#0f172a;color:#e2e8f0;border-radius:6px;padding:3px 8px;font:700 11px inherit;cursor:pointer;">🔤 ASCII</button>';
+
+    var rightHead = document.createElement("div");
+    rightHead.style.cssText = "display:flex;align-items:center;gap:6px;";
+
+    var btnClear = document.createElement("button");
+    btnClear.type = "button";
+    btnClear.textContent = "🗑️ Effacer";
+    btnClear.title = "Vider l'historique affiché dans la console (Ctrl + L)";
+    btnClear.style.cssText =
+      "border:1px solid #475569;background:#0f172a;color:#cbd5e1;border-radius:6px;padding:4px 9px;font:800 11px inherit;cursor:pointer;";
+
+    var btnClose = document.createElement("button");
+    btnClose.type = "button";
+    btnClose.textContent = "✕ Fermer";
+    btnClose.style.cssText =
+      "border:none;background:#ef4444;color:#fff;border-radius:6px;padding:4px 10px;font:800 11.5px inherit;cursor:pointer;";
+    btnClose.onclick = function () { window.ouvrirConsoleNavigateurSTI(btnBar); };
+
+    rightHead.appendChild(btnClear);
+    rightHead.appendChild(btnClose);
+    head.appendChild(leftHead);
+    head.appendChild(rightHead);
+
+    /* Zone d'affichage des sorties */
+    var out = document.createElement("div");
+    out.id = "sti-bcons-output";
+    out.style.cssText = "flex:1;overflow-y:auto;background:#0b1120;min-height:0;";
+
+    /* Barre de saisie REPL (>) */
+    var inputRow = document.createElement("div");
+    inputRow.style.cssText =
+      "display:flex;align-items:center;gap:8px;padding:7px 10px;background:#1e293b;border-top:1.5px solid #334155;flex-shrink:0;";
+
+    var promptSym = document.createElement("span");
+    promptSym.textContent = "❯";
+    promptSym.style.cssText = "color:#38bdf8;font:900 15px monospace;user-select:none;";
+
+    var inputCmd = document.createElement("textarea");
+    inputCmd.id = "sti-bcons-input";
+    inputCmd.rows = 2;
+    inputCmd.spellcheck = false;
+    inputCmd.placeholder = "Tapez votre code JavaScript ici puis appuyez sur Entrée (Maj+Entrée = nouvelle ligne, ↑/↓ = historique)…";
+    inputCmd.style.cssText =
+      "flex:1;border:1.5px solid #475569;border-radius:8px;padding:6px 10px;background:#0f172a;color:#f8fafc;" +
+      "font:600 12.5px/1.45 'JetBrains Mono','Fira Code',Consolas,monospace;font-variant-ligatures:none;resize:none;outline:none;";
+
+    var btnExec = document.createElement("button");
+    btnExec.type = "button";
+    btnExec.innerHTML = "▶ Exécuter";
+    btnExec.title = "Exécuter l'instruction JavaScript (Entrée)";
+    btnExec.style.cssText =
+      "padding:8px 14px;border-radius:8px;border:1.5px solid #22c55e;background:#177245;color:#fff;" +
+      "font:900 12px/1 inherit;cursor:pointer;white-space:nowrap;";
+
+    inputRow.appendChild(promptSym);
+    inputRow.appendChild(inputCmd);
+    inputRow.appendChild(btnExec);
+
+    panel.appendChild(dragTop);
+    panel.appendChild(head);
+    panel.appendChild(out);
+    panel.appendChild(inputRow);
+    (document.body || document.documentElement).appendChild(panel);
+
+    /* Message d'accueil et relecture du buffer */
+    var msgInfo = document.createElement("div");
+    msgInfo.style.cssText = "padding:6px 10px;color:#94a3b8;font:600 11.5px/1.4 monospace;border-bottom:1px solid rgba(148,163,184,0.14);";
+    msgInfo.innerHTML = "💡 <b>Console JavaScript interactive STI</b> — Testez vos expressions (<code>ch.length</code>, <code>ch[i]</code>, <code>substring(d, f)</code>, <code>indexOf()</code>, <code>isNaN()</code>, <code>verif()</code>…).";
+    out.appendChild(msgInfo);
+
+    for (var i = 0; i < consoleLogsBufferSTI.length; i++) {
+      var it = consoleLogsBufferSTI[i];
+      ajouterEntreeConsoleDOM(it.type, it.texte, it.couleur);
+      consoleLogsBufferSTI.pop(); /* éviter de dupliquer dans le buffer */
+    }
+
+    function executerCommandeConsole() {
+      var cmd = inputCmd.value;
+      if (!cmd || !cmd.trim()) return;
+      consoleHistSTI.push(cmd);
+      consoleHistIdxSTI = consoleHistSTI.length;
+      ajouterEntreeConsoleDOM("cmd", cmd);
+
+      try {
+        /* Choisir le contexte d'exécution : iframe d'exercice/aperçu ouverte s'il y en a une, sinon window */
+        var ctxWin = window;
+        try {
+          var frActive = document.querySelector("#sti-split-preview, #sti-sb-frame, #sti-sandbox-iframe, #pdfModal.open #pdfFrame");
+          if (frActive && frActive.contentWindow) ctxWin = frActive.contentWindow;
+        } catch (e) {}
+
+        var res = ctxWin.eval(cmd);
+        var fmt = formaterValeurConsoleSTI(res);
+        ajouterEntreeConsoleDOM("res", fmt.texte, fmt.couleur);
+      } catch (err) {
+        ajouterEntreeConsoleDOM("err", (err && err.name ? err.name + ": " : "Erreur: ") + (err && err.message ? err.message : String(err)));
+      }
+      inputCmd.value = "";
+      inputCmd.focus();
+    }
+
+    btnExec.onclick = executerCommandeConsole;
+    btnClear.onclick = function () {
+      consoleLogsBufferSTI = [];
+      out.innerHTML = "";
+      inputCmd.focus();
+    };
+
+    leftHead.querySelectorAll("button[data-js-snip]").forEach(function (b) {
+      b.onclick = function () {
+        inputCmd.value = b.getAttribute("data-js-snip") || "";
+        executerCommandeConsole();
+      };
+    });
+
+    inputCmd.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        executerCommandeConsole();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === "l" || e.key === "L")) {
+        e.preventDefault();
+        btnClear.click();
+      } else if (e.key === "ArrowUp" && inputCmd.selectionStart === 0) {
+        if (consoleHistIdxSTI > 0) {
+          e.preventDefault();
+          consoleHistIdxSTI--;
+          inputCmd.value = consoleHistSTI[consoleHistIdxSTI] || "";
+        }
+      } else if (e.key === "ArrowDown") {
+        if (consoleHistIdxSTI < consoleHistSTI.length - 1) {
+          e.preventDefault();
+          consoleHistIdxSTI++;
+          inputCmd.value = consoleHistSTI[consoleHistIdxSTI] || "";
+        } else if (consoleHistIdxSTI === consoleHistSTI.length - 1) {
+          consoleHistIdxSTI = consoleHistSTI.length;
+          inputCmd.value = "";
+        }
+      }
+    });
+
+    var zPage = obtenirZoomActuelSTI();
+    if (zPage !== 100) {
+      panel.style.zoom = (10000 / zPage).toFixed(2) + "%";
+    }
+    setTimeout(function () { inputCmd.focus(); }, 40);
+  };
+
   function installerOutilsPcWindowsSTI() {
     if (!estModePcWindowsSTI()) return;
     if (document.getElementById("sti-pc-win-tools")) {
@@ -6173,6 +6488,19 @@
       basculerSandboxCodeSTI(btnSandbox);
     };
 
+    /* Bouton Console JavaScript du navigateur (🖥️ Console) */
+    var btnConsole = document.createElement("button");
+    btnConsole.type = "button";
+    btnConsole.id = "sti-btn-pc-console";
+    btnConsole.innerHTML = "🖥️ <span>Console</span>";
+    btnConsole.title = "Ouvrir la Console JavaScript du navigateur pour essayer des instructions JS en direct (console.log, ch.substring, indexOf, isNaN…)";
+    btnConsole.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnConsole.onclick = function () {
+      window.ouvrirConsoleNavigateurSTI(btnConsole);
+    };
+
     bar.appendChild(btnPin);
     bar.appendChild(sep);
     bar.appendChild(btnZoomOut);
@@ -6182,6 +6510,7 @@
     bar.appendChild(btnLaser);
     bar.appendChild(btnSplit);
     bar.appendChild(btnSandbox);
+    bar.appendChild(btnConsole);
     (document.body || document.documentElement).appendChild(bar);
 
     var zInit = obtenirZoomActuelSTI();
