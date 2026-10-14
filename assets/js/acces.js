@@ -4995,11 +4995,13 @@
         else ouvrirBoiteQuestionProf(uid || currentUid || "eleve", maClasse || currentClasse || "");
       }, 250);
     }
+    installerOutilsPcWindowsSTI();
   }
 
-  /* Installation immédiate dès le chargement de la page pour que 💬 Messenger STI soit visible sur 100 % des pages sans attendre le réseau */
+  /* Installation immédiate dès le chargement de la page pour que 💬 Messenger STI et la barre PC Windows soient visibles sur 100 % des pages sans attendre le réseau */
   (function initBoutonMessengerImmediat() {
     function poser() {
+      installerOutilsPcWindowsSTI();
       if (window !== window.top) {
         try {
           if (window.top && window.top.document && window.top.document.getElementById("sti-btn-messenger-global")) return;
@@ -5009,7 +5011,6 @@
       var c = lireCacheSessionLocal();
       var isAdm = estSessionAdminVerifiee();
       installerBoutonMessengerGlobal(isAdm, (c && c.id) || currentUid || "eleve", (c && c.classe) || currentClasse || "");
-      installerOutilsPcWindowsSTI();
     }
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", poser);
