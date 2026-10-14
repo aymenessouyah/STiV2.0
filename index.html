@@ -4600,7 +4600,7 @@
         var regSW = null;
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker
-            .register("./sw.js")
+            .register("./sw.js", { updateViaCache: "none" })
             .then(function (reg) {
               regSW = reg;
               reg.update().catch(function () {});
@@ -4610,8 +4610,9 @@
             "controllerchange",
             function () {
               try {
-                if (sessionStorage.getItem("sti-sw-reload-81") === "1") return;
-                sessionStorage.setItem("sti-sw-reload-81", "1");
+                var verAct = localStorage.getItem("sti-version-installee") || "latest";
+                if (sessionStorage.getItem("sti-sw-reload-ver") === verAct) return;
+                sessionStorage.setItem("sti-sw-reload-ver", verAct);
               } catch (e) {}
               location.reload();
             }

@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v183";
+var CACHE = "sti-atelier-v184";
 var SHELL = [
   "./",
   "./index.html",
@@ -669,8 +669,47 @@ self.addEventListener("activate", function (evt) {
 
 self.addEventListener("message", function (evt) {
   if (!evt.data) return;
+  if (evt.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+    return;
+  }
   if (evt.data.type === "PRECACHE_ALL") {
     prechargerSequentiel();
+    return;
+  }
+  if (evt.data.type === "SYNC_UPDATE" || evt.data.type === "FORCE_REFRESH_VERSION") {
+    self.skipWaiting();
+    (async function () {
+      try {
+        var cles = await caches.keys();
+        for (var k of cles) {
+          if (k !== CACHE && k.indexOf("sti-atelier-") === 0) {
+            await caches.delete(k);
+          }
+        }
+        var c = await caches.open(CACHE);
+        var critiques = [
+          "./",
+          "./index.html",
+          "./portail.html",
+          "./admin.html",
+          "./bac-pratique.html",
+          "./assets/js/config.js",
+          "./assets/js/protection.js",
+          "./assets/js/acces.js",
+          "./assets/js/portail.js",
+          "./assets/js/admin.js",
+          "./assets/css/atelier.css",
+          "./assets/css/protection.css"
+        ];
+        await Promise.allSettled(critiques.map(function (u) {
+          return fetch(u, { cache: "reload" }).then(function (rep) {
+            if (rep && rep.ok) return c.put(u, rep);
+          }).catch(function () {});
+        }));
+      } catch (e) {}
+      prechargerSequentiel();
+    })();
   }
 });
 
@@ -708,6 +747,16 @@ self.addEventListener("fetch", function (evt) {
   if (req.method !== "GET") return;
 
   var url = new URL(req.url);
+
+  /* Ne jamais mettre sw.js lui-même en cache dans CACHE pour garantir la détection immédiate de chaque nouvelle version */
+  if (url.origin === self.location.origin && /\/sw\.js$/i.test(url.pathname)) {
+    evt.respondWith(
+      fetch(req, { cache: "no-store" }).catch(function () {
+        return caches.match(req, { ignoreSearch: true });
+      })
+    );
+    return;
+  }
 
   /* Ressources CDN externes (Tailwind, FontAwesome, Google Fonts, Chart.js, Confetti) : cache en secours hors-ligne */
   if (url.origin !== self.location.origin) {

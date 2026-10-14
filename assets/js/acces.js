@@ -136,11 +136,25 @@
     }
   })();
 
-  /* Enregistrement du Service Worker et pré-chargement automatique en arrière-plan pour le mode 100 % Hors-ligne (PC Windows & Mobile) */
+  /* Enregistrement du Service Worker, vérification automatique de nouvelle version à chaque nouvelle connexion/ouverture de session pour chaque candidat, et pré-chargement 100 % Hors-ligne */
   try {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register(cfg.RACINE + "sw.js").then(function (reg) {
-        if (reg) reg.update().catch(function () {});
+      navigator.serviceWorker.register(cfg.RACINE + "sw.js", { updateViaCache: "none" }).then(function (reg) {
+        if (reg) {
+          reg.update().catch(function () {});
+          if (reg.waiting) {
+            try { reg.waiting.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
+          }
+          reg.addEventListener("updatefound", function () {
+            var nw = reg.installing;
+            if (!nw) return;
+            nw.addEventListener("statechange", function () {
+              if (nw.state === "installed" && navigator.serviceWorker.controller) {
+                try { nw.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
+              }
+            });
+          });
+        }
         setTimeout(function () {
           try {
             var swTarget = (reg && reg.active) || navigator.serviceWorker.controller;
@@ -150,10 +164,74 @@
           } catch (e) {}
         }, 2000);
       }).catch(function () {});
+
+      /* Vérification automatique de la dernière version à chaque nouvelle connexion / ouverture de session */
+      if (navigator.onLine && typeof fetch === "function") {
+        fetch(cfg.RACINE + "sw.js?t=" + Date.now(), { cache: "no-store" })
+          .then(function (r) { return r && r.ok ? r.text() : ""; })
+          .then(function (txt) {
+            var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
+            var verSrv = m && m[1] ? parseInt(m[1], 10) : 0;
+            if (!verSrv) return;
+            var hEl = document.getElementById("sti-pan-version-head");
+            var fEl = document.getElementById("sti-pan-version-foot");
+            if (hEl) hEl.textContent = "STiV2.0." + verSrv;
+            if (fEl) fEl.textContent = "STiV2.0." + verSrv;
+
+            var verLoc = 0;
+            try { verLoc = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0; } catch (e) {}
+            var dejaRechargeVer = "";
+            try { dejaRechargeVer = sessionStorage.getItem("sti-sw-reload-ver") || ""; } catch (e) {}
+
+            var verifierCachesLocaux = (window.caches && caches.keys)
+              ? caches.keys().then(function (cles) {
+                  var aAncienCache = false;
+                  var suppr = [];
+                  (cles || []).forEach(function (k) {
+                    var mk = String(k).match(/sti-atelier-v(\d+)/i);
+                    var nk = mk && mk[1] ? parseInt(mk[1], 10) : 0;
+                    if (nk > 0 && nk !== verSrv) {
+                      aAncienCache = true;
+                      suppr.push(caches.delete(k));
+                    }
+                  });
+                  return Promise.allSettled(suppr).then(function () { return aAncienCache; });
+                }).catch(function () { return false; })
+              : Promise.resolve(false);
+
+            verifierCachesLocaux.then(function (aAncienCache) {
+              try {
+                localStorage.setItem("sti-version-installee", String(verSrv));
+                sessionStorage.setItem("sti-conn-ver-checked", String(verSrv));
+              } catch (e) {}
+              if ((verLoc > 0 && verLoc < verSrv) || aAncienCache) {
+                if (dejaRechargeVer !== String(verSrv)) {
+                  try { sessionStorage.setItem("sti-sw-reload-ver", String(verSrv)); } catch (e) {}
+                  navigator.serviceWorker.getRegistration().then(function (reg) {
+                    if (reg) {
+                      return reg.update().then(function () {
+                        var swW = reg.waiting || reg.installing || reg.active || navigator.serviceWorker.controller;
+                        if (swW) {
+                          try { swW.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (e) {}
+                          try { swW.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
+                        }
+                      }).catch(function () {});
+                    }
+                  }).finally(function () {
+                    setTimeout(function () { location.reload(); }, 250);
+                  });
+                }
+              }
+            });
+          })
+          .catch(function () {});
+      }
+
       navigator.serviceWorker.addEventListener("controllerchange", function () {
         try {
-          if (sessionStorage.getItem("sti-sw-reload-81") === "1") return;
-          sessionStorage.setItem("sti-sw-reload-81", "1");
+          var verAct = localStorage.getItem("sti-version-installee") || "latest";
+          if (sessionStorage.getItem("sti-sw-reload-ver") === verAct) return;
+          sessionStorage.setItem("sti-sw-reload-ver", verAct);
         } catch (e) {}
         location.reload();
       });
@@ -1439,7 +1517,7 @@
         "<button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1.5px solid #23201a;background:#f3ead9;color:#23201a;border-radius:7px;padding:1px 7px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
         "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:1.5px solid #23201a;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;box-shadow:1.5px 1.5px 0 #23201a'>👑 GOLD</span>" +
-          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.183</span>" +
+          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.184</span>" +
           "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
         "</div>" +
       "</div>" +
@@ -1694,7 +1772,7 @@
 
     var badgeVerRoue = document.createElement("div");
     badgeVerRoue.id = "sti-pan-version-foot";
-    badgeVerRoue.textContent = "STiV2.0.183";
+    badgeVerRoue.textContent = "STiV2.0.184";
     badgeVerRoue.style.cssText = "margin-top:5px;padding-top:4px;border-top:1px dashed #e2d5be;text-align:center;font-size:10px;font-weight:900;color:#7a6f5d;letter-spacing:.4px;";
     pan.appendChild(badgeVerRoue);
 

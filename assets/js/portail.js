@@ -63,9 +63,78 @@
       }
     }
   } catch (e) {}
+  /* Mise à jour automatique de la version lors de chaque nouvelle connexion d'un candidat */
+  function mettreAJourVersionAvantEntree(allerVers) {
+    var fait = false;
+    function terminer() {
+      if (fait) return;
+      fait = true;
+      location.href = allerVers;
+    }
+    if (!navigator.onLine || typeof fetch !== "function") {
+      terminer();
+      return;
+    }
+    var timerMax = setTimeout(terminer, 2200);
+    fetch(cfg.RACINE + "sw.js?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r && r.ok ? r.text() : ""; })
+      .then(function (txt) {
+        var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
+        var verSrv = m && m[1] ? parseInt(m[1], 10) : 0;
+        var verLoc = 0;
+        try { verLoc = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0; } catch (e) {}
+        if (verSrv > 0) {
+          try {
+            localStorage.setItem("sti-version-installee", String(verSrv));
+            sessionStorage.setItem("sti-conn-ver-checked", String(verSrv));
+            sessionStorage.setItem("sti-sw-reload-ver", String(verSrv));
+          } catch (e) {}
+        }
+        var pCaches = (window.caches && caches.keys && verSrv > 0)
+          ? caches.keys().then(function (cles) {
+              var suppr = [];
+              (cles || []).forEach(function (k) {
+                var mk = String(k).match(/sti-atelier-v(\d+)/i);
+                var nk = mk && mk[1] ? parseInt(mk[1], 10) : 0;
+                if (nk > 0 && nk !== verSrv) {
+                  suppr.push(caches.delete(k));
+                }
+              });
+              return Promise.allSettled(suppr);
+            }).catch(function () {})
+          : Promise.resolve();
+        var pSw = ("serviceWorker" in navigator)
+          ? navigator.serviceWorker.getRegistration().then(function (reg) {
+              if (!reg) return;
+              return reg.update().then(function () {
+                var swW = reg.waiting || reg.installing || reg.active || navigator.serviceWorker.controller;
+                if (swW) {
+                  try { swW.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (e) {}
+                  try { swW.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
+                }
+              }).catch(function () {});
+            }).catch(function () {})
+          : Promise.resolve();
+        var pCrit = (verSrv > verLoc && verSrv > 0)
+          ? Promise.allSettled([
+              fetch(cfg.RACINE + "index.html", { cache: "reload" }),
+              fetch(cfg.RACINE + "assets/js/acces.js", { cache: "reload" }),
+              fetch(cfg.RACINE + "assets/js/protection.js", { cache: "reload" }),
+              fetch(cfg.RACINE + "assets/css/atelier.css", { cache: "reload" })
+            ])
+          : Promise.resolve();
+        return Promise.allSettled([pCaches, pSw, pCrit]);
+      })
+      .catch(function () {})
+      .finally(function () {
+        clearTimeout(timerMax);
+        terminer();
+      });
+  }
+
   try {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js").then(function (reg) {
+      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {
         if (reg) reg.update().catch(function () {});
         setTimeout(function () {
           try {
@@ -464,11 +533,11 @@
           sessionStorage.setItem("sti-bio-session-ok", "1");
           localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
         } catch (e) {}
-        location.href = cfg.RACINE;
+        mettreAJourVersionAvantEntree(cfg.RACINE);
         return;
       }
       activeBio(user.id, user.email, function () {
-        location.href = cfg.RACINE;
+        mettreAJourVersionAvantEntree(cfg.RACINE);
       });
     }
 
@@ -688,7 +757,7 @@
           }));
         } catch (err) {}
         activeBio(r.data.user.id, r.data.user.email, function () {
-          location.href = cfg.RACINE + "admin.html";
+          mettreAJourVersionAvantEntree(cfg.RACINE + "admin.html");
         });
         return;
       }
