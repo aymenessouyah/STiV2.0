@@ -8582,7 +8582,7 @@
             "<span>👁️ Rendu en direct</span>" +
             "<span style='color:#177245'>100 % Hors-ligne</span>" +
           "</div>" +
-          "<iframe id='sti-sb-frame' sandbox='allow-scripts allow-modals' style='flex:1;width:100%;border:0;background:#fff'></iframe>" +
+          "<iframe id='sti-sb-frame' sandbox='allow-scripts allow-modals allow-forms' style='flex:1;width:100%;border:0;background:#fff'></iframe>" +
           "<div style='height:105px;border-top:2px solid #23201a;background:#0f0f23;color:#e8e8f5;display:flex;flex-direction:column'>" +
             "<div style='padding:4px 10px;background:#17172e;border-bottom:1px solid rgba(255,255,255,.12);font-size:10.5px;font-weight:800;color:#ffd23f;display:flex;justify-content:space-between'>" +
               "<span>🖥️ Console JavaScript (console.log / alert / erreurs)</span>" +
@@ -8634,8 +8634,17 @@
           "function send(k,a){try{parent.postMessage({source:'sti-sandbox',kind:k,msg:[].slice.call(a).map(function(x){return typeof x==='object'?JSON.stringify(x):String(x)}).join(' ')},'*')}catch(e){}}" +
           "var oLog=console.log;console.log=function(){send('log',arguments);if(oLog)oLog.apply(console,arguments)};" +
           "var oErr=console.error;console.error=function(){send('err',arguments);if(oErr)oErr.apply(console,arguments)};" +
-          "window.alert=function(m){send('alert',[m]);};" +
-          "window.onerror=function(msg,u,line){send('err',[msg+' (ligne '+line+')']);};" +
+          "function banniere(txt, bg, col){" +
+            "var b=document.getElementById('__sti_sb_banner');" +
+            "if(!b){b=document.createElement('div');b.id='__sti_sb_banner';if(document.body)document.body.insertBefore(b,document.body.firstChild);}" +
+            "b.style.cssText='position:sticky;top:0;z-index:9999;margin:0 0 10px 0;padding:8px 12px;border-radius:8px;border:2px solid #23201a;background:'+bg+';color:'+col+';font:800 12.5px system-ui,sans-serif;box-shadow:2px 2px 0 #23201a;display:flex;justify-content:space-between;align-items:center;gap:8px;';" +
+            "b.innerHTML='<span>'+txt+'</span><button type=\"button\" onclick=\"this.parentNode.remove()\" style=\"border:0;background:#23201a;color:#fff;border-radius:5px;padding:2px 8px;cursor:pointer;font-weight:800;\">OK</button>';" +
+          "}" +
+          "window.alert=function(m){send('alert',[m]);banniere('🔔 <b>alert :</b> '+String(m).replace(/</g,'&lt;'),'#fff3b0','#23201a');};" +
+          "window.onerror=function(msg,u,line){send('err',[msg+' (ligne '+line+')']);banniere('❌ <b>Erreur JS :</b> '+String(msg).replace(/</g,'&lt;')+(line?' (ligne '+line+')':''),'#fee2e2','#991b1b');};" +
+          "document.addEventListener('submit',function(ev){" +
+            "if(!ev.defaultPrevented){ev.preventDefault();send('log',['✅ Formulaire valide (onsubmit a retourné true)']);banniere('✅ <b>Formulaire validé !</b> (verif() a retourné true)','#dcfce7','#166534');}" +
+          "});" +
         "})();" +
         "<\/script>";
       var doc = "<!DOCTYPE html><html><head><meta charset='utf-8'><style>" +
@@ -11873,10 +11882,16 @@
             "<button type='button' data-sp-tab='js' style='border:1.5px solid #475569;background:transparent;color:#fff;border-radius:8px;padding:4px 10px;font-weight:800;font-size:11.5px;cursor:pointer'>⚡ JS</button>" +
             "<button type='button' data-sp-tab='sql' style='border:1.5px solid #475569;background:transparent;color:#fff;border-radius:8px;padding:4px 10px;font-weight:800;font-size:11.5px;cursor:pointer'>🗄️ SQL / PHP</button>" +
           "</div>" +
-          "<textarea id='sti-split-editor' spellcheck='false' style='flex:1;width:100%;border:0;padding:10px;background:#0f172a;color:#f8fafc;font:600 12.5px/1.5 ui-monospace,Consolas,monospace;resize:none;outline:none'></textarea>" +
-          "<div style='height:42%;border-top:2px solid #334155;display:flex;flex-direction:column;background:#fff;color:#0f172a'>" +
-            "<div style='padding:4px 10px;background:#f1f5f9;font-size:11px;font-weight:900;color:#334155;border-bottom:1px solid #cbd5e1'>👁️ Aperçu en direct de votre page :</div>" +
-            "<iframe id='sti-split-preview' sandbox='allow-scripts' style='flex:1;width:100%;border:0;background:#fff'></iframe>" +
+          "<textarea id='sti-split-editor' spellcheck='false' style='flex:1;width:100%;border:0;padding:10px;background:#0f172a;color:#f8fafc;font:600 12.5px/1.5 ui-monospace,Consolas,monospace;resize:none;outline:none;font-variant-ligatures:none'></textarea>" +
+          "<div style='height:46%;border-top:2px solid #334155;display:flex;flex-direction:column;background:#fff;color:#0f172a'>" +
+            "<div style='padding:4px 10px;background:#f1f5f9;font-size:11px;font-weight:900;color:#334155;border-bottom:1px solid #cbd5e1;display:flex;justify-content:space-between;align-items:center'>" +
+              "<span>👁️ Aperçu interactif en direct (HTML + CSS + JavaScript) :</span>" +
+              "<span id='sti-split-run-status' style='color:#0f766e;font-weight:900'>● Exécution active</span>" +
+            "</div>" +
+            "<iframe id='sti-split-preview' sandbox='allow-scripts allow-modals allow-forms' style='flex:1;width:100%;border:0;background:#fff'></iframe>" +
+            "<div id='sti-split-console' style='height:74px;border-top:1.5px solid #334155;background:#0f172a;color:#e2e8f0;padding:5px 10px;font:600 11.5px/1.4 ui-monospace,Consolas,monospace;overflow-y:auto'>" +
+              "<div style='color:#94a3b8;font-size:10.5px'>🖥️ Console JavaScript (alert / console.log / erreurs) :</div>" +
+            "</div>" +
           "</div>" +
         "</div>" +
       "</div>";
@@ -11884,22 +11899,89 @@
     (document.body || document.documentElement).appendChild(fond);
 
     var etatCode = {
-      html: "<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n</head>\n<body>\n  <h2>Ma solution TP STI</h2>\n  <form onsubmit=\"return verif()\">\n    <label>Nom :</label>\n    <input type=\"text\" id=\"nom\" name=\"nom\">\n    <input type=\"submit\" value=\"Valider\">\n  </form>\n</body>\n</html>",
-      css: "body { font-family: sans-serif; padding: 14px; }\ninput { padding: 5px; margin: 4px 0; }",
-      js: "function verif() {\n  var nom = document.getElementById(\"nom\").value;\n  if (nom.length === 0) {\n    alert(\"Veuillez saisir votre nom !\");\n    return false;\n  }\n  return true;\n}",
+      html: "<h2>Ma solution TP STI</h2>\n<form onsubmit=\"return verif()\">\n  <label>Nom :</label>\n  <input type=\"text\" id=\"nom\" name=\"nom\" placeholder=\"Votre nom\">\n  <input type=\"submit\" value=\"Valider\">\n</form>",
+      css: "body { font-family: sans-serif; padding: 14px; background: #fffdf7; }\ninput[type=text] { padding: 6px 8px; margin: 4px 0; border: 1.5px solid #23201a; border-radius: 6px; }\ninput[type=submit] { padding: 6px 14px; background: #0f766e; color: #fff; font-weight: bold; border: 1.5px solid #23201a; border-radius: 6px; cursor: pointer; }",
+      js: "function verif() {\n  var nom = document.getElementById(\"nom\").value.trim();\n  if (nom.length == 0) {\n    alert(\"Veuillez saisir votre nom !\");\n    return false;\n  }\n  alert(\"Bravo \" + nom + \", formulaire valide !\");\n  return true;\n}",
       sql: "-- Vos requêtes SQL ou script PHP ici :\nSELECT * FROM client;"
     };
     var ongletAct = "html";
     var txtEd = fond.querySelector("#sti-split-editor");
     var frPrev = fond.querySelector("#sti-split-preview");
+    var consSplit = fond.querySelector("#sti-split-console");
     var frDoc = fond.querySelector("#sti-split-doc-frame");
     var selDoc = fond.querySelector("#sti-split-sel-doc");
 
     txtEd.value = etatCode.html;
 
+    function logSplit(kind, msg) {
+      if (!consSplit) return;
+      var d = document.createElement("div");
+      var col = kind === "err" ? "#f87171" : (kind === "alert" ? "#ffd54f" : "#4ade80");
+      var pref = kind === "err" ? "❌ [Erreur JS] " : (kind === "alert" ? "🔔 [alert] " : "› ");
+      d.style.cssText = "padding:2px 0;border-bottom:1px dashed rgba(255,255,255,0.08);color:" + col + ";";
+      d.textContent = pref + msg;
+      consSplit.appendChild(d);
+      consSplit.scrollTop = consSplit.scrollHeight;
+    }
+
+    function onMessageSplit(e) {
+      if (!e || !e.data || e.data.source !== "sti-split-preview") return;
+      logSplit(e.data.kind || "log", e.data.msg || "");
+    }
+    window.addEventListener("message", onMessageSplit);
+
     function majApercuSplit() {
       etatCode[ongletAct] = txtEd.value;
-      frPrev.srcdoc = "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>" + etatCode.css + "</style></head><body>" + etatCode.html + "<script>" + etatCode.js + "<\/script></body></html>";
+      if (consSplit) {
+        consSplit.innerHTML = "<div style='color:#94a3b8;font-size:10.5px'>🖥️ Console JavaScript (alert / console.log / erreurs) :</div>";
+      }
+      /* Extraire le contenu du <body> si l'élève a mis un squelette <!DOCTYPE html>...<body>...</body> dans l'onglet HTML */
+      var htmlBrut = etatCode.html || "";
+      var mBody = htmlBrut.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+      var corpsHtml = mBody ? mBody[1] : htmlBrut;
+      var styleDansHtml = "";
+      var mStyle = htmlBrut.match(/<style[^>]*>([\s\S]*?)<\/style>/gi);
+      if (mStyle) styleDansHtml = mStyle.join("\n");
+      var scriptDansHtml = "";
+      if (mBody) {
+        var mHead = htmlBrut.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
+        if (mHead) {
+          var mScrHead = mHead[1].match(/<script[^>]*>([\s\S]*?)<\/script>/gi);
+          if (mScrHead) scriptDansHtml = mScrHead.join("\n");
+        }
+      }
+
+      var pontJsSplit =
+        "<script>" +
+        "(function(){" +
+          "function send(k,a){try{parent.postMessage({source:'sti-split-preview',kind:k,msg:[].slice.call(a).map(function(x){return typeof x==='object'?JSON.stringify(x):String(x)}).join(' ')},'*')}catch(e){}}" +
+          "var oLog=console.log;console.log=function(){send('log',arguments);if(oLog)oLog.apply(console,arguments)};" +
+          "var oErr=console.error;console.error=function(){send('err',arguments);if(oErr)oErr.apply(console,arguments)};" +
+          "function banniere(txt, bg, col){" +
+            "var b=document.getElementById('__sti_sp_banner');" +
+            "if(!b){b=document.createElement('div');b.id='__sti_sp_banner';if(document.body)document.body.insertBefore(b,document.body.firstChild);}" +
+            "b.style.cssText='position:sticky;top:0;z-index:9999;margin:0 0 10px 0;padding:8px 12px;border-radius:8px;border:2px solid #23201a;background:'+bg+';color:'+col+';font:800 12.5px system-ui,sans-serif;box-shadow:2px 2px 0 #23201a;display:flex;justify-content:space-between;align-items:center;gap:8px;';" +
+            "b.innerHTML='<span>'+txt+'</span><button type=\"button\" onclick=\"this.parentNode.remove()\" style=\"border:0;background:#23201a;color:#fff;border-radius:5px;padding:2px 8px;cursor:pointer;font-weight:800;\">OK</button>';" +
+          "}" +
+          "window.alert=function(m){send('alert',[m]);banniere('🔔 <b>alert :</b> '+String(m).replace(/</g,'&lt;'),'#fff3b0','#23201a');};" +
+          "window.onerror=function(msg,u,line){send('err',[msg+' (ligne '+line+')']);banniere('❌ <b>Erreur JS :</b> '+String(msg).replace(/</g,'&lt;')+(line?' (ligne '+line+')':''),'#fee2e2','#991b1b');};" +
+          "document.addEventListener('submit',function(ev){" +
+            "if(!ev.defaultPrevented){ev.preventDefault();send('log',['✅ Formulaire valide (verif() a retourné true)']);banniere('✅ <b>Formulaire validé !</b> (verif() a retourné true)','#dcfce7','#166534');}" +
+          "});" +
+        "})();" +
+        "<\/script>";
+
+      frPrev.srcdoc =
+        "<!DOCTYPE html><html><head><meta charset='UTF-8'><style>" +
+        (etatCode.css || "") +
+        "</style>" +
+        styleDansHtml +
+        pontJsSplit +
+        scriptDansHtml +
+        "</head><body>" +
+        corpsHtml +
+        "<script>\n" + (etatCode.js || "") + "\n<\/script>" +
+        "</body></html>";
     }
 
     fond.querySelectorAll("button[data-sp-tab]").forEach(function (btn) {
@@ -11913,14 +11995,24 @@
           b.style.color = on ? "#0f172a" : "#fff";
           b.style.borderColor = on ? "#38bdf8" : "#475569";
         });
+        majApercuSplit();
       });
     });
 
     selDoc.addEventListener("change", function () {
       frDoc.src = selDoc.value;
     });
+    var timerAutoSplit = null;
     txtEd.addEventListener("input", function () {
       etatCode[ongletAct] = txtEd.value;
+      if (timerAutoSplit) clearTimeout(timerAutoSplit);
+      timerAutoSplit = setTimeout(majApercuSplit, 400);
+    });
+    txtEd.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        majApercuSplit();
+      }
     });
     fond.querySelector("#sti-split-run").addEventListener("click", majApercuSplit);
     fond.querySelector("#sti-split-send").addEventListener("click", function () {
@@ -11935,7 +12027,10 @@
       });
       afficherToastSynchro("📤 Votre copie a été envoyée au professeur !");
     });
-    fond.querySelector("#sti-split-close").addEventListener("click", function () { fond.remove(); });
+    fond.querySelector("#sti-split-close").addEventListener("click", function () {
+      window.removeEventListener("message", onMessageSplit);
+      fond.remove();
+    });
 
     majApercuSplit();
   };
