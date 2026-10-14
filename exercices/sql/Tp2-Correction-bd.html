@@ -419,19 +419,35 @@
           MIN(AVG(SAL)) FROM EMP GROUP BY PROF);
         </div>
       </li>
-      <li>Afficher la somme des commissions par mois .</li>
+      <li>
+        Afficher la somme des commissions par mois :
+        <div class="sql-block">
+          SELECT MONTH(DATEEMB) AS mois, SUM(COMM) AS total_comm FROM EMP GROUP
+          BY MONTH(DATEEMB);
+        </div>
+      </li>
       <li>
         Augmenter tous les salaires du département &laquo; Développement &raquo;
-        de 10% .
+        de 10% :
+        <div class="sql-block">
+          UPDATE EMP SET SAL = SAL * 1.10 WHERE DNO = (SELECT DNO FROM DEPT
+          WHERE UPPER(DNOM) = 'DEVELOPPEMENT');
+        </div>
       </li>
       <li>
         Augmenter les salaires des employés ayant une commission supérieure à
-        2000 .
+        2000 :
+        <div class="sql-block">
+          UPDATE EMP SET SAL = SAL * 1.10 WHERE COMM &gt; 2000;
+        </div>
       </li>
       <li>
         Changer les noms des villes des départements en ajoutant l'abréviation
         &laquo; TN &raquo; (Exemple : &laquo; Sousse &raquo; devient &laquo;
-        TNSousse &raquo;) .
+        TNSousse &raquo;) :
+        <div class="sql-block">
+          UPDATE DEPT SET VILLE = CONCAT('TN', VILLE);
+        </div>
       </li>
     </ol>
 
@@ -636,6 +652,7 @@
     <div class="footer-page">
       4ème SI - Lycée Rafèha | Série de Révision BD - LMD
     </div>
+    <script src="tp2-lmd-animation.js"></script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../../assets/css/protection.css?v=142" />
 <script src="../../assets/js/protection.js?v=142" defer></script>
