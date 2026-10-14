@@ -69,6 +69,7 @@
   var laserLineEl = null;
   var splitViewActifSTI = false;
   var splitRatioDroiteSTI = 48;
+  var consoleRatioDroiteSTI = 38;
   var consoleHistSTI = [];
   var consoleHistIdxSTI = -1;
   var consoleHookInstalleSTI = false;
@@ -6171,17 +6172,49 @@
     });
   }
 
+  function appliquerLargeurConsoleDroiteSTI(pctDroite) {
+    consoleRatioDroiteSTI = Math.max(24, Math.min(65, Math.round(pctDroite)));
+    var panel = document.getElementById("sti-browser-console-panel");
+    if (!panel) return;
+    panel.style.width = consoleRatioDroiteSTI + "vw";
+    var largGauche = (100 - consoleRatioDroiteSTI) + "vw";
+    document.documentElement.style.width = largGauche;
+    document.documentElement.style.overflowX = "hidden";
+    var roueEl = document.getElementById("sti-roue-wrap");
+    if (roueEl) roueEl.style.right = "calc(" + consoleRatioDroiteSTI + "vw + 12px)";
+    var badgeAdmEl = document.getElementById("sti-badge-admin-flottant");
+    if (badgeAdmEl) badgeAdmEl.style.right = "calc(" + consoleRatioDroiteSTI + "vw + 12px)";
+  }
+
+  function restaurerLargeurApresConsoleSTI() {
+    if (!splitViewActifSTI) {
+      document.documentElement.style.width = "";
+      document.documentElement.style.overflowX = "";
+    }
+    var roueEl = document.getElementById("sti-roue-wrap");
+    if (roueEl) roueEl.style.right = "12px";
+    var badgeAdmEl = document.getElementById("sti-badge-admin-flottant");
+    if (badgeAdmEl) badgeAdmEl.style.right = "14px";
+  }
+
   window.ouvrirConsoleNavigateurSTI = function (btnDeclencheur) {
     installerHookConsoleNavigateurSTI();
     var btnBar = btnDeclencheur || document.getElementById("sti-btn-pc-console");
     var ex = document.getElementById("sti-browser-console-panel");
     if (ex) {
       ex.remove();
+      restaurerLargeurApresConsoleSTI();
       if (btnBar) {
         btnBar.style.background = "#fffdf7";
         btnBar.style.color = "#23201a";
       }
       return;
+    }
+
+    /* Si le mode 2 vues était ouvert à droite, le refermer proprement pour laisser la place à la colonne Console */
+    if (splitViewActifSTI) {
+      var btnSp = document.getElementById("sti-btn-pc-split");
+      basculerSplitViewSTI(btnSp);
     }
 
     if (btnBar) {
@@ -6193,25 +6226,26 @@
     panel.id = "sti-browser-console-panel";
     panel.className = "sti-no-print";
     panel.style.cssText =
-      "position:fixed;left:0;right:0;bottom:66px;height:min(340px,52vh);z-index:2147483644;" +
-      "background:#0f172a;color:#f8fafc;border-top:3px solid #38bdf8;box-shadow:0 -10px 30px rgba(0,0,0,0.45);" +
+      "position:fixed;top:0;right:0;bottom:0;width:" + consoleRatioDroiteSTI + "vw;z-index:2147483644;" +
+      "background:#0f172a;color:#f8fafc;border-left:3px solid #38bdf8;box-shadow:-8px 0 28px rgba(0,0,0,0.42);" +
       "display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;";
 
-    /* Poignée supérieure pour agrandir/réduire la hauteur de la console */
-    var dragTop = document.createElement("div");
-    dragTop.title = "Glisser verticalement pour redimensionner la console";
-    dragTop.style.cssText =
-      "height:6px;background:#1e293b;cursor:ns-resize;display:flex;align-items:center;justify-content:center;flex-shrink:0;";
-    dragTop.innerHTML = '<span style="width:42px;height:3px;border-radius:999px;background:#64748b;display:block;"></span>';
+    /* Poignée verticale à gauche pour élargir/réduire la colonne Console et pousser la page */
+    var dragLeft = document.createElement("div");
+    dragLeft.title = "Glisser horizontalement pour ajuster la largeur de la Console";
+    dragLeft.style.cssText =
+      "position:absolute;left:-7px;top:0;bottom:0;width:12px;cursor:col-resize;z-index:5;" +
+      "display:flex;align-items:center;justify-content:center;";
+    dragLeft.innerHTML = '<span style="background:#0f172a;color:#38bdf8;border:1.5px solid #38bdf8;border-radius:6px;padding:8px 2px;font-size:10px;font-weight:900;">⋮</span>';
     (function () {
-      var enDragH = false;
-      dragTop.addEventListener("mousedown", function (e) { e.preventDefault(); enDragH = true; });
+      var enDragW = false;
+      dragLeft.addEventListener("mousedown", function (e) { e.preventDefault(); enDragW = true; });
       window.addEventListener("mousemove", function (e) {
-        if (!enDragH) return;
-        var nvH = Math.max(180, Math.min(window.innerHeight - 90, window.innerHeight - e.clientY - 66));
-        panel.style.height = nvH + "px";
+        if (!enDragW) return;
+        var pctDr = ((window.innerWidth - e.clientX) / window.innerWidth) * 100;
+        appliquerLargeurConsoleDroiteSTI(pctDr);
       });
-      window.addEventListener("mouseup", function () { enDragH = false; });
+      window.addEventListener("mouseup", function () { enDragW = false; });
     })();
 
     /* Barre d'en-tête avec exemples rapides STI */
@@ -6286,11 +6320,13 @@
     inputRow.appendChild(inputCmd);
     inputRow.appendChild(btnExec);
 
-    panel.appendChild(dragTop);
+    panel.appendChild(dragLeft);
     panel.appendChild(head);
     panel.appendChild(out);
     panel.appendChild(inputRow);
     (document.body || document.documentElement).appendChild(panel);
+
+    appliquerLargeurConsoleDroiteSTI(consoleRatioDroiteSTI);
 
     /* Message d'accueil et relecture du buffer */
     var msgInfo = document.createElement("div");
