@@ -334,13 +334,39 @@ main {
   background: var(--card); border: 3px solid var(--ink); border-radius: 999px;
   padding: 0.35rem 0.5rem 0.35rem 1rem; box-shadow: 4px 4px 0 var(--shadow);
 }
-.hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; max-width: 440px; margin-top: 1.4rem; }
-.hero-stats .stat { padding: 0.7rem 0.5rem; text-align: center; }
-.hero-stats .stat b { display: block; font-family: "Fredoka", sans-serif; font-weight: 700; font-size: 1.7rem; line-height: 1; }
-.hero-stats .stat span { display: block; font-size: 10px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.6; margin-top: 4px; }
+.hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; max-width: 480px; margin-top: 1.4rem; }
+.hero-stats .stat {
+  padding: 0.75rem 0.55rem; text-align: center; cursor: pointer; user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  position: relative;
+}
+.hero-stats .stat:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--shadow); }
+.hero-stats .stat.active-stat { outline: 3px solid var(--grape); transform: translate(-2px, -2px); }
+.hero-stats .stat b { display: block; font-family: "Fredoka", sans-serif; font-weight: 700; font-size: 1.75rem; line-height: 1; }
+.hero-stats .stat span { display: block; font-size: 10.5px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.78; margin-top: 5px; }
+.hero-stats .stat small { display: block; font-size: 9.5px; font-weight: 800; opacity: 0.55; margin-top: 3px; }
 .hero-stats .stat:nth-child(1) b { color: var(--grape); }
 .hero-stats .stat:nth-child(2) b { color: var(--candy); }
 .hero-stats .stat:nth-child(3) b { color: var(--mint); }
+.hero-explorer {
+  display: none; margin-top: 1.1rem; padding: 1.1rem 1.15rem;
+  background: var(--card); border: 3px solid var(--ink); border-radius: 18px;
+  box-shadow: 6px 6px 0 var(--shadow);
+}
+.hero-explorer.open { display: block; }
+.hero-exp-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.85rem; padding-bottom: 0.6rem; border-bottom: 2px dashed var(--line); }
+.hero-exp-title { font-family: "Fredoka", sans-serif; font-size: 1.1rem; font-weight: 700; margin: 0; }
+.hero-exp-close { border: 2px solid var(--ink); background: var(--paper); color: var(--ink); font-weight: 900; font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: 999px; cursor: pointer; }
+.hero-exp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 0.65rem; max-height: 370px; overflow-y: auto; padding-right: 4px; }
+.hero-exp-item {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 0.4rem;
+  padding: 0.65rem 0.8rem; border: 2px solid var(--ink); border-radius: 12px;
+  background: var(--paper); color: var(--ink); text-decoration: none;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.hero-exp-item:hover { transform: translateY(-2px); border-color: var(--grape); }
+.hero-exp-badge { display: inline-block; font-size: 0.68rem; font-weight: 900; padding: 2px 7px; border-radius: 999px; background: var(--grape); color: #fff; width: fit-content; }
+.hero-exp-sql { margin: 0.25rem 0 0; padding: 0.45rem 0.6rem; border-radius: 8px; background: #0f172a; color: #e2e8f0; font-family: "JetBrains Mono", monospace; font-size: 0.73rem; line-height: 1.4; white-space: pre-wrap; max-height: 92px; overflow: hidden; }
 .hero-sticker { position: absolute; right: 0; top: 0.5rem; }
 .hero-sticker .sticker { background: var(--sun); font-size: 0.8rem; padding: 0.5rem 1rem; }
 
@@ -775,7 +801,8 @@ html.dark .rel-box { border-color: #fff; box-shadow: 2px 2px 0 #000; }
       <div class="nav-group">
         <a href="#intro" class="main-link">1. Introduction</a>
         <div class="sub-links-container">
-          <a href="#intro-bd" class="sub-link">Qu'est-ce qu'une BD & SQL</a>
+          <a href="#intro-bd" class="sub-link">Qu'est-ce qu'une BD &amp; SQL</a>
+          <a href="#schema-analogie" class="sub-link">Schéma BD &amp; SGBD (Analogie)</a>
           <a href="#intro-sub" class="sub-link"
             >Sous-langages (LDD, LMD, LCD)</a
           >
@@ -793,16 +820,17 @@ html.dark .rel-box { border-color: #fff; box-shadow: 2px 2px 0 #000; }
       <div class="nav-group">
         <a href="#ldd" class="main-link">2. Partie LDD</a>
         <div class="sub-links-container">
-          <a href="#ldd-db-commands" class="sub-link">CREATE & USE DATABASE</a>
+          <a href="#ldd-construction" class="sub-link">Vue d'ensemble des commandes LDD</a>
+          <a href="#ldd-db-commands" class="sub-link">CREATE &amp; USE DATABASE</a>
           <a href="#ldd-create" class="sub-link"
-            >CREATE TABLE, Normes & Types</a
+            >CREATE TABLE, Normes &amp; Types</a
           >
           <a href="#ldd-constraints" class="sub-link"
-            >CHECK, FOREIGN KEY & REFERENCES</a
+            >CHECK, FOREIGN KEY &amp; REFERENCES</a
           >
-          <a href="#ldd-date" class="sub-link">Focus type DATE & Timestamp</a>
+          <a href="#ldd-date" class="sub-link">Focus type DATE &amp; Timestamp</a>
           <a href="#ldd-alter" class="sub-link">ALTER TABLE détaillé</a>
-          <a href="#ldd-drop" class="sub-link">DROP TABLE & DATABASE</a>
+          <a href="#ldd-drop" class="sub-link">DROP TABLE &amp; DATABASE</a>
         </div>
       </div>
 
@@ -858,11 +886,18 @@ html.dark .rel-box { border-color: #fff; box-shadow: 2px 2px 0 #000; }
             onerror="this.style.display='none'"
           />
         </div>
-        <div class="hero-stats">
-          <div class="brutal stat"><b id="stat-parts">3</b><span>Parties</span></div>
-          <div class="brutal stat"><b id="stat-cards">18</b><span>Fiches</span></div>
-          <div class="brutal stat"><b id="stat-sql">21</b><span>Requêtes</span></div>
+        <div class="hero-stats" role="group" aria-label="Accès rapide aux parties, fiches et requêtes du cours">
+          <button type="button" class="brutal stat" id="btn-stat-parts" data-mode="parts" title="Cliquer pour voir le plan des 3 Parties">
+            <b id="stat-parts">3</b> <span>Parties</span><small>Voir le plan ▾</small>
+          </button>
+          <button type="button" class="brutal stat" id="btn-stat-cards" data-mode="cards" title="Cliquer pour parcourir les 24 Fiches du cours">
+            <b id="stat-cards">24</b> <span>Fiches</span><small>Accès direct ▾</small>
+          </button>
+          <button type="button" class="brutal stat" id="btn-stat-sql" data-mode="sql" title="Cliquer pour parcourir les 28 Requêtes SQL du cours">
+            <b id="stat-sql">28</b> <span>Requêtes</span><small>Catalogue SQL ▾</small>
+          </button>
         </div>
+        <div class="hero-explorer" id="hero-stats-explorer" aria-live="polite"></div>
       </div>
 
       <!-- 1. INTRODUCTION -->
@@ -2008,7 +2043,7 @@ WHERE ville = 'Bizerte';</code></pre>
         <div class="card" id="lmd-update">
           <h3>UPDATE simple (Modification de données et Nettoyage)</h3>
           <pre><code>-- Augmentation de salaires selon ancienneté
-UPDATE Employé
+UPDATE Employe
 SET Salaire = Salaire * 1.15
 WHERE anciennete &gt; 10;
 
@@ -2616,10 +2651,14 @@ SELECT YEAR('2024-03-01'); -- Résultat : 2024
 SELECT NOW(); -- Retourne la date et l'heure système actuelles</code></pre>
             </li>
             <li>
-              <strong>DATEADD & DATEDIFF :</strong> Manipulation d'intervalles
-              et calculs d'écarts.
-              <pre><code>SELECT DATEADD(month, 3, '2024/08/25'); -- Résultat : 2024-11-25
-SELECT DATEDIFF(year, '2024/08/25', '2011/08/25'); -- Résultat : -13</code></pre>
+              <strong>DATE_ADD, DATE_SUB &amp; DATEDIFF :</strong> Manipulation d'intervalles
+              et calculs d'écarts entre deux dates.
+              <pre><code>-- Ajouter ou retrancher un intervalle (MySQL STI) :
+SELECT DATE_ADD('2024-08-25', INTERVAL 3 MONTH); -- Résultat : 2024-11-25
+SELECT DATE_SUB(NOW(), INTERVAL 7 DAY);          -- Il y a 7 jours
+
+-- Écart en jours entre deux dates :
+SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
             </li>
           </ul>
         </div>
@@ -4216,11 +4255,101 @@ SELECT DATEDIFF(year, '2024/08/25', '2011/08/25'); -- Résultat : -13</code></pr
           pre.appendChild(b);
         });
 
-        /* Compteurs de l'accroche */
+        /* Compteurs de l'accroche + Explorateur interactif (3 Parties, 24 Fiches, 28 Requêtes) */
         var sc = document.getElementById("stat-cards"), ss = document.getElementById("stat-sql"), sp = document.getElementById("stat-parts");
-        if (sc) sc.textContent = document.querySelectorAll("main .card").length;
+        var allCourseCards = document.querySelectorAll("main > section > .card");
+        var allSections = document.querySelectorAll("main > section");
+        if (sc) sc.textContent = allCourseCards.length;
         if (ss) ss.textContent = pres.length;
-        if (sp) sp.textContent = document.querySelectorAll("main > section").length;
+        if (sp) sp.textContent = allSections.length;
+
+        var expBox = document.getElementById("hero-stats-explorer");
+        var statBtns = document.querySelectorAll(".hero-stats .stat[data-mode]");
+        var activeStatMode = "";
+
+        function renderHeroExplorer(mode) {
+          if (!expBox) return;
+          if (!mode || activeStatMode === mode) {
+            activeStatMode = "";
+            expBox.classList.remove("open");
+            expBox.innerHTML = "";
+            Array.prototype.forEach.call(statBtns, function (b) { b.classList.remove("active-stat"); });
+            return;
+          }
+          activeStatMode = mode;
+          Array.prototype.forEach.call(statBtns, function (b) {
+            b.classList.toggle("active-stat", b.getAttribute("data-mode") === mode);
+          });
+
+          var html = "";
+          if (mode === "parts") {
+            html += '<div class="hero-exp-head"><h3 class="hero-exp-title">📚 Les ' + allSections.length + ' Parties du Cours SQL</h3><button type="button" class="hero-exp-close" id="hero-exp-close-btn">✕ Fermer</button></div>';
+            html += '<div class="hero-exp-grid">';
+            Array.prototype.forEach.call(allSections, function (sec, idx) {
+              var h2 = sec.querySelector("h2");
+              var title = h2 ? h2.textContent.trim() : ("Partie " + (idx + 1));
+              var secCards = sec.querySelectorAll(":scope > .card").length;
+              var secPres = sec.querySelectorAll("pre").length;
+              html += '<a class="hero-exp-item" href="#' + sec.id + '">' +
+                '<div><span class="hero-exp-badge">Partie ' + (idx + 1) + '</span>' +
+                '<div style="font-weight:900;font-size:.95rem;margin-top:5px">' + title + '</div></div>' +
+                '<div style="font-size:.8rem;opacity:.8;font-weight:700">' + secCards + ' fiches • ' + secPres + ' requêtes SQL ➔</div>' +
+              '</a>';
+            });
+            html += '</div>';
+          } else if (mode === "cards") {
+            html += '<div class="hero-exp-head"><h3 class="hero-exp-title">🗂️ Les ' + allCourseCards.length + ' Fiches de Révision SQL</h3><button type="button" class="hero-exp-close" id="hero-exp-close-btn">✕ Fermer</button></div>';
+            html += '<div class="hero-exp-grid">';
+            Array.prototype.forEach.call(allCourseCards, function (card, idx) {
+              var h3 = card.querySelector("h3");
+              var cTitle = h3 ? h3.textContent.replace(/\s+/g, " ").trim() : ("Fiche " + (idx + 1));
+              var parentSec = card.closest("section");
+              var secLabel = parentSec && parentSec.id === "intro" ? "1. Intro" : (parentSec && parentSec.id === "ldd" ? "2. LDD" : "3. LMD");
+              var numStr = (idx + 1) < 10 ? "0" + (idx + 1) : String(idx + 1);
+              html += '<a class="hero-exp-item" href="#' + card.id + '">' +
+                '<div><span class="hero-exp-badge">Fiche ' + numStr + ' • ' + secLabel + '</span>' +
+                '<div style="font-weight:800;font-size:.88rem;margin-top:5px;line-height:1.3">' + cTitle + '</div></div>' +
+                '<div style="font-size:.76rem;font-weight:800;color:var(--grape)">Ouvrir la fiche ➔</div>' +
+              '</a>';
+            });
+            html += '</div>';
+          } else if (mode === "sql") {
+            html += '<div class="hero-exp-head"><h3 class="hero-exp-title">💻 Les ' + pres.length + ' Blocs de Requêtes SQL du Cours</h3><button type="button" class="hero-exp-close" id="hero-exp-close-btn">✕ Fermer</button></div>';
+            html += '<div class="hero-exp-grid">';
+            Array.prototype.forEach.call(pres, function (pre, idx) {
+              var card = pre.closest(".card");
+              var h3 = card ? card.querySelector("h3") : null;
+              var cTitle = h3 ? h3.textContent.replace(/\s+/g, " ").trim() : "Exemple SQL";
+              var cardId = card && card.id ? card.id : "top";
+              var codeEl = pre.querySelector("code");
+              var rawSql = (codeEl ? codeEl.textContent : pre.textContent.replace(/COPIÉ\s*!|COPIER/g, "")).trim();
+              var safeSql = rawSql.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+              var numStr = (idx + 1) < 10 ? "0" + (idx + 1) : String(idx + 1);
+              html += '<a class="hero-exp-item" href="#' + cardId + '">' +
+                '<div><span class="hero-exp-badge">Requête #' + numStr + '</span>' +
+                '<div style="font-weight:800;font-size:.82rem;margin-top:4px;line-height:1.25">' + cTitle + '</div>' +
+                '<pre class="hero-exp-sql">' + safeSql + '</pre></div>' +
+                '<div style="font-size:.75rem;font-weight:800;color:var(--mint)">Voir dans la fiche ➔</div>' +
+              '</a>';
+            });
+            html += '</div>';
+          }
+
+          expBox.innerHTML = html;
+          expBox.classList.add("open");
+          var closeBtn = document.getElementById("hero-exp-close-btn");
+          if (closeBtn) {
+            closeBtn.addEventListener("click", function () {
+              renderHeroExplorer("");
+            });
+          }
+        }
+
+        Array.prototype.forEach.call(statBtns, function (btn) {
+          btn.addEventListener("click", function () {
+            renderHeroExplorer(btn.getAttribute("data-mode"));
+          });
+        });
 
         /* Apparition au défilement */
         var items = document.querySelectorAll("main .card, main section h2");
