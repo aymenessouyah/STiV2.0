@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v184";
+var CACHE = "sti-atelier-v185";
 var SHELL = [
   "./",
   "./index.html",
@@ -564,8 +564,8 @@ var OFFLINE_LIST = [
 
 var precacheEnCours = false;
 
-async function prechargerSequentiel() {
-  if (precacheEnCours) return;
+async function prechargerSequentiel(forcerMajCode) {
+  if (precacheEnCours && !forcerMajCode) return;
   precacheEnCours = true;
   try {
     var cache = await caches.open(CACHE);
@@ -576,9 +576,10 @@ async function prechargerSequentiel() {
       var lot = OFFLINE_LIST.slice(i, i + batchSize);
       await Promise.allSettled(lot.map(async function (u) {
         try {
-          var ex = await cache.match(u, { ignoreSearch: true });
+          var estCode = /\.(html|js|css|webmanifest)$/i.test(u) || u === "./";
+          var ex = (!forcerMajCode || !estCode) ? await cache.match(u, { ignoreSearch: true }) : null;
           if (!ex) {
-            var rep = await fetch(u);
+            var rep = await fetch(u, (forcerMajCode && estCode) ? { cache: "reload" } : undefined);
             if (rep && rep.ok) await cache.put(u, rep);
           }
         } catch (e) {}
@@ -587,7 +588,7 @@ async function prechargerSequentiel() {
       if (done % 12 === 0 || done >= total) {
         var clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
         for (var c of clients) {
-          c.postMessage({ type: "STI_OFFLINE_PROGRESS", done: Math.min(done, total), total: total });
+          c.postMessage({ type: "STI_OFFLINE_PROGRESS", done: Math.min(done, total), total: total, cache: CACHE });
         }
       }
     }
@@ -708,7 +709,7 @@ self.addEventListener("message", function (evt) {
           }).catch(function () {});
         }));
       } catch (e) {}
-      prechargerSequentiel();
+      prechargerSequentiel(true);
     })();
   }
 });

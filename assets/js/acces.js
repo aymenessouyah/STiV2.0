@@ -1517,7 +1517,7 @@
         "<button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1.5px solid #23201a;background:#f3ead9;color:#23201a;border-radius:7px;padding:1px 7px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
         "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:1.5px solid #23201a;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;box-shadow:1.5px 1.5px 0 #23201a'>👑 GOLD</span>" +
-          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.184</span>" +
+          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.185</span>" +
           "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
         "</div>" +
       "</div>" +
@@ -1706,29 +1706,109 @@
     btnOff.textContent = dejaCache
       ? (navigator.onLine ? "✅ Prêt hors-ligne" : "📴 Hors-ligne")
       : "📲 Hors-ligne";
-    btnOff.title = "Télécharger 100 % des cours pour travailler sans Internet";
+    btnOff.title = "Mettre à jour vers la dernière version et télécharger 100 % des cours pour travailler sans Internet";
     btnOff.style.cssText = styleBtnCompact + "background:" + (dejaCache ? "#e3f6e8;color:#177245" : "#fff;color:#23201a") + ";";
+    var majManuelleHorsLigneEnCours = false;
+    var versionAvantClicHorsLigne = 0;
+    var versionServeurDetecteeClic = 0;
     btnOff.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
-      if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-        btnOff.textContent = "⏳ Chargement…";
-        navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL" });
-      } else {
-        btnOff.textContent = "✅ Cache actif";
+      if (!navigator.onLine) {
+        if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+          btnOff.textContent = "⏳ Vérification…";
+          navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL" });
+        } else {
+          btnOff.textContent = "📴 Hors-ligne actif";
+        }
+        return;
       }
+      majManuelleHorsLigneEnCours = true;
+      try { versionAvantClicHorsLigne = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0; } catch (err) {}
+      btnOff.textContent = "🔄 Mise à jour…";
+      btnOff.style.background = "#fff8e1";
+      btnOff.style.color = "#b45309";
+
+      fetch(cfg.RACINE + "sw.js?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r && r.ok ? r.text() : ""; })
+        .then(function (txt) {
+          var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
+          var verSrv = m && m[1] ? parseInt(m[1], 10) : 0;
+          if (verSrv > 0) {
+            versionServeurDetecteeClic = verSrv;
+            try { localStorage.setItem("sti-version-installee", String(verSrv)); } catch (err) {}
+            var lblVer = "STiV2.0." + verSrv;
+            var hEl = document.getElementById("sti-pan-version-head");
+            var fEl = document.getElementById("sti-pan-version-foot");
+            if (hEl) hEl.textContent = lblVer;
+            if (fEl) fEl.textContent = lblVer;
+          }
+          var pClean = (window.caches && caches.keys && verSrv > 0)
+            ? caches.keys().then(function (cles) {
+                var suppr = [];
+                (cles || []).forEach(function (k) {
+                  var mk = String(k).match(/sti-atelier-v(\d+)/i);
+                  var nk = mk && mk[1] ? parseInt(mk[1], 10) : 0;
+                  if (nk > 0 && nk !== verSrv) suppr.push(caches.delete(k));
+                });
+                return Promise.allSettled(suppr);
+              }).catch(function () {})
+            : Promise.resolve();
+          return pClean.then(function () {
+            if ("serviceWorker" in navigator) {
+              return navigator.serviceWorker.register(cfg.RACINE + "sw.js", { updateViaCache: "none" }).then(function (reg) {
+                if (!reg) return;
+                return reg.update().then(function () {
+                  var swCible = reg.waiting || reg.installing || reg.active || navigator.serviceWorker.controller;
+                  if (swCible) {
+                    try { swCible.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (err) {}
+                    try { swCible.postMessage({ type: "SKIP_WAITING" }); } catch (err) {}
+                  }
+                }).catch(function () {
+                  if (navigator.serviceWorker.controller) {
+                    try { navigator.serviceWorker.controller.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (err) {}
+                  }
+                });
+              });
+            }
+          });
+        })
+        .catch(function () {
+          if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+            try { navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL" }); } catch (err) {}
+          }
+        });
     });
     gridBas.appendChild(btnOff);
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.addEventListener("message", function (evt) {
         if (!evt.data || evt.data.type !== "STI_OFFLINE_PROGRESS") return;
+        if (evt.data.cache) {
+          var mCache = String(evt.data.cache).match(/sti-atelier-v(\d+)/i);
+          if (mCache && mCache[1]) {
+            var numC = parseInt(mCache[1], 10);
+            var lblC = "STiV2.0." + numC;
+            var hElC = document.getElementById("sti-pan-version-head");
+            var fElC = document.getElementById("sti-pan-version-foot");
+            if (hElC) hElC.textContent = lblC;
+            if (fElC) fElC.textContent = lblC;
+          }
+        }
         var pct = evt.data.total ? Math.round((evt.data.done / evt.data.total) * 100) : 100;
         if (pct >= 100) {
           try { localStorage.setItem("sti-precache-100", "1"); } catch (e) {}
-          btnOff.textContent = "✅ Prêt hors-ligne";
+          btnOff.textContent = versionServeurDetecteeClic
+            ? ("✅ À jour · v2.0." + versionServeurDetecteeClic)
+            : "✅ Prêt hors-ligne";
           btnOff.style.background = "#e3f6e8";
           btnOff.style.color = "#177245";
+          if (majManuelleHorsLigneEnCours) {
+            majManuelleHorsLigneEnCours = false;
+            if (versionServeurDetecteeClic > 0 && versionAvantClicHorsLigne > 0 && versionServeurDetecteeClic > versionAvantClicHorsLigne) {
+              setTimeout(function () { location.reload(); }, 350);
+            }
+          }
         } else {
           btnOff.textContent = "⏳ " + pct + " %";
         }
@@ -1772,7 +1852,7 @@
 
     var badgeVerRoue = document.createElement("div");
     badgeVerRoue.id = "sti-pan-version-foot";
-    badgeVerRoue.textContent = "STiV2.0.184";
+    badgeVerRoue.textContent = "STiV2.0.185";
     badgeVerRoue.style.cssText = "margin-top:5px;padding-top:4px;border-top:1px dashed #e2d5be;text-align:center;font-size:10px;font-weight:900;color:#7a6f5d;letter-spacing:.4px;";
     pan.appendChild(badgeVerRoue);
 
