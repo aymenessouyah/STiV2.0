@@ -6932,7 +6932,7 @@
     js: {
       lang: "JavaScript",
       titre: "Corrigé JavaScript — Fonction de contrôle de saisie d'un formulaire",
-      code: "function verifFormulaire() {\n  var cin = document.getElementById(\"cin\").value.trim();\n  var nom = document.getElementById(\"nom\").value.trim();\n\n  // 1) Vérifier que le CIN comporte exactement 8 chiffres commençant par 0 ou 1\n  if (cin.length !== 8 || isNaN(cin) || (cin.charAt(0) !== \"0\" && cin.charAt(0) !== \"1\")) {\n    alert(\"❌ Le numéro CIN doit comporter 8 chiffres et commencer par 0 ou 1.\");\n    return false;\n  }\n\n  // 2) Vérifier que le nom n'est pas vide\n  if (nom.length < 2) {\n    alert(\"❌ Veuillez saisir un nom valide.\");\n    return false;\n  }\n\n  return true;\n}",
+      code: "function verifFormulaire() {\n  var cin = document.getElementById(\"cin\").value.trim();\n  var nom = document.getElementById(\"nom\").value.trim();\n\n  // 1) Vérifier que le CIN comporte exactement 8 chiffres commençant par 0 ou 1\n  if (cin.length !== 8 || isNaN(cin) || (cin[0] !== \"0\" && cin[0] !== \"1\")) {\n    alert(\"❌ Le numéro CIN doit comporter 8 chiffres et commencer par 0 ou 1.\");\n    return false;\n  }\n\n  // 2) Vérifier que le nom n'est pas vide\n  if (nom.length < 2) {\n    alert(\"❌ Veuillez saisir un nom valide.\");\n    return false;\n  }\n\n  return true;\n}",
       note: "Dans la balise <form>, appelez la fonction avec : onsubmit=\"return verifFormulaire()\" pour bloquer l'envoi en cas d'erreur."
     },
     html: {

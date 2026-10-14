@@ -1979,7 +1979,7 @@
       <!-- Modèles rapides en 1 clic -->
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;background:#f9f1e3;border:1.5px solid #23201a;border-radius:11px;padding:7px 10px">
         <span style="font-size:11.5px;font-weight:900;color:#23201a">⚡ Modèles rapides :</span>
-        <button type="button" class="btn-tpl-tb" data-tpl="sql" style="border:1.5px solid #23201a;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:900;background:#fff;cursor:pointer">🗄️ SQL JOIN + GROUP BY</button>
+        <button type="button" class="btn-tpl-tb" data-tpl="sql" style="border:1.5px solid #23201a;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:900;background:#fff;cursor:pointer">🗄️ SQL Jointure WHERE + GROUP BY</button>
         <button type="button" class="btn-tpl-tb" data-tpl="php" style="border:1.5px solid #23201a;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:900;background:#fff;cursor:pointer">🐘 PHP MySQLi</button>
         <button type="button" class="btn-tpl-tb" data-tpl="js" style="border:1.5px solid #23201a;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:900;background:#fff;cursor:pointer">⚡ JS Contrôle saisie</button>
         <button type="button" class="btn-tpl-tb" data-tpl="html" style="border:1.5px solid #23201a;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:900;background:#fff;cursor:pointer">🎨 HTML5 / Flexbox</button>
@@ -2941,35 +2941,40 @@
       </div>
       <div id="contenu-readme-admin" style="overflow-y:auto;flex:1;padding-right:6px;font-size:13.2px;line-height:1.55;color:#23201a">
         <div style="background:#f9f1e3;border:2px solid #23201a;border-radius:14px;padding:12px 15px;margin-bottom:12px">
-          <div style="font-size:15px;font-weight:900;color:#d84315">📚 STI By A'e — Le Web de A à Z (Version 2.0 · v120)</div>
-          <div style="font-size:12.5px;color:#5a5244;margin-top:4px">Plateforme éducative interactive dédiée aux <b>Sciences et Technologies de l'Informatique (STI — 3ème &amp; 4ème SI)</b> : cours complets, leçons animées pas à pas, annexes officielles du Bac Tunisien, flashcards 3D, bac à sable de code en direct, écran partagé Énoncé + Code, simulateur SQL hors-ligne, laboratoire Chaînes &amp; ASCII JavaScript, simulateur Form ➔ PHP ➔ SQL, constructeur visuel Tableaux/Formulaires/Flexbox, chasse aux erreurs, examen blanc <code>/20</code>, tableau blanc live, coffre TP, boîte de réception et notation des copies TP, sondages QCM Live (Kahoot STI), messagerie temps réel avec pièces jointes, séries d'exercices, TP corrigés, quiz et épreuves pratiques en <b>HTML5, CSS3, JavaScript, SQL et PHP / MySQLi</b>.</div>
+          <div style="font-size:15px;font-weight:900;color:#d84315">📚 STI By A'e — Le Web de A à Z (Version 2.0 · STiV2.0.186)</div>
+          <div style="font-size:12.5px;color:#5a5244;margin-top:4px">Plateforme éducative interactive dédiée aux <b>Sciences et Technologies de l'Informatique (STI — 3ème &amp; 4ème SI)</b> : cours complets, leçons animées pas à pas, annexes officielles du Bac Tunisien, studios d'animation SQL et PHP pas à pas, flashcards 3D, bac à sable multi-fichiers en direct, console JS ancrée à droite, écran partagé Énoncé + Code, simulateur SQL hors-ligne, laboratoire Chaînes &amp; ASCII JavaScript, simulateur Form ➔ PHP ➔ SQL, constructeur visuel Tableaux/Formulaires/Flexbox, chasse aux erreurs, examen blanc <code>/20</code>, tableau blanc live, coffre TP, boîte de réception et notation des copies TP, sondages QCM Live (Kahoot STI), messagerie temps réel avec pièces jointes et SOS Capture, séries d'exercices, TP corrigés, quiz et épreuves pratiques en <b>HTML5, CSS3, JavaScript, SQL et PHP / MySQLi</b>.</div>
         </div>
 
-        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">🔐 1. Portail d'accès, Inscription &amp; Gestion des profils (<code>portail.html</code>)</h4>
+        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">🔐 1. Portail d'accès, Biométrie, Mise à jour auto &amp; Gestion des profils (<code>portail.html</code>)</h4>
         <ul style="margin:0 0 10px 18px;padding:0">
           <li><b>Identité visuelle unifiée</b> : thème sombre (<code>#0d1526</code> + halo orange + grille de points) avec animation dactylo <b>STI</b>.</li>
-          <li><b>Modes d'inscription et de connexion</b> : par <b>e-mail</b>, par <b>téléphone (<code>+216</code>)</b> avec Nom, Prénom et validation par code WhatsApp à 6 chiffres (6 cases OTP), ou par <b>Badge Laboratoire à 6 caractères (<code>🪪 Badge Labo</code>)</b> avec <b>protection Anti-Brute-Force</b> (blocage de 60 s après 5 échecs).</li>
-          <li><b>Session permanente « Labo » (<code>elevelabo3</code>)</b> : maintien automatique de la session sur les PC du laboratoire avec accès à tous les cours et bouton <code>🚪 Déconnexion</code>, mais <b>aucun accès à <code>admin.html</code></b>.</li>
-          <li><b>Profil Enseignant (<code>Prof</code>) &amp; Restriction automatique par niveau (<code>3ème SI</code> vs <code>4ème SI</code>)</b> : masquage et verrouillage dès 0 ms de tout le contenu PHP / MySQLi, de l'Atelier Bac Pratique et du Projet STI 0 hors <code>4SI1..4SI5</code>, <code>Prof</code>, <code>elevelabo3</code> et Administrateur.</li>
+          <li><b>Modes d'inscription et de connexion</b> : par <b>e-mail</b>, par <b>téléphone (<code>+216</code>)</b> avec Nom, Prénom et validation par code WhatsApp à 6 chiffres (6 cases OTP), ou par <b>Badge Laboratoire à 6 caractères (<code>🪪 Badge Labo</code>)</b> avec <b>protection Anti-Brute-Force</b> (blocage de 2 min après 5 échecs).</li>
+          <li><b>Biométrie &amp; Code de sécurité intelligents</b> : demandés uniquement à la 1re ouverture et à chaque nouvelle ouverture de l'application (jamais entre les pages).</li>
+          <li><b>Mise à jour automatique de la version (<code>STiV2.0.186</code>)</b> : exécutée automatiquement à chaque nouvelle connexion, à chaque ouverture de session et lors du clic sur le bouton <b>📲 Hors-ligne</b> dans la roue <code>⚙️</code>.</li>
+          <li><b>Session permanente « Labo » (<code>elevelabo3</code>) &amp; Profil Enseignant (<code>Prof</code>)</b> : accès complet aux cours avec masquage automatique dès 0 ms de PHP / MySQLi, du Bac Pratique et du Projet STI 0 hors <code>4SI1..4SI5</code>, <code>Prof</code>, <code>elevelabo3</code> et Administrateur.</li>
         </ul>
 
-        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">🎓 2. Laboratoires Interactifs, Outils d'étude &amp; Révision Élève (<code>index.html</code> &amp; <code>acces.js</code>)</h4>
+        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">🖥️ 2. Barre d'Outils PC Windows (<code>🛠️ ▸</code>), Console JS &amp; Roue Candidat (<code>⚙️</code>)</h4>
         <ul style="margin:0 0 10px 18px;padding:0">
-          <li><b>🗄️ Simulateur SQL Hors-ligne &amp; Atelier Requêtes STI</b> : exécution réelle hors-ligne de requêtes <code>SELECT</code>, <code>WHERE</code>, <code>JOIN</code>, <code>GROUP BY</code>, <code>HAVING</code>, <code>ORDER BY</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code> sur 3 bases Bac Tunisien + 8 défis auto-corrigés et envoi au professeur.</li>
-          <li><b>🔤 Laboratoire Interactif « Chaînes &amp; Code ASCII JavaScript »</b> : visualisation case par case des indices <code>0..ch.length-1</code> et codes ASCII, testeur conforme à l'Annexe Bac STI (<code>ch[i]</code>, <code>substring(d, f)</code>, <code>indexOf</code>, <code>lastIndexOf</code>, <code>toUpperCase</code>, <code>toLowerCase</code>, <code>trim</code>, <code>String.fromCharCode</code>) et générateur d'algorithmes de contrôle de saisie.</li>
-          <li><b>🌗 Écran Partagé (Split-View : Énoncé / Annexe + Code)</b>, <b>💻 Bac à sable (<code>HTML / CSS / JS</code>)</b>, <b>📋 Constructeur Visuel Tableaux/Formulaires/Flexbox</b> et <b>🔗 Simulateur Form ➔ PHP ➔ SQL</b>.</li>
-          <li><b>🃏 Flashcards 3D réalistes (60 FPS)</b>, <b>🐞 Chasse aux erreurs (30 pièges du Bac STI)</b> et <b>📝 Examen Blanc Chronométré (<code>/20</code>)</b> avec tirage aléatoire par élève.</li>
-          <li><b>💬 Messenger STI bidirectionnel avec pièces jointes (<code>📎</code>)</b>, <b>🗂️ Coffre TP</b>, <b>🙋‍♂️ Lever la main</b>, <b>🏆 Palmarès</b>, <b>🩺 Docteur STI</b>, <b>🔍 Recherche globale (<code>Ctrl + K</code>)</b>, <b>📝 Carnet de notes (<code>Alt + N</code>)</b> et <b>bouton universel <code>⬆ Haut</code></b>.</li>
+          <li><b>Barre d'outils PC repliable (<code>#sti-pc-win-tools</code>)</b> : repliée par défaut en bas à gauche (<code>🛠️ ▸</code>) et regroupant <b>⛶ Sans adresse</b> (masquage automatique de l'adresse GitHub en haut sur PC pour tous les comptes), <b>📌 1er plan</b>, <b>🔍− / 100% / 🔍+</b>, <b>🔴 Laser &amp; 📏 Guide-ligne</b> (réservés à l'Admin et <code>Prof</code>, persistants entre toutes les pages et iframes jusqu'à désactivation manuelle), <b>◫ 2 vues</b>, <b>▶️ Tester code</b> (multi-fichiers) et <b>🖥️ Console</b> (ancrée à droite en poussant la page vers la gauche, sans <code>EvalError</code>).</li>
+          <li><b>Roue Candidat compacte (<code>⚙️</code>)</b> : réservée aux candidats, affichant dynamiquement <b>STiV2.0.186</b> en en-tête et en pied, la durée hebdomadaire, les laboratoires, <b>📸 SOS Capture</b> et <b>📲 Hors-ligne</b>.</li>
         </ul>
 
-        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">📖 3. Cours interactifs, Animations &amp; Projets Bac</h4>
+        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">🎓 3. Laboratoires Interactifs, Conformité Programme Bac STI &amp; Révision Élève</h4>
         <ul style="margin:0 0 10px 18px;padding:0">
-          <li><b>🐘 Cours PHP (<code>cours/php.html</code>)</b> : bouton permanent <b>🪄 PHP-recap ✨</b> (modale <code>PHP-recap.html</code>), bouton <b>🎬</b> (animation du guichet Client/Serveur) et boîte interactive <code>php-mysqli.html</code>.</li>
-          <li><b>🗄️ Cours SQL (<code>cours/sql.html</code>)</b> : bouton <b>⚡ Voir l'animation : Effet des contraintes</b> ouvrant le simulateur néo-brutaliste <code>sql-contraintes.html</code> (<code>PRIMARY KEY</code>, <code>FOREIGN KEY</code>, <code>ON DELETE CASCADE</code>, <code>CHECK</code>…).</li>
-          <li><b>🧪 Atelier Bac Pratique &amp; Projet STI 0</b> : épreuves notées sur 20 et téléchargement 100 % hors-ligne du sujet PDF et de l'archive <code>ressources-projet-sti0.zip</code>.</li>
+          <li><b>Conformité stricte Bac STI</b> : JavaScript conforme à l'annexe STI (<code>ch[i]</code>, <code>substring(d, f)</code>, <code>indexOf</code>, <code>lastIndexOf</code>, <code>trim</code>, <code>toUpperCase</code>, <code>toLowerCase</code>, <code>charCodeAt</code>, <code>String.fromCharCode</code> — sans <code>split</code> ni <code>charAt</code>) ; SQL avec jointure dans <code>WHERE a.col = b.col</code> (zéro <code>JOIN</code>) et opérateur <code>!=</code> ; PHP avec <code>mysqli_*</code> et <code>!=</code>.</li>
+          <li><b>🗄️ Simulateur SQL Hors-ligne</b>, <b>🔤 Laboratoire Chaînes &amp; ASCII JS</b>, <b>🌗 Écran Partagé</b>, <b>💻 Bac à sable</b>, <b>📋 Constructeur Visuel</b>, <b>🔗 Simulateur Form ➔ PHP ➔ SQL</b>, <b>🃏 Flashcards 3D</b>, <b>🐞 Chasse aux erreurs</b> et <b>📝 Examen Blanc (<code>/20</code>)</b>.</li>
+          <li><b>💬 Messenger STI bidirectionnel (<code>📎</code> &amp; <code>📸 SOS Capture</code>)</b> : bouton flottant réduit au seul logo rond sans texte, point vert (<code>#31a24c</code>) en ligne et mauve (<code>#8b5cf6</code>) hors ligne, et bouton <b>👁️ Voir le code</b> côté professeur.</li>
         </ul>
 
-        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">📊 4. Tableau de bord Administrateur réorganisé &amp; Pilotage de classe (<code>admin.html</code>)</h4>
+        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">📖 4. Cours interactifs, Studios d'Animation Pas à Pas &amp; Projets Bac</h4>
+        <ul style="margin:0 0 10px 18px;padding:0">
+          <li><b>🗄️ Cours SQL (<code>cours/sql.html</code>) &amp; Studios d'Animation SQL (Séries 1 à 5)</b> : compteurs interactifs (<code>3 Parties</code>, <code>24 Fiches</code>, <code>28 Requêtes</code>), ateliers animés pas à pas (jointure <code>WHERE</code>, <code>GROUP BY</code>, <code>HAVING</code>), simulateur <code>sql-contraintes.html</code> et studios d'animation pas à pas dans les Séries 1 à 5 (<code>exercices/sql/</code>).</li>
+          <li><b>🐘 Cours PHP (<code>cours/php.html</code>) &amp; DC N°6</b> : <b>🪄 PHP-recap ✨</b>, animation Client/Serveur (<code>🎬</code>), boîte interactive <code>php-mysqli.html</code> et Devoir de Contrôle N°6 PHP (4SI 2025-2026).</li>
+          <li><b>🧪 Atelier Bac Pratique &amp; Projet STI 0 (<code>p0</code>)</b> : animations pas à pas de <code>sondage.php</code> et <code>Correctionstat.php</code> intégrées au Projet STI 0, sujet PDF et archive <code>ressources-projet-sti0.zip</code> 100 % hors-ligne.</li>
+        </ul>
+
+        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">📊 5. Tableau de bord Administrateur réorganisé &amp; Pilotage de classe (<code>admin.html</code>)</h4>
         <ul style="margin:0 0 10px 18px;padding:0">
           <li><b>Organisation claire en 4 zones (PC &amp; Mobile)</b> :
             <b>(1) En-tête épuré</b> avec témoin réseau, jauge Supabase cliquable, raccourcis live et tiroir <code>⚙️ Système &amp; Plus ▾</code> ;
@@ -2980,7 +2985,7 @@
           <li><b>📥 Copies &amp; TP rendus (<code>/20</code>), 🧮 Grille Devoirs (<code>DC / DS</code> + CSV Eduserv), 📊 QCM Live Kahoot, 🪪 Badges Labo, 📄 Bulletin PDF A4 &amp; 🧹 Nettoyeur Intelligent Supabase</b>.</li>
         </ul>
 
-        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">🛡️ 5. Pack Sécurité Totale, Compte 👑 Gold, PDF &amp; Mode 100 % Hors-ligne</h4>
+        <h4 style="margin:12px 0 6px;font-size:14px;color:#f4511e">🛡️ 6. Pack Sécurité Totale, Compte 👑 Gold, PDF &amp; Mode 100 % Hors-ligne</h4>
         <ul style="margin:0 0 10px 18px;padding:0">
           <li><b>Documents PDF accessibles à tous &amp; Compte 👑 Gold</b> : tous les documents PDF (<code>.pdf</code> et <code>.pdf.html</code>) sont téléchargeables et imprimables par tous les abonnés ; le statut <b>👑 Gold</b> débloque en plus la copie et l'impression des pages de cours.</li>
           <li><b>Verrouillage strict du code source &amp; Éjection auto <code>3/3</code></b> : clic droit, <code>F12</code>, <code>Ctrl+U</code>, <code>Ctrl+Shift+I/J/C/K</code>, <code>Ctrl+S</code> et bouclier Anti-DevTools actifs pour 100 % des abonnés (même 👑 Gold et <code>elevelabo3</code>) avec éjection automatique à la 3e tentative.</li>
@@ -3089,7 +3094,7 @@
   >⬆ Haut</button>
 
   <footer class="pied-admin-version">
-    Plateforme STI V2.0 © Aymen Essouyah — Lycée Raféha · <span id="pied-version-admin">🏷️ Version active : STI V2.0 (v130)</span> · <span id="pied-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo / 500 Mo)</span> · <button type="button" id="pied-readme-admin" style="border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">📖 README</button> · <button type="button" id="pied-haut-admin" style="border:1.5px solid #23201a;background:#f4511e;color:#fff;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">⬆ Haut</button>
+    Plateforme STI V2.0 © Aymen Essouyah — Lycée Raféha · <span id="pied-version-admin">🏷️ Version active : STI V2.0 (v186)</span> · <span id="pied-supabase-quota" style="color:#177245">🗄️ Supabase : 99,8 % restant (499,2 Mo / 500 Mo)</span> · <button type="button" id="pied-readme-admin" style="border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">📖 README</button> · <button type="button" id="pied-haut-admin" style="border:1.5px solid #23201a;background:#f4511e;color:#fff;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">⬆ Haut</button>
   </footer>
 
   <!-- Barre de navigation rapide mobile fixe en bas d'écran (visible uniquement sur smartphone ≤ 768px) -->
