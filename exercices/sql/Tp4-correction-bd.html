@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <title>
-      Corrigé : Série BD - Jointure, sous-requêtes, Group By (Lycée Rafèha)
+      Corrigé : Série 4 BD - Jointures, Sous-requêtes et Group By (Lycée Rafèha)
     </title>
     <style>
       @page {
@@ -19,13 +19,13 @@
         margin: 0;
         padding: 20px;
         color: #1a202c;
-        line-height: 1.45;
+        line-height: 1.48;
         background-color: #fff;
       }
       .header-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
       }
       .header-table td {
         border: 2px solid #1a365d;
@@ -41,24 +41,29 @@
       .title-container {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin: 20px 0;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 16px 0 18px;
         border-bottom: 3px solid #1a365d;
-        padding-bottom: 10px;
+        padding-bottom: 12px;
+      }
+      .title-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
       }
       .title-container h1 {
         font-size: 1.2em;
         color: #1a365d;
         text-transform: uppercase;
         margin: 0;
-        text-align: center;
       }
       .db-logo {
         width: 42px;
         height: 42px;
         background: #2b6cb0;
-        border-radius: 4px;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -68,53 +73,128 @@
         color: #fff;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
       }
+      .btn-video-serie4 {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 10px;
+        border: 2px solid #facc15;
+        background: linear-gradient(135deg, #ea580c, #c2410c);
+        color: #fff;
+        font: 800 13.5px/1.2 "Segoe UI", system-ui, sans-serif;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(234, 88, 12, 0.32);
+        text-decoration: none;
+      }
+      .btn-video-serie4:hover {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+      }
       h2 {
-        color: #2b6cb0;
-        background-color: #ebf8ff;
-        padding: 6px 12px;
-        font-size: 1.05em;
-        border-left: 5px solid #2b6cb0;
+        color: #1e3a8a;
+        background-color: #dbeafe;
+        padding: 8px 14px;
+        font-size: 1.06em;
+        border-left: 5px solid #1d4ed8;
         margin-top: 22px;
-        margin-bottom: 10px;
-        border-radius: 0 4px 4px 0;
+        margin-bottom: 12px;
+        border-radius: 0 6px 6px 0;
+      }
+      .schema-box {
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
+        border-left: 5px solid #2b6cb0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+      }
+      .req-card {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+      }
+      .req-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .req-title {
+        font-size: 0.98em;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .req-badges {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .badge-type {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.78em;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+      }
+      .badge-jointure {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+      }
+      .badge-sousreq {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+      .badge-imbriquee {
+        background: #fae8ff;
+        color: #86198f;
+        border: 1px solid #f0abfc;
+      }
+      .badge-groupby {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #93c5fd;
       }
       pre {
-        background-color: #f7fafc;
-        border: 1px solid #cbd5e0;
-        border-left: 4px solid #2b6cb0;
-        padding: 10px 12px;
-        border-radius: 4px;
-        font-family: Consolas, monospace;
-        font-size: 0.88em;
-        color: #1e3a8a;
+        background-color: #0f172a;
+        border: 1px solid #1e293b;
+        border-left: 4px solid #f97316;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        color: #f8fafc;
         overflow-x: auto;
-        margin: 6px 0 8px 0;
+        margin: 8px 0;
       }
-      .explain-note {
-        font-size: 0.86em;
-        color: #475569;
-        background: #f8fafc;
-        border-left: 3px solid #94a3b8;
-        padding: 5px 10px;
-        margin: 0 0 14px 0;
-        border-radius: 0 4px 4px 0;
+      .why-box {
+        font-size: 0.89em;
+        color: #1e293b;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-left: 4px solid #16a34a;
+        padding: 8px 12px;
+        margin-top: 8px;
+        border-radius: 0 6px 6px 0;
       }
-      ul,
-      ol {
-        margin-top: 5px;
-        margin-bottom: 8px;
-        padding-left: 22px;
-      }
-      li {
-        margin-bottom: 10px;
+      .why-box strong {
+        color: #14532d;
       }
       code {
         font-family: Consolas, monospace;
         font-size: 0.9em;
-        background: #edf2f7;
-        padding: 1px 4px;
-        border-radius: 3px;
-        color: #2b6cb0;
+        background: #e2e8f0;
+        padding: 1px 5px;
+        border-radius: 4px;
+        color: #1e3a8a;
       }
       .footer-page {
         text-align: right;
@@ -123,6 +203,11 @@
         margin-top: 30px;
         border-top: 1px solid #e2e8f0;
         padding-top: 5px;
+      }
+      @media print {
+        .btn-video-serie4 {
+          display: none !important;
+        }
       }
     </style>
   </head>
@@ -138,9 +223,9 @@
           >
         </td>
         <td width="40%" class="header-title">
-          Corrigé : Série BD - Jointure - sous-requêtes - Group By<br /><span
+          Corrigé Série 4 BD : Jointures, Sous-requêtes &amp; Group By<br /><span
             style="font-weight: normal; font-size: 0.85em"
-            >Bases de Données - SQL</span
+            >Création BD, Insertion &amp; 15 Requêtes commentées</span
           >
         </td>
         <td width="30%" class="header-title">
@@ -152,48 +237,165 @@
     </table>
 
     <div class="title-container">
-      <div class="db-logo">SQL</div>
-      <h1>Corrigé de la Série de Révision</h1>
+      <div class="title-left">
+        <div class="db-logo">SQL</div>
+        <h1>Corrigé Série 4 — Jointures, Sous-requêtes et Group By</h1>
+      </div>
+      <button
+        type="button"
+        class="btn-video-serie4"
+        onclick="if(window.ouvrirVideoPasAPasSTI){window.ouvrirVideoPasAPasSTI('sql-serie4','🎥 Série 4 SQL — Création BD, Insertion & Corrigé des 15 requêtes');}else if(window.top&&window.top.ouvrirVideoPasAPasSTI){window.top.ouvrirVideoPasAPasSTI('sql-serie4','🎥 Série 4 SQL — Création BD, Insertion & Corrigé des 15 requêtes');}"
+      >
+        🎥 Voir la vidéo : Créer la BD, Insérer &amp; Corriger les 15 requêtes
+      </button>
     </div>
 
-    <p>
-      <strong>Rappel du schéma de la base de données <code>ÉTUDIANT</code> :</strong><br />
-      <code>ETUDIANT (<u>Numetu</u>, Nometu, Dtnaiss, #Cdsexe)</code> •
-      <code>SEXE (<u>Cdsexe</u>, Lbsexe)</code> •
-      <code>ENSEIGNANT (<u>Numens</u>, Nomens, Grade, Ancien)</code> •
-      <code>MATIERE (<u>Numat</u>, Nomat, Coeff, #Numens)</code> •
-      <code>NOTES (<u>#Numetu, #Numat</u>, Note)</code>
-    </p>
+    <div class="schema-box" id="sec-schema">
+      <strong>Schéma relationnel de la base de données <code>ETUDIANT_BD</code> :</strong><br />
+      • <strong>SEXE</strong> (<u>Cdsexe</u>, Lbsexe)<br />
+      • <strong>ENSEIGNANT</strong> (<u>Numens</u>, Nomens, Grade, Ancien)<br />
+      • <strong>ETUDIANT</strong> (<u>Numetu</u>, Nometu, Dtnaiss, #Cdsexe)<br />
+      • <strong>MATIERE</strong> (<u>Numat</u>, Nomat, Coeff, #Numens)<br />
+      • <strong>NOTES</strong> (<u>#Numetu, #Numat</u>, Note)
+    </div>
 
-    <ol>
-      <li>
-        <strong>Requête 1 :</strong> Afficher quel était l'âge moyen des garçons
-        et des filles au premier janvier 2025.
-        <pre>SELECT S.Lbsexe, AVG(DATEDIFF('2025-01-01', E.Dtnaiss) / 365) AS "Age Moyen"
+    <!-- PARTIE I : CRÉATION DE LA BASE DE DONNÉES ET DES TABLES -->
+    <div id="sec-creation-bd" class="req-card">
+      <h2>I. Création de la Base de Données et des 5 Tables (LDD)</h2>
+      <p style="margin:4px 0 8px;font-size:0.9em;color:#334155;">
+        On crée d'abord les tables parentes sans clé étrangère (<code>SEXE</code> et <code>ENSEIGNANT</code>), puis les tables enfants (<code>ETUDIANT</code> et <code>MATIERE</code>), et enfin la table d'association <code>NOTES</code> munie d'une clé primaire composée :
+      </p>
+      <pre>CREATE DATABASE ETUDIANT_BD;
+USE ETUDIANT_BD;
+
+CREATE TABLE SEXE (
+  Cdsexe CHAR(1) PRIMARY KEY,
+  Lbsexe VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE ENSEIGNANT (
+  Numens INT PRIMARY KEY,
+  Nomens VARCHAR(50) NOT NULL,
+  Grade  VARCHAR(30) NOT NULL,
+  Ancien INT NOT NULL
+);
+
+CREATE TABLE ETUDIANT (
+  Numetu  INT PRIMARY KEY,
+  Nometu  VARCHAR(50) NOT NULL,
+  Dtnaiss DATE NOT NULL,
+  Cdsexe  CHAR(1) NOT NULL,
+  FOREIGN KEY (Cdsexe) REFERENCES SEXE(Cdsexe)
+);
+
+CREATE TABLE MATIERE (
+  Numat  INT PRIMARY KEY,
+  Nomat  VARCHAR(40) NOT NULL,
+  Coeff  INT NOT NULL,
+  Numens INT NOT NULL,
+  FOREIGN KEY (Numens) REFERENCES ENSEIGNANT(Numens)
+);
+
+CREATE TABLE NOTES (
+  Numetu INT NOT NULL,
+  Numat  INT NOT NULL,
+  Note   DECIMAL(4,2) NOT NULL,
+  PRIMARY KEY (Numetu, Numat),
+  FOREIGN KEY (Numetu) REFERENCES ETUDIANT(Numetu),
+  FOREIGN KEY (Numat)  REFERENCES MATIERE(Numat)
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi cet ordre de création ?</strong> En SQL, une clé étrangère (<code>FOREIGN KEY</code>) ne peut référencer qu'une table déjà existante : on crée donc <code>SEXE</code> et <code>ENSEIGNANT</code> avant <code>ETUDIANT</code> et <code>MATIERE</code>, puis <code>NOTES</code> en dernier.
+      </div>
+    </div>
+
+    <!-- PARTIE II : INSERTION DES ÉLÉMENTS -->
+    <div id="sec-insertion-bd" class="req-card">
+      <h2>II. Insertion des éléments dans la Base de Données (LMD : INSERT INTO)</h2>
+      <p style="margin:4px 0 8px;font-size:0.9em;color:#334155;">
+        En respectant l'intégrité référentielle, on insère les enregistrements dans les tables mères puis dans les tables filles :
+      </p>
+      <pre>-- 1. Insertion dans SEXE
+INSERT INTO SEXE VALUES ('H', 'Garçon');
+INSERT INTO SEXE VALUES ('F', 'Fille');
+
+-- 2. Insertion dans ENSEIGNANT
+INSERT INTO ENSEIGNANT VALUES (101, 'Ali Ben Salah',  'Professeur', 15);
+INSERT INTO ENSEIGNANT VALUES (102, 'Safia Tammar',   'MCF',         8);
+INSERT INTO ENSEIGNANT VALUES (103, 'Karim Foughali', 'Assistant',   3);
+
+-- 3. Insertion dans ETUDIANT
+INSERT INTO ETUDIANT VALUES (1, 'Asma Ben Mahmoud', '2003-05-12', 'F');
+INSERT INTO ETUDIANT VALUES (2, 'Bassem Hdhili',    '2004-11-23', 'H');
+INSERT INTO ETUDIANT VALUES (3, 'Souhir Korbsi',    '2003-09-01', 'F');
+INSERT INTO ETUDIANT VALUES (4, 'Karim Hfayedh',    '2005-02-14', 'H');
+INSERT INTO ETUDIANT VALUES (5, 'Wissal Wertani',   '2004-07-19', 'F');
+
+-- 4. Insertion dans MATIERE
+INSERT INTO MATIERE VALUES (10, 'Informatique',  3, 101);
+INSERT INTO MATIERE VALUES (11, 'Mathématiques', 4, 102);
+INSERT INTO MATIERE VALUES (12, 'Histoire',      2, 103);
+INSERT INTO MATIERE VALUES (13, 'Sociologie',    2, 101);
+
+-- 5. Insertion dans NOTES
+INSERT INTO NOTES VALUES (1, 10, 15.50), (1, 11, 12.00), (1, 12, 14.00);
+INSERT INTO NOTES VALUES (2, 10, 11.00), (2, 11,  9.00);
+INSERT INTO NOTES VALUES (3, 10, 18.00), (3, 11, 15.50), (3, 12, 13.50), (3, 13, 16.00);
+INSERT INTO NOTES VALUES (4, 12, 10.00);
+INSERT INTO NOTES VALUES (5, 10, 13.00), (5, 12,  8.00);</pre>
+      <div class="why-box">
+        <strong>Pourquoi cet ordre d'insertion ?</strong> Chaque valeur de clé étrangère (comme <code>Cdsexe = 'F'</code>, <code>Numens = 101</code> ou <code>Numat = 10</code>) doit préexister comme clé primaire dans sa table de référence avant d'être utilisée dans <code>ETUDIANT</code>, <code>MATIERE</code> ou <code>NOTES</code>.
+      </div>
+    </div>
+
+    <!-- PARTIE III : CORRIGÉ DÉTAILLÉ DES 15 REQUÊTES -->
+    <h2>III. Corrigé détaillé des 15 Requêtes (Type &amp; Justification de la solution)</h2>
+
+    <!-- Requête 1 -->
+    <div id="req-1" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 1 : Afficher quel était l'âge moyen des garçons et des filles au 1er janvier 2025.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-groupby">+ GROUP BY / Agrégation (AVG)</span>
+        </div>
+      </div>
+      <pre>SELECT S.Lbsexe, AVG(DATEDIFF('2025-01-01', E.Dtnaiss) / 365) AS "Age Moyen"
 FROM SEXE S, ETUDIANT E
 WHERE E.Cdsexe = S.Cdsexe
 GROUP BY S.Cdsexe, S.Lbsexe;</pre>
-        <div class="explain-note">
-          Jointure <code>E.Cdsexe = S.Cdsexe</code> (forme <code>a.x = b.x</code>) entre <code>ETUDIANT</code> et <code>SEXE</code>, puis regroupement par sexe avec calcul de la moyenne d'âge au <code>2025-01-01</code>.
-        </div>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le libellé du sexe (<code>Lbsexe</code>) est dans la table <code>SEXE</code> tandis que la date de naissance (<code>Dtnaiss</code>) est dans <code>ETUDIANT</code> : il faut donc une <strong>jointure</strong> <code>WHERE E.Cdsexe = S.Cdsexe</code>. Ensuite, comme la moyenne est demandée <em>pour chaque sexe</em> (garçons d'un côté, filles de l'autre), on utilise <code>GROUP BY S.Cdsexe, S.Lbsexe</code> avec la fonction d'agrégation <code>AVG(...)</code>.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 2 :</strong> Afficher le nom et le grade des enseignants
-        d'histoire.
-        <pre>SELECT E.Nomens, E.Grade
+    <!-- Requête 2 -->
+    <div id="req-2" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 2 : Afficher le nom et le grade des enseignants d'histoire.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+        </div>
+      </div>
+      <pre>SELECT E.Nomens, E.Grade
 FROM ENSEIGNANT E, MATIERE M
 WHERE E.Numens = M.Numens
   AND M.Nomat = 'Histoire';</pre>
-        <div class="explain-note">
-          Jointure <code>E.Numens = M.Numens</code> et restriction sur la matière <code>'Histoire'</code>.
-        </div>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Les colonnes à afficher (<code>Nomens</code>, <code>Grade</code>) appartiennent à <code>ENSEIGNANT</code>, mais la condition porte sur le nom de la matière (<code>Nomat = 'Histoire'</code>) situé dans <code>MATIERE</code>. Une <strong>jointure</strong> <code>WHERE E.Numens = M.Numens</code> permet de relier chaque matière à son enseignant sur la même ligne et d'afficher ses attributs.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 3 :</strong> Afficher les noms et numéro des étudiants
-        qui n'ont pas de notes en Sociologie.
-        <pre>SELECT E.Nometu, E.Numetu
+    <!-- Requête 3 -->
+    <div id="req-3" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 3 : Afficher les noms et numéro des étudiants qui n'ont pas de notes en Sociologie.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-sousreq">Type : Sous-requête (NOT IN)</span>
+          <span class="badge-type badge-imbriquee">Requête imbriquée</span>
+        </div>
+      </div>
+      <pre>SELECT E.Nometu, E.Numetu
 FROM ETUDIANT E
 WHERE E.Numetu NOT IN (
   SELECT N.Numetu
@@ -201,90 +403,125 @@ WHERE E.Numetu NOT IN (
   WHERE N.Numat = M.Numat
     AND M.Nomat = 'Sociologie'
 );</pre>
-        <div class="explain-note">
-          La sous-requête récupère les numéros des étudiants ayant une note en <code>'Sociologie'</code>, et <code>NOT IN</code> sélectionne ceux qui n'y figurent pas.
-        </div>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On cherche une <strong>absence d'enregistrement</strong> dans <code>NOTES</code> pour la matière <code>'Sociologie'</code>. Une simple jointure avec <code>M.Nomat != 'Sociologie'</code> serait fausse car elle garderait tout étudiant ayant une note en Informatique même s'il a aussi une note en Sociologie. On utilise donc une <strong>sous-requête imbriquée</strong> qui trouve d'abord ceux qui <em>ont</em> une note en Sociologie, puis <code>NOT IN</code> pour les exclure.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 4 :</strong> Afficher le nom et le coefficient des
-        matières qui sont enseignées par des maîtres de conférences ou des
-        assistants.
-        <pre>SELECT M.Nomat, M.Coeff
+    <!-- Requête 4 -->
+    <div id="req-4" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 4 : Afficher le nom et le coefficient des matières enseignées par des maîtres de conférences ou des assistants.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+        </div>
+      </div>
+      <pre>SELECT M.Nomat, M.Coeff
 FROM MATIERE M, ENSEIGNANT E
 WHERE M.Numens = E.Numens
   AND E.Grade IN ('MCF', 'Assistant');</pre>
-        <div class="explain-note">
-          Ou avec les libellés complets : <code>AND E.Grade IN ('Maître de conférences', 'Assistant')</code> (ou <code>AND (E.Grade = 'MCF' OR E.Grade = 'Assistant')</code>). Attention : ne pas mettre <code>'PR'</code> qui désigne les Professeurs.
-        </div>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le nom et le coefficient sont dans <code>MATIERE</code> alors que le grade (<code>'MCF'</code> ou <code>'Assistant'</code>) est dans <code>ENSEIGNANT</code>. La <strong>jointure</strong> <code>WHERE M.Numens = E.Numens</code> relie directement chaque matière à son enseignant, et l'opérateur <code>IN ('MCF', 'Assistant')</code> filtre les deux grades souhaités sans avoir besoin de sous-requête.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 5 :</strong> Afficher pour chaque étudiant (nom et
-        numéro), et par ordre alphabétique, la moyenne qu'il a obtenue dans
-        chaque matière.
-        <pre>SELECT E.Nometu, E.Numetu, M.Nomat, AVG(N.Note) AS Moyenne
+    <!-- Requête 5 -->
+    <div id="req-5" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 5 : Afficher pour chaque étudiant (nom et numéro), et par ordre alphabétique, la moyenne obtenue dans chaque matière.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure (3 tables)</span>
+          <span class="badge-type badge-groupby">+ GROUP BY &amp; ORDER BY</span>
+        </div>
+      </div>
+      <pre>SELECT E.Nometu, E.Numetu, M.Nomat, AVG(N.Note) AS Moyenne
 FROM ETUDIANT E, NOTES N, MATIERE M
 WHERE E.Numetu = N.Numetu
   AND N.Numat = M.Numat
 GROUP BY E.Numetu, E.Nometu, M.Numat, M.Nomat
 ORDER BY E.Nometu ASC;</pre>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On doit afficher simultanément des colonnes issues de 3 tables (<code>ETUDIANT</code>, <code>MATIERE</code>, <code>NOTES</code>), ce qui impose une <strong>double jointure</strong> (<code>E.Numetu = N.Numetu AND N.Numat = M.Numat</code>). Comme la moyenne <code>AVG(N.Note)</code> est demandée <em>par étudiant et par matière</em>, on utilise <code>GROUP BY E.Numetu, E.Nometu, M.Numat, M.Nomat</code> suivi de <code>ORDER BY E.Nometu ASC</code>.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 6 :</strong> Afficher le nom, l'âge et le sexe des
-        étudiants qui ont eu une note d'informatique supérieure à la moyenne
-        générale de la classe.
-        <pre>SELECT E.Nometu, DATEDIFF(CURRENT_DATE, E.Dtnaiss) / 365 AS Age, S.Lbsexe
+    <!-- Requête 6 -->
+    <div id="req-6" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 6 : Afficher le nom, l'âge et le sexe des étudiants ayant une note d'informatique supérieure à la moyenne générale de la classe.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-imbriquee">+ Sous-requête imbriquée scalaire</span>
+        </div>
+      </div>
+      <pre>SELECT E.Nometu, DATEDIFF(CURRENT_DATE, E.Dtnaiss) / 365 AS Age, S.Lbsexe
 FROM ETUDIANT E, SEXE S, NOTES N, MATIERE M
 WHERE E.Cdsexe = S.Cdsexe
   AND E.Numetu = N.Numetu
   AND N.Numat = M.Numat
   AND M.Nomat = 'Informatique'
-  AND N.Note > (
+  AND N.Note &gt; (
     SELECT AVG(N2.Note)
     FROM NOTES N2, MATIERE M2
     WHERE N2.Numat = M2.Numat
       AND M2.Nomat = 'Informatique'
   );</pre>
-        <div class="explain-note">
-          Si l'on compare à la moyenne générale de la classe toutes matières confondues (pondérée par les coefficients), la sous-requête s'écrit : <code>(SELECT SUM(N2.Note * M2.Coeff) / SUM(M2.Coeff) FROM NOTES N2, MATIERE M2 WHERE N2.Numat = M2.Numat)</code>.
-        </div>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> En SQL, il est interdit d'écrire <code>WHERE N.Note &gt; AVG(N.Note)</code>. Il faut donc obligatoirement une <strong>sous-requête imbriquée</strong> qui calcule d'abord la moyenne de la classe, puis la requête principale utilise une <strong>jointure</strong> sur <code>ETUDIANT</code>, <code>SEXE</code>, <code>NOTES</code> et <code>MATIERE</code> pour garder les étudiants dont la note dépasse cette moyenne.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 7 :</strong> Afficher, pour chaque étudiant (nom et
-        numéro) qui a une note dans chacune des matières, la moyenne obtenue au
-        diplôme.
-        <pre>SELECT E.Nometu, E.Numetu, SUM(N.Note * M.Coeff) / SUM(M.Coeff) AS Moyenne
+    <!-- Requête 7 -->
+    <div id="req-7" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 7 : Afficher, pour chaque étudiant ayant une note dans chacune des matières, la moyenne obtenue au diplôme.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-groupby">+ GROUP BY / HAVING</span>
+          <span class="badge-type badge-imbriquee">+ Sous-requête imbriquée</span>
+        </div>
+      </div>
+      <pre>SELECT E.Nometu, E.Numetu, SUM(N.Note * M.Coeff) / SUM(M.Coeff) AS Moyenne
 FROM ETUDIANT E, NOTES N, MATIERE M
 WHERE E.Numetu = N.Numetu
   AND N.Numat = M.Numat
 GROUP BY E.Numetu, E.Nometu
 HAVING COUNT(DISTINCT N.Numat) = (SELECT COUNT(*) FROM MATIERE)
 ORDER BY E.Nometu ASC;</pre>
-        <div class="explain-note">
-          La condition <code>HAVING COUNT(DISTINCT N.Numat) = (SELECT COUNT(*) FROM MATIERE)</code> garantit que l'étudiant possède une note dans toutes les matières enregistrées dans la table <code>MATIERE</code>.
-        </div>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le calcul de la moyenne pondérée par étudiant nécessite une <strong>jointure</strong> entre <code>ETUDIANT</code>, <code>NOTES</code> et <code>MATIERE</code> et un <code>GROUP BY E.Numetu, E.Nometu</code>. Pour vérifier que l'étudiant a été noté dans <em>toutes</em> les matières, on filtre chaque groupe avec <code>HAVING COUNT(DISTINCT N.Numat)</code> comparé à la <strong>sous-requête</strong> <code>(SELECT COUNT(*) FROM MATIERE)</code> qui donne le nombre total de matières.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 8 :</strong> Afficher le nom, le grade et l'ancienneté
-        des enseignants qui enseignent dans plus d'une matière.
-        <pre>SELECT E.Nomens, E.Grade, E.Ancien
+    <!-- Requête 8 -->
+    <div id="req-8" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 8 : Afficher le nom, le grade et l'ancienneté des enseignants qui enseignent dans plus d'une matière.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-groupby">+ GROUP BY / HAVING</span>
+        </div>
+      </div>
+      <pre>SELECT E.Nomens, E.Grade, E.Ancien
 FROM ENSEIGNANT E, MATIERE M
 WHERE E.Numens = M.Numens
 GROUP BY E.Numens, E.Nomens, E.Grade, E.Ancien
-HAVING COUNT(M.Numat) > 1;</pre>
-        <div class="explain-note">
-          On regroupe par <code>E.Numens</code> (clé primaire de l'enseignant) afin d'éviter toute confusion en cas d'homonymie sur <code>Nomens</code>, puis on filtre avec <code>HAVING COUNT(M.Numat) &gt; 1</code>.
-        </div>
-      </li>
+HAVING COUNT(M.Numat) &gt; 1;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On relie chaque enseignant à ses matières par la <strong>jointure</strong> <code>WHERE E.Numens = M.Numens</code>, puis on regroupe par enseignant avec <code>GROUP BY</code>. Comme la condition « plus d'une matière » porte sur la fonction d'agrégation <code>COUNT(M.Numat) &gt; 1</code>, elle doit obligatoirement être placée dans la clause <strong><code>HAVING</code></strong>.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 9 :</strong> Afficher le nombre de garçons et le nombre
-        de filles qui ont réussi au diplôme : moyenne &gt;= 10.
-        <pre>SELECT S.Lbsexe, COUNT(E.Numetu) AS Nb_Reussis
+    <!-- Requête 9 -->
+    <div id="req-9" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 9 : Afficher le nombre de garçons et le nombre de filles qui ont réussi au diplôme (moyenne &gt;= 10).</div>
+        <div class="req-badges">
+          <span class="badge-type badge-imbriquee">Type : Requête imbriquée (IN + GROUP BY / HAVING)</span>
+          <span class="badge-type badge-jointure">+ Jointure &amp; GROUP BY</span>
+        </div>
+      </div>
+      <pre>SELECT S.Lbsexe, COUNT(E.Numetu) AS Nb_Reussis
 FROM SEXE S, ETUDIANT E
 WHERE S.Cdsexe = E.Cdsexe
   AND E.Numetu IN (
@@ -292,83 +529,111 @@ WHERE S.Cdsexe = E.Cdsexe
     FROM NOTES N, MATIERE M
     WHERE N.Numat = M.Numat
     GROUP BY N.Numetu
-    HAVING SUM(N.Note * M.Coeff) / SUM(M.Coeff) >= 10
+    HAVING SUM(N.Note * M.Coeff) / SUM(M.Coeff) &gt;= 10
        AND COUNT(DISTINCT N.Numat) = (SELECT COUNT(*) FROM MATIERE)
   )
 GROUP BY S.Cdsexe, S.Lbsexe;</pre>
-        <div class="explain-note">
-          Le nombre total de matières est déterminé dynamiquement par <code>(SELECT COUNT(*) FROM MATIERE)</code> (au lieu d'une valeur fixe codée en dur).
-        </div>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Il y a ici <strong>deux regroupements différents</strong> : il faut d'abord regrouper <em>par étudiant</em> pour calculer sa moyenne au diplôme (<code>&gt;= 10</code>), puis regrouper <em>par sexe</em> pour compter le nombre d'admis. On utilise donc une <strong>requête imbriquée</strong> (avec <code>IN</code>) qui identifie les <code>Numetu</code> ayant réussi, et la requête externe fait la <strong>jointure</strong> avec <code>SEXE</code> et le <code>GROUP BY S.Cdsexe, S.Lbsexe</code>.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 10 :</strong> Afficher le nom, le numéro et le sexe des
-        étudiants qui ont une note en informatique supérieure à leur note de
-        Mathématiques.
-        <pre>SELECT E.Nometu, E.Numetu, S.Lbsexe
+    <!-- Requête 10 -->
+    <div id="req-10" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 10 : Afficher le nom, le numéro et le sexe des étudiants ayant une note en Informatique supérieure à leur note de Mathématiques.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-sousreq">+ Sous-requête corrélée (Requête imbriquée)</span>
+        </div>
+      </div>
+      <pre>SELECT E.Nometu, E.Numetu, S.Lbsexe
 FROM ETUDIANT E, SEXE S, NOTES N1, MATIERE M1
 WHERE E.Cdsexe = S.Cdsexe
   AND E.Numetu = N1.Numetu
   AND N1.Numat = M1.Numat
   AND M1.Nomat = 'Informatique'
-  AND N1.Note > (
+  AND N1.Note &gt; (
     SELECT N2.Note
     FROM NOTES N2, MATIERE M2
     WHERE N2.Numat = M2.Numat
       AND M2.Nomat = 'Mathématiques'
       AND N2.Numetu = E.Numetu
   );</pre>
-        <div class="explain-note">
-          On utilise l'opérateur <code>&gt;</code> (sans <code>ALL</code>) avec des alias distincts (<code>N1, M1</code> et <code>N2, M2</code>) : ainsi, un étudiant qui n'a pas de note en Mathématiques n'est pas sélectionné à tort.
-        </div>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On compare deux notes appartenant au <em>même étudiant</em> mais stockées sur deux lignes distinctes de la table <code>NOTES</code>. La requête principale récupère par <strong>jointure</strong> la note d'Informatique (<code>N1.Note</code>) de l'étudiant <code>E.Numetu</code>, et la <strong>sous-requête corrélée</strong> (reliée par <code>N2.Numetu = E.Numetu</code>) récupère sa note de Mathématiques pour effectuer la comparaison <code>N1.Note &gt; (...)</code>.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 11 :</strong> Afficher le nom des couples, nom du garçon
-        nom de la fille, dont la différence d'âge ne dépasse pas 6 mois (180
-        jours).
-        <pre>SELECT E1.Nometu AS Nom_Garcon, E2.Nometu AS Nom_Fille
+    <!-- Requête 11 -->
+    <div id="req-11" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 11 : Afficher le nom des couples (garçon, fille) dont la différence d'âge ne dépasse pas 6 mois (180 jours).</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Auto-jointure (Jointure d'une table avec elle-même)</span>
+        </div>
+      </div>
+      <pre>SELECT E1.Nometu AS Nom_Garcon, E2.Nometu AS Nom_Fille
 FROM ETUDIANT E1, ETUDIANT E2
 WHERE E1.Cdsexe = 'H'
   AND E2.Cdsexe = 'F'
-  AND ABS(DATEDIFF(E1.Dtnaiss, E2.Dtnaiss)) <= 180;</pre>
-        <div class="explain-note">
-          Variante équivalente sans <code>ABS</code> : <code>AND DATEDIFF(E1.Dtnaiss, E2.Dtnaiss) BETWEEN -180 AND 180</code>.
-        </div>
-      </li>
+  AND ABS(DATEDIFF(E1.Dtnaiss, E2.Dtnaiss)) &lt;= 180;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Les garçons et les filles se trouvent tous dans la <strong>même table <code>ETUDIANT</code></strong>. Pour comparer sur une même ligne la date de naissance d'un garçon et celle d'une fille, on utilise une <strong>auto-jointure</strong> en appelant deux fois la table avec deux alias différents (<code>ETUDIANT E1, ETUDIANT E2</code>).
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 12 :</strong> Pour les étudiants n'ayant pas de note
-        dans une matière, afficher le numéro, le nom de l'étudiant et le nom de
-        la matière concernée.
-        <pre>SELECT E.Numetu, E.Nometu, M.Nomat
+    <!-- Requête 12 -->
+    <div id="req-12" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 12 : Pour les étudiants n'ayant pas de note dans une matière, afficher le numéro, le nom de l'étudiant et le nom de la matière concernée.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-sousreq">Type : Sous-requête corrélée (NOT IN)</span>
+          <span class="badge-type badge-imbriquee">Requête imbriquée</span>
+        </div>
+      </div>
+      <pre>SELECT E.Numetu, E.Nometu, M.Nomat
 FROM ETUDIANT E, MATIERE M
 WHERE E.Numetu NOT IN (
   SELECT N.Numetu
   FROM NOTES N
   WHERE N.Numat = M.Numat
 );</pre>
-        <div class="explain-note">
-          Pour chaque couple <code>(ETUDIANT E, MATIERE M)</code>, la sous-requête corrélée vérifie que <code>E.Numetu</code> ne figure pas parmi les étudiants ayant une note dans la matière <code>M.Numat</code>.
-        </div>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Une jointure avec la table <code>NOTES</code> ne peut jamais afficher une matière où l'étudiant n'a aucune ligne dans <code>NOTES</code>. On génère donc tous les couples possibles <code>(ETUDIANT E, MATIERE M)</code> dans le <code>FROM</code>, puis la <strong>sous-requête corrélée</strong> avec <code>NOT IN</code> conserve uniquement les couples <code>(étudiant, matière)</code> absents de la table <code>NOTES</code>.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 13 :</strong> Afficher les matières pour lesquelles la
-        moyenne des notes est inférieure à 10. Afficher le nom de l'enseignant
-        correspondant.
-        <pre>SELECT M.Nomat, E.Nomens, AVG(N.Note) AS Moyenne
+    <!-- Requête 13 -->
+    <div id="req-13" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 13 : Afficher les matières pour lesquelles la moyenne des notes est inférieure à 10, avec le nom de l'enseignant correspondant.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure (3 tables)</span>
+          <span class="badge-type badge-groupby">+ GROUP BY / HAVING</span>
+        </div>
+      </div>
+      <pre>SELECT M.Nomat, E.Nomens, AVG(N.Note) AS Moyenne
 FROM ENSEIGNANT E, MATIERE M, NOTES N
 WHERE E.Numens = M.Numens
   AND M.Numat = N.Numat
 GROUP BY M.Numat, M.Nomat, E.Numens, E.Nomens
-HAVING AVG(N.Note) < 10;</pre>
-      </li>
+HAVING AVG(N.Note) &lt; 10;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Il faut relier la matière (<code>MATIERE</code>), son enseignant (<code>ENSEIGNANT</code>) et les notes obtenues (<code>NOTES</code>) grâce à une <strong>double jointure</strong>. Ensuite, comme la condition <code>AVG(N.Note) &lt; 10</code> porte sur la moyenne calculée par matière, on utilise <code>GROUP BY</code> suivi du filtre de groupe <strong><code>HAVING AVG(N.Note) &lt; 10</code></strong>.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 14 :</strong> Afficher, pour chaque matière, quelle est
-        la meilleure note et quel est l'étudiant qui l'a obtenue.
-        <pre>SELECT M.Nomat, N.Note AS Meilleure_Note, E.Nometu
+    <!-- Requête 14 -->
+    <div id="req-14" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 14 : Afficher, pour chaque matière, quelle est la meilleure note et quel est l'étudiant qui l'a obtenue.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-sousreq">+ Sous-requête corrélée (= SELECT MAX)</span>
+        </div>
+      </div>
+      <pre>SELECT M.Nomat, N.Note AS Meilleure_Note, E.Nometu
 FROM MATIERE M, NOTES N, ETUDIANT E
 WHERE N.Numat = M.Numat
   AND E.Numetu = N.Numetu
@@ -377,12 +642,21 @@ WHERE N.Numat = M.Numat
     FROM NOTES N2
     WHERE N2.Numat = M.Numat
   );</pre>
-      </li>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Un simple <code>GROUP BY M.Numat</code> avec <code>MAX(N.Note)</code> donnerait la meilleure note de chaque matière mais ne permettrait pas de savoir quel étudiant (<code>E.Nometu</code>) a obtenu cette note maximale. On utilise donc une <strong>jointure</strong> entre <code>MATIERE</code>, <code>NOTES</code> et <code>ETUDIANT</code>, combinée à une <strong>sous-requête corrélée</strong> <code>N.Note = (SELECT MAX(N2.Note) ... WHERE N2.Numat = M.Numat)</code>.
+      </div>
+    </div>
 
-      <li>
-        <strong>Requête 15 :</strong> Afficher, pour chaque sexe (Homme, Femme)
-        la moyenne des notes dans la matière enseignée par Ali Ben Salah.
-        <pre>SELECT S.Lbsexe, AVG(N.Note) AS Moyenne
+    <!-- Requête 15 -->
+    <div id="req-15" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 15 : Afficher, pour chaque sexe (Homme, Femme), la moyenne des notes dans la matière enseignée par Ali Ben Salah.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure (5 tables)</span>
+          <span class="badge-type badge-groupby">+ GROUP BY / Agrégation (AVG)</span>
+        </div>
+      </div>
+      <pre>SELECT S.Lbsexe, AVG(N.Note) AS Moyenne
 FROM SEXE S, ETUDIANT E, NOTES N, MATIERE M, ENSEIGNANT G
 WHERE S.Cdsexe = E.Cdsexe
   AND E.Numetu = N.Numetu
@@ -390,18 +664,19 @@ WHERE S.Cdsexe = E.Cdsexe
   AND M.Numens = G.Numens
   AND UPPER(G.Nomens) = 'ALI BEN SALAH'
 GROUP BY S.Cdsexe, S.Lbsexe;</pre>
-      </li>
-    </ol>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le chemin entre le libellé du sexe (<code>SEXE</code>), l'étudiant (<code>ETUDIANT</code>), ses notes (<code>NOTES</code>), la matière (<code>MATIERE</code>) et le nom de l'enseignant (<code>ENSEIGNANT</code>) traverse les 5 tables : on écrit donc <strong>4 conditions de jointure</strong> dans le <code>WHERE</code> avec le filtre sur <code>'ALI BEN SALAH'</code>, puis on regroupe par sexe avec <code>GROUP BY S.Cdsexe, S.Lbsexe</code> pour calculer <code>AVG(N.Note)</code>.
+      </div>
+    </div>
 
     <div class="footer-page">4ème SI 2 - Lycée Rafèha | Prof : A. Essouyah</div>
     <script>window.__APP_OK = true;</script>
-    <script src="tp-bd-animation.js"></script>
-  <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../../assets/css/protection.css?v=193" />
-<script src="../../assets/js/protection.js?v=193" defer></script>
-<!-- /Protection -->
-<script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=193"></script>
-<script src="../../assets/js/acces.js?v=193"></script>
-</body>
+    <!-- 🔒 Protection du contenu STI -->
+    <link rel="stylesheet" href="../../assets/css/protection.css?v=225" />
+    <script src="../../assets/js/protection.js?v=225" defer></script>
+    <!-- /Protection -->
+    <script src="../../assets/js/supabase-umd.js"></script>
+    <script src="../../assets/js/config.js?v=225"></script>
+    <script src="../../assets/js/acces.js?v=225"></script>
+  </body>
 </html>

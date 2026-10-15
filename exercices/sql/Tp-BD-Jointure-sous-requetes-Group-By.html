@@ -75,11 +75,6 @@
         margin-top: 22px;
         margin-bottom: 10px;
         border-radius: 0 4px 4px 0;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 10px;
       }
       ul,
       ol {
@@ -98,68 +93,6 @@
         border-radius: 3px;
         color: #2b6cb0;
       }
-      .toolbar-corr {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        align-items: center;
-      }
-      .btn-toggle-corr {
-        background: #1a365d;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        padding: 6px 12px;
-        font-size: 0.82em;
-        font-weight: 700;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-      }
-      .btn-toggle-corr:hover {
-        background: #2b6cb0;
-      }
-      .btn-q-corr {
-        margin-left: 8px;
-        background: #edf2f7;
-        color: #2b6cb0;
-        border: 1px solid #cbd5e0;
-        border-radius: 5px;
-        padding: 2px 8px;
-        font-size: 0.78em;
-        font-weight: 700;
-        cursor: pointer;
-      }
-      .btn-q-corr:hover {
-        background: #ebf8ff;
-        border-color: #2b6cb0;
-      }
-      .sql-ans {
-        display: none;
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e0;
-        border-left: 4px solid #2b6cb0;
-        padding: 9px 12px;
-        border-radius: 4px;
-        font-family: Consolas, monospace;
-        font-size: 0.88em;
-        color: #1e3a8a;
-        overflow-x: auto;
-        margin: 6px 0 12px 0;
-        white-space: pre-wrap;
-      }
-      .sql-ans.visible {
-        display: block;
-      }
-      .sql-note {
-        display: block;
-        margin-top: 5px;
-        font-family: "Segoe UI", Arial, sans-serif;
-        font-size: 0.9em;
-        color: #475569;
-      }
       .footer-page {
         text-align: right;
         font-size: 0.8em;
@@ -167,12 +100,6 @@
         margin-top: 30px;
         border-top: 1px solid #e2e8f0;
         padding-top: 5px;
-      }
-      @media print {
-        .toolbar-corr,
-        .btn-q-corr {
-          display: none !important;
-        }
       }
     </style>
   </head>
@@ -230,270 +157,98 @@
       </li>
     </ul>
 
-    <h2>
-      <span>Travail Demandé</span>
-      <span class="toolbar-corr">
-        <button type="button" class="btn-toggle-corr" id="btnToggleAllCorr" onclick="toggleAllCorrections()">
-          ✅ Afficher toutes les réponses
-        </button>
-        <a href="Tp4-correction-bd.html" class="btn-toggle-corr" style="background:#2b6cb0;">
-          📖 Ouvrir la fiche corrigée complète
-        </a>
-      </span>
-    </h2>
+    <h2>Travail Demandé</h2>
     <p>
       À partir de la base de données ci-dessus, écrire les requêtes SQL
-      permettant de répondre aux questions suivantes (la jointure entre deux tables s'écrit toujours sous la forme <code>WHERE a.x = b.x</code>) :
+      permettant de répondre aux questions suivantes (la jointure entre deux
+      tables s'écrit toujours sous la forme <code>WHERE a.x = b.x</code>) :
     </p>
 
     <ol>
       <li>
         Afficher quel était l'âge moyen des garçons et des filles au premier
         janvier 2025.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT S.Lbsexe, AVG(DATEDIFF('2025-01-01', E.Dtnaiss) / 365) AS "Age Moyen"
-FROM SEXE S, ETUDIANT E
-WHERE E.Cdsexe = S.Cdsexe
-GROUP BY S.Cdsexe, S.Lbsexe;</div>
       </li>
 
       <li>
         Afficher le nom et le grade des enseignants d'histoire.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT E.Nomens, E.Grade
-FROM ENSEIGNANT E, MATIERE M
-WHERE E.Numens = M.Numens
-  AND M.Nomat = 'Histoire';</div>
       </li>
 
       <li>
         Afficher les noms et numéro des étudiants qui n'ont pas de notes en
         Sociologie.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT E.Nometu, E.Numetu
-FROM ETUDIANT E
-WHERE E.Numetu NOT IN (
-  SELECT N.Numetu
-  FROM NOTES N, MATIERE M
-  WHERE N.Numat = M.Numat
-    AND M.Nomat = 'Sociologie'
-);</div>
       </li>
 
       <li>
         Afficher le nom et le coefficient des matières qui sont enseignées par
         des maîtres de conférences ou des assistants.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT M.Nomat, M.Coeff
-FROM MATIERE M, ENSEIGNANT E
-WHERE M.Numens = E.Numens
-  AND E.Grade IN ('MCF', 'Assistant');
-<span class="sql-note">💡 Ou avec les libellés complets : <code>AND E.Grade IN ('Maître de conférences', 'Assistant')</code> (et non <code>'PR'</code> qui désigne un Professeur).</span></div>
       </li>
 
       <li>
         Afficher pour chaque étudiant (nom et numéro), et par ordre
         alphabétique, la moyenne qu'il a obtenue dans chaque matière.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT E.Nometu, E.Numetu, M.Nomat, AVG(N.Note) AS Moyenne
-FROM ETUDIANT E, NOTES N, MATIERE M
-WHERE E.Numetu = N.Numetu
-  AND N.Numat = M.Numat
-GROUP BY E.Numetu, E.Nometu, M.Numat, M.Nomat
-ORDER BY E.Nometu ASC;</div>
       </li>
 
       <li>
         Afficher le nom, l'âge et le sexe des étudiants qui ont eu une note
         d'informatique supérieure à la moyenne générale de la classe.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT E.Nometu, DATEDIFF(CURRENT_DATE, E.Dtnaiss) / 365 AS Age, S.Lbsexe
-FROM ETUDIANT E, SEXE S, NOTES N, MATIERE M
-WHERE E.Cdsexe = S.Cdsexe
-  AND E.Numetu = N.Numetu
-  AND N.Numat = M.Numat
-  AND M.Nomat = 'Informatique'
-  AND N.Note > (
-    SELECT AVG(N2.Note)
-    FROM NOTES N2, MATIERE M2
-    WHERE N2.Numat = M2.Numat
-      AND M2.Nomat = 'Informatique'
-  );
-<span class="sql-note">💡 Si l'on compare à la moyenne générale toutes matières confondues : remplacer la sous-requête par <code>(SELECT SUM(N2.Note * M2.Coeff) / SUM(M2.Coeff) FROM NOTES N2, MATIERE M2 WHERE N2.Numat = M2.Numat)</code>.</span></div>
       </li>
 
       <li>
         Afficher, pour chaque étudiant (nom et numéro) qui a une note dans
         chacune des matières, la moyenne obtenue au diplôme.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT E.Nometu, E.Numetu, SUM(N.Note * M.Coeff) / SUM(M.Coeff) AS Moyenne
-FROM ETUDIANT E, NOTES N, MATIERE M
-WHERE E.Numetu = N.Numetu
-  AND N.Numat = M.Numat
-GROUP BY E.Numetu, E.Nometu
-HAVING COUNT(DISTINCT N.Numat) = (SELECT COUNT(*) FROM MATIERE)
-ORDER BY E.Nometu ASC;</div>
       </li>
 
       <li>
         Afficher le nom, le grade et l'ancienneté des enseignants qui enseignent
         dans plus d'une matière.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT E.Nomens, E.Grade, E.Ancien
-FROM ENSEIGNANT E, MATIERE M
-WHERE E.Numens = M.Numens
-GROUP BY E.Numens, E.Nomens, E.Grade, E.Ancien
-HAVING COUNT(M.Numat) > 1;</div>
       </li>
 
       <li>
         Afficher le nombre de garçons et le nombre de filles qui ont réussi au
         diplôme : moyenne &gt;= 10.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT S.Lbsexe, COUNT(E.Numetu) AS Nb_Reussis
-FROM SEXE S, ETUDIANT E
-WHERE S.Cdsexe = E.Cdsexe
-  AND E.Numetu IN (
-    SELECT N.Numetu
-    FROM NOTES N, MATIERE M
-    WHERE N.Numat = M.Numat
-    GROUP BY N.Numetu
-    HAVING SUM(N.Note * M.Coeff) / SUM(M.Coeff) >= 10
-       AND COUNT(DISTINCT N.Numat) = (SELECT COUNT(*) FROM MATIERE)
-  )
-GROUP BY S.Cdsexe, S.Lbsexe;
-<span class="sql-note">💡 Le nombre total de matières est récupéré dynamiquement avec <code>(SELECT COUNT(*) FROM MATIERE)</code> (et non fixé en dur à 5).</span></div>
       </li>
 
       <li>
         Afficher le nom, le numéro et le sexe des étudiants qui ont une note en
         informatique supérieure à leur note de Mathématiques.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT E.Nometu, E.Numetu, S.Lbsexe
-FROM ETUDIANT E, SEXE S, NOTES N1, MATIERE M1
-WHERE E.Cdsexe = S.Cdsexe
-  AND E.Numetu = N1.Numetu
-  AND N1.Numat = M1.Numat
-  AND M1.Nomat = 'Informatique'
-  AND N1.Note > (
-    SELECT N2.Note
-    FROM NOTES N2, MATIERE M2
-    WHERE N2.Numat = M2.Numat
-      AND M2.Nomat = 'Mathématiques'
-      AND N2.Numetu = E.Numetu
-  );
-<span class="sql-note">💡 Attention : on utilise <code>&gt;</code> (sans <code>ALL</code>), car avec <code>&gt; ALL</code> un étudiant n'ayant aucune note en Mathématiques serait retenu à tort (puisque <code>Note &gt; ALL (ensemble vide)</code> vaut VRAI).</span></div>
       </li>
 
       <li>
         Afficher le nom des couples, nom du garçon nom de la fille, dont la
         différence d'âge ne dépasse pas 6 mois (180 jours).
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT E1.Nometu AS Nom_Garcon, E2.Nometu AS Nom_Fille
-FROM ETUDIANT E1, ETUDIANT E2
-WHERE E1.Cdsexe = 'H'
-  AND E2.Cdsexe = 'F'
-  AND ABS(DATEDIFF(E1.Dtnaiss, E2.Dtnaiss)) <= 180;
-<span class="sql-note">💡 Ou : <code>AND DATEDIFF(E1.Dtnaiss, E2.Dtnaiss) BETWEEN -180 AND 180</code>.</span></div>
       </li>
 
       <li>
         Pour les étudiants n'ayant pas de note dans une matière, afficher le
         numéro, le nom de l'étudiant et le nom de la matière concernée.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT E.Numetu, E.Nometu, M.Nomat
-FROM ETUDIANT E, MATIERE M
-WHERE E.Numetu NOT IN (
-  SELECT N.Numetu
-  FROM NOTES N
-  WHERE N.Numat = M.Numat
-);</div>
       </li>
 
       <li>
         Afficher les matières pour lesquelles la moyenne des notes est
         inférieure à 10. Afficher le nom de l'enseignant correspondant.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT M.Nomat, E.Nomens, AVG(N.Note) AS Moyenne
-FROM ENSEIGNANT E, MATIERE M, NOTES N
-WHERE E.Numens = M.Numens
-  AND M.Numat = N.Numat
-GROUP BY M.Numat, M.Nomat, E.Numens, E.Nomens
-HAVING AVG(N.Note) < 10;</div>
       </li>
 
       <li>
         Afficher, pour chaque matière, quelle est la meilleure note et quel est
         l'étudiant qui l'a obtenue.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT M.Nomat, N.Note AS Meilleure_Note, E.Nometu
-FROM MATIERE M, NOTES N, ETUDIANT E
-WHERE N.Numat = M.Numat
-  AND E.Numetu = N.Numetu
-  AND N.Note = (
-    SELECT MAX(N2.Note)
-    FROM NOTES N2
-    WHERE N2.Numat = M.Numat
-  );</div>
       </li>
 
       <li>
         Afficher, pour chaque sexe (Homme, Femme) la moyenne des notes dans la
         matière enseignée par Ali Ben Salah.
-        <button type="button" class="btn-q-corr" onclick="toggleOneCorr(this)">Réponse</button>
-        <div class="sql-ans">SELECT S.Lbsexe, AVG(N.Note) AS Moyenne
-FROM SEXE S, ETUDIANT E, NOTES N, MATIERE M, ENSEIGNANT G
-WHERE S.Cdsexe = E.Cdsexe
-  AND E.Numetu = N.Numetu
-  AND N.Numat = M.Numat
-  AND M.Numens = G.Numens
-  AND UPPER(G.Nomens) = 'ALI BEN SALAH'
-GROUP BY S.Cdsexe, S.Lbsexe;</div>
       </li>
     </ol>
 
     <div class="footer-page">4ème SI - Lycée Rafèha | Prof : A. Essouyah</div>
 
-    <script>
-      window.__APP_OK = true;
-      function toggleOneCorr(btn) {
-        var box = btn.nextElementSibling;
-        if (!box) return;
-        var open = box.classList.toggle("visible");
-        btn.textContent = open ? "Masquer" : "Réponse";
-      }
-      function toggleAllCorrections() {
-        var boxes = document.querySelectorAll(".sql-ans");
-        var btns = document.querySelectorAll(".btn-q-corr");
-        var mainBtn = document.getElementById("btnToggleAllCorr");
-        var anyHidden = false;
-        for (var i = 0; i < boxes.length; i++) {
-          if (!boxes[i].classList.contains("visible")) {
-            anyHidden = true;
-            break;
-          }
-        }
-        for (var j = 0; j < boxes.length; j++) {
-          if (anyHidden) boxes[j].classList.add("visible");
-          else boxes[j].classList.remove("visible");
-        }
-        for (var k = 0; k < btns.length; k++) {
-          btns[k].textContent = anyHidden ? "Masquer" : "Réponse";
-        }
-        if (mainBtn) {
-          mainBtn.textContent = anyHidden
-            ? "🙈 Masquer toutes les réponses"
-            : "✅ Afficher toutes les réponses";
-        }
-      }
-    </script>
-    <script src="tp-bd-animation.js"></script>
-  <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../../assets/css/protection.css?v=193" />
-<script src="../../assets/js/protection.js?v=193" defer></script>
-<!-- /Protection -->
-<script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=193"></script>
-<script src="../../assets/js/acces.js?v=193"></script>
-</body>
+    <script>window.__APP_OK = true;</script>
+    <!-- 🔒 Protection du contenu STI -->
+    <link rel="stylesheet" href="../../assets/css/protection.css?v=225" />
+    <script src="../../assets/js/protection.js?v=225" defer></script>
+    <!-- /Protection -->
+    <script src="../../assets/js/supabase-umd.js"></script>
+    <script src="../../assets/js/config.js?v=225"></script>
+    <script src="../../assets/js/acces.js?v=225"></script>
+  </body>
 </html>

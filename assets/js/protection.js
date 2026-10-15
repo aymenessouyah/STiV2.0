@@ -716,36 +716,40 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=224",
+        file: "php-guichet.mp4?v=225",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=224",
+        file: "css-positionnement.mp4?v=225",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=224",
+        file: "css-animee.mp4?v=225",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=224",
+        file: "sql-cours.mp4?v=225",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=224",
+        file: "html5-cours.mp4?v=225",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=224",
+        file: "css3-cours.mp4?v=225",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=224",
+        file: "javascript-cours.mp4?v=225",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Récapitulatif JavaScript complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=224",
+        file: "php-cours.mp4?v=225",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
+      };
+      var VIDEO_SQL_SERIE4_INFO = {
+        file: "sql-serie4.mp4?v=225",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — Série 4 SQL : Création BD, Insertion & Corrigé des 15 Requêtes (.mp4)"
       };
 
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
@@ -842,6 +846,26 @@
           { t: 152.10, short: "6-7. Bordure/Ombre", label: "02:32 · 6 & 7. Bordures arrondies & Ombres (box-shadow)" },
           { t: 196.63, short: "8-9. Listes/Tables", label: "03:17 · 8 & 9. Habillage des listes & Tableaux" },
           { t: 248.97, short: "10-11. Transitions", label: "04:09 · 10 & 11. Transitions (:hover) & Transformations" }
+        ],
+        "sql-serie4": [
+          { t: 0.00, short: "Intro", label: "00:00 · Introduction Série 4 SQL", sel: "#sec-schema" },
+          { t: 22.20, short: "I. Création BD", label: "00:22 · I. Création de la BD — CREATE DATABASE & CREATE TABLE", sel: "#sec-creation-bd" },
+          { t: 48.00, short: "II. Insertion", label: "00:48 · II. Insertion (INSERT INTO SEXE, ENSEIGNANT, ETUDIANT, MATIERE, NOTES)", sel: "#sec-insertion-bd" },
+          { t: 66.98, short: "Req 1 · Jointure+GROUP BY", label: "01:06 · Requête 1 · Jointure + GROUP BY / AVG (Âge moyen par sexe)", sel: "#req-1" },
+          { t: 98.20, short: "Req 2 · Jointure", label: "01:38 · Requête 2 · Jointure simple (Enseignants d'Histoire)", sel: "#req-2" },
+          { t: 122.90, short: "Req 3 · Sous-req NOT IN", label: "02:02 · Requête 3 · Sous-requête / Requête imbriquée NOT IN (Sans note en Sociologie)", sel: "#req-3" },
+          { t: 154.68, short: "Req 4 · Jointure+IN", label: "02:34 · Requête 4 · Jointure + IN (Matières enseignées par MCF ou Assistant)", sel: "#req-4" },
+          { t: 180.82, short: "Req 5 · 3 tables+GROUP BY", label: "03:00 · Requête 5 · Jointure 3 tables + GROUP BY & ORDER BY", sel: "#req-5" },
+          { t: 211.44, short: "Req 6 · Sous-req AVG", label: "03:31 · Requête 6 · Jointure + Sous-requête scalaire (> SELECT AVG)", sel: "#req-6" },
+          { t: 241.34, short: "Req 7 · HAVING+Sous-req", label: "04:01 · Requête 7 · Jointure + GROUP BY / HAVING + Sous-requête (Moyenne diplôme)", sel: "#req-7" },
+          { t: 272.85, short: "Req 8 · GROUP BY/HAVING", label: "04:32 · Requête 8 · Jointure + GROUP BY / HAVING (Plus d'une matière)", sel: "#req-8" },
+          { t: 298.31, short: "Req 9 · Req imbriquée", label: "04:58 · Requête 9 · Requête imbriquée (IN + GROUP BY / HAVING) — Admis par sexe", sel: "#req-9" },
+          { t: 328.07, short: "Req 10 · Sous-req corrélée", label: "05:28 · Requête 10 · Sous-requête corrélée (Note Info > Note Maths)", sel: "#req-10" },
+          { t: 358.69, short: "Req 11 · Auto-jointure", label: "05:58 · Requête 11 · Auto-jointure (ETUDIANT E1, ETUDIANT E2 — Écart <= 180 j)", sel: "#req-11" },
+          { t: 384.15, short: "Req 12 · Sous-req NOT IN", label: "06:24 · Requête 12 · Sous-requête corrélée NOT IN (Étudiants sans note par matière)", sel: "#req-12" },
+          { t: 411.51, short: "Req 13 · HAVING < 10", label: "06:51 · Requête 13 · Jointure 3 tables + GROUP BY / HAVING AVG < 10", sel: "#req-13" },
+          { t: 437.41, short: "Req 14 · Sous-req MAX", label: "07:17 · Requête 14 · Jointure + Sous-requête corrélée (= SELECT MAX)", sel: "#req-14" },
+          { t: 465.85, short: "Req 15 · 5 tables+GROUP BY", label: "07:45 · Requête 15 · Jointure 5 tables + GROUP BY (Ali Ben Salah)", sel: "#req-15" }
         ]
       };
       window.STI_CHAPITRES_MEDIA = STI_CHAPITRES_MEDIA;
@@ -1095,6 +1119,10 @@
         return prefixeAssetsSTI() + "videos/" + VIDEO_PHP_COURS_INFO.file;
       }
 
+      function resoudreUrlVideoSqlSerie4() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_SQL_SERIE4_INFO.file;
+      }
+
       var estPageGuichet = (pathLower.indexOf("php-mysqli") !== -1);
       var estPageCssPos = (pathLower.indexOf("positionnement-animee") !== -1);
       var estPageCssDeco = (pathLower.indexOf("cssanimee") !== -1);
@@ -1319,15 +1347,16 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt, startSecOpt) {
         var sSlug = String(slugOuUrl || "");
-        var estHtml5 = (sSlug === "html5-cours" || sSlug.indexOf("html5-cours") !== -1 || (!sSlug && estPageHtml5));
-        var estCss3 = (!estHtml5 && (sSlug === "css3-cours" || sSlug.indexOf("css3-cours") !== -1 || (!sSlug && estPageCss3)));
-        var estJs = (!estHtml5 && !estCss3 && (sSlug === "javascript-cours" || sSlug.indexOf("javascript-cours") !== -1 || (!sSlug && estPageJs)));
-        var estPhpC = (!estHtml5 && !estCss3 && !estJs && (sSlug === "php-cours" || sSlug.indexOf("php-cours") !== -1 || (!sSlug && estPagePhpCours)));
-        var estSql = (!estHtml5 && !estCss3 && !estJs && !estPhpC && (sSlug === "sql-cours" || sSlug.indexOf("sql-cours") !== -1 || (!sSlug && estPageSql)));
-        var estCssDeco = (!estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
-        var estCssPos = (!estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
-        var estGuichet = (!estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
-        if (!estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet) {
+        var estSqlSerie4 = (sSlug === "sql-serie4" || sSlug.indexOf("sql-serie4") !== -1);
+        var estHtml5 = (!estSqlSerie4 && (sSlug === "html5-cours" || sSlug.indexOf("html5-cours") !== -1 || (!sSlug && estPageHtml5)));
+        var estCss3 = (!estSqlSerie4 && !estHtml5 && (sSlug === "css3-cours" || sSlug.indexOf("css3-cours") !== -1 || (!sSlug && estPageCss3)));
+        var estJs = (!estSqlSerie4 && !estHtml5 && !estCss3 && (sSlug === "javascript-cours" || sSlug.indexOf("javascript-cours") !== -1 || (!sSlug && estPageJs)));
+        var estPhpC = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && (sSlug === "php-cours" || sSlug.indexOf("php-cours") !== -1 || (!sSlug && estPagePhpCours)));
+        var estSql = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && (sSlug === "sql-cours" || sSlug.indexOf("sql-cours") !== -1 || (!sSlug && estPageSql)));
+        var estCssDeco = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
+        var estCssPos = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
+        var estGuichet = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
+        if (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet) {
           return;
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
@@ -1359,7 +1388,7 @@
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
-        var slugCible = estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet"))))));
+        var slugCible = estSqlSerie4 ? "sql-serie4" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))));
         try {
           if (
             window.top &&
@@ -1370,8 +1399,8 @@
             return;
           }
         } catch (e) {}
-        var url = estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet()))))));
-        var titre = titreOpt || (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title)))))));
+        var url = estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))));
+        var titre = titreOpt || (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
@@ -1809,7 +1838,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=224";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=225";
 
           var CUES_MAP = {
             html5: {
