@@ -716,35 +716,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=216",
+        file: "php-guichet.mp4?v=217",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=216",
+        file: "css-positionnement.mp4?v=217",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=216",
+        file: "css-animee.mp4?v=217",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=216",
+        file: "sql-cours.mp4?v=217",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=216",
+        file: "html5-cours.mp4?v=217",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=216",
+        file: "css3-cours.mp4?v=217",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=216",
+        file: "javascript-cours.mp4?v=217",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=216",
+        file: "php-cours.mp4?v=217",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -859,6 +859,194 @@
         }
         return idx;
       }
+
+      /* ── Suivi de progression des vidéos (.mp4) et cours vocaux (.mp3) : ✅ Vu / ⏳ En cours ── */
+      var CLE_PROG_MEDIA = "sti-media-prog-v1";
+
+      function lireProgressionMediaSTI() {
+        try {
+          return JSON.parse(localStorage.getItem(CLE_PROG_MEDIA) || "{}") || {};
+        } catch (e) {
+          return {};
+        }
+      }
+      window.lireProgressionMediaSTI = lireProgressionMediaSTI;
+
+      function synchroniserRevisionDepuisMedia(cleMedia) {
+        var mapRev = {
+          "video:html5-cours": { rev: "html5", chap: "HTML5" },
+          "audio:html5-cours": { rev: "html5", chap: "HTML5" },
+          "video:css3-cours": { rev: "css3", chap: "CSS3" },
+          "audio:css3-cours": { rev: "css3", chap: "CSS3" },
+          "video:javascript-cours": { rev: "js", chap: "JS" },
+          "audio:javascript-cours": { rev: "js", chap: "JS" },
+          "video:sql-cours": { rev: "sql", chap: "SQL" },
+          "audio:sql-cours": { rev: "sql", chap: "SQL" },
+          "video:php-cours": { rev: "php", chap: "PHP" },
+          "audio:php-cours": { rev: "php", chap: "PHP" }
+        };
+        var info = mapRev[cleMedia];
+        if (!info) return;
+        try {
+          var revObj = JSON.parse(localStorage.getItem("sti-revised-courses") || "{}") || {};
+          revObj[info.rev] = true;
+          localStorage.setItem("sti-revised-courses", JSON.stringify(revObj));
+          var vusObj = JSON.parse(localStorage.getItem("sti-chapitres-vus") || "{}") || {};
+          vusObj[info.chap] = 1;
+          localStorage.setItem("sti-chapitres-vus", JSON.stringify(vusObj));
+        } catch (e) {}
+      }
+
+      function enregistrerProgressionMediaSTI(cle, sec, dur, forceDone) {
+        if (!cle) return;
+        var s = Math.max(0, Number(sec) || 0);
+        var d = Math.max(0, Number(dur) || 0);
+        if (!forceDone && s < 2.5) return;
+        var map = lireProgressionMediaSTI();
+        var prev = map[cle] || { pct: 0, maxPct: 0, sec: 0, done: false };
+        var pct = (d > 2) ? Math.min(100, Math.round((s / d) * 100)) : (prev.pct || 5);
+        var maxPct = Math.max(prev.maxPct || 0, pct);
+        var isDone = Boolean(forceDone || prev.done || maxPct >= 88);
+        if (isDone) maxPct = 100;
+        var changed = (prev.done !== isDone) || (Math.abs((prev.maxPct || 0) - maxPct) >= 2) || (Math.abs((prev.sec || 0) - Math.round(s)) >= 4);
+        map[cle] = {
+          pct: pct,
+          maxPct: maxPct,
+          sec: isDone ? 0 : Math.round(s),
+          dur: Math.round(d),
+          done: isDone,
+          ts: Date.now()
+        };
+        if (changed || forceDone) {
+          try {
+            localStorage.setItem(CLE_PROG_MEDIA, JSON.stringify(map));
+          } catch (e) {}
+          if (isDone) synchroniserRevisionDepuisMedia(cle);
+          rafraichirBadgesProgressionSTI();
+        }
+      }
+      window.enregistrerProgressionMediaSTI = enregistrerProgressionMediaSTI;
+
+      function badgeProgTexteCourt(entry) {
+        if (!entry) return "";
+        if (entry.done) return "✅ Vu";
+        if ((entry.maxPct || 0) >= 2) return "⏳ " + entry.maxPct + "%";
+        return "";
+      }
+
+      function majPastilleSurBouton(btn, cleMedia) {
+        if (!btn) return;
+        var map = lireProgressionMediaSTI();
+        var entry = map[cleMedia];
+        var span = btn.querySelector(".sti-prog-pill");
+        if (!entry || (!entry.done && (entry.maxPct || 0) < 2)) {
+          if (span) span.remove();
+          return;
+        }
+        if (!span) {
+          span = document.createElement("span");
+          span.className = "sti-prog-pill";
+          span.style.cssText = "display:inline-flex;align-items:center;padding:2px 7px;margin-left:5px;border-radius:999px;font-size:11px;font-weight:900;line-height:1.1;letter-spacing:0.01em;";
+          btn.appendChild(span);
+        }
+        if (entry.done) {
+          span.textContent = "✅ Vu";
+          span.style.background = "#dcfce7";
+          span.style.color = "#14532d";
+          span.style.border = "1.5px solid #16a34a";
+        } else {
+          span.textContent = "⏳ En cours · " + entry.maxPct + "%";
+          span.style.background = "#fef3c7";
+          span.style.color = "#78350f";
+          span.style.border = "1.5px solid #f59e0b";
+        }
+      }
+
+      function rafraichirBadgesProgressionSTI() {
+        try {
+          var map = lireProgressionMediaSTI();
+          var slugC = estPageHtml5 ? "html5-cours" : (estPageCss3 ? "css3-cours" : (estPageJs ? "javascript-cours" : (estPagePhpCours ? "php-cours" : (estPageSql ? "sql-cours" : ""))));
+          if (slugC) {
+            majPastilleSurBouton(document.getElementById("sti-btn-cours-video-hero"), "video:" + slugC);
+            majPastilleSurBouton(document.getElementById("sti-btn-cours-voix-hero"), "audio:" + slugC);
+            majPastilleSurBouton(document.getElementById("sti-btn-sql-video-hero"), "video:sql-cours");
+            majPastilleSurBouton(document.getElementById("sti-btn-sql-voix-hero"), "audio:sql-cours");
+          }
+          majPastilleSurBouton(document.getElementById("sti-btn-php-guichet-hero"), "video:php-guichet");
+          var btnsGuichet = document.querySelectorAll(".sti-btn-video-guichet, .sti-btn-video-modal-guichet");
+          for (var g = 0; g < btnsGuichet.length; g++) {
+            majPastilleSurBouton(btnsGuichet[g], "video:php-guichet");
+          }
+          if (estPageGuichet) {
+            var bDedG = document.querySelectorAll(".sti-btn-video-dedie");
+            for (var dg = 0; dg < bDedG.length; dg++) majPastilleSurBouton(bDedG[dg], "video:php-guichet");
+          }
+          if (estPageCssPos) {
+            var bPos = document.querySelectorAll("#btn-video-mp4, .sti-btn-video-dedie");
+            for (var bp = 0; bp < bPos.length; bp++) majPastilleSurBouton(bPos[bp], "video:css-positionnement");
+          }
+          if (estPageCssDeco) {
+            var bDeco = document.querySelectorAll("#btn-video-mp4, .sti-btn-video-dedie");
+            for (var bd = 0; bd < bDeco.length; bd++) majPastilleSurBouton(bDeco[bd], "video:css-animee");
+          }
+
+          /* Cartes de cours sur index.html (.annexe-card[data-course-id]) */
+          var mapCartes = {
+            html5: { v: ["video:html5-cours"], a: "audio:html5-cours" },
+            css3: { v: ["video:css3-cours", "video:css-positionnement", "video:css-animee"], a: "audio:css3-cours" },
+            js: { v: ["video:javascript-cours"], a: "audio:javascript-cours" },
+            sql: { v: ["video:sql-cours"], a: "audio:sql-cours" },
+            php: { v: ["video:php-cours", "video:php-guichet"], a: "audio:php-cours" }
+          };
+          var cards = document.querySelectorAll(".annexe-card[data-course-id]");
+          for (var c = 0; c < cards.length; c++) {
+            var card = cards[c];
+            var cid = card.getAttribute("data-course-id") || "";
+            var cfg = mapCartes[cid];
+            if (!cfg) continue;
+            var wrapB = card.querySelector(".sti-card-media-prog");
+            var vEntry = map[cfg.v[0]];
+            var aEntry = map[cfg.a];
+            var parts = [];
+            if (vEntry && (vEntry.done || (vEntry.maxPct || 0) >= 2)) {
+              parts.push(
+                '<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:800;border:1.5px solid ' +
+                (vEntry.done ? '#16a34a;background:#dcfce7;color:#14532d' : '#f59e0b;background:#fef3c7;color:#78350f') +
+                ';">🎥 ' + (vEntry.done ? '✅ Vu' : ('⏳ ' + vEntry.maxPct + '%')) + '</span>'
+              );
+            }
+            if (aEntry && (aEntry.done || (aEntry.maxPct || 0) >= 2)) {
+              parts.push(
+                '<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:800;border:1.5px solid ' +
+                (aEntry.done ? '#16a34a;background:#dcfce7;color:#14532d' : '#f59e0b;background:#fef3c7;color:#78350f') +
+                ';">🔊 ' + (aEntry.done ? '✅ Écouté' : ('⏳ ' + aEntry.maxPct + '%')) + '</span>'
+              );
+            }
+            if (parts.length) {
+              if (!wrapB) {
+                wrapB = document.createElement("div");
+                wrapB.className = "sti-card-media-prog";
+                wrapB.style.cssText = "display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 2px;";
+                var pDesc = card.querySelector("p");
+                if (pDesc && pDesc.parentNode) {
+                  pDesc.parentNode.insertBefore(wrapB, pDesc.nextSibling);
+                } else {
+                  card.appendChild(wrapB);
+                }
+              }
+              wrapB.innerHTML = parts.join("");
+            } else if (wrapB) {
+              wrapB.remove();
+            }
+          }
+
+          /* Rafraîchir aussi le panneau candidat ⚙️ si ouvert */
+          if (typeof window.__stiMajProgressionPan === "function") {
+            window.__stiMajProgressionPan();
+          }
+        } catch (e) {}
+      }
+      window.rafraichirBadgesProgressionSTI = rafraichirBadgesProgressionSTI;
 
       function prefixeAssetsSTI() {
         var scripts = document.querySelectorAll("script[src]");
@@ -1026,6 +1214,7 @@
           vid.addEventListener("timeupdate", function () {
             var idxA = trouverIndexChapitreActif(chapsG, vid.currentTime);
             if (String(selChapG.value) !== String(idxA)) selChapG.value = String(idxA);
+            enregistrerProgressionMediaSTI("video:php-guichet", vid.currentTime, vid.duration, false);
           });
         }
         var endInline = creerEcranFinVideoSTI(
@@ -1046,6 +1235,7 @@
         box.appendChild(endInline);
         if (vid) {
           vid.addEventListener("ended", function () {
+            enregistrerProgressionMediaSTI("video:php-guichet", vid.duration || 320, vid.duration || 320, true);
             endInline.hidden = false;
             endInline.style.display = "flex";
           });
@@ -1257,7 +1447,11 @@
           }
           if (mVid) {
             mVid.addEventListener("timeupdate", function () {
-              var chapsAct = STI_CHAPITRES_MEDIA[overlay.getAttribute("data-slug") || ""] || [];
+              var slugAct = overlay.getAttribute("data-slug") || "";
+              if (slugAct) {
+                enregistrerProgressionMediaSTI("video:" + slugAct, mVid.currentTime, mVid.duration, false);
+              }
+              var chapsAct = STI_CHAPITRES_MEDIA[slugAct] || [];
               if (!chapsAct.length) return;
               var idxAct = trouverIndexChapitreActif(chapsAct, mVid.currentTime);
               if (mChapSel && String(mChapSel.value) !== String(idxAct)) {
@@ -1305,6 +1499,10 @@
 
           if (mVid) {
             mVid.addEventListener("ended", function () {
+              var slugEnd = overlay.getAttribute("data-slug") || "";
+              if (slugEnd) {
+                enregistrerProgressionMediaSTI("video:" + slugEnd, mVid.duration || 200, mVid.duration || 200, true);
+              }
               mEndScreen.hidden = false;
               mEndScreen.style.display = "flex";
             });
@@ -1606,7 +1804,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=216";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=217";
 
           var CUES_MAP = {
             html5: {
@@ -1708,11 +1906,13 @@
           };
 
           cAudio.addEventListener("timeupdate", function () {
+            enregistrerProgressionMediaSTI("audio:" + cSlug, cAudio.currentTime, cAudio.duration, false);
             if (cSegEnd > 0 && cAudio.currentTime >= cSegEnd - 0.05) {
               window.arreterVoixCoursSTI();
             }
           });
           cAudio.addEventListener("ended", function () {
+            enregistrerProgressionMediaSTI("audio:" + cSlug, cAudio.duration || 200, cAudio.duration || 200, true);
             majBtnVoixCours(false);
           });
 
@@ -1865,7 +2065,11 @@
       }
 
       injecterBoutonsStudio();
-      setTimeout(injecterBoutonsStudio, 900);
+      rafraichirBadgesProgressionSTI();
+      setTimeout(function () {
+        injecterBoutonsStudio();
+        rafraichirBadgesProgressionSTI();
+      }, 900);
     } catch (err) {}
   }
 
@@ -2210,6 +2414,9 @@
         /* Synchroniser le sélecteur de chapitres dans la barre vocale haute (#sti-voice-top-ctrl) */
         var chapsMap = window.STI_CHAPITRES_MEDIA || {};
         var chapsKey = courseKey ? (courseKey + "-cours") : "";
+        if (chapsKey && typeof window.enregistrerProgressionMediaSTI === "function") {
+          window.enregistrerProgressionMediaSTI("audio:" + chapsKey, audio.currentTime || 0, audio.duration || 0, false);
+        }
         var chapsList = chapsMap[chapsKey] || [];
         var topSel = document.getElementById("sti-voice-top-chap");
         var topPrev = document.getElementById("sti-voice-top-prev");

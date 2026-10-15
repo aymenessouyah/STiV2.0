@@ -101,15 +101,15 @@
   /* S'assurer que protection.css et protection.js sont chargés sur 100 % des pages (code source verrouillé pour tous les abonnés) */
   (function assurerProtectionActive() {
     try {
-      if (!document.querySelector('link[href*="protection.css?v=216"]') && document.head) {
+      if (!document.querySelector('link[href*="protection.css?v=217"]') && document.head) {
         var lnk = document.createElement("link");
         lnk.rel = "stylesheet";
-        lnk.href = cfg.RACINE + "assets/css/protection.css?v=216";
+        lnk.href = cfg.RACINE + "assets/css/protection.css?v=217";
         document.head.appendChild(lnk);
       }
-      if (!document.querySelector('script[src*="protection.js?v=216"]') && (document.head || document.documentElement)) {
+      if (!document.querySelector('script[src*="protection.js?v=217"]') && (document.head || document.documentElement)) {
         var scr = document.createElement("script");
-        scr.src = cfg.RACINE + "assets/js/protection.js?v=216";
+        scr.src = cfg.RACINE + "assets/js/protection.js?v=217";
         scr.defer = true;
         (document.head || document.documentElement).appendChild(scr);
       }
@@ -546,7 +546,7 @@
     if (document.body) document.body.classList.toggle("sti-gold", ok);
 
     try {
-      var liens = document.querySelectorAll('link[href*="protection.css?v=216"]');
+      var liens = document.querySelectorAll('link[href*="protection.css?v=217"]');
       for (var i = 0; i < liens.length; i++) liens[i].disabled = ok;
     } catch (e) {}
 
@@ -568,7 +568,7 @@
         if (fr.contentDocument) {
           if (fr.contentDocument.documentElement) fr.contentDocument.documentElement.classList.toggle("sti-gold", ok);
           if (fr.contentDocument.body) fr.contentDocument.body.classList.toggle("sti-gold", ok);
-          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=216"]');
+          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=217"]');
           for (var j = 0; j < liensFr.length; j++) liensFr[j].disabled = ok;
           var wmFr = fr.contentDocument.getElementById("sti-watermark");
           if (ok && wmFr && wmFr.parentNode) wmFr.parentNode.removeChild(wmFr);
@@ -1561,35 +1561,98 @@
       affLogin = npPan + " · " + affLogin;
     }
 
-    var vus = {};
-    try { vus = JSON.parse(localStorage.getItem("sti-chapitres-vus") || "{}"); } catch (e) {}
     var ok4SI = estAutorise4SI(profil.classe, false);
     var mods = ok4SI ? ["HTML5", "CSS3", "JS", "PHP", "SQL"] : ["HTML5", "CSS3", "JS", "SQL"];
-    var nbVus = 0;
-    var badgesMod = mods.map(function (m) {
-      var ok = Boolean(vus[m]);
-      if (ok) nbVus++;
-      return "<span style='display:inline-block;padding:1px 5px;margin:1px;border-radius:5px;font-size:9.5px;font-weight:800;border:1px solid #23201a;background:" +
-        (ok ? "#e3f6e8;color:#177245" : "#f3ead9;color:#7a6f5d") + "'>" + m + (ok ? " ✔" : "") + "</span>";
-    }).join("");
-    var pctProg = Math.round((nbVus / mods.length) * 100);
+
+    function calculerHtmlProgressionPan() {
+      var vus = {};
+      var mProg = {};
+      try { vus = JSON.parse(localStorage.getItem("sti-chapitres-vus") || "{}") || {}; } catch (e) {}
+      try { mProg = JSON.parse(localStorage.getItem("sti-media-prog-v1") || "{}") || {}; } catch (e2) {}
+      var mapSlugMod = {
+        HTML5: "html5-cours",
+        CSS3: "css3-cours",
+        JS: "javascript-cours",
+        PHP: "php-cours",
+        SQL: "sql-cours"
+      };
+      var nbVus = 0;
+      var badgesMod = mods.map(function (m) {
+        var slugM = mapSlugMod[m];
+        var vInfo = mProg["video:" + slugM];
+        var aInfo = mProg["audio:" + slugM];
+        var vDone = Boolean(vInfo && vInfo.done);
+        var aDone = Boolean(aInfo && aInfo.done);
+        var vPct = vInfo ? (vInfo.maxPct || 0) : 0;
+        var aPct = aInfo ? (aInfo.maxPct || 0) : 0;
+        var bestPct = Math.max(vPct, aPct);
+        var ok = Boolean(vus[m] || vDone || aDone);
+        if (ok) nbVus++;
+        var suffix = (vDone || aDone) ? " ✅" : (bestPct >= 2 ? (" ⏳" + bestPct + "%") : (ok ? " ✔" : ""));
+        var bgCol = (vDone || aDone)
+          ? "#dcfce7;color:#14532d;border-color:#16a34a"
+          : (bestPct >= 2 ? "#fef3c7;color:#78350f;border-color:#f59e0b" : (ok ? "#e3f6e8;color:#177245;border-color:#23201a" : "#f3ead9;color:#7a6f5d;border-color:#23201a"));
+        return "<span style='display:inline-block;padding:1px 5px;margin:1px;border-radius:5px;font-size:9.5px;font-weight:800;border:1px solid;" +
+          "background:" + bgCol + "'>" + m + suffix + "</span>";
+      }).join("");
+
+      var vidKeys = ok4SI
+        ? ["html5-cours", "css3-cours", "javascript-cours", "sql-cours", "php-cours", "php-guichet", "css-positionnement", "css-animee"]
+        : ["html5-cours", "css3-cours", "javascript-cours", "sql-cours", "css-positionnement", "css-animee"];
+      var audKeys = ok4SI
+        ? ["html5-cours", "css3-cours", "javascript-cours", "sql-cours", "php-cours"]
+        : ["html5-cours", "css3-cours", "javascript-cours", "sql-cours"];
+      var nbVidDone = 0, nbVidEnCours = 0;
+      for (var vi = 0; vi < vidKeys.length; vi++) {
+        var ve = mProg["video:" + vidKeys[vi]];
+        if (ve && ve.done) nbVidDone++;
+        else if (ve && (ve.maxPct || 0) >= 2) nbVidEnCours++;
+      }
+      var nbAudDone = 0, nbAudEnCours = 0;
+      for (var ai = 0; ai < audKeys.length; ai++) {
+        var ae = mProg["audio:" + audKeys[ai]];
+        if (ae && ae.done) nbAudDone++;
+        else if (ae && (ae.maxPct || 0) >= 2) nbAudEnCours++;
+      }
+      var pctProg = Math.round(((nbVus + nbVidDone + nbAudDone) / (mods.length + vidKeys.length + audKeys.length)) * 100);
+      var resumeMedia =
+        "<div style='margin-top:3px;font-size:9.8px;font-weight:800;color:#475569;display:flex;justify-content:space-between;gap:4px;flex-wrap:wrap'>" +
+          "<span>🎥 Vidéos : <b style='color:#177245'>" + nbVidDone + "/" + vidKeys.length + " ✅</b>" + (nbVidEnCours ? " <span style='color:#b45309'>(⏳" + nbVidEnCours + ")</span>" : "") + "</span>" +
+          "<span>🔊 Audios : <b style='color:#177245'>" + nbAudDone + "/" + audKeys.length + " ✅</b>" + (nbAudEnCours ? " <span style='color:#b45309'>(⏳" + nbAudEnCours + ")</span>" : "") + "</span>" +
+        "</div>";
+      return { pctProg: pctProg, badgesMod: badgesMod, resumeMedia: resumeMedia };
+    }
+    var initProgPan = calculerHtmlProgressionPan();
 
     pan.innerHTML =
       "<div style='display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px'>" +
         "<button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1.5px solid #23201a;background:#f3ead9;color:#23201a;border-radius:7px;padding:1px 7px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
         "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:1.5px solid #23201a;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;box-shadow:1.5px 1.5px 0 #23201a'>👑 GOLD</span>" +
-          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.215</span>" +
+          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.217</span>" +
           "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
         "</div>" +
       "</div>" +
       "<div id='sti-pan-login' style='font-weight:900;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(affLogin) + "</div>" +
       "<div id='sti-pan-lycee' style='color:#7a6f5d;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(lyceePropre(profil)) + " · " + esc(profil.classe || "—") + "</div>" +
       "<div style='margin-top:6px;padding-top:6px;border-top:1px dashed #e2d5be;text-align:left'>" +
-        "<div style='display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:#23201a'><span>📈 Progression</span><span style='color:#f4511e'>" + pctProg + "%</span></div>" +
-        "<div style='margin-top:3px'>" + badgesMod + "</div>" +
+        "<div style='display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:#23201a'><span>📈 Progression</span><span id='sti-pan-prog-pct' style='color:#f4511e'>" + initProgPan.pctProg + "%</span></div>" +
+        "<div id='sti-pan-prog-badges' style='margin-top:3px'>" + initProgPan.badgesMod + "</div>" +
+        "<div id='sti-pan-prog-media'>" + initProgPan.resumeMedia + "</div>" +
         "<div id='sti-ma-duree-sem' style='margin-top:4px;font-size:10.5px;font-weight:800;color:#177245'>⏱️ Cette semaine : calcul…</div>" +
       "</div>";
+
+    window.__stiMajProgressionPan = function () {
+      try {
+        var pr = calculerHtmlProgressionPan();
+        var elPct = document.getElementById("sti-pan-prog-pct");
+        var elBdg = document.getElementById("sti-pan-prog-badges");
+        var elMed = document.getElementById("sti-pan-prog-media");
+        if (elPct) elPct.textContent = pr.pctProg + "%";
+        if (elBdg) elBdg.innerHTML = pr.badgesMod;
+        if (elMed) elMed.innerHTML = pr.resumeMedia;
+      } catch (e) {}
+    };
 
     var styleBtnCompact = "display:flex;align-items:center;justify-content:center;gap:4px;width:100%;margin:0;border:1.5px solid #23201a;border-radius:8px;padding:5px 6px;font-weight:800;font-size:10.8px;line-height:1.15;cursor:pointer;text-align:center;box-sizing:border-box;";
 
@@ -1967,6 +2030,9 @@
 
     var ouvert = false;
     function ouvrir() {
+      if (typeof window.__stiMajProgressionPan === "function") {
+        window.__stiMajProgressionPan();
+      }
       ouvert = true;
       pan.classList.add("ouvert");
       porte.style.transform = "translateX(-" + (pan.offsetWidth + 14) + "px)";
