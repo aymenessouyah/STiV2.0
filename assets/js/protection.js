@@ -629,10 +629,13 @@
         box.className = "sti-video-pas-a-pas-box sti-no-print";
         if (idBox) box.id = idBox;
         box.hidden = true;
+        box.style.cssText = "width:min(720px,94vw);max-width:100%;max-height:76vh;overflow:hidden;box-sizing:border-box;margin:12px auto;padding:10px 12px;";
         box.innerHTML =
           '<div class="sti-video-pas-a-pas-head">' +
             '<div class="sti-video-pas-a-pas-title">' + VIDEO_GUICHET_INFO.title + '</div>' +
             '<div class="sti-video-pas-a-pas-actions">' +
+              '<button type="button" data-vplay="1">⏸ Pause</button>' +
+              '<button type="button" data-vstop="1">⏹ Arrêter</button>' +
               '<button type="button" data-vrate="0.75">0.75×</button>' +
               '<button type="button" data-vrate="0.85">0.85×</button>' +
               '<button type="button" data-vrate="1">1×</button>' +
@@ -641,11 +644,32 @@
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
             '</div>' +
           '</div>' +
-          '<video controls playsinline webkit-playsinline preload="metadata" src="' + url + '">' +
+          '<video controls playsinline webkit-playsinline preload="metadata" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:min(340px,48vh);object-fit:contain;display:block;margin:0 auto;">' +
             '<source src="' + url + '" type="video/mp4" />' +
           '</video>';
 
         var vid = box.querySelector("video");
+        var btnPlay = box.querySelector("button[data-vplay]");
+        var btnStop = box.querySelector("button[data-vstop]");
+        if (vid && btnPlay) {
+          vid.addEventListener("play", function () { btnPlay.textContent = "⏸ Pause"; });
+          vid.addEventListener("pause", function () { btnPlay.textContent = "▶ Lecture"; });
+          btnPlay.addEventListener("click", function () {
+            if (vid.paused) {
+              try { vid.play(); } catch (e) {}
+            } else {
+              try { vid.pause(); } catch (e) {}
+            }
+          });
+        }
+        if (vid && btnStop) {
+          btnStop.addEventListener("click", function () {
+            try {
+              vid.pause();
+              vid.currentTime = 0;
+            } catch (e) {}
+          });
+        }
         var btnsRate = box.querySelectorAll("button[data-vrate]");
         for (var r = 0; r < btnsRate.length; r++) {
           (function (b) {
@@ -658,7 +682,7 @@
         if (btnClose) {
           btnClose.addEventListener("click", function () {
             if (vid) {
-              try { vid.pause(); } catch (e) {}
+              try { vid.pause(); vid.currentTime = 0; } catch (e) {}
             }
             box.hidden = true;
           });
@@ -721,11 +745,14 @@
           overlay.id = "sti-video-modal-overlay";
           overlay.className = "sti-no-print";
           overlay.hidden = true;
+          overlay.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(10,15,28,0.88);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;";
           overlay.innerHTML =
-            '<div class="sti-video-modal-card" role="dialog" aria-modal="true">' +
-              '<div class="sti-video-pas-a-pas-head">' +
+            '<div class="sti-video-modal-card" role="dialog" aria-modal="true" style="width:min(740px,92vw);max-width:92vw;max-height:82vh;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;background:#0d1526;color:#f9f1e3;border:2px solid #f4511e;border-radius:16px;padding:12px 14px;">' +
+              '<div class="sti-video-pas-a-pas-head" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px;flex-shrink:0;">' +
                 '<div class="sti-video-pas-a-pas-title" id="sti-video-modal-title"></div>' +
-                '<div class="sti-video-pas-a-pas-actions">' +
+                '<div class="sti-video-pas-a-pas-actions" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">' +
+                  '<button type="button" id="sti-video-modal-play">⏸ Pause</button>' +
+                  '<button type="button" id="sti-video-modal-stop">⏹ Arrêter</button>' +
                   '<button type="button" data-mrate="0.75">0.75×</button>' +
                   '<button type="button" data-mrate="0.85">0.85×</button>' +
                   '<button type="button" data-mrate="1">1×</button>' +
@@ -734,11 +761,32 @@
                   '<button type="button" id="sti-video-modal-close">✕ Fermer</button>' +
                 '</div>' +
               '</div>' +
-              '<video id="sti-video-modal-player" controls playsinline webkit-playsinline preload="metadata"></video>' +
+              '<video id="sti-video-modal-player" controls playsinline webkit-playsinline preload="metadata" style="width:100%;max-width:100%;height:auto;max-height:min(380px,calc(82vh - 96px));object-fit:contain;display:block;margin:0 auto;border-radius:10px;background:#000;"></video>' +
             '</div>';
           document.body.appendChild(overlay);
 
           var mVid = document.getElementById("sti-video-modal-player");
+          var mPlay = document.getElementById("sti-video-modal-play");
+          var mStop = document.getElementById("sti-video-modal-stop");
+          if (mVid && mPlay) {
+            mVid.addEventListener("play", function () { mPlay.textContent = "⏸ Pause"; });
+            mVid.addEventListener("pause", function () { mPlay.textContent = "▶ Lecture"; });
+            mPlay.addEventListener("click", function () {
+              if (mVid.paused) {
+                try { mVid.play(); } catch (e) {}
+              } else {
+                try { mVid.pause(); } catch (e) {}
+              }
+            });
+          }
+          if (mVid && mStop) {
+            mStop.addEventListener("click", function () {
+              try {
+                mVid.pause();
+                mVid.currentTime = 0;
+              } catch (e) {}
+            });
+          }
           var mRates = overlay.querySelectorAll("button[data-mrate]");
           for (var i = 0; i < mRates.length; i++) {
             (function (b) {
@@ -749,7 +797,7 @@
           }
           function fermerModaleVideo() {
             if (mVid) {
-              try { mVid.pause(); } catch (e) {}
+              try { mVid.pause(); mVid.currentTime = 0; } catch (e) {}
             }
             overlay.hidden = true;
           }
@@ -844,7 +892,12 @@
           });
           btnAnimOpen.parentNode.insertBefore(bVG, btnAnimOpen.nextSibling);
           if (boxG) {
-            btnAnimOpen.parentNode.insertBefore(boxG, bVG.nextSibling);
+            var pCont = btnAnimOpen.parentNode;
+            if (pCont && pCont.parentNode) {
+              pCont.parentNode.insertBefore(boxG, pCont.nextSibling);
+            } else {
+              pCont.insertBefore(boxG, bVG.nextSibling);
+            }
           }
         }
         var btnTopGuichet = document.getElementById("btn-top-anim-guichet");

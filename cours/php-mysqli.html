@@ -21,7 +21,7 @@ body{margin:0;color:var(--ink);font:16px/1.55 "Segoe UI Variable Text","Inter","
 main{max-width:1400px;margin:0 auto;padding:24px 18px 48px}
 h1{font-size:clamp(1.4rem,2.3vw,1.9rem);font-weight:750;letter-spacing:-.02em;line-height:1.2;margin:0 0 6px}
 .sub{color:var(--mut);margin:0 0 18px;max-width:95ch}.sub b{color:var(--ink);font-weight:650}
-.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;position:sticky;top:0;z-index:60;background:var(--bg);padding:8px 6px;border-bottom:1px solid var(--line)}
 button{font:inherit;font-size:.92rem;font-weight:600;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 16px;border-radius:999px;cursor:pointer;box-shadow:var(--sh);transition:transform .2s var(--pop),box-shadow .2s,border-color .2s,background .25s,color .25s}
 button:hover:not(:disabled){border-color:var(--php);transform:translateY(-1px);box-shadow:var(--sh2)}
 button:active:not(:disabled){transform:scale(.96)}
@@ -171,7 +171,7 @@ html:fullscreen body{font-size:18px;overflow:auto}
 <button id="mUpd">UPDATE (réponse booléenne)</button>
 <span class="grow"></span>
 <button id="prev">Précédent</button><button id="next" class="main">Suivant</button>
-<button id="auto">Lecture auto</button><button id="voixBtn" type="button" class="on" title="Activer ou couper la voix de l'homme qui explique chaque étape">🔊 Voix : ON</button><select id="spd" aria-label="Vitesse de lecture"><option value="6500">Lente</option><option value="4200" selected>Normale</option><option value="2500">Rapide</option></select><button id="rst">Recommencer</button><button id="fs">Plein écran</button>
+<button id="auto">Lecture auto</button><button id="stopBtn" type="button" style="background:#dc2626;color:#fff;border-color:#991b1b" title="Arrêter immédiatement l'animation et la voix">⏹ Arrêter</button><button id="voixBtn" type="button" class="on" title="Activer ou couper la voix de l'homme qui explique chaque étape">🔊 Voix : ON</button><select id="spd" aria-label="Vitesse de lecture"><option value="6500">Lente</option><option value="4200" selected>Normale</option><option value="2500">Rapide</option></select><button id="rst">Recommencer</button><button id="fs">Plein écran</button>
 </div>
 <div class="phases" id="phases"></div>
 <div class="dots" id="dots"></div>
@@ -710,6 +710,11 @@ el('auto').onclick = function () {
   if (autoRunning) { stop(); return; }
   demarrerAuto();
 };
+if (el('stopBtn')) {
+  el('stopBtn').onclick = function () {
+    stop();
+  };
+}
 if (el('voixBtn')) {
   el('voixBtn').onclick = function () {
     voixActive = !voixActive;
@@ -787,6 +792,7 @@ init();build();render();
 <nav id="phpm-ctrl" aria-label="Contrôles rapides">
   <button type="button" class="pc-btn" id="pc-prev" aria-label="Étape précédente">&#9664;</button>
   <button type="button" class="pc-btn" id="pc-auto" aria-label="Lecture automatique / pause">&#9205;</button>
+  <button type="button" class="pc-btn" id="pc-stop" aria-label="Arrêter" style="background:#dc2626;border-color:#fca5a5;color:#fff;font-weight:800">&#9209; Arrêter</button>
   <button type="button" class="pc-btn" id="pc-next" aria-label="Étape suivante">&#9654;</button>
   <button type="button" class="pc-btn" id="pc-rst" aria-label="Recommencer">&#8635;</button>
   <span class="pc-etape" id="pc-etape">1/1</span>
@@ -802,7 +808,19 @@ init();build();render();
   </div>
 </div>
 <style>
-  body{padding-bottom:78px}
+  body{padding-bottom:68px}
+  html.is-embed .topbar-guichet,
+  html.is-embed h1,
+  html.is-embed .sub,
+  html.is-embed .hint{display:none !important}
+  html.is-embed main{padding:6px 10px 58px !important}
+  html.is-embed .legend{margin:0 0 6px !important;gap:5px !important}
+  html.is-embed .legend span{font-size:.75rem !important;padding:3px 9px 3px 22px !important}
+  html.is-embed .bar{padding:5px 4px !important;margin-bottom:6px !important;gap:6px !important}
+  html.is-embed .bar button, html.is-embed select#spd{padding:5px 11px !important;font-size:.82rem !important}
+  html.is-embed .phases{margin:0 0 6px !important;gap:5px !important}
+  html.is-embed .phases button{padding:4px 10px !important;font-size:.76rem !important}
+  html.is-embed .dots{margin:0 0 6px !important}
   #phpm-ctrl{
     position:fixed;left:0;right:0;bottom:0;z-index:9998;
     display:flex;align-items:center;gap:7px;
@@ -865,11 +883,15 @@ init();build();render();
 (function () {
   function $(x) { return document.getElementById(x); }
   var prev = $("pc-prev"), nxt = $("pc-next"), rst = $("pc-rst"),
-      auto = $("pc-auto"), lab = $("pc-etape");
+      auto = $("pc-auto"), stp = $("pc-stop"), lab = $("pc-etape");
   if (prev) prev.onclick = function () { stop(); go(i - 1, true, false); };
   if (nxt)  nxt.onclick  = function () { stop(); go(i + 1, true, false); };
   if (rst)  rst.onclick  = function () { stop(); go(0, false, false); };
+  if (stp)  stp.onclick  = function () { stop(); };
   if (auto) auto.onclick = function () { var a = $("auto"); if (a) a.click(); };
+  if (window.self !== window.top || location.search.indexOf("embed=1") !== -1) {
+    document.documentElement.classList.add("is-embed");
+  }
   function sync() {
     var a = $("auto");
     if (auto && a) {

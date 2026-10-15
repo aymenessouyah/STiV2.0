@@ -1126,6 +1126,14 @@ echo (date("Y-d-m H:i:s",$e)." = ".$e." secondes&lt;br&gt;") ;
               <span class="anim-tools">
                 <button
                   type="button"
+                  id="animStop"
+                  title="Arrêter l'animation et la voix"
+                  style="background:#dc2626;color:#fff;border-color:#fca5a5;font-weight:800"
+                >
+                  ⏹ Arrêter
+                </button>
+                <button
+                  type="button"
                   id="animRetourCours"
                   title="Retourner au cours PHP"
                   style="background:linear-gradient(120deg,#f4511e,#b4552d);color:#fff;border-color:#101728;font-weight:800"
@@ -1638,6 +1646,14 @@ mysqli_close($connexion);
         document.getElementById("animClose").onclick = close;
         if (document.getElementById("animRetourCours")) {
           document.getElementById("animRetourCours").onclick = close;
+        }
+        if (document.getElementById("animStop")) {
+          document.getElementById("animStop").onclick = function () {
+            var f = document.getElementById("animFrame");
+            if (f && f.contentWindow) {
+              try { f.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*"); } catch (err) {}
+            }
+          };
         }
         document.getElementById("animFull").onclick = toggleFull;
         M.addEventListener("click", function (e) {
