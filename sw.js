@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v192";
+var CACHE = "sti-atelier-v193";
 var SHELL = [
   "./",
   "./index.html",
@@ -559,23 +559,6 @@ var OFFLINE_LIST = [
   "./quiz/pp.html",
   "./quiz/sql.html",
   "./assets/videos/php-guichet.mp4",
-  "./assets/audio/pas-a-pas/php-guichet.mp3",
-  "./assets/audio/pas-a-pas/php-recap.mp3",
-  "./assets/audio/pas-a-pas/php-sondage-pas-a-pas.mp3",
-  "./assets/audio/pas-a-pas/php-stat-pas-a-pas.mp3",
-  "./assets/audio/pas-a-pas/sql-contraintes.mp3",
-  "./assets/audio/pas-a-pas/sql-jointure-where.mp3",
-  "./assets/audio/pas-a-pas/sql-groupby-having.mp3",
-  "./assets/audio/pas-a-pas/sql-serie1-ldd.mp3",
-  "./assets/audio/pas-a-pas/sql-serie2-lmd.mp3",
-  "./assets/audio/pas-a-pas/sql-serie3-groupby.mp3",
-  "./assets/audio/pas-a-pas/sql-serie4-jointure-sr.mp3",
-  "./assets/audio/pas-a-pas/sql-serie5-gesthotel.mp3",
-  "./assets/audio/pas-a-pas/css-positionnement.mp3",
-  "./assets/audio/pas-a-pas/css-decoration-animations.mp3",
-  "./assets/audio/pas-a-pas/tp2-positionnement-corrige.mp3",
-  "./assets/audio/pas-a-pas/projet-tunisie-animation.mp3",
-  "./assets/audio/pas-a-pas/javascript-controles-sti.mp3",
   "./robots.txt",
   "./sitemap.xml"
 ];
@@ -661,8 +644,14 @@ self.addEventListener("activate", function (evt) {
               for (var r of reqs) {
                 var rPath = "";
                 try { rPath = new URL(r.url).pathname; } catch (e) {}
-                /* Ne jamais copier les anciens .html, .js, .css, .webmanifest ou fichiers Explore_Tunisie d'une version précédente */
-                if (/\.(html|js|css|webmanifest)$/i.test(rPath) || rPath.indexOf("Explore_Tunisie") !== -1 || rPath.slice(-1) === "/") {
+                /* Ne jamais copier les anciens .html, .js, .css, .webmanifest, anciens audios pas-à-pas ou anciennes vidéos supprimées */
+                if (
+                  /\.(html|js|css|webmanifest)$/i.test(rPath) ||
+                  rPath.indexOf("Explore_Tunisie") !== -1 ||
+                  rPath.indexOf("/audio/pas-a-pas/") !== -1 ||
+                  (rPath.indexOf("/assets/videos/") !== -1 && rPath.indexOf("php-guichet.mp4") === -1) ||
+                  rPath.slice(-1) === "/"
+                ) {
                   continue;
                 }
                 var deja = await nvCache.match(r, { ignoreSearch: true });

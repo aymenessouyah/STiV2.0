@@ -566,20 +566,27 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     🔊 VOIX DE L'HOMME PAS-À-PAS STI & 🎥 VIDÉO DE L'ANIMATION DU GUICHET
-     - Zéro synthèse vocale féminine (window.speechSynthesis désactivé).
-     - Voix de l'homme (assets/audio/pas-a-pas/<slug>.mp3) expliquant les étapes pas à pas.
-     - Seule la vidéo de l'animation du guichet (assets/videos/php-guichet.mp4) est conservée.
+     🎥 VIDÉO DE L'ANIMATION DU GUICHET (php-guichet.mp4 AVEC LA VOIX DE L'HOMME)
+     - Zéro voix dans les pas à pas interactifs (aucune lecture commentée ni audio d'étape).
+     - Seule la vidéo de l'animation du guichet (assets/videos/php-guichet.mp4) est conservée
+       avec la voix de l'homme qui explique les étapes pas à pas.
      ═══════════════════════════════════════════════════════════════════════════ */
   function installerVideosPasAPasSTI() {
     try {
-      /* Couper définitivement toute synthèse vocale (voix féminine du navigateur) */
+      /* Couper et neutraliser définitivement toute synthèse vocale (window.speechSynthesis) */
       if ("speechSynthesis" in window && window.speechSynthesis) {
-        try { window.speechSynthesis.cancel(); } catch (e) {}
+        try {
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.speak = function () {};
+        } catch (e) {}
       }
 
       var oldDock = document.getElementById("sti-voix-dock");
       if (oldDock && oldDock.parentNode) oldDock.parentNode.removeChild(oldDock);
+      var oldVoixBtns = document.querySelectorAll(".sti-btn-voix-inline, .sti-btn-voix-homme-toggle, .sti-btn-ecouter-bloc");
+      for (var k = 0; k < oldVoixBtns.length; k++) {
+        if (oldVoixBtns[k].parentNode) oldVoixBtns[k].parentNode.removeChild(oldVoixBtns[k]);
+      }
 
       var pathLower = (location.pathname || "").toLowerCase();
       if (
@@ -592,28 +599,7 @@
         return;
       }
 
-      /* Catalogue des pistes audio masculines (voix de l'homme expliquant les étapes pas à pas) */
-      var CATALOGUE_VOIX_HOMME_STI = {
-        "php-guichet": { audio: "php-guichet.mp3", dur: 135.0, steps: 10 },
-        "php-recap": { audio: "php-recap.mp3", dur: 158.5, steps: 8 },
-        "php-sondage-pas-a-pas": { audio: "php-sondage-pas-a-pas.mp3", dur: 59.2, steps: 7 },
-        "php-stat-pas-a-pas": { audio: "php-stat-pas-a-pas.mp3", dur: 54.6, steps: 7 },
-        "sql-contraintes": { audio: "sql-contraintes.mp3", dur: 47.3, steps: 4 },
-        "sql-jointure-where": { audio: "sql-jointure-where.mp3", dur: 33.4, steps: 6 },
-        "sql-groupby-having": { audio: "sql-groupby-having.mp3", dur: 31.7, steps: 6 },
-        "sql-serie1-ldd": { audio: "sql-serie1-ldd.mp3", dur: 28.0, steps: 5 },
-        "sql-serie2-lmd": { audio: "sql-serie2-lmd.mp3", dur: 32.1, steps: 5 },
-        "sql-serie3-groupby": { audio: "sql-serie3-groupby.mp3", dur: 27.9, steps: 5 },
-        "sql-serie4-jointure-sr": { audio: "sql-serie4-jointure-sr.mp3", dur: 24.6, steps: 5 },
-        "sql-serie5-gesthotel": { audio: "sql-serie5-gesthotel.mp3", dur: 34.1, steps: 6 },
-        "css-positionnement": { audio: "css-positionnement.mp3", dur: 49.0, steps: 12 },
-        "css-decoration-animations": { audio: "css-decoration-animations.mp3", dur: 37.4, steps: 8 },
-        "tp2-positionnement-corrige": { audio: "tp2-positionnement-corrige.mp3", dur: 23.4, steps: 5 },
-        "projet-tunisie-animation": { audio: "projet-tunisie-animation.mp3", dur: 19.2, steps: 8 },
-        "javascript-controles-sti": { audio: "javascript-controles-sti.mp3", dur: 26.0, steps: 5 }
-      };
-
-      /* Seule vidéo conservée : l'animation du guichet */
+      /* Seule vidéo conservée : l'animation du guichet (avec la voix de l'homme) */
       var VIDEO_GUICHET_INFO = {
         file: "php-guichet.mp4",
         title: "🎥 Animation du Guichet (PHP + MySQLi en 10 étapes)"
@@ -634,174 +620,7 @@
         return prefixeAssetsSTI() + "videos/" + VIDEO_GUICHET_INFO.file;
       }
 
-      function resoudreUrlAudioHomme(slug) {
-        if (!slug || !CATALOGUE_VOIX_HOMME_STI[slug]) return "";
-        return prefixeAssetsSTI() + "audio/pas-a-pas/" + CATALOGUE_VOIX_HOMME_STI[slug].audio;
-      }
-
-      function detecterPasAPasParChemin(chemin) {
-        var p = String(chemin || "").toLowerCase();
-        if (p.indexOf("php-mysqli") !== -1) return "php-guichet";
-        if (p.indexOf("php-recap") !== -1) return "php-recap";
-        if (p.indexOf("sondage-parcours-pas-a-pas") !== -1 || p.indexOf("sti0/sondage") !== -1) return "php-sondage-pas-a-pas";
-        if (p.indexOf("statphpanimee") !== -1 || p.indexOf("sti0/statistiques") !== -1) return "php-stat-pas-a-pas";
-        if (p.indexOf("sql-contraintes") !== -1) return "sql-contraintes";
-        if (p.indexOf("tp1-bd") !== -1) return "sql-serie1-ldd";
-        if (p.indexOf("tp2-bd") !== -1 || p.indexOf("tp2-correction-bd") !== -1) return "sql-serie2-lmd";
-        if (p.indexOf("tp-groupby-bd") !== -1) return "sql-serie3-groupby";
-        if (p.indexOf("tp-bd-jointure") !== -1 || p.indexOf("tp4-correction-bd") !== -1) return "sql-serie4-jointure-sr";
-        if (p.indexOf("tp-date-ssr") !== -1 || p.indexOf("atelier_sql_3_fenetres") !== -1) return "sql-serie5-gesthotel";
-        if (p.indexOf("positionnement-animee") !== -1) return "css-positionnement";
-        if (p.indexOf("cssanimee") !== -1 || p.indexOf("box-shadow-text-shadow") !== -1) return "css-decoration-animations";
-        if (p.indexOf("tp2corrposition") !== -1) return "tp2-positionnement-corrige";
-        if (p.indexOf("site-tunisie-correction-animation") !== -1 || p.indexOf("carte-timbre-droite-haut") !== -1) return "projet-tunisie-animation";
-        if (p.indexOf("cours/javascript") !== -1 || p.indexOf("-correction-js") !== -1 || p.indexOf("carte-bancaire/cb") !== -1) return "javascript-controles-sti";
-        return null;
-      }
-
-      var slugPasAPasPage = detecterPasAPasParChemin(location.pathname);
-      var estPageGuichet = (slugPasAPasPage === "php-guichet");
-
-      /* ── Lecteur Audio de la Voix de l'Homme (étape par étape) ── */
-      var voixHommeActive = true;
-      try {
-        if (localStorage.getItem("sti-voix-homme") === "0") voixHommeActive = false;
-      } catch (e) {}
-
-      var audioHomme = null;
-      var audioSlugActuel = "";
-      var timerFinSegment = null;
-      var compteurClicEtape = 0;
-
-      function arreterAudioHomme() {
-        if (timerFinSegment) {
-          clearTimeout(timerFinSegment);
-          timerFinSegment = null;
-        }
-        if (audioHomme) {
-          try { audioHomme.pause(); } catch (e) {}
-        }
-      }
-
-      function detecterIndiceEtapeCourante(nbTotalDefaut) {
-        var idsCompteurs = [
-          "stepNum", "pc-etape", "count", "counter", "ctrl-etape", "compteur",
-          "pNum", "tp1-step-counter", "tp2-step-counter", "tp3-step-counter",
-          "tpgh-step-counter", "janim-step-badge", "gbanim-step-badge", "hvanim-step-badge"
-        ];
-        for (var i = 0; i < idsCompteurs.length; i++) {
-          var el = document.getElementById(idsCompteurs[i]);
-          if (el) {
-            var tx = (el.innerText || el.textContent || "").trim();
-            var m = tx.match(/(\d+)\s*\/\s*(\d+)/);
-            if (m) {
-              var cur = parseInt(m[1], 10) - 1;
-              var tot = parseInt(m[2], 10);
-              if (cur >= 0 && tot > 0) return { idx: cur, total: tot };
-            }
-            var mSimple = tx.match(/(\d+)/);
-            if (mSimple) {
-              var c2 = parseInt(mSimple[1], 10) - 1;
-              if (c2 >= 0) return { idx: c2, total: nbTotalDefaut || 8 };
-            }
-          }
-        }
-        var tabsBtns = document.querySelectorAll("#tabs button");
-        if (tabsBtns && tabsBtns.length > 0) {
-          for (var t = 0; t < tabsBtns.length; t++) {
-            if (tabsBtns[t].classList.contains("on")) {
-              return { idx: t, total: tabsBtns.length };
-            }
-          }
-        }
-        var idxMod = compteurClicEtape % (nbTotalDefaut || 8);
-        compteurClicEtape++;
-        return { idx: idxMod, total: nbTotalDefaut || 8 };
-      }
-
-      function lireEtapeVoixHomme(slugCible) {
-        if (!voixHommeActive) return;
-        var slug = slugCible || slugPasAPasPage;
-        if (!slug || !CATALOGUE_VOIX_HOMME_STI[slug]) return;
-        var info = CATALOGUE_VOIX_HOMME_STI[slug];
-        var url = resoudreUrlAudioHomme(slug);
-        if (!url) return;
-
-        if (!audioHomme) {
-          audioHomme = document.createElement("audio");
-          audioHomme.preload = "auto";
-          audioHomme.style.display = "none";
-          document.body.appendChild(audioHomme);
-        }
-        if (audioSlugActuel !== slug) {
-          audioSlugActuel = slug;
-          audioHomme.src = url;
-        }
-        arreterAudioHomme();
-
-        var pos = detecterIndiceEtapeCourante(info.steps || 8);
-        var totalSteps = Math.max(1, pos.total || info.steps || 8);
-        var stepIdx = Math.max(0, Math.min(pos.idx, totalSteps - 1));
-        var durTotale = (audioHomme.duration && isFinite(audioHomme.duration) && audioHomme.duration > 5)
-          ? audioHomme.duration
-          : (info.dur || 35);
-        var segDur = durTotale / totalSteps;
-        var tDebut = Math.max(0, stepIdx * segDur);
-
-        function lancerSegment() {
-          try {
-            audioHomme.muted = false;
-            audioHomme.volume = 1.0;
-            audioHomme.currentTime = tDebut;
-            var p = audioHomme.play();
-            if (p && p.catch) p.catch(function () {});
-            timerFinSegment = setTimeout(function () {
-              if (audioHomme) {
-                try { audioHomme.pause(); } catch (e) {}
-              }
-            }, Math.round(segDur * 1000) + 250);
-          } catch (e) {}
-        }
-
-        if (audioHomme.readyState >= 1) {
-          lancerSegment();
-        } else {
-          var onMeta = function () {
-            audioHomme.removeEventListener("loadedmetadata", onMeta);
-            lancerSegment();
-          };
-          audioHomme.addEventListener("loadedmetadata", onMeta);
-          try { audioHomme.load(); } catch (e) {}
-        }
-      }
-
-      function majBoutonsVoixHommeUI() {
-        var btns = document.querySelectorAll(".sti-btn-voix-homme-toggle");
-        for (var i = 0; i < btns.length; i++) {
-          btns[i].textContent = voixHommeActive ? "🔊 Voix pas-à-pas ON" : "🔇 Voix OFF";
-          btns[i].classList.toggle("muted", !voixHommeActive);
-        }
-      }
-
-      function creerBoutonVoixHomme(slugRef) {
-        var bVoixH = document.createElement("button");
-        bVoixH.type = "button";
-        bVoixH.className = "sti-btn-voix-inline sti-btn-voix-homme-toggle" + (voixHommeActive ? "" : " muted");
-        bVoixH.textContent = voixHommeActive ? "🔊 Voix pas-à-pas ON" : "🔇 Voix OFF";
-        bVoixH.title = "Activer / couper la voix de l'homme qui explique les étapes pas à pas";
-        bVoixH.addEventListener("click", function (ev) {
-          ev.stopPropagation();
-          voixHommeActive = !voixHommeActive;
-          try { localStorage.setItem("sti-voix-homme", voixHommeActive ? "1" : "0"); } catch (e) {}
-          majBoutonsVoixHommeUI();
-          if (!voixHommeActive) {
-            arreterAudioHomme();
-          } else {
-            lireEtapeVoixHomme(slugRef || slugPasAPasPage);
-          }
-        });
-        return bVoixH;
-      }
+      var estPageGuichet = (pathLower.indexOf("php-mysqli") !== -1);
 
       /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
@@ -844,11 +663,6 @@
             box.hidden = true;
           });
         }
-        if (vid) {
-          vid.addEventListener("play", function () {
-            arreterAudioHomme();
-          });
-        }
         return box;
       }
 
@@ -856,7 +670,6 @@
         if (!box) return;
         var vid = box.querySelector("video");
         if (box.hidden) {
-          arreterAudioHomme();
           box.hidden = false;
           try {
             box.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -879,7 +692,6 @@
         if (slugOuUrl && slugOuUrl !== "php-guichet" && String(slugOuUrl).indexOf("php-guichet") === -1) {
           return;
         }
-        arreterAudioHomme();
         try {
           if (
             window.top &&
@@ -956,44 +768,20 @@
       };
 
       function injecterBoutonsStudio() {
-        var btnPlayStat = document.getElementById("btn-play");
-        var barresCibles = [
-          document.querySelector(".controls"),
-          document.querySelector(".ctrl"),
-          document.querySelector(".ctrl-mobile"),
-          document.querySelector(".ctrl-texte"),
-          document.querySelector(".topbar-guichet"),
-          document.querySelector(".bar:not(.scan-bar)"),
-          document.getElementById("phpm-ctrl"),
-          document.querySelector(".topbar-recap > div:last-child"),
-          document.querySelector(".barre"),
-          btnPlayStat ? btnPlayStat.parentNode : null,
-          document.querySelector(".tp1-controls"),
-          document.querySelector(".tp2-controls"),
-          document.querySelector(".tp3-controls"),
-          document.querySelector(".tpbd-controls"),
-          document.querySelector(".tpgh-controls")
-        ];
-        for (var i = 0; i < barresCibles.length; i++) {
-          var bar = barresCibles[i];
-          if (!bar || bar.tagName === "INPUT") continue;
-
-          if (slugPasAPasPage && CATALOGUE_VOIX_HOMME_STI[slugPasAPasPage]) {
-            if (
-              bar.id !== "phpm-ctrl" &&
-              !bar.classList.contains("ctrl-mobile") &&
-              !bar.querySelector(".sti-btn-voix-homme-toggle")
-            ) {
-              bar.appendChild(creerBoutonVoixHomme(slugPasAPasPage));
-            }
-          }
-
-          /* Bouton vidéo .mp4 UNIQUEMENT sur la page de l'animation du guichet (php-mysqli.html) */
-          if (estPageGuichet && !bar.querySelector(".sti-btn-video-dedie")) {
+        /* Boutons vidéo .mp4 UNIQUEMENT sur la page de l'animation du guichet (cours/php-mysqli.html) */
+        if (estPageGuichet) {
+          var barresGuichet = [
+            document.querySelector(".controls"),
+            document.querySelector(".topbar-guichet"),
+            document.getElementById("phpm-ctrl")
+          ];
+          for (var i = 0; i < barresGuichet.length; i++) {
+            var bar = barresGuichet[i];
+            if (!bar || bar.tagName === "INPUT" || bar.querySelector(".sti-btn-video-dedie")) continue;
             var bVid = document.createElement("button");
             bVid.type = "button";
             bVid.className = "sti-btn-video-dedie";
-            bVid.textContent = (bar.id === "phpm-ctrl" || bar.classList.contains("ctrl-mobile"))
+            bVid.textContent = (bar.id === "phpm-ctrl")
               ? "🎥 Vidéo"
               : "🎥 Vidéo du Guichet (.mp4)";
             bVid.title = VIDEO_GUICHET_INFO.title;
@@ -1003,10 +791,8 @@
             });
             bar.appendChild(bVid);
           }
-        }
 
-        /* Écran mobile portrait « Tournez-moi ! 🔄 » UNIQUEMENT pour l'animation du guichet */
-        if (estPageGuichet) {
+          /* Écran mobile portrait « Tournez-moi ! 🔄 » pour l'animation du guichet */
           var rotBoites = [
             document.querySelector("#rot-overlay .rot-boite"),
             document.getElementById("rotate-overlay")
@@ -1026,20 +812,6 @@
               rBoite.appendChild(bRotVid);
             }
           }
-        }
-
-        /* Studios SQL intégrés dans cours/sql.html : bouton Voix de l'homme uniquement (aucune vidéo) */
-        var sqlStudios = [
-          ["janim-btn-play", "sql-jointure-where"],
-          ["gbanim-btn-play", "sql-groupby-having"],
-          ["hvanim-btn-play", "sql-groupby-having"]
-        ];
-        for (var s = 0; s < sqlStudios.length; s++) {
-          (function (btnId, vSlug) {
-            var playBtn = document.getElementById(btnId);
-            if (!playBtn || !playBtn.parentNode || playBtn.parentNode.querySelector(".sti-btn-voix-homme-toggle")) return;
-            playBtn.parentNode.appendChild(creerBoutonVoixHomme(vSlug));
-          })(sqlStudios[s][0], sqlStudios[s][1]);
         }
 
         /* Boutons Guichet (#animOpen, #btn-top-anim-guichet, #animModal) dans cours/php.html */
@@ -1083,66 +855,6 @@
           animTools.insertBefore(bModG, animTools.firstChild);
         }
       }
-
-      /* ── Écoute des clics sur les boutons d'étape pas-à-pas pour déclencher la voix de l'homme ── */
-      document.addEventListener(
-        "click",
-        function (e) {
-          var t = e.target;
-          if (!t || !t.closest) return;
-          if (t.closest(".sti-btn-video-dedie") || t.closest(".sti-btn-voix-homme-toggle") || t.closest("#sti-video-modal-overlay")) return;
-
-          if (t.closest("#animClose, #recapClose")) {
-            arreterAudioHomme();
-            return;
-          }
-
-          var slugStudioSql = null;
-          if (t.closest("#sql-jointure-anim-app")) slugStudioSql = "sql-jointure-where";
-          else if (t.closest("#sql-groupby-anim-app") || t.closest("#sql-having-anim-app")) slugStudioSql = "sql-groupby-having";
-
-          var btn = t.closest("button, input[type='button'], .dot, .phase, .chip, .tpbd-step-dot, .tpbd-q-pill");
-          if (!btn) return;
-
-          var idB = (btn.id || "").toLowerCase();
-          var clsB = (btn.className || "").toLowerCase();
-          var txtB = (btn.innerText || btn.value || "").toLowerCase();
-
-          var estActionEtape =
-            idB.indexOf("prev") !== -1 ||
-            idB.indexOf("next") !== -1 ||
-            idB.indexOf("suiv") !== -1 ||
-            idB.indexOf("prec") !== -1 ||
-            idB.indexOf("play") !== -1 ||
-            idB.indexOf("auto") !== -1 ||
-            idB.indexOf("skip") !== -1 ||
-            idB.indexOf("rst") !== -1 ||
-            idB.indexOf("reset") !== -1 ||
-            idB.indexOf("start") !== -1 ||
-            idB.indexOf("go") === 0 ||
-            idB === "mins" ||
-            idB === "msel" ||
-            idB === "mupd" ||
-            clsB.indexOf("dot") !== -1 ||
-            clsB.indexOf("chip") !== -1 ||
-            clsB.indexOf("phase") !== -1 ||
-            clsB.indexOf("q-pill") !== -1 ||
-            txtB.indexOf("suivant") !== -1 ||
-            txtB.indexOf("précédent") !== -1 ||
-            txtB.indexOf("étape") !== -1 ||
-            txtB.indexOf("exécuter") !== -1 ||
-            (btn.parentNode && btn.parentNode.id === "tabs");
-
-          if (estActionEtape && (slugStudioSql || slugPasAPasPage)) {
-            setTimeout(function () {
-              lireEtapeVoixHomme(slugStudioSql || slugPasAPasPage);
-            }, 120);
-          }
-        },
-        true
-      );
-
-      window.addEventListener("beforeunload", arreterAudioHomme);
 
       injecterBoutonsStudio();
       setTimeout(injecterBoutonsStudio, 900);
