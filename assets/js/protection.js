@@ -574,7 +574,6 @@
      ═══════════════════════════════════════════════════════════════════════════ */
   function installerNarrationVocaleSTI() {
     try {
-      if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") return;
       if (document.getElementById("sti-voix-dock")) return;
 
       var pathLower = (location.pathname || "").toLowerCase();
@@ -589,7 +588,8 @@
         return;
       }
 
-      var synth = window.speechSynthesis;
+      var hasSpeech = ("speechSynthesis" in window) && typeof SpeechSynthesisUtterance !== "undefined";
+      var synth = hasSpeech ? window.speechSynthesis : null;
       var voixChoisie = null;
       var voixAuto = true;
       try {
@@ -614,6 +614,7 @@
       var blocsCours = [];
 
       function choisirVoixFr() {
+        if (!hasSpeech || !synth) return;
         try {
           var liste = synth.getVoices() || [];
           var best = null;
@@ -638,7 +639,7 @@
         } catch (e) {}
       }
       choisirVoixFr();
-      if (synth.onvoiceschanged !== undefined) {
+      if (synth && synth.onvoiceschanged !== undefined) {
         synth.onvoiceschanged = choisirVoixFr;
       }
 
@@ -1150,13 +1151,16 @@
         if (!garderAuto) {
           modeAutoVoix = false;
         }
-        try {
-          synth.cancel();
-        } catch (e) {}
+        if (synth) {
+          try {
+            synth.cancel();
+          } catch (e) {}
+        }
         majBoutonsUI(false);
       }
 
       function lireTexte(brut, depuisAuto) {
+        if (!hasSpeech || !synth) return;
         var propre = nettoyerTextePourVoix(brut);
         if (!propre) return;
         dernierTexteLu = propre;
@@ -1303,8 +1307,8 @@
         return prefixeAssetsVideosSTI() + slugOuUrl + ".mp4";
       }
 
-      function detecterVideoPasAPasCourant() {
-        var p = String(location.pathname || "").toLowerCase();
+      function detecterVideoParChemin(chemin) {
+        var p = String(chemin || "").toLowerCase();
         if (p.indexOf("php-mysqli") !== -1) return "php-guichet";
         if (p.indexOf("php-recap") !== -1) return "php-recap";
         if (p.indexOf("sondage-parcours-pas-a-pas") !== -1 || p.indexOf("sti0/sondage") !== -1) return "php-sondage-pas-a-pas";
@@ -1321,6 +1325,10 @@
         if (p.indexOf("site-tunisie-correction-animation") !== -1 || p.indexOf("carte-timbre-droite-haut") !== -1) return "projet-tunisie-animation";
         if (p.indexOf("cours/javascript") !== -1 || p.indexOf("-correction-js") !== -1 || p.indexOf("carte-bancaire/cb") !== -1) return "javascript-controles-sti";
         return null;
+      }
+
+      function detecterVideoPasAPasCourant() {
+        return detecterVideoParChemin(location.pathname);
       }
 
       function creerBlocVideoInline(slug, idBox) {
@@ -1343,7 +1351,9 @@
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
             '</div>' +
           '</div>' +
-          '<video controls playsinline preload="metadata" src="' + url + '"></video>';
+          '<video controls playsinline webkit-playsinline preload="metadata" src="' + url + '">' +
+            '<source src="' + url + '" type="video/mp4" />' +
+          '</video>';
 
         var vid = box.querySelector("video");
         var btnsRate = box.querySelectorAll("button[data-vrate]");
@@ -1393,6 +1403,17 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt) {
         arreterVoix(false);
+        try {
+          if (
+            window.top &&
+            window.top !== window &&
+            CATALOGUE_VIDEOS_STI[slugOuUrl] &&
+            typeof window.top.ouvrirVideoPasAPasSTI === "function"
+          ) {
+            window.top.ouvrirVideoPasAPasSTI(slugOuUrl, titreOpt);
+            return;
+          }
+        } catch (e) {}
         var info = CATALOGUE_VIDEOS_STI[slugOuUrl] || null;
         var url = resoudreUrlVideoSTI(slugOuUrl);
         var titre = titreOpt || (info ? info.title : "🎥 Vidéo commentée du pas-à-pas");
@@ -1412,11 +1433,11 @@
                   '<button type="button" data-mrate="1">1×</button>' +
                   '<button type="button" data-mrate="1.25">1.25×</button>' +
                   '<button type="button" data-mrate="1.5">1.5×</button>' +
-                  '<a id="sti-video-modal-dl" href="#" download>⬇ Télécharger .MP4</a>' +
+                  '<a id="sti-video-modal-dl" href="#" download>⬇ MP4</a>' +
                   '<button type="button" id="sti-video-modal-close">✕ Fermer</button>' +
                 '</div>' +
               '</div>' +
-              '<video id="sti-video-modal-player" controls playsinline preload="metadata"></video>' +
+              '<video id="sti-video-modal-player" controls playsinline webkit-playsinline preload="metadata"></video>' +
             '</div>';
           document.body.appendChild(overlay);
 
@@ -1449,6 +1470,8 @@
         if (vEl) {
           if (vEl.getAttribute("src") !== url) {
             vEl.setAttribute("src", url);
+            vEl.innerHTML = '<source src="' + url + '" type="video/mp4" />';
+            try { vEl.load(); } catch (e) {}
           }
           overlay.hidden = false;
           try { vEl.play(); } catch (e) {}
@@ -1463,23 +1486,22 @@
       dock.className = "sti-no-print";
       dock.innerHTML =
         '<button type="button" id="sti-voix-btn-collapse" title="Réduire / Ouvrir le lecteur vocal STI">🎧</button>' +
-        '<button type="button" id="sti-voix-btn-toggle" class="sti-voix-item" title="Activer ou couper la voix automatique sur les étapes">🔊 Voix ON</button>' +
-        '<button type="button" id="sti-voix-btn-speak" class="sti-voix-item" title="Écouter l\'explication de l\'étape actuelle">▶ Lire l\'étape</button>' +
-        '<button type="button" id="sti-voix-btn-auto" class="sti-voix-item" title="Lancer l\'animation pas à pas commentée par la voix">🎬 Auto + Voix</button>' +
+        (hasSpeech
+          ? '<button type="button" id="sti-voix-btn-toggle" class="sti-voix-item" title="Activer ou couper la voix automatique sur les étapes">🔊 Voix ON</button>' +
+            '<button type="button" id="sti-voix-btn-speak" class="sti-voix-item" title="Écouter l\'explication de l\'étape actuelle">▶ Lire l\'étape</button>' +
+            '<button type="button" id="sti-voix-btn-auto" class="sti-voix-item" title="Lancer l\'animation pas à pas commentée par la voix">🎬 Auto + Voix</button>'
+          : '') +
         (slugVideoPage
           ? '<button type="button" id="sti-voix-btn-video" class="sti-voix-item sti-voix-video-btn" title="Regarder la vidéo .MP4 commentée dédiée à ce pas-à-pas">🎥 Vidéo MP4</button>'
           : '') +
-        '<button type="button" id="sti-voix-btn-speed" class="sti-voix-item" title="Vitesse de la voix">1.15×</button>';
+        (hasSpeech
+          ? '<button type="button" id="sti-voix-btn-speed" class="sti-voix-item" title="Vitesse de la voix">1.15×</button>'
+          : '');
       document.body.appendChild(dock);
 
       if (slugVideoPage && document.getElementById("sti-voix-btn-video")) {
         document.getElementById("sti-voix-btn-video").addEventListener("click", function () {
-          var boxInline = document.getElementById("sti-video-inline-main");
-          if (boxInline) {
-            basculerBlocVideoInline(boxInline);
-          } else {
-            window.ouvrirVideoPasAPasSTI(slugVideoPage);
-          }
+          window.ouvrirVideoPasAPasSTI(slugVideoPage);
         });
       }
 
@@ -1487,138 +1509,177 @@
         dock.classList.toggle("collapsed");
       });
 
-      document.getElementById("sti-voix-btn-toggle").addEventListener("click", function () {
-        voixAuto = !voixAuto;
-        try {
-          localStorage.setItem("sti-voix-auto", voixAuto ? "1" : "0");
-        } catch (e) {}
-        if (!voixAuto) {
-          arreterVoix(false);
-        } else {
-          majBoutonsUI(false);
-          lireTexte(extraireTexteEtapeActive(), false);
-        }
-      });
-
-      document.getElementById("sti-voix-btn-speak").addEventListener("click", function () {
-        if (synth.speaking) {
-          arreterVoix(false);
-        } else {
-          lireTexte(extraireTexteEtapeActive(), false);
-        }
-      });
-
-      document.getElementById("sti-voix-btn-auto").addEventListener("click", function () {
-        if (modeAutoVoix) {
-          arreterVoix(false);
-        } else {
-          voixAuto = true;
-          modeAutoVoix = true;
+      if (document.getElementById("sti-voix-btn-toggle")) {
+        document.getElementById("sti-voix-btn-toggle").addEventListener("click", function () {
+          voixAuto = !voixAuto;
           try {
-            localStorage.setItem("sti-voix-auto", "1");
+            localStorage.setItem("sti-voix-auto", voixAuto ? "1" : "0");
           } catch (e) {}
-          majBoutonsUI(true);
-          lireTexte(extraireTexteEtapeActive(), true);
-        }
-      });
+          if (!voixAuto) {
+            arreterVoix(false);
+          } else {
+            majBoutonsUI(false);
+            lireTexte(extraireTexteEtapeActive(), false);
+          }
+        });
+      }
 
-      document.getElementById("sti-voix-btn-speed").addEventListener("click", function () {
-        idxVitesse = (idxVitesse + 1) % vitesses.length;
-        try {
-          localStorage.setItem("sti-voix-speed", String(vitesses[idxVitesse]));
-        } catch (e) {}
-        majBoutonsUI(synth.speaking);
-      });
+      if (document.getElementById("sti-voix-btn-speak")) {
+        document.getElementById("sti-voix-btn-speak").addEventListener("click", function () {
+          if (synth && synth.speaking) {
+            arreterVoix(false);
+          } else {
+            lireTexte(extraireTexteEtapeActive(), false);
+          }
+        });
+      }
 
-      /* ── Injection des boutons vocaux + Vidéo .MP4 dédiée dans les barres de contrôle des studios ── */
+      if (document.getElementById("sti-voix-btn-auto")) {
+        document.getElementById("sti-voix-btn-auto").addEventListener("click", function () {
+          if (modeAutoVoix) {
+            arreterVoix(false);
+          } else {
+            voixAuto = true;
+            modeAutoVoix = true;
+            try {
+              localStorage.setItem("sti-voix-auto", "1");
+            } catch (e) {}
+            majBoutonsUI(true);
+            lireTexte(extraireTexteEtapeActive(), true);
+          }
+        });
+      }
+
+      if (document.getElementById("sti-voix-btn-speed")) {
+        document.getElementById("sti-voix-btn-speed").addEventListener("click", function () {
+          idxVitesse = (idxVitesse + 1) % vitesses.length;
+          try {
+            localStorage.setItem("sti-voix-speed", String(vitesses[idxVitesse]));
+          } catch (e) {}
+          majBoutonsUI(synth && synth.speaking);
+        });
+      }
+
+      /* ── Injection des boutons vocaux + Vidéo .MP4 dédiée dans les barres de contrôle des studios (PC & Mobile) ── */
       function injecterBoutonsStudio() {
+        var btnPlayStat = document.getElementById("btn-play");
         var barresCibles = [
           document.querySelector(".controls"),
-          document.getElementById("parcours"),
-          document.getElementById("ctrl-auto"),
+          document.querySelector(".ctrl"),
+          document.querySelector(".ctrl-mobile"),
+          document.querySelector(".ctrl-texte"),
+          document.querySelector(".topbar-guichet"),
+          document.querySelector(".bar:not(.scan-bar)"),
+          document.getElementById("phpm-ctrl"),
           document.querySelector(".topbar-recap > div:last-child"),
+          document.querySelector(".barre"),
+          btnPlayStat ? btnPlayStat.parentNode : null,
           document.querySelector(".tp1-controls"),
           document.querySelector(".tp2-controls"),
           document.querySelector(".tp3-controls"),
           document.querySelector(".tpbd-controls"),
-          document.querySelector(".tpgh-controls"),
-          document.getElementById("bar")
+          document.querySelector(".tpgh-controls")
         ];
         for (var i = 0; i < barresCibles.length; i++) {
           var bar = barresCibles[i];
-          if (!bar || bar.querySelector(".sti-btn-voix-inline")) continue;
+          if (!bar || bar.tagName === "INPUT" || bar.querySelector(".sti-btn-video-dedie, .sti-btn-voix-inline")) continue;
 
-          var b1 = document.createElement("button");
-          b1.type = "button";
-          b1.className = "sti-btn-voix-inline sti-btn-voix-inline-toggle";
-          b1.textContent = voixAuto ? "🔊 Voix ON" : "🔇 Voix OFF";
-          b1.title = "Activer / couper la description vocale des étapes";
-          b1.addEventListener("click", function (ev) {
-            ev.stopPropagation();
-            document.getElementById("sti-voix-btn-toggle").click();
-          });
+          if (hasSpeech && bar.id !== "phpm-ctrl" && !bar.classList.contains("ctrl-mobile")) {
+            var b1 = document.createElement("button");
+            b1.type = "button";
+            b1.className = "sti-btn-voix-inline sti-btn-voix-inline-toggle";
+            b1.textContent = voixAuto ? "🔊 Voix ON" : "🔇 Voix OFF";
+            b1.title = "Activer / couper la description vocale des étapes";
+            b1.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              var bt = document.getElementById("sti-voix-btn-toggle");
+              if (bt) bt.click();
+            });
 
-          var b2 = document.createElement("button");
-          b2.type = "button";
-          b2.className = "sti-btn-voix-inline auto-play sti-btn-voix-inline-auto";
-          b2.textContent = "🎬 Lecture commentée";
-          b2.title = "Jouer automatiquement toutes les étapes avec la voix off";
-          b2.addEventListener("click", function (ev) {
-            ev.stopPropagation();
-            document.getElementById("sti-voix-btn-auto").click();
-          });
+            var b2 = document.createElement("button");
+            b2.type = "button";
+            b2.className = "sti-btn-voix-inline auto-play sti-btn-voix-inline-auto";
+            b2.textContent = "🎬 Lecture commentée";
+            b2.title = "Jouer automatiquement toutes les étapes avec la voix off";
+            b2.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              var ba = document.getElementById("sti-voix-btn-auto");
+              if (ba) ba.click();
+            });
 
-          bar.appendChild(b1);
-          bar.appendChild(b2);
+            bar.appendChild(b1);
+            bar.appendChild(b2);
+          }
 
           if (slugVideoPage && CATALOGUE_VIDEOS_STI[slugVideoPage]) {
             var bVid = document.createElement("button");
             bVid.type = "button";
             bVid.className = "sti-btn-video-dedie";
-            bVid.textContent = "🎥 Vidéo du pas-à-pas (.mp4)";
+            bVid.textContent = (bar.id === "phpm-ctrl" || bar.classList.contains("ctrl-mobile"))
+              ? "🎥 Vidéo"
+              : "🎥 Vidéo du pas-à-pas (.mp4)";
             bVid.title = CATALOGUE_VIDEOS_STI[slugVideoPage].title;
-
-            var ancreInsertion = bar.classList.contains("topbar-recap") || (bar.parentNode && bar.parentNode.classList && bar.parentNode.classList.contains("topbar-recap"))
-              ? bar.parentNode
-              : bar;
-            var boxVid = document.getElementById("sti-video-inline-main");
-            if (!boxVid && ancreInsertion && ancreInsertion.parentNode) {
-              boxVid = creerBlocVideoInline(slugVideoPage, "sti-video-inline-main");
-              if (boxVid) {
-                ancreInsertion.parentNode.insertBefore(boxVid, ancreInsertion.nextSibling);
-              }
-            }
             bVid.addEventListener("click", function (ev) {
               ev.stopPropagation();
-              var b = document.getElementById("sti-video-inline-main");
-              if (b) basculerBlocVideoInline(b);
-              else window.ouvrirVideoPasAPasSTI(slugVideoPage);
+              window.ouvrirVideoPasAPasSTI(slugVideoPage);
             });
             bar.appendChild(bVid);
           }
         }
 
-        /* Si la page courante a une vidéo dédiée mais pas de barre .controls standard (ex: sql-contraintes, cssanimee, Sondage.html, Statistiques.html, atelier_sql_3_fenetres) */
-        if (slugVideoPage && !document.getElementById("sti-video-inline-main") && !document.getElementById("sti-banniere-video-dediee")) {
+        /* Écrans mobiles portrait « Tournez-moi ! 🔄 » (#rot-overlay et #rotate-overlay) */
+        if (slugVideoPage && CATALOGUE_VIDEOS_STI[slugVideoPage]) {
+          var rotBoites = [
+            document.querySelector("#rot-overlay .rot-boite"),
+            document.getElementById("rotate-overlay")
+          ];
+          for (var rb = 0; rb < rotBoites.length; rb++) {
+            var rBoite = rotBoites[rb];
+            if (rBoite && !rBoite.querySelector(".sti-btn-video-rot-mobile")) {
+              var bRotVid = document.createElement("button");
+              bRotVid.type = "button";
+              bRotVid.className = "sti-btn-video-dedie sti-btn-video-rot-mobile";
+              bRotVid.style.cssText = "margin:14px auto 4px;padding:12px 20px;font-size:14px;border-radius:999px;display:inline-flex;";
+              bRotVid.textContent = "🎥 Regarder la vidéo commentée (.mp4)";
+              bRotVid.addEventListener("click", function (ev) {
+                ev.stopPropagation();
+                window.ouvrirVideoPasAPasSTI(slugVideoPage);
+              });
+              rBoite.appendChild(bRotVid);
+            }
+          }
+        }
+
+        /* Bannière vidéo en haut de chaque page ayant un pas-à-pas dédié (PC & Mobile) */
+        if (slugVideoPage && CATALOGUE_VIDEOS_STI[slugVideoPage] && !document.getElementById("sti-banniere-video-dediee")) {
           var conteneurHaut =
-            document.querySelector(".wrap, .container, main, .page, body > header, body > div");
+            document.querySelector(".topbar-guichet, .topbar-recap, nav.barre, .wrap, .container, main, .page, body > header, body > div");
           if (conteneurHaut && conteneurHaut.parentNode) {
             var barreDediee = document.createElement("div");
             barreDediee.id = "sti-banniere-video-dediee";
             barreDediee.className = "sti-no-print";
-            barreDediee.style.cssText = "max-width:980px;margin:10px auto 4px;padding:0 12px;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;";
+            barreDediee.style.cssText = "max-width:980px;margin:8px auto 6px;padding:0 10px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;";
             var btnOuvrir = document.createElement("button");
             btnOuvrir.type = "button";
             btnOuvrir.className = "sti-btn-video-dedie";
-            btnOuvrir.textContent = "🎥 Vidéo explicative de ce pas-à-pas (.mp4)";
+            btnOuvrir.textContent = "🎥 Voir la vidéo explicative de ce pas-à-pas (.mp4)";
             btnOuvrir.title = CATALOGUE_VIDEOS_STI[slugVideoPage].title;
-            var blocV = creerBlocVideoInline(slugVideoPage, "sti-video-inline-main");
+            var blocV = document.getElementById("sti-video-inline-main") || creerBlocVideoInline(slugVideoPage, "sti-video-inline-main");
             btnOuvrir.addEventListener("click", function () {
               basculerBlocVideoInline(blocV);
             });
+            var btnModalV = document.createElement("button");
+            btnModalV.type = "button";
+            btnModalV.className = "sti-btn-video-dedie";
+            btnModalV.style.background = "linear-gradient(125deg,#0e7c86,#6b5bd2)";
+            btnModalV.textContent = "⛶ Plein écran (.mp4)";
+            btnModalV.addEventListener("click", function () {
+              window.ouvrirVideoPasAPasSTI(slugVideoPage);
+            });
             barreDediee.appendChild(btnOuvrir);
+            barreDediee.appendChild(btnModalV);
             conteneurHaut.parentNode.insertBefore(barreDediee, conteneurHaut);
-            if (blocV) {
+            if (blocV && !blocV.parentNode) {
               conteneurHaut.parentNode.insertBefore(blocV, conteneurHaut);
             }
           }
@@ -1633,23 +1694,25 @@
         for (var s = 0; s < sqlStudios.length; s++) {
           (function (btnId, kind, vSlug, vLabel) {
             var playBtn = document.getElementById(btnId);
-            if (!playBtn || !playBtn.parentNode || playBtn.parentNode.querySelector(".sti-btn-voix-sql-" + kind)) return;
-            var bv = document.createElement("button");
-            bv.type = "button";
-            bv.className = "sti-btn-voix-inline auto-play sti-btn-voix-sql-" + kind;
-            bv.textContent = "🔊 Animer avec voix";
-            bv.addEventListener("click", function () {
-              dernierStudioSql = kind;
-              voixAuto = true;
-              modeAutoVoix = true;
-              majBoutonsUI(true);
-              lireTexte(extraireTexteEtapeActive(), true);
-            });
-            playBtn.parentNode.appendChild(bv);
+            if (!playBtn || !playBtn.parentNode || playBtn.parentNode.querySelector(".sti-btn-video-sql-" + kind)) return;
+            if (hasSpeech) {
+              var bv = document.createElement("button");
+              bv.type = "button";
+              bv.className = "sti-btn-voix-inline auto-play sti-btn-voix-sql-" + kind;
+              bv.textContent = "🔊 Animer avec voix";
+              bv.addEventListener("click", function () {
+                dernierStudioSql = kind;
+                voixAuto = true;
+                modeAutoVoix = true;
+                majBoutonsUI(true);
+                lireTexte(extraireTexteEtapeActive(), true);
+              });
+              playBtn.parentNode.appendChild(bv);
+            }
 
             var bVideoSql = document.createElement("button");
             bVideoSql.type = "button";
-            bVideoSql.className = "sti-btn-video-dedie";
+            bVideoSql.className = "sti-btn-video-dedie sti-btn-video-sql-" + kind;
             bVideoSql.textContent = vLabel;
             var idBoxSql = "sti-video-box-sql-" + kind;
             var wrapStudio = playBtn.closest(".sql-janim-wrap") || playBtn.parentNode;
@@ -1670,7 +1733,7 @@
         var btnContraintes = document.getElementById("btnSqlContraintes");
         if (btnContraintes && btnContraintes.parentNode && !btnContraintes.parentNode.querySelector(".sti-btn-video-contraintes")) {
           var wrapC = document.createElement("div");
-          wrapC.style.cssText = "margin-top:8px;display:flex;justify-content:center;";
+          wrapC.style.cssText = "margin-top:8px;display:flex;justify-content:center;flex-wrap:wrap;gap:6px;";
           var bVC = document.createElement("button");
           bVC.type = "button";
           bVC.className = "sti-btn-video-dedie sti-btn-video-contraintes";
@@ -1686,7 +1749,7 @@
           }
         }
 
-        /* Boutons Guichet (#animOpen & #btn-top-anim-guichet) dans cours/php.html */
+        /* Boutons Guichet (#animOpen, #btn-top-anim-guichet, #animModal, #recapModal) dans cours/php.html */
         var btnAnimOpen = document.getElementById("animOpen");
         if (btnAnimOpen && btnAnimOpen.parentNode && !btnAnimOpen.parentNode.querySelector(".sti-btn-video-guichet")) {
           var bVG = document.createElement("button");
@@ -1708,24 +1771,99 @@
           var bVGTop = document.createElement("button");
           bVGTop.type = "button";
           bVGTop.className = "sti-btn-video-dedie sti-btn-video-top-php";
-          bVGTop.textContent = "🎥 Vidéo Guichet (.mp4)";
+          bVGTop.innerHTML = '<span>🎥</span><span>Guichet</span>';
+          bVGTop.title = "Vidéo pas-à-pas : Histoire du Guichet PHP + MySQLi (.mp4)";
           bVGTop.addEventListener("click", function () {
             window.ouvrirVideoPasAPasSTI("php-guichet");
           });
           var bVRTop = document.createElement("button");
           bVRTop.type = "button";
           bVRTop.className = "sti-btn-video-dedie";
-          bVRTop.textContent = "🎥 Vidéo Récap PHP (.mp4)";
+          bVRTop.innerHTML = '<span>🎥</span><span>Récap</span>';
+          bVRTop.title = "Vidéo pas-à-pas : Récap PHP en 8 étapes (.mp4)";
           bVRTop.addEventListener("click", function () {
             window.ouvrirVideoPasAPasSTI("php-recap");
           });
           btnTopGuichet.parentNode.appendChild(bVGTop);
           btnTopGuichet.parentNode.appendChild(bVRTop);
         }
+        /* En-têtes des modales #animModal et #recapModal dans cours/php.html (visibles sur mobile !) */
+        var animTools = document.querySelector("#animModal .anim-tools");
+        if (animTools && !animTools.querySelector(".sti-btn-video-modal-guichet")) {
+          var bModG = document.createElement("button");
+          bModG.type = "button";
+          bModG.className = "sti-btn-video-dedie sti-btn-video-modal-guichet";
+          bModG.textContent = "🎥 Vidéo (.mp4)";
+          bModG.addEventListener("click", function () {
+            window.ouvrirVideoPasAPasSTI("php-guichet");
+          });
+          animTools.insertBefore(bModG, animTools.firstChild);
+        }
+        var recapTools = document.querySelector("#recapModal .anim-tools");
+        if (recapTools && !recapTools.querySelector(".sti-btn-video-modal-recap")) {
+          var bModR = document.createElement("button");
+          bModR.type = "button";
+          bModR.className = "sti-btn-video-dedie sti-btn-video-modal-recap";
+          bModR.textContent = "🎥 Vidéo (.mp4)";
+          bModR.addEventListener("click", function () {
+            window.ouvrirVideoPasAPasSTI("php-recap");
+          });
+          recapTools.insertBefore(bModR, recapTools.firstChild);
+        }
+
+        /* En-têtes des modales #pdfModal (series-exercices.html) et #modal-doc-bac (bac-pratique.html) */
+        var pdfFrame = document.getElementById("pdfFrame");
+        var modalReloadBtn = document.getElementById("modalReloadBtn");
+        if (pdfFrame && modalReloadBtn && modalReloadBtn.parentNode && !document.getElementById("sti-btn-video-pdfmodal")) {
+          var bPdfVid = document.createElement("button");
+          bPdfVid.type = "button";
+          bPdfVid.id = "sti-btn-video-pdfmodal";
+          bPdfVid.className = "sti-btn-video-dedie";
+          bPdfVid.style.display = "none";
+          bPdfVid.textContent = "🎥 Vidéo (.mp4)";
+          bPdfVid.addEventListener("click", function () {
+            var sl = detecterVideoParChemin(pdfFrame.getAttribute("src") || "");
+            if (sl) window.ouvrirVideoPasAPasSTI(sl);
+          });
+          modalReloadBtn.parentNode.insertBefore(bPdfVid, modalReloadBtn);
+          function majBtnPdfVid() {
+            var sl = detecterVideoParChemin(pdfFrame.getAttribute("src") || "");
+            bPdfVid.style.display = sl ? "inline-flex" : "none";
+          }
+          pdfFrame.addEventListener("load", majBtnPdfVid);
+          if (typeof MutationObserver !== "undefined") {
+            new MutationObserver(majBtnPdfVid).observe(pdfFrame, { attributes: true, attributeFilter: ["src"] });
+          }
+        }
+
+        var docBacFrame = document.getElementById("modal-doc-frame");
+        var docBacTitre = document.getElementById("modal-doc-titre");
+        if (docBacFrame && docBacTitre && docBacTitre.nextElementSibling && !document.getElementById("sti-btn-video-docbac")) {
+          var bBacVid = document.createElement("button");
+          bBacVid.type = "button";
+          bBacVid.id = "sti-btn-video-docbac";
+          bBacVid.className = "sti-btn-video-dedie";
+          bBacVid.style.display = "none";
+          bBacVid.textContent = "🎥 Vidéo (.mp4)";
+          bBacVid.addEventListener("click", function () {
+            var sl = detecterVideoParChemin(docBacFrame.getAttribute("src") || "");
+            if (sl) window.ouvrirVideoPasAPasSTI(sl);
+          });
+          docBacTitre.nextElementSibling.insertBefore(bBacVid, docBacTitre.nextElementSibling.firstChild);
+          function majBtnBacVid() {
+            var sl = detecterVideoParChemin(docBacFrame.getAttribute("src") || "");
+            bBacVid.style.display = sl ? "inline-flex" : "none";
+          }
+          docBacFrame.addEventListener("load", majBtnBacVid);
+          if (typeof MutationObserver !== "undefined") {
+            new MutationObserver(majBtnBacVid).observe(docBacFrame, { attributes: true, attributeFilter: ["src"] });
+          }
+        }
       }
 
       /* ── Injection des boutons « 🔊 Écouter » sur les blocs de cours et d'exercices corrigés ── */
       function injecterBoutonsBlocsCours() {
+        if (!hasSpeech) return;
         var cibles = document.querySelectorAll(
           ".step, .analogy, .exo-card, .question-card, .corr-block, .correction-box, main section[id], article section[id]"
         );

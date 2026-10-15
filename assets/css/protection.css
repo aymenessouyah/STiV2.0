@@ -163,14 +163,14 @@ body.sti-gold #sti-watermark {
    ══════════════════════════════════════════════════════════ */
 #sti-voix-dock {
   position: fixed;
-  left: 12px;
-  bottom: 12px;
-  z-index: 2147483000;
+  left: 72px;
+  bottom: 14px;
+  z-index: 2147483640;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
-  max-width: calc(100vw - 90px);
+  max-width: calc(100vw - 140px);
   padding: 6px 10px;
   border-radius: 999px;
   background: rgba(16, 23, 40, 0.94);
@@ -180,6 +180,12 @@ body.sti-gold #sti-watermark {
   font: 700 12px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
   backdrop-filter: blur(6px);
   transition: transform 0.2s ease, opacity 0.2s ease;
+}
+html.sti-has-bottom-bar #sti-voix-dock {
+  bottom: 70px !important;
+}
+html.sti-msn-mob-open #sti-voix-dock {
+  display: none !important;
 }
 #sti-voix-dock.collapsed .sti-voix-item {
   display: none !important;
@@ -268,16 +274,32 @@ body.sti-gold #sti-watermark {
   outline-offset: 4px !important;
   transition: outline 0.2s ease;
 }
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   #sti-voix-dock {
-    left: 8px;
-    bottom: 8px;
+    left: 58px;
+    bottom: 10px;
+    max-width: calc(100vw - 68px);
     padding: 5px 8px;
     gap: 4px;
+    border-radius: 16px;
   }
   #sti-voix-dock button {
     padding: 4px 8px;
     font-size: 11px;
+  }
+  .sti-btn-video-dedie {
+    padding: 6px 10px;
+    font-size: 11.5px;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+  .sti-video-pas-a-pas-box {
+    margin: 8px 6px;
+    padding: 10px;
+  }
+  .sti-video-pas-a-pas-title {
+    font-size: 12.5px;
   }
 }
 @media print {
@@ -386,13 +408,13 @@ body.sti-gold #sti-watermark {
 #sti-video-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 2147483500;
-  background: rgba(10, 15, 28, 0.84);
+  z-index: 2147483647;
+  background: rgba(10, 15, 28, 0.88);
   backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 10px;
 }
 #sti-video-modal-overlay[hidden] {
   display: none !important;

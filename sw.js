@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v188";
+var CACHE = "sti-atelier-v189";
 var SHELL = [
   "./",
   "./index.html",
@@ -850,12 +850,62 @@ self.addEventListener("fetch", function (evt) {
     return;
   }
 
-  /* 2. Tous les autres fichiers (images, PDF, archives .zip/.rar, polices, audio/vidéo, .docx) : Cache d'abord (0 ms) + rafraîchissement en tâche de fond */
+  /* 2. Fichiers vidéo/audio (.mp4, .webm, .mp3, .wav) & requêtes HTTP Range (indispensable sur mobile Safari iOS & Chrome Android) */
+  if (/\.(mp4|webm|mp3|wav|ogg|m4a)$/i.test(url.pathname) || req.headers.get("range")) {
+    evt.respondWith(
+      (async function () {
+        var rangeHeader = req.headers.get("range");
+        var enCache = await chercherDansCache(new Request(url.origin + url.pathname), url);
+
+        if (enCache) {
+          if (rangeHeader) {
+            try {
+              var buf = await enCache.clone().arrayBuffer();
+              var total = buf.byteLength;
+              var mRange = /bytes=(\d+)-(\d*)/i.exec(rangeHeader);
+              var start = mRange ? parseInt(mRange[1], 10) : 0;
+              var end = mRange && mRange[2] ? parseInt(mRange[2], 10) : total - 1;
+              if (isNaN(start) || start < 0) start = 0;
+              if (isNaN(end) || end >= total) end = total - 1;
+              if (start > end) start = 0;
+              var chunk = buf.slice(start, end + 1);
+              var cType = enCache.headers.get("Content-Type") || (/\.mp4$/i.test(url.pathname) ? "video/mp4" : "application/octet-stream");
+              return new Response(chunk, {
+                status: 206,
+                statusText: "Partial Content",
+                headers: {
+                  "Content-Type": cType,
+                  "Accept-Ranges": "bytes",
+                  "Content-Range": "bytes " + start + "-" + end + "/" + total,
+                  "Content-Length": String(chunk.byteLength)
+                }
+              });
+            } catch (e) {}
+          }
+          return enCache;
+        }
+
+        try {
+          var rep = await fetch(req);
+          if (rep && rep.status === 200) {
+            var copie = rep.clone();
+            caches.open(CACHE).then(function (c) { c.put(new Request(url.origin + url.pathname), copie); });
+          }
+          return rep;
+        } catch (err) {
+          return enCache || Response.error();
+        }
+      })()
+    );
+    return;
+  }
+
+  /* 3. Tous les autres fichiers (images, PDF, archives .zip/.rar, polices, .docx) : Cache d'abord (0 ms) + rafraîchissement en tâche de fond */
   evt.respondWith(
     chercherDansCache(req, url).then(function (m) {
       var reseau = fetch(req)
         .then(function (rep) {
-          if (rep && rep.ok) {
+          if (rep && rep.status === 200) {
             var copie = rep.clone();
             caches.open(CACHE).then(function (c) { c.put(req, copie); });
           }
