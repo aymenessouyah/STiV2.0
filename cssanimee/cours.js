@@ -296,7 +296,7 @@ var decoAutoTimer = null;
 var decoSegFin = 0;
 var decoAudio = document.createElement('audio');
 decoAudio.preload = 'auto';
-decoAudio.src = '../assets/audio/css-animee.mp3?v=217';
+decoAudio.src = '../assets/audio/css-animee.mp3?v=218';
 decoAudio.style.display = 'none';
 if (document.body) { document.body.appendChild(decoAudio); }
 

@@ -716,35 +716,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=217",
+        file: "php-guichet.mp4?v=218",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=217",
+        file: "css-positionnement.mp4?v=218",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=217",
+        file: "css-animee.mp4?v=218",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=217",
+        file: "sql-cours.mp4?v=218",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=217",
+        file: "html5-cours.mp4?v=218",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=217",
+        file: "css3-cours.mp4?v=218",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=217",
+        file: "javascript-cours.mp4?v=218",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=217",
+        file: "php-cours.mp4?v=218",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -923,6 +923,13 @@
           } catch (e) {}
           if (isDone) synchroniserRevisionDepuisMedia(cle);
           rafraichirBadgesProgressionSTI();
+          var oldTier = Math.floor((prev.maxPct || 0) / 25);
+          var newTier = isDone ? 4 : Math.floor(maxPct / 25);
+          if ((isDone && !prev.done) || newTier > oldTier) {
+            if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+              window.synchroniserProgressionMediaServeurSTI(isDone);
+            }
+          }
         }
       }
       window.enregistrerProgressionMediaSTI = enregistrerProgressionMediaSTI;
@@ -1804,7 +1811,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=217";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=218";
 
           var CUES_MAP = {
             html5: {

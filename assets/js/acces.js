@@ -101,15 +101,15 @@
   /* S'assurer que protection.css et protection.js sont chargés sur 100 % des pages (code source verrouillé pour tous les abonnés) */
   (function assurerProtectionActive() {
     try {
-      if (!document.querySelector('link[href*="protection.css?v=217"]') && document.head) {
+      if (!document.querySelector('link[href*="protection.css?v=218"]') && document.head) {
         var lnk = document.createElement("link");
         lnk.rel = "stylesheet";
-        lnk.href = cfg.RACINE + "assets/css/protection.css?v=217";
+        lnk.href = cfg.RACINE + "assets/css/protection.css?v=218";
         document.head.appendChild(lnk);
       }
-      if (!document.querySelector('script[src*="protection.js?v=217"]') && (document.head || document.documentElement)) {
+      if (!document.querySelector('script[src*="protection.js?v=218"]') && (document.head || document.documentElement)) {
         var scr = document.createElement("script");
-        scr.src = cfg.RACINE + "assets/js/protection.js?v=217";
+        scr.src = cfg.RACINE + "assets/js/protection.js?v=218";
         scr.defer = true;
         (document.head || document.documentElement).appendChild(scr);
       }
@@ -546,7 +546,7 @@
     if (document.body) document.body.classList.toggle("sti-gold", ok);
 
     try {
-      var liens = document.querySelectorAll('link[href*="protection.css?v=217"]');
+      var liens = document.querySelectorAll('link[href*="protection.css?v=218"]');
       for (var i = 0; i < liens.length; i++) liens[i].disabled = ok;
     } catch (e) {}
 
@@ -568,7 +568,7 @@
         if (fr.contentDocument) {
           if (fr.contentDocument.documentElement) fr.contentDocument.documentElement.classList.toggle("sti-gold", ok);
           if (fr.contentDocument.body) fr.contentDocument.body.classList.toggle("sti-gold", ok);
-          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=217"]');
+          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=218"]');
           for (var j = 0; j < liensFr.length; j++) liensFr[j].disabled = ok;
           var wmFr = fr.contentDocument.getElementById("sti-watermark");
           if (ok && wmFr && wmFr.parentNode) wmFr.parentNode.removeChild(wmFr);
@@ -844,7 +844,7 @@
       var qOff = JSON.parse(localStorage.getItem(CLE_FILE_OFFLINE) || "[]");
       qOff.forEach(function (it) {
         var pg = String((it && it.page) || "");
-        if (pg.indexOf("MSG_") !== 0 && pg.indexOf("QUIZ:") !== 0 && pg.indexOf("CTRL_") !== 0) {
+        if (pg.indexOf("MSG_") !== 0 && pg.indexOf("QUIZ:") !== 0 && pg.indexOf("CTRL_") !== 0 && pg !== "PROG_MEDIA") {
           secCache += Number((it && it.duree_sec) || 0);
         }
       });
@@ -873,6 +873,33 @@
       try { mesScores = JSON.parse(localStorage.getItem("sti-mes-scores") || "{}"); } catch (e) {}
       ra.data.forEach(function (a) {
         var pg = a.page || "";
+        if (pg === "PROG_MEDIA") {
+          try {
+            var pm = JSON.parse(a.lieu || "{}");
+            if (pm && pm.m && typeof pm.m === "object") {
+              var locM = JSON.parse(localStorage.getItem("sti-media-prog-v1") || "{}") || {};
+              var modifieM = false;
+              Object.keys(pm.m).forEach(function (k) {
+                var pctSrv = Number(pm.m[k]) || 0;
+                var curLoc = locM[k] || { pct: 0, maxPct: 0, sec: 0, done: false };
+                if (pctSrv > (curLoc.maxPct || 0)) {
+                  curLoc.maxPct = pctSrv;
+                  curLoc.pct = Math.max(curLoc.pct || 0, pctSrv);
+                  if (pctSrv >= 88) curLoc.done = true;
+                  locM[k] = curLoc;
+                  modifieM = true;
+                }
+              });
+              if (modifieM) {
+                localStorage.setItem("sti-media-prog-v1", JSON.stringify(locM));
+                if (typeof window.rafraichirBadgesProgressionSTI === "function") {
+                  window.rafraichirBadgesProgressionSTI();
+                }
+              }
+            }
+          } catch (e) {}
+          return;
+        }
         if (pg.indexOf("QUIZ:") === 0) {
           try {
             var qz = JSON.parse(a.lieu || "{}");
@@ -927,6 +954,54 @@
     });
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "quiz", payload: { uid: currentUid, data: payload } });
+    } catch (e) {}
+  };
+
+  /* ---------- Synchronisation de la progression Vidéos (.mp4) & Audios (.mp3) vers l'Admin ---------- */
+  window.synchroniserProgressionMediaServeurSTI = function (forceNow) {
+    if (!currentUid || currentUid === "offline-user") return;
+    try {
+      var rawM = JSON.parse(localStorage.getItem("sti-media-prog-v1") || "{}") || {};
+      var compactM = {};
+      var nbKeys = 0;
+      Object.keys(rawM).forEach(function (k) {
+        var it = rawM[k];
+        if (!it) return;
+        var p = it.done ? 100 : (Math.floor((it.maxPct || 0) / 10) * 10);
+        if (p >= 10) {
+          compactM[k] = p;
+          nbKeys++;
+        }
+      });
+      if (!nbKeys) return;
+      var hashStr = JSON.stringify(compactM);
+      var prevHash = localStorage.getItem("sti-prog-sync-hash") || "";
+      if (!forceNow && hashStr === prevHash) return;
+      localStorage.setItem("sti-prog-sync-hash", hashStr);
+      var tsIso = new Date().toISOString();
+      var payloadProg = { m: compactM, ts: Date.now() };
+      var rowProg = {
+        user_id: currentUid,
+        page: "PROG_MEDIA",
+        lieu: JSON.stringify(payloadProg),
+        debut: tsIso,
+        fin: tsIso,
+        duree_sec: 0
+      };
+      if (!navigator.onLine) {
+        empilerHorsLigne(rowProg);
+        return;
+      }
+      sb.from("acces").insert(rowProg).then(function (r) {
+        if (r && r.error) empilerHorsLigne(rowProg);
+      });
+      try {
+        sb.channel("sti-diffusion").send({
+          type: "broadcast",
+          event: "prog_media",
+          payload: { uid: currentUid, m: compactM, ts: payloadProg.ts }
+        });
+      } catch (e2) {}
     } catch (e) {}
   };
 
@@ -2077,6 +2152,11 @@
 
     /* Calcul de la durée personnelle de la semaine en cours + récupération des scores serveur */
     rafraichirDureeEtScoresServeur(user.id);
+    if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+      setTimeout(function () {
+        window.synchroniserProgressionMediaServeurSTI(false);
+      }, 1800);
+    }
 
     ecouterMessagesClasse(user.id, profil.classe || "");
   }
