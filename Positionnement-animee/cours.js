@@ -9,6 +9,7 @@
 
 var etape = 0;
 var temps = 0;
+var introPosActive = false;
 var auto = false;
 var minuteur = null;
 var zone = null;
@@ -44,7 +45,6 @@ var COURS = [
     { nh: 6, nc: 11, hh: [], hc: [9] }
   ] },
   { id: 'stat', titre: 'position: static (le défaut)', temps: [
-    { nh: 3, nc: 1, hh: [], hc: [] },
     { nh: 3, nc: 1, hh: [1], hc: [] },
     { nh: 3, nc: 5, hh: [], hc: [1, 2, 3] }
   ] },
@@ -87,22 +87,44 @@ var COURS = [
 ];
 
 /* ---------- déplacement ---------- */
+function allerIntroPosition() {
+  etape = 4;
+  temps = 0;
+  introPosActive = true;
+  afficher();
+  arreterAuto();
+}
+
 function aller(n) {
   etape = n;
   temps = 0;
+  introPosActive = false;
   afficher();
   arreterAuto();
 }
 
 function allerTemps(n) {
+  introPosActive = false;
   temps = n;
   afficher();
   arreterAuto();
 }
 
 function suivant() {
+  if (introPosActive) {
+    introPosActive = false;
+    etape = 4;
+    temps = 0;
+    afficher();
+    return true;
+  }
   var t = COURS[etape].temps.length;
   if (temps < t - 1) { temps = temps + 1; }
+  else if (etape === 3) {
+    etape = 4;
+    temps = 0;
+    introPosActive = true;
+  }
   else if (etape < COURS.length - 1) { etape = etape + 1; temps = 0; }
   else { arreterAuto(); return false; }
   afficher();
@@ -110,6 +132,19 @@ function suivant() {
 }
 
 function precedent() {
+  if (introPosActive) {
+    introPosActive = false;
+    etape = 3;
+    temps = COURS[3].temps.length - 1;
+    afficher();
+    return true;
+  }
+  if (etape === 4 && temps === 0) {
+    introPosActive = true;
+    temps = 0;
+    afficher();
+    return true;
+  }
   if (temps > 0) { temps = temps - 1; }
   else if (etape > 0) { etape = etape - 1; temps = COURS[etape].temps.length - 1; }
   else { return false; }
@@ -138,44 +173,65 @@ function afficher() {
 
   /* une seule scène et une seule paire de fichiers visibles */
   for (i = 0; i < COURS.length; i++) {
-    document.getElementById('scene-' + i).hidden = (i !== etape);
-    document.getElementById('code-html-' + i).hidden = (i !== etape);
-    document.getElementById('code-css-' + i).hidden = (i !== etape);
+    document.getElementById('scene-' + i).hidden = (introPosActive || i !== etape);
+    document.getElementById('code-html-' + i).hidden = (introPosActive || i !== etape);
+    document.getElementById('code-css-' + i).hidden = (introPosActive || i !== etape);
   }
   var blocIntroPos = document.getElementById('sti-intro-etape4-position');
   if (blocIntroPos) {
-    blocIntroPos.hidden = !(etape === 4 || (etape === 3 && temps === COURS[3].temps.length - 1));
+    blocIntroPos.hidden = !introPosActive;
   }
+  var codeHtmlIntro = document.getElementById('code-html-4-0');
+  var codeCssIntro = document.getElementById('code-css-4-0');
+  if (codeHtmlIntro) { codeHtmlIntro.hidden = !introPosActive; }
+  if (codeCssIntro) { codeCssIntro.hidden = !introPosActive; }
 
   /* une seule note visible */
   for (j = 0; j < COURS[etape].temps.length; j++) {
-    document.getElementById('note-' + etape + '-' + j).hidden = (j !== temps);
+    document.getElementById('note-' + etape + '-' + j).hidden = (introPosActive || j !== temps);
   }
 
   habiller();
 
   /* le code : lignes écrites et lignes mises en évidence */
-  ecrireCode('code-html-' + etape, t.nh, t.hh);
-  ecrireCode('code-css-' + etape, t.nc, t.hc);
+  if (introPosActive) {
+    ecrireCode('code-html-4-0', 3, [1, 2]);
+    ecrireCode('code-css-4-0', 6, [0]);
+  } else {
+    ecrireCode('code-html-' + etape, t.nh, t.hh);
+    ecrireCode('code-css-' + etape, t.nc, t.hc);
+  }
 
   /* pastilles + compteur + jauge */
   pastilles = '';
-  for (j = 0; j < COURS[etape].temps.length; j++) {
-    pastilles = pastilles + '<input type="button" class="point ' +
-      (j === temps ? 'actif' : (j < temps ? 'fait' : '')) +
-      ' ' + theme + ' ' + format +
-      '" value="" onclick="allerTemps(' + j + ')" />';
+  if (introPosActive) {
+    pastilles = '<input type="button" class="point actif ' + theme + ' ' + format + '" value="" onclick="allerIntroPosition()" />';
+  } else {
+    for (j = 0; j < COURS[etape].temps.length; j++) {
+      pastilles = pastilles + '<input type="button" class="point ' +
+        (j === temps ? 'actif' : (j < temps ? 'fait' : '')) +
+        ' ' + theme + ' ' + format +
+        '" value="" onclick="allerTemps(' + j + ')" />';
+    }
   }
   document.getElementById('pastilles').innerHTML = pastilles;
 
   for (i = 0; i < COURS.length; i++) {
     document.getElementById('chip-' + i).className =
-      'chip' + (i === etape ? ' actif' : '') + ' ' + theme + ' ' + format;
+      'chip' + (!introPosActive && i === etape ? ' actif' : '') + ' ' + theme + ' ' + format;
+  }
+  var chipIntro = document.getElementById('chip-4-0');
+  if (chipIntro) {
+    chipIntro.className = 'chip' + (introPosActive ? ' actif' : '') + ' ' + theme + ' ' + format;
   }
 
-  document.getElementById('compteur').innerHTML =
-    'étape ' + (etape + 1) + '/' + COURS.length +
-    ' · temps ' + (temps + 1) + '/' + COURS[etape].temps.length;
+  if (introPosActive) {
+    document.getElementById('compteur').innerHTML = 'étape 4.0 · Position · temps 1/1';
+  } else {
+    document.getElementById('compteur').innerHTML =
+      'étape ' + (etape + 1) + '/' + COURS.length +
+      ' · temps ' + (temps + 1) + '/' + COURS[etape].temps.length;
+  }
 
   total = 0; fait = 0;
   for (i = 0; i < COURS.length; i++) {
@@ -264,8 +320,13 @@ function choisirTheme(nom) {
   try { window.localStorage.setItem('fond-du-cours', theme); } catch (e) { }
   habiller();
   /* le code doit être réécrit : ses lignes portent aussi le thème */
-  ecrireCode('code-html-' + etape, COURS[etape].temps[temps].nh, COURS[etape].temps[temps].hh);
-  ecrireCode('code-css-' + etape, COURS[etape].temps[temps].nc, COURS[etape].temps[temps].hc);
+  if (introPosActive) {
+    ecrireCode('code-html-4-0', 3, [1, 2]);
+    ecrireCode('code-css-4-0', 6, [0]);
+  } else {
+    ecrireCode('code-html-' + etape, COURS[etape].temps[temps].nh, COURS[etape].temps[temps].hh);
+    ecrireCode('code-css-' + etape, COURS[etape].temps[temps].nc, COURS[etape].temps[temps].hc);
+  }
 }
 
 function calculerFormat() {

@@ -1140,8 +1140,8 @@ p { font-size: 13px; }
   transition: opacity 0.45s;
 }
 
-.fantome-stat.b2 { opacity: 1; }
-.clair #sti-intro-etape4-position { background: rgba(220,38,38,0.06) !important; color: #1c2740 !important; }
+.fantome-stat.b1 { opacity: 1; }
+.clair #sti-intro-etape4-position { color: #1c2740 !important; }
 .clair #sti-intro-etape4-position blockquote { background: rgba(220,38,38,0.08) !important; color: #1c2740 !important; }
 .clair #sti-intro-etape4-position p { color: #1c2740 !important; }
 
