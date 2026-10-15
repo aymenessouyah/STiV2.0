@@ -1597,6 +1597,7 @@ mysqli_close($connexion);
         function open(e) {
           if (e && e.preventDefault) e.preventDefault();
           M.hidden = false;
+          M.style.display = "flex";
           document.body.style.overflow = "hidden";
           var f = document.getElementById("animFrame");
           var estPortrait = window.innerHeight > window.innerWidth || window.innerWidth <= 768;
@@ -1617,6 +1618,7 @@ mysqli_close($connexion);
           }
           M.classList.remove("full");
           M.hidden = true;
+          M.style.display = "none";
           document.body.style.overflow = "";
           var f = document.getElementById("animFrame");
           if (f && f.contentWindow) {
@@ -1672,6 +1674,7 @@ mysqli_close($connexion);
         function openRecap(e) {
           if (e && e.preventDefault) e.preventDefault();
           MR.hidden = false;
+          MR.style.display = "flex";
           document.body.style.overflow = "hidden";
         }
         function closeRecap() {
@@ -1680,6 +1683,7 @@ mysqli_close($connexion);
           }
           MR.classList.remove("full");
           MR.hidden = true;
+          MR.style.display = "none";
           document.body.style.overflow = "";
         }
         function toggleFullRecap() {

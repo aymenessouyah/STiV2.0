@@ -629,7 +629,7 @@
         box.className = "sti-video-pas-a-pas-box sti-no-print";
         if (idBox) box.id = idBox;
         box.hidden = true;
-        box.style.cssText = "width:min(720px,94vw);max-width:100%;max-height:76vh;overflow:hidden;box-sizing:border-box;margin:12px auto;padding:10px 12px;";
+        box.style.cssText = "display:none;width:min(720px,94vw);max-width:100%;max-height:76vh;overflow:hidden;box-sizing:border-box;margin:12px auto;padding:10px 12px;flex-direction:column;";
         box.innerHTML =
           '<div class="sti-video-pas-a-pas-head">' +
             '<div class="sti-video-pas-a-pas-title">' + VIDEO_GUICHET_INFO.title + '</div>' +
@@ -680,11 +680,13 @@
         }
         var btnClose = box.querySelector("button[data-vclose]");
         if (btnClose) {
-          btnClose.addEventListener("click", function () {
+          btnClose.addEventListener("click", function (ev) {
+            if (ev && ev.stopPropagation) ev.stopPropagation();
             if (vid) {
               try { vid.pause(); vid.currentTime = 0; } catch (e) {}
             }
             box.hidden = true;
+            box.style.display = "none";
           });
         }
         return box;
@@ -693,8 +695,9 @@
       function basculerBlocVideoInline(box) {
         if (!box) return;
         var vid = box.querySelector("video");
-        if (box.hidden) {
+        if (box.hidden || box.style.display === "none") {
           box.hidden = false;
+          box.style.display = "flex";
           try {
             box.scrollIntoView({ behavior: "smooth", block: "nearest" });
           } catch (e) {}
@@ -705,9 +708,10 @@
           }
         } else {
           if (vid) {
-            try { vid.pause(); } catch (e) {}
+            try { vid.pause(); vid.currentTime = 0; } catch (e) {}
           }
           box.hidden = true;
+          box.style.display = "none";
         }
       }
 
@@ -745,7 +749,7 @@
           overlay.id = "sti-video-modal-overlay";
           overlay.className = "sti-no-print";
           overlay.hidden = true;
-          overlay.style.cssText = "position:fixed;inset:0;z-index:2147483647;background:rgba(10,15,28,0.88);display:flex;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;";
+          overlay.style.cssText = "display:none;position:fixed;inset:0;z-index:2147483647;background:rgba(10,15,28,0.88);align-items:center;justify-content:center;padding:12px;box-sizing:border-box;";
           overlay.innerHTML =
             '<div class="sti-video-modal-card" role="dialog" aria-modal="true" style="width:min(740px,92vw);max-width:92vw;max-height:82vh;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;background:#0d1526;color:#f9f1e3;border:2px solid #f4511e;border-radius:16px;padding:12px 14px;">' +
               '<div class="sti-video-pas-a-pas-head" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px;flex-shrink:0;">' +
@@ -795,15 +799,22 @@
               });
             })(mRates[i]);
           }
-          function fermerModaleVideo() {
+          function fermerModaleVideo(ev) {
+            if (ev && ev.stopPropagation) ev.stopPropagation();
             if (mVid) {
               try { mVid.pause(); mVid.currentTime = 0; } catch (e) {}
             }
             overlay.hidden = true;
+            overlay.style.display = "none";
           }
           document.getElementById("sti-video-modal-close").addEventListener("click", fermerModaleVideo);
           overlay.addEventListener("click", function (ev) {
-            if (ev.target === overlay) fermerModaleVideo();
+            if (ev.target === overlay) fermerModaleVideo(ev);
+          });
+          document.addEventListener("keydown", function (ev) {
+            if (ev.key === "Escape" && !overlay.hidden && overlay.style.display !== "none") {
+              fermerModaleVideo(ev);
+            }
           });
         }
 
@@ -827,6 +838,7 @@
             try { vEl.load(); } catch (e) {}
           }
           overlay.hidden = false;
+          overlay.style.display = "flex";
           try { vEl.play(); } catch (e) {}
         }
       };

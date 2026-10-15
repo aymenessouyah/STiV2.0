@@ -565,7 +565,7 @@ footer {
   padding: 1rem;
 }
 .anim-modal[hidden] {
-  display: none;
+  display: none !important;
 }
 .anim-box {
   background: var(--bg);
