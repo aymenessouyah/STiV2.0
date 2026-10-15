@@ -1620,12 +1620,8 @@ mysqli_close($connexion);
         function toggleFull() {
           if (M.classList.contains("full")) {
             M.classList.remove("full");
-            if (document.fullscreenElement)
-              document.exitFullscreen().catch(function () {});
           } else {
             M.classList.add("full");
-            if (B.requestFullscreen)
-              B.requestFullscreen().catch(function () {});
           }
           var isFull = M.classList.contains("full");
           document.getElementById("animFull").textContent =
@@ -1701,13 +1697,6 @@ mysqli_close($connexion);
             if (!M.classList.contains("full")) {
               M.classList.add("full");
               document.getElementById("animFull").textContent = "⤡ Réduire";
-            }
-            if (B.requestFullscreen) {
-              B.requestFullscreen().then(function () {
-                if (screen.orientation && screen.orientation.lock) {
-                  screen.orientation.lock("landscape").catch(function () {});
-                }
-              }).catch(function () {});
             }
           }
         });
@@ -1890,11 +1879,11 @@ mysqli_close($connexion);
     </script>
   <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(null,"",location.pathname+location.search);});})();</script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=213" />
-<script src="../assets/js/protection.js?v=213" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=214" />
+<script src="../assets/js/protection.js?v=214" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=213"></script>
-<script src="../assets/js/acces.js?v=213"></script>
+<script src="../assets/js/config.js?v=214"></script>
+<script src="../assets/js/acces.js?v=214"></script>
 </body>
 </html>

@@ -2928,14 +2928,8 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
         function toggleFull() {
           if (M.classList.contains("full")) {
             M.classList.remove("full");
-            if (document.fullscreenElement) {
-              document.exitFullscreen().catch(function () {});
-            }
           } else {
             M.classList.add("full");
-            if (B && B.requestFullscreen) {
-              B.requestFullscreen().catch(function () {});
-            }
           }
           if (btnFull) {
             btnFull.textContent = M.classList.contains("full") ? "⤡ Réduire" : "⛶ Plein écran";
@@ -4581,7 +4575,7 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
     var sqlSegFin = 0;
     var sqlAudio = document.createElement("audio");
     sqlAudio.preload = "auto";
-    sqlAudio.src = "../assets/audio/sql-cours.mp3?v=213";
+    sqlAudio.src = "../assets/audio/sql-cours.mp3?v=214";
     sqlAudio.style.display = "none";
     document.body.appendChild(sqlAudio);
 
@@ -4711,11 +4705,11 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
   })();
   </script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=213" />
-<script src="../assets/js/protection.js?v=213" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=214" />
+<script src="../assets/js/protection.js?v=214" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=213"></script>
-<script src="../assets/js/acces.js?v=213"></script>
+<script src="../assets/js/config.js?v=214"></script>
+<script src="../assets/js/acces.js?v=214"></script>
 </body>
 </html>

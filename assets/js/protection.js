@@ -420,32 +420,23 @@
       if (!estAppareilPC()) return;
       if (window.self !== window.top) return;
       if (!forcer && localStorage.getItem("sti-pc-fullscreen-off") === "1") return;
-      var docEl = document.documentElement;
-      if (!docEl) return;
-      if (document.fullscreenElement || document.webkitFullscreenElement) return;
-      var reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
-      if (typeof reqFs === "function") {
-        var p = reqFs.call(docEl);
-        if (p && typeof p.catch === "function") p.catch(function () {});
-      }
+      document.documentElement.classList.add("sti-kiosk-css-full");
+      majBoutonPleinEcranPC();
     } catch (e) {}
   }
 
   window.basculerPleinEcranSansAdressePC = function (btnEl) {
     try {
       var docEl = document.documentElement;
-      if (document.fullscreenElement || document.webkitFullscreenElement) {
+      var dejaActif = docEl.classList.contains("sti-kiosk-css-full");
+      if (dejaActif) {
         localStorage.setItem("sti-pc-fullscreen-off", "1");
-        var exitFs = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
-        if (typeof exitFs === "function") exitFs.call(document);
+        docEl.classList.remove("sti-kiosk-css-full");
       } else {
         localStorage.removeItem("sti-pc-fullscreen-off");
-        var reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
-        if (typeof reqFs === "function") {
-          var p = reqFs.call(docEl);
-          if (p && typeof p.catch === "function") p.catch(function () {});
-        }
+        docEl.classList.add("sti-kiosk-css-full");
       }
+      majBoutonPleinEcranPC();
     } catch (e) {}
   };
 
@@ -453,7 +444,7 @@
     try {
       var btn = document.getElementById("sti-btn-pc-fullscreen");
       if (!btn) return;
-      var actif = Boolean(document.fullscreenElement || document.webkitFullscreenElement);
+      var actif = document.documentElement.classList.contains("sti-kiosk-css-full") || Boolean(document.__stiCssFsEl);
       if (actif) {
         btn.style.background = "#177245";
         btn.style.color = "#ffffff";
@@ -463,6 +454,130 @@
         btn.style.color = "#23201a";
         btn.innerHTML = "⛶ <span>Sans adresse</span>";
       }
+    } catch (e) {}
+  }
+
+  function installerPleinEcranSansAdresseGitHub() {
+    try {
+      if (window.__stiSafeFullscreenInstalled) return;
+      window.__stiSafeFullscreenInstalled = true;
+
+      if (document.head && !document.getElementById("sti-safe-fs-style")) {
+        var stFs = document.createElement("style");
+        stFs.id = "sti-safe-fs-style";
+        stFs.textContent =
+          "video::-webkit-media-controls-fullscreen-button { display: none !important; }" +
+          ".sti-css-fullscreen-target {" +
+          "  position: fixed !important; inset: 0 !important; left: 0 !important; top: 0 !important;" +
+          "  width: 100vw !important; height: 100dvh !important; max-width: 100vw !important; max-height: 100dvh !important;" +
+          "  margin: 0 !important; border-radius: 0 !important; z-index: 2147483640 !important;" +
+          "  box-sizing: border-box !important; overflow: auto !important;" +
+          "}" +
+          ".sti-video-modal-card.sti-css-fullscreen-target {" +
+          "  background: #0a0f1d !important; padding: 8px 12px !important;" +
+          "}" +
+          ".sti-video-modal-card.sti-css-fullscreen-target video {" +
+          "  max-height: calc(100dvh - 68px) !important; height: calc(100dvh - 68px) !important;" +
+          "}";
+        document.head.appendChild(stFs);
+      }
+
+      function activerCssFsSur(el) {
+        var cible = (el && el !== document.documentElement && el !== document.body) ? el : document.documentElement;
+        if (document.__stiCssFsEl && document.__stiCssFsEl !== cible) {
+          document.__stiCssFsEl.classList.remove("sti-css-fullscreen-target");
+        }
+        document.__stiCssFsEl = cible;
+        if (cible !== document.documentElement) {
+          cible.classList.add("sti-css-fullscreen-target");
+        } else {
+          document.documentElement.classList.add("sti-kiosk-css-full");
+        }
+        if (window.self !== window.top) {
+          try {
+            window.parent.postMessage({ type: "STI_IFRAME_CSS_FS", active: true }, "*");
+          } catch (e) {}
+        }
+        try {
+          document.dispatchEvent(new Event("fullscreenchange"));
+        } catch (e2) {}
+        majBoutonPleinEcranPC();
+        return Promise.resolve();
+      }
+
+      function quitterCssFs() {
+        /* Si une vraie session plein écran native était ouverte par le navigateur, la fermer */
+        try {
+          if (origExitFs && ( origFsDesc ? origFsDesc.get.call(document) : false )) {
+            origExitFs.call(document);
+          }
+        } catch (e) {}
+        if (document.__stiCssFsEl) {
+          try {
+            document.__stiCssFsEl.classList.remove("sti-css-fullscreen-target");
+          } catch (e2) {}
+          document.__stiCssFsEl = null;
+        }
+        document.documentElement.classList.remove("sti-kiosk-css-full");
+        if (window.self !== window.top) {
+          try {
+            window.parent.postMessage({ type: "STI_IFRAME_CSS_FS", active: false }, "*");
+          } catch (e3) {}
+        }
+        try {
+          document.dispatchEvent(new Event("fullscreenchange"));
+        } catch (e4) {}
+        majBoutonPleinEcranPC();
+        return Promise.resolve();
+      }
+
+      var origExitFs = document.exitFullscreen || document.webkitExitFullscreen;
+      var origFsDesc = Object.getOwnPropertyDescriptor(Document.prototype, "fullscreenElement") ||
+                       Object.getOwnPropertyDescriptor(document, "fullscreenElement");
+
+      /* Surcharger requestFullscreen / webkitRequestFullscreen / webkitEnterFullscreen pour empêcher Chrome/Safari mobile d'afficher la bannière avec l'adresse github.io */
+      if (typeof Element !== "undefined" && Element.prototype) {
+        Element.prototype.requestFullscreen = function () {
+          return activerCssFsSur(this);
+        };
+        Element.prototype.webkitRequestFullscreen = Element.prototype.requestFullscreen;
+        Element.prototype.msRequestFullscreen = Element.prototype.requestFullscreen;
+      }
+      if (typeof HTMLVideoElement !== "undefined" && HTMLVideoElement.prototype) {
+        HTMLVideoElement.prototype.webkitEnterFullscreen = function () {
+          var card = this.closest ? (this.closest(".sti-video-modal-card, .sti-video-pas-a-pas-box") || this) : this;
+          return activerCssFsSur(card);
+        };
+        HTMLVideoElement.prototype.webkitEnterFullScreen = HTMLVideoElement.prototype.webkitEnterFullscreen;
+      }
+      document.exitFullscreen = quitterCssFs;
+      document.webkitExitFullscreen = quitterCssFs;
+      try {
+        Object.defineProperty(document, "fullscreenElement", {
+          configurable: true,
+          get: function () { return document.__stiCssFsEl || null; }
+        });
+        Object.defineProperty(document, "webkitFullscreenElement", {
+          configurable: true,
+          get: function () { return document.__stiCssFsEl || null; }
+        });
+      } catch (e) {}
+
+      window.addEventListener("message", function (ev) {
+        if (!ev || !ev.data || ev.data.type !== "STI_IFRAME_CSS_FS") return;
+        var iframes = document.querySelectorAll("iframe");
+        for (var i = 0; i < iframes.length; i++) {
+          if (iframes[i].contentWindow === ev.source) {
+            var box = iframes[i].closest(".anim-box, .modal-box") || iframes[i];
+            if (ev.data.active) {
+              activerCssFsSur(box);
+            } else {
+              quitterCssFs();
+            }
+            break;
+          }
+        }
+      });
     } catch (e) {}
   }
 
@@ -601,35 +716,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=213",
+        file: "php-guichet.mp4?v=214",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=213",
+        file: "css-positionnement.mp4?v=214",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=213",
+        file: "css-animee.mp4?v=214",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=213",
+        file: "sql-cours.mp4?v=214",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=213",
+        file: "html5-cours.mp4?v=214",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=213",
+        file: "css3-cours.mp4?v=214",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=213",
+        file: "javascript-cours.mp4?v=214",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=213",
+        file: "php-cours.mp4?v=214",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -685,6 +800,54 @@
       var estPageJs = (pathLower.indexOf("/javascript.html") !== -1);
       var estPagePhpCours = (pathLower.indexOf("/php.html") !== -1);
 
+      /* ── Écran de fin interactif (Logo + QR code + Relecture ou Quitter) ── */
+      function creerEcranFinVideoSTI(onReplay, onQuit) {
+        var logoSrc = prefixeAssetsSTI() + "icons/STI_by_AE.ico";
+        var qrSrc = prefixeAssetsSTI() + "images/qr-code-site.png";
+        var endEl = document.createElement("div");
+        endEl.className = "sti-video-end-screen sti-no-print";
+        endEl.hidden = true;
+        endEl.style.cssText =
+          "display:none;position:absolute;inset:52px 10px 10px 10px;z-index:30;" +
+          "background:rgba(10,15,29,0.96);border:3px solid #f4511e;border-radius:16px;" +
+          "flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;text-align:center;" +
+          "box-shadow:0 12px 36px rgba(0,0,0,0.65);";
+        endEl.innerHTML =
+          '<div style="display:inline-block;padding:5px 16px;border-radius:999px;background:#facc15;color:#0f172a;font-weight:900;font-size:13px;letter-spacing:0.04em;">★ FIN DE LA VIDÉO ★</div>' +
+          '<div style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;margin:4px 0;">' +
+            '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;background:#0f172a;border:2px solid #facc15;border-radius:16px;padding:12px 16px;">' +
+              '<img src="' + logoSrc + '" alt="Logo STI by AE" style="width:92px;height:92px;object-fit:contain;border-radius:12px;" />' +
+              '<span style="font-size:11px;font-weight:800;color:#facc15;">LOGO STI BY AE</span>' +
+            '</div>' +
+            '<div style="max-width:440px;display:flex;flex-direction:column;gap:6px;">' +
+              '<div style="font-size:clamp(16px,2.2vw,22px);font-weight:900;color:#f8fafc;line-height:1.25;">Maintenant vous pouvez commencer à jouer <span style="color:#38bdf8;">les quiz et les exercices</span> !</div>' +
+              '<div style="font-size:clamp(14px,1.8vw,17px);font-weight:700;color:#cbd5e1;">Merci pour votre Attention ...</div>' +
+              '<div style="font-size:clamp(20px,2.8vw,30px);font-weight:900;color:#facc15;letter-spacing:0.02em;">STI version 2.0 By AE</div>' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;background:#ffffff;border:2px solid #facc15;border-radius:16px;padding:12px 16px;">' +
+              '<img src="' + qrSrc + '" alt="QR Code STI version 2.0" style="width:92px;height:92px;object-fit:contain;" />' +
+              '<span style="font-size:11px;font-weight:800;color:#0f172a;">SCAN QR CODE</span>' +
+            '</div>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:6px;">' +
+            '<button type="button" data-end-replay="1" style="padding:11px 24px;border-radius:12px;border:2px solid #86efac;background:#177245;color:#ffffff;font-weight:900;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(23,114,69,0.45);">↻ Relecture</button>' +
+            '<button type="button" data-end-quit="1" style="padding:11px 24px;border-radius:12px;border:2px solid #fca5a5;background:#dc2626;color:#ffffff;font-weight:900;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(220,38,38,0.45);">✕ Quitter</button>' +
+          '</div>';
+        endEl.querySelector("button[data-end-replay]").addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          endEl.hidden = true;
+          endEl.style.display = "none";
+          if (typeof onReplay === "function") onReplay();
+        });
+        endEl.querySelector("button[data-end-quit]").addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          endEl.hidden = true;
+          endEl.style.display = "none";
+          if (typeof onQuit === "function") onQuit();
+        });
+        return endEl;
+      }
+
       /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
         var url = resoudreUrlVideoGuichet();
@@ -692,7 +855,7 @@
         box.className = "sti-video-pas-a-pas-box sti-no-print";
         if (idBox) box.id = idBox;
         box.hidden = true;
-        box.style.cssText = "display:none;width:min(1080px,96vw);max-width:100%;max-height:90vh;overflow:hidden;box-sizing:border-box;margin:12px auto;padding:10px 14px;flex-direction:column;";
+        box.style.cssText = "display:none;position:relative;width:min(1080px,96vw);max-width:100%;max-height:90vh;overflow:hidden;box-sizing:border-box;margin:12px auto;padding:10px 14px;flex-direction:column;";
         box.innerHTML =
           '<div class="sti-video-pas-a-pas-head">' +
             '<div class="sti-video-pas-a-pas-title">' + VIDEO_GUICHET_INFO.title + '</div>' +
@@ -701,15 +864,50 @@
               '<button type="button" data-vrate="0.85">0.85×</button>' +
               '<button type="button" data-vrate="1" class="is-active" style="background:#177245;border-color:#86efac;color:#fff;">1×</button>' +
               '<button type="button" data-vrate="1.25">1.25×</button>' +
+              '<button type="button" data-vfs="1">⛶ Plein écran</button>' +
               '<a href="' + url + '" download>⬇ MP4</a>' +
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
             '</div>' +
           '</div>' +
-          '<video controls playsinline webkit-playsinline preload="metadata" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
+          '<video controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
             '<source src="' + url + '" type="video/mp4" />' +
           '</video>';
 
         var vid = box.querySelector("video");
+        var endInline = creerEcranFinVideoSTI(
+          function () {
+            if (vid) {
+              try { vid.currentTime = 0; vid.play(); } catch (e) {}
+            }
+          },
+          function () {
+            if (vid) {
+              try { vid.pause(); vid.currentTime = 0; } catch (e) {}
+            }
+            box.classList.remove("sti-css-fullscreen-target");
+            box.hidden = true;
+            box.style.display = "none";
+          }
+        );
+        box.appendChild(endInline);
+        if (vid) {
+          vid.addEventListener("ended", function () {
+            endInline.hidden = false;
+            endInline.style.display = "flex";
+          });
+          vid.addEventListener("play", function () {
+            endInline.hidden = true;
+            endInline.style.display = "none";
+          });
+        }
+        var btnFsInline = box.querySelector("button[data-vfs]");
+        if (btnFsInline) {
+          btnFsInline.addEventListener("click", function (ev) {
+            ev.stopPropagation();
+            var isFull = box.classList.toggle("sti-css-fullscreen-target");
+            btnFsInline.textContent = isFull ? "⤡ Réduire" : "⛶ Plein écran";
+          });
+        }
         var btnsRate = box.querySelectorAll("button[data-vrate]");
         function majBoutonsVitesseInline(rateActif) {
           for (var k = 0; k < btnsRate.length; k++) {
@@ -738,6 +936,9 @@
             if (vid) {
               try { vid.pause(); vid.currentTime = 0; } catch (e) {}
             }
+            endInline.hidden = true;
+            endInline.style.display = "none";
+            box.classList.remove("sti-css-fullscreen-target");
             box.hidden = true;
             box.style.display = "none";
           });
@@ -832,7 +1033,7 @@
           overlay.hidden = true;
           overlay.style.cssText = "display:none;position:fixed;inset:0;z-index:2147483647;background:rgba(10,15,28,0.88);align-items:center;justify-content:center;padding:10px;box-sizing:border-box;";
           overlay.innerHTML =
-            '<div class="sti-video-modal-card" role="dialog" aria-modal="true" style="width:min(1180px,96vw);max-width:96vw;max-height:94vh;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;background:#0d1526;color:#f9f1e3;border:2px solid #f4511e;border-radius:16px;padding:10px 14px 12px;">' +
+            '<div class="sti-video-modal-card" id="sti-video-modal-card" role="dialog" aria-modal="true" style="position:relative;width:min(1180px,96vw);max-width:96vw;max-height:94vh;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;background:#0d1526;color:#f9f1e3;border:2px solid #f4511e;border-radius:16px;padding:10px 14px 12px;">' +
               '<div class="sti-video-pas-a-pas-head" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px;flex-shrink:0;">' +
                 '<div class="sti-video-pas-a-pas-title" id="sti-video-modal-title"></div>' +
                 '<div class="sti-video-pas-a-pas-actions" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">' +
@@ -840,16 +1041,67 @@
                   '<button type="button" data-mrate="0.85">0.85×</button>' +
                   '<button type="button" data-mrate="1" class="is-active" style="background:#177245;border-color:#86efac;color:#fff;">1×</button>' +
                   '<button type="button" data-mrate="1.25">1.25×</button>' +
+                  '<button type="button" id="sti-video-modal-fs">⛶ Plein écran</button>' +
                   '<a id="sti-video-modal-dl" href="#" download>⬇ MP4</a>' +
                   '<button type="button" id="sti-video-modal-close">✕ Fermer</button>' +
                 '</div>' +
               '</div>' +
-              '<video id="sti-video-modal-player" controls playsinline webkit-playsinline preload="metadata" style="width:100%;max-width:100%;height:auto;max-height:calc(94vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;border-radius:10px;background:#0d1526;"></video>' +
+              '<video id="sti-video-modal-player" controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" style="width:100%;max-width:100%;height:auto;max-height:calc(94vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;border-radius:10px;background:#0d1526;"></video>' +
             '</div>';
           document.body.appendChild(overlay);
 
+          var mCard = document.getElementById("sti-video-modal-card");
           var mVid = document.getElementById("sti-video-modal-player");
+          var mBtnFs = document.getElementById("sti-video-modal-fs");
           var mRates = overlay.querySelectorAll("button[data-mrate]");
+
+          function fermerModaleVideo(ev) {
+            if (ev && ev.stopPropagation) ev.stopPropagation();
+            if (mVid) {
+              try { mVid.pause(); mVid.currentTime = 0; } catch (e) {}
+            }
+            if (mEndScreen) {
+              mEndScreen.hidden = true;
+              mEndScreen.style.display = "none";
+            }
+            if (mCard) mCard.classList.remove("sti-css-fullscreen-target");
+            if (mBtnFs) mBtnFs.textContent = "⛶ Plein écran";
+            overlay.hidden = true;
+            overlay.style.display = "none";
+          }
+
+          var mEndScreen = creerEcranFinVideoSTI(
+            function () {
+              if (mVid) {
+                try { mVid.currentTime = 0; mVid.play(); } catch (e) {}
+              }
+            },
+            function () {
+              fermerModaleVideo();
+            }
+          );
+          mEndScreen.id = "sti-video-modal-end-screen";
+          if (mCard) mCard.appendChild(mEndScreen);
+
+          if (mVid) {
+            mVid.addEventListener("ended", function () {
+              mEndScreen.hidden = false;
+              mEndScreen.style.display = "flex";
+            });
+            mVid.addEventListener("play", function () {
+              mEndScreen.hidden = true;
+              mEndScreen.style.display = "none";
+            });
+          }
+
+          if (mBtnFs && mCard) {
+            mBtnFs.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              var isFull = mCard.classList.toggle("sti-css-fullscreen-target");
+              mBtnFs.textContent = isFull ? "⤡ Réduire" : "⛶ Plein écran";
+            });
+          }
+
           function majBoutonsVitesseModale(rateActif) {
             for (var k = 0; k < mRates.length; k++) {
               var btnK = mRates[k];
@@ -870,14 +1122,6 @@
               });
             })(mRates[i]);
           }
-          function fermerModaleVideo(ev) {
-            if (ev && ev.stopPropagation) ev.stopPropagation();
-            if (mVid) {
-              try { mVid.pause(); mVid.currentTime = 0; } catch (e) {}
-            }
-            overlay.hidden = true;
-            overlay.style.display = "none";
-          }
           document.getElementById("sti-video-modal-close").addEventListener("click", fermerModaleVideo);
           overlay.addEventListener("click", function (ev) {
             if (ev.target === overlay) fermerModaleVideo(ev);
@@ -887,6 +1131,12 @@
               fermerModaleVideo(ev);
             }
           });
+        }
+
+        var prevEnd = document.getElementById("sti-video-modal-end-screen");
+        if (prevEnd) {
+          prevEnd.hidden = true;
+          prevEnd.style.display = "none";
         }
 
         /* Si un élément est en plein écran (#animBox ou autre), attacher la modale vidéo à l'élément plein écran pour qu'elle soit toujours visible (jamais de voix qui démarre sans vidéo !) */
@@ -1028,7 +1278,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=213";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=214";
 
           var CUES_MAP = {
             html5: {
@@ -1655,6 +1905,7 @@
       installPrintBlock();
     }
     checkDevtools();
+    installerPleinEcranSansAdresseGitHub();
     installerMasquageAdressePC();
     installerVideosPasAPasSTI();
     installerGuideVocalEnParlant();
