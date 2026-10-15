@@ -886,13 +886,13 @@ html.dark .msg.wa { border-color: var(--sun); }
 <script>
 const $=id=>document.getElementById(id);
 const msg=(id,t,c)=>{const m=$(id);m.className='msg';void m.offsetWidth;m.className='msg '+c;m.textContent=t};
-const SQLC_CUES = {"t1":[108.1,120.48],"t2":[120.6,129.58],"t3":[129.7,139.48],"t4":[139.6,150.29]};
+const SQLC_CUES = {"t1":[161.84,174.27],"t2":[174.46,183.51],"t3":[183.7,193.54],"t4":[193.73,204.48]};
 let sqlcVoixActive = true;
 let sqlcTimer = null;
 let sqlcFin = 0;
 const sqlcAudio = document.createElement('audio');
 sqlcAudio.preload = 'auto';
-sqlcAudio.src = '../assets/audio/sql-cours.mp3?v=206';
+sqlcAudio.src = '../assets/audio/sql-cours.mp3?v=207';
 sqlcAudio.style.display = 'none';
 document.body.appendChild(sqlcAudio);
 function arreterVoixSqlSTI(){
@@ -1026,10 +1026,10 @@ document.querySelectorAll('input[name=m3]').forEach(r=>r.onchange=()=>$('sq3').t
 document.querySelectorAll('input[name=m4]').forEach(r=>r.onchange=()=>$('sq4').textContent=document.querySelector('input[name=m4]:checked').value==='1'?'ON DELETE CASCADE':'-- sans ON DELETE CASCADE (RESTRICT par défaut)');
 </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=206" />
-<script src="../assets/js/protection.js?v=206" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=207" />
+<script src="../assets/js/protection.js?v=207" defer></script>
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=206"></script>
-<script src="../assets/js/acces.js?v=206"></script>
+<script src="../assets/js/config.js?v=207"></script>
+<script src="../assets/js/acces.js?v=207"></script>
 </body>
 </html>
