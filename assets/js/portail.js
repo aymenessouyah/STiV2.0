@@ -63,7 +63,7 @@
       }
     }
   } catch (e) {}
-  /* Mise à jour automatique de la version lors de chaque nouvelle connexion d'un candidat */
+  /* La mise à jour de la plateforme ne se fait QUE s'il y a une nouvelle version (allège la connexion et la navigation) */
   function mettreAJourVersionAvantEntree(allerVers) {
     var fait = false;
     function terminer() {
@@ -75,7 +75,7 @@
       terminer();
       return;
     }
-    var timerMax = setTimeout(terminer, 2200);
+    var timerMax = setTimeout(terminer, 1500);
     fetch(cfg.RACINE + "sw.js?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { return r && r.ok ? r.text() : ""; })
       .then(function (txt) {
@@ -85,12 +85,19 @@
         try { verLoc = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0; } catch (e) {}
         if (verSrv > 0) {
           try {
-            localStorage.setItem("sti-version-installee", String(verSrv));
             sessionStorage.setItem("sti-conn-ver-checked", String(verSrv));
-            sessionStorage.setItem("sti-sw-reload-ver", String(verSrv));
+            sessionStorage.setItem("sti-ver-check-ts", String(Date.now()));
           } catch (e) {}
         }
-        var pCaches = (window.caches && caches.keys && verSrv > 0)
+        /* Si aucune nouvelle version de la plateforme n'est disponible, entrer immédiatement sans recharger les caches */
+        if (!verSrv || verSrv === verLoc) {
+          return Promise.resolve();
+        }
+        try {
+          localStorage.setItem("sti-version-installee", String(verSrv));
+          sessionStorage.setItem("sti-sw-reload-ver", String(verSrv));
+        } catch (e) {}
+        var pCaches = (window.caches && caches.keys)
           ? caches.keys().then(function (cles) {
               var suppr = [];
               (cles || []).forEach(function (k) {
@@ -115,15 +122,7 @@
               }).catch(function () {});
             }).catch(function () {})
           : Promise.resolve();
-        var pCrit = (verSrv > verLoc && verSrv > 0)
-          ? Promise.allSettled([
-              fetch(cfg.RACINE + "index.html", { cache: "reload" }),
-              fetch(cfg.RACINE + "assets/js/acces.js", { cache: "reload" }),
-              fetch(cfg.RACINE + "assets/js/protection.js", { cache: "reload" }),
-              fetch(cfg.RACINE + "assets/css/atelier.css", { cache: "reload" })
-            ])
-          : Promise.resolve();
-        return Promise.allSettled([pCaches, pSw, pCrit]);
+        return Promise.allSettled([pCaches, pSw]);
       })
       .catch(function () {})
       .finally(function () {
@@ -134,15 +133,7 @@
 
   try {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {
-        if (reg) reg.update().catch(function () {});
-        setTimeout(function () {
-          try {
-            var swT = (reg && reg.active) || navigator.serviceWorker.controller;
-            if (swT && navigator.onLine) swT.postMessage({ type: "PRECACHE_ALL" });
-          } catch (e) {}
-        }, 1800);
-      }).catch(function () {});
+      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).catch(function () {});
     }
   } catch (e) {}
 
@@ -491,7 +482,8 @@
         var metaU = (user && user.user_metadata) || {};
         var objSessPortail = {
           id: user.id,
-          email: user.email,
+          email: (profilData && profilData.email) || user.email,
+          phone: (profilData && profilData.phone) || metaU.phone || "",
           nom: (profilData && profilData.nom) || metaU.nom || "",
           prenom: (profilData && profilData.prenom) || metaU.prenom || "",
           user_metadata: metaU,
@@ -511,6 +503,7 @@
         try {
           sessionStorage.setItem("sti-offline", String(Date.now()));
           sessionStorage.setItem("sti-session-cache", jsonSessPortail);
+          sessionStorage.setItem("sti-profil-sync-ts", String(Date.now()));
         } catch (e) {}
         try {
           document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonSessPortail) + "; path=/; max-age=2592000; SameSite=Lax";
@@ -1020,42 +1013,60 @@
       msg("⛔ Le compte administrateur exige le mot de passe complet.", "err");
       return;
     }
-    var sessObj = {
-      id: pBadge.id,
-      email: pBadge.email || "",
-      phone: pBadge.phone || "",
-      nom: pBadge.nom || "",
-      prenom: pBadge.prenom || "",
-      classe: pBadge.classe || "—",
-      lycee: pBadge.lycee || "Lycée",
-      statut: "actif",
-      gold: Boolean(pBadge.gold),
-      isAdmin: false,
-      badgeLabo: true,
-      ts: Date.now()
-    };
-    try {
-      localStorage.removeItem("sti-admin-gold");
-      localStorage.removeItem("sti-force-exit");
-      localStorage.removeItem("sti-bio");
-      if (sessObj.gold) localStorage.setItem("sti-gold", "1");
-      else localStorage.removeItem("sti-gold");
-      var jsonBadge = JSON.stringify(sessObj);
-      localStorage.setItem("sti-offline", String(Date.now()));
-      localStorage.setItem("sti-session-cache", jsonBadge);
-      localStorage.setItem("sti-labo-badge-sess", jsonBadge);
+    function finaliserBadge(pActu) {
+      var p = pActu || pBadge;
+      var isG = Boolean(p.gold || /\|\s*GOLD$/i.test(p.lycee || ""));
+      var sessObj = {
+        id: p.id || pBadge.id,
+        email: p.email || pBadge.email || "",
+        phone: p.phone || pBadge.phone || "",
+        nom: p.nom || pBadge.nom || "",
+        prenom: p.prenom || pBadge.prenom || "",
+        classe: p.classe || pBadge.classe || "—",
+        lycee: p.lycee || pBadge.lycee || "Lycée",
+        statut: "actif",
+        gold: isG,
+        isAdmin: false,
+        badgeLabo: true,
+        ts: Date.now()
+      };
       try {
-        sessionStorage.setItem("sti-offline", String(Date.now()));
-        sessionStorage.setItem("sti-session-cache", jsonBadge);
+        localStorage.removeItem("sti-admin-gold");
+        localStorage.removeItem("sti-force-exit");
+        localStorage.removeItem("sti-bio");
+        if (sessObj.gold) localStorage.setItem("sti-gold", "1");
+        else localStorage.removeItem("sti-gold");
+        var jsonBadge = JSON.stringify(sessObj);
+        localStorage.setItem("sti-offline", String(Date.now()));
+        localStorage.setItem("sti-session-cache", jsonBadge);
+        localStorage.setItem("sti-labo-badge-sess", jsonBadge);
+        try {
+          sessionStorage.setItem("sti-offline", String(Date.now()));
+          sessionStorage.setItem("sti-session-cache", jsonBadge);
+          sessionStorage.setItem("sti-profil-sync-ts", String(Date.now()));
+        } catch (e) {}
+        try {
+          document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonBadge) + "; path=/; max-age=2592000; SameSite=Lax";
+        } catch (e) {}
       } catch (e) {}
-      try {
-        document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonBadge) + "; path=/; max-age=2592000; SameSite=Lax";
-      } catch (e) {}
-    } catch (e) {}
-    msg("✅ Badge Labo reconnu (" + ((sessObj.prenom || "") + " " + (sessObj.nom || "")).trim() + " · " + sessObj.classe + ") ! Ouverture…", "ok");
-    activeBio(sessObj.id, sessObj.email || sessObj.nom || "badge-labo", function () {
-      location.replace(cfg.RACINE + "index.html");
-    });
+      msg("✅ Badge Labo reconnu (" + ((sessObj.prenom || "") + " " + (sessObj.nom || "")).trim() + " · " + sessObj.classe + ") ! Ouverture…", "ok");
+      activeBio(sessObj.id, sessObj.email || sessObj.nom || "badge-labo", function () {
+        mettreAJourVersionAvantEntree(cfg.RACINE + "index.html");
+      });
+    }
+    if (navigator.onLine) {
+      sb.from("profiles").select("id,email,phone,nom,prenom,lycee,classe,statut").eq("id", pBadge.id).maybeSingle()
+        .then(function (rp) {
+          if (rp && rp.data && rp.data.statut === "exclu") {
+            msg("⛔ Vous êtes exclu. Contactez l'administrateur.", "err");
+            return;
+          }
+          finaliserBadge((rp && rp.data) ? rp.data : pBadge);
+        })
+        .catch(function () { finaliserBadge(pBadge); });
+    } else {
+      finaliserBadge(pBadge);
+    }
   }
 
   function validerCodeBadgeLabo() {

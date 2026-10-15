@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v214";
+var CACHE = "sti-atelier-v215";
 var SHELL = [
   "./",
   "./index.html",
@@ -114,10 +114,6 @@ var OFFLINE_LIST = [
   "./assets/audio/css-positionnement.mp3",
   "./assets/audio/css-animee.mp3",
   "./assets/audio/sql-cours.mp3",
-  "./assets/videos/php-guichet.mp4",
-  "./assets/videos/css-positionnement.mp4",
-  "./assets/videos/css-animee.mp4",
-  "./assets/videos/sql-cours.mp4",
   "./assets/css/atelier-pages.css",
   "./assets/css/atelier-php.css",
   "./assets/css/atelier.css",
@@ -812,17 +808,17 @@ self.addEventListener("fetch", function (evt) {
   }
 
   /* 1. Pages (navigation, documents HTML, iframes) & Scripts / Styles :
-        - Si hors-ligne et en cache -> 0 ms depuis le cache
-        - Si en cache et en ligne -> réseau avec repli rapide (2,2 s) sur la copie exacte en cache (évite le blocage DNS Windows hors-ligne)
-        - Si pas encore en cache -> réseau normal + mise en cache */
+        - Si déjà en cache pour la version courante (CACHE) -> 0 ms depuis le cache (navigation ultra-légère : la plateforme ne se met à jour que s'il y a une nouvelle version de CACHE)
+        - Si pas encore en cache -> réseau + mise en cache */
   if (req.mode === "navigate" || /\.(html|css|js|webmanifest)$/i.test(url.pathname) || url.pathname.slice(-1) === "/") {
     evt.respondWith(
       (async function () {
         var enCache = await chercherDansCache(req, url);
-        if (enCache && self.navigator && self.navigator.onLine === false) {
+        if (enCache) {
           return enCache;
         }
-        var promReseau = fetch(req, { cache: "no-cache" }).then(function (rep) {
+        try {
+          var rep = await fetch(req);
           if (rep && rep.ok) {
             var copie = rep.clone();
             var copieNue = rep.clone();
@@ -842,23 +838,9 @@ self.addEventListener("fetch", function (evt) {
             });
           }
           return rep;
-        });
-
-        if (!enCache) {
-          try {
-            return await promReseau;
-          } catch (e) {
-            return (await chercherDansCache(req, url)) || Response.error();
-          }
+        } catch (e) {
+          return (await chercherDansCache(req, url)) || Response.error();
         }
-
-        /* Le fichier exact existe déjà en cache : si le réseau répond en < 2,2 s on prend la version fraîche, sinon la version en cache immédiatement */
-        return await Promise.race([
-          promReseau.catch(function () { return enCache; }),
-          new Promise(function (resolve) {
-            setTimeout(function () { resolve(enCache); }, 2200);
-          })
-        ]);
       })()
     );
     return;

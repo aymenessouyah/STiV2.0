@@ -11,7 +11,7 @@
     <title>STI Quiz — Plateforme de tests de compétences</title>
     <meta
       name="description"
-      content="Testez vos compétences en développement web avec les quiz HTML5, CSS3, JavaScript, SQL et PHP."
+      content="Testez vos compétences en développement web avec les cours, vidéos explicatives (.mp4), écoute vocale synchronisée, animations pas à pas et quiz HTML5, CSS3, JavaScript, SQL et PHP."
     />
     <meta name="author" content="Aymen Essouyah" />
     <meta
@@ -30,7 +30,7 @@
     />
     <meta
       property="og:description"
-      content="Cours, annexes, exercices et quiz : HTML5, CSS3, JavaScript, SQL et PHP."
+      content="Cours avec vidéos explicatives (.mp4) et écoute vocale synchronisée, animations pas à pas, annexes, exercices et quiz : HTML5, CSS3, JavaScript, SQL et PHP."
     />
     <meta property="og:type" content="website" />
     <meta
@@ -1433,7 +1433,7 @@
          ============================ */
       .stats-strip {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         margin: 60px 0;
         border: 1px solid var(--border);
         border-radius: var(--radius);
@@ -2410,9 +2410,9 @@
             <span class="tile tile-z">Z</span>.
           </h1>
           <p class="lead">
-            HTML5, CSS3, JavaScript<span class="sti-non-4si-only"> et SQL</span><span class="sti-4si-only">, SQL et PHP</span> : testez vos compétences avec
-            des questions et des exercices ciblés, un retour immédiat et des
-            annexes de révision toujours à portée de clic.
+            HTML5, CSS3, JavaScript<span class="sti-non-4si-only"> et SQL</span><span class="sti-4si-only">, SQL et PHP</span> : révisez avec des
+            <strong>🎥 vidéos explicatives (.mp4)</strong> et une <strong>🔊 écoute vocale synchronisée (Guide-Ligne)</strong>,
+            testez vos compétences avec des exercices ciblés, un retour immédiat et des annexes toujours à portée de clic.
           </p>
           <div class="hero-cta">
             <a href="#modules" class="btn btn-primary">
@@ -2857,7 +2857,12 @@
       <!-- ======================= Cours & annexes ======================= -->
       <section class="annexes" id="cours">
         <div class="section-head reveal">
-          <h2>Cours</h2>
+          <div>
+            <h2>Cours</h2>
+            <p style="margin:4px 0 0;font-size:0.9rem;color:var(--muted);font-weight:600">
+              🎥 Vidéos explicatives (.mp4) commentées pas à pas &amp; 🔊 écoute vocale synchronisée avec Guide-Ligne sur chaque cours
+            </p>
+          </div>
           <div
             class="revision-progress"
             title="Votre avancement dans la révision des cours"
@@ -2876,8 +2881,8 @@
             data-course-id="html5"
           >
             <div class="annexe-icon">🌐</div>
-            <h4>HTML5</h4>
-            <p>Balises, formulaires, tableaux, vidéo</p>
+            <h4>HTML5 <span style="display:inline-block;background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent);font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;vertical-align:middle;margin-left:4px">🎥 Vidéo &amp; 🔊 Audio</span></h4>
+            <p>Balises, formulaires, tableaux, multimédia · Vidéo du cours (.mp4) incluse</p>
             <button
               type="button"
               class="revise-toggle"
@@ -2910,8 +2915,8 @@
             data-course-id="css3"
           >
             <div class="annexe-icon">🎨</div>
-            <h4>CSS3</h4>
-            <p>Sélecteurs, propriétés, animations</p>
+            <h4>CSS3 <span style="display:inline-block;background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent);font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;vertical-align:middle;margin-left:4px">🎥 3 Vidéos &amp; 🔊 Audio</span></h4>
+            <p>Sélecteurs, propriétés, animations · Vidéo du cours + 2 vidéos CSS pas à pas (.mp4)</p>
             <button
               type="button"
               class="revise-toggle"
@@ -2944,8 +2949,8 @@
             data-course-id="js"
           >
             <div class="annexe-icon">📜</div>
-            <h4>JavaScript</h4>
-            <p>Variables, fonctions, DOM, objets</p>
+            <h4>JavaScript <span style="display:inline-block;background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent);font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;vertical-align:middle;margin-left:4px">🎥 Vidéo &amp; 🔊 Audio</span></h4>
+            <p>Variables, fonctions, DOM, objets · Vidéo du cours (.mp4) incluse</p>
             <button
               type="button"
               class="revise-toggle"
@@ -2978,8 +2983,8 @@
             data-course-id="sql"
           >
             <div class="annexe-icon">🗄️</div>
-            <h4>SQL</h4>
-            <p>Requêtes, jointures, agrégations</p>
+            <h4>SQL <span style="display:inline-block;background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent);font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;vertical-align:middle;margin-left:4px">🎥 Vidéo &amp; 🔊 Audio</span></h4>
+            <p>Requêtes, jointures, agrégations · Vidéo du cours (.mp4) incluse</p>
             <button
               type="button"
               class="revise-toggle"
@@ -3012,8 +3017,8 @@
             data-course-id="php"
           >
             <div class="annexe-icon">🐘</div>
-            <h4>PHP <span style="display:inline-block;background:#f4511e;color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;vertical-align:middle;margin-left:4px">🎓 4<sup>e</sup> SI (1 à 5)</span></h4>
-            <p>Fonctions, tableaux, MySQLi, dates · Réservé 4<sup>e</sup> SI</p>
+            <h4>PHP <span style="display:inline-block;background:#f4511e;color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;vertical-align:middle;margin-left:4px">🎓 4<sup>e</sup> SI (1 à 5)</span> <span style="display:inline-block;background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent);font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;vertical-align:middle;margin-left:4px">🎥 2 Vidéos &amp; 🔊 Audio</span></h4>
+            <p>Fonctions, tableaux, MySQLi · Vidéo du cours + Vidéo du Guichet (.mp4) · Réservé 4<sup>e</sup> SI</p>
             <button
               type="button"
               class="revise-toggle"
@@ -3352,6 +3357,10 @@
           <div class="stat-label">Pages de cours</div>
         </div>
         <div class="stat">
+          <div class="stat-number" data-count="8">0</div>
+          <div class="stat-label">Vidéos explicatives (.mp4)</div>
+        </div>
+        <div class="stat">
           <div class="stat-number" data-count="4">0</div>
           <div class="stat-label">Quiz auto-corrigés</div>
         </div>
@@ -3529,7 +3538,7 @@
         >
           <span class="qr-frame">
             <img
-              src="assets/images/qr-code-site.png?v=214"
+              src="assets/images/qr-code-site.png?v=215"
               alt="QR code du site STI by AE"
               width="118"
               height="118"
@@ -3610,12 +3619,13 @@
 
         /* ---------- Rotation du terminal ---------- */
         var rotatorItemsAll = [
-          { icon: "logo", text: "Cours, Exercices & Annexes pour" },
+          { icon: "logo", text: "Cours, Vidéos, Exercices & Annexes pour" },
           { icon: "🌐", text: "HTML5" },
           { icon: "🎨", text: "CSS3" },
           { icon: "📜", text: "JavaScript" },
           { icon: "🗄️", text: "SQL" },
           { icon: "🐘", text: "PHP", only4si: true },
+          { icon: "🎥", text: "des vidéos explicatives (.mp4) & écoute vocale" },
           { icon: "🎯", text: "des quiz" },
           { icon: "📝", text: "des séries et exercices" },
         ];
@@ -4781,11 +4791,11 @@
       })();
     </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="assets/css/protection.css?v=214" />
-<script src="assets/js/protection.js?v=214" defer></script>
+<link rel="stylesheet" href="assets/css/protection.css?v=215" />
+<script src="assets/js/protection.js?v=215" defer></script>
 <!-- /Protection -->
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=214"></script>
-<script src="assets/js/acces.js?v=214"></script>
+<script src="assets/js/config.js?v=215"></script>
+<script src="assets/js/acces.js?v=215"></script>
 </body>
 </html>

@@ -101,15 +101,15 @@
   /* S'assurer que protection.css et protection.js sont chargés sur 100 % des pages (code source verrouillé pour tous les abonnés) */
   (function assurerProtectionActive() {
     try {
-      if (!document.querySelector('link[href*="protection.css?v=214"]') && document.head) {
+      if (!document.querySelector('link[href*="protection.css?v=215"]') && document.head) {
         var lnk = document.createElement("link");
         lnk.rel = "stylesheet";
-        lnk.href = cfg.RACINE + "assets/css/protection.css?v=214";
+        lnk.href = cfg.RACINE + "assets/css/protection.css?v=215";
         document.head.appendChild(lnk);
       }
-      if (!document.querySelector('script[src*="protection.js?v=214"]') && (document.head || document.documentElement)) {
+      if (!document.querySelector('script[src*="protection.js?v=215"]') && (document.head || document.documentElement)) {
         var scr = document.createElement("script");
-        scr.src = cfg.RACINE + "assets/js/protection.js?v=214";
+        scr.src = cfg.RACINE + "assets/js/protection.js?v=215";
         scr.defer = true;
         (document.head || document.documentElement).appendChild(scr);
       }
@@ -136,12 +136,14 @@
     }
   })();
 
-  /* Enregistrement du Service Worker, vérification automatique de nouvelle version à chaque nouvelle connexion/ouverture de session pour chaque candidat, et pré-chargement 100 % Hors-ligne */
+  /* Enregistrement du Service Worker : la mise à jour de la plateforme ne se fait QUE s'il y a une nouvelle version afin d'alléger la connexion et la navigation */
   try {
     if ("serviceWorker" in navigator) {
+      var verLocInit = 0;
+      try { verLocInit = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || (cfg && cfg.VERSION) || 215; } catch (e) {}
+
       navigator.serviceWorker.register(cfg.RACINE + "sw.js", { updateViaCache: "none" }).then(function (reg) {
         if (reg) {
-          reg.update().catch(function () {});
           if (reg.waiting) {
             try { reg.waiting.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
           }
@@ -155,18 +157,33 @@
             });
           });
         }
-        setTimeout(function () {
-          try {
-            var swTarget = (reg && reg.active) || navigator.serviceWorker.controller;
-            if (swTarget && navigator.onLine) {
-              swTarget.postMessage({ type: "PRECACHE_ALL" });
-            }
-          } catch (e) {}
-        }, 2000);
+        /* Ne pré-charger en arrière-plan qu'une seule fois par version installée (évite de solliciter le réseau à chaque page) */
+        var verPrecachee = "";
+        try { verPrecachee = localStorage.getItem("sti-precache-ver") || ""; } catch (e) {}
+        if (verPrecachee !== String(verLocInit)) {
+          setTimeout(function () {
+            try {
+              var swTarget = (reg && reg.active) || navigator.serviceWorker.controller;
+              if (swTarget && navigator.onLine) {
+                localStorage.setItem("sti-precache-ver", String(verLocInit));
+                swTarget.postMessage({ type: "PRECACHE_ALL" });
+              }
+            } catch (e) {}
+          }, 3000);
+        }
       }).catch(function () {});
 
-      /* Vérification automatique de la dernière version à chaque nouvelle connexion / ouverture de session */
-      if (navigator.onLine && typeof fetch === "function") {
+      /* Vérification légère de nouvelle version uniquement à l'accès initial de la session (ou toutes les 15 min), sans alourdir la navigation entre les pages */
+      var tsDerniereVerifVer = 0;
+      var verDejaVerifieeSess = "";
+      try {
+        tsDerniereVerifVer = parseInt(sessionStorage.getItem("sti-ver-check-ts") || "0", 10) || 0;
+        verDejaVerifieeSess = sessionStorage.getItem("sti-conn-ver-checked") || "";
+      } catch (e) {}
+      var besoinVerifVersion = !verDejaVerifieeSess || (Date.now() - tsDerniereVerifVer > 900000);
+
+      if (navigator.onLine && typeof fetch === "function" && besoinVerifVersion) {
+        try { sessionStorage.setItem("sti-ver-check-ts", String(Date.now())); } catch (e) {}
         fetch(cfg.RACINE + "sw.js?t=" + Date.now(), { cache: "no-store" })
           .then(function (r) { return r && r.ok ? r.text() : ""; })
           .then(function (txt) {
@@ -180,6 +197,13 @@
 
             var verLoc = 0;
             try { verLoc = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0; } catch (e) {}
+            try { sessionStorage.setItem("sti-conn-ver-checked", String(verSrv)); } catch (e) {}
+
+            /* Si la version installée est déjà la dernière version, ne déclencher AUCUNE mise à jour de la plateforme */
+            if (verLoc === verSrv) {
+              return;
+            }
+
             var dejaRechargeVer = "";
             try { dejaRechargeVer = sessionStorage.getItem("sti-sw-reload-ver") || ""; } catch (e) {}
 
@@ -202,7 +226,7 @@
             verifierCachesLocaux.then(function (aAncienCache) {
               try {
                 localStorage.setItem("sti-version-installee", String(verSrv));
-                sessionStorage.setItem("sti-conn-ver-checked", String(verSrv));
+                localStorage.removeItem("sti-precache-ver");
               } catch (e) {}
               if ((verLoc > 0 && verLoc < verSrv) || aAncienCache) {
                 if (dejaRechargeVer !== String(verSrv)) {
@@ -522,7 +546,7 @@
     if (document.body) document.body.classList.toggle("sti-gold", ok);
 
     try {
-      var liens = document.querySelectorAll('link[href*="protection.css?v=214"]');
+      var liens = document.querySelectorAll('link[href*="protection.css?v=215"]');
       for (var i = 0; i < liens.length; i++) liens[i].disabled = ok;
     } catch (e) {}
 
@@ -544,7 +568,7 @@
         if (fr.contentDocument) {
           if (fr.contentDocument.documentElement) fr.contentDocument.documentElement.classList.toggle("sti-gold", ok);
           if (fr.contentDocument.body) fr.contentDocument.body.classList.toggle("sti-gold", ok);
-          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=214"]');
+          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=215"]');
           for (var j = 0; j < liensFr.length; j++) liensFr[j].disabled = ok;
           var wmFr = fr.contentDocument.getElementById("sti-watermark");
           if (ok && wmFr && wmFr.parentNode) wmFr.parentNode.removeChild(wmFr);
@@ -569,6 +593,17 @@
     var elLycee = document.getElementById("sti-pan-lycee");
     if (elLycee && arguments.length > 1 && arguments[1]) {
       elLycee.textContent = lyceePropre(arguments[1]) + " · " + (arguments[1].classe || "—");
+    }
+    var elLogin = document.getElementById("sti-pan-login");
+    if (elLogin && arguments.length > 1 && arguments[1]) {
+      var pInf = arguments[1];
+      var npInf = ((pInf.prenom || "") + " " + (pInf.nom || "")).trim();
+      var emInf = pInf.email || pInf.phone || "";
+      if (/@tel\.sti\.tn$/i.test(emInf)) {
+        emInf = "📱 " + (pInf.phone || ("+" + emInf.replace(/@tel\.sti\.tn$/i, "")));
+      }
+      if (npInf && emInf) elLogin.textContent = npInf + " · " + emInf;
+      else if (npInf || emInf) elLogin.textContent = npInf || emInf;
     }
   }
 
@@ -674,25 +709,28 @@
     }).catch(function () {});
   }
 
-  /* Envoie les données enregistrées hors-ligne + reçoit les dernières données du serveur + met à jour le SW */
+  /* Envoie les données enregistrées hors-ligne + met à jour uniquement les données personnelles du candidat (sans recharger toute la plateforme s'il n'y a pas de nouvelle version) */
+  var syncProfilEnCours = false;
   function synchroniserFileHorsLigne(estRetourInternet) {
     if (!navigator.onLine) return;
-    /* 1. Demander au Service Worker de vérifier et mettre à jour les fichiers du site */
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistration().then(function (reg) {
-        if (reg) reg.update();
-      }).catch(function () {});
-      if (navigator.serviceWorker.controller) {
-        try { navigator.serviceWorker.controller.postMessage({ type: "SYNC_UPDATE" }); } catch (e) {}
-      }
-    }
     var btnOff = document.getElementById("sti-btn-precache");
     if (btnOff && localStorage.getItem("sti-precache-100") === "1") {
       btnOff.textContent = "✅ 100 % prêt hors-ligne";
     }
 
+    var qVerif = [];
+    try { qVerif = JSON.parse(localStorage.getItem(CLE_FILE_OFFLINE) || "[]"); } catch (e) {}
+    var tsDernierSyncProfil = 0;
+    try { tsDernierSyncProfil = parseInt(sessionStorage.getItem("sti-profil-sync-ts") || "0", 10) || 0; } catch (e) {}
+    /* Alléger la navigation entre les pages : si la file hors-ligne est vide et que les données personnelles viennent d'être mises à jour (< 45 s), ne pas refaire de requête doublon */
+    if (!estRetourInternet && qVerif.length === 0 && (syncProfilEnCours || (tsDernierSyncProfil > 0 && Date.now() - tsDernierSyncProfil < 45000))) {
+      rafraichirDureeEtScoresServeur(currentUid, true);
+      return;
+    }
+    syncProfilEnCours = true;
+
     assurerSessionEnLigne(function (user) {
-      /* 2. ENVOYER la file d'attente hors-ligne (scores Quiz/Bac, durées d'étude, questions au prof) */
+      /* 1. ENVOYER la file d'attente hors-ligne (scores Quiz/Bac, durées d'étude, questions au prof) */
       var q = [];
       try { q = JSON.parse(localStorage.getItem(CLE_FILE_OFFLINE) || "[]"); } catch (e) {}
       var avaitFile = q.length > 0;
@@ -735,10 +773,12 @@
         });
       }
 
-      /* 3. RECEVOIR les données à jour depuis Supabase (statut, Gold, classe, durée semaine, scores Quiz) */
+      /* 2. RECEVOIR et mettre à jour les données personnelles du candidat depuis Supabase (statut, Gold, classe, lycée, nom, prénom, téléphone, durée semaine, scores Quiz) */
       if ((user.email || "").toLowerCase() !== (cfg.ADMIN || "").toLowerCase()) {
-        sb.from("profiles").select("statut,lycee,classe,nom,prenom,email").eq("id", user.id).maybeSingle().then(function (rp) {
+        sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone").eq("id", user.id).maybeSingle().then(function (rp) {
+          syncProfilEnCours = false;
           if (!rp || rp.error || !rp.data) return;
+          try { sessionStorage.setItem("sti-profil-sync-ts", String(Date.now())); } catch (e) {}
           var st = rp.data.statut;
           if ((estClasseProfLabo(rp.data.classe, user.email) || estProfilIssaouiAmel(rp.data, user.user_metadata) || estProfilMrezguiaMeriem(rp.data, user.user_metadata)) && (!st || st === "en_attente")) {
             st = "actif";
@@ -758,11 +798,13 @@
           var isLaboS = estClasseProfLabo(currentClasse, user.email);
           var isG = Boolean(isLaboS || estGoldProfil(rp.data, user.user_metadata));
           appliquerModeGold(isG, rp.data);
+          appliquerVerrou4SI(isLaboS ? "elevelabo3" : currentClasse, false);
           try {
             var ancC = lireCacheSessionLocal() || {};
             ecrireCacheSessionLocal({
               id: user.id,
-              email: user.email,
+              email: rp.data.email || user.email,
+              phone: rp.data.phone || ancC.phone || "",
               nom: rp.data.nom || ancC.nom || "",
               prenom: rp.data.prenom || ancC.prenom || "",
               user_metadata: user.user_metadata || ancC.user_metadata || {},
@@ -776,12 +818,16 @@
               ts: Date.now()
             });
           } catch (e) {}
+        }).catch(function () {
+          syncProfilEnCours = false;
         });
-        rafraichirDureeEtScoresServeur(user.id);
+        rafraichirDureeEtScoresServeur(user.id, false);
+      } else {
+        syncProfilEnCours = false;
       }
 
       if (estRetourInternet || avaitFile) {
-        afficherToastSynchro("🔄 Connexion Internet : données envoyées, reçues et mises à jour ✅");
+        afficherToastSynchro("🔄 Connexion Internet : données personnelles synchronisées ✅");
       }
     });
   }
@@ -789,7 +835,7 @@
     synchroniserFileHorsLigne(true);
   });
 
-  function rafraichirDureeEtScoresServeur(uid) {
+  function rafraichirDureeEtScoresServeur(uid, seulementCacheLocal) {
     if (!uid || uid === "offline-user") return;
     /* Affichage immédiat depuis le cache local si disponible */
     var elD = document.getElementById("sti-ma-duree-sem");
@@ -808,6 +854,7 @@
       }
     } catch (e) {}
 
+    if (seulementCacheLocal) return;
     if (!navigator.onLine) {
       if (elD && elD.textContent.indexOf("calcul") !== -1) {
         elD.textContent = "⏱️ Cette semaine : 0 min (hors-ligne)";
@@ -1310,6 +1357,15 @@
     }
 
     var dejaEntre = false;
+    var cachesConnus = lireCacheSessionLocal();
+    var tsSyncRec = 0;
+    try { tsSyncRec = parseInt(sessionStorage.getItem("sti-profil-sync-ts") || "0", 10) || 0; } catch (e) {}
+    if (cachesConnus && cachesConnus.id === user.id && cachesConnus.statut === "actif" && tsSyncRec > 0 && Date.now() - tsSyncRec < 45000) {
+      dejaEntre = true;
+      entrer(cachesConnus);
+      return;
+    }
+
     var timerProfilOff = setTimeout(function () {
       if (!dejaEntre) {
         dejaEntre = true;
@@ -1317,12 +1373,13 @@
       }
     }, 2000);
 
-    sb.from("profiles").select("statut,lycee,classe,nom,prenom,email").eq("id", user.id).maybeSingle().then(function (rp) {
+    sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone").eq("id", user.id).maybeSingle().then(function (rp) {
       clearTimeout(timerProfilOff);
       if (!rp || rp.error) {
         if (!dejaEntre) { dejaEntre = true; entrer(lireCacheSessionLocal() || {}); }
         return;
       }
+      try { sessionStorage.setItem("sti-profil-sync-ts", String(Date.now())); } catch (e) {}
       if (!appliquerStatut(rp)) return;
       if (!dejaEntre) {
         dejaEntre = true;
@@ -1339,17 +1396,20 @@
     }
   });
 
-  /* ---------- Surveillance continue : exclusion / retrait / mise en attente / passage Gold en direct ---------- */
+  /* ---------- Surveillance continue : exclusion / retrait / mise en attente / passage Gold et données personnelles en direct ---------- */
   function surveillerSessionTempsReel(uid, appliquerStatut) {
     if (window.__stiSurveillanceActive) return;
     window.__stiSurveillanceActive = true;
     function verifDirecte() {
-      if (enSortie) return;
-      sb.from("profiles").select("statut,lycee,classe").eq("id", uid).maybeSingle().then(function (rp) {
+      if (enSortie || !navigator.onLine) return;
+      sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone").eq("id", uid).maybeSingle().then(function (rp) {
+        if (rp && !rp.error && rp.data) {
+          try { sessionStorage.setItem("sti-profil-sync-ts", String(Date.now())); } catch (e) {}
+        }
         appliquerStatut(rp);
       });
     }
-    setInterval(verifDirecte, 8000);
+    setInterval(verifDirecte, 30000);
     window.addEventListener("focus", verifDirecte);
     document.addEventListener("visibilitychange", function () {
       if (!document.hidden) verifDirecte();
@@ -1491,12 +1551,14 @@
       "padding:10px 12px;box-shadow:5px 5px 0 rgba(244,81,30,.5);font:600 11.5px/1.38 system-ui,'Segoe UI',sans-serif;" +
       "color:#23201a;width:274px;max-width:calc(100vw - 72px);max-height:min(82dvh,calc(100vh - 28px));" +
       "overflow-y:auto;overscroll-behavior:contain;text-align:right;color-scheme:light;";
-    var affLogin = user.email || user.phone || "—";
+    var affLogin = (profil && (profil.email || profil.phone)) || user.email || user.phone || "—";
+    var meta = (user && user.user_metadata) || (profil && profil.user_metadata) || {};
+    var npPan = (((profil && profil.prenom) || meta.prenom || "") + " " + ((profil && profil.nom) || meta.nom || "")).trim();
     if (/@tel\.sti\.tn$/i.test(affLogin)) {
-      var meta = user.user_metadata || {};
-      affLogin = "📱 " + (meta.phone || ("+" + affLogin.replace(/@tel\.sti\.tn$/i, "")));
-      var np = ((meta.prenom || "") + " " + (meta.nom || "")).trim();
-      if (np) affLogin += " · " + np;
+      affLogin = "📱 " + ((profil && profil.phone) || meta.phone || ("+" + affLogin.replace(/@tel\.sti\.tn$/i, "")));
+      if (npPan) affLogin += " · " + npPan;
+    } else if (npPan) {
+      affLogin = npPan + " · " + affLogin;
     }
 
     var vus = {};
@@ -1517,11 +1579,11 @@
         "<button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1.5px solid #23201a;background:#f3ead9;color:#23201a;border-radius:7px;padding:1px 7px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
         "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:1.5px solid #23201a;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;box-shadow:1.5px 1.5px 0 #23201a'>👑 GOLD</span>" +
-          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.214</span>" +
+          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.215</span>" +
           "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
         "</div>" +
       "</div>" +
-      "<div style='font-weight:900;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(affLogin) + "</div>" +
+      "<div id='sti-pan-login' style='font-weight:900;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(affLogin) + "</div>" +
       "<div id='sti-pan-lycee' style='color:#7a6f5d;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(lyceePropre(profil)) + " · " + esc(profil.classe || "—") + "</div>" +
       "<div style='margin-top:6px;padding-top:6px;border-top:1px dashed #e2d5be;text-align:left'>" +
         "<div style='display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:#23201a'><span>📈 Progression</span><span style='color:#f4511e'>" + pctProg + "%</span></div>" +
@@ -1852,7 +1914,7 @@
 
     var badgeVerRoue = document.createElement("div");
     badgeVerRoue.id = "sti-pan-version-foot";
-    badgeVerRoue.textContent = "STiV2.0.214";
+    badgeVerRoue.textContent = "STiV2.0.215";
     badgeVerRoue.style.cssText = "margin-top:5px;padding-top:4px;border-top:1px dashed #e2d5be;text-align:center;font-size:10px;font-weight:900;color:#7a6f5d;letter-spacing:.4px;";
     pan.appendChild(badgeVerRoue);
 
