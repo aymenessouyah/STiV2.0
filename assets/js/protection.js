@@ -716,51 +716,51 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=223",
+        file: "php-guichet.mp4?v=224",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=223",
+        file: "css-positionnement.mp4?v=224",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=223",
+        file: "css-animee.mp4?v=224",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=223",
+        file: "sql-cours.mp4?v=224",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=223",
+        file: "html5-cours.mp4?v=224",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=223",
+        file: "css3-cours.mp4?v=224",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=223",
+        file: "javascript-cours.mp4?v=224",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Récapitulatif JavaScript complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=223",
+        file: "php-cours.mp4?v=224",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
       var STI_CHAPITRES_MEDIA = {
         "html5-cours": [
-          { t: 0.00, short: "I. Squelette", label: "00:00 · I. Squelette HTML5 (<head>, <meta>)", sel: "#entete" },
-          { t: 26.13, short: "II. Structure", label: "00:26 · II. Structuration (<header>, <nav>, <main>)", sel: "#structuration" },
-          { t: 44.93, short: "III. Textes", label: "00:45 · III. Conteneurs & textes (<div>, <span>, <p>)", sel: "#conteneurs" },
-          { t: 57.40, short: "IV. Listes", label: "00:57 · IV. Listes (<ul>, <ol>, <dl>)", sel: "#listes" },
-          { t: 67.92, short: "V. Tableaux", label: "01:08 · V. Tableaux (<table>, rowspan, colspan)", sel: "#tableaux" },
-          { t: 77.98, short: "VI. Médias & Liens", label: "01:18 · VI. Multimédia & Liens (<img>, <audio>, <video>, <a>)", sel: "#texte-media" },
-          { t: 96.72, short: "VII. Événements", label: "01:37 · VII. Attributs globaux & Événements JS", sel: "#attributs-evenements" },
-          { t: 110.88, short: "VIII. target", label: "01:51 · VIII. Attribut target (_blank, _self, iframe)", sel: "#target-explication" },
-          { t: 121.35, short: "IX. Formulaires", label: "02:01 · IX. Formulaires HTML5 (<form>, <input>, <datalist>)", sel: "#formulaires" },
-          { t: 140.47, short: "X. <iframe>", label: "02:20 · X. Cadres intégrés (<iframe>) & Conclusion", sel: "#iframe" }
+          { t: 0.00, short: "I. Squelette", label: "00:00 · I. Squelette HTML5 (<head>, <meta>, <link>, <script>)", sel: "#entete" },
+          { t: 45.09, short: "II. Structure", label: "00:45 · II. Structuration (<header>, <nav>, <main>, <section>)", sel: "#structuration" },
+          { t: 69.64, short: "III. Conteneurs", label: "01:09 · III. Conteneurs génériques (<div>, <span>, <iframe>)", sel: "#conteneurs" },
+          { t: 93.86, short: "IV. Listes", label: "01:33 · IV. Listes HTML5 (<ul>, <ol>, <li> & exemples)", sel: "#listes" },
+          { t: 126.81, short: "V. Tableaux", label: "02:06 · V. Tableaux (<table>, <tr>, <th>, <td>, rowspan, colspan)", sel: "#tableaux" },
+          { t: 161.32, short: "VI. Médias & Liens", label: "02:41 · VI. Texte, Médias & Liens (<img>, <audio>, <video>, <a>)", sel: "#texte-media" },
+          { t: 210.04, short: "VII. Événements", label: "03:30 · VII. Attributs globaux & Événements JS (onclick, oninput…)", sel: "#attributs-evenements" },
+          { t: 250.84, short: "VIII. target", label: "04:10 · VIII. Attribut target (_self, _blank, _parent, _top, iframe)", sel: "#target-explication" },
+          { t: 272.46, short: "IX. Formulaires", label: "04:32 · IX. Formulaires HTML5 (<form>, <input>, <datalist>, <select>)", sel: "#formulaires" },
+          { t: 339.33, short: "X. <iframe>", label: "05:39 · X (10). Intégrer une page : <iframe> (attributs, target='cadre', srcdoc, sandbox)", sel: "#iframe" }
         ],
         "css3-cours": [
           { t: 0.00, short: "I. Sélecteurs", label: "00:00 · I. Syntaxe et Sélecteurs CSS3", sel: "#point-1" },
@@ -1809,20 +1809,20 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=223";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=224";
 
           var CUES_MAP = {
             html5: {
-              "entete": [9.10, 26.13],
-              "structuration": [26.13, 44.93],
-              "conteneurs": [44.93, 57.40],
-              "listes": [57.40, 67.92],
-              "tableaux": [67.92, 77.98],
-              "texte-media": [77.98, 96.72],
-              "attributs-evenements": [96.72, 110.88],
-              "target-explication": [110.88, 121.35],
-              "formulaires": [121.35, 140.47],
-              "iframe": [140.47, 147.71]
+              "entete": [13.27, 45.09],
+              "structuration": [45.09, 69.64],
+              "conteneurs": [69.64, 93.86],
+              "listes": [93.86, 126.81],
+              "tableaux": [126.81, 161.32],
+              "texte-media": [161.32, 210.04],
+              "attributs-evenements": [210.04, 250.84],
+              "target-explication": [250.84, 272.46],
+              "formulaires": [272.46, 339.33],
+              "iframe": [339.33, 435.20]
             },
             css3: {
               "point-1": [9.78, 36.01],
