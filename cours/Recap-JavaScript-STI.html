@@ -1,552 +1,3459 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
-<title>Récapitulatif JavaScript — STI</title>
-<style>
-:root{color-scheme:dark;--bg:#0b1220;--panel:#111c2e;--panel2:#162338;--line:#2a3a50;--text:#f9f1e3;--muted:#b8c3d2;--accent:#e17a45;--accent2:#f4b183;--green:#69d6a5;--red:#ff8b8b;--code:#09101b}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:85px}
-body{margin:0;background:radial-gradient(ellipse at top,#17283e 0,#0b1220 55%);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
-header{padding:38px 20px 30px;border-bottom:1px solid var(--line);background:#0d1728}
-.hero,main,footer{width:min(1180px,calc(100% - 32px));margin:auto}
-.eyebrow{color:var(--accent2);font-weight:800;letter-spacing:.13em;text-transform:uppercase;font-size:.78rem}
-h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.12;margin:8px 0 12px}
-header p{max-width:780px;color:var(--muted);margin:0}
-.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.pill{border:1px solid #4a5b70;border-radius:999px;padding:5px 11px;color:#f9f1e3;font-size:.82rem}
-nav{position:sticky;top:0;z-index:10;background:#0d1728f2;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
-.navinner{width:min(1180px,calc(100% - 24px));margin:auto;display:flex;gap:7px;overflow:auto;padding:10px 0}
-nav a{flex:none;text-decoration:none;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:.84rem}
-nav a:hover{background:#b4552d;border-color:#b4552d}
-main{padding:26px 0 48px}
-.intro,.section,.card{border:1px solid var(--line);border-radius:15px;background:var(--panel);box-shadow:0 10px 28px #0002}
-.intro{padding:18px 20px;margin-bottom:20px}
-.section{padding:22px;margin:20px 0}
-.section h2{margin:0 0 14px;font-size:1.55rem;line-height:1.3}
-.section h2:before{content:"";display:inline-block;width:5px;height:1.1em;background:var(--accent);border-radius:5px;margin-right:10px;vertical-align:-.15em}
-.section h3{margin:0 0 8px;font-size:1.08rem;color:var(--accent2)}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
-.card{padding:16px;background:var(--panel2);min-width:0}
-.card p{margin:7px 0;color:var(--muted)}
-.card ul{margin:8px 0;padding-left:22px;color:var(--muted)}
-pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--code);border:1px solid #29374a;border-radius:10px;padding:13px 14px;margin:10px 0;color:#f9d9a8;font: .9rem/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-x:auto}
-code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#ffd29f;background:#09101b;padding:2px 5px;border-radius:5px}
-pre code{padding:0;background:transparent}
-.note{font-size:.91rem;color:var(--muted)}
-table{border-collapse:collapse;width:100%;margin:10px 0}
-th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
-th{color:var(--accent2)}
-.callout{border-left:4px solid var(--accent);padding:10px 14px;background:#1a293d;border-radius:0 9px 9px 0;color:var(--muted);margin:12px 0}
-button{background:var(--accent);color:#17120e;border:0;border-radius:9px;padding:9px 13px;font-weight:750;cursor:pointer}
-button:hover{filter:brightness(1.1)}
-input,select{max-width:100%;background:#09101b;color:var(--text);border:1px solid #43546a;border-radius:8px;padding:10px;font:inherit}
-.demo{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
-.result{padding:10px 12px;background:#09101b;border:1px solid var(--line);border-radius:9px;min-height:42px;color:var(--green);overflow-wrap:anywhere}
-footer{text-align:center;color:var(--muted);padding:5px 0 30px;font-size:.9rem}
-@media(max-width:760px){.grid{grid-template-columns:1fr}.section{padding:16px}.hero,main,footer{width:calc(100% - 22px)}header{padding:28px 0}th,td{padding:7px;font-size:.9rem}}
-@media print{body{background:white;color:#111}.section,.card,.intro{background:white;color:#111;box-shadow:none;border-color:#bbb}p,li,.note,.card p{color:#333}nav,button{display:none}pre{background:#f4f4f4;color:#111}}
-</style>
-</head>
-<body>
-<header id="haut">
-  <div class="hero">
-    <div class="eyebrow">STI · Sciences de l’informatique</div>
-    <h1>Récapitulatif JavaScript</h1>
-    <p>Les notions essentielles, les syntaxes à connaître et des exemples progressifs pour réviser et s’entraîner directement dans le navigateur.</p>
-    <div class="pills"><span class="pill">Cours de révision</span><span class="pill">Exemples exécutables</span><span class="pill">Interface adaptable</span></div>
-  </div>
-</header>
-<nav><div class="navinner">
-<a href="#base">Introduction</a><a href="#variables">Variables</a><a href="#operateurs">Opérateurs</a><a href="#conditions">Conditions</a><a href="#boucles">Boucles</a><a href="#fonctions">Fonctions</a><a href="#tableaux">Tableaux</a><a href="#chaines">Chaînes</a><a href="#dom">DOM</a><a href="#evenements">Événements</a><a href="#formulaires">Formulaires</a><a href="#exercices">Exercices</a>
-</div></nav>
-<main>
-<div class="intro">
-<strong>Comment utiliser cette fiche ?</strong>
-<p class="note">Lire les règles, observer les exemples, puis modifier les valeurs dans les démonstrations interactives. Les extraits sont indépendants : ils peuvent être copiés dans un fichier HTML ou JavaScript.</p>
-</div>
+  <head>
+    <meta name="robots" content="noai, noimageai" />
+    <meta name="description" content="Récapitulatif JavaScript STI : synthèse complète, structures de contrôle, fonctions, chaînes, tableaux, DOM, événements et validation de formulaire." />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta charset="UTF-8" />
+    <link rel="icon" href="../assets/icons/STI_by_AE.ico" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="dark" />
+    <title>Récapitulatif JavaScript — Cours · 3ème/4ème SI</title>
+    <link rel="stylesheet" href="../assets/fonts/fonts.css" />
 
-<section class="section" id="base">
-<h2>1. Introduction et emplacement du code</h2>
-<div class="grid">
-<article class="card"><h3>À quoi sert JavaScript ?</h3><p>JavaScript permet de rendre une page interactive : calculer, réagir à un clic, vérifier une saisie, modifier le contenu HTML et changer le style.</p></article>
-<article class="card"><h3>Script interne</h3><pre><code>&lt;script&gt;
-  alert("Bonjour STI !");
-&lt;/script&gt;</code></pre><p>Placer souvent le script avant <code>&lt;/body&gt;</code> pour que les éléments HTML soient déjà chargés.</p></article>
-<article class="card"><h3>Script externe</h3><pre><code>&lt;script src="script.js"&gt;&lt;/script&gt;</code></pre><p>Le code est enregistré dans un fichier séparé nommé par exemple <code>script.js</code>.</p></article>
-<article class="card"><h3>Afficher une information</h3><pre><code>console.log("Message");
-alert("Attention !");
-let nom = prompt("Votre nom ?");
-console.log(nom);</code></pre><p><code>console.log()</code> affiche dans la console, <code>alert()</code> ouvre une boîte de dialogue et <code>prompt()</code> demande une saisie.</p></article>
-</div>
-</section>
+    <!-- Prism en mode manuel : la coloration est lancée après préparation des blocs <pre> -->
+    <script>
+      window.Prism = window.Prism || {};
+      window.Prism.manual = true;
+    </script>
+    <!-- PrismJS : coloration des extraits de code (intégré, identique au quiz) -->
+    <script>
+      /* PrismJS 1.29.0 — intégré */
+      var _self =
+          "undefined" != typeof window
+            ? window
+            : "undefined" != typeof WorkerGlobalScope &&
+              self instanceof WorkerGlobalScope
+            ? self
+            : {},
+        Prism = (function (l) {
+          var n = /(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,
+            t = 0,
+            e = {},
+            j = {
+              manual: l.Prism && l.Prism.manual,
+              disableWorkerMessageHandler:
+                l.Prism && l.Prism.disableWorkerMessageHandler,
+              util: {
+                encode: function e(t) {
+                  return t instanceof C
+                    ? new C(t.type, e(t.content), t.alias)
+                    : Array.isArray(t)
+                    ? t.map(e)
+                    : t
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/\u00a0/g, " ");
+                },
+                type: function (e) {
+                  return Object.prototype.toString.call(e).slice(8, -1);
+                },
+                objId: function (e) {
+                  return (
+                    e.__id || Object.defineProperty(e, "__id", { value: ++t }),
+                    e.__id
+                  );
+                },
+                clone: function n(e, a) {
+                  var r, t;
+                  switch (((a = a || {}), j.util.type(e))) {
+                    case "Object":
+                      if (((t = j.util.objId(e)), a[t])) return a[t];
+                      for (var s in ((r = {}), (a[t] = r), e))
+                        e.hasOwnProperty(s) && (r[s] = n(e[s], a));
+                      return r;
+                    case "Array":
+                      return ((t = j.util.objId(e)), a[t])
+                        ? a[t]
+                        : ((r = []),
+                          (a[t] = r),
+                          e.forEach(function (e, t) {
+                            r[t] = n(e, a);
+                          }),
+                          r);
+                    default:
+                      return e;
+                  }
+                },
+                getLanguage: function (e) {
+                  for (; e; ) {
+                    var t = n.exec(e.className);
+                    if (t) return t[1].toLowerCase();
+                    e = e.parentElement;
+                  }
+                  return "none";
+                },
+                setLanguage: function (e, t) {
+                  (e.className = e.className.replace(RegExp(n, "gi"), "")),
+                    e.classList.add("language-" + t);
+                },
+                currentScript: function () {
+                  if ("undefined" == typeof document) return null;
+                  if ("currentScript" in document)
+                    return document.currentScript;
+                  try {
+                    throw new Error();
+                  } catch (e) {
+                    var t = (/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(
+                      e.stack
+                    ) || [])[1];
+                    if (t) {
+                      var n,
+                        a = document.getElementsByTagName("script");
+                      for (n in a) if (a[n].src == t) return a[n];
+                    }
+                    return null;
+                  }
+                },
+                isActive: function (e, t, n) {
+                  for (var a = "no-" + t; e; ) {
+                    var r = e.classList;
+                    if (r.contains(t)) return !0;
+                    if (r.contains(a)) return !1;
+                    e = e.parentElement;
+                  }
+                  return !!n;
+                },
+              },
+              languages: {
+                plain: e,
+                plaintext: e,
+                text: e,
+                txt: e,
+                extend: function (e, t) {
+                  var n,
+                    a = j.util.clone(j.languages[e]);
+                  for (n in t) a[n] = t[n];
+                  return a;
+                },
+                insertBefore: function (n, e, t, a) {
+                  var r,
+                    s = (a = a || j.languages)[n],
+                    i = {};
+                  for (r in s)
+                    if (s.hasOwnProperty(r)) {
+                      if (r == e)
+                        for (var o in t) t.hasOwnProperty(o) && (i[o] = t[o]);
+                      t.hasOwnProperty(r) || (i[r] = s[r]);
+                    }
+                  var l = a[n];
+                  return (
+                    (a[n] = i),
+                    j.languages.DFS(j.languages, function (e, t) {
+                      t === l && e != n && (this[e] = i);
+                    }),
+                    i
+                  );
+                },
+                DFS: function e(t, n, a, r) {
+                  r = r || {};
+                  var s,
+                    i,
+                    o,
+                    l = j.util.objId;
+                  for (s in t)
+                    t.hasOwnProperty(s) &&
+                      (n.call(t, s, t[s], a || s),
+                      (i = t[s]),
+                      "Object" !== (o = j.util.type(i)) || r[l(i)]
+                        ? "Array" !== o ||
+                          r[l(i)] ||
+                          ((r[l(i)] = !0), e(i, n, s, r))
+                        : ((r[l(i)] = !0), e(i, n, null, r)));
+                },
+              },
+              plugins: {},
+              highlightAll: function (e, t) {
+                j.highlightAllUnder(document, e, t);
+              },
+              highlightAllUnder: function (e, t, n) {
+                var a = {
+                  callback: n,
+                  container: e,
+                  selector:
+                    'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code',
+                };
+                j.hooks.run("before-highlightall", a),
+                  (a.elements = Array.prototype.slice.apply(
+                    a.container.querySelectorAll(a.selector)
+                  )),
+                  j.hooks.run("before-all-elements-highlight", a);
+                for (var r, s = 0; (r = a.elements[s++]); )
+                  j.highlightElement(r, !0 === t, a.callback);
+              },
+              highlightElement: function (e, t, n) {
+                var a = j.util.getLanguage(e),
+                  r = j.languages[a],
+                  s = (j.util.setLanguage(e, a), e.parentElement);
+                s &&
+                  "pre" === s.nodeName.toLowerCase() &&
+                  j.util.setLanguage(s, a);
+                var i = {
+                  element: e,
+                  language: a,
+                  grammar: r,
+                  code: e.textContent,
+                };
+                function o(e) {
+                  (i.highlightedCode = e),
+                    j.hooks.run("before-insert", i),
+                    (i.element.innerHTML = i.highlightedCode),
+                    j.hooks.run("after-highlight", i),
+                    j.hooks.run("complete", i),
+                    n && n.call(i.element);
+                }
+                if (
+                  (j.hooks.run("before-sanity-check", i),
+                  (s = i.element.parentElement) &&
+                    "pre" === s.nodeName.toLowerCase() &&
+                    !s.hasAttribute("tabindex") &&
+                    s.setAttribute("tabindex", "0"),
+                  !i.code)
+                )
+                  return (
+                    j.hooks.run("complete", i), void (n && n.call(i.element))
+                  );
+                j.hooks.run("before-highlight", i),
+                  i.grammar
+                    ? t && l.Worker
+                      ? (((a = new Worker(j.filename)).onmessage = function (
+                          e
+                        ) {
+                          o(e.data);
+                        }),
+                        a.postMessage(
+                          JSON.stringify({
+                            language: i.language,
+                            code: i.code,
+                            immediateClose: !0,
+                          })
+                        ))
+                      : o(j.highlight(i.code, i.grammar, i.language))
+                    : o(j.util.encode(i.code));
+              },
+              highlight: function (e, t, n) {
+                e = { code: e, grammar: t, language: n };
+                if ((j.hooks.run("before-tokenize", e), e.grammar))
+                  return (
+                    (e.tokens = j.tokenize(e.code, e.grammar)),
+                    j.hooks.run("after-tokenize", e),
+                    C.stringify(j.util.encode(e.tokens), e.language)
+                  );
+                throw new Error(
+                  'The language "' + e.language + '" has no grammar.'
+                );
+              },
+              tokenize: function (e, t) {
+                var n = t.rest;
+                if (n) {
+                  for (var a in n) t[a] = n[a];
+                  delete t.rest;
+                }
+                for (
+                  var r = new u(),
+                    s =
+                      (z(r, r.head, e),
+                      !(function e(t, n, a, r, s, i) {
+                        for (var o in a)
+                          if (a.hasOwnProperty(o) && a[o]) {
+                            var l = a[o];
+                            l = Array.isArray(l) ? l : [l];
+                            for (var u = 0; u < l.length; ++u) {
+                              if (i && i.cause == o + "," + u) return;
+                              for (
+                                var g,
+                                  c = l[u],
+                                  d = c.inside,
+                                  p = !!c.lookbehind,
+                                  m = !!c.greedy,
+                                  h = c.alias,
+                                  f =
+                                    (m &&
+                                      !c.pattern.global &&
+                                      ((g = c.pattern
+                                        .toString()
+                                        .match(/[imsuy]*$/)[0]),
+                                      (c.pattern = RegExp(
+                                        c.pattern.source,
+                                        g + "g"
+                                      ))),
+                                    c.pattern || c),
+                                  b = r.next,
+                                  y = s;
+                                b !== n.tail && !(i && y >= i.reach);
+                                y += b.value.length, b = b.next
+                              ) {
+                                var v = b.value;
+                                if (n.length > t.length) return;
+                                if (!(v instanceof C)) {
+                                  var F,
+                                    x = 1;
+                                  if (m) {
+                                    if (
+                                      !(F = L(f, y, t, p)) ||
+                                      F.index >= t.length
+                                    )
+                                      break;
+                                    var k = F.index,
+                                      w = F.index + F[0].length,
+                                      A = y;
+                                    for (A += b.value.length; A <= k; )
+                                      (b = b.next), (A += b.value.length);
+                                    if (
+                                      ((A -= b.value.length),
+                                      (y = A),
+                                      b.value instanceof C)
+                                    )
+                                      continue;
+                                    for (
+                                      var P = b;
+                                      P !== n.tail &&
+                                      (A < w || "string" == typeof P.value);
+                                      P = P.next
+                                    )
+                                      x++, (A += P.value.length);
+                                    x--, (v = t.slice(y, A)), (F.index -= y);
+                                  } else if (!(F = L(f, 0, v, p))) continue;
+                                  var k = F.index,
+                                    $ = F[0],
+                                    S = v.slice(0, k),
+                                    E = v.slice(k + $.length),
+                                    v = y + v.length,
+                                    _ =
+                                      (i && v > i.reach && (i.reach = v),
+                                      b.prev),
+                                    S =
+                                      (S && ((_ = z(n, _, S)), (y += S.length)),
+                                      O(n, _, x),
+                                      new C(o, d ? j.tokenize($, d) : $, h, $));
+                                  (b = z(n, _, S)),
+                                    E && z(n, b, E),
+                                    1 < x &&
+                                      (($ = { cause: o + "," + u, reach: v }),
+                                      e(t, n, a, b.prev, y, $),
+                                      i &&
+                                        $.reach > i.reach &&
+                                        (i.reach = $.reach));
+                                }
+                              }
+                            }
+                          }
+                      })(e, r, t, r.head, 0),
+                      r),
+                    i = [],
+                    o = s.head.next;
+                  o !== s.tail;
 
-<section class="section" id="variables">
-<h2>2. Variables, constantes et types</h2>
-<div class="grid">
-<article class="card"><h3>Déclarer des variables</h3><pre><code>let age = 17;
-let nom = "Amira";
-let admis = true;
-const PI = 3.14159;
-var ancien = "ancienne syntaxe";</code></pre><ul><li><code>let</code> : valeur réaffectable.</li><li><code>const</code> : variable non réaffectable.</li><li><code>var</code> : ancienne déclaration, portée différente.</li></ul></article>
-<article class="card"><h3>Types principaux</h3><pre><code>let n = 12;             // number
-let prix = 8.5;         // number
-let texte = "Bonjour";  // string
-let ok = false;         // boolean
-let vide;               // undefined
-let rien = null;        // absence volontaire de valeur</code></pre><p>JavaScript est à typage dynamique : le type dépend de la valeur affectée.</p></article>
-<article class="card"><h3>Règles de nommage</h3><ul><li>Commencer par une lettre, <code>_</code> ou <code>$</code>.</li><li>Ne pas commencer par un chiffre.</li><li>Respecter les majuscules et minuscules : <code>note</code> et <code>Note</code> sont différentes.</li><li>Éviter les mots réservés.</li></ul><pre><code>let noteEleve = 15;
-let _compteur = 0;</code></pre></article>
-<article class="card"><h3>Conversions de types : principe</h3>
-<p>Convertir signifie transformer une valeur d’un type vers un autre : chaîne (<code>string</code>), nombre (<code>number</code>) ou booléen (<code>boolean</code>).</p>
-<pre><code>let texte = "25";          // string
-let nombre = Number(texte); // number : 25
-let resultat = nombre + 5;  // 30</code></pre>
-<div class="callout">Attention : <code>"25" + 5</code> donne <code>"255"</code> (concaténation), tandis que <code>Number("25") + 5</code> donne <code>30</code> (addition numérique).</div>
-</article>
-<article class="card"><h3>À comprendre : le signe +, la multiplication et la soustraction</h3>
-<p>Lorsqu’une chaîne numérique est associée à un nombre, JavaScript ne réagit pas de la même manière selon l’opérateur utilisé. Le signe <code>+</code> peut concaténer des chaînes, tandis que <code>*</code> et <code>-</code> effectuent des calculs numériques et convertissent ici automatiquement les chaînes numériques en nombres.</p>
-<table><tr><th>Expression</th><th>Résultat</th><th>Pourquoi ?</th></tr>
-<tr><td><code>5 + "6"</code></td><td><code>"56"</code></td><td>Concaténation : le nombre 5 est associé au texte "6".</td></tr>
-<tr><td><code>"6" + 5</code></td><td><code>"65"</code></td><td>Concaténation, dans l’ordre des opérandes.</td></tr>
-<tr><td><code>5 * "6"</code></td><td><code>30</code></td><td>La chaîne "6" est convertie en nombre.</td></tr>
-<tr><td><code>"5" * 6</code></td><td><code>30</code></td><td>La chaîne "5" est convertie en nombre.</td></tr>
-<tr><td><code>5 - "6"</code></td><td><code>-1</code></td><td>La chaîne "6" est convertie en nombre.</td></tr>
-<tr><td><code>"5" - 6</code></td><td><code>-1</code></td><td>La chaîne "5" est convertie en nombre.</td></tr></table>
-<pre><code>console.log(5 + "6"); // "56" : string
-console.log("6" + 5); // "65" : string
-console.log(5 * "6"); // 30 : number
-console.log("5" * 6); // 30 : number
-console.log(5 - "6"); // -1 : number
-console.log("5" - 6); // -1 : number
+                )
+                  i.push(o.value), (o = o.next);
+                return i;
+              },
+              hooks: {
+                all: {},
+                add: function (e, t) {
+                  var n = j.hooks.all;
+                  (n[e] = n[e] || []), n[e].push(t);
+                },
+                run: function (e, t) {
+                  var n = j.hooks.all[e];
+                  if (n && n.length) for (var a, r = 0; (a = n[r++]); ) a(t);
+                },
+              },
+              Token: C,
+            };
+          function C(e, t, n, a) {
+            (this.type = e),
+              (this.content = t),
+              (this.alias = n),
+              (this.length = 0 | (a || "").length);
+          }
+          function L(e, t, n, a) {
+            e.lastIndex = t;
+            t = e.exec(n);
+            return (
+              t &&
+                a &&
+                t[1] &&
+                ((e = t[1].length), (t.index += e), (t[0] = t[0].slice(e))),
+              t
+            );
+          }
+          function u() {
+            var e = { value: null, prev: null, next: null },
+              t = { value: null, prev: e, next: null };
+            (e.next = t), (this.head = e), (this.tail = t), (this.length = 0);
+          }
+          function z(e, t, n) {
+            var a = t.next,
+              n = { value: n, prev: t, next: a };
+            return (t.next = n), (a.prev = n), e.length++, n;
+          }
+          function O(e, t, n) {
+            for (var a = t.next, r = 0; r < n && a !== e.tail; r++) a = a.next;
+            ((t.next = a).prev = t), (e.length -= r);
+          }
+          if (
+            ((l.Prism = j),
+            (C.stringify = function t(e, n) {
+              if ("string" == typeof e) return e;
+              var a;
+              if (Array.isArray(e))
+                return (
+                  (a = ""),
+                  e.forEach(function (e) {
+                    a += t(e, n);
+                  }),
+                  a
+                );
+              var r,
+                s = {
+                  type: e.type,
+                  content: t(e.content, n),
+                  tag: "span",
+                  classes: ["token", e.type],
+                  attributes: {},
+                  language: n,
+                },
+                e = e.alias,
+                i =
+                  (e &&
+                    (Array.isArray(e)
+                      ? Array.prototype.push.apply(s.classes, e)
+                      : s.classes.push(e)),
+                  j.hooks.run("wrap", s),
+                  "");
+              for (r in s.attributes)
+                i +=
+                  " " +
+                  r +
+                  '="' +
+                  (s.attributes[r] || "").replace(/"/g, "&quot;") +
+                  '"';
+              return (
+                "<" +
+                s.tag +
+                ' class="' +
+                s.classes.join(" ") +
+                '"' +
+                i +
+                ">" +
+                s.content +
+                "</" +
+                s.tag +
+                ">"
+              );
+            }),
+            !l.document)
+          )
+            return (
+              l.addEventListener &&
+                (j.disableWorkerMessageHandler ||
+                  l.addEventListener(
+                    "message",
+                    function (e) {
+                      var e = JSON.parse(e.data),
+                        t = e.language,
+                        n = e.code,
+                        e = e.immediateClose;
+                      l.postMessage(j.highlight(n, j.languages[t], t)),
+                        e && l.close();
+                    },
+                    !1
+                  )),
+              j
+            );
+          var a,
+            e = j.util.currentScript();
+          function r() {
+            j.manual || j.highlightAll();
+          }
+          return (
+            e &&
+              ((j.filename = e.src),
+              e.hasAttribute("data-manual") && (j.manual = !0)),
+            j.manual ||
+              ("loading" === (a = document.readyState) ||
+              ("interactive" === a && e && e.defer)
+                ? document.addEventListener("DOMContentLoaded", r)
+                : window.requestAnimationFrame
+                ? window.requestAnimationFrame(r)
+                : window.setTimeout(r, 16)),
+            j
+          );
+        })(_self);
+      "undefined" != typeof module &&
+        module.exports &&
+        (module.exports = Prism),
+        "undefined" != typeof global && (global.Prism = Prism),
+        (Prism.languages.markup = {
+          comment: { pattern: /<!--(?:(?!<!--)[\s\S])*?-->/, greedy: !0 },
+          prolog: { pattern: /<\?[\s\S]+?\?>/, greedy: !0 },
+          doctype: {
+            pattern:
+              /<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,
+            greedy: !0,
+            inside: {
+              "internal-subset": {
+                pattern: /(^[^\[]*\[)[\s\S]+(?=\]>$)/,
+                lookbehind: !0,
+                greedy: !0,
+                inside: null,
+              },
+              string: { pattern: /"[^"]*"|'[^']*'/, greedy: !0 },
+              punctuation: /^<!|>$|[[\]]/,
+              "doctype-tag": /^DOCTYPE/i,
+              name: /[^\s<>'"]+/,
+            },
+          },
+          cdata: { pattern: /<!\[CDATA\[[\s\S]*?\]\]>/i, greedy: !0 },
+          tag: {
+            pattern:
+              /<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,
+            greedy: !0,
+            inside: {
+              tag: {
+                pattern: /^<\/?[^\s>\/]+/,
+                inside: { punctuation: /^<\/?/, namespace: /^[^\s>\/:]+:/ },
+              },
+              "special-attr": [],
+              "attr-value": {
+                pattern: /=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,
+                inside: {
+                  punctuation: [
+                    { pattern: /^=/, alias: "attr-equals" },
+                    { pattern: /^(\s*)["']|["']$/, lookbehind: !0 },
+                  ],
+                },
+              },
+              punctuation: /\/?>/,
+              "attr-name": {
+                pattern: /[^\s>\/]+/,
+                inside: { namespace: /^[^\s>\/:]+:/ },
+              },
+            },
+          },
+          entity: [
+            { pattern: /&[\da-z]{1,8};/i, alias: "named-entity" },
+            /&#x?[\da-f]{1,8};/i,
+          ],
+        }),
+        (Prism.languages.markup.tag.inside["attr-value"].inside.entity =
+          Prism.languages.markup.entity),
+        (Prism.languages.markup.doctype.inside["internal-subset"].inside =
+          Prism.languages.markup),
+        Prism.hooks.add("wrap", function (e) {
+          "entity" === e.type &&
+            (e.attributes.title = e.content.replace(/&amp;/, "&"));
+        }),
+        Object.defineProperty(Prism.languages.markup.tag, "addInlined", {
+          value: function (e, t) {
+            var n = {},
+              n =
+                ((n["language-" + t] = {
+                  pattern: /(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,
+                  lookbehind: !0,
+                  inside: Prism.languages[t],
+                }),
+                (n.cdata = /^<!\[CDATA\[|\]\]>$/i),
+                {
+                  "included-cdata": {
+                    pattern: /<!\[CDATA\[[\s\S]*?\]\]>/i,
+                    inside: n,
+                  },
+                }),
+              t =
+                ((n["language-" + t] = {
+                  pattern: /[\s\S]+/,
+                  inside: Prism.languages[t],
+                }),
+                {});
+            (t[e] = {
+              pattern: RegExp(
+                /(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(
+                  /__/g,
+                  function () {
+                    return e;
+                  }
+                ),
+                "i"
+              ),
+              lookbehind: !0,
+              greedy: !0,
+              inside: n,
+            }),
+              Prism.languages.insertBefore("markup", "cdata", t);
+          },
+        }),
+        Object.defineProperty(Prism.languages.markup.tag, "addAttribute", {
+          value: function (e, t) {
+            Prism.languages.markup.tag.inside["special-attr"].push({
+              pattern: RegExp(
+                /(^|["'\s])/.source +
+                  "(?:" +
+                  e +
+                  ")" +
+                  /\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,
+                "i"
+              ),
+              lookbehind: !0,
+              inside: {
+                "attr-name": /^[^\s=]+/,
+                "attr-value": {
+                  pattern: /=[\s\S]+/,
+                  inside: {
+                    value: {
+                      pattern: /(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,
+                      lookbehind: !0,
+                      alias: [t, "language-" + t],
+                      inside: Prism.languages[t],
+                    },
+                    punctuation: [
+                      { pattern: /^=/, alias: "attr-equals" },
+                      /"|'/,
+                    ],
+                  },
+                },
+              },
+            });
+          },
+        }),
+        (Prism.languages.html = Prism.languages.markup),
+        (Prism.languages.mathml = Prism.languages.markup),
+        (Prism.languages.svg = Prism.languages.markup),
+        (Prism.languages.xml = Prism.languages.extend("markup", {})),
+        (Prism.languages.ssml = Prism.languages.xml),
+        (Prism.languages.atom = Prism.languages.xml),
+        (Prism.languages.rss = Prism.languages.xml),
+        (function (e) {
+          var t =
+              /(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/,
+            t =
+              ((e.languages.css = {
+                comment: /\/\*[\s\S]*?\*\//,
+                atrule: {
+                  pattern: RegExp(
+                    "@[\\w-](?:" +
+                      /[^;{\s"']|\s+(?!\s)/.source +
+                      "|" +
+                      t.source +
+                      ")*?" +
+                      /(?:;|(?=\s*\{))/.source
+                  ),
+                  inside: {
+                    rule: /^@[\w-]+/,
+                    "selector-function-argument": {
+                      pattern:
+                        /(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,
+                      lookbehind: !0,
+                      alias: "selector",
+                    },
+                    keyword: {
+                      pattern: /(^|[^\w-])(?:and|not|only|or)(?![\w-])/,
+                      lookbehind: !0,
+                    },
+                  },
+                },
+                url: {
+                  pattern: RegExp(
+                    "\\burl\\((?:" +
+                      t.source +
+                      "|" +
+                      /(?:[^\\\r\n()"']|\\[\s\S])*/.source +
+                      ")\\)",
+                    "i"
+                  ),
+                  greedy: !0,
+                  inside: {
+                    function: /^url/i,
+                    punctuation: /^\(|\)$/,
+                    string: {
+                      pattern: RegExp("^" + t.source + "$"),
+                      alias: "url",
+                    },
+                  },
+                },
+                selector: {
+                  pattern: RegExp(
+                    "(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|" +
+                      t.source +
+                      ")*(?=\\s*\\{)"
+                  ),
+                  lookbehind: !0,
+                },
+                string: { pattern: t, greedy: !0 },
+                property: {
+                  pattern:
+                    /(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,
+                  lookbehind: !0,
+                },
+                important: /!important\b/i,
+                function: {
+                  pattern: /(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,
+                  lookbehind: !0,
+                },
+                punctuation: /[(){};:,]/,
+              }),
+              (e.languages.css.atrule.inside.rest = e.languages.css),
+              e.languages.markup);
+          t &&
+            (t.tag.addInlined("style", "css"),
+            t.tag.addAttribute("style", "css"));
+        })(Prism),
+        (Prism.languages.clike = {
+          comment: [
+            {
+              pattern: /(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,
+              lookbehind: !0,
+              greedy: !0,
+            },
+            { pattern: /(^|[^\\:])\/\/.*/, lookbehind: !0, greedy: !0 },
+          ],
+          string: {
+            pattern: /(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,
+            greedy: !0,
+          },
+          "class-name": {
+            pattern:
+              /(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,
+            lookbehind: !0,
+            inside: { punctuation: /[.\\]/ },
+          },
+          keyword:
+            /\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,
+          boolean: /\b(?:false|true)\b/,
+          function: /\b\w+(?=\()/,
+          number: /\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,
+          operator: /[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,
+          punctuation: /[{}[\];(),.:]/,
+        }),
+        (Prism.languages.javascript = Prism.languages.extend("clike", {
+          "class-name": [
+            Prism.languages.clike["class-name"],
+            {
+              pattern:
+                /(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,
+              lookbehind: !0,
+            },
+          ],
+          keyword: [
+            { pattern: /((?:^|\})\s*)catch\b/, lookbehind: !0 },
+            {
+              pattern:
+                /(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,
+              lookbehind: !0,
+            },
+          ],
+          function:
+            /#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,
+          number: {
+            pattern: RegExp(
+              /(^|[^\w$])/.source +
+                "(?:" +
+                /NaN|Infinity/.source +
+                "|" +
+                /0[bB][01]+(?:_[01]+)*n?/.source +
+                "|" +
+                /0[oO][0-7]+(?:_[0-7]+)*n?/.source +
+                "|" +
+                /0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source +
+                "|" +
+                /\d+(?:_\d+)*n/.source +
+                "|" +
+                /(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/
+                  .source +
+                ")" +
+                /(?![\w$])/.source
+            ),
+            lookbehind: !0,
+          },
+          operator:
+            /--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/,
+        })),
+        (Prism.languages.javascript["class-name"][0].pattern =
+          /(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/),
+        Prism.languages.insertBefore("javascript", "keyword", {
+          regex: {
+            pattern: RegExp(
+              /((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source +
+                /\//.source +
+                "(?:" +
+                /(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/
+                  .source +
+                "|" +
+                /(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/
+                  .source +
+                ")" +
+                /(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/
+                  .source
+            ),
+            lookbehind: !0,
+            greedy: !0,
+            inside: {
+              "regex-source": {
+                pattern: /^(\/)[\s\S]+(?=\/[a-z]*$)/,
+                lookbehind: !0,
+                alias: "language-regex",
+                inside: Prism.languages.regex,
+              },
+              "regex-delimiter": /^\/|\/$/,
+              "regex-flags": /^[a-z]+$/,
+            },
+          },
+          "function-variable": {
+            pattern:
+              /#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,
+            alias: "function",
+          },
+          parameter: [
+            {
+              pattern:
+                /(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,
+              lookbehind: !0,
+              inside: Prism.languages.javascript,
+            },
+            {
+              pattern:
+                /(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,
+              lookbehind: !0,
+              inside: Prism.languages.javascript,
+            },
+            {
+              pattern:
+                /(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,
+              lookbehind: !0,
+              inside: Prism.languages.javascript,
+            },
+            {
+              pattern:
+                /((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,
+              lookbehind: !0,
+              inside: Prism.languages.javascript,
+            },
+          ],
+          constant: /\b[A-Z](?:[A-Z_]|\dx?)*\b/,
+        }),
+        Prism.languages.insertBefore("javascript", "string", {
+          hashbang: { pattern: /^#!.*/, greedy: !0, alias: "comment" },
+          "template-string": {
+            pattern:
+              /`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,
+            greedy: !0,
+            inside: {
+              "template-punctuation": { pattern: /^`|`$/, alias: "string" },
+              interpolation: {
+                pattern:
+                  /((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,
+                lookbehind: !0,
+                inside: {
+                  "interpolation-punctuation": {
+                    pattern: /^\$\{|\}$/,
+                    alias: "punctuation",
+                  },
+                  rest: Prism.languages.javascript,
+                },
+              },
+              string: /[\s\S]+/,
+            },
+          },
+          "string-property": {
+            pattern:
+              /((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,
+            lookbehind: !0,
+            greedy: !0,
+            alias: "property",
+          },
+        }),
+        Prism.languages.insertBefore("javascript", "operator", {
+          "literal-property": {
+            pattern:
+              /((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,
+            lookbehind: !0,
+            alias: "property",
+          },
+        }),
+        Prism.languages.markup &&
+          (Prism.languages.markup.tag.addInlined("script", "javascript"),
+          Prism.languages.markup.tag.addAttribute(
+            /on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/
+              .source,
+            "javascript"
+          )),
+        (Prism.languages.js = Prism.languages.javascript),
+        (function () {
+          var l, u, g, c, e;
+          void 0 !== Prism &&
+            "undefined" != typeof document &&
+            (Element.prototype.matches ||
+              (Element.prototype.matches =
+                Element.prototype.msMatchesSelector ||
+                Element.prototype.webkitMatchesSelector),
+            (l = {
+              js: "javascript",
+              py: "python",
+              rb: "ruby",
+              ps1: "powershell",
+              psm1: "powershell",
+              sh: "bash",
+              bat: "batch",
+              h: "c",
+              tex: "latex",
+            }),
+            (c =
+              "pre[data-src]:not([" +
+              (u = "data-src-status") +
+              '="loaded"]):not([' +
+              u +
+              '="' +
+              (g = "loading") +
+              '"])'),
+            Prism.hooks.add("before-highlightall", function (e) {
+              e.selector += ", " + c;
+            }),
+            Prism.hooks.add("before-sanity-check", function (e) {
+              var r,
+                t,
+                n,
+                a,
+                s,
+                i,
+                o = e.element;
+              o.matches(c) &&
+                ((e.code = ""),
+                o.setAttribute(u, g),
+                ((r = o.appendChild(
+                  document.createElement("CODE")
+                )).textContent = "Loading…"),
+                (t = o.getAttribute("data-src")),
+                "none" === (e = e.language) &&
+                  ((n = (/\.(\w+)$/.exec(t) || [, "none"])[1]),
+                  (e = l[n] || n)),
+                Prism.util.setLanguage(r, e),
+                Prism.util.setLanguage(o, e),
+                (n = Prism.plugins.autoloader) && n.loadLanguages(e),
+                (n = t),
+                (a = function (e) {
+                  o.setAttribute(u, "loaded");
+                  var t,
+                    n,
+                    a = (function (e) {
+                      var t, n;
+                      if (
+                        (e = /^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(
+                          e || ""
+                        ))
+                      )
+                        return (
+                          (t = Number(e[1])),
+                          (n = e[2]),
+                          (e = e[3]),
+                          n ? (e ? [t, Number(e)] : [t, void 0]) : [t, t]
+                        );
+                    })(o.getAttribute("data-range"));
+                  a &&
+                    ((t = e.split(/\r\n?|\n/g)),
+                    (n = a[0]),
+                    (a = null == a[1] ? t.length : a[1]),
+                    n < 0 && (n += t.length),
+                    (n = Math.max(0, Math.min(n - 1, t.length))),
+                    a < 0 && (a += t.length),
+                    (a = Math.max(0, Math.min(a, t.length))),
+                    (e = t.slice(n, a).join("\n")),
+                    o.hasAttribute("data-start") ||
+                      o.setAttribute("data-start", String(n + 1))),
+                    (r.textContent = e),
+                    Prism.highlightElement(r);
+                }),
+                (s = function (e) {
+                  o.setAttribute(u, "failed"), (r.textContent = e);
+                }),
+                (i = new XMLHttpRequest()).open("GET", n, !0),
+                (i.onreadystatechange = function () {
+                  4 == i.readyState &&
+                    (i.status < 400 && i.responseText
+                      ? a(i.responseText)
+                      : 400 <= i.status
+                      ? s(
+                          "✖ Error " +
+                            i.status +
+                            " while fetching file: " +
+                            i.statusText
+                        )
+                      : s("✖ Error: File does not exist or is empty"));
+                }),
+                i.send(null));
+            }),
+            (e = !(Prism.plugins.fileHighlight = {
+              highlight: function (e) {
+                for (
+                  var t, n = (e || document).querySelectorAll(c), a = 0;
+                  (t = n[a++]);
 
-console.log(typeof (5 + "6")); // "string"
-console.log(typeof (5 * "6")); // "number"</code></pre>
-<div class="callout"><strong>Règle importante :</strong> <code>"56"</code> est une chaîne de caractères, alors que <code>56</code> est un nombre. Pour obtenir une addition numérique, convertir explicitement la chaîne : <code>5 + Number("6")</code> donne <code>11</code>.</div>
-</article>
-<article class="card"><h3>1. Number() — convertir en nombre</h3>
-<pre><code>Number("42")       // 42
-Number("3.5")      // 3.5
-Number("")         // 0
-Number("   ")      // 0
-Number("42abc")    // NaN
-Number("bonjour")  // NaN
-Number(true)       // 1
-Number(false)      // 0
-Number(null)       // 0
-Number(undefined)  // NaN</code></pre>
-<p><code>Number()</code> tente de convertir toute la valeur. Si la chaîne ne représente pas un nombre valide, le résultat est <code>NaN</code> (« Not a Number »).</p>
-</article>
-<article class="card"><h3>2. parseInt() — lire un entier</h3>
-<pre><code>parseInt("27")       // 27
-parseInt("27.9")     // 27
-parseInt("-8")       // -8
-parseInt("27abc")    // 27
-parseInt("abc27")    // NaN
-parseInt("3.14")     // 3</code></pre>
-<p><code>parseInt()</code> lit un entier au début de la chaîne et s’arrête lorsqu’il rencontre un caractère incompatible. Pour une base décimale, on peut écrire <code>parseInt(texte, 10)</code>.</p>
-</article>
-<article class="card"><h3>3. parseFloat() — lire un nombre décimal</h3>
-<pre><code>parseFloat("27.8")    // 27.8
-parseFloat("-2.5")    // -2.5
-parseFloat("27.8abc") // 27.8
-parseFloat("abc27.8") // NaN
-parseFloat("12")      // 12</code></pre>
-<p>En JavaScript, le séparateur décimal dans une chaîne numérique est le point : <code>"3.5"</code>. La virgule de <code>"3,5"</code> ne constitue pas un séparateur décimal reconnu par ces conversions.</p>
-</article>
-<article class="card"><h3>4. String() — convertir en chaîne</h3>
-<pre><code>String(25)        // "25"
-String(3.14)      // "3.14"
-String(true)      // "true"
-String(false)     // "false"
-String(null)      // "null"
-String(undefined) // "undefined"</code></pre>
-<p>Utile pour obtenir une représentation textuelle d’une valeur. La concaténation avec <code>+</code> peut également transformer un nombre en chaîne lorsqu’un des opérandes est une chaîne.</p>
-</article>
-<article class="card"><h3>5. Boolean() — convertir en booléen</h3>
-<pre><code>Boolean(1)         // true
-Boolean(-5)        // true
-Boolean("Bonjour") // true
-Boolean(0)         // false
-Boolean("")        // false
-Boolean(null)      // false
-Boolean(undefined) // false
-Boolean(NaN)       // false</code></pre>
-<p>Valeurs considérées comme fausses : <code>false</code>, <code>0</code>, <code>-0</code>, <code>""</code>, <code>null</code>, <code>undefined</code> et <code>NaN</code>. Les autres valeurs sont généralement vraies, y compris <code>"0"</code> et <code>"false"</code>.</p>
-</article>
-<article class="card"><h3>6. La valeur NaN</h3>
-<pre><code>let n = Number("12abc"); // NaN
-Number.isNaN(n);         // true
-isNaN("bonjour");        // true, après conversion</code></pre>
-<p><code>NaN</code> indique qu’une opération numérique n’a pas produit un nombre valide. Pour tester précisément une valeur déjà calculée, préférer <code>Number.isNaN()</code>.</p>
-</article>
-<article class="card"><h3>7. Les saisies avec prompt()</h3>
-<pre><code>let ageTexte = prompt("Votre âge ?");
-let age = Number(ageTexte);
+                )
+                  Prism.highlightElement(t);
+              },
+            })),
+            (Prism.fileHighlight = function () {
+              e ||
+                (console.warn(
+                  "Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."
+                ),
+                (e = !0)),
+                Prism.plugins.fileHighlight.highlight.apply(this, arguments);
+            }));
+        })();
+    </script>
+    <script>
+      /* PrismJS — grammaire JavaScript — intégrée */
+      (Prism.languages.javascript = Prism.languages.extend("clike", {
+        "class-name": [
+          Prism.languages.clike["class-name"],
+          {
+            pattern:
+              /(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,
+            lookbehind: !0,
+          },
+        ],
+        keyword: [
+          { pattern: /((?:^|\})\s*)catch\b/, lookbehind: !0 },
+          {
+            pattern:
+              /(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,
+            lookbehind: !0,
+          },
+        ],
+        function:
+          /#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,
+        number: {
+          pattern: RegExp(
+            "(^|[^\\w$])(?:NaN|Infinity|0[bB][01]+(?:_[01]+)*n?|0[oO][0-7]+(?:_[0-7]+)*n?|0[xX][\\dA-Fa-f]+(?:_[\\dA-Fa-f]+)*n?|\\d+(?:_\\d+)*n|(?:\\d+(?:_\\d+)*(?:\\.(?:\\d+(?:_\\d+)*)?)?|\\.\\d+(?:_\\d+)*)(?:[Ee][+-]?\\d+(?:_\\d+)*)?)(?![\\w$])"
+          ),
+          lookbehind: !0,
+        },
+        operator:
+          /--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/,
+      })),
+        (Prism.languages.javascript["class-name"][0].pattern =
+          /(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/),
+        Prism.languages.insertBefore("javascript", "keyword", {
+          regex: {
+            pattern: RegExp(
+              "((?:^|[^$\\w\\xA0-\\uFFFF.\"'\\])\\s]|\\b(?:return|yield))\\s*)/(?:(?:\\[(?:[^\\]\\\\\r\n]|\\\\.)*\\]|\\\\.|[^/\\\\\\[\r\n])+/[dgimyus]{0,7}|(?:\\[(?:[^[\\]\\\\\r\n]|\\\\.|\\[(?:[^[\\]\\\\\r\n]|\\\\.|\\[(?:[^[\\]\\\\\r\n]|\\\\.)*\\])*\\])*\\]|\\\\.|[^/\\\\\\[\r\n])+/[dgimyus]{0,7}v[dgimyus]{0,7})(?=(?:\\s|/\\*(?:[^*]|\\*(?!/))*\\*/)*(?:$|[\r\n,.;:})\\]]|//))"
+            ),
+            lookbehind: !0,
+            greedy: !0,
+            inside: {
+              "regex-source": {
+                pattern: /^(\/)[\s\S]+(?=\/[a-z]*$)/,
+                lookbehind: !0,
+                alias: "language-regex",
+                inside: Prism.languages.regex,
+              },
+              "regex-delimiter": /^\/|\/$/,
+              "regex-flags": /^[a-z]+$/,
+            },
+          },
+          "function-variable": {
+            pattern:
+              /#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,
+            alias: "function",
+          },
+          parameter: [
+            {
+              pattern:
+                /(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,
+              lookbehind: !0,
+              inside: Prism.languages.javascript,
+            },
+            {
+              pattern:
+                /(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,
+              lookbehind: !0,
+              inside: Prism.languages.javascript,
+            },
+            {
+              pattern:
+                /(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,
+              lookbehind: !0,
+              inside: Prism.languages.javascript,
+            },
+            {
+              pattern:
+                /((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,
+              lookbehind: !0,
+              inside: Prism.languages.javascript,
+            },
+          ],
+          constant: /\b[A-Z](?:[A-Z_]|\dx?)*\b/,
+        }),
+        Prism.languages.insertBefore("javascript", "string", {
+          hashbang: { pattern: /^#!.*/, greedy: !0, alias: "comment" },
+          "template-string": {
+            pattern:
+              /`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,
+            greedy: !0,
+            inside: {
+              "template-punctuation": { pattern: /^`|`$/, alias: "string" },
+              interpolation: {
+                pattern:
+                  /((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,
+                lookbehind: !0,
+                inside: {
+                  "interpolation-punctuation": {
+                    pattern: /^\$\{|\}$/,
+                    alias: "punctuation",
+                  },
+                  rest: Prism.languages.javascript,
+                },
+              },
+              string: /[\s\S]+/,
+            },
+          },
+          "string-property": {
+            pattern:
+              /((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,
+            lookbehind: !0,
+            greedy: !0,
+            alias: "property",
+          },
+        }),
+        Prism.languages.insertBefore("javascript", "operator", {
+          "literal-property": {
+            pattern:
+              /((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,
+            lookbehind: !0,
+            alias: "property",
+          },
+        }),
+        Prism.languages.markup &&
+          (Prism.languages.markup.tag.addInlined("script", "javascript"),
+          Prism.languages.markup.tag.addAttribute(
+            "on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)",
+            "javascript"
+          )),
+        (Prism.languages.js = Prism.languages.javascript);
+    </script>
 
-if (ageTexte !== null && ageTexte.trim() !== "" && Number.isFinite(age)) {
-  console.log("L'année prochaine : " + (age + 1));
+    <style>
+      /* ==== Thème Prism « tomorrow » (intégré) ==== */
+      code[class*="language-"],
+      pre[class*="language-"] {
+        color: #ccc;
+        background: 0 0;
+        font-family: "Fira Code", Consolas, Monaco, "Andale Mono", "Ubuntu Mono",
+          monospace;
+        font-size: 1em;
+        text-align: left;
+        white-space: pre;
+        word-spacing: normal;
+        word-break: normal;
+        word-wrap: normal;
+        line-height: 1.5;
+        -moz-tab-size: 4;
+        -o-tab-size: 4;
+        tab-size: 4;
+        -webkit-hyphens: none;
+        -moz-hyphens: none;
+        -ms-hyphens: none;
+        hyphens: none;
+      }
+      .token.block-comment,
+      .token.cdata,
+      .token.comment,
+      .token.doctype,
+      .token.prolog {
+        color: #999;
+      }
+      .token.punctuation {
+        color: #ccc;
+      }
+      .token.attr-name,
+      .token.deleted,
+      .token.namespace,
+      .token.tag {
+        color: #e2777a;
+      }
+      .token.function-name {
+        color: #6196cc;
+      }
+      .token.boolean,
+      .token.function,
+      .token.number {
+        color: #f08d49;
+      }
+      .token.class-name,
+      .token.constant,
+      .token.property,
+      .token.symbol {
+        color: #f8c555;
+      }
+      .token.atrule,
+      .token.builtin,
+      .token.important,
+      .token.keyword,
+      .token.selector {
+        color: #cc99cd;
+      }
+      .token.attr-value,
+      .token.char,
+      .token.regex,
+      .token.string,
+      .token.variable {
+        color: #7ec699;
+      }
+      .token.entity,
+      .token.operator,
+      .token.url {
+        color: #67cdcc;
+      }
+      .token.bold,
+      .token.important {
+        font-weight: 700;
+      }
+      .token.italic {
+        font-style: italic;
+      }
+      .token.entity {
+        cursor: help;
+      }
+      .token.inserted {
+        color: green;
+      }
+
+      /* ==== Variables du thème « Arène JavaScript » ==== */
+      :root {
+        --js-yellow: #f7df1e;
+        --js: #f7df1e;
+        --js-ink: #0a0c14;
+        --neon-blue: #00f3ff;
+        --neon-pink: #ff2d78;
+        --neon-green: #22ff88;
+        --cyber-dark: #0a0c14;
+        --text: #e2e8f0;
+        --muted: #9ca3af;
+        --dim: #6b7280;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --code-bg: #0d1120;
+        --code-line: #1e293b;
+        --blue: #60a5fa;
+        --cyan: #22d3ee;
+        --green: #34d399;
+        --red: #fb7185;
+        --glass: rgba(16, 20, 34, 0.72);
+        --glass-line: rgba(255, 255, 255, 0.08);
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-padding-top: calc(var(--topbar-h, 96px) + 8px);
+        scroll-behavior: smooth;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        .bg-mesh,
+        .grid-floor,
+        .title-glow,
+        .ping {
+          animation: none !important;
+        }
+      }
+      body {
+        margin: 0;
+        background-color: var(--cyber-dark);
+        color: var(--text);
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial,
+          sans-serif;
+        line-height: 1.55;
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+      code,
+      .mono,
+      table td code,
+      .sig,
+      .font-mono-code {
+        font-family: "Fira Code", Consolas, "Courier New", monospace;
+      }
+      h1,
+      h2,
+      h3,
+      .brand-name,
+      .font-heading {
+        font-family: "Orbitron", "Trebuchet MS", "Arial Black", sans-serif;
+        letter-spacing: 1px;
+      }
+
+      /* ==== Calques de fond (identiques au quiz) ==== */
+      .bg-mesh {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: radial-gradient(
+            ellipse 60% 50% at 15% 20%,
+            rgba(247, 223, 30, 0.08),
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse 50% 50% at 85% 80%,
+            rgba(0, 243, 255, 0.08),
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse 40% 40% at 60% 10%,
+            rgba(255, 45, 120, 0.05),
+            transparent 50%
+          );
+        animation: meshDrift 16s ease-in-out infinite alternate;
+        pointer-events: none;
+      }
+      @keyframes meshDrift {
+        0% {
+          filter: hue-rotate(0deg) saturate(1);
+          transform: scale(1);
+        }
+        100% {
+          filter: hue-rotate(40deg) saturate(1.3);
+          transform: scale(1.08);
+        }
+      }
+      #particle-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .grid-floor {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 45vh;
+        z-index: 0;
+        background-image: linear-gradient(
+            rgba(0, 243, 255, 0.07) 1px,
+            transparent 1px
+          ),
+          linear-gradient(90deg, rgba(0, 243, 255, 0.07) 1px, transparent 1px);
+        background-size: 44px 44px;
+        transform: perspective(420px) rotateX(62deg) scale(1.6);
+        transform-origin: bottom;
+        opacity: 0.5;
+        animation: gridScroll 3.5s linear infinite;
+        mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+        -webkit-mask-image: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.9),
+          transparent
+        );
+        pointer-events: none;
+      }
+      @keyframes gridScroll {
+        to {
+          background-position: 0 44px, 0 44px;
+        }
+      }
+      .scanlines {
+        position: relative;
+      }
+      .scanlines::before {
+        content: " ";
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(
+            rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.22) 50%
+          ),
+          linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 0.02),
+            rgba(0, 255, 0, 0.01),
+            rgba(0, 0, 255, 0.02)
+          );
+        z-index: 60;
+        background-size: 100% 3px, 3px 100%;
+        pointer-events: none;
+        opacity: 0.55;
+      }
+
+      /* ==== Effet verre ==== */
+      .glass-panel,
+      .card,
+      .fn-box,
+      aside#side {
+        background: var(--glass);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid var(--glass-line);
+        box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.8),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+
+      /* ==== Barre du haut ==== */
+      nav.topbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        padding-top: env(safe-area-inset-top, 0px);
+        background: rgba(13, 16, 26, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+      }
+      .topbar-inner {
+        margin: 0 auto;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .brand-col {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--text);
+        min-width: 0;
+      }
+      .js-badge {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 auto;
+        background: var(--js-yellow);
+        color: #000;
+        font-family: "Fira Code", monospace;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        box-shadow: 0 0 16px rgba(247, 223, 30, 0.55);
+        transition: transform 0.2s;
+      }
+      .logo:hover .js-badge {
+        transform: rotate(6deg);
+      }
+      .brand-text {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        line-height: 1.25;
+      }
+      .brand-name {
+        font-weight: 800;
+        font-size: 0.95rem;
+        color: #fff;
+        text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .brand-name em {
+        font-style: normal;
+        color: var(--js-yellow);
+      }
+      .ver {
+        font-family: "Fira Code", monospace;
+        font-size: 10px;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        padding: 1px 6px;
+        border-radius: 4px;
+        background: rgba(247, 223, 30, 0.1);
+        color: var(--js-yellow);
+        border: 1px solid rgba(247, 223, 30, 0.3);
+      }
+      .brand-sub {
+        font-family: "Fira Code", monospace;
+        font-size: 11px;
+        color: var(--dim);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .author {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        padding-left: 46px;
+      }
+      .author-logo {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+        border-radius: 6px;
+        flex: 0 0 auto;
+      }
+      .author-mono {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        background: var(--js-yellow);
+        color: #000;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 800;
+        font-size: 0.6rem;
+      }
+      .author-txt {
+        font-family: "Fira Code", monospace;
+        font-weight: 600;
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .navlinks {
+        display: flex;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+      .navbtn {
+        font-family: "Fira Code", Consolas, monospace;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--gray-700);
+        color: #d1d5db;
+        background: rgba(31, 41, 55, 0.8);
+        transition: all 0.2s;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .navbtn:hover {
+        color: var(--js-yellow);
+        border-color: rgba(247, 223, 30, 0.5);
+        transform: translateY(-2px);
+      }
+      .navbtn.active {
+        background: var(--js-yellow);
+        color: #000;
+        border-color: var(--js-yellow);
+        font-family: "Orbitron", sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+      .navbtn.active:hover {
+        background: #fde047;
+        box-shadow: 0 0 20px rgba(247, 223, 30, 0.4);
+        color: #000;
+      }
+      .menu-btn {
+        display: none;
+        font-size: 1.1rem;
+        line-height: 1;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--gray-700);
+        background: rgba(31, 41, 55, 0.8);
+        color: #d1d5db;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .menu-btn:hover {
+        color: var(--js-yellow);
+        border-color: rgba(247, 223, 30, 0.5);
+      }
+
+      /* ==== Bandeau de progression ==== */
+      .course-bar {
+        border-top: 1px solid rgba(31, 41, 55, 0.8);
+        background: rgba(10, 12, 20, 0.6);
+        position: relative;
+      }
+      .course-bar-inner {
+        padding: 5px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 0.78rem;
+        font-family: "Fira Code", monospace;
+      }
+      .course-bar-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+      }
+      .course-level-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(0, 243, 255, 0.08);
+        color: var(--cyan);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        padding: 2px 9px;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        flex: 0 0 auto;
+      }
+      .course-sep {
+        color: var(--dim);
+        flex: 0 0 auto;
+      }
+      .course-sec-step {
+        font-weight: 700;
+        font-size: 0.7rem;
+        background: var(--js-yellow);
+        color: #000;
+        padding: 1px 7px;
+        border-radius: 999px;
+        flex: 0 0 auto;
+      }
+      .course-sec-name {
+        font-weight: 600;
+        color: var(--text);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.72rem;
+      }
+      .course-bar-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+      .course-mini-track {
+        width: 84px;
+        height: 6px;
+        background: var(--gray-800);
+        border: 1px solid var(--gray-700);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .course-mini-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--cyan), var(--js-yellow));
+        border-radius: 999px;
+        transition: width 0.12s ease-out;
+      }
+      .course-pct {
+        font-weight: 700;
+        font-size: 0.74rem;
+        color: var(--js-yellow);
+        min-width: 3.4ch;
+        text-align: right;
+      }
+      .course-progress-track {
+        height: 3px;
+        width: 100%;
+        background: rgba(31, 41, 55, 0.6);
+        overflow: hidden;
+      }
+      .course-progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--cyan), var(--js-yellow));
+        box-shadow: 0 0 10px rgba(247, 223, 30, 0.6);
+        transition: width 0.1s ease-out;
+      }
+
+      /* ==== Mise en page ==== */
+      .layout {
+        display: flex;
+        align-items: flex-start;
+        position: relative;
+        z-index: 10;
+      }
+      .content {
+        flex: 1;
+        min-width: 0;
+      }
+      aside#side {
+        position: sticky;
+        top: var(--topbar-h, 64px);
+        flex: 0 0 210px;
+        width: 210px;
+        max-height: calc(100vh - var(--topbar-h, 64px));
+        overflow-y: auto;
+        padding: 12px 8px 20px 10px;
+        border: none;
+        border-right: 1px solid rgba(31, 41, 55, 0.8);
+        border-radius: 0;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      aside#side a {
+        font-family: "Fira Code", monospace;
+        font-size: 0.78rem;
+        font-weight: 500;
+        text-decoration: none;
+        color: var(--muted);
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        transition: all 0.15s;
+        position: relative;
+        counter-increment: side;
+      }
+      aside#side {
+        counter-reset: side;
+      }
+      aside#side a::before {
+        content: counter(side, decimal-leading-zero) " ";
+        color: var(--dim);
+        font-size: 0.68rem;
+      }
+      aside#side a:hover {
+        background: rgba(31, 41, 55, 0.6);
+        color: #fff;
+        transform: translateX(4px);
+      }
+      aside#side a.active {
+        background: rgba(247, 223, 30, 0.1);
+        color: var(--js-yellow);
+        border-color: rgba(247, 223, 30, 0.3);
+        box-shadow: 0 0 14px rgba(247, 223, 30, 0.12);
+      }
+      aside#side a.active::before {
+        color: var(--js-yellow);
+      }
+
+      /* ==== En-tête de la page ==== */
+      header {
+        padding: 28px 18px 10px;
+        text-align: left;
+        margin: 0 auto;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: rgba(247, 223, 30, 0.1);
+        border: 1px solid rgba(247, 223, 30, 0.3);
+        color: var(--js-yellow);
+        font-family: "Fira Code", monospace;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .eyebrow .ping {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--js-yellow);
+        position: relative;
+      }
+      .eyebrow .ping::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: var(--js-yellow);
+        animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+      }
+      @keyframes ping {
+        75%,
+        100% {
+          transform: scale(2.4);
+          opacity: 0;
+        }
+      }
+      h1 {
+        font-size: clamp(1.8rem, 4.5vw, 3rem);
+        margin: 0.4em 0 0.25em;
+        font-weight: 900;
+        line-height: 1.1;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        background: linear-gradient(90deg, #fef08a, #fcd34d, #eab308);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .title-glow {
+        animation: titleGlow 3s ease-in-out infinite;
+      }
+      @keyframes titleGlow {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 10px rgba(247, 223, 30, 0.35));
+        }
+        50% {
+          filter: drop-shadow(0 0 22px rgba(247, 223, 30, 0.6));
+        }
+      }
+      header p {
+        color: var(--muted);
+        max-width: 64ch;
+        margin: 0;
+        font-size: 0.98rem;
+      }
+      header p .kbd {
+        margin: 0 2px;
+      }
+      .kbd {
+        font-family: "Fira Code", Consolas, monospace;
+        font-size: 10px;
+        padding: 1px 6px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom-width: 3px;
+        background: rgba(255, 255, 255, 0.06);
+        color: #d1d5db;
+      }
+
+      main {
+        margin: 0 auto;
+        padding: 8px 18px 48px;
+      }
+
+      /* ==== Sections ==== */
+      .section {
+        margin-bottom: 34px;
+        animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      @keyframes popIn {
+        0% {
+          transform: scale(0.97);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .section h2 {
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin: 0 0 14px;
+        padding: 8px 16px 8px 14px;
+        background: rgba(16, 20, 34, 0.8);
+        border: 1px solid var(--gray-700);
+        border-left: 3px solid var(--js-yellow);
+        border-radius: 10px;
+        display: inline-block;
+        max-width: 100%;
+        color: #fff;
+        text-transform: uppercase;
+        line-height: 1.35;
+        box-shadow: 0 0 20px rgba(247, 223, 30, 0.08);
+      }
+      .section h2::before {
+        content: "// ";
+        color: var(--js-yellow);
+        font-family: "Fira Code", monospace;
+        font-weight: 700;
+      }
+      .section h2 .note {
+        font-family: "Fira Code", monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0;
+        text-transform: none;
+        margin: 0 0 0 8px;
+        font-weight: 400;
+        display: inline-block;
+        vertical-align: middle;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(0, 243, 255, 0.08);
+        color: var(--cyan);
+        border: 1px solid rgba(0, 243, 255, 0.25);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+        gap: 14px;
+      }
+
+      /* ==== Cartes ==== */
+      .card {
+        border-radius: 16px;
+        padding: 18px 20px;
+        overflow-x: auto;
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+          border-color 0.25s, box-shadow 0.25s;
+      }
+      .card:hover {
+        border-color: rgba(247, 223, 30, 0.25);
+        box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.8),
+          0 0 24px rgba(247, 223, 30, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+      .card h3 {
+        margin: 0 0 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--js-yellow);
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card h3::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--js-yellow);
+        box-shadow: 0 0 8px var(--js-yellow);
+        flex: 0 0 auto;
+      }
+      .card h3 code {
+        text-transform: none;
+        letter-spacing: 0;
+        color: var(--cyan);
+      }
+      .card p {
+        color: #cbd5e1;
+      }
+      .card strong {
+        color: #fff;
+      }
+
+      /* ==== Tableaux ==== */
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.9rem;
+      }
+      table.wide {
+        min-width: 0;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 9px 10px;
+        border-bottom: 1px solid rgba(55, 65, 81, 0.6);
+        vertical-align: top;
+      }
+      th {
+        color: var(--dim);
+        font-weight: 600;
+        font-size: 0.72rem;
+        font-family: "Fira Code", monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      td {
+        color: #cbd5e1;
+      }
+      td code,
+      th code,
+      p code,
+      li code,
+      .fn-desc code,
+      .exo-txt code,
+      .note code {
+        color: var(--blue);
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        padding: 1px 6px;
+        border-radius: 6px;
+        font-size: 0.85em;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .ok {
+        color: var(--neon-green);
+      }
+      .no {
+        color: var(--neon-pink);
+      }
+
+      /* ==== Blocs de code (style « exercice.js » du quiz) ==== */
+      pre {
+        position: relative;
+        background: var(--code-bg) !important;
+        border: 1px solid var(--code-line);
+        border-radius: 0.75rem;
+        padding: 36px 16px 14px !important;
+        overflow-x: auto;
+        font-size: 0.82rem;
+        margin: 10px 0 0;
+        line-height: 1.6;
+        box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.7);
+        font-family: "Fira Code", Consolas, monospace;
+        color: #ccc;
+      }
+      pre::before {
+        content: "";
+        position: absolute;
+        top: 11px;
+        left: 14px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, 0.7);
+        box-shadow: 16px 0 0 rgba(234, 179, 8, 0.7),
+          32px 0 0 rgba(34, 197, 94, 0.7);
+      }
+      pre::after {
+        content: attr(data-file);
+        position: absolute;
+        top: 7px;
+        right: 12px;
+        font-family: "Fira Code", monospace;
+        font-size: 10px;
+        color: var(--dim);
+      }
+      pre code {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: inherit;
+        color: inherit;
+      }
+      pre .c,
+      .token.comment {
+        color: #6b7280;
+      }
+      .note {
+        color: var(--muted);
+        font-size: 0.84rem;
+        margin-top: 8px;
+        font-style: italic;
+      }
+
+      /* ==== Exercices ==== */
+      .exo {
+        border-bottom: 1px solid rgba(55, 65, 81, 0.6);
+        padding: 12px 0;
+      }
+      .exo:last-child {
+        border-bottom: none;
+      }
+      .exo summary {
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        gap: 10px;
+        align-items: baseline;
+        font-size: 0.92rem;
+        color: #e5e7eb;
+        padding: 6px 8px;
+        margin: -6px -8px;
+        border-radius: 10px;
+        transition: background 0.2s, transform 0.15s;
+      }
+      .exo summary:hover {
+        background: rgba(255, 255, 255, 0.03);
+        transform: translateX(5px);
+      }
+      .exo summary::-webkit-details-marker {
+        display: none;
+      }
+      .exo summary::before {
+        content: "▸";
+        color: var(--js-yellow);
+        flex: 0 0 auto;
+        transition: transform 0.15s;
+      }
+      .exo[open] summary::before {
+        transform: rotate(90deg);
+      }
+      .exo[open] summary {
+        color: #fff;
+      }
+      .exo-num {
+        color: #000;
+        background: var(--js-yellow);
+        border-radius: 6px;
+        font-family: "Fira Code", monospace;
+        font-weight: 700;
+        font-size: 0.72rem;
+        flex: 0 0 auto;
+        min-width: 1.8em;
+        text-align: center;
+        padding: 2px 4px;
+        box-shadow: 0 0 10px rgba(247, 223, 30, 0.35);
+      }
+      .exo-txt {
+        flex: 1;
+      }
+      .exo pre {
+        margin-top: 12px;
+        animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+
+      .compare {
+        overflow-x: auto;
+      }
+      .compare table {
+        min-width: 0;
+      }
+
+      /* ==== Boutons / boîtes extensibles (fonctions Math, chaînes…) ==== */
+      .fn-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .fnbtn {
+        font-family: "Fira Code", monospace;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 7px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--gray-700);
+        background: rgba(31, 41, 55, 0.8);
+        color: var(--cyan);
+        transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s,
+          background 0.2s, color 0.2s;
+      }
+      .fnbtn::after {
+        content: " ▾";
+        color: var(--js-yellow);
+      }
+      .fnbtn:hover {
+        transform: translateY(-2px);
+        border-color: rgba(0, 243, 255, 0.5);
+        box-shadow: 0 0 14px rgba(0, 243, 255, 0.15);
+      }
+      .fnbtn:focus-visible {
+        outline: 2px solid var(--js-yellow);
+        outline-offset: 2px;
+      }
+      .fnbtn[aria-expanded="true"] {
+        background: var(--js-yellow);
+        color: #000;
+        border-color: var(--js-yellow);
+        box-shadow: 0 0 20px rgba(247, 223, 30, 0.4);
+      }
+      .fnbtn[aria-expanded="true"]::after {
+        content: " ▴";
+        color: #000;
+      }
+      .fn-panel {
+        display: grid;
+        grid-template-rows: 0fr;
+        visibility: hidden;
+        transition: grid-template-rows 0.25s ease, visibility 0.25s;
+      }
+      .fn-panel.open {
+        grid-template-rows: 1fr;
+        visibility: visible;
+        margin-top: 12px;
+      }
+      .fn-inner {
+        overflow: hidden;
+        min-height: 0;
+      }
+      .fn-box {
+        border-left: 4px solid var(--js-yellow);
+        border-radius: 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+        column-gap: 24px;
+        align-content: start;
+        padding: 18px 22px;
+      }
+      .fn-box .sig,
+      .fn-box .fn-desc,
+      .fn-box .note {
+        grid-column: 1;
+      }
+      .fn-box .sig {
+        color: var(--js-yellow);
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 6px;
+      }
+      .fn-desc {
+        font-size: 0.95rem;
+        color: #cbd5e1;
+      }
+      .fn-box pre {
+        grid-column: 2;
+        grid-row: 1 / span 3;
+        margin: 0;
+        font-size: 0.88rem;
+        align-self: start;
+      }
+      .fn-box .note {
+        margin-top: 10px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .fn-panel {
+          transition: none;
+        }
+      }
+
+      /* ==== Pied de page ==== */
+      footer {
+        margin: 20px auto 0;
+        text-align: center;
+        color: var(--dim);
+        font-family: "Fira Code", monospace;
+        font-size: 0.78rem;
+        padding: 22px 14px 32px;
+        border-top: 1px solid rgba(31, 41, 55, 0.6);
+        position: relative;
+        z-index: 10;
+      }
+      footer .credit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: #d1d5db;
+        margin-bottom: 12px;
+      }
+      footer .credit .js-badge {
+        width: 24px;
+        height: 24px;
+        font-size: 0.75rem;
+        border-radius: 6px;
+      }
+
+      /* ==== Bouton « revenir en haut » ==== */
+      .back-to-top {
+        position: fixed;
+        right: 18px;
+        bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+        z-index: 40;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 50%;
+        border: none;
+        background: var(--js-yellow);
+        color: #000;
+        font-family: "Orbitron", sans-serif;
+        font-weight: 800;
+        font-size: 1.1rem;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 0 20px rgba(247, 223, 30, 0.55);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(14px) scale(0.92);
+        pointer-events: none;
+        transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s,
+          background 0.15s;
+      }
+      .back-to-top span {
+        display: none;
+      }
+      .back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+      .back-to-top:hover {
+        background: #fde047;
+        transform: translateY(-3px) scale(1.04);
+      }
+      .back-to-top:active {
+        transform: translateY(0) scale(0.98);
+      }
+      .back-to-top:focus-visible {
+        outline: 2px solid var(--cyan);
+        outline-offset: 3px;
+      }
+
+      /* ==== Barre de défilement ==== */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0d1117;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #2a3448;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #f7df1e;
+      }
+
+      /* ==== Responsive ==== */
+      @media (max-width: 900px) {
+        .menu-btn {
+          display: inline-block;
+        }
+        aside#side {
+          position: fixed;
+          left: 0;
+          z-index: 45;
+          background: rgba(13, 16, 26, 0.96);
+          transform: translateX(-105%);
+          transition: transform 0.2s;
+          border-right: 1px solid var(--gray-700);
+          border-radius: 0 12px 12px 0;
+        }
+        aside#side.open {
+          transform: none;
+        }
+        .fn-box {
+          grid-template-columns: 1fr;
+        }
+        .fn-box pre {
+          grid-column: 1;
+          grid-row: auto;
+          margin-top: 10px;
+        }
+      }
+      @media (max-width: 600px) {
+        .course-mini-track {
+          display: none;
+        }
+        .brand-sub,
+        .author {
+          display: none;
+        }
+        .back-to-top {
+          right: 14px;
+          bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+        }
+        .navbtn span.lbl {
+          display: none;
+        }
+        .brand-name {
+          font-size: 0.72rem;
+          white-space: normal;
+          display: block;
+          line-height: 1.2;
+        }
+        .navbtn.active {
+          font-size: 0.65rem;
+          padding: 8px 9px;
+        }
+        .brand-name .ver {
+          display: none;
+        }
+        .section h2 {
+          font-size: 0.9rem;
+          letter-spacing: 0.5px;
+        }
+        header {
+          padding: 20px 14px 8px;
+        }
+        main {
+          padding: 8px 12px 40px;
+        }
+        .card {
+          padding: 14px 14px;
+        }
+      }
+    </style>
+    <style>
+      /* ==== Styles complémentaires pour les démonstrations du Récapitulatif JavaScript ==== */
+      header#top {
+        padding: 28px 18px 10px;
+        text-align: left;
+        margin: 0 auto;
+      }
+      header p.lead {
+        color: var(--muted);
+        max-width: 72ch;
+        margin: 0;
+        font-size: 0.98rem;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+        gap: 14px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+        gap: 14px;
+      }
+      .section > .card + .card,
+      .section > .grid-2 + .card,
+      .section > .grid-3 + .card,
+      .section > .card + .grid-2,
+      .section > .card + .grid-3 {
+        margin-top: 14px;
+      }
+      ul.clean {
+        margin: 8px 0 0 18px;
+        padding: 0;
+      }
+      ul.clean li {
+        margin: 6px 0;
+        color: #cbd5e1;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid rgba(55, 65, 81, 0.6);
+        border-radius: 12px;
+        background: rgba(13, 17, 32, 0.55);
+      }
+      .tip,
+      .warn {
+        padding: 12px 14px;
+        border-radius: 12px;
+        margin-top: 12px;
+        border: 1px solid rgba(55, 65, 81, 0.7);
+        font-size: 0.9rem;
+      }
+      .tip {
+        background: rgba(34, 255, 136, 0.07);
+        border-left: 4px solid var(--neon-green);
+        color: #d1fae5;
+      }
+      .warn {
+        background: rgba(247, 223, 30, 0.08);
+        border-left: 4px solid var(--js-yellow);
+        color: #fef08a;
+      }
+      .tip code,
+      .warn code {
+        color: var(--blue);
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        padding: 1px 6px;
+        border-radius: 6px;
+        font-size: 0.85em;
+      }
+      .demo {
+        margin-top: 12px;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 243, 255, 0.22);
+        background: rgba(10, 14, 26, 0.75);
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      input,
+      select,
+      button {
+        font: inherit;
+      }
+      input[type="text"],
+      input[type="number"],
+      select {
+        width: 100%;
+        max-width: 260px;
+        padding: 9px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--gray-700);
+        background: rgba(17, 24, 39, 0.9);
+        color: var(--text);
+        font-family: "Fira Code", monospace;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      input[type="text"]:focus,
+      input[type="number"]:focus,
+      select:focus {
+        border-color: var(--js-yellow);
+        box-shadow: 0 0 12px rgba(247, 223, 30, 0.25);
+      }
+      .btn {
+        cursor: pointer;
+        border: 1px solid var(--gray-700);
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-family: "Fira Code", monospace;
+        font-size: 0.8rem;
+        font-weight: 700;
+        transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s,
+          background 0.2s, color 0.2s;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+      .btn.primary {
+        background: var(--js-yellow);
+        color: #000;
+        border-color: var(--js-yellow);
+        box-shadow: 0 0 16px rgba(247, 223, 30, 0.35);
+      }
+      .btn.primary:hover {
+        background: #fde047;
+        box-shadow: 0 0 22px rgba(247, 223, 30, 0.55);
+      }
+      .btn.secondary {
+        background: rgba(31, 41, 55, 0.85);
+        color: var(--cyan);
+        border-color: rgba(0, 243, 255, 0.35);
+      }
+      .btn.secondary:hover {
+        border-color: var(--cyan);
+        box-shadow: 0 0 14px rgba(0, 243, 255, 0.2);
+      }
+      .out {
+        margin-top: 10px;
+        padding: 11px 14px;
+        border-radius: 10px;
+        background: var(--code-bg);
+        color: var(--neon-green);
+        border: 1px solid var(--code-line);
+        border-left: 3px solid var(--cyan);
+        min-height: 44px;
+        white-space: pre-wrap;
+        font-family: "Fira Code", Consolas, monospace;
+        font-size: 0.84rem;
+      }
+      @media (max-width: 600px) {
+        input[type="text"],
+        input[type="number"],
+        select {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body class="scanlines">
+    <!-- Calques de fond (identiques à cours/javascript.html) -->
+    <div class="bg-mesh"></div>
+    <canvas id="particle-canvas"></canvas>
+    <div class="grid-floor"></div>
+
+    <nav class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-col">
+          <a class="logo" href="#top">
+            <span class="js-badge">JS</span>
+            <span class="brand-text">
+              <span class="brand-name">
+                Récapitulatif <em>JavaScript</em>
+                <span class="ver">3ème/4ème SI</span>
+              </span>
+              <span class="brand-sub"
+                >Synthèse interactive &amp; exemples exécutables</span
+              >
+            </span>
+          </a>
+          <div class="author">
+            <img
+              class="author-logo"
+              src="../assets/icons/STI_by_AE.ico"
+              alt="Logo de A. Essouyah"
+              width="26"
+              height="26"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+            />
+            <span class="author-mono" style="display: none" aria-hidden="true"
+              >AE</span
+            >
+            <span class="author-txt">Travail élaboré par A. Essouyah</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="menu-btn"
+          id="menu-btn"
+          aria-label="Sommaire"
+        >
+          ☰
+        </button>
+        <div class="navlinks">
+          <a
+            class="navbtn active"
+            id="btn-retour-cours-js"
+            href="javascript.html"
+            title="Retourner au cours JavaScript"
+            >📜 ← Retour au cours JavaScript</a
+          >
+        </div>
+      </div>
+      <div
+        class="course-bar"
+        role="status"
+        aria-live="polite"
+        aria-label="Niveau et progression du récapitulatif"
+      >
+        <div class="course-bar-inner">
+          <div class="course-bar-left">
+            <span class="course-level-badge">🎓 Niveau : 3ème/4ème SI</span>
+            <span class="course-sep" aria-hidden="true">•</span>
+            <span class="course-sec-step" id="course-sec-step">1 / 12</span>
+            <span class="course-sec-name" id="course-sec-name"
+              >Rôle de JavaScript</span
+            >
+          </div>
+          <div class="course-bar-right" title="Progression de lecture">
+            <div class="course-mini-track" aria-hidden="true">
+              <div class="course-mini-fill" id="course-mini-fill"></div>
+            </div>
+            <span class="course-pct" id="course-pct">0%</span>
+          </div>
+        </div>
+        <div class="course-progress-track" aria-hidden="true">
+          <div class="course-progress-fill" id="course-progress-fill"></div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="layout">
+      <aside id="side" aria-label="Sommaire du cours">
+        <a href="#intro" class="active">Rôle de JavaScript</a>
+        <a href="#insertion">Insertion du code</a>
+        <a href="#variables">Variables &amp; types</a>
+        <a href="#operateurs">Opérateurs</a>
+        <a href="#es">Entrées / sorties</a>
+        <a href="#conditions">Conditions</a>
+        <a href="#boucles">Boucles</a>
+        <a href="#chaines">Chaînes</a>
+        <a href="#tableaux">Tableaux</a>
+        <a href="#dom">DOM</a>
+        <a href="#evenements">Événements</a>
+        <a href="#formulaire">Validation formulaire</a>
+      </aside>
+
+      <div class="content">
+        <header id="top">
+          <h1 class="title-glow">Récapitulatif JavaScript</h1>
+          <p class="lead">
+            Synthèse complète pour revoir les bases de JavaScript, les structures de contrôle, les fonctions,
+            les chaînes, les tableaux, le DOM, les événements et la validation d’un formulaire.
+          </p>
+        </header>
+
+        <main>
+          <section class="section" id="intro">
+            <h2>1. Rôle de JavaScript</h2>
+            <div class="card">
+              <p>
+                <strong>JavaScript</strong> est un langage de programmation exécuté principalement dans le navigateur.
+                Il rend une page web <strong>dynamique</strong> et <strong>interactive</strong>.
+              </p>
+              <div class="grid-3">
+                <div class="card">
+                  <h3>HTML</h3>
+                  <p>Structure le contenu : titres, paragraphes, formulaires, tableaux, images.</p>
+                </div>
+                <div class="card">
+                  <h3>CSS</h3>
+                  <p>Gère la présentation : couleurs, tailles, marges, disposition, responsive.</p>
+                </div>
+                <div class="card">
+                  <h3>JavaScript</h3>
+                  <p>Gère le comportement : calculs, réactions aux clics, vérifications, mise à jour du DOM.</p>
+                </div>
+              </div>
+              <div class="tip">
+                En STI, JavaScript est très utilisé pour lire les valeurs d’un formulaire, vérifier les données saisies,
+                afficher un résultat et modifier le contenu d’une page sans la recharger.
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="insertion">
+            <h2>2. Où écrire le code JavaScript ?</h2>
+            <div class="grid-2">
+              <div class="card">
+                <h3>Dans la page HTML</h3>
+                <pre>&lt;script&gt;
+  alert("Bienvenue en STI");
+&lt;/script&gt;</pre>
+              </div>
+              <div class="card">
+                <h3>Dans un fichier externe</h3>
+                <pre>&lt;script src="script.js"&gt;&lt;/script&gt;</pre>
+                <div class="tip">Le fichier externe est recommandé pour séparer la structure HTML et le code JS.</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="variables">
+            <h2>3. Variables et types de données</h2>
+            <div class="card">
+              <div class="grid-3">
+                <div class="card">
+                  <h3><code>let</code></h3>
+                  <p>Variable modifiable, portée de bloc.</p>
+                  <pre>let note = 15.5;
+note = 17;</pre>
+                </div>
+                <div class="card">
+                  <h3><code>const</code></h3>
+                  <p>Constante : sa référence ne peut pas être réaffectée.</p>
+                  <pre>const coeff = 3;</pre>
+                </div>
+                <div class="card">
+                  <h3><code>var</code></h3>
+                  <p>Ancienne déclaration, encore présente dans plusieurs exercices.</p>
+                  <pre>var nom = "Ali";</pre>
+                </div>
+              </div>
+
+              <div class="table-wrap" style="margin-top:14px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Exemple</th>
+                      <th>Description</th>
+                      <th>Test avec <code>typeof</code></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Number</strong></td>
+                      <td><code>18</code>, <code>12.75</code></td>
+                      <td>Nombre entier ou réel</td>
+                      <td><code>"number"</code></td>
+                    </tr>
+                    <tr>
+                      <td><strong>String</strong></td>
+                      <td><code>"Bac STI"</code></td>
+                      <td>Chaîne de caractères</td>
+                      <td><code>"string"</code></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Boolean</strong></td>
+                      <td><code>true</code>, <code>false</code></td>
+                      <td>Valeur logique</td>
+                      <td><code>"boolean"</code></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Array</strong></td>
+                      <td><code>[10, 14, 16]</code></td>
+                      <td>Tableau de valeurs</td>
+                      <td><code>"object"</code></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Object</strong></td>
+                      <td><code>{nom:"Sami", age:18}</code></td>
+                      <td>Ensemble de propriétés</td>
+                      <td><code>"object"</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="warn">
+                Une valeur lue depuis un champ de formulaire (<code>input.value</code>) ou <code>prompt()</code> est toujours une
+                <strong>chaîne de caractères</strong>. Pour calculer, utilisez <code>Number()</code>, <code>parseInt()</code> ou <code>parseFloat()</code>.
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="operateurs">
+            <h2>4. Opérateurs essentiels</h2>
+            <div class="grid-2">
+              <div class="card">
+                <h3>Arithmétiques</h3>
+                <ul class="clean">
+                  <li><code>+</code> addition (ou concaténation si chaîne)</li>
+                  <li><code>-</code> soustraction</li>
+                  <li><code>*</code> multiplication</li>
+                  <li><code>/</code> division</li>
+                  <li><code>%</code> reste de la division entière (modulo)</li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3>Comparaison et logique</h3>
+                <ul class="clean">
+                  <li><code>==</code> égalité de valeur, <code>===</code> valeur et type</li>
+                  <li><code>!=</code> différent (ou <code>!==</code> valeur et type)</li>
+                  <li><code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code></li>
+                  <li><code>&amp;&amp;</code> ET logique, <code>||</code> OU logique, <code>!</code> NON</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="es">
+            <h2>5. Entrées / sorties</h2>
+            <div class="card">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Instruction</th>
+                      <th>Rôle</th>
+                      <th>Exemple</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>alert(msg)</code></td>
+                      <td>Affiche une boîte de message</td>
+                      <td><code>alert("Bonjour");</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>prompt(txt)</code></td>
+                      <td>Demande une saisie à l’utilisateur</td>
+                      <td><code>let nom = prompt("Votre nom ?");</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>confirm(txt)</code></td>
+                      <td>Demande une confirmation (<code>true</code>/<code>false</code>)</td>
+                      <td><code>let ok = confirm("Continuer ?");</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>console.log(x)</code></td>
+                      <td>Affiche dans la console du navigateur</td>
+                      <td><code>console.log(total);</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>document.getElementById(id)</code></td>
+                      <td>Accède à un élément de la page</td>
+                      <td><code>document.getElementById("res").innerHTML = "OK";</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="conditions">
+            <h2>6. Structures conditionnelles</h2>
+            <div class="grid-2">
+              <div class="card">
+                <h3><code>if ... else if ... else</code></h3>
+                <pre>if (moy &gt;= 10) {
+  mention = "Admis";
+} else if (moy &gt;= 9) {
+  mention = "Contrôle";
 } else {
-  console.log("Saisie numérique invalide.");
-}</code></pre>
-<p><code>prompt()</code> renvoie une chaîne si l’utilisateur saisit une valeur, et <code>null</code> s’il annule. Vérifier aussi la chaîne vide : <code>Number("")</code> vaut <code>0</code>.</p>
-</article>
-</div>
-<div class="card">
-<h3>Atelier interactif — comparer les conversions</h3>
-<p class="note">Saisis une valeur puis observe ce que produisent <code>Number()</code>, <code>parseInt()</code>, <code>parseFloat()</code>, <code>String()</code> et <code>Boolean()</code>.</p>
-<div class="demo"><label for="conversionInput">Valeur à convertir :</label><input id="conversionInput" value="12.8abc" aria-label="Valeur à convertir"><button id="conversionGo">Convertir</button></div>
-<div class="result" id="conversionOut" aria-live="polite">Les résultats apparaîtront ici.</div>
-<div class="callout">Essaie successivement : <code>12.8</code>, <code>12.8abc</code>, <code>bonjour</code>, une chaîne vide, <code>0</code> et <code>false</code>. Observe notamment la différence entre <code>Number()</code> et les fonctions <code>parse...</code>.</div>
-</div>
-</section>
+  mention = "Refusé";
+}</pre>
+              </div>
+              <div class="card">
+                <h3><code>switch</code></h3>
+                <pre>switch (code) {
+  case 1:lib = "Informatique"; break;
+  case 2:lib = "Mathématiques"; break;
+  default: lib = "Autre";
+}</pre>
+              </div>
+            </div>
 
-<section class="section" id="operateurs">
-<h2>3. Opérateurs et calculs</h2>
-<div class="grid">
-<article class="card"><h3>Arithmétiques</h3><table><tr><th>Opérateur</th><th>Rôle</th><th>Exemple</th></tr><tr><td><code>+</code></td><td>Addition ou concaténation</td><td><code>4 + 3</code> donne 7</td></tr><tr><td><code>-</code></td><td>Soustraction</td><td><code>9 - 2</code> donne 7</td></tr><tr><td><code>*</code>, <code>/</code></td><td>Multiplication, division</td><td><code>8 / 2</code> donne 4</td></tr><tr><td><code>%</code></td><td>Reste de division</td><td><code>7 % 2</code> donne 1</td></tr><tr><td><code>**</code></td><td>Puissance</td><td><code>2 ** 3</code> donne 8</td></tr></table></article>
-<article class="card"><h3>Comparaison et logique</h3><pre><code>age >= 18
-note === 10
-nom !== ""
-a > 0 && a < 20
-jour === 6 || jour === 0
-!admis</code></pre><p><code>===</code> compare valeur et type. Préférer <code>===</code> à <code>==</code> pour éviter les conversions implicites.</p></article>
-<article class="card"><h3>Incrémentation et affectation</h3><pre><code>compteur = compteur + 1;
-compteur++;
-compteur += 2;
-prix *= 1.19;</code></pre><p><code>++</code> ajoute 1 ; <code>+=</code> ajoute la valeur à droite à la variable.</p></article>
-<article class="card"><h3>Math</h3><pre><code>Math.abs(-8)       // 8
-Math.sqrt(81)      // 9
-Math.round(3.6)    // 4
-Math.floor(3.9)    // 3
-Math.ceil(3.1)     // 4
-Math.random()      // entre 0 inclus et 1 exclu
-Math.floor(Math.random() * 6) + 1 // dé 1 à 6</code></pre></article>
-</div>
-<div class="card"><h3>Tester une expression</h3><div class="demo"><label for="a">a :</label><input id="a" type="number" value="12"><label for="b">b :</label><input id="b" type="number" value="5"><button id="calc">Calculer</button></div><div class="result" id="calcOut" aria-live="polite">Résultat affiché ici.</div></div>
-</section>
+            <div class="card">
+              <div class="demo">
+                <h3>Tester une décision de moyenne</h3>
+                <div class="row">
+                  <input type="number" id="moyInput" step="0.25" min="0" max="20" value="13.5" aria-label="Moyenne" />
+                  <button class="btn primary" id="btnMoy">Évaluer</button>
+                </div>
+                <div class="out" id="moyOut">Cliquez sur « Évaluer » pour voir le résultat.</div>
+              </div>
+            </div>
+          </section>
 
-<section class="section" id="conditions">
-<h2>4. Structures conditionnelles</h2>
-<div class="grid">
-<article class="card"><h3>if / else</h3><pre><code>if (note >= 10) {
-  resultat = "Admis";
-} else {
-  resultat = "Ajourné";
-}</code></pre></article>
-<article class="card"><h3>if / else if / else</h3><pre><code>if (note >= 16) {
-  mention = "Très bien";
-} else if (note >= 14) {
-  mention = "Bien";
-} else if (note >= 12) {
-  mention = "Assez bien";
-} else {
-  mention = "À travailler";
-}</code></pre><p>Les conditions sont évaluées dans l’ordre. La première vraie est exécutée.</p></article>
-<article class="card"><h3>switch</h3><pre><code>switch (jour) {
-  case 0:
-    nomJour = "Dimanche";
-    break;
-  case 6:
-    nomJour = "Samedi";
-    break;
-  default:
-    nomJour = "Jour ouvré";
-}</code></pre><p>Utiliser <code>break</code> pour éviter de poursuivre dans le cas suivant.</p></article>
-<article class="card"><h3>Opérateur ternaire</h3><pre><code>let resultat = note >= 10 ? "Admis" : "Ajourné";</code></pre><p>Forme courte d’un <code>if / else</code> pour une expression simple.</p></article>
-</div>
-</section>
-
-<section class="section" id="boucles">
-<h2>5. Boucles</h2>
-<div class="grid">
-<article class="card"><h3>while</h3><pre><code>let i = 1;
-while (i <= 5) {
+          <section class="section" id="boucles">
+            <h2>7. Les boucles</h2>
+            <div class="grid-3">
+              <div class="card">
+                <h3><code>for</code></h3>
+                <p>Quand le nombre de répétitions est connu.</p>
+                <pre>for (let i = 1; i &lt;= 5; i++) {
   console.log(i);
-  i++;
-}</code></pre><p>La condition est testée avant chaque tour. Si elle est fausse au départ, le corps ne s’exécute pas.</p></article>
-<article class="card"><h3>do ... while</h3><pre><code>let i = 1;
-do {
-  console.log(i);
-  i++;
-} while (i <= 5);</code></pre><p>Le corps s’exécute au moins une fois, puis la condition est testée.</p></article>
-<article class="card"><h3>for</h3><pre><code>for (let i = 1; i <= 5; i++) {
-  console.log(i);
-}</code></pre><p>Initialisation ; condition ; mise à jour. Très pratique quand le nombre de répétitions est connu.</p></article>
-<article class="card"><h3>break et continue</h3><pre><code>for (let i = 1; i <= 10; i++) {
-  if (i === 5) continue;
-  if (i === 8) break;
-  console.log(i);
-}</code></pre><p><code>continue</code> passe au tour suivant ; <code>break</code> quitte la boucle.</p></article>
-</div>
-<div class="card"><h3>Suivre une boucle</h3><div class="demo"><label for="limite">Afficher de 1 à :</label><input id="limite" type="number" min="1" max="30" value="5"><button id="boucleGo">Exécuter</button></div><div class="result" id="boucleOut">Les valeurs apparaîtront ici.</div></div>
-</section>
+}</pre>
+              </div>
+              <div class="card">
+                <h3><code>while</code></h3>
+                <p>Tant que la condition est vraie.</p>
+                <pre>while (n &gt; 0) {
+  n--;
+}</pre>
+              </div>
+              <div class="card">
+                <h3><code>do ... while</code></h3>
+                <p>Exécutée au moins une fois.</p>
+                <pre>do {
+  x = Number(prompt("x &gt; 0"));
+} while (x &lt;= 0);</pre>
+              </div>
+            </div>
 
-<section class="section" id="fonctions">
-<h2>6. Fonctions</h2>
-<div class="grid">
-<article class="card"><h3>Déclaration et appel</h3><pre><code>function saluer(nom) {
-  return "Bonjour " + nom;
-}
-let message = saluer("Amira");
-console.log(message);</code></pre><p>Les paramètres reçoivent les données ; <code>return</code> renvoie le résultat.</p></article>
-<article class="card"><h3>Paramètres par défaut</h3><pre><code>function multiplier(a, b = 2) {
-  return a * b;
-}
-multiplier(4);    // 8
-multiplier(4, 3); // 12</code></pre></article>
-<article class="card"><h3>Fonction anonyme et fléchée</h3><pre><code>const carre = function (n) {
-  return n * n;
-};
+            <div class="card">
+              <div class="demo">
+                <h3>Générer une table de multiplication</h3>
+                <div class="row">
+                  <input type="number" id="tableInput" value="7" min="1" max="20" aria-label="Nombre" />
+                  <button class="btn primary" id="btnTable">Afficher la table</button>
+                </div>
+                <div class="out" id="tableOut"></div>
+              </div>
+            </div>
+          </section>
 
-const double = n => n * 2;</code></pre></article>
-<article class="card"><h3>Portée</h3><p>Une variable déclarée dans une fonction est locale à cette fonction. Une variable déclarée dans un bloc avec <code>let</code> ou <code>const</code> est limitée à ce bloc.</p><pre><code>let total = 10;
-function exemple() {
-  let local = 3;
-  return total + local;
-}</code></pre></article>
-</div>
-</section>
+          <section class="section" id="chaines">
+            <h2>8. Chaînes de caractères (<code>String</code>)</h2>
+            <div class="grid-2">
+              <div class="card">
+                <h3>Propriétés et méthodes utiles (Programme STI)</h3>
+                <ul class="clean">
+                  <li><code>ch.length</code> : longueur de la chaîne</li>
+                  <li><code>ch.toUpperCase()</code> / <code>ch.toLowerCase()</code></li>
+                  <li><code>ch.trim()</code> : supprime les espaces au début et à la fin</li>
+                  <li><code>ch[i]</code> : caractère à la position <code>i</code> (et <code>ch.charCodeAt(i)</code>)</li>
+                  <li><code>ch.indexOf(s)</code> / <code>ch.lastIndexOf(s)</code> : position d’une sous-chaîne (<code>-1</code> si absente)</li>
+                  <li><code>ch.substring(d, f)</code> : extrait une sous-chaîne de <code>d</code> à <code>f - 1</code></li>
+                  <li><code>ch.replace(a, b)</code> : remplace <code>a</code> par <code>b</code></li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3>Exemple</h3>
+                <pre>let ch = "Informatique";
+ch.length;            // 12
+ch.toUpperCase();     // "INFORMATIQUE"
+ch.substring(0, 4);   // "Info"
+ch.indexOf("mat");    // 5</pre>
+              </div>
+            </div>
 
-<section class="section" id="tableaux">
-<h2>7. Tableaux</h2>
-<div class="grid">
-<article class="card"><h3>Créer et accéder</h3><pre><code>let notes = [12, 15, 9, 18];
+            <div class="card">
+              <div class="demo">
+                <h3>Analyse rapide d’une chaîne</h3>
+                <div class="row">
+                  <input type="text" id="strInput" value="Bac STI 2026" aria-label="Chaîne à analyser" />
+                  <button class="btn primary" id="btnStr">Analyser</button>
+                </div>
+                <div class="out" id="strOut"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="tableaux">
+            <h2>9. Tableaux et fonctions</h2>
+            <div class="grid-2">
+              <div class="card">
+                <h3>Tableaux (<code>Array</code>)</h3>
+                <pre>let notes = [12, 15, 9, 17];
+notes.length;      // 4
 notes[0];          // 12
-notes[2] = 10;
-notes.length;      // 4</code></pre><p>Les indices commencent à 0. Le dernier indice vaut généralement <code>length - 1</code>.</p></article>
-<article class="card"><h3>Méthodes courantes</h3><pre><code>notes.push(14);    // ajouter à la fin
-notes.pop();       // retirer le dernier
-notes.unshift(8);  // ajouter au début
-notes.shift();     // retirer le premier
-notes.includes(15); // tester la présence</code></pre></article>
-<article class="card"><h3>Parcourir un tableau</h3><pre><code>for (let i = 0; i < notes.length; i++) {
-  console.log(notes[i]);
+notes.push(14);    // ajoute à la fin
+notes.pop();       // retire le dernier</pre>
+              </div>
+              <div class="card">
+                <h3>Fonctions</h3>
+                <pre>function calculerMoyenne(a, b) {
+  return (a + b) / 2;
 }
 
-for (const note of notes) {
-  console.log(note);
-}</code></pre></article>
-<article class="card"><h3>Tableau et calcul</h3><pre><code>let somme = 0;
-for (let i = 0; i < notes.length; i++) {
-  somme += notes[i];
-}
-let moyenne = somme / notes.length;</code></pre><p>Vérifier que le tableau n’est pas vide avant de calculer une moyenne.</p></article>
-</div>
-</section>
+let m = calculerMoyenne(14, 16);</pre>
+              </div>
+            </div>
+          </section>
 
-<section class="section" id="chaines">
-<h2>8. Chaînes de caractères</h2>
-<div class="grid">
-<article class="card"><h3>Créer et concaténer</h3><pre><code>let prenom = "Amira";
-let nom = "Ben Ali";
-let complet = prenom + " " + nom;
-let phrase = `Bonjour ${prenom} !`;</code></pre><p>Les apostrophes, guillemets et accents font partie du texte ; les chaînes sont indexées à partir de 0.</p></article>
-<article class="card"><h3>Propriétés et méthodes</h3><pre><code>let s = "Bonjour STI";
-s.length;              // longueur
-s.toUpperCase();       // majuscules
-s.toLowerCase();       // minuscules
-s.includes("STI");     // true
-s.indexOf("jour");     // position ou -1
-s.slice(0, 7);         // "Bonjour"
-s.trim();              // retirer espaces aux extrémités
-s.replace("STI", "SI");</code></pre></article>
-<article class="card"><h3>Parcourir les caractères</h3><pre><code>let mot = "STI";
-for (let i = 0; i < mot.length; i++) {
-  console.log(mot[i]);
-}</code></pre><p>On peut accéder à un caractère avec son indice, par exemple <code>mot[i]</code>.</p></article>
-<article class="card"><h3>Exemple interactif</h3><div class="demo"><input id="texte" value="Bonjour STI" aria-label="Texte à analyser"><button id="texteGo">Analyser</button></div><div class="result" id="texteOut">Longueur et version en majuscules.</div></article>
-</div>
-</section>
+          <section class="section" id="dom">
+            <h2>10. Manipulation du DOM</h2>
+            <div class="card">
+              <p>Le <strong>DOM</strong> (Document Object Model) représente les éléments HTML sous forme d’objets manipulables en JavaScript.</p>
+              <div class="grid-2">
+                <div class="card">
+                  <h3>Sélectionner un élément</h3>
+                  <pre>let el = document.getElementById("message");
+let champ = document.querySelector("#nom");
+let items = document.querySelectorAll(".item");</pre>
+                </div>
+                <div class="card">
+                  <h3>Lire / modifier</h3>
+                  <pre>let nom = document.getElementById("nom").value;
+el.textContent = "Bonjour " + nom;
+el.style.color = "#f7df1e";</pre>
+                </div>
+              </div>
+            </div>
+          </section>
 
-<section class="section" id="date">
-<h2>9. Dates et nombres aléatoires</h2>
-<div class="grid">
-<article class="card"><h3>Date actuelle</h3><pre><code>let d = new Date();
-d.getDate();       // jour du mois
-d.getMonth();      // mois : 0 à 11
-d.getFullYear();   // année
-d.getDay();        // jour de semaine : 0 à 6
-d.toLocaleDateString("fr-FR");</code></pre><p>Attention : <code>getMonth()</code> commence à 0 (janvier).</p></article>
-<article class="card"><h3>Créer une date</h3><pre><code>new Date(2026, 9, 15); // 15 octobre 2026
-new Date("2026-10-15");</code></pre><p>Dans le constructeur numérique, le mois 9 correspond à octobre.</p></article>
-</div>
-<div class="card"><h3>Afficher la date du jour</h3><div class="demo"><button id="dateGo">Afficher la date</button></div><div class="result" id="dateOut"></div></div>
-</section>
-
-<section class="section" id="dom">
-<h2>10. DOM : accéder et modifier la page</h2>
-<div class="grid">
-<article class="card"><h3>Sélectionner un élément</h3><pre><code>document.getElementById("titre");
-document.querySelector(".carte");
-document.querySelectorAll("p");</code></pre><p><code>getElementById()</code> cible un identifiant ; <code>querySelector()</code> renvoie le premier élément correspondant au sélecteur CSS.</p></article>
-<article class="card"><h3>Modifier le contenu</h3><pre><code>let p = document.getElementById("message");
-p.textContent = "Nouveau texte";
-p.innerHTML = "&lt;strong&gt;Important&lt;/strong&gt;";</code></pre><p>Utiliser <code>textContent</code> pour afficher du texte brut. <code>innerHTML</code> interprète du HTML et doit être utilisé avec prudence.</p></article>
-<article class="card"><h3>Modifier le style et les classes</h3><pre><code>p.style.color = "tomato";
-p.style.fontSize = "20px";
-p.classList.add("actif");
-p.classList.remove("actif");
-p.classList.toggle("actif");</code></pre></article>
-<article class="card"><h3>Créer un élément</h3><pre><code>let li = document.createElement("li");
-li.textContent = "Nouvel élément";
-document.querySelector("ul").appendChild(li);</code></pre></article>
-</div>
-</section>
-
-<section class="section" id="evenements">
-<h2>11. Événements</h2>
-<div class="grid">
-<article class="card"><h3>Événement de clic</h3><pre><code>let bouton = document.getElementById("btn");
-bouton.addEventListener("click", function () {
+          <section class="section" id="evenements">
+            <h2>11. Les événements</h2>
+            <div class="card">
+              <p>Un événement est une action détectée par le navigateur : clic, saisie, changement de valeur, envoi de formulaire, chargement.</p>
+              <div class="grid-2">
+                <div class="card">
+                  <h3>Événements fréquents</h3>
+                  <ul class="clean">
+                    <li><code>click</code> : clic sur un bouton</li>
+                    <li><code>input</code> : saisie en direct dans un champ</li>
+                    <li><code>change</code> : changement de sélection</li>
+                    <li><code>submit</code> : envoi d’un formulaire</li>
+                  </ul>
+                </div>
+                <div class="card">
+                  <h3><code>addEventListener</code></h3>
+                  <pre>const btn = document.getElementById("btn");
+btn.addEventListener("click", function () {
   alert("Bouton cliqué !");
-});</code></pre><p>Un événement déclenche une fonction lorsqu’une action se produit.</p></article>
-<article class="card"><h3>Événements courants</h3><table><tr><th>Événement</th><th>Déclenchement</th></tr><tr><td><code>click</code></td><td>Clic sur un élément</td></tr><tr><td><code>input</code></td><td>Modification pendant la saisie</td></tr><tr><td><code>change</code></td><td>Valeur modifiée puis validée</td></tr><tr><td><code>submit</code></td><td>Envoi d’un formulaire</td></tr><tr><td><code>mouseover</code></td><td>Pointeur au-dessus</td></tr><tr><td><code>keydown</code></td><td>Touche enfoncée</td></tr></table></article>
-</div>
-<div class="card"><h3>Mini-démo : réagir au clic</h3><div class="demo"><button id="clicGo">Cliquer ici</button><button id="resetClic">Réinitialiser</button></div><div class="result" id="clicOut">Nombre de clics : 0</div></div>
-</section>
+});</pre>
+                </div>
+              </div>
+            </div>
+          </section>
 
-<section class="section" id="formulaires">
-<h2>12. Formulaires et validation</h2>
-<div class="grid">
-<article class="card"><h3>Lire une valeur</h3><pre><code>let champ = document.getElementById("nom");
-let valeur = champ.value;</code></pre><p><code>value</code> contient la valeur saisie. Pour un champ numérique, convertir avec <code>Number()</code>.</p></article>
-<article class="card"><h3>Vérifier une saisie</h3><pre><code>let nom = document.getElementById("nom").value.trim();
-
-if (nom === "") {
-  document.getElementById("erreur").textContent =
-    "Le nom est obligatoire.";
-} else {
-  document.getElementById("erreur").textContent =
-    "Saisie correcte.";
-}</code></pre></article>
-<article class="card"><h3>Empêcher l’envoi si invalide</h3><pre><code>form.addEventListener("submit", function (event) {
-  if (champ.value.trim() === "") {
-    event.preventDefault();
-    message.textContent = "Champ obligatoire";
+          <section class="section" id="formulaire">
+            <h2>12. Exemple complet : validation d’un formulaire STI</h2>
+            <div class="card">
+              <div class="grid-2">
+                <div>
+                  <h3>Tester la validation</h3>
+                  <div class="demo">
+                    <div class="row" style="margin-bottom:10px">
+                      <input type="text" id="fNom" placeholder="Nom (lettres uniquement)" value="Sami" />
+                      <input type="text" id="fCin" placeholder="CIN (8 chiffres)" value="12345678" />
+                    </div>
+                    <div class="row" style="margin-bottom:10px">
+                      <input type="number" id="fNote" placeholder="Note entre 0 et 20" value="15" min="0" max="20" step="0.25" />
+                      <select id="fSection" aria-label="Section">
+                        <option value="STI">Sciences de l'informatique</option>
+                        <option value="MATH">Mathématiques</option>
+                        <option value="SC">Sciences expérimentales</option>
+                      </select>
+                    </div>
+                    <div class="row">
+                      <button class="btn primary" id="btnValider">Vérifier le formulaire</button>
+                      <button class="btn secondary" id="btnReset">Réinitialiser</button>
+                    </div>
+                    <div class="out" id="formOut">Remplissez les champs puis cliquez sur « Vérifier le formulaire ».</div>
+                  </div>
+                </div>
+                <div>
+                  <h3>Principe de contrôle en STI</h3>
+                  <pre>function estChiffres(ch) {
+  for (let i = 0; i &lt; ch.length; i++) {
+    if (ch[i] &lt; "0" || ch[i] &gt; "9") return false;
   }
-});</code></pre><p><code>preventDefault()</code> empêche l’action habituelle, ici l’envoi du formulaire, si la validation échoue.</p></article>
-<article class="card"><h3>Démo de validation</h3><div class="demo"><label for="nomDemo">Nom :</label><input id="nomDemo" placeholder="Saisir un nom"><button id="validerNom">Vérifier</button></div><div class="result" id="nomOut" aria-live="polite">Le résultat apparaîtra ici.</div></article>
-</div>
-</section>
-
-<section class="section" id="erreurs">
-<h2>13. Erreurs, débogage et bonnes habitudes</h2>
-<div class="grid">
-<article class="card"><h3>Repérer les erreurs</h3><ul><li>Ouvrir les outils de développement du navigateur (F12).</li><li>Lire l’onglet Console.</li><li>Utiliser <code>console.log()</code> pour suivre les valeurs.</li><li>Vérifier l’orthographe des identifiants et les parenthèses/accolades.</li></ul></article>
-<article class="card"><h3>Erreurs fréquentes</h3><pre><code>let note = 12;       // déclaration
-if (note >= 10) {    // condition
-  console.log("Admis");
+  return ch.length &gt; 0;
 }
 
-let total = Number("15"); // conversion</code></pre><p>Un <code>=</code> affecte une valeur ; <code>===</code> compare. Respecter les majuscules/minuscules.</p></article>
-<article class="card"><h3>Bonnes pratiques</h3><ul><li>Utiliser des noms explicites.</li><li>Indenter le code régulièrement.</li><li>Préférer <code>let</code> et <code>const</code> à <code>var</code> dans du nouveau code.</li><li>Vérifier les valeurs saisies par l’utilisateur.</li><li>Tester les cas normaux et les cas limites.</li></ul></article>
-<article class="card"><h3>Rappel important</h3><p>JavaScript s’exécute côté navigateur, mais une validation côté client ne remplace pas une validation côté serveur pour les données sensibles.</p></article>
-</div>
-</section>
+function verifier() {
+  let cin = document.getElementById("fCin").value.trim();
+  let note = Number(document.getElementById("fNote").value);
 
-<section class="section" id="exercices">
-<h2>14. Exercices rapides</h2>
-<div class="grid">
-<article class="card"><h3>Exercice 1 — Pair ou impair</h3><p>Écrire un programme qui affiche si un nombre entier est pair ou impair.</p><pre><code>let n = 17;
-// Compléter avec une condition utilisant %</code></pre><details><summary>Voir une correction possible</summary><pre><code>if (n % 2 === 0) {
-  console.log("Pair");
-} else {
-  console.log("Impair");
-}</code></pre></details></article>
-<article class="card"><h3>Exercice 2 — Somme de 1 à N</h3><p>Calculer la somme des entiers de 1 jusqu’à N à l’aide d’une boucle.</p><details><summary>Voir une correction possible</summary><pre><code>let n = 5;
-let somme = 0;
-for (let i = 1; i <= n; i++) {
-  somme += i;
-}
-console.log(somme); // 15</code></pre></details></article>
-<article class="card"><h3>Exercice 3 — Moyenne</h3><p>Calculer la moyenne d’un tableau de notes, puis afficher « Admis » si elle est au moins égale à 10.</p><details><summary>Voir une correction possible</summary><pre><code>let notes = [12, 9, 15];
-let somme = 0;
-for (let i = 0; i < notes.length; i++) {
-  somme += notes[i];
-}
-let moyenne = somme / notes.length;
-console.log(moyenne);
-console.log(moyenne >= 10 ? "Admis" : "Ajourné");</code></pre></details></article>
-<article class="card"><h3>Exercice 4 — Interaction DOM</h3><p>Créer un bouton qui modifie le texte d’un paragraphe au clic.</p><details><summary>Voir une correction possible</summary><pre><code>document.getElementById("btn").addEventListener("click", function () {
-  document.getElementById("message").textContent = "Bienvenue en STI !";
-});</code></pre></details></article>
-</div>
-<div class="callout"><strong>À retenir :</strong> variables → opérateurs → conditions → boucles → fonctions → tableaux et chaînes → DOM → événements → validation. Ces notions constituent la base de la majorité des petits programmes JavaScript.</div>
-</section>
-</main>
-<footer>Récapitulatif JavaScript · STI · A. Essouyah <span>—</span> <a href="#haut" style="color:var(--accent2)">Retour en haut ↑</a></footer>
-<script>
-document.getElementById("conversionGo").addEventListener("click", function () {
-  const valeur = document.getElementById("conversionInput").value;
-  const n = Number(valeur);
-  const entier = parseInt(valeur, 10);
-  const decimal = parseFloat(valeur);
-  const affiche = function (x) {
-    if (typeof x === "number" && Number.isNaN(x)) return "NaN";
-    return String(x);
-  };
-  const lignes = [
-    "Valeur initiale : " + JSON.stringify(valeur) + " (string)",
-    "Number(...) : " + affiche(n) + " (" + (Number.isNaN(n) ? "conversion impossible" : typeof n) + ")",
-    "parseInt(...) : " + affiche(entier),
-    "parseFloat(...) : " + affiche(decimal),
-    "String(...) : " + JSON.stringify(String(valeur)),
-    "Boolean(...) : " + Boolean(valeur) + " (une chaîne non vide vaut true)",
-    'Number("25") + 5 = ' + (Number("25") + 5),
-    '"25" + 5 = ' + ("25" + 5)
-  ];
-  document.getElementById("conversionOut").textContent = lignes.join(" | ");
-});
-document.getElementById("conversionGo").click();
-
-document.getElementById("calc").addEventListener("click", function () {
-  const a = Number(document.getElementById("a").value);
-  const b = Number(document.getElementById("b").value);
-  const division = b === 0 ? "impossible (division par zéro)" : a / b;
-  document.getElementById("calcOut").textContent =
-    "a + b = " + (a + b) + " | a - b = " + (a - b) +
-    " | a × b = " + (a * b) + " | a / b = " + division +
-    " | a % b = " + (b === 0 ? "non défini" : a % b);
-});
-document.getElementById("boucleGo").addEventListener("click", function () {
-  const n = Math.max(1, Math.min(30, Number(document.getElementById("limite").value) || 1));
-  const valeurs = [];
-  for (let i = 1; i <= n; i++) valeurs.push(i);
-  document.getElementById("boucleOut").textContent = valeurs.join(" → ");
-});
-document.getElementById("texteGo").addEventListener("click", function () {
-  const s = document.getElementById("texte").value;
-  document.getElementById("texteOut").textContent =
-    "Longueur : " + s.length + " caractères | Majuscules : " + s.toUpperCase() +
-    " | Minuscules : " + s.toLowerCase();
-});
-document.getElementById("dateGo").addEventListener("click", function () {
-  document.getElementById("dateOut").textContent =
-    new Date().toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
-});
-let nombreClics = 0;
-document.getElementById("clicGo").addEventListener("click", function () {
-  nombreClics++;
-  document.getElementById("clicOut").textContent = "Nombre de clics : " + nombreClics;
-});
-document.getElementById("resetClic").addEventListener("click", function () {
-  nombreClics = 0;
-  document.getElementById("clicOut").textContent = "Nombre de clics : 0";
-});
-document.getElementById("validerNom").addEventListener("click", function () {
-  const nom = document.getElementById("nomDemo").value.trim();
-  const sortie = document.getElementById("nomOut");
-  if (nom === "") {
-    sortie.textContent = "Erreur : le champ nom est obligatoire.";
-    sortie.style.color = "var(--red)";
-  } else {
-    sortie.textContent = "Saisie correcte : " + nom;
-    sortie.style.color = "var(--green)";
+  if (cin.length != 8 || !estChiffres(cin)) {
+    alert("Le CIN doit contenir 8 chiffres.");
+    return false;
   }
-});
-</script>
-</body>
+  if (isNaN(note) || note &lt; 0 || note &gt; 20) {
+    alert("La note doit être comprise entre 0 et 20.");
+    return false;
+  }
+  return true;
+}</pre>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer>
+          <div class="credit">
+            <span class="js-badge">JS</span>
+            <span>Récapitulatif JavaScript · 3ème/4ème SI — Travail élaboré par A. Essouyah</span>
+          </div>
+          <div>Conforme à l'Annexe JavaScript officielle</div>
+        </footer>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="back-to-top"
+      id="back-to-top"
+      title="Revenir en haut"
+      aria-label="Revenir en haut"
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M18 15l-6-6-6 6" />
+      </svg>
+    </button>
+
+    <!-- ==== PARTICULES FLOTTANTES (symboles JS, identique à cours/javascript.html) ==== -->
+    <script>
+      (function () {
+        const canvas = document.getElementById("particle-canvas");
+        const ctx = canvas.getContext("2d");
+        const SYMBOLS = [
+          "let",
+          "const",
+          "var",
+          "prompt()",
+          "parseInt()",
+          "alert()",
+          "for",
+          "if…else",
+          "&&",
+          "===",
+          "getElementById",
+          "substring()",
+          "indexOf()",
+          "innerHTML",
+          "toUpperCase()",
+          "push()",
+        ];
+        let particles = [];
+        let W, H;
+        function resize() {
+          W = canvas.width = window.innerWidth;
+          H = canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resize);
+        resize();
+        function makeParticle() {
+          return {
+            x: Math.random() * W,
+            y: H + 20,
+            size: 10 + Math.random() * 12,
+            speed: 0.25 + Math.random() * 0.6,
+            drift: (Math.random() - 0.5) * 0.3,
+            rot: Math.random() * Math.PI,
+            rotSpeed: (Math.random() - 0.5) * 0.005,
+            text: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+            hue: Math.random() < 0.35 ? 52 : 190,
+            alpha: 0.06 + Math.random() * 0.14,
+          };
+        }
+        for (let i = 0; i < 26; i++) {
+          const p = makeParticle();
+          p.y = Math.random() * H;
+          particles.push(p);
+        }
+        function tick() {
+          ctx.clearRect(0, 0, W, H);
+          particles.forEach((p) => {
+            p.y -= p.speed;
+            p.x += p.drift;
+            p.rot += p.rotSpeed;
+            if (p.y < -30) Object.assign(p, makeParticle());
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.font = `${p.size}px 'Fira Code', monospace`;
+            ctx.fillStyle = `hsla(${p.hue}, 90%, 65%, ${p.alpha})`;
+            ctx.textAlign = "center";
+            ctx.fillText(p.text, 0, 0);
+            ctx.restore();
+          });
+          requestAnimationFrame(tick);
+        }
+        tick();
+      })();
+    </script>
+
+    <!-- ==== COLORATION DES EXTRAITS DE CODE (Prism) ==== -->
+    <script>
+      (function () {
+        function highlightPre(pre) {
+          var txt = pre.textContent.replace(/^\n+/, "").replace(/\s+$/, "");
+          var isHtml = /^\s*</.test(txt);
+          var lang = isHtml ? "markup" : "javascript";
+          pre.className = "language-" + lang;
+          pre.setAttribute(
+            "data-file",
+            isHtml ? "page.html · HTML" : "script.js · JavaScript"
+          );
+          var code = document.createElement("code");
+          code.className = "language-" + lang;
+          code.textContent = txt;
+          pre.innerHTML = "";
+          pre.appendChild(code);
+          if (window.Prism) Prism.highlightElement(code);
+        }
+        document.querySelectorAll("pre").forEach(highlightPre);
+      })();
+    </script>
+
+    <!-- ==== INTERACTIONS DU RÉCAPITULATIF ==== -->
+    <script>
+      // Retour au cours JavaScript
+      (function () {
+        var b = document.getElementById("btn-retour-cours-js");
+        if (!b) return;
+        b.addEventListener("click", function (e) {
+          e.preventDefault();
+          try {
+            window.top.location.href = "javascript.html";
+          } catch (err) {
+            window.location.href = "javascript.html";
+          }
+        });
+      })();
+
+      // Démo moyenne
+      function evaluerMoyenne() {
+        const m = Number(document.getElementById("moyInput").value);
+        const out = document.getElementById("moyOut");
+        if (isNaN(m) || m < 0 || m > 20) {
+          out.textContent = "Erreur : veuillez saisir une moyenne comprise entre 0 et 20.";
+          return;
+        }
+        let decision = "";
+        if (m >= 16) decision = "Admis avec mention Très Bien";
+        else if (m >= 14) decision = "Admis avec mention Bien";
+        else if (m >= 12) decision = "Admis avec mention Assez Bien";
+        else if (m >= 10) decision = "Admis";
+        else if (m >= 9) decision = "Contrôle";
+        else decision = "Refusé";
+        out.textContent = "Moyenne = " + m.toFixed(2) + " → " + decision;
+      }
+      document.getElementById("btnMoy").addEventListener("click", evaluerMoyenne);
+      evaluerMoyenne();
+
+      // Démo boucle
+      function genererTable() {
+        const n = Number(document.getElementById("tableInput").value);
+        const out = document.getElementById("tableOut");
+        if (isNaN(n)) {
+          out.textContent = "Veuillez saisir un nombre valide.";
+          return;
+        }
+        const lignes = [];
+        for (let i = 1; i <= 10; i++) {
+          lignes.push(n + " × " + i + " = " + (n * i));
+        }
+        out.textContent = lignes.join("\n");
+      }
+      document.getElementById("btnTable").addEventListener("click", genererTable);
+      genererTable();
+
+      // Démo chaînes (100% conforme au programme STI : length, toUpperCase, toLowerCase, substring, indexOf)
+      function analyserChaine() {
+        const ch = document.getElementById("strInput").value;
+        const propre = ch.trim();
+        const out = document.getElementById("strOut");
+        out.textContent =
+          'Chaîne brute       : "' + ch + '"\n' +
+          'Après trim()       : "' + propre + '"\n' +
+          'Longueur (length)  : ' + propre.length + '\n' +
+          'Majuscules         : ' + propre.toUpperCase() + '\n' +
+          'Minuscules         : ' + propre.toLowerCase() + '\n' +
+          '4 premiers caract. : ' + propre.substring(0, 4) + '\n' +
+          'Position de "STI"  : ' + propre.indexOf("STI");
+      }
+      document.getElementById("btnStr").addEventListener("click", analyserChaine);
+      analyserChaine();
+
+      // Démo validation formulaire STI
+      function estLettresEspaces(ch) {
+        if (ch.length == 0) return false;
+        for (let i = 0; i < ch.length; i++) {
+          const c = ch[i].toUpperCase();
+          const ok = (c >= "A" && c <= "Z") || c == " " || c == "-" || c == "É" || c == "È" || c == "Ê";
+          if (!ok) return false;
+        }
+        return true;
+      }
+
+      function estChiffres(ch) {
+        if (ch.length == 0) return false;
+        for (let i = 0; i < ch.length; i++) {
+          if (ch[i] < "0" || ch[i] > "9") return false;
+        }
+        return true;
+      }
+
+      document.getElementById("btnValider").addEventListener("click", function () {
+        const nom = document.getElementById("fNom").value.trim();
+        const cin = document.getElementById("fCin").value.trim();
+        const noteStr = document.getElementById("fNote").value.trim();
+        const note = Number(noteStr);
+        const section = document.getElementById("fSection").value;
+        const erreurs = [];
+
+        if (!estLettresEspaces(nom)) {
+          erreurs.push("- Le nom doit contenir uniquement des lettres.");
+        }
+        if (cin.length != 8 || !estChiffres(cin)) {
+          erreurs.push("- Le CIN doit contenir exactement 8 chiffres.");
+        }
+        if (noteStr == "" || isNaN(note) || note < 0 || note > 20) {
+          erreurs.push("- La note doit être un nombre entre 0 et 20.");
+        }
+
+        const out = document.getElementById("formOut");
+        if (erreurs.length > 0) {
+          out.textContent = "Formulaire invalide :\n" + erreurs.join("\n");
+        } else {
+          out.textContent =
+            "Formulaire valide ✔\n" +
+            "Candidat : " + nom.toUpperCase() + " | CIN : " + cin + "\n" +
+            "Section : " + section + " | Note : " + note.toFixed(2) + "/20";
+        }
+      });
+
+      document.getElementById("btnReset").addEventListener("click", function () {
+        document.getElementById("fNom").value = "";
+        document.getElementById("fCin").value = "";
+        document.getElementById("fNote").value = "";
+        document.getElementById("fSection").value = "STI";
+        document.getElementById("formOut").textContent = "Champs réinitialisés.";
+      });
+    </script>
+
+    <!-- ==== SOMMAIRE & BARRE DE PROGRESSION (identique à cours/javascript.html) ==== -->
+    <script>
+      (function () {
+        var nav = document.querySelector("nav.topbar");
+        function setH() {
+          document.documentElement.style.setProperty(
+            "--topbar-h",
+            nav.offsetHeight + "px"
+          );
+        }
+        setH();
+        window.addEventListener("resize", setH);
+
+        var side = document.getElementById("side");
+        document
+          .getElementById("menu-btn")
+          .addEventListener("click", function () {
+            side.classList.toggle("open");
+          });
+        var links = Array.prototype.slice.call(side.querySelectorAll("a"));
+        links.forEach(function (a) {
+          a.addEventListener("click", function () {
+            side.classList.remove("open");
+          });
+        });
+
+        var sections = Array.prototype.slice.call(
+          document.querySelectorAll(".section[id]")
+        );
+        var secStepEl = document.getElementById("course-sec-step");
+        var secNameEl = document.getElementById("course-sec-name");
+        var pctEl = document.getElementById("course-pct");
+        var miniFillEl = document.getElementById("course-mini-fill");
+        var progFillEl = document.getElementById("course-progress-fill");
+        var backToTopBtn = document.getElementById("back-to-top");
+
+        if (backToTopBtn) {
+          backToTopBtn.addEventListener("click", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        }
+
+        function updateScrollState() {
+          var scrollTop =
+            window.scrollY || document.documentElement.scrollTop || 0;
+          var docHeight =
+            document.documentElement.scrollHeight - window.innerHeight;
+          var pct =
+            docHeight > 0
+              ? Math.min(
+                  100,
+                  Math.max(0, Math.round((scrollTop / docHeight) * 100))
+                )
+              : 0;
+
+          if (pctEl) pctEl.textContent = pct + "%";
+          if (miniFillEl) miniFillEl.style.width = pct + "%";
+          if (progFillEl) progFillEl.style.width = pct + "%";
+
+          if (backToTopBtn) {
+            backToTopBtn.classList.toggle("visible", scrollTop > 220);
+          }
+
+          if (sections.length > 0) {
+            var triggerY = (nav ? nav.offsetHeight : 90) + 60;
+            var activeIdx = 0;
+
+            for (var i = 0; i < sections.length; i++) {
+              var rect = sections[i].getBoundingClientRect();
+              if (rect.top <= triggerY) {
+                activeIdx = i;
+              } else {
+                break;
+              }
+            }
+
+            if (docHeight > 0 && scrollTop >= docHeight - 10) {
+              activeIdx = sections.length - 1;
+            }
+
+            var activeSec = sections[activeIdx];
+            var activeId = activeSec.id;
+            var activeTitle = "";
+
+            links.forEach(function (a) {
+              var isMatch = a.getAttribute("href") === "#" + activeId;
+              a.classList.toggle("active", isMatch);
+              if (isMatch) {
+                activeTitle = a.textContent.trim();
+              }
+            });
+
+            if (!activeTitle) {
+              var h2 = activeSec.querySelector("h2");
+              if (h2) activeTitle = h2.textContent.trim();
+            }
+
+            if (secStepEl) {
+              secStepEl.textContent = activeIdx + 1 + " / " + sections.length;
+            }
+            if (secNameEl && activeTitle) {
+              secNameEl.textContent = activeTitle;
+            }
+          }
+        }
+
+        var ticking = false;
+        function requestUpdate() {
+          if (!ticking) {
+            window.requestAnimationFrame(function () {
+              updateScrollState();
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        updateScrollState();
+      })();
+    </script>
+
+    <!-- 🔒 Protection du contenu STI -->
+    <link rel="stylesheet" href="../assets/css/protection.css?v=221" />
+    <script src="../assets/js/protection.js?v=221" defer></script>
+    <script src="../assets/js/supabase-umd.js"></script>
+    <script src="../assets/js/config.js?v=221"></script>
+    <script src="../assets/js/acces.js?v=221"></script>
+  </body>
 </html>

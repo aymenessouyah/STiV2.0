@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v220";
+var CACHE = "sti-atelier-v221";
 var SHELL = [
   "./",
   "./index.html",
@@ -39,6 +39,7 @@ var SHELL = [
   "./cssanimee/cours.js",
   "./cssanimee/style.css",
   "./cours/javascript.html",
+  "./cours/Recap-JavaScript-STI.html",
   "./cours/php.html",
   "./cours/coursphp.html",
   "./cours/PHP-recap.html",
@@ -162,6 +163,7 @@ var OFFLINE_LIST = [
   "./cours/fiche-revision-html5.html",
   "./cours/html5.html",
   "./cours/javascript.html",
+  "./cours/Recap-JavaScript-STI.html",
   "./cours/PHP-recap.html",
   "./cours/php-recap.html",
   "./cours/php-mysqli.html",
