@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Récapitulatif JavaScript — STI</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#111c2e;--panel2:#162338;--line:#2a3a50;--text:#f9f1e3;--muted:#b8c3d2;--accent:#e17a45;--accent2:#f4b183;--green:#69d6a5;--red:#ff8b8b;--code:#09101b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:85px}
+body{margin:0;background:radial-gradient(ellipse at top,#17283e 0,#0b1220 55%);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:38px 20px 30px;border-bottom:1px solid var(--line);background:#0d1728}
+.hero,main,footer{width:min(1180px,calc(100% - 32px));margin:auto}
+.eyebrow{color:var(--accent2);font-weight:800;letter-spacing:.13em;text-transform:uppercase;font-size:.78rem}
+h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.12;margin:8px 0 12px}
+header p{max-width:780px;color:var(--muted);margin:0}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.pill{border:1px solid #4a5b70;border-radius:999px;padding:5px 11px;color:#f9f1e3;font-size:.82rem}
+nav{position:sticky;top:0;z-index:10;background:#0d1728f2;border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.navinner{width:min(1180px,calc(100% - 24px));margin:auto;display:flex;gap:7px;overflow:auto;padding:10px 0}
+nav a{flex:none;text-decoration:none;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:.84rem}
+nav a:hover{background:#b4552d;border-color:#b4552d}
+main{padding:26px 0 48px}
+.intro,.section,.card{border:1px solid var(--line);border-radius:15px;background:var(--panel);box-shadow:0 10px 28px #0002}
+.intro{padding:18px 20px;margin-bottom:20px}
+.section{padding:22px;margin:20px 0}
+.section h2{margin:0 0 14px;font-size:1.55rem;line-height:1.3}
+.section h2:before{content:"";display:inline-block;width:5px;height:1.1em;background:var(--accent);border-radius:5px;margin-right:10px;vertical-align:-.15em}
+.section h3{margin:0 0 8px;font-size:1.08rem;color:var(--accent2)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.card{padding:16px;background:var(--panel2);min-width:0}
+.card p{margin:7px 0;color:var(--muted)}
+.card ul{margin:8px 0;padding-left:22px;color:var(--muted)}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--code);border:1px solid #29374a;border-radius:10px;padding:13px 14px;margin:10px 0;color:#f9d9a8;font: .9rem/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-x:auto}
+code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#ffd29f;background:#09101b;padding:2px 5px;border-radius:5px}
+pre code{padding:0;background:transparent}
+.note{font-size:.91rem;color:var(--muted)}
+table{border-collapse:collapse;width:100%;margin:10px 0}
+th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--accent2)}
+.callout{border-left:4px solid var(--accent);padding:10px 14px;background:#1a293d;border-radius:0 9px 9px 0;color:var(--muted);margin:12px 0}
+button{background:var(--accent);color:#17120e;border:0;border-radius:9px;padding:9px 13px;font-weight:750;cursor:pointer}
+button:hover{filter:brightness(1.1)}
+input,select{max-width:100%;background:#09101b;color:var(--text);border:1px solid #43546a;border-radius:8px;padding:10px;font:inherit}
+.demo{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.result{padding:10px 12px;background:#09101b;border:1px solid var(--line);border-radius:9px;min-height:42px;color:var(--green);overflow-wrap:anywhere}
+footer{text-align:center;color:var(--muted);padding:5px 0 30px;font-size:.9rem}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.section{padding:16px}.hero,main,footer{width:calc(100% - 22px)}header{padding:28px 0}th,td{padding:7px;font-size:.9rem}}
+@media print{body{background:white;color:#111}.section,.card,.intro{background:white;color:#111;box-shadow:none;border-color:#bbb}p,li,.note,.card p{color:#333}nav,button{display:none}pre{background:#f4f4f4;color:#111}}
+</style>
+</head>
+<body>
+<header id="haut">
+  <div class="hero">
+    <div class="eyebrow">STI · Sciences de l’informatique</div>
+    <h1>Récapitulatif JavaScript</h1>
+    <p>Les notions essentielles, les syntaxes à connaître et des exemples progressifs pour réviser et s’entraîner directement dans le navigateur.</p>
+    <div class="pills"><span class="pill">Cours de révision</span><span class="pill">Exemples exécutables</span><span class="pill">Interface adaptable</span></div>
+  </div>
+</header>
+<nav><div class="navinner">
+<a href="#base">Introduction</a><a href="#variables">Variables</a><a href="#operateurs">Opérateurs</a><a href="#conditions">Conditions</a><a href="#boucles">Boucles</a><a href="#fonctions">Fonctions</a><a href="#tableaux">Tableaux</a><a href="#chaines">Chaînes</a><a href="#dom">DOM</a><a href="#evenements">Événements</a><a href="#formulaires">Formulaires</a><a href="#exercices">Exercices</a>
+</div></nav>
+<main>
+<div class="intro">
+<strong>Comment utiliser cette fiche ?</strong>
+<p class="note">Lire les règles, observer les exemples, puis modifier les valeurs dans les démonstrations interactives. Les extraits sont indépendants : ils peuvent être copiés dans un fichier HTML ou JavaScript.</p>
+</div>
+
+<section class="section" id="base">
+<h2>1. Introduction et emplacement du code</h2>
+<div class="grid">
+<article class="card"><h3>À quoi sert JavaScript ?</h3><p>JavaScript permet de rendre une page interactive : calculer, réagir à un clic, vérifier une saisie, modifier le contenu HTML et changer le style.</p></article>
+<article class="card"><h3>Script interne</h3><pre><code>&lt;script&gt;
+  alert("Bonjour STI !");
+&lt;/script&gt;</code></pre><p>Placer souvent le script avant <code>&lt;/body&gt;</code> pour que les éléments HTML soient déjà chargés.</p></article>
+<article class="card"><h3>Script externe</h3><pre><code>&lt;script src="script.js"&gt;&lt;/script&gt;</code></pre><p>Le code est enregistré dans un fichier séparé nommé par exemple <code>script.js</code>.</p></article>
+<article class="card"><h3>Afficher une information</h3><pre><code>console.log("Message");
+alert("Attention !");
+let nom = prompt("Votre nom ?");
+console.log(nom);</code></pre><p><code>console.log()</code> affiche dans la console, <code>alert()</code> ouvre une boîte de dialogue et <code>prompt()</code> demande une saisie.</p></article>
+</div>
+</section>
+
+<section class="section" id="variables">
+<h2>2. Variables, constantes et types</h2>
+<div class="grid">
+<article class="card"><h3>Déclarer des variables</h3><pre><code>let age = 17;
+let nom = "Amira";
+let admis = true;
+const PI = 3.14159;
+var ancien = "ancienne syntaxe";</code></pre><ul><li><code>let</code> : valeur réaffectable.</li><li><code>const</code> : variable non réaffectable.</li><li><code>var</code> : ancienne déclaration, portée différente.</li></ul></article>
+<article class="card"><h3>Types principaux</h3><pre><code>let n = 12;             // number
+let prix = 8.5;         // number
+let texte = "Bonjour";  // string
+let ok = false;         // boolean
+let vide;               // undefined
+let rien = null;        // absence volontaire de valeur</code></pre><p>JavaScript est à typage dynamique : le type dépend de la valeur affectée.</p></article>
+<article class="card"><h3>Règles de nommage</h3><ul><li>Commencer par une lettre, <code>_</code> ou <code>$</code>.</li><li>Ne pas commencer par un chiffre.</li><li>Respecter les majuscules et minuscules : <code>note</code> et <code>Note</code> sont différentes.</li><li>Éviter les mots réservés.</li></ul><pre><code>let noteEleve = 15;
+let _compteur = 0;</code></pre></article>
+<article class="card"><h3>Conversions de types : principe</h3>
+<p>Convertir signifie transformer une valeur d’un type vers un autre : chaîne (<code>string</code>), nombre (<code>number</code>) ou booléen (<code>boolean</code>).</p>
+<pre><code>let texte = "25";          // string
+let nombre = Number(texte); // number : 25
+let resultat = nombre + 5;  // 30</code></pre>
+<div class="callout">Attention : <code>"25" + 5</code> donne <code>"255"</code> (concaténation), tandis que <code>Number("25") + 5</code> donne <code>30</code> (addition numérique).</div>
+</article>
+<article class="card"><h3>À comprendre : le signe +, la multiplication et la soustraction</h3>
+<p>Lorsqu’une chaîne numérique est associée à un nombre, JavaScript ne réagit pas de la même manière selon l’opérateur utilisé. Le signe <code>+</code> peut concaténer des chaînes, tandis que <code>*</code> et <code>-</code> effectuent des calculs numériques et convertissent ici automatiquement les chaînes numériques en nombres.</p>
+<table><tr><th>Expression</th><th>Résultat</th><th>Pourquoi ?</th></tr>
+<tr><td><code>5 + "6"</code></td><td><code>"56"</code></td><td>Concaténation : le nombre 5 est associé au texte "6".</td></tr>
+<tr><td><code>"6" + 5</code></td><td><code>"65"</code></td><td>Concaténation, dans l’ordre des opérandes.</td></tr>
+<tr><td><code>5 * "6"</code></td><td><code>30</code></td><td>La chaîne "6" est convertie en nombre.</td></tr>
+<tr><td><code>"5" * 6</code></td><td><code>30</code></td><td>La chaîne "5" est convertie en nombre.</td></tr>
+<tr><td><code>5 - "6"</code></td><td><code>-1</code></td><td>La chaîne "6" est convertie en nombre.</td></tr>
+<tr><td><code>"5" - 6</code></td><td><code>-1</code></td><td>La chaîne "5" est convertie en nombre.</td></tr></table>
+<pre><code>console.log(5 + "6"); // "56" : string
+console.log("6" + 5); // "65" : string
+console.log(5 * "6"); // 30 : number
+console.log("5" * 6); // 30 : number
+console.log(5 - "6"); // -1 : number
+console.log("5" - 6); // -1 : number
+
+console.log(typeof (5 + "6")); // "string"
+console.log(typeof (5 * "6")); // "number"</code></pre>
+<div class="callout"><strong>Règle importante :</strong> <code>"56"</code> est une chaîne de caractères, alors que <code>56</code> est un nombre. Pour obtenir une addition numérique, convertir explicitement la chaîne : <code>5 + Number("6")</code> donne <code>11</code>.</div>
+</article>
+<article class="card"><h3>1. Number() — convertir en nombre</h3>
+<pre><code>Number("42")       // 42
+Number("3.5")      // 3.5
+Number("")         // 0
+Number("   ")      // 0
+Number("42abc")    // NaN
+Number("bonjour")  // NaN
+Number(true)       // 1
+Number(false)      // 0
+Number(null)       // 0
+Number(undefined)  // NaN</code></pre>
+<p><code>Number()</code> tente de convertir toute la valeur. Si la chaîne ne représente pas un nombre valide, le résultat est <code>NaN</code> (« Not a Number »).</p>
+</article>
+<article class="card"><h3>2. parseInt() — lire un entier</h3>
+<pre><code>parseInt("27")       // 27
+parseInt("27.9")     // 27
+parseInt("-8")       // -8
+parseInt("27abc")    // 27
+parseInt("abc27")    // NaN
+parseInt("3.14")     // 3</code></pre>
+<p><code>parseInt()</code> lit un entier au début de la chaîne et s’arrête lorsqu’il rencontre un caractère incompatible. Pour une base décimale, on peut écrire <code>parseInt(texte, 10)</code>.</p>
+</article>
+<article class="card"><h3>3. parseFloat() — lire un nombre décimal</h3>
+<pre><code>parseFloat("27.8")    // 27.8
+parseFloat("-2.5")    // -2.5
+parseFloat("27.8abc") // 27.8
+parseFloat("abc27.8") // NaN
+parseFloat("12")      // 12</code></pre>
+<p>En JavaScript, le séparateur décimal dans une chaîne numérique est le point : <code>"3.5"</code>. La virgule de <code>"3,5"</code> ne constitue pas un séparateur décimal reconnu par ces conversions.</p>
+</article>
+<article class="card"><h3>4. String() — convertir en chaîne</h3>
+<pre><code>String(25)        // "25"
+String(3.14)      // "3.14"
+String(true)      // "true"
+String(false)     // "false"
+String(null)      // "null"
+String(undefined) // "undefined"</code></pre>
+<p>Utile pour obtenir une représentation textuelle d’une valeur. La concaténation avec <code>+</code> peut également transformer un nombre en chaîne lorsqu’un des opérandes est une chaîne.</p>
+</article>
+<article class="card"><h3>5. Boolean() — convertir en booléen</h3>
+<pre><code>Boolean(1)         // true
+Boolean(-5)        // true
+Boolean("Bonjour") // true
+Boolean(0)         // false
+Boolean("")        // false
+Boolean(null)      // false
+Boolean(undefined) // false
+Boolean(NaN)       // false</code></pre>
+<p>Valeurs considérées comme fausses : <code>false</code>, <code>0</code>, <code>-0</code>, <code>""</code>, <code>null</code>, <code>undefined</code> et <code>NaN</code>. Les autres valeurs sont généralement vraies, y compris <code>"0"</code> et <code>"false"</code>.</p>
+</article>
+<article class="card"><h3>6. La valeur NaN</h3>
+<pre><code>let n = Number("12abc"); // NaN
+Number.isNaN(n);         // true
+isNaN("bonjour");        // true, après conversion</code></pre>
+<p><code>NaN</code> indique qu’une opération numérique n’a pas produit un nombre valide. Pour tester précisément une valeur déjà calculée, préférer <code>Number.isNaN()</code>.</p>
+</article>
+<article class="card"><h3>7. Les saisies avec prompt()</h3>
+<pre><code>let ageTexte = prompt("Votre âge ?");
+let age = Number(ageTexte);
+
+if (ageTexte !== null && ageTexte.trim() !== "" && Number.isFinite(age)) {
+  console.log("L'année prochaine : " + (age + 1));
+} else {
+  console.log("Saisie numérique invalide.");
+}</code></pre>
+<p><code>prompt()</code> renvoie une chaîne si l’utilisateur saisit une valeur, et <code>null</code> s’il annule. Vérifier aussi la chaîne vide : <code>Number("")</code> vaut <code>0</code>.</p>
+</article>
+</div>
+<div class="card">
+<h3>Atelier interactif — comparer les conversions</h3>
+<p class="note">Saisis une valeur puis observe ce que produisent <code>Number()</code>, <code>parseInt()</code>, <code>parseFloat()</code>, <code>String()</code> et <code>Boolean()</code>.</p>
+<div class="demo"><label for="conversionInput">Valeur à convertir :</label><input id="conversionInput" value="12.8abc" aria-label="Valeur à convertir"><button id="conversionGo">Convertir</button></div>
+<div class="result" id="conversionOut" aria-live="polite">Les résultats apparaîtront ici.</div>
+<div class="callout">Essaie successivement : <code>12.8</code>, <code>12.8abc</code>, <code>bonjour</code>, une chaîne vide, <code>0</code> et <code>false</code>. Observe notamment la différence entre <code>Number()</code> et les fonctions <code>parse...</code>.</div>
+</div>
+</section>
+
+<section class="section" id="operateurs">
+<h2>3. Opérateurs et calculs</h2>
+<div class="grid">
+<article class="card"><h3>Arithmétiques</h3><table><tr><th>Opérateur</th><th>Rôle</th><th>Exemple</th></tr><tr><td><code>+</code></td><td>Addition ou concaténation</td><td><code>4 + 3</code> donne 7</td></tr><tr><td><code>-</code></td><td>Soustraction</td><td><code>9 - 2</code> donne 7</td></tr><tr><td><code>*</code>, <code>/</code></td><td>Multiplication, division</td><td><code>8 / 2</code> donne 4</td></tr><tr><td><code>%</code></td><td>Reste de division</td><td><code>7 % 2</code> donne 1</td></tr><tr><td><code>**</code></td><td>Puissance</td><td><code>2 ** 3</code> donne 8</td></tr></table></article>
+<article class="card"><h3>Comparaison et logique</h3><pre><code>age >= 18
+note === 10
+nom !== ""
+a > 0 && a < 20
+jour === 6 || jour === 0
+!admis</code></pre><p><code>===</code> compare valeur et type. Préférer <code>===</code> à <code>==</code> pour éviter les conversions implicites.</p></article>
+<article class="card"><h3>Incrémentation et affectation</h3><pre><code>compteur = compteur + 1;
+compteur++;
+compteur += 2;
+prix *= 1.19;</code></pre><p><code>++</code> ajoute 1 ; <code>+=</code> ajoute la valeur à droite à la variable.</p></article>
+<article class="card"><h3>Math</h3><pre><code>Math.abs(-8)       // 8
+Math.sqrt(81)      // 9
+Math.round(3.6)    // 4
+Math.floor(3.9)    // 3
+Math.ceil(3.1)     // 4
+Math.random()      // entre 0 inclus et 1 exclu
+Math.floor(Math.random() * 6) + 1 // dé 1 à 6</code></pre></article>
+</div>
+<div class="card"><h3>Tester une expression</h3><div class="demo"><label for="a">a :</label><input id="a" type="number" value="12"><label for="b">b :</label><input id="b" type="number" value="5"><button id="calc">Calculer</button></div><div class="result" id="calcOut" aria-live="polite">Résultat affiché ici.</div></div>
+</section>
+
+<section class="section" id="conditions">
+<h2>4. Structures conditionnelles</h2>
+<div class="grid">
+<article class="card"><h3>if / else</h3><pre><code>if (note >= 10) {
+  resultat = "Admis";
+} else {
+  resultat = "Ajourné";
+}</code></pre></article>
+<article class="card"><h3>if / else if / else</h3><pre><code>if (note >= 16) {
+  mention = "Très bien";
+} else if (note >= 14) {
+  mention = "Bien";
+} else if (note >= 12) {
+  mention = "Assez bien";
+} else {
+  mention = "À travailler";
+}</code></pre><p>Les conditions sont évaluées dans l’ordre. La première vraie est exécutée.</p></article>
+<article class="card"><h3>switch</h3><pre><code>switch (jour) {
+  case 0:
+    nomJour = "Dimanche";
+    break;
+  case 6:
+    nomJour = "Samedi";
+    break;
+  default:
+    nomJour = "Jour ouvré";
+}</code></pre><p>Utiliser <code>break</code> pour éviter de poursuivre dans le cas suivant.</p></article>
+<article class="card"><h3>Opérateur ternaire</h3><pre><code>let resultat = note >= 10 ? "Admis" : "Ajourné";</code></pre><p>Forme courte d’un <code>if / else</code> pour une expression simple.</p></article>
+</div>
+</section>
+
+<section class="section" id="boucles">
+<h2>5. Boucles</h2>
+<div class="grid">
+<article class="card"><h3>while</h3><pre><code>let i = 1;
+while (i <= 5) {
+  console.log(i);
+  i++;
+}</code></pre><p>La condition est testée avant chaque tour. Si elle est fausse au départ, le corps ne s’exécute pas.</p></article>
+<article class="card"><h3>do ... while</h3><pre><code>let i = 1;
+do {
+  console.log(i);
+  i++;
+} while (i <= 5);</code></pre><p>Le corps s’exécute au moins une fois, puis la condition est testée.</p></article>
+<article class="card"><h3>for</h3><pre><code>for (let i = 1; i <= 5; i++) {
+  console.log(i);
+}</code></pre><p>Initialisation ; condition ; mise à jour. Très pratique quand le nombre de répétitions est connu.</p></article>
+<article class="card"><h3>break et continue</h3><pre><code>for (let i = 1; i <= 10; i++) {
+  if (i === 5) continue;
+  if (i === 8) break;
+  console.log(i);
+}</code></pre><p><code>continue</code> passe au tour suivant ; <code>break</code> quitte la boucle.</p></article>
+</div>
+<div class="card"><h3>Suivre une boucle</h3><div class="demo"><label for="limite">Afficher de 1 à :</label><input id="limite" type="number" min="1" max="30" value="5"><button id="boucleGo">Exécuter</button></div><div class="result" id="boucleOut">Les valeurs apparaîtront ici.</div></div>
+</section>
+
+<section class="section" id="fonctions">
+<h2>6. Fonctions</h2>
+<div class="grid">
+<article class="card"><h3>Déclaration et appel</h3><pre><code>function saluer(nom) {
+  return "Bonjour " + nom;
+}
+let message = saluer("Amira");
+console.log(message);</code></pre><p>Les paramètres reçoivent les données ; <code>return</code> renvoie le résultat.</p></article>
+<article class="card"><h3>Paramètres par défaut</h3><pre><code>function multiplier(a, b = 2) {
+  return a * b;
+}
+multiplier(4);    // 8
+multiplier(4, 3); // 12</code></pre></article>
+<article class="card"><h3>Fonction anonyme et fléchée</h3><pre><code>const carre = function (n) {
+  return n * n;
+};
+
+const double = n => n * 2;</code></pre></article>
+<article class="card"><h3>Portée</h3><p>Une variable déclarée dans une fonction est locale à cette fonction. Une variable déclarée dans un bloc avec <code>let</code> ou <code>const</code> est limitée à ce bloc.</p><pre><code>let total = 10;
+function exemple() {
+  let local = 3;
+  return total + local;
+}</code></pre></article>
+</div>
+</section>
+
+<section class="section" id="tableaux">
+<h2>7. Tableaux</h2>
+<div class="grid">
+<article class="card"><h3>Créer et accéder</h3><pre><code>let notes = [12, 15, 9, 18];
+notes[0];          // 12
+notes[2] = 10;
+notes.length;      // 4</code></pre><p>Les indices commencent à 0. Le dernier indice vaut généralement <code>length - 1</code>.</p></article>
+<article class="card"><h3>Méthodes courantes</h3><pre><code>notes.push(14);    // ajouter à la fin
+notes.pop();       // retirer le dernier
+notes.unshift(8);  // ajouter au début
+notes.shift();     // retirer le premier
+notes.includes(15); // tester la présence</code></pre></article>
+<article class="card"><h3>Parcourir un tableau</h3><pre><code>for (let i = 0; i < notes.length; i++) {
+  console.log(notes[i]);
+}
+
+for (const note of notes) {
+  console.log(note);
+}</code></pre></article>
+<article class="card"><h3>Tableau et calcul</h3><pre><code>let somme = 0;
+for (let i = 0; i < notes.length; i++) {
+  somme += notes[i];
+}
+let moyenne = somme / notes.length;</code></pre><p>Vérifier que le tableau n’est pas vide avant de calculer une moyenne.</p></article>
+</div>
+</section>
+
+<section class="section" id="chaines">
+<h2>8. Chaînes de caractères</h2>
+<div class="grid">
+<article class="card"><h3>Créer et concaténer</h3><pre><code>let prenom = "Amira";
+let nom = "Ben Ali";
+let complet = prenom + " " + nom;
+let phrase = `Bonjour ${prenom} !`;</code></pre><p>Les apostrophes, guillemets et accents font partie du texte ; les chaînes sont indexées à partir de 0.</p></article>
+<article class="card"><h3>Propriétés et méthodes</h3><pre><code>let s = "Bonjour STI";
+s.length;              // longueur
+s.toUpperCase();       // majuscules
+s.toLowerCase();       // minuscules
+s.includes("STI");     // true
+s.indexOf("jour");     // position ou -1
+s.slice(0, 7);         // "Bonjour"
+s.trim();              // retirer espaces aux extrémités
+s.replace("STI", "SI");</code></pre></article>
+<article class="card"><h3>Parcourir les caractères</h3><pre><code>let mot = "STI";
+for (let i = 0; i < mot.length; i++) {
+  console.log(mot[i]);
+}</code></pre><p>On peut accéder à un caractère avec son indice, par exemple <code>mot[i]</code>.</p></article>
+<article class="card"><h3>Exemple interactif</h3><div class="demo"><input id="texte" value="Bonjour STI" aria-label="Texte à analyser"><button id="texteGo">Analyser</button></div><div class="result" id="texteOut">Longueur et version en majuscules.</div></article>
+</div>
+</section>
+
+<section class="section" id="date">
+<h2>9. Dates et nombres aléatoires</h2>
+<div class="grid">
+<article class="card"><h3>Date actuelle</h3><pre><code>let d = new Date();
+d.getDate();       // jour du mois
+d.getMonth();      // mois : 0 à 11
+d.getFullYear();   // année
+d.getDay();        // jour de semaine : 0 à 6
+d.toLocaleDateString("fr-FR");</code></pre><p>Attention : <code>getMonth()</code> commence à 0 (janvier).</p></article>
+<article class="card"><h3>Créer une date</h3><pre><code>new Date(2026, 9, 15); // 15 octobre 2026
+new Date("2026-10-15");</code></pre><p>Dans le constructeur numérique, le mois 9 correspond à octobre.</p></article>
+</div>
+<div class="card"><h3>Afficher la date du jour</h3><div class="demo"><button id="dateGo">Afficher la date</button></div><div class="result" id="dateOut"></div></div>
+</section>
+
+<section class="section" id="dom">
+<h2>10. DOM : accéder et modifier la page</h2>
+<div class="grid">
+<article class="card"><h3>Sélectionner un élément</h3><pre><code>document.getElementById("titre");
+document.querySelector(".carte");
+document.querySelectorAll("p");</code></pre><p><code>getElementById()</code> cible un identifiant ; <code>querySelector()</code> renvoie le premier élément correspondant au sélecteur CSS.</p></article>
+<article class="card"><h3>Modifier le contenu</h3><pre><code>let p = document.getElementById("message");
+p.textContent = "Nouveau texte";
+p.innerHTML = "&lt;strong&gt;Important&lt;/strong&gt;";</code></pre><p>Utiliser <code>textContent</code> pour afficher du texte brut. <code>innerHTML</code> interprète du HTML et doit être utilisé avec prudence.</p></article>
+<article class="card"><h3>Modifier le style et les classes</h3><pre><code>p.style.color = "tomato";
+p.style.fontSize = "20px";
+p.classList.add("actif");
+p.classList.remove("actif");
+p.classList.toggle("actif");</code></pre></article>
+<article class="card"><h3>Créer un élément</h3><pre><code>let li = document.createElement("li");
+li.textContent = "Nouvel élément";
+document.querySelector("ul").appendChild(li);</code></pre></article>
+</div>
+</section>
+
+<section class="section" id="evenements">
+<h2>11. Événements</h2>
+<div class="grid">
+<article class="card"><h3>Événement de clic</h3><pre><code>let bouton = document.getElementById("btn");
+bouton.addEventListener("click", function () {
+  alert("Bouton cliqué !");
+});</code></pre><p>Un événement déclenche une fonction lorsqu’une action se produit.</p></article>
+<article class="card"><h3>Événements courants</h3><table><tr><th>Événement</th><th>Déclenchement</th></tr><tr><td><code>click</code></td><td>Clic sur un élément</td></tr><tr><td><code>input</code></td><td>Modification pendant la saisie</td></tr><tr><td><code>change</code></td><td>Valeur modifiée puis validée</td></tr><tr><td><code>submit</code></td><td>Envoi d’un formulaire</td></tr><tr><td><code>mouseover</code></td><td>Pointeur au-dessus</td></tr><tr><td><code>keydown</code></td><td>Touche enfoncée</td></tr></table></article>
+</div>
+<div class="card"><h3>Mini-démo : réagir au clic</h3><div class="demo"><button id="clicGo">Cliquer ici</button><button id="resetClic">Réinitialiser</button></div><div class="result" id="clicOut">Nombre de clics : 0</div></div>
+</section>
+
+<section class="section" id="formulaires">
+<h2>12. Formulaires et validation</h2>
+<div class="grid">
+<article class="card"><h3>Lire une valeur</h3><pre><code>let champ = document.getElementById("nom");
+let valeur = champ.value;</code></pre><p><code>value</code> contient la valeur saisie. Pour un champ numérique, convertir avec <code>Number()</code>.</p></article>
+<article class="card"><h3>Vérifier une saisie</h3><pre><code>let nom = document.getElementById("nom").value.trim();
+
+if (nom === "") {
+  document.getElementById("erreur").textContent =
+    "Le nom est obligatoire.";
+} else {
+  document.getElementById("erreur").textContent =
+    "Saisie correcte.";
+}</code></pre></article>
+<article class="card"><h3>Empêcher l’envoi si invalide</h3><pre><code>form.addEventListener("submit", function (event) {
+  if (champ.value.trim() === "") {
+    event.preventDefault();
+    message.textContent = "Champ obligatoire";
+  }
+});</code></pre><p><code>preventDefault()</code> empêche l’action habituelle, ici l’envoi du formulaire, si la validation échoue.</p></article>
+<article class="card"><h3>Démo de validation</h3><div class="demo"><label for="nomDemo">Nom :</label><input id="nomDemo" placeholder="Saisir un nom"><button id="validerNom">Vérifier</button></div><div class="result" id="nomOut" aria-live="polite">Le résultat apparaîtra ici.</div></article>
+</div>
+</section>
+
+<section class="section" id="erreurs">
+<h2>13. Erreurs, débogage et bonnes habitudes</h2>
+<div class="grid">
+<article class="card"><h3>Repérer les erreurs</h3><ul><li>Ouvrir les outils de développement du navigateur (F12).</li><li>Lire l’onglet Console.</li><li>Utiliser <code>console.log()</code> pour suivre les valeurs.</li><li>Vérifier l’orthographe des identifiants et les parenthèses/accolades.</li></ul></article>
+<article class="card"><h3>Erreurs fréquentes</h3><pre><code>let note = 12;       // déclaration
+if (note >= 10) {    // condition
+  console.log("Admis");
+}
+
+let total = Number("15"); // conversion</code></pre><p>Un <code>=</code> affecte une valeur ; <code>===</code> compare. Respecter les majuscules/minuscules.</p></article>
+<article class="card"><h3>Bonnes pratiques</h3><ul><li>Utiliser des noms explicites.</li><li>Indenter le code régulièrement.</li><li>Préférer <code>let</code> et <code>const</code> à <code>var</code> dans du nouveau code.</li><li>Vérifier les valeurs saisies par l’utilisateur.</li><li>Tester les cas normaux et les cas limites.</li></ul></article>
+<article class="card"><h3>Rappel important</h3><p>JavaScript s’exécute côté navigateur, mais une validation côté client ne remplace pas une validation côté serveur pour les données sensibles.</p></article>
+</div>
+</section>
+
+<section class="section" id="exercices">
+<h2>14. Exercices rapides</h2>
+<div class="grid">
+<article class="card"><h3>Exercice 1 — Pair ou impair</h3><p>Écrire un programme qui affiche si un nombre entier est pair ou impair.</p><pre><code>let n = 17;
+// Compléter avec une condition utilisant %</code></pre><details><summary>Voir une correction possible</summary><pre><code>if (n % 2 === 0) {
+  console.log("Pair");
+} else {
+  console.log("Impair");
+}</code></pre></details></article>
+<article class="card"><h3>Exercice 2 — Somme de 1 à N</h3><p>Calculer la somme des entiers de 1 jusqu’à N à l’aide d’une boucle.</p><details><summary>Voir une correction possible</summary><pre><code>let n = 5;
+let somme = 0;
+for (let i = 1; i <= n; i++) {
+  somme += i;
+}
+console.log(somme); // 15</code></pre></details></article>
+<article class="card"><h3>Exercice 3 — Moyenne</h3><p>Calculer la moyenne d’un tableau de notes, puis afficher « Admis » si elle est au moins égale à 10.</p><details><summary>Voir une correction possible</summary><pre><code>let notes = [12, 9, 15];
+let somme = 0;
+for (let i = 0; i < notes.length; i++) {
+  somme += notes[i];
+}
+let moyenne = somme / notes.length;
+console.log(moyenne);
+console.log(moyenne >= 10 ? "Admis" : "Ajourné");</code></pre></details></article>
+<article class="card"><h3>Exercice 4 — Interaction DOM</h3><p>Créer un bouton qui modifie le texte d’un paragraphe au clic.</p><details><summary>Voir une correction possible</summary><pre><code>document.getElementById("btn").addEventListener("click", function () {
+  document.getElementById("message").textContent = "Bienvenue en STI !";
+});</code></pre></details></article>
+</div>
+<div class="callout"><strong>À retenir :</strong> variables → opérateurs → conditions → boucles → fonctions → tableaux et chaînes → DOM → événements → validation. Ces notions constituent la base de la majorité des petits programmes JavaScript.</div>
+</section>
+</main>
+<footer>Récapitulatif JavaScript · STI · A. Essouyah <span>—</span> <a href="#haut" style="color:var(--accent2)">Retour en haut ↑</a></footer>
+<script>
+document.getElementById("conversionGo").addEventListener("click", function () {
+  const valeur = document.getElementById("conversionInput").value;
+  const n = Number(valeur);
+  const entier = parseInt(valeur, 10);
+  const decimal = parseFloat(valeur);
+  const affiche = function (x) {
+    if (typeof x === "number" && Number.isNaN(x)) return "NaN";
+    return String(x);
+  };
+  const lignes = [
+    "Valeur initiale : " + JSON.stringify(valeur) + " (string)",
+    "Number(...) : " + affiche(n) + " (" + (Number.isNaN(n) ? "conversion impossible" : typeof n) + ")",
+    "parseInt(...) : " + affiche(entier),
+    "parseFloat(...) : " + affiche(decimal),
+    "String(...) : " + JSON.stringify(String(valeur)),
+    "Boolean(...) : " + Boolean(valeur) + " (une chaîne non vide vaut true)",
+    'Number("25") + 5 = ' + (Number("25") + 5),
+    '"25" + 5 = ' + ("25" + 5)
+  ];
+  document.getElementById("conversionOut").textContent = lignes.join(" | ");
+});
+document.getElementById("conversionGo").click();
+
+document.getElementById("calc").addEventListener("click", function () {
+  const a = Number(document.getElementById("a").value);
+  const b = Number(document.getElementById("b").value);
+  const division = b === 0 ? "impossible (division par zéro)" : a / b;
+  document.getElementById("calcOut").textContent =
+    "a + b = " + (a + b) + " | a - b = " + (a - b) +
+    " | a × b = " + (a * b) + " | a / b = " + division +
+    " | a % b = " + (b === 0 ? "non défini" : a % b);
+});
+document.getElementById("boucleGo").addEventListener("click", function () {
+  const n = Math.max(1, Math.min(30, Number(document.getElementById("limite").value) || 1));
+  const valeurs = [];
+  for (let i = 1; i <= n; i++) valeurs.push(i);
+  document.getElementById("boucleOut").textContent = valeurs.join(" → ");
+});
+document.getElementById("texteGo").addEventListener("click", function () {
+  const s = document.getElementById("texte").value;
+  document.getElementById("texteOut").textContent =
+    "Longueur : " + s.length + " caractères | Majuscules : " + s.toUpperCase() +
+    " | Minuscules : " + s.toLowerCase();
+});
+document.getElementById("dateGo").addEventListener("click", function () {
+  document.getElementById("dateOut").textContent =
+    new Date().toLocaleDateString("fr-FR", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+});
+let nombreClics = 0;
+document.getElementById("clicGo").addEventListener("click", function () {
+  nombreClics++;
+  document.getElementById("clicOut").textContent = "Nombre de clics : " + nombreClics;
+});
+document.getElementById("resetClic").addEventListener("click", function () {
+  nombreClics = 0;
+  document.getElementById("clicOut").textContent = "Nombre de clics : 0";
+});
+document.getElementById("validerNom").addEventListener("click", function () {
+  const nom = document.getElementById("nomDemo").value.trim();
+  const sortie = document.getElementById("nomOut");
+  if (nom === "") {
+    sortie.textContent = "Erreur : le champ nom est obligatoire.";
+    sortie.style.color = "var(--red)";
+  } else {
+    sortie.textContent = "Saisie correcte : " + nom;
+    sortie.style.color = "var(--green)";
+  }
+});
+</script>
+</body>
+</html>
