@@ -2607,7 +2607,7 @@
           <div class="course-bar-left">
             <span class="course-level-badge">🎓 Niveau : 3ème/4ème SI</span>
             <span class="course-sep" aria-hidden="true">•</span>
-            <span class="course-sec-step" id="course-sec-step">1 / 12</span>
+            <span class="course-sec-step" id="course-sec-step">1 / 13</span>
             <span class="course-sec-name" id="course-sec-name"
               >Rôle de JavaScript</span
             >
@@ -2636,7 +2636,8 @@
         <a href="#boucles">Boucles</a>
         <a href="#chaines">Chaînes</a>
         <a href="#tableaux">Tableaux</a>
-        <a href="#dom">DOM</a>
+        <a href="#date">Objet Date</a>
+        <a href="#dom">DOM &amp; Multimédia</a>
         <a href="#evenements">Événements</a>
         <a href="#formulaire">Validation formulaire</a>
       </aside>
@@ -2805,6 +2806,7 @@ note = 17;</pre>
           <section class="section" id="es">
             <h2>5. Entrées / sorties</h2>
             <div class="card">
+              <h3>Instructions d'entrée / sortie</h3>
               <div class="table-wrap">
                 <table>
                   <thead>
@@ -2844,6 +2846,66 @@ note = 17;</pre>
                 </table>
               </div>
             </div>
+
+            <div class="card">
+              <h3>Comparaison entre les méthodes pour afficher une sortie</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Critère</th>
+                      <th><code>document.write()</code></th>
+                      <th><code>innerHTML</code></th>
+                      <th><code>textContent</code></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Type d’usage</strong></td>
+                      <td>Écrire pendant le chargement de la page</td>
+                      <td>Modifier le contenu HTML d’un élément</td>
+                      <td>Insérer du texte brut</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Ajoute ou remplace ?</strong></td>
+                      <td>Remplace toute la page après chargement</td>
+                      <td>Remplace tout le contenu de l’élément</td>
+                      <td>Remplace tout le texte de l’élément</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Accepte du HTML ?</strong></td>
+                      <td class="ok">✔ Oui</td>
+                      <td class="ok">✔ Oui</td>
+                      <td class="no">✘ Non</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Efface tout le document si utilisé après chargement ?</strong></td>
+                      <td class="ok">✔ Oui</td>
+                      <td class="no">✘ Non</td>
+                      <td class="no">✘ Non</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Modernité</strong></td>
+                      <td class="no">✘ Obsolète</td>
+                      <td class="ok">✔ Moderne</td>
+                      <td class="ok">✔ Moderne</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Utilisation recommandée ?</strong></td>
+                      <td class="no">✘ Non</td>
+                      <td class="ok">✔ Oui</td>
+                      <td class="ok">✔ Oui</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Cas d’usage typiques</strong></td>
+                      <td>Scripts anciens</td>
+                      <td>Ajouter du HTML</td>
+                      <td>Ajouter du texte simple</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </section>
 
           <section class="section" id="conditions">
@@ -2874,7 +2936,7 @@ note = 17;</pre>
                 <h3>Tester une décision de moyenne</h3>
                 <div class="row">
                   <input type="number" id="moyInput" step="0.25" min="0" max="20" value="13.5" aria-label="Moyenne" />
-                  <button class="btn primary" id="btnMoy">Évaluer</button>
+                  <button class="btn primary" id="btnMoy" onclick="evaluerMoyenne()">Évaluer</button>
                 </div>
                 <div class="out" id="moyOut">Cliquez sur « Évaluer » pour voir le résultat.</div>
               </div>
@@ -2912,7 +2974,7 @@ note = 17;</pre>
                 <h3>Générer une table de multiplication</h3>
                 <div class="row">
                   <input type="number" id="tableInput" value="7" min="1" max="20" aria-label="Nombre" />
-                  <button class="btn primary" id="btnTable">Afficher la table</button>
+                  <button class="btn primary" id="btnTable" onclick="genererTable()">Afficher la table</button>
                 </div>
                 <div class="out" id="tableOut"></div>
               </div>
@@ -2930,12 +2992,13 @@ note = 17;</pre>
                   <li><code>ch.trim()</code> : supprime les espaces au début et à la fin</li>
                   <li><code>ch[i]</code> : caractère à la position <code>i</code> (et <code>ch.charCodeAt(i)</code>)</li>
                   <li><code>ch.indexOf(s)</code> / <code>ch.lastIndexOf(s)</code> : position d’une sous-chaîne (<code>-1</code> si absente)</li>
-                  <li><code>ch.substring(d, f)</code> : extrait une sous-chaîne de <code>d</code> à <code>f - 1</code></li>
-                  <li><code>ch.replace(a, b)</code> : remplace <code>a</code> par <code>b</code></li>
+                  <li><code>ch.substring(indiceA, indiceB)</code> : extrait une sous-chaîne de <code>indiceA</code> à <code>indiceB</code> (non compris)</li>
+                  <li><code>ch.replace(a, b)</code> : remplace la 1ère occurrence de <code>a</code> par <code>b</code></li>
+                  <li><code>String.fromCharCode()</code> : crée une chaîne à partir de codes UTF-16 / ASCII</li>
                 </ul>
               </div>
               <div class="card">
-                <h3>Exemple</h3>
+                <h3>Exemple général</h3>
                 <pre>let ch = "Informatique";
 ch.length;            // 12
 ch.toUpperCase();     // "INFORMATIQUE"
@@ -2944,12 +3007,55 @@ ch.indexOf("mat");    // 5</pre>
               </div>
             </div>
 
+            <div class="grid-2">
+              <div class="card" id="chaines-substring">
+                <h3>Détail de <code>substring(indiceA, indiceB)</code></h3>
+                <p>
+                  Cette méthode retourne une sous-chaîne de la chaîne courante, entre un indice de début et un indice de fin.
+                  <code>substring</code> extrait des caractères de la chaîne courante à partir de <code>indiceA</code> jusqu'à <code>indiceB</code> (<strong>non compris</strong>). On a notamment :
+                </p>
+                <ul class="clean">
+                  <li>Si <code>indiceA</code> est égal à <code>indiceB</code>, <code>substring</code> retournera une <strong>chaîne vide</strong> (<code>""</code>).</li>
+                  <li>Si <code>indiceB</code> est omis, <code>substring</code> effectuera l'extraction des caractères <strong>jusqu'à la fin de la chaîne</strong>.</li>
+                  <li>Si l'un des deux arguments est <strong>négatif</strong> ou vaut <code>NaN</code>, il sera traité comme <code>0</code>.</li>
+                  <li>Si l'un des deux arguments est plus grand que <code>str.length</code>, il sera traité comme <code>str.length</code>.</li>
+                  <li>Si <code>indiceA</code> est supérieur à <code>indiceB</code>, la fonction <code>substring()</code> <strong>intervertira (inversera)</strong> ces deux valeurs afin de les traiter comme si elles avaient été passées dans le bon ordre. Par exemple : <code>str.substring(1, 0) == str.substring(0, 1)</code>.</li>
+                </ul>
+                <pre>let str = "Mozilla";
+str.substring(0, 3);   // "Moz" (de 0 à 3 non compris)
+str.substring(2, 2);   // "" (indiceA == indiceB → chaîne vide)
+str.substring(4);      // "lla" (indiceB omis → jusqu'à la fin)
+str.substring(-3, 3);  // "Moz" (-3 traité comme 0)
+str.substring(0, 20);  // "Mozilla" (20 > str.length → str.length)
+str.substring(1, 0);   // "M" (inversé : égal à str.substring(0, 1))</pre>
+              </div>
+
+              <div class="card" id="chaines-fromcharcode">
+                <h3>Méthode statique <code>String.fromCharCode()</code></h3>
+                <p>
+                  La méthode statique <code>String.fromCharCode()</code> renvoie une chaîne de caractères créée à partir de <strong>points de code UTF-16</strong> (codes ASCII).
+                </p>
+                <pre>String.fromCharCode(65);           // "A"
+String.fromCharCode(97);           // "a"
+String.fromCharCode(66, 97, 99);   // "Bac"
+String.fromCharCode(83, 84, 73);   // "STI"
+
+// Opération inverse avec charCodeAt(i) :
+let mot = "STI";
+mot.charCodeAt(0);                 // 83 (code de "S")</pre>
+                <div class="tip">
+                  Retenez les plages ASCII utiles au Bac : <code>"0"</code> à <code>"9"</code> (48 à 57),
+                  <code>"A"</code> à <code>"Z"</code> (65 à 90), et <code>"a"</code> à <code>"z"</code> (97 à 122).
+                </div>
+              </div>
+            </div>
+
             <div class="card">
               <div class="demo">
                 <h3>Analyse rapide d’une chaîne</h3>
                 <div class="row">
                   <input type="text" id="strInput" value="Bac STI 2026" aria-label="Chaîne à analyser" />
-                  <button class="btn primary" id="btnStr">Analyser</button>
+                  <button class="btn primary" id="btnStr" onclick="analyserChaine()">Analyser</button>
                 </div>
                 <div class="out" id="strOut"></div>
               </div>
@@ -2978,54 +3084,146 @@ let m = calculerMoyenne(14, 16);</pre>
             </div>
           </section>
 
+          <section class="section" id="date">
+            <h2>10. L’objet <code>Date</code></h2>
+            <div class="grid-2">
+              <div class="card">
+                <h3>Les 9 façons pour créer un nouvel objet <code>Date</code></h3>
+                <p>Il existe <strong>9 façons</strong> pour créer un nouvel objet <code>Date</code> :</p>
+                <pre>new Date()
+new Date(date string)
+new Date(year, month)
+new Date(year, month, day)
+new Date(year, month, day, hours)
+new Date(year, month, day, hours, minutes)
+new Date(year, month, day, hours, minutes, seconds)
+new Date(year, month, day, hours, minutes, seconds, ms)
+new Date(milliseconds)</pre>
+                <div class="tip">Attention : les mois (<code>month</code>) sont numérotés de <code>0</code> (janvier) à <code>11</code> (décembre).</div>
+              </div>
+
+              <div class="card">
+                <h3><code>new Date()</code> et les 3 types de <code>new Date(ch)</code></h3>
+                <pre>d = new Date();
+// donne la date courante sous ce format :
+// Fri Nov 20 2026 18:14:07 GMT+0100 (UTC+01:00)</pre>
+                <p style="margin:12px 0 8px"><strong><code>new Date(ch)</code> — Il existe 3 types de <code>ch</code> en JavaScript :</strong></p>
+                <div class="table-wrap">
+                  <table style="min-width:0">
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Exemple</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>ISO Date</strong></td>
+                        <td><code>"2026-11-21"</code> <em>(The International Standard)</em></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Short Date</strong></td>
+                        <td><code>"11/20/2026"</code></td>
+                      </tr>
+                      <tr>
+                        <td><strong>Long Date</strong></td>
+                        <td><code>"Nov 20 2026"</code> ou <code>"20 Nov 2026"</code></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <pre style="margin-top:10px">d.getDate();      // Jour du mois (1 à 31)
+d.getMonth();     // Mois (0 à 11)
+d.getFullYear();  // Année sur 4 chiffres (ex. 2026)</pre>
+              </div>
+            </div>
+          </section>
+
           <section class="section" id="dom">
-            <h2>10. Manipulation du DOM</h2>
+            <h2>11. Manipulation du DOM, <code>style</code> &amp; Multimédia (<code>play</code> / <code>pause</code>)</h2>
             <div class="card">
               <p>Le <strong>DOM</strong> (Document Object Model) représente les éléments HTML sous forme d’objets manipulables en JavaScript.</p>
               <div class="grid-2">
-                <div class="card">
-                  <h3>Sélectionner un élément</h3>
+                <div class="card" id="dom-select">
+                  <h3>Sélectionner et lire / modifier un élément</h3>
+                  <ul class="clean">
+                    <li><code>document.getElementById("id")</code> : sélectionne un élément unique par son attribut <code>id</code>.</li>
+                    <li><code>document.getElementsByName("nom")</code> : sélectionne tous les éléments partageant le même attribut <code>name</code> (boutons radio, cases à cocher).</li>
+                  </ul>
                   <pre>let el = document.getElementById("message");
-let champ = document.querySelector("#nom");
-let items = document.querySelectorAll(".item");</pre>
+let radios = document.getElementsByName("choix");
+
+let nom = document.getElementById("nom").value;
+el.innerHTML = "&lt;b&gt;Bonjour " + nom + "&lt;/b&gt;";
+el.textContent = "Bonjour " + nom;</pre>
                 </div>
-                <div class="card">
-                  <h3>Lire / modifier</h3>
-                  <pre>let nom = document.getElementById("nom").value;
-el.textContent = "Bonjour " + nom;
-el.style.color = "#f7df1e";</pre>
+
+                <div class="card" id="dom-style">
+                  <h3>Exemple avec <code>style</code>, <code>bgColor</code> et <code>style.borderColor</code></h3>
+                  <pre>let boite = document.getElementById("boite");
+let champ = document.getElementById("nom");
+
+// Modifier les propriétés CSS via l'objet style
+boite.style.color = "#f7df1e";
+boite.style.backgroundColor = "#111827";
+champ.style.borderColor = "red";
+
+// Couleur d'arrière-plan du document (bgColor)
+document.bgColor = "#0a0c14";</pre>
+                </div>
+              </div>
+
+              <div class="card" id="dom-media" style="margin-top:14px">
+                <h3>Les fonctions <code>play()</code> et <code>pause()</code> (Audio / Vidéo)</h3>
+                <p>Pour contrôler un élément multimédia HTML5 (<code>&lt;audio&gt;</code> ou <code>&lt;video&gt;</code>) depuis JavaScript :</p>
+                <div class="grid-2">
+                  <pre>&lt;audio id="monSon" src="musique.mp3"&gt;&lt;/audio&gt;
+&lt;button onclick="jouer()"&gt;Lecture&lt;/button&gt;
+&lt;button onclick="mettreEnPause()"&gt;Pause&lt;/button&gt;</pre>
+                  <pre>let media = document.getElementById("monSon");
+
+function jouer() {
+  media.play();   // lance la lecture du média
+}
+function mettreEnPause() {
+  media.pause();  // met en pause la lecture
+}</pre>
                 </div>
               </div>
             </div>
           </section>
 
           <section class="section" id="evenements">
-            <h2>11. Les événements</h2>
+            <h2>12. Les événements</h2>
             <div class="card">
               <p>Un événement est une action détectée par le navigateur : clic, saisie, changement de valeur, envoi de formulaire, chargement.</p>
               <div class="grid-2">
                 <div class="card">
-                  <h3>Événements fréquents</h3>
+                  <h3>Attributs d'événements fréquents</h3>
                   <ul class="clean">
-                    <li><code>click</code> : clic sur un bouton</li>
-                    <li><code>input</code> : saisie en direct dans un champ</li>
-                    <li><code>change</code> : changement de sélection</li>
-                    <li><code>submit</code> : envoi d’un formulaire</li>
+                    <li><code>onclick</code> : clic sur un bouton ou un élément</li>
+                    <li><code>oninput</code> : saisie en direct dans un champ</li>
+                    <li><code>onchange</code> : changement de valeur ou de sélection</li>
+                    <li><code>onsubmit</code> : envoi d’un formulaire (<code>return verifier()</code>)</li>
+                    <li><code>onfocus</code> / <code>onblur</code> : entrée / sortie d'un champ</li>
                   </ul>
                 </div>
                 <div class="card">
-                  <h3><code>addEventListener</code></h3>
-                  <pre>const btn = document.getElementById("btn");
-btn.addEventListener("click", function () {
-  alert("Bouton cliqué !");
-});</pre>
+                  <h3>Exemples d'utilisation</h3>
+                  <pre>&lt;button onclick="saluer()"&gt;Cliquer&lt;/button&gt;
+
+&lt;input type="text" id="nom" oninput="afficher()"&gt;
+
+&lt;form onsubmit="return verifier()"&gt;
+  &lt;input type="submit" value="Envoyer"&gt;
+&lt;/form&gt;</pre>
                 </div>
               </div>
             </div>
           </section>
 
           <section class="section" id="formulaire">
-            <h2>12. Exemple complet : validation d’un formulaire STI</h2>
+            <h2>13. Exemple complet : validation d’un formulaire STI</h2>
             <div class="card">
               <div class="grid-2">
                 <div>
@@ -3044,8 +3242,8 @@ btn.addEventListener("click", function () {
                       </select>
                     </div>
                     <div class="row">
-                      <button class="btn primary" id="btnValider">Vérifier le formulaire</button>
-                      <button class="btn secondary" id="btnReset">Réinitialiser</button>
+                      <button class="btn primary" id="btnValider" onclick="validerFormulaireSTI()">Vérifier le formulaire</button>
+                      <button class="btn secondary" id="btnReset" onclick="reinitialiserFormulaireSTI()">Réinitialiser</button>
                     </div>
                     <div class="out" id="formOut">Remplissez les champs puis cliquez sur « Vérifier le formulaire ».</div>
                   </div>
@@ -3060,13 +3258,16 @@ btn.addEventListener("click", function () {
 }
 
 function verifier() {
-  let cin = document.getElementById("fCin").value.trim();
+  let champCin = document.getElementById("fCin");
+  let cin = champCin.value.trim();
   let note = Number(document.getElementById("fNote").value);
 
   if (cin.length != 8 || !estChiffres(cin)) {
+    champCin.style.borderColor = "red";
     alert("Le CIN doit contenir 8 chiffres.");
     return false;
   }
+  champCin.style.borderColor = "#22ff88";
   if (isNaN(note) || note &lt; 0 || note &gt; 20) {
     alert("La note doit être comprise entre 0 et 20.");
     return false;
@@ -3212,12 +3413,12 @@ function verifier() {
       (function () {
         var b = document.getElementById("btn-retour-cours-js");
         if (!b) return;
-        b.addEventListener("click", function (e) {
-          e.preventDefault();
+        b.onclick = function (e) {
+          if (e && e.preventDefault) e.preventDefault();
           if (window.self !== window.top && window.parent) {
             try {
               window.parent.postMessage({ type: "STI_FERMER_MODALE_JS_RECAP" }, "*");
-              return;
+              return false;
             } catch (err) {}
           }
           try {
@@ -3225,7 +3426,8 @@ function verifier() {
           } catch (err) {
             window.location.href = "javascript.html";
           }
-        });
+          return false;
+        };
       })();
 
       // Démo moyenne
@@ -3245,7 +3447,6 @@ function verifier() {
         else decision = "Refusé";
         out.textContent = "Moyenne = " + m.toFixed(2) + " → " + decision;
       }
-      document.getElementById("btnMoy").addEventListener("click", evaluerMoyenne);
       evaluerMoyenne();
 
       // Démo boucle
@@ -3262,27 +3463,27 @@ function verifier() {
         }
         out.textContent = lignes.join("\n");
       }
-      document.getElementById("btnTable").addEventListener("click", genererTable);
       genererTable();
 
-      // Démo chaînes (100% conforme au programme STI : length, toUpperCase, toLowerCase, substring, indexOf)
+      // Démo chaînes (100% conforme au programme STI : length, toUpperCase, toLowerCase, substring, indexOf, fromCharCode)
       function analyserChaine() {
         const ch = document.getElementById("strInput").value;
         const propre = ch.trim();
         const out = document.getElementById("strOut");
         out.textContent =
-          'Chaîne brute       : "' + ch + '"\n' +
-          'Après trim()       : "' + propre + '"\n' +
-          'Longueur (length)  : ' + propre.length + '\n' +
-          'Majuscules         : ' + propre.toUpperCase() + '\n' +
-          'Minuscules         : ' + propre.toLowerCase() + '\n' +
-          '4 premiers caract. : ' + propre.substring(0, 4) + '\n' +
-          'Position de "STI"  : ' + propre.indexOf("STI");
+          'Chaîne brute          : "' + ch + '"\n' +
+          'Après trim()          : "' + propre + '"\n' +
+          'Longueur (length)     : ' + propre.length + '\n' +
+          'Majuscules            : ' + propre.toUpperCase() + '\n' +
+          'Minuscules            : ' + propre.toLowerCase() + '\n' +
+          'substring(0, 4)       : "' + propre.substring(0, 4) + '"\n' +
+          'substring(4, 0) (inv) : "' + propre.substring(4, 0) + '"\n' +
+          'Position de "STI"     : ' + propre.indexOf("STI") + '\n' +
+          'fromCharCode(83,84,73): "' + String.fromCharCode(83, 84, 73) + '"';
       }
-      document.getElementById("btnStr").addEventListener("click", analyserChaine);
       analyserChaine();
 
-      // Démo validation formulaire STI
+      // Démo validation formulaire STI (avec style.borderColor et style.backgroundColor)
       function estLettresEspaces(ch) {
         if (ch.length == 0) return false;
         for (let i = 0; i < ch.length; i++) {
@@ -3301,42 +3502,67 @@ function verifier() {
         return true;
       }
 
-      document.getElementById("btnValider").addEventListener("click", function () {
-        const nom = document.getElementById("fNom").value.trim();
-        const cin = document.getElementById("fCin").value.trim();
-        const noteStr = document.getElementById("fNote").value.trim();
+      function validerFormulaireSTI() {
+        const elNom = document.getElementById("fNom");
+        const elCin = document.getElementById("fCin");
+        const elNote = document.getElementById("fNote");
+        const nom = elNom.value.trim();
+        const cin = elCin.value.trim();
+        const noteStr = elNote.value.trim();
         const note = Number(noteStr);
         const section = document.getElementById("fSection").value;
         const erreurs = [];
 
         if (!estLettresEspaces(nom)) {
           erreurs.push("- Le nom doit contenir uniquement des lettres.");
+          elNom.style.borderColor = "#ff2d78";
+        } else {
+          elNom.style.borderColor = "#22ff88";
         }
         if (cin.length != 8 || !estChiffres(cin)) {
           erreurs.push("- Le CIN doit contenir exactement 8 chiffres.");
+          elCin.style.borderColor = "#ff2d78";
+        } else {
+          elCin.style.borderColor = "#22ff88";
         }
         if (noteStr == "" || isNaN(note) || note < 0 || note > 20) {
           erreurs.push("- La note doit être un nombre entre 0 et 20.");
+          elNote.style.borderColor = "#ff2d78";
+        } else {
+          elNote.style.borderColor = "#22ff88";
         }
 
         const out = document.getElementById("formOut");
         if (erreurs.length > 0) {
+          out.style.backgroundColor = "rgba(255, 45, 120, 0.12)";
+          out.style.borderColor = "#ff2d78";
           out.textContent = "Formulaire invalide :\n" + erreurs.join("\n");
         } else {
+          out.style.backgroundColor = "#0d1120";
+          out.style.borderColor = "#22ff88";
           out.textContent =
             "Formulaire valide ✔\n" +
             "Candidat : " + nom.toUpperCase() + " | CIN : " + cin + "\n" +
             "Section : " + section + " | Note : " + note.toFixed(2) + "/20";
         }
-      });
+      }
 
-      document.getElementById("btnReset").addEventListener("click", function () {
-        document.getElementById("fNom").value = "";
-        document.getElementById("fCin").value = "";
-        document.getElementById("fNote").value = "";
+      function reinitialiserFormulaireSTI() {
+        const elNom = document.getElementById("fNom");
+        const elCin = document.getElementById("fCin");
+        const elNote = document.getElementById("fNote");
+        elNom.value = "";
+        elCin.value = "";
+        elNote.value = "";
+        elNom.style.borderColor = "";
+        elCin.style.borderColor = "";
+        elNote.style.borderColor = "";
         document.getElementById("fSection").value = "STI";
-        document.getElementById("formOut").textContent = "Champs réinitialisés.";
-      });
+        const out = document.getElementById("formOut");
+        out.style.backgroundColor = "#0d1120";
+        out.style.borderColor = "";
+        out.textContent = "Champs réinitialisés.";
+      }
     </script>
 
     <!-- ==== SOMMAIRE & BARRE DE PROGRESSION (identique à cours/javascript.html) ==== -->
@@ -3463,10 +3689,10 @@ function verifier() {
     </script>
 
     <!-- 🔒 Protection du contenu STI -->
-    <link rel="stylesheet" href="../assets/css/protection.css?v=222" />
-    <script src="../assets/js/protection.js?v=222" defer></script>
+    <link rel="stylesheet" href="../assets/css/protection.css?v=223" />
+    <script src="../assets/js/protection.js?v=223" defer></script>
     <script src="../assets/js/supabase-umd.js"></script>
-    <script src="../assets/js/config.js?v=222"></script>
-    <script src="../assets/js/acces.js?v=222"></script>
+    <script src="../assets/js/config.js?v=223"></script>
+    <script src="../assets/js/acces.js?v=223"></script>
   </body>
 </html>

@@ -3553,23 +3553,26 @@ s.lastIndexOf("z");      <span class="c">// -1</span></pre>
               <div class="fn-panel" id="s-substring" role="region">
                 <div class="fn-inner">
                   <div class="fn-box">
-                    <div class="sig">ch.substring(d [, f])</div>
+                    <div class="sig">ch.substring(indiceA [, indiceB])</div>
                     <div class="fn-desc">
-                      Extrait les caractères de l'indice <code>d</code> (inclus)
-                      à l'indice <code>f</code> (<strong>exclu</strong>).
+                      Cette méthode retourne une sous-chaîne de la chaîne courante, entre un indice de début et un indice de fin.
+                      <code>substring</code> extrait des caractères de la chaîne courante à partir de <code>indiceA</code> jusqu'à <code>indiceB</code> (<strong>non compris</strong>). On a notamment :
+                      <ul style="margin:6px 0 0 18px;padding:0">
+                        <li>Si <code>indiceA</code> est égal à <code>indiceB</code>, <code>substring</code> retournera une chaîne vide.</li>
+                        <li>Si <code>indiceB</code> est omis, <code>substring</code> effectuera l'extraction des caractères jusqu'à la fin de la chaîne.</li>
+                        <li>Si l'un des deux arguments est négatif ou vaut <code>NaN</code>, il sera traité comme <code>0</code>.</li>
+                        <li>Si l'un des deux arguments est plus grand que <code>str.length</code>, il sera traité comme <code>str.length</code>.</li>
+                        <li>Si <code>indiceA</code> est supérieur à <code>indiceB</code>, la fonction <code>substring()</code> intervertira (inversera) ces deux valeurs afin de les traiter comme si elles avaient été passées dans le bon ordre. Par exemple : <code>str.substring(1, 0) == str.substring(0, 1)</code>.</li>
+                      </ul>
                     </div>
-                    <pre>var s = "Mozilla";
-s.substring(0,3);  <span class="c">// "Moz"</span>
-s.substring(3,0);  <span class="c">// "Moz" (inversé)</span>
-s.substring(4,7);  <span class="c">// "lla"</span>
-s.substring(4);    <span class="c">// "lla"</span>
-s.substring(0,6);  <span class="c">// "Mozill"</span>
-s.substring(0,10); <span class="c">// "Mozilla"</span></pre>
-                    <p class="note">
-                      Règles : d = f → chaîne vide · f omis → jusqu'à la fin ·
-                      négatif ou NaN → 0 · valeur &gt; length → length · d &gt;
-                      f → les deux valeurs sont interverties.
-                    </p>
+                    <pre>var str = "Mozilla";
+str.substring(0,3);  <span class="c">// "Moz"</span>
+str.substring(1,0);  <span class="c">// "M" (égal à str.substring(0, 1))</span>
+str.substring(3,0);  <span class="c">// "Moz" (inversé)</span>
+str.substring(4,7);  <span class="c">// "lla"</span>
+str.substring(4);    <span class="c">// "lla"</span>
+str.substring(0,6);  <span class="c">// "Mozill"</span>
+str.substring(0,10); <span class="c">// "Mozilla"</span></pre>
                   </div>
                 </div>
               </div>
@@ -3637,13 +3640,12 @@ s = s.replace("-", "+"); <span class="c">// pour conserver le résultat</span></
                   <div class="fn-box">
                     <div class="sig">String.fromCharCode(num, …, numN)</div>
                     <div class="fn-desc">
-                      Méthode appelée sur <code>String</code> (et non sur ch) :
-                      construit une chaîne à partir de codes ASCII / UTF-16.
+                      La méthode statique <code>String.fromCharCode()</code> renvoie une chaîne de caractères créée à partir de points de code UTF-16.
                     </div>
                     <pre>String.fromCharCode(65,66,67); <span class="c">// "ABC"</span>
 String.fromCharCode(97);       <span class="c">// "a"</span>
-String.fromCharCode(0x2014);   <span class="c">// "—"</span>
-String.fromCharCode(8212);     <span class="c">// "—"</span></pre>
+String.fromCharCode(83,84,73); <span class="c">// "STI"</span>
+String.fromCharCode(0x2014);   <span class="c">// "—"</span></pre>
                   </div>
                 </div>
               </div>
@@ -3691,24 +3693,24 @@ String.fromCharCode(8212);     <span class="c">// "—"</span></pre>
               <div class="card">
                 <h3>Essayez ! — <code>new Date()</code></h3>
                 <p class="note" style="margin: 0 0 8px">
-                  Cet exemple s'exécute dans votre navigateur et affiche la date
-                  du jour.
+                  <code>d = new Date();</code> donne la date courante sous ce format :
                 </p>
-                <pre id="date-demo">let d = new Date();
-d.toString(); <span class="c">// calcul en cours…</span></pre>
+                <pre id="date-demo">d = new Date();
+// donne la date courante sous ce format
+// Fri Nov 20 2026 18:14:07 GMT+0100 (UTC+01:00)</pre>
               </div>
               <div class="card">
-                <h3>Créer une date</h3>
+                <h3>Il existe 9 façons pour créer un nouveau objet date</h3>
                 <pre>
 new Date()
-new Date(chaîne)
-new Date(année, mois)
-new Date(année, mois, jour)
-new Date(année, mois, jour, h)
-new Date(année, mois, jour, h, min)
-new Date(année, mois, jour, h, min, s)
-new Date(année, mois, jour, h, min, s, ms)
-new Date(millisecondes)</pre
+new Date(date string)
+new Date(year,month)
+new Date(year,month,day)
+new Date(year,month,day,hours)
+new Date(year,month,day,hours,minutes)
+new Date(year,month,day,hours,minutes,seconds)
+new Date(year,month,day,hours,minutes,seconds,ms)
+new Date(milliseconds)</pre
                 >
                 <p class="note">
                   Les mois vont de 0 (janvier) à 11 (décembre).
@@ -3736,19 +3738,23 @@ new Date(millisecondes)</pre
                 </table>
               </div>
               <div class="card">
-                <h3>Formats de chaîne acceptés</h3>
+                <h3><code>new Date(ch)</code> — Il existe 3 types de <code>ch</code> en JavaScript</h3>
                 <table>
                   <tr>
+                    <th>Type</th>
+                    <th>Exemple</th>
+                  </tr>
+                  <tr>
                     <td>ISO Date</td>
-                    <td><code>"2025-11-21"</code></td>
+                    <td><code>"2026-11-21"</code> (The International Standard)</td>
                   </tr>
                   <tr>
                     <td>Short Date</td>
-                    <td><code>"11/21/2025"</code></td>
+                    <td><code>"11/20/2026"</code></td>
                   </tr>
                   <tr>
                     <td>Long Date</td>
-                    <td><code>"Nov 21 2025"</code></td>
+                    <td><code>"Nov 20 2026"</code> ou <code>"20 Nov 2026"</code></td>
                   </tr>
                 </table>
               </div>
@@ -4933,11 +4939,11 @@ function changer() {
     
   <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(null,"",location.pathname+location.search);});})();</script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=222" />
-<script src="../assets/js/protection.js?v=222" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=223" />
+<script src="../assets/js/protection.js?v=223" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=222"></script>
-<script src="../assets/js/acces.js?v=222"></script>
+<script src="../assets/js/config.js?v=223"></script>
+<script src="../assets/js/acces.js?v=223"></script>
 </body>
 </html>

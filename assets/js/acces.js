@@ -101,15 +101,15 @@
   /* S'assurer que protection.css et protection.js sont chargés sur 100 % des pages (code source verrouillé pour tous les abonnés) */
   (function assurerProtectionActive() {
     try {
-      if (!document.querySelector('link[href*="protection.css?v=222"]') && document.head) {
+      if (!document.querySelector('link[href*="protection.css?v=223"]') && document.head) {
         var lnk = document.createElement("link");
         lnk.rel = "stylesheet";
-        lnk.href = cfg.RACINE + "assets/css/protection.css?v=222";
+        lnk.href = cfg.RACINE + "assets/css/protection.css?v=223";
         document.head.appendChild(lnk);
       }
-      if (!document.querySelector('script[src*="protection.js?v=222"]') && (document.head || document.documentElement)) {
+      if (!document.querySelector('script[src*="protection.js?v=223"]') && (document.head || document.documentElement)) {
         var scr = document.createElement("script");
-        scr.src = cfg.RACINE + "assets/js/protection.js?v=222";
+        scr.src = cfg.RACINE + "assets/js/protection.js?v=223";
         scr.defer = true;
         (document.head || document.documentElement).appendChild(scr);
       }
@@ -546,7 +546,7 @@
     if (document.body) document.body.classList.toggle("sti-gold", ok);
 
     try {
-      var liens = document.querySelectorAll('link[href*="protection.css?v=222"]');
+      var liens = document.querySelectorAll('link[href*="protection.css?v=223"]');
       for (var i = 0; i < liens.length; i++) liens[i].disabled = ok;
     } catch (e) {}
 
@@ -568,7 +568,7 @@
         if (fr.contentDocument) {
           if (fr.contentDocument.documentElement) fr.contentDocument.documentElement.classList.toggle("sti-gold", ok);
           if (fr.contentDocument.body) fr.contentDocument.body.classList.toggle("sti-gold", ok);
-          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=222"]');
+          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=223"]');
           for (var j = 0; j < liensFr.length; j++) liensFr[j].disabled = ok;
           var wmFr = fr.contentDocument.getElementById("sti-watermark");
           if (ok && wmFr && wmFr.parentNode) wmFr.parentNode.removeChild(wmFr);
@@ -8670,7 +8670,7 @@
     { tech: "js", badge: "📜 JavaScript", title: "Objet Date (gestion des dates et heures)", sub: "new Date(), getFullYear(), getMonth(), getDate(), getDay(), getHours(), getMinutes()", url: "cours/javascript.html#sec11", kw: "date getfullyear getmonth getdate getday gethours getminutes gettime annee mois jour" },
     { tech: "js", badge: "📜 JavaScript", title: "Structures conditionnelles & Boucles", sub: "if / else, switch / case, opérateur ternaire, for, while, do...while", url: "cours/javascript.html#sec12", kw: "if else switch case break default for while do boucle condition" },
     { tech: "js", badge: "📜 JavaScript", title: "Fonctions en JavaScript", sub: "function nom(param), return, passage de paramètres, appel sur événement", url: "cours/javascript.html#sec14", kw: "function fonction return parametre argument" },
-    { tech: "js", badge: "📜 JavaScript", title: "Manipulation du DOM & Formulaires en JS", sub: "document.getElementById(), getElementsByName(), querySelector(), .value, .checked, .selectedIndex, .style", url: "cours/javascript.html#sec15", kw: "dom document getelementbyid getelementsbyname queryselector queryselectorall value checked selectedindex options focus style classlist" },
+    { tech: "js", badge: "📜 JavaScript", title: "Manipulation du DOM & Formulaires en JS", sub: "document.getElementById(), getElementsByName(), .value, .checked, .selectedIndex, .style, play(), pause()", url: "cours/javascript.html#sec15", kw: "dom document getelementbyid getelementsbyname value checked selectedindex options focus style bgcolor bordercolor play pause" },
     { tech: "js", badge: "📜 Fonctions Bac", title: "Fonctions standards JS (verifnom, alpha, numérique, email)", sub: "Algorithmes classiques de contrôle de saisie en JavaScript", url: "exercices/resume-fonctions-standards.html#js", kw: "verifnom verifmail alpha alphanumerique controle saisie bac formulaire" },
     { tech: "js", badge: "🪄 Recap-JS", title: "Récapitulatif JavaScript interactif (Synthèse complète STI)", sub: "Variables, conditions, boucles, chaînes, tableaux, DOM, événements et validation de formulaire avec exemples exécutables", url: "cours/Recap-JavaScript-STI.html", kw: "recap javascript fiche revision synthese dom evenements formulaire" },
 

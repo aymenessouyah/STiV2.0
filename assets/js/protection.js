@@ -716,35 +716,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=222",
+        file: "php-guichet.mp4?v=223",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=222",
+        file: "css-positionnement.mp4?v=223",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=222",
+        file: "css-animee.mp4?v=223",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=222",
+        file: "sql-cours.mp4?v=223",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=222",
+        file: "html5-cours.mp4?v=223",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=222",
+        file: "css3-cours.mp4?v=223",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=222",
+        file: "javascript-cours.mp4?v=223",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Récapitulatif JavaScript complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=222",
+        file: "php-cours.mp4?v=223",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -775,17 +775,18 @@
         ],
         "javascript-cours": [
           { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#intro" },
-          { t: 62.57, short: "2. Où écrire JS", label: "01:02 · 2. Où écrire le code JS (interne, externe, inline)", sel: "#insertion" },
-          { t: 112.20, short: "3. Variables & Types", label: "01:52 · 3. Variables (let, const, var) & Types (typeof)", sel: "#variables" },
-          { t: 188.26, short: "4. Opérateurs", label: "03:08 · 4. Opérateurs arithmétiques, comparaison (!=) et logiques", sel: "#operateurs" },
-          { t: 232.41, short: "5. Entrées / sorties", label: "03:52 · 5. Entrées / sorties (alert, prompt, confirm, console.log, getElementById)", sel: "#es" },
-          { t: 276.30, short: "6. Conditions", label: "04:36 · 6. Structures conditionnelles (if/else, switch & démo moyenne)", sel: "#conditions" },
-          { t: 328.94, short: "7. Boucles", label: "05:28 · 7. Les boucles (for, while, do...while & table de multiplication)", sel: "#boucles" },
-          { t: 382.17, short: "8. Chaînes (String)", label: "06:22 · 8. Chaînes de caractères (length, substring, indexOf, trim, toUpperCase)", sel: "#chaines" },
-          { t: 446.01, short: "9. Tableaux & Fonctions", label: "07:26 · 9. Tableaux (Array : length, push, pop) et Fonctions (function, return)", sel: "#tableaux" },
-          { t: 480.97, short: "10. DOM", label: "08:00 · 10. Manipulation du DOM (getElementById, querySelector, value, textContent, style)", sel: "#dom" },
-          { t: 518.30, short: "11. Événements", label: "08:38 · 11. Les événements (click, input, change, submit, addEventListener)", sel: "#evenements" },
-          { t: 545.67, short: "12. Validation STI", label: "09:05 · 12. Exemple complet : validation d'un formulaire STI (estChiffres, verifier)", sel: "#formulaire" }
+          { t: 62.62, short: "2. Où écrire JS", label: "01:02 · 2. Où écrire le code JS (interne, externe, inline)", sel: "#insertion" },
+          { t: 112.35, short: "3. Variables & Types", label: "01:52 · 3. Variables (let, const, var) & Types (typeof)", sel: "#variables" },
+          { t: 188.60, short: "4. Opérateurs", label: "03:08 · 4. Opérateurs arithmétiques, comparaison (!=) et logiques", sel: "#operateurs" },
+          { t: 232.75, short: "5. Entrées / sorties", label: "03:52 · 5. Entrées / sorties & Comparaison document.write / innerHTML / textContent", sel: "#es" },
+          { t: 319.64, short: "6. Conditions", label: "05:19 · 6. Structures conditionnelles (if/else, switch & démo moyenne)", sel: "#conditions" },
+          { t: 372.28, short: "7. Boucles", label: "06:12 · 7. Les boucles (for, while, do...while & table de multiplication)", sel: "#boucles" },
+          { t: 425.51, short: "8. Chaînes (String)", label: "07:05 · 8. Chaînes : substring détaillé, String.fromCharCode(), indexOf, trim", sel: "#chaines" },
+          { t: 574.70, short: "9. Tableaux & Fonctions", label: "09:34 · 9. Tableaux (Array : length, push, pop) et Fonctions (function, return)", sel: "#tableaux" },
+          { t: 609.66, short: "10. Objet Date", label: "10:09 · 10. L'objet Date (9 constructeurs new Date et les 3 formats ISO / Short / Long)", sel: "#date" },
+          { t: 667.01, short: "11. DOM & Multimédia", label: "11:07 · 11. DOM (getElementById, getElementsByName), style / bgColor / borderColor & play() / pause()", sel: "#dom" },
+          { t: 731.58, short: "12. Événements", label: "12:11 · 12. Les événements HTML (onclick, oninput, onchange, onsubmit, onfocus, onblur)", sel: "#evenements" },
+          { t: 765.55, short: "13. Validation STI", label: "12:45 · 13. Exemple complet : validation d'un formulaire STI (estChiffres, verifier, borderColor)", sel: "#formulaire" }
         ],
         "php-cours": [
           { t: 0.00, short: "I. Définition", label: "00:00 · I. Définition de PHP & Client-Serveur", sel: "#s1" },
@@ -1808,7 +1809,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=222";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=223";
 
           var CUES_MAP = {
             html5: {
@@ -1835,34 +1836,35 @@
               "css-pas-a-pas": [144.62, 150.15]
             },
             javascript: {
-              "intro": [16.55, 62.57],
-              "insertion": [62.57, 112.20],
-              "variables": [112.20, 188.26],
-              "operateurs": [188.26, 232.41],
-              "es": [232.41, 276.30],
-              "conditions": [276.30, 328.94],
-              "boucles": [328.94, 382.17],
-              "chaines": [382.17, 446.01],
-              "tableaux": [446.01, 480.97],
-              "dom": [480.97, 518.30],
-              "evenements": [518.30, 545.67],
-              "formulaire": [545.67, 637.87],
-              "sec1": [16.55, 62.57],
-              "sec2": [62.57, 112.20],
-              "sec3": [112.20, 188.26],
-              "sec4": [188.26, 232.41],
-              "sec5": [232.41, 276.30],
-              "sec6": [188.26, 232.41],
-              "sec7": [150.00, 188.26],
-              "sec8": [188.26, 232.41],
-              "sec9": [382.17, 446.01],
-              "sec10": [446.01, 464.00],
-              "sec11": [446.01, 480.97],
-              "sec12": [276.30, 328.94],
-              "sec13": [328.94, 382.17],
-              "sec14": [464.00, 480.97],
-              "sec15": [480.97, 545.67],
-              "sec16": [545.67, 637.87]
+              "intro": [16.89, 62.62],
+              "insertion": [62.62, 112.35],
+              "variables": [112.35, 188.60],
+              "operateurs": [188.60, 232.75],
+              "es": [232.75, 319.64],
+              "conditions": [319.64, 372.28],
+              "boucles": [372.28, 425.51],
+              "chaines": [425.51, 574.70],
+              "tableaux": [574.70, 609.66],
+              "date": [609.66, 667.01],
+              "dom": [667.01, 731.58],
+              "evenements": [731.58, 765.55],
+              "formulaire": [765.55, 861.64],
+              "sec1": [16.89, 62.62],
+              "sec2": [62.62, 112.35],
+              "sec3": [112.35, 188.60],
+              "sec4": [188.60, 232.75],
+              "sec5": [232.75, 276.52],
+              "sec6": [276.52, 319.64],
+              "sec7": [155.46, 188.60],
+              "sec8": [188.60, 232.75],
+              "sec9": [425.51, 574.70],
+              "sec10": [574.70, 592.00],
+              "sec11": [609.66, 667.01],
+              "sec12": [319.64, 372.28],
+              "sec13": [372.28, 425.51],
+              "sec14": [592.00, 609.66],
+              "sec15": [667.01, 765.55],
+              "sec16": [765.55, 861.64]
             },
             php: {
               "s1": [9.12, 64.02],
