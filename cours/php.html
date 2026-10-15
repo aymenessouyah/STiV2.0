@@ -1148,6 +1148,7 @@ echo (date("Y-d-m H:i:s",$e)." = ".$e." secondes&lt;br&gt;") ;
               <div id="anim-bd">
             <iframe id="animFrame" src="php-mysqli.html?embed=1"
               title="Animation — Du formulaire aux archives : l’histoire du guichet"
+              allowfullscreen
               loading="lazy"></iframe>
           </div>
             </div>
@@ -1608,6 +1609,9 @@ mysqli_close($connexion);
           M.hidden = true;
           document.body.style.overflow = "";
           var f = document.getElementById("animFrame");
+          if (f && f.contentWindow) {
+            try { f.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*"); } catch (err) {}
+          }
           var a = f && f.contentDocument ? f.contentDocument.getElementById("auto") : null;
           if (a && a.textContent == "Pause") a.click();
         }
@@ -1621,8 +1625,13 @@ mysqli_close($connexion);
             if (B.requestFullscreen)
               B.requestFullscreen().catch(function () {});
           }
+          var isFull = M.classList.contains("full");
           document.getElementById("animFull").textContent =
-            M.classList.contains("full") ? "⤡ Réduire" : "⛶ Plein écran";
+            isFull ? "⤡ Réduire" : "⛶ Plein écran";
+          var f = document.getElementById("animFrame");
+          if (f && f.contentWindow) {
+            try { f.contentWindow.postMessage({ type: "STI_ETAT_PLEIN_ECRAN_GUICHET", full: isFull }, "*"); } catch (err) {}
+          }
         }
         document.getElementById("animOpen").onclick = open;
         if (btnTopGuichet) btnTopGuichet.onclick = open;
@@ -1684,6 +1693,8 @@ mysqli_close($connexion);
           if (ev && ev.data && ev.data.type === "STI_FERMER_MODALE_PHP") {
             if (!M.hidden) close();
             if (!MR.hidden) closeRecap();
+          } else if (ev && ev.data && ev.data.type === "STI_BASCULER_PLEIN_ECRAN_GUICHET") {
+            toggleFull();
           } else if (ev && ev.data && ev.data.type === "STI_PLEIN_ECRAN_GUICHET") {
             if (!M.classList.contains("full")) {
               M.classList.add("full");

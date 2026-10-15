@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v193";
+var CACHE = "sti-atelier-v194";
 var SHELL = [
   "./",
   "./index.html",
@@ -110,6 +110,8 @@ var OFFLINE_LIST = [
   "./Positionnement-animee/uploads/Annexe HTML5 By A.E.pdf",
   "./admin.html",
   "./assets/audio/foret.mp3",
+  "./assets/audio/guichet-etapes.mp3",
+  "./assets/videos/php-guichet.mp4",
   "./assets/css/atelier-pages.css",
   "./assets/css/atelier-php.css",
   "./assets/css/atelier.css",
@@ -649,7 +651,8 @@ self.addEventListener("activate", function (evt) {
                   /\.(html|js|css|webmanifest)$/i.test(rPath) ||
                   rPath.indexOf("Explore_Tunisie") !== -1 ||
                   rPath.indexOf("/audio/pas-a-pas/") !== -1 ||
-                  (rPath.indexOf("/assets/videos/") !== -1 && rPath.indexOf("php-guichet.mp4") === -1) ||
+                  rPath.indexOf("/assets/videos/") !== -1 ||
+                  rPath.indexOf("guichet-etapes.mp3") !== -1 ||
                   rPath.slice(-1) === "/"
                 ) {
                   continue;

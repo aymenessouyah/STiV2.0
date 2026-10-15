@@ -599,10 +599,10 @@
         return;
       }
 
-      /* Seule vidéo conservée : l'animation du guichet (avec la voix de l'homme) */
+      /* Seule vidéo conservée : l'animation du guichet (avec la voix de l'homme et les 3 états INSERT, UPDATE, SELECT) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4",
-        title: "🎥 Animation du Guichet (PHP + MySQLi en 10 étapes)"
+        file: "php-guichet.mp4?v=194",
+        title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
 
       function prefixeAssetsSTI() {
@@ -692,6 +692,16 @@
         if (slugOuUrl && slugOuUrl !== "php-guichet" && String(slugOuUrl).indexOf("php-guichet") === -1) {
           return;
         }
+        /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
+        try {
+          if (typeof window.stop === "function" && document.getElementById("mIns")) {
+            window.stop();
+          }
+          var fAnim = document.getElementById("animFrame");
+          if (fAnim && fAnim.contentWindow) {
+            fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
+          }
+        } catch (e) {}
         try {
           if (
             window.top &&
@@ -747,6 +757,12 @@
           overlay.addEventListener("click", function (ev) {
             if (ev.target === overlay) fermerModaleVideo();
           });
+        }
+
+        /* Si un élément est en plein écran (#animBox ou autre), attacher la modale vidéo à l'élément plein écran pour qu'elle soit toujours visible (jamais de voix qui démarre sans vidéo !) */
+        var fsParent = document.fullscreenElement || document.webkitFullscreenElement || document.body;
+        if (fsParent && overlay.parentNode !== fsParent) {
+          fsParent.appendChild(overlay);
         }
 
         var tEl = document.getElementById("sti-video-modal-title");

@@ -171,7 +171,7 @@ html:fullscreen body{font-size:18px;overflow:auto}
 <button id="mUpd">UPDATE (réponse booléenne)</button>
 <span class="grow"></span>
 <button id="prev">Précédent</button><button id="next" class="main">Suivant</button>
-<button id="auto">Lecture auto</button><select id="spd" aria-label="Vitesse de lecture"><option value="6500">Lente</option><option value="4200" selected>Normale</option><option value="2500">Rapide</option></select><button id="rst">Recommencer</button><button id="fs">Plein écran</button>
+<button id="auto">Lecture auto</button><button id="voixBtn" type="button" class="on" title="Activer ou couper la voix de l'homme qui explique chaque étape">🔊 Voix : ON</button><select id="spd" aria-label="Vitesse de lecture"><option value="6500">Lente</option><option value="4200" selected>Normale</option><option value="2500">Rapide</option></select><button id="rst">Recommencer</button><button id="fs">Plein écran</button>
 </div>
 <div class="phases" id="phases"></div>
 <div class="dots" id="dots"></div>
@@ -550,35 +550,237 @@ el('ttl').textContent=(i+1)+'/'+S.length+' – '+s.t;
 el('desc').textContent=s.d;
 el('prev').disabled=i==0;el('next').disabled=i==S.length-1;
 }
-function go(k){i=Math.max(0,Math.min(S.length-1,k));render();}
-function stop(){if(timer){clearInterval(timer);timer=null;el('auto').textContent='Lecture auto';}}
-function setMode(m){stop();mode=m;el('mIns').classList.toggle('on',m=='ins');el('mSel').classList.toggle('on',m=='sel');el('mUpd').classList.toggle('on',m=='upd');i=i<=5?i:0;curScr='—';curUrl='ecole.tn/formulaire.html';build();render();}
-el('next').onclick=function(){stop();go(i+1);};
-el('prev').onclick=function(){stop();go(i-1);};
-el('rst').onclick=function(){stop();go(0);};
-el('mIns').onclick=function(){setMode('ins');};
-el('mSel').onclick=function(){setMode('sel');};
-el('mUpd').onclick=function(){setMode('upd');};
-el('auto').onclick=function(){
-if(timer){stop();return;}
-if(i==S.length-1)go(0);
-el('auto').textContent='Pause';
-timer=setInterval(function(){if(i>=S.length-1){stop();return;}go(i+1);},+el('spd').value);};
-el('spd').onchange=function(){if(timer){stop();el('auto').click();}};
-el('phases').onclick=function(e){var b=e.target.closest('button');if(b){stop();go(+b.getAttribute('data-b'));}};
-el('dots').onclick=function(e){var k=[].indexOf.call(el('dots').children,e.target);if(k>-1){stop();go(k);}};
-el('fs').onclick=function(){var d=document;if(d.fullscreenElement){d.exitFullscreen();}else if(d.documentElement.requestFullscreen){d.documentElement.requestFullscreen();}};
-document.addEventListener('fullscreenchange',function(){el('fs').textContent=document.fullscreenElement?'Quitter le plein écran':'Plein écran';});
-document.addEventListener('keydown',function(e){
-var tg=e.target.tagName,k=e.key;
-if(e.ctrlKey||e.metaKey||e.altKey||tg=='SELECT'||tg=='INPUT')return;
-if(k=='ArrowRight'||k=='PageDown'){e.preventDefault();stop();go(i+1);}
-else if(k=='ArrowLeft'||k=='PageUp'){e.preventDefault();stop();go(i-1);}
-else if(k=='Home'){stop();go(0);}
-else if(k=='End'){stop();go(S.length-1);}
-else if(k==' '&&tg!='BUTTON'){e.preventDefault();stop();go(i+1);}
-else if(k=='a'||k=='A'){el('auto').click();}
-else if(k=='f'||k=='F'){el('fs').click();}});
+var GUICHET_VOIX_TS = {"ins": [[0.0, 10.78], [11.18, 19.8], [20.2, 32.04], [32.44, 39.68], [40.08, 50.76], [51.16, 59.88], [60.28, 67.28], [67.68, 75.04], [75.44, 84.78], [85.18, 91.66], [92.06, 98.56], [98.96, 109.74], [110.14, 121.48], [121.88, 130.92], [131.32, 140.26], [140.66, 147.94], [148.34, 156.16], [156.56, 162.98], [163.38, 171.02], [171.42, 178.78]], "upd": [[0.0, 10.78], [11.18, 19.8], [20.2, 32.04], [32.44, 39.68], [40.08, 50.76], [179.18, 189.3], [189.7, 196.9], [67.68, 75.04], [75.44, 84.78], [85.18, 91.66], [92.06, 98.56], [98.96, 109.74], [110.14, 121.48], [121.88, 130.92], [197.3, 209.48], [209.88, 217.6], [148.34, 156.16], [156.56, 162.98], [218.0, 226.8], [171.42, 178.78]], "sel": [[0.0, 10.78], [11.18, 19.8], [20.2, 32.04], [32.44, 39.68], [40.08, 50.76], [227.2, 236.6], [237.0, 242.82], [67.68, 75.04], [75.44, 84.78], [85.18, 91.66], [92.06, 98.56], [98.96, 109.74], [110.14, 121.48], [121.88, 130.92], [243.22, 252.86], [253.26, 263.6], [264.0, 274.52], [274.92, 285.06], [285.46, 295.12], [295.52, 304.26], [304.66, 312.8], [313.2, 320.94], [321.34, 329.52]]};
+var voixActive = true;
+var autoRunning = false;
+var voixTimer = null;
+var stepAdvanceTimer = null;
+var segFinCourant = 0;
+var guichetAudio = document.createElement('audio');
+guichetAudio.preload = 'auto';
+guichetAudio.src = '../assets/audio/guichet-etapes.mp3?v=194';
+guichetAudio.style.display = 'none';
+document.body.appendChild(guichetAudio);
+
+function vitesseVoixCourante() {
+  var v = +el('spd').value;
+  if (v >= 6000) return 0.92;
+  if (v <= 3000) return 1.24;
+  return 1.08;
+}
+
+function arreterVoixGuichet() {
+  if (voixTimer) { clearTimeout(voixTimer); voixTimer = null; }
+  if (stepAdvanceTimer) { clearTimeout(stepAdvanceTimer); stepAdvanceTimer = null; }
+  segFinCourant = 0;
+  try { guichetAudio.pause(); } catch (e) {}
+}
+
+function finSegmentVoix(enAuto) {
+  if (voixTimer) { clearTimeout(voixTimer); voixTimer = null; }
+  segFinCourant = 0;
+  try { guichetAudio.pause(); } catch (e) {}
+  if (enAuto && autoRunning) {
+    if (i >= S.length - 1) {
+      stop();
+      return;
+    }
+    stepAdvanceTimer = setTimeout(function () {
+      if (!autoRunning) return;
+      go(i + 1, true, true);
+    }, 320);
+  }
+}
+
+guichetAudio.addEventListener('timeupdate', function () {
+  if (segFinCourant > 0 && guichetAudio.currentTime >= segFinCourant - 0.04) {
+    finSegmentVoix(autoRunning);
+  }
+});
+
+function jouerVoixEtapeCourante(enAuto) {
+  arreterVoixGuichet();
+  if (!voixActive) {
+    if (enAuto && autoRunning) {
+      stepAdvanceTimer = setTimeout(function () {
+        if (!autoRunning) return;
+        if (i >= S.length - 1) { stop(); return; }
+        go(i + 1, true, true);
+      }, +el('spd').value);
+    }
+    return;
+  }
+  var tableMode = GUICHET_VOIX_TS[mode] || GUICHET_VOIX_TS.ins;
+  var seg = tableMode[i];
+  if (!seg) return;
+  var t0 = seg[0], t1 = seg[1];
+  var rate = vitesseVoixCourante();
+  segFinCourant = t1;
+
+  function lancer() {
+    try {
+      guichetAudio.muted = false;
+      guichetAudio.volume = 1.0;
+      guichetAudio.playbackRate = rate;
+      guichetAudio.currentTime = t0;
+      var p = guichetAudio.play();
+      if (p && p.catch) {
+        p.catch(function () {
+          if (enAuto && autoRunning) {
+            stepAdvanceTimer = setTimeout(function () {
+              if (!autoRunning) return;
+              if (i >= S.length - 1) { stop(); return; }
+              go(i + 1, true, true);
+            }, +el('spd').value);
+          }
+        });
+      }
+      var durMs = Math.max(800, Math.round(((t1 - t0) / rate) * 1000) + 180);
+      voixTimer = setTimeout(function () {
+        finSegmentVoix(enAuto);
+      }, durMs);
+    } catch (e) {}
+  }
+
+  if (guichetAudio.readyState >= 1) {
+    lancer();
+  } else {
+    var onMeta = function () {
+      guichetAudio.removeEventListener('loadedmetadata', onMeta);
+      lancer();
+    };
+    guichetAudio.addEventListener('loadedmetadata', onMeta);
+    try { guichetAudio.load(); } catch (e) {}
+  }
+}
+
+function go(k, avecVoix, enAuto) {
+  i = Math.max(0, Math.min(S.length - 1, k));
+  render();
+  if (avecVoix) {
+    jouerVoixEtapeCourante(!!enAuto);
+  } else {
+    arreterVoixGuichet();
+  }
+}
+
+function stop() {
+  autoRunning = false;
+  if (timer) { clearInterval(timer); timer = null; }
+  arreterVoixGuichet();
+  el('auto').textContent = 'Lecture auto';
+}
+
+function demarrerAuto() {
+  if (i >= S.length - 1) {
+    i = 0;
+  }
+  autoRunning = true;
+  el('auto').textContent = 'Pause';
+  go(i, true, true);
+}
+
+function setMode(m) {
+  var etaitAuto = autoRunning;
+  stop();
+  mode = m;
+  el('mIns').classList.toggle('on', m == 'ins');
+  el('mSel').classList.toggle('on', m == 'sel');
+  el('mUpd').classList.toggle('on', m == 'upd');
+  build();
+  if (i < 5) i = 5;
+  if (i >= S.length) i = S.length - 1;
+  curScr = '—';
+  curUrl = 'ecole.tn/formulaire.html';
+  render();
+  if (etaitAuto) {
+    demarrerAuto();
+  } else {
+    jouerVoixEtapeCourante(false);
+  }
+}
+
+el('next').onclick = function () { stop(); go(i + 1, true, false); };
+el('prev').onclick = function () { stop(); go(i - 1, true, false); };
+el('rst').onclick = function () { stop(); go(0, false, false); };
+el('mIns').onclick = function () { setMode('ins'); };
+el('mSel').onclick = function () { setMode('sel'); };
+el('mUpd').onclick = function () { setMode('upd'); };
+el('auto').onclick = function () {
+  if (autoRunning) { stop(); return; }
+  demarrerAuto();
+};
+if (el('voixBtn')) {
+  el('voixBtn').onclick = function () {
+    voixActive = !voixActive;
+    el('voixBtn').classList.toggle('on', voixActive);
+    el('voixBtn').textContent = voixActive ? '🔊 Voix : ON' : '🔇 Voix : OFF';
+    if (!voixActive) {
+      arreterVoixGuichet();
+      if (autoRunning) {
+        jouerVoixEtapeCourante(true);
+      }
+    } else if (autoRunning) {
+      jouerVoixEtapeCourante(true);
+    }
+  };
+}
+el('spd').onchange = function () {
+  if (guichetAudio && !guichetAudio.paused) {
+    try { guichetAudio.playbackRate = vitesseVoixCourante(); } catch (e) {}
+  }
+  if (autoRunning) {
+    jouerVoixEtapeCourante(true);
+  }
+};
+el('phases').onclick = function (e) {
+  var b = e.target.closest('button');
+  if (b) { stop(); go(+b.getAttribute('data-b'), true, false); }
+};
+el('dots').onclick = function (e) {
+  var k = [].indexOf.call(el('dots').children, e.target);
+  if (k > -1) { stop(); go(k, true, false); }
+};
+el('fs').onclick = function () {
+  if (window.self !== window.top) {
+    try {
+      window.parent.postMessage({ type: 'STI_BASCULER_PLEIN_ECRAN_GUICHET' }, '*');
+      return;
+    } catch (e) {}
+  }
+  var d = document;
+  if (d.fullscreenElement || d.webkitFullscreenElement) {
+    if (d.exitFullscreen) d.exitFullscreen();
+    else if (d.webkitExitFullscreen) d.webkitExitFullscreen();
+  } else {
+    var de = d.documentElement;
+    if (de.requestFullscreen) de.requestFullscreen();
+    else if (de.webkitRequestFullscreen) de.webkitRequestFullscreen();
+  }
+};
+document.addEventListener('fullscreenchange', function () {
+  el('fs').textContent = document.fullscreenElement ? 'Quitter le plein écran' : 'Plein écran';
+});
+window.addEventListener('message', function (ev) {
+  if (!ev || !ev.data) return;
+  if (ev.data.type === 'STI_STOP_GUICHET') {
+    stop();
+  } else if (ev.data.type === 'STI_ETAT_PLEIN_ECRAN_GUICHET') {
+    el('fs').textContent = ev.data.full ? 'Quitter le plein écran' : 'Plein écran';
+  }
+});
+window.addEventListener('beforeunload', function () { stop(); });
+document.addEventListener('keydown', function (e) {
+  var tg = e.target.tagName, k = e.key;
+  if (e.ctrlKey || e.metaKey || e.altKey || tg == 'SELECT' || tg == 'INPUT') return;
+  if (k == 'ArrowRight' || k == 'PageDown') { e.preventDefault(); stop(); go(i + 1, true, false); }
+  else if (k == 'ArrowLeft' || k == 'PageUp') { e.preventDefault(); stop(); go(i - 1, true, false); }
+  else if (k == 'Home') { stop(); go(0, false, false); }
+  else if (k == 'End') { stop(); go(S.length - 1, true, false); }
+  else if (k == ' ' && tg != 'BUTTON') { e.preventDefault(); stop(); go(i + 1, true, false); }
+  else if (k == 'a' || k == 'A') { el('auto').click(); }
+  else if (k == 'f' || k == 'F') { el('fs').click(); }
+});
 init();build();render();
 </script>
 <!-- ⏯️ Barre de contrôles par symboles + étape actuelle + 🔄 Overlay « Tournez-moi » -->
@@ -664,9 +866,9 @@ init();build();render();
   function $(x) { return document.getElementById(x); }
   var prev = $("pc-prev"), nxt = $("pc-next"), rst = $("pc-rst"),
       auto = $("pc-auto"), lab = $("pc-etape");
-  if (prev) prev.onclick = function () { stop(); go(i - 1); };
-  if (nxt)  nxt.onclick  = function () { stop(); go(i + 1); };
-  if (rst)  rst.onclick  = function () { stop(); go(0); };
+  if (prev) prev.onclick = function () { stop(); go(i - 1, true, false); };
+  if (nxt)  nxt.onclick  = function () { stop(); go(i + 1, true, false); };
+  if (rst)  rst.onclick  = function () { stop(); go(0, false, false); };
   if (auto) auto.onclick = function () { var a = $("auto"); if (a) a.click(); };
   function sync() {
     var a = $("auto");
