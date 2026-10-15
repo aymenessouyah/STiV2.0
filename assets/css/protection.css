@@ -279,18 +279,6 @@ body.sti-gold #sti-watermark {
   cursor: pointer;
   text-decoration: none !important;
 }
-.sti-video-pas-a-pas-actions button[data-vstop="1"],
-.sti-video-pas-a-pas-actions button#sti-video-modal-stop {
-  background: #dc2626 !important;
-  border-color: #fca5a5 !important;
-  color: #fff !important;
-}
-.sti-video-pas-a-pas-actions button[data-vplay="1"],
-.sti-video-pas-a-pas-actions button#sti-video-modal-play {
-  background: #2563eb !important;
-  border-color: #93c5fd !important;
-  color: #fff !important;
-}
 .sti-video-pas-a-pas-actions button[data-vclose="1"],
 .sti-video-pas-a-pas-actions button#sti-video-modal-close {
   background: #b91c1c !important;

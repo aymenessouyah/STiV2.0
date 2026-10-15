@@ -634,8 +634,6 @@
           '<div class="sti-video-pas-a-pas-head">' +
             '<div class="sti-video-pas-a-pas-title">' + VIDEO_GUICHET_INFO.title + '</div>' +
             '<div class="sti-video-pas-a-pas-actions">' +
-              '<button type="button" data-vplay="1">⏸ Pause</button>' +
-              '<button type="button" data-vstop="1">⏹ Arrêter</button>' +
               '<button type="button" data-vrate="0.75">0.75×</button>' +
               '<button type="button" data-vrate="0.85">0.85×</button>' +
               '<button type="button" data-vrate="1">1×</button>' +
@@ -649,27 +647,6 @@
           '</video>';
 
         var vid = box.querySelector("video");
-        var btnPlay = box.querySelector("button[data-vplay]");
-        var btnStop = box.querySelector("button[data-vstop]");
-        if (vid && btnPlay) {
-          vid.addEventListener("play", function () { btnPlay.textContent = "⏸ Pause"; });
-          vid.addEventListener("pause", function () { btnPlay.textContent = "▶ Lecture"; });
-          btnPlay.addEventListener("click", function () {
-            if (vid.paused) {
-              try { vid.play(); } catch (e) {}
-            } else {
-              try { vid.pause(); } catch (e) {}
-            }
-          });
-        }
-        if (vid && btnStop) {
-          btnStop.addEventListener("click", function () {
-            try {
-              vid.pause();
-              vid.currentTime = 0;
-            } catch (e) {}
-          });
-        }
         var btnsRate = box.querySelectorAll("button[data-vrate]");
         for (var r = 0; r < btnsRate.length; r++) {
           (function (b) {
@@ -755,8 +732,6 @@
               '<div class="sti-video-pas-a-pas-head" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px;flex-shrink:0;">' +
                 '<div class="sti-video-pas-a-pas-title" id="sti-video-modal-title"></div>' +
                 '<div class="sti-video-pas-a-pas-actions" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">' +
-                  '<button type="button" id="sti-video-modal-play">⏸ Pause</button>' +
-                  '<button type="button" id="sti-video-modal-stop">⏹ Arrêter</button>' +
                   '<button type="button" data-mrate="0.75">0.75×</button>' +
                   '<button type="button" data-mrate="0.85">0.85×</button>' +
                   '<button type="button" data-mrate="1">1×</button>' +
@@ -770,27 +745,6 @@
           document.body.appendChild(overlay);
 
           var mVid = document.getElementById("sti-video-modal-player");
-          var mPlay = document.getElementById("sti-video-modal-play");
-          var mStop = document.getElementById("sti-video-modal-stop");
-          if (mVid && mPlay) {
-            mVid.addEventListener("play", function () { mPlay.textContent = "⏸ Pause"; });
-            mVid.addEventListener("pause", function () { mPlay.textContent = "▶ Lecture"; });
-            mPlay.addEventListener("click", function () {
-              if (mVid.paused) {
-                try { mVid.play(); } catch (e) {}
-              } else {
-                try { mVid.pause(); } catch (e) {}
-              }
-            });
-          }
-          if (mVid && mStop) {
-            mStop.addEventListener("click", function () {
-              try {
-                mVid.pause();
-                mVid.currentTime = 0;
-              } catch (e) {}
-            });
-          }
           var mRates = overlay.querySelectorAll("button[data-mrate]");
           for (var i = 0; i < mRates.length; i++) {
             (function (b) {
