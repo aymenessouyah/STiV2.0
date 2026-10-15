@@ -565,6 +565,953 @@
     } catch (e) {}
   }
 
+  /* ═══════════════════════════════════════════════════════════════════════════
+     🔊 MOTEUR UNIVERSEL DE NARRATION VOCALE & LECTURE COMMENTÉE PAS-À-PAS STI
+     - Décrit vocalement en français chaque étape des simulations pas à pas,
+       des animations de cours et des exercices animés / corrigés sur tout le site.
+     - Mode « 🎬 Auto + Voix » : enchaîne automatiquement toutes les étapes de
+       l'animation ou du cours au rythme exact de la voix off.
+     ═══════════════════════════════════════════════════════════════════════════ */
+  function installerNarrationVocaleSTI() {
+    try {
+      if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") return;
+      if (document.getElementById("sti-voix-dock")) return;
+
+      var pathLower = (location.pathname || "").toLowerCase();
+      /* Ne pas afficher sur le portail de connexion, l'admin, la carte de visite, 404 ou les visionneuses PDF pures */
+      if (
+        pathLower.indexOf("portail.html") !== -1 ||
+        pathLower.indexOf("admin.html") !== -1 ||
+        pathLower.indexOf("carte-visite.html") !== -1 ||
+        pathLower.indexOf("404.html") !== -1 ||
+        pathLower.indexOf(".pdf.html") !== -1
+      ) {
+        return;
+      }
+
+      var synth = window.speechSynthesis;
+      var voixChoisie = null;
+      var voixAuto = true;
+      try {
+        var savedAuto = localStorage.getItem("sti-voix-auto");
+        if (savedAuto === "0") voixAuto = false;
+      } catch (e) {}
+
+      var vitesses = [1.0, 1.15, 1.3];
+      var idxVitesse = 1;
+      try {
+        var savedSpd = parseFloat(localStorage.getItem("sti-voix-speed") || "1.15");
+        if (savedSpd === 1.0) idxVitesse = 0;
+        else if (savedSpd === 1.3) idxVitesse = 2;
+      } catch (e) {}
+
+      var modeAutoVoix = false;
+      var timerAutoVoix = null;
+      var timerDebounce = null;
+      var dernierTexteLu = "";
+      var dernierStudioSql = "join";
+      var idxBlocCours = 0;
+      var blocsCours = [];
+
+      function choisirVoixFr() {
+        try {
+          var liste = synth.getVoices() || [];
+          var best = null;
+          var bestScore = -1;
+          for (var i = 0; i < liste.length; i++) {
+            var v = liste[i];
+            var lg = (v.lang || "").toLowerCase();
+            if (lg.indexOf("fr") === 0) {
+              var sc = 10;
+              var nm = (v.name || "").toLowerCase();
+              if (lg.indexOf("fr-fr") === 0) sc += 5;
+              if (nm.indexOf("natural") !== -1 || nm.indexOf("neural") !== -1 || nm.indexOf("online") !== -1) sc += 15;
+              if (nm.indexOf("denise") !== -1 || nm.indexOf("henri") !== -1 || nm.indexOf("thomas") !== -1 || nm.indexOf("amelie") !== -1 || nm.indexOf("google") !== -1 || nm.indexOf("microsoft") !== -1) sc += 8;
+              if (v.localService) sc += 2;
+              if (sc > bestScore) {
+                bestScore = sc;
+                best = v;
+              }
+            }
+          }
+          voixChoisie = best;
+        } catch (e) {}
+      }
+      choisirVoixFr();
+      if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = choisirVoixFr;
+      }
+
+      function texteEl(idOrEl) {
+        var el = typeof idOrEl === "string" ? document.getElementById(idOrEl) : idOrEl;
+        if (!el) return "";
+        return (el.innerText || el.textContent || "").replace(/\s+/g, " ").trim();
+      }
+
+      function nettoyerTextePourVoix(brut) {
+        if (!brut) return "";
+        var t = String(brut);
+        /* Retirer les boutons "Écouter" éventuels inclus dans innerText */
+        t = t.replace(/🔊\s*Écouter/g, " ").replace(/⏹\s*Stop/g, " ");
+        /* Prononciation claire des termes techniques PHP / SQL / JS / CSS */
+        t = t
+          .replace(/\$_POST\b/g, " dollar POST ")
+          .replace(/\$_GET\b/g, " dollar GET ")
+          .replace(/\$_SERVER\b/g, " dollar SERVER ")
+          .replace(/\$conn\b/g, " dollar conn ")
+          .replace(/\$res\b/g, " dollar res ")
+          .replace(/\$row\b/g, " dollar row ")
+          .replace(/\$sql\b/g, " dollar S Q L ")
+          .replace(/\$ok\b/g, " dollar O K ")
+          .replace(/\$req\b/g, " dollar req ")
+          .replace(/\$([a-zA-Z_][a-zA-Z0-9_]*)/g, " dollar $1 ")
+          .replace(/mysqli_connect/g, " mysqli connect ")
+          .replace(/mysqli_query/g, " mysqli query ")
+          .replace(/mysqli_fetch_row/g, " mysqli fetch row ")
+          .replace(/mysqli_fetch_array/g, " mysqli fetch array ")
+          .replace(/mysqli_fetch_assoc/g, " mysqli fetch assoc ")
+          .replace(/mysqli_num_rows/g, " mysqli num rows ")
+          .replace(/mysqli_affected_rows/g, " mysqli affected rows ")
+          .replace(/mysqli_close/g, " mysqli close ")
+          .replace(/!==/g, " strictement différent de ")
+          .replace(/===/g, " strictement égal à ")
+          .replace(/!=/g, " différent de ")
+          .replace(/==/g, " égal à ")
+          .replace(/<=/g, " inférieur ou égal à ")
+          .replace(/>=/g, " supérieur ou égal à ")
+          .replace(/&&/g, " et ")
+          .replace(/\|\|/g, " ou ")
+          .replace(/->|→|➔|⟶/g, ", donne ")
+          .replace(/↔/g, " entre ")
+          .replace(/[✓✔]/g, ", validé, ")
+          .replace(/[✕✖]/g, ", refusé, ")
+          .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, " ")
+          .replace(/[★☆◆▸◀▶⏮⏭⟲↺⛶⤡☰🌙☀️]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        if (t.length > 950) {
+          t = t.substring(0, 950);
+        }
+        return t;
+      }
+
+      /* Détecte le type de page / studio actif et retourne le texte descriptif de l'étape en cours */
+      function extraireTexteEtapeActive() {
+        /* 1. cours/php-mysqli.html : Animation du Guichet */
+        if (document.getElementById("stepTitle") && document.getElementById("scene") && document.getElementById("mIns")) {
+          var sNum = texteEl("stepNum");
+          var sPhase = texteEl("stepPhase");
+          var sTitle = texteEl("stepTitle");
+          var sDesc = texteEl("stepDesc");
+          var parts = [];
+          if (sNum) parts.push("Étape " + sNum + ".");
+          if (sPhase) parts.push(sPhase + ".");
+          if (sTitle) parts.push(sTitle + ".");
+          if (sDesc) parts.push(sDesc);
+          var bulles = [
+            ["bd", "tbd", "Le directeur dit : "],
+            ["bc", "tbc", "La cliente Sara dit : "],
+            ["bw", "tbw", "La guichetière JavaScript dit : "],
+            ["ba", "tba", "Le coursier PHP dit : "],
+            ["bg", "tbg", "L'administration MySQL dit : "]
+          ];
+          for (var b = 0; b < bulles.length; b++) {
+            var gEl = document.getElementById(bulles[b][0]);
+            var tEl = document.getElementById(bulles[b][1]);
+            if (gEl && tEl && gEl.getAttribute("opacity") === "1") {
+              var bt = texteEl(tEl);
+              if (bt) parts.push(bulles[b][2] + bt + ".");
+            }
+          }
+          return parts.join(" ");
+        }
+
+        /* 2. cours/PHP-recap.html : Animation PHP-recap (8 onglets) */
+        if (document.getElementById("tabs") && document.getElementById("go1") && document.getElementById("t1")) {
+          var btnOn = document.querySelector("#tabs button.on");
+          var secOn = document.querySelector(".sec.on");
+          if (secOn) {
+            var pRecap = [];
+            if (btnOn) pRecap.push("Atelier " + texteEl(btnOn) + ".");
+            var h2On = secOn.querySelector("h2");
+            if (h2On) pRecap.push(texteEl(h2On) + ".");
+            var curCode = secOn.querySelector(".code div.cur");
+            if (curCode) pRecap.push("Ligne exécutée : " + texteEl(curCode) + ".");
+            var trMe = secOn.querySelector("tr.me");
+            if (trMe) pRecap.push("Cas testé : " + texteEl(trMe) + ".");
+            var outs = secOn.querySelectorAll(".out");
+            for (var oi = 0; oi < outs.length; oi++) {
+              var ot = texteEl(outs[oi]);
+              if (ot && ot !== "—") pRecap.push("Résultat : " + ot + ".");
+            }
+            var notes = secOn.querySelectorAll(".note");
+            for (var ni = 0; ni < notes.length; ni++) {
+              pRecap.push(texteEl(notes[ni]));
+            }
+            return pRecap.join(" ");
+          }
+        }
+
+        /* 3. cours/sql-contraintes.html : Animation SQL Contraintes */
+        if (document.getElementById("tabs") && document.getElementById("go1") && document.getElementById("c1") && document.getElementById("m1")) {
+          var btnC = document.querySelector("#tabs button.on");
+          var secC = document.querySelector(".sec.on");
+          if (secC) {
+            var pCon = [];
+            if (btnC) pCon.push("Contrainte SQL : " + texteEl(btnC) + ".");
+            var h2C = secC.querySelector("h2");
+            if (h2C) pCon.push(texteEl(h2C) + ".");
+            var msgC = secC.querySelector(".msg");
+            if (msgC && texteEl(msgC)) pCon.push("Effet observé : " + texteEl(msgC) + ".");
+            var noteC = secC.querySelector(".note");
+            if (noteC) pCon.push(texteEl(noteC));
+            return pCon.join(" ");
+          }
+        }
+
+        /* 4. exercices/php/sondage-parcours-pas-a-pas.html */
+        if (document.getElementById("snip") && document.getElementById("t") && document.getElementById("d")) {
+          return (
+            "Étape " +
+            texteEl("count") +
+            ". " +
+            texteEl("t") +
+            ". " +
+            texteEl("d") +
+            (texteEl("cond") ? ". Évaluation de la condition : " + texteEl("cond") : "")
+          );
+        }
+
+        /* 5. exercices/php/statphpanimee.html */
+        if (document.getElementById("step-title") && document.getElementById("step-desc") && document.getElementById("btn-next")) {
+          return (
+            texteEl("counter") +
+            ". " +
+            texteEl("step-badge") +
+            " : " +
+            texteEl("step-title") +
+            ". " +
+            texteEl("step-desc") +
+            (texteEl("decision") ? ". " + texteEl("decision") : "")
+          );
+        }
+
+        /* 6. Positionnement-animee/index.html & cssanimee/index.html */
+        if (document.getElementById("ctrl-etape") && document.getElementById("pastilles")) {
+          var cpt = texteEl("compteur");
+          var chipAct = document.querySelector(".chip.actif");
+          var noteVis = document.querySelector('[id^="note-"]:not([hidden])');
+          return (
+            (cpt ? cpt + ". " : "") +
+            (chipAct ? texteEl(chipAct) + ". " : "") +
+            (noteVis ? texteEl(noteVis) : "")
+          );
+        }
+
+        /* 7. exercices/html-css/TP2/tp2corrposition.html */
+        if (document.getElementById("pTitre") && document.getElementById("pTexte") && document.getElementById("bSuiv")) {
+          return (
+            texteEl("pNum") +
+            " : " +
+            texteEl("pTitre") +
+            ". " +
+            texteEl("pTexte") +
+            " " +
+            texteEl("pPuceHtml") +
+            " " +
+            texteEl("pPuceCss") +
+            " " +
+            texteEl("pPucePlus")
+          );
+        }
+
+        /* 8. projets/site-tunisie/site-tunisie-Correction-animation-html-css.html */
+        if (document.getElementById("lbl") && document.getElementById("skip") && document.getElementById("c-html")) {
+          return "Animation HTML et CSS Explore Tunisie : " + texteEl("lbl");
+        }
+
+        /* 9. Studios d'animation SQL des Séries 1, 2, 3, 5 (tp1, tp2, tp3, tpgh) */
+        var prefixesSql = ["tp1", "tp2", "tp3", "tpgh"];
+        for (var pi = 0; pi < prefixesSql.length; pi++) {
+          var pf = prefixesSql[pi];
+          if (document.getElementById(pf + "-step-title") && document.getElementById(pf + "-step-exp")) {
+            var qcat = texteEl(pf + "-qcat");
+            var scnt = texteEl(pf + "-step-counter");
+            var stit = texteEl(pf + "-step-title");
+            var sexp = texteEl(pf + "-step-exp");
+            var trList = document.getElementById(pf + "-trace-list");
+            var trTxt = trList ? texteEl(trList) : "";
+            return (qcat ? qcat + ". " : "") + (scnt ? scnt + ". " : "") + stit + ". " + sexp + (trTxt ? " Détail : " + trTxt : "");
+          }
+        }
+
+        /* 10. Studio d'animation SQL Série 4 (tp-bd-animation.js) */
+        var tpbdTitle = document.querySelector(".tpbd-exp-title");
+        var tpbdText = document.querySelector(".tpbd-exp-text");
+        if (tpbdTitle && tpbdText) {
+          var qTit = document.querySelector(".tpbd-q-title");
+          var clFoc = document.querySelector(".tpbd-clause-focus");
+          return (
+            (qTit ? texteEl(qTit) + ". " : "") +
+            (clFoc ? texteEl(clFoc) + ". " : "") +
+            texteEl(tpbdTitle) +
+            " : " +
+            texteEl(tpbdText)
+          );
+        }
+
+        /* 11. cours/sql.html : 3 studios d'animation (Jointure WHERE, GROUP BY, HAVING) */
+        if (document.getElementById("sql-jointure-anim-app") || document.getElementById("sql-groupby-anim-app") || document.getElementById("sql-having-anim-app")) {
+          if (dernierStudioSql === "groupby" && document.getElementById("gbanim-step-badge")) {
+            return "Animation GROUP BY : " + texteEl("gbanim-step-badge") + ". " + texteEl("gbanim-comparator");
+          }
+          if (dernierStudioSql === "having" && document.getElementById("hvanim-step-badge")) {
+            return "Animation HAVING : " + texteEl("hvanim-step-badge") + ". " + texteEl("hvanim-comparator") + ". " + texteEl("hvanim-decisions");
+          }
+          if (document.getElementById("janim-step-badge")) {
+            return (
+              "Animation Jointure dans WHERE : " +
+              texteEl("janim-step-badge") +
+              ". " +
+              texteEl("janim-comparator") +
+              ". " +
+              texteEl("janim-bridge-sub") +
+              ". " +
+              texteEl("janim-result-note")
+            );
+          }
+        }
+
+        /* 12. Atelier SQL 3 fenêtres */
+        if (document.getElementById("sqlInput") && document.getElementById("terminalStatus") && document.getElementById("output")) {
+          return "Atelier SQL : " + texteEl("terminalStatus") + ". " + texteEl("output");
+        }
+
+        /* 12b. Modale de détail CSS ouverte dans cours/css3.html (data-win="win-...") */
+        var winOpenCss = document.querySelector(".win-overlay.open, .win-overlay.active, [id^='win-'][style*='flex'], [id^='win-'][style*='block']");
+        if (winOpenCss) {
+          return texteEl(winOpenCss);
+        }
+
+        /* 12c. Modale de détail HTML5 ouverte dans cours/html5.html (#modal-overlay) */
+        var modHtml5 = document.getElementById("modal-overlay");
+        if (modHtml5 && !modHtml5.hidden && modHtml5.style.display !== "none" && modHtml5.classList.contains("active")) {
+          return texteEl("modal-title") + ". " + texteEl("modal-body");
+        }
+
+        /* 12d. Guide Carte & Timbre (projets/site-tunisie/correction-details/carte-timbre-droite-haut.html) */
+        if (document.getElementById("sec-header") && document.getElementById("demo-badge")) {
+          var navAct = document.querySelector(".nav-btn.active");
+          var secs = ["sec-header", "sec-carte", "sec-titre", "sec-fieldset", "sec-combine"];
+          for (var si = 0; si < secs.length; si++) {
+            var sEl = document.getElementById(secs[si]);
+            if (sEl && sEl.style.display !== "none") {
+              return (navAct ? texteEl(navAct) + ". " : "") + texteEl(sEl);
+            }
+          }
+        }
+
+        /* 12e. Atelier box-shadow & text-shadow (exercices/html-css/box-shadow-text-shadow-css3.html) */
+        if (document.getElementById("out") && document.getElementById("controls") && document.getElementById("tcontrols")) {
+          return "Atelier ombres CSS3 : code généré : " + texteEl("out") + ". " + texteEl("tout");
+        }
+
+        /* 13. Pages générales de Cours / Exercices / Corrigés / Bac Pratique */
+        collecterBlocsCours();
+        if (blocsCours.length > 0) {
+          if (idxBlocCours >= blocsCours.length) idxBlocCours = 0;
+          var bAct = blocsCours[idxBlocCours];
+          mettreEnEvidenceBloc(bAct);
+          return texteEl(bAct);
+        }
+
+        var h1 = document.querySelector("h1");
+        return h1 ? texteEl(h1) : document.title;
+      }
+
+      function collecterBlocsCours() {
+        if (blocsCours.length > 0) return;
+        var selecteurs =
+          ".step, .analogy, .exo-card, .question-card, .corr-block, .correction-box, " +
+          "#zone-enonce, .sujet-card, main section, article section, .card, ol > li";
+        var nodes = document.querySelectorAll(selecteurs);
+        var vus = [];
+        for (var i = 0; i < nodes.length; i++) {
+          var n = nodes[i];
+          if (n.closest && (n.closest("#sti-voix-dock") || n.closest("nav") || n.closest("header"))) continue;
+          var tx = texteEl(n);
+          if (tx.length < 25 || tx.length > 2200) continue;
+          /* Éviter d'inclure à la fois un parent et son enfant direct */
+          var doublonParent = false;
+          for (var j = 0; j < vus.length; j++) {
+            if (vus[j].contains(n) || n.contains(vus[j])) {
+              doublonParent = true;
+              break;
+            }
+          }
+          if (!doublonParent) {
+            vus.push(n);
+          }
+        }
+        blocsCours = vus;
+      }
+
+      function mettreEnEvidenceBloc(el) {
+        var anciens = document.querySelectorAll(".sti-voix-active-bloc");
+        for (var i = 0; i < anciens.length; i++) {
+          anciens[i].classList.remove("sti-voix-active-bloc");
+        }
+        if (el && el.classList) {
+          el.classList.add("sti-voix-active-bloc");
+          try {
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+          } catch (e) {}
+        }
+      }
+
+      /* Passe automatiquement à l'étape suivante lors du mode « 🎬 Auto + Voix » */
+      function avancerEtapeSuivante() {
+        /* 1. cours/php-mysqli.html */
+        var btnNextGuichet = document.getElementById("next");
+        if (btnNextGuichet && document.getElementById("scene") && document.getElementById("mIns")) {
+          if (!btnNextGuichet.disabled) {
+            btnNextGuichet.click();
+            return true;
+          }
+          return false;
+        }
+
+        /* 2. cours/PHP-recap.html & cours/sql-contraintes.html */
+        if (document.getElementById("tabs") && document.getElementById("t1")) {
+          var tabBtns = document.querySelectorAll("#tabs button");
+          var curIdx = -1;
+          for (var ti = 0; ti < tabBtns.length; ti++) {
+            if (tabBtns[ti].classList.contains("on")) {
+              curIdx = ti;
+              break;
+            }
+          }
+          if (curIdx >= 0 && curIdx < tabBtns.length - 1) {
+            tabBtns[curIdx + 1].click();
+            setTimeout(function () {
+              var secOn = document.querySelector(".sec.on");
+              var goBtn = secOn ? secOn.querySelector("button.btn.p, button[id^='go']") : null;
+              if (goBtn) goBtn.click();
+            }, 250);
+            return true;
+          }
+          return false;
+        }
+
+        /* 3. sondage-parcours-pas-a-pas.html */
+        if (document.getElementById("snip") && document.getElementById("next")) {
+          var nSond = document.getElementById("next");
+          if (!nSond.disabled) {
+            nSond.click();
+            return true;
+          }
+          return false;
+        }
+
+        /* 4. statphpanimee.html */
+        var nStat = document.getElementById("btn-next");
+        if (nStat && document.getElementById("step-title")) {
+          if (!nStat.disabled) {
+            nStat.click();
+            return true;
+          }
+          return false;
+        }
+
+        /* 5. Positionnement-animee & cssanimee */
+        if (document.getElementById("ctrl-etape") && typeof window.suivant === "function") {
+          return !!window.suivant();
+        }
+
+        /* 6. tp2corrposition.html */
+        var bSuivTp2 = document.getElementById("bSuiv");
+        if (bSuivTp2 && document.getElementById("pTitre")) {
+          if (!bSuivTp2.disabled) {
+            bSuivTp2.click();
+            return true;
+          }
+          return false;
+        }
+
+        /* 7. site-tunisie-Correction-animation-html-css.html */
+        var bSkipTun = document.getElementById("skip");
+        if (bSkipTun && document.getElementById("lbl")) {
+          bSkipTun.click();
+          return true;
+        }
+
+        /* 8. Studios SQL Séries 1, 2, 3, 5 */
+        var pfs = ["tp1", "tp2", "tp3", "tpgh"];
+        for (var k = 0; k < pfs.length; k++) {
+          var pf = pfs[k];
+          var bNextSql = document.getElementById(pf + "-btn-next");
+          if (bNextSql) {
+            if (!bNextSql.disabled) {
+              bNextSql.click();
+              return true;
+            }
+            /* Passer à la requête suivante de la série */
+            var qBtns = document.querySelectorAll("." + pf + "-qbtn");
+            for (var qi = 0; qi < qBtns.length - 1; qi++) {
+              if (qBtns[qi].classList.contains("active")) {
+                qBtns[qi + 1].click();
+                return true;
+              }
+            }
+            return false;
+          }
+        }
+
+        /* 9. Studio SQL Série 4 (tp-bd-animation.js) */
+        var bNextTpbd = document.getElementById("tpbd-btn-next-step");
+        if (bNextTpbd) {
+          var pills = document.querySelectorAll("#tpbd-q-pills .tpbd-q-pill");
+          var dots = document.querySelectorAll(".tpbd-step-dot");
+          var isLastDot = dots.length > 0 && dots[dots.length - 1].classList.contains("current");
+          if (!isLastDot) {
+            bNextTpbd.click();
+            return true;
+          }
+          var bNextQ = document.getElementById("tpbd-next-q");
+          if (bNextQ && pills.length > 1) {
+            bNextQ.click();
+            return true;
+          }
+          return false;
+        }
+
+        /* 10. Studios SQL dans cours/sql.html */
+        if (dernierStudioSql === "groupby" && document.getElementById("gbanim-btn-next")) {
+          document.getElementById("gbanim-btn-next").click();
+          return true;
+        }
+        if (dernierStudioSql === "having" && document.getElementById("hvanim-btn-next")) {
+          document.getElementById("hvanim-btn-next").click();
+          return true;
+        }
+        if (document.getElementById("janim-btn-next")) {
+          document.getElementById("janim-btn-next").click();
+          return true;
+        }
+
+        /* 11. Parcours pas à pas des blocs de cours / exercices corrigés */
+        collecterBlocsCours();
+        if (blocsCours.length > 0 && idxBlocCours < blocsCours.length - 1) {
+          idxBlocCours++;
+          lireTexte(extraireTexteEtapeActive(), true);
+          return true;
+        }
+        return false;
+      }
+
+      function majBoutonsUI(enLecture) {
+        var btnToggle = document.getElementById("sti-voix-btn-toggle");
+        var btnSpeak = document.getElementById("sti-voix-btn-speak");
+        var btnAuto = document.getElementById("sti-voix-btn-auto");
+        var btnSpeed = document.getElementById("sti-voix-btn-speed");
+
+        if (btnToggle) {
+          btnToggle.textContent = voixAuto ? "🔊 Voix ON" : "🔇 Muet";
+          btnToggle.classList.toggle("sti-voix-on", voixAuto);
+        }
+        if (btnSpeak) {
+          btnSpeak.textContent = enLecture ? "⏹ Stop" : "▶ Lire l'étape";
+          btnSpeak.classList.toggle("sti-voix-speaking", !!enLecture);
+        }
+        if (btnAuto) {
+          btnAuto.textContent = modeAutoVoix ? "⏸ Pause Auto+Voix" : "🎬 Auto + Voix";
+          btnAuto.classList.toggle("sti-voix-auto-active", modeAutoVoix);
+        }
+        if (btnSpeed) {
+          btnSpeed.textContent = vitesses[idxVitesse] + "×";
+        }
+
+        var inlinesToggle = document.querySelectorAll(".sti-btn-voix-inline-toggle");
+        for (var i = 0; i < inlinesToggle.length; i++) {
+          inlinesToggle[i].textContent = voixAuto ? "🔊 Voix ON" : "🔇 Voix OFF";
+          inlinesToggle[i].classList.toggle("muted", !voixAuto);
+        }
+        var inlinesAuto = document.querySelectorAll(".sti-btn-voix-inline-auto");
+        for (var j = 0; j < inlinesAuto.length; j++) {
+          inlinesAuto[j].textContent = modeAutoVoix ? "⏸ Pause commentée" : "🎬 Lecture commentée";
+        }
+      }
+
+      function arreterVoix(garderAuto) {
+        if (timerAutoVoix) {
+          clearTimeout(timerAutoVoix);
+          timerAutoVoix = null;
+        }
+        if (!garderAuto) {
+          modeAutoVoix = false;
+        }
+        try {
+          synth.cancel();
+        } catch (e) {}
+        majBoutonsUI(false);
+      }
+
+      function lireTexte(brut, depuisAuto) {
+        var propre = nettoyerTextePourVoix(brut);
+        if (!propre) return;
+        dernierTexteLu = propre;
+        try {
+          synth.cancel();
+        } catch (e) {}
+
+        var u = new SpeechSynthesisUtterance(propre);
+        u.lang = "fr-FR";
+        if (!voixChoisie) choisirVoixFr();
+        if (voixChoisie) u.voice = voixChoisie;
+        u.rate = vitesses[idxVitesse] || 1.15;
+        u.pitch = 1.0;
+
+        u.onstart = function () {
+          majBoutonsUI(true);
+        };
+        u.onend = function () {
+          majBoutonsUI(false);
+          if (modeAutoVoix) {
+            timerAutoVoix = setTimeout(function () {
+              if (!modeAutoVoix) return;
+              var ok = avancerEtapeSuivante();
+              if (!ok) {
+                modeAutoVoix = false;
+                majBoutonsUI(false);
+              }
+            }, 550);
+          }
+        };
+        u.onerror = function () {
+          majBoutonsUI(false);
+        };
+
+        majBoutonsUI(true);
+        try {
+          synth.speak(u);
+        } catch (e) {}
+      }
+
+      function planifierLectureEtape(delaiMs) {
+        if (!voixAuto && !modeAutoVoix) return;
+        if (timerDebounce) clearTimeout(timerDebounce);
+        timerDebounce = setTimeout(function () {
+          var t = extraireTexteEtapeActive();
+          var p = nettoyerTextePourVoix(t);
+          if (p && p !== dernierTexteLu) {
+            lireTexte(t, modeAutoVoix);
+          }
+        }, delaiMs || 180);
+      }
+
+      /* ── Création du Dock flottant #sti-voix-dock ── */
+      var dock = document.createElement("div");
+      dock.id = "sti-voix-dock";
+      dock.className = "sti-no-print";
+      dock.innerHTML =
+        '<button type="button" id="sti-voix-btn-collapse" title="Réduire / Ouvrir le lecteur vocal STI">🎧</button>' +
+        '<button type="button" id="sti-voix-btn-toggle" class="sti-voix-item" title="Activer ou couper la voix automatique sur les étapes">🔊 Voix ON</button>' +
+        '<button type="button" id="sti-voix-btn-speak" class="sti-voix-item" title="Écouter l\'explication de l\'étape actuelle">▶ Lire l\'étape</button>' +
+        '<button type="button" id="sti-voix-btn-auto" class="sti-voix-item" title="Lancer l\'animation pas à pas commentée par la voix">🎬 Auto + Voix</button>' +
+        '<button type="button" id="sti-voix-btn-speed" class="sti-voix-item" title="Vitesse de la voix">1.15×</button>';
+      document.body.appendChild(dock);
+
+      document.getElementById("sti-voix-btn-collapse").addEventListener("click", function () {
+        dock.classList.toggle("collapsed");
+      });
+
+      document.getElementById("sti-voix-btn-toggle").addEventListener("click", function () {
+        voixAuto = !voixAuto;
+        try {
+          localStorage.setItem("sti-voix-auto", voixAuto ? "1" : "0");
+        } catch (e) {}
+        if (!voixAuto) {
+          arreterVoix(false);
+        } else {
+          majBoutonsUI(false);
+          lireTexte(extraireTexteEtapeActive(), false);
+        }
+      });
+
+      document.getElementById("sti-voix-btn-speak").addEventListener("click", function () {
+        if (synth.speaking) {
+          arreterVoix(false);
+        } else {
+          lireTexte(extraireTexteEtapeActive(), false);
+        }
+      });
+
+      document.getElementById("sti-voix-btn-auto").addEventListener("click", function () {
+        if (modeAutoVoix) {
+          arreterVoix(false);
+        } else {
+          voixAuto = true;
+          modeAutoVoix = true;
+          try {
+            localStorage.setItem("sti-voix-auto", "1");
+          } catch (e) {}
+          majBoutonsUI(true);
+          lireTexte(extraireTexteEtapeActive(), true);
+        }
+      });
+
+      document.getElementById("sti-voix-btn-speed").addEventListener("click", function () {
+        idxVitesse = (idxVitesse + 1) % vitesses.length;
+        try {
+          localStorage.setItem("sti-voix-speed", String(vitesses[idxVitesse]));
+        } catch (e) {}
+        majBoutonsUI(synth.speaking);
+      });
+
+      /* ── Injection des boutons vocaux directement dans les barres de contrôle des studios ── */
+      function injecterBoutonsStudio() {
+        var barresCibles = [
+          document.querySelector(".controls"),
+          document.getElementById("parcours"),
+          document.getElementById("ctrl-auto"),
+          document.querySelector(".topbar-recap > div:last-child"),
+          document.querySelector(".tp1-controls"),
+          document.querySelector(".tp2-controls"),
+          document.querySelector(".tp3-controls"),
+          document.querySelector(".tpbd-controls"),
+          document.querySelector(".tpgh-controls"),
+          document.getElementById("bar")
+        ];
+        for (var i = 0; i < barresCibles.length; i++) {
+          var bar = barresCibles[i];
+          if (!bar || bar.querySelector(".sti-btn-voix-inline")) continue;
+
+          var b1 = document.createElement("button");
+          b1.type = "button";
+          b1.className = "sti-btn-voix-inline sti-btn-voix-inline-toggle";
+          b1.textContent = voixAuto ? "🔊 Voix ON" : "🔇 Voix OFF";
+          b1.title = "Activer / couper la description vocale des étapes";
+          b1.addEventListener("click", function (ev) {
+            ev.stopPropagation();
+            document.getElementById("sti-voix-btn-toggle").click();
+          });
+
+          var b2 = document.createElement("button");
+          b2.type = "button";
+          b2.className = "sti-btn-voix-inline auto-play sti-btn-voix-inline-auto";
+          b2.textContent = "🎬 Lecture commentée";
+          b2.title = "Jouer automatiquement toutes les étapes avec la voix off";
+          b2.addEventListener("click", function (ev) {
+            ev.stopPropagation();
+            document.getElementById("sti-voix-btn-auto").click();
+          });
+
+          bar.appendChild(b1);
+          bar.appendChild(b2);
+        }
+
+        /* Studios SQL intégrés dans cours/sql.html */
+        var sqlStudios = [
+          ["janim-btn-play", "join"],
+          ["gbanim-btn-play", "groupby"],
+          ["hvanim-btn-play", "having"]
+        ];
+        for (var s = 0; s < sqlStudios.length; s++) {
+          (function (btnId, kind) {
+            var playBtn = document.getElementById(btnId);
+            if (!playBtn || !playBtn.parentNode || playBtn.parentNode.querySelector(".sti-btn-voix-sql-" + kind)) return;
+            var bv = document.createElement("button");
+            bv.type = "button";
+            bv.className = "sti-btn-voix-inline auto-play sti-btn-voix-sql-" + kind;
+            bv.textContent = "🔊 Animer avec voix";
+            bv.addEventListener("click", function () {
+              dernierStudioSql = kind;
+              voixAuto = true;
+              modeAutoVoix = true;
+              majBoutonsUI(true);
+              lireTexte(extraireTexteEtapeActive(), true);
+            });
+            playBtn.parentNode.appendChild(bv);
+          })(sqlStudios[s][0], sqlStudios[s][1]);
+        }
+      }
+
+      /* ── Injection des boutons « 🔊 Écouter » sur les blocs de cours et d'exercices corrigés ── */
+      function injecterBoutonsBlocsCours() {
+        var cibles = document.querySelectorAll(
+          ".step, .analogy, .exo-card, .question-card, .corr-block, .correction-box, main section[id], article section[id]"
+        );
+        for (var i = 0; i < cibles.length; i++) {
+          (function (bloc) {
+            if (bloc.querySelector(".sti-btn-ecouter-bloc")) return;
+            var tx = texteEl(bloc);
+            if (tx.length < 30) return;
+            var btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "sti-btn-ecouter-bloc sti-no-print";
+            btn.textContent = "🔊 Écouter";
+            btn.title = "Écouter l'explication de cette section";
+            btn.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              if (btn.classList.contains("speaking") && synth.speaking) {
+                btn.classList.remove("speaking");
+                btn.textContent = "🔊 Écouter";
+                arreterVoix(false);
+                return;
+              }
+              var tous = document.querySelectorAll(".sti-btn-ecouter-bloc.speaking");
+              for (var k = 0; k < tous.length; k++) {
+                tous[k].classList.remove("speaking");
+                tous[k].textContent = "🔊 Écouter";
+              }
+              btn.classList.add("speaking");
+              btn.textContent = "⏹ Stop";
+              mettreEnEvidenceBloc(bloc);
+              lireTexte(texteEl(bloc), false);
+            });
+            bloc.insertBefore(btn, bloc.firstChild);
+          })(cibles[i]);
+        }
+      }
+
+      injecterBoutonsStudio();
+      injecterBoutonsBlocsCours();
+      setTimeout(function () {
+        injecterBoutonsStudio();
+        injecterBoutonsBlocsCours();
+      }, 900);
+
+      /* ── Écoute automatique de tous les clics sur les boutons d'étape / d'animation ── */
+      document.addEventListener(
+        "click",
+        function (e) {
+          var t = e.target;
+          if (!t || !t.closest) return;
+          if (t.closest("#sti-voix-dock") || t.closest(".sti-btn-voix-inline") || t.closest(".sti-btn-ecouter-bloc")) return;
+
+          /* Si une modale d'animation s'ouvre/se ferme dans cours/php.html, couper la voix parente */
+          if (t.closest("#animOpen, #btn-top-anim-guichet, #btn-magique-php-recap, #animClose, #recapClose")) {
+            arreterVoix(false);
+            return;
+          }
+
+          /* Détecter quel studio SQL de cours/sql.html est utilisé */
+          if (t.closest("#sql-jointure-anim-app")) dernierStudioSql = "join";
+          else if (t.closest("#sql-groupby-anim-app")) dernierStudioSql = "groupby";
+          else if (t.closest("#sql-having-anim-app")) dernierStudioSql = "having";
+
+          var btn = t.closest("button, input[type='button'], .dot, .phase, .chip, .tpbd-step-dot, .tpbd-q-pill");
+          if (!btn) return;
+
+          var idB = (btn.id || "").toLowerCase();
+          var clsB = (btn.className || "").toLowerCase();
+          var txtB = (btn.innerText || btn.value || "").toLowerCase();
+
+          /* Boutons de détails CSS3 (data-win) */
+          var dataWin = btn.getAttribute ? btn.getAttribute("data-win") : null;
+          if (dataWin && document.getElementById(dataWin)) {
+            if (voixAuto) {
+              setTimeout(function () {
+                lireTexte(texteEl(dataWin), false);
+              }, 260);
+            }
+            return;
+          }
+
+          var estActionAnim =
+            idB.indexOf("prev") !== -1 ||
+            idB.indexOf("next") !== -1 ||
+            idB.indexOf("suiv") !== -1 ||
+            idB.indexOf("prec") !== -1 ||
+            idB.indexOf("play") !== -1 ||
+            idB.indexOf("auto") !== -1 ||
+            idB.indexOf("skip") !== -1 ||
+            idB.indexOf("rst") !== -1 ||
+            idB.indexOf("reset") !== -1 ||
+            idB.indexOf("start") !== -1 ||
+            idB.indexOf("go") === 0 ||
+            idB === "mins" ||
+            idB === "msel" ||
+            idB === "mupd" ||
+            idB === "castgo" ||
+            idB === "mathgo" ||
+            idB === "datego" ||
+            clsB.indexOf("dot") !== -1 ||
+            clsB.indexOf("point") !== -1 ||
+            clsB.indexOf("chip") !== -1 ||
+            clsB.indexOf("phase") !== -1 ||
+            clsB.indexOf("qbtn") !== -1 ||
+            clsB.indexOf("q-pill") !== -1 ||
+            clsB.indexOf("inline-btn") !== -1 ||
+            clsB.indexOf("nav-btn") !== -1 ||
+            clsB.indexOf("demo") !== -1 ||
+            txtB.indexOf("suivant") !== -1 ||
+            txtB.indexOf("précédent") !== -1 ||
+            txtB.indexOf("étape") !== -1 ||
+            txtB.indexOf("exécuter") !== -1 ||
+            txtB.indexOf("tester") !== -1 ||
+            txtB.indexOf("envoyer") !== -1 ||
+            txtB.indexOf("convertir") !== -1 ||
+            txtB.indexOf("animer") !== -1 ||
+            txtB.indexOf("agrandir") !== -1 ||
+            (btn.parentNode && btn.parentNode.id === "tabs");
+
+          if (estActionAnim) {
+            /* Délai un peu plus long sur PHP-recap (go1..go8) pour laisser l'animation afficher le résultat */
+            var delai = idB.indexOf("go") === 0 ? 1250 : 220;
+            planifierLectureEtape(delai);
+          }
+        },
+        true
+      );
+
+      /* ── Observation des changements automatiques d'étape (ex. bouton Lecture auto natif) ── */
+      var ciblesObsIds = [
+        "stepTitle",
+        "stepDesc",
+        "t",
+        "d",
+        "step-title",
+        "step-desc",
+        "compteur",
+        "pTitre",
+        "lbl",
+        "tp1-step-title",
+        "tp2-step-title",
+        "tp3-step-title",
+        "tpgh-step-title",
+        "janim-comparator",
+        "gbanim-comparator",
+        "hvanim-comparator"
+      ];
+      if (typeof MutationObserver !== "undefined") {
+        var obs = new MutationObserver(function () {
+          if (voixAuto && !modeAutoVoix) {
+            planifierLectureEtape(200);
+          }
+        });
+        setTimeout(function () {
+          for (var i = 0; i < ciblesObsIds.length; i++) {
+            var elObs = document.getElementById(ciblesObsIds[i]);
+            if (elObs) {
+              obs.observe(elObs, { childList: true, characterData: true, subtree: true });
+            }
+          }
+          var tpbdExp = document.querySelector(".tpbd-exp-text");
+          if (tpbdExp) {
+            obs.observe(tpbdExp, { childList: true, characterData: true, subtree: true });
+          }
+        }, 700);
+      }
+
+      window.addEventListener("beforeunload", function () {
+        arreterVoix(false);
+      });
+
+      majBoutonsUI(false);
+    } catch (err) {}
+  }
+
   /* ─────────────────────────────────────────────
      Mise en place au chargement
      ───────────────────────────────────────────── */
@@ -575,6 +1522,7 @@
     }
     checkDevtools();
     installerMasquageAdressePC();
+    installerNarrationVocaleSTI();
   }
 
   if (document.readyState === "loading") {
