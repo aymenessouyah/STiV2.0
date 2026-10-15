@@ -613,8 +613,8 @@
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=204",
-        title: "🎥 Cours SQL animé pas à pas (Contraintes · Jointure WHERE a.x = b.x · GROUP BY · HAVING)"
+        file: "sql-cours.mp4?v=205",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
 
       function prefixeAssetsSTI() {
@@ -787,9 +787,9 @@
           overlay.id = "sti-video-modal-overlay";
           overlay.className = "sti-no-print";
           overlay.hidden = true;
-          overlay.style.cssText = "display:none;position:fixed;inset:0;z-index:2147483647;background:rgba(10,15,28,0.88);align-items:center;justify-content:center;padding:12px;box-sizing:border-box;";
+          overlay.style.cssText = "display:none;position:fixed;inset:0;z-index:2147483647;background:rgba(10,15,28,0.88);align-items:center;justify-content:center;padding:10px;box-sizing:border-box;";
           overlay.innerHTML =
-            '<div class="sti-video-modal-card" role="dialog" aria-modal="true" style="width:min(740px,92vw);max-width:92vw;max-height:82vh;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;background:#0d1526;color:#f9f1e3;border:2px solid #f4511e;border-radius:16px;padding:12px 14px;">' +
+            '<div class="sti-video-modal-card" role="dialog" aria-modal="true" style="width:min(1080px,96vw);max-width:96vw;max-height:92vh;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;background:#0d1526;color:#f9f1e3;border:2px solid #f4511e;border-radius:16px;padding:10px 14px;">' +
               '<div class="sti-video-pas-a-pas-head" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px;flex-shrink:0;">' +
                 '<div class="sti-video-pas-a-pas-title" id="sti-video-modal-title"></div>' +
                 '<div class="sti-video-pas-a-pas-actions" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">' +
@@ -801,7 +801,7 @@
                   '<button type="button" id="sti-video-modal-close">✕ Fermer</button>' +
                 '</div>' +
               '</div>' +
-              '<video id="sti-video-modal-player" controls playsinline webkit-playsinline preload="metadata" style="width:100%;max-width:100%;height:auto;max-height:min(380px,calc(82vh - 96px));object-fit:contain;display:block;margin:0 auto;border-radius:10px;background:#000;"></video>' +
+              '<video id="sti-video-modal-player" controls playsinline webkit-playsinline preload="metadata" style="width:100%;max-width:100%;height:auto;max-height:calc(92vh - 86px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;border-radius:10px;background:#0d1526;"></video>' +
             '</div>';
           document.body.appendChild(overlay);
 
