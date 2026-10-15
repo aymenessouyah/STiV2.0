@@ -112,6 +112,8 @@
     <input type="button" class="btn btn-violet" value="Suivant &#9654;" onclick="suivant()" />
     <input type="button" class="btn" value="&#8635; Rejouer l’étape" onclick="rejouer()" />
     <input type="button" class="btn" id="bouton-auto" value="&#9654; Lecture auto" onclick="lectureAuto()" />
+    <input type="button" class="btn btn-violet" id="sti-btn-voix-pos" value="🔊 Voix : ON" onclick="basculerVoixPos()" />
+    <input type="button" class="btn" id="sti-btn-video-pos" value="🎥 Vidéo (.mp4)" onclick="ouvrirVideoPositionnement()" style="background:#f4511e;color:#fff;border-color:#ff8a50;font-weight:800;" />
   </p>
   <p>
     <span class="choix-fond">Fond :</span>
@@ -747,7 +749,7 @@
   <p>Cours animé « CSS pas à pas » — HTML5 et CSS3 conformes aux annexes (A. Essouyah). Mesures en px et en % uniquement.</p>
 </footer>
 
-<script src="cours.js?v=76"></script>
+<script src="cours.js?v=202"></script>
 
 <script>
 /* 📱 Mobile : barre ⇄ menu compact + overlay « Tournez-moi » */
@@ -865,11 +867,16 @@
       ctrlAuto.value = btnAuto.value.indexOf("Pause") !== -1 ? "\u23F8" : "\u23F5";
     }
     if (etiquette && window.COURS && window.COURS[window.etape]) {
-      var n = window.etape + 1;
-      var t = window.COURS[window.etape].titre || "";
-      etiquette.textContent = n + "/" + window.COURS.length + (t ? " \u00B7 " + t : "");
-      etiquette.setAttribute("aria-label",
-        "\u00C9tape " + n + " sur " + window.COURS.length + (t ? " : " + t : ""));
+      if (window.introPosActive) {
+        etiquette.textContent = "4.0 \u00B7 Position";
+        etiquette.setAttribute("aria-label", "\u00C9tape 4.0 : Position");
+      } else {
+        var n = window.etape + 1;
+        var t = window.COURS[window.etape].titre || "";
+        etiquette.textContent = n + "/" + window.COURS.length + (t ? " \u00B7 " + t : "");
+        etiquette.setAttribute("aria-label",
+          "\u00C9tape " + n + " sur " + window.COURS.length + (t ? " : " + t : ""));
+      }
     }
   }
   sync();
@@ -878,11 +885,11 @@
 </script>
 
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=193" />
-<script src="../assets/js/protection.js?v=193" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=202" />
+<script src="../assets/js/protection.js?v=202" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=193"></script>
-<script src="../assets/js/acces.js?v=193"></script>
+<script src="../assets/js/config.js?v=202"></script>
+<script src="../assets/js/acces.js?v=202"></script>
 </body>
 </html>

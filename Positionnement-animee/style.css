@@ -2086,6 +2086,7 @@ p { font-size: 13px; }
 .resume-etapes.mobile { display: block; margin: 0 0 6px 0; }
 
 /* mobile : barre de navigation compacte */
+.ctrl-mobile.bureau { display: none !important; }
 .chip.mobile { font-size: 9px; padding: 3px 6px; margin: 1px; }
 .btn.mobile { font-size: 10px; padding: 5px 7px; margin: 1px; }
 .choix-fond.mobile { font-size: 10px; }

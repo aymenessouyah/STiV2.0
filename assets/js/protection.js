@@ -599,10 +599,14 @@
         return;
       }
 
-      /* Seule vidéo conservée : l'animation du guichet (avec la voix de l'homme et les 3 états INSERT, UPDATE, SELECT) */
+      /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi et CSS pas à pas Positionnement animé */
       var VIDEO_GUICHET_INFO = {
         file: "php-guichet.mp4?v=195",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
+      };
+      var VIDEO_CSS_POS_INFO = {
+        file: "css-positionnement.mp4?v=202",
+        title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
 
       function prefixeAssetsSTI() {
@@ -620,7 +624,12 @@
         return prefixeAssetsSTI() + "videos/" + VIDEO_GUICHET_INFO.file;
       }
 
+      function resoudreUrlVideoCssPos() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_CSS_POS_INFO.file;
+      }
+
       var estPageGuichet = (pathLower.indexOf("php-mysqli") !== -1);
+      var estPageCssPos = (pathLower.indexOf("positionnement-animee") !== -1);
 
       /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
@@ -706,14 +715,22 @@
       }
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt) {
-        /* Seule la vidéo de l'animation du guichet est autorisée */
-        if (slugOuUrl && slugOuUrl !== "php-guichet" && String(slugOuUrl).indexOf("php-guichet") === -1) {
+        var sSlug = String(slugOuUrl || "");
+        var estCssPos = (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos));
+        var estGuichet = (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || (!sSlug && estPageGuichet));
+        if (!estCssPos && !estGuichet) {
           return;
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
         try {
           if (typeof window.stop === "function" && document.getElementById("mIns")) {
             window.stop();
+          }
+          if (typeof window.arreterAuto === "function") {
+            window.arreterAuto();
+          }
+          if (typeof window.arreterVoixPos === "function") {
+            window.arreterVoixPos();
           }
           var fAnim = document.getElementById("animFrame");
           if (fAnim && fAnim.contentWindow) {
@@ -726,12 +743,12 @@
             window.top !== window &&
             typeof window.top.ouvrirVideoPasAPasSTI === "function"
           ) {
-            window.top.ouvrirVideoPasAPasSTI("php-guichet", titreOpt);
+            window.top.ouvrirVideoPasAPasSTI(estCssPos ? "css-positionnement" : "php-guichet", titreOpt);
             return;
           }
         } catch (e) {}
-        var url = resoudreUrlVideoGuichet();
-        var titre = titreOpt || VIDEO_GUICHET_INFO.title;
+        var url = estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet();
+        var titre = titreOpt || (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title);
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
@@ -867,6 +884,22 @@
               });
               rBoite.appendChild(bRotVid);
             }
+          }
+        }
+
+        if (estPageCssPos) {
+          var rotCss = document.querySelector("#rotate-overlay .rotate-boite");
+          if (rotCss && !rotCss.querySelector(".sti-btn-video-rot-mobile")) {
+            var bRotCss = document.createElement("button");
+            bRotCss.type = "button";
+            bRotCss.className = "sti-btn-video-dedie sti-btn-video-rot-mobile";
+            bRotCss.style.cssText = "margin:14px auto 4px;padding:12px 20px;font-size:14px;border-radius:999px;display:inline-flex;";
+            bRotCss.textContent = "🎥 Regarder la vidéo CSS pas à pas (.mp4)";
+            bRotCss.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              window.ouvrirVideoPasAPasSTI("css-positionnement");
+            });
+            rotCss.appendChild(bRotCss);
           }
         }
 

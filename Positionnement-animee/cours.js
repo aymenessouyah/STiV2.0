@@ -88,34 +88,39 @@ var COURS = [
 
 /* ---------- déplacement ---------- */
 function allerIntroPosition() {
+  arreterAuto();
   etape = 4;
   temps = 0;
   introPosActive = true;
   afficher();
-  arreterAuto();
+  jouerVoixPosCourante(false);
 }
 
 function aller(n) {
+  arreterAuto();
   etape = n;
   temps = 0;
   introPosActive = false;
   afficher();
-  arreterAuto();
+  jouerVoixPosCourante(false);
 }
 
 function allerTemps(n) {
+  arreterAuto();
   introPosActive = false;
   temps = n;
   afficher();
-  arreterAuto();
+  jouerVoixPosCourante(false);
 }
 
-function suivant() {
+function suivant(depuisAuto) {
+  if (!depuisAuto && auto) { arreterAuto(); }
   if (introPosActive) {
     introPosActive = false;
     etape = 4;
     temps = 0;
     afficher();
+    jouerVoixPosCourante(!!depuisAuto);
     return true;
   }
   var t = COURS[etape].temps.length;
@@ -126,35 +131,42 @@ function suivant() {
     introPosActive = true;
   }
   else if (etape < COURS.length - 1) { etape = etape + 1; temps = 0; }
-  else { arreterAuto(); return false; }
+  else { arreterAuto(); arreterVoixPos(); return false; }
   afficher();
+  jouerVoixPosCourante(!!depuisAuto);
   return true;
 }
 
 function precedent() {
+  if (auto) { arreterAuto(); }
   if (introPosActive) {
     introPosActive = false;
     etape = 3;
     temps = COURS[3].temps.length - 1;
     afficher();
+    jouerVoixPosCourante(false);
     return true;
   }
   if (etape === 4 && temps === 0) {
     introPosActive = true;
     temps = 0;
     afficher();
+    jouerVoixPosCourante(false);
     return true;
   }
   if (temps > 0) { temps = temps - 1; }
   else if (etape > 0) { etape = etape - 1; temps = COURS[etape].temps.length - 1; }
   else { return false; }
   afficher();
+  jouerVoixPosCourante(false);
   return true;
 }
 
 function rejouer() {
+  if (auto) { arreterAuto(); }
   temps = 0;
   afficher();
+  jouerVoixPosCourante(false);
 }
 
 function clavier(e) {
@@ -313,6 +325,14 @@ function habiller() {
     'btn ' + (theme === 'sombre' ? 'btn-violet ' : '') + theme + ' ' + format;
   document.getElementById('bouton-clair').className =
     'btn ' + (theme === 'clair' ? 'btn-violet ' : '') + theme + ' ' + format;
+  var btnVoix = document.getElementById('sti-btn-voix-pos');
+  if (btnVoix) {
+    btnVoix.className = 'btn ' + (voixPosActive ? 'btn-violet ' : '') + theme + ' ' + format;
+  }
+  var btnVid = document.getElementById('sti-btn-video-pos');
+  if (btnVid) {
+    btnVid.className = 'btn ' + theme + ' ' + format;
+  }
 }
 
 function choisirTheme(nom) {
@@ -384,6 +404,112 @@ function basculerPause() {
   enPause = !enPause;
 }
 
+/* ---------- voix masculine synchronisée (comme le guichet) ---------- */
+var POS_VOIX_CUES = {"0-0": [0.0, 13.55], "0-1": [13.7, 19.8], "0-2": [19.95, 26.95], "0-3": [27.1, 34.32], "1-0": [34.47, 43.97], "1-1": [44.12, 52.82], "1-2": [52.97, 61.29], "2-0": [61.44, 70.64], "2-1": [70.79, 78.74], "2-2": [78.89, 87.04], "2-3": [87.19, 92.56], "3-0": [92.71, 102.56], "3-1": [102.71, 110.91], "3-2": [111.06, 119.85], "4.0": [120.0, 150.7], "4-0": [150.85, 160.4], "4-1": [160.55, 168.2], "5-0": [168.35, 178.1], "5-1": [178.25, 187.15], "5-2": [187.3, 193.63], "6-0": [193.78, 202.53], "6-1": [202.68, 212.88], "6-2": [213.03, 224.12], "7-0": [224.27, 232.67], "7-1": [232.82, 241.72], "8-0": [241.87, 248.37], "8-1": [248.52, 259.55], "9-0": [259.7, 268.35], "9-1": [268.5, 277.25], "9-2": [277.4, 283.85], "10-0": [284.0, 293.5], "10-1": [293.65, 302.48], "11-0": [302.63, 308.53], "11-1": [308.68, 313.68], "11-2": [313.83, 321.63], "11-3": [321.78, 329.48], "11-4": [329.63, 336.78], "11-5": [336.93, 342.08], "11-6": [342.23, 349.21]};
+var voixPosActive = true;
+var posVoixTimer = null;
+var posAutoTimer = null;
+var posSegFin = 0;
+var posAudio = document.createElement('audio');
+posAudio.preload = 'auto';
+posAudio.src = '../assets/audio/css-positionnement.mp3?v=202';
+posAudio.style.display = 'none';
+if (document.body) { document.body.appendChild(posAudio); }
+
+function arreterVoixPos() {
+  if (posVoixTimer) { clearTimeout(posVoixTimer); posVoixTimer = null; }
+  if (posAutoTimer) { clearTimeout(posAutoTimer); posAutoTimer = null; }
+  posSegFin = 0;
+  try { posAudio.pause(); } catch (e) {}
+}
+
+function finSegmentVoixPos(enAuto) {
+  if (posVoixTimer) { clearTimeout(posVoixTimer); posVoixTimer = null; }
+  posSegFin = 0;
+  try { posAudio.pause(); } catch (e) {}
+  if (enAuto && auto) {
+    posAutoTimer = setTimeout(function () {
+      if (!auto) return;
+      suivant(true);
+    }, 700);
+  }
+}
+
+posAudio.addEventListener('timeupdate', function () {
+  if (posSegFin > 0 && posAudio.currentTime >= posSegFin - 0.04) {
+    finSegmentVoixPos(auto);
+  }
+});
+
+function jouerVoixPosCourante(enAuto) {
+  arreterVoixPos();
+  if (!voixPosActive) {
+    if (enAuto && auto) {
+      programmer();
+    }
+    return;
+  }
+  var cle = introPosActive ? '4.0' : (etape + '-' + temps);
+  var seg = POS_VOIX_CUES[cle];
+  if (!seg) {
+    if (enAuto && auto) programmer();
+    return;
+  }
+  var t0 = seg[0], t1 = seg[1];
+  posSegFin = t1;
+  function lancer() {
+    try {
+      posAudio.muted = false;
+      posAudio.volume = 1.0;
+      posAudio.playbackRate = 0.95;
+      posAudio.currentTime = t0;
+      var p = posAudio.play();
+      if (p && p.catch) {
+        p.catch(function () {
+          if (enAuto && auto) programmer();
+        });
+      }
+      var durMs = Math.max(900, Math.round(((t1 - t0) / 0.95) * 1000) + 180);
+      posVoixTimer = setTimeout(function () {
+        finSegmentVoixPos(enAuto);
+      }, durMs);
+    } catch (e) {}
+  }
+  if (posAudio.readyState >= 1) {
+    lancer();
+  } else {
+    var onMeta = function () {
+      posAudio.removeEventListener('loadedmetadata', onMeta);
+      lancer();
+    };
+    posAudio.addEventListener('loadedmetadata', onMeta);
+    try { posAudio.load(); } catch (e) {}
+  }
+}
+
+function basculerVoixPos() {
+  voixPosActive = !voixPosActive;
+  var btn = document.getElementById('sti-btn-voix-pos');
+  if (btn) {
+    btn.value = voixPosActive ? '🔊 Voix : ON' : '🔇 Voix : OFF';
+    btn.className = 'btn ' + (voixPosActive ? 'btn-violet ' : '') + theme + ' ' + format;
+  }
+  if (voixPosActive) {
+    jouerVoixPosCourante(auto);
+  } else {
+    arreterVoixPos();
+    if (auto) programmer();
+  }
+}
+
+function ouvrirVideoPositionnement() {
+  arreterAuto();
+  arreterVoixPos();
+  if (typeof window.ouvrirVideoPasAPasSTI === 'function') {
+    window.ouvrirVideoPasAPasSTI('css-positionnement');
+  }
+}
+
 /* ---------- lecture automatique ---------- */
 function duree() {
   var id = COURS[etape].id;
@@ -392,23 +518,24 @@ function duree() {
 }
 
 function programmer() {
+  clearTimeout(minuteur);
   minuteur = setTimeout(function () {
     if (!auto) { return; }
-    if (suivant()) { programmer(); }
-    else { arreterAuto(); }
+    if (!suivant(true)) { arreterAuto(); }
   }, duree());
 }
 
 function lectureAuto() {
-  if (auto) { arreterAuto(); return; }
+  if (auto) { arreterAuto(); arreterVoixPos(); return; }
   auto = true;
   document.getElementById('bouton-auto').value = '❚❚ Pause';
-  programmer();
+  jouerVoixPosCourante(true);
 }
 
 function arreterAuto() {
   auto = false;
   clearTimeout(minuteur);
+  if (posAutoTimer) { clearTimeout(posAutoTimer); posAutoTimer = null; }
   document.getElementById('bouton-auto').value = '▶ Lecture auto';
 }
 
