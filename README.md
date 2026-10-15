@@ -123,7 +123,7 @@ cours complets avec **8 vidéos explicatives (`.mp4`) commentées pas à pas** e
   - Clic droit, `Ctrl + S`, `Ctrl + U`, `F12`, `Ctrl + Shift + I / J / C / K` bloqués pour **100 % des abonnés** (seul l'administrateur strict est exempté), sans faux positif de redimensionnement/zoom.
 - **🛡️ Centre de Sécurité & Bouclier Anti-IA (`#modal-securite`)** :
   - **Mode Examen / Verrouillage par classe** avec minuteur d'auto-déverrouillage, **Plein Écran**, **Téléportation d'écran**, **Pause écran individuel**, **Session unique**, **chronométrage des sorties d'onglet (`Alt + Tab` ≥ 10 s)**, **Tirage aléatoire des QCM**, **Piège Copy-Trap** et **Bouclier Anti-IA complet (Anti-ChatGPT · Anti-Gemini · Anti-Claude)**.
-- **📴 Autonomie 100 % Hors-ligne (`sw.js` · `sti-atelier-v225`)** :
+- **📴 Autonomie 100 % Hors-ligne (`sw.js` · `sti-atelier-v226`)** :
   - Service instantané (`0 ms`) depuis le cache local de la version active (`SHELL` de 94 fichiers essentiels + `OFFLINE_LIST` de ressources locales : cours, exercices, studios d'animation SQL/PHP/CSS, console JS, médias HTML5/audio/vidéo locaux, PDF et archives `.zip`/`.rar`) permettant de travailler **100 % sans Internet** avec synchronisation automatique dès le retour de la connexion.
 
 ---
@@ -138,7 +138,7 @@ STI-Atelier-V2.0/
 ├── admin.html                        # 📊 Tableau de bord Admin organisé en 3 pôles & 4 sections repliables
 ├── bac-pratique.html                 # 🧪 Atelier Épreuve Pratique Bac STI + Projet STI 0 (sondage & stats pas à pas)
 ├── carte-visite.html                 # 🪪 Carte de visite numérique AE (.vcf & impression réservés Admin)
-├── sw.js                             # ⚙️ Service Worker PWA (cache 100 % hors-ligne sti-atelier-v225)
+├── sw.js                             # ⚙️ Service Worker PWA (cache 100 % hors-ligne sti-atelier-v226)
 ├── manifest.webmanifest              # 📱 Manifeste PWA (fullscreen / standalone sans barre d'adresse)
 ├── robots.txt                        # 🤖 Directives SEO & blocage des robots d'IA (noai / noimageai)
 ├── sitemap.xml                       # 🗺️ Plan du site

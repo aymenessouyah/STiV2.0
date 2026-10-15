@@ -716,40 +716,44 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=225",
+        file: "php-guichet.mp4?v=226",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=225",
+        file: "css-positionnement.mp4?v=226",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=225",
+        file: "css-animee.mp4?v=226",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=225",
+        file: "sql-cours.mp4?v=226",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=225",
+        file: "html5-cours.mp4?v=226",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=225",
+        file: "css3-cours.mp4?v=226",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=225",
+        file: "javascript-cours.mp4?v=226",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Récapitulatif JavaScript complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=225",
+        file: "php-cours.mp4?v=226",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
       var VIDEO_SQL_SERIE4_INFO = {
-        file: "sql-serie4.mp4?v=225",
+        file: "sql-serie4.mp4?v=226",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 4 SQL : Création BD, Insertion & Corrigé des 15 Requêtes (.mp4)"
+      };
+      var VIDEO_SQL_SERIE5_INFO = {
+        file: "sql-serie5.mp4?v=226",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — Série 5 SQL (Gesthotel) : Création BD, Insertion & Corrigé des 20 Requêtes (.mp4)"
       };
 
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
@@ -866,6 +870,31 @@
           { t: 411.51, short: "Req 13 · HAVING < 10", label: "06:51 · Requête 13 · Jointure 3 tables + GROUP BY / HAVING AVG < 10", sel: "#req-13" },
           { t: 437.41, short: "Req 14 · Sous-req MAX", label: "07:17 · Requête 14 · Jointure + Sous-requête corrélée (= SELECT MAX)", sel: "#req-14" },
           { t: 465.85, short: "Req 15 · 5 tables+GROUP BY", label: "07:45 · Requête 15 · Jointure 5 tables + GROUP BY (Ali Ben Salah)", sel: "#req-15" }
+        ],
+        "sql-serie5": [
+          { t: 0.00, short: "Intro", label: "00:00 · Introduction Série 5 SQL (Gesthotel)", sel: "#sec-schema" },
+          { t: 24.26, short: "I. Création BD", label: "00:24 · I. Création de la BD — CREATE DATABASE Gesthotel & CREATE TABLE", sel: "#sec-creation-bd" },
+          { t: 47.88, short: "II. Insertion", label: "00:47 · II. Insertion (INSERT INTO CHAMBRE, CLIENT, RESERVATION)", sel: "#sec-insertion-bd" },
+          { t: 67.97, short: "Req 1 · Sélection", label: "01:07 · Requête 1 · Sélection simple (Clients d'Ariana)", sel: "#req-1" },
+          { t: 87.77, short: "Req 2 · GROUP BY+COUNT", label: "01:27 · Requête 2 · GROUP BY & COUNT (Chambres par type)", sel: "#req-2" },
+          { t: 109.32, short: "Req 3 · Sous-req MIN", label: "01:49 · Requête 3 · Sous-requête (= SELECT MIN) — Chambres les moins chères", sel: "#req-3" },
+          { t: 137.45, short: "Req 4 · Jointure", label: "02:17 · Requête 4 · Jointure (numr, dateDebut, nom du client)", sel: "#req-4" },
+          { t: 161.16, short: "Req 5 · Jointure+Dates", label: "02:41 · Requête 5 · Jointure + Dates (NOW, DATE, DATE_SUB : 5.1, 5.2, 5.3)", sel: "#req-5" },
+          { t: 193.18, short: "Req 6 · AVG global", label: "03:13 · Requête 6 · Agrégation globale AVG (Prix moyen des chambres)", sel: "#req-6" },
+          { t: 211.35, short: "Req 7 · GROUP BY+AVG", label: "03:31 · Requête 7 · GROUP BY & AVG (Prix moyen par type)", sel: "#req-7" },
+          { t: 233.05, short: "Req 8 · Sélection CL03", label: "03:53 · Requête 8 · Sélection simple (Réservations du client CL03)", sel: "#req-8" },
+          { t: 253.47, short: "Req 9 · Jointure+SUM", label: "04:13 · Requête 9 · Jointure + GROUP BY & SUM (Facture du client CL03)", sel: "#req-9" },
+          { t: 280.81, short: "Req 10 · Jointure+Dates", label: "04:40 · Requête 10 · Jointure + Dates (Clients résidant actuellement)", sel: "#req-10" },
+          { t: 306.11, short: "Req 11 · Sous-req IN", label: "05:06 · Requête 11 · Sous-requête IN + COUNT(DISTINCT) — Pensions de CL02", sel: "#req-11" },
+          { t: 334.53, short: "Req 12 · Sous-req AVG", label: "05:34 · Requête 12 · Sous-requête (> SELECT AVG) — Séjour > moyenne", sel: "#req-12" },
+          { t: 359.71, short: "Req 13 · Sous-req numr=2", label: "05:59 · Requête 13 · Sous-requête scalaire (Séjour > numr = 2)", sel: "#req-13" },
+          { t: 384.07, short: "Req 14 · Jointure+COUNT", label: "06:24 · Requête 14 · Jointure + COUNT (Chambres simples 'S')", sel: "#req-14" },
+          { t: 406.34, short: "Req 15 · GROUP BY+SUM", label: "06:46 · Requête 15 · GROUP BY & SUM (Total des nuitées par chambre)", sel: "#req-15" },
+          { t: 429.21, short: "Req 16 · Jointure+CA", label: "07:09 · Requête 16 · Jointure + GROUP BY & SUM (Chiffre d'affaires par chambre)", sel: "#req-16" },
+          { t: 456.28, short: "Req 17 · GROUP BY 2 col", label: "07:36 · Requête 17 · GROUP BY (numcl, pension) & COUNT", sel: "#req-17" },
+          { t: 477.28, short: "Req 18 · ORDER BY", label: "07:57 · Requête 18 · Tri multicritère (ORDER BY type ASC, prix DESC)", sel: "#req-18" },
+          { t: 499.41, short: "Req 19 · Jointure+HAVING", label: "08:19 · Requête 19 · Jointure + GROUP BY / HAVING COUNT >= 2", sel: "#req-19" },
+          { t: 528.11, short: "Req 20 · Sous-req NOT IN", label: "08:48 · Requête 20 · Sous-requête NOT IN (Chambres sans réservation)", sel: "#req-20" }
         ]
       };
       window.STI_CHAPITRES_MEDIA = STI_CHAPITRES_MEDIA;
@@ -1123,6 +1152,10 @@
         return prefixeAssetsSTI() + "videos/" + VIDEO_SQL_SERIE4_INFO.file;
       }
 
+      function resoudreUrlVideoSqlSerie5() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_SQL_SERIE5_INFO.file;
+      }
+
       var estPageGuichet = (pathLower.indexOf("php-mysqli") !== -1);
       var estPageCssPos = (pathLower.indexOf("positionnement-animee") !== -1);
       var estPageCssDeco = (pathLower.indexOf("cssanimee") !== -1);
@@ -1347,16 +1380,17 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt, startSecOpt) {
         var sSlug = String(slugOuUrl || "");
-        var estSqlSerie4 = (sSlug === "sql-serie4" || sSlug.indexOf("sql-serie4") !== -1);
-        var estHtml5 = (!estSqlSerie4 && (sSlug === "html5-cours" || sSlug.indexOf("html5-cours") !== -1 || (!sSlug && estPageHtml5)));
-        var estCss3 = (!estSqlSerie4 && !estHtml5 && (sSlug === "css3-cours" || sSlug.indexOf("css3-cours") !== -1 || (!sSlug && estPageCss3)));
-        var estJs = (!estSqlSerie4 && !estHtml5 && !estCss3 && (sSlug === "javascript-cours" || sSlug.indexOf("javascript-cours") !== -1 || (!sSlug && estPageJs)));
-        var estPhpC = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && (sSlug === "php-cours" || sSlug.indexOf("php-cours") !== -1 || (!sSlug && estPagePhpCours)));
-        var estSql = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && (sSlug === "sql-cours" || sSlug.indexOf("sql-cours") !== -1 || (!sSlug && estPageSql)));
-        var estCssDeco = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
-        var estCssPos = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
-        var estGuichet = (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
-        if (!estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet) {
+        var estSqlSerie5 = (sSlug === "sql-serie5" || sSlug.indexOf("sql-serie5") !== -1);
+        var estSqlSerie4 = (!estSqlSerie5 && (sSlug === "sql-serie4" || sSlug.indexOf("sql-serie4") !== -1));
+        var estHtml5 = (!estSqlSerie5 && !estSqlSerie4 && (sSlug === "html5-cours" || sSlug.indexOf("html5-cours") !== -1 || (!sSlug && estPageHtml5)));
+        var estCss3 = (!estSqlSerie5 && !estSqlSerie4 && !estHtml5 && (sSlug === "css3-cours" || sSlug.indexOf("css3-cours") !== -1 || (!sSlug && estPageCss3)));
+        var estJs = (!estSqlSerie5 && !estSqlSerie4 && !estHtml5 && !estCss3 && (sSlug === "javascript-cours" || sSlug.indexOf("javascript-cours") !== -1 || (!sSlug && estPageJs)));
+        var estPhpC = (!estSqlSerie5 && !estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && (sSlug === "php-cours" || sSlug.indexOf("php-cours") !== -1 || (!sSlug && estPagePhpCours)));
+        var estSql = (!estSqlSerie5 && !estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && (sSlug === "sql-cours" || sSlug.indexOf("sql-cours") !== -1 || (!sSlug && estPageSql)));
+        var estCssDeco = (!estSqlSerie5 && !estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
+        var estCssPos = (!estSqlSerie5 && !estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
+        var estGuichet = (!estSqlSerie5 && !estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
+        if (!estSqlSerie5 && !estSqlSerie4 && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet) {
           return;
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
@@ -1388,7 +1422,7 @@
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
-        var slugCible = estSqlSerie4 ? "sql-serie4" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))));
+        var slugCible = estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet"))))))));
         try {
           if (
             window.top &&
@@ -1399,8 +1433,8 @@
             return;
           }
         } catch (e) {}
-        var url = estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))));
-        var titre = titreOpt || (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))));
+        var url = estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet()))))))));
+        var titre = titreOpt || (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title)))))))));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
@@ -1838,7 +1872,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=225";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=226";
 
           var CUES_MAP = {
             html5: {

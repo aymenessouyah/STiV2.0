@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
     <meta name="robots" content="noai, noimageai" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
     <title>
-      Corrigé : Série BD - Date, Jointure, Sous-requêtes, Group By (Gesthotel)
+      Corrigé : Série 5 BD - Date, Jointure, Sous-requêtes, Group By (Gesthotel)
     </title>
     <style>
       @page {
@@ -19,13 +19,13 @@
         margin: 0;
         padding: 20px;
         color: #1a202c;
-        line-height: 1.4;
+        line-height: 1.48;
         background-color: #fff;
       }
       .header-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
       }
       .header-table td {
         border: 2px solid #1a365d;
@@ -41,61 +41,165 @@
       .title-container {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin: 20px 0;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 16px 0 18px;
         border-bottom: 3px solid #1a365d;
-        padding-bottom: 10px;
+        padding-bottom: 12px;
+      }
+      .title-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
       }
       .title-container h1 {
-        font-size: 1.1em;
+        font-size: 1.18em;
         color: #1a365d;
         text-transform: uppercase;
         margin: 0;
-        text-align: center;
       }
       .db-logo {
         width: 42px;
         height: 42px;
         background: #2b6cb0;
-        border-radius: 4px;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-family: Arial, sans-serif;
         font-weight: bold;
-        font-size: 16px;
+        font-size: 18px;
         color: #fff;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
       }
+      .btn-video-serie5 {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 10px;
+        border: 2px solid #facc15;
+        background: linear-gradient(135deg, #ea580c, #c2410c);
+        color: #fff;
+        font: 800 13.5px/1.2 "Segoe UI", system-ui, sans-serif;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(234, 88, 12, 0.32);
+        text-decoration: none;
+      }
+      .btn-video-serie5:hover {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+      }
       h2 {
-        color: #2b6cb0;
-        background-color: #ebf8ff;
-        padding: 6px 12px;
-        font-size: 1.05em;
-        border-left: 5px solid #2b6cb0;
+        color: #1e3a8a;
+        background-color: #dbeafe;
+        padding: 8px 14px;
+        font-size: 1.06em;
+        border-left: 5px solid #1d4ed8;
         margin-top: 22px;
-        margin-bottom: 10px;
-        border-radius: 0 4px 4px 0;
+        margin-bottom: 12px;
+        border-radius: 0 6px 6px 0;
+      }
+      .schema-box {
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
+        border-left: 5px solid #2b6cb0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+      }
+      .req-card {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+      }
+      .req-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .req-title {
+        font-size: 0.98em;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .req-badges {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .badge-type {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.78em;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+      }
+      .badge-jointure {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+      }
+      .badge-sousreq {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+      .badge-imbriquee {
+        background: #fae8ff;
+        color: #86198f;
+        border: 1px solid #f0abfc;
+      }
+      .badge-groupby {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #93c5fd;
+      }
+      .badge-selection {
+        background: #e0f2fe;
+        color: #075985;
+        border: 1px solid #7dd3fc;
       }
       pre {
-        background-color: #f7fafc;
-        border: 1px solid #cbd5e0;
-        padding: 10px;
-        border-radius: 4px;
-        font-family: Consolas, monospace;
-        font-size: 0.88em;
-        color: #2b6cb0;
+        background-color: #0f172a;
+        border: 1px solid #1e293b;
+        border-left: 4px solid #f97316;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        color: #f8fafc;
         overflow-x: auto;
-        margin: 5px 0 15px 0;
+        margin: 8px 0;
       }
-      ol {
-        margin-top: 5px;
-        margin-bottom: 8px;
-        padding-left: 22px;
+      .why-box {
+        font-size: 0.89em;
+        color: #1e293b;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-left: 4px solid #16a34a;
+        padding: 8px 12px;
+        margin-top: 8px;
+        border-radius: 0 6px 6px 0;
       }
-      li {
-        margin-bottom: 10px;
+      .why-box strong {
+        color: #14532d;
+      }
+      code {
+        font-family: Consolas, monospace;
+        font-size: 0.9em;
+        background: #e2e8f0;
+        padding: 1px 5px;
+        border-radius: 4px;
+        color: #1e3a8a;
       }
       .footer-page {
         text-align: right;
@@ -104,6 +208,11 @@
         margin-top: 30px;
         border-top: 1px solid #e2e8f0;
         padding-top: 5px;
+      }
+      @media print {
+        .btn-video-serie5 {
+          display: none !important;
+        }
       }
     </style>
   </head>
@@ -119,9 +228,9 @@
           >
         </td>
         <td width="40%" class="header-title">
-          Corrigé : Série Date, Jointure, Sous-requêtes, Group By<br /><span
+          Corrigé Série 5 BD : Date, Jointure, Sous-requêtes, Group By<br /><span
             style="font-weight: normal; font-size: 0.85em"
-            >Base de données "Gesthotel"</span
+            >Base de données "Gesthotel" (Création, Insertion &amp; 20 Requêtes)</span
           >
         </td>
         <td width="30%" class="header-title">
@@ -133,275 +242,468 @@
     </table>
 
     <div class="title-container">
-      <div class="db-logo">SQL</div>
-      <h1>
-        Corrigé de la Série de Révision : Gestion d'un Hôtel (Gesthotel)
-      </h1>
+      <div class="title-left">
+        <div class="db-logo">SQL</div>
+        <h1>
+          Corrigé Série 5 — Gestion d'un Hôtel (Gesthotel)
+        </h1>
+      </div>
+      <button
+        type="button"
+        class="btn-video-serie5"
+        onclick="if(window.ouvrirVideoPasAPasSTI){window.ouvrirVideoPasAPasSTI('sql-serie5','🎥 Série 5 SQL (Gesthotel) — Création BD, Insertion & Corrigé des 20 requêtes');}else if(window.top&&window.top.ouvrirVideoPasAPasSTI){window.top.ouvrirVideoPasAPasSTI('sql-serie5','🎥 Série 5 SQL (Gesthotel) — Création BD, Insertion & Corrigé des 20 requêtes');}"
+      >
+        🎥 Voir la vidéo : Créer la BD, Insérer &amp; Corriger les 20 requêtes
+      </button>
     </div>
 
-    <h2>Correction des Requêtes SQL</h2>
-    <ol>
-      <li>
-        <strong>Afficher tous les Clients d'Ariana :</strong>
-        <pre>
-SELECT * 
-FROM client 
-WHERE adresse = 'ariana'; </pre
-        >
-      </li>
+    <div class="schema-box" id="sec-schema">
+      <strong>Modèle relationnel de la base de données <code>Gesthotel</code> :</strong><br />
+      • <strong>CHAMBRE</strong> (<u>numch</u>, prix, type) — <code>type</code> : <code>'S'</code> (Simple), <code>'D'</code> (Double), <code>'Q'</code> (Quadruple)<br />
+      • <strong>CLIENT</strong> (<u>numcl</u>, nom, adresse)<br />
+      • <strong>RESERVATION</strong> (<u>numr</u>, #numch, #numcl, dateDebut, nbjours, pension) — <code>numr</code> auto-incrémenté, <code>dateDebut</code> de type <code>DATETIME</code>
+    </div>
 
-      <li>
-        <strong>Donner le nombre de chambres par type de chambre :</strong>
-        <pre>
-SELECT type, COUNT(*) AS nb_chambre 
-FROM chambre 
-GROUP BY type; </pre
-        >
-      </li>
+    <!-- PARTIE I : CRÉATION DE LA BASE DE DONNÉES ET DES 3 TABLES -->
+    <div id="sec-creation-bd" class="req-card">
+      <h2>I. Question 1 — Création de la Base de Données <code>Gesthotel</code> et des 3 Tables (LDD)</h2>
+      <p style="margin:4px 0 8px;font-size:0.9em;color:#334155;">
+        On crée d'abord les deux tables parentes <code>CHAMBRE</code> et <code>CLIENT</code>, puis la table enfant <code>RESERVATION</code> munie d'une clé primaire auto-incrémentée (<code>AUTO_INCREMENT</code>), d'un champ <code>DATETIME</code> et de deux clés étrangères :
+      </p>
+      <pre>CREATE DATABASE Gesthotel;
+USE Gesthotel;
 
-      <li>
-        <strong>Trouver les chambres qui coûtent le moins cher :</strong>
-        <pre>
-SELECT * 
-FROM chambre 
-WHERE prix = (SELECT MIN(prix) FROM chambre); </pre
-        >
-      </li>
+CREATE TABLE CHAMBRE (
+  numch VARCHAR(5) PRIMARY KEY,
+  prix  DECIMAL(8,2) NOT NULL,
+  type  CHAR(1) NOT NULL CHECK (type IN ('S', 'D', 'Q'))
+);
 
-      <li>
-        <strong
-          >Afficher une liste qui comprend le numéro de réservation, la date
-          d'entrée et le nom du client :</strong
-        >
-        <pre>
-SELECT r.numr, dateDebut, nom 
-FROM client cl, reservation r 
-WHERE r.numcl = cl.numcl; </pre
-        >
-      </li>
+CREATE TABLE CLIENT (
+  numcl   VARCHAR(6) PRIMARY KEY,
+  nom     VARCHAR(50) NOT NULL,
+  adresse VARCHAR(50) NOT NULL
+);
 
-      <li>
-        <strong
-          >Afficher une liste qui comprend le numéro de réservation et le nom du
-          client pour les entrées :
-        </strong>
-        <ul>
-          <li>
-            <strong
-              >5.1 d'aujourd'hui (date de début de réservation = date système)
-              :</strong
-            >
-            <pre>
-SELECT numr, nom 
-FROM client cl, reservation r 
-WHERE r.numcl = cl.numcl 
-AND DATE(dateDebut) = DATE(NOW()); </pre
-            >
-          </li>
-          <li>
-            <strong>5.2 passées au cours des 7 derniers jours :</strong>
-            <pre>
-SELECT numr, nom 
-FROM client cl, reservation r 
-WHERE r.numcl = cl.numcl 
-AND DATE(dateDebut) >= DATE_SUB(NOW(), INTERVAL 7 DAY); </pre
-            >
-          </li>
-          <li>
-            <strong>5.3 passées il y a plus de 30 jours :</strong>
-            <pre>
-SELECT numr, nom 
-FROM client cl, reservation r 
-WHERE r.numcl = cl.numcl 
-AND DATE(dateDebut) < DATE_SUB(NOW(), INTERVAL 30 DAY); </pre
-            >
-          </li>
-        </ul>
-      </li>
+CREATE TABLE RESERVATION (
+  numr      INT AUTO_INCREMENT PRIMARY KEY,
+  numch     VARCHAR(5) NOT NULL,
+  numcl     VARCHAR(6) NOT NULL,
+  dateDebut DATETIME NOT NULL,
+  nbjours   INT NOT NULL,
+  pension   VARCHAR(10) NOT NULL,
+  FOREIGN KEY (numch) REFERENCES CHAMBRE(numch),
+  FOREIGN KEY (numcl) REFERENCES CLIENT(numcl)
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi cette solution ?</strong> Les notes de l'énoncé imposent trois contraintes : <code>type IN ('S', 'D', 'Q')</code> sur <code>CHAMBRE</code>, <code>AUTO_INCREMENT</code> sur la clé primaire <code>numr</code>, et le type <code>DATETIME</code> pour <code>dateDebut</code> (date et heure). On crée <code>CHAMBRE</code> et <code>CLIENT</code> avant <code>RESERVATION</code> pour que les deux clés étrangères (<code>#numch</code> et <code>#numcl</code>) référencent des tables déjà existantes.
+      </div>
+    </div>
 
-      <li>
-        <strong>Calculer le prix moyen des chambres :</strong>
-        <pre>
-SELECT AVG(prix) AS prix_moyenne 
-FROM chambre; </pre
-        >
-      </li>
+    <!-- PARTIE II : INSERTION DES ÉLÉMENTS -->
+    <div id="sec-insertion-bd" class="req-card">
+      <h2>II. Insertion des éléments dans <code>CHAMBRE</code>, <code>CLIENT</code> et <code>RESERVATION</code> (LMD : INSERT INTO)</h2>
+      <p style="margin:4px 0 8px;font-size:0.9em;color:#334155;">
+        On insère les 4 chambres, les 3 clients, puis les 6 réservations au format standard SQL <code>'AAAA-MM-JJ HH:MM:SS'</code> :
+      </p>
+      <pre>-- 1. Insertion des 4 chambres dans CHAMBRE
+INSERT INTO CHAMBRE VALUES ('C01', 250, 'S');
+INSERT INTO CHAMBRE VALUES ('C02', 250, 'D');
+INSERT INTO CHAMBRE VALUES ('C03', 400, 'Q');
+INSERT INTO CHAMBRE VALUES ('C04', 300, 'D');
 
-      <li>
-        <strong
-          >Calculer le prix moyen des chambres par type de chambre :</strong
-        >
-        <pre>
-SELECT AVG(prix) AS prix_moyenne, type 
-FROM chambre 
-GROUP BY type; </pre
-        >
-      </li>
+-- 2. Insertion des 3 clients dans CLIENT
+INSERT INTO CLIENT VALUES ('CL01', 'Ali Trabelsi',   'Ariana');
+INSERT INTO CLIENT VALUES ('CL02', 'Alia Ben Ahmed', 'Tunis');
+INSERT INTO CLIENT VALUES ('CL03', 'Sonia Kammoun',  'Sfax');
 
-      <li>
-        <strong>Lister toutes les réservations du client CL03 :</strong>
-        <pre>
-SELECT * 
-FROM reservation 
-WHERE numcl = 'CL03'; </pre
-        >
-      </li>
+-- 3. Insertion des 6 réservations dans RESERVATION (numr est auto-incrémenté)
+INSERT INTO RESERVATION (numch, numcl, dateDebut, nbjours, pension) VALUES
+  ('C01', 'CL02', '2022-05-20 12:30:00',  3, 'PC'),
+  ('C01', 'CL03', '2022-04-07 10:00:00',  5, 'DP'),
+  ('C02', 'CL01', '2022-06-24 15:00:00', 10, 'ALLIN'),
+  ('C03', 'CL01', '2022-06-24 15:00:00', 10, 'ALLIN'),
+  ('C03', 'CL03', '2022-07-17 08:00:00',  7, 'PC'),
+  ('C04', 'CL02', '2022-06-26 13:30:00',  4, 'DP');</pre>
+      <div class="why-box">
+        <strong>Pourquoi cet ordre d'insertion ?</strong> Chaque réservation référence un code chambre (<code>C01</code> à <code>C04</code>) et un code client (<code>CL01</code> à <code>CL03</code>) : les tables mères <code>CHAMBRE</code> et <code>CLIENT</code> doivent donc être remplies avant <code>RESERVATION</code>.
+      </div>
+    </div>
 
-      <li>
-        <strong
-          >Calculer le montant total de la facture en cours du client CL03
-          :</strong
-        >
-        <pre>
-SELECT numcl, SUM(prix * nbjours) AS facture 
-FROM reservation R, chambre ch 
-WHERE ch.numch = R.numch 
-AND R.numcl = 'CL03' 
-GROUP BY numcl; </pre
-        >
-      </li>
+    <!-- PARTIE III : CORRIGÉ DÉTAILLÉ DES 20 REQUÊTES -->
+    <h2>III. Question 2 — Corrigé détaillé des 20 Requêtes SQL (Type &amp; Justification de la solution)</h2>
 
-      <li>
-        <strong
-          >Lister les noms des clients résidant actuellement à l'hôtel :</strong
-        >
-        <pre>
-SELECT nom 
-FROM client C, reservation R 
-WHERE C.numcl = R.numcl 
-AND DATE(dateDebut) + nbjours >= DATE(NOW()) 
-AND DATE(dateDebut) <= DATE(NOW()); </pre
-        >
-      </li>
+    <!-- Requête 1 -->
+    <div id="req-1" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 1 : Afficher tous les Clients d'Ariana.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-selection">Type : Sélection simple (Restriction WHERE)</span>
+        </div>
+      </div>
+      <pre>SELECT *
+FROM client
+WHERE adresse = 'Ariana';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Toutes les informations demandées (toutes les colonnes du client et son adresse) se trouvent dans la seule table <code>client</code> : aucune jointure ni sous-requête n'est nécessaire, un simple filtre <code>WHERE adresse = 'Ariana'</code> suffit.
+      </div>
+    </div>
 
-      <li>
-        <strong
-          >Donner le nombre de clients qui ont choisi les mêmes pensions que le
-          client CL02 :</strong
-        >
-        <pre>
-SELECT COUNT(DISTINCT numcl) AS nbrclient 
-FROM reservation 
-WHERE pension IN (SELECT pension FROM reservation WHERE numcl = 'CL02'); </pre
-        >
-      </li>
+    <!-- Requête 2 -->
+    <div id="req-2" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 2 : Donner le nombre de chambres par type de chambre.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-groupby">Type : Regroupement (GROUP BY) &amp; Agrégation (COUNT)</span>
+        </div>
+      </div>
+      <pre>SELECT type, COUNT(*) AS nb_chambre
+FROM chambre
+GROUP BY type;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> L'expression « <em>par type de chambre</em> » indique qu'il faut regrouper les lignes de la table <code>chambre</code> selon la colonne <code>type</code> (<code>'S'</code>, <code>'D'</code>, <code>'Q'</code>) avec <code>GROUP BY type</code> et compter l'effectif de chaque groupe avec <code>COUNT(*)</code>.
+      </div>
+    </div>
 
-      <li>
-        <strong
-          >Afficher les réservations dont le séjour est supérieur à la moyenne
-          des séjours :</strong
-        >
-        <pre>
-SELECT * 
-FROM reservation 
-WHERE nbjours > (SELECT AVG(nbjours) FROM reservation); </pre
-        >
-      </li>
+    <!-- Requête 3 -->
+    <div id="req-3" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 3 : Trouver les chambres qui coûtent le moins cher.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-sousreq">Type : Sous-requête scalaire (= SELECT MIN)</span>
+          <span class="badge-type badge-imbriquee">Requête imbriquée</span>
+        </div>
+      </div>
+      <pre>SELECT *
+FROM chambre
+WHERE prix = (SELECT MIN(prix) FROM chambre);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> En SQL, on ne peut pas écrire <code>WHERE prix = MIN(prix)</code>, et plusieurs chambres peuvent partager ce prix minimum (ici <code>C01</code> et <code>C02</code> à <code>250</code>). On utilise donc une <strong>sous-requête imbriquée</strong> <code>(SELECT MIN(prix) FROM chambre)</code> qui calcule d'abord le tarif minimum, puis la requête principale affiche toutes les chambres ayant ce prix.
+      </div>
+    </div>
 
-      <li>
-        <strong
-          >Afficher les réservations dont le séjour est supérieur à celui de
-          numr = 2 :</strong
-        >
-        <pre>
-SELECT * 
-FROM reservation 
-WHERE nbjours > (SELECT nbjours FROM reservation WHERE numr = 2); </pre
-        >
-      </li>
+    <!-- Requête 4 -->
+    <div id="req-4" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 4 : Afficher une liste qui comprend le numéro de réservation, la date d'entrée et le nom du client.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+        </div>
+      </div>
+      <pre>SELECT r.numr, r.dateDebut, cl.nom
+FROM client cl, reservation r
+WHERE r.numcl = cl.numcl;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le numéro de réservation et la date d'entrée sont dans <code>reservation</code> tandis que le nom du client est dans <code>client</code> : une <strong>jointure</strong> <code>WHERE r.numcl = cl.numcl</code> est indispensable pour associer chaque réservation à son client.
+      </div>
+    </div>
 
-      <li>
-        <strong
-          >Donner le nombre de réservations faites pour des chambres simples
-          :</strong
-        >
-        <pre>
-SELECT COUNT(*) AS nbchambre 
-FROM reservation R, chambre ch 
-WHERE R.numch = ch.numch 
-AND type = 'S'; </pre
-        >
-      </li>
+    <!-- Requête 5 -->
+    <div id="req-5" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 5 : Afficher le numéro de réservation et le nom du client pour les entrées : (5.1) d'aujourd'hui, (5.2) des 7 derniers jours, (5.3) d'il y a plus de 30 jours.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-selection">+ Fonctions de Date (NOW, DATE, DATE_SUB / DATEDIFF)</span>
+        </div>
+      </div>
+      <pre>-- 5.1 Entrées d'aujourd'hui (date de début = date système) :
+SELECT r.numr, cl.nom
+FROM client cl, reservation r
+WHERE r.numcl = cl.numcl
+  AND DATE(r.dateDebut) = DATE(NOW());
 
-      <li>
-        <strong>Calculer le nombre total de nuitées par chambre :</strong>
-        <pre>
-SELECT SUM(nbjours) AS nbrnuits, numch 
-FROM reservation 
-GROUP BY numch; </pre
-        >
-      </li>
+-- 5.2 Entrées passées au cours des 7 derniers jours :
+SELECT r.numr, cl.nom
+FROM client cl, reservation r
+WHERE r.numcl = cl.numcl
+  AND DATE(r.dateDebut) &gt;= DATE_SUB(DATE(NOW()), INTERVAL 7 DAY);
 
-      <li>
-        <strong
-          >Calculer le chiffre d'affaires total par chambre (= total des nuitées
-          * prix) :</strong
-        >
-        <pre>
-SELECT SUM(nbjours) * prix AS chiffre_affaire, R.numch 
-FROM reservation R, chambre ch 
-WHERE R.numch = ch.numch 
-GROUP BY R.numch, prix; </pre
-        >
-      </li>
+-- 5.3 Entrées passées il y a plus de 30 jours :
+SELECT r.numr, cl.nom
+FROM client cl, reservation r
+WHERE r.numcl = cl.numcl
+  AND DATE(r.dateDebut) &lt; DATE_SUB(DATE(NOW()), INTERVAL 30 DAY);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Dans les trois cas, on affiche des colonnes issues de <code>reservation</code> (<code>numr</code>) et de <code>client</code> (<code>nom</code>), ce qui impose la <strong>jointure</strong> <code>WHERE r.numcl = cl.numcl</code>. Comme <code>dateDebut</code> contient aussi l'heure (<code>DATETIME</code>), on extrait la partie date avec <code>DATE(r.dateDebut)</code> pour la comparer à la date système <code>DATE(NOW())</code> et aux intervalles de 7 ou 30 jours via <code>DATE_SUB</code> (ou <code>DATEDIFF</code>).
+      </div>
+    </div>
 
-      <li>
-        <strong
-          >Afficher le nombre de réservations par client et pension :</strong
-        >
-        <pre>
-SELECT numcl, pension, COUNT(*) AS nbreservation 
-FROM reservation 
-GROUP BY numcl, pension; </pre
-        >
-      </li>
+    <!-- Requête 6 -->
+    <div id="req-6" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 6 : Calculer le prix moyen des chambres.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-groupby">Type : Agrégation globale (AVG sans GROUP BY)</span>
+        </div>
+      </div>
+      <pre>SELECT AVG(prix) AS prix_moyenne
+FROM chambre;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On demande une seule valeur globale sur toute la table <code>chambre</code> : la fonction d'agrégation <code>AVG(prix)</code> s'applique directement à l'ensemble des lignes sans <code>GROUP BY</code>.
+      </div>
+    </div>
 
-      <li>
-        <strong
-          >Lister les chambres dans l'ordre croissant des types et l'ordre
-          décroissant des prix :</strong
-        >
-        <pre>
-SELECT * 
-FROM chambre 
-ORDER BY type, prix DESC; </pre
-        >
-      </li>
+    <!-- Requête 7 -->
+    <div id="req-7" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 7 : Calculer le prix moyen des chambres par type de chambre.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-groupby">Type : Regroupement (GROUP BY) &amp; Agrégation (AVG)</span>
+        </div>
+      </div>
+      <pre>SELECT type, AVG(prix) AS prix_moyenne
+FROM chambre
+GROUP BY type;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Contrairement à la requête 6, la moyenne est ici demandée <em>par type de chambre</em> : on regroupe donc les chambres par <code>type</code> avec <code>GROUP BY type</code> afin que <code>AVG(prix)</code> calcule une moyenne distincte pour chaque catégorie (<code>'S'</code>, <code>'D'</code>, <code>'Q'</code>).
+      </div>
+    </div>
 
-      <li>
-        <strong
-          >Lister les clients ayant effectué au moins 2 réservations :</strong
-        >
-        <pre>
-SELECT cl.numcl, nom, adresse, COUNT(numr) AS nbreservation 
-FROM client cl, reservation r 
-WHERE cl.numcl = r.numcl 
-GROUP BY cl.numcl, nom, adresse 
-HAVING COUNT(numr) >= 2; </pre
-        >
-      </li>
+    <!-- Requête 8 -->
+    <div id="req-8" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 8 : Lister toutes les réservations du client CL03.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-selection">Type : Sélection simple (Restriction WHERE)</span>
+        </div>
+      </div>
+      <pre>SELECT *
+FROM reservation
+WHERE numcl = 'CL03';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le code du client (<code>numcl</code>) est déjà présent comme clé étrangère dans la table <code>reservation</code> : on n'a donc pas besoin de joindre la table <code>client</code>, un simple filtre <code>WHERE numcl = 'CL03'</code> suffit.
+      </div>
+    </div>
 
-      <li>
-        <strong
-          >Lister les chambres n'ayant aucune réservation enregistrée dans la
-          base :</strong
-        >
-        <pre>
-SELECT * 
-FROM chambre 
-WHERE numch NOT IN (SELECT numch FROM reservation); </pre
-        >
-      </li>
-    </ol>
+    <!-- Requête 9 -->
+    <div id="req-9" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 9 : Calculer le montant total de la facture en cours du client CL03.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-groupby">+ GROUP BY &amp; Agrégation (SUM)</span>
+        </div>
+      </div>
+      <pre>SELECT R.numcl, SUM(ch.prix * R.nbjours) AS facture
+FROM reservation R, chambre ch
+WHERE ch.numch = R.numch
+  AND R.numcl = 'CL03'
+GROUP BY R.numcl;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le nombre de jours (<code>nbjours</code>) est dans <code>reservation</code> tandis que le tarif par nuit (<code>prix</code>) est dans <code>chambre</code> : il faut donc une <strong>jointure</strong> <code>WHERE ch.numch = R.numch</code> pour calculer le coût de chaque séjour (<code>prix * nbjours</code>), puis <code>SUM(...)</code> et <code>GROUP BY R.numcl</code> pour additionner toutes les réservations du client <code>'CL03'</code>.
+      </div>
+    </div>
+
+    <!-- Requête 10 -->
+    <div id="req-10" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 10 : Lister les noms des clients résidant actuellement à l'hôtel.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-selection">+ Calcul d'intervalle de Dates</span>
+        </div>
+      </div>
+      <pre>SELECT C.nom
+FROM client C, reservation R
+WHERE C.numcl = R.numcl
+  AND DATE(R.dateDebut) &lt;= DATE(NOW())
+  AND DATE_ADD(DATE(R.dateDebut), INTERVAL R.nbjours DAY) &gt;= DATE(NOW());</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Un client réside actuellement à l'hôtel si la date du jour <code>DATE(NOW())</code> est comprise entre sa date d'arrivée <code>DATE(R.dateDebut)</code> et sa date de départ (<code>DATE(R.dateDebut) + nbjours</code>). Comme on veut afficher le <code>nom</code> du client, on relie <code>client C</code> et <code>reservation R</code> par la <strong>jointure</strong> <code>WHERE C.numcl = R.numcl</code>.
+      </div>
+    </div>
+
+    <!-- Requête 11 -->
+    <div id="req-11" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 11 : Donner le nombre de clients qui ont choisi les mêmes pensions que le client CL02.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-sousreq">Type : Sous-requête (IN)</span>
+          <span class="badge-type badge-imbriquee">Requête imbriquée + COUNT(DISTINCT)</span>
+        </div>
+      </div>
+      <pre>SELECT COUNT(DISTINCT numcl) AS nbrclient
+FROM reservation
+WHERE pension IN (
+  SELECT pension
+  FROM reservation
+  WHERE numcl = 'CL02'
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On ne connaît pas à l'avance quelles pensions a choisies le client <code>'CL02'</code> (il peut en avoir plusieurs). La <strong>sous-requête imbriquée</strong> récupère d'abord la liste des pensions de <code>'CL02'</code>, puis la requête principale utilise l'opérateur <code>IN</code> et compte les clients distincts avec <code>COUNT(DISTINCT numcl)</code> pour ne pas compter deux fois un même client.
+      </div>
+    </div>
+
+    <!-- Requête 12 -->
+    <div id="req-12" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 12 : Afficher les réservations dont le séjour est supérieur à la moyenne des séjours.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-sousreq">Type : Sous-requête scalaire (&gt; SELECT AVG)</span>
+          <span class="badge-type badge-imbriquee">Requête imbriquée</span>
+        </div>
+      </div>
+      <pre>SELECT *
+FROM reservation
+WHERE nbjours &gt; (SELECT AVG(nbjours) FROM reservation);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Une fonction d'agrégation comme <code>AVG(nbjours)</code> ne pouvant jamais figurer directement dans un <code>WHERE</code>, on utilise une <strong>sous-requête imbriquée</strong> <code>(SELECT AVG(nbjours) FROM reservation)</code> qui calcule d'abord la durée moyenne, puis la requête principale filtre les réservations dont <code>nbjours</code> dépasse cette moyenne.
+      </div>
+    </div>
+
+    <!-- Requête 13 -->
+    <div id="req-13" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 13 : Afficher les réservations dont le séjour est supérieur à celui de <code>numr = 2</code>.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-sousreq">Type : Sous-requête scalaire</span>
+          <span class="badge-type badge-imbriquee">Requête imbriquée</span>
+        </div>
+      </div>
+      <pre>SELECT *
+FROM reservation
+WHERE nbjours &gt; (
+  SELECT nbjours
+  FROM reservation
+  WHERE numr = 2
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Pour comparer le nombre de jours de chaque réservation à celui de la réservation n° 2 sans coder la valeur en dur, on utilise une <strong>sous-requête</strong> qui extrait d'abord <code>nbjours</code> pour <code>numr = 2</code>, puis la requête principale sélectionne toutes les lignes ayant un <code>nbjours</code> strictement supérieur.
+      </div>
+    </div>
+
+    <!-- Requête 14 -->
+    <div id="req-14" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 14 : Donner le nombre de réservations faites pour des chambres simples.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-groupby">+ Agrégation (COUNT)</span>
+        </div>
+      </div>
+      <pre>SELECT COUNT(*) AS nb_reservations
+FROM reservation R, chambre ch
+WHERE R.numch = ch.numch
+  AND ch.type = 'S';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On compte des lignes de <code>reservation</code>, mais le critère « chambre simple » (<code>type = 'S'</code>) se trouve dans la table <code>chambre</code>. On utilise donc une <strong>jointure</strong> <code>WHERE R.numch = ch.numch</code> suivie du filtre <code>AND ch.type = 'S'</code> et de <code>COUNT(*)</code>.
+      </div>
+    </div>
+
+    <!-- Requête 15 -->
+    <div id="req-15" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 15 : Calculer le nombre total de nuitées par chambre.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-groupby">Type : Regroupement (GROUP BY) &amp; Agrégation (SUM)</span>
+        </div>
+      </div>
+      <pre>SELECT numch, SUM(nbjours) AS nbrnuits
+FROM reservation
+GROUP BY numch;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le numéro de chambre (<code>numch</code>) et le nombre de nuitées (<code>nbjours</code>) sont tous deux dans la table <code>reservation</code> : aucune jointure n'est nécessaire, on regroupe par chambre avec <code>GROUP BY numch</code> et on additionne les durées avec <code>SUM(nbjours)</code>.
+      </div>
+    </div>
+
+    <!-- Requête 16 -->
+    <div id="req-16" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 16 : Calculer le chiffre d'affaires total par chambre (= total des nuitées * prix).</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-groupby">+ GROUP BY &amp; Agrégation (SUM)</span>
+        </div>
+      </div>
+      <pre>SELECT R.numch, SUM(R.nbjours) * ch.prix AS chiffre_affaire
+FROM reservation R, chambre ch
+WHERE R.numch = ch.numch
+GROUP BY R.numch, ch.prix;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Les nuitées (<code>nbjours</code>) sont dans <code>reservation</code> alors que le tarif unitaire (<code>prix</code>) est dans <code>chambre</code> : il faut donc une <strong>jointure</strong> <code>WHERE R.numch = ch.numch</code>, puis un regroupement <code>GROUP BY R.numch, ch.prix</code> pour multiplier le total des nuitées <code>SUM(R.nbjours)</code> par le prix de la chambre.
+      </div>
+    </div>
+
+    <!-- Requête 17 -->
+    <div id="req-17" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 17 : Afficher le nombre de réservations par client et pension.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-groupby">Type : Regroupement sur 2 colonnes (GROUP BY) &amp; COUNT</span>
+        </div>
+      </div>
+      <pre>SELECT numcl, pension, COUNT(*) AS nbreservation
+FROM reservation
+GROUP BY numcl, pension;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Les deux critères de regroupement (<code>numcl</code> et <code>pension</code>) appartiennent à la table <code>reservation</code>. On regroupe donc sur le couple <code>(numcl, pension)</code> dans le <code>GROUP BY</code> et on compte le nombre de réservations de chaque couple avec <code>COUNT(*)</code>.
+      </div>
+    </div>
+
+    <!-- Requête 18 -->
+    <div id="req-18" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 18 : Lister les chambres dans l'ordre croissant des types et l'ordre décroissant des prix.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-selection">Type : Sélection avec Tri multicritère (ORDER BY ASC, DESC)</span>
+        </div>
+      </div>
+      <pre>SELECT *
+FROM chambre
+ORDER BY type ASC, prix DESC;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Il s'agit d'un tri sur une seule table : <code>ORDER BY type ASC, prix DESC</code> trie d'abord les chambres par type croissant, puis, à type égal, de la plus chère à la moins chère.
+      </div>
+    </div>
+
+    <!-- Requête 19 -->
+    <div id="req-19" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 19 : Lister les clients ayant effectué au moins 2 réservations.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-jointure">Type : Jointure</span>
+          <span class="badge-type badge-groupby">+ GROUP BY / HAVING</span>
+        </div>
+      </div>
+      <pre>SELECT cl.numcl, cl.nom, cl.adresse, COUNT(r.numr) AS nbreservation
+FROM client cl, reservation r
+WHERE cl.numcl = r.numcl
+GROUP BY cl.numcl, cl.nom, cl.adresse
+HAVING COUNT(r.numr) &gt;= 2;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Pour afficher l'identité complète du client et compter ses réservations, on relie <code>client</code> et <code>reservation</code> par la <strong>jointure</strong> <code>WHERE cl.numcl = r.numcl</code> et on regroupe par client avec <code>GROUP BY</code>. Comme la condition « au moins 2 réservations » porte sur l'agrégat <code>COUNT(r.numr) &gt;= 2</code>, on utilise obligatoirement la clause <strong><code>HAVING</code></strong>.
+      </div>
+    </div>
+
+    <!-- Requête 20 -->
+    <div id="req-20" class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 20 : Lister les chambres n'ayant aucune réservation enregistrée dans la base.</div>
+        <div class="req-badges">
+          <span class="badge-type badge-sousreq">Type : Sous-requête (NOT IN)</span>
+          <span class="badge-type badge-imbriquee">Requête imbriquée</span>
+        </div>
+      </div>
+      <pre>SELECT *
+FROM chambre
+WHERE numch NOT IN (
+  SELECT numch
+  FROM reservation
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On cherche les chambres <strong>absentes</strong> de la table <code>reservation</code>. Une jointure entre <code>chambre</code> et <code>reservation</code> ne montre que les chambres réservées ; il faut donc une <strong>sous-requête imbriquée</strong> <code>(SELECT numch FROM reservation)</code> combinée à l'opérateur <code>NOT IN</code> pour retenir les chambres qui n'y figurent jamais.
+      </div>
+    </div>
 
     <div class="footer-page">4ème SI - Lycée Rafèha | Corrigé Gesthotel</div>
-    <script src="tp-gesthotel-animation.js"></script>
-  <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../../assets/css/protection.css?v=193" />
-<script src="../../assets/js/protection.js?v=193" defer></script>
-<!-- /Protection -->
-<script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=193"></script>
-<script src="../../assets/js/acces.js?v=193"></script>
-</body>
+    <script>window.__APP_OK = true;</script>
+    <!-- 🔒 Protection du contenu STI -->
+    <link rel="stylesheet" href="../../assets/css/protection.css?v=226" />
+    <script src="../../assets/js/protection.js?v=226" defer></script>
+    <!-- /Protection -->
+    <script src="../../assets/js/supabase-umd.js"></script>
+    <script src="../../assets/js/config.js?v=226"></script>
+    <script src="../../assets/js/acces.js?v=226"></script>
+  </body>
 </html>
