@@ -296,7 +296,7 @@ var decoAutoTimer = null;
 var decoSegFin = 0;
 var decoAudio = document.createElement('audio');
 decoAudio.preload = 'auto';
-decoAudio.src = '../assets/audio/css-animee.mp3?v=219';
+decoAudio.src = '../assets/audio/css-animee.mp3?v=220';
 decoAudio.style.display = 'none';
 if (document.body) { document.body.appendChild(decoAudio); }
 
@@ -320,6 +320,7 @@ function finSegmentVoixDeco(enAuto) {
 }
 
 decoAudio.addEventListener('timeupdate', function () {
+  if (decoAudio.paused) return;
   if (decoSegFin > 0 && decoAudio.currentTime >= decoSegFin - 0.04) {
     finSegmentVoixDeco(auto);
   }
@@ -345,7 +346,7 @@ function jouerVoixDecoCourante(enAuto) {
     try {
       decoAudio.muted = false;
       decoAudio.volume = 1.0;
-      decoAudio.playbackRate = 0.95;
+      decoAudio.playbackRate = (typeof window.lireVitesseVoixSTI === 'function') ? window.lireVitesseVoixSTI() : 0.95;
       decoAudio.currentTime = t0;
       var p = decoAudio.play();
       if (p && p.catch) {
@@ -353,10 +354,6 @@ function jouerVoixDecoCourante(enAuto) {
           if (enAuto && auto) programmer();
         });
       }
-      var durMs = Math.max(900, Math.round(((t1 - t0) / 0.95) * 1000) + 180);
-      decoVoixTimer = setTimeout(function () {
-        finSegmentVoixDeco(enAuto);
-      }, durMs);
     } catch (e) {}
   }
   if (decoAudio.readyState >= 1) {

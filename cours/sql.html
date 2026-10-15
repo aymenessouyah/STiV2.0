@@ -4575,14 +4575,19 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
     var sqlSegFin = 0;
     var sqlAudio = document.createElement("audio");
     sqlAudio.preload = "auto";
-    sqlAudio.src = "../assets/audio/sql-cours.mp3?v=219";
+    sqlAudio.src = "../assets/audio/sql-cours.mp3?v=220";
     sqlAudio.style.display = "none";
     document.body.appendChild(sqlAudio);
 
     function majBoutonHeroVoix(enLecture) {
       var bHero = document.getElementById("sti-btn-sql-voix-hero");
       if (bHero) {
-        bHero.textContent = enLecture ? "⏸️ Pause Voix SQL" : "🔊 Écouter le cours SQL";
+        var pill = bHero.querySelector(".sti-prog-pill");
+        var enPause = !enLecture && sqlAudio && sqlAudio.paused && sqlAudio.currentTime > 0.5 && !sqlAudio.ended && window.__stiVoiceSessionActive;
+        bHero.textContent = enLecture
+          ? "⏸️ Pause Voix SQL"
+          : (enPause ? "▶️ Reprendre Voix SQL" : "🔊 Écouter le cours SQL");
+        if (pill) bHero.appendChild(pill);
         bHero.style.background = enLecture ? "#b45309" : "#177245";
       }
     }
@@ -4596,16 +4601,25 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
     window.arreterVoixSqlSTI = arreterVoixSqlSTI;
 
     sqlAudio.addEventListener("timeupdate", function () {
+      if (sqlAudio.paused) return;
       if (sqlSegFin > 0 && sqlAudio.currentTime >= sqlSegFin - 0.04) {
         arreterVoixSqlSTI();
       }
     });
+    sqlAudio.addEventListener("pause", function () {
+      majBoutonHeroVoix(false);
+    });
+    sqlAudio.addEventListener("play", function () {
+      majBoutonHeroVoix(true);
+    });
     sqlAudio.addEventListener("ended", function () {
+      window.__stiVoiceSessionActive = false;
       majBoutonHeroVoix(false);
     });
 
     function jouerVoixSqlCle(cle) {
-      arreterVoixSqlSTI();
+      if (sqlVoixTimer) { clearTimeout(sqlVoixTimer); sqlVoixTimer = null; }
+      try { sqlAudio.pause(); } catch (e0) {}
       if (!voixSqlActive && cle !== "cours-complet") return;
       var seg = SQL_VOIX_CUES[cle];
       if (!seg) return;
@@ -4617,11 +4631,11 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
           sqlAudio.volume = 1.0;
           sqlAudio.playbackRate = rSql;
           sqlAudio.currentTime = seg[0];
+          window.__stiActiveVoiceAudio = sqlAudio;
+          window.__stiVoiceSessionActive = true;
           var p = sqlAudio.play();
           if (p && p.catch) p.catch(function () {});
           majBoutonHeroVoix(true);
-          var durMs = Math.max(1200, Math.round(((seg[1] - seg[0]) / Math.min(0.75, rSql)) * 1000) + 600);
-          sqlVoixTimer = setTimeout(arreterVoixSqlSTI, durMs);
         } catch (e) {}
       }
       if (sqlAudio.readyState >= 1) {
@@ -4639,7 +4653,19 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
 
     window.lancerOuCouperVoixCoursSqlComplet = function () {
       if (!sqlAudio.paused) {
-        arreterVoixSqlSTI();
+        window.__stiVoiceSessionActive = true;
+        try { sqlAudio.pause(); } catch (e) {}
+        majBoutonHeroVoix(false);
+      } else if (sqlAudio.currentTime > 0.5 && !sqlAudio.ended) {
+        voixSqlActive = true;
+        window.__stiActiveVoiceAudio = sqlAudio;
+        window.__stiVoiceSessionActive = true;
+        try {
+          sqlAudio.playbackRate = (typeof window.lireVitesseVoixSTI === "function") ? window.lireVitesseVoixSTI() : 1;
+          var pR = sqlAudio.play();
+          if (pR && pR.catch) pR.catch(function () {});
+        } catch (e2) {}
+        majBoutonHeroVoix(true);
       } else {
         voixSqlActive = true;
         var btns = document.querySelectorAll(".sti-btn-voix-sql");
@@ -4706,11 +4732,11 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
   })();
   </script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=219" />
-<script src="../assets/js/protection.js?v=219" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=220" />
+<script src="../assets/js/protection.js?v=220" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=219"></script>
-<script src="../assets/js/acces.js?v=219"></script>
+<script src="../assets/js/config.js?v=220"></script>
+<script src="../assets/js/acces.js?v=220"></script>
 </body>
 </html>

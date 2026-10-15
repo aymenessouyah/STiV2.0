@@ -560,7 +560,7 @@ var stepAdvanceTimer = null;
 var segFinCourant = 0;
 var guichetAudio = document.createElement('audio');
 guichetAudio.preload = 'auto';
-guichetAudio.src = '../assets/audio/guichet-etapes.mp3?v=219';
+guichetAudio.src = '../assets/audio/guichet-etapes.mp3?v=220';
 guichetAudio.style.display = 'none';
 document.body.appendChild(guichetAudio);
 
@@ -595,6 +595,7 @@ function finSegmentVoix(enAuto) {
 }
 
 guichetAudio.addEventListener('timeupdate', function () {
+  if (guichetAudio.paused) return;
   if (segFinCourant > 0 && guichetAudio.currentTime >= segFinCourant - 0.04) {
     finSegmentVoix(autoRunning);
   }
@@ -637,10 +638,6 @@ function jouerVoixEtapeCourante(enAuto) {
           }
         });
       }
-      var durMs = Math.max(800, Math.round(((t1 - t0) / rate) * 1000) + 180);
-      voixTimer = setTimeout(function () {
-        finSegmentVoix(enAuto);
-      }, durMs);
     } catch (e) {}
   }
 
@@ -958,11 +955,11 @@ init();build();render();
 </script>
 
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=219" />
-<script src="../assets/js/protection.js?v=219" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=220" />
+<script src="../assets/js/protection.js?v=220" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=219"></script>
-<script src="../assets/js/acces.js?v=219"></script>
+<script src="../assets/js/config.js?v=220"></script>
+<script src="../assets/js/acces.js?v=220"></script>
 </body>
 </html>

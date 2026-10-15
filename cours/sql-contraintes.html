@@ -892,7 +892,7 @@ let sqlcTimer = null;
 let sqlcFin = 0;
 const sqlcAudio = document.createElement('audio');
 sqlcAudio.preload = 'auto';
-sqlcAudio.src = '../assets/audio/sql-cours.mp3?v=219';
+sqlcAudio.src = '../assets/audio/sql-cours.mp3?v=220';
 sqlcAudio.style.display = 'none';
 document.body.appendChild(sqlcAudio);
 function arreterVoixSqlSTI(){
@@ -902,6 +902,7 @@ function arreterVoixSqlSTI(){
 }
 window.arreterVoixSqlSTI = arreterVoixSqlSTI;
 sqlcAudio.addEventListener('timeupdate',()=>{
+  if(sqlcAudio.paused)return;
   if(sqlcFin>0 && sqlcAudio.currentTime>=sqlcFin-0.04){arreterVoixSqlSTI();}
 });
 function jouerVoixSqlc(cle){
@@ -912,10 +913,9 @@ function jouerVoixSqlc(cle){
   sqlcFin=seg[1];
   const go=()=>{
     try{
-      sqlcAudio.muted=false;sqlcAudio.volume=1.0;sqlcAudio.playbackRate=0.95;
+      sqlcAudio.muted=false;sqlcAudio.volume=1.0;sqlcAudio.playbackRate=(typeof window.lireVitesseVoixSTI==='function')?window.lireVitesseVoixSTI():0.95;
       sqlcAudio.currentTime=seg[0];
       const p=sqlcAudio.play();if(p&&p.catch)p.catch(()=>{});
-      sqlcTimer=setTimeout(arreterVoixSqlSTI,Math.max(900,Math.round(((seg[1]-seg[0])/0.95)*1000)+200));
     }catch(e){}
   };
   if(sqlcAudio.readyState>=1)go();
@@ -1026,10 +1026,10 @@ document.querySelectorAll('input[name=m3]').forEach(r=>r.onchange=()=>$('sq3').t
 document.querySelectorAll('input[name=m4]').forEach(r=>r.onchange=()=>$('sq4').textContent=document.querySelector('input[name=m4]:checked').value==='1'?'ON DELETE CASCADE':'-- sans ON DELETE CASCADE (RESTRICT par défaut)');
 </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=219" />
-<script src="../assets/js/protection.js?v=219" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=220" />
+<script src="../assets/js/protection.js?v=220" defer></script>
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=219"></script>
-<script src="../assets/js/acces.js?v=219"></script>
+<script src="../assets/js/config.js?v=220"></script>
+<script src="../assets/js/acces.js?v=220"></script>
 </body>
 </html>

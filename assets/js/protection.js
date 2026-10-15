@@ -716,35 +716,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=219",
+        file: "php-guichet.mp4?v=220",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=219",
+        file: "css-positionnement.mp4?v=220",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=219",
+        file: "css-animee.mp4?v=220",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=219",
+        file: "sql-cours.mp4?v=220",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=219",
+        file: "html5-cours.mp4?v=220",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=219",
+        file: "css3-cours.mp4?v=220",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=219",
+        file: "javascript-cours.mp4?v=220",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=219",
+        file: "php-cours.mp4?v=220",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -1812,7 +1812,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=219";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=220";
 
           var CUES_MAP = {
             html5: {
@@ -1901,7 +1901,12 @@
           function majBtnVoixCours(enLecture) {
             var bV = document.getElementById("sti-btn-cours-voix-hero");
             if (bV) {
-              bV.textContent = enLecture ? ("⏸️ Pause Voix " + cLabel) : ("🔊 Écouter le cours " + cLabel);
+              var enPause = !enLecture && cAudio && cAudio.paused && cAudio.currentTime > 0.5 && !cAudio.ended && window.__stiVoiceSessionActive;
+              var pill = bV.querySelector(".sti-prog-pill");
+              bV.textContent = enLecture
+                ? ("⏸️ Pause Voix " + cLabel)
+                : (enPause ? ("▶️ Reprendre Voix " + cLabel) : ("🔊 Écouter le cours " + cLabel));
+              if (pill) bV.appendChild(pill);
               bV.style.background = enLecture ? "#b45309" : "#177245";
             }
           }
@@ -1914,18 +1919,27 @@
           };
 
           cAudio.addEventListener("timeupdate", function () {
+            if (cAudio.paused) return;
             enregistrerProgressionMediaSTI("audio:" + cSlug, cAudio.currentTime, cAudio.duration, false);
             if (cSegEnd > 0 && cAudio.currentTime >= cSegEnd - 0.05) {
               window.arreterVoixCoursSTI();
             }
           });
+          cAudio.addEventListener("pause", function () {
+            majBtnVoixCours(false);
+          });
+          cAudio.addEventListener("play", function () {
+            majBtnVoixCours(true);
+          });
           cAudio.addEventListener("ended", function () {
             enregistrerProgressionMediaSTI("audio:" + cSlug, cAudio.duration || 200, cAudio.duration || 200, true);
+            window.__stiVoiceSessionActive = false;
             majBtnVoixCours(false);
           });
 
           function jouerSegmentCours(st, en) {
-            window.arreterVoixCoursSTI();
+            if (cTimer) { clearTimeout(cTimer); cTimer = null; }
+            try { cAudio.pause(); } catch (e0) {}
             cSegEnd = en || 0;
             function go() {
               try {
@@ -1934,12 +1948,11 @@
                 cAudio.volume = 1.0;
                 cAudio.playbackRate = rV;
                 cAudio.currentTime = st || 0;
+                window.__stiActiveVoiceAudio = cAudio;
+                window.__stiVoiceSessionActive = true;
                 var p = cAudio.play();
                 if (p && p.catch) p.catch(function () {});
                 majBtnVoixCours(true);
-                if (en && en > st) {
-                  cTimer = setTimeout(window.arreterVoixCoursSTI, Math.max(1200, Math.round(((en - st) / Math.min(0.75, rV)) * 1000) + 600));
-                }
               } catch (e) {}
             }
             if (cAudio.readyState >= 1) {
@@ -2007,7 +2020,20 @@
             bVoixHero.addEventListener("click", function (ev) {
               ev.stopPropagation();
               if (!cAudio.paused) {
-                window.arreterVoixCoursSTI();
+                /* Pause sans réinitialiser la position */
+                window.__stiVoiceSessionActive = true;
+                try { cAudio.pause(); } catch (e) {}
+                majBtnVoixCours(false);
+              } else if (cAudio.currentTime > 0.5 && !cAudio.ended) {
+                /* Reprendre là où l'audio a été mis en pause */
+                window.__stiActiveVoiceAudio = cAudio;
+                window.__stiVoiceSessionActive = true;
+                try {
+                  cAudio.playbackRate = (typeof window.lireVitesseVoixSTI === "function") ? window.lireVitesseVoixSTI() : 1;
+                  var pr = cAudio.play();
+                  if (pr && pr.catch) pr.catch(function () {});
+                } catch (e2) {}
+                majBtnVoixCours(true);
               } else {
                 jouerSegmentCours(0, 0);
               }
@@ -2143,6 +2169,7 @@
             var src = (this.currentSrc || this.src || "").toLowerCase();
             if (this.tagName === "AUDIO" && src.indexOf("foret.mp3") === -1) {
               window.__stiActiveVoiceAudio = this;
+              window.__stiVoiceSessionActive = true;
               this.playbackRate = lireVitesseVoixSTI();
             }
           } catch (e) {}
@@ -2294,8 +2321,10 @@
       function basculerPausePlayEcouteSTI() {
         var a = window.__stiActiveVoiceAudio;
         if (!a) return;
+        window.__stiVoiceSessionActive = true;
         try {
           if (a.paused) {
+            a.playbackRate = lireVitesseVoixSTI();
             var p = a.play();
             if (p && p.catch) p.catch(function () {});
           } else {
@@ -2309,7 +2338,7 @@
       function majBoutonsPausePlayGuide() {
         var a = window.__stiActiveVoiceAudio;
         var enPause = !a || a.paused;
-        var txt = enPause ? "▶️ Play" : "⏸️ Pause";
+        var txt = enPause ? "▶️ Reprendre" : "⏸️ Pause";
         var bg = enPause ? "#177245" : "#b45309";
         var b1 = document.getElementById("sti-voice-guide-pp");
         if (b1) {
@@ -2323,13 +2352,23 @@
         }
         var bV = document.getElementById("sti-btn-cours-voix-hero");
         if (bV && a) {
-          var lbl = bV.textContent.replace(/^.*?cours\s+/i, "").replace(/^.*?Voix\s+/i, "");
-          bV.textContent = enPause ? ("🔊 Écouter le cours " + lbl) : ("⏸️ Pause Voix " + lbl);
+          var pillV = bV.querySelector(".sti-prog-pill");
+          var cL = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
+          var aCommence = a.currentTime > 0.5 && !a.ended && window.__stiVoiceSessionActive;
+          bV.textContent = !enPause
+            ? ("⏸️ Pause Voix " + cL)
+            : (aCommence ? ("▶️ Reprendre Voix " + cL) : ("🔊 Écouter le cours " + cL));
+          if (pillV) bV.appendChild(pillV);
           bV.style.background = enPause ? "#177245" : "#b45309";
         }
         var bSql = document.getElementById("sti-btn-sql-voix-hero");
         if (bSql && a) {
-          bSql.textContent = enPause ? "🔊 Écouter le cours SQL" : "⏸️ Pause Voix SQL";
+          var pillS = bSql.querySelector(".sti-prog-pill");
+          var sCommence = a.currentTime > 0.5 && !a.ended && window.__stiVoiceSessionActive;
+          bSql.textContent = !enPause
+            ? "⏸️ Pause Voix SQL"
+            : (sCommence ? "▶️ Reprendre Voix SQL" : "🔊 Écouter le cours SQL");
+          if (pillS) bSql.appendChild(pillS);
           bSql.style.background = enPause ? "#177245" : "#b45309";
         }
       }

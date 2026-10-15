@@ -412,7 +412,7 @@ var posAutoTimer = null;
 var posSegFin = 0;
 var posAudio = document.createElement('audio');
 posAudio.preload = 'auto';
-posAudio.src = '../assets/audio/css-positionnement.mp3?v=219';
+posAudio.src = '../assets/audio/css-positionnement.mp3?v=220';
 posAudio.style.display = 'none';
 if (document.body) { document.body.appendChild(posAudio); }
 
@@ -436,6 +436,7 @@ function finSegmentVoixPos(enAuto) {
 }
 
 posAudio.addEventListener('timeupdate', function () {
+  if (posAudio.paused) return;
   if (posSegFin > 0 && posAudio.currentTime >= posSegFin - 0.04) {
     finSegmentVoixPos(auto);
   }
@@ -461,7 +462,7 @@ function jouerVoixPosCourante(enAuto) {
     try {
       posAudio.muted = false;
       posAudio.volume = 1.0;
-      posAudio.playbackRate = 0.95;
+      posAudio.playbackRate = (typeof window.lireVitesseVoixSTI === 'function') ? window.lireVitesseVoixSTI() : 0.95;
       posAudio.currentTime = t0;
       var p = posAudio.play();
       if (p && p.catch) {
@@ -469,10 +470,6 @@ function jouerVoixPosCourante(enAuto) {
           if (enAuto && auto) programmer();
         });
       }
-      var durMs = Math.max(900, Math.round(((t1 - t0) / 0.95) * 1000) + 180);
-      posVoixTimer = setTimeout(function () {
-        finSegmentVoixPos(enAuto);
-      }, durMs);
     } catch (e) {}
   }
   if (posAudio.readyState >= 1) {

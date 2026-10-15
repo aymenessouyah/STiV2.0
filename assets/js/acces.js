@@ -101,15 +101,15 @@
   /* S'assurer que protection.css et protection.js sont chargés sur 100 % des pages (code source verrouillé pour tous les abonnés) */
   (function assurerProtectionActive() {
     try {
-      if (!document.querySelector('link[href*="protection.css?v=219"]') && document.head) {
+      if (!document.querySelector('link[href*="protection.css?v=220"]') && document.head) {
         var lnk = document.createElement("link");
         lnk.rel = "stylesheet";
-        lnk.href = cfg.RACINE + "assets/css/protection.css?v=219";
+        lnk.href = cfg.RACINE + "assets/css/protection.css?v=220";
         document.head.appendChild(lnk);
       }
-      if (!document.querySelector('script[src*="protection.js?v=219"]') && (document.head || document.documentElement)) {
+      if (!document.querySelector('script[src*="protection.js?v=220"]') && (document.head || document.documentElement)) {
         var scr = document.createElement("script");
-        scr.src = cfg.RACINE + "assets/js/protection.js?v=219";
+        scr.src = cfg.RACINE + "assets/js/protection.js?v=220";
         scr.defer = true;
         (document.head || document.documentElement).appendChild(scr);
       }
@@ -546,7 +546,7 @@
     if (document.body) document.body.classList.toggle("sti-gold", ok);
 
     try {
-      var liens = document.querySelectorAll('link[href*="protection.css?v=219"]');
+      var liens = document.querySelectorAll('link[href*="protection.css?v=220"]');
       for (var i = 0; i < liens.length; i++) liens[i].disabled = ok;
     } catch (e) {}
 
@@ -568,7 +568,7 @@
         if (fr.contentDocument) {
           if (fr.contentDocument.documentElement) fr.contentDocument.documentElement.classList.toggle("sti-gold", ok);
           if (fr.contentDocument.body) fr.contentDocument.body.classList.toggle("sti-gold", ok);
-          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=219"]');
+          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=220"]');
           for (var j = 0; j < liensFr.length; j++) liensFr[j].disabled = ok;
           var wmFr = fr.contentDocument.getElementById("sti-watermark");
           if (ok && wmFr && wmFr.parentNode) wmFr.parentNode.removeChild(wmFr);
