@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v226";
+var CACHE = "sti-atelier-v227";
 var SHELL = [
   "./",
   "./index.html",
@@ -58,10 +58,8 @@ var SHELL = [
   "./exercices/sql/tp3-groupby-animation.js",
   "./exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
   "./exercices/sql/Tp4-correction-bd.html",
-  "./exercices/sql/tp-bd-animation.js",
   "./exercices/sql/Tp-date-ssr-j-gp-bd.html",
   "./exercices/sql/Tp-date-ssr-j-gp-correction-bd.html",
-  "./exercices/sql/tp-gesthotel-animation.js",
   "./exercices/sql/sql.html",
   "./exercices/sql/sql-correction.html",
   "./exercices/sql/sql-controle.js",
@@ -565,6 +563,8 @@ var OFFLINE_LIST = [
   "./quiz/pp.html",
   "./quiz/sql.html",
   "./assets/audio/sql-cours.mp3",
+  "./assets/audio/sql-serie4.mp3",
+  "./assets/audio/sql-serie5.mp3",
   "./assets/audio/html5-cours.mp3",
   "./assets/audio/css3-cours.mp3",
   "./assets/audio/javascript-cours.mp3",
@@ -573,6 +573,8 @@ var OFFLINE_LIST = [
   "./assets/videos/css-positionnement.mp4",
   "./assets/videos/css-animee.mp4",
   "./assets/videos/sql-cours.mp4",
+  "./assets/videos/sql-serie4.mp4",
+  "./assets/videos/sql-serie5.mp4",
   "./assets/videos/html5-cours.mp4",
   "./assets/videos/css3-cours.mp4",
   "./assets/videos/javascript-cours.mp4",
@@ -730,7 +732,12 @@ self.addEventListener("message", function (evt) {
           "./assets/js/portail.js",
           "./assets/js/admin.js",
           "./assets/css/atelier.css",
-          "./assets/css/protection.css"
+          "./assets/css/protection.css",
+          "./exercices/series-exercices.html",
+          "./exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
+          "./exercices/sql/Tp4-correction-bd.html",
+          "./exercices/sql/Tp-date-ssr-j-gp-bd.html",
+          "./exercices/sql/Tp-date-ssr-j-gp-correction-bd.html"
         ];
         await Promise.allSettled(critiques.map(function (u) {
           return fetch(u, { cache: "reload" }).then(function (rep) {
