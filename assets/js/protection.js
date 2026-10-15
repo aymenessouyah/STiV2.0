@@ -1209,6 +1209,254 @@
         }, delaiMs || 180);
       }
 
+      /* ── Catalogue des 17 vidéos .mp4 dédiées à chaque pas-à-pas STI ── */
+      var CATALOGUE_VIDEOS_STI = {
+        "php-guichet": {
+          file: "php-guichet.mp4",
+          title: "🎥 Pas-à-pas : L'Histoire du Guichet (PHP + MySQLi en 10 étapes)"
+        },
+        "php-recap": {
+          file: "php-recap.mp4",
+          title: "🎥 Pas-à-pas : Récapitulatif PHP (8 étapes essentielles)"
+        },
+        "php-sondage-pas-a-pas": {
+          file: "php-sondage-pas-a-pas.mp4",
+          title: "🎥 Pas-à-pas : sondage.php commenté en 7 étapes (Projet STI 0)"
+        },
+        "php-stat-pas-a-pas": {
+          file: "php-stat-pas-a-pas.mp4",
+          title: "🎥 Pas-à-pas : Correctionstat.php commenté en 7 étapes (Projet STI 0)"
+        },
+        "sql-contraintes": {
+          file: "sql-contraintes.mp4",
+          title: "🎥 Pas-à-pas : Les 6 Contraintes d'Intégrité SQL (LDD)"
+        },
+        "sql-jointure-where": {
+          file: "sql-jointure-where.mp4",
+          title: "🎥 Pas-à-pas : Jointure SQL dans WHERE (WHERE a.x = b.x)"
+        },
+        "sql-groupby-having": {
+          file: "sql-groupby-having.mp4",
+          title: "🎥 Pas-à-pas : Regroupement GROUP BY & Filtrage HAVING"
+        },
+        "sql-serie1-ldd": {
+          file: "sql-serie1-ldd.mp4",
+          title: "🎥 Pas-à-pas : SQL Série 1 — LDD (CREATE, ALTER, DROP)"
+        },
+        "sql-serie2-lmd": {
+          file: "sql-serie2-lmd.mp4",
+          title: "🎥 Pas-à-pas : SQL Série 2 — LMD (INSERT, UPDATE, DELETE, SELECT)"
+        },
+        "sql-serie3-groupby": {
+          file: "sql-serie3-groupby.mp4",
+          title: "🎥 Pas-à-pas : SQL Série 3 — GROUP BY, HAVING & Agrégation"
+        },
+        "sql-serie4-jointure-sr": {
+          file: "sql-serie4-jointure-sr.mp4",
+          title: "🎥 Pas-à-pas : SQL Série 4 — Jointures dans WHERE & Sous-requêtes"
+        },
+        "sql-serie5-gesthotel": {
+          file: "sql-serie5-gesthotel.mp4",
+          title: "🎥 Pas-à-pas : SQL Série 5 — Base GestHotel & Atelier SQL"
+        },
+        "css-positionnement": {
+          file: "css-positionnement.mp4",
+          title: "🎥 Pas-à-pas : Positionnement CSS3 animé en 10 étapes"
+        },
+        "css-decoration-animations": {
+          file: "css-decoration-animations.mp4",
+          title: "🎥 Pas-à-pas : Décoration CSS3, Ombres, Transitions & @keyframes"
+        },
+        "tp2-positionnement-corrige": {
+          file: "tp2-positionnement-corrige.mp4",
+          title: "🎥 Pas-à-pas : Corrigé TP2 Positionnement CSS3 (Position / Float / Inline-Block)"
+        },
+        "projet-tunisie-animation": {
+          file: "projet-tunisie-animation.mp4",
+          title: "🎥 Pas-à-pas : Projet Explore Tunisie — Animation HTML5 & CSS3 en 8 étapes"
+        },
+        "javascript-controles-sti": {
+          file: "javascript-controles-sti.mp4",
+          title: "🎥 Pas-à-pas : JavaScript STI — Contrôles de saisie & Annexe Bac"
+        }
+      };
+
+      function prefixeAssetsVideosSTI() {
+        var scripts = document.querySelectorAll("script[src]");
+        for (var i = 0; i < scripts.length; i++) {
+          var s = scripts[i].getAttribute("src") || "";
+          if (s.indexOf("assets/js/protection.js") !== -1) {
+            return s.replace(/assets\/js\/protection\.js.*$/, "assets/videos/");
+          }
+        }
+        return "assets/videos/";
+      }
+
+      function resoudreUrlVideoSTI(slugOuUrl) {
+        if (!slugOuUrl) return "";
+        if (CATALOGUE_VIDEOS_STI[slugOuUrl]) {
+          return prefixeAssetsVideosSTI() + CATALOGUE_VIDEOS_STI[slugOuUrl].file;
+        }
+        if (slugOuUrl.indexOf("/") !== -1 || slugOuUrl.indexOf(".mp4") !== -1) {
+          return slugOuUrl;
+        }
+        return prefixeAssetsVideosSTI() + slugOuUrl + ".mp4";
+      }
+
+      function detecterVideoPasAPasCourant() {
+        var p = String(location.pathname || "").toLowerCase();
+        if (p.indexOf("php-mysqli") !== -1) return "php-guichet";
+        if (p.indexOf("php-recap") !== -1) return "php-recap";
+        if (p.indexOf("sondage-parcours-pas-a-pas") !== -1 || p.indexOf("sti0/sondage") !== -1) return "php-sondage-pas-a-pas";
+        if (p.indexOf("statphpanimee") !== -1 || p.indexOf("sti0/statistiques") !== -1) return "php-stat-pas-a-pas";
+        if (p.indexOf("sql-contraintes") !== -1) return "sql-contraintes";
+        if (p.indexOf("tp1-bd") !== -1) return "sql-serie1-ldd";
+        if (p.indexOf("tp2-bd") !== -1 || p.indexOf("tp2-correction-bd") !== -1) return "sql-serie2-lmd";
+        if (p.indexOf("tp-groupby-bd") !== -1) return "sql-serie3-groupby";
+        if (p.indexOf("tp-bd-jointure") !== -1 || p.indexOf("tp4-correction-bd") !== -1) return "sql-serie4-jointure-sr";
+        if (p.indexOf("tp-date-ssr") !== -1 || p.indexOf("atelier_sql_3_fenetres") !== -1) return "sql-serie5-gesthotel";
+        if (p.indexOf("positionnement-animee") !== -1) return "css-positionnement";
+        if (p.indexOf("cssanimee") !== -1 || p.indexOf("box-shadow-text-shadow") !== -1) return "css-decoration-animations";
+        if (p.indexOf("tp2corrposition") !== -1) return "tp2-positionnement-corrige";
+        if (p.indexOf("site-tunisie-correction-animation") !== -1 || p.indexOf("carte-timbre-droite-haut") !== -1) return "projet-tunisie-animation";
+        if (p.indexOf("cours/javascript") !== -1 || p.indexOf("-correction-js") !== -1 || p.indexOf("carte-bancaire/cb") !== -1) return "javascript-controles-sti";
+        return null;
+      }
+
+      function creerBlocVideoInline(slug, idBox) {
+        var info = CATALOGUE_VIDEOS_STI[slug];
+        if (!info) return null;
+        var url = resoudreUrlVideoSTI(slug);
+        var box = document.createElement("div");
+        box.className = "sti-video-pas-a-pas-box sti-no-print";
+        if (idBox) box.id = idBox;
+        box.hidden = true;
+        box.innerHTML =
+          '<div class="sti-video-pas-a-pas-head">' +
+            '<div class="sti-video-pas-a-pas-title">' + info.title + '</div>' +
+            '<div class="sti-video-pas-a-pas-actions">' +
+              '<button type="button" data-vrate="0.85">0.85×</button>' +
+              '<button type="button" data-vrate="1">1×</button>' +
+              '<button type="button" data-vrate="1.25">1.25×</button>' +
+              '<button type="button" data-vrate="1.5">1.5×</button>' +
+              '<a href="' + url + '" download>⬇ MP4</a>' +
+              '<button type="button" data-vclose="1">✕ Fermer</button>' +
+            '</div>' +
+          '</div>' +
+          '<video controls playsinline preload="metadata" src="' + url + '"></video>';
+
+        var vid = box.querySelector("video");
+        var btnsRate = box.querySelectorAll("button[data-vrate]");
+        for (var r = 0; r < btnsRate.length; r++) {
+          (function (b) {
+            b.addEventListener("click", function () {
+              if (vid) vid.playbackRate = parseFloat(b.getAttribute("data-vrate")) || 1;
+            });
+          })(btnsRate[r]);
+        }
+        var btnClose = box.querySelector("button[data-vclose]");
+        if (btnClose) {
+          btnClose.addEventListener("click", function () {
+            if (vid) {
+              try { vid.pause(); } catch (e) {}
+            }
+            box.hidden = true;
+          });
+        }
+        if (vid) {
+          vid.addEventListener("play", function () {
+            arreterVoix(false);
+          });
+        }
+        return box;
+      }
+
+      function basculerBlocVideoInline(box) {
+        if (!box) return;
+        var vid = box.querySelector("video");
+        if (box.hidden) {
+          arreterVoix(false);
+          box.hidden = false;
+          try {
+            box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          } catch (e) {}
+          if (vid) {
+            try { vid.play(); } catch (e) {}
+          }
+        } else {
+          if (vid) {
+            try { vid.pause(); } catch (e) {}
+          }
+          box.hidden = true;
+        }
+      }
+
+      window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt) {
+        arreterVoix(false);
+        var info = CATALOGUE_VIDEOS_STI[slugOuUrl] || null;
+        var url = resoudreUrlVideoSTI(slugOuUrl);
+        var titre = titreOpt || (info ? info.title : "🎥 Vidéo commentée du pas-à-pas");
+
+        var overlay = document.getElementById("sti-video-modal-overlay");
+        if (!overlay) {
+          overlay = document.createElement("div");
+          overlay.id = "sti-video-modal-overlay";
+          overlay.className = "sti-no-print";
+          overlay.hidden = true;
+          overlay.innerHTML =
+            '<div class="sti-video-modal-card" role="dialog" aria-modal="true">' +
+              '<div class="sti-video-pas-a-pas-head">' +
+                '<div class="sti-video-pas-a-pas-title" id="sti-video-modal-title"></div>' +
+                '<div class="sti-video-pas-a-pas-actions">' +
+                  '<button type="button" data-mrate="0.85">0.85×</button>' +
+                  '<button type="button" data-mrate="1">1×</button>' +
+                  '<button type="button" data-mrate="1.25">1.25×</button>' +
+                  '<button type="button" data-mrate="1.5">1.5×</button>' +
+                  '<a id="sti-video-modal-dl" href="#" download>⬇ Télécharger .MP4</a>' +
+                  '<button type="button" id="sti-video-modal-close">✕ Fermer</button>' +
+                '</div>' +
+              '</div>' +
+              '<video id="sti-video-modal-player" controls playsinline preload="metadata"></video>' +
+            '</div>';
+          document.body.appendChild(overlay);
+
+          var mVid = document.getElementById("sti-video-modal-player");
+          var mRates = overlay.querySelectorAll("button[data-mrate]");
+          for (var i = 0; i < mRates.length; i++) {
+            (function (b) {
+              b.addEventListener("click", function () {
+                if (mVid) mVid.playbackRate = parseFloat(b.getAttribute("data-mrate")) || 1;
+              });
+            })(mRates[i]);
+          }
+          function fermerModaleVideo() {
+            if (mVid) {
+              try { mVid.pause(); } catch (e) {}
+            }
+            overlay.hidden = true;
+          }
+          document.getElementById("sti-video-modal-close").addEventListener("click", fermerModaleVideo);
+          overlay.addEventListener("click", function (ev) {
+            if (ev.target === overlay) fermerModaleVideo();
+          });
+        }
+
+        var tEl = document.getElementById("sti-video-modal-title");
+        var dlEl = document.getElementById("sti-video-modal-dl");
+        var vEl = document.getElementById("sti-video-modal-player");
+        if (tEl) tEl.textContent = titre;
+        if (dlEl) dlEl.href = url;
+        if (vEl) {
+          if (vEl.getAttribute("src") !== url) {
+            vEl.setAttribute("src", url);
+          }
+          overlay.hidden = false;
+          try { vEl.play(); } catch (e) {}
+        }
+      };
+
+      var slugVideoPage = detecterVideoPasAPasCourant();
+
       /* ── Création du Dock flottant #sti-voix-dock ── */
       var dock = document.createElement("div");
       dock.id = "sti-voix-dock";
@@ -1218,8 +1466,22 @@
         '<button type="button" id="sti-voix-btn-toggle" class="sti-voix-item" title="Activer ou couper la voix automatique sur les étapes">🔊 Voix ON</button>' +
         '<button type="button" id="sti-voix-btn-speak" class="sti-voix-item" title="Écouter l\'explication de l\'étape actuelle">▶ Lire l\'étape</button>' +
         '<button type="button" id="sti-voix-btn-auto" class="sti-voix-item" title="Lancer l\'animation pas à pas commentée par la voix">🎬 Auto + Voix</button>' +
+        (slugVideoPage
+          ? '<button type="button" id="sti-voix-btn-video" class="sti-voix-item sti-voix-video-btn" title="Regarder la vidéo .MP4 commentée dédiée à ce pas-à-pas">🎥 Vidéo MP4</button>'
+          : '') +
         '<button type="button" id="sti-voix-btn-speed" class="sti-voix-item" title="Vitesse de la voix">1.15×</button>';
       document.body.appendChild(dock);
+
+      if (slugVideoPage && document.getElementById("sti-voix-btn-video")) {
+        document.getElementById("sti-voix-btn-video").addEventListener("click", function () {
+          var boxInline = document.getElementById("sti-video-inline-main");
+          if (boxInline) {
+            basculerBlocVideoInline(boxInline);
+          } else {
+            window.ouvrirVideoPasAPasSTI(slugVideoPage);
+          }
+        });
+      }
 
       document.getElementById("sti-voix-btn-collapse").addEventListener("click", function () {
         dock.classList.toggle("collapsed");
@@ -1268,7 +1530,7 @@
         majBoutonsUI(synth.speaking);
       });
 
-      /* ── Injection des boutons vocaux directement dans les barres de contrôle des studios ── */
+      /* ── Injection des boutons vocaux + Vidéo .MP4 dédiée dans les barres de contrôle des studios ── */
       function injecterBoutonsStudio() {
         var barresCibles = [
           document.querySelector(".controls"),
@@ -1308,16 +1570,68 @@
 
           bar.appendChild(b1);
           bar.appendChild(b2);
+
+          if (slugVideoPage && CATALOGUE_VIDEOS_STI[slugVideoPage]) {
+            var bVid = document.createElement("button");
+            bVid.type = "button";
+            bVid.className = "sti-btn-video-dedie";
+            bVid.textContent = "🎥 Vidéo du pas-à-pas (.mp4)";
+            bVid.title = CATALOGUE_VIDEOS_STI[slugVideoPage].title;
+
+            var ancreInsertion = bar.classList.contains("topbar-recap") || (bar.parentNode && bar.parentNode.classList && bar.parentNode.classList.contains("topbar-recap"))
+              ? bar.parentNode
+              : bar;
+            var boxVid = document.getElementById("sti-video-inline-main");
+            if (!boxVid && ancreInsertion && ancreInsertion.parentNode) {
+              boxVid = creerBlocVideoInline(slugVideoPage, "sti-video-inline-main");
+              if (boxVid) {
+                ancreInsertion.parentNode.insertBefore(boxVid, ancreInsertion.nextSibling);
+              }
+            }
+            bVid.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              var b = document.getElementById("sti-video-inline-main");
+              if (b) basculerBlocVideoInline(b);
+              else window.ouvrirVideoPasAPasSTI(slugVideoPage);
+            });
+            bar.appendChild(bVid);
+          }
         }
 
-        /* Studios SQL intégrés dans cours/sql.html */
+        /* Si la page courante a une vidéo dédiée mais pas de barre .controls standard (ex: sql-contraintes, cssanimee, Sondage.html, Statistiques.html, atelier_sql_3_fenetres) */
+        if (slugVideoPage && !document.getElementById("sti-video-inline-main") && !document.getElementById("sti-banniere-video-dediee")) {
+          var conteneurHaut =
+            document.querySelector(".wrap, .container, main, .page, body > header, body > div");
+          if (conteneurHaut && conteneurHaut.parentNode) {
+            var barreDediee = document.createElement("div");
+            barreDediee.id = "sti-banniere-video-dediee";
+            barreDediee.className = "sti-no-print";
+            barreDediee.style.cssText = "max-width:980px;margin:10px auto 4px;padding:0 12px;display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;";
+            var btnOuvrir = document.createElement("button");
+            btnOuvrir.type = "button";
+            btnOuvrir.className = "sti-btn-video-dedie";
+            btnOuvrir.textContent = "🎥 Vidéo explicative de ce pas-à-pas (.mp4)";
+            btnOuvrir.title = CATALOGUE_VIDEOS_STI[slugVideoPage].title;
+            var blocV = creerBlocVideoInline(slugVideoPage, "sti-video-inline-main");
+            btnOuvrir.addEventListener("click", function () {
+              basculerBlocVideoInline(blocV);
+            });
+            barreDediee.appendChild(btnOuvrir);
+            conteneurHaut.parentNode.insertBefore(barreDediee, conteneurHaut);
+            if (blocV) {
+              conteneurHaut.parentNode.insertBefore(blocV, conteneurHaut);
+            }
+          }
+        }
+
+        /* Studios SQL intégrés dans cours/sql.html et cours/sql-bases-ldd-lmd-lcd.html */
         var sqlStudios = [
-          ["janim-btn-play", "join"],
-          ["gbanim-btn-play", "groupby"],
-          ["hvanim-btn-play", "having"]
+          ["janim-btn-play", "join", "sql-jointure-where", "🎥 Vidéo Jointure WHERE (.mp4)"],
+          ["gbanim-btn-play", "groupby", "sql-groupby-having", "🎥 Vidéo GROUP BY & HAVING (.mp4)"],
+          ["hvanim-btn-play", "having", "sql-groupby-having", "🎥 Vidéo GROUP BY & HAVING (.mp4)"]
         ];
         for (var s = 0; s < sqlStudios.length; s++) {
-          (function (btnId, kind) {
+          (function (btnId, kind, vSlug, vLabel) {
             var playBtn = document.getElementById(btnId);
             if (!playBtn || !playBtn.parentNode || playBtn.parentNode.querySelector(".sti-btn-voix-sql-" + kind)) return;
             var bv = document.createElement("button");
@@ -1332,7 +1646,81 @@
               lireTexte(extraireTexteEtapeActive(), true);
             });
             playBtn.parentNode.appendChild(bv);
-          })(sqlStudios[s][0], sqlStudios[s][1]);
+
+            var bVideoSql = document.createElement("button");
+            bVideoSql.type = "button";
+            bVideoSql.className = "sti-btn-video-dedie";
+            bVideoSql.textContent = vLabel;
+            var idBoxSql = "sti-video-box-sql-" + kind;
+            var wrapStudio = playBtn.closest(".sql-janim-wrap") || playBtn.parentNode;
+            var boxSql = document.getElementById(idBoxSql);
+            if (!boxSql && wrapStudio) {
+              boxSql = creerBlocVideoInline(vSlug, idBoxSql);
+              if (boxSql) wrapStudio.appendChild(boxSql);
+            }
+            bVideoSql.addEventListener("click", function () {
+              if (boxSql) basculerBlocVideoInline(boxSql);
+              else window.ouvrirVideoPasAPasSTI(vSlug);
+            });
+            playBtn.parentNode.appendChild(bVideoSql);
+          })(sqlStudios[s][0], sqlStudios[s][1], sqlStudios[s][2], sqlStudios[s][3]);
+        }
+
+        /* Bouton #btnSqlContraintes dans cours/sql.html */
+        var btnContraintes = document.getElementById("btnSqlContraintes");
+        if (btnContraintes && btnContraintes.parentNode && !btnContraintes.parentNode.querySelector(".sti-btn-video-contraintes")) {
+          var wrapC = document.createElement("div");
+          wrapC.style.cssText = "margin-top:8px;display:flex;justify-content:center;";
+          var bVC = document.createElement("button");
+          bVC.type = "button";
+          bVC.className = "sti-btn-video-dedie sti-btn-video-contraintes";
+          bVC.textContent = "🎥 Vidéo pas-à-pas : Les 6 Contraintes d'Intégrité SQL (.mp4)";
+          var boxC = creerBlocVideoInline("sql-contraintes", "sti-video-box-sql-contraintes");
+          bVC.addEventListener("click", function () {
+            basculerBlocVideoInline(boxC);
+          });
+          wrapC.appendChild(bVC);
+          btnContraintes.parentNode.insertBefore(wrapC, btnContraintes.nextSibling);
+          if (boxC) {
+            btnContraintes.parentNode.insertBefore(boxC, wrapC.nextSibling);
+          }
+        }
+
+        /* Boutons Guichet (#animOpen & #btn-top-anim-guichet) dans cours/php.html */
+        var btnAnimOpen = document.getElementById("animOpen");
+        if (btnAnimOpen && btnAnimOpen.parentNode && !btnAnimOpen.parentNode.querySelector(".sti-btn-video-guichet")) {
+          var bVG = document.createElement("button");
+          bVG.type = "button";
+          bVG.className = "sti-btn-video-dedie sti-btn-video-guichet";
+          bVG.style.marginTop = "8px";
+          bVG.textContent = "🎥 Vidéo pas-à-pas : L'Histoire du Guichet PHP + MySQLi (.mp4)";
+          var boxG = creerBlocVideoInline("php-guichet", "sti-video-box-php-guichet");
+          bVG.addEventListener("click", function () {
+            basculerBlocVideoInline(boxG);
+          });
+          btnAnimOpen.parentNode.insertBefore(bVG, btnAnimOpen.nextSibling);
+          if (boxG) {
+            btnAnimOpen.parentNode.insertBefore(boxG, bVG.nextSibling);
+          }
+        }
+        var btnTopGuichet = document.getElementById("btn-top-anim-guichet");
+        if (btnTopGuichet && btnTopGuichet.parentNode && !btnTopGuichet.parentNode.querySelector(".sti-btn-video-top-php")) {
+          var bVGTop = document.createElement("button");
+          bVGTop.type = "button";
+          bVGTop.className = "sti-btn-video-dedie sti-btn-video-top-php";
+          bVGTop.textContent = "🎥 Vidéo Guichet (.mp4)";
+          bVGTop.addEventListener("click", function () {
+            window.ouvrirVideoPasAPasSTI("php-guichet");
+          });
+          var bVRTop = document.createElement("button");
+          bVRTop.type = "button";
+          bVRTop.className = "sti-btn-video-dedie";
+          bVRTop.textContent = "🎥 Vidéo Récap PHP (.mp4)";
+          bVRTop.addEventListener("click", function () {
+            window.ouvrirVideoPasAPasSTI("php-recap");
+          });
+          btnTopGuichet.parentNode.appendChild(bVGTop);
+          btnTopGuichet.parentNode.appendChild(bVRTop);
         }
       }
 

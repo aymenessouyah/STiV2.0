@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v187";
+var CACHE = "sti-atelier-v188";
 var SHELL = [
   "./",
   "./index.html",
@@ -558,6 +558,23 @@ var OFFLINE_LIST = [
   "./quiz/php.html",
   "./quiz/pp.html",
   "./quiz/sql.html",
+  "./assets/videos/php-guichet.mp4",
+  "./assets/videos/php-recap.mp4",
+  "./assets/videos/php-sondage-pas-a-pas.mp4",
+  "./assets/videos/php-stat-pas-a-pas.mp4",
+  "./assets/videos/sql-contraintes.mp4",
+  "./assets/videos/sql-jointure-where.mp4",
+  "./assets/videos/sql-groupby-having.mp4",
+  "./assets/videos/sql-serie1-ldd.mp4",
+  "./assets/videos/sql-serie2-lmd.mp4",
+  "./assets/videos/sql-serie3-groupby.mp4",
+  "./assets/videos/sql-serie4-jointure-sr.mp4",
+  "./assets/videos/sql-serie5-gesthotel.mp4",
+  "./assets/videos/css-positionnement.mp4",
+  "./assets/videos/css-decoration-animations.mp4",
+  "./assets/videos/tp2-positionnement-corrige.mp4",
+  "./assets/videos/projet-tunisie-animation.mp4",
+  "./assets/videos/javascript-controles-sti.mp4",
   "./robots.txt",
   "./sitemap.xml"
 ];

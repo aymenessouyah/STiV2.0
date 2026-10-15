@@ -283,9 +283,137 @@ body.sti-gold #sti-watermark {
 @media print {
   #sti-voix-dock,
   .sti-btn-voix-inline,
-  .sti-btn-ecouter-bloc {
+  .sti-btn-ecouter-bloc,
+  .sti-btn-video-dedie,
+  .sti-video-pas-a-pas-box,
+  #sti-video-modal-overlay {
     display: none !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   🎥 Vidéo .MP4 dédiée accompagnant chaque Pas-à-Pas STI
+   ══════════════════════════════════════════════════════════ */
+.sti-btn-video-dedie {
+  appearance: none;
+  border: 1.5px solid #101728;
+  background: linear-gradient(125deg, #b91c1c, #f4511e, #6b5bd2);
+  color: #fff !important;
+  padding: 6px 12px;
+  border-radius: 9px;
+  font: 800 12px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 4px;
+  text-decoration: none !important;
+  box-shadow: 0 3px 8px rgba(185, 28, 28, 0.28);
+  transition: transform 0.14s ease, filter 0.14s ease;
+}
+.sti-btn-video-dedie:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+#sti-voix-dock button.sti-voix-video-btn {
+  background: linear-gradient(125deg, #b91c1c, #f4511e);
+  border-color: #fde68a;
+  color: #fff !important;
+}
+.sti-video-pas-a-pas-box {
+  margin: 12px auto;
+  max-width: 980px;
+  background: #0d1526;
+  color: #f9f1e3;
+  border: 2px solid #f4511e;
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.sti-video-pas-a-pas-box[hidden] {
+  display: none !important;
+}
+.sti-video-pas-a-pas-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.sti-video-pas-a-pas-title {
+  font-weight: 800;
+  font-size: 14px;
+  color: #fde68a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sti-video-pas-a-pas-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.sti-video-pas-a-pas-actions button,
+.sti-video-pas-a-pas-actions a {
+  appearance: none;
+  border: 1px solid rgba(249, 241, 227, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: #f9f1e3 !important;
+  padding: 4px 9px;
+  border-radius: 8px;
+  font: 700 11.5px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
+  cursor: pointer;
+  text-decoration: none !important;
+}
+.sti-video-pas-a-pas-actions button:hover,
+.sti-video-pas-a-pas-actions a:hover {
+  background: #f4511e;
+  color: #fff !important;
+}
+.sti-video-pas-a-pas-box video {
+  width: 100%;
+  max-height: 520px;
+  border-radius: 10px;
+  background: #000;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Modale vidéo universelle #sti-video-modal-overlay */
+#sti-video-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483500;
+  background: rgba(10, 15, 28, 0.84);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+#sti-video-modal-overlay[hidden] {
+  display: none !important;
+}
+.sti-video-modal-card {
+  width: min(980px, 96vw);
+  background: #0d1526;
+  color: #f9f1e3;
+  border: 2px solid #f4511e;
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.sti-video-modal-card video {
+  width: 100%;
+  max-height: 74vh;
+  border-radius: 10px;
+  background: #000;
+  display: block;
+}
+
 
 
