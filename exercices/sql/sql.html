@@ -1,972 +1,342 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
     <meta name="robots" content="noai, noimageai" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
-    <meta charset="UTF-8" /><link rel="icon" type="image/png" href="../../assets/images/lycee_logo.png" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=yes"
-    />
-    <title>Épreuve SQL - Base de données ÉTUDIANT</title>
-    
+    <meta charset="UTF-8" />
+    <title>Série 6 : Récap LDD + LMD (Base ÉTUDIANT) - Lycée Rafeha</title>
     <style>
-      /* Écran de transition avec logo SQL */
-.splash-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #00758f 0%, #003b57 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    transition: opacity 0.8s ease, visibility 0.8s ease;
-}
-
-.splash-screen .sql-logo {
-    text-align: center;
-    animation: pulse 1s ease infinite;
-}
-
-.splash-screen .sql-logo span {
-    font-size: 6em;
-    display: block;
-    animation: bounce 0.8s ease;
-}
-
-.splash-screen .sql-logo p {
-    font-size: 1.5em;
-    color: white;
-    margin-top: 20px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
-    50% {
-        transform: scale(1.1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
-}
-
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-20px);
-    }
-}
-
-.splash-screen.fade-out {
-    opacity: 0;
-    visibility: hidden;
-}
-      /* Écran de transition avec logo PHP */
-.splash-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #4a6ea8 0%, #3b5998 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    transition: opacity 0.8s ease, visibility 0.8s ease;
-}
-
-.splash-screen .php-logo {
-    text-align: center;
-    animation: pulse 1s ease infinite;
-}
-
-.splash-screen .php-logo span {
-    font-size: 6em;
-    display: block;
-    animation: bounce 0.8s ease;
-}
-
-.splash-screen .php-logo p {
-    font-size: 1.5em;
-    color: white;
-    margin-top: 20px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
-    50% {
-        transform: scale(1.1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-    }
-}
-
-.splash-screen.fade-out {
-    opacity: 0;
-    visibility: hidden;
-}
-      /* Logo SQL flottant à gauche */
-.sql-float-logo {
-    position: fixed;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 100;
-    background: rgba(255,255,255,0.95);
-    border-radius: 50%;
-    padding: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    text-align: center;
-}
-
-.sql-float-logo:hover {
-    transform: translateY(-50%) scale(1.1);
-}
-
-.sql-float-logo span {
-    font-size: 3em;
-    display: block;
-}
-
-.sql-float-logo p {
-    font-size: 0.8em;
-    font-weight: bold;
-    color: #00758f;
-    margin-top: 5px;
-}
-
-.home-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255,255,255,0.2);
-    color: white;
-    text-decoration: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.home-link:hover {
-    background: rgba(255,255,255,0.3);
-    transform: translateY(-2px);
-}
-
-.home-link img {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-@media (max-width: 768px) {
-    .sql-float-logo {
-        left: 5px;
-        padding: 8px;
-    }
-    .sql-float-logo span {
-        font-size: 1.8em;
-    }
-    .sql-float-logo p {
-        font-size: 0.6em;
-    }
-}
-      /* Styles supplémentaires pour le schéma sticky */
-      .sticky-schema {
-        position: sticky;
-        top: 20px;
-        z-index: 100;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      @page {
+        margin: 15mm;
+        size: A4;
+      }
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        color: #1a202c;
+        line-height: 1.45;
+        background-color: #fff;
+      }
+      .header-table {
+        width: 100%;
+        border-collapse: collapse;
         margin-bottom: 20px;
-        transition: all 0.3s ease;
       }
-
-      .sticky-schema .schema-card {
-        margin-bottom: 0;
-        border: 2px solid #3b82f6;
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      .header-table td {
+        border: 2px solid #1a365d;
+        padding: 8px 12px;
+        text-align: center;
+        vertical-align: middle;
       }
-
-      .sticky-schema .schema-card pre {
-        font-size: 0.85rem;
+      .header-title {
+        font-size: 1.05em;
+        font-weight: bold;
+        color: #1a365d;
       }
-
-      .schema-toggle {
-        position: absolute;
-        right: 20px;
-        top: 15px;
-        background: #3b82f6;
-        color: white;
-        border: none;
-        border-radius: 20px;
-        padding: 5px 12px;
-        font-size: 0.75rem;
-        cursor: pointer;
-        z-index: 101;
-      }
-
-      .schema-toggle:hover {
-        background: #2563eb;
-      }
-
-      /* Ajustement pour le contenu quand le schéma est réduit */
-      .schema-minimized .schema-card pre {
-        white-space: nowrap;
-        overflow-x: auto;
-        font-size: 0.7rem;
-      }
-
-      .scroll-top-btn {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: #0f172a;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
-        cursor: pointer;
-        display: none;
+      .title-container {
+        display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        z-index: 100;
-      }
-
-      .scroll-top-btn:hover {
-        background: #3b82f6;
-      }
-
-      .scroll-top-btn.show {
-        display: flex;
-      }
-
-      .correction-link {
-        background: #10b981;
-        color: white;
-        text-decoration: none;
-        padding: 10px 24px;
-        border-radius: 40px;
-        font-weight: bold;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .correction-link:hover {
-        background: #059669;
-        transform: translateY(-2px);
-      }
-
-      .header-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
         gap: 15px;
+        margin: 20px 0;
+        border-bottom: 3px solid #1a365d;
+        padding-bottom: 10px;
       }
-
-      @media (max-width: 768px) {
-        .header-top {
-          flex-direction: column;
-          text-align: center;
-        }
+      .title-container h1 {
+        font-size: 1.25em;
+        color: #1a365d;
+        text-transform: uppercase;
+        margin: 0;
+        text-align: center;
       }
-      * {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  background: #f0f4f8;
-  margin: 0;
-  padding: 20px;
-  color: #1e293b;
-}
-
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.exam-header {
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
-  padding: 25px 30px;
-  border-radius: 28px;
-  margin-bottom: 30px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-}
-
-.exam-header h1 {
-  margin: 0 0 8px 0;
-  font-size: 2rem;
-}
-
-.schema-card {
-  background: white;
-  border-radius: 24px;
-  padding: 18px 24px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
-  font-family: "Courier New", monospace;
-  overflow-x: auto;
-}
-
-.schema-card pre {
-  margin: 0;
-  white-space: pre-wrap;
-  font-weight: 500;
-  color: #0c4a6e;
-}
-
-.data-preview {
-  background: #fff;
-  border-radius: 20px;
-  padding: 15px 20px;
-  margin-bottom: 30px;
-  border: 1px solid #e2e8f0;
-  overflow-x: auto;
-}
-
-.data-preview table {
-  border-collapse: collapse;
-  width: 100%;
-  font-family: monospace;
-  font-size: 0.75rem;
-}
-
-.data-preview th,
-.data-preview td {
-  border: 1px solid #cbd5e1;
-  padding: 6px 10px;
-  text-align: left;
-}
-
-.data-preview th {
-  background: #f1f5f9;
-}
-
-.flex-tables {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
-}
-
-.flex-tables > div {
-  flex: 1;
-  min-width: 180px;
-}
-
-.score-bar {
-  position: sticky;
-  top: 20px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 60px;
-  padding: 8px 20px;
-  margin-bottom: 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e2e8f0;
-  z-index: 10;
-  backdrop-filter: blur(4px);
-}
-
-.btn-submit-all {
-  background: #3b82f6;
-  font-size: 1rem;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 40px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.tabs {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 25px;
-  flex-wrap: wrap;
-}
-
-.tab-btn {
-  background: #e2e8f0;
-  border: none;
-  padding: 12px 28px;
-  border-radius: 40px;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.2s;
-  color: #1e293b;
-}
-
-.tab-btn.active {
-  background: #0f172a;
-  color: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.tab-content {
-  display: none;
-  animation: fade 0.2s ease;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.questions-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
-.part-card {
-  background: white;
-  border-radius: 28px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  border: 1px solid #e9eef3;
-}
-
-.part-title {
-  background: #f8fafc;
-  padding: 18px 28px;
-  border-bottom: 2px solid #cbd5e1;
-  font-size: 1.6rem;
-  font-weight: 700;
-}
-
-.questions-list {
-  padding: 20px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.question-item {
-  border-left: 4px solid #3b82f6;
-  padding-left: 20px;
-}
-
-.q-text {
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 10px 0;
-}
-
-.truefalse {
-  display: flex;
-  gap: 20px;
-  margin-top: 8px;
-}
-
-textarea {
-  width: 100%;
-  padding: 12px;
-  font-family: "Courier New", monospace;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  border-radius: 16px;
-  resize: vertical;
-}
-
-button {
-  background: #1e293b;
-  border: none;
-  color: white;
-  padding: 8px 18px;
-  border-radius: 40px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
-  margin-right: 12px;
-}
-
-.feedback {
-  margin-top: 12px;
-  font-size: 0.85rem;
-  padding: 8px 12px;
-  border-radius: 20px;
-}
-
-.correct-feedback {
-  background: #e0f2e7;
-  color: #15803d;
-}
-
-.wrong-feedback {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-
-.result-area {
-  background: #f1f5f9;
-  border-radius: 20px;
-  padding: 12px;
-  margin-top: 15px;
-  overflow-x: auto;
-}
-
-.result-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.result-table th,
-.result-table td {
-  border: 1px solid #94a3b8;
-  padding: 6px 10px;
-  background: white;
-}
-
-footer {
-  text-align: center;
-  margin-top: 40px;
-  color: #475569;
-}
-
-@media (max-width: 700px) {
-  .part-title {
-    font-size: 1.3rem;
-  }
-}
-
+      .db-logo {
+        width: 44px;
+        height: 44px;
+        background: #2b6cb0;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        font-size: 17px;
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      }
+      h2 {
+        color: #2b6cb0;
+        background-color: #ebf8ff;
+        padding: 7px 12px;
+        font-size: 1.05em;
+        border-left: 5px solid #2b6cb0;
+        margin-top: 22px;
+        margin-bottom: 10px;
+        border-radius: 0 4px 4px 0;
+      }
+      h3 {
+        color: #2c5282;
+        font-size: 0.96em;
+        margin-top: 14px;
+        margin-bottom: 6px;
+      }
+      .schema-box {
+        background: #f8fafc;
+        border: 1px solid #cbd5e0;
+        border-left: 4px solid #1a365d;
+        border-radius: 6px;
+        padding: 12px 16px;
+        margin: 12px 0 18px 0;
+        font-size: 0.92em;
+      }
+      .tables-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 14px;
+        margin: 12px 0 18px 0;
+      }
+      table.data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 6px 0 12px 0;
+        font-size: 0.88em;
+      }
+      table.data-table th,
+      table.data-table td {
+        border: 1px solid #cbd5e0;
+        padding: 6px 9px;
+        text-align: left;
+      }
+      table.data-table th {
+        background-color: #edf2f7;
+        color: #2d3748;
+        font-weight: bold;
+      }
+      ol, ul {
+        margin-top: 6px;
+        margin-bottom: 10px;
+        padding-left: 22px;
+      }
+      li {
+        margin-bottom: 6px;
+      }
+      .qcm-opts {
+        list-style: none;
+        padding-left: 14px;
+        margin: 4px 0 8px 0;
+        color: #2d3748;
+      }
+      code {
+        font-family: Consolas, monospace;
+        font-size: 0.9em;
+        background-color: #f7fafc;
+        padding: 2px 5px;
+        border-radius: 3px;
+        color: #2b6cb0;
+      }
+      .footer-page {
+        text-align: right;
+        font-size: 0.8em;
+        color: #718096;
+        margin-top: 30px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 5px;
+      }
     </style>
   </head>
   <body>
 <!-- STI navigation croisée -->
-<style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:78px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../../cours/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours SQL</a><a href="../../quiz/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🎯 Quiz</a><a href="../../exercices/series-exercices.html#bdd" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">≡ Séries</a></nav>
+<style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../../cours/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours SQL</a><a href="../../quiz/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🎯 Quiz</a><a href="../../exercices/series-exercices.html#bdd" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">≡ Séries</a></nav>
 
-    <!-- Écran de transition avec logo SQL -->
-<div class="splash-screen" id="splashScreen">
-  <div class="sql-logo">
-      <span>🗄️</span>
-      <p>SQL</p>
-  </div>
-</div>
-    <div class="container">
-      <!-- En-tête avec lien vers correction -->
-      <div class="exam-header">
-        <div class="header-top">
-          <div style="display: flex; align-items: center; gap: 15px;">
-              <a href="../../index.html#exercices" class="home-link">
-                  <img src="../../assets/images/lycee_logo.png" alt="Logo Lycée" onerror="this.style.display='none'">
-                  Accueil
-              </a>
-              <div>
-                  <h1>📘 Épreuve SQL – Base ÉTUDIANT</h1>
-                  <p>✅ QCM • LDD • SQL à compléter • Vrai/Faux • Réflexion • 15 requêtes interactives</p>
-              </div>
-          </div>
-          <a href="sql-correction.html" class="correction-link">
-              📖 Voir la correction détaillée
-          </a>
-      </div>
-      </div>
+    <table class="header-table">
+      <tr>
+        <td width="30%" class="header-title">
+          Lycée Rafeha<br />Enseignant : A. Essouyah<br /><span style="font-weight: normal; font-size: 0.9em">Matière : STI</span>
+        </td>
+        <td width="40%" class="header-title">
+          Série 6 : Récap LDD + LMD<br /><span style="font-weight: normal; font-size: 0.85em">Date, Jointures, Sous-requêtes &amp; Group By</span>
+        </td>
+        <td width="30%" class="header-title">
+          Classe<br /><span style="font-weight: normal; font-size: 0.9em">4<sup>ème</sup> Science Info</span>
+        </td>
+      </tr>
+    </table>
 
-      <!-- Schéma STICKY toujours visible -->
-      <div class="sticky-schema" id="stickySchema">
-        <button class="schema-toggle" id="schemaToggle">📋 Réduire</button>
-        <div class="schema-card">
-          <pre id="schemaContent">
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                         📊 SCHÉMA DE LA BASE DE DONNÉES                     │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  ETUDIANT (Numetu, Nometu, Dtnaiss, Cdsexe)                                 │
-│  NOTES (Numetu, Numat, Note)    SEXE (Cdsexe, Lbsexe)                       │
-│  MATIERE (Numat, Nomat, Coeff, Numens)                                      │
-│  ENSEIGNANT (Numens, Nomens, Grade, Ancien)                                 │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-Détail des tables :
-• ETUDIANT  : Numetu (PK), Nometu, Dtnaiss, Cdsexe (FK → SEXE)
-• SEXE      : Cdsexe (PK), Lbsexe
-• ENSEIGNANT: Numens (PK), Nomens, Grade, Ancien
-• MATIERE   : Numat (PK), Nomat, Coeff, Numens (FK → ENSEIGNANT)
-• NOTES     : (Numetu, Numat) (PK composite), Note (FK Numetu → ETUDIANT, FK Numat → MATIERE)
-            </pre
-          >
-        </div>
-      </div>
-
-      <!-- Aperçu des données de test -->
-      <div class="data-preview">
-        <h3>📊 Données de test (intégrées – pour les 15 requêtes SQL)</h3>
-        <div class="flex-tables">
-          <div>
-            <strong>ETUDIANT</strong>
-            <table>
-              <thead>
-                <tr>
-                  <th>Numetu</th>
-                  <th>Nometu</th>
-                  <th>Dtnaiss</th>
-                  <th>Cdsexe</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Asma Ben Mahmoud</td>
-                  <td>2003-05-12</td>
-                  <td>F</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Bassem Hdhili</td>
-                  <td>2004-11-23</td>
-                  <td>H</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Souhir Korbsi</td></td>
-                  <td>2003-09-01</td>
-                  <td>F</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>Karim Hfayedh</td>
-                  <td>2005-02-14</td>
-                  <td>H</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>Wissal Wertani</td>
-                  <td>2004-07-19</td>
-                  <td>F</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div>
-            <strong>SEXE</strong>
-            <table>
-              <thead>
-                <tr>
-                  <th>Cdsexe</th>
-                  <th>Lbsexe</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>H</td>
-                  <td>Garçon</td>
-                </tr>
-                <tr>
-                  <td>F</td>
-                  <td>Fille</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div>
-            <strong>ENSEIGNANT</strong>
-            <table>
-              <thead>
-                <tr>
-                  <th>Numens</th>
-                  <th>Nomens</th>
-                  <th>Grade</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>101</td>
-                  <td>Ali Ben Salah</td>
-                  <td>Professeur</td>
-                </tr>
-                <tr>
-                  <td>102</td>
-                  <td>Safia Tammar</td>
-                  <td>MCF</td>
-                </tr>
-                <tr>
-                  <td>103</td>
-                  <td>Karim Foughali</td>
-                  <td>Assistant</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div>
-            <strong>MATIERE</strong>
-            <table>
-              <thead>
-                <tr>
-                  <th>Numat</th>
-                  <th>Nomat</th>
-                  <th>Coeff</th>
-                  <th>Numens</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>10</td>
-                  <td>Informatique</td>
-                  <td>3</td>
-                  <td>101</td>
-                </tr>
-                <tr>
-                  <td>11</td>
-                  <td>Mathématiques</td>
-                  <td>4</td>
-                  <td>102</td>
-                </tr>
-                <tr>
-                  <td>12</td>
-                  <td>Histoire</td>
-                  <td>2</td>
-                  <td>103</td>
-                </tr>
-                <tr>
-                  <td>13</td>
-                  <td>Sociologie</td>
-                  <td>2</td>
-                  <td>101</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div>
-            <strong>NOTES</strong>
-            <table>
-              <thead>
-                <tr>
-                  <th>Numetu</th>
-                  <th>Numat</th>
-                  <th>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>10</td>
-                  <td>15.5</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>11</td>
-                  <td>12.0</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>12</td>
-                  <td>14.0</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>10</td>
-                  <td>11.0</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>11</td>
-                  <td>9.0</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>10</td>
-                  <td>18.0</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>11</td>
-                  <td>15.5</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>12</td>
-                  <td>13.5</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>13</td>
-                  <td>16.0</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>12</td>
-                  <td>10.0</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>10</td>
-                  <td>13.0</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>12</td>
-                  <td>8.0</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Barre de score -->
-      <div class="score-bar">
-        <span
-          >🏆 Score théorique : <span id="totalScoreSpan">0</span> / 30</span
-        >
-        <button id="submitAllBtn" class="btn-submit-all">
-          ✅ Corriger tout l'examen théorique
-        </button>
-      </div>
-
-      <!-- Onglets -->
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="theory">
-          📖 Partie théorique (QCM, LDD, SQL, réflexion)
-        </button>
-        <button class="tab-btn" data-tab="practice">
-          💻 15 Requêtes pratiques (exécution SQL)
-        </button>
-      </div>
-
-      <!-- Partie théorique -->
-      <div id="theoryTab" class="tab-content active">
-        <div class="questions-grid" id="questionsContainer"></div>
-      </div>
-
-      <!-- Partie pratique -->
-      <div id="practiceTab" class="tab-content">
-        <div id="practiceContainer"></div>
-      </div>
-
-      <footer>
-        <p>
-          📌 Pour la partie pratique, écrivez vos requêtes SELECT et cliquez sur
-          Exécuter. Les résultats s'affichent en temps réel.
-        </p>
-        <p>
-          💡 Le schéma de la BD reste visible en haut de page pour vous aider !
-        </p>
-      </footer>
+    <div class="title-container">
+      <div class="db-logo">SQL</div>
+      <h1>Épreuve Récapitulative SQL — Base de données ÉTUDIANT</h1>
     </div>
 
-    <!-- Bouton retour haut de page -->
-    <button class="scroll-top-btn" id="scrollTopBtn" title="Retour en haut">
-      ↑
-    </button>
+    <h2>Schéma relationnel de la base de données « Gestion_Etudiant »</h2>
+    <div class="schema-box">
+      <ul>
+        <li><strong>SEXE</strong> (<u>Cdsexe</u>, Lbsexe)</li>
+        <li><strong>ETUDIANT</strong> (<u>Numetu</u>, Nometu, Dtnaiss, <em>#Cdsexe</em>)</li>
+        <li><strong>ENSEIGNANT</strong> (<u>Numens</u>, Nomens, Grade, Ancien)</li>
+        <li><strong>MATIERE</strong> (<u>Numat</u>, Nomat, Coeff, <em>#Numens</em>)</li>
+        <li><strong>NOTES</strong> (<u><em>#Numetu</em>, <em>#Numat</em></u>, Note)</li>
+      </ul>
+    </div>
 
-    <script src="sql-controle.js"></script>
+    <h2>Aperçu des enregistrements des 5 tables</h2>
+    <div class="tables-grid">
+      <div>
+        <h3>1. Table SEXE</h3>
+        <table class="data-table">
+          <thead><tr><th>Cdsexe</th><th>Lbsexe</th></tr></thead>
+          <tbody>
+            <tr><td>H</td><td>Garçon</td></tr>
+            <tr><td>F</td><td>Fille</td></tr>
+          </tbody>
+        </table>
 
-    <script>
-      // Gestion de l'écran de transition
-const splashScreen = document.getElementById('splashScreen');
+        <h3>2. Table ENSEIGNANT</h3>
+        <table class="data-table">
+          <thead><tr><th>Numens</th><th>Nomens</th><th>Grade</th><th>Ancien</th></tr></thead>
+          <tbody>
+            <tr><td>101</td><td>Ali Ben Salah</td><td>Professeur</td><td>15</td></tr>
+            <tr><td>102</td><td>Safia Tammar</td><td>MCF</td><td>8</td></tr>
+            <tr><td>103</td><td>Karim Foughali</td><td>Assistant</td><td>3</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-// Attendre 2 secondes puis faire disparaître l'écran
-setTimeout(() => {
-    splashScreen.classList.add('fade-out');
-    // Supprimer l'élément après l'animation
-    setTimeout(() => {
-        splashScreen.style.display = 'none';
-    }, 800);
-}, 2000);
-      // Gestion du schéma sticky (réduction/agrandissement)
-      const stickySchema = document.getElementById("stickySchema");
-      const schemaToggle = document.getElementById("schemaToggle");
-      let schemaMinimized = false;
+      <div>
+        <h3>3. Table ETUDIANT</h3>
+        <table class="data-table">
+          <thead><tr><th>Numetu</th><th>Nometu</th><th>Dtnaiss</th><th>Cdsexe</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Asma Ben Mahmoud</td><td>2003-05-12</td><td>F</td></tr>
+            <tr><td>2</td><td>Bassem Hdhili</td><td>2004-11-23</td><td>H</td></tr>
+            <tr><td>3</td><td>Souhir Korbsi</td><td>2003-09-01</td><td>F</td></tr>
+            <tr><td>4</td><td>Karim Hfayedh</td><td>2005-02-14</td><td>H</td></tr>
+            <tr><td>5</td><td>Wissal Wertani</td><td>2004-07-19</td><td>F</td></tr>
+          </tbody>
+        </table>
 
-      schemaToggle.addEventListener("click", () => {
-        if (!schemaMinimized) {
-          stickySchema.classList.add("schema-minimized");
-          schemaToggle.textContent = "📖 Agrandir";
-          schemaMinimized = true;
-        } else {
-          stickySchema.classList.remove("schema-minimized");
-          schemaToggle.textContent = "📋 Réduire";
-          schemaMinimized = false;
-        }
-      });
+        <h3>4. Table MATIERE</h3>
+        <table class="data-table">
+          <thead><tr><th>Numat</th><th>Nomat</th><th>Coeff</th><th>Numens</th></tr></thead>
+          <tbody>
+            <tr><td>10</td><td>Informatique</td><td>3</td><td>101</td></tr>
+            <tr><td>11</td><td>Mathématiques</td><td>4</td><td>102</td></tr>
+            <tr><td>12</td><td>Histoire</td><td>2</td><td>103</td></tr>
+            <tr><td>13</td><td>Sociologie</td><td>2</td><td>101</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-      // Bouton retour en haut
-      const scrollTopBtn = document.getElementById("scrollTopBtn");
+      <div>
+        <h3>5. Table NOTES</h3>
+        <table class="data-table">
+          <thead><tr><th>Numetu</th><th>Numat</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>10</td><td>15.5</td></tr>
+            <tr><td>1</td><td>11</td><td>12.0</td></tr>
+            <tr><td>1</td><td>12</td><td>14.0</td></tr>
+            <tr><td>2</td><td>10</td><td>11.0</td></tr>
+            <tr><td>2</td><td>11</td><td>9.0</td></tr>
+            <tr><td>3</td><td>10</td><td>18.0</td></tr>
+            <tr><td>3</td><td>11</td><td>15.5</td></tr>
+            <tr><td>3</td><td>12</td><td>13.5</td></tr>
+            <tr><td>3</td><td>13</td><td>16.0</td></tr>
+            <tr><td>4</td><td>12</td><td>10.0</td></tr>
+            <tr><td>5</td><td>10</td><td>13.0</td></tr>
+            <tr><td>5</td><td>12</td><td>8.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 300) {
-          scrollTopBtn.classList.add("show");
-        } else {
-          scrollTopBtn.classList.remove("show");
-        }
-      });
+    <h2>Partie I — Questions Théoriques, LDD &amp; Analyse</h2>
 
-      scrollTopBtn.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
+    <h3>1. QCM SQL général</h3>
+    <ol>
+      <li>
+        Quelle est la clé primaire de la table <code>NOTES</code> ?
+        <ul class="qcm-opts">
+          <li>A) <code>Numetu</code> &nbsp;&nbsp; B) <code>Numat</code> &nbsp;&nbsp; C) <code>(Numetu, Numat)</code> &nbsp;&nbsp; D) <code>Note</code></li>
+        </ul>
+      </li>
+      <li>
+        En quelle unité la fonction <code>DATEDIFF('2025-01-01', Dtnaiss)</code> retourne-t-elle l'écart entre deux dates ?
+        <ul class="qcm-opts">
+          <li>A) Années &nbsp;&nbsp; B) Mois &nbsp;&nbsp; C) Jours &nbsp;&nbsp; D) Heures</li>
+        </ul>
+      </li>
+      <li>
+        Que permet de vérifier la clause <code>HAVING COUNT(DISTINCT Numat) = (SELECT COUNT(*) FROM MATIERE)</code> ?
+        <ul class="qcm-opts">
+          <li>A) Filtrer les notes &gt; 10 &nbsp;&nbsp; B) Retenir les étudiants ayant une note dans toutes les matières &nbsp;&nbsp; C) Calculer la moyenne générale &nbsp;&nbsp; D) Trier les matières</li>
+        </ul>
+      </li>
+      <li>
+        Quelle est la différence principale entre les opérateurs <code>IN</code> et <code>EXISTS</code> ?
+        <ul class="qcm-opts">
+          <li>A) Ils sont identiques &nbsp;&nbsp; B) <code>IN</code> ne prend pas de sous-requête &nbsp;&nbsp; C) <code>IN</code> compare une valeur à une liste, <code>EXISTS</code> teste l'existence de lignes &nbsp;&nbsp; D) <code>EXISTS</code> s'utilise sans <code>SELECT</code></li>
+        </ul>
+      </li>
+      <li>
+        Pourquoi utilise-t-on une sous-requête corrélée pour afficher la meilleure note de chaque matière avec le nom de l'étudiant ?
+        <ul class="qcm-opts">
+          <li>A) Pour calculer la moyenne &nbsp;&nbsp; B) Pour comparer chaque note au maximum de sa propre matière &nbsp;&nbsp; C) Pour compter les matières &nbsp;&nbsp; D) Pour trier par ordre alphabétique</li>
+        </ul>
+      </li>
+    </ol>
 
-      // Option: rendre le schéma plus compact lors du scroll
-      let lastScrollY = 0;
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 100 && !schemaMinimized) {
-          // Optionnel: réduire automatiquement après défilement
-          // Décommentez la ligne ci-dessous pour activer la réduction auto
-          // if (!stickySchema.classList.contains('schema-minimized')) {
-          //     stickySchema.classList.add('schema-minimized');
-          //     schemaToggle.textContent = '📖 Agrandir';
-          //     schemaMinimized = true;
-          // }
-        }
-      });
-    </script>
+    <h3>2. Langage de Définition des Données (LDD)</h3>
+    <ol>
+      <li>Que signifie l'acronyme <strong>LDD</strong> et quelles sont ses principales commandes SQL ?</li>
+      <li>Écrire la commande SQL permettant de créer la table <code>MATIERE (Numat INT, Nomat VARCHAR(50), Coeff INT, Numens INT)</code> avec sa clé primaire et sa clé étrangère vers <code>ENSEIGNANT(Numens)</code>.</li>
+      <li>Écrire la commande permettant d'ajouter une colonne <code>DateEvaluation</code> de type <code>DATE</code> à la table <code>NOTES</code>.</li>
+      <li>Quelle est la différence entre <code>DROP TABLE</code> et <code>TRUNCATE TABLE</code> ?</li>
+      <li>Écrire la commande permettant de modifier le type de la colonne <code>Note</code> de la table <code>NOTES</code> en <code>DECIMAL(5,2)</code>.</li>
+      <li>Écrire la commande permettant d'ajouter une contrainte <code>CHECK</code> sur la colonne <code>Note</code> (comprise entre 0 et 20) dans la table <code>NOTES</code>.</li>
+      <li>Écrire la commande permettant de supprimer la contrainte de clé étrangère <code>fk_matiere_enseignant</code> dans la table <code>MATIERE</code>.</li>
+    </ol>
+
+    <h3>3. Vrai / Faux</h3>
+    <ol>
+      <li><code>SELECT * FROM ETUDIANT WHERE Cdsexe = 'H';</code> affiche tous les garçons.</li>
+      <li>Le mot-clé <code>DISTINCT</code> placé après <code>SELECT</code> permet d'éliminer les lignes en double.</li>
+      <li>La clause <code>WHERE</code> peut contenir directement une fonction d'agrégation comme <code>AVG(Note)</code>.</li>
+      <li>Une sous-requête corrélée fait référence à une colonne de la requête principale.</li>
+      <li>Une requête portant sur deux tables sans condition de jointure <code>WHERE a.x = b.x</code> produit un produit cartésien.</li>
+    </ol>
+
+    <h2>Partie II — Travail Pratique : Requêtes LMD sur la base ÉTUDIANT</h2>
+    <p>Exprimer en SQL les requêtes suivantes (en utilisant uniquement des jointures dans la clause <code>WHERE</code>) :</p>
+    <ol>
+      <li>Afficher le nom et la date de naissance des étudiants nés après le <code>01/01/2004</code>.</li>
+      <li>Afficher le code sexe et le nombre d'étudiants pour chaque sexe.</li>
+      <li>Afficher le nom et le grade des enseignants qui assurent la matière <code>'Histoire'</code>.</li>
+      <li>Afficher le nom et le coefficient des matières enseignées par un enseignant de grade <code>'MCF'</code> ou <code>'Assistant'</code>.</li>
+      <li>Afficher les noms des étudiants ayant obtenu une note strictement supérieure à 15 en <code>'Mathématiques'</code>.</li>
+      <li>Afficher les matières dont la moyenne des notes est supérieure ou égale à 12, ainsi que cette moyenne.</li>
+      <li>Afficher les enseignants (nom, grade, ancienneté) qui enseignent au moins 2 matières.</li>
+      <li>Afficher l'âge moyen des garçons et des filles au <code>1er janvier 2025</code> (avec <code>DATEDIFF('2025-01-01', Dtnaiss) / 365</code>).</li>
+      <li>Afficher les étudiants (nom et numéro) qui n'ont aucune note dans la matière <code>'Sociologie'</code>.</li>
+      <li>Pour chaque étudiant, afficher son nom, son numéro, le nom de la matière et sa moyenne par matière, triés par ordre alphabétique du nom.</li>
+      <li>Afficher le nom, l'âge et le libellé du sexe des étudiants ayant obtenu en <code>'Informatique'</code> une note supérieure à la moyenne générale de la matière <code>'Informatique'</code>.</li>
+      <li>Afficher les étudiants ayant une note dans toutes les matières, avec leur moyenne générale pondérée par les coefficients (<code>SUM(Note * Coeff) / SUM(Coeff)</code>).</li>
+      <li>Afficher les étudiants (nom, numéro, libellé sexe) dont la note en <code>'Informatique'</code> est strictement supérieure à leur propre note en <code>'Mathématiques'</code>.</li>
+      <li>Afficher les couples <code>(Nom_Garcon, Nom_Fille)</code> dont la différence d'âge ne dépasse pas 180 jours (<code>ABS(DATEDIFF(...)) &lt;= 180</code>).</li>
+      <li>Pour chaque matière, afficher le nom de la matière, la meilleure note obtenue et le nom de l'étudiant qui l'a obtenue.</li>
+      <li>Afficher la moyenne des notes obtenues dans les matières enseignées par <code>'Ali Ben Salah'</code>, regroupée par sexe (<code>Lbsexe</code>).</li>
+      <li>Augmenter à <code>4</code> le coefficient de la matière <code>'Informatique'</code>, puis supprimer les enseignants qui n'enseignent aucune matière.</li>
+    </ol>
+
+    <div class="footer-page">
+      4ème SI - Lycée Rafeha | Série 6 — Récap LDD + LMD (Base ÉTUDIANT)
+    </div>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../../assets/css/protection.css?v=193" />
-<script src="../../assets/js/protection.js?v=193" defer></script>
+<link rel="stylesheet" href="../../assets/css/protection.css?v=227" />
+<script src="../../assets/js/protection.js?v=227" defer></script>
 <!-- /Protection -->
 <script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=193"></script>
-<script src="../../assets/js/acces.js?v=193"></script>
+<script src="../../assets/js/config.js?v=227"></script>
+<script src="../../assets/js/acces.js?v=227"></script>
 </body>
 </html>

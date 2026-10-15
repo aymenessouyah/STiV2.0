@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
+    <meta name="robots" content="noai, noimageai" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta charset="UTF-8" />
+    <title>Corrigé : Série 3 BD - LMD (Group By) (bdtp5, Employés & Notes)</title>
+    <style>
+      @page {
+        margin: 15mm;
+        size: A4;
+      }
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        color: #1a202c;
+        line-height: 1.48;
+        background-color: #fff;
+      }
+      .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 18px;
+      }
+      .header-table td {
+        border: 2px solid #1a365d;
+        padding: 8px 12px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .header-title {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #1a365d;
+      }
+      .title-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 16px 0 18px;
+        border-bottom: 3px solid #1a365d;
+        padding-bottom: 12px;
+      }
+      .title-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .title-container h1 {
+        font-size: 1.18em;
+        color: #1a365d;
+        text-transform: uppercase;
+        margin: 0;
+      }
+      .db-logo {
+        width: 42px;
+        height: 42px;
+        background: #2b6cb0;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        font-size: 18px;
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      }
+      .btn-video-serie {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 10px;
+        border: 2px solid #facc15;
+        background: linear-gradient(135deg, #ea580c, #c2410c);
+        color: #fff;
+        font: 800 13.5px/1.2 "Segoe UI", system-ui, sans-serif;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(234, 88, 12, 0.32);
+        text-decoration: none;
+      }
+      .btn-video-serie:hover {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+      }
+      h2 {
+        color: #1e3a8a;
+        background-color: #dbeafe;
+        padding: 8px 14px;
+        font-size: 1.06em;
+        border-left: 5px solid #1d4ed8;
+        margin-top: 22px;
+        margin-bottom: 12px;
+        border-radius: 0 6px 6px 0;
+      }
+      .schema-box {
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
+        border-left: 5px solid #2b6cb0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+      }
+      .req-card {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+      }
+      .req-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .req-title {
+        font-size: 0.98em;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .req-badges {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .badge-type {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.78em;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+      }
+      .badge-jointure {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+      }
+      .badge-sousreq {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+      .badge-imbriquee {
+        background: #fae8ff;
+        color: #86198f;
+        border: 1px solid #f0abfc;
+      }
+      .badge-groupby {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #93c5fd;
+      }
+      .badge-selection {
+        background: #e0f2fe;
+        color: #075985;
+        border: 1px solid #7dd3fc;
+      }
+      pre {
+        background-color: #0f172a;
+        border: 1px solid #1e293b;
+        border-left: 4px solid #f97316;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        color: #f8fafc;
+        overflow-x: auto;
+        margin: 8px 0 10px 0;
+        white-space: pre-wrap;
+      }
+      .why-box {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-left: 4px solid #f59e0b;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        color: #78350f;
+      }
+      .why-box strong {
+        color: #92400e;
+      }
+      code {
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        background-color: #edf2f7;
+        padding: 2px 5px;
+        border-radius: 3px;
+        color: #1e3a8a;
+      }
+      .footer-page {
+        text-align: right;
+        font-size: 0.8em;
+        color: #718096;
+        margin-top: 30px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 5px;
+      }
+      @media print {
+        .btn-video-serie, #stix-nav {
+          display: none !important;
+        }
+      }
+</style>
+  </head>
+  <body>
+<!-- STI navigation croisée -->
+<style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../../cours/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours SQL</a><a href="../../quiz/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🎯 Quiz</a><a href="../../exercices/series-exercices.html#bdd" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">≡ Séries</a></nav>
+
+    <table class="header-table">
+      <tr>
+        <td width="30%" class="header-title">
+          Lycée Rafeha<br />Enseignant : A. Essouyah<br /><span style="font-weight: normal; font-size: 0.9em">Matière : STI</span>
+        </td>
+        <td width="40%" class="header-title">
+          Corrigé — Série 3 : LMD (Group By)<br /><span style="font-weight: normal; font-size: 0.85em">Création BD, Insertion, Jointures, Agrégation & GROUP BY</span>
+        </td>
+        <td width="30%" class="header-title">
+          Classe<br /><span style="font-weight: normal; font-size: 0.9em">4<sup>ème</sup> SI</span>
+        </td>
+      </tr>
+    </table>
+
+    <div class="title-container">
+      <div class="title-left">
+        <div class="db-logo">SQL</div>
+        <h1>Corrigé Série 3 : LMD — Regroupement (GROUP BY) & Agrégation</h1>
+      </div>
+      <button
+        type="button"
+        class="btn-video-serie"
+        onclick="ouvrirVideoCorrigeeSerie()"
+      >
+        🎥 Vidéo Corrigé — Création BD, Insertion & Requêtes Série 3
+      </button>
+    </div>
+
+    <h2>I. Création de la base de données « bdtp5 » et des tables (CREATE DATABASE / CREATE TABLE)</h2>
+    <div class="schema-box">
+      <pre>CREATE DATABASE bdtp5;
+USE bdtp5;
+
+CREATE TABLE Sondage (
+    NumS INT AUTO_INCREMENT PRIMARY KEY,
+    Theme VARCHAR(50) NOT NULL,
+    DateDebut DATE NOT NULL
+);
+
+CREATE TABLE Question (
+    NumQ INT,
+    NumS INT,
+    Contenu VARCHAR(150) NOT NULL,
+    PRIMARY KEY (NumQ, NumS),
+    FOREIGN KEY (NumS) REFERENCES Sondage(NumS)
+);
+
+CREATE TABLE Participant (
+    IdParticipant INT AUTO_INCREMENT PRIMARY KEY,
+    Mail VARCHAR(50) NOT NULL,
+    Mdp VARCHAR(6) NOT NULL,
+    Genre CHAR(1) CHECK (Genre IN ('M', 'F'))
+);
+
+CREATE TABLE Reponse (
+    NumQ INT,
+    NumS INT,
+    IdParticipant INT,
+    Rep CHAR(1) CHECK (Rep IN ('O', 'N', 'S')),
+    PRIMARY KEY (NumQ, NumS, IdParticipant),
+    FOREIGN KEY (NumQ, NumS) REFERENCES Question(NumQ, NumS),
+    FOREIGN KEY (IdParticipant) REFERENCES Participant(IdParticipant)
+);</pre>
+    </div>
+
+    <h2>II. Insertion des enregistrements (INSERT INTO) — Question 1</h2>
+    <div class="schema-box">
+      <pre>-- a) Insertion dans la table Sondage :
+INSERT INTO Sondage (NumS, Theme, DateDebut) VALUES
+(1, 'Les réseaux sociaux', '2026-05-01'),
+(2, 'Les jeux vidéo', '2026-06-01');
+
+-- b) Insertion dans la table Question :
+INSERT INTO Question (NumQ, NumS, Contenu) VALUES
+(1, 1, 'Les informations partagées sur les réseaux sociaux sont fiables'),
+(2, 1, 'L''usage des réseaux sociaux par les enfants doit être sous le contrôle parental'),
+(3, 1, 'Les réseaux sociaux deviennent une nécessité pour les citoyens'),
+(1, 2, 'Les jeux vidéo contribuent au développement de la pensée logique');
+
+-- Insertion de participants et réponses d'exemple :
+INSERT INTO Participant (IdParticipant, Mail, Mdp, Genre) VALUES
+(1, 'amine@sti.tn', 'az1234', 'M'),
+(2, 'sarra@sti.tn', 'sr5678', 'F'),
+(3, 'ines@sti.tn', 'in9012', 'F');
+
+INSERT INTO Reponse VALUES (1, 1, 1, 'O'), (2, 1, 1, 'O'), (1, 1, 2, 'N'), (1, 2, 3, 'O');</pre>
+    </div>
+
+    <h2>III. Corrigé Exercice 1 — Base de sondage « bdtp5 » (Questions 2 à 9)</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q2 : Exporter la base au format SQL sous le nom « bdtp5.sql ».</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Export SQL (phpMyAdmin)</span></div>
+      </div>
+      <pre>-- Dans phpMyAdmin :
+-- Sélectionner la base 'bdtp5' -> Onglet 'Exporter' -> Format 'SQL' -> Exécuter (génère bdtp5.sql)</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> L'exportation au format <code>.sql</code> génère un script contenant les instructions <code>CREATE TABLE</code> (structure) et <code>INSERT INTO</code> (données) permettant de restaurer la base sur n'importe quel serveur.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q3 : Afficher les adresses mail et les mots de passe existant dans la base de données.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Projection simple</span></div>
+      </div>
+      <pre>SELECT Mail, Mdp
+FROM Participant;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Les deux colonnes demandées (<code>Mail</code> et <code>Mdp</code>) appartiennent uniquement à la table <code>Participant</code> : une projection simple sans condition suffit.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q4 : Afficher le nombre total des participants qui ont participé à un sondage relatif à un thème.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT S.Theme, COUNT(DISTINCT R.IdParticipant) AS nb_participants
+FROM Sondage S, Reponse R
+WHERE S.NumS = R.NumS
+GROUP BY S.NumS, S.Theme;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On relie <code>Sondage</code> et <code>Reponse</code> par la <strong>jointure</strong> <code>S.NumS = R.NumS</code>, on regroupe par thème avec <code>GROUP BY</code> et on utilise <code>COUNT(DISTINCT R.IdParticipant)</code> pour ne compter chaque participant qu'une seule fois par sondage.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q5 : Afficher le nombre total des femmes qui ont participé à un sondage relatif à un thème.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT S.Theme, COUNT(DISTINCT P.IdParticipant) AS nb_femmes
+FROM Sondage S, Reponse R, Participant P
+WHERE S.NumS = R.NumS
+  AND R.IdParticipant = P.IdParticipant
+  AND P.Genre = 'F'
+GROUP BY S.NumS, S.Theme;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le thème est dans <code>Sondage</code>, la participation dans <code>Reponse</code> et le genre dans <code>Participant</code> : on réalise une <strong>jointure à 3 tables</strong> dans <code>WHERE</code> avec le filtre <code>P.Genre = 'F'</code> et un <code>GROUP BY</code> par thème.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q6 : Afficher le nombre total des hommes qui ont participé à un sondage relatif à un thème.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT S.Theme, COUNT(DISTINCT P.IdParticipant) AS nb_hommes
+FROM Sondage S, Reponse R, Participant P
+WHERE S.NumS = R.NumS
+  AND R.IdParticipant = P.IdParticipant
+  AND P.Genre = 'M'
+GROUP BY S.NumS, S.Theme;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Même principe que la question 5 : <strong>jointure entre les 3 tables</strong> dans <code>WHERE</code>, filtrage sur le genre masculin <code>P.Genre = 'M'</code> et regroupement <code>GROUP BY S.NumS, S.Theme</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q7 : Afficher le pourcentage des internautes ayant répondu « Oui » relatif à un thème.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span><span class="badge-type badge-imbriquee">Type : Requête imbriquée</span></div>
+      </div>
+      <pre>SELECT S.Theme,
+       (COUNT(*) * 100) / (SELECT COUNT(*) FROM Reponse R2 WHERE R2.NumS = S.NumS) AS pct_oui
+FROM Sondage S, Reponse R
+WHERE S.NumS = R.NumS
+  AND R.Rep = 'O'
+GROUP BY S.NumS, S.Theme;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On filtre les réponses « Oui » (<code>R.Rep = 'O'</code>), on regroupe par thème (<code>GROUP BY</code>) et on divise <code>COUNT(*) * 100</code> par une <strong>requête imbriquée</strong> comptant le total des réponses de ce sondage.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q8 : Afficher le pourcentage des internautes ayant répondu « Non » pour chaque thème.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span><span class="badge-type badge-imbriquee">Type : Requête imbriquée</span></div>
+      </div>
+      <pre>SELECT S.Theme,
+       (COUNT(*) * 100) / (SELECT COUNT(*) FROM Reponse R2 WHERE R2.NumS = S.NumS) AS pct_non
+FROM Sondage S, Reponse R
+WHERE S.NumS = R.NumS
+  AND R.Rep = 'N'
+GROUP BY S.NumS, S.Theme;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On applique la même combinaison (<strong>jointure</strong> + <code>GROUP BY</code> + <strong>requête imbriquée</strong> au dénominateur) en filtrant cette fois sur <code>R.Rep = 'N'</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q9 : Afficher le pourcentage des internautes ayant répondu « Sans avis » pour chaque thème.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span><span class="badge-type badge-imbriquee">Type : Requête imbriquée</span></div>
+      </div>
+      <pre>SELECT S.Theme,
+       (COUNT(*) * 100) / (SELECT COUNT(*) FROM Reponse R2 WHERE R2.NumS = S.NumS) AS pct_sans_avis
+FROM Sondage S, Reponse R
+WHERE S.NumS = R.NumS
+  AND R.Rep = 'S'
+GROUP BY S.NumS, S.Theme;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On filtre sur les réponses « Sans avis » (<code>R.Rep = 'S'</code>) et on rapporte le nombre de réponses de chaque groupe au total du sondage via la <strong>requête imbriquée</strong>.
+      </div>
+    </div>
+    <h2>IV. Corrigé Exercice 2 — Départements &amp; Employés (Questions 1 à 7)</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q1 : Donnez la liste des employés ayant une commission ?</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Sélection IS NOT NULL</span></div>
+      </div>
+      <pre>SELECT *
+FROM Employes
+WHERE COMM IS NOT NULL;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On teste la présence d'une commission avec l'opérateur SQL dédié <code>IS NOT NULL</code> dans la clause <code>WHERE</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q2 : Donnez les noms, emplois et salaires des employés par emploi croissant, et pour chaque emploi, par salaire décroissant ?</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Sélection + Tri ORDER BY</span></div>
+      </div>
+      <pre>SELECT ENOM, PROF, SAL
+FROM Employes
+ORDER BY PROF ASC, SAL DESC;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On trie d'abord sur <code>PROF ASC</code> (ordre alphabétique croissant), puis sur <code>SAL DESC</code> (ordre décroissant des salaires).
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q3 : Donnez le salaire moyen des employés ?</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : Agrégation AVG</span></div>
+      </div>
+      <pre>SELECT AVG(SAL) AS salaire_moyen
+FROM Employes;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> La fonction d'agrégation <code>AVG(SAL)</code> calcule la moyenne de la colonne <code>SAL</code> sur toute la table <code>Employes</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q4 : Donnez le salaire moyen du département Production ?</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : Agrégation AVG</span></div>
+      </div>
+      <pre>SELECT AVG(E.SAL) AS sal_moy_production
+FROM Employes E, Departements D
+WHERE E.DNO = D.DNO
+  AND UPPER(D.DNOM) = 'PRODUCTION';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le salaire est dans <code>Employes</code> et le nom du département dans <code>Departements</code> : il faut une <strong>jointure</strong> <code>E.DNO = D.DNO</code> dans <code>WHERE</code> avant de calculer <code>AVG(E.SAL)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q5 : Donnez les numéros de département et leur salaire maximum ?</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT DNO, MAX(SAL) AS sal_max
+FROM Employes
+GROUP BY DNO;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On regroupe les employés par numéro de département (<code>GROUP BY DNO</code>) afin que <code>MAX(SAL)</code> retourne le salaire maximal de chaque département.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q6 : Donnez les différentes professions et leur salaire moyen ?</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT PROF, AVG(SAL) AS sal_moy
+FROM Employes
+GROUP BY PROF;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise <code>GROUP BY PROF</code> pour former un groupe par profession et calculer la moyenne des salaires <code>AVG(SAL)</code> de chacune.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q7 : Donnez le salaire moyen par profession le plus bas ?</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : GROUP BY</span><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>SELECT PROF, AVG(SAL) AS sal_moy_min
+FROM Employes
+GROUP BY PROF
+HAVING AVG(SAL) <= ALL (
+    SELECT AVG(SAL)
+    FROM Employes
+    GROUP BY PROF
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On calcule le salaire moyen par profession avec <code>GROUP BY PROF</code> et on utilise <code>HAVING AVG(SAL) &lt;= ALL (...)</code> (ou <code>ORDER BY sal_moy_min ASC LIMIT 1</code>) pour retenir la profession ayant la moyenne la plus basse.
+      </div>
+    </div>
+    <h2>V. Corrigé Exercice 3 — Gestion des Notes Annuelles (Questions 1 à 5)</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex3 - Q1 : Afficher le nombre total d'étudiants ?</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : Agrégation COUNT</span></div>
+      </div>
+      <pre>SELECT COUNT(*) AS nb_etudiants
+FROM ETUDIANT;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On compte le nombre total de lignes de la table <code>ETUDIANT</code> à l'aide de <code>COUNT(*)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex3 - Q2 : Afficher la note la plus haute et la note la plus basse pour chaque étudiant ?</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT NEtudiant, MAX(Note) AS note_max, MIN(Note) AS note_min
+FROM EVALUER
+GROUP BY NEtudiant;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> L'expression « pour chaque étudiant » impose un regroupement <code>GROUP BY NEtudiant</code> sur la table <code>EVALUER</code> avec les fonctions <code>MAX(Note)</code> et <code>MIN(Note)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex3 - Q3 : Afficher les moyennes de chaque étudiant dans chacune des matières ?</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT E.NEtudiant, E.Nom, E.Prenom, M.LibelleMat, AVG(EV.Note) AS moyenne
+FROM ETUDIANT E, MATIERE M, EVALUER EV
+WHERE E.NEtudiant = EV.NEtudiant
+  AND M.CodeMat = EV.CodeMat
+GROUP BY E.NEtudiant, E.Nom, E.Prenom, M.CodeMat, M.LibelleMat;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On combine une <strong>jointure à 3 tables</strong> (<code>ETUDIANT</code>, <code>MATIERE</code>, <code>EVALUER</code>) dans <code>WHERE</code> et un regroupement <code>GROUP BY</code> sur le couple (étudiant, matière) pour calculer <code>AVG(EV.Note)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex3 - Q4 : Afficher les noms et les prénoms des étudiants dans chaque matière ?</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span></div>
+      </div>
+      <pre>SELECT DISTINCT M.LibelleMat, E.Nom, E.Prenom
+FROM ETUDIANT E, MATIERE M, EVALUER EV
+WHERE E.NEtudiant = EV.NEtudiant
+  AND M.CodeMat = EV.CodeMat
+ORDER BY M.LibelleMat ASC, E.Nom ASC;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On effectue une <strong>jointure</strong> entre les 3 tables via la table de liaison <code>EVALUER</code>, avec <code>DISTINCT</code> pour éviter qu'un étudiant évalué plusieurs fois dans la même matière n'apparaisse en double.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex3 - Q5 : Afficher les noms et les prénoms des étudiants dans un ordre décroissant des notes pour chaque matière ?</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-selection">Type : Tri ORDER BY</span></div>
+      </div>
+      <pre>SELECT M.LibelleMat, E.Nom, E.Prenom, EV.Note
+FROM ETUDIANT E, MATIERE M, EVALUER EV
+WHERE E.NEtudiant = EV.NEtudiant
+  AND M.CodeMat = EV.CodeMat
+ORDER BY M.LibelleMat ASC, EV.Note DESC;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Après la <strong>jointure</strong> des 3 tables dans <code>WHERE</code>, on trie par matière (<code>M.LibelleMat ASC</code>) puis par note décroissante (<code>EV.Note DESC</code>).
+      </div>
+    </div>
+
+    <div class="footer-page">
+      4ème SI - Lycée Rafeha | Corrigé Série 3 BD (Group By)
+    </div>
+
+    <script>
+      function ouvrirVideoCorrigeeSerie() {
+        var titre = '🎥 Série 3 SQL (Group By) — Création BD, Insertion & Corrigé complet';
+        var cle = 'sql-serie3';
+        try {
+          if (
+            window.parent &&
+            window.parent !== window &&
+            typeof window.parent.ouvrirVideoPasAPasSTI === "function"
+          ) {
+            window.parent.ouvrirVideoPasAPasSTI(cle, titre);
+            return;
+          }
+        } catch (e) {}
+        if (typeof window.ouvrirVideoPasAPasSTI === "function") {
+          window.ouvrirVideoPasAPasSTI(cle, titre);
+        }
+      }
+    </script>
+  <!-- 🔒 Protection du contenu STI -->
+<link rel="stylesheet" href="../../assets/css/protection.css?v=227" />
+<script src="../../assets/js/protection.js?v=227" defer></script>
+<!-- /Protection -->
+<script src="../../assets/js/supabase-umd.js"></script>
+<script src="../../assets/js/config.js?v=227"></script>
+<script src="../../assets/js/acces.js?v=227"></script>
+</body>
+</html>

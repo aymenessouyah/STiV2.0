@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
     <meta name="robots" content="noai, noimageai" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta charset="UTF-8" />
-    <title>Série de Révision : BD - SQL - LMD (Lycée Rafèha)</title>
+    <title>Corrigé : Série 2 BD - LMD Jointures et sous-requêtes</title>
     <style>
       @page {
         margin: 15mm;
@@ -17,13 +17,13 @@
         margin: 0;
         padding: 20px;
         color: #1a202c;
-        line-height: 1.4;
+        line-height: 1.48;
         background-color: #fff;
       }
       .header-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
       }
       .header-table td {
         border: 2px solid #1a365d;
@@ -39,24 +39,29 @@
       .title-container {
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 15px;
-        margin: 20px 0;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 16px 0 18px;
         border-bottom: 3px solid #1a365d;
-        padding-bottom: 10px;
+        padding-bottom: 12px;
+      }
+      .title-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
       }
       .title-container h1 {
-        font-size: 1.2em;
+        font-size: 1.18em;
         color: #1a365d;
         text-transform: uppercase;
         margin: 0;
-        text-align: center;
       }
       .db-logo {
         width: 42px;
         height: 42px;
         background: #2b6cb0;
-        border-radius: 4px;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -66,66 +71,133 @@
         color: #fff;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
       }
+      .btn-video-serie {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 10px;
+        border: 2px solid #facc15;
+        background: linear-gradient(135deg, #ea580c, #c2410c);
+        color: #fff;
+        font: 800 13.5px/1.2 "Segoe UI", system-ui, sans-serif;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(234, 88, 12, 0.32);
+        text-decoration: none;
+      }
+      .btn-video-serie:hover {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+      }
       h2 {
-        color: #2b6cb0;
-        background-color: #ebf8ff;
-        padding: 6px 12px;
-        font-size: 1.05em;
-        border-left: 5px solid #2b6cb0;
+        color: #1e3a8a;
+        background-color: #dbeafe;
+        padding: 8px 14px;
+        font-size: 1.06em;
+        border-left: 5px solid #1d4ed8;
         margin-top: 22px;
-        margin-bottom: 10px;
-        border-radius: 0 4px 4px 0;
+        margin-bottom: 12px;
+        border-radius: 0 6px 6px 0;
       }
-      h3 {
-        color: #2c5282;
-        font-size: 0.95em;
-        margin-top: 15px;
-        margin-bottom: 5px;
+      .schema-box {
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
+        border-left: 5px solid #2b6cb0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
       }
-      table.data-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 10px 0 15px 0;
-        font-size: 0.9em;
+      .req-card {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
       }
-      table.data-table th,
-      table.data-table td {
-        border: 1px solid #cbd5e0;
-        padding: 6px 10px;
-        text-align: left;
-      }
-      table.data-table th {
-        background-color: #edf2f7;
-        color: #2d3748;
-        font-weight: bold;
-      }
-      ul,
-      ol {
-        margin-top: 5px;
+      .req-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
         margin-bottom: 8px;
-        padding-left: 22px;
       }
-      li {
-        margin-bottom: 4px;
+      .req-title {
+        font-size: 0.98em;
+        font-weight: 800;
+        color: #0f172a;
       }
-      code,
+      .req-badges {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .badge-type {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.78em;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+      }
+      .badge-jointure {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+      }
+      .badge-sousreq {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+      .badge-imbriquee {
+        background: #fae8ff;
+        color: #86198f;
+        border: 1px solid #f0abfc;
+      }
+      .badge-groupby {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #93c5fd;
+      }
+      .badge-selection {
+        background: #e0f2fe;
+        color: #075985;
+        border: 1px solid #7dd3fc;
+      }
       pre {
-        font-family: Consolas, monospace;
-        font-size: 0.88em;
-        background-color: #f7fafc;
-        padding: 2px 4px;
-        border-radius: 3px;
-        color: #2b6cb0;
-      }
-      .sql-block {
-        background-color: #f7fafc;
-        border-left: 3px solid #2b6cb0;
-        padding: 8px 12px;
-        margin: 6px 0 10px 0;
-        font-family: Consolas, monospace;
-        font-size: 0.85em;
+        background-color: #0f172a;
+        border: 1px solid #1e293b;
+        border-left: 4px solid #f97316;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        color: #f8fafc;
+        overflow-x: auto;
+        margin: 8px 0 10px 0;
         white-space: pre-wrap;
-        color: #2d3748;
+      }
+      .why-box {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-left: 4px solid #f59e0b;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        color: #78350f;
+      }
+      .why-box strong {
+        color: #92400e;
+      }
+      code {
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        background-color: #edf2f7;
+        padding: 2px 5px;
+        border-radius: 3px;
+        color: #1e3a8a;
       }
       .footer-page {
         text-align: right;
@@ -135,7 +207,12 @@
         border-top: 1px solid #e2e8f0;
         padding-top: 5px;
       }
-    </style>
+      @media print {
+        .btn-video-serie, #stix-nav {
+          display: none !important;
+        }
+      }
+</style>
   </head>
   <body>
 <!-- STI navigation croisée -->
@@ -144,521 +221,538 @@
     <table class="header-table">
       <tr>
         <td width="30%" class="header-title">
-          Lycée Rafèha<br /><span style="font-weight: normal; font-size: 0.9em"
-            >Matière : STI</span
-          >
+          Lycée Rafeha<br />Enseignant : A. Essouyah<br /><span style="font-weight: normal; font-size: 0.9em">Matière : STI</span>
         </td>
         <td width="40%" class="header-title">
-          Série : Update, Select, Group By, Having<br /><span
-            style="font-weight: normal; font-size: 0.85em"
-            >BD - SQL - LMD</span
-          >
+          Corrigé — Série 2 : LMD Jointures & Sous-requêtes<br /><span style="font-weight: normal; font-size: 0.85em">Création BD, Insertion & Corrigé détaillé avec types et justifications</span>
         </td>
         <td width="30%" class="header-title">
-          Classe<br /><span style="font-weight: normal; font-size: 0.9em"
-            >4<sup>ème</sup> SI</span
-          >
+          Classe<br /><span style="font-weight: normal; font-size: 0.9em">4<sup>ème</sup> SI</span>
         </td>
       </tr>
     </table>
 
     <div class="title-container">
-      <div class="db-logo">LMD</div>
-      <h1>Série de Révision : Langage de Manipulation de Données (LMD)</h1>
+      <div class="title-left">
+        <div class="db-logo">SQL</div>
+        <h1>Corrigé Série 2 : LMD — Jointures, Sous-requêtes & Group By</h1>
+      </div>
+      <button
+        type="button"
+        class="btn-video-serie"
+        onclick="ouvrirVideoCorrigeeSerie()"
+      >
+        🎥 Vidéo Corrigé — Création BD, Insertion & Requêtes Série 2
+      </button>
     </div>
 
-    <p>
-      Pour chacun des exercices suivants, exprimez en SQL les requêtes demandées
-      .
-    </p>
+    <h2>I. Création des bases de données et des tables (CREATE DATABASE / CREATE TABLE)</h2>
+    <div class="schema-box">
+      <pre>CREATE DATABASE BDDEPEMP;
+USE BDDEPEMP;
 
-    <h2>Exercice 1 : Festival de Musique</h2>
-    <p>Soit la base de données d'un festival de musique :</p>
-    <ul>
-      <li>Dans une représentation peut participer un ou plusieurs musiciens</li>
-      <li>Un musicien ne peut participer qu'à une seule représentation .</li>
-      <li><strong>Representation :</strong> (Num_Rep, titre_Rep, lieu)</li>
-      <li><strong>Musicien :</strong> (Num_mus, nom, #Num_Rep)</li>
-      <li><strong>Programmer :</strong> (Date, #Num_Rep, tarif)</li>
-    </ul>
-    <p><strong>Travail demandé :</strong></p>
-    <ol>
-      <li>
-        La liste des titres des représentations .
-        <div class="sql-block">SELECT titre_Rep FROM Representation;</div>
-      </li>
-      <li>
-        La liste des titres des représentations ayant lieu au &laquo; théâtre
-        Municipal &raquo; .
-        <div class="sql-block">
-          SELECT titre_Rep<br />FROM Representation<br />WHERE upper(lieu) =
-          'THEATRE MUNICIPAL';
-        </div>
-      </li>
-      <li>
-        La liste des noms des musiciens et les titres des représentations
-        auxquelles ils participent .
-        <div class="sql-block">
-          SELECT M.nom, R.titre_Rep<br />FROM Musicien M, Representation R<br />WHERE
-          R.Num_Rep = M.Num_Rep;
-        </div>
-      </li>
-      <li>
-        La liste des titres des représentations, les lieux et les tarifs du
-        25/01/2022 .
-        <div class="sql-block">
-          SELECT R.titre_Rep, R.lieu, P.tarif<br />FROM Programmer P,
-          Representation R<br />WHERE P.Num_Rep = R.Num_Rep<br />AND P.date =
-          '2022-01-25';
-        </div>
-      </li>
-      <li>
-        Le nombre des musiciens qui participent à la représentation n°20
-        <div class="sql-block">
-          SELECT COUNT(*) AS "Nombre de musiciens"<br />FROM Musicien WHERE
-          Num_Rep = 20;
-        </div>
-      </li>
-      <li>
-        Les représentations et leurs dates dont le tarif ne dépasse pas 20 DT .
-        <div class="sql-block">
-          SELECT R.Num_Rep, R.titre_Rep, P.Date<br />FROM Representation R,
-          Programmer P<br />WHERE R.Num_Rep = P.Num_Rep<br />AND P.tarif &lt;=
-          20;
-        </div>
-      </li>
-    </ol>
+-- Exercice 1 : Festival de Musique
+CREATE TABLE Representation (
+    Num_Rep INT PRIMARY KEY,
+    titre_Rep VARCHAR(60) NOT NULL,
+    lieu VARCHAR(50) NOT NULL
+);
+CREATE TABLE Musicien (
+    Num_mus INT PRIMARY KEY,
+    nom VARCHAR(50) NOT NULL,
+    Num_Rep INT REFERENCES Representation(Num_Rep)
+);
+CREATE TABLE Programmer (
+    Date DATE,
+    Num_Rep INT REFERENCES Representation(Num_Rep),
+    tarif DECIMAL(8,2),
+    PRIMARY KEY (Date, Num_Rep)
+);
 
-    <h2>Exercice 2 : Base de données BDDEPEMP</h2>
-    <p>Soit la base de données <code>BDDEPEMP</code> suivante :</p>
-    <ul>
-      <li><strong>Départements :</strong> (DNO, DNOM, DIR, VILLE)</li>
-      <li>
-        <strong>Employés :</strong> (ENO, ENOM, PROF, DATEEMB, SAL, COMM, DNO#)
-      </li>
-    </ul>
+-- Exercice 2 : Départements (DEPT) et Employés (EMP)
+CREATE TABLE DEPT (
+    DNO INT PRIMARY KEY,
+    DNOM VARCHAR(30) NOT NULL,
+    DIR INT,
+    VILLE VARCHAR(30)
+);
+CREATE TABLE EMP (
+    ENO INT PRIMARY KEY,
+    ENOM VARCHAR(30) NOT NULL,
+    PROF VARCHAR(30),
+    DATEEMB DATE,
+    SAL DECIMAL(10,2),
+    COMM DECIMAL(10,2),
+    DNO INT REFERENCES DEPT(DNO)
+);</pre>
+    </div>
 
-    <h3>Description de la table Départements</h3>
-    <table class="data-table">
-      <tr>
-        <th>Colonne</th>
-        <th>Description</th>
-      </tr>
-      <tr>
-        <td>DNO</td>
-        <td>numéro de département, clé</td>
-      </tr>
-      <tr>
-        <td>DNOM</td>
-        <td>nom du département</td>
-      </tr>
-      <tr>
-        <td>DIR</td>
-        <td>directeur du département</td>
-      </tr>
-      <tr>
-        <td>VILLE</td>
-        <td>lieu du département (ville)</td>
-      </tr>
-    </table>
+    <h2>II. Insertion des enregistrements (INSERT INTO)</h2>
+    <div class="schema-box">
+      <pre>-- Insertion Exercice 1 (Festival)
+INSERT INTO Representation VALUES (10, 'Symphonie de Carthage', 'THEATRE MUNICIPAL');
+INSERT INTO Representation VALUES (20, 'Nuit du Jazz', 'Hammamet');
+INSERT INTO Representation VALUES (30, 'Malouf Tunisien', 'Medina');
 
-    <h3>Description de la table Employés</h3>
-    <table class="data-table">
-      <tr>
-        <th>Colonne</th>
-        <th>Description</th>
-      </tr>
-      <tr>
-        <td>ENO</td>
-        <td>numéro d'employé, clé</td>
-      </tr>
-      <tr>
-        <td>ENOM</td>
-        <td>nom de l'employé</td>
-      </tr>
-      <tr>
-        <td>PROF</td>
-        <td>profession (directeur n'est pas une profession)</td>
-      </tr>
-      <tr>
-        <td>DATEEMB</td>
-        <td>date d'embauche</td>
-      </tr>
-      <tr>
-        <td>SAL</td>
-        <td>Salaire</td>
-      </tr>
-      <tr>
-        <td>COMM</td>
-        <td>commission (un employé peut ne pas avoir de commission)</td>
-      </tr>
-      <tr>
-        <td>DNO</td>
-        <td>numéro de département auquel appartient l'employé</td>
-      </tr>
-    </table>
+INSERT INTO Musicien VALUES (1, 'Amine Bouhafa', 10);
+INSERT INTO Musicien VALUES (2, 'Anouar Brahem', 20);
+INSERT INTO Musicien VALUES (3, 'Lotfi Bouchnak', 30);
 
-    <p><strong>Travail demandé :</strong></p>
-    <ol>
-      <li>
-        Créer la BD <code>BDDEPEMP</code> ainsi que les tables Départements et
-        Employés .
-      </li>
-      <li>
-        Insérer les lignes spécifiées dans l'énoncé d'origine pour les
-        départements et les employés .
-      </li>
-      <li>
-        Donnez la liste des employés ayant une commission :
-        <div class="sql-block">
-          SELECT * FROM Employes WHERE COMM IS NOT NULL;
-        </div>
-      </li>
-      <li>
-        Donnez les noms, emplois et salaires des employés par emploi croissant,
-        et pour chaque emploi, par salaire décroissant :
-        <div class="sql-block">
-          SELECT ENOM, PROF, SAL FROM Employes ORDER BY PROF ASC, SAL DESC;
-        </div>
-      </li>
-      <li>
-        Donnez le salaire moyen des employés :
-        <div class="sql-block">SELECT AVG(SAL) FROM Employes;</div>
-      </li>
-      <li>
-        Donnez les numéros de département et leur salaire maximum :
-        <div class="sql-block">
-          SELECT DNO, MAX(SAL) FROM Employes GROUP BY DNO;
-        </div>
-      </li>
-      <li>
-        Donner les noms des employés ayant le salaire maximum de chaque
-        département :
-        <div class="sql-block">
-          SELECT ENOM FROM EMP WHERE (DNO, SAL) IN (SELECT DNO, MAX(SAL) FROM
-          EMP GROUP BY DNO);
-        </div>
-      </li>
-      <li>
-        Donnez les différentes professions et leur salaire moyen :
-        <div class="sql-block">
-          SELECT PROF, AVG(SAL) FROM Employes GROUP BY PROF;
-        </div>
-      </li>
-      <li>
-        Donner les noms des employés du département COMMERCIAL embauchés le même
-        jour qu'un employé du département PRODUCTION :
-        <div class="sql-block">
-          SELECT ENOM FROM EMP, DEPT WHERE EMP.DNO = DEPT.DNO AND DNOM =
-          'COMMERCIAL' AND DATEEMB IN (SELECT DATEEMB FROM EMP, DEPT WHERE
-          EMP.DNO = DEPT.DNO AND DNOM = 'PRODUCTION');
-        </div>
-      </li>
-      <li>
-        Donner les noms des employés embauchés avant tous les employés du
-        département 1 :
-        <div class="sql-block">
-          SELECT ENOM FROM EMP WHERE DATEEMB &lt; ALL (SELECT DATEEMB FROM EMP
-          WHERE DNO = 1);
-        </div>
-      </li>
-      <li>
-        Donner les noms des employés ayant le même emploi et le même directeur
-        que 'Ali' :
-        <div class="sql-block">
-          SELECT ENOM FROM EMP, DEPT WHERE upper(ENOM) LIKE 'ALI' AND EMP.DNO =
-          DEPT.DNO AND (PROF, DIR) = (SELECT PROF, DIR FROM EMP, DEPT WHERE
-          upper(ENOM) = 'ALI' AND EMP.DNO = DEPT.DNO);
-        </div>
-      </li>
-      <li>
-        Donner la liste des employés ayant une commission :
-        <div class="sql-block">SELECT * FROM EMP WHERE COMM IS NOT NULL;</div>
-      </li>
-      <li>
-        Donner les noms, emplois et salaires des employés par emploi croissant
-        et, pour chaque emploi, par salaire décroissant :
-        <div class="sql-block">
-          SELECT ENOM, PROF, SAL FROM EMP ORDER BY PROF ASC, SAL DESC;
-        </div>
-      </li>
-      <li>
-        Donner le salaire moyen des employés :
-        <div class="sql-block">
-          SELECT AVG(SAL) AS 'SALAIRE MOYEN' FROM EMP;
-        </div>
-      </li>
-      <li>
-        Donner le nombre d'employés du département PRODUCTION :
-        <div class="sql-block">
-          SELECT COUNT(*) FROM EMP, DEPT WHERE EMP.DNO = DEPT.DNO AND DEPT.DNOM
-          = 'PRODUCTION';
-        </div>
-      </li>
-      <li>
-        Les numéros de département et leur salaire maximum :
-        <div class="sql-block">SELECT DNO, MAX(SAL) FROM EMP GROUP BY DNO;</div>
-      </li>
-      <li>
-        Les professions et leur salaire moyen :
-        <div class="sql-block">
-          SELECT PROF, AVG(SAL) FROM EMP GROUP BY PROF;
-        </div>
-      </li>
-      <li>
-        Le salaire moyen le plus bas (par profession) :
-        <div class="sql-block">
-          SELECT MIN(AVG(SAL)) FROM EMP GROUP BY PROF;
-        </div>
-      </li>
-      <li>
-        Donnez le ou les emplois ayant le salaire moyen le plus bas, donnez
-        aussi leur salaire moyen :
-        <div class="sql-block">
-          SELECT PROF, AVG(SAL) FROM EMP GROUP BY PROF HAVING AVG(SAL) = (SELECT
-          MIN(AVG(SAL)) FROM EMP GROUP BY PROF);
-        </div>
-      </li>
-      <li>
-        Afficher la somme des commissions par mois :
-        <div class="sql-block">
-          SELECT MONTH(DATEEMB) AS mois, SUM(COMM) AS total_comm FROM EMP GROUP
-          BY MONTH(DATEEMB);
-        </div>
-      </li>
-      <li>
-        Augmenter tous les salaires du département &laquo; Développement &raquo;
-        de 10% :
-        <div class="sql-block">
-          UPDATE EMP SET SAL = SAL * 1.10 WHERE DNO = (SELECT DNO FROM DEPT
-          WHERE UPPER(DNOM) = 'DEVELOPPEMENT');
-        </div>
-      </li>
-      <li>
-        Augmenter les salaires des employés ayant une commission supérieure à
-        2000 :
-        <div class="sql-block">
-          UPDATE EMP SET SAL = SAL * 1.10 WHERE COMM &gt; 2000;
-        </div>
-      </li>
-      <li>
-        Changer les noms des villes des départements en ajoutant l'abréviation
-        &laquo; TN &raquo; (Exemple : &laquo; Sousse &raquo; devient &laquo;
-        TNSousse &raquo;) :
-        <div class="sql-block">
-          UPDATE DEPT SET VILLE = CONCAT('TN', VILLE);
-        </div>
-      </li>
-    </ol>
+INSERT INTO Programmer VALUES ('2022-01-25', 10, 25.00);
+INSERT INTO Programmer VALUES ('2022-01-25', 30, 15.00);
 
-    <h2>Exercice 3 : Gestion des Ventes</h2>
-    <p>Soit la base de données de gestion des ventes :</p>
-    <ul>
-      <li>
-        <strong>Produit :</strong> (Ref, Designation, PrixUnitaire, Dimension,
-        #code_Machine)
-      </li>
-      <li><strong>Vente :</strong> (Ncom, #Ref, Qte, DateLiv)</li>
-      <li>
-        <strong>Commande :</strong> (Ncom, DateCmd, #CodeClt, #Code_Salarie)
-      </li>
-      <li>
-        <strong>Produit_concurrent :</strong> (Ref, Designation, PrixUnitaire,
-        Dimension, #code_Machine, Nom_Concurrent)
-      </li>
-    </ul>
-    <p><strong>Travail demandé :</strong></p>
-    <ol>
-      <li>
-        Donner la requête qui permet d'obtenir le chiffre d'affaires mensuel de
-        l'année en cours :
-        <div class="sql-block">
-          SELECT sum(Qte*PrixUnitaire), MONTH(DateCmd) FROM Produit, Vente,
-          Commande WHERE Produit.Ref = Vente.Ref AND Vente.Ncom = Commande.Ncom
-          AND YEAR(DateCmd) = YEAR(NOW()) GROUP BY MONTH(DateCmd);
-        </div>
-      </li>
-      <li>
-        Donner la requête qui calcule le taux de vente de chaque produit:
-        <div class="sql-block">
-          SELECT Ref, sum(Qte)/(select sum(Qte) FROM Vente) FROM Vente GROUP BY
-          Ref;
-        </div>
-      </li>
-      <li>
-        Donner la requête qui affiche le produit le plus vendu du mois en cours
-        :
-        <div class="sql-block">
-          SELECT Ref, Designation, tot FROM (SELECT Ref, Designation, SUM(Qte)
-          as tot FROM Produit, Vente WHERE Produit.Ref = Vente.Ref GROUP BY Ref)
-          ORDER BY tot DESC;
-        </div>
-      </li>
-    </ol>
+-- Insertion Exercice 2 (BDDEPEMP)
+INSERT INTO DEPT VALUES (1, 'COMMERCIAL', 10, 'Sousse');
+INSERT INTO DEPT VALUES (2, 'PRODUCTION', 20, 'Tunis');
+INSERT INTO DEPT VALUES (3, 'DEVELOPPEMENT', 30, 'Sfax');
 
-    <h2>Exercice 4 : Tour de France 2021</h2>
-    <p>
-      Soit le modèle relationnel relatif à la gestion simplifiée des étapes du
-      Tour de France 2021, dont une des étapes de type &laquo; contre la montre
-      individuel &raquo; se déroula à Saint-Etienne :
-    </p>
-    <ul>
-      <li>
-        <strong>EQUIPE :</strong> (CodeEquipe, NomEquipe, DirecteurSportif)
-      </li>
-      <li>
-        <strong>COUREUR :</strong> (NuméroCoureur, NomCoureur, #CodeEquipe,
-        #CodePays)
-      </li>
-      <li><strong>PAYS :</strong> (CodePays, NomPays)</li>
-      <li><strong>TYPE_ETAPE :</strong> (CodeType, LibelleType)</li>
-      <li>
-        <strong>ETAPE :</strong> (NuméroEtape, DateEtape, VilleDép, VilleArr,
-        NbKm, #CodeType)
-      </li>
-      <li>
-        <strong>PARTICIPER :</strong> (#NuméroCoureur, #NuméroEtape,
-        TempsRealisé)
-      </li>
-      <li>
-        <strong>ATTRIBUER_BONIFICATION :</strong> (#NuméroEtape, #NuméroCoureur,
-        km, Rang, NbSecondes)
-      </li>
-    </ul>
-    <p><strong>Travail demandé :</strong></p>
-    <ol>
-      <li>
-        Quelle est la composition de l'équipe Festina (Numéro, nom et pays des
-        coureurs)?
-        <div class="sql-block">
-          SELECT NumeroCoureur, NomCoureur, NomPays FROM EQUIPE A, COUREUR B,
-          PAYS C WHERE A.CodeEquipe = B.CodeEquipe And B.CodePays = C.CodePays
-          And NomEquipe = 'FESTINA';
-        </div>
-      </li>
-      <li>
-        Quel est le nombre de kilomètres total du Tour de France 2021?
-        <div class="sql-block">SELECT SUM(Nbkm) FROM ETAPE;</div>
-      </li>
-      <li>
-        Quel est le nombre de kilomètres total des étapes de type &laquo; Haute
-        Montagne &raquo;?
-        <div class="sql-block">
-          SELECT SUM(Nbkm) FROM ETAPE A, TYPE_ETAPE B WHERE A.CodeType =
-          B.CodeType And LibelleType = 'HAUTE MONTAGNE';
-        </div>
-      </li>
-      <li>
-        Quels sont les noms des coureurs qui n'ont pas obtenu de bonifications?
-        <div class="sql-block">
-          SELECT NomCoureur FROM COUREUR WHERE NumeroCoureur NOT IN (SELECT
-          NumeroCoureur FROM ATTRIBUER_BONIFICATION);
-        </div>
-      </li>
-      <li>
-        Quels sont les noms des coureurs qui ont participé à toutes les étapes ?
-        <div class="sql-block">
-          SELECT NomCoureur FROM PARTICIPER A, COUREUR B WHERE A.NumeroCoureur =
-          B.NumeroCoureur GROUP BY NomCoureur HAVING COUNT(*) = (SELECT COUNT(*)
-          FROM ETAPE);
-        </div>
-      </li>
-      <li>
-        Quel est le classement général des coureurs à l'issue des 13 premières
-        étapes (sachant que les bonifications ont été intégrées dans les temps
-        réalisés)?
-        <div class="sql-block">
-          SELECT NomCoureur, CodeEquipe, CodePays, SUM(TempsRealise) AS Total
-          FROM PARTICIPER A, COUREUR B WHERE A.NumeroCoureur = B.NumeroCoureur
-          and NumeroEtape &lt;= 13 GROUP BY NomCoureur, CodeEquipe, CodePays
-          ORDER BY Total;
-        </div>
-      </li>
-      <li>
-        Quel est le classement par équipe à l'issue des 13 premières étapes (nom
-        et temps des équipes)?
-        <div class="sql-block">
-          SELECT NomEquipe, SUM(TempsRealise) AS Total FROM PARTICIPER A,
-          COUREUR B, EQUIPE C WHERE A.NumeroCoureur = B.NumeroCoureur And
-          B.CodeEquipe = C.CodeEquipe And NumeroEtape &lt;= 13 GROUP BY
-          NomEquipe ORDER BY Total;
-        </div>
-      </li>
-    </ol>
+INSERT INTO EMP VALUES (10, 'Ali', 'Ingenieur', '2020-03-15', 2500.00, 500.00, 1);
+INSERT INTO EMP VALUES (20, 'Sonia', 'Technicien', '2021-06-10', 1800.00, NULL, 2);
+INSERT INTO EMP VALUES (30, 'Karim', 'Analyste', '2019-01-20', 2800.00, 2200.00, 3);</pre>
+    </div>
 
-    <h2>Exercice 5 : Gestion des Notes Anuelles</h2>
-    <p>
-      Soit le modèle relationnel suivant relatif à la gestion des notes
-      annuelles d'une promotion d'étudiants :
-    </p>
-    <ul>
-      <li><strong>ETUDIANT :</strong> (NEtudiant, Nom, Prénom)</li>
-      <li><strong>MATIERE :</strong> (CodeMat, LibelléMat, CoeffMat)</li>
-      <li><strong>EVALUER :</strong> (#NEtudiant, #CodeMat, Date, Note)</li>
-    </ul>
-    <p><strong>Travail demandé :</strong></p>
-    <ol>
-      <li>
-        Quel est le nombre total d'étudiants ?
-        <div class="sql-block">SELECT count(*) FROM ETUDIANT;</div>
-      </li>
-      <li>
-        Quelles sont, parmi l'ensemble des notes, la note la plus haute et la
-        note la plus basse ?
-        <div class="sql-block">
-          SELECT MIN(Note) as 'plus basse note', MAX(Note) as 'plus haute note'
-          FROM EVALUER;
-        </div>
-      </li>
-      <li>
-        Quelles sont les moyennes de chaque étudiant dans chacune des matières ?
-        <div class="sql-block">
-          SELECT E.NEtudiant, M.LibelléMat, AVG(EV.Note) AS MoyEtuMat FROM
-          EVALUER EV, MATIERE M, ETUDIANT E WHERE EV.CodeMat = M.CodeMat AND
-          EV.NEtudiant = E.NEtudiant GROUP BY E.NEtudiant, M.LibelléMat;
-        </div>
-      </li>
-      <li>
-        Quelles sont les moyennes par matière ? (Avec la vue MOYETUMAT de la
-        question 3)
-        <div class="sql-block">
-          SELECT LibelleMat, AVG(MoyEtuMat) FROM MOYETUMAT GROUP BY LibelleMat;
-        </div>
-      </li>
-      <li>
-        Quelle est la moyenne générale de chaque étudiant ? (Avec la vue
-        MOYETUMAT de la question 3)
-        <div class="sql-block">
-          SELECT NEtudiant, SUM(MoyEtuMat*CoeffMat)/SUM(CoeffMat) AS MgEtu FROM
-          MOYETUMAT GROUP BY NEtudiant;
-        </div>
-      </li>
-      <li>
-        Quelle est la moyenne générale de la promotion ? (Avec la vue MGETU de
-        la question 5)
-        <div class="sql-block">SELECT AVG(MgEtu) FROM MGETU;</div>
-      </li>
-      <li>
-        Quels sont les étudiants qui ont une moyenne générale supérieure ou
-        égale à la moyenne générale de la promotion ? (Avec la vue MGETU de la
-        question 5)
-        <div class="sql-block">
-          SELECT NEtudiant, Nom, Prenom, MgEtu FROM MGETU WHERE MgEtu &gt;=
-          (SELECT AVG(MgEtu) FROM MGETU);
-        </div>
-      </li>
-    </ol>
+    <h2>III. Corrigé Exercice 1 — Festival de Musique (Requêtes 1 à 6)</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q1 : La liste des titres des représentations.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Projection simple</span></div>
+      </div>
+      <pre>SELECT titre_Rep
+FROM Representation;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Toutes les informations demandées se trouvent dans une seule colonne (<code>titre_Rep</code>) d'une seule table (<code>Representation</code>) : une projection simple suffit.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q2 : La liste des titres des représentations ayant lieu au « théâtre Municipal ».</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Sélection simple</span></div>
+      </div>
+      <pre>SELECT titre_Rep
+FROM Representation
+WHERE UPPER(lieu) = 'THEATRE MUNICIPAL';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On filtre les lignes de la table <code>Representation</code> avec la clause <code>WHERE</code> sur la colonne <code>lieu</code> en utilisant <code>UPPER()</code> pour ignorer la casse.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q3 : La liste des noms des musiciens et les titres des représentations auxquelles ils participent.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span></div>
+      </div>
+      <pre>SELECT M.nom, R.titre_Rep
+FROM Musicien M, Representation R
+WHERE R.Num_Rep = M.Num_Rep;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le nom du musicien est dans <code>Musicien</code> et le titre du spectacle dans <code>Representation</code> : on utilise une <strong>jointure</strong> dans <code>WHERE</code> sur la clé commune <code>R.Num_Rep = M.Num_Rep</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q4 : La liste des titres des représentations, les lieux et les tarifs du 25/01/2022.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-selection">Type : Date</span></div>
+      </div>
+      <pre>SELECT R.titre_Rep, R.lieu, P.tarif
+FROM Programmer P, Representation R
+WHERE P.Num_Rep = R.Num_Rep
+  AND P.Date = '2022-01-25';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le tarif et la date sont dans <code>Programmer</code> tandis que le titre et le lieu sont dans <code>Representation</code> : on combine une <strong>jointure</strong> <code>P.Num_Rep = R.Num_Rep</code> et un filtre sur la date.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q5 : Le nombre des musiciens qui participent à la représentation n°20.</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : Agrégation COUNT</span></div>
+      </div>
+      <pre>SELECT COUNT(*) AS nb_musiciens
+FROM Musicien
+WHERE Num_Rep = 20;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le numéro de représentation <code>Num_Rep</code> figure déjà comme clé étrangère dans <code>Musicien</code> : nul besoin de jointure, on filtre <code>WHERE Num_Rep = 20</code> et on compte avec <code>COUNT(*)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q6 : Les représentations et leurs dates dont le tarif ne dépasse pas 20 DT.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span></div>
+      </div>
+      <pre>SELECT R.Num_Rep, R.titre_Rep, P.Date
+FROM Representation R, Programmer P
+WHERE R.Num_Rep = P.Num_Rep
+  AND P.tarif <= 20;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On relie <code>Representation</code> et <code>Programmer</code> par la condition de <strong>jointure</strong> <code>R.Num_Rep = P.Num_Rep</code> et on filtre les tarifs inférieurs ou égaux à 20 DT.
+      </div>
+    </div>
+    <h2>IV. Corrigé Exercice 2 — Base BDDEPEMP : Départements &amp; Employés</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q3 & Q12 : Donnez la liste des employés ayant une commission.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Sélection IS NOT NULL</span></div>
+      </div>
+      <pre>SELECT *
+FROM EMP
+WHERE COMM IS NOT NULL;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> En SQL, l'absence de valeur est représentée par <code>NULL</code>. On utilise <code>WHERE COMM IS NOT NULL</code> pour retenir uniquement les employés qui perçoivent une commission.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q4 & Q13 : Donnez les noms, emplois et salaires des employés par emploi croissant, et pour chaque emploi, par salaire décroissant.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Sélection + Tri ORDER BY</span></div>
+      </div>
+      <pre>SELECT ENOM, PROF, SAL
+FROM EMP
+ORDER BY PROF ASC, SAL DESC;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> La clause <code>ORDER BY PROF ASC, SAL DESC</code> trie d'abord par profession de A à Z, puis départage les employés d'une même profession du salaire le plus élevé au plus bas.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q5 & Q14 : Donnez le salaire moyen des employés.</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : Agrégation AVG</span></div>
+      </div>
+      <pre>SELECT AVG(SAL) AS salaire_moyen
+FROM EMP;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> La fonction d'agrégation <code>AVG(SAL)</code> calcule directement la moyenne arithmétique de tous les salaires de la table <code>EMP</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q6 & Q16 : Donnez les numéros de département et leur salaire maximum.</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT DNO, MAX(SAL) AS sal_max
+FROM EMP
+GROUP BY DNO;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On veut un résultat <strong>par département</strong> : on utilise <code>GROUP BY DNO</code> pour regrouper les employés de chaque département et <code>MAX(SAL)</code> pour extraire le salaire maximal de chaque groupe.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q7 : Donner les noms des employés ayant le salaire maximum de chaque département.</div>
+        <div class="req-badges"><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>SELECT ENOM, DNO, SAL
+FROM EMP
+WHERE (DNO, SAL) IN (
+    SELECT DNO, MAX(SAL)
+    FROM EMP
+    GROUP BY DNO
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise une <strong>sous-requête</strong> avec <code>GROUP BY DNO</code> qui retourne le couple <code>(DNO, MAX(SAL))</code> de chaque département, puis la requête principale sélectionne les employés dont le couple <code>(DNO, SAL)</code> appartient à ce résultat.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q8 & Q17 : Donnez les différentes professions et leur salaire moyen.</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT PROF, AVG(SAL) AS sal_moyen
+FROM EMP
+GROUP BY PROF;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On regroupe les lignes par profession avec <code>GROUP BY PROF</code> et on applique <code>AVG(SAL)</code> sur chaque groupe.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q9 : Donner les noms des employés du département COMMERCIAL embauchés le même jour qu'un employé du département PRODUCTION.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>SELECT EMP.ENOM
+FROM EMP, DEPT
+WHERE EMP.DNO = DEPT.DNO
+  AND DEPT.DNOM = 'COMMERCIAL'
+  AND EMP.DATEEMB IN (
+      SELECT E2.DATEEMB
+      FROM EMP E2, DEPT D2
+      WHERE E2.DNO = D2.DNO
+        AND D2.DNOM = 'PRODUCTION'
+  );</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On combine une <strong>jointure</strong> (pour filtrer le département <code>'COMMERCIAL'</code>) et une <strong>sous-requête</strong> avec <code>IN</code> qui récupère l'ensemble des dates d'embauche des employés du département <code>'PRODUCTION'</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q10 : Donner les noms des employés embauchés avant tous les employés du département 1.</div>
+        <div class="req-badges"><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>SELECT ENOM
+FROM EMP
+WHERE DATEEMB < ALL (
+    SELECT DATEEMB
+    FROM EMP
+    WHERE DNO = 1
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise une <strong>sous-requête</strong> avec l'opérateur <code>&lt; ALL</code> (ou <code>&lt; (SELECT MIN(DATEEMB) FROM EMP WHERE DNO = 1)</code>) pour comparer la date d'embauche de chaque employé à toutes celles du département 1.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q11 : Donner les noms des employés ayant le même emploi et le même directeur que 'Ali'.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>SELECT E.ENOM
+FROM EMP E, DEPT D
+WHERE E.DNO = D.DNO
+  AND (E.PROF, D.DIR) = (
+      SELECT E2.PROF, D2.DIR
+      FROM EMP E2, DEPT D2
+      WHERE E2.DNO = D2.DNO
+        AND UPPER(E2.ENOM) = 'ALI'
+  );</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> L'emploi <code>PROF</code> est dans <code>EMP</code> et le directeur <code>DIR</code> est dans <code>DEPT</code> : la <strong>sous-requête</strong> joint les deux tables pour trouver le couple <code>(PROF, DIR)</code> d'Ali, et la requête principale affiche les employés partageant ce couple.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q15 : Donner le nombre d'employés du département PRODUCTION.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : Agrégation COUNT</span></div>
+      </div>
+      <pre>SELECT COUNT(*) AS nb_employes
+FROM EMP, DEPT
+WHERE EMP.DNO = DEPT.DNO
+  AND DEPT.DNOM = 'PRODUCTION';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise une <strong>jointure</strong> <code>EMP.DNO = DEPT.DNO</code> car le nom <code>'PRODUCTION'</code> est dans <code>DEPT</code> tandis que les employés à compter sont dans <code>EMP</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q18 & Q19 : Donnez le ou les emplois ayant le salaire moyen le plus bas, ainsi que ce salaire moyen.</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : GROUP BY + HAVING</span><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>SELECT PROF, AVG(SAL) AS sal_moy_min
+FROM EMP
+GROUP BY PROF
+HAVING AVG(SAL) <= ALL (
+    SELECT AVG(SAL)
+    FROM EMP
+    GROUP BY PROF
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On regroupe par emploi (<code>GROUP BY PROF</code>) et on filtre les groupes avec <code>HAVING AVG(SAL) &lt;= ALL (...)</code> face à une <strong>sous-requête</strong> calculant les moyennes de toutes les professions.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q20 : Afficher la somme des commissions par mois d'embauche.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Date</span><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT MONTH(DATEEMB) AS mois, SUM(COMM) AS total_comm
+FROM EMP
+GROUP BY MONTH(DATEEMB);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> La fonction de date <code>MONTH(DATEEMB)</code> extrait le numéro du mois, <code>GROUP BY MONTH(DATEEMB)</code> regroupe par mois et <code>SUM(COMM)</code> additionne les commissions.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q21, Q22 & Q23 : Mises à jour (UPDATE) des salaires et des noms de villes.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Mise à jour UPDATE</span><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>-- Q21 : Augmenter les salaires du département Développement de 10%
+UPDATE EMP
+SET SAL = SAL * 1.10
+WHERE DNO = (SELECT DNO FROM DEPT WHERE UPPER(DNOM) = 'DEVELOPPEMENT');
+
+-- Q22 : Augmenter les salaires des employés ayant une commission > 2000
+UPDATE EMP
+SET SAL = SAL * 1.10
+WHERE COMM > 2000;
+
+-- Q23 : Ajouter le préfixe 'TN' devant les villes des départements
+UPDATE DEPT
+SET VILLE = CONCAT('TN', VILLE);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Pour Q21, la <strong>sous-requête</strong> récupère le <code>DNO</code> du département Développement afin de cibler <code>UPDATE EMP</code>. Pour Q23, la fonction <code>CONCAT('TN', VILLE)</code> préfixe chaque nom de ville.
+      </div>
+    </div>
+    <h2>V. Corrigé Exercices 3, 4 &amp; 5 — Ventes, Tour de France &amp; Notes</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex3 - Q1, Q2 & Q3 : Gestion des Ventes (Chiffre d'affaires mensuel, taux de vente, produit le plus vendu).</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>-- Q1 : Chiffre d'affaires mensuel de l'année en cours
+SELECT MONTH(C.DateCmd) AS mois, SUM(V.Qte * P.PrixUnitaire) AS CA_mensuel
+FROM Produit P, Vente V, Commande C
+WHERE P.Ref = V.Ref
+  AND V.Ncom = C.Ncom
+  AND YEAR(C.DateCmd) = YEAR(NOW())
+GROUP BY MONTH(C.DateCmd);
+
+-- Q2 : Taux de vente de chaque produit
+SELECT Ref, (SUM(Qte) * 100) / (SELECT SUM(Qte) FROM Vente) AS taux_vente
+FROM Vente
+GROUP BY Ref;
+
+-- Q3 : Produit le plus vendu du mois en cours
+SELECT P.Ref, P.Designation, SUM(V.Qte) AS total_vendu
+FROM Produit P, Vente V
+WHERE P.Ref = V.Ref
+  AND MONTH(V.DateLiv) = MONTH(NOW())
+  AND YEAR(V.DateLiv) = YEAR(NOW())
+GROUP BY P.Ref, P.Designation
+ORDER BY total_vendu DESC
+LIMIT 1;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On combine les <strong>jointures</strong> dans <code>WHERE</code>, les fonctions de date (<code>YEAR(NOW())</code>, <code>MONTH(NOW())</code>), le regroupement <code>GROUP BY</code> et une <strong>sous-requête</strong> scalaire <code>(SELECT SUM(Qte) FROM Vente)</code> pour rapporter la quantité de chaque produit au total global.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex4 - Q1 à Q7 : Tour de France 2021 (Jointures, Sous-requête NOT IN, GROUP BY / HAVING).</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-sousreq">Type : Sous-requête</span><span class="badge-type badge-groupby">Type : GROUP BY + HAVING</span></div>
+      </div>
+      <pre>-- Q1 : Composition de l'équipe FESTINA
+SELECT B.NumeroCoureur, B.NomCoureur, C.NomPays
+FROM EQUIPE A, COUREUR B, PAYS C
+WHERE A.CodeEquipe = B.CodeEquipe
+  AND B.CodePays = C.CodePays
+  AND A.NomEquipe = 'FESTINA';
+
+-- Q2 : Nombre de kilomètres total du Tour de France 2021
+SELECT SUM(NbKm) AS total_km FROM ETAPE;
+
+-- Q3 : Nombre de km total des étapes de type 'HAUTE MONTAGNE'
+SELECT SUM(A.NbKm) AS km_haute_montagne
+FROM ETAPE A, TYPE_ETAPE B
+WHERE A.CodeType = B.CodeType
+  AND B.LibelleType = 'HAUTE MONTAGNE';
+
+-- Q4 : Noms des coureurs qui n'ont pas obtenu de bonifications
+SELECT NomCoureur
+FROM COUREUR
+WHERE NumeroCoureur NOT IN (SELECT NumeroCoureur FROM ATTRIBUER_BONIFICATION);
+
+-- Q5 : Noms des coureurs ayant participé à toutes les étapes
+SELECT B.NomCoureur
+FROM PARTICIPER A, COUREUR B
+WHERE A.NumeroCoureur = B.NumeroCoureur
+GROUP BY B.NumeroCoureur, B.NomCoureur
+HAVING COUNT(*) = (SELECT COUNT(*) FROM ETAPE);
+
+-- Q6 : Classement général des coureurs à l'issue des 13 premières étapes
+SELECT B.NomCoureur, B.CodeEquipe, B.CodePays, SUM(A.TempsRealise) AS Total
+FROM PARTICIPER A, COUREUR B
+WHERE A.NumeroCoureur = B.NumeroCoureur
+  AND A.NumeroEtape <= 13
+GROUP BY B.NumeroCoureur, B.NomCoureur, B.CodeEquipe, B.CodePays
+ORDER BY Total ASC;
+
+-- Q7 : Classement par équipe à l'issue des 13 premières étapes
+SELECT C.NomEquipe, SUM(A.TempsRealise) AS Total
+FROM PARTICIPER A, COUREUR B, EQUIPE C
+WHERE A.NumeroCoureur = B.NumeroCoureur
+  AND B.CodeEquipe = C.CodeEquipe
+  AND A.NumeroEtape <= 13
+GROUP BY C.CodeEquipe, C.NomEquipe
+ORDER BY Total ASC;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Q4 utilise une <strong>sous-requête</strong> avec <code>NOT IN</code> pour exprimer l'exclusion (« n'ont pas obtenu »). Q5 utilise <code>GROUP BY</code> + <code>HAVING COUNT(*) = (SELECT COUNT(*) FROM ETAPE)</code> pour vérifier la participation à toutes les étapes.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex5 - Q1 à Q7 : Gestion des Notes Annuelles (Agrégation, Jointures, Vues et Sous-requêtes).</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>-- Q1 : Nombre total d'étudiants
+SELECT COUNT(*) AS nb_etudiants FROM ETUDIANT;
+
+-- Q2 : Note la plus haute et note la plus basse
+SELECT MIN(Note) AS plus_basse_note, MAX(Note) AS plus_haute_note FROM EVALUER;
+
+-- Q3 : Moyennes de chaque étudiant dans chacune des matières (Vue MOYETUMAT)
+CREATE VIEW MOYETUMAT AS
+SELECT E.NEtudiant, E.Nom, E.Prenom, M.CodeMat, M.LibelleMat, M.CoeffMat, AVG(EV.Note) AS MoyEtuMat
+FROM ETUDIANT E, MATIERE M, EVALUER EV
+WHERE E.NEtudiant = EV.NEtudiant
+  AND EV.CodeMat = M.CodeMat
+GROUP BY E.NEtudiant, E.Nom, E.Prenom, M.CodeMat, M.LibelleMat, M.CoeffMat;
+
+-- Q4 : Moyennes par matière à partir de la vue MOYETUMAT
+SELECT LibelleMat, AVG(MoyEtuMat) AS moy_matiere
+FROM MOYETUMAT
+GROUP BY LibelleMat;
+
+-- Q5 : Moyenne générale pondérée de chaque étudiant (Vue MGETU)
+CREATE VIEW MGETU AS
+SELECT NEtudiant, Nom, Prenom, SUM(MoyEtuMat * CoeffMat) / SUM(CoeffMat) AS MgEtu
+FROM MOYETUMAT
+GROUP BY NEtudiant, Nom, Prenom;
+
+-- Q6 : Moyenne générale de la promotion
+SELECT AVG(MgEtu) AS moy_promotion FROM MGETU;
+
+-- Q7 : Étudiants ayant une moyenne >= moyenne générale de la promotion
+SELECT NEtudiant, Nom, Prenom, MgEtu
+FROM MGETU
+WHERE MgEtu >= (SELECT AVG(MgEtu) FROM MGETU);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Les vues <code>MOYETUMAT</code> et <code>MGETU</code> décomposent le calcul des moyennes par matière puis des moyennes générales pondérées, et Q7 utilise une <strong>sous-requête</strong> pour comparer chaque étudiant à la moyenne de la promotion.
+      </div>
+    </div>
 
     <div class="footer-page">
-      4ème SI - Lycée Rafèha | Série de Révision BD - LMD
+      4ème SI - Lycée Rafeha | Corrigé Série 2 BD (LMD)
     </div>
-    <script src="tp2-lmd-animation.js"></script>
+
+    <script>
+      function ouvrirVideoCorrigeeSerie() {
+        var titre = '🎥 Série 2 SQL (LMD) — Création BD, Insertion & Corrigé complet';
+        var cle = 'sql-serie2';
+        try {
+          if (
+            window.parent &&
+            window.parent !== window &&
+            typeof window.parent.ouvrirVideoPasAPasSTI === "function"
+          ) {
+            window.parent.ouvrirVideoPasAPasSTI(cle, titre);
+            return;
+          }
+        } catch (e) {}
+        if (typeof window.ouvrirVideoPasAPasSTI === "function") {
+          window.ouvrirVideoPasAPasSTI(cle, titre);
+        }
+      }
+    </script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../../assets/css/protection.css?v=193" />
-<script src="../../assets/js/protection.js?v=193" defer></script>
+<link rel="stylesheet" href="../../assets/css/protection.css?v=227" />
+<script src="../../assets/js/protection.js?v=227" defer></script>
 <!-- /Protection -->
 <script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=193"></script>
-<script src="../../assets/js/acces.js?v=193"></script>
+<script src="../../assets/js/config.js?v=227"></script>
+<script src="../../assets/js/acces.js?v=227"></script>
 </body>
 </html>

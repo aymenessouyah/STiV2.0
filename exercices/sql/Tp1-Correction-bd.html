@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
+    <meta name="robots" content="noai, noimageai" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta charset="UTF-8" />
+    <title>Corrigé : Série 1 BD - Requêtes LDD simples (Hôpital & Location)</title>
+    <style>
+      @page {
+        margin: 15mm;
+        size: A4;
+      }
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        color: #1a202c;
+        line-height: 1.48;
+        background-color: #fff;
+      }
+      .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 18px;
+      }
+      .header-table td {
+        border: 2px solid #1a365d;
+        padding: 8px 12px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .header-title {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: #1a365d;
+      }
+      .title-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 16px 0 18px;
+        border-bottom: 3px solid #1a365d;
+        padding-bottom: 12px;
+      }
+      .title-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .title-container h1 {
+        font-size: 1.18em;
+        color: #1a365d;
+        text-transform: uppercase;
+        margin: 0;
+      }
+      .db-logo {
+        width: 42px;
+        height: 42px;
+        background: #2b6cb0;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        font-size: 18px;
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      }
+      .btn-video-serie {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 10px;
+        border: 2px solid #facc15;
+        background: linear-gradient(135deg, #ea580c, #c2410c);
+        color: #fff;
+        font: 800 13.5px/1.2 "Segoe UI", system-ui, sans-serif;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(234, 88, 12, 0.32);
+        text-decoration: none;
+      }
+      .btn-video-serie:hover {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+      }
+      h2 {
+        color: #1e3a8a;
+        background-color: #dbeafe;
+        padding: 8px 14px;
+        font-size: 1.06em;
+        border-left: 5px solid #1d4ed8;
+        margin-top: 22px;
+        margin-bottom: 12px;
+        border-radius: 0 6px 6px 0;
+      }
+      .schema-box {
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
+        border-left: 5px solid #2b6cb0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+      }
+      .req-card {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+      }
+      .req-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .req-title {
+        font-size: 0.98em;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .req-badges {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .badge-type {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.78em;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+      }
+      .badge-jointure {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+      }
+      .badge-sousreq {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+      .badge-imbriquee {
+        background: #fae8ff;
+        color: #86198f;
+        border: 1px solid #f0abfc;
+      }
+      .badge-groupby {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #93c5fd;
+      }
+      .badge-selection {
+        background: #e0f2fe;
+        color: #075985;
+        border: 1px solid #7dd3fc;
+      }
+      pre {
+        background-color: #0f172a;
+        border: 1px solid #1e293b;
+        border-left: 4px solid #f97316;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        color: #f8fafc;
+        overflow-x: auto;
+        margin: 8px 0 10px 0;
+        white-space: pre-wrap;
+      }
+      .why-box {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-left: 4px solid #f59e0b;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        color: #78350f;
+      }
+      .why-box strong {
+        color: #92400e;
+      }
+      code {
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        background-color: #edf2f7;
+        padding: 2px 5px;
+        border-radius: 3px;
+        color: #1e3a8a;
+      }
+      .footer-page {
+        text-align: right;
+        font-size: 0.8em;
+        color: #718096;
+        margin-top: 30px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 5px;
+      }
+      @media print {
+        .btn-video-serie, #stix-nav {
+          display: none !important;
+        }
+      }
+</style>
+  </head>
+  <body>
+<!-- STI navigation croisée -->
+<style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../../cours/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours SQL</a><a href="../../quiz/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🎯 Quiz</a><a href="../../exercices/series-exercices.html#bdd" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">≡ Séries</a></nav>
+
+    <table class="header-table">
+      <tr>
+        <td width="30%" class="header-title">
+          Lycée Rafeha<br />Enseignant : A. Essouyah<br /><span style="font-weight: normal; font-size: 0.9em">Matière : STI</span>
+        </td>
+        <td width="40%" class="header-title">
+          Corrigé — Série 1 : Requêtes LDD<br /><span style="font-weight: normal; font-size: 0.85em">Création BD, Insertion & Modification de structure (CREATE, ALTER, DROP)</span>
+        </td>
+        <td width="30%" class="header-title">
+          Classe<br /><span style="font-weight: normal; font-size: 0.9em">4<sup>ème</sup> SI</span>
+        </td>
+      </tr>
+    </table>
+
+    <div class="title-container">
+      <div class="title-left">
+        <div class="db-logo">SQL</div>
+        <h1>Corrigé Série 1 : Langage de Définition de Données (LDD)</h1>
+      </div>
+      <button
+        type="button"
+        class="btn-video-serie"
+        onclick="ouvrirVideoCorrigeeSerie()"
+      >
+        🎥 Vidéo Corrigé — Création BD, Insertion & Requêtes LDD
+      </button>
+    </div>
+
+    <h2>I. Création des bases de données et des tables (LDD)</h2>
+    <div class="schema-box">
+      <p><strong>Rappel LDD :</strong> On crée toujours les <strong>tables mères</strong> (possédant les clés primaires référencées) avant les <strong>tables filles</strong> (contenant les clés étrangères <code>FOREIGN KEY</code>), puis on insère les enregistrements dans le même ordre.</p>
+      <pre>CREATE DATABASE Hopital;
+USE Hopital;
+
+CREATE TABLE Patient (
+    num_patient INT(10) PRIMARY KEY,
+    nom_patient VARCHAR(20) NOT NULL,
+    prenom_patient VARCHAR(20) NOT NULL,
+    adr_patient VARCHAR(50)
+);
+
+CREATE TABLE Medecin (
+    code_med VARCHAR(10) PRIMARY KEY,
+    nom_med VARCHAR(20) NOT NULL,
+    prenom_med VARCHAR(20) NOT NULL,
+    tel_med INT(8),
+    specialite VARCHAR(12) CHECK (specialite IN ('generaliste', 'chirurgien'))
+);
+
+CREATE TABLE Sejour (
+    num_sej INT AUTO_INCREMENT PRIMARY KEY,
+    num_chambre INT(4) NOT NULL CHECK (num_chambre BETWEEN 1 AND 1000),
+    date_deb DATE NOT NULL,
+    date_fin DATE CHECK (date_fin &gt; date_deb),
+    num_patient INT(10)
+);
+
+CREATE TABLE traite (
+    num_patient INT(10),
+    date_deb_trait DATE,
+    code_med VARCHAR(10),
+    PRIMARY KEY (num_patient, code_med),
+    FOREIGN KEY (num_patient) REFERENCES Patient(num_patient),
+    FOREIGN KEY (code_med) REFERENCES Medecin(code_med)
+);</pre>
+    </div>
+
+    <h2>II. Insertion des enregistrements d'exemple (INSERT INTO)</h2>
+    <div class="schema-box">
+      <pre>INSERT INTO Patient VALUES (101, 'Ben Ali', 'Sami', 'Tunis');
+INSERT INTO Patient VALUES (102, 'Trabelsi', 'Ines', 'Sousse');
+
+INSERT INTO Medecin VALUES ('M01', 'Gharbi', 'Karim', 71234567, 'chirurgien');
+INSERT INTO Medecin VALUES ('M02', 'Mansouri', 'Leila', 73456789, 'generaliste');
+
+INSERT INTO Sejour (num_chambre, date_deb, date_fin, num_patient)
+VALUES (120, '2026-03-01', '2026-03-08', 101);
+
+INSERT INTO traite VALUES (101, '2026-03-02', 'M01');</pre>
+    </div>
+
+    <h2>III. Corrigé détaillé — Exercice 1 (Système d'Information d'un Hôpital)</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q1 : Créer la structure des quatre tables (Patient, Medecin, Sejour, traite) en respectant les contraintes d'intégrité.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : CREATE TABLE + Contraintes</span></div>
+      </div>
+      <pre>CREATE TABLE Patient (
+    num_patient INT(10) PRIMARY KEY,
+    nom_patient VARCHAR(20) NOT NULL,
+    prenom_patient VARCHAR(20) NOT NULL,
+    adr_patient VARCHAR(50)
+);
+CREATE TABLE Medecin (
+    code_med VARCHAR(10) PRIMARY KEY,
+    nom_med VARCHAR(20) NOT NULL,
+    prenom_med VARCHAR(20) NOT NULL,
+    tel_med INT(8),
+    specialite VARCHAR(12) CHECK (specialite IN ('generaliste', 'chirurgien'))
+);
+CREATE TABLE Sejour (
+    num_sej INT AUTO_INCREMENT PRIMARY KEY,
+    num_chambre INT(4) NOT NULL CHECK (num_chambre BETWEEN 1 AND 1000),
+    date_deb DATE NOT NULL,
+    date_fin DATE CHECK (date_fin > date_deb),
+    num_patient INT(10)
+);
+CREATE TABLE traite (
+    num_patient INT(10),
+    date_deb_trait DATE,
+    code_med VARCHAR(10),
+    PRIMARY KEY (num_patient, code_med),
+    FOREIGN KEY (num_patient) REFERENCES Patient(num_patient),
+    FOREIGN KEY (code_med) REFERENCES Medecin(code_med)
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise <code>CREATE TABLE</code> avec <code>PRIMARY KEY</code> pour l'unicité, <code>NOT NULL</code> pour les champs obligatoires, <code>CHECK (specialite IN (...))</code> et <code>CHECK (num_chambre BETWEEN 1 AND 1000)</code> pour les domaines de valeurs, et une clé primaire composée <code>PRIMARY KEY (num_patient, code_med)</code> dans la table d'association <code>traite</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q2 : Ajouter la colonne « Age » dans la table Patient (Numérique(2), Non nulle et >= 1).</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : ALTER TABLE ... ADD</span></div>
+      </div>
+      <pre>ALTER TABLE Patient
+ADD Age INT(2) NOT NULL CHECK (Age >= 1);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> La structure de la table <code>Patient</code> existe déjà : on utilise donc <code>ALTER TABLE Patient ADD ...</code> pour ajouter une nouvelle colonne sans recréer la table, en lui associant les contraintes <code>NOT NULL</code> et <code>CHECK (Age &gt;= 1)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q3 : Modifier la colonne « tel_med » de la table Medecin (type : texte, taille : 15).</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : ALTER TABLE ... MODIFY</span></div>
+      </div>
+      <pre>ALTER TABLE Medecin
+MODIFY tel_med VARCHAR(15);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> La colonne <code>tel_med</code> existe déjà (initialement <code>INT(8)</code>) et on souhaite changer son type et sa taille sans changer son nom : on utilise <code>ALTER TABLE ... MODIFY</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q4 : Supprimer la colonne « tel_med » de la table Medecin.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : ALTER TABLE ... DROP COLUMN</span></div>
+      </div>
+      <pre>ALTER TABLE Medecin
+DROP COLUMN tel_med;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Pour retirer définitivement un champ d'une table existante, on utilise la clause <code>DROP COLUMN</code> dans la commande <code>ALTER TABLE</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q5 : Ajouter la contrainte de clé étrangère entre « num_patient » de Patient (table mère) et « num_patient » de Sejour (table fille).</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : ADD CONSTRAINT FOREIGN KEY</span></div>
+      </div>
+      <pre>ALTER TABLE Sejour
+ADD CONSTRAINT fk_sejour_patient
+FOREIGN KEY (num_patient) REFERENCES Patient(num_patient);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Une clé étrangère s'ajoute toujours sur la <strong>table fille</strong> (<code>Sejour</code>) et pointe vers la clé primaire de la <strong>table mère</strong> (<code>Patient(num_patient)</code>) afin de garantir l'intégrité référentielle.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex1 - Q6 : Ajouter la valeur par défaut « Tunis » à la colonne « adr_patient » de la table Patient.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : ALTER TABLE ... SET DEFAULT</span></div>
+      </div>
+      <pre>ALTER TABLE Patient
+ALTER adr_patient SET DEFAULT 'Tunis';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise <code>ALTER adr_patient SET DEFAULT 'Tunis'</code> (ou <code>MODIFY adr_patient VARCHAR(50) DEFAULT 'Tunis'</code>) pour attribuer automatiquement la ville <code>'Tunis'</code> lorsqu'aucune adresse n'est précisée à l'insertion.
+      </div>
+    </div>
+    <h2>IV. Corrigé détaillé — Exercice 2 (Agence de Location de Voitures)</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q1 : Créer la base de données « Gestion_Location ».</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : CREATE DATABASE</span></div>
+      </div>
+      <pre>CREATE DATABASE Gestion_Location;
+USE Gestion_Location;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> La commande <code>CREATE DATABASE</code> crée le schéma de la base de données sur le serveur MySQL et <code>USE</code> la sélectionne comme base active.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q2 : Créer les trois tables Client, Vehicule et Location avec leurs types et contraintes + Insertion d'exemples.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : CREATE TABLE + INSERT INTO</span></div>
+      </div>
+      <pre>CREATE TABLE Client (
+    NCIN_Cli VARCHAR(8) PRIMARY KEY,
+    Nom_Cli VARCHAR(20) NOT NULL,
+    Prenom_Cli VARCHAR(20) NOT NULL,
+    Adresse_Cli VARCHAR(50),
+    Ville VARCHAR(20)
+);
+CREATE TABLE Vehicule (
+    Immat_vehicule VARCHAR(10) PRIMARY KEY,
+    Marque VARCHAR(20) NOT NULL CHECK (Marque IN ('Peugeot', 'BYD', 'Fiat', 'Opel', 'Volkswagen', 'Citroen')),
+    Model VARCHAR(20) NOT NULL,
+    Annee_Acq YEAR NOT NULL
+);
+CREATE TABLE Location (
+    Immat_vehicule VARCHAR(10),
+    NCIN_Cli VARCHAR(8),
+    Date_Loc TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Duree_Loc INT CHECK (Duree_Loc > 0),
+    Cout_Loc DECIMAL(10,3) CHECK (Cout_Loc > 0),
+    PRIMARY KEY (Immat_vehicule, NCIN_Cli),
+    FOREIGN KEY (Immat_vehicule) REFERENCES Vehicule(Immat_vehicule),
+    FOREIGN KEY (NCIN_Cli) REFERENCES Client(NCIN_Cli)
+);
+
+INSERT INTO Client VALUES ('09876543', 'Mejri', 'Youssef', '12 Rue Liberté', 'Tunis');
+INSERT INTO Vehicule VALUES ('215TU4520', 'Peugeot', '208', 2023);
+INSERT INTO Location (Immat_vehicule, NCIN_Cli, Duree_Loc, Cout_Loc)
+VALUES ('215TU4520', '09876543', 5, 450.000);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On crée d'abord les deux tables mères <code>Client</code> et <code>Vehicule</code>, puis la table fille <code>Location</code> dont la clé primaire composée <code>(Immat_vehicule, NCIN_Cli)</code> référence les deux tables mères. Conformément au N.B., <code>Date_Loc</code> utilise <code>TIMESTAMP DEFAULT CURRENT_TIMESTAMP</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q3.a : Ajouter à la table Client un champ nommé Tel_Cli de type texte et de taille 10.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : ALTER TABLE ... ADD</span></div>
+      </div>
+      <pre>ALTER TABLE Client
+ADD Tel_Cli VARCHAR(10);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise <code>ALTER TABLE Client ADD</code> pour ajouter la colonne <code>Tel_Cli</code> de type chaîne variable <code>VARCHAR(10)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q3.b : Modifier le type de donnée de la colonne « Tel_Cli » de la table « Client » en numérique de 8 chiffres.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : ALTER TABLE ... MODIFY</span></div>
+      </div>
+      <pre>ALTER TABLE Client
+MODIFY Tel_Cli INT(8);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise <code>MODIFY</code> pour convertir le type de la colonne existante <code>Tel_Cli</code> de <code>VARCHAR(10)</code> en entier de 8 chiffres <code>INT(8)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q3.c : Supprimer la colonne « Adresse_Cli » dans la table « Client ».</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : ALTER TABLE ... DROP COLUMN</span></div>
+      </div>
+      <pre>ALTER TABLE Client
+DROP COLUMN Adresse_Cli;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> La clause <code>DROP COLUMN Adresse_Cli</code> supprime la colonne de la structure de la table <code>Client</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q3.d : Vérifier que les valeurs de « Annee_Acq » dans la table « Vehicule » sont entre 2010 et 2026.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : ADD CONSTRAINT CHECK</span></div>
+      </div>
+      <pre>ALTER TABLE Vehicule
+ADD CONSTRAINT chk_annee CHECK (Annee_Acq BETWEEN 2010 AND 2026);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On ajoute une contrainte de domaine <code>CHECK (Annee_Acq BETWEEN 2010 AND 2026)</code> avec <code>ALTER TABLE Vehicule ADD CONSTRAINT</code> pour interdire toute année hors intervalle.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q3.e : Modifier la clé primaire actuelle de la table Location par la clé primaire composée (Immat_vehicule, NCIN_Cli, Date_Loc).</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : DROP PRIMARY KEY + ADD PRIMARY KEY</span></div>
+      </div>
+      <pre>ALTER TABLE Location
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (Immat_vehicule, NCIN_Cli, Date_Loc);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Une table ne peut avoir qu'une seule clé primaire : il faut d'abord supprimer l'ancienne (<code>DROP PRIMARY KEY</code>) puis définir la nouvelle clé composée de 3 colonnes (<code>ADD PRIMARY KEY (...)</code>) pour permettre au même client de louer le même véhicule à des dates différentes.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Ex2 - Q3.f à Q3.k : Supprimer la PK de Client, désactiver/réactiver les clés de Location, renommer Vehicule en Voiture, supprimer Client et la BD.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : DROP PK, DISABLE/ENABLE KEYS, RENAME, DROP</span></div>
+      </div>
+      <pre>-- f. Supprimer la clé primaire de la table Client :
+ALTER TABLE Client DROP PRIMARY KEY;
+
+-- g. Désactiver les index/contraintes de la table Location :
+ALTER TABLE Location DISABLE KEYS;
+
+-- h. Réactiver les index/contraintes de la table Location :
+ALTER TABLE Location ENABLE KEYS;
+
+-- i. Renommer la table Vehicule en Voiture :
+RENAME TABLE Vehicule TO Voiture;
+
+-- j. Supprimer la table Client :
+DROP TABLE Client;
+
+-- k. Supprimer la base de données Gestion_Location :
+DROP DATABASE Gestion_Location;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Ces commandes couvrent tout le cycle de vie LDD : <code>DROP PRIMARY KEY</code> retire l'identifiant, <code>DISABLE/ENABLE KEYS</code> suspend puis rétablit la vérification des index, <code>RENAME TABLE</code> renomme l'entité sans perte de données, et <code>DROP TABLE</code> / <code>DROP DATABASE</code> suppriment définitivement la structure.
+      </div>
+    </div>
+
+    <div class="footer-page">
+      3/4ème SI - Lycée Rafeha | Corrigé Série 1 BD (LDD)
+    </div>
+
+    <script>
+      function ouvrirVideoCorrigeeSerie() {
+        var titre = '🎥 Série 1 SQL (LDD) — Création BD, Insertion & Corrigé complet';
+        var cle = 'sql-serie1';
+        try {
+          if (
+            window.parent &&
+            window.parent !== window &&
+            typeof window.parent.ouvrirVideoPasAPasSTI === "function"
+          ) {
+            window.parent.ouvrirVideoPasAPasSTI(cle, titre);
+            return;
+          }
+        } catch (e) {}
+        if (typeof window.ouvrirVideoPasAPasSTI === "function") {
+          window.ouvrirVideoPasAPasSTI(cle, titre);
+        }
+      }
+    </script>
+  <!-- 🔒 Protection du contenu STI -->
+<link rel="stylesheet" href="../../assets/css/protection.css?v=227" />
+<script src="../../assets/js/protection.js?v=227" defer></script>
+<!-- /Protection -->
+<script src="../../assets/js/supabase-umd.js"></script>
+<script src="../../assets/js/config.js?v=227"></script>
+<script src="../../assets/js/acces.js?v=227"></script>
+</body>
+</html>

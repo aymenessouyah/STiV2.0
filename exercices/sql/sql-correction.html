@@ -1,757 +1,696 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
     <meta name="robots" content="noai, noimageai" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
-    <meta charset="UTF-8" /><link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Correction détaillée - Épreuve SQL</title>
+    <meta charset="UTF-8" />
+    <title>Corrigé : Série 6 BD - Récap LDD + LMD (Base ÉTUDIANT)</title>
     <style>
-      * {
-        box-sizing: border-box;
+      @page {
+        margin: 15mm;
+        size: A4;
       }
       body {
-        font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-        background: #f0f4f8;
+        font-family: "Segoe UI", Arial, sans-serif;
         margin: 0;
         padding: 20px;
-        color: #1e293b;
+        color: #1a202c;
+        line-height: 1.48;
+        background-color: #fff;
       }
-      .container {
-        max-width: 1300px;
-        margin: 0 auto;
+      .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 18px;
       }
-      .header {
-        background: linear-gradient(135deg, #0f172a, #1e293b);
-        color: white;
-        padding: 25px 30px;
-        border-radius: 28px;
-        margin-bottom: 30px;
+      .header-table td {
+        border: 2px solid #1a365d;
+        padding: 8px 12px;
         text-align: center;
+        vertical-align: middle;
       }
-      .header h1 {
-        margin: 0 0 10px 0;
-        font-size: 2rem;
-      }
-      .summary {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 30px;
-        border-left: 5px solid #3b82f6;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      }
-      .summary h2 {
-        margin-top: 0;
-        color: #0f172a;
-      }
-      .part-correction {
-        background: white;
-        border-radius: 24px;
-        margin-bottom: 30px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-      }
-      .part-title {
-        background: #f8fafc;
-        padding: 18px 28px;
-        border-bottom: 3px solid #3b82f6;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #0f172a;
-      }
-      .part-title small {
-        font-size: 0.9rem;
-        font-weight: normal;
-        color: #475569;
-        margin-left: 12px;
-      }
-      .correction-list {
-        padding: 20px 28px;
-      }
-      .correction-item {
-        border-left: 4px solid #cbd5e1;
-        padding-left: 20px;
-        margin-bottom: 30px;
-        transition: all 0.2s;
-      }
-      .correction-item:hover {
-        border-left-color: #3b82f6;
-        background: #f8fafc;
-        padding: 15px 20px;
-        margin-left: -8px;
-        border-radius: 12px;
-      }
-      .question-text {
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: #1e40af;
-        margin-bottom: 12px;
-      }
-      .answer {
-        background: #e0f2e7;
-        padding: 12px 18px;
-        border-radius: 12px;
-        margin: 12px 0;
-        font-family: "Courier New", monospace;
-        font-size: 0.9rem;
-        border-left: 3px solid #15803d;
-      }
-      .explanation {
-        color: #475569;
-        margin-top: 10px;
-        line-height: 1.5;
-      }
-      .explanation ul {
-        margin: 8px 0;
-        padding-left: 25px;
-      }
-      .sql-code {
-        background: #0f172a;
-        color: #e2e8f0;
-        padding: 12px 18px;
-        border-radius: 12px;
-        font-family: "Courier New", monospace;
-        font-size: 0.85rem;
-        overflow-x: auto;
-        margin: 10px 0;
-      }
-      .keyword {
-        color: #3b82f6;
+      .header-title {
+        font-size: 1.1em;
         font-weight: bold;
+        color: #1a365d;
       }
-      .note {
-        background: #fef3c7;
-        padding: 10px 15px;
+      .title-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 16px 0 18px;
+        border-bottom: 3px solid #1a365d;
+        padding-bottom: 12px;
+      }
+      .title-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .title-container h1 {
+        font-size: 1.18em;
+        color: #1a365d;
+        text-transform: uppercase;
+        margin: 0;
+      }
+      .db-logo {
+        width: 42px;
+        height: 42px;
+        background: #2b6cb0;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        font-size: 18px;
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      }
+      .btn-video-serie {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
         border-radius: 10px;
-        margin-top: 10px;
-        font-size: 0.85rem;
-        border-left: 3px solid #f59e0b;
-      }
-      .back-btn {
-        background: #3b82f6;
-        color: white;
-        border: none;
-        padding: 12px 28px;
-        border-radius: 40px;
-        font-weight: 600;
+        border: 2px solid #facc15;
+        background: linear-gradient(135deg, #ea580c, #c2410c);
+        color: #fff;
+        font: 800 13.5px/1.2 "Segoe UI", system-ui, sans-serif;
         cursor: pointer;
-        margin-bottom: 20px;
-        font-size: 1rem;
+        box-shadow: 0 6px 18px rgba(234, 88, 12, 0.32);
+        text-decoration: none;
       }
-      .back-btn:hover {
-        background: #2563eb;
+      .btn-video-serie:hover {
+        background: linear-gradient(135deg, #f97316, #ea580c);
       }
-      footer {
-        text-align: center;
-        margin-top: 40px;
-        padding: 20px;
-        color: #64748b;
+      h2 {
+        color: #1e3a8a;
+        background-color: #dbeafe;
+        padding: 8px 14px;
+        font-size: 1.06em;
+        border-left: 5px solid #1d4ed8;
+        margin-top: 22px;
+        margin-bottom: 12px;
+        border-radius: 0 6px 6px 0;
+      }
+      .schema-box {
+        background: #f8fafc;
+        border: 1.5px solid #cbd5e1;
+        border-left: 5px solid #2b6cb0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+      }
+      .req-card {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+      }
+      .req-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .req-title {
+        font-size: 0.98em;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .req-badges {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .badge-type {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.78em;
+        font-weight: 800;
+        letter-spacing: 0.01em;
+      }
+      .badge-jointure {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+      }
+      .badge-sousreq {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+      .badge-imbriquee {
+        background: #fae8ff;
+        color: #86198f;
+        border: 1px solid #f0abfc;
+      }
+      .badge-groupby {
+        background: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #93c5fd;
+      }
+      .badge-selection {
+        background: #e0f2fe;
+        color: #075985;
+        border: 1px solid #7dd3fc;
+      }
+      pre {
+        background-color: #0f172a;
+        border: 1px solid #1e293b;
+        border-left: 4px solid #f97316;
+        padding: 11px 14px;
+        border-radius: 8px;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        color: #f8fafc;
+        overflow-x: auto;
+        margin: 8px 0 10px 0;
+        white-space: pre-wrap;
+      }
+      .why-box {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-left: 4px solid #f59e0b;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        color: #78350f;
+      }
+      .why-box strong {
+        color: #92400e;
+      }
+      code {
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 0.9em;
+        background-color: #edf2f7;
+        padding: 2px 5px;
+        border-radius: 3px;
+        color: #1e3a8a;
+      }
+      .footer-page {
+        text-align: right;
+        font-size: 0.8em;
+        color: #718096;
+        margin-top: 30px;
         border-top: 1px solid #e2e8f0;
+        padding-top: 5px;
       }
-      @media (max-width: 700px) {
-        .part-title {
-          font-size: 1.2rem;
-        }
-        .correction-list {
-          padding: 15px;
+      @media print {
+        .btn-video-serie, #stix-nav {
+          display: none !important;
         }
       }
-    </style>
+</style>
   </head>
   <body>
 <!-- STI navigation croisée -->
 <style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../../cours/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours SQL</a><a href="../../quiz/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🎯 Quiz</a><a href="../../exercices/series-exercices.html#bdd" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">≡ Séries</a></nav>
 
-    <div class="container">
-      <button class="back-btn" onclick="window.location.href='../../index.html'">
-        ← Retour à l'épreuve
+    <table class="header-table">
+      <tr>
+        <td width="30%" class="header-title">
+          Lycée Rafeha<br />Enseignant : A. Essouyah<br /><span style="font-weight: normal; font-size: 0.9em">Matière : STI</span>
+        </td>
+        <td width="40%" class="header-title">
+          Corrigé — Série 6 : Récap LDD + LMD<br /><span style="font-weight: normal; font-size: 0.85em">Base ÉTUDIANT : Création BD, Insertion, LDD, Date, Jointures, Sous-requêtes & Group By</span>
+        </td>
+        <td width="30%" class="header-title">
+          Classe<br /><span style="font-weight: normal; font-size: 0.9em">4<sup>ème</sup> SI</span>
+        </td>
+      </tr>
+    </table>
+
+    <div class="title-container">
+      <div class="title-left">
+        <div class="db-logo">SQL</div>
+        <h1>Corrigé Série 6 : Récapitulatif LDD + LMD (Base ÉTUDIANT)</h1>
+      </div>
+      <button
+        type="button"
+        class="btn-video-serie"
+        onclick="ouvrirVideoCorrigeeSerie()"
+      >
+        🎥 Vidéo Corrigé — Création BD, Insertion & Requêtes Série 6
       </button>
-
-      <div class="header">
-        <h1>📖 Correction détaillée de l'épreuve SQL</h1>
-        <p>Base de données ÉTUDIANT - Toutes les réponses expliquées</p>
-      </div>
-
-      <div class="summary">
-        <h2>📊 Structure de la correction</h2>
-        <p>
-          Cette correction détaille l'ensemble des réponses attendues pour les 5
-          parties de l'épreuve :
-        </p>
-        <ul>
-          <li><strong>Partie 1 :</strong> QCM SQL général (5 questions)</li>
-          <li>
-            <strong>Partie 2 :</strong> LDD - Langage de Définition des Données
-            (8 questions)
-          </li>
-          <li><strong>Partie 3 :</strong> SQL à compléter (5 exercices)</li>
-          <li><strong>Partie 4 :</strong> Vrai / Faux (5 questions)</li>
-          <li><strong>Partie 5 :</strong> Réflexion (7 questions)</li>
-        </ul>
-      </div>
-
-      <!-- PARTIE 1 : QCM -->
-      <div class="part-correction">
-        <div class="part-title">
-          📌 Partie 1 – QCM SQL général <small>(5 points)</small>
-        </div>
-        <div class="correction-list">
-          <div class="correction-item">
-            <div class="question-text">
-              Q1. Quelle est la clé primaire de la table NOTES ?
-            </div>
-            <div class="answer">✅ Réponse correcte : C) (Numetu, Numat)</div>
-            <div class="explanation">
-              <strong>Explication :</strong> La table NOTES enregistre les notes
-              des étudiants dans chaque matière. Un étudiant (Numetu) ne peut
-              avoir qu'une seule note par matière (Numat). La clé primaire est
-              donc une <strong>clé composite</strong> formée par les deux
-              colonnes (Numetu, Numat).
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Q2. Que retourne DATEDIFF('2025-01-01', Dtnaiss) ?
-            </div>
-            <div class="answer">✅ Réponse correcte : C) Jours</div>
-            <div class="explanation">
-              <strong>Explication :</strong> La fonction DATEDIFF retourne la
-              différence entre deux dates en <strong>nombre de jours</strong>.
-              Pour obtenir l'âge, on divise par 365.25 (années incluant les
-              années bissextiles).
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Q3. HAVING COUNT(Note) = (SELECT COUNT(*) FROM MATIERE) permet de
-              :
-            </div>
-            <div class="answer">
-              ✅ Réponse correcte : B) Étudiants avec note dans toutes les
-              matières
-            </div>
-            <div class="explanation">
-              <strong>Explication :</strong> La sous-requête compte le nombre
-              total de matières. La condition HAVING vérifie que l'étudiant a
-              autant de notes que de matières, donc qu'il a une note
-              <strong>dans chaque matière</strong>.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">Q4. Différence IN / EXISTS ?</div>
-            <div class="answer">
-              ✅ Réponse correcte : C) IN compare des valeurs, EXISTS teste
-              l'existence de lignes
-            </div>
-            <div class="explanation">
-              <strong>Explication :</strong>
-              <ul>
-                <li>
-                  <span class="keyword">IN</span> : Compare une valeur à une
-                  liste de valeurs (peut être une sous-requête)
-                </li>
-                <li>
-                  <span class="keyword">EXISTS</span> : Teste si une
-                  sous-requête retourne au moins une ligne
-                </li>
-                <li>
-                  EXISTS est souvent plus performant pour de grands volumes car
-                  il s'arrête dès qu'une ligne est trouvée
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Q5. Pourquoi sous-requête corrélée dans requête14 (meilleure note)
-              ?
-            </div>
-            <div class="answer">
-              ✅ Réponse correcte : B) Meilleure note par matière
-            </div>
-            <div class="explanation">
-              <strong>Explication :</strong> La sous-requête corrélée s'exécute
-              pour chaque matière et trouve la note maximale de cette matière
-              spécifique. Elle est "corrélée" car elle fait référence à la
-              matière de la requête principale.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PARTIE 2 : LDD -->
-      <div class="part-correction">
-        <div class="part-title">
-          🗄️ Partie 2 – LDD (Langage de Définition des Données)
-          <small>(8 points)</small>
-        </div>
-        <div class="correction-list">
-          <div class="correction-item">
-            <div class="question-text">Q1. Que signifie l'acronyme LDD ?</div>
-            <div class="answer">
-              ✅ Réponse : Langage de Définition des Données (Data Definition
-              Language - DDL)
-            </div>
-            <div class="explanation">
-              Le LDD est le sous-ensemble du SQL qui permet de
-              <strong>définir la structure</strong> de la base de données
-              (création, modification, suppression des tables, indexes,
-              contraintes, etc.).
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">Q2. Citez 3 commandes du LDD.</div>
-            <div class="answer">
-              ✅ Réponse : CREATE, ALTER, DROP, TRUNCATE, RENAME
-            </div>
-            <div class="explanation">
-              <ul>
-                <li>
-                  <span class="keyword">CREATE</span> : Créer une table, un
-                  index, une vue, une base
-                </li>
-                <li>
-                  <span class="keyword">ALTER</span> : Modifier la structure
-                  d'une table (ajouter/supprimer colonnes, contraintes)
-                </li>
-                <li>
-                  <span class="keyword">DROP</span> : Supprimer définitivement
-                  une table ou un objet
-                </li>
-                <li>
-                  <span class="keyword">TRUNCATE</span> : Vider toutes les
-                  données d'une table (plus rapide que DELETE)
-                </li>
-                <li>
-                  <span class="keyword">RENAME</span> : Renommer une table ou
-                  une colonne
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Q3. Créer la table MATIERE (Numat INT, Nomat VARCHAR(50), Coeff
-              INT, Numens INT).
-            </div>
-            <div class="sql-code">
-              CREATE TABLE MATIERE (<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;Numat INT PRIMARY KEY,<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;Nomat VARCHAR(50),<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;Coeff INT,<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;Numens INT,<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;FOREIGN KEY (Numens) REFERENCES
-              ENSEIGNANT(Numens)<br />
-              );
-            </div>
-            <div class="explanation">
-              <strong>Explication :</strong> La clé primaire est Numat. On
-              ajoute une contrainte de clé étrangère pour lier chaque matière à
-              son enseignant.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Q4. Ajouter une colonne 'DateEvaluation' à la table NOTES.
-            </div>
-            <div class="sql-code">
-              ALTER TABLE NOTES ADD COLUMN DateEvaluation DATE;
-            </div>
-            <div class="explanation">
-              La commande <span class="keyword">ALTER TABLE</span> avec
-              <span class="keyword">ADD COLUMN</span>
-              ajoute une nouvelle colonne. La colonne sera NULL pour les
-              enregistrements existants.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Q5. Différence entre DROP et TRUNCATE ?
-            </div>
-            <div class="answer">
-              ✅ DROP supprime la table et sa structure, TRUNCATE supprime
-              uniquement les données
-            </div>
-            <div class="explanation">
-              <ul>
-                <li>
-                  <span class="keyword">DROP TABLE</span> : Supprime la table
-                  <strong>et sa structure</strong> (schéma, contraintes). La
-                  table n'existe plus.
-                </li>
-                <li>
-                  <span class="keyword">TRUNCATE TABLE</span> : Supprime
-                  <strong>toutes les lignes</strong> mais conserve la structure
-                  (colonne, contraintes).
-                </li>
-                <li>
-                  TRUNCATE est plus rapide que DELETE car il ne génère pas de
-                  logs ligne par ligne.
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Q6. Modifier le type de 'Note' de INT à DECIMAL(5,2).
-            </div>
-            <div class="sql-code">
-              ALTER TABLE NOTES MODIFY COLUMN Note DECIMAL(5,2);
-            </div>
-            <div class="explanation">
-              DECIMAL(5,2) permet des notes avec 2 décimales (ex: 15.50). Le
-              (5,2) signifie 5 chiffres au total dont 2 après la virgule (max
-              999.99).
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Q7. Supprimer la contrainte de clé étrangère sur Numens dans
-              MATIERE.
-            </div>
-            <div class="sql-code">
-              ALTER TABLE MATIERE DROP FOREIGN KEY fk_matiere_enseignant;
-            </div>
-            <div class="explanation">
-              Pour supprimer une clé étrangère, il faut connaître son nom. La
-              syntaxe peut varier selon les SGBD :
-              <span class="keyword">DROP CONSTRAINT nom_contrainte</span> ou
-              <span class="keyword">DROP FOREIGN KEY nom_contrainte</span>.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Q8. Créer une vue 'VueMoyennes' affichant Numetu et moyenne
-              générale.
-            </div>
-            <div class="sql-code">
-              CREATE VIEW VueMoyennes AS<br />
-              SELECT Numetu, AVG(Note) as MoyenneGenerale<br />
-              FROM NOTES<br />
-              GROUP BY Numetu;
-            </div>
-            <div class="explanation">
-              Une <strong>vue</strong> est une table virtuelle basée sur une
-              requête. Elle simplifie les accès aux données et peut servir de
-              couche de sécurité en masquant certaines colonnes.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PARTIE 3 : SQL à compléter -->
-      <div class="part-correction">
-        <div class="part-title">
-          ✏️ Partie 3 – SQL à compléter <small>(5 points)</small>
-        </div>
-        <div class="correction-list">
-          <div class="correction-item">
-            <div class="question-text">
-              Exercice 1 : Afficher nom et date naissance des étudiants nés
-              après 01/01/2010.
-            </div>
-            <div class="sql-code">
-              SELECT Nometu, Dtnaiss<br />
-              FROM ETUDIANT<br />
-              WHERE Dtnaiss > '2010-01-01';
-            </div>
-            <div class="explanation">
-              La condition
-              <span class="keyword">WHERE Dtnaiss > '2010-01-01'</span> filtre
-              les étudiants nés après cette date. Les dates en SQL se comparent
-              directement avec les opérateurs &gt;, &lt;, =.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Exercice 2 : Nombre d'étudiants par sexe.
-            </div>
-            <div class="sql-code">
-              SELECT Cdsexe, COUNT(*) AS NbEtudiants<br />
-              FROM ETUDIANT<br />
-              GROUP BY Cdsexe;
-            </div>
-            <div class="explanation">
-              <span class="keyword">GROUP BY Cdsexe</span> regroupe les
-              étudiants par sexe, et <span class="keyword">COUNT(*)</span>
-              compte le nombre dans chaque groupe.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Exercice 3 : Étudiants avec note >15 en Mathématiques.
-            </div>
-            <div class="sql-code">
-              SELECT Nometu<br />
-              FROM ETUDIANT<br />
-              WHERE Numetu IN (<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;SELECT Numetu<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;FROM NOTES N, MATIERE M<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;WHERE N.Numat = M.Numat<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND M.Nomat =
-              'Mathématiques'<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND N.Note > 15<br />
-              );
-            </div>
-            <div class="explanation">
-              La sous-requête trouve les Numetu des étudiants ayant une note >15
-              en Maths. La requête principale sélectionne leurs noms.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Exercice 4 : Matières avec moyenne >=12.
-            </div>
-            <div class="sql-code">
-              SELECT M.Nomat, AVG(N.Note) AS Moyenne<br />
-              FROM MATIERE M, NOTES N<br />
-              WHERE M.Numat = N.Numat<br />
-              GROUP BY M.Nomat<br />
-              HAVING AVG(N.Note) >= 12;
-            </div>
-            <div class="explanation">
-              <span class="keyword">HAVING</span> s'utilise pour filtrer sur les
-              résultats d'agrégation (AVG, SUM, COUNT).
-              <span class="keyword">WHERE</span> filtre avant agrégation.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              Exercice 5 : Enseignants qui enseignent au moins 2 matières.
-            </div>
-            <div class="sql-code">
-              SELECT E.Nomens, COUNT(M.Numat) AS NbMatieres<br />
-              FROM ENSEIGNANT E, MATIERE M<br />
-              WHERE E.Numens = M.Numens<br />
-              GROUP BY E.Numens, E.Nomens<br />
-              HAVING COUNT(M.Numat) >= 2;
-            </div>
-            <div class="explanation">
-              La clause
-              <span class="keyword">HAVING COUNT(M.Numat) >= 2</span> ne retient
-              que les enseignants ayant au moins 2 matières dans leur groupe.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PARTIE 4 : Vrai/Faux -->
-      <div class="part-correction">
-        <div class="part-title">
-          ✅❌ Partie 4 – Vrai / Faux <small>(5 points)</small>
-        </div>
-        <div class="correction-list">
-          <div class="correction-item">
-            <div class="question-text">
-              1. SELECT * FROM ETUDIANT WHERE Cdsexe='H' affiche tous les
-              garçons.
-            </div>
-            <div class="answer">✅ VRAI</div>
-            <div class="explanation">
-              'H' désigne le sexe masculin (Garçon) dans la table SEXE.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              2. DISTINCT permet d'éliminer les doublons.
-            </div>
-            <div class="answer">✅ VRAI</div>
-            <div class="explanation">
-              DISTINCT s'utilise après SELECT pour supprimer les lignes en
-              double.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">3. WHERE peut contenir AVG().</div>
-            <div class="answer">❌ FAUX</div>
-            <div class="explanation">
-              WHERE ne peut pas contenir de fonctions d'agrégation comme AVG(),
-              SUM(), COUNT(). C'est le rôle de
-              <span class="keyword">HAVING</span> pour filtrer après GROUP BY.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              4. Une sous-requête corrélée s'exécute pour chaque ligne
-              principale.
-            </div>
-            <div class="answer">✅ VRAI</div>
-            <div class="explanation">
-              Une sous-requête corrélée dépend de la ligne courante de la
-              requête principale, elle s'exécute donc une fois par ligne.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              5. Une jointure sans condition WHERE a.x = b.x produit un produit cartésien.
-            </div>
-            <div class="answer">✅ VRAI</div>
-            <div class="explanation">
-              Sans condition d'égalité <strong>WHERE a.x = b.x</strong>, chaque ligne de la 1re table est combinée avec toutes les lignes de la 2e table (produit cartésien).
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PARTIE 5 : Réflexion -->
-      <div class="part-correction">
-        <div class="part-title">
-          💭 Partie 5 – Réflexion <small>(7 points)</small>
-        </div>
-        <div class="correction-list">
-          <div class="correction-item">
-            <div class="question-text">
-              1. Modifier requête 11 pour éviter les doublons (chaque couple garçon/fille une
-              fois).
-            </div>
-            <div class="sql-code">
-              SELECT DISTINCT<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;G.Nometu AS Nom_Garcon,<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;F.Nometu AS Nom_Fille<br />
-              FROM ETUDIANT G, ETUDIANT F<br />
-              WHERE G.Cdsexe = 'H' AND F.Cdsexe = 'F'<br />
-              &nbsp;&nbsp;AND ABS(DATEDIFF(G.Dtnaiss, F.Dtnaiss)) &lt;= 180;
-            </div>
-            <div class="explanation">
-              Comme <span class="keyword">G</span> désigne uniquement les garçons (<code>Cdsexe = 'H'</code>) et <span class="keyword">F</span> uniquement les filles (<code>Cdsexe = 'F'</code>), un couple (Garçon, Fille) n'est jamais inversé en (Fille, Garçon) : <span class="keyword">SELECT DISTINCT</span> suffit pour éviter les doublons d'homonymes.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              2. Que se passe-t-il requête7 si étudiant sans note ? Correction ?
-            </div>
-            <div class="answer">
-              L'étudiant est exclu car il n'a pas de ligne dans NOTES
-            </div>
-            <div class="explanation">
-              La requête utilise la jointure <span class="keyword">WHERE E.Numetu = N.Numetu</span> (forme <code>a.x = b.x</code>). Les
-              étudiants sans note n'apparaissent pas. Pour les lister séparément, utiliser une sous-requête avec <span class="keyword">NOT IN</span>.
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              3. Trouver l'étudiant avec meilleure moyenne générale.
-            </div>
-            <div class="sql-code">
-              SELECT E.Nometu,<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;SUM(N.Note * M.Coeff)/SUM(M.Coeff) AS
-              Moyenne<br />
-              FROM ETUDIANT E, NOTES N, MATIERE M<br />
-              WHERE E.Numetu = N.Numetu AND N.Numat = M.Numat<br />
-              GROUP BY E.Numetu, E.Nometu<br />
-              ORDER BY Moyenne DESC<br />
-              LIMIT 1;
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              4. Mettre à jour coefficient 'Informatique' à 4.
-            </div>
-            <div class="sql-code">
-              UPDATE MATIERE SET Coeff = 4 WHERE Nomat = 'Informatique';
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              5. Supprimer enseignants sans matière.
-            </div>
-            <div class="sql-code">
-              DELETE FROM ENSEIGNANT<br />
-              WHERE Numens NOT IN (SELECT DISTINCT Numens FROM MATIERE);
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              6. Ajouter une contrainte CHECK sur Note (entre 0 et 20).
-            </div>
-            <div class="sql-code">
-              ALTER TABLE NOTES<br />
-              ADD CONSTRAINT ck_note CHECK (Note BETWEEN 0 AND 20);
-            </div>
-            <div class="explanation">
-              La contrainte <span class="keyword">CHECK</span> garantit que les
-              notes insérées sont valides (entre 0 et 20).
-            </div>
-          </div>
-
-          <div class="correction-item">
-            <div class="question-text">
-              7. Créer un index sur Nometu dans la table ETUDIANT.
-            </div>
-            <div class="sql-code">
-              CREATE INDEX idx_nometu ON ETUDIANT(Nometu);
-            </div>
-            <div class="explanation">
-              Un <strong>index</strong> accélère les recherches sur la colonne
-              Nometu (recherche par nom). Il ralentit en revanche les
-              INSERT/UPDATE.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Note supplémentaire -->
-      <div class="summary">
-        <h2>📌 Rappel des commandes LDD essentielles</h2>
-        <div class="sql-code">
-          CREATE TABLE nom_table (colonne1 TYPE, colonne2 TYPE, ...);<br />
-          ALTER TABLE nom_table ADD COLUMN nouvelle_colonne TYPE;<br />
-          ALTER TABLE nom_table DROP COLUMN colonne;<br />
-          ALTER TABLE nom_table MODIFY COLUMN colonne NOUVEAU_TYPE;<br />
-          DROP TABLE nom_table;<br />
-          TRUNCATE TABLE nom_table;<br />
-          CREATE INDEX nom_index ON table(colonne);<br />
-          DROP INDEX nom_index;<br />
-          CREATE VIEW nom_vue AS SELECT ...;<br />
-          DROP VIEW nom_vue;
-        </div>
-        <div class="note">
-          💡 <strong>Conseil :</strong> Pour réussir une épreuve SQL, maîtrisez
-          les 3 sous-langages :<br />
-          - <strong>LDD</strong> : CREATE, ALTER, DROP (structure)<br />
-          - <strong>LMD</strong> : SELECT, INSERT, UPDATE, DELETE (données)<br />
-          - <strong>LTD</strong> : BEGIN, COMMIT, ROLLBACK (transactions)
-        </div>
-      </div>
-
-      <footer>
-        <p>
-          © Correction détaillée - Base de données ÉTUDIANT | Toutes les
-          requêtes sont exécutables sur le schéma fourni
-        </p>
-      </footer>
     </div>
+
+    <h2>I. Création de la base de données « Gestion_Etudiant » et des 5 tables (LDD)</h2>
+    <div class="schema-box">
+      <pre>CREATE DATABASE Gestion_Etudiant;
+USE Gestion_Etudiant;
+
+CREATE TABLE SEXE (
+    Cdsexe CHAR(1) PRIMARY KEY,
+    Lbsexe VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE ETUDIANT (
+    Numetu INT PRIMARY KEY,
+    Nometu VARCHAR(50) NOT NULL,
+    Dtnaiss DATE NOT NULL,
+    Cdsexe CHAR(1) NOT NULL,
+    FOREIGN KEY (Cdsexe) REFERENCES SEXE(Cdsexe)
+);
+
+CREATE TABLE ENSEIGNANT (
+    Numens INT PRIMARY KEY,
+    Nomens VARCHAR(50) NOT NULL,
+    Grade VARCHAR(30) NOT NULL,
+    Ancien INT
+);
+
+CREATE TABLE MATIERE (
+    Numat INT PRIMARY KEY,
+    Nomat VARCHAR(50) NOT NULL,
+    Coeff INT NOT NULL,
+    Numens INT NOT NULL,
+    CONSTRAINT fk_matiere_enseignant FOREIGN KEY (Numens) REFERENCES ENSEIGNANT(Numens)
+);
+
+CREATE TABLE NOTES (
+    Numetu INT,
+    Numat INT,
+    Note DECIMAL(5,2) CHECK (Note BETWEEN 0 AND 20),
+    PRIMARY KEY (Numetu, Numat),
+    FOREIGN KEY (Numetu) REFERENCES ETUDIANT(Numetu),
+    FOREIGN KEY (Numat) REFERENCES MATIERE(Numat)
+);</pre>
+    </div>
+
+    <h2>II. Insertion des enregistrements dans les 5 tables (INSERT INTO)</h2>
+    <div class="schema-box">
+      <pre>INSERT INTO SEXE VALUES ('H', 'Garçon'), ('F', 'Fille');
+
+INSERT INTO ENSEIGNANT VALUES
+(101, 'Ali Ben Salah', 'Professeur', 15),
+(102, 'Safia Tammar', 'MCF', 8),
+(103, 'Karim Foughali', 'Assistant', 3);
+
+INSERT INTO ETUDIANT VALUES
+(1, 'Asma Ben Mahmoud', '2003-05-12', 'F'),
+(2, 'Bassem Hdhili', '2004-11-23', 'H'),
+(3, 'Souhir Korbsi', '2003-09-01', 'F'),
+(4, 'Karim Hfayedh', '2005-02-14', 'H'),
+(5, 'Wissal Wertani', '2004-07-19', 'F');
+
+INSERT INTO MATIERE VALUES
+(10, 'Informatique', 3, 101),
+(11, 'Mathématiques', 4, 102),
+(12, 'Histoire', 2, 103),
+(13, 'Sociologie', 2, 101);
+
+INSERT INTO NOTES VALUES
+(1, 10, 15.50), (1, 11, 12.00), (1, 12, 14.00),
+(2, 10, 11.00), (2, 11, 9.00),
+(3, 10, 18.00), (3, 11, 15.50), (3, 12, 13.50), (3, 13, 16.00),
+(4, 12, 10.00), (5, 10, 13.00), (5, 12, 8.00);</pre>
+    </div>
+
+    <h2>III. Corrigé Partie I — QCM, Commandes LDD &amp; Vrai/Faux</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Partie I.1 — QCM SQL général (Questions 1 à 5)</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : QCM & Analyse</span></div>
+      </div>
+      <pre>Q1 : C) (Numetu, Numat)  --> Clé primaire composée de la table NOTES.
+Q2 : C) Jours            --> DATEDIFF(d1, d2) retourne l'écart en nombre de jours.
+Q3 : B) Retenir les étudiants ayant une note dans toutes les matières.
+Q4 : C) IN compare une valeur à une liste, EXISTS teste l'existence de lignes.
+Q5 : B) Pour comparer chaque note au maximum de sa propre matière (sous-requête corrélée).</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Dans <code>NOTES</code>, un étudiant possède une note par matière : le couple <code>(Numetu, Numat)</code> est donc nécessaire pour identifier chaque ligne de façon unique.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Partie I.2 — Commandes LDD (Questions 1 à 7)</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : LDD : CREATE, ALTER, DROP</span></div>
+      </div>
+      <pre>-- Q1 : LDD = Langage de Définition des Données (CREATE, ALTER, DROP, RENAME, TRUNCATE).
+-- Q2 : Créer la table MATIERE :
+CREATE TABLE MATIERE (
+    Numat INT PRIMARY KEY,
+    Nomat VARCHAR(50),
+    Coeff INT,
+    Numens INT,
+    CONSTRAINT fk_matiere_enseignant FOREIGN KEY (Numens) REFERENCES ENSEIGNANT(Numens)
+);
+-- Q3 : Ajouter la colonne DateEvaluation à NOTES :
+ALTER TABLE NOTES ADD DateEvaluation DATE;
+-- Q4 : DROP TABLE supprime la table et sa structure ; TRUNCATE TABLE vide uniquement les lignes.
+-- Q5 : Modifier le type de Note en DECIMAL(5,2) :
+ALTER TABLE NOTES MODIFY Note DECIMAL(5,2);
+-- Q6 : Ajouter la contrainte CHECK sur Note (entre 0 et 20) :
+ALTER TABLE NOTES ADD CONSTRAINT ck_note CHECK (Note BETWEEN 0 AND 20);
+-- Q7 : Supprimer la clé étrangère fk_matiere_enseignant :
+ALTER TABLE MATIERE DROP FOREIGN KEY fk_matiere_enseignant;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise les instructions du LDD (<code>CREATE TABLE</code> et <code>ALTER TABLE ... ADD / MODIFY / DROP</code>) car ces opérations agissent directement sur le schéma des tables <code>MATIERE</code> et <code>NOTES</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Partie I.3 — Vrai / Faux (Affirmations 1 à 5)</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Règles SQL</span></div>
+      </div>
+      <pre>1. VRAI  (Cdsexe = 'H' filtre les garçons)
+2. VRAI  (DISTINCT élimine les doublons dans SELECT)
+3. FAUX  (WHERE ne peut pas contenir AVG() ; il faut utiliser HAVING après GROUP BY)
+4. VRAI  (Une sous-requête corrélée dépend d'une colonne de la requête externe)
+5. VRAI  (Sans condition de jointure WHERE a.x = b.x, on obtient un produit cartésien)</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> La distinction fondamentale entre <code>WHERE</code> (filtrage ligne par ligne avant regroupement) et <code>HAVING</code> (filtrage sur une fonction d'agrégation après <code>GROUP BY</code>) est une règle essentielle du programme STI.
+      </div>
+    </div>
+    <h2>IV. Corrigé Partie II — Les 17 Requêtes SQL sur la base ÉTUDIANT</h2>
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 1 : Afficher le nom et la date de naissance des étudiants nés après le 01/01/2004.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : Date</span><span class="badge-type badge-selection">Type : Sélection simple</span></div>
+      </div>
+      <pre>SELECT Nometu, Dtnaiss
+FROM ETUDIANT
+WHERE Dtnaiss > '2004-01-01';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Toutes les colonnes sont dans la table <code>ETUDIANT</code> : on filtre directement sur la colonne de type <code>DATE</code> au format ISO <code>'YYYY-MM-DD'</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 2 : Afficher le code sexe et le nombre d'étudiants pour chaque sexe.</div>
+        <div class="req-badges"><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT Cdsexe, COUNT(*) AS NbEtudiants
+FROM ETUDIANT
+GROUP BY Cdsexe;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On regroupe les lignes de <code>ETUDIANT</code> par <code>Cdsexe</code> avec <code>GROUP BY Cdsexe</code> et on compte l'effectif de chaque groupe avec <code>COUNT(*)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 3 : Afficher le nom et le grade des enseignants qui assurent la matière 'Histoire'.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span></div>
+      </div>
+      <pre>SELECT E.Nomens, E.Grade
+FROM ENSEIGNANT E, MATIERE M
+WHERE E.Numens = M.Numens
+  AND M.Nomat = 'Histoire';</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Le nom et le grade sont dans <code>ENSEIGNANT</code> tandis que le libellé <code>'Histoire'</code> est dans <code>MATIERE</code> : on utilise une <strong>jointure</strong> <code>E.Numens = M.Numens</code> dans <code>WHERE</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 4 : Afficher le nom et le coefficient des matières enseignées par un enseignant de grade 'MCF' ou 'Assistant'.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span></div>
+      </div>
+      <pre>SELECT M.Nomat, M.Coeff
+FROM MATIERE M, ENSEIGNANT E
+WHERE M.Numens = E.Numens
+  AND E.Grade IN ('MCF', 'Assistant');</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On relie <code>MATIERE</code> et <code>ENSEIGNANT</code> par la condition de <strong>jointure</strong> <code>M.Numens = E.Numens</code> et on filtre le grade avec <code>IN ('MCF', 'Assistant')</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 5 : Afficher les noms des étudiants ayant obtenu une note strictement supérieure à 15 en 'Mathématiques'.</div>
+        <div class="req-badges"><span class="badge-type badge-sousreq">Type : Sous-requête</span><span class="badge-type badge-jointure">Type : Jointure</span></div>
+      </div>
+      <pre>SELECT Nometu
+FROM ETUDIANT
+WHERE Numetu IN (
+    SELECT N.Numetu
+    FROM NOTES N, MATIERE M
+    WHERE N.Numat = M.Numat
+      AND M.Nomat = 'Mathématiques'
+      AND N.Note > 15
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise une <strong>sous-requête</strong> avec <code>IN</code> (qui joint <code>NOTES</code> et <code>MATIERE</code>) pour isoler les numéros des étudiants ayant eu plus de 15 en Mathématiques, puis la requête principale affiche leur nom.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 6 : Afficher les matières dont la moyenne des notes est supérieure ou égale à 12, ainsi que cette moyenne.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY + HAVING</span></div>
+      </div>
+      <pre>SELECT M.Nomat, AVG(N.Note) AS Moyenne
+FROM MATIERE M, NOTES N
+WHERE M.Numat = N.Numat
+GROUP BY M.Numat, M.Nomat
+HAVING AVG(N.Note) >= 12;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On joint <code>MATIERE</code> et <code>NOTES</code>, on regroupe par matière avec <code>GROUP BY</code>, et comme la condition porte sur la moyenne <code>AVG(N.Note)</code>, on utilise obligatoirement <code>HAVING AVG(N.Note) &gt;= 12</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 7 : Afficher les enseignants (nom, grade, ancienneté) qui enseignent au moins 2 matières.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY + HAVING</span></div>
+      </div>
+      <pre>SELECT E.Nomens, E.Grade, E.Ancien
+FROM ENSEIGNANT E, MATIERE M
+WHERE E.Numens = M.Numens
+GROUP BY E.Numens, E.Nomens, E.Grade, E.Ancien
+HAVING COUNT(M.Numat) >= 2;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Après la <strong>jointure</strong> entre <code>ENSEIGNANT</code> et <code>MATIERE</code>, on regroupe par enseignant (<code>GROUP BY</code>) et on filtre ceux qui comptent au moins 2 matières avec <code>HAVING COUNT(M.Numat) &gt;= 2</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 8 : Afficher l'âge moyen des garçons et des filles au 1er janvier 2025.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-selection">Type : Date</span><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT S.Lbsexe, AVG(DATEDIFF('2025-01-01', E.Dtnaiss) / 365) AS Age_Moyen
+FROM SEXE S, ETUDIANT E
+WHERE E.Cdsexe = S.Cdsexe
+GROUP BY S.Cdsexe, S.Lbsexe;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On combine une <strong>jointure</strong> <code>E.Cdsexe = S.Cdsexe</code>, la fonction de date <code>DATEDIFF('2025-01-01', E.Dtnaiss) / 365</code> pour calculer l'âge de chaque étudiant, et un <code>GROUP BY</code> par sexe avec <code>AVG()</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 9 : Afficher les étudiants (nom et numéro) qui n'ont aucune note dans la matière 'Sociologie'.</div>
+        <div class="req-badges"><span class="badge-type badge-sousreq">Type : Sous-requête</span><span class="badge-type badge-jointure">Type : Jointure</span></div>
+      </div>
+      <pre>SELECT E.Nometu, E.Numetu
+FROM ETUDIANT E
+WHERE E.Numetu NOT IN (
+    SELECT N.Numetu
+    FROM NOTES N, MATIERE M
+    WHERE N.Numat = M.Numat
+      AND M.Nomat = 'Sociologie'
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Pour exprimer l'absence de note (« aucune note en Sociologie »), on utilise une <strong>sous-requête</strong> avec <code>NOT IN</code> qui exclut les étudiants ayant une note enregistrée dans cette matière.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 10 : Pour chaque étudiant, afficher son nom, son numéro, le nom de la matière et sa moyenne par matière, par ordre alphabétique.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT E.Nometu, E.Numetu, M.Nomat, AVG(N.Note) AS Moyenne
+FROM ETUDIANT E, NOTES N, MATIERE M
+WHERE E.Numetu = N.Numetu
+  AND N.Numat = M.Numat
+GROUP BY E.Numetu, E.Nometu, M.Numat, M.Nomat
+ORDER BY E.Nometu ASC;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On réalise une <strong>jointure à 3 tables</strong> (<code>ETUDIANT</code>, <code>NOTES</code>, <code>MATIERE</code>) dans <code>WHERE</code>, suivie d'un <code>GROUP BY</code> par étudiant et par matière, et d'un tri <code>ORDER BY E.Nometu ASC</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 11 : Afficher le nom, l'âge et le libellé du sexe des étudiants ayant obtenu en 'Informatique' une note supérieure à la moyenne générale d'Informatique.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-imbriquee">Type : Requête imbriquée</span><span class="badge-type badge-selection">Type : Date</span></div>
+      </div>
+      <pre>SELECT E.Nometu, DATEDIFF(CURRENT_DATE, E.Dtnaiss) / 365 AS Age, S.Lbsexe, N.Note
+FROM ETUDIANT E, SEXE S, NOTES N, MATIERE M
+WHERE E.Cdsexe = S.Cdsexe
+  AND E.Numetu = N.Numetu
+  AND N.Numat = M.Numat
+  AND M.Nomat = 'Informatique'
+  AND N.Note > (
+      SELECT AVG(N2.Note)
+      FROM NOTES N2, MATIERE M2
+      WHERE N2.Numat = M2.Numat
+        AND M2.Nomat = 'Informatique'
+  );</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Il faut comparer la note d'Informatique de chaque étudiant à la moyenne globale de la matière : la <strong>requête imbriquée</strong> calcule d'abord <code>AVG(N2.Note)</code> en Informatique, et la requête principale filtre avec <code>N.Note &gt; (...)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 12 : Afficher les étudiants ayant une note dans toutes les matières, avec leur moyenne générale pondérée par les coefficients.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY + HAVING</span><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>SELECT E.Nometu, E.Numetu, SUM(N.Note * M.Coeff) / SUM(M.Coeff) AS Moyenne_Ponderee
+FROM ETUDIANT E, NOTES N, MATIERE M
+WHERE E.Numetu = N.Numetu
+  AND N.Numat = M.Numat
+GROUP BY E.Numetu, E.Nometu
+HAVING COUNT(DISTINCT N.Numat) = (SELECT COUNT(*) FROM MATIERE)
+ORDER BY E.Nometu ASC;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On regroupe par étudiant (<code>GROUP BY</code>) pour calculer la moyenne pondérée <code>SUM(N.Note * M.Coeff) / SUM(M.Coeff)</code>, et <code>HAVING COUNT(DISTINCT N.Numat) = (SELECT COUNT(*) FROM MATIERE)</code> vérifie qu'il a bien été évalué dans toutes les matières.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 13 : Afficher les étudiants (nom, numéro, libellé sexe) dont la note en 'Informatique' est supérieure à leur propre note en 'Mathématiques'.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-imbriquee">Type : Requête imbriquée corrélée</span></div>
+      </div>
+      <pre>SELECT E.Nometu, E.Numetu, S.Lbsexe
+FROM ETUDIANT E, SEXE S, NOTES N1, MATIERE M1
+WHERE E.Cdsexe = S.Cdsexe
+  AND E.Numetu = N1.Numetu
+  AND N1.Numat = M1.Numat
+  AND M1.Nomat = 'Informatique'
+  AND N1.Note > (
+      SELECT N2.Note
+      FROM NOTES N2, MATIERE M2
+      WHERE N2.Numat = M2.Numat
+        AND M2.Nomat = 'Mathématiques'
+        AND N2.Numetu = E.Numetu
+  );</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise une <strong>requête imbriquée corrélée</strong> (reliée à l'étudiant courant par <code>N2.Numetu = E.Numetu</code>) pour récupérer la note de Mathématiques du même étudiant et la comparer à sa note d'Informatique.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 14 : Afficher les couples (Nom_Garcon, Nom_Fille) dont la différence d'âge ne dépasse pas 180 jours.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Auto-jointure</span><span class="badge-type badge-selection">Type : Date</span></div>
+      </div>
+      <pre>SELECT DISTINCT E1.Nometu AS Nom_Garcon, E2.Nometu AS Nom_Fille
+FROM ETUDIANT E1, ETUDIANT E2
+WHERE E1.Cdsexe = 'H'
+  AND E2.Cdsexe = 'F'
+  AND ABS(DATEDIFF(E1.Dtnaiss, E2.Dtnaiss)) <= 180;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On compare deux lignes de la même table <code>ETUDIANT</code> : on réalise une <strong>auto-jointure</strong> avec deux alias <code>E1</code> (garçons) et <code>E2</code> (filles) et on teste l'écart en jours avec <code>ABS(DATEDIFF(E1.Dtnaiss, E2.Dtnaiss)) &lt;= 180</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 15 : Pour chaque matière, afficher le nom de la matière, la meilleure note obtenue et le nom de l'étudiant qui l'a obtenue.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-imbriquee">Type : Requête imbriquée corrélée</span></div>
+      </div>
+      <pre>SELECT M.Nomat, N.Note AS Meilleure_Note, E.Nometu
+FROM MATIERE M, NOTES N, ETUDIANT E
+WHERE N.Numat = M.Numat
+  AND E.Numetu = N.Numetu
+  AND N.Note = (
+      SELECT MAX(N2.Note)
+      FROM NOTES N2
+      WHERE N2.Numat = M.Numat
+  );</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> Pour obtenir à la fois la meilleure note de chaque matière et le nom du lauréat, on utilise une <strong>requête imbriquée corrélée</strong> <code>(SELECT MAX(N2.Note) FROM NOTES N2 WHERE N2.Numat = M.Numat)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 16 : Afficher la moyenne des notes obtenues dans les matières enseignées par 'Ali Ben Salah', regroupée par sexe.</div>
+        <div class="req-badges"><span class="badge-type badge-jointure">Type : Jointure</span><span class="badge-type badge-groupby">Type : GROUP BY</span></div>
+      </div>
+      <pre>SELECT S.Lbsexe, AVG(N.Note) AS Moyenne
+FROM SEXE S, ETUDIANT E, NOTES N, MATIERE M, ENSEIGNANT G
+WHERE S.Cdsexe = E.Cdsexe
+  AND E.Numetu = N.Numetu
+  AND N.Numat = M.Numat
+  AND M.Numens = G.Numens
+  AND UPPER(G.Nomens) = 'ALI BEN SALAH'
+GROUP BY S.Cdsexe, S.Lbsexe;</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On relie les 5 tables par leurs clés dans <code>WHERE</code> pour filtrer les matières d'Ali Ben Salah, puis on regroupe par sexe avec <code>GROUP BY S.Cdsexe, S.Lbsexe</code> pour calculer <code>AVG(N.Note)</code>.
+      </div>
+    </div>
+
+    <div class="req-card">
+      <div class="req-head">
+        <div class="req-title">Requête 17 : Augmenter à 4 le coefficient de la matière 'Informatique', puis supprimer les enseignants qui n'enseignent aucune matière.</div>
+        <div class="req-badges"><span class="badge-type badge-selection">Type : UPDATE & DELETE</span><span class="badge-type badge-sousreq">Type : Sous-requête</span></div>
+      </div>
+      <pre>-- a) Mise à jour du coefficient d'Informatique :
+UPDATE MATIERE
+SET Coeff = 4
+WHERE Nomat = 'Informatique';
+
+-- b) Suppression des enseignants sans matière :
+DELETE FROM ENSEIGNANT
+WHERE Numens NOT IN (
+    SELECT DISTINCT Numens FROM MATIERE
+);</pre>
+      <div class="why-box">
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On utilise <code>UPDATE ... SET Coeff = 4</code> pour modifier la ligne d'Informatique, puis <code>DELETE FROM ENSEIGNANT</code> combiné à une <strong>sous-requête</strong> <code>NOT IN</code> pour supprimer les enseignants qui ne figurent dans aucune ligne de <code>MATIERE</code>.
+      </div>
+    </div>
+
+    <div class="footer-page">
+      4ème SI - Lycée Rafeha | Corrigé Série 6 BD (Récap LDD + LMD)
+    </div>
+
+    <script>
+      function ouvrirVideoCorrigeeSerie() {
+        var titre = '🎥 Série 6 SQL (Base ÉTUDIANT) — Création BD, Insertion & Corrigé complet';
+        var cle = 'sql-serie6';
+        try {
+          if (
+            window.parent &&
+            window.parent !== window &&
+            typeof window.parent.ouvrirVideoPasAPasSTI === "function"
+          ) {
+            window.parent.ouvrirVideoPasAPasSTI(cle, titre);
+            return;
+          }
+        } catch (e) {}
+        if (typeof window.ouvrirVideoPasAPasSTI === "function") {
+          window.ouvrirVideoPasAPasSTI(cle, titre);
+        }
+      }
+    </script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../../assets/css/protection.css?v=193" />
-<script src="../../assets/js/protection.js?v=193" defer></script>
+<link rel="stylesheet" href="../../assets/css/protection.css?v=227" />
+<script src="../../assets/js/protection.js?v=227" defer></script>
 <!-- /Protection -->
 <script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=193"></script>
-<script src="../../assets/js/acces.js?v=193"></script>
+<script src="../../assets/js/config.js?v=227"></script>
+<script src="../../assets/js/acces.js?v=227"></script>
 </body>
 </html>
