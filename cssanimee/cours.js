@@ -82,38 +82,46 @@ var COURS = [
 
 /* ---------- déplacement ---------- */
 function aller(n) {
+  arreterAuto();
   etape = n;
   temps = 0;
   afficher();
-  arreterAuto();
+  jouerVoixDecoCourante(false);
 }
 
 function allerTemps(n) {
+  arreterAuto();
   temps = n;
   afficher();
-  arreterAuto();
+  jouerVoixDecoCourante(false);
 }
 
-function suivant() {
+function suivant(depuisAuto) {
+  if (!depuisAuto && auto) { arreterAuto(); }
   var t = COURS[etape].temps.length;
   if (temps < t - 1) { temps = temps + 1; }
   else if (etape < COURS.length - 1) { etape = etape + 1; temps = 0; }
-  else { arreterAuto(); return false; }
+  else { arreterAuto(); arreterVoixDeco(); return false; }
   afficher();
+  jouerVoixDecoCourante(!!depuisAuto);
   return true;
 }
 
 function precedent() {
+  if (auto) { arreterAuto(); }
   if (temps > 0) { temps = temps - 1; }
   else if (etape > 0) { etape = etape - 1; temps = COURS[etape].temps.length - 1; }
   else { return false; }
   afficher();
+  jouerVoixDecoCourante(false);
   return true;
 }
 
 function rejouer() {
+  if (auto) { arreterAuto(); }
   temps = 0;
   afficher();
+  jouerVoixDecoCourante(false);
 }
 
 function clavier(e) {
@@ -245,6 +253,14 @@ function habiller() {
     'btn ' + (theme === 'sombre' ? 'btn-violet ' : '') + theme + ' ' + format;
   document.getElementById('bouton-clair').className =
     'btn ' + (theme === 'clair' ? 'btn-violet ' : '') + theme + ' ' + format;
+  var btnVoix = document.getElementById('sti-btn-voix-deco');
+  if (btnVoix) {
+    btnVoix.className = 'btn ' + (voixDecoActive ? 'btn-violet ' : '') + theme + ' ' + format;
+  }
+  var btnVid = document.getElementById('sti-btn-video-deco');
+  if (btnVid) {
+    btnVid.className = 'btn ' + theme + ' ' + format;
+  }
 }
 
 function choisirTheme(nom) {
@@ -272,29 +288,136 @@ window.addEventListener('resize', function () {
   if (f !== format) { format = f; appliquerFormat(); habiller(); }
 });
 
+/* ---------- voix masculine synchronisée (comme le guichet) ---------- */
+var DECO_VOIX_CUES = {"0-0": [0.0, 10.1], "0-1": [10.25, 17.6], "1-0": [17.75, 26.65], "1-1": [26.8, 36.24], "2-0": [36.39, 45.09], "2-1": [45.24, 54.84], "2-2": [54.99, 62.39], "3-0": [62.54, 72.69], "3-1": [72.84, 77.54], "3-2": [77.69, 83.59], "3-3": [83.74, 90.65], "4-0": [90.8, 100.35], "4-1": [100.5, 110.5], "4-2": [110.65, 120.18], "5-0": [120.33, 134.43], "5-1": [134.58, 142.83], "5-2": [142.98, 151.95], "6-0": [152.1, 161.8], "6-1": [161.95, 170.1], "6-2": [170.25, 177.5], "7-0": [177.65, 187.9], "7-1": [188.05, 196.48], "8-0": [196.63, 207.78], "8-1": [207.93, 214.38], "8-2": [214.53, 221.85], "9-0": [222.0, 232.3], "9-1": [232.45, 239.85], "9-2": [240.0, 248.82], "10-0": [248.97, 259.67], "10-1": [259.82, 269.77], "10-2": [269.92, 275.02], "11-0": [275.17, 287.32], "11-1": [287.47, 292.39]};
+var voixDecoActive = true;
+var decoVoixTimer = null;
+var decoAutoTimer = null;
+var decoSegFin = 0;
+var decoAudio = document.createElement('audio');
+decoAudio.preload = 'auto';
+decoAudio.src = '../assets/audio/css-animee.mp3?v=203';
+decoAudio.style.display = 'none';
+if (document.body) { document.body.appendChild(decoAudio); }
+
+function arreterVoixDeco() {
+  if (decoVoixTimer) { clearTimeout(decoVoixTimer); decoVoixTimer = null; }
+  if (decoAutoTimer) { clearTimeout(decoAutoTimer); decoAutoTimer = null; }
+  decoSegFin = 0;
+  try { decoAudio.pause(); } catch (e) {}
+}
+
+function finSegmentVoixDeco(enAuto) {
+  if (decoVoixTimer) { clearTimeout(decoVoixTimer); decoVoixTimer = null; }
+  decoSegFin = 0;
+  try { decoAudio.pause(); } catch (e) {}
+  if (enAuto && auto) {
+    decoAutoTimer = setTimeout(function () {
+      if (!auto) return;
+      suivant(true);
+    }, 700);
+  }
+}
+
+decoAudio.addEventListener('timeupdate', function () {
+  if (decoSegFin > 0 && decoAudio.currentTime >= decoSegFin - 0.04) {
+    finSegmentVoixDeco(auto);
+  }
+});
+
+function jouerVoixDecoCourante(enAuto) {
+  arreterVoixDeco();
+  if (!voixDecoActive) {
+    if (enAuto && auto) {
+      programmer();
+    }
+    return;
+  }
+  var cle = etape + '-' + temps;
+  var seg = DECO_VOIX_CUES[cle];
+  if (!seg) {
+    if (enAuto && auto) programmer();
+    return;
+  }
+  var t0 = seg[0], t1 = seg[1];
+  decoSegFin = t1;
+  function lancer() {
+    try {
+      decoAudio.muted = false;
+      decoAudio.volume = 1.0;
+      decoAudio.playbackRate = 0.95;
+      decoAudio.currentTime = t0;
+      var p = decoAudio.play();
+      if (p && p.catch) {
+        p.catch(function () {
+          if (enAuto && auto) programmer();
+        });
+      }
+      var durMs = Math.max(900, Math.round(((t1 - t0) / 0.95) * 1000) + 180);
+      decoVoixTimer = setTimeout(function () {
+        finSegmentVoixDeco(enAuto);
+      }, durMs);
+    } catch (e) {}
+  }
+  if (decoAudio.readyState >= 1) {
+    lancer();
+  } else {
+    var onMeta = function () {
+      decoAudio.removeEventListener('loadedmetadata', onMeta);
+      lancer();
+    };
+    decoAudio.addEventListener('loadedmetadata', onMeta);
+    try { decoAudio.load(); } catch (e) {}
+  }
+}
+
+function basculerVoixDeco() {
+  voixDecoActive = !voixDecoActive;
+  var btn = document.getElementById('sti-btn-voix-deco');
+  if (btn) {
+    btn.value = voixDecoActive ? '🔊 Voix : ON' : '🔇 Voix : OFF';
+    btn.className = 'btn ' + (voixDecoActive ? 'btn-violet ' : '') + theme + ' ' + format;
+  }
+  if (voixDecoActive) {
+    jouerVoixDecoCourante(auto);
+  } else {
+    arreterVoixDeco();
+    if (auto) programmer();
+  }
+}
+
+function ouvrirVideoDeco() {
+  arreterAuto();
+  arreterVoixDeco();
+  if (typeof window.ouvrirVideoPasAPasSTI === 'function') {
+    window.ouvrirVideoPasAPasSTI('css-animee');
+  }
+}
+
 /* ---------- lecture automatique ---------- */
 function duree() {
   return 4200;
 }
 
 function programmer() {
+  clearTimeout(minuteur);
   minuteur = setTimeout(function () {
     if (!auto) { return; }
-    if (suivant()) { programmer(); }
-    else { arreterAuto(); }
+    if (!suivant(true)) { arreterAuto(); }
   }, duree());
 }
 
 function lectureAuto() {
-  if (auto) { arreterAuto(); return; }
+  if (auto) { arreterAuto(); arreterVoixDeco(); return; }
   auto = true;
   document.getElementById('bouton-auto').value = '❚❚ Pause';
-  programmer();
+  jouerVoixDecoCourante(true);
 }
 
 function arreterAuto() {
   auto = false;
   clearTimeout(minuteur);
+  if (decoAutoTimer) { clearTimeout(decoAutoTimer); decoAutoTimer = null; }
   document.getElementById('bouton-auto').value = '▶ Lecture auto';
 }
 

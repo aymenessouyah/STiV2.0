@@ -809,3 +809,5 @@ body.mobile .table-code { font-size: 11.5px; }
 }
 .sombre .pied { color: #5a6488; }
 .clair  .pied { color: #6b6250; }
+.ctrl-mobile.bureau { display: none !important; }
+

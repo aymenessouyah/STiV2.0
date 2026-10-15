@@ -599,7 +599,7 @@
         return;
       }
 
-      /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi et CSS pas à pas Positionnement animé */
+      /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé et CSS animée */
       var VIDEO_GUICHET_INFO = {
         file: "php-guichet.mp4?v=195",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
@@ -607,6 +607,10 @@
       var VIDEO_CSS_POS_INFO = {
         file: "css-positionnement.mp4?v=202",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
+      };
+      var VIDEO_CSS_DECO_INFO = {
+        file: "css-animee.mp4?v=203",
+        title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
 
       function prefixeAssetsSTI() {
@@ -628,8 +632,13 @@
         return prefixeAssetsSTI() + "videos/" + VIDEO_CSS_POS_INFO.file;
       }
 
+      function resoudreUrlVideoCssDeco() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_CSS_DECO_INFO.file;
+      }
+
       var estPageGuichet = (pathLower.indexOf("php-mysqli") !== -1);
       var estPageCssPos = (pathLower.indexOf("positionnement-animee") !== -1);
+      var estPageCssDeco = (pathLower.indexOf("cssanimee") !== -1);
 
       /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
@@ -716,9 +725,10 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt) {
         var sSlug = String(slugOuUrl || "");
-        var estCssPos = (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos));
-        var estGuichet = (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || (!sSlug && estPageGuichet));
-        if (!estCssPos && !estGuichet) {
+        var estCssDeco = (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco));
+        var estCssPos = (!estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
+        var estGuichet = (!estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || (!sSlug && estPageGuichet)));
+        if (!estCssDeco && !estCssPos && !estGuichet) {
           return;
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
@@ -732,23 +742,27 @@
           if (typeof window.arreterVoixPos === "function") {
             window.arreterVoixPos();
           }
+          if (typeof window.arreterVoixDeco === "function") {
+            window.arreterVoixDeco();
+          }
           var fAnim = document.getElementById("animFrame");
           if (fAnim && fAnim.contentWindow) {
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
+        var slugCible = estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet");
         try {
           if (
             window.top &&
             window.top !== window &&
             typeof window.top.ouvrirVideoPasAPasSTI === "function"
           ) {
-            window.top.ouvrirVideoPasAPasSTI(estCssPos ? "css-positionnement" : "php-guichet", titreOpt);
+            window.top.ouvrirVideoPasAPasSTI(slugCible, titreOpt);
             return;
           }
         } catch (e) {}
-        var url = estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet();
-        var titre = titreOpt || (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title);
+        var url = estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet());
+        var titre = titreOpt || (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
@@ -887,7 +901,7 @@
           }
         }
 
-        if (estPageCssPos) {
+        if (estPageCssPos || estPageCssDeco) {
           var rotCss = document.querySelector("#rotate-overlay .rotate-boite");
           if (rotCss && !rotCss.querySelector(".sti-btn-video-rot-mobile")) {
             var bRotCss = document.createElement("button");
@@ -897,7 +911,7 @@
             bRotCss.textContent = "🎥 Regarder la vidéo CSS pas à pas (.mp4)";
             bRotCss.addEventListener("click", function (ev) {
               ev.stopPropagation();
-              window.ouvrirVideoPasAPasSTI("css-positionnement");
+              window.ouvrirVideoPasAPasSTI(estPageCssDeco ? "css-animee" : "css-positionnement");
             });
             rotCss.appendChild(bRotCss);
           }
