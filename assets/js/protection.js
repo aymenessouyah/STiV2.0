@@ -601,35 +601,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=210",
+        file: "php-guichet.mp4?v=211",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=210",
+        file: "css-positionnement.mp4?v=211",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=210",
+        file: "css-animee.mp4?v=211",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=210",
+        file: "sql-cours.mp4?v=211",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=210",
+        file: "html5-cours.mp4?v=211",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=210",
+        file: "css3-cours.mp4?v=211",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=210",
+        file: "javascript-cours.mp4?v=211",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=210",
+        file: "php-cours.mp4?v=211",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -1044,15 +1044,15 @@
               "iframe": [137.5, 145.7]
             },
             css3: {
-              "point-1": [8.0, 32.0],
-              "point-2": [32.0, 56.0],
-              "point-3": [56.0, 72.0],
-              "point-6": [56.0, 72.0],
-              "point-7": [72.0, 88.37],
-              "point-4": [88.63, 108.6],
-              "point-5": [108.6, 124.6],
-              "point-8": [124.6, 140.6],
-              "css-pas-a-pas": [140.6, 150.8]
+              "point-1": [9.78, 36.01],
+              "point-2": [36.01, 57.37],
+              "point-3": [57.37, 65.32],
+              "point-6": [65.32, 73.07],
+              "point-7": [73.07, 88.63],
+              "point-4": [88.63, 110.11],
+              "point-5": [110.11, 132.12],
+              "point-8": [132.12, 144.62],
+              "css-pas-a-pas": [144.62, 150.15]
             },
             javascript: {
               "sec1": [8.5, 18.5],
@@ -1268,14 +1268,15 @@
           [137.5, 155.0, "#iframe"]
         ],
         css3: [
-          [0.0, 32.0, "#point-1"],
-          [32.0, 56.0, "#point-2"],
-          [56.0, 72.0, "#point-3"],
-          [72.0, 88.5, "#point-7"],
-          [88.5, 108.6, "#point-4"],
-          [108.6, 124.6, "#point-5"],
-          [124.6, 140.6, "#point-8"],
-          [140.6, 160.0, "#css-pas-a-pas"]
+          [9.78, 36.01, "#point-1"],
+          [36.01, 57.37, "#point-2"],
+          [57.37, 65.32, "#point-3"],
+          [65.32, 73.07, "#point-6"],
+          [73.07, 88.63, "#point-7"],
+          [88.63, 110.11, "#point-4"],
+          [110.11, 132.12, "#point-5"],
+          [132.12, 144.62, "#point-8"],
+          [144.62, 150.15, "#css-pas-a-pas"]
         ],
         javascript: [
           [0.0, 18.5, "#sec1"],
