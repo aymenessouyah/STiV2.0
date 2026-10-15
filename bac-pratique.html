@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noai, noimageai" />
 <link rel="icon" href="assets/icons/STI_by_AE.ico" />
-<link rel="stylesheet" href="assets/css/protection.css?v=191" />
+<link rel="stylesheet" href="assets/css/protection.css?v=192" />
 <title>🧪 Atelier Épreuve Pratique Bac STI — STI By A'e V2.0</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -201,9 +201,9 @@
   <div class="eval-box" id="zone-eval"></div>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=191"></script>
-<script src="assets/js/protection.js?v=191"></script>
-<script src="assets/js/acces.js?v=191"></script>
+<script src="assets/js/config.js?v=192"></script>
+<script src="assets/js/protection.js?v=192"></script>
+<script src="assets/js/acces.js?v=192"></script>
 <script>
 (function () {
   "use strict";
@@ -257,9 +257,7 @@
         "<a class='btn btn-gold' style='padding:6px 12px;font-size:12px' href='projets/sti0/ressources-projet-sti0.zip' download='Projet_STI_0_Ressources.zip' onclick='return window.telechargerRessourcesSTI0(event)'>📦 Télécharger ressources (.zip : index.html, Sondage.html, Statistiques.html)</a>" +
         "<button type='button' class='btn' style='padding:6px 12px;font-size:12px' onclick=\"ouvrirDocModal('projets/sti0/index.html', '👁️ Aperçu des pages ressources — Projet STI 0')\">👁️ Voir les 3 pages ressources</button>" +
         "<button type='button' class='btn' style='padding:6px 12px;font-size:12px' onclick=\"ouvrirDocModal('exercices/php/sondage-parcours-pas-a-pas.html', 'sondage.php _ le parcours pas à pas')\">sondage.php _ le parcours pas à pas</button>" +
-        "<button type='button' class='sti-btn-video-dedie' style='padding:6px 11px;font-size:12px' onclick=\"window.ouvrirVideoPasAPasSTI('php-sondage-pas-a-pas')\">🎥 Vidéo sondage.php (.mp4)</button>" +
         "<button type='button' class='btn' style='padding:6px 12px;font-size:12px' onclick=\"ouvrirDocModal('exercices/php/statphpanimee.html', 'Correctionstat.php pas à pas.')\">Correctionstat.php pas à pas.</button>" +
-        "<button type='button' class='sti-btn-video-dedie' style='padding:6px 11px;font-size:12px' onclick=\"window.ouvrirVideoPasAPasSTI('php-stat-pas-a-pas')\">🎥 Vidéo Correctionstat.php (.mp4)</button>" +
         "</div>" +
         "<div><b>I. Base de données <code>BDDC6</code> :</b> Tables <code>Sondage(NumS, Theme, DateDebut)</code>, <code>Question(NumQ, NumS#, Contenu)</code>, <code>Participant(IdParticipant, Mail, Mdp, Genre)</code> et <code>Reponse(NumQ#, NumS#, IdParticipant#, Rep)</code>.<br>" +
         "<b>II. Partie A (<code>Sondage.html</code>, <code>Controle.js</code>, <code>Sondage.php</code>) :</b> Affecter aux boutons radio les valeurs <code>1O/1N/1S</code>, <code>2O/2N/2S</code>, <code>3O/3N/3S</code> ; développer <code>test()</code> (<code>@Mail</code> &le; 50 car. au format <code>ch1@ch2.ch3</code> avec <code>ch1, ch2</code> alphanumériques &ge; 3 et <code>ch3</code> de 2 à 4 lettres ; <code>Mdp</code> de 6 car. avec &ge; 1 majuscule, &ge; 1 minuscule et &ge; 1 chiffre ; <code>Genre</code> et les 3 questions obligatoires) ; créer <code>Sondage.php</code>.<br>" +

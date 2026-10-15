@@ -566,10 +566,10 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     🎥 LECTEUR VIDÉO .MP4 & VOIX DE L'HOMME PAS-À-PAS STI
+     🔊 VOIX DE L'HOMME PAS-À-PAS STI & 🎥 VIDÉO DE L'ANIMATION DU GUICHET
      - Zéro synthèse vocale féminine (window.speechSynthesis désactivé).
-     - Utilise exclusivement la voix de l'homme enregistrée dans les 17 fichiers
-       assets/videos/<slug>.mp4 (pour la vidéo ET pour l'explication étape par étape).
+     - Voix de l'homme (assets/audio/pas-a-pas/<slug>.mp3) expliquant les étapes pas à pas.
+     - Seule la vidéo de l'animation du guichet (assets/videos/php-guichet.mp4) est conservée.
      ═══════════════════════════════════════════════════════════════════════════ */
   function installerVideosPasAPasSTI() {
     try {
@@ -592,134 +592,54 @@
         return;
       }
 
-      var CATALOGUE_VIDEOS_STI = {
-        "php-guichet": {
-          file: "php-guichet.mp4",
-          dur: 135.0,
-          steps: 10,
-          title: "🎥 Pas-à-pas : L'Histoire du Guichet (PHP + MySQLi en 10 étapes)"
-        },
-        "php-recap": {
-          file: "php-recap.mp4",
-          dur: 158.5,
-          steps: 8,
-          title: "🎥 Pas-à-pas : Récapitulatif PHP (8 étapes essentielles)"
-        },
-        "php-sondage-pas-a-pas": {
-          file: "php-sondage-pas-a-pas.mp4",
-          dur: 59.2,
-          steps: 7,
-          title: "🎥 Pas-à-pas : sondage.php expliqué en 7 étapes (Projet STI 0)"
-        },
-        "php-stat-pas-a-pas": {
-          file: "php-stat-pas-a-pas.mp4",
-          dur: 54.6,
-          steps: 7,
-          title: "🎥 Pas-à-pas : Correctionstat.php expliqué en 7 étapes (Projet STI 0)"
-        },
-        "sql-contraintes": {
-          file: "sql-contraintes.mp4",
-          dur: 47.3,
-          steps: 4,
-          title: "🎥 Pas-à-pas : Les 6 Contraintes d'Intégrité SQL (LDD)"
-        },
-        "sql-jointure-where": {
-          file: "sql-jointure-where.mp4",
-          dur: 33.4,
-          steps: 6,
-          title: "🎥 Pas-à-pas : Jointure SQL dans WHERE (WHERE a.x = b.x)"
-        },
-        "sql-groupby-having": {
-          file: "sql-groupby-having.mp4",
-          dur: 31.7,
-          steps: 6,
-          title: "🎥 Pas-à-pas : Regroupement GROUP BY & Filtrage HAVING"
-        },
-        "sql-serie1-ldd": {
-          file: "sql-serie1-ldd.mp4",
-          dur: 28.0,
-          steps: 5,
-          title: "🎥 Pas-à-pas : SQL Série 1 — LDD (CREATE, ALTER, DROP)"
-        },
-        "sql-serie2-lmd": {
-          file: "sql-serie2-lmd.mp4",
-          dur: 32.1,
-          steps: 5,
-          title: "🎥 Pas-à-pas : SQL Série 2 — LMD (INSERT, UPDATE, DELETE, SELECT)"
-        },
-        "sql-serie3-groupby": {
-          file: "sql-serie3-groupby.mp4",
-          dur: 27.9,
-          steps: 5,
-          title: "🎥 Pas-à-pas : SQL Série 3 — GROUP BY, HAVING & Agrégation"
-        },
-        "sql-serie4-jointure-sr": {
-          file: "sql-serie4-jointure-sr.mp4",
-          dur: 24.6,
-          steps: 5,
-          title: "🎥 Pas-à-pas : SQL Série 4 — Jointures dans WHERE & Sous-requêtes"
-        },
-        "sql-serie5-gesthotel": {
-          file: "sql-serie5-gesthotel.mp4",
-          dur: 34.1,
-          steps: 6,
-          title: "🎥 Pas-à-pas : SQL Série 5 — Base GestHotel & Atelier SQL"
-        },
-        "css-positionnement": {
-          file: "css-positionnement.mp4",
-          dur: 49.0,
-          steps: 12,
-          title: "🎥 Pas-à-pas : Positionnement CSS3 animé en 10 étapes"
-        },
-        "css-decoration-animations": {
-          file: "css-decoration-animations.mp4",
-          dur: 37.4,
-          steps: 8,
-          title: "🎥 Pas-à-pas : Décoration CSS3, Ombres, Transitions & @keyframes"
-        },
-        "tp2-positionnement-corrige": {
-          file: "tp2-positionnement-corrige.mp4",
-          dur: 23.4,
-          steps: 5,
-          title: "🎥 Pas-à-pas : Corrigé TP2 Positionnement CSS3 (Position / Float / Inline-Block)"
-        },
-        "projet-tunisie-animation": {
-          file: "projet-tunisie-animation.mp4",
-          dur: 19.2,
-          steps: 8,
-          title: "🎥 Pas-à-pas : Projet Explore Tunisie — Animation HTML5 & CSS3 en 8 étapes"
-        },
-        "javascript-controles-sti": {
-          file: "javascript-controles-sti.mp4",
-          dur: 26.0,
-          steps: 5,
-          title: "🎥 Pas-à-pas : JavaScript STI — Contrôles de saisie & Annexe Bac"
-        }
+      /* Catalogue des pistes audio masculines (voix de l'homme expliquant les étapes pas à pas) */
+      var CATALOGUE_VOIX_HOMME_STI = {
+        "php-guichet": { audio: "php-guichet.mp3", dur: 135.0, steps: 10 },
+        "php-recap": { audio: "php-recap.mp3", dur: 158.5, steps: 8 },
+        "php-sondage-pas-a-pas": { audio: "php-sondage-pas-a-pas.mp3", dur: 59.2, steps: 7 },
+        "php-stat-pas-a-pas": { audio: "php-stat-pas-a-pas.mp3", dur: 54.6, steps: 7 },
+        "sql-contraintes": { audio: "sql-contraintes.mp3", dur: 47.3, steps: 4 },
+        "sql-jointure-where": { audio: "sql-jointure-where.mp3", dur: 33.4, steps: 6 },
+        "sql-groupby-having": { audio: "sql-groupby-having.mp3", dur: 31.7, steps: 6 },
+        "sql-serie1-ldd": { audio: "sql-serie1-ldd.mp3", dur: 28.0, steps: 5 },
+        "sql-serie2-lmd": { audio: "sql-serie2-lmd.mp3", dur: 32.1, steps: 5 },
+        "sql-serie3-groupby": { audio: "sql-serie3-groupby.mp3", dur: 27.9, steps: 5 },
+        "sql-serie4-jointure-sr": { audio: "sql-serie4-jointure-sr.mp3", dur: 24.6, steps: 5 },
+        "sql-serie5-gesthotel": { audio: "sql-serie5-gesthotel.mp3", dur: 34.1, steps: 6 },
+        "css-positionnement": { audio: "css-positionnement.mp3", dur: 49.0, steps: 12 },
+        "css-decoration-animations": { audio: "css-decoration-animations.mp3", dur: 37.4, steps: 8 },
+        "tp2-positionnement-corrige": { audio: "tp2-positionnement-corrige.mp3", dur: 23.4, steps: 5 },
+        "projet-tunisie-animation": { audio: "projet-tunisie-animation.mp3", dur: 19.2, steps: 8 },
+        "javascript-controles-sti": { audio: "javascript-controles-sti.mp3", dur: 26.0, steps: 5 }
       };
 
-      function prefixeAssetsVideosSTI() {
+      /* Seule vidéo conservée : l'animation du guichet */
+      var VIDEO_GUICHET_INFO = {
+        file: "php-guichet.mp4",
+        title: "🎥 Animation du Guichet (PHP + MySQLi en 10 étapes)"
+      };
+
+      function prefixeAssetsSTI() {
         var scripts = document.querySelectorAll("script[src]");
         for (var i = 0; i < scripts.length; i++) {
           var s = scripts[i].getAttribute("src") || "";
           if (s.indexOf("assets/js/protection.js") !== -1) {
-            return s.replace(/assets\/js\/protection\.js.*$/, "assets/videos/");
+            return s.replace(/assets\/js\/protection\.js.*$/, "assets/");
           }
         }
-        return "assets/videos/";
+        return "assets/";
       }
 
-      function resoudreUrlVideoSTI(slugOuUrl) {
-        if (!slugOuUrl) return "";
-        if (CATALOGUE_VIDEOS_STI[slugOuUrl]) {
-          return prefixeAssetsVideosSTI() + CATALOGUE_VIDEOS_STI[slugOuUrl].file;
-        }
-        if (slugOuUrl.indexOf("/") !== -1 || slugOuUrl.indexOf(".mp4") !== -1) {
-          return slugOuUrl;
-        }
-        return prefixeAssetsVideosSTI() + slugOuUrl + ".mp4";
+      function resoudreUrlVideoGuichet() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_GUICHET_INFO.file;
       }
 
-      function detecterVideoParChemin(chemin) {
+      function resoudreUrlAudioHomme(slug) {
+        if (!slug || !CATALOGUE_VOIX_HOMME_STI[slug]) return "";
+        return prefixeAssetsSTI() + "audio/pas-a-pas/" + CATALOGUE_VOIX_HOMME_STI[slug].audio;
+      }
+
+      function detecterPasAPasParChemin(chemin) {
         var p = String(chemin || "").toLowerCase();
         if (p.indexOf("php-mysqli") !== -1) return "php-guichet";
         if (p.indexOf("php-recap") !== -1) return "php-recap";
@@ -739,9 +659,10 @@
         return null;
       }
 
-      var slugVideoPage = detecterVideoParChemin(location.pathname);
+      var slugPasAPasPage = detecterPasAPasParChemin(location.pathname);
+      var estPageGuichet = (slugPasAPasPage === "php-guichet");
 
-      /* ── Lecteur Audio de la Voix de l'Homme (depuis la piste vocale masculine du .mp4) ── */
+      /* ── Lecteur Audio de la Voix de l'Homme (étape par étape) ── */
       var voixHommeActive = true;
       try {
         if (localStorage.getItem("sti-voix-homme") === "0") voixHommeActive = false;
@@ -763,7 +684,6 @@
       }
 
       function detecterIndiceEtapeCourante(nbTotalDefaut) {
-        /* Détecter le numéro d'étape affiché dans le pas-à-pas courant (ex: "3 / 10", "Étape 2/7", etc.) */
         var idsCompteurs = [
           "stepNum", "pc-etape", "count", "counter", "ctrl-etape", "compteur",
           "pNum", "tp1-step-counter", "tp2-step-counter", "tp3-step-counter",
@@ -786,7 +706,6 @@
             }
           }
         }
-        /* Onglets #tabs (PHP-recap, sql-contraintes) */
         var tabsBtns = document.querySelectorAll("#tabs button");
         if (tabsBtns && tabsBtns.length > 0) {
           for (var t = 0; t < tabsBtns.length; t++) {
@@ -802,10 +721,11 @@
 
       function lireEtapeVoixHomme(slugCible) {
         if (!voixHommeActive) return;
-        var slug = slugCible || slugVideoPage;
-        if (!slug || !CATALOGUE_VIDEOS_STI[slug]) return;
-        var info = CATALOGUE_VIDEOS_STI[slug];
-        var url = resoudreUrlVideoSTI(slug);
+        var slug = slugCible || slugPasAPasPage;
+        if (!slug || !CATALOGUE_VOIX_HOMME_STI[slug]) return;
+        var info = CATALOGUE_VOIX_HOMME_STI[slug];
+        var url = resoudreUrlAudioHomme(slug);
+        if (!url) return;
 
         if (!audioHomme) {
           audioHomme = document.createElement("audio");
@@ -863,17 +783,36 @@
         }
       }
 
-      function creerBlocVideoInline(slug, idBox) {
-        var info = CATALOGUE_VIDEOS_STI[slug];
-        if (!info) return null;
-        var url = resoudreUrlVideoSTI(slug);
+      function creerBoutonVoixHomme(slugRef) {
+        var bVoixH = document.createElement("button");
+        bVoixH.type = "button";
+        bVoixH.className = "sti-btn-voix-inline sti-btn-voix-homme-toggle" + (voixHommeActive ? "" : " muted");
+        bVoixH.textContent = voixHommeActive ? "🔊 Voix pas-à-pas ON" : "🔇 Voix OFF";
+        bVoixH.title = "Activer / couper la voix de l'homme qui explique les étapes pas à pas";
+        bVoixH.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          voixHommeActive = !voixHommeActive;
+          try { localStorage.setItem("sti-voix-homme", voixHommeActive ? "1" : "0"); } catch (e) {}
+          majBoutonsVoixHommeUI();
+          if (!voixHommeActive) {
+            arreterAudioHomme();
+          } else {
+            lireEtapeVoixHomme(slugRef || slugPasAPasPage);
+          }
+        });
+        return bVoixH;
+      }
+
+      /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
+      function creerBlocVideoGuichetInline(idBox) {
+        var url = resoudreUrlVideoGuichet();
         var box = document.createElement("div");
         box.className = "sti-video-pas-a-pas-box sti-no-print";
         if (idBox) box.id = idBox;
         box.hidden = true;
         box.innerHTML =
           '<div class="sti-video-pas-a-pas-head">' +
-            '<div class="sti-video-pas-a-pas-title">' + info.title + '</div>' +
+            '<div class="sti-video-pas-a-pas-title">' + VIDEO_GUICHET_INFO.title + '</div>' +
             '<div class="sti-video-pas-a-pas-actions">' +
               '<button type="button" data-vrate="0.85">0.85×</button>' +
               '<button type="button" data-vrate="1">1×</button>' +
@@ -936,21 +875,23 @@
       }
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt) {
+        /* Seule la vidéo de l'animation du guichet est autorisée */
+        if (slugOuUrl && slugOuUrl !== "php-guichet" && String(slugOuUrl).indexOf("php-guichet") === -1) {
+          return;
+        }
         arreterAudioHomme();
         try {
           if (
             window.top &&
             window.top !== window &&
-            CATALOGUE_VIDEOS_STI[slugOuUrl] &&
             typeof window.top.ouvrirVideoPasAPasSTI === "function"
           ) {
-            window.top.ouvrirVideoPasAPasSTI(slugOuUrl, titreOpt);
+            window.top.ouvrirVideoPasAPasSTI("php-guichet", titreOpt);
             return;
           }
         } catch (e) {}
-        var info = CATALOGUE_VIDEOS_STI[slugOuUrl] || null;
-        var url = resoudreUrlVideoSTI(slugOuUrl);
-        var titre = titreOpt || (info ? info.title : "🎥 Vidéo du pas-à-pas");
+        var url = resoudreUrlVideoGuichet();
+        var titre = titreOpt || VIDEO_GUICHET_INFO.title;
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
@@ -1035,46 +976,37 @@
         ];
         for (var i = 0; i < barresCibles.length; i++) {
           var bar = barresCibles[i];
-          if (!bar || bar.tagName === "INPUT" || bar.querySelector(".sti-btn-video-dedie")) continue;
+          if (!bar || bar.tagName === "INPUT") continue;
 
-          if (slugVideoPage && CATALOGUE_VIDEOS_STI[slugVideoPage]) {
-            if (bar.id !== "phpm-ctrl" && !bar.classList.contains("ctrl-mobile")) {
-              var bVoixH = document.createElement("button");
-              bVoixH.type = "button";
-              bVoixH.className = "sti-btn-voix-inline sti-btn-voix-homme-toggle" + (voixHommeActive ? "" : " muted");
-              bVoixH.textContent = voixHommeActive ? "🔊 Voix pas-à-pas ON" : "🔇 Voix OFF";
-              bVoixH.title = "Activer / couper la voix de l'homme qui explique les étapes pas à pas";
-              bVoixH.addEventListener("click", function (ev) {
-                ev.stopPropagation();
-                voixHommeActive = !voixHommeActive;
-                try { localStorage.setItem("sti-voix-homme", voixHommeActive ? "1" : "0"); } catch (e) {}
-                majBoutonsVoixHommeUI();
-                if (!voixHommeActive) {
-                  arreterAudioHomme();
-                } else {
-                  lireEtapeVoixHomme(slugVideoPage);
-                }
-              });
-              bar.appendChild(bVoixH);
+          if (slugPasAPasPage && CATALOGUE_VOIX_HOMME_STI[slugPasAPasPage]) {
+            if (
+              bar.id !== "phpm-ctrl" &&
+              !bar.classList.contains("ctrl-mobile") &&
+              !bar.querySelector(".sti-btn-voix-homme-toggle")
+            ) {
+              bar.appendChild(creerBoutonVoixHomme(slugPasAPasPage));
             }
+          }
 
+          /* Bouton vidéo .mp4 UNIQUEMENT sur la page de l'animation du guichet (php-mysqli.html) */
+          if (estPageGuichet && !bar.querySelector(".sti-btn-video-dedie")) {
             var bVid = document.createElement("button");
             bVid.type = "button";
             bVid.className = "sti-btn-video-dedie";
             bVid.textContent = (bar.id === "phpm-ctrl" || bar.classList.contains("ctrl-mobile"))
               ? "🎥 Vidéo"
-              : "🎥 Vidéo du pas-à-pas (.mp4)";
-            bVid.title = CATALOGUE_VIDEOS_STI[slugVideoPage].title;
+              : "🎥 Vidéo du Guichet (.mp4)";
+            bVid.title = VIDEO_GUICHET_INFO.title;
             bVid.addEventListener("click", function (ev) {
               ev.stopPropagation();
-              window.ouvrirVideoPasAPasSTI(slugVideoPage);
+              window.ouvrirVideoPasAPasSTI("php-guichet");
             });
             bar.appendChild(bVid);
           }
         }
 
-        /* Écrans mobiles portrait « Tournez-moi ! 🔄 » (#rot-overlay et #rotate-overlay) */
-        if (slugVideoPage && CATALOGUE_VIDEOS_STI[slugVideoPage]) {
+        /* Écran mobile portrait « Tournez-moi ! 🔄 » UNIQUEMENT pour l'animation du guichet */
+        if (estPageGuichet) {
           var rotBoites = [
             document.querySelector("#rot-overlay .rot-boite"),
             document.getElementById("rotate-overlay")
@@ -1086,109 +1018,39 @@
               bRotVid.type = "button";
               bRotVid.className = "sti-btn-video-dedie sti-btn-video-rot-mobile";
               bRotVid.style.cssText = "margin:14px auto 4px;padding:12px 20px;font-size:14px;border-radius:999px;display:inline-flex;";
-              bRotVid.textContent = "🎥 Regarder la vidéo du pas-à-pas (.mp4)";
+              bRotVid.textContent = "🎥 Regarder la vidéo du Guichet (.mp4)";
               bRotVid.addEventListener("click", function (ev) {
                 ev.stopPropagation();
-                window.ouvrirVideoPasAPasSTI(slugVideoPage);
+                window.ouvrirVideoPasAPasSTI("php-guichet");
               });
               rBoite.appendChild(bRotVid);
             }
           }
         }
 
-        /* Bannière vidéo en haut de chaque page ayant un pas-à-pas dédié (PC & Mobile) */
-        if (slugVideoPage && CATALOGUE_VIDEOS_STI[slugVideoPage] && !document.getElementById("sti-banniere-video-dediee")) {
-          var conteneurHaut =
-            document.querySelector(".topbar-guichet, .topbar-recap, nav.barre, .wrap, .container, main, .page, body > header, body > div");
-          if (conteneurHaut && conteneurHaut.parentNode) {
-            var barreDediee = document.createElement("div");
-            barreDediee.id = "sti-banniere-video-dediee";
-            barreDediee.className = "sti-no-print";
-            barreDediee.style.cssText = "max-width:980px;margin:8px auto 6px;padding:0 10px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;";
-            var btnOuvrir = document.createElement("button");
-            btnOuvrir.type = "button";
-            btnOuvrir.className = "sti-btn-video-dedie";
-            btnOuvrir.textContent = "🎥 Voir la vidéo de ce pas-à-pas (.mp4)";
-            btnOuvrir.title = CATALOGUE_VIDEOS_STI[slugVideoPage].title;
-            var blocV = document.getElementById("sti-video-inline-main") || creerBlocVideoInline(slugVideoPage, "sti-video-inline-main");
-            btnOuvrir.addEventListener("click", function () {
-              basculerBlocVideoInline(blocV);
-            });
-            var btnModalV = document.createElement("button");
-            btnModalV.type = "button";
-            btnModalV.className = "sti-btn-video-dedie";
-            btnModalV.style.background = "linear-gradient(125deg,#0e7c86,#6b5bd2)";
-            btnModalV.textContent = "⛶ Plein écran (.mp4)";
-            btnModalV.addEventListener("click", function () {
-              window.ouvrirVideoPasAPasSTI(slugVideoPage);
-            });
-            barreDediee.appendChild(btnOuvrir);
-            barreDediee.appendChild(btnModalV);
-            conteneurHaut.parentNode.insertBefore(barreDediee, conteneurHaut);
-            if (blocV && !blocV.parentNode) {
-              conteneurHaut.parentNode.insertBefore(blocV, conteneurHaut);
-            }
-          }
-        }
-
-        /* Studios SQL intégrés dans cours/sql.html et cours/sql-bases-ldd-lmd-lcd.html */
+        /* Studios SQL intégrés dans cours/sql.html : bouton Voix de l'homme uniquement (aucune vidéo) */
         var sqlStudios = [
-          ["janim-btn-play", "join", "sql-jointure-where", "🎥 Vidéo Jointure WHERE (.mp4)"],
-          ["gbanim-btn-play", "groupby", "sql-groupby-having", "🎥 Vidéo GROUP BY & HAVING (.mp4)"],
-          ["hvanim-btn-play", "having", "sql-groupby-having", "🎥 Vidéo GROUP BY & HAVING (.mp4)"]
+          ["janim-btn-play", "sql-jointure-where"],
+          ["gbanim-btn-play", "sql-groupby-having"],
+          ["hvanim-btn-play", "sql-groupby-having"]
         ];
         for (var s = 0; s < sqlStudios.length; s++) {
-          (function (btnId, kind, vSlug, vLabel) {
+          (function (btnId, vSlug) {
             var playBtn = document.getElementById(btnId);
-            if (!playBtn || !playBtn.parentNode || playBtn.parentNode.querySelector(".sti-btn-video-sql-" + kind)) return;
-            var bVideoSql = document.createElement("button");
-            bVideoSql.type = "button";
-            bVideoSql.className = "sti-btn-video-dedie sti-btn-video-sql-" + kind;
-            bVideoSql.textContent = vLabel;
-            var idBoxSql = "sti-video-box-sql-" + kind;
-            var wrapStudio = playBtn.closest(".sql-janim-wrap") || playBtn.parentNode;
-            var boxSql = document.getElementById(idBoxSql);
-            if (!boxSql && wrapStudio) {
-              boxSql = creerBlocVideoInline(vSlug, idBoxSql);
-              if (boxSql) wrapStudio.appendChild(boxSql);
-            }
-            bVideoSql.addEventListener("click", function () {
-              if (boxSql) basculerBlocVideoInline(boxSql);
-              else window.ouvrirVideoPasAPasSTI(vSlug);
-            });
-            playBtn.parentNode.appendChild(bVideoSql);
-          })(sqlStudios[s][0], sqlStudios[s][1], sqlStudios[s][2], sqlStudios[s][3]);
+            if (!playBtn || !playBtn.parentNode || playBtn.parentNode.querySelector(".sti-btn-voix-homme-toggle")) return;
+            playBtn.parentNode.appendChild(creerBoutonVoixHomme(vSlug));
+          })(sqlStudios[s][0], sqlStudios[s][1]);
         }
 
-        /* Bouton #btnSqlContraintes dans cours/sql.html */
-        var btnContraintes = document.getElementById("btnSqlContraintes");
-        if (btnContraintes && btnContraintes.parentNode && !btnContraintes.parentNode.querySelector(".sti-btn-video-contraintes")) {
-          var wrapC = document.createElement("div");
-          wrapC.style.cssText = "margin-top:8px;display:flex;justify-content:center;flex-wrap:wrap;gap:6px;";
-          var bVC = document.createElement("button");
-          bVC.type = "button";
-          bVC.className = "sti-btn-video-dedie sti-btn-video-contraintes";
-          bVC.textContent = "🎥 Vidéo pas-à-pas : Les 6 Contraintes d'Intégrité SQL (.mp4)";
-          var boxC = creerBlocVideoInline("sql-contraintes", "sti-video-box-sql-contraintes");
-          bVC.addEventListener("click", function () {
-            basculerBlocVideoInline(boxC);
-          });
-          wrapC.appendChild(bVC);
-          btnContraintes.parentNode.insertBefore(wrapC, btnContraintes.nextSibling);
-          if (boxC) {
-            btnContraintes.parentNode.insertBefore(boxC, wrapC.nextSibling);
-          }
-        }
-
-        /* Boutons Guichet (#animOpen, #btn-top-anim-guichet, #animModal, #recapModal) dans cours/php.html */
+        /* Boutons Guichet (#animOpen, #btn-top-anim-guichet, #animModal) dans cours/php.html */
         var btnAnimOpen = document.getElementById("animOpen");
         if (btnAnimOpen && btnAnimOpen.parentNode && !btnAnimOpen.parentNode.querySelector(".sti-btn-video-guichet")) {
           var bVG = document.createElement("button");
           bVG.type = "button";
           bVG.className = "sti-btn-video-dedie sti-btn-video-guichet";
           bVG.style.marginTop = "8px";
-          bVG.textContent = "🎥 Vidéo pas-à-pas : L'Histoire du Guichet PHP + MySQLi (.mp4)";
-          var boxG = creerBlocVideoInline("php-guichet", "sti-video-box-php-guichet");
+          bVG.textContent = "🎥 Vidéo : L'Histoire du Guichet PHP + MySQLi (.mp4)";
+          var boxG = creerBlocVideoGuichetInline("sti-video-box-php-guichet");
           bVG.addEventListener("click", function () {
             basculerBlocVideoInline(boxG);
           });
@@ -1203,20 +1065,11 @@
           bVGTop.type = "button";
           bVGTop.className = "sti-btn-video-dedie sti-btn-video-top-php";
           bVGTop.innerHTML = '<span>🎥</span><span>Guichet</span>';
-          bVGTop.title = "Vidéo pas-à-pas : Histoire du Guichet PHP + MySQLi (.mp4)";
+          bVGTop.title = "Vidéo : Histoire du Guichet PHP + MySQLi (.mp4)";
           bVGTop.addEventListener("click", function () {
             window.ouvrirVideoPasAPasSTI("php-guichet");
           });
-          var bVRTop = document.createElement("button");
-          bVRTop.type = "button";
-          bVRTop.className = "sti-btn-video-dedie";
-          bVRTop.innerHTML = '<span>🎥</span><span>Récap</span>';
-          bVRTop.title = "Vidéo pas-à-pas : Récap PHP en 8 étapes (.mp4)";
-          bVRTop.addEventListener("click", function () {
-            window.ouvrirVideoPasAPasSTI("php-recap");
-          });
           btnTopGuichet.parentNode.appendChild(bVGTop);
-          btnTopGuichet.parentNode.appendChild(bVRTop);
         }
         var animTools = document.querySelector("#animModal .anim-tools");
         if (animTools && !animTools.querySelector(".sti-btn-video-modal-guichet")) {
@@ -1228,66 +1081,6 @@
             window.ouvrirVideoPasAPasSTI("php-guichet");
           });
           animTools.insertBefore(bModG, animTools.firstChild);
-        }
-        var recapTools = document.querySelector("#recapModal .anim-tools");
-        if (recapTools && !recapTools.querySelector(".sti-btn-video-modal-recap")) {
-          var bModR = document.createElement("button");
-          bModR.type = "button";
-          bModR.className = "sti-btn-video-dedie sti-btn-video-modal-recap";
-          bModR.textContent = "🎥 Vidéo (.mp4)";
-          bModR.addEventListener("click", function () {
-            window.ouvrirVideoPasAPasSTI("php-recap");
-          });
-          recapTools.insertBefore(bModR, recapTools.firstChild);
-        }
-
-        /* En-têtes des modales #pdfModal (series-exercices.html) et #modal-doc-bac (bac-pratique.html) */
-        var pdfFrame = document.getElementById("pdfFrame");
-        var modalReloadBtn = document.getElementById("modalReloadBtn");
-        if (pdfFrame && modalReloadBtn && modalReloadBtn.parentNode && !document.getElementById("sti-btn-video-pdfmodal")) {
-          var bPdfVid = document.createElement("button");
-          bPdfVid.type = "button";
-          bPdfVid.id = "sti-btn-video-pdfmodal";
-          bPdfVid.className = "sti-btn-video-dedie";
-          bPdfVid.style.display = "none";
-          bPdfVid.textContent = "🎥 Vidéo (.mp4)";
-          bPdfVid.addEventListener("click", function () {
-            var sl = detecterVideoParChemin(pdfFrame.getAttribute("src") || "");
-            if (sl) window.ouvrirVideoPasAPasSTI(sl);
-          });
-          modalReloadBtn.parentNode.insertBefore(bPdfVid, modalReloadBtn);
-          function majBtnPdfVid() {
-            var sl = detecterVideoParChemin(pdfFrame.getAttribute("src") || "");
-            bPdfVid.style.display = sl ? "inline-flex" : "none";
-          }
-          pdfFrame.addEventListener("load", majBtnPdfVid);
-          if (typeof MutationObserver !== "undefined") {
-            new MutationObserver(majBtnPdfVid).observe(pdfFrame, { attributes: true, attributeFilter: ["src"] });
-          }
-        }
-
-        var docBacFrame = document.getElementById("modal-doc-frame");
-        var docBacTitre = document.getElementById("modal-doc-titre");
-        if (docBacFrame && docBacTitre && docBacTitre.nextElementSibling && !document.getElementById("sti-btn-video-docbac")) {
-          var bBacVid = document.createElement("button");
-          bBacVid.type = "button";
-          bBacVid.id = "sti-btn-video-docbac";
-          bBacVid.className = "sti-btn-video-dedie";
-          bBacVid.style.display = "none";
-          bBacVid.textContent = "🎥 Vidéo (.mp4)";
-          bBacVid.addEventListener("click", function () {
-            var sl = detecterVideoParChemin(docBacFrame.getAttribute("src") || "");
-            if (sl) window.ouvrirVideoPasAPasSTI(sl);
-          });
-          docBacTitre.nextElementSibling.insertBefore(bBacVid, docBacTitre.nextElementSibling.firstChild);
-          function majBtnBacVid() {
-            var sl = detecterVideoParChemin(docBacFrame.getAttribute("src") || "");
-            bBacVid.style.display = sl ? "inline-flex" : "none";
-          }
-          docBacFrame.addEventListener("load", majBtnBacVid);
-          if (typeof MutationObserver !== "undefined") {
-            new MutationObserver(majBtnBacVid).observe(docBacFrame, { attributes: true, attributeFilter: ["src"] });
-          }
         }
       }
 
@@ -1340,9 +1133,9 @@
             txtB.indexOf("exécuter") !== -1 ||
             (btn.parentNode && btn.parentNode.id === "tabs");
 
-          if (estActionEtape && (slugStudioSql || slugVideoPage)) {
+          if (estActionEtape && (slugStudioSql || slugPasAPasPage)) {
             setTimeout(function () {
-              lireEtapeVoixHomme(slugStudioSql || slugVideoPage);
+              lireEtapeVoixHomme(slugStudioSql || slugPasAPasPage);
             }, 120);
           }
         },
