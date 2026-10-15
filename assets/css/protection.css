@@ -159,12 +159,30 @@ body.sti-gold #sti-watermark {
 }
 
 /* ══════════════════════════════════════════════════════════
-   Masquage total de toute lecture commentée / synthèse vocale
+   Bouton Voix de l'homme pas-à-pas (sans lecture commentée féminine)
    ══════════════════════════════════════════════════════════ */
 #sti-voix-dock,
-.sti-btn-voix-inline,
 .sti-btn-ecouter-bloc {
   display: none !important;
+}
+.sti-btn-voix-inline {
+  appearance: none;
+  border: 1.5px solid #101728;
+  background: linear-gradient(120deg, #177245, #0e7c86);
+  color: #fff !important;
+  padding: 6px 11px;
+  border-radius: 9px;
+  font: 700 12px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
+}
+.sti-btn-voix-inline.muted {
+  background: #4b5563;
+  opacity: 0.85;
 }
 @media (max-width: 768px) {
   .sti-btn-video-dedie {

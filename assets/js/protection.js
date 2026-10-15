@@ -566,20 +566,17 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     🎥 LECTEUR VIDÉO .MP4 PAS-À-PAS STI (SANS VOIX / SANS LECTURE COMMENTÉE)
-     - Associe chaque simulation pas à pas et exercice animé à sa vidéo .mp4
-       visuelle dédiée (sans piste vocale).
+     🎥 LECTEUR VIDÉO .MP4 & VOIX DE L'HOMME PAS-À-PAS STI
+     - Zéro synthèse vocale féminine (window.speechSynthesis désactivé).
+     - Utilise exclusivement la voix de l'homme enregistrée dans les 17 fichiers
+       assets/videos/<slug>.mp4 (pour la vidéo ET pour l'explication étape par étape).
      ═══════════════════════════════════════════════════════════════════════════ */
   function installerVideosPasAPasSTI() {
     try {
-      /* Couper et nettoyer toute synthèse vocale résiduelle du navigateur */
+      /* Couper définitivement toute synthèse vocale (voix féminine du navigateur) */
       if ("speechSynthesis" in window && window.speechSynthesis) {
         try { window.speechSynthesis.cancel(); } catch (e) {}
       }
-      try {
-        localStorage.removeItem("sti-voix-auto");
-        localStorage.removeItem("sti-voix-speed");
-      } catch (e) {}
 
       var oldDock = document.getElementById("sti-voix-dock");
       if (oldDock && oldDock.parentNode) oldDock.parentNode.removeChild(oldDock);
@@ -598,70 +595,104 @@
       var CATALOGUE_VIDEOS_STI = {
         "php-guichet": {
           file: "php-guichet.mp4",
+          dur: 135.0,
+          steps: 10,
           title: "🎥 Pas-à-pas : L'Histoire du Guichet (PHP + MySQLi en 10 étapes)"
         },
         "php-recap": {
           file: "php-recap.mp4",
+          dur: 158.5,
+          steps: 8,
           title: "🎥 Pas-à-pas : Récapitulatif PHP (8 étapes essentielles)"
         },
         "php-sondage-pas-a-pas": {
           file: "php-sondage-pas-a-pas.mp4",
-          title: "🎥 Pas-à-pas : sondage.php en 7 étapes (Projet STI 0)"
+          dur: 59.2,
+          steps: 7,
+          title: "🎥 Pas-à-pas : sondage.php expliqué en 7 étapes (Projet STI 0)"
         },
         "php-stat-pas-a-pas": {
           file: "php-stat-pas-a-pas.mp4",
-          title: "🎥 Pas-à-pas : Correctionstat.php en 7 étapes (Projet STI 0)"
+          dur: 54.6,
+          steps: 7,
+          title: "🎥 Pas-à-pas : Correctionstat.php expliqué en 7 étapes (Projet STI 0)"
         },
         "sql-contraintes": {
           file: "sql-contraintes.mp4",
+          dur: 47.3,
+          steps: 4,
           title: "🎥 Pas-à-pas : Les 6 Contraintes d'Intégrité SQL (LDD)"
         },
         "sql-jointure-where": {
           file: "sql-jointure-where.mp4",
+          dur: 33.4,
+          steps: 6,
           title: "🎥 Pas-à-pas : Jointure SQL dans WHERE (WHERE a.x = b.x)"
         },
         "sql-groupby-having": {
           file: "sql-groupby-having.mp4",
+          dur: 31.7,
+          steps: 6,
           title: "🎥 Pas-à-pas : Regroupement GROUP BY & Filtrage HAVING"
         },
         "sql-serie1-ldd": {
           file: "sql-serie1-ldd.mp4",
+          dur: 28.0,
+          steps: 5,
           title: "🎥 Pas-à-pas : SQL Série 1 — LDD (CREATE, ALTER, DROP)"
         },
         "sql-serie2-lmd": {
           file: "sql-serie2-lmd.mp4",
+          dur: 32.1,
+          steps: 5,
           title: "🎥 Pas-à-pas : SQL Série 2 — LMD (INSERT, UPDATE, DELETE, SELECT)"
         },
         "sql-serie3-groupby": {
           file: "sql-serie3-groupby.mp4",
+          dur: 27.9,
+          steps: 5,
           title: "🎥 Pas-à-pas : SQL Série 3 — GROUP BY, HAVING & Agrégation"
         },
         "sql-serie4-jointure-sr": {
           file: "sql-serie4-jointure-sr.mp4",
+          dur: 24.6,
+          steps: 5,
           title: "🎥 Pas-à-pas : SQL Série 4 — Jointures dans WHERE & Sous-requêtes"
         },
         "sql-serie5-gesthotel": {
           file: "sql-serie5-gesthotel.mp4",
+          dur: 34.1,
+          steps: 6,
           title: "🎥 Pas-à-pas : SQL Série 5 — Base GestHotel & Atelier SQL"
         },
         "css-positionnement": {
           file: "css-positionnement.mp4",
+          dur: 49.0,
+          steps: 12,
           title: "🎥 Pas-à-pas : Positionnement CSS3 animé en 10 étapes"
         },
         "css-decoration-animations": {
           file: "css-decoration-animations.mp4",
+          dur: 37.4,
+          steps: 8,
           title: "🎥 Pas-à-pas : Décoration CSS3, Ombres, Transitions & @keyframes"
         },
         "tp2-positionnement-corrige": {
           file: "tp2-positionnement-corrige.mp4",
+          dur: 23.4,
+          steps: 5,
           title: "🎥 Pas-à-pas : Corrigé TP2 Positionnement CSS3 (Position / Float / Inline-Block)"
         },
         "projet-tunisie-animation": {
           file: "projet-tunisie-animation.mp4",
+          dur: 19.2,
+          steps: 8,
           title: "🎥 Pas-à-pas : Projet Explore Tunisie — Animation HTML5 & CSS3 en 8 étapes"
         },
         "javascript-controles-sti": {
           file: "javascript-controles-sti.mp4",
+          dur: 26.0,
+          steps: 5,
           title: "🎥 Pas-à-pas : JavaScript STI — Contrôles de saisie & Annexe Bac"
         }
       };
@@ -708,6 +739,130 @@
         return null;
       }
 
+      var slugVideoPage = detecterVideoParChemin(location.pathname);
+
+      /* ── Lecteur Audio de la Voix de l'Homme (depuis la piste vocale masculine du .mp4) ── */
+      var voixHommeActive = true;
+      try {
+        if (localStorage.getItem("sti-voix-homme") === "0") voixHommeActive = false;
+      } catch (e) {}
+
+      var audioHomme = null;
+      var audioSlugActuel = "";
+      var timerFinSegment = null;
+      var compteurClicEtape = 0;
+
+      function arreterAudioHomme() {
+        if (timerFinSegment) {
+          clearTimeout(timerFinSegment);
+          timerFinSegment = null;
+        }
+        if (audioHomme) {
+          try { audioHomme.pause(); } catch (e) {}
+        }
+      }
+
+      function detecterIndiceEtapeCourante(nbTotalDefaut) {
+        /* Détecter le numéro d'étape affiché dans le pas-à-pas courant (ex: "3 / 10", "Étape 2/7", etc.) */
+        var idsCompteurs = [
+          "stepNum", "pc-etape", "count", "counter", "ctrl-etape", "compteur",
+          "pNum", "tp1-step-counter", "tp2-step-counter", "tp3-step-counter",
+          "tpgh-step-counter", "janim-step-badge", "gbanim-step-badge", "hvanim-step-badge"
+        ];
+        for (var i = 0; i < idsCompteurs.length; i++) {
+          var el = document.getElementById(idsCompteurs[i]);
+          if (el) {
+            var tx = (el.innerText || el.textContent || "").trim();
+            var m = tx.match(/(\d+)\s*\/\s*(\d+)/);
+            if (m) {
+              var cur = parseInt(m[1], 10) - 1;
+              var tot = parseInt(m[2], 10);
+              if (cur >= 0 && tot > 0) return { idx: cur, total: tot };
+            }
+            var mSimple = tx.match(/(\d+)/);
+            if (mSimple) {
+              var c2 = parseInt(mSimple[1], 10) - 1;
+              if (c2 >= 0) return { idx: c2, total: nbTotalDefaut || 8 };
+            }
+          }
+        }
+        /* Onglets #tabs (PHP-recap, sql-contraintes) */
+        var tabsBtns = document.querySelectorAll("#tabs button");
+        if (tabsBtns && tabsBtns.length > 0) {
+          for (var t = 0; t < tabsBtns.length; t++) {
+            if (tabsBtns[t].classList.contains("on")) {
+              return { idx: t, total: tabsBtns.length };
+            }
+          }
+        }
+        var idxMod = compteurClicEtape % (nbTotalDefaut || 8);
+        compteurClicEtape++;
+        return { idx: idxMod, total: nbTotalDefaut || 8 };
+      }
+
+      function lireEtapeVoixHomme(slugCible) {
+        if (!voixHommeActive) return;
+        var slug = slugCible || slugVideoPage;
+        if (!slug || !CATALOGUE_VIDEOS_STI[slug]) return;
+        var info = CATALOGUE_VIDEOS_STI[slug];
+        var url = resoudreUrlVideoSTI(slug);
+
+        if (!audioHomme) {
+          audioHomme = document.createElement("audio");
+          audioHomme.preload = "auto";
+          audioHomme.style.display = "none";
+          document.body.appendChild(audioHomme);
+        }
+        if (audioSlugActuel !== slug) {
+          audioSlugActuel = slug;
+          audioHomme.src = url;
+        }
+        arreterAudioHomme();
+
+        var pos = detecterIndiceEtapeCourante(info.steps || 8);
+        var totalSteps = Math.max(1, pos.total || info.steps || 8);
+        var stepIdx = Math.max(0, Math.min(pos.idx, totalSteps - 1));
+        var durTotale = (audioHomme.duration && isFinite(audioHomme.duration) && audioHomme.duration > 5)
+          ? audioHomme.duration
+          : (info.dur || 35);
+        var segDur = durTotale / totalSteps;
+        var tDebut = Math.max(0, stepIdx * segDur);
+
+        function lancerSegment() {
+          try {
+            audioHomme.muted = false;
+            audioHomme.volume = 1.0;
+            audioHomme.currentTime = tDebut;
+            var p = audioHomme.play();
+            if (p && p.catch) p.catch(function () {});
+            timerFinSegment = setTimeout(function () {
+              if (audioHomme) {
+                try { audioHomme.pause(); } catch (e) {}
+              }
+            }, Math.round(segDur * 1000) + 250);
+          } catch (e) {}
+        }
+
+        if (audioHomme.readyState >= 1) {
+          lancerSegment();
+        } else {
+          var onMeta = function () {
+            audioHomme.removeEventListener("loadedmetadata", onMeta);
+            lancerSegment();
+          };
+          audioHomme.addEventListener("loadedmetadata", onMeta);
+          try { audioHomme.load(); } catch (e) {}
+        }
+      }
+
+      function majBoutonsVoixHommeUI() {
+        var btns = document.querySelectorAll(".sti-btn-voix-homme-toggle");
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].textContent = voixHommeActive ? "🔊 Voix pas-à-pas ON" : "🔇 Voix OFF";
+          btns[i].classList.toggle("muted", !voixHommeActive);
+        }
+      }
+
       function creerBlocVideoInline(slug, idBox) {
         var info = CATALOGUE_VIDEOS_STI[slug];
         if (!info) return null;
@@ -728,7 +883,7 @@
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
             '</div>' +
           '</div>' +
-          '<video controls muted playsinline webkit-playsinline preload="metadata" src="' + url + '">' +
+          '<video controls playsinline webkit-playsinline preload="metadata" src="' + url + '">' +
             '<source src="' + url + '" type="video/mp4" />' +
           '</video>';
 
@@ -750,6 +905,11 @@
             box.hidden = true;
           });
         }
+        if (vid) {
+          vid.addEventListener("play", function () {
+            arreterAudioHomme();
+          });
+        }
         return box;
       }
 
@@ -757,11 +917,14 @@
         if (!box) return;
         var vid = box.querySelector("video");
         if (box.hidden) {
+          arreterAudioHomme();
           box.hidden = false;
           try {
             box.scrollIntoView({ behavior: "smooth", block: "nearest" });
           } catch (e) {}
           if (vid) {
+            vid.muted = false;
+            vid.volume = 1.0;
             try { vid.play(); } catch (e) {}
           }
         } else {
@@ -773,6 +936,7 @@
       }
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt) {
+        arreterAudioHomme();
         try {
           if (
             window.top &&
@@ -807,7 +971,7 @@
                   '<button type="button" id="sti-video-modal-close">✕ Fermer</button>' +
                 '</div>' +
               '</div>' +
-              '<video id="sti-video-modal-player" controls muted playsinline webkit-playsinline preload="metadata"></video>' +
+              '<video id="sti-video-modal-player" controls playsinline webkit-playsinline preload="metadata"></video>' +
             '</div>';
           document.body.appendChild(overlay);
 
@@ -838,6 +1002,8 @@
         if (tEl) tEl.textContent = titre;
         if (dlEl) dlEl.href = url;
         if (vEl) {
+          vEl.muted = false;
+          vEl.volume = 1.0;
           if (vEl.getAttribute("src") !== url) {
             vEl.setAttribute("src", url);
             vEl.innerHTML = '<source src="' + url + '" type="video/mp4" />';
@@ -847,8 +1013,6 @@
           try { vEl.play(); } catch (e) {}
         }
       };
-
-      var slugVideoPage = detecterVideoParChemin(location.pathname);
 
       function injecterBoutonsStudio() {
         var btnPlayStat = document.getElementById("btn-play");
@@ -874,6 +1038,26 @@
           if (!bar || bar.tagName === "INPUT" || bar.querySelector(".sti-btn-video-dedie")) continue;
 
           if (slugVideoPage && CATALOGUE_VIDEOS_STI[slugVideoPage]) {
+            if (bar.id !== "phpm-ctrl" && !bar.classList.contains("ctrl-mobile")) {
+              var bVoixH = document.createElement("button");
+              bVoixH.type = "button";
+              bVoixH.className = "sti-btn-voix-inline sti-btn-voix-homme-toggle" + (voixHommeActive ? "" : " muted");
+              bVoixH.textContent = voixHommeActive ? "🔊 Voix pas-à-pas ON" : "🔇 Voix OFF";
+              bVoixH.title = "Activer / couper la voix de l'homme qui explique les étapes pas à pas";
+              bVoixH.addEventListener("click", function (ev) {
+                ev.stopPropagation();
+                voixHommeActive = !voixHommeActive;
+                try { localStorage.setItem("sti-voix-homme", voixHommeActive ? "1" : "0"); } catch (e) {}
+                majBoutonsVoixHommeUI();
+                if (!voixHommeActive) {
+                  arreterAudioHomme();
+                } else {
+                  lireEtapeVoixHomme(slugVideoPage);
+                }
+              });
+              bar.appendChild(bVoixH);
+            }
+
             var bVid = document.createElement("button");
             bVid.type = "button";
             bVid.className = "sti-btn-video-dedie";
@@ -1106,6 +1290,66 @@
           }
         }
       }
+
+      /* ── Écoute des clics sur les boutons d'étape pas-à-pas pour déclencher la voix de l'homme ── */
+      document.addEventListener(
+        "click",
+        function (e) {
+          var t = e.target;
+          if (!t || !t.closest) return;
+          if (t.closest(".sti-btn-video-dedie") || t.closest(".sti-btn-voix-homme-toggle") || t.closest("#sti-video-modal-overlay")) return;
+
+          if (t.closest("#animClose, #recapClose")) {
+            arreterAudioHomme();
+            return;
+          }
+
+          var slugStudioSql = null;
+          if (t.closest("#sql-jointure-anim-app")) slugStudioSql = "sql-jointure-where";
+          else if (t.closest("#sql-groupby-anim-app") || t.closest("#sql-having-anim-app")) slugStudioSql = "sql-groupby-having";
+
+          var btn = t.closest("button, input[type='button'], .dot, .phase, .chip, .tpbd-step-dot, .tpbd-q-pill");
+          if (!btn) return;
+
+          var idB = (btn.id || "").toLowerCase();
+          var clsB = (btn.className || "").toLowerCase();
+          var txtB = (btn.innerText || btn.value || "").toLowerCase();
+
+          var estActionEtape =
+            idB.indexOf("prev") !== -1 ||
+            idB.indexOf("next") !== -1 ||
+            idB.indexOf("suiv") !== -1 ||
+            idB.indexOf("prec") !== -1 ||
+            idB.indexOf("play") !== -1 ||
+            idB.indexOf("auto") !== -1 ||
+            idB.indexOf("skip") !== -1 ||
+            idB.indexOf("rst") !== -1 ||
+            idB.indexOf("reset") !== -1 ||
+            idB.indexOf("start") !== -1 ||
+            idB.indexOf("go") === 0 ||
+            idB === "mins" ||
+            idB === "msel" ||
+            idB === "mupd" ||
+            clsB.indexOf("dot") !== -1 ||
+            clsB.indexOf("chip") !== -1 ||
+            clsB.indexOf("phase") !== -1 ||
+            clsB.indexOf("q-pill") !== -1 ||
+            txtB.indexOf("suivant") !== -1 ||
+            txtB.indexOf("précédent") !== -1 ||
+            txtB.indexOf("étape") !== -1 ||
+            txtB.indexOf("exécuter") !== -1 ||
+            (btn.parentNode && btn.parentNode.id === "tabs");
+
+          if (estActionEtape && (slugStudioSql || slugVideoPage)) {
+            setTimeout(function () {
+              lireEtapeVoixHomme(slugStudioSql || slugVideoPage);
+            }, 120);
+          }
+        },
+        true
+      );
+
+      window.addEventListener("beforeunload", arreterAudioHomme);
 
       injecterBoutonsStudio();
       setTimeout(injecterBoutonsStudio, 900);
