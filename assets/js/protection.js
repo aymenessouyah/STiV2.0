@@ -636,7 +636,7 @@
             '<div class="sti-video-pas-a-pas-actions">' +
               '<button type="button" data-vrate="0.75">0.75×</button>' +
               '<button type="button" data-vrate="0.85">0.85×</button>' +
-              '<button type="button" data-vrate="1">1×</button>' +
+              '<button type="button" data-vrate="1" class="is-active" style="background:#177245;border-color:#86efac;color:#fff;">1×</button>' +
               '<button type="button" data-vrate="1.25">1.25×</button>' +
               '<a href="' + url + '" download>⬇ MP4</a>' +
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
@@ -648,10 +648,23 @@
 
         var vid = box.querySelector("video");
         var btnsRate = box.querySelectorAll("button[data-vrate]");
+        function majBoutonsVitesseInline(rateActif) {
+          for (var k = 0; k < btnsRate.length; k++) {
+            var btnK = btnsRate[k];
+            var rVal = parseFloat(btnK.getAttribute("data-vrate")) || 1;
+            var actif = Math.abs(rVal - rateActif) < 0.01;
+            btnK.classList.toggle("is-active", actif);
+            btnK.style.background = actif ? "#177245" : "";
+            btnK.style.borderColor = actif ? "#86efac" : "";
+            btnK.style.color = actif ? "#fff" : "";
+          }
+        }
         for (var r = 0; r < btnsRate.length; r++) {
           (function (b) {
             b.addEventListener("click", function () {
-              if (vid) vid.playbackRate = parseFloat(b.getAttribute("data-vrate")) || 1;
+              var nvRate = parseFloat(b.getAttribute("data-vrate")) || 1;
+              if (vid) vid.playbackRate = nvRate;
+              majBoutonsVitesseInline(nvRate);
             });
           })(btnsRate[r]);
         }
@@ -734,7 +747,7 @@
                 '<div class="sti-video-pas-a-pas-actions" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">' +
                   '<button type="button" data-mrate="0.75">0.75×</button>' +
                   '<button type="button" data-mrate="0.85">0.85×</button>' +
-                  '<button type="button" data-mrate="1">1×</button>' +
+                  '<button type="button" data-mrate="1" class="is-active" style="background:#177245;border-color:#86efac;color:#fff;">1×</button>' +
                   '<button type="button" data-mrate="1.25">1.25×</button>' +
                   '<a id="sti-video-modal-dl" href="#" download>⬇ MP4</a>' +
                   '<button type="button" id="sti-video-modal-close">✕ Fermer</button>' +
@@ -746,10 +759,23 @@
 
           var mVid = document.getElementById("sti-video-modal-player");
           var mRates = overlay.querySelectorAll("button[data-mrate]");
+          function majBoutonsVitesseModale(rateActif) {
+            for (var k = 0; k < mRates.length; k++) {
+              var btnK = mRates[k];
+              var rVal = parseFloat(btnK.getAttribute("data-mrate")) || 1;
+              var actif = Math.abs(rVal - rateActif) < 0.01;
+              btnK.classList.toggle("is-active", actif);
+              btnK.style.background = actif ? "#177245" : "";
+              btnK.style.borderColor = actif ? "#86efac" : "";
+              btnK.style.color = actif ? "#fff" : "";
+            }
+          }
           for (var i = 0; i < mRates.length; i++) {
             (function (b) {
               b.addEventListener("click", function () {
-                if (mVid) mVid.playbackRate = parseFloat(b.getAttribute("data-mrate")) || 1;
+                var nvRate = parseFloat(b.getAttribute("data-mrate")) || 1;
+                if (mVid) mVid.playbackRate = nvRate;
+                majBoutonsVitesseModale(nvRate);
               });
             })(mRates[i]);
           }

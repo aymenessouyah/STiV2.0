@@ -279,6 +279,13 @@ body.sti-gold #sti-watermark {
   cursor: pointer;
   text-decoration: none !important;
 }
+.sti-video-pas-a-pas-actions button.is-active,
+.sti-video-pas-a-pas-actions button.is-active:hover {
+  background: #177245 !important;
+  border-color: #86efac !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 2px rgba(23, 114, 69, 0.35);
+}
 .sti-video-pas-a-pas-actions button[data-vclose="1"],
 .sti-video-pas-a-pas-actions button#sti-video-modal-close {
   background: #b91c1c !important;
