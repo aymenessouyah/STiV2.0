@@ -4575,7 +4575,7 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
     var sqlSegFin = 0;
     var sqlAudio = document.createElement("audio");
     sqlAudio.preload = "auto";
-    sqlAudio.src = "../assets/audio/sql-cours.mp3?v=218";
+    sqlAudio.src = "../assets/audio/sql-cours.mp3?v=219";
     sqlAudio.style.display = "none";
     document.body.appendChild(sqlAudio);
 
@@ -4612,14 +4612,15 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
       sqlSegFin = seg[1];
       function lancer() {
         try {
+          var rSql = (typeof window.lireVitesseVoixSTI === "function") ? window.lireVitesseVoixSTI() : 1;
           sqlAudio.muted = false;
           sqlAudio.volume = 1.0;
-          sqlAudio.playbackRate = 0.95;
+          sqlAudio.playbackRate = rSql;
           sqlAudio.currentTime = seg[0];
           var p = sqlAudio.play();
           if (p && p.catch) p.catch(function () {});
           majBoutonHeroVoix(true);
-          var durMs = Math.max(900, Math.round(((seg[1] - seg[0]) / 0.95) * 1000) + 250);
+          var durMs = Math.max(1200, Math.round(((seg[1] - seg[0]) / Math.min(0.75, rSql)) * 1000) + 600);
           sqlVoixTimer = setTimeout(arreterVoixSqlSTI, durMs);
         } catch (e) {}
       }
@@ -4705,11 +4706,11 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
   })();
   </script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=218" />
-<script src="../assets/js/protection.js?v=218" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=219" />
+<script src="../assets/js/protection.js?v=219" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=218"></script>
-<script src="../assets/js/acces.js?v=218"></script>
+<script src="../assets/js/config.js?v=219"></script>
+<script src="../assets/js/acces.js?v=219"></script>
 </body>
 </html>

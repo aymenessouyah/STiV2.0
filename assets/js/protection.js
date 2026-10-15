@@ -716,35 +716,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=218",
+        file: "php-guichet.mp4?v=219",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=218",
+        file: "css-positionnement.mp4?v=219",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=218",
+        file: "css-animee.mp4?v=219",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=218",
+        file: "sql-cours.mp4?v=219",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=218",
+        file: "html5-cours.mp4?v=219",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=218",
+        file: "css3-cours.mp4?v=219",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=218",
+        file: "javascript-cours.mp4?v=219",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=218",
+        file: "php-cours.mp4?v=219",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -1791,9 +1791,10 @@
               try { window.arreterVoixSqlSTI(); } catch (e) {}
             }
             try {
+              var rVoix = (typeof window.lireVitesseVoixSTI === "function") ? window.lireVitesseVoixSTI() : 1;
               audS.muted = false;
               audS.volume = 1.0;
-              audS.playbackRate = 0.95;
+              audS.playbackRate = rVoix;
               audS.currentTime = chapObj.t;
               var pS = audS.play();
               if (pS && pS.catch) pS.catch(function () {});
@@ -1811,7 +1812,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=218";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=219";
 
           var CUES_MAP = {
             html5: {
@@ -1928,15 +1929,16 @@
             cSegEnd = en || 0;
             function go() {
               try {
+                var rV = (typeof window.lireVitesseVoixSTI === "function") ? window.lireVitesseVoixSTI() : 1;
                 cAudio.muted = false;
                 cAudio.volume = 1.0;
-                cAudio.playbackRate = 0.96;
+                cAudio.playbackRate = rV;
                 cAudio.currentTime = st || 0;
                 var p = cAudio.play();
                 if (p && p.catch) p.catch(function () {});
                 majBtnVoixCours(true);
                 if (en && en > st) {
-                  cTimer = setTimeout(window.arreterVoixCoursSTI, Math.max(900, Math.round(((en - st) / 0.96) * 1000) + 250));
+                  cTimer = setTimeout(window.arreterVoixCoursSTI, Math.max(1200, Math.round(((en - st) / Math.min(0.75, rV)) * 1000) + 600));
                 }
               } catch (e) {}
             }
@@ -2088,6 +2090,48 @@
       if (window.__stiGuideVocalInit) return;
       window.__stiGuideVocalInit = true;
 
+      /* Vitesse vocale mémorisée (0.85×, 1×, 1.15×) + formateur de temps mm:ss */
+      function lireVitesseVoixSTI() {
+        try {
+          var v = parseFloat(localStorage.getItem("sti-voice-rate") || "1");
+          if (v === 0.85 || v === 1 || v === 1.15) return v;
+        } catch (e) {}
+        return 1;
+      }
+      window.lireVitesseVoixSTI = lireVitesseVoixSTI;
+
+      function definirVitesseVoixSTI(nvRate) {
+        var r = (nvRate === 0.85 || nvRate === 1.15) ? nvRate : 1;
+        try { localStorage.setItem("sti-voice-rate", String(r)); } catch (e) {}
+        var a = window.__stiActiveVoiceAudio;
+        if (a) {
+          try { a.playbackRate = r; } catch (e2) {}
+        }
+        majBoutonsVitesseGuideVocal(r);
+      }
+      window.definirVitesseVoixSTI = definirVitesseVoixSTI;
+
+      function formaterTempsAudioSTI(sec) {
+        var s = Math.max(0, Math.floor(Number(sec) || 0));
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return (m < 10 ? "0" + m : String(m)) + ":" + (r < 10 ? "0" + r : String(r));
+      }
+
+      function majBoutonsVitesseGuideVocal(rateActif) {
+        if (!topVoiceBar) return;
+        var rCur = rateActif || lireVitesseVoixSTI();
+        var btnsR = topVoiceBar.querySelectorAll("button[data-vvoice-rate]");
+        for (var i = 0; i < btnsR.length; i++) {
+          var b = btnsR[i];
+          var valB = parseFloat(b.getAttribute("data-vvoice-rate")) || 1;
+          var on = Math.abs(valB - rCur) < 0.02;
+          b.style.background = on ? "#177245" : "#1e293b";
+          b.style.borderColor = on ? "#86efac" : "#475569";
+          b.style.color = on ? "#ffffff" : "#cbd5e1";
+        }
+      }
+
       /* Intercepter tout audio vocal lancé (new Audio() ou <audio>) */
       var origPlay = window.HTMLMediaElement && window.HTMLMediaElement.prototype
         ? window.HTMLMediaElement.prototype.play
@@ -2099,6 +2143,7 @@
             var src = (this.currentSrc || this.src || "").toLowerCase();
             if (this.tagName === "AUDIO" && src.indexOf("foret.mp3") === -1) {
               window.__stiActiveVoiceAudio = this;
+              this.playbackRate = lireVitesseVoixSTI();
             }
           } catch (e) {}
           return origPlay.apply(this, arguments);
@@ -2296,17 +2341,31 @@
         topVoiceBar.className = "sti-no-print";
         topVoiceBar.style.cssText =
           "position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:2147482600;" +
-          "display:none;align-items:center;flex-wrap:wrap;justify-content:center;gap:6px;padding:6px 12px;border-radius:999px;" +
+          "display:none;align-items:center;flex-wrap:wrap;justify-content:center;gap:5px;padding:6px 12px;border-radius:999px;" +
           "max-width:96vw;background:rgba(13,21,38,0.96);border:2px solid #ff2a00;color:#fff;" +
           "box-shadow:0 6px 20px rgba(0,0,0,0.42);font:800 12px/1 system-ui,-apple-system,sans-serif;";
         topVoiceBar.innerHTML =
           '<span style="color:#fde68a;display:inline-flex;align-items:center;gap:4px;">📏 Guide vocal</span>' +
+          '<span id="sti-voice-top-time" style="padding:4px 8px;border-radius:999px;background:#0f172a;border:1px solid #334155;color:#fde68a;font:800 11px/1 ui-monospace,Consolas,monospace;letter-spacing:0.02em;">00:00 / 00:00</span>' +
           '<button type="button" id="sti-voice-top-prev" title="Chapitre précédent" style="display:none;padding:4px 8px;border-radius:999px;border:1.5px solid #facc15;background:#1e293b;color:#fde68a;font-weight:800;font-size:11.5px;cursor:pointer;">⏮</button>' +
-          '<select id="sti-voice-top-chap" aria-label="Chapitre vocal en cours" style="display:none;max-width:225px;padding:4px 8px;border-radius:999px;border:1.5px solid #facc15;background:#1e293b;color:#fde68a;font:800 11.5px/1.1 system-ui,sans-serif;cursor:pointer;"></select>' +
+          '<select id="sti-voice-top-chap" aria-label="Chapitre vocal en cours" style="display:none;max-width:215px;padding:4px 8px;border-radius:999px;border:1.5px solid #facc15;background:#1e293b;color:#fde68a;font:800 11.5px/1.1 system-ui,sans-serif;cursor:pointer;"></select>' +
           '<button type="button" id="sti-voice-top-next" title="Chapitre suivant" style="display:none;padding:4px 8px;border-radius:999px;border:1.5px solid #facc15;background:#1e293b;color:#fde68a;font-weight:800;font-size:11.5px;cursor:pointer;">⏭</button>' +
+          '<button type="button" data-vvoice-rate="0.85" title="Vitesse lente (0.85×)" style="padding:4px 7px;border-radius:999px;border:1.5px solid #475569;background:#1e293b;color:#cbd5e1;font-weight:800;font-size:11px;cursor:pointer;">0.85×</button>' +
+          '<button type="button" data-vvoice-rate="1" title="Vitesse normale (1×)" style="padding:4px 7px;border-radius:999px;border:1.5px solid #86efac;background:#177245;color:#fff;font-weight:800;font-size:11px;cursor:pointer;">1×</button>' +
+          '<button type="button" data-vvoice-rate="1.15" title="Vitesse rapide (1.15×)" style="padding:4px 7px;border-radius:999px;border:1.5px solid #475569;background:#1e293b;color:#cbd5e1;font-weight:800;font-size:11px;cursor:pointer;">1.15×</button>' +
           '<button type="button" id="sti-voice-top-pp" style="padding:5px 11px;border-radius:999px;border:1.5px solid #fde68a;background:#b45309;color:#fff;font-weight:800;font-size:12px;cursor:pointer;">⏸️ Pause</button>' +
           '<button type="button" id="sti-voice-top-close" title="Couper l\'écoute et fermer le guide-ligne" style="padding:5px 10px;border-radius:999px;border:1.5px solid #fca5a5;background:#dc2626;color:#fff;font-weight:800;font-size:12px;cursor:pointer;">✕ Fermer</button>';
         document.body.appendChild(topVoiceBar);
+        majBoutonsVitesseGuideVocal(lireVitesseVoixSTI());
+        var rateBtnsTop = topVoiceBar.querySelectorAll("button[data-vvoice-rate]");
+        for (var rb = 0; rb < rateBtnsTop.length; rb++) {
+          (function (btnR) {
+            btnR.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              definirVitesseVoixSTI(parseFloat(btnR.getAttribute("data-vvoice-rate")) || 1);
+            });
+          })(rateBtnsTop[rb]);
+        }
         document.getElementById("sti-voice-top-pp").addEventListener("click", function (ev) {
           ev.stopPropagation();
           basculerPausePlayEcouteSTI();
@@ -2409,6 +2468,12 @@
         }
         ensureTopVoiceBar().style.display = "inline-flex";
         majBoutonsPausePlayGuide();
+        var topTimeEl = document.getElementById("sti-voice-top-time");
+        if (topTimeEl) {
+          var curS = audio.currentTime || 0;
+          var totS = (audio.duration && isFinite(audio.duration) && audio.duration > 0) ? audio.duration : 0;
+          topTimeEl.textContent = formaterTempsAudioSTI(curS) + (totS > 0 ? (" / " + formaterTempsAudioSTI(totS)) : "");
+        }
 
         var pLow = (window.location.pathname || "").toLowerCase();
         var courseKey =
