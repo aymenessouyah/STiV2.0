@@ -347,7 +347,7 @@ body.sti-gold #sti-watermark {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
-  max-height: calc(94vh - 82px) !important;
+  max-height: calc(94vh - 116px) !important;
   aspect-ratio: 16 / 9;
   object-fit: contain !important;
   margin: 0 auto !important;
@@ -375,8 +375,8 @@ video::-webkit-media-controls-fullscreen-button {
 }
 .sti-video-modal-card.sti-css-fullscreen-target video,
 .sti-video-pas-a-pas-box.sti-css-fullscreen-target video {
-  max-height: calc(100dvh - 68px) !important;
-  height: calc(100dvh - 68px) !important;
+  max-height: calc(100dvh - 102px) !important;
+  height: calc(100dvh - 102px) !important;
 }
 
 

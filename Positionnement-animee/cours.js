@@ -412,7 +412,7 @@ var posAutoTimer = null;
 var posSegFin = 0;
 var posAudio = document.createElement('audio');
 posAudio.preload = 'auto';
-posAudio.src = '../assets/audio/css-positionnement.mp3?v=215';
+posAudio.src = '../assets/audio/css-positionnement.mp3?v=216';
 posAudio.style.display = 'none';
 if (document.body) { document.body.appendChild(posAudio); }
 
