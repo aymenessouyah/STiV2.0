@@ -44,6 +44,7 @@ var COURS = [
     { nh: 6, nc: 11, hh: [], hc: [9] }
   ] },
   { id: 'stat', titre: 'position: static (le défaut)', temps: [
+    { nh: 3, nc: 1, hh: [], hc: [] },
     { nh: 3, nc: 1, hh: [1], hc: [] },
     { nh: 3, nc: 5, hh: [], hc: [1, 2, 3] }
   ] },
@@ -140,6 +141,10 @@ function afficher() {
     document.getElementById('scene-' + i).hidden = (i !== etape);
     document.getElementById('code-html-' + i).hidden = (i !== etape);
     document.getElementById('code-css-' + i).hidden = (i !== etape);
+  }
+  var blocIntroPos = document.getElementById('sti-intro-etape4-position');
+  if (blocIntroPos) {
+    blocIntroPos.hidden = !(etape === 4 || (etape === 3 && temps === COURS[3].temps.length - 1));
   }
 
   /* une seule note visible */

@@ -96,11 +96,14 @@
           <input type="button" class="chip" id="chip-1" value="1 · display: block" onclick="aller(1)" />
           <input type="button" class="chip" id="chip-2" value="2 · display: inline" onclick="aller(2)" />
           <input type="button" class="chip" id="chip-3" value="3 · inline-block" onclick="aller(3)" />
-          <input type="button" class="chip" id="chip-4" value="4 · position: static" onclick="aller(4)" />
-          <input type="button" class="chip" id="chip-5" value="5 · position: relative" onclick="aller(5)" />
-          <input type="button" class="chip" id="chip-6" value="6 · position: absolute" onclick="aller(6)" />
-          <input type="button" class="chip" id="chip-7" value="7 · position: fixed" onclick="aller(7)" />
-          <input type="button" class="chip" id="chip-8" value="8 · position: sticky" onclick="aller(8)" />
+          <span id="sti-groupe-position-cadre" style="display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px;margin:2px 4px;border:3px solid #e11d48;border-radius:12px;background:rgba(225,29,72,0.12);box-shadow:0 0 0 2px rgba(225,29,72,0.22);">
+            <strong id="sti-label-position-cadre" style="display:inline-block;padding:4px 12px;border:2px solid #e11d48;border-radius:8px;background:#e11d48;color:#fff;font-family:monospace;font-size:14px;font-weight:900;letter-spacing:0.5px;">position</strong>
+            <input type="button" class="chip" id="chip-4" value="4 · position: static" onclick="aller(4)" />
+            <input type="button" class="chip" id="chip-5" value="5 · position: relative" onclick="aller(5)" />
+            <input type="button" class="chip" id="chip-6" value="6 · position: absolute" onclick="aller(6)" />
+            <input type="button" class="chip" id="chip-7" value="7 · position: fixed" onclick="aller(7)" />
+            <input type="button" class="chip" id="chip-8" value="8 · position: sticky" onclick="aller(8)" />
+          </span>
           <input type="button" class="chip" id="chip-9" value="9 · float" onclick="aller(9)" />
           <input type="button" class="chip" id="chip-10" value="10 · Récap et quiz" onclick="aller(10)" />
           <input type="button" class="chip" id="chip-11" value="Bonus · flex" onclick="aller(11)" />
@@ -188,6 +191,18 @@
         <p class="note" id="note-3-1" hidden>Piège classique : le <span class="surligne">retour à la ligne entre les balises</span> dans le HTML crée un petit espace d’environ 4 px entre les boîtes.</p>
         <p class="note" id="note-3-2" hidden>L’astuce : <span class="note-code">font-size: 0</span> sur le parent (les enfants gardent leur propre taille) → les espaces disparaissent.</p>
       </div>
+      <div id="sti-intro-etape4-position" hidden style="margin:0 0 14px 0;padding:16px 18px;border:3.5px solid #dc2626;border-radius:14px;background:rgba(220,38,38,0.09);box-shadow:0 6px 20px rgba(220,38,38,0.18);text-align:left;line-height:1.55;">
+        <div style="text-align:center;margin:0 0 12px 0;">
+          <span style="display:inline-block;padding:8px 28px;border:3.5px solid #dc2626;border-radius:12px;background:#dc2626;color:#ffffff;font-family:monospace;font-size:24px;font-weight:900;letter-spacing:1.5px;box-shadow:0 4px 14px rgba(220,38,38,0.35);">position</span>
+        </div>
+        <p style="margin:0 0 8px 0;font-size:15px;font-weight:800;color:#fca5a5;"><span class="surligne">La phrase à retenir :</span></p>
+        <blockquote style="margin:0 0 10px 0;padding:10px 14px;border-left:4px solid #dc2626;background:rgba(15,23,42,0.35);border-radius:0 10px 10px 0;font-size:13.5px;">
+          <p style="margin:0 0 6px 0;font-weight:700;">Pour comprendre une position CSS, je pose toujours deux questions :</p>
+          <p style="margin:0 0 4px 0;"><strong>1. Flux :</strong> est-ce que l'élément garde sa place dans le couloir ?</p>
+          <p style="margin:0;"><strong>2. Référence :</strong> par rapport à quoi l'élément est-il positionné ?</p>
+        </blockquote>
+        <p style="margin:0;font-size:13px;"><strong>Petite précision pédagogique :</strong> <span class="note-code">sticky</span> ne perd pas sa place dans le flux, contrairement à <span class="note-code">absolute</span> et <span class="note-code">fixed</span>. Et pour <span class="note-code">absolute</span>, la référence n'est pas obligatoirement le parent direct : c'est l'ancêtre positionné le plus proche.</p>
+      </div>
       <div class="scene" id="scene-4" hidden>
         <div class="demo demo-stat b0" id="demo-4">
           <div class="frere-stat">Frère 1</div>
@@ -197,8 +212,9 @@
           </div>
           <div class="frere-stat">Frère 2</div>
         </div>
-        <p class="note" id="note-4-0" hidden>Par défaut, <span class="surligne">tous</span> les éléments sont en <span class="note-code">position: static</span> : ils s’empilent simplement dans le flux.</p>
-        <p class="note" id="note-4-1" hidden>Avec static, <span class="note-code">top</span>, <span class="note-code">right</span>, <span class="note-code">bottom</span> et <span class="note-code">left</span> n’ont <span class="surligne">aucun effet</span> : rien ne bouge d’un pixel (cadre rouge).</p>
+        <p class="note" id="note-4-0" hidden><span class="surligne">Avant d’entamer l’étape 4 (position)</span> : retenez toujours les 2 questions (<span class="surligne">1. Flux</span> : garde-t-il sa place dans le couloir ? <span class="surligne">2. Référence</span> : par rapport à quoi est-il positionné ?).</p>
+        <p class="note" id="note-4-1" hidden>Par défaut, <span class="surligne">tous</span> les éléments sont en <span class="note-code">position: static</span> : ils s’empilent simplement dans le flux.</p>
+        <p class="note" id="note-4-2" hidden>Avec static, <span class="note-code">top</span>, <span class="note-code">right</span>, <span class="note-code">bottom</span> et <span class="note-code">left</span> n’ont <span class="surligne">aucun effet</span> : rien ne bouge d’un pixel (cadre rouge).</p>
       </div>
       <div class="scene" id="scene-5" hidden>
         <div class="demo demo-rel b0" id="demo-5">
