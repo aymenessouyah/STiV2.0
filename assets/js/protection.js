@@ -599,22 +599,38 @@
         return;
       }
 
-      /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé et CSS animée */
+      /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=208",
+        file: "php-guichet.mp4?v=209",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=208",
+        file: "css-positionnement.mp4?v=209",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=208",
+        file: "css-animee.mp4?v=209",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=208",
+        file: "sql-cours.mp4?v=209",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
+      };
+      var VIDEO_HTML5_INFO = {
+        file: "html5-cours.mp4?v=209",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
+      };
+      var VIDEO_CSS3_INFO = {
+        file: "css3-cours.mp4?v=209",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
+      };
+      var VIDEO_JS_INFO = {
+        file: "javascript-cours.mp4?v=209",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
+      };
+      var VIDEO_PHP_COURS_INFO = {
+        file: "php-cours.mp4?v=209",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
       function prefixeAssetsSTI() {
@@ -644,10 +660,30 @@
         return prefixeAssetsSTI() + "videos/" + VIDEO_SQL_INFO.file;
       }
 
+      function resoudreUrlVideoHtml5() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_HTML5_INFO.file;
+      }
+
+      function resoudreUrlVideoCss3() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_CSS3_INFO.file;
+      }
+
+      function resoudreUrlVideoJs() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_JS_INFO.file;
+      }
+
+      function resoudreUrlVideoPhpCours() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_PHP_COURS_INFO.file;
+      }
+
       var estPageGuichet = (pathLower.indexOf("php-mysqli") !== -1);
       var estPageCssPos = (pathLower.indexOf("positionnement-animee") !== -1);
       var estPageCssDeco = (pathLower.indexOf("cssanimee") !== -1);
       var estPageSql = (pathLower.indexOf("/sql.html") !== -1 || pathLower.indexOf("sql-contraintes") !== -1);
+      var estPageHtml5 = (pathLower.indexOf("/html5.html") !== -1);
+      var estPageCss3 = (pathLower.indexOf("/css3.html") !== -1);
+      var estPageJs = (pathLower.indexOf("/javascript.html") !== -1);
+      var estPagePhpCours = (pathLower.indexOf("/php.html") !== -1);
 
       /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
@@ -734,11 +770,15 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt) {
         var sSlug = String(slugOuUrl || "");
-        var estSql = (sSlug === "sql-cours" || sSlug.indexOf("sql-cours") !== -1 || (!sSlug && estPageSql));
-        var estCssDeco = (!estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
-        var estCssPos = (!estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
-        var estGuichet = (!estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || (!sSlug && estPageGuichet)));
-        if (!estSql && !estCssDeco && !estCssPos && !estGuichet) {
+        var estHtml5 = (sSlug === "html5-cours" || sSlug.indexOf("html5-cours") !== -1 || (!sSlug && estPageHtml5));
+        var estCss3 = (!estHtml5 && (sSlug === "css3-cours" || sSlug.indexOf("css3-cours") !== -1 || (!sSlug && estPageCss3)));
+        var estJs = (!estHtml5 && !estCss3 && (sSlug === "javascript-cours" || sSlug.indexOf("javascript-cours") !== -1 || (!sSlug && estPageJs)));
+        var estPhpC = (!estHtml5 && !estCss3 && !estJs && (sSlug === "php-cours" || sSlug.indexOf("php-cours") !== -1 || (!sSlug && estPagePhpCours)));
+        var estSql = (!estHtml5 && !estCss3 && !estJs && !estPhpC && (sSlug === "sql-cours" || sSlug.indexOf("sql-cours") !== -1 || (!sSlug && estPageSql)));
+        var estCssDeco = (!estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
+        var estCssPos = (!estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
+        var estGuichet = (!estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || (!sSlug && estPageGuichet)));
+        if (!estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet) {
           return;
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
@@ -758,6 +798,9 @@
           if (typeof window.arreterVoixSqlSTI === "function") {
             window.arreterVoixSqlSTI();
           }
+          if (typeof window.arreterVoixCoursSTI === "function") {
+            window.arreterVoixCoursSTI();
+          }
           var fSql = document.getElementById("sqlContraintesFrame");
           if (fSql && fSql.contentWindow) {
             fSql.contentWindow.postMessage({ type: "STI_STOP_SQL" }, "*");
@@ -767,7 +810,7 @@
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
-        var slugCible = estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet"));
+        var slugCible = estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet"))))));
         try {
           if (
             window.top &&
@@ -778,8 +821,8 @@
             return;
           }
         } catch (e) {}
-        var url = estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet()));
-        var titre = titreOpt || (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title)));
+        var url = estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet()))))));
+        var titre = titreOpt || (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title)))))));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
@@ -978,6 +1021,206 @@
             window.ouvrirVideoPasAPasSTI("php-guichet");
           });
           animTools.insertBefore(bModG, animTools.firstChild);
+        }
+
+        /* ── Barre Vidéo (.mp4) + Voix (.mp3) sur les cours HTML5, CSS3, JavaScript et PHP ── */
+        if ((estPageHtml5 || estPageCss3 || estPageJs || estPagePhpCours) && !document.getElementById("sti-cours-media-bar")) {
+          var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
+          var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
+          var cSlug = cKey + "-cours";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=209";
+
+          var CUES_MAP = {
+            html5: {
+              "entete": [8.0, 26.0],
+              "structuration": [26.0, 44.0],
+              "conteneurs": [44.0, 56.0],
+              "listes": [56.0, 67.0],
+              "tableaux": [67.0, 78.0],
+              "texte-media": [78.07, 95.5],
+              "attributs-evenements": [95.5, 107.5],
+              "target-explication": [107.5, 117.5],
+              "formulaires": [117.5, 137.5],
+              "iframe": [137.5, 145.7]
+            },
+            css3: {
+              "point-1": [8.0, 32.0],
+              "point-2": [32.0, 56.0],
+              "point-3": [56.0, 72.0],
+              "point-6": [56.0, 72.0],
+              "point-7": [72.0, 88.37],
+              "point-4": [88.63, 108.6],
+              "point-5": [108.6, 124.6],
+              "point-8": [124.6, 140.6],
+              "css-pas-a-pas": [140.6, 150.8]
+            },
+            javascript: {
+              "sec1": [8.5, 18.5],
+              "sec2": [8.5, 18.5],
+              "sec3": [18.5, 30.5],
+              "sec4": [30.5, 44.5],
+              "sec5": [44.5, 58.5],
+              "sec6": [30.5, 44.5],
+              "sec7": [58.5, 73.01],
+              "sec8": [73.27, 89.2],
+              "sec9": [89.2, 119.2],
+              "sec10": [119.2, 131.2],
+              "sec11": [131.2, 144.05],
+              "sec12": [144.31, 157.3],
+              "sec13": [157.3, 171.3],
+              "sec14": [171.3, 183.3],
+              "sec15": [183.3, 210.9],
+              "sec16": [183.3, 210.9]
+            },
+            php: {
+              "s1": [8.0, 24.0],
+              "s1-1": [8.0, 24.0],
+              "s1b": [8.0, 24.0],
+              "s1-3": [8.0, 24.0],
+              "s2": [24.0, 44.0],
+              "s2-1": [24.0, 44.0],
+              "s2-2": [24.0, 44.0],
+              "s2-3": [24.0, 44.0],
+              "s2-4": [24.0, 44.0],
+              "s2-5": [24.0, 44.0],
+              "s3": [44.0, 61.18],
+              "s4": [61.44, 79.4],
+              "s5": [79.4, 93.4],
+              "s6": [93.4, 107.4],
+              "s7": [107.4, 121.97],
+              "s8": [122.23, 158.2],
+              "s8anim": [122.23, 138.2],
+              "s8-1": [122.23, 138.2],
+              "s8-2": [138.2, 158.2],
+              "s8-3": [138.2, 158.2],
+              "s8-4": [138.2, 158.2],
+              "s8-5": [138.2, 158.2],
+              "s8-6": [138.2, 158.2],
+              "s8-7": [158.2, 172.2],
+              "s9": [172.2, 188.8],
+              "s10": [172.2, 188.8],
+              "s10a": [172.2, 188.8],
+              "s10b": [172.2, 188.8],
+              "s10c": [172.2, 188.8],
+              "s10d": [172.2, 188.8]
+            }
+          };
+
+          var cAudio = document.createElement("audio");
+          cAudio.preload = "metadata";
+          cAudio.src = cAudioUrl;
+          cAudio.style.display = "none";
+          document.body.appendChild(cAudio);
+          var cTimer = null;
+          var cSegEnd = 0;
+
+          function majBtnVoixCours(enLecture) {
+            var bV = document.getElementById("sti-btn-cours-voix-hero");
+            if (bV) {
+              bV.textContent = enLecture ? ("⏸️ Pause Voix " + cLabel) : ("🔊 Écouter le cours " + cLabel);
+              bV.style.background = enLecture ? "#b45309" : "#177245";
+            }
+          }
+
+          window.arreterVoixCoursSTI = function () {
+            if (cTimer) { clearTimeout(cTimer); cTimer = null; }
+            cSegEnd = 0;
+            try { cAudio.pause(); } catch (e) {}
+            majBtnVoixCours(false);
+          };
+
+          cAudio.addEventListener("timeupdate", function () {
+            if (cSegEnd > 0 && cAudio.currentTime >= cSegEnd - 0.05) {
+              window.arreterVoixCoursSTI();
+            }
+          });
+          cAudio.addEventListener("ended", function () {
+            majBtnVoixCours(false);
+          });
+
+          function jouerSegmentCours(st, en) {
+            window.arreterVoixCoursSTI();
+            cSegEnd = en || 0;
+            function go() {
+              try {
+                cAudio.muted = false;
+                cAudio.volume = 1.0;
+                cAudio.playbackRate = 0.96;
+                cAudio.currentTime = st || 0;
+                var p = cAudio.play();
+                if (p && p.catch) p.catch(function () {});
+                majBtnVoixCours(true);
+                if (en && en > st) {
+                  cTimer = setTimeout(window.arreterVoixCoursSTI, Math.max(900, Math.round(((en - st) / 0.96) * 1000) + 250));
+                }
+              } catch (e) {}
+            }
+            if (cAudio.readyState >= 1) {
+              go();
+            } else {
+              var onM = function () {
+                cAudio.removeEventListener("loadedmetadata", onM);
+                go();
+              };
+              cAudio.addEventListener("loadedmetadata", onM);
+              try { cAudio.load(); } catch (e) {}
+            }
+          }
+
+          var barEl = document.createElement("div");
+          barEl.id = "sti-cours-media-bar";
+          barEl.className = "sti-no-print";
+          barEl.style.cssText = "display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:12px auto 16px;padding:10px 14px;background:rgba(13,21,38,0.92);border:2px solid #f4511e;border-radius:14px;max-width:760px;box-shadow:0 6px 18px rgba(0,0,0,0.22);";
+          barEl.innerHTML =
+            '<button type="button" id="sti-btn-cours-video-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #fde68a;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎥 Vidéo du cours ' + cLabel + ' (.mp4)</button>' +
+            '<button type="button" id="sti-btn-cours-voix-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #86efac;background:#177245;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🔊 Écouter le cours ' + cLabel + '</button>';
+
+          var targetAnchor =
+            document.querySelector("main section:first-of-type") ||
+            document.querySelector("main .wrap h1.title") ||
+            document.querySelector("main #sec1") ||
+            document.querySelector("main") ||
+            document.body.firstChild;
+          if (targetAnchor && targetAnchor.parentNode) {
+            if (estPageHtml5 && targetAnchor.tagName === "SECTION") {
+              targetAnchor.appendChild(barEl);
+            } else if (estPagePhpCours && targetAnchor.classList && targetAnchor.classList.contains("title")) {
+              var subEl = targetAnchor.nextElementSibling;
+              if (subEl && subEl.parentNode) subEl.parentNode.insertBefore(barEl, subEl.nextSibling);
+              else targetAnchor.parentNode.insertBefore(barEl, targetAnchor.nextSibling);
+            } else {
+              targetAnchor.parentNode.insertBefore(barEl, targetAnchor);
+            }
+          }
+
+          var bVidHero = document.getElementById("sti-btn-cours-video-hero");
+          if (bVidHero) {
+            bVidHero.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              window.ouvrirVideoPasAPasSTI(cSlug);
+            });
+          }
+          var bVoixHero = document.getElementById("sti-btn-cours-voix-hero");
+          if (bVoixHero) {
+            bVoixHero.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              if (!cAudio.paused) {
+                window.arreterVoixCoursSTI();
+              } else {
+                jouerSegmentCours(0, 0);
+              }
+            });
+          }
+
+          document.addEventListener("click", function (ev) {
+            var a = ev.target && ev.target.closest ? ev.target.closest("a[href^='#']") : null;
+            if (!a) return;
+            var idSec = (a.getAttribute("href") || "").slice(1);
+            var cues = CUES_MAP[cKey] || {};
+            if (cues[idSec] && !cAudio.paused) {
+              jouerSegmentCours(cues[idSec][0], cues[idSec][1]);
+            }
+          });
         }
       }
 
