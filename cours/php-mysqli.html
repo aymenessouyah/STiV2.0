@@ -354,7 +354,7 @@ var U=(mode=='upd'),I=(mode!='sel'),s=[];
 var RT=U?'✔ Nom modifié : Sara → Selim':'✔ Élève enregistré';
 var RT1=U?'true · Nom modifié (Sara → Selim)':'true · Élève enregistré';
 s.push({t:"Le SGBD crée les archives (CREATE DATABASE)",
-d:"Au tout début, la salle des archives est vide. L'administration, c'est le serveur de base de données (MySQL, un SGBD) : elle la construit : CREATE DATABASE ecole crée la base de données, puis USE ecole la sélectionne. Pas encore d'étagère ni de dossier. Un panneau « Travaux : fermé au public » est affiché : personne ne peut entrer.",
+d:"Un panneau «Travaux : fermé au public » est affiché .\n\nAu tout début, la salle des archives est vide. L'administration, c'est le serveur de base de données (MySQL, un SGBD) : elle la construit : CREATE DATABASE ecole crée la base de données, puis USE ecole la sélectionne. Pas encore d'étagère ni de dossier.",
 b:{d:"SGBD, construis les archives : la base « ecole » !",g:"À vos ordres ! Je construis la salle des archives."},dir:1,
 dx:680,ag:'W',cx:-90,sh:0,form:0,stat:"La base de données vient d'être créée (vide)",file:'sql',url:'ecole.tn/phpmyadmin',scr:'CREATE DATABASE ecole…',l:[0,1]});
 s.push({t:"Il installe les étagères (CREATE TABLE)",
@@ -550,7 +550,7 @@ el('ttl').textContent=(i+1)+'/'+S.length+' – '+s.t;
 el('desc').textContent=s.d;
 el('prev').disabled=i==0;el('next').disabled=i==S.length-1;
 }
-var GUICHET_VOIX_TS = {"ins": [[0.0, 10.78], [11.18, 19.8], [20.2, 32.04], [32.44, 39.68], [40.08, 50.76], [51.16, 59.88], [60.28, 67.28], [67.68, 75.04], [75.44, 84.78], [85.18, 91.66], [92.06, 98.56], [98.96, 109.74], [110.14, 121.48], [121.88, 130.92], [131.32, 140.26], [140.66, 147.94], [148.34, 156.16], [156.56, 162.98], [163.38, 171.02], [171.42, 178.78]], "upd": [[0.0, 10.78], [11.18, 19.8], [20.2, 32.04], [32.44, 39.68], [40.08, 50.76], [179.18, 189.3], [189.7, 196.9], [67.68, 75.04], [75.44, 84.78], [85.18, 91.66], [92.06, 98.56], [98.96, 109.74], [110.14, 121.48], [121.88, 130.92], [197.3, 209.48], [209.88, 217.6], [148.34, 156.16], [156.56, 162.98], [218.0, 226.8], [171.42, 178.78]], "sel": [[0.0, 10.78], [11.18, 19.8], [20.2, 32.04], [32.44, 39.68], [40.08, 50.76], [227.2, 236.6], [237.0, 242.82], [67.68, 75.04], [75.44, 84.78], [85.18, 91.66], [92.06, 98.56], [98.96, 109.74], [110.14, 121.48], [121.88, 130.92], [243.22, 252.86], [253.26, 263.6], [264.0, 274.52], [274.92, 285.06], [285.46, 295.12], [295.52, 304.26], [304.66, 312.8], [313.2, 320.94], [321.34, 329.52]]};
+var GUICHET_VOIX_TS = {"ins": [[0.0, 25.55], [26.05, 36.3], [36.8, 50.88], [51.38, 59.98], [60.48, 73.18], [73.68, 84.04], [84.54, 92.85], [93.35, 102.1], [102.6, 113.7], [114.2, 121.89], [122.39, 130.11], [130.61, 143.43], [143.93, 157.42], [157.92, 168.67], [169.17, 179.79], [180.29, 188.94], [189.44, 198.74], [199.24, 206.87], [207.37, 216.45], [216.95, 225.69]], "upd": [[0.0, 25.55], [26.05, 36.3], [36.8, 50.88], [51.38, 59.98], [60.48, 73.18], [226.19, 238.22], [238.72, 247.27], [93.35, 102.1], [102.6, 113.7], [114.2, 121.89], [122.39, 130.11], [130.61, 143.43], [143.93, 157.42], [157.92, 168.67], [247.77, 262.25], [262.75, 271.93], [189.44, 198.74], [199.24, 206.87], [272.43, 282.89], [216.95, 225.69]], "sel": [[0.0, 25.55], [26.05, 36.3], [36.8, 50.88], [51.38, 59.98], [60.48, 73.18], [283.39, 294.56], [295.06, 301.98], [93.35, 102.1], [102.6, 113.7], [114.2, 121.89], [122.39, 130.11], [130.61, 143.43], [143.93, 157.42], [157.92, 168.67], [302.48, 313.94], [314.44, 326.74], [327.24, 339.74], [340.24, 352.29], [352.79, 364.27], [364.77, 375.16], [375.66, 385.33], [385.83, 395.03], [395.53, 405.25]]};
 var voixActive = true;
 var autoRunning = false;
 var voixTimer = null;
@@ -558,15 +558,15 @@ var stepAdvanceTimer = null;
 var segFinCourant = 0;
 var guichetAudio = document.createElement('audio');
 guichetAudio.preload = 'auto';
-guichetAudio.src = '../assets/audio/guichet-etapes.mp3?v=194';
+guichetAudio.src = '../assets/audio/guichet-etapes.mp3?v=195';
 guichetAudio.style.display = 'none';
 document.body.appendChild(guichetAudio);
 
 function vitesseVoixCourante() {
   var v = +el('spd').value;
-  if (v >= 6000) return 0.92;
-  if (v <= 3000) return 1.24;
-  return 1.08;
+  if (v >= 6000) return 0.84;
+  if (v <= 3000) return 1.10;
+  return 0.95;
 }
 
 function arreterVoixGuichet() {
@@ -588,7 +588,7 @@ function finSegmentVoix(enAuto) {
     stepAdvanceTimer = setTimeout(function () {
       if (!autoRunning) return;
       go(i + 1, true, true);
-    }, 320);
+    }, 850);
   }
 }
 

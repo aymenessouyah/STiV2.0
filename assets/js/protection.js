@@ -601,7 +601,7 @@
 
       /* Seule vidéo conservée : l'animation du guichet (avec la voix de l'homme et les 3 états INSERT, UPDATE, SELECT) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=194",
+        file: "php-guichet.mp4?v=195",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
 
@@ -633,10 +633,10 @@
           '<div class="sti-video-pas-a-pas-head">' +
             '<div class="sti-video-pas-a-pas-title">' + VIDEO_GUICHET_INFO.title + '</div>' +
             '<div class="sti-video-pas-a-pas-actions">' +
+              '<button type="button" data-vrate="0.75">0.75×</button>' +
               '<button type="button" data-vrate="0.85">0.85×</button>' +
               '<button type="button" data-vrate="1">1×</button>' +
               '<button type="button" data-vrate="1.25">1.25×</button>' +
-              '<button type="button" data-vrate="1.5">1.5×</button>' +
               '<a href="' + url + '" download>⬇ MP4</a>' +
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
             '</div>' +
@@ -726,10 +726,10 @@
               '<div class="sti-video-pas-a-pas-head">' +
                 '<div class="sti-video-pas-a-pas-title" id="sti-video-modal-title"></div>' +
                 '<div class="sti-video-pas-a-pas-actions">' +
+                  '<button type="button" data-mrate="0.75">0.75×</button>' +
                   '<button type="button" data-mrate="0.85">0.85×</button>' +
                   '<button type="button" data-mrate="1">1×</button>' +
                   '<button type="button" data-mrate="1.25">1.25×</button>' +
-                  '<button type="button" data-mrate="1.5">1.5×</button>' +
                   '<a id="sti-video-modal-dl" href="#" download>⬇ MP4</a>' +
                   '<button type="button" id="sti-video-modal-close">✕ Fermer</button>' +
                 '</div>' +
