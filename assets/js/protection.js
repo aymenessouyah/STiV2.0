@@ -716,35 +716,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=221",
+        file: "php-guichet.mp4?v=222",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=221",
+        file: "css-positionnement.mp4?v=222",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=221",
+        file: "css-animee.mp4?v=222",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=221",
+        file: "sql-cours.mp4?v=222",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=221",
+        file: "html5-cours.mp4?v=222",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=221",
+        file: "css3-cours.mp4?v=222",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=221",
-        title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
+        file: "javascript-cours.mp4?v=222",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — Récapitulatif JavaScript complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=221",
+        file: "php-cours.mp4?v=222",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -774,22 +774,18 @@
           { t: 144.62, short: "IX. Pas à pas", label: "02:25 · IX. Leçons animées CSS pas à pas", sel: "#css-pas-a-pas" }
         ],
         "javascript-cours": [
-          { t: 0.00, short: "I. Intro JS", label: "00:00 · I. Qu'est-ce que JavaScript ?", sel: "#sec1" },
-          { t: 14.96, short: "II. <script>", label: "00:15 · II. Intégration dans HTML (<script>)", sel: "#sec2" },
-          { t: 24.18, short: "III. Variables", label: "00:24 · III. Variables, Types & Opérateurs (!=)", sel: "#sec3" },
-          { t: 42.38, short: "IV. Conversions", label: "00:42 · IV. Boîtes de dialogue & Conversions (Number, parseInt)", sel: "#sec4" },
-          { t: 60.87, short: "V. Conditions", label: "01:01 · V. Structures conditionnelles (if / else, switch)", sel: "#sec5" },
-          { t: 67.51, short: "VI. Boucles", label: "01:08 · VI. Boucles répétitives (for, while, do...while)", sel: "#sec6" },
-          { t: 76.51, short: "VII. Fonctions", label: "01:17 · VII. Fonctions & Portée des variables", sel: "#sec7" },
-          { t: 93.59, short: "VIII. Tableaux", label: "01:34 · VIII. Tableaux (Array, .length)", sel: "#sec8" },
-          { t: 111.37, short: "IX. Chaînes/ASCII", label: "01:51 · IX. Chaînes & Code ASCII (substring, indexOf, charCodeAt)", sel: "#sec9" },
-          { t: 143.49, short: "X. Math", label: "02:23 · X. Objet Math (round, sqrt, random)", sel: "#sec10" },
-          { t: 152.68, short: "XI. Date", label: "02:33 · XI. Objet Date (getFullYear, getMonth)", sel: "#sec11" },
-          { t: 167.48, short: "XII. Événements", label: "02:47 · XII. Événements HTML (onsubmit, onclick, oninput)", sel: "#sec12" },
-          { t: 178.03, short: "XIII. DOM", label: "02:58 · XIII. Accès au DOM (getElementById, querySelector)", sel: "#sec13" },
-          { t: 187.69, short: "XIV. Contrôle", label: "03:08 · XIV. Contrôle de saisie (radio, select, checkbox)", sel: "#sec14" },
-          { t: 202.20, short: "XV. verif() Bac", label: "03:22 · XV. Fonctions de vérification types du Bac", sel: "#sec15" },
-          { t: 218.14, short: "XVI. Annexe JS", label: "03:38 · XVI. Récapitulatif Annexe Officielle JS", sel: "#sec16" }
+          { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#intro" },
+          { t: 62.57, short: "2. Où écrire JS", label: "01:02 · 2. Où écrire le code JS (interne, externe, inline)", sel: "#insertion" },
+          { t: 112.20, short: "3. Variables & Types", label: "01:52 · 3. Variables (let, const, var) & Types (typeof)", sel: "#variables" },
+          { t: 188.26, short: "4. Opérateurs", label: "03:08 · 4. Opérateurs arithmétiques, comparaison (!=) et logiques", sel: "#operateurs" },
+          { t: 232.41, short: "5. Entrées / sorties", label: "03:52 · 5. Entrées / sorties (alert, prompt, confirm, console.log, getElementById)", sel: "#es" },
+          { t: 276.30, short: "6. Conditions", label: "04:36 · 6. Structures conditionnelles (if/else, switch & démo moyenne)", sel: "#conditions" },
+          { t: 328.94, short: "7. Boucles", label: "05:28 · 7. Les boucles (for, while, do...while & table de multiplication)", sel: "#boucles" },
+          { t: 382.17, short: "8. Chaînes (String)", label: "06:22 · 8. Chaînes de caractères (length, substring, indexOf, trim, toUpperCase)", sel: "#chaines" },
+          { t: 446.01, short: "9. Tableaux & Fonctions", label: "07:26 · 9. Tableaux (Array : length, push, pop) et Fonctions (function, return)", sel: "#tableaux" },
+          { t: 480.97, short: "10. DOM", label: "08:00 · 10. Manipulation du DOM (getElementById, querySelector, value, textContent, style)", sel: "#dom" },
+          { t: 518.30, short: "11. Événements", label: "08:38 · 11. Les événements (click, input, change, submit, addEventListener)", sel: "#evenements" },
+          { t: 545.67, short: "12. Validation STI", label: "09:05 · 12. Exemple complet : validation d'un formulaire STI (estChiffres, verifier)", sel: "#formulaire" }
         ],
         "php-cours": [
           { t: 0.00, short: "I. Définition", label: "00:00 · I. Définition de PHP & Client-Serveur", sel: "#s1" },
@@ -1104,7 +1100,7 @@
       var estPageSql = (pathLower.indexOf("/sql.html") !== -1 || pathLower.indexOf("sql-contraintes") !== -1);
       var estPageHtml5 = (pathLower.indexOf("/html5.html") !== -1);
       var estPageCss3 = (pathLower.indexOf("/css3.html") !== -1);
-      var estPageJs = (pathLower.indexOf("/javascript.html") !== -1);
+      var estPageJs = (pathLower.indexOf("/javascript.html") !== -1 || pathLower.indexOf("recap-javascript-sti") !== -1);
       var estPagePhpCours = (pathLower.indexOf("/php.html") !== -1);
 
       /* ── Écran de fin interactif (Logo + QR code + Relecture ou Quitter) ── */
@@ -1812,7 +1808,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=221";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=222";
 
           var CUES_MAP = {
             html5: {
@@ -1839,22 +1835,34 @@
               "css-pas-a-pas": [144.62, 150.15]
             },
             javascript: {
-              "sec1": [6.27, 14.96],
-              "sec2": [14.96, 24.18],
-              "sec3": [24.18, 42.38],
-              "sec4": [42.38, 60.87],
-              "sec5": [60.87, 67.51],
-              "sec6": [67.51, 76.51],
-              "sec7": [76.51, 93.59],
-              "sec8": [93.59, 111.37],
-              "sec9": [111.37, 143.49],
-              "sec10": [143.49, 152.68],
-              "sec11": [152.68, 167.48],
-              "sec12": [167.48, 178.03],
-              "sec13": [178.03, 187.69],
-              "sec14": [187.69, 202.20],
-              "sec15": [202.20, 218.14],
-              "sec16": [218.14, 220.11]
+              "intro": [16.55, 62.57],
+              "insertion": [62.57, 112.20],
+              "variables": [112.20, 188.26],
+              "operateurs": [188.26, 232.41],
+              "es": [232.41, 276.30],
+              "conditions": [276.30, 328.94],
+              "boucles": [328.94, 382.17],
+              "chaines": [382.17, 446.01],
+              "tableaux": [446.01, 480.97],
+              "dom": [480.97, 518.30],
+              "evenements": [518.30, 545.67],
+              "formulaire": [545.67, 637.87],
+              "sec1": [16.55, 62.57],
+              "sec2": [62.57, 112.20],
+              "sec3": [112.20, 188.26],
+              "sec4": [188.26, 232.41],
+              "sec5": [232.41, 276.30],
+              "sec6": [188.26, 232.41],
+              "sec7": [150.00, 188.26],
+              "sec8": [188.26, 232.41],
+              "sec9": [382.17, 446.01],
+              "sec10": [446.01, 464.00],
+              "sec11": [446.01, 480.97],
+              "sec12": [276.30, 328.94],
+              "sec13": [328.94, 382.17],
+              "sec14": [464.00, 480.97],
+              "sec15": [480.97, 545.67],
+              "sec16": [545.67, 637.87]
             },
             php: {
               "s1": [9.12, 64.02],

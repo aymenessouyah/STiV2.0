@@ -2463,7 +2463,98 @@
         }
       }
       @media print {
-        #btn-magique-js-recap { display: none !important; }
+        #btn-magique-js-recap, #jsRecapModal { display: none !important; }
+      }
+
+      /* ==== Boîte modale pour Recap-JavaScript ==== */
+      .js-recap-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        background: rgba(5, 7, 14, 0.78);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .js-recap-modal[hidden] {
+        display: none !important;
+      }
+      .js-recap-box {
+        background: #0a0c14;
+        color: var(--text);
+        border: 1px solid rgba(247, 223, 30, 0.38);
+        border-radius: 14px;
+        width: min(1240px, 96vw);
+        max-height: 94vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75), 0 0 28px rgba(247, 223, 30, 0.14);
+        overflow: hidden;
+      }
+      .js-recap-modal.full {
+        padding: 0;
+      }
+      .js-recap-modal.full .js-recap-box {
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+      }
+      .js-recap-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        background: rgba(16, 20, 34, 0.96);
+        border-bottom: 1px solid rgba(247, 223, 30, 0.25);
+        color: #fff;
+        padding: 0.55rem 0.95rem;
+        font-family: "Orbitron", system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 0.88rem;
+        flex-shrink: 0;
+      }
+      .js-recap-tools {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+      .js-recap-tools button {
+        background: rgba(31, 41, 55, 0.9);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 7px;
+        padding: 0.35rem 0.75rem;
+        font: 700 0.76rem/1.1 "Fira Code", Consolas, monospace;
+        cursor: pointer;
+        transition: all 0.18s;
+      }
+      .js-recap-tools button:hover {
+        border-color: var(--js-yellow);
+        color: var(--js-yellow);
+      }
+      .js-recap-body {
+        overflow: hidden;
+        padding: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .js-recap-body iframe#jsRecapFrame {
+        width: 100%;
+        height: min(82vh, 780px);
+        border: 0;
+        display: block;
+        background: #0a0c14;
+      }
+      .js-recap-modal.full .js-recap-body iframe#jsRecapFrame {
+        height: calc(100vh - 52px);
       }
     </style>
   </head>
@@ -2475,8 +2566,7 @@
     <button
       type="button"
       id="btn-magique-js-recap"
-      onclick="window.location.href='Recap-JavaScript-STI.html'"
-      title="Ouvrir le Récapitulatif JavaScript interactif (Recap-JavaScript)"
+      title="Ouvrir le Récapitulatif JavaScript interactif dans une boîte (Recap-JavaScript)"
     >
       <span class="baguette" aria-hidden="true">🪄</span>
       <span>Recap-JavaScript</span>
@@ -4492,6 +4582,102 @@ function changer() {
       <span>Haut</span>
     </button>
 
+    <!-- Boîte modale pour Recap-JavaScript -->
+    <div
+      id="jsRecapModal"
+      class="js-recap-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="jsRecapTitle"
+      hidden
+    >
+      <div class="js-recap-box" id="jsRecapBox">
+        <div class="js-recap-head">
+          <span id="jsRecapTitle">🪄 Récapitulatif JavaScript — Synthèse interactive &amp; exemples exécutables</span>
+          <span class="js-recap-tools">
+            <button
+              type="button"
+              onclick="if(window.ouvrirVideoPasAPasSTI)window.ouvrirVideoPasAPasSTI('javascript-cours');"
+              title="Ouvrir la vidéo explicative complète du Récapitulatif JavaScript (.mp4)"
+              style="background:#177245;color:#fff;border-color:#86efac;font-weight:800"
+            >
+              🎥 Vidéo (.mp4)
+            </button>
+            <button
+              type="button"
+              id="jsRecapRetourCours"
+              title="Retourner au cours JavaScript"
+              style="background:var(--js-yellow);color:#000;border-color:var(--js-yellow);font-weight:800"
+            >
+              📜 ← Retour au cours JavaScript
+            </button>
+            <button type="button" id="jsRecapFull" title="Agrandir sur toute la page">
+              ⛶ Plein écran
+            </button>
+            <button type="button" id="jsRecapClose" title="Fermer">
+              ✕ Fermer
+            </button>
+          </span>
+        </div>
+        <div class="js-recap-body">
+          <iframe
+            id="jsRecapFrame"
+            src="Recap-JavaScript-STI.html?embed=1"
+            title="Récapitulatif JavaScript — Synthèse interactive"
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* ---- Gestion de la boîte modale Recap-JavaScript ---- */
+      (function () {
+        var MR = document.getElementById("jsRecapModal"),
+          btnMag = document.getElementById("btn-magique-js-recap"),
+          btnClose = document.getElementById("jsRecapClose"),
+          btnRetour = document.getElementById("jsRecapRetourCours"),
+          btnFull = document.getElementById("jsRecapFull");
+        if (!MR) return;
+        function openRecap(e) {
+          if (e && e.preventDefault) e.preventDefault();
+          MR.hidden = false;
+          MR.style.display = "flex";
+          document.body.style.overflow = "hidden";
+        }
+        function closeRecap() {
+          if (document.fullscreenElement) {
+            document.exitFullscreen().catch(function () {});
+          }
+          MR.classList.remove("full");
+          if (btnFull) btnFull.textContent = "⛶ Plein écran";
+          MR.hidden = true;
+          MR.style.display = "none";
+          document.body.style.overflow = "";
+        }
+        function toggleFullRecap() {
+          MR.classList.toggle("full");
+          var isFull = MR.classList.contains("full");
+          if (btnFull) btnFull.textContent = isFull ? "⤡ Réduire" : "⛶ Plein écran";
+        }
+        if (btnMag) btnMag.onclick = openRecap;
+        if (btnClose) btnClose.onclick = closeRecap;
+        if (btnRetour) btnRetour.onclick = closeRecap;
+        if (btnFull) btnFull.onclick = toggleFullRecap;
+        MR.addEventListener("click", function (e) {
+          if (e.target === MR) closeRecap();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && !MR.hidden) closeRecap();
+        });
+        window.addEventListener("message", function (ev) {
+          if (ev && ev.data && ev.data.type === "STI_FERMER_MODALE_JS_RECAP") {
+            if (!MR.hidden) closeRecap();
+          }
+        });
+      })();
+    </script>
+
     <!-- ==== PARTICULES FLOTTANTES (symboles JS) ==== -->
     <script>
       (function () {
@@ -4747,11 +4933,11 @@ function changer() {
     
   <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(null,"",location.pathname+location.search);});})();</script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=221" />
-<script src="../assets/js/protection.js?v=221" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=222" />
+<script src="../assets/js/protection.js?v=222" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=221"></script>
-<script src="../assets/js/acces.js?v=221"></script>
+<script src="../assets/js/config.js?v=222"></script>
+<script src="../assets/js/acces.js?v=222"></script>
 </body>
 </html>
