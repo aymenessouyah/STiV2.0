@@ -172,8 +172,6 @@
           >
           <a
             href="../documents/annexes/annexe-php.pdf.html"
-            target="_blank"
-            rel="noopener"
             title="Annexe PHP (PDF)"
             aria-label="Annexe PHP (PDF)"
             ><span aria-hidden="true">📄</span
@@ -1651,15 +1649,13 @@ mysqli_close($connexion);
           if (e.key == "Escape" && !M.hidden) close();
         });
 
-        /* Boîte modale PHP-recap (même fonctionnement que l'animation du guichet) */
+        /* Bouton PHP-recap : accède directement et uniquement à la page PHP-recap.html */
         var MR = document.getElementById("recapModal"),
           BR = document.getElementById("recapBox"),
           btnMag = document.getElementById("btn-magique-php-recap");
         function openRecap(e) {
           if (e && e.preventDefault) e.preventDefault();
-          MR.hidden = false;
-          MR.style.display = "flex";
-          document.body.style.overflow = "hidden";
+          window.location.href = "PHP-recap.html";
         }
         function closeRecap() {
           if (document.fullscreenElement) {
@@ -1894,11 +1890,11 @@ mysqli_close($connexion);
     </script>
   <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(null,"",location.pathname+location.search);});})();</script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=212" />
-<script src="../assets/js/protection.js?v=212" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=213" />
+<script src="../assets/js/protection.js?v=213" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=212"></script>
-<script src="../assets/js/acces.js?v=212"></script>
+<script src="../assets/js/config.js?v=213"></script>
+<script src="../assets/js/acces.js?v=213"></script>
 </body>
 </html>

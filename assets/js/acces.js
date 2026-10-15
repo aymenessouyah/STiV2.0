@@ -101,15 +101,15 @@
   /* S'assurer que protection.css et protection.js sont chargés sur 100 % des pages (code source verrouillé pour tous les abonnés) */
   (function assurerProtectionActive() {
     try {
-      if (!document.querySelector('link[href*="protection.css?v=212"]') && document.head) {
+      if (!document.querySelector('link[href*="protection.css?v=213"]') && document.head) {
         var lnk = document.createElement("link");
         lnk.rel = "stylesheet";
-        lnk.href = cfg.RACINE + "assets/css/protection.css?v=212";
+        lnk.href = cfg.RACINE + "assets/css/protection.css?v=213";
         document.head.appendChild(lnk);
       }
-      if (!document.querySelector('script[src*="protection.js?v=212"]') && (document.head || document.documentElement)) {
+      if (!document.querySelector('script[src*="protection.js?v=213"]') && (document.head || document.documentElement)) {
         var scr = document.createElement("script");
-        scr.src = cfg.RACINE + "assets/js/protection.js?v=212";
+        scr.src = cfg.RACINE + "assets/js/protection.js?v=213";
         scr.defer = true;
         (document.head || document.documentElement).appendChild(scr);
       }
@@ -522,7 +522,7 @@
     if (document.body) document.body.classList.toggle("sti-gold", ok);
 
     try {
-      var liens = document.querySelectorAll('link[href*="protection.css?v=212"]');
+      var liens = document.querySelectorAll('link[href*="protection.css?v=213"]');
       for (var i = 0; i < liens.length; i++) liens[i].disabled = ok;
     } catch (e) {}
 
@@ -544,7 +544,7 @@
         if (fr.contentDocument) {
           if (fr.contentDocument.documentElement) fr.contentDocument.documentElement.classList.toggle("sti-gold", ok);
           if (fr.contentDocument.body) fr.contentDocument.body.classList.toggle("sti-gold", ok);
-          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=212"]');
+          var liensFr = fr.contentDocument.querySelectorAll('link[href*="protection.css?v=213"]');
           for (var j = 0; j < liensFr.length; j++) liensFr[j].disabled = ok;
           var wmFr = fr.contentDocument.getElementById("sti-watermark");
           if (ok && wmFr && wmFr.parentNode) wmFr.parentNode.removeChild(wmFr);
@@ -1517,7 +1517,7 @@
         "<button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1.5px solid #23201a;background:#f3ead9;color:#23201a;border-radius:7px;padding:1px 7px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
         "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:1.5px solid #23201a;border-radius:999px;padding:1px 8px;font-size:10px;font-weight:900;box-shadow:1.5px 1.5px 0 #23201a'>👑 GOLD</span>" +
-          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.212</span>" +
+          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:1.5px solid #23201a;border-radius:999px;padding:1px 7px;font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0.213</span>" +
           "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
         "</div>" +
       "</div>" +
@@ -1852,7 +1852,7 @@
 
     var badgeVerRoue = document.createElement("div");
     badgeVerRoue.id = "sti-pan-version-foot";
-    badgeVerRoue.textContent = "STiV2.0.212";
+    badgeVerRoue.textContent = "STiV2.0.213";
     badgeVerRoue.style.cssText = "margin-top:5px;padding-top:4px;border-top:1px dashed #e2d5be;text-align:center;font-size:10px;font-weight:900;color:#7a6f5d;letter-spacing:.4px;";
     pan.appendChild(badgeVerRoue);
 

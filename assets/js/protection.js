@@ -601,35 +601,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=212",
+        file: "php-guichet.mp4?v=213",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=212",
+        file: "css-positionnement.mp4?v=213",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=212",
+        file: "css-animee.mp4?v=213",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=212",
+        file: "sql-cours.mp4?v=213",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=212",
+        file: "html5-cours.mp4?v=213",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=212",
+        file: "css3-cours.mp4?v=213",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=212",
+        file: "javascript-cours.mp4?v=213",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=212",
+        file: "php-cours.mp4?v=213",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -683,8 +683,7 @@
       var estPageHtml5 = (pathLower.indexOf("/html5.html") !== -1);
       var estPageCss3 = (pathLower.indexOf("/css3.html") !== -1);
       var estPageJs = (pathLower.indexOf("/javascript.html") !== -1);
-      var estPagePhpCours = (pathLower.indexOf("/php.html") !== -1 || pathLower.indexOf("php-recap") !== -1);
-      var estPagePhpRecap = (pathLower.indexOf("php-recap") !== -1);
+      var estPagePhpCours = (pathLower.indexOf("/php.html") !== -1);
 
       /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
@@ -1029,20 +1028,20 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=212";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=213";
 
           var CUES_MAP = {
             html5: {
-              "entete": [8.0, 26.0],
-              "structuration": [26.0, 44.0],
-              "conteneurs": [44.0, 56.0],
-              "listes": [56.0, 67.0],
-              "tableaux": [67.0, 78.0],
-              "texte-media": [78.07, 95.5],
-              "attributs-evenements": [95.5, 107.5],
-              "target-explication": [107.5, 117.5],
-              "formulaires": [117.5, 137.5],
-              "iframe": [137.5, 145.7]
+              "entete": [9.10, 26.13],
+              "structuration": [26.13, 44.93],
+              "conteneurs": [44.93, 57.40],
+              "listes": [57.40, 67.92],
+              "tableaux": [67.92, 77.98],
+              "texte-media": [77.98, 96.72],
+              "attributs-evenements": [96.72, 110.88],
+              "target-explication": [110.88, 121.35],
+              "formulaires": [121.35, 140.47],
+              "iframe": [140.47, 147.71]
             },
             css3: {
               "point-1": [9.78, 36.01],
@@ -1056,64 +1055,54 @@
               "css-pas-a-pas": [144.62, 150.15]
             },
             javascript: {
-              "sec1": [8.5, 18.5],
-              "sec2": [8.5, 18.5],
-              "sec3": [18.5, 30.5],
-              "sec4": [30.5, 44.5],
-              "sec5": [44.5, 58.5],
-              "sec6": [30.5, 44.5],
-              "sec7": [58.5, 73.01],
-              "sec8": [73.27, 89.2],
-              "sec9": [89.2, 119.2],
-              "sec10": [119.2, 131.2],
-              "sec11": [131.2, 144.05],
-              "sec12": [144.31, 157.3],
-              "sec13": [157.3, 171.3],
-              "sec14": [171.3, 183.3],
-              "sec15": [183.3, 210.9],
-              "sec16": [183.3, 210.9]
+              "sec1": [6.27, 14.96],
+              "sec2": [14.96, 24.18],
+              "sec3": [24.18, 42.38],
+              "sec4": [42.38, 60.87],
+              "sec5": [60.87, 67.51],
+              "sec6": [67.51, 76.51],
+              "sec7": [76.51, 93.59],
+              "sec8": [93.59, 111.37],
+              "sec9": [111.37, 143.49],
+              "sec10": [143.49, 152.68],
+              "sec11": [152.68, 167.48],
+              "sec12": [167.48, 178.03],
+              "sec13": [178.03, 187.69],
+              "sec14": [187.69, 202.20],
+              "sec15": [202.20, 218.14],
+              "sec16": [218.14, 220.11]
             },
             php: {
-              "def-php": [10.19, 26.42],
-              "t1": [26.42, 70.11],
-              "t3": [70.11, 105.00],
-              "t4": [105.00, 141.81],
-              "t8": [141.81, 173.22],
-              "t7": [173.22, 230.15],
-              "t5": [230.15, 308.57],
-              "t6": [308.57, 348.00],
-              "t9": [348.00, 387.95],
-              "t10": [387.95, 565.14],
-              "s1": [10.19, 26.42],
-              "s1-1": [10.19, 26.42],
-              "s1b": [26.42, 70.11],
-              "s1-3": [308.57, 348.00],
-              "s2": [230.15, 308.57],
-              "s2-1": [230.15, 256.60],
-              "s2-2": [256.60, 282.85],
-              "s2-3": [282.85, 300.07],
-              "s2-4": [300.07, 308.57],
-              "s2-5": [256.60, 282.85],
-              "s3": [70.11, 105.00],
-              "s4": [105.00, 141.81],
-              "s5": [141.81, 173.22],
-              "s6": [173.22, 230.15],
-              "s7": [348.00, 387.95],
-              "s8": [387.95, 565.14],
-              "s8anim": [387.95, 409.94],
-              "s8-1": [409.94, 438.23],
-              "s8-2": [438.23, 443.64],
-              "s8-3": [443.64, 497.74],
-              "s8-4": [497.74, 518.11],
-              "s8-5": [518.11, 533.29],
-              "s8-6": [533.29, 546.78],
-              "s8-7": [546.78, 555.00],
-              "s9": [546.78, 565.14],
-              "s10": [546.78, 565.14],
-              "s10a": [546.78, 565.14],
-              "s10b": [546.78, 565.14],
-              "s10c": [546.78, 565.14],
-              "s10d": [546.78, 565.14]
+              "s1": [9.12, 64.02],
+              "s1-1": [9.12, 29.83],
+              "s1b": [29.83, 47.13],
+              "s1-3": [47.13, 64.02],
+              "s2": [64.02, 111.40],
+              "s2-1": [64.02, 80.90],
+              "s2-2": [80.90, 95.68],
+              "s2-3": [95.68, 111.40],
+              "s2-4": [315.35, 393.77],
+              "s2-5": [227.01, 258.42],
+              "s3": [155.31, 190.20],
+              "s4": [258.42, 315.35],
+              "s5": [258.42, 315.35],
+              "s6": [433.20, 473.15],
+              "s7": [190.20, 227.01],
+              "s8": [473.15, 650.34],
+              "s8anim": [473.15, 495.14],
+              "s8-1": [473.15, 495.14],
+              "s8-2": [495.14, 528.84],
+              "s8-3": [528.84, 582.94],
+              "s8-4": [603.31, 631.98],
+              "s8-5": [582.94, 603.31],
+              "s8-6": [495.14, 528.84],
+              "s8-7": [528.84, 582.94],
+              "s9": [631.98, 650.34],
+              "s10": [631.98, 650.34],
+              "s10a": [631.98, 650.34],
+              "s10b": [631.98, 650.34],
+              "s10c": [631.98, 650.34],
+              "s10d": [631.98, 650.34]
             }
           };
 
@@ -1285,121 +1274,213 @@
 
       var TIMELINES = {
         html5: [
-          [0.0, 26.0, "#entete"],
-          [26.0, 44.0, "#structuration"],
-          [44.0, 56.0, "#conteneurs"],
-          [56.0, 67.0, "#listes"],
-          [67.0, 78.0, "#tableaux"],
-          [78.0, 95.5, "#texte-media"],
-          [95.5, 107.5, "#attributs-evenements"],
-          [107.5, 117.5, "#target-explication"],
-          [117.5, 137.5, "#formulaires"],
-          [137.5, 155.0, "#iframe"]
+          [0.00, 26.13, "#entete"],
+          [26.13, 44.93, "#structuration"],
+          [44.93, 57.40, "#conteneurs"],
+          [57.40, 62.99, "#listes > div:nth-of-type(1)"],
+          [62.99, 67.92, "#listes > div:nth-of-type(2)"],
+          [67.92, 74.88, "#tableaux > div:nth-of-type(1)"],
+          [74.88, 77.98, "#tableaux > div:nth-of-type(2)"],
+          [77.98, 84.78, "#texte-media > div:nth-of-type(1)"],
+          [84.78, 96.72, "#texte-media > div:nth-of-type(2)"],
+          [96.72, 100.44, "#attributs-evenements > div.grid > div:nth-child(1)"],
+          [100.44, 110.88, "#attributs-evenements > div.grid > div:nth-child(2), #attributs-evenements > div:nth-of-type(2)"],
+          [110.88, 121.35, "#target-explication"],
+          [121.35, 128.51, "#formulaires > div:nth-of-type(1)"],
+          [128.51, 136.61, "#formulaires > div:nth-of-type(2)"],
+          [136.61, 140.47, "#formulaires > div:nth-of-type(3)"],
+          [140.47, 155.00, "#iframe > div:nth-of-type(1), #iframe > div:nth-of-type(2)"]
         ],
         css3: [
-          [9.78, 36.01, "#point-1"],
-          [36.01, 57.37, "#point-2"],
-          [57.37, 65.32, "#point-3"],
-          [65.32, 73.07, "#point-6"],
-          [73.07, 88.63, "#point-7"],
-          [88.63, 110.11, "#point-4"],
-          [110.11, 132.12, "#point-5"],
-          [132.12, 144.62, "#point-8"],
-          [144.62, 150.15, "#css-pas-a-pas"]
+          [0.00, 17.69, "#point-1 .grid > div:nth-child(1)"],
+          [17.69, 20.85, "#point-1 .grid > div:nth-child(2)"],
+          [20.85, 27.07, "#point-1 .grid > div:nth-child(3)"],
+          [27.07, 36.01, "#point-1 > div.mt-5"],
+          [36.01, 41.33, "#point-2 .grid > div:nth-child(1)"],
+          [41.33, 45.97, "#point-2 .grid > div:nth-child(2)"],
+          [45.97, 51.77, "#point-2 .grid > div:nth-child(3)"],
+          [51.77, 57.37, "#point-2 .grid > div:nth-child(4)"],
+          [57.37, 65.32, "#point-3 > div"],
+          [65.32, 73.07, "#point-6 > div"],
+          [73.07, 79.95, "#point-7 .grid > div:nth-child(1)"],
+          [79.95, 83.60, "#point-7 .grid > div:nth-child(2)"],
+          [83.60, 88.63, "#point-7 .grid > div:nth-child(3)"],
+          [88.63, 97.76, "#point-4 .grid > div:nth-child(1)"],
+          [97.76, 104.65, "#point-4 .grid > div:nth-child(2)"],
+          [104.65, 110.11, "#point-4 .grid > div:nth-child(3)"],
+          [110.11, 115.91, "#point-5 .grid > div:nth-child(1)"],
+          [115.91, 122.31, "#point-5 .grid > div:nth-child(2)"],
+          [122.31, 127.09, "#point-5 .grid > div:nth-child(3)"],
+          [127.09, 132.12, "#point-5 .grid > div:nth-child(4)"],
+          [132.12, 137.30, "#point-8 > div > div.grid > div:nth-child(1)"],
+          [137.30, 144.62, "#point-8 > div > div.grid > div:nth-child(2)"],
+          [144.62, 160.00, "#css-pas-a-pas > div"]
         ],
         javascript: [
-          [0.0, 18.5, "#sec1"],
-          [18.5, 30.5, "#sec3"],
-          [30.5, 44.5, "#sec4"],
-          [44.5, 58.5, "#sec5"],
-          [58.5, 73.1, "#sec7"],
-          [73.1, 89.2, "#sec8"],
-          [89.2, 119.2, "#sec9"],
-          [119.2, 131.2, "#sec10"],
-          [131.2, 144.2, "#sec11"],
-          [144.2, 157.3, "#sec12"],
-          [157.3, 171.3, "#sec13"],
-          [171.3, 183.3, "#sec14"],
-          [183.3, 220.0, "#sec15"]
+          [0.00, 14.96, "#sec1"],
+          [14.96, 24.18, "#sec2"],
+          [24.18, 33.52, "#sec3 .grid > .card:nth-child(1), #sec3 .grid > .card:nth-child(2)"],
+          [33.52, 42.38, "#sec3 .grid > .card:nth-child(3), #sec3 .grid > .card:nth-child(4)"],
+          [42.38, 60.87, "#sec4"],
+          [60.87, 67.51, "#sec5"],
+          [67.51, 76.51, "#sec6"],
+          [76.51, 93.59, "#sec7"],
+          [93.59, 111.37, "#sec8"],
+          [111.37, 125.68, "#sec9 > .card:nth-of-type(1), #s-plus, #s-length, #s-indexof, #s-lastindexof"],
+          [125.68, 143.49, "#s-substring, #s-replace, #s-lower, #s-upper, #s-trim, #s-fromcharcode"],
+          [143.49, 152.68, "#sec10"],
+          [152.68, 167.48, "#sec11"],
+          [167.48, 178.03, "#sec12"],
+          [178.03, 187.69, "#sec13"],
+          [187.69, 202.20, "#sec14"],
+          [202.20, 218.14, "#sec15"],
+          [218.14, 230.00, "#sec16 > h2, #sec16 > .card:nth-of-type(1), #sec16 > .card:nth-of-type(2)"]
         ],
         php: [
-          [0.0, 26.42, "#s1"],
-          [26.42, 70.11, "#s1b"],
-          [70.11, 105.00, "#s3"],
-          [105.00, 141.81, "#s4"],
-          [141.81, 173.22, "#s5"],
-          [173.22, 230.15, "#s6"],
-          [230.15, 308.57, "#s2"],
-          [308.57, 348.00, "#s1-3"],
-          [348.00, 387.95, "#s7"],
-          [387.95, 438.23, "#s8-1"],
-          [438.23, 497.74, "#s8-2"],
-          [497.74, 546.78, "#s8-4"],
-          [546.78, 575.00, "#s9"]
-        ],
-        phprecap: [
-          [0.0, 26.42, "#def-php", "t1"],
-          [26.42, 35.56, "#cd1", "t1"],
-          [35.56, 65.39, "#o1", "t1"],
-          [65.39, 70.11, "#t1 .note", "t1"],
-          [70.11, 81.32, "#t3 .code", "t3"],
-          [81.32, 95.02, "#t3 table", "t3"],
-          [95.02, 105.00, "#o3", "t3"],
-          [105.00, 111.45, "#cd4", "t4"],
-          [111.45, 141.81, "#t4 .two", "t4"],
-          [141.81, 153.51, "#t8 .two .card:nth-child(1)", "t8"],
-          [153.51, 158.11, "#t8 .two .card:nth-child(2)", "t8"],
-          [158.11, 165.88, "#t8 .two .card:nth-child(3)", "t8"],
-          [165.88, 173.22, "#t8 .two .card:nth-child(4)", "t8"],
-          [173.22, 217.12, "#t7 table", "t7"],
-          [217.12, 230.15, "#t7 .card", "t7"],
-          [230.15, 256.60, "#tb5", "t5"],
-          [256.60, 282.85, "#tb6", "t5"],
-          [282.85, 300.07, "#tb7", "t5"],
-          [300.07, 308.57, "#castOut", "t5"],
-          [308.57, 348.00, "#tb8", "t6"],
-          [348.00, 367.61, "#t9 table", "t9"],
-          [367.61, 387.95, "#t9 .code", "t9"],
-          [387.95, 409.94, "#t10 > table", "t10"],
-          [409.94, 438.23, "#m-connect", "t10"],
-          [438.23, 443.64, "#m-selectdb", "t10"],
-          [443.64, 497.74, "#m-query", "t10"],
-          [497.74, 518.11, "#m-numrows", "t10"],
-          [518.11, 533.29, "#m-fetchrow", "t10"],
-          [533.29, 546.78, "#m-fetcharray", "t10"],
-          [546.78, 575.00, "#m-exemple", "t10"]
+          [0.00, 29.83, "#s1, #s1-1, #s1-1 + p, #s1-1 + p + p"],
+          [29.83, 38.50, "#s1b, #s1b + .analogy"],
+          [38.50, 47.13, "#s1b + .analogy + .analogy"],
+          [47.13, 64.02, "#s1-3, #s1-3 + pre, #s1-3 + pre + p"],
+          [64.02, 80.90, "#s2, #s2-1, #s2-1 + table"],
+          [80.90, 95.68, "#s2-2, #s2-2 + p, #s2-2 + p + pre"],
+          [95.68, 111.40, "#s2-3, #s2-3 + p, #s2-3 + p + pre"],
+          [111.40, 155.31, "#s7"],
+          [155.31, 190.20, "#s3, #s3 + table, #s3 + table + pre"],
+          [190.20, 227.01, "#s7, #s7 + table, #s7 + table + pre"],
+          [227.01, 258.42, "#s2-5, #s2-5 + pre"],
+          [258.42, 315.35, "#s4, #s4 + table, #s4 + table + pre"],
+          [315.35, 393.77, "#s2-4, #s2-4 + table"],
+          [393.77, 433.20, "#s1-3, #s1-3 + pre"],
+          [433.20, 473.15, "#s6, #s6-1, #s6-2"],
+          [473.15, 495.14, "#s8, #s8anim, #s8-1"],
+          [495.14, 528.84, "#s8-2, #s8-6"],
+          [528.84, 582.94, "#s8-3, #s8-7"],
+          [582.94, 603.31, "#s8-5"],
+          [603.31, 631.98, "#s8-4"],
+          [631.98, 660.00, "#s9, #s10"]
         ],
         sql: [
-          [0.0, 19.1, "#intro"],
-          [19.1, 41.4, "#intro-bd"],
-          [41.4, 58.8, "#schema-analogie"],
-          [58.8, 77.2, "#intro-sub"],
-          [77.2, 102.0, "#intro-cles"],
-          [102.0, 123.4, "#intro-contraintes"],
-          [123.4, 204.5, "#intro-relations"],
-          [204.5, 230.7, "#ldd"],
-          [230.7, 264.5, "#ldd-create"],
-          [264.5, 296.5, "#ldd-constraints"],
-          [296.5, 342.3, "#ldd-alter"],
-          [342.3, 360.1, "#ldd-drop"],
-          [360.1, 377.0, "#lmd"],
-          [377.0, 397.7, "#lmd-insert"],
-          [397.7, 411.9, "#lmd-update"],
-          [411.9, 437.3, "#lmd-update-jointure"],
-          [437.3, 455.8, "#lmd-delete"],
-          [455.8, 480.3, "#lmd-select"],
-          [480.3, 507.5, "#lmd-jointure"],
-          [507.5, 531.7, "#lmd-aggr"],
-          [531.7, 555.2, "#lmd-groupby"],
-          [555.2, 576.7, "#lmd-having"],
-          [576.7, 598.8, "#lmd-strings"],
-          [598.8, 626.0, "#lmd-dates"]
+          [0.00, 19.20, "#intro"],
+          [19.20, 41.35, "#intro-bd"],
+          [41.35, 58.65, "#schema-analogie"],
+          [58.65, 76.75, "#intro-sub"],
+          [76.75, 101.70, "#intro-cles"],
+          [101.70, 122.65, "#intro-contraintes"],
+          [122.65, 160.90, "#intro-relations"],
+          [160.90, 173.70, "#c-t1"],
+          [173.70, 182.70, "#c-t2"],
+          [182.70, 192.60, "#c-t3"],
+          [192.60, 203.25, "#c-t4"],
+          [203.25, 229.35, "#ldd"],
+          [229.35, 263.05, "#ldd-create"],
+          [263.05, 294.85, "#ldd-constraints"],
+          [294.85, 340.55, "#ldd-alter"],
+          [340.55, 358.30, "#ldd-drop"],
+          [358.30, 375.10, "#lmd"],
+          [375.10, 395.90, "#lmd-insert"],
+          [395.90, 410.00, "#lmd-update"],
+          [410.00, 435.05, "#lmd-update-jointure"],
+          [435.05, 453.45, "#lmd-delete"],
+          [453.45, 478.00, "#lmd-select"],
+          [478.00, 504.80, "#lmd-jointure"],
+          [504.80, 529.00, "#lmd-aggr"],
+          [529.00, 552.55, "#lmd-groupby"],
+          [552.55, 573.60, "#lmd-having"],
+          [573.60, 595.80, "#lmd-strings"],
+          [595.80, 622.03, "#lmd-dates"]
         ]
       };
 
       var guideBox = null;
-      var lastTargetEl = null;
+      var topVoiceBar = null;
+      var lastScrollKey = "";
       var lastScrollAt = 0;
+
+      function couperEcouteCoursSTI() {
+        window.__stiVoiceSessionActive = false;
+        var a = window.__stiActiveVoiceAudio;
+        if (a) {
+          try { a.pause(); a.currentTime = 0; } catch (e) {}
+        }
+        window.__stiActiveVoiceAudio = null;
+        if (typeof window.arreterVoixCoursSTI === "function") {
+          try { window.arreterVoixCoursSTI(); } catch (e2) {}
+        }
+        if (typeof window.arreterVoixSqlSTI === "function") {
+          try { window.arreterVoixSqlSTI(); } catch (e3) {}
+        }
+        masquerGuide();
+      }
+      window.couperEcouteCoursSTI = couperEcouteCoursSTI;
+
+      function basculerPausePlayEcouteSTI() {
+        var a = window.__stiActiveVoiceAudio;
+        if (!a) return;
+        try {
+          if (a.paused) {
+            var p = a.play();
+            if (p && p.catch) p.catch(function () {});
+          } else {
+            a.pause();
+          }
+        } catch (e) {}
+        majBoutonsPausePlayGuide();
+      }
+      window.basculerPausePlayEcouteSTI = basculerPausePlayEcouteSTI;
+
+      function majBoutonsPausePlayGuide() {
+        var a = window.__stiActiveVoiceAudio;
+        var enPause = !a || a.paused;
+        var txt = enPause ? "▶️ Play" : "⏸️ Pause";
+        var bg = enPause ? "#177245" : "#b45309";
+        var b1 = document.getElementById("sti-voice-guide-pp");
+        if (b1) {
+          b1.textContent = txt;
+          b1.style.background = bg;
+        }
+        var b2 = document.getElementById("sti-voice-top-pp");
+        if (b2) {
+          b2.textContent = txt;
+          b2.style.background = bg;
+        }
+        var bV = document.getElementById("sti-btn-cours-voix-hero");
+        if (bV && a) {
+          var lbl = bV.textContent.replace(/^.*?cours\s+/i, "").replace(/^.*?Voix\s+/i, "");
+          bV.textContent = enPause ? ("🔊 Écouter le cours " + lbl) : ("⏸️ Pause Voix " + lbl);
+          bV.style.background = enPause ? "#177245" : "#b45309";
+        }
+        var bSql = document.getElementById("sti-btn-sql-voix-hero");
+        if (bSql && a) {
+          bSql.textContent = enPause ? "🔊 Écouter le cours SQL" : "⏸️ Pause Voix SQL";
+          bSql.style.background = enPause ? "#177245" : "#b45309";
+        }
+      }
+
+      function ensureTopVoiceBar() {
+        if (topVoiceBar && topVoiceBar.parentNode) return topVoiceBar;
+        topVoiceBar = document.createElement("div");
+        topVoiceBar.id = "sti-voice-top-ctrl";
+        topVoiceBar.className = "sti-no-print";
+        topVoiceBar.style.cssText =
+          "position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:2147482600;" +
+          "display:none;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;" +
+          "background:rgba(13,21,38,0.96);border:2px solid #ff2a00;color:#fff;" +
+          "box-shadow:0 6px 20px rgba(0,0,0,0.42);font:800 12.5px/1 system-ui,-apple-system,sans-serif;";
+        topVoiceBar.innerHTML =
+          '<span style="color:#fde68a;display:inline-flex;align-items:center;gap:5px;">📏 Guide-ligne vocal</span>' +
+          '<button type="button" id="sti-voice-top-pp" style="padding:5px 11px;border-radius:999px;border:1.5px solid #fde68a;background:#b45309;color:#fff;font-weight:800;font-size:12px;cursor:pointer;">⏸️ Pause</button>' +
+          '<button type="button" id="sti-voice-top-close" title="Couper l\'écoute et fermer le guide-ligne" style="padding:5px 10px;border-radius:999px;border:1.5px solid #fca5a5;background:#dc2626;color:#fff;font-weight:800;font-size:12px;cursor:pointer;">✕ Fermer</button>';
+        document.body.appendChild(topVoiceBar);
+        document.getElementById("sti-voice-top-pp").addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          basculerPausePlayEcouteSTI();
+        });
+        document.getElementById("sti-voice-top-close").addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          couperEcouteCoursSTI();
+        });
+        return topVoiceBar;
+      }
 
       function ensureGuideDom() {
         if (guideBox && guideBox.parentNode) return guideBox;
@@ -1410,92 +1491,54 @@
           "position:fixed;left:0;top:0;width:0;height:0;opacity:0;pointer-events:none;z-index:2147482500;" +
           "border:3px solid #ff2a00;border-radius:12px;background:rgba(255,200,0,0.09);" +
           "box-shadow:0 0 0 4px rgba(255,145,0,0.34),0 8px 24px rgba(255,42,0,0.22);" +
-          "transition:top 0.22s ease-out,left 0.22s ease-out,width 0.22s ease-out,height 0.22s ease-out,opacity 0.18s ease;";
+          "transition:top 0.18s ease-out,left 0.18s ease-out,width 0.18s ease-out,height 0.18s ease-out,opacity 0.15s ease;";
         guideBox.innerHTML =
+          '<div id="sti-voice-guide-ctrl" style="position:absolute;right:8px;top:-34px;display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:999px;background:rgba(13,21,38,0.96);border:2px solid #ff2a00;box-shadow:0 4px 12px rgba(0,0,0,0.38);pointer-events:auto;font:800 11.5px/1 system-ui,-apple-system,sans-serif;">' +
+            '<button type="button" id="sti-voice-guide-pp" style="padding:4px 9px;border-radius:999px;border:1px solid #fde68a;background:#b45309;color:#fff;font-weight:800;font-size:11.5px;cursor:pointer;">⏸️ Pause</button>' +
+            '<button type="button" id="sti-voice-guide-close" title="Couper l\'écoute et fermer le guide-ligne" style="padding:4px 8px;border-radius:999px;border:1px solid #fca5a5;background:#dc2626;color:#fff;font-weight:800;font-size:11.5px;cursor:pointer;">✕</button>' +
+          '</div>' +
           '<div id="sti-voice-guide-badge" style="position:absolute;left:-34px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:8px;background:#ff2a00;border:2px solid #fde68a;color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,0.35);">▶</div>' +
           '<div id="sti-voice-guide-line" style="position:absolute;left:6px;right:6px;bottom:-4px;height:5px;border-radius:4px;background:linear-gradient(90deg,#ff2a00,#ffd600,#ff2a00);box-shadow:0 0 10px rgba(255,42,0,0.75);"></div>';
         document.body.appendChild(guideBox);
+        document.getElementById("sti-voice-guide-pp").addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          basculerPausePlayEcouteSTI();
+        });
+        document.getElementById("sti-voice-guide-close").addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          couperEcouteCoursSTI();
+        });
         return guideBox;
       }
 
       function masquerGuide() {
         if (guideBox) {
           guideBox.style.opacity = "0";
+          guideBox.style.pointerEvents = "none";
         }
-        lastTargetEl = null;
+        if (topVoiceBar) {
+          topVoiceBar.style.display = "none";
+        }
+        lastScrollKey = "";
       }
 
       function trouverAudioActif() {
         var a = window.__stiActiveVoiceAudio;
-        if (a && !a.paused && !a.ended) return a;
+        if (a && !a.ended && (!a.paused || window.__stiVoiceSessionActive)) {
+          return a;
+        }
         var list = document.querySelectorAll("audio");
         for (var i = 0; i < list.length; i++) {
           var el = list[i];
           var s = (el.currentSrc || el.src || "").toLowerCase();
           if (!el.paused && !el.ended && s.indexOf("foret.mp3") === -1) {
             window.__stiActiveVoiceAudio = el;
+            window.__stiVoiceSessionActive = true;
             return el;
           }
         }
+        window.__stiVoiceSessionActive = false;
         return null;
-      }
-
-      function collecterBlocsSection(anchorEl) {
-        if (!anchorEl) return [];
-        var containers = [];
-        var tag = (anchorEl.tagName || "").toUpperCase();
-        if (tag === "SECTION" || (tag === "DIV" && !anchorEl.classList.contains("section-divider"))) {
-          containers.push(anchorEl);
-        } else {
-          containers.push(anchorEl);
-          var sib = anchorEl.nextElementSibling;
-          var guard = 0;
-          while (sib && guard < 35) {
-            guard++;
-            var sTag = (sib.tagName || "").toUpperCase();
-            if (
-              (tag === "H2" && sTag === "H2") ||
-              (anchorEl.classList.contains("section-divider") && sib.classList && sib.classList.contains("section-divider"))
-            ) {
-              break;
-            }
-            containers.push(sib);
-            sib = sib.nextElementSibling;
-          }
-        }
-
-        var raw = [];
-        for (var c = 0; c < containers.length; c++) {
-          var root = containers[c];
-          var kids = root.querySelectorAll
-            ? root.querySelectorAll("h2, h3, h4, p, pre, table, .card, .fiche, .req-card, .code-block, .tip, .warn, .alert, ul, ol")
-            : [];
-          if (!kids || kids.length === 0) {
-            raw.push(root);
-          } else {
-            for (var k = 0; k < kids.length; k++) {
-              raw.push(kids[k]);
-            }
-          }
-        }
-
-        /* Filtrer les éléments visibles de taille lisible sans doublons imbriqués */
-        var filtered = [];
-        for (var i = 0; i < raw.length; i++) {
-          var el = raw[i];
-          if (!el || !el.getBoundingClientRect) continue;
-          var r = el.getBoundingClientRect();
-          if (r.width < 120 || r.height < 20 || r.height > 460) continue;
-          var skip = false;
-          for (var j = 0; j < filtered.length; j++) {
-            if (filtered[j].contains(el) && filtered[j].getBoundingClientRect().height < 210) {
-              skip = true;
-              break;
-            }
-          }
-          if (!skip) filtered.push(el);
-        }
-        return filtered.length > 0 ? filtered : [anchorEl];
       }
 
       function majPositionGuide() {
@@ -1509,16 +1552,19 @@
           masquerGuide();
           return;
         }
+        ensureTopVoiceBar().style.display = "inline-flex";
+        majBoutonsPausePlayGuide();
+
         var pLow = (window.location.pathname || "").toLowerCase();
         var courseKey =
           pLow.indexOf("/html5.html") !== -1 ? "html5" :
           pLow.indexOf("/css3.html") !== -1 ? "css3" :
           pLow.indexOf("/javascript.html") !== -1 ? "javascript" :
-          pLow.indexOf("php-recap") !== -1 ? "phprecap" :
           pLow.indexOf("/php.html") !== -1 ? "php" :
           pLow.indexOf("/sql.html") !== -1 ? "sql" : "";
 
-        var targetEl = null;
+        var els = [];
+        var segKey = "";
         if (courseKey && TIMELINES[courseKey]) {
           var t = audio.currentTime || 0;
           var list = TIMELINES[courseKey];
@@ -1529,68 +1575,60 @@
               break;
             }
           }
-          if (courseKey === "phprecap" && activeSeg[3]) {
-            var reqTab = activeSeg[3];
-            var curTabBtn = document.querySelector("#tabs button.on");
-            if (!curTabBtn || curTabBtn.getAttribute("data-t") !== reqTab) {
-              var newBtn = document.querySelector('#tabs button[data-t="' + reqTab + '"]');
-              if (newBtn) {
-                var evClick = new MouseEvent("click", { bubbles: true });
-                evClick.__stiAutoSync = true;
-                newBtn.dispatchEvent(evClick);
-              }
-            }
-            targetEl = document.querySelector(activeSeg[2]);
-          } else {
-            var anchor = document.querySelector(activeSeg[2]);
-            if (anchor) {
-              var blocs = collecterBlocsSection(anchor);
-              var ratio = (t - activeSeg[0]) / Math.max(0.5, activeSeg[1] - activeSeg[0]);
-              if (ratio < 0) ratio = 0;
-              if (ratio > 0.999) ratio = 0.999;
-              var idx = Math.floor(ratio * blocs.length);
-              targetEl = blocs[idx] || anchor;
-            }
+          segKey = courseKey + ":" + activeSeg[0];
+          var nodes = document.querySelectorAll(activeSeg[2]);
+          for (var n = 0; n < nodes.length; n++) {
+            els.push(nodes[n]);
           }
         } else {
-          /* Pages d'animations pas à pas (Positionnement CSS, Décoration CSS, Guichet, Contraintes SQL) */
-          targetEl =
+          var single =
             document.querySelector(".phrase-retenir-cadre:not([hidden])") ||
             document.querySelector("#panneau-explication") ||
             document.querySelector("#explainBox") ||
             document.querySelector(".tab-pane.active .card") ||
             document.querySelector("#code-box");
+          if (single) {
+            els.push(single);
+            segKey = "anim:" + (single.id || single.className);
+          }
         }
 
-        if (!targetEl || !targetEl.getBoundingClientRect) {
-          masquerGuide();
+        if (!els.length) {
           return;
         }
 
         var now = Date.now();
-        if (targetEl !== lastTargetEl) {
-          lastTargetEl = targetEl;
-          var rectCheck = targetEl.getBoundingClientRect();
-          if ((rectCheck.top < 88 || rectCheck.bottom > window.innerHeight - 68) && now - lastScrollAt > 900) {
+        if (segKey !== lastScrollKey && !audio.paused) {
+          lastScrollKey = segKey;
+          var firstRect = els[0].getBoundingClientRect();
+          if ((firstRect.top < 96 || firstRect.bottom > window.innerHeight - 76) && now - lastScrollAt > 500) {
             lastScrollAt = now;
             try {
-              targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+              els[0].scrollIntoView({ behavior: "smooth", block: "center" });
             } catch (e) {}
           }
         }
 
-        var rect = targetEl.getBoundingClientRect();
-        if (rect.bottom < 40 || rect.top > window.innerHeight - 20 || rect.width < 60) {
-          masquerGuide();
+        var x1 = 99999, y1 = 99999, x2 = 0, y2 = 0;
+        for (var k = 0; k < els.length; k++) {
+          var r = els[k].getBoundingClientRect();
+          if (r.width < 20 || r.height < 12) continue;
+          if (r.left < x1) x1 = r.left;
+          if (r.top < y1) y1 = r.top;
+          if (r.right > x2) x2 = r.right;
+          if (r.bottom > y2) y2 = r.bottom;
+        }
+        if (x2 <= x1 || y2 <= y1 || y2 < 45 || y1 > window.innerHeight - 25) {
+          if (guideBox) guideBox.style.opacity = "0";
           return;
         }
         var g = ensureGuideDom();
         var padX = 8;
         var padY = 5;
-        var left = Math.max(8, Math.round(rect.left - padX));
-        var top = Math.max(54, Math.round(rect.top - padY));
-        var width = Math.min(window.innerWidth - left - 8, Math.round(rect.width + padX * 2));
-        var height = Math.min(window.innerHeight - top - 8, Math.round(rect.height + padY * 2));
+        var left = Math.max(8, Math.round(x1 - padX));
+        var top = Math.max(54, Math.round(y1 - padY));
+        var width = Math.min(window.innerWidth - left - 8, Math.round((x2 - x1) + padX * 2));
+        var height = Math.min(window.innerHeight - top - 8, Math.round((y2 - y1) + padY * 2));
         g.style.left = left + "px";
         g.style.top = top + "px";
         g.style.width = width + "px";
@@ -1598,12 +1636,12 @@
         g.style.opacity = "1";
       }
 
-      setInterval(majPositionGuide, 160);
+      setInterval(majPositionGuide, 120);
       window.addEventListener("scroll", function () {
-        if (lastTargetEl) majPositionGuide();
+        if (window.__stiVoiceSessionActive) majPositionGuide();
       }, { passive: true });
       window.addEventListener("resize", function () {
-        if (lastTargetEl) majPositionGuide();
+        if (window.__stiVoiceSessionActive) majPositionGuide();
       });
     } catch (e) {}
   }

@@ -4532,56 +4532,56 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
   (function(){
     var SQL_VOIX_CUES = {
       "welcome": [0.0, 4.44],
-      "intro": [4.63, 19.08],
-      "intro-bd": [19.27, 41.3],
-      "schema-analogie": [41.49, 58.72],
-      "intro-sub": [58.91, 77.1],
-      "intro-cles": [77.29, 101.94],
-      "intro-contraintes": [102.13, 123.32],
-      "intro-relations": [123.51, 161.65],
-      "c-t1": [161.84, 174.27],
-      "c-t2": [174.46, 183.51],
-      "c-t3": [183.7, 193.54],
-      "c-t4": [193.73, 204.48],
-      "ldd": [204.67, 230.64],
-      "ldd-construction": [204.67, 230.64],
-      "ldd-db-commands": [204.67, 230.64],
-      "ldd-create": [230.83, 264.48],
-      "ldd-constraints": [264.67, 296.4],
-      "ldd-date": [264.67, 296.4],
-      "ldd-alter": [296.59, 342.21],
-      "ldd-drop": [342.4, 360.04],
-      "lmd": [360.23, 376.91],
-      "lmd-insert": [377.1, 397.64],
-      "lmd-update": [397.83, 411.87],
-      "lmd-update-jointure": [412.06, 437.26],
-      "lmd-delete": [437.45, 455.74],
-      "lmd-select": [455.93, 480.22],
-      "lmd-jointure": [480.41, 493.8],
-      "j-0": [480.41, 493.8],
-      "j-1": [493.99, 507.45],
-      "j-2": [493.99, 507.45],
-      "j-3": [493.99, 507.45],
-      "lmd-aggr": [507.64, 531.69],
-      "lmd-groupby": [531.88, 555.16],
-      "gb-0": [531.88, 555.16],
-      "gb-1": [531.88, 555.16],
-      "gb-2": [531.88, 555.16],
-      "lmd-having": [555.35, 576.61],
-      "hv-0": [555.35, 576.61],
-      "hv-1": [555.35, 576.61],
-      "hv-2": [555.35, 576.61],
-      "lmd-strings": [576.8, 598.74],
-      "lmd-dates": [598.93, 616.79],
-      "outro": [616.98, 625.14],
-      "cours-complet": [0.0, 625.14]
+      "intro": [4.56, 19.20],
+      "intro-bd": [19.33, 41.35],
+      "schema-analogie": [41.49, 58.65],
+      "intro-sub": [58.77, 76.75],
+      "intro-cles": [76.88, 101.70],
+      "intro-contraintes": [101.84, 122.65],
+      "intro-relations": [122.79, 160.90],
+      "c-t1": [161.02, 173.70],
+      "c-t2": [173.85, 182.70],
+      "c-t3": [182.86, 192.60],
+      "c-t4": [192.77, 203.25],
+      "ldd": [203.38, 229.35],
+      "ldd-construction": [203.38, 229.35],
+      "ldd-db-commands": [203.38, 229.35],
+      "ldd-create": [229.46, 263.05],
+      "ldd-constraints": [263.18, 294.85],
+      "ldd-date": [263.18, 294.85],
+      "ldd-alter": [294.99, 340.55],
+      "ldd-drop": [340.70, 358.30],
+      "lmd": [358.43, 375.10],
+      "lmd-insert": [375.20, 395.90],
+      "lmd-update": [396.10, 410.00],
+      "lmd-update-jointure": [410.18, 435.05],
+      "lmd-delete": [435.23, 453.45],
+      "lmd-select": [453.60, 478.00],
+      "lmd-jointure": [478.22, 491.45],
+      "j-0": [478.22, 491.45],
+      "j-1": [491.65, 504.80],
+      "j-2": [491.65, 504.80],
+      "j-3": [491.65, 504.80],
+      "lmd-aggr": [505.00, 529.00],
+      "lmd-groupby": [529.13, 552.55],
+      "gb-0": [529.13, 552.55],
+      "gb-1": [529.13, 552.55],
+      "gb-2": [529.13, 552.55],
+      "lmd-having": [552.78, 573.60],
+      "hv-0": [552.78, 573.60],
+      "hv-1": [552.78, 573.60],
+      "hv-2": [552.78, 573.60],
+      "lmd-strings": [573.82, 595.80],
+      "lmd-dates": [596.02, 613.55],
+      "outro": [613.76, 622.03],
+      "cours-complet": [0.0, 622.03]
     };
     var voixSqlActive = true;
     var sqlVoixTimer = null;
     var sqlSegFin = 0;
     var sqlAudio = document.createElement("audio");
     sqlAudio.preload = "auto";
-    sqlAudio.src = "../assets/audio/sql-cours.mp3?v=212";
+    sqlAudio.src = "../assets/audio/sql-cours.mp3?v=213";
     sqlAudio.style.display = "none";
     document.body.appendChild(sqlAudio);
 
@@ -4711,11 +4711,11 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
   })();
   </script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=212" />
-<script src="../assets/js/protection.js?v=212" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=213" />
+<script src="../assets/js/protection.js?v=213" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=212"></script>
-<script src="../assets/js/acces.js?v=212"></script>
+<script src="../assets/js/config.js?v=213"></script>
+<script src="../assets/js/acces.js?v=213"></script>
 </body>
 </html>

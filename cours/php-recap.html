@@ -339,7 +339,6 @@ if (location.search.indexOf("embed=1") !== -1 || window.self !== window.top) {
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <a class="btn p" id="btn-retour-cours-php" href="php.html" style="text-decoration:none">🐘 ← Retour au cours PHP</a>
-    <a class="btn" href="../index.html#cours" target="_top" style="text-decoration:none">🏠 Accueil</a>
   </div>
 </div>
 <script>
@@ -347,14 +346,11 @@ if (location.search.indexOf("embed=1") !== -1 || window.self !== window.top) {
   var b = document.getElementById("btn-retour-cours-php");
   if (!b) return;
   b.addEventListener("click", function (e) {
-    if (window.self !== window.top) {
-      e.preventDefault();
-      try { window.parent.postMessage({ type: "STI_FERMER_MODALE_PHP" }, "*"); } catch (err) {}
-      try {
-        var pDoc = window.parent.document;
-        var rc = pDoc.getElementById("recapClose");
-        if (rc) rc.click();
-      } catch (err2) {}
+    e.preventDefault();
+    try {
+      window.top.location.href = "php.html";
+    } catch (err) {
+      window.location.href = "php.html";
     }
   });
 })();
@@ -1016,10 +1012,10 @@ function setupFetch(P,mode){
 setupFetch('fr','row');setupFetch('fa','array');
 </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=212" />
-<script src="../assets/js/protection.js?v=212" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=213" />
+<script src="../assets/js/protection.js?v=213" defer></script>
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=212"></script>
-<script src="../assets/js/acces.js?v=212"></script>
+<script src="../assets/js/config.js?v=213"></script>
+<script src="../assets/js/acces.js?v=213"></script>
 </body>
 </html>
