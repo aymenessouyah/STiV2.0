@@ -226,9 +226,9 @@ body.sti-gold #sti-watermark {
 }
 .sti-video-pas-a-pas-box {
   margin: 12px auto;
-  width: min(720px, 94vw);
+  width: min(1080px, 96vw);
   max-width: 100%;
-  max-height: 76vh;
+  max-height: 90vh;
   box-sizing: border-box;
   overflow: hidden;
   display: flex;
@@ -236,8 +236,8 @@ body.sti-gold #sti-watermark {
   background: #0d1526;
   color: #f9f1e3;
   border: 2px solid #f4511e;
-  border-radius: 14px;
-  padding: 10px 12px;
+  border-radius: 16px;
+  padding: 10px 14px 12px;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -301,11 +301,12 @@ body.sti-gold #sti-watermark {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
-  max-height: min(340px, 48vh) !important;
+  max-height: calc(88vh - 82px) !important;
+  aspect-ratio: 16 / 9;
   object-fit: contain !important;
   margin: 0 auto !important;
   border-radius: 10px;
-  background: #000;
+  background: #0d1526;
   display: block;
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
@@ -320,16 +321,16 @@ body.sti-gold #sti-watermark {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 10px;
   box-sizing: border-box;
 }
 #sti-video-modal-overlay[hidden] {
   display: none !important;
 }
 .sti-video-modal-card {
-  width: min(740px, 92vw) !important;
-  max-width: 92vw !important;
-  max-height: 82vh !important;
+  width: min(1180px, 96vw) !important;
+  max-width: 96vw !important;
+  max-height: 94vh !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
   display: flex !important;
@@ -338,7 +339,7 @@ body.sti-gold #sti-watermark {
   color: #f9f1e3;
   border: 2px solid #f4511e;
   border-radius: 16px;
-  padding: 12px 14px;
+  padding: 10px 14px 12px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -346,11 +347,12 @@ body.sti-gold #sti-watermark {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
-  max-height: min(380px, calc(82vh - 96px)) !important;
+  max-height: calc(94vh - 82px) !important;
+  aspect-ratio: 16 / 9;
   object-fit: contain !important;
   margin: 0 auto !important;
   border-radius: 10px;
-  background: #000;
+  background: #0d1526;
   display: block;
 }
 
