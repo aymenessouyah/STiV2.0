@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v203";
+var CACHE = "sti-atelier-v204";
 var SHELL = [
   "./",
   "./index.html",
@@ -113,9 +113,11 @@ var OFFLINE_LIST = [
   "./assets/audio/guichet-etapes.mp3",
   "./assets/audio/css-positionnement.mp3",
   "./assets/audio/css-animee.mp3",
+  "./assets/audio/sql-cours.mp3",
   "./assets/videos/php-guichet.mp4",
   "./assets/videos/css-positionnement.mp4",
   "./assets/videos/css-animee.mp4",
+  "./assets/videos/sql-cours.mp4",
   "./assets/css/atelier-pages.css",
   "./assets/css/atelier-php.css",
   "./assets/css/atelier.css",
@@ -567,6 +569,7 @@ var OFFLINE_LIST = [
   "./assets/videos/php-guichet.mp4",
   "./assets/videos/css-positionnement.mp4",
   "./assets/videos/css-animee.mp4",
+  "./assets/videos/sql-cours.mp4",
   "./robots.txt",
   "./sitemap.xml"
 ];
@@ -661,6 +664,7 @@ self.addEventListener("activate", function (evt) {
                   rPath.indexOf("guichet-etapes.mp3") !== -1 ||
                   rPath.indexOf("css-positionnement.mp3") !== -1 ||
                   rPath.indexOf("css-animee.mp3") !== -1 ||
+                  rPath.indexOf("sql-cours.mp3") !== -1 ||
                   rPath.slice(-1) === "/"
                 ) {
                   continue;

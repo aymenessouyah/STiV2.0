@@ -1945,12 +1945,13 @@ CREATE TABLE Location (
               est référencée.
             </li>
           </ul>
-          <div class="sql-anim-launch">
+          <div class="sql-anim-launch" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
             <button type="button" id="btnSqlContraintes" class="btn-sql-contraintes">
               <span aria-hidden="true">🎬</span>
               <span>Voir l'effet des contraintes (Animation interactive : CHAR/VARCHAR, CHECK, ON UPDATE &amp; ON DELETE CASCADE)</span>
               <span aria-hidden="true">✨</span>
             </button>
+            <button type="button" class="sql-janim-btn" onclick="if(window.ouvrirVideoPasAPasSTI)window.ouvrirVideoPasAPasSTI('sql-cours');" style="background:#f4511e;color:#fff;border-color:#ff8a50;font-weight:800;padding:10px 16px;border-radius:999px;">🎥 Vidéo du cours SQL (.mp4)</button>
           </div>
         </div>
 
@@ -2264,6 +2265,8 @@ WHERE c.NCIN_Cli = l.NCIN_Cli
               <button type="button" class="sql-janim-btn" id="janim-btn-next">Suivant ▶</button>
               <button type="button" class="sql-janim-btn" id="janim-btn-reset">⏮ Début</button>
               <button type="button" class="sql-janim-btn accent" id="janim-btn-all">⚡ Résultat final</button>
+              <button type="button" class="sql-janim-btn sti-btn-voix-sql" onclick="if(window.basculerVoixSqlSTI)window.basculerVoixSqlSTI('j');" style="background:#177245;color:#fff;border-color:#86efac;font-weight:800;">🔊 Voix : ON</button>
+              <button type="button" class="sql-janim-btn" onclick="if(window.ouvrirVideoPasAPasSTI)window.ouvrirVideoPasAPasSTI('sql-cours');" style="background:#f4511e;color:#fff;border-color:#ff8a50;font-weight:800;">🎥 Vidéo (.mp4)</button>
               <label class="sql-janim-filter-chk" title="Parcourir uniquement les couples où a.x = b.x ou tous les couples (a, b)">
                 <input type="checkbox" id="janim-chk-only-match" />
                 <span>Aller directement aux correspondances (<code>a.x = b.x</code>)</span>
@@ -2442,6 +2445,8 @@ ORDER BY total_jours DESC;</code></pre>
               <button type="button" class="sql-janim-btn" id="gbanim-btn-next">Suivant ▶</button>
               <button type="button" class="sql-janim-btn" id="gbanim-btn-reset">⏮ Début</button>
               <button type="button" class="sql-janim-btn accent" id="gbanim-btn-all">⚡ Résultat final</button>
+              <button type="button" class="sql-janim-btn sti-btn-voix-sql" onclick="if(window.basculerVoixSqlSTI)window.basculerVoixSqlSTI('gb');" style="background:#177245;color:#fff;border-color:#86efac;font-weight:800;">🔊 Voix : ON</button>
+              <button type="button" class="sql-janim-btn" onclick="if(window.ouvrirVideoPasAPasSTI)window.ouvrirVideoPasAPasSTI('sql-cours');" style="background:#f4511e;color:#fff;border-color:#ff8a50;font-weight:800;">🎥 Vidéo (.mp4)</button>
               <span class="sql-janim-step-badge" id="gbanim-step-badge">Prêt · 0 / 5</span>
             </div>
 
@@ -2576,6 +2581,8 @@ HAVING AVG(duree_loc) > 3;</code></pre>
               <button type="button" class="sql-janim-btn" id="hvanim-btn-next">Suivant ▶</button>
               <button type="button" class="sql-janim-btn" id="hvanim-btn-reset">⏮ Début</button>
               <button type="button" class="sql-janim-btn accent" id="hvanim-btn-all">⚡ Résultat final</button>
+              <button type="button" class="sql-janim-btn sti-btn-voix-sql" onclick="if(window.basculerVoixSqlSTI)window.basculerVoixSqlSTI('hv');" style="background:#177245;color:#fff;border-color:#86efac;font-weight:800;">🔊 Voix : ON</button>
+              <button type="button" class="sql-janim-btn" onclick="if(window.ouvrirVideoPasAPasSTI)window.ouvrirVideoPasAPasSTI('sql-cours');" style="background:#f4511e;color:#fff;border-color:#ff8a50;font-weight:800;">🎥 Vidéo (.mp4)</button>
               <span class="sql-janim-step-badge" id="hvanim-step-badge">Prêt · 0 / 3</span>
             </div>
 
@@ -4517,12 +4524,114 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
       })();
     </script>
   <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(null,"",location.pathname+location.search);});})();</script>
+  <script id="stix-sql-voix">
+  (function(){
+    var SQL_VOIX_CUES = {"c-t1": [0.0, 25.15], "c-t2": [25.3, 43.32], "c-t3": [43.47, 61.72], "c-t4": [61.87, 78.15], "j-0": [78.3, 121.16], "j-1": [121.31, 140.46], "j-2": [140.61, 153.56], "j-3": [153.71, 166.05], "gb-0": [166.2, 203.94], "gb-1": [204.09, 220.44], "gb-2": [220.59, 237.17], "hv-0": [237.32, 270.9], "hv-1": [271.05, 287.3], "hv-2": [287.45, 299.65], "recap": [299.8, 331.78]};
+    var voixSqlActive = true;
+    var sqlVoixTimer = null;
+    var sqlSegFin = 0;
+    var sqlAudio = document.createElement("audio");
+    sqlAudio.preload = "auto";
+    sqlAudio.src = "../assets/audio/sql-cours.mp3?v=204";
+    sqlAudio.style.display = "none";
+    document.body.appendChild(sqlAudio);
+
+    function arreterVoixSqlSTI() {
+      if (sqlVoixTimer) { clearTimeout(sqlVoixTimer); sqlVoixTimer = null; }
+      sqlSegFin = 0;
+      try { sqlAudio.pause(); } catch (e) {}
+    }
+    window.arreterVoixSqlSTI = arreterVoixSqlSTI;
+
+    sqlAudio.addEventListener("timeupdate", function () {
+      if (sqlSegFin > 0 && sqlAudio.currentTime >= sqlSegFin - 0.04) {
+        arreterVoixSqlSTI();
+      }
+    });
+
+    function jouerVoixSqlCle(cle) {
+      arreterVoixSqlSTI();
+      if (!voixSqlActive) return;
+      var seg = SQL_VOIX_CUES[cle];
+      if (!seg) return;
+      sqlSegFin = seg[1];
+      function lancer() {
+        try {
+          sqlAudio.muted = false;
+          sqlAudio.volume = 1.0;
+          sqlAudio.playbackRate = 0.95;
+          sqlAudio.currentTime = seg[0];
+          var p = sqlAudio.play();
+          if (p && p.catch) p.catch(function () {});
+          var durMs = Math.max(900, Math.round(((seg[1] - seg[0]) / 0.95) * 1000) + 200);
+          sqlVoixTimer = setTimeout(arreterVoixSqlSTI, durMs);
+        } catch (e) {}
+      }
+      if (sqlAudio.readyState >= 1) {
+        lancer();
+      } else {
+        var onMeta = function () {
+          sqlAudio.removeEventListener("loadedmetadata", onMeta);
+          lancer();
+        };
+        sqlAudio.addEventListener("loadedmetadata", onMeta);
+        try { sqlAudio.load(); } catch (e) {}
+      }
+    }
+    window.jouerVoixSqlCle = jouerVoixSqlCle;
+
+    function cleCourante(famille) {
+      if (famille === "gb") {
+        var tGb = document.querySelector("#sql-groupby-anim-app .sql-janim-tab.active");
+        return "gb-" + (tGb ? (tGb.getAttribute("data-gbex") || "0") : "0");
+      }
+      if (famille === "hv") {
+        var tHv = document.querySelector("#sql-having-anim-app .sql-janim-tab.active");
+        return "hv-" + (tHv ? (tHv.getAttribute("data-hvex") || "0") : "0");
+      }
+      var tJ = document.querySelector("#sql-jointure-anim-app .sql-janim-tab.active");
+      return "j-" + (tJ ? (tJ.getAttribute("data-jex") || "0") : "0");
+    }
+
+    window.basculerVoixSqlSTI = function (famille) {
+      voixSqlActive = !voixSqlActive;
+      var btns = document.querySelectorAll(".sti-btn-voix-sql");
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].textContent = voixSqlActive ? "🔊 Voix : ON" : "🔇 Voix : OFF";
+        btns[i].style.background = voixSqlActive ? "#177245" : "#475569";
+      }
+      if (voixSqlActive) {
+        jouerVoixSqlCle(cleCourante(famille || "j"));
+      } else {
+        arreterVoixSqlSTI();
+      }
+    };
+
+    document.addEventListener("click", function (ev) {
+      var btn = ev.target && ev.target.closest ? ev.target.closest("button") : null;
+      if (!btn) return;
+      if (btn.hasAttribute("data-jex")) {
+        jouerVoixSqlCle("j-" + btn.getAttribute("data-jex"));
+      } else if (btn.id === "janim-btn-play") {
+        jouerVoixSqlCle(cleCourante("j"));
+      } else if (btn.hasAttribute("data-gbex")) {
+        jouerVoixSqlCle("gb-" + btn.getAttribute("data-gbex"));
+      } else if (btn.id === "gbanim-btn-play") {
+        jouerVoixSqlCle(cleCourante("gb"));
+      } else if (btn.hasAttribute("data-hvex")) {
+        jouerVoixSqlCle("hv-" + btn.getAttribute("data-hvex"));
+      } else if (btn.id === "hvanim-btn-play") {
+        jouerVoixSqlCle(cleCourante("hv"));
+      }
+    });
+  })();
+  </script>
   <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=193" />
-<script src="../assets/js/protection.js?v=193" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=204" />
+<script src="../assets/js/protection.js?v=204" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=193"></script>
-<script src="../assets/js/acces.js?v=193"></script>
+<script src="../assets/js/config.js?v=204"></script>
+<script src="../assets/js/acces.js?v=204"></script>
 </body>
 </html>

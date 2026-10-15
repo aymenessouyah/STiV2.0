@@ -779,6 +779,8 @@ html.dark .msg.wa { border-color: var(--sun); }
     <button data-t="t2">✅ CHECK</button>
     <button data-t="t3">🔄 ON UPDATE CASCADE</button>
     <button data-t="t4">🗑️ ON DELETE</button>
+    <button type="button" id="sti-btn-voix-sqlc" style="background:#177245;color:#fff;border-color:#86efac;font-weight:800;">🔊 Voix : ON</button>
+    <button type="button" id="sti-btn-video-sqlc" style="background:#f4511e;color:#fff;border-color:#ff8a50;font-weight:800;">🎥 Vidéo (.mp4)</button>
   </nav>
 
   <section id="t1" class="sec on card">
@@ -884,9 +886,65 @@ html.dark .msg.wa { border-color: var(--sun); }
 <script>
 const $=id=>document.getElementById(id);
 const msg=(id,t,c)=>{const m=$(id);m.className='msg';void m.offsetWidth;m.className='msg '+c;m.textContent=t};
-document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
+const SQLC_CUES = {"t1":[0.0,25.15],"t2":[25.3,43.32],"t3":[43.47,61.72],"t4":[61.87,78.15]};
+let sqlcVoixActive = true;
+let sqlcTimer = null;
+let sqlcFin = 0;
+const sqlcAudio = document.createElement('audio');
+sqlcAudio.preload = 'auto';
+sqlcAudio.src = '../assets/audio/sql-cours.mp3?v=204';
+sqlcAudio.style.display = 'none';
+document.body.appendChild(sqlcAudio);
+function arreterVoixSqlSTI(){
+  if(sqlcTimer){clearTimeout(sqlcTimer);sqlcTimer=null;}
+  sqlcFin=0;
+  try{sqlcAudio.pause();}catch(e){}
+}
+window.arreterVoixSqlSTI = arreterVoixSqlSTI;
+sqlcAudio.addEventListener('timeupdate',()=>{
+  if(sqlcFin>0 && sqlcAudio.currentTime>=sqlcFin-0.04){arreterVoixSqlSTI();}
+});
+function jouerVoixSqlc(cle){
+  arreterVoixSqlSTI();
+  if(!sqlcVoixActive)return;
+  const seg=SQLC_CUES[cle];
+  if(!seg)return;
+  sqlcFin=seg[1];
+  const go=()=>{
+    try{
+      sqlcAudio.muted=false;sqlcAudio.volume=1.0;sqlcAudio.playbackRate=0.95;
+      sqlcAudio.currentTime=seg[0];
+      const p=sqlcAudio.play();if(p&&p.catch)p.catch(()=>{});
+      sqlcTimer=setTimeout(arreterVoixSqlSTI,Math.max(900,Math.round(((seg[1]-seg[0])/0.95)*1000)+200));
+    }catch(e){}
+  };
+  if(sqlcAudio.readyState>=1)go();
+  else{const m=()=>{sqlcAudio.removeEventListener('loadedmetadata',m);go();};sqlcAudio.addEventListener('loadedmetadata',m);try{sqlcAudio.load();}catch(e){}}
+}
+document.querySelectorAll('#tabs button[data-t]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#tabs button[data-t]').forEach(x=>x.classList.toggle('on',x===b));
   document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));
+  jouerVoixSqlc(b.dataset.t);
+});
+if($('sti-btn-voix-sqlc')){
+  $('sti-btn-voix-sqlc').onclick=()=>{
+    sqlcVoixActive=!sqlcVoixActive;
+    $('sti-btn-voix-sqlc').textContent=sqlcVoixActive?'🔊 Voix : ON':'🔇 Voix : OFF';
+    $('sti-btn-voix-sqlc').style.background=sqlcVoixActive?'#177245':'#475569';
+    if(sqlcVoixActive){
+      const act=document.querySelector('#tabs button[data-t].on');
+      if(act)jouerVoixSqlc(act.dataset.t);
+    }else{arreterVoixSqlSTI();}
+  };
+}
+if($('sti-btn-video-sqlc')){
+  $('sti-btn-video-sqlc').onclick=()=>{
+    arreterVoixSqlSTI();
+    if(typeof window.ouvrirVideoPasAPasSTI==='function')window.ouvrirVideoPasAPasSTI('sql-cours');
+  };
+}
+window.addEventListener('message',e=>{
+  if(e&&e.data&&e.data.type==='STI_STOP_SQL')arreterVoixSqlSTI();
 });
 
 /* Bouton thème sombre / clair synchronisé avec cours/sql.html */
@@ -968,10 +1026,10 @@ document.querySelectorAll('input[name=m3]').forEach(r=>r.onchange=()=>$('sq3').t
 document.querySelectorAll('input[name=m4]').forEach(r=>r.onchange=()=>$('sq4').textContent=document.querySelector('input[name=m4]:checked').value==='1'?'ON DELETE CASCADE':'-- sans ON DELETE CASCADE (RESTRICT par défaut)');
 </script>
 <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=193" />
-<script src="../assets/js/protection.js?v=193" defer></script>
+<link rel="stylesheet" href="../assets/css/protection.css?v=204" />
+<script src="../assets/js/protection.js?v=204" defer></script>
 <script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=193"></script>
-<script src="../assets/js/acces.js?v=193"></script>
+<script src="../assets/js/config.js?v=204"></script>
+<script src="../assets/js/acces.js?v=204"></script>
 </body>
 </html>

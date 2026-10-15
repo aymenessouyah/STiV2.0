@@ -612,6 +612,10 @@
         file: "css-animee.mp4?v=203",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
+      var VIDEO_SQL_INFO = {
+        file: "sql-cours.mp4?v=204",
+        title: "🎥 Cours SQL animé pas à pas (Contraintes · Jointure WHERE a.x = b.x · GROUP BY · HAVING)"
+      };
 
       function prefixeAssetsSTI() {
         var scripts = document.querySelectorAll("script[src]");
@@ -636,9 +640,14 @@
         return prefixeAssetsSTI() + "videos/" + VIDEO_CSS_DECO_INFO.file;
       }
 
+      function resoudreUrlVideoSql() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_SQL_INFO.file;
+      }
+
       var estPageGuichet = (pathLower.indexOf("php-mysqli") !== -1);
       var estPageCssPos = (pathLower.indexOf("positionnement-animee") !== -1);
       var estPageCssDeco = (pathLower.indexOf("cssanimee") !== -1);
+      var estPageSql = (pathLower.indexOf("/sql.html") !== -1 || pathLower.indexOf("sql-contraintes") !== -1);
 
       /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
@@ -725,10 +734,11 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt) {
         var sSlug = String(slugOuUrl || "");
-        var estCssDeco = (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco));
-        var estCssPos = (!estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
-        var estGuichet = (!estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || (!sSlug && estPageGuichet)));
-        if (!estCssDeco && !estCssPos && !estGuichet) {
+        var estSql = (sSlug === "sql-cours" || sSlug.indexOf("sql-cours") !== -1 || (!sSlug && estPageSql));
+        var estCssDeco = (!estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
+        var estCssPos = (!estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
+        var estGuichet = (!estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || (!sSlug && estPageGuichet)));
+        if (!estSql && !estCssDeco && !estCssPos && !estGuichet) {
           return;
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
@@ -745,12 +755,19 @@
           if (typeof window.arreterVoixDeco === "function") {
             window.arreterVoixDeco();
           }
+          if (typeof window.arreterVoixSqlSTI === "function") {
+            window.arreterVoixSqlSTI();
+          }
+          var fSql = document.getElementById("sqlContraintesFrame");
+          if (fSql && fSql.contentWindow) {
+            fSql.contentWindow.postMessage({ type: "STI_STOP_SQL" }, "*");
+          }
           var fAnim = document.getElementById("animFrame");
           if (fAnim && fAnim.contentWindow) {
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
-        var slugCible = estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet");
+        var slugCible = estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet"));
         try {
           if (
             window.top &&
@@ -761,8 +778,8 @@
             return;
           }
         } catch (e) {}
-        var url = estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet());
-        var titre = titreOpt || (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title));
+        var url = estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet()));
+        var titre = titreOpt || (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title)));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
