@@ -601,35 +601,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=211",
+        file: "php-guichet.mp4?v=212",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=211",
+        file: "css-positionnement.mp4?v=212",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=211",
+        file: "css-animee.mp4?v=212",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=211",
+        file: "sql-cours.mp4?v=212",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=211",
+        file: "html5-cours.mp4?v=212",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=211",
+        file: "css3-cours.mp4?v=212",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=211",
+        file: "javascript-cours.mp4?v=212",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=211",
+        file: "php-cours.mp4?v=212",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -683,7 +683,8 @@
       var estPageHtml5 = (pathLower.indexOf("/html5.html") !== -1);
       var estPageCss3 = (pathLower.indexOf("/css3.html") !== -1);
       var estPageJs = (pathLower.indexOf("/javascript.html") !== -1);
-      var estPagePhpCours = (pathLower.indexOf("/php.html") !== -1);
+      var estPagePhpCours = (pathLower.indexOf("/php.html") !== -1 || pathLower.indexOf("php-recap") !== -1);
+      var estPagePhpRecap = (pathLower.indexOf("php-recap") !== -1);
 
       /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
@@ -1028,7 +1029,7 @@
           var cKey = estPageHtml5 ? "html5" : (estPageCss3 ? "css3" : (estPageJs ? "javascript" : "php"));
           var cLabel = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
           var cSlug = cKey + "-cours";
-          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=209";
+          var cAudioUrl = prefixeAssetsSTI() + "audio/" + cSlug + ".mp3?v=212";
 
           var CUES_MAP = {
             html5: {
@@ -1073,36 +1074,46 @@
               "sec16": [183.3, 210.9]
             },
             php: {
-              "s1": [8.0, 24.0],
-              "s1-1": [8.0, 24.0],
-              "s1b": [8.0, 24.0],
-              "s1-3": [8.0, 24.0],
-              "s2": [24.0, 44.0],
-              "s2-1": [24.0, 44.0],
-              "s2-2": [24.0, 44.0],
-              "s2-3": [24.0, 44.0],
-              "s2-4": [24.0, 44.0],
-              "s2-5": [24.0, 44.0],
-              "s3": [44.0, 61.18],
-              "s4": [61.44, 79.4],
-              "s5": [79.4, 93.4],
-              "s6": [93.4, 107.4],
-              "s7": [107.4, 121.97],
-              "s8": [122.23, 158.2],
-              "s8anim": [122.23, 138.2],
-              "s8-1": [122.23, 138.2],
-              "s8-2": [138.2, 158.2],
-              "s8-3": [138.2, 158.2],
-              "s8-4": [138.2, 158.2],
-              "s8-5": [138.2, 158.2],
-              "s8-6": [138.2, 158.2],
-              "s8-7": [158.2, 172.2],
-              "s9": [172.2, 188.8],
-              "s10": [172.2, 188.8],
-              "s10a": [172.2, 188.8],
-              "s10b": [172.2, 188.8],
-              "s10c": [172.2, 188.8],
-              "s10d": [172.2, 188.8]
+              "def-php": [10.19, 26.42],
+              "t1": [26.42, 70.11],
+              "t3": [70.11, 105.00],
+              "t4": [105.00, 141.81],
+              "t8": [141.81, 173.22],
+              "t7": [173.22, 230.15],
+              "t5": [230.15, 308.57],
+              "t6": [308.57, 348.00],
+              "t9": [348.00, 387.95],
+              "t10": [387.95, 565.14],
+              "s1": [10.19, 26.42],
+              "s1-1": [10.19, 26.42],
+              "s1b": [26.42, 70.11],
+              "s1-3": [308.57, 348.00],
+              "s2": [230.15, 308.57],
+              "s2-1": [230.15, 256.60],
+              "s2-2": [256.60, 282.85],
+              "s2-3": [282.85, 300.07],
+              "s2-4": [300.07, 308.57],
+              "s2-5": [256.60, 282.85],
+              "s3": [70.11, 105.00],
+              "s4": [105.00, 141.81],
+              "s5": [141.81, 173.22],
+              "s6": [173.22, 230.15],
+              "s7": [348.00, 387.95],
+              "s8": [387.95, 565.14],
+              "s8anim": [387.95, 409.94],
+              "s8-1": [409.94, 438.23],
+              "s8-2": [438.23, 443.64],
+              "s8-3": [443.64, 497.74],
+              "s8-4": [497.74, 518.11],
+              "s8-5": [518.11, 533.29],
+              "s8-6": [533.29, 546.78],
+              "s8-7": [546.78, 555.00],
+              "s9": [546.78, 565.14],
+              "s10": [546.78, 565.14],
+              "s10a": [546.78, 565.14],
+              "s10b": [546.78, 565.14],
+              "s10c": [546.78, 565.14],
+              "s10d": [546.78, 565.14]
             }
           };
 
@@ -1170,12 +1181,14 @@
           var barEl = document.createElement("div");
           barEl.id = "sti-cours-media-bar";
           barEl.className = "sti-no-print";
-          barEl.style.cssText = "display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:12px auto 16px;padding:10px 14px;background:rgba(13,21,38,0.92);border:2px solid #f4511e;border-radius:14px;max-width:760px;box-shadow:0 6px 18px rgba(0,0,0,0.22);";
+          barEl.style.cssText = "display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:12px auto 16px;padding:10px 14px;background:rgba(13,21,38,0.92);border:2px solid #f4511e;border-radius:14px;max-width:860px;box-shadow:0 6px 18px rgba(0,0,0,0.22);";
           barEl.innerHTML =
             '<button type="button" id="sti-btn-cours-video-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #fde68a;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎥 Vidéo du cours ' + cLabel + ' (.mp4)</button>' +
-            '<button type="button" id="sti-btn-cours-voix-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #86efac;background:#177245;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🔊 Écouter le cours ' + cLabel + '</button>';
+            '<button type="button" id="sti-btn-cours-voix-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #86efac;background:#177245;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🔊 Écouter le cours ' + cLabel + '</button>' +
+            (estPagePhpCours ? '<button type="button" id="sti-btn-php-guichet-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#0369a1;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎬 Vidéo du Guichet (.mp4)</button>' : '');
 
           var targetAnchor =
+            document.getElementById("def-php") ||
             document.querySelector("main section:first-of-type") ||
             document.querySelector("main .wrap h1.title") ||
             document.querySelector("main #sec1") ||
@@ -1200,6 +1213,13 @@
               window.ouvrirVideoPasAPasSTI(cSlug);
             });
           }
+          var bGuiHero = document.getElementById("sti-btn-php-guichet-hero");
+          if (bGuiHero) {
+            bGuiHero.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              window.ouvrirVideoPasAPasSTI("guichet");
+            });
+          }
           var bVoixHero = document.getElementById("sti-btn-cours-voix-hero");
           if (bVoixHero) {
             bVoixHero.addEventListener("click", function (ev) {
@@ -1213,6 +1233,15 @@
           }
 
           document.addEventListener("click", function (ev) {
+            var tabBtn = ev.target && ev.target.closest ? ev.target.closest("#tabs button[data-t]") : null;
+            if (tabBtn && !ev.__stiAutoSync && !cAudio.paused) {
+              var tId = tabBtn.getAttribute("data-t") || "";
+              var cuesT = CUES_MAP[cKey] || {};
+              if (cuesT[tId]) {
+                jouerSegmentCours(cuesT[tId][0], cuesT[tId][1]);
+              }
+              return;
+            }
             var a = ev.target && ev.target.closest ? ev.target.closest("a[href^='#']") : null;
             if (!a) return;
             var idSec = (a.getAttribute("href") || "").slice(1);
@@ -1294,17 +1323,51 @@
           [183.3, 220.0, "#sec15"]
         ],
         php: [
-          [0.0, 24.0, "#s1"],
-          [24.0, 44.0, "#s2"],
-          [44.0, 61.3, "#s3"],
-          [61.3, 79.4, "#s4"],
-          [79.4, 93.4, "#s5"],
-          [93.4, 107.4, "#s6"],
-          [107.4, 122.1, "#s7"],
-          [122.1, 138.2, "#s8"],
-          [138.2, 158.2, "#s8-2"],
-          [158.2, 172.2, "#s8-7"],
-          [172.2, 198.0, "#s9"]
+          [0.0, 26.42, "#s1"],
+          [26.42, 70.11, "#s1b"],
+          [70.11, 105.00, "#s3"],
+          [105.00, 141.81, "#s4"],
+          [141.81, 173.22, "#s5"],
+          [173.22, 230.15, "#s6"],
+          [230.15, 308.57, "#s2"],
+          [308.57, 348.00, "#s1-3"],
+          [348.00, 387.95, "#s7"],
+          [387.95, 438.23, "#s8-1"],
+          [438.23, 497.74, "#s8-2"],
+          [497.74, 546.78, "#s8-4"],
+          [546.78, 575.00, "#s9"]
+        ],
+        phprecap: [
+          [0.0, 26.42, "#def-php", "t1"],
+          [26.42, 35.56, "#cd1", "t1"],
+          [35.56, 65.39, "#o1", "t1"],
+          [65.39, 70.11, "#t1 .note", "t1"],
+          [70.11, 81.32, "#t3 .code", "t3"],
+          [81.32, 95.02, "#t3 table", "t3"],
+          [95.02, 105.00, "#o3", "t3"],
+          [105.00, 111.45, "#cd4", "t4"],
+          [111.45, 141.81, "#t4 .two", "t4"],
+          [141.81, 153.51, "#t8 .two .card:nth-child(1)", "t8"],
+          [153.51, 158.11, "#t8 .two .card:nth-child(2)", "t8"],
+          [158.11, 165.88, "#t8 .two .card:nth-child(3)", "t8"],
+          [165.88, 173.22, "#t8 .two .card:nth-child(4)", "t8"],
+          [173.22, 217.12, "#t7 table", "t7"],
+          [217.12, 230.15, "#t7 .card", "t7"],
+          [230.15, 256.60, "#tb5", "t5"],
+          [256.60, 282.85, "#tb6", "t5"],
+          [282.85, 300.07, "#tb7", "t5"],
+          [300.07, 308.57, "#castOut", "t5"],
+          [308.57, 348.00, "#tb8", "t6"],
+          [348.00, 367.61, "#t9 table", "t9"],
+          [367.61, 387.95, "#t9 .code", "t9"],
+          [387.95, 409.94, "#t10 > table", "t10"],
+          [409.94, 438.23, "#m-connect", "t10"],
+          [438.23, 443.64, "#m-selectdb", "t10"],
+          [443.64, 497.74, "#m-query", "t10"],
+          [497.74, 518.11, "#m-numrows", "t10"],
+          [518.11, 533.29, "#m-fetchrow", "t10"],
+          [533.29, 546.78, "#m-fetcharray", "t10"],
+          [546.78, 575.00, "#m-exemple", "t10"]
         ],
         sql: [
           [0.0, 19.1, "#intro"],
@@ -1451,6 +1514,7 @@
           pLow.indexOf("/html5.html") !== -1 ? "html5" :
           pLow.indexOf("/css3.html") !== -1 ? "css3" :
           pLow.indexOf("/javascript.html") !== -1 ? "javascript" :
+          pLow.indexOf("php-recap") !== -1 ? "phprecap" :
           pLow.indexOf("/php.html") !== -1 ? "php" :
           pLow.indexOf("/sql.html") !== -1 ? "sql" : "";
 
@@ -1465,14 +1529,28 @@
               break;
             }
           }
-          var anchor = document.querySelector(activeSeg[2]);
-          if (anchor) {
-            var blocs = collecterBlocsSection(anchor);
-            var ratio = (t - activeSeg[0]) / Math.max(0.5, activeSeg[1] - activeSeg[0]);
-            if (ratio < 0) ratio = 0;
-            if (ratio > 0.999) ratio = 0.999;
-            var idx = Math.floor(ratio * blocs.length);
-            targetEl = blocs[idx] || anchor;
+          if (courseKey === "phprecap" && activeSeg[3]) {
+            var reqTab = activeSeg[3];
+            var curTabBtn = document.querySelector("#tabs button.on");
+            if (!curTabBtn || curTabBtn.getAttribute("data-t") !== reqTab) {
+              var newBtn = document.querySelector('#tabs button[data-t="' + reqTab + '"]');
+              if (newBtn) {
+                var evClick = new MouseEvent("click", { bubbles: true });
+                evClick.__stiAutoSync = true;
+                newBtn.dispatchEvent(evClick);
+              }
+            }
+            targetEl = document.querySelector(activeSeg[2]);
+          } else {
+            var anchor = document.querySelector(activeSeg[2]);
+            if (anchor) {
+              var blocs = collecterBlocsSection(anchor);
+              var ratio = (t - activeSeg[0]) / Math.max(0.5, activeSeg[1] - activeSeg[0]);
+              if (ratio < 0) ratio = 0;
+              if (ratio > 0.999) ratio = 0.999;
+              var idx = Math.floor(ratio * blocs.length);
+              targetEl = blocs[idx] || anchor;
+            }
           }
         } else {
           /* Pages d'animations pas à pas (Positionnement CSS, Décoration CSS, Guichet, Contraintes SQL) */
