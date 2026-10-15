@@ -601,35 +601,35 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=209",
+        file: "php-guichet.mp4?v=210",
         title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
       };
       var VIDEO_CSS_POS_INFO = {
-        file: "css-positionnement.mp4?v=209",
+        file: "css-positionnement.mp4?v=210",
         title: "🎥 CSS pas à pas — Positionnement animé (display, position & flex)"
       };
       var VIDEO_CSS_DECO_INFO = {
-        file: "css-animee.mp4?v=209",
+        file: "css-animee.mp4?v=210",
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=209",
+        file: "sql-cours.mp4?v=210",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
-        file: "html5-cours.mp4?v=209",
+        file: "html5-cours.mp4?v=210",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=209",
+        file: "css3-cours.mp4?v=210",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
-        file: "javascript-cours.mp4?v=209",
+        file: "javascript-cours.mp4?v=210",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours JavaScript STI complet animé (.mp4)"
       };
       var VIDEO_PHP_COURS_INFO = {
-        file: "php-cours.mp4?v=209",
+        file: "php-cours.mp4?v=210",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
 
@@ -1230,6 +1230,306 @@
   }
 
   /* ─────────────────────────────────────────────
+     Guide Rectangle + Guide-Ligne visant le texte en cours en parlant
+     ───────────────────────────────────────────── */
+  function installerGuideVocalEnParlant() {
+    try {
+      if (window.__stiGuideVocalInit) return;
+      window.__stiGuideVocalInit = true;
+
+      /* Intercepter tout audio vocal lancé (new Audio() ou <audio>) */
+      var origPlay = window.HTMLMediaElement && window.HTMLMediaElement.prototype
+        ? window.HTMLMediaElement.prototype.play
+        : null;
+      if (origPlay && !window.__stiPlayWrapped) {
+        window.__stiPlayWrapped = true;
+        window.HTMLMediaElement.prototype.play = function () {
+          try {
+            var src = (this.currentSrc || this.src || "").toLowerCase();
+            if (this.tagName === "AUDIO" && src.indexOf("foret.mp3") === -1) {
+              window.__stiActiveVoiceAudio = this;
+            }
+          } catch (e) {}
+          return origPlay.apply(this, arguments);
+        };
+      }
+
+      var TIMELINES = {
+        html5: [
+          [0.0, 26.0, "#entete"],
+          [26.0, 44.0, "#structuration"],
+          [44.0, 56.0, "#conteneurs"],
+          [56.0, 67.0, "#listes"],
+          [67.0, 78.0, "#tableaux"],
+          [78.0, 95.5, "#texte-media"],
+          [95.5, 107.5, "#attributs-evenements"],
+          [107.5, 117.5, "#target-explication"],
+          [117.5, 137.5, "#formulaires"],
+          [137.5, 155.0, "#iframe"]
+        ],
+        css3: [
+          [0.0, 32.0, "#point-1"],
+          [32.0, 56.0, "#point-2"],
+          [56.0, 72.0, "#point-3"],
+          [72.0, 88.5, "#point-7"],
+          [88.5, 108.6, "#point-4"],
+          [108.6, 124.6, "#point-5"],
+          [124.6, 140.6, "#point-8"],
+          [140.6, 160.0, "#css-pas-a-pas"]
+        ],
+        javascript: [
+          [0.0, 18.5, "#sec1"],
+          [18.5, 30.5, "#sec3"],
+          [30.5, 44.5, "#sec4"],
+          [44.5, 58.5, "#sec5"],
+          [58.5, 73.1, "#sec7"],
+          [73.1, 89.2, "#sec8"],
+          [89.2, 119.2, "#sec9"],
+          [119.2, 131.2, "#sec10"],
+          [131.2, 144.2, "#sec11"],
+          [144.2, 157.3, "#sec12"],
+          [157.3, 171.3, "#sec13"],
+          [171.3, 183.3, "#sec14"],
+          [183.3, 220.0, "#sec15"]
+        ],
+        php: [
+          [0.0, 24.0, "#s1"],
+          [24.0, 44.0, "#s2"],
+          [44.0, 61.3, "#s3"],
+          [61.3, 79.4, "#s4"],
+          [79.4, 93.4, "#s5"],
+          [93.4, 107.4, "#s6"],
+          [107.4, 122.1, "#s7"],
+          [122.1, 138.2, "#s8"],
+          [138.2, 158.2, "#s8-2"],
+          [158.2, 172.2, "#s8-7"],
+          [172.2, 198.0, "#s9"]
+        ],
+        sql: [
+          [0.0, 19.1, "#intro"],
+          [19.1, 41.4, "#intro-bd"],
+          [41.4, 58.8, "#schema-analogie"],
+          [58.8, 77.2, "#intro-sub"],
+          [77.2, 102.0, "#intro-cles"],
+          [102.0, 123.4, "#intro-contraintes"],
+          [123.4, 204.5, "#intro-relations"],
+          [204.5, 230.7, "#ldd"],
+          [230.7, 264.5, "#ldd-create"],
+          [264.5, 296.5, "#ldd-constraints"],
+          [296.5, 342.3, "#ldd-alter"],
+          [342.3, 360.1, "#ldd-drop"],
+          [360.1, 377.0, "#lmd"],
+          [377.0, 397.7, "#lmd-insert"],
+          [397.7, 411.9, "#lmd-update"],
+          [411.9, 437.3, "#lmd-update-jointure"],
+          [437.3, 455.8, "#lmd-delete"],
+          [455.8, 480.3, "#lmd-select"],
+          [480.3, 507.5, "#lmd-jointure"],
+          [507.5, 531.7, "#lmd-aggr"],
+          [531.7, 555.2, "#lmd-groupby"],
+          [555.2, 576.7, "#lmd-having"],
+          [576.7, 598.8, "#lmd-strings"],
+          [598.8, 626.0, "#lmd-dates"]
+        ]
+      };
+
+      var guideBox = null;
+      var lastTargetEl = null;
+      var lastScrollAt = 0;
+
+      function ensureGuideDom() {
+        if (guideBox && guideBox.parentNode) return guideBox;
+        guideBox = document.createElement("div");
+        guideBox.id = "sti-voice-guide-rect";
+        guideBox.className = "sti-no-print";
+        guideBox.style.cssText =
+          "position:fixed;left:0;top:0;width:0;height:0;opacity:0;pointer-events:none;z-index:2147482500;" +
+          "border:3px solid #ff2a00;border-radius:12px;background:rgba(255,200,0,0.09);" +
+          "box-shadow:0 0 0 4px rgba(255,145,0,0.34),0 8px 24px rgba(255,42,0,0.22);" +
+          "transition:top 0.22s ease-out,left 0.22s ease-out,width 0.22s ease-out,height 0.22s ease-out,opacity 0.18s ease;";
+        guideBox.innerHTML =
+          '<div id="sti-voice-guide-badge" style="position:absolute;left:-34px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:8px;background:#ff2a00;border:2px solid #fde68a;color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,0.35);">▶</div>' +
+          '<div id="sti-voice-guide-line" style="position:absolute;left:6px;right:6px;bottom:-4px;height:5px;border-radius:4px;background:linear-gradient(90deg,#ff2a00,#ffd600,#ff2a00);box-shadow:0 0 10px rgba(255,42,0,0.75);"></div>';
+        document.body.appendChild(guideBox);
+        return guideBox;
+      }
+
+      function masquerGuide() {
+        if (guideBox) {
+          guideBox.style.opacity = "0";
+        }
+        lastTargetEl = null;
+      }
+
+      function trouverAudioActif() {
+        var a = window.__stiActiveVoiceAudio;
+        if (a && !a.paused && !a.ended) return a;
+        var list = document.querySelectorAll("audio");
+        for (var i = 0; i < list.length; i++) {
+          var el = list[i];
+          var s = (el.currentSrc || el.src || "").toLowerCase();
+          if (!el.paused && !el.ended && s.indexOf("foret.mp3") === -1) {
+            window.__stiActiveVoiceAudio = el;
+            return el;
+          }
+        }
+        return null;
+      }
+
+      function collecterBlocsSection(anchorEl) {
+        if (!anchorEl) return [];
+        var containers = [];
+        var tag = (anchorEl.tagName || "").toUpperCase();
+        if (tag === "SECTION" || (tag === "DIV" && !anchorEl.classList.contains("section-divider"))) {
+          containers.push(anchorEl);
+        } else {
+          containers.push(anchorEl);
+          var sib = anchorEl.nextElementSibling;
+          var guard = 0;
+          while (sib && guard < 35) {
+            guard++;
+            var sTag = (sib.tagName || "").toUpperCase();
+            if (
+              (tag === "H2" && sTag === "H2") ||
+              (anchorEl.classList.contains("section-divider") && sib.classList && sib.classList.contains("section-divider"))
+            ) {
+              break;
+            }
+            containers.push(sib);
+            sib = sib.nextElementSibling;
+          }
+        }
+
+        var raw = [];
+        for (var c = 0; c < containers.length; c++) {
+          var root = containers[c];
+          var kids = root.querySelectorAll
+            ? root.querySelectorAll("h2, h3, h4, p, pre, table, .card, .fiche, .req-card, .code-block, .tip, .warn, .alert, ul, ol")
+            : [];
+          if (!kids || kids.length === 0) {
+            raw.push(root);
+          } else {
+            for (var k = 0; k < kids.length; k++) {
+              raw.push(kids[k]);
+            }
+          }
+        }
+
+        /* Filtrer les éléments visibles de taille lisible sans doublons imbriqués */
+        var filtered = [];
+        for (var i = 0; i < raw.length; i++) {
+          var el = raw[i];
+          if (!el || !el.getBoundingClientRect) continue;
+          var r = el.getBoundingClientRect();
+          if (r.width < 120 || r.height < 20 || r.height > 460) continue;
+          var skip = false;
+          for (var j = 0; j < filtered.length; j++) {
+            if (filtered[j].contains(el) && filtered[j].getBoundingClientRect().height < 210) {
+              skip = true;
+              break;
+            }
+          }
+          if (!skip) filtered.push(el);
+        }
+        return filtered.length > 0 ? filtered : [anchorEl];
+      }
+
+      function majPositionGuide() {
+        var modVid = document.getElementById("sti-video-modal-overlay");
+        if (modVid && !modVid.hidden && modVid.style.display !== "none") {
+          masquerGuide();
+          return;
+        }
+        var audio = trouverAudioActif();
+        if (!audio) {
+          masquerGuide();
+          return;
+        }
+        var pLow = (window.location.pathname || "").toLowerCase();
+        var courseKey =
+          pLow.indexOf("/html5.html") !== -1 ? "html5" :
+          pLow.indexOf("/css3.html") !== -1 ? "css3" :
+          pLow.indexOf("/javascript.html") !== -1 ? "javascript" :
+          pLow.indexOf("/php.html") !== -1 ? "php" :
+          pLow.indexOf("/sql.html") !== -1 ? "sql" : "";
+
+        var targetEl = null;
+        if (courseKey && TIMELINES[courseKey]) {
+          var t = audio.currentTime || 0;
+          var list = TIMELINES[courseKey];
+          var activeSeg = list[0];
+          for (var i = 0; i < list.length; i++) {
+            if (t >= list[i][0] && t <= list[i][1]) {
+              activeSeg = list[i];
+              break;
+            }
+          }
+          var anchor = document.querySelector(activeSeg[2]);
+          if (anchor) {
+            var blocs = collecterBlocsSection(anchor);
+            var ratio = (t - activeSeg[0]) / Math.max(0.5, activeSeg[1] - activeSeg[0]);
+            if (ratio < 0) ratio = 0;
+            if (ratio > 0.999) ratio = 0.999;
+            var idx = Math.floor(ratio * blocs.length);
+            targetEl = blocs[idx] || anchor;
+          }
+        } else {
+          /* Pages d'animations pas à pas (Positionnement CSS, Décoration CSS, Guichet, Contraintes SQL) */
+          targetEl =
+            document.querySelector(".phrase-retenir-cadre:not([hidden])") ||
+            document.querySelector("#panneau-explication") ||
+            document.querySelector("#explainBox") ||
+            document.querySelector(".tab-pane.active .card") ||
+            document.querySelector("#code-box");
+        }
+
+        if (!targetEl || !targetEl.getBoundingClientRect) {
+          masquerGuide();
+          return;
+        }
+
+        var now = Date.now();
+        if (targetEl !== lastTargetEl) {
+          lastTargetEl = targetEl;
+          var rectCheck = targetEl.getBoundingClientRect();
+          if ((rectCheck.top < 88 || rectCheck.bottom > window.innerHeight - 68) && now - lastScrollAt > 900) {
+            lastScrollAt = now;
+            try {
+              targetEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            } catch (e) {}
+          }
+        }
+
+        var rect = targetEl.getBoundingClientRect();
+        if (rect.bottom < 40 || rect.top > window.innerHeight - 20 || rect.width < 60) {
+          masquerGuide();
+          return;
+        }
+        var g = ensureGuideDom();
+        var padX = 8;
+        var padY = 5;
+        var left = Math.max(8, Math.round(rect.left - padX));
+        var top = Math.max(54, Math.round(rect.top - padY));
+        var width = Math.min(window.innerWidth - left - 8, Math.round(rect.width + padX * 2));
+        var height = Math.min(window.innerHeight - top - 8, Math.round(rect.height + padY * 2));
+        g.style.left = left + "px";
+        g.style.top = top + "px";
+        g.style.width = width + "px";
+        g.style.height = height + "px";
+        g.style.opacity = "1";
+      }
+
+      setInterval(majPositionGuide, 160);
+      window.addEventListener("scroll", function () {
+        if (lastTargetEl) majPositionGuide();
+      }, { passive: true });
+      window.addEventListener("resize", function () {
+        if (lastTargetEl) majPositionGuide();
+      });
+    } catch (e) {}
+  }
+
+  /* ─────────────────────────────────────────────
      Mise en place au chargement
      ───────────────────────────────────────────── */
   function init() {
@@ -1240,6 +1540,7 @@
     checkDevtools();
     installerMasquageAdressePC();
     installerVideosPasAPasSTI();
+    installerGuideVocalEnParlant();
   }
 
   if (document.readyState === "loading") {
