@@ -315,6 +315,15 @@ code {
   box-shadow: 3.5px 3.5px 0 var(--edge);
 }
 html.is-embed body { padding-top: 10px; }
+.mh{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.mh a.back{font:700 12px/1 "Manrope","Inter",system-ui,sans-serif;color:var(--ac);text-decoration:none;border:2px solid var(--edge);border-radius:999px;padding:5px 10px;background:var(--card)}
+a.fn{text-decoration:none;color:inherit}
+a.fn code{border-bottom:2px dashed var(--accent);cursor:pointer}
+a.fn:hover code{background:var(--accent);color:#fff}
+.note a.fn:not(:has(code)){color:var(--ac);font-weight:800;text-decoration:underline}
+.flash{animation:flash 1.4s ease}
+@keyframes flash{0%,55%{box-shadow:0 0 0 5px var(--accent)}100%{box-shadow:4px 4px 0 rgba(16,23,40,.14)}}
+.defphp{margin:0 0 14px}
 </style>
 <script>
 if (location.search.indexOf("embed=1") !== -1 || window.self !== window.top) {
@@ -352,6 +361,7 @@ if (location.search.indexOf("embed=1") !== -1 || window.self !== window.top) {
 </script>
 <main>
 <h1>PHP : voir l'effet, étape par étape</h1>
+<p class="note defphp" id="def-php"><b>PHP</b> (<i>PHP: Hypertext Preprocessor</i>) est un langage de programmation de script exécuté <b>côté serveur</b> : le serveur Web (Apache) interprète le code PHP et n'envoie au navigateur que le résultat, sous forme de HTML. Il sert à créer des pages dynamiques, traiter les formulaires et dialoguer avec une base de données (MySQL). Un fichier PHP porte l'extension <code>.php</code> et son code est placé entre <code>&lt;?php</code> et <code>?&gt;</code>.</p>
 <nav id="tabs">
 <button class="on" data-t="t1">1. include / require</button>
 <button data-t="t3">2. isset / empty</button>
@@ -361,6 +371,7 @@ if (location.search.indexOf("embed=1") !== -1 || window.self !== window.top) {
 <button data-t="t5">6. Conversion</button>
 <button data-t="t6">7. Guillemets ' "</button>
 <button data-t="t9">8. Date et formats</button>
+<button data-t="t10">9. mysqli</button>
 </nav>
 
 <!-- 1 -->
@@ -509,6 +520,182 @@ nom <input type="text" id="n4" value="Ali" size="8">
 <div class="row"><label for="dateFmt">Choisir un format :</label><select id="dateFmt"><option value="Y-m-d">Y-m-d</option><option value="y-m-d">y-m-d</option><option value="d-m-Y">d-m-Y</option><option value="d/m/Y">d/m/Y</option><option value="H:i:s">H:i:s</option></select><button class="btn p" id="dateGo">▶ Voir l'exemple</button></div>
 <div class="out" id="dateOut">Sélectionnez un format puis cliquez.</div>
 <p class="note"><b>Attention :</b> les tirets et les barres obliques sont des séparateurs littéraux. Par exemple, <code>date("Y-m-d")</code> donne année-mois-jour, tandis que <code>date("y-m-d")</code> donne la même structure mais avec l'année sur 2 chiffres. Le résultat réel dépend de la date et du fuseau horaire du serveur PHP.</p>
+</section>
+<!-- 10 : mysqli -->
+<section id="t10" class="sec card">
+<h2 id="m-top" style="font-size:1.1rem;margin-top:0">mysqli : relier PHP à MySQL (style procédural)</h2>
+<p><b>mysqli</b> (« MySQL Improved ») est l'extension de PHP qui fournit les fonctions permettant de communiquer avec un serveur MySQL : se connecter, envoyer des requêtes SQL et lire les résultats.</p>
+<p>Ordre habituel d'un script : <b>connexion → choix de la base → requête → lecture du résultat → fermeture</b>. Cliquez sur une fonction pour aller à sa section.</p>
+<table><thead><tr><th>Fonction (cliquable)</th><th>Rôle</th><th>Valeur renvoyée</th></tr></thead><tbody>
+<tr><td><a class="fn" href="#m-connect"><code>mysqli_connect()</code></a></td><td>Ouvre la connexion au serveur MySQL</td><td>identifiant de connexion, ou <code>false</code></td></tr>
+<tr><td><a class="fn" href="#m-selectdb"><code>mysqli_select_db()</code></a></td><td>Choisit la base de données</td><td><code>true</code> / <code>false</code></td></tr>
+<tr><td><a class="fn" href="#m-query"><code>mysqli_query()</code></a></td><td>Envoie une requête SQL au serveur</td><td>SELECT : objet résultat ; INSERT / UPDATE : <code>true</code> ; erreur : <code>false</code></td></tr>
+<tr><td><a class="fn" href="#m-numrows"><code>mysqli_num_rows()</code></a></td><td>Compte les lignes d'un résultat SELECT</td><td>un entier</td></tr>
+<tr><td><a class="fn" href="#m-fetchrow"><code>mysqli_fetch_row()</code></a></td><td>Lit la ligne suivante (tableau indicé)</td><td>un tableau, ou <code>NULL</code> à la fin</td></tr>
+<tr><td><a class="fn" href="#m-fetcharray"><code>mysqli_fetch_array()</code></a></td><td>Lit la ligne suivante (indices + noms de colonnes)</td><td>un tableau, ou <code>NULL</code> à la fin</td></tr>
+<tr><td><a class="fn" href="#m-close"><code>mysqli_close()</code></a></td><td>Ferme la connexion</td><td><code>true</code></td></tr>
+</tbody></table>
+
+<!-- mysqli_connect -->
+<div class="card" id="m-connect" style="margin-top:14px">
+<h3 class="mh" style="margin-top:0"><span>1. mysqli_connect()</span><a class="back" href="#m-top">↑ tableau</a></h3>
+<p><code>mysqli_connect(serveur, utilisateur, mot_de_passe, base)</code> : le 4ᵉ argument (la base) est facultatif, d'où <b>deux formes</b>.</p>
+<div class="two">
+<div style="min-width:0"><p class="cap">Forme 1 : sans BD (2 instructions)</p><div class="code"><div>$cnx = mysqli_connect("localhost", "root", "");</div><div>mysqli_select_db($cnx, "lycee");</div></div></div>
+<div style="min-width:0"><p class="cap">Forme 2 : avec BD (1 instruction)</p><div class="code"><div>$cnx = mysqli_connect("localhost", "root", "", "lycee");</div></div></div>
+</div>
+<div class="row">
+<label><input type="radio" name="fm1" value="1" checked> forme 1 (sans BD)</label>
+<label><input type="radio" name="fm1" value="2"> forme 2 (avec BD)</label>
+<select id="scm1"><option value="ok">tout est correct</option><option value="pw">accès refusé (utilisateur / mot de passe)</option><option value="nodb">la base « lycee » n'existe pas</option></select>
+<button class="btn p" id="gom1">▶ Exécuter</button>
+</div>
+<p class="cap">Script PHP</p><div class="code" id="cdm1"></div>
+<p class="cap">Résultat dans le navigateur</p><div class="out" id="om1"></div>
+<p class="note"><b>$cnx</b> est l'identifiant de connexion : on le passe en 1<sup>er</sup> argument de <code>mysqli_select_db</code>, <code>mysqli_query</code>, <code>mysqli_close</code>… Avec la forme 2, une base inexistante fait échouer la connexion elle-même ; avec la forme 1, c'est <code>mysqli_select_db</code> qui renvoie <code>false</code>. (Avec PHP 8.1 et plus, une erreur peut s'afficher sous la forme « Fatal error: Uncaught mysqli_sql_exception » selon la configuration du serveur.)</p>
+</div>
+
+<!-- mysqli_select_db -->
+<div class="card" id="m-selectdb" style="margin-top:14px">
+<h3 class="mh" style="margin-top:0"><span>2. mysqli_select_db()</span><a class="back" href="#m-top">↑ tableau</a></h3>
+<p><code>mysqli_select_db(connexion, base)</code> choisit la base de données à utiliser. On en a besoin avec la <a class="fn" href="#m-connect"><b>forme 1</b> de mysqli_connect</a> (connexion sans BD). Elle sert aussi à <b>changer de base</b> en cours de script.</p>
+<div class="code"><div>$cnx = mysqli_connect("localhost", "root", "");</div><div>if (mysqli_select_db($cnx, "lycee")) {</div><div>    echo "Base lycee sélectionnée";</div><div>} else {</div><div>    echo "BD introuvable : " . mysqli_error($cnx);</div><div>}</div></div>
+<table><thead><tr><th>Situation</th><th>Valeur renvoyée</th><th>Message</th></tr></thead><tbody>
+<tr><td>La base existe</td><td><span class="bd t">true</span></td><td>—</td></tr>
+<tr><td>La base n'existe pas</td><td><span class="bd f">false</span></td><td><code>mysqli_error($cnx)</code> → Unknown database 'lycee'</td></tr>
+</tbody></table>
+<p class="note">Le démonstrateur de la section <a class="fn" href="#m-connect"><b>mysqli_connect</b></a> (forme 1, scénario « la base n'existe pas ») montre ce <code>false</code> en action.</p>
+</div>
+
+<!-- mysqli_query -->
+<div class="card" id="m-query" style="margin-top:14px">
+<h3 class="mh" style="margin-top:0"><span>3. mysqli_query() : SELECT, INSERT, UPDATE</span><a class="back" href="#m-top">↑ tableau</a></h3>
+<p>Table utilisée : <code>etudiant (id AUTO_INCREMENT, nom, age)</code>. <code>mysqli_query($cnx, $sql)</code> envoie la requête ; ce qu'elle renvoie dépend de son type.</p>
+<table><thead><tr><th>Requête</th><th>Si elle réussit, $res vaut</th><th>Pour exploiter le résultat</th></tr></thead><tbody>
+<tr><td><b>SELECT</b></td><td>un <b>objet résultat</b> (mysqli_result)</td><td><a class="fn" href="#m-numrows"><code>mysqli_num_rows($res)</code></a>, <a class="fn" href="#m-fetchrow"><code>mysqli_fetch_row($res)</code></a>, <a class="fn" href="#m-fetcharray"><code>mysqli_fetch_array($res)</code></a></td></tr>
+<tr><td><b>INSERT</b></td><td><code>true</code></td><td><code>mysqli_affected_rows($cnx)</code>, <code>mysqli_insert_id($cnx)</code> (id généré)</td></tr>
+<tr><td><b>UPDATE</b> (et DELETE)</td><td><code>true</code></td><td><code>mysqli_affected_rows($cnx)</code> (nombre de lignes modifiées)</td></tr>
+<tr><td>Toute requête en erreur</td><td><code>false</code></td><td><code>mysqli_error($cnx)</code> (message d'erreur)</td></tr>
+</tbody></table>
+
+<div class="note">
+<b>⚠ N'oubliez pas les apostrophes ' ' autour des valeurs de type char, varchar ou date</b>
+<table style="margin:8px 0">
+<thead><tr><th>Type du champ dans la BD</th><th>Dans la requête</th><th>Exemple</th></tr></thead>
+<tbody>
+<tr><td>INT, FLOAT, DECIMAL (nombres)</td><td>sans apostrophes</td><td><code>age = $age</code></td></tr>
+<tr><td>CHAR, VARCHAR, TEXT (texte)</td><td><b>avec</b> ' '</td><td><code>nom = '$nom'</code></td></tr>
+<tr><td>DATE, DATETIME</td><td><b>avec</b> ' '</td><td><code>date_naiss = '$date'</code></td></tr>
+</tbody></table>
+Cette règle vaut pour <b>toute</b> requête : INSERT (<code>VALUES ('$nom', $age)</code>), UPDATE (<code>SET nom = '$nom'</code>), DELETE et SELECT (<code>WHERE nom = '$nom'</code>). Sans apostrophes, MySQL prend le texte pour un <b>nom de colonne</b> et renvoie une erreur. Rappel : les ' ' se placent à l'intérieur de la chaîne PHP délimitée par " " (voir l'onglet « 6. Guillemets »).
+</div>
+
+<div class="row">Requête :
+<select id="qm">
+<optgroup label="Sans variables">
+<option value="sel">SELECT (lecture)</option>
+<option value="ins1">INSERT sans id, colonnes listées ✔</option>
+<option value="ins4">INSERT avec NULL à la place de id ✔</option>
+<option value="ins2">INSERT avec un id déjà existant ✘</option>
+<option value="ins3">INSERT sans id et sans liste de colonnes ✘</option>
+<option value="upd1">UPDATE avec WHERE</option>
+<option value="upd2">UPDATE sans WHERE ⚠</option>
+<option value="upd3">UPDATE avec un id inexistant</option>
+</optgroup>
+<optgroup label="Avec variables PHP : les ' ' autour du texte">
+<option value="insv">INSERT : '$nom' avec apostrophes ✔</option>
+<option value="insx">INSERT : $nom sans apostrophes ✘</option>
+<option value="selv">SELECT WHERE nom = '$nom' ✔</option>
+<option value="selx">SELECT WHERE nom = $nom ✘</option>
+</optgroup>
+</select>
+<button class="btn p" id="goqm">▶ Exécuter</button></div>
+<p class="cap">Script PHP</p><div class="code" id="cdqm"></div>
+<p class="cap">Résultat</p><div class="out" id="oqm"></div>
+<div id="tbqm"></div>
+<div class="note">
+<b>⚠ Attention aux champs AUTO_INCREMENT (ex. id)</b>
+<ul style="margin:6px 0 0;padding-left:20px">
+<li>MySQL attribue lui-même la valeur : ne pas la demander dans le formulaire et ne pas l'imposer dans l'INSERT.</li>
+<li>Deux écritures correctes : <code>INSERT INTO etudiant (nom, age) VALUES (...)</code> (on ne cite pas id) ou <code>INSERT INTO etudiant VALUES (NULL, ...)</code>.</li>
+<li>Toujours lister les colonnes ou mettre <code>NULL</code> à la place de l'id : sinon MySQL attend une valeur pour <b>chaque</b> colonne, id compris.</li>
+<li>Imposer un id déjà utilisé provoque l'erreur <code>Duplicate entry</code>.</li>
+<li>Pour récupérer l'id qui vient d'être généré : <code>mysqli_insert_id($cnx)</code>.</li>
+<li>UPDATE et DELETE : toujours un <code>WHERE</code>, sinon <b>toutes</b> les lignes sont touchées. Un UPDATE renvoie <code>true</code> même si aucune ligne n'est modifiée : <code>true</code> signifie « requête valide », pas « une ligne a changé ».</li>
+</ul>
+</div>
+</div>
+
+<!-- mysqli_num_rows -->
+<div class="card" id="m-numrows" style="margin-top:14px">
+<h3 class="mh" style="margin-top:0"><span>4. mysqli_num_rows()</span><a class="back" href="#m-top">↑ tableau</a></h3>
+<p><code>mysqli_num_rows($res)</code> renvoie le <b>nombre de lignes</b> d'un résultat de <b>SELECT</b>. On l'utilise pour savoir si la requête a trouvé quelque chose avant d'afficher.</p>
+<div class="row"><select id="cn"><option value="all">tous les étudiants</option><option value="a17">age = 17</option><option value="a20">age &gt; 20 (aucun résultat)</option></select>
+<button class="btn p" id="gon">▶ Exécuter</button></div>
+<p class="cap">Script PHP</p><div class="code" id="cdn"></div>
+<p class="cap">Résultat</p><div class="out" id="on"></div>
+<p class="note">Valable uniquement pour un SELECT. Pour un INSERT, un UPDATE ou un DELETE, on utilise <code>mysqli_affected_rows($cnx)</code>. Si la requête a échoué (<code>$res</code> vaut <code>false</code>), <code>mysqli_num_rows</code> provoque une erreur : testez d'abord <code>$res</code>.</p>
+</div>
+
+<!-- mysqli_fetch_row -->
+<div class="card" id="m-fetchrow" style="margin-top:14px">
+<h3 class="mh" style="margin-top:0"><span>5. mysqli_fetch_row()</span><a class="back" href="#m-top">↑ tableau</a></h3>
+<p><code>mysqli_fetch_row($res)</code> lit la <b>ligne suivante</b> du résultat et la renvoie sous forme d'un tableau à <b>indices numériques</b> (0, 1, 2…, dans l'ordre des colonnes). À la fin, elle renvoie <code>NULL</code> : c'est ce qui arrête le <code>while</code>.</p>
+<div class="row"><select id="cf_fr"><option value="all">tous les étudiants</option><option value="a17">age = 17</option><option value="a20">age &gt; 20 (aucun résultat)</option></select>
+<button class="btn p" id="go_fr">▶ Exécuter</button></div>
+<p class="cap">Script PHP</p><div class="code" id="cd_fr"></div>
+<p class="cap">Ce qui se passe à chaque appel</p><div class="out" id="o_fr"></div>
+<p class="note">Accès aux valeurs : <code>$ligne[0]</code>, <code>$ligne[1]</code>… Il faut donc connaître l'ordre des colonnes. Toutes les valeurs lues sont des chaînes.</p>
+</div>
+
+<!-- mysqli_fetch_array -->
+<div class="card" id="m-fetcharray" style="margin-top:14px">
+<h3 class="mh" style="margin-top:0"><span>6. mysqli_fetch_array()</span><a class="back" href="#m-top">↑ tableau</a></h3>
+<p><code>mysqli_fetch_array($res)</code> lit la ligne suivante comme <code>mysqli_fetch_row</code>, mais le tableau contient <b>les indices numériques ET les noms des colonnes</b>. Elle renvoie aussi <code>NULL</code> à la fin.</p>
+<div class="row"><select id="cf_fa"><option value="all">tous les étudiants</option><option value="a17">age = 17</option><option value="a20">age &gt; 20 (aucun résultat)</option></select>
+<button class="btn p" id="go_fa">▶ Exécuter</button></div>
+<p class="cap">Script PHP</p><div class="code" id="cd_fa"></div>
+<p class="cap">Ce qui se passe à chaque appel</p><div class="out" id="o_fa"></div>
+<table><thead><tr><th>Fonction</th><th>Tableau renvoyé</th><th>Accès à une valeur</th></tr></thead><tbody>
+<tr><td><a class="fn" href="#m-fetchrow"><code>mysqli_fetch_row</code></a></td><td>indices numériques seulement</td><td><code>$ligne[1]</code></td></tr>
+<tr><td><code>mysqli_fetch_array</code></td><td>indices numériques <b>et</b> noms des colonnes</td><td><code>$ligne[1]</code> ou <code>$ligne['nom']</code></td></tr>
+</tbody></table>
+<p class="note">L'accès par le nom de colonne est plus lisible et ne dépend pas de l'ordre des colonnes. <code>mysqli_fetch_array($res, MYSQLI_ASSOC)</code> ou <code>mysqli_fetch_assoc($res)</code> ne gardent que les noms.</p>
+</div>
+
+<!-- mysqli_close -->
+<div class="card" id="m-close" style="margin-top:14px">
+<h3 class="mh" style="margin-top:0"><span>7. mysqli_close()</span><a class="back" href="#m-top">↑ tableau</a></h3>
+<div class="code"><div>mysqli_close($cnx);</div></div>
+<p><code>mysqli_close($cnx)</code> ferme la connexion une fois les requêtes terminées. PHP la ferme de toute façon à la fin du script, mais il est correct de le faire explicitement. Après <code>mysqli_close</code>, <code>$cnx</code> ne doit plus être utilisé.</p>
+</div>
+
+<!-- exemple complet -->
+<div class="card" id="m-exemple" style="margin-top:14px">
+<h3 class="mh" style="margin-top:0"><span>Exemple complet</span><a class="back" href="#m-top">↑ tableau</a></h3>
+<pre>&lt;?php
+$cnx = mysqli_connect("localhost", "root", "", "lycee");
+if (!$cnx) {
+    die("Connexion impossible : " . mysqli_connect_error());
+}
+
+$nom = $_POST['nom'];
+$res = mysqli_query($cnx, "SELECT * FROM etudiant WHERE nom = '$nom'");
+if (!$res) {
+    die("Erreur SQL : " . mysqli_error($cnx));
+}
+
+if (mysqli_num_rows($res) == 0) {
+    echo "Aucun étudiant trouvé.";
+} else {
+    while ($ligne = mysqli_fetch_array($res)) {
+        echo $ligne['nom'] . " : " . $ligne['age'] . " ans&lt;br&gt;";
+    }
+}
+
+mysqli_close($cnx);
+?&gt;</pre>
+</div>
 </section>
 </main>
 <script>
@@ -697,6 +884,136 @@ document.getElementById('castGo').onclick=runCast;runCast();
 document.getElementById('mathGo').onclick=()=>{const f=document.getElementById('mathFn').value;let r;if(f==='abs')r=Math.abs(-12.5);else if(f==='sqrt')r=Math.sqrt(81);else if(f==='round')r=Math.round(3.14159*100)/100;else r=Math.floor(Math.random()*6)+1;document.getElementById('mathOut').textContent='Résultat simulé : '+r;};
 /* Exemples de formats date() */
 document.getElementById('dateGo').onclick=()=>{const f=document.getElementById('dateFmt').value;const d={Y:2026,y:'26',m:'10',n:10,d:'09',j:9,H:'16',i:'50',s:'00'};let r='';for(let i=0;i<f.length;i++){const c=f[i];r+=Object.prototype.hasOwnProperty.call(d,c)?d[c]:c;}document.getElementById('dateOut').textContent='date("'+f+'") → '+r+' (exemple pédagogique)';};
+
+/* 10 : mysqli */
+document.querySelectorAll('#t10 a.fn, #t10 a.back').forEach(a=>a.onclick=e=>{
+  e.preventDefault();
+  const t=document.getElementById(a.getAttribute('href').slice(1));if(!t)return;
+  t.scrollIntoView({behavior:'smooth',block:'start'});
+  t.classList.remove('flash');void t.offsetWidth;t.classList.add('flash');
+});
+let tkm1=0;
+function codeM1(){
+  const f=document.querySelector('input[name=fm1]:checked').value;
+  const L=f==='1'
+    ?['$cnx = mysqli_connect("localhost", "root", "");','if (!$cnx) die("Connexion impossible : " . mysqli_connect_error());','if (!mysqli_select_db($cnx, "lycee")) die("BD introuvable : " . mysqli_error($cnx));','echo "Connexion réussie";']
+    :['$cnx = mysqli_connect("localhost", "root", "", "lycee");','if (!$cnx) die("Connexion impossible : " . mysqli_connect_error());','echo "Connexion réussie";'];
+  $('cdm1').innerHTML=L.map(l=>`<div>${esc(l)}</div>`).join('');
+  return f;
+}
+document.querySelectorAll('input[name=fm1]').forEach(r=>r.onchange=codeM1);codeM1();
+$('gom1').onclick=()=>{
+  const f=codeM1(),sc=$('scm1').value,o=$('om1'),box=$('cdm1'),my=++tkm1;
+  o.innerHTML='';
+  const L=[...box.children];
+  const AD="Connexion impossible : Access denied for user 'root'@'localhost' (using password: NO)";
+  let ev=[],stop=false;
+  if(f==='1'){
+    if(sc==='pw'){ev=[[0,'$cnx vaut false : accès refusé','wa'],[1,AD,'ko']];stop=true}
+    else if(sc==='nodb'){ev=[[0,"✔ Connecté au serveur (aucune base choisie pour l'instant)",'ok'],[1,null],[2,'mysqli_select_db renvoie false','wa'],[2,"BD introuvable : Unknown database 'lycee'",'ko']];stop=true}
+    else ev=[[0,'✔ Connecté au serveur MySQL','ok'],[1,null],[2,'✔ mysqli_select_db renvoie true : la base lycee est sélectionnée','ok'],[3,'Connexion réussie','ok']];
+  }else{
+    if(sc==='pw'){ev=[[0,'$cnx vaut false : accès refusé','wa'],[1,AD,'ko']];stop=true}
+    else if(sc==='nodb'){ev=[[0,'$cnx vaut false : la base est vérifiée dès la connexion','wa'],[1,"Connexion impossible : Unknown database 'lycee'",'ko']];stop=true}
+    else ev=[[0,'✔ Connecté au serveur et à la base lycee','ok'],[1,null],[2,'Connexion réussie','ok']];
+  }
+  L.forEach(d=>d.classList.remove('skip','cur'));
+  ev.forEach((e,k)=>setTimeout(()=>{if(my!==tkm1)return;cur(box,e[0]);if(e[1])add(o,esc(e[1]),e[2])},k*800));
+  setTimeout(()=>{
+    if(my!==tkm1)return;
+    if(stop){const last=ev[ev.length-1][0];L.forEach((d,j)=>{if(j>last)d.classList.add('skip')});cur(box,-1);add(o,"⛔ Script arrêté par die() : les lignes suivantes ne sont pas exécutées",'wa')}
+  },ev.length*800);
+};
+
+const BASE=[[1,'Ali',17],[2,'Sami',18],[3,'Amel',17]];
+const tblM=(rows,hl)=>'<table><thead><tr><th>id</th><th>nom</th><th>age</th></tr></thead><tbody>'+rows.map(r=>`<tr class="${hl.includes(r[0])?'me':''}">`+r.map(c=>`<td>${esc(c)}</td>`).join('')+'</tr>').join('')+'</tbody></table>';
+const QM={
+  sel:{pre:[],sql:"SELECT * FROM etudiant WHERE age = 17"},
+  ins1:{pre:[],sql:"INSERT INTO etudiant (nom, age) VALUES ('Nour', 19)"},
+  ins4:{pre:[],sql:"INSERT INTO etudiant VALUES (NULL, 'Nour', 19)"},
+  ins2:{pre:[],sql:"INSERT INTO etudiant (id, nom, age) VALUES (2, 'Nour', 19)"},
+  ins3:{pre:[],sql:"INSERT INTO etudiant VALUES ('Nour', 19)"},
+  upd1:{pre:[],sql:"UPDATE etudiant SET age = 18 WHERE id = 1"},
+  upd2:{pre:[],sql:"UPDATE etudiant SET age = 19"},
+  upd3:{pre:[],sql:"UPDATE etudiant SET age = 18 WHERE id = 99"},
+  insv:{pre:['$nom = "Nour";','$age = 19;'],sql:"INSERT INTO etudiant (nom, age) VALUES ('$nom', $age)",sent:"INSERT INTO etudiant (nom, age) VALUES ('Nour', 19)"},
+  insx:{pre:['$nom = "Nour";','$age = 19;'],sql:"INSERT INTO etudiant (nom, age) VALUES ($nom, $age)",sent:"INSERT INTO etudiant (nom, age) VALUES (Nour, 19)"},
+  selv:{pre:['$nom = "Ali";'],sql:"SELECT * FROM etudiant WHERE nom = '$nom'",sent:"SELECT * FROM etudiant WHERE nom = 'Ali'"},
+  selx:{pre:['$nom = "Ali";'],sql:"SELECT * FROM etudiant WHERE nom = $nom",sent:"SELECT * FROM etudiant WHERE nom = Ali"}
+};
+let tkqm=0;
+function runQM(){
+  const my=++tkqm,k=$('qm').value,Q=QM[k],cd=$('cdqm'),o=$('oqm'),tb=$('tbqm');
+  const lines=Q.pre.concat(['$sql = "'+Q.sql+'";','$res = mysqli_query($cnx, $sql);']);
+  const iS=Q.pre.length;
+  cd.innerHTML=lines.map(l=>`<div>${esc(l)}</div>`).join('');
+  o.innerHTML='';tb.innerHTML='';
+  let rows=BASE.map(r=>r.slice()),hl=[],M=[],cap2='Table après';
+  const sent=Q.sent?[['Requête reçue par MySQL : '+Q.sent,(k==='insx'||k==='selx')?'wa':'ok']]:[];
+  if(k==='sel'){hl=[1,3];cap2='Lignes trouvées (surlignées)';M=[["$res = objet mysqli_result (ce n'est pas un tableau : les lignes ne sont pas encore lues)",'ok'],['Lire le résultat avec mysqli_num_rows($res), puis mysqli_fetch_row ou mysqli_fetch_array','ok']]}
+  else if(k==='ins1'||k==='ins4'){rows.push([4,'Nour',19]);hl=[4];M=[['$res = true','ok'],['mysqli_affected_rows($cnx) → 1','ok'],['mysqli_insert_id($cnx) → 4 (id attribué par AUTO_INCREMENT)','ok']]}
+  else if(k==='ins2'){M=[['$res = false','ko'],["mysqli_error($cnx) → Duplicate entry '2' for key 'PRIMARY'",'ko'],["Cause : l'id 2 est déjà pris. Ne pas imposer l'id : laisser MySQL le choisir.",'wa']]}
+  else if(k==='ins3'){M=[['$res = false','ko'],["mysqli_error($cnx) → Column count doesn't match value count at row 1",'ko'],["Cause : sans liste de colonnes, MySQL attend 3 valeurs (id, nom, age). Lister les colonnes ou mettre NULL pour id.",'wa']]}
+  else if(k==='upd1'){rows[0][2]=18;hl=[1];M=[['$res = true','ok'],['mysqli_affected_rows($cnx) → 1','ok']]}
+  else if(k==='upd2'){rows.forEach(r=>r[2]=19);hl=[1,2,3];M=[['$res = true','ok'],['mysqli_affected_rows($cnx) → 3','wa'],["⚠ Pas de WHERE : toutes les lignes ont été modifiées.",'wa']]}
+  else if(k==='upd3'){M=[["$res = true (la requête est valide, même si aucune ligne n'est concernée)",'ok'],['mysqli_affected_rows($cnx) → 0','wa']]}
+  else if(k==='insv'){rows.push([4,'Nour',19]);hl=[4];M=sent.concat([['$res = true','ok'],['mysqli_affected_rows($cnx) → 1','ok'],['mysqli_insert_id($cnx) → 4','ok'],["✔ Le texte « Nour » est entre apostrophes, le nombre 19 n'en a pas.",'ok']])}
+  else if(k==='insx'){M=sent.concat([['$res = false','ko'],["mysqli_error($cnx) → Unknown column 'Nour' in 'field list'",'ko'],["Cause : sans apostrophes, MySQL croit que Nour est un nom de colonne. Écrire '$nom'.",'wa']])}
+  else if(k==='selv'){hl=[1];cap2='Lignes trouvées (surlignées)';M=sent.concat([['$res = objet mysqli_result','ok'],['mysqli_num_rows($res) → 1','ok']])}
+  else{cap2='Aucune ligne : la requête est en erreur';M=sent.concat([['$res = false','ko'],["mysqli_error($cnx) → Unknown column 'Ali' in 'where clause'",'ko'],["Cause : sans apostrophes, MySQL croit que Ali est un nom de colonne. Écrire '$nom'.",'wa']])}
+  cur(cd,0);
+  if(iS>0)setTimeout(()=>{if(my===tkqm)cur(cd,iS)},400);
+  setTimeout(()=>{if(my===tkqm)cur(cd,iS+1)},iS>0?900:500);
+  const t0=iS>0?1400:1000;
+  M.forEach((m,i)=>setTimeout(()=>{if(my===tkqm)add(o,esc(m[0]),m[1])},t0+i*500));
+  setTimeout(()=>{if(my!==tkqm)return;
+    tb.innerHTML=`<div class="two"><div style="min-width:0"><p class="cap">Table avant</p>${tblM(BASE,[])}</div><div style="min-width:0"><p class="cap">${cap2}</p>${tblM(rows,hl)}</div></div>`},t0+M.length*500);
+}
+$('goqm').onclick=runQM;
+
+const WHERE={all:'',a17:' WHERE age = 17',a20:' WHERE age > 20'};
+const pick=c=>BASE.filter(r=>c==='all'||(c==='a17'?r[2]===17:r[2]>20));
+let tkn=0;
+function codeN(){
+  const c=$('cn').value;
+  $('cdn').innerHTML=['$res = mysqli_query($cnx, "SELECT * FROM etudiant'+WHERE[c]+'");','$nb = mysqli_num_rows($res);','if ($nb == 0) {','    echo "Aucun résultat";','} else {','    echo $nb . " étudiant(s) trouvé(s)";','}'].map(l=>`<div>${esc(l)}</div>`).join('');
+  return c;
+}
+$('cn').onchange=codeN;codeN();
+$('gon').onclick=()=>{
+  const c=codeN(),my=++tkn,box=$('cdn'),o=$('on');o.innerHTML='';
+  const n=pick(c).length;
+  const ev=[[0,null],[1,'mysqli_num_rows($res) → '+n,n?'ok':'wa'],[2,null],n===0?[3,'Aucun résultat','wa']:[5,n+' étudiant(s) trouvé(s)','ok']];
+  ev.forEach((e,k)=>setTimeout(()=>{if(my!==tkn)return;cur(box,e[0]);if(e[1])add(o,esc(e[1]),e[2])},k*700));
+};
+
+function setupFetch(P,mode){
+  const sel=$('cf_'+P),box=$('cd_'+P),o=$('o_'+P);let tk=0;
+  const fn=mode==='row'?'mysqli_fetch_row':'mysqli_fetch_array';
+  const show=mode==='row'?'$ligne[1] . " " . $ligne[2]':'$ligne[\'nom\'] . " " . $ligne[\'age\']';
+  const rep=r=>mode==='row'
+    ?"[0 => '"+r[0]+"', 1 => '"+r[1]+"', 2 => '"+r[2]+"']"
+    :"[0 => '"+r[0]+"', 'id' => '"+r[0]+"', 1 => '"+r[1]+"', 'nom' => '"+r[1]+"', 2 => '"+r[2]+"', 'age' => '"+r[2]+"']";
+  function draw(){
+    const c=sel.value;
+    box.innerHTML=['$res = mysqli_query($cnx, "SELECT * FROM etudiant'+WHERE[c]+'");','echo mysqli_num_rows($res);','while ($ligne = '+fn+'($res)) {','    echo '+show+' . "<br>";','}'].map(l=>`<div>${esc(l)}</div>`).join('');
+    return c;
+  }
+  sel.onchange=draw;draw();
+  $('go_'+P).onclick=()=>{
+    const c=draw(),my=++tk;o.innerHTML='';
+    const rows=pick(c);
+    const ev=[[0,null],[1,'mysqli_num_rows($res) → '+rows.length+(rows.length?'':' (aucune ligne trouvée)'),rows.length?'ok':'wa']];
+    rows.forEach((r,i)=>{
+      ev.push([2,'Appel '+(i+1)+' : $ligne = '+rep(r),'ok']);
+      ev.push([3,'Affichage : '+r[1]+' '+r[2],'ok']);
+    });
+    ev.push([2,"Appel "+(rows.length+1)+" : NULL → la condition du while est fausse, la boucle s'arrête",'wa']);
+    ev.push([4,null]);
+    ev.forEach((e,k)=>setTimeout(()=>{if(my!==tk)return;cur(box,e[0]);if(e[1])add(o,esc(e[1]),e[2])},k*700));
+  };
+}
+setupFetch('fr','row');setupFetch('fa','array');
 </script>
 <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../assets/css/protection.css?v=193" />
