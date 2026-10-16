@@ -1654,18 +1654,47 @@ mysqli_close($connexion);
           "
         >
           <p style="font-weight: 800; font-size: 1.15rem; margin: 0.2rem 0 0.6rem">
-            🎬 Explication synthèse animée — l'exercice pas à pas (8 min, Full HD)
+            🎬 Explication synthèse animée — l'exercice pas à pas (8 min 45, Full HD)
           </p>
           <video
+            id="videoSynthese"
             controls
             preload="metadata"
             playsinline
             style="width: 100%; max-width: 960px; border-radius: 10px; background: #000; box-shadow: 0 8px 30px rgba(0,0,0,0.35)"
-            src="../assets/videos/php-synthese.mp4?v=242"
+            src="../assets/videos/php-synthese.mp4?v=243"
           >
             Votre navigateur ne peut pas lire cette vidéo.
-            <a href="../assets/videos/php-synthese.mp4?v=242">Télécharger la vidéo</a>
+            <a href="../assets/videos/php-synthese.mp4?v=243">Télécharger la vidéo</a>
           </video>
+          <p style="margin: 0.6rem 0 0">
+            <button
+              type="button"
+              id="btnPleinEcranSynthese"
+              class="anim-open"
+              style="background: linear-gradient(120deg, #f4511e, #d81b60); font-weight: 800"
+              title="Afficher la vidéo en plein écran"
+            >
+              ⛶ Plein écran
+            </button>
+          </p>
+          <script>
+            (function () {
+              var btn = document.getElementById("btnPleinEcranSynthese");
+              var video = document.getElementById("videoSynthese");
+              if (!btn || !video) return;
+              btn.addEventListener("click", function () {
+                if (video.requestFullscreen) {
+                  video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) {
+                  video.webkitRequestFullscreen();
+                } else if (video.webkitEnterFullscreen) {
+                  video.webkitEnterFullscreen();
+                }
+                if (video.paused) video.play();
+              });
+            })();
+          </script>
           <p style="margin: 0.7rem auto 0; max-width: 960px; text-align: left">
             À chaque étape : <b>le code à gauche, l'aperçu à droite</b> —
             introduction (dossier sous <code>www</code>/<code>htdocs</code>,
