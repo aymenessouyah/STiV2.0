@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v231";
+var CACHE = "sti-atelier-v232";
 var SHELL = [
   "./",
   "./index.html",
@@ -383,7 +383,12 @@ var OFFLINE_LIST = [
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Images/ExploreTunisie/images/sahara.jpg",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Images/ExploreTunisie/images/sidi-bou-said.jpg",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style.css",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-flex.css",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-float.css",
+  "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-position.css",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/images/djerba.jpg",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/images/presentation.jpg",
   "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/images/sahara.jpg",
@@ -736,6 +741,13 @@ self.addEventListener("message", function (evt) {
           "./assets/css/atelier.css",
           "./assets/css/protection.css",
           "./exercices/series-exercices.html",
+          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html",
+          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html",
+          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html",
+          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style.css",
+          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-flex.css",
+          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-float.css",
+          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-position.css",
           "./exercices/sql/Tp1-bd.html",
           "./exercices/sql/Tp1-Correction-bd.html",
           "./exercices/sql/Tp2-bd.html",

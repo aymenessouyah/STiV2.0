@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Tunisie</title>
+    <link id="feuille-style-active" rel="stylesheet" href="style-float.css">
+</head>
+<body>
+
+    <!-- 1. En-tête du site -->
+    <header class="entete-site">
+        <h1 class="nom-agence">Explore Tunisie</h1>
+        <p class="slogan-agence">Découvrez la beauté de la Tunisie</p>
+    </header>
+
+    <!-- 2. Barre de navigation -->
+    <nav class="barre-navigation">
+        <ul class="liste-navigation">
+            <li><a href="#accueil" class="lien-navigation">Accueil</a></li>
+            <li><a href="#destinations" class="lien-navigation">Destinations</a></li>
+            <li><a href="#inscription" class="lien-navigation">Inscription</a></li>
+            <li><a href="#contact" class="lien-navigation">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main>
+
+        <!-- 3. Section de présentation -->
+        <section id="accueil" class="section-presentation">
+            <h2 class="titre-presentation">Explorez la Tunisie autrement</h2>
+            <p class="texte-presentation">
+                Avec Explore Tunisie, voyagez en toute sérénité : des circuits soigneusement
+                préparés, des guides locaux passionnés, des hébergements de charme et des
+                tarifs transparents. Du bleu de la Méditerranée à l'or du désert, vivez des
+                expériences authentiques, à votre rythme.
+            </p>
+        </section>
+
+        <!-- 4. Section des destinations touristiques -->
+        <section id="destinations" class="section-destinations">
+            <h2 class="titre-section">Nos destinations préférées</h2>
+
+            <div class="liste-destinations">
+
+                <article class="carte-destination">
+                    <span class="etiquette-offre">Offre spéciale</span>
+                    <img class="image-destination" src="images/sidi-bou-said.jpg" alt="Village blanc et bleu de Sidi Bou Saïd">
+                    <h3 class="titre-destination">Sidi Bou Saïd</h3>
+                    <p class="description-destination">
+                        Un village perché sur la falaise, aux maisons blanches, aux portes
+                        bleues et aux bougainvillées, face au golfe de Tunis.
+                    </p>
+                </article>
+
+                <article class="carte-destination">
+                    <img class="image-destination" src="images/sahara.jpg" alt="Dunes et caravane de dromadaires dans le Sahara">
+                    <h3 class="titre-destination">Le Sahara tunisien</h3>
+                    <p class="description-destination">
+                        Des dunes à perte de vue, des nuits sous les étoiles et des balades
+                        à dos de dromadaire autour de Douz et de Tozeur.
+                    </p>
+                </article>
+
+                <article class="carte-destination">
+                    <img class="image-destination" src="images/djerba.jpg" alt="Plage de sable fin et palmiers à Djerba">
+                    <h3 class="titre-destination">Djerba</h3>
+                    <p class="description-destination">
+                        L'île de la douceur : plages de sable fin, eaux turquoise, palmiers
+                        et petits villages traditionnels.
+                    </p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- 5. Section du formulaire d'inscription -->
+        <section id="inscription" class="section-inscription">
+            <h2 class="titre-section">Inscrivez-vous à notre prochain voyage</h2>
+
+            <form class="formulaire-inscription" action="#" method="post">
+
+                <fieldset class="groupe-champs">
+                    <legend class="titre-groupe">Informations personnelles</legend>
+
+                    <div class="ligne-champ">
+                        <label for="nom-prenom">Nom et prénom</label>
+                        <input type="text" id="nom-prenom" name="nom_prenom" class="champ-saisie">
+                    </div>
+
+                    <div class="ligne-champ">
+                        <label for="adresse-email">Adresse électronique</label>
+                        <input type="email" id="adresse-email" name="email" class="champ-saisie">
+                    </div>
+
+                    <div class="ligne-champ">
+                        <label for="date-depart">Date de départ souhaitée</label>
+                        <input type="date" id="date-depart" name="date_depart" class="champ-saisie">
+                    </div>
+                </fieldset>
+
+                <fieldset class="groupe-champs">
+                    <legend class="titre-groupe">Préférences de voyage</legend>
+
+                    <p class="question-groupe">Type de voyage :</p>
+                    <div class="ligne-choix">
+                        <input type="radio" id="voyage-individuel" name="type_voyage" value="individuel">
+                        <label for="voyage-individuel">Voyage individuel</label>
+                    </div>
+                    <div class="ligne-choix">
+                        <input type="radio" id="voyage-famille" name="type_voyage" value="famille">
+                        <label for="voyage-famille">Voyage en famille</label>
+                    </div>
+                    <div class="ligne-choix">
+                        <input type="radio" id="voyage-groupe" name="type_voyage" value="groupe">
+                        <label for="voyage-groupe">Voyage en groupe</label>
+                    </div>
+
+                    <p class="question-groupe">Activités souhaitées :</p>
+                    <div class="ligne-choix">
+                        <input type="checkbox" id="activite-monuments" name="activites" value="monuments">
+                        <label for="activite-monuments">Visite des monuments</label>
+                    </div>
+                    <div class="ligne-choix">
+                        <input type="checkbox" id="activite-desert" name="activites" value="desert">
+                        <label for="activite-desert">Excursion dans le désert</label>
+                    </div>
+                    <div class="ligne-choix">
+                        <input type="checkbox" id="activite-mer" name="activites" value="mer">
+                        <label for="activite-mer">Activités en bord de mer</label>
+                    </div>
+
+                    <div class="ligne-champ">
+                        <label for="destination-choisie">Destination</label>
+                        <select id="destination-choisie" name="destination" class="champ-saisie">
+                            <option value="sidi-bou-said">Sidi Bou Saïd</option>
+                            <option value="sahara">Le Sahara tunisien</option>
+                            <option value="djerba">Djerba</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="bouton-validation">Valider mon inscription</button>
+            </form>
+        </section>
+
+        <!-- 6. Gestion du débordement : overflow -->
+        <section id="circuits" class="section-circuits">
+            <h2 class="titre-section">Présentation de nos circuits</h2>
+
+            <div class="liste-blocs-circuits">
+
+                <div class="bloc-circuit bloc-circuit-hidden">
+                    <h3 class="titre-bloc-circuit">overflow : hidden</h3>
+                    <p>
+                        Nos circuits vous font découvrir la Tunisie sous toutes ses facettes.
+                        Le circuit « Cap Bon et Nord » vous mène de Tunis à Sidi Bou Saïd, puis
+                        vers les plages de Hammamet et de Kelibia. Le circuit « Sahara » relie
+                        Tozeur, Douz et Chott el-Jérid, avec une nuit sous tente au cœur des
+                        dunes. Le circuit « Île de Djerba » combine détente en bord de mer,
+                        visite de Houmt Souk et rencontre avec les artisans potiers de Guellala.
+                        Enfin, le circuit « Patrimoine » traverse Carthage, Dougga, Kairouan et
+                        El Jem pour un voyage à travers vingt-cinq siècles d'histoire.
+                    </p>
+                </div>
+
+                <div class="bloc-circuit bloc-circuit-auto">
+                    <h3 class="titre-bloc-circuit">overflow : auto</h3>
+                    <p>
+                        Nos circuits vous font découvrir la Tunisie sous toutes ses facettes.
+                        Le circuit « Cap Bon et Nord » vous mène de Tunis à Sidi Bou Saïd, puis
+                        vers les plages de Hammamet et de Kelibia. Le circuit « Sahara » relie
+                        Tozeur, Douz et Chott el-Jérid, avec une nuit sous tente au cœur des
+                        dunes. Le circuit « Île de Djerba » combine détente en bord de mer,
+                        visite de Houmt Souk et rencontre avec les artisans potiers de Guellala.
+                        Enfin, le circuit « Patrimoine » traverse Carthage, Dougga, Kairouan et
+                        El Jem pour un voyage à travers vingt-cinq siècles d'histoire.
+                    </p>
+                </div>
+
+                <div class="bloc-circuit bloc-circuit-scroll">
+                    <h3 class="titre-bloc-circuit">overflow : scroll</h3>
+                    <p>
+                        Nos circuits vous font découvrir la Tunisie sous toutes ses facettes.
+                        Le circuit « Cap Bon et Nord » vous mène de Tunis à Sidi Bou Saïd, puis
+                        vers les plages de Hammamet et de Kelibia. Le circuit « Sahara » relie
+                        Tozeur, Douz et Chott el-Jérid, avec une nuit sous tente au cœur des
+                        dunes. Le circuit « Île de Djerba » combine détente en bord de mer,
+                        visite de Houmt Souk et rencontre avec les artisans potiers de Guellala.
+                        Enfin, le circuit « Patrimoine » traverse Carthage, Dougga, Kairouan et
+                        El Jem pour un voyage à travers vingt-cinq siècles d'histoire.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 7. Section des informations supplémentaires -->
+        <section id="infos" class="section-infos">
+            <details class="rubrique-infos">
+                <summary class="titre-rubrique">Conditions et informations pratiques</summary>
+                <p>
+                    <strong>Réservation :</strong> toute réservation est confirmée après le
+                    versement d'un acompte de 30 %. L'annulation est gratuite jusqu'à 15 jours
+                    avant le départ.
+                </p>
+                <p>
+                    <strong>Horaires :</strong> l'agence vous accueille du lundi au vendredi,
+                    de 9h00 à 18h00, et le samedi de 9h00 à 13h00.
+                </p>
+                <p>
+                    <strong>Recommandations :</strong> munissez-vous d'un passeport valide,
+                    de vêtements légers, d'un chapeau et d'une protection solaire. Pour les
+                    excursions dans le désert, prévoyez aussi une tenue chaude pour la nuit.
+                </p>
+            </details>
+        </section>
+
+    </main>
+
+    <!-- 8. Pied de page -->
+    <footer id="contact" class="pied-page">
+        <p class="texte-pied-page">Explore Tunisie — Tous droits réservés</p>
+        <a href="mailto:contact@exploretunisie.tn" class="lien-contact">Nous contacter</a>
+    </footer>
+
+    <script>
+      window.__APP_OK = true;
+      (function () {
+        var modeActif = "flex";
+        var sUrl = String(window.location.search || "") + String(window.location.pathname || "");
+        if (sUrl.indexOf("float") !== -1) modeActif = "float";
+        else if (sUrl.indexOf("position") !== -1) modeActif = "position";
+
+        /* Barre flottante en bas à gauche : sélecteur des 3 solutions CSS + bouton Voir le code */
+        var bar = document.createElement("div");
+        bar.id = "barre-solutions-explore";
+        bar.style.cssText = "position:fixed;left:14px;bottom:14px;z-index:99999;display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 10px;border-radius:16px;border:2px solid #101728;background:#0f172a;color:#fff;font:800 12px/1 system-ui,-apple-system,sans-serif;box-shadow:3px 3px 0 #101728;";
+        bar.innerHTML =
+          '<span style="color:#94a3b8;font-size:11.5px;padding:0 4px;">Méthode CSS :</span>' +
+          '<button type="button" id="btn-mode-flex" style="padding:7px 12px;border-radius:999px;border:1.5px solid #f2c14e;background:#f2c14e;color:#0a3d55;font-weight:800;font-size:12px;cursor:pointer;">📐 1. Flexbox</button>' +
+          '<button type="button" id="btn-mode-float" style="padding:7px 12px;border-radius:999px;border:1.5px solid #475569;background:#1e293b;color:#f8fafc;font-weight:800;font-size:12px;cursor:pointer;">🌊 2. Float</button>' +
+          '<button type="button" id="btn-mode-position" style="padding:7px 12px;border-radius:999px;border:1.5px solid #475569;background:#1e293b;color:#f8fafc;font-weight:800;font-size:12px;cursor:pointer;">📌 3. Position</button>' +
+          '<button type="button" id="btn-open-code-exp" style="padding:7px 14px;border-radius:999px;border:1.5px solid #38bdf8;background:#0284c7;color:#fff;font-weight:900;font-size:12px;cursor:pointer;margin-left:4px;">💻 Voir le code corrigé (HTML + 3 CSS)</button>';
+        document.body.appendChild(bar);
+
+        var mod = document.createElement("div");
+        mod.id = "modale-code-explore";
+        mod.style.cssText = "display:none;position:fixed;inset:0;z-index:100000;background:rgba(10,25,38,.88);padding:16px;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;";
+        mod.innerHTML =
+          '<div style="width:min(1040px,96vw);max-height:90vh;background:#0f172a;color:#f8fafc;border:2px solid #f2c14e;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.6);">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;background:#1e293b;border-bottom:1px solid #334155;flex-wrap:wrap;">' +
+              '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+                '<button type="button" id="tab-html-exp" style="padding:7px 12px;border-radius:999px;border:none;background:#f2c14e;color:#0a3d55;font-weight:800;font-size:12px;cursor:pointer;">📄 index.html</button>' +
+                '<button type="button" id="tab-css-flex" style="padding:7px 12px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12px;cursor:pointer;">📐 Solution 1 : Flexbox (style-flex.css)</button>' +
+                '<button type="button" id="tab-css-float" style="padding:7px 12px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12px;cursor:pointer;">🌊 Solution 2 : Float (style-float.css)</button>' +
+                '<button type="button" id="tab-css-position" style="padding:7px 12px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12px;cursor:pointer;">📌 Solution 3 : Position (style-position.css)</button>' +
+                '<button type="button" id="tab-css-comp" style="padding:7px 12px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12px;cursor:pointer;">⚖️ Comparatif des 3 méthodes</button>' +
+              '</div>' +
+              '<div style="display:flex;gap:8px;">' +
+                '<button type="button" id="close-code-exp" style="padding:6px 13px;border-radius:999px;border:1px solid #64748b;background:#334155;color:#fff;font-weight:800;font-size:12px;cursor:pointer;">✕ Fermer</button>' +
+              '</div>' +
+            '</div>' +
+            '<pre id="pre-code-exp" style="margin:0;padding:16px;overflow:auto;flex:1;font:500 12.5px/1.55 Consolas,ui-monospace,monospace;color:#e2e8f0;white-space:pre;"></pre>' +
+          '</div>';
+        document.body.appendChild(mod);
+
+        var linkCss = document.getElementById("feuille-style-active");
+        var bModeFlex = document.getElementById("btn-mode-flex");
+        var bModeFloat = document.getElementById("btn-mode-float");
+        var bModePos = document.getElementById("btn-mode-position");
+        var bOpenCode = document.getElementById("btn-open-code-exp");
+
+        var preEl = document.getElementById("pre-code-exp");
+        var bHtml = document.getElementById("tab-html-exp");
+        var bCssFlex = document.getElementById("tab-css-flex");
+        var bCssFloat = document.getElementById("tab-css-float");
+        var bCssPos = document.getElementById("tab-css-position");
+        var bCssComp = document.getElementById("tab-css-comp");
+        var bClose = document.getElementById("close-code-exp");
+
+        var cacheTextes = {};
+        var texteComparatif =
+          "========================================================================================\n" +
+          "  TP EXPLORE TUNISIE — COMPARATIF DES 3 SOLUTIONS D'ALIGNEMENT CÔTE À CÔTE (STI)\n" +
+          "========================================================================================\n\n" +
+          "Le fichier HTML (index.html) reste 100 % IDENTIQUE dans les 3 solutions.\n" +
+          "Seule la feuille de style CSS change pour aligner :\n" +
+          "  1) Les liens du menu (.liste-navigation)\n" +
+          "  2) Les 3 cartes des destinations (.liste-destinations > .carte-destination)\n" +
+          "  3) Les 3 blocs circuits overflow (.liste-blocs-circuits > .bloc-circuit)\n\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "  MÉTHODE 1 : AVEC FLEXBOX (style-flex.css)\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "• Principe : On applique display: flex sur le conteneur parent direct.\n" +
+          "• Menu :\n" +
+          "    .liste-navigation {\n" +
+          "        display: flex;\n" +
+          "        justify-content: center;\n" +
+          "    }\n" +
+          "• 3 Cartes Destinations & 3 Blocs Circuits :\n" +
+          "    .liste-destinations, .liste-blocs-circuits {\n" +
+          "        display: flex;\n" +
+          "        justify-content: space-between;\n" +
+          "    }\n" +
+          "    .carte-destination, .bloc-circuit {\n" +
+          "        width: 31%;\n" +
+          "    }\n" +
+          "• Avantage : Répartition automatique de l'espace restant (9% répartis en 2 espaces de 4.5%).\n\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "  MÉTHODE 2 : AVEC FLOAT (style-float.css)\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "• Principe : Chaque élément enfant flotte à gauche (float: left) avec une marge droite,\n" +
+          "  et le parent utilise overflow: hidden (et clear: both sur la section suivante).\n" +
+          "• Menu :\n" +
+          "    .liste-navigation { display: inline-block; overflow: hidden; }\n" +
+          "    .liste-navigation li { float: left; }\n" +
+          "• 3 Cartes Destinations & 3 Blocs Circuits (3 x 31% + 2 x 3.5% = 100%) :\n" +
+          "    .liste-destinations, .liste-blocs-circuits {\n" +
+          "        width: 100%;\n" +
+          "        overflow: hidden;\n" +
+          "    }\n" +
+          "    .carte-destination, .bloc-circuit {\n" +
+          "        float: left;\n" +
+          "        width: 31%;\n" +
+          "        margin-right: 3.5%;\n" +
+          "    }\n" +
+          "    .carte-destination:last-child, .bloc-circuit:last-child {\n" +
+          "        margin-right: 0;\n" +
+          "    }\n" +
+          "    section { clear: both; }\n\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "  MÉTHODE 3 : AVEC POSITION (style-position.css)\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "• Principe : Le conteneur parent est en position: relative avec une hauteur fixe (height),\n" +
+          "  et chaque enfant est placé en position: absolute avec top et left / right.\n" +
+          "• 3 Cartes Destinations :\n" +
+          "    .liste-destinations {\n" +
+          "        position: relative;\n" +
+          "        width: 100%;\n" +
+          "        height: 390px;\n" +
+          "    }\n" +
+          "    .carte-destination {\n" +
+          "        position: absolute;\n" +
+          "        top: 0;\n" +
+          "        width: 31%;\n" +
+          "    }\n" +
+          "    .carte-destination:nth-child(1) { left: 0%; }\n" +
+          "    .carte-destination:nth-child(2) { left: 34.5%; }\n" +
+          "    .carte-destination:nth-child(3) { right: 0%; }\n" +
+          "• 3 Blocs Circuits :\n" +
+          "    .liste-blocs-circuits { position: relative; width: 100%; height: 190px; }\n" +
+          "    .bloc-circuit { position: absolute; top: 0; width: 31%; height: 180px; }\n" +
+          "    .bloc-circuit-hidden { left: 0%; overflow: hidden; }\n" +
+          "    .bloc-circuit-auto   { left: 34.5%; overflow: auto; }\n" +
+          "    .bloc-circuit-scroll { right: 0%; overflow: scroll; }\n";
+
+        function majBoutonsMode(m) {
+          modeActif = m;
+          var mapFichier = {
+            flex: "style-flex.css",
+            float: "style-float.css",
+            position: "style-position.css"
+          };
+          if (linkCss) {
+            linkCss.setAttribute("href", mapFichier[m] || "style.css");
+          }
+          var pairs = [
+            [bModeFlex, "flex"],
+            [bModeFloat, "float"],
+            [bModePos, "position"]
+          ];
+          for (var i = 0; i < pairs.length; i++) {
+            var b = pairs[i][0];
+            var k = pairs[i][1];
+            if (!b) continue;
+            if (k === m) {
+              b.style.background = "#f2c14e";
+              b.style.color = "#0a3d55";
+              b.style.borderColor = "#f2c14e";
+            } else {
+              b.style.background = "#1e293b";
+              b.style.color = "#f8fafc";
+              b.style.borderColor = "#475569";
+            }
+          }
+        }
+
+        function activerOnglet(type) {
+          var onglets = [
+            [bHtml, "html"],
+            [bCssFlex, "flex"],
+            [bCssFloat, "float"],
+            [bCssPos, "position"],
+            [bCssComp, "comp"]
+          ];
+          for (var i = 0; i < onglets.length; i++) {
+            var btnT = onglets[i][0];
+            var cleT = onglets[i][1];
+            if (!btnT) continue;
+            if (cleT === type) {
+              btnT.style.background = "#f2c14e";
+              btnT.style.color = "#0a3d55";
+              btnT.style.border = "none";
+            } else {
+              btnT.style.background = "transparent";
+              btnT.style.color = "#e2e8f0";
+              btnT.style.border = "1px solid #64748b";
+            }
+          }
+          if (type === "comp") {
+            preEl.textContent = texteComparatif;
+            return;
+          }
+          var fichierCible =
+            type === "html" ? "index.html" :
+            type === "float" ? "style-float.css" :
+            type === "position" ? "style-position.css" : "style-flex.css";
+
+          if (cacheTextes[fichierCible]) {
+            preEl.textContent = cacheTextes[fichierCible];
+            return;
+          }
+          fetch(fichierCible).then(function (r) { return r.text(); }).then(function (t) {
+            if (type === "html") {
+              var idx = t.indexOf("<script>\n      window.__APP_OK");
+              var cleanHtml = idx !== -1 ? (t.substring(0, idx).trim() + "\n\n</body>\n</html>") : t;
+              cleanHtml = cleanHtml.replace('id="feuille-style-active" rel="stylesheet" href="style-float.css"', 'rel="stylesheet" href="style.css"');
+              cacheTextes[fichierCible] = cleanHtml;
+            } else {
+              cacheTextes[fichierCible] = t;
+            }
+            preEl.textContent = cacheTextes[fichierCible];
+          }).catch(function () {
+            preEl.textContent = "Impossible de charger " + fichierCible;
+          });
+        }
+
+        bModeFlex.onclick = function () { majBoutonsMode("flex"); };
+        bModeFloat.onclick = function () { majBoutonsMode("float"); };
+        bModePos.onclick = function () { majBoutonsMode("position"); };
+
+        bOpenCode.onclick = function () {
+          mod.style.display = "flex";
+          activerOnglet(modeActif);
+        };
+        bHtml.onclick = function () { activerOnglet("html"); };
+        bCssFlex.onclick = function () { majBoutonsMode("flex"); activerOnglet("flex"); };
+        bCssFloat.onclick = function () { majBoutonsMode("float"); activerOnglet("float"); };
+        bCssPos.onclick = function () { majBoutonsMode("position"); activerOnglet("position"); };
+        bCssComp.onclick = function () { activerOnglet("comp"); };
+        bClose.onclick = function () { mod.style.display = "none"; };
+        mod.onclick = function (e) { if (e.target === mod) mod.style.display = "none"; };
+
+        majBoutonsMode(modeActif);
+      })();
+    </script>
+</body>
+</html>

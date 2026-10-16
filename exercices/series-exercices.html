@@ -888,11 +888,11 @@
                 <li>Couleurs, alignement du texte, suppression des puces et du soulignement</li>
                 <li>Image d’arrière-plan (<code>background-image</code>, <code>background-repeat</code>, <code>background-size</code>)</li>
                 <li><code>border-radius</code> et <code>box-shadow</code></li>
-                <li>Positionnement : <code>sticky</code>, <code>relative</code>, <code>absolute</code> avec <code>top</code> et <code>right</code></li>
+                <li><strong>3 solutions de mise en page proposées :</strong> <strong>1) Avec Flexbox</strong> (<code>display: flex</code>, <code>justify-content</code>), <strong>2) Avec Float</strong> (<code>float: left</code>, <code>overflow: hidden</code>, <code>clear: both</code>) et <strong>3) Avec Position</strong> (<code>position: sticky</code>, <code>relative</code>, <code>absolute</code> avec <code>top</code>, <code>left</code> et <code>right</code>)</li>
                 <li><code>overflow</code> (hidden, auto, scroll)</li>
               </ul>
             </div>
-            <div class="exo-actions">
+            <div class="exo-actions" style="flex-wrap:wrap;">
               <button
                 class="enonce"
                 onclick="openPdfModal('html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.html', 'TP Explore Tunisie — Énoncé')"
@@ -908,9 +908,21 @@
               </a>
               <button
                 class="corrige"
-                onclick="openPdfModal('html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html', 'TP Explore Tunisie — Aperçu + Corrigé')"
+                onclick="openPdfModal('html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html?v=232', 'TP Explore Tunisie — Solution 1 : Avec Flexbox (display: flex)')"
               >
-                Aperçu + Corrigé
+                📐 Corrigé 1 : Flexbox
+              </button>
+              <button
+                class="corrige"
+                onclick="openPdfModal('html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html?v=232', 'TP Explore Tunisie — Solution 2 : Avec Float (float: left)')"
+              >
+                🌊 Corrigé 2 : Float
+              </button>
+              <button
+                class="corrige"
+                onclick="openPdfModal('html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html?v=232', 'TP Explore Tunisie — Solution 3 : Avec Position (relative & absolute)')"
+              >
+                📌 Corrigé 3 : Position
               </button>
             </div>
           </div>

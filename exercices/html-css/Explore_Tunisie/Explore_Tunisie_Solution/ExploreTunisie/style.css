@@ -1,5 +1,5 @@
 /* ==========================================================
-   Explore Tunisie - Feuille de style
+   Explore Tunisie - SOLUTION 1 : AVEC FLEXBOX (display: flex)
    Unités utilisées : px et % uniquement
    ========================================================== */
 
@@ -50,10 +50,11 @@ section {
     color: #f2c14e;
 }
 
-/* ---------- Barre de navigation ---------- */
+/* ---------- Barre de navigation (MÉTHODE FLEX) ---------- */
 .barre-navigation {
     position: sticky;
     top: 0;
+    z-index: 100;
     width: 100%;
     background-color: #0a3d55;
 }
@@ -108,7 +109,7 @@ section {
     text-shadow: 1px 1px 4px #000000;
 }
 
-/* ---------- Destinations touristiques ---------- */
+/* ---------- Destinations touristiques (MÉTHODE FLEX) ---------- */
 .section-destinations {
     width: 90%;
     margin: 0 auto;
@@ -244,7 +245,7 @@ section {
     background-color: #c8102e;
 }
 
-/* ---------- Gestion du débordement : overflow ---------- */
+/* ---------- Gestion du débordement : overflow (MÉTHODE FLEX) ---------- */
 .section-circuits {
     width: 90%;
     margin: 0 auto;

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explore Tunisie</title>
-    <link rel="stylesheet" href="style.css">
+    <link id="feuille-style-active" rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -227,18 +227,35 @@
     <script>
       window.__APP_OK = true;
       (function () {
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.textContent = "💻 Voir le code corrigé (index.html & style.css)";
-        btn.style.cssText = "position:fixed;left:14px;bottom:14px;z-index:99999;padding:9px 15px;border-radius:999px;border:2px solid #101728;background:#f2c14e;color:#0a3d55;font:800 12.5px/1 system-ui,-apple-system,sans-serif;cursor:pointer;box-shadow:3px 3px 0 #101728;";
+        var modeActif = "flex";
+        var sUrl = String(window.location.search || "") + String(window.location.pathname || "");
+        if (sUrl.indexOf("float") !== -1) modeActif = "float";
+        else if (sUrl.indexOf("position") !== -1) modeActif = "position";
+
+        /* Barre flottante en bas à gauche : sélecteur des 3 solutions CSS + bouton Voir le code */
+        var bar = document.createElement("div");
+        bar.id = "barre-solutions-explore";
+        bar.style.cssText = "position:fixed;left:14px;bottom:14px;z-index:99999;display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:7px 10px;border-radius:16px;border:2px solid #101728;background:#0f172a;color:#fff;font:800 12px/1 system-ui,-apple-system,sans-serif;box-shadow:3px 3px 0 #101728;";
+        bar.innerHTML =
+          '<span style="color:#94a3b8;font-size:11.5px;padding:0 4px;">Méthode CSS :</span>' +
+          '<button type="button" id="btn-mode-flex" style="padding:7px 12px;border-radius:999px;border:1.5px solid #f2c14e;background:#f2c14e;color:#0a3d55;font-weight:800;font-size:12px;cursor:pointer;">📐 1. Flexbox</button>' +
+          '<button type="button" id="btn-mode-float" style="padding:7px 12px;border-radius:999px;border:1.5px solid #475569;background:#1e293b;color:#f8fafc;font-weight:800;font-size:12px;cursor:pointer;">🌊 2. Float</button>' +
+          '<button type="button" id="btn-mode-position" style="padding:7px 12px;border-radius:999px;border:1.5px solid #475569;background:#1e293b;color:#f8fafc;font-weight:800;font-size:12px;cursor:pointer;">📌 3. Position</button>' +
+          '<button type="button" id="btn-open-code-exp" style="padding:7px 14px;border-radius:999px;border:1.5px solid #38bdf8;background:#0284c7;color:#fff;font-weight:900;font-size:12px;cursor:pointer;margin-left:4px;">💻 Voir le code corrigé (HTML + 3 CSS)</button>';
+        document.body.appendChild(bar);
+
         var mod = document.createElement("div");
-        mod.style.cssText = "display:none;position:fixed;inset:0;z-index:100000;background:rgba(10,25,38,.86);padding:18px;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;";
+        mod.id = "modale-code-explore";
+        mod.style.cssText = "display:none;position:fixed;inset:0;z-index:100000;background:rgba(10,25,38,.88);padding:16px;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;";
         mod.innerHTML =
-          '<div style="width:min(980px,96vw);max-height:90vh;background:#0f172a;color:#f8fafc;border:2px solid #f2c14e;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.6);">' +
-            '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;background:#1e293b;border-bottom:1px solid #334155;flex-wrap:wrap;">' +
-              '<div style="display:flex;gap:8px;">' +
-                '<button type="button" id="tab-html-exp" style="padding:7px 14px;border-radius:999px;border:none;background:#f2c14e;color:#0a3d55;font-weight:800;font-size:12.5px;cursor:pointer;">📄 index.html</button>' +
-                '<button type="button" id="tab-css-exp" style="padding:7px 14px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12.5px;cursor:pointer;">🎨 style.css</button>' +
+          '<div style="width:min(1040px,96vw);max-height:90vh;background:#0f172a;color:#f8fafc;border:2px solid #f2c14e;border-radius:16px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.6);">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;background:#1e293b;border-bottom:1px solid #334155;flex-wrap:wrap;">' +
+              '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+                '<button type="button" id="tab-html-exp" style="padding:7px 12px;border-radius:999px;border:none;background:#f2c14e;color:#0a3d55;font-weight:800;font-size:12px;cursor:pointer;">📄 index.html</button>' +
+                '<button type="button" id="tab-css-flex" style="padding:7px 12px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12px;cursor:pointer;">📐 Solution 1 : Flexbox (style-flex.css)</button>' +
+                '<button type="button" id="tab-css-float" style="padding:7px 12px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12px;cursor:pointer;">🌊 Solution 2 : Float (style-float.css)</button>' +
+                '<button type="button" id="tab-css-position" style="padding:7px 12px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12px;cursor:pointer;">📌 Solution 3 : Position (style-position.css)</button>' +
+                '<button type="button" id="tab-css-comp" style="padding:7px 12px;border-radius:999px;border:1px solid #64748b;background:transparent;color:#e2e8f0;font-weight:700;font-size:12px;cursor:pointer;">⚖️ Comparatif des 3 méthodes</button>' +
               '</div>' +
               '<div style="display:flex;gap:8px;">' +
                 '<button type="button" id="close-code-exp" style="padding:6px 13px;border-radius:999px;border:1px solid #64748b;background:#334155;color:#fff;font-weight:800;font-size:12px;cursor:pointer;">✕ Fermer</button>' +
@@ -246,38 +263,196 @@
             '</div>' +
             '<pre id="pre-code-exp" style="margin:0;padding:16px;overflow:auto;flex:1;font:500 12.5px/1.55 Consolas,ui-monospace,monospace;color:#e2e8f0;white-space:pre;"></pre>' +
           '</div>';
-        document.body.appendChild(btn);
         document.body.appendChild(mod);
-        var codeHtmlCache = "";
-        var codeCssCache = "";
-        var preEl = mod.querySelector("#pre-code-exp");
-        var bHtml = mod.querySelector("#tab-html-exp");
-        var bCss = mod.querySelector("#tab-css-exp");
-        function activerOnglet(type) {
-          if (type === "html") {
-            bHtml.style.background = "#f2c14e"; bHtml.style.color = "#0a3d55"; bHtml.style.border = "none";
-            bCss.style.background = "transparent"; bCss.style.color = "#e2e8f0"; bCss.style.border = "1px solid #64748b";
-            if (codeHtmlCache) { preEl.textContent = codeHtmlCache; return; }
-            fetch("index.html").then(function (r) { return r.text(); }).then(function (t) {
-              var idx = t.indexOf("<script>\n      window.__APP_OK");
-              codeHtmlCache = idx !== -1 ? (t.substring(0, idx).trim() + "\n\n</body>\n</html>") : t;
-              preEl.textContent = codeHtmlCache;
-            }).catch(function () { preEl.textContent = "Impossible de charger index.html"; });
-          } else {
-            bCss.style.background = "#f2c14e"; bCss.style.color = "#0a3d55"; bCss.style.border = "none";
-            bHtml.style.background = "transparent"; bHtml.style.color = "#e2e8f0"; bHtml.style.border = "1px solid #64748b";
-            if (codeCssCache) { preEl.textContent = codeCssCache; return; }
-            fetch("style.css").then(function (r) { return r.text(); }).then(function (t) {
-              codeCssCache = t;
-              preEl.textContent = codeCssCache;
-            }).catch(function () { preEl.textContent = "Impossible de charger style.css"; });
+
+        var linkCss = document.getElementById("feuille-style-active");
+        var bModeFlex = document.getElementById("btn-mode-flex");
+        var bModeFloat = document.getElementById("btn-mode-float");
+        var bModePos = document.getElementById("btn-mode-position");
+        var bOpenCode = document.getElementById("btn-open-code-exp");
+
+        var preEl = document.getElementById("pre-code-exp");
+        var bHtml = document.getElementById("tab-html-exp");
+        var bCssFlex = document.getElementById("tab-css-flex");
+        var bCssFloat = document.getElementById("tab-css-float");
+        var bCssPos = document.getElementById("tab-css-position");
+        var bCssComp = document.getElementById("tab-css-comp");
+        var bClose = document.getElementById("close-code-exp");
+
+        var cacheTextes = {};
+        var texteComparatif =
+          "========================================================================================\n" +
+          "  TP EXPLORE TUNISIE — COMPARATIF DES 3 SOLUTIONS D'ALIGNEMENT CÔTE À CÔTE (STI)\n" +
+          "========================================================================================\n\n" +
+          "Le fichier HTML (index.html) reste 100 % IDENTIQUE dans les 3 solutions.\n" +
+          "Seule la feuille de style CSS change pour aligner :\n" +
+          "  1) Les liens du menu (.liste-navigation)\n" +
+          "  2) Les 3 cartes des destinations (.liste-destinations > .carte-destination)\n" +
+          "  3) Les 3 blocs circuits overflow (.liste-blocs-circuits > .bloc-circuit)\n\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "  MÉTHODE 1 : AVEC FLEXBOX (style-flex.css)\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "• Principe : On applique display: flex sur le conteneur parent direct.\n" +
+          "• Menu :\n" +
+          "    .liste-navigation {\n" +
+          "        display: flex;\n" +
+          "        justify-content: center;\n" +
+          "    }\n" +
+          "• 3 Cartes Destinations & 3 Blocs Circuits :\n" +
+          "    .liste-destinations, .liste-blocs-circuits {\n" +
+          "        display: flex;\n" +
+          "        justify-content: space-between;\n" +
+          "    }\n" +
+          "    .carte-destination, .bloc-circuit {\n" +
+          "        width: 31%;\n" +
+          "    }\n" +
+          "• Avantage : Répartition automatique de l'espace restant (9% répartis en 2 espaces de 4.5%).\n\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "  MÉTHODE 2 : AVEC FLOAT (style-float.css)\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "• Principe : Chaque élément enfant flotte à gauche (float: left) avec une marge droite,\n" +
+          "  et le parent utilise overflow: hidden (et clear: both sur la section suivante).\n" +
+          "• Menu :\n" +
+          "    .liste-navigation { display: inline-block; overflow: hidden; }\n" +
+          "    .liste-navigation li { float: left; }\n" +
+          "• 3 Cartes Destinations & 3 Blocs Circuits (3 x 31% + 2 x 3.5% = 100%) :\n" +
+          "    .liste-destinations, .liste-blocs-circuits {\n" +
+          "        width: 100%;\n" +
+          "        overflow: hidden;\n" +
+          "    }\n" +
+          "    .carte-destination, .bloc-circuit {\n" +
+          "        float: left;\n" +
+          "        width: 31%;\n" +
+          "        margin-right: 3.5%;\n" +
+          "    }\n" +
+          "    .carte-destination:last-child, .bloc-circuit:last-child {\n" +
+          "        margin-right: 0;\n" +
+          "    }\n" +
+          "    section { clear: both; }\n\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "  MÉTHODE 3 : AVEC POSITION (style-position.css)\n" +
+          "----------------------------------------------------------------------------------------\n" +
+          "• Principe : Le conteneur parent est en position: relative avec une hauteur fixe (height),\n" +
+          "  et chaque enfant est placé en position: absolute avec top et left / right.\n" +
+          "• 3 Cartes Destinations :\n" +
+          "    .liste-destinations {\n" +
+          "        position: relative;\n" +
+          "        width: 100%;\n" +
+          "        height: 390px;\n" +
+          "    }\n" +
+          "    .carte-destination {\n" +
+          "        position: absolute;\n" +
+          "        top: 0;\n" +
+          "        width: 31%;\n" +
+          "    }\n" +
+          "    .carte-destination:nth-child(1) { left: 0%; }\n" +
+          "    .carte-destination:nth-child(2) { left: 34.5%; }\n" +
+          "    .carte-destination:nth-child(3) { right: 0%; }\n" +
+          "• 3 Blocs Circuits :\n" +
+          "    .liste-blocs-circuits { position: relative; width: 100%; height: 190px; }\n" +
+          "    .bloc-circuit { position: absolute; top: 0; width: 31%; height: 180px; }\n" +
+          "    .bloc-circuit-hidden { left: 0%; overflow: hidden; }\n" +
+          "    .bloc-circuit-auto   { left: 34.5%; overflow: auto; }\n" +
+          "    .bloc-circuit-scroll { right: 0%; overflow: scroll; }\n";
+
+        function majBoutonsMode(m) {
+          modeActif = m;
+          var mapFichier = {
+            flex: "style-flex.css",
+            float: "style-float.css",
+            position: "style-position.css"
+          };
+          if (linkCss) {
+            linkCss.setAttribute("href", mapFichier[m] || "style.css");
+          }
+          var pairs = [
+            [bModeFlex, "flex"],
+            [bModeFloat, "float"],
+            [bModePos, "position"]
+          ];
+          for (var i = 0; i < pairs.length; i++) {
+            var b = pairs[i][0];
+            var k = pairs[i][1];
+            if (!b) continue;
+            if (k === m) {
+              b.style.background = "#f2c14e";
+              b.style.color = "#0a3d55";
+              b.style.borderColor = "#f2c14e";
+            } else {
+              b.style.background = "#1e293b";
+              b.style.color = "#f8fafc";
+              b.style.borderColor = "#475569";
+            }
           }
         }
-        btn.onclick = function () { mod.style.display = "flex"; activerOnglet("html"); };
+
+        function activerOnglet(type) {
+          var onglets = [
+            [bHtml, "html"],
+            [bCssFlex, "flex"],
+            [bCssFloat, "float"],
+            [bCssPos, "position"],
+            [bCssComp, "comp"]
+          ];
+          for (var i = 0; i < onglets.length; i++) {
+            var btnT = onglets[i][0];
+            var cleT = onglets[i][1];
+            if (!btnT) continue;
+            if (cleT === type) {
+              btnT.style.background = "#f2c14e";
+              btnT.style.color = "#0a3d55";
+              btnT.style.border = "none";
+            } else {
+              btnT.style.background = "transparent";
+              btnT.style.color = "#e2e8f0";
+              btnT.style.border = "1px solid #64748b";
+            }
+          }
+          if (type === "comp") {
+            preEl.textContent = texteComparatif;
+            return;
+          }
+          var fichierCible =
+            type === "html" ? "index.html" :
+            type === "float" ? "style-float.css" :
+            type === "position" ? "style-position.css" : "style-flex.css";
+
+          if (cacheTextes[fichierCible]) {
+            preEl.textContent = cacheTextes[fichierCible];
+            return;
+          }
+          fetch(fichierCible).then(function (r) { return r.text(); }).then(function (t) {
+            if (type === "html") {
+              var idx = t.indexOf("<script>\n      window.__APP_OK");
+              var cleanHtml = idx !== -1 ? (t.substring(0, idx).trim() + "\n\n</body>\n</html>") : t;
+              cleanHtml = cleanHtml.replace('id="feuille-style-active" rel="stylesheet" href="style.css"', 'rel="stylesheet" href="style.css"');
+              cacheTextes[fichierCible] = cleanHtml;
+            } else {
+              cacheTextes[fichierCible] = t;
+            }
+            preEl.textContent = cacheTextes[fichierCible];
+          }).catch(function () {
+            preEl.textContent = "Impossible de charger " + fichierCible;
+          });
+        }
+
+        bModeFlex.onclick = function () { majBoutonsMode("flex"); };
+        bModeFloat.onclick = function () { majBoutonsMode("float"); };
+        bModePos.onclick = function () { majBoutonsMode("position"); };
+
+        bOpenCode.onclick = function () {
+          mod.style.display = "flex";
+          activerOnglet(modeActif);
+        };
         bHtml.onclick = function () { activerOnglet("html"); };
-        bCss.onclick = function () { activerOnglet("css"); };
-        mod.querySelector("#close-code-exp").onclick = function () { mod.style.display = "none"; };
+        bCssFlex.onclick = function () { majBoutonsMode("flex"); activerOnglet("flex"); };
+        bCssFloat.onclick = function () { majBoutonsMode("float"); activerOnglet("float"); };
+        bCssPos.onclick = function () { majBoutonsMode("position"); activerOnglet("position"); };
+        bCssComp.onclick = function () { activerOnglet("comp"); };
+        bClose.onclick = function () { mod.style.display = "none"; };
         mod.onclick = function (e) { if (e.target === mod) mod.style.display = "none"; };
+
+        majBoutonsMode(modeActif);
       })();
     </script>
 </body>
