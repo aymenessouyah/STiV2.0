@@ -1835,7 +1835,7 @@ mysqli_close($connexion);
           (<code>let</code>, <code>innerHTML</code>, <code>alert()</code>) et
           quatre pages PHP — mais avec une nouvelle base
           <code>station</code> et sa table
-          <code>recharges(Id, Nom_prenom, Kwh, DateRecharge)</code>, où la
+          <code>recharges(Id, Nom_prenom, Borne, Kwh, DateRecharge, HeureRecharge)</code>, où la
           première lettre de l'Id donne le <b>type de recharge</b> :
           <b>L</b> Lente, <b>N</b> Normale, <b>R</b> Rapide, <b>U</b> Ultra-rapide.
         </p>
@@ -1875,8 +1875,8 @@ mysqli_close($connexion);
         </p>
         <ul>
           <li><b>HTML + CSS</b> : <code>index.html</code>, <code>inscription.html</code> et <code>style.css</code> — mise en page avec <code>float</code> (sans <code>flex</code>), effets de <code>transition</code> détaillés (<code>all</code>, <code>ease</code>, <code>ease-in</code>, <code>ease-out</code>, <code>ease-in-out</code>), une couleur par type de recharge.</li>
-          <li><b>JavaScript</b> : <code>validation.js</code> — <code>let</code>, Id commençant par une majuscule, nom du conducteur nettoyé (lettres et espaces, 2 à 5 mots), énergie entre 1 et 100 kWh, date non future ; <code>innerHTML</code> et <code>alert()</code>.</li>
-          <li><b>PHP</b> : <code>ajouter.php</code>, <code>liste.php</code>, <code>modifier.php</code>, <code>statistiques.php</code> (avec le coût estimé selon le tarif du type) — sans <code>mysqli_real_escape_string</code>.</li>
+          <li><b>JavaScript</b> : <code>validation.js</code> — <code>let</code>, Id commençant par une majuscule, nom du conducteur nettoyé (lettres et espaces, 2 à 5 mots), énergie entre 1 et 100 kWh, date non future, <b>heure fixée dans les horaires 8h00-12h00 / 13h00-18h00</b>, <b>horloge affichée dès l'entrée</b> ; <code>innerHTML</code> et <code>alert()</code>. La page index change de couleur au hasard parmi 3 couleurs.</li>
+          <li><b>PHP</b> : <code>ajouter.php</code> (<b>vérification de la disponibilité</b> de la station avant insertion), <code>liste.php</code>, <code>modifier.php</code>, <code>statistiques.php</code> (coût estimé selon le tarif du type + <b>tableau de disponibilité des stations du jour</b>) — sans <code>mysqli_real_escape_string</code>.</li>
         </ul>
         <p style="text-align: center">
           <a href="../documents/complet/recharge-ve.zip" download class="anim-open" style="display: inline-block; background: linear-gradient(120deg, #166534, #16a34a); color: #fff; border-radius: 8px; padding: 0.6rem 1.2rem; font-weight: 800; text-decoration: none">⬇ Télécharger le corrigé complet (dossier recharge-ve + station.sql)</a>
@@ -2338,28 +2338,28 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
               <p><b>Correction HTML + CSS</b> — l'organisation du site (<code>index.html</code>), le formulaire (<code>inscription.html</code>) et le style commun (<code>style.css</code>) : mise en page avec <code>float</code> (aucun <code>flex</code>) et effets de <code>transition</code> au survol et au focus. Pensez à importer d'abord la base <code>ecole.sql</code>.</p>
               <h4>🌐 index.html — header (logo + texte), nav à gauche, iframe à droite, footer</h4>
               <pre><code>&lt;!DOCTYPE html&gt;
-&lt;html lang="fr"&gt;
+&lt;html lang=&quot;fr&quot;&gt;
 &lt;head&gt;
-   &lt;meta charset="utf-8"&gt;
+   &lt;meta charset=&quot;utf-8&quot;&gt;
    &lt;title&gt;Gestion des élèves&lt;/title&gt;
-   &lt;link rel="stylesheet" href="style.css"&gt;
+   &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
 
 &lt;header&gt;
-   &lt;img src="logo.png" alt="Logo du lycée"&gt;
+   &lt;img src=&quot;logo.svg&quot; alt=&quot;Logo du lycée&quot;&gt;
    &lt;h1&gt;Gestion des élèves — Lycée Raféha&lt;/h1&gt;
 &lt;/header&gt;
 
-&lt;div class="milieu"&gt;
+&lt;div class=&quot;milieu&quot;&gt;
    &lt;nav&gt;
-      &lt;a href="inscription.html" target="cadre"&gt;📝 Inscription&lt;/a&gt;
-      &lt;a href="liste.php" target="cadre"&gt;📋 Liste des élèves&lt;/a&gt;
-      &lt;a href="modifier.php" target="cadre"&gt;✏️ Mise à jour&lt;/a&gt;
-      &lt;a href="statistiques.php" target="cadre"&gt;📊 Statistiques&lt;/a&gt;
+      &lt;a href=&quot;inscription.html&quot; target=&quot;cadre&quot;&gt;📝 Inscription&lt;/a&gt;
+      &lt;a href=&quot;liste.php&quot; target=&quot;cadre&quot;&gt;📋 Liste des élèves&lt;/a&gt;
+      &lt;a href=&quot;modifier.php&quot; target=&quot;cadre&quot;&gt;✏️ Mise à jour&lt;/a&gt;
+      &lt;a href=&quot;statistiques.php&quot; target=&quot;cadre&quot;&gt;📊 Statistiques&lt;/a&gt;
    &lt;/nav&gt;
    &lt;section&gt;
-      &lt;iframe name="cadre" src="inscription.html"&gt;&lt;/iframe&gt;
+      &lt;iframe name=&quot;cadre&quot; src=&quot;inscription.html&quot;&gt;&lt;/iframe&gt;
    &lt;/section&gt;
 &lt;/div&gt;
 
@@ -2369,37 +2369,37 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
 &lt;/html&gt;</code></pre>
               <h4>🌐 inscription.html — le formulaire d'ajout (envoyé vers ajouter.php, dans l'iframe)</h4>
               <pre><code>&lt;!DOCTYPE html&gt;
-&lt;html lang="fr"&gt;
+&lt;html lang=&quot;fr&quot;&gt;
 &lt;head&gt;
-   &lt;meta charset="utf-8"&gt;
-   &lt;title&gt;Inscription d'un élève&lt;/title&gt;
-   &lt;link rel="stylesheet" href="style.css"&gt;
+   &lt;meta charset=&quot;utf-8&quot;&gt;
+   &lt;title&gt;Inscription d&#x27;un élève&lt;/title&gt;
+   &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
 
-&lt;h2&gt;📝 Inscription d'un élève&lt;/h2&gt;
+&lt;h2&gt;📝 Inscription d&#x27;un élève&lt;/h2&gt;
 
-&lt;form method="post" action="ajouter.php" target="cadre"
-      onsubmit="return validerInscription()"&gt;
+&lt;form method=&quot;post&quot; action=&quot;ajouter.php&quot; target=&quot;cadre&quot;
+      onsubmit=&quot;return validerInscription()&quot;&gt;
    &lt;label&gt;Id (ex. A01) :&lt;/label&gt;
-   &lt;input type="text" id="Id" name="Id"&gt;&lt;br&gt;
+   &lt;input type=&quot;text&quot; id=&quot;Id&quot; name=&quot;Id&quot;&gt;&lt;br&gt;
 
    &lt;label&gt;Nom et prénom :&lt;/label&gt;
-   &lt;input type="text" id="Nom_prenom" name="Nom_prenom"&gt;&lt;br&gt;
+   &lt;input type=&quot;text&quot; id=&quot;Nom_prenom&quot; name=&quot;Nom_prenom&quot;&gt;&lt;br&gt;
 
    &lt;label&gt;Moyenne :&lt;/label&gt;
-   &lt;input type="number" id="Moyenne" name="Moyenne" step="0.01"&gt;&lt;br&gt;
+   &lt;input type=&quot;number&quot; id=&quot;Moyenne&quot; name=&quot;Moyenne&quot; step=&quot;0.01&quot;&gt;&lt;br&gt;
 
    &lt;label&gt;Date de naissance :&lt;/label&gt;
-   &lt;input type="date" id="DateNaissance" name="DateNaissance"&gt;&lt;br&gt;
+   &lt;input type=&quot;date&quot; id=&quot;DateNaissance&quot; name=&quot;DateNaissance&quot;&gt;&lt;br&gt;
 
-   &lt;p id="message"&gt;&lt;/p&gt;
+   &lt;p id=&quot;message&quot;&gt;&lt;/p&gt;
 
-   &lt;input type="submit" name="ok" value="Ajouter"&gt;
-   &lt;input type="reset" value="Effacer"&gt;
+   &lt;input type=&quot;submit&quot; name=&quot;ok&quot; value=&quot;Ajouter&quot;&gt;
+   &lt;input type=&quot;reset&quot; value=&quot;Effacer&quot;&gt;
 &lt;/form&gt;
 
-&lt;script src="validation.js"&gt;&lt;/script&gt;
+&lt;script src=&quot;validation.js&quot;&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
               <h4>🎨 style.css — mise en page avec float (sans flex), transitions, formulaires, tableaux, couleurs par Catégorie</h4>
@@ -2485,7 +2485,7 @@ input {
    margin-top: 4px;
    border: 1px solid #999;
    border-radius: 6px;
-   /* Transition douce de la bordure et de l'ombre au focus */
+   /* Transition douce de la bordure et de l&#x27;ombre au focus */
    transition: all 0.3s ease-in-out; /* all : bordure, ombre... tout est animé */
 }
 input:focus {
@@ -2493,7 +2493,7 @@ input:focus {
    box-shadow: 0 0 6px rgba(244, 81, 30, 0.5);
    outline: none;
 }
-input[type="submit"], input[type="reset"] {
+input[type=&quot;submit&quot;], input[type=&quot;reset&quot;] {
    width: auto;
    cursor: pointer;
    font-weight: bold;
@@ -2505,8 +2505,8 @@ input[type="submit"], input[type="reset"] {
    /* Transition : fond et agrandissement progressifs au survol */
    transition: transform 0.2s ease-in, background-color 0.3s ease-out, opacity 0.3s ease;
 }
-input[type="reset"] { background: #64748b; }
-input[type="submit"]:hover, input[type="reset"]:hover {
+input[type=&quot;reset&quot;] { background: #64748b; }
+input[type=&quot;submit&quot;]:hover, input[type=&quot;reset&quot;]:hover {
    opacity: 0.9;
    transform: scale(1.06); /* le bouton grandit doucement */
 }
@@ -2521,7 +2521,7 @@ tr:nth-child(even) { background: #eef2ff; }
 tr { transition: background-color 0.3s ease; }
 tr:hover { background: #ffe9e0; }
 
-/* --- Une couleur par Catégorie (première lettre de l'Id) --- */
+/* --- Une couleur par Catégorie (première lettre de l&#x27;Id) --- */
 .cat-A { background: #dcfce7; color: #166534; font-weight: bold; }
 .cat-B { background: #dbeafe; color: #1e40af; font-weight: bold; }
 .cat-C { background: #fef3c7; color: #92400e; font-weight: bold; }
@@ -2530,22 +2530,22 @@ tr:hover { background: #ffe9e0; }
             <div class="sol-panel" id="solPanel-js" hidden>
               <p><b>Correction JavaScript</b> — <code>validation.js</code> contrôle la saisie avant l'envoi, avec des variables déclarées par <code>let</code> : Id commençant par une majuscule ; Nom_prenom d'abord nettoyé (espaces superflus éliminés), composé uniquement de lettres et d'espaces, avec 2 à 5 mots ; Moyenne entre 0 et 20 ; DateNaissance remplie et dans le passé. En cas d'erreur, le message s'affiche dans la page avec <code>innerHTML</code> et dans une boîte <code>alert()</code>, et l'envoi est annulé.</p>
               <h4>🟨 validation.js</h4>
-              <pre><code>// ===== validation.js : contrôler la saisie avant l'envoi =====
+              <pre><code>// ===== validation.js : contrôler la saisie avant l&#x27;envoi =====
 // Variables déclarées avec let ; messages avec innerHTML et alert()
 
 function afficherErreur(texte) {
-   let message = document.getElementById("message");
+   let message = document.getElementById(&quot;message&quot;);
    message.innerHTML = texte; // message affiché dans la page
    alert(texte);              // ... et dans une boîte de dialogue
-   return false;              // l'envoi du formulaire est annulé
+   return false;              // l&#x27;envoi du formulaire est annulé
 }
 
 function commenceParMajuscule(texte) {
-   return texte.length &gt; 0 &amp;&amp; texte[0] &gt;= "A" &amp;&amp; texte[0] &lt;= "Z";
+   return texte.length &gt; 0 &amp;&amp; texte[0] &gt;= &quot;A&quot; &amp;&amp; texte[0] &lt;= &quot;Z&quot;;
 }
 
 function dateDansLePasse(valeur) {
-   if (valeur == "") return false;
+   if (valeur == &quot;&quot;) return false;
    let saisie = new Date(valeur);
    let aujourdHui = new Date();
    return saisie &lt;= aujourdHui;
@@ -2554,7 +2554,7 @@ function dateDansLePasse(valeur) {
 // Éliminer les espaces superflus : au début, à la fin,
 // et plusieurs espaces de suite remplacés par un seul
 function nettoyerNomPrenom(valeur) {
-   return valeur.trim().replace(/\s+/g, " ");
+   return valeur.trim().replace(/\s+/g, &quot; &quot;);
 }
 
 // Nom_prenom correct : uniquement des lettres (accentuées acceptées)
@@ -2562,37 +2562,37 @@ function nettoyerNomPrenom(valeur) {
 function nomPrenomCorrect(valeur) {
    let lettresEtEspaces = /^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/;
    if (!lettresEtEspaces.test(valeur)) return false;
-   let mots = valeur.split(" ");
+   let mots = valeur.split(&quot; &quot;);
    return mots.length &gt;= 2 &amp;&amp; mots.length &lt;= 5;
 }
 
 // Contrôles communs : Id, Moyenne, DateNaissance
 function controlesCommuns() {
-   let Id = document.getElementById("Id").value;
-   let Moyenne = document.getElementById("Moyenne").value;
-   let DateNaissance = document.getElementById("DateNaissance").value;
-   let message = document.getElementById("message");
+   let Id = document.getElementById(&quot;Id&quot;).value;
+   let Moyenne = document.getElementById(&quot;Moyenne&quot;).value;
+   let DateNaissance = document.getElementById(&quot;DateNaissance&quot;).value;
+   let message = document.getElementById(&quot;message&quot;);
 
    if (!commenceParMajuscule(Id)) {
-      return afficherErreur("Erreur : l'Id doit commencer par une lettre en majuscule.");
+      return afficherErreur(&quot;Erreur : l&#x27;Id doit commencer par une lettre en majuscule.&quot;);
    }
-   if (Moyenne == "" || isNaN(Moyenne) || Moyenne &lt; 0 || Moyenne &gt; 20) {
-      return afficherErreur("Erreur : la Moyenne doit être un nombre entre 0 et 20.");
+   if (Moyenne == &quot;&quot; || isNaN(Moyenne) || Moyenne &lt; 0 || Moyenne &gt; 20) {
+      return afficherErreur(&quot;Erreur : la Moyenne doit être un nombre entre 0 et 20.&quot;);
    }
    if (!dateDansLePasse(DateNaissance)) {
-      return afficherErreur("Erreur : la Date de naissance doit être remplie et ne pas être dans le futur.");
+      return afficherErreur(&quot;Erreur : la Date de naissance doit être remplie et ne pas être dans le futur.&quot;);
    }
-   message.innerHTML = "";
+   message.innerHTML = &quot;&quot;;
    return true;
 }
 
 // Page inscription.html : on contrôle aussi le Nom_prenom
 function validerInscription() {
-   let champNom = document.getElementById("Nom_prenom");
+   let champNom = document.getElementById(&quot;Nom_prenom&quot;);
    let NomPrenom = nettoyerNomPrenom(champNom.value);
-   champNom.value = NomPrenom; // c'est le nom nettoyé qui sera envoyé
+   champNom.value = NomPrenom; // c&#x27;est le nom nettoyé qui sera envoyé
    if (!nomPrenomCorrect(NomPrenom)) {
-      return afficherErreur("Erreur : le Nom et le Prénom ne doivent contenir que des lettres et des espaces, avec 2 à 5 mots (ex. Benali Amine).");
+      return afficherErreur(&quot;Erreur : le Nom et le Prénom ne doivent contenir que des lettres et des espaces, avec 2 à 5 mots (ex. Benali Amine).&quot;);
    }
    return controlesCommuns();
 }
@@ -2605,155 +2605,155 @@ function validerModification() {
             <div class="sol-panel" id="solPanel-php" hidden>
               <p><b>Correction PHP — tout le point 10</b>, adaptée au site : <code>ajouter.php</code> reçoit le formulaire d'<code>inscription.html</code> et affiche le résultat dans l'iframe. Aucune page n'utilise <code>mysqli_real_escape_string</code>, et chaque Id commence par une lettre en majuscule (sa Catégorie).</p>
               <h4>🐘 ajouter.php — insertion (10.1)</h4><pre><code>&lt;?php
-$connexion = mysqli_connect("localhost", "root", "");
-mysqli_select_db($connexion, "ecole");
+$connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
+mysqli_select_db($connexion, &quot;ecole&quot;);
 ?&gt;
-&lt;link rel="stylesheet" href="style.css"&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
 &lt;?php
-if (isset($_POST["ok"])) {
-   $Id = $_POST['Id'];
+if (isset($_POST[&quot;ok&quot;])) {
+   $Id = $_POST[&#x27;Id&#x27;];
    // Chaque Id commence par une lettre en majuscule (la Catégorie : A, B, C…)
    $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
-   $Nom_prenom = $_POST['Nom_prenom'];
-   $Moyenne = (float)$_POST['Moyenne'];
-   $DateNaissance = $_POST['DateNaissance'];
+   $Nom_prenom = $_POST[&#x27;Nom_prenom&#x27;];
+   $Moyenne = (float)$_POST[&#x27;Moyenne&#x27;];
+   $DateNaissance = $_POST[&#x27;DateNaissance&#x27;];
 
-   $req = "INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance)
-           VALUES ('$Id', '$Nom_prenom', $Moyenne, '$DateNaissance')";
+   $req = &quot;INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance)
+           VALUES (&#x27;$Id&#x27;, &#x27;$Nom_prenom&#x27;, $Moyenne, &#x27;$DateNaissance&#x27;)&quot;;
    if (mysqli_query($connexion, $req)) {
-      echo "Élève ajouté (Id = $Id).";
+      echo &quot;Élève ajouté (Id = $Id).&quot;;
    } else {
-      echo "Erreur : " . mysqli_error($connexion);
+      echo &quot;Erreur : &quot; . mysqli_error($connexion);
    }
 }
 mysqli_close($connexion);
 ?&gt;
-&lt;p&gt;&lt;a href="inscription.html"&gt;← Ajouter un autre élève&lt;/a&gt;&lt;/p&gt;</code></pre><h5>🔍 Détail ligne par ligne — ajouter.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>&lt;?php … ?&gt;</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Délimite le script exécuté côté serveur (le HTML hors balises est affiché tel quel).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>—</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_connect("localhost", "root", "")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui ouvre la connexion au serveur MySQL. Paramètres (attributs) : hôte, utilisateur, mot de passe (4ᵉ paramètre possible : le nom de la base). Le résultat est rangé dans <code>$connexion</code>.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Objet de connexion (mysqli) ou <code>false</code> si échec</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_select_db($connexion, "ecole")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui choisit la base de travail sur la connexion ouverte.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen (<code>true</code>/<code>false</code>)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>isset($_POST["ok"])</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Vérifie que le bouton d'envoi « ok » a bien été cliqué avant de traiter.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$_POST['Id']</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Superglobale : données envoyées par le formulaire (méthode post).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau associatif de chaînes (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>substr($Id, 0, 1) / substr($Id, 1)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Extrait le 1ᵉʳ caractère / le reste de la chaîne.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>strtoupper(…)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Convertit une chaîne en majuscules — ici : la 1ʳᵉ lettre de l'Id, donc sa Catégorie.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>. (point)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Opérateur de concaténation : colle deux chaînes.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>(float)$_POST['Moyenne']</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Conversion explicite (cast) de la saisie en nombre réel.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Nombre réel (float)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$req = "INSERT INTO …"</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">La requête SQL est d'abord construite dans une variable.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui exécute la requête. Pour INSERT/UPDATE/DELETE : succès ou échec seulement.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen (<code>true</code>/<code>false</code>)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_error($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Message d'erreur de la dernière requête (à afficher en cas d'échec).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>echo</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Instruction d'affichage : envoie du texte vers la page.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Affichage (pas de retour)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_close($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Ferme proprement la connexion à la fin du script.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr></table><h4>🐘 liste.php — sélection (10.2)</h4><pre><code>&lt;?php
-$connexion = mysqli_connect("localhost", "root", "");
-mysqli_select_db($connexion, "ecole");
+&lt;p&gt;&lt;a href=&quot;inscription.html&quot;&gt;← Ajouter un autre élève&lt;/a&gt;&lt;/p&gt;</code></pre><h5>🔍 Détail ligne par ligne — ajouter.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>&lt;?php … ?&gt;</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Délimite le script exécuté côté serveur (le HTML hors balises est affiché tel quel).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>—</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_connect("localhost", "root", "")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui ouvre la connexion au serveur MySQL. Paramètres (attributs) : hôte, utilisateur, mot de passe (4ᵉ paramètre possible : le nom de la base). Le résultat est rangé dans <code>$connexion</code>.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Objet de connexion (mysqli) ou <code>false</code> si échec</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_select_db($connexion, "ecole")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui choisit la base de travail sur la connexion ouverte.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen (<code>true</code>/<code>false</code>)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>isset($_POST["ok"])</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Vérifie que le bouton d'envoi « ok » a bien été cliqué avant de traiter.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$_POST['Id']</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Superglobale : données envoyées par le formulaire (méthode post).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau associatif de chaînes (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>substr($Id, 0, 1) / substr($Id, 1)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Extrait le 1ᵉʳ caractère / le reste de la chaîne.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>strtoupper(…)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Convertit une chaîne en majuscules — ici : la 1ʳᵉ lettre de l'Id, donc sa Catégorie.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>. (point)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Opérateur de concaténation : colle deux chaînes.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>(float)$_POST['Moyenne']</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Conversion explicite (cast) de la saisie en nombre réel.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Nombre réel (float)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$req = "INSERT INTO …"</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">La requête SQL est d'abord construite dans une variable.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui exécute la requête. Pour INSERT/UPDATE/DELETE : succès ou échec seulement.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen (<code>true</code>/<code>false</code>)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_error($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Message d'erreur de la dernière requête (à afficher en cas d'échec).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>echo</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Instruction d'affichage : envoie du texte vers la page.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Affichage (pas de retour)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_close($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Ferme proprement la connexion à la fin du script.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr></table><h4>🐘 liste.php — sélection (10.2)</h4><pre><code>&lt;?php
+$connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
+mysqli_select_db($connexion, &quot;ecole&quot;);
 
-$req = "SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves ORDER BY Nom_prenom";
+$req = &quot;SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves ORDER BY Nom_prenom&quot;;
 $resultat = mysqli_query($connexion, $req);
 ?&gt;
-&lt;link rel="stylesheet" href="style.css"&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
 &lt;h2&gt;📋 Liste des élèves&lt;/h2&gt;
 &lt;table&gt;
    &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Nom et prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;/tr&gt;
    &lt;?php while ($ligne = mysqli_fetch_array($resultat)) { ?&gt;
    &lt;tr&gt;
-      &lt;td&gt;&lt;?php echo $ligne["Id"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["Nom_prenom"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["Moyenne"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["DateNaissance"]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;Id&quot;]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;Nom_prenom&quot;]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;Moyenne&quot;]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;DateNaissance&quot;]; ?&gt;&lt;/td&gt;
    &lt;/tr&gt;
    &lt;?php } ?&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;?php echo mysqli_num_rows($resultat); ?&gt; élève(s) au total.&lt;/p&gt;
 &lt;?php mysqli_close($connexion); ?&gt;</code></pre><h5>🔍 Détail ligne par ligne — liste.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req) avec SELECT</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Exécute la sélection (triée par Nom_prenom). ⚠ Différence avec INSERT : ici on récupère les lignes.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Objet résultat (<code>mysqli_result</code>) ou <code>false</code></b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>while ($ligne = mysqli_fetch_array($resultat))</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Lit une ligne du résultat à chaque tour ; l'affectation est testée dans la condition de la boucle.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau, ou <code>null</code> quand il n'y a plus de ligne → la boucle s'arrête</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_fetch_array(…)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui extrait la ligne courante du résultat (voir le comparatif ci-dessous).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau à double accès : indexé <code>$ligne[0]</code> ET associatif <code>$ligne["Id"]</code></b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$ligne["Nom_prenom"]</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Accès à une colonne par son nom (tableau associatif).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Valeur de la colonne (string/nombre)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_num_rows($resultat)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Compte les lignes du résultat SELECT déjà exécuté (utilisé ici pour « élève(s) au total »).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Entier (int)</b></td></tr></table><h4>🐘 modifier.php — mise à jour (10.3)</h4><pre><code>&lt;?php
-$connexion = mysqli_connect("localhost", "root", "");
-mysqli_select_db($connexion, "ecole");
+$connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
+mysqli_select_db($connexion, &quot;ecole&quot;);
 
-if (isset($_POST["ok"])) {
-   $Id = $_POST['Id'];
+if (isset($_POST[&quot;ok&quot;])) {
+   $Id = $_POST[&#x27;Id&#x27;];
    // Chaque Id commence par une lettre en majuscule (la Catégorie : A, B, C…)
    $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
-   $Moyenne = (float)$_POST['Moyenne'];
-   $DateNaissance = $_POST['DateNaissance'];
+   $Moyenne = (float)$_POST[&#x27;Moyenne&#x27;];
+   $DateNaissance = $_POST[&#x27;DateNaissance&#x27;];
 
-   $req = "UPDATE eleves
-           SET Moyenne = $Moyenne, DateNaissance = '$DateNaissance'
-           WHERE Id = '$Id'";
+   $req = &quot;UPDATE eleves
+           SET Moyenne = $Moyenne, DateNaissance = &#x27;$DateNaissance&#x27;
+           WHERE Id = &#x27;$Id&#x27;&quot;;
    mysqli_query($connexion, $req);
 
    if (mysqli_affected_rows($connexion) &gt; 0) {
-      echo "Élève $Id mis à jour.";
+      echo &quot;Élève $Id mis à jour.&quot;;
    } else {
-      echo "Aucune ligne modifiée (Id introuvable ou valeurs identiques).";
+      echo &quot;Aucune ligne modifiée (Id introuvable ou valeurs identiques).&quot;;
    }
 }
 mysqli_close($connexion);
 ?&gt;
-&lt;link rel="stylesheet" href="style.css"&gt;
-&lt;h2&gt;✏️ Mise à jour d'un élève&lt;/h2&gt;
-&lt;form method="post" onsubmit="return validerModification()"&gt;
-   &lt;label&gt;Id de l'élève (ex. A01) :&lt;/label&gt;
-   &lt;input type="text" id="Id" name="Id"&gt;&lt;br&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
+&lt;h2&gt;✏️ Mise à jour d&#x27;un élève&lt;/h2&gt;
+&lt;form method=&quot;post&quot; onsubmit=&quot;return validerModification()&quot;&gt;
+   &lt;label&gt;Id de l&#x27;élève (ex. A01) :&lt;/label&gt;
+   &lt;input type=&quot;text&quot; id=&quot;Id&quot; name=&quot;Id&quot;&gt;&lt;br&gt;
 
    &lt;label&gt;Nouvelle moyenne :&lt;/label&gt;
-   &lt;input type="number" id="Moyenne" name="Moyenne" step="0.01"&gt;&lt;br&gt;
+   &lt;input type=&quot;number&quot; id=&quot;Moyenne&quot; name=&quot;Moyenne&quot; step=&quot;0.01&quot;&gt;&lt;br&gt;
 
    &lt;label&gt;Nouvelle date de naissance :&lt;/label&gt;
-   &lt;input type="date" id="DateNaissance" name="DateNaissance"&gt;&lt;br&gt;
+   &lt;input type=&quot;date&quot; id=&quot;DateNaissance&quot; name=&quot;DateNaissance&quot;&gt;&lt;br&gt;
 
-   &lt;p id="message"&gt;&lt;/p&gt;
+   &lt;p id=&quot;message&quot;&gt;&lt;/p&gt;
 
-   &lt;input type="submit" name="ok" value="Mettre à jour"&gt;
-   &lt;input type="reset" value="Effacer"&gt;
+   &lt;input type=&quot;submit&quot; name=&quot;ok&quot; value=&quot;Mettre à jour&quot;&gt;
+   &lt;input type=&quot;reset&quot; value=&quot;Effacer&quot;&gt;
 &lt;/form&gt;
-&lt;script src="validation.js"&gt;&lt;/script&gt;</code></pre><h5>🔍 Détail ligne par ligne — modifier.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req) avec UPDATE</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Exécute la mise à jour (SET … WHERE Id = …). <code>true</code> signifie « requête acceptée », pas forcément « ligne modifiée » !</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_affected_rows($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction clé de cette page : nombre de lignes réellement modifiées par le dernier INSERT/UPDATE/DELETE.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Entier (int) : &gt; 0 = modifié · 0 = Id absent ou valeurs identiques · −1 = erreur</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>if (mysqli_affected_rows(…) &gt; 0)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">On ne félicite l'utilisateur que si une ligne a vraiment changé.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Condition booléenne</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>onsubmit="return validerModification()"</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Rappel JavaScript : le <code>return</code> transmet le <code>false</code> qui bloque l'envoi.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen côté JavaScript</b></td></tr></table><h4>🐘 statistiques.php — statistiques (10.4)</h4><pre><code>&lt;!DOCTYPE html&gt;
-&lt;html lang="fr"&gt;
+&lt;script src=&quot;validation.js&quot;&gt;&lt;/script&gt;</code></pre><h5>🔍 Détail ligne par ligne — modifier.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req) avec UPDATE</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Exécute la mise à jour (SET … WHERE Id = …). <code>true</code> signifie « requête acceptée », pas forcément « ligne modifiée » !</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_affected_rows($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction clé de cette page : nombre de lignes réellement modifiées par le dernier INSERT/UPDATE/DELETE.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Entier (int) : &gt; 0 = modifié · 0 = Id absent ou valeurs identiques · −1 = erreur</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>if (mysqli_affected_rows(…) &gt; 0)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">On ne félicite l'utilisateur que si une ligne a vraiment changé.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Condition booléenne</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>onsubmit="return validerModification()"</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Rappel JavaScript : le <code>return</code> transmet le <code>false</code> qui bloque l'envoi.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen côté JavaScript</b></td></tr></table><h4>🐘 statistiques.php — statistiques (10.4)</h4><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;fr&quot;&gt;
 &lt;head&gt;
-   &lt;meta charset="utf-8"&gt;
+   &lt;meta charset=&quot;utf-8&quot;&gt;
    &lt;title&gt;Statistiques des élèves&lt;/title&gt;
-   &lt;link rel="stylesheet" href="style.css"&gt;
+   &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
 
 &lt;h1&gt;📊 Statistiques des élèves&lt;/h1&gt;
 
 &lt;?php
-$connexion = mysqli_connect("localhost", "root", "", "ecole");
+$connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;, &quot;ecole&quot;);
 if (!$connexion) {
-   die("Erreur de connexion : " . mysqli_connect_error());
+   die(&quot;Erreur de connexion : &quot; . mysqli_connect_error());
 }
 
-$total = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves");
+$total = mysqli_query($connexion, &quot;SELECT COUNT(*) AS nb FROM eleves&quot;);
 $ligneTotal = mysqli_fetch_array($total);
 
-if ($ligneTotal["nb"] &gt; 0) {
+if ($ligneTotal[&quot;nb&quot;] &gt; 0) {
 
-   $moy = mysqli_query($connexion, "SELECT AVG(Moyenne) AS m FROM eleves");
+   $moy = mysqli_query($connexion, &quot;SELECT AVG(Moyenne) AS m FROM eleves&quot;);
    $ligneMoy = mysqli_fetch_array($moy);
 
-   $max = mysqli_query($connexion, "SELECT Nom_prenom, Moyenne FROM eleves ORDER BY Moyenne DESC LIMIT 1");
+   $max = mysqli_query($connexion, &quot;SELECT Nom_prenom, Moyenne FROM eleves ORDER BY Moyenne DESC LIMIT 1&quot;);
    $ligneMax = mysqli_fetch_array($max);
 
-   $r1 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &gt;= 10");
+   $r1 = mysqli_query($connexion, &quot;SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &gt;= 10&quot;);
    $l1 = mysqli_fetch_array($r1);
 
-   $r2 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &lt; 10");
+   $r2 = mysqli_query($connexion, &quot;SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &lt; 10&quot;);
    $l2 = mysqli_fetch_array($r2);
 ?&gt;
    &lt;table&gt;
-      &lt;tr&gt;&lt;td&gt;Nombre d'élèves&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneTotal["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;Moyenne générale&lt;/td&gt;&lt;td&gt;&lt;?php echo round($ligneMoy["m"], 2); ?&gt;&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;Meilleure moyenne&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax["Nom_prenom"] . " (" . $ligneMax["Moyenne"] . ")"; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;Admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l1["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;Non admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l2["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Nombre d&#x27;élèves&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneTotal[&quot;nb&quot;]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Moyenne générale&lt;/td&gt;&lt;td&gt;&lt;?php echo round($ligneMoy[&quot;m&quot;], 2); ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Meilleure moyenne&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax[&quot;Nom_prenom&quot;] . &quot; (&quot; . $ligneMax[&quot;Moyenne&quot;] . &quot;)&quot;; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l1[&quot;nb&quot;]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Non admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l2[&quot;nb&quot;]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
    &lt;/table&gt;
 
    &lt;h2&gt;Âge et anniversaire de chaque élève&lt;/h2&gt;
    &lt;table&gt;
       &lt;tr&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;th&gt;Âge&lt;/th&gt;&lt;th&gt;Prochain anniversaire&lt;/th&gt;&lt;/tr&gt;
 &lt;?php
-   $liste = mysqli_query($connexion, "SELECT Nom_prenom, DateNaissance FROM eleves ORDER BY Nom_prenom");
-   $a = date("Y");
-   $m = date("n");
-   $j = date("j");
+   $liste = mysqli_query($connexion, &quot;SELECT Nom_prenom, DateNaissance FROM eleves ORDER BY Nom_prenom&quot;);
+   $a = date(&quot;Y&quot;);
+   $m = date(&quot;n&quot;);
+   $j = date(&quot;j&quot;);
 
    while ($ligne = mysqli_fetch_array($liste)) {
 
       // Nom et Prénom sont séparés par un espace dans Nom_prenom
-      $partiesNom = explode(" ", $ligne["Nom_prenom"], 2);
+      $partiesNom = explode(&quot; &quot;, $ligne[&quot;Nom_prenom&quot;], 2);
       $Nom = $partiesNom[0];
-      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : "";
+      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : &quot;&quot;;
 
-      if (empty($ligne["DateNaissance"])) {
-         $texteAge = "—";
-         $texteAnniv = "—";
+      if (empty($ligne[&quot;DateNaissance&quot;])) {
+         $texteAge = &quot;—&quot;;
+         $texteAnniv = &quot;—&quot;;
       } else {
          // Date de naissance : AAAA-MM-JJ
-         $partie = explode("-", $ligne["DateNaissance"]);
+         $partie = explode(&quot;-&quot;, $ligne[&quot;DateNaissance&quot;]);
          $an = (int)$partie[0];
          $mn = (int)$partie[1];
          $jn = (int)$partie[2];
@@ -2764,15 +2764,15 @@ if ($ligneTotal["nb"] &gt; 0) {
          $jours = $j - $jn;
          if ($jours &lt; 0) {
             $mois = $mois - 1;
-            $jours = $jours + date("t", mktime(0, 0, 0, $m - 1, 1, $a));
+            $jours = $jours + date(&quot;t&quot;, mktime(0, 0, 0, $m - 1, 1, $a));
          }
          if ($mois &lt; 0) {
             $ans = $ans - 1;
             $mois = $mois + 12;
          }
-         $texteAge = "$ans an(s), $mois mois, $jours jour(s)";
+         $texteAge = &quot;$ans an(s), $mois mois, $jours jour(s)&quot;;
 
-         // Prochain anniversaire : cette année, sinon l'année prochaine
+         // Prochain anniversaire : cette année, sinon l&#x27;année prochaine
          $anneeProchain = $a;
          if (mktime(0, 0, 0, $mn, $jn, $a) &lt; mktime(0, 0, 0, $m, $j, $a)) {
             $anneeProchain = $a + 1;
@@ -2781,19 +2781,19 @@ if ($ligneTotal["nb"] &gt; 0) {
          $resteJours = $jn - $j;
          if ($resteJours &lt; 0) {
             $resteMois = $resteMois - 1;
-            $resteJours = $resteJours + date("t", mktime(0, 0, 0, $mn - 1, 1, $anneeProchain));
+            $resteJours = $resteJours + date(&quot;t&quot;, mktime(0, 0, 0, $mn - 1, 1, $anneeProchain));
          }
          if ($resteMois == 0 &amp;&amp; $resteJours == 0) {
-            $texteAnniv = "C'est aujourd'hui son anniversaire !";
+            $texteAnniv = &quot;C&#x27;est aujourd&#x27;hui son anniversaire !&quot;;
          } else {
-            $texteAnniv = "Il reste $resteMois mois et $resteJours jours avant l'anniversaire";
+            $texteAnniv = &quot;Il reste $resteMois mois et $resteJours jours avant l&#x27;anniversaire&quot;;
          }
       }
 ?&gt;
       &lt;tr&gt;
          &lt;td&gt;&lt;?php echo $Nom; ?&gt;&lt;/td&gt;
          &lt;td&gt;&lt;?php echo $Prenom; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $ligne["DateNaissance"]; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $ligne[&quot;DateNaissance&quot;]; ?&gt;&lt;/td&gt;
          &lt;td&gt;&lt;?php echo $texteAge; ?&gt;&lt;/td&gt;
          &lt;td&gt;&lt;?php echo $texteAnniv; ?&gt;&lt;/td&gt;
       &lt;/tr&gt;
@@ -2806,19 +2806,19 @@ if ($ligneTotal["nb"] &gt; 0) {
    &lt;table&gt;
       &lt;tr&gt;&lt;th&gt;Catégorie&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;/tr&gt;
 &lt;?php
-   // Tri par Catégorie (A, B, C…) : la Catégorie est la première lettre de l'Id
-   $parCategorie = mysqli_query($connexion, "SELECT Id, Nom_prenom, Moyenne FROM eleves ORDER BY LEFT(Id, 1), Nom_prenom");
+   // Tri par Catégorie (A, B, C…) : la Catégorie est la première lettre de l&#x27;Id
+   $parCategorie = mysqli_query($connexion, &quot;SELECT Id, Nom_prenom, Moyenne FROM eleves ORDER BY LEFT(Id, 1), Nom_prenom&quot;);
    while ($ligne = mysqli_fetch_array($parCategorie)) {
-      $Categorie = substr($ligne["Id"], 0, 1);
-      $partiesNom = explode(" ", $ligne["Nom_prenom"], 2);
+      $Categorie = substr($ligne[&quot;Id&quot;], 0, 1);
+      $partiesNom = explode(&quot; &quot;, $ligne[&quot;Nom_prenom&quot;], 2);
       $Nom = $partiesNom[0];
-      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : "";
+      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : &quot;&quot;;
 ?&gt;
       &lt;tr&gt;
-         &lt;td class="cat-&lt;?php echo $Categorie; ?&gt;"&gt;&lt;?php echo $Categorie; ?&gt;&lt;/td&gt;
+         &lt;td class=&quot;cat-&lt;?php echo $Categorie; ?&gt;&quot;&gt;&lt;?php echo $Categorie; ?&gt;&lt;/td&gt;
          &lt;td&gt;&lt;?php echo $Nom; ?&gt;&lt;/td&gt;
          &lt;td&gt;&lt;?php echo $Prenom; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $ligne["Moyenne"]; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $ligne[&quot;Moyenne&quot;]; ?&gt;&lt;/td&gt;
       &lt;/tr&gt;
 &lt;?php
    }
@@ -2826,7 +2826,7 @@ if ($ligneTotal["nb"] &gt; 0) {
    &lt;/table&gt;
 &lt;?php
 } else {
-   echo "&lt;p&gt;Aucun élève dans la table.&lt;/p&gt;";
+   echo &quot;&lt;p&gt;Aucun élève dans la table.&lt;/p&gt;&quot;;
 }
 
 mysqli_close($connexion);
@@ -3258,7 +3258,7 @@ mysqli_close($connexion);
               l'exercice de synthèse n°1, nouveau thème — en réutilisant
               <b>tout ce qui a été vu jusqu'au point 10</b>. La base
               <code>station</code> contient la table
-              <code>recharges(Id, Nom_prenom, Kwh, DateRecharge)</code> :
+              <code>recharges(Id, Nom_prenom, Borne, Kwh, DateRecharge, HeureRecharge)</code> :
               l'<code>Id</code> commence par une <b>lettre en majuscule</b>
               qui indique le <b>type de recharge</b> :
               <b>L</b> = Lente, <b>N</b> = Normale, <b>R</b> = Rapide,
@@ -3280,9 +3280,21 @@ USE station;
 CREATE TABLE recharges (
   Id VARCHAR(10) PRIMARY KEY,
   Nom_prenom VARCHAR(60) NOT NULL,
+  Borne VARCHAR(5) NOT NULL,
   Kwh DECIMAL(5,2) NOT NULL,
-  DateRecharge DATE NOT NULL
+  DateRecharge DATE NOT NULL,
+  HeureRecharge TIME NOT NULL
 );
+
+INSERT INTO recharges (Id, Nom_prenom, Borne, Kwh, DateRecharge, HeureRecharge) VALUES
+(&#x27;L01&#x27;, &#x27;Trabelsi Sara&#x27;, &#x27;S1&#x27;, 12.50, &#x27;2025-09-03&#x27;, &#x27;08:30:00&#x27;),
+(&#x27;L02&#x27;, &#x27;Ayadi Nour&#x27;,     &#x27;S2&#x27;, 15.00, &#x27;2025-09-10&#x27;, &#x27;09:00:00&#x27;),
+(&#x27;N01&#x27;, &#x27;Benali Amine&#x27;,   &#x27;S1&#x27;, 25.00, &#x27;2025-10-02&#x27;, &#x27;10:00:00&#x27;),
+(&#x27;N02&#x27;, &#x27;Haddad Leila&#x27;,   &#x27;S3&#x27;, 30.50, &#x27;2025-10-05&#x27;, &#x27;11:00:00&#x27;),
+(&#x27;R01&#x27;, &#x27;Gharbi Yassine&#x27;, &#x27;S2&#x27;, 45.00, CURDATE(),    &#x27;13:30:00&#x27;),
+(&#x27;R02&#x27;, &#x27;Mansouri Khalil&#x27;, &#x27;S4&#x27;, 52.75, &#x27;2025-10-12&#x27;, &#x27;14:00:00&#x27;),
+(&#x27;U01&#x27;, &#x27;Slimani Omar&#x27;,    &#x27;S1&#x27;, 68.00, CURDATE(),    &#x27;15:30:00&#x27;),
+(&#x27;U02&#x27;, &#x27;Cherif Ines&#x27;,     &#x27;S3&#x27;, 80.25, &#x27;2025-10-20&#x27;, &#x27;16:00:00&#x27;);
 
 INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
 (&#x27;L01&#x27;, &#x27;Trabelsi Sara&#x27;, 12.50, &#x27;2025-09-03&#x27;),
@@ -3297,7 +3309,9 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
             <h3>1️⃣ Partie HTML — l'organisation du site</h3>
             <ul>
               <li><b><code>index.html</code></b> : un <code>header</code> en haut (logo + texte « ⚡ Recharge VE — Station électrique »), une <code>nav</code> verticale à gauche vers <code>inscription.html</code>, <code>liste.php</code>, <code>modifier.php</code>, <code>statistiques.php</code> (chaque lien avec <code>target="cadre"</code>), une <code>section</code> à droite contenant l'<code>iframe name="cadre"</code> (qui affiche au départ <code>inscription.html</code>), et un <code>footer</code> en bas. La <code>nav</code> et la <code>section</code> sont placées dans une <code>div</code> avant le footer.</li>
-              <li><b><code>inscription.html</code></b> : le formulaire d'enregistrement d'une recharge — <code>form</code> méthode <code>post</code>, action <code>ajouter.php</code>, <code>target="cadre"</code> ; champs <code>text</code> (Id, Nom_prenom), <code>number step="0.01"</code> (Kwh), <code>date</code> (DateRecharge), paragraphe <code>&lt;p id="message"&gt;</code>, boutons Enregistrer et Effacer.</li>
+              <li><b><code>inscription.html</code></b> : le formulaire d'enregistrement d'une recharge — <code>form</code> méthode <code>post</code>, action <code>ajouter.php</code>, <code>target="cadre"</code> ; champs <code>text</code> (Id, Nom_prenom), liste <code>select</code> pour la station (<code>Borne</code> : S1 à S4), <code>number step="0.01"</code> (Kwh), <code>date</code> (DateRecharge) et <code>time</code> pour <b>fixer l'heure de la recharge</b> (<code>HeureRecharge</code>), paragraphe <code>&lt;p id="message"&gt;</code>, boutons Enregistrer et Effacer.</li>
+              <li>En haut de la page d'inscription, affichez les <b>horaires de travail de la station : de 8h00 à 12h00 et de 13h00 à 18h00</b> (fermé entre 12h00 et 13h00), ainsi que <b>l'heure actuelle, qui s'affiche dès l'entrée dans la page</b> et se met à jour chaque seconde (JavaScript, voir partie 3).</li>
+              <li>La <b>couleur de la page <code>index.html</code> varie aléatoirement entre 3 couleurs</b> à chaque chargement : un petit script JavaScript choisit une couleur au hasard (<code>Math.random</code>) et l'applique à l'en-tête, à la navigation et au pied de page.</li>
               <li>Les résultats PHP s'affichent dans des tableaux HTML propres (<code>table/tr/th/td</code>).</li>
             </ul>
 
@@ -3315,15 +3329,17 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
               <li>Le <b>Nom_prenom</b> du conducteur est <b>nettoyé</b> (espaces superflus éliminés), n'est composé <b>que de lettres et d'espaces</b>, et contient <b>entre 2 et 5 mots</b>.</li>
               <li>L'énergie <b>Kwh</b> est un nombre <b>entre 1 et 100</b> (capacité d'une batterie).</li>
               <li>La <b>DateRecharge</b> est remplie et n'est pas dans le futur.</li>
+              <li><b>Fixer l'heure de la recharge</b> : l'<b>HeureRecharge</b> doit tomber dans les <b>horaires de travail</b> — de <b>8h00 à 12h00</b> ou de <b>13h00 à 18h00</b>. Écrivez une fonction qui retourne un <b>booléen</b> (par exemple convertir l'heure en minutes, puis tester les deux intervalles) ; 12h30 (pause) et 19h00 (fermeture) sont refusés.</li>
+              <li>Affichez <b>l'heure actuelle dès l'entrée dans la page</b> d'inscription : une fonction JavaScript lit l'heure de l'ordinateur (<code>new Date()</code>, <code>getHours()</code>, <code>getMinutes()</code>, <code>getSeconds()</code>), l'écrit aussitôt dans la page avec <code>innerHTML</code>, puis la rafraîchit chaque seconde avec <code>setInterval</code>. Indiquez aussi si la station est <b>ouverte ou fermée</b> à cette heure-là.</li>
               <li>En cas d'erreur : message dans la page avec <code>innerHTML</code> et/ou boîte <code>alert()</code>, puis envoi annulé (<code>return false</code>).</li>
             </ul>
 
             <h3>4️⃣ Partie PHP — les quatre pages (mysql i)</h3>
             <ul>
-              <li><b>ajouter.php</b> : reçoit le formulaire d'<code>inscription.html</code> dans l'iframe ; première lettre de l'Id forcée en majuscule (<code>strtoupper</code> + <code>substr</code>), puis <code>INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge)</code> ; message de réussite ou erreur.</li>
+              <li><b>ajouter.php</b> : reçoit le formulaire d'<code>inscription.html</code> dans l'iframe ; première lettre de l'Id forcée en majuscule (<code>strtoupper</code> + <code>substr</code>). <b>Avant d'insérer, vérifier la disponibilité de la station choisie</b> : un <code>SELECT COUNT(*)</code> avec la même <code>Borne</code>, la même <code>DateRecharge</code> et la même <code>HeureRecharge</code> — si le compteur est &gt; 0, la station est <b>occupée</b> : afficher un message et ne pas insérer ; sinon <code>INSERT INTO recharges (Id, Nom_prenom, Borne, Kwh, DateRecharge, HeureRecharge)</code>.</li>
               <li><b>liste.php</b> : toutes les recharges triées par Nom_prenom, puis le nombre total (pensez au type de retour de <code>mysqli_query</code> avec SELECT, et à <code>mysqli_fetch_array</code>).</li>
               <li><b>modifier.php</b> : met à jour <code>Kwh</code> et <code>DateRecharge</code> selon l'Id saisi ; vérifier avec <code>mysqli_affected_rows</code> qu'une ligne a bien été modifiée.</li>
-              <li><b>statistiques.php</b> : nombre de recharges (<code>COUNT(*)</code>), énergie moyenne, plus grosse recharge, recharges complètes (≥ 40 kWh) et partielles ; puis le tableau <b>Type | Nom | Prénom | kWh | Tarif | Coût</b> trié par type (L, N, R, U) : Nom et Prénom séparés par <code>explode</code>, coût = kWh × tarif du type (L : 0,300 DT · N : 0,450 DT · R : 0,700 DT · U : 0,950 DT).</li>
+              <li><b>statistiques.php</b> : nombre de recharges (<code>COUNT(*)</code>), énergie moyenne, plus grosse recharge, recharges complètes (≥ 40 kWh) et partielles ; puis le tableau <b>Type | Nom | Prénom | kWh | Tarif | Coût</b> trié par type (L, N, R, U) : Nom et Prénom séparés par <code>explode</code>, coût = kWh × tarif du type (L : 0,300 DT · N : 0,450 DT · R : 0,700 DT · U : 0,950 DT). Ajoutez enfin un tableau <b>« Disponibilité des stations aujourd'hui »</b> : en lignes les stations S1 à S4, en colonnes les créneaux des horaires de travail (8h, 9h, 10h, 11h, 13h, 14h, 15h, 16h, 17h) ; chaque case affiche ✅ Libre ou 🔴 Occupée selon les recharges du jour.</li>
               <li>⚠ <b>Interdit</b> : <code>mysqli_real_escape_string</code> dans aucune page.</li>
             </ul>
 
@@ -3333,6 +3349,9 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
               <li>Ajouter une recharge avec l'Id <code>r03</code> (minuscule) : enregistrée <code>R03</code> (type Rapide). JavaScript refuse : Id commençant par un chiffre, énergie 0 ou 120, nom d'un seul mot ou avec des chiffres, date future ; « &nbsp;Benali&nbsp;&nbsp;&nbsp;Amine&nbsp; » est nettoyé en « Benali Amine ».</li>
               <li>Modifier l'énergie de cette recharge, vérifier dans liste.php.</li>
               <li>statistiques.php : compteurs à jour, tableau trié L, N, R, U avec des coûts corrects (ex. 45 kWh en R = 31,50 DT).</li>
+              <li>Sur la page d'inscription : l'heure actuelle s'affiche immédiatement et avance chaque seconde ; saisir 12h30 ou 19h00 comme heure de recharge est refusé, 9h00 et 14h00 sont acceptés.</li>
+              <li>Enregistrer deux fois la même station, le même jour à la même heure : la deuxième est refusée (« station occupée »). Le tableau de disponibilité de statistiques.php montre le créneau en 🔴 Occupée.</li>
+              <li>Recharger plusieurs fois la page index : sa couleur change au hasard parmi les 3 couleurs prévues.</li>
             </ul>
 
             <h3>📦 À rendre</h3>
@@ -3396,6 +3415,16 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
 
 &lt;footer&gt;Travail élaboré par … — Année scolaire …&lt;/footer&gt;
 
+
+&lt;script&gt;
+   // La couleur de la page index varie aléatoirement entre 3 couleurs
+   let couleurs = [&quot;#0f1c47&quot;, &quot;#065f46&quot;, &quot;#7c2d12&quot;];
+   let numero = Math.floor(Math.random() * couleurs.length);
+   let couleurChoisie = couleurs[numero];
+   document.querySelector(&quot;header&quot;).style.backgroundColor = couleurChoisie;
+   document.querySelector(&quot;nav&quot;).style.backgroundColor = couleurChoisie;
+   document.querySelector(&quot;footer&quot;).style.backgroundColor = couleurChoisie;
+&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
               <h4>🌐 inscription.html — le formulaire (vers ajouter.php, dans l'iframe)</h4>
@@ -3410,6 +3439,12 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
 
 &lt;h2&gt;⚡ Enregistrer une recharge&lt;/h2&gt;
 
+&lt;!-- L&#x27;heure actuelle s&#x27;affiche dès l&#x27;entrée dans la page --&gt;
+&lt;p id=&quot;horloge&quot; style=&quot;font-weight:bold; font-size:18px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;🕗 &lt;b&gt;Horaires de travail de la station :&lt;/b&gt;
+   le matin de &lt;b&gt;8h00 à 12h00&lt;/b&gt;, l&#x27;après-midi de &lt;b&gt;13h00 à 18h00&lt;/b&gt;
+   (fermé entre 12h00 et 13h00).&lt;/p&gt;
+
 &lt;form method=&quot;post&quot; action=&quot;ajouter.php&quot; target=&quot;cadre&quot;
       onsubmit=&quot;return validerInscription()&quot;&gt;
    &lt;label&gt;Id (ex. R01) :&lt;/label&gt;
@@ -3418,11 +3453,22 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
    &lt;label&gt;Conducteur (Nom et prénom) :&lt;/label&gt;
    &lt;input type=&quot;text&quot; id=&quot;Nom_prenom&quot; name=&quot;Nom_prenom&quot;&gt;&lt;br&gt;
 
+   &lt;label&gt;Station (borne) :&lt;/label&gt;
+   &lt;select id=&quot;Borne&quot; name=&quot;Borne&quot;&gt;
+      &lt;option value=&quot;S1&quot;&gt;Station 1&lt;/option&gt;
+      &lt;option value=&quot;S2&quot;&gt;Station 2&lt;/option&gt;
+      &lt;option value=&quot;S3&quot;&gt;Station 3&lt;/option&gt;
+      &lt;option value=&quot;S4&quot;&gt;Station 4&lt;/option&gt;
+   &lt;/select&gt;&lt;br&gt;
+
    &lt;label&gt;Énergie rechargée (kWh) :&lt;/label&gt;
    &lt;input type=&quot;number&quot; id=&quot;Kwh&quot; name=&quot;Kwh&quot; step=&quot;0.01&quot;&gt;&lt;br&gt;
 
    &lt;label&gt;Date de la recharge :&lt;/label&gt;
    &lt;input type=&quot;date&quot; id=&quot;DateRecharge&quot; name=&quot;DateRecharge&quot;&gt;&lt;br&gt;
+
+   &lt;label&gt;Heure de la recharge (entre 8h00-12h00 ou 13h00-18h00) :&lt;/label&gt;
+   &lt;input type=&quot;time&quot; id=&quot;HeureRecharge&quot; name=&quot;HeureRecharge&quot; min=&quot;08:00&quot; max=&quot;18:00&quot;&gt;&lt;br&gt;
 
    &lt;p id=&quot;message&quot;&gt;&lt;/p&gt;
 
@@ -3519,7 +3565,8 @@ input {
    /* Transition douce de la bordure et de l&#x27;ombre au focus */
    transition: all 0.3s ease-in-out; /* all : bordure, ombre... tout est animé */
 }
-input:focus {
+select { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #999; border-radius: 6px; transition: all 0.3s ease-in-out; }
+input:focus, select:focus {
    border-color: #059669;
    box-shadow: 0 0 6px rgba(5, 150, 105, 0.5);
    outline: none;
@@ -3582,6 +3629,41 @@ function dateDansLePasse(valeur) {
    return saisie &lt;= aujourdHui;
 }
 
+
+// ===== Horaires de travail : 8h00-12h00 et 13h00-18h00 =====
+// L&#x27;heure actuelle s&#x27;affiche dès l&#x27;entrée dans la page, et se met à jour chaque seconde
+function afficherHeure() {
+   let zone = document.getElementById(&quot;horloge&quot;);
+   if (!zone) return; // la page modifier.php n&#x27;a pas d&#x27;horloge
+   let maintenant = new Date();
+   let h = maintenant.getHours();
+   let m = maintenant.getMinutes();
+   let s = maintenant.getSeconds();
+   let texte = &quot;🕐 Heure actuelle : &quot;
+      + (h &lt; 10 ? &quot;0&quot; + h : h) + &quot;:&quot;
+      + (m &lt; 10 ? &quot;0&quot; + m : m) + &quot;:&quot;
+      + (s &lt; 10 ? &quot;0&quot; + s : s);
+   let minutes = h * 60 + m;
+   if ((minutes &gt;= 480 &amp;&amp; minutes &lt; 720) || (minutes &gt;= 780 &amp;&amp; minutes &lt; 1080)) {
+      texte += &quot; — ✅ Station ouverte (horaires : 8h00-12h00 et 13h00-18h00)&quot;;
+   } else {
+      texte += &quot; — 🔴 Station fermée (horaires : 8h00-12h00 et 13h00-18h00)&quot;;
+   }
+   zone.innerHTML = texte;
+}
+
+// L&#x27;heure de recharge est-elle dans les horaires de travail ?
+// Retourne un booléen : true si 8h00 &lt;= heure &lt; 12h00 ou 13h00 &lt;= heure &lt; 18h00
+function heureDansHoraires(heure) {
+   if (heure == &quot;&quot;) return false;
+   let parties = heure.split(&quot;:&quot;);
+   let minutes = parseInt(parties[0]) * 60 + parseInt(parties[1]);
+   return (minutes &gt;= 480 &amp;&amp; minutes &lt; 720) || (minutes &gt;= 780 &amp;&amp; minutes &lt; 1080);
+}
+
+afficherHeure();                 // affichage immédiat dès l&#x27;entrée dans la page
+setInterval(afficherHeure, 1000); // puis mise à jour chaque seconde
+
 // Éliminer les espaces superflus : au début, à la fin,
 // et plusieurs espaces de suite remplacés par un seul
 function nettoyerNomPrenom(valeur) {
@@ -3602,6 +3684,7 @@ function controlesCommuns() {
    let Id = document.getElementById(&quot;Id&quot;).value;
    let Kwh = document.getElementById(&quot;Kwh&quot;).value;
    let DateRecharge = document.getElementById(&quot;DateRecharge&quot;).value;
+   let HeureRecharge = document.getElementById(&quot;HeureRecharge&quot;).value;
    let message = document.getElementById(&quot;message&quot;);
 
    if (!commenceParMajuscule(Id)) {
@@ -3612,6 +3695,9 @@ function controlesCommuns() {
    }
    if (!dateDansLePasse(DateRecharge)) {
       return afficherErreur(&quot;Erreur : la Date de la recharge doit être remplie et ne pas être dans le futur.&quot;);
+   }
+   if (!heureDansHoraires(HeureRecharge)) {
+      return afficherErreur(&quot;Erreur : fixez l&#x27;heure de la recharge dans les horaires de travail (8h00-12h00 ou 13h00-18h00).&quot;);
    }
    message.innerHTML = &quot;&quot;;
    return true;
@@ -3647,15 +3733,26 @@ if (isset($_POST[&quot;ok&quot;])) {
    // Chaque Id commence par une lettre en majuscule (le type de recharge : L, N, R, U)
    $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
    $Nom_prenom = $_POST[&#x27;Nom_prenom&#x27;];
+   $Borne = $_POST[&#x27;Borne&#x27;];
    $Kwh = (float)$_POST[&#x27;Kwh&#x27;];
    $DateRecharge = $_POST[&#x27;DateRecharge&#x27;];
+   $HeureRecharge = $_POST[&#x27;HeureRecharge&#x27;];
 
-   $req = &quot;INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge)
-           VALUES (&#x27;$Id&#x27;, &#x27;$Nom_prenom&#x27;, $Kwh, &#x27;$DateRecharge&#x27;)&quot;;
-   if (mysqli_query($connexion, $req)) {
-      echo &quot;Recharge enregistrée (Id = $Id).&quot;;
+   // Disponibilité : cette station est-elle déjà occupée à cette date et à cette heure ?
+   $verif = mysqli_query($connexion, &quot;SELECT COUNT(*) AS nb FROM recharges
+           WHERE Borne = &#x27;$Borne&#x27; AND DateRecharge = &#x27;$DateRecharge&#x27; AND HeureRecharge = &#x27;$HeureRecharge&#x27;&quot;);
+   $ligneVerif = mysqli_fetch_array($verif);
+
+   if ($ligneVerif[&quot;nb&quot;] &gt; 0) {
+      echo &quot;🔴 Station $Borne occupée le $DateRecharge à $HeureRecharge : choisissez une autre station ou une autre heure.&quot;;
    } else {
-      echo &quot;Erreur : &quot; . mysqli_error($connexion);
+      $req = &quot;INSERT INTO recharges (Id, Nom_prenom, Borne, Kwh, DateRecharge, HeureRecharge)
+              VALUES (&#x27;$Id&#x27;, &#x27;$Nom_prenom&#x27;, &#x27;$Borne&#x27;, $Kwh, &#x27;$DateRecharge&#x27;, &#x27;$HeureRecharge&#x27;)&quot;;
+      if (mysqli_query($connexion, $req)) {
+         echo &quot;✅ Recharge enregistrée (Id = $Id, station $Borne, le $DateRecharge à $HeureRecharge).&quot;;
+      } else {
+         echo &quot;Erreur : &quot; . mysqli_error($connexion);
+      }
    }
 }
 mysqli_close($connexion);
@@ -3666,19 +3763,21 @@ mysqli_close($connexion);
 $connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
 mysqli_select_db($connexion, &quot;station&quot;);
 
-$req = &quot;SELECT Id, Nom_prenom, Kwh, DateRecharge FROM recharges ORDER BY Nom_prenom&quot;;
+$req = &quot;SELECT Id, Nom_prenom, Borne, Kwh, DateRecharge, HeureRecharge FROM recharges ORDER BY Nom_prenom&quot;;
 $resultat = mysqli_query($connexion, $req);
 ?&gt;
 &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
 &lt;h2&gt;📋 Historique des recharges&lt;/h2&gt;
 &lt;table&gt;
-   &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Conducteur&lt;/th&gt;&lt;th&gt;Énergie (kWh)&lt;/th&gt;&lt;th&gt;Date de la recharge&lt;/th&gt;&lt;/tr&gt;
+   &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Conducteur&lt;/th&gt;&lt;th&gt;Station&lt;/th&gt;&lt;th&gt;Énergie (kWh)&lt;/th&gt;&lt;th&gt;Date&lt;/th&gt;&lt;th&gt;Heure&lt;/th&gt;&lt;/tr&gt;
    &lt;?php while ($ligne = mysqli_fetch_array($resultat)) { ?&gt;
    &lt;tr&gt;
       &lt;td&gt;&lt;?php echo $ligne[&quot;Id&quot;]; ?&gt;&lt;/td&gt;
       &lt;td&gt;&lt;?php echo $ligne[&quot;Nom_prenom&quot;]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;Borne&quot;]; ?&gt;&lt;/td&gt;
       &lt;td&gt;&lt;?php echo $ligne[&quot;Kwh&quot;]; ?&gt;&lt;/td&gt;
       &lt;td&gt;&lt;?php echo $ligne[&quot;DateRecharge&quot;]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;HeureRecharge&quot;]; ?&gt;&lt;/td&gt;
    &lt;/tr&gt;
    &lt;?php } ?&gt;
 &lt;/table&gt;
@@ -3693,11 +3792,13 @@ if (isset($_POST[&quot;ok&quot;])) {
    $Id = $_POST[&#x27;Id&#x27;];
    // Chaque Id commence par une lettre en majuscule (le type de recharge : L, N, R, U)
    $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
+   $Borne = $_POST[&#x27;Borne&#x27;];
    $Kwh = (float)$_POST[&#x27;Kwh&#x27;];
    $DateRecharge = $_POST[&#x27;DateRecharge&#x27;];
+   $HeureRecharge = $_POST[&#x27;HeureRecharge&#x27;];
 
    $req = &quot;UPDATE recharges
-           SET Kwh = $Kwh, DateRecharge = &#x27;$DateRecharge&#x27;
+           SET Borne = &#x27;$Borne&#x27;, Kwh = $Kwh, DateRecharge = &#x27;$DateRecharge&#x27;, HeureRecharge = &#x27;$HeureRecharge&#x27;
            WHERE Id = &#x27;$Id&#x27;&quot;;
    mysqli_query($connexion, $req);
 
@@ -3715,11 +3816,22 @@ mysqli_close($connexion);
    &lt;label&gt;Id de la recharge (ex. R01) :&lt;/label&gt;
    &lt;input type=&quot;text&quot; id=&quot;Id&quot; name=&quot;Id&quot;&gt;&lt;br&gt;
 
+   &lt;label&gt;Nouvelle station (borne) :&lt;/label&gt;
+   &lt;select id=&quot;Borne&quot; name=&quot;Borne&quot;&gt;
+      &lt;option value=&quot;S1&quot;&gt;Station 1&lt;/option&gt;
+      &lt;option value=&quot;S2&quot;&gt;Station 2&lt;/option&gt;
+      &lt;option value=&quot;S3&quot;&gt;Station 3&lt;/option&gt;
+      &lt;option value=&quot;S4&quot;&gt;Station 4&lt;/option&gt;
+   &lt;/select&gt;&lt;br&gt;
+
    &lt;label&gt;Nouvelle énergie (kWh) :&lt;/label&gt;
    &lt;input type=&quot;number&quot; id=&quot;Kwh&quot; name=&quot;Kwh&quot; step=&quot;0.01&quot;&gt;&lt;br&gt;
 
    &lt;label&gt;Nouvelle date de recharge :&lt;/label&gt;
    &lt;input type=&quot;date&quot; id=&quot;DateRecharge&quot; name=&quot;DateRecharge&quot;&gt;&lt;br&gt;
+
+   &lt;label&gt;Nouvelle heure (8h00-12h00 ou 13h00-18h00) :&lt;/label&gt;
+   &lt;input type=&quot;time&quot; id=&quot;HeureRecharge&quot; name=&quot;HeureRecharge&quot; min=&quot;08:00&quot; max=&quot;18:00&quot;&gt;&lt;br&gt;
 
    &lt;p id=&quot;message&quot;&gt;&lt;/p&gt;
 
@@ -3796,6 +3908,29 @@ if ($ligneTotal[&quot;nb&quot;] &gt; 0) {
          &lt;td&gt;&lt;?php echo $cout; ?&gt;&lt;/td&gt;
       &lt;/tr&gt;
 &lt;?php
+   }
+?&gt;
+   &lt;/table&gt;
+
+   &lt;h2&gt;🔌 Disponibilité des stations aujourd&#x27;hui (&lt;?php echo date(&quot;Y-m-d&quot;); ?&gt;)&lt;/h2&gt;
+   &lt;p&gt;Créneaux selon les horaires de travail : 8h00-12h00 et 13h00-18h00.&lt;/p&gt;
+   &lt;table&gt;
+      &lt;tr&gt;&lt;th&gt;Station&lt;/th&gt;&lt;th&gt;8h&lt;/th&gt;&lt;th&gt;9h&lt;/th&gt;&lt;th&gt;10h&lt;/th&gt;&lt;th&gt;11h&lt;/th&gt;&lt;th&gt;13h&lt;/th&gt;&lt;th&gt;14h&lt;/th&gt;&lt;th&gt;15h&lt;/th&gt;&lt;th&gt;16h&lt;/th&gt;&lt;th&gt;17h&lt;/th&gt;&lt;/tr&gt;
+&lt;?php
+   $aujourdhui = date(&quot;Y-m-d&quot;);
+   $occ = mysqli_query($connexion, &quot;SELECT Borne, HeureRecharge FROM recharges WHERE DateRecharge = &#x27;$aujourdhui&#x27;&quot;);
+   $occupees = array();
+   while ($l = mysqli_fetch_array($occ)) {
+      $occupees[$l[&quot;Borne&quot;] . &quot;-&quot; . substr($l[&quot;HeureRecharge&quot;], 0, 2)] = true;
+   }
+   $heures = array(&quot;08&quot;, &quot;09&quot;, &quot;10&quot;, &quot;11&quot;, &quot;13&quot;, &quot;14&quot;, &quot;15&quot;, &quot;16&quot;, &quot;17&quot;);
+   foreach (array(&quot;S1&quot;, &quot;S2&quot;, &quot;S3&quot;, &quot;S4&quot;) as $borne) {
+      echo &quot;&lt;tr&gt;&lt;td&gt;&lt;b&gt;$borne&lt;/b&gt;&lt;/td&gt;&quot;;
+      foreach ($heures as $heure) {
+         if (isset($occupees[$borne . &quot;-&quot; . $heure])) echo &quot;&lt;td style=&#x27;background:#fee2e2&#x27;&gt;🔴 Occupée&lt;/td&gt;&quot;;
+         else echo &quot;&lt;td style=&#x27;background:#dcfce7&#x27;&gt;✅ Libre&lt;/td&gt;&quot;;
+      }
+      echo &quot;&lt;/tr&gt;&quot;;
    }
 ?&gt;
    &lt;/table&gt;
