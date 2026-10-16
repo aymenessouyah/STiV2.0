@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v235";
+var CACHE = "sti-atelier-v236";
 var SHELL = [
   "./",
   "./index.html",
@@ -28,6 +28,7 @@ var SHELL = [
   "./assets/icons/STI_by_AE.ico",
   "./assets/icons/sti-icon-192.png",
   "./assets/icons/sti-icon-512.png",
+  "./assets/images/sti-course-pause-qr.png",
   "./cours/html5.html",
   "./cours/css3.html",
   "./cours/fiche-revision-html5.html",
@@ -141,6 +142,7 @@ var OFFLINE_LIST = [
   "./assets/images/lycee_logo.png",
   "./assets/images/qr-code-site.png",
   "./assets/images/qr-stiv2.png",
+  "./assets/images/sti-course-pause-qr.png",
   "./assets/js/acces.js",
   "./assets/js/admin.js",
   "./assets/js/config.js",

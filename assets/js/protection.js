@@ -680,6 +680,159 @@
     } catch (e) {}
   }
 
+  /* ── Pause pédagogique à mi-parcours de chaque lecteur vidéo HTML5 du site ── */
+  function obtenirPauseQRVideoSTI() {
+    var interlude = document.getElementById("sti-video-course-pause-overlay");
+    if (interlude) return interlude;
+    if (!document.body) return null;
+
+    var racine = "./";
+    try {
+      racine = (window.STI_AUTH && window.STI_AUTH.RACINE) ? window.STI_AUTH.RACINE : obtenirRacineSite();
+    } catch (e) {}
+    racine = String(racine || "./");
+    if (racine.charAt(racine.length - 1) !== "/") racine += "/";
+
+    interlude = document.createElement("div");
+    interlude.id = "sti-video-course-pause-overlay";
+    interlude.className = "sti-no-print";
+    interlude.hidden = true;
+    interlude.style.display = "none";
+    interlude.setAttribute("role", "dialog");
+    interlude.setAttribute("aria-modal", "true");
+    interlude.setAttribute("aria-labelledby", "sti-video-course-pause-title");
+    interlude.innerHTML =
+      '<div class="sti-video-course-pause-card">' +
+        '<div class="sti-video-course-pause-head">' +
+          '<img id="sti-video-course-pause-logo" class="sti-video-course-pause-logo" alt="Logo STI by AE">' +
+          '<div><div class="sti-video-course-pause-brand">STI by AE <span>VERSION 2.0</span></div>' +
+          '<div class="sti-video-course-pause-kicker">PAUSE PÉDAGOGIQUE · VIDÉO SUSPENDUE</div></div>' +
+        '</div>' +
+        '<div class="sti-video-course-pause-main">' +
+          '<div class="sti-video-course-pause-copy">' +
+            '<h2 id="sti-video-course-pause-title">je vous rappelle que pour plus de détails scanner ce QR code pour accéder au cours détaillé</h2>' +
+            '<p>La lecture reste en pause pendant que vous consultez cette indication.</p>' +
+          '</div>' +
+          '<img id="sti-video-course-pause-qr" class="sti-video-course-pause-qr" alt="QR code indicatif STI V2.0 By AE">' +
+        '</div>' +
+        '<button type="button" id="sti-video-course-pause-resume" class="sti-video-course-pause-resume">▶️ Reprendre la vidéo</button>' +
+      '</div>';
+    document.body.appendChild(interlude);
+
+    var logo = document.getElementById("sti-video-course-pause-logo");
+    var qr = document.getElementById("sti-video-course-pause-qr");
+    var resume = document.getElementById("sti-video-course-pause-resume");
+    if (logo) logo.src = racine + "assets/icons/sti-icon-192.png";
+    if (qr) qr.src = racine + "assets/images/sti-course-pause-qr.png";
+    if (resume) {
+      resume.onclick = function (ev) {
+        if (ev && ev.stopPropagation) ev.stopPropagation();
+        var cible = window.__stiPauseQRTargetVideo || null;
+        interlude.hidden = true;
+        interlude.style.display = "none";
+        window.__stiPauseQRTargetVideo = null;
+        if (cible) {
+          cible.__stiPauseQRActive = false;
+          try {
+            var lecture = cible.play();
+            if (lecture && lecture.catch) lecture.catch(function () {});
+          } catch (e) {}
+        }
+      };
+    }
+    return interlude;
+  }
+
+  function fermerPauseQRVideoSTI(video, reinitialiser) {
+    var interlude = document.getElementById("sti-video-course-pause-overlay");
+    var cible = window.__stiPauseQRTargetVideo || null;
+    if (reinitialiser && video) {
+      video.__stiPauseQRShown = false;
+      video.__stiPauseQRActive = false;
+    }
+    if (cible && (!video || cible === video)) {
+      if (interlude) {
+        interlude.hidden = true;
+        interlude.style.display = "none";
+      }
+      cible.__stiPauseQRActive = false;
+      window.__stiPauseQRTargetVideo = null;
+    }
+  }
+
+  function installerPauseQRVideoSTI(video) {
+    if (!video || video.__stiPauseQRBound) return;
+    video.__stiPauseQRBound = true;
+    var ancienTimeupdate = video.ontimeupdate;
+    video.ontimeupdate = function (ev) {
+      if (typeof ancienTimeupdate === "function") {
+        try { ancienTimeupdate.call(video, ev); } catch (e) {}
+      }
+      if (video.__stiPauseQRActive) return;
+      var src = String(video.currentSrc || video.src || "").toLowerCase();
+      if (!src) return;
+      if (video.__stiPauseQRSource !== src) {
+        video.__stiPauseQRSource = src;
+        video.__stiPauseQRShown = false;
+      }
+      var duree = Number(video.duration) || 0;
+      if (!isFinite(duree) || duree <= 0 || video.__stiPauseQRShown) return;
+      if (window.__stiPauseQRTargetVideo && window.__stiPauseQRTargetVideo !== video) return;
+      if ((Number(video.currentTime) || 0) >= duree * 0.5) {
+        var interlude = obtenirPauseQRVideoSTI();
+        if (!interlude) return;
+        video.__stiPauseQRShown = true;
+        video.__stiPauseQRActive = true;
+        window.__stiPauseQRTargetVideo = video;
+        try { video.pause(); } catch (e) {}
+        interlude.hidden = false;
+        interlude.style.display = "flex";
+        var btnReprise = document.getElementById("sti-video-course-pause-resume");
+        if (btnReprise && typeof btnReprise.focus === "function") {
+          try { btnReprise.focus(); } catch (e) {}
+        }
+      }
+    };
+    var ancienEnded = video.onended;
+    video.onended = function (ev) {
+      fermerPauseQRVideoSTI(video, false);
+      video.__stiPauseQRShown = false;
+      video.__stiPauseQRActive = false;
+      if (typeof ancienEnded === "function") {
+        try { ancienEnded.call(video, ev); } catch (e) {}
+      }
+    };
+  }
+
+  /* Installe aussi l'interlude sur les lecteurs natifs présents dans les pages,
+     puis observe les vidéos ajoutées dynamiquement (modal, contenus chargés après init). */
+  function installerPauseQRVideosPageSTI() {
+    try {
+      function installerDans(noeud) {
+        if (!noeud) return;
+        if (noeud.nodeType === 1 && String(noeud.tagName || "").toLowerCase() === "video") {
+          installerPauseQRVideoSTI(noeud);
+        }
+        if (noeud.getElementsByTagName) {
+          var videos = noeud.getElementsByTagName("video");
+          for (var i = 0; i < videos.length; i++) installerPauseQRVideoSTI(videos[i]);
+        }
+      }
+
+      installerDans(document);
+      if (window.MutationObserver && document.body && !window.__stiPauseQRVideoObserver) {
+        var observer = new window.MutationObserver(function (mutations) {
+          for (var i = 0; i < mutations.length; i++) {
+            var ajoutes = mutations[i].addedNodes || [];
+            for (var j = 0; j < ajoutes.length; j++) installerDans(ajoutes[j]);
+          }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        window.__stiPauseQRVideoObserver = observer;
+      }
+    } catch (e) {}
+  }
+
   /* ═══════════════════════════════════════════════════════════════════════════
      🎥 VIDÉO DE L'ANIMATION DU GUICHET (php-guichet.mp4 AVEC LA VOIX DE L'HOMME)
      - Zéro voix dans les pas à pas interactifs (aucune lecture commentée ni audio d'étape).
@@ -772,12 +925,12 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 6 SQL (Base ÉTUDIANT) : Création BD, Insertion & Corrigé complet (.mp4)"
       };
       var VIDEO_EXPLORE_FLEX_INFO = {
-        file: "explore-tunisie-flex.mp4?v=233",
-        title: "🎥 Bienvenue dans STI V2.0 By AE — TP Explore Tunisie (Flexbox) : Code saisi à gauche ➔ Résultat instantané à droite (.mp4)"
+        file: "explore-tunisie-flex.mp4?v=236",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — TP Explore Tunisie (Flexbox) : Code tapé comme un dactylo à gauche ➔ rendu actualisé en direct à droite (.mp4)"
       };
       var VIDEO_EXPLORE_FLOAT_INFO = {
-        file: "explore-tunisie-float.mp4?v=233",
-        title: "🎥 Bienvenue dans STI V2.0 By AE — TP Explore Tunisie (Float) : Code saisi à gauche ➔ Résultat instantané à droite (.mp4)"
+        file: "explore-tunisie-float.mp4?v=236",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — TP Explore Tunisie (Float) : Code tapé comme un dactylo à gauche ➔ rendu actualisé en direct à droite (.mp4)"
       };
 
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
@@ -963,28 +1116,28 @@
           { t: 162, short: "Req 14 à 17 (Auto-jointure/MAJ)", label: "02:42 · 09. Requêtes 14 à 17 : Auto-jointure, Meilleure note, UPDATE & DELETE" }
         ],
         "explore-tunisie-flex": [
-          { t: 0.0, short: "Intro", label: "00:00 · 01. Introduction — Correction pas à pas avec Flexbox" },
-          { t: 22.74, short: "1. Structure & <header>", label: "00:22 · 02. Étape 1 — Structure HTML5 & En-tête (.entete-site)" },
-          { t: 59.83, short: "2. Menu Sticky & Flex", label: "00:59 · 03. Étape 2 — Barre de navigation (position: sticky & display: flex)" },
-          { t: 94.26, short: "3. Présentation (bg-image)", label: "01:34 · 04. Étape 3 — Section de présentation (background-image & text-shadow)" },
-          { t: 127.87, short: "4. Cartes en Flexbox", label: "02:07 · 05. Étape 4 — Alignement des 3 cartes Destinations avec Flexbox" },
-          { t: 164.36, short: "5. Badge Absolute & :hover", label: "02:44 · 06. Étape 5 — Étiquette « Offre spéciale » (position: absolute) & Survol" },
-          { t: 195.12, short: "6. Formulaire & :focus", label: "03:15 · 07. Étape 6 — Formulaire d'inscription (<fieldset>, label block & :focus)" },
-          { t: 223.43, short: "7. Circuits : Flex & overflow", label: "03:43 · 08. Étape 7 — Blocs Circuits (display: flex & overflow: hidden / auto / scroll)" },
-          { t: 254.5, short: "8. <details> & <footer>", label: "04:14 · 09. Étape 8 — Rubrique dépliable (<details>/<summary>) & Pied de page" },
-          { t: 277.75, short: "Fin & Récap", label: "04:37 · 10. Conclusion — S T I Version 2.0 By AE" }
+          { t: 0.00, short: "Intro", label: "00:00 · Introduction — choix de la méthode" },
+          { t: 34.13, short: "1. En-tête", label: "00:34 · Étape 1 — En-tête HTML5 et modèle de boîte" },
+          { t: 62.02, short: "2. Navigation", label: "01:02 · Étape 2 — Menu horizontal" },
+          { t: 89.76, short: "3. Présentation", label: "01:29 · Étape 3 — Image d’arrière-plan et lisibilité" },
+          { t: 117.29, short: "4. Cartes", label: "01:57 · Étape 4 — Trois cartes de destinations avec Flexbox" },
+          { t: 149.98, short: "5. Badge & survol", label: "02:29 · Étape 5 — Badge positionné et effet au survol" },
+          { t: 179.07, short: "6. Formulaire", label: "02:59 · Étape 6 — Formulaire centré et champ actif" },
+          { t: 205.37, short: "7. Circuits & overflow", label: "03:25 · Étape 7 — Trois blocs et débordement du texte" },
+          { t: 233.38, short: "8. Détails & pied de page", label: "03:53 · Étape 8 — Rubrique native et pied de page" },
+          { t: 264.17, short: "Conclusion", label: "04:24 · Conclusion — récapitulatif" },
         ],
         "explore-tunisie-float": [
-          { t: 0.0, short: "Intro", label: "00:00 · 01. Introduction — Correction pas à pas avec Float" },
-          { t: 22.62, short: "1. Structure & <header>", label: "00:22 · 02. Étape 1 — Structure HTML5 & En-tête (.entete-site)" },
-          { t: 49.06, short: "2. Menu avec Float", label: "00:49 · 03. Étape 2 — Barre de navigation avec float: left & overflow: hidden" },
-          { t: 75.35, short: "3. Présentation (bg-image)", label: "01:15 · 04. Étape 3 — Section de présentation (background-image & cover)" },
-          { t: 97.42, short: "4. Cartes avec Float", label: "01:37 · 05. Étape 4 — Alignement des 3 cartes Destinations avec float: left" },
-          { t: 133.51, short: "5. Badge Absolute & :hover", label: "02:13 · 06. Étape 5 — Étiquette « Offre spéciale » (position: absolute) & Survol" },
-          { t: 159.61, short: "6. clear: both & Formulaire", label: "02:39 · 07. Étape 6 — Rétablissement du flux (clear: both) & Formulaire (:focus)" },
-          { t: 183.58, short: "7. Circuits : Float & overflow", label: "03:03 · 08. Étape 7 — Blocs Circuits avec float: left & overflow (hidden / auto / scroll)" },
-          { t: 214.43, short: "8. <details> & <footer>", label: "03:34 · 09. Étape 8 — Rubrique <details> / <summary> & Pied de page (clear: both)" },
-          { t: 234.39, short: "Fin & Récap", label: "03:54 · 10. Conclusion — S T I Version 2.0 By AE" }
+          { t: 0.00, short: "Intro", label: "00:00 · Introduction — choix de la méthode" },
+          { t: 33.50, short: "1. En-tête", label: "00:33 · Étape 1 — En-tête HTML5 et modèle de boîte" },
+          { t: 58.99, short: "2. Navigation", label: "00:58 · Étape 2 — Menu horizontal" },
+          { t: 92.57, short: "3. Présentation", label: "01:32 · Étape 3 — Image d’arrière-plan et lisibilité" },
+          { t: 120.10, short: "4. Cartes", label: "02:00 · Étape 4 — Trois cartes de destinations avec Float" },
+          { t: 156.70, short: "5. Badge & survol", label: "02:36 · Étape 5 — Badge positionné et effet au survol" },
+          { t: 185.79, short: "6. Formulaire", label: "03:05 · Étape 6 — Formulaire centré et champ actif" },
+          { t: 214.37, short: "7. Circuits & overflow", label: "03:34 · Étape 7 — Trois blocs et débordement du texte" },
+          { t: 242.91, short: "8. Détails & pied de page", label: "04:02 · Étape 8 — Rubrique native et pied de page" },
+          { t: 270.61, short: "Conclusion", label: "04:30 · Conclusion — récapitulatif" },
         ]
       };
       window.STI_CHAPITRES_MEDIA = STI_CHAPITRES_MEDIA;
@@ -1379,6 +1532,7 @@
           '</video>';
 
         var vid = box.querySelector("video");
+        installerPauseQRVideoSTI(vid);
         var selChapG = box.querySelector("select[data-vchap-sel]");
         var chapsG = STI_CHAPITRES_MEDIA["php-guichet"] || [];
         if (selChapG) {
@@ -1480,6 +1634,7 @@
           btnClose.addEventListener("click", function (ev) {
             if (ev && ev.stopPropagation) ev.stopPropagation();
             if (vid) {
+              fermerPauseQRVideoSTI(vid, true);
               try { vid.pause(); vid.currentTime = 0; } catch (e) {}
             }
             endInline.hidden = true;
@@ -1611,6 +1766,7 @@
 
           var mCard = document.getElementById("sti-video-modal-card");
           var mVid = document.getElementById("sti-video-modal-player");
+          installerPauseQRVideoSTI(mVid);
           var mBtnFs = document.getElementById("sti-video-modal-fs");
           var mRates = overlay.querySelectorAll("button[data-mrate]");
           var mChapSel = document.getElementById("sti-video-modal-chap-sel");
@@ -1683,6 +1839,7 @@
           function fermerModaleVideo(ev) {
             if (ev && ev.stopPropagation) ev.stopPropagation();
             if (mVid) {
+              fermerPauseQRVideoSTI(mVid, true);
               try { mVid.pause(); mVid.currentTime = 0; } catch (e) {}
             }
             if (mEndScreen) {
@@ -1809,6 +1966,7 @@
         var tEl = document.getElementById("sti-video-modal-title");
         var dlEl = document.getElementById("sti-video-modal-dl");
         var vEl = document.getElementById("sti-video-modal-player");
+        installerPauseQRVideoSTI(vEl);
         if (tEl) tEl.textContent = titre;
         if (dlEl) dlEl.href = url;
         if (vEl) {
@@ -2874,6 +3032,7 @@
     checkDevtools();
     installerPleinEcranSansAdresseGitHub();
     installerMasquageAdressePC();
+    installerPauseQRVideosPageSTI();
     installerVideosPasAPasSTI();
     installerGuideVocalEnParlant();
   }

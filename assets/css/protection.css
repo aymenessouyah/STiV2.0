@@ -190,7 +190,8 @@ body.sti-gold #sti-watermark {
   .sti-btn-ecouter-bloc,
   .sti-btn-video-dedie,
   .sti-video-pas-a-pas-box,
-  #sti-video-modal-overlay {
+  #sti-video-modal-overlay,
+  #sti-video-course-pause-overlay {
     display: none !important;
   }
 }
@@ -355,6 +356,161 @@ body.sti-gold #sti-watermark {
   background: #0d1526;
   display: block;
 }
+/* ── Pause pédagogique QR/Logo à mi-parcours des lecteurs vidéo HTML5 ── */
+#sti-video-course-pause-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background: rgba(3, 8, 18, 0.94);
+  color: #f9f1e3;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+#sti-video-course-pause-overlay[hidden] {
+  display: none !important;
+}
+.sti-video-course-pause-card {
+  width: min(920px, 96vw);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: clamp(20px, 4vw, 42px);
+  border: 2px solid #f4511e;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #13213a, #0d1526 68%);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.62);
+}
+.sti-video-course-pause-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 26px;
+}
+.sti-video-course-pause-logo {
+  flex: 0 0 auto;
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+}
+.sti-video-course-pause-brand {
+  font-size: clamp(20px, 3vw, 29px);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+.sti-video-course-pause-brand span {
+  display: inline-block;
+  margin-left: 8px;
+  color: #facc15;
+  font-size: 0.72em;
+}
+.sti-video-course-pause-kicker {
+  margin-top: 5px;
+  color: #7dd3fc;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+.sti-video-course-pause-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
+  align-items: center;
+  gap: clamp(18px, 4vw, 42px);
+  padding: 24px;
+  border: 1px solid rgba(250, 204, 21, 0.42);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+}
+.sti-video-course-pause-copy h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(21px, 3vw, 33px);
+  line-height: 1.38;
+  font-weight: 850;
+}
+.sti-video-course-pause-copy p {
+  margin: 16px 0 0;
+  color: #cbd5e1;
+  font-size: clamp(14px, 1.8vw, 17px);
+  line-height: 1.5;
+}
+.sti-video-course-pause-qr {
+  display: block;
+  width: 180px;
+  max-width: 100%;
+  height: auto;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 2px solid #facc15;
+  border-radius: 12px;
+  background: #fff;
+  image-rendering: pixelated;
+}
+.sti-video-course-pause-resume {
+  display: block;
+  min-height: 50px;
+  margin: 24px auto 0;
+  padding: 12px 24px;
+  border: 2px solid #86efac;
+  border-radius: 999px;
+  background: #177245;
+  color: #fff;
+  font: 900 16px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(23, 114, 69, 0.3);
+}
+.sti-video-course-pause-resume:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+@media (max-width: 600px) {
+  #sti-video-course-pause-overlay {
+    padding: 10px;
+  }
+  .sti-video-course-pause-card {
+    padding: 18px;
+    border-radius: 16px;
+  }
+  .sti-video-course-pause-head {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .sti-video-course-pause-logo {
+    width: 58px;
+    height: 58px;
+  }
+  .sti-video-course-pause-kicker {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  .sti-video-course-pause-main {
+    grid-template-columns: minmax(0, 1fr) 104px;
+    gap: 12px;
+    padding: 14px;
+  }
+  .sti-video-course-pause-qr {
+    width: 104px;
+    padding: 4px;
+    border-radius: 8px;
+  }
+  .sti-video-course-pause-copy p {
+    margin-top: 10px;
+  }
+  .sti-video-course-pause-resume {
+    width: 100%;
+    margin-top: 16px;
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+}
+
 video::-webkit-media-controls-fullscreen-button {
   display: none !important;
 }
