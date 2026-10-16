@@ -625,6 +625,35 @@
       if (connexionResolue) return;
       connexionResolue = true;
       btn.disabled = false;
+      /* Cas spécial Poste Labo 3 (elevelabo3@exemple.tn) sans Internet : connexion hors-ligne directe et permanente */
+      if (!estSaisieAdmin && /^elevelabo3(?:@|$)/i.test(String(emailConn || idConn || "").trim())) {
+        var objPermOff = {
+          id: "labo3-local",
+          email: emailConn || "elevelabo3@exemple.tn",
+          nom: "Poste",
+          prenom: "Labo 3",
+          lycee: "Lycée Rafèha",
+          classe: "elevelabo3",
+          statut: "actif",
+          gold: true,
+          permanent: true,
+          isAdmin: false,
+          ts: Date.now()
+        };
+        try {
+          var jsPerm = JSON.stringify(objPermOff);
+          localStorage.removeItem("sti-admin-gold");
+          localStorage.removeItem("sti-force-exit");
+          localStorage.setItem("sti-gold", "1");
+          localStorage.setItem("sti-offline", String(Date.now()));
+          localStorage.setItem("sti-session-cache", jsPerm);
+          localStorage.setItem("sti-labo3-permanent", jsPerm);
+          sessionStorage.setItem("sti-bio-session-ok", "1");
+          localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+        } catch (err) {}
+        location.href = cfg.RACINE + "index.html";
+        return;
+      }
       var cred = null;
       try { cred = JSON.parse(localStorage.getItem("sti-cred") || "null"); } catch (err) {}
       sha256(mdp).then(function (h) {

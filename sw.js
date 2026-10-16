@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v230";
+var CACHE = "sti-atelier-v231";
 var SHELL = [
   "./",
   "./index.html",
@@ -829,9 +829,21 @@ self.addEventListener("fetch", function (evt) {
   /* 1. Pages (navigation, documents HTML, iframes) & Scripts / Styles :
         - Si déjà en cache pour la version courante (CACHE) -> 0 ms depuis le cache (navigation ultra-légère : la plateforme ne se met à jour que s'il y a une nouvelle version de CACHE)
         - Si pas encore en cache -> réseau + mise en cache */
+  var estHoteLocalDossier = /^(localhost|127\.0\.0\.1|::1|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/i.test(url.hostname || "");
   if (req.mode === "navigate" || /\.(html|css|js|webmanifest)$/i.test(url.pathname) || url.pathname.slice(-1) === "/") {
     evt.respondWith(
       (async function () {
+        /* Sur un dossier local servi en localhost/LAN (PC Labo 3 sans Internet), lire directement les fichiers remplacés du dossier */
+        if (estHoteLocalDossier) {
+          try {
+            var repLoc = await fetch(req, { cache: "no-store" });
+            if (repLoc && repLoc.ok) {
+              var copLoc = repLoc.clone();
+              caches.open(CACHE).then(function (c) { c.put(req, copLoc); });
+              return repLoc;
+            }
+          } catch (e) {}
+        }
         var enCache = await chercherDansCache(req, url);
         if (enCache) {
           return enCache;

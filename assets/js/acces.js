@@ -185,8 +185,31 @@
         }
       } catch (e) {}
 
+      /* Détection immédiate par fichier local config.js (fonctionne en file:// et 100 % sans Internet quand on copie-remplace le dossier) */
+      try {
+        var verCfgLocal = (cfg && Number(cfg.VERSION)) || 0;
+        var verInstLocal = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0;
+        if (verCfgLocal > 0 && verCfgLocal !== verInstLocal) {
+          localStorage.setItem("sti-version-installee", String(verCfgLocal));
+          localStorage.removeItem("sti-precache-ver");
+          sessionStorage.removeItem("sti-conn-ver-checked");
+          if ("caches" in window && caches.keys) {
+            caches.keys().then(function (cles) {
+              (cles || []).forEach(function (k) {
+                if (k.indexOf("sti-atelier-v") === 0 && k !== ("sti-atelier-v" + verCfgLocal)) {
+                  caches.delete(k);
+                }
+              });
+            }).catch(function () {});
+          }
+        }
+      } catch (e) {}
+
+      var estOrigineLocaleDossier = /^(localhost|127\.0\.0\.1|::1|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/i.test(location.hostname || "") || location.protocol === "file:";
+
       function verifierVersionServeurSTI(forcerImmediate) {
-        if (!navigator.onLine || typeof fetch !== "function") return;
+        if (typeof fetch !== "function" || location.protocol === "file:") return;
+        if (!navigator.onLine && !estOrigineLocaleDossier && !estPosteLabo3Init) return;
         var tsDerniereVerifVer = 0;
         var verDejaVerifieeSess = "";
         try {
@@ -194,8 +217,8 @@
           verDejaVerifieeSess = sessionStorage.getItem("sti-conn-ver-checked") || "";
         } catch (e) {}
         /* Sur les PC du labo3 (elevelabo3), vérifier toutes les 45 s ou à chaque navigation ; sinon toutes les 15 min */
-        var delaiVerif = estPosteLabo3Init ? 45000 : 900000;
-        var besoinVerifVersion = Boolean(forcerImmediate) || !verDejaVerifieeSess || (Date.now() - tsDerniereVerifVer > delaiVerif);
+        var delaiVerif = estOrigineLocaleDossier ? 0 : (estPosteLabo3Init ? 45000 : 900000);
+        var besoinVerifVersion = Boolean(forcerImmediate) || estOrigineLocaleDossier || !verDejaVerifieeSess || (Date.now() - tsDerniereVerifVer > delaiVerif);
         if (!besoinVerifVersion) return;
 
         try { sessionStorage.setItem("sti-ver-check-ts", String(Date.now())); } catch (e) {}
@@ -1198,6 +1221,31 @@
         } catch (e) {}
         return c;
       }
+      if (!c && (location.protocol === "file:" || (!navigator.onLine && estOrigineLocaleDossier))) {
+        var forceEx = "";
+        try { forceEx = localStorage.getItem("sti-force-exit") || ""; } catch (e) {}
+        if (!forceEx) {
+          c = {
+            id: "labo3-local",
+            email: "elevelabo3@exemple.tn",
+            nom: "Poste",
+            prenom: "Labo 3",
+            lycee: "Lycée Rafèha",
+            classe: "elevelabo3",
+            statut: "actif",
+            gold: true,
+            permanent: true,
+            isAdmin: false,
+            ts: Date.now()
+          };
+          try {
+            localStorage.setItem("sti-gold", "1");
+            localStorage.setItem("sti-offline", String(Date.now()));
+            localStorage.setItem("sti-session-cache", JSON.stringify(c));
+            localStorage.setItem("sti-labo3-permanent", JSON.stringify(c));
+          } catch (e) {}
+        }
+      }
       return c;
     } catch (e) { return null; }
   }
@@ -1941,7 +1989,7 @@
     btnOff.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
-      if (!navigator.onLine) {
+      if (!navigator.onLine && !estOrigineLocaleDossier && !estPosteLabo3Init) {
         if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
           btnOff.textContent = "⏳ Vérification…";
           navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL" });
