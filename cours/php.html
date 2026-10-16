@@ -1646,23 +1646,41 @@ mysqli_close($connexion);
         <div
           id="s10c-video"
           style="
-            border: 2px dashed #b4552d;
+            border: 2px solid #b4552d;
             border-radius: 12px;
             background: #fff7ed;
             padding: 2.2rem 1rem;
             text-align: center;
           "
         >
-          <div style="font-size: 3rem">🎬</div>
-          <p style="font-weight: 800; font-size: 1.1rem; margin: 0.4rem 0">
-            Explication synthèse animée — vidéo à venir
+          <p style="font-weight: 800; font-size: 1.15rem; margin: 0.2rem 0 0.6rem">
+            🎬 Explication synthèse animée — l'exercice pas à pas (8 min, Full HD)
           </p>
-          <p style="margin: 0">
-            La vidéo qui explique cet exercice pas à pas — de la page
-            <code>index.html</code> et son iframe jusqu'aux pages PHP du
-            point 10 — sera ajoutée ici ultérieurement.
+          <video
+            controls
+            preload="metadata"
+            playsinline
+            style="width: 100%; max-width: 960px; border-radius: 10px; background: #000; box-shadow: 0 8px 30px rgba(0,0,0,0.35)"
+            src="../assets/videos/php-synthese.mp4?v=242"
+          >
+            Votre navigateur ne peut pas lire cette vidéo.
+            <a href="../assets/videos/php-synthese.mp4?v=242">Télécharger la vidéo</a>
+          </video>
+          <p style="margin: 0.7rem auto 0; max-width: 960px; text-align: left">
+            À chaque étape : <b>le code à gauche, l'aperçu à droite</b> —
+            introduction (dossier sous <code>www</code>/<code>htdocs</code>,
+            appel par <code>http://localhost/...</code>, la page
+            <code>index</code> affichée seule), base de données,
+            <code>index.html</code>, <code>inscription.html</code>, CSS avec
+            <code>float</code> (même couloir, footer et <code>clear</code>),
+            <code>transition</code> en détail (<code>all</code>,
+            <code>ease</code>, <code>ease-in</code>, <code>ease-out</code>,
+            <code>ease-in-out</code>), JavaScript (<code>let</code>,
+            <code>innerHTML</code>, <code>alert()</code>, le
+            <code>return</code> de <code>onsubmit</code>, Nom_prenom nettoyé
+            et les dates — mois de 0 à 11, fonctions booléennes), puis le
+            PHP des quatre pages et les tests.
           </p>
-          <!-- 🎬 VIDÉO À AJOUTER ICI (10.3) -->
         </div>
 
         <footer>Cours PHP — 4ème SI · Travail élaboré par A. Essouyah</footer>
@@ -1868,6 +1886,25 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
                 (<code>:focus</code>). Indiquez la propriété animée et la
                 durée, par exemple
                 <code>transition: background-color 0.3s, transform 0.3s;</code>
+              </li>
+              <li>
+                <b>Détail de <code>transition</code></b> — la syntaxe
+                complète est :
+                <code>transition: propriété durée fonction délai;</code>
+                (le délai, 4<sup>e</sup> valeur, est facultatif). La
+                <b>fonction de temporisation</b> règle la vitesse pendant
+                l'effet :
+                <ul>
+                  <li><code><b>all</b></code> (à la place du nom de la propriété) : <b>toutes</b> les propriétés qui changent sont animées en même temps (fond, bordure, ombre, <code>transform</code>…) — ex. <code>transition: all 0.3s ease-in-out;</code> ;</li>
+                  <li><code><b>ease</b></code> (valeur par défaut) : lent au départ, rapide au milieu, lent à la fin ;</li>
+                  <li><code><b>ease-in</b></code> : démarrage <b>lent</b>, puis accélération jusqu'à la fin ;</li>
+                  <li><code><b>ease-out</b></code> : démarrage <b>rapide</b>, puis ralentissement en douceur à la fin ;</li>
+                  <li><code><b>ease-in-out</b></code> : lent au début <b>et</b> à la fin, rapide au milieu — l'effet le plus doux.</li>
+                </ul>
+                Utilisez au moins deux de ces fonctions dans votre
+                <code>style.css</code> (par exemple <code>ease-out</code>
+                pour les liens de la navigation et <code>ease-in-out</code>
+                avec <code>all</code> pour les champs).
               </li>
               <li>
                 Reliez le même fichier <code>style.css</code> aux quatre pages
@@ -2183,7 +2220,7 @@ nav a {
    margin-bottom: 8px;
    border-radius: 8px;
    /* Effet de transition : le changement au survol est progressif */
-   transition: background-color 0.3s, padding-left 0.3s;
+   transition: background-color 0.3s ease, padding-left 0.3s ease-out;
 }
 nav a:hover {
    background: #f4511e;
@@ -2227,7 +2264,7 @@ input {
    border: 1px solid #999;
    border-radius: 6px;
    /* Transition douce de la bordure et de l'ombre au focus */
-   transition: border-color 0.3s, box-shadow 0.3s;
+   transition: all 0.3s ease-in-out; /* all : bordure, ombre... tout est animé */
 }
 input:focus {
    border-color: #f4511e;
@@ -2244,7 +2281,7 @@ input[type="submit"], input[type="reset"] {
    padding: 9px 18px;
    margin-right: 8px;
    /* Transition : fond et agrandissement progressifs au survol */
-   transition: background-color 0.3s, transform 0.3s, opacity 0.3s;
+   transition: transform 0.2s ease-in, background-color 0.3s ease-out, opacity 0.3s ease;
 }
 input[type="reset"] { background: #64748b; }
 input[type="submit"]:hover, input[type="reset"]:hover {
@@ -2259,7 +2296,7 @@ table { border-collapse: collapse; width: 100%; background: #fff; }
 th, td { border: 1px solid #999; padding: 8px; text-align: left; }
 th { background: #0f1c47; color: #fff; }
 tr:nth-child(even) { background: #eef2ff; }
-tr { transition: background-color 0.3s; }
+tr { transition: background-color 0.3s ease; }
 tr:hover { background: #ffe9e0; }
 
 /* --- Une couleur par Catégorie (première lettre de l'Id) --- */
