@@ -1542,145 +1542,222 @@ mysqli_close($connexion);
         <h2 id="s10">10. Quatre pages PHP complètes (CRUD + statistiques)</h2>
         <p>
           Ces quatre pages utilisent la même table
-          <code>eleves(id, nom, age, moyenne)</code> et le même schéma de
-          connexion.
+          <code>eleves(id, nom, age, moyenne, datenaissance)</code> et le même
+          schéma de connexion. Les lectures de résultats se font avec
+          <code>mysqli_fetch_array</code>.
         </p>
 
         <h3 id="s10a">10.1 Page d'insertion — ajouter.php</h3>
-        <pre><code>
-          &lt;?php
-          $connexion = mysqli_connect("localhost", "root", "");
-          mysqli_select_db($connexion, "ecole");
-          
-          if (isset($_POST["ok"])) {
-             $nom = $_POST['nom'];
-             $age = (int)$_POST['age'];
-             $moyenne = (float)$_POST['moyenne'];
-          
-             $req = "INSERT INTO eleves (nom, age, moyenne) VALUES ('$nom', $age, $moyenne)";
-             if (mysqli_query($connexion, $req)) {
-                echo "Élève ajouté (id = " . mysqli_insert_id($connexion) . ").";
-             } else {
-                echo "Erreur : " . mysqli_error($connexion);
-             }
-          }
-          ?&gt;
-          &lt;form method="post"&gt;
-             Nom : &lt;input name="nom"&gt;&lt;br&gt;
-             Âge : &lt;input name="age" type="number"&gt;&lt;br&gt;
-             Moyenne : &lt;input name="moyenne" type="number" step="0.01"&gt;&lt;br&gt;
-             &lt;input type="submit" name="ok" value="Ajouter"&gt;
-          &lt;/form&gt;
-</code></pre>
+        <pre><code>&lt;?php
+$connexion = mysqli_connect("localhost", "root", "");
+mysqli_select_db($connexion, "ecole");
+
+if (isset($_POST["ok"])) {
+   $nom = mysqli_real_escape_string($connexion, $_POST['nom']);
+   $age = (int)$_POST['age'];
+   $moyenne = (float)$_POST['moyenne'];
+   $datenaissance = mysqli_real_escape_string($connexion, $_POST['datenaissance']);
+
+   $req = "INSERT INTO eleves (nom, age, moyenne, datenaissance)
+           VALUES ('$nom', $age, $moyenne, '$datenaissance')";
+   if (mysqli_query($connexion, $req)) {
+      echo "Élève ajouté (id = " . mysqli_insert_id($connexion) . ").";
+   } else {
+      echo "Erreur : " . mysqli_error($connexion);
+   }
+}
+mysqli_close($connexion);
+?&gt;
+&lt;form method="post"&gt;
+   Nom : &lt;input name="nom"&gt;&lt;br&gt;
+   Âge : &lt;input name="age" type="number"&gt;&lt;br&gt;
+   Moyenne : &lt;input name="moyenne" type="number" step="0.01"&gt;&lt;br&gt;
+   Date de naissance : &lt;input name="datenaissance" type="date"&gt;&lt;br&gt;
+   &lt;input type="submit" name="ok" value="Ajouter"&gt;
+&lt;/form&gt;</code></pre>
 
         <h3 id="s10b">10.2 Page de sélection — liste.php</h3>
         <pre><code>&lt;?php
 $connexion = mysqli_connect("localhost", "root", "");
 mysqli_select_db($connexion, "ecole");
 
-$req = "SELECT id, nom, age, moyenne FROM eleves ORDER BY nom";
+$req = "SELECT id, nom, age, moyenne, datenaissance FROM eleves ORDER BY nom";
 $resultat = mysqli_query($connexion, $req);
 ?&gt;
 &lt;table border="1"&gt;
-   &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Âge&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;/tr&gt;
+   &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Âge&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;/tr&gt;
    &lt;?php while ($ligne = mysqli_fetch_array($resultat)) { ?&gt;
    &lt;tr&gt;
       &lt;td&gt;&lt;?php echo $ligne["id"]; ?&gt;&lt;/td&gt;
       &lt;td&gt;&lt;?php echo $ligne["nom"]; ?&gt;&lt;/td&gt;
       &lt;td&gt;&lt;?php echo $ligne["age"]; ?&gt;&lt;/td&gt;
       &lt;td&gt;&lt;?php echo $ligne["moyenne"]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne["datenaissance"]; ?&gt;&lt;/td&gt;
    &lt;/tr&gt;
    &lt;?php } ?&gt;
 &lt;/table&gt;
-&lt;p&gt;&lt;?php echo mysqli_num_rows($resultat); ?&gt; élève(s) au total.&lt;/p&gt;</code></pre>
+&lt;p&gt;&lt;?php echo mysqli_num_rows($resultat); ?&gt; élève(s) au total.&lt;/p&gt;
+&lt;?php mysqli_close($connexion); ?&gt;</code></pre>
 
         <h3 id="s10c">10.3 Page de mise à jour — modifier.php</h3>
-        <pre><code>
-          &lt;?php
+        <pre><code>&lt;?php
 $connexion = mysqli_connect("localhost", "root", "");
 mysqli_select_db($connexion, "ecole");
 
 if (isset($_POST["ok"])) {
    $id = (int)$_POST['id'];
+   $age = (int)$_POST['age'];
    $moyenne = (float)$_POST['moyenne'];
+   $datenaissance = mysqli_real_escape_string($connexion, $_POST['datenaissance']);
 
-   $req = "UPDATE eleves SET moyenne = $moyenne WHERE id = $id";
+   $req = "UPDATE eleves
+           SET age = $age, moyenne = $moyenne, datenaissance = '$datenaissance'
+           WHERE id = $id";
    mysqli_query($connexion, $req);
 
    if (mysqli_affected_rows($connexion) &gt; 0) {
-      echo "Moyenne mise à jour pour l'élève n°$id.";
+      echo "Élève n°$id mis à jour.";
    } else {
-      echo "Aucune ligne modifiée (id introuvable ?).";
+      echo "Aucune ligne modifiée (id introuvable ou valeurs identiques).";
    }
 }
+mysqli_close($connexion);
 ?&gt;
 &lt;form method="post"&gt;
    Id de l'élève : &lt;input name="id" type="number"&gt;&lt;br&gt;
+   Nouvel âge : &lt;input name="age" type="number"&gt;&lt;br&gt;
    Nouvelle moyenne : &lt;input name="moyenne" type="number" step="0.01"&gt;&lt;br&gt;
+   Nouvelle date de naissance : &lt;input name="datenaissance" type="date"&gt;&lt;br&gt;
    &lt;input type="submit" name="ok" value="Mettre à jour"&gt;
-&lt;/form&gt;
-</code></pre>
+&lt;/form&gt;</code></pre>
 
         <h3 id="s10d">10.4 Page de statistiques — statistiques.php</h3>
-        <pre><code>
-          &lt;!DOCTYPE html&gt;
-          &lt;html lang="fr"&gt;
-          &lt;head&gt;
-             &lt;meta charset="utf-8"&gt;
-             &lt;title&gt;Statistiques des élèves&lt;/title&gt;
-             &lt;style&gt;
-                body { font-family: Arial, sans-serif; margin: 30px; }
-                h1 { color: #2c3e50; }
-                table { border-collapse: collapse; width: 400px; }
-                td { border: 1px solid #999; padding: 8px; }
-                td:first-child { background: #ecf0f1; font-weight: bold; }
-             &lt;/style&gt;
-          &lt;/head&gt;
-          &lt;body&gt;
-          
-          &lt;h1&gt;Statistiques des élèves&lt;/h1&gt;
-          
-          &lt;?php
-          $connexion = mysqli_connect("localhost", "root", "", "ecole");
-          if (!$connexion) {
-             die("Erreur de connexion : " . mysqli_connect_error());
-          }
-          
-          $total = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves");
-          $ligneTotal = mysqli_fetch_assoc($total);
-          
-          if ($ligneTotal["nb"] &gt; 0) {
-          
-             $moy = mysqli_query($connexion, "SELECT AVG(moyenne) AS m FROM eleves");
-             $ligneMoy = mysqli_fetch_assoc($moy);
-          
-             $max = mysqli_query($connexion, "SELECT nom, moyenne FROM eleves ORDER BY moyenne DESC LIMIT 1");
-             $ligneMax = mysqli_fetch_assoc($max);
-          
-             $r1 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE moyenne &gt;= 10");
-             $l1 = mysqli_fetch_assoc($r1);
-          
-             $r2 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE moyenne &lt; 10");
-             $l2 = mysqli_fetch_assoc($r2);
-          ?&gt;
-             &lt;table&gt;
-                &lt;tr&gt;&lt;td&gt;Nombre d'élèves&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneTotal["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-                &lt;tr&gt;&lt;td&gt;Moyenne générale&lt;/td&gt;&lt;td&gt;&lt;?php echo round($ligneMoy["m"], 2); ?&gt;&lt;/td&gt;&lt;/tr&gt;
-                &lt;tr&gt;&lt;td&gt;Meilleure moyenne&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax["nom"] . " (" . $ligneMax["moyenne"] . ")"; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-                &lt;tr&gt;&lt;td&gt;Admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l1["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-                &lt;tr&gt;&lt;td&gt;Non admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l2["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-             &lt;/table&gt;
-          &lt;?php
-          } else {
-             echo "&lt;p&gt;Aucun élève dans la table.&lt;/p&gt;";
-          }
-          
-          mysqli_close($connexion);
-          ?&gt;
-          
-          &lt;/body&gt;
-          &lt;/html&gt;
-</code></pre>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+   &lt;meta charset="utf-8"&gt;
+   &lt;title&gt;Statistiques des élèves&lt;/title&gt;
+   &lt;style&gt;
+      body { font-family: Arial, sans-serif; margin: 30px; }
+      h1 { color: #2c3e50; }
+      table { border-collapse: collapse; margin-bottom: 25px; }
+      td, th { border: 1px solid #999; padding: 8px; }
+      th { background: #2c3e50; color: #fff; }
+      .stats td:first-child { background: #ecf0f1; font-weight: bold; }
+   &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;Statistiques des élèves&lt;/h1&gt;
+
+&lt;?php
+$connexion = mysqli_connect("localhost", "root", "", "ecole");
+if (!$connexion) {
+   die("Erreur de connexion : " . mysqli_connect_error());
+}
+
+$total = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves");
+$ligneTotal = mysqli_fetch_array($total);
+
+if ($ligneTotal["nb"] &gt; 0) {
+
+   $moy = mysqli_query($connexion, "SELECT AVG(moyenne) AS m FROM eleves");
+   $ligneMoy = mysqli_fetch_array($moy);
+
+   $max = mysqli_query($connexion, "SELECT nom, moyenne FROM eleves ORDER BY moyenne DESC LIMIT 1");
+   $ligneMax = mysqli_fetch_array($max);
+
+   $r1 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE moyenne &gt;= 10");
+   $l1 = mysqli_fetch_array($r1);
+
+   $r2 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE moyenne &lt; 10");
+   $l2 = mysqli_fetch_array($r2);
+?&gt;
+   &lt;table class="stats"&gt;
+      &lt;tr&gt;&lt;td&gt;Nombre d'élèves&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneTotal["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Moyenne générale&lt;/td&gt;&lt;td&gt;&lt;?php echo round($ligneMoy["m"], 2); ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Meilleure moyenne&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax["nom"] . " (" . $ligneMax["moyenne"] . ")"; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l1["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Non admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l2["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;/table&gt;
+
+   &lt;h2&gt;Âge et anniversaire de chaque élève&lt;/h2&gt;
+   &lt;table&gt;
+      &lt;tr&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;th&gt;Âge&lt;/th&gt;&lt;th&gt;Prochain anniversaire&lt;/th&gt;&lt;/tr&gt;
+&lt;?php
+   $liste = mysqli_query($connexion, "SELECT nom, datenaissance FROM eleves ORDER BY nom");
+   // Date du jour
+   $a = date("Y");
+   $m = date("n");
+   $j = date("j");
+
+   while ($ligne = mysqli_fetch_array($liste)) {
+
+      if (empty($ligne["datenaissance"])) {
+         $texteAge = "—";
+         $texteAnniv = "—";
+      } else {
+         // Date de naissance : AAAA-MM-JJ
+         $partie = explode("-", $ligne["datenaissance"]);
+         $an = (int)$partie[0];
+         $mn = (int)$partie[1];
+         $jn = (int)$partie[2];
+
+         // Âge : années, mois, jours
+         $ans = $a - $an;
+         $mois = $m - $mn;
+         $jours = $j - $jn;
+         if ($jours &lt; 0) {
+            $mois = $mois - 1;
+            $jours = $jours + date("t", mktime(0, 0, 0, $m - 1, 1, $a));
+         }
+         if ($mois &lt; 0) {
+            $ans = $ans - 1;
+            $mois = $mois + 12;
+         }
+         $texteAge = "$ans an(s), $mois mois, $jours jour(s)";
+
+         // Prochain anniversaire : cette année, sinon l'année prochaine
+         $anneeProchain = $a;
+         if (mktime(0, 0, 0, $mn, $jn, $a) &lt; mktime(0, 0, 0, $m, $j, $a)) {
+            $anneeProchain = $a + 1;
+         }
+
+         // Temps restant : mois et jours
+         $resteMois = ($anneeProchain - $a) * 12 + $mn - $m;
+         $resteJours = $jn - $j;
+         if ($resteJours &lt; 0) {
+            $resteMois = $resteMois - 1;
+            $resteJours = $resteJours + date("t", mktime(0, 0, 0, $mn - 1, 1, $anneeProchain));
+         }
+
+         if ($resteMois == 0 &amp;&amp; $resteJours == 0) {
+            $texteAnniv = "C'est aujourd'hui son anniversaire !";
+         } else {
+            $texteAnniv = "Il reste $resteMois mois et $resteJours jours avant l'anniversaire";
+         }
+      }
+?&gt;
+      &lt;tr&gt;
+         &lt;td&gt;&lt;?php echo $ligne["nom"]; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $ligne["datenaissance"]; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $texteAge; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $texteAnniv; ?&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+&lt;?php
+   }
+?&gt;
+   &lt;/table&gt;
+&lt;?php
+} else {
+   echo "&lt;p&gt;Aucun élève dans la table.&lt;/p&gt;";
+}
+
+mysqli_close($connexion);
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
 
         <footer>Cours PHP — 4ème SI · Travail élaboré par A. Essouyah</footer>
       </div>
