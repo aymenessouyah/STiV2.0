@@ -1542,9 +1542,12 @@ mysqli_close($connexion);
         <h2 id="s10">10. Quatre pages PHP complètes (CRUD + statistiques)</h2>
         <p>
           Ces quatre pages utilisent la même table
-          <code>eleves(id, nom, age, moyenne, datenaissance)</code> et le même
-          schéma de connexion. Les lectures de résultats se font avec
-          <code>mysqli_fetch_array</code>.
+          <code>eleves(Id, Nom_prenom, Moyenne, DateNaissance)</code> et le
+          même schéma de connexion. Les lectures de résultats se font avec
+          <code>mysqli_fetch_array</code>. L'<code>Id</code> est un code qui
+          commence toujours par une <b>lettre en majuscule</b> : cette première
+          lettre est la <b>Catégorie</b> de l'élève (A, B, C…), utilisée pour
+          le tri dans la page de statistiques (10.4).
         </p>
 
         <h3 id="s10a">10.1 Page d'insertion — ajouter.php</h3>
@@ -1553,15 +1556,17 @@ $connexion = mysqli_connect("localhost", "root", "");
 mysqli_select_db($connexion, "ecole");
 
 if (isset($_POST["ok"])) {
-   $nom = mysqli_real_escape_string($connexion, $_POST['nom']);
-   $age = (int)$_POST['age'];
-   $moyenne = (float)$_POST['moyenne'];
-   $datenaissance = mysqli_real_escape_string($connexion, $_POST['datenaissance']);
+   $Id = $_POST['Id'];
+   // Chaque Id commence par une lettre en majuscule (la Catégorie : A, B, C…)
+   $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
+   $Nom_prenom = $_POST['Nom_prenom'];
+   $Moyenne = (float)$_POST['Moyenne'];
+   $DateNaissance = $_POST['DateNaissance'];
 
-   $req = "INSERT INTO eleves (nom, age, moyenne, datenaissance)
-           VALUES ('$nom', $age, $moyenne, '$datenaissance')";
+   $req = "INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance)
+           VALUES ('$Id', '$Nom_prenom', $Moyenne, '$DateNaissance')";
    if (mysqli_query($connexion, $req)) {
-      echo "Élève ajouté (id = " . mysqli_insert_id($connexion) . ").";
+      echo "Élève ajouté (Id = $Id).";
    } else {
       echo "Erreur : " . mysqli_error($connexion);
    }
@@ -1569,10 +1574,10 @@ if (isset($_POST["ok"])) {
 mysqli_close($connexion);
 ?&gt;
 &lt;form method="post"&gt;
-   Nom : &lt;input name="nom"&gt;&lt;br&gt;
-   Âge : &lt;input name="age" type="number"&gt;&lt;br&gt;
-   Moyenne : &lt;input name="moyenne" type="number" step="0.01"&gt;&lt;br&gt;
-   Date de naissance : &lt;input name="datenaissance" type="date"&gt;&lt;br&gt;
+   Id (ex. A01) : &lt;input name="Id"&gt;&lt;br&gt;
+   Nom et prénom : &lt;input name="Nom_prenom"&gt;&lt;br&gt;
+   Moyenne : &lt;input name="Moyenne" type="number" step="0.01"&gt;&lt;br&gt;
+   Date de naissance : &lt;input name="DateNaissance" type="date"&gt;&lt;br&gt;
    &lt;input type="submit" name="ok" value="Ajouter"&gt;
 &lt;/form&gt;</code></pre>
 
@@ -1581,18 +1586,17 @@ mysqli_close($connexion);
 $connexion = mysqli_connect("localhost", "root", "");
 mysqli_select_db($connexion, "ecole");
 
-$req = "SELECT id, nom, age, moyenne, datenaissance FROM eleves ORDER BY nom";
+$req = "SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves ORDER BY Nom_prenom";
 $resultat = mysqli_query($connexion, $req);
 ?&gt;
 &lt;table border="1"&gt;
-   &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Âge&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;/tr&gt;
+   &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Nom et prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;/tr&gt;
    &lt;?php while ($ligne = mysqli_fetch_array($resultat)) { ?&gt;
    &lt;tr&gt;
-      &lt;td&gt;&lt;?php echo $ligne["id"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["nom"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["age"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["moyenne"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["datenaissance"]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne["Id"]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne["Nom_prenom"]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne["Moyenne"]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne["DateNaissance"]; ?&gt;&lt;/td&gt;
    &lt;/tr&gt;
    &lt;?php } ?&gt;
 &lt;/table&gt;
@@ -1605,29 +1609,29 @@ $connexion = mysqli_connect("localhost", "root", "");
 mysqli_select_db($connexion, "ecole");
 
 if (isset($_POST["ok"])) {
-   $id = (int)$_POST['id'];
-   $age = (int)$_POST['age'];
-   $moyenne = (float)$_POST['moyenne'];
-   $datenaissance = mysqli_real_escape_string($connexion, $_POST['datenaissance']);
+   $Id = $_POST['Id'];
+   // Chaque Id commence par une lettre en majuscule (la Catégorie : A, B, C…)
+   $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
+   $Moyenne = (float)$_POST['Moyenne'];
+   $DateNaissance = $_POST['DateNaissance'];
 
    $req = "UPDATE eleves
-           SET age = $age, moyenne = $moyenne, datenaissance = '$datenaissance'
-           WHERE id = $id";
+           SET Moyenne = $Moyenne, DateNaissance = '$DateNaissance'
+           WHERE Id = '$Id'";
    mysqli_query($connexion, $req);
 
    if (mysqli_affected_rows($connexion) &gt; 0) {
-      echo "Élève n°$id mis à jour.";
+      echo "Élève $Id mis à jour.";
    } else {
-      echo "Aucune ligne modifiée (id introuvable ou valeurs identiques).";
+      echo "Aucune ligne modifiée (Id introuvable ou valeurs identiques).";
    }
 }
 mysqli_close($connexion);
 ?&gt;
 &lt;form method="post"&gt;
-   Id de l'élève : &lt;input name="id" type="number"&gt;&lt;br&gt;
-   Nouvel âge : &lt;input name="age" type="number"&gt;&lt;br&gt;
-   Nouvelle moyenne : &lt;input name="moyenne" type="number" step="0.01"&gt;&lt;br&gt;
-   Nouvelle date de naissance : &lt;input name="datenaissance" type="date"&gt;&lt;br&gt;
+   Id de l'élève (ex. A01) : &lt;input name="Id"&gt;&lt;br&gt;
+   Nouvelle moyenne : &lt;input name="Moyenne" type="number" step="0.01"&gt;&lt;br&gt;
+   Nouvelle date de naissance : &lt;input name="DateNaissance" type="date"&gt;&lt;br&gt;
    &lt;input type="submit" name="ok" value="Mettre à jour"&gt;
 &lt;/form&gt;</code></pre>
 
@@ -1661,31 +1665,31 @@ $ligneTotal = mysqli_fetch_array($total);
 
 if ($ligneTotal["nb"] &gt; 0) {
 
-   $moy = mysqli_query($connexion, "SELECT AVG(moyenne) AS m FROM eleves");
+   $moy = mysqli_query($connexion, "SELECT AVG(Moyenne) AS m FROM eleves");
    $ligneMoy = mysqli_fetch_array($moy);
 
-   $max = mysqli_query($connexion, "SELECT nom, moyenne FROM eleves ORDER BY moyenne DESC LIMIT 1");
+   $max = mysqli_query($connexion, "SELECT Nom_prenom, Moyenne FROM eleves ORDER BY Moyenne DESC LIMIT 1");
    $ligneMax = mysqli_fetch_array($max);
 
-   $r1 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE moyenne &gt;= 10");
+   $r1 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &gt;= 10");
    $l1 = mysqli_fetch_array($r1);
 
-   $r2 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE moyenne &lt; 10");
+   $r2 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &lt; 10");
    $l2 = mysqli_fetch_array($r2);
 ?&gt;
    &lt;table class="stats"&gt;
       &lt;tr&gt;&lt;td&gt;Nombre d'élèves&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneTotal["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
       &lt;tr&gt;&lt;td&gt;Moyenne générale&lt;/td&gt;&lt;td&gt;&lt;?php echo round($ligneMoy["m"], 2); ?&gt;&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;Meilleure moyenne&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax["nom"] . " (" . $ligneMax["moyenne"] . ")"; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Meilleure moyenne&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax["Nom_prenom"] . " (" . $ligneMax["Moyenne"] . ")"; ?&gt;&lt;/td&gt;&lt;/tr&gt;
       &lt;tr&gt;&lt;td&gt;Admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l1["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
       &lt;tr&gt;&lt;td&gt;Non admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l2["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
    &lt;/table&gt;
 
    &lt;h2&gt;Âge et anniversaire de chaque élève&lt;/h2&gt;
    &lt;table&gt;
-      &lt;tr&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;th&gt;Âge&lt;/th&gt;&lt;th&gt;Prochain anniversaire&lt;/th&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;th&gt;Âge&lt;/th&gt;&lt;th&gt;Prochain anniversaire&lt;/th&gt;&lt;/tr&gt;
 &lt;?php
-   $liste = mysqli_query($connexion, "SELECT nom, datenaissance FROM eleves ORDER BY nom");
+   $liste = mysqli_query($connexion, "SELECT Nom_prenom, DateNaissance FROM eleves ORDER BY Nom_prenom");
    // Date du jour
    $a = date("Y");
    $m = date("n");
@@ -1693,12 +1697,17 @@ if ($ligneTotal["nb"] &gt; 0) {
 
    while ($ligne = mysqli_fetch_array($liste)) {
 
-      if (empty($ligne["datenaissance"])) {
+      // Nom et Prénom sont séparés par un espace dans Nom_prenom
+      $partiesNom = explode(" ", $ligne["Nom_prenom"], 2);
+      $Nom = $partiesNom[0];
+      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : "";
+
+      if (empty($ligne["DateNaissance"])) {
          $texteAge = "—";
          $texteAnniv = "—";
       } else {
          // Date de naissance : AAAA-MM-JJ
-         $partie = explode("-", $ligne["datenaissance"]);
+         $partie = explode("-", $ligne["DateNaissance"]);
          $an = (int)$partie[0];
          $mn = (int)$partie[1];
          $jn = (int)$partie[2];
@@ -1739,10 +1748,34 @@ if ($ligneTotal["nb"] &gt; 0) {
       }
 ?&gt;
       &lt;tr&gt;
-         &lt;td&gt;&lt;?php echo $ligne["nom"]; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $ligne["datenaissance"]; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $Nom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $Prenom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $ligne["DateNaissance"]; ?&gt;&lt;/td&gt;
          &lt;td&gt;&lt;?php echo $texteAge; ?&gt;&lt;/td&gt;
          &lt;td&gt;&lt;?php echo $texteAnniv; ?&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+&lt;?php
+   }
+?&gt;
+   &lt;/table&gt;
+
+   &lt;h2&gt;Liste des élèves par Catégorie&lt;/h2&gt;
+   &lt;table&gt;
+      &lt;tr&gt;&lt;th&gt;Catégorie&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;/tr&gt;
+&lt;?php
+   // Tri par Catégorie (A, B, C…) : la Catégorie est la première lettre de l'Id
+   $parCategorie = mysqli_query($connexion, "SELECT Id, Nom_prenom, Moyenne FROM eleves ORDER BY LEFT(Id, 1), Nom_prenom");
+   while ($ligne = mysqli_fetch_array($parCategorie)) {
+      $Categorie = substr($ligne["Id"], 0, 1);
+      $partiesNom = explode(" ", $ligne["Nom_prenom"], 2);
+      $Nom = $partiesNom[0];
+      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : "";
+?&gt;
+      &lt;tr&gt;
+         &lt;td&gt;&lt;?php echo $Categorie; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $Nom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $Prenom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $ligne["Moyenne"]; ?&gt;&lt;/td&gt;
       &lt;/tr&gt;
 &lt;?php
    }
