@@ -52,7 +52,10 @@
         if (lignes && lignes.length) {
           var distant = new Date(lignes[0].maj).getTime() || 0;
           var local = parseInt(localStorage.getItem(CLE_SYNC_MAJ) || "0", 10) || 0;
-          if (distant > local && lignes[0].donnees) { appliquer(lignes[0].donnees); localStorage.setItem(CLE_SYNC_MAJ, String(distant)); dernierHash = hash(collecter()); pastille("☁️ Progression restaurée depuis le cloud", "#e8f5e9"); return; }
+          if (distant > local && lignes[0].donnees) { appliquer(lignes[0].donnees); localStorage.setItem(CLE_SYNC_MAJ, String(distant)); dernierHash = hash(collecter()); pastille("☁️ Progression restaurée depuis le cloud", "#e8f5e9");
+            /* Recharger une fois pour que le tableau de bord affiche les valeurs restaurées */
+            try { if (document.getElementsByClassName("bord-notion").length && !sessionStorage.getItem("sti-sync-recharge")) { sessionStorage.setItem("sti-sync-recharge", "1"); setTimeout(function () { location.reload(); }, 600); } } catch (e) {}
+            return; }
         }
         pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9"); pousser(true);
       })
