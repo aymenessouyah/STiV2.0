@@ -340,22 +340,19 @@
         </div>
       </div>
       <div class="nav-group">
-        <a href="#s9" class="main-link">9. Exemple récapitulatif</a>
+        <a href="#s9" class="main-link">9. 🧩 Exercice de synthèse</a>
+        <div class="sub-links-container">
+          <a href="#s9a" class="sub-link">9.1 Énoncé</a>
+          <a href="#s9b" class="sub-link">9.2 Solution</a>
+          <a href="#s9c" class="sub-link">9.3 Explication animée</a>
+        </div>
       </div>
       <div class="nav-group">
-        <a href="#s10" class="main-link">10. 🧩 Exercice de synthèse</a>
+        <a href="#s10" class="main-link">10. 🧩 Exercice de synthèse N°2 — Recharge VE</a>
         <div class="sub-links-container">
           <a href="#s10a" class="sub-link">10.1 Énoncé</a>
           <a href="#s10b" class="sub-link">10.2 Solution</a>
           <a href="#s10c" class="sub-link">10.3 Explication animée</a>
-        </div>
-      </div>
-      <div class="nav-group">
-        <a href="#s11" class="main-link">11. 🧩 Exercice de synthèse N°2 — Recharge VE</a>
-        <div class="sub-links-container">
-          <a href="#s11a" class="sub-link">11.1 Énoncé</a>
-          <a href="#s11b" class="sub-link">11.2 Solution</a>
-          <a href="#s11c" class="sub-link">11.3 Explication animée</a>
         </div>
       </div>
     </nav>
@@ -1522,30 +1519,6 @@ mysqli_close($connexion);
           « i ») sont obsolètes : utiliser MySQLi.
         </p>
 
-        <h2 id="s9">9. Exemple récapitulatif — formulaire d'inscription</h2>
-        <pre><code>&lt;!-- formulaire.html --&gt;
-&lt;form method="post" action="inscription.php"&gt;
-   Nom : &lt;input type="text" name="nom"&gt;&lt;br&gt;
-   Âge : &lt;input type="text" name="age"&gt;&lt;br&gt;
-   &lt;input type="submit" value="Envoyer"&gt;
-&lt;/form&gt;</code></pre>
-        <pre><code>&lt;?php
-// inscription.php
-$nom = $_POST['nom'];
-$age = (int)$_POST['age'];
-if (!isset($nom) || $nom == "") die("Le nom est obligatoire.");
-
-$connexion = mysqli_connect("localhost", "root", "");
-mysqli_select_db($connexion, "ecole");
-$req = "INSERT INTO eleves (nom, age) VALUES ('" . $nom . "', " . $age . ")";
-if (mysqli_query($connexion, $req)) {
-   echo "Inscription réussie pour " . $nom . " le " . date("d-m-Y") . ".";
-} else {
-   echo mysqli_error($connexion);
-}
-mysqli_close($connexion);
-?&gt;</code></pre>
-
         <div
           style="
             display: flex;
@@ -1555,8 +1528,8 @@ mysqli_close($connexion);
             flex-wrap: nowrap;
           "
         >
-          <h2 id="s10" style="flex: 1 1 auto; min-width: 0; margin-top: 2.6rem">
-            10. 🧩 Exercice de synthèse
+          <h2 id="s9" style="flex: 1 1 auto; min-width: 0; margin-top: 2.6rem">
+            9. 🧩 Exercice de synthèse
           </h2>
           <button
             type="button"
@@ -1569,13 +1542,13 @@ mysqli_close($connexion);
               background: linear-gradient(120deg, #f4511e, #d81b60);
               font-weight: 800;
             "
-            title="Ouvrir l'exercice de synthèse du point 10"
+            title="Ouvrir l'exercice de synthèse (point 9)"
           >
-            📋 10.1 Énoncé
+            📋 9.1 Énoncé
           </button>
         </div>
         <p>
-          Cet exercice récapitule <b>tout le cours jusqu'au point 10</b> :
+          Cet exercice récapitule <b>tout le cours qui précède (points 1 à 8)</b> :
           vous construisez en entier le site
           <b>« Gestion des élèves »</b> — sa page <code>index.html</code>
           (en-tête avec logo, navigation verticale, iframe et pied de page),
@@ -1586,12 +1559,12 @@ mysqli_close($connexion);
           <code>eleves(Id, Nom_prenom, Moyenne, DateNaissance)</code>.
         </p>
 
-        <h3 id="s10a">10.1 Énoncé</h3>
+        <h3 id="s9a">9.1 Énoncé</h3>
         <p>
           L'énoncé complet — contexte, base de données à importer
           (<code>ecole.sql</code> téléchargeable), organisation du site,
           parties <b>HTML</b>, <b>CSS</b>, <b>JavaScript</b> et
-          <b>PHP (tout le point 10)</b>, tests à effectuer et barème sur 20 —
+          <b>PHP (toute la partie PHP du cours)</b>, tests à effectuer et barème sur 20 —
           s'ouvre dans la fenêtre de l'exercice :
         </p>
         <p style="text-align: center">
@@ -1600,11 +1573,11 @@ mysqli_close($connexion);
             class="anim-open btn-ouvrir-enonce"
             style="background: linear-gradient(120deg, #f4511e, #d81b60); font-weight: 800"
           >
-            📋 Ouvrir l'énoncé complet (10.1)
+            📋 Ouvrir l'énoncé complet (9.1)
           </button>
         </p>
 
-        <h3 id="s10b">10.2 Solution — correction complète</h3>
+        <h3 id="s9b">9.2 Solution — correction complète</h3>
         <p>
           Voici la correction de tout l'exercice, en trois volets. Cliquez
           sur un bouton pour ouvrir le code corrigé correspondant, puis
@@ -1666,9 +1639,9 @@ mysqli_close($connexion);
             >🧾 Fiche mémento imprimable (PDF)</a
           >
         </p>
-<h3 id="s10c">10.3 Explication synthèse animée</h3>
+<h3 id="s9c">9.3 Explication synthèse animée</h3>
         <div
-          id="s10c-video"
+          id="s9c-video"
           style="
             border: 2px solid #b4552d;
             border-radius: 12px;
@@ -1806,8 +1779,8 @@ mysqli_close($connexion);
             flex-wrap: nowrap;
           "
         >
-          <h2 id="s11" style="flex: 1 1 auto; min-width: 0; margin-top: 2.6rem">
-            11. 🧩 Exercice de synthèse N°2 — Recharge voiture électrique
+          <h2 id="s10" style="flex: 1 1 auto; min-width: 0; margin-top: 2.6rem">
+            10. 🧩 Exercice de synthèse N°2 — Recharge voiture électrique
           </h2>
           <button
             type="button"
@@ -1822,7 +1795,7 @@ mysqli_close($connexion);
             "
             title="Ouvrir l'exercice de synthèse n°2"
           >
-            📋 11.1 Énoncé
+            📋 10.1 Énoncé
           </button>
         </div>
         <p>
@@ -1840,7 +1813,7 @@ mysqli_close($connexion);
           <b>L</b> Lente, <b>N</b> Normale, <b>R</b> Rapide, <b>U</b> Ultra-rapide.
         </p>
 
-        <h3 id="s11a">11.1 Énoncé</h3>
+        <h3 id="s10a">10.1 Énoncé</h3>
         <p>
           L'énoncé complet — contexte, base <code>station.sql</code>
           téléchargeable, organisation du site, parties HTML, CSS,
@@ -1852,11 +1825,11 @@ mysqli_close($connexion);
             class="anim-open btn-ouvrir-enonce2"
             style="background: linear-gradient(120deg, #059669, #0d9488); font-weight: 800"
           >
-            📋 Ouvrir l'énoncé complet (11.1)
+            📋 Ouvrir l'énoncé complet (10.1)
           </button>
         </p>
 
-        <h3 id="s11b">11.2 Solution — correction complète</h3>
+        <h3 id="s10b">10.2 Solution — correction complète</h3>
         <p>
           Voici la correction de tout l'exercice n°2, en trois volets :
         </p>
@@ -1882,9 +1855,9 @@ mysqli_close($connexion);
           <a href="../documents/complet/recharge-ve.zip" download class="anim-open" style="display: inline-block; background: linear-gradient(120deg, #166534, #16a34a); color: #fff; border-radius: 8px; padding: 0.6rem 1.2rem; font-weight: 800; text-decoration: none">⬇ Télécharger le corrigé complet (dossier recharge-ve + station.sql)</a>
         </p>
 
-        <h3 id="s11c">11.3 Explication synthèse animée</h3>
+        <h3 id="s10c">10.3 Explication synthèse animée</h3>
         <div
-          id="s11c-video"
+          id="s10c-video"
           style="
             border: 2px dashed #059669;
             border-radius: 12px;
@@ -1902,7 +1875,7 @@ mysqli_close($connexion);
             aperçu à droite, comme pour l'exercice n°1 — sera ajoutée ici
             ultérieurement.
           </p>
-          <!-- 🎬 VIDÉO À AJOUTER ICI (11.3) -->
+          <!-- 🎬 VIDÉO À AJOUTER ICI (10.3) -->
         </div>
 
         <footer>Cours PHP — 4ème SI · Travail élaboré par A. Essouyah</footer>
@@ -1948,7 +1921,7 @@ mysqli_close($connexion);
               <b>Contexte.</b> Le lycée veut une petite application web pour
               gérer ses élèves et leurs moyennes. Vous allez la construire en
               entier — la page, son style, ses contrôles et son traitement —
-              en réutilisant <b>tout ce qui a été vu jusqu'au point 10</b>.
+              en réutilisant <b>tout ce qui a été vu dans le cours qui précède</b>.
               Le site s'organise autour d'une page
               <code>index.html</code> : un en-tête avec logo, une navigation
               verticale à gauche, une section à droite contenant un
@@ -2021,7 +1994,7 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
                 <b>Une navigation verticale à gauche (<code>nav</code>)</b> :
                 ses liens s'affichent les uns sous les autres et pointent vers
                 la page <code>inscription.html</code> et vers les autres
-                pages PHP du point 10 (<code>liste.php</code>,
+                pages PHP du cours (<code>liste.php</code>,
                 <code>modifier.php</code>, <code>statistiques.php</code>).
                 Chaque lien utilise <code>target="cadre"</code> pour
                 s'ouvrir dans l'iframe de droite, sans quitter la page
@@ -2193,10 +2166,10 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
               </li>
             </ul>
 
-            <h3>4️⃣ Partie PHP — tout le point 10, sans rien oublier</h3>
+            <h3>4️⃣ Partie PHP — tout le PHP du cours, sans rien oublier</h3>
             <ul>
               <li>
-                <b>10.1 — ajouter.php</b> : cette page reçoit le formulaire
+                <b>Étape PHP 1 — ajouter.php</b> : cette page reçoit le formulaire
                 de <code>inscription.html</code> et affiche son résultat dans
                 l'iframe ; récupérer les champs, mettre la
                 première lettre de l'Id en majuscule
@@ -2205,18 +2178,18 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
                 et afficher un message de réussite ou l'erreur.
               </li>
               <li>
-                <b>10.2 — liste.php</b> : afficher tous les élèves
+                <b>Étape PHP 2 — liste.php</b> : afficher tous les élèves
                 (Id, Nom et prénom, Moyenne, Date de naissance) triés par
                 Nom_prenom, puis le nombre total d'élèves.
               </li>
               <li>
-                <b>10.3 — modifier.php</b> : mettre à jour la Moyenne et la
+                <b>Étape PHP 3 — modifier.php</b> : mettre à jour la Moyenne et la
                 DateNaissance de l'élève dont on saisit l'Id
                 (<code>mysqli_affected_rows</code> pour vérifier qu'une ligne
                 a bien été modifiée).
               </li>
               <li>
-                <b>10.4 — statistiques.php</b> : nombre d'élèves, moyenne
+                <b>Étape PHP 4 — statistiques.php</b> : nombre d'élèves, moyenne
                 générale, meilleure moyenne, admis et non admis ; le tableau
                 « Âge et anniversaire » ; et le tableau
                 <b>Catégorie | Nom | Prénom | Moyenne</b> où le Nom et le
@@ -2272,12 +2245,11 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
             </p>
             <p>
               <b>Barème (sur 20)</b> — Base importée : 2 · HTML : 3 ·
-              CSS : 3 · JavaScript : 4 · PHP 10.1 : 2 · 10.2 : 2 ·
-              10.3 : 2 · 10.4 : 2.
+              CSS : 3 · JavaScript : 4 · PHP (4 pages : ajouter, liste, modifier, statistiques) : 2 × 4.
             </p>
             <p style="text-align: center">
-              <a href="#s10b">✅ 10.2 Solution</a> ·
-              <a href="#s10c">🎬 10.3 Explication animée</a>
+              <a href="#s9b">✅ 9.2 Solution</a> ·
+              <a href="#s9c">🎬 9.3 Explication animée</a>
             </p>
           </div>
         </div>
@@ -2285,7 +2257,7 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
     </div>
 
 
-    <!-- Boîte modale : Solution de l'exercice de synthèse (10.2) -->
+    <!-- Boîte modale : Solution de l'exercice de synthèse (9.2) -->
     <div
       id="solModal"
       class="anim-modal"
@@ -2296,7 +2268,7 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
     >
       <div class="anim-box" id="solBox">
         <div class="anim-head">
-          <span id="solTitle">✅ 10.2 Solution — Correction complète de l'exercice de synthèse</span>
+          <span id="solTitle">✅ 9.2 Solution — Correction complète de l'exercice de synthèse</span>
           <span class="anim-tools">
             <button
               type="button"
@@ -2605,8 +2577,8 @@ function validerModification() {
 }</code></pre>
             </div>
             <div class="sol-panel" id="solPanel-php" hidden>
-              <p><b>Correction PHP — tout le point 10</b>, adaptée au site : <code>ajouter.php</code> reçoit le formulaire d'<code>inscription.html</code> et affiche le résultat dans l'iframe. Aucune page n'utilise <code>mysqli_real_escape_string</code>, et chaque Id commence par une lettre en majuscule (sa Catégorie).</p>
-              <h4>🐘 ajouter.php — insertion (10.1)</h4><pre><code>&lt;?php
+              <p><b>Correction PHP — toute la partie PHP du cours</b>, adaptée au site : <code>ajouter.php</code> reçoit le formulaire d'<code>inscription.html</code> et affiche le résultat dans l'iframe. Aucune page n'utilise <code>mysqli_real_escape_string</code>, et chaque Id commence par une lettre en majuscule (sa Catégorie).</p>
+              <h4>🐘 ajouter.php — insertion (Étape PHP 1)</h4><pre><code>&lt;?php
 $connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
 mysqli_select_db($connexion, &quot;ecole&quot;);
 ?&gt;
@@ -2630,7 +2602,7 @@ if (isset($_POST[&quot;ok&quot;])) {
 }
 mysqli_close($connexion);
 ?&gt;
-&lt;p&gt;&lt;a href=&quot;inscription.html&quot;&gt;← Ajouter un autre élève&lt;/a&gt;&lt;/p&gt;</code></pre><h5>🔍 Détail ligne par ligne — ajouter.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>&lt;?php … ?&gt;</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Délimite le script exécuté côté serveur (le HTML hors balises est affiché tel quel).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>—</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_connect("localhost", "root", "")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui ouvre la connexion au serveur MySQL. Paramètres (attributs) : hôte, utilisateur, mot de passe (4ᵉ paramètre possible : le nom de la base). Le résultat est rangé dans <code>$connexion</code>.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Objet de connexion (mysqli) ou <code>false</code> si échec</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_select_db($connexion, "ecole")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui choisit la base de travail sur la connexion ouverte.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen (<code>true</code>/<code>false</code>)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>isset($_POST["ok"])</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Vérifie que le bouton d'envoi « ok » a bien été cliqué avant de traiter.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$_POST['Id']</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Superglobale : données envoyées par le formulaire (méthode post).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau associatif de chaînes (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>substr($Id, 0, 1) / substr($Id, 1)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Extrait le 1ᵉʳ caractère / le reste de la chaîne.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>strtoupper(…)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Convertit une chaîne en majuscules — ici : la 1ʳᵉ lettre de l'Id, donc sa Catégorie.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>. (point)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Opérateur de concaténation : colle deux chaînes.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>(float)$_POST['Moyenne']</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Conversion explicite (cast) de la saisie en nombre réel.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Nombre réel (float)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$req = "INSERT INTO …"</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">La requête SQL est d'abord construite dans une variable.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui exécute la requête. Pour INSERT/UPDATE/DELETE : succès ou échec seulement.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen (<code>true</code>/<code>false</code>)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_error($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Message d'erreur de la dernière requête (à afficher en cas d'échec).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>echo</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Instruction d'affichage : envoie du texte vers la page.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Affichage (pas de retour)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_close($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Ferme proprement la connexion à la fin du script.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr></table><h4>🐘 liste.php — sélection (10.2)</h4><pre><code>&lt;?php
+&lt;p&gt;&lt;a href=&quot;inscription.html&quot;&gt;← Ajouter un autre élève&lt;/a&gt;&lt;/p&gt;</code></pre><h5>🔍 Détail ligne par ligne — ajouter.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>&lt;?php … ?&gt;</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Délimite le script exécuté côté serveur (le HTML hors balises est affiché tel quel).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>—</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_connect("localhost", "root", "")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui ouvre la connexion au serveur MySQL. Paramètres (attributs) : hôte, utilisateur, mot de passe (4ᵉ paramètre possible : le nom de la base). Le résultat est rangé dans <code>$connexion</code>.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Objet de connexion (mysqli) ou <code>false</code> si échec</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_select_db($connexion, "ecole")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui choisit la base de travail sur la connexion ouverte.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen (<code>true</code>/<code>false</code>)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>isset($_POST["ok"])</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Vérifie que le bouton d'envoi « ok » a bien été cliqué avant de traiter.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$_POST['Id']</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Superglobale : données envoyées par le formulaire (méthode post).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau associatif de chaînes (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>substr($Id, 0, 1) / substr($Id, 1)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Extrait le 1ᵉʳ caractère / le reste de la chaîne.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>strtoupper(…)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Convertit une chaîne en majuscules — ici : la 1ʳᵉ lettre de l'Id, donc sa Catégorie.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>. (point)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Opérateur de concaténation : colle deux chaînes.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>(float)$_POST['Moyenne']</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Conversion explicite (cast) de la saisie en nombre réel.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Nombre réel (float)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$req = "INSERT INTO …"</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">La requête SQL est d'abord construite dans une variable.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui exécute la requête. Pour INSERT/UPDATE/DELETE : succès ou échec seulement.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen (<code>true</code>/<code>false</code>)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_error($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Message d'erreur de la dernière requête (à afficher en cas d'échec).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Chaîne (string)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>echo</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Instruction d'affichage : envoie du texte vers la page.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Affichage (pas de retour)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_close($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Ferme proprement la connexion à la fin du script.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr></table><h4>🐘 liste.php — sélection (Étape PHP 2)</h4><pre><code>&lt;?php
 $connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
 mysqli_select_db($connexion, &quot;ecole&quot;);
 
@@ -2651,7 +2623,7 @@ $resultat = mysqli_query($connexion, $req);
    &lt;?php } ?&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;?php echo mysqli_num_rows($resultat); ?&gt; élève(s) au total.&lt;/p&gt;
-&lt;?php mysqli_close($connexion); ?&gt;</code></pre><h5>🔍 Détail ligne par ligne — liste.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req) avec SELECT</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Exécute la sélection (triée par Nom_prenom). ⚠ Différence avec INSERT : ici on récupère les lignes.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Objet résultat (<code>mysqli_result</code>) ou <code>false</code></b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>while ($ligne = mysqli_fetch_array($resultat))</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Lit une ligne du résultat à chaque tour ; l'affectation est testée dans la condition de la boucle.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau, ou <code>null</code> quand il n'y a plus de ligne → la boucle s'arrête</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_fetch_array(…)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui extrait la ligne courante du résultat (voir le comparatif ci-dessous).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau à double accès : indexé <code>$ligne[0]</code> ET associatif <code>$ligne["Id"]</code></b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$ligne["Nom_prenom"]</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Accès à une colonne par son nom (tableau associatif).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Valeur de la colonne (string/nombre)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_num_rows($resultat)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Compte les lignes du résultat SELECT déjà exécuté (utilisé ici pour « élève(s) au total »).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Entier (int)</b></td></tr></table><h4>🐘 modifier.php — mise à jour (10.3)</h4><pre><code>&lt;?php
+&lt;?php mysqli_close($connexion); ?&gt;</code></pre><h5>🔍 Détail ligne par ligne — liste.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req) avec SELECT</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Exécute la sélection (triée par Nom_prenom). ⚠ Différence avec INSERT : ici on récupère les lignes.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Objet résultat (<code>mysqli_result</code>) ou <code>false</code></b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>while ($ligne = mysqli_fetch_array($resultat))</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Lit une ligne du résultat à chaque tour ; l'affectation est testée dans la condition de la boucle.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau, ou <code>null</code> quand il n'y a plus de ligne → la boucle s'arrête</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_fetch_array(…)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction qui extrait la ligne courante du résultat (voir le comparatif ci-dessous).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Tableau à double accès : indexé <code>$ligne[0]</code> ET associatif <code>$ligne["Id"]</code></b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>$ligne["Nom_prenom"]</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Accès à une colonne par son nom (tableau associatif).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Valeur de la colonne (string/nombre)</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_num_rows($resultat)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Compte les lignes du résultat SELECT déjà exécuté (utilisé ici pour « élève(s) au total »).</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Entier (int)</b></td></tr></table><h4>🐘 modifier.php — mise à jour (Étape PHP 3)</h4><pre><code>&lt;?php
 $connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
 mysqli_select_db($connexion, &quot;ecole&quot;);
 
@@ -2692,7 +2664,7 @@ mysqli_close($connexion);
    &lt;input type=&quot;submit&quot; name=&quot;ok&quot; value=&quot;Mettre à jour&quot;&gt;
    &lt;input type=&quot;reset&quot; value=&quot;Effacer&quot;&gt;
 &lt;/form&gt;
-&lt;script src=&quot;validation.js&quot;&gt;&lt;/script&gt;</code></pre><h5>🔍 Détail ligne par ligne — modifier.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req) avec UPDATE</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Exécute la mise à jour (SET … WHERE Id = …). <code>true</code> signifie « requête acceptée », pas forcément « ligne modifiée » !</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_affected_rows($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction clé de cette page : nombre de lignes réellement modifiées par le dernier INSERT/UPDATE/DELETE.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Entier (int) : &gt; 0 = modifié · 0 = Id absent ou valeurs identiques · −1 = erreur</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>if (mysqli_affected_rows(…) &gt; 0)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">On ne félicite l'utilisateur que si une ligne a vraiment changé.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Condition booléenne</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>onsubmit="return validerModification()"</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Rappel JavaScript : le <code>return</code> transmet le <code>false</code> qui bloque l'envoi.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen côté JavaScript</b></td></tr></table><h4>🐘 statistiques.php — statistiques (10.4)</h4><pre><code>&lt;!DOCTYPE html&gt;
+&lt;script src=&quot;validation.js&quot;&gt;&lt;/script&gt;</code></pre><h5>🔍 Détail ligne par ligne — modifier.php</h5><table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem"><tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle (et paramètres)</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / valeur de retour</th></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query($connexion, $req) avec UPDATE</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Exécute la mise à jour (SET … WHERE Id = …). <code>true</code> signifie « requête acceptée », pas forcément « ligne modifiée » !</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_affected_rows($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Fonction clé de cette page : nombre de lignes réellement modifiées par le dernier INSERT/UPDATE/DELETE.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Entier (int) : &gt; 0 = modifié · 0 = Id absent ou valeurs identiques · −1 = erreur</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>if (mysqli_affected_rows(…) &gt; 0)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">On ne félicite l'utilisateur que si une ligne a vraiment changé.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Condition booléenne</b></td></tr><tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>onsubmit="return validerModification()"</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Rappel JavaScript : le <code>return</code> transmet le <code>false</code> qui bloque l'envoi.</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>Booléen côté JavaScript</b></td></tr></table><h4>🐘 statistiques.php — statistiques (Étape PHP 4)</h4><pre><code>&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;fr&quot;&gt;
 &lt;head&gt;
    &lt;meta charset=&quot;utf-8&quot;&gt;
@@ -3258,7 +3230,7 @@ mysqli_close($connexion);
               application web pour enregistrer et suivre les recharges.
               Vous allez la construire en entier — même démarche que
               l'exercice de synthèse n°1, nouveau thème — en réutilisant
-              <b>tout ce qui a été vu jusqu'au point 10</b>. La base
+              <b>tout ce qui a été vu dans le cours qui précède</b>. La base
               <code>station</code> contient la table
               <code>recharges(Id, Nom_prenom, Borne, Kwh, DateRecharge, HeureRecharge)</code> :
               l'<code>Id</code> commence par une <b>lettre en majuscule</b>
@@ -3361,19 +3333,19 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
             <p>Le dossier du projet (<code>index.html</code>, <code>inscription.html</code>, les 4 pages PHP, <code>style.css</code>, <code>validation.js</code>) et <b>l'export de la base</b> après les tests : <code>station_export.sql</code>.</p>
             <p><b>Barème (sur 20)</b> — Base importée : 2 · HTML : 3 · CSS : 3 · JavaScript : 4 · PHP ajouter : 2 · liste : 2 · modifier : 2 · statistiques : 2.</p>
             <p style="text-align: center">
-              <a href="#s11b">✅ 11.2 Solution</a> ·
-              <a href="#s11c">🎬 11.3 Explication animée</a>
+              <a href="#s10b">✅ 10.2 Solution</a> ·
+              <a href="#s10c">🎬 10.3 Explication animée</a>
             </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Boîte modale : Solution de l'exercice de synthèse n°2 (11.2) -->
+    <!-- Boîte modale : Solution de l'exercice de synthèse n°2 (10.2) -->
     <div id="sol2Modal" class="anim-modal" role="dialog" aria-modal="true" aria-labelledby="sol2Title" hidden>
       <div class="anim-box" id="sol2Box">
         <div class="anim-head">
-          <span id="sol2Title">✅ 11.2 Solution — Correction complète de l'exercice n°2 (Recharge VE)</span>
+          <span id="sol2Title">✅ 10.2 Solution — Correction complète de l'exercice n°2 (Recharge VE)</span>
           <span class="anim-tools">
             <button type="button" id="sol2RetourCours" title="Retourner au cours PHP" style="background: linear-gradient(120deg, #059669, #0d9488); color: #fff; border-color: #101728; font-weight: 800">🐘 ← Retour au cours PHP</button>
             <button type="button" id="sol2Full" title="Agrandir sur toute la page">⛶ Plein écran</button>
@@ -3968,7 +3940,7 @@ mysqli_close($connexion);
     </div>
 
     <script>
-      /* ---- fenêtre Exercice de synthèse (point 10) ---- */
+      /* ---- fenêtre Exercice de synthèse (point 9) ---- */
       (function () {
         var E = document.getElementById("exoModal"),
           EB = document.getElementById("exoBox"),
@@ -4011,14 +3983,14 @@ mysqli_close($connexion);
         document.addEventListener("keydown", function (e) {
           if (e.key == "Escape" && !E.hidden) closeE();
         });
-        // Les liens 10.1 → 10.4 de la fenêtre ferment la fenêtre avant d'y aller
-        E.querySelectorAll('a[href^="#s10"]').forEach(function (a) {
+        // Les liens 9.1 → 10.4 de la fenêtre ferment la fenêtre avant d'y aller
+        E.querySelectorAll('a[href^="#s9"]').forEach(function (a) {
           a.addEventListener("click", closeE);
         });
       })();
     </script>
     <script>
-      /* ---- fenêtre Solution (10.2) : 3 onglets HTML+CSS / JavaScript / PHP ---- */
+      /* ---- fenêtre Solution (9.2) : 3 onglets HTML+CSS / JavaScript / PHP ---- */
       (function () {
         var S = document.getElementById("solModal");
         function activerOnglet(nom) {
@@ -4078,7 +4050,7 @@ mysqli_close($connexion);
     <script src="../assets/js/acces.js?v=227"></script>
 
     <script>
-      /* ---- Exercice de synthèse n°2 (point 11) : énoncé + solution 3 onglets ---- */
+      /* ---- Exercice de synthèse n°2 (point 10) : énoncé + solution 3 onglets ---- */
       (function () {
         function brancher(idModal, idBoutons, idClose, idFull, idRetour) {
           var M = document.getElementById(idModal);
@@ -4111,7 +4083,7 @@ mysqli_close($connexion);
           document.querySelectorAll(".btn-ouvrir-enonce2").forEach(function (x) {
             x.addEventListener("click", E2.open);
           });
-          E2.modal.querySelectorAll('a[href^="#s11"]').forEach(function (a) {
+          E2.modal.querySelectorAll('a[href^="#s10"]').forEach(function (a) {
             a.addEventListener("click", E2.close);
           });
         }
