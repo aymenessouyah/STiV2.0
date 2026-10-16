@@ -1642,7 +1642,23 @@ mysqli_close($connexion);
           <li><b>PHP</b> : les quatre pages du point 10 adaptées au site — <code>ajouter.php</code> (réception du formulaire d'inscription, Id en majuscule, INSERT), <code>liste.php</code>, <code>modifier.php</code> et <code>statistiques.php</code> (statistiques, âge et anniversaire, et le tableau Catégorie | Nom | Prénom trié par Catégorie) — sans <code>mysqli_real_escape_string</code>.</li>
         </ul>
 
-        <h3 id="s10c">10.3 Explication synthèse animée</h3>
+                <p style="text-align: center">
+          <a
+            href="../documents/complet/gestion-eleves.zip"
+            download
+            class="anim-open"
+            style="display: inline-block; background: linear-gradient(120deg, #166534, #16a34a); color: #fff; border-radius: 8px; padding: 0.6rem 1.2rem; font-weight: 800; text-decoration: none"
+            >⬇ Télécharger le corrigé complet (dossier gestion-eleves + ecole.sql)</a
+          >
+          <a
+            href="../documents/complet/fiche-memento-synthese.pdf"
+            target="_blank"
+            class="anim-open"
+            style="display: inline-block; background: linear-gradient(120deg, #92400e, #d97706); color: #fff; border-radius: 8px; padding: 0.6rem 1.2rem; font-weight: 800; text-decoration: none"
+            >🧾 Fiche mémento imprimable (PDF)</a
+          >
+        </p>
+<h3 id="s10c">10.3 Explication synthèse animée</h3>
         <div
           id="s10c-video"
           style="
@@ -1662,6 +1678,7 @@ mysqli_close($connexion);
             preload="metadata"
             playsinline
             style="width: 100%; max-width: 960px; border-radius: 10px; background: #000; box-shadow: 0 8px 30px rgba(0,0,0,0.35)"
+            poster="../assets/images/php-synthese-poster.jpg?v=245"
             src="../assets/videos/php-synthese.mp4?v=244"
           >
             Votre navigateur ne peut pas lire cette vidéo.
@@ -1678,6 +1695,10 @@ mysqli_close($connexion);
               ⛶ Plein écran
             </button>
           </p>
+          <div style="max-width: 960px; margin: 0.8rem auto 0; text-align: left">
+            <p style="font-weight: 800; margin: 0 0 0.45rem">📌 Chapitres — cliquez pour aller directement à une étape :</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.45rem"><button type="button" class="chapitre-btn anim-open" data-t="0.0" style="font-weight:700">0:00 · 🎬 Bienvenue — STI 2.0 By AE</button><button type="button" class="chapitre-btn anim-open" data-t="31.2" style="font-weight:700">0:31 · 0 · Le projet et le web local</button><button type="button" class="chapitre-btn anim-open" data-t="79.37" style="font-weight:700">1:19 · 1 · Base de données ecole</button><button type="button" class="chapitre-btn anim-open" data-t="121.17" style="font-weight:700">2:01 · 2 · index.html</button><button type="button" class="chapitre-btn anim-open" data-t="164.05" style="font-weight:700">2:44 · 3 · inscription.html</button><button type="button" class="chapitre-btn anim-open" data-t="203.52" style="font-weight:700">3:23 · 4 · CSS float</button><button type="button" class="chapitre-btn anim-open" data-t="258.85" style="font-weight:700">4:18 · 5 · CSS transition en détail</button><button type="button" class="chapitre-btn anim-open" data-t="321.65" style="font-weight:700">5:21 · 6 · JavaScript : let, innerHTML, alert, return</button><button type="button" class="chapitre-btn anim-open" data-t="374.85" style="font-weight:700">6:14 · 7 · Nom_prenom et dates</button><button type="button" class="chapitre-btn anim-open" data-t="431.09" style="font-weight:700">7:11 · 8 · PHP : ajouter et liste</button><button type="button" class="chapitre-btn anim-open" data-t="470.09" style="font-weight:700">7:50 · 9 · modifier, statistiques, tests</button><button type="button" class="chapitre-btn anim-open" data-t="518.02" style="font-weight:700">8:38 · 🔍 ajouter.php ligne par ligne</button><button type="button" class="chapitre-btn anim-open" data-t="593.06" style="font-weight:700">9:53 · 🔍 liste.php ligne par ligne</button><button type="button" class="chapitre-btn anim-open" data-t="656.86" style="font-weight:700">10:56 · 🔍 modifier.php ligne par ligne</button><button type="button" class="chapitre-btn anim-open" data-t="716.59" style="font-weight:700">11:56 · 🔍 statistiques.php ligne par ligne</button><button type="button" class="chapitre-btn anim-open" data-t="778.26" style="font-weight:700">12:58 · ⚖ fetch et num_rows / COUNT(*)</button><button type="button" class="chapitre-btn anim-open" data-t="841.03" style="font-weight:700">14:01 · ★ Fin — plateforme et bon courage</button></div>
+          </div>
           <script>
             (function () {
               var btn = document.getElementById("btnPleinEcranSynthese");
@@ -1692,6 +1713,13 @@ mysqli_close($connexion);
                   video.webkitEnterFullscreen();
                 }
                 if (video.paused) video.play();
+              });
+              var boutonsChapitres = document.querySelectorAll(".chapitre-btn");
+              boutonsChapitres.forEach(function (b) {
+                b.addEventListener("click", function () {
+                  video.currentTime = parseFloat(b.getAttribute("data-t"));
+                  video.play();
+                });
               });
             })();
           </script>
@@ -1711,6 +1739,54 @@ mysqli_close($connexion);
             PHP des quatre pages et les tests.
           </p>
         </div>
+
+        
+        <div id="quizSynthese" style="max-width: 960px; margin: 1.2rem auto 0">
+          <h3 style="text-align:center">🧠 À vous de jouer — Quiz de contrôle (10 questions)</h3>
+          <p style="text-align:center">Après avoir regardé la vidéo, vérifiez que vous avez bien retenu les types de retour et les différences. Cochez vos réponses, puis cliquez sur « Corriger ».</p>
+          <fieldset class="synth-question" data-q="1" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 1/10</legend><p style="margin:0 0 0.4rem">Que retourne la fonction <code>mysqli_connect(...)</code> ?</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq1" value="0"> Un objet de connexion, ou <code>false</code> si la connexion échoue</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq1" value="1"> Toujours un booléen</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq1" value="2"> Un tableau contenant les lignes des tables</label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset><fieldset class="synth-question" data-q="2" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 2/10</legend><p style="margin:0 0 0.4rem">Que retourne <code>mysqli_query($connexion, $req)</code> quand la requête est un <b>SELECT</b> ?</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq2" value="0"> Un booléen <code>true</code></label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq2" value="1"> Une chaîne de caractères</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq2" value="2"> Un objet résultat (<code>mysqli_result</code>) contenant les lignes</label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset><fieldset class="synth-question" data-q="3" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 3/10</legend><p style="margin:0 0 0.4rem">Et quand la requête est un <b>INSERT</b> ?</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq3" value="0"> Un objet résultat à lire avec fetch</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq3" value="1"> Un booléen : <code>true</code> si l'insertion a réussi, <code>false</code> sinon</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq3" value="2"> Le nombre de lignes de la table</label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset><fieldset class="synth-question" data-q="4" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 4/10</legend><p style="margin:0 0 0.4rem">Avec <code>mysqli_fetch_assoc($resultat)</code>, comment lit-on la colonne Id de la ligne courante ?</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq4" value="0"> <code>$ligne["Id"]</code> (par le nom de la colonne)</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq4" value="1"> <code>$ligne-&gt;Id</code> uniquement</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq4" value="2"> On ne peut pas, il faut fetch_row</label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset><fieldset class="synth-question" data-q="5" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 5/10</legend><p style="margin:0 0 0.4rem">Quelle est la particularité de <code>mysqli_fetch_array</code> (par défaut) ?</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq5" value="0"> Elle retourne seulement les numéros de colonnes</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq5" value="1"> Elle donne un double accès : indexé (<code>$ligne[0]</code>) ET associatif (<code>$ligne["Id"]</code>)</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq5" value="2"> Elle retourne toutes les lignes d'un coup</label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset><fieldset class="synth-question" data-q="6" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 6/10</legend><p style="margin:0 0 0.4rem">Que retourne une fonction <code>fetch</code> quand il n'y a plus de ligne à lire ?</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq6" value="0"> <code>false</code> et une erreur s'affiche</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq6" value="1"> La première ligne, en boucle</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq6" value="2"> <code>null</code> — c'est ce qui arrête la boucle <code>while</code></label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset><fieldset class="synth-question" data-q="7" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 7/10</legend><p style="margin:0 0 0.4rem">Je veux UNIQUEMENT le nombre d'élèves, sans afficher leurs lignes. Le plus léger ?</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq7" value="0"> Un grand SELECT puis <code>mysqli_num_rows</code></label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq7" value="1"> <code>SELECT COUNT(*) AS nb</code> : le serveur compte et renvoie une seule valeur</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq7" value="2"> <code>mysqli_affected_rows</code> après le SELECT</label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset><fieldset class="synth-question" data-q="8" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 8/10</legend><p style="margin:0 0 0.4rem">Après un <code>UPDATE</code>, comment vérifier qu'un élève a VRAIMENT été modifié ?</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq8" value="0"> Si <code>mysqli_query</code> retourne <code>true</code>, c'est certain</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq8" value="1"> Avec <code>mysqli_num_rows($resultat)</code></label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq8" value="2"> Avec <code>mysqli_affected_rows($connexion) &gt; 0</code></label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset><fieldset class="synth-question" data-q="9" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 9/10</legend><p style="margin:0 0 0.4rem">Dans <code>onsubmit="validerInscription()"</code> (SANS <code>return</code>), si la fonction retourne <code>false</code>…</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq9" value="0"> L'envoi est quand même bloqué</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq9" value="1"> Le formulaire est envoyé malgré le <code>false</code> — d'où le <code>return</code> indispensable</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq9" value="2"> JavaScript se désactive</label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset><fieldset class="synth-question" data-q="10" style="border:1.5px solid #98a2b8;border-radius:10px;margin:0.7rem 0;padding:0.7rem 1rem;text-align:left"><legend style="font-weight:800;padding:0 0.4rem">Question 10/10</legend><p style="margin:0 0 0.4rem">Combien de lignes contient le résultat de <code>SELECT COUNT(*) AS nb FROM eleves</code> ?</p><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq10" value="0"> Autant que d'élèves dans la table</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq10" value="1"> Zéro ligne, c'est un booléen</label><label style="display:block;margin:0.3rem 0;cursor:pointer"><input type="radio" name="synthq10" value="2"> Une seule ligne, avec le nombre dans la colonne <code>nb</code></label><p class="synth-verdict" style="margin:0.4rem 0 0;font-weight:800"></p></fieldset>
+          <p style="text-align:center">
+            <button type="button" id="btnCorrigerQuiz" class="anim-open" style="background:linear-gradient(120deg,#166534,#16a34a);font-weight:800">✅ Corriger</button>
+            <button type="button" id="btnResetQuiz" class="anim-open" style="background:linear-gradient(120deg,#64748b,#475569);font-weight:800">↺ Recommencer</button>
+          </p>
+          <p id="scoreQuiz" style="text-align:center;font-weight:800;font-size:1.1rem"></p>
+        </div>
+        <script>
+          (function () {
+            var BONNES = [0,2,1,0,1,2,1,2,1,2];
+            var btnC = document.getElementById("btnCorrigerQuiz");
+            var btnR = document.getElementById("btnResetQuiz");
+            var scoreEl = document.getElementById("scoreQuiz");
+            if (!btnC) return;
+            btnC.addEventListener("click", function () {
+              var score = 0;
+              document.querySelectorAll(".synth-question").forEach(function (fs, idx) {
+                var choix = fs.querySelector("input[type=radio]:checked");
+                var verdict = fs.querySelector(".synth-verdict");
+                if (choix && parseInt(choix.value, 10) === BONNES[idx]) {
+                  score++;
+                  fs.style.borderColor = "#16a34a"; fs.style.background = "#f0fdf4";
+                  verdict.style.color = "#166534"; verdict.innerHTML = "✅ Bonne réponse !";
+                } else {
+                  fs.style.borderColor = "#dc2626"; fs.style.background = "#fef2f2";
+                  verdict.style.color = "#991b1b";
+                  verdict.innerHTML = choix ? "❌ Mauvaise réponse — la bonne réponse est surlignée dans la fiche mémento." : "⚠ Sans réponse — cochez une proposition.";
+                }
+              });
+              var msg = score === 10 ? "🏆 Parfait, 10/10 ! Vous maîtrisez les types de retour." : (score >= 7 ? "👏 Très bien !" : (score >= 5 ? "🙂 Pas mal — revoyez les scènes 🔍 de la vidéo." : "📺 Re-regardez les scènes « PHP ligne par ligne », puis réessayez."));
+              scoreEl.innerHTML = "Score : " + score + " / 10 — " + msg;
+              scoreEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
+            btnR.addEventListener("click", function () {
+              document.querySelectorAll(".synth-question").forEach(function (fs) {
+                fs.querySelectorAll("input[type=radio]").forEach(function (r) { r.checked = false; });
+                fs.style.borderColor = "#98a2b8"; fs.style.background = "";
+                fs.querySelector(".synth-verdict").innerHTML = "";
+              });
+              scoreEl.innerHTML = "";
+            });
+          })();
+        </script>
 
         <footer>Cours PHP — 4ème SI · Travail élaboré par A. Essouyah</footer>
       </div>

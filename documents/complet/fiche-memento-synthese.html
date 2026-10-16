@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>Fiche mémento — Exercice de synthèse n°1 (PHP/MySQLi)</title>
+<style>
+@page{size:A4;margin:10mm}
+*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#1c2440;margin:0;font-size:12.5px;line-height:1.35}
+h1{font-size:19px;margin:0 0 2px;color:#0f1c47}h2{font-size:14px;margin:10px 0 4px;color:#b4552d;border-bottom:2px solid #f4511e;padding-bottom:2px}
+.sub{color:#445;margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:3px 0}
+th,td{border:1px solid #98a2b8;padding:3.5px 6px;text-align:left;vertical-align:top}
+th{background:#0f1c47;color:#fff;font-size:12px}
+code{font-family:Consolas,monospace;color:#6d28d9;font-weight:bold;font-size:12px}
+.r{font-weight:bold;color:#166534;white-space:nowrap}
+.grid{display:table;width:100%}.col{display:table-cell;width:50%;padding-right:8px}.col+.col{padding:0 0 0 8px}
+.note{background:#fff7ed;border:1.5px dashed #b4552d;border-radius:8px;padding:6px 10px;margin-top:8px}
+button{margin:8px 0;padding:8px 18px;font-weight:bold;cursor:pointer}
+@media print{button{display:none}}
+</style></head><body>
+<button onclick="window.print()">🖨 Imprimer cette fiche</button>
+<h1>🧾 Fiche mémento — Exercice de synthèse n°1 · Gestion des élèves</h1>
+<div class="sub">STI version 2.0 By AE — PHP &amp; MySQLi : rôle et <b>type de retour</b> des instructions · float/transition · JavaScript</div>
+<h2>🐘 Les instructions PHP/MySQLi et leur type de retour</h2>
+<table><tr><th>Instruction</th><th>Rôle (paramètres)</th><th>Retour</th></tr>
+<tr><td><code>mysqli_connect(hôte, user, mdp[, base])</code></td><td>Ouvre la connexion au serveur MySQL</td><td class="r">objet connexion ou false</td></tr>
+<tr><td><code>mysqli_select_db($connexion, "ecole")</code></td><td>Choisit la base de travail</td><td class="r">booléen</td></tr>
+<tr><td><code>mysqli_connect_error()</code> / <code>die(msg)</code></td><td>Cause d'échec de connexion / arrête le script</td><td class="r">chaîne / arrêt</td></tr>
+<tr><td><code>isset($_POST["ok"])</code></td><td>Le bouton d'envoi a-t-il été cliqué ?</td><td class="r">booléen</td></tr>
+<tr><td><code>$_POST['Id']</code></td><td>Données du formulaire (superglobale)</td><td class="r">tableau associatif (string)</td></tr>
+<tr><td><code>substr($s,0,1)</code> · <code>strtoupper($s)</code> · <code>explode(" ",$s,2)</code></td><td>Extrait / majuscules / découpe en tableau</td><td class="r">chaîne / chaîne / tableau</td></tr>
+<tr><td><code>(float)$x</code> · <code>(int)$x</code></td><td>Conversion explicite (cast)</td><td class="r">réel / entier</td></tr>
+<tr><td><code>mysqli_query($c,$req)</code> SELECT</td><td>Exécute une sélection</td><td class="r">objet résultat (mysqli_result)</td></tr>
+<tr><td><code>mysqli_query($c,$req)</code> INSERT/UPDATE/DELETE</td><td>Exécute une écriture (succès ≠ lignes touchées)</td><td class="r">booléen</td></tr>
+<tr><td><code>mysqli_fetch_array($resultat)</code></td><td>Ligne courante, accès indexé ET associatif (null à la fin)</td><td class="r">tableau / null</td></tr>
+<tr><td><code>mysqli_num_rows($resultat)</code></td><td>Nombre de lignes d'un SELECT déjà exécuté</td><td class="r">entier (int)</td></tr>
+<tr><td><code>mysqli_affected_rows($connexion)</code></td><td>Lignes réellement modifiées (dernier UPDATE/DELETE)</td><td class="r">entier (&gt;0, 0, −1)</td></tr>
+<tr><td><code>mysqli_error($c)</code> · <code>echo</code> · <code>mysqli_close($c)</code></td><td>Erreur de requête / affiche / ferme la connexion</td><td class="r">chaîne / affichage / booléen</td></tr></table>
+<div class="grid"><div class="col">
+<h2>⚖ fetch_row / fetch_array / fetch_assoc</h2>
+<table><tr><th>Fonction</th><th>Accès</th></tr>
+<tr><td><code>fetch_row</code></td><td>indexé : <code>$l[0]</code>, <code>$l[1]</code></td></tr>
+<tr><td><code>fetch_array</code></td><td>mixte : <code>$l[0]</code> ou <code>$l["Id"]</code> (valeurs en double)</td></tr>
+<tr><td><code>fetch_assoc</code></td><td>associatif : <code>$l["Id"]</code> (le plus lisible)</td></tr></table>
+<p>Les 3 renvoient <b>null</b> quand il n'y a plus de ligne → fin du <code>while</code>.</p>
+</div><div class="col">
+<h2>🔢 Qui compte les lignes ?</h2>
+<table><tr><th>Méthode</th><th>Quand ?</th></tr>
+<tr><td><code>mysqli_num_rows()</code> (PHP)</td><td>Après un SELECT dont on affiche aussi les lignes (liste.php)</td></tr>
+<tr><td><code>SELECT COUNT(*) AS nb</code> (SQL)</td><td>Juste le nombre : 1 seule valeur revient (statistiques)</td></tr></table>
+<p><code>COUNT(*)</code> compte côté serveur ; <code>AVG()</code>, <code>MAX()</code> idem.</p>
+</div></div>
+<h2>🎨 CSS &amp; 🟨 JavaScript — rappels</h2>
+<table><tr><th>Notion</th><th>À retenir</th></tr>
+<tr><td><code>float</code></td><td>Sort du flux : flotter l'élément <b>et ses frères</b> (ou <code>margin-left</code>) pour rester dans le même couloir ; footer : div <code>.milieu</code> avant, ou div <code>clear: both</code> après la section.</td></tr>
+<tr><td><code>transition: propriété durée fonction délai;</code></td><td><code>all</code> = tout animer · <code>ease</code> lent-rapide-lent (défaut) · <code>ease-in</code> démarre lent · <code>ease-out</code> finit doux · <code>ease-in-out</code> lent aux deux bouts.</td></tr>
+<tr><td><code>onsubmit="return f()"</code></td><td>Le <code>return</code> est indispensable : sans lui, le <code>false</code> ne bloque pas l'envoi. Messages : <code>innerHTML</code> et/ou <code>alert()</code> ; variables en <code>let</code>.</td></tr>
+<tr><td>Nom_prenom</td><td>Nettoyer les espaces superflus (<code>trim</code> + espaces multiples → 1), lettres et espaces uniquement, <b>2 à 5 mots</b> (<code>split</code>).</td></tr>
+<tr><td>Dates JS</td><td>Mois de <b>0 à 11</b> ! <code>getDate()</code> jour, <code>getMonth()</code> mois−1, <code>getFullYear()</code> année. Une fonction de contrôle retourne un <b>booléen</b>.</td></tr>
+<tr><td>Web local</td><td>Dossier sous <code>www</code>/<code>htdocs</code>, appel par <code>http://localhost/dossier/</code> ; s'il existe, <code>index</code> s'affiche seul.</td></tr></table>
+<div class="note">💡 <b>Piège n°1 :</b> <code>mysqli_query</code> qui retourne <code>true</code> après un UPDATE ne prouve pas la modification → vérifier avec <code>mysqli_affected_rows() &gt; 0</code>. &nbsp;·&nbsp; <b>Piège n°2 :</b> utiliser <code>mysqli_num_rows</code> après un UPDATE → utiliser <code>mysqli_affected_rows</code>.</div>
+</body></html>
