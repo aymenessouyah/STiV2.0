@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v232";
+var CACHE = "sti-atelier-v233";
 var SHELL = [
   "./",
   "./index.html",
@@ -568,6 +568,8 @@ var OFFLINE_LIST = [
   "./assets/audio/sql-serie4.mp3",
   "./assets/audio/sql-serie5.mp3",
   "./assets/audio/sql-serie6.mp3",
+  "./assets/audio/explore-tunisie-flex.mp3",
+  "./assets/audio/explore-tunisie-float.mp3",
   "./assets/audio/html5-cours.mp3",
   "./assets/audio/css3-cours.mp3",
   "./assets/audio/javascript-cours.mp3",
@@ -582,6 +584,8 @@ var OFFLINE_LIST = [
   "./assets/videos/sql-serie4.mp4",
   "./assets/videos/sql-serie5.mp4",
   "./assets/videos/sql-serie6.mp4",
+  "./assets/videos/explore-tunisie-flex.mp4",
+  "./assets/videos/explore-tunisie-float.mp4",
   "./assets/videos/html5-cours.mp4",
   "./assets/videos/css3-cours.mp4",
   "./assets/videos/javascript-cours.mp4",

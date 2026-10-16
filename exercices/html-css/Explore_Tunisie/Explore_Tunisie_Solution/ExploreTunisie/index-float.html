@@ -241,7 +241,9 @@
           '<button type="button" id="btn-mode-flex" style="padding:7px 12px;border-radius:999px;border:1.5px solid #f2c14e;background:#f2c14e;color:#0a3d55;font-weight:800;font-size:12px;cursor:pointer;">📐 1. Flexbox</button>' +
           '<button type="button" id="btn-mode-float" style="padding:7px 12px;border-radius:999px;border:1.5px solid #475569;background:#1e293b;color:#f8fafc;font-weight:800;font-size:12px;cursor:pointer;">🌊 2. Float</button>' +
           '<button type="button" id="btn-mode-position" style="padding:7px 12px;border-radius:999px;border:1.5px solid #475569;background:#1e293b;color:#f8fafc;font-weight:800;font-size:12px;cursor:pointer;">📌 3. Position</button>' +
-          '<button type="button" id="btn-open-code-exp" style="padding:7px 14px;border-radius:999px;border:1.5px solid #38bdf8;background:#0284c7;color:#fff;font-weight:900;font-size:12px;cursor:pointer;margin-left:4px;">💻 Voir le code corrigé (HTML + 3 CSS)</button>';
+          '<button type="button" id="btn-vid-exp-flex" style="padding:7px 12px;border-radius:999px;border:1.5px solid #facc15;background:#ea580c;color:#fff;font-weight:900;font-size:12px;cursor:pointer;margin-left:4px;">🎥 Vidéo Flex</button>' +
+          '<button type="button" id="btn-vid-exp-float" style="padding:7px 12px;border-radius:999px;border:1.5px solid #7dd3fc;background:#0284c7;color:#fff;font-weight:900;font-size:12px;cursor:pointer;">🎥 Vidéo Float</button>' +
+          '<button type="button" id="btn-open-code-exp" style="padding:7px 14px;border-radius:999px;border:1.5px solid #4ade80;background:#15803d;color:#fff;font-weight:900;font-size:12px;cursor:pointer;">💻 Voir le code corrigé (HTML + 3 CSS)</button>';
         document.body.appendChild(bar);
 
         var mod = document.createElement("div");
@@ -439,6 +441,30 @@
         bModeFlex.onclick = function () { majBoutonsMode("flex"); };
         bModeFloat.onclick = function () { majBoutonsMode("float"); };
         bModePos.onclick = function () { majBoutonsMode("position"); };
+
+        function lancerVideoExplore(slug, titre) {
+          try {
+            if (window.parent && window.parent !== window && typeof window.parent.ouvrirVideoPasAPasSTI === "function") {
+              window.parent.ouvrirVideoPasAPasSTI(slug, titre);
+              return;
+            }
+          } catch (e) {}
+          if (typeof window.ouvrirVideoPasAPasSTI === "function") {
+            window.ouvrirVideoPasAPasSTI(slug, titre);
+          }
+        }
+        var bVidFlex = document.getElementById("btn-vid-exp-flex");
+        var bVidFloat = document.getElementById("btn-vid-exp-float");
+        if (bVidFlex) {
+          bVidFlex.onclick = function () {
+            lancerVideoExplore("explore-tunisie-flex", "🎥 TP Explore Tunisie (Flexbox) — Code saisi à gauche ➔ Résultat instantané à droite");
+          };
+        }
+        if (bVidFloat) {
+          bVidFloat.onclick = function () {
+            lancerVideoExplore("explore-tunisie-float", "🎥 TP Explore Tunisie (Float) — Code saisi à gauche ➔ Résultat instantané à droite");
+          };
+        }
 
         bOpenCode.onclick = function () {
           mod.style.display = "flex";

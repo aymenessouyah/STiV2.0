@@ -771,6 +771,14 @@
         file: "sql-serie6.mp4?v=228",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 6 SQL (Base ÉTUDIANT) : Création BD, Insertion & Corrigé complet (.mp4)"
       };
+      var VIDEO_EXPLORE_FLEX_INFO = {
+        file: "explore-tunisie-flex.mp4?v=233",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — TP Explore Tunisie (Flexbox) : Code saisi à gauche ➔ Résultat instantané à droite (.mp4)"
+      };
+      var VIDEO_EXPLORE_FLOAT_INFO = {
+        file: "explore-tunisie-float.mp4?v=233",
+        title: "🎥 Bienvenue dans STI V2.0 By AE — TP Explore Tunisie (Float) : Code saisi à gauche ➔ Résultat instantané à droite (.mp4)"
+      };
 
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
       var STI_CHAPITRES_MEDIA = {
@@ -953,6 +961,30 @@
           { t: 110, short: "Req 8 à 10 (DATEDIFF & NOT IN)", label: "01:50 · 07. Requêtes 8, 9 & 10 : DATEDIFF, NOT IN et Moyenne par matière" },
           { t: 134, short: "Req 11 à 13 (Imbriquées)", label: "02:14 · 08. Requêtes 11, 12 & 13 : Requêtes imbriquées & Moyenne pondérée" },
           { t: 162, short: "Req 14 à 17 (Auto-jointure/MAJ)", label: "02:42 · 09. Requêtes 14 à 17 : Auto-jointure, Meilleure note, UPDATE & DELETE" }
+        ],
+        "explore-tunisie-flex": [
+          { t: 0.0, short: "Intro", label: "00:00 · 01. Introduction — Correction pas à pas avec Flexbox" },
+          { t: 22.74, short: "1. Structure & <header>", label: "00:22 · 02. Étape 1 — Structure HTML5 & En-tête (.entete-site)" },
+          { t: 59.83, short: "2. Menu Sticky & Flex", label: "00:59 · 03. Étape 2 — Barre de navigation (position: sticky & display: flex)" },
+          { t: 94.26, short: "3. Présentation (bg-image)", label: "01:34 · 04. Étape 3 — Section de présentation (background-image & text-shadow)" },
+          { t: 127.87, short: "4. Cartes en Flexbox", label: "02:07 · 05. Étape 4 — Alignement des 3 cartes Destinations avec Flexbox" },
+          { t: 164.36, short: "5. Badge Absolute & :hover", label: "02:44 · 06. Étape 5 — Étiquette « Offre spéciale » (position: absolute) & Survol" },
+          { t: 195.12, short: "6. Formulaire & :focus", label: "03:15 · 07. Étape 6 — Formulaire d'inscription (<fieldset>, label block & :focus)" },
+          { t: 223.43, short: "7. Circuits : Flex & overflow", label: "03:43 · 08. Étape 7 — Blocs Circuits (display: flex & overflow: hidden / auto / scroll)" },
+          { t: 254.5, short: "8. <details> & <footer>", label: "04:14 · 09. Étape 8 — Rubrique dépliable (<details>/<summary>) & Pied de page" },
+          { t: 277.75, short: "Fin & Récap", label: "04:37 · 10. Conclusion — S T I Version 2.0 By AE" }
+        ],
+        "explore-tunisie-float": [
+          { t: 0.0, short: "Intro", label: "00:00 · 01. Introduction — Correction pas à pas avec Float" },
+          { t: 22.62, short: "1. Structure & <header>", label: "00:22 · 02. Étape 1 — Structure HTML5 & En-tête (.entete-site)" },
+          { t: 49.06, short: "2. Menu avec Float", label: "00:49 · 03. Étape 2 — Barre de navigation avec float: left & overflow: hidden" },
+          { t: 75.35, short: "3. Présentation (bg-image)", label: "01:15 · 04. Étape 3 — Section de présentation (background-image & cover)" },
+          { t: 97.42, short: "4. Cartes avec Float", label: "01:37 · 05. Étape 4 — Alignement des 3 cartes Destinations avec float: left" },
+          { t: 133.51, short: "5. Badge Absolute & :hover", label: "02:13 · 06. Étape 5 — Étiquette « Offre spéciale » (position: absolute) & Survol" },
+          { t: 159.61, short: "6. clear: both & Formulaire", label: "02:39 · 07. Étape 6 — Rétablissement du flux (clear: both) & Formulaire (:focus)" },
+          { t: 183.58, short: "7. Circuits : Float & overflow", label: "03:03 · 08. Étape 7 — Blocs Circuits avec float: left & overflow (hidden / auto / scroll)" },
+          { t: 214.43, short: "8. <details> & <footer>", label: "03:34 · 09. Étape 8 — Rubrique <details> / <summary> & Pied de page (clear: both)" },
+          { t: 234.39, short: "Fin & Récap", label: "03:54 · 10. Conclusion — S T I Version 2.0 By AE" }
         ]
       };
       window.STI_CHAPITRES_MEDIA = STI_CHAPITRES_MEDIA;
@@ -1121,6 +1153,8 @@
             else if (oc.indexOf("sql-serie4") !== -1) majPastilleSurBouton(allBtns[sb], "video:sql-serie4");
             else if (oc.indexOf("sql-serie5") !== -1) majPastilleSurBouton(allBtns[sb], "video:sql-serie5");
             else if (oc.indexOf("sql-serie6") !== -1) majPastilleSurBouton(allBtns[sb], "video:sql-serie6");
+            else if (oc.indexOf("explore-tunisie-flex") !== -1) majPastilleSurBouton(allBtns[sb], "video:explore-tunisie-flex");
+            else if (oc.indexOf("explore-tunisie-float") !== -1) majPastilleSurBouton(allBtns[sb], "video:explore-tunisie-float");
             else if (clePageSerie && oc.indexOf("ouvrirVideoSerie") !== -1 || (clePageSerie && oc.indexOf("ouvrirVideoCorrigee") !== -1)) {
               majPastilleSurBouton(allBtns[sb], clePageSerie);
             }
@@ -1249,6 +1283,14 @@
 
       function resoudreUrlVideoSqlSerie6() {
         return prefixeAssetsSTI() + "videos/" + VIDEO_SQL_SERIE6_INFO.file;
+      }
+
+      function resoudreUrlVideoExploreFlex() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_EXPLORE_FLEX_INFO.file;
+      }
+
+      function resoudreUrlVideoExploreFloat() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_EXPLORE_FLOAT_INFO.file;
       }
 
       var estPageGuichet = (pathLower.indexOf("php-mysqli") !== -1);
@@ -1475,13 +1517,15 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt, startSecOpt) {
         var sSlug = String(slugOuUrl || "");
-        var estSqlSerie6 = (sSlug === "sql-serie6" || sSlug.indexOf("sql-serie6") !== -1);
-        var estSqlSerie5 = (!estSqlSerie6 && (sSlug === "sql-serie5" || sSlug.indexOf("sql-serie5") !== -1));
-        var estSqlSerie4 = (!estSqlSerie6 && !estSqlSerie5 && (sSlug === "sql-serie4" || sSlug.indexOf("sql-serie4") !== -1));
-        var estSqlSerie3 = (!estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && (sSlug === "sql-serie3" || sSlug.indexOf("sql-serie3") !== -1));
-        var estSqlSerie2 = (!estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && (sSlug === "sql-serie2" || sSlug.indexOf("sql-serie2") !== -1));
-        var estSqlSerie1 = (!estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && !estSqlSerie2 && (sSlug === "sql-serie1" || sSlug.indexOf("sql-serie1") !== -1));
-        var estSqlSerieAny = (estSqlSerie1 || estSqlSerie2 || estSqlSerie3 || estSqlSerie4 || estSqlSerie5 || estSqlSerie6);
+        var estExploreFloat = (sSlug === "explore-tunisie-float" || sSlug.indexOf("explore-tunisie-float") !== -1);
+        var estExploreFlex = (!estExploreFloat && (sSlug === "explore-tunisie-flex" || sSlug.indexOf("explore-tunisie-flex") !== -1));
+        var estSqlSerie6 = (!estExploreFloat && !estExploreFlex && (sSlug === "sql-serie6" || sSlug.indexOf("sql-serie6") !== -1));
+        var estSqlSerie5 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && (sSlug === "sql-serie5" || sSlug.indexOf("sql-serie5") !== -1));
+        var estSqlSerie4 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && (sSlug === "sql-serie4" || sSlug.indexOf("sql-serie4") !== -1));
+        var estSqlSerie3 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && (sSlug === "sql-serie3" || sSlug.indexOf("sql-serie3") !== -1));
+        var estSqlSerie2 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && (sSlug === "sql-serie2" || sSlug.indexOf("sql-serie2") !== -1));
+        var estSqlSerie1 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && !estSqlSerie2 && (sSlug === "sql-serie1" || sSlug.indexOf("sql-serie1") !== -1));
+        var estSqlSerieAny = (estExploreFloat || estExploreFlex || estSqlSerie1 || estSqlSerie2 || estSqlSerie3 || estSqlSerie4 || estSqlSerie5 || estSqlSerie6);
         var estHtml5 = (!estSqlSerieAny && (sSlug === "html5-cours" || sSlug.indexOf("html5-cours") !== -1 || (!sSlug && estPageHtml5)));
         var estCss3 = (!estSqlSerieAny && !estHtml5 && (sSlug === "css3-cours" || sSlug.indexOf("css3-cours") !== -1 || (!sSlug && estPageCss3)));
         var estJs = (!estSqlSerieAny && !estHtml5 && !estCss3 && (sSlug === "javascript-cours" || sSlug.indexOf("javascript-cours") !== -1 || (!sSlug && estPageJs)));
@@ -1522,7 +1566,7 @@
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
-        var slugCible = estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet"))))))))))));
+        var slugCible = estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet"))))))))))))));
         try {
           if (
             window.top &&
@@ -1533,8 +1577,8 @@
             return;
           }
         } catch (e) {}
-        var url = estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet()))))))))))));
-        var titre = titreOpt || (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title)))))))))))));
+        var url = estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet()))))))))))))));
+        var titre = titreOpt || (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title)))))))))))))));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
