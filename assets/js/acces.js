@@ -174,15 +174,30 @@
       }).catch(function () {});
 
       /* Vérification légère de nouvelle version uniquement à l'accès initial de la session (ou toutes les 15 min), sans alourdir la navigation entre les pages */
-      var tsDerniereVerifVer = 0;
-      var verDejaVerifieeSess = "";
+      var estPosteLabo3Init = false;
       try {
-        tsDerniereVerifVer = parseInt(sessionStorage.getItem("sti-ver-check-ts") || "0", 10) || 0;
-        verDejaVerifieeSess = sessionStorage.getItem("sti-conn-ver-checked") || "";
+        estPosteLabo3Init = Boolean(localStorage.getItem("sti-labo3-permanent"));
+        if (!estPosteLabo3Init) {
+          var csInit = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+          if (csInit && (csInit.permanent || /^elevelabo3/i.test(String(csInit.email || "")) || /^elevelabo3/i.test(String(csInit.classe || "")))) {
+            estPosteLabo3Init = true;
+          }
+        }
       } catch (e) {}
-      var besoinVerifVersion = !verDejaVerifieeSess || (Date.now() - tsDerniereVerifVer > 900000);
 
-      if (navigator.onLine && typeof fetch === "function" && besoinVerifVersion) {
+      function verifierVersionServeurSTI(forcerImmediate) {
+        if (!navigator.onLine || typeof fetch !== "function") return;
+        var tsDerniereVerifVer = 0;
+        var verDejaVerifieeSess = "";
+        try {
+          tsDerniereVerifVer = parseInt(sessionStorage.getItem("sti-ver-check-ts") || "0", 10) || 0;
+          verDejaVerifieeSess = sessionStorage.getItem("sti-conn-ver-checked") || "";
+        } catch (e) {}
+        /* Sur les PC du labo3 (elevelabo3), vérifier toutes les 45 s ou à chaque navigation ; sinon toutes les 15 min */
+        var delaiVerif = estPosteLabo3Init ? 45000 : 900000;
+        var besoinVerifVersion = Boolean(forcerImmediate) || !verDejaVerifieeSess || (Date.now() - tsDerniereVerifVer > delaiVerif);
+        if (!besoinVerifVersion) return;
+
         try { sessionStorage.setItem("sti-ver-check-ts", String(Date.now())); } catch (e) {}
         fetch(cfg.RACINE + "sw.js?t=" + Date.now(), { cache: "no-store" })
           .then(function (r) { return r && r.ok ? r.text() : ""; })
@@ -200,7 +215,10 @@
             try { sessionStorage.setItem("sti-conn-ver-checked", String(verSrv)); } catch (e) {}
 
             /* Si la version installée est déjà la dernière version, ne déclencher AUCUNE mise à jour de la plateforme */
-            if (verLoc === verSrv) {
+            if (verLoc === verSrv && !forcerImmediate) {
+              return;
+            }
+            if (verLoc === verSrv && forcerImmediate !== "force_reload") {
               return;
             }
 
@@ -228,8 +246,8 @@
                 localStorage.setItem("sti-version-installee", String(verSrv));
                 localStorage.removeItem("sti-precache-ver");
               } catch (e) {}
-              if ((verLoc > 0 && verLoc < verSrv) || aAncienCache) {
-                if (dejaRechargeVer !== String(verSrv)) {
+              if ((verLoc > 0 && verLoc < verSrv) || aAncienCache || forcerImmediate === "force_reload") {
+                if (dejaRechargeVer !== String(verSrv) || forcerImmediate === "force_reload") {
                   try { sessionStorage.setItem("sti-sw-reload-ver", String(verSrv)); } catch (e) {}
                   navigator.serviceWorker.getRegistration().then(function (reg) {
                     if (reg) {
@@ -242,13 +260,22 @@
                       }).catch(function () {});
                     }
                   }).finally(function () {
-                    setTimeout(function () { location.reload(); }, 250);
+                    setTimeout(function () { location.reload(); }, 300);
                   });
                 }
               }
             });
           })
           .catch(function () {});
+      }
+      window.__stiVerifierVersionServeur = verifierVersionServeurSTI;
+      verifierVersionServeurSTI(estPosteLabo3Init);
+      if (estPosteLabo3Init) {
+        setInterval(function () { verifierVersionServeurSTI(true); }, 60000);
+        window.addEventListener("focus", function () { verifierVersionServeurSTI(true); });
+        document.addEventListener("visibilitychange", function () {
+          if (!document.hidden) verifierVersionServeurSTI(true);
+        });
       }
 
       navigator.serviceWorker.addEventListener("controllerchange", function () {
@@ -4253,6 +4280,7 @@
           var dernierTbLive = null;
           var dernierSecCfg = null;
           var dernierSessUnique = null;
+          var dernierForceUpd = null;
           for (var i = 0; i < lignes.length; i++) {
             if (!lignes[i]) continue;
             try {
@@ -4274,7 +4302,7 @@
                 } else if (a && a.type === "copie_note" && a.uid === uid) {
                   if (typeof window.__stiAfficherNoteCopieEleve === "function") window.__stiAfficherNoteCopieEleve(a);
                 } else if (a && a.type === "force_update") {
-                  if (typeof window.__stiExecuterForceUpdate === "function") window.__stiExecuterForceUpdate(a);
+                  if (!dernierForceUpd || Number(a.ts || 0) >= Number(dernierForceUpd.ts || 0)) dernierForceUpd = a;
                 } else if (a && a.type === "sec_config") {
                   if (!dernierSecCfg || Number(a.ts || 0) >= Number(dernierSecCfg.ts || 0)) dernierSecCfg = a;
                 } else if (a && a.type === "session_unique" && a.uid === uid) {
@@ -4292,6 +4320,7 @@
           if (dernierFlash) afficherQuestionFlashLive(dernierFlash, uid);
           if (dernierTbLive) afficherTableauBlancLiveEleve(dernierTbLive);
           if (dernierSecCfg) appliquerConfigSecurite(dernierSecCfg);
+          if (dernierForceUpd && typeof window.__stiExecuterForceUpdate === "function") window.__stiExecuterForceUpdate(dernierForceUpd);
         })
         .catch(function () {});
     }
@@ -12715,30 +12744,66 @@
      ══════════════════════════════════════════════════════════════════════════ */
   window.__stiExecuterForceUpdate = function (payload) {
     if (!payload || !payload.ts) return;
-    if (Date.now() - Number(payload.ts) > 120000) return; // ignorer si > 2 min
     var cleF = "sti-force-upd-ts";
     var dernierTs = 0;
     try { dernierTs = Number(localStorage.getItem(cleF) || 0); } catch (e) {}
     if (Number(payload.ts) <= dernierTs) return;
-    try { localStorage.setItem(cleF, String(payload.ts)); } catch (e) {}
 
-    afficherToastSynchro("🩺 Mise à jour demandée par le professeur… Actualisation du cache en cours !");
-    if ("caches" in window) {
-      caches.keys().then(function (keys) {
-        return Promise.all(keys.map(function (k) { return caches.delete(k); }));
-      }).then(function () {
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.getRegistrations().then(function (regs) {
-            regs.forEach(function (r) { r.update(); });
-            setTimeout(function () { location.reload(); }, 600);
-          });
-        } else {
-          location.reload();
-        }
-      });
-    } else {
-      location.reload();
+    var verCibleNum = 0;
+    if (payload.version) {
+      var mv = String(payload.version).match(/(\d+)/);
+      if (mv && mv[1]) verCibleNum = parseInt(mv[1], 10) || 0;
     }
+    var verLocAct = 0;
+    try { verLocAct = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0; } catch (e) {}
+
+    /* Accepter le signal soit s'il date de moins de 24h (tolère un décalage d'horloge sur les PC du labo3),
+       soit s'il annonce une version supérieure à la version locale installée */
+    var ecartMs = Math.abs(Date.now() - Number(payload.ts));
+    if (ecartMs > 86400000 && !(verCibleNum > 0 && verCibleNum > verLocAct)) return;
+
+    try {
+      localStorage.setItem(cleF, String(payload.ts));
+      sessionStorage.removeItem("sti-conn-ver-checked");
+      sessionStorage.removeItem("sti-sw-reload-ver");
+      localStorage.removeItem("sti-precache-ver");
+    } catch (e) {}
+
+    afficherToastSynchro("🩺 Mise à jour de la plateforme (Labo 3 / Élèves)… Actualisation en cours !");
+    fetch(cfg.RACINE + "sw.js?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r && r.ok ? r.text() : ""; })
+      .catch(function () { return ""; })
+      .then(function (txt) {
+        var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
+        var verSrv = (m && m[1]) ? parseInt(m[1], 10) : verCibleNum;
+        if (verSrv > 0) {
+          try { localStorage.setItem("sti-version-installee", String(verSrv)); } catch (e) {}
+        }
+        var pCaches = ("caches" in window && caches.keys)
+          ? caches.keys().then(function (keys) {
+              return Promise.all((keys || []).map(function (k) { return caches.delete(k); }));
+            }).catch(function () {})
+          : Promise.resolve();
+        return pCaches;
+      })
+      .then(function () {
+        if ("serviceWorker" in navigator && navigator.serviceWorker.getRegistrations) {
+          return navigator.serviceWorker.getRegistrations().then(function (regs) {
+            return Promise.all((regs || []).map(function (r) {
+              return r.update().then(function () {
+                var swW = r.waiting || r.installing || r.active || navigator.serviceWorker.controller;
+                if (swW) {
+                  try { swW.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (e) {}
+                  try { swW.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
+                }
+              }).catch(function () {});
+            }));
+          }).catch(function () {});
+        }
+      })
+      .finally(function () {
+        setTimeout(function () { location.reload(); }, 450);
+      });
   };
 
   window.ouvrirDocteurSTI = function () {

@@ -9352,19 +9352,26 @@
   var btnForceUpdateEleves = document.getElementById("btn-force-update-eleves");
   if (btnForceUpdateEleves) {
     btnForceUpdateEleves.addEventListener("click", function () {
-      var payloadUpd = {
-        type: "force_update",
-        version: "v115",
-        ts: Date.now()
-      };
-      try {
-        sb.channel("sti-diffusion").send({ type: "broadcast", event: "force_update", payload: payloadUpd });
-      } catch (e) {}
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-        method: "POST",
-        body: JSON.stringify(payloadUpd)
-      }).catch(function () {});
-      msg("🩺 Signal de réparation & mise à jour envoyé en direct à tous les écrans d'élèves connectés !", "ok");
+      fetch("sw.js?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r && r.ok ? r.text() : ""; })
+        .catch(function () { return ""; })
+        .then(function (txt) {
+          var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
+          var verStr = (m && m[1]) ? ("v" + m[1]) : ("v" + ((cfg && cfg.VERSION) || 230));
+          var payloadUpd = {
+            type: "force_update",
+            version: verStr,
+            ts: Date.now()
+          };
+          try {
+            sb.channel("sti-diffusion").send({ type: "broadcast", event: "force_update", payload: payloadUpd });
+          } catch (e) {}
+          fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
+            method: "POST",
+            body: JSON.stringify(payloadUpd)
+          }).catch(function () {});
+          msg("🩺 Signal de mise à jour (" + verStr + ") envoyé en direct à tous les PC du Labo 3 (elevelabo3) et aux élèves connectés !", "ok");
+        });
     });
   }
 
