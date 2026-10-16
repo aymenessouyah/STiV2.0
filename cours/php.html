@@ -1539,7 +1539,34 @@ if (mysqli_query($connexion, $req)) {
 mysqli_close($connexion);
 ?&gt;</code></pre>
 
-        <h2 id="s10">10. Quatre pages PHP complètes (CRUD + statistiques)</h2>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: nowrap;
+          "
+        >
+          <h2 id="s10" style="flex: 1 1 auto; min-width: 0; margin-top: 2.6rem">
+            10. Quatre pages PHP complètes (CRUD + statistiques)
+          </h2>
+          <button
+            type="button"
+            id="btnExoS10"
+            class="anim-open"
+            style="
+              margin-top: 2.6rem;
+              flex: 0 0 auto;
+              white-space: nowrap;
+              background: linear-gradient(120deg, #f4511e, #d81b60);
+              font-weight: 800;
+            "
+            title="Ouvrir l'exercice de synthèse du point 10"
+          >
+            🧩 Exercice de synthèse
+          </button>
+        </div>
         <p>
           Ces quatre pages utilisent la même table
           <code>eleves(Id, Nom_prenom, Moyenne, DateNaissance)</code> et le
@@ -1795,6 +1822,239 @@ mysqli_close($connexion);
         <footer>Cours PHP — 4ème SI · Travail élaboré par A. Essouyah</footer>
       </div>
     </main>
+
+
+    <!-- Boîte modale : Exercice de synthèse du point 10 -->
+    <div
+      id="exoModal"
+      class="anim-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="exoTitle"
+      hidden
+    >
+      <div class="anim-box" id="exoBox">
+        <div class="anim-head">
+          <span id="exoTitle">🧩 Exercice de synthèse — Gestion des élèves (HTML · CSS · JavaScript · PHP)</span>
+          <span class="anim-tools">
+            <button
+              type="button"
+              id="exoRetourCours"
+              title="Retourner au cours PHP"
+              style="
+                background: linear-gradient(120deg, #f4511e, #b4552d);
+                color: #fff;
+                border-color: #101728;
+                font-weight: 800;
+              "
+            >
+              🐘 ← Retour au cours PHP
+            </button>
+            <button type="button" id="exoFull" title="Agrandir sur toute la page">
+              ⛶ Plein écran
+            </button>
+            <button type="button" id="exoClose" title="Fermer">✕ Fermer</button>
+          </span>
+        </div>
+        <div class="anim-body">
+          <div style="padding: 0.4rem 0.6rem 1rem">
+            <p>
+              <b>Contexte.</b> Le lycée veut une petite application web pour
+              gérer ses élèves et leurs moyennes. Vous allez la construire en
+              entier — la page, son style, ses contrôles et son traitement —
+              en réutilisant <b>tout ce qui a été vu jusqu'au point 10</b>.
+              La base de données <code>ecole</code> contient la table
+              <code>eleves(Id, Nom_prenom, Moyenne, DateNaissance)</code> :
+              l'<code>Id</code> commence toujours par une
+              <b>lettre en majuscule</b>, qui est la
+              <b>Catégorie</b> de l'élève (A, B, C…).
+            </p>
+            <p style="text-align: center">
+              <a
+                href="../documents/bd/ecole.sql"
+                download
+                style="
+                  display: inline-block;
+                  background: var(--navy);
+                  color: #fff;
+                  border-radius: 8px;
+                  padding: 0.6rem 1.2rem;
+                  font-weight: 700;
+                  text-decoration: none;
+                "
+                >⬇ Télécharger la base de données (ecole.sql)</a
+              >
+            </p>
+
+            <h3>🗄 Base de données à importer (obligatoire avant de commencer)</h3>
+            <p>
+              Dans <b>phpMyAdmin</b> : onglet <b>Importer</b> → choisir le
+              fichier <code>ecole.sql</code> téléchargé ci-dessus → Exécuter.
+              La base <code>ecole</code> et la table <code>eleves</code> sont
+              créées avec un jeu d'essai de 8 élèves (2 par Catégorie A, B, C
+              et D). Vous pouvez aussi recopier ce script dans l'onglet SQL :
+            </p>
+            <pre><code>CREATE DATABASE IF NOT EXISTS ecole;
+USE ecole;
+
+CREATE TABLE eleves (
+  Id VARCHAR(10) PRIMARY KEY,
+  Nom_prenom VARCHAR(60) NOT NULL,
+  Moyenne DECIMAL(4,2) NOT NULL,
+  DateNaissance DATE NOT NULL
+);
+
+INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
+('A01', 'Benali Amine',   17.50, '2008-03-14'),
+('A02', 'Trabelsi Sara',  16.25, '2008-07-02'),
+('B01', 'Gharbi Yassine', 14.75, '2007-11-25'),
+('B02', 'Haddad Leila',   13.50, '2008-01-19'),
+('C01', 'Mansouri Khalil', 11.75, '2007-09-08'),
+('C02', 'Ayadi Nour',     10.50, '2008-05-30'),
+('D01', 'Slimani Omar',    8.75, '2007-12-11'),
+('D02', 'Cherif Ines',     7.25, '2008-09-17');</code></pre>
+
+            <h3>1️⃣ Partie HTML — les formulaires et les tableaux</h3>
+            <ul>
+              <li>
+                Dans chaque page PHP ci-dessous, le formulaire est écrit en
+                HTML correct : balises <code>form</code> (méthode
+                <code>post</code>), <code>label</code>, champs
+                <code>input</code> avec les bons types :
+                <code>text</code> pour l'Id et le Nom_prenom,
+                <code>number</code> (avec <code>step="0.01"</code>) pour la
+                Moyenne, <code>date</code> pour la DateNaissance, et boutons
+                d'envoi et d'effacement.
+              </li>
+              <li>
+                Les résultats sont affichés dans des tableaux HTML
+                (<code>table</code>, <code>tr</code>, <code>th</code>,
+                <code>td</code>) construits proprement.
+              </li>
+            </ul>
+
+            <h3>2️⃣ Partie CSS — un fichier style.css commun aux 4 pages</h3>
+            <ul>
+              <li>
+                Reliez le même fichier <code>style.css</code> aux quatre pages
+                PHP et stylisez : le corps de page, les formulaires
+                (modèle de boîte complet : contenu, padding, border, margin),
+                les champs et les boutons (avec un effet au survol
+                <code>:hover</code>).
+              </li>
+              <li>
+                Tableaux lisibles : bordures fusionnées
+                (<code>border-collapse</code>), en-tête colorée, lignes
+                alternées, coins arrondis et ombre portée
+                (<code>border-radius</code>, <code>box-shadow</code>).
+              </li>
+              <li>
+                Affichez la Catégorie (A, B, C, D) avec une couleur différente
+                par lettre, à l'aide de classes CSS.
+              </li>
+            </ul>
+
+            <h3>3️⃣ Partie JavaScript — contrôler avant d'envoyer</h3>
+            <ul>
+              <li>
+                Un fichier <code>validation.js</code>, relié aux pages
+                d'ajout et de modification, contrôle la saisie
+                <b>avant</b> l'envoi du formulaire (fonction appelée au clic
+                sur le bouton d'envoi) :
+              </li>
+              <li>l'<b>Id</b> commence par une lettre en majuscule ;</li>
+              <li>
+                le <b>Nom_prenom</b> contient au moins un espace
+                (le nom et le prénom sont bien séparés) ;
+              </li>
+              <li>la <b>Moyenne</b> est un nombre entre 0 et 20 ;</li>
+              <li>
+                la <b>DateNaissance</b> est remplie et n'est pas dans le futur.
+              </li>
+              <li>
+                En cas d'erreur : un message clair s'affiche dans la page et
+                l'envoi est annulé. Si tout est correct, le formulaire part
+                vers la page PHP.
+              </li>
+            </ul>
+
+            <h3>4️⃣ Partie PHP — tout le point 10, sans rien oublier</h3>
+            <ul>
+              <li>
+                <b>10.1 — ajouter.php</b> : récupérer les champs, mettre la
+                première lettre de l'Id en majuscule
+                (<code>strtoupper</code> + <code>substr</code>), puis
+                <code>INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance)</code>
+                et afficher un message de réussite ou l'erreur.
+              </li>
+              <li>
+                <b>10.2 — liste.php</b> : afficher tous les élèves
+                (Id, Nom et prénom, Moyenne, Date de naissance) triés par
+                Nom_prenom, puis le nombre total d'élèves.
+              </li>
+              <li>
+                <b>10.3 — modifier.php</b> : mettre à jour la Moyenne et la
+                DateNaissance de l'élève dont on saisit l'Id
+                (<code>mysqli_affected_rows</code> pour vérifier qu'une ligne
+                a bien été modifiée).
+              </li>
+              <li>
+                <b>10.4 — statistiques.php</b> : nombre d'élèves, moyenne
+                générale, meilleure moyenne, admis et non admis ; le tableau
+                « Âge et anniversaire » ; et le tableau
+                <b>Catégorie | Nom | Prénom | Moyenne</b> où le Nom et le
+                Prénom sont séparés à partir de Nom_prenom (le premier mot,
+                puis le reste), <b>trié par Catégorie</b> (A, B, C…) grâce à
+                la première lettre de l'Id.
+              </li>
+              <li>
+                ⚠ <b>Interdit dans tout l'exercice</b> :
+                <code>mysqli_real_escape_string</code> ne doit apparaître dans
+                aucune page.
+              </li>
+            </ul>
+
+            <h3>✅ Tests à effectuer avant de rendre</h3>
+            <ul>
+              <li>Importer la base, ouvrir liste.php : les 8 élèves s'affichent.</li>
+              <li>
+                Ajouter un élève avec un Id saisi en minuscule
+                (<code>b03</code>) : il doit être enregistré avec un Id
+                commençant par une majuscule (<code>B03</code>), et
+                JavaScript doit refuser un Id commençant par un chiffre, une
+                moyenne de 25 ou un nom sans espace.
+              </li>
+              <li>Modifier la moyenne de cet élève, puis vérifier dans liste.php.</li>
+              <li>
+                Ouvrir statistiques.php : les statistiques sont à jour, et le
+                tableau par Catégorie affiche les élèves dans l'ordre A, B,
+                C, D avec le Nom et le Prénom dans deux colonnes séparées.
+              </li>
+            </ul>
+
+            <h3>📦 À rendre</h3>
+            <p>
+              Le dossier du projet (les quatre pages PHP,
+              <code>style.css</code> et <code>validation.js</code>) ainsi que
+              <b>l'export de votre base de données</b> après les tests :
+              dans phpMyAdmin, base <code>ecole</code> → onglet
+              <b>Exporter</b> → fichier <code>ecole_export.sql</code>.
+            </p>
+            <p>
+              <b>Barème (sur 20)</b> — Base importée : 2 · HTML : 3 ·
+              CSS : 3 · JavaScript : 4 · PHP 10.1 : 2 · 10.2 : 2 ·
+              10.3 : 2 · 10.4 : 2.
+            </p>
+            <p style="text-align: center">
+              <a href="#s10a">10.1 Insertion</a> ·
+              <a href="#s10b">10.2 Sélection</a> ·
+              <a href="#s10c">10.3 Mise à jour</a> ·
+              <a href="#s10d">10.4 Statistiques</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Boîte modale pour PHP-recap (identique à ▶ Ouvrir l'animation du guichet) -->
     <div
@@ -2189,6 +2449,53 @@ mysqli_close($connexion);
           else de.style.removeProperty("scroll-behavior");
           if (location.hash === "#top" && history.replaceState)
             history.replaceState(null, "", location.pathname + location.search);
+        });
+      })();
+    </script>
+    <script>
+      /* ---- fenêtre Exercice de synthèse (point 10) ---- */
+      (function () {
+        var E = document.getElementById("exoModal"),
+          EB = document.getElementById("exoBox"),
+          btnE = document.getElementById("btnExoS10");
+        function openE(e) {
+          if (e && e.preventDefault) e.preventDefault();
+          E.hidden = false;
+          E.style.display = "flex";
+          document.body.style.overflow = "hidden";
+        }
+        function closeE() {
+          if (document.fullscreenElement) {
+            document.exitFullscreen().catch(function () {});
+          }
+          E.classList.remove("full");
+          E.hidden = true;
+          E.style.display = "none";
+          document.body.style.overflow = "";
+        }
+        function toggleFullE() {
+          if (E.classList.contains("full")) {
+            E.classList.remove("full");
+          } else {
+            E.classList.add("full");
+          }
+          document.getElementById("exoFull").textContent = E.classList.contains("full")
+            ? "⤡ Réduire"
+            : "⛶ Plein écran";
+        }
+        if (btnE) btnE.onclick = openE;
+        document.getElementById("exoClose").onclick = closeE;
+        document.getElementById("exoRetourCours").onclick = closeE;
+        document.getElementById("exoFull").onclick = toggleFullE;
+        E.addEventListener("click", function (e) {
+          if (e.target === E) closeE();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key == "Escape" && !E.hidden) closeE();
+        });
+        // Les liens 10.1 → 10.4 de la fenêtre ferment la fenêtre avant d'y aller
+        E.querySelectorAll('a[href^="#s10"]').forEach(function (a) {
+          a.addEventListener("click", closeE);
         });
       })();
     </script>

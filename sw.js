@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v237";
+var CACHE = "sti-atelier-v238";
 var SHELL = [
   "./",
   "./index.html",
@@ -172,6 +172,7 @@ var OFFLINE_LIST = [
   "./cssanimee/cours.js",
   "./cssanimee/index.html",
   "./cssanimee/style.css",
+  "./documents/bd/ecole.sql",
   "./documents/annexes/annexe-css3.pdf",
   "./documents/annexes/annexe-css3.pdf.assets/page-01.jpg",
   "./documents/annexes/annexe-css3.pdf.assets/page-02.jpg",
