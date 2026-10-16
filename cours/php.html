@@ -2154,7 +2154,9 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
                 <code>inscription.html</code> et à la page de modification,
                 contrôle la saisie
                 <b>avant</b> l'envoi du formulaire (fonction appelée au clic
-                sur le bouton d'envoi) :
+                sur le bouton d'envoi). ⚠ Accès aux éléments uniquement par
+                <code>getElementById</code> ou <code>getElementsByName</code> :
+                <code>querySelector</code> est interdit.
               </li>
               <li>
                 Déclarez toutes les variables avec le mot-clé
@@ -3311,7 +3313,7 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
               <li><b><code>index.html</code></b> : un <code>header</code> en haut (logo + texte « ⚡ Recharge VE — Station électrique »), une <code>nav</code> verticale à gauche vers <code>inscription.html</code>, <code>liste.php</code>, <code>modifier.php</code>, <code>statistiques.php</code> (chaque lien avec <code>target="cadre"</code>), une <code>section</code> à droite contenant l'<code>iframe name="cadre"</code> (qui affiche au départ <code>inscription.html</code>), et un <code>footer</code> en bas. La <code>nav</code> et la <code>section</code> sont placées dans une <code>div</code> avant le footer.</li>
               <li><b><code>inscription.html</code></b> : le formulaire d'enregistrement d'une recharge — <code>form</code> méthode <code>post</code>, action <code>ajouter.php</code>, <code>target="cadre"</code> ; champs <code>text</code> (Id, Nom_prenom), liste <code>select</code> pour la station (<code>Borne</code> : S1 à S4), <code>number step="0.01"</code> (Kwh), <code>date</code> (DateRecharge) et <code>time</code> pour <b>fixer l'heure de la recharge</b> (<code>HeureRecharge</code>), paragraphe <code>&lt;p id="message"&gt;</code>, boutons Enregistrer et Effacer.</li>
               <li>En haut de la page d'inscription, affichez les <b>horaires de travail de la station : de 8h00 à 12h00 et de 13h00 à 18h00</b> (fermé entre 12h00 et 13h00), ainsi que <b>l'heure actuelle, qui s'affiche dès l'entrée dans la page</b> et se met à jour chaque seconde (JavaScript, voir partie 3).</li>
-              <li>La <b>couleur de la page <code>index.html</code> varie aléatoirement entre 3 couleurs</b> à chaque chargement : un petit script JavaScript choisit une couleur au hasard (<code>Math.random</code>) et l'applique à l'en-tête, à la navigation et au pied de page.</li>
+              <li>La <b>couleur de la page <code>index.html</code> varie aléatoirement entre 3 couleurs</b> à chaque chargement : un petit script JavaScript choisit une couleur au hasard (<code>Math.random</code>) et l'applique à l'en-tête, à la navigation et au pied de page, en les retrouvant par leur <code>id</code> avec <code>getElementById</code> (donnez donc un <code>id</code> à <code>header</code>, <code>nav</code> et <code>footer</code>).</li>
               <li>Les résultats PHP s'affichent dans des tableaux HTML propres (<code>table/tr/th/td</code>).</li>
             </ul>
 
@@ -3325,6 +3327,7 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
             <h3>3️⃣ Partie JavaScript — contrôler avant d'envoyer</h3>
             <ul>
               <li><code>validation.js</code>, relié à <code>inscription.html</code> et à la page de modification ; variables déclarées avec <code>let</code> ; fonction appelée par <code>onsubmit="return …()"</code> (le <code>return</code> est indispensable pour bloquer l'envoi).</li>
+              <li>⚠ <b>Interdit dans tout le JavaScript de l'exercice : <code>querySelector</code> et <code>querySelectorAll</code>.</b> Pour accéder aux éléments de la page, utilisez uniquement <code>getElementById</code> (accès par <code>id</code>) ou <code>getElementsByName</code> (accès par <code>name</code>).</li>
               <li>L'<b>Id</b> commence par une lettre en majuscule.</li>
               <li>Le <b>Nom_prenom</b> du conducteur est <b>nettoyé</b> (espaces superflus éliminés), n'est composé <b>que de lettres et d'espaces</b>, et contient <b>entre 2 et 5 mots</b>.</li>
               <li>L'énergie <b>Kwh</b> est un nombre <b>entre 1 et 100</b> (capacité d'une batterie).</li>
@@ -3396,13 +3399,13 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
 &lt;/head&gt;
 &lt;body&gt;
 
-&lt;header&gt;
+&lt;header id=&quot;entete&quot;&gt;
    &lt;img src=&quot;logo.svg&quot; alt=&quot;Logo de la station&quot;&gt;
    &lt;h1&gt;⚡ Recharge VE — Station électrique&lt;/h1&gt;
 &lt;/header&gt;
 
 &lt;div class=&quot;milieu&quot;&gt;
-   &lt;nav&gt;
+   &lt;nav id=&quot;menu&quot;&gt;
       &lt;a href=&quot;inscription.html&quot; target=&quot;cadre&quot;&gt;⚡ Nouvelle recharge&lt;/a&gt;
       &lt;a href=&quot;liste.php&quot; target=&quot;cadre&quot;&gt;📋 Historique&lt;/a&gt;
       &lt;a href=&quot;modifier.php&quot; target=&quot;cadre&quot;&gt;✏️ Mise à jour&lt;/a&gt;
@@ -3413,7 +3416,7 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
    &lt;/section&gt;
 &lt;/div&gt;
 
-&lt;footer&gt;Travail élaboré par … — Année scolaire …&lt;/footer&gt;
+&lt;footer id=&quot;pied&quot;&gt;Travail élaboré par … — Année scolaire …&lt;/footer&gt;
 
 
 &lt;script&gt;
@@ -3421,9 +3424,9 @@ INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
    let couleurs = [&quot;#0f1c47&quot;, &quot;#065f46&quot;, &quot;#7c2d12&quot;];
    let numero = Math.floor(Math.random() * couleurs.length);
    let couleurChoisie = couleurs[numero];
-   document.querySelector(&quot;header&quot;).style.backgroundColor = couleurChoisie;
-   document.querySelector(&quot;nav&quot;).style.backgroundColor = couleurChoisie;
-   document.querySelector(&quot;footer&quot;).style.backgroundColor = couleurChoisie;
+   document.getElementById(&quot;entete&quot;).style.backgroundColor = couleurChoisie;
+   document.getElementById(&quot;menu&quot;).style.backgroundColor = couleurChoisie;
+   document.getElementById(&quot;pied&quot;).style.backgroundColor = couleurChoisie;
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
