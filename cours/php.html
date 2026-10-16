@@ -343,12 +343,11 @@
         <a href="#s9" class="main-link">9. Exemple récapitulatif</a>
       </div>
       <div class="nav-group">
-        <a href="#s10" class="main-link">10. Quatre pages complètes</a>
+        <a href="#s10" class="main-link">10. 🧩 Exercice de synthèse</a>
         <div class="sub-links-container">
-          <a href="#s10a" class="sub-link">10.1 Insertion</a>
-          <a href="#s10b" class="sub-link">10.2 Sélection</a>
-          <a href="#s10c" class="sub-link">10.3 Mise à jour</a>
-          <a href="#s10d" class="sub-link">10.4 Statistiques</a>
+          <a href="#s10a" class="sub-link">10.1 Énoncé</a>
+          <a href="#s10b" class="sub-link">10.2 Solution</a>
+          <a href="#s10c" class="sub-link">10.3 Explication animée</a>
         </div>
       </div>
     </nav>
@@ -1549,7 +1548,7 @@ mysqli_close($connexion);
           "
         >
           <h2 id="s10" style="flex: 1 1 auto; min-width: 0; margin-top: 2.6rem">
-            10. Quatre pages PHP complètes (CRUD + statistiques)
+            10. 🧩 Exercice de synthèse
           </h2>
           <button
             type="button"
@@ -1564,260 +1563,107 @@ mysqli_close($connexion);
             "
             title="Ouvrir l'exercice de synthèse du point 10"
           >
-            🧩 Exercice de synthèse
+            📋 10.1 Énoncé
           </button>
         </div>
         <p>
-          Ces quatre pages utilisent la même table
-          <code>eleves(Id, Nom_prenom, Moyenne, DateNaissance)</code> et le
-          même schéma de connexion. Les lectures de résultats se font avec
-          <code>mysqli_fetch_array</code>. L'<code>Id</code> est un code qui
-          commence toujours par une <b>lettre en majuscule</b> : cette première
-          lettre est la <b>Catégorie</b> de l'élève (A, B, C…), utilisée pour
-          le tri dans la page de statistiques (10.4).
+          Cet exercice récapitule <b>tout le cours jusqu'au point 10</b> :
+          vous construisez en entier le site
+          <b>« Gestion des élèves »</b> — sa page <code>index.html</code>
+          (en-tête avec logo, navigation verticale, iframe et pied de page),
+          son style, ses contrôles JavaScript et ses quatre pages PHP
+          (<code>ajouter.php</code>, <code>liste.php</code>,
+          <code>modifier.php</code>, <code>statistiques.php</code>) reliées à
+          la base <code>ecole</code> et sa table
+          <code>eleves(Id, Nom_prenom, Moyenne, DateNaissance)</code>.
         </p>
 
-        <h3 id="s10a">10.1 Page d'insertion — ajouter.php</h3>
-        <pre><code>&lt;?php
-$connexion = mysqli_connect("localhost", "root", "");
-mysqli_select_db($connexion, "ecole");
+        <h3 id="s10a">10.1 Énoncé</h3>
+        <p>
+          L'énoncé complet — contexte, base de données à importer
+          (<code>ecole.sql</code> téléchargeable), organisation du site,
+          parties <b>HTML</b>, <b>CSS</b>, <b>JavaScript</b> et
+          <b>PHP (tout le point 10)</b>, tests à effectuer et barème sur 20 —
+          s'ouvre dans la fenêtre de l'exercice :
+        </p>
+        <p style="text-align: center">
+          <button
+            type="button"
+            class="anim-open btn-ouvrir-enonce"
+            style="background: linear-gradient(120deg, #f4511e, #d81b60); font-weight: 800"
+          >
+            📋 Ouvrir l'énoncé complet (10.1)
+          </button>
+        </p>
 
-if (isset($_POST["ok"])) {
-   $Id = $_POST['Id'];
-   // Chaque Id commence par une lettre en majuscule (la Catégorie : A, B, C…)
-   $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
-   $Nom_prenom = $_POST['Nom_prenom'];
-   $Moyenne = (float)$_POST['Moyenne'];
-   $DateNaissance = $_POST['DateNaissance'];
+        <h3 id="s10b">10.2 Solution — correction complète</h3>
+        <p>
+          Voici la correction de tout l'exercice, en trois volets. Cliquez
+          sur un bouton pour ouvrir le code corrigé correspondant, puis
+          comparez avec votre propre travail :
+        </p>
+        <p
+          style="
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            text-align: center;
+          "
+        >
+          <button
+            type="button"
+            class="anim-open sol-open"
+            data-sol="html"
+            style="background: linear-gradient(120deg, #2563eb, #0ea5e9); font-weight: 800"
+          >
+            🌐 HTML + CSS
+          </button>
+          <button
+            type="button"
+            class="anim-open sol-open"
+            data-sol="js"
+            style="background: linear-gradient(120deg, #d97706, #facc15); color: #1c2440; font-weight: 800"
+          >
+            🟨 JavaScript
+          </button>
+          <button
+            type="button"
+            class="anim-open sol-open"
+            data-sol="php"
+            style="background: linear-gradient(120deg, #6d28d9, #4f46e5); font-weight: 800"
+          >
+            🐘 PHP
+          </button>
+        </p>
+        <ul>
+          <li><b>HTML + CSS</b> : <code>index.html</code> (header avec logo et texte, nav verticale à gauche, section avec l'iframe <code>cadre</code> à droite, footer), <code>inscription.html</code> et le <code>style.css</code> commun, avec une couleur par Catégorie.</li>
+          <li><b>JavaScript</b> : <code>validation.js</code> — Id commençant par une majuscule, Nom_prenom avec un espace, Moyenne entre 0 et 20, DateNaissance remplie et passée ; envoi annulé en cas d'erreur.</li>
+          <li><b>PHP</b> : les quatre pages du point 10 adaptées au site — <code>ajouter.php</code> (réception du formulaire d'inscription, Id en majuscule, INSERT), <code>liste.php</code>, <code>modifier.php</code> et <code>statistiques.php</code> (statistiques, âge et anniversaire, et le tableau Catégorie | Nom | Prénom trié par Catégorie) — sans <code>mysqli_real_escape_string</code>.</li>
+        </ul>
 
-   $req = "INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance)
-           VALUES ('$Id', '$Nom_prenom', $Moyenne, '$DateNaissance')";
-   if (mysqli_query($connexion, $req)) {
-      echo "Élève ajouté (Id = $Id).";
-   } else {
-      echo "Erreur : " . mysqli_error($connexion);
-   }
-}
-mysqli_close($connexion);
-?&gt;
-&lt;form method="post"&gt;
-   Id (ex. A01) : &lt;input name="Id"&gt;&lt;br&gt;
-   Nom et prénom : &lt;input name="Nom_prenom"&gt;&lt;br&gt;
-   Moyenne : &lt;input name="Moyenne" type="number" step="0.01"&gt;&lt;br&gt;
-   Date de naissance : &lt;input name="DateNaissance" type="date"&gt;&lt;br&gt;
-   &lt;input type="submit" name="ok" value="Ajouter"&gt;
-&lt;/form&gt;</code></pre>
-
-        <h3 id="s10b">10.2 Page de sélection — liste.php</h3>
-        <pre><code>&lt;?php
-$connexion = mysqli_connect("localhost", "root", "");
-mysqli_select_db($connexion, "ecole");
-
-$req = "SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves ORDER BY Nom_prenom";
-$resultat = mysqli_query($connexion, $req);
-?&gt;
-&lt;table border="1"&gt;
-   &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Nom et prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;/tr&gt;
-   &lt;?php while ($ligne = mysqli_fetch_array($resultat)) { ?&gt;
-   &lt;tr&gt;
-      &lt;td&gt;&lt;?php echo $ligne["Id"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["Nom_prenom"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["Moyenne"]; ?&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;?php echo $ligne["DateNaissance"]; ?&gt;&lt;/td&gt;
-   &lt;/tr&gt;
-   &lt;?php } ?&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;?php echo mysqli_num_rows($resultat); ?&gt; élève(s) au total.&lt;/p&gt;
-&lt;?php mysqli_close($connexion); ?&gt;</code></pre>
-
-        <h3 id="s10c">10.3 Page de mise à jour — modifier.php</h3>
-        <pre><code>&lt;?php
-$connexion = mysqli_connect("localhost", "root", "");
-mysqli_select_db($connexion, "ecole");
-
-if (isset($_POST["ok"])) {
-   $Id = $_POST['Id'];
-   // Chaque Id commence par une lettre en majuscule (la Catégorie : A, B, C…)
-   $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
-   $Moyenne = (float)$_POST['Moyenne'];
-   $DateNaissance = $_POST['DateNaissance'];
-
-   $req = "UPDATE eleves
-           SET Moyenne = $Moyenne, DateNaissance = '$DateNaissance'
-           WHERE Id = '$Id'";
-   mysqli_query($connexion, $req);
-
-   if (mysqli_affected_rows($connexion) &gt; 0) {
-      echo "Élève $Id mis à jour.";
-   } else {
-      echo "Aucune ligne modifiée (Id introuvable ou valeurs identiques).";
-   }
-}
-mysqli_close($connexion);
-?&gt;
-&lt;form method="post"&gt;
-   Id de l'élève (ex. A01) : &lt;input name="Id"&gt;&lt;br&gt;
-   Nouvelle moyenne : &lt;input name="Moyenne" type="number" step="0.01"&gt;&lt;br&gt;
-   Nouvelle date de naissance : &lt;input name="DateNaissance" type="date"&gt;&lt;br&gt;
-   &lt;input type="submit" name="ok" value="Mettre à jour"&gt;
-&lt;/form&gt;</code></pre>
-
-        <h3 id="s10d">10.4 Page de statistiques — statistiques.php</h3>
-        <pre><code>&lt;!DOCTYPE html&gt;
-&lt;html lang="fr"&gt;
-&lt;head&gt;
-   &lt;meta charset="utf-8"&gt;
-   &lt;title&gt;Statistiques des élèves&lt;/title&gt;
-   &lt;style&gt;
-      body { font-family: Arial, sans-serif; margin: 30px; }
-      h1 { color: #2c3e50; }
-      table { border-collapse: collapse; margin-bottom: 25px; }
-      td, th { border: 1px solid #999; padding: 8px; }
-      th { background: #2c3e50; color: #fff; }
-      .stats td:first-child { background: #ecf0f1; font-weight: bold; }
-   &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;h1&gt;Statistiques des élèves&lt;/h1&gt;
-
-&lt;?php
-$connexion = mysqli_connect("localhost", "root", "", "ecole");
-if (!$connexion) {
-   die("Erreur de connexion : " . mysqli_connect_error());
-}
-
-$total = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves");
-$ligneTotal = mysqli_fetch_array($total);
-
-if ($ligneTotal["nb"] &gt; 0) {
-
-   $moy = mysqli_query($connexion, "SELECT AVG(Moyenne) AS m FROM eleves");
-   $ligneMoy = mysqli_fetch_array($moy);
-
-   $max = mysqli_query($connexion, "SELECT Nom_prenom, Moyenne FROM eleves ORDER BY Moyenne DESC LIMIT 1");
-   $ligneMax = mysqli_fetch_array($max);
-
-   $r1 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &gt;= 10");
-   $l1 = mysqli_fetch_array($r1);
-
-   $r2 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &lt; 10");
-   $l2 = mysqli_fetch_array($r2);
-?&gt;
-   &lt;table class="stats"&gt;
-      &lt;tr&gt;&lt;td&gt;Nombre d'élèves&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneTotal["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;Moyenne générale&lt;/td&gt;&lt;td&gt;&lt;?php echo round($ligneMoy["m"], 2); ?&gt;&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;Meilleure moyenne&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax["Nom_prenom"] . " (" . $ligneMax["Moyenne"] . ")"; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;Admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l1["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-      &lt;tr&gt;&lt;td&gt;Non admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l2["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
-   &lt;/table&gt;
-
-   &lt;h2&gt;Âge et anniversaire de chaque élève&lt;/h2&gt;
-   &lt;table&gt;
-      &lt;tr&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;th&gt;Âge&lt;/th&gt;&lt;th&gt;Prochain anniversaire&lt;/th&gt;&lt;/tr&gt;
-&lt;?php
-   $liste = mysqli_query($connexion, "SELECT Nom_prenom, DateNaissance FROM eleves ORDER BY Nom_prenom");
-   // Date du jour
-   $a = date("Y");
-   $m = date("n");
-   $j = date("j");
-
-   while ($ligne = mysqli_fetch_array($liste)) {
-
-      // Nom et Prénom sont séparés par un espace dans Nom_prenom
-      $partiesNom = explode(" ", $ligne["Nom_prenom"], 2);
-      $Nom = $partiesNom[0];
-      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : "";
-
-      if (empty($ligne["DateNaissance"])) {
-         $texteAge = "—";
-         $texteAnniv = "—";
-      } else {
-         // Date de naissance : AAAA-MM-JJ
-         $partie = explode("-", $ligne["DateNaissance"]);
-         $an = (int)$partie[0];
-         $mn = (int)$partie[1];
-         $jn = (int)$partie[2];
-
-         // Âge : années, mois, jours
-         $ans = $a - $an;
-         $mois = $m - $mn;
-         $jours = $j - $jn;
-         if ($jours &lt; 0) {
-            $mois = $mois - 1;
-            $jours = $jours + date("t", mktime(0, 0, 0, $m - 1, 1, $a));
-         }
-         if ($mois &lt; 0) {
-            $ans = $ans - 1;
-            $mois = $mois + 12;
-         }
-         $texteAge = "$ans an(s), $mois mois, $jours jour(s)";
-
-         // Prochain anniversaire : cette année, sinon l'année prochaine
-         $anneeProchain = $a;
-         if (mktime(0, 0, 0, $mn, $jn, $a) &lt; mktime(0, 0, 0, $m, $j, $a)) {
-            $anneeProchain = $a + 1;
-         }
-
-         // Temps restant : mois et jours
-         $resteMois = ($anneeProchain - $a) * 12 + $mn - $m;
-         $resteJours = $jn - $j;
-         if ($resteJours &lt; 0) {
-            $resteMois = $resteMois - 1;
-            $resteJours = $resteJours + date("t", mktime(0, 0, 0, $mn - 1, 1, $anneeProchain));
-         }
-
-         if ($resteMois == 0 &amp;&amp; $resteJours == 0) {
-            $texteAnniv = "C'est aujourd'hui son anniversaire !";
-         } else {
-            $texteAnniv = "Il reste $resteMois mois et $resteJours jours avant l'anniversaire";
-         }
-      }
-?&gt;
-      &lt;tr&gt;
-         &lt;td&gt;&lt;?php echo $Nom; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $Prenom; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $ligne["DateNaissance"]; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $texteAge; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $texteAnniv; ?&gt;&lt;/td&gt;
-      &lt;/tr&gt;
-&lt;?php
-   }
-?&gt;
-   &lt;/table&gt;
-
-   &lt;h2&gt;Liste des élèves par Catégorie&lt;/h2&gt;
-   &lt;table&gt;
-      &lt;tr&gt;&lt;th&gt;Catégorie&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;/tr&gt;
-&lt;?php
-   // Tri par Catégorie (A, B, C…) : la Catégorie est la première lettre de l'Id
-   $parCategorie = mysqli_query($connexion, "SELECT Id, Nom_prenom, Moyenne FROM eleves ORDER BY LEFT(Id, 1), Nom_prenom");
-   while ($ligne = mysqli_fetch_array($parCategorie)) {
-      $Categorie = substr($ligne["Id"], 0, 1);
-      $partiesNom = explode(" ", $ligne["Nom_prenom"], 2);
-      $Nom = $partiesNom[0];
-      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : "";
-?&gt;
-      &lt;tr&gt;
-         &lt;td&gt;&lt;?php echo $Categorie; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $Nom; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $Prenom; ?&gt;&lt;/td&gt;
-         &lt;td&gt;&lt;?php echo $ligne["Moyenne"]; ?&gt;&lt;/td&gt;
-      &lt;/tr&gt;
-&lt;?php
-   }
-?&gt;
-   &lt;/table&gt;
-&lt;?php
-} else {
-   echo "&lt;p&gt;Aucun élève dans la table.&lt;/p&gt;";
-}
-
-mysqli_close($connexion);
-?&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+        <h3 id="s10c">10.3 Explication synthèse animée</h3>
+        <div
+          id="s10c-video"
+          style="
+            border: 2px dashed #b4552d;
+            border-radius: 12px;
+            background: #fff7ed;
+            padding: 2.2rem 1rem;
+            text-align: center;
+          "
+        >
+          <div style="font-size: 3rem">🎬</div>
+          <p style="font-weight: 800; font-size: 1.1rem; margin: 0.4rem 0">
+            Explication synthèse animée — vidéo à venir
+          </p>
+          <p style="margin: 0">
+            La vidéo qui explique cet exercice pas à pas — de la page
+            <code>index.html</code> et son iframe jusqu'aux pages PHP du
+            point 10 — sera ajoutée ici ultérieurement.
+          </p>
+          <!-- 🎬 VIDÉO À AJOUTER ICI (10.3) -->
+        </div>
 
         <footer>Cours PHP — 4ème SI · Travail élaboré par A. Essouyah</footer>
       </div>
@@ -2129,11 +1975,524 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
               10.3 : 2 · 10.4 : 2.
             </p>
             <p style="text-align: center">
-              <a href="#s10a">10.1 Insertion</a> ·
-              <a href="#s10b">10.2 Sélection</a> ·
-              <a href="#s10c">10.3 Mise à jour</a> ·
-              <a href="#s10d">10.4 Statistiques</a>
+              <a href="#s10b">✅ 10.2 Solution</a> ·
+              <a href="#s10c">🎬 10.3 Explication animée</a>
             </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Boîte modale : Solution de l'exercice de synthèse (10.2) -->
+    <div
+      id="solModal"
+      class="anim-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="solTitle"
+      hidden
+    >
+      <div class="anim-box" id="solBox">
+        <div class="anim-head">
+          <span id="solTitle">✅ 10.2 Solution — Correction complète de l'exercice de synthèse</span>
+          <span class="anim-tools">
+            <button
+              type="button"
+              id="solRetourCours"
+              title="Retourner au cours PHP"
+              style="
+                background: linear-gradient(120deg, #f4511e, #b4552d);
+                color: #fff;
+                border-color: #101728;
+                font-weight: 800;
+              "
+            >
+              🐘 ← Retour au cours PHP
+            </button>
+            <button type="button" id="solFull" title="Agrandir sur toute la page">
+              ⛶ Plein écran
+            </button>
+            <button type="button" id="solClose" title="Fermer">✕ Fermer</button>
+          </span>
+        </div>
+        <div class="anim-body">
+          <p
+            style="
+              display: flex;
+              gap: 0.6rem;
+              flex-wrap: wrap;
+              justify-content: center;
+              position: sticky;
+              top: 0;
+              background: var(--bg);
+              padding: 0.5rem 0;
+              z-index: 2;
+            "
+          >
+            <button type="button" class="anim-open sol-tab" data-sol="html" style="font-weight: 800">🌐 HTML + CSS</button>
+            <button type="button" class="anim-open sol-tab" data-sol="js" style="font-weight: 800">🟨 JavaScript</button>
+            <button type="button" class="anim-open sol-tab" data-sol="php" style="font-weight: 800">🐘 PHP</button>
+          </p>
+          <div style="padding: 0.4rem 0.6rem 1rem">
+            <div class="sol-panel" id="solPanel-html">
+              <p><b>Correction HTML + CSS</b> — l'organisation du site (<code>index.html</code>), le formulaire (<code>inscription.html</code>) et le style commun (<code>style.css</code>). Pensez à importer d'abord la base <code>ecole.sql</code>.</p>
+              <h4>🌐 index.html — header (logo + texte), nav à gauche, iframe à droite, footer</h4>
+              <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+   &lt;meta charset="utf-8"&gt;
+   &lt;title&gt;Gestion des élèves&lt;/title&gt;
+   &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;header&gt;
+   &lt;img src="logo.png" alt="Logo du lycée"&gt;
+   &lt;h1&gt;Gestion des élèves — Lycée Raféha&lt;/h1&gt;
+&lt;/header&gt;
+
+&lt;div class="milieu"&gt;
+   &lt;nav&gt;
+      &lt;a href="inscription.html" target="cadre"&gt;📝 Inscription&lt;/a&gt;
+      &lt;a href="liste.php" target="cadre"&gt;📋 Liste des élèves&lt;/a&gt;
+      &lt;a href="modifier.php" target="cadre"&gt;✏️ Mise à jour&lt;/a&gt;
+      &lt;a href="statistiques.php" target="cadre"&gt;📊 Statistiques&lt;/a&gt;
+   &lt;/nav&gt;
+   &lt;section&gt;
+      &lt;iframe name="cadre" src="inscription.html"&gt;&lt;/iframe&gt;
+   &lt;/section&gt;
+&lt;/div&gt;
+
+&lt;footer&gt;Travail élaboré par … — Année scolaire …&lt;/footer&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+              <h4>🌐 inscription.html — le formulaire d'ajout (envoyé vers ajouter.php, dans l'iframe)</h4>
+              <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+   &lt;meta charset="utf-8"&gt;
+   &lt;title&gt;Inscription d'un élève&lt;/title&gt;
+   &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h2&gt;📝 Inscription d'un élève&lt;/h2&gt;
+
+&lt;form method="post" action="ajouter.php" target="cadre"
+      onsubmit="return validerInscription()"&gt;
+   &lt;label&gt;Id (ex. A01) :&lt;/label&gt;
+   &lt;input type="text" id="Id" name="Id"&gt;&lt;br&gt;
+
+   &lt;label&gt;Nom et prénom :&lt;/label&gt;
+   &lt;input type="text" id="Nom_prenom" name="Nom_prenom"&gt;&lt;br&gt;
+
+   &lt;label&gt;Moyenne :&lt;/label&gt;
+   &lt;input type="number" id="Moyenne" name="Moyenne" step="0.01"&gt;&lt;br&gt;
+
+   &lt;label&gt;Date de naissance :&lt;/label&gt;
+   &lt;input type="date" id="DateNaissance" name="DateNaissance"&gt;&lt;br&gt;
+
+   &lt;p id="message"&gt;&lt;/p&gt;
+
+   &lt;input type="submit" name="ok" value="Ajouter"&gt;
+   &lt;input type="reset" value="Effacer"&gt;
+&lt;/form&gt;
+
+&lt;script src="validation.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+              <h4>🎨 style.css — mise en page du site, formulaires, tableaux, couleurs par Catégorie</h4>
+              <pre><code>/* ===== style.css : commun à toutes les pages ===== */
+* { box-sizing: border-box; }
+
+body {
+   font-family: Arial, sans-serif;
+   margin: 0;
+   background: #f6f1e7;
+   color: #1c2440;
+}
+
+/* --- Page index : en-tête, milieu, pied de page --- */
+header {
+   display: flex;
+   align-items: center;
+   gap: 15px;
+   background: #0f1c47;
+   color: #fff;
+   padding: 10px 20px;
+}
+header img { height: 54px; }
+header h1 { font-size: 22px; margin: 0; }
+
+.milieu { display: flex; }
+
+nav {
+   width: 220px;
+   flex: 0 0 220px;
+   background: #16295c;
+   padding: 15px 10px;
+}
+nav a {
+   display: block;
+   color: #fff;
+   text-decoration: none;
+   padding: 10px 12px;
+   margin-bottom: 8px;
+   border-radius: 8px;
+}
+nav a:hover { background: #f4511e; }
+
+section { flex: 1; padding: 10px; }
+section iframe {
+   width: 100%;
+   height: 520px;
+   border: 1px solid #999;
+   border-radius: 10px;
+   background: #fff;
+}
+
+footer {
+   background: #0f1c47;
+   color: #fff;
+   text-align: center;
+   padding: 10px;
+}
+
+/* --- Formulaires --- */
+form {
+   background: #fff;
+   max-width: 520px;
+   padding: 20px;
+   border: 1px solid #ddd;
+   border-radius: 12px;
+   box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+label { display: block; font-weight: bold; margin-top: 10px; }
+input {
+   width: 100%;
+   padding: 8px;
+   margin-top: 4px;
+   border: 1px solid #999;
+   border-radius: 6px;
+}
+input[type="submit"], input[type="reset"] {
+   width: auto;
+   cursor: pointer;
+   font-weight: bold;
+   color: #fff;
+   background: #f4511e;
+   border: none;
+   padding: 9px 18px;
+   margin-right: 8px;
+}
+input[type="reset"] { background: #64748b; }
+input[type="submit"]:hover, input[type="reset"]:hover { opacity: 0.85; }
+
+#message { color: #b02a2a; font-weight: bold; min-height: 20px; }
+
+/* --- Tableaux --- */
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { border: 1px solid #999; padding: 8px; text-align: left; }
+th { background: #0f1c47; color: #fff; }
+tr:nth-child(even) { background: #eef2ff; }
+
+/* --- Une couleur par Catégorie (première lettre de l'Id) --- */
+.cat-A { background: #dcfce7; color: #166534; font-weight: bold; }
+.cat-B { background: #dbeafe; color: #1e40af; font-weight: bold; }
+.cat-C { background: #fef3c7; color: #92400e; font-weight: bold; }
+.cat-D { background: #fee2e2; color: #991b1b; font-weight: bold; }</code></pre>
+            </div>
+            <div class="sol-panel" id="solPanel-js" hidden>
+              <p><b>Correction JavaScript</b> — <code>validation.js</code> contrôle la saisie avant l'envoi : Id commençant par une majuscule, Nom_prenom avec un espace (nom et prénom séparés), Moyenne entre 0 et 20, DateNaissance remplie et dans le passé. En cas d'erreur, un message s'affiche et l'envoi est annulé.</p>
+              <h4>🟨 validation.js</h4>
+              <pre><code>// ===== validation.js : contrôler la saisie avant l'envoi =====
+
+function commenceParMajuscule(texte) {
+   return texte.length &gt; 0 &amp;&amp; texte[0] &gt;= "A" &amp;&amp; texte[0] &lt;= "Z";
+}
+
+function dateDansLePasse(valeur) {
+   if (valeur == "") return false;
+   var saisie = new Date(valeur);
+   var aujourdHui = new Date();
+   return saisie &lt;= aujourdHui;
+}
+
+// Contrôles communs : Id, Moyenne, DateNaissance
+function controlesCommuns() {
+   var Id = document.getElementById("Id").value;
+   var Moyenne = document.getElementById("Moyenne").value;
+   var DateNaissance = document.getElementById("DateNaissance").value;
+   var message = document.getElementById("message");
+
+   if (!commenceParMajuscule(Id)) {
+      message.textContent = "Erreur : l'Id doit commencer par une lettre en majuscule.";
+      return false;
+   }
+   if (Moyenne == "" || isNaN(Moyenne) || Moyenne &lt; 0 || Moyenne &gt; 20) {
+      message.textContent = "Erreur : la Moyenne doit être un nombre entre 0 et 20.";
+      return false;
+   }
+   if (!dateDansLePasse(DateNaissance)) {
+      message.textContent = "Erreur : la Date de naissance doit être remplie et ne pas être dans le futur.";
+      return false;
+   }
+   message.textContent = "";
+   return true;
+}
+
+// Page inscription.html : on contrôle aussi le Nom_prenom
+function validerInscription() {
+   var NomPrenom = document.getElementById("Nom_prenom").value;
+   var message = document.getElementById("message");
+   NomPrenom = NomPrenom.trim();
+   if (NomPrenom.indexOf(" ") &lt;= 0) {
+      message.textContent = "Erreur : écrivez le Nom et le Prénom séparés par un espace.";
+      return false;
+   }
+   return controlesCommuns();
+}
+
+// Page modifier.php
+function validerModification() {
+   return controlesCommuns();
+}</code></pre>
+            </div>
+            <div class="sol-panel" id="solPanel-php" hidden>
+              <p><b>Correction PHP — tout le point 10</b>, adaptée au site : <code>ajouter.php</code> reçoit le formulaire d'<code>inscription.html</code> et affiche le résultat dans l'iframe. Aucune page n'utilise <code>mysqli_real_escape_string</code>, et chaque Id commence par une lettre en majuscule (sa Catégorie).</p>
+              <h4>🐘 ajouter.php — insertion (10.1)</h4><pre><code>&lt;?php
+$connexion = mysqli_connect("localhost", "root", "");
+mysqli_select_db($connexion, "ecole");
+?&gt;
+&lt;link rel="stylesheet" href="style.css"&gt;
+&lt;?php
+if (isset($_POST["ok"])) {
+   $Id = $_POST['Id'];
+   // Chaque Id commence par une lettre en majuscule (la Catégorie : A, B, C…)
+   $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
+   $Nom_prenom = $_POST['Nom_prenom'];
+   $Moyenne = (float)$_POST['Moyenne'];
+   $DateNaissance = $_POST['DateNaissance'];
+
+   $req = "INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance)
+           VALUES ('$Id', '$Nom_prenom', $Moyenne, '$DateNaissance')";
+   if (mysqli_query($connexion, $req)) {
+      echo "Élève ajouté (Id = $Id).";
+   } else {
+      echo "Erreur : " . mysqli_error($connexion);
+   }
+}
+mysqli_close($connexion);
+?&gt;
+&lt;p&gt;&lt;a href="inscription.html"&gt;← Ajouter un autre élève&lt;/a&gt;&lt;/p&gt;</code></pre><h4>🐘 liste.php — sélection (10.2)</h4><pre><code>&lt;?php
+$connexion = mysqli_connect("localhost", "root", "");
+mysqli_select_db($connexion, "ecole");
+
+$req = "SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves ORDER BY Nom_prenom";
+$resultat = mysqli_query($connexion, $req);
+?&gt;
+&lt;link rel="stylesheet" href="style.css"&gt;
+&lt;h2&gt;📋 Liste des élèves&lt;/h2&gt;
+&lt;table&gt;
+   &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Nom et prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;/tr&gt;
+   &lt;?php while ($ligne = mysqli_fetch_array($resultat)) { ?&gt;
+   &lt;tr&gt;
+      &lt;td&gt;&lt;?php echo $ligne["Id"]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne["Nom_prenom"]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne["Moyenne"]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne["DateNaissance"]; ?&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;?php } ?&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;?php echo mysqli_num_rows($resultat); ?&gt; élève(s) au total.&lt;/p&gt;
+&lt;?php mysqli_close($connexion); ?&gt;</code></pre><h4>🐘 modifier.php — mise à jour (10.3)</h4><pre><code>&lt;?php
+$connexion = mysqli_connect("localhost", "root", "");
+mysqli_select_db($connexion, "ecole");
+
+if (isset($_POST["ok"])) {
+   $Id = $_POST['Id'];
+   // Chaque Id commence par une lettre en majuscule (la Catégorie : A, B, C…)
+   $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
+   $Moyenne = (float)$_POST['Moyenne'];
+   $DateNaissance = $_POST['DateNaissance'];
+
+   $req = "UPDATE eleves
+           SET Moyenne = $Moyenne, DateNaissance = '$DateNaissance'
+           WHERE Id = '$Id'";
+   mysqli_query($connexion, $req);
+
+   if (mysqli_affected_rows($connexion) &gt; 0) {
+      echo "Élève $Id mis à jour.";
+   } else {
+      echo "Aucune ligne modifiée (Id introuvable ou valeurs identiques).";
+   }
+}
+mysqli_close($connexion);
+?&gt;
+&lt;link rel="stylesheet" href="style.css"&gt;
+&lt;h2&gt;✏️ Mise à jour d'un élève&lt;/h2&gt;
+&lt;form method="post" onsubmit="return validerModification()"&gt;
+   &lt;label&gt;Id de l'élève (ex. A01) :&lt;/label&gt;
+   &lt;input type="text" id="Id" name="Id"&gt;&lt;br&gt;
+
+   &lt;label&gt;Nouvelle moyenne :&lt;/label&gt;
+   &lt;input type="number" id="Moyenne" name="Moyenne" step="0.01"&gt;&lt;br&gt;
+
+   &lt;label&gt;Nouvelle date de naissance :&lt;/label&gt;
+   &lt;input type="date" id="DateNaissance" name="DateNaissance"&gt;&lt;br&gt;
+
+   &lt;p id="message"&gt;&lt;/p&gt;
+
+   &lt;input type="submit" name="ok" value="Mettre à jour"&gt;
+   &lt;input type="reset" value="Effacer"&gt;
+&lt;/form&gt;
+&lt;script src="validation.js"&gt;&lt;/script&gt;</code></pre><h4>🐘 statistiques.php — statistiques (10.4)</h4><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+   &lt;meta charset="utf-8"&gt;
+   &lt;title&gt;Statistiques des élèves&lt;/title&gt;
+   &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;📊 Statistiques des élèves&lt;/h1&gt;
+
+&lt;?php
+$connexion = mysqli_connect("localhost", "root", "", "ecole");
+if (!$connexion) {
+   die("Erreur de connexion : " . mysqli_connect_error());
+}
+
+$total = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves");
+$ligneTotal = mysqli_fetch_array($total);
+
+if ($ligneTotal["nb"] &gt; 0) {
+
+   $moy = mysqli_query($connexion, "SELECT AVG(Moyenne) AS m FROM eleves");
+   $ligneMoy = mysqli_fetch_array($moy);
+
+   $max = mysqli_query($connexion, "SELECT Nom_prenom, Moyenne FROM eleves ORDER BY Moyenne DESC LIMIT 1");
+   $ligneMax = mysqli_fetch_array($max);
+
+   $r1 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &gt;= 10");
+   $l1 = mysqli_fetch_array($r1);
+
+   $r2 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &lt; 10");
+   $l2 = mysqli_fetch_array($r2);
+?&gt;
+   &lt;table&gt;
+      &lt;tr&gt;&lt;td&gt;Nombre d'élèves&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneTotal["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Moyenne générale&lt;/td&gt;&lt;td&gt;&lt;?php echo round($ligneMoy["m"], 2); ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Meilleure moyenne&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax["Nom_prenom"] . " (" . $ligneMax["Moyenne"] . ")"; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l1["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Non admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l2["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;/table&gt;
+
+   &lt;h2&gt;Âge et anniversaire de chaque élève&lt;/h2&gt;
+   &lt;table&gt;
+      &lt;tr&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Date de naissance&lt;/th&gt;&lt;th&gt;Âge&lt;/th&gt;&lt;th&gt;Prochain anniversaire&lt;/th&gt;&lt;/tr&gt;
+&lt;?php
+   $liste = mysqli_query($connexion, "SELECT Nom_prenom, DateNaissance FROM eleves ORDER BY Nom_prenom");
+   $a = date("Y");
+   $m = date("n");
+   $j = date("j");
+
+   while ($ligne = mysqli_fetch_array($liste)) {
+
+      // Nom et Prénom sont séparés par un espace dans Nom_prenom
+      $partiesNom = explode(" ", $ligne["Nom_prenom"], 2);
+      $Nom = $partiesNom[0];
+      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : "";
+
+      if (empty($ligne["DateNaissance"])) {
+         $texteAge = "—";
+         $texteAnniv = "—";
+      } else {
+         // Date de naissance : AAAA-MM-JJ
+         $partie = explode("-", $ligne["DateNaissance"]);
+         $an = (int)$partie[0];
+         $mn = (int)$partie[1];
+         $jn = (int)$partie[2];
+
+         // Âge : années, mois, jours
+         $ans = $a - $an;
+         $mois = $m - $mn;
+         $jours = $j - $jn;
+         if ($jours &lt; 0) {
+            $mois = $mois - 1;
+            $jours = $jours + date("t", mktime(0, 0, 0, $m - 1, 1, $a));
+         }
+         if ($mois &lt; 0) {
+            $ans = $ans - 1;
+            $mois = $mois + 12;
+         }
+         $texteAge = "$ans an(s), $mois mois, $jours jour(s)";
+
+         // Prochain anniversaire : cette année, sinon l'année prochaine
+         $anneeProchain = $a;
+         if (mktime(0, 0, 0, $mn, $jn, $a) &lt; mktime(0, 0, 0, $m, $j, $a)) {
+            $anneeProchain = $a + 1;
+         }
+         $resteMois = ($anneeProchain - $a) * 12 + $mn - $m;
+         $resteJours = $jn - $j;
+         if ($resteJours &lt; 0) {
+            $resteMois = $resteMois - 1;
+            $resteJours = $resteJours + date("t", mktime(0, 0, 0, $mn - 1, 1, $anneeProchain));
+         }
+         if ($resteMois == 0 &amp;&amp; $resteJours == 0) {
+            $texteAnniv = "C'est aujourd'hui son anniversaire !";
+         } else {
+            $texteAnniv = "Il reste $resteMois mois et $resteJours jours avant l'anniversaire";
+         }
+      }
+?&gt;
+      &lt;tr&gt;
+         &lt;td&gt;&lt;?php echo $Nom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $Prenom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $ligne["DateNaissance"]; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $texteAge; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $texteAnniv; ?&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+&lt;?php
+   }
+?&gt;
+   &lt;/table&gt;
+
+   &lt;h2&gt;Liste des élèves par Catégorie&lt;/h2&gt;
+   &lt;table&gt;
+      &lt;tr&gt;&lt;th&gt;Catégorie&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;/tr&gt;
+&lt;?php
+   // Tri par Catégorie (A, B, C…) : la Catégorie est la première lettre de l'Id
+   $parCategorie = mysqli_query($connexion, "SELECT Id, Nom_prenom, Moyenne FROM eleves ORDER BY LEFT(Id, 1), Nom_prenom");
+   while ($ligne = mysqli_fetch_array($parCategorie)) {
+      $Categorie = substr($ligne["Id"], 0, 1);
+      $partiesNom = explode(" ", $ligne["Nom_prenom"], 2);
+      $Nom = $partiesNom[0];
+      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : "";
+?&gt;
+      &lt;tr&gt;
+         &lt;td class="cat-&lt;?php echo $Categorie; ?&gt;"&gt;&lt;?php echo $Categorie; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $Nom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $Prenom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $ligne["Moyenne"]; ?&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+&lt;?php
+   }
+?&gt;
+   &lt;/table&gt;
+&lt;?php
+} else {
+   echo "&lt;p&gt;Aucun élève dans la table.&lt;/p&gt;";
+}
+
+mysqli_close($connexion);
+?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
           </div>
         </div>
       </div>
@@ -2567,6 +2926,9 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
             : "⛶ Plein écran";
         }
         if (btnE) btnE.onclick = openE;
+        document.querySelectorAll(".btn-ouvrir-enonce").forEach(function (b) {
+          b.addEventListener("click", openE);
+        });
         document.getElementById("exoClose").onclick = closeE;
         document.getElementById("exoRetourCours").onclick = closeE;
         document.getElementById("exoFull").onclick = toggleFullE;
@@ -2579,6 +2941,58 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
         // Les liens 10.1 → 10.4 de la fenêtre ferment la fenêtre avant d'y aller
         E.querySelectorAll('a[href^="#s10"]').forEach(function (a) {
           a.addEventListener("click", closeE);
+        });
+      })();
+    </script>
+    <script>
+      /* ---- fenêtre Solution (10.2) : 3 onglets HTML+CSS / JavaScript / PHP ---- */
+      (function () {
+        var S = document.getElementById("solModal");
+        function activerOnglet(nom) {
+          ["html", "js", "php"].forEach(function (n) {
+            var pn = document.getElementById("solPanel-" + n);
+            if (pn) pn.hidden = n !== nom;
+          });
+          S.querySelector(".anim-body").scrollTop = 0;
+        }
+        function openS(nom) {
+          S.hidden = false;
+          S.style.display = "flex";
+          document.body.style.overflow = "hidden";
+          activerOnglet(nom || "html");
+        }
+        function closeS() {
+          if (document.fullscreenElement) {
+            document.exitFullscreen().catch(function () {});
+          }
+          S.classList.remove("full");
+          S.hidden = true;
+          S.style.display = "none";
+          document.body.style.overflow = "";
+        }
+        document.querySelectorAll(".sol-open").forEach(function (b) {
+          b.addEventListener("click", function () {
+            openS(b.getAttribute("data-sol"));
+          });
+        });
+        document.querySelectorAll(".sol-tab").forEach(function (b) {
+          b.addEventListener("click", function () {
+            activerOnglet(b.getAttribute("data-sol"));
+          });
+        });
+        document.getElementById("solClose").onclick = closeS;
+        document.getElementById("solRetourCours").onclick = closeS;
+        document.getElementById("solFull").onclick = function () {
+          S.classList.toggle("full");
+          this.textContent = S.classList.contains("full")
+            ? "⤡ Réduire"
+            : "⛶ Plein écran";
+        };
+        S.addEventListener("click", function (e) {
+          if (e.target === S) closeS();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key == "Escape" && !S.hidden) closeS();
         });
       })();
     </script>
