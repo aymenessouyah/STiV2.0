@@ -1637,8 +1637,8 @@ mysqli_close($connexion);
           </button>
         </p>
         <ul>
-          <li><b>HTML + CSS</b> : <code>index.html</code> (header avec logo et texte, nav verticale à gauche, section avec l'iframe <code>cadre</code> à droite, footer), <code>inscription.html</code> et le <code>style.css</code> commun, avec une couleur par Catégorie.</li>
-          <li><b>JavaScript</b> : <code>validation.js</code> — Id commençant par une majuscule, Nom_prenom avec un espace, Moyenne entre 0 et 20, DateNaissance remplie et passée ; envoi annulé en cas d'erreur.</li>
+          <li><b>HTML + CSS</b> : <code>index.html</code> (header avec logo et texte, nav verticale à gauche, section avec l'iframe <code>cadre</code> à droite, footer), <code>inscription.html</code> et le <code>style.css</code> commun — mise en page avec <code>float</code> (sans <code>flex</code>) et effets de <code>transition</code>, avec une couleur par Catégorie.</li>
+          <li><b>JavaScript</b> : <code>validation.js</code> — variables déclarées avec <code>let</code> ; Id commençant par une majuscule ; Nom_prenom nettoyé (espaces superflus éliminés), composé uniquement de lettres et d'espaces, avec <b>2 à 5 mots</b> ; Moyenne entre 0 et 20 ; DateNaissance remplie et passée. Messages affichés avec <code>innerHTML</code> et <code>alert()</code> ; envoi annulé en cas d'erreur.</li>
           <li><b>PHP</b> : les quatre pages du point 10 adaptées au site — <code>ajouter.php</code> (réception du formulaire d'inscription, Id en majuscule, INSERT), <code>liste.php</code>, <code>modifier.php</code> et <code>statistiques.php</code> (statistiques, âge et anniversaire, et le tableau Catégorie | Nom | Prénom trié par Catégorie) — sans <code>mysqli_real_escape_string</code>.</li>
         </ul>
 
@@ -1840,17 +1840,34 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
             <h3>2️⃣ Partie CSS — un fichier style.css commun à toutes les pages</h3>
             <ul>
               <li>
-                <b>La mise en page de la page index</b> : l'en-tête
-                (<code>header</code>) aligne le logo et le texte sur une même
-                ligne ; le bloc du milieu (<code>.milieu</code>) place la
-                navigation et la section côte à côte avec
-                <code>display: flex</code> ; la navigation
-                (<code>nav</code>) a une largeur fixe et ses liens
-                s'affichent en colonne, les uns sous les autres, avec un
-                effet au survol ; la section prend toute la place restante
-                et son <code>iframe</code> occupe 100 % de sa largeur et une
-                hauteur suffisante ; le pied de page
-                (<code>footer</code>) reste en bas, texte centré.
+                <b>La mise en page de la page index, uniquement avec
+                <code>float</code></b> (⚠ <b>interdit d'utiliser
+                <code>display: flex</code></b> dans cet exercice) : dans
+                l'en-tête (<code>header</code>), le logo flotte à gauche
+                (<code>float: left</code>) et le texte se place à côté de
+                lui ; la navigation (<code>nav</code>) flotte à gauche
+                (<code>float: left</code>) avec une largeur fixe, et ses
+                liens s'affichent en bloc, les uns sous les autres ; la
+                section (<code>section</code>) est décalée à droite de la
+                navigation grâce à une marge à gauche
+                (<code>margin-left</code>), et son <code>iframe</code>
+                occupe 100 % de sa largeur et une hauteur suffisante ; le
+                pied de page (<code>footer</code>) revient sous les
+                éléments flottants avec <code>clear: both</code>, texte
+                centré.
+              </li>
+              <li>
+                <b>Ajouter des effets de transition</b> avec la propriété
+                <code>transition</code> : les changements d'état doivent
+                être <b>progressifs</b> et non instantanés. Par exemple :
+                les liens de la navigation changent lentement de couleur de
+                fond et se décalent légèrement au survol
+                (<code>:hover</code>), les boutons s'agrandissent doucement
+                au survol, et les champs de saisie changent progressivement
+                de bordure et d'ombre lorsqu'ils reçoivent le focus
+                (<code>:focus</code>). Indiquez la propriété animée et la
+                durée, par exemple
+                <code>transition: background-color 0.3s, transform 0.3s;</code>
               </li>
               <li>
                 Reliez le même fichier <code>style.css</code> aux quatre pages
@@ -1880,19 +1897,38 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
                 <b>avant</b> l'envoi du formulaire (fonction appelée au clic
                 sur le bouton d'envoi) :
               </li>
+              <li>
+                Déclarez toutes les variables avec le mot-clé
+                <code>let</code> (et non <code>var</code>).
+              </li>
               <li>l'<b>Id</b> commence par une lettre en majuscule ;</li>
               <li>
-                le <b>Nom_prenom</b> contient au moins un espace
-                (le nom et le prénom sont bien séparés) ;
+                le <b>Nom_prenom</b> doit être <b>nettoyé</b> avant le
+                contrôle : éliminer les <b>espaces superflus</b> (espaces
+                au début et à la fin, et plusieurs espaces de suite
+                remplacés par un seul espace) — c'est cette valeur nettoyée
+                qui sera envoyée à la page PHP ;
+              </li>
+              <li>
+                le <b>Nom_prenom</b> nettoyé n'est composé <b>que de lettres
+                et d'espaces</b> : aucun chiffre, aucun caractère spécial ;
+              </li>
+              <li>
+                le <b>Nom_prenom</b> nettoyé contient <b>entre 2 et 5
+                mots</b> (par exemple « Benali Amine » = 2 mots) : un seul
+                mot est refusé, plus de 5 mots aussi ;
               </li>
               <li>la <b>Moyenne</b> est un nombre entre 0 et 20 ;</li>
               <li>
                 la <b>DateNaissance</b> est remplie et n'est pas dans le futur.
               </li>
               <li>
-                En cas d'erreur : un message clair s'affiche dans la page et
-                l'envoi est annulé. Si tout est correct, le formulaire part
-                vers la page PHP.
+                En cas d'erreur : affichez un message clair <b>dans la
+                page</b> à l'aide de <code>innerHTML</code> (dans
+                l'élément <code>&lt;p id="message"&gt;</code>) <b>et/ou</b>
+                dans une boîte de dialogue avec <code>alert()</code>, puis
+                annulez l'envoi (<code>return false</code>). Si tout est
+                correct, le formulaire part vers la page PHP.
               </li>
             </ul>
 
@@ -1950,7 +1986,11 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
                 (<code>b03</code>) : il doit être enregistré avec un Id
                 commençant par une majuscule (<code>B03</code>), et
                 JavaScript doit refuser un Id commençant par un chiffre, une
-                moyenne de 25 ou un nom sans espace.
+                moyenne de 25, un Nom_prenom d'un seul mot, un Nom_prenom de
+                plus de 5 mots ou contenant des chiffres ; et la saisie
+                «&nbsp;&nbsp;Benali&nbsp;&nbsp;&nbsp;&nbsp;Amine&nbsp;&nbsp;»
+                (espaces superflus) doit être nettoyée automatiquement en
+                « Benali Amine » avant l'envoi.
               </li>
               <li>Modifier la moyenne de cet élève, puis vérifier dans liste.php.</li>
               <li>
@@ -2036,7 +2076,7 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
           </p>
           <div style="padding: 0.4rem 0.6rem 1rem">
             <div class="sol-panel" id="solPanel-html">
-              <p><b>Correction HTML + CSS</b> — l'organisation du site (<code>index.html</code>), le formulaire (<code>inscription.html</code>) et le style commun (<code>style.css</code>). Pensez à importer d'abord la base <code>ecole.sql</code>.</p>
+              <p><b>Correction HTML + CSS</b> — l'organisation du site (<code>index.html</code>), le formulaire (<code>inscription.html</code>) et le style commun (<code>style.css</code>) : mise en page avec <code>float</code> (aucun <code>flex</code>) et effets de <code>transition</code> au survol et au focus. Pensez à importer d'abord la base <code>ecole.sql</code>.</p>
               <h4>🌐 index.html — header (logo + texte), nav à gauche, iframe à droite, footer</h4>
               <pre><code>&lt;!DOCTYPE html&gt;
 &lt;html lang="fr"&gt;
@@ -2103,7 +2143,7 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
 &lt;script src="validation.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
-              <h4>🎨 style.css — mise en page du site, formulaires, tableaux, couleurs par Catégorie</h4>
+              <h4>🎨 style.css — mise en page avec float (sans flex), transitions, formulaires, tableaux, couleurs par Catégorie</h4>
               <pre><code>/* ===== style.css : commun à toutes les pages ===== */
 * { box-sizing: border-box; }
 
@@ -2114,23 +2154,24 @@ body {
    color: #1c2440;
 }
 
-/* --- Page index : en-tête, milieu, pied de page --- */
+/* --- Page index : mise en page avec FLOAT (pas de flex) --- */
 header {
-   display: flex;
-   align-items: center;
-   gap: 15px;
    background: #0f1c47;
    color: #fff;
    padding: 10px 20px;
+   overflow: hidden; /* contient le logo flottant */
 }
-header img { height: 54px; }
-header h1 { font-size: 22px; margin: 0; }
-
-.milieu { display: flex; }
+header img {
+   float: left; /* le logo flotte à gauche, le texte se place à côté */
+   height: 54px;
+   margin-right: 15px;
+}
+header h1 { font-size: 22px; margin: 12px 0 0; }
 
 nav {
+   float: left; /* navigation verticale flottante à gauche */
    width: 220px;
-   flex: 0 0 220px;
+   min-height: 540px;
    background: #16295c;
    padding: 15px 10px;
 }
@@ -2141,10 +2182,18 @@ nav a {
    padding: 10px 12px;
    margin-bottom: 8px;
    border-radius: 8px;
+   /* Effet de transition : le changement au survol est progressif */
+   transition: background-color 0.3s, padding-left 0.3s;
 }
-nav a:hover { background: #f4511e; }
+nav a:hover {
+   background: #f4511e;
+   padding-left: 22px; /* léger décalage animé grâce à transition */
+}
 
-section { flex: 1; padding: 10px; }
+section {
+   margin-left: 240px; /* décalée à droite de la nav flottante (220px) */
+   padding: 10px;
+}
 section iframe {
    width: 100%;
    height: 520px;
@@ -2154,6 +2203,7 @@ section iframe {
 }
 
 footer {
+   clear: both; /* revient sous les éléments flottants (logo et nav) */
    background: #0f1c47;
    color: #fff;
    text-align: center;
@@ -2176,6 +2226,13 @@ input {
    margin-top: 4px;
    border: 1px solid #999;
    border-radius: 6px;
+   /* Transition douce de la bordure et de l'ombre au focus */
+   transition: border-color 0.3s, box-shadow 0.3s;
+}
+input:focus {
+   border-color: #f4511e;
+   box-shadow: 0 0 6px rgba(244, 81, 30, 0.5);
+   outline: none;
 }
 input[type="submit"], input[type="reset"] {
    width: auto;
@@ -2186,9 +2243,14 @@ input[type="submit"], input[type="reset"] {
    border: none;
    padding: 9px 18px;
    margin-right: 8px;
+   /* Transition : fond et agrandissement progressifs au survol */
+   transition: background-color 0.3s, transform 0.3s, opacity 0.3s;
 }
 input[type="reset"] { background: #64748b; }
-input[type="submit"]:hover, input[type="reset"]:hover { opacity: 0.85; }
+input[type="submit"]:hover, input[type="reset"]:hover {
+   opacity: 0.9;
+   transform: scale(1.06); /* le bouton grandit doucement */
+}
 
 #message { color: #b02a2a; font-weight: bold; min-height: 20px; }
 
@@ -2197,6 +2259,8 @@ table { border-collapse: collapse; width: 100%; background: #fff; }
 th, td { border: 1px solid #999; padding: 8px; text-align: left; }
 th { background: #0f1c47; color: #fff; }
 tr:nth-child(even) { background: #eef2ff; }
+tr { transition: background-color 0.3s; }
+tr:hover { background: #ffe9e0; }
 
 /* --- Une couleur par Catégorie (première lettre de l'Id) --- */
 .cat-A { background: #dcfce7; color: #166534; font-weight: bold; }
@@ -2205,9 +2269,17 @@ tr:nth-child(even) { background: #eef2ff; }
 .cat-D { background: #fee2e2; color: #991b1b; font-weight: bold; }</code></pre>
             </div>
             <div class="sol-panel" id="solPanel-js" hidden>
-              <p><b>Correction JavaScript</b> — <code>validation.js</code> contrôle la saisie avant l'envoi : Id commençant par une majuscule, Nom_prenom avec un espace (nom et prénom séparés), Moyenne entre 0 et 20, DateNaissance remplie et dans le passé. En cas d'erreur, un message s'affiche et l'envoi est annulé.</p>
+              <p><b>Correction JavaScript</b> — <code>validation.js</code> contrôle la saisie avant l'envoi, avec des variables déclarées par <code>let</code> : Id commençant par une majuscule ; Nom_prenom d'abord nettoyé (espaces superflus éliminés), composé uniquement de lettres et d'espaces, avec 2 à 5 mots ; Moyenne entre 0 et 20 ; DateNaissance remplie et dans le passé. En cas d'erreur, le message s'affiche dans la page avec <code>innerHTML</code> et dans une boîte <code>alert()</code>, et l'envoi est annulé.</p>
               <h4>🟨 validation.js</h4>
               <pre><code>// ===== validation.js : contrôler la saisie avant l'envoi =====
+// Variables déclarées avec let ; messages avec innerHTML et alert()
+
+function afficherErreur(texte) {
+   let message = document.getElementById("message");
+   message.innerHTML = texte; // message affiché dans la page
+   alert(texte);              // ... et dans une boîte de dialogue
+   return false;              // l'envoi du formulaire est annulé
+}
 
 function commenceParMajuscule(texte) {
    return texte.length &gt; 0 &amp;&amp; texte[0] &gt;= "A" &amp;&amp; texte[0] &lt;= "Z";
@@ -2215,42 +2287,53 @@ function commenceParMajuscule(texte) {
 
 function dateDansLePasse(valeur) {
    if (valeur == "") return false;
-   var saisie = new Date(valeur);
-   var aujourdHui = new Date();
+   let saisie = new Date(valeur);
+   let aujourdHui = new Date();
    return saisie &lt;= aujourdHui;
+}
+
+// Éliminer les espaces superflus : au début, à la fin,
+// et plusieurs espaces de suite remplacés par un seul
+function nettoyerNomPrenom(valeur) {
+   return valeur.trim().replace(/\s+/g, " ");
+}
+
+// Nom_prenom correct : uniquement des lettres (accentuées acceptées)
+// et des espaces, avec un nombre de mots entre 2 et 5
+function nomPrenomCorrect(valeur) {
+   let lettresEtEspaces = /^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/;
+   if (!lettresEtEspaces.test(valeur)) return false;
+   let mots = valeur.split(" ");
+   return mots.length &gt;= 2 &amp;&amp; mots.length &lt;= 5;
 }
 
 // Contrôles communs : Id, Moyenne, DateNaissance
 function controlesCommuns() {
-   var Id = document.getElementById("Id").value;
-   var Moyenne = document.getElementById("Moyenne").value;
-   var DateNaissance = document.getElementById("DateNaissance").value;
-   var message = document.getElementById("message");
+   let Id = document.getElementById("Id").value;
+   let Moyenne = document.getElementById("Moyenne").value;
+   let DateNaissance = document.getElementById("DateNaissance").value;
+   let message = document.getElementById("message");
 
    if (!commenceParMajuscule(Id)) {
-      message.textContent = "Erreur : l'Id doit commencer par une lettre en majuscule.";
-      return false;
+      return afficherErreur("Erreur : l'Id doit commencer par une lettre en majuscule.");
    }
    if (Moyenne == "" || isNaN(Moyenne) || Moyenne &lt; 0 || Moyenne &gt; 20) {
-      message.textContent = "Erreur : la Moyenne doit être un nombre entre 0 et 20.";
-      return false;
+      return afficherErreur("Erreur : la Moyenne doit être un nombre entre 0 et 20.");
    }
    if (!dateDansLePasse(DateNaissance)) {
-      message.textContent = "Erreur : la Date de naissance doit être remplie et ne pas être dans le futur.";
-      return false;
+      return afficherErreur("Erreur : la Date de naissance doit être remplie et ne pas être dans le futur.");
    }
-   message.textContent = "";
+   message.innerHTML = "";
    return true;
 }
 
 // Page inscription.html : on contrôle aussi le Nom_prenom
 function validerInscription() {
-   var NomPrenom = document.getElementById("Nom_prenom").value;
-   var message = document.getElementById("message");
-   NomPrenom = NomPrenom.trim();
-   if (NomPrenom.indexOf(" ") &lt;= 0) {
-      message.textContent = "Erreur : écrivez le Nom et le Prénom séparés par un espace.";
-      return false;
+   let champNom = document.getElementById("Nom_prenom");
+   let NomPrenom = nettoyerNomPrenom(champNom.value);
+   champNom.value = NomPrenom; // c'est le nom nettoyé qui sera envoyé
+   if (!nomPrenomCorrect(NomPrenom)) {
+      return afficherErreur("Erreur : le Nom et le Prénom ne doivent contenir que des lettres et des espaces, avec 2 à 5 mots (ex. Benali Amine).");
    }
    return controlesCommuns();
 }
