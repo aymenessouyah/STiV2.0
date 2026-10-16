@@ -889,7 +889,7 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=227",
+        file: "css3-cours.mp4?v=237",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
@@ -948,15 +948,15 @@
           { t: 339.33, short: "X. <iframe>", label: "05:39 · X (10). Intégrer une page : <iframe> (attributs, target='cadre', srcdoc, sandbox)", sel: "#iframe" }
         ],
         "css3-cours": [
-          { t: 0.00, short: "I. Sélecteurs", label: "00:00 · I. Syntaxe et Sélecteurs CSS3", sel: "#point-1" },
-          { t: 36.01, short: "II. Polices & Texte", label: "00:36 · II. Polices, Textes et Couleurs (font, text)", sel: "#point-2" },
-          { t: 57.37, short: "III. Fond", label: "00:57 · III. Arrière-plans et Dégradés (background)", sel: "#point-3" },
-          { t: 65.32, short: "IV. Listes & Tables", label: "01:05 · IV. Listes et Tableaux stylisés (border-collapse)", sel: "#point-6" },
-          { t: 73.07, short: "V. Boîtes & Ombres", label: "01:13 · V. Modèle de boîte, Bordures & Ombres", sel: "#point-7" },
-          { t: 88.63, short: "VI. Position", label: "01:29 · VI. Affichage & Positionnement (display, position)", sel: "#point-4" },
-          { t: 110.11, short: "VII. Flexbox", label: "01:50 · VII. Mise en page Flexbox", sel: "#point-5" },
-          { t: 132.12, short: "VIII. Animations", label: "02:12 · VIII. Transitions, Transformations & Animations", sel: "#point-8" },
-          { t: 144.62, short: "IX. Pas à pas", label: "02:25 · IX. Leçons animées CSS pas à pas", sel: "#css-pas-a-pas" }
+          { t: 0.00, short: "Intro. Définition", label: "00:00 · Introduction · Définition CSS et règles de priorité (cascading, spécificité)", sel: "#css-definition-title" },
+          { t: 45.98, short: "I. Sélecteurs", label: "00:46 · I. Types des Sélecteurs et Pseudo-Classes (base, attributs, combinaisons, ::first-letter, états d'un lien)", sel: "#point-1" },
+          { t: 98.40, short: "II. Polices & Texte", label: "01:38 · II. Mise en Forme du Texte (font-family, text-align, text-shadow)", sel: "#point-2" },
+          { t: 148.30, short: "III. Fond", label: "02:28 · III. Propriétés d'Arrière-Plan (background-color, image, repeat, size, clip, raccourci)", sel: "#point-3" },
+          { t: 209.64, short: "IV. Boîtes & Display", label: "03:30 · IV. Modèle de Boîte et Display (inline-block, margin, padding, overflow, opacity)", sel: "#point-4" },
+          { t: 257.66, short: "V. Float · Position · Flex", label: "04:18 · V. Float, Positionnement et Flexbox (nature des balises, relative, absolute, fixed, sticky, flex)", sel: "#point-5" },
+          { t: 319.92, short: "VI. Bordures & Ombres", label: "05:20 · VI. Bordures, Ombrages et Border-Radius (1 à 4 valeurs, box-shadow)", sel: "#point-6" },
+          { t: 369.70, short: "VII. Listes & Tables", label: "06:10 · VII. Listes et Tableaux Avancés (table-layout, border-collapse, list-style)", sel: "#point-7" },
+          { t: 424.52, short: "VIII. Animations", label: "07:05 · VIII. Transformations 2D et Animations (rotate, skew, scale, translate, transition, @keyframes) + CSS pas à pas", sel: "#point-8" }
         ],
         "javascript-cours": [
           { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#intro" },
