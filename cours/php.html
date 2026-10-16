@@ -350,6 +350,14 @@
           <a href="#s10c" class="sub-link">10.3 Explication animée</a>
         </div>
       </div>
+      <div class="nav-group">
+        <a href="#s11" class="main-link">11. 🧩 Exercice de synthèse N°2 — Recharge VE</a>
+        <div class="sub-links-container">
+          <a href="#s11a" class="sub-link">11.1 Énoncé</a>
+          <a href="#s11b" class="sub-link">11.2 Solution</a>
+          <a href="#s11c" class="sub-link">11.3 Explication animée</a>
+        </div>
+      </div>
     </nav>
     <div class="scrim" id="scrim"></div>
 
@@ -1788,6 +1796,115 @@ mysqli_close($connexion);
           })();
         </script>
 
+        
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: nowrap;
+          "
+        >
+          <h2 id="s11" style="flex: 1 1 auto; min-width: 0; margin-top: 2.6rem">
+            11. 🧩 Exercice de synthèse N°2 — Recharge voiture électrique
+          </h2>
+          <button
+            type="button"
+            id="btnExoS11"
+            class="anim-open"
+            style="
+              margin-top: 2.6rem;
+              flex: 0 0 auto;
+              white-space: nowrap;
+              background: linear-gradient(120deg, #059669, #0d9488);
+              font-weight: 800;
+            "
+            title="Ouvrir l'exercice de synthèse n°2"
+          >
+            📋 11.1 Énoncé
+          </button>
+        </div>
+        <p>
+          Deuxième exercice de synthèse, sur un nouveau thème :
+          <b>la gestion d'une station de recharge pour voitures électriques</b>.
+          Vous réutilisez exactement la même démarche que l'exercice n°1 —
+          page <code>index.html</code> (en-tête avec logo, navigation
+          verticale, iframe <code>cadre</code>, pied de page), style avec
+          <code>float</code> et <code>transition</code>, contrôles JavaScript
+          (<code>let</code>, <code>innerHTML</code>, <code>alert()</code>) et
+          quatre pages PHP — mais avec une nouvelle base
+          <code>station</code> et sa table
+          <code>recharges(Id, Nom_prenom, Kwh, DateRecharge)</code>, où la
+          première lettre de l'Id donne le <b>type de recharge</b> :
+          <b>L</b> Lente, <b>N</b> Normale, <b>R</b> Rapide, <b>U</b> Ultra-rapide.
+        </p>
+
+        <h3 id="s11a">11.1 Énoncé</h3>
+        <p>
+          L'énoncé complet — contexte, base <code>station.sql</code>
+          téléchargeable, organisation du site, parties HTML, CSS,
+          JavaScript et PHP, tests et barème — s'ouvre dans une fenêtre :
+        </p>
+        <p style="text-align: center">
+          <button
+            type="button"
+            class="anim-open btn-ouvrir-enonce2"
+            style="background: linear-gradient(120deg, #059669, #0d9488); font-weight: 800"
+          >
+            📋 Ouvrir l'énoncé complet (11.1)
+          </button>
+        </p>
+
+        <h3 id="s11b">11.2 Solution — correction complète</h3>
+        <p>
+          Voici la correction de tout l'exercice n°2, en trois volets :
+        </p>
+        <p
+          style="
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            text-align: center;
+          "
+        >
+          <button type="button" class="anim-open sol2-open" data-sol2="html" style="background: linear-gradient(120deg, #2563eb, #0ea5e9); font-weight: 800">🌐 HTML + CSS</button>
+          <button type="button" class="anim-open sol2-open" data-sol2="js" style="background: linear-gradient(120deg, #d97706, #facc15); color: #1c2440; font-weight: 800">🟨 JavaScript</button>
+          <button type="button" class="anim-open sol2-open" data-sol2="php" style="background: linear-gradient(120deg, #6d28d9, #4f46e5); font-weight: 800">🐘 PHP</button>
+        </p>
+        <ul>
+          <li><b>HTML + CSS</b> : <code>index.html</code>, <code>inscription.html</code> et <code>style.css</code> — mise en page avec <code>float</code> (sans <code>flex</code>), effets de <code>transition</code> détaillés (<code>all</code>, <code>ease</code>, <code>ease-in</code>, <code>ease-out</code>, <code>ease-in-out</code>), une couleur par type de recharge.</li>
+          <li><b>JavaScript</b> : <code>validation.js</code> — <code>let</code>, Id commençant par une majuscule, nom du conducteur nettoyé (lettres et espaces, 2 à 5 mots), énergie entre 1 et 100 kWh, date non future ; <code>innerHTML</code> et <code>alert()</code>.</li>
+          <li><b>PHP</b> : <code>ajouter.php</code>, <code>liste.php</code>, <code>modifier.php</code>, <code>statistiques.php</code> (avec le coût estimé selon le tarif du type) — sans <code>mysqli_real_escape_string</code>.</li>
+        </ul>
+        <p style="text-align: center">
+          <a href="../documents/complet/recharge-ve.zip" download class="anim-open" style="display: inline-block; background: linear-gradient(120deg, #166534, #16a34a); color: #fff; border-radius: 8px; padding: 0.6rem 1.2rem; font-weight: 800; text-decoration: none">⬇ Télécharger le corrigé complet (dossier recharge-ve + station.sql)</a>
+        </p>
+
+        <h3 id="s11c">11.3 Explication synthèse animée</h3>
+        <div
+          id="s11c-video"
+          style="
+            border: 2px dashed #059669;
+            border-radius: 12px;
+            background: #ecfdf5;
+            padding: 2.2rem 1rem;
+            text-align: center;
+          "
+        >
+          <div style="font-size: 3rem">🎬</div>
+          <p style="font-weight: 800; font-size: 1.1rem; margin: 0.4rem 0">
+            Explication synthèse animée n°2 — vidéo à venir
+          </p>
+          <p style="margin: 0">
+            La vidéo qui explique cet exercice n°2 pas à pas — code à gauche,
+            aperçu à droite, comme pour l'exercice n°1 — sera ajoutée ici
+            ultérieurement.
+          </p>
+          <!-- 🎬 VIDÉO À AJOUTER ICI (11.3) -->
+        </div>
+
         <footer>Cours PHP — 4ème SI · Travail élaboré par A. Essouyah</footer>
       </div>
     </main>
@@ -3119,6 +3236,599 @@ mysqli_close($connexion);
         });
       })();
     </script>
+    
+    <!-- Boîte modale : Exercice de synthèse n°2 — Recharge voiture électrique -->
+    <div id="exo2Modal" class="anim-modal" role="dialog" aria-modal="true" aria-labelledby="exo2Title" hidden>
+      <div class="anim-box" id="exo2Box">
+        <div class="anim-head">
+          <span id="exo2Title">🧩⚡ Exercice de synthèse N°2 — Recharge voiture électrique (HTML · CSS · JavaScript · PHP)</span>
+          <span class="anim-tools">
+            <button type="button" id="exo2RetourCours" title="Retourner au cours PHP" style="background: linear-gradient(120deg, #059669, #0d9488); color: #fff; border-color: #101728; font-weight: 800">🐘 ← Retour au cours PHP</button>
+            <button type="button" id="exo2Full" title="Agrandir sur toute la page">⛶ Plein écran</button>
+            <button type="button" id="exo2Close" title="Fermer">✕ Fermer</button>
+          </span>
+        </div>
+        <div class="anim-body">
+          <div style="padding: 0.4rem 0.6rem 1rem">
+            <p>
+              <b>Contexte.</b> Une station-service installe des bornes de
+              recharge pour voitures électriques et veut une petite
+              application web pour enregistrer et suivre les recharges.
+              Vous allez la construire en entier — même démarche que
+              l'exercice de synthèse n°1, nouveau thème — en réutilisant
+              <b>tout ce qui a été vu jusqu'au point 10</b>. La base
+              <code>station</code> contient la table
+              <code>recharges(Id, Nom_prenom, Kwh, DateRecharge)</code> :
+              l'<code>Id</code> commence par une <b>lettre en majuscule</b>
+              qui indique le <b>type de recharge</b> :
+              <b>L</b> = Lente, <b>N</b> = Normale, <b>R</b> = Rapide,
+              <b>U</b> = Ultra-rapide. Enregistrez le dossier du projet sous
+              <code>www</code> (Wamp) ou <code>htdocs</code> (Xampp), et
+              appelez-le par le web local
+              (<code>http://localhost/recharge-ve/</code>) : s'il contient
+              une page <code>index</code>, c'est elle seule qui s'affiche.
+            </p>
+            <p style="text-align: center">
+              <a href="../documents/bd/station.sql" download style="display: inline-block; background: var(--navy); color: #fff; border-radius: 8px; padding: 0.6rem 1.2rem; font-weight: 700; text-decoration: none">⬇ Télécharger la base de données (station.sql)</a>
+            </p>
+
+            <h3>🗄 Base de données à importer (obligatoire avant de commencer)</h3>
+            <p>Dans <b>phpMyAdmin</b> : onglet <b>Importer</b> → choisir <code>station.sql</code> → Exécuter. Jeu d'essai : 8 recharges (2 par type L, N, R, U).</p>
+            <pre><code>CREATE DATABASE IF NOT EXISTS station;
+USE station;
+
+CREATE TABLE recharges (
+  Id VARCHAR(10) PRIMARY KEY,
+  Nom_prenom VARCHAR(60) NOT NULL,
+  Kwh DECIMAL(5,2) NOT NULL,
+  DateRecharge DATE NOT NULL
+);
+
+INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge) VALUES
+(&#x27;L01&#x27;, &#x27;Trabelsi Sara&#x27;, 12.50, &#x27;2025-09-03&#x27;),
+(&#x27;L02&#x27;, &#x27;Ayadi Nour&#x27;,     15.00, &#x27;2025-09-10&#x27;),
+(&#x27;N01&#x27;, &#x27;Benali Amine&#x27;,   25.00, &#x27;2025-10-02&#x27;),
+(&#x27;N02&#x27;, &#x27;Haddad Leila&#x27;,   30.50, &#x27;2025-10-05&#x27;),
+(&#x27;R01&#x27;, &#x27;Gharbi Yassine&#x27;, 45.00, &#x27;2025-10-08&#x27;),
+(&#x27;R02&#x27;, &#x27;Mansouri Khalil&#x27;, 52.75, &#x27;2025-10-12&#x27;),
+(&#x27;U01&#x27;, &#x27;Slimani Omar&#x27;,    68.00, &#x27;2025-10-15&#x27;),
+(&#x27;U02&#x27;, &#x27;Cherif Ines&#x27;,     80.25, &#x27;2025-10-20&#x27;);</code></pre>
+
+            <h3>1️⃣ Partie HTML — l'organisation du site</h3>
+            <ul>
+              <li><b><code>index.html</code></b> : un <code>header</code> en haut (logo + texte « ⚡ Recharge VE — Station électrique »), une <code>nav</code> verticale à gauche vers <code>inscription.html</code>, <code>liste.php</code>, <code>modifier.php</code>, <code>statistiques.php</code> (chaque lien avec <code>target="cadre"</code>), une <code>section</code> à droite contenant l'<code>iframe name="cadre"</code> (qui affiche au départ <code>inscription.html</code>), et un <code>footer</code> en bas. La <code>nav</code> et la <code>section</code> sont placées dans une <code>div</code> avant le footer.</li>
+              <li><b><code>inscription.html</code></b> : le formulaire d'enregistrement d'une recharge — <code>form</code> méthode <code>post</code>, action <code>ajouter.php</code>, <code>target="cadre"</code> ; champs <code>text</code> (Id, Nom_prenom), <code>number step="0.01"</code> (Kwh), <code>date</code> (DateRecharge), paragraphe <code>&lt;p id="message"&gt;</code>, boutons Enregistrer et Effacer.</li>
+              <li>Les résultats PHP s'affichent dans des tableaux HTML propres (<code>table/tr/th/td</code>).</li>
+            </ul>
+
+            <h3>2️⃣ Partie CSS — un fichier style.css commun à toutes les pages</h3>
+            <ul>
+              <li><b>Mise en page uniquement avec <code>float</code></b> (⚠ <code>display: flex</code> interdit) : logo en <code>float: left</code> dans le header, <code>nav</code> en <code>float: left</code> à largeur fixe, <code>section</code> décalée par <code>margin-left</code> (même couloir), <code>footer</code> en <code>clear: both</code>.</li>
+              <li><b>Effets de <code>transition</code></b> détaillés — syntaxe <code>transition: propriété durée fonction délai;</code> : <code>all</code> anime toutes les propriétés ; <code>ease</code> (défaut) lent-rapide-lent ; <code>ease-in</code> démarre lentement ; <code>ease-out</code> finit en douceur ; <code>ease-in-out</code> lent aux deux extrémités. Au moins deux fonctions différentes (liens du menu, boutons, focus des champs…).</li>
+              <li>Formulaires et tableaux stylés (modèle de boîte, <code>border-collapse</code>, lignes alternées, coins arrondis, ombre), et une <b>couleur par type de recharge</b> (classes CSS <code>.cat-L</code>, <code>.cat-N</code>, <code>.cat-R</code>, <code>.cat-U</code>).</li>
+            </ul>
+
+            <h3>3️⃣ Partie JavaScript — contrôler avant d'envoyer</h3>
+            <ul>
+              <li><code>validation.js</code>, relié à <code>inscription.html</code> et à la page de modification ; variables déclarées avec <code>let</code> ; fonction appelée par <code>onsubmit="return …()"</code> (le <code>return</code> est indispensable pour bloquer l'envoi).</li>
+              <li>L'<b>Id</b> commence par une lettre en majuscule.</li>
+              <li>Le <b>Nom_prenom</b> du conducteur est <b>nettoyé</b> (espaces superflus éliminés), n'est composé <b>que de lettres et d'espaces</b>, et contient <b>entre 2 et 5 mots</b>.</li>
+              <li>L'énergie <b>Kwh</b> est un nombre <b>entre 1 et 100</b> (capacité d'une batterie).</li>
+              <li>La <b>DateRecharge</b> est remplie et n'est pas dans le futur.</li>
+              <li>En cas d'erreur : message dans la page avec <code>innerHTML</code> et/ou boîte <code>alert()</code>, puis envoi annulé (<code>return false</code>).</li>
+            </ul>
+
+            <h3>4️⃣ Partie PHP — les quatre pages (mysql i)</h3>
+            <ul>
+              <li><b>ajouter.php</b> : reçoit le formulaire d'<code>inscription.html</code> dans l'iframe ; première lettre de l'Id forcée en majuscule (<code>strtoupper</code> + <code>substr</code>), puis <code>INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge)</code> ; message de réussite ou erreur.</li>
+              <li><b>liste.php</b> : toutes les recharges triées par Nom_prenom, puis le nombre total (pensez au type de retour de <code>mysqli_query</code> avec SELECT, et à <code>mysqli_fetch_array</code>).</li>
+              <li><b>modifier.php</b> : met à jour <code>Kwh</code> et <code>DateRecharge</code> selon l'Id saisi ; vérifier avec <code>mysqli_affected_rows</code> qu'une ligne a bien été modifiée.</li>
+              <li><b>statistiques.php</b> : nombre de recharges (<code>COUNT(*)</code>), énergie moyenne, plus grosse recharge, recharges complètes (≥ 40 kWh) et partielles ; puis le tableau <b>Type | Nom | Prénom | kWh | Tarif | Coût</b> trié par type (L, N, R, U) : Nom et Prénom séparés par <code>explode</code>, coût = kWh × tarif du type (L : 0,300 DT · N : 0,450 DT · R : 0,700 DT · U : 0,950 DT).</li>
+              <li>⚠ <b>Interdit</b> : <code>mysqli_real_escape_string</code> dans aucune page.</li>
+            </ul>
+
+            <h3>✅ Tests à effectuer avant de rendre</h3>
+            <ul>
+              <li>Importer la base, ouvrir <code>http://localhost/recharge-ve/</code> : seule la page index s'affiche ; chaque lien du menu change uniquement l'iframe.</li>
+              <li>Ajouter une recharge avec l'Id <code>r03</code> (minuscule) : enregistrée <code>R03</code> (type Rapide). JavaScript refuse : Id commençant par un chiffre, énergie 0 ou 120, nom d'un seul mot ou avec des chiffres, date future ; « &nbsp;Benali&nbsp;&nbsp;&nbsp;Amine&nbsp; » est nettoyé en « Benali Amine ».</li>
+              <li>Modifier l'énergie de cette recharge, vérifier dans liste.php.</li>
+              <li>statistiques.php : compteurs à jour, tableau trié L, N, R, U avec des coûts corrects (ex. 45 kWh en R = 31,50 DT).</li>
+            </ul>
+
+            <h3>📦 À rendre</h3>
+            <p>Le dossier du projet (<code>index.html</code>, <code>inscription.html</code>, les 4 pages PHP, <code>style.css</code>, <code>validation.js</code>) et <b>l'export de la base</b> après les tests : <code>station_export.sql</code>.</p>
+            <p><b>Barème (sur 20)</b> — Base importée : 2 · HTML : 3 · CSS : 3 · JavaScript : 4 · PHP ajouter : 2 · liste : 2 · modifier : 2 · statistiques : 2.</p>
+            <p style="text-align: center">
+              <a href="#s11b">✅ 11.2 Solution</a> ·
+              <a href="#s11c">🎬 11.3 Explication animée</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boîte modale : Solution de l'exercice de synthèse n°2 (11.2) -->
+    <div id="sol2Modal" class="anim-modal" role="dialog" aria-modal="true" aria-labelledby="sol2Title" hidden>
+      <div class="anim-box" id="sol2Box">
+        <div class="anim-head">
+          <span id="sol2Title">✅ 11.2 Solution — Correction complète de l'exercice n°2 (Recharge VE)</span>
+          <span class="anim-tools">
+            <button type="button" id="sol2RetourCours" title="Retourner au cours PHP" style="background: linear-gradient(120deg, #059669, #0d9488); color: #fff; border-color: #101728; font-weight: 800">🐘 ← Retour au cours PHP</button>
+            <button type="button" id="sol2Full" title="Agrandir sur toute la page">⛶ Plein écran</button>
+            <button type="button" id="sol2Close" title="Fermer">✕ Fermer</button>
+          </span>
+        </div>
+        <div class="anim-body">
+          <p style="display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; position: sticky; top: 0; background: var(--bg); padding: 0.5rem 0; z-index: 2;">
+            <button type="button" class="anim-open sol2-tab" data-sol2="html" style="font-weight: 800">🌐 HTML + CSS</button>
+            <button type="button" class="anim-open sol2-tab" data-sol2="js" style="font-weight: 800">🟨 JavaScript</button>
+            <button type="button" class="anim-open sol2-tab" data-sol2="php" style="font-weight: 800">🐘 PHP</button>
+          </p>
+          <div style="padding: 0.4rem 0.6rem 1rem">
+            <div class="sol2-panel" id="sol2Panel-html">
+              <p><b>Correction HTML + CSS</b> — <code>index.html</code>, <code>inscription.html</code> et <code>style.css</code> : float (aucun flex), transitions détaillées, couleur par type de recharge. Importez d'abord <code>station.sql</code>.</p>
+              <h4>🌐 index.html — header (logo + texte), nav à gauche, iframe à droite, footer</h4>
+              <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;fr&quot;&gt;
+&lt;head&gt;
+   &lt;meta charset=&quot;utf-8&quot;&gt;
+   &lt;title&gt;Recharge VE — Station électrique&lt;/title&gt;
+   &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;header&gt;
+   &lt;img src=&quot;logo.svg&quot; alt=&quot;Logo de la station&quot;&gt;
+   &lt;h1&gt;⚡ Recharge VE — Station électrique&lt;/h1&gt;
+&lt;/header&gt;
+
+&lt;div class=&quot;milieu&quot;&gt;
+   &lt;nav&gt;
+      &lt;a href=&quot;inscription.html&quot; target=&quot;cadre&quot;&gt;⚡ Nouvelle recharge&lt;/a&gt;
+      &lt;a href=&quot;liste.php&quot; target=&quot;cadre&quot;&gt;📋 Historique&lt;/a&gt;
+      &lt;a href=&quot;modifier.php&quot; target=&quot;cadre&quot;&gt;✏️ Mise à jour&lt;/a&gt;
+      &lt;a href=&quot;statistiques.php&quot; target=&quot;cadre&quot;&gt;📊 Statistiques&lt;/a&gt;
+   &lt;/nav&gt;
+   &lt;section&gt;
+      &lt;iframe name=&quot;cadre&quot; src=&quot;inscription.html&quot;&gt;&lt;/iframe&gt;
+   &lt;/section&gt;
+&lt;/div&gt;
+
+&lt;footer&gt;Travail élaboré par … — Année scolaire …&lt;/footer&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+              <h4>🌐 inscription.html — le formulaire (vers ajouter.php, dans l'iframe)</h4>
+              <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;fr&quot;&gt;
+&lt;head&gt;
+   &lt;meta charset=&quot;utf-8&quot;&gt;
+   &lt;title&gt;Enregistrer une recharge&lt;/title&gt;
+   &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h2&gt;⚡ Enregistrer une recharge&lt;/h2&gt;
+
+&lt;form method=&quot;post&quot; action=&quot;ajouter.php&quot; target=&quot;cadre&quot;
+      onsubmit=&quot;return validerInscription()&quot;&gt;
+   &lt;label&gt;Id (ex. R01) :&lt;/label&gt;
+   &lt;input type=&quot;text&quot; id=&quot;Id&quot; name=&quot;Id&quot;&gt;&lt;br&gt;
+
+   &lt;label&gt;Conducteur (Nom et prénom) :&lt;/label&gt;
+   &lt;input type=&quot;text&quot; id=&quot;Nom_prenom&quot; name=&quot;Nom_prenom&quot;&gt;&lt;br&gt;
+
+   &lt;label&gt;Énergie rechargée (kWh) :&lt;/label&gt;
+   &lt;input type=&quot;number&quot; id=&quot;Kwh&quot; name=&quot;Kwh&quot; step=&quot;0.01&quot;&gt;&lt;br&gt;
+
+   &lt;label&gt;Date de la recharge :&lt;/label&gt;
+   &lt;input type=&quot;date&quot; id=&quot;DateRecharge&quot; name=&quot;DateRecharge&quot;&gt;&lt;br&gt;
+
+   &lt;p id=&quot;message&quot;&gt;&lt;/p&gt;
+
+   &lt;input type=&quot;submit&quot; name=&quot;ok&quot; value=&quot;Enregistrer&quot;&gt;
+   &lt;input type=&quot;reset&quot; value=&quot;Effacer&quot;&gt;
+&lt;/form&gt;
+
+&lt;script src=&quot;validation.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+              <h4>🎨 style.css — float (sans flex), transitions (all, ease, ease-in, ease-out, ease-in-out), types colorés</h4>
+              <pre><code>/* ===== style.css : commun à toutes les pages ===== */
+* { box-sizing: border-box; }
+
+body {
+   font-family: Arial, sans-serif;
+   margin: 0;
+   background: #f6f1e7;
+   color: #1c2440;
+}
+
+/* --- Page index : mise en page avec FLOAT (pas de flex) --- */
+header {
+   background: #0f1c47;
+   color: #fff;
+   padding: 10px 20px;
+   overflow: hidden; /* contient le logo flottant */
+}
+header img {
+   float: left; /* le logo flotte à gauche, le texte se place à côté */
+   height: 54px;
+   margin-right: 15px;
+}
+header h1 { font-size: 22px; margin: 12px 0 0; }
+
+nav {
+   float: left; /* navigation verticale flottante à gauche */
+   width: 220px;
+   min-height: 540px;
+   background: #16295c;
+   padding: 15px 10px;
+}
+nav a {
+   display: block;
+   color: #fff;
+   text-decoration: none;
+   padding: 10px 12px;
+   margin-bottom: 8px;
+   border-radius: 8px;
+   /* Effet de transition : le changement au survol est progressif */
+   transition: background-color 0.3s ease, padding-left 0.3s ease-out;
+}
+nav a:hover {
+   background: #059669;
+   padding-left: 22px; /* léger décalage animé grâce à transition */
+}
+
+section {
+   margin-left: 240px; /* décalée à droite de la nav flottante (220px) */
+   padding: 10px;
+}
+section iframe {
+   width: 100%;
+   height: 520px;
+   border: 1px solid #999;
+   border-radius: 10px;
+   background: #fff;
+}
+
+footer {
+   clear: both; /* revient sous les éléments flottants (logo et nav) */
+   background: #0f1c47;
+   color: #fff;
+   text-align: center;
+   padding: 10px;
+}
+
+/* --- Formulaires --- */
+form {
+   background: #fff;
+   max-width: 520px;
+   padding: 20px;
+   border: 1px solid #ddd;
+   border-radius: 12px;
+   box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+label { display: block; font-weight: bold; margin-top: 10px; }
+input {
+   width: 100%;
+   padding: 8px;
+   margin-top: 4px;
+   border: 1px solid #999;
+   border-radius: 6px;
+   /* Transition douce de la bordure et de l&#x27;ombre au focus */
+   transition: all 0.3s ease-in-out; /* all : bordure, ombre... tout est animé */
+}
+input:focus {
+   border-color: #059669;
+   box-shadow: 0 0 6px rgba(5, 150, 105, 0.5);
+   outline: none;
+}
+input[type=&quot;submit&quot;], input[type=&quot;reset&quot;] {
+   width: auto;
+   cursor: pointer;
+   font-weight: bold;
+   color: #fff;
+   background: #059669;
+   border: none;
+   padding: 9px 18px;
+   margin-right: 8px;
+   /* Transition : fond et agrandissement progressifs au survol */
+   transition: transform 0.2s ease-in, background-color 0.3s ease-out, opacity 0.3s ease;
+}
+input[type=&quot;reset&quot;] { background: #64748b; }
+input[type=&quot;submit&quot;]:hover, input[type=&quot;reset&quot;]:hover {
+   opacity: 0.9;
+   transform: scale(1.06); /* le bouton grandit doucement */
+}
+
+#message { color: #b02a2a; font-weight: bold; min-height: 20px; }
+
+/* --- Tableaux --- */
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { border: 1px solid #999; padding: 8px; text-align: left; }
+th { background: #0f1c47; color: #fff; }
+tr:nth-child(even) { background: #eef2ff; }
+tr { transition: background-color 0.3s ease; }
+tr:hover { background: #d1fae5; }
+
+/* --- Une couleur par Catégorie (première lettre de l&#x27;Id) --- */
+.cat-L { background: #e0e7ff; color: #3730a3; font-weight: bold; }
+.cat-N { background: #dcfce7; color: #166534; font-weight: bold; }
+.cat-R { background: #fef3c7; color: #92400e; font-weight: bold; }
+.cat-U { background: #fee2e2; color: #991b1b; font-weight: bold; }</code></pre>
+            </div>
+            <div class="sol2-panel" id="sol2Panel-js" hidden>
+              <p><b>Correction JavaScript</b> — variables en <code>let</code> ; nom du conducteur nettoyé (lettres et espaces, 2 à 5 mots) ; énergie 1 à 100 kWh ; date non future ; messages par <code>innerHTML</code> et <code>alert()</code>.</p>
+              <h4>🟨 validation.js</h4>
+              <pre><code>// ===== validation.js : contrôler la saisie avant l&#x27;envoi =====
+// Variables déclarées avec let ; messages avec innerHTML et alert()
+
+function afficherErreur(texte) {
+   let message = document.getElementById(&quot;message&quot;);
+   message.innerHTML = texte; // message affiché dans la page
+   alert(texte);              // ... et dans une boîte de dialogue
+   return false;              // l&#x27;envoi du formulaire est annulé
+}
+
+function commenceParMajuscule(texte) {
+   return texte.length &gt; 0 &amp;&amp; texte[0] &gt;= &quot;A&quot; &amp;&amp; texte[0] &lt;= &quot;Z&quot;;
+}
+
+function dateDansLePasse(valeur) {
+   if (valeur == &quot;&quot;) return false;
+   let saisie = new Date(valeur);
+   let aujourdHui = new Date();
+   return saisie &lt;= aujourdHui;
+}
+
+// Éliminer les espaces superflus : au début, à la fin,
+// et plusieurs espaces de suite remplacés par un seul
+function nettoyerNomPrenom(valeur) {
+   return valeur.trim().replace(/\s+/g, &quot; &quot;);
+}
+
+// Nom_prenom correct : uniquement des lettres (accentuées acceptées)
+// et des espaces, avec un nombre de mots entre 2 et 5
+function nomPrenomCorrect(valeur) {
+   let lettresEtEspaces = /^[A-Za-zÀ-ÖØ-öø-ÿ ]+$/;
+   if (!lettresEtEspaces.test(valeur)) return false;
+   let mots = valeur.split(&quot; &quot;);
+   return mots.length &gt;= 2 &amp;&amp; mots.length &lt;= 5;
+}
+
+// Contrôles communs : Id, Kwh, DateRecharge
+function controlesCommuns() {
+   let Id = document.getElementById(&quot;Id&quot;).value;
+   let Kwh = document.getElementById(&quot;Kwh&quot;).value;
+   let DateRecharge = document.getElementById(&quot;DateRecharge&quot;).value;
+   let message = document.getElementById(&quot;message&quot;);
+
+   if (!commenceParMajuscule(Id)) {
+      return afficherErreur(&quot;Erreur : l&#x27;Id doit commencer par une lettre en majuscule.&quot;);
+   }
+   if (Kwh == &quot;&quot; || isNaN(Kwh) || Kwh &lt; 1 || Kwh &gt; 100) {
+      return afficherErreur(&quot;Erreur : l&#x27;énergie Kwh doit être un nombre entre 1 et 100.&quot;);
+   }
+   if (!dateDansLePasse(DateRecharge)) {
+      return afficherErreur(&quot;Erreur : la Date de la recharge doit être remplie et ne pas être dans le futur.&quot;);
+   }
+   message.innerHTML = &quot;&quot;;
+   return true;
+}
+
+// Page inscription.html : on contrôle aussi le Nom_prenom
+function validerInscription() {
+   let champNom = document.getElementById(&quot;Nom_prenom&quot;);
+   let NomPrenom = nettoyerNomPrenom(champNom.value);
+   champNom.value = NomPrenom; // c&#x27;est le nom nettoyé qui sera envoyé
+   if (!nomPrenomCorrect(NomPrenom)) {
+      return afficherErreur(&quot;Erreur : le Nom et le Prénom ne doivent contenir que des lettres et des espaces, avec 2 à 5 mots (ex. Benali Amine).&quot;);
+   }
+   return controlesCommuns();
+}
+
+// Page modifier.php
+function validerModification() {
+   return controlesCommuns();
+}</code></pre>
+            </div>
+            <div class="sol2-panel" id="sol2Panel-php" hidden>
+              <p><b>Correction PHP</b> — les quatre pages, adaptées au thème recharge. Aucun <code>mysqli_real_escape_string</code> ; chaque Id commence par une majuscule (son type).</p>
+              <h4>🐘 ajouter.php — insertion</h4>
+              <pre><code>&lt;?php
+$connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
+mysqli_select_db($connexion, &quot;station&quot;);
+?&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
+&lt;?php
+if (isset($_POST[&quot;ok&quot;])) {
+   $Id = $_POST[&#x27;Id&#x27;];
+   // Chaque Id commence par une lettre en majuscule (le type de recharge : L, N, R, U)
+   $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
+   $Nom_prenom = $_POST[&#x27;Nom_prenom&#x27;];
+   $Kwh = (float)$_POST[&#x27;Kwh&#x27;];
+   $DateRecharge = $_POST[&#x27;DateRecharge&#x27;];
+
+   $req = &quot;INSERT INTO recharges (Id, Nom_prenom, Kwh, DateRecharge)
+           VALUES (&#x27;$Id&#x27;, &#x27;$Nom_prenom&#x27;, $Kwh, &#x27;$DateRecharge&#x27;)&quot;;
+   if (mysqli_query($connexion, $req)) {
+      echo &quot;Recharge enregistrée (Id = $Id).&quot;;
+   } else {
+      echo &quot;Erreur : &quot; . mysqli_error($connexion);
+   }
+}
+mysqli_close($connexion);
+?&gt;
+&lt;p&gt;&lt;a href=&quot;inscription.html&quot;&gt;← Enregistrer une autre recharge&lt;/a&gt;&lt;/p&gt;</code></pre>
+              <h4>🐘 liste.php — sélection</h4>
+              <pre><code>&lt;?php
+$connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
+mysqli_select_db($connexion, &quot;station&quot;);
+
+$req = &quot;SELECT Id, Nom_prenom, Kwh, DateRecharge FROM recharges ORDER BY Nom_prenom&quot;;
+$resultat = mysqli_query($connexion, $req);
+?&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
+&lt;h2&gt;📋 Historique des recharges&lt;/h2&gt;
+&lt;table&gt;
+   &lt;tr&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Conducteur&lt;/th&gt;&lt;th&gt;Énergie (kWh)&lt;/th&gt;&lt;th&gt;Date de la recharge&lt;/th&gt;&lt;/tr&gt;
+   &lt;?php while ($ligne = mysqli_fetch_array($resultat)) { ?&gt;
+   &lt;tr&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;Id&quot;]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;Nom_prenom&quot;]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;Kwh&quot;]; ?&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;?php echo $ligne[&quot;DateRecharge&quot;]; ?&gt;&lt;/td&gt;
+   &lt;/tr&gt;
+   &lt;?php } ?&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;?php echo mysqli_num_rows($resultat); ?&gt; recharge(s) au total.&lt;/p&gt;
+&lt;?php mysqli_close($connexion); ?&gt;</code></pre>
+              <h4>🐘 modifier.php — mise à jour</h4>
+              <pre><code>&lt;?php
+$connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;);
+mysqli_select_db($connexion, &quot;station&quot;);
+
+if (isset($_POST[&quot;ok&quot;])) {
+   $Id = $_POST[&#x27;Id&#x27;];
+   // Chaque Id commence par une lettre en majuscule (le type de recharge : L, N, R, U)
+   $Id = strtoupper(substr($Id, 0, 1)) . substr($Id, 1);
+   $Kwh = (float)$_POST[&#x27;Kwh&#x27;];
+   $DateRecharge = $_POST[&#x27;DateRecharge&#x27;];
+
+   $req = &quot;UPDATE recharges
+           SET Kwh = $Kwh, DateRecharge = &#x27;$DateRecharge&#x27;
+           WHERE Id = &#x27;$Id&#x27;&quot;;
+   mysqli_query($connexion, $req);
+
+   if (mysqli_affected_rows($connexion) &gt; 0) {
+      echo &quot;Recharge $Id mise à jour.&quot;;
+   } else {
+      echo &quot;Aucune ligne modifiée (Id introuvable ou valeurs identiques).&quot;;
+   }
+}
+mysqli_close($connexion);
+?&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
+&lt;h2&gt;✏️ Mise à jour d&#x27;une recharge&lt;/h2&gt;
+&lt;form method=&quot;post&quot; onsubmit=&quot;return validerModification()&quot;&gt;
+   &lt;label&gt;Id de la recharge (ex. R01) :&lt;/label&gt;
+   &lt;input type=&quot;text&quot; id=&quot;Id&quot; name=&quot;Id&quot;&gt;&lt;br&gt;
+
+   &lt;label&gt;Nouvelle énergie (kWh) :&lt;/label&gt;
+   &lt;input type=&quot;number&quot; id=&quot;Kwh&quot; name=&quot;Kwh&quot; step=&quot;0.01&quot;&gt;&lt;br&gt;
+
+   &lt;label&gt;Nouvelle date de recharge :&lt;/label&gt;
+   &lt;input type=&quot;date&quot; id=&quot;DateRecharge&quot; name=&quot;DateRecharge&quot;&gt;&lt;br&gt;
+
+   &lt;p id=&quot;message&quot;&gt;&lt;/p&gt;
+
+   &lt;input type=&quot;submit&quot; name=&quot;ok&quot; value=&quot;Mettre à jour&quot;&gt;
+   &lt;input type=&quot;reset&quot; value=&quot;Effacer&quot;&gt;
+&lt;/form&gt;
+&lt;script src=&quot;validation.js&quot;&gt;&lt;/script&gt;</code></pre>
+              <h4>🐘 statistiques.php — statistiques et coût par type</h4>
+              <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;fr&quot;&gt;
+&lt;head&gt;
+   &lt;meta charset=&quot;utf-8&quot;&gt;
+   &lt;title&gt;Statistiques des recharges&lt;/title&gt;
+   &lt;link rel=&quot;stylesheet&quot; href=&quot;style.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h1&gt;📊 Statistiques des recharges&lt;/h1&gt;
+
+&lt;?php
+$connexion = mysqli_connect(&quot;localhost&quot;, &quot;root&quot;, &quot;&quot;, &quot;station&quot;);
+if (!$connexion) {
+   die(&quot;Erreur de connexion : &quot; . mysqli_connect_error());
+}
+
+$total = mysqli_query($connexion, &quot;SELECT COUNT(*) AS nb FROM recharges&quot;);
+$ligneTotal = mysqli_fetch_array($total);
+
+if ($ligneTotal[&quot;nb&quot;] &gt; 0) {
+
+   $nrj = mysqli_query($connexion, &quot;SELECT AVG(Kwh) AS m FROM recharges&quot;);
+   $ligneNrj = mysqli_fetch_array($nrj);
+
+   $max = mysqli_query($connexion, &quot;SELECT Nom_prenom, Kwh FROM recharges ORDER BY Kwh DESC LIMIT 1&quot;);
+   $ligneMax = mysqli_fetch_array($max);
+
+   $r1 = mysqli_query($connexion, &quot;SELECT COUNT(*) AS nb FROM recharges WHERE Kwh &gt;= 40&quot;);
+   $l1 = mysqli_fetch_array($r1);
+
+   $r2 = mysqli_query($connexion, &quot;SELECT COUNT(*) AS nb FROM recharges WHERE Kwh &lt; 40&quot;);
+   $l2 = mysqli_fetch_array($r2);
+?&gt;
+   &lt;table&gt;
+      &lt;tr&gt;&lt;td&gt;Nombre de recharges&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneTotal[&quot;nb&quot;]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Énergie moyenne par recharge (kWh)&lt;/td&gt;&lt;td&gt;&lt;?php echo round($ligneNrj[&quot;m&quot;], 2); ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Plus grosse recharge&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax[&quot;Nom_prenom&quot;] . &quot; (&quot; . $ligneMax[&quot;Kwh&quot;] . &quot; kWh)&quot;; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Recharges complètes (≥ 40 kWh)&lt;/td&gt;&lt;td&gt;&lt;?php echo $l1[&quot;nb&quot;]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;Recharges partielles (&amp;lt; 40 kWh)&lt;/td&gt;&lt;td&gt;&lt;?php echo $l2[&quot;nb&quot;]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+   &lt;/table&gt;
+
+   &lt;h2&gt;🏷 Liste des recharges par type (Catégorie) et coût estimé&lt;/h2&gt;
+   &lt;table&gt;
+      &lt;tr&gt;&lt;th&gt;Catégorie&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;kWh&lt;/th&gt;&lt;th&gt;Tarif (DT/kWh)&lt;/th&gt;&lt;th&gt;Coût (DT)&lt;/th&gt;&lt;/tr&gt;
+&lt;?php
+   // Tarif selon le type de recharge (première lettre de l&#x27;Id)
+   $parCategorie = mysqli_query($connexion, &quot;SELECT Id, Nom_prenom, Kwh FROM recharges ORDER BY LEFT(Id, 1), Nom_prenom&quot;);
+   while ($ligne = mysqli_fetch_array($parCategorie)) {
+      $Categorie = substr($ligne[&quot;Id&quot;], 0, 1);
+      if ($Categorie == &quot;L&quot;) $tarif = 0.300;
+      else if ($Categorie == &quot;N&quot;) $tarif = 0.450;
+      else if ($Categorie == &quot;R&quot;) $tarif = 0.700;
+      else $tarif = 0.950; // U : Ultra-rapide
+      $cout = round($ligne[&quot;Kwh&quot;] * $tarif, 2);
+      $partiesNom = explode(&quot; &quot;, $ligne[&quot;Nom_prenom&quot;], 2);
+      $Nom = $partiesNom[0];
+      $Prenom = isset($partiesNom[1]) ? $partiesNom[1] : &quot;&quot;;
+?&gt;
+      &lt;tr&gt;
+         &lt;td class=&quot;cat-&lt;?php echo $Categorie; ?&gt;&quot;&gt;&lt;?php echo $Categorie; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $Nom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $Prenom; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $ligne[&quot;Kwh&quot;]; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $tarif; ?&gt;&lt;/td&gt;
+         &lt;td&gt;&lt;?php echo $cout; ?&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+&lt;?php
+   }
+?&gt;
+   &lt;/table&gt;
+&lt;?php
+} else {
+   echo &quot;Aucune recharge enregistrée.&quot;;
+}
+mysqli_close($connexion);
+?&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+              <h5>🔍 Rappel ligne par ligne (types de retour) — comme dans l'exercice n°1</h5>
+<table style="border-collapse:collapse;width:100%;margin:0.4rem 0 1rem">
+<tr><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Instruction</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Rôle</th><th style="border:1px solid #999;padding:6px 8px;background:#0f1c47;color:#fff;text-align:left">Type / retour</th></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_connect("localhost","root","")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Connexion au serveur (hôte, utilisateur, mot de passe)</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>objet connexion ou false</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_select_db($connexion, "station")</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Choisit la base</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>booléen</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>isset($_POST["ok"])</code> · <code>$_POST[…]</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Bouton cliqué ? · données du formulaire</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>booléen</b> · <b>tableau associatif (string)</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>strtoupper(substr($Id,0,1))</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">1ʳᵉ lettre en majuscule = type de recharge</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>chaîne</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>(float)$_POST['Kwh']</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Conversion de l'énergie en réel</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>réel (float)</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query</code> (INSERT/UPDATE)</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Exécute l'écriture</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>booléen</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_query</code> (SELECT)</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Exécute la lecture</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>objet résultat (mysqli_result)</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_fetch_array / _row / _assoc</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Ligne suivante : accès mixte / indexé / par noms — <code>null</code> à la fin</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>tableau ou null</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_num_rows($resultat)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Compte les lignes d'un SELECT déjà exécuté (PHP)</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>entier</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>SELECT COUNT(*) AS nb</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Le serveur compte : 1 seule ligne revient (juste le nombre)</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>1 ligne : entier</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>mysqli_affected_rows($connexion)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Lignes réellement modifiées après UPDATE (&gt;0 / 0 / −1)</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>entier</b></td></tr>
+<tr><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><code>explode(" ", …, 2)</code> · <code>LEFT(Id,1)</code></td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top">Nom/Prénom séparés · type = 1ʳᵉ lettre, tri par type</td><td style="border:1px solid #999;padding:6px 8px;text-align:left;vertical-align:top"><b>tableau de chaînes</b> · <b>chaîne</b></td></tr>
+</table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       /* ---- fenêtre Exercice de synthèse (point 10) ---- */
       (function () {
@@ -3228,5 +3938,62 @@ mysqli_close($connexion);
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=227"></script>
     <script src="../assets/js/acces.js?v=227"></script>
+
+    <script>
+      /* ---- Exercice de synthèse n°2 (point 11) : énoncé + solution 3 onglets ---- */
+      (function () {
+        function brancher(idModal, idBoutons, idClose, idFull, idRetour) {
+          var M = document.getElementById(idModal);
+          if (!M) return null;
+          function open(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            M.hidden = false; M.style.display = "flex";
+            document.body.style.overflow = "hidden";
+          }
+          function close() {
+            M.classList.remove("full"); M.hidden = true; M.style.display = "none";
+            document.body.style.overflow = "";
+          }
+          document.getElementById(idClose).onclick = close;
+          document.getElementById(idRetour).onclick = close;
+          document.getElementById(idFull).onclick = function () {
+            M.classList.toggle("full");
+            this.textContent = M.classList.contains("full") ? "⤡ Réduire" : "⛶ Plein écran";
+          };
+          M.addEventListener("click", function (e) { if (e.target === M) close(); });
+          document.addEventListener("keydown", function (e) {
+            if (e.key == "Escape" && !M.hidden) close();
+          });
+          return { open: open, close: close, modal: M };
+        }
+        var E2 = brancher("exo2Modal", null, "exo2Close", "exo2Full", "exo2RetourCours");
+        if (E2) {
+          var b = document.getElementById("btnExoS11");
+          if (b) b.onclick = E2.open;
+          document.querySelectorAll(".btn-ouvrir-enonce2").forEach(function (x) {
+            x.addEventListener("click", E2.open);
+          });
+          E2.modal.querySelectorAll('a[href^="#s11"]').forEach(function (a) {
+            a.addEventListener("click", E2.close);
+          });
+        }
+        var S2 = brancher("sol2Modal", null, "sol2Close", "sol2Full", "sol2RetourCours");
+        if (S2) {
+          function activer(nom) {
+            ["html", "js", "php"].forEach(function (n) {
+              var pn = document.getElementById("sol2Panel-" + n);
+              if (pn) pn.hidden = n !== nom;
+            });
+            S2.modal.querySelector(".anim-body").scrollTop = 0;
+          }
+          document.querySelectorAll(".sol2-open").forEach(function (x) {
+            x.addEventListener("click", function () { S2.open(); activer(x.getAttribute("data-sol2")); });
+          });
+          document.querySelectorAll(".sol2-tab").forEach(function (x) {
+            x.addEventListener("click", function () { activer(x.getAttribute("data-sol2")); });
+          });
+        }
+      })();
+    </script>
   </body>
 </html>
