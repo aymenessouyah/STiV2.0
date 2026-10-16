@@ -2,8 +2,14 @@
 <html lang="fr">
   <head>
     <meta name="robots" content="noai, noimageai" />
-    <meta name="description" content="Cours PHP complet : variables, conditions, boucles, fonctions et MySQLi — avec l'animation interactive du guichet." />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta
+      name="description"
+      content="Cours PHP complet : variables, conditions, boucles, fonctions et MySQLi — avec l'animation interactive du guichet."
+    />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -16,111 +22,201 @@
     <title>Cours PHP complet</title>
   </head>
   <body id="top">
-<!-- STI navigation croisée + Bouton Magique permanent sous le header vers PHP-recap -->
-<style>
-  #stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}
-  #btn-magique-php-recap {
-    position: fixed;
-    top: calc(var(--header-h, 60px) + 10px);
-    right: 14px;
-    z-index: 29;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 6px 11px;
-    width: auto;
-    max-width: fit-content;
-    border-radius: 999px;
-    background: linear-gradient(120deg, #f4511e 0%, #d81b60 45%, #6d28d9 75%, #f4511e 100%);
-    background-size: 300% 300%;
-    color: #fff !important;
-    text-decoration: none;
-    font: 800 12px/1.1 "Space Grotesk", "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
-    border: 2px solid #101728;
-    box-shadow: 0 6px 18px rgba(244, 81, 30, 0.5), 2.5px 2.5px 0 #101728;
-    cursor: pointer;
-    overflow: hidden;
-    white-space: nowrap;
-    animation: stiMagieInfini 2.4s ease-in-out infinite !important;
-  }
-  #btn-magique-php-recap::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -80%;
-    width: 55%;
-    height: 100%;
-    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.65), transparent);
-    transform: skewX(-22deg);
-    pointer-events: none;
-    animation: stiMagieReflet 2.6s linear infinite !important;
-  }
-  #btn-magique-php-recap:hover {
-    filter: brightness(1.08);
-    box-shadow: 0 12px 30px rgba(216, 27, 96, 0.72), 5px 5px 0 #101728;
-  }
-  #btn-magique-php-recap .baguette {
-    display: inline-block;
-    font-size: 13.5px;
-    animation: stiBaguette 0.95s ease-in-out infinite alternate !important;
-  }
-  #btn-magique-php-recap .etincelle {
-    display: inline-block;
-    font-size: 12px;
-    animation: stiEtincelle 1.1s ease-in-out infinite alternate !important;
-  }
-  @keyframes stiMagieInfini {
-    0%, 100% {
-      background-position: 0% 50%;
-      transform: translateY(0) scale(1);
-      box-shadow: 0 6px 20px rgba(244, 81, 30, 0.5), 3.5px 3.5px 0 #101728;
-    }
-    50% {
-      background-position: 100% 50%;
-      transform: translateY(-5px) scale(1.045);
-      box-shadow: 0 14px 30px rgba(109, 40, 217, 0.68), 4.5px 4.5px 0 #101728;
-    }
-  }
-  @keyframes stiMagieReflet {
-    0% { left: -80%; }
-    65%, 100% { left: 140%; }
-  }
-  @keyframes stiBaguette {
-    0% { transform: rotate(-14deg) scale(0.95); }
-    100% { transform: rotate(18deg) scale(1.22); }
-  }
-  @keyframes stiEtincelle {
-    0% { transform: scale(0.85) rotate(-10deg); opacity: 0.75; }
-    100% { transform: scale(1.25) rotate(15deg); opacity: 1; }
-  }
-  .anim-body #recap-bd iframe#recapFrame {
-    width: 100%;
-    height: min(76vh, 720px);
-    border: 0;
-    display: block;
-    border-radius: 10px;
-    background: var(--bg);
-  }
-  .anim-modal.full .anim-body #recap-bd iframe#recapFrame {
-    height: calc(100vh - 60px);
-    border-radius: 0;
-  }
-  @media (max-width: 640px) {
-    #btn-magique-php-recap {
-      top: calc(var(--header-h, 58px) + 8px);
-      right: 8px;
-      padding: 5px 9px;
-      font-size: 11px;
-    }
-  }
-  @media print { #stix-nav, #btn-magique-php-recap { display: none !important; } }
-</style>
-<button type="button" id="btn-magique-php-recap" title="Ouvrir l'animation interactive PHP-recap (voir l'effet étape par étape)">
-  <span class="baguette" aria-hidden="true">🪄</span>
-  <span>PHP-recap</span>
-  <span class="etincelle" aria-hidden="true">✨</span>
-</button>
-<nav id="stix-nav" style="position:fixed;right:14px;bottom:78px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../exercices/series-exercices.html#php" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🏋️ Exercices</a><a href="../quiz/php.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🎯 Quiz</a></nav>
+    <!-- STI navigation croisée + Bouton Magique permanent sous le header vers PHP-recap -->
+    <style>
+      #stix-nav a:hover {
+        background: #b4552d !important;
+        border-color: #b4552d !important;
+        color: #fff !important;
+      }
+      #btn-magique-php-recap {
+        position: fixed;
+        top: calc(var(--header-h, 60px) + 10px);
+        right: 14px;
+        z-index: 29;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 11px;
+        width: auto;
+        max-width: fit-content;
+        border-radius: 999px;
+        background: linear-gradient(
+          120deg,
+          #f4511e 0%,
+          #d81b60 45%,
+          #6d28d9 75%,
+          #f4511e 100%
+        );
+        background-size: 300% 300%;
+        color: #fff !important;
+        text-decoration: none;
+        font: 800 12px/1.1 "Space Grotesk", "Manrope", system-ui, -apple-system,
+          "Segoe UI", sans-serif;
+        border: 2px solid #101728;
+        box-shadow: 0 6px 18px rgba(244, 81, 30, 0.5), 2.5px 2.5px 0 #101728;
+        cursor: pointer;
+        overflow: hidden;
+        white-space: nowrap;
+        animation: stiMagieInfini 2.4s ease-in-out infinite !important;
+      }
+      #btn-magique-php-recap::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -80%;
+        width: 55%;
+        height: 100%;
+        background: linear-gradient(
+          105deg,
+          transparent,
+          rgba(255, 255, 255, 0.65),
+          transparent
+        );
+        transform: skewX(-22deg);
+        pointer-events: none;
+        animation: stiMagieReflet 2.6s linear infinite !important;
+      }
+      #btn-magique-php-recap:hover {
+        filter: brightness(1.08);
+        box-shadow: 0 12px 30px rgba(216, 27, 96, 0.72), 5px 5px 0 #101728;
+      }
+      #btn-magique-php-recap .baguette {
+        display: inline-block;
+        font-size: 13.5px;
+        animation: stiBaguette 0.95s ease-in-out infinite alternate !important;
+      }
+      #btn-magique-php-recap .etincelle {
+        display: inline-block;
+        font-size: 12px;
+        animation: stiEtincelle 1.1s ease-in-out infinite alternate !important;
+      }
+      @keyframes stiMagieInfini {
+        0%,
+        100% {
+          background-position: 0% 50%;
+          transform: translateY(0) scale(1);
+          box-shadow: 0 6px 20px rgba(244, 81, 30, 0.5), 3.5px 3.5px 0 #101728;
+        }
+        50% {
+          background-position: 100% 50%;
+          transform: translateY(-5px) scale(1.045);
+          box-shadow: 0 14px 30px rgba(109, 40, 217, 0.68),
+            4.5px 4.5px 0 #101728;
+        }
+      }
+      @keyframes stiMagieReflet {
+        0% {
+          left: -80%;
+        }
+        65%,
+        100% {
+          left: 140%;
+        }
+      }
+      @keyframes stiBaguette {
+        0% {
+          transform: rotate(-14deg) scale(0.95);
+        }
+        100% {
+          transform: rotate(18deg) scale(1.22);
+        }
+      }
+      @keyframes stiEtincelle {
+        0% {
+          transform: scale(0.85) rotate(-10deg);
+          opacity: 0.75;
+        }
+        100% {
+          transform: scale(1.25) rotate(15deg);
+          opacity: 1;
+        }
+      }
+      .anim-body #recap-bd iframe#recapFrame {
+        width: 100%;
+        height: min(76vh, 720px);
+        border: 0;
+        display: block;
+        border-radius: 10px;
+        background: var(--bg);
+      }
+      .anim-modal.full .anim-body #recap-bd iframe#recapFrame {
+        height: calc(100vh - 60px);
+        border-radius: 0;
+      }
+      @media (max-width: 640px) {
+        #btn-magique-php-recap {
+          top: calc(var(--header-h, 58px) + 8px);
+          right: 8px;
+          padding: 5px 9px;
+          font-size: 11px;
+        }
+      }
+      @media print {
+        #stix-nav,
+        #btn-magique-php-recap {
+          display: none !important;
+        }
+      }
+    </style>
+    <button
+      type="button"
+      id="btn-magique-php-recap"
+      title="Ouvrir l'animation interactive PHP-recap (voir l'effet étape par étape)"
+    >
+      <span class="baguette" aria-hidden="true">🪄</span>
+      <span>PHP-recap</span>
+      <span class="etincelle" aria-hidden="true">✨</span>
+    </button>
+    <nav
+      id="stix-nav"
+      style="
+        position: fixed;
+        right: 14px;
+        bottom: 78px;
+        z-index: 9999;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font: 600 12px/1 system-ui, 'Segoe UI', sans-serif;
+      "
+    >
+      <a
+        href="../exercices/series-exercices.html#php"
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 8px 12px;
+          border-radius: 999px;
+          background: rgba(15, 23, 38, 0.93);
+          color: #f9f1e3;
+          text-decoration: none;
+          border: 1px solid rgba(249, 241, 227, 0.22);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+          backdrop-filter: blur(4px);
+          white-space: nowrap;
+        "
+        >🏋️ Exercices</a
+      ><a
+        href="../quiz/php.html"
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 8px 12px;
+          border-radius: 999px;
+          background: rgba(15, 23, 38, 0.93);
+          color: #f9f1e3;
+          text-decoration: none;
+          border: 1px solid rgba(249, 241, 227, 0.22);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+          backdrop-filter: blur(4px);
+          white-space: nowrap;
+        "
+        >🎯 Quiz</a
+      >
+    </nav>
 
     <header class="top">
       <div class="top-inner">
@@ -162,7 +258,12 @@
             id="btn-top-anim-guichet"
             title="Ouvrir l'animation du guichet"
             aria-label="Ouvrir l'animation du guichet"
-            style="background:linear-gradient(120deg,#f4511e,#b4552d)!important;color:#fff!important;border-color:#0f1726!important;font-weight:800"
+            style="
+              background: linear-gradient(120deg, #f4511e, #b4552d) !important;
+              color: #fff !important;
+              border-color: #0f1726 !important;
+              font-weight: 800;
+            "
             ><span aria-hidden="true">🎬</span
             ><span class="txt">Ouvrir l'animation du guichet</span></a
           >
@@ -1128,7 +1229,12 @@ echo (date("Y-d-m H:i:s",$e)." = ".$e." secondes&lt;br&gt;") ;
                   type="button"
                   id="animRetourCours"
                   title="Retourner au cours PHP"
-                  style="background:linear-gradient(120deg,#f4511e,#b4552d);color:#fff;border-color:#101728;font-weight:800"
+                  style="
+                    background: linear-gradient(120deg, #f4511e, #b4552d);
+                    color: #fff;
+                    border-color: #101728;
+                    font-weight: 800;
+                  "
                 >
                   🐘 ← Retour au cours PHP
                 </button>
@@ -1146,11 +1252,14 @@ echo (date("Y-d-m H:i:s",$e)." = ".$e." secondes&lt;br&gt;") ;
             </div>
             <div class="anim-body">
               <div id="anim-bd">
-            <iframe id="animFrame" src="php-mysqli.html?embed=1"
-              title="Animation — Du formulaire aux archives : l’histoire du guichet"
-              allowfullscreen
-              loading="lazy"></iframe>
-          </div>
+                <iframe
+                  id="animFrame"
+                  src="php-mysqli.html?embed=1"
+                  title="Animation — Du formulaire aux archives : l’histoire du guichet"
+                  allowfullscreen
+                  loading="lazy"
+                ></iframe>
+              </div>
             </div>
           </div>
         </div>
@@ -1436,29 +1545,31 @@ mysqli_close($connexion);
         </p>
 
         <h3 id="s10a">10.1 Page d'insertion — ajouter.php</h3>
-        <pre><code>&lt;?php
-$connexion = mysqli_connect("localhost", "root", "");
-mysqli_select_db($connexion, "ecole");
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-   $nom = $_POST['nom'];
-   $age = (int)$_POST['age'];
-   $moyenne = (float)$_POST['moyenne'];
-
-   $req = "INSERT INTO eleves (nom, age, moyenne) VALUES ('$nom', $age, $moyenne)";
-   if (mysqli_query($connexion, $req)) {
-      echo "Élève ajouté (id = " . mysqli_insert_id($connexion) . ").";
-   } else {
-      echo "Erreur : " . mysqli_error($connexion);
-   }
-}
-?&gt;
-&lt;form method="post"&gt;
-   Nom : &lt;input name="nom"&gt;&lt;br&gt;
-   Âge : &lt;input name="age" type="number"&gt;&lt;br&gt;
-   Moyenne : &lt;input name="moyenne" type="number" step="0.01"&gt;&lt;br&gt;
-   &lt;input type="submit" value="Ajouter"&gt;
-&lt;/form&gt;</code></pre>
+        <pre><code>
+          &lt;?php
+          $connexion = mysqli_connect("localhost", "root", "");
+          mysqli_select_db($connexion, "ecole");
+          
+          if (isset($_POST["ok"])) {
+             $nom = $_POST['nom'];
+             $age = (int)$_POST['age'];
+             $moyenne = (float)$_POST['moyenne'];
+          
+             $req = "INSERT INTO eleves (nom, age, moyenne) VALUES ('$nom', $age, $moyenne)";
+             if (mysqli_query($connexion, $req)) {
+                echo "Élève ajouté (id = " . mysqli_insert_id($connexion) . ").";
+             } else {
+                echo "Erreur : " . mysqli_error($connexion);
+             }
+          }
+          ?&gt;
+          &lt;form method="post"&gt;
+             Nom : &lt;input name="nom"&gt;&lt;br&gt;
+             Âge : &lt;input name="age" type="number"&gt;&lt;br&gt;
+             Moyenne : &lt;input name="moyenne" type="number" step="0.01"&gt;&lt;br&gt;
+             &lt;input type="submit" name="ok" value="Ajouter"&gt;
+          &lt;/form&gt;
+</code></pre>
 
         <h3 id="s10b">10.2 Page de sélection — liste.php</h3>
         <pre><code>&lt;?php
@@ -1482,18 +1593,19 @@ $resultat = mysqli_query($connexion, $req);
 &lt;p&gt;&lt;?php echo mysqli_num_rows($resultat); ?&gt; élève(s) au total.&lt;/p&gt;</code></pre>
 
         <h3 id="s10c">10.3 Page de mise à jour — modifier.php</h3>
-        <pre><code>&lt;?php
+        <pre><code>
+          &lt;?php
 $connexion = mysqli_connect("localhost", "root", "");
 mysqli_select_db($connexion, "ecole");
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if (isset($_POST["ok"])) {
    $id = (int)$_POST['id'];
    $moyenne = (float)$_POST['moyenne'];
 
    $req = "UPDATE eleves SET moyenne = $moyenne WHERE id = $id";
    mysqli_query($connexion, $req);
 
-   if (mysqli_affected_rows($connexion) > 0) {
+   if (mysqli_affected_rows($connexion) &gt; 0) {
       echo "Moyenne mise à jour pour l'élève n°$id.";
    } else {
       echo "Aucune ligne modifiée (id introuvable ?).";
@@ -1503,34 +1615,70 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 &lt;form method="post"&gt;
    Id de l'élève : &lt;input name="id" type="number"&gt;&lt;br&gt;
    Nouvelle moyenne : &lt;input name="moyenne" type="number" step="0.01"&gt;&lt;br&gt;
-   &lt;input type="submit" value="Mettre à jour"&gt;
-&lt;/form&gt;</code></pre>
+   &lt;input type="submit" name="ok" value="Mettre à jour"&gt;
+&lt;/form&gt;
+</code></pre>
 
         <h3 id="s10d">10.4 Page de statistiques — statistiques.php</h3>
-        <pre><code>&lt;?php
-$connexion = mysqli_connect("localhost", "root", "");
-mysqli_select_db($connexion, "ecole");
-
-$total = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves");
-$ligneTotal = mysqli_fetch_array($total);
-echo "Nombre d'élèves : " . $ligneTotal["nb"] . "&lt;br&gt;";
-
-$moy = mysqli_query($connexion, "SELECT AVG(moyenne) AS m FROM eleves");
-$ligneMoy = mysqli_fetch_array($moy);
-echo "Moyenne générale : " . round($ligneMoy["m"], 2) . "&lt;br&gt;";
-
-$max = mysqli_query($connexion, "SELECT nom, moyenne FROM eleves ORDER BY moyenne DESC LIMIT 1");
-$ligneMax = mysqli_fetch_array($max);
-echo "Meilleure moyenne : " . $ligneMax["nom"] . " (" . $ligneMax["moyenne"] . ")&lt;br&gt;";
-
-$parTranche = mysqli_query($connexion,
-   "SELECT CASE WHEN moyenne&gt;=10 THEN 'Admis' ELSE 'Non admis' END AS statut, COUNT(*) AS nb
-    FROM eleves GROUP BY statut");
-while ($l = mysqli_fetch_array($parTranche)) {
-   echo $l["statut"] . " : " . $l["nb"] . "&lt;br&gt;";
-}
-mysqli_close($connexion);
-?&gt;</code></pre>
+        <pre><code>
+          &lt;!DOCTYPE html&gt;
+          &lt;html lang="fr"&gt;
+          &lt;head&gt;
+             &lt;meta charset="utf-8"&gt;
+             &lt;title&gt;Statistiques des élèves&lt;/title&gt;
+             &lt;style&gt;
+                body { font-family: Arial, sans-serif; margin: 30px; }
+                h1 { color: #2c3e50; }
+                table { border-collapse: collapse; width: 400px; }
+                td { border: 1px solid #999; padding: 8px; }
+                td:first-child { background: #ecf0f1; font-weight: bold; }
+             &lt;/style&gt;
+          &lt;/head&gt;
+          &lt;body&gt;
+          
+          &lt;h1&gt;Statistiques des élèves&lt;/h1&gt;
+          
+          &lt;?php
+          $connexion = mysqli_connect("localhost", "root", "", "ecole");
+          if (!$connexion) {
+             die("Erreur de connexion : " . mysqli_connect_error());
+          }
+          
+          $total = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves");
+          $ligneTotal = mysqli_fetch_assoc($total);
+          
+          if ($ligneTotal["nb"] &gt; 0) {
+          
+             $moy = mysqli_query($connexion, "SELECT AVG(moyenne) AS m FROM eleves");
+             $ligneMoy = mysqli_fetch_assoc($moy);
+          
+             $max = mysqli_query($connexion, "SELECT nom, moyenne FROM eleves ORDER BY moyenne DESC LIMIT 1");
+             $ligneMax = mysqli_fetch_assoc($max);
+          
+             $r1 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE moyenne &gt;= 10");
+             $l1 = mysqli_fetch_assoc($r1);
+          
+             $r2 = mysqli_query($connexion, "SELECT COUNT(*) AS nb FROM eleves WHERE moyenne &lt; 10");
+             $l2 = mysqli_fetch_assoc($r2);
+          ?&gt;
+             &lt;table&gt;
+                &lt;tr&gt;&lt;td&gt;Nombre d'élèves&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneTotal["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+                &lt;tr&gt;&lt;td&gt;Moyenne générale&lt;/td&gt;&lt;td&gt;&lt;?php echo round($ligneMoy["m"], 2); ?&gt;&lt;/td&gt;&lt;/tr&gt;
+                &lt;tr&gt;&lt;td&gt;Meilleure moyenne&lt;/td&gt;&lt;td&gt;&lt;?php echo $ligneMax["nom"] . " (" . $ligneMax["moyenne"] . ")"; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+                &lt;tr&gt;&lt;td&gt;Admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l1["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+                &lt;tr&gt;&lt;td&gt;Non admis&lt;/td&gt;&lt;td&gt;&lt;?php echo $l2["nb"]; ?&gt;&lt;/td&gt;&lt;/tr&gt;
+             &lt;/table&gt;
+          &lt;?php
+          } else {
+             echo "&lt;p&gt;Aucun élève dans la table.&lt;/p&gt;";
+          }
+          
+          mysqli_close($connexion);
+          ?&gt;
+          
+          &lt;/body&gt;
+          &lt;/html&gt;
+</code></pre>
 
         <footer>Cours PHP — 4ème SI · Travail élaboré par A. Essouyah</footer>
       </div>
@@ -1547,17 +1695,29 @@ mysqli_close($connexion);
     >
       <div class="anim-box" id="recapBox">
         <div class="anim-head">
-          <span id="recapTitle">🪄 Animation — PHP : voir l'effet, étape par étape (PHP-recap)</span>
+          <span id="recapTitle"
+            >🪄 Animation — PHP : voir l'effet, étape par étape
+            (PHP-recap)</span
+          >
           <span class="anim-tools">
             <button
               type="button"
               id="recapRetourCours"
               title="Retourner au cours PHP"
-              style="background:linear-gradient(120deg,#f4511e,#b4552d);color:#fff;border-color:#101728;font-weight:800"
+              style="
+                background: linear-gradient(120deg, #f4511e, #b4552d);
+                color: #fff;
+                border-color: #101728;
+                font-weight: 800;
+              "
             >
               🐘 ← Retour au cours PHP
             </button>
-            <button type="button" id="recapFull" title="Agrandir sur toute la page">
+            <button
+              type="button"
+              id="recapFull"
+              title="Agrandir sur toute la page"
+            >
               ⛶ Plein écran
             </button>
             <button type="button" id="recapClose" title="Fermer">
@@ -1590,11 +1750,15 @@ mysqli_close($connexion);
           M.style.display = "flex";
           document.body.style.overflow = "hidden";
           var f = document.getElementById("animFrame");
-          var estPortrait = window.innerHeight > window.innerWidth || window.innerWidth <= 768;
+          var estPortrait =
+            window.innerHeight > window.innerWidth || window.innerWidth <= 768;
           function notifierGuichet() {
             if (f && f.contentWindow) {
               try {
-                f.contentWindow.postMessage({ type: "STI_OUVRIR_GUICHET", portrait: estPortrait }, "*");
+                f.contentWindow.postMessage(
+                  { type: "STI_OUVRIR_GUICHET", portrait: estPortrait },
+                  "*"
+                );
               } catch (err) {}
             }
           }
@@ -1612,9 +1776,14 @@ mysqli_close($connexion);
           document.body.style.overflow = "";
           var f = document.getElementById("animFrame");
           if (f && f.contentWindow) {
-            try { f.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*"); } catch (err) {}
+            try {
+              f.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
+            } catch (err) {}
           }
-          var a = f && f.contentDocument ? f.contentDocument.getElementById("auto") : null;
+          var a =
+            f && f.contentDocument
+              ? f.contentDocument.getElementById("auto")
+              : null;
           if (a && a.textContent == "Pause") a.click();
         }
         function toggleFull() {
@@ -1624,11 +1793,17 @@ mysqli_close($connexion);
             M.classList.add("full");
           }
           var isFull = M.classList.contains("full");
-          document.getElementById("animFull").textContent =
-            isFull ? "⤡ Réduire" : "⛶ Plein écran";
+          document.getElementById("animFull").textContent = isFull
+            ? "⤡ Réduire"
+            : "⛶ Plein écran";
           var f = document.getElementById("animFrame");
           if (f && f.contentWindow) {
-            try { f.contentWindow.postMessage({ type: "STI_ETAT_PLEIN_ECRAN_GUICHET", full: isFull }, "*"); } catch (err) {}
+            try {
+              f.contentWindow.postMessage(
+                { type: "STI_ETAT_PLEIN_ECRAN_GUICHET", full: isFull },
+                "*"
+              );
+            } catch (err) {}
           }
         }
         document.getElementById("animOpen").onclick = open;
@@ -1691,9 +1866,17 @@ mysqli_close($connexion);
           if (ev && ev.data && ev.data.type === "STI_FERMER_MODALE_PHP") {
             if (!M.hidden) close();
             if (!MR.hidden) closeRecap();
-          } else if (ev && ev.data && ev.data.type === "STI_BASCULER_PLEIN_ECRAN_GUICHET") {
+          } else if (
+            ev &&
+            ev.data &&
+            ev.data.type === "STI_BASCULER_PLEIN_ECRAN_GUICHET"
+          ) {
             toggleFull();
-          } else if (ev && ev.data && ev.data.type === "STI_PLEIN_ECRAN_GUICHET") {
+          } else if (
+            ev &&
+            ev.data &&
+            ev.data.type === "STI_PLEIN_ECRAN_GUICHET"
+          ) {
             if (!M.classList.contains("full")) {
               M.classList.add("full");
               document.getElementById("animFull").textContent = "⤡ Réduire";
@@ -1709,14 +1892,14 @@ mysqli_close($connexion);
             }
             if (MR.classList.contains("full")) {
               MR.classList.remove("full");
-              document.getElementById("recapFull").textContent = "⛶ Plein écran";
+              document.getElementById("recapFull").textContent =
+                "⛶ Plein écran";
             }
           }
         });
       })();
     </script>
-    
-    
+
     <button
       type="button"
       id="to-top"
@@ -1877,13 +2060,32 @@ mysqli_close($connexion);
         update();
       })();
     </script>
-  <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(null,"",location.pathname+location.search);});})();</script>
-  <!-- 🔒 Protection du contenu STI -->
-<link rel="stylesheet" href="../assets/css/protection.css?v=227" />
-<script src="../assets/js/protection.js?v=227" defer></script>
-<!-- /Protection -->
-<script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=227"></script>
-<script src="../assets/js/acces.js?v=227"></script>
-</body>
+    <script id="stix-top">
+      (function () {
+        document.addEventListener("click", function (e) {
+          var a =
+            e.target && e.target.closest
+              ? e.target.closest('a[href="#top"]')
+              : null;
+          if (!a) return;
+          e.preventDefault();
+          var de = document.documentElement,
+            pr = de.style.scrollBehavior;
+          de.style.scrollBehavior = "auto";
+          window.scrollTo(0, 0);
+          if (pr) de.style.scrollBehavior = pr;
+          else de.style.removeProperty("scroll-behavior");
+          if (location.hash === "#top" && history.replaceState)
+            history.replaceState(null, "", location.pathname + location.search);
+        });
+      })();
+    </script>
+    <!-- 🔒 Protection du contenu STI -->
+    <link rel="stylesheet" href="../assets/css/protection.css?v=227" />
+    <script src="../assets/js/protection.js?v=227" defer></script>
+    <!-- /Protection -->
+    <script src="../assets/js/supabase-umd.js"></script>
+    <script src="../assets/js/config.js?v=227"></script>
+    <script src="../assets/js/acces.js?v=227"></script>
+  </body>
 </html>
