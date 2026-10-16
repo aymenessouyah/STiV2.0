@@ -728,7 +728,7 @@
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=234",
+        file: "sql-cours.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
       var VIDEO_HTML5_INFO = {
@@ -748,27 +748,27 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours PHP & MySQLi complet animé (.mp4)"
       };
       var VIDEO_SQL_SERIE1_INFO = {
-        file: "sql-serie1.mp4?v=234",
+        file: "sql-serie1.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 1 SQL (LDD) : Création BD, Insertion & Corrigé complet (.mp4)"
       };
       var VIDEO_SQL_SERIE2_INFO = {
-        file: "sql-serie2.mp4?v=234",
+        file: "sql-serie2.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 2 SQL (LMD) : Création BD, Insertion & Corrigé complet (.mp4)"
       };
       var VIDEO_SQL_SERIE3_INFO = {
-        file: "sql-serie3.mp4?v=234",
+        file: "sql-serie3.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 3 SQL (Group By) : Création BD, Insertion & Corrigé complet (.mp4)"
       };
       var VIDEO_SQL_SERIE4_INFO = {
-        file: "sql-serie4.mp4?v=234",
+        file: "sql-serie4.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 4 SQL : Création BD, Insertion & Corrigé des 15 Requêtes (.mp4)"
       };
       var VIDEO_SQL_SERIE5_INFO = {
-        file: "sql-serie5.mp4?v=234",
+        file: "sql-serie5.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 5 SQL (Gesthotel) : Création BD, Insertion & Corrigé des 20 Requêtes (.mp4)"
       };
       var VIDEO_SQL_SERIE6_INFO = {
-        file: "sql-serie6.mp4?v=234",
+        file: "sql-serie6.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 6 SQL (Base ÉTUDIANT) : Création BD, Insertion & Corrigé complet (.mp4)"
       };
       var VIDEO_EXPLORE_FLEX_INFO = {
