@@ -913,7 +913,7 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 3 SQL (Group By) : Création BD, Insertion & Corrigé complet (.mp4)"
       };
       var VIDEO_SQL_SERIE4_INFO = {
-        file: "sql-serie4.mp4?v=235",
+        file: "sql-serie4.mp4?v=250",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 4 SQL : Création BD, Insertion & Corrigé des 15 Requêtes (.mp4)"
       };
       var VIDEO_SQL_SERIE5_INFO = {
@@ -1029,24 +1029,26 @@
           { t: 248.97, short: "10-11. Transitions", label: "04:09 · 10 & 11. Transitions (:hover) & Transformations" }
         ],
         "sql-serie4": [
-          { t: 0.00, short: "Intro", label: "00:00 · Introduction Série 4 SQL", sel: "#sec-schema" },
-          { t: 22.20, short: "I. Création BD", label: "00:22 · I. Création de la BD — CREATE DATABASE & CREATE TABLE", sel: "#sec-creation-bd" },
-          { t: 48.00, short: "II. Insertion", label: "00:48 · II. Insertion (INSERT INTO SEXE, ENSEIGNANT, ETUDIANT, MATIERE, NOTES)", sel: "#sec-insertion-bd" },
-          { t: 66.98, short: "Req 1 · Jointure+GROUP BY", label: "01:06 · Requête 1 · Jointure + GROUP BY / AVG (Âge moyen par sexe)", sel: "#req-1" },
-          { t: 98.20, short: "Req 2 · Jointure", label: "01:38 · Requête 2 · Jointure simple (Enseignants d'Histoire)", sel: "#req-2" },
-          { t: 122.90, short: "Req 3 · Sous-req NOT IN", label: "02:02 · Requête 3 · Sous-requête / Requête imbriquée NOT IN (Sans note en Sociologie)", sel: "#req-3" },
-          { t: 154.68, short: "Req 4 · Jointure+IN", label: "02:34 · Requête 4 · Jointure + IN (Matières enseignées par MCF ou Assistant)", sel: "#req-4" },
-          { t: 180.82, short: "Req 5 · 3 tables+GROUP BY", label: "03:00 · Requête 5 · Jointure 3 tables + GROUP BY & ORDER BY", sel: "#req-5" },
-          { t: 211.44, short: "Req 6 · Sous-req AVG", label: "03:31 · Requête 6 · Jointure + Sous-requête scalaire (> SELECT AVG)", sel: "#req-6" },
-          { t: 241.34, short: "Req 7 · HAVING+Sous-req", label: "04:01 · Requête 7 · Jointure + GROUP BY / HAVING + Sous-requête (Moyenne diplôme)", sel: "#req-7" },
-          { t: 272.85, short: "Req 8 · GROUP BY/HAVING", label: "04:32 · Requête 8 · Jointure + GROUP BY / HAVING (Plus d'une matière)", sel: "#req-8" },
-          { t: 298.31, short: "Req 9 · Req imbriquée", label: "04:58 · Requête 9 · Requête imbriquée (IN + GROUP BY / HAVING) — Admis par sexe", sel: "#req-9" },
-          { t: 328.07, short: "Req 10 · Sous-req corrélée", label: "05:28 · Requête 10 · Sous-requête corrélée (Note Info > Note Maths)", sel: "#req-10" },
-          { t: 358.69, short: "Req 11 · Auto-jointure", label: "05:58 · Requête 11 · Auto-jointure (ETUDIANT E1, ETUDIANT E2 — Écart <= 180 j)", sel: "#req-11" },
-          { t: 384.15, short: "Req 12 · Sous-req NOT IN", label: "06:24 · Requête 12 · Sous-requête corrélée NOT IN (Étudiants sans note par matière)", sel: "#req-12" },
-          { t: 411.51, short: "Req 13 · HAVING < 10", label: "06:51 · Requête 13 · Jointure 3 tables + GROUP BY / HAVING AVG < 10", sel: "#req-13" },
-          { t: 437.41, short: "Req 14 · Sous-req MAX", label: "07:17 · Requête 14 · Jointure + Sous-requête corrélée (= SELECT MAX)", sel: "#req-14" },
-          { t: 465.85, short: "Req 15 · 5 tables+GROUP BY", label: "07:45 · Requête 15 · Jointure 5 tables + GROUP BY (Ali Ben Salah)", sel: "#req-15" }
+          { t: 0.00, short: "Intro", label: "00:00 · Introduction Série 4 SQL — jointures, sous-requêtes, Group By", sel: "#sec-schema" },
+          { t: 39.00, short: "I. Création BD", label: "00:39 · Création de la BD — ordre parents, enfants, association", sel: "#sec-creation-bd" },
+          { t: 80.80, short: "Ibis. Contraintes", label: "01:20 · Rappel contraintes — UPDATE par défaut = RESTRICT", sel: "#sec-creation-bd" },
+          { t: 134.50, short: "II. Insertion", label: "02:14 · Insertion — les tableaux remplis utilisés dans les requêtes", sel: "#sec-insertion-bd" },
+          { t: 173.20, short: "Req 1 · Jointure + GROUP BY / AVG", label: "02:53 · Requête 1 · Jointure + GROUP BY / AVG (âge moyen par sexe)", sel: "#req-1" },
+          { t: 223.00, short: "Req 2 · Jointure simple", label: "03:43 · Requête 2 · Jointure simple (enseignants d'Histoire)", sel: "#req-2" },
+          { t: 261.00, short: "Req 3 · Sous-requête imbriquée NOT IN", label: "04:21 · Requête 3 · Sous-requête imbriquée NOT IN (sans note en Sociologie)", sel: "#req-3" },
+          { t: 301.50, short: "Req 4 · Jointure + IN", label: "05:01 · Requête 4 · Jointure + IN (MCF ou Assistant)", sel: "#req-4" },
+          { t: 346.60, short: "Req 5 · Jointure 3 tables + GROUP BY", label: "05:46 · Requête 5 · Jointure 3 tables + GROUP BY", sel: "#req-5" },
+          { t: 392.70, short: "Req 6 · Jointure + sous-requête scalaire", label: "06:32 · Requête 6 · Jointure + sous-requête scalaire (note Info > moyenne)", sel: "#req-6" },
+          { t: 437.60, short: "Req 7 · Jointure + GROUP BY / HAVING + sou", label: "07:17 · Requête 7 · Jointure + GROUP BY / HAVING + sous-requête", sel: "#req-7" },
+          { t: 481.80, short: "Req 8 · Jointure + GROUP BY / HAVING COUNT", label: "08:01 · Requête 8 · Jointure + GROUP BY / HAVING COUNT > 1", sel: "#req-8" },
+          { t: 520.90, short: "Req 9 · Requête imbriquée", label: "08:40 · Requête 9 · Requête imbriquée (admis par sexe)", sel: "#req-9" },
+          { t: 567.40, short: "Req 10 · Sous-requête corrélée", label: "09:27 · Requête 10 · Sous-requête corrélée (Info > Maths)", sel: "#req-10" },
+          { t: 614.50, short: "Req 11 · Auto-jointure", label: "10:14 · Requête 11 · Auto-jointure (écart d'âge <= 180 j)", sel: "#req-11" },
+          { t: 657.50, short: "Req 12 · Sous-requête corrélée NOT IN", label: "10:57 · Requête 12 · Sous-requête corrélée NOT IN (couples sans note)", sel: "#req-12" },
+          { t: 696.70, short: "Req 13 · Jointure 3 tables + GROUP BY / HAV", label: "11:36 · Requête 13 · Jointure 3 tables + GROUP BY / HAVING (résultat vide !)", sel: "#req-13" },
+          { t: 740.40, short: "Req 14 · Sous-requête corrélée MAX", label: "12:20 · Requête 14 · Sous-requête corrélée MAX (meilleure note)", sel: "#req-14" },
+          { t: 788.40, short: "Req 15 · Jointure 5 tables + GROUP BY", label: "13:08 · Requête 15 · Jointure 5 tables + GROUP BY", sel: "#req-15" },
+          { t: 835.10, short: "Fin", label: "13:55 · Conclusion — les types de requêtes à retenir", sel: "#req-15" }
         ],
         "sql-serie5": [
           { t: 0.00, short: "Intro", label: "00:00 · Introduction Série 5 SQL (Gesthotel)", sel: "#sec-schema" },
