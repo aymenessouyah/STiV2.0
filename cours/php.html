@@ -1863,6 +1863,11 @@ mysqli_close($connexion);
               gérer ses élèves et leurs moyennes. Vous allez la construire en
               entier — la page, son style, ses contrôles et son traitement —
               en réutilisant <b>tout ce qui a été vu jusqu'au point 10</b>.
+              Le site s'organise autour d'une page
+              <code>index.html</code> : un en-tête avec logo, une navigation
+              verticale à gauche, une section à droite contenant un
+              <code>iframe</code> qui affiche toutes les pages, et un pied de
+              page en bas.
               La base de données <code>ecole</code> contient la table
               <code>eleves(Id, Nom_prenom, Moyenne, DateNaissance)</code> :
               l'<code>Id</code> commence toujours par une
@@ -1914,27 +1919,93 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
 ('D01', 'Slimani Omar',    8.75, '2007-12-11'),
 ('D02', 'Cherif Ines',     7.25, '2008-09-17');</code></pre>
 
-            <h3>1️⃣ Partie HTML — les formulaires et les tableaux</h3>
+            <h3>1️⃣ Partie HTML — l'organisation du site</h3>
+            <p>
+              <b>Créer une page <code>index.html</code></b> qui organise tout
+              le site selon le schéma suivant :
+            </p>
             <ul>
               <li>
-                Dans chaque page PHP ci-dessous, le formulaire est écrit en
-                HTML correct : balises <code>form</code> (méthode
-                <code>post</code>), <code>label</code>, champs
-                <code>input</code> avec les bons types :
-                <code>text</code> pour l'Id et le Nom_prenom,
-                <code>number</code> (avec <code>step="0.01"</code>) pour la
-                Moyenne, <code>date</code> pour la DateNaissance, et boutons
-                d'envoi et d'effacement.
+                <b>Un en-tête (<code>header</code>) en haut de la page</b> :
+                il contient le <b>logo</b> du lycée (une image
+                <code>img</code>) et un <b>texte</b> de titre, par exemple
+                « Gestion des élèves — Lycée Raféha ».
               </li>
               <li>
-                Les résultats sont affichés dans des tableaux HTML
-                (<code>table</code>, <code>tr</code>, <code>th</code>,
+                <b>Une navigation verticale à gauche (<code>nav</code>)</b> :
+                ses liens s'affichent les uns sous les autres et pointent vers
+                la page <code>inscription.html</code> et vers les autres
+                pages PHP du point 10 (<code>liste.php</code>,
+                <code>modifier.php</code>, <code>statistiques.php</code>).
+                Chaque lien utilise <code>target="cadre"</code> pour
+                s'ouvrir dans l'iframe de droite, sans quitter la page
+                index.
+              </li>
+              <li>
+                <b>Une section à droite (<code>section</code>)</b> : elle
+                contient un <code>iframe</code> nommé
+                <code>name="cadre"</code> qui contiendra
+                <b>toutes les pages</b> du site. Au départ, il affiche
+                <code>inscription.html</code>
+                (<code>src="inscription.html"</code>).
+              </li>
+              <li>
+                <b>Un pied de page (<code>footer</code>) en bas</b> : un texte
+                de fin de page (par exemple « Travail élaboré par … —
+                Année scolaire … »).
+              </li>
+            </ul>
+            <pre><code>&lt;header&gt;
+   &lt;img src="logo.png" alt="Logo du lycée"&gt;
+   &lt;h1&gt;Gestion des élèves — Lycée Raféha&lt;/h1&gt;
+&lt;/header&gt;
+&lt;div class="milieu"&gt;
+   &lt;nav&gt;
+      &lt;a href="inscription.html" target="cadre"&gt;📝 Inscription&lt;/a&gt;
+      &lt;a href="liste.php" target="cadre"&gt;📋 Liste des élèves&lt;/a&gt;
+      &lt;a href="modifier.php" target="cadre"&gt;✏️ Mise à jour&lt;/a&gt;
+      &lt;a href="statistiques.php" target="cadre"&gt;📊 Statistiques&lt;/a&gt;
+   &lt;/nav&gt;
+   &lt;section&gt;
+      &lt;iframe name="cadre" src="inscription.html"&gt;&lt;/iframe&gt;
+   &lt;/section&gt;
+&lt;/div&gt;
+&lt;footer&gt;Travail élaboré par … — Année scolaire …&lt;/footer&gt;</code></pre>
+            <ul>
+              <li>
+                <b>La page <code>inscription.html</code></b> contient le
+                formulaire d'ajout d'un élève, écrit en HTML correct :
+                <code>form</code> avec la méthode <code>post</code>, l'action
+                <code>ajouter.php</code> et <code>target="cadre"</code> pour
+                afficher le résultat dans l'iframe ; des
+                <code>label</code> et des champs <code>input</code> avec les
+                bons types : <code>text</code> pour l'Id et le Nom_prenom,
+                <code>number</code> (avec <code>step="0.01"</code>) pour la
+                Moyenne, <code>date</code> pour la DateNaissance, et des
+                boutons d'envoi et d'effacement.
+              </li>
+              <li>
+                Les résultats des pages PHP sont affichés dans des tableaux
+                HTML (<code>table</code>, <code>tr</code>, <code>th</code>,
                 <code>td</code>) construits proprement.
               </li>
             </ul>
 
-            <h3>2️⃣ Partie CSS — un fichier style.css commun aux 4 pages</h3>
+            <h3>2️⃣ Partie CSS — un fichier style.css commun à toutes les pages</h3>
             <ul>
+              <li>
+                <b>La mise en page de la page index</b> : l'en-tête
+                (<code>header</code>) aligne le logo et le texte sur une même
+                ligne ; le bloc du milieu (<code>.milieu</code>) place la
+                navigation et la section côte à côte avec
+                <code>display: flex</code> ; la navigation
+                (<code>nav</code>) a une largeur fixe et ses liens
+                s'affichent en colonne, les uns sous les autres, avec un
+                effet au survol ; la section prend toute la place restante
+                et son <code>iframe</code> occupe 100 % de sa largeur et une
+                hauteur suffisante ; le pied de page
+                (<code>footer</code>) reste en bas, texte centré.
+              </li>
               <li>
                 Reliez le même fichier <code>style.css</code> aux quatre pages
                 PHP et stylisez : le corps de page, les formulaires
@@ -1957,8 +2028,9 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
             <h3>3️⃣ Partie JavaScript — contrôler avant d'envoyer</h3>
             <ul>
               <li>
-                Un fichier <code>validation.js</code>, relié aux pages
-                d'ajout et de modification, contrôle la saisie
+                Un fichier <code>validation.js</code>, relié à la page
+                <code>inscription.html</code> et à la page de modification,
+                contrôle la saisie
                 <b>avant</b> l'envoi du formulaire (fonction appelée au clic
                 sur le bouton d'envoi) :
               </li>
@@ -1981,7 +2053,9 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
             <h3>4️⃣ Partie PHP — tout le point 10, sans rien oublier</h3>
             <ul>
               <li>
-                <b>10.1 — ajouter.php</b> : récupérer les champs, mettre la
+                <b>10.1 — ajouter.php</b> : cette page reçoit le formulaire
+                de <code>inscription.html</code> et affiche son résultat dans
+                l'iframe ; récupérer les champs, mettre la
                 première lettre de l'Id en majuscule
                 (<code>strtoupper</code> + <code>substr</code>), puis
                 <code>INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance)</code>
@@ -2016,7 +2090,15 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
 
             <h3>✅ Tests à effectuer avant de rendre</h3>
             <ul>
-              <li>Importer la base, ouvrir liste.php : les 8 élèves s'affichent.</li>
+              <li>
+                Importer la base, puis ouvrir <code>index.html</code> :
+                l'en-tête (logo + texte), la navigation verticale à gauche
+                et le pied de page sont visibles, et l'iframe de droite
+                affiche la page d'inscription. Chaque lien de la navigation
+                change uniquement le contenu de l'iframe, sans quitter la
+                page index.
+              </li>
+              <li>Ouvrir la liste depuis la navigation : les 8 élèves s'affichent dans l'iframe.</li>
               <li>
                 Ajouter un élève avec un Id saisi en minuscule
                 (<code>b03</code>) : il doit être enregistré avec un Id
@@ -2034,7 +2116,8 @@ INSERT INTO eleves (Id, Nom_prenom, Moyenne, DateNaissance) VALUES
 
             <h3>📦 À rendre</h3>
             <p>
-              Le dossier du projet (les quatre pages PHP,
+              Le dossier du projet (la page <code>index.html</code>, la
+              page <code>inscription.html</code>, les quatre pages PHP,
               <code>style.css</code> et <code>validation.js</code>) ainsi que
               <b>l'export de votre base de données</b> après les tests :
               dans phpMyAdmin, base <code>ecole</code> → onglet
