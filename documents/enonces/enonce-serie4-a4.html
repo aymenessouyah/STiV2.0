@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>Série 4 — LMD : Jointures, Sous-requêtes et Group By — Énoncé A4 (STI By AE)</title><style>
+@page { size: A4; margin: 14mm; }
+* { box-sizing: border-box; }
+body { font-family: Georgia, 'Times New Roman', serif; color: #111; margin: 0; font-size: 13.5px; line-height: 1.45; }
+.entete { border: 2.5px solid #111; padding: 10px 14px; display: flex; justify-content: space-between; gap: 10px; }
+.entete h1 { font-size: 19px; margin: 0 0 4px; }
+.entete p { margin: 2px 0; }
+.id { border: 2px solid #111; border-top: none; padding: 8px 14px; display: flex; gap: 18px; flex-wrap: wrap; }
+h2 { font-size: 15.5px; border-bottom: 2px solid #111; padding-bottom: 3px; margin: 16px 0 8px; }
+table { border-collapse: collapse; margin: 6px 0 12px; }
+th, td { border: 1.2px solid #111; padding: 3px 8px; text-align: left; font-size: 12.5px; }
+th { background: #eee; }
+code, pre { font-family: 'Courier New', monospace; font-size: 12.5px; }
+pre { border: 1.5px solid #111; padding: 8px 12px; background: #fafafa; }
+ol > li { margin: 7px 0; }
+.note { font-style: italic; }
+.btn-print { position: fixed; top: 12px; right: 12px; padding: 12px 20px; font-size: 15px; font-weight: bold; background: #f4511e; color: #fff; border: 3px solid #111; border-radius: 12px; cursor: pointer; box-shadow: 4px 4px 0 #111; }
+@media print { .btn-print { display: none; } body { font-size: 12.5px; } }
+.cols { display: flex; gap: 22px; flex-wrap: wrap; }
+</style></head>
+<body>
+<button class="btn-print" onclick="window.print()">🖨️ Imprimer / PDF</button>
+<div class="entete"><div><h1>Série 4 — LMD : Jointures, Sous-requêtes et Group By</h1><p><strong>Matière :</strong> STI — Bases de données (SQL) · <strong>Classe :</strong> 4<sup>ème</sup> SI</p></div>
+<div style="text-align:right"><p><strong>Durée :</strong> 1 h</p><p><strong>Note :</strong> / 20</p></div></div>
+<div class="id"><span>Nom et prénom : ______________________________</span><span>Classe : __________</span><span>Date : ____ / ____ / ________</span></div>
+<h2>Base de données « ETUDIANT_BD »</h2>
+<pre>SEXE (Cdsexe, Lbsexe)
+ENSEIGNANT (Numens, Nomens, Grade, Ancien)
+ETUDIANT (Numetu, Nometu, Dtnaiss, Cdsexe#)
+MATIERE (Numat, Nomat, Coeff, Numens#)
+NOTES (Numetu#, Numat#, Note)   — clé primaire composée (Numetu, Numat)</pre>
+<div class="cols"><div><h3>Table ETUDIANT</h3><table><tr><th>Numetu</th><th>Nometu</th><th>Dtnaiss</th><th>Cdsexe</th></tr>
+<tr><td>1</td><td>Asma Ben Mahmoud</td><td>2003-05-12</td><td>F</td></tr><tr><td>2</td><td>Bassem Hdhili</td><td>2004-11-23</td><td>H</td></tr>
+<tr><td>3</td><td>Souhir Korbsi</td><td>2003-09-01</td><td>F</td></tr><tr><td>4</td><td>Karim Hfayedh</td><td>2005-02-14</td><td>H</td></tr>
+<tr><td>5</td><td>Wissal Wertani</td><td>2004-07-19</td><td>F</td></tr></table>
+<h3>Table SEXE</h3><table><tr><th>Cdsexe</th><th>Lbsexe</th></tr><tr><td>H</td><td>Garçon</td></tr><tr><td>F</td><td>Fille</td></tr></table>
+<h3>Table ENSEIGNANT</h3><table><tr><th>Numens</th><th>Nomens</th><th>Grade</th><th>Ancien</th></tr>
+<tr><td>101</td><td>Ali Ben Salah</td><td>Professeur</td><td>15</td></tr><tr><td>102</td><td>Safia Tammar</td><td>MCF</td><td>8</td></tr><tr><td>103</td><td>Karim Foughali</td><td>Assistant</td><td>3</td></tr></table></div>
+<div><h3>Table MATIERE</h3><table><tr><th>Numat</th><th>Nomat</th><th>Coeff</th><th>Numens</th></tr>
+<tr><td>10</td><td>Informatique</td><td>3</td><td>101</td></tr><tr><td>11</td><td>Mathématiques</td><td>4</td><td>102</td></tr>
+<tr><td>12</td><td>Histoire</td><td>2</td><td>103</td></tr><tr><td>13</td><td>Sociologie</td><td>2</td><td>101</td></tr></table>
+<h3>Table NOTES</h3><table><tr><th>Numetu</th><th>Numat</th><th>Note</th></tr>
+<tr><td>1</td><td>10</td><td>15.50</td></tr><tr><td>1</td><td>11</td><td>12.00</td></tr><tr><td>1</td><td>12</td><td>14.00</td></tr>
+<tr><td>2</td><td>10</td><td>11.00</td></tr><tr><td>2</td><td>11</td><td>9.00</td></tr><tr><td>3</td><td>10</td><td>18.00</td></tr>
+<tr><td>3</td><td>11</td><td>15.50</td></tr><tr><td>3</td><td>12</td><td>13.50</td></tr><tr><td>3</td><td>13</td><td>16.00</td></tr>
+<tr><td>4</td><td>12</td><td>10.00</td></tr><tr><td>5</td><td>10</td><td>13.00</td></tr><tr><td>5</td><td>12</td><td>8.00</td></tr></table></div></div>
+<h2>Travail demandé — écrire les requêtes SQL (15 requêtes)</h2>
+<ol><li>Afficher quel était l'âge moyen des garçons et celui des filles au 01/01/2025.</li><li>Afficher le nom et le grade des enseignants d'histoire.</li><li>Afficher les noms et numéros des étudiants qui n'ont pas de notes en Sociologie.</li><li>Afficher le nom et le coefficient des matières enseignées par des maîtres de conférences (MCF) ou des assistants.</li><li>Afficher pour chaque étudiant (nom et numéro), et par ordre alphabétique, la moyenne qu'il a obtenue dans chaque matière.</li><li>Afficher le nom, l'âge et le sexe des étudiants qui ont eu une note d'informatique supérieure à la moyenne générale de la classe.</li><li>Afficher, pour chaque étudiant (nom et numéro) qui a une note dans chacune des matières, la moyenne obtenue au diplôme (moyenne pondérée par les coefficients).</li><li>Afficher le nom, le grade et l'ancienneté des enseignants qui enseignent dans plus d'une matière.</li><li>Afficher le nombre de garçons et le nombre de filles qui ont réussi au diplôme (moyenne pondérée &ge; 10 et une note dans chaque matière).</li><li>Afficher le nom, le numéro et le sexe des étudiants qui ont une note en informatique supérieure à leur note de mathématiques.</li><li>Afficher les noms des couples (nom du garçon, nom de la fille) dont la différence d'âge ne dépasse pas 6 mois (180 jours).</li><li>Pour les étudiants n'ayant pas de note dans une matière, afficher le numéro et le nom de l'étudiant ainsi que le nom de la matière concernée.</li><li>Afficher les matières pour lesquelles la moyenne des notes est inférieure à 10, ainsi que le nom de l'enseignant correspondant.</li><li>Afficher, pour chaque matière, la meilleure note et le nom de l'étudiant qui l'a obtenue.</li><li>Afficher, pour chaque sexe, la moyenne des notes dans les matières enseignées par l'enseignant « Ali Ben Salah ».</li></ol>
+<p class="note">NB : toute requête syntaxiquement correcte et donnant le résultat attendu est acceptée. Préciser si nécessaire les alias de tables utilisés.</p>
+<p style="text-align:center;margin-top:18px">— Bon courage —<br><small>STI Version 2.0 By AE · Série 4 SQL</small></p>
+</body></html>

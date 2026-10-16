@@ -861,7 +861,7 @@ html.dark .rel-box { border-color: #fff; box-shadow: 2px 2px 0 #000; }
         <div class="sub-links-container">
           <a href="#bac-serie4" class="sub-link">🎬 Série 4 — Jointures, Sous-requêtes, Group By (15 requêtes)</a>
           <a href="#bac-serie5" class="sub-link">🎬 Série 5 — Date, Jointures, Sous-requêtes, Group By (20 requêtes)</a>
-          <a href="#bac-sujets" class="sub-link">🗂️ Banque de sujets de Bac corrigés (2018 · 2019)</a>
+          <a href="#bac-enseignant" class="sub-link">🏫 Mode enseignant &amp; tableau de bord</a>
         </div>
       </div>
     </nav>
@@ -2714,142 +2714,80 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
         </div>
 
 
-        <div class="card" id="bac-sujets">
-          <h3>🗂️ Banque de sujets de Bac — épreuve Bases de données (Sciences de l'informatique)</h3>
-          <p>De <strong>vrais sujets officiels</strong> des sessions passées (ministère de l'Éducation), reproduits avec le <strong>corrigé officiel</strong> remis en forme pas à pas : pour chaque question, le type de requête et la démarche. Travaillez d'abord le sujet <em>sans regarder</em>, puis ouvrez les corrigés un par un.</p>
-          <p>🏷️ <strong>Filtrer par thème :</strong></p>
-          <p id="bac-filtres">
-            <button type="button" class="bac-filtre" data-theme="tous" style="padding:8px 14px;border-radius:999px;border:2px solid #1a1a2e;background:#f4511e;color:#fff;font-weight:800;cursor:pointer;margin:2px">Tous</button>
-            <button type="button" class="bac-filtre" data-theme="ldd" style="padding:8px 14px;border-radius:999px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer;margin:2px">LDD (CREATE / ALTER)</button>
-            <button type="button" class="bac-filtre" data-theme="lmd" style="padding:8px 14px;border-radius:999px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer;margin:2px">LMD (INSERT / UPDATE / DELETE)</button>
-            <button type="button" class="bac-filtre" data-theme="jointures" style="padding:8px 14px;border-radius:999px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer;margin:2px">Jointures</button>
-            <button type="button" class="bac-filtre" data-theme="groupby" style="padding:8px 14px;border-radius:999px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer;margin:2px">GROUP BY</button>
-            <button type="button" class="bac-filtre" data-theme="lcd" style="padding:8px 14px;border-radius:999px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer;margin:2px">LCD (utilisateurs & droits)</button>
-            <button type="button" class="bac-filtre" data-theme="theorie" style="padding:8px 14px;border-radius:999px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer;margin:2px">Théorie & contraintes</button>
-            <button type="button" class="bac-filtre" data-theme="modelisation" style="padding:8px 14px;border-radius:999px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer;margin:2px">Modélisation</button>
+
+        <div class="card" id="bac-enseignant">
+          <h3>🏫 Mode enseignant — énoncés imprimables &amp; tableau de bord de la classe</h3>
+          <h4>🖨️ 1) Énoncés seuls, prêts pour un devoir surveillé (A4)</h4>
+          <p>Chaque fiche contient uniquement l'<strong>énoncé</strong> (schéma, données et questions — <em>aucune correction</em>), avec en-tête Nom / Classe / Date et barème sur 20. Cliquez, puis imprimez (ou enregistrez en PDF) depuis la fiche :</p>
+          <p>
+            <a href="../documents/enonces/enonce-serie4-a4.html" target="_blank" rel="noopener" style="display:inline-block;padding:12px 18px;border-radius:12px;border:3px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;">🖨️ Énoncé Série 4 (ETUDIANT_BD) — A4</a>
+            <a href="../documents/enonces/enonce-serie5-a4.html" target="_blank" rel="noopener" style="display:inline-block;margin-left:10px;padding:12px 18px;border-radius:12px;border:3px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;">🖨️ Énoncé Série 5 (Gesthotel) — A4</a>
           </p>
-          <p style="font-size:.9rem">📄 Sources officielles : <a href="http://www.bacweb.tn/bac/2018/principale/informatique/bd_c.pdf" target="_blank" rel="noopener">corrigé Bac 2018 (bacweb.tn)</a> · <a href="https://www.ecoles.com.tn/sites/default/files/devoirs/files/bac-2019-bac-info-epreuve-base-donnees-session-controle-correction-pdf.pdf" target="_blank" rel="noopener">corrigé Bac 2019 contrôle</a>. Durée de l'épreuve : 2 h · coefficient 1.5.</p>
-        </div>
-
-        <div class="card bac-sujet" data-themes="theorie ldd lmd jointures groupby modelisation" id="bac-sujet-2018">
-          <h3>📝 Bac 2018 — session principale · Bases de données <small>(2 h · coef 1.5)</small></h3>
-          <p><strong>Exercice 1 (3 pts) — Théorie :</strong> associer chaque anomalie (doublons d'identifiant, besoins de recherche non couverts, perte de données après coupure, colonnes manquantes, données secrètes consultées par tous, mises à jour simultanées) à la fonction du SGBD concernée : intégrité, manipulation, sécurité du fonctionnement, définition des données, confidentialité, gestion des accès concurrents.</p>
-          <details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 Exercice 1 — voir le corrigé pas à pas</summary><p>Les correspondances officielles : doublon d'identifiant → <strong>intégrité</strong> ; recherches impossibles → <strong>définition des données</strong> (schéma incomplet) ; perte après coupure → <strong>sécurité du fonctionnement</strong> ; colonnes manquantes → <strong>définition</strong> ; données secrètes lues par tous → <strong>confidentialité</strong> ; mises à jour simultanées → <strong>gestion des accès concurrents</strong>. 👣 Réflexe Bac : chaque anomalie décrit la <em>fonction absente</em> du SGBD.</p></details>
-          <p><strong>Exercice 2 (9 pts) — Annonces de vente de véhicules :</strong></p>
-          <pre><code>CONSTRUCTEUR (IdConst, NomConst)
-MODELE (IdMod, NomMod, IdConst#)
-VEHICULE (ImmatVeh, PuisFisc, Energie, Couleur, IdMod#)
-VENDEUR (IdVend, Email, Tel, NomReg)
-ANNONCE (RefAnn, DateAnn, PrixVente, IdVend#, ImmatVeh#)</code></pre>
-          <p><strong>Partie A</strong> — écrire les requêtes SQL :</p>
-          <ol>
-            <li>Créer la table MODELE (IdMod Varchar(6) PK, NomMod Varchar(30) NOT NULL, IdConst Varchar(4) FK).</li>
-            <li>Diminuer de 10 % les prix de vente des véhicules de puissance fiscale ≥ 6 CV.</li>
-            <li>Supprimer les annonces effectuées avant l'année 2010.</li>
-            <li>Liste des annonces (modèle, puissance, énergie, couleur, prix) triée par prix décroissant.</li>
-            <li>Noms distincts des modèles DIESEL dont le prix ≤ 50 000 DT.</li>
-            <li>Pour chaque modèle : identifiant et nombre d'annonces.</li>
-          </ol>
-          <details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 A.1 — Créer MODELE — voir le corrigé pas à pas</summary><pre><code>CREATE TABLE MODELE (
-  IdMod Varchar(6) PRIMARY KEY,
-  NomMod Varchar(30) NOT NULL,
-  IdConst Varchar(4) REFERENCES CONSTRUCTEUR(IdConst));</code></pre><p>🏷️ <strong>Type :</strong> LDD — CREATE TABLE avec clé primaire, NOT NULL et clé étrangère</p><p>👣 <strong>Pas à pas :</strong> types imposés par l'énoncé ; la FK référence CONSTRUCTEUR déjà créée.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 A.2 — Baisse de 10 % — voir le corrigé pas à pas</summary><pre><code>UPDATE ANNONCE A, VEHICULE V
-SET PrixVente = PrixVente * 0.9
-WHERE A.ImmatVeh = V.ImmatVeh
-AND PuisFisc >= 6;</code></pre><p>🏷️ <strong>Type :</strong> LMD — UPDATE avec jointure</p><p>👣 <strong>Pas à pas :</strong> le prix est dans ANNONCE mais le critère (PuisFisc) dans VEHICULE : jointure dans l'UPDATE, puis −10 % = × 0,9.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 A.3 — Supprimer avant 2010 — voir le corrigé pas à pas</summary><pre><code>DELETE FROM ANNONCE
-WHERE DateAnn <= '31/12/2009';</code></pre><p>🏷️ <strong>Type :</strong> LMD — DELETE avec condition de date</p><p>👣 <strong>Pas à pas :</strong> « avant 2010 » = jusqu'au 31/12/2009 inclus (tout format de date valide accepté).</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 A.4 — Liste triée par prix décroissant — voir le corrigé pas à pas</summary><pre><code>SELECT NomMod, PuisFisc, Energie, Couleur, PrixVente
-FROM ANNONCE A, VEHICULE V, MODELE M
-WHERE A.ImmatVeh = V.ImmatVeh
-AND V.IdMod = M.IdMod
-ORDER BY PrixVente DESC;</code></pre><p>🏷️ <strong>Type :</strong> Jointure (3 tables) + ORDER BY</p><p>👣 <strong>Pas à pas :</strong> chaîner ANNONCE → VEHICULE → MODELE par les clés, puis tri DESC sur le prix.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 A.5 — Modèles DIESEL ≤ 50 000 DT — voir le corrigé pas à pas</summary><pre><code>SELECT DISTINCT NomMod
-FROM MODELE M, ANNONCE A, VEHICULE V
-WHERE A.ImmatVeh = V.ImmatVeh
-AND V.IdMod = M.IdMod
-AND Energie = 'DIESEL'
-AND PrixVente <= 50000;</code></pre><p>🏷️ <strong>Type :</strong> Jointure + DISTINCT</p><p>👣 <strong>Pas à pas :</strong> même chaîne de jointures ; DISTINCT élimine les modèles répétés par plusieurs annonces.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 A.6 — Nombre d'annonces par modèle — voir le corrigé pas à pas</summary><pre><code>SELECT IdMod, COUNT(RefAnn)
-FROM ANNONCE A, VEHICULE V
-WHERE A.ImmatVeh = V.ImmatVeh
-GROUP BY IdMod;</code></pre><p>🏷️ <strong>Type :</strong> GROUP BY + COUNT</p><p>👣 <strong>Pas à pas :</strong> « pour chaque modèle » → GROUP BY IdMod ; COUNT compte les annonces du groupe.</p></details>
-          <p><strong>Partie B</strong> — on ajoute la table REGION (IdReg, Libelle) ; le vendeur ne garde plus NomReg mais référence sa région.</p>
-          <details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 Partie B — ALTER VENDEUR — voir le corrigé pas à pas</summary><p>🏷️ <strong>Contrainte d'intégrité référentielle</strong> à respecter. Nouvelle représentation : <code>VENDEUR (IdVend, Email, Tel, IdReg#)</code>.</p><pre><code>ALTER TABLE VENDEUR DROP COLUMN NomReg;
-ALTER TABLE VENDEUR ADD COLUMN IdReg Varchar(3) REFERENCES REGION(IdReg);</code></pre><p>🏷️ <strong>Type :</strong> LDD — ALTER TABLE (DROP / ADD COLUMN)</p><p>👣 <strong>Pas à pas :</strong> supprimer l'ancienne colonne texte, ajouter la clé étrangère vers REGION. Le barème accepte aussi : supprimer la table VENDEUR et la recréer.</p></details>
-          <p><strong>Exercice 3 (8 pts) — Modélisation « Prix Nobel » :</strong> à partir des colonnes (AnneePrix, IntCat, IntObj, NomLaur, LibPays…), dégager les sujets et leurs identifiants, puis la représentation textuelle.</p>
-          <details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 Exercice 3 — voir le corrigé pas à pas</summary><pre><code>CATEGORIE (CodeCat, IntCat)
-PAYS (CodePays, LibPays)
-LAUREAT (IdLaur, NomLaur, CodePays#)
-OBJET (CodeObj, LibObj, CodeCat#)
-PRIX (AnneePrix, CodeObj#, IdLaur#)</code></pre><p>🏷️ <strong>Type :</strong> Modélisation — schéma relationnel</p><p>👣 <strong>Pas à pas :</strong> 5 tables, 5 clés primaires (dont la composée de PRIX : année + objet + lauréat), 4 clés étrangères. Barème officiel : identification des tables et des clés, point par point.</p></details>
-        </div>
-
-        <div class="card bac-sujet" data-themes="ldd lmd jointures groupby lcd theorie modelisation" id="bac-sujet-2019">
-          <h3>📝 Bac 2019 — session de contrôle · Bases de données <small>(2 h · coef 1.5)</small></h3>
-          <p><strong>Exercice 1 (2,5 pts) — Vrai/Faux et types de contraintes :</strong> « DELETE efface la structure » (F), « deux utilisateurs peuvent avoir le même mot de passe » (V), « WITH GRANT OPTION = droit de sauvegarde » (F)… et classer : ON DELETE CASCADE → intégrité <em>référentielle</em> ; CHECK → intégrité de <em>domaine</em> ; PRIMARY KEY → intégrité de <em>table</em>.</p>
-          <details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 Exercice 1 — voir le corrigé pas à pas</summary><p>👣 <strong>Pas à pas :</strong> retenez le trio officiel — contrainte <strong>de table</strong> (PRIMARY KEY), <strong>référentielle</strong> (FOREIGN KEY, ON DELETE/UPDATE…), <strong>de domaine</strong> (CHECK, type, NOT NULL sur une colonne).</p></details>
-          <p><strong>Exercice 2 (8,5 pts) — Club_Robotique :</strong></p>
-          <pre><code>ROBOT (IdRob, NomRob)
-FABRICANT (IdFab, LibFab)
-COMPOSANT (CodeComp, LibComp, PoidsComp, PrixComp, IdFab#)
-MEMBRE (IdMemb, NomMemb, PreMemb)
-MONTAGE (IdRob#, CodeComp#, IdMemb#, DateMont)</code></pre>
-          <ol>
-            <li>Créer la table MONTAGE (3 chaînes de 5, DateMont obligatoire).</li>
-            <li>Ajouter le composant « Caméra vidéo » (C0015, 150 g, 180.250 DT, fabricant F234).</li>
-            <li>Réduction de 20 % sur les composants dont le libellé commence par « Diode LED ».</li>
-            <li>Ajouter la contrainte VP : poids ≤ 200 g.</li>
-            <li>Afficher : a) fabricants triés alphabétiquement · b) membres ayant monté le robot 'R101' · c) nombre de « Capteur de couleurs » montés en 2018 · d) robots contenant une « Caméra infrarouge » · e) par robot : montant total et nombre de composants.</li>
-            <li>Créer l'utilisateur U22 (mot de passe 'ROB2019').</li>
-            <li>Donner à U22 INSERT, UPDATE, DELETE sur COMPOSANT, avec droit de transmettre INSERT.</li>
-          </ol>
-          <details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 1 — Créer MONTAGE — voir le corrigé pas à pas</summary><pre><code>CREATE TABLE MONTAGE (
-  IdRob varchar(5) REFERENCES ROBOT(IdRob),
-  CodeComp varchar(5) REFERENCES COMPOSANT(CodeComp),
-  IdMemb varchar(5) REFERENCES MEMBRE(IdMemb),
-  DateMont Date NOT NULL,
-  CONSTRAINT PK PRIMARY KEY (IdRob, CodeComp, IdMemb));</code></pre><p>🏷️ <strong>Type :</strong> LDD — CREATE TABLE, clé primaire composée (3 colonnes)</p><p>👣 <strong>Pas à pas :</strong> MONTAGE est une association ternaire : sa clé primaire réunit les 3 clés étrangères ; DateMont NOT NULL car obligatoire.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 2 — Ajouter le composant — voir le corrigé pas à pas</summary><pre><code>INSERT INTO COMPOSANT VALUES ('C0015', 'Caméra vidéo', 150, 180.250, 'F234');</code></pre><p>🏷️ <strong>Type :</strong> LMD — INSERT INTO</p><p>👣 <strong>Pas à pas :</strong> l'ordre des valeurs suit l'ordre des colonnes de COMPOSANT.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 3 — Réduction de 20 % — voir le corrigé pas à pas</summary><pre><code>UPDATE COMPOSANT
-SET PrixComp = PrixComp * 0.8
-WHERE LibComp LIKE 'Diode LED%';</code></pre><p>🏷️ <strong>Type :</strong> LMD — UPDATE + LIKE</p><p>👣 <strong>Pas à pas :</strong> −20 % = × 0,8 ; LIKE 'Diode LED%' = « commence par » (le % remplace n'importe quelle suite).</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 4 — Contrainte VP — voir le corrigé pas à pas</summary><pre><code>ALTER TABLE COMPOSANT
-ADD CONSTRAINT VP CHECK (PoidsComp <= 200);</code></pre><p>🏷️ <strong>Type :</strong> LDD — ALTER TABLE ADD CONSTRAINT CHECK</p><p>👣 <strong>Pas à pas :</strong> une contrainte nommée peut être ajoutée après création de la table.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 5.a — Fabricants triés — voir le corrigé pas à pas</summary><pre><code>SELECT LibFab FROM FABRICANT ORDER BY LibFab;</code></pre><p>🏷️ <strong>Type :</strong> Sélection + ORDER BY croissant (par défaut)</p><p>👣 <strong>Pas à pas :</strong> une seule table, tri alphabétique.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 5.b — Membres du robot R101 — voir le corrigé pas à pas</summary><pre><code>SELECT NomMemb, PreMemb
-FROM MEMBRE Mb, MONTAGE Mt
-WHERE Mt.IdMemb = Mb.IdMemb
-AND IdRob = 'R101';</code></pre><p>🏷️ <strong>Type :</strong> Jointure + filtre</p><p>👣 <strong>Pas à pas :</strong> le nom est dans MEMBRE, la participation dans MONTAGE : jointure sur IdMemb, filtre sur le robot.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 5.c — Capteurs de couleurs montés en 2018 — voir le corrigé pas à pas</summary><pre><code>SELECT COUNT(*)
-FROM MONTAGE M, COMPOSANT C
-WHERE M.CodeComp = C.CodeComp
-AND LibComp = 'Capteur de couleurs'
-AND DateMont >= '01/01/2018' AND DateMont <= '31/12/2018';</code></pre><p>🏷️ <strong>Type :</strong> Jointure + COUNT + dates</p><p>👣 <strong>Pas à pas :</strong> le libellé est dans COMPOSANT, la date dans MONTAGE ; on compte les montages de l'année 2018.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 5.d — Robots avec Caméra infrarouge — voir le corrigé pas à pas</summary><pre><code>SELECT NomRob
-FROM ROBOT R, MONTAGE M, COMPOSANT C
-WHERE C.CodeComp = M.CodeComp
-AND R.IdRob = M.IdRob
-AND LibComp = 'Caméra infrarouge';</code></pre><p>🏷️ <strong>Type :</strong> Jointure (3 tables)</p><p>👣 <strong>Pas à pas :</strong> chaîner ROBOT → MONTAGE → COMPOSANT, filtrer sur le libellé.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 5.e — Montant et nombre par robot — voir le corrigé pas à pas</summary><pre><code>SELECT IdRob, SUM(PrixComp), COUNT(CodeComp)
-FROM COMPOSANT C, MONTAGE M
-WHERE C.CodeComp = M.CodeComp
-GROUP BY IdRob;</code></pre><p>🏷️ <strong>Type :</strong> GROUP BY + SUM + COUNT</p><p>👣 <strong>Pas à pas :</strong> « pour chaque robot » → GROUP BY IdRob ; SUM additionne les prix, COUNT les composants du groupe.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 6 — Créer l'utilisateur U22 — voir le corrigé pas à pas</summary><pre><code>CREATE USER U22 IDENTIFIED BY 'ROB2019';</code></pre><p>🏷️ <strong>Type :</strong> LCD — CREATE USER</p><p>👣 <strong>Pas à pas :</strong> création du compte avant toute attribution de droits.</p></details><details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 7 — Droits de U22 — voir le corrigé pas à pas</summary><pre><code>GRANT INSERT, UPDATE, DELETE ON COMPOSANT TO U22
-WITH GRANT OPTION;</code></pre><p>🏷️ <strong>Type :</strong> LCD — GRANT … WITH GRANT OPTION</p><p>👣 <strong>Pas à pas :</strong> WITH GRANT OPTION autorise U22 à transmettre à son tour le droit d'insertion (réponse officielle : INSERT accordé avec l'option, UPDATE/DELETE sans).</p></details>
-          <p><strong>Exercice 3 (9 pts) — Modélisation « voies urbaines intelligentes » :</strong> dégager VOIE, PANNEAU, OBJET et CAPTEUR avec leurs identifiants, puis la représentation textuelle, et sa variante avec la table d'association ALIMENTER entre panneaux et objets.</p>
-          <details style="margin:8px 0;border:2px solid #1a1a2e;border-radius:10px;padding:8px 12px;background:#fffdf7"><summary style="cursor:pointer;font-weight:800">🔎 Exercice 3 — voir le corrigé pas à pas</summary><pre><code>VOIE (CodeVoie, NomVoie)
-PANNEAU (IdPan, DesPan, CodeVoie#)
-OBJET (IdObj, DesObj, IdPan#)
-CAPTEUR (IdCap, DesCap, IdObj#)
--- Variante B : OBJET (IdObj, DesObj) + ALIMENTER (IdPan#, IdObj#)</code></pre><p>🏷️ <strong>Type :</strong> Modélisation — schéma relationnel et association N-N</p><p>👣 <strong>Pas à pas :</strong> chaque objet intelligent dépend d'un panneau, lui-même sur une voie ; la partie B transforme le lien panneau-objet en table d'association à clé composée.</p></details>
+          <h4>📊 2) Tableau de bord de la classe (sauvegardé sur cet appareil)</h4>
+          <p>Cochez les notions <strong>acquises par la classe</strong> au fil des séances : la progression se met à jour instantanément et reste enregistrée dans le navigateur.</p>
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+          <div style="flex:1;min-width:280px;border:2px solid #1a1a2e;border-radius:12px;padding:12px 16px;background:#fffdf7">
+<h4 style="margin:4px 0">Série 4 — Jointures, Sous-requêtes, Group By</h4><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Création de la BD (ordre parents → enfants → association)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Contraintes : PK, FK, NOT NULL — UPDATE par défaut RESTRICT</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Jointure simple entre 2 tables</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Jointure multi-tables (3 à 5 tables)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">GROUP BY + AVG / COUNT</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">HAVING (filtrer après regroupement)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Sous-requête imbriquée (IN / NOT IN)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Sous-requête scalaire (= MIN, > AVG…)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Sous-requête corrélée</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Auto-jointure (une table avec elle-même)</label>
+<div style="background:#e8e4da;border-radius:999px;height:16px;margin-top:10px;overflow:hidden"><div class="bord-barre" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="height:100%;width:0%;background:linear-gradient(90deg,#f4511e,#d81b60);transition:width .4s"></div></div>
+<p style="margin:6px 0 0"><strong class="bord-pct" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By">0 %</strong> des notions acquises</p></div>
+          <div style="flex:1;min-width:280px;border:2px solid #1a1a2e;border-radius:12px;padding:12px 16px;background:#fffdf7">
+<h4 style="margin:4px 0">Série 5 — Date, Jointures, Sous-requêtes, Group By</h4><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Création : CHECK, AUTO_INCREMENT, DATETIME</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Contraintes et intégrité référentielle</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Dates : DATE() et NOW() (ignorer l'heure)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Dates : DATE_ADD / DATE_SUB / DATEDIFF</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Jointures avec alias</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">GROUP BY sur 1 ou 2 colonnes</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Agrégations SUM et COUNT(DISTINCT)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">HAVING COUNT >= …</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Sous-requêtes IN / NOT IN</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Tri multicritère ORDER BY et DISTINCT</label>
+<div style="background:#e8e4da;border-radius:999px;height:16px;margin-top:10px;overflow:hidden"><div class="bord-barre" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="height:100%;width:0%;background:linear-gradient(90deg,#f4511e,#d81b60);transition:width .4s"></div></div>
+<p style="margin:6px 0 0"><strong class="bord-pct" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By">0 %</strong> des notions acquises</p></div>
+          </div>
+          <div style="border:3px solid #1a1a2e;border-radius:12px;padding:12px 16px;margin-top:16px;background:#fdf6ec">
+            <p style="margin:4px 0;font-size:1.1rem">🎓 <strong>Progression globale de la classe : <span id="bord-global-pct">0 %</span></strong> <span id="bord-global-txt"></span></p>
+            <div style="background:#e8e4da;border-radius:999px;height:20px;overflow:hidden"><div id="bord-global-barre" style="height:100%;width:0%;background:linear-gradient(90deg,#2e7d32,#66bb6a);transition:width .4s"></div></div>
+            <p style="margin-top:12px">
+              <button type="button" id="bord-tout" style="padding:9px 16px;border-radius:10px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer">☑ Tout cocher</button>
+              <button type="button" id="bord-reset" style="padding:9px 16px;border-radius:10px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer;margin-left:10px">↺ Réinitialiser</button>
+            </p>
+          </div>
         </div>
         <script>
         (function () {
-          var btns = document.getElementsByClassName("bac-filtre");
-          var sujets = document.getElementsByClassName("bac-sujet");
-          function filtrer(theme) {
-            var i, j;
-            for (i = 0; i < sujets.length; i++) {
-              var themes = sujets[i].getAttribute("data-themes") || "";
-              sujets[i].style.display = (theme === "tous" || themes.indexOf(theme) !== -1) ? "" : "none";
+          var CLE = "sti-bord-classe-v1";
+          var cases = document.getElementsByClassName("bord-notion");
+          var etat = {};
+          try { etat = JSON.parse(localStorage.getItem(CLE) || "{}"); } catch (e) { etat = {}; }
+          function indice(c) { return c.getAttribute("data-groupe") + "|" + c.parentNode.textContent.trim(); }
+          function maj() {
+            var groupes = {}, total = 0, coches = 0, i, c, g;
+            for (i = 0; i < cases.length; i++) {
+              c = cases[i]; g = c.getAttribute("data-groupe");
+              if (!groupes[g]) groupes[g] = [0, 0];
+              groupes[g][1]++; total++;
+              if (c.checked) { groupes[g][0]++; coches++; }
+              etat[indice(c)] = c.checked;
             }
-            for (j = 0; j < btns.length; j++) {
-              var actif = btns[j].getAttribute("data-theme") === theme;
-              btns[j].style.background = actif ? "#f4511e" : "#fff";
-              btns[j].style.color = actif ? "#fff" : "#1a1a2e";
+            var barres = document.getElementsByClassName("bord-barre");
+            for (i = 0; i < barres.length; i++) {
+              g = barres[i].getAttribute("data-groupe");
+              barres[i].style.width = (groupes[g] ? Math.round(groupes[g][0] * 100 / groupes[g][1]) : 0) + "%";
             }
+            var pcts = document.getElementsByClassName("bord-pct");
+            for (i = 0; i < pcts.length; i++) {
+              g = pcts[i].getAttribute("data-groupe");
+              pcts[i].textContent = (groupes[g] ? Math.round(groupes[g][0] * 100 / groupes[g][1]) : 0) + " %";
+            }
+            var pctG = total ? Math.round(coches * 100 / total) : 0;
+            document.getElementById("bord-global-barre").style.width = pctG + "%";
+            document.getElementById("bord-global-pct").textContent = pctG + " %";
+            document.getElementById("bord-global-txt").textContent = "(" + coches + " / " + total + " notions)";
+            try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch (e) {}
           }
-          for (var k = 0; k < btns.length; k++) {
-            btns[k].addEventListener("click", function () { filtrer(this.getAttribute("data-theme")); });
+          var i;
+          for (i = 0; i < cases.length; i++) {
+            if (etat[indice(cases[i])]) cases[i].checked = true;
+            cases[i].addEventListener("change", maj);
           }
+          document.getElementById("bord-tout").addEventListener("click", function () {
+            for (var j = 0; j < cases.length; j++) cases[j].checked = true; maj();
+          });
+          document.getElementById("bord-reset").addEventListener("click", function () {
+            for (var j = 0; j < cases.length; j++) cases[j].checked = false; maj();
+          });
+          maj();
         })();
         </script>
 
