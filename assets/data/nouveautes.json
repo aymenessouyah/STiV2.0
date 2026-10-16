@@ -1,10 +1,65 @@
 [
-  {"date": "2026-10-16", "tag": "Plateforme", "titre": "« Continuer où je m'étais arrêté » + Analytique enseignant", "desc": "L'accueil propose la reprise de la vidéo en cours ou la prochaine notion à réviser ; l'admin visualise les notions qui bloquent la classe.", "lien": "index.html"},
-  {"date": "2026-10-16", "tag": "Plateforme", "titre": "Progression sauvegardée dans le cloud ☁️", "desc": "Connecté, l'élève retrouve ses notions cochées et ses vidéos en cours sur tous ses appareils (pastille en bas à droite).", "lien": "cours/sql.html#bac-enseignant"},
-  {"date": "2026-10-16", "tag": "Cours SQL", "titre": "Mode enseignant & tableau de bord de la classe", "desc": "Énoncés A4 imprimables des Séries 4 et 5 (sans corrigés) pour les devoirs surveillés, et suivi des 20 notions à cocher.", "lien": "cours/sql.html#bac-enseignant"},
-  {"date": "2026-10-16", "tag": "Cours SQL", "titre": "Partie 4 : L'essentiel pour les Bac 🎓", "desc": "Nouvelle partie du cours SQL qui rassemble les deux vidéos de révision (Séries 4 et 5) et le mémo des types de requêtes.", "lien": "cours/sql.html#bac"},
-  {"date": "2026-10-16", "tag": "Vidéo", "titre": "Nouvelle vidéo Série 5 — Gesthotel (18 min 09)", "desc": "Dates, jointures, sous-requêtes et Group By : 20 requêtes tapées lettre par lettre, résultat et type annoncés, 27 chapitres.", "lien": "cours/sql.html#bac-serie5"},
-  {"date": "2026-10-16", "tag": "Vidéo", "titre": "Nouvelle vidéo Série 4 — ETUDIANT_BD (14 min 34)", "desc": "Jointures, sous-requêtes et Group By : création de la BD, contraintes, 15 requêtes lettre par lettre avec leur type.", "lien": "cours/sql.html#bac-serie4"},
-  {"date": "2026-10-16", "tag": "Cours PHP", "titre": "Exercices de synthèse PHP n°1 et n°2 enrichis", "desc": "Gestion des élèves et Recharge VE (horaires 8h–12h / 13h–18h, disponibilité des bornes), corrigés détaillés ligne par ligne, quiz et fiche mémento.", "lien": "cours/php.html"},
-  {"date": "2026-10-16", "tag": "Plateforme", "titre": "Bouton « Installer l'application » partout 📲", "desc": "La plateforme s'installe en un clic sur téléphone et ordinateur, avec un pack hors-ligne pour la Partie Bac.", "lien": "index.html"}
+  {
+    "date": "2026-10-16",
+    "tag": "Admin",
+    "titre": "Vérificateur de santé du site 🩺 + Sauvegarde complète 💾",
+    "desc": "En un clic dans l'admin, contrôlez pages, 12 vidéos, bases .sql, archives .zip, fiches A4 et tables Supabase avant une séance.",
+    "lien": "admin.html"
+  },
+  {
+    "date": "2026-10-16",
+    "tag": "Plateforme",
+    "titre": "« Continuer où je m'étais arrêté » + Analytique enseignant",
+    "desc": "L'accueil propose la reprise de la vidéo en cours ou la prochaine notion à réviser ; l'admin visualise les notions qui bloquent la classe.",
+    "lien": "index.html"
+  },
+  {
+    "date": "2026-10-16",
+    "tag": "Plateforme",
+    "titre": "Progression sauvegardée dans le cloud ☁️",
+    "desc": "Connecté, l'élève retrouve ses notions cochées et ses vidéos en cours sur tous ses appareils (pastille en bas à droite).",
+    "lien": "cours/sql.html#bac-enseignant"
+  },
+  {
+    "date": "2026-10-16",
+    "tag": "Cours SQL",
+    "titre": "Mode enseignant & tableau de bord de la classe",
+    "desc": "Énoncés A4 imprimables des Séries 4 et 5 (sans corrigés) pour les devoirs surveillés, et suivi des 20 notions à cocher.",
+    "lien": "cours/sql.html#bac-enseignant"
+  },
+  {
+    "date": "2026-10-16",
+    "tag": "Cours SQL",
+    "titre": "Partie 4 : L'essentiel pour les Bac 🎓",
+    "desc": "Nouvelle partie du cours SQL qui rassemble les deux vidéos de révision (Séries 4 et 5) et le mémo des types de requêtes.",
+    "lien": "cours/sql.html#bac"
+  },
+  {
+    "date": "2026-10-16",
+    "tag": "Vidéo",
+    "titre": "Nouvelle vidéo Série 5 — Gesthotel (18 min 09)",
+    "desc": "Dates, jointures, sous-requêtes et Group By : 20 requêtes tapées lettre par lettre, résultat et type annoncés, 27 chapitres.",
+    "lien": "cours/sql.html#bac-serie5"
+  },
+  {
+    "date": "2026-10-16",
+    "tag": "Vidéo",
+    "titre": "Nouvelle vidéo Série 4 — ETUDIANT_BD (14 min 34)",
+    "desc": "Jointures, sous-requêtes et Group By : création de la BD, contraintes, 15 requêtes lettre par lettre avec leur type.",
+    "lien": "cours/sql.html#bac-serie4"
+  },
+  {
+    "date": "2026-10-16",
+    "tag": "Cours PHP",
+    "titre": "Exercices de synthèse PHP n°1 et n°2 enrichis",
+    "desc": "Gestion des élèves et Recharge VE (horaires 8h–12h / 13h–18h, disponibilité des bornes), corrigés détaillés ligne par ligne, quiz et fiche mémento.",
+    "lien": "cours/php.html"
+  },
+  {
+    "date": "2026-10-16",
+    "tag": "Plateforme",
+    "titre": "Bouton « Installer l'application » partout 📲",
+    "desc": "La plateforme s'installe en un clic sur téléphone et ordinateur, avec un pack hors-ligne pour la Partie Bac.",
+    "lien": "index.html"
+  }
 ]
