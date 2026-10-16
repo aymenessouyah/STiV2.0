@@ -2723,7 +2723,31 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
             <a href="../documents/enonces/enonce-serie4-a4.html" target="_blank" rel="noopener" style="display:inline-block;padding:12px 18px;border-radius:12px;border:3px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;">🖨️ Énoncé Série 4 (ETUDIANT_BD) — A4</a>
             <a href="../documents/enonces/enonce-serie5-a4.html" target="_blank" rel="noopener" style="display:inline-block;margin-left:10px;padding:12px 18px;border-radius:12px;border:3px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;">🖨️ Énoncé Série 5 (Gesthotel) — A4</a>
           </p>
-          <h4>📊 2) Tableau de bord de la classe (sauvegardé sur cet appareil)</h4>
+          <h4>⬇️ 2) Pack hors-ligne de la Partie Bac</h4>
+          <p>Téléchargez d'avance les pages de cette partie (cours, énoncés A4, corrigés écrits et miniatures) pour les ouvrir <strong>sans connexion</strong> — les vidéos restent en ligne (trop lourdes : 43 et 53 Mo).</p>
+          <p>
+            <button type="button" id="pack-offline" style="padding:10px 16px;border-radius:10px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer">⬇️ Préparer le hors-ligne</button>
+            <span id="pack-offline-txt" style="margin-left:10px;font-weight:700"></span>
+          </p>
+          <script>
+          (function () {
+            var urls = ["./sql.html", "../documents/enonces/enonce-serie4-a4.html", "../documents/enonces/enonce-serie5-a4.html", "../exercices/sql/Tp4-correction-bd.html", "../exercices/sql/Tp-date-ssr-j-gp-correction-bd.html", "../assets/images/sql-serie4-poster.jpg", "../assets/images/sql-serie5-poster.jpg"];
+            document.getElementById("pack-offline").addEventListener("click", function () {
+              var txt = document.getElementById("pack-offline-txt");
+              if (!("caches" in window)) { txt.textContent = "⚠️ Navigateur non compatible."; return; }
+              txt.textContent = "⏳ Téléchargement…";
+              caches.keys().then(function (noms) {
+                var nom = noms.filter(function (n) { return n.indexOf("sti-atelier-") === 0; })[0] || "sti-atelier-v255";
+                return caches.open(nom);
+              }).then(function (cache) {
+                var absolues = urls.map(function (u) { return new URL(u, location.href).href; });
+                return Promise.all(absolues.map(function (u) { return cache.add(u).catch(function () {}); }));
+              }).then(function () { txt.textContent = "✅ Hors-ligne prêt : rouvrez ces pages sans connexion."; })
+              .catch(function () { txt.textContent = "⚠️ Échec partiel — vérifiez la connexion puis réessayez."; });
+            });
+          })();
+          </script>
+          <h4>📊 3) Tableau de bord de la classe (sauvegardé sur cet appareil)</h4>
           <p>Cochez les notions <strong>acquises par la classe</strong> au fil des séances : la progression se met à jour instantanément et reste enregistrée dans le navigateur.</p>
           <div style="display:flex;gap:16px;flex-wrap:wrap">
           <div style="flex:1;min-width:280px;border:2px solid #1a1a2e;border-radius:12px;padding:12px 16px;background:#fffdf7">
@@ -4866,5 +4890,6 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
 <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/config.js?v=227"></script>
 <script src="../assets/js/acces.js?v=227"></script>
+<script src="../assets/js/sync-progressions.js"></script>
 </body>
 </html>

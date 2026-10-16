@@ -3049,3 +3049,34 @@
     init();
   }
 })();
+
+/* ═══════════════ STI PWA INSTALL (v255) — bouton d'installation sur toutes les pages ═══════════════ */
+(function () {
+  try {
+    if (window.__stiPwaInstalle) return; window.__stiPwaInstalle = true;
+    var dejaInstalle = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+    if (dejaInstalle) return;
+    var promptDiffere = null;
+    function bouton() {
+      if (document.getElementById("sti-btn-installer")) return;
+      var b = document.createElement("button");
+      b.id = "sti-btn-installer"; b.type = "button";
+      b.textContent = "📲 Installer l'application";
+      b.setAttribute("style", "position:fixed;left:14px;bottom:14px;z-index:99999;padding:12px 18px;border-radius:999px;border:3px solid #1a1a2e;background:linear-gradient(120deg,#f4511e,#d81b60);color:#fff;font-weight:800;font-size:15px;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;");
+      b.addEventListener("click", function () {
+        if (promptDiffere) {
+          promptDiffere.prompt();
+          promptDiffere.userChoice.then(function () { promptDiffere = null; b.remove(); });
+        } else {
+          alert("Pour installer STI By AE :\n• Sur téléphone : menu du navigateur → « Installer l'application » ou « Ajouter à l'écran d'accueil ».\n• Sur ordinateur : icône d'installation dans la barre d'adresse.");
+        }
+      });
+      document.body.appendChild(b);
+    }
+    window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); promptDiffere = e; bouton(); });
+    window.addEventListener("appinstalled", function () { var b = document.getElementById("sti-btn-installer"); if (b) b.remove(); });
+    /* iPhone/iPad : pas d'événement d'installation → afficher l'aide après 2,5 s */
+    var estIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (estIOS) setTimeout(bouton, 2500);
+  } catch (e) {}
+})();
