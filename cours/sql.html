@@ -854,6 +854,15 @@ html.dark .rel-box { border-color: #fff; box-shadow: 2px 2px 0 #000; }
           <a href="#lmd-dates" class="sub-link">Fonctions de Date & Heure</a>
         </div>
       </div>
+
+      <!-- Section 4 : L'essentiel pour les Bac (vidéos Séries 4 & 5) -->
+      <div class="nav-group">
+        <a href="#bac" class="main-link">4. L'essentiel pour les Bac 🎓</a>
+        <div class="sub-links-container">
+          <a href="#bac-serie4" class="sub-link">🎬 Série 4 — Jointures, Sous-requêtes, Group By (15 requêtes)</a>
+          <a href="#bac-serie5" class="sub-link">🎬 Série 5 — Date, Jointures, Sous-requêtes, Group By (20 requêtes)</a>
+        </div>
+      </div>
     </nav>
     <div class="scrim" id="scrim"></div>
 
@@ -886,7 +895,7 @@ html.dark .rel-box { border-color: #fff; box-shadow: 2px 2px 0 #000; }
           />
         </div>
         <div class="hero-stats" role="group" aria-label="Accès rapide aux parties, fiches et requêtes du cours">
-          <button type="button" class="brutal stat" id="btn-stat-parts" data-mode="parts" title="Cliquer pour voir le plan des 3 Parties">
+          <button type="button" class="brutal stat" id="btn-stat-parts" data-mode="parts" title="Cliquer pour voir le plan des 4 Parties">
             <b id="stat-parts">3</b> <span>Parties</span><small>Voir le plan ▾</small>
           </button>
           <button type="button" class="brutal stat" id="btn-stat-cards" data-mode="cards" title="Cliquer pour parcourir les 24 Fiches du cours">
@@ -2670,6 +2679,46 @@ SELECT DATE_SUB(NOW(), INTERVAL 7 DAY);          -- Il y a 7 jours
 -- Écart en jours entre deux dates :
 SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
             </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 4. PARTIE : L'ESSENTIEL POUR LES BAC (VIDÉOS SÉRIES 4 & 5) -->
+      <section id="bac">
+        <h2>4. L'essentiel pour les Bac 🎓 : les deux vidéos de révision</h2>
+        <div class="card">
+          <h3>🎯 Réviser l'épreuve de Bac avec les deux séries corrigées en vidéo</h3>
+          <p>Cette partie rassemble les <strong>deux vidéos de synthèse SQL</strong> qui reprennent, pas à pas, tout ce qu'il faut maîtriser pour le Bac : création de la base, contraintes, insertion, puis chaque requête <strong>tapée lettre par lettre</strong> avec les tables qui se transforment à l'écran (jointure → WHERE → GROUP BY → HAVING) et le <strong>type de la requête</strong> annoncé à la fin de chaque saisie.</p>
+          <p>📚 <strong>Méthode conseillée :</strong> regarder la vidéo, mettre en pause avant chaque résultat, refaire la requête sur papier, puis comparer avec le corrigé écrit (liens sous chaque vidéo).</p>
+        </div>
+
+        <div class="card" id="bac-serie4">
+          <h3>🎬 Série 4 — LMD : Jointures, Sous-requêtes et Group By <small>(base ETUDIANT_BD · 14 min 34)</small></h3>
+          <img src="../assets/images/sql-serie4-poster.jpg" alt="Aperçu de la vidéo Série 4 SQL" style="width:100%;max-width:760px;border-radius:14px;border:3px solid #1a1a2e;box-shadow:5px 5px 0 #1a1a2e;display:block;margin:10px 0;" loading="lazy" />
+          <p><strong>Contenu :</strong> création de la BD <code>ETUDIANT_BD</code> (5 tables : SEXE, ENSEIGNANT, ETUDIANT, MATIERE, NOTES) · rappel sur les contraintes et le cas de l'<code>UPDATE</code> d'une clé référencée (par défaut <strong>RESTRICT</strong>) · insertions vérifiables · <strong>15 requêtes corrigées</strong> : jointures (jusqu'à 5 tables), GROUP BY / HAVING, sous-requêtes imbriquées et <strong>corrélées</strong>, auto-jointure — chaque requête se termine par l'annonce de son <strong>type</strong>.</p>
+          <p>
+            <button type="button" onclick="if(window.ouvrirVideoPasAPasSTI)window.ouvrirVideoPasAPasSTI('sql-serie4','🎬 Série 4 — Jointures, Sous-requêtes et Group By');" style="padding:12px 20px;border-radius:12px;border:3px solid #1a1a2e;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;">▶️ Regarder la vidéo Série 4 (14 min 34)</button>
+            <a href="../exercices/sql/Tp4-correction-bd.html" style="display:inline-block;margin-left:10px;padding:12px 18px;border-radius:12px;border:3px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;font-size:1rem;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;">📄 Corrigé écrit Série 4</a>
+          </p>
+        </div>
+
+        <div class="card" id="bac-serie5">
+          <h3>🎬 Série 5 — LMD : Date, Sous-requêtes et Group By <small>(base Gesthotel · 18 min 09)</small></h3>
+          <img src="../assets/images/sql-serie5-poster.jpg" alt="Aperçu de la vidéo Série 5 SQL" style="width:100%;max-width:760px;border-radius:14px;border:3px solid #1a1a2e;box-shadow:5px 5px 0 #1a1a2e;display:block;margin:10px 0;" loading="lazy" />
+          <p><strong>Contenu :</strong> création de la BD <code>Gesthotel</code> (3 tables : CHAMBRE, CLIENT, RESERVATION) avec <code>CHECK</code>, <code>AUTO_INCREMENT</code> et <code>DATETIME</code> · rappel sur les contraintes et l'<code>UPDATE</code> par défaut <strong>RESTRICT</strong> · insertions vérifiables · <strong>20 requêtes corrigées</strong> : fonctions de date (<code>NOW</code>, <code>DATE</code>, <code>DATE_ADD</code>, <code>DATE_SUB</code>), jointures, GROUP BY / HAVING, sous-requêtes scalaires et <code>NOT IN</code> — avec le <strong>type de chaque requête</strong>.</p>
+          <p>
+            <button type="button" onclick="if(window.ouvrirVideoPasAPasSTI)window.ouvrirVideoPasAPasSTI('sql-serie5','🎬 Série 5 — Date, Sous-requêtes et Group By');" style="padding:12px 20px;border-radius:12px;border:3px solid #1a1a2e;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;">▶️ Regarder la vidéo Série 5 (18 min 09)</button>
+            <a href="../exercices/sql/Tp-date-ssr-j-gp-correction-bd.html" style="display:inline-block;margin-left:10px;padding:12px 18px;border-radius:12px;border:3px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;font-size:1rem;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;">📄 Corrigé écrit Série 5</a>
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>🧠 Le mémo des types de requêtes (à retenir pour le Bac)</h3>
+          <ul>
+            <li><strong>Jointure</strong> : les données demandées vivent dans plusieurs tables → relier par les clés (<code>a.x = b.x</code>).</li>
+            <li><strong>Sous-requête (imbriquée)</strong> : la condition dépend d'un calcul (<code>MIN</code>, <code>AVG</code>…) ou d'une absence (<code>NOT IN</code>) — jamais d'agrégat directement dans le <code>WHERE</code>.</li>
+            <li><strong>GROUP BY</strong> : dès que l'énoncé dit « par catégorie / par client / par type » ; <strong>HAVING</strong> filtre ensuite sur un agrégat (<code>COUNT</code>, <code>AVG</code>…).</li>
+            <li><strong>Fonctions de date</strong> : <code>DATE()</code> pour ignorer l'heure, <code>DATE_ADD</code> / <code>DATE_SUB</code> pour reculer/avancer, <code>DATEDIFF</code> pour un écart.</li>
           </ul>
         </div>
       </section>
