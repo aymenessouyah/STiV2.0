@@ -5,7 +5,7 @@
     "categorie": "Vidéo CSS3",
     "icone": "🎬",
     "titre": "Vidéo CSS3 refaite : filter conforme à la fiche du cours",
-    "resume": "La nouvelle vidéo Full HD v8 remplace réellement l’ancienne partie filter. Elle reprend la définition exacte après rendu, le tableau des valeurs neutres et uniquement blur(), grayscale() et invert(), avec les exemples blur(0/2px/5px/10px), grayscale(0/50/100%), invert(0/50/100%) et des combinaisons limitées à ces trois fonctions. Les sept autres fonctions sont barrées et marquées « Hors programme ». La narration, les sous-titres, les mouvements et le Guide-Ligne ont été recalés sur un master PCM commun.",
+    "resume": "La nouvelle vidéo Full HD v8 remplace réellement l’ancienne partie filter. Elle reprend la définition exacte après rendu, le tableau des valeurs neutres et uniquement blur(), grayscale() et invert(), avec les exemples blur(0/2px/5px/10px), grayscale(0/50/100%), invert(0/50/100%) et des combinaisons limitées à ces trois fonctions. Les sept autres fonctions sont barrées et marquées « Hors programme ». La narration, les sous-titres, les mouvements et le Guide-Ligne ont été recalés sur un master PCM commun. Le sélecteur vidéo/audio place maintenant le chapitre 10 à 10 min 14 s, exactement au début de la nouvelle narration.",
     "lien": "cours/css3.html#css-filter",
     "libelleLien": "Regarder la nouvelle vidéo CSS3 v8"
   },

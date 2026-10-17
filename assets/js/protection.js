@@ -964,7 +964,7 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours-v8.mp4?v=298",
+        file: "css3-cours-v8.mp4?v=298-sync",
         title: "🎥 CSS3 complet — Guide-Ligne synchronisé, blur, grayscale et invert, 3e & 4e SI"
       };
       var VIDEO_JS_INFO = {
@@ -1044,8 +1044,8 @@
           { t: 333.09, short: "6. Positions animées", label: "05:33 · 6. Passons aux positions : relative, absolute, fixed, sticky, flux, repères et tableau comparatif", sel: "#point-5" },
           { t: 393.95, short: "7. Float animé & Flexbox", label: "06:34 · 7. Passons à float : sortie du flux, frère remonté, partie masquée, clear, flow-root et Flexbox", sel: "#point-5" },
           { t: 449.04, short: "8. Bordures & tableaux", label: "07:29 · 8. Passons aux bordures, box-shadow, table-layout et border-collapse détaillés", sel: "#point-6" },
-          { t: 517.86, short: "9. Listes, filtres & transform", label: "08:38 · 9. Passons aux listes, galerie et animation des filtres, puis transformations", sel: "#point-7" },
-          { t: 587.93, short: "10. Transition & animation", label: "09:48 · 10. Passons aux transitions, @keyframes, animations, synthèse et conclusion", sel: "#point-8" }
+          { t: 517.86, short: "9. Listes, filter & transform", label: "08:38 · 9. Passons aux listes, puis à filter : définition, blur(), grayscale(), invert() et transformations", sel: "#point-7" },
+          { t: 613.95, short: "10. Transition & animation", label: "10:14 · 10. Passons aux transitions, @keyframes, animations, synthèse et conclusion", sel: "#point-8" }
         ],
         "javascript-cours": [
           { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#intro" },
@@ -2154,7 +2154,7 @@
             vEl.__stiChoixPhpAffiche = false;
             vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v10-poster.jpg?v=288");
           } else if (slugCible === "css3-cours") {
-            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/css3-cours-v8-poster.jpg?v=298");
+            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/css3-cours-v8-poster.jpg?v=298-sync");
           } else {
             vEl.removeAttribute("poster");
           }
