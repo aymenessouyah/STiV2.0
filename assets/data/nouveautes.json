@@ -1,13 +1,13 @@
 [
   {
-    "version": "v281",
+    "version": "v282",
     "date": "2026-10-17",
     "categorie": "Vidéo PHP & MySQLi",
     "icone": "🎬",
-    "titre": "Guichet PHP en double représentation : technique + analogie",
-    "resume": "Nouvelle version Full HD coupée horizontalement : traitement V2 en haut et analogie animée en bas. Une femme au Guichet communique avec le Client, contrôle JavaScript et identifie INSERT, UPDATE, DELETE ou SELECT. Le coursier représente PHP. Un Monsieur représente le SGBD MySQL qui administre la Base de Données. Pour SELECT, il retourne une ressource sous forme d’armoire ; PHP ouvre chaque tiroir/ligne avec fetch_assoc, fetch_row ou fetch_array jusqu’au retour null/false. La synthèse repasse ensuite sur une seule ligne V2 en plein écran.",
+    "titre": "Animation réelle du Guichet en haut, analogie en bas",
+    "resume": "Version corrigée : une seule page de bienvenue, puis la véritable animation « Du formulaire aux archives » occupe la moitié haute avec ses mouvements, ses étapes, son code et sa voix. La moitié basse traduit simultanément le même parcours par analogie : Client, femme au Guichet pour JavaScript, coursier pour le langage PHP, Monsieur SGBD MySQL et Archive/Base de Données. À l’arrivée de la feuille au coursier, la vidéo explique PHP puis se met en pause pour proposer le cours PHP ou la continuation. SELECT retourne une ressource-armoire parcourue avec num_rows et les fonctions fetch.",
     "lien": "cours/php.html",
-    "libelleLien": "Regarder la double représentation du Guichet"
+    "libelleLien": "Regarder l’animation et son analogie"
   },
   {
     "version": "v280",
