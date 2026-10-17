@@ -1,13 +1,13 @@
 [
   {
-    "version": "v275",
+    "version": "v276",
     "date": "2026-10-17",
     "categorie": "Vidéo BD & SQL",
     "icone": "🎬",
-    "titre": "Vidéo SQL concrète et animée : Archives, Client, Administration/SGBD, BD graphique et textuelle, Mère➔Fille",
-    "resume": "Nouvelle vidéo officielle HD de 8 min 19 en 10 chapitres : de vraies scènes animées montrent le Client qui rédige une requête, l'Administration/SGBD qui contrôle l'accès et les Archives/BD composées d'armoires-tables. La BD est présentée sous ses deux formes, graphique et textuelle, avec les étiquettes Table Mère / Table Fille et l'avion animé qui transporte la clé primaire CodeClasse vers la clé étrangère. La suite anime aussi le chantier LDD, les lignes INSERT/UPDATE/DELETE, le scanner SELECT, les agrégats et la partie 4ème SI (jointures, GROUP BY, HAVING et sous-requêtes).",
+    "titre": "Refonte cinématique Full HD du cours SQL : avatars concrets, projecteur et synchronisation scène par scène",
+    "resume": "Vidéo officielle entièrement reconstruite en Full HD, 7 min 44 et 10 chapitres. Des avatars concrets incarnent le Client et l'Administrateur/SGBD devant une véritable salle d'Archives. Un projecteur désigne chaque personne, lieu, table et clé au moment exact où la narration en parle. L'introduction précède désormais toutes les requêtes. La vidéo précise qu'une clé primaire peut contenir un ou plusieurs champs, montre la BD sous forme graphique et textuelle, puis anime un avion réaliste de la Table Mère vers la Table Fille. Les opérations SQL, jointures, regroupements et sous-requêtes sont synchronisés avec le commentaire.",
     "lien": "cours/sql.html#video-initiation-sql",
-    "libelleLien": "Regarder la nouvelle vidéo concrète du Cours SQL"
+    "libelleLien": "Regarder la refonte Full HD du Cours SQL"
   },
   {
     "version": "v271",
