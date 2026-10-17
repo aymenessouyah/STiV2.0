@@ -868,9 +868,9 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     🎥 VIDÉO PRINCIPALE DU GUICHET (php-guichet-v2.mp4, COURS PHP ET SYNTHÈSE INTÉGRÉS)
+     🎥 VIDÉO PRINCIPALE DU GUICHET (php-guichet-v3.mp4, DOUBLE REPRÉSENTATION ET SYNTHÈSE PLEIN ÉCRAN)
      - Zéro voix dans les pas à pas interactifs (aucune lecture commentée ni audio d'étape).
-     - La nouvelle vidéo du Guichet (assets/videos/php-guichet-v2.mp4) porte la narration
+     - La nouvelle vidéo du Guichet (assets/videos/php-guichet-v3.mp4) porte la narration
        avec la voix de l'homme qui explique les étapes pas à pas.
      ═══════════════════════════════════════════════════════════════════════════ */
   function installerVideosPasAPasSTI() {
@@ -903,8 +903,8 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet-v2.mp4?v=280",
-        title: "🎥 PHP + MySQLi — L’histoire du Guichet (Cours PHP · Guichet · Synthèse)"
+        file: "php-guichet-v3.mp4?v=281",
+        title: "🎥 PHP + MySQLi — Double représentation : vidéo V2 en haut, analogie en bas"
       };
       var VIDEO_CSS_POS_INFO = {
         file: "css-positionnement.mp4?v=227",
@@ -929,7 +929,8 @@
           return cacheSqlV275.keys().then(function (clesSqlV275) {
             return Promise.all(clesSqlV275.map(function (cleSqlV275) {
               var uSqlV275 = cleSqlV275.url || "";
-              if (uSqlV275.indexOf("php-guichet.mp4") !== -1 ||
+              if (uSqlV275.indexOf("php-guichet-v2.mp4") !== -1 ||
+                  uSqlV275.indexOf("php-guichet.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v2.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v3.mp4") !== -1 ||
@@ -1076,16 +1077,16 @@
           { t: 518.98, short: "11. Merci & Suite", label: "08:39 · 11. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
         ],
         "php-guichet": [
-          { t: 0.00, short: "1. Accueil & Directeur", label: "00:00 · 1. Trois parcours et Directeur qui coordonne tous les acteurs" },
-          { t: 37.52, short: "2. Web local, Client & JS", label: "00:37 · 2. Web local, dossiers www/htdocs, localhost, formulaire et validation JavaScript" },
-          { t: 119.12, short: "3. Coursier PHP & choix", label: "01:59 · 3. Méthode POST, arrivée du coursier PHP et pause interactive" },
-          { t: 148.80, short: "4. $_POST & langage PHP", label: "02:29 · 4. $_POST, variables, balises PHP, echo et structures" },
-          { t: 185.24, short: "5. Femme au Guichet / SGBD", label: "03:05 · 5. Femme au Guichet, MySQLi, administration SGBD MySQL et Archive BD" },
-          { t: 229.08, short: "6. INSERT", label: "03:49 · 6. INSERT INTO, nouvelle fiche et mysqli_affected_rows" },
-          { t: 263.20, short: "7. UPDATE & DELETE", label: "04:23 · 7. UPDATE, DELETE, WHERE et sécurité" },
-          { t: 298.20, short: "8. SELECT & fetch", label: "04:58 · 8. SELECT, num_rows, boucle while et fonctions fetch" },
-          { t: 335.60, short: "9. Projet de synthèse", label: "05:36 · 9. Architecture complète, code à gauche et aperçu à droite" },
-          { t: 372.84, short: "10. Récapitulatif & suite", label: "06:13 · 10. Directeur, trajet complet, cours et exercices de synthèse" }
+          { t: 0.00, short: "1. Directeur & double vue", label: "00:00 · 1. Directeur : traitement V2 en haut et analogie du Guichet en bas" },
+          { t: 37.52, short: "2. Web local & femme JS", label: "00:37 · 2. Web local puis femme au Guichet : communication Client et contrôle JavaScript" },
+          { t: 119.12, short: "3. Type de demande & PHP", label: "01:59 · 3. Identifier INSERT, UPDATE, DELETE ou SELECT avant le passage au coursier PHP" },
+          { t: 148.80, short: "4. $_POST & langage PHP", label: "02:29 · 4. PHP ouvre $_POST, récupère les variables et traite la demande" },
+          { t: 185.24, short: "5. Monsieur SGBD MySQL", label: "03:05 · 5. Monsieur SGBD administre MySQL et s’occupe de la Base de Données" },
+          { t: 229.08, short: "6. INSERT", label: "03:49 · 6. INSERT : ajouter une fiche / un tiroir et contrôler affected_rows" },
+          { t: 263.20, short: "7. UPDATE & DELETE", label: "04:23 · 7. UPDATE ou DELETE : WHERE cible exactement la fiche" },
+          { t: 298.20, short: "8. Ressource & fetch détaillé", label: "04:58 · 8. SELECT : le SGBD retourne une ressource-armoire que PHP parcourt avec fetch" },
+          { t: 350.60, short: "9. Synthèse V2 plein écran", label: "05:51 · 9. Une seule ligne V2 en plein écran pour la synthèse" },
+          { t: 387.84, short: "10. Récapitulatif & suite", label: "06:28 · 10. Ligne V2 plein écran, cours et exercices de synthèse" }
         ],
         "css-positionnement": [
           { t: 0.00, short: "0. Flux HTML", label: "00:00 · 0. Le flux naturel HTML (block & inline)" },
@@ -1634,7 +1635,7 @@
         video.addEventListener("emptied", masquerChoix);
       }
 
-      /* ── Lecteur vidéo principal du Guichet (php-guichet-v2.mp4) ── */
+      /* ── Lecteur vidéo principal du Guichet (php-guichet-v3.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
         var url = resoudreUrlVideoGuichet();
         var box = document.createElement("div");
@@ -1658,7 +1659,7 @@
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
             '</div>' +
           '</div>' +
-          '<video controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" poster="' + prefixeAssetsSTI() + 'images/php-guichet-v2-poster.jpg?v=280" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
+          '<video controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" poster="' + prefixeAssetsSTI() + 'images/php-guichet-v3-poster.jpg?v=281" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
             '<source src="' + url + '" type="video/mp4" />' +
           '</video>';
 
@@ -2111,7 +2112,7 @@
         if (vEl) {
           if (slugCible === "php-guichet") {
             vEl.__stiChoixPhpAffiche = false;
-            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v2-poster.jpg?v=280");
+            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v3-poster.jpg?v=281");
           } else {
             vEl.removeAttribute("poster");
           }
@@ -2155,7 +2156,7 @@
             bVid.className = "sti-btn-video-dedie";
             bVid.textContent = (bar.id === "phpm-ctrl")
               ? "🎥 Vidéo"
-              : "🎥 Histoire du Guichet — cours + synthèse";
+              : "🎥 Double vue : Guichet + analogie";
             bVid.title = VIDEO_GUICHET_INFO.title;
             bVid.addEventListener("click", function (ev) {
               ev.stopPropagation();
@@ -2176,7 +2177,7 @@
               bRotVid.type = "button";
               bRotVid.className = "sti-btn-video-dedie sti-btn-video-rot-mobile";
               bRotVid.style.cssText = "margin:14px auto 4px;padding:12px 20px;font-size:14px;border-radius:999px;display:inline-flex;";
-              bRotVid.textContent = "🎥 Histoire du Guichet — cours + synthèse";
+              bRotVid.textContent = "🎥 Double vue : Guichet + analogie";
               bRotVid.addEventListener("click", function (ev) {
                 ev.stopPropagation();
                 window.ouvrirVideoPasAPasSTI("php-guichet");
@@ -2500,7 +2501,7 @@
             '<button type="button" id="sti-btn-cours-video-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #fde68a;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎥 Vidéo du cours ' + cLabel + ' (.mp4)</button>' +
             '<button type="button" id="sti-btn-cours-voix-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #86efac;background:#177245;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🔊 Écouter le cours ' + cLabel + '</button>' +
             '<select id="sti-select-cours-chap-hero" aria-label="Choisir un chapitre du cours ' + cLabel + '" style="padding:8px 12px;border-radius:10px;border:2px solid #facc15;background:#1e293b;color:#fde68a;font-weight:800;font-size:12.5px;cursor:pointer;max-width:290px;">' + optsChapsHtml + '</select>' +
-            (estPagePhpCours ? '<button type="button" id="sti-btn-php-guichet-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#0369a1;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎬 Histoire du Guichet — cours + synthèse</button>' : '');
+            (estPagePhpCours ? '<button type="button" id="sti-btn-php-guichet-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#0369a1;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎬 Double vue : Guichet + analogie</button>' : '');
 
           var targetAnchor =
             document.getElementById("def-php") ||
