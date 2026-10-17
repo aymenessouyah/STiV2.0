@@ -1746,10 +1746,10 @@ mysqli_close($connexion);
                 var verdict = fs.querySelector(".synth-verdict");
                 if (choix && parseInt(choix.value, 10) === BONNES[idx]) {
                   score++;
-                  fs.style.borderColor = "#16a34a"; fs.style.background = "#f0fdf4";
+                  fs.style.borderColor = "#16a34a"; fs.style.background = "#f0fdf4"; fs.style.color = "#1a1a2e";
                   verdict.style.color = "#166534"; verdict.innerHTML = "✅ Bonne réponse !";
                 } else {
-                  fs.style.borderColor = "#dc2626"; fs.style.background = "#fef2f2";
+                  fs.style.borderColor = "#dc2626"; fs.style.background = "#fef2f2"; fs.style.color = "#1a1a2e";
                   verdict.style.color = "#991b1b";
                   verdict.innerHTML = choix ? "❌ Mauvaise réponse — la bonne réponse est surlignée dans la fiche mémento." : "⚠ Sans réponse — cochez une proposition.";
                 }
@@ -1761,7 +1761,7 @@ mysqli_close($connexion);
             btnR.addEventListener("click", function () {
               document.querySelectorAll(".synth-question").forEach(function (fs) {
                 fs.querySelectorAll("input[type=radio]").forEach(function (r) { r.checked = false; });
-                fs.style.borderColor = "#98a2b8"; fs.style.background = "";
+                fs.style.borderColor = "#98a2b8"; fs.style.background = ""; fs.style.color = "";
                 fs.querySelector(".synth-verdict").innerHTML = "";
               });
               scoreEl.innerHTML = "";

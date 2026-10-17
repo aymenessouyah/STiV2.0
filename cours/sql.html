@@ -356,12 +356,12 @@ main {
 .hero-explorer.open { display: block; }
 .hero-exp-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.85rem; padding-bottom: 0.6rem; border-bottom: 2px dashed var(--line); }
 .hero-exp-title { font-family: "Fredoka", sans-serif; font-size: 1.1rem; font-weight: 700; margin: 0; }
-.hero-exp-close { border: 2px solid var(--ink); background: var(--paper); color: var(--ink); font-weight: 900; font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: 999px; cursor: pointer; }
+.hero-exp-close { border: 2px solid var(--ink); background: var(--bg); color: var(--ink); font-weight: 900; font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: 999px; cursor: pointer; }
 .hero-exp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 0.65rem; max-height: 370px; overflow-y: auto; padding-right: 4px; }
 .hero-exp-item {
   display: flex; flex-direction: column; justify-content: space-between; gap: 0.4rem;
   padding: 0.65rem 0.8rem; border: 2px solid var(--ink); border-radius: 12px;
-  background: var(--paper); color: var(--ink); text-decoration: none;
+  background: var(--bg); color: var(--ink); text-decoration: none;
   transition: transform 0.12s ease, border-color 0.12s ease;
 }
 .hero-exp-item:hover { transform: translateY(-2px); border-color: var(--grape); }
@@ -380,6 +380,81 @@ section h2 {
 }
 section#ldd h2 { background: var(--limey); transform: rotate(0.8deg); }
 section#lmd h2 { background: var(--sky); transform: rotate(-0.6deg); }
+section#bac h2 { background: var(--peach); transform: rotate(0.6deg); }
+.nav-group:nth-child(5).current .main-link { background: var(--peach); color: #1a1a2e; }
+.bac-bord-box {
+  flex: 1; min-width: 280px; border: 2.5px solid var(--ink); border-radius: 14px;
+  padding: 14px 16px; background: var(--bg); color: var(--ink);
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+html.dark .bac-bord-box {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.05);
+  color: #f5f3ff;
+}
+.bac-bord-box label { color: var(--ink); cursor: pointer; }
+html.dark .bac-bord-box label { color: #f5f3ff; }
+.bac-bord-resume {
+  border: 3px solid var(--ink); border-radius: 14px; padding: 14px 16px;
+  margin-top: 16px; background: var(--p-sun); color: var(--ink);
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+html.dark .bac-bord-resume {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 210, 63, 0.12);
+  color: #f5f3ff;
+}
+.bac-bord-btn {
+  padding: 10px 16px; border-radius: 10px; border: 2.5px solid #1a1a2e;
+  background: var(--sun); color: #1a1a2e; font-weight: 800; cursor: pointer;
+  box-shadow: 3px 3px 0 var(--shadow); font-family: inherit;
+}
+.bac-link-btn {
+  display: inline-block; padding: 12px 18px; border-radius: 12px;
+  border: 3px solid #1a1a2e; background: var(--card); color: var(--ink);
+  font-weight: 800; font-size: 1rem; text-decoration: none;
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+html.dark .bac-link-btn {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: #252547; color: #f5f3ff;
+}
+.vquiz-wrap {
+  margin-top: 16px; padding-top: 14px; border-top: 2px dashed var(--line);
+}
+.vquiz-q {
+  border: 2px solid var(--ink); border-radius: 12px; margin: 10px 0;
+  padding: 10px 14px; background: var(--bg); color: var(--ink);
+}
+html.dark .vquiz-q {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.05);
+  color: #f5f3ff;
+}
+.vquiz-q legend {
+  font-weight: 900; padding: 2px 10px; border-radius: 999px;
+  background: var(--grape); color: #ffffff; font-size: 0.85rem;
+}
+.vquiz-q p { color: inherit; margin: 4px 0 8px; font-weight: 800; }
+.vquiz-q label {
+  display: block; margin: 6px 0; padding: 6px 10px; border-radius: 8px;
+  cursor: pointer; color: inherit; background: rgba(123, 97, 255, 0.06);
+}
+html.dark .vquiz-q label { background: rgba(255, 255, 255, 0.06); color: #f5f3ff; }
+.vquiz-q.vq-ok {
+  border-color: #2ecc9e !important; background: rgba(46, 204, 158, 0.16) !important; color: var(--ink) !important;
+}
+html.dark .vquiz-q.vq-ok { color: #f5f3ff !important; }
+.vquiz-q.vq-ko {
+  border-color: #ff5d8f !important; background: rgba(255, 93, 143, 0.16) !important; color: var(--ink) !important;
+}
+html.dark .vquiz-q.vq-ko { color: #f5f3ff !important; }
+.vquiz-verdict { margin: 6px 0 0; font-weight: 900; }
+.vquiz-verdict.ok { color: #16a34a; }
+html.dark .vquiz-verdict.ok { color: #5ef2c2; }
+.vquiz-verdict.ko { color: #dc2626; }
+html.dark .vquiz-verdict.ko { color: #ff85a9; }
+
 
 /* Cartes */
 .card {
@@ -2699,8 +2774,57 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
           <p><strong>Contenu :</strong> création de la BD <code>ETUDIANT_BD</code> (5 tables : SEXE, ENSEIGNANT, ETUDIANT, MATIERE, NOTES) · rappel sur les contraintes et le cas de l'<code>UPDATE</code> d'une clé référencée (par défaut <strong>RESTRICT</strong>) · insertions vérifiables · <strong>15 requêtes corrigées</strong> : jointures (jusqu'à 5 tables), GROUP BY / HAVING, sous-requêtes imbriquées et <strong>corrélées</strong>, auto-jointure — chaque requête se termine par l'annonce de son <strong>type</strong>.</p>
           <p>
             <button type="button" onclick="if(window.ouvrirVideoPasAPasSTI)window.ouvrirVideoPasAPasSTI('sql-serie4','🎬 Série 4 — Jointures, Sous-requêtes et Group By');" style="padding:12px 20px;border-radius:12px;border:3px solid #1a1a2e;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;">▶️ Regarder la vidéo Série 4 (14 min 34)</button>
-            <a href="../exercices/sql/Tp4-correction-bd.html" style="display:inline-block;margin-left:10px;padding:12px 18px;border-radius:12px;border:3px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;font-size:1rem;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;">📄 Corrigé écrit Série 4</a>
+            <a href="../exercices/sql/Tp4-correction-bd.html" class="bac-link-btn" style="margin-left:10px;">📄 Corrigé écrit Série 4</a>
           </p>
+          <div class="vquiz-wrap" id="vquiz-s4">
+            <h4>🧠 Quiz rapide de la vidéo Série 4 (5 questions)</h4>
+            <p class="muted">Vérifiez que les points clés de la vidéo <code>ETUDIANT_BD</code> sont acquis (lisible en mode sombre 🌙 et clair ☀️) :</p>
+            <fieldset class="vquiz-q vquiz-s4-q">
+              <legend>Question 1 / 5</legend>
+              <p>Dans quel ordre doit-on créer les tables de <code>ETUDIANT_BD</code> ?</p>
+              <label><input type="radio" name="vqs4_0" value="0"> Dans l'ordre alphabétique des noms de tables</label>
+              <label><input type="radio" name="vqs4_0" value="1"> Les tables parentes (<code>SEXE</code>, <code>ENSEIGNANT</code>) d'abord, puis <code>ETUDIANT</code> et <code>MATIERE</code>, et enfin la table d'association <code>NOTES</code></label>
+              <label><input type="radio" name="vqs4_0" value="2"> La table <code>NOTES</code> en premier car elle contient toutes les clés</label>
+              <div class="vquiz-verdict" id="vqs4_v0"></div>
+            </fieldset>
+            <fieldset class="vquiz-q vquiz-s4-q">
+              <legend>Question 2 / 5</legend>
+              <p>Si aucune option <code>ON UPDATE</code> n'est précisée sur une clé étrangère, que se passe-t-il par défaut lors d'un <code>UPDATE</code> de la clé primaire parente déjà référencée ?</p>
+              <label><input type="radio" name="vqs4_1" value="0"> Le SGBD applique <code>RESTRICT</code> : la modification est refusée tant que des lignes enfants la référencent</label>
+              <label><input type="radio" name="vqs4_1" value="1"> Les lignes enfants sont automatiquement supprimées</label>
+              <label><input type="radio" name="vqs4_1" value="2"> La clé étrangère passe à <code>0</code></label>
+              <div class="vquiz-verdict" id="vqs4_v1"></div>
+            </fieldset>
+            <fieldset class="vquiz-q vquiz-s4-q">
+              <legend>Question 3 / 5</legend>
+              <p>Pour afficher les étudiants dont la moyenne générale est supérieure ou égale à 10 (Requête 7), quelle clause filtre le résultat de <code>AVG(Note)</code> ?</p>
+              <label><input type="radio" name="vqs4_2" value="0"> <code>WHERE AVG(Note) &gt;= 10</code></label>
+              <label><input type="radio" name="vqs4_2" value="1"> <code>GROUP BY NumEtud HAVING AVG(Note) &gt;= 10</code> (car on filtre après regroupement sur une fonction d'agrégation)</label>
+              <label><input type="radio" name="vqs4_2" value="2"> <code>ORDER BY AVG(Note) &gt;= 10</code></label>
+              <div class="vquiz-verdict" id="vqs4_v2"></div>
+            </fieldset>
+            <fieldset class="vquiz-q vquiz-s4-q">
+              <legend>Question 4 / 5</legend>
+              <p>Pourquoi la Requête 10 (« pour chaque matière, l'étudiant qui a eu la meilleure note de cette matière ») est-elle une <b>sous-requête corrélée</b> ?</p>
+              <label><input type="radio" name="vqs4_3" value="0"> Parce que la sous-requête <code>SELECT MAX(n2.Note) FROM NOTES n2 WHERE n2.CodeMat = n1.CodeMat</code> dépend du <code>CodeMat</code> de la requête externe</label>
+              <label><input type="radio" name="vqs4_3" value="1"> Parce qu'elle utilise <code>ORDER BY</code></label>
+              <label><input type="radio" name="vqs4_3" value="2"> Parce qu'elle modifie la table <code>MATIERE</code></label>
+              <div class="vquiz-verdict" id="vqs4_v3"></div>
+            </fieldset>
+            <fieldset class="vquiz-q vquiz-s4-q">
+              <legend>Question 5 / 5</legend>
+              <p>Comment obtient-on les paires d'étudiants de même sexe (Requête 15) sans doublon inversé ?</p>
+              <label><input type="radio" name="vqs4_4" value="0"> Par une auto-jointure <code>FROM ETUDIANT e1, ETUDIANT e2 WHERE e1.CodeSexe = e2.CodeSexe AND e1.NumEtud &lt; e2.NumEtud</code></label>
+              <label><input type="radio" name="vqs4_4" value="1"> Avec <code>GROUP BY CodeSexe</code> seul</label>
+              <label><input type="radio" name="vqs4_4" value="2"> Avec <code>DISTINCT CodeSexe</code></label>
+              <div class="vquiz-verdict" id="vqs4_v4"></div>
+            </fieldset>
+            <p>
+              <button type="button" id="vqs4_btn_ok" class="bac-bord-btn">✅ Corriger le quiz Série 4</button>
+              <button type="button" id="vqs4_btn_rst" class="bac-bord-btn" style="margin-left:8px;background:var(--card);color:var(--ink)">↺ Recommencer</button>
+              <span id="vqs4_score" style="margin-left:12px;font-weight:900"></span>
+            </p>
+          </div>
         </div>
 
         <div class="card" id="bac-serie5">
@@ -2709,8 +2833,102 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
           <p><strong>Contenu :</strong> création de la BD <code>Gesthotel</code> (3 tables : CHAMBRE, CLIENT, RESERVATION) avec <code>CHECK</code>, <code>AUTO_INCREMENT</code> et <code>DATETIME</code> · rappel sur les contraintes et l'<code>UPDATE</code> par défaut <strong>RESTRICT</strong> · insertions vérifiables · <strong>20 requêtes corrigées</strong> : fonctions de date (<code>NOW</code>, <code>DATE</code>, <code>DATE_ADD</code>, <code>DATE_SUB</code>), jointures, GROUP BY / HAVING, sous-requêtes scalaires et <code>NOT IN</code> — avec le <strong>type de chaque requête</strong>.</p>
           <p>
             <button type="button" onclick="if(window.ouvrirVideoPasAPasSTI)window.ouvrirVideoPasAPasSTI('sql-serie5','🎬 Série 5 — Date, Sous-requêtes et Group By');" style="padding:12px 20px;border-radius:12px;border:3px solid #1a1a2e;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;">▶️ Regarder la vidéo Série 5 (18 min 09)</button>
-            <a href="../exercices/sql/Tp-date-ssr-j-gp-correction-bd.html" style="display:inline-block;margin-left:10px;padding:12px 18px;border-radius:12px;border:3px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;font-size:1rem;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;">📄 Corrigé écrit Série 5</a>
+            <a href="../exercices/sql/Tp-date-ssr-j-gp-correction-bd.html" class="bac-link-btn" style="margin-left:10px;">📄 Corrigé écrit Série 5</a>
           </p>
+          <div class="vquiz-wrap" id="vquiz-s5">
+            <h4>🧠 Quiz rapide de la vidéo Série 5 (5 questions)</h4>
+            <p class="muted">Vérifiez que les points clés de la vidéo <code>Gesthotel</code> sont acquis (lisible en mode sombre 🌙 et clair ☀️) :</p>
+            <fieldset class="vquiz-q vquiz-s5-q">
+              <legend>Question 1 / 5</legend>
+              <p>Pourquoi utilise-t-on <code>DATE(DateArr) = DATE(NOW())</code> plutôt que <code>DateArr = NOW()</code> quand <code>DateArr</code> est de type <code>DATETIME</code> ?</p>
+              <label><input type="radio" name="vqs5_0" value="0"> Pour comparer uniquement la date (année-mois-jour) en ignorant l'heure exacte à la seconde près</label>
+              <label><input type="radio" name="vqs5_0" value="1"> Parce que <code>NOW()</code> ne fonctionne qu'avec <code>VARCHAR</code></label>
+              <label><input type="radio" name="vqs5_0" value="2"> Pour trier par ordre décroissant</label>
+              <div class="vquiz-verdict" id="vqs5_v0"></div>
+            </fieldset>
+            <fieldset class="vquiz-q vquiz-s5-q">
+              <legend>Question 2 / 5</legend>
+              <p>Dans la table <code>RESERVATION</code>, comment calcule-t-on le nombre de nuitées d'un séjour entre <code>DateArr</code> et <code>DateDep</code> ?</p>
+              <label><input type="radio" name="vqs5_1" value="0"> <code>DATEDIFF(DateDep, DateArr)</code> (écart en jours entre le départ et l'arrivée)</label>
+              <label><input type="radio" name="vqs5_1" value="1"> <code>DATE_ADD(DateArr, DateDep)</code></label>
+              <label><input type="radio" name="vqs5_1" value="2"> <code>COUNT(DateDep)</code></label>
+              <div class="vquiz-verdict" id="vqs5_v1"></div>
+            </fieldset>
+            <fieldset class="vquiz-q vquiz-s5-q">
+              <legend>Question 3 / 5</legend>
+              <p>Pour lister les chambres qui n'ont fait l'objet d'<b>aucune</b> réservation, quelle écriture est correcte ?</p>
+              <label><input type="radio" name="vqs5_2" value="0"> <code>WHERE NumCh NOT IN (SELECT NumCh FROM RESERVATION)</code> (sous-requête d'exclusion)</label>
+              <label><input type="radio" name="vqs5_2" value="1"> <code>WHERE COUNT(NumRes) = 0</code></label>
+              <label><input type="radio" name="vqs5_2" value="2"> <code>FROM CHAMBRE c, RESERVATION r WHERE c.NumCh != r.NumCh</code></label>
+              <div class="vquiz-verdict" id="vqs5_v2"></div>
+            </fieldset>
+            <fieldset class="vquiz-q vquiz-s5-q">
+              <legend>Question 4 / 5</legend>
+              <p>Quelle expression désigne « il y a exactement 7 jours » par rapport à aujourd'hui en SQL ?</p>
+              <label><input type="radio" name="vqs5_3" value="0"> <code>DATE_SUB(DATE(NOW()), INTERVAL 7 DAY)</code></label>
+              <label><input type="radio" name="vqs5_3" value="1"> <code>DATEDIFF(NOW(), 7)</code></label>
+              <label><input type="radio" name="vqs5_3" value="2"> <code>YEAR(NOW()) - 7</code></label>
+              <div class="vquiz-verdict" id="vqs5_v3"></div>
+            </fieldset>
+            <fieldset class="vquiz-q vquiz-s5-q">
+              <legend>Question 5 / 5</legend>
+              <p>Pourquoi la Requête 20 de la Série 5 renvoie-t-elle un <b>résultat vide (0 ligne)</b> sur le jeu d'essai ?</p>
+              <label><input type="radio" name="vqs5_4" value="0"> Parce qu'aucune ligne du jeu d'essai ne vérifie simultanément tous les critères demandés — une requête juste peut légitimement renvoyer 0 ligne</label>
+              <label><input type="radio" name="vqs5_4" value="1"> Parce que la syntaxe SQL contient une erreur</label>
+              <label><input type="radio" name="vqs5_4" value="2"> Parce que la table <code>CLIENT</code> est vide</label>
+              <div class="vquiz-verdict" id="vqs5_v4"></div>
+            </fieldset>
+            <p>
+              <button type="button" id="vqs5_btn_ok" class="bac-bord-btn">✅ Corriger le quiz Série 5</button>
+              <button type="button" id="vqs5_btn_rst" class="bac-bord-btn" style="margin-left:8px;background:var(--card);color:var(--ink)">↺ Recommencer</button>
+              <span id="vqs5_score" style="margin-left:12px;font-weight:900"></span>
+            </p>
+          </div>
+          <script>
+          (function () {
+            function brancherQuizVideo(pref, cls, bonnes) {
+              var bOk = document.getElementById(pref + "_btn_ok");
+              var bRst = document.getElementById(pref + "_btn_rst");
+              var sc = document.getElementById(pref + "_score");
+              var blocs = document.getElementsByClassName(cls);
+              if (!bOk) return;
+              bOk.addEventListener("click", function () {
+                var pts = 0, i, j, radios, choisi, vEl;
+                for (i = 0; i < bonnes.length; i++) {
+                  radios = document.getElementsByName(pref + "_" + i);
+                  choisi = -1;
+                  for (j = 0; j < radios.length; j++) {
+                    if (radios[j].checked) choisi = parseInt(radios[j].value, 10);
+                  }
+                  vEl = document.getElementById(pref + "_v" + i);
+                  if (choisi === bonnes[i]) {
+                    pts++;
+                    blocs[i].className = "vquiz-q " + cls + " vq-ok";
+                    vEl.className = "vquiz-verdict ok";
+                    vEl.textContent = "✅ Bonne réponse !";
+                  } else {
+                    blocs[i].className = "vquiz-q " + cls + " vq-ko";
+                    vEl.className = "vquiz-verdict ko";
+                    vEl.textContent = choisi === -1 ? "⚠️ Choisissez une réponse." : "❌ À revoir dans la vidéo.";
+                  }
+                }
+                sc.textContent = "Score : " + pts + " / " + bonnes.length + (pts === bonnes.length ? " 🏆 Parfait !" : "");
+              });
+              bRst.addEventListener("click", function () {
+                var i, j, radios;
+                for (i = 0; i < bonnes.length; i++) {
+                  radios = document.getElementsByName(pref + "_" + i);
+                  for (j = 0; j < radios.length; j++) radios[j].checked = false;
+                  blocs[i].className = "vquiz-q " + cls;
+                  document.getElementById(pref + "_v" + i).textContent = "";
+                }
+                sc.textContent = "";
+              });
+            }
+            brancherQuizVideo("vqs4", "vquiz-s4-q", [1, 0, 1, 0, 0]);
+            brancherQuizVideo("vqs5", "vquiz-s5-q", [0, 0, 0, 0, 0]);
+          })();
+          </script>
         </div>
 
 
@@ -2726,7 +2944,7 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
           <h4>⬇️ 2) Pack hors-ligne de la Partie Bac</h4>
           <p>Téléchargez d'avance les pages de cette partie (cours, énoncés A4, corrigés écrits et miniatures) pour les ouvrir <strong>sans connexion</strong> — les vidéos restent en ligne (trop lourdes : 43 et 53 Mo).</p>
           <p>
-            <button type="button" id="pack-offline" style="padding:10px 16px;border-radius:10px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer">⬇️ Préparer le hors-ligne</button>
+            <button type="button" id="pack-offline" class="bac-bord-btn">⬇️ Préparer le hors-ligne</button>
             <span id="pack-offline-txt" style="margin-left:10px;font-weight:700"></span>
           </p>
           <script>
@@ -2750,21 +2968,21 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
           <h4>📊 3) Tableau de bord de la classe (sauvegardé sur cet appareil)</h4>
           <p>Cochez les notions <strong>acquises par la classe</strong> au fil des séances : la progression se met à jour instantanément et reste enregistrée dans le navigateur.</p>
           <div style="display:flex;gap:16px;flex-wrap:wrap">
-          <div style="flex:1;min-width:280px;border:2px solid #1a1a2e;border-radius:12px;padding:12px 16px;background:#fffdf7">
+          <div class="bac-bord-box">
 <h4 style="margin:4px 0">Série 4 — Jointures, Sous-requêtes, Group By</h4><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Création de la BD (ordre parents → enfants → association)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Contraintes : PK, FK, NOT NULL — UPDATE par défaut RESTRICT</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Jointure simple entre 2 tables</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Jointure multi-tables (3 à 5 tables)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">GROUP BY + AVG / COUNT</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">HAVING (filtrer après regroupement)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Sous-requête imbriquée (IN / NOT IN)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Sous-requête scalaire (= MIN, > AVG…)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Sous-requête corrélée</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Auto-jointure (une table avec elle-même)</label>
 <div style="background:#e8e4da;border-radius:999px;height:16px;margin-top:10px;overflow:hidden"><div class="bord-barre" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By" style="height:100%;width:0%;background:linear-gradient(90deg,#f4511e,#d81b60);transition:width .4s"></div></div>
 <p style="margin:6px 0 0"><strong class="bord-pct" data-groupe="Série 4 — Jointures, Sous-requêtes, Group By">0 %</strong> des notions acquises</p></div>
-          <div style="flex:1;min-width:280px;border:2px solid #1a1a2e;border-radius:12px;padding:12px 16px;background:#fffdf7">
+          <div class="bac-bord-box">
 <h4 style="margin:4px 0">Série 5 — Date, Jointures, Sous-requêtes, Group By</h4><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Création : CHECK, AUTO_INCREMENT, DATETIME</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Contraintes et intégrité référentielle</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Dates : DATE() et NOW() (ignorer l'heure)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Dates : DATE_ADD / DATE_SUB / DATEDIFF</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Jointures avec alias</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">GROUP BY sur 1 ou 2 colonnes</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Agrégations SUM et COUNT(DISTINCT)</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">HAVING COUNT >= …</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Sous-requêtes IN / NOT IN</label><label style="display:block;margin:6px 0;font-size:1rem"><input type="checkbox" class="bord-notion" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="width:19px;height:19px;vertical-align:-3px;margin-right:8px">Tri multicritère ORDER BY et DISTINCT</label>
 <div style="background:#e8e4da;border-radius:999px;height:16px;margin-top:10px;overflow:hidden"><div class="bord-barre" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By" style="height:100%;width:0%;background:linear-gradient(90deg,#f4511e,#d81b60);transition:width .4s"></div></div>
 <p style="margin:6px 0 0"><strong class="bord-pct" data-groupe="Série 5 — Date, Jointures, Sous-requêtes, Group By">0 %</strong> des notions acquises</p></div>
           </div>
-          <div style="border:3px solid #1a1a2e;border-radius:12px;padding:12px 16px;margin-top:16px;background:#fdf6ec">
+          <div class="bac-bord-resume">
             <p style="margin:4px 0;font-size:1.1rem">🎓 <strong>Progression globale de la classe : <span id="bord-global-pct">0 %</span></strong> <span id="bord-global-txt"></span></p>
             <div style="background:#e8e4da;border-radius:999px;height:20px;overflow:hidden"><div id="bord-global-barre" style="height:100%;width:0%;background:linear-gradient(90deg,#2e7d32,#66bb6a);transition:width .4s"></div></div>
             <p style="margin-top:12px">
-              <button type="button" id="bord-tout" style="padding:9px 16px;border-radius:10px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer">☑ Tout cocher</button>
-              <button type="button" id="bord-reset" style="padding:9px 16px;border-radius:10px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer;margin-left:10px">↺ Réinitialiser</button>
+              <button type="button" id="bord-tout" class="bac-bord-btn">☑ Tout cocher</button>
+              <button type="button" id="bord-reset" class="bac-bord-btn" style="margin-left:10px;background:var(--card);color:var(--ink)">↺ Réinitialiser</button>
             </p>
           </div>
         </div>
@@ -4460,7 +4678,7 @@ SELECT DATEDIFF('2024-08-25', '2024-08-15');     -- Résultat : 10</code></pre>
               var h3 = card.querySelector("h3");
               var cTitle = h3 ? h3.textContent.replace(/\s+/g, " ").trim() : ("Fiche " + (idx + 1));
               var parentSec = card.closest("section");
-              var secLabel = parentSec && parentSec.id === "intro" ? "1. Intro" : (parentSec && parentSec.id === "ldd" ? "2. LDD" : "3. LMD");
+              var secLabel = parentSec && parentSec.id === "intro" ? "1. Intro" : (parentSec && parentSec.id === "ldd" ? "2. LDD" : (parentSec && parentSec.id === "lmd" ? "3. LMD" : "4. Bac"));
               var numStr = (idx + 1) < 10 ? "0" + (idx + 1) : String(idx + 1);
               html += '<a class="hero-exp-item" href="#' + card.id + '">' +
                 '<div><span class="hero-exp-badge">Fiche ' + numStr + ' • ' + secLabel + '</span>' +
