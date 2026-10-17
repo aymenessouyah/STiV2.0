@@ -917,171 +917,6 @@ html.dark-mode body.course-css3-page .css-definition {
 
 
 
-/* ---------- v295 — Laboratoire filter de la section 8 CSS3 ---------- */
-body.course-css3-page .filter-function-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 7px;
-}
-
-body.course-css3-page .filter-function-grid code {
-  display: block;
-  padding: 7px 9px;
-  border: 1px solid #bbf7d0;
-  border-radius: 8px;
-  background: #ecfdf5;
-  color: #047857;
-  font-size: 11px;
-  text-align: center;
-}
-
-body.course-css3-page .filter-lab {
-  display: grid;
-  grid-template-columns: minmax(250px, 0.9fr) minmax(300px, 1.1fr);
-  gap: 14px;
-  align-items: stretch;
-}
-
-body.course-css3-page .filter-preview-stage {
-  display: grid;
-  place-items: center;
-  min-height: 225px;
-  overflow: hidden;
-  padding: 18px;
-  border: 1px dashed #94a3b8;
-  border-radius: 13px;
-  background: linear-gradient(145deg, #dbeafe, #fef3c7);
-}
-
-body.course-css3-page .filter-demo-visual {
-  position: relative;
-  display: grid;
-  align-content: end;
-  width: min(100%, 340px);
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  padding: 18px;
-  border: 3px solid #9a3412;
-  border-radius: 18px;
-  background:
-    radial-gradient(circle at 75% 33%, #fbbf24 0 11%, transparent 12%),
-    linear-gradient(180deg, #7dd3fc 0 54%, #65a30d 55% 100%);
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.22);
-  color: #ffffff;
-  text-shadow: 0 2px 4px rgba(15, 23, 42, 0.9);
-  transition: filter 0.48s ease;
-  will-change: filter;
-}
-
-body.course-css3-page .filter-demo-visual::before {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: 48%;
-  background: linear-gradient(180deg, transparent, rgba(15, 23, 42, 0.74));
-}
-
-body.course-css3-page .filter-demo-visual strong,
-body.course-css3-page .filter-demo-visual small {
-  position: relative;
-  z-index: 1;
-}
-
-body.course-css3-page .filter-demo-visual strong {
-  font-size: 18px;
-  letter-spacing: 0.04em;
-}
-
-body.course-css3-page .filter-demo-visual small {
-  margin-top: 3px;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-body.course-css3-page .filter-demo-plate {
-  position: absolute;
-  top: 24px;
-  left: 30px;
-  font-size: 46px;
-  filter: drop-shadow(4px 5px 3px rgba(15, 23, 42, 0.45));
-}
-
-body.course-css3-page .filter-controls {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  align-content: center;
-}
-
-body.course-css3-page .filter-controls button {
-  min-height: 40px;
-  padding: 7px 8px;
-  border: 1px solid #94a3b8;
-  border-radius: 9px;
-  background: #ffffff;
-  color: #1e293b;
-  font: 700 11px/1.25 system-ui, -apple-system, "Segoe UI", sans-serif;
-  cursor: pointer;
-  transition: transform 0.16s ease, background-color 0.16s ease, color 0.16s ease;
-}
-
-body.course-css3-page .filter-controls button:hover,
-body.course-css3-page .filter-controls button:focus-visible {
-  transform: translateY(-2px);
-  outline: 3px solid rgba(29, 78, 216, 0.28);
-  outline-offset: 1px;
-}
-
-body.course-css3-page .filter-controls button[aria-pressed="true"] {
-  border-color: #1d4ed8;
-  background: #1d4ed8;
-  color: #ffffff;
-}
-
-html[data-theme="dark"] body.course-css3-page .filter-function-grid code,
-html.dark-mode body.course-css3-page .filter-function-grid code {
-  border-color: #047857;
-  background: #052e2b;
-  color: #a7f3d0;
-}
-
-html[data-theme="dark"] body.course-css3-page .filter-preview-stage,
-html.dark-mode body.course-css3-page .filter-preview-stage {
-  border-color: #64748b;
-  background: linear-gradient(145deg, #172554, #422006);
-}
-
-html[data-theme="dark"] body.course-css3-page .filter-controls button,
-html.dark-mode body.course-css3-page .filter-controls button {
-  border-color: #64748b;
-  background: #0f172a;
-  color: #f8fafc;
-}
-
-html[data-theme="dark"] body.course-css3-page .filter-controls button[aria-pressed="true"],
-html.dark-mode body.course-css3-page .filter-controls button[aria-pressed="true"] {
-  border-color: #93c5fd;
-  background: #1d4ed8;
-  color: #ffffff;
-}
-
-@media (max-width: 720px) {
-  body.course-css3-page .filter-lab {
-    grid-template-columns: 1fr;
-  }
-
-  body.course-css3-page .filter-controls {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body.course-css3-page .filter-demo-visual,
-  body.course-css3-page .filter-controls button {
-    transition: none;
-  }
-}
-
 /* ---------- v296 — Page détaillée de la propriété filter ---------- */
 body.course-css3-page .filter-detail-page {
   color: #1b2733;
@@ -1237,5 +1072,44 @@ body.course-css3-page .filter-detail-card strong {
 
   body.course-css3-page .filter-detail-page h3 {
     font-size: 18px;
+  }
+}
+
+
+/* v297 — signalement explicite des notions hors programme */
+body.course-css3-page .filter-detail-outside-program {
+  margin: 14px 0;
+  padding: 10px 14px;
+  border: 1px dashed #dc2626;
+  border-radius: 8px;
+  background: #fff1f2;
+  color: #991b1b;
+}
+
+body.course-css3-page .filter-detail-outside-program s,
+body.course-css3-page .filter-detail-outside-line s {
+  text-decoration-thickness: 2px;
+}
+
+body.course-css3-page .filter-detail-outside-line {
+  border-color: #fecaca;
+  background: #fff1f2;
+  color: #991b1b;
+}
+
+
+/* ---------- v297 — Fiche filter complète dans la page du cours ---------- */
+body.course-css3-page .filter-main-page {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #cdd6df;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1b2733;
+}
+
+@media (max-width: 560px) {
+  body.course-css3-page .filter-main-page {
+    padding: 11px;
   }
 }

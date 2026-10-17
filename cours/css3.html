@@ -25,7 +25,7 @@
     </script>
     <link rel="stylesheet" href="../assets/css/css.css" />
     <link rel="stylesheet" href="../assets/fonts/fonts.css" />
-    <link rel="stylesheet" href="../assets/css/atelier-pages.css?v=296" />
+    <link rel="stylesheet" href="../assets/css/atelier-pages.css?v=297" />
   </head>
   <body class="course-css3-page">
 <!-- STI navigation croisée -->
@@ -2189,83 +2189,194 @@
         <div class="card anim-c css-filter-card" id="css-filter" style="grid-column: span 2">
           <div class="card-head">
             <div class="num">🎨</div>
-            <h2>Propriété <code>filter</code> — filtres visuels CSS</h2>
+            <h2>CSS : la propriété <code>filter</code></h2>
           </div>
-          <p style="font-size: 12.5px; line-height: 1.55; margin: 0">
-            La propriété <code>filter</code> applique un effet visuel à un
-            élément <em>après</em> son rendu : image, texte, bloc avec tous ses
-            enfants. Le HTML n’est pas modifié, seul l’affichage change.
-          </p>
           <div class="win-btns">
             <button type="button" class="btn-detail" data-win="win-filter">
               🔍 Détail filtre
             </button>
           </div>
-          <div class="filter-function-grid" aria-label="Fonctions de filtre CSS">
-            <code>blur(3px)</code>
-            <code>grayscale(1)</code>
-            <code>sepia(0.8)</code>
-            <code>brightness(1.3)</code>
-            <code>contrast(1.5)</code>
-            <code>saturate(1.8)</code>
-            <code>hue-rotate(120deg)</code>
-            <code>invert(1)</code>
-            <code>opacity(0.55)</code>
-            <code>drop-shadow(...)</code>
-          </div>
-          <div class="codebox" id="filter-code-output" aria-live="polite">
-            filter: none;
-          </div>
-          <div class="demo-label">👁 Exemple interactif — choisissez un filtre</div>
-          <div class="filter-lab" data-filter-lab>
-            <div class="filter-preview-stage">
-              <div class="filter-demo-visual" data-filter-preview>
-                <span class="filter-demo-sun" aria-hidden="true"></span>
-                <span class="filter-demo-plate" aria-hidden="true">🍽️</span>
-                <strong>LE PETIT OLIVIER</strong>
-                <small>Cuisine fraîche • Mégrine</small>
-              </div>
-            </div>
-            <div class="filter-controls" role="group" aria-label="Exemples de filtres CSS">
-              <button type="button" data-filter-value="none" aria-pressed="true">Original</button>
-              <button type="button" data-filter-value="blur(3px)">Flou</button>
-              <button type="button" data-filter-value="grayscale(1)">Noir &amp; blanc</button>
-              <button type="button" data-filter-value="sepia(0.85)">Sépia</button>
-              <button type="button" data-filter-value="brightness(1.35)">Luminosité</button>
-              <button type="button" data-filter-value="contrast(1.55)">Contraste</button>
-              <button type="button" data-filter-value="saturate(1.8)">Saturation</button>
-              <button type="button" data-filter-value="hue-rotate(120deg)">Teinte</button>
-              <button type="button" data-filter-value="invert(1)">Inversion</button>
-              <button type="button" data-filter-value="opacity(0.55)">Opacité</button>
-              <button type="button" data-filter-value="drop-shadow(10px 10px 7px rgba(15, 23, 42, 0.48))">Ombre portée</button>
-              <button type="button" data-filter-value="sepia(0.55) saturate(1.6) contrast(1.2)">Combinaison</button>
-            </div>
-          </div>
-          <ul class="keypoints">
-            <li><span class="ico">🔹</span><code>blur()</code> utilise une longueur ; les autres fonctions acceptent souvent un nombre ou un pourcentage.</li>
-            <li><span class="ico">🔹</span><code>drop-shadow()</code> suit le contour transparent d’une image, tandis que <code>box-shadow</code> suit sa boîte.</li>
-            <li><span class="ico">⭐</span>Une transition sur <code>filter</code> permet de passer progressivement d’un rendu à un autre.</li>
-          </ul>
+      <div class="filter-detail-page filter-main-page">
+        <p class="filter-detail-lead">
+          Trois fonctions étudiées : <code>blur()</code>,
+          <code>grayscale()</code> et <code>invert()</code>.
+        </p>
+
+        <h3>1. Principe</h3>
+        <p>
+          La propriété <code>filter</code> applique un effet visuel à un
+          élément <em>après</em> son rendu : image, texte, bloc avec tous ses
+          enfants. Le HTML n’est pas modifié, seul l’affichage change.
+        </p>
+        <pre class="filter-detail-code"><code>selecteur {
+  filter: fonction(valeur);
+}</code></pre>
+
+        <div class="filter-detail-table-wrap">
+          <table class="filter-detail-table">
+            <thead>
+              <tr>
+                <th>Fonction</th>
+                <th>Effet</th>
+                <th>Valeur</th>
+                <th>Valeur neutre</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>blur()</code></td>
+                <td>Flou</td>
+                <td>Longueur (<code>px</code>)</td>
+                <td><code>0</code></td>
+              </tr>
+              <tr>
+                <td><code>grayscale()</code></td>
+                <td>Niveaux de gris</td>
+                <td><code>0%</code> à <code>100%</code></td>
+                <td><code>0%</code></td>
+              </tr>
+              <tr>
+                <td><code>invert()</code></td>
+                <td>Couleurs inversées (négatif)</td>
+                <td><code>0%</code> à <code>100%</code></td>
+                <td><code>0%</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="filter-detail-note">
+          La « valeur neutre » donne le même rendu que sans filtre.
+        </div>
+        <div class="filter-detail-outside-program">
+          <strong>Hors programme :</strong>
+          <s>sepia()</s>, <s>brightness()</s>, <s>contrast()</s>,
+          <s>saturate()</s>, <s>hue-rotate()</s>, <s>opacity()</s> et
+          <s>drop-shadow()</s> ne sont pas étudiées.
         </div>
 
-        <script>
-          (function () {
-            var lab = document.querySelector("[data-filter-lab]");
-            if (!lab) return;
-            var preview = lab.querySelector("[data-filter-preview]");
-            var output = document.getElementById("filter-code-output");
-            lab.addEventListener("click", function (event) {
-              var button = event.target.closest("button[data-filter-value]");
-              if (!button) return;
-              var value = button.getAttribute("data-filter-value") || "none";
-              preview.style.filter = value;
-              output.textContent = "filter: " + value + ";";
-              lab.querySelectorAll("button[data-filter-value]").forEach(function (item) {
-                item.setAttribute("aria-pressed", item === button ? "true" : "false");
-              });
-            });
-          })();
-        </script>
+        <h3>2. <code>blur()</code> : le flou</h3>
+        <p>
+          La valeur est un rayon en pixels. Plus elle est grande, plus
+          l’élément est flou. Les valeurs négatives sont interdites.
+        </p>
+        <div class="filter-detail-grid">
+          <figure>
+            <div class="filter-detail-photo filter-blur-0" role="img" aria-label="Logo STI avec blur zéro"></div>
+            <figcaption>blur(0)</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-photo filter-blur-2" role="img" aria-label="Logo STI avec blur deux pixels"></div>
+            <figcaption>blur(2px)</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-photo filter-blur-5" role="img" aria-label="Logo STI avec blur cinq pixels"></div>
+            <figcaption>blur(5px)</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-photo filter-blur-10" role="img" aria-label="Logo STI avec blur dix pixels"></div>
+            <figcaption>blur(10px)</figcaption>
+          </figure>
+        </div>
+        <pre class="filter-detail-code"><code>.photo { filter: blur(5px); }</code></pre>
+
+        <h4>Sur du texte</h4>
+        <figure class="filter-detail-figure-wide">
+          <div class="filter-detail-blurred-text">
+            Ce texte est légèrement flouté avec blur(1.5px).
+          </div>
+          <figcaption>filter: blur(1.5px)</figcaption>
+        </figure>
+
+        <h3>3. <code>grayscale()</code> : les niveaux de gris</h3>
+        <p>
+          De <code>0%</code> (couleurs d’origine) à <code>100%</code> (noir et
+          blanc). Un nombre entre 0 et 1 est équivalent : <code>0.5</code> =
+          <code>50%</code>.
+        </p>
+        <div class="filter-detail-grid">
+          <figure>
+            <div class="filter-detail-photo filter-gray-0" role="img" aria-label="Logo STI en couleurs"></div>
+            <figcaption>grayscale(0%)</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-photo filter-gray-50" role="img" aria-label="Logo STI à moitié en niveaux de gris"></div>
+            <figcaption>grayscale(50%)</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-photo filter-gray-100" role="img" aria-label="Logo STI en niveaux de gris"></div>
+            <figcaption>grayscale(100%)</figcaption>
+          </figure>
+        </div>
+        <pre class="filter-detail-code"><code>.photo { filter: grayscale(100%); }</code></pre>
+
+        <h3>4. <code>invert()</code> : l’inversion des couleurs</h3>
+        <p>
+          <code>100%</code> donne le négatif de l’image. <code>50%</code> donne
+          un gris uniforme : les couleurs se « croisent » à mi-chemin.
+        </p>
+        <div class="filter-detail-grid">
+          <figure>
+            <div class="filter-detail-photo filter-invert-0" role="img" aria-label="Logo STI sans inversion"></div>
+            <figcaption>invert(0%)</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-photo filter-invert-50" role="img" aria-label="Logo STI avec inversion à moitié"></div>
+            <figcaption>invert(50%)</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-photo filter-invert-100" role="img" aria-label="Logo STI en couleurs inversées"></div>
+            <figcaption>invert(100%)</figcaption>
+          </figure>
+        </div>
+        <pre class="filter-detail-code"><code>.photo { filter: invert(100%); }</code></pre>
+
+        <h4>Sur un bloc de texte coloré</h4>
+        <div class="filter-detail-before-after">
+          <figure>
+            <div class="filter-detail-card">
+              <strong>Titre</strong>Fond jaune, texte sombre.
+            </div>
+            <figcaption>sans filtre</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-card filter-invert-100">
+              <strong>Titre</strong>Fond jaune, texte sombre.
+            </div>
+            <figcaption>invert(100%)</figcaption>
+          </figure>
+        </div>
+
+        <h3>5. Combiner plusieurs filtres</h3>
+        <p>
+          On sépare les fonctions par un espace. Elles sont appliquées
+          <strong>de gauche à droite</strong>.
+        </p>
+        <pre class="filter-detail-code"><code>.photo { filter: grayscale(100%) blur(2px); }</code></pre>
+        <div class="filter-detail-grid">
+          <figure>
+            <div class="filter-detail-photo filter-combo-1" role="img" aria-label="Logo STI en niveaux de gris puis flouté"></div>
+            <figcaption>grayscale(100%) blur(2px)</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-photo filter-combo-2" role="img" aria-label="Logo STI inversé puis en niveaux de gris"></div>
+            <figcaption>invert(100%) grayscale(100%)</figcaption>
+          </figure>
+          <figure>
+            <div class="filter-detail-photo filter-combo-3" role="img" aria-label="Logo STI flouté puis inversé"></div>
+            <figcaption>blur(3px) invert(100%)</figcaption>
+          </figure>
+        </div>
+
+        <h3>6. À retenir</h3>
+        <ul class="keypoints">
+          <li><span class="ico">🔹</span><code>filter</code> s’applique à tout l’élément, enfants compris.</li>
+          <li><span class="ico">🔹</span>Les pourcentages et les décimaux sont équivalents (<code>50%</code> = <code>0.5</code>).</li>
+          <li><span class="ico">🔹</span>Plusieurs filtres : une seule déclaration <code>filter</code>, fonctions séparées par des espaces.</li>
+          <li><span class="ico">🔹</span>Une seconde déclaration <code>filter</code> sur le même élément remplace la première.</li>
+          <li class="filter-detail-outside-line"><span class="ico">⛔</span><strong>Hors programme :</strong> <s>Pour flouter ce qui est derrière un élément, on utilise <code>backdrop-filter</code>.</s></li>
+        </ul>
+      </div>
+        </div>
 
         <div class="card anim-c" style="grid-column: span 2">
           <div class="card-head">
@@ -3576,6 +3687,12 @@ box-shadow: 0px 14px 30px -6px rgba(33,31,56,.35);</pre
         <div class="filter-detail-note">
           La « valeur neutre » donne le même rendu que sans filtre.
         </div>
+        <div class="filter-detail-outside-program">
+          <strong>Hors programme :</strong>
+          <s>sepia()</s>, <s>brightness()</s>, <s>contrast()</s>,
+          <s>saturate()</s>, <s>hue-rotate()</s>, <s>opacity()</s> et
+          <s>drop-shadow()</s> ne sont pas étudiées.
+        </div>
 
         <h3>2. <code>blur()</code> : le flou</h3>
         <p>
@@ -3696,7 +3813,7 @@ box-shadow: 0px 14px 30px -6px rgba(33,31,56,.35);</pre
           <li><span class="ico">🔹</span>Les pourcentages et les décimaux sont équivalents (<code>50%</code> = <code>0.5</code>).</li>
           <li><span class="ico">🔹</span>Plusieurs filtres : une seule déclaration <code>filter</code>, fonctions séparées par des espaces.</li>
           <li><span class="ico">🔹</span>Une seconde déclaration <code>filter</code> sur le même élément remplace la première.</li>
-          <li><span class="ico">⭐</span>Pour flouter ce qui est <em>derrière</em> un élément, on utilise <code>backdrop-filter</code>.</li>
+          <li class="filter-detail-outside-line"><span class="ico">⛔</span><strong>Hors programme :</strong> <s>Pour flouter ce qui est derrière un élément, on utilise <code>backdrop-filter</code>.</s></li>
         </ul>
       </div>
     </template>

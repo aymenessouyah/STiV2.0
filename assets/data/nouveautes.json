@@ -1,5 +1,15 @@
 [
   {
+    "version": "v297",
+    "date": "2026-10-17",
+    "categorie": "Cours CSS3",
+    "icone": "🎯",
+    "titre": "Filter recentré sur les trois fonctions du programme",
+    "resume": "La partie filter reprend désormais directement le contenu complet de la fiche fournie : principe, syntaxe, tableau des valeurs, quatre niveaux de blur(), trois niveaux de grayscale(), trois niveaux de invert(), application au texte et à un bloc, combinaisons et synthèse. Seules ces trois fonctions sont étudiées ; les autres sont barrées et signalées comme hors programme.",
+    "lien": "cours/css3.html#css-filter",
+    "libelleLien": "Voir les trois fonctions étudiées"
+  },
+  {
     "version": "v296",
     "date": "2026-10-17",
     "categorie": "Cours CSS3",
