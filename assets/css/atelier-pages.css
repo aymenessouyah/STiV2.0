@@ -457,4 +457,462 @@ html.dark-mode .border-slate-300 {
   border-color: #475569 !important;
 }
 
+/* ============================================================
+   5) v294 — Contraste garanti des cours HTML5 et CSS3
+   Les deux pages possèdent désormais une classe de portée dédiée afin que
+   le mode universel ne transforme jamais un texte clair sur une carte claire
+   (ou un texte sombre sur une surface sombre).
+   ============================================================ */
+
+/* ---------- Mode clair : état explicite et stable ---------- */
+html[data-theme="light"] body.course-html5-page {
+  color-scheme: light;
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+}
+
+html[data-theme="light"] body.course-html5-page .text-slate-400 {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] body.course-html5-page .text-amber-600 {
+  color: #92400e !important;
+}
+
+body.course-html5-page .bg-amber-600 {
+  background-color: #92400e !important;
+  color: #ffffff !important;
+}
+
+body.course-html5-page .hover\:bg-amber-700:hover {
+  background-color: #78350f !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] body.course-css3-page {
+  color-scheme: light;
+  background-color: #eef1fb !important;
+  color: #1c2440 !important;
+}
+
+html[data-theme="light"] body.course-css3-page .card,
+html[data-theme="light"] body.course-css3-page .course-topics {
+  background-color: #ffffff !important;
+  color: #1c2440 !important;
+}
+
+html[data-theme="light"] body.course-css3-page #win {
+  background-color: #ffffff !important;
+  color: #1c2440 !important;
+  color-scheme: light;
+}
+
+/* L’en-tête CSS3 reste volontairement bleu nuit dans les deux thèmes.
+   Son ancien fond crème rendait ses textes blancs invisibles en mode clair. */
+body.course-css3-page header.topbar {
+  background: rgba(15, 28, 71, 0.97) !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+body.course-css3-page header.topbar .css-badge {
+  background: #101728 !important;
+  color: #ffd9c2 !important;
+  border-color: #64748b !important;
+}
+
+body.course-css3-page header.topbar .toc-nav a {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #dbeafe !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+body.course-css3-page header.topbar .toc-nav a[aria-current] {
+  background: #ffffff !important;
+  color: #0f1c47 !important;
+  border-color: #ffffff !important;
+}
+
+/* ---------- Cours HTML5 : surfaces et textes du mode sombre ---------- */
+html[data-theme="dark"] body.course-html5-page,
+html.dark-mode body.course-html5-page {
+  color-scheme: dark;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] body.course-html5-page > header,
+html.dark-mode body.course-html5-page > header {
+  background: rgba(15, 23, 42, 0.98) !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .bg-white,
+html.dark-mode body.course-html5-page .bg-white,
+html[data-theme="dark"] body.course-html5-page .bg-slate-50,
+html.dark-mode body.course-html5-page .bg-slate-50,
+html[data-theme="dark"] body.course-html5-page .bg-slate-100,
+html.dark-mode body.course-html5-page .bg-slate-100,
+html[data-theme="dark"] body.course-html5-page .bg-slate-200,
+html.dark-mode body.course-html5-page .bg-slate-200 {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .text-slate-900,
+html.dark-mode body.course-html5-page .text-slate-900,
+html[data-theme="dark"] body.course-html5-page .text-slate-800,
+html.dark-mode body.course-html5-page .text-slate-800,
+html[data-theme="dark"] body.course-html5-page .text-slate-700,
+html.dark-mode body.course-html5-page .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .text-slate-600,
+html.dark-mode body.course-html5-page .text-slate-600,
+html[data-theme="dark"] body.course-html5-page .text-slate-500,
+html.dark-mode body.course-html5-page .text-slate-500,
+html[data-theme="dark"] body.course-html5-page .text-slate-400,
+html.dark-mode body.course-html5-page .text-slate-400,
+html[data-theme="dark"] body.course-html5-page .text-slate-300,
+html.dark-mode body.course-html5-page .text-slate-300,
+html[data-theme="dark"] body.course-html5-page .text-slate-200,
+html.dark-mode body.course-html5-page .text-slate-200 {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .bg-brand-50,
+html.dark-mode body.course-html5-page .bg-brand-50,
+html[data-theme="dark"] body.course-html5-page .bg-brand-100,
+html.dark-mode body.course-html5-page .bg-brand-100 {
+  background-color: #172554 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .bg-brand-500,
+html.dark-mode body.course-html5-page .bg-brand-500,
+html[data-theme="dark"] body.course-html5-page .bg-brand-600,
+html.dark-mode body.course-html5-page .bg-brand-600,
+html[data-theme="dark"] body.course-html5-page .bg-brand-700,
+html.dark-mode body.course-html5-page .bg-brand-700,
+html[data-theme="dark"] body.course-html5-page .bg-brand-800,
+html.dark-mode body.course-html5-page .bg-brand-800 {
+  background-color: #166534 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .text-brand-600,
+html.dark-mode body.course-html5-page .text-brand-600,
+html[data-theme="dark"] body.course-html5-page .text-brand-700,
+html.dark-mode body.course-html5-page .text-brand-700,
+html[data-theme="dark"] body.course-html5-page .text-brand-800,
+html.dark-mode body.course-html5-page .text-brand-800 {
+  color: #93c5fd !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .text-blue-600,
+html.dark-mode body.course-html5-page .text-blue-600 {
+  color: #60a5fa !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .text-purple-600,
+html.dark-mode body.course-html5-page .text-purple-600 {
+  color: #c084fc !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .bg-amber-50,
+html.dark-mode body.course-html5-page .bg-amber-50,
+html[data-theme="dark"] body.course-html5-page .bg-amber-50\/60,
+html.dark-mode body.course-html5-page .bg-amber-50\/60,
+html[data-theme="dark"] body.course-html5-page .bg-amber-100,
+html.dark-mode body.course-html5-page .bg-amber-100,
+html[data-theme="dark"] body.course-html5-page .bg-amber-200,
+html.dark-mode body.course-html5-page .bg-amber-200 {
+  background-color: #422006 !important;
+  color: #fef3c7 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .text-amber-600,
+html.dark-mode body.course-html5-page .text-amber-600,
+html[data-theme="dark"] body.course-html5-page .text-amber-700,
+html.dark-mode body.course-html5-page .text-amber-700,
+html[data-theme="dark"] body.course-html5-page .text-amber-800,
+html.dark-mode body.course-html5-page .text-amber-800,
+html[data-theme="dark"] body.course-html5-page .text-amber-900,
+html.dark-mode body.course-html5-page .text-amber-900 {
+  color: #fde68a !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .bg-red-50,
+html.dark-mode body.course-html5-page .bg-red-50 {
+  background-color: #450a0a !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .text-red-600,
+html.dark-mode body.course-html5-page .text-red-600,
+html[data-theme="dark"] body.course-html5-page .text-red-700,
+html.dark-mode body.course-html5-page .text-red-700 {
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .bg-green-50,
+html.dark-mode body.course-html5-page .bg-green-50 {
+  background-color: #052e16 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .text-green-700,
+html.dark-mode body.course-html5-page .text-green-700 {
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .border-slate-200,
+html.dark-mode body.course-html5-page .border-slate-200,
+html[data-theme="dark"] body.course-html5-page .border-slate-300,
+html.dark-mode body.course-html5-page .border-slate-300,
+html[data-theme="dark"] body.course-html5-page .divide-slate-200 > :not([hidden]) ~ :not([hidden]),
+html.dark-mode body.course-html5-page .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .hover\:bg-brand-50:hover,
+html.dark-mode body.course-html5-page .hover\:bg-brand-50:hover {
+  background-color: #172554 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .hover\:bg-slate-300:hover,
+html.dark-mode body.course-html5-page .hover\:bg-slate-300:hover {
+  background-color: #334155 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .hover\:bg-amber-100:hover,
+html.dark-mode body.course-html5-page .hover\:bg-amber-100:hover {
+  background-color: #422006 !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .hover\:bg-red-100:hover,
+html.dark-mode body.course-html5-page .hover\:bg-red-100:hover {
+  background-color: #450a0a !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .hover\:text-brand-700:hover,
+html.dark-mode body.course-html5-page .hover\:text-brand-700:hover {
+  color: #93c5fd !important;
+}
+
+html[data-theme="dark"] body.course-html5-page .hover\:text-slate-700:hover,
+html.dark-mode body.course-html5-page .hover\:text-slate-700:hover {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] body.course-html5-page :is(input:not([type]), input[type="text"], input[type="email"], input[type="password"], input[type="search"], input[type="url"], input[type="tel"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"], input[type="week"]),
+html.dark-mode body.course-html5-page :is(input:not([type]), input[type="text"], input[type="email"], input[type="password"], input[type="search"], input[type="url"], input[type="tel"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"], input[type="week"]),
+html[data-theme="dark"] body.course-html5-page select,
+html.dark-mode body.course-html5-page select,
+html[data-theme="dark"] body.course-html5-page textarea,
+html.dark-mode body.course-html5-page textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #64748b !important;
+}
+
+html[data-theme="dark"] body.course-html5-page :is(input:not([type]), input[type="text"], input[type="email"], input[type="password"], input[type="search"], input[type="url"], input[type="tel"], input[type="number"])::placeholder,
+html.dark-mode body.course-html5-page :is(input:not([type]), input[type="text"], input[type="email"], input[type="password"], input[type="search"], input[type="url"], input[type="tel"], input[type="number"])::placeholder,
+html[data-theme="dark"] body.course-html5-page textarea::placeholder,
+html.dark-mode body.course-html5-page textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+
+/* Accents CSS3 lisibles aussi dans le thème clair : les teintes restent
+   distinctes, mais leurs variantes foncées dépassent le contraste AA. */
+body.course-css3-page .card.sel-c .card-head .num { background-color: #1d4ed8 !important; }
+body.course-css3-page .card.txt-c .card-head .num { background-color: #7e22ce !important; }
+body.course-css3-page .card.bg-c .card-head .num { background-color: #9a3412 !important; }
+body.course-css3-page .card.box-c .card-head .num { background-color: #047857 !important; }
+body.course-css3-page .card.pos-c .card-head .num { background-color: #be123c !important; }
+body.course-css3-page .card.bdr-c .card-head .num { background-color: #0369a1 !important; }
+body.course-css3-page .card.tbl-c .card-head .num { background-color: #5b21b6 !important; }
+body.course-css3-page .card.anim-c .card-head .num { background-color: #047857 !important; }
+
+body.course-css3-page .card.sel-c .card-head code { color: #1d4ed8 !important; }
+body.course-css3-page .card.txt-c .card-head code { color: #7e22ce !important; }
+body.course-css3-page .card.bg-c .card-head code { color: #9a3412 !important; }
+body.course-css3-page .card.box-c .card-head code { color: #047857 !important; }
+body.course-css3-page .card.pos-c .card-head code { color: #be123c !important; }
+body.course-css3-page .card.bdr-c .card-head code { color: #0369a1 !important; }
+body.course-css3-page .card.tbl-c .card-head code { color: #5b21b6 !important; }
+body.course-css3-page .card.anim-c .card-head code { color: #047857 !important; }
+body.course-css3-page .position-origin-marker { color: #475569 !important; }
+body.course-css3-page .relative-card-label { color: #be123c !important; }
+body.course-css3-page .radius-demo-chip { background-color: #0369a1 !important; }
+body.course-css3-page .box-model-border-label { background-color: #047857 !important; }
+body.course-css3-page .box-model-padding-label { color: #713f12 !important; }
+body.course-css3-page .prio-badge[style*="#2e86de"] { background-color: #1d4ed8 !important; }
+body.course-css3-page .lst-out li,
+body.course-css3-page .lst-in li { color: #1c2440 !important; }
+body.course-css3-page .lnk-demo { color: #1d4ed8 !important; border-color: #1d4ed8 !important; }
+body.course-css3-page .lnk-demo:visited { color: #7e22ce !important; border-color: #7e22ce !important; }
+body.course-css3-page .lnk-demo:hover { color: #ffffff !important; background-color: #9a3412 !important; border-color: #9a3412 !important; }
+body.course-css3-page .lnk-demo:active { color: #ffffff !important; background-color: #be123c !important; border-color: #be123c !important; }
+body.course-css3-page .dm { color: #0f172a !important; }
+body.course-css3-page #pas-a-pas-toggle {
+  background: linear-gradient(120deg, #9a3412, #c2410c) !important;
+  color: #ffffff !important;
+}
+html[data-theme="light"] body.course-css3-page .pas-a-pas-card-arrow { color: #9a3412 !important; }
+html[data-theme="dark"] body.course-css3-page .pas-a-pas-card-arrow,
+html.dark-mode body.course-css3-page .pas-a-pas-card-arrow { color: #fdba74 !important; }
+
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#2e86de"] { color: #1d4ed8 !important; }
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#8e44ad"] { color: #7e22ce !important; }
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#e2691a"] { color: #9a3412 !important; }
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#0e9e86"] { color: #047857 !important; }
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#d6336c"] { color: #be123c !important; }
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#29abe2"] { color: #0369a1 !important; }
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#6c4fe0"] { color: #5b21b6 !important; }
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#2ecc91"] { color: #047857 !important; }
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#ff8c42"] { color: #9a3412 !important; }
+html[data-theme="light"] body.course-css3-page .course-topics .topic-word[style*="#e84393"] { color: #be185d !important; }
+
+/* ---------- Cours CSS3 : cartes, démos et fenêtres toujours lisibles ---------- */
+html[data-theme="dark"] body.course-css3-page,
+html.dark-mode body.course-css3-page {
+  color-scheme: dark;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .card,
+html.dark-mode body.course-css3-page .card {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.28);
+}
+
+html[data-theme="dark"] body.course-css3-page .card-head h2,
+html.dark-mode body.course-css3-page .card-head h2,
+html[data-theme="dark"] body.course-css3-page .card > p,
+html.dark-mode body.course-css3-page .card > p,
+html[data-theme="dark"] body.course-css3-page .card .keypoints li,
+html.dark-mode body.course-css3-page .card .keypoints li {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .section-label span,
+html.dark-mode body.course-css3-page .section-label span,
+html[data-theme="dark"] body.course-css3-page .demo-label,
+html.dark-mode body.course-css3-page .demo-label,
+html[data-theme="dark"] body.course-css3-page .pos-tag,
+html.dark-mode body.course-css3-page .pos-tag {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .section-label::after,
+html.dark-mode body.course-css3-page .section-label::after {
+  background-color: #475569 !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .course-topics,
+html.dark-mode body.course-css3-page .course-topics {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .course-topics .topic-separator,
+html.dark-mode body.course-css3-page .course-topics .topic-separator {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .course-topics .topic-word,
+html.dark-mode body.course-css3-page .course-topics .topic-word {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .demo,
+html.dark-mode body.course-css3-page .demo {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+  border-color: #64748b !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .demo.float-demo,
+html.dark-mode body.course-css3-page .demo.float-demo,
+html[data-theme="dark"] body.course-css3-page .float-demo .float-clear,
+html.dark-mode body.course-css3-page .float-demo .float-clear {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] body.course-css3-page [style*="color: #5b6584"],
+html.dark-mode body.course-css3-page [style*="color: #5b6584"] {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .demo-shadow-box,
+html.dark-mode body.course-css3-page .demo-shadow-box,
+html[data-theme="dark"] body.course-css3-page .prio-item,
+html.dark-mode body.course-css3-page .prio-item,
+html[data-theme="dark"] body.course-css3-page .retenir,
+html.dark-mode body.course-css3-page .retenir,
+html[data-theme="dark"] body.course-css3-page .astuce,
+html.dark-mode body.course-css3-page .astuce,
+html[data-theme="dark"] body.course-css3-page .box-model-stage,
+html.dark-mode body.course-css3-page .box-model-stage {
+  color: #1c2440 !important;
+  color-scheme: light;
+}
+
+/* Les fenêtres de détail restent volontairement claires : tout leur contenu,
+   leurs tableaux et leurs laboratoires conserve ainsi un contraste constant. */
+html[data-theme="dark"] body.course-css3-page #win,
+html.dark-mode body.course-css3-page #win {
+  --m2-bg: #f6eedc;
+  --m2-bg-2: #fbf5e8;
+  --m2-surface: #fffdf5;
+  --m2-surface-2: #f1e6d0;
+  --m2-line: #e2d3b4;
+  --m2-line-strong: #d0bd97;
+  --m2-ink: #101728;
+  --m2-ink-soft: #3d3624;
+  --m2-muted: #6b6250;
+  --m2-cream: #efe3cc;
+  --m2-edge: #101728;
+  background-color: #ffffff !important;
+  color: #1c2440 !important;
+  border-color: #cbd5e1 !important;
+  color-scheme: light;
+}
+
+html[data-theme="dark"] body.course-css3-page #win .win-body,
+html.dark-mode body.course-css3-page #win .win-body {
+  background-color: #ffffff !important;
+  color: #1c2440 !important;
+}
+
+html[data-theme="dark"] body.course-css3-page #win [style*="color: #5b6584"],
+html.dark-mode body.course-css3-page #win [style*="color: #5b6584"] {
+  color: #475569 !important;
+}
+
+html[data-theme="dark"] body.course-css3-page .codebox,
+html.dark-mode body.course-css3-page .codebox,
+html[data-theme="dark"] body.course-css3-page .station-board,
+html.dark-mode body.course-css3-page .station-board,
+html[data-theme="dark"] body.course-css3-page footer,
+html.dark-mode body.course-css3-page footer,
+html[data-theme="dark"] body.course-css3-page .css-definition,
+html.dark-mode body.course-css3-page .css-definition {
+  color-scheme: dark;
+}
+
+@media print {
+  body.course-html5-page,
+  body.course-css3-page {
+    color-scheme: light !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+}
+
 

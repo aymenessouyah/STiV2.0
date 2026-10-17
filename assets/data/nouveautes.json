@@ -1,5 +1,15 @@
 [
   {
+    "version": "v294",
+    "date": "2026-10-17",
+    "categorie": "Accessibilité des cours",
+    "icone": "🌓",
+    "titre": "Cours HTML5 et CSS3 lisibles dans les thèmes clair et sombre",
+    "resume": "Les pages de cours HTML5 et CSS3 disposent maintenant de styles de contraste dédiés. En mode sombre, l’en-tête translucide, les cartes, les tableaux, les champs, les démonstrations, les boîtes colorées et les fenêtres de détail restent lisibles ; le retour au mode clair restaure immédiatement les couleurs claires. Le thème mémorisé est appliqué avant l’affichage pour éviter tout éclair ou contenu momentanément illisible.",
+    "lien": "cours/html5.html",
+    "libelleLien": "Tester les cours dans les deux thèmes"
+  },
+  {
     "version": "v293",
     "date": "2026-10-17",
     "categorie": "Vidéo CSS3",
