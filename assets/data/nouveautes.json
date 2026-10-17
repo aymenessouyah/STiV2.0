@@ -1,5 +1,15 @@
 [
   {
+    "version": "v286",
+    "date": "2026-10-17",
+    "categorie": "Vidéo PHP & MySQLi",
+    "icone": "🎥",
+    "titre": "Retour à l’analogie du Guichet, enrichie et sans masquage",
+    "resume": "La vidéo précédente en analogie plein écran revient dans une version retouchée. Les remarques et sous-titres sont placés dans des zones réservées sous l’animation. Un tableau compare INSERT, UPDATE et DELETE. mysqli_affected_rows est expliqué en détail, ainsi que fetch_row, fetch_array, la boucle while et la construction du résultat ligne par ligne pour le Client. Correction Web local : www concerne WampServer et xampLite ; htdocs concerne XAMPP.",
+    "lien": "cours/php.html",
+    "libelleLien": "Voir l’analogie retouchée"
+  },
+  {
     "version": "v285",
     "date": "2026-10-17",
     "categorie": "Film pédagogique PHP & MySQLi",
