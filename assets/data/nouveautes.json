@@ -1,13 +1,13 @@
 [
   {
-    "version": "v282",
+    "version": "v283",
     "date": "2026-10-17",
     "categorie": "Vidéo PHP & MySQLi",
     "icone": "🎬",
-    "titre": "Animation réelle du Guichet en haut, analogie en bas",
-    "resume": "Version corrigée : une seule page de bienvenue, puis la véritable animation « Du formulaire aux archives » occupe la moitié haute avec ses mouvements, ses étapes, son code et sa voix. La moitié basse traduit simultanément le même parcours par analogie : Client, femme au Guichet pour JavaScript, coursier pour le langage PHP, Monsieur SGBD MySQL et Archive/Base de Données. À l’arrivée de la feuille au coursier, la vidéo explique PHP puis se met en pause pour proposer le cours PHP ou la continuation. SELECT retourne une ressource-armoire parcourue avec num_rows et les fonctions fetch.",
+    "titre": "Analogie en haut, scène seule du Guichet en bas",
+    "resume": "Les deux lignes sont inversées : l’analogie occupe le haut et la scène animée réelle du Guichet occupe le bas. Dans cette scène basse, tous les boutons et le panneau de code ont été supprimés. Une seule voix — celle entendue dès le début — accompagne toute la vidéo. Le comparatif distingue fortement INSERT (ajouter), UPDATE (modifier), DELETE (supprimer) et SELECT (lire). SELECT est mis en évidence car il ne renvoie pas un booléen mais une ressource représentée par une armoire : tiroirs/lignes, num_rows, fetch_assoc, fetch_row, fetch_array et fin null/false.",
     "lien": "cours/php.html",
-    "libelleLien": "Regarder l’animation et son analogie"
+    "libelleLien": "Regarder la version inversée et épurée"
   },
   {
     "version": "v280",

@@ -868,9 +868,9 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     🎥 VIDÉO PRINCIPALE DU GUICHET (php-guichet-v4.mp4, ANIMATION DU GUICHET EN HAUT ET ANALOGIE EN BAS)
+     🎥 VIDÉO PRINCIPALE DU GUICHET (php-guichet-v5.mp4, ANALOGIE EN HAUT ET SCÈNE SEULE DU GUICHET EN BAS)
      - Zéro voix dans les pas à pas interactifs (aucune lecture commentée ni audio d'étape).
-     - La nouvelle vidéo du Guichet (assets/videos/php-guichet-v4.mp4) porte la narration
+     - La nouvelle vidéo du Guichet (assets/videos/php-guichet-v5.mp4) porte la narration
        avec la voix de l'homme qui explique les étapes pas à pas.
      ═══════════════════════════════════════════════════════════════════════════ */
   function installerVideosPasAPasSTI() {
@@ -903,8 +903,8 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet-v4.mp4?v=282",
-        title: "🎥 PHP + MySQLi — Animation du Guichet en haut, analogie en bas"
+        file: "php-guichet-v5.mp4?v=283",
+        title: "🎥 PHP + MySQLi — Analogie en haut, scène seule du Guichet en bas"
       };
       var VIDEO_CSS_POS_INFO = {
         file: "css-positionnement.mp4?v=227",
@@ -929,7 +929,8 @@
           return cacheSqlV275.keys().then(function (clesSqlV275) {
             return Promise.all(clesSqlV275.map(function (cleSqlV275) {
               var uSqlV275 = cleSqlV275.url || "";
-              if (uSqlV275.indexOf("php-guichet-v3.mp4") !== -1 ||
+              if (uSqlV275.indexOf("php-guichet-v4.mp4") !== -1 ||
+                  uSqlV275.indexOf("php-guichet-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v2.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours.mp4") !== -1 ||
@@ -1078,17 +1079,16 @@
           { t: 518.98, short: "11. Merci & Suite", label: "08:39 · 11. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
         ],
         "php-guichet": [
-          { t: 0.00, short: "1. Bienvenue", label: "00:00 · 1. Une seule page de bienvenue : deux représentations" },
-          { t: 6.00, short: "2. Archives & table", label: "00:06 · 2. Animation du Guichet : création de la Base de Données et de la table" },
-          { t: 43.50, short: "3. Formulaire HTML", label: "00:43 · 3. Création de la feuille HTML destinée au Client" },
-          { t: 67.88, short: "4. Le coursier = PHP", label: "01:08 · 4. Le Directeur rappelle que le coursier représente le langage PHP" },
-          { t: 81.43, short: "5. Client & choix SELECT", label: "01:21 · 5. Web local, Client, type SELECT identifié au Guichet" },
-          { t: 101.22, short: "6. Contrôle JavaScript", label: "01:41 · 6. La femme au Guichet contrôle Nom, Téléphone et Email avec JavaScript" },
-          { t: 139.88, short: "7. Arrivée au coursier", label: "02:20 · 7. La feuille arrive au coursier PHP ; choix interactif à 02:48,56" },
-          { t: 169.41, short: "8. PHP → MySQL", label: "02:49 · 8. PHP reçoit $_POST, se connecte et transmet SELECT à Monsieur SGBD" },
-          { t: 207.66, short: "9. Ressource-armoire", label: "03:28 · 9. MySQL retourne $res : num_rows, fetch_assoc, fetch_row et fetch_array" },
-          { t: 270.63, short: "10. Page HTML retournée", label: "04:31 · 10. PHP construit la page HTML et la renvoie au Client" },
-          { t: 301.77, short: "11. Récapitulatif & suite", label: "05:02 · 11. Cours, vidéos des exercices de synthèse et remerciement" }
+          { t: 0.00, short: "1. Bienvenue", label: "00:00 · 1. Une page de bienvenue : analogie en haut, scène seule en bas" },
+          { t: 37.52, short: "2. Web local & Client", label: "00:37 · 2. Projet sous www/htdocs, localhost et arrivée du Client" },
+          { t: 82.12, short: "3. Femme au Guichet = JS", label: "01:22 · 3. Contrôle JavaScript du formulaire dans le navigateur" },
+          { t: 115.64, short: "4. INSERT/UPDATE/DELETE/SELECT", label: "01:56 · 4. Différence entre les quatre demandes et arrivée au coursier PHP" },
+          { t: 152.08, short: "5. Langage PHP", label: "02:32 · 5. $_POST, variables et traitement côté serveur" },
+          { t: 188.52, short: "6. Monsieur SGBD MySQL", label: "03:09 · 6. Administration de MySQL et de la Base de Données" },
+          { t: 224.72, short: "7. INSERT", label: "03:45 · 7. INSERT ajoute : retour booléen et affected_rows" },
+          { t: 258.84, short: "8. UPDATE & DELETE", label: "04:19 · 8. UPDATE modifie, DELETE supprime, WHERE sécurise" },
+          { t: 293.84, short: "9. SELECT & armoire", label: "04:54 · 9. SELECT lit : ressource-armoire, num_rows et fonctions fetch" },
+          { t: 345.16, short: "10. Récapitulatif", label: "05:45 · 10. Comparatif final, cours et exercices de synthèse" }
         ],
         "css-positionnement": [
           { t: 0.00, short: "0. Flux HTML", label: "00:00 · 0. Le flux naturel HTML (block & inline)" },
@@ -1593,7 +1593,7 @@
       function installerChoixCoursPhpSTI(video, parent, estGuichetFn) {
         if (!video || !parent || video.__stiChoixPhpInstalle) return;
         video.__stiChoixPhpInstalle = true;
-        var instantChoix = 168.56;
+        var instantChoix = 151.08;
         var choix = document.createElement("div");
         choix.className = "sti-php-courier-choice sti-no-print";
         choix.hidden = true;
@@ -1637,7 +1637,7 @@
         video.addEventListener("emptied", masquerChoix);
       }
 
-      /* ── Lecteur vidéo principal du Guichet (php-guichet-v4.mp4) ── */
+      /* ── Lecteur vidéo principal du Guichet (php-guichet-v5.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
         var url = resoudreUrlVideoGuichet();
         var box = document.createElement("div");
@@ -1661,7 +1661,7 @@
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
             '</div>' +
           '</div>' +
-          '<video controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" poster="' + prefixeAssetsSTI() + 'images/php-guichet-v4-poster.jpg?v=282" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
+          '<video controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" poster="' + prefixeAssetsSTI() + 'images/php-guichet-v5-poster.jpg?v=283" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
             '<source src="' + url + '" type="video/mp4" />' +
           '</video>';
 
@@ -2114,7 +2114,7 @@
         if (vEl) {
           if (slugCible === "php-guichet") {
             vEl.__stiChoixPhpAffiche = false;
-            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v4-poster.jpg?v=282");
+            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v5-poster.jpg?v=283");
           } else {
             vEl.removeAttribute("poster");
           }
@@ -2158,7 +2158,7 @@
             bVid.className = "sti-btn-video-dedie";
             bVid.textContent = (bar.id === "phpm-ctrl")
               ? "🎥 Vidéo"
-              : "🎥 Animation du Guichet + analogie";
+              : "🎥 Analogie + scène seule du Guichet";
             bVid.title = VIDEO_GUICHET_INFO.title;
             bVid.addEventListener("click", function (ev) {
               ev.stopPropagation();
@@ -2179,7 +2179,7 @@
               bRotVid.type = "button";
               bRotVid.className = "sti-btn-video-dedie sti-btn-video-rot-mobile";
               bRotVid.style.cssText = "margin:14px auto 4px;padding:12px 20px;font-size:14px;border-radius:999px;display:inline-flex;";
-              bRotVid.textContent = "🎥 Animation du Guichet + analogie";
+              bRotVid.textContent = "🎥 Analogie + scène seule du Guichet";
               bRotVid.addEventListener("click", function (ev) {
                 ev.stopPropagation();
                 window.ouvrirVideoPasAPasSTI("php-guichet");
@@ -2503,7 +2503,7 @@
             '<button type="button" id="sti-btn-cours-video-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #fde68a;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎥 Vidéo du cours ' + cLabel + ' (.mp4)</button>' +
             '<button type="button" id="sti-btn-cours-voix-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #86efac;background:#177245;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🔊 Écouter le cours ' + cLabel + '</button>' +
             '<select id="sti-select-cours-chap-hero" aria-label="Choisir un chapitre du cours ' + cLabel + '" style="padding:8px 12px;border-radius:10px;border:2px solid #facc15;background:#1e293b;color:#fde68a;font-weight:800;font-size:12.5px;cursor:pointer;max-width:290px;">' + optsChapsHtml + '</select>' +
-            (estPagePhpCours ? '<button type="button" id="sti-btn-php-guichet-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#0369a1;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎬 Animation du Guichet + analogie</button>' : '');
+            (estPagePhpCours ? '<button type="button" id="sti-btn-php-guichet-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#0369a1;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎬 Analogie + scène seule du Guichet</button>' : '');
 
           var targetAnchor =
             document.getElementById("def-php") ||
