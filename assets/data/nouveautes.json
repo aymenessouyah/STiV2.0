@@ -1,5 +1,15 @@
 [
   {
+    "version": "v299",
+    "date": "2026-10-18",
+    "categorie": "Accessibilité vidéo CSS3",
+    "icone": "♿",
+    "titre": "Sous-titres WebVTT, transcription cliquable et version mobile 720p",
+    "resume": "Le cours CSS3 propose désormais 135 sous-titres français WebVTT accessibles, une transcription complète organisée en dix chapitres avec repères temporels cliquables, et trois accès directs aux passages blur(), grayscale() et invert(). Le lecteur choisit automatiquement la version mobile 720p sur petit écran ou en mode économie de données, tout en permettant de basculer vers la Full HD sans perdre la position. Un contrôle automatique intégré à la page vérifie à chaque visite les médias, les durées, les dimensions, les repères, le cache et les URLs de production ; le script de validation contrôle aussi les codecs.",
+    "lien": "cours/css3.html#css-video-access",
+    "libelleLien": "Ouvrir la vidéo CSS3 accessible"
+  },
+  {
     "version": "v298",
     "date": "2026-10-18",
     "categorie": "Vidéo CSS3",

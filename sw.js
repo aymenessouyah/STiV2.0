@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v298-sync";
+var CACHE = "sti-atelier-v299";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
 var videosEnCoursDeCache = {};
 var SHELL = [
@@ -46,6 +46,7 @@ var SHELL = [
   "./assets/images/php-guichet-v10-poster.jpg",
   "./assets/images/css3-cours-v8-poster.jpg",
   "./assets/images/css-restaurant-capture-v298.jpg",
+  "./assets/subtitles/css3-cours-v8-fr.vtt",
   "./assets/images/guichet-animation-capture-v288.jpg",
   "./cours/html5.html",
   "./cours/css3.html",
@@ -610,6 +611,8 @@ var OFFLINE_LIST = [
   "./assets/videos/explore-tunisie-float.mp4",
   "./assets/videos/html5-cours.mp4",
   "./assets/videos/css3-cours-v8.mp4",
+  "./assets/videos/css3-cours-v8-mobile-720p.mp4",
+  "./assets/subtitles/css3-cours-v8-fr.vtt",
   "./assets/videos/javascript-cours.mp4",
   "./assets/videos/php-cours.mp4",
   "./robots.txt",

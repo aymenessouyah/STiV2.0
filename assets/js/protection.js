@@ -964,7 +964,9 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours-v8.mp4?v=298-sync",
+        file: "css3-cours-v8.mp4?v=299",
+        mobileFile: "css3-cours-v8-mobile-720p.mp4?v=299",
+        subtitlesFile: "subtitles/css3-cours-v8-fr.vtt?v=299",
         title: "🎥 CSS3 complet — Guide-Ligne synchronisé, blur, grayscale et invert, 3e & 4e SI"
       };
       var VIDEO_JS_INFO = {
@@ -1504,6 +1506,22 @@
         return prefixeAssetsSTI() + "videos/" + VIDEO_CSS3_INFO.file;
       }
 
+      function resoudreUrlVideoCss3Mobile() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_CSS3_INFO.mobileFile;
+      }
+
+      function resoudreUrlSousTitresCss3() {
+        return prefixeAssetsSTI() + VIDEO_CSS3_INFO.subtitlesFile;
+      }
+
+      function contenuSourceVideoSTI(urlVideo, slugVideo) {
+        var contenu = '<source src="' + urlVideo + '" type="video/mp4" />';
+        if (slugVideo === "css3-cours") {
+          contenu += '<track kind="subtitles" src="' + resoudreUrlSousTitresCss3() + '" srclang="fr" label="Français" default />';
+        }
+        return contenu;
+      }
+
       function resoudreUrlVideoJs() {
         return prefixeAssetsSTI() + "videos/" + VIDEO_JS_INFO.file;
       }
@@ -1909,6 +1927,15 @@
           }
         } catch (e) {}
         var url = estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
+        var css3Qualite = "full";
+        if (estCss3) {
+          var prefCss3 = "";
+          try { prefCss3 = localStorage.getItem("sti-css3-quality") || ""; } catch (ePref) {}
+          var connexionCss3 = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+          var mobileAutoCss3 = (!prefCss3 && ((connexionCss3 && connexionCss3.saveData) || (window.matchMedia && window.matchMedia("(max-width: 820px)").matches)));
+          css3Qualite = (prefCss3 === "mobile" || mobileAutoCss3) ? "mobile" : "full";
+          url = css3Qualite === "mobile" ? resoudreUrlVideoCss3Mobile() : resoudreUrlVideoCss3();
+        }
         var titre = titreOpt || (estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
@@ -1931,6 +1958,7 @@
                   '<button type="button" data-mrate="1" class="is-active" style="background:#177245;border-color:#86efac;color:#fff;">1×</button>' +
                   '<button type="button" data-mrate="1.25">1.25×</button>' +
                   '<button type="button" id="sti-video-modal-fs">⛶ Plein écran</button>' +
+                  '<button type="button" id="sti-video-modal-quality" hidden>Qualité : Full HD</button>' +
                   '<a id="sti-video-modal-dl" href="#" download>⬇ MP4</a>' +
                   '<button type="button" id="sti-video-modal-close">✕ Fermer</button>' +
                 '</div>' +
@@ -1947,6 +1975,7 @@
             return (overlay.getAttribute("data-slug") || "") === "php-guichet";
           });
           var mBtnFs = document.getElementById("sti-video-modal-fs");
+          var mBtnQuality = document.getElementById("sti-video-modal-quality");
           var mRates = overlay.querySelectorAll("button[data-mrate]");
           var mChapSel = document.getElementById("sti-video-modal-chap-sel");
           var mChapPrev = document.getElementById("sti-video-modal-chap-prev");
@@ -2088,6 +2117,40 @@
               });
             })(mRates[i]);
           }
+          if (mBtnQuality) {
+            mBtnQuality.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              if ((overlay.getAttribute("data-slug") || "") !== "css3-cours") return;
+              var vPlayer = document.getElementById("sti-video-modal-player");
+              if (!vPlayer) return;
+              var ancienneQualite = overlay.getAttribute("data-css-quality") || "full";
+              var nouvelleQualite = ancienneQualite === "mobile" ? "full" : "mobile";
+              var nouvelleUrl = nouvelleQualite === "mobile" ? overlay.getAttribute("data-css-mobile-url") : overlay.getAttribute("data-css-full-url");
+              var reprise = Number(vPlayer.currentTime) || 0;
+              var etaitEnLecture = !vPlayer.paused;
+              var vitesse = vPlayer.playbackRate || 1;
+              try { vPlayer.pause(); } catch (ePause) {}
+              vPlayer.innerHTML = contenuSourceVideoSTI(nouvelleUrl, "css3-cours");
+              vPlayer.setAttribute("src", nouvelleUrl);
+              vPlayer.load();
+              vPlayer.addEventListener("loadedmetadata", function reprendreQualiteCss3() {
+                vPlayer.removeEventListener("loadedmetadata", reprendreQualiteCss3);
+                try {
+                  vPlayer.currentTime = reprise;
+                  vPlayer.playbackRate = vitesse;
+                  if (etaitEnLecture) {
+                    var pQualite = vPlayer.play();
+                    if (pQualite && pQualite.catch) pQualite.catch(function () {});
+                  }
+                } catch (eReprise) {}
+              });
+              overlay.setAttribute("data-css-quality", nouvelleQualite);
+              mBtnQuality.textContent = nouvelleQualite === "mobile" ? "Qualité : 720p éco" : "Qualité : Full HD";
+              var lienDl = document.getElementById("sti-video-modal-dl");
+              if (lienDl) lienDl.href = nouvelleUrl;
+              try { localStorage.setItem("sti-css3-quality", nouvelleQualite); } catch (eStore) {}
+            });
+          }
           document.getElementById("sti-video-modal-close").addEventListener("click", fermerModaleVideo);
           overlay.addEventListener("click", function (ev) {
             if (ev.target === overlay) fermerModaleVideo(ev);
@@ -2112,6 +2175,20 @@
         }
 
         overlay.setAttribute("data-slug", slugCible);
+        var boutonQualiteCss3 = document.getElementById("sti-video-modal-quality");
+        if (estCss3) {
+          overlay.setAttribute("data-css-full-url", resoudreUrlVideoCss3());
+          overlay.setAttribute("data-css-mobile-url", resoudreUrlVideoCss3Mobile());
+          overlay.setAttribute("data-css-quality", css3Qualite);
+          if (boutonQualiteCss3) {
+            boutonQualiteCss3.hidden = false;
+            boutonQualiteCss3.style.display = "inline-flex";
+            boutonQualiteCss3.textContent = css3Qualite === "mobile" ? "Qualité : 720p éco" : "Qualité : Full HD";
+          }
+        } else if (boutonQualiteCss3) {
+          boutonQualiteCss3.hidden = true;
+          boutonQualiteCss3.style.display = "none";
+        }
         var chapsCible = STI_CHAPITRES_MEDIA[slugCible] || [];
         var selChapEl = document.getElementById("sti-video-modal-chap-sel");
         var pillsChapEl = document.getElementById("sti-video-modal-chap-pills");
@@ -2154,15 +2231,15 @@
             vEl.__stiChoixPhpAffiche = false;
             vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v10-poster.jpg?v=288");
           } else if (slugCible === "css3-cours") {
-            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/css3-cours-v8-poster.jpg?v=298-sync");
+            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/css3-cours-v8-poster.jpg?v=299");
           } else {
             vEl.removeAttribute("poster");
           }
           vEl.muted = false;
           vEl.volume = 1.0;
           if (vEl.getAttribute("src") !== url) {
+            vEl.innerHTML = contenuSourceVideoSTI(url, slugCible);
             vEl.setAttribute("src", url);
-            vEl.innerHTML = '<source src="' + url + '" type="video/mp4" />';
             try { vEl.load(); } catch (e) {}
           }
           overlay.hidden = false;
@@ -2541,6 +2618,7 @@
           barEl.style.cssText = "display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:12px auto 16px;padding:10px 14px;background:rgba(13,21,38,0.92);border:2px solid #f4511e;border-radius:14px;max-width:960px;box-shadow:0 6px 18px rgba(0,0,0,0.22);";
           barEl.innerHTML =
             '<button type="button" id="sti-btn-cours-video-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #fde68a;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎥 Vidéo du cours ' + cLabel + ' (.mp4)</button>' +
+            (estPageCss3 ? '<button type="button" id="sti-btn-css3-mobile-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#075985;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">📱 Version mobile 720p</button>' : '') +
             '<button type="button" id="sti-btn-cours-voix-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #86efac;background:#177245;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🔊 Écouter le cours ' + cLabel + '</button>' +
             '<select id="sti-select-cours-chap-hero" aria-label="Choisir un chapitre du cours ' + cLabel + '" style="padding:8px 12px;border-radius:10px;border:2px solid #facc15;background:#1e293b;color:#fde68a;font-weight:800;font-size:12.5px;cursor:pointer;max-width:290px;">' + optsChapsHtml + '</select>' +
             (estPagePhpCours ? '<button type="button" id="sti-btn-php-guichet-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#0369a1;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎬 Le Guichet — film 3D interactif</button>' : '');
@@ -2572,6 +2650,14 @@
             bVidHero.addEventListener("click", function (ev) {
               ev.stopPropagation();
               window.ouvrirVideoPasAPasSTI(cSlug);
+            });
+          }
+          var bMobileCss3Hero = document.getElementById("sti-btn-css3-mobile-hero");
+          if (bMobileCss3Hero) {
+            bMobileCss3Hero.addEventListener("click", function (ev) {
+              ev.stopPropagation();
+              try { localStorage.setItem("sti-css3-quality", "mobile"); } catch (e) {}
+              window.ouvrirVideoPasAPasSTI("css3-cours");
             });
           }
           var bGuiHero = document.getElementById("sti-btn-php-guichet-hero");

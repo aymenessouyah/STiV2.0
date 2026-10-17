@@ -1113,3 +1113,175 @@ body.course-css3-page .filter-main-page {
     padding: 11px;
   }
 }
+
+/* v299 — accès vidéo CSS3, raccourcis filter et transcription accessible */
+body.course-css3-page .css-video-access {
+  width: min(1180px, calc(100% - 28px));
+  margin: 14px auto 22px;
+  padding: 18px;
+  border: 2px solid #2e86de;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f7fbff 0%, #eef7ff 100%);
+  color: #17233d;
+  box-shadow: 0 10px 28px rgba(35, 53, 104, 0.14);
+}
+body.course-css3-page .css-video-access-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+body.course-css3-page .css-video-access-head > div { flex: 1 1 620px; }
+body.course-css3-page .css-video-access-kicker {
+  margin: 0 0 4px;
+  color: #1769aa;
+  font: 900 0.74rem/1.2 "JetBrains Mono", monospace;
+  letter-spacing: 0.12em;
+}
+body.course-css3-page .css-video-access h2 {
+  margin: 0 0 7px;
+  color: #233568;
+  font-size: clamp(1.12rem, 2.2vw, 1.55rem);
+}
+body.course-css3-page .css-video-access-head p:last-child {
+  margin: 0;
+  color: #44536e;
+  line-height: 1.55;
+}
+body.course-css3-page .css-vtt-download,
+body.course-css3-page .css-filter-video-shortcuts button,
+body.course-css3-page .css-transcript-time {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 2px solid #2e86de;
+  background: #fff;
+  color: #174f82;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+body.course-css3-page .css-vtt-download { padding: 10px 15px; white-space: nowrap; }
+body.course-css3-page .css-filter-video-shortcuts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 16px 0 14px;
+  padding: 13px;
+  border-radius: 14px;
+  background: #17233d;
+  color: #fff;
+}
+body.course-css3-page .css-filter-video-shortcuts button { padding: 8px 13px; }
+body.course-css3-page .css-vtt-download:hover,
+body.course-css3-page .css-filter-video-shortcuts button:hover,
+body.course-css3-page .css-transcript-time:hover,
+body.course-css3-page .css-vtt-download:focus-visible,
+body.course-css3-page .css-filter-video-shortcuts button:focus-visible,
+body.course-css3-page .css-transcript-time:focus-visible {
+  transform: translateY(-2px);
+  background: #dceeff;
+  box-shadow: 0 6px 14px rgba(46, 134, 222, 0.24);
+  outline: 3px solid #ffcf5a;
+  outline-offset: 2px;
+}
+body.course-css3-page .css-course-transcript {
+  border: 1px solid #b9cbe3;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+body.course-css3-page .css-course-transcript > summary {
+  padding: 13px 16px;
+  background: #e8f3ff;
+  color: #233568;
+  font-weight: 900;
+  cursor: pointer;
+}
+body.course-css3-page .css-transcript-list { padding: 5px 16px 15px; }
+body.course-css3-page .css-transcript-chapter {
+  padding: 14px 0;
+  border-bottom: 1px solid #dce6f2;
+}
+body.course-css3-page .css-transcript-chapter:last-child { border-bottom: 0; }
+body.course-css3-page .css-transcript-chapter h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 8px;
+  color: #233568;
+  font-size: 1rem;
+}
+body.course-css3-page .css-transcript-time {
+  min-width: 64px;
+  padding: 6px 10px;
+  font: 900 0.82rem/1 "JetBrains Mono", monospace;
+}
+body.course-css3-page .css-transcript-chapter p {
+  margin: 0;
+  color: #34415a;
+  line-height: 1.68;
+}
+html[data-theme="dark"] body.course-css3-page .css-video-access,
+html.dark-mode body.course-css3-page .css-video-access {
+  background: linear-gradient(135deg, #101c31 0%, #0b1628 100%);
+  border-color: #63c5ff;
+  color: #eef7ff;
+}
+html[data-theme="dark"] body.course-css3-page .css-video-access h2,
+html.dark-mode body.course-css3-page .css-video-access h2,
+html[data-theme="dark"] body.course-css3-page .css-transcript-chapter h3,
+html.dark-mode body.course-css3-page .css-transcript-chapter h3 { color: #eaf6ff; }
+html[data-theme="dark"] body.course-css3-page .css-video-access-head p:last-child,
+html.dark-mode body.course-css3-page .css-video-access-head p:last-child,
+html[data-theme="dark"] body.course-css3-page .css-transcript-chapter p,
+html.dark-mode body.course-css3-page .css-transcript-chapter p { color: #c9d8ea; }
+html[data-theme="dark"] body.course-css3-page .css-course-transcript,
+html.dark-mode body.course-css3-page .css-course-transcript { background: #0d1b2d; border-color: #38536f; }
+html[data-theme="dark"] body.course-css3-page .css-course-transcript > summary,
+html.dark-mode body.course-css3-page .css-course-transcript > summary { background: #162a43; color: #eaf6ff; }
+html[data-theme="dark"] body.course-css3-page .css-transcript-chapter,
+html.dark-mode body.course-css3-page .css-transcript-chapter { border-color: #29415c; }
+@media (max-width: 700px) {
+  body.course-css3-page .css-video-access { width: min(100% - 16px, 1180px); padding: 13px; }
+  body.course-css3-page .css-vtt-download { width: 100%; }
+  body.course-css3-page .css-filter-video-shortcuts { align-items: stretch; }
+  body.course-css3-page .css-filter-video-shortcuts strong { width: 100%; text-align: center; }
+  body.course-css3-page .css-filter-video-shortcuts button { flex: 1 1 130px; }
+  body.course-css3-page .css-transcript-list { padding-inline: 12px; }
+  body.course-css3-page .css-transcript-chapter h3 { align-items: flex-start; }
+}
+
+/* Contrôle automatique v299 — état de la publication réelle */
+.css-publication-status {
+  flex: 0 0 100%;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: .38rem .72rem;
+  border: 1px solid rgba(148, 163, 184, .5);
+  border-radius: 999px;
+  color: var(--text-muted, #475569);
+  background: rgba(148, 163, 184, .12);
+  font: 700 .78rem/1.25 system-ui, sans-serif;
+}
+.css-publication-status.is-checking { animation: css-check-pulse 1.4s ease-in-out infinite; }
+.css-publication-status.is-ok { color: #166534; border-color: rgba(34, 197, 94, .45); background: rgba(34, 197, 94, .12); }
+.css-publication-status.is-error { color: #991b1b; border-color: rgba(239, 68, 68, .45); background: rgba(239, 68, 68, .12); }
+html.dark .css-publication-status,
+body.dark .css-publication-status,
+[data-theme="dark"] .css-publication-status { color: #cbd5e1; }
+html.dark .css-publication-status.is-ok,
+body.dark .css-publication-status.is-ok,
+[data-theme="dark"] .css-publication-status.is-ok { color: #86efac; }
+html.dark .css-publication-status.is-error,
+body.dark .css-publication-status.is-error,
+[data-theme="dark"] .css-publication-status.is-error { color: #fca5a5; }
+@keyframes css-check-pulse { 50% { opacity: .58; } }
+@media (prefers-reduced-motion: reduce) { .css-publication-status.is-checking { animation: none; } }
