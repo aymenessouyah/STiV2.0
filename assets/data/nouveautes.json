@@ -1,11 +1,11 @@
 [
   {
-    "version": "v270",
+    "version": "v271",
     "date": "2026-10-17",
     "categorie": "Exercices PHP & Bac STI",
     "icone": "🔄",
-    "titre": "Visualiseur Pas-à-Pas while/fetch + Série 1 séparée + Série 5 Sujet Blanc Bac (/20)",
-    "resume": "Nouveau visualiseur pas-à-pas de la boucle while et des 3 fonctions fetch (mysqli_fetch_assoc, fetch_row, fetch_array + comparateur COUNT(*)), séparation Énoncé/Corrigé de la Série 1 PHP et ajout de la Série 5 (Sujet Blanc complet type Bac Pratique sur 20 points avec corrigé ligne par ligne).",
+    "titre": "Séries 3, 4, 5 & 6 BD (SQL) réservées GOLD / Labo 3 / Prof / 4SI + Visualiseur fetch + Série 5 PHP",
+    "resume": "Accès aux Séries 3, 4, 5 et 6 de BD (SQL) (énoncés, corrigés et vidéos) réservé exclusivement aux comptes GOLD, elevelabo3, prof et 4SI (1 à 5) + Visualiseur while/fetch et Série 5 PHP.",
     "lien": "exercices/series-exercices.html#php",
     "libelleLien": "Ouvrir les Exercices PHP"
   },

@@ -32,7 +32,7 @@
           if (c && c.isAdmin) isAdm = true;
           var cl = String((c && c.classe) || "").trim().toUpperCase().replace(/[\s._\-]+/g, "");
           var clNorm = cl.normalize ? cl.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : cl;
-          var ok4 = isAdm || clNorm === "ELEVELABO3" || /^4(E|ÈME|EME)?SI([1-5])?$/i.test(cl);
+          var ok4 = isAdm || clNorm === "ELEVELABO3" || clNorm === "PROF" || clNorm === "PROFESSEUR" || clNorm === "ENSEIGNANT" || clNorm.indexOf("GOLD") !== -1 || /^4(E|ÈME|EME)?SI([1-5])?$/i.test(cl);
           if (ok4) document.documentElement.classList.add("sti-4si-autorise");
         } catch (e) {}
       })();
@@ -1271,8 +1271,8 @@
               </button>
             </div>
           </div>
-          <div class="exo-card">
-            <div class="exo-level">Avancé</div>
+          <div class="exo-card sti-4si-only">
+            <div class="exo-level">Avancé · 🎓 Réservé 4<sup>e</sup> SI (1-5) · Labo 3 · Prof · GOLD</div>
             <h3>Série 3 — LMD (Group By)</h3>
             <p>GROUP BY, HAVING et fonctions statistiques.</p>
             <div class="exo-actions" style="flex-wrap:wrap;">
@@ -1297,8 +1297,8 @@
               </button>
             </div>
           </div>
-          <div class="exo-card">
-            <div class="exo-level">Avancé</div>
+          <div class="exo-card sti-4si-only">
+            <div class="exo-level">Avancé · 🎓 Réservé 4<sup>e</sup> SI (1-5) · Labo 3 · Prof · GOLD</div>
             <h3>
               Série 4 — LMD Jointures, Sous-requêtes et Group By (Group By)
             </h3>
@@ -1325,8 +1325,8 @@
               </button>
             </div>
           </div>
-          <div class="exo-card">
-            <div class="exo-level">Avancé</div>
+          <div class="exo-card sti-4si-only">
+            <div class="exo-level">Avancé · 🎓 Réservé 4<sup>e</sup> SI (1-5) · Labo 3 · Prof · GOLD</div>
             <h3>Série 5 — LMD (Date, sous_requêtes, Group By)</h3>
             <p>
               Date (Fonctions de Date (NOW, DATEADD, DATEDIFF)) Jointure - sous
@@ -1355,8 +1355,8 @@
             </div>
           </div>
 
-          <div class="exo-card">
-            <div class="exo-level">Avancé</div>
+          <div class="exo-card sti-4si-only">
+            <div class="exo-level">Avancé · 🎓 Réservé 4<sup>e</sup> SI (1-5) · Labo 3 · Prof · GOLD</div>
             <h3>Série 6 — Récap LDD + LMD (Date, sous_requêtes, Group By)</h3>
             <p>
               Date (Fonctions de Date (NOW, DATEADD, DATEDIFF)) Jointure - sous
