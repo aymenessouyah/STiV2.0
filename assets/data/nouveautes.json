@@ -1,5 +1,15 @@
 [
   {
+    "version": "v296",
+    "date": "2026-10-17",
+    "categorie": "Cours CSS3",
+    "icone": "🔍",
+    "titre": "Une fiche détaillée directement depuis la carte filter",
+    "resume": "La définition de filter précise maintenant que l’effet visuel est appliqué après le rendu à l’image, au texte ou au bloc avec tous ses enfants, sans modifier le HTML. Un bouton « Détail filtre » ouvre une fiche complète consacrée à blur(), grayscale(), invert(), aux valeurs neutres et aux combinaisons de filtres, avec tableaux, code et comparaisons visuelles.",
+    "lien": "cours/css3.html#css-filter",
+    "libelleLien": "Ouvrir la partie filter"
+  },
+  {
     "version": "v295",
     "date": "2026-10-17",
     "categorie": "Cours et vidéo CSS3",

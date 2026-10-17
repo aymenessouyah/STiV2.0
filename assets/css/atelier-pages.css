@@ -1081,3 +1081,161 @@ html.dark-mode body.course-css3-page .filter-controls button[aria-pressed="true"
     transition: none;
   }
 }
+
+/* ---------- v296 — Page détaillée de la propriété filter ---------- */
+body.course-css3-page .filter-detail-page {
+  color: #1b2733;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+body.course-css3-page .filter-detail-page .filter-detail-lead {
+  margin-top: 0;
+  color: #566574;
+  font-size: 16px;
+}
+
+body.course-css3-page .filter-detail-page h3 {
+  margin: 32px 0 9px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #0f6e8c;
+  color: #1b2733;
+  font-size: 20px;
+}
+
+body.course-css3-page .filter-detail-page h4 {
+  margin: 22px 0 8px;
+  color: #1b2733;
+  font-size: 16px;
+}
+
+body.course-css3-page .filter-detail-code {
+  overflow-x: auto;
+  margin: 12px 0;
+  padding: 14px 16px;
+  border-radius: 7px;
+  background: #1b2733;
+  color: #e6edf3;
+  font: 14px/1.5 ui-monospace, Consolas, Menlo, monospace;
+  white-space: pre;
+}
+
+body.course-css3-page .filter-detail-code code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+body.course-css3-page .filter-detail-note {
+  margin: 16px 0;
+  padding: 10px 16px;
+  border-left: 4px solid #0f6e8c;
+  border-radius: 0 7px 7px 0;
+  background: #eef2f6;
+  color: #1b2733;
+}
+
+body.course-css3-page .filter-detail-table-wrap {
+  overflow-x: auto;
+}
+
+body.course-css3-page .filter-detail-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+body.course-css3-page .filter-detail-table th,
+body.course-css3-page .filter-detail-table td {
+  padding: 8px 10px;
+  border: 1px solid #cdd6df;
+  color: #1b2733;
+  text-align: left;
+  vertical-align: top;
+}
+
+body.course-css3-page .filter-detail-table th {
+  background: #eef2f6;
+}
+
+body.course-css3-page .filter-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+
+body.course-css3-page .filter-detail-page figure {
+  margin: 0;
+  padding: 10px;
+  border: 1px solid #cdd6df;
+  border-radius: 7px;
+  background: #ffffff;
+}
+
+body.course-css3-page .filter-detail-page figcaption {
+  margin-top: 8px;
+  color: #566574;
+  font: 12px/1.4 ui-monospace, Consolas, Menlo, monospace;
+}
+
+body.course-css3-page .filter-detail-photo {
+  height: 140px;
+  border-radius: 5px;
+  background: #dbeafe url("../icons/sti-icon-512.png") center / contain no-repeat;
+}
+
+body.course-css3-page .filter-blur-0 { filter: blur(0); }
+body.course-css3-page .filter-blur-2 { filter: blur(2px); }
+body.course-css3-page .filter-blur-5 { filter: blur(5px); }
+body.course-css3-page .filter-blur-10 { filter: blur(10px); }
+body.course-css3-page .filter-gray-0 { filter: grayscale(0%); }
+body.course-css3-page .filter-gray-50 { filter: grayscale(50%); }
+body.course-css3-page .filter-gray-100 { filter: grayscale(100%); }
+body.course-css3-page .filter-invert-0 { filter: invert(0%); }
+body.course-css3-page .filter-invert-50 { filter: invert(50%); }
+body.course-css3-page .filter-invert-100 { filter: invert(100%); }
+body.course-css3-page .filter-combo-1 { filter: grayscale(100%) blur(2px); }
+body.course-css3-page .filter-combo-2 { filter: invert(100%) grayscale(100%); }
+body.course-css3-page .filter-combo-3 { filter: blur(3px) invert(100%); }
+
+body.course-css3-page .filter-detail-figure-wide {
+  margin: 12px 0;
+}
+
+body.course-css3-page .filter-detail-blurred-text {
+  padding: 10px 0;
+  font-size: 17px;
+  filter: blur(1.5px);
+}
+
+body.course-css3-page .filter-detail-before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+body.course-css3-page .filter-detail-card {
+  min-height: 120px;
+  padding: 14px;
+  border-radius: 5px;
+  background: #ffd23f;
+  color: #1a1a1a;
+}
+
+body.course-css3-page .filter-detail-card strong {
+  display: block;
+  font-size: 17px;
+}
+
+@media (max-width: 560px) {
+  body.course-css3-page .filter-detail-before-after {
+    grid-template-columns: 1fr;
+  }
+
+  body.course-css3-page .filter-detail-page h3 {
+    font-size: 18px;
+  }
+}
