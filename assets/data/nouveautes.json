@@ -1,6 +1,13 @@
 [
   {
     "date": "2026-10-17",
+    "tag": "Exercices PHP",
+    "titre": "Nouvel exercice interactif PHP : Remise en ordre des scripts PHP/MySQLi & SQL 🧩🐘",
+    "desc": "Ajouté dans Exercices PHP : 8 défis progressifs pour remettre dans l'ordre inscription.php, statistiques.php (Catégorie = initiale de Id), SELECT COUNT(*), clauses SQL, verif() JS et déploiement Wamp/XAMPP.",
+    "lien": "exercices/series-exercices.html#php"
+  },
+  {
+    "date": "2026-10-17",
     "tag": "Bac & Cours",
     "titre": "Simulateur PHP/MySQLi sans Wamp 🐘 + Générateur 10 Fonctions JS ⚡ + Mode Sombre Universel 🌙",
     "desc": "Exécutez vos scripts PHP/MySQLi et visualisez les tables SQL en direct dans bac-pratique.html sans WampServer, testez et générez les 10 fonctions JS du Bac STI dans outils-js-bac.html, et profitez du Mode Sombre harmonisé sur tous les cours.",

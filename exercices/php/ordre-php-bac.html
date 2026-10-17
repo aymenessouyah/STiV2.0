@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atelier Interactif PHP/MySQLi & SQL — Remise en ordre des scripts du Bac STI</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/icons/sti-icon-192.png">
+  <link rel="stylesheet" href="../../assets/css/protection.css?v=227">
+  <script src="../../assets/js/protection.js?v=227"></script>
+  <style>
+    :root {
+      --bg: #faf6ee;
+      --card: #ffffff;
+      --ink: #23201a;
+      --muted: #5a5244;
+      --border: #23201a;
+      --code-bg: #1e293b;
+      --code-ink: #f8fafc;
+      --accent: #4c51bf;
+      --ok-bg: #dcfce7;
+      --ok-ink: #14532d;
+      --ko-bg: #fee2e2;
+      --ko-ink: #991b1b;
+    }
+    html[data-theme="dark"], html.dark-mode {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --ink: #f8fafc;
+      --muted: #cbd5e1;
+      --border: #475569;
+      --code-bg: #090d16;
+      --code-ink: #e2e8f0;
+      --accent: #818cf8;
+      --ok-bg: rgba(20, 83, 45, 0.45);
+      --ok-ink: #bbf7d0;
+      --ko-bg: rgba(127, 29, 29, 0.45);
+      --ko-ink: #fecaca;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      padding: 16px 16px 50px;
+    }
+    .wrap-ord {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+    .topbar-ord {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .btn-o {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 12px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--border);
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-o:hover { transform: translateY(-2px); }
+    .hero-ord {
+      background: linear-gradient(135deg, #ede9fe 0%, #dbeafe 55%, #dcfce7 100%);
+      color: #1e1b4b;
+      border: 2.5px solid #23201a;
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: 4px 4px 0 #23201a;
+      margin-bottom: 16px;
+    }
+    html[data-theme="dark"] .hero-ord, html.dark-mode .hero-ord {
+      background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+      color: #f8fafc;
+      border-color: #818cf8;
+      box-shadow: 4px 4px 0 #818cf8;
+    }
+    .hero-ord h1 { margin: 0 0 5px; font-size: clamp(18px, 2.5vw, 24px); font-weight: 900; }
+    .hero-ord p { margin: 0; font-size: 13px; font-weight: 700; }
+
+    .nav-defis {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .tab-defi {
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .tab-defi.actif {
+      background: #4c51bf;
+      color: #ffffff;
+      border-color: #23201a;
+    }
+    .tab-defi.reussi {
+      border-color: #16a34a;
+      background: #dcfce7;
+      color: #14532d;
+    }
+    .tab-defi.reussi.actif {
+      background: #15803d;
+      color: #ffffff;
+    }
+
+    .panneau-defi {
+      background: var(--card);
+      border: 2.5px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 4px 4px 0 var(--border);
+    }
+    .consigne-defi {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--muted);
+      margin: 6px 0 14px;
+      padding: 10px 13px;
+      border-radius: 10px;
+      border-left: 5px solid #4c51bf;
+      background: rgba(76, 81, 191, 0.08);
+    }
+    .liste-lignes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .ligne-code-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 11px;
+      border: 2px solid var(--border);
+      background: var(--code-bg);
+      color: var(--code-ink);
+      cursor: grab;
+      user-select: none;
+      transition: all 0.15s ease-in-out;
+    }
+    .ligne-code-item.selectionnee {
+      border-color: #facc15;
+      box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.45);
+    }
+    .ligne-code-item.correcte {
+      border-color: #22c55e;
+      background: #064e3b;
+    }
+    .ligne-code-item.incorrecte {
+      border-color: #ef4444;
+      background: #450a0a;
+    }
+    .num-pos {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: #334155;
+      color: #f8fafc;
+      font-weight: 900;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .texte-code-ligne {
+      flex: 1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.8px;
+      font-weight: 700;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .actions-ligne {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .btn-move {
+      border: 1.5px solid #64748b;
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 7px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .btn-move:hover { background: #4c51bf; border-color: #fff; }
+    .feedback-box {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      border: 2px solid;
+    }
+    .feedback-box.ok { display: block; background: var(--ok-bg); color: var(--ok-ink); border-color: #16a34a; }
+    .feedback-box.ko { display: block; background: var(--ko-bg); color: var(--ko-ink); border-color: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="wrap-ord">
+    <div class="topbar-ord">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="../series-exercices.html#php" class="btn-o">⬅️ Séries d'exercices PHP</a>
+        <a href="../../cours/php.html" class="btn-o">🐘 Cours PHP</a>
+        <a href="../../bac-pratique.html" class="btn-o">🧪 Atelier Bac Pratique</a>
+        <a href="../../pieges-bac.html" class="btn-o">⚠️ 25 Pièges du Bac</a>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <span id="badge-score-ord" class="btn-o" style="background:#dcfce7;color:#14532d;border-color:#16a34a;cursor:default">🏆 Score : 0 / 8 défis (0/20)</span>
+        <button type="button" id="theme-toggle" class="btn-o">🌙 Mode Sombre</button>
+      </div>
+    </div>
+
+    <header class="hero-ord">
+      <div style="display:inline-block;background:#4c51bf;color:#fff;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:900;margin-bottom:5px">
+        🐘 EXERCICE INTERACTIF PHP / MYSQLI &amp; BAC STI — 8 DÉFIS PROGRESSIFS
+      </div>
+      <h1>🧩 Remise en ordre des scripts PHP/MySQLi, Requêtes SQL &amp; Contrôles du Bac</h1>
+      <p>Remettez les instructions dans l'ordre logique d'exécution (par <b>glisser-déposer</b>, avec les boutons <b>⬆️ / ⬇️</b> ou en <b>cliquant sur 2 lignes pour les échanger</b>), puis cliquez sur <b>« ✅ Vérifier l'ordre »</b>.</p>
+    </header>
+
+    <div class="nav-defis" id="barre-onglets-defis"></div>
+
+    <section class="panneau-defi">
+      <h2 id="titre-defi-actuel" style="margin:0;font-size:17px;font-weight:900;color:#4c51bf"></h2>
+      <div id="consigne-defi-actuel" class="consigne-defi"></div>
+
+      <div id="liste-lignes-code" class="liste-lignes"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" id="btn-verifier-ordre" class="btn-o" style="background:#16a34a;color:#fff;border-color:#14532d;font-size:13px;padding:9px 16px">✅ Vérifier l'ordre</button>
+          <button type="button" id="btn-melanger-ordre" class="btn-o">🔀 Mélanger à nouveau</button>
+          <button type="button" id="btn-indice-ordre" class="btn-o">💡 Voir l'explication</button>
+        </div>
+        <button type="button" id="btn-defi-suivant" class="btn-o" style="background:#4c51bf;color:#fff">➡️ Défi suivant</button>
+      </div>
+
+      <div id="feedback-defi" class="feedback-box"></div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var DEFIS = [
+        {
+          id: "d1",
+          court: "1. inscription.php (INSERT)",
+          titre: "Défi 1 — Script PHP d'inscription d'un élève (Table eleves)",
+          consigne: "Remettez dans l'ordre les 8 étapes d'une page inscription.php : ouverture PHP, connexion à la base, lecture de $_POST, vérification d'existence avec mysqli_num_rows(), insertion avec mysqli_query() + mysqli_affected_rows(), et fermeture.",
+          explication: "En PHP/MySQLi procédural : 1) mysqli_connect() → 2) Lecture $_POST → 3) SELECT pour vérifier si l'Id existe déjà avec mysqli_num_rows($r) > 0 → 4) Sinon INSERT INTO eleves et contrôle avec mysqli_affected_rows($con) → 5) mysqli_close($con).",
+          lignes: [
+            '<?php',
+            '$con = mysqli_connect("localhost", "root", "", "bd_lycee");',
+            '$id = $_POST["id"]; $np = $_POST["np"]; $moy = $_POST["moy"]; $dn = $_POST["dn"];',
+            '$r = mysqli_query($con, "SELECT * FROM eleves WHERE Id = \'$id\'");',
+            'if (mysqli_num_rows($r) > 0) { echo "Élève déjà inscrit !"; }',
+            'else { mysqli_query($con, "INSERT INTO eleves VALUES (\'$id\', \'$np\', $moy, \'$dn\')");',
+            '  if (mysqli_affected_rows($con) > 0) { echo "Inscription réussie !"; } }',
+            'mysqli_close($con); ?>'
+          ]
+        },
+        {
+          id: "d2",
+          court: "2. statistiques.php (Catégorie)",
+          titre: "Défi 2 — Affichage trié par Catégorie (initiale de Id) et séparation Nom / Prénom",
+          consigne: "Chaque Id commence par une lettre majuscule (= Catégorie). Remettez dans l'ordre le script statistiques.php qui trie les élèves par Catégorie et sépare le Nom et le Prénom grâce à l'espace.",
+          explication: "On exécute SELECT ... ORDER BY LEFT(Id, 1) ASC, on parcourt les lignes avec while ($t = mysqli_fetch_assoc($res)), on extrait la Catégorie avec substr($t['Id'], 0, 1) et on coupe Nom_prenom au premier espace avec strpos().",
+          lignes: [
+            '$con = mysqli_connect("localhost", "root", "", "bd_lycee");',
+            '$res = mysqli_query($con, "SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves ORDER BY LEFT(Id, 1) ASC");',
+            'while ($t = mysqli_fetch_assoc($res)) {',
+            '  $cat = substr($t["Id"], 0, 1);',
+            '  $pos = strpos($t["Nom_prenom"], " ");',
+            '  $nom = substr($t["Nom_prenom"], 0, $pos); $prenom = substr($t["Nom_prenom"], $pos + 1);',
+            '  echo $cat . " - Nom : " . $nom . " | Prénom : " . $prenom . " | Moy : " . $t["Moyenne"] . "<br>";',
+            '} mysqli_close($con);'
+          ]
+        },
+        {
+          id: "d3",
+          court: "3. SELECT COUNT(*) vs fetch",
+          titre: "Défi 3 — Calculer un effectif avec SELECT COUNT(*) AS total en PHP",
+          consigne: "Attention au piège du Bac : SELECT COUNT(*) renvoie toujours 1 ligne ! Remettez dans l'ordre les instructions permettant de lire et d'afficher la valeur réelle du compteur.",
+          explication: "Avec SELECT COUNT(*) AS total, mysqli_num_rows($res) vaut toujours 1. Il faut donc appeler mysqli_fetch_assoc($res) (ou mysqli_fetch_row) puis afficher $lig['total'].",
+          lignes: [
+            '$con = mysqli_connect("localhost", "root", "", "bd_lycee");',
+            '$req = "SELECT COUNT(*) AS total FROM eleves WHERE Moyenne >= 10";',
+            '$res = mysqli_query($con, $req);',
+            '$lig = mysqli_fetch_assoc($res);',
+            '$nbAdmis = $lig["total"];',
+            'echo "Nombre d\'élèves admis : " . $nbAdmis;',
+            'mysqli_close($con);'
+          ]
+        },
+        {
+          id: "d4",
+          court: "4. Disponibilité Station (PHP)",
+          titre: "Défi 4 — Vérifier la disponibilité d'une station de recharge et réserver",
+          consigne: "Remettez dans l'ordre le script PHP qui vérifie si une station est disponible à l'heure choisie (entre 08h00–12h00 ou 13h00–18h00) avant d'enregistrer la réservation.",
+          explication: "On récupère l'identifiant de station et l'heure, on vérifie dans la table recharge si un créneau existe déjà (mysqli_num_rows($verif) > 0), sinon on insère la réservation et on met à jour l'état de la station.",
+          lignes: [
+            '$con = mysqli_connect("localhost", "root", "", "bd_recharge");',
+            '$idSt = $_POST["station"]; $heure = $_POST["heure"]; $cin = $_POST["cin"];',
+            '$verif = mysqli_query($con, "SELECT * FROM recharge WHERE IdStation=\'$idSt\' AND Heure=\'$heure\'");',
+            'if (mysqli_num_rows($verif) > 0) {',
+            '  echo "Station occupée à cette heure !";',
+            '} else {',
+            '  mysqli_query($con, "INSERT INTO recharge VALUES (\'$cin\', \'$idSt\', \'$heure\')");',
+            '  echo "Réservation confirmée à " . $heure; } mysqli_close($con);'
+          ]
+        },
+        {
+          id: "d5",
+          court: "5. Clauses SQL (GROUP BY)",
+          titre: "Défi 5 — Ordre immuable des 6 clauses d'une requête SQL dans PHP",
+          consigne: "Remettez dans l'ordre syntaxique exact les 6 clauses de cette requête SQL exécutée par mysqli_query().",
+          explication: "L'ordre SQL est strictement : 1) SELECT → 2) FROM → 3) WHERE (filtre avant regroupement) → 4) GROUP BY → 5) HAVING (filtre sur agrégat COUNT/AVG) → 6) ORDER BY.",
+          lignes: [
+            'SELECT LEFT(Id, 1) AS Categorie, COUNT(*) AS Nb, AVG(Moyenne) AS MoyCat',
+            'FROM eleves',
+            'WHERE YEAR(DateNaissance) >= 2007',
+            'GROUP BY LEFT(Id, 1)',
+            'HAVING COUNT(*) >= 2',
+            'ORDER BY Categorie ASC;'
+          ]
+        },
+        {
+          id: "d6",
+          court: "6. Validation JS avant PHP",
+          titre: "Défi 6 — Fonction JS verif() (let, getElementById, Nom_prenom 2 à 5 mots)",
+          consigne: "Remettez dans l'ordre la fonction JavaScript verif() appelée par onsubmit=\"return verif()\" avant l'envoi du formulaire au fichier PHP.",
+          explication: "On lit et nettoie d'abord la valeur avec document.getElementById('np').value, on teste les conditions en retournant false après alert()/innerHTML en cas d'erreur, et on termine par return true.",
+          lignes: [
+            'function verif() {',
+            '  let id = document.getElementById("id").value.trim();',
+            '  let np = nettoyerEspaces(document.getElementById("np").value);',
+            '  if (id.length < 2 || id[0] < "A" || id[0] > "Z") {',
+            '    alert("L\'identifiant doit commencer par une lettre majuscule !"); return false;',
+            '  }',
+            '  if (!verifNomPrenom(np)) { alert("Nom_prenom : 2 à 5 mots (lettres et espaces) !"); return false; }',
+            '  return true; }'
+          ]
+        },
+        {
+          id: "d7",
+          court: "7. Architecture Float & Iframe",
+          titre: "Défi 7 — Structure index.html + CSS float / clear: both vers les pages PHP",
+          consigne: "Remettez dans l'ordre la structure HTML/CSS de la page d'accueil qui ouvre inscription.html et statistiques.php dans le cadre droit.",
+          explication: "Le menu <nav> (float: left) contient des liens avec target='cadre' qui ciblent <iframe name='cadre'> dans <section> (float: left), et <footer> utilise obligatoirement clear: both.",
+          lignes: [
+            '<header><h1>Gestion du Lycée</h1></header>',
+            '<nav style="float: left; width: 25%; transition: all 0.3s ease-in-out;">',
+            '  <a href="inscription.html" target="cadre">Inscription</a>',
+            '  <a href="statistiques.php" target="cadre">Statistiques PHP</a>',
+            '</nav>',
+            '<section style="float: left; width: 75%;">',
+            '  <iframe name="cadre" src="inscription.html"></iframe>',
+            '</section><footer style="clear: both;">Bac STI</footer>'
+          ]
+        },
+        {
+          id: "d8",
+          court: "8. Exécution Wamp / Localhost",
+          titre: "Défi 8 — Du dossier www/ (ou htdocs/) à l'exécution PHP sur serveur local",
+          consigne: "Remettez dans l'ordre chronologique les 5 étapes indispensables le jour de l'épreuve pratique pour exécuter votre projet PHP/MySQL.",
+          explication: "Un fichier .php ne s'ouvre jamais par double-clic (file://) : il doit être placé dans www/ ou htdocs/, la base importée dans phpMyAdmin, et le projet appelé via http://localhost/...",
+          lignes: [
+            '1. Démarrer les services Apache et MySQL dans WampServer / XAMPP.',
+            '2. Créer le dossier du projet dans C:\\wamp64\\www\\ (ou C:\\xampp\\htdocs\\).',
+            '3. Ouvrir http://localhost/phpmyadmin et créer/importer la base de données SQL.',
+            '4. Enregistrer index.html, controle.js et les pages .php dans le dossier du projet.',
+            '5. Tester l\'application dans le navigateur via http://localhost/nom_dossier/index.html.'
+          ]
+        }
+      ];
+
+      var CLE_STORAGE = "sti-ordre-php-bac-ok";
+      var reussisMap = {};
+      try { reussisMap = JSON.parse(localStorage.getItem(CLE_STORAGE) || "{}") || {}; } catch (e) {}
+
+      var idxActuel = 0;
+      var ordreCourant = [];
+      var idxSelectionClic = null;
+      var idxDragStart = null;
+
+      function ech(s) {
+        return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      function melangerTableau(arr) {
+        var copie = arr.slice();
+        for (var attempt = 0; attempt < 6; attempt++) {
+          for (var i = copie.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = copie[i];
+            copie[i] = copie[j];
+            copie[j] = tmp;
+          }
+          var identique = true;
+          for (var k = 0; k < copie.length; k++) {
+            if (copie[k] !== arr[k]) { identique = false; break; }
+          }
+          if (!identique) break;
+        }
+        return copie;
+      }
+
+      function majScoreGlobal() {
+        var nbOk = 0;
+        for (var i = 0; i < DEFIS.length; i++) {
+          if (reussisMap[DEFIS[i].id]) nbOk++;
+        }
+        var note20 = Math.round((nbOk / DEFIS.length) * 20 * 10) / 10;
+        var badge = document.getElementById("badge-score-ord");
+        if (badge) {
+          badge.innerHTML = "🏆 Score : " + nbOk + " / " + DEFIS.length + " défis (" + note20 + "/20)";
+        }
+        if (nbOk > 0 && window.enregistrerScoreQuizSTI) {
+          try {
+            window.enregistrerScoreQuizSTI("Atelier Ordre PHP/SQL Bac", note20 + "/20", note20);
+          } catch (e) {}
+        }
+      }
+
+      function rendreOnglets() {
+        var bar = document.getElementById("barre-onglets-defis");
+        var html = "";
+        for (var i = 0; i < DEFIS.length; i++) {
+          var d = DEFIS[i];
+          var cls = "tab-defi" + (i === idxActuel ? " actif" : "") + (reussisMap[d.id] ? " reussi" : "");
+          html += '<button type="button" class="' + cls + '" data-idx="' + i + '">' + (reussisMap[d.id] ? "✅ " : "") + ech(d.court) + '</button>';
+        }
+        bar.innerHTML = html;
+        var btns = bar.getElementsByClassName("tab-defi");
+        for (var j = 0; j < btns.length; j++) {
+          btns[j].onclick = function () {
+            chargerDefi(parseInt(this.getAttribute("data-idx"), 10));
+          };
+        }
+      }
+
+      function rendreLignes(classesValidation) {
+        var cont = document.getElementById("liste-lignes-code");
+        var html = "";
+        for (var i = 0; i < ordreCourant.length; i++) {
+          var clsExtra = "";
+          if (idxSelectionClic === i) clsExtra += " selectionnee";
+          if (classesValidation && classesValidation[i]) clsExtra += " " + classesValidation[i];
+          html +=
+            '<div class="ligne-code-item' + clsExtra + '" draggable="true" data-pos="' + i + '">' +
+              '<span class="num-pos">' + (i + 1) + '</span>' +
+              '<div class="texte-code-ligne">' + ech(ordreCourant[i]) + '</div>' +
+              '<div class="actions-ligne">' +
+                '<button type="button" class="btn-move" data-dir="-1" data-pos="' + i + '" title="Monter cette ligne">⬆️</button>' +
+                '<button type="button" class="btn-move" data-dir="1" data-pos="' + i + '" title="Descendre cette ligne">⬇️</button>' +
+              '</div>' +
+            '</div>';
+        }
+        cont.innerHTML = html;
+
+        /* Boutons monter / descendre */
+        var btnsM = cont.getElementsByClassName("btn-move");
+        for (var b = 0; b < btnsM.length; b++) {
+          btnsM[b].onclick = function (ev) {
+            ev.stopPropagation();
+            var p = parseInt(this.getAttribute("data-pos"), 10);
+            var dir = parseInt(this.getAttribute("data-dir"), 10);
+            var cible = p + dir;
+            if (cible < 0 || cible >= ordreCourant.length) return;
+            var tmp = ordreCourant[p];
+            ordreCourant[p] = ordreCourant[cible];
+            ordreCourant[cible] = tmp;
+            idxSelectionClic = null;
+            rendreLignes();
+          };
+        }
+
+        /* Clic-échange & Drag-and-Drop */
+        var items = cont.getElementsByClassName("ligne-code-item");
+        for (var k = 0; k < items.length; k++) {
+          items[k].onclick = function () {
+            var pos = parseInt(this.getAttribute("data-pos"), 10);
+            if (idxSelectionClic === null) {
+              idxSelectionClic = pos;
+              rendreLignes();
+            } else if (idxSelectionClic === pos) {
+              idxSelectionClic = null;
+              rendreLignes();
+            } else {
+              var tmp = ordreCourant[idxSelectionClic];
+              ordreCourant[idxSelectionClic] = ordreCourant[pos];
+              ordreCourant[pos] = tmp;
+              idxSelectionClic = null;
+              rendreLignes();
+            }
+          };
+          items[k].ondragstart = function () {
+            idxDragStart = parseInt(this.getAttribute("data-pos"), 10);
+          };
+          items[k].ondragover = function (ev) {
+            ev.preventDefault();
+          };
+          items[k].ondrop = function (ev) {
+            ev.preventDefault();
+            var posCible = parseInt(this.getAttribute("data-pos"), 10);
+            if (idxDragStart === null || idxDragStart === posCible) return;
+            var elem = ordreCourant.splice(idxDragStart, 1)[0];
+            ordreCourant.splice(posCible, 0, elem);
+            idxDragStart = null;
+            idxSelectionClic = null;
+            rendreLignes();
+          };
+        }
+      }
+
+      function chargerDefi(idx) {
+        idxActuel = (idx >= 0 && idx < DEFIS.length) ? idx : 0;
+        idxSelectionClic = null;
+        var d = DEFIS[idxActuel];
+        document.getElementById("titre-defi-actuel").innerHTML = ech(d.titre);
+        document.getElementById("consigne-defi-actuel").innerHTML = ech(d.consigne);
+        var fb = document.getElementById("feedback-defi");
+        fb.className = "feedback-box";
+        fb.innerHTML = "";
+        ordreCourant = melangerTableau(d.lignes);
+        rendreOnglets();
+        rendreLignes();
+        majScoreGlobal();
+      }
+
+      document.getElementById("btn-verifier-ordre").onclick = function () {
+        var d = DEFIS[idxActuel];
+        var classes = [];
+        var nbBon = 0;
+        for (var i = 0; i < d.lignes.length; i++) {
+          if (ordreCourant[i] === d.lignes[i]) {
+            classes.push("correcte");
+            nbBon++;
+          } else {
+            classes.push("incorrecte");
+          }
+        }
+        rendreLignes(classes);
+        var fb = document.getElementById("feedback-defi");
+        if (nbBon === d.lignes.length) {
+          reussisMap[d.id] = true;
+          try { localStorage.setItem(CLE_STORAGE, JSON.stringify(reussisMap)); } catch (e) {}
+          fb.className = "feedback-box ok";
+          fb.innerHTML = "✅ Bravo ! Les " + d.lignes.length + " lignes sont dans l'ordre exact.<br><span style='font-weight:700'>" + ech(d.explication) + "</span>";
+          rendreOnglets();
+          majScoreGlobal();
+        } else {
+          fb.className = "feedback-box ko";
+          fb.innerHTML = "❌ " + nbBon + " / " + d.lignes.length + " lignes sont bien placées (en vert). Corrigez les lignes en rouge puis recliquez sur « Vérifier l'ordre ».";
+        }
+      };
+
+      document.getElementById("btn-melanger-ordre").onclick = function () {
+        chargerDefi(idxActuel);
+      };
+
+      document.getElementById("btn-indice-ordre").onclick = function () {
+        var d = DEFIS[idxActuel];
+        var fb = document.getElementById("feedback-defi");
+        fb.className = "feedback-box ok";
+        fb.innerHTML = "💡 <b>Rappel méthodologique :</b> " + ech(d.explication);
+      };
+
+      document.getElementById("btn-defi-suivant").onclick = function () {
+        chargerDefi((idxActuel + 1) % DEFIS.length);
+      };
+
+      /* Mode Sombre */
+      var btnTh = document.getElementById("theme-toggle");
+      function appliquerTheme(th) {
+        var dark = (th === "dark");
+        document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+        document.documentElement.classList.toggle("dark-mode", dark);
+        btnTh.innerHTML = dark ? "☀️ Mode Clair" : "🌙 Mode Sombre";
+      }
+      appliquerTheme(localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "light");
+      btnTh.onclick = function () {
+        var act = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        localStorage.setItem("sti-theme", act);
+        localStorage.setItem("theme", act);
+        appliquerTheme(act);
+      };
+
+      chargerDefi(0);
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../assets/js/config.js?v=256"></script>
+  <script src="../../assets/js/acces.js?v=267"></script>
+</body>
+</html>
