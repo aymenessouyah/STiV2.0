@@ -1,13 +1,13 @@
 [
   {
-    "version": "v273",
+    "version": "v275",
     "date": "2026-10-17",
     "categorie": "Vidéo BD & SQL",
     "icone": "🎬",
-    "titre": "Nouvelle Vidéo Officielle du Cours SQL avec Guide-Ligne : Archives (BD), SGBD, Avion Mère➔Fille, LDD, LMD, Agrégats & 4ème SI",
-    "resume": "Remplacement de l'ancienne vidéo du cours SQL par une nouvelle vidéo Full HD 1080p de 9 min 23 en 10 chapitres avec Guide-Ligne : simulation Archives (BD / Database) ↔ Administration (SGBD) ↔ Client & Requête (Query) en SQL, voyage en Avion de la Table Mère vers la Table Fille, relations 1-1 / 1-N / N-M, LDD (CREATE, ALTER, DROP), LMD (INSERT, UPDATE, DELETE, SELECT avec exemples concrets, 5 agrégats) et partie réservée aux 4ème SI (Jointures, GROUP BY, HAVING, Sous-requêtes et Requêtes imbriquées).",
+    "titre": "Vidéo SQL concrète et animée : Archives, Client, Administration/SGBD, BD graphique et textuelle, Mère➔Fille",
+    "resume": "Nouvelle vidéo officielle HD de 8 min 19 en 10 chapitres : de vraies scènes animées montrent le Client qui rédige une requête, l'Administration/SGBD qui contrôle l'accès et les Archives/BD composées d'armoires-tables. La BD est présentée sous ses deux formes, graphique et textuelle, avec les étiquettes Table Mère / Table Fille et l'avion animé qui transporte la clé primaire CodeClasse vers la clé étrangère. La suite anime aussi le chantier LDD, les lignes INSERT/UPDATE/DELETE, le scanner SELECT, les agrégats et la partie 4ème SI (jointures, GROUP BY, HAVING et sous-requêtes).",
     "lien": "cours/sql.html#video-initiation-sql",
-    "libelleLien": "Regarder la vidéo du Cours SQL"
+    "libelleLien": "Regarder la nouvelle vidéo concrète du Cours SQL"
   },
   {
     "version": "v271",
