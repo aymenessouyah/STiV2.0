@@ -119,6 +119,45 @@
     padding: 6px 0; border-bottom: 1px dashed #e2d5be; font-size: 13px; font-weight: 700;
   }
   .eval-item:last-child { border-bottom: 0; }
+  html[data-theme="dark"] body, html.dark-mode body { background: #0f172a; color: #f8fafc; }
+  html[data-theme="dark"] .entete, html.dark-mode .entete,
+  html[data-theme="dark"] .sujet-bar, html.dark-mode .sujet-bar,
+  html[data-theme="dark"] .enonce-box, html.dark-mode .enonce-box,
+  html[data-theme="dark"] .panneau, html.dark-mode .panneau,
+  html[data-theme="dark"] .eval-box, html.dark-mode .eval-box,
+  html[data-theme="dark"] .sim-phpsql-box, html.dark-mode .sim-phpsql-box {
+    background: #1e293b; color: #f8fafc; border-color: #475569;
+  }
+  html[data-theme="dark"] h1, html.dark-mode h1 { color: #f8fafc; }
+  html[data-theme="dark"] .sous, html.dark-mode .sous { color: #cbd5e1; }
+  html[data-theme="dark"] .onglets, html.dark-mode .onglets,
+  html[data-theme="dark"] .apercu-entete, html.dark-mode .apercu-entete {
+    background: #0f172a; color: #f8fafc; border-color: #475569;
+  }
+  html[data-theme="dark"] .btn, html.dark-mode .btn,
+  html[data-theme="dark"] .onglet:not(.actif), html.dark-mode .onglet:not(.actif),
+  html[data-theme="dark"] .b-tag, html.dark-mode .b-tag {
+    background: #334155; color: #f8fafc; border-color: #64748b;
+  }
+  .sim-phpsql-box {
+    margin-top: 16px; background: #fffdf7; border: 2.5px solid #23201a;
+    border-radius: 16px; padding: 18px; box-shadow: 6px 6px 0 #0284c7;
+  }
+  .sim-grid {
+    display: grid; grid-template-columns: 1fr 1.15fr; gap: 14px; margin-top: 12px;
+  }
+  @media (max-width: 900px) { .sim-grid { grid-template-columns: 1fr; } }
+  .sim-table {
+    width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px;
+  }
+  .sim-table th, .sim-table td {
+    border: 1.5px solid #23201a; padding: 6px 9px; text-align: left;
+  }
+  .sim-table th { background: #e0f2fe; color: #0c4a6e; font-weight: 900; }
+  html[data-theme="dark"] .sim-table th, html.dark-mode .sim-table th { background: #0369a1; color: #fff; border-color: #475569; }
+  html[data-theme="dark"] .sim-table td, html.dark-mode .sim-table td { border-color: #475569; }
+  .tr-new { background: rgba(34, 197, 94, 0.22); font-weight: 800; }
+  .tr-upd { background: rgba(250, 204, 21, 0.28); font-weight: 800; }
 </style>
 </head>
 <body>
@@ -132,11 +171,13 @@
     </div>
     <div class="barre-actions">
       <a class="btn" href="index.html">🏠 Accueil</a>
+      <a class="btn" href="outils-js-bac.html">⚡ 10 Fonctions JS</a>
       <a class="btn" href="pieges-bac.html">⚠️ 25 Pièges du Bac</a>
       <a class="btn" href="memo-veille-bac.html">📄 Mémo Veille du Bac</a>
-      <a class="btn" href="exercices/series-exercices.html">🏋️ Séries d'exercices</a>
-      <button type="button" class="btn" id="btn-reset-sujet">🔄 Réinitialiser le sujet</button>
+      <button type="button" class="btn" id="theme-toggle">🌙 Mode Sombre</button>
+      <button type="button" class="btn" id="btn-reset-sujet">🔄 Réinitialiser</button>
       <button type="button" class="btn btn-prim" id="btn-run">▶️ Exécuter l'aperçu</button>
+      <button type="button" class="btn" id="btn-sim-php-top" style="background:#e0f2fe;color:#0369a1;border-color:#0284c7">🐘 Simuler PHP &amp; SQL</button>
       <button type="button" class="btn btn-gold" id="btn-evaluer">🏆 Évaluer (/20) &amp; Envoyer au prof</button>
     </div>
   </div>
@@ -202,6 +243,34 @@
   </div>
 
   <div class="eval-box" id="zone-eval"></div>
+
+  <!-- Simulateur PHP / MySQLi & Tableaux SQL en direct (100 % navigateur, sans WampServer) -->
+  <div class="sim-phpsql-box" id="zone-sim-phpsql">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div>
+        <h3 style="font-size:16.5px;font-weight:900;color:#0284c7">🐘 Simulateur PHP / MySQLi &amp; Tableaux SQL en direct (Sans WampServer)</h3>
+        <div style="font-size:12.5px;font-weight:700;opacity:0.85">Testez l'exécution de votre script PHP (<code>$_POST</code>, <code>mysqli_connect</code>, <code>mysqli_query</code>, <code>mysqli_num_rows</code>, <code>mysqli_fetch_assoc</code>, <code>mysqli_affected_rows</code>) et visualisez l'effet immédiat sur la table MySQL.</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn btn-prim" id="btn-exec-sim-php">▶️ Exécuter PHP &amp; Requête SQL</button>
+        <button type="button" class="btn" id="btn-reset-sim-db">🔄 Réinitialiser la table SQL</button>
+      </div>
+    </div>
+
+    <div id="sim-post-inputs" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;border:1.5px dashed #0284c7;border-radius:12px"></div>
+
+    <div class="sim-grid">
+      <div>
+        <div style="font-size:13px;font-weight:900;margin-bottom:6px">🖥️ Rendu de la page PHP (<code>echo</code>) &amp; Trace MySQLi :</div>
+        <div id="sim-php-echo" style="padding:12px;border-radius:10px;border:2px solid #23201a;background:#fff;color:#0f172a;font-weight:800;font-size:13px;min-height:64px"></div>
+        <pre id="sim-mysqli-trace" style="margin-top:8px;padding:10px 12px;border-radius:10px;background:#0f172a;color:#38bdf8;font:600 12px/1.45 monospace;overflow-x:auto"></pre>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:900;margin-bottom:6px">🗄️ État de la Table MySQL en direct (<span id="sim-nom-table">eleves</span>) :</div>
+        <div id="sim-table-rendu" style="overflow-x:auto"></div>
+      </div>
+    </div>
+  </div>
 
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
@@ -431,7 +500,260 @@
     }
   });
 
+  /* =====================================================================
+     SIMULATEUR PHP / MYSQLI & TABLEAUX SQL EN DIRECT (SANS WAMPSERVER)
+     ===================================================================== */
+  var DB_INIT = {
+    p0: {
+      bd: "BDDC6",
+      table: "Participant",
+      cols: ["IdParticipant", "Mail", "Mdp", "Genre", "Reponses_Sondage1"],
+      rows: [
+        { IdParticipant: 1, Mail: "sami2026@lycee.tn", Mdp: "Bac26a", Genre: "M", Reponses_Sondage1: "1:O | 2:O | 3:N" },
+        { IdParticipant: 2, Mail: "INES01@sti.tn", Mdp: "Sti26b", Genre: "F", Reponses_Sondage1: "1:N | 2:O | 3:O" }
+      ],
+      champs: [
+        { k: "mail", lbl: "$_POST['mail']", val: "ali2026@lycee.tn" },
+        { k: "mdp", lbl: "$_POST['mdp']", val: "Bac26z" },
+        { k: "genre", lbl: "$_POST['genre']", val: "M" },
+        { k: "q1", lbl: "$_POST['q1']", val: "1O" },
+        { k: "q2", lbl: "$_POST['q2']", val: "2O" },
+        { k: "q3", lbl: "$_POST['q3']", val: "3S" }
+      ]
+    },
+    s4: {
+      bd: "bd_lycee",
+      table: "eleves (Id, Nom_prenom, Moyenne, DateNaissance)",
+      cols: ["Id", "Categorie", "Nom_prenom", "Moyenne", "DateNaissance"],
+      rows: [
+        { Id: "A101", Categorie: "A", Nom_prenom: "Sami Ben Ali", Moyenne: 15.50, DateNaissance: "2008-03-12" },
+        { Id: "A102", Categorie: "A", Nom_prenom: "Ines Trabelsi", Moyenne: 16.75, DateNaissance: "2008-07-24" },
+        { Id: "B201", Categorie: "B", Nom_prenom: "Yassine Gharbi", Moyenne: 13.25, DateNaissance: "2007-11-05" }
+      ],
+      champs: [
+        { k: "id_el", lbl: "$_POST['id_el']", val: "B205" },
+        { k: "np", lbl: "$_POST['np']", val: "Meriem Ben Salah" },
+        { k: "moy", lbl: "$_POST['moy']", val: "17.25" },
+        { k: "dn", lbl: "$_POST['dn']", val: "2008-05-15" }
+      ]
+    },
+    s1: {
+      bd: "bd_club",
+      table: "membre (cin, nom, email, spec, duree)",
+      cols: ["cin", "nom", "email", "spec", "duree"],
+      rows: [
+        { cin: "09876541", nom: "Amine Tounsi", email: "amine@sti.tn", spec: "Arduino", duree: 6 },
+        { cin: "09876542", nom: "Sarra Mansour", email: "sarra@sti.tn", spec: "IA", duree: 12 }
+      ],
+      champs: [
+        { k: "cin", lbl: "$_POST['cin']", val: "09876549" },
+        { k: "nom", lbl: "$_POST['nom']", val: "Nour Gharbi" },
+        { k: "email", lbl: "$_POST['email']", val: "nour@sti.tn" },
+        { k: "spec", lbl: "$_POST['spec']", val: "Web" },
+        { k: "duree", lbl: "$_POST['duree']", val: "8" }
+      ]
+    },
+    s2: {
+      bd: "bd_hotel",
+      table: "reservation (id, tel, nom, ville, nuits)",
+      cols: ["id", "tel", "nom", "ville", "nuits"],
+      rows: [
+        { id: 1, tel: "22123456", nom: "Karim Ayari", ville: "Hammamet", nuits: 3 },
+        { id: 2, tel: "55987654", nom: "Leila Dridi", ville: "Djerba", nuits: 5 }
+      ],
+      champs: [
+        { k: "tel", lbl: "$_POST['tel']", val: "98112233" },
+        { k: "nom", lbl: "$_POST['nom']", val: "Hichem Mejri" },
+        { k: "ville", lbl: "$_POST['ville']", val: "Sousse" },
+        { k: "nuits", lbl: "$_POST['nuits']", val: "4" }
+      ]
+    },
+    s3: {
+      bd: "bd_fleurs",
+      table: "commande (id, code, nom, bouquet, qte)",
+      cols: ["id", "code", "nom", "bouquet", "qte"],
+      rows: [
+        { id: 1, code: "12345670", nom: "Salma Khelil", bouquet: "Roses", qte: 2 },
+        { id: 2, code: "12345671", nom: "Walid Jazi", bouquet: "Jasmin", qte: 4 }
+      ],
+      champs: [
+        { k: "code", lbl: "$_POST['code']", val: "12345678" },
+        { k: "nom", lbl: "$_POST['nom']", val: "Rania Zouari" },
+        { k: "bouquet", lbl: "$_POST['bouquet']", val: "Tulipes" },
+        { k: "qte", lbl: "$_POST['qte']", val: "3" }
+      ]
+    }
+  };
+
+  var etatSimRows = [];
+  var cleSimActuelle = "p0";
+
+  function clonerRows(arr) {
+    return JSON.parse(JSON.stringify(arr || []));
+  }
+
+  function initSimulateurSujet(cle) {
+    cleSimActuelle = DB_INIT[cle] ? cle : "s4";
+    var cfgSim = DB_INIT[cleSimActuelle];
+    etatSimRows = clonerRows(cfgSim.rows);
+    document.getElementById("sim-nom-table").textContent = cfgSim.bd + " → " + cfgSim.table;
+    var boxPost = document.getElementById("sim-post-inputs");
+    boxPost.innerHTML = cfgSim.champs.map(function (c) {
+      return "<label style='display:flex;flex-direction:column;gap:3px;font-size:11.5px;font-weight:900'>" +
+        "<span>" + c.lbl + " :</span>" +
+        "<input type='text' data-sim-post='" + c.k + "' value='" + c.val + "' style='padding:5px 8px;border:1.5px solid #23201a;border-radius:7px;font-weight:800;font-size:12px;width:145px'>" +
+      "</label>";
+    }).join("");
+    rendreTableSim("Prêt — cliquez sur « ▶️ Exécuter PHP & Requête SQL » pour simuler l'envoi du formulaire vers Apache/PHP & MySQL.", [
+      "$con = mysqli_connect('localhost', 'root', '', '" + cfgSim.bd + "'); // ✅ Connexion établie"
+    ]);
+  }
+
+  function lirePostSim() {
+    var post = {};
+    document.querySelectorAll("input[data-sim-post]").forEach(function (inp) {
+      post[inp.getAttribute("data-sim-post")] = inp.value.trim();
+    });
+    return post;
+  }
+
+  function rendreTableSim(echoHtml, traceLines) {
+    var cfgSim = DB_INIT[cleSimActuelle];
+    document.getElementById("sim-php-echo").innerHTML = echoHtml;
+    document.getElementById("sim-mysqli-trace").textContent = traceLines.join("\n");
+    var htmlT = "<table class='sim-table'><thead><tr>" +
+      cfgSim.cols.map(function (col) { return "<th>" + col + "</th>"; }).join("") +
+      "</tr></thead><tbody>";
+    etatSimRows.forEach(function (r) {
+      var cls = r.__new ? " class='tr-new'" : (r.__upd ? " class='tr-upd'" : "");
+      htmlT += "<tr" + cls + ">" + cfgSim.cols.map(function (col) {
+        return "<td>" + (r[col] !== undefined ? r[col] : "") + "</td>";
+      }).join("") + "</tr>";
+    });
+    htmlT += "</tbody></table>";
+    document.getElementById("sim-table-rendu").innerHTML = htmlT;
+  }
+
+  function executerSimulationPHP() {
+    var cfgSim = DB_INIT[cleSimActuelle];
+    var post = lirePostSim();
+    etatSimRows.forEach(function (r) { delete r.__new; delete r.__upd; });
+    var trace = [
+      "$con = mysqli_connect('localhost', 'root', '', '" + cfgSim.bd + "'); // ✅ OK"
+    ];
+    var echoOut = "";
+
+    if (cleSimActuelle === "s4") {
+      var idEl = post.id_el || "B205";
+      var np = post.np || "Meriem Ben Salah";
+      var moy = parseFloat(post.moy) || 15.0;
+      var dn = post.dn || "2008-05-15";
+      var catInit = idEl.charAt(0).toUpperCase();
+      trace.push("$r = mysqli_query($con, \"SELECT * FROM eleves WHERE Id = '" + idEl + "'\");");
+      var exist = etatSimRows.find(function (x) { return String(x.Id).toUpperCase() === idEl.toUpperCase(); });
+      if (exist) {
+        trace.push("mysqli_num_rows($r) === 1 // ⚠️ Élève déjà présent");
+        echoOut = "<span style='color:#b91c1c'>⚠️ Cet identifiant (" + idEl + ") existe déjà !</span><hr style='margin:8px 0'>";
+      } else {
+        trace.push("mysqli_num_rows($r) === 0 // Nouveau -> INSERT INTO eleves");
+        trace.push("mysqli_query($con, \"INSERT INTO eleves VALUES ('" + idEl + "', '" + np + "', " + moy + ", '" + dn + "')\");");
+        trace.push("mysqli_affected_rows($con) === 1 // ✅ 1 ligne insérée");
+        etatSimRows.push({ Id: idEl, Categorie: catInit, Nom_prenom: np, Moyenne: moy, DateNaissance: dn, __new: true });
+        echoOut = "<div style='color:#15803d;margin-bottom:6px'>✅ Élève inscrit avec succès dans la Catégorie <b>" + catInit + "</b> !</div>";
+      }
+      etatSimRows.sort(function (a, b) {
+        if (a.Categorie !== b.Categorie) return a.Categorie < b.Categorie ? -1 : 1;
+        return Number(b.Moyenne) - Number(a.Moyenne);
+      });
+      trace.push("$res = mysqli_query($con, \"SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves ORDER BY LEFT(Id,1) ASC, Moyenne DESC\");");
+      trace.push("while ($t = mysqli_fetch_assoc($res)) { /* Séparation Nom / Prénom par espace */ }");
+      echoOut += "<div style='font-size:12px;margin-top:4px'><b>📊 Affichage PHP trié par Catégorie (initiale de Id) :</b><br>";
+      etatSimRows.forEach(function (el) {
+        var pEsp = String(el.Nom_prenom).indexOf(" ");
+        var nomS = pEsp !== -1 ? el.Nom_prenom.slice(0, pEsp) : el.Nom_prenom;
+        var prenomS = pEsp !== -1 ? el.Nom_prenom.slice(pEsp + 1) : "—";
+        echoOut += "• Catégorie <b>" + el.Categorie + "</b> (" + el.Id + ") — Nom : <b>" + nomS + "</b> | Prénom : <b>" + prenomS + "</b> | Moyenne : <b>" + el.Moyenne + "</b><br>";
+      });
+      echoOut += "</div>";
+    } else if (cleSimActuelle === "p0") {
+      var m = post.mail || "ali2026@lycee.tn";
+      var mdp = post.mdp || "Bac26z";
+      var g = post.genre || "M";
+      var repStr = "1:" + (post.q1 || "1O").slice(-1) + " | 2:" + (post.q2 || "2O").slice(-1) + " | 3:" + (post.q3 || "3S").slice(-1);
+      trace.push("$rPart = mysqli_query($con, \"SELECT * FROM Participant WHERE Mail='" + m + "'\");");
+      var exP = etatSimRows.find(function (x) { return x.Mail.toLowerCase() === m.toLowerCase(); });
+      if (exP) {
+        trace.push("mysqli_num_rows($rPart) === 1 // Participant trouvé");
+        if (exP.Mdp !== mdp) {
+          echoOut = "<span style='color:#b91c1c'>❌ Erreur d'authentification (mot de passe incorrect)</span>";
+        } else {
+          exP.Reponses_Sondage1 = repStr;
+          exP.__upd = true;
+          trace.push("UPDATE Reponse SET Rep=... WHERE IdParticipant=" + exP.IdParticipant + " // mysqli_affected_rows($con) >= 1");
+          echoOut = "<span style='color:#0369a1'>🔄 Mise à jour effectuée avec succès pour " + m + "</span>";
+        }
+      } else {
+        var nvId = etatSimRows.length + 1;
+        etatSimRows.push({ IdParticipant: nvId, Mail: m, Mdp: mdp, Genre: g, Reponses_Sondage1: repStr, __new: true });
+        trace.push("mysqli_num_rows($rPart) === 0 -> INSERT INTO Participant & INSERT INTO Reponse");
+        trace.push("mysqli_insert_id($con) === " + nvId + " | mysqli_affected_rows($con) === 1");
+        echoOut = "<span style='color:#15803d'>✅ Inscription et participation au sondage effectuées avec succès (IdParticipant = " + nvId + ")</span>";
+      }
+    } else if (cleSimActuelle === "s1") {
+      etatSimRows.push({ cin: post.cin, nom: post.nom, email: post.email, spec: post.spec, duree: Number(post.duree) || 6, __new: true });
+      trace.push("mysqli_query($con, \"INSERT INTO membre VALUES ('" + post.cin + "', '" + post.nom + "', '" + post.email + "', '" + post.spec + "', " + post.duree + ")\");");
+      trace.push("mysqli_affected_rows($con) === 1 // ✅ OK");
+      echoOut = "<span style='color:#15803d'>✅ Inscription enregistrée avec succès pour " + post.nom + " !</span>";
+    } else if (cleSimActuelle === "s2") {
+      var idR = etatSimRows.length + 1;
+      etatSimRows.push({ id: idR, tel: post.tel, nom: post.nom, ville: post.ville, nuits: Number(post.nuits) || 3, __new: true });
+      trace.push("mysqli_query($con, \"INSERT INTO reservation (tel, nom, ville, nuits) VALUES ('" + post.tel + "', '" + post.nom + "', '" + post.ville + "', " + post.nuits + ")\");");
+      trace.push("mysqli_affected_rows($con) === 1 // ✅ OK");
+      echoOut = "<span style='color:#15803d'>✅ Réservation #" + idR + " enregistrée à " + post.ville + " (" + post.nuits + " nuits) !</span>";
+    } else {
+      var idC = etatSimRows.length + 1;
+      etatSimRows.push({ id: idC, code: post.code, nom: post.nom, bouquet: post.bouquet, qte: Number(post.qte) || 1, __new: true });
+      trace.push("mysqli_query($con, \"INSERT INTO commande (code, nom, bouquet, qte) VALUES ('" + post.code + "', '" + post.nom + "', '" + post.bouquet + "', " + post.qte + ")\");");
+      trace.push("mysqli_affected_rows($con) === 1 // ✅ OK");
+      echoOut = "<span style='color:#15803d'>✅ Commande #" + idC + " enregistrée (" + post.qte + " × " + post.bouquet + ") !</span>";
+    }
+    trace.push("mysqli_close($con);");
+    rendreTableSim(echoOut, trace);
+  }
+
+  document.getElementById("btn-exec-sim-php").addEventListener("click", executerSimulationPHP);
+  document.getElementById("btn-reset-sim-db").addEventListener("click", function () {
+    initSimulateurSujet(selSujet.value);
+  });
+  document.getElementById("btn-sim-php-top").addEventListener("click", function () {
+    var zSim = document.getElementById("zone-sim-phpsql");
+    if (zSim) zSim.scrollIntoView({ behavior: "smooth", block: "start" });
+    executerSimulationPHP();
+  });
+  selSujet.addEventListener("change", function () {
+    initSimulateurSujet(selSujet.value);
+  });
+
+  /* Mode Sombre / Clair synchronisé */
+  var btnThBac = document.getElementById("theme-toggle");
+  function majThemeBac(th) {
+    var dark = (th === "dark");
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    document.documentElement.classList.toggle("dark-mode", dark);
+    if (btnThBac) btnThBac.innerHTML = dark ? "☀️ Mode Clair" : "🌙 Mode Sombre";
+  }
+  majThemeBac(localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "light");
+  if (btnThBac) {
+    btnThBac.addEventListener("click", function () {
+      var act = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      localStorage.setItem("sti-theme", act);
+      localStorage.setItem("theme", act);
+      majThemeBac(act);
+    });
+  }
+
   chargerSujet("p0");
+  initSimulateurSujet("p0");
 })();
 </script>
 </body>

@@ -8880,6 +8880,7 @@
      ===================================================================== */
   var STI_SEARCH_ITEMS = [
     /* --- PIÈGES DU BAC & MÉMO VEILLE DU BAC STI --- */
+    { tech: "js", badge: "⚡ Outils JS Bac", title: "Atelier & Générateur des 10 Fonctions de Contrôle JavaScript du Bac STI", sub: "Testeur interactif + générateur controle.js (let, getElementById, getElementsByName, Date, horaires 08h-12h/13h-18h)", url: "outils-js-bac.html", kw: "outils js bac generateur controle verif estchiffres estlettres nom_prenom categorie horaire date getmonth" },
     { tech: "bac", badge: "📄 Mémo Bac", title: "Mémo Express Veille du Bac STI (Fiche A4 Recto-Verso)", sub: "Toutes les syntaxes HTML5/CSS3 (float, transition), JS (let, getElementById, Date), SQL et PHP/MySQLi sur 1 page", url: "memo-veille-bac.html", kw: "memo veille bac fiche a4 revision resume float transition getelementbyid mysqli fetch assoc group by having" },
     { tech: "bac", badge: "⚠️ Pièges Bac", title: "Les 25 Pièges du Bac STI à éviter (HTML/CSS · JS · SQL · PHP)", sub: "Erreurs classiques éliminatoires en épreuve pratique & théorique + exemples Faux vs Vrai", url: "pieges-bac.html", kw: "pieges bac erreurs frequentes onsubmit return getelementbyid mysqli fetch assoc group by where having varchar date float clear" },
     /* --- HTML5 --- */
@@ -13517,13 +13518,69 @@
     }
   }
 
+  /* Point 5 (v266) : Mode Sombre universel harmonisé sur cours/html5.html, cours/css3.html, cours/javascript.html, exercices et fiches */
+  function installerModeSombreUniverselSTI() {
+    var pathAct = (location.pathname || "").toLowerCase();
+    if (/portail\.html$|admin\.html$/i.test(pathAct)) return;
+
+    if (!document.getElementById("sti-style-dark-universel")) {
+      var stDark = document.createElement("style");
+      stDark.id = "sti-style-dark-universel";
+      stDark.textContent =
+        "html[data-theme='dark'], html.dark-mode { color-scheme: dark; }" +
+        "#sti-universal-theme-btn { position: fixed; left: 14px; bottom: 52px; z-index: 9990; border: 2px solid #23201a; border-radius: 999px; padding: 6px 12px; font: 900 11.5px system-ui, -apple-system, sans-serif; cursor: pointer; background: #fffdf8; color: #23201a; box-shadow: 2px 2px 0 #23201a; transition: transform .15s ease; }" +
+        "#sti-universal-theme-btn:hover { transform: translateY(-2px); }" +
+        "html[data-theme='dark'] #sti-universal-theme-btn, html.dark-mode #sti-universal-theme-btn { background: #1e293b; color: #fde047; border-color: #fde047; }" +
+        "@media print { #sti-universal-theme-btn { display: none !important; } }";
+      document.head.appendChild(stDark);
+    }
+
+    function appliquerThemeGlobal(th) {
+      var isDark = (th === "dark");
+      document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+      document.documentElement.classList.toggle("dark-mode", isDark);
+      if (document.body) document.body.classList.toggle("dark-mode", isDark);
+      var bUniv = document.getElementById("sti-universal-theme-btn");
+      if (bUniv) {
+        bUniv.innerHTML = isDark ? "☀️ Mode Clair" : "🌙 Mode Sombre";
+      }
+    }
+
+    var sauvTh = "";
+    try { sauvTh = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || ""; } catch (e) {}
+    if (sauvTh === "dark" || sauvTh === "light") {
+      appliquerThemeGlobal(sauvTh);
+    }
+
+    if (document.body && !document.getElementById("theme-toggle") && !document.querySelector("[data-theme-toggle]")) {
+      var bTh = document.createElement("button");
+      bTh.type = "button";
+      bTh.id = "sti-universal-theme-btn";
+      bTh.setAttribute("data-theme-toggle", "1");
+      var estD = document.documentElement.getAttribute("data-theme") === "dark" || document.documentElement.classList.contains("dark-mode");
+      bTh.innerHTML = estD ? "☀️ Mode Clair" : "🌙 Mode Sombre";
+      bTh.title = "Basculer entre le Mode Sombre et le Mode Clair (synchronisé sur tous vos onglets)";
+      bTh.addEventListener("click", function () {
+        var nv = (document.documentElement.getAttribute("data-theme") === "dark" || document.documentElement.classList.contains("dark-mode")) ? "light" : "dark";
+        try {
+          localStorage.setItem("sti-theme", nv);
+          localStorage.setItem("theme", nv);
+        } catch (e) {}
+        appliquerThemeGlobal(nv);
+      });
+      document.body.appendChild(bTh);
+    }
+  }
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
+      installerModeSombreUniverselSTI();
       installerModeProjecteurLaboSTI();
       installerSynchroInterOngletsSTI();
       installerAutoSaveBrouillonsSTI();
     });
   } else {
+    installerModeSombreUniverselSTI();
     installerModeProjecteurLaboSTI();
     installerSynchroInterOngletsSTI();
     installerAutoSaveBrouillonsSTI();

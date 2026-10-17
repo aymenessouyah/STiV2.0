@@ -1,6 +1,13 @@
 [
   {
     "date": "2026-10-17",
+    "tag": "Bac & Cours",
+    "titre": "Simulateur PHP/MySQLi sans Wamp 🐘 + Générateur 10 Fonctions JS ⚡ + Mode Sombre Universel 🌙",
+    "desc": "Exécutez vos scripts PHP/MySQLi et visualisez les tables SQL en direct dans bac-pratique.html sans WampServer, testez et générez les 10 fonctions JS du Bac STI dans outils-js-bac.html, et profitez du Mode Sombre harmonisé sur tous les cours.",
+    "lien": "outils-js-bac.html"
+  },
+  {
+    "date": "2026-10-17",
     "tag": "Bac & Labo",
     "titre": "Mémo Express Veille du Bac A4 📄 + Sujet Synthèse Élèves 🎓 + Export CSV Labo 3 📥",
     "desc": "Nouvelle fiche A4 recto-verso « Mémo Express Veille du Bac STI », nouveau Sujet de synthèse Bac dans l'atelier pratique (table eleves par Catégorie) et export CSV horodaté des postes du Labo 3 dans l'admin.",

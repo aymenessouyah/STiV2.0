@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atelier & Générateur des 10 Fonctions JS du Bac STI — STI V2.0 By AE</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/sti-icon-192.png">
+  <link rel="stylesheet" href="assets/css/atelier.css">
+  <link rel="stylesheet" href="assets/css/protection.css?v=227">
+  <script src="assets/js/protection.js?v=227"></script>
+  <style>
+    :root {
+      --bg: #faf6ee;
+      --card: #ffffff;
+      --ink: #23201a;
+      --muted: #5a5244;
+      --border: #23201a;
+      --code-bg: #1e293b;
+      --code-ink: #f8fafc;
+      --ok-bg: #dcfce7;
+      --ok-ink: #14532d;
+      --ko-bg: #fee2e2;
+      --ko-ink: #991b1b;
+    }
+    html[data-theme="dark"], html.dark-mode {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --ink: #f8fafc;
+      --muted: #cbd5e1;
+      --border: #475569;
+      --code-bg: #090d16;
+      --code-ink: #e2e8f0;
+      --ok-bg: rgba(20, 83, 45, 0.45);
+      --ok-ink: #bbf7d0;
+      --ko-bg: rgba(127, 29, 29, 0.45);
+      --ko-ink: #fecaca;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .wrap-js {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 18px 60px;
+    }
+    .topbar-js {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .btn-j {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 12.5px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--border);
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-j:hover { transform: translateY(-2px); }
+    .hero-js {
+      background: linear-gradient(135deg, #fef08a 0%, #fed7aa 60%, #bae6fd 100%);
+      color: #23201a;
+      border: 3px solid #23201a;
+      border-radius: 22px;
+      padding: 22px 26px;
+      box-shadow: 5px 5px 0 #23201a;
+      margin-bottom: 20px;
+    }
+    html[data-theme="dark"] .hero-js, html.dark-mode .hero-js {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #f8fafc;
+      border-color: #facc15;
+      box-shadow: 5px 5px 0 #facc15;
+    }
+    .hero-js h1 { margin: 0 0 6px; font-size: clamp(21px, 3vw, 29px); font-weight: 900; }
+    .hero-js p { margin: 0; font-size: 14px; font-weight: 700; }
+
+    .generateur-box {
+      background: var(--card);
+      border: 3px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 20px;
+      box-shadow: 5px 5px 0 #f4511e;
+      margin-bottom: 24px;
+    }
+    .gen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .gen-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .grille-fn {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .carte-fn {
+      background: var(--card);
+      border: 2.5px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: 4px 4px 0 var(--border);
+    }
+    .carte-fn h2 {
+      margin: 0 0 6px;
+      font-size: 17.5px;
+      font-weight: 900;
+      color: #f4511e;
+    }
+    .desc-fn {
+      margin: 0 0 12px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .cols-fn {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .cols-fn { grid-template-columns: 1fr; }
+    }
+    pre.code-js {
+      margin: 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      overflow-x: auto;
+      line-height: 1.48;
+    }
+    .testeur-box {
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(148, 163, 184, 0.08);
+    }
+    .champ-test {
+      width: 100%;
+      padding: 8px 11px;
+      border-radius: 9px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 13px;
+      margin: 6px 0 8px;
+    }
+    .exemples-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .pill-ex {
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .res-test {
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 12.8px;
+      font-weight: 900;
+      border: 2px solid var(--border);
+    }
+    .res-ok { background: var(--ok-bg); color: var(--ok-ink); border-color: #16a34a; }
+    .res-ko { background: var(--ko-bg); color: var(--ko-ink); border-color: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="wrap-js">
+    <div class="topbar-js">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="index.html" class="btn-j">🏠 Accueil</a>
+        <a href="bac-pratique.html" class="btn-j">🧪 Atelier Bac Pratique</a>
+        <a href="exercices/resume-fonctions-standards.html" class="btn-j">📘 Résumé Fonctions Standards</a>
+        <a href="pieges-bac.html" class="btn-j">⚠️ 25 Pièges du Bac</a>
+        <a href="memo-veille-bac.html" class="btn-j">📄 Mémo A4</a>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span id="horloge-entree-js" class="btn-j" style="cursor:default">🕒 Heure : --:--</span>
+        <button type="button" id="theme-toggle" class="btn-j">🌙 Mode Sombre</button>
+        <button type="button" onclick="window.print()" class="btn-j">🖨️ Imprimer</button>
+      </div>
+    </div>
+
+    <header class="hero-js">
+      <div style="display:inline-block;background:#23201a;color:#fff3b0;padding:3px 11px;border-radius:999px;font-size:11.5px;font-weight:900;margin-bottom:6px">
+        ⚡ ALGORITHMES DE VALIDATION JAVASCRIPT OFFICIELS (4ème SI)
+      </div>
+      <h1>Atelier &amp; Générateur des 10 Fonctions de Contrôle JavaScript du Bac STI</h1>
+      <p>Toutes les fonctions ci-dessous respectent les règles officielles du Bac STI : déclaration avec <code>let</code>, accès aux champs exclusivement par <code>document.getElementById(...)</code> ou <code>document.getElementsByName(...)</code>, affichage via <code>innerHTML</code> / <code>alert(...)</code> et retour d'un booléen (<code>true</code> / <code>false</code>) pour <code>onsubmit="return verif()"</code>.</p>
+    </header>
+
+    <!-- Générateur sur-mesure de controle.js -->
+    <section class="generateur-box">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div>
+          <h2 style="margin:0;font-size:18px;font-weight:900">🛠️ Générateur de fichier <code>controle.js</code> sur-mesure</h2>
+          <p style="margin:3px 0 0;font-size:13px;font-weight:700;color:var(--muted)">Cochez les contrôles demandés dans votre sujet de Bac pour assembler automatiquement un squelette <code>controle.js</code> propre.</p>
+        </div>
+        <button type="button" id="btn-copier-gen" class="btn-j" style="background:#dcfce7;color:#14532d;border-color:#16a34a">📋 Copier le script généré</button>
+      </div>
+      <div class="gen-grid" id="grille-options-gen"></div>
+      <pre class="code-js" id="code-genere-out" style="max-height:290px"></pre>
+    </section>
+
+    <!-- Les 10 fonctions avec testeur interactif -->
+    <div id="conteneur-10-fonctions" class="grille-fn"></div>
+  </div>
+
+  <script>
+    (function () {
+      /* Affichage de l'heure actuelle dès l'entrée dans la page */
+      function majHorlogeEntree() {
+        let d = new Date();
+        let hh = d.getHours();
+        let mm = d.getMinutes();
+        let ss = d.getSeconds();
+        let txt = (hh < 10 ? "0" + hh : hh) + ":" + (mm < 10 ? "0" + mm : mm) + ":" + (ss < 10 ? "0" + ss : ss);
+        let elH = document.getElementById("horloge-entree-js");
+        if (elH) elH.innerHTML = "🕒 Heure actuelle : " + txt;
+      }
+      majHorlogeEntree();
+      setInterval(majHorlogeEntree, 1000);
+
+      var FONCTIONS = [
+        {
+          id: "f1",
+          titre: "1. Vérifier une chaîne de N chiffres exacts (CIN ou Téléphone : 8 chiffres)",
+          desc: "Parcourt chaque caractère de la chaîne avec une boucle for et vérifie qu'il est compris entre '0' et '9'. Retourne un booléen (true ou false).",
+          defaut: "09876543",
+          exemples: [
+            { lbl: "✅ 09876543", val: "09876543" },
+            { lbl: "❌ 0987A543 (lettre)", val: "0987A543" },
+            { lbl: "❌ 12345 (trop court)", val: "12345" }
+          ],
+          code:
+'function estChiffres(ch) {\n' +
+'  if (ch.length !== 8) {\n' +
+'    return false;\n' +
+'  }\n' +
+'  for (let i = 0; i < ch.length; i++) {\n' +
+'    if (ch[i] < "0" || ch[i] > "9") {\n' +
+'      return false;\n' +
+'    }\n' +
+'  }\n' +
+'  return true;\n' +
+'}',
+          appelGen:
+'  let cin = document.getElementById("cin").value.trim();\n' +
+'  if (!estChiffres(cin)) {\n' +
+'    alert("Erreur : le CIN doit comporter exactement 8 chiffres !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            if (v.length !== 8) return { ok: false, msg: "Retourne false : longueur = " + v.length + " (attendu : 8 caractères)." };
+            for (let i = 0; i < v.length; i++) {
+              if (v[i] < "0" || v[i] > "9") {
+                return { ok: false, msg: "Retourne false : caractère non numérique '" + v[i] + "' à la position " + i + "." };
+              }
+            }
+            return { ok: true, msg: "Retourne true : les 8 caractères sont tous des chiffres ('0' à '9')." };
+          }
+        },
+        {
+          id: "f2",
+          titre: "2. Vérifier une chaîne strictement alphabétique (Lettres uniquement)",
+          desc: "Convertit chaque caractère en majuscule avec .toUpperCase() et vérifie qu'il est compris entre 'A' et 'Z'.",
+          defaut: "Informatique",
+          exemples: [
+            { lbl: "✅ Informatique", val: "Informatique" },
+            { lbl: "❌ STI2026 (chiffres)", val: "STI2026" },
+            { lbl: "❌ Ali_Ben (symbole)", val: "Ali_Ben" }
+          ],
+          code:
+'function estLettres(ch) {\n' +
+'  if (ch.length < 2) {\n' +
+'    return false;\n' +
+'  }\n' +
+'  for (let i = 0; i < ch.length; i++) {\n' +
+'    let c = ch[i].toUpperCase();\n' +
+'    if (c < "A" || c > "Z") {\n' +
+'      return false;\n' +
+'    }\n' +
+'  }\n' +
+'  return true;\n' +
+'}',
+          appelGen:
+'  let nom = document.getElementById("nom").value.trim();\n' +
+'  if (!estLettres(nom)) {\n' +
+'    alert("Erreur : le champ doit contenir uniquement des lettres !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            if (v.length < 2) return { ok: false, msg: "Retourne false : longueur insuffisante (" + v.length + " < 2)." };
+            for (let i = 0; i < v.length; i++) {
+              let c = v[i].toUpperCase();
+              if (c < "A" || c > "Z") {
+                return { ok: false, msg: "Retourne false : caractère '" + v[i] + "' (indice " + i + ") n'est pas une lettre A..Z." };
+              }
+            }
+            return { ok: true, msg: "Retourne true : chaîne 100 % alphabétique (" + v.length + " lettres)." };
+          }
+        },
+        {
+          id: "f3",
+          titre: "3. Nettoyer les espaces superflus et valider Nom_prenom (Lettres + espaces, entre 2 et 5 mots)",
+          desc: "Élimine d'abord les espaces multiples ou aux extrémités, puis vérifie que la chaîne ne contient que des lettres et des espaces et compte entre 2 et 5 mots.",
+          defaut: "Ali   Ben   Salah",
+          exemples: [
+            { lbl: "✅ Ali   Ben   Salah (3 mots)", val: "Ali   Ben   Salah" },
+            { lbl: "❌ Ali (1 seul mot)", val: "Ali" },
+            { lbl: "❌ A B C D E F (6 mots)", val: "A B C D E F" },
+            { lbl: "❌ Ali Ben 2026 (chiffres)", val: "Ali Ben 2026" }
+          ],
+          code:
+'function nettoyerEspaces(ch) {\n' +
+'  let res = "";\n' +
+'  let precEspace = true;\n' +
+'  for (let i = 0; i < ch.length; i++) {\n' +
+'    if (ch[i] !== " ") {\n' +
+'      res = res + ch[i];\n' +
+'      precEspace = false;\n' +
+'    } else if (!precEspace) {\n' +
+'      res = res + " ";\n' +
+'      precEspace = true;\n' +
+'    }\n' +
+'  }\n' +
+'  return res.trim();\n' +
+'}\n\n' +
+'function verifNomPrenom(ch) {\n' +
+'  let propre = nettoyerEspaces(ch);\n' +
+'  if (propre.length === 0) return false;\n' +
+'  let nbEspaces = 0;\n' +
+'  for (let i = 0; i < propre.length; i++) {\n' +
+'    let c = propre[i].toUpperCase();\n' +
+'    if (c === " ") {\n' +
+'      nbEspaces++;\n' +
+'    } else if (c < "A" || c > "Z") {\n' +
+'      return false;\n' +
+'    }\n' +
+'  }\n' +
+'  let nbMots = nbEspaces + 1;\n' +
+'  return (nbMots >= 2 && nbMots <= 5);\n' +
+'}',
+          appelGen:
+'  let np = nettoyerEspaces(document.getElementById("np").value);\n' +
+'  document.getElementById("np").value = np;\n' +
+'  if (!verifNomPrenom(np)) {\n' +
+'    alert("Erreur : Nom_prenom doit contenir entre 2 et 5 mots (lettres et espaces uniquement) !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            let res = "", prec = true;
+            for (let i = 0; i < v.length; i++) {
+              if (v[i] !== " ") { res += v[i]; prec = false; }
+              else if (!prec) { res += " "; prec = true; }
+            }
+            let propre = res.trim();
+            if (!propre.length) return { ok: false, msg: "Retourne false : chaîne vide après nettoyage." };
+            let nbEsp = 0;
+            for (let i = 0; i < propre.length; i++) {
+              let c = propre[i].toUpperCase();
+              if (c === " ") nbEsp++;
+              else if (c < "A" || c > "Z") return { ok: false, msg: "Retourne false : caractère interdit '" + propre[i] + "'." };
+            }
+            let nbMots = nbEsp + 1;
+            if (nbMots < 2 || nbMots > 5) {
+              return { ok: false, msg: "Retourne false : " + nbMots + " mot(s) détecté(s) après nettoyage (\"" + propre + "\") — attendu : entre 2 et 5 mots." };
+            }
+            return { ok: true, msg: "Retourne true : Chaîne nettoyée = \"" + propre + "\" (" + nbMots + " mots valides)." };
+          }
+        },
+        {
+          id: "f4",
+          titre: "4. Vérifier un Identifiant commençant par une lettre majuscule (= Catégorie)",
+          desc: "L'identifiant Id doit commencer par une lettre majuscule ('A' à 'Z' qui représente la Catégorie de l'élève) suivie de chiffres.",
+          defaut: "B204",
+          exemples: [
+            { lbl: "✅ B204 (Catégorie B)", val: "B204" },
+            { lbl: "❌ b204 (minuscule)", val: "b204" },
+            { lbl: "❌ 1204 (pas de lettre initiale)", val: "1204" }
+          ],
+          code:
+'function verifIdCategorie(id) {\n' +
+'  if (id.length < 2) {\n' +
+'    return false;\n' +
+'  }\n' +
+'  if (id[0] < "A" || id[0] > "Z") {\n' +
+'    return false;\n' +
+'  }\n' +
+'  for (let i = 1; i < id.length; i++) {\n' +
+'    if (id[i] < "0" || id[i] > "9") {\n' +
+'      return false;\n' +
+'    }\n' +
+'  }\n' +
+'  return true;\n' +
+'}',
+          appelGen:
+'  let id = document.getElementById("id_el").value.trim();\n' +
+'  if (!verifIdCategorie(id)) {\n' +
+'    alert("Erreur : Id doit commencer par une lettre majuscule (Catégorie) suivie de chiffres !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            if (v.length < 2) return { ok: false, msg: "Retourne false : Id trop court." };
+            if (v[0] < "A" || v[0] > "Z") return { ok: false, msg: "Retourne false : le 1er caractère '" + v[0] + "' n'est pas une majuscule ('A'..'Z')." };
+            for (let i = 1; i < v.length; i++) {
+              if (v[i] < "0" || v[i] > "9") return { ok: false, msg: "Retourne false : caractère '" + v[i] + "' non numérique après la lettre de catégorie." };
+            }
+            return { ok: true, msg: "Retourne true : Id valide → Catégorie = '" + v[0] + "', numéro = '" + v.substring(1) + "'." };
+          }
+        },
+        {
+          id: "f5",
+          titre: "5. Vérifier les horaires de travail (08h00–12h00 et 13h00–18h00)",
+          desc: "Vérifie qu'une heure de recharge ou de rendez-vous (format HH:MM) est comprise dans les plages d'ouverture 08:00–12:00 ou 13:00–18:00.",
+          defaut: "14:30",
+          exemples: [
+            { lbl: "✅ 09:15 (Matin)", val: "09:15" },
+            { lbl: "✅ 14:30 (Après-midi)", val: "14:30" },
+            { lbl: "❌ 12:30 (Pause déjeuner)", val: "12:30" },
+            { lbl: "❌ 19:00 (Fermé)", val: "19:00" }
+          ],
+          code:
+'function verifHoraireTravail(h) {\n' +
+'  if (h.length !== 5 || h[2] !== ":") {\n' +
+'    return false;\n' +
+'  }\n' +
+'  let hh = parseInt(h.substring(0, 2), 10);\n' +
+'  let mm = parseInt(h.substring(3, 5), 10);\n' +
+'  if (isNaN(hh) || isNaN(mm) || mm < 0 || mm > 59) {\n' +
+'    return false;\n' +
+'  }\n' +
+'  let totalMin = hh * 60 + mm;\n' +
+'  let matinOk = (totalMin >= 8 * 60 && totalMin <= 12 * 60);\n' +
+'  let apresMidiOk = (totalMin >= 13 * 60 && totalMin <= 18 * 60);\n' +
+'  return (matinOk || apresMidiOk);\n' +
+'}',
+          appelGen:
+'  let h = document.getElementById("heure_recharge").value.trim();\n' +
+'  if (!verifHoraireTravail(h)) {\n' +
+'    alert("Erreur : horaire hors plages de travail (08h00-12h00 et 13h00-18h00) !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            if (v.length !== 5 || v[2] !== ":") return { ok: false, msg: "Retourne false : format attendu HH:MM (ex: 09:30)." };
+            let hh = parseInt(v.substring(0, 2), 10);
+            let mm = parseInt(v.substring(3, 5), 10);
+            if (isNaN(hh) || isNaN(mm) || mm < 0 || mm > 59) return { ok: false, msg: "Retourne false : heures ou minutes invalides." };
+            let tot = hh * 60 + mm;
+            let mOk = (tot >= 480 && tot <= 720);
+            let aOk = (tot >= 780 && tot <= 1080);
+            if (!mOk && !aOk) return { ok: false, msg: "Retourne false : " + v + " est en dehors des horaires 08h00–12h00 et 13h00–18h00." };
+            return { ok: true, msg: "Retourne true : " + v + " est bien dans la plage " + (mOk ? "du matin (08h00–12h00)" : "de l'après-midi (13h00–18h00)") + "." };
+          }
+        },
+        {
+          id: "f6",
+          titre: "6. Manipuler et valider une Date en JavaScript (Mois de 0 à 11 : getMonth() + 1)",
+          desc: "Rappel fondamental du Bac : getMonth() renvoie un entier entre 0 (Janvier) et 11 (Décembre). La fonction extrait l'année, le mois réel (+1) et le jour, et retourne un booléen.",
+          defaut: "2008-05-15",
+          exemples: [
+            { lbl: "✅ 2008-05-15", val: "2008-05-15" },
+            { lbl: "✅ 2007-01-10 (Janvier -> getMonth()=0)", val: "2007-01-10" },
+            { lbl: "❌ 2030-01-01 (Date future)", val: "2030-01-01" }
+          ],
+          code:
+'function verifDateNaissance(chDate) {\n' +
+'  if (chDate === "") {\n' +
+'    return false;\n' +
+'  }\n' +
+'  let dSaisie = new Date(chDate);\n' +
+'  let aujourdhui = new Date();\n' +
+'  let annee = dSaisie.getFullYear();\n' +
+'  let mois = dSaisie.getMonth() + 1; // 0..11 -> +1 pour obtenir 1..12\n' +
+'  let jour = dSaisie.getDate();\n' +
+'  if (isNaN(annee) || dSaisie >= aujourdhui) {\n' +
+'    return false;\n' +
+'  }\n' +
+'  return true;\n' +
+'}',
+          appelGen:
+'  let dn = document.getElementById("dn").value;\n' +
+'  if (!verifDateNaissance(dn)) {\n' +
+'    alert("Erreur : veuillez saisir une date valide antérieure à aujourd\'hui !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            if (!v) return { ok: false, msg: "Retourne false : date vide." };
+            let d = new Date(v);
+            let now = new Date();
+            if (isNaN(d.getFullYear())) return { ok: false, msg: "Retourne false : date invalide." };
+            let mBrut = d.getMonth();
+            let mReel = mBrut + 1;
+            if (d >= now) return { ok: false, msg: "Retourne false : la date " + v + " n'est pas antérieure à aujourd'hui." };
+            return { ok: true, msg: "Retourne true : Année = " + d.getFullYear() + ", getMonth() = " + mBrut + " donc Mois réel = " + mReel + ", Jour = " + d.getDate() + "." };
+          }
+        },
+        {
+          id: "f7",
+          titre: "7. Vérifier une adresse @Mail au format Bac (ch1@ch2.ch3)",
+          desc: "Découpe l'adresse grâce à indexOf('@') et lastIndexOf('.'), puis vérifie que ch1 et ch2 sont alphanumériques (>= 3 car.) et ch3 alphabétique (2 à 4 lettres).",
+          defaut: "eleve2026@lycee.tn",
+          exemples: [
+            { lbl: "✅ eleve2026@lycee.tn", val: "eleve2026@lycee.tn" },
+            { lbl: "❌ ab@lycee.tn (ch1 < 3)", val: "ab@lycee.tn" },
+            { lbl: "❌ eleve@lycee.12 (ch3 non lettres)", val: "eleve@lycee.12" }
+          ],
+          code:
+'function estAlphanum(ch) {\n' +
+'  if (ch.length < 3) return false;\n' +
+'  for (let i = 0; i < ch.length; i++) {\n' +
+'    let c = ch[i];\n' +
+'    let ok = (c >= "A" && c <= "Z") || (c >= "a" && c <= "z") || (c >= "0" && c <= "9");\n' +
+'    if (!ok) return false;\n' +
+'  }\n' +
+'  return true;\n' +
+'}\n\n' +
+'function verifMailBac(mail) {\n' +
+'  if (mail.length === 0 || mail.length > 50) return false;\n' +
+'  let pAt = mail.indexOf("@");\n' +
+'  let pPt = mail.lastIndexOf(".");\n' +
+'  if (pAt <= 0 || pPt <= pAt + 1) return false;\n' +
+'  let ch1 = mail.substring(0, pAt);\n' +
+'  let ch2 = mail.substring(pAt + 1, pPt);\n' +
+'  let ch3 = mail.substring(pPt + 1);\n' +
+'  return estAlphanum(ch1) && estAlphanum(ch2) && (ch3.length >= 2 && ch3.length <= 4);\n' +
+'}',
+          appelGen:
+'  let mail = document.getElementById("mail").value.trim();\n' +
+'  if (!verifMailBac(mail)) {\n' +
+'    alert("Erreur : adresse @Mail invalide (format ch1@ch2.ch3) !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            let pAt = v.indexOf("@"), pPt = v.lastIndexOf(".");
+            if (pAt <= 0 || pPt <= pAt + 1) return { ok: false, msg: "Retourne false : '@' ou '.' manquant ou mal placé." };
+            let ch1 = v.substring(0, pAt), ch2 = v.substring(pAt + 1, pPt), ch3 = v.substring(pPt + 1);
+            function an(s) {
+              if (s.length < 3) return false;
+              for (let i = 0; i < s.length; i++) {
+                let c = s[i];
+                if (!((c >= "A" && c <= "Z") || (c >= "a" && c <= "z") || (c >= "0" && c <= "9"))) return false;
+              }
+              return true;
+            }
+            if (!an(ch1)) return { ok: false, msg: "Retourne false : ch1 ('" + ch1 + "') doit être alphanumérique >= 3 car." };
+            if (!an(ch2)) return { ok: false, msg: "Retourne false : ch2 ('" + ch2 + "') doit être alphanumérique >= 3 car." };
+            if (ch3.length < 2 || ch3.length > 4) return { ok: false, msg: "Retourne false : ch3 ('" + ch3 + "') doit avoir 2 à 4 lettres." };
+            for (let i = 0; i < ch3.length; i++) {
+              let c = ch3[i].toUpperCase();
+              if (c < "A" || c > "Z") return { ok: false, msg: "Retourne false : ch3 ('" + ch3 + "') doit contenir uniquement des lettres." };
+            }
+            return { ok: true, msg: "Retourne true : ch1='" + ch1 + "', ch2='" + ch2 + "', ch3='" + ch3 + "'." };
+          }
+        },
+        {
+          id: "f8",
+          titre: "8. Vérifier un Mot de passe complexe (Majuscule + Minuscule + Chiffre)",
+          desc: "Utilise trois drapeaux booléens (maj, min, chif) initialisés à false et mis à true lors du parcours de la chaîne.",
+          defaut: "Bac26a",
+          exemples: [
+            { lbl: "✅ Bac26a", val: "Bac26a" },
+            { lbl: "❌ bac26a (sans majuscule)", val: "bac26a" },
+            { lbl: "❌ BACDEF (sans chiffre ni minuscule)", val: "BACDEF" }
+          ],
+          code:
+'function verifMdpBac(mdp) {\n' +
+'  if (mdp.length !== 6) {\n' +
+'    return false;\n' +
+'  }\n' +
+'  let maj = false;\n' +
+'  let min = false;\n' +
+'  let chif = false;\n' +
+'  for (let i = 0; i < mdp.length; i++) {\n' +
+'    let c = mdp[i];\n' +
+'    if (c >= "A" && c <= "Z") maj = true;\n' +
+'    else if (c >= "a" && c <= "z") min = true;\n' +
+'    else if (c >= "0" && c <= "9") chif = true;\n' +
+'  }\n' +
+'  return (maj && min && chif);\n' +
+'}',
+          appelGen:
+'  let mdp = document.getElementById("mdp").value;\n' +
+'  if (!verifMdpBac(mdp)) {\n' +
+'    alert("Erreur : le mot de passe doit contenir 6 caractères (majuscule, minuscule, chiffre) !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            if (v.length !== 6) return { ok: false, msg: "Retourne false : longueur = " + v.length + " (attendu : 6 caractères)." };
+            let maj = false, min = false, chif = false;
+            for (let i = 0; i < v.length; i++) {
+              let c = v[i];
+              if (c >= "A" && c <= "Z") maj = true;
+              else if (c >= "a" && c <= "z") min = true;
+              else if (c >= "0" && c <= "9") chif = true;
+            }
+            if (!maj || !min || !chif) {
+              return { ok: false, msg: "Retourne false : majuscule=" + maj + ", minuscule=" + min + ", chiffre=" + chif + "." };
+            }
+            return { ok: true, msg: "Retourne true : 6 caractères avec majuscule=true, minuscule=true, chiffre=true." };
+          }
+        },
+        {
+          id: "f9",
+          titre: "9. Vérifier les boutons radio et cases à cocher avec document.getElementsByName()",
+          desc: "Accède au tableau d'éléments partageant le même attribut name grâce à document.getElementsByName(nom) et teste la propriété .checked.",
+          defaut: "1",
+          exemples: [
+            { lbl: "✅ Option 1 cochée", val: "1" },
+            { lbl: "❌ Aucun bouton coché", val: "0" }
+          ],
+          code:
+'function radioCoche(nom) {\n' +
+'  let r = document.getElementsByName(nom);\n' +
+'  for (let i = 0; i < r.length; i++) {\n' +
+'    if (r[i].checked) {\n' +
+'      return true;\n' +
+'    }\n' +
+'  }\n' +
+'  return false;\n' +
+'}',
+          appelGen:
+'  if (!radioCoche("genre")) {\n' +
+'    alert("Erreur : veuillez cocher une option !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            if (v === "0" || v === "") return { ok: false, msg: "Retourne false : aucun élément de getElementsByName() n'a .checked === true." };
+            return { ok: true, msg: "Retourne true : au moins un bouton radio du groupe a .checked === true." };
+          }
+        },
+        {
+          id: "f10",
+          titre: "10. Vérifier une liste déroulante <select> et varier aléatoirement entre 3 couleurs",
+          desc: "Vérifie que selectedIndex > 0 sur la liste déroulante, et illustre le changement aléatoire de couleur d'arrière-plan parmi 3 couleurs.",
+          defaut: "2",
+          exemples: [
+            { lbl: "✅ selectedIndex = 2 (Choix valide)", val: "2" },
+            { lbl: "❌ selectedIndex = 0 (Invite non choisie)", val: "0" }
+          ],
+          code:
+'function listeChoisie(idSelect) {\n' +
+'  let s = document.getElementById(idSelect);\n' +
+'  if (s.selectedIndex === 0) {\n' +
+'    return false;\n' +
+'  }\n' +
+'  return true;\n' +
+'}\n\n' +
+'function couleurAleatoirePage() {\n' +
+'  let couleurs = ["#fef9c3", "#dbeafe", "#dcfce7"];\n' +
+'  let pos = Math.floor(Math.random() * 3);\n' +
+'  document.body.style.backgroundColor = couleurs[pos];\n' +
+'}',
+          appelGen:
+'  if (!listeChoisie("station")) {\n' +
+'    alert("Erreur : veuillez sélectionner un élément dans la liste !");\n' +
+'    return false;\n' +
+'  }',
+          tester: function (v) {
+            let idx = parseInt(v, 10);
+            if (isNaN(idx) || idx <= 0) return { ok: false, msg: "Retourne false : selectedIndex vaut 0 (l'élève a laissé l'option par défaut)." };
+            return { ok: true, msg: "Retourne true : selectedIndex = " + idx + " (option valide sélectionnée)." };
+          }
+        }
+      ];
+
+      function ech(s) {
+        return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      /* Rendu des 10 cartes */
+      var cont = document.getElementById("conteneur-10-fonctions");
+      var htmlCartes = "";
+      for (var i = 0; i < FONCTIONS.length; i++) {
+        var f = FONCTIONS[i];
+        var pills = "";
+        for (var j = 0; j < f.exemples.length; j++) {
+          pills += '<button type="button" class="pill-ex" data-fn="' + i + '" data-val="' + ech(f.exemples[j].val) + '">' + ech(f.exemples[j].lbl) + '</button>';
+        }
+        htmlCartes +=
+          '<article class="carte-fn">' +
+            '<h2>' + ech(f.titre) + '</h2>' +
+            '<p class="desc-fn">' + ech(f.desc) + '</p>' +
+            '<div class="cols-fn">' +
+              '<pre class="code-js"><code>' + ech(f.code) + '</code></pre>' +
+              '<div class="testeur-box">' +
+                '<div style="font-size:12.5px;font-weight:900">🧪 Tester cette fonction en direct :</div>' +
+                '<input type="text" class="champ-test" id="inp-' + f.id + '" data-fn="' + i + '" value="' + ech(f.defaut) + '">' +
+                '<div class="exemples-pills">' + pills + '</div>' +
+                '<div class="res-test" id="res-' + f.id + '"></div>' +
+              '</div>' +
+            '</div>' +
+          '</article>';
+      }
+      cont.innerHTML = htmlCartes;
+
+      function evaluerCarte(idx) {
+        var f = FONCTIONS[idx];
+        var inp = document.getElementById("inp-" + f.id);
+        var out = document.getElementById("res-" + f.id);
+        var r = f.tester(inp.value);
+        out.className = "res-test " + (r.ok ? "res-ok" : "res-ko");
+        out.innerHTML = (r.ok ? "✅ " : "❌ ") + ech(r.msg);
+      }
+
+      for (var k = 0; k < FONCTIONS.length; k++) {
+        evaluerCarte(k);
+        var champ = document.getElementById("inp-" + FONCTIONS[k].id);
+        champ.oninput = function () {
+          evaluerCarte(parseInt(this.getAttribute("data-fn"), 10));
+        };
+      }
+
+      var btnsEx = cont.getElementsByClassName("pill-ex");
+      for (var p = 0; p < btnsEx.length; p++) {
+        btnsEx[p].onclick = function () {
+          var idx = parseInt(this.getAttribute("data-fn"), 10);
+          var f = FONCTIONS[idx];
+          document.getElementById("inp-" + f.id).value = this.getAttribute("data-val");
+          evaluerCarte(idx);
+        };
+      }
+
+      /* Générateur controle.js */
+      var gGrid = document.getElementById("grille-options-gen");
+      var htmlGen = "";
+      for (var g = 0; g < FONCTIONS.length; g++) {
+        var cocheDef = (g < 4 || g === 8);
+        htmlGen +=
+          '<label class="gen-item">' +
+            '<input type="checkbox" class="chk-gen-fn" value="' + g + '"' + (cocheDef ? ' checked' : '') + '>' +
+            '<span>' + ech(FONCTIONS[g].titre.replace(/^\d+\.\s*/, "")) + '</span>' +
+          '</label>';
+      }
+      gGrid.innerHTML = htmlGen;
+
+      function majScriptGenere() {
+        var chks = gGrid.getElementsByClassName("chk-gen-fn");
+        var blocsFn = [];
+        var blocsAppel = [];
+        for (var c = 0; c < chks.length; c++) {
+          if (chks[c].checked) {
+            var fnObj = FONCTIONS[parseInt(chks[c].value, 10)];
+            blocsFn.push(fnObj.code);
+            blocsAppel.push(fnObj.appelGen);
+          }
+        }
+        var scriptComplet =
+          "// Fichier controle.js — Généré pour l'épreuve pratique du Bac STI\n\n" +
+          blocsFn.join("\n\n") +
+          "\n\nfunction verif() {\n" +
+          blocsAppel.join("\n\n") +
+          "\n\n  return true;\n}\n";
+        document.getElementById("code-genere-out").textContent = scriptComplet;
+      }
+
+      var chksAll = gGrid.getElementsByClassName("chk-gen-fn");
+      for (var u = 0; u < chksAll.length; u++) {
+        chksAll[u].onchange = majScriptGenere;
+      }
+      majScriptGenere();
+
+      document.getElementById("btn-copier-gen").onclick = function () {
+        var txt = document.getElementById("code-genere-out").textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(txt);
+        }
+        this.innerHTML = "✅ Copié dans le presse-papiers !";
+        var selfBtn = this;
+        setTimeout(function () { selfBtn.innerHTML = "📋 Copier le script généré"; }, 2000);
+      };
+
+      /* Mode Sombre */
+      var btnTh = document.getElementById("theme-toggle");
+      function appliquerTheme(th) {
+        var dark = (th === "dark");
+        document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+        document.documentElement.classList.toggle("dark-mode", dark);
+        btnTh.innerHTML = dark ? "☀️ Mode Clair" : "🌙 Mode Sombre";
+      }
+      appliquerTheme(localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "light");
+      btnTh.onclick = function () {
+        var act = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        localStorage.setItem("sti-theme", act);
+        localStorage.setItem("theme", act);
+        appliquerTheme(act);
+      };
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js?v=256"></script>
+  <script src="assets/js/acces.js?v=266"></script>
+</body>
+</html>

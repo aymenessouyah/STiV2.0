@@ -393,3 +393,68 @@ header.topbar {
   -webkit-font-feature-settings: "liga" 0, "calt" 0 !important;
 }
 
+/* ============================================================
+   4) Mode Sombre harmonisé (cours/html5.html · cours/css3.html · series-exercices.html)
+   ============================================================ */
+html[data-theme="dark"],
+html.dark-mode {
+  --m2-bg: #0f172a;
+  --m2-bg-2: #1e293b;
+  --m2-surface: #1e293b;
+  --m2-surface-2: #0f172a;
+  --m2-line: #334155;
+  --m2-line-strong: #475569;
+  --m2-ink: #f8fafc;
+  --m2-ink-soft: #e2e8f0;
+  --m2-muted: #94a3b8;
+  --m2-cream: #1e293b;
+  --m2-edge: #475569;
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #0f172a;
+  --border: #334155;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+}
+
+html[data-theme="dark"] body,
+html.dark-mode body {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  background-image: radial-gradient(circle, rgba(148, 163, 184, 0.12) 1.15px, transparent 1.15px);
+}
+
+html[data-theme="dark"] .bg-white,
+html.dark-mode .bg-white,
+html[data-theme="dark"] .bg-slate-50,
+html.dark-mode .bg-slate-50,
+html[data-theme="dark"] .bg-slate-100,
+html.dark-mode .bg-slate-100 {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .text-slate-900,
+html.dark-mode .text-slate-900,
+html[data-theme="dark"] .text-slate-800,
+html.dark-mode .text-slate-800,
+html[data-theme="dark"] .text-slate-700,
+html.dark-mode .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .text-slate-600,
+html.dark-mode .text-slate-600,
+html[data-theme="dark"] .text-slate-500,
+html.dark-mode .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .border-slate-200,
+html.dark-mode .border-slate-200,
+html[data-theme="dark"] .border-slate-300,
+html.dark-mode .border-slate-300 {
+  border-color: #475569 !important;
+}
+
+
