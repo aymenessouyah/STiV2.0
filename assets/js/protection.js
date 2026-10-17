@@ -915,12 +915,12 @@
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=235",
-        title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
+        file: "sql-cours.mp4?v=273",
+        title: "🎥 Cours SQL Complet (Guide-Ligne) — Archives (BD), SGBD, Requête (Query), Avion Mère->Fille, LDD, LMD, Agrégats & 4ème SI"
       };
       var VIDEO_SQL_INIT_INFO = {
-        file: "sql-initiation.mp4?v=272",
-        title: "🎥 Initiation BD, SGBD & SQL — LDD (CREATE, ALTER TABLE, DROP) & LMD (INSERT, UPDATE, SELECT & Fonctions d'Agrégation sans jointure)"
+        file: "sql-cours.mp4?v=273",
+        title: "🎥 Cours SQL Complet (Guide-Ligne) — Archives (BD), SGBD, Requête (Query), Avion Mère->Fille, LDD, LMD, Agrégats & 4ème SI"
       };
       var VIDEO_HTML5_INFO = {
         file: "html5-cours.mp4?v=227",
@@ -974,14 +974,16 @@
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
       var STI_CHAPITRES_MEDIA = {
         "sql-initiation": [
-          { t: 0.00, short: "1. BD, SGBD & SQL", label: "00:00 · 1. Concepts : Base de Données (BD), SGBD & SQL (LDD vs LMD)", sel: "#intro-bd" },
-          { t: 61.37, short: "2. LDD : CREATE", label: "01:01 · 2. LDD (1/2) : CREATE DATABASE, USE & CREATE TABLE (Types & Contraintes)", sel: "#ldd" },
-          { t: 127.54, short: "3. LDD : ALTER & DROP", label: "02:07 · 3. LDD (2/2) : ALTER TABLE (ADD, MODIFY, CHANGE, DROP) & DROP TABLE", sel: "#ldd" },
-          { t: 192.20, short: "4. LMD : INSERT INTO", label: "03:12 · 4. LMD (1/4) : INSERT INTO — Insérer des enregistrements", sel: "#lmd" },
-          { t: 256.62, short: "5. LMD : UPDATE", label: "04:16 · 5. LMD (2/4) : UPDATE ... SET ... WHERE (et DELETE)", sel: "#lmd" },
-          { t: 322.84, short: "6. LMD : SELECT", label: "05:22 · 6. LMD (3/4) : SELECT sans jointure (WHERE, LIKE, BETWEEN, ORDER BY)", sel: "#lmd" },
-          { t: 391.50, short: "7. 5 Agrégats", label: "06:31 · 7. LMD (4/4) : Les 5 Fonctions d'Agrégation sans jointure (COUNT, AVG, MAX, MIN, SUM)", sel: "#fonctions" },
-          { t: 457.72, short: "8. GROUP BY & HAVING", label: "07:37 · 8. Regroupement GROUP BY, filtrage HAVING & Synthèse SQL", sel: "#fonctions" }
+          { t: 0.00, short: "1. Archives, SGBD & SQL", label: "00:00 · 1. Simulation : Archives (BD), Administration (SGBD), Client, Query & LDD/LMD/LCD", sel: "#intro-bd" },
+          { t: 62.18, short: "2. Tables & Avion ✈", label: "01:02 · 2. Tables, Champs, Clé Primaire, Voyage en Avion Mère ➔ Fille & Relations 1-1, 1-N, N-M", sel: "#intro-cles" },
+          { t: 120.65, short: "3. LDD : Archive", label: "02:00 · 3. Le LDD : Construction de l'archive (CREATE, ALTER TABLE, DROP)", sel: "#ldd" },
+          { t: 176.50, short: "4. INSERT/UPDATE/DELETE", label: "02:56 · 4. Le LMD : Entrer (INSERT), Modifier (UPDATE) et Supprimer (DELETE)", sel: "#lmd" },
+          { t: 233.28, short: "5. SELECT & Exemples", label: "03:53 · 5. Le LMD : Demander à voir des données (SELECT) & exemples concrets", sel: "#lmd-select" },
+          { t: 294.53, short: "6. 5 Agrégats", label: "04:54 · 6. Les 5 Fonctions d'Agrégation (COUNT, AVG, MAX, MIN, SUM)", sel: "#fonctions" },
+          { t: 349.46, short: "7. [4ème SI] Jointure", label: "05:49 · 7. [Spécial 4ème SI] Les Jointures avec exemples concrets", sel: "#lmd-jointure" },
+          { t: 407.47, short: "8. [4ème SI] GROUP/HAVING", label: "06:47 · 8. [Spécial 4ème SI] Regroupement GROUP BY et filtrage HAVING", sel: "#lmd-groupby" },
+          { t: 463.06, short: "9. [4ème SI] Imbriquée", label: "07:43 · 9. [Spécial 4ème SI] Sous-requêtes et Requêtes imbriquées", sel: "#lmd-select" },
+          { t: 511.20, short: "10. Synthèse Guide-Ligne", label: "08:31 · 10. Synthèse générale du parcours Guide-Ligne", sel: "#intro" }
         ],
         "html5-cours": [
           { t: 0.00, short: "I. Squelette", label: "00:00 · I. Squelette HTML5 (<head>, <meta>, <link>, <script>)", sel: "#entete" },
@@ -1037,18 +1039,16 @@
           { t: 631.98, short: "IX. Récap & Guichet", label: "10:32 · IX. Récapitulatif Annexe PHP/MySQLi & Guichet", sel: "#s9" }
         ],
         "sql-cours": [
-          { t: 0.00, short: "I.1 Intro BD", label: "00:00 · I.1 Introduction : BD, SGBD & SQL", sel: "#intro" },
-          { t: 76.75, short: "I.2 Clés PK/FK", label: "01:17 · I.2 Clés primaires, étrangères & Contraintes", sel: "#intro-cles" },
-          { t: 122.65, short: "I.3 Relations/Types", label: "02:03 · I.3 Relations entre tables & Types SQL", sel: "#intro-relations" },
-          { t: 203.25, short: "II.1 CREATE TABLE", label: "03:23 · II.1 LDD : CREATE DATABASE & CREATE TABLE", sel: "#ldd" },
-          { t: 263.05, short: "II.2 CASCADE", label: "04:23 · II.2 Contraintes & ON DELETE CASCADE / RESTRICT", sel: "#ldd-constraints" },
-          { t: 294.85, short: "II.3 ALTER/DROP", label: "04:55 · II.3 Modification & Suppression (ALTER, DROP)", sel: "#ldd-alter" },
-          { t: 358.30, short: "III.1 INSERT/UPDATE", label: "05:58 · III.1 LMD : INSERT INTO, UPDATE & DELETE", sel: "#lmd" },
-          { t: 453.45, short: "III.2 SELECT/WHERE", label: "07:33 · III.2 SELECT, WHERE (!=), ORDER BY, DISTINCT", sel: "#lmd-select" },
-          { t: 478.00, short: "III.3 Jointure WHERE", label: "07:58 · III.3 Jointure dans WHERE (a.col = b.col)", sel: "#lmd-jointure" },
-          { t: 504.80, short: "III.4 Agrégation", label: "08:25 · III.4 Fonctions d'agrégation (COUNT, SUM, AVG…)", sel: "#lmd-aggr" },
-          { t: 529.00, short: "III.5 GROUP/HAVING", label: "08:49 · III.5 Regroupement GROUP BY & HAVING", sel: "#lmd-groupby" },
-          { t: 573.60, short: "III.6 Chaînes/Dates", label: "09:34 · III.6 Fonctions chaînes, dates & Conclusion", sel: "#lmd-strings" }
+          { t: 0.00, short: "1. Archives, SGBD & SQL", label: "00:00 · 1. Simulation : Archives (BD), Administration (SGBD), Client, Query & LDD/LMD/LCD", sel: "#intro-bd" },
+          { t: 62.18, short: "2. Tables & Avion ✈", label: "01:02 · 2. Tables, Champs, Clé Primaire, Voyage en Avion Mère ➔ Fille & Relations 1-1, 1-N, N-M", sel: "#intro-cles" },
+          { t: 120.65, short: "3. LDD : Archive", label: "02:00 · 3. Le LDD : Construction de l'archive (CREATE, ALTER TABLE, DROP)", sel: "#ldd" },
+          { t: 176.50, short: "4. INSERT/UPDATE/DELETE", label: "02:56 · 4. Le LMD : Entrer (INSERT), Modifier (UPDATE) et Supprimer (DELETE)", sel: "#lmd" },
+          { t: 233.28, short: "5. SELECT & Exemples", label: "03:53 · 5. Le LMD : Demander à voir des données (SELECT) & exemples concrets", sel: "#lmd-select" },
+          { t: 294.53, short: "6. 5 Agrégats", label: "04:54 · 6. Les 5 Fonctions d'Agrégation (COUNT, AVG, MAX, MIN, SUM)", sel: "#fonctions" },
+          { t: 349.46, short: "7. [4ème SI] Jointure", label: "05:49 · 7. [Spécial 4ème SI] Les Jointures avec exemples concrets", sel: "#lmd-jointure" },
+          { t: 407.47, short: "8. [4ème SI] GROUP/HAVING", label: "06:47 · 8. [Spécial 4ème SI] Regroupement GROUP BY et filtrage HAVING", sel: "#lmd-groupby" },
+          { t: 463.06, short: "9. [4ème SI] Imbriquée", label: "07:43 · 9. [Spécial 4ème SI] Sous-requêtes et Requêtes imbriquées", sel: "#lmd-select" },
+          { t: 511.20, short: "10. Synthèse Guide-Ligne", label: "08:31 · 10. Synthèse générale du parcours Guide-Ligne", sel: "#intro" }
         ],
         "php-guichet": [
           { t: 0.00, short: "1. Client & JS", label: "00:00 · Étapes 1 à 5 : Client, Formulaire HTML & Contrôle JS" },

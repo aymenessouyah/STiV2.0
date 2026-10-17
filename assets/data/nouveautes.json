@@ -1,13 +1,13 @@
 [
   {
-    "version": "v272",
+    "version": "v273",
     "date": "2026-10-17",
     "categorie": "Vidéo BD & SQL",
     "icone": "🎬",
-    "titre": "Nouvelle Vidéo d'Initiation BD, SGBD & SQL (LDD + LMD + 5 Fonctions d'Agrégation sans jointure)",
-    "resume": "Vidéo Full HD 1080p de 8 min 41 en 8 chapitres (2 colonnes : code SQL à gauche, tables animées à droite + Logo & QR Code) détaillant BD, SGBD, SQL, LDD (CREATE, ALTER TABLE ADD/MODIFY/CHANGE/DROP, DROP TABLE) et LMD (INSERT INTO, UPDATE, SELECT et les 5 fonctions d'agrégation COUNT, AVG, MAX, MIN, SUM + GROUP BY / HAVING sans jointure).",
+    "titre": "Nouvelle Vidéo Officielle du Cours SQL avec Guide-Ligne : Archives (BD), SGBD, Avion Mère➔Fille, LDD, LMD, Agrégats & 4ème SI",
+    "resume": "Remplacement de l'ancienne vidéo du cours SQL par une nouvelle vidéo Full HD 1080p de 9 min 23 en 10 chapitres avec Guide-Ligne : simulation Archives (BD / Database) ↔ Administration (SGBD) ↔ Client & Requête (Query) en SQL, voyage en Avion de la Table Mère vers la Table Fille, relations 1-1 / 1-N / N-M, LDD (CREATE, ALTER, DROP), LMD (INSERT, UPDATE, DELETE, SELECT avec exemples concrets, 5 agrégats) et partie réservée aux 4ème SI (Jointures, GROUP BY, HAVING, Sous-requêtes et Requêtes imbriquées).",
     "lien": "cours/sql.html#video-initiation-sql",
-    "libelleLien": "Regarder la vidéo d'Initiation SQL"
+    "libelleLien": "Regarder la vidéo du Cours SQL"
   },
   {
     "version": "v271",
