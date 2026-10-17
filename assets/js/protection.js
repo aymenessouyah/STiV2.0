@@ -791,6 +791,12 @@
   function installerPauseQRVideoSTI(video) {
     if (!video || video.__stiPauseQRBound) return;
     video.__stiPauseQRBound = true;
+    /* Mode Réseau Labo Fluide : éviter le téléchargement simultané de toutes les vidéos MP4 avant le clic sur Lecture */
+    try {
+      if (video.paused && !video.autoplay && video.getAttribute("preload") !== "none") {
+        video.setAttribute("preload", "metadata");
+      }
+    } catch (e) {}
     var ancienTimeupdate = video.ontimeupdate;
     video.ontimeupdate = function (ev) {
       if (typeof ancienTimeupdate === "function") {

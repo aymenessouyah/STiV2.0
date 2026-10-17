@@ -393,14 +393,24 @@
     classes: ["3eme SI1", "3eme SI2", "4eme SI1", "4eme SI2", "Prof", "elevelabo3"],
     supprLycees: [],
     supprClasses: [],
+    postesLaboMap: {},
     ts: 0
   };
   try {
     var cfgLocal = JSON.parse(localStorage.getItem("sti-cfg-ecoles") || "null");
     if (cfgLocal && Array.isArray(cfgLocal.lycees) && Array.isArray(cfgLocal.classes)) {
       cfgEcoles = Object.assign(cfgEcoles, cfgLocal);
+      if (!cfgEcoles.postesLaboMap || typeof cfgEcoles.postesLaboMap !== "object") {
+        cfgEcoles.postesLaboMap = {};
+      }
     }
   } catch (e) {}
+
+  function nomPosteLabo(code) {
+    var c = String(code || "").toUpperCase();
+    var map = (cfgEcoles && cfgEcoles.postesLaboMap) || {};
+    return map[c] || "";
+  }
 
   function obtenirLyceesActifs() {
     var suppr = cfgEcoles.supprLycees || [];
@@ -448,6 +458,7 @@
       classes: cfgEcoles.classes,
       supprLycees: cfgEcoles.supprLycees || [],
       supprClasses: cfgEcoles.supprClasses || [],
+      postesLaboMap: cfgEcoles.postesLaboMap || {},
       ts: cfgEcoles.ts
     };
     if (!navigator.onLine) {
@@ -1238,19 +1249,35 @@
     if (bandLaboM) {
       if (nbLaboOuvertes > 0 || bandeauLabo3ForceOuvert) {
         bandLaboM.style.display = "block";
+        var pausesMach = (cfgSecuriteAdmin && cfgSecuriteAdmin.pausesMachines) || {};
+        function htmlCartePosteLabo(m, estActif) {
+          var nomP = nomPosteLabo(m.code);
+          var titreP = nomP ? ("🖥️ " + nomP + " (" + m.code + ")") : m.appareil;
+          var enPauseM = Boolean(pausesMach[m.code]);
+          var bgP = enPauseM ? "#fde2e6" : (estActif ? "#dcfce7" : "#f1f5f9");
+          var bdP = enPauseM ? "#c0392b" : (estActif ? "#16a34a" : "#cbd5e1");
+          var colP = enPauseM ? "#991b1b" : (estActif ? "#14532d" : "#475569");
+          return (
+            "<span style='display:inline-flex;align-items:center;gap:5px;background:" + bgP + ";color:" + colP + ";border:1.5px solid " + bdP + ";border-radius:999px;padding:4px 10px;font-weight:900;font-size:11.5px;margin:3px 5px 3px 0'>" +
+              (enPauseM ? "⏸️ " : (estActif ? "🟢 " : "⚪ ")) +
+              "<span>" + echHtml(titreP) + " · 📄 <b>" + echHtml(m.page || "index.html") + "</b></span>" +
+              "<button type='button' data-labo-rename='" + echHtml(m.code) + "' title='Attribuer un numéro de poste (ex: Poste 01)' style='border:1px solid #0284c7;background:#fff;color:#0284c7;border-radius:999px;padding:1px 6px;font-size:10px;font-weight:900;cursor:pointer'>✏️</button>" +
+              (estActif
+                ? "<button type='button' data-labo-tp='" + echHtml(m.code) + "' title='Téléporter uniquement cette machine vers une page' style='border:1px solid #177245;background:#fff;color:#177245;border-radius:999px;padding:1px 6px;font-size:10px;font-weight:900;cursor:pointer'>🚀</button>" +
+                  "<button type='button' data-labo-pause='" + echHtml(m.code) + "' title='" + (enPauseM ? "Libérer l\u0027écran de ce poste" : "Figer l\u0027écran de ce poste") + "' style='border:1px solid #c0392b;background:#fff;color:#c0392b;border-radius:999px;padding:1px 6px;font-size:10px;font-weight:900;cursor:pointer'>" + (enPauseM ? "▶️" : "⏸️") + "</button>"
+                : "") +
+            "</span>"
+          );
+        }
         var htmlPostesActifs = infoLabo3.ouvertes.length
-          ? infoLabo3.ouvertes.map(function (m) {
-              return "<span style='display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#14532d;border:1.5px solid #16a34a;border-radius:999px;padding:4px 11px;font-weight:900;font-size:11.5px;margin:3px 4px 3px 0'>🟢 " + echHtml(m.appareil) + " · 📄 <b>" + echHtml(m.page || "index.html") + "</b></span>";
-            }).join("")
+          ? infoLabo3.ouvertes.map(function (m) { return htmlCartePosteLabo(m, true); }).join("")
           : "<span style='display:inline-block;background:#fff;color:#64748b;border:1.5px dashed #94a3b8;border-radius:999px;padding:4px 11px;font-weight:800;font-size:11.5px;margin:3px 0'>⚪ Aucune machine ouverte en cet instant avec elevelabo3@exemple.tn</span>";
         var inactifsList = infoLabo3.connues.filter(function (m) {
           return !(m.ts > 0 && (Date.now() - m.ts < 95000));
         });
         var htmlPostesInactifs = (bandeauLabo3ForceOuvert && inactifsList.length)
           ? "<div style='margin-top:6px;font-size:11px;color:#475569;font-weight:700'>Postes Labo 3 connus hors-ligne (" + inactifsList.length + ") : " +
-            inactifsList.slice(0, 20).map(function (m) {
-              return "<span style='display:inline-block;background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;border-radius:999px;padding:2px 8px;margin:2px 3px 2px 0;font-weight:800'>⚪ " + echHtml(m.code) + " (" + echHtml(m.page || "—") + ")</span>";
-            }).join("") + "</div>"
+            inactifsList.slice(0, 24).map(function (m) { return htmlCartePosteLabo(m, false); }).join("") + "</div>"
           : "";
         bandLaboM.innerHTML =
           "<div style='display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px'>" +
@@ -1258,7 +1285,10 @@
               "<span style='display:inline-block;background:" + (nbLaboOuvertes > 0 ? "#16a34a" : "#0284c7") + ";color:#fff;border-radius:999px;padding:2px 10px;font-size:12px'>" + nbLaboOuvertes + " machine(s) ouverte(s)</span>" +
               " <span style='font-size:11.5px;color:#475569;font-weight:800'>· " + nbLaboConnues + " poste(s) Labo 3 identifié(s) au total</span>" +
             "</div>" +
-            "<button type='button' id='btn-fermer-band-labo3' style='border:1.5px solid #0284c7;background:#fff;color:#0284c7;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>✖ Masquer</button>" +
+            "<div style='display:flex;align-items:center;gap:6px;flex-wrap:wrap'>" +
+              "<button type='button' id='btn-num-auto-labo3' title='Numéroter automatiquement toutes les machines connues (Poste 01, Poste 02…)' style='border:1.5px solid #0284c7;background:#e0f2fe;color:#0369a1;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>🔢 Numéroter auto (Poste 01…)</button>" +
+              "<button type='button' id='btn-fermer-band-labo3' style='border:1.5px solid #0284c7;background:#fff;color:#0284c7;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>✖ Masquer</button>" +
+            "</div>" +
           "</div>" +
           "<div>" + htmlPostesActifs + "</div>" +
           htmlPostesInactifs;
@@ -1269,6 +1299,78 @@
             bandLaboM.style.display = "none";
           };
         }
+        var bAutoNum = document.getElementById("btn-num-auto-labo3");
+        if (bAutoNum) {
+          bAutoNum.onclick = function () {
+            if (!cfgEcoles.postesLaboMap) cfgEcoles.postesLaboMap = {};
+            var idxP = 1;
+            infoLabo3.connues.forEach(function (m) {
+              if (!cfgEcoles.postesLaboMap[m.code]) {
+                cfgEcoles.postesLaboMap[m.code] = "Poste " + (idxP < 10 ? "0" + idxP : idxP);
+              }
+              idxP++;
+            });
+            sauvegarderCfgEcoles();
+            majBandeauEtCompteursClasse();
+            rendAbonnes();
+            msg("🖥️ Numérotation automatique des postes Labo 3 enregistrée !", "ok");
+          };
+        }
+        bandLaboM.querySelectorAll("button[data-labo-rename]").forEach(function (bRen) {
+          bRen.onclick = function (ev) {
+            ev.stopPropagation();
+            var cM = bRen.getAttribute("data-labo-rename");
+            var actN = nomPosteLabo(cM) || "Poste 01";
+            var saisie = window.prompt("Nom ou numéro pour la machine " + cM + " (ex: Poste 01, Poste 12, PC Fond Gauche — laisser vide pour effacer) :", actN);
+            if (saisie === null) return;
+            if (!cfgEcoles.postesLaboMap) cfgEcoles.postesLaboMap = {};
+            saisie = saisie.trim();
+            if (saisie) cfgEcoles.postesLaboMap[cM] = saisie;
+            else delete cfgEcoles.postesLaboMap[cM];
+            sauvegarderCfgEcoles();
+            majBandeauEtCompteursClasse();
+            rendAbonnes();
+          };
+        });
+        bandLaboM.querySelectorAll("button[data-labo-tp]").forEach(function (bTp) {
+          bTp.onclick = function (ev) {
+            ev.stopPropagation();
+            var cM = bTp.getAttribute("data-labo-tp");
+            var nomP = nomPosteLabo(cM) || cM;
+            var dest = window.prompt("🚀 Téléporter uniquement " + nomP + " vers quelle page ?\n(ex: cours/sql.html, cours/php.html, bac-pratique.html, pieges-bac.html, index.html)", "cours/sql.html");
+            if (!dest || !dest.trim()) return;
+            var tpPayload = {
+              id: "tp_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+              cible: "MACHINE:" + cM,
+              page: dest.trim(),
+              ts: Date.now()
+            };
+            try {
+              sb.channel("sti-diffusion").send({ type: "broadcast", event: "teleporter", payload: tpPayload });
+            } catch (e) {}
+            msg("🚀 Téléportation envoyée à " + nomP + " → " + dest.trim(), "ok");
+          };
+        });
+        bandLaboM.querySelectorAll("button[data-labo-pause]").forEach(function (bPs) {
+          bPs.onclick = function (ev) {
+            ev.stopPropagation();
+            var cM = bPs.getAttribute("data-labo-pause");
+            var nomP = nomPosteLabo(cM) || cM;
+            if (!cfgSecuriteAdmin.pausesMachines) cfgSecuriteAdmin.pausesMachines = {};
+            if (cfgSecuriteAdmin.pausesMachines[cM]) {
+              delete cfgSecuriteAdmin.pausesMachines[cM];
+            } else {
+              cfgSecuriteAdmin.pausesMachines[cM] = true;
+            }
+            cfgSecuriteAdmin.ts = Date.now();
+            try { localStorage.setItem("sti-sec-config", JSON.stringify(cfgSecuriteAdmin)); } catch (e) {}
+            try {
+              sb.channel("sti-diffusion").send({ type: "broadcast", event: "sec_config", payload: cfgSecuriteAdmin });
+            } catch (e) {}
+            majBandeauEtCompteursClasse();
+            msg((cfgSecuriteAdmin.pausesMachines[cM] ? "⏸️ Écran figé sur " : "▶️ Écran libéré sur ") + nomP, "ok");
+          };
+        });
       } else {
         bandLaboM.style.display = "none";
       }
@@ -2653,7 +2755,10 @@
           bLaboOn.style.cssText = "display:inline-block;margin-left:5px;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:900;border:1.5px solid #0284c7;background:#e0f2fe;color:#0369a1;";
         }
         var detPagesL3 = nbOuvL3 > 0
-          ? " · " + infL3.ouvertes.map(function (m) { return m.code + " (" + (m.page || "site") + ")"; }).join(", ")
+          ? " · " + infL3.ouvertes.map(function (m) {
+              var npM = nomPosteLabo(m.code) || m.code;
+              return npM + " (" + (m.page || "site") + ")";
+            }).join(", ")
           : "";
         bLaboOn.textContent = (nbOuvL3 > 0 ? "🟢 " : "💻 ") + nbOuvL3 + " machine(s) ouverte(s)" + detPagesL3 + " / " + infL3.connues.length + " poste(s) connus";
         ligneIdentite.appendChild(bLaboOn);

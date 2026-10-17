@@ -4584,7 +4584,15 @@
     else if (/CriOS|Chrome\//i.test(ua)) nav = "Chrome";
     else if (/Safari\//i.test(ua)) nav = "Safari";
 
-    return ico + " " + os + " · " + nav + " (" + obtenirEmpreinteAppareilCourte() + ")";
+    var codeM = obtenirEmpreinteAppareilCourte();
+    var nomPoste = "";
+    try {
+      var cfgEc = JSON.parse(localStorage.getItem("sti-cfg-ecoles") || "null");
+      if (cfgEc && cfgEc.postesLaboMap && codeM && cfgEc.postesLaboMap[codeM]) {
+        nomPoste = cfgEc.postesLaboMap[codeM] + " · ";
+      }
+    } catch (eN) {}
+    return nomPoste + ico + " " + os + " · " + nav + " (" + codeM + ")";
   }
   window.obtenirInfoAppareilSTI = obtenirInfoAppareilSTI;
 
@@ -4784,7 +4792,10 @@
     }
     var cLoc = lireCacheSessionLocal() || {};
     var monUid = currentUid || cLoc.id || "";
-    var enPause = Boolean(monUid && cfgSecurite && cfgSecurite.pausesUids && cfgSecurite.pausesUids[monUid]);
+    var codeMach = obtenirEmpreinteAppareilCourte();
+    var pMap = (cfgSecurite && cfgSecurite.pausesUids) || {};
+    var pMach = (cfgSecurite && cfgSecurite.pausesMachines) || {};
+    var enPause = Boolean((monUid && pMap[monUid]) || (codeMach && pMach[codeMach]));
     if (!enPause) {
       if (exPause) exPause.remove();
       return;
@@ -4815,8 +4826,11 @@
     var cLoc = lireCacheSessionLocal() || {};
     var monUid = currentUid || cLoc.id || "";
     var maCl = currentClasse || cLoc.classe || "";
+    var codeMach = obtenirEmpreinteAppareilCourte();
     var estCible = false;
-    if (tp.cible && tp.cible.indexOf("UID:") === 0) {
+    if (tp.cible && tp.cible.indexOf("MACHINE:") === 0) {
+      estCible = Boolean(codeMach && tp.cible.slice(8).toUpperCase() === codeMach.toUpperCase());
+    } else if (tp.cible && tp.cible.indexOf("UID:") === 0) {
       estCible = (monUid && tp.cible.slice(4) === monUid);
     } else {
       estCible = estCibleParVerrou(tp.cible || "*", maCl);
@@ -8865,6 +8879,8 @@
      4) Carnet de notes personnel hors-ligne par cours (Alt+N ou menu élève)
      ===================================================================== */
   var STI_SEARCH_ITEMS = [
+    /* --- PIÈGES DU BAC STI --- */
+    { tech: "bac", badge: "⚠️ Pièges Bac", title: "Les 25 Pièges du Bac STI à éviter (HTML/CSS · JS · SQL · PHP)", sub: "Erreurs classiques éliminatoires en épreuve pratique & théorique + exemples Faux vs Vrai", url: "pieges-bac.html", kw: "pieges bac erreurs frequentes onsubmit return getelementbyid mysqli fetch assoc group by where having varchar date float clear" },
     /* --- HTML5 --- */
     { tech: "htmlcss", badge: "🌐 HTML5", title: "En-tête & Structure d'une page HTML5", sub: "<!DOCTYPE html>, <head>, <meta charset>, <title>, <link>", url: "cours/html5.html#entete", kw: "doctype html head meta title link utf8 structure" },
     { tech: "htmlcss", badge: "🌐 HTML5", title: "Balises sémantiques de structuration", sub: "<header>, <nav>, <main>, <section>, <article>, <aside>, <footer>", url: "cours/html5.html#structuration", kw: "header nav main section article aside footer semantique mise en page" },
@@ -13303,5 +13319,214 @@
 
     majApercuSplit();
   };
+
+  /* =====================================================================
+     AMÉLIORATIONS LABO & CONFORT ÉLÈVE / ENSEIGNANT (v264) :
+     - Point 3 : Synchronisation instantanée inter-onglets (Mode Sombre, Notions SQL, Quiz)
+     - Point 4 : Sauvegarde automatique anti-coupure des saisies élèves (0 perte)
+     - Point 5 : Mode « Vidéoprojecteur Labo » (+25 % contraste net, Alt+P)
+     ===================================================================== */
+  function appliquerEtatModeProjecteurSTI(actif) {
+    try {
+      document.documentElement.classList.toggle("sti-mode-projecteur", Boolean(actif));
+      if (!document.getElementById("sti-style-mode-projecteur")) {
+        var stProj = document.createElement("style");
+        stProj.id = "sti-style-mode-projecteur";
+        stProj.textContent =
+          "html.sti-mode-projecteur { font-size: 122% !important; }" +
+          "html.sti-mode-projecteur pre, html.sti-mode-projecteur code, html.sti-mode-projecteur textarea, html.sti-mode-projecteur .sql-code, html.sti-mode-projecteur .code-block { font-size: 1.12em !important; line-height: 1.55 !important; font-weight: 700 !important; }" +
+          "html.sti-mode-projecteur table th, html.sti-mode-projecteur table td { font-size: 1.08em !important; padding: 10px 13px !important; }" +
+          "html.sti-mode-projecteur p, html.sti-mode-projecteur li { line-height: 1.65 !important; }" +
+          "#sti-btn-mode-projecteur { position: fixed; left: 14px; bottom: 14px; z-index: 9990; border: 2px solid #23201a; border-radius: 999px; padding: 6px 12px; font: 900 11.5px system-ui, -apple-system, sans-serif; cursor: pointer; background: #fffdf8; color: #23201a; box-shadow: 2px 2px 0 #23201a; transition: transform .15s ease, background .15s ease; }" +
+          "#sti-btn-mode-projecteur:hover { transform: translateY(-2px); }" +
+          "html.sti-mode-projecteur #sti-btn-mode-projecteur { background: #fde047; color: #0f172a; border-color: #0f172a; }" +
+          "@media (max-width: 900px), print { #sti-btn-mode-projecteur { display: none !important; } }";
+        document.head.appendChild(stProj);
+      }
+      var btnP = document.getElementById("sti-btn-mode-projecteur");
+      if (btnP) {
+        btnP.innerHTML = actif ? "📽️ Projecteur ON (+25 %)" : "📽️ Projecteur";
+        btnP.title = "Basculer le Mode Vidéoprojecteur Labo (+25 % taille du code et des tableaux — Raccourci Alt+P)";
+      }
+    } catch (e) {}
+  }
+
+  function basculerModeProjecteurSTI() {
+    var act = !document.documentElement.classList.contains("sti-mode-projecteur");
+    try { localStorage.setItem("sti-mode-projecteur", act ? "1" : "0"); } catch (e) {}
+    appliquerEtatModeProjecteurSTI(act);
+    if (typeof afficherToastSynchro === "function") {
+      afficherToastSynchro(act ? "📽️ Mode Vidéoprojecteur Labo activé (+25 %)" : "📽️ Mode Vidéoprojecteur désactivé (taille normale)");
+    }
+  }
+  window.basculerModeProjecteurSTI = basculerModeProjecteurSTI;
+
+  function installerModeProjecteurLaboSTI() {
+    var sauv = false;
+    try { sauv = localStorage.getItem("sti-mode-projecteur") === "1"; } catch (e) {}
+    appliquerEtatModeProjecteurSTI(sauv);
+    if (estPostePC() && document.body && !document.getElementById("sti-btn-mode-projecteur")) {
+      var bProj = document.createElement("button");
+      bProj.type = "button";
+      bProj.id = "sti-btn-mode-projecteur";
+      bProj.innerHTML = sauv ? "📽️ Projecteur ON (+25 %)" : "📽️ Projecteur";
+      bProj.title = "Basculer le Mode Vidéoprojecteur Labo (+25 % taille du code et des tableaux — Raccourci Alt+P)";
+      bProj.addEventListener("click", basculerModeProjecteurSTI);
+      document.body.appendChild(bProj);
+    }
+    window.addEventListener("keydown", function (ev) {
+      if (ev.altKey && !ev.ctrlKey && !ev.metaKey && (ev.key === "p" || ev.key === "P")) {
+        ev.preventDefault();
+        basculerModeProjecteurSTI();
+      }
+    });
+  }
+
+  /* Point 3 : Synchronisation instantanée inter-onglets (0 ms) */
+  function installerSynchroInterOngletsSTI() {
+    window.addEventListener("storage", function (ev) {
+      if (!ev || !ev.key) return;
+      /* 1. Mode Sombre / Clair synchronisé sur tous les onglets ouverts */
+      if (ev.key === "theme" || ev.key === "sti-theme" || ev.key === "sti-sql-theme") {
+        var nvTheme = ev.newValue || "light";
+        var isDark = nvTheme === "dark";
+        document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+        document.documentElement.classList.toggle("dark-mode", isDark);
+        if (document.body) document.body.classList.toggle("dark-mode", isDark);
+        var btnTh = document.getElementById("theme-toggle") || document.querySelector("[data-theme-toggle]");
+        if (btnTh && btnTh.textContent) {
+          if (isDark && btnTh.textContent.indexOf("🌙") !== -1) btnTh.textContent = btnTh.textContent.replace("🌙", "☀️");
+          else if (!isDark && btnTh.textContent.indexOf("☀️") !== -1) btnTh.textContent = btnTh.textContent.replace("☀️", "🌙");
+        }
+        return;
+      }
+      /* 2. Mode Vidéoprojecteur synchronisé sur tous les onglets */
+      if (ev.key === "sti-mode-projecteur") {
+        appliquerEtatModeProjecteurSTI(ev.newValue === "1");
+        return;
+      }
+      /* 3. Notions SQL cochées dans cours/sql.html */
+      if (ev.key === "sti-sql-bord-notions" && ev.newValue) {
+        try {
+          var mapNotions = JSON.parse(ev.newValue || "{}");
+          document.querySelectorAll("[data-notion-id], input[data-sql-notion]").forEach(function (el) {
+            var idN = el.getAttribute("data-notion-id") || el.getAttribute("data-sql-notion");
+            if (!idN) return;
+            var coche = Boolean(mapNotions[idN]);
+            if (el.type === "checkbox") el.checked = coche;
+            el.classList.toggle("done", coche);
+            el.classList.toggle("checked", coche);
+          });
+        } catch (eN) {}
+        return;
+      }
+      /* 4. Pièges du Bac cochés dans pieges-bac.html */
+      if (ev.key === "sti-pieges-bac-ok" && typeof window.__stiMajPiegesBacDepuisStorage === "function") {
+        try { window.__stiMajPiegesBacDepuisStorage(); } catch (eP) {}
+      }
+    });
+
+    /* Émettre le changement de thème dès qu'un bouton thème de cours/sql.html, cours/php.html ou index.html est cliqué */
+    document.addEventListener("click", function (ev) {
+      var btn = ev.target && ev.target.closest ? ev.target.closest("#theme-toggle, [data-theme-toggle], .theme-toggle-btn") : null;
+      if (!btn) return;
+      setTimeout(function () {
+        var dt = document.documentElement.getAttribute("data-theme") ||
+          (document.documentElement.classList.contains("dark-mode") || (document.body && document.body.classList.contains("dark-mode")) ? "dark" : "light");
+        try {
+          localStorage.setItem("sti-theme", dt);
+          localStorage.setItem("theme", dt);
+        } catch (eT) {}
+      }, 40);
+    }, true);
+  }
+
+  /* Point 4 : Sauvegarde automatique anti-coupure des saisies élèves (Auto-save brouillon 0 perte) */
+  function installerAutoSaveBrouillonsSTI() {
+    var pathCle = (location.pathname || "/index.html").replace(/\/+/g, "/");
+    if (/portail\.html$|admin\.html$/i.test(pathCle)) return;
+    var cleStorage = "sti-autosave-v1:" + pathCle;
+
+    function idChampBrouillon(el, idx) {
+      if (!el || !el.tagName) return "";
+      var tp = (el.type || "").toLowerCase();
+      if (tp === "password" || tp === "hidden" || tp === "submit" || tp === "button" || tp === "reset" || tp === "file") return "";
+      if (el.id && /^filtre|^search|^sti-search/i.test(el.id)) return "";
+      return (el.tagName.toLowerCase() + ":" + (el.id || el.name || ("idx_" + idx)));
+    }
+
+    function restaurerBrouillonsPage() {
+      var donnees = null;
+      try { donnees = JSON.parse(localStorage.getItem(cleStorage) || "null"); } catch (e) {}
+      if (!donnees || !donnees.champs || typeof donnees.champs !== "object") return;
+      var champs = document.querySelectorAll("textarea, input[type='text'], input:not([type])");
+      var nbRestaures = 0;
+      champs.forEach(function (el, idx) {
+        var cid = idChampBrouillon(el, idx);
+        if (!cid || typeof donnees.champs[cid] !== "string") return;
+        var valSauv = donnees.champs[cid];
+        if (valSauv && valSauv.trim().length >= 3 && (!el.value || !el.value.trim())) {
+          el.value = valSauv;
+          nbRestaures++;
+        }
+      });
+      if (nbRestaures > 0 && typeof afficherToastSynchro === "function") {
+        afficherToastSynchro("💾 Brouillon restauré automatiquement (" + nbRestaures + " saisie" + (nbRestaures > 1 ? "s" : "") + ")");
+      }
+    }
+
+    var timerSauv = null;
+    function sauvegarderBrouillonsPage() {
+      try {
+        var champs = document.querySelectorAll("textarea, input[type='text'], input:not([type])");
+        var map = {};
+        var nb = 0;
+        champs.forEach(function (el, idx) {
+          var cid = idChampBrouillon(el, idx);
+          if (!cid) return;
+          var v = String(el.value || "");
+          if (v.trim().length >= 2 && v.length <= 25000) {
+            map[cid] = v;
+            nb++;
+          }
+        });
+        if (nb > 0) {
+          localStorage.setItem(cleStorage, JSON.stringify({ ts: Date.now(), champs: map }));
+        } else {
+          localStorage.removeItem(cleStorage);
+        }
+      } catch (e) {}
+    }
+
+    document.addEventListener("input", function (ev) {
+      var t = ev.target;
+      if (!t || !t.tagName) return;
+      var tag = t.tagName.toLowerCase();
+      if (tag !== "textarea" && tag !== "input") return;
+      if (timerSauv) clearTimeout(timerSauv);
+      timerSauv = setTimeout(sauvegarderBrouillonsPage, 350);
+    }, true);
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(restaurerBrouillonsPage, 250);
+      });
+    } else {
+      setTimeout(restaurerBrouillonsPage, 250);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      installerModeProjecteurLaboSTI();
+      installerSynchroInterOngletsSTI();
+      installerAutoSaveBrouillonsSTI();
+    });
+  } else {
+    installerModeProjecteurLaboSTI();
+    installerSynchroInterOngletsSTI();
+    installerAutoSaveBrouillonsSTI();
+  }
 })();
+
 

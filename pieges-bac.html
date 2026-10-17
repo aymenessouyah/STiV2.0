@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Les 25 Pièges du Bac STI à éviter — STI V2.0 By AE</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/sti-icon-192.png">
+  <link rel="stylesheet" href="assets/css/atelier.css">
+  <link rel="stylesheet" href="assets/css/protection.css?v=227">
+  <script src="assets/js/protection.js?v=227"></script>
+  <style>
+    :root {
+      --bg-page: #faf6ee;
+      --bg-card: #ffffff;
+      --ink: #23201a;
+      --ink-soft: #5a5244;
+      --border: #23201a;
+      --bad-bg: #fef2f2;
+      --bad-border: #dc2626;
+      --bad-ink: #991b1b;
+      --good-bg: #f0fdf4;
+      --good-border: #16a34a;
+      --good-ink: #14532d;
+      --code-bg: #1e293b;
+      --code-ink: #f8fafc;
+    }
+    html[data-theme="dark"], html.dark-mode {
+      --bg-page: #0f172a;
+      --bg-card: #1e293b;
+      --ink: #f8fafc;
+      --ink-soft: #cbd5e1;
+      --border: #475569;
+      --bad-bg: rgba(127, 29, 29, 0.28);
+      --bad-border: #f87171;
+      --bad-ink: #fecaca;
+      --good-bg: rgba(20, 83, 45, 0.28);
+      --good-border: #4ade80;
+      --good-ink: #bbf7d0;
+      --code-bg: #090d16;
+      --code-ink: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-page);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .wrap-pieges {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 18px 60px;
+    }
+    .topbar-pieges {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .btn-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--border);
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-top:hover { transform: translateY(-2px); }
+    .hero-pieges {
+      background: linear-gradient(135deg, #fff3b0 0%, #fed7aa 55%, #fecaca 100%);
+      color: #23201a;
+      border: 3px solid #23201a;
+      border-radius: 22px;
+      padding: 24px 26px;
+      box-shadow: 5px 5px 0 #23201a;
+      margin-bottom: 20px;
+    }
+    html[data-theme="dark"] .hero-pieges, html.dark-mode .hero-pieges {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #f8fafc;
+      border-color: #f59e0b;
+      box-shadow: 5px 5px 0 #f59e0b;
+    }
+    .hero-pieges h1 {
+      margin: 0 0 8px;
+      font-size: clamp(22px, 3vw, 31px);
+      font-weight: 900;
+    }
+    .hero-pieges p {
+      margin: 0;
+      font-size: 14.5px;
+      font-weight: 700;
+      opacity: 0.92;
+    }
+    .barre-prog-box {
+      margin-top: 16px;
+      background: rgba(255, 255, 255, 0.82);
+      color: #23201a;
+      border: 2px solid #23201a;
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    html[data-theme="dark"] .barre-prog-box, html.dark-mode .barre-prog-box {
+      background: #0f172a;
+      color: #f8fafc;
+      border-color: #475569;
+    }
+    .jauge-fond {
+      flex: 1;
+      min-width: 180px;
+      height: 14px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      border: 1.5px solid #23201a;
+      overflow: hidden;
+    }
+    .jauge-remplie {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #16a34a, #22c55e);
+      transition: width 0.3s ease-in-out;
+    }
+    .filtres-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .filtres-boutons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-filtre {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-filtre.actif {
+      background: #23201a;
+      color: #fff3b0;
+      border-color: #23201a;
+    }
+    html[data-theme="dark"] .btn-filtre.actif, html.dark-mode .btn-filtre.actif {
+      background: #f59e0b;
+      color: #0f172a;
+      border-color: #f59e0b;
+    }
+    .champ-rech-piege {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 13px;
+      min-width: 250px;
+    }
+    .grille-pieges {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .carte-piege {
+      background: var(--bg-card);
+      border: 2.5px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: 4px 4px 0 var(--border);
+      transition: all 0.2s ease-in-out;
+    }
+    .carte-piege.maitrise {
+      border-color: #16a34a;
+      box-shadow: 4px 4px 0 #16a34a;
+    }
+    .entete-piege {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .badge-cat {
+      display: inline-block;
+      padding: 3px 11px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 900;
+      border: 1.5px solid #23201a;
+    }
+    .cat-htmlcss { background: #dbeafe; color: #1e3a8a; }
+    .cat-js { background: #fef08a; color: #713f12; }
+    .cat-sql { background: #dcfce7; color: #14532d; }
+    .cat-php { background: #ede9fe; color: #4c1d95; }
+    .titre-piege {
+      margin: 0 0 8px;
+      font-size: 17.5px;
+      font-weight: 900;
+    }
+    .explication-piege {
+      margin: 0 0 12px;
+      font-size: 13.8px;
+      color: var(--ink-soft);
+      font-weight: 700;
+    }
+    .comparatif-code {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 12px;
+    }
+    .bloc-faux, .bloc-vrai {
+      border-radius: 13px;
+      padding: 11px 13px;
+      border: 2px solid;
+    }
+    .bloc-faux {
+      background: var(--bad-bg);
+      border-color: var(--bad-border);
+      color: var(--bad-ink);
+    }
+    .bloc-vrai {
+      background: var(--good-bg);
+      border-color: var(--good-border);
+      color: var(--good-ink);
+    }
+    .label-comparatif {
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 6px;
+      display: block;
+    }
+    pre.code-piege {
+      margin: 0;
+      padding: 10px 12px;
+      border-radius: 9px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      overflow-x: auto;
+      line-height: 1.45;
+    }
+    .btn-check-piege {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .carte-piege.maitrise .btn-check-piege {
+      background: #dcfce7;
+      color: #14532d;
+      border-color: #16a34a;
+    }
+    @media print {
+      .topbar-pieges, .filtres-bar, .btn-check-piege { display: none !important; }
+      body { background: #fff; color: #000; }
+      .carte-piege { break-inside: avoid; box-shadow: none; margin-bottom: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap-pieges">
+    <div class="topbar-pieges">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="index.html" class="btn-top">🏠 Accueil Atelier</a>
+        <a href="bac-pratique.html" class="btn-top">🎓 Espace Bac STI</a>
+        <a href="cours/sql.html" class="btn-top">🗄️ Cours SQL</a>
+        <a href="cours/php.html" class="btn-top">🐘 Cours PHP</a>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" id="theme-toggle" class="btn-top">🌙 Mode Sombre</button>
+        <button type="button" id="btn-print-pieges" class="btn-top">🖨️ Imprimer en fiche A4</button>
+      </div>
+    </div>
+
+    <header class="hero-pieges">
+      <div style="display:inline-block;background:#23201a;color:#fff3b0;padding:3px 11px;border-radius:999px;font-size:11.5px;font-weight:900;margin-bottom:8px">
+        ⚠️ CHECK-LIST OFFICIELLE AVANT L'ÉPREUVE PRATIQUE & THÉORIQUE (4ème SI)
+      </div>
+      <h1>Les 25 Pièges du Bac STI à éviter absolument</h1>
+      <p>Chaque année au Baccalauréat, ces 25 erreurs classiques font perdre entre 3 et 8 points aux candidats en HTML5/CSS3, JavaScript, SQL et PHP/MySQLi. Comparez le piège (❌) et le réflexe correct (✅), puis cochez chaque point maîtrisé.</p>
+      <div class="barre-prog-box">
+        <div style="font-weight:900;font-size:13.5px">
+          🎯 Progression personnelle : <span id="lbl-prog-pieges">0 / 25</span> pièges maîtrisés (<span id="pct-prog-pieges">0 %</span>)
+        </div>
+        <div class="jauge-fond">
+          <div id="jauge-pieges" class="jauge-remplie"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button type="button" id="btn-tout-cocher" class="btn-top" style="padding:5px 11px;font-size:11.5px">✅ Tout cocher</button>
+          <button type="button" id="btn-reinit-pieges" class="btn-top" style="padding:5px 11px;font-size:11.5px">🔄 Réinitialiser</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="filtres-bar">
+      <div class="filtres-boutons" id="filtres-cat-pieges">
+        <button type="button" class="btn-filtre actif" data-cat="all">Tous les pièges (25)</button>
+        <button type="button" class="btn-filtre" data-cat="htmlcss">🌐 HTML5 / CSS3 (6)</button>
+        <button type="button" class="btn-filtre" data-cat="js">⚡ JavaScript (6)</button>
+        <button type="button" class="btn-filtre" data-cat="sql">🗄️ SQL / MySQL (7)</button>
+        <button type="button" class="btn-filtre" data-cat="php">🐘 PHP / MySQLi (6)</button>
+        <button type="button" class="btn-filtre" data-cat="todo">⏳ Restant à réviser</button>
+      </div>
+      <input type="text" id="filtre-texte-piege" class="champ-rech-piege" placeholder="🔍 Filtrer (ex: onsubmit, float, HAVING, fetch_assoc…)">
+    </div>
+
+    <div id="liste-pieges-bac" class="grille-pieges"></div>
+  </div>
+
+  <script>
+    (function () {
+      var PIEGES = [
+        /* ==================== HTML5 / CSS3 (1 à 6) ==================== */
+        {
+          id: "p1", cat: "htmlcss", badge: "🌐 HTML5 / CSS3",
+          titre: "1. Oublier le mot-clé return dans onsubmit du formulaire",
+          exp: "Sans « return », le formulaire s'envoie vers le fichier PHP même lorsque la fonction JavaScript verif() retourne false !",
+          faux: '<form action="ajout.php" method="post" onsubmit="verif()">',
+          vrai: '<form action="ajout.php" method="post" onsubmit="return verif()">'
+        },
+        {
+          id: "p2", cat: "htmlcss", badge: "🌐 HTML5 / CSS3",
+          titre: "2. Oublier l'attribut name sur les champs de formulaire",
+          exp: "L'attribut id sert à document.getElementById() en JS, mais PHP ($_POST['...']) lit uniquement l'attribut name ! Sans name, $_POST est vide.",
+          faux: '<input type="text" id="nom">',
+          vrai: '<input type="text" id="nom" name="nom">'
+        },
+        {
+          id: "p3", cat: "htmlcss", badge: "🌐 HTML5 / CSS3",
+          titre: "3. Mauvaise liaison entre <nav> et <iframe name=\"cadre\">",
+          exp: "Pour qu'un lien du menu s'ouvre dans le cadre droit sans recharger toute la page index.html, l'attribut target du lien <a> doit être strictement identique au name de l'iframe.",
+          faux: '<a href="inscription.html" target="_blank">Inscription</a>\n<iframe id="cadre" src="inscription.html"></iframe>',
+          vrai: '<a href="inscription.html" target="cadre">Inscription</a>\n<iframe name="cadre" src="inscription.html"></iframe>'
+        },
+        {
+          id: "p4", cat: "htmlcss", badge: "🌐 HTML5 / CSS3",
+          titre: "4. Mise en page avec float sans clear: both sur le footer",
+          exp: "Lorsque nav est en float: left et section en float: left (ou right), le pied de page <footer> remonte sous les colonnes si on oublie clear: both.",
+          faux: 'nav { float: left; width: 25%; }\nsection { float: left; width: 75%; }\nfooter { height: 60px; }',
+          vrai: 'nav { float: left; width: 25%; }\nsection { float: left; width: 75%; }\nfooter { clear: both; height: 60px; }'
+        },
+        {
+          id: "p5", cat: "htmlcss", badge: "🌐 HTML5 / CSS3",
+          titre: "5. Boutons radio d'un même choix avec des attributs name différents",
+          exp: "Pour qu'un seul bouton radio soit sélectionnable à la fois et récupérable par getElementsByName(), tous les choix du groupe doivent partager le même name.",
+          faux: '<input type="radio" name="r1" value="M"> M\n<input type="radio" name="r2" value="F"> F',
+          vrai: '<input type="radio" name="genre" value="M"> M\n<input type="radio" name="genre" value="F"> F'
+        },
+        {
+          id: "p6", cat: "htmlcss", badge: "🌐 HTML5 / CSS3",
+          titre: "6. Placer la propriété CSS transition uniquement sur :hover",
+          exp: "La propriété transition (all, durée, fonction ease/ease-in/ease-out/ease-in-out) se place sur l'élément de base pour animer l'aller ET le retour du survol.",
+          faux: 'a:hover {\n  transform: scale(1.08);\n  transition: all 0.3s ease-in-out;\n}',
+          vrai: 'a {\n  transition: all 0.3s ease-in-out;\n}\na:hover {\n  transform: scale(1.08);\n}'
+        },
+
+        /* ==================== JAVASCRIPT (7 à 12) ==================== */
+        {
+          id: "p7", cat: "js", badge: "⚡ JavaScript",
+          titre: "7. Lire l'élément HTML au lieu de sa valeur (.value)",
+          exp: "document.getElementById('id') renvoie l'objet balise <input>. Pour tester la chaîne saisie ou sa longueur, il faut obligatoirement lire .value.",
+          faux: 'let ch = document.getElementById("cin");\nif (ch.length !== 8) { return false; }',
+          vrai: 'let ch = document.getElementById("cin").value;\nif (ch.length !== 8) { return false; }'
+        },
+        {
+          id: "p8", cat: "js", badge: "⚡ JavaScript",
+          titre: "8. Additionner des valeurs de champs sans Number() ou parseFloat()",
+          exp: "La propriété .value renvoie toujours une chaîne (String). L'opérateur + fait alors une concaténation (\"12\" + \"15\" donne \"1215\") au lieu d'une somme.",
+          faux: 'let n1 = document.getElementById("dc").value;\nlet n2 = document.getElementById("ds").value;\nlet moy = (n1 + n2 * 2) / 3;',
+          vrai: 'let n1 = parseFloat(document.getElementById("dc").value);\nlet n2 = parseFloat(document.getElementById("ds").value);\nlet moy = (n1 + n2 * 2) / 3;'
+        },
+        {
+          id: "p9", cat: "js", badge: "⚡ JavaScript",
+          titre: "9. Tester un bouton radio ou une case à cocher avec .value au lieu de .checked",
+          exp: "La propriété .value d'un radio vaut toujours sa valeur HTML même s'il n'est pas coché ! Il faut vérifier .checked avec document.getElementsByName().",
+          faux: 'let r = document.getElementsByName("cat");\nif (r[0].value === "" && r[1].value === "") {\n  alert("Choisir une catégorie !"); return false;\n}',
+          vrai: 'let r = document.getElementsByName("cat");\nif (!r[0].checked && !r[1].checked) {\n  alert("Choisir une catégorie !"); return false;\n}'
+        },
+        {
+          id: "p10", cat: "js", badge: "⚡ JavaScript",
+          titre: "10. Oublier que getMonth() numérote les mois de 0 à 11 en JavaScript",
+          exp: "Avec l'objet Date de JavaScript, Janvier vaut 0 et Décembre vaut 11. Il faut toujours ajouter + 1 à getMonth() pour obtenir le numéro réel du mois (1 à 12).",
+          faux: 'let d = new Date();\nlet mois = d.getMonth(); // Janvier donne 0 !',
+          vrai: 'let d = new Date();\nlet mois = d.getMonth() + 1; // Janvier donne 1'
+        },
+        {
+          id: "p11", cat: "js", badge: "⚡ JavaScript",
+          titre: "11. Vérifier une liste déroulante <select> sans selectedIndex",
+          exp: "Lorsque la première option <option value=\"\">-- Choisir --</option> est une invite, on vérifie que selectedIndex === 0 (ou value === \"\").",
+          faux: 'let s = document.getElementById("station");\nif (s === 0) { alert("Choisir !"); return false; }',
+          vrai: 'let s = document.getElementById("station");\nif (s.selectedIndex === 0) {\n  alert("Veuillez choisir une station !"); return false;\n}'
+        },
+        {
+          id: "p12", cat: "js", badge: "⚡ JavaScript",
+          titre: "12. Oublier de retourner un booléen (true / false) dans la fonction de validation",
+          exp: "Une fonction de contrôle appelée par onsubmit=\"return verif()\" doit retourner false dès qu'une condition échoue, et retourner true à la toute fin.",
+          faux: 'function verif() {\n  let id = document.getElementById("id").value;\n  if (id === "") { alert("Id obligatoire"); }\n}',
+          vrai: 'function verif() {\n  let id = document.getElementById("id").value;\n  if (id === "") { alert("Id obligatoire"); return false; }\n  return true;\n}'
+        },
+
+        /* ==================== SQL / MySQL (13 à 19) ==================== */
+        {
+          id: "p13", cat: "sql", badge: "🗄️ SQL / MySQL",
+          titre: "13. Mettre une fonction d'agrégation (COUNT, SUM, AVG, MAX) dans WHERE",
+          exp: "WHERE filtre les lignes avant regroupement et n'accepte jamais COUNT(), AVG(), SUM(). Pour filtrer sur le résultat d'un agrégat après GROUP BY, on utilise HAVING.",
+          faux: 'SELECT IdCat, COUNT(*) FROM Article\nWHERE COUNT(*) >= 5\nGROUP BY IdCat;',
+          vrai: 'SELECT IdCat, COUNT(*) FROM Article\nGROUP BY IdCat\nHAVING COUNT(*) >= 5;'
+        },
+        {
+          id: "p14", cat: "sql", badge: "🗄️ SQL / MySQL",
+          titre: "14. Tester la valeur NULL avec = NULL ou <> NULL",
+          exp: "En SQL, toute comparaison arithmétique avec NULL renvoie UNKNOWN. On utilise exclusivement IS NULL ou IS NOT NULL.",
+          faux: 'SELECT * FROM Abonne\nWHERE DateRetour = NULL;',
+          vrai: 'SELECT * FROM Abonne\nWHERE DateRetour IS NULL;'
+        },
+        {
+          id: "p15", cat: "sql", badge: "🗄️ SQL / MySQL",
+          titre: "15. Oublier la condition de jointure entre N tables (Produit cartésien)",
+          exp: "Relier N tables dans FROM sans écrire les (N - 1) égalités de clés primaires = clés étrangères multiplie toutes les lignes entre elles.",
+          faux: 'SELECT Nom, Moyenne, Libelle\nFROM Eleve E, Classe C\nWHERE Moyenne >= 10;',
+          vrai: 'SELECT Nom, Moyenne, Libelle\nFROM Eleve E, Classe C\nWHERE E.CodeCl = C.CodeCl AND Moyenne >= 10;'
+        },
+        {
+          id: "p16", cat: "sql", badge: "🗄️ SQL / MySQL",
+          titre: "16. Mauvais ordre des clauses dans une requête SELECT complète",
+          exp: "L'ordre syntaxique SQL est immuable : SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY.",
+          faux: 'SELECT CodeCl, AVG(Moyenne) FROM Eleve\nORDER BY AVG(Moyenne) DESC\nGROUP BY CodeCl;',
+          vrai: 'SELECT CodeCl, AVG(Moyenne) FROM Eleve\nGROUP BY CodeCl\nORDER BY AVG(Moyenne) DESC;'
+        },
+        {
+          id: "p17", cat: "sql", badge: "🗄️ SQL / MySQL",
+          titre: "17. Utiliser INT pour un CIN, un téléphone ou un code pouvant commencer par 0 ou une lettre",
+          exp: "Le type INT supprime le zéro initial (ex: '07451234' devient 7451234) et refuse les lettres (ex: Id 'A102'). Utiliser VARCHAR(n) ou CHAR(n).",
+          faux: 'Cin INT(8) PRIMARY KEY,\nId INT PRIMARY KEY',
+          vrai: 'Cin VARCHAR(8) PRIMARY KEY,\nId VARCHAR(10) PRIMARY KEY'
+        },
+        {
+          id: "p18", cat: "sql", badge: "🗄️ SQL / MySQL",
+          titre: "18. Écrire une date SQL au format JJ/MM/AAAA au lieu de AAAA-MM-JJ",
+          exp: "MySQL stocke et compare le type DATE exclusivement au format standard 'AAAA-MM-JJ' entre apostrophes.",
+          faux: "INSERT INTO Eleves VALUES ('A01', 'Ali Tunsi', 14.5, '17/10/2008');",
+          vrai: "INSERT INTO Eleves VALUES ('A01', 'Ali Tunsi', 14.5, '2008-10-17');"
+        },
+        {
+          id: "p19", cat: "sql", badge: "🗄️ SQL / MySQL",
+          titre: "19. Exécuter UPDATE ou DELETE sans clause WHERE",
+          exp: "Sans WHERE, UPDATE modifie 100 % des lignes de la table et DELETE vide toute la table ! Toujours cibler la clé primaire dans WHERE.",
+          faux: "UPDATE Eleves SET Moyenne = 15.25;",
+          vrai: "UPDATE Eleves SET Moyenne = 15.25 WHERE Id = 'A01';"
+        },
+
+        /* ==================== PHP / MySQLi (20 à 25) ==================== */
+        {
+          id: "p20", cat: "php", badge: "🐘 PHP / MySQLi",
+          titre: "20. Tester l'existence d'un enregistrement avec if ($res) sur un SELECT",
+          exp: "Sur un SELECT syntaxiquement correct, mysqli_query() renvoie toujours un objet résultat vrai, même si 0 ligne n'est trouvée ! Il faut tester mysqli_num_rows($res).",
+          faux: '$res = mysqli_query($con, "SELECT * FROM eleves WHERE Id=\'$id\'");\nif ($res) { echo "Élève trouvé"; }',
+          vrai: '$res = mysqli_query($con, "SELECT * FROM eleves WHERE Id=\'$id\'");\nif (mysqli_num_rows($res) > 0) { echo "Élève trouvé"; }'
+        },
+        {
+          id: "p21", cat: "php", badge: "🐘 PHP / MySQLi",
+          titre: "21. Confondre mysqli_fetch_row($res) et mysqli_fetch_assoc($res)",
+          exp: "mysqli_fetch_row() retourne un tableau indicé numériquement ($t[0], $t[1]), tandis que mysqli_fetch_assoc() retourne un tableau associatif ($t['Nom_prenom']) et mysqli_fetch_array() accepte les deux.",
+          faux: '$t = mysqli_fetch_row($res);\necho $t["Nom_prenom"]; // Erreur : indice associatif sur fetch_row !',
+          vrai: '$t = mysqli_fetch_assoc($res);\necho $t["Nom_prenom"]; // ou $t[0] avec mysqli_fetch_row($res)'
+        },
+        {
+          id: "p22", cat: "php", badge: "🐘 PHP / MySQLi",
+          titre: "22. Utiliser mysqli_num_rows($res) après un INSERT, UPDATE ou DELETE",
+          exp: "mysqli_num_rows() ne fonctionne que pour SELECT. Pour savoir combien de lignes ont été insérées, modifiées ou supprimées, on utilise mysqli_affected_rows($con).",
+          faux: '$res = mysqli_query($con, "UPDATE eleves SET Moyenne=$m WHERE Id=\'$id\'");\nif (mysqli_num_rows($res) > 0) { echo "Mis à jour"; }',
+          vrai: '$res = mysqli_query($con, "UPDATE eleves SET Moyenne=$m WHERE Id=\'$id\'");\nif (mysqli_affected_rows($con) > 0) { echo "Mis à jour"; }'
+        },
+        {
+          id: "p23", cat: "php", badge: "🐘 PHP / MySQLi",
+          titre: "23. Oublier les apostrophes SQL autour des variables chaînes/dates dans la requête PHP",
+          exp: "En SQL, les types VARCHAR et DATE doivent être entourés d'apostrophes simples ('...'), contrairement aux nombres (INT / FLOAT / DECIMAL).",
+          faux: '$req = "INSERT INTO eleves VALUES ($id, $np, $moy, $dn)";',
+          vrai: '$req = "INSERT INTO eleves VALUES (\'$id\', \'$np\', $moy, \'$dn\')";'
+        },
+        {
+          id: "p24", cat: "php", badge: "🐘 PHP / MySQLi",
+          titre: "24. Confondre mysqli_num_rows($res) et SELECT COUNT(*) AS nb",
+          exp: "SELECT COUNT(*) renvoie toujours 1 seule ligne contenant le total : mysqli_num_rows() vaudra donc 1 ! Il faut lire la valeur via mysqli_fetch_assoc($res) ou mysqli_fetch_row($res).",
+          faux: '$res = mysqli_query($con, "SELECT COUNT(*) FROM eleves");\n$nb = mysqli_num_rows($res); // Vaut toujours 1 !',
+          vrai: '$res = mysqli_query($con, "SELECT COUNT(*) AS nb FROM eleves");\n$lig = mysqli_fetch_assoc($res);\n$nb = $lig["nb"];'
+        },
+        {
+          id: "p25", cat: "php", badge: "🐘 PHP / MySQLi",
+          titre: "25. Ouvrir la page en double-cliquant (file://) au lieu de passer par http://localhost/",
+          exp: "Le serveur Apache/PHP n'exécute les fichiers .php que s'ils sont placés dans www/ (ou htdocs/) et appelés via http://localhost/...",
+          faux: 'C:\\wamp64\\www\\bac2026\\index.html (file:///C:/wamp64/www/...)',
+          vrai: 'http://localhost/bac2026/index.html (ou http://127.0.0.1/bac2026/)'
+        }
+      ];
+
+      var CLE_STORAGE = "sti-pieges-bac-ok";
+      var catActive = "all";
+      var mapOk = {};
+
+      function chargerEtat() {
+        try {
+          mapOk = JSON.parse(localStorage.getItem(CLE_STORAGE) || "{}") || {};
+        } catch (e) {
+          mapOk = {};
+        }
+      }
+
+      function sauvegarderEtat() {
+        try {
+          localStorage.setItem(CLE_STORAGE, JSON.stringify(mapOk));
+        } catch (e) {}
+      }
+
+      function ech(s) {
+        return String(s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function majProgression() {
+        var nb = 0;
+        for (var i = 0; i < PIEGES.length; i++) {
+          if (mapOk[PIEGES[i].id]) nb++;
+        }
+        var pct = Math.round((nb / PIEGES.length) * 100);
+        document.getElementById("lbl-prog-pieges").innerHTML = nb + " / " + PIEGES.length;
+        document.getElementById("pct-prog-pieges").innerHTML = pct + " %";
+        document.getElementById("jauge-pieges").style.width = pct + "%";
+      }
+
+      function afficherPieges() {
+        var cont = document.getElementById("liste-pieges-bac");
+        var q = (document.getElementById("filtre-texte-piege").value || "").toLowerCase().trim();
+        var html = "";
+        for (var i = 0; i < PIEGES.length; i++) {
+          var p = PIEGES[i];
+          var estOk = Boolean(mapOk[p.id]);
+          if (catActive === "todo" && estOk) continue;
+          if (catActive !== "all" && catActive !== "todo" && p.cat !== catActive) continue;
+          if (q) {
+            var blocTxt = (p.titre + " " + p.exp + " " + p.faux + " " + p.vrai).toLowerCase();
+            if (blocTxt.indexOf(q) === -1) continue;
+          }
+          html +=
+            '<article class="carte-piege' + (estOk ? ' maitrise' : '') + '" id="card-' + p.id + '">' +
+              '<div class="entete-piege">' +
+                '<span class="badge-cat cat-' + p.cat + '">' + ech(p.badge) + '</span>' +
+                '<button type="button" class="btn-check-piege" data-id="' + p.id + '">' +
+                  (estOk ? '✅ Piège maîtrisé' : '⬜ Marquer comme maîtrisé') +
+                '</button>' +
+              '</div>' +
+              '<h2 class="titre-piege">' + ech(p.titre) + '</h2>' +
+              '<p class="explication-piege">' + ech(p.exp) + '</p>' +
+              '<div class="comparatif-code">' +
+                '<div class="bloc-faux">' +
+                  '<span class="label-comparatif">❌ À ÉVITER AU BAC (Piège classique)</span>' +
+                  '<pre class="code-piege"><code>' + ech(p.faux) + '</code></pre>' +
+                '</div>' +
+                '<div class="bloc-vrai">' +
+                  '<span class="label-comparatif">✅ RÉFLEXE CORRECT (Barème complet)</span>' +
+                  '<pre class="code-piege"><code>' + ech(p.vrai) + '</code></pre>' +
+                '</div>' +
+              '</div>' +
+            '</article>';
+        }
+        if (!html) {
+          html = '<div style="padding:28px;text-align:center;font-weight:800;border:2px dashed #94a3b8;border-radius:16px">Aucun piège ne correspond à ce filtre.</div>';
+        }
+        cont.innerHTML = html;
+
+        var btns = cont.getElementsByClassName("btn-check-piege");
+        for (var j = 0; j < btns.length; j++) {
+          btns[j].onclick = function () {
+            var pid = this.getAttribute("data-id");
+            if (mapOk[pid]) delete mapOk[pid];
+            else mapOk[pid] = true;
+            sauvegarderEtat();
+            majProgression();
+            afficherPieges();
+          };
+        }
+      }
+
+      /* Filtres par catégorie */
+      var barreF = document.getElementById("filtres-cat-pieges");
+      var btnsF = barreF.getElementsByClassName("btn-filtre");
+      for (var k = 0; k < btnsF.length; k++) {
+        btnsF[k].onclick = function () {
+          for (var m = 0; m < btnsF.length; m++) {
+            btnsF[m].classList.remove("actif");
+          }
+          this.classList.add("actif");
+          catActive = this.getAttribute("data-cat") || "all";
+          afficherPieges();
+        };
+      }
+
+      document.getElementById("filtre-texte-piege").oninput = afficherPieges;
+
+      document.getElementById("btn-tout-cocher").onclick = function () {
+        for (var i = 0; i < PIEGES.length; i++) mapOk[PIEGES[i].id] = true;
+        sauvegarderEtat();
+        majProgression();
+        afficherPieges();
+      };
+
+      document.getElementById("btn-reinit-pieges").onclick = function () {
+        mapOk = {};
+        sauvegarderEtat();
+        majProgression();
+        afficherPieges();
+      };
+
+      document.getElementById("btn-print-pieges").onclick = function () {
+        window.print();
+      };
+
+      /* Thème sombre / clair synchronisé */
+      var btnTheme = document.getElementById("theme-toggle");
+      function appliquerThemeLocal(th) {
+        var dark = (th === "dark");
+        document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+        document.documentElement.classList.toggle("dark-mode", dark);
+        btnTheme.innerHTML = dark ? "☀️ Mode Clair" : "🌙 Mode Sombre";
+      }
+      var thInit = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "light";
+      appliquerThemeLocal(thInit);
+      btnTheme.onclick = function () {
+        var act = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        localStorage.setItem("sti-theme", act);
+        localStorage.setItem("theme", act);
+        appliquerThemeLocal(act);
+      };
+
+      window.__stiMajPiegesBacDepuisStorage = function () {
+        chargerEtat();
+        majProgression();
+        afficherPieges();
+      };
+
+      chargerEtat();
+      majProgression();
+      afficherPieges();
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js?v=256"></script>
+  <script src="assets/js/acces.js?v=264"></script>
+</body>
+</html>

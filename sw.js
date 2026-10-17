@@ -3,13 +3,16 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v263";
+var CACHE = "sti-atelier-v264";
+var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
+var videosEnCoursDeCache = {};
 var SHELL = [
   "./",
   "./index.html",
   "./portail.html",
   "./admin.html",
   "./bac-pratique.html",
+  "./pieges-bac.html",
   "./carte-visite.html",
   "./README.md",
   "./manifest.webmanifest",
@@ -678,12 +681,23 @@ self.addEventListener("activate", function (evt) {
               for (var r of reqs) {
                 var rPath = "";
                 try { rPath = new URL(r.url).pathname; } catch (e) {}
-                /* Ne jamais copier les anciens .html, .js, .css, .webmanifest, anciens audios pas-à-pas ou anciennes vidéos supprimées */
+                /* Conserver les vidéos MP4 dans le cache persistant du labo (CACHE_VIDEOS_LABO) pour 0 Mo de trafic réseau */
+                if (rPath.indexOf("/assets/videos/") !== -1 && /\.mp4$/i.test(rPath)) {
+                  try {
+                    var cVid = await caches.open(CACHE_VIDEOS_LABO);
+                    var dejaVid = await cVid.match(r, { ignoreSearch: true });
+                    if (!dejaVid) {
+                      var repVid = await ancCache.match(r);
+                      if (repVid) await cVid.put(new Request(new URL(r.url).origin + rPath), repVid);
+                    }
+                  } catch (eV) {}
+                  continue;
+                }
+                /* Ne jamais copier les anciens .html, .js, .css, .webmanifest ou anciens audios pas-à-pas */
                 if (
                   /\.(html|js|css|webmanifest)$/i.test(rPath) ||
                   rPath.indexOf("Explore_Tunisie") !== -1 ||
                   rPath.indexOf("/audio/pas-a-pas/") !== -1 ||
-                  rPath.indexOf("/assets/videos/") !== -1 ||
                   rPath.indexOf("guichet-etapes.mp3") !== -1 ||
                   rPath.indexOf("css-positionnement.mp3") !== -1 ||
                   rPath.indexOf("css-animee.mp3") !== -1 ||
@@ -700,7 +714,7 @@ self.addEventListener("activate", function (evt) {
               }
             } catch (e) {}
             await caches.delete(k);
-          } else if (k !== CACHE) {
+          } else if (k !== CACHE && k !== CACHE_VIDEOS_LABO) {
             await caches.delete(k);
           }
         }
@@ -896,12 +910,21 @@ self.addEventListener("fetch", function (evt) {
     return;
   }
 
-  /* 2. Fichiers vidéo/audio (.mp4, .webm, .mp3, .wav) & requêtes HTTP Range (indispensable sur mobile Safari iOS & Chrome Android) */
+  /* 2. Fichiers vidéo/audio (.mp4, .webm, .mp3, .wav) & Mode « Réseau Labo Fluide » (cache persistant CACHE_VIDEOS_LABO + support HTTP Range) */
   if (/\.(mp4|webm|mp3|wav|ogg|m4a)$/i.test(url.pathname) || req.headers.get("range")) {
     evt.respondWith(
       (async function () {
         var rangeHeader = req.headers.get("range");
-        var enCache = await chercherDansCache(new Request(url.origin + url.pathname), url);
+        var clePropre = new Request(url.origin + url.pathname);
+        var cVid = null;
+        var enCache = null;
+        try {
+          cVid = await caches.open(CACHE_VIDEOS_LABO);
+          enCache = await cVid.match(clePropre, { ignoreSearch: true });
+        } catch (e) {}
+        if (!enCache) {
+          enCache = await chercherDansCache(clePropre, url);
+        }
 
         if (enCache) {
           if (rangeHeader) {
@@ -931,11 +954,26 @@ self.addEventListener("fetch", function (evt) {
           return enCache;
         }
 
+        /* Mise en cache persistante en tâche de fond dès la 1re lecture sur un PC du labo (évite de re-télécharger la vidéo aux lectures suivantes) */
+        var urlCle = url.origin + url.pathname;
+        if (!videosEnCoursDeCache[urlCle] && /\.mp4$/i.test(url.pathname)) {
+          videosEnCoursDeCache[urlCle] = true;
+          fetch(clePropre).then(function (repFull) {
+            if (repFull && repFull.status === 200 && cVid) {
+              return cVid.put(clePropre, repFull.clone());
+            }
+          }).catch(function () {}).finally(function () {
+            delete videosEnCoursDeCache[urlCle];
+          });
+        }
+
         try {
           var rep = await fetch(req);
           if (rep && rep.status === 200) {
             var copie = rep.clone();
-            caches.open(CACHE).then(function (c) { c.put(new Request(url.origin + url.pathname), copie); });
+            (cVid ? Promise.resolve(cVid) : caches.open(CACHE_VIDEOS_LABO)).then(function (c) {
+              c.put(clePropre, copie);
+            }).catch(function () {});
           }
           return rep;
         } catch (err) {
