@@ -1,5 +1,15 @@
 [
   {
+    "version": "v291",
+    "date": "2026-10-17",
+    "categorie": "Vidéo et page CSS3",
+    "icone": "🎬",
+    "titre": "Ouverture CSS3 avec identité visuelle et commandes après la définition",
+    "resume": "La vidéo commence maintenant par un écran dédié réunissant le logo, le QR code de la plateforme et le titre « Cours CSS3 complet — Annexe officielle 3e & 4e SI ». L’exemple du restaurant affiche « Cuisine fraîche • Mégrine ». Sur la page CSS, les boutons Vidéo du cours CSS3 et Écouter le cours CSS3, avec le choix des chapitres, sont déplacés immédiatement après la définition.",
+    "lien": "cours/css3.html",
+    "libelleLien": "Voir la nouvelle ouverture et les commandes CSS"
+  },
+  {
     "version": "v290",
     "date": "2026-10-17",
     "categorie": "Vidéo CSS3",

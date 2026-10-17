@@ -937,6 +937,7 @@
                   uSqlV275.indexOf("php-guichet-v4.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v2.mp4") !== -1 ||
+                  uSqlV275.indexOf("css3-cours-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("css3-cours-v2.mp4") !== -1 ||
                   uSqlV275.indexOf("css3-cours.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet.mp4") !== -1 ||
@@ -960,8 +961,8 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours-v3.mp4?v=290",
-        title: "🎥 CSS3 complet — Annexe 3e & 4e STI, restaurant avant/après, logo et QR de la plateforme"
+        file: "css3-cours-v4.mp4?v=291",
+        title: "🎥 CSS3 complet — Logo et QR au démarrage, annexe 3e & 4e SI et restaurant Mégrine"
       };
       var VIDEO_JS_INFO = {
         file: "javascript-cours.mp4?v=227",
@@ -1032,16 +1033,16 @@
           { t: 339.33, short: "X. <iframe>", label: "05:39 · X (10). Intégrer une page : <iframe> (attributs, target='cadre', srcdoc, sandbox)", sel: "#iframe" }
         ],
         "css3-cours": [
-          { t: 0.00, short: "1. Restaurant & cascade", label: "00:00 · 1. Bienvenue, restaurant HTML sans CSS / avec CSS, syntaxe, cascade et spécificité", sel: "#css-definition-title" },
-          { t: 79.33, short: "2. Sélecteurs & texte", label: "01:19 · 2. Sélecteurs, combinaisons, liens LoVe/HAte, typographie et text-shadow", sel: "#point-1" },
-          { t: 162.02, short: "3. Fonds & boîte", label: "02:42 · 3. Arrière-plans, modèle de boîte, background-color/image/repeat/size/origin/clip", sel: "#point-3" },
-          { t: 234.39, short: "4. background détaillé", label: "03:54 · 4. Super-propriété background, couches, réinitialisation et pièges", sel: "#point-3" },
-          { t: 326.58, short: "5. Display & overflow", label: "05:27 · 5. inline, block, inline-block, overflow, ellipsis et opacity", sel: "#point-4" },
-          { t: 373.67, short: "6. Positionnement", label: "06:14 · 6. relative, absolute, fixed, sticky, repères, flux et z-index", sel: "#point-5" },
-          { t: 456.04, short: "7. Float & Flexbox", label: "07:36 · 7. float, clear, flow-root et Flexbox avec les axes", sel: "#point-5" },
-          { t: 536.52, short: "8. Bordures & tableaux", label: "08:57 · 8. border-radius, box-shadow, table-layout et border-collapse", sel: "#point-6" },
-          { t: 620.84, short: "9. Listes & transform", label: "10:21 · 9. list-style puis rotate, skew, scale et translate", sel: "#point-7" },
-          { t: 660.69, short: "10. Transition & animation", label: "11:01 · 10. transition, @keyframes, animation, synthèse et conclusion", sel: "#point-8" }
+          { t: 0.00, short: "1. Restaurant & cascade", label: "00:00 · 1. Logo, QR et titre, puis restaurant HTML sans CSS / avec CSS, syntaxe et cascade", sel: "#css-definition-title" },
+          { t: 79.21, short: "2. Sélecteurs & texte", label: "01:19 · 2. Sélecteurs, combinaisons, liens LoVe/HAte, typographie et text-shadow", sel: "#point-1" },
+          { t: 161.90, short: "3. Fonds & boîte", label: "02:42 · 3. Arrière-plans, modèle de boîte, background-color/image/repeat/size/origin/clip", sel: "#point-3" },
+          { t: 234.27, short: "4. background détaillé", label: "03:54 · 4. Super-propriété background, couches, réinitialisation et pièges", sel: "#point-3" },
+          { t: 326.46, short: "5. Display & overflow", label: "05:27 · 5. inline, block, inline-block, overflow, ellipsis et opacity", sel: "#point-4" },
+          { t: 373.55, short: "6. Positionnement", label: "06:14 · 6. relative, absolute, fixed, sticky, repères, flux et z-index", sel: "#point-5" },
+          { t: 455.92, short: "7. Float & Flexbox", label: "07:36 · 7. float, clear, flow-root et Flexbox avec les axes", sel: "#point-5" },
+          { t: 536.40, short: "8. Bordures & tableaux", label: "08:57 · 8. border-radius, box-shadow, table-layout et border-collapse", sel: "#point-6" },
+          { t: 620.72, short: "9. Listes & transform", label: "10:21 · 9. list-style puis rotate, skew, scale et translate", sel: "#point-7" },
+          { t: 660.57, short: "10. Transition & animation", label: "11:01 · 10. transition, @keyframes, animation, synthèse et conclusion", sel: "#point-8" }
         ],
         "javascript-cours": [
           { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#intro" },
@@ -2540,6 +2541,7 @@
             (estPagePhpCours ? '<button type="button" id="sti-btn-php-guichet-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#0369a1;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎬 Le Guichet — film 3D interactif</button>' : '');
 
           var targetAnchor =
+            (estPageCss3 ? document.querySelector(".css-definition") : null) ||
             document.getElementById("def-php") ||
             document.querySelector("main section:first-of-type") ||
             document.querySelector("main .wrap h1.title") ||
@@ -2547,7 +2549,9 @@
             document.querySelector("main") ||
             document.body.firstChild;
           if (targetAnchor && targetAnchor.parentNode) {
-            if (estPageHtml5 && targetAnchor.tagName === "SECTION") {
+            if (estPageCss3 && targetAnchor.classList && targetAnchor.classList.contains("css-definition")) {
+              targetAnchor.parentNode.insertBefore(barEl, targetAnchor.nextSibling);
+            } else if (estPageHtml5 && targetAnchor.tagName === "SECTION") {
               targetAnchor.appendChild(barEl);
             } else if (estPagePhpCours && targetAnchor.classList && targetAnchor.classList.contains("title")) {
               var subEl = targetAnchor.nextElementSibling;
