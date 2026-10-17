@@ -213,15 +213,19 @@
         var tsDerniereVerifVer = 0;
         var verDejaVerifieeSess = "";
         try {
-          tsDerniereVerifVer = parseInt(sessionStorage.getItem("sti-ver-check-ts") || "0", 10) || 0;
-          verDejaVerifieeSess = sessionStorage.getItem("sti-conn-ver-checked") || "";
+          tsDerniereVerifVer = parseInt(sessionStorage.getItem("sti-ver-check-ts") || localStorage.getItem("sti-ver-check-ts") || "0", 10) || 0;
+          verDejaVerifieeSess = sessionStorage.getItem("sti-conn-ver-checked") || localStorage.getItem("sti-conn-ver-checked") || "";
         } catch (e) {}
         /* Sur les PC du labo3 (elevelabo3), vérifier toutes les 45 s ou à chaque navigation ; sinon toutes les 15 min */
         var delaiVerif = estOrigineLocaleDossier ? 0 : (estPosteLabo3Init ? 45000 : 900000);
         var besoinVerifVersion = Boolean(forcerImmediate) || estOrigineLocaleDossier || !verDejaVerifieeSess || (Date.now() - tsDerniereVerifVer > delaiVerif);
         if (!besoinVerifVersion) return;
 
-        try { sessionStorage.setItem("sti-ver-check-ts", String(Date.now())); } catch (e) {}
+        try {
+          var tsVerNow = String(Date.now());
+          sessionStorage.setItem("sti-ver-check-ts", tsVerNow);
+          localStorage.setItem("sti-ver-check-ts", tsVerNow);
+        } catch (e) {}
         fetch(cfg.RACINE + "sw.js?t=" + Date.now(), { cache: "no-store" })
           .then(function (r) { return r && r.ok ? r.text() : ""; })
           .then(function (txt) {
@@ -235,7 +239,10 @@
 
             var verLoc = 0;
             try { verLoc = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0; } catch (e) {}
-            try { sessionStorage.setItem("sti-conn-ver-checked", String(verSrv)); } catch (e) {}
+            try {
+              sessionStorage.setItem("sti-conn-ver-checked", String(verSrv));
+              localStorage.setItem("sti-conn-ver-checked", String(verSrv));
+            } catch (e) {}
 
             /* Si la version installée est déjà la dernière version, ne déclencher AUCUNE mise à jour de la plateforme */
             if (verLoc === verSrv && !forcerImmediate) {
@@ -246,7 +253,7 @@
             }
 
             var dejaRechargeVer = "";
-            try { dejaRechargeVer = sessionStorage.getItem("sti-sw-reload-ver") || ""; } catch (e) {}
+            try { dejaRechargeVer = sessionStorage.getItem("sti-sw-reload-ver") || localStorage.getItem("sti-sw-reload-ver") || ""; } catch (e) {}
 
             var verifierCachesLocaux = (window.caches && caches.keys)
               ? caches.keys().then(function (cles) {
@@ -271,7 +278,10 @@
               } catch (e) {}
               if ((verLoc > 0 && verLoc < verSrv) || aAncienCache || forcerImmediate === "force_reload") {
                 if (dejaRechargeVer !== String(verSrv) || forcerImmediate === "force_reload") {
-                  try { sessionStorage.setItem("sti-sw-reload-ver", String(verSrv)); } catch (e) {}
+                  try {
+                    sessionStorage.setItem("sti-sw-reload-ver", String(verSrv));
+                    localStorage.setItem("sti-sw-reload-ver", String(verSrv));
+                  } catch (e) {}
                   navigator.serviceWorker.getRegistration().then(function (reg) {
                     if (reg) {
                       return reg.update().then(function () {
@@ -304,8 +314,9 @@
       navigator.serviceWorker.addEventListener("controllerchange", function () {
         try {
           var verAct = localStorage.getItem("sti-version-installee") || "latest";
-          if (sessionStorage.getItem("sti-sw-reload-ver") === verAct) return;
+          if ((sessionStorage.getItem("sti-sw-reload-ver") || localStorage.getItem("sti-sw-reload-ver")) === verAct) return;
           sessionStorage.setItem("sti-sw-reload-ver", verAct);
+          localStorage.setItem("sti-sw-reload-ver", verAct);
         } catch (e) {}
         location.reload();
       });
@@ -435,8 +446,9 @@
   }
 
   function appliquerVerrou4SI(classe, estAdmin) {
-    estAdminGlobal = Boolean(estAdmin);
-    currentClasse = classe || currentClasse || "";
+    var cFall4 = (typeof lireCacheSessionLocal === "function") ? (lireCacheSessionLocal() || {}) : {};
+    estAdminGlobal = Boolean(estAdmin || cFall4.isAdmin || String(cFall4.email || "").trim().toLowerCase() === ADMIN_MAIL_STRICT);
+    currentClasse = classe || currentClasse || cFall4.classe || "";
     if (typeof appliquerVerrouExamen === "function") {
       try { appliquerVerrouExamen(); } catch (e) {}
     }
@@ -445,10 +457,12 @@
       document.documentElement.classList.toggle("sti-4si-autorise", autorise);
     }
 
-    /* 1. Si l'utilisateur ouvre directement une page réservée aux 4e SI alors qu'il n'est ni en 4e SI ni Prof */
+    /* 1. Si l'utilisateur ouvre directement une page réservée aux 4e SI alors qu'il n'est ni en 4e SI ni Prof :
+       attendre que la session et la classe soient connues avant d'afficher l'écran de blocage pour ne pas bloquer l'ouverture d'un nouvel onglet */
     var espacePage = nomEspaceReserve4SI(location.pathname);
     var existLock = document.getElementById("sti-lock-4si");
-    if (espacePage && !autorise) {
+    var classeDejaResolue = Boolean(currentClasse) || Boolean(sessionInitialisee && cFall4 && cFall4.statut === "actif");
+    if (espacePage && !autorise && classeDejaResolue) {
       if (!existLock) {
         var ov = document.createElement("div");
         ov.id = "sti-lock-4si";
@@ -1092,6 +1106,12 @@
       localStorage.removeItem("sti-gold");
       localStorage.removeItem("sti-admin-gold");
       localStorage.removeItem("sti-bio-nav-ts");
+      localStorage.removeItem("sti-bio-lease-ts");
+      localStorage.removeItem("sti-bio-click-nav-ts");
+      localStorage.removeItem("sti-internal-nav-ts");
+      localStorage.removeItem("sti-fs-examen-ok");
+      localStorage.removeItem("sti-demo-vu");
+      localStorage.removeItem("sti-profil-sync-ts");
       Object.keys(localStorage).forEach(function (k) {
         if (k.indexOf("sb-") === 0 || k.indexOf("supabase") !== -1) {
           localStorage.removeItem(k);
@@ -1509,8 +1529,10 @@
     var dejaEntre = false;
     var cachesConnus = lireCacheSessionLocal();
     var tsSyncRec = 0;
-    try { tsSyncRec = parseInt(sessionStorage.getItem("sti-profil-sync-ts") || "0", 10) || 0; } catch (e) {}
-    if (cachesConnus && cachesConnus.id === user.id && cachesConnus.statut === "actif" && tsSyncRec > 0 && Date.now() - tsSyncRec < 45000) {
+    try {
+      tsSyncRec = parseInt(sessionStorage.getItem("sti-profil-sync-ts") || localStorage.getItem("sti-profil-sync-ts") || "0", 10) || 0;
+    } catch (e) {}
+    if (cachesConnus && cachesConnus.id === user.id && cachesConnus.statut === "actif" && tsSyncRec > 0 && Date.now() - tsSyncRec < 120000) {
       dejaEntre = true;
       entrer(cachesConnus);
       return;
@@ -1529,7 +1551,11 @@
         if (!dejaEntre) { dejaEntre = true; entrer(lireCacheSessionLocal() || {}); }
         return;
       }
-      try { sessionStorage.setItem("sti-profil-sync-ts", String(Date.now())); } catch (e) {}
+      try {
+        var nowSyncStr = String(Date.now());
+        sessionStorage.setItem("sti-profil-sync-ts", nowSyncStr);
+        localStorage.setItem("sti-profil-sync-ts", nowSyncStr);
+      } catch (e) {}
       if (!appliquerStatut(rp)) return;
       if (!dejaEntre) {
         dejaEntre = true;
@@ -2208,8 +2234,9 @@
       });
     }
 
-    if (window === window.top && !sessionStorage.getItem("sti-demo")) {
+    if (window === window.top && !sessionStorage.getItem("sti-demo") && !localStorage.getItem("sti-demo-vu")) {
       sessionStorage.setItem("sti-demo", "1");
+      try { localStorage.setItem("sti-demo-vu", "1"); } catch (e) {}
       setTimeout(function () {
         ouvrir();
         setTimeout(fermer, 1700);
@@ -4836,15 +4863,33 @@
     afficherToastSynchro("🛡️ Alerte sécurité (" + strikes + "/3) : tentative transmise au professeur. À 3/3 votre session sera fermée.");
   });
 
-  /* 📵 3) Détection anti-triche & Ouverture d'application tierce / IA avec chronométrage exact de la durée d'absence */
+  /* 📵 3) Détection anti-triche & Ouverture d'application tierce / IA avec chronométrage exact de la durée d'absence
+     (ne bloque et n'alerte JAMAIS lors d'un passage d'une page à une autre ou de l'ouverture d'un nouvel onglet interne STI) */
   var nbSortiesOngletQuiz = 0;
   var cumulAbsenceSec = 0;
   var debutAbsenceOngletMs = 0;
   var dernierBlurQuizTs = 0;
+  var timerVerifAbsenceExterne = null;
+
+  function marquerOngletInterneActif() {
+    try {
+      localStorage.setItem("sti-active-tab-ts", String(Date.now()));
+    } catch (e) {}
+  }
+  marquerOngletInterneActif();
+
+  function estNavigationOuOngletInterneRecente() {
+    try {
+      var now = Date.now();
+      var navTs = parseInt(localStorage.getItem("sti-internal-nav-ts") || localStorage.getItem("sti-bio-click-nav-ts") || "0", 10) || 0;
+      if (navTs && (now - navTs < 5000)) return true;
+      var tabTs = parseInt(localStorage.getItem("sti-active-tab-ts") || "0", 10) || 0;
+      if (tabTs && (now - tabTs < 1500)) return true;
+    } catch (e) {}
+    return false;
+  }
 
   function estPageQuizOuControleActif() {
-    var p = String(location.pathname || "").toLowerCase();
-    if (p.indexOf("/quiz/") !== -1 || p.indexOf("bac-pratique.html") !== -1) return true;
     if (document.getElementById("sti-banniere-ctrl")) return true;
     if (document.getElementById("sti-modal-flash-eleve")) return true;
     if (document.getElementById("sti-examen-blanc-modal")) return true;
@@ -4858,19 +4903,28 @@
     if (estSessionAdminVerifiee() || window.origin === "null") return;
     if (cfgSecurite.antiTricheOnglet === false) return;
     if (!estPageQuizOuControleActif()) return;
+    if (estNavigationOuOngletInterneRecente()) return;
     var now = Date.now();
     if (debutAbsenceOngletMs > 0) return;
     if (now - dernierBlurQuizTs < 1500) return;
     dernierBlurQuizTs = now;
-    debutAbsenceOngletMs = now;
-    nbSortiesOngletQuiz++;
-    envoyerAlerteSecurite(
-      "Sortie d'onglet pendant épreuve (#" + nbSortiesOngletQuiz + ")",
-      "Départ hors de la fenêtre sur " + chemin + " (chronométrage en cours…)"
-    );
+    clearTimeout(timerVerifAbsenceExterne);
+    timerVerifAbsenceExterne = setTimeout(function () {
+      if (document.visibilityState === "visible" && document.hasFocus()) return;
+      if (estNavigationOuOngletInterneRecente()) return;
+      if (debutAbsenceOngletMs > 0) return;
+      debutAbsenceOngletMs = Date.now();
+      nbSortiesOngletQuiz++;
+      envoyerAlerteSecurite(
+        "Sortie d'onglet pendant épreuve (#" + nbSortiesOngletQuiz + ")",
+        "Départ hors de la fenêtre sur " + chemin + " (chronométrage en cours…)"
+      );
+    }, 900);
   }
 
   function enregistrerRetourAbsenceEpreuve() {
+    marquerOngletInterneActif();
+    clearTimeout(timerVerifAbsenceExterne);
     if (estSessionAdminVerifiee() || window.origin === "null") return;
     if (cfgSecurite.antiTricheOnglet === false) return;
     if (!debutAbsenceOngletMs) return;
@@ -5170,11 +5224,14 @@
     }
   })();
 
-  /* 🖥️ Mode Plein Écran obligatoire pendant un Examen / Contrôle / Quiz */
+  /* 🖥️ Mode Plein Écran obligatoire pendant un Examen / Contrôle verrouillé par le professeur
+     (ne bloque jamais la navigation normale inter-pages ni l'ouverture d'un nouvel onglet) */
   var etaitEnPleinEcran = false;
   var nbSortiesPleinEcran = 0;
 
   function estEnModePleinEcranActuel() {
+    var docEl = document.documentElement;
+    if (docEl && docEl.classList && docEl.classList.contains("sti-kiosk-css-full")) return true;
     return Boolean(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
   }
 
@@ -5183,9 +5240,8 @@
     if (cfgSecurite.pleinEcranExamen === false) return false;
     /* Si la page est déjà bloquée par le verrou d'examen complet, pas besoin d'empiler 2 écrans */
     if (document.getElementById("sti-overlay-verrou-examen")) return false;
-    var p = String(location.pathname || "").toLowerCase();
-    if (p.indexOf("/quiz/") !== -1 || p.indexOf("bac-pratique.html") !== -1) return true;
     if (document.getElementById("sti-banniere-ctrl")) return true;
+    if (document.getElementById("sti-examen-blanc-modal")) return true;
     var cLoc = lireCacheSessionLocal() || {};
     var maCl = currentClasse || cLoc.classe || "";
     if (cfgSecurite.verrouActif && estCibleParVerrou(cfgSecurite.verrouCible, maCl) && estPageAutoriseePendantVerrou(cfgSecurite.pageAutorisee)) {
@@ -5196,8 +5252,19 @@
 
   function verifierPleinEcranExamen() {
     var exFs = document.getElementById("sti-overlay-plein-ecran");
-    if (!doitExigerPleinEcran() || estEnModePleinEcranActuel()) {
-      if (estEnModePleinEcranActuel()) etaitEnPleinEcran = true;
+    if (!doitExigerPleinEcran()) {
+      if (exFs) exFs.remove();
+      return;
+    }
+    /* Si l'élève a déjà validé le plein écran dans sa session en cours, l'appliquer automatiquement sans bloquer le nouvel onglet ou la nouvelle page */
+    try {
+      var tsFsOk = parseInt(localStorage.getItem("sti-fs-examen-ok") || "0", 10) || 0;
+      if (tsFsOk && (Date.now() - tsFsOk < 4 * 3600 * 1000) && document.documentElement) {
+        document.documentElement.classList.add("sti-kiosk-css-full");
+      }
+    } catch (e) {}
+    if (estEnModePleinEcranActuel()) {
+      etaitEnPleinEcran = true;
       if (exFs) exFs.remove();
       return;
     }
@@ -5225,6 +5292,8 @@
     if (btnFs) {
       btnFs.addEventListener("click", function () {
         var docEl = document.documentElement;
+        try { localStorage.setItem("sti-fs-examen-ok", String(Date.now())); } catch (e) {}
+        if (docEl && docEl.classList) docEl.classList.add("sti-kiosk-css-full");
         var req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.msRequestFullscreen;
         if (req) {
           Promise.resolve(req.call(docEl)).then(function () {
@@ -8390,22 +8459,32 @@
   function estSessionAppDejaDeverrouillee() {
     if (window !== window.top) return true;
     try {
+      var now = Date.now();
       if (sessionStorage.getItem("sti-bio-session-ok") === "1") {
-        localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+        localStorage.setItem("sti-bio-nav-ts", String(now));
+        localStorage.setItem("sti-bio-lease-ts", String(now));
         return true;
       }
-      /* Si la page vient d'être ouverte par un clic interne dans l'application (< 10 s, même avec rel="noopener" sur iPhone/Android) ou referrer du même site */
-      var clickNavTs = parseInt(localStorage.getItem("sti-bio-click-nav-ts") || "0", 10) || 0;
-      if (clickNavTs && (Date.now() - clickNavTs < 10000)) {
-        sessionStorage.setItem("sti-bio-session-ok", "1");
-        localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
-        return true;
-      }
+      /* Partage transparent entre tous les onglets ouverts et nouvelles pages :
+         si la session de l'élève est active ou a été déverrouillée au cours des 12 dernières heures,
+         le nouvel onglet hérite immédiatement du déverrouillage sans bloquer l'élève. */
+      var leaseTs = parseInt(localStorage.getItem("sti-bio-lease-ts") || "0", 10) || 0;
       var navTs = parseInt(localStorage.getItem("sti-bio-nav-ts") || "0", 10) || 0;
-      var refMemeSite = Boolean(document.referrer && document.referrer.indexOf(location.origin) === 0);
-      if (refMemeSite && navTs && (Date.now() - navTs < 30 * 60 * 1000)) {
+      var clickNavTs = parseInt(localStorage.getItem("sti-bio-click-nav-ts") || "0", 10) || 0;
+      var maxTs = Math.max(leaseTs, navTs, clickNavTs);
+      var cLocBio = lireCacheSessionLocal();
+      var sessionLocaleActive = Boolean(cLocBio && cLocBio.statut === "actif" && cLocBio.ts && (now - Number(cLocBio.ts) < 30 * 86400000));
+      if ((maxTs && (now - maxTs < 12 * 3600 * 1000)) || (sessionLocaleActive && maxTs > 0)) {
         sessionStorage.setItem("sti-bio-session-ok", "1");
-        localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+        localStorage.setItem("sti-bio-nav-ts", String(now));
+        localStorage.setItem("sti-bio-lease-ts", String(now));
+        return true;
+      }
+      var refMemeSite = Boolean(document.referrer && document.referrer.indexOf(location.origin) === 0);
+      if (refMemeSite || sessionLocaleActive) {
+        sessionStorage.setItem("sti-bio-session-ok", "1");
+        localStorage.setItem("sti-bio-nav-ts", String(now));
+        localStorage.setItem("sti-bio-lease-ts", String(now));
         return true;
       }
     } catch (e) { return true; }
@@ -8413,8 +8492,10 @@
   }
   function marquerSessionAppDeverrouillee() {
     try {
+      var nowInit = String(Date.now());
       sessionStorage.setItem("sti-bio-session-ok", "1");
-      localStorage.setItem("sti-bio-nav-ts", String(Date.now()));
+      localStorage.setItem("sti-bio-nav-ts", nowInit);
+      localStorage.setItem("sti-bio-lease-ts", nowInit);
     } catch (e) {}
     if (!window.__stiBioNavTrackBound) {
       window.__stiBioNavTrackBound = true;
@@ -8423,13 +8504,27 @@
           if (sessionStorage.getItem("sti-bio-session-ok") === "1") {
             var now = String(Date.now());
             localStorage.setItem("sti-bio-nav-ts", now);
+            localStorage.setItem("sti-bio-lease-ts", now);
             localStorage.setItem("sti-bio-click-nav-ts", now);
           }
         } catch (e) {}
       };
       window.addEventListener("pagehide", majTsNav);
       window.addEventListener("beforeunload", majTsNav);
+      window.addEventListener("focus", majTsNav);
+      document.addEventListener("visibilitychange", majTsNav);
       document.addEventListener("click", majTsNav, true);
+      document.addEventListener("auxclick", majTsNav, true);
+      setInterval(majTsNav, 20000);
+      window.addEventListener("storage", function (ev) {
+        try {
+          if (ev && (ev.key === "sti-bio-lease-ts" || ev.key === "sti-bio-nav-ts") && ev.newValue) {
+            sessionStorage.setItem("sti-bio-session-ok", "1");
+            var ovEx = document.getElementById("sti-overlay-bio-open");
+            if (ovEx) ovEx.remove();
+          }
+        } catch (e) {}
+      });
     }
   }
 

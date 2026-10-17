@@ -23,6 +23,12 @@
       localStorage.removeItem("sti-gold");
       localStorage.removeItem("sti-admin-gold");
       localStorage.removeItem("sti-bio-nav-ts");
+      localStorage.removeItem("sti-bio-lease-ts");
+      localStorage.removeItem("sti-bio-click-nav-ts");
+      localStorage.removeItem("sti-internal-nav-ts");
+      localStorage.removeItem("sti-fs-examen-ok");
+      localStorage.removeItem("sti-demo-vu");
+      localStorage.removeItem("sti-profil-sync-ts");
       try {
         sessionStorage.removeItem("sti-session-cache");
         sessionStorage.removeItem("sti-offline");
@@ -58,6 +64,24 @@
         localStorage.setItem("sti-offline", String(Date.now()));
         localStorage.setItem("sti-session-cache", JSON.stringify(objPerm));
         localStorage.setItem("sti-labo3-permanent", JSON.stringify(objPerm));
+        try {
+          var nowLaboStr = String(Date.now());
+          sessionStorage.setItem("sti-bio-session-ok", "1");
+          localStorage.setItem("sti-bio-nav-ts", nowLaboStr);
+          localStorage.setItem("sti-bio-lease-ts", nowLaboStr);
+        } catch (e) {}
+        location.replace(cfg.RACINE + "index.html");
+        return;
+      }
+      /* Si un élève déjà connecté ouvre un nouvel onglet tombant sur portail.html (ou #connexion),
+         le renvoyer immédiatement vers l'accueil sans le bloquer sur le formulaire */
+      if (sessLoc && sessLoc.statut === "actif" && sessLoc.ts && (Date.now() - Number(sessLoc.ts) < 30 * 86400000) && (!hInit || hInit === "connexion")) {
+        try {
+          var nowActStr = String(Date.now());
+          sessionStorage.setItem("sti-bio-session-ok", "1");
+          localStorage.setItem("sti-bio-nav-ts", nowActStr);
+          localStorage.setItem("sti-bio-lease-ts", nowActStr);
+        } catch (e) {}
         location.replace(cfg.RACINE + "index.html");
         return;
       }
@@ -370,6 +394,7 @@
       var nowStr = String(Date.now());
       sessionStorage.setItem("sti-bio-session-ok", "1");
       localStorage.setItem("sti-bio-nav-ts", nowStr);
+      localStorage.setItem("sti-bio-lease-ts", nowStr);
       localStorage.setItem("sti-bio-click-nav-ts", nowStr);
     } catch (e) {}
     if (typeof suite === "function") suite(true);

@@ -52,10 +52,27 @@
         if (lignes && lignes.length) {
           var distant = new Date(lignes[0].maj).getTime() || 0;
           var local = parseInt(localStorage.getItem(CLE_SYNC_MAJ) || "0", 10) || 0;
-          if (distant > local && lignes[0].donnees) { appliquer(lignes[0].donnees); localStorage.setItem(CLE_SYNC_MAJ, String(distant)); dernierHash = hash(collecter()); pastille("☁️ Progression restaurée depuis le cloud", "#e8f5e9");
-            /* Recharger une fois pour que le tableau de bord affiche les valeurs restaurées */
-            try { if (document.getElementsByClassName("bord-notion").length && !sessionStorage.getItem("sti-sync-recharge")) { sessionStorage.setItem("sti-sync-recharge", "1"); setTimeout(function () { location.reload(); }, 600); } } catch (e) {}
-            return; }
+          if (distant > local && lignes[0].donnees) {
+            appliquer(lignes[0].donnees);
+            localStorage.setItem(CLE_SYNC_MAJ, String(distant));
+            dernierHash = hash(collecter());
+            pastille("☁️ Progression restaurée depuis le cloud", "#e8f5e9");
+            /* Mettre à jour les cases à cocher en mémoire sans recharger la page ni bloquer le nouvel onglet */
+            try {
+              var cbs = document.getElementsByClassName("bord-notion");
+              if (cbs && cbs.length) {
+                var cochees = JSON.parse(localStorage.getItem("sti-sql-bord-notions") || "{}");
+                for (var idx = 0; idx < cbs.length; idx++) {
+                  var cleCb = cbs[idx].getAttribute("data-notion") || "";
+                  if (cleCb) cbs[idx].checked = Boolean(cochees[cleCb]);
+                }
+                if (cbs[0] && typeof Event === "function") {
+                  cbs[0].dispatchEvent(new Event("change", { bubbles: true }));
+                }
+              }
+            } catch (e) {}
+            return;
+          }
         }
         pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9"); pousser(true);
       })

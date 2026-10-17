@@ -1,5 +1,12 @@
 [
   {
+    "date": "2026-10-17",
+    "tag": "Plateforme",
+    "titre": "Navigation inter-pages & multi-onglets 100 % fluide ⚡",
+    "desc": "Partage instantané de la session déverrouillée entre tous les onglets ouverts, conservation native des liens Nouvel onglet et suppression des faux blocages plein écran hors contrôle.",
+    "lien": "index.html"
+  },
+  {
     "date": "2026-10-16",
     "tag": "Admin",
     "titre": "Vérificateur de santé du site 🩺 + Sauvegarde complète 💾",

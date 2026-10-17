@@ -229,13 +229,25 @@
   }
 
   /* ─────────────────────────────────────────────
-     1) Clic droit bloqué pour TOUS les abonnés (empêche « Afficher le code source » et « Inspecter »)
+     1) Clic droit bloqué hors liens et champs de saisie (empêche « Afficher le code source »
+        tout en autorisant « Ouvrir le lien dans un nouvel onglet » sur les liens a[href])
      ───────────────────────────────────────────── */
   document.addEventListener(
     "contextmenu",
     function (e) {
       if (estAdminStrict()) return;
       var t = e.target;
+      var lien = t && t.closest ? t.closest("a[href]") : null;
+      if (lien) {
+        try {
+          var nowStr = String(Date.now());
+          localStorage.setItem("sti-bio-nav-ts", nowStr);
+          localStorage.setItem("sti-bio-click-nav-ts", nowStr);
+          localStorage.setItem("sti-bio-lease-ts", nowStr);
+          localStorage.setItem("sti-internal-nav-ts", nowStr);
+        } catch (err) {}
+        return;
+      }
       if (t && t.closest && t.closest("input, textarea, [contenteditable='true'], #sti-messenger-eleve, #sti-messenger-admin, #sti-messenger-admin-site")) return;
       e.preventDefault();
       e.stopPropagation();
@@ -622,55 +634,41 @@
 
       if (!estAppareilPC()) return;
 
-      /* 3. Neutraliser tous les target="_blank" internes pour éviter toute ouverture de fenêtre externe avec barre d'adresse GitHub en haut */
+      /* 3. Navigation fluide entre les pages et ouverture de nouveaux onglets sans blocage :
+         on conserve l'attribut href et target="_blank" natifs et on horodate la navigation interne
+         pour que le nouvel onglet hérite immédiatement de la session déverrouillée. */
+      function marquerLienInterneSTI(e) {
+        var t = e && e.target;
+        var a = t && t.closest ? t.closest("a") : null;
+        if (!a) return;
+        if (a.hasAttribute("data-sti-href") && !a.getAttribute("href")) {
+          a.setAttribute("href", a.getAttribute("data-sti-href"));
+        }
+        var href = a.getAttribute("href") || "";
+        if (!href || href.indexOf("javascript:") === 0 || href.indexOf("mailto:") === 0 || href.indexOf("tel:") === 0) return;
+        try {
+          var u = new URL(href, location.href);
+          if (u.origin === location.origin) {
+            var nowStr = String(Date.now());
+            localStorage.setItem("sti-bio-nav-ts", nowStr);
+            localStorage.setItem("sti-bio-click-nav-ts", nowStr);
+            localStorage.setItem("sti-bio-lease-ts", nowStr);
+            localStorage.setItem("sti-internal-nav-ts", nowStr);
+          }
+        } catch (err) {}
+      }
+
+      document.addEventListener("pointerdown", marquerLienInterneSTI, true);
+      document.addEventListener("auxclick", marquerLienInterneSTI, true);
       document.addEventListener(
         "click",
         function (e) {
-          /* Activer automatiquement le plein écran sans adresse au 1er clic utilisateur sur PC (pour tous les comptes) */
           var t = e.target;
           var surBtnFs = t && t.closest && t.closest("#sti-btn-pc-fullscreen");
           if (!surBtnFs) {
             activerPleinEcranSansAdressePC(false);
           }
-
-          var a = t && t.closest ? t.closest("a") : null;
-          if (!a) return;
-          var href = a.getAttribute("href") || a.getAttribute("data-sti-href") || "";
-          if (!href || href.indexOf("javascript:") === 0 || href.indexOf("mailto:") === 0 || href.indexOf("tel:") === 0) return;
-          if (a.hasAttribute("download")) return;
-          try {
-            var u = new URL(href, location.href);
-            if (u.origin === location.origin) {
-              if (a.getAttribute("target") === "_blank") {
-                a.removeAttribute("target");
-              }
-              if (a.hasAttribute("data-sti-href") && !a.getAttribute("href")) {
-                e.preventDefault();
-                location.assign(u.href);
-              }
-            }
-          } catch (err) {}
-        },
-        true
-      );
-
-      /* 4. Masquer l'aperçu d'adresse GitHub au survol des liens internes sur PC */
-      document.addEventListener(
-        "mouseover",
-        function (e) {
-          var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
-          if (!a || a.hasAttribute("download")) return;
-          var h = a.getAttribute("href") || "";
-          if (!h || h.charAt(0) === "#" || h.indexOf("javascript:") === 0 || h.indexOf("mailto:") === 0 || h.indexOf("tel:") === 0) return;
-          try {
-            var u = new URL(h, location.href);
-            if (u.origin === location.origin) {
-              if (a.getAttribute("target") === "_blank") a.removeAttribute("target");
-              a.setAttribute("data-sti-href", h);
-              a.removeAttribute("href");
-              if (!a.style.cursor) a.style.cursor = "pointer";
-            }
-          } catch (err) {}
+          marquerLienInterneSTI(e);
         },
         true
       );
@@ -889,7 +887,7 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=237",
+        file: "css3-cours.mp4?v=227",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
       };
       var VIDEO_JS_INFO = {
@@ -913,11 +911,11 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 3 SQL (Group By) : Création BD, Insertion & Corrigé complet (.mp4)"
       };
       var VIDEO_SQL_SERIE4_INFO = {
-        file: "sql-serie4.mp4?v=250",
+        file: "sql-serie4.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 4 SQL : Création BD, Insertion & Corrigé des 15 Requêtes (.mp4)"
       };
       var VIDEO_SQL_SERIE5_INFO = {
-        file: "sql-serie5.mp4?v=251",
+        file: "sql-serie5.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Série 5 SQL (Gesthotel) : Création BD, Insertion & Corrigé des 20 Requêtes (.mp4)"
       };
       var VIDEO_SQL_SERIE6_INFO = {
@@ -948,15 +946,15 @@
           { t: 339.33, short: "X. <iframe>", label: "05:39 · X (10). Intégrer une page : <iframe> (attributs, target='cadre', srcdoc, sandbox)", sel: "#iframe" }
         ],
         "css3-cours": [
-          { t: 0.00, short: "Intro. Définition", label: "00:00 · Introduction · Définition CSS et règles de priorité (cascading, spécificité)", sel: "#css-definition-title" },
-          { t: 45.98, short: "I. Sélecteurs", label: "00:46 · I. Types des Sélecteurs et Pseudo-Classes (base, attributs, combinaisons, ::first-letter, états d'un lien)", sel: "#point-1" },
-          { t: 98.40, short: "II. Polices & Texte", label: "01:38 · II. Mise en Forme du Texte (font-family, text-align, text-shadow)", sel: "#point-2" },
-          { t: 148.30, short: "III. Fond", label: "02:28 · III. Propriétés d'Arrière-Plan (background-color, image, repeat, size, clip, raccourci)", sel: "#point-3" },
-          { t: 209.64, short: "IV. Boîtes & Display", label: "03:30 · IV. Modèle de Boîte et Display (inline-block, margin, padding, overflow, opacity)", sel: "#point-4" },
-          { t: 257.66, short: "V. Float · Position · Flex", label: "04:18 · V. Float, Positionnement et Flexbox (nature des balises, relative, absolute, fixed, sticky, flex)", sel: "#point-5" },
-          { t: 319.92, short: "VI. Bordures & Ombres", label: "05:20 · VI. Bordures, Ombrages et Border-Radius (1 à 4 valeurs, box-shadow)", sel: "#point-6" },
-          { t: 369.70, short: "VII. Listes & Tables", label: "06:10 · VII. Listes et Tableaux Avancés (table-layout, border-collapse, list-style)", sel: "#point-7" },
-          { t: 424.52, short: "VIII. Animations", label: "07:05 · VIII. Transformations 2D et Animations (rotate, skew, scale, translate, transition, @keyframes) + CSS pas à pas", sel: "#point-8" }
+          { t: 0.00, short: "I. Sélecteurs", label: "00:00 · I. Syntaxe et Sélecteurs CSS3", sel: "#point-1" },
+          { t: 36.01, short: "II. Polices & Texte", label: "00:36 · II. Polices, Textes et Couleurs (font, text)", sel: "#point-2" },
+          { t: 57.37, short: "III. Fond", label: "00:57 · III. Arrière-plans et Dégradés (background)", sel: "#point-3" },
+          { t: 65.32, short: "IV. Listes & Tables", label: "01:05 · IV. Listes et Tableaux stylisés (border-collapse)", sel: "#point-6" },
+          { t: 73.07, short: "V. Boîtes & Ombres", label: "01:13 · V. Modèle de boîte, Bordures & Ombres", sel: "#point-7" },
+          { t: 88.63, short: "VI. Position", label: "01:29 · VI. Affichage & Positionnement (display, position)", sel: "#point-4" },
+          { t: 110.11, short: "VII. Flexbox", label: "01:50 · VII. Mise en page Flexbox", sel: "#point-5" },
+          { t: 132.12, short: "VIII. Animations", label: "02:12 · VIII. Transitions, Transformations & Animations", sel: "#point-8" },
+          { t: 144.62, short: "IX. Pas à pas", label: "02:25 · IX. Leçons animées CSS pas à pas", sel: "#css-pas-a-pas" }
         ],
         "javascript-cours": [
           { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#intro" },
@@ -1029,55 +1027,49 @@
           { t: 248.97, short: "10-11. Transitions", label: "04:09 · 10 & 11. Transitions (:hover) & Transformations" }
         ],
         "sql-serie4": [
-          { t: 0.00, short: "Intro", label: "00:00 · Introduction Série 4 SQL — jointures, sous-requêtes, Group By", sel: "#sec-schema" },
-          { t: 39.00, short: "I. Création BD", label: "00:39 · Création de la BD — ordre parents, enfants, association", sel: "#sec-creation-bd" },
-          { t: 80.80, short: "Ibis. Contraintes", label: "01:20 · Rappel contraintes — UPDATE par défaut = RESTRICT", sel: "#sec-creation-bd" },
-          { t: 134.50, short: "II. Insertion", label: "02:14 · Insertion — les tableaux remplis utilisés dans les requêtes", sel: "#sec-insertion-bd" },
-          { t: 173.20, short: "Req 1 · Jointure + GROUP BY / AVG", label: "02:53 · Requête 1 · Jointure + GROUP BY / AVG (âge moyen par sexe)", sel: "#req-1" },
-          { t: 223.00, short: "Req 2 · Jointure simple", label: "03:43 · Requête 2 · Jointure simple (enseignants d'Histoire)", sel: "#req-2" },
-          { t: 261.00, short: "Req 3 · Sous-requête imbriquée NOT IN", label: "04:21 · Requête 3 · Sous-requête imbriquée NOT IN (sans note en Sociologie)", sel: "#req-3" },
-          { t: 301.50, short: "Req 4 · Jointure + IN", label: "05:01 · Requête 4 · Jointure + IN (MCF ou Assistant)", sel: "#req-4" },
-          { t: 346.60, short: "Req 5 · Jointure 3 tables + GROUP BY", label: "05:46 · Requête 5 · Jointure 3 tables + GROUP BY", sel: "#req-5" },
-          { t: 392.70, short: "Req 6 · Jointure + sous-requête scalaire", label: "06:32 · Requête 6 · Jointure + sous-requête scalaire (note Info > moyenne)", sel: "#req-6" },
-          { t: 437.60, short: "Req 7 · Jointure + GROUP BY / HAVING + sou", label: "07:17 · Requête 7 · Jointure + GROUP BY / HAVING + sous-requête", sel: "#req-7" },
-          { t: 481.80, short: "Req 8 · Jointure + GROUP BY / HAVING COUNT", label: "08:01 · Requête 8 · Jointure + GROUP BY / HAVING COUNT > 1", sel: "#req-8" },
-          { t: 520.90, short: "Req 9 · Requête imbriquée", label: "08:40 · Requête 9 · Requête imbriquée (admis par sexe)", sel: "#req-9" },
-          { t: 567.40, short: "Req 10 · Sous-requête corrélée", label: "09:27 · Requête 10 · Sous-requête corrélée (Info > Maths)", sel: "#req-10" },
-          { t: 614.50, short: "Req 11 · Auto-jointure", label: "10:14 · Requête 11 · Auto-jointure (écart d'âge <= 180 j)", sel: "#req-11" },
-          { t: 657.50, short: "Req 12 · Sous-requête corrélée NOT IN", label: "10:57 · Requête 12 · Sous-requête corrélée NOT IN (couples sans note)", sel: "#req-12" },
-          { t: 696.70, short: "Req 13 · Jointure 3 tables + GROUP BY / HAV", label: "11:36 · Requête 13 · Jointure 3 tables + GROUP BY / HAVING (résultat vide !)", sel: "#req-13" },
-          { t: 740.40, short: "Req 14 · Sous-requête corrélée MAX", label: "12:20 · Requête 14 · Sous-requête corrélée MAX (meilleure note)", sel: "#req-14" },
-          { t: 788.40, short: "Req 15 · Jointure 5 tables + GROUP BY", label: "13:08 · Requête 15 · Jointure 5 tables + GROUP BY", sel: "#req-15" },
-          { t: 835.10, short: "Fin", label: "13:55 · Conclusion — les types de requêtes à retenir", sel: "#req-15" }
+          { t: 0.00, short: "Intro", label: "00:00 · Introduction Série 4 SQL", sel: "#sec-schema" },
+          { t: 22.20, short: "I. Création BD", label: "00:22 · I. Création de la BD — CREATE DATABASE & CREATE TABLE", sel: "#sec-creation-bd" },
+          { t: 48.00, short: "II. Insertion", label: "00:48 · II. Insertion (INSERT INTO SEXE, ENSEIGNANT, ETUDIANT, MATIERE, NOTES)", sel: "#sec-insertion-bd" },
+          { t: 66.98, short: "Req 1 · Jointure+GROUP BY", label: "01:06 · Requête 1 · Jointure + GROUP BY / AVG (Âge moyen par sexe)", sel: "#req-1" },
+          { t: 98.20, short: "Req 2 · Jointure", label: "01:38 · Requête 2 · Jointure simple (Enseignants d'Histoire)", sel: "#req-2" },
+          { t: 122.90, short: "Req 3 · Sous-req NOT IN", label: "02:02 · Requête 3 · Sous-requête / Requête imbriquée NOT IN (Sans note en Sociologie)", sel: "#req-3" },
+          { t: 154.68, short: "Req 4 · Jointure+IN", label: "02:34 · Requête 4 · Jointure + IN (Matières enseignées par MCF ou Assistant)", sel: "#req-4" },
+          { t: 180.82, short: "Req 5 · 3 tables+GROUP BY", label: "03:00 · Requête 5 · Jointure 3 tables + GROUP BY & ORDER BY", sel: "#req-5" },
+          { t: 211.44, short: "Req 6 · Sous-req AVG", label: "03:31 · Requête 6 · Jointure + Sous-requête scalaire (> SELECT AVG)", sel: "#req-6" },
+          { t: 241.34, short: "Req 7 · HAVING+Sous-req", label: "04:01 · Requête 7 · Jointure + GROUP BY / HAVING + Sous-requête (Moyenne diplôme)", sel: "#req-7" },
+          { t: 272.85, short: "Req 8 · GROUP BY/HAVING", label: "04:32 · Requête 8 · Jointure + GROUP BY / HAVING (Plus d'une matière)", sel: "#req-8" },
+          { t: 298.31, short: "Req 9 · Req imbriquée", label: "04:58 · Requête 9 · Requête imbriquée (IN + GROUP BY / HAVING) — Admis par sexe", sel: "#req-9" },
+          { t: 328.07, short: "Req 10 · Sous-req corrélée", label: "05:28 · Requête 10 · Sous-requête corrélée (Note Info > Note Maths)", sel: "#req-10" },
+          { t: 358.69, short: "Req 11 · Auto-jointure", label: "05:58 · Requête 11 · Auto-jointure (ETUDIANT E1, ETUDIANT E2 — Écart <= 180 j)", sel: "#req-11" },
+          { t: 384.15, short: "Req 12 · Sous-req NOT IN", label: "06:24 · Requête 12 · Sous-requête corrélée NOT IN (Étudiants sans note par matière)", sel: "#req-12" },
+          { t: 411.51, short: "Req 13 · HAVING < 10", label: "06:51 · Requête 13 · Jointure 3 tables + GROUP BY / HAVING AVG < 10", sel: "#req-13" },
+          { t: 437.41, short: "Req 14 · Sous-req MAX", label: "07:17 · Requête 14 · Jointure + Sous-requête corrélée (= SELECT MAX)", sel: "#req-14" },
+          { t: 465.85, short: "Req 15 · 5 tables+GROUP BY", label: "07:45 · Requête 15 · Jointure 5 tables + GROUP BY (Ali Ben Salah)", sel: "#req-15" }
         ],
         "sql-serie5": [
-          { t: 0.00, short: "Intro", label: "00:00 · Introduction Série 5 SQL — Gesthotel : dates, jointures, sous-requêtes, Group By", sel: "#sec-schema" },
-          { t: 42.40, short: "I. Création BD", label: "00:42 · Création de la BD Gesthotel — CHECK, AUTO_INCREMENT, DATETIME", sel: "#sec-creation-bd" },
-          { t: 85.60, short: "Ibis. Contraintes", label: "01:25 · Rappel contraintes — UPDATE par défaut = RESTRICT", sel: "#sec-creation-bd" },
-          { t: 137.20, short: "II. Insertion", label: "02:17 · Insertion — les tableaux remplis utilisés dans les requêtes", sel: "#sec-insertion-bd" },
-          { t: 182.60, short: "Req 1 · Sélection simple (restriction ", label: "03:02 · Requête 1 · Sélection simple (restriction WHERE)", sel: "#req-1" },
-          { t: 216.80, short: "Req 2 · Regroupement GROUP BY + agréga", label: "03:36 · Requête 2 · Regroupement GROUP BY + agrégation COUNT", sel: "#req-2" },
-          { t: 257.10, short: "Req 3 · Sous-requête scalaire (= SELEC", label: "04:17 · Requête 3 · Sous-requête scalaire (= SELECT MIN) — requête imbriquée", sel: "#req-3" },
-          { t: 295.90, short: "Req 4 · Jointure", label: "04:55 · Requête 4 · Jointure", sel: "#req-4" },
-          { t: 333.80, short: "Req 5.1 · Jointure + fonction de date (D", label: "05:33 · Requête 5.1 · Jointure + fonction de date (DATE / NOW)", sel: "#req-5" },
-          { t: 378.20, short: "Req 5.2 · Jointure + fonction de date (D", label: "06:18 · Requête 5.2 · Jointure + fonction de date (DATE_SUB)", sel: "#req-5" },
-          { t: 422.30, short: "Req 5.3 · Jointure + fonction de date (D", label: "07:02 · Requête 5.3 · Jointure + fonction de date (DATE_SUB)", sel: "#req-5" },
-          { t: 464.30, short: "Req 6 · Agrégation globale (AVG sans G", label: "07:44 · Requête 6 · Agrégation globale (AVG sans GROUP BY)", sel: "#req-6" },
-          { t: 500.30, short: "Req 7 · Regroupement GROUP BY + agréga", label: "08:20 · Requête 7 · Regroupement GROUP BY + agrégation AVG", sel: "#req-7" },
-          { t: 542.20, short: "Req 8 · Sélection simple (restriction ", label: "09:02 · Requête 8 · Sélection simple (restriction WHERE)", sel: "#req-8" },
-          { t: 580.00, short: "Req 9 · Jointure + GROUP BY + agrégati", label: "09:40 · Requête 9 · Jointure + GROUP BY + agrégation SUM", sel: "#req-9" },
-          { t: 619.10, short: "Req 10 · Jointure + calcul d'intervalle", label: "10:19 · Requête 10 · Jointure + calcul d'intervalle de dates", sel: "#req-10" },
-          { t: 658.00, short: "Req 11 · Sous-requête imbriquée (IN) + ", label: "10:58 · Requête 11 · Sous-requête imbriquée (IN) + COUNT(DISTINCT)", sel: "#req-11" },
-          { t: 701.70, short: "Req 12 · Sous-requête scalaire (> SELEC", label: "11:41 · Requête 12 · Sous-requête scalaire (> SELECT AVG) — requête imbriquée", sel: "#req-12" },
-          { t: 744.40, short: "Req 13 · Sous-requête scalaire — requêt", label: "12:24 · Requête 13 · Sous-requête scalaire — requête imbriquée", sel: "#req-13" },
-          { t: 785.50, short: "Req 14 · Jointure + agrégation COUNT", label: "13:05 · Requête 14 · Jointure + agrégation COUNT", sel: "#req-14" },
-          { t: 819.50, short: "Req 15 · Regroupement GROUP BY + agréga", label: "13:39 · Requête 15 · Regroupement GROUP BY + agrégation SUM", sel: "#req-15" },
-          { t: 854.50, short: "Req 16 · Jointure + GROUP BY + agrégati", label: "14:14 · Requête 16 · Jointure + GROUP BY + agrégation SUM", sel: "#req-16" },
-          { t: 893.50, short: "Req 17 · Regroupement sur 2 colonnes (G", label: "14:53 · Requête 17 · Regroupement sur 2 colonnes (GROUP BY) + COUNT", sel: "#req-17" },
-          { t: 932.60, short: "Req 18 · Sélection avec tri multicritèr", label: "15:32 · Requête 18 · Sélection avec tri multicritère (ORDER BY)", sel: "#req-18" },
-          { t: 974.20, short: "Req 19 · Jointure + GROUP BY / HAVING", label: "16:14 · Requête 19 · Jointure + GROUP BY / HAVING", sel: "#req-19" },
-          { t: 1012.90, short: "Req 20 · Sous-requête imbriquée (NOT IN", label: "16:52 · Requête 20 · Sous-requête imbriquée (NOT IN)", sel: "#req-20" },
-          { t: 1052.60, short: "Fin", label: "17:32 · Conclusion — dates, jointures, sous-requêtes, Group By", sel: "#req-20" }
+          { t: 0.00, short: "Intro", label: "00:00 · Introduction Série 5 SQL (Gesthotel)", sel: "#sec-schema" },
+          { t: 24.26, short: "I. Création BD", label: "00:24 · I. Création de la BD — CREATE DATABASE Gesthotel & CREATE TABLE", sel: "#sec-creation-bd" },
+          { t: 47.88, short: "II. Insertion", label: "00:47 · II. Insertion (INSERT INTO CHAMBRE, CLIENT, RESERVATION)", sel: "#sec-insertion-bd" },
+          { t: 67.97, short: "Req 1 · Sélection", label: "01:07 · Requête 1 · Sélection simple (Clients d'Ariana)", sel: "#req-1" },
+          { t: 87.77, short: "Req 2 · GROUP BY+COUNT", label: "01:27 · Requête 2 · GROUP BY & COUNT (Chambres par type)", sel: "#req-2" },
+          { t: 109.32, short: "Req 3 · Sous-req MIN", label: "01:49 · Requête 3 · Sous-requête (= SELECT MIN) — Chambres les moins chères", sel: "#req-3" },
+          { t: 137.45, short: "Req 4 · Jointure", label: "02:17 · Requête 4 · Jointure (numr, dateDebut, nom du client)", sel: "#req-4" },
+          { t: 161.16, short: "Req 5 · Jointure+Dates", label: "02:41 · Requête 5 · Jointure + Dates (NOW, DATE, DATE_SUB : 5.1, 5.2, 5.3)", sel: "#req-5" },
+          { t: 193.18, short: "Req 6 · AVG global", label: "03:13 · Requête 6 · Agrégation globale AVG (Prix moyen des chambres)", sel: "#req-6" },
+          { t: 211.35, short: "Req 7 · GROUP BY+AVG", label: "03:31 · Requête 7 · GROUP BY & AVG (Prix moyen par type)", sel: "#req-7" },
+          { t: 233.05, short: "Req 8 · Sélection CL03", label: "03:53 · Requête 8 · Sélection simple (Réservations du client CL03)", sel: "#req-8" },
+          { t: 253.47, short: "Req 9 · Jointure+SUM", label: "04:13 · Requête 9 · Jointure + GROUP BY & SUM (Facture du client CL03)", sel: "#req-9" },
+          { t: 280.81, short: "Req 10 · Jointure+Dates", label: "04:40 · Requête 10 · Jointure + Dates (Clients résidant actuellement)", sel: "#req-10" },
+          { t: 306.11, short: "Req 11 · Sous-req IN", label: "05:06 · Requête 11 · Sous-requête IN + COUNT(DISTINCT) — Pensions de CL02", sel: "#req-11" },
+          { t: 334.53, short: "Req 12 · Sous-req AVG", label: "05:34 · Requête 12 · Sous-requête (> SELECT AVG) — Séjour > moyenne", sel: "#req-12" },
+          { t: 359.71, short: "Req 13 · Sous-req numr=2", label: "05:59 · Requête 13 · Sous-requête scalaire (Séjour > numr = 2)", sel: "#req-13" },
+          { t: 384.07, short: "Req 14 · Jointure+COUNT", label: "06:24 · Requête 14 · Jointure + COUNT (Chambres simples 'S')", sel: "#req-14" },
+          { t: 406.34, short: "Req 15 · GROUP BY+SUM", label: "06:46 · Requête 15 · GROUP BY & SUM (Total des nuitées par chambre)", sel: "#req-15" },
+          { t: 429.21, short: "Req 16 · Jointure+CA", label: "07:09 · Requête 16 · Jointure + GROUP BY & SUM (Chiffre d'affaires par chambre)", sel: "#req-16" },
+          { t: 456.28, short: "Req 17 · GROUP BY 2 col", label: "07:36 · Requête 17 · GROUP BY (numcl, pension) & COUNT", sel: "#req-17" },
+          { t: 477.28, short: "Req 18 · ORDER BY", label: "07:57 · Requête 18 · Tri multicritère (ORDER BY type ASC, prix DESC)", sel: "#req-18" },
+          { t: 499.41, short: "Req 19 · Jointure+HAVING", label: "08:19 · Requête 19 · Jointure + GROUP BY / HAVING COUNT >= 2", sel: "#req-19" },
+          { t: 528.11, short: "Req 20 · Sous-req NOT IN", label: "08:48 · Requête 20 · Sous-requête NOT IN (Chambres sans réservation)", sel: "#req-20" }
         ],
         "sql-serie1": [
           { t: 0, short: "Intro", label: "00:00 · 01. Introduction & Présentation Série 1 (LDD)" },
@@ -3048,35 +3040,4 @@
   } else {
     init();
   }
-})();
-
-/* ═══════════════ STI PWA INSTALL (v255) — bouton d'installation sur toutes les pages ═══════════════ */
-(function () {
-  try {
-    if (window.__stiPwaInstalle) return; window.__stiPwaInstalle = true;
-    var dejaInstalle = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
-    if (dejaInstalle) return;
-    var promptDiffere = null;
-    function bouton() {
-      if (document.getElementById("sti-btn-installer")) return;
-      var b = document.createElement("button");
-      b.id = "sti-btn-installer"; b.type = "button";
-      b.textContent = "📲 Installer l'application";
-      b.setAttribute("style", "position:fixed;left:14px;bottom:14px;z-index:99999;padding:12px 18px;border-radius:999px;border:3px solid #1a1a2e;background:linear-gradient(120deg,#f4511e,#d81b60);color:#fff;font-weight:800;font-size:15px;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;");
-      b.addEventListener("click", function () {
-        if (promptDiffere) {
-          promptDiffere.prompt();
-          promptDiffere.userChoice.then(function () { promptDiffere = null; b.remove(); });
-        } else {
-          alert("Pour installer STI By AE :\n• Sur téléphone : menu du navigateur → « Installer l'application » ou « Ajouter à l'écran d'accueil ».\n• Sur ordinateur : icône d'installation dans la barre d'adresse.");
-        }
-      });
-      document.body.appendChild(b);
-    }
-    window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); promptDiffere = e; bouton(); });
-    window.addEventListener("appinstalled", function () { var b = document.getElementById("sti-btn-installer"); if (b) b.remove(); });
-    /* iPhone/iPad : pas d'événement d'installation → afficher l'aide après 2,5 s */
-    var estIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    if (estIOS) setTimeout(bouton, 2500);
-  } catch (e) {}
 })();
