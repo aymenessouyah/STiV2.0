@@ -915,11 +915,11 @@
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours.mp4?v=273",
+        file: "sql-cours-v2.mp4?v=274",
         title: "🎥 Cours SQL Complet (Guide-Ligne) — Archives (BD), SGBD, Requête (Query), Avion Mère->Fille, LDD, LMD, Agrégats & 4ème SI"
       };
       var VIDEO_SQL_INIT_INFO = {
-        file: "sql-cours.mp4?v=273",
+        file: "sql-cours-v2.mp4?v=274",
         title: "🎥 Cours SQL Complet (Guide-Ligne) — Archives (BD), SGBD, Requête (Query), Avion Mère->Fille, LDD, LMD, Agrégats & 4ème SI"
       };
       var VIDEO_HTML5_INFO = {
