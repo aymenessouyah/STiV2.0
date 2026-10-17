@@ -1,13 +1,13 @@
 [
   {
-    "version": "v283",
+    "version": "v284",
     "date": "2026-10-17",
     "categorie": "Vidéo PHP & MySQLi",
     "icone": "🎬",
-    "titre": "Analogie en haut, scène seule du Guichet en bas",
-    "resume": "Les deux lignes sont inversées : l’analogie occupe le haut et la scène animée réelle du Guichet occupe le bas. Dans cette scène basse, tous les boutons et le panneau de code ont été supprimés. Une seule voix — celle entendue dès le début — accompagne toute la vidéo. Le comparatif distingue fortement INSERT (ajouter), UPDATE (modifier), DELETE (supprimer) et SELECT (lire). SELECT est mis en évidence car il ne renvoie pas un booléen mais une ressource représentée par une armoire : tiroirs/lignes, num_rows, fetch_assoc, fetch_row, fetch_array et fin null/false.",
+    "titre": "Analogie seule en plein écran et menu de ressources",
+    "resume": "La scène basse a été supprimée : toute la vidéo est désormais consacrée à l’analogie en plein écran. La nouvelle narration commence par « Maintenant, on va faire une analogie par rapport à l’animation du Guichet » et conserve une seule voix sur les dix chapitres. À chaque pause, puis à la fin, un menu propose cinq destinations : animation du Guichet avec sa capture, cours PHP, exercice de synthèse, révision SQL en vidéo et CSS pas à pas Positionnement.",
     "lien": "cours/php.html",
-    "libelleLien": "Regarder la version inversée et épurée"
+    "libelleLien": "Regarder l’analogie plein écran"
   },
   {
     "version": "v280",
