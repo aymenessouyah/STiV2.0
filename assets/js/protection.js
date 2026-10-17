@@ -868,9 +868,9 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     🎥 VIDÉO PRINCIPALE DU GUICHET (php-guichet-v9.mp4, ANALOGIE RETOUCHÉE — EXPLICATIONS SANS MASQUER L’ANIMATION)
+     🎥 VIDÉO PRINCIPALE DU GUICHET (php-guichet-v10.mp4, ANALOGIE RETOUCHÉE — EXPLICATIONS SANS MASQUER L’ANIMATION)
      - Zéro voix dans les pas à pas interactifs (aucune lecture commentée ni audio d'étape).
-     - La nouvelle vidéo du Guichet (assets/videos/php-guichet-v9.mp4) porte la narration
+     - La nouvelle vidéo du Guichet (assets/videos/php-guichet-v10.mp4) porte la narration
        avec la voix de l'homme qui explique les étapes pas à pas.
      ═══════════════════════════════════════════════════════════════════════════ */
   function installerVideosPasAPasSTI() {
@@ -903,8 +903,8 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet-v9.mp4?v=287",
-        title: "🎥 PHP + MySQLi — Du formulaire à mysqli_query puis au résultat"
+        file: "php-guichet-v10.mp4?v=288",
+        title: "🎥 PHP + MySQLi — Armoire SELECT, étage par étage"
       };
       var VIDEO_CSS_POS_INFO = {
         file: "css-positionnement.mp4?v=227",
@@ -929,7 +929,8 @@
           return cacheSqlV275.keys().then(function (clesSqlV275) {
             return Promise.all(clesSqlV275.map(function (cleSqlV275) {
               var uSqlV275 = cleSqlV275.url || "";
-              if (uSqlV275.indexOf("php-guichet-v8.mp4") !== -1 ||
+              if (uSqlV275.indexOf("php-guichet-v9.mp4") !== -1 ||
+                  uSqlV275.indexOf("php-guichet-v8.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v7.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v6.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v5.mp4") !== -1 ||
@@ -1083,16 +1084,16 @@
           { t: 518.98, short: "11. Merci & Suite", label: "08:39 · 11. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
         ],
         "php-guichet": [
-          { t: 0.00, short: "1. Analogie sans masquage", label: "00:00 · 1. Parcours analogique et zones d’explication séparées" },
-          { t: 26.94, short: "2. Web local", label: "00:26 · 2. WampServer www, xampLite www, XAMPP htdocs et localhost" },
-          { t: 54.79, short: "3. GET ou POST", label: "00:54 · 3. JavaScript valide puis le formulaire envoie par GET ou POST" },
-          { t: 86.69, short: "4. PHP identifie l’action", label: "01:26 · 4. PHP récupère les superglobales et choisit la requête" },
-          { t: 112.26, short: "5. Écrire puis transmettre", label: "01:52 · 5. Variables, $sql, mysqli_query et attente du résultat" },
-          { t: 143.44, short: "6. Monsieur SGBD", label: "02:23 · 6. MySQL exécute et renvoie le résultat à PHP" },
-          { t: 169.54, short: "7. Branches SQL", label: "02:49 · 7. Que faire pour INSERT, UPDATE, DELETE ou SELECT" },
-          { t: 221.15, short: "8. affected_rows", label: "03:41 · 8. Pourquoi et comment utiliser mysqli_affected_rows" },
-          { t: 267.48, short: "9. fetch_row / fetch_array", label: "04:27 · 9. Différences entre fetch_row, fetch_array et fetch_assoc" },
-          { t: 312.82, short: "10. SELECT & affichage", label: "05:12 · 10. num_rows, boucle fetch, echo et résultat au Client" }
+          { t: 0.00, short: "1. Trajet réorganisé", label: "00:00 · 1. Formulaire → PHP → MySQL → résultat → Client" },
+          { t: 24.78, short: "2. Formulaire GET/POST", label: "00:24 · 2. Web local, validation et superglobales GET ou POST" },
+          { t: 50.68, short: "3. PHP écrit $sql", label: "00:50 · 3. Variables, $sql, connexion et mysqli_query" },
+          { t: 78.02, short: "4. MySQL répond", label: "01:18 · 4. MySQL exécute ; PHP attend le résultat" },
+          { t: 105.72, short: "5. Trois écritures", label: "01:45 · 5. Tableau comparatif INSERT, UPDATE et DELETE" },
+          { t: 140.74, short: "6. affected_rows", label: "02:20 · 6. Effet réel des trois requêtes d’écriture" },
+          { t: 175.43, short: "7. L’armoire SELECT", label: "02:55 · 7. Ressource, quatre étages et mysqli_num_rows" },
+          { t: 205.13, short: "8. mysqli_fetch_row", label: "03:25 · 8. Tirer les étages un par un avec mysqli_fetch_row" },
+          { t: 238.83, short: "9. mysqli_fetch_array", label: "03:58 · 9. Tirer les étages un par un avec mysqli_fetch_array" },
+          { t: 274.24, short: "10. Afficher au Client", label: "04:34 · 10. Boucle, tiroirs, echo et tableau HTML du Client" }
         ],
         "css-positionnement": [
           { t: 0.00, short: "0. Flux HTML", label: "00:00 · 0. Le flux naturel HTML (block & inline)" },
@@ -1597,7 +1598,7 @@
       function installerChoixCoursPhpSTI(video, parent, estGuichetFn) {
         if (!video || !parent || video.__stiMenuRessourcesInstalle) return;
         video.__stiMenuRessourcesInstalle = true;
-        var captureSrc = prefixeAssetsSTI() + "images/guichet-animation-capture-v287.jpg?v=287";
+        var captureSrc = prefixeAssetsSTI() + "images/guichet-animation-capture-v288.jpg?v=288";
         var racineSite = prefixeAssetsSTI().replace(/assets\/$/, "");
         var urlAnimation = racineSite + "cours/php-mysqli.html";
         var urlSynthese = racineSite + "cours/php.html#s9c-video";
@@ -1667,7 +1668,7 @@
         video.addEventListener("emptied", masquer);
       }
 
-      /* ── Lecteur vidéo principal du Guichet (php-guichet-v9.mp4) ── */
+      /* ── Lecteur vidéo principal du Guichet (php-guichet-v10.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
         var url = resoudreUrlVideoGuichet();
         var box = document.createElement("div");
@@ -1691,7 +1692,7 @@
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
             '</div>' +
           '</div>' +
-          '<video controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" poster="' + prefixeAssetsSTI() + 'images/php-guichet-v9-poster.jpg?v=287" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
+          '<video controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" poster="' + prefixeAssetsSTI() + 'images/php-guichet-v10-poster.jpg?v=288" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
             '<source src="' + url + '" type="video/mp4" />' +
           '</video>';
 
@@ -2144,7 +2145,7 @@
         if (vEl) {
           if (slugCible === "php-guichet") {
             vEl.__stiChoixPhpAffiche = false;
-            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v9-poster.jpg?v=287");
+            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v10-poster.jpg?v=288");
           } else {
             vEl.removeAttribute("poster");
           }

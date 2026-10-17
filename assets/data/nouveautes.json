@@ -1,5 +1,15 @@
 [
   {
+    "version": "v288",
+    "date": "2026-10-17",
+    "categorie": "Vidéo PHP & MySQLi",
+    "icone": "🗄️",
+    "titre": "Armoire SELECT animée étage par étage",
+    "resume": "La vidéo est réorganisée en dix étapes cohérentes. La partie SELECT place une grande armoire au centre : chaque appel à mysqli_fetch_row ou mysqli_fetch_array tire exactement un étage, avance le curseur et ajoute une ligne au tableau HTML du Client. Aucune autre fonction fetch n’est utilisée. Le code complet avec mysqli_query, mysqli_num_rows, while, echo, htmlspecialchars et mysqli_free_result est affiché.",
+    "lien": "cours/php.html",
+    "libelleLien": "Voir l’armoire SELECT animée"
+  },
+  {
     "version": "v287",
     "date": "2026-10-17",
     "categorie": "Vidéo PHP & MySQLi",
