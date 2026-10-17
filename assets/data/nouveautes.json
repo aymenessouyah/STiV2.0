@@ -1,5 +1,15 @@
 [
   {
+    "version": "v270",
+    "date": "2026-10-17",
+    "categorie": "Exercices PHP & Bac STI",
+    "icone": "🔄",
+    "titre": "Visualiseur Pas-à-Pas while/fetch + Série 1 séparée + Série 5 Sujet Blanc Bac (/20)",
+    "resume": "Nouveau visualiseur pas-à-pas de la boucle while et des 3 fonctions fetch (mysqli_fetch_assoc, fetch_row, fetch_array + comparateur COUNT(*)), séparation Énoncé/Corrigé de la Série 1 PHP et ajout de la Série 5 (Sujet Blanc complet type Bac Pratique sur 20 points avec corrigé ligne par ligne).",
+    "lien": "exercices/series-exercices.html#php",
+    "libelleLien": "Ouvrir les Exercices PHP"
+  },
+  {
     "date": "2026-10-17",
     "tag": "Exercices PHP",
     "titre": "Exercices PHP : Série 4 MySQLi Procédural + Corrigé dédié + Refonte Débogage interactif + Carte 10 Fonctions JS",

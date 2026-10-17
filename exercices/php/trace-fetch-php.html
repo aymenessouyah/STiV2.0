@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noai, noimageai">
+  <title>Visualiseur Pas-à-Pas : Boucle while &amp; mysqli_fetch_assoc / fetch_row / fetch_array</title>
+  <link rel="icon" href="../../assets/icons/STI_by_AE.ico">
+  <link rel="stylesheet" href="../../assets/css/protection.css?v=227">
+  <script src="../../assets/js/protection.js?v=227"></script>
+  <script>window.__APP_OK = true;</script>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #f8fafc;
+      --ink: #1a202c;
+      --muted: #4a5568;
+      --border: #1a365d;
+      --code-bg: #0f172a;
+      --code-ink: #f8fafc;
+    }
+    html[data-theme="dark"], html.dark-mode {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --ink: #f8fafc;
+      --muted: #cbd5e1;
+      --border: #475569;
+      --code-bg: #090d16;
+      --code-ink: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0; padding: 18px 20px 60px;
+      background: var(--bg); color: var(--ink); line-height: 1.5;
+    }
+    .wrap-tr { max-width: 1120px; margin: 0 auto; }
+    .header-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+    .header-table td {
+      border: 2px solid var(--border); padding: 8px 12px;
+      text-align: center; vertical-align: middle; font-weight: bold;
+    }
+    .barre-modes { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .btn-mode {
+      padding: 8px 14px; border-radius: 9px; border: 2px solid var(--border);
+      background: var(--card); color: var(--ink); font-weight: 800; font-size: 12.8px; cursor: pointer;
+    }
+    .btn-mode.actif { background: #2b6cb0; color: #fff; border-color: #1a365d; }
+    .barre-pas {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 12px 14px; border-radius: 12px; border: 2px solid var(--border);
+      background: var(--card); margin-bottom: 14px;
+    }
+    .btn-pas {
+      padding: 7px 13px; border-radius: 8px; border: 2px solid var(--border);
+      background: var(--bg); color: var(--ink); font-weight: 800; font-size: 12.5px; cursor: pointer;
+    }
+    .btn-pas.prim { background: #16a34a; color: #fff; border-color: #14532d; }
+    .grille-2col {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;
+    }
+    @media (max-width: 860px) { .grille-2col { grid-template-columns: 1fr; } }
+    .bloc-tr {
+      background: var(--card); border: 2px solid var(--border);
+      border-radius: 12px; padding: 14px;
+    }
+    .bloc-tr h3 {
+      margin: 0 0 10px; font-size: 14.5px; color: #2b6cb0;
+      border-bottom: 2px solid rgba(43, 108, 176, 0.25); padding-bottom: 6px;
+    }
+    table.tbl-sql {
+      width: 100%; border-collapse: collapse; font-size: 12.5px; background: var(--bg);
+    }
+    table.tbl-sql th, table.tbl-sql td {
+      border: 1.5px solid var(--border); padding: 6px 8px; text-align: left;
+    }
+    table.tbl-sql th { background: #2b6cb0; color: #fff; }
+    tr.lig-curseur {
+      background: #fef08a !important; color: #0f172a !important; font-weight: 800;
+    }
+    tr.lig-lue {
+      background: rgba(22, 163, 74, 0.14);
+    }
+    pre.code-trace {
+      background: var(--code-bg); color: var(--code-ink);
+      padding: 12px; border-radius: 8px; font: 700 12.4px/1.5 Consolas, monospace;
+      margin: 0; overflow-x: auto;
+    }
+    .var-pill {
+      display: inline-block; padding: 4px 9px; border-radius: 6px;
+      background: var(--code-bg); color: #fde047;
+      font: 700 12.2px Consolas, monospace; margin: 3px 4px 3px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap-tr">
+    <table class="header-table">
+      <tr>
+        <td width="28%">Lycée Rafèha<br>Enseignant : A. Essouyah</td>
+        <td width="44%">Visualiseur Pas-à-Pas — Boucle <code>while</code> &amp; les 3 fonctions <code>fetch</code><br><span style="font-weight:normal;font-size:0.9em">Table <code>eleves(Id, Nom_prenom, Moyenne, DateNaissance)</code></span></td>
+        <td width="28%">Niveau : 4<sup>ème</sup> SI<br><span id="badge-tour" style="color:#2b6cb0">Tour : 1 / 5</span></td>
+      </tr>
+    </table>
+
+    <div class="barre-modes">
+      <button type="button" id="mode-assoc" class="btn-mode actif">1️⃣ mysqli_fetch_assoc($res)</button>
+      <button type="button" id="mode-row" class="btn-mode">2️⃣ mysqli_fetch_row($res)</button>
+      <button type="button" id="mode-array" class="btn-mode">3️⃣ mysqli_fetch_array($res)</button>
+      <button type="button" id="mode-count" class="btn-mode">4️⃣ mysqli_num_rows($res) vs SELECT COUNT(*)</button>
+    </div>
+
+    <div class="barre-pas" id="barre-navigation-pas">
+      <button type="button" id="btn-debut" class="btn-pas">⏮️ Début (Tour 1)</button>
+      <button type="button" id="btn-prec" class="btn-pas">◀️ Tour précédent</button>
+      <button type="button" id="btn-suiv" class="btn-pas prim">▶️ Tour suivant (Appel fetch)</button>
+      <button type="button" id="btn-fin" class="btn-pas">⏭️ Fin de boucle (false)</button>
+      <span id="resume-tour" style="margin-left:auto;font-weight:800;font-size:13px;color:#15803d"></span>
+    </div>
+
+    <div id="zone-fetch-trace">
+      <div class="grille-2col">
+        <div class="bloc-tr">
+          <h3>🗄️ 1. Curseur SQL dans le résultat $res (trié par Catégorie = 1re lettre de Id)</h3>
+          <table class="tbl-sql">
+            <thead>
+              <tr>
+                <th>Curseur</th>
+                <th>Id (Col 0)</th>
+                <th>Nom_prenom (Col 1)</th>
+                <th>Moyenne (Col 2)</th>
+                <th>DateNaissance (Col 3)</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-curseur-sql"></tbody>
+          </table>
+        </div>
+
+        <div class="bloc-tr">
+          <h3 id="titre-script-php">🐘 2. Script PHP exécuté à ce tour de boucle</h3>
+          <pre id="code-php-actif" class="code-trace"></pre>
+        </div>
+      </div>
+
+      <div class="grille-2col">
+        <div class="bloc-tr">
+          <h3>📦 3. Contenu exact du tableau PHP <code>$t</code> et découpage des chaînes</h3>
+          <div id="contenu-tableau-t"></div>
+        </div>
+
+        <div class="bloc-tr">
+          <h3>🌐 4. Tableau HTML généré progressivement par <code>echo</code></h3>
+          <div id="apercu-html-cumule"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="zone-comparaison-count" class="bloc-tr" style="display:none;margin-bottom:14px">
+      <h3>⚖️ Comparaison visuelle : <code>mysqli_num_rows($res)</code> vs <code>SELECT COUNT(*) AS nb</code></h3>
+      <div class="grille-2col">
+        <div>
+          <h4 style="margin:4px 0 8px;color:#15803d">✅ Méthode A : SELECT classique + mysqli_num_rows($res)</h4>
+          <pre class="code-trace">$req = "SELECT * FROM eleves WHERE Moyenne &gt;= 10";
+$res = mysqli_query($con, $req);
+// $res contient 4 lignes (A101, A104, B201, C302)
+$nbAdmis = mysqli_num_rows($res); // Vaut 4 !
+echo "Nombre d'admis : " . $nbAdmis;</pre>
+          <p style="font-size:13px;margin-top:8px">
+            👉 <b>Quand l'utiliser ?</b> Quand la requête ne contient <b>pas</b> <code>COUNT(*)</code> et que l'on veut savoir combien d'enregistrements ont été trouvés (ou vérifier si un identifiant existe avec <code>mysqli_num_rows($res) &gt; 0</code>).
+          </p>
+        </div>
+        <div>
+          <h4 style="margin:4px 0 8px;color:#2b6cb0">✅ Méthode B : SELECT COUNT(*) AS nb + fetch</h4>
+          <pre class="code-trace">$req = "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &gt;= 10";
+$res = mysqli_query($con, $req);
+// ⚠️ $res contient TOUJOURS 1 seule ligne avec la colonne 'nb' !
+// mysqli_num_rows($res) vaudrait 1 (PIÈGE DU BAC !)
+$lig = mysqli_fetch_assoc($res); // ou mysqli_fetch_row($res)
+$nbAdmis = $lig["nb"];           // Vaut 4 !
+echo "Nombre d'admis : " . $nbAdmis;</pre>
+          <p style="font-size:13px;margin-top:8px">
+            👉 <b>Règle d'or du Bac :</b> Avec <code>SELECT COUNT(*) AS nb</code>, il faut <b>toujours</b> extraire l'unique ligne avec <code>mysqli_fetch_assoc($res)</code> (puis lire <code>$lig["nb"]</code>) ou <code>mysqli_fetch_row($res)</code> (puis lire <code>$lig[0]</code>).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var LIGNES = [
+        { Id: "A101", Nom_prenom: "BenAli Sami", Moyenne: "15.50", DateNaissance: "2008-03-14" },
+        { Id: "A104", Nom_prenom: "Trabelsi Ines", Moyenne: "13.25", DateNaissance: "2008-07-22" },
+        { Id: "B201", Nom_prenom: "Gharbi Youssef", Moyenne: "16.75", DateNaissance: "2008-11-05" },
+        { Id: "C302", Nom_prenom: "Mansouri Salma", Moyenne: "12.00", DateNaissance: "2008-01-19" }
+      ];
+
+      var modeActuel = "assoc"; // assoc | row | array | count
+      var tour = 0; // 0..3 = lignes 1..4, 4 = fin de boucle (false)
+
+      function ech(s) {
+        return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      function majTout() {
+        var bAssoc = document.getElementById("mode-assoc");
+        var bRow   = document.getElementById("mode-row");
+        var bArray = document.getElementById("mode-array");
+        var bCount = document.getElementById("mode-count");
+        bAssoc.className = "btn-mode" + (modeActuel === "assoc" ? " actif" : "");
+        bRow.className   = "btn-mode" + (modeActuel === "row"   ? " actif" : "");
+        bArray.className = "btn-mode" + (modeActuel === "array" ? " actif" : "");
+        bCount.className = "btn-mode" + (modeActuel === "count" ? " actif" : "");
+
+        var zoneTrace = document.getElementById("zone-fetch-trace");
+        var zoneCount = document.getElementById("zone-comparaison-count");
+        var barrePas  = document.getElementById("barre-navigation-pas");
+
+        if (modeActuel === "count") {
+          zoneTrace.style.display = "none";
+          barrePas.style.display = "none";
+          zoneCount.style.display = "block";
+          document.getElementById("badge-tour").innerHTML = "Comparateur COUNT(*)";
+          return;
+        }
+        zoneTrace.style.display = "block";
+        barrePas.style.display = "flex";
+        zoneCount.style.display = "none";
+
+        document.getElementById("badge-tour").innerHTML =
+          tour < LIGNES.length ? ("Tour : " + (tour + 1) + " / " + LIGNES.length) : "Fin : $t = false";
+
+        document.getElementById("resume-tour").innerHTML =
+          tour < LIGNES.length
+            ? ("Enregistrement lu : " + LIGNES[tour].Id + " (" + LIGNES[tour].Nom_prenom + ")")
+            : "⏹️ Plus aucune ligne dans $res : fetch renvoie false → sortie du while !";
+
+        /* 1. Table SQL */
+        var htmlSql = "";
+        for (var i = 0; i < LIGNES.length; i++) {
+          var r = LIGNES[i];
+          var cls = "";
+          var ico = "";
+          if (i === tour) { cls = "lig-curseur"; ico = "👉 Tour " + (i + 1); }
+          else if (i < tour) { cls = "lig-lue"; ico = "✅ Déjà lu"; }
+          else { ico = "⏳ En attente"; }
+          htmlSql +=
+            '<tr class="' + cls + '">' +
+              '<td>' + ico + '</td>' +
+              '<td>' + ech(r.Id) + '</td>' +
+              '<td>' + ech(r.Nom_prenom) + '</td>' +
+              '<td>' + ech(r.Moyenne) + '</td>' +
+              '<td>' + ech(r.DateNaissance) + '</td>' +
+            '</tr>';
+        }
+        htmlSql +=
+          '<tr class="' + (tour === LIGNES.length ? "lig-curseur" : "") + '">' +
+            '<td>' + (tour === LIGNES.length ? "🛑 Fin (EOF)" : "—") + '</td>' +
+            '<td colspan="4"><em>Fin du résultat SQL → la fonction fetch renvoie <code>false</code></em></td>' +
+          '</tr>';
+        document.getElementById("tbody-curseur-sql").innerHTML = htmlSql;
+
+        /* 2. Script PHP selon le mode */
+        var fnFetch = modeActuel === "assoc" ? "mysqli_fetch_assoc" : (modeActuel === "row" ? "mysqli_fetch_row" : "mysqli_fetch_array");
+        var exprId  = modeActuel === "row" ? "$t[0]" : '$t["Id"]';
+        var exprNp  = modeActuel === "row" ? "$t[1]" : '$t["Nom_prenom"]';
+        var exprMoy = modeActuel === "row" ? "$t[2]" : '$t["Moyenne"]';
+
+        document.getElementById("code-php-actif").innerHTML =
+          '$req = "SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves\\n' +
+          '        WHERE Moyenne &gt;= 10 ORDER BY LEFT(Id, 1) ASC";\n' +
+          '$res = mysqli_query($con, $req);\n\n' +
+          'while ($t = ' + fnFetch + '($res)) {\n' +
+          '    $cat    = substr(' + exprId + ', 0, 1);        // Initiale de Id = Catégorie\n' +
+          '    $pos    = strpos(' + exprNp + ', " ");         // Position de l\'espace\n' +
+          '    $nom    = substr(' + exprNp + ', 0, $pos);     // Nom\n' +
+          '    $prenom = substr(' + exprNp + ', $pos + 1);    // Prénom\n' +
+          '    echo "&lt;tr&gt;&lt;td&gt;$cat&lt;/td&gt;&lt;td&gt;$nom&lt;/td&gt;&lt;td&gt;$prenom&lt;/td&gt;&lt;td&gt;" . ' + exprMoy + ' . "&lt;/td&gt;&lt;/tr&gt;";\n' +
+          '}';
+
+        /* 3. Contenu de $t */
+        var contT = document.getElementById("contenu-tableau-t");
+        if (tour >= LIGNES.length) {
+          contT.innerHTML =
+            '<div style="padding:12px;border-radius:8px;background:#fee2e2;color:#991b1b;font-weight:800">' +
+              '🛑 Au 5ème appel, <code>' + fnFetch + '($res)</code> renvoie <code>false</code>.<br>' +
+              'La condition du <code>while ($t = ...)</code> devient fausse et la boucle s\'arrête proprement.' +
+            '</div>';
+        } else {
+          var lig = LIGNES[tour];
+          var cat = lig.Id.substring(0, 1);
+          var pos = lig.Nom_prenom.indexOf(" ");
+          var nom = lig.Nom_prenom.substring(0, pos);
+          var prenom = lig.Nom_prenom.substring(pos + 1);
+
+          varcles = "";
+          if (modeActuel === "assoc") {
+            varcles =
+              '<span class="var-pill">$t["Id"] = "' + lig.Id + '"</span>' +
+              '<span class="var-pill">$t["Nom_prenom"] = "' + lig.Nom_prenom + '"</span>' +
+              '<span class="var-pill">$t["Moyenne"] = "' + lig.Moyenne + '"</span>' +
+              '<span class="var-pill">$t["DateNaissance"] = "' + lig.DateNaissance + '"</span>' +
+              '<div style="font-size:12px;color:#b91c1c;margin-top:4px;font-weight:700">⚠️ Avec <code>mysqli_fetch_assoc</code>, <code>$t[0]</code> n\'existe pas !</div>';
+          } else if (modeActuel === "row") {
+            varcles =
+              '<span class="var-pill">$t[0] = "' + lig.Id + '"</span>' +
+              '<span class="var-pill">$t[1] = "' + lig.Nom_prenom + '"</span>' +
+              '<span class="var-pill">$t[2] = "' + lig.Moyenne + '"</span>' +
+              '<span class="var-pill">$t[3] = "' + lig.DateNaissance + '"</span>' +
+              '<div style="font-size:12px;color:#b91c1c;margin-top:4px;font-weight:700">⚠️ Avec <code>mysqli_fetch_row</code>, <code>$t["Id"]</code> n\'existe pas !</div>';
+          } else {
+            varcles =
+              '<span class="var-pill">$t[0] et $t["Id"] = "' + lig.Id + '"</span>' +
+              '<span class="var-pill">$t[1] et $t["Nom_prenom"] = "' + lig.Nom_prenom + '"</span>' +
+              '<span class="var-pill">$t[2] et $t["Moyenne"] = "' + lig.Moyenne + '"</span>' +
+              '<div style="font-size:12px;color:#15803d;margin-top:4px;font-weight:700">✅ Avec <code>mysqli_fetch_array</code>, les deux notations fonctionnent !</div>';
+          }
+
+          contT.innerHTML =
+            '<div>' + varcles + '</div>' +
+            '<hr style="border:none;border-top:1px solid #cbd5e1;margin:10px 0">' +
+            '<div style="font-size:12.8px;font-weight:700">' +
+              '• <code>$cat = substr("' + lig.Id + '", 0, 1)</code> ➔ <b>"' + cat + '"</b> (Catégorie)<br>' +
+              '• <code>$pos = strpos("' + lig.Nom_prenom + '", " ")</code> ➔ <b>' + pos + '</b><br>' +
+              '• <code>$nom = substr(..., 0, ' + pos + ')</code> ➔ <b>"' + nom + '"</b><br>' +
+              '• <code>$prenom = substr(..., ' + (pos + 1) + ')</code> ➔ <b>"' + prenom + '"</b>' +
+            '</div>';
+        }
+
+        /* 4. Tableau HTML généré jusqu'au tour actuel */
+        var nbAffichees = tour < LIGNES.length ? (tour + 1) : LIGNES.length;
+        var htmlOut = '<table class="tbl-sql"><thead><tr><th>Catégorie</th><th>Nom</th><th>Prénom</th><th>Moyenne</th></tr></thead><tbody>';
+        for (var k = 0; k < nbAffichees; k++) {
+          var l = LIGNES[k];
+          var p = l.Nom_prenom.indexOf(" ");
+          htmlOut +=
+            '<tr class="' + (k === tour ? "lig-curseur" : "") + '">' +
+              '<td>' + l.Id.substring(0, 1) + '</td>' +
+              '<td>' + l.Nom_prenom.substring(0, p) + '</td>' +
+              '<td>' + l.Nom_prenom.substring(p + 1) + '</td>' +
+              '<td>' + l.Moyenne + '</td>' +
+            '</tr>';
+        }
+        htmlOut += '</tbody></table>';
+        document.getElementById("apercu-html-cumule").innerHTML = htmlOut;
+      }
+
+      document.getElementById("mode-assoc").onclick = function () { modeActuel = "assoc"; majTout(); };
+      document.getElementById("mode-row").onclick   = function () { modeActuel = "row";   majTout(); };
+      document.getElementById("mode-array").onclick = function () { modeActuel = "array"; majTout(); };
+      document.getElementById("mode-count").onclick = function () { modeActuel = "count"; majTout(); };
+
+      document.getElementById("btn-debut").onclick = function () { tour = 0; majTout(); };
+      document.getElementById("btn-prec").onclick  = function () { if (tour > 0) tour--; majTout(); };
+      document.getElementById("btn-suiv").onclick  = function () { if (tour < LIGNES.length) tour++; else tour = 0; majTout(); };
+      document.getElementById("btn-fin").onclick   = function () { tour = LIGNES.length; majTout(); };
+
+      majTout();
+    })();
+  </script>
+  <script src="../../assets/js/supabase-umd.js"></script>
+  <script src="../../assets/js/config.js?v=256"></script>
+  <script src="../../assets/js/acces.js?v=270"></script>
+</body>
+</html>

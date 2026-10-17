@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noai, noimageai" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta charset="UTF-8" />
+    <link rel="icon" href="../../assets/icons/STI_by_AE.ico" />
+    <title>Corrigé Série 5 PHP — Sujet Blanc Complet Type Bac Pratique</title>
+    <style>
+      @page { margin: 14mm; size: A4; }
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0; padding: 20px; color: #1a202c;
+        line-height: 1.5; background-color: #fff;
+      }
+      .header-table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+      .header-table td {
+        border: 2px solid #1a365d; padding: 8px 12px;
+        text-align: center; vertical-align: middle;
+      }
+      .header-title { font-size: 1.05em; font-weight: bold; color: #1a365d; }
+      .title-container {
+        display: flex; align-items: center; justify-content: center; gap: 14px;
+        margin: 16px 0; border-bottom: 3px solid #16a34a; padding-bottom: 10px;
+      }
+      .title-container h1 {
+        font-size: 1.12em; color: #14532d; text-transform: uppercase; margin: 0; text-align: center;
+      }
+      .db-logo {
+        width: 44px; height: 44px; background: #16a34a; border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: bold; font-size: 14px; color: #fff;
+      }
+      h2 {
+        color: #14532d; background-color: #f0fdf4; padding: 7px 12px;
+        font-size: 1.02em; border-left: 5px solid #16a34a;
+        margin-top: 18px; margin-bottom: 8px; border-radius: 0 4px 4px 0;
+      }
+      pre {
+        background-color: #0f172a; color: #f8fafc;
+        border: 1.5px solid #334155; padding: 12px 14px;
+        border-radius: 8px; font-family: Consolas, monospace;
+        font-size: 0.86em; overflow-x: auto; margin: 6px 0 12px 0; line-height: 1.46;
+      }
+      .note-box {
+        background: #fffbeb; border-left: 4px solid #d97706;
+        padding: 8px 12px; font-size: 0.89em; margin: 8px 0 12px; border-radius: 0 6px 6px 0;
+      }
+      .footer-page {
+        text-align: right; font-size: 0.8em; color: #718096;
+        margin-top: 26px; border-top: 1px solid #e2e8f0; padding-top: 5px;
+      }
+    </style>
+    <script>window.__APP_OK = true;</script>
+  </head>
+  <body>
+    <style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style>
+    <nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;">
+      <a href="Tp5-php.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:#2b6cb0;color:#fff;text-decoration:none;border:1px solid #1a365d;box-shadow:0 6px 18px rgba(0,0,0,.28);white-space:nowrap;">📄 Revoir le Sujet (Barème / 20)</a>
+      <a href="../../cours/php.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);white-space:nowrap;">📚 Cours PHP</a>
+      <a href="../../exercices/series-exercices.html#php" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);white-space:nowrap;">≡ Séries</a>
+    </nav>
+
+    <table class="header-table">
+      <tr>
+        <td width="30%" class="header-title">Lycée Rafèha<br />Enseignant : A. Essouyah</td>
+        <td width="40%" class="header-title">
+          Corrigé Détaillé Ligne par Ligne — Série 5 PHP<br />
+          Sujet Blanc Complet Type Bac Pratique
+        </td>
+        <td width="30%" class="header-title">Niveau : 4<sup>ème</sup> SI<br /><span style="font-weight:normal;font-size:0.9em">Corrigé sur 20 points</span></td>
+      </tr>
+    </table>
+
+    <div class="title-container">
+      <div class="db-logo">20/20</div>
+      <h1>Corrigé Intégral Ligne par Ligne — Série N°5 (Bac Pratique)</h1>
+    </div>
+
+    <h2>Partie I — Script SQL de la base <code>bd_lycee</code> (<code>bd_lycee.sql</code> — 3 pts)</h2>
+    <pre>CREATE DATABASE IF NOT EXISTS bd_lycee;
+USE bd_lycee;
+
+CREATE TABLE eleves (
+    Id VARCHAR(10) PRIMARY KEY,
+    Nom_prenom VARCHAR(60) NOT NULL,
+    Moyenne DECIMAL(4,2) NOT NULL,
+    DateNaissance DATE NOT NULL
+);
+
+INSERT INTO eleves VALUES ('A101', 'BenAli Sami', 15.50, '2008-03-14');
+INSERT INTO eleves VALUES ('A104', 'Trabelsi Ines', 13.25, '2008-07-22');
+INSERT INTO eleves VALUES ('B201', 'Gharbi Youssef', 16.75, '2008-11-05');
+INSERT INTO eleves VALUES ('C302', 'Mansouri Salma', 12.00, '2008-01-19');</pre>
+
+    <h2>Partie II — Architecture <code>index.html</code> et <code>style.css</code> (4 pts)</h2>
+    <pre>&lt;!-- Fichier : index.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Gestion des Élèves — Lycée Rafèha&lt;/title&gt;
+    &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        &lt;img src="logo.png" alt="Logo" width="48"&gt;
+        &lt;h1&gt;Gestion des Élèves par Catégorie — Lycée Rafèha&lt;/h1&gt;
+    &lt;/header&gt;
+
+    &lt;nav&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;a href="inscription.html" target="cadre"&gt;Inscription d'un élève&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="recherche.html" target="cadre"&gt;Recherche par Catégorie&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="statistiques.php" target="cadre"&gt;Statistiques &amp; Admis&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+
+    &lt;section&gt;
+        &lt;iframe name="cadre" src="inscription.html"&gt;&lt;/iframe&gt;
+    &lt;/section&gt;
+
+    &lt;footer&gt;
+        Lycée Rafèha — 4ème Sciences de l'Informatique — Année scolaire 2026
+    &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <div class="note-box">
+      <strong>Rappel CSS sur <code>transition</code> :</strong><br />
+      • <code>all</code> : applique la transition sur toutes les propriétés modifiées au survol.<br />
+      • <code>ease</code> : démarrage lent, rapide au milieu, fin lente.<br />
+      • <code>ease-in</code> : démarrage lent puis accélère.<br />
+      • <code>ease-out</code> : démarrage rapide puis ralentit à la fin.<br />
+      • <code>ease-in-out</code> : démarrage et fin progressifs et symétriques.
+    </div>
+    <pre>/* Fichier : style.css (Mise en page avec float, sans flex) */
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Arial, sans-serif; }
+header { height: 80px; background: #1a365d; color: #fff; text-align: center; padding: 12px; }
+nav {
+    float: left;
+    width: 25%;
+    height: 460px;
+    background: #e2e8f0;
+    padding: 15px;
+}
+nav a {
+    display: block;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: #2b6cb0;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease-in-out;
+}
+nav a:hover {
+    background: #1a365d;
+    padding-left: 20px;
+}
+section {
+    float: left;
+    width: 75%;
+    height: 460px;
+}
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+footer {
+    clear: both;
+    height: 50px;
+    background: #1e293b;
+    color: #fff;
+    text-align: center;
+    line-height: 50px;
+}</pre>
+
+    <h2>Partie III — Formulaire <code>inscription.html</code> et script <code>controle.js</code> (5 pts)</h2>
+    <pre>&lt;!-- Fichier : inscription.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Inscription Élève&lt;/title&gt;
+    &lt;script src="controle.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Inscription d'un nouvel élève&lt;/h2&gt;
+    &lt;form action="inscription.php" method="post" onsubmit="return verif()"&gt;
+        &lt;p&gt;Identifiant (1re lettre majuscule = Catégorie) : &lt;input type="text" id="id" name="id"&gt;&lt;/p&gt;
+        &lt;p&gt;Nom et Prénom (2 à 5 mots) : &lt;input type="text" id="np" name="np"&gt;&lt;/p&gt;
+        &lt;p&gt;Moyenne : &lt;input type="text" id="moy" name="moy"&gt;&lt;/p&gt;
+        &lt;p&gt;Date de naissance : &lt;input type="date" id="dn" name="dn"&gt;&lt;/p&gt;
+        &lt;p&gt;&lt;input type="submit" value="Inscrire"&gt; &lt;input type="reset" value="Annuler"&gt;&lt;/p&gt;
+    &lt;/form&gt;
+    &lt;div id="msg" style="color:red;font-weight:bold;"&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+    <pre>// Fichier : controle.js (avec let, getElementById uniquement, aucun querySelector)
+function estLettreOuEspace(ch) {
+    for (let i = 0; i &lt; ch.length; i++) {
+        let c = ch[i].toUpperCase();
+        if (!((c &gt;= "A" &amp;&amp; c &lt;= "Z") || c === " ")) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function nettoyerEspaces(ch) {
+    let s = ch.trim();
+    while (s.indexOf("  ") !== -1) {
+        s = s.replace("  ", " ");
+    }
+    return s;
+}
+
+function verif() {
+    let id  = document.getElementById("id").value.trim();
+    let np  = nettoyerEspaces(document.getElementById("np").value);
+    document.getElementById("np").value = np; // Réinjecte la chaîne sans espaces superflus
+    let moy = document.getElementById("moy").value.trim();
+    let dn  = document.getElementById("dn").value;
+    let msg = document.getElementById("msg");
+    msg.innerHTML = "";
+
+    // 1) Contrôle de Id : commence par une lettre majuscule (= Catégorie)
+    if (id.length &lt; 2 || id[0] &lt; "A" || id[0] &gt; "Z") {
+        msg.innerHTML = "Erreur : Id doit commencer par une lettre majuscule (Catégorie) !";
+        alert("Erreur : Id invalide !");
+        return false;
+    }
+
+    // 2) Contrôle de Nom_prenom : lettres et espaces uniquement, entre 2 et 5 mots
+    let mots = np === "" ? [] : np.split(" ");
+    if (!estLettreOuEspace(np) || mots.length &lt; 2 || mots.length &gt; 5) {
+        msg.innerHTML = "Erreur : Nom_prenom ne doit contenir que des lettres/espaces (entre 2 et 5 mots) !";
+        return false;
+    }
+
+    // 3) Contrôle de Moyenne : nombre réel entre 0 et 20
+    if (moy === "" || isNaN(moy) || Number(moy) &lt; 0 || Number(moy) &gt; 20) {
+        msg.innerHTML = "Erreur : la moyenne doit être comprise entre 0 et 20 !";
+        return false;
+    }
+
+    // 4) Contrôle de DateNaissance : getMonth() renvoie 0..11 donc + 1
+    if (dn === "") {
+        msg.innerHTML = "Veuillez saisir la date de naissance !";
+        return false;
+    }
+    let d = new Date(dn);
+    let annee = d.getFullYear();
+    let mois  = d.getMonth() + 1;
+    if (annee &lt; 2004 || annee &gt; 2010) {
+        msg.innerHTML = "Erreur : année de naissance hors intervalle (2004-2010), mois lu = " + mois;
+        return false;
+    }
+
+    return true;
+}</pre>
+
+    <h2>Partie IV — Pages PHP expliquées ligne par ligne (8 pts)</h2>
+    <pre>&lt;?php
+// === 1. Fichier : inscription.php (3 pts) ===
+$con = mysqli_connect("localhost", "root", "", "bd_lycee"); // Connexion au serveur MySQL
+
+$id  = $_POST["id"];  // Lecture de l'identifiant
+$np  = $_POST["np"];  // Lecture de Nom_prenom
+$moy = $_POST["moy"]; // Lecture de la moyenne
+$dn  = $_POST["dn"];  // Lecture de la date de naissance
+
+// Vérifier si l'élève existe déjà avec mysqli_num_rows($res)
+$req1 = "SELECT * FROM eleves WHERE Id = '$id'";
+$res1 = mysqli_query($con, $req1);
+
+if (mysqli_num_rows($res1) &gt; 0) {
+    echo "Erreur : l'élève d'identifiant $id existe déjà !";
+} else {
+    $req2 = "INSERT INTO eleves VALUES ('$id', '$np', $moy, '$dn')";
+    mysqli_query($con, $req2);
+
+    if (mysqli_affected_rows($con) &gt; 0) {
+        $cat = substr($id, 0, 1); // Initiale de l'Id = Catégorie
+        echo "Inscription réussie dans la Catégorie $cat !";
+    } else {
+        echo "Échec de l'insertion.";
+    }
+}
+mysqli_close($con);
+?&gt;</pre>
+
+    <pre>&lt;?php
+// === 2. Fichier : recherche.php (2 pts) ===
+$con = mysqli_connect("localhost", "root", "", "bd_lycee");
+$cat = $_POST["cat"]; // Lettre majuscule choisie (ex: 'A')
+
+$req = "SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves
+        WHERE LEFT(Id, 1) = '$cat' ORDER BY Moyenne DESC";
+$res = mysqli_query($con, $req);
+
+if (mysqli_num_rows($res) == 0) {
+    echo "Aucun élève trouvé dans la catégorie $cat.";
+} else {
+    echo "&lt;h3&gt;Élèves de la Catégorie $cat :&lt;/h3&gt;";
+    while ($t = mysqli_fetch_assoc($res)) {
+        echo $t["Id"] . " — " . $t["Nom_prenom"] . " (" . $t["Moyenne"] . ")&lt;br&gt;";
+    }
+}
+mysqli_close($con);
+?&gt;</pre>
+
+    <pre>&lt;?php
+// === 3. Fichier : statistiques.php (3 pts) ===
+$con = mysqli_connect("localhost", "root", "", "bd_lycee");
+
+// a) Nombre d'admis avec SELECT COUNT(*) AS nb (renvoie 1 seule ligne -> fetch !)
+$resNb = mysqli_query($con, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &gt;= 10");
+$ligNb = mysqli_fetch_assoc($resNb);
+echo "&lt;h3&gt;Nombre d'élèves admis : " . $ligNb["nb"] . "&lt;/h3&gt;";
+
+// b) Liste triée par Catégorie (initiale de Id) avec séparation Nom et Prénom par l'espace
+$req = "SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves
+        ORDER BY LEFT(Id, 1) ASC, Nom_prenom ASC";
+$res = mysqli_query($con, $req);
+
+echo "&lt;table border='1' cellpadding='6'&gt;";
+echo "&lt;tr&gt;&lt;th&gt;Catégorie&lt;/th&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;/tr&gt;";
+
+while ($t = mysqli_fetch_assoc($res)) {
+    $cat    = substr($t["Id"], 0, 1);        // 1re lettre de Id = Catégorie
+    $pos    = strpos($t["Nom_prenom"], " "); // Position du 1er espace
+    $nom    = substr($t["Nom_prenom"], 0, $pos);
+    $prenom = substr($t["Nom_prenom"], $pos + 1);
+
+    echo "&lt;tr&gt;";
+    echo "&lt;td&gt;$cat&lt;/td&gt;&lt;td&gt;" . $t["Id"] . "&lt;/td&gt;";
+    echo "&lt;td&gt;$nom&lt;/td&gt;&lt;td&gt;$prenom&lt;/td&gt;";
+    echo "&lt;td&gt;" . $t["Moyenne"] . "&lt;/td&gt;";
+    echo "&lt;/tr&gt;";
+}
+echo "&lt;/table&gt;";
+mysqli_close($con);
+?&gt;</pre>
+
+    <div class="footer-page">Pages Web Dynamiques — Corrigé Intégral Série N°5 (Bac Pratique STI)</div>
+
+    <link rel="stylesheet" href="../../assets/css/protection.css?v=227" />
+    <script src="../../assets/js/protection.js?v=227" defer></script>
+    <script src="../../assets/js/supabase-umd.js"></script>
+    <script src="../../assets/js/config.js?v=256"></script>
+    <script src="../../assets/js/acces.js?v=270"></script>
+  </body>
+</html>

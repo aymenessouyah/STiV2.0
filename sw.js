@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v269";
+var CACHE = "sti-atelier-v270";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
 var videosEnCoursDeCache = {};
 var SHELL = [
@@ -15,8 +15,13 @@ var SHELL = [
   "./pieges-bac.html",
   "./memo-veille-bac.html",
   "./outils-js-bac.html",
+  "./exercices/php/Tp1-php.html",
+  "./exercices/php/Tp1-Correction-php.html",
   "./exercices/php/Tp4-php.html",
   "./exercices/php/Tp4-Correction-php.html",
+  "./exercices/php/Tp5-php.html",
+  "./exercices/php/Tp5-Correction-php.html",
+  "./exercices/php/trace-fetch-php.html",
   "./exercices/php/ordre-php-bac.html",
   "./exercices/php/debogage-php-bac.html",
   "./carte-visite.html",
