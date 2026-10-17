@@ -1,5 +1,15 @@
 [
   {
+    "version": "v289",
+    "date": "2026-10-17",
+    "categorie": "Vidéo CSS3",
+    "icone": "🎨",
+    "titre": "CSS3 détaillé : du restaurant brut à la page mise en forme",
+    "resume": "Nouvelle vidéo Full HD en dix chapitres suivant l’annexe officielle des 3e et 4e STI. Elle commence par une animation de restaurant qui compare le même HTML sans CSS puis avec CSS, avant de détailler la cascade, les sélecteurs, le texte, tous les arrière-plans, le modèle de boîte, display, overflow, opacity, le positionnement, float, Flexbox, les bordures, les ombres, les tableaux, les listes, les transformations, les transitions et les animations. Les notions contenues dans les boîtes de détail sont intégrées au parcours.",
+    "lien": "cours/css3.html",
+    "libelleLien": "Regarder le nouveau cours CSS3 détaillé"
+  },
+  {
     "version": "v288",
     "date": "2026-10-17",
     "categorie": "Vidéo PHP & MySQLi",

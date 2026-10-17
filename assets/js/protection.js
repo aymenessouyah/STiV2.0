@@ -937,6 +937,7 @@
                   uSqlV275.indexOf("php-guichet-v4.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v2.mp4") !== -1 ||
+                  uSqlV275.indexOf("css3-cours.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v2.mp4") !== -1 ||
@@ -958,8 +959,8 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours.mp4?v=227",
-        title: "🎥 Bienvenue dans STI V2.0 By AE — Cours CSS3 complet animé (.mp4)"
+        file: "css3-cours-v2.mp4?v=289",
+        title: "🎥 CSS3 complet — Annexe officielle 3e & 4e STI, restaurant avant/après et toutes les boîtes détaillées"
       };
       var VIDEO_JS_INFO = {
         file: "javascript-cours.mp4?v=227",
@@ -1030,15 +1031,16 @@
           { t: 339.33, short: "X. <iframe>", label: "05:39 · X (10). Intégrer une page : <iframe> (attributs, target='cadre', srcdoc, sandbox)", sel: "#iframe" }
         ],
         "css3-cours": [
-          { t: 0.00, short: "I. Sélecteurs", label: "00:00 · I. Syntaxe et Sélecteurs CSS3", sel: "#point-1" },
-          { t: 36.01, short: "II. Polices & Texte", label: "00:36 · II. Polices, Textes et Couleurs (font, text)", sel: "#point-2" },
-          { t: 57.37, short: "III. Fond", label: "00:57 · III. Arrière-plans et Dégradés (background)", sel: "#point-3" },
-          { t: 65.32, short: "IV. Listes & Tables", label: "01:05 · IV. Listes et Tableaux stylisés (border-collapse)", sel: "#point-6" },
-          { t: 73.07, short: "V. Boîtes & Ombres", label: "01:13 · V. Modèle de boîte, Bordures & Ombres", sel: "#point-7" },
-          { t: 88.63, short: "VI. Position", label: "01:29 · VI. Affichage & Positionnement (display, position)", sel: "#point-4" },
-          { t: 110.11, short: "VII. Flexbox", label: "01:50 · VII. Mise en page Flexbox", sel: "#point-5" },
-          { t: 132.12, short: "VIII. Animations", label: "02:12 · VIII. Transitions, Transformations & Animations", sel: "#point-8" },
-          { t: 144.62, short: "IX. Pas à pas", label: "02:25 · IX. Leçons animées CSS pas à pas", sel: "#css-pas-a-pas" }
+          { t: 0.00, short: "1. Restaurant & cascade", label: "00:00 · 1. Bienvenue, restaurant HTML sans CSS / avec CSS, syntaxe, cascade et spécificité", sel: "#css-definition-title" },
+          { t: 79.33, short: "2. Sélecteurs & texte", label: "01:19 · 2. Sélecteurs, combinaisons, liens LoVe/HAte, typographie et text-shadow", sel: "#point-1" },
+          { t: 162.02, short: "3. Fonds & boîte", label: "02:42 · 3. Arrière-plans, modèle de boîte, background-color/image/repeat/size/origin/clip", sel: "#point-3" },
+          { t: 234.39, short: "4. background détaillé", label: "03:54 · 4. Super-propriété background, couches, réinitialisation et pièges", sel: "#point-3" },
+          { t: 326.58, short: "5. Display & overflow", label: "05:27 · 5. inline, block, inline-block, overflow, ellipsis et opacity", sel: "#point-4" },
+          { t: 373.67, short: "6. Positionnement", label: "06:14 · 6. relative, absolute, fixed, sticky, repères, flux et z-index", sel: "#point-5" },
+          { t: 456.04, short: "7. Float & Flexbox", label: "07:36 · 7. float, clear, flow-root et Flexbox avec les axes", sel: "#point-5" },
+          { t: 536.52, short: "8. Bordures & tableaux", label: "08:57 · 8. border-radius, box-shadow, table-layout et border-collapse", sel: "#point-6" },
+          { t: 620.84, short: "9. Listes & transform", label: "10:21 · 9. list-style puis rotate, skew, scale et translate", sel: "#point-7" },
+          { t: 660.69, short: "10. Transition & animation", label: "11:01 · 10. transition, @keyframes, animation, synthèse et conclusion", sel: "#point-8" }
         ],
         "javascript-cours": [
           { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#intro" },
