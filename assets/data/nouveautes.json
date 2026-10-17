@@ -1,5 +1,15 @@
 [
   {
+    "version": "v290",
+    "date": "2026-10-17",
+    "categorie": "Vidéo CSS3",
+    "icone": "🔳",
+    "titre": "Logo et QR de la plateforme visibles dans la vidéo CSS3",
+    "resume": "Le logo du lycée et le QR code de la plateforme sont désormais affichés ensemble en permanence dans l’angle supérieur droit de la vidéo CSS3, sans recouvrir l’animation, les explications ni les sous-titres. Le parcours détaillé en dix chapitres et l’animation du restaurant sont conservés.",
+    "lien": "cours/css3.html",
+    "libelleLien": "Regarder la version CSS3 avec logo et QR"
+  },
+  {
     "version": "v289",
     "date": "2026-10-17",
     "categorie": "Vidéo CSS3",

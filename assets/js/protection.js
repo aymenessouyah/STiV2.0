@@ -937,6 +937,7 @@
                   uSqlV275.indexOf("php-guichet-v4.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v2.mp4") !== -1 ||
+                  uSqlV275.indexOf("css3-cours-v2.mp4") !== -1 ||
                   uSqlV275.indexOf("css3-cours.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours.mp4") !== -1 ||
@@ -959,8 +960,8 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours-v2.mp4?v=289",
-        title: "🎥 CSS3 complet — Annexe officielle 3e & 4e STI, restaurant avant/après et toutes les boîtes détaillées"
+        file: "css3-cours-v3.mp4?v=290",
+        title: "🎥 CSS3 complet — Annexe 3e & 4e STI, restaurant avant/après, logo et QR de la plateforme"
       };
       var VIDEO_JS_INFO = {
         file: "javascript-cours.mp4?v=227",
