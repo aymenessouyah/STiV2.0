@@ -937,6 +937,9 @@
                   uSqlV275.indexOf("php-guichet-v4.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("php-guichet-v2.mp4") !== -1 ||
+                  uSqlV275.indexOf("css3-cours-v6.mp4") !== -1 ||
+                  uSqlV275.indexOf("css3-cours-v5.mp4") !== -1 ||
+                  uSqlV275.indexOf("css3-cours-v4.mp4") !== -1 ||
                   uSqlV275.indexOf("css3-cours-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("css3-cours-v2.mp4") !== -1 ||
                   uSqlV275.indexOf("css3-cours.mp4") !== -1 ||
@@ -961,8 +964,8 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours-v6.mp4?v=293",
-        title: "🎥 CSS3 complet — Guide-Ligne, transitions annoncées, positions et float animés, 3e & 4e SI"
+        file: "css3-cours-v7.mp4?v=295",
+        title: "🎥 CSS3 complet — Guide-Ligne synchronisé, tableaux détaillés, filtres animés, 3e & 4e SI"
       };
       var VIDEO_JS_INFO = {
         file: "javascript-cours.mp4?v=227",
@@ -1033,16 +1036,16 @@
           { t: 339.33, short: "X. <iframe>", label: "05:39 · X (10). Intégrer une page : <iframe> (attributs, target='cadre', srcdoc, sandbox)", sel: "#iframe" }
         ],
         "css3-cours": [
-          { t: 0.00, short: "1. Restaurant & cascade", label: "00:00 · 1. Logo, QR et titre, puis restaurant HTML sans CSS / avec CSS à Mégrine, syntaxe et cascade", sel: "#css-definition-title" },
-          { t: 82.55, short: "2. Sélecteurs & texte", label: "01:23 · 2. Passons aux sélecteurs, liens LoVe/HAte, typographie et text-shadow", sel: "#point-1" },
-          { t: 166.46, short: "3. Fonds & boîte", label: "02:46 · 3. Passons aux arrière-plans, modèle de boîte, background-color/image/repeat/size/origin/clip", sel: "#point-3" },
-          { t: 239.04, short: "4. background détaillé", label: "03:59 · 4. Passons à la super-propriété background, ses couches, réinitialisations et pièges", sel: "#point-3" },
-          { t: 335.67, short: "5. Display & overflow", label: "05:36 · 5. Passons à inline, block, inline-block, overflow, ellipsis et opacity", sel: "#point-4" },
-          { t: 384.89, short: "6. Positions animées", label: "06:25 · 6. Passons aux positions : relative, absolute, fixed, sticky, flux, repères et tableau comparatif", sel: "#point-5" },
-          { t: 462.33, short: "7. Float animé & Flexbox", label: "07:42 · 7. Passons à float : sortie du flux, frère remonté, partie masquée, clear, flow-root et Flexbox", sel: "#point-5" },
-          { t: 534.23, short: "8. Bordures & tableaux", label: "08:54 · 8. Passons aux bordures, box-shadow, table-layout et border-collapse", sel: "#point-6" },
-          { t: 617.54, short: "9. Listes & transform", label: "10:18 · 9. Passons aux listes puis rotate, skew, scale et translate", sel: "#point-7" },
-          { t: 655.61, short: "10. Transition & animation", label: "10:56 · 10. Passons aux transitions, @keyframes, animations, synthèse et conclusion", sel: "#point-8" }
+          { t: 0.00, short: "1. Restaurant & cascade", label: "00:00 · 1. Logo STI bleu, QR et titre, puis restaurant HTML sans CSS / avec CSS, syntaxe et cascade", sel: "#css-definition-title" },
+          { t: 66.90, short: "2. Sélecteurs & texte", label: "01:07 · 2. Passons aux sélecteurs, liens LoVe/HAte, typographie et text-shadow", sel: "#point-1" },
+          { t: 141.48, short: "3. Fonds & boîte", label: "02:21 · 3. Passons aux arrière-plans, modèle de boîte, background-color/image/repeat/size/origin/clip", sel: "#point-3" },
+          { t: 212.25, short: "4. background détaillé", label: "03:32 · 4. Passons à la super-propriété background, ses couches, réinitialisations et pièges", sel: "#point-3" },
+          { t: 290.67, short: "5. Display & overflow", label: "04:51 · 5. Passons à inline, block, inline-block, overflow et opacity", sel: "#point-4" },
+          { t: 333.09, short: "6. Positions animées", label: "05:33 · 6. Passons aux positions : relative, absolute, fixed, sticky, flux, repères et tableau comparatif", sel: "#point-5" },
+          { t: 393.95, short: "7. Float animé & Flexbox", label: "06:34 · 7. Passons à float : sortie du flux, frère remonté, partie masquée, clear, flow-root et Flexbox", sel: "#point-5" },
+          { t: 449.04, short: "8. Bordures & tableaux", label: "07:29 · 8. Passons aux bordures, box-shadow, table-layout et border-collapse détaillés", sel: "#point-6" },
+          { t: 517.86, short: "9. Listes, filtres & transform", label: "08:38 · 9. Passons aux listes, galerie et animation des filtres, puis transformations", sel: "#point-7" },
+          { t: 587.93, short: "10. Transition & animation", label: "09:48 · 10. Passons aux transitions, @keyframes, animations, synthèse et conclusion", sel: "#point-8" }
         ],
         "javascript-cours": [
           { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#intro" },
@@ -2150,6 +2153,8 @@
           if (slugCible === "php-guichet") {
             vEl.__stiChoixPhpAffiche = false;
             vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v10-poster.jpg?v=288");
+          } else if (slugCible === "css3-cours") {
+            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/css3-cours-v7-poster.jpg?v=295");
           } else {
             vEl.removeAttribute("poster");
           }

@@ -1,5 +1,15 @@
 [
   {
+    "version": "v295",
+    "date": "2026-10-17",
+    "categorie": "Cours et vidéo CSS3",
+    "icone": "🎛️",
+    "titre": "Filtres CSS interactifs, tableaux animés et synchronisation PCM exacte",
+    "resume": "La section 8 propose maintenant un laboratoire filter avant transform, avec douze rendus immédiatement comparables et le code CSS correspondant. La vidéo Full HD v7 détaille et anime table-layout auto/fixed, border-collapse separate/collapse ainsi qu’une galerie et une progression de filtres CSS. Sa chronologie de 10 min 58 est calculée sur les échantillons PCM du même master audio afin d’aligner narration, sous-titres, mouvements et Guide-Ligne. Le logo officiel STI à fond bleu est utilisé ; le logo, le QR code et le nom de la ville restent absents de la narration.",
+    "lien": "cours/css3.html",
+    "libelleLien": "Tester les filtres et regarder la vidéo CSS3 v7"
+  },
+  {
     "version": "v294",
     "date": "2026-10-17",
     "categorie": "Accessibilité des cours",
