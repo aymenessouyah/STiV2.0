@@ -915,15 +915,15 @@
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours-v5.mp4?v=277",
-        title: "🎥 Cours SQL Full HD synchronisé — Guide-Ligne, projecteur silencieux, Avion PK Mère ➔ FK Fille, CREATE/Types/Contraintes/CASCADE/ALTER & INSERT détaillés"
+        file: "sql-cours-v6.mp4?v=278",
+        title: "🎥 Cours SQL Full HD — Bienvenue STI V2.0, Chantier LDD, CASCADE approfondi, avatars ALTER/DROP/INSERT/UPDATE/SELECT & Guide-Ligne synchronisé"
       };
       var VIDEO_SQL_INIT_INFO = {
-        file: "sql-cours-v5.mp4?v=277",
-        title: "🎥 Cours SQL Full HD synchronisé — Guide-Ligne, projecteur silencieux, Avion PK Mère ➔ FK Fille, CREATE/Types/Contraintes/CASCADE/ALTER & INSERT détaillés"
+        file: "sql-cours-v6.mp4?v=278",
+        title: "🎥 Cours SQL Full HD — Bienvenue STI V2.0, Chantier LDD, CASCADE approfondi, avatars ALTER/DROP/INSERT/UPDATE/SELECT & Guide-Ligne synchronisé"
       };
       /* v275 : supprimer immédiatement les anciennes vidéos SQL du cache persistant.
-         Le nouveau nom sql-cours-v5.mp4 garantit que la version détaillée et synchronisée remplace bien toute ancienne copie. */
+         Le nouveau nom sql-cours-v6.mp4 garantit que la version enrichie par les avatars métiers remplace bien toute ancienne copie. */
       if ("caches" in window) {
         caches.open("sti-videos-labo-v1").then(function (cacheSqlV275) {
           return cacheSqlV275.keys().then(function (clesSqlV275) {
@@ -933,6 +933,7 @@
                   uSqlV275.indexOf("sql-cours-v2.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v4.mp4") !== -1 ||
+                  uSqlV275.indexOf("sql-cours-v5.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-initiation.mp4") !== -1) {
                 return cacheSqlV275.delete(cleSqlV275);
               }
@@ -994,16 +995,16 @@
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
       var STI_CHAPITRES_MEDIA = {
         "sql-initiation": [
-          { t: 0.00, short: "1. Acteurs sans SQL", label: "00:00 · 1. Client, Administration/SGBD et Archives — projecteur silencieux et Guide-Ligne", sel: "#intro-bd" },
-          { t: 37.54, short: "2. Clés & Avion PK→FK", label: "00:38 · 2. Tables, clé simple/composée, graphique/textuel et Avion exact PK Mère → FK Fille", sel: "#intro-cles" },
-          { t: 86.35, short: "3. CREATE TABLE détaillé", label: "01:26 · 3. LDD : CREATE DATABASE/TABLE — Nom, Type, Taille optionnelle et Contraintes", sel: "#ldd" },
-          { t: 139.30, short: "4. Types & Tailles", label: "02:19 · 4. INT, DECIMAL, FLOAT, CHAR, VARCHAR, TEXT, DATE, TIME, DATETIME et BOOLEAN", sel: "#ldd" },
-          { t: 195.31, short: "5. Contraintes & CASCADE", label: "03:15 · 5. NOT NULL, UNIQUE, PRIMARY KEY, CHECK, DEFAULT, FK et différence avec/sans CASCADE", sel: "#ldd" },
-          { t: 250.54, short: "6. ALTER TABLE détaillé", label: "04:11 · 6. ALTER TABLE : ADD, MODIFY, CHANGE, DROP COLUMN/FOREIGN KEY et RENAME", sel: "#ldd" },
-          { t: 302.16, short: "7. INSERT détaillé", label: "05:02 · 7. INSERT : liste des champs, ordre, apostrophes, DEFAULT/NULL, multi-lignes et contrôles", sel: "#lmd" },
-          { t: 358.25, short: "8. UPDATE/DELETE/SELECT", label: "05:58 · 8. UPDATE, DELETE, SELECT, WHERE, Guide-Ligne et fonctions d'agrégation", sel: "#lmd-select" },
-          { t: 399.98, short: "9. [4ème SI] Avancé", label: "06:40 · 9. [Spécial 4ème SI] Jointure, GROUP BY/HAVING et sous-requête", sel: "#lmd-jointure" },
-          { t: 438.55, short: "10. Synthèse Guide-Ligne", label: "07:19 · 10. Synthèse complète LDD/LMD : le Guide-Ligne relie chaque mot SQL à l'élément réel", sel: "#intro" }
+          { t: 0.00, short: "1. Bienvenue & Acteurs", label: "00:00 · 1. Bienvenue dans la plateforme STI V2.0 By A.E puis Client, SGBD et Archives", sel: "#intro-bd" },
+          { t: 41.42, short: "2. Clés & Avion PK→FK", label: "00:41 · 2. Tables, clé simple/composée, graphique/textuel et Avion exact PK Mère → FK Fille", sel: "#intro-cles" },
+          { t: 90.24, short: "3. Chantier CREATE TABLE", label: "01:30 · 3. Le chantier commence : avatar chef de chantier et CREATE TABLE détaillé", sel: "#ldd" },
+          { t: 140.54, short: "4. Types & Tailles", label: "02:21 · 4. INT, DECIMAL, FLOAT, CHAR, VARCHAR, TEXT, DATE, TIME, DATETIME et BOOLEAN", sel: "#ldd" },
+          { t: 196.56, short: "5. CASCADE approfondi", label: "03:17 · 5. Contraintes, RESTRICT/NO ACTION, ON DELETE/UPDATE CASCADE et SET NULL", sel: "#ldd" },
+          { t: 268.70, short: "6. Chantier ALTER/DROP", label: "04:29 · 6. Le chantier continue : machine à chenilles, ALTER TABLE détaillé et marteaux pour DROP", sel: "#ldd" },
+          { t: 331.44, short: "7. Camion & INSERT", label: "05:31 · 7. Chantier terminé : camion de déménagement et INSERT détaillé", sel: "#lmd" },
+          { t: 387.58, short: "8. UPDATE & Inspection", label: "06:28 · 8. Avatar de mise à jour pour UPDATE puis avatar d'inspection pour SELECT", sel: "#lmd-select" },
+          { t: 434.71, short: "9. [4ème SI] Avancé", label: "07:15 · 9. [Spécial 4ème SI] Jointure, GROUP BY/HAVING et sous-requête", sel: "#lmd-jointure" },
+          { t: 473.28, short: "10. Merci & Suite", label: "07:53 · 10. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
         ],
         "html5-cours": [
           { t: 0.00, short: "I. Squelette", label: "00:00 · I. Squelette HTML5 (<head>, <meta>, <link>, <script>)", sel: "#entete" },
@@ -1059,16 +1060,16 @@
           { t: 631.98, short: "IX. Récap & Guichet", label: "10:32 · IX. Récapitulatif Annexe PHP/MySQLi & Guichet", sel: "#s9" }
         ],
         "sql-cours": [
-          { t: 0.00, short: "1. Acteurs sans SQL", label: "00:00 · 1. Client, Administration/SGBD et Archives — projecteur silencieux et Guide-Ligne", sel: "#intro-bd" },
-          { t: 37.54, short: "2. Clés & Avion PK→FK", label: "00:38 · 2. Tables, clé simple/composée, graphique/textuel et Avion exact PK Mère → FK Fille", sel: "#intro-cles" },
-          { t: 86.35, short: "3. CREATE TABLE détaillé", label: "01:26 · 3. LDD : CREATE DATABASE/TABLE — Nom, Type, Taille optionnelle et Contraintes", sel: "#ldd" },
-          { t: 139.30, short: "4. Types & Tailles", label: "02:19 · 4. INT, DECIMAL, FLOAT, CHAR, VARCHAR, TEXT, DATE, TIME, DATETIME et BOOLEAN", sel: "#ldd" },
-          { t: 195.31, short: "5. Contraintes & CASCADE", label: "03:15 · 5. NOT NULL, UNIQUE, PRIMARY KEY, CHECK, DEFAULT, FK et différence avec/sans CASCADE", sel: "#ldd" },
-          { t: 250.54, short: "6. ALTER TABLE détaillé", label: "04:11 · 6. ALTER TABLE : ADD, MODIFY, CHANGE, DROP COLUMN/FOREIGN KEY et RENAME", sel: "#ldd" },
-          { t: 302.16, short: "7. INSERT détaillé", label: "05:02 · 7. INSERT : liste des champs, ordre, apostrophes, DEFAULT/NULL, multi-lignes et contrôles", sel: "#lmd" },
-          { t: 358.25, short: "8. UPDATE/DELETE/SELECT", label: "05:58 · 8. UPDATE, DELETE, SELECT, WHERE, Guide-Ligne et fonctions d'agrégation", sel: "#lmd-select" },
-          { t: 399.98, short: "9. [4ème SI] Avancé", label: "06:40 · 9. [Spécial 4ème SI] Jointure, GROUP BY/HAVING et sous-requête", sel: "#lmd-jointure" },
-          { t: 438.55, short: "10. Synthèse Guide-Ligne", label: "07:19 · 10. Synthèse complète LDD/LMD : le Guide-Ligne relie chaque mot SQL à l'élément réel", sel: "#intro" }
+          { t: 0.00, short: "1. Bienvenue & Acteurs", label: "00:00 · 1. Bienvenue dans la plateforme STI V2.0 By A.E puis Client, SGBD et Archives", sel: "#intro-bd" },
+          { t: 41.42, short: "2. Clés & Avion PK→FK", label: "00:41 · 2. Tables, clé simple/composée, graphique/textuel et Avion exact PK Mère → FK Fille", sel: "#intro-cles" },
+          { t: 90.24, short: "3. Chantier CREATE TABLE", label: "01:30 · 3. Le chantier commence : avatar chef de chantier et CREATE TABLE détaillé", sel: "#ldd" },
+          { t: 140.54, short: "4. Types & Tailles", label: "02:21 · 4. INT, DECIMAL, FLOAT, CHAR, VARCHAR, TEXT, DATE, TIME, DATETIME et BOOLEAN", sel: "#ldd" },
+          { t: 196.56, short: "5. CASCADE approfondi", label: "03:17 · 5. Contraintes, RESTRICT/NO ACTION, ON DELETE/UPDATE CASCADE et SET NULL", sel: "#ldd" },
+          { t: 268.70, short: "6. Chantier ALTER/DROP", label: "04:29 · 6. Le chantier continue : machine à chenilles, ALTER TABLE détaillé et marteaux pour DROP", sel: "#ldd" },
+          { t: 331.44, short: "7. Camion & INSERT", label: "05:31 · 7. Chantier terminé : camion de déménagement et INSERT détaillé", sel: "#lmd" },
+          { t: 387.58, short: "8. UPDATE & Inspection", label: "06:28 · 8. Avatar de mise à jour pour UPDATE puis avatar d'inspection pour SELECT", sel: "#lmd-select" },
+          { t: 434.71, short: "9. [4ème SI] Avancé", label: "07:15 · 9. [Spécial 4ème SI] Jointure, GROUP BY/HAVING et sous-requête", sel: "#lmd-jointure" },
+          { t: 473.28, short: "10. Merci & Suite", label: "07:53 · 10. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
         ],
         "php-guichet": [
           { t: 0.00, short: "1. Client & JS", label: "00:00 · Étapes 1 à 5 : Client, Formulaire HTML & Contrôle JS" },
