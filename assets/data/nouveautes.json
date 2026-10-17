@@ -1,5 +1,15 @@
 [
   {
+    "version": "v272",
+    "date": "2026-10-17",
+    "categorie": "Vidéo BD & SQL",
+    "icone": "🎬",
+    "titre": "Nouvelle Vidéo d'Initiation BD, SGBD & SQL (LDD + LMD + 5 Fonctions d'Agrégation sans jointure)",
+    "resume": "Vidéo Full HD 1080p de 8 min 41 en 8 chapitres (2 colonnes : code SQL à gauche, tables animées à droite + Logo & QR Code) détaillant BD, SGBD, SQL, LDD (CREATE, ALTER TABLE ADD/MODIFY/CHANGE/DROP, DROP TABLE) et LMD (INSERT INTO, UPDATE, SELECT et les 5 fonctions d'agrégation COUNT, AVG, MAX, MIN, SUM + GROUP BY / HAVING sans jointure).",
+    "lien": "cours/sql.html#video-initiation-sql",
+    "libelleLien": "Regarder la vidéo d'Initiation SQL"
+  },
+  {
     "version": "v271",
     "date": "2026-10-17",
     "categorie": "Exercices PHP & Bac STI",

@@ -918,6 +918,10 @@
         file: "sql-cours.mp4?v=235",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours SQL complet animé (.mp4)"
       };
+      var VIDEO_SQL_INIT_INFO = {
+        file: "sql-initiation.mp4?v=272",
+        title: "🎥 Initiation BD, SGBD & SQL — LDD (CREATE, ALTER TABLE, DROP) & LMD (INSERT, UPDATE, SELECT & Fonctions d'Agrégation sans jointure)"
+      };
       var VIDEO_HTML5_INFO = {
         file: "html5-cours.mp4?v=227",
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
@@ -969,6 +973,16 @@
 
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
       var STI_CHAPITRES_MEDIA = {
+        "sql-initiation": [
+          { t: 0.00, short: "1. BD, SGBD & SQL", label: "00:00 · 1. Concepts : Base de Données (BD), SGBD & SQL (LDD vs LMD)", sel: "#intro-bd" },
+          { t: 61.37, short: "2. LDD : CREATE", label: "01:01 · 2. LDD (1/2) : CREATE DATABASE, USE & CREATE TABLE (Types & Contraintes)", sel: "#ldd" },
+          { t: 127.54, short: "3. LDD : ALTER & DROP", label: "02:07 · 3. LDD (2/2) : ALTER TABLE (ADD, MODIFY, CHANGE, DROP) & DROP TABLE", sel: "#ldd" },
+          { t: 192.20, short: "4. LMD : INSERT INTO", label: "03:12 · 4. LMD (1/4) : INSERT INTO — Insérer des enregistrements", sel: "#lmd" },
+          { t: 256.62, short: "5. LMD : UPDATE", label: "04:16 · 5. LMD (2/4) : UPDATE ... SET ... WHERE (et DELETE)", sel: "#lmd" },
+          { t: 322.84, short: "6. LMD : SELECT", label: "05:22 · 6. LMD (3/4) : SELECT sans jointure (WHERE, LIKE, BETWEEN, ORDER BY)", sel: "#lmd" },
+          { t: 391.50, short: "7. 5 Agrégats", label: "06:31 · 7. LMD (4/4) : Les 5 Fonctions d'Agrégation sans jointure (COUNT, AVG, MAX, MIN, SUM)", sel: "#fonctions" },
+          { t: 457.72, short: "8. GROUP BY & HAVING", label: "07:37 · 8. Regroupement GROUP BY, filtrage HAVING & Synthèse SQL", sel: "#fonctions" }
+        ],
         "html5-cours": [
           { t: 0.00, short: "I. Squelette", label: "00:00 · I. Squelette HTML5 (<head>, <meta>, <link>, <script>)", sel: "#entete" },
           { t: 45.09, short: "II. Structure", label: "00:45 · II. Structuration (<header>, <nav>, <main>, <section>)", sel: "#structuration" },
@@ -1432,6 +1446,10 @@
         return prefixeAssetsSTI() + "videos/" + VIDEO_SQL_INFO.file;
       }
 
+      function resoudreUrlVideoSqlInit() {
+        return prefixeAssetsSTI() + "videos/" + VIDEO_SQL_INIT_INFO.file;
+      }
+
       function resoudreUrlVideoHtml5() {
         return prefixeAssetsSTI() + "videos/" + VIDEO_HTML5_INFO.file;
       }
@@ -1706,15 +1724,16 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt, startSecOpt) {
         var sSlug = String(slugOuUrl || "");
-        var estExploreFloat = (sSlug === "explore-tunisie-float" || sSlug.indexOf("explore-tunisie-float") !== -1);
-        var estExploreFlex = (!estExploreFloat && (sSlug === "explore-tunisie-flex" || sSlug.indexOf("explore-tunisie-flex") !== -1));
-        var estSqlSerie6 = (!estExploreFloat && !estExploreFlex && (sSlug === "sql-serie6" || sSlug.indexOf("sql-serie6") !== -1));
-        var estSqlSerie5 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && (sSlug === "sql-serie5" || sSlug.indexOf("sql-serie5") !== -1));
-        var estSqlSerie4 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && (sSlug === "sql-serie4" || sSlug.indexOf("sql-serie4") !== -1));
-        var estSqlSerie3 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && (sSlug === "sql-serie3" || sSlug.indexOf("sql-serie3") !== -1));
-        var estSqlSerie2 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && (sSlug === "sql-serie2" || sSlug.indexOf("sql-serie2") !== -1));
-        var estSqlSerie1 = (!estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && !estSqlSerie2 && (sSlug === "sql-serie1" || sSlug.indexOf("sql-serie1") !== -1));
-        var estSqlSerieAny = (estExploreFloat || estExploreFlex || estSqlSerie1 || estSqlSerie2 || estSqlSerie3 || estSqlSerie4 || estSqlSerie5 || estSqlSerie6);
+        var estSqlInit = (sSlug === "sql-initiation" || sSlug.indexOf("sql-initiation") !== -1);
+        var estExploreFloat = (!estSqlInit && (sSlug === "explore-tunisie-float" || sSlug.indexOf("explore-tunisie-float") !== -1));
+        var estExploreFlex = (!estSqlInit && !estExploreFloat && (sSlug === "explore-tunisie-flex" || sSlug.indexOf("explore-tunisie-flex") !== -1));
+        var estSqlSerie6 = (!estSqlInit && !estExploreFloat && !estExploreFlex && (sSlug === "sql-serie6" || sSlug.indexOf("sql-serie6") !== -1));
+        var estSqlSerie5 = (!estSqlInit && !estExploreFloat && !estExploreFlex && !estSqlSerie6 && (sSlug === "sql-serie5" || sSlug.indexOf("sql-serie5") !== -1));
+        var estSqlSerie4 = (!estSqlInit && !estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && (sSlug === "sql-serie4" || sSlug.indexOf("sql-serie4") !== -1));
+        var estSqlSerie3 = (!estSqlInit && !estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && (sSlug === "sql-serie3" || sSlug.indexOf("sql-serie3") !== -1));
+        var estSqlSerie2 = (!estSqlInit && !estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && (sSlug === "sql-serie2" || sSlug.indexOf("sql-serie2") !== -1));
+        var estSqlSerie1 = (!estSqlInit && !estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && !estSqlSerie2 && (sSlug === "sql-serie1" || sSlug.indexOf("sql-serie1") !== -1));
+        var estSqlSerieAny = (estSqlInit || estExploreFloat || estExploreFlex || estSqlSerie1 || estSqlSerie2 || estSqlSerie3 || estSqlSerie4 || estSqlSerie5 || estSqlSerie6);
         var estHtml5 = (!estSqlSerieAny && (sSlug === "html5-cours" || sSlug.indexOf("html5-cours") !== -1 || (!sSlug && estPageHtml5)));
         var estCss3 = (!estSqlSerieAny && !estHtml5 && (sSlug === "css3-cours" || sSlug.indexOf("css3-cours") !== -1 || (!sSlug && estPageCss3)));
         var estJs = (!estSqlSerieAny && !estHtml5 && !estCss3 && (sSlug === "javascript-cours" || sSlug.indexOf("javascript-cours") !== -1 || (!sSlug && estPageJs)));
@@ -1755,7 +1774,7 @@
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
-        var slugCible = estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet"))))))))))))));
+        var slugCible = estSqlInit ? "sql-initiation" : (estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))))))))))));
         try {
           if (
             window.top &&
@@ -1766,8 +1785,8 @@
             return;
           }
         } catch (e) {}
-        var url = estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet()))))))))))))));
-        var titre = titreOpt || (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title)))))))))))))));
+        var url = estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
+        var titre = titreOpt || (estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
