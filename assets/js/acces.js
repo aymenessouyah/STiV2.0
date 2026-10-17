@@ -8879,7 +8879,8 @@
      4) Carnet de notes personnel hors-ligne par cours (Alt+N ou menu élève)
      ===================================================================== */
   var STI_SEARCH_ITEMS = [
-    /* --- PIÈGES DU BAC STI --- */
+    /* --- PIÈGES DU BAC & MÉMO VEILLE DU BAC STI --- */
+    { tech: "bac", badge: "📄 Mémo Bac", title: "Mémo Express Veille du Bac STI (Fiche A4 Recto-Verso)", sub: "Toutes les syntaxes HTML5/CSS3 (float, transition), JS (let, getElementById, Date), SQL et PHP/MySQLi sur 1 page", url: "memo-veille-bac.html", kw: "memo veille bac fiche a4 revision resume float transition getelementbyid mysqli fetch assoc group by having" },
     { tech: "bac", badge: "⚠️ Pièges Bac", title: "Les 25 Pièges du Bac STI à éviter (HTML/CSS · JS · SQL · PHP)", sub: "Erreurs classiques éliminatoires en épreuve pratique & théorique + exemples Faux vs Vrai", url: "pieges-bac.html", kw: "pieges bac erreurs frequentes onsubmit return getelementbyid mysqli fetch assoc group by where having varchar date float clear" },
     /* --- HTML5 --- */
     { tech: "htmlcss", badge: "🌐 HTML5", title: "En-tête & Structure d'une page HTML5", sub: "<!DOCTYPE html>, <head>, <meta charset>, <title>, <link>", url: "cours/html5.html#entete", kw: "doctype html head meta title link utf8 structure" },

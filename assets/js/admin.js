@@ -1287,6 +1287,7 @@
             "</div>" +
             "<div style='display:flex;align-items:center;gap:6px;flex-wrap:wrap'>" +
               "<button type='button' id='btn-num-auto-labo3' title='Numéroter automatiquement toutes les machines connues (Poste 01, Poste 02…)' style='border:1.5px solid #0284c7;background:#e0f2fe;color:#0369a1;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>🔢 Numéroter auto (Poste 01…)</button>" +
+              "<button type='button' id='btn-export-csv-labo3' title='Télécharger le rapport horodaté des postes du Labo 3 au format CSV (Excel)' style='border:1.5px solid #16a34a;background:#dcfce7;color:#14532d;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>📥 Exporter présence (CSV)</button>" +
               "<button type='button' id='btn-fermer-band-labo3' style='border:1.5px solid #0284c7;background:#fff;color:#0284c7;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>✖ Masquer</button>" +
             "</div>" +
           "</div>" +
@@ -1297,6 +1298,31 @@
           bCloseLabo.onclick = function () {
             bandeauLabo3ForceOuvert = false;
             bandLaboM.style.display = "none";
+          };
+        }
+        var bExpCsv = document.getElementById("btn-export-csv-labo3");
+        if (bExpCsv) {
+          bExpCsv.onclick = function () {
+            var maintenant = new Date();
+            var dateStr = maintenant.toISOString().slice(0, 10);
+            var heureStr = maintenant.toTimeString().slice(0, 8);
+            var lignesCsv = ["Poste;Code_Machine;Statut;Page_Active;Appareil;Horodatage_Export"];
+            infoLabo3.connues.forEach(function (m) {
+              var estOn = Boolean(m.ts > 0 && (Date.now() - m.ts < 95000));
+              var nomP = nomPosteLabo(m.code) || m.code;
+              var stTxt = estOn ? "EN_LIGNE" : "HORS_LIGNE";
+              var pgTxt = (m.page || "—").replace(/;/g, ",");
+              var apTxt = (m.appareil || "PC").replace(/;/g, ",");
+              lignesCsv.push(nomP + ";" + m.code + ";" + stTxt + ";" + pgTxt + ";" + apTxt + ";" + dateStr + " " + heureStr);
+            });
+            var blob = new Blob(["\uFEFF" + lignesCsv.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+            var a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "presence_labo3_" + dateStr + ".csv";
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function () { a.remove(); }, 300);
+            msg("📥 Rapport de présence Labo 3 exporté (" + infoLabo3.ouvertes.length + " machine(s) ouverte(s) / " + infoLabo3.connues.length + " poste(s)) !", "ok");
           };
         }
         var bAutoNum = document.getElementById("btn-num-auto-labo3");

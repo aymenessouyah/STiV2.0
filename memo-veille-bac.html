@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mémo Express Veille du Bac STI (A4 Recto-Verso) — STI V2.0 By AE</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/sti-icon-192.png">
+  <link rel="stylesheet" href="assets/css/atelier.css">
+  <link rel="stylesheet" href="assets/css/protection.css?v=227">
+  <script src="assets/js/protection.js?v=227"></script>
+  <style>
+    :root {
+      --bg: #faf6ee;
+      --card: #ffffff;
+      --ink: #23201a;
+      --muted: #5a5244;
+      --border: #23201a;
+      --code-bg: #1e293b;
+      --code-ink: #f8fafc;
+    }
+    html[data-theme="dark"], html.dark-mode {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --ink: #f8fafc;
+      --muted: #cbd5e1;
+      --border: #475569;
+      --code-bg: #090d16;
+      --code-ink: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .wrap-memo {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px 18px 50px;
+    }
+    .topbar-memo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .btn-m {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 12.5px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--border);
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-m:hover { transform: translateY(-2px); }
+    .hero-memo {
+      background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 55%, #ede9fe 100%);
+      color: #0f172a;
+      border: 3px solid #23201a;
+      border-radius: 20px;
+      padding: 20px 24px;
+      box-shadow: 5px 5px 0 #23201a;
+      margin-bottom: 18px;
+    }
+    html[data-theme="dark"] .hero-memo, html.dark-mode .hero-memo {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #f8fafc;
+      border-color: #38bdf8;
+      box-shadow: 5px 5px 0 #38bdf8;
+    }
+    .hero-memo h1 { margin: 0 0 6px; font-size: clamp(21px, 2.8vw, 28px); font-weight: 900; }
+    .hero-memo p { margin: 0; font-size: 14px; font-weight: 700; }
+    .grille-memo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 600px) {
+      .grille-memo { grid-template-columns: 1fr; }
+    }
+    .bloc-memo {
+      background: var(--card);
+      border: 2.5px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 4px 4px 0 var(--border);
+    }
+    .bloc-memo h2 {
+      margin: 0 0 10px;
+      font-size: 17px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 7px;
+      border-bottom: 2px solid var(--border);
+    }
+    .bloc-memo h3 {
+      margin: 12px 0 5px;
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #f4511e;
+    }
+    pre.code-m {
+      margin: 4px 0 8px;
+      padding: 9px 11px;
+      border-radius: 9px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      line-height: 1.42;
+    }
+    ul.liste-m {
+      margin: 4px 0;
+      padding-left: 18px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    ul.liste-m li { margin-bottom: 4px; }
+    @media print {
+      .topbar-memo { display: none !important; }
+      body { background: #fff; color: #000; font-size: 11px; }
+      .wrap-memo { max-width: 100%; padding: 0; }
+      .hero-memo { padding: 10px 14px; margin-bottom: 10px; box-shadow: none; }
+      .grille-memo { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .bloc-memo { break-inside: avoid; box-shadow: none; padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap-memo">
+    <div class="topbar-memo">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="index.html" class="btn-m">🏠 Accueil</a>
+        <a href="bac-pratique.html" class="btn-m">🧪 Atelier Bac Pratique</a>
+        <a href="pieges-bac.html" class="btn-m">⚠️ Les 25 Pièges du Bac</a>
+        <a href="cours/sql.html" class="btn-m">🗄️ Cours SQL</a>
+        <a href="cours/php.html" class="btn-m">🐘 Cours PHP</a>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" id="theme-toggle" class="btn-m">🌙 Mode Sombre</button>
+        <button type="button" onclick="window.print()" class="btn-m">🖨️ Imprimer en fiche A4</button>
+      </div>
+    </div>
+
+    <header class="hero-memo">
+      <div style="display:inline-block;background:#23201a;color:#fff3b0;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:900;margin-bottom:6px">
+        📄 FICHE DE SYNTHÈSE OFFICIELLE 4ème SI — PRÊTE À IMPRIMER EN A4
+      </div>
+      <h1>Mémo Express « Veille du Bac STI » (HTML5/CSS3 · JS · SQL · PHP/MySQLi)</h1>
+      <p>Toutes les syntaxes indispensables de l'épreuve pratique et théorique regroupées sur une seule page de révision rapide.</p>
+    </header>
+
+    <div class="grille-memo">
+      <!-- 1. HTML5 & CSS3 -->
+      <section class="bloc-memo">
+        <h2>🌐 1. HTML5 &amp; CSS3 (Architecture, Float &amp; Transition)</h2>
+        <h3>Architecture type Bac (`index.html` avec `<nav>` + `<iframe>` + `<footer>`)</h3>
+        <pre class="code-m"><code>&lt;header&gt;&lt;h1&gt;Titre du site&lt;/h1&gt;&lt;/header&gt;
+&lt;nav&gt;
+  &lt;a href="inscription.html" target="cadre"&gt;Inscription&lt;/a&gt;
+  &lt;a href="statistiques.php" target="cadre"&gt;Statistiques&lt;/a&gt;
+&lt;/nav&gt;
+&lt;section&gt;
+  &lt;iframe name="cadre" src="inscription.html"&gt;&lt;/iframe&gt;
+&lt;/section&gt;
+&lt;footer&gt;Pied de page&lt;/footer&gt;</code></pre>
+
+        <h3>Mise en page CSS avec `float` et `clear: both`</h3>
+        <pre class="code-m"><code>nav     { float: left; width: 25%; height: 480px; }
+section { float: left; width: 75%; height: 480px; }
+iframe  { width: 100%; height: 100%; border: none; }
+footer  { clear: both; height: 55px; text-align: center; }</code></pre>
+
+        <h3>Effets de `transition` CSS3 (`all`, `ease`, `ease-in`, `ease-out`, `ease-in-out`)</h3>
+        <pre class="code-m"><code>nav a {
+  display: block;
+  transition: all 0.3s ease-in-out; /* sur l'état normal ! */
+}
+nav a:hover {
+  transform: translateX(6px);
+  background-color: #1e3a8a;
+  color: #ffffff;
+}</code></pre>
+      </section>
+
+      <!-- 2. JAVASCRIPT -->
+      <section class="bloc-memo">
+        <h2>⚡ 2. JavaScript (`let`, `getElementById`, `getElementsByName`, `Date`)</h2>
+        <h3>Lecture des champs &amp; appel `onsubmit="return verif()"`</h3>
+        <pre class="code-m"><code>let id  = document.getElementById("id").value.trim();
+let moy = parseFloat(document.getElementById("moy").value);
+let sel = document.getElementById("station"); // sel.selectedIndex === 0
+let rad = document.getElementsByName("cat");  // !rad[0].checked &amp;&amp; !rad[1].checked</code></pre>
+
+        <h3>Fonctions booléennes classiques (`Nom_prenom` : lettres + espaces, 2 à 5 mots)</h3>
+        <pre class="code-m"><code>function nettoyerEspaces(ch) {
+  let res = "", precEspace = true;
+  for (let i = 0; i &lt; ch.length; i++) {
+    if (ch[i] !== " ") { res += ch[i]; precEspace = false; }
+    else if (!precEspace) { res += " "; precEspace = true; }
+  }
+  return res.trim();
+}
+function verifNomPrenom(ch) {
+  let propre = nettoyerEspaces(ch);
+  if (propre.length === 0) return false;
+  let nbEspaces = 0;
+  for (let i = 0; i &lt; propre.length; i++) {
+    let c = propre[i].toUpperCase();
+    if (c === " ") nbEspaces++;
+    else if (c &lt; "A" || c &gt; "Z") return false;
+  }
+  let nbMots = nbEspaces + 1;
+  return (nbMots &gt;= 2 &amp;&amp; nbMots &lt;= 5);
+}</code></pre>
+
+        <h3>Manipuler les dates en JS (`getMonth()` renvoie `0` à `11`)</h3>
+        <pre class="code-m"><code>let d = new Date();
+let annee = d.getFullYear();
+let mois  = d.getMonth() + 1; // +1 obligatoire (Janvier = 0)
+let jour  = d.getDate();
+let heure = d.getHours() + ":" + d.getMinutes();
+document.getElementById("msg").innerHTML = "Heure : " + heure;</code></pre>
+      </section>
+
+      <!-- 3. SQL / MYSQL -->
+      <section class="bloc-memo">
+        <h2>🗄️ 3. SQL / MySQL (LDD · LMD · LID · Agrégats &amp; Dates)</h2>
+        <h3>Création &amp; modification de tables (LDD)</h3>
+        <pre class="code-m"><code>CREATE TABLE eleves (
+  Id VARCHAR(10) PRIMARY KEY,
+  Nom_prenom VARCHAR(60) NOT NULL,
+  Moyenne DECIMAL(4,2) DEFAULT 10.00 CHECK (Moyenne BETWEEN 0 AND 20),
+  DateNaissance DATE NOT NULL
+);
+ALTER TABLE eleves ADD CONSTRAINT chk_moy CHECK (Moyenne &gt;= 0);</code></pre>
+
+        <h3>Ordre immuable d'une requête `SELECT` &amp; Jointures / Sous-requêtes</h3>
+        <pre class="code-m"><code>SELECT LEFT(Id, 1) AS Categorie, COUNT(*) AS Nb, AVG(Moyenne) AS MoyCat
+FROM eleves
+WHERE YEAR(DateNaissance) &gt;= 2006
+GROUP BY LEFT(Id, 1)
+HAVING COUNT(*) &gt;= 2
+ORDER BY Categorie ASC;
+
+-- Sous-requête : l'élève ayant la meilleure moyenne
+SELECT * FROM eleves
+WHERE Moyenne = (SELECT MAX(Moyenne) FROM eleves);</code></pre>
+      </section>
+
+      <!-- 4. PHP / MYSQLI -->
+      <section class="bloc-memo">
+        <h2>🐘 4. PHP &amp; MySQLi Procédural (`www` / `htdocs` → `http://localhost/`)</h2>
+        <h3>Connexion, vérification d'existence et insertion</h3>
+        <pre class="code-m"><code>&lt;?php
+$con = mysqli_connect("localhost", "root", "", "bd_lycee");
+$id  = $_POST["id"];
+$np  = $_POST["np"];
+$moy = $_POST["moy"];
+$dn  = $_POST["dn"];
+
+$res = mysqli_query($con, "SELECT * FROM eleves WHERE Id = '$id'");
+if (mysqli_num_rows($res) &gt; 0) {
+  echo "Élève déjà inscrit !";
+} else {
+  $req = "INSERT INTO eleves VALUES ('$id', '$np', $moy, '$dn')";
+  mysqli_query($con, $req);
+  if (mysqli_affected_rows($con) &gt; 0) {
+    echo "Inscription réussie !";
+  }
+}
+mysqli_close($con);
+?&gt;</code></pre>
+
+        <h3>Différences clés à connaître par cœur au Bac</h3>
+        <ul class="liste-m">
+          <li><code>mysqli_fetch_row($res)</code> → tableau indicé numériquement (<code>$t[0]</code>, <code>$t[1]</code>).</li>
+          <li><code>mysqli_fetch_assoc($res)</code> → tableau associatif par nom de colonne (<code>$t["Nom_prenom"]</code>).</li>
+          <li><code>mysqli_fetch_array($res)</code> → accepte les deux (<code>$t[0]</code> ET <code>$t["Nom_prenom"]</code>).</li>
+          <li><code>mysqli_num_rows($res)</code> → nombre de lignes retournées par un <code>SELECT</code> (tandis que <code>SELECT COUNT(*) AS nb</code> renvoie 1 ligne dont on lit <code>$t["nb"]</code>).</li>
+          <li><code>mysqli_affected_rows($con)</code> → nombre de lignes touchées par <code>INSERT</code>, <code>UPDATE</code> ou <code>DELETE</code>.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var btnTheme = document.getElementById("theme-toggle");
+      function appliquerTheme(th) {
+        var dark = (th === "dark");
+        document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+        document.documentElement.classList.toggle("dark-mode", dark);
+        btnTheme.innerHTML = dark ? "☀️ Mode Clair" : "🌙 Mode Sombre";
+      }
+      appliquerTheme(localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "light");
+      btnTheme.onclick = function () {
+        var act = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        localStorage.setItem("sti-theme", act);
+        localStorage.setItem("theme", act);
+        appliquerTheme(act);
+      };
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/config.js?v=256"></script>
+  <script src="assets/js/acces.js?v=265"></script>
+</body>
+</html>
