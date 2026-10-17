@@ -307,7 +307,7 @@
   /* ── 3) Cartes Statistiques en direct (cliquables pour filtrer) ── */
   .stats {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 10px;
     margin-bottom: 14px;
   }
@@ -568,10 +568,10 @@
     .ca-titre { font-size: 11.5px; line-height: 1.15; }
     .ca-desc { font-size: 9.5px; line-height: 1.15; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 
-    /* 3. Les 5 compteurs alignés sur 1 seule ligne horizontale bien tactile */
+    /* 3. Les 6 compteurs alignés sur 2 lignes de 3 cartes bien tactiles sur mobile */
     .stats {
-      grid-template-columns: repeat(5, 1fr);
-      gap: 5px; margin-bottom: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px; margin-bottom: 10px;
     }
     .stat {
       padding: 8px 3px; border-radius: 11px;
@@ -1456,11 +1456,13 @@
   <!-- 3. COMPTEURS EN DIRECT (cliquables pour filtrer la liste ou aller aux connexions) -->
   <div class="stats" id="stats">
     <div class="stat" data-filtre="en_ligne" title="Cliquer pour filtrer les élèves en ligne"><b id="s-enligne" style="color:#177245">0</b><small>🟢 En ligne</small></div>
+    <div class="stat" id="stat-machines-labo3" title="Cliquer pour voir le détail des machines ouvertes avec le compte elevelabo3@exemple.tn" style="border-color:#0284c7;box-shadow:3px 3px 0 rgba(2,132,199,.45)"><b id="s-labo3-machines" style="color:#0284c7">0</b><small>💻 Postes Labo 3</small></div>
     <div class="stat" data-filtre="*" title="Cliquer pour afficher tous les abonnés"><b id="s-total">0</b><small>👥 Abonnés</small></div>
     <div class="stat" data-filtre="actif" title="Cliquer pour filtrer les abonnés actifs"><b id="s-actifs" style="color:#6d28d9">0</b><small>🟣 Actifs</small></div>
     <div class="stat" data-filtre="en_attente" title="Cliquer pour filtrer les demandes en attente"><b id="s-attente" style="color:#b47d09">0</b><small>⏳ En attente</small></div>
     <div class="stat" id="stat-connexions" data-scroll-cible="sec-dernieres-connexions" title="Cliquer pour aller directement à Dernières connexions"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
   </div>
+  <div id="bandeau-machines-labo3" style="display:none;background:#f0f9ff;border:2px solid #0284c7;border-radius:16px;padding:12px 16px;margin-bottom:14px;box-shadow:3.5px 3.5px 0 rgba(2,132,199,.35);font-size:12.5px;color:#0c4a6e"></div>
 
   <!-- 4. BARRE D'ONGLETS DE NAVIGATION ENTRE LES 4 SECTIONS DE DONNÉES -->
   <nav class="nav-sections-admin" id="nav-sections-admin" aria-label="Navigation entre les sections du tableau de bord">

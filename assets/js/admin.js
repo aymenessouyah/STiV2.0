@@ -307,8 +307,85 @@
   var questionsFlash = [], reponsesFlash = {};
   var scoresParUser = {}, listeResultatsQuiz = [], progMediaParUser = {};
   var enLigneMap = {}; /* uid -> { ts: ms, page: str } */
+  var machinesLabo3Live = {}; /* code #XXXX -> { code, appareil, page, ts } */
+  var bandeauLabo3ForceOuvert = false;
   var adminUid = null;
   var cibleSuppr = null, cibleMdp = null, cibleAff = null;
+
+  function estCompteElevelabo3(pOuEmail, clOpt) {
+    if (!pOuEmail && !clOpt) return false;
+    var em = typeof pOuEmail === "string" ? pOuEmail : ((pOuEmail && pOuEmail.email) || "");
+    var cl = clOpt || (typeof pOuEmail === "object" && pOuEmail ? (pOuEmail.classe || "") : "");
+    em = String(em || "").trim().toLowerCase();
+    if (em === "elevelabo3@exemple.tn" || /^elevelabo3(?:@|$)/i.test(em)) return true;
+    return estClasseProfLabo(cl);
+  }
+
+  function extraireCodeMachineLabo(str, fallbackCode) {
+    var s = String(str || "");
+    var m = s.match(/#[0-9A-F]{4}/i);
+    if (m && m[0]) return m[0].toUpperCase();
+    var fb = String(fallbackCode || "").trim().toUpperCase();
+    if (/^#[0-9A-F]{4}$/i.test(fb)) return fb;
+    var m2 = s.match(/((?:📱|💻)\s*[^·]+·\s*[^·(]+)/i);
+    if (m2 && m2[1]) return m2[1].trim();
+    return fb || "#LABO";
+  }
+
+  function extraireLibelleAppareilLabo(str, code) {
+    var s = String(str || "").trim();
+    var m = s.match(/((?:📱|💻)\s*[^·]+·\s*[^·(]+(?:\(#[0-9A-F]{4}\))?)/i);
+    if (m && m[1]) return m[1].trim();
+    return s ? s.split("·").slice(0, 2).join("·").trim() : ("💻 Poste " + (code || "#LABO"));
+  }
+
+  function calculerMachinesLabo3() {
+    var idsLabo = { "labo3-local": true };
+    profils.forEach(function (p) {
+      if (estCompteElevelabo3(p)) idsLabo[p.id] = true;
+    });
+    var mapPostes = {};
+    Object.keys(machinesLabo3Live).forEach(function (code) {
+      var it = machinesLabo3Live[code];
+      if (!it) return;
+      mapPostes[code] = {
+        code: code,
+        appareil: it.appareil || ("💻 Poste " + code),
+        page: it.page || "index.html",
+        ts: Number(it.ts) || 0
+      };
+    });
+    acces.forEach(function (a) {
+      if (!a || !idsLabo[a.user_id]) return;
+      var code = extraireCodeMachineLabo(a.lieu || "", "");
+      var appLbl = extraireLibelleAppareilLabo(a.lieu || "", code);
+      var tAct = new Date(a.fin || a.debut).getTime() || 0;
+      if (!mapPostes[code]) {
+        mapPostes[code] = {
+          code: code,
+          appareil: appLbl,
+          page: a.page || "index.html",
+          ts: tAct
+        };
+      } else if (tAct > mapPostes[code].ts) {
+        mapPostes[code].ts = tAct;
+        mapPostes[code].page = a.page || mapPostes[code].page || "index.html";
+        if (appLbl) mapPostes[code].appareil = appLbl;
+      }
+    });
+    var now = Date.now();
+    var toutes = Object.keys(mapPostes).map(function (k) { return mapPostes[k]; }).sort(function (a, b) {
+      return (b.ts || 0) - (a.ts || 0);
+    });
+    var ouvertes = toutes.filter(function (m) {
+      return m.ts > 0 && (now - m.ts < 95000);
+    });
+    return {
+      ouvertes: ouvertes,
+      connues: toutes,
+      idsLabo: idsLabo
+    };
+  }
 
   /* ---------- Configuration dynamique des Lycées et des Classes ---------- */
   var cfgEcoles = {
@@ -872,11 +949,23 @@
         })
         .on("broadcast", { event: "presence" }, function (p) {
           if (p && p.payload && p.payload.uid) {
-            enLigneMap[p.payload.uid] = {
-              ts: Date.now(),
-              page: p.payload.page || "site",
-              appareil: p.payload.appareil || ""
+            var pl = p.payload;
+            enLigneMap[pl.uid] = {
+              ts: pl.closed ? 0 : Date.now(),
+              page: pl.page || "site",
+              appareil: pl.appareil || ""
             };
+            var profCorresp = null;
+            profils.forEach(function (pr) { if (pr.id === pl.uid) profCorresp = pr; });
+            if (pl.isLabo3 || estCompteElevelabo3(pl.email, pl.classe) || (profCorresp && estCompteElevelabo3(profCorresp))) {
+              var codeM = extraireCodeMachineLabo(pl.appareil || "", pl.machineId || "");
+              machinesLabo3Live[codeM] = {
+                code: codeM,
+                appareil: extraireLibelleAppareilLabo(pl.appareil || "", codeM),
+                page: pl.page || "index.html",
+                ts: pl.closed ? 0 : Date.now()
+              };
+            }
             majCompteurEnLigne();
             rendAbonnes();
             if (typeof rafraichirMessengerAdmin === "function") rafraichirMessengerAdmin();
@@ -926,7 +1015,21 @@
             recevoirMainLeveeLive(p.payload);
           }
         })
-        .subscribe();
+        .subscribe(function (stSub) {
+          if (stSub === "SUBSCRIBED") {
+            try {
+              sb.channel("sti-diffusion").send({ type: "broadcast", event: "who_is_online", payload: { ts: Date.now() } });
+            } catch (e) {}
+          }
+        });
+      setInterval(function () {
+        if (navigator.onLine) {
+          try {
+            sb.channel("sti-diffusion").send({ type: "broadcast", event: "who_is_online", payload: { ts: Date.now() } });
+          } catch (e) {}
+        }
+        majBandeauEtCompteursClasse();
+      }, 25000);
     } catch (e) {}
     majBoutonNotif();
   }).catch(function () {
@@ -1099,12 +1202,77 @@
 
   function majBandeauEtCompteursClasse() {
     var st = statsPourSelection();
+    var infoLabo3 = calculerMachinesLabo3();
+    var nbLaboOuvertes = infoLabo3.ouvertes.length;
+    var nbLaboConnues = infoLabo3.connues.length;
     var elOn = document.getElementById("s-enligne");
+    var elLaboM = document.getElementById("s-labo3-machines");
+    var cardLaboM = document.getElementById("stat-machines-labo3");
+    var bandLaboM = document.getElementById("bandeau-machines-labo3");
     var elTot = document.getElementById("s-total");
     var elAct = document.getElementById("s-actifs");
     var elAtt = document.getElementById("s-attente");
     var elCon = document.getElementById("s-connex");
     if (elOn) elOn.textContent = st.enLigne;
+    if (elLaboM) {
+      elLaboM.textContent = nbLaboOuvertes;
+      elLaboM.style.color = nbLaboOuvertes > 0 ? "#177245" : "#0284c7";
+    }
+    if (cardLaboM) {
+      cardLaboM.title = "Compte elevelabo3@exemple.tn : " + nbLaboOuvertes + " machine(s) ouverte(s) en direct sur " + nbLaboConnues + " poste(s) Labo 3 connus (cliquer pour afficher les détails)";
+      if (!cardLaboM.__stiBound) {
+        cardLaboM.__stiBound = true;
+        cardLaboM.addEventListener("click", function () {
+          bandeauLabo3ForceOuvert = !bandeauLabo3ForceOuvert;
+          try {
+            sb.channel("sti-diffusion").send({ type: "broadcast", event: "who_is_online", payload: { ts: Date.now() } });
+          } catch (e) {}
+          if (selFiltreClasse && bandeauLabo3ForceOuvert) {
+            selFiltreClasse.value = "elevelabo3";
+            rendAbonnes();
+          }
+          majBandeauEtCompteursClasse();
+        });
+      }
+    }
+    if (bandLaboM) {
+      if (nbLaboOuvertes > 0 || bandeauLabo3ForceOuvert) {
+        bandLaboM.style.display = "block";
+        var htmlPostesActifs = infoLabo3.ouvertes.length
+          ? infoLabo3.ouvertes.map(function (m) {
+              return "<span style='display:inline-flex;align-items:center;gap:5px;background:#dcfce7;color:#14532d;border:1.5px solid #16a34a;border-radius:999px;padding:4px 11px;font-weight:900;font-size:11.5px;margin:3px 4px 3px 0'>🟢 " + echHtml(m.appareil) + " · 📄 <b>" + echHtml(m.page || "index.html") + "</b></span>";
+            }).join("")
+          : "<span style='display:inline-block;background:#fff;color:#64748b;border:1.5px dashed #94a3b8;border-radius:999px;padding:4px 11px;font-weight:800;font-size:11.5px;margin:3px 0'>⚪ Aucune machine ouverte en cet instant avec elevelabo3@exemple.tn</span>";
+        var inactifsList = infoLabo3.connues.filter(function (m) {
+          return !(m.ts > 0 && (Date.now() - m.ts < 95000));
+        });
+        var htmlPostesInactifs = (bandeauLabo3ForceOuvert && inactifsList.length)
+          ? "<div style='margin-top:6px;font-size:11px;color:#475569;font-weight:700'>Postes Labo 3 connus hors-ligne (" + inactifsList.length + ") : " +
+            inactifsList.slice(0, 20).map(function (m) {
+              return "<span style='display:inline-block;background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;border-radius:999px;padding:2px 8px;margin:2px 3px 2px 0;font-weight:800'>⚪ " + echHtml(m.code) + " (" + echHtml(m.page || "—") + ")</span>";
+            }).join("") + "</div>"
+          : "";
+        bandLaboM.innerHTML =
+          "<div style='display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px'>" +
+            "<div style='font-weight:900;font-size:13px;color:#0c4a6e'>💻 Machines ouvertes avec <span style='color:#0284c7'>elevelabo3@exemple.tn</span> : " +
+              "<span style='display:inline-block;background:" + (nbLaboOuvertes > 0 ? "#16a34a" : "#0284c7") + ";color:#fff;border-radius:999px;padding:2px 10px;font-size:12px'>" + nbLaboOuvertes + " machine(s) ouverte(s)</span>" +
+              " <span style='font-size:11.5px;color:#475569;font-weight:800'>· " + nbLaboConnues + " poste(s) Labo 3 identifié(s) au total</span>" +
+            "</div>" +
+            "<button type='button' id='btn-fermer-band-labo3' style='border:1.5px solid #0284c7;background:#fff;color:#0284c7;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>✖ Masquer</button>" +
+          "</div>" +
+          "<div>" + htmlPostesActifs + "</div>" +
+          htmlPostesInactifs;
+        var bCloseLabo = document.getElementById("btn-fermer-band-labo3");
+        if (bCloseLabo) {
+          bCloseLabo.onclick = function () {
+            bandeauLabo3ForceOuvert = false;
+            bandLaboM.style.display = "none";
+          };
+        }
+      } else {
+        bandLaboM.style.display = "none";
+      }
+    }
     if (elTot) elTot.textContent = st.total;
     if (elAct) elAct.textContent = st.actifs;
     if (elAtt) elAtt.textContent = st.attente;
@@ -2476,7 +2644,20 @@
       });
       ligneIdentite.appendChild(btnEditNom);
 
-      if (estEnLigne(p.id)) {
+      if (estCompteElevelabo3(p)) {
+        var infL3 = calculerMachinesLabo3();
+        var nbOuvL3 = infL3.ouvertes.length;
+        var bLaboOn = document.createElement("span");
+        bLaboOn.className = nbOuvL3 > 0 ? "badge-online" : "";
+        if (nbOuvL3 === 0) {
+          bLaboOn.style.cssText = "display:inline-block;margin-left:5px;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:900;border:1.5px solid #0284c7;background:#e0f2fe;color:#0369a1;";
+        }
+        var detPagesL3 = nbOuvL3 > 0
+          ? " · " + infL3.ouvertes.map(function (m) { return m.code + " (" + (m.page || "site") + ")"; }).join(", ")
+          : "";
+        bLaboOn.textContent = (nbOuvL3 > 0 ? "🟢 " : "💻 ") + nbOuvL3 + " machine(s) ouverte(s)" + detPagesL3 + " / " + infL3.connues.length + " poste(s) connus";
+        ligneIdentite.appendChild(bLaboOn);
+      } else if (estEnLigne(p.id)) {
         var bOn = document.createElement("span");
         bOn.className = "badge-online";
         var pgOn = (enLigneMap[p.id] && enLigneMap[p.id].page) || "site";

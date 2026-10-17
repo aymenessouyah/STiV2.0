@@ -634,9 +634,21 @@
 
       if (!estAppareilPC()) return;
 
-      /* 3. Navigation fluide entre les pages et ouverture de nouveaux onglets sans blocage :
-         on conserve l'attribut href et target="_blank" natifs et on horodate la navigation interne
-         pour que le nouvel onglet hérite immédiatement de la session déverrouillée. */
+      /* 3. Navigation fluide entre les pages, ouverture de nouveaux onglets sans blocage
+         et préchargement spéculatif (<link rel="prefetch">) au survol des liens internes (0 ms) */
+      var urlsPrechargeesSTI = {};
+      function prechargerUrlInterneSTI(urlStr) {
+        if (!urlStr || urlsPrechargeesSTI[urlStr] || !document.head) return;
+        if (!/\.html($|[?#])/i.test(urlStr) && urlStr.slice(-1) !== "/") return;
+        urlsPrechargeesSTI[urlStr] = true;
+        try {
+          var lnk = document.createElement("link");
+          lnk.rel = "prefetch";
+          lnk.href = urlStr;
+          document.head.appendChild(lnk);
+        } catch (err) {}
+      }
+
       function marquerLienInterneSTI(e) {
         var t = e && e.target;
         var a = t && t.closest ? t.closest("a") : null;
@@ -654,10 +666,28 @@
             localStorage.setItem("sti-bio-click-nav-ts", nowStr);
             localStorage.setItem("sti-bio-lease-ts", nowStr);
             localStorage.setItem("sti-internal-nav-ts", nowStr);
+            prechargerUrlInterneSTI(u.href.split("#")[0]);
           }
         } catch (err) {}
       }
 
+      document.addEventListener(
+        "mouseover",
+        function (e) {
+          var t = e && e.target;
+          var a = t && t.closest ? t.closest("a[href]") : null;
+          if (!a) return;
+          var href = a.getAttribute("href") || "";
+          if (!href || href.charAt(0) === "#" || href.indexOf("javascript:") === 0) return;
+          try {
+            var u = new URL(href, location.href);
+            if (u.origin === location.origin && u.pathname !== location.pathname) {
+              prechargerUrlInterneSTI(u.href.split("#")[0]);
+            }
+          } catch (err) {}
+        },
+        { passive: true }
+      );
       document.addEventListener("pointerdown", marquerLienInterneSTI, true);
       document.addEventListener("auxclick", marquerLienInterneSTI, true);
       document.addEventListener(

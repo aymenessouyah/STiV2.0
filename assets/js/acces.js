@@ -323,6 +323,17 @@
     }
   } catch (e) {}
 
+  function estPostePC() {
+    try {
+      var ua = String((navigator && navigator.userAgent) || "");
+      if (/Android|iPhone|iPad|iPod|Mobile/i.test(ua)) return false;
+      if (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) return false;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function estClasseProfLabo(classe, email) {
     var c = String(classe || "").trim().toLowerCase();
     try { c = c.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
@@ -1273,10 +1284,19 @@
   function restaurerDepuisCacheLocal() {
     var cache = lireCacheSessionLocal();
     var estLaboPerm = Boolean(cache && (cache.permanent || estClasseProfLabo(cache.classe, cache.email)));
+    var sessionPcPerm = Boolean(estPostePC() && cache && cache.statut === "actif");
     var tOff = parseInt(localStorage.getItem("sti-offline") || "0", 10);
     var tsValide = (cache && cache.ts) || tOff;
-    if (estLaboPerm || (tsValide && Date.now() - tsValide < 30 * 86400000)) {
+    if (estLaboPerm || sessionPcPerm || (tsValide && Date.now() - tsValide < 30 * 86400000)) {
       sessionInitialisee = true;
+      if (sessionPcPerm && !estLaboPerm) {
+        try {
+          cache.ts = Date.now();
+          cache.permanentPC = true;
+          localStorage.setItem("sti-offline", String(Date.now()));
+          localStorage.setItem("sti-session-cache", JSON.stringify(cache));
+        } catch (e) {}
+      }
       if (estLaboPerm) {
         try {
           cache.isAdmin = false;
@@ -1332,7 +1352,7 @@
      restaurer dès 0 ms pour éviter toute redemande d'authentification à chaque changement de page sur mobile / iPhone */
   (function verifImmediateLabo3OuHorsLigne() {
     var cInit = lireCacheSessionLocal();
-    var cacheActifValide = Boolean(cInit && cInit.statut === "actif" && cInit.ts && (Date.now() - Number(cInit.ts) < 30 * 86400000));
+    var cacheActifValide = Boolean(cInit && cInit.statut === "actif" && (estPostePC() || (cInit.ts && (Date.now() - Number(cInit.ts) < 30 * 86400000))));
     if (!navigator.onLine || cacheActifValide || (cInit && (cInit.permanent || estClasseProfLabo(cInit.classe, cInit.email)))) {
       restaurerDepuisCacheLocal();
     }
@@ -4443,6 +4463,11 @@
             }
           }
         })
+        .on("broadcast", { event: "who_is_online" }, function () {
+          if (typeof window.__stiEnvoyerPresenceMaintenant === "function") {
+            window.__stiEnvoyerPresenceMaintenant();
+          }
+        })
         .on("broadcast", { event: "force_update" }, function (p) {
           if (p && p.payload && typeof window.__stiExecuterForceUpdate === "function") {
             window.__stiExecuterForceUpdate(p.payload);
@@ -4822,7 +4847,7 @@
     if (typeof verifierSplitScreenExamen === "function") verifierSplitScreenExamen();
   }
 
-  /* Charger la dernière configuration de sécurité depuis Supabase au démarrage */
+  /* Charger la dernière configuration de sécurité depuis Supabase au démarrage (avec cache mémoire 45 s entre pages) */
   (function chargerConfigSecuriteInitiale() {
     appliquerVerrouExamen();
     appliquerPauseEleve();
@@ -4832,6 +4857,11 @@
       appliquerFiligraneNominatif();
     }
     if (!navigator.onLine) return;
+    try {
+      var tsSecChk = parseInt(localStorage.getItem("sti-sec-cfg-check-ts") || "0", 10) || 0;
+      if (tsSecChk && (Date.now() - tsSecChk < 45000)) return;
+      localStorage.setItem("sti-sec-cfg-check-ts", String(Date.now()));
+    } catch (e) {}
     sb.from("acces").select("lieu,debut").eq("page", "SEC_CONFIG").order("debut", { ascending: false }).limit(1).then(function (r) {
       if (r && r.data && r.data[0] && r.data[0].lieu) {
         try {
@@ -5436,7 +5466,7 @@
         return;
       }
       var cLoc = lireCacheSessionLocal() || {};
-      if (cLoc.permanent || estClasseProfLabo(currentClasse || cLoc.classe, cLoc.email)) return;
+      if (estPostePC() || cLoc.permanent || cLoc.permanentPC || estClasseProfLabo(currentClasse || cLoc.classe, cLoc.email)) return;
 
       var tLoc = 0;
       try { tLoc = parseInt(localStorage.getItem("sti-last-activity") || "0", 10) || 0; } catch (e) {}
@@ -8544,7 +8574,7 @@
     var cLoc = lireCacheSessionLocal() || {};
     var cl = currentClasse || cLoc.classe || "";
     var em = (user && user.email) || cLoc.email || "";
-    if (estClasseProfLabo(cl, em)) {
+    if (estPostePC() || estClasseProfLabo(cl, em)) {
       finOk();
       return;
     }
@@ -8710,17 +8740,39 @@
   function journal(uid) {
     if (window !== window.top) return;
     var infoAppareil = obtenirInfoAppareilSTI();
+    var codeMach = obtenirEmpreinteAppareilCourte();
     var lieu = infoAppareil;
-    function envoyerPresence() {
+    function envoyerPresence(fermeture) {
       if (!navigator.onLine) return;
       try {
+        var cLocP = lireCacheSessionLocal() || {};
+        var emP = (cLocP && cLocP.email) || "";
+        var clP = currentClasse || (cLocP && cLocP.classe) || "";
+        var isLabo3P = estClasseProfLabo(clP, emP);
         sb.channel("sti-diffusion").send({
           type: "broadcast",
           event: "presence",
-          payload: { uid: uid, page: chemin, appareil: infoAppareil, ts: Date.now() }
+          payload: {
+            uid: uid,
+            email: emP || (isLabo3P ? "elevelabo3@exemple.tn" : ""),
+            classe: clP || (isLabo3P ? "elevelabo3" : ""),
+            isLabo3: isLabo3P,
+            machineId: codeMach,
+            page: chemin,
+            appareil: infoAppareil,
+            closed: Boolean(fermeture),
+            ts: Date.now()
+          }
         });
       } catch (e) {}
     }
+    window.__stiEnvoyerPresenceMaintenant = function () { envoyerPresence(false); };
+    envoyerPresence(false);
+    setInterval(function () { envoyerPresence(false); }, 20000);
+    window.addEventListener("focus", function () { envoyerPresence(false); });
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") envoyerPresence(false);
+    });
     function suiviHorsLigne() {
       var debutOff = Date.now();
       var cleSession = "off-" + debutOff;
@@ -8791,11 +8843,18 @@
       suiviHorsLigne();
       return;
     }
+    var geoCache = null;
+    try { geoCache = JSON.parse(localStorage.getItem("sti-geo-cache") || "null"); } catch (e) {}
+    if (geoCache && geoCache.ts && (Date.now() - Number(geoCache.ts) < 7 * 86400000)) {
+      if (geoCache.txt) lieu = infoAppareil + " · " + geoCache.txt;
+      insere();
+      return;
+    }
+    insere();
     fetch("https://ipapi.co/json/").then(function (r) { return r.json(); }).then(function (j) {
       var geo = ((j.city || "") + (j.country_name ? ", " + j.country_name : "")).trim();
-      lieu = geo ? (infoAppareil + " · " + geo) : infoAppareil;
-      insere();
-    }).catch(function () { insere(); });
+      try { localStorage.setItem("sti-geo-cache", JSON.stringify({ txt: geo, ts: Date.now() })); } catch (e) {}
+    }).catch(function () {});
   }
 
   /* =====================================================================

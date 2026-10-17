@@ -2,9 +2,9 @@
   {
     "date": "2026-10-17",
     "tag": "Plateforme",
-    "titre": "Navigation inter-pages & multi-onglets 100 % fluide ⚡",
-    "desc": "Partage instantané de la session déverrouillée entre tous les onglets ouverts, conservation native des liens Nouvel onglet et suppression des faux blocages plein écran hors contrôle.",
-    "lien": "index.html"
+    "titre": "Sessions PC permanentes + Compteur direct des postes Labo 3 💻⚡",
+    "desc": "Toute session ouverte sur PC reste active en permanence ; le tableau de bord affiche en direct le nombre et le détail des machines ouvertes avec elevelabo3@exemple.tn.",
+    "lien": "admin.html"
   },
   {
     "date": "2026-10-16",

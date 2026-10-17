@@ -73,11 +73,17 @@
         location.replace(cfg.RACINE + "index.html");
         return;
       }
-      /* Si un élève déjà connecté ouvre un nouvel onglet tombant sur portail.html (ou #connexion),
+      /* Si un élève déjà connecté ouvre un nouvel onglet tombant sur portail.html (ou #connexion)
+         — et sur PC, la session ouverte reste active en permanence —
          le renvoyer immédiatement vers l'accueil sans le bloquer sur le formulaire */
-      if (sessLoc && sessLoc.statut === "actif" && sessLoc.ts && (Date.now() - Number(sessLoc.ts) < 30 * 86400000) && (!hInit || hInit === "connexion")) {
+      var estPcPortail = !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "") && !(navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      if (sessLoc && sessLoc.statut === "actif" && (estPcPortail || (sessLoc.ts && (Date.now() - Number(sessLoc.ts) < 30 * 86400000))) && (!hInit || hInit === "connexion")) {
         try {
           var nowActStr = String(Date.now());
+          sessLoc.ts = Date.now();
+          if (estPcPortail) sessLoc.permanentPC = true;
+          localStorage.setItem("sti-offline", nowActStr);
+          localStorage.setItem("sti-session-cache", JSON.stringify(sessLoc));
           sessionStorage.setItem("sti-bio-session-ok", "1");
           localStorage.setItem("sti-bio-nav-ts", nowActStr);
           localStorage.setItem("sti-bio-lease-ts", nowActStr);
