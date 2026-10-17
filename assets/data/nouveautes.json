@@ -1,5 +1,15 @@
 [
   {
+    "version": "v293",
+    "date": "2026-10-17",
+    "categorie": "Vidéo CSS3",
+    "icone": "📏",
+    "titre": "Transitions annoncées, positions et float animés avec Guide-Ligne",
+    "resume": "La nouvelle vidéo CSS3 annonce chaque changement de partie par « Passons maintenant à… ». Le chapitre Position montre en animation que relative conserve sa place tandis que top et left déplacent son rendu, qu’absolute libère la place et fait remonter le frère suivant, puis compare static, relative, absolute, fixed et sticky dans un tableau. Le chapitre Float anime la sortie du flux, le frère qui remonte, la partie de fond masquée, le texte qui contourne, clear et flow-root. Le Guide-Ligne reste synchronisé ; l’ouverture conserve logo, QR, titre, 3e et 4e SI ainsi que « Cuisine fraîche • Mégrine ».",
+    "lien": "cours/css3.html",
+    "libelleLien": "Regarder la vidéo CSS3 v293"
+  },
+  {
     "version": "v291",
     "date": "2026-10-17",
     "categorie": "Vidéo et page CSS3",
