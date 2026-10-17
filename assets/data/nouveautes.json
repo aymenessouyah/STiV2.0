@@ -2,9 +2,11 @@
   {
     "date": "2026-10-17",
     "tag": "Exercices PHP",
-    "titre": "Atelier Débogage PHP/SQL/JS : Trouver et Corriger l'Erreur (10 pannes) 🔍🐘",
+    "titre": "Exercices PHP : Série 4 MySQLi Procédural + Corrigé dédié + Refonte Débogage interactif + Carte 10 Fonctions JS",
     "desc": "Nouvel exercice interactif dans Exercices PHP : cliquez sur la ligne fautive dans un code en panne au labo (mysqli_affected_rows, fetch_assoc, SELECT COUNT(*), onsubmit, float/clear) et choisissez la correction.",
-    "lien": "exercices/series-exercices.html#php"
+    "lien": "exercices/series-exercices.html#php",
+    "version": "v269",
+    "resume": "Série 4 PHP alignée sur MySQLi procédural avec son corrigé détaillé (Tp4-Correction-php.html), refonte de l'atelier de débogage PHP/MySQLi avec éditeur de ligne interactif et intégration de la carte des 10 fonctions JS dans Exercices PHP."
   },
   {
     "date": "2026-10-17",
