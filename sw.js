@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v294";
+var CACHE = "sti-atelier-v295";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
 var videosEnCoursDeCache = {};
 var SHELL = [
@@ -44,8 +44,8 @@ var SHELL = [
   "./assets/icons/sti-icon-512.png",
   "./assets/images/sti-course-pause-qr.png",
   "./assets/images/php-guichet-v10-poster.jpg",
-  "./assets/images/css3-cours-v6-poster.jpg",
-  "./assets/images/css-restaurant-capture-v293.jpg",
+  "./assets/images/css3-cours-v7-poster.jpg",
+  "./assets/images/css-restaurant-capture-v295.jpg",
   "./assets/images/guichet-animation-capture-v288.jpg",
   "./cours/html5.html",
   "./cours/css3.html",
@@ -609,7 +609,7 @@ var OFFLINE_LIST = [
   "./assets/videos/explore-tunisie-flex.mp4",
   "./assets/videos/explore-tunisie-float.mp4",
   "./assets/videos/html5-cours.mp4",
-  "./assets/videos/css3-cours-v6.mp4",
+  "./assets/videos/css3-cours-v7.mp4",
   "./assets/videos/javascript-cours.mp4",
   "./assets/videos/php-cours.mp4",
   "./robots.txt",
@@ -741,7 +741,7 @@ self.addEventListener("activate", function (evt) {
           var cVidClean = await caches.open(CACHE_VIDEOS_LABO);
           var keysVid = await cVidClean.keys();
           for (var kv of keysVid) {
-            if (kv.url.indexOf("css3-cours-v5.mp4") !== -1 || kv.url.indexOf("css3-cours-v4.mp4") !== -1 || kv.url.indexOf("css3-cours-v3.mp4") !== -1 || kv.url.indexOf("css3-cours-v2.mp4") !== -1 || kv.url.indexOf("css3-cours.mp4") !== -1 || kv.url.indexOf("php-guichet-v9.mp4") !== -1 || kv.url.indexOf("php-guichet-v8.mp4") !== -1 || kv.url.indexOf("php-guichet-v7.mp4") !== -1 || kv.url.indexOf("php-guichet-v6.mp4") !== -1 || kv.url.indexOf("php-guichet-v5.mp4") !== -1 || kv.url.indexOf("php-guichet-v4.mp4") !== -1 || kv.url.indexOf("php-guichet-v3.mp4") !== -1 || kv.url.indexOf("php-guichet-v2.mp4") !== -1 || kv.url.indexOf("php-guichet.mp4") !== -1 || kv.url.indexOf("sql-cours.mp4") !== -1 || kv.url.indexOf("sql-cours-v2.mp4") !== -1 || kv.url.indexOf("sql-cours-v3.mp4") !== -1 || kv.url.indexOf("sql-cours-v4.mp4") !== -1 || kv.url.indexOf("sql-cours-v5.mp4") !== -1 || kv.url.indexOf("sql-cours-v6.mp4") !== -1 || kv.url.indexOf("sql-initiation.mp4") !== -1) {
+            if (kv.url.indexOf("css3-cours-v6.mp4") !== -1 || kv.url.indexOf("css3-cours-v5.mp4") !== -1 || kv.url.indexOf("css3-cours-v4.mp4") !== -1 || kv.url.indexOf("css3-cours-v3.mp4") !== -1 || kv.url.indexOf("css3-cours-v2.mp4") !== -1 || kv.url.indexOf("css3-cours.mp4") !== -1 || kv.url.indexOf("php-guichet-v9.mp4") !== -1 || kv.url.indexOf("php-guichet-v8.mp4") !== -1 || kv.url.indexOf("php-guichet-v7.mp4") !== -1 || kv.url.indexOf("php-guichet-v6.mp4") !== -1 || kv.url.indexOf("php-guichet-v5.mp4") !== -1 || kv.url.indexOf("php-guichet-v4.mp4") !== -1 || kv.url.indexOf("php-guichet-v3.mp4") !== -1 || kv.url.indexOf("php-guichet-v2.mp4") !== -1 || kv.url.indexOf("php-guichet.mp4") !== -1 || kv.url.indexOf("sql-cours.mp4") !== -1 || kv.url.indexOf("sql-cours-v2.mp4") !== -1 || kv.url.indexOf("sql-cours-v3.mp4") !== -1 || kv.url.indexOf("sql-cours-v4.mp4") !== -1 || kv.url.indexOf("sql-cours-v5.mp4") !== -1 || kv.url.indexOf("sql-cours-v6.mp4") !== -1 || kv.url.indexOf("sql-initiation.mp4") !== -1) {
               await cVidClean.delete(kv);
             }
           }

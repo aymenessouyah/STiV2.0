@@ -25,7 +25,7 @@
     </script>
     <link rel="stylesheet" href="../assets/css/css.css" />
     <link rel="stylesheet" href="../assets/fonts/fonts.css" />
-    <link rel="stylesheet" href="../assets/css/atelier-pages.css?v=294" />
+    <link rel="stylesheet" href="../assets/css/atelier-pages.css?v=295" />
   </head>
   <body class="course-css3-page">
 <!-- STI navigation croisée -->
@@ -2186,6 +2186,83 @@
       </div>
 
       <div class="grid">
+        <div class="card anim-c css-filter-card" id="css-filter" style="grid-column: span 2">
+          <div class="card-head">
+            <div class="num">🎨</div>
+            <h2>Propriété <code>filter</code> — filtres visuels CSS</h2>
+          </div>
+          <p style="font-size: 12.5px; line-height: 1.55; margin: 0">
+            La propriété <code>filter</code> modifie le rendu visuel d’un
+            élément sans changer sa taille ni sa place dans le flux. Plusieurs
+            fonctions peuvent être enchaînées ; leur ordre peut modifier le
+            résultat final.
+          </p>
+          <div class="filter-function-grid" aria-label="Fonctions de filtre CSS">
+            <code>blur(3px)</code>
+            <code>grayscale(1)</code>
+            <code>sepia(0.8)</code>
+            <code>brightness(1.3)</code>
+            <code>contrast(1.5)</code>
+            <code>saturate(1.8)</code>
+            <code>hue-rotate(120deg)</code>
+            <code>invert(1)</code>
+            <code>opacity(0.55)</code>
+            <code>drop-shadow(...)</code>
+          </div>
+          <div class="codebox" id="filter-code-output" aria-live="polite">
+            filter: none;
+          </div>
+          <div class="demo-label">👁 Exemple interactif — choisissez un filtre</div>
+          <div class="filter-lab" data-filter-lab>
+            <div class="filter-preview-stage">
+              <div class="filter-demo-visual" data-filter-preview>
+                <span class="filter-demo-sun" aria-hidden="true"></span>
+                <span class="filter-demo-plate" aria-hidden="true">🍽️</span>
+                <strong>LE PETIT OLIVIER</strong>
+                <small>Cuisine fraîche • Mégrine</small>
+              </div>
+            </div>
+            <div class="filter-controls" role="group" aria-label="Exemples de filtres CSS">
+              <button type="button" data-filter-value="none" aria-pressed="true">Original</button>
+              <button type="button" data-filter-value="blur(3px)">Flou</button>
+              <button type="button" data-filter-value="grayscale(1)">Noir &amp; blanc</button>
+              <button type="button" data-filter-value="sepia(0.85)">Sépia</button>
+              <button type="button" data-filter-value="brightness(1.35)">Luminosité</button>
+              <button type="button" data-filter-value="contrast(1.55)">Contraste</button>
+              <button type="button" data-filter-value="saturate(1.8)">Saturation</button>
+              <button type="button" data-filter-value="hue-rotate(120deg)">Teinte</button>
+              <button type="button" data-filter-value="invert(1)">Inversion</button>
+              <button type="button" data-filter-value="opacity(0.55)">Opacité</button>
+              <button type="button" data-filter-value="drop-shadow(10px 10px 7px rgba(15, 23, 42, 0.48))">Ombre portée</button>
+              <button type="button" data-filter-value="sepia(0.55) saturate(1.6) contrast(1.2)">Combinaison</button>
+            </div>
+          </div>
+          <ul class="keypoints">
+            <li><span class="ico">🔹</span><code>blur()</code> utilise une longueur ; les autres fonctions acceptent souvent un nombre ou un pourcentage.</li>
+            <li><span class="ico">🔹</span><code>drop-shadow()</code> suit le contour transparent d’une image, tandis que <code>box-shadow</code> suit sa boîte.</li>
+            <li><span class="ico">⭐</span>Une transition sur <code>filter</code> permet de passer progressivement d’un rendu à un autre.</li>
+          </ul>
+        </div>
+
+        <script>
+          (function () {
+            var lab = document.querySelector("[data-filter-lab]");
+            if (!lab) return;
+            var preview = lab.querySelector("[data-filter-preview]");
+            var output = document.getElementById("filter-code-output");
+            lab.addEventListener("click", function (event) {
+              var button = event.target.closest("button[data-filter-value]");
+              if (!button) return;
+              var value = button.getAttribute("data-filter-value") || "none";
+              preview.style.filter = value;
+              output.textContent = "filter: " + value + ";";
+              lab.querySelectorAll("button[data-filter-value]").forEach(function (item) {
+                item.setAttribute("aria-pressed", item === button ? "true" : "false");
+              });
+            });
+          })();
+        </script>
+
         <div class="card anim-c" style="grid-column: span 2">
           <div class="card-head">
             <div class="num">🔄</div>
