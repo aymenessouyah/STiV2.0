@@ -964,8 +964,8 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours-v7.mp4?v=295",
-        title: "🎥 CSS3 complet — Guide-Ligne synchronisé, tableaux détaillés, filtres animés, 3e & 4e SI"
+        file: "css3-cours-v8.mp4?v=298",
+        title: "🎥 CSS3 complet — Guide-Ligne synchronisé, blur, grayscale et invert, 3e & 4e SI"
       };
       var VIDEO_JS_INFO = {
         file: "javascript-cours.mp4?v=227",
@@ -2154,7 +2154,7 @@
             vEl.__stiChoixPhpAffiche = false;
             vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v10-poster.jpg?v=288");
           } else if (slugCible === "css3-cours") {
-            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/css3-cours-v7-poster.jpg?v=295");
+            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/css3-cours-v8-poster.jpg?v=298");
           } else {
             vEl.removeAttribute("poster");
           }
