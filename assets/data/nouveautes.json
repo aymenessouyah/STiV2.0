@@ -1,5 +1,15 @@
 [
   {
+    "version": "v280",
+    "date": "2026-10-17",
+    "categorie": "Vidéo PHP & MySQLi",
+    "icone": "🎬",
+    "titre": "Nouvelle histoire du Guichet : cours PHP, MySQLi et synthèse réunis",
+    "resume": "Nouvelle vidéo Full HD avec six avatars 3D et le Guichet comme fil conducteur : formulaire HTML, gardien JavaScript, coursier PHP, guichetière MySQLi, INSERT, UPDATE, DELETE, SELECT/fetch et projet de synthèse. Le Directeur organise tous les acteurs. Le Client entre par le Web local : projet sous www avec WampServer ou htdocs avec XAMPP, puis adresse localhost. Une femme au Guichet représente l’administration du SGBD MySQL, tandis que la Base de Données est l’Archive administrée. À 02:27.80, le lecteur se met réellement en pause et propose soit d’ouvrir le cours PHP complet, soit de continuer exactement la scène du Guichet.",
+    "lien": "cours/php.html",
+    "libelleLien": "Regarder la nouvelle vidéo interactive du Guichet"
+  },
+  {
     "version": "v279",
     "date": "2026-10-17",
     "categorie": "Vidéo BD & SQL",

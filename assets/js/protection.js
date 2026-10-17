@@ -868,9 +868,9 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     🎥 VIDÉO DE L'ANIMATION DU GUICHET (php-guichet.mp4 AVEC LA VOIX DE L'HOMME)
+     🎥 VIDÉO PRINCIPALE DU GUICHET (php-guichet-v2.mp4, COURS PHP ET SYNTHÈSE INTÉGRÉS)
      - Zéro voix dans les pas à pas interactifs (aucune lecture commentée ni audio d'étape).
-     - Seule la vidéo de l'animation du guichet (assets/videos/php-guichet.mp4) est conservée
+     - La nouvelle vidéo du Guichet (assets/videos/php-guichet-v2.mp4) porte la narration
        avec la voix de l'homme qui explique les étapes pas à pas.
      ═══════════════════════════════════════════════════════════════════════════ */
   function installerVideosPasAPasSTI() {
@@ -903,8 +903,8 @@
 
       /* Vidéos commentées avec la voix de l'homme : Guichet PHP + MySQLi, CSS pas à pas Positionnement animé, CSS animée et les 5 cours complets (SQL, HTML5, CSS3, JavaScript, PHP) */
       var VIDEO_GUICHET_INFO = {
-        file: "php-guichet.mp4?v=227",
-        title: "🎥 Animation du Guichet PHP + MySQLi (3 états : INSERT · UPDATE · SELECT)"
+        file: "php-guichet-v2.mp4?v=280",
+        title: "🎥 PHP + MySQLi — L’histoire du Guichet (Cours PHP · Guichet · Synthèse)"
       };
       var VIDEO_CSS_POS_INFO = {
         file: "css-positionnement.mp4?v=227",
@@ -915,11 +915,11 @@
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours-v7.mp4?v=279",
+        file: "sql-cours-v7.mp4?v=280",
         title: "🎥 Cours SQL Full HD — Synchronisation phrase→cible, ALTER puis DROP TABLE/DATABASE détaillé, marteaux visuels muets & LMD"
       };
       var VIDEO_SQL_INIT_INFO = {
-        file: "sql-cours-v7.mp4?v=279",
+        file: "sql-cours-v7.mp4?v=280",
         title: "🎥 Cours SQL Full HD — Synchronisation phrase→cible, ALTER puis DROP TABLE/DATABASE détaillé, marteaux visuels muets & LMD"
       };
       /* v275 : supprimer immédiatement les anciennes vidéos SQL du cache persistant.
@@ -929,7 +929,8 @@
           return cacheSqlV275.keys().then(function (clesSqlV275) {
             return Promise.all(clesSqlV275.map(function (cleSqlV275) {
               var uSqlV275 = cleSqlV275.url || "";
-              if (uSqlV275.indexOf("sql-cours.mp4") !== -1 ||
+              if (uSqlV275.indexOf("php-guichet.mp4") !== -1 ||
+                  uSqlV275.indexOf("sql-cours.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v2.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v4.mp4") !== -1 ||
@@ -1075,10 +1076,16 @@
           { t: 518.98, short: "11. Merci & Suite", label: "08:39 · 11. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
         ],
         "php-guichet": [
-          { t: 0.00, short: "1. Client & JS", label: "00:00 · Étapes 1 à 5 : Client, Formulaire HTML & Contrôle JS" },
-          { t: 73.68, short: "2. Cas INSERT", label: "01:14 · Cas 1 (INSERT INTO) : Envoi PHP, MySQL & Retour" },
-          { t: 226.19, short: "3. Cas UPDATE", label: "03:46 · Cas 2 (UPDATE) : Modification & mysqli_affected_rows" },
-          { t: 283.39, short: "4. Cas SELECT", label: "04:43 · Cas 3 (SELECT) : Lecture avec mysqli_fetch_array" }
+          { t: 0.00, short: "1. Accueil & Directeur", label: "00:00 · 1. Trois parcours et Directeur qui coordonne tous les acteurs" },
+          { t: 37.52, short: "2. Web local, Client & JS", label: "00:37 · 2. Web local, dossiers www/htdocs, localhost, formulaire et validation JavaScript" },
+          { t: 119.12, short: "3. Coursier PHP & choix", label: "01:59 · 3. Méthode POST, arrivée du coursier PHP et pause interactive" },
+          { t: 148.80, short: "4. $_POST & langage PHP", label: "02:29 · 4. $_POST, variables, balises PHP, echo et structures" },
+          { t: 185.24, short: "5. Femme au Guichet / SGBD", label: "03:05 · 5. Femme au Guichet, MySQLi, administration SGBD MySQL et Archive BD" },
+          { t: 229.08, short: "6. INSERT", label: "03:49 · 6. INSERT INTO, nouvelle fiche et mysqli_affected_rows" },
+          { t: 263.20, short: "7. UPDATE & DELETE", label: "04:23 · 7. UPDATE, DELETE, WHERE et sécurité" },
+          { t: 298.20, short: "8. SELECT & fetch", label: "04:58 · 8. SELECT, num_rows, boucle while et fonctions fetch" },
+          { t: 335.60, short: "9. Projet de synthèse", label: "05:36 · 9. Architecture complète, code à gauche et aperçu à droite" },
+          { t: 372.84, short: "10. Récapitulatif & suite", label: "06:13 · 10. Directeur, trajet complet, cours et exercices de synthèse" }
         ],
         "css-positionnement": [
           { t: 0.00, short: "0. Flux HTML", label: "00:00 · 0. Le flux naturel HTML (block & inline)" },
@@ -1579,7 +1586,55 @@
         return endEl;
       }
 
-      /* ── Lecteur vidéo réservé exclusivement à l'animation du Guichet (php-guichet.mp4) ── */
+      /* ── Bifurcation pédagogique réelle au passage du coursier PHP (02:27.80) ── */
+      function installerChoixCoursPhpSTI(video, parent, estGuichetFn) {
+        if (!video || !parent || video.__stiChoixPhpInstalle) return;
+        video.__stiChoixPhpInstalle = true;
+        var instantChoix = 147.80;
+        var choix = document.createElement("div");
+        choix.className = "sti-php-courier-choice sti-no-print";
+        choix.hidden = true;
+        choix.style.cssText = "display:none;position:absolute;inset:62px 18px 18px;z-index:45;background:linear-gradient(145deg,rgba(7,15,31,.97),rgba(39,20,72,.97));border:3px solid #a855f7;border-radius:20px;box-shadow:0 18px 55px rgba(0,0,0,.7);padding:clamp(18px,3vw,38px);box-sizing:border-box;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;color:#fff;";
+        choix.innerHTML =
+          '<div style="padding:6px 18px;border-radius:999px;background:#facc15;color:#172033;font:900 13px/1.2 system-ui,sans-serif;letter-spacing:.06em;">PAUSE INTERACTIVE · LE COURSIER REPRÉSENTE PHP</div>' +
+          '<div style="font:900 clamp(22px,3vw,38px)/1.15 system-ui,sans-serif;color:#fff;">Pour plus de détails sur le langage PHP,<br>cliquez sur ce lien</div>' +
+          '<div style="font:700 clamp(14px,1.7vw,19px)/1.4 system-ui,sans-serif;color:#d8c8ff;max-width:820px;">Choisissez le cours complet, ou reprenez exactement la scène du Guichet.</div>' +
+          '<div style="display:flex;align-items:stretch;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:4px;">' +
+            '<button type="button" data-php-choice-course="1" style="min-width:260px;padding:16px 22px;border-radius:15px;border:2px solid #c4b5fd;background:linear-gradient(135deg,#6d28d9,#4f46e5);color:#fff;font:900 17px/1.2 system-ui,sans-serif;cursor:pointer;box-shadow:0 7px 22px rgba(109,40,217,.45);">▣ Voir le cours PHP</button>' +
+            '<button type="button" data-php-choice-continue="1" style="min-width:300px;padding:16px 22px;border-radius:15px;border:2px solid #86efac;background:linear-gradient(135deg,#15803d,#0f766e);color:#fff;font:900 17px/1.2 system-ui,sans-serif;cursor:pointer;box-shadow:0 7px 22px rgba(21,128,61,.4);">▶ Continuer la scène du Guichet</button>' +
+          '</div>';
+        parent.appendChild(choix);
+        function masquerChoix() { choix.hidden = true; choix.style.display = "none"; }
+        choix.querySelector("button[data-php-choice-continue]").addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          video.__stiChoixPhpAffiche = true;
+          masquerChoix();
+          try { var p = video.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+        });
+        choix.querySelector("button[data-php-choice-course]").addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          video.__stiChoixPhpAffiche = true;
+          masquerChoix();
+          setTimeout(function () {
+            if (typeof window.ouvrirVideoPasAPasSTI === "function") window.ouvrirVideoPasAPasSTI("php-cours");
+          }, 0);
+        });
+        video.addEventListener("timeupdate", function () {
+          var estGuichetActif = true;
+          try { estGuichetActif = typeof estGuichetFn === "function" ? !!estGuichetFn() : true; } catch (e) {}
+          if (!estGuichetActif) { masquerChoix(); return; }
+          var tChoix = Number(video.currentTime) || 0;
+          if (!video.__stiChoixPhpAffiche && tChoix >= instantChoix && tChoix < instantChoix + 1.5) {
+            video.__stiChoixPhpAffiche = true;
+            try { video.pause(); video.currentTime = instantChoix; } catch (e) {}
+            choix.hidden = false;
+            choix.style.display = "flex";
+          }
+        });
+        video.addEventListener("emptied", masquerChoix);
+      }
+
+      /* ── Lecteur vidéo principal du Guichet (php-guichet-v2.mp4) ── */
       function creerBlocVideoGuichetInline(idBox) {
         var url = resoudreUrlVideoGuichet();
         var box = document.createElement("div");
@@ -1603,12 +1658,13 @@
               '<button type="button" data-vclose="1">✕ Fermer</button>' +
             '</div>' +
           '</div>' +
-          '<video controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
+          '<video controls controlsList="nofullscreen" disablePictureInPicture playsinline webkit-playsinline preload="metadata" poster="' + prefixeAssetsSTI() + 'images/php-guichet-v2-poster.jpg?v=280" src="' + url + '" style="width:100%;max-width:100%;height:auto;max-height:calc(88vh - 82px);aspect-ratio:16/9;object-fit:contain;display:block;margin:0 auto;">' +
             '<source src="' + url + '" type="video/mp4" />' +
           '</video>';
 
         var vid = box.querySelector("video");
         installerPauseQRVideoSTI(vid);
+        installerChoixCoursPhpSTI(vid, box, function () { return true; });
         var selChapG = box.querySelector("select[data-vchap-sel]");
         var chapsG = STI_CHAPITRES_MEDIA["php-guichet"] || [];
         if (selChapG) {
@@ -1652,6 +1708,7 @@
         var endInline = creerEcranFinVideoSTI(
           function () {
             if (vid) {
+              vid.__stiChoixPhpAffiche = false;
               try { vid.currentTime = 0; vid.play(); } catch (e) {}
             }
           },
@@ -1733,6 +1790,7 @@
             box.scrollIntoView({ behavior: "smooth", block: "nearest" });
           } catch (e) {}
           if (vid) {
+            vid.__stiChoixPhpAffiche = false;
             vid.muted = false;
             vid.volume = 1.0;
             try { vid.play(); } catch (e) {}
@@ -1844,6 +1902,9 @@
           var mCard = document.getElementById("sti-video-modal-card");
           var mVid = document.getElementById("sti-video-modal-player");
           installerPauseQRVideoSTI(mVid);
+          installerChoixCoursPhpSTI(mVid, mCard, function () {
+            return (overlay.getAttribute("data-slug") || "") === "php-guichet";
+          });
           var mBtnFs = document.getElementById("sti-video-modal-fs");
           var mRates = overlay.querySelectorAll("button[data-mrate]");
           var mChapSel = document.getElementById("sti-video-modal-chap-sel");
@@ -1932,6 +1993,7 @@
           var mEndScreen = creerEcranFinVideoSTI(
             function () {
               if (mVid) {
+                if ((overlay.getAttribute("data-slug") || "") === "php-guichet") mVid.__stiChoixPhpAffiche = false;
                 try { mVid.currentTime = 0; mVid.play(); } catch (e) {}
               }
             },
@@ -2047,6 +2109,12 @@
         if (tEl) tEl.textContent = titre;
         if (dlEl) dlEl.href = url;
         if (vEl) {
+          if (slugCible === "php-guichet") {
+            vEl.__stiChoixPhpAffiche = false;
+            vEl.setAttribute("poster", prefixeAssetsSTI() + "images/php-guichet-v2-poster.jpg?v=280");
+          } else {
+            vEl.removeAttribute("poster");
+          }
           vEl.muted = false;
           vEl.volume = 1.0;
           if (vEl.getAttribute("src") !== url) {
@@ -2087,7 +2155,7 @@
             bVid.className = "sti-btn-video-dedie";
             bVid.textContent = (bar.id === "phpm-ctrl")
               ? "🎥 Vidéo"
-              : "🎥 Vidéo du Guichet (.mp4)";
+              : "🎥 Histoire du Guichet — cours + synthèse";
             bVid.title = VIDEO_GUICHET_INFO.title;
             bVid.addEventListener("click", function (ev) {
               ev.stopPropagation();
@@ -2108,7 +2176,7 @@
               bRotVid.type = "button";
               bRotVid.className = "sti-btn-video-dedie sti-btn-video-rot-mobile";
               bRotVid.style.cssText = "margin:14px auto 4px;padding:12px 20px;font-size:14px;border-radius:999px;display:inline-flex;";
-              bRotVid.textContent = "🎥 Regarder la vidéo du Guichet (.mp4)";
+              bRotVid.textContent = "🎥 Histoire du Guichet — cours + synthèse";
               bRotVid.addEventListener("click", function (ev) {
                 ev.stopPropagation();
                 window.ouvrirVideoPasAPasSTI("php-guichet");
@@ -2432,7 +2500,7 @@
             '<button type="button" id="sti-btn-cours-video-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #fde68a;background:linear-gradient(120deg,#f4511e,#ff7043);color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎥 Vidéo du cours ' + cLabel + ' (.mp4)</button>' +
             '<button type="button" id="sti-btn-cours-voix-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #86efac;background:#177245;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🔊 Écouter le cours ' + cLabel + '</button>' +
             '<select id="sti-select-cours-chap-hero" aria-label="Choisir un chapitre du cours ' + cLabel + '" style="padding:8px 12px;border-radius:10px;border:2px solid #facc15;background:#1e293b;color:#fde68a;font-weight:800;font-size:12.5px;cursor:pointer;max-width:290px;">' + optsChapsHtml + '</select>' +
-            (estPagePhpCours ? '<button type="button" id="sti-btn-php-guichet-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#0369a1;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎬 Vidéo du Guichet (.mp4)</button>' : '');
+            (estPagePhpCours ? '<button type="button" id="sti-btn-php-guichet-hero" style="padding:9px 16px;border-radius:10px;border:2px solid #7dd3fc;background:#0369a1;color:#fff;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;">🎬 Histoire du Guichet — cours + synthèse</button>' : '');
 
           var targetAnchor =
             document.getElementById("def-php") ||
