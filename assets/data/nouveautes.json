@@ -2,6 +2,13 @@
   {
     "date": "2026-10-17",
     "tag": "Exercices PHP",
+    "titre": "Atelier Débogage PHP/SQL/JS : Trouver et Corriger l'Erreur (10 pannes) 🔍🐘",
+    "desc": "Nouvel exercice interactif dans Exercices PHP : cliquez sur la ligne fautive dans un code en panne au labo (mysqli_affected_rows, fetch_assoc, SELECT COUNT(*), onsubmit, float/clear) et choisissez la correction.",
+    "lien": "exercices/series-exercices.html#php"
+  },
+  {
+    "date": "2026-10-17",
+    "tag": "Exercices PHP",
     "titre": "Nouvel exercice interactif PHP : Remise en ordre des scripts PHP/MySQLi & SQL 🧩🐘",
     "desc": "Ajouté dans Exercices PHP : 8 défis progressifs pour remettre dans l'ordre inscription.php, statistiques.php (Catégorie = initiale de Id), SELECT COUNT(*), clauses SQL, verif() JS et déploiement Wamp/XAMPP.",
     "lien": "exercices/series-exercices.html#php"

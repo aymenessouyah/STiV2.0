@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atelier Débogage PHP / SQL / JS — Trouver et Corriger l'Erreur (Bac STI)</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="../../assets/icons/sti-icon-192.png">
+  <link rel="stylesheet" href="../../assets/css/protection.css?v=227">
+  <script src="../../assets/js/protection.js?v=227"></script>
+  <style>
+    :root {
+      --bg: #faf6ee;
+      --card: #ffffff;
+      --ink: #23201a;
+      --muted: #5a5244;
+      --border: #23201a;
+      --code-bg: #1e293b;
+      --code-ink: #f8fafc;
+      --ok-bg: #dcfce7;
+      --ok-ink: #14532d;
+      --ko-bg: #fee2e2;
+      --ko-ink: #991b1b;
+    }
+    html[data-theme="dark"], html.dark-mode {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --ink: #f8fafc;
+      --muted: #cbd5e1;
+      --border: #475569;
+      --code-bg: #090d16;
+      --code-ink: #e2e8f0;
+      --ok-bg: rgba(20, 83, 45, 0.45);
+      --ok-ink: #bbf7d0;
+      --ko-bg: rgba(127, 29, 29, 0.45);
+      --ko-ink: #fecaca;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      padding: 16px 16px 50px;
+    }
+    .wrap-dbg { max-width: 1060px; margin: 0 auto; }
+    .topbar-dbg {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 8px; flex-wrap: wrap; margin-bottom: 14px;
+    }
+    .btn-d {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 13px; border-radius: 999px; border: 2px solid var(--border);
+      background: var(--card); color: var(--ink); font-weight: 900; font-size: 12px;
+      text-decoration: none; cursor: pointer; box-shadow: 2px 2px 0 var(--border);
+      transition: all 0.2s ease-in-out;
+    }
+    .btn-d:hover { transform: translateY(-2px); }
+    .hero-dbg {
+      background: linear-gradient(135deg, #fee2e2 0%, #fef3c7 55%, #e0e7ff 100%);
+      color: #1e1b4b; border: 2.5px solid #23201a; border-radius: 18px;
+      padding: 18px 20px; box-shadow: 4px 4px 0 #23201a; margin-bottom: 16px;
+    }
+    html[data-theme="dark"] .hero-dbg, html.dark-mode .hero-dbg {
+      background: linear-gradient(135deg, #31102f 0%, #0f172a 100%);
+      color: #f8fafc; border-color: #f87171; box-shadow: 4px 4px 0 #f87171;
+    }
+    .hero-dbg h1 { margin: 0 0 5px; font-size: clamp(18px, 2.5vw, 24px); font-weight: 900; }
+    .hero-dbg p { margin: 0; font-size: 13px; font-weight: 700; }
+
+    .nav-pannes { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .tab-panne {
+      padding: 6px 11px; border-radius: 10px; border: 2px solid var(--border);
+      background: var(--card); color: var(--ink); font-weight: 900; font-size: 11.8px; cursor: pointer;
+    }
+    .tab-panne.actif { background: #dc2626; color: #fff; border-color: #23201a; }
+    .tab-panne.reussi { background: #dcfce7; color: #14532d; border-color: #16a34a; }
+    .tab-panne.reussi.actif { background: #15803d; color: #fff; }
+
+    .panneau-dbg {
+      background: var(--card); border: 2.5px solid var(--border);
+      border-radius: 18px; padding: 18px; box-shadow: 4px 4px 0 var(--border);
+    }
+    .symptome-box {
+      padding: 11px 14px; border-radius: 12px; border: 2px solid #dc2626;
+      background: var(--ko-bg); color: var(--ko-ink);
+      font-size: 13.2px; font-weight: 800; margin: 8px 0 14px;
+    }
+    .code-inspect {
+      display: flex; flex-direction: column; gap: 5px;
+      background: var(--code-bg); padding: 12px; border-radius: 14px;
+      border: 2px solid var(--border); margin-bottom: 14px;
+    }
+    .ligne-dbg {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px; border-radius: 8px;
+      border: 1.5px solid transparent; color: var(--code-ink);
+      cursor: pointer; transition: all 0.15s ease-in-out;
+    }
+    .ligne-dbg:hover { background: rgba(255, 255, 255, 0.08); border-color: #94a3b8; }
+    .ligne-dbg.fautive-trouvee {
+      background: rgba(239, 68, 68, 0.28); border-color: #f87171;
+    }
+    .ligne-dbg.corrigee-ok {
+      background: rgba(34, 197, 94, 0.28); border-color: #4ade80;
+    }
+    .ligne-dbg.cliquee-saine {
+      background: rgba(148, 163, 184, 0.18); border-color: #64748b;
+    }
+    .num-l {
+      min-width: 24px; height: 24px; border-radius: 6px;
+      background: #334155; color: #cbd5e1; font: 900 11.5px system-ui, sans-serif;
+      display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .code-l {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.6px; font-weight: 700; white-space: pre-wrap; word-break: break-word;
+    }
+    .choix-fix-box {
+      display: none; margin-top: 12px; padding: 14px;
+      border-radius: 14px; border: 2px solid #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+    }
+    .btn-choix-fix {
+      display: block; width: 100%; text-align: left;
+      margin-top: 8px; padding: 10px 12px; border-radius: 10px;
+      border: 2px solid var(--border); background: var(--code-bg); color: var(--code-ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.5px; font-weight: 700; cursor: pointer;
+    }
+    .btn-choix-fix:hover { border-color: #38bdf8; }
+    .msg-dbg {
+      display: none; margin-top: 12px; padding: 12px 14px;
+      border-radius: 12px; font-size: 13px; font-weight: 800; border: 2px solid;
+    }
+    .msg-dbg.ok { display: block; background: var(--ok-bg); color: var(--ok-ink); border-color: #16a34a; }
+    .msg-dbg.ko { display: block; background: var(--ko-bg); color: var(--ko-ink); border-color: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="wrap-dbg">
+    <div class="topbar-dbg">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <a href="../series-exercices.html#php" class="btn-d">⬅️ Séries d'exercices PHP</a>
+        <a href="ordre-php-bac.html" class="btn-d">🧩 Exercice Remise en ordre</a>
+        <a href="../../cours/php.html" class="btn-d">🐘 Cours PHP</a>
+        <a href="../../bac-pratique.html" class="btn-d">🧪 Atelier Bac Pratique</a>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <span id="badge-score-dbg" class="btn-d" style="background:#dcfce7;color:#14532d;border-color:#16a34a;cursor:default">🏆 Score : 0 / 10 pannes (0/20)</span>
+        <button type="button" id="theme-toggle" class="btn-d">🌙 Mode Sombre</button>
+      </div>
+    </div>
+
+    <header class="hero-dbg">
+      <div style="display:inline-block;background:#dc2626;color:#fff;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:900;margin-bottom:5px">
+        🔍 ATELIER DÉBOGAGE BAC PRATIQUE STI — 10 PANNES CLASSIQUES À RÉPARER
+      </div>
+      <h1>🔍 Trouver et Corriger l'Erreur (PHP/MySQLi · SQL · JavaScript · HTML/CSS)</h1>
+      <p><b>Étape 1 :</b> Cliquez directement sur la ligne de code qui provoque la panne. <b>Étape 2 :</b> Choisissez l'instruction corrigée exacte pour réparer le programme.</p>
+    </header>
+
+    <div class="nav-pannes" id="barre-pannes"></div>
+
+    <section class="panneau-dbg">
+      <h2 id="titre-panne" style="margin:0;font-size:17px;font-weight:900;color:#dc2626"></h2>
+      <div id="symptome-panne" class="symptome-box"></div>
+
+      <div style="font-size:12.5px;font-weight:900;margin-bottom:6px">👇 Cliquez sur la ligne fautive dans le code ci-dessous :</div>
+      <div id="code-panne-lignes" class="code-inspect"></div>
+
+      <div id="boite-choix-fix" class="choix-fix-box">
+        <div style="font-size:13px;font-weight:900">🛠️ Ligne fautive repérée ! Choisissez la bonne correction :</div>
+        <div id="liste-boutons-fix"></div>
+      </div>
+
+      <div id="feedback-dbg" class="msg-dbg"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button type="button" id="btn-indice-dbg" class="btn-d">💡 Indice</button>
+        <button type="button" id="btn-suivant-dbg" class="btn-d" style="background:#dc2626;color:#fff">➡️ Panne suivante</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var PANNES = [
+        {
+          id: "b1",
+          court: "1. INSERT & num_rows",
+          titre: "Panne 1 — inscription.php : l'insertion fonctionne mais affiche un message d'échec",
+          symptome: "🚨 Symptôme au labo : L'élève est bien ajouté dans la table eleves sous phpMyAdmin, mais la page PHP n'affiche jamais « Inscription réussie » et déclenche un Warning MySQLi !",
+          indice: "mysqli_num_rows() ne s'utilise qu'avec SELECT. Après un INSERT, UPDATE ou DELETE, quelle fonction MySQLi prend $con en paramètre ?",
+          lignes: [
+            '<?php',
+            '$con = mysqli_connect("localhost", "root", "", "bd_lycee");',
+            '$id = $_POST["id"]; $np = $_POST["np"]; $moy = $_POST["moy"]; $dn = $_POST["dn"];',
+            '$req = "INSERT INTO eleves VALUES (\'$id\', \'$np\', $moy, \'$dn\')";',
+            '$res = mysqli_query($con, $req);',
+            'if (mysqli_num_rows($res) > 0) {',
+            '  echo "Inscription réussie !";',
+            '} mysqli_close($con); ?>'
+          ],
+          idxFautif: 5,
+          correctFix: 'if (mysqli_affected_rows($con) > 0) {',
+          options: [
+            'if (mysqli_affected_rows($con) > 0) {',
+            'if (mysqli_fetch_assoc($res) > 0) {',
+            'if (mysqli_num_rows($con) == 1) {'
+          ],
+          explication: "Après une requête d'action (INSERT, UPDATE ou DELETE), mysqli_query() retourne un booléen et non un jeu de résultats. Pour connaître le nombre de lignes insérées/modifiées, on utilise obligatoirement mysqli_affected_rows($con)."
+        },
+        {
+          id: "b2",
+          court: "2. fetch_row vs assoc",
+          titre: "Panne 2 — statistiques.php : les colonnes Nom_prenom et Moyenne restent vides",
+          symptome: "🚨 Symptôme au labo : La table eleves contient 15 élèves, mais la boucle while affiche des lignes vides avec l'erreur « Undefined array key 'Nom_prenom' » !",
+          indice: "Regardez comment la ligne est extraite dans le while(...) et comment les colonnes sont appelées ($t['Nom_prenom']).",
+          lignes: [
+            '<?php',
+            '$con = mysqli_connect("localhost", "root", "", "bd_lycee");',
+            '$res = mysqli_query($con, "SELECT Id, Nom_prenom, Moyenne FROM eleves ORDER BY LEFT(Id, 1) ASC");',
+            'while ($t = mysqli_fetch_row($res)) {',
+            '  $cat = substr($t["Id"], 0, 1);',
+            '  echo $cat . " : " . $t["Nom_prenom"] . " (" . $t["Moyenne"] . ")<br>";',
+            '}',
+            'mysqli_close($con); ?>'
+          ],
+          idxFautif: 3,
+          correctFix: 'while ($t = mysqli_fetch_assoc($res)) {',
+          options: [
+            'while ($t = mysqli_fetch_assoc($res)) {',
+            'while ($t = mysqli_num_rows($res)) {',
+            'while ($t = mysqli_affected_rows($res)) {'
+          ],
+          explication: "mysqli_fetch_row($res) renvoie uniquement un tableau indicé numériquement ($t[0], $t[1], $t[2]). Pour utiliser les noms des colonnes ($t['Id'], $t['Nom_prenom']), il faut utiliser mysqli_fetch_assoc($res) (ou mysqli_fetch_array($res))."
+        },
+        {
+          id: "b3",
+          court: "3. SELECT COUNT(*)",
+          titre: "Panne 3 — effectif.php : le nombre d'admis affiche toujours 1",
+          symptome: "🚨 Symptôme au labo : Il y a 12 élèves ayant une moyenne >= 10 dans la table eleves, mais la page PHP affiche toujours « Nombre d'admis : 1 » !",
+          indice: "Combien de lignes renvoie une requête SELECT COUNT(*) ? Comment lire la valeur calculée par COUNT(*) ?",
+          lignes: [
+            '<?php',
+            '$con = mysqli_connect("localhost", "root", "", "bd_lycee");',
+            '$res = mysqli_query($con, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne >= 10");',
+            '$nbAdmis = mysqli_num_rows($res);',
+            'echo "Nombre d\'admis : " . $nbAdmis;',
+            'mysqli_close($con);',
+            '?>'
+          ],
+          idxFautif: 3,
+          correctFix: '$lig = mysqli_fetch_assoc($res); $nbAdmis = $lig["nb"];',
+          options: [
+            '$lig = mysqli_fetch_assoc($res); $nbAdmis = $lig["nb"];',
+            '$nbAdmis = mysqli_affected_rows($con);',
+            '$nbAdmis = count($res);'
+          ],
+          explication: "SELECT COUNT(*) AS nb renvoie toujours une seule ligne contenant la colonne 'nb'. mysqli_num_rows($res) vaut donc toujours 1 ! Il faut extraire la ligne avec mysqli_fetch_assoc($res) puis lire $lig['nb']."
+        },
+        {
+          id: "b4",
+          court: "4. Apostrophes SQL",
+          titre: "Panne 4 — ajout.php : erreur SQL « Unknown column 'A102' in field list »",
+          symptome: "🚨 Symptôme au labo : Dès qu'on soumet l'identifiant 'A102' et le nom 'Ali Ben Salah', la requête INSERT échoue dans MySQL !",
+          indice: "En SQL, comment doivent être entourées les valeurs de type VARCHAR et DATE dans VALUES (...) ?",
+          lignes: [
+            '<?php',
+            '$con = mysqli_connect("localhost", "root", "", "bd_lycee");',
+            '$id = $_POST["id"]; $np = $_POST["np"]; $moy = $_POST["moy"]; $dn = $_POST["dn"];',
+            '$req = "INSERT INTO eleves VALUES ($id, $np, $moy, $dn)";',
+            'mysqli_query($con, $req);',
+            'mysqli_close($con); ?>'
+          ],
+          idxFautif: 3,
+          correctFix: '$req = "INSERT INTO eleves VALUES (\'$id\', \'$np\', $moy, \'$dn\')";',
+          options: [
+            '$req = "INSERT INTO eleves VALUES (\'$id\', \'$np\', $moy, \'$dn\')";',
+            '$req = "INSERT INTO eleves VALUES ($id, $np, \'$moy\', $dn)";',
+            '$req = "INSERT TABLE eleves VALUES ($id, $np, $moy, $dn)";'
+          ],
+          explication: "En SQL, les chaînes (VARCHAR/CHAR comme Id et Nom_prenom) et les dates (DATE comme DateNaissance) doivent obligatoirement être entourées d'apostrophes simples : '$id', '$np', '$dn'."
+        },
+        {
+          id: "b5",
+          court: "5. WHERE vs HAVING",
+          titre: "Panne 5 — Requête SQL de statistiques par Catégorie : « Invalid use of group function »",
+          symptome: "🚨 Symptôme au labo : On veut afficher les Catégories (initiale de Id) comptant au moins 3 élèves, mais MySQL renvoie une erreur de syntaxe !",
+          indice: "Peut-on écrire COUNT(*) dans la clause WHERE ?",
+          lignes: [
+            'SELECT LEFT(Id, 1) AS Categorie, COUNT(*) AS Effectif, AVG(Moyenne) AS MoyCat',
+            'FROM eleves',
+            'WHERE COUNT(*) >= 3',
+            'GROUP BY LEFT(Id, 1)',
+            'ORDER BY Categorie ASC;'
+          ],
+          idxFautif: 2,
+          correctFix: '/* Supprimer WHERE COUNT(*) et placer HAVING COUNT(*) >= 3 après GROUP BY */',
+          options: [
+            '/* Supprimer WHERE COUNT(*) et placer HAVING COUNT(*) >= 3 après GROUP BY */',
+            'WHERE SUM(*) >= 3',
+            'GROUP BY COUNT(*) >= 3'
+          ],
+          explication: "La clause WHERE filtre les lignes individuelles avant le regroupement et n'accepte jamais de fonction d'agrégation (COUNT, AVG, SUM, MIN, MAX). Pour filtrer sur COUNT(*) >= 3, on utilise HAVING après GROUP BY."
+        },
+        {
+          id: "b6",
+          court: "6. onsubmit sans return",
+          titre: "Panne 6 — inscription.html : le formulaire s'envoie vers PHP même si verif() retourne false",
+          symptome: "🚨 Symptôme au labo : Quand un champ est vide, l'alerte JavaScript s'affiche bien, mais dès qu'on clique sur OK, le navigateur ouvre quand même inscription.php !",
+          indice: "Regardez l'attribut onsubmit de la balise <form>.",
+          lignes: [
+            '<form id="f-insc" action="inscription.php" method="post" onsubmit="verif()">',
+            '  <label>Identifiant (Catégorie + chiffres) :</label>',
+            '  <input type="text" id="id" name="id">',
+            '  <label>Nom et Prénom :</label>',
+            '  <input type="text" id="np" name="np">',
+            '  <input type="submit" value="Enregistrer">',
+            '</form>'
+          ],
+          idxFautif: 0,
+          correctFix: '<form id="f-insc" action="inscription.php" method="post" onsubmit="return verif()">',
+          options: [
+            '<form id="f-insc" action="inscription.php" method="post" onsubmit="return verif()">',
+            '<form id="f-insc" action="inscription.php" method="post" onclick="verif()">',
+            '<form id="f-insc" action="inscription.php" method="get" onsubmit="verif() == false">'
+          ],
+          explication: "Sans le mot-clé « return » dans onsubmit=\"return verif()\", la valeur booléenne false retournée par verif() n'est pas transmise à l'événement de soumission du formulaire."
+        },
+        {
+          id: "b7",
+          court: "7. getElementById sans .value",
+          titre: "Panne 7 — controle.js : l'objet balise HTML est lu à la place du texte saisi",
+          symptome: "🚨 Symptôme au labo : La fonction verif() affiche toujours « Identifiant trop court » même quand l'élève tape 'A1025' dans le champ !",
+          indice: "Que renvoie document.getElementById('id') si on oublie .value ?",
+          lignes: [
+            'function verif() {',
+            '  let id = document.getElementById("id");',
+            '  if (id.length < 2 || id[0] < "A" || id[0] > "Z") {',
+            '    alert("Identifiant invalide (doit commencer par une majuscule) !");',
+            '    return false;',
+            '  }',
+            '  return true;',
+            '}'
+          ],
+          idxFautif: 1,
+          correctFix: '  let id = document.getElementById("id").value.trim();',
+          options: [
+            '  let id = document.getElementById("id").value.trim();',
+            '  let id = document.getElementById("id").innerHTML;',
+            '  let id = document.getElementsByName("id").value;'
+          ],
+          explication: "document.getElementById('id') renvoie l'élément DOM <input> (dont .length est undefined). Il faut obligatoirement lire .value pour récupérer la chaîne saisie par l'utilisateur."
+        },
+        {
+          id: "b8",
+          court: "8. Radio .value vs .checked",
+          titre: "Panne 8 — controle.js : le contrôle des boutons radio ne bloque jamais l'envoi",
+          symptome: "🚨 Symptôme au labo : Même si l'élève ne coche aucun bouton radio pour le genre, le formulaire est accepté sans afficher d'alerte !",
+          indice: "Quelle propriété booléenne indique si un bouton radio est coché ?",
+          lignes: [
+            'function verifGenre() {',
+            '  let r = document.getElementsByName("genre");',
+            '  if (r[0].value === "" && r[1].value === "") {',
+            '    alert("Veuillez choisir un genre !");',
+            '    return false;',
+            '  }',
+            '  return true;',
+            '}'
+          ],
+          idxFautif: 2,
+          correctFix: '  if (!r[0].checked && !r[1].checked) {',
+          options: [
+            '  if (!r[0].checked && !r[1].checked) {',
+            '  if (r.selectedIndex === 0) {',
+            '  if (r[0].innerHTML === "") {'
+          ],
+          explication: "Un bouton radio <input type='radio' name='genre' value='M'> possède toujours value='M', même lorsqu'il est décoché ! Il faut tester la propriété booléenne .checked."
+        },
+        {
+          id: "b9",
+          court: "9. Date JS getMonth()",
+          titre: "Panne 9 — controle.js : le mois affiché est décalé de 1 (Janvier affiche 0)",
+          symptome: "🚨 Symptôme au labo : Pour une date saisie en Janvier (2008-01-15), l'affichage indique « Mois : 0 » au lieu de « Mois : 1 » !",
+          indice: "Comment JavaScript numérote-t-il les mois dans getMonth() ?",
+          lignes: [
+            'function afficherDateSaisie() {',
+            '  let ch = document.getElementById("dn").value;',
+            '  let d = new Date(ch);',
+            '  let annee = d.getFullYear();',
+            '  let mois = d.getMonth();',
+            '  document.getElementById("info").innerHTML = "Mois : " + mois + "/" + annee;',
+            '  return true;',
+            '}'
+          ],
+          idxFautif: 4,
+          correctFix: '  let mois = d.getMonth() + 1;',
+          options: [
+            '  let mois = d.getMonth() + 1;',
+            '  let mois = d.getDate() + 1;',
+            '  let mois = d.getYear();'
+          ],
+          explication: "En JavaScript, la méthode getMonth() numérote les mois de 0 (Janvier) à 11 (Décembre). Il faut donc toujours écrire d.getMonth() + 1 pour obtenir un mois compris entre 1 et 12."
+        },
+        {
+          id: "b10",
+          court: "10. Float & clear: both",
+          titre: "Panne 10 — style.css : le pied de page <footer> remonte sous les colonnes flottantes",
+          symptome: "🚨 Symptôme au labo : Le menu <nav> et la <section> sont côte à côte avec float: left, mais le <footer> vient se superposer derrière eux au lieu de rester en bas !",
+          indice: "Quelle propriété CSS annule l'effet de flottement (float) sur le pied de page ?",
+          lignes: [
+            'nav { float: left; width: 25%; height: 450px; transition: all 0.3s ease-in-out; }',
+            'section { float: left; width: 75%; height: 450px; }',
+            'iframe { width: 100%; height: 100%; border: none; }',
+            'footer { float: none; height: 50px; background: #1e293b; color: #fff; }'
+          ],
+          idxFautif: 3,
+          correctFix: 'footer { clear: both; height: 50px; background: #1e293b; color: #fff; }',
+          options: [
+            'footer { clear: both; height: 50px; background: #1e293b; color: #fff; }',
+            'footer { float: bottom; height: 50px; background: #1e293b; color: #fff; }',
+            'footer { position: float; height: 50px; background: #1e293b; color: #fff; }'
+          ],
+          explication: "Après des blocs positionnés avec float: left (ou float: right), l'élément suivant (<footer>) doit impérativement avoir la propriété clear: both; pour se placer sous les colonnes flottantes."
+        }
+      ];
+
+      var CLE_STORAGE = "sti-debogage-php-bac-ok";
+      var reussis = {};
+      try { reussis = JSON.parse(localStorage.getItem(CLE_STORAGE) || "{}") || {}; } catch (e) {}
+
+      var idxActuel = 0;
+      var ligneFautiveTrouvee = false;
+
+      function ech(s) {
+        return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      function majScore() {
+        var nb = 0;
+        for (var i = 0; i < PANNES.length; i++) {
+          if (reussis[PANNES[i].id]) nb++;
+        }
+        var note20 = nb * 2;
+        var b = document.getElementById("badge-score-dbg");
+        if (b) b.innerHTML = "🏆 Score : " + nb + " / " + PANNES.length + " pannes (" + note20 + "/20)";
+        if (nb > 0 && window.enregistrerScoreQuizSTI) {
+          try { window.enregistrerScoreQuizSTI("Atelier Débogage PHP/SQL Bac", note20 + "/20", note20); } catch (e) {}
+        }
+      }
+
+      function rendreBarrePannes() {
+        var bar = document.getElementById("barre-pannes");
+        var html = "";
+        for (var i = 0; i < PANNES.length; i++) {
+          var p = PANNES[i];
+          var cls = "tab-panne" + (i === idxActuel ? " actif" : "") + (reussis[p.id] ? " reussi" : "");
+          html += '<button type="button" class="' + cls + '" data-idx="' + i + '">' + (reussis[p.id] ? "✅ " : "") + ech(p.court) + '</button>';
+        }
+        bar.innerHTML = html;
+        var btns = bar.getElementsByClassName("tab-panne");
+        for (var j = 0; j < btns.length; j++) {
+          btns[j].onclick = function () {
+            chargerPanne(parseInt(this.getAttribute("data-idx"), 10));
+          };
+        }
+      }
+
+      function chargerPanne(idx) {
+        idxActuel = (idx >= 0 && idx < PANNES.length) ? idx : 0;
+        var p = PANNES[idxActuel];
+        var dejaResolu = Boolean(reussis[p.id]);
+        ligneFautiveTrouvee = dejaResolu;
+
+        document.getElementById("titre-panne").innerHTML = ech(p.titre);
+        document.getElementById("symptome-panne").innerHTML = ech(p.symptome);
+        document.getElementById("boite-choix-fix").style.display = "none";
+
+        var fb = document.getElementById("feedback-dbg");
+        if (dejaResolu) {
+          fb.className = "msg-dbg ok";
+          fb.innerHTML = "✅ <b>Panne réparée !</b> " + ech(p.explication);
+        } else {
+          fb.className = "msg-dbg";
+          fb.innerHTML = "";
+        }
+
+        rendreBarrePannes();
+        rendreCodePanne();
+        majScore();
+      }
+
+      function rendreCodePanne() {
+        var p = PANNES[idxActuel];
+        var dejaResolu = Boolean(reussis[p.id]);
+        var cont = document.getElementById("code-panne-lignes");
+        var html = "";
+        for (var i = 0; i < p.lignes.length; i++) {
+          var txtLigne = (dejaResolu && i === p.idxFautif) ? p.correctFix : p.lignes[i];
+          var cls = "ligne-dbg";
+          if (dejaResolu && i === p.idxFautif) cls += " corrigee-ok";
+          else if (ligneFautiveTrouvee && i === p.idxFautif) cls += " fautive-trouvee";
+          html +=
+            '<div class="' + cls + '" data-line="' + i + '">' +
+              '<span class="num-l">' + (i + 1) + '</span>' +
+              '<span class="code-l">' + ech(txtLigne) + '</span>' +
+            '</div>';
+        }
+        cont.innerHTML = html;
+
+        var lignesDom = cont.getElementsByClassName("ligne-dbg");
+        for (var j = 0; j < lignesDom.length; j++) {
+          lignesDom[j].onclick = function () {
+            if (reussis[p.id]) return;
+            var numClick = parseInt(this.getAttribute("data-line"), 10);
+            var fb = document.getElementById("feedback-dbg");
+            if (numClick === p.idxFautif) {
+              ligneFautiveTrouvee = true;
+              rendreCodePanne();
+              fb.className = "msg-dbg";
+              fb.style.display = "none";
+              afficherChoixFix(p);
+            } else {
+              this.classList.add("cliquee-saine");
+              fb.className = "msg-dbg ko";
+              fb.innerHTML = "❌ La ligne " + (numClick + 1) + " est correcte. Cherchez la ligne qui cause le symptôme décrit ci-dessus !";
+            }
+          };
+        }
+      }
+
+      function afficherChoixFix(p) {
+        var box = document.getElementById("boite-choix-fix");
+        var list = document.getElementById("liste-boutons-fix");
+        var opts = p.options.slice();
+        /* Mélange léger */
+        for (var i = opts.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = opts[i]; opts[i] = opts[j]; opts[j] = t;
+        }
+        var html = "";
+        for (var k = 0; k < opts.length; k++) {
+          html += '<button type="button" class="btn-choix-fix" data-opt="' + ech(opts[k]) + '">' + ech(opts[k]) + '</button>';
+        }
+        list.innerHTML = html;
+        box.style.display = "block";
+
+        var btns = list.getElementsByClassName("btn-choix-fix");
+        for (var m = 0; m < btns.length; m++) {
+          btns[m].onclick = function () {
+            var choix = this.getAttribute("data-opt");
+            var fb = document.getElementById("feedback-dbg");
+            if (choix === p.correctFix) {
+              reussis[p.id] = true;
+              try { localStorage.setItem(CLE_STORAGE, JSON.stringify(reussis)); } catch (e) {}
+              box.style.display = "none";
+              rendreCodePanne();
+              rendreBarrePannes();
+              majScore();
+              fb.className = "msg-dbg ok";
+              fb.innerHTML = "✅ <b>Exact ! La ligne " + (p.idxFautif + 1) + " a été réparée :</b><br>" + ech(p.explication);
+            } else {
+              fb.className = "msg-dbg ko";
+              fb.innerHTML = "❌ Ce n'est pas la bonne syntaxe. Réessayez parmi les propositions !";
+            }
+          };
+        }
+      }
+
+      document.getElementById("btn-indice-dbg").onclick = function () {
+        var p = PANNES[idxActuel];
+        var fb = document.getElementById("feedback-dbg");
+        fb.className = "msg-dbg ok";
+        fb.innerHTML = "💡 <b>Indice :</b> " + ech(p.indice);
+      };
+
+      document.getElementById("btn-suivant-dbg").onclick = function () {
+        chargerPanne((idxActuel + 1) % PANNES.length);
+      };
+
+      /* Mode Sombre */
+      var btnTh = document.getElementById("theme-toggle");
+      function appliquerTheme(th) {
+        var dark = (th === "dark");
+        document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+        document.documentElement.classList.toggle("dark-mode", dark);
+        btnTh.innerHTML = dark ? "☀️ Mode Clair" : "🌙 Mode Sombre";
+      }
+      appliquerTheme(localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "light");
+      btnTh.onclick = function () {
+        var act = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        localStorage.setItem("sti-theme", act);
+        localStorage.setItem("theme", act);
+        appliquerTheme(act);
+      };
+
+      chargerPanne(0);
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../assets/js/config.js?v=256"></script>
+  <script src="../../assets/js/acces.js?v=268"></script>
+</body>
+</html>
