@@ -3,7 +3,7 @@
    - Pré-chargement automatique en arrière-plan des 426 fichiers du site
    - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
 
-var CACHE = "sti-atelier-v278";
+var CACHE = "sti-atelier-v279";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
 var videosEnCoursDeCache = {};
 var SHELL = [
@@ -594,7 +594,7 @@ var OFFLINE_LIST = [
   "./assets/videos/php-guichet.mp4",
   "./assets/videos/css-positionnement.mp4",
   "./assets/videos/css-animee.mp4",
-  "./assets/videos/sql-cours-v6.mp4",
+  "./assets/videos/sql-cours-v7.mp4",
   "./assets/videos/sql-serie1.mp4",
   "./assets/videos/sql-serie2.mp4",
   "./assets/videos/sql-serie3.mp4",
@@ -694,7 +694,7 @@ self.addEventListener("activate", function (evt) {
                 try { rPath = new URL(r.url).pathname; } catch (e) {}
                 /* Conserver les vidéos MP4 dans le cache persistant du labo (CACHE_VIDEOS_LABO) pour 0 Mo de trafic réseau */
                 if (rPath.indexOf("/assets/videos/") !== -1 && /\.mp4$/i.test(rPath)) {
-                  if (rPath.indexOf("sql-cours.mp4") !== -1 || rPath.indexOf("sql-cours-v2.mp4") !== -1 || rPath.indexOf("sql-cours-v3.mp4") !== -1 || rPath.indexOf("sql-cours-v4.mp4") !== -1 || rPath.indexOf("sql-cours-v5.mp4") !== -1 || rPath.indexOf("sql-initiation.mp4") !== -1) {
+                  if (rPath.indexOf("sql-cours.mp4") !== -1 || rPath.indexOf("sql-cours-v2.mp4") !== -1 || rPath.indexOf("sql-cours-v3.mp4") !== -1 || rPath.indexOf("sql-cours-v4.mp4") !== -1 || rPath.indexOf("sql-cours-v5.mp4") !== -1 || rPath.indexOf("sql-cours-v6.mp4") !== -1 || rPath.indexOf("sql-initiation.mp4") !== -1) {
                     continue;
                   }
                   try {
@@ -736,7 +736,7 @@ self.addEventListener("activate", function (evt) {
           var cVidClean = await caches.open(CACHE_VIDEOS_LABO);
           var keysVid = await cVidClean.keys();
           for (var kv of keysVid) {
-            if (kv.url.indexOf("sql-cours.mp4") !== -1 || kv.url.indexOf("sql-cours-v2.mp4") !== -1 || kv.url.indexOf("sql-cours-v3.mp4") !== -1 || kv.url.indexOf("sql-cours-v4.mp4") !== -1 || kv.url.indexOf("sql-cours-v5.mp4") !== -1 || kv.url.indexOf("sql-initiation.mp4") !== -1) {
+            if (kv.url.indexOf("sql-cours.mp4") !== -1 || kv.url.indexOf("sql-cours-v2.mp4") !== -1 || kv.url.indexOf("sql-cours-v3.mp4") !== -1 || kv.url.indexOf("sql-cours-v4.mp4") !== -1 || kv.url.indexOf("sql-cours-v5.mp4") !== -1 || kv.url.indexOf("sql-cours-v6.mp4") !== -1 || kv.url.indexOf("sql-initiation.mp4") !== -1) {
               await cVidClean.delete(kv);
             }
           }

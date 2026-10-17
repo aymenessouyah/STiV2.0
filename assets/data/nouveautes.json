@@ -1,13 +1,13 @@
 [
   {
-    "version": "v278",
+    "version": "v279",
     "date": "2026-10-17",
     "categorie": "Vidéo BD & SQL",
     "icone": "🎬",
-    "titre": "Cours SQL enrichi : bienvenue STI, chantier LDD et nouveaux avatars métiers",
-    "resume": "Version Full HD de 8 min 46 : accueil « Bienvenue dans la plateforme STI Version 2.0 By A.E », chef de chantier pour CREATE, machine à chenilles pour corriger la structure avec ALTER, marteaux à la fin de DROP, camion de déménagement pour le passage au LMD/INSERT, avatar de mise à jour pour UPDATE et inspectrice avec loupe pour SELECT. CASCADE est approfondi avec RESTRICT/NO ACTION, ON DELETE CASCADE, ON UPDATE CASCADE et ON DELETE SET NULL. La conclusion invite à consulter les cours et exercices sur la plateforme STI avant « Merci pour votre attention ».",
+    "titre": "Cours SQL en 11 chapitres : DROP séparé et synchronisation phrase par phrase",
+    "resume": "Version Full HD de 9 min 32. Les marteaux ne sont plus annoncés oralement et apparaissent uniquement dans un nouveau chapitre placé après ALTER et avant le LMD. Ce chapitre détaille DROP TABLE, l'absence de WHERE, la différence avec DELETE, l'ordre Table Fille puis Table Mère, IF EXISTS, les contraintes de clé étrangère, DROP DATABASE et la sauvegarde préalable. La synchronisation a été reconstruite directement sur les fins de phrases : chaque changement de texte, cible, Guide-Ligne et animation intervient à la frontière audio correspondante, sans recalage approximatif d'une ancienne séquence.",
     "lien": "cours/sql.html#video-initiation-sql",
-    "libelleLien": "Regarder la nouvelle vidéo SQL enrichie"
+    "libelleLien": "Regarder la version synchronisée en 11 chapitres"
   },
   {
     "version": "v271",

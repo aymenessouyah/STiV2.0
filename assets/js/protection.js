@@ -915,15 +915,15 @@
         title: "🎥 CSS pas à pas — Décoration animée (background, shadow, border, table & list)"
       };
       var VIDEO_SQL_INFO = {
-        file: "sql-cours-v6.mp4?v=278",
-        title: "🎥 Cours SQL Full HD — Bienvenue STI V2.0, Chantier LDD, CASCADE approfondi, avatars ALTER/DROP/INSERT/UPDATE/SELECT & Guide-Ligne synchronisé"
+        file: "sql-cours-v7.mp4?v=279",
+        title: "🎥 Cours SQL Full HD — Synchronisation phrase→cible, ALTER puis DROP TABLE/DATABASE détaillé, marteaux visuels muets & LMD"
       };
       var VIDEO_SQL_INIT_INFO = {
-        file: "sql-cours-v6.mp4?v=278",
-        title: "🎥 Cours SQL Full HD — Bienvenue STI V2.0, Chantier LDD, CASCADE approfondi, avatars ALTER/DROP/INSERT/UPDATE/SELECT & Guide-Ligne synchronisé"
+        file: "sql-cours-v7.mp4?v=279",
+        title: "🎥 Cours SQL Full HD — Synchronisation phrase→cible, ALTER puis DROP TABLE/DATABASE détaillé, marteaux visuels muets & LMD"
       };
       /* v275 : supprimer immédiatement les anciennes vidéos SQL du cache persistant.
-         Le nouveau nom sql-cours-v6.mp4 garantit que la version enrichie par les avatars métiers remplace bien toute ancienne copie. */
+         Le nouveau nom sql-cours-v7.mp4 garantit que la version à 11 chapitres remplace bien toute ancienne copie. */
       if ("caches" in window) {
         caches.open("sti-videos-labo-v1").then(function (cacheSqlV275) {
           return cacheSqlV275.keys().then(function (clesSqlV275) {
@@ -934,6 +934,7 @@
                   uSqlV275.indexOf("sql-cours-v3.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v4.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-cours-v5.mp4") !== -1 ||
+                  uSqlV275.indexOf("sql-cours-v6.mp4") !== -1 ||
                   uSqlV275.indexOf("sql-initiation.mp4") !== -1) {
                 return cacheSqlV275.delete(cleSqlV275);
               }
@@ -995,16 +996,17 @@
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
       var STI_CHAPITRES_MEDIA = {
         "sql-initiation": [
-          { t: 0.00, short: "1. Bienvenue & Acteurs", label: "00:00 · 1. Bienvenue dans la plateforme STI V2.0 By A.E puis Client, SGBD et Archives", sel: "#intro-bd" },
+          { t: 0.00, short: "1. Bienvenue & Acteurs", label: "00:00 · 1. Bienvenue STI V2.0 By A.E puis Client, SGBD et Archives", sel: "#intro-bd" },
           { t: 41.42, short: "2. Clés & Avion PK→FK", label: "00:41 · 2. Tables, clé simple/composée, graphique/textuel et Avion exact PK Mère → FK Fille", sel: "#intro-cles" },
-          { t: 90.24, short: "3. Chantier CREATE TABLE", label: "01:30 · 3. Le chantier commence : avatar chef de chantier et CREATE TABLE détaillé", sel: "#ldd" },
-          { t: 140.54, short: "4. Types & Tailles", label: "02:21 · 4. INT, DECIMAL, FLOAT, CHAR, VARCHAR, TEXT, DATE, TIME, DATETIME et BOOLEAN", sel: "#ldd" },
-          { t: 196.56, short: "5. CASCADE approfondi", label: "03:17 · 5. Contraintes, RESTRICT/NO ACTION, ON DELETE/UPDATE CASCADE et SET NULL", sel: "#ldd" },
-          { t: 268.70, short: "6. Chantier ALTER/DROP", label: "04:29 · 6. Le chantier continue : machine à chenilles, ALTER TABLE détaillé et marteaux pour DROP", sel: "#ldd" },
-          { t: 331.44, short: "7. Camion & INSERT", label: "05:31 · 7. Chantier terminé : camion de déménagement et INSERT détaillé", sel: "#lmd" },
-          { t: 387.58, short: "8. UPDATE & Inspection", label: "06:28 · 8. Avatar de mise à jour pour UPDATE puis avatar d'inspection pour SELECT", sel: "#lmd-select" },
-          { t: 434.71, short: "9. [4ème SI] Avancé", label: "07:15 · 9. [Spécial 4ème SI] Jointure, GROUP BY/HAVING et sous-requête", sel: "#lmd-jointure" },
-          { t: 473.28, short: "10. Merci & Suite", label: "07:53 · 10. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
+          { t: 90.24, short: "3. Chantier CREATE TABLE", label: "01:30 · 3. Chef de chantier et CREATE TABLE détaillé", sel: "#ldd" },
+          { t: 140.54, short: "4. Types & Tailles", label: "02:21 · 4. Types SQL et tailles expliqués", sel: "#ldd" },
+          { t: 196.56, short: "5. CASCADE approfondi", label: "03:17 · 5. Contraintes, RESTRICT/NO ACTION, CASCADE et SET NULL", sel: "#ldd" },
+          { t: 268.70, short: "6. ALTER TABLE", label: "04:29 · 6. Le chantier continue : ALTER TABLE détaillé, sans marteaux", sel: "#ldd" },
+          { t: 326.45, short: "7. DROP TABLE/DATABASE", label: "05:26 · 7. DROP TABLE, IF EXISTS, ordre Fille/Mère et DROP DATABASE — marteaux visuels muets", sel: "#ldd" },
+          { t: 377.14, short: "8. Camion & INSERT", label: "06:17 · 8. Chantier terminé : camion de déménagement et INSERT détaillé", sel: "#lmd" },
+          { t: 433.27, short: "9. UPDATE & SELECT", label: "07:13 · 9. Avatar UPDATE, DELETE avec WHERE et inspection SELECT", sel: "#lmd-select" },
+          { t: 480.41, short: "10. [4ème SI] Avancé", label: "08:00 · 10. [Spécial 4ème SI] Jointure, GROUP BY/HAVING et sous-requête", sel: "#lmd-jointure" },
+          { t: 518.98, short: "11. Merci & Suite", label: "08:39 · 11. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
         ],
         "html5-cours": [
           { t: 0.00, short: "I. Squelette", label: "00:00 · I. Squelette HTML5 (<head>, <meta>, <link>, <script>)", sel: "#entete" },
@@ -1060,16 +1062,17 @@
           { t: 631.98, short: "IX. Récap & Guichet", label: "10:32 · IX. Récapitulatif Annexe PHP/MySQLi & Guichet", sel: "#s9" }
         ],
         "sql-cours": [
-          { t: 0.00, short: "1. Bienvenue & Acteurs", label: "00:00 · 1. Bienvenue dans la plateforme STI V2.0 By A.E puis Client, SGBD et Archives", sel: "#intro-bd" },
+          { t: 0.00, short: "1. Bienvenue & Acteurs", label: "00:00 · 1. Bienvenue STI V2.0 By A.E puis Client, SGBD et Archives", sel: "#intro-bd" },
           { t: 41.42, short: "2. Clés & Avion PK→FK", label: "00:41 · 2. Tables, clé simple/composée, graphique/textuel et Avion exact PK Mère → FK Fille", sel: "#intro-cles" },
-          { t: 90.24, short: "3. Chantier CREATE TABLE", label: "01:30 · 3. Le chantier commence : avatar chef de chantier et CREATE TABLE détaillé", sel: "#ldd" },
-          { t: 140.54, short: "4. Types & Tailles", label: "02:21 · 4. INT, DECIMAL, FLOAT, CHAR, VARCHAR, TEXT, DATE, TIME, DATETIME et BOOLEAN", sel: "#ldd" },
-          { t: 196.56, short: "5. CASCADE approfondi", label: "03:17 · 5. Contraintes, RESTRICT/NO ACTION, ON DELETE/UPDATE CASCADE et SET NULL", sel: "#ldd" },
-          { t: 268.70, short: "6. Chantier ALTER/DROP", label: "04:29 · 6. Le chantier continue : machine à chenilles, ALTER TABLE détaillé et marteaux pour DROP", sel: "#ldd" },
-          { t: 331.44, short: "7. Camion & INSERT", label: "05:31 · 7. Chantier terminé : camion de déménagement et INSERT détaillé", sel: "#lmd" },
-          { t: 387.58, short: "8. UPDATE & Inspection", label: "06:28 · 8. Avatar de mise à jour pour UPDATE puis avatar d'inspection pour SELECT", sel: "#lmd-select" },
-          { t: 434.71, short: "9. [4ème SI] Avancé", label: "07:15 · 9. [Spécial 4ème SI] Jointure, GROUP BY/HAVING et sous-requête", sel: "#lmd-jointure" },
-          { t: 473.28, short: "10. Merci & Suite", label: "07:53 · 10. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
+          { t: 90.24, short: "3. Chantier CREATE TABLE", label: "01:30 · 3. Chef de chantier et CREATE TABLE détaillé", sel: "#ldd" },
+          { t: 140.54, short: "4. Types & Tailles", label: "02:21 · 4. Types SQL et tailles expliqués", sel: "#ldd" },
+          { t: 196.56, short: "5. CASCADE approfondi", label: "03:17 · 5. Contraintes, RESTRICT/NO ACTION, CASCADE et SET NULL", sel: "#ldd" },
+          { t: 268.70, short: "6. ALTER TABLE", label: "04:29 · 6. Le chantier continue : ALTER TABLE détaillé, sans marteaux", sel: "#ldd" },
+          { t: 326.45, short: "7. DROP TABLE/DATABASE", label: "05:26 · 7. DROP TABLE, IF EXISTS, ordre Fille/Mère et DROP DATABASE — marteaux visuels muets", sel: "#ldd" },
+          { t: 377.14, short: "8. Camion & INSERT", label: "06:17 · 8. Chantier terminé : camion de déménagement et INSERT détaillé", sel: "#lmd" },
+          { t: 433.27, short: "9. UPDATE & SELECT", label: "07:13 · 9. Avatar UPDATE, DELETE avec WHERE et inspection SELECT", sel: "#lmd-select" },
+          { t: 480.41, short: "10. [4ème SI] Avancé", label: "08:00 · 10. [Spécial 4ème SI] Jointure, GROUP BY/HAVING et sous-requête", sel: "#lmd-jointure" },
+          { t: 518.98, short: "11. Merci & Suite", label: "08:39 · 11. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
         ],
         "php-guichet": [
           { t: 0.00, short: "1. Client & JS", label: "00:00 · Étapes 1 à 5 : Client, Formulaire HTML & Contrôle JS" },
