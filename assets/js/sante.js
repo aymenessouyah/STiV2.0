@@ -62,7 +62,7 @@
     var hdr = { "apikey": cfg.CLE, "Authorization": "Bearer " + tk };
     var tous = ITEMS.concat([
       { cat: "Supabase", nom: "Table profiles", url: cfg.URL + "/rest/v1/profiles?select=id&limit=1", headers: hdr },
-      { cat: "Supabase", nom: "Table acces", url: cfg.URL + "/rest/v1/acces?select=email&limit=1", headers: hdr },
+      { cat: "Supabase", nom: "Table acces", url: cfg.URL + "/rest/v1/acces?select=id&limit=1", headers: hdr },
       { cat: "Supabase", nom: "Table sti_progressions", url: cfg.URL + "/rest/v1/sti_progressions?select=user_id&limit=1", headers: hdr }
     ]);
     Promise.all(tous.map(testerUn)).then(function (res) {
