@@ -74,7 +74,8 @@ test('le Service Worker relaie Range sans mettre en cache le média complet', as
   const eviction = await page.evaluate(async () => {
     const asset = new URL('assets/images/sql-serie5-poster.avif?v=302', location.origin + '/').href;
     await fetch(asset);
-    const cache = await caches.open('sti-atelier-v302');
+    const cacheNames = (await caches.keys()).filter(n => /^sti-atelier-v\d+$/.test(n)).sort().reverse();
+    const cache = await caches.open(cacheNames[0] || 'sti-atelier-v303');
     for (let i = 0; i < 30 && !(await cache.match(asset, { ignoreSearch: true })); i++) await new Promise(r => setTimeout(r, 50));
     const avant = Boolean(await cache.match(asset, { ignoreSearch: true }));
     navigator.serviceWorker.controller.postMessage({ type: 'STI_EVICT_RUNTIME' });
@@ -105,8 +106,8 @@ test('le mode économie est détecté et le diagnostic visible', async ({ browse
 test('le manifeste différentiel exclut les vidéos lourdes du téléchargement automatique', async ({ request }) => {
   const sw = await (await request.get('/sw.js')).text();
   const bloc = sw.slice(sw.indexOf('var UPDATE_FILES'), sw.indexOf('var CACHE_REVISIONS'));
-  expect(bloc).toContain('idb-idempotence-v302');
-  expect(bloc).toContain('delta-pagination-mfa-v302');
+  expect(bloc).toContain('./assets/js/acces.js');
+  expect(bloc).toContain('./assets/js/admin.js');
   expect(bloc).not.toMatch(/\.(mp4|m4s|mp3)/i);
   expect(sw).toContain('PRECACHE_ALL_USER');
   expect(sw).toContain('evincerRuntimeLRUSTI');

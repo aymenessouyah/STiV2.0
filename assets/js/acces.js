@@ -20,6 +20,51 @@
       lock: function (name, acquireTimeout, fn) { return fn(); }
     }
   });
+  function estCompteLaboRestreintV303(email) {
+    return String(email || "").trim().toLowerCase() === "elevelabo3@exemple.tn";
+  }
+  function cacheLaboRestreintV303() {
+    try {
+      var c = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+      return Boolean(c && estCompteLaboRestreintV303(c.email));
+    } catch (e) { return false; }
+  }
+  function preuvePosteFraicheV303() {
+    try {
+      var p = JSON.parse(sessionStorage.getItem("sti-labo-device-proof-v303") || "null");
+      return Boolean(p && p.deviceId && Number(p.until) > Date.now());
+    } catch (e) { return false; }
+  }
+  function masquerContenuLaboV303() {
+    if (!cacheLaboRestreintV303()) return;
+    document.documentElement.classList.add("sti-labo-device-pending-v303");
+    if (!document.getElementById("sti-labo-device-pending-style")) {
+      var st = document.createElement("style");
+      st.id = "sti-labo-device-pending-style";
+      st.textContent = "html.sti-labo-device-pending-v303 body{visibility:hidden!important}";
+      document.documentElement.appendChild(st);
+    }
+  }
+  function afficherContenuLaboV303() {
+    document.documentElement.classList.remove("sti-labo-device-pending-v303");
+  }
+  try {
+    localStorage.removeItem("sti-labo3-permanent");
+    if (cacheLaboRestreintV303()) localStorage.removeItem("sti-cred");
+  } catch (e) {}
+  masquerContenuLaboV303();
+  var apiLaboDevicePageV303 = null;
+  function chargerControlePosteLaboV303() {
+    if (apiLaboDevicePageV303) return Promise.resolve(apiLaboDevicePageV303);
+    return import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=303").then(function (m) {
+      if (!apiLaboDevicePageV303) {
+        apiLaboDevicePageV303 = m.createLaboDeviceClient({ sb: sb, root: cfg.RACINE, notify: function (texte) {
+          try { if (typeof afficherToastSynchro === "function") afficherToastSynchro(texte); } catch (e) {}
+        } });
+      }
+      return apiLaboDevicePageV303;
+    });
+  }
   /* La bibliothèque Supabase conserve et renouvelle déjà la session : aucune copie du mot de passe. */
   try { localStorage.removeItem("sti-reauth"); } catch (e) {}
   function connexionLimiteeSTI() {
@@ -173,7 +218,7 @@
           setTimeout(function () {
             try {
               var swTarget = (reg && reg.active) || navigator.serviceWorker.controller;
-              if (swTarget && navigator.onLine) {
+              if (swTarget && navigator.onLine && !cacheLaboRestreintV303()) {
                 localStorage.setItem("sti-precache-ver", String(verLocInit));
                 swTarget.postMessage({ type: "PRECACHE_ALL" });
               }
@@ -1313,6 +1358,10 @@
   function lireCacheSessionLocal() {
     try {
       var perm = JSON.parse(localStorage.getItem("sti-labo3-permanent") || "null");
+      if (perm && estCompteLaboRestreintV303(perm.email)) {
+        localStorage.removeItem("sti-labo3-permanent");
+        perm = null;
+      }
       if (perm && estClasseProfLabo(perm.classe, perm.email)) {
         perm.ts = Date.now();
         perm.gold = true;
@@ -1371,7 +1420,7 @@
         if (!c.statut || c.statut === "en_attente") c.statut = "actif";
         c.isAdmin = false;
       }
-      if (c && estClasseProfLabo(c.classe, c.email)) {
+      if (c && estClasseProfLabo(c.classe, c.email) && !estCompteLaboRestreintV303(c.email)) {
         c.ts = Date.now();
         c.gold = true;
         c.statut = "actif";
@@ -1384,37 +1433,17 @@
         } catch (e) {}
         return c;
       }
-      if (!c && (location.protocol === "file:" || (!navigator.onLine && estOrigineLocaleDossier))) {
-        var forceEx = "";
-        try { forceEx = localStorage.getItem("sti-force-exit") || ""; } catch (e) {}
-        if (!forceEx) {
-          c = {
-            id: "labo3-local",
-            email: "elevelabo3@exemple.tn",
-            nom: "Poste",
-            prenom: "Labo 3",
-            lycee: "Lycée Rafèha",
-            classe: "elevelabo3",
-            statut: "actif",
-            gold: true,
-            permanent: true,
-            isAdmin: false,
-            ts: Date.now()
-          };
-          try {
-            localStorage.setItem("sti-gold", "1");
-            localStorage.setItem("sti-offline", String(Date.now()));
-            localStorage.setItem("sti-session-cache", JSON.stringify(c));
-            localStorage.setItem("sti-labo3-permanent", JSON.stringify(c));
-          } catch (e) {}
-        }
-      }
+      /* v303 : aucune identité elevelabo3 ne peut être créée localement ou hors ligne. */
       return c;
     } catch (e) { return null; }
   }
 
   function restaurerDepuisCacheLocal() {
     var cache = lireCacheSessionLocal();
+    if (cache && estCompteLaboRestreintV303(cache.email)) {
+      masquerContenuLaboV303();
+      return false;
+    }
     var estLaboPerm = Boolean(cache && (cache.permanent || estClasseProfLabo(cache.classe, cache.email)));
     var sessionPcPerm = Boolean(estPostePC() && cache && cache.statut === "actif");
     var tOff = parseInt(localStorage.getItem("sti-offline") || "0", 10);
@@ -1512,8 +1541,24 @@
       redirigerTop(PORTAIL + "#connexion");
       return;
     }
-    sessionInitialisee = true;
     var user = session.user;
+    if (estCompteLaboRestreintV303(user && user.email)) {
+      masquerContenuLaboV303();
+      if (!navigator.onLine || !preuvePosteFraicheV303()) {
+        chargerControlePosteLaboV303().then(function (api) { return api.authorize(); }).then(function (result) {
+          if (result && result.ok) location.reload();
+        }).catch(function () {});
+        return;
+      }
+      chargerControlePosteLaboV303().then(function (api) {
+        return api.start();
+      }).then(function (result) {
+        if (result && result.ok) afficherContenuLaboV303();
+      }).catch(function () {});
+    } else {
+      afficherContenuLaboV303();
+    }
+    sessionInitialisee = true;
     currentUid = user.id;
     detecterSupportClientEventIdSTI();
     synchroniserFileHorsLigne();
@@ -1551,9 +1596,19 @@
     } catch (e) {}
 
     function appliquerStatut(rp) {
-      if (!rp || rp.error) return true;
+      if (!rp || rp.error) {
+        if (estCompteLaboRestreintV303(user && user.email)) {
+          masquerContenuLaboV303();
+          return false;
+        }
+        return true;
+      }
       var estLaboEmailOuCache = estClasseProfLabo(currentClasse, user.email) || Boolean(localStorage.getItem("sti-labo3-permanent"));
       if (!rp.data) {
+        if (estCompteLaboRestreintV303(user && user.email)) {
+          masquerContenuLaboV303();
+          return false;
+        }
         if (estLaboEmailOuCache) {
           currentClasse = currentClasse || "elevelabo3";
           appliquerModeGold(true);
@@ -1607,12 +1662,13 @@
             classe: rp.data.classe || (isLaboP ? "elevelabo3" : "—"),
             statut: "actif",
             gold: isG,
-            permanent: isLaboP,
+            permanent: Boolean(isLaboP && !estCompteLaboRestreintV303(user.email)),
+            deviceControlled: Boolean(isLaboP && estCompteLaboRestreintV303(user.email)),
             isAdmin: false,
             ts: Date.now()
           };
           ecrireCacheSessionLocal(objSess);
-          if (isLaboP) {
+          if (isLaboP && !estCompteLaboRestreintV303(user.email)) {
             localStorage.setItem("sti-labo3-permanent", JSON.stringify(objSess));
           } else {
             localStorage.removeItem("sti-labo3-permanent");
@@ -1656,14 +1712,14 @@
     try {
       tsSyncRec = parseInt(sessionStorage.getItem("sti-profil-sync-ts") || localStorage.getItem("sti-profil-sync-ts") || "0", 10) || 0;
     } catch (e) {}
-    if (cachesConnus && cachesConnus.id === user.id && cachesConnus.statut === "actif" && tsSyncRec > 0 && Date.now() - tsSyncRec < 120000) {
+    if (!estCompteLaboRestreintV303(user && user.email) && cachesConnus && cachesConnus.id === user.id && cachesConnus.statut === "actif" && tsSyncRec > 0 && Date.now() - tsSyncRec < 120000) {
       dejaEntre = true;
       entrer(cachesConnus);
       return;
     }
 
     var timerProfilOff = setTimeout(function () {
-      if (!dejaEntre) {
+      if (!dejaEntre && !estCompteLaboRestreintV303(user && user.email)) {
         dejaEntre = true;
         entrer(lireCacheSessionLocal() || {});
       }
@@ -1672,6 +1728,10 @@
     sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone").eq("id", user.id).maybeSingle().then(function (rp) {
       clearTimeout(timerProfilOff);
       if (!rp || rp.error) {
+        if (estCompteLaboRestreintV303(user && user.email)) {
+          masquerContenuLaboV303();
+          return;
+        }
         if (!dejaEntre) { dejaEntre = true; entrer(lireCacheSessionLocal() || {}); }
         return;
       }
@@ -1687,6 +1747,10 @@
       }
     }).catch(function () {
       clearTimeout(timerProfilOff);
+      if (estCompteLaboRestreintV303(user && user.email)) {
+        masquerContenuLaboV303();
+        return;
+      }
       if (!dejaEntre) { dejaEntre = true; entrer(lireCacheSessionLocal() || {}); }
     });
   }).catch(function () {
@@ -2133,12 +2197,20 @@
       : "📲 Hors-ligne";
     btnOff.title = "Mettre à jour vers la dernière version et télécharger 100 % des cours pour travailler sans Internet";
     btnOff.style.cssText = styleBtnCompact + "background:" + (dejaCache ? "#e3f6e8;color:#177245" : "#fff;color:#23201a") + ";";
+    var compteLaboDeviceV303 = estCompteLaboRestreintV303(user && user.email);
+    if (compteLaboDeviceV303) {
+      btnOff.textContent = "🔒 Hors-ligne désactivé";
+      btnOff.title = "Ce compte partagé exige une machine autorisée et une connexion Internet.";
+      btnOff.disabled = true;
+      btnOff.style.opacity = ".72";
+    }
     var majManuelleHorsLigneEnCours = false;
     var versionAvantClicHorsLigne = 0;
     var versionServeurDetecteeClic = 0;
     btnOff.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
+      if (compteLaboDeviceV303) return;
       if (!navigator.onLine && !estOrigineLocaleDossier && !estPosteLabo3Init) {
         if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
           btnOff.textContent = "⏳ Vérification…";

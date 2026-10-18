@@ -639,6 +639,36 @@
     return false;
   }
 
+  var apiLaboDevicesAdminV303 = null;
+  var promesseLaboDevicesAdminV303 = null;
+  function chargerModuleLaboDevicesAdminV303() {
+    if (apiLaboDevicesAdminV303) return Promise.resolve(apiLaboDevicesAdminV303);
+    if (promesseLaboDevicesAdminV303) return promesseLaboDevicesAdminV303;
+    var urlModule = "assets/js/modules/admin-labo-devices.js?v=303";
+    try {
+      var scripts = document.querySelectorAll("script[src]");
+      for (var i = 0; i < scripts.length; i++) {
+        if ((scripts[i].src || "").indexOf("assets/js/admin.js") !== -1) {
+          urlModule = new URL("modules/admin-labo-devices.js?v=303", scripts[i].src).toString();
+          break;
+        }
+      }
+    } catch (e) {}
+    promesseLaboDevicesAdminV303 = import(urlModule).then(function (m) {
+      apiLaboDevicesAdminV303 = m.createAdminLaboDevices({
+        sb: sb,
+        notify: msg,
+        requireMfa: exigerMfaAdmin
+      });
+      window.__stiLaboDevicesAdmin = apiLaboDevicesAdminV303;
+      return apiLaboDevicesAdminV303;
+    });
+    return promesseLaboDevicesAdminV303;
+  }
+  function demarrerMiniTableauLaboDevicesV303() {
+    chargerModuleLaboDevicesAdminV303().then(function (api) { api.start(); }).catch(function () {});
+  }
+
   sb.auth.getSession().then(function (r) {
     var s = r && r.data ? r.data.session : null;
     if (s && s.user && !estAdminEmail(s.user.email)) {
@@ -715,6 +745,7 @@
     if (s && s.user && estAdminEmail(s.user.email) && navigator.onLine) {
       installerProtectionsMfaAdmin();
       rafraichirEtatMfaAdmin();
+      demarrerMiniTableauLaboDevicesV303();
     }
     /* Affichage immédiat du dernier instantané IndexedDB, puis contrôle complet au démarrage. */
     chargerDepuisCacheAdmin(true, "");

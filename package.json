@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "test:v302": "node --test tests/v302-static.test.mjs",
-    "test:browser:v302": "playwright test --config tests/playwright.config.mjs"
+    "test:v303": "node --test tests/v303-device-control.test.mjs",
+    "test:browser:v302": "playwright test --config tests/playwright.config.mjs",
+    "test:browser:v303": "playwright test --config tests/playwright-v303.config.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0"

@@ -1,0 +1,24 @@
+<!doctype html><html lang="fr"><meta charset="utf-8"><title>Harness v303</title><body><main id="app">Harness</main><script type="module">
+import { createLaboDeviceClient } from '../assets/js/modules/labo-device-client.js';
+const params = new URLSearchParams(location.search);
+window.__rpcCalls = [];
+const fake = {
+  auth: {
+    getSession: async () => ({ data: { session: { user: { id: '00000000-0000-4000-8000-000000000123', email: 'elevelabo3@exemple.tn' } } } })
+  },
+  rpc: async (name, args) => {
+    window.__rpcCalls.push({ name, args });
+    if (name === 'labo_device_open_session') {
+      if (params.get('blocked') === '1') return { data: { ok: false, code: 'blocked', device_id: args.p_device_id }, error: null };
+      return { data: { ok: true, code: 'allowed', device_id: args.p_device_id, name: 'Test', new_device: false }, error: null };
+    }
+    return { data: true, error: null };
+  },
+  from: () => ({ select() { return this; }, eq() { return this; }, order() { return this; }, limit: async () => ({ data: [], error: null }) }),
+  channel: () => ({ on() { return this; }, subscribe() { return this; } }),
+  removeChannel: () => {}
+};
+window.__client = createLaboDeviceClient({ sb: fake, root: '../', notify: () => {} });
+window.runAuthorize = () => window.__client.authorize();
+window.runStart = () => window.__client.start();
+</script></body></html>
