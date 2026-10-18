@@ -14,6 +14,7 @@ test('syntaxe des scripts v303', () => {
     'assets/js/portail.js',
     'assets/js/modules/labo-device-client.js',
     'assets/js/modules/admin-labo-devices.js',
+    'assets/js/modules/password-recovery.js',
     'sw.js'
   ]) execFileSync(process.execPath, ['--check', join(root, f)], { stdio: 'pipe' });
 });
@@ -75,7 +76,7 @@ test('migration v303 : RLS restrictive, session_id et secrets hachés', () => {
 test('service worker v303+ reste différentiel et léger', () => {
   const sw = read('sw.js');
   assert.match(sw, /sti-atelier-v\d+/);
-  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline|unified-device-admin)-1/);
+  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline|unified-device-admin|password-recovery)-1/);
   assert.match(sw, /labo-device-client\.js/);
   assert.match(sw, /admin-labo-devices\.js/);
   const manifest = sw.slice(sw.indexOf('var UPDATE_FILES'), sw.indexOf('var CACHE_REVISIONS'));
@@ -122,4 +123,23 @@ test('migration v306 : suppression message réservée à AAL2', () => {
   assert.match(sql, /revoke execute[^]*from public, anon/);
   assert.match(sql, /grant execute[^]*to authenticated/);
   assert.doesNotMatch(sql, /grant delete on public\.labo_device_messages/i);
+});
+
+test('récupération v307 : lien, nouveau mot de passe et erreurs expirées', () => {
+  const portail = read('portail.html');
+  const script = read('assets/js/portail.js');
+  const recovery = read('assets/js/modules/password-recovery.js');
+  assert.match(portail, /id="f-nouveau-mdp"/);
+  assert.match(portail, /id="n-mdp2"/);
+  assert.match(portail, /password-recovery\.js\?v=307/);
+  assert.match(script, /modeRecuperationMdpV307/);
+  assert.match(script, /portail\.html\?mode=recovery/);
+  assert.match(recovery, /exchangeCodeForSession/);
+  assert.match(recovery, /verifyOtp/);
+  assert.match(recovery, /setSession/);
+  assert.match(recovery, /updateUser\(\{ password: value \}\)/);
+  assert.match(recovery, /signOut\(\{ scope: "global" \}\)/);
+  assert.match(recovery, /localStorage\.removeItem\(key\)/);
+  assert.match(recovery, /sti-cred/);
+  assert.match(recovery, /lien de récupération a expiré/i);
 });

@@ -89,3 +89,34 @@ test('notification d’un nouveau poste auto-accepté', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.__notifications.some(text => text.includes('Nouveau poste accepté automatiquement')))).toBeTruthy();
   await expect(page.locator('#admin-labo-devices-inline')).toContainText('PC Nouveau');
 });
+
+test('lien de récupération puis modification du mot de passe', async ({ page }) => {
+  await page.goto('/tests/password-recovery-harness.html?mode=recovery#access_token=test-access&refresh_token=test-refresh&type=recovery');
+  await expect(page.locator('#f-nouveau-mdp')).toBeVisible();
+  await expect(page.locator('#msg')).toContainText('Lien vérifié');
+  await expect(page.locator('#msg')).toContainText('c•••@example.tn');
+  await expect(page).not.toHaveURL(/test-access|test-refresh/);
+
+  await page.evaluate(() => {
+    localStorage.setItem('sti-cred', 'ancien-secret-hors-ligne');
+    localStorage.setItem('sti-session-cache', JSON.stringify({ email: 'candidat@example.tn' }));
+  });
+  await page.locator('#n-mdp').fill('NouveauSecret2026!');
+  await page.locator('#n-mdp2').fill('NouveauSecret2026!');
+  await page.locator('#b-nouveau-mdp').click();
+  await expect(page.locator('#msg')).toContainText('Mot de passe modifié');
+  const calls = await page.evaluate(() => window.__calls);
+  expect(calls.some(call => call.name === 'setSession')).toBeTruthy();
+  expect(calls.some(call => call.name === 'updateUser' && call.args.password === 'NouveauSecret2026!')).toBeTruthy();
+  expect(calls.some(call => call.name === 'signOut' && call.args.scope === 'global')).toBeTruthy();
+  expect(await page.evaluate(() => localStorage.getItem('sti-cred'))).toBeNull();
+  expect(await page.evaluate(() => localStorage.getItem('sti-session-cache'))).toBeNull();
+});
+
+test('lien de récupération expiré clairement signalé', async ({ page }) => {
+  await page.goto('/tests/password-recovery-harness.html?mode=recovery#error=access_denied&error_description=otp_expired');
+  await expect(page.locator('#f-nouveau-mdp')).toBeVisible();
+  await expect(page.locator('#msg')).toContainText('expiré');
+  await expect(page.locator('#b-nouveau-mdp')).toBeDisabled();
+  await expect(page.locator('#b-nouveau-lien')).toBeEnabled();
+});

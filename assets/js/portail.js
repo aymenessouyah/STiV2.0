@@ -10,6 +10,12 @@
       lock: function (name, acquireTimeout, fn) { return fn(); }
     }
   });
+  /* Le module v307 traite lui-même les jetons de récupération afin de ne jamais
+     confondre une session normale avec un lien « mot de passe oublié ». */
+  var modeRecuperationMdpV307 = Boolean(
+    window.STI_PASSWORD_RECOVERY &&
+    window.STI_PASSWORD_RECOVERY.isRecoveryUrl(window.location.href)
+  );
   /* Supprimer les anciens secrets et jetons applicatifs : seule la session Supabase est valide. */
   try {
     localStorage.removeItem("sti-reauth");
@@ -79,7 +85,7 @@
       }
       var clVerif = String((permLabo && permLabo.classe) || (sessLoc && sessLoc.classe) || "").trim().toLowerCase().replace(/[\s._\-]+/g, "");
       var emVerif = String((permLabo && permLabo.email) || (sessLoc && sessLoc.email) || "").trim().toLowerCase();
-      if ((clVerif === "elevelabo3" || /^elevelabo3(?:@|$)/i.test(emVerif)) && !estCompteLaboRestreintV303(emVerif) && !hInit) {
+      if ((clVerif === "elevelabo3" || /^elevelabo3(?:@|$)/i.test(emVerif)) && !estCompteLaboRestreintV303(emVerif) && !hInit && !modeRecuperationMdpV307) {
         var objPerm = permLabo || sessLoc;
         objPerm.ts = Date.now();
         objPerm.gold = true;
@@ -105,7 +111,7 @@
          — et sur PC, la session ouverte reste active en permanence —
          le renvoyer immédiatement vers l'accueil sans le bloquer sur le formulaire */
       var estPcPortail = !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "") && !(navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-      if (sessLoc && !estCompteLaboRestreintV303(sessLoc.email) && sessLoc.statut === "actif" && (estPcPortail || (sessLoc.ts && (Date.now() - Number(sessLoc.ts) < 30 * 86400000))) && (!hInit || hInit === "connexion")) {
+      if (!modeRecuperationMdpV307 && sessLoc && !estCompteLaboRestreintV303(sessLoc.email) && sessLoc.statut === "actif" && (estPcPortail || (sessLoc.ts && (Date.now() - Number(sessLoc.ts) < 30 * 86400000))) && (!hInit || hInit === "connexion")) {
         try {
           var nowActStr = String(Date.now());
           sessLoc.ts = Date.now();
@@ -377,6 +383,18 @@
   if (h === "connexion") msg("🔒 Connexion requise pour accéder à la plateforme.", "att");
   if (h === "admin") msg("🔒 Accès réservé à l'administrateur (aymenessouyah@gmail.com) : veuillez saisir vos identifiants.", "att");
   if (h === "deconnecte") msg("Vous êtes déconnecté(e). À bientôt !", "ok");
+  if (h === "oubli") {
+    document.getElementById("tab-oubli").click();
+    msg("📨 Saisissez votre adresse pour recevoir un nouveau lien de récupération.", "att");
+  }
+
+  if (modeRecuperationMdpV307 && window.STI_PASSWORD_RECOVERY) {
+    window.STI_PASSWORD_RECOVERY.start({
+      sb: sb,
+      root: cfg.RACINE,
+      message: msg
+    });
+  }
 
   /* Clic sur « 📊 Tableau de bord administrateur » depuis le portail :
      vérifier d'abord la session Supabase active (seul aymenessouyah@gmail.com est autorisé) */
@@ -981,11 +999,11 @@
     e.preventDefault();
     var btn = e.target.querySelector(".btn"); btn.disabled = true;
     sb.auth.resetPasswordForEmail(document.getElementById("o-email").value.trim(), {
-      redirectTo: cfg.RACINE + "portail.html"
+      redirectTo: cfg.RACINE + "portail.html?mode=recovery"
     }).then(function (r) {
       btn.disabled = false;
       if (r.error) { msg("❌ " + r.error.message, "err"); return; }
-      msg("📧 Lien de réinitialisation envoyé (vérifiez votre boîte mail).", "ok");
+      msg("📧 Si cette adresse est enregistrée, un lien vient d’être envoyé. Vérifiez aussi le dossier spam. Le lien est temporaire et utilisable une seule fois.", "ok");
     });
   });
 

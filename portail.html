@@ -356,8 +356,20 @@
 
     <form id="f-oubli" hidden>
       <label for="o-email">Adresse e-mail du compte</label>
-      <span class="champ"><span class="ico">✉️</span><input id="o-email" type="email" required placeholder="vous@exemple.tn" /></span>
+      <span class="champ"><span class="ico">✉️</span><input id="o-email" type="email" required placeholder="vous@exemple.tn" autocomplete="email" /></span>
       <button class="btn" type="submit">📨 Recevoir le lien de réinitialisation</button>
+      <p style="font-size:11.5px;line-height:1.45;color:var(--muted);margin:9px 0 0">Compte créé uniquement avec un numéro WhatsApp ? Contactez l’administrateur : aucune adresse e-mail réelle n’est associée à ce type de compte.</p>
+    </form>
+
+    <form id="f-nouveau-mdp" hidden autocomplete="off">
+      <h2 style="margin:0 0 8px;font-size:19px;color:var(--accent)">🔐 Nouveau mot de passe</h2>
+      <p style="font-size:12px;line-height:1.5;color:var(--muted);margin:0 0 12px">Le lien reçu par e-mail doit être vérifié avant l’enregistrement.</p>
+      <label for="n-mdp">Nouveau mot de passe (8 caractères minimum)</label>
+      <span class="champ"><span class="ico">🔒</span><input id="n-mdp" type="password" required minlength="8" placeholder="••••••••" autocomplete="new-password" /></span>
+      <label for="n-mdp2">Confirmez le nouveau mot de passe</label>
+      <span class="champ"><span class="ico">🔒</span><input id="n-mdp2" type="password" required minlength="8" placeholder="••••••••" autocomplete="new-password" /></span>
+      <button class="btn" id="b-nouveau-mdp" type="submit" disabled>✅ Enregistrer le nouveau mot de passe</button>
+      <button class="btn btn-sec" id="b-nouveau-lien" type="button">📨 Demander un nouveau lien</button>
     </form>
 
     <div class="qr-zone">
@@ -431,7 +443,8 @@
 </script>
 <link rel="stylesheet" href="assets/css/protection.css?v=227" />
 <script src="assets/js/protection.js?v=302" defer></script>
-<script src="assets/js/portail.js?v=303"></script>
+<script src="assets/js/modules/password-recovery.js?v=307"></script>
+<script src="assets/js/portail.js?v=307"></script>
 <script src="assets/js/sync-progressions.js"></script>
 </body>
 </html>
