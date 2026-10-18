@@ -152,7 +152,7 @@ begin
     if coalesce(e->>'code', '') ~ '^[A-Z0-9]{5,12}$' then
       insert into public.badges_labo(code_hash, profil_public, actif, updated_at)
       values (
-        encode(digest(upper(e->>'code'), 'sha256'), 'hex'),
+        encode(sha256(convert_to(upper(e->>'code'), 'UTF8')), 'hex'),
         jsonb_strip_nulls(jsonb_build_object(
           'id', e->'profil'->>'id',
           'nom', e->'profil'->>'nom',
@@ -179,7 +179,7 @@ language sql stable security definer set search_path = public as $$
   select profil_public
   from public.badges_labo
   where actif = true
-    and code_hash = encode(digest(upper(trim(coalesce(code_saisi, ''))), 'sha256'), 'hex')
+    and code_hash = encode(sha256(convert_to(upper(trim(coalesce(code_saisi, ''))), 'UTF8')), 'hex')
   limit 1;
 $$;
 revoke execute on function public.valider_badge_labo(text) from public;

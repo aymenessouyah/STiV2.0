@@ -49,7 +49,9 @@ test('migration RLS, Realtime et AAL2', () => {
   assert.match(sql, /alter publication supabase_realtime add table public\.profiles/);
   assert.match(sql, /alter publication supabase_realtime add table public\.acces/);
   assert.match(sql, /admin_sync_badges/);
-  assert.match(sql, /digest\(upper\(e->>'code'\), 'sha256'\)/);
+  assert.match(sql, /sha256\(convert_to\(upper\(e->>'code'\), 'UTF8'\)\)/);
+  assert.match(sql, /sha256\(convert_to\(upper\(trim\(coalesce\(code_saisi, ''\)\)\), 'UTF8'\)\)/);
+  assert.doesNotMatch(sql, /(?<![a-z])digest\s*\(/i);
 });
 
 test('HLS CSS3 cohérent, trois renditions et plages d’octets', () => {
