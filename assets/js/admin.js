@@ -644,12 +644,12 @@
   function chargerModuleLaboDevicesAdminV303() {
     if (apiLaboDevicesAdminV303) return Promise.resolve(apiLaboDevicesAdminV303);
     if (promesseLaboDevicesAdminV303) return promesseLaboDevicesAdminV303;
-    var urlModule = "assets/js/modules/admin-labo-devices.js?v=303";
+    var urlModule = "assets/js/modules/admin-labo-devices.js?v=306";
     try {
       var scripts = document.querySelectorAll("script[src]");
       for (var i = 0; i < scripts.length; i++) {
         if ((scripts[i].src || "").indexOf("assets/js/admin.js") !== -1) {
-          urlModule = new URL("modules/admin-labo-devices.js?v=303", scripts[i].src).toString();
+          urlModule = new URL("modules/admin-labo-devices.js?v=306", scripts[i].src).toString();
           break;
         }
       }
@@ -1395,7 +1395,7 @@
               " <span style='font-size:11.5px;color:#475569;font-weight:800'>· " + nbLaboConnues + " poste(s) Labo 3 identifié(s) au total</span>" +
             "</div>" +
             "<div style='display:flex;align-items:center;gap:6px;flex-wrap:wrap'>" +
-              "<button type='button' id='btn-gerer-labo3-securise' title='Ouvrir le contrôle sécurisé par machine' style='border:1.5px solid #b8321b;background:#fff0ed;color:#8f2514;border-radius:999px;padding:4px 11px;font-size:11px;font-weight:900;cursor:pointer'>🛡️ Gérer : Renommer · Autoriser/Bloquer · Supprimer</button>" +
+              "<button type='button' id='btn-gerer-labo3-securise' title='Afficher la gestion sécurisée intégrée ci-dessous' style='border:1.5px solid #b8321b;background:#fff0ed;color:#8f2514;border-radius:999px;padding:4px 11px;font-size:11px;font-weight:900;cursor:pointer'>🛡️ Gestion sécurisée détaillée ↓</button>" +
               "<button type='button' id='btn-num-auto-labo3' title='Numéroter automatiquement toutes les machines connues (Poste 01, Poste 02…)' style='border:1.5px solid #0284c7;background:#e0f2fe;color:#0369a1;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>🔢 Numéroter auto (Poste 01…)</button>" +
               "<button type='button' id='btn-export-csv-labo3' title='Télécharger le rapport horodaté des postes du Labo 3 au format CSV (Excel)' style='border:1.5px solid #16a34a;background:#dcfce7;color:#14532d;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>📥 Exporter présence (CSV)</button>" +
               "<button type='button' id='btn-fermer-band-labo3' style='border:1.5px solid #0284c7;background:#fff;color:#0284c7;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer'>✖ Masquer</button>" +
@@ -1425,7 +1425,7 @@
               msg("❌ Impossible d’ouvrir la gestion sécurisée des postes : " + ((e && e.message) || "module indisponible"), "err");
             }).finally(function () {
               bGererLaboSecurise.disabled = false;
-              bGererLaboSecurise.textContent = "🛡️ Gérer : Renommer · Autoriser/Bloquer · Supprimer";
+              bGererLaboSecurise.textContent = "🛡️ Gestion sécurisée détaillée ↓";
             });
           };
         }
@@ -1526,6 +1526,9 @@
             msg((cfgSecuriteAdmin.pausesMachines[cM] ? "⏸️ Écran figé sur " : "▶️ Écran libéré sur ") + nomP, "ok");
           };
         });
+        if (window.__stiLaboDevicesAdmin && typeof window.__stiLaboDevicesAdmin.mountInline === "function") {
+          window.__stiLaboDevicesAdmin.mountInline();
+        }
       } else {
         bandLaboM.style.display = "none";
       }

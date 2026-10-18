@@ -40,13 +40,15 @@ test('identité machine persistante et session serveur', () => {
   assert.match(client, /labo_device_mark_message/);
   assert.match(client, /postgres_changes/);
   assert.match(client, /https:\/\/ipapi\.co\/json\//);
-  assert.match(client, /location:\s*readApproxLocation\(\)/);
+  assert.match(client, /location:\s*geo \? geo\.text/);
+  assert.match(client, /location_at:\s*geo \? geo\.at/);
+  assert.match(client, /stale:\s*Date\.now\(\) - timestamp/);
 });
 
 test('mini-tableau intégré et actions AAL2', () => {
   const admin = read('assets/js/admin.js');
   const module = read('assets/js/modules/admin-labo-devices.js');
-  assert.match(admin, /modules\/admin-labo-devices\.js\?v=303/);
+  assert.match(admin, /modules\/admin-labo-devices\.js\?v=\d+/);
   assert.match(admin, /requireMfa: exigerMfaAdmin/);
   assert.match(module, /admin_labo_devices_list/);
   assert.match(module, /admin_labo_device_action/);
@@ -73,24 +75,51 @@ test('migration v303 : RLS restrictive, session_id et secrets hachés', () => {
 test('service worker v303+ reste différentiel et léger', () => {
   const sw = read('sw.js');
   assert.match(sw, /sti-atelier-v\d+/);
-  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline)-1/);
+  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline|unified-device-admin)-1/);
   assert.match(sw, /labo-device-client\.js/);
   assert.match(sw, /admin-labo-devices\.js/);
   const manifest = sw.slice(sw.indexOf('var UPDATE_FILES'), sw.indexOf('var CACHE_REVISIONS'));
   assert.doesNotMatch(manifest, /\.(mp4|m4s|mp3|pdf|zip)/i);
 });
 
-test('contrôles sécurisés visibles depuis le bandeau Labo 3', () => {
+test('contrôles sécurisés fusionnés dans le bandeau Labo 3', () => {
   const admin = read('assets/js/admin.js');
+  const module = read('assets/js/modules/admin-labo-devices.js');
   assert.match(admin, /id='btn-gerer-labo3-securise'/);
-  assert.match(admin, /Gérer : Renommer · Autoriser\/Bloquer · Supprimer/);
-  assert.match(admin, /chargerModuleLaboDevicesAdminV303\(\)[\s\S]*api\.open\(\)/);
+  assert.match(admin, /Gestion sécurisée détaillée/);
+  assert.match(admin, /mountInline/);
+  assert.match(module, /bandeau-machines-labo3/);
+  assert.match(module, /admin-labo-devices-inline/);
 });
 
-test('localisation approximative et postes hors ligne restent visibles', () => {
+test('localisation datée et postes hors ligne restent visibles', () => {
   const module = read('assets/js/modules/admin-labo-devices.js');
-  assert.match(module, /Localisation approximative/);
+  assert.match(module, /location_at/);
+  assert.match(module, /relevée/);
   assert.match(module, /⚪ Hors ligne/);
   assert.match(module, /const offline = devices\.filter/);
-  assert.match(module, /Tous les postes enregistrés restent affichés, même hors ligne/);
+  assert.match(module, /Les postes hors ligne restent visibles/);
+});
+
+test('historique, filtres et notification des nouveaux postes', () => {
+  const module = read('assets/js/modules/admin-labo-devices.js');
+  assert.match(module, /admin_labo_device_message_delete/);
+  assert.match(module, /📜 Historique/);
+  assert.match(module, /Renvoyer/);
+  assert.match(module, /Non lu/);
+  for (const value of ['all', 'online', 'offline', 'blocked']) {
+    assert.match(module, new RegExp(`value: ["']${value}["']`));
+  }
+  assert.match(module, /Nouveau poste accepté automatiquement/);
+  assert.match(module, /sti-admin-labo-new-device-sound/);
+});
+
+test('migration v306 : suppression message réservée à AAL2', () => {
+  const sql = read('supabase/migrations/20261018_labo_device_admin_v306.sql');
+  assert.match(sql, /admin_labo_device_message_delete/);
+  assert.match(sql, /if not public\.est_admin_mfa\(\)/);
+  assert.match(sql, /delete from public\.labo_device_messages/);
+  assert.match(sql, /revoke execute[^]*from public, anon/);
+  assert.match(sql, /grant execute[^]*to authenticated/);
+  assert.doesNotMatch(sql, /grant delete on public\.labo_device_messages/i);
 });

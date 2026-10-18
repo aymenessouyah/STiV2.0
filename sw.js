@@ -3,10 +3,10 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v305";
+var CACHE = "sti-atelier-v306";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v305-device-location-offline-1";
+var UPDATE_ID = "v306-unified-device-admin-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -14,13 +14,13 @@ var UPDATE_FILES = [
   { url: "./portail.html", revision: "device-login-v303" },
   { url: "./admin.html", revision: "device-dashboard-v303" },
   { url: "./assets/js/acces.js", revision: "labo-device-gate-v303" },
-  { url: "./assets/js/admin.js", revision: "labo-device-controls-visible-v304" },
+  { url: "./assets/js/admin.js", revision: "labo-device-admin-inline-v306" },
   { url: "./assets/js/portail.js", revision: "labo-device-login-v303" },
   { url: "./assets/js/protection.js", revision: "hls-diagnostics-v302" },
   { url: "./assets/js/modules/admin-mfa.js", revision: "mfa-module-v302" },
   { url: "./assets/js/modules/mobile-diagnostics.js", revision: "diagnostics-module-v302" },
-  { url: "./assets/js/modules/labo-device-client.js", revision: "device-location-v305" },
-  { url: "./assets/js/modules/admin-labo-devices.js", revision: "device-admin-offline-v305" }
+  { url: "./assets/js/modules/labo-device-client.js", revision: "device-location-time-v306" },
+  { url: "./assets/js/modules/admin-labo-devices.js", revision: "device-admin-unified-v306" }
 ];
 var CACHE_REVISIONS = "sti-update-revisions-v1";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";

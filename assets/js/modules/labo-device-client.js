@@ -1,4 +1,4 @@
-/* STI v303 — identité machine et messages ciblés du compte partagé elevelabo3 */
+/* STI v306 — identité, localisation datée et messages ciblés du compte partagé elevelabo3 */
 const TARGET_EMAIL = "elevelabo3@exemple.tn";
 const DB_NAME = "sti-labo-device-v303";
 const STORE = "identity";
@@ -68,12 +68,23 @@ async function getIdentity() {
   return created;
 }
 
-function readApproxLocation() {
+function readApproxLocationRecord() {
   try {
     const cached = JSON.parse(localStorage.getItem(GEO_CACHE_KEY) || "null");
-    if (!cached || !cached.ts || Date.now() - Number(cached.ts) >= GEO_CACHE_MAX_AGE) return "";
-    return String(cached.txt || "").trim().slice(0, 180);
-  } catch (_) { return ""; }
+    if (!cached || !cached.ts) return null;
+    const timestamp = Number(cached.ts);
+    const text = String(cached.txt || "").trim().slice(0, 180);
+    return text ? {
+      text,
+      at: new Date(timestamp).toISOString(),
+      stale: Date.now() - timestamp >= GEO_CACHE_MAX_AGE
+    } : null;
+  } catch (_) { return null; }
+}
+
+function readApproxLocation() {
+  const record = readApproxLocationRecord();
+  return record && !record.stale ? record.text : "";
 }
 
 async function refreshApproxLocation() {
@@ -102,6 +113,7 @@ async function refreshApproxLocation() {
 
 function browserInfo() {
   const ua = navigator.userAgent || "";
+  const geo = readApproxLocationRecord();
   let os = "Appareil";
   if (/Windows/i.test(ua)) os = "Windows";
   else if (/Android/i.test(ua)) os = "Android";
@@ -120,7 +132,8 @@ function browserInfo() {
     page: (location.pathname.split("/").pop() || "index.html").slice(0, 120),
     label: `${os} • ${browser}`,
     timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone || "").slice(0, 80),
-    location: readApproxLocation()
+    location: geo ? geo.text : "",
+    location_at: geo ? geo.at : ""
   };
 }
 

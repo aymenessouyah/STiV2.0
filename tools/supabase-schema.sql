@@ -684,3 +684,20 @@ drop trigger if exists trg_labo_cleanup_sessions on public.labo_device_sessions;
 create trigger trg_labo_cleanup_sessions
 after insert or update on public.labo_device_sessions
 for each statement execute function public.labo_cleanup_expired_device_sessions();
+
+-- v306 : suppression d’un message ciblé depuis l’historique administrateur, protégée par AAL2.
+create or replace function public.admin_labo_device_message_delete(
+  p_message_id uuid
+) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare v_device_id uuid;
+begin
+  if not public.est_admin_mfa() then raise exception 'validation MFA AAL2 requise'; end if;
+  delete from public.labo_device_messages
+  where id = p_message_id
+  returning device_id into v_device_id;
+  if v_device_id is null then raise exception 'message introuvable'; end if;
+  return jsonb_build_object('ok', true, 'message_id', p_message_id, 'device_id', v_device_id);
+end $$;
+revoke execute on function public.admin_labo_device_message_delete(uuid) from public, anon;
+grant execute on function public.admin_labo_device_message_delete(uuid) to authenticated;
