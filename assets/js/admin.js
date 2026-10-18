@@ -651,7 +651,9 @@
     } catch (e) {}
     window.__STI_GOLD = true;
     charge(false);
-    setInterval(function () { if (navigator.onLine) charge(true); }, 15000);
+    /* Tant que l’administrateur est connecté, actualiser le tableau depuis Supabase toutes les 20 secondes. */
+    var DELAI_ACTUALISATION_ADMIN_MS = 20000;
+    setInterval(function () { if (navigator.onLine) charge(true); }, DELAI_ACTUALISATION_ADMIN_MS);
     window.addEventListener("online", function () { charge(false); });
 
     function estSessionAppAdminDejaDeverrouillee() {

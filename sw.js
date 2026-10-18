@@ -6,10 +6,14 @@
 var CACHE = "sti-atelier-v299";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v299-delta-mobile-1";
+var UPDATE_ID = "v299-delta-mobile-2";
+/* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
+   Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  "./assets/js/acces.js"
+  { url: "./assets/js/acces.js", revision: "bcfd9bf-mobile-delta", bytes: 751603, bootstrapBySize: true },
+  { url: "./assets/js/admin.js", revision: "admin-refresh-20s" }
 ];
+var CACHE_REVISIONS = "sti-update-revisions-v1";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
 var videosEnCoursDeCache = {};
 var SHELL = [
@@ -678,10 +682,28 @@ async function prechargerSequentiel(forcerMajCode) {
 
 async function actualiserFichiersConcernes() {
   var cache = await caches.open(CACHE);
-  await Promise.allSettled(UPDATE_FILES.map(function (u) {
-    return fetch(u, { cache: "reload" }).then(function (rep) {
-      if (rep && rep.ok) return cache.put(u, rep);
-    }).catch(function () {});
+  var revisions = await caches.open(CACHE_REVISIONS);
+  await Promise.allSettled(UPDATE_FILES.map(async function (item) {
+    var u = typeof item === "string" ? item : item.url;
+    var revision = typeof item === "string" ? UPDATE_ID : item.revision;
+    var marker = new Request(new URL("./__sti_revision__/" + encodeURIComponent(u) + "?rev=" + encodeURIComponent(revision), self.location.href));
+    try {
+      if (await revisions.match(marker)) return;
+      /* Amorçage sans réseau pour le petit fichier déjà installé par le delta précédent. */
+      if (item.bootstrapBySize && item.bytes) {
+        var existant = await cache.match(u, { ignoreSearch: true });
+        var taille = existant ? parseInt(existant.headers.get("content-length") || "0", 10) : 0;
+        if (taille === item.bytes) {
+          await revisions.put(marker, new Response(UPDATE_ID));
+          return;
+        }
+      }
+      var rep = await fetch(u, { cache: "reload" });
+      if (rep && rep.ok) {
+        await cache.put(u, rep.clone());
+        await revisions.put(marker, new Response(UPDATE_ID));
+      }
+    } catch (e) {}
   }));
 }
 
