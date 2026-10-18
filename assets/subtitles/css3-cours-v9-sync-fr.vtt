@@ -2,562 +2,564 @@ WEBVTT
 Kind: captions
 Language: fr
 
+NOTE Synchronisation v309 — limites issues des silences réels de la narration
+
 NOTE Chapitre 1 — Restaurant HTML et cascade
 
 1
-00:00:00.000 --> 00:00:03.742
+00:00:00.215 --> 00:00:03.115
 Bienvenue dans S T I version 2 point zéro, by A E.
 
 2
-00:00:03.742 --> 00:00:11.130
+00:00:04.179 --> 00:00:09.572
 Aujourd’hui, nous étudions le cours C S S complet pour les niveaux troisième et quatrième Sciences de l’Informatique.
 
 3
-00:00:11.130 --> 00:00:14.198
+00:00:10.655 --> 00:00:12.306
 Prenons le restaurant Le Petit Olivier.
 
 4
-00:00:14.198 --> 00:00:20.240
+00:00:13.367 --> 00:00:19.069
 Sans C S S, le navigateur affiche seulement le H T M L brut : titre, texte, menu et bouton.
 
 5
-00:00:20.240 --> 00:00:24.570
+00:00:20.111 --> 00:00:23.319
 Le contenu est présent, mais la présentation reste minimale.
 
 6
-00:00:24.570 --> 00:00:31.242
+00:00:24.382 --> 00:00:29.670
 Lorsque style point C S S arrive, le même H T M L devient une carte de restaurant claire et attractive.
 
 7
-00:00:31.242 --> 00:00:36.307
+00:00:30.741 --> 00:00:35.189
 On ajoute couleurs, typographie, espacements, bordures, ombres et bouton.
 
 8
-00:00:36.307 --> 00:00:40.580
+00:00:36.241 --> 00:00:39.774
 H T M L décrit le contenu ; C S S organise sa présentation.
 
 9
-00:00:40.580 --> 00:00:46.085
+00:00:40.817 --> 00:00:44.871
 Une règle contient un sélecteur, puis une propriété et sa valeur entre accolades.
 
 10
-00:00:46.085 --> 00:00:52.180
+00:00:45.933 --> 00:00:50.596
 Le style peut être en ligne, dans une balise style, ou dans un fichier externe lié par link.
 
 11
-00:00:52.180 --> 00:00:59.365
+00:00:51.648 --> 00:00:57.707
 Dans la cascade du cours, le style en ligne précède le style interne, le style externe et le style du navigateur.
 
 12
-00:00:59.365 --> 00:01:06.550
+00:00:58.812 --> 00:01:05.606
 Pour la spécificité, important domine, puis l’identifiant, la classe ou pseudo-classe, et enfin le nom de balise.
 
 NOTE Chapitre 2 — Sélecteurs, liens et texte
 
 13
-00:01:06.900 --> 00:01:12.131
+00:01:07.118 --> 00:01:10.800
 Passons maintenant à la partie consacrée aux sélecteurs, aux liens et au texte.
 
 14
-00:01:12.131 --> 00:01:14.733
+00:01:11.875 --> 00:01:13.432
 L’étoile cible tous les éléments.
 
 15
-00:01:14.733 --> 00:01:18.706
+00:01:14.499 --> 00:01:16.870
 Le nom d’une balise cible toutes les balises de ce type.
 
 16
-00:01:18.706 --> 00:01:22.450
+00:01:17.945 --> 00:01:20.434
 Dièse suivi d’un identifiant vise un élément unique.
 
 17
-00:01:22.450 --> 00:01:27.035
+00:01:21.516 --> 00:01:24.507
 Le point suivi d’une classe vise tous les éléments de cette classe.
 
 18
-00:01:27.035 --> 00:01:31.345
+00:01:25.545 --> 00:01:28.329
 Un sélecteur d’attribut peut tester la présence d’un attribut.
 
 19
-00:01:31.345 --> 00:01:36.839
+00:01:29.374 --> 00:01:34.006
 Accent circonflexe égal signifie commence par ; dollar égal signifie se termine par.
 
 20
-00:01:36.839 --> 00:01:41.093
+00:01:35.126 --> 00:01:38.229
 Sans espace, deux classes doivent appartenir au même élément.
 
 21
-00:01:41.093 --> 00:01:47.003
+00:01:39.299 --> 00:01:44.620
 Avec un espace, on vise un descendant ; avec le signe supérieur, seulement un enfant direct.
 
 22
-00:01:47.003 --> 00:01:50.038
+00:01:45.696 --> 00:01:47.619
 First-letter stylise la première lettre.
 
 23
-00:01:50.038 --> 00:01:55.163
+00:01:48.688 --> 00:01:53.204
 Les états d’un lien suivent l’ordre LoVe HAte : link, visited, hover, active.
 
 24
-00:01:55.163 --> 00:02:01.731
+00:01:54.283 --> 00:02:00.138
 Link désigne le lien non visité, visited le lien déjà ouvert, hover le survol et active la durée du clic.
 
 25
-00:02:01.731 --> 00:02:07.382
+00:02:01.221 --> 00:02:06.380
 Pour le texte, retenons font-family, font-size, font-weight, text-align et text-shadow.
 
 26
-00:02:07.382 --> 00:02:13.033
+00:02:07.442 --> 00:02:12.516
 Text-shadow reçoit le décalage horizontal, le décalage vertical, le flou et la couleur.
 
 27
-00:02:13.033 --> 00:02:15.635
+00:02:13.632 --> 00:02:15.427
 Il n’accepte ni étendue ni inset.
 
 28
-00:02:15.635 --> 00:02:21.130
+00:02:16.501 --> 00:02:20.190
 Plusieurs ombres se séparent par des virgules et le contraste doit rester suffisant.
 
 NOTE Chapitre 3 — Arrière-plans et modèle de boîte
 
 29
-00:02:21.480 --> 00:02:26.886
+00:02:21.699 --> 00:02:25.222
 Passons maintenant à la partie consacrée aux arrière-plans et au modèle de boîte.
 
 30
-00:02:26.886 --> 00:02:32.924
+00:02:26.288 --> 00:02:31.676
 Du centre vers l’extérieur, la boîte contient le contenu, le padding, la bordure et la marge.
 
 31
-00:02:32.924 --> 00:02:35.999
+00:02:32.751 --> 00:02:34.600
 Le fond couvre le contenu et le padding.
 
 32
-00:02:35.999 --> 00:02:42.141
+00:02:35.664 --> 00:02:40.532
 Avec border-box, il passe aussi sous la bordure, mais jamais sous la marge propre de l’élément.
 
 33
-00:02:42.141 --> 00:02:46.951
+00:02:41.584 --> 00:02:46.101
 Background-color accepte un nom, une valeur hexadécimale, rgb ou rgba.
 
 34
-00:02:46.951 --> 00:02:53.350
+00:02:47.159 --> 00:02:52.295
 Rgba rend uniquement le fond transparent, tandis que opacity agit sur toute la boîte et ses enfants.
 
 35
-00:02:53.350 --> 00:02:59.492
+00:02:53.345 --> 00:02:58.814
 Background-image accepte url, un dégradé, plusieurs couches séparées par des virgules, ou none.
 
 36
-00:02:59.492 --> 00:03:02.689
+00:02:59.854 --> 00:03:01.640
 La première couche est dessinée au-dessus.
 
 37
-00:03:02.689 --> 00:03:08.041
+00:03:02.688 --> 00:03:07.928
 Background-repeat propose repeat, repeat-x, repeat-y, no-repeat, space et round.
 
 38
-00:03:08.041 --> 00:03:13.125
+00:03:08.972 --> 00:03:13.015
 Background-size peut valoir auto, une ou deux dimensions, contain ou cover.
 
 39
-00:03:13.125 --> 00:03:18.478
+00:03:14.104 --> 00:03:17.908
 Contain montre l’image entière ; cover remplit la zone avec un rognage possible.
 
 40
-00:03:18.478 --> 00:03:22.094
+00:03:18.953 --> 00:03:21.305
 Background-origin choisit l’origine du placement.
 
 41
-00:03:22.094 --> 00:03:27.819
+00:03:22.371 --> 00:03:27.254
 Background-clip choisit la limite de peinture : border-box, padding-box ou content-box.
 
 42
-00:03:27.819 --> 00:03:31.900
+00:03:28.301 --> 00:03:30.957
 La valeur text découpe le fond avec la forme des lettres.
 
 NOTE Chapitre 4 — La super-propriété background
 
 43
-00:03:32.250 --> 00:03:35.886
+00:03:32.466 --> 00:03:34.949
 Passons maintenant à la super-propriété background.
 
 44
-00:03:35.886 --> 00:03:41.765
+00:03:35.988 --> 00:03:42.165
 Elle rassemble image, position, taille, répétition, attachement, origine, découpe et couleur.
 
 45
-00:03:41.765 --> 00:03:47.543
+00:03:43.272 --> 00:03:49.677
 Exemple : background deux-points, url de la photo, center, barre oblique, cover, no-repeat.
 
 46
-00:03:47.543 --> 00:03:51.572
+00:03:50.749 --> 00:03:53.404
 La barre oblique est obligatoire entre position et taille.
 
 47
-00:03:51.572 --> 00:03:58.540
+00:03:54.469 --> 00:04:00.254
 Une valeur de boîte s’applique à origin et clip ; avec deux valeurs, la première définit origin et la seconde clip.
 
 48
-00:03:58.540 --> 00:04:04.318
+00:04:01.337 --> 00:04:05.903
 Repeat no-repeat correspond à repeat-x ; space et round peuvent régler séparément les axes.
 
 49
-00:04:04.318 --> 00:04:08.458
+00:04:06.962 --> 00:04:10.419
 Attention : le raccourci réinitialise toute propriété omise.
 
 50
-00:04:08.458 --> 00:04:15.036
+00:04:11.464 --> 00:04:16.627
 Si background-size cover est écrit avant un raccourci qui ne donne pas la taille, la valeur revient à auto.
 
 51
-00:04:15.036 --> 00:04:19.010
+00:04:17.694 --> 00:04:20.365
 Écrivez un raccourci complet ou placez les détails après.
 
 52
-00:04:19.010 --> 00:04:23.095
+00:04:21.428 --> 00:04:24.227
 Pour plusieurs fonds, séparez les couches par des virgules.
 
 53
-00:04:23.095 --> 00:04:28.974
+00:04:25.290 --> 00:04:29.737
 La première reste au-dessus et chaque couche possède sa position, sa taille et sa répétition.
 
 54
-00:04:28.974 --> 00:04:32.836
+00:04:30.793 --> 00:04:33.165
 La couleur apparaît uniquement dans la dernière couche.
 
 55
-00:04:32.836 --> 00:04:36.300
+00:04:34.226 --> 00:04:36.391
 Une couche invalide annule toute la déclaration.
 
 56
-00:04:36.300 --> 00:04:39.705
+00:04:37.436 --> 00:04:41.920
 Les chemins url sont relatifs au fichier C S S.
 
 57
-00:04:39.705 --> 00:04:43.111
+00:04:42.963 --> 00:04:44.489
 Background-attachment fixed peut fixer un fond.
 
 58
-00:04:43.111 --> 00:04:50.320
+00:04:44.839 --> 00:04:49.341
 Une position à quatre valeurs, comme right dix pixels bottom vingt pixels, mesure le décalage depuis les bords indiqués.
 
 NOTE Chapitre 5 — Display, overflow et opacity
 
 59
-00:04:50.670 --> 00:04:54.717
+00:04:50.888 --> 00:04:54.078
 Passons maintenant à la partie display, overflow et opacity.
 
 60
-00:04:54.717 --> 00:04:59.137
+00:04:55.149 --> 00:04:58.140
 Display inline conserve l’élément sur la ligne et suit son contenu.
 
 61
-00:04:59.137 --> 00:05:03.609
+00:04:59.168 --> 00:05:02.090
 Block commence sur une nouvelle ligne et accepte largeur et hauteur.
 
 62
-00:05:03.609 --> 00:05:07.923
+00:05:03.200 --> 00:05:06.190
 Inline-block reste sur la ligne tout en acceptant les dimensions.
 
 63
-00:05:07.923 --> 00:05:11.023
+00:05:07.246 --> 00:05:09.368
 Margin est extérieure et padding intérieur.
 
 64
-00:05:11.023 --> 00:05:18.395
+00:05:10.500 --> 00:05:16.640
 Overflow visible laisse dépasser ; hidden coupe ; scroll affiche toujours les barres ; auto les ajoute seulement si nécessaire.
 
 65
-00:05:18.395 --> 00:05:22.334
+00:05:17.728 --> 00:05:20.574
 Overflow-x et overflow-y règlent séparément les deux axes.
 
 66
-00:05:22.334 --> 00:05:26.053
+00:05:21.626 --> 00:05:24.457
 Opacity varie de zéro à un et agit sur toute la boîte.
 
 67
-00:05:26.053 --> 00:05:28.802
+00:05:25.524 --> 00:05:27.403
 Rgba ne rend transparent que le fond.
 
 68
-00:05:28.802 --> 00:05:32.740
+00:05:28.450 --> 00:05:31.808
 Opacity zéro garde la place, contrairement à display none.
 
 NOTE Chapitre 6 — Positionnement et repères
 
 69
-00:05:33.090 --> 00:05:36.441
+00:05:33.310 --> 00:05:35.249
 Passons maintenant à la partie positionnement.
 
 70
-00:05:36.441 --> 00:05:42.225
+00:05:36.322 --> 00:05:40.295
 Posez toujours deux questions : l’élément reste-t-il dans le flux, et quel est son repère ?
 
 71
-00:05:42.225 --> 00:05:48.262
+00:05:41.373 --> 00:05:46.840
 Relative conserve sa place d’origine ; top, right, bottom et left déplacent seulement son rendu.
 
 72
-00:05:48.262 --> 00:05:52.296
+00:05:47.924 --> 00:05:50.951
 Relative peut aussi servir de repère à un enfant absolute.
 
 73
-00:05:52.296 --> 00:05:54.153
+00:05:52.040 --> 00:05:53.126
 Absolute sort du flux.
 
 74
-00:05:54.153 --> 00:06:00.787
+00:05:54.150 --> 00:05:58.927
 Son frère remonte dans la place libérée et l’élément se place par rapport au plus proche ancêtre positionné.
 
 75
-00:06:00.787 --> 00:06:06.212
+00:05:59.993 --> 00:06:04.238
 Fixed sort du flux, se repère sur la fenêtre et reste visible pendant le défilement.
 
 76
-00:06:06.212 --> 00:06:12.349
+00:06:05.286 --> 00:06:09.953
 Sticky reste d’abord dans le flux comme relative, puis se colle lorsqu’il atteint le seuil défini.
 
 77
-00:06:12.349 --> 00:06:17.410
+00:06:10.997 --> 00:06:15.528
 Il exige au moins top, bottom, left ou right et reste limité à son conteneur.
 
 78
-00:06:17.410 --> 00:06:24.043
+00:06:16.642 --> 00:06:22.584
 L’animation montre la place réservée de relative, la sortie du flux de absolute, puis un tableau comparatif.
 
 79
-00:06:24.043 --> 00:06:28.462
+00:06:23.642 --> 00:06:27.064
 Pour un badge, utilisez un parent relative et un enfant absolute.
 
 80
-00:06:28.462 --> 00:06:31.093
+00:06:28.149 --> 00:06:30.006
 Pour une action permanente, fixed.
 
 81
-00:06:31.093 --> 00:06:33.600
+00:06:31.060 --> 00:06:32.643
 Pour un en-tête collant, sticky.
 
 NOTE Chapitre 7 — Float, clear et Flexbox
 
 82
-00:06:33.950 --> 00:06:37.674
+00:06:34.164 --> 00:06:37.119
 Passons maintenant à la partie float, clear et Flexbox.
 
 83
-00:06:37.674 --> 00:06:41.397
+00:06:38.175 --> 00:06:41.056
 Au départ, la photo est une boîte normale dans le flux.
 
 84
-00:06:41.397 --> 00:06:46.067
+00:06:42.074 --> 00:06:45.573
 Quand float left s’active, elle flotte à gauche et quitte le flux normal.
 
 85
-00:06:46.067 --> 00:06:50.166
+00:06:46.643 --> 00:06:49.295
 Son frère suivant remonte immédiatement dans la place libérée.
 
 86
-00:06:50.166 --> 00:06:57.848
+00:06:50.363 --> 00:06:56.506
 Sa boîte peut passer derrière le flottant et une partie de son fond semble masquée, tandis que ses lignes de texte contournent la photo.
 
 87
-00:06:57.848 --> 00:07:00.560
+00:06:57.561 --> 00:06:59.316
 Une marge sépare le texte et l’image.
 
 88
-00:07:00.560 --> 00:07:04.658
+00:07:00.399 --> 00:07:03.211
 Clear both force le bloc suivant à commencer sous le flottant.
 
 89
-00:07:04.658 --> 00:07:08.650
+00:07:04.246 --> 00:07:06.870
 Display flow-root permet au parent d’englober ses flottants.
 
 90
-00:07:08.650 --> 00:07:12.319
+00:07:07.924 --> 00:07:10.351
 Float sert surtout à habiller une image avec du texte.
 
 91
-00:07:12.319 --> 00:07:16.151
+00:07:11.417 --> 00:07:14.768
 Pour organiser une mise en page, utilisez plutôt Flexbox.
 
 92
-00:07:16.151 --> 00:07:20.872
+00:07:15.811 --> 00:07:19.638
 Display flex place les enfants sur un axe principal et un axe transversal.
 
 93
-00:07:20.872 --> 00:07:28.690
+00:07:20.694 --> 00:07:27.721
 Justify-content répartit les éléments sur l’axe principal, align-items les aligne sur l’axe transversal et gap crée un espacement régulier.
 
-NOTE Chapitre 8 — Bordures, ombres et tableaux détaillés
+NOTE Chapitre 8 — Bordures, ombres et tableaux
 
 94
-00:07:29.040 --> 00:07:34.140
+00:07:29.257 --> 00:07:32.918
 Passons maintenant à la partie consacrée aux bordures, aux ombres et aux tableaux.
 
 95
-00:07:34.140 --> 00:07:39.974
+00:07:33.993 --> 00:07:38.893
 Border-radius accepte une à quatre valeurs, dans le sens horaire depuis le coin supérieur gauche.
 
 96
-00:07:39.974 --> 00:07:46.095
+00:07:39.949 --> 00:07:44.748
 Cinquante pour cent forme un cercle si les dimensions sont égales ; une grande valeur forme une pilule.
 
 97
-00:07:46.095 --> 00:07:50.640
+00:07:45.820 --> 00:07:50.832
 Box-shadow reçoit X, Y, flou, étendue, couleur et éventuellement inset.
 
 98
-00:07:50.640 --> 00:07:53.852
+00:07:51.904 --> 00:07:54.007
 Plusieurs ombres se séparent par des virgules.
 
 99
-00:07:53.852 --> 00:08:02.558
+00:07:55.070 --> 00:08:02.718
 Pour les tableaux, table-layout auto calcule les colonnes selon leur contenu : lorsqu’un texte long arrive, la colonne peut s’élargir et les autres se déplacer.
 
 100
-00:08:02.558 --> 00:08:12.883
+00:08:03.795 --> 00:08:12.874
 Table-layout fixed utilise la largeur du tableau et les largeurs prévues ; les colonnes restent stables, le calcul est rapide et le texte trop long doit être géré avec retour à la ligne ou overflow.
 
 101
-00:08:12.883 --> 00:08:19.983
+00:08:13.933 --> 00:08:19.991
 Border-collapse separate conserve chaque bordure et autorise border-spacing : l’animation montre les espaces entre cellules.
 
 102
-00:08:19.983 --> 00:08:25.281
+00:08:21.062 --> 00:08:24.871
 Collapse fusionne les bordures voisines en un seul trait et neutralise border-spacing.
 
 103
-00:08:25.281 --> 00:08:30.182
+00:08:25.926 --> 00:08:30.128
 L’exemple compare auto et fixed, puis anime le passage de separate à collapse.
 
 104
-00:08:30.182 --> 00:08:37.510
+00:08:31.165 --> 00:08:36.581
 Donnez une largeur au tableau avec fixed et définissez au besoin la largeur des colonnes dans la première ligne ou avec colgroup.
 
-NOTE Chapitre 9 — Listes, filter et transformations
+NOTE Chapitre 9 — Listes, filtres et transformations
 
 105
-00:08:37.860 --> 00:08:43.113
+00:08:38.072 --> 00:08:41.792
 Passons maintenant à la partie consacrée aux listes, aux filtres et aux transformations.
 
 106
-00:08:43.113 --> 00:08:47.735
+00:08:42.788 --> 00:08:47.673
 List-style-type choisit disc, circle, square, decimal, upper-roman ou none.
 
 107
-00:08:47.735 --> 00:08:50.697
+00:08:48.677 --> 00:08:50.804
 List-style-position vaut outside ou inside.
 
 108
-00:08:50.697 --> 00:08:55.170
+00:08:51.802 --> 00:08:55.465
 List-style-image emploie une image ; si elle échoue, le type réapparaît.
 
 109
-00:08:55.170 --> 00:09:01.767
+00:08:56.477 --> 00:09:02.652
 La propriété filter applique un effet visuel à un élément après son rendu : image, texte, bloc avec tous ses enfants.
 
 110
-00:09:01.767 --> 00:09:05.162
+00:09:03.664 --> 00:09:06.472
 Le HTML n’est pas modifié, seul l’affichage change.
 
 111
-00:09:05.162 --> 00:09:10.126
+00:09:07.490 --> 00:09:11.689
 Trois fonctions sont étudiées, et seulement celles-ci : blur, grayscale et invert.
 
 112
-00:09:10.126 --> 00:09:13.680
+00:09:12.720 --> 00:09:15.222
 Blur crée un flou dont le rayon est exprimé en pixels.
 
 113
-00:09:13.680 --> 00:09:20.457
+00:09:16.229 --> 00:09:21.814
 Plus la valeur augmente, plus le flou est important ; les valeurs négatives sont interdites et zéro est la valeur neutre.
 
 114
-00:09:20.457 --> 00:09:24.980
+00:09:22.854 --> 00:09:27.085
 Les exemples comparent blur zéro, deux pixels, cinq pixels et dix pixels.
 
 115
-00:09:24.980 --> 00:09:29.304
+00:09:28.091 --> 00:09:30.871
 Grayscale transforme progressivement les couleurs en niveaux de gris.
 
 116
-00:09:29.304 --> 00:09:36.481
+00:09:31.901 --> 00:09:37.325
 Zéro pour cent conserve les couleurs, cinquante pour cent donne un effet intermédiaire et cent pour cent produit le noir et blanc.
 
 117
-00:09:36.481 --> 00:09:40.296
+00:09:38.329 --> 00:09:42.012
 La valeur zéro virgule cinq équivaut à cinquante pour cent.
 
 118
-00:09:40.296 --> 00:09:42.397
+00:09:43.089 --> 00:09:44.712
 Invert inverse les couleurs.
 
 119
-00:09:42.397 --> 00:09:49.174
+00:09:45.026 --> 00:09:48.741
 Zéro pour cent conserve l’image, cinquante pour cent produit un gris uniforme et cent pour cent donne le négatif complet.
 
 120
-00:09:49.174 --> 00:09:57.221
+00:09:49.754 --> 00:09:56.302
 Plusieurs de ces trois fonctions peuvent être écrites dans une seule déclaration, séparées par des espaces ; elles sont appliquées de gauche à droite.
 
 121
-00:09:57.221 --> 00:10:01.695
+00:09:57.323 --> 00:10:00.658
 Une seconde déclaration filter sur le même élément remplace la première.
 
 122
-00:10:01.695 --> 00:10:05.510
+00:10:01.730 --> 00:10:04.083
 Les autres fonctions affichées barrées sont hors programme.
 
 123
-00:10:05.510 --> 00:10:13.600
+00:10:05.095 --> 00:10:12.695
 Transform modifie ensuite la géométrie sans déplacer les voisins : rotate tourne, skew incline, scale change l’échelle et translate déplace sur X et Y.
 
 NOTE Chapitre 10 — Transitions, animations et synthèse
 
 124
-00:10:13.950 --> 00:10:19.291
+00:10:14.167 --> 00:10:17.437
 Passons maintenant à la partie consacrée aux transitions et aux animations.
 
 125
-00:10:19.291 --> 00:10:25.744
+00:10:18.485 --> 00:10:23.429
 Transition rend progressif le passage entre deux états, par exemple l’état normal et le survol.
 
 126
-00:10:25.744 --> 00:10:30.798
+00:10:24.492 --> 00:10:28.381
 Sa forme courte indique la propriété, la durée, le rythme et le délai.
 
 127
-00:10:30.798 --> 00:10:35.910
+00:10:29.444 --> 00:10:33.595
 Ease, linear, ease-in, ease-out et cubic-bezier règlent l’accélération.
 
 128
-00:10:35.910 --> 00:10:39.585
+00:10:34.645 --> 00:10:36.781
 Une transition a besoin d’un changement d’état.
 
 129
-00:10:39.585 --> 00:10:44.983
+00:10:37.822 --> 00:10:41.678
 Une animation peut démarrer seule, comporter plusieurs étapes et se répéter.
 
 130
-00:10:44.983 --> 00:10:50.886
+00:10:42.772 --> 00:10:47.504
 On définit son scénario avec arobase keyframes, puis from et to, ou des pourcentages.
 
 131
-00:10:50.886 --> 00:11:02.027
+00:10:48.587 --> 00:10:58.912
 Animation-name choisit le scénario, duration la durée, timing-function le rythme, delay l’attente, iteration-count le nombre de répétitions, direction le sens et fill-mode l’état conservé.
 
 132
-00:11:02.027 --> 00:11:05.192
+00:10:59.974 --> 00:11:01.525
 Play-state paused suspend le mouvement.
 
 133
-00:11:05.192 --> 00:11:09.420
+00:11:02.568 --> 00:11:05.154
 Prefers-reduced-motion permet de réduire les animations.
 
 134
-00:11:09.420 --> 00:11:20.750
+00:11:06.182 --> 00:11:20.004
 Récapitulons : sélecteurs, texte, fonds, boîtes, display, overflow, opacity, positions, float, Flexbox, bordures, ombres, tableaux, listes, filtres, transformations, transitions et animations.
 
 135
-00:11:20.750 --> 00:11:23.980
+00:11:21.059 --> 00:11:23.029
 Merci pour votre attention et à bientôt.

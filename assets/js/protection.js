@@ -92,7 +92,7 @@
   }
 
   var AFFICHES_OPTIMISEES_STI = [
-    "css-restaurant-capture-v298", "css3-cours-v8-poster", "php-guichet-v10-poster",
+    "css-restaurant-capture-v298", "css3-cours-v9-sync-poster", "php-guichet-v10-poster",
     "sql-initiation-poster", "sql-serie4-poster", "sql-serie5-poster"
   ];
   function moderniserImageSTI(img) {
@@ -1077,10 +1077,10 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — Cours HTML5 complet animé (.mp4)"
       };
       var VIDEO_CSS3_INFO = {
-        file: "css3-cours-v8.mp4?v=299",
-        mobileFile: "css3-cours-v8-mobile-720p.mp4?v=299",
-        subtitlesFile: "subtitles/css3-cours-v8-fr.vtt?v=299",
-        hlsFile: "streams/css3-v302/master.m3u8?v=302",
+        file: "css3-cours-v9-sync.mp4?v=309",
+        mobileFile: "css3-cours-v9-sync-mobile-720p.mp4?v=309",
+        subtitlesFile: "subtitles/css3-cours-v9-sync-fr.vtt?v=309",
+        hlsFile: "",
         title: "🎥 CSS3 complet — Guide-Ligne synchronisé, blur, grayscale et invert, 3e & 4e SI"
       };
       var VIDEO_JS_INFO = {
@@ -1663,52 +1663,20 @@
 
       function initialiserVideoCss3HlsSTI(video, preference) {
         if (!video) return Promise.reject(new Error("lecteur absent"));
-        var manifeste = resoudreUrlHlsCss3();
         if (video.__stiHls) { try { video.__stiHls.destroy(); } catch (e) {} video.__stiHls = null; }
-        video.innerHTML = '<track kind="subtitles" src="' + resoudreUrlSousTitresCss3() + '" srclang="fr" label="Français" default />';
-        video.removeAttribute("src");
-        if (video.canPlayType("application/vnd.apple.mpegurl")) {
-          video.src = manifeste;
-          video.setAttribute("data-sti-quality", preference === "auto" ? "Auto HLS" : preference + "p HLS");
-          return Promise.resolve();
+        var mobile = preference === "480" || preference === "720";
+        var source = mobile ? resoudreUrlVideoCss3Mobile() : resoudreUrlVideoCss3();
+        var depart = Number(video.__stiStartSec);
+        if (isFinite(depart) && depart >= 0) {
+          video.addEventListener("loadedmetadata", function appliquerDepartCss3() {
+            try { video.currentTime = depart; } catch (eDepart) {}
+          }, { once: true });
         }
-        return chargerHlsJsSTI().then(function (HlsCtor) {
-          if (!HlsCtor.isSupported()) throw new Error("HLS non pris en charge");
-          var hls = new HlsCtor({
-            startLevel: modeEconomieDonneesSTI() ? 0 : -1,
-            capLevelToPlayerSize: true,
-            maxBufferLength: modeEconomieDonneesSTI() ? 20 : 35,
-            backBufferLength: 20,
-            enableWorker: true
-          });
-          video.__stiHls = hls;
-          hls.attachMedia(video);
-          return new Promise(function (resolve, reject) {
-            hls.on(HlsCtor.Events.MEDIA_ATTACHED, function () { hls.loadSource(manifeste); });
-            hls.on(HlsCtor.Events.MANIFEST_PARSED, function () {
-              reglerNiveauHlsCss3(video, preference);
-              resolve();
-            });
-            hls.on(HlsCtor.Events.LEVEL_SWITCHED, function (_ev, data) {
-              var niv = hls.levels[data.level] || {};
-              var label = hls.autoLevelEnabled ? "Auto · " + (niv.height || "…") + "p" : (niv.height || preference) + "p";
-              video.setAttribute("data-sti-quality", label);
-              window.__STI_VIDEO_QUALITY = label;
-              var bq = document.getElementById("sti-video-modal-quality");
-              if (bq) bq.textContent = "Qualité : " + label;
-              if (window.__STI_MAJ_INDICATEURS) window.__STI_MAJ_INDICATEURS();
-            });
-            hls.on(HlsCtor.Events.ERROR, function (_ev, data) {
-              if (data && data.fatal) reject(new Error("flux HLS interrompu"));
-            });
-          });
-        }).catch(function () {
-          var secours = preference === "480" || preference === "720" ? resoudreUrlVideoCss3Mobile() : resoudreUrlVideoCss3();
-          video.innerHTML = contenuSourceVideoSTI(secours, "css3-cours");
-          video.src = secours;
-          video.setAttribute("data-sti-quality", "MP4 secours");
-          try { video.load(); } catch (e) {}
-        });
+        video.innerHTML = '<track kind="subtitles" src="' + resoudreUrlSousTitresCss3() + '" srclang="fr" label="Français" default />';
+        video.src = source;
+        video.setAttribute("data-sti-quality", mobile ? "720p éco MP4" : "1080p MP4");
+        try { video.load(); } catch (e) {}
+        return Promise.resolve();
       }
 
       function contenuSourceVideoSTI(urlVideo, slugVideo) {
@@ -2418,12 +2386,13 @@
             vEl.__stiChoixPhpAffiche = false;
             appliquerPosterOptimiseSTI(vEl, "images/php-guichet-v10-poster.jpg?v=288");
           } else if (slugCible === "css3-cours") {
-            appliquerPosterOptimiseSTI(vEl, "images/css3-cours-v8-poster.jpg?v=299");
+            appliquerPosterOptimiseSTI(vEl, "images/css3-cours-v9-sync-poster.jpg?v=309");
           } else {
             vEl.removeAttribute("poster");
           }
           vEl.muted = false;
           vEl.volume = 1.0;
+          vEl.__stiStartSec = (typeof startSecOpt === "number" && startSecOpt >= 0) ? startSecOpt : null;
           if (slugCible === "css3-cours") {
             initialiserVideoCss3HlsSTI(vEl, css3Qualite).then(function () {
               try { var ph = vEl.play(); if (ph && ph.catch) ph.catch(function () {}); } catch (e) {}

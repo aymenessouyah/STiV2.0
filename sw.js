@@ -3,10 +3,10 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v308";
+var CACHE = "sti-atelier-v309";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v308-password-recovery-redirect-1";
+var UPDATE_ID = "v309-css3-synchronisation-phrase-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -17,7 +17,10 @@ var UPDATE_FILES = [
   { url: "./assets/js/admin.js", revision: "labo-device-admin-inline-v306" },
   { url: "./assets/js/portail.js", revision: "password-recovery-flow-v308" },
   { url: "./assets/js/modules/password-recovery.js", revision: "password-recovery-module-v307" },
-  { url: "./assets/js/protection.js", revision: "hls-diagnostics-v302" },
+  { url: "./assets/js/protection.js", revision: "css3-mp4-sync-v309" },
+  { url: "./cours/css3.html", revision: "css3-timeline-v309" },
+  { url: "./assets/subtitles/css3-cours-v9-sync-fr.vtt", revision: "css3-vtt-sync-v309" },
+  { url: "./assets/images/css3-cours-v9-sync-poster.jpg", revision: "css3-poster-v309" },
   { url: "./assets/js/modules/admin-mfa.js", revision: "mfa-module-v302" },
   { url: "./assets/js/modules/mobile-diagnostics.js", revision: "diagnostics-module-v302" },
   { url: "./assets/js/modules/labo-device-client.js", revision: "device-location-time-v306" },
@@ -166,9 +169,9 @@ var SHELL = [
   "./assets/icons/sti-icon-512.png",
   "./assets/images/sti-course-pause-qr.png",
   "./assets/images/php-guichet-v10-poster.jpg",
-  "./assets/images/css3-cours-v8-poster.jpg",
+  "./assets/images/css3-cours-v9-sync-poster.jpg",
   "./assets/images/css-restaurant-capture-v298.jpg",
-  "./assets/subtitles/css3-cours-v8-fr.vtt",
+  "./assets/subtitles/css3-cours-v9-sync-fr.vtt",
   "./assets/images/guichet-animation-capture-v288.jpg",
   "./cours/html5.html",
   "./cours/css3.html",
@@ -732,9 +735,9 @@ var OFFLINE_LIST = [
   "./assets/videos/explore-tunisie-flex.mp4",
   "./assets/videos/explore-tunisie-float.mp4",
   "./assets/videos/html5-cours.mp4",
-  "./assets/videos/css3-cours-v8.mp4",
-  "./assets/videos/css3-cours-v8-mobile-720p.mp4",
-  "./assets/subtitles/css3-cours-v8-fr.vtt",
+  "./assets/videos/css3-cours-v9-sync.mp4",
+  "./assets/videos/css3-cours-v9-sync-mobile-720p.mp4",
+  "./assets/subtitles/css3-cours-v9-sync-fr.vtt",
   "./assets/videos/javascript-cours.mp4",
   "./assets/videos/php-cours.mp4",
   "./robots.txt",
@@ -850,6 +853,18 @@ self.addEventListener("activate", function (evt) {
           } catch (eMigration) {}
           /* Suppression seulement après copie locale : zéro re-téléchargement. */
           await caches.delete(k);
+        }
+        /* La v309 remplace réellement la vidéo CSS3 : supprimer les anciennes copies lourdes sans les re-télécharger. */
+        var anciensCss3 = ["/assets/videos/css3-cours-v8.mp4", "/assets/videos/css3-cours-v8-mobile-720p.mp4", "/assets/subtitles/css3-cours-v8-fr.vtt", "/assets/images/css3-cours-v8-poster.jpg"];
+        for (var cacheCss3 of [nvCache, cVid]) {
+          var reqCss3 = await cacheCss3.keys();
+          for (var ancienneReq of reqCss3) {
+            var ancienPath = "";
+            try { ancienPath = new URL(ancienneReq.url).pathname; } catch (eAncien) {}
+            if (anciensCss3.some(function (suffixe) { return ancienPath.slice(-suffixe.length) === suffixe; })) {
+              await cacheCss3.delete(ancienneReq, { ignoreSearch: true });
+            }
+          }
         }
       } catch (e) {}
       await self.clients.claim();

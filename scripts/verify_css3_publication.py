@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Contrôle reproductible de la publication CSS3 v299, localement ou sur GitHub Pages."""
+"""Contrôle reproductible de la publication CSS3 v309, localement ou sur GitHub Pages."""
 from __future__ import annotations
 import argparse, json, os, re, shutil, subprocess, sys, time
 from pathlib import Path
@@ -7,11 +7,13 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 ROOT=Path(__file__).resolve().parents[1]
-FULL=ROOT/'assets/videos/css3-cours-v8.mp4'
-MOBILE=ROOT/'assets/videos/css3-cours-v8-mobile-720p.mp4'
+FULL=ROOT/'assets/videos/css3-cours-v9-sync.mp4'
+MOBILE=ROOT/'assets/videos/css3-cours-v9-sync-mobile-720p.mp4'
 AUDIO=ROOT/'assets/audio/css3-cours.mp3'
-POSTER=ROOT/'assets/images/css3-cours-v8-poster.jpg'
-VTT=ROOT/'assets/subtitles/css3-cours-v8-fr.vtt'
+POSTER=ROOT/'assets/images/css3-cours-v9-sync-poster.jpg'
+POSTER_AVIF=ROOT/'assets/images/css3-cours-v9-sync-poster.avif'
+POSTER_WEBP=ROOT/'assets/images/css3-cours-v9-sync-poster.webp'
+VTT=ROOT/'assets/subtitles/css3-cours-v9-sync-fr.vtt'
 EXPECTED_DURATION=683.98
 BASE='https://aymenessouyah.github.io/STiV2.0/'
 
@@ -47,7 +49,7 @@ def stream(info,kind):
     return next((x for x in info.get('streams',[]) if x.get('codec_type')==kind),{})
 
 def verify_local():
-    for f in [FULL,MOBILE,AUDIO,POSTER,VTT]: require(f.is_file() and f.stat().st_size>100,f'{f.relative_to(ROOT)} existe')
+    for f in [FULL,MOBILE,AUDIO,POSTER,POSTER_AVIF,POSTER_WEBP,VTT]: require(f.is_file() and f.stat().st_size>100,f'{f.relative_to(ROOT)} existe')
     full=media_info(FULL);mobile=media_info(MOBILE)
     for name,info,size in [('Full HD',full,(1920,1080)),('mobile',mobile,(1280,720))]:
         duration=float(info['format']['duration']);v=stream(info,'video');a=stream(info,'audio')
@@ -72,7 +74,10 @@ def verify_local():
         a,b=cue_seconds(start),cue_seconds(end)
         require(int(number)==expected and a>=previous_end-.001 and b>a,f'repère WebVTT {expected} monotone')
         previous_end=b
-    require(abs(cue_seconds(cues[0][1]))<.001 and previous_end<=EXPECTED_DURATION+.05,'les sous-titres couvrent exactement la durée utile')
+    require(cue_seconds(cues[0][1])<.30 and previous_end<=EXPECTED_DURATION+.05,'les sous-titres suivent la parole utile, silences exclus')
+    exact_starts={1:.215,13:67.118,29:141.699,43:212.466,59:290.888,69:333.310,82:394.164,94:449.257,105:518.072,112:552.720,115:568.091,118:583.089,124:614.167,135:681.059}
+    for number,expected_start in exact_starts.items():
+        require(abs(cue_seconds(cues[number-1][1])-expected_start)<.002,f'cue {number} calée à {expected_start:.3f} s')
     require('NOTE Chapitre 9' in vtt and 'NOTE Chapitre 10' in vtt,'les sous-titres couvrent les dix chapitres')
     filter_part=vtt.split('NOTE Chapitre 9',1)[1].split('NOTE Chapitre 10',1)[0]
     for term in ['blur','grayscale','invert','hors programme']: require(term.lower() in filter_part.lower(),f'le chapitre filter sous-titré contient « {term} »')
@@ -83,31 +88,34 @@ def verify_local():
     js=(ROOT/'assets/js/protection.js').read_text(encoding='utf-8')
     sw=(ROOT/'sw.js').read_text(encoding='utf-8')
     news=json.loads((ROOT/'assets/data/nouveautes.json').read_text(encoding='utf-8'))
-    require('atelier-pages.css?v=299' in html and 'protection.js?v=299' in html,'la page force le chargement des ressources v299')
+    require('atelier-pages.css?v=299' in html and 'protection.js?v=309' in html,'la page force le chargement des ressources concernées v309')
     require(html.count('class="css-transcript-chapter"')==10,'la transcription HTML contient dix chapitres')
     require(html.count('data-css-video-time=')==13,'dix repères et trois raccourcis vidéo sont présents')
-    require('id="css-publication-status"' in html and '__STI_CSS3_PUBLICATION_CHECK' in html,'le contrôle automatique de production v299 est actif')
-    for ref in ['css3-cours-v8.mp4?v=298','css3-cours-v8-mobile-720p.mp4?v=299','css3-cours.mp3?v=291','css3-cours-v8-poster.jpg?v=298','css3-cours-v8-fr.vtt?v=299','../sw.js?v=299']:
+    require('id="css-publication-status"' in html and '__STI_CSS3_PUBLICATION_CHECK' in html,'le contrôle automatique de production v309 est actif')
+    for ref in ['css3-cours-v9-sync.mp4?v=309','css3-cours-v9-sync-mobile-720p.mp4?v=309','css3-cours.mp3?v=291','css3-cours-v9-sync-poster.jpg?v=309','css3-cours-v9-sync-fr.vtt?v=309','../sw.js?v=309']:
         require(ref in html,f'le contrôle automatique couvre {ref}')
-    for val in ['550.90','565.90','580.90']: require(f'data-css-video-time="{val}"' in html,f'le raccourci {val} s est présent')
-    for ref in ['css3-cours-v8-mobile-720p.mp4?v=299','css3-cours-v8-fr.vtt?v=299','sti-video-modal-quality','sti-css3-quality','{ t: 613.95']:
+    for val in ['552.72','568.09','583.09']: require(f'data-css-video-time="{val}"' in html,f'le raccourci {val} s est présent')
+    for ref in ['css3-cours-v9-sync-mobile-720p.mp4?v=309','css3-cours-v9-sync-fr.vtt?v=309','sti-video-modal-quality','sti-css3-quality','{ t: 613.95','720p éco MP4']:
         require(ref in js,f'protection.js contient {ref}')
-    for ref in ['sti-atelier-v299','css3-cours-v8-mobile-720p.mp4','css3-cours-v8-fr.vtt']:
+    require('streams/css3-v302' not in js and 'css3-cours-v8' not in js+html,'aucun lecteur ou média CSS3 obsolète n’est encore référencé')
+    for ref in ['sti-atelier-v309','css3-cours-v9-sync-mobile-720p.mp4','css3-cours-v9-sync-fr.vtt']:
         require(ref in sw,f'sw.js contient {ref}')
     require(news[0].get('version')=='v299','l’actualité v299 est en tête')
 
 def get(url,head=False):
-    req=Request(url,method='HEAD' if head else 'GET',headers={'Cache-Control':'no-cache','User-Agent':'sti-publication-check/299'})
+    req=Request(url,method='HEAD' if head else 'GET',headers={'Cache-Control':'no-cache','User-Agent':'sti-publication-check/309'})
     with urlopen(req,timeout=40) as r:return r.status,r.headers,r.read() if not head else b''
 
 def verify_remote_once():
-    stamp='?verify=v299'
+    stamp='?verify=v309'
     paths={
-      'assets/videos/css3-cours-v8.mp4':1_000_000,
-      'assets/videos/css3-cours-v8-mobile-720p.mp4':1_000_000,
+      'assets/videos/css3-cours-v9-sync.mp4':1_000_000,
+      'assets/videos/css3-cours-v9-sync-mobile-720p.mp4':1_000_000,
       'assets/audio/css3-cours.mp3':1_000_000,
-      'assets/images/css3-cours-v8-poster.jpg':50_000,
-      'assets/subtitles/css3-cours-v8-fr.vtt':1_000,
+      'assets/images/css3-cours-v9-sync-poster.jpg':50_000,
+      'assets/images/css3-cours-v9-sync-poster.avif':5_000,
+      'assets/images/css3-cours-v9-sync-poster.webp':10_000,
+      'assets/subtitles/css3-cours-v9-sync-fr.vtt':1_000,
     }
     for path,min_size in paths.items():
         status,h,_=get(BASE+path+stamp,True);size=int(h.get('Content-Length') or 0)
@@ -115,12 +123,12 @@ def verify_remote_once():
     _,_,page=get(BASE+'cours/css3.html'+stamp);page=page.decode('utf-8')
     _,_,js=get(BASE+'assets/js/protection.js'+stamp);js=js.decode('utf-8')
     _,_,sw=get(BASE+'sw.js'+stamp);sw=sw.decode('utf-8')
-    _,_,vtt=get(BASE+'assets/subtitles/css3-cours-v8-fr.vtt'+stamp);vtt=vtt.decode('utf-8')
+    _,_,vtt=get(BASE+'assets/subtitles/css3-cours-v9-sync-fr.vtt'+stamp);vtt=vtt.decode('utf-8')
     _,_,news=get(BASE+'assets/data/nouveautes.json'+stamp);news=json.loads(news)
-    for ref in ['atelier-pages.css?v=299','protection.js?v=299','css-video-access','css-course-transcript','data-css-video-time="550.90"','css-publication-status','__STI_CSS3_PUBLICATION_CHECK']: require(ref in page,f'page publiée contient {ref}')
-    for ref in ['css3-cours-v8-mobile-720p.mp4?v=299','css3-cours-v8-fr.vtt?v=299','Qualité : 720p éco']:
+    for ref in ['atelier-pages.css?v=299','protection.js?v=309','css-video-access','css-course-transcript','data-css-video-time="552.72"','css-publication-status','__STI_CSS3_PUBLICATION_CHECK']: require(ref in page,f'page publiée contient {ref}')
+    for ref in ['css3-cours-v9-sync-mobile-720p.mp4?v=309','css3-cours-v9-sync-fr.vtt?v=309','Qualité : 720p éco']:
         require(ref in js,f'JavaScript publié contient {ref}')
-    require('sti-atelier-v299' in sw,'service worker publié utilise le cache v299')
+    require('sti-atelier-v309' in sw,'service worker publié utilise le cache v309')
     require(vtt.startswith('WEBVTT') and 'NOTE Chapitre 10' in vtt,'WebVTT publié complet')
     require(news[0].get('version')=='v299','actualité publiée en v299')
 

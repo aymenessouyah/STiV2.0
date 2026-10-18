@@ -200,14 +200,14 @@
           <h2 id="css-video-access-title">Accès direct et transcription du cours CSS3</h2>
           <p>Les boutons ouvrent la vidéo exactement au début de l’exemple choisi. Les sous-titres français peuvent être activés avec le bouton CC du lecteur.</p>
         </div>
-        <a class="css-vtt-download" href="../assets/subtitles/css3-cours-v8-fr.vtt?v=299" download>⬇ Sous-titres WebVTT</a>
-        <output id="css-publication-status" class="css-publication-status" role="status" aria-live="polite">⏳ Vérification automatique v299…</output>
+        <a class="css-vtt-download" href="../assets/subtitles/css3-cours-v9-sync-fr.vtt?v=309" download>⬇ Sous-titres WebVTT</a>
+        <output id="css-publication-status" class="css-publication-status" role="status" aria-live="polite">⏳ Vérification automatique v309…</output>
       </div>
       <div class="css-filter-video-shortcuts" aria-label="Accès direct aux fonctions filter">
         <strong>Aller directement à :</strong>
-        <button type="button" data-css-video-time="550.90">💧 blur()</button>
-        <button type="button" data-css-video-time="565.90">◐ grayscale()</button>
-        <button type="button" data-css-video-time="580.90">🔄 invert()</button>
+        <button type="button" data-css-video-time="552.72">💧 blur()</button>
+        <button type="button" data-css-video-time="568.09">◐ grayscale()</button>
+        <button type="button" data-css-video-time="583.09">🔄 invert()</button>
       </div>
       <details class="css-course-transcript" id="css-course-transcript">
         <summary>📜 Afficher la transcription complète — 10 chapitres</summary>
@@ -300,7 +300,7 @@
         });
 
         var status = document.getElementById("css-publication-status");
-        var stamp = "check=v299-" + Date.now();
+        var stamp = "check=v309-" + Date.now();
         function url(path) {
           return path + (path.indexOf("?") === -1 ? "?" : "&") + stamp;
         }
@@ -336,33 +336,33 @@
           });
         }
         function finish(ok, details) {
-          window.__STI_CSS3_PUBLICATION_CHECK = { version: "v299", ok: ok, details: details, checkedAt: new Date().toISOString() };
+          window.__STI_CSS3_PUBLICATION_CHECK = { version: "v309", ok: ok, details: details, checkedAt: new Date().toISOString() };
           status.classList.remove("is-checking");
           status.classList.add(ok ? "is-ok" : "is-error");
-          status.textContent = ok ? "✓ Publication v299 vérifiée" : "⚠ Contrôle v299 incomplet";
+          status.textContent = ok ? "✓ Publication v309 vérifiée" : "⚠ Contrôle v309 incomplet";
           status.title = details.join(" · ");
           window.dispatchEvent(new CustomEvent("sti:css3-publication-check", { detail: window.__STI_CSS3_PUBLICATION_CHECK }));
-          if (!ok && window.console) console.error("Contrôle CSS3 v299 :", details);
+          if (!ok && window.console) console.error("Contrôle CSS3 v309 :", details);
         }
 
         status.classList.add("is-checking");
         Promise.all([
-          head("../assets/videos/css3-cours-v8.mp4?v=298"),
-          head("../assets/videos/css3-cours-v8-mobile-720p.mp4?v=299"),
+          head("../assets/videos/css3-cours-v9-sync.mp4?v=309"),
+          head("../assets/videos/css3-cours-v9-sync-mobile-720p.mp4?v=309"),
           head("../assets/audio/css3-cours.mp3?v=291"),
-          head("../assets/images/css3-cours-v8-poster.jpg?v=298"),
-          text("../assets/subtitles/css3-cours-v8-fr.vtt?v=299"),
-          text("../sw.js?v=299"),
-          text("../assets/js/protection.js?v=299"),
-          metadata("../assets/videos/css3-cours-v8.mp4?v=298"),
-          metadata("../assets/videos/css3-cours-v8-mobile-720p.mp4?v=299")
+          head("../assets/images/css3-cours-v9-sync-poster.jpg?v=309"),
+          text("../assets/subtitles/css3-cours-v9-sync-fr.vtt?v=309"),
+          text("../sw.js?v=309"),
+          text("../assets/js/protection.js?v=309"),
+          metadata("../assets/videos/css3-cours-v9-sync.mp4?v=309"),
+          metadata("../assets/videos/css3-cours-v9-sync-mobile-720p.mp4?v=309")
         ]).then(function (result) {
           var errors = [];
           var full = result[0], mobile = result[1], vtt = result[4], sw = result[5], protection = result[6];
           var fullMeta = result[7], mobileMeta = result[8];
           if (full.size && mobile.size && mobile.size >= full.size) errors.push("la version mobile n’est pas allégée");
           if (vtt.indexOf("WEBVTT") !== 0 || vtt.split("-->").length - 1 !== 135) errors.push("WebVTT : 135 répliques attendues");
-          if (sw.indexOf("sti-atelier-v299") === -1) errors.push("cache v299 absent");
+          if (sw.indexOf("sti-atelier-v309") === -1) errors.push("cache v309 absent");
           if (protection.indexOf("sti-css3-quality") === -1) errors.push("sélecteur de qualité absent");
           if (root.querySelectorAll(".css-transcript-chapter").length !== 10) errors.push("10 chapitres attendus");
           if (root.querySelectorAll("[data-css-video-time]").length !== 13) errors.push("13 repères attendus");
@@ -5397,7 +5397,7 @@ box-shadow: 0px 14px 30px -6px rgba(33,31,56,.35);</pre
   <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(null,"",location.pathname+location.search);});})();</script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../assets/css/protection.css?v=227" />
-<script src="../assets/js/protection.js?v=299" defer></script>
+<script src="../assets/js/protection.js?v=309" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/config.js?v=227"></script>
