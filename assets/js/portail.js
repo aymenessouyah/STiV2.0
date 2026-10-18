@@ -999,7 +999,7 @@
     e.preventDefault();
     var btn = e.target.querySelector(".btn"); btn.disabled = true;
     sb.auth.resetPasswordForEmail(document.getElementById("o-email").value.trim(), {
-      redirectTo: cfg.RACINE + "portail.html?mode=recovery"
+      redirectTo: cfg.RACINE + "portail.html"
     }).then(function (r) {
       btn.disabled = false;
       if (r.error) { msg("❌ " + r.error.message, "err"); return; }

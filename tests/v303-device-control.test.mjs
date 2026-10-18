@@ -76,7 +76,7 @@ test('migration v303 : RLS restrictive, session_id et secrets hachés', () => {
 test('service worker v303+ reste différentiel et léger', () => {
   const sw = read('sw.js');
   assert.match(sw, /sti-atelier-v\d+/);
-  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline|unified-device-admin|password-recovery)-1/);
+  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline|unified-device-admin|password-recovery(?:-redirect)?)-1/);
   assert.match(sw, /labo-device-client\.js/);
   assert.match(sw, /admin-labo-devices\.js/);
   const manifest = sw.slice(sw.indexOf('var UPDATE_FILES'), sw.indexOf('var CACHE_REVISIONS'));
@@ -133,7 +133,7 @@ test('récupération v307 : lien, nouveau mot de passe et erreurs expirées', ()
   assert.match(portail, /id="n-mdp2"/);
   assert.match(portail, /password-recovery\.js\?v=307/);
   assert.match(script, /modeRecuperationMdpV307/);
-  assert.match(script, /portail\.html\?mode=recovery/);
+  assert.match(script, /redirectTo: cfg\.RACINE \+ "portail\.html"/);
   assert.match(recovery, /exchangeCodeForSession/);
   assert.match(recovery, /verifyOtp/);
   assert.match(recovery, /setSession/);
