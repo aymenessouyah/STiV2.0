@@ -157,7 +157,7 @@
             });
           });
         }
-        /* Ne pré-charger en arrière-plan qu'une seule fois par version installée (évite de solliciter le réseau à chaque page) */
+        /* Ne demander automatiquement que le petit delta de la version, une seule fois (jamais le contenu hors-ligne complet). */
         var verPrecachee = "";
         try { verPrecachee = localStorage.getItem("sti-precache-ver") || ""; } catch (e) {}
         if (verPrecachee !== String(verLocInit)) {
@@ -2082,7 +2082,7 @@
       if (!navigator.onLine && !estOrigineLocaleDossier && !estPosteLabo3Init) {
         if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
           btnOff.textContent = "⏳ Vérification…";
-          navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL" });
+          navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL_USER" });
         } else {
           btnOff.textContent = "📴 Hors-ligne actif";
         }
@@ -2126,12 +2126,12 @@
                 return reg.update().then(function () {
                   var swCible = reg.waiting || reg.installing || reg.active || navigator.serviceWorker.controller;
                   if (swCible) {
-                    try { swCible.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (err) {}
+                    try { swCible.postMessage({ type: "PRECACHE_ALL_USER" }); } catch (err) {}
                     try { swCible.postMessage({ type: "SKIP_WAITING" }); } catch (err) {}
                   }
                 }).catch(function () {
                   if (navigator.serviceWorker.controller) {
-                    try { navigator.serviceWorker.controller.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (err) {}
+                    try { navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL_USER" }); } catch (err) {}
                   }
                 });
               });
@@ -2140,7 +2140,7 @@
         })
         .catch(function () {
           if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-            try { navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL" }); } catch (err) {}
+            try { navigator.serviceWorker.controller.postMessage({ type: "PRECACHE_ALL_USER" }); } catch (err) {}
           }
         });
     });

@@ -1,9 +1,15 @@
-/* STI by AE — Service Worker 100 % Hors-ligne (PC Windows & Mobile) — v46
-   - Migration automatique des caches précédents (aucune perte lors des mises à jour)
-   - Pré-chargement automatique en arrière-plan des 426 fichiers du site
-   - Réponse 0 ms hors-ligne et secours rapide (2,2 s) sur PC Windows même si une carte réseau virtuelle garde navigator.onLine = true */
+/* STI by AE — Service Worker hors-ligne (PC Windows & Mobile) — v47 incrémentale
+   RÈGLE MOBILE : une mise à jour automatique ne télécharge que les fichiers réellement modifiés.
+   Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
+   disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
 var CACHE = "sti-atelier-v299";
+/* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
+   Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
+var UPDATE_ID = "v299-delta-mobile-1";
+var UPDATE_FILES = [
+  "./assets/js/acces.js"
+];
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
 var videosEnCoursDeCache = {};
 var SHELL = [
@@ -670,20 +676,19 @@ async function prechargerSequentiel(forcerMajCode) {
   precacheEnCours = false;
 }
 
+async function actualiserFichiersConcernes() {
+  var cache = await caches.open(CACHE);
+  await Promise.allSettled(UPDATE_FILES.map(function (u) {
+    return fetch(u, { cache: "reload" }).then(function (rep) {
+      if (rep && rep.ok) return cache.put(u, rep);
+    }).catch(function () {});
+  }));
+}
+
 self.addEventListener("install", function (evt) {
   self.skipWaiting();
-  evt.waitUntil(
-    caches
-      .open(CACHE)
-      .then(function (c) {
-        return Promise.allSettled(SHELL.map(function (u) {
-          return fetch(u, { cache: "reload" }).then(function (rep) {
-            if (rep && rep.ok) return c.put(u, rep);
-          }).catch(function () {});
-        }));
-      })
-      .catch(function () {})
-  );
+  /* Mise à jour différentielle : aucun parcours de SHELL ou OFFLINE_LIST ici. */
+  evt.waitUntil(actualiserFichiersConcernes());
 });
 
 self.addEventListener("activate", function (evt) {
@@ -691,69 +696,30 @@ self.addEventListener("activate", function (evt) {
     (async function () {
       try {
         var nvCache = await caches.open(CACHE);
+        var cVid = await caches.open(CACHE_VIDEOS_LABO);
         var cles = await caches.keys();
         for (var k of cles) {
-          if (k !== CACHE && k.indexOf("sti-atelier-") === 0) {
-            try {
-              var ancCache = await caches.open(k);
-              var reqs = await ancCache.keys();
-              for (var r of reqs) {
-                var rPath = "";
-                try { rPath = new URL(r.url).pathname; } catch (e) {}
-                /* Conserver les vidéos MP4 dans le cache persistant du labo (CACHE_VIDEOS_LABO) pour 0 Mo de trafic réseau */
-                if (rPath.indexOf("/assets/videos/") !== -1 && /\.mp4$/i.test(rPath)) {
-                  if (rPath.indexOf("php-guichet-v9.mp4") !== -1 || rPath.indexOf("php-guichet-v8.mp4") !== -1 || rPath.indexOf("php-guichet-v7.mp4") !== -1 || rPath.indexOf("php-guichet-v6.mp4") !== -1 || rPath.indexOf("php-guichet-v5.mp4") !== -1 || rPath.indexOf("php-guichet-v4.mp4") !== -1 || rPath.indexOf("php-guichet-v3.mp4") !== -1 || rPath.indexOf("php-guichet-v2.mp4") !== -1 || rPath.indexOf("php-guichet.mp4") !== -1 || rPath.indexOf("sql-cours.mp4") !== -1 || rPath.indexOf("sql-cours-v2.mp4") !== -1 || rPath.indexOf("sql-cours-v3.mp4") !== -1 || rPath.indexOf("sql-cours-v4.mp4") !== -1 || rPath.indexOf("sql-cours-v5.mp4") !== -1 || rPath.indexOf("sql-cours-v6.mp4") !== -1 || rPath.indexOf("sql-initiation.mp4") !== -1) {
-                    continue;
-                  }
-                  try {
-                    var cVid = await caches.open(CACHE_VIDEOS_LABO);
-                    var dejaVid = await cVid.match(r, { ignoreSearch: true });
-                    if (!dejaVid) {
-                      var repVid = await ancCache.match(r);
-                      if (repVid) await cVid.put(new Request(new URL(r.url).origin + rPath), repVid);
-                    }
-                  } catch (eV) {}
-                  continue;
-                }
-                /* Ne jamais copier les anciens .html, .js, .css, .webmanifest ou anciens audios pas-à-pas */
-                if (
-                  /\.(html|js|css|webmanifest)$/i.test(rPath) ||
-                  rPath.indexOf("Explore_Tunisie") !== -1 ||
-                  rPath.indexOf("/audio/pas-a-pas/") !== -1 ||
-                  rPath.indexOf("guichet-etapes.mp3") !== -1 ||
-                  rPath.indexOf("css-positionnement.mp3") !== -1 ||
-                  rPath.indexOf("css-animee.mp3") !== -1 ||
-                  rPath.indexOf("-cours.mp3") !== -1 ||
-                  rPath.slice(-1) === "/"
-                ) {
-                  continue;
-                }
-                var deja = await nvCache.match(r, { ignoreSearch: true });
-                if (!deja) {
-                  var rep = await ancCache.match(r);
-                  if (rep) await nvCache.put(r, rep);
-                }
+          if (k === CACHE || k === CACHE_VIDEOS_LABO || k.indexOf("sti-atelier-") !== 0) continue;
+          try {
+            var ancCache = await caches.open(k);
+            var reqs = await ancCache.keys();
+            for (var r of reqs) {
+              var rPath = "";
+              try { rPath = new URL(r.url).pathname; } catch (e) {}
+              var cible = (rPath.indexOf("/assets/videos/") !== -1 && /\.mp4$/i.test(rPath)) ? cVid : nvCache;
+              var deja = await cible.match(r, { ignoreSearch: true });
+              if (!deja) {
+                var rep = await ancCache.match(r);
+                if (rep) await cible.put(r, rep);
               }
-            } catch (e) {}
-            await caches.delete(k);
-          } else if (k !== CACHE && k !== CACHE_VIDEOS_LABO) {
-            await caches.delete(k);
-          }
-        }
-        try {
-          var cVidClean = await caches.open(CACHE_VIDEOS_LABO);
-          var keysVid = await cVidClean.keys();
-          for (var kv of keysVid) {
-            if (kv.url.indexOf("css3-cours-v6.mp4") !== -1 || kv.url.indexOf("css3-cours-v5.mp4") !== -1 || kv.url.indexOf("css3-cours-v4.mp4") !== -1 || kv.url.indexOf("css3-cours-v3.mp4") !== -1 || kv.url.indexOf("css3-cours-v2.mp4") !== -1 || kv.url.indexOf("css3-cours.mp4") !== -1 || kv.url.indexOf("php-guichet-v9.mp4") !== -1 || kv.url.indexOf("php-guichet-v8.mp4") !== -1 || kv.url.indexOf("php-guichet-v7.mp4") !== -1 || kv.url.indexOf("php-guichet-v6.mp4") !== -1 || kv.url.indexOf("php-guichet-v5.mp4") !== -1 || kv.url.indexOf("php-guichet-v4.mp4") !== -1 || kv.url.indexOf("php-guichet-v3.mp4") !== -1 || kv.url.indexOf("php-guichet-v2.mp4") !== -1 || kv.url.indexOf("php-guichet.mp4") !== -1 || kv.url.indexOf("sql-cours.mp4") !== -1 || kv.url.indexOf("sql-cours-v2.mp4") !== -1 || kv.url.indexOf("sql-cours-v3.mp4") !== -1 || kv.url.indexOf("sql-cours-v4.mp4") !== -1 || kv.url.indexOf("sql-cours-v5.mp4") !== -1 || kv.url.indexOf("sql-cours-v6.mp4") !== -1 || kv.url.indexOf("sql-initiation.mp4") !== -1) {
-              await cVidClean.delete(kv);
             }
-          }
-        } catch (eClean) {}
+          } catch (eMigration) {}
+          /* Suppression seulement après copie locale : zéro re-téléchargement. */
+          await caches.delete(k);
+        }
       } catch (e) {}
       await self.clients.claim();
-      setTimeout(function () {
-        prechargerSequentiel();
-      }, 800);
+      /* Aucun préchargement global automatique après activation. */
     })()
   );
 });
@@ -764,63 +730,15 @@ self.addEventListener("message", function (evt) {
     self.skipWaiting();
     return;
   }
-  if (evt.data.type === "PRECACHE_ALL") {
-    prechargerSequentiel();
+  if (evt.data.type === "PRECACHE_ALL_USER") {
+    /* Téléchargement complet uniquement après le clic volontaire « Hors-ligne ». */
+    evt.waitUntil(prechargerSequentiel(true));
     return;
   }
-  if (evt.data.type === "SYNC_UPDATE" || evt.data.type === "FORCE_REFRESH_VERSION") {
+  if (evt.data.type === "PRECACHE_ALL" || evt.data.type === "SYNC_UPDATE" || evt.data.type === "FORCE_REFRESH_VERSION") {
+    /* Les anciens appels automatiques sont volontairement limités au delta de publication. */
     self.skipWaiting();
-    (async function () {
-      try {
-        var cles = await caches.keys();
-        for (var k of cles) {
-          if (k !== CACHE && k.indexOf("sti-atelier-") === 0) {
-            await caches.delete(k);
-          }
-        }
-        var c = await caches.open(CACHE);
-        var critiques = [
-          "./",
-          "./index.html",
-          "./portail.html",
-          "./admin.html",
-          "./bac-pratique.html",
-          "./assets/js/config.js",
-          "./assets/js/protection.js",
-          "./assets/js/acces.js",
-          "./assets/js/portail.js",
-          "./assets/js/admin.js",
-          "./assets/css/atelier.css",
-          "./assets/css/protection.css",
-          "./exercices/series-exercices.html",
-          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html",
-          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html",
-          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html",
-          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style.css",
-          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-flex.css",
-          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-float.css",
-          "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-position.css",
-          "./exercices/sql/Tp1-bd.html",
-          "./exercices/sql/Tp1-Correction-bd.html",
-          "./exercices/sql/Tp2-bd.html",
-          "./exercices/sql/Tp2-Correction-bd.html",
-          "./exercices/sql/Tp-GroupBy-bd.html",
-          "./exercices/sql/Tp3-Correction-bd.html",
-          "./exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
-          "./exercices/sql/Tp4-correction-bd.html",
-          "./exercices/sql/Tp-date-ssr-j-gp-bd.html",
-          "./exercices/sql/Tp-date-ssr-j-gp-correction-bd.html",
-          "./exercices/sql/sql.html",
-          "./exercices/sql/sql-correction.html"
-        ];
-        await Promise.allSettled(critiques.map(function (u) {
-          return fetch(u, { cache: "reload" }).then(function (rep) {
-            if (rep && rep.ok) return c.put(u, rep);
-          }).catch(function () {});
-        }));
-      } catch (e) {}
-      prechargerSequentiel(true);
-    })();
+    evt.waitUntil(actualiserFichiersConcernes());
   }
 });
 
