@@ -68,12 +68,19 @@ test('migration v303 : RLS restrictive, session_id et secrets hachés', () => {
   assert.doesNotMatch(sql, /p_device_secret\s+text[^]*insert into public\.labo_devices[^]*p_device_secret,/i);
 });
 
-test('service worker v303 reste différentiel et léger', () => {
+test('service worker v303+ reste différentiel et léger', () => {
   const sw = read('sw.js');
-  assert.match(sw, /sti-atelier-v303/);
-  assert.match(sw, /v303-labo-devices-1/);
+  assert.match(sw, /sti-atelier-v\d+/);
+  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls)-1/);
   assert.match(sw, /labo-device-client\.js/);
   assert.match(sw, /admin-labo-devices\.js/);
   const manifest = sw.slice(sw.indexOf('var UPDATE_FILES'), sw.indexOf('var CACHE_REVISIONS'));
   assert.doesNotMatch(manifest, /\.(mp4|m4s|mp3|pdf|zip)/i);
+});
+
+test('contrôles sécurisés visibles depuis le bandeau Labo 3', () => {
+  const admin = read('assets/js/admin.js');
+  assert.match(admin, /id='btn-gerer-labo3-securise'/);
+  assert.match(admin, /Gérer : Renommer · Autoriser\/Bloquer · Supprimer/);
+  assert.match(admin, /chargerModuleLaboDevicesAdminV303\(\)[\s\S]*api\.open\(\)/);
 });
