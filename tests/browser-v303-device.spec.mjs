@@ -41,7 +41,10 @@ test('mini-tableau admin et blocage ciblé AAL2', async ({ page }) => {
   await expect(button).toContainText('Postes Labo 3');
   await button.click();
   await expect(page.locator('#admin-labo-devices-modal')).toContainText('PC Salle 03');
-  await page.getByRole('button', { name: '⛔ Bloquer' }).click();
+  await expect(page.locator('#admin-labo-devices-modal')).toContainText('PC Salle 04');
+  await expect(page.locator('#admin-labo-devices-modal')).toContainText('⚪ Hors ligne');
+  await expect(page.locator('#admin-labo-devices-modal')).toContainText('📍 Localisation approximative : Gafsa, Tunisie');
+  await page.getByRole('button', { name: '⛔ Bloquer' }).first().click();
   await expect.poll(() => page.evaluate(() => window.__actions.length)).toBe(1);
   const action = await page.evaluate(() => window.__actions[0]);
   expect(action.name).toBe('admin_labo_device_action');

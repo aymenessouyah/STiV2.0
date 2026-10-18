@@ -39,6 +39,8 @@ test('identité machine persistante et session serveur', () => {
   assert.match(client, /window\.addEventListener\(["']offline["']/);
   assert.match(client, /labo_device_mark_message/);
   assert.match(client, /postgres_changes/);
+  assert.match(client, /https:\/\/ipapi\.co\/json\//);
+  assert.match(client, /location:\s*readApproxLocation\(\)/);
 });
 
 test('mini-tableau intégré et actions AAL2', () => {
@@ -71,7 +73,7 @@ test('migration v303 : RLS restrictive, session_id et secrets hachés', () => {
 test('service worker v303+ reste différentiel et léger', () => {
   const sw = read('sw.js');
   assert.match(sw, /sti-atelier-v\d+/);
-  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls)-1/);
+  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline)-1/);
   assert.match(sw, /labo-device-client\.js/);
   assert.match(sw, /admin-labo-devices\.js/);
   const manifest = sw.slice(sw.indexOf('var UPDATE_FILES'), sw.indexOf('var CACHE_REVISIONS'));
@@ -83,4 +85,12 @@ test('contrôles sécurisés visibles depuis le bandeau Labo 3', () => {
   assert.match(admin, /id='btn-gerer-labo3-securise'/);
   assert.match(admin, /Gérer : Renommer · Autoriser\/Bloquer · Supprimer/);
   assert.match(admin, /chargerModuleLaboDevicesAdminV303\(\)[\s\S]*api\.open\(\)/);
+});
+
+test('localisation approximative et postes hors ligne restent visibles', () => {
+  const module = read('assets/js/modules/admin-labo-devices.js');
+  assert.match(module, /Localisation approximative/);
+  assert.match(module, /⚪ Hors ligne/);
+  assert.match(module, /const offline = devices\.filter/);
+  assert.match(module, /Tous les postes enregistrés restent affichés, même hors ligne/);
 });

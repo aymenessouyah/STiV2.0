@@ -34,7 +34,7 @@ export function createAdminLaboDevices(options) {
     const titleWrap = el("div");
     titleWrap.append(
       el("h2", "🖥️ Postes elevelabo3", "margin:0 0 5px;color:#0f4c81"),
-      el("p", "Chaque nouveau poste est accepté automatiquement. Vous pouvez le bloquer, le réautoriser, le supprimer ou lui écrire individuellement.", "margin:0;max-width:760px;line-height:1.45;font-weight:700")
+      el("p", "Chaque nouveau poste est accepté automatiquement. Tous les postes enregistrés restent affichés, même hors ligne, avec leur dernière localisation approximative disponible.", "margin:0;max-width:760px;line-height:1.45;font-weight:700")
     );
     const actions = el("div", null, "display:flex;gap:8px;flex-wrap:wrap");
     const refresh = el("button", "↻ Actualiser", "padding:8px 12px;border:2px solid #23201a;border-radius:8px;background:#e8f2ff;font-weight:900;cursor:pointer");
@@ -58,6 +58,16 @@ export function createAdminLaboDevices(options) {
   function safeInfo(info) {
     const i = info && typeof info === "object" ? info : {};
     return [i.os, i.browser, i.mobile ? "Mobile" : "PC", i.page ? "Page : " + i.page : ""].filter(Boolean).join(" · ");
+  }
+
+  function safeLocation(info) {
+    const i = info && typeof info === "object" ? info : {};
+    const place = String(i.location || i.localisation || "").trim();
+    const timezone = String(i.timezone || "").trim();
+    if (place && timezone) return `📍 Localisation approximative : ${place} · Fuseau : ${timezone}`;
+    if (place) return `📍 Localisation approximative : ${place}`;
+    if (timezone) return `📍 Localisation non disponible · Fuseau : ${timezone}`;
+    return "📍 Localisation non disponible";
   }
 
   function actionButton(label, color, fn) {
@@ -86,9 +96,10 @@ export function createAdminLaboDevices(options) {
   function render(rows) {
     list.textContent = "";
     const devices = Array.isArray(rows) ? rows : [];
-    const online = devices.filter(d => d.online).length;
+    const online = devices.filter(d => d.status !== "blocked" && d.online).length;
+    const offline = devices.filter(d => d.status !== "blocked" && !d.online).length;
     const blocked = devices.filter(d => d.status === "blocked").length;
-    state.textContent = `${devices.length} poste(s) · ${online} en ligne · ${blocked} bloqué(s) · actualisé ${new Date().toLocaleTimeString("fr-FR")}`;
+    state.textContent = `${devices.length} poste(s) enregistré(s) · ${online} en ligne · ${offline} hors ligne · ${blocked} bloqué(s) · actualisé ${new Date().toLocaleTimeString("fr-FR")}`;
     button.textContent = devices.length ? `🖥️ Postes Labo 3 (${devices.length})` : "🖥️ Postes Labo 3";
     if (!devices.length) {
       list.appendChild(el("p", "Aucune machine n’a encore utilisé le compte elevelabo3@exemple.tn.", "padding:18px;background:#f3ead9;border-radius:10px;font-weight:800"));
@@ -99,9 +110,10 @@ export function createAdminLaboDevices(options) {
       const card = el("article", null, `padding:14px;border:2px solid ${blockedNow ? "#b8321b" : "#0f4c81"};border-radius:13px;background:${blockedNow ? "#fff0ed" : "#f8fcff"}`);
       const top = el("div", null, "display:flex;gap:8px;align-items:flex-start;justify-content:space-between");
       const name = el("h3", d.name || "Poste Labo 3", "margin:0;font-size:1.05rem");
-      const badge = el("span", blockedNow ? "⛔ Bloqué" : (d.online ? "🟢 En ligne" : "⚪ Autorisé"), `padding:4px 8px;border-radius:999px;background:${blockedNow ? "#b8321b" : d.online ? "#177245" : "#64748b"};color:white;font-size:.78rem;font-weight:900;white-space:nowrap`);
+      const badge = el("span", blockedNow ? "⛔ Bloqué" : (d.online ? "🟢 En ligne" : "⚪ Hors ligne"), `padding:4px 8px;border-radius:999px;background:${blockedNow ? "#b8321b" : d.online ? "#177245" : "#64748b"};color:white;font-size:.78rem;font-weight:900;white-space:nowrap`);
       top.append(name, badge);
-      const info = el("p", safeInfo(d.info), "margin:8px 0;font-weight:750;color:#334155;line-height:1.4");
+      const info = el("p", safeInfo(d.info), "margin:8px 0 4px;font-weight:750;color:#334155;line-height:1.4");
+      const location = el("p", safeLocation(d.info), "margin:4px 0 8px;padding:6px 8px;border-radius:8px;background:#eef6ff;color:#0f4c81;font-size:.84rem;font-weight:850;line-height:1.35");
       const dates = el("p", `Première entrée : ${fmtDate(d.first_seen)}\nDernière présence : ${fmtDate(d.last_seen)}`, "margin:6px 0;font-size:.84rem;white-space:pre-line;color:#475569");
       const unread = el("p", d.unread ? `📨 ${d.unread} message(s) non lu(s)` : "✓ Aucun message non lu", `margin:7px 0;font-weight:900;color:${d.unread ? "#b8321b" : "#177245"}`);
       const actions = el("div", null, "display:flex;gap:6px;flex-wrap:wrap;margin-top:10px");
@@ -121,7 +133,7 @@ export function createAdminLaboDevices(options) {
         }),
         actionButton("🗑️ Supprimer", "#fff3cd", () => runAction("delete", d.id, null, "Supprimer définitivement cette machine et son historique de messages ? Elle réapparaîtra comme nouveau poste lors de sa prochaine connexion."))
       );
-      card.append(top, info, dates, unread, actions); list.appendChild(card);
+      card.append(top, info, location, dates, unread, actions); list.appendChild(card);
     });
   }
 

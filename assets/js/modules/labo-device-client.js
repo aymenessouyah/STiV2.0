@@ -4,6 +4,8 @@ const DB_NAME = "sti-labo-device-v303";
 const STORE = "identity";
 const KEY = "current";
 const PROOF_KEY = "sti-labo-device-proof-v303";
+const GEO_CACHE_KEY = "sti-geo-cache";
+const GEO_CACHE_MAX_AGE = 7 * 86400000;
 
 export function isRestrictedLaboAccount(email) {
   return String(email || "").trim().toLowerCase() === TARGET_EMAIL;
@@ -66,6 +68,38 @@ async function getIdentity() {
   return created;
 }
 
+function readApproxLocation() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(GEO_CACHE_KEY) || "null");
+    if (!cached || !cached.ts || Date.now() - Number(cached.ts) >= GEO_CACHE_MAX_AGE) return "";
+    return String(cached.txt || "").trim().slice(0, 180);
+  } catch (_) { return ""; }
+}
+
+async function refreshApproxLocation() {
+  const cached = readApproxLocation();
+  if (cached) return cached;
+  const controller = typeof AbortController === "function" ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(), 5000) : null;
+  try {
+    const response = await fetch("https://ipapi.co/json/", controller ? { signal: controller.signal } : undefined);
+    if (!response.ok) return "";
+    const data = await response.json();
+    const parts = [data.city, data.region, data.country_name]
+      .map(value => String(value || "").trim())
+      .filter((value, index, all) => value && all.indexOf(value) === index);
+    const text = parts.join(", ").slice(0, 180);
+    if (text) {
+      try { localStorage.setItem(GEO_CACHE_KEY, JSON.stringify({ txt: text, ts: Date.now() })); } catch (_) {}
+    }
+    return text;
+  } catch (_) {
+    return "";
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 function browserInfo() {
   const ua = navigator.userAgent || "";
   let os = "Appareil";
@@ -85,7 +119,8 @@ function browserInfo() {
     mobile: /Android|iPhone|iPad|iPod|Mobile/i.test(ua),
     page: (location.pathname.split("/").pop() || "index.html").slice(0, 120),
     label: `${os} • ${browser}`,
-    timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone || "").slice(0, 80)
+    timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone || "").slice(0, 80),
+    location: readApproxLocation()
   };
 }
 
@@ -124,6 +159,7 @@ export function createLaboDeviceClient(options) {
   let messageTimer = null;
   let channel = null;
   let lastPopupId = "";
+  let locationRefreshStarted = false;
 
   clearLegacyLaboState();
 
@@ -177,6 +213,17 @@ export function createLaboDeviceClient(options) {
     const quiet = Boolean(readProof());
     if (!quiet) showGate("🖥️ Vérification de la machine", "Identification sécurisée de ce poste en cours…", false);
     identity = identity || await getIdentity();
+    if (!locationRefreshStarted && !readApproxLocation()) {
+      locationRefreshStarted = true;
+      refreshApproxLocation().then(approxLocation => {
+        if (!approxLocation || !identity || !navigator.onLine) return;
+        return sb.rpc("labo_device_open_session", {
+          p_device_id: identity.deviceId,
+          p_device_secret: identity.secret,
+          p_device_info: browserInfo()
+        });
+      }).catch(() => {});
+    }
     const response = await sb.rpc("labo_device_open_session", {
       p_device_id: identity.deviceId,
       p_device_secret: identity.secret,

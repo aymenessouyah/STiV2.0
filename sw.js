@@ -3,10 +3,10 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v304";
+var CACHE = "sti-atelier-v305";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v304-visible-labo-controls-1";
+var UPDATE_ID = "v305-device-location-offline-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -19,8 +19,8 @@ var UPDATE_FILES = [
   { url: "./assets/js/protection.js", revision: "hls-diagnostics-v302" },
   { url: "./assets/js/modules/admin-mfa.js", revision: "mfa-module-v302" },
   { url: "./assets/js/modules/mobile-diagnostics.js", revision: "diagnostics-module-v302" },
-  { url: "./assets/js/modules/labo-device-client.js", revision: "device-client-v303" },
-  { url: "./assets/js/modules/admin-labo-devices.js", revision: "device-admin-v303" }
+  { url: "./assets/js/modules/labo-device-client.js", revision: "device-location-v305" },
+  { url: "./assets/js/modules/admin-labo-devices.js", revision: "device-admin-offline-v305" }
 ];
 var CACHE_REVISIONS = "sti-update-revisions-v1";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
