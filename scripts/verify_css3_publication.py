@@ -126,7 +126,7 @@ def verify_remote_once():
     _,_,vtt=get(BASE+'assets/subtitles/css3-cours-v9-sync-fr.vtt'+stamp);vtt=vtt.decode('utf-8')
     _,_,news=get(BASE+'assets/data/nouveautes.json'+stamp);news=json.loads(news)
     for ref in ['atelier-pages.css?v=299','protection.js?v=309','css-video-access','css-course-transcript','data-css-video-time="552.72"','css-publication-status','__STI_CSS3_PUBLICATION_CHECK']: require(ref in page,f'page publiée contient {ref}')
-    for ref in ['css3-cours-v9-sync-mobile-720p.mp4?v=309','css3-cours-v9-sync-fr.vtt?v=309','Qualité : 720p éco']:
+    for ref in ['css3-cours-v9-sync-mobile-720p.mp4?v=309','css3-cours-v9-sync-fr.vtt?v=309','720p éco MP4']:
         require(ref in js,f'JavaScript publié contient {ref}')
     require('sti-atelier-v309' in sw,'service worker publié utilise le cache v309')
     require(vtt.startswith('WEBVTT') and 'NOTE Chapitre 10' in vtt,'WebVTT publié complet')
