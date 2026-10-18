@@ -76,7 +76,7 @@
             regs.forEach(function (r) { r.update(); });
           });
         }
-        charge(false);
+        charge(false, true);
       });
     }
   })();
@@ -84,6 +84,7 @@
   /* ---------- Jauge d'espace Supabase (pourcentage + quantité restante sur 500 Mo) à côté de la version ---------- */
   var QUOTA_SUPABASE_OCTETS = 500 * 1024 * 1024; // 500 Mo (Plan Free Supabase)
   var dernierQuotaInfo = null;
+  var dernierRpcQuotaTs = 0;
 
   function formaterOctets(oct) {
     var n = Math.max(0, Number(oct) || 0);
@@ -173,8 +174,9 @@
 
     majAffichageQuotaSupabase(totalEstime, nbP, nbA, false);
 
-    /* Si la fonction RPC SQL public.admin_taille_base() est installée côté Supabase, utiliser la mesure exacte pg_database_size */
-    if (navigator.onLine && sb && typeof sb.rpc === "function") {
+    /* Mesure exacte au maximum toutes les 10 minutes : jamais à chaque delta de 20 secondes. */
+    if (navigator.onLine && sb && typeof sb.rpc === "function" && Date.now() - dernierRpcQuotaTs > 600000) {
+      dernierRpcQuotaTs = Date.now();
       sb.rpc("admin_taille_base").then(function (r) {
         if (r && !r.error && typeof r.data === "number" && r.data > 0) {
           majAffichageQuotaSupabase(r.data, nbP, nbA, true);
@@ -302,6 +304,15 @@
 
   var triParAcces = false;
   var profils = [], acces = [], counts = {};
+  /* Jeux bruts conservés localement : les sondages de 20 s ne récupèrent que les lignes nouvelles. */
+  var profilsBrutsAdmin = [], accesBrutsAdmin = [], ntfyBrutAdmin = "";
+  var dernierIdAccesAdmin = 0;
+  var chargeAdminEnCours = false;
+  var chargeAdminCompleteEnAttente = false;
+  var derniereApplicationAdminTs = 0;
+  var OCTETS_RESEAU_ADMIN_SESSION = 0;
+  var COLONNES_PROFILS_ADMIN = "id,email,phone,nom,prenom,lycee,classe,statut,cree_le";
+  var COLONNES_ACCES_ADMIN = "id,user_id,debut,fin,duree_sec,lieu,page";
   var dureesSemaine = {}, dureesTotales = {}, semainesDispo = [];
   var messagesDiffuses = [], lecturesParMsg = {}, reponsesParMsg = {}, fichiersParMsg = {}, questionsLibres = [];
   var questionsFlash = [], reponsesFlash = {};
@@ -650,11 +661,18 @@
       localStorage.setItem("sti-admin-gold", "1");
     } catch (e) {}
     window.__STI_GOLD = true;
-    charge(false);
-    /* Tant que l’administrateur est connecté, actualiser le tableau depuis Supabase toutes les 20 secondes. */
+    /* Affichage immédiat du dernier instantané IndexedDB, puis contrôle complet au démarrage. */
+    chargerDepuisCacheAdmin(true, "");
+    charge(false, true);
+    /* Tant que l’administrateur est connecté et l’onglet visible : petit delta Supabase toutes les 20 s. */
     var DELAI_ACTUALISATION_ADMIN_MS = 20000;
-    setInterval(function () { if (navigator.onLine) charge(true); }, DELAI_ACTUALISATION_ADMIN_MS);
-    window.addEventListener("online", function () { charge(false); });
+    setInterval(function () {
+      if (navigator.onLine && document.visibilityState !== "hidden") charge(true, false);
+    }, DELAI_ACTUALISATION_ADMIN_MS);
+    window.addEventListener("online", function () { charge(false, true); });
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden && navigator.onLine) charge(true, false);
+    });
 
     function estSessionAppAdminDejaDeverrouillee() {
       try {
@@ -918,8 +936,10 @@
     verrouBioAdmin(function () {});
     try {
       sb.channel("admin-demandes")
-        .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, function () { charge(true); })
-        .on("postgres_changes", { event: "*", schema: "public", table: "acces" }, function () { charge(true); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, function () { charge(true, "profils"); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "acces" }, function (evtAcces) {
+          charge(true, evtAcces && evtAcces.eventType && evtAcces.eventType !== "INSERT" ? "acces" : false);
+        })
         .subscribe();
       sb.channel("sti-diffusion")
         .on("broadcast", { event: "lu" }, function (p) {
@@ -956,7 +976,7 @@
               msg("💬 Nouveau message de " + nomExp + " : « " + apercu.slice(0, 70) + " »", "ok");
             }
             if (fRecu && fRecu.depuisDb && !fRecu.dataUrl) {
-              setTimeout(function () { charge(true); }, 600);
+              setTimeout(function () { charge(true, false); }, 600);
             }
           }
         })
@@ -985,7 +1005,7 @@
           }
         })
         .on("broadcast", { event: "quiz" }, function () {
-          charge(true);
+          charge(true, false);
         })
         .on("broadcast", { event: "prog_media" }, function (p) {
           if (p && p.payload && p.payload.uid && p.payload.m && typeof p.payload.m === "object") {
@@ -1176,7 +1196,7 @@
     } catch (e) {}
     sb.auth.signOut().catch(function () {}).then(function () { location.replace(cfg.RACINE + "portail.html#deconnecte"); });
   });
-  document.getElementById("btn-refresh").addEventListener("click", function () { charge(false); });
+  document.getElementById("btn-refresh").addEventListener("click", function () { charge(false, true); });
   document.getElementById("btn-stats").addEventListener("click", function () {
     triParAcces = !triParAcces;
     this.classList.toggle("on", triParAcces);
@@ -1450,14 +1470,93 @@
     }
   }
 
-  function chargerDepuisCacheAdmin(garderMsg, raison) {
-    try {
-      var c = JSON.parse(localStorage.getItem("sti-admin-cache") || "null");
-      if (c && Array.isArray(c.tous)) {
-        appliquerDonneesAdmin(c.tous, c.tousAcces || [], c.txtNtfy || "", true, c.ts);
-        return true;
+  /* Cache IndexedDB : affichage instantané sans nouvelle consommation réseau. */
+  var cacheAdminMemoire = null;
+  var promesseCacheAdmin = null;
+  var DB_CACHE_ADMIN = "sti-admin-dashboard-v1";
+
+  function ouvrirDbCacheAdmin() {
+    return new Promise(function (resolve, reject) {
+      if (!("indexedDB" in window)) { reject(new Error("IndexedDB indisponible")); return; }
+      var req = indexedDB.open(DB_CACHE_ADMIN, 1);
+      req.onupgradeneeded = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains("snapshots")) db.createObjectStore("snapshots");
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error || new Error("IndexedDB inaccessible")); };
+    });
+  }
+
+  function lireCacheAdminIndexedDb() {
+    return ouvrirDbCacheAdmin().then(function (db) {
+      return new Promise(function (resolve) {
+        var tx = db.transaction("snapshots", "readonly");
+        var req = tx.objectStore("snapshots").get("dashboard");
+        req.onsuccess = function () { resolve(req.result || null); };
+        req.onerror = function () { resolve(null); };
+        tx.oncomplete = function () { db.close(); };
+      });
+    }).catch(function () { return null; });
+  }
+
+  function ecrireCacheAdminIndexedDb(snapshot) {
+    cacheAdminMemoire = snapshot;
+    return ouvrirDbCacheAdmin().then(function (db) {
+      return new Promise(function (resolve) {
+        var tx = db.transaction("snapshots", "readwrite");
+        tx.objectStore("snapshots").put(snapshot, "dashboard");
+        tx.oncomplete = function () { db.close(); resolve(); };
+        tx.onerror = function () { db.close(); resolve(); };
+      });
+    }).catch(function () {
+      /* Secours pour les très anciens navigateurs uniquement. */
+      try { localStorage.setItem("sti-admin-cache", JSON.stringify(snapshot)); } catch (e) {}
+    });
+  }
+
+  function initialiserCacheAdminIndexedDb() {
+    var ancien = null;
+    try { ancien = JSON.parse(localStorage.getItem("sti-admin-cache") || "null"); } catch (e) {}
+    promesseCacheAdmin = lireCacheAdminIndexedDb().then(function (idb) {
+      var choisi = idb && (!ancien || Number(idb.ts || 0) >= Number(ancien.ts || 0)) ? idb : ancien;
+      cacheAdminMemoire = choisi || null;
+      if (choisi && choisi === ancien) ecrireCacheAdminIndexedDb(choisi);
+      if (idb || choisi) {
+        try { localStorage.removeItem("sti-admin-cache"); } catch (e) {}
       }
+      return cacheAdminMemoire;
+    });
+  }
+  initialiserCacheAdminIndexedDb();
+
+  function noterTraficAdmin(objets) {
+    try {
+      var n = JSON.stringify(objets || []).length;
+      OCTETS_RESEAU_ADMIN_SESSION += n;
+      sessionStorage.setItem("sti-admin-data-bytes", String(OCTETS_RESEAU_ADMIN_SESSION));
+      window.__STI_ADMIN_DATA_USAGE = { bytes: OCTETS_RESEAU_ADMIN_SESSION, ko: Math.round(OCTETS_RESEAU_ADMIN_SESSION / 102.4) / 10 };
     } catch (e) {}
+  }
+
+  function chargerDepuisCacheAdmin(garderMsg, raison) {
+    function appliquerSnapshot(c) {
+      if (!c || !Array.isArray(c.tous)) return false;
+      if (Number(c.ts || 0) < derniereApplicationAdminTs) return true;
+      cacheAdminMemoire = c;
+      appliquerDonneesAdmin(c.tous, c.tousAcces || [], c.txtNtfy || "", true, c.ts);
+      return true;
+    }
+    if (appliquerSnapshot(cacheAdminMemoire)) return true;
+    var ancien = null;
+    try { ancien = JSON.parse(localStorage.getItem("sti-admin-cache") || "null"); } catch (e) {}
+    if (appliquerSnapshot(ancien)) return true;
+    if (promesseCacheAdmin) {
+      promesseCacheAdmin.then(function (c) {
+        if (!appliquerSnapshot(c) && !garderMsg) msg("❌ " + (raison || "Aucune donnée locale disponible."), "err");
+      });
+      return true;
+    }
     if (!garderMsg) msg("❌ " + (raison || "Impossible de joindre le serveur hors-ligne."), "err");
     return false;
   }
@@ -1520,6 +1619,11 @@
   }
 
   function appliquerDonneesAdmin(tous, tousAcces, txtNtfy, estHorsLigne, tsCache) {
+    profilsBrutsAdmin = Array.isArray(tous) ? tous.slice() : [];
+    accesBrutsAdmin = Array.isArray(tousAcces) ? tousAcces.slice() : [];
+    ntfyBrutAdmin = txtNtfy || "";
+    dernierIdAccesAdmin = accesBrutsAdmin.reduce(function (mx, a) { return Math.max(mx, Number(a && a.id) || 0); }, 0);
+    derniereApplicationAdminTs = Math.max(derniereApplicationAdminTs, Number(tsCache || 0));
     var adminIds = {};
     tous.forEach(function (p) { if (estAdminEmail(p.email)) adminIds[p.id] = true; });
     profils = tous.filter(function (p) { return !estAdminEmail(p.email); });
@@ -2083,53 +2187,129 @@
       }
   }
 
-  function charge(garderMsg) {
-    if (!navigator.onLine) {
-      chargerDepuisCacheAdmin(garderMsg, "Appareil hors-ligne (aucun cache enregistré).");
-      return;
-    }
-    if (!garderMsg) msg("Chargement…", "");
+  function sauvegarderSnapshotAdmin(tous, tousAcces, txtNtfy) {
+    var snapshot = { tous: tous, tousAcces: tousAcces, txtNtfy: txtNtfy || "", ts: Date.now() };
+    ecrireCacheAdminIndexedDb(snapshot);
+    return snapshot;
+  }
+
+  function retirerAccesDuCacheAdmin(ids) {
+    if (!ids || !ids.length) return;
+    var mapIds = {};
+    ids.forEach(function (id) { mapIds[String(id)] = true; });
+    accesBrutsAdmin = accesBrutsAdmin.filter(function (a) { return !mapIds[String(a.id)]; });
+    dernierIdAccesAdmin = accesBrutsAdmin.reduce(function (mx, a) { return Math.max(mx, Number(a && a.id) || 0); }, 0);
+    sauvegarderSnapshotAdmin(profilsBrutsAdmin, accesBrutsAdmin, ntfyBrutAdmin);
+  }
+
+  function fusionnerAccesAdmin(nouveaux) {
+    var map = {};
+    accesBrutsAdmin.concat(nouveaux || []).forEach(function (a) {
+      if (a && a.id != null) map[String(a.id)] = a;
+    });
+    return Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) {
+      var di = Number(b.id || 0) - Number(a.id || 0);
+      return di || String(b.debut || "").localeCompare(String(a.debut || ""));
+    }).slice(0, 600);
+  }
+
+  function requeteCompleteAdmin(garderMsg) {
+    if (!garderMsg) msg("Chargement optimisé…", "");
     var resolu = false;
     var timerOffAdmin = setTimeout(function () {
-      if (!resolu) {
-        resolu = true;
-        chargerDepuisCacheAdmin(garderMsg, "Mode Hors-ligne (serveur injoignable).");
-      }
+      if (!resolu) chargerDepuisCacheAdmin(garderMsg, "Mode hors-ligne (serveur injoignable).");
     }, 3500);
-    Promise.all([
-      sb.from("profiles").select("*", { count: "exact" }).order("cree_le", { ascending: false }),
-      sb.from("acces").select("*", { count: "exact" }).order("debut", { ascending: false }).limit(600),
-      fetch("https://ntfy.sh/sti_v2_diffusion_9482/json?poll=1&since=all").then(function (r) { return r.text(); }).catch(function () { return ""; })
+    return Promise.all([
+      sb.from("profiles").select(COLONNES_PROFILS_ADMIN, { count: "exact" }).order("cree_le", { ascending: false }),
+      sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(600)
     ]).then(function (res) {
       clearTimeout(timerOffAdmin);
-      if (res[0].error || res[1].error) {
-        var errTxt = (res[0].error || res[1].error).message;
-        if (!chargerDepuisCacheAdmin(garderMsg, errTxt)) {
-          msg("❌ " + errTxt, "err");
-        }
-        return;
-      }
+      if (res[0].error || res[1].error) throw (res[0].error || res[1].error);
       resolu = true;
       var tous = res[0].data || [];
       var tousAcces = res[1].data || [];
+      /* L'historique persistant provient uniquement de Supabase ; ntfy n'est plus aspiré en masse. */
+      var txtNtfy = "";
       window.__stiCountProfils = typeof res[0].count === "number" ? res[0].count : tous.length;
       window.__stiCountAcces = typeof res[1].count === "number" ? res[1].count : tousAcces.length;
-      var txtNtfy = res[2] || "";
-      try {
-        localStorage.setItem("sti-admin-cache", JSON.stringify({
-          tous: tous,
-          tousAcces: tousAcces,
-          txtNtfy: txtNtfy,
-          ts: Date.now()
-        }));
-      } catch (e) {}
-      appliquerDonneesAdmin(tous, tousAcces, txtNtfy, false, Date.now());
-      if (!garderMsg) msg("✅ " + profils.length + " abonné(s), " + acces.length + " connexion(s) journalisée(s).", "ok");
-    }).catch(function () {
+      noterTraficAdmin([tous, tousAcces, txtNtfy]);
+      var snap = sauvegarderSnapshotAdmin(tous, tousAcces, txtNtfy);
+      appliquerDonneesAdmin(tous, tousAcces, txtNtfy, false, snap.ts);
+      if (!garderMsg) {
+        var ko = window.__STI_ADMIN_DATA_USAGE ? window.__STI_ADMIN_DATA_USAGE.ko : 0;
+        msg("✅ " + profils.length + " abonné(s), " + acces.length + " activité(s) · session réseau : " + ko + " Ko.", "ok");
+      }
+    }).catch(function (err) {
       clearTimeout(timerOffAdmin);
-      if (!resolu) {
-        resolu = true;
-        chargerDepuisCacheAdmin(garderMsg, "Impossible de joindre le serveur.");
+      if (!resolu && !chargerDepuisCacheAdmin(garderMsg, err && err.message)) {
+        msg("❌ " + ((err && err.message) || "Impossible de joindre Supabase."), "err");
+      }
+    });
+  }
+
+  function requeteProfilsAdmin() {
+    return sb.from("profiles").select(COLONNES_PROFILS_ADMIN, { count: "exact" }).order("cree_le", { ascending: false }).then(function (res) {
+      if (res.error) throw res.error;
+      var tous = res.data || [];
+      window.__stiCountProfils = typeof res.count === "number" ? res.count : tous.length;
+      noterTraficAdmin(tous);
+      var snap = sauvegarderSnapshotAdmin(tous, accesBrutsAdmin, ntfyBrutAdmin);
+      appliquerDonneesAdmin(tous, accesBrutsAdmin, ntfyBrutAdmin, false, snap.ts);
+    }).catch(function () {});
+  }
+
+  function requeteAccesCompletAdmin() {
+    return sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(600).then(function (res) {
+      if (res.error) throw res.error;
+      var tousAcces = res.data || [];
+      window.__stiCountAcces = typeof res.count === "number" ? res.count : tousAcces.length;
+      noterTraficAdmin(tousAcces);
+      var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, tousAcces, ntfyBrutAdmin);
+      appliquerDonneesAdmin(profilsBrutsAdmin, tousAcces, ntfyBrutAdmin, false, snap.ts);
+    }).catch(function () {});
+  }
+
+  function requeteDeltaAdmin() {
+    if (!profilsBrutsAdmin.length) return requeteCompleteAdmin(true);
+    var q = sb.from("acces").select(COLONNES_ACCES_ADMIN);
+    if (dernierIdAccesAdmin > 0) q = q.gt("id", dernierIdAccesAdmin);
+    q = q.order("id", { ascending: true }).limit(250);
+    return q.then(function (res) {
+      if (res.error) throw res.error;
+      var nouveaux = res.data || [];
+      noterTraficAdmin(nouveaux);
+      if (!nouveaux.length) return;
+      var fusion = fusionnerAccesAdmin(nouveaux);
+      var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, fusion, ntfyBrutAdmin);
+      appliquerDonneesAdmin(profilsBrutsAdmin, fusion, ntfyBrutAdmin, false, snap.ts);
+      /* Plus de 250 événements en 20 s : réconciliation complète pour ne rien omettre. */
+      if (nouveaux.length >= 250) chargeAdminCompleteEnAttente = true;
+    }).catch(function () {
+      /* Le dernier instantané reste affiché ; une reconnexion déclenchera un contrôle complet. */
+    });
+  }
+
+  function charge(garderMsg, forcerComplet) {
+    if (!navigator.onLine) {
+      chargerDepuisCacheAdmin(garderMsg, "Appareil hors-ligne (aucun cache enregistré).");
+      return Promise.resolve();
+    }
+    if (!forcerComplet && document.visibilityState === "hidden") return Promise.resolve();
+    if (chargeAdminEnCours) {
+      if (forcerComplet) chargeAdminCompleteEnAttente = true;
+      return Promise.resolve();
+    }
+    chargeAdminEnCours = true;
+    var travail;
+    if (!profilsBrutsAdmin.length || forcerComplet === true) travail = requeteCompleteAdmin(garderMsg);
+    else if (forcerComplet === "profils") travail = requeteProfilsAdmin();
+    else if (forcerComplet === "acces") travail = requeteAccesCompletAdmin();
+    else travail = requeteDeltaAdmin();
+    return Promise.resolve(travail).finally(function () {
+      chargeAdminEnCours = false;
+      if (chargeAdminCompleteEnAttente) {
+        chargeAdminCompleteEnAttente = false;
+        charge(true, true);
       }
     });
   }
@@ -2318,7 +2498,7 @@
             if (r.error) { msg("❌ " + r.error.message, "err"); return; }
             cibles.forEach(function (p) { diffuserSignalStatut(p.id, "actif", estGold(p)); });
             msg("✅ " + cibles.length + " abonné(s) activé(s) !", "ok");
-            charge(true);
+            charge(true, "profils");
           });
         }
       });
@@ -2552,7 +2732,7 @@
             return;
           }
           msg("✅ Classe de " + contact(p) + " changée en « " + nvClasse + " ».", "ok");
-          charge(true);
+          charge(true, "profils");
         });
       }
     });
@@ -3651,15 +3831,7 @@
         if (!scoresParUser[q.uid][cleQ]) scoresParUser[q.uid][cleQ] = q.note;
       });
 
-      try {
-        var cLoc = JSON.parse(localStorage.getItem("sti-admin-cache") || "null");
-        if (cLoc && Array.isArray(cLoc.tousAcces)) {
-          var mapIds = {};
-          ids.forEach(function (id) { mapIds[id] = true; });
-          cLoc.tousAcces = cLoc.tousAcces.filter(function (a) { return !mapIds[a.id]; });
-          localStorage.setItem("sti-admin-cache", JSON.stringify(cLoc));
-        }
-      } catch (e) {}
+      retirerAccesDuCacheAdmin(ids);
 
       if (modalPurgeQuiz) modalPurgeQuiz.classList.remove("visible");
       rendQuiz();
@@ -3787,15 +3959,7 @@
 
       sauvegarderCfgEcoles();
 
-      try {
-        var cLoc = JSON.parse(localStorage.getItem("sti-admin-cache") || "null");
-        if (cLoc && Array.isArray(cLoc.tousAcces) && ids.length) {
-          var mapIds = {};
-          ids.forEach(function (id) { mapIds[id] = true; });
-          cLoc.tousAcces = cLoc.tousAcces.filter(function (a) { return !mapIds[a.id]; });
-          localStorage.setItem("sti-admin-cache", JSON.stringify(cLoc));
-        }
-      } catch (e) {}
+      retirerAccesDuCacheAdmin(ids);
 
       if (modalPurgeMsg) modalPurgeMsg.classList.remove("visible");
       rendSuiviMessages();
@@ -4043,15 +4207,7 @@
         dureesSemaine[sk][a.user_id] = (dureesSemaine[sk][a.user_id] || 0) + sec;
       });
 
-      try {
-        var cLoc = JSON.parse(localStorage.getItem("sti-admin-cache") || "null");
-        if (cLoc && Array.isArray(cLoc.tousAcces)) {
-          var mapIds = {};
-          ids.forEach(function (id) { mapIds[id] = true; });
-          cLoc.tousAcces = cLoc.tousAcces.filter(function (a) { return !mapIds[a.id]; });
-          localStorage.setItem("sti-admin-cache", JSON.stringify(cLoc));
-        }
-      } catch (e) {}
+      retirerAccesDuCacheAdmin(ids);
 
       if (modalPurgeAcces) modalPurgeAcces.classList.remove("visible");
       rendAcces();
@@ -4430,7 +4586,7 @@
           if (r.error) { msg("❌ " + r.error.message, "err"); return; }
           diffuserSignalStatut(p.id, statut, estGold(p));
           msg("✅ " + contact(p) + " → " + libSt, "ok");
-          charge(true);
+          charge(true, "profils");
         });
       }
     });
@@ -4459,7 +4615,7 @@
               : "🔒 " + contact(p) + " est repassé en compte standard (capture d'écran & impression bloquées).",
             "ok"
           );
-          charge(true);
+          charge(true, "profils");
         });
       }
     });
@@ -4512,7 +4668,7 @@
       if (r.error) { msg("❌ " + r.error.message, "err"); return; }
       diffuserSignalStatut(p.id, "supprime", false);
       msg("🗑️ " + contact(p) + " supprimé définitivement.", "ok");
-      charge(true);
+      charge(true, "profils");
     });
   });
 
@@ -4977,7 +5133,7 @@
           return;
         }
         msg("✅ " + contact(p) + " → " + nvLyceeBase + " · " + nvClasse, "ok");
-        charge(true);
+        charge(true, "profils");
       });
     });
   }
@@ -6034,7 +6190,7 @@
       majBarreFichierModal();
       if (selSuiviMsg && !etaitReponse) selSuiviMsg.value = "";
       msg((uidSel ? (etaitReponse ? "↩️ Réponse envoyée à « " : "📩 Message personnel envoyé à « ") : "📢 Message diffusé pour « ") + libCl + " ».", "ok");
-      charge(true);
+      charge(true, false);
     });
   });
 

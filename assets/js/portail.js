@@ -10,6 +10,15 @@
       lock: function (name, acquireTimeout, fn) { return fn(); }
     }
   });
+  /* Supprimer une éventuelle ancienne copie Base64 du mot de passe : la session Supabase persistante suffit. */
+  try { localStorage.removeItem("sti-reauth"); } catch (e) {}
+  function connexionLimiteePortail() {
+    try {
+      var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      var t = String((c && c.effectiveType) || "").toLowerCase();
+      return Boolean(c && (c.saveData || /^(slow-2g|2g|3g)$/.test(t)));
+    } catch (e) { return false; }
+  }
 
   /* Si la classe "elevelabo3" a déjà été connectée une fois sur ce PC du labo,
      ne plus jamais demander login ni mot de passe (sauf si déconnexion volontaire #deconnecte ou accès #admin) */
@@ -95,70 +104,14 @@
   } catch (e) {}
   /* La mise à jour de la plateforme ne se fait QUE s'il y a une nouvelle version (allège la connexion et la navigation) */
   function mettreAJourVersionAvantEntree(allerVers) {
-    var fait = false;
-    function terminer() {
-      if (fait) return;
-      fait = true;
-      location.href = allerVers;
-    }
-    if (!navigator.onLine || typeof fetch !== "function") {
-      terminer();
-      return;
-    }
-    var timerMax = setTimeout(terminer, 1500);
-    fetch(cfg.RACINE + "sw.js?t=" + Date.now(), { cache: "no-store" })
-      .then(function (r) { return r && r.ok ? r.text() : ""; })
-      .then(function (txt) {
-        var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
-        var verSrv = m && m[1] ? parseInt(m[1], 10) : 0;
-        var verLoc = 0;
-        try { verLoc = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0; } catch (e) {}
-        if (verSrv > 0) {
-          try {
-            sessionStorage.setItem("sti-conn-ver-checked", String(verSrv));
-            sessionStorage.setItem("sti-ver-check-ts", String(Date.now()));
-          } catch (e) {}
-        }
-        /* Si aucune nouvelle version de la plateforme n'est disponible, entrer immédiatement sans recharger les caches */
-        if (!verSrv || verSrv === verLoc) {
-          return Promise.resolve();
-        }
-        try {
-          localStorage.setItem("sti-version-installee", String(verSrv));
-          sessionStorage.setItem("sti-sw-reload-ver", String(verSrv));
-        } catch (e) {}
-        var pCaches = (window.caches && caches.keys)
-          ? caches.keys().then(function (cles) {
-              var suppr = [];
-              (cles || []).forEach(function (k) {
-                var mk = String(k).match(/sti-atelier-v(\d+)/i);
-                var nk = mk && mk[1] ? parseInt(mk[1], 10) : 0;
-                if (nk > 0 && nk !== verSrv) {
-                  suppr.push(caches.delete(k));
-                }
-              });
-              return Promise.allSettled(suppr);
-            }).catch(function () {})
-          : Promise.resolve();
-        var pSw = ("serviceWorker" in navigator)
-          ? navigator.serviceWorker.getRegistration().then(function (reg) {
-              if (!reg) return;
-              return reg.update().then(function () {
-                var swW = reg.waiting || reg.installing || reg.active || navigator.serviceWorker.controller;
-                if (swW) {
-                  try { swW.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (e) {}
-                  try { swW.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
-                }
-              }).catch(function () {});
-            }).catch(function () {})
-          : Promise.resolve();
-        return Promise.allSettled([pCaches, pSw]);
-      })
-      .catch(function () {})
-      .finally(function () {
-        clearTimeout(timerMax);
-        terminer();
-      });
+    /* La connexion n'attend plus un téléchargement ni une purge globale de caches. */
+    try {
+      if (navigator.onLine && "serviceWorker" in navigator) {
+        if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: "SYNC_UPDATE" });
+        navigator.serviceWorker.getRegistration().then(function (reg) { if (reg) reg.update().catch(function () {}); }).catch(function () {});
+      }
+    } catch (e) {}
+    location.href = allerVers;
   }
 
   try {
@@ -192,38 +145,15 @@
   }
   var NTFY_CANAL = "sti_v2_aymen_9482";
   function alerterAdminDemande(d) {
+    /* Notification générique : aucune identité, téléphone, adresse ni OTP ne quitte Supabase. */
     try {
-      var lignes = [];
-      if (d.tel) {
-        lignes.push("👤 " + d.prenom + " " + d.nom);
-        lignes.push("📱 " + d.tel);
-        lignes.push("🏫 " + d.lycee + " · " + d.classe);
-        lignes.push("🔢 Code WhatsApp : " + d.code);
-      } else {
-        if (d.prenom || d.nom) lignes.push("👤 " + ((d.prenom || "") + " " + (d.nom || "")).trim());
-        lignes.push("✉️ " + d.email);
-        lignes.push("🏫 " + d.lycee + " · " + d.classe);
-      }
       var urlAdmin = (cfg && cfg.RACINE && cfg.RACINE.indexOf("http") === 0)
         ? (cfg.RACINE.replace(/\/?$/, "/") + "admin.html")
-        : (typeof location !== "undefined" && location.origin && location.origin !== "null"
-            ? new URL("admin.html", location.href).href
-            : "admin.html");
-      var headers = {
-        "Title": d.tel ? "Nouvelle demande STI V2.0 (Telephone)" : "Nouvelle demande STI V2.0 (E-mail)",
-        "Priority": "high",
-        "Tags": "bell,mortar_board",
-        "Click": urlAdmin
-      };
-      if (d.tel) {
-        var ch = d.tel.replace(/\D/g, "");
-        var txtWa = "Bonjour " + d.prenom + " " + d.nom + ", voici votre code de confirmation pour la plateforme STI V2.0 : *" + d.code + "*";
-        headers["Actions"] = "view, Envoyer code WhatsApp, https://wa.me/" + ch + "?text=" + encodeURIComponent(txtWa) + "; view, Tableau de bord, " + urlAdmin;
-      }
+        : (typeof location !== "undefined" && location.origin && location.origin !== "null" ? new URL("admin.html", location.href).href : "admin.html");
       fetch("https://ntfy.sh/" + NTFY_CANAL, {
         method: "POST",
-        headers: headers,
-        body: lignes.join("\n")
+        headers: { "Title": "Nouvelle demande STI V2.0", "Priority": "high", "Tags": "bell,mortar_board", "Click": urlAdmin },
+        body: "Une nouvelle demande est disponible dans le tableau de bord sécurisé."
       }).catch(function () {});
     } catch (err) {}
   }
@@ -354,7 +284,8 @@
     if (cfgLoc) appliquerCfgEcolesPortail(cfgLoc);
   } catch (e) {}
 
-  if (navigator.onLine) {
+  if (navigator.onLine && !connexionLimiteePortail()) {
+    /* Configuration non essentielle différée sur saveData/2G/3G. */
     fetch("https://ntfy.sh/sti_v2_diffusion_9482/json?poll=1&since=all")
       .then(function (r) { return r.text(); })
       .then(function (txt) {
@@ -695,10 +626,7 @@
             localStorage.removeItem("sti-bio");
             if (!okAdmOff) localStorage.removeItem("sti-admin-gold");
             else localStorage.setItem("sti-admin-gold", "1");
-            localStorage.setItem("sti-reauth", JSON.stringify({
-              e: emailConn,
-              p: btoa(unescape(encodeURIComponent(mdp)))
-            }));
+            localStorage.removeItem("sti-reauth");
             var cExist = JSON.parse(localStorage.getItem("sti-session-cache") || "null") || {};
             var objOff = {
               id: cExist.id || (okAdmOff ? "admin" : "abonne-local"),
@@ -782,10 +710,7 @@
         localStorage.removeItem("sti-bruteforce-lock");
         localStorage.removeItem("sti-force-exit");
         localStorage.removeItem("sti-bio");
-        localStorage.setItem("sti-reauth", JSON.stringify({
-          e: emailConn,
-          p: btoa(unescape(encodeURIComponent(mdp)))
-        }));
+        localStorage.removeItem("sti-reauth");
       } catch (err) {}
       /* login en ligne réussi : mémorise l'empreinte locale pour le mode hors-ligne */
       var isAdm = (r.data.user.email || "").trim().toLowerCase() === adminMailStrict;
@@ -923,7 +848,8 @@
           return;
         }
         e.target.reset(); maintenirPrefixe216(); cap2.reset();
-        alerterAdminDemande({ tel: tel, nom: nom, prenom: prenom, lycee: lycee, classe: classe, code: codeWa(tel) });
+        /* L'OTP n'est jamais placé dans une notification ni dans le dossier candidat. */
+        alerterAdminDemande({ tel: tel, nom: nom, prenom: prenom, lycee: lycee, classe: classe });
         document.getElementById("f-inscription").hidden = true;
         document.getElementById("zone-code").hidden = false;
         document.getElementById("code-cible").textContent = tel + " (" + prenom + " " + nom + ")";

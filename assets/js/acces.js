@@ -20,6 +20,15 @@
       lock: function (name, acquireTimeout, fn) { return fn(); }
     }
   });
+  /* La bibliothèque Supabase conserve et renouvelle déjà la session : aucune copie du mot de passe. */
+  try { localStorage.removeItem("sti-reauth"); } catch (e) {}
+  function connexionLimiteeSTI() {
+    try {
+      var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      var t = String((c && c.effectiveType) || "").toLowerCase();
+      return Boolean(c && (c.saveData || /^(slow-2g|2g|3g)$/.test(t)));
+    } catch (e) { return false; }
+  }
   var PORTAIL = cfg.RACINE + "portail.html";
   var CANAL_DIFFUSION = "sti_v2_diffusion_9482";
   var enSortie = false;
@@ -193,15 +202,7 @@
           localStorage.setItem("sti-version-installee", String(verCfgLocal));
           localStorage.removeItem("sti-precache-ver");
           sessionStorage.removeItem("sti-conn-ver-checked");
-          if ("caches" in window && caches.keys) {
-            caches.keys().then(function (cles) {
-              (cles || []).forEach(function (k) {
-                if (k.indexOf("sti-atelier-v") === 0 && k !== ("sti-atelier-v" + verCfgLocal)) {
-                  caches.delete(k);
-                }
-              });
-            }).catch(function () {});
-          }
+          /* Ne pas purger le cache : le Service Worker migre localement les fichiers inchangés. */
         }
       } catch (e) {}
 
@@ -210,6 +211,8 @@
       function verifierVersionServeurSTI(forcerImmediate) {
         if (typeof fetch !== "function" || location.protocol === "file:") return;
         if (!navigator.onLine && !estOrigineLocaleDossier && !estPosteLabo3Init) return;
+        /* Sur réseau limité, l'enregistrement du SW suffit ; le contrôle de version non essentiel attend. */
+        if (connexionLimiteeSTI() && forcerImmediate !== "force_reload") return;
         var tsDerniereVerifVer = 0;
         var verDejaVerifieeSess = "";
         try {
@@ -255,49 +258,30 @@
             var dejaRechargeVer = "";
             try { dejaRechargeVer = sessionStorage.getItem("sti-sw-reload-ver") || localStorage.getItem("sti-sw-reload-ver") || ""; } catch (e) {}
 
-            var verifierCachesLocaux = (window.caches && caches.keys)
-              ? caches.keys().then(function (cles) {
-                  var aAncienCache = false;
-                  var suppr = [];
-                  (cles || []).forEach(function (k) {
-                    var mk = String(k).match(/sti-atelier-v(\d+)/i);
-                    var nk = mk && mk[1] ? parseInt(mk[1], 10) : 0;
-                    if (nk > 0 && nk !== verSrv) {
-                      aAncienCache = true;
-                      suppr.push(caches.delete(k));
-                    }
-                  });
-                  return Promise.allSettled(suppr).then(function () { return aAncienCache; });
-                }).catch(function () { return false; })
-              : Promise.resolve(false);
-
-            verifierCachesLocaux.then(function (aAncienCache) {
-              try {
-                localStorage.setItem("sti-version-installee", String(verSrv));
-                localStorage.removeItem("sti-precache-ver");
-              } catch (e) {}
-              if ((verLoc > 0 && verLoc < verSrv) || aAncienCache || forcerImmediate === "force_reload") {
-                if (dejaRechargeVer !== String(verSrv) || forcerImmediate === "force_reload") {
-                  try {
-                    sessionStorage.setItem("sti-sw-reload-ver", String(verSrv));
-                    localStorage.setItem("sti-sw-reload-ver", String(verSrv));
-                  } catch (e) {}
-                  navigator.serviceWorker.getRegistration().then(function (reg) {
-                    if (reg) {
-                      return reg.update().then(function () {
-                        var swW = reg.waiting || reg.installing || reg.active || navigator.serviceWorker.controller;
-                        if (swW) {
-                          try { swW.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (e) {}
-                          try { swW.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
-                        }
-                      }).catch(function () {});
-                    }
-                  }).finally(function () {
-                    setTimeout(function () { location.reload(); }, 300);
-                  });
-                }
+            /* Aucun effacement global : le SW migre le cache puis récupère uniquement son manifeste différentiel. */
+            try {
+              localStorage.setItem("sti-version-installee", String(verSrv));
+              localStorage.removeItem("sti-precache-ver");
+            } catch (e) {}
+            if ((verLoc > 0 && verLoc < verSrv) || forcerImmediate === "force_reload") {
+              if (dejaRechargeVer !== String(verSrv) || forcerImmediate === "force_reload") {
+                try {
+                  sessionStorage.setItem("sti-sw-reload-ver", String(verSrv));
+                  localStorage.setItem("sti-sw-reload-ver", String(verSrv));
+                } catch (e) {}
+                navigator.serviceWorker.getRegistration().then(function (reg) {
+                  if (reg) {
+                    return reg.update().then(function () {
+                      var swW = reg.waiting || reg.installing || reg.active || navigator.serviceWorker.controller;
+                      if (swW) {
+                        try { swW.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (e) {}
+                        try { swW.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
+                      }
+                    }).catch(function () {});
+                  }
+                }).finally(function () { setTimeout(function () { location.reload(); }, 300); });
               }
-            });
+            }
           })
           .catch(function () {});
       }
@@ -806,24 +790,13 @@
     if (!navigator.onLine) return;
     sb.auth.getSession().then(function (r) {
       var s = r && r.data ? r.data.session : null;
-      if (s && s.user) {
-        currentUid = s.user.id;
-        cb(s.user);
-        return;
-      }
-      var re = null;
-      try { re = JSON.parse(localStorage.getItem("sti-reauth") || "null"); } catch (e) {}
-      if (re && re.e && re.p) {
-        var mdpClair = "";
-        try { mdpClair = decodeURIComponent(escape(atob(re.p))); } catch (e) {}
-        if (mdpClair) {
-          sb.auth.signInWithPassword({ email: re.e, password: mdpClair }).then(function (rs) {
-            if (rs && rs.data && rs.data.user) {
-              currentUid = rs.data.user.id;
-              cb(rs.data.user);
-            }
-          }).catch(function () {});
-        }
+      if (s && s.user) { currentUid = s.user.id; cb(s.user); return; }
+      /* Réutiliser exclusivement le jeton de renouvellement géré par Supabase. */
+      if (sb.auth && typeof sb.auth.refreshSession === "function") {
+        sb.auth.refreshSession().then(function (rr) {
+          var sr = rr && rr.data ? rr.data.session : null;
+          if (sr && sr.user) { currentUid = sr.user.id; cb(sr.user); }
+        }).catch(function () {});
       }
     }).catch(function () {});
   }
@@ -1250,8 +1223,7 @@
           var forceExit = localStorage.getItem("sti-force-exit");
           var tOffRec = parseInt(localStorage.getItem("sti-offline") || sessionStorage.getItem("sti-offline") || "0", 10);
           var credRec = JSON.parse(localStorage.getItem("sti-cred") || "null");
-          var reRec = JSON.parse(localStorage.getItem("sti-reauth") || "null");
-          var emRec = (credRec && credRec.email) || (reRec && reRec.e) || "";
+          var emRec = (credRec && credRec.email) || "";
           if (!forceExit && emRec && (!tOffRec || (Date.now() - tOffRec < 30 * 86400000))) {
             var isAdmRec = Boolean(credRec && credRec.isAdmin && emRec.trim().toLowerCase() === ADMIN_MAIL_STRICT);
             c = {
@@ -1414,36 +1386,8 @@
         if (navigator.onLine) assurerSessionEnLigne(function () {});
         return;
       }
-      /* Tenter une reconnexion silencieuse via sti-reauth avant toute redirection vers le portail */
-      var reSilencieux = null;
-      try { reSilencieux = JSON.parse(localStorage.getItem("sti-reauth") || "null"); } catch (e) {}
-      if (navigator.onLine && reSilencieux && reSilencieux.e && reSilencieux.p) {
-        var mdpSil = "";
-        try { mdpSil = decodeURIComponent(escape(atob(reSilencieux.p))); } catch (e) {}
-        if (mdpSil) {
-          sb.auth.signInWithPassword({ email: reSilencieux.e, password: mdpSil }).then(function (rs) {
-            if (rs && rs.data && rs.data.user) {
-              var uSil = rs.data.user;
-              currentUid = uSil.id;
-              ecrireCacheSessionLocal({
-                id: uSil.id,
-                email: uSil.email,
-                user_metadata: uSil.user_metadata || {},
-                statut: "actif",
-                gold: Boolean(localStorage.getItem("sti-gold") === "1"),
-                isAdmin: (uSil.email || "").trim().toLowerCase() === ADMIN_MAIL_STRICT,
-                ts: Date.now()
-              });
-              restaurerDepuisCacheLocal();
-            } else {
-              redirigerTop(PORTAIL + "#connexion");
-            }
-          }).catch(function () {
-            redirigerTop(PORTAIL + "#connexion");
-          });
-          return;
-        }
-      }
+      /* Aucun mot de passe mémorisé ni nouvelle authentification répétée :
+         getSession/autoRefreshToken ont déjà tenté la restauration Supabase. */
       localStorage.removeItem("sti-labo3-permanent");
       localStorage.removeItem("sti-offline");
       localStorage.removeItem("sti-session-cache");
@@ -2108,18 +2052,8 @@
             if (hEl) hEl.textContent = lblVer;
             if (fEl) fEl.textContent = lblVer;
           }
-          var pClean = (window.caches && caches.keys && verSrv > 0)
-            ? caches.keys().then(function (cles) {
-                var suppr = [];
-                (cles || []).forEach(function (k) {
-                  var mk = String(k).match(/sti-atelier-v(\d+)/i);
-                  var nk = mk && mk[1] ? parseInt(mk[1], 10) : 0;
-                  if (nk > 0 && nk !== verSrv) suppr.push(caches.delete(k));
-                });
-                return Promise.allSettled(suppr);
-              }).catch(function () {})
-            : Promise.resolve();
-          return pClean.then(function () {
+          /* Même lors du téléchargement volontaire, conserver le cache existant : seuls les absents seront pris. */
+          return Promise.resolve().then(function () {
             if ("serviceWorker" in navigator) {
               return navigator.serviceWorker.register(cfg.RACINE + "sw.js", { updateViaCache: "none" }).then(function (reg) {
                 if (!reg) return;

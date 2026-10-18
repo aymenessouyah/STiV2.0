@@ -16,6 +16,37 @@
   var MSG_SOURCE_BLOQUE =
     "\uD83D\uDEE1\uFE0F Code source et inspecteur verrouillés \u00A9 A. Essouyah";
 
+  function modeEconomieDonneesSTI() {
+    try {
+      var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      var type = String((c && c.effectiveType) || "").toLowerCase();
+      return Boolean(c && (c.saveData || /^(slow-2g|2g|3g)$/.test(type)));
+    } catch (e) { return false; }
+  }
+  window.__STI_MODE_ECO_DONNEES = modeEconomieDonneesSTI;
+  if (document.documentElement) document.documentElement.classList.toggle("sti-data-saver", modeEconomieDonneesSTI());
+  function appliquerChargementLegerSTI() {
+    var eco = modeEconomieDonneesSTI();
+    try {
+      Array.prototype.forEach.call(document.querySelectorAll("img"), function (img, i) {
+        var ident = String((img.alt || "") + " " + (img.id || "") + " " + (img.className || "")).toLowerCase();
+        var prioritaire = i < 2 || /logo|qr/.test(ident) || img.hasAttribute("data-sti-eager");
+        if (!prioritaire) img.loading = "lazy";
+        img.decoding = "async";
+        if (prioritaire) { img.loading = "eager"; try { img.fetchPriority = "high"; } catch (e) {} }
+      });
+      if (eco) Array.prototype.forEach.call(document.querySelectorAll("video"), function (v) {
+        if (!v.autoplay && !v.hasAttribute("data-sti-offline-explicite")) v.preload = "none";
+      });
+    } catch (e) {}
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", appliquerChargementLegerSTI);
+  else appliquerChargementLegerSTI();
+  try {
+    var connexionSTI = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (connexionSTI && connexionSTI.addEventListener) connexionSTI.addEventListener("change", appliquerChargementLegerSTI);
+  } catch (e) {}
+
   /* 1) Détecte si l'utilisateur connecté est strictement l'Administrateur (aymenessouyah@gmail.com) */
   function estAdminStrict() {
     try {
@@ -794,7 +825,7 @@
     /* Mode Réseau Labo Fluide : éviter le téléchargement simultané de toutes les vidéos MP4 avant le clic sur Lecture */
     try {
       if (video.paused && !video.autoplay && video.getAttribute("preload") !== "none") {
-        video.setAttribute("preload", "metadata");
+        video.setAttribute("preload", modeEconomieDonneesSTI() ? "none" : "metadata");
       }
     } catch (e) {}
     var ancienTimeupdate = video.ontimeupdate;
@@ -1931,8 +1962,7 @@
         if (estCss3) {
           var prefCss3 = "";
           try { prefCss3 = localStorage.getItem("sti-css3-quality") || ""; } catch (ePref) {}
-          var connexionCss3 = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-          var mobileAutoCss3 = (!prefCss3 && ((connexionCss3 && connexionCss3.saveData) || (window.matchMedia && window.matchMedia("(max-width: 820px)").matches)));
+          var mobileAutoCss3 = modeEconomieDonneesSTI() || (!prefCss3 && window.matchMedia && window.matchMedia("(max-width: 820px)").matches);
           css3Qualite = (prefCss3 === "mobile" || mobileAutoCss3) ? "mobile" : "full";
           url = css3Qualite === "mobile" ? resoudreUrlVideoCss3Mobile() : resoudreUrlVideoCss3();
         }

@@ -6,16 +6,17 @@
 var CACHE = "sti-atelier-v299";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v299-delta-mobile-2";
+var UPDATE_ID = "v299-data-saver-3";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./assets/js/acces.js", revision: "bcfd9bf-mobile-delta", bytes: 751603, bootstrapBySize: true },
-  { url: "./assets/js/admin.js", revision: "admin-refresh-20s" }
+  { url: "./assets/js/acces.js", revision: "session-delta-v3" },
+  { url: "./assets/js/admin.js", revision: "admin-idb-delta-v3" },
+  { url: "./assets/js/portail.js", revision: "session-reuse-v3" },
+  { url: "./assets/js/protection.js", revision: "network-aware-v3" }
 ];
 var CACHE_REVISIONS = "sti-update-revisions-v1";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
-var videosEnCoursDeCache = {};
 var SHELL = [
   "./",
   "./index.html",
@@ -809,21 +810,19 @@ self.addEventListener("fetch", function (evt) {
     return;
   }
 
-  /* Ressources CDN externes (Tailwind, FontAwesome, Google Fonts, Chart.js, Confetti) : cache en secours hors-ligne */
+  /* Ressources CDN versionnées : cache d'abord, sans revalidation gourmande à chaque page. */
   if (url.origin !== self.location.origin) {
     if (/cdn\.tailwindcss\.com|cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.gstatic\.com/i.test(url.hostname)) {
       evt.respondWith(
         caches.match(req).then(function (m) {
-          var reseau = fetch(req).then(function (rep) {
+          if (m) return m;
+          return fetch(req).then(function (rep) {
             if (rep && (rep.ok || rep.type === "opaque")) {
               var cop = rep.clone();
               caches.open(CACHE).then(function (c) { c.put(req, cop); });
             }
             return rep;
-          }).catch(function () {
-            return m || Response.error();
-          });
-          return m || reseau;
+          }).catch(function () { return Response.error(); });
         })
       );
     }
@@ -925,19 +924,8 @@ self.addEventListener("fetch", function (evt) {
           return enCache;
         }
 
-        /* Mise en cache persistante en tâche de fond dès la 1re lecture sur un PC du labo (évite de re-télécharger la vidéo aux lectures suivantes) */
-        var urlCle = url.origin + url.pathname;
-        if (!videosEnCoursDeCache[urlCle] && /\.mp4$/i.test(url.pathname)) {
-          videosEnCoursDeCache[urlCle] = true;
-          fetch(clePropre).then(function (repFull) {
-            if (repFull && repFull.status === 200 && cVid) {
-              return cVid.put(clePropre, repFull.clone());
-            }
-          }).catch(function () {}).finally(function () {
-            delete videosEnCoursDeCache[urlCle];
-          });
-        }
-
+        /* Une requête Range reste une requête Range : aucun téléchargement MP4 complet parallèle.
+           Seule une vraie réponse réseau 200 (ou le bouton Hors-ligne explicite) remplit le cache vidéo. */
         try {
           var rep = await fetch(req);
           if (rep && rep.status === 200) {
@@ -955,10 +943,12 @@ self.addEventListener("fetch", function (evt) {
     return;
   }
 
-  /* 3. Tous les autres fichiers (images, PDF, archives .zip/.rar, polices, .docx) : Cache d'abord (0 ms) + rafraîchissement en tâche de fond */
+  /* 3. Images, PDF, archives, polices et documents : cache d'abord.
+        Un fichier déjà présent n'est plus retéléchargé silencieusement à chaque consultation. */
   evt.respondWith(
     chercherDansCache(req, url).then(function (m) {
-      var reseau = fetch(req)
+      if (m) return m;
+      return fetch(req)
         .then(function (rep) {
           if (rep && rep.status === 200) {
             var copie = rep.clone();
@@ -966,10 +956,7 @@ self.addEventListener("fetch", function (evt) {
           }
           return rep;
         })
-        .catch(function () {
-          return m || Response.error();
-        });
-      return m || reseau;
+        .catch(function () { return Response.error(); });
     })
   );
 });
