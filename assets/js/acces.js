@@ -29,6 +29,7 @@
       return Boolean(c && (c.saveData || /^(slow-2g|2g|3g)$/.test(t)));
     } catch (e) { return false; }
   }
+  try { localStorage.removeItem("sti-session-token"); } catch (e) {}
   var PORTAIL = cfg.RACINE + "portail.html";
   var CANAL_DIFFUSION = "sti_v2_diffusion_9482";
   var enSortie = false;
@@ -92,7 +93,6 @@
     motifVerrou: "Épreuve ou contrôle en cours — l'accès aux cours est temporairement verrouillé par le professeur.",
     ejectDevtools: true,
     antiTricheOnglet: true,
-    sessionUnique: true,
     inactiviteActif: true,
     inactiviteMin: 30,
     alerteMultiAppareils: true,
@@ -758,14 +758,171 @@
 
   /* ---------- File d'attente hors-ligne (synchronisée automatiquement dès le retour d'Internet) ---------- */
   var CLE_FILE_OFFLINE = "sti-offline-queue";
+  var DB_FILE_OFFLINE = "sti-candidat-sync-v1";
+  var STORE_FILE_OFFLINE = "outbox";
+
+  function genererIdEvenementSTI() {
+    try { if (crypto && typeof crypto.randomUUID === "function") return crypto.randomUUID(); } catch (e) {}
+    return "evt_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 12);
+  }
+  function normaliserLigneOffline(ligne) {
+    var c = Object.assign({}, ligne || {});
+    c._event_id = c._event_id || c.client_event_id || genererIdEvenementSTI();
+    c.client_event_id = c._event_id;
+    return c;
+  }
+  function ouvrirDbFileOffline() {
+    return new Promise(function (resolve, reject) {
+      if (!("indexedDB" in window)) { reject(new Error("IndexedDB indisponible")); return; }
+      var req = indexedDB.open(DB_FILE_OFFLINE, 1);
+      req.onupgradeneeded = function () {
+        if (!req.result.objectStoreNames.contains(STORE_FILE_OFFLINE)) {
+          req.result.createObjectStore(STORE_FILE_OFFLINE, { keyPath: "_event_id" });
+        }
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error || new Error("IndexedDB inaccessible")); };
+    });
+  }
+  function ecrireLigneOfflineIdb(ligne) {
+    return ouvrirDbFileOffline().then(function (db) {
+      return new Promise(function (resolve) {
+        var tx = db.transaction(STORE_FILE_OFFLINE, "readwrite");
+        tx.objectStore(STORE_FILE_OFFLINE).put(normaliserLigneOffline(ligne));
+        tx.oncomplete = function () { db.close(); resolve(); };
+        tx.onerror = function () { db.close(); resolve(); };
+      });
+    }).catch(function () {});
+  }
+  function lireFileOfflineIdb() {
+    return ouvrirDbFileOffline().then(function (db) {
+      return new Promise(function (resolve) {
+        var tx = db.transaction(STORE_FILE_OFFLINE, "readonly");
+        var req = tx.objectStore(STORE_FILE_OFFLINE).getAll();
+        req.onsuccess = function () { resolve(req.result || []); };
+        req.onerror = function () { resolve([]); };
+        tx.oncomplete = function () { db.close(); };
+      });
+    }).catch(function () { return []; });
+  }
+  function supprimerFileOfflineIdb(ids) {
+    if (!ids || !ids.length) return Promise.resolve();
+    return ouvrirDbFileOffline().then(function (db) {
+      return new Promise(function (resolve) {
+        var tx = db.transaction(STORE_FILE_OFFLINE, "readwrite");
+        ids.forEach(function (id) { tx.objectStore(STORE_FILE_OFFLINE).delete(id); });
+        tx.oncomplete = function () { db.close(); resolve(); };
+        tx.onerror = function () { db.close(); resolve(); };
+      });
+    }).catch(function () {});
+  }
+
   function empilerHorsLigne(ligne) {
+    var propre = normaliserLigneOffline(ligne);
+    ecrireLigneOfflineIdb(propre);
+    /* Miroir de compatibilité : retiré uniquement après confirmation Supabase. */
     try {
       var q = JSON.parse(localStorage.getItem(CLE_FILE_OFFLINE) || "[]");
-      q.push(ligne);
-      if (q.length > 200) q = q.slice(-200);
+      var map = {};
+      q.concat([propre]).forEach(function (it) {
+        var n = normaliserLigneOffline(it);
+        map[n._event_id] = n;
+      });
+      q = Object.keys(map).map(function (id) { return map[id]; });
+      if (q.length > 400) q = q.slice(-400);
       localStorage.setItem(CLE_FILE_OFFLINE, JSON.stringify(q));
     } catch (e) {}
+    return propre;
   }
+
+  /* Migration transparente de l’ancienne file localStorage vers IndexedDB. */
+  try {
+    var anciennesLignesOffline = JSON.parse(localStorage.getItem(CLE_FILE_OFFLINE) || "[]");
+    anciennesLignesOffline.forEach(function (it) { ecrireLigneOfflineIdb(normaliserLigneOffline(it)); });
+  } catch (e) {}
+
+  function diffuserLigneSynchronisee(row, user) {
+    var pg = String(row.page || "");
+    if (pg.indexOf("QUIZ:") === 0) {
+      try {
+        var pQuiz = JSON.parse(row.lieu || "{}");
+        sb.channel("sti-diffusion").send({ type: "broadcast", event: "quiz", payload: { uid: user.id, data: pQuiz } });
+      } catch (e) {}
+    } else if (pg.indexOf("MSG_LU:") === 0) {
+      var mid = pg.replace("MSG_LU:", "");
+      var repTxt = "";
+      try { repTxt = JSON.parse(row.lieu || "{}").reponse || ""; } catch (e) {}
+      try { sb.channel("sti-diffusion").send({ type: "broadcast", event: "lu", payload: { msgId: mid, uid: user.id, ts: row.fin, reponse: repTxt } }); } catch (e) {}
+    }
+  }
+
+  var supportClientEventIdSTI = false;
+  var detectionClientEventIdSTI = false;
+  function detecterSupportClientEventIdSTI() {
+    if (detectionClientEventIdSTI || !navigator.onLine) return;
+    detectionClientEventIdSTI = true;
+    sb.from("acces").select("client_event_id").limit(1).then(function (r) {
+      supportClientEventIdSTI = Boolean(r && !r.error);
+    }).catch(function () { supportClientEventIdSTI = false; });
+  }
+  function insererAccesSTI(valeurs) {
+    var liste = Array.isArray(valeurs) ? valeurs : [valeurs];
+    if (supportClientEventIdSTI) {
+      liste.forEach(function (row) {
+        if (row && !row.client_event_id) row.client_event_id = genererIdEvenementSTI();
+      });
+    }
+    return sb.from("acces").insert(valeurs);
+  }
+
+  function envoyerFileHorsLigneIdb(user) {
+    return lireFileOfflineIdb().then(function (idbRows) {
+      var localRows = [];
+      try { localRows = JSON.parse(localStorage.getItem(CLE_FILE_OFFLINE) || "[]"); } catch (e) {}
+      var map = {};
+      idbRows.concat(localRows).forEach(function (it) {
+        var n = normaliserLigneOffline(it);
+        map[n._event_id] = n;
+      });
+      var q = Object.keys(map).map(function (id) { return map[id]; });
+      if (!q.length) return;
+      q.forEach(ecrireLigneOfflineIdb);
+      var propres = q.map(function (it) {
+        var c = Object.assign({}, it);
+        delete c._sid;
+        delete c._event_id;
+        if (!c.user_id || c.user_id === "offline-user") c.user_id = user.id;
+        return c;
+      });
+
+      function confirmer() {
+        var ids = q.map(function (it) { return it._event_id; });
+        try { localStorage.removeItem(CLE_FILE_OFFLINE); } catch (e) {}
+        supprimerFileOfflineIdb(ids);
+        propres.forEach(function (row) { diffuserLigneSynchronisee(row, user); });
+        afficherToastSynchro("✅ " + propres.length + " activité(s) synchronisée(s) sans doublon.");
+      }
+      function insertionCompatibilite() {
+        var sansId = propres.map(function (row) { var c = Object.assign({}, row); delete c.client_event_id; return c; });
+        return sb.from("acces").insert(sansId).then(function (r2) { if (!r2.error) confirmer(); });
+      }
+
+      return sb.from("acces").upsert(propres, { onConflict: "user_id,client_event_id", ignoreDuplicates: true }).then(function (r) {
+        if (!r.error) { supportClientEventIdSTI = true; confirmer(); return; }
+        if (/client_event_id|schema cache|column/i.test(r.error.message || "")) {
+          supportClientEventIdSTI = false;
+          return insertionCompatibilite();
+        }
+      }).catch(function () {});
+    });
+  }
+
+  window.__STI_V302_OUTBOX_TESTS = {
+    enqueue: empilerHorsLigne,
+    readAll: lireFileOfflineIdb,
+    remove: supprimerFileOfflineIdb,
+    makeId: genererIdEvenementSTI
+  };
 
   function afficherToastSynchro(texte) {
     if (window !== window.top) return;
@@ -790,12 +947,12 @@
     if (!navigator.onLine) return;
     sb.auth.getSession().then(function (r) {
       var s = r && r.data ? r.data.session : null;
-      if (s && s.user) { currentUid = s.user.id; cb(s.user); return; }
+      if (s && s.user) { currentUid = s.user.id; detecterSupportClientEventIdSTI(); cb(s.user); return; }
       /* Réutiliser exclusivement le jeton de renouvellement géré par Supabase. */
       if (sb.auth && typeof sb.auth.refreshSession === "function") {
         sb.auth.refreshSession().then(function (rr) {
           var sr = rr && rr.data ? rr.data.session : null;
-          if (sr && sr.user) { currentUid = sr.user.id; cb(sr.user); }
+          if (sr && sr.user) { currentUid = sr.user.id; detecterSupportClientEventIdSTI(); cb(sr.user); }
         }).catch(function () {});
       }
     }).catch(function () {});
@@ -823,47 +980,7 @@
 
     assurerSessionEnLigne(function (user) {
       /* 1. ENVOYER la file d'attente hors-ligne (scores Quiz/Bac, durées d'étude, questions au prof) */
-      var q = [];
-      try { q = JSON.parse(localStorage.getItem(CLE_FILE_OFFLINE) || "[]"); } catch (e) {}
-      var avaitFile = q.length > 0;
-      if (avaitFile) {
-        try { localStorage.removeItem(CLE_FILE_OFFLINE); } catch (e) {}
-        var propres = q.map(function (it) {
-          var c = Object.assign({}, it);
-          delete c._sid;
-          if (!c.user_id || c.user_id === "offline-user") c.user_id = user.id;
-          return c;
-        });
-        sb.from("acces").insert(propres).then(function (r) {
-          if (r && r.error) {
-            q.forEach(empilerHorsLigne);
-          } else {
-            /* Diffuser en temps réel les scores ou messages qui étaient en attente */
-            propres.forEach(function (row) {
-              var pg = String(row.page || "");
-              if (pg.indexOf("QUIZ:") === 0) {
-                try {
-                  var pQuiz = JSON.parse(row.lieu || "{}");
-                  sb.channel("sti-diffusion").send({ type: "broadcast", event: "quiz", payload: { uid: user.id, data: pQuiz } });
-                } catch (e) {}
-              } else if (pg.indexOf("MSG_LU:") === 0) {
-                var mid = pg.replace("MSG_LU:", "");
-                var repTxt = "";
-                try { repTxt = JSON.parse(row.lieu || "{}").reponse || ""; } catch (e) {}
-                try {
-                  sb.channel("sti-diffusion").send({ type: "broadcast", event: "lu", payload: { msgId: mid, uid: user.id, ts: row.fin, reponse: repTxt } });
-                } catch (e) {}
-                fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-                  method: "POST",
-                  body: JSON.stringify({ type: "lu", msgId: mid, uid: user.id, ts: row.fin, reponse: repTxt })
-                }).catch(function () {});
-              }
-            });
-          }
-        }).catch(function () {
-          q.forEach(empilerHorsLigne);
-        });
-      }
+      envoyerFileHorsLigneIdb(user);
 
       /* 2. RECEVOIR et mettre à jour les données personnelles du candidat depuis Supabase (statut, Gold, classe, lycée, nom, prénom, téléphone, durée semaine, scores Quiz) */
       if ((user.email || "").toLowerCase() !== (cfg.ADMIN || "").toLowerCase()) {
@@ -906,7 +1023,6 @@
               gold: isG,
               permanent: isLaboS,
               isAdmin: false,
-              sessionToken: localStorage.getItem("sti-session-token") || ancC.sessionToken || "",
               ts: Date.now()
             });
           } catch (e) {}
@@ -1041,7 +1157,7 @@
       empilerHorsLigne(row);
       return;
     }
-    sb.from("acces").insert(row).then(function (r) {
+    insererAccesSTI(row).then(function (r) {
       if (r.error) empilerHorsLigne(row);
     });
     try {
@@ -1084,7 +1200,7 @@
         empilerHorsLigne(rowProg);
         return;
       }
-      sb.from("acces").insert(rowProg).then(function (r) {
+      insererAccesSTI(rowProg).then(function (r) {
         if (r && r.error) empilerHorsLigne(rowProg);
       });
       try {
@@ -1399,6 +1515,7 @@
     sessionInitialisee = true;
     var user = session.user;
     currentUid = user.id;
+    detecterSupportClientEventIdSTI();
     synchroniserFileHorsLigne();
     if ((user.email || "").trim().toLowerCase() === ADMIN_MAIL_STRICT) {
       try {
@@ -1492,7 +1609,6 @@
             gold: isG,
             permanent: isLaboP,
             isAdmin: false,
-            sessionToken: localStorage.getItem("sti-session-token") || ancCache.sessionToken || "",
             ts: Date.now()
           };
           ecrireCacheSessionLocal(objSess);
@@ -2563,7 +2679,7 @@
       empilerHorsLigne(ligneLu);
       return;
     }
-    sb.from("acces").insert(ligneLu).then(function (r) {
+    insererAccesSTI(ligneLu).then(function (r) {
       if (r && r.error) empilerHorsLigne(ligneLu);
     }).catch(function () {
       empilerHorsLigne(ligneLu);
@@ -2575,13 +2691,6 @@
         payload: { msgId: a.id, uid: uid, ts: tsNow, reponse: texteRep || "", fichier: fichierJoint || undefined }
       });
     } catch (e) {}
-    var fNtfy = fichierJoint
-      ? (JSON.stringify(fichierJoint).length < 2600 ? fichierJoint : { nom: fichierJoint.nom, type: fichierJoint.type, taille: fichierJoint.taille, depuisDb: true })
-      : undefined;
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify({ type: "lu", msgId: a.id, uid: uid, ts: tsNow, reponse: texteRep || "", fichier: fNtfy })
-    }).catch(function () {});
   }
 
   var fichierEnAttenteEleve = null;
@@ -3615,7 +3724,7 @@
           empilerHorsLigne(ligneMsg);
           return;
         }
-        sb.from("acces").insert(ligneMsg).then(function (r) {
+        insererAccesSTI(ligneMsg).then(function (r) {
           if (r && r.error) empilerHorsLigne(ligneMsg);
         }).catch(function () {
           empilerHorsLigne(ligneMsg);
@@ -3628,13 +3737,6 @@
             payload: { msgId: cibleMsgId, uid: uid, ts: tsNow, reponse: repTexte, fichier: fJoint || undefined }
           });
         } catch (err) {}
-        var fNtfy = fJoint
-          ? (JSON.stringify(fJoint).length < 2600 ? fJoint : { nom: fJoint.nom, type: fJoint.type, taille: fJoint.taille, depuisDb: true })
-          : undefined;
-        fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-          method: "POST",
-          body: JSON.stringify({ type: "lu", msgId: cibleMsgId, uid: uid, ts: tsNow, reponse: repTexte, fichier: fNtfy })
-        }).catch(function () {});
       });
     }
 
@@ -4031,7 +4133,7 @@
           ts: new Date().toISOString()
         };
         if (uid && uid !== "offline-user") {
-          sb.from("acces").insert({
+          insererAccesSTI({
             user_id: uid,
             page: "FLASH_REP:" + fq.id,
             lieu: JSON.stringify({ choix: idx, correct: estJuste, ts: repPayload.ts }),
@@ -4041,10 +4143,6 @@
         try {
           sb.channel("sti-diffusion").send({ type: "broadcast", event: "flash_rep", payload: repPayload });
         } catch (e) {}
-        fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-          method: "POST",
-          body: JSON.stringify(repPayload)
-        }).catch(function () {});
       });
     }
   }
@@ -4255,7 +4353,7 @@
         ts: a.ts
       });
 
-      /* Si le fichier joint a été allégé pour ntfy.sh (depuisDb), charger le contenu complet depuis Supabase */
+      /* Si le fichier joint a été allégé (depuisDb), charger le contenu complet depuis Supabase */
       if (a.fichier && a.fichier.depuisDb && !a.fichier.dataUrl && navigator.onLine) {
         sb.from("acces").select("lieu").eq("page", "MSG_ENVOI:" + a.id).limit(1).then(function (r) {
           if (r && r.data && r.data[0] && r.data[0].lieu) {
@@ -4341,66 +4439,6 @@
       (document.body || document.documentElement).appendChild(boite);
     }
 
-    function verifierDiffusion() {
-      if (enSortie || !navigator.onLine) return;
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION + "/json?poll=1&since=all")
-        .then(function (r) { return r.text(); })
-        .then(function (txt) {
-          var lignes = (txt || "").trim().split("\n");
-          var derniereAnnonce = null;
-          var dernierCtrl = null;
-          var dernierFlash = null;
-          var dernierTbLive = null;
-          var dernierSecCfg = null;
-          var dernierSessUnique = null;
-          var dernierForceUpd = null;
-          for (var i = 0; i < lignes.length; i++) {
-            if (!lignes[i]) continue;
-            try {
-              var evt = JSON.parse(lignes[i]);
-              if (evt && evt.message) {
-                var a = JSON.parse(evt.message);
-                if (a && a.type === "statut" && a.uid === uid) {
-                  traiterSignalStatut(a);
-                } else if (a && a.type === "controle") {
-                  dernierCtrl = a;
-                } else if (a && a.type === "flash_q") {
-                  dernierFlash = a;
-                } else if (a && a.type === "tableau_blanc") {
-                  if (!dernierTbLive || Number(a.ts || 0) >= Number(dernierTbLive.ts || 0)) dernierTbLive = a;
-                } else if (a && a.type === "coffre_tp") {
-                  if (typeof window.__stiTraiterSignalCoffreTp === "function") window.__stiTraiterSignalCoffreTp(a, true);
-                } else if (a && a.type === "kahoot_q") {
-                  if (typeof window.__stiAfficherKahootEleve === "function") window.__stiAfficherKahootEleve(a, uid);
-                } else if (a && a.type === "copie_note" && a.uid === uid) {
-                  if (typeof window.__stiAfficherNoteCopieEleve === "function") window.__stiAfficherNoteCopieEleve(a);
-                } else if (a && a.type === "force_update") {
-                  if (!dernierForceUpd || Number(a.ts || 0) >= Number(dernierForceUpd.ts || 0)) dernierForceUpd = a;
-                } else if (a && a.type === "sec_config") {
-                  if (!dernierSecCfg || Number(a.ts || 0) >= Number(dernierSecCfg.ts || 0)) dernierSecCfg = a;
-                } else if (a && a.type === "session_unique" && a.uid === uid) {
-                  if (!dernierSessUnique || Number(a.ts || 0) >= Number(dernierSessUnique.ts || 0)) dernierSessUnique = a;
-                } else if (a && a.type === "main_levee" && a.uid === uid && a.action === "down" && a.parProf) {
-                  if (typeof window.__stiTraiterAcquittementMain === "function") window.__stiTraiterAcquittementMain(a);
-                } else if (estAnnoncePourMoi(a)) {
-                  derniereAnnonce = a;
-                }
-              }
-            } catch (e) {}
-          }
-          if (derniereAnnonce) afficherAnnonce(derniereAnnonce);
-          if (dernierCtrl) afficherControleChrono(dernierCtrl);
-          if (dernierFlash) afficherQuestionFlashLive(dernierFlash, uid);
-          if (dernierTbLive) afficherTableauBlancLiveEleve(dernierTbLive);
-          if (dernierSecCfg) appliquerConfigSecurite(dernierSecCfg);
-          if (dernierForceUpd && typeof window.__stiExecuterForceUpdate === "function") window.__stiExecuterForceUpdate(dernierForceUpd);
-        })
-        .catch(function () {});
-    }
-
-    verifierDiffusion();
-    setInterval(verifierDiffusion, 12000);
-    window.addEventListener("online", verifierDiffusion);
     try {
       sb.channel("sti-diffusion")
         .on("broadcast", { event: "annonce" }, function (p) {
@@ -4454,9 +4492,6 @@
         .on("broadcast", { event: "sec_config" }, function (p) {
           if (p && p.payload) appliquerConfigSecurite(p.payload);
         })
-        .on("broadcast", { event: "session_unique" }, function (p) {
-          if (p && p.payload) verifierSessionUnique(p.payload);
-        })
         .on("broadcast", { event: "teleporter" }, function (p) {
           if (p && p.payload && typeof appliquerTeleportation === "function") appliquerTeleportation(p.payload);
         })
@@ -4485,7 +4520,6 @@
     motifVerrou: "Épreuve ou contrôle en cours — l'accès aux cours est temporairement verrouillé par le professeur.",
     ejectDevtools: true,
     antiTricheOnglet: true,
-    sessionUnique: true,
     inactiviteActif: true,
     inactiviteMin: 30,
     alerteMultiAppareils: true,
@@ -4596,7 +4630,7 @@
     };
     if (uid && uid !== "offline-user") {
       try {
-        sb.from("acces").insert({
+        insererAccesSTI({
           user_id: uid,
           page: "SEC_ALERTE:" + typeAlerte.slice(0, 40),
           lieu: JSON.stringify(payload),
@@ -4606,29 +4640,6 @@
     }
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "sec_alerte", payload: payload });
-    } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }).catch(function () {});
-  }
-
-  function verifierSessionUnique(sig) {
-    if (!sig || !sig.uid || !sig.token) return;
-    if (estSessionAdminVerifiee()) return;
-    if (cfgSecurite.sessionUnique === false) return;
-    var cLoc = lireCacheSessionLocal() || {};
-    var monUid = currentUid || cLoc.id;
-    var maClasse = currentClasse || cLoc.classe || "";
-    if (!monUid || sig.uid !== monUid) return;
-    if (estClasseProfLabo(maClasse, cLoc.email)) return;
-    /* Sur le même appareil (ex: navigation iPhone/iOS entre onglets ou pages), synchroniser simplement le jeton sans jamais déconnecter */
-    try {
-      localStorage.setItem("sti-session-token", sig.token);
-      if (cLoc && cLoc.id === monUid) {
-        cLoc.sessionToken = sig.token;
-        localStorage.setItem("sti-session-cache", JSON.stringify(cLoc));
-      }
     } catch (e) {}
   }
 
@@ -7693,12 +7704,8 @@
       };
       lignesAcces.unshift({ user_id: currentUid || "admin", page: "MSG_ENVOI:" + payload.id, lieu: JSON.stringify(payload), debut: payload.ts });
       peindreConvSite();
-      sb.from("acces").insert({ user_id: currentUid, page: "MSG_ENVOI:" + payload.id, lieu: JSON.stringify(payload), duree_sec: 0 }).then(function () {});
+      insererAccesSTI({ user_id: currentUid, page: "MSG_ENVOI:" + payload.id, lieu: JSON.stringify(payload), duree_sec: 0 }).then(function () {});
       try { sb.channel("sti-diffusion").send({ type: "broadcast", event: "annonce", payload: payload }); } catch (err) {}
-      var pNtfy = fJoint && JSON.stringify(payload).length >= 2600
-        ? { id: payload.id, classe: payload.classe, uid: payload.uid, texte: payload.texte, fichier: { nom: fJoint.nom, type: fJoint.type, taille: fJoint.taille, depuisDb: true }, ts: payload.ts }
-        : payload;
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, { method: "POST", body: JSON.stringify(pNtfy) }).catch(function () {});
     });
 
     function appliquerDonneesSite(tous, acc) {
@@ -8182,7 +8189,7 @@
       majHisto(flashPayload.id);
 
       if (currentUid) {
-        sb.from("acces").insert({
+        insererAccesSTI({
           user_id: currentUid,
           page: "FLASH_Q:" + flashPayload.id,
           lieu: JSON.stringify(flashPayload),
@@ -8192,10 +8199,6 @@
       try {
         sb.channel("sti-diffusion").send({ type: "broadcast", event: "flash_q", payload: flashPayload });
       } catch (e) {}
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-        method: "POST",
-        body: JSON.stringify(flashPayload)
-      }).catch(function () {});
 
       afficherToastSynchro("⚡ Question Flash diffusée en direct (" + dureeSec + " s) !");
     });
@@ -8207,10 +8210,6 @@
       try {
         sb.channel("sti-diffusion").send({ type: "broadcast", event: "flash_q", payload: stopPayload });
       } catch (e) {}
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-        method: "POST",
-        body: JSON.stringify(stopPayload)
-      }).catch(function () {});
       afficherToastSynchro("⏹️ Question Flash clôturée sur les écrans des élèves.");
     });
   }
@@ -8321,7 +8320,7 @@
       };
       try { localStorage.setItem("sti-tb-live-admin", JSON.stringify(payload)); } catch (e) {}
       if (currentUid) {
-        sb.from("acces").insert({
+        insererAccesSTI({
           user_id: currentUid,
           page: "TABLEAU_BLANC",
           lieu: JSON.stringify(payload),
@@ -8331,10 +8330,6 @@
       try {
         sb.channel("sti-diffusion").send({ type: "broadcast", event: "tableau_blanc", payload: payload });
       } catch (e) {}
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      }).catch(function () {});
 
       afficherToastSynchro(actif ? "📺 Code projeté en direct sur les écrans des élèves !" : "⏹️ Tableau Blanc refermé chez les élèves.");
       if (!actif) fond.remove();
@@ -8807,7 +8802,7 @@
         return;
       }
       var tsInit = new Date().toISOString();
-      sb.from("acces").insert({ user_id: uid, lieu: lieu, page: chemin, fin: tsInit, duree_sec: 1 }).select("id").single().then(function (r) {
+      insererAccesSTI({ user_id: uid, lieu: lieu, page: chemin, fin: tsInit, duree_sec: 1 }).select("id").single().then(function (r) {
         if (r.error || !r.data) {
           suiviHorsLigne();
           return;
@@ -9965,7 +9960,7 @@
           duree_sec: 0
         };
         if (navigator.onLine && uidEl !== "offline-user") {
-          sb.from("acces").insert(rowMsg).then(function (r) {
+          insererAccesSTI(rowMsg).then(function (r) {
             if (r && r.error) empilerHorsLigne(rowMsg);
           });
           try {
@@ -9975,17 +9970,6 @@
               payload: { msgId: "libre", uid: uidEl, ts: nowIso, reponse: resumeCode, fichier: fObj || undefined }
             });
           } catch (e) {}
-          fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-            method: "POST",
-            body: JSON.stringify({
-              type: "lu",
-              msgId: "libre",
-              uid: uidEl,
-              ts: nowIso,
-              reponse: resumeCode,
-              fichier: fObj ? { nom: fObj.nom, type: fObj.type, taille: fObj.taille, depuisDb: true } : undefined
-            })
-          }).catch(function () {});
         } else {
           empilerHorsLigne(rowMsg);
         }
@@ -10858,16 +10842,12 @@
       duree_sec: 0
     };
     if (navigator.onLine && uid !== "offline-user") {
-      sb.from("acces").insert(row).then(function (r) {
+      insererAccesSTI(row).then(function (r) {
         if (r && r.error) empilerHorsLigne(row);
       });
       try {
         sb.channel("sti-diffusion").send({ type: "broadcast", event: "main_levee", payload: payload });
       } catch (e) {}
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      }).catch(function () {});
     } else {
       empilerHorsLigne(row);
     }
@@ -11968,7 +11948,7 @@
           ts: Date.now()
         };
         if (currentUid) {
-          sb.from("acces").insert({
+          insererAccesSTI({
             user_id: currentUid,
             page: "COFFRE_TP:" + idNew,
             lieu: JSON.stringify(payload),
@@ -11978,10 +11958,6 @@
         try {
           sb.channel("sti-diffusion").send({ type: "broadcast", event: "coffre_tp", payload: payload });
         } catch (e) {}
-        fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        }).catch(function () {});
         fond.remove();
         afficherToastSynchro("📤 Fichier « " + f.name + " » distribué aux élèves !");
       };
@@ -12052,16 +12028,12 @@
       duree_sec: 0
     };
     if (navigator.onLine && uidEl !== "offline-user") {
-      sb.from("acces").insert(row).then(function (r) {
+      insererAccesSTI(row).then(function (r) {
         if (r && r.error) empilerHorsLigne(row);
       });
       try {
         sb.channel("sti-diffusion").send({ type: "broadcast", event: "copie_tp", payload: payload });
       } catch (e) {}
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      }).catch(function () {});
     } else {
       empilerHorsLigne(row);
     }
@@ -12197,7 +12169,7 @@
             choix: monChoix,
             ts: Date.now()
           };
-          sb.from("acces").insert({
+          insererAccesSTI({
             user_id: uidV,
             page: "KAHOOT_REP:" + payload.id,
             lieu: JSON.stringify(repPayload),
@@ -12206,10 +12178,6 @@
           try {
             sb.channel("sti-diffusion").send({ type: "broadcast", event: "kahoot_rep", payload: repPayload });
           } catch (e) {}
-          fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-            method: "POST",
-            body: JSON.stringify(repPayload)
-          }).catch(function () {});
         });
       });
     }

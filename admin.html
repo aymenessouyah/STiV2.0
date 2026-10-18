@@ -7,7 +7,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh; base-uri 'self'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
 <link rel="icon" href="assets/icons/STI_by_AE.ico" />
 <link rel="manifest" href="manifest.webmanifest" />
 <title>Tableau de bord — STI V2.0</title>
@@ -791,7 +791,7 @@
     box-shadow: 4px 4px 0 #f4511e; font-size: 13.5px; font-weight: 800; color: #23201a;
   }
   .alerte-demande.visible { display: flex; }
-  .code-ntfy {
+  .code-notif {
     display: inline-block; background: #f3ead9; border: 1.5px dashed #23201a;
     border-radius: 8px; padding: 4px 9px; font-family: monospace; font-weight: 900; color: #d84315;
   }
@@ -1310,7 +1310,7 @@
       <button class="btn-util" id="btn-messenger-top" type="button" title="Ouvrir la messagerie directe Messenger STI avec les candidats" style="background:#fff3e0;border-color:#f4511e;color:#d84315">💬 <span class="lbl-pc">Messenger</span><span class="lbl-mob">Chat</span> <span id="badge-msn-top" style="display:none;background:#ffd54f;color:#23201a;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
       <button class="btn-util" id="btn-flash-top" type="button" title="Lancer une Question Flash / Sondage Live en classe" style="background:#fff8e1;border-color:#d97706;color:#b45309">⚡ <span class="lbl-pc">Question Flash</span><span class="lbl-mob">Flash</span></button>
       <button class="btn-util" id="btn-appel-top" type="button" title="Feuille d'appel &amp; présence automatique du jour par classe (Présents vs Absents)" style="background:#e3f6e8;border-color:#177245;color:#177245">📋 <span class="lbl-pc">Appel / Présence</span><span class="lbl-mob">Appel</span></button>
-      <button class="btn-util" id="btn-securite-top" type="button" title="Centre de Sécurité : Mode Examen / Verrouillage, Anti-partage, Éjection F12 &amp; Journal d'alertes" style="background:#fde2e6;border-color:#c0392b;color:#a61b29">🛡️ <span class="lbl-pc">Sécurité</span><span class="lbl-mob">Sécu</span> <span id="badge-sec-top" style="display:none;background:#c0392b;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
+      <button class="btn-util" id="btn-securite-top" type="button" title="Centre de Sécurité : Mode Examen / Verrouillage, Sessions Supabase, Éjection F12 &amp; Journal d'alertes" style="background:#fde2e6;border-color:#c0392b;color:#a61b29">🛡️ <span class="lbl-pc">Sécurité</span><span class="lbl-mob">Sécu</span> <span id="badge-sec-top" style="display:none;background:#c0392b;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
       <button class="btn-util mob-extra" id="btn-mains-top" type="button" title="File d'attente des élèves ayant levé la main pour demander de l'aide en TP" style="background:#ede9fe;border-color:#6d28d9;color:#6d28d9">🙋‍♂️ <span class="lbl-pc">Mains levées</span><span class="lbl-mob">Aide</span> <span id="badge-mains-top" style="display:none;background:#6d28d9;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
       <button class="btn-util mob-extra" id="btn-palmares-top" type="button" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)" style="background:linear-gradient(120deg,#fff3b0,#ffd54f);border-color:#23201a;color:#6d4c00">🏆 <span class="lbl-pc">Palmarès</span><span class="lbl-mob">Top 3</span></button>
       <button class="btn-util mob-extra" id="btn-refresh" type="button" title="Rafraîchir immédiatement toutes les données">🔄 <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
@@ -1428,7 +1428,7 @@
       <span class="ca-ico orange" style="background:linear-gradient(135deg,#fde2e6,#c0392b)">🛡️</span>
       <span class="ca-corps">
         <span class="ca-titre">Sécurité &amp; Mode Examen</span>
-        <span class="ca-desc">Verrouillage classe, anti-partage, alertes F12 &amp; anti-triche</span>
+        <span class="ca-desc">Verrouillage classe, sessions Supabase, alertes F12 &amp; anti-triche</span>
       </span>
     </button>
 
@@ -2185,8 +2185,8 @@
         <div style="font-size:13.5px;font-weight:900;color:#23201a;margin-bottom:8px">⚙️ 2. Protections automatiques actives (Pack Sécurité Totale)</div>
         <div style="display:flex;flex-direction:column;gap:7px;font-size:12.5px;font-weight:800;color:#23201a">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input type="checkbox" id="sec-chk-session-unique" checked style="width:17px;height:17px;margin:0" />
-            <span>🚫 <b>Anti-partage de compte</b> : 1 seule session simultanée autorisée par élève (déconnecte l'ancien appareil en cas de double connexion)</span>
+            <input type="checkbox" checked disabled style="width:17px;height:17px;margin:0" />
+            <span>🔐 <b>Sessions Supabase Auth</b> : renouvellement, expiration et révocation sont gérés par Supabase, sans jeton applicatif personnalisé.</span>
           </label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
             <input type="checkbox" id="sec-chk-eject-devtools" checked style="width:17px;height:17px;margin:0" />
@@ -2655,8 +2655,8 @@
   <div class="modal-fond" id="modal-notif" role="dialog" aria-modal="true">
     <div class="modal-boite">
       <h3>🔔 Notifications de nouvelles demandes</h3>
-      <p><b>1. Sur cet appareil (PC / mobile) :</b><br />Alerte sonore + notification système dès qu'un élève s'inscrit.</p>
-      <p><b>2. Sur votre téléphone même navigateur fermé :</b><br />Installez l'application gratuite <b>ntfy</b> (Android / iPhone) et abonnez-vous au canal :<br /><span class="code-ntfy">sti_v2_aymen_9482</span><br /><small style="color:#7a6f5d">Chaque nouvelle demande arrive en 1 seconde avec le bouton direct pour envoyer le code WhatsApp.</small></p>
+      <p><b>1. Sur cet appareil (PC / mobile) :</b><br />Supabase Realtime déclenche une alerte sonore et une notification système lorsque le tableau de bord sécurisé est ouvert.</p>
+      <p><b>2. Navigateur fermé — option privée :</b><br /><span class="code-notif">Edge Function admin-notify</span><br /><small style="color:#7a6f5d">Un webhook privé peut être configuré comme secret Supabase. La notification reste générique et ne contient jamais l’identité, le téléphone, un OTP ou un jeton.</small></p>
       <div class="modal-actions">
         <button type="button" id="btn-fermer-notif">Fermer</button>
         <button type="button" class="btn-valider" id="btn-tester-notif">🔔 Activer &amp; tester</button>
@@ -2993,7 +2993,7 @@
         <ul style="margin:0 0 10px 18px;padding:0">
           <li><b>Documents PDF accessibles à tous &amp; Compte 👑 Gold</b> : tous les documents PDF (<code>.pdf</code> et <code>.pdf.html</code>) sont téléchargeables et imprimables par tous les abonnés ; le statut <b>👑 Gold</b> débloque en plus la copie et l'impression des pages de cours.</li>
           <li><b>Verrouillage strict du code source &amp; Éjection auto <code>3/3</code></b> : clic droit, <code>F12</code>, <code>Ctrl+U</code>, <code>Ctrl+Shift+I/J/C/K</code>, <code>Ctrl+S</code> et bouclier Anti-DevTools actifs pour 100 % des abonnés (même 👑 Gold et <code>elevelabo3</code>) avec éjection automatique à la 3e tentative.</li>
-          <li><b>Centre de Sécurité (<code>🛡️ Sécurité</code>)</b> : Mode Examen + minuteur d'auto-déverrouillage + Plein Écran <code>F11</code> obligatoire, Session unique anti-partage, Chronométrage exact des sorties d'onglet (<code>Alt+Tab ≥ 10 s</code>), Tirage aléatoire QCM, Piège Copy-Trap au Copier, Anti-Écran partagé (<code>Split-screen &lt; 80 %</code>), Anti-Traduction auto (<code>translate="no"</code>), Bouclier Anti-IA complet (<b>Anti-ChatGPT · Anti-Gemini · Anti-Claude</b>), Filigrane nominatif anti-photo smartphone, Auto-déconnexion d'inactivité et Sauvegarde complète Backup JSON.</li>
+          <li><b>Centre de Sécurité (<code>🛡️ Sécurité</code>)</b> : Mode Examen + minuteur d'auto-déverrouillage + Plein Écran <code>F11</code> obligatoire, sessions Supabase Auth sans jeton personnalisé, Chronométrage exact des sorties d'onglet (<code>Alt+Tab ≥ 10 s</code>), Tirage aléatoire QCM, Piège Copy-Trap au Copier, Anti-Écran partagé (<code>Split-screen &lt; 80 %</code>), Anti-Traduction auto (<code>translate="no"</code>), Bouclier Anti-IA complet (<b>Anti-ChatGPT · Anti-Gemini · Anti-Claude</b>), Filigrane nominatif anti-photo smartphone, Auto-déconnexion d'inactivité et Sauvegarde complète Backup JSON.</li>
           <li><b>Service Worker <code>sw.js</code> (100 % hors-ligne)</b> : fonctionnement intégral hors-ligne avec synchronisation différée automatique.</li>
         </ul>
       </div>
@@ -3403,8 +3403,8 @@
 
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
-<script src="assets/js/protection.js?v=227" defer></script>
-  <script src="assets/js/admin.js?v=227"></script>
+<script src="assets/js/protection.js?v=302" defer></script>
+  <script src="assets/js/admin.js?v=302"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>

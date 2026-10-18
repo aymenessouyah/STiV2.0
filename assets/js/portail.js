@@ -10,8 +10,11 @@
       lock: function (name, acquireTimeout, fn) { return fn(); }
     }
   });
-  /* Supprimer une éventuelle ancienne copie Base64 du mot de passe : la session Supabase persistante suffit. */
-  try { localStorage.removeItem("sti-reauth"); } catch (e) {}
+  /* Supprimer les anciens secrets et jetons applicatifs : seule la session Supabase est valide. */
+  try {
+    localStorage.removeItem("sti-reauth");
+    localStorage.removeItem("sti-session-token");
+  } catch (e) {}
   function connexionLimiteePortail() {
     try {
       var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
@@ -143,19 +146,13 @@
     }
     return String(100000 + (h % 900000));
   }
-  var NTFY_CANAL = "sti_v2_aymen_9482";
-  function alerterAdminDemande(d) {
-    /* Notification générique : aucune identité, téléphone, adresse ni OTP ne quitte Supabase. */
+  function alerterAdminDemande() {
+    /* Notification générique : aucune identité, téléphone, adresse, OTP ou jeton. */
     try {
-      var urlAdmin = (cfg && cfg.RACINE && cfg.RACINE.indexOf("http") === 0)
-        ? (cfg.RACINE.replace(/\/?$/, "/") + "admin.html")
-        : (typeof location !== "undefined" && location.origin && location.origin !== "null" ? new URL("admin.html", location.href).href : "admin.html");
-      fetch("https://ntfy.sh/" + NTFY_CANAL, {
-        method: "POST",
-        headers: { "Title": "Nouvelle demande STI V2.0", "Priority": "high", "Tags": "bell,mortar_board", "Click": urlAdmin },
-        body: "Une nouvelle demande est disponible dans le tableau de bord sécurisé."
-      }).catch(function () {});
-    } catch (err) {}
+      if (sb.functions && typeof sb.functions.invoke === "function") {
+        sb.functions.invoke("admin-notify", { body: { type: "nouvelle_demande" } }).catch(function () {});
+      }
+    } catch (e) {}
   }
 
   /* ---------- petit captcha maison ---------- */
@@ -284,25 +281,11 @@
     if (cfgLoc) appliquerCfgEcolesPortail(cfgLoc);
   } catch (e) {}
 
-  if (navigator.onLine && !connexionLimiteePortail()) {
-    /* Configuration non essentielle différée sur saveData/2G/3G. */
-    fetch("https://ntfy.sh/sti_v2_diffusion_9482/json?poll=1&since=all")
-      .then(function (r) { return r.text(); })
-      .then(function (txt) {
-        var dernierCfg = null;
-        (txt || "").trim().split("\n").forEach(function (ln) {
-          if (!ln) return;
-          try {
-            var ev = JSON.parse(ln);
-            if (ev && ev.message) {
-              var obj = JSON.parse(ev.message);
-              if (obj && obj.type === "cfg_ecoles") dernierCfg = obj;
-            }
-          } catch (e) {}
-        });
-        if (dernierCfg) appliquerCfgEcolesPortail(dernierCfg);
-      })
-      .catch(function () {});
+  if (navigator.onLine) {
+    /* Configuration publique Supabase, sans codes Badge ni données personnelles. */
+    sb.from("app_config_public").select("value,updated_at").eq("id", "ecoles").maybeSingle().then(function (rCfg) {
+      if (rCfg && !rCfg.error && rCfg.data && rCfg.data.value) appliquerCfgEcolesPortail(rCfg.data.value);
+    }).catch(function () {});
     try {
       sb.channel("sti-diffusion")
         .on("broadcast", { event: "cfg_ecoles" }, function (p) {
@@ -440,7 +423,7 @@
         localStorage.removeItem("sti-bio");
         if (isG) localStorage.setItem("sti-gold", "1");
         else localStorage.removeItem("sti-gold");
-        var jetonSess = "st_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+        localStorage.removeItem("sti-session-token");
         var metaU = (user && user.user_metadata) || {};
         var objSessPortail = {
           id: user.id,
@@ -455,11 +438,9 @@
           gold: isG,
           permanent: isLabo,
           isAdmin: false,
-          sessionToken: jetonSess,
           ts: Date.now()
         };
         var jsonSessPortail = JSON.stringify(objSessPortail);
-        localStorage.setItem("sti-session-token", jetonSess);
         localStorage.setItem("sti-offline", String(Date.now()));
         localStorage.setItem("sti-session-cache", jsonSessPortail);
         try {
@@ -470,13 +451,7 @@
         try {
           document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonSessPortail) + "; path=/; max-age=2592000; SameSite=Lax";
         } catch (e) {}
-        if (!isLabo) {
-          var sigSess = { type: "session_unique", uid: user.id, token: jetonSess, ts: Date.now() };
-          try {
-            sb.channel("sti-diffusion").send({ type: "broadcast", event: "session_unique", payload: sigSess });
-          } catch (e) {}
-          fetch("https://ntfy.sh/sti_v2_diffusion_9482", { method: "POST", body: JSON.stringify(sigSess) }).catch(function () {});
-        }
+        /* L’unicité et l’expiration de session sont déléguées à Supabase Auth. */
         if (isLabo) {
           localStorage.setItem("sti-labo3-permanent", jsonSessPortail);
         } else {
@@ -698,7 +673,6 @@
           try {
             sb.channel("sti-diffusion").send({ type: "broadcast", event: "sec_alerte", payload: alBrute });
           } catch (err) {}
-          fetch("https://ntfy.sh/" + CANAL_DIFFUSION_PORTAIL, { method: "POST", body: JSON.stringify(alBrute) }).catch(function () {});
           msg("🛡️ Bouclier anti-brute-force activé : 5 échecs consécutifs. Connexion verrouillée pendant 2 minutes (professeur alerté).", "err");
           return;
         }
@@ -1099,34 +1073,17 @@
       return;
     }
     if (btnValiderBadge) btnValiderBadge.disabled = true;
-    fetch("https://ntfy.sh/sti_v2_diffusion_9482/json?poll=1&since=all")
-      .then(function (r) { return r.text(); })
-      .then(function (txt) {
-        if (btnValiderBadge) btnValiderBadge.disabled = false;
-        var mapTrouve = null;
-        (txt || "").trim().split("\n").forEach(function (ln) {
-          if (!ln) return;
-          try {
-            var ev = JSON.parse(ln);
-            if (ev && ev.message) {
-              var obj = JSON.parse(ev.message);
-              if (obj && obj.type === "cfg_ecoles" && obj.codesLaboMap) {
-                appliquerCfgEcolesPortail(obj);
-                if (obj.codesLaboMap[code]) mapTrouve = obj.codesLaboMap[code];
-              }
-            }
-          } catch (e) {}
-        });
-        if (mapTrouve) {
-          connecterAvecProfilBadge(mapTrouve);
-        } else {
-          msg("❌ Code Badge « " + code + " » non reconnu. Demandez au professeur d'actualiser les Badges Labo de la classe.", "err");
-        }
-      })
-      .catch(function () {
-        if (btnValiderBadge) btnValiderBadge.disabled = false;
-        msg("❌ Impossible de vérifier le Code Badge pour le moment.", "err");
-      });
+    sb.rpc("valider_badge_labo", { code_saisi: code }).then(function (rBadge) {
+      if (btnValiderBadge) btnValiderBadge.disabled = false;
+      if (rBadge && !rBadge.error && rBadge.data) {
+        connecterAvecProfilBadge(rBadge.data);
+      } else {
+        msg("❌ Code Badge « " + code + " » non reconnu. Demandez au professeur d’actualiser les Badges Labo.", "err");
+      }
+    }).catch(function () {
+      if (btnValiderBadge) btnValiderBadge.disabled = false;
+      msg("❌ Impossible de vérifier le Code Badge pour le moment.", "err");
+    });
   }
 
   if (btnValiderBadge) btnValiderBadge.addEventListener("click", validerCodeBadgeLabo);

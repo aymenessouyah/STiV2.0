@@ -305,8 +305,12 @@
   var triParAcces = false;
   var profils = [], acces = [], counts = {};
   /* Jeux bruts conservés localement : les sondages de 20 s ne récupèrent que les lignes nouvelles. */
-  var profilsBrutsAdmin = [], accesBrutsAdmin = [], ntfyBrutAdmin = "";
+  var profilsBrutsAdmin = [], accesBrutsAdmin = [], signauxCompatBrutAdmin = "";
   var dernierIdAccesAdmin = 0;
+  var dernierProfilUpdatedAtAdmin = "";
+  var supportDeltaProfilsAdmin = null;
+  var historiqueAdminEnCours = false;
+  var TAILLE_PAGE_ACCES_ADMIN = 100;
   var chargeAdminEnCours = false;
   var chargeAdminCompleteEnAttente = false;
   var derniereApplicationAdminTs = 0;
@@ -460,6 +464,17 @@
     return liste;
   }
 
+  function chargerCfgEcolesSupabase() {
+    if (!navigator.onLine) return Promise.resolve();
+    return sb.from("app_config_public").select("value,updated_at").eq("id", "ecoles").maybeSingle().then(function (r) {
+      if (r && !r.error && r.data && r.data.value && Number(r.data.value.ts || 0) >= Number(cfgEcoles.ts || 0)) {
+        cfgEcoles = Object.assign(cfgEcoles, r.data.value);
+        try { localStorage.setItem("sti-cfg-ecoles", JSON.stringify(cfgEcoles)); } catch (e) {}
+        majFiltreClasses();
+      }
+    }).catch(function () {});
+  }
+
   function sauvegarderCfgEcoles() {
     cfgEcoles.ts = Date.now();
     try { localStorage.setItem("sti-cfg-ecoles", JSON.stringify(cfgEcoles)); } catch (e) {}
@@ -480,10 +495,12 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "cfg_ecoles", payload: payload });
     } catch (e) {}
-    fetch("https://ntfy.sh/sti_v2_diffusion_9482", {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }).catch(function () {});
+    /* Persistance centrale sans codes Badge : lecture autorisée, écriture réservée à l’admin par RLS. */
+    sb.from("app_config_public").upsert({
+      id: "ecoles",
+      value: payload,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "id" }).then(function () {}).catch(function () {});
     if (adminUid && adminUid !== "admin") {
       sb.from("acces").insert({
         user_id: adminUid,
@@ -587,6 +604,41 @@
     });
   } catch (e) {}
 
+  var apiMfaAdmin = null;
+  var promesseMfaAdmin = null;
+  function chargerModuleMfaAdmin() {
+    if (apiMfaAdmin) return Promise.resolve(apiMfaAdmin);
+    if (promesseMfaAdmin) return promesseMfaAdmin;
+    var urlModule = "assets/js/modules/admin-mfa.js?v=302";
+    try {
+      var scriptsMfa = document.querySelectorAll("script[src]");
+      for (var im = 0; im < scriptsMfa.length; im++) {
+        var srcMfa = scriptsMfa[im].src || "";
+        if (srcMfa.indexOf("assets/js/admin.js") !== -1) {
+          urlModule = new URL("modules/admin-mfa.js?v=302", srcMfa).toString();
+          break;
+        }
+      }
+    } catch (e) {}
+    promesseMfaAdmin = import(urlModule).then(function (m) {
+      apiMfaAdmin = m.createAdminMfa({ sb: sb, notify: msg });
+      window.__stiExigerMfaAdmin = function (action) { return apiMfaAdmin.require(action); };
+      return apiMfaAdmin;
+    });
+    return promesseMfaAdmin;
+  }
+  function rafraichirEtatMfaAdmin() {
+    return chargerModuleMfaAdmin().then(function (api) { return api.refresh(); });
+  }
+  function installerProtectionsMfaAdmin() {
+    chargerModuleMfaAdmin().then(function (api) { api.installProtections(); });
+  }
+  function exigerMfaAdmin(action) {
+    if (apiMfaAdmin) return apiMfaAdmin.require(action);
+    chargerModuleMfaAdmin().then(function (api) { api.require(action); });
+    return false;
+  }
+
   sb.auth.getSession().then(function (r) {
     var s = r && r.data ? r.data.session : null;
     if (s && s.user && !estAdminEmail(s.user.email)) {
@@ -625,7 +677,6 @@
             lieu: JSON.stringify(alAdmin),
             duree_sec: 0
           }).then(function () {});
-          fetch("https://ntfy.sh/" + CANAL_DIFFUSION, { method: "POST", body: JSON.stringify(alAdmin) }).catch(function () {});
         } catch (e) {}
       }
       var cacheSess = lireCacheSessAdmin();
@@ -661,8 +712,13 @@
       localStorage.setItem("sti-admin-gold", "1");
     } catch (e) {}
     window.__STI_GOLD = true;
+    if (s && s.user && estAdminEmail(s.user.email) && navigator.onLine) {
+      installerProtectionsMfaAdmin();
+      rafraichirEtatMfaAdmin();
+    }
     /* Affichage immédiat du dernier instantané IndexedDB, puis contrôle complet au démarrage. */
     chargerDepuisCacheAdmin(true, "");
+    chargerCfgEcolesSupabase();
     charge(false, true);
     /* Tant que l’administrateur est connecté et l’onglet visible : petit delta Supabase toutes les 20 s. */
     var DELAI_ACTUALISATION_ADMIN_MS = 20000;
@@ -1544,7 +1600,7 @@
       if (!c || !Array.isArray(c.tous)) return false;
       if (Number(c.ts || 0) < derniereApplicationAdminTs) return true;
       cacheAdminMemoire = c;
-      appliquerDonneesAdmin(c.tous, c.tousAcces || [], c.txtNtfy || "", true, c.ts);
+      appliquerDonneesAdmin(c.tous, c.tousAcces || [], c.txtSignauxCompat || "", true, c.ts);
       return true;
     }
     if (appliquerSnapshot(cacheAdminMemoire)) return true;
@@ -1573,7 +1629,6 @@
     motifVerrou: "Épreuve ou contrôle en cours — l'accès aux cours est temporairement verrouillé par le professeur.",
     ejectDevtools: true,
     antiTricheOnglet: true,
-    sessionUnique: true,
     inactiviteActif: true,
     inactiviteMin: 30,
     alerteMultiAppareils: true,
@@ -1618,11 +1673,14 @@
     return false;
   }
 
-  function appliquerDonneesAdmin(tous, tousAcces, txtNtfy, estHorsLigne, tsCache) {
+  function appliquerDonneesAdmin(tous, tousAcces, txtSignauxCompat, estHorsLigne, tsCache) {
     profilsBrutsAdmin = Array.isArray(tous) ? tous.slice() : [];
     accesBrutsAdmin = Array.isArray(tousAcces) ? tousAcces.slice() : [];
-    ntfyBrutAdmin = txtNtfy || "";
+    signauxCompatBrutAdmin = txtSignauxCompat || "";
     dernierIdAccesAdmin = accesBrutsAdmin.reduce(function (mx, a) { return Math.max(mx, Number(a && a.id) || 0); }, 0);
+    dernierProfilUpdatedAtAdmin = profilsBrutsAdmin.reduce(function (mx, p) {
+      return String((p && p.updated_at) || "") > mx ? String(p.updated_at) : mx;
+    }, dernierProfilUpdatedAtAdmin || "");
     derniereApplicationAdminTs = Math.max(derniereApplicationAdminTs, Number(tsCache || 0));
     var adminIds = {};
     tous.forEach(function (p) { if (estAdminEmail(p.email)) adminIds[p.id] = true; });
@@ -1648,7 +1706,6 @@
           }).eq("id", p.id).then(function () {
             var sigProfGold = { type: "statut", uid: p.id, statut: "actif", gold: true, classe: "Prof", ts: Date.now() };
             try { sb.channel("sti-diffusion").send({ type: "broadcast", event: "statut", payload: sigProfGold }); } catch (e) {}
-            fetch("https://ntfy.sh/" + CANAL_DIFFUSION, { method: "POST", body: JSON.stringify(sigProfGold) }).catch(function () {});
           });
         }
       }
@@ -1664,7 +1721,6 @@
           }).eq("id", p.id).then(function () {
             var sigProfMeriem = { type: "statut", uid: p.id, statut: p.statut, gold: estGold(p), classe: "Prof", ts: Date.now() };
             try { sb.channel("sti-diffusion").send({ type: "broadcast", event: "statut", payload: sigProfMeriem }); } catch (e) {}
-            fetch("https://ntfy.sh/" + CANAL_DIFFUSION, { method: "POST", body: JSON.stringify(sigProfMeriem) }).catch(function () {});
           });
         }
       }
@@ -1682,8 +1738,8 @@
         } catch (e) {}
       }
     });
-    if (txtNtfy) {
-      txtNtfy.trim().split("\n").forEach(function (ln) {
+    if (txtSignauxCompat) {
+      txtSignauxCompat.trim().split("\n").forEach(function (ln) {
         if (!ln) return;
         try {
           var ev0 = JSON.parse(ln);
@@ -1961,8 +2017,8 @@
         }
       });
 
-      if (txtNtfy) {
-        txtNtfy.trim().split("\n").forEach(function (ln) {
+      if (txtSignauxCompat) {
+        txtSignauxCompat.trim().split("\n").forEach(function (ln) {
           if (!ln) return;
           try {
             var ev = JSON.parse(ln);
@@ -2187,8 +2243,8 @@
       }
   }
 
-  function sauvegarderSnapshotAdmin(tous, tousAcces, txtNtfy) {
-    var snapshot = { tous: tous, tousAcces: tousAcces, txtNtfy: txtNtfy || "", ts: Date.now() };
+  function sauvegarderSnapshotAdmin(tous, tousAcces, txtSignauxCompat) {
+    var snapshot = { tous: tous, tousAcces: tousAcces, txtSignauxCompat: txtSignauxCompat || "", ts: Date.now() };
     ecrireCacheAdminIndexedDb(snapshot);
     return snapshot;
   }
@@ -2199,7 +2255,7 @@
     ids.forEach(function (id) { mapIds[String(id)] = true; });
     accesBrutsAdmin = accesBrutsAdmin.filter(function (a) { return !mapIds[String(a.id)]; });
     dernierIdAccesAdmin = accesBrutsAdmin.reduce(function (mx, a) { return Math.max(mx, Number(a && a.id) || 0); }, 0);
-    sauvegarderSnapshotAdmin(profilsBrutsAdmin, accesBrutsAdmin, ntfyBrutAdmin);
+    sauvegarderSnapshotAdmin(profilsBrutsAdmin, accesBrutsAdmin, signauxCompatBrutAdmin);
   }
 
   function fusionnerAccesAdmin(nouveaux) {
@@ -2210,7 +2266,28 @@
     return Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) {
       var di = Number(b.id || 0) - Number(a.id || 0);
       return di || String(b.debut || "").localeCompare(String(a.debut || ""));
-    }).slice(0, 600);
+    });
+  }
+
+  function selectionnerProfilsAdmin(avecCount) {
+    var options = avecCount ? { count: "exact" } : undefined;
+    var cols = COLONNES_PROFILS_ADMIN + (supportDeltaProfilsAdmin === false ? "" : ",updated_at");
+    return sb.from("profiles").select(cols, options).order("cree_le", { ascending: false }).then(function (r) {
+      if (r && r.error && supportDeltaProfilsAdmin !== false && /updated_at|column/i.test(r.error.message || "")) {
+        supportDeltaProfilsAdmin = false;
+        return sb.from("profiles").select(COLONNES_PROFILS_ADMIN, options).order("cree_le", { ascending: false });
+      }
+      if (r && !r.error && cols.indexOf("updated_at") !== -1) supportDeltaProfilsAdmin = true;
+      return r;
+    });
+  }
+
+  function fusionnerProfilsAdmin(modifies) {
+    var map = {};
+    profilsBrutsAdmin.concat(modifies || []).forEach(function (p) { if (p && p.id) map[p.id] = p; });
+    return Object.keys(map).map(function (id) { return map[id]; }).sort(function (a, b) {
+      return String(b.cree_le || "").localeCompare(String(a.cree_le || ""));
+    });
   }
 
   function requeteCompleteAdmin(garderMsg) {
@@ -2220,21 +2297,21 @@
       if (!resolu) chargerDepuisCacheAdmin(garderMsg, "Mode hors-ligne (serveur injoignable).");
     }, 3500);
     return Promise.all([
-      sb.from("profiles").select(COLONNES_PROFILS_ADMIN, { count: "exact" }).order("cree_le", { ascending: false }),
-      sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(600)
+      selectionnerProfilsAdmin(true),
+      sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(TAILLE_PAGE_ACCES_ADMIN)
     ]).then(function (res) {
       clearTimeout(timerOffAdmin);
       if (res[0].error || res[1].error) throw (res[0].error || res[1].error);
       resolu = true;
       var tous = res[0].data || [];
       var tousAcces = res[1].data || [];
-      /* L'historique persistant provient uniquement de Supabase ; ntfy n'est plus aspiré en masse. */
-      var txtNtfy = "";
+      /* L’historique persistant provient uniquement de Supabase ; aucun ancien flux n’est aspiré en masse. */
+      var txtSignauxCompat = "";
       window.__stiCountProfils = typeof res[0].count === "number" ? res[0].count : tous.length;
       window.__stiCountAcces = typeof res[1].count === "number" ? res[1].count : tousAcces.length;
-      noterTraficAdmin([tous, tousAcces, txtNtfy]);
-      var snap = sauvegarderSnapshotAdmin(tous, tousAcces, txtNtfy);
-      appliquerDonneesAdmin(tous, tousAcces, txtNtfy, false, snap.ts);
+      noterTraficAdmin([tous, tousAcces, txtSignauxCompat]);
+      var snap = sauvegarderSnapshotAdmin(tous, tousAcces, txtSignauxCompat);
+      appliquerDonneesAdmin(tous, tousAcces, txtSignauxCompat, false, snap.ts);
       if (!garderMsg) {
         var ko = window.__STI_ADMIN_DATA_USAGE ? window.__STI_ADMIN_DATA_USAGE.ko : 0;
         msg("✅ " + profils.length + " abonné(s), " + acces.length + " activité(s) · session réseau : " + ko + " Ko.", "ok");
@@ -2248,46 +2325,90 @@
   }
 
   function requeteProfilsAdmin() {
-    return sb.from("profiles").select(COLONNES_PROFILS_ADMIN, { count: "exact" }).order("cree_le", { ascending: false }).then(function (res) {
+    return selectionnerProfilsAdmin(true).then(function (res) {
       if (res.error) throw res.error;
       var tous = res.data || [];
       window.__stiCountProfils = typeof res.count === "number" ? res.count : tous.length;
       noterTraficAdmin(tous);
-      var snap = sauvegarderSnapshotAdmin(tous, accesBrutsAdmin, ntfyBrutAdmin);
-      appliquerDonneesAdmin(tous, accesBrutsAdmin, ntfyBrutAdmin, false, snap.ts);
+      var snap = sauvegarderSnapshotAdmin(tous, accesBrutsAdmin, signauxCompatBrutAdmin);
+      appliquerDonneesAdmin(tous, accesBrutsAdmin, signauxCompatBrutAdmin, false, snap.ts);
     }).catch(function () {});
   }
 
   function requeteAccesCompletAdmin() {
-    return sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(600).then(function (res) {
+    return sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(TAILLE_PAGE_ACCES_ADMIN).then(function (res) {
       if (res.error) throw res.error;
       var tousAcces = res.data || [];
       window.__stiCountAcces = typeof res.count === "number" ? res.count : tousAcces.length;
       noterTraficAdmin(tousAcces);
-      var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, tousAcces, ntfyBrutAdmin);
-      appliquerDonneesAdmin(profilsBrutsAdmin, tousAcces, ntfyBrutAdmin, false, snap.ts);
+      var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, tousAcces, signauxCompatBrutAdmin);
+      appliquerDonneesAdmin(profilsBrutsAdmin, tousAcces, signauxCompatBrutAdmin, false, snap.ts);
     }).catch(function () {});
   }
 
   function requeteDeltaAdmin() {
     if (!profilsBrutsAdmin.length) return requeteCompleteAdmin(true);
-    var q = sb.from("acces").select(COLONNES_ACCES_ADMIN);
-    if (dernierIdAccesAdmin > 0) q = q.gt("id", dernierIdAccesAdmin);
-    q = q.order("id", { ascending: true }).limit(250);
-    return q.then(function (res) {
-      if (res.error) throw res.error;
-      var nouveaux = res.data || [];
-      noterTraficAdmin(nouveaux);
-      if (!nouveaux.length) return;
-      var fusion = fusionnerAccesAdmin(nouveaux);
-      var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, fusion, ntfyBrutAdmin);
-      appliquerDonneesAdmin(profilsBrutsAdmin, fusion, ntfyBrutAdmin, false, snap.ts);
-      /* Plus de 250 événements en 20 s : réconciliation complète pour ne rien omettre. */
-      if (nouveaux.length >= 250) chargeAdminCompleteEnAttente = true;
+    var qAcces = sb.from("acces").select(COLONNES_ACCES_ADMIN);
+    if (dernierIdAccesAdmin > 0) qAcces = qAcces.gt("id", dernierIdAccesAdmin);
+    qAcces = qAcces.order("id", { ascending: true }).limit(250);
+
+    var pProfils = Promise.resolve({ data: [], error: null });
+    if (supportDeltaProfilsAdmin !== false) {
+      var qProf = sb.from("profiles").select(COLONNES_PROFILS_ADMIN + ",updated_at");
+      if (dernierProfilUpdatedAtAdmin) qProf = qProf.gt("updated_at", dernierProfilUpdatedAtAdmin);
+      pProfils = qProf.order("updated_at", { ascending: true }).limit(100).then(function (r) {
+        if (r && r.error && /updated_at|column/i.test(r.error.message || "")) {
+          supportDeltaProfilsAdmin = false;
+          return { data: [], error: null };
+        }
+        if (r && !r.error) supportDeltaProfilsAdmin = true;
+        return r;
+      });
+    }
+
+    return Promise.all([qAcces, pProfils]).then(function (res) {
+      if (res[0].error || res[1].error) throw (res[0].error || res[1].error);
+      var nouveaux = res[0].data || [];
+      var profilsModifies = res[1].data || [];
+      noterTraficAdmin([nouveaux, profilsModifies]);
+      if (!nouveaux.length && !profilsModifies.length) return;
+      var fusionAcces = fusionnerAccesAdmin(nouveaux);
+      var fusionProfils = fusionnerProfilsAdmin(profilsModifies);
+      var snap = sauvegarderSnapshotAdmin(fusionProfils, fusionAcces, signauxCompatBrutAdmin);
+      appliquerDonneesAdmin(fusionProfils, fusionAcces, signauxCompatBrutAdmin, false, snap.ts);
+      if (nouveaux.length >= 250 || profilsModifies.length >= 100) chargeAdminCompleteEnAttente = true;
     }).catch(function () {
-      /* Le dernier instantané reste affiché ; une reconnexion déclenchera un contrôle complet. */
+      /* Le dernier instantané reste affiché ; la reconnexion déclenchera une réconciliation. */
     });
   }
+
+  function chargerPageAccesPrecedente() {
+    if (historiqueAdminEnCours || !navigator.onLine || !accesBrutsAdmin.length) return Promise.resolve();
+    var minId = accesBrutsAdmin.reduce(function (mn, a) {
+      var id = Number(a && a.id) || 0;
+      return id && (!mn || id < mn) ? id : mn;
+    }, 0);
+    if (!minId) return Promise.resolve();
+    historiqueAdminEnCours = true;
+    if (btnVoirPlusAcces) { btnVoirPlusAcces.disabled = true; btnVoirPlusAcces.textContent = "⏳ Chargement de l’historique…"; }
+    return sb.from("acces").select(COLONNES_ACCES_ADMIN).lt("id", minId)
+      .order("id", { ascending: false }).limit(TAILLE_PAGE_ACCES_ADMIN).then(function (r) {
+        if (r.error) throw r.error;
+        noterTraficAdmin(r.data || []);
+        if ((r.data || []).length) {
+          var fusion = fusionnerAccesAdmin(r.data || []);
+          var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, fusion, signauxCompatBrutAdmin);
+          appliquerDonneesAdmin(profilsBrutsAdmin, fusion, signauxCompatBrutAdmin, false, snap.ts);
+        }
+      }).catch(function () {
+        msg("⚠️ Impossible de charger la page précédente pour le moment.", "err");
+      }).finally(function () {
+        historiqueAdminEnCours = false;
+        if (btnVoirPlusAcces) btnVoirPlusAcces.disabled = false;
+        rendAcces();
+      });
+  }
+  window.__stiChargerHistoriqueAdmin = chargerPageAccesPrecedente;
 
   function charge(garderMsg, forcerComplet) {
     if (!navigator.onLine) {
@@ -3981,8 +4102,16 @@
 
   if (btnVoirPlusAcces) {
     btnVoirPlusAcces.addEventListener("click", function () {
-      toutVoirAcces = !toutVoirAcces;
-      rendAcces();
+      if (!toutVoirAcces) {
+        toutVoirAcces = true;
+        rendAcces();
+        if (accesBrutsAdmin.length < Number(window.__stiCountAcces || 0)) chargerPageAccesPrecedente();
+      } else if (accesBrutsAdmin.length < Number(window.__stiCountAcces || 0)) {
+        chargerPageAccesPrecedente();
+      } else {
+        toutVoirAcces = false;
+        rendAcces();
+      }
     });
   }
   if (btnVoirPlusSuivi) {
@@ -4097,11 +4226,12 @@
       ta.appendChild(tr);
     });
     if (wrapVoirPlusAcces && btnVoirPlusAcces) {
-      if (totalA > 5) {
+      var resteServeur = Math.max(0, Number(window.__stiCountAcces || 0) - accesBrutsAdmin.length);
+      if (totalA > 5 || resteServeur > 0) {
         wrapVoirPlusAcces.style.display = "block";
         btnVoirPlusAcces.textContent = toutVoirAcces
-          ? "➖ Voir moins (afficher les 5 premiers)"
-          : ("➕ Voir plus (" + (totalA - 5) + " autre(s) connexion(s))");
+          ? (resteServeur > 0 ? ("➕ Charger " + Math.min(TAILLE_PAGE_ACCES_ADMIN, resteServeur) + " activité(s) précédente(s)") : "➖ Voir moins (afficher les 5 premiers)")
+          : ("➕ Voir plus (" + Math.max(0, totalA - 5) + " chargée(s)" + (resteServeur ? " · historique disponible" : "") + ")");
       } else {
         wrapVoirPlusAcces.style.display = "none";
       }
@@ -4180,45 +4310,48 @@
   }
   if (btnConfirmerPurgeAcces) {
     btnConfirmerPurgeAcces.addEventListener("click", function () {
-      var ym = selMoisPurge ? selMoisPurge.value : "*";
-      var cibles = connexionsDuMois(ym);
-      var lib = ym === "*" ? "tous les mois" : libelleMois(ym);
-      if (!cfgEcoles.purgesMois || typeof cfgEcoles.purgesMois !== "object") {
-        cfgEcoles.purgesMois = {};
+      if (!navigator.onLine) {
+        msg("❌ La suppression serveur exige une connexion Internet.", "err");
+        return;
       }
+      var ym = selMoisPurge ? selMoisPurge.value : "*";
+      var lib = ym === "*" ? "tous les mois" : libelleMois(ym);
+      var ciblesChargees = connexionsDuMois(ym);
+      if (!cfgEcoles.purgesMois || typeof cfgEcoles.purgesMois !== "object") cfgEcoles.purgesMois = {};
       cfgEcoles.purgesMois[ym] = Date.now();
       sauvegarderCfgEcoles();
 
-      var ids = cibles.map(function (a) { return a.id; }).filter(Boolean);
-      acces = acces.filter(function (a) {
-        return ym === "*" ? false : (cleMois(a.debut) !== ym);
-      });
-
-      /* Recalcul immédiat des compteurs et durées */
-      counts = {};
-      dureesSemaine = {};
-      dureesTotales = {};
-      acces.forEach(function (a) {
-        counts[a.user_id] = (counts[a.user_id] || 0) + 1;
-        var sec = dureeLigne(a);
-        dureesTotales[a.user_id] = (dureesTotales[a.user_id] || 0) + sec;
-        var sk = cleSemaine(a.debut);
-        if (!dureesSemaine[sk]) dureesSemaine[sk] = {};
-        dureesSemaine[sk][a.user_id] = (dureesSemaine[sk][a.user_id] || 0) + sec;
-      });
-
-      retirerAccesDuCacheAdmin(ids);
-
-      if (modalPurgeAcces) modalPurgeAcces.classList.remove("visible");
-      rendAcces();
-      rendAbonnes();
-      majCompteurEnLigne();
-
-      if (ids.length && navigator.onLine) {
-        sb.from("acces").update({ page: "SUPPR_ACCES" }).in("id", ids).then(function () {});
-        sb.from("acces").delete().in("id", ids).then(function () {});
+      var suppression = sb.from("acces").delete();
+      if (ym === "*") {
+        suppression = suppression.gt("id", 0);
+      } else {
+        var morceaux = ym.split("-");
+        var an = parseInt(morceaux[0], 10);
+        var mois = parseInt(morceaux[1], 10) - 1;
+        var debutMois = new Date(an, mois, 1).toISOString();
+        var finMois = new Date(an, mois + 1, 1).toISOString();
+        suppression = suppression.gte("debut", debutMois).lt("debut", finMois);
       }
-      msg("🗑️ " + cibles.length + " connexion(s) de " + lib + " supprimée(s).", "ok");
+
+      btnConfirmerPurgeAcces.disabled = true;
+      btnConfirmerPurgeAcces.textContent = "⏳ Suppression sécurisée…";
+      suppression.then(function (r) {
+        if (r.error) throw r.error;
+        var idsCharges = ciblesChargees.map(function (a) { return a.id; }).filter(Boolean);
+        var reste = ym === "*" ? [] : accesBrutsAdmin.filter(function (a) { return cleMois(a.debut) !== ym; });
+        retirerAccesDuCacheAdmin(idsCharges);
+        var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, reste, signauxCompatBrutAdmin);
+        appliquerDonneesAdmin(profilsBrutsAdmin, reste, signauxCompatBrutAdmin, false, snap.ts);
+        if (modalPurgeAcces) modalPurgeAcces.classList.remove("visible");
+        msg("🗑️ Connexions de " + lib + " supprimées côté serveur.", "ok");
+        chargeAdminCompleteEnAttente = true;
+        charge(true, true);
+      }).catch(function (e) {
+        msg("❌ Suppression refusée : " + ((e && e.message) || "vérifiez la MFA"), "err");
+      }).finally(function () {
+        btnConfirmerPurgeAcces.disabled = false;
+        btnConfirmerPurgeAcces.textContent = "🗑️ Confirmer la suppression";
+      });
     });
   }
 
@@ -4502,10 +4635,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "statut", payload: sig });
     } catch (e) {}
-    fetch("https://ntfy.sh/sti_v2_diffusion_9482", {
-      method: "POST",
-      body: JSON.stringify(sig)
-    }).catch(function () {});
   }
 
   /* ---------- Boîte modale universelle de confirmation d'opération (2 boutons : Annuler et Confirmer) ---------- */
@@ -4563,7 +4692,7 @@
     btnConfirmerOp.addEventListener("click", function () {
       var fn = actionConfirmOp;
       fermerConfirmationOperation(false);
-      if (typeof fn === "function") fn();
+      if (typeof fn === "function") exigerMfaAdmin(fn);
     });
   }
   if (modalConfirmOp) {
@@ -5211,10 +5340,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "controle", payload: ctrlPayload });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(ctrlPayload)
-    }).catch(function () {});
     modalCtrl.classList.remove("visible");
     msg("🚀 Contrôle chronométré (« " + titre + " », " + min + " min) lancé en direct !", "ok");
   });
@@ -5223,10 +5348,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "controle", payload: stopPayload });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(stopPayload)
-    }).catch(function () {});
     modalCtrl.classList.remove("visible");
     msg("⏹️ Contrôle chronométré arrêté sur les écrans des élèves.", "ok");
   });
@@ -5545,10 +5666,6 @@
       try {
         sb.channel("sti-diffusion").send({ type: "broadcast", event: "flash_q", payload: flashPayload });
       } catch (e) {}
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-        method: "POST",
-        body: JSON.stringify(flashPayload)
-      }).catch(function () {});
 
       msg("⚡ Question Flash diffusée en direct (" + dureeSec + " s) ! Suivez les réponses ci-dessous.", "ok");
     });
@@ -5563,10 +5680,6 @@
       try {
         sb.channel("sti-diffusion").send({ type: "broadcast", event: "flash_q", payload: stopPayload });
       } catch (e) {}
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-        method: "POST",
-        body: JSON.stringify(stopPayload)
-      }).catch(function () {});
       msg("⏹️ Question Flash clôturée sur les écrans des élèves.", "ok");
     });
   }
@@ -6170,15 +6283,9 @@
     var pDb = adminUid
       ? sb.from("acces").insert({ user_id: adminUid, page: "MSG_ENVOI:" + payload.id, lieu: JSON.stringify(payload), duree_sec: 0 })
       : Promise.resolve();
-    var payloadNtfy = fJoint && JSON.stringify(fJoint).length >= 2600
-      ? Object.assign({}, payload, { fichier: { nom: fJoint.nom, type: fJoint.type, taille: fJoint.taille, depuisDb: true } })
-      : payload;
-    var pNtfy = fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(payloadNtfy)
-    }).catch(function () {});
+    var pEnvoi = Promise.resolve(pDb);
 
-    Promise.all([pDb, pNtfy]).then(function () {
+    pEnvoi.then(function () {
       btn.disabled = false;
       btn.textContent = "🔔 Envoyer sur le site";
       var etaitReponse = Boolean(citationEnCours);
@@ -7131,13 +7238,6 @@
       if (adminUid) {
         sb.from("acces").insert({ user_id: adminUid, page: "MSG_ENVOI:" + payload.id, lieu: JSON.stringify(payload), duree_sec: 0 }).then(function () {});
       }
-      var payloadNtfy = fJoint && JSON.stringify(fJoint).length >= 2600
-        ? Object.assign({}, payload, { fichier: { nom: fJoint.nom, type: fJoint.type, taille: fJoint.taille, depuisDb: true } })
-        : payload;
-      fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-        method: "POST",
-        body: JSON.stringify(payloadNtfy)
-      }).catch(function () {});
     });
   }
 
@@ -7156,7 +7256,6 @@
   var inpMotifVerrou = document.getElementById("sec-motif-verrou");
   var btnSecVerrouiller = document.getElementById("btn-sec-verrouiller");
   var btnSecDeverrouiller = document.getElementById("btn-sec-deverrouiller");
-  var chkSessionUnique = document.getElementById("sec-chk-session-unique");
   var chkEjectDevtools = document.getElementById("sec-chk-eject-devtools");
   var chkAntiTricheOnglet = document.getElementById("sec-chk-antitriche-onglet");
   var chkInactivite = document.getElementById("sec-chk-inactivite");
@@ -7254,7 +7353,6 @@
     if (selVerrouCible && cfgSecuriteAdmin.verrouCible) selVerrouCible.value = cfgSecuriteAdmin.verrouCible;
     if (selPageAutorisee && cfgSecuriteAdmin.pageAutorisee !== undefined) selPageAutorisee.value = cfgSecuriteAdmin.pageAutorisee;
     if (inpMotifVerrou && cfgSecuriteAdmin.motifVerrou) inpMotifVerrou.value = cfgSecuriteAdmin.motifVerrou;
-    if (chkSessionUnique) chkSessionUnique.checked = cfgSecuriteAdmin.sessionUnique !== false;
     if (chkEjectDevtools) chkEjectDevtools.checked = cfgSecuriteAdmin.ejectDevtools !== false;
     if (chkAntiTricheOnglet) chkAntiTricheOnglet.checked = cfgSecuriteAdmin.antiTricheOnglet !== false;
     if (chkInactivite) chkInactivite.checked = cfgSecuriteAdmin.inactiviteActif !== false;
@@ -7352,10 +7450,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "sec_config", payload: cfgSecuriteAdmin });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(cfgSecuriteAdmin)
-    }).catch(function () {});
     if (messageToast) msg(messageToast, "ok");
   }
 
@@ -7505,7 +7599,6 @@
     if (!el) return;
     el.addEventListener("change", function () {
       sauvegarderEtDiffuserConfigSecurite({
-        sessionUnique: chkSessionUnique ? chkSessionUnique.checked : true,
         ejectDevtools: chkEjectDevtools ? chkEjectDevtools.checked : true,
         antiTricheOnglet: chkAntiTricheOnglet ? chkAntiTricheOnglet.checked : true,
         inactiviteActif: chkInactivite ? chkInactivite.checked : true,
@@ -7715,10 +7808,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "tableau_blanc", payload: payload });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }).catch(function () {});
 
     if (actif) {
       msg("📺 Tableau Blanc projeté en direct sur les écrans (" + (payload.cible === "*" ? "Toutes les classes" : payload.cible) + ") !", "ok");
@@ -8152,10 +8241,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "main_levee", payload: payload });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }).catch(function () {});
     rendMainsLevees();
     rendAbonnes();
     if (!silencieux) msg("✅ Demande d'aide traitée (main baissée).", "ok");
@@ -8877,10 +8962,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "coffre_tp", payload: payload });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }).catch(function () {});
 
     if (inpCoffreFile) inpCoffreFile.value = "";
     fichierPretCoffre = null;
@@ -8911,10 +8992,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "coffre_tp", payload: payloadDel });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(payloadDel)
-    }).catch(function () {});
     msg("🗑️ Fichier retiré du coffre des élèves.", "ok");
   }
 
@@ -8938,10 +9015,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "coffre_tp", payload: payloadClear });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(payloadClear)
-    }).catch(function () {});
     msg("🧹 Coffre de partage vidé pour toutes les classes.", "ok");
   }
 
@@ -9252,7 +9325,7 @@
         divKahootVotants.innerHTML = "<em>Aucun vote reçu pour le moment.</em>";
       } else {
         divKahootVotants.innerHTML = votants.map(function (v) {
-          var p = (profiles || []).find(function (x) { return x.id === v.uid; });
+          var p = (profils || []).find(function (x) { return x.id === v.uid; });
           var nomA = v.nom || (p ? ((p.nom || "") + " " + (p.prenom || "")).trim() : "Élève");
           var clA = v.classe || (p && p.classe) || "—";
           var okV = String(v.choix || "").toUpperCase() === bonne;
@@ -9306,10 +9379,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "kahoot_q", payload: payload });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    }).catch(function () {});
     msg("🚀 QCM Live lancé sur les écrans des élèves !", "ok");
   }
 
@@ -9334,10 +9403,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "kahoot_q", payload: qAct });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(qAct)
-    }).catch(function () {});
     msg("🎯 Corrigé (" + qAct.bonneRep + ") révélé sur les écrans des élèves !", "ok");
   }
 
@@ -9363,10 +9428,6 @@
     try {
       sb.channel("sti-diffusion").send({ type: "broadcast", event: "kahoot_q", payload: payloadStop });
     } catch (e) {}
-    fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-      method: "POST",
-      body: JSON.stringify(payloadStop)
-    }).catch(function () {});
     msg("⏹️ QCM Live fermé chez les élèves.", "ok");
   }
 
@@ -9469,7 +9530,7 @@
     var clFiltre = selCopiesClasse ? selCopiesClasse.value : "*";
     var liste = toutes.filter(function (c) {
       if (clFiltre === "*") return true;
-      var p = (profiles || []).find(function (x) { return x.id === c.uid; });
+      var p = (profils || []).find(function (x) { return x.id === c.uid; });
       var cl = c.classe || (p && p.classe) || "";
       return cl === clFiltre;
     });
@@ -9487,7 +9548,7 @@
 
     divListeCopiesTp.innerHTML = "";
     liste.forEach(function (c) {
-      var p = (profiles || []).find(function (x) { return x.id === c.uid; });
+      var p = (profils || []).find(function (x) { return x.id === c.uid; });
       var nomEl = c.nom || (p ? ((p.nom || "") + " " + (p.prenom || "")).trim() : "") || (p && (p.email || p.phone)) || "Élève";
       var clEl = c.classe || (p && p.classe) || "—";
       var dtStr = c.ts ? fmtDate(new Date(c.ts).toISOString()) : "—";
@@ -9544,6 +9605,7 @@
 
       var btnSaveNote = document.createElement("button");
       btnSaveNote.type = "button";
+      btnSaveNote.setAttribute("data-mfa-sensitive", "1");
       btnSaveNote.style.cssText = "border:2px solid #23201a;border-radius:999px;padding:6px 13px;font-size:12px;font-weight:900;background:#177245;color:#fff;cursor:pointer;";
       btnSaveNote.textContent = c.note != null ? "✅ Note envoyée (" + c.note + "/20)" : "✅ Envoyer la note";
       btnSaveNote.addEventListener("click", function () {
@@ -9579,10 +9641,6 @@
         try {
           sb.channel("sti-diffusion").send({ type: "broadcast", event: "copie_note", payload: payloadNote });
         } catch (e) {}
-        fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-          method: "POST",
-          body: JSON.stringify(payloadNote)
-        }).catch(function () {});
         msg("✅ Note " + n20 + "/20 envoyée en direct à " + nomEl + " !", "ok");
       });
 
@@ -9620,7 +9678,7 @@
       var toutes = window.__stiListeCopiesTp || [];
       var lignes = ['"Date";"Nom & Prenom";"Classe";"Type de TP";"Note (/20)";"Observation"'];
       toutes.forEach(function (c) {
-        var p = (profiles || []).find(function (x) { return x.id === c.uid; });
+        var p = (profils || []).find(function (x) { return x.id === c.uid; });
         var nomEl = c.nom || (p ? ((p.nom || "") + " " + (p.prenom || "")).trim() : "Élève");
         var clEl = c.classe || (p && p.classe) || "—";
         var cols = [
@@ -9683,7 +9741,7 @@
 
   function construireMapCodesLaboActifs() {
     var map = {};
-    (profiles || []).forEach(function (p) {
+    (profils || []).forEach(function (p) {
       if (!p || p.statut !== "actif") return;
       var code = calculerCodeBadgeEleve(p);
       map[code] = {
@@ -9703,10 +9761,17 @@
   function synchroniserCodesLaboDansCfgEcoles(silencieux) {
     if (!cfgEcoles) return;
     cfgEcoles.codesLaboMap = construireMapCodesLaboActifs();
-    sauverCfgEcoles();
-    if (!silencieux) {
-      msg("✅ Codes Badges Labo activés et synchronisés sur le portail pour " + Object.keys(cfgEcoles.codesLaboMap).length + " élève(s) actif(s) !", "ok");
-    }
+    sauvegarderCfgEcoles();
+    var entrees = Object.keys(cfgEcoles.codesLaboMap).map(function (code) {
+      return { code: code, profil: cfgEcoles.codesLaboMap[code] };
+    });
+    /* Les codes sont hachés côté base et ne sont jamais placés dans la configuration publique. */
+    sb.rpc("admin_sync_badges", { entrees: entrees }).then(function (r) {
+      if (!silencieux && r && !r.error) {
+        msg("✅ " + entrees.length + " Code(s) Badge synchronisé(s) dans le coffre Supabase.", "ok");
+      }
+    }).catch(function () {});
+    if (!silencieux) msg("⏳ Synchronisation sécurisée de " + entrees.length + " Code(s) Badge…", "ok");
   }
 
   function peuplerBadgesClasse() {
@@ -9726,7 +9791,7 @@
 
   function obtenirElevesBadgesFiltres() {
     var cl = selBadgesClasse ? selBadgesClasse.value : "*";
-    return (profiles || []).filter(function (p) {
+    return (profils || []).filter(function (p) {
       if (!p || p.statut !== "actif") return false;
       return cl === "*" || p.classe === cl;
     }).sort(function (a, b) {
@@ -9761,7 +9826,7 @@
 
   function ouvrirModalBadgesLabo() {
     peuplerBadgesClasse();
-    synchroniserCodesLaboDansCfgEcoles(true);
+    /* La synchronisation distante reste une action explicite protégée par TOTP. */
     rendGrilleBadgesLabo();
     if (modalBadgesLabo) modalBadgesLabo.classList.add("visible");
   }
@@ -9836,10 +9901,6 @@
           try {
             sb.channel("sti-diffusion").send({ type: "broadcast", event: "force_update", payload: payloadUpd });
           } catch (e) {}
-          fetch("https://ntfy.sh/" + CANAL_DIFFUSION, {
-            method: "POST",
-            body: JSON.stringify(payloadUpd)
-          }).catch(function () {});
           msg("🩺 Signal de mise à jour (" + verStr + ") envoyé en direct à tous les PC du Labo 3 (elevelabo3) et aux élèves connectés !", "ok");
         });
     });
@@ -9892,7 +9953,7 @@
 
   function obtenirElevesGrille() {
     var cl = selGrilleClasse ? selGrilleClasse.value : "*";
-    return (profiles || []).filter(function (p) {
+    return (profils || []).filter(function (p) {
       if (!p || p.statut === "exclu") return false;
       return cl === "*" || p.classe === cl;
     }).sort(function (a, b) {
@@ -10147,7 +10208,7 @@
       copies: { lbl: "💻 Copies & TP rendus par les élèves", nb: 0, octets: 0, col: "#15803d" },
       nav: { lbl: "🕒 Historique de navigation & présence", nb: 0, octets: 0, col: "#0284c7" },
       sec: { lbl: "🛡️ Alertes de sécurité & journaux techniques", nb: 0, octets: 0, col: "#c0392b" },
-      quiz: { lbl: "🏆 Notes de Quiz & Profils élèves (🔒 Protégés)", nb: (profiles || []).length, octets: (profiles || []).length * 420, col: "#6d28d9" }
+      quiz: { lbl: "🏆 Notes de Quiz & Profils élèves (🔒 Protégés)", nb: (profils || []).length, octets: (profils || []).length * 420, col: "#6d28d9" }
     };
 
     (tousAcces || []).forEach(function (a) {

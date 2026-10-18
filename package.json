@@ -1,0 +1,11 @@
+{
+  "name": "sti-v2-platform",
+  "private": true,
+  "scripts": {
+    "test:v302": "node --test tests/v302-static.test.mjs",
+    "test:browser:v302": "playwright test --config tests/playwright.config.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  }
+}

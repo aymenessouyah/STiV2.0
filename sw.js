@@ -3,20 +3,128 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v299";
+var CACHE = "sti-atelier-v302";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v299-data-saver-3";
+var UPDATE_ID = "v302-mobile-secure-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./assets/js/acces.js", revision: "session-delta-v3" },
-  { url: "./assets/js/admin.js", revision: "admin-idb-delta-v3" },
-  { url: "./assets/js/portail.js", revision: "session-reuse-v3" },
-  { url: "./assets/js/protection.js", revision: "network-aware-v3" }
+  { url: "./index.html", revision: "csp-v302" },
+  { url: "./portail.html", revision: "csp-v302" },
+  { url: "./admin.html", revision: "csp-v302" },
+  { url: "./assets/js/acces.js", revision: "idb-idempotence-v302" },
+  { url: "./assets/js/admin.js", revision: "delta-pagination-mfa-v302" },
+  { url: "./assets/js/portail.js", revision: "supabase-config-v302" },
+  { url: "./assets/js/protection.js", revision: "hls-diagnostics-v302" },
+  { url: "./assets/js/modules/admin-mfa.js", revision: "mfa-module-v302" },
+  { url: "./assets/js/modules/mobile-diagnostics.js", revision: "diagnostics-module-v302" }
 ];
 var CACHE_REVISIONS = "sti-update-revisions-v1";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
+var CACHE_LRU_META = "sti-runtime-lru-v302";
+var MAX_RUNTIME_BYTES = 180 * 1024 * 1024;
+
+function tailleReponseSTI(rep) {
+  if (!rep || !rep.headers) return 0;
+  var n = parseInt(rep.headers.get("content-length") || "0", 10);
+  return isFinite(n) && n > 0 ? n : 0;
+}
+function cleMetaLRUSTI(url) {
+  return new Request(new URL("./__sti_lru__/" + encodeURIComponent(url), self.location.href).toString());
+}
+async function toucherLRUSTI(req, rep, cacheName, type) {
+  try {
+    var meta = await caches.open(CACHE_LRU_META);
+    var objet = {
+      url: typeof req === "string" ? new URL(req, self.location.href).toString() : req.url,
+      cache: cacheName,
+      type: type || "runtime",
+      bytes: tailleReponseSTI(rep),
+      at: Date.now()
+    };
+    await meta.put(cleMetaLRUSTI(objet.url), new Response(JSON.stringify(objet), { headers: { "Content-Type": "application/json" } }));
+  } catch (e) {}
+}
+async function rafraichirLRUExistantSTI(req, rep, cacheName, type) {
+  try {
+    var url = typeof req === "string" ? new URL(req, self.location.href).toString() : req.url;
+    var meta = await caches.open(CACHE_LRU_META);
+    if (await meta.match(cleMetaLRUSTI(url))) await toucherLRUSTI(req, rep, cacheName, type);
+  } catch (e) {}
+}
+async function lireEntreesLRUSTI() {
+  var meta = await caches.open(CACHE_LRU_META);
+  var cles = await meta.keys();
+  var lignes = [];
+  for (var i = 0; i < cles.length; i++) {
+    try {
+      var r = await meta.match(cles[i]);
+      var j = r ? await r.json() : null;
+      if (j && j.url) { j._metaKey = cles[i]; lignes.push(j); }
+    } catch (e) {}
+  }
+  return lignes;
+}
+async function notifierStockageSTI(extra) {
+  var estimation = {};
+  try {
+    if (self.navigator && self.navigator.storage && self.navigator.storage.estimate) estimation = await self.navigator.storage.estimate();
+  } catch (e) {}
+  var lignes = [];
+  try { lignes = await lireEntreesLRUSTI(); } catch (e) {}
+  var runtime = lignes.reduce(function (n, x) { return n + (Number(x.bytes) || 0); }, 0);
+  var payload = Object.assign({
+    type: "STI_STORAGE_STATUS",
+    usage: Number(estimation.usage) || runtime,
+    quota: Number(estimation.quota) || 0,
+    runtimeBytes: runtime,
+    runtimeEntries: lignes.length
+  }, extra || {});
+  var clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+  for (var c of clients) c.postMessage(payload);
+}
+async function evincerRuntimeLRUSTI(force) {
+  var lignes = await lireEntreesLRUSTI();
+  var estimation = {};
+  try {
+    if (self.navigator && self.navigator.storage && self.navigator.storage.estimate) estimation = await self.navigator.storage.estimate();
+  } catch (e) {}
+  var quota = Number(estimation.quota) || 0;
+  var usage = Number(estimation.usage) || 0;
+  var runtime = lignes.reduce(function (n, x) { return n + (Number(x.bytes) || 0); }, 0);
+  var pression = quota > 0 && usage / quota >= 0.82;
+  if (!force && !pression && runtime <= MAX_RUNTIME_BYTES) { notifierStockageSTI(); return; }
+  lignes.sort(function (a, b) { return (Number(a.at) || 0) - (Number(b.at) || 0); });
+  var cible = force ? 0 : Math.min(MAX_RUNTIME_BYTES * 0.72, pression ? Math.max(0, runtime - (usage - quota * 0.70)) : MAX_RUNTIME_BYTES * 0.72);
+  var liberes = 0;
+  var nb = 0;
+  var meta = await caches.open(CACHE_LRU_META);
+  for (var i = 0; i < lignes.length && runtime - liberes > cible; i++) {
+    var l = lignes[i];
+    try {
+      var c = await caches.open(l.cache === CACHE_VIDEOS_LABO ? CACHE_VIDEOS_LABO : CACHE);
+      await c.delete(l.url, { ignoreSearch: true });
+      await meta.delete(l._metaKey);
+      liberes += Number(l.bytes) || 0;
+      nb++;
+    } catch (e) {}
+  }
+  await notifierStockageSTI({ evictedEntries: nb, evictedBytes: liberes });
+}
+async function mettreCacheRuntimeSTI(cache, req, rep, type) {
+  try {
+    var nomCache = type === "media" ? CACHE_VIDEOS_LABO : CACHE;
+    await cache.put(req, rep);
+    await toucherLRUSTI(req, rep, nomCache, type);
+    await evincerRuntimeLRUSTI(false);
+  } catch (e) {}
+}
+async function signalerCacheEviteSTI(rep) {
+  var octets = tailleReponseSTI(rep);
+  var clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+  for (var c of clients) c.postMessage({ type: "STI_CACHE_HIT", bytes: octets });
+}
 var SHELL = [
   "./",
   "./index.html",
@@ -753,6 +861,14 @@ self.addEventListener("message", function (evt) {
     self.skipWaiting();
     return;
   }
+  if (evt.data.type === "STI_STORAGE_STATUS") {
+    evt.waitUntil(notifierStockageSTI());
+    return;
+  }
+  if (evt.data.type === "STI_EVICT_RUNTIME") {
+    evt.waitUntil(evincerRuntimeLRUSTI(true));
+    return;
+  }
   if (evt.data.type === "PRECACHE_ALL_USER") {
     /* Téléchargement complet uniquement après le clic volontaire « Hors-ligne ». */
     evt.waitUntil(prechargerSequentiel(true));
@@ -767,9 +883,9 @@ self.addEventListener("message", function (evt) {
 
 async function chercherDansCache(req, url) {
   var mExact = await caches.match(req);
-  if (mExact) return mExact;
+  if (mExact) { signalerCacheEviteSTI(mExact); rafraichirLRUExistantSTI(req, mExact, CACHE, "runtime"); return mExact; }
   var m = await caches.match(req, { ignoreSearch: true });
-  if (m) return m;
+  if (m) { signalerCacheEviteSTI(m); rafraichirLRUExistantSTI(req, m, CACHE, "runtime"); return m; }
   if (url.origin === self.location.origin) {
     try {
       var decodedUrl = url.origin + decodeURIComponent(url.pathname);
@@ -819,7 +935,7 @@ self.addEventListener("fetch", function (evt) {
           return fetch(req).then(function (rep) {
             if (rep && (rep.ok || rep.type === "opaque")) {
               var cop = rep.clone();
-              caches.open(CACHE).then(function (c) { c.put(req, cop); });
+              evt.waitUntil(caches.open(CACHE).then(function (c) { return mettreCacheRuntimeSTI(c, req, cop, "cdn"); }));
             }
             return rep;
           }).catch(function () { return Response.error(); });
@@ -897,6 +1013,8 @@ self.addEventListener("fetch", function (evt) {
         }
 
         if (enCache) {
+          signalerCacheEviteSTI(enCache);
+          rafraichirLRUExistantSTI(clePropre, enCache, CACHE_VIDEOS_LABO, "media");
           if (rangeHeader) {
             try {
               var buf = await enCache.clone().arrayBuffer();
@@ -930,9 +1048,9 @@ self.addEventListener("fetch", function (evt) {
           var rep = await fetch(req);
           if (rep && rep.status === 200) {
             var copie = rep.clone();
-            (cVid ? Promise.resolve(cVid) : caches.open(CACHE_VIDEOS_LABO)).then(function (c) {
-              c.put(clePropre, copie);
-            }).catch(function () {});
+            evt.waitUntil((cVid ? Promise.resolve(cVid) : caches.open(CACHE_VIDEOS_LABO)).then(function (c) {
+              return mettreCacheRuntimeSTI(c, clePropre, copie, "media");
+            }).catch(function () {}));
           }
           return rep;
         } catch (err) {
@@ -952,7 +1070,7 @@ self.addEventListener("fetch", function (evt) {
         .then(function (rep) {
           if (rep && rep.status === 200) {
             var copie = rep.clone();
-            caches.open(CACHE).then(function (c) { c.put(req, copie); });
+            evt.waitUntil(caches.open(CACHE).then(function (c) { return mettreCacheRuntimeSTI(c, req, copie, "asset"); }));
           }
           return rep;
         })

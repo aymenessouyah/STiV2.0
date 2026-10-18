@@ -1,0 +1,32 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>STI v302 — Outbox harness</title>
+<script>
+window.STI_AUTH = { URL: 'https://example.invalid', CLE: 'test', RACINE: './' };
+(function () {
+  var chaine;
+  chaine = new Proxy({}, {
+    get: function (_t, prop) {
+      if (prop === 'then') return function (resolve) { return Promise.resolve({ data: [], error: null }).then(resolve); };
+      return function () { return chaine; };
+    }
+  });
+  var canal = { on: function () { return canal; }, subscribe: function () { return canal; }, send: function () { return Promise.resolve(); }, unsubscribe: function () {} };
+  window.supabase = { createClient: function () {
+    return {
+      auth: {
+        getSession: function () { return new Promise(function () {}); },
+        onAuthStateChange: function () { return { data: { subscription: { unsubscribe: function () {} } } }; },
+        signOut: function () { return Promise.resolve(); }
+      },
+      from: function () { return chaine; },
+      channel: function () { return canal; },
+      removeChannel: function () {},
+      rpc: function () { return Promise.resolve({ data: null, error: null }); },
+      storage: { from: function () { return chaine; } }
+    };
+  } };
+})();
+</script>
+<script src="../assets/js/acces.js"></script>
+<p>Harnais IndexedDB v302</p>
