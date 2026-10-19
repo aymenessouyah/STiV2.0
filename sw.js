@@ -1,4 +1,4 @@
-/* STI by AE — Service Worker hors-ligne (PC Windows & Mobile) — v47 incrémentale
+/* STI by AE — Service Worker hors-ligne (PC Windows & Mobile) — v48 incrémentale
    RÈGLE MOBILE : une mise à jour automatique ne télécharge que les fichiers réellement modifiés.
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v316-windows-logo-update-ui-1";
+var UPDATE_ID = "v316-sql-serie42-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -28,7 +28,8 @@ var UPDATE_FILES = [
   { url: "./assets/js/modules/labo-device-client.js", revision: "labo-portable-local-v315" },
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" },
   { url: "./assets/js/modules/labo-offline-diagnostics.js", revision: "offline-diagnostics-v315" },
-  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-logo-update-1" },
+  { url: "./exercices/series-exercices.html", revision: "sql-serie42-gestlocation-v316-1" },
+  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-sql-serie42-1" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
   { url: "./Lancer-Labo3-Hors-Ligne.ps1", revision: "portable-powershell-server-v315" }
 ];
@@ -613,6 +614,10 @@ var OFFLINE_LIST = [
   "./exercices/sql/Tp2-bd.html",
   "./exercices/sql/Tp3-Correction-bd.html",
   "./exercices/sql/Tp4-correction-bd.html",
+  "./exercices/sql/Série 4.2 - GestLocation - énoncé.pdf",
+  "./exercices/sql/Série 4.2 - GestLocation - Corrigé.pdf",
+  "./exercices/sql/Série 4.2 - GestLocation - Vidéo.mp4",
+  "./exercices/sql/Série 4.2 - GestLocation - MySQL.sql",
   "./exercices/sql/atelier_sql_3_fenetres.html",
   "./exercices/sql/sql-correction.html",
   "./exercices/sql/sql.html",
