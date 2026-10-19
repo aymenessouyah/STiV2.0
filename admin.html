@@ -1423,12 +1423,20 @@
       </span>
     </button>
 
-    <!-- PÔLE 3 : CLASSE, SÉCURITÉ & SUIVI (3 cartes) -->
+    <!-- PÔLE 3 : CLASSE, SÉCURITÉ & SUIVI (4 cartes) -->
     <button class="carte-action" id="btn-securite-card" data-pole-item="classe" type="button">
       <span class="ca-ico orange" style="background:linear-gradient(135deg,#fde2e6,#c0392b)">🛡️</span>
       <span class="ca-corps">
         <span class="ca-titre">Sécurité &amp; Mode Examen</span>
         <span class="ca-desc">Verrouillage classe, sessions Supabase, alertes F12 &amp; anti-triche</span>
+      </span>
+    </button>
+
+    <button class="carte-action" id="btn-mdp-oublie-card" data-pole-item="classe" type="button">
+      <span class="ca-ico" style="background:linear-gradient(135deg,#dbeafe,#2563eb);color:#fff">🔐</span>
+      <span class="ca-corps">
+        <span class="ca-titre">Mot de passe candidat oublié</span>
+        <span class="ca-desc">Rechercher un candidat et définir un nouveau mot de passe</span>
       </span>
     </button>
 
@@ -1695,15 +1703,41 @@
     </div>
   </div>
 
-  <!-- Boîte de changement de mot de passe -->
-  <div class="modal-fond" id="modal-mdp" role="dialog" aria-modal="true">
-    <div class="modal-boite">
-      <h3>🔑 Nouveau mot de passe</h3>
-      <p>Définir un nouveau mot de passe pour <b id="mdp-cible"></b> (6 caractères minimum) :</p>
-      <input type="text" id="inp-nouveau-mdp" placeholder="Nouveau mot de passe…" autocomplete="off" />
+  <!-- Outil administrateur : mot de passe candidat oublié -->
+  <div class="modal-fond" id="modal-mdp" role="dialog" aria-modal="true" aria-labelledby="titre-modal-mdp">
+    <div class="modal-boite" style="max-width:540px">
+      <h3 id="titre-modal-mdp">🔐 Mot de passe candidat oublié</h3>
+      <p style="line-height:1.5">Sélectionnez le candidat puis définissez un nouveau mot de passe. L’ancien mot de passe reste invisible et n’est jamais récupéré.</p>
+
+      <label for="sel-mdp-candidat" style="display:block;font-size:12px;font-weight:900;margin:0 0 5px;color:#23201a">👤 Candidat</label>
+      <select id="sel-mdp-candidat" style="width:100%;border:2px solid #23201a;border-radius:10px;padding:9px 11px;background:#fff;color:#23201a;font-weight:800;margin-bottom:8px">
+        <option value="">— Choisir un candidat —</option>
+      </select>
+      <div id="resume-mdp-candidat" class="resume-classe-modal" style="display:none;margin-bottom:12px"></div>
+      <b id="mdp-cible" style="display:none"></b>
+
+      <label for="inp-nouveau-mdp" style="display:block;font-size:12px;font-weight:900;margin:0 0 5px;color:#23201a">🔑 Nouveau mot de passe — 8 caractères minimum</label>
+      <div style="display:flex;gap:7px;align-items:stretch;margin-bottom:9px">
+        <input type="password" id="inp-nouveau-mdp" minlength="8" placeholder="Nouveau mot de passe…" autocomplete="new-password" style="flex:1;margin:0" />
+        <button type="button" id="btn-generer-mdp" class="btn-outil" title="Générer un mot de passe temporaire fort">🎲 Générer</button>
+      </div>
+
+      <label for="inp-confirmer-mdp" style="display:block;font-size:12px;font-weight:900;margin:0 0 5px;color:#23201a">✅ Confirmer le nouveau mot de passe</label>
+      <input type="password" id="inp-confirmer-mdp" minlength="8" placeholder="Confirmer le nouveau mot de passe…" autocomplete="new-password" style="margin-bottom:8px" />
+
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:4px 0 12px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#5a5244;cursor:pointer">
+          <input type="checkbox" id="chk-afficher-mdp" style="width:auto;margin:0" /> Afficher le mot de passe
+        </label>
+        <button type="button" id="btn-copier-mdp" class="btn-outil" title="Copier le mot de passe afin de le transmettre au candidat">📋 Copier</button>
+      </div>
+
+      <div style="background:#fff7ed;border:1.5px solid #f4511e;border-radius:10px;padding:9px 11px;margin-bottom:13px;font-size:11.5px;line-height:1.45;color:#7c2d12;font-weight:750">
+        🛡️ Action réservée à l’administrateur avec validation MFA. Le mot de passe n’est jamais affiché dans les journaux du tableau de bord.
+      </div>
       <div class="modal-actions">
         <button type="button" id="btn-annuler-mdp">Annuler</button>
-        <button type="button" class="btn-valider" id="btn-confirmer-mdp">✅ Confirmer</button>
+        <button type="button" class="btn-valider" id="btn-confirmer-mdp">✅ Enregistrer le nouveau mot de passe</button>
       </div>
     </div>
   </div>
@@ -3404,7 +3438,7 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
-  <script src="assets/js/admin.js?v=303"></script>
+  <script src="assets/js/admin.js?v=303-password-1"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>

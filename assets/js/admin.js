@@ -3382,7 +3382,7 @@
         if (tel) {
           bouton("💬", function () { envoyerCodeWhatsApp(p, tel); }, "", "Envoyer le code de confirmation par WhatsApp");
         }
-        bouton("🔑", function () { nouveauMdp(p); }, "", "Définir un nouveau mot de passe");
+        bouton("🔑", function () { nouveauMdp(p); }, "", "Mot de passe candidat oublié");
         bouton("🔎", function () { detail(p); }, "", "Voir l'historique des connexions");
         bouton("🗑️", function () { supprimer(p); }, "del", "Supprimer définitivement");
         return tdAct;
@@ -4804,33 +4804,165 @@
     });
   }
 
-  /* ---------- Boîte modale : nouveau mot de passe ---------- */
+  /* ---------- Outil administrateur : Mot de passe candidat oublié ---------- */
   var modalMdp = document.getElementById("modal-mdp");
+  var selMdpCandidat = document.getElementById("sel-mdp-candidat");
+  var resumeMdpCandidat = document.getElementById("resume-mdp-candidat");
   var inpMdp = document.getElementById("inp-nouveau-mdp");
+  var inpMdp2 = document.getElementById("inp-confirmer-mdp");
+  var chkAfficherMdp = document.getElementById("chk-afficher-mdp");
+  var btnGenererMdp = document.getElementById("btn-generer-mdp");
+  var btnCopierMdp = document.getElementById("btn-copier-mdp");
   var btnConfMdp = document.getElementById("btn-confirmer-mdp");
-  document.getElementById("btn-annuler-mdp").addEventListener("click", function () {
-    modalMdp.classList.remove("visible"); cibleMdp = null;
+  var btnMdpOublieCard = document.getElementById("btn-mdp-oublie-card");
+
+  function estCompteSystemeMdp(p) {
+    var email = String((p && p.email) || "").toLowerCase();
+    return !p || estAdminEmail(email) || email === "elevelabo3@exemple.tn";
+  }
+
+  function candidatsPourMotDePasse() {
+    return profils.filter(function (p) { return !estCompteSystemeMdp(p); }).sort(function (a, b) {
+      var na = ((a.nom || "") + " " + (a.prenom || "") + " " + contact(a)).toLowerCase();
+      var nb = ((b.nom || "") + " " + (b.prenom || "") + " " + contact(b)).toLowerCase();
+      return na.localeCompare(nb, "fr");
+    });
+  }
+
+  function remplirCandidatsMdp(cibleId) {
+    var liste = candidatsPourMotDePasse();
+    selMdpCandidat.innerHTML = '<option value="">— Choisir un candidat —</option>';
+    liste.forEach(function (p) {
+      var opt = document.createElement("option");
+      opt.value = p.id;
+      var nom = ((p.prenom || "") + " " + (p.nom || "")).trim() || "Candidat";
+      opt.textContent = nom + " — " + contact(p) + " — " + (p.classe || "sans classe");
+      selMdpCandidat.appendChild(opt);
+    });
+    if (cibleId && liste.some(function (p) { return String(p.id) === String(cibleId); })) {
+      selMdpCandidat.value = String(cibleId);
+    }
+    if (!liste.length) {
+      var vide = document.createElement("option");
+      vide.value = ""; vide.textContent = "Aucun candidat disponible";
+      selMdpCandidat.appendChild(vide);
+    }
+    actualiserCibleMdp();
+  }
+
+  function actualiserCibleMdp() {
+    var id = String(selMdpCandidat.value || "");
+    cibleMdp = profils.find(function (p) { return String(p.id) === id && !estCompteSystemeMdp(p); }) || null;
+    document.getElementById("mdp-cible").textContent = cibleMdp ? contact(cibleMdp) : "";
+    if (!cibleMdp) {
+      resumeMdpCandidat.style.display = "none";
+      resumeMdpCandidat.textContent = "";
+      return;
+    }
+    var nom = ((cibleMdp.prenom || "") + " " + (cibleMdp.nom || "")).trim() || "Candidat";
+    resumeMdpCandidat.textContent = "👤 " + nom + " · 📬 " + contact(cibleMdp) + " · 🏫 " +
+      (cibleMdp.lycee || "Lycée non indiqué") + " / " + (cibleMdp.classe || "Classe non indiquée") +
+      " · État : " + (LIB[cibleMdp.statut] || cibleMdp.statut || "—");
+    resumeMdpCandidat.style.display = "block";
+  }
+
+  function fermerModalMdp() {
+    modalMdp.classList.remove("visible");
+    cibleMdp = null;
+    inpMdp.value = ""; inpMdp2.value = "";
+    inpMdp.type = "password"; inpMdp2.type = "password";
+    chkAfficherMdp.checked = false;
+    selMdpCandidat.value = "";
+    resumeMdpCandidat.style.display = "none";
+  }
+
+  function entierAleatoire(max) {
+    if (window.crypto && window.crypto.getRandomValues) {
+      var a = new Uint32Array(1); window.crypto.getRandomValues(a); return a[0] % max;
+    }
+    return Math.floor(Math.random() * max);
+  }
+
+  function genererMdpTemporaire() {
+    var groupes = ["ABCDEFGHJKLMNPQRSTUVWXYZ", "abcdefghijkmnopqrstuvwxyz", "23456789", "!@#$%*-_+"];
+    var tous = groupes.join("");
+    var chars = groupes.map(function (g) { return g.charAt(entierAleatoire(g.length)); });
+    while (chars.length < 14) chars.push(tous.charAt(entierAleatoire(tous.length)));
+    for (var i = chars.length - 1; i > 0; i--) {
+      var j = entierAleatoire(i + 1); var tmp = chars[i]; chars[i] = chars[j]; chars[j] = tmp;
+    }
+    var mdp = chars.join("");
+    inpMdp.value = mdp; inpMdp2.value = mdp;
+    inpMdp.type = "text"; inpMdp2.type = "text"; chkAfficherMdp.checked = true;
+    inpMdp.focus(); inpMdp.select();
+    msg("🎲 Mot de passe temporaire fort généré. Copiez-le avant de confirmer.", "ok");
+  }
+
+  function copierMdpCandidat() {
+    var valeur = inpMdp.value;
+    if (!valeur) { msg("❌ Saisissez ou générez d’abord le nouveau mot de passe.", "err"); return; }
+    function succes() { msg("📋 Mot de passe copié. Transmettez-le au candidat par un canal privé.", "ok"); }
+    function secours() {
+      inpMdp.type = "text"; chkAfficherMdp.checked = true; inpMdp.focus(); inpMdp.select();
+      try { document.execCommand("copy"); succes(); }
+      catch (e) { msg("⚠️ Copie automatique impossible : sélectionnez puis copiez le champ manuellement.", "err"); }
+    }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(valeur).then(succes).catch(secours);
+    else secours();
+  }
+
+  document.getElementById("btn-annuler-mdp").addEventListener("click", fermerModalMdp);
+  selMdpCandidat.addEventListener("change", actualiserCibleMdp);
+  chkAfficherMdp.addEventListener("change", function () {
+    var type = chkAfficherMdp.checked ? "text" : "password";
+    inpMdp.type = type; inpMdp2.type = type;
   });
+  btnGenererMdp.addEventListener("click", genererMdpTemporaire);
+  btnCopierMdp.addEventListener("click", copierMdpCandidat);
+  if (btnMdpOublieCard) btnMdpOublieCard.addEventListener("click", function () { nouveauMdp(null); });
+  [inpMdp, inpMdp2].forEach(function (inp) {
+    inp.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); btnConfMdp.click(); }
+    });
+  });
+
   btnConfMdp.addEventListener("click", function () {
-    if (!cibleMdp) return;
+    actualiserCibleMdp();
+    if (!cibleMdp) { msg("❌ Choisissez d’abord le candidat concerné.", "err"); selMdpCandidat.focus(); return; }
     var mdp = inpMdp.value;
-    if (!mdp || mdp.length < 6) { msg("❌ Mot de passe trop court (6 caractères minimum).", "err"); return; }
+    if (!mdp || mdp.length < 8) { msg("❌ Mot de passe trop court (8 caractères minimum).", "err"); inpMdp.focus(); return; }
+    if (mdp !== inpMdp2.value) { msg("❌ Les deux saisies du mot de passe ne correspondent pas.", "err"); inpMdp2.focus(); return; }
     var p = cibleMdp;
     btnConfMdp.disabled = true;
+    btnConfMdp.textContent = "⏳ Enregistrement…";
     sb.rpc("admin_set_password", { uid: p.id, newpass: mdp }).then(function (r) {
       btnConfMdp.disabled = false;
-      modalMdp.classList.remove("visible"); cibleMdp = null;
-      if (r.error) { msg("❌ " + r.error.message, "err"); return; }
-      msg("🔑 Mot de passe de " + contact(p) + " défini.", "ok");
+      btnConfMdp.textContent = "✅ Enregistrer le nouveau mot de passe";
+      if (r.error) {
+        var detail = r.error.message || "Réinitialisation refusée";
+        if (/aal2|mfa/i.test(detail)) detail = "Validation MFA requise : reconnectez-vous avec votre second facteur puis réessayez.";
+        msg("❌ " + detail, "err");
+        return;
+      }
+      fermerModalMdp();
+      msg("🔐 Nouveau mot de passe enregistré pour " + contact(p) + ".", "ok");
+    }).catch(function (err) {
+      btnConfMdp.disabled = false;
+      btnConfMdp.textContent = "✅ Enregistrer le nouveau mot de passe";
+      msg("❌ Erreur réseau : " + ((err && err.message) || "réessayez dans quelques instants"), "err");
     });
   });
 
   function nouveauMdp(p) {
-    cibleMdp = p;
-    document.getElementById("mdp-cible").textContent = contact(p);
-    inpMdp.value = "";
+    if (p && estCompteSystemeMdp(p)) {
+      msg("❌ Cet outil est réservé aux comptes candidats, pas aux comptes système ou administrateur.", "err");
+      return;
+    }
+    remplirCandidatsMdp(p && p.id);
+    inpMdp.value = ""; inpMdp2.value = "";
+    inpMdp.type = "password"; inpMdp2.type = "password"; chkAfficherMdp.checked = false;
     modalMdp.classList.add("visible");
-    setTimeout(function () { inpMdp.focus(); }, 30);
+    setTimeout(function () { (p ? inpMdp : selMdpCandidat).focus(); }, 30);
   }
 
   /* ---------- Boîte modale : suppression définitive ---------- */
