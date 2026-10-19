@@ -1,4 +1,4 @@
-/* STI v306 — identité, localisation datée et messages ciblés du compte partagé elevelabo3 */
+/* STI v311 — identité, localisation datée et messages ciblés du compte partagé elevelabo3 */
 const TARGET_EMAIL = "elevelabo3@exemple.tn";
 const DB_NAME = "sti-labo-device-v303";
 const STORE = "identity";
@@ -6,9 +6,19 @@ const KEY = "current";
 const PROOF_KEY = "sti-labo-device-proof-v303";
 const GEO_CACHE_KEY = "sti-geo-cache";
 const GEO_CACHE_MAX_AGE = 7 * 86400000;
+const OFFLINE_APPROVAL_KEY = "sti-labo-device-approved-v311";
+const MESSAGE_CACHE_KEY = "sti-labo-device-messages-cache-v311";
+const MESSAGE_READ_KEY = "sti-labo-device-messages-read-v311";
 
 export function isRestrictedLaboAccount(email) {
   return String(email || "").trim().toLowerCase() === TARGET_EMAIL;
+}
+
+function withTimeout(promise, delay, fallback) {
+  return Promise.race([
+    Promise.resolve(promise),
+    new Promise(resolve => setTimeout(() => resolve(fallback), delay))
+  ]);
 }
 
 function randomBase64Url(bytes) {
@@ -148,15 +158,23 @@ function writeProof(deviceId) {
   try { sessionStorage.setItem(PROOF_KEY, JSON.stringify({ deviceId, until: Date.now() + 120000 })); } catch (_) {}
 }
 
-function clearLegacyLaboState() {
+function readOfflineApproval(deviceId) {
   try {
-    localStorage.removeItem("sti-labo3-permanent");
-    localStorage.removeItem("sti-labo-badge-sess");
+    const p = JSON.parse(localStorage.getItem(OFFLINE_APPROVAL_KEY) || "null");
+    return Boolean(p && p.deviceId === deviceId && p.approved === true);
+  } catch (_) { return false; }
+}
+function writeOfflineApproval(deviceId) {
+  try { localStorage.setItem(OFFLINE_APPROVAL_KEY, JSON.stringify({ deviceId, approved: true, at: Date.now() })); } catch (_) {}
+}
+function preserveLaboOfflineSession() {
+  try {
     const c = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
-    if (c && isRestrictedLaboAccount(c.email)) {
-      c.permanent = false;
+    if (c && isRestrictedLaboAccount(c.email) && c.statut === "actif") {
+      c.permanent = true;
+      c.deviceControlled = true;
       localStorage.setItem("sti-session-cache", JSON.stringify(c));
-      localStorage.removeItem("sti-cred");
+      localStorage.setItem("sti-labo3-permanent", JSON.stringify(c));
     }
   } catch (_) {}
 }
@@ -174,7 +192,7 @@ export function createLaboDeviceClient(options) {
   let lastPopupId = "";
   let locationRefreshStarted = false;
 
-  clearLegacyLaboState();
+  preserveLaboOfflineSession();
 
   function removeGate() {
     const el = document.getElementById("sti-labo-device-gate");
@@ -218,14 +236,18 @@ export function createLaboDeviceClient(options) {
   async function authorize() {
     const sessionInfo = await getTargetSession();
     if (!sessionInfo.target) return { ok: true, skipped: true };
-    clearLegacyLaboState();
+    preserveLaboOfflineSession();
+    identity = identity || await getIdentity();
     if (!navigator.onLine) {
-      showGate("🔒 Compte Labo hors ligne", "Une connexion Internet est obligatoire pour identifier et autoriser cette machine.", false);
-      return { ok: false, code: "offline" };
+      if (readOfflineApproval(identity.deviceId)) {
+        removeGate();
+        return { ok: true, offline: true, deviceId: identity.deviceId, name: "Poste Labo 3" };
+      }
+      showGate("🔒 Première autorisation requise", "Connectez cette machine une première fois à Internet afin de l’autoriser. Elle fonctionnera ensuite hors ligne.", false);
+      return { ok: false, code: "offline_first_authorization" };
     }
     const quiet = Boolean(readProof());
     if (!quiet) showGate("🖥️ Vérification de la machine", "Identification sécurisée de ce poste en cours…", false);
-    identity = identity || await getIdentity();
     if (!locationRefreshStarted && !readApproxLocation()) {
       locationRefreshStarted = true;
       refreshApproxLocation().then(approxLocation => {
@@ -237,12 +259,17 @@ export function createLaboDeviceClient(options) {
         });
       }).catch(() => {});
     }
-    const response = await sb.rpc("labo_device_open_session", {
+    const response = await withTimeout(sb.rpc("labo_device_open_session", {
       p_device_id: identity.deviceId,
       p_device_secret: identity.secret,
       p_device_info: browserInfo()
-    });
+    }), 8000, { error: { message: "Délai de vérification dépassé." } });
     if (response.error) {
+      if (readOfflineApproval(identity.deviceId)) {
+        removeGate();
+        notify("📴 Serveur indisponible : fonctionnement temporaire avec l’autorisation locale de cette machine.");
+        return { ok: true, localFallback: true, deviceId: identity.deviceId, name: "Poste Labo 3" };
+      }
       showGate("⚠️ Contrôle machine indisponible", response.error.message || "Le serveur a refusé la vérification.", true);
       return { ok: false, code: "rpc_error", error: response.error };
     }
@@ -251,10 +278,20 @@ export function createLaboDeviceClient(options) {
       const blocked = data.code === "blocked";
       showGate(blocked ? "⛔ Poste bloqué" : "⛔ Identité machine refusée",
         blocked ? "L’administrateur a supprimé l’accès de cette machine. Contactez-le pour une nouvelle autorisation." : "Cette identité machine ne correspond pas au poste enregistré.", true);
-      try { sessionStorage.removeItem(PROOF_KEY); } catch (_) {}
+      try {
+        sessionStorage.removeItem(PROOF_KEY);
+        if (blocked) {
+          localStorage.removeItem(OFFLINE_APPROVAL_KEY);
+          localStorage.removeItem("sti-labo3-permanent");
+          localStorage.removeItem("sti-session-cache");
+          localStorage.removeItem("sti-cred");
+        }
+      } catch (_) {}
       return { ok: false, code: data.code || "denied", deviceId: data.device_id || identity.deviceId };
     }
     writeProof(identity.deviceId);
+    writeOfflineApproval(identity.deviceId);
+    preserveLaboOfflineSession();
     removeGate();
     if (data.new_device) notify("✅ Nouveau poste ajouté automatiquement à la liste administrateur.", "ok");
     return { ok: true, deviceId: identity.deviceId, name: data.name || "Poste Labo 3", fresh: true };
@@ -282,6 +319,46 @@ export function createLaboDeviceClient(options) {
     modal.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
   }
 
+  function readLocalReadIds() {
+    try { return JSON.parse(localStorage.getItem(MESSAGE_READ_KEY) || "[]") || []; } catch (_) { return []; }
+  }
+  function writeLocalReadIds(ids) {
+    try { localStorage.setItem(MESSAGE_READ_KEY, JSON.stringify(Array.from(new Set(ids)).slice(-500))); } catch (_) {}
+  }
+  function readCachedMessages() {
+    try { return JSON.parse(localStorage.getItem(MESSAGE_CACHE_KEY) || "[]") || []; } catch (_) { return []; }
+  }
+  function writeCachedMessages(rows) {
+    try { localStorage.setItem(MESSAGE_CACHE_KEY, JSON.stringify((rows || []).slice(0, 100))); } catch (_) {}
+  }
+  function applyLocalRead(rows) {
+    const ids = new Set(readLocalReadIds());
+    return (rows || []).map(row => ids.has(row.id) ? Object.assign({}, row, { read_at: row.read_at || new Date().toISOString() }) : row);
+  }
+  function queueAck(id) {
+    const ids = readLocalReadIds();
+    if (ids.indexOf(id) === -1) ids.push(id);
+    writeLocalReadIds(ids);
+    const cache = applyLocalRead(readCachedMessages());
+    writeCachedMessages(cache);
+  }
+  async function flushAckQueue() {
+    if (!identity || !navigator.onLine) return;
+    const ids = readLocalReadIds();
+    if (!ids.length) return;
+    const outcomes = await Promise.all(ids.map(async id => {
+      try {
+        const result = await withTimeout(
+          sb.rpc("labo_device_mark_message", { p_message_id: id }),
+          5000,
+          { error: { message: "timeout" } }
+        );
+        return result && result.error ? id : null;
+      } catch (_) { return id; }
+    }));
+    writeLocalReadIds(outcomes.filter(Boolean));
+  }
+
   function renderMessages(rows) {
     ensureInbox();
     const list = document.getElementById("sti-labo-device-message-list");
@@ -298,35 +375,63 @@ export function createLaboDeviceClient(options) {
       const ack = document.createElement("button"); ack.type = "button"; ack.textContent = row.read_at ? "✓ Lu" : "✅ Marquer comme lu";
       ack.disabled = Boolean(row.read_at);
       ack.style.cssText = "display:block;margin-top:8px;padding:6px 10px;border:1px solid #23201a;border-radius:7px;font-weight:800";
-      ack.onclick = () => sb.rpc("labo_device_mark_message", { p_message_id: row.id }).then(() => loadMessages(false));
+      ack.onclick = () => {
+        queueAck(row.id);
+        renderMessages(applyLocalRead(readCachedMessages()));
+        flushAckQueue().then(() => loadMessages(false)).catch(() => {});
+      };
       item.append(body, date, ack); list.appendChild(item);
     });
   }
 
   function popupMessage(row) {
-    if (!row || row.read_at || row.id === lastPopupId) return;
+    if (!row || row.read_at || readLocalReadIds().indexOf(row.id) !== -1 || row.id === lastPopupId) return;
     lastPopupId = row.id;
     const overlay = document.createElement("div");
+    overlay.className = "sti-labo-prof-message-popup";
     overlay.style.cssText = "position:fixed;inset:0;z-index:30000;background:#101418dd;display:grid;place-items:center;padding:20px";
     const card = document.createElement("section");
-    card.style.cssText = "width:min(520px,100%);background:#fffdf7;color:#23201a;border:3px solid #23201a;border-radius:18px;padding:22px;box-shadow:8px 8px 0 #0007";
+    card.style.cssText = "position:relative;width:min(520px,100%);background:#fffdf7;color:#23201a;border:3px solid #23201a;border-radius:18px;padding:22px;box-shadow:8px 8px 0 #0007";
     const h = document.createElement("h2"); h.textContent = "📨 Message du professeur";
     const p = document.createElement("p"); p.textContent = row.body || ""; p.style.cssText = "font-size:1.08rem;font-weight:800;white-space:pre-wrap";
-    const b = document.createElement("button"); b.type = "button"; b.textContent = "✅ Lu";
-    b.style.cssText = "padding:9px 15px;border:2px solid #23201a;border-radius:8px;background:#177245;color:white;font-weight:900";
-    b.onclick = () => sb.rpc("labo_device_mark_message", { p_message_id: row.id }).finally(() => { overlay.remove(); loadMessages(false); });
+    const b = document.createElement("button"); b.type = "button"; b.textContent = "✅ Lu et fermer";
+    b.style.cssText = "padding:9px 15px;border:2px solid #23201a;border-radius:8px;background:#177245;color:white;font-weight:900;cursor:pointer";
+    const close = () => {
+      document.removeEventListener("keydown", onKey);
+      if (!overlay.isConnected) return;
+      queueAck(row.id);
+      overlay.remove();
+      renderMessages(applyLocalRead(readCachedMessages()));
+      if (navigator.onLine) flushAckQueue().then(() => loadMessages(false)).catch(() => {});
+    };
+    b.onclick = close;
+    overlay.onclick = event => { if (event.target === overlay) close(); };
+    const onKey = event => { if (event.key === "Escape") { document.removeEventListener("keydown", onKey); close(); } };
+    document.addEventListener("keydown", onKey);
     card.append(h, p, b); overlay.appendChild(card); document.body.appendChild(overlay);
+    try { b.focus(); } catch (_) {}
   }
 
   async function loadMessages(showPopup = true) {
-    if (!identity || !navigator.onLine) return [];
+    identity = identity || await getIdentity();
+    if (!navigator.onLine) {
+      const cached = applyLocalRead(readCachedMessages());
+      renderMessages(cached);
+      return cached;
+    }
+    await flushAckQueue();
     const result = await sb.from("labo_device_messages")
       .select("id,body,created_at,read_at")
       .eq("device_id", identity.deviceId)
       .order("created_at", { ascending: false })
       .limit(100);
-    if (result.error) return [];
-    const rows = result.data || [];
+    if (result.error) {
+      const cached = applyLocalRead(readCachedMessages());
+      renderMessages(cached);
+      return cached;
+    }
+    const rows = applyLocalRead(result.data || []);
+    writeCachedMessages(rows);
     renderMessages(rows);
     const unread = rows.filter(r => !r.read_at);
     const button = document.getElementById("sti-labo-device-inbox");
@@ -360,11 +465,15 @@ export function createLaboDeviceClient(options) {
     const result = await heartbeat();
     if (!result.ok) return result;
     ensureInbox();
-    await loadMessages(true);
+    loadMessages(true).catch(() => {});
     heartbeatTimer = setInterval(heartbeat, 45000);
     messageTimer = setInterval(() => loadMessages(true), 15000);
-    window.addEventListener("offline", () => showGate("🔒 Compte Labo hors ligne", "Cette machine est verrouillée tant que la connexion Internet n’est pas rétablie.", false));
-    window.addEventListener("online", () => heartbeat().then(r => { if (r.ok) loadMessages(true); }));
+    window.addEventListener("offline", () => {
+      removeGate();
+      notify("📴 Mode hors ligne : les cours en cache restent disponibles et les messages déjà reçus restent consultables.");
+      loadMessages(false).catch(() => {});
+    });
+    window.addEventListener("online", () => heartbeat().then(r => { if (r.ok) return flushAckQueue().then(() => loadMessages(true)); }));
     document.addEventListener("visibilitychange", () => { if (!document.hidden && navigator.onLine) heartbeat(); });
     return result;
   }

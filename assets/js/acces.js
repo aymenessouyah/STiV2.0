@@ -49,14 +49,18 @@
     document.documentElement.classList.remove("sti-labo-device-pending-v303");
   }
   try {
-    localStorage.removeItem("sti-labo3-permanent");
-    if (cacheLaboRestreintV303()) localStorage.removeItem("sti-cred");
+    var cacheLaboV311 = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+    if (cacheLaboV311 && estCompteLaboRestreintV303(cacheLaboV311.email) && cacheLaboV311.statut === "actif") {
+      cacheLaboV311.permanent = true;
+      cacheLaboV311.deviceControlled = true;
+      localStorage.setItem("sti-labo3-permanent", JSON.stringify(cacheLaboV311));
+    }
   } catch (e) {}
   masquerContenuLaboV303();
   var apiLaboDevicePageV303 = null;
   function chargerControlePosteLaboV303() {
     if (apiLaboDevicePageV303) return Promise.resolve(apiLaboDevicePageV303);
-    return import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=303").then(function (m) {
+    return import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=311").then(function (m) {
       if (!apiLaboDevicePageV303) {
         apiLaboDevicePageV303 = m.createLaboDeviceClient({ sb: sb, root: cfg.RACINE, notify: function (texte) {
           try { if (typeof afficherToastSynchro === "function") afficherToastSynchro(texte); } catch (e) {}
@@ -1359,8 +1363,9 @@
     try {
       var perm = JSON.parse(localStorage.getItem("sti-labo3-permanent") || "null");
       if (perm && estCompteLaboRestreintV303(perm.email)) {
-        localStorage.removeItem("sti-labo3-permanent");
-        perm = null;
+        perm.permanent = true;
+        perm.deviceControlled = true;
+        perm.statut = "actif";
       }
       if (perm && estClasseProfLabo(perm.classe, perm.email)) {
         perm.ts = Date.now();
@@ -1420,7 +1425,7 @@
         if (!c.statut || c.statut === "en_attente") c.statut = "actif";
         c.isAdmin = false;
       }
-      if (c && estClasseProfLabo(c.classe, c.email) && !estCompteLaboRestreintV303(c.email)) {
+      if (c && estClasseProfLabo(c.classe, c.email)) {
         c.ts = Date.now();
         c.gold = true;
         c.statut = "actif";
@@ -1440,10 +1445,6 @@
 
   function restaurerDepuisCacheLocal() {
     var cache = lireCacheSessionLocal();
-    if (cache && estCompteLaboRestreintV303(cache.email)) {
-      masquerContenuLaboV303();
-      return false;
-    }
     var estLaboPerm = Boolean(cache && (cache.permanent || estClasseProfLabo(cache.classe, cache.email)));
     var sessionPcPerm = Boolean(estPostePC() && cache && cache.statut === "actif");
     var tOff = parseInt(localStorage.getItem("sti-offline") || "0", 10);
@@ -1544,12 +1545,6 @@
     var user = session.user;
     if (estCompteLaboRestreintV303(user && user.email)) {
       masquerContenuLaboV303();
-      if (!navigator.onLine || !preuvePosteFraicheV303()) {
-        chargerControlePosteLaboV303().then(function (api) { return api.authorize(); }).then(function (result) {
-          if (result && result.ok) location.reload();
-        }).catch(function () {});
-        return;
-      }
       chargerControlePosteLaboV303().then(function (api) {
         return api.start();
       }).then(function (result) {

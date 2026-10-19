@@ -43,7 +43,6 @@
       }
     } catch (e) {}
   }
-  purgerAncienAccesPermanentLaboV303();
 
   /* Si la classe "elevelabo3" a déjà été connectée une fois sur ce PC du labo,
      ne plus jamais demander login ni mot de passe (sauf si déconnexion volontaire #deconnecte ou accès #admin) */
@@ -85,7 +84,7 @@
       }
       var clVerif = String((permLabo && permLabo.classe) || (sessLoc && sessLoc.classe) || "").trim().toLowerCase().replace(/[\s._\-]+/g, "");
       var emVerif = String((permLabo && permLabo.email) || (sessLoc && sessLoc.email) || "").trim().toLowerCase();
-      if ((clVerif === "elevelabo3" || /^elevelabo3(?:@|$)/i.test(emVerif)) && !estCompteLaboRestreintV303(emVerif) && !hInit && !modeRecuperationMdpV307) {
+      if ((clVerif === "elevelabo3" || /^elevelabo3(?:@|$)/i.test(emVerif)) && !hInit && !modeRecuperationMdpV307) {
         var objPerm = permLabo || sessLoc;
         objPerm.ts = Date.now();
         objPerm.gold = true;
@@ -111,7 +110,7 @@
          — et sur PC, la session ouverte reste active en permanence —
          le renvoyer immédiatement vers l'accueil sans le bloquer sur le formulaire */
       var estPcPortail = !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "") && !(navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-      if (!modeRecuperationMdpV307 && sessLoc && !estCompteLaboRestreintV303(sessLoc.email) && sessLoc.statut === "actif" && (estPcPortail || (sessLoc.ts && (Date.now() - Number(sessLoc.ts) < 30 * 86400000))) && (!hInit || hInit === "connexion")) {
+      if (!modeRecuperationMdpV307 && sessLoc && sessLoc.statut === "actif" && (estPcPortail || (sessLoc.ts && (Date.now() - Number(sessLoc.ts) < 30 * 86400000))) && (!hInit || hInit === "connexion")) {
         try {
           var nowActStr = String(Date.now());
           sessLoc.ts = Date.now();
@@ -452,14 +451,8 @@
       verifierStatutEtEntrer(user);
       return;
     }
-    if (!navigator.onLine) {
-      purgerAncienAccesPermanentLaboV303();
-      msg("⛔ Le compte elevelabo3 exige une connexion Internet et une machine enregistrée.", "err");
-      try { sb.auth.signOut({ scope: "local" }); } catch (e) {}
-      return;
-    }
-    msg("🖥️ Identification sécurisée de cette machine…", "att");
-    import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=303").then(function (m) {
+    msg(navigator.onLine ? "🖥️ Identification sécurisée de cette machine…" : "📴 Vérification locale de cette machine…", "att");
+    import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=311").then(function (m) {
       if (!apiLaboDevicePortailV303) {
         apiLaboDevicePortailV303 = m.createLaboDeviceClient({ sb: sb, root: cfg.RACINE, notify: msg });
       }
@@ -507,7 +500,7 @@
           classe: (profilData && profilData.classe) || metaU.classe || (isLabo ? "elevelabo3" : "—"),
           statut: "actif",
           gold: isG,
-          permanent: Boolean(isLabo && !estCompteLaboRestreintV303(user.email)),
+          permanent: Boolean(isLabo),
           deviceControlled: Boolean(isLabo && estCompteLaboRestreintV303(user.email)),
           isAdmin: false,
           ts: Date.now()
@@ -524,11 +517,10 @@
           document.cookie = "sti_sess_cache=" + encodeURIComponent(jsonSessPortail) + "; path=/; max-age=2592000; SameSite=Lax";
         } catch (e) {}
         /* L’unicité et l’expiration de session sont déléguées à Supabase Auth. */
-        if (isLabo && !estCompteLaboRestreintV303(user.email)) {
+        if (isLabo) {
           localStorage.setItem("sti-labo3-permanent", jsonSessPortail);
         } else {
           localStorage.removeItem("sti-labo3-permanent");
-          if (estCompteLaboRestreintV303(user.email)) localStorage.removeItem("sti-cred");
         }
       } catch (e) {}
       if (isLabo) {
@@ -635,12 +627,6 @@
       if (connexionResolue) return;
       connexionResolue = true;
       btn.disabled = false;
-      /* v303 : le compte partagé ne peut jamais s’ouvrir hors ligne. */
-      if (!estSaisieAdmin && estCompteLaboRestreintV303(emailConn)) {
-        purgerAncienAccesPermanentLaboV303();
-        msg("⛔ Compte elevelabo3 verrouillé : Internet et validation de la machine obligatoires.", "err");
-        return;
-      }
       var cred = null;
       try { cred = JSON.parse(localStorage.getItem("sti-cred") || "null"); } catch (err) {}
       sha256(mdp).then(function (h) {
@@ -738,15 +724,11 @@
       } catch (err) {}
       /* login en ligne réussi : mémorise l'empreinte locale pour le mode hors-ligne */
       var isAdm = (r.data.user.email || "").trim().toLowerCase() === adminMailStrict;
-      if (!estCompteLaboRestreintV303(r.data.user.email)) {
-        sha256(mdp).then(function (h) {
-          try {
-            localStorage.setItem("sti-cred", JSON.stringify({ email: emailConn, h: h, isAdmin: isAdm }));
-          } catch (err) {}
-        });
-      } else {
-        purgerAncienAccesPermanentLaboV303();
-      }
+      sha256(mdp).then(function (h) {
+        try {
+          localStorage.setItem("sti-cred", JSON.stringify({ email: emailConn, h: h, isAdmin: isAdm }));
+        } catch (err) {}
+      });
       if (isAdm) {
         try {
           localStorage.removeItem("sti-labo3-permanent");
