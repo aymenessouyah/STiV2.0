@@ -3,10 +3,10 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v309";
+var CACHE = "sti-atelier-v309-healthfix-1";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v309-css3-synchronisation-phrase-1";
+var UPDATE_ID = "v309-sante-video-paths-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -18,6 +18,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/portail.js", revision: "password-recovery-flow-v308" },
   { url: "./assets/js/modules/password-recovery.js", revision: "password-recovery-module-v307" },
   { url: "./assets/js/protection.js", revision: "css3-mp4-sync-v309" },
+  { url: "./assets/js/sante.js", revision: "sante-video-paths-v309-hotfix-1" },
   { url: "./cours/css3.html", revision: "css3-timeline-v309" },
   { url: "./assets/subtitles/css3-cours-v9-sync-fr.vtt", revision: "css3-vtt-sync-v309" },
   { url: "./assets/images/css3-cours-v9-sync-poster.jpg", revision: "css3-poster-v309" },

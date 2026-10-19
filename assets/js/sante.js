@@ -22,7 +22,7 @@
     { cat: "Bases & ZIP", nom: "Mémento synthèse PDF", url: "documents/complet/fiche-memento-synthese.pdf", range: true },
     { cat: "Vidéos", nom: "PHP — Synthèse n°1", url: "assets/videos/php-synthese.mp4", range: true },
     { cat: "Vidéos", nom: "PHP — Cours", url: "assets/videos/php-cours.mp4", range: true },
-    { cat: "Vidéos", nom: "SQL — Cours", url: "assets/videos/sql-cours.mp4", range: true },
+    { cat: "Vidéos", nom: "SQL — Cours", url: "assets/videos/sql-cours-v7.mp4?v=280", range: true },
     { cat: "Vidéos", nom: "SQL — Série 1", url: "assets/videos/sql-serie1.mp4", range: true },
     { cat: "Vidéos", nom: "SQL — Série 2", url: "assets/videos/sql-serie2.mp4", range: true },
     { cat: "Vidéos", nom: "SQL — Série 3", url: "assets/videos/sql-serie3.mp4", range: true },
@@ -30,7 +30,7 @@
     { cat: "Vidéos", nom: "SQL — Série 5 (Gesthotel)", url: "assets/videos/sql-serie5.mp4", range: true },
     { cat: "Vidéos", nom: "SQL — Série 6", url: "assets/videos/sql-serie6.mp4", range: true },
     { cat: "Vidéos", nom: "HTML5 — Cours", url: "assets/videos/html5-cours.mp4", range: true },
-    { cat: "Vidéos", nom: "CSS3 — Cours", url: "assets/videos/css3-cours.mp4", range: true },
+    { cat: "Vidéos", nom: "CSS3 — Cours", url: "assets/videos/css3-cours-v9-sync.mp4?v=309", range: true },
     { cat: "Vidéos", nom: "JavaScript — Cours", url: "assets/videos/javascript-cours.mp4", range: true }
   ];
   function token() {
