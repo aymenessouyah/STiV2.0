@@ -27,48 +27,28 @@
     var host = String(location.hostname || "").toLowerCase();
     return location.protocol === "file:" || host === "127.0.0.1" || host === "localhost" || host === "[::1]" || host === "::1";
   }
-  function activerSessionPortableLaboV315() {
+  /* v316 : le mode local n'invente plus aucune identité. La session doit être
+     injectée par l'application Windows après authentification native. */
+  function lireSessionNativeLocaleV316() {
     if (!estModePortableLocalV315()) return null;
-    var now = Date.now();
-    var obj = {
-      id: "labo3-portable-local",
-      email: "elevelabo3@exemple.tn",
-      nom: "Poste",
-      prenom: "Labo 3",
-      lycee: "Installation locale",
-      classe: "elevelabo3",
-      statut: "actif",
-      gold: true,
-      permanent: true,
-      deviceControlled: true,
-      portableNoLogin: true,
-      isAdmin: false,
-      ts: now
-    };
-    var json = JSON.stringify(obj);
     try {
-      localStorage.removeItem("sti-force-exit");
-      localStorage.removeItem("sti-admin-gold");
-      localStorage.setItem("sti-gold", "1");
-      localStorage.setItem("sti-offline", String(now));
-      localStorage.setItem("sti-session-cache", json);
-      localStorage.setItem("sti-labo3-permanent", json);
-    } catch (e) {}
-    try {
-      sessionStorage.setItem("sti-offline", String(now));
-      sessionStorage.setItem("sti-session-cache", json);
-      sessionStorage.setItem("sti-bio-session-ok", "1");
-    } catch (e) {}
-    try { document.cookie = "sti_sess_cache=" + encodeURIComponent(json) + "; path=/; max-age=31536000; SameSite=Lax"; } catch (e) {}
-    window.__STI_LABO_PORTABLE_LOCAL = true;
-    return obj;
+      var marqueur = window.__STI_NATIVE_AUTHENTICATED_V316 === true && sessionStorage.getItem("sti-native-session-v316") === "1";
+      var obj = JSON.parse(sessionStorage.getItem("sti-session-cache") || localStorage.getItem("sti-session-cache") || "null");
+      if (!marqueur || !obj || obj.nativeAuthenticated !== true || obj.statut !== "actif") return null;
+      window.__STI_LABO_PORTABLE_LOCAL = true;
+      return obj;
+    } catch (e) { return null; }
   }
-  var sessionPortableLaboV315 = activerSessionPortableLaboV315();
+  var sessionPortableLaboV315 = lireSessionNativeLocaleV316();
+  if (estModePortableLocalV315() && !sessionPortableLaboV315) {
+    location.replace(cfg.RACINE + "portail.html#application");
+    return;
+  }
   function lancerDiagnosticPortableV315() {
-    if (!estModePortableLocalV315()) return;
-    import(cfg.RACINE + "assets/js/modules/labo-offline-diagnostics.js?v=315").then(function (m) {
+    if (!estModePortableLocalV315() || !sessionPortableLaboV315) return;
+    import(cfg.RACINE + "assets/js/modules/labo-offline-diagnostics.js?v=316").then(function (m) {
       if (m && typeof m.startLaboOfflineDiagnostics === "function") {
-        m.startLaboOfflineDiagnostics({ root: cfg.RACINE, version: Number(cfg.VERSION) || 315 });
+        m.startLaboOfflineDiagnostics({ root: cfg.RACINE, version: Number(cfg.VERSION) || 316 });
       }
     }).catch(function () {});
   }
@@ -87,7 +67,7 @@
     } catch (e) { return false; }
   }
   function masquerContenuLaboV303() {
-    if (estModePortableLocalV315()) return;
+    if (estModePortableLocalV315() && sessionPortableLaboV315) return;
     if (!cacheLaboRestreintV303()) return;
     document.documentElement.classList.add("sti-labo-device-pending-v303");
     if (!document.getElementById("sti-labo-device-pending-style")) {
@@ -112,7 +92,7 @@
   var apiLaboDevicePageV303 = null;
   function chargerControlePosteLaboV303() {
     if (apiLaboDevicePageV303) return Promise.resolve(apiLaboDevicePageV303);
-    return import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=315").then(function (m) {
+    return import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=316").then(function (m) {
       if (!apiLaboDevicePageV303) {
         apiLaboDevicePageV303 = m.createLaboDeviceClient({ sb: sb, root: cfg.RACINE, notify: function (texte) {
           try { if (typeof afficherToastSynchro === "function") afficherToastSynchro(texte); } catch (e) {}

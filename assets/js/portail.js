@@ -16,31 +16,23 @@
   }
   function ouvrirLaboPortableSansLoginV315() {
     if (!estModePortableLocalV315()) return false;
-    var h = String(location.hash || "").toLowerCase();
-    var href = String(location.href || "").toLowerCase();
-    if (h === "#admin" || href.indexOf("type=recovery") !== -1 || href.indexOf("access_token=") !== -1) return false;
-    var now = Date.now();
-    var obj = {
-      id: "labo3-portable-local", email: "elevelabo3@exemple.tn",
-      nom: "Poste", prenom: "Labo 3", lycee: "Installation locale",
-      classe: "elevelabo3", statut: "actif", gold: true,
-      permanent: true, deviceControlled: true, portableNoLogin: true,
-      isAdmin: false, ts: now
-    };
-    var json = JSON.stringify(obj);
     try {
-      localStorage.removeItem("sti-force-exit");
-      localStorage.removeItem("sti-admin-gold");
-      localStorage.setItem("sti-gold", "1");
-      localStorage.setItem("sti-offline", String(now));
-      localStorage.setItem("sti-session-cache", json);
-      localStorage.setItem("sti-labo3-permanent", json);
-      sessionStorage.setItem("sti-offline", String(now));
-      sessionStorage.setItem("sti-session-cache", json);
-      sessionStorage.setItem("sti-bio-session-ok", "1");
+      var marqueur = window.__STI_NATIVE_AUTHENTICATED_V316 === true && sessionStorage.getItem("sti-native-session-v316") === "1";
+      var obj = JSON.parse(sessionStorage.getItem("sti-session-cache") || localStorage.getItem("sti-session-cache") || "null");
+      if (marqueur && obj && obj.nativeAuthenticated === true && obj.statut === "actif") {
+        location.replace(cfg.RACINE + "index.html");
+        return true;
+      }
     } catch (e) {}
-    try { document.cookie = "sti_sess_cache=" + encodeURIComponent(json) + "; path=/; max-age=31536000; SameSite=Lax"; } catch (e) {}
-    location.replace(cfg.RACINE + "index.html");
+    function afficherBlocageApplicationV316() {
+      var cible = document.body || document.documentElement;
+      if (!cible) return;
+      cible.innerHTML = "<main style='max-width:680px;margin:12vh auto;padding:36px;font:16px/1.6 system-ui,Segoe UI,sans-serif;text-align:center'>" +
+        "<h1>Ouverture sécurisée requise</h1><p>Cette installation locale doit être lancée depuis l’application <b>STI Labo 3</b>.</p>" +
+        "<p>Utilisez le raccourci du Bureau ou du menu Démarrer, puis identifiez-vous.</p></main>";
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", afficherBlocageApplicationV316, { once: true });
+    else afficherBlocageApplicationV316();
     return true;
   }
   if (ouvrirLaboPortableSansLoginV315()) return;

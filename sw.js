@@ -3,20 +3,20 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v315";
+var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v315-labo-portable-diagnostics-1";
+var UPDATE_ID = "v316-windows-native-auth-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
   { url: "./index.html", revision: "device-gate-v303" },
-  { url: "./assets/js/config.js", revision: "platform-version-v315" },
+  { url: "./assets/js/config.js", revision: "platform-version-v316" },
   { url: "./portail.html", revision: "password-recovery-ui-v308" },
   { url: "./admin.html", revision: "device-dashboard-v303" },
-  { url: "./assets/js/acces.js", revision: "labo-portable-no-login-v315" },
+  { url: "./assets/js/acces.js", revision: "windows-native-auth-v316" },
   { url: "./assets/js/admin.js", revision: "labo-confirm-loader-v312" },
-  { url: "./assets/js/portail.js", revision: "labo-portable-redirect-v315" },
+  { url: "./assets/js/portail.js", revision: "windows-native-auth-gate-v316" },
   { url: "./assets/js/modules/password-recovery.js", revision: "password-recovery-module-v307" },
   { url: "./assets/js/protection.js", revision: "css3-mp4-sync-v309" },
   { url: "./assets/js/sante.js", revision: "sante-video-paths-v309-hotfix-1" },
@@ -28,7 +28,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/modules/labo-device-client.js", revision: "labo-portable-local-v315" },
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" },
   { url: "./assets/js/modules/labo-offline-diagnostics.js", revision: "offline-diagnostics-v315" },
-  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v315" },
+  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
   { url: "./Lancer-Labo3-Hors-Ligne.ps1", revision: "portable-powershell-server-v315" }
 ];
