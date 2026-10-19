@@ -1,4 +1,4 @@
-/* STI v306 — gestion sécurisée des postes elevelabo3 intégrée au tableau existant */
+/* STI v312 — gestion sécurisée des postes elevelabo3 intégrée au tableau existant */
 export function createAdminLaboDevices(options) {
   "use strict";
   const sb = options.sb;
@@ -141,7 +141,7 @@ export function createAdminLaboDevices(options) {
     const titleWrap = el("div");
     titleWrap.append(
       el("h3", "🛡️ Gestion sécurisée des postes elevelabo3", "margin:0 0 3px;color:#0f4c81;font-size:1rem"),
-      el("p", "Présence, localisation, messages et actions réunis dans le bandeau existant. Les postes hors ligne restent visibles.", "margin:0;font-size:.78rem;font-weight:750;color:#475569")
+      el("p", "Présence, confirmation, localisation, messages et actions réunis dans le bandeau existant. Les postes hors ligne restent visibles.", "margin:0;font-size:.78rem;font-weight:750;color:#475569")
     );
     const refresh = actionButton("↻ Actualiser", "#0f4c81", () => load(true));
     head.append(titleWrap, refresh);
@@ -160,7 +160,9 @@ export function createAdminLaboDevices(options) {
       { value: "all", label: "Tous" },
       { value: "online", label: "En ligne" },
       { value: "offline", label: "Hors ligne" },
-      { value: "blocked", label: "Bloqués" }
+      { value: "blocked", label: "Bloqués" },
+      { value: "confirmed", label: "Confirmés" },
+      { value: "unconfirmed", label: "Non confirmés" }
     ], statusFilter, value => { statusFilter = value; renderRows(); });
     statusSelect = statusControl.select;
     const sortControl = makeSelect("Tri", [
@@ -227,7 +229,7 @@ export function createAdminLaboDevices(options) {
     devices.forEach(device => {
       const place = locationText(device.info);
       const detail = [device.name || "Nouveau poste", safeInfo(device.info), place].filter(Boolean).join(" · ");
-      notify(`🆕 Nouveau poste accepté automatiquement : ${detail}`, "ok");
+      notify(`🆕 Nouveau poste Labo 3 détecté — confirmation administrative en attente : ${detail}`, "att");
       if ("Notification" in window && Notification.permission === "granted") {
         try { new Notification("🆕 Nouveau poste Labo 3", { body: detail, icon: "assets/icons/sti-icon-192.png" }); } catch (_) {}
       }
@@ -251,14 +253,23 @@ export function createAdminLaboDevices(options) {
     try { localStorage.setItem(KNOWN_KEY, JSON.stringify(Array.from(knownIds).slice(-500))); } catch (_) {}
   }
 
+  function isConfirmed(device) {
+    /* Compatibilité avant exécution de la migration v312 : une valeur absente
+       correspond aux postes historiques, explicitement conservés comme confirmés. */
+    return device && device.confirmed !== false;
+  }
+
   function matchesFilters(device) {
     const blocked = device.status === "blocked";
+    const confirmed = isConfirmed(device);
     if (statusFilter === "online" && (blocked || !device.online)) return false;
     if (statusFilter === "offline" && (blocked || device.online)) return false;
     if (statusFilter === "blocked" && !blocked) return false;
+    if (statusFilter === "confirmed" && !confirmed) return false;
+    if (statusFilter === "unconfirmed" && confirmed) return false;
     if (!query) return true;
     const info = infoObject(device.info);
-    const haystack = [device.name, device.status, info.os, info.browser, info.page, info.location, info.timezone]
+    const haystack = [device.name, device.status, confirmed ? "confirmé" : "non confirmé", info.os, info.browser, info.page, info.location, info.timezone]
       .map(value => String(value || "").toLowerCase()).join(" ");
     return haystack.includes(query);
   }
@@ -301,8 +312,10 @@ export function createAdminLaboDevices(options) {
     const online = devices.filter(device => device.status !== "blocked" && device.online).length;
     const offline = devices.filter(device => device.status !== "blocked" && !device.online).length;
     const blocked = devices.filter(device => device.status === "blocked").length;
+    const confirmed = devices.filter(isConfirmed).length;
+    const unconfirmed = devices.length - confirmed;
     const filtered = sortedRows(devices.filter(matchesFilters));
-    state.textContent = `${devices.length} enregistré(s) · ${online} en ligne · ${offline} hors ligne · ${blocked} bloqué(s) · ${filtered.length} affiché(s) · ${new Date().toLocaleTimeString("fr-FR")}`;
+    state.textContent = `${devices.length} enregistré(s) · ${confirmed} confirmé(s) · ${unconfirmed} non confirmé(s) · ${online} en ligne · ${offline} hors ligne · ${blocked} bloqué(s) · ${filtered.length} affiché(s) · ${new Date().toLocaleTimeString("fr-FR")}`;
     if (!devices.length) {
       list.appendChild(el("p", "Aucune machine sécurisée n’a encore utilisé le compte elevelabo3@exemple.tn.", "padding:14px;background:#f3ead9;border-radius:10px;font-weight:800"));
       return;
@@ -313,21 +326,28 @@ export function createAdminLaboDevices(options) {
     }
     filtered.forEach(device => {
       const blockedNow = device.status === "blocked";
+      const confirmedNow = isConfirmed(device);
       const recent = Date.now() - new Date(device.first_seen || 0).getTime() < 5 * 60000;
-      const border = blockedNow ? "#b8321b" : device.online ? "#177245" : "#64748b";
+      const border = blockedNow ? "#b8321b" : !confirmedNow ? "#b7791f" : device.online ? "#177245" : "#64748b";
       const card = el("article", null, `padding:12px;border:2px solid ${border};border-radius:12px;background:${blockedNow ? "#fff0ed" : device.online ? "#f0fff6" : "#f8fafc"}`);
       const top = el("div", null, "display:flex;gap:7px;align-items:flex-start;justify-content:space-between");
       const title = el("h4", device.name || "Poste Labo 3", "margin:0;font-size:.98rem;color:#23201a");
       if (recent) title.appendChild(el("span", " 🆕 Nouveau", "color:#b8321b;font-size:.68rem"));
-      const badge = el("span", blockedNow ? "⛔ Bloqué" : device.online ? "🟢 En ligne" : "⚪ Hors ligne", `padding:3px 7px;border-radius:999px;background:${border};color:white;font-size:.7rem;font-weight:900;white-space:nowrap`);
-      top.append(title, badge);
+      const badges = el("div", null, "display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end");
+      const presenceBadge = el("span", blockedNow ? "⛔ Bloqué" : device.online ? "🟢 En ligne" : "⚪ Hors ligne", `padding:3px 7px;border-radius:999px;background:${blockedNow ? "#b8321b" : device.online ? "#177245" : "#64748b"};color:white;font-size:.7rem;font-weight:900;white-space:nowrap`);
+      const confirmationBadge = el("span", confirmedNow ? "✅ Confirmé" : "⚠️ Non confirmé", `padding:3px 7px;border-radius:999px;background:${confirmedNow ? "#0f766e" : "#fff3cd"};color:${confirmedNow ? "white" : "#6b4f00"};border:1px solid ${confirmedNow ? "#0f766e" : "#b7791f"};font-size:.7rem;font-weight:900;white-space:nowrap`);
+      badges.append(presenceBadge, confirmationBadge);
+      top.append(title, badges);
       const info = el("p", safeInfo(device.info) || "Appareil non renseigné", "margin:7px 0 3px;font-size:.8rem;font-weight:750;color:#334155");
       const location = el("p", locationLine(device.info), "margin:3px 0 7px;padding:5px 7px;border-radius:7px;background:#eef6ff;color:#0f4c81;font-size:.77rem;font-weight:850");
-      const dates = el("p", `Première entrée : ${fmtDate(device.first_seen)}\nDernière présence : ${fmtDate(device.last_seen)} (${fmtAgo(device.last_seen)})`, "margin:5px 0;font-size:.75rem;white-space:pre-line;color:#475569");
+      const dates = el("p", `Première entrée : ${fmtDate(device.first_seen)}\nDernière présence : ${fmtDate(device.last_seen)} (${fmtAgo(device.last_seen)})\nConfirmation : ${confirmedNow ? "✅ confirmée le " + fmtDate(device.confirmed_at || device.first_seen) : "⚠️ en attente de confirmation"}`, "margin:5px 0;font-size:.75rem;white-space:pre-line;color:#475569");
       let messageState = "💬 Aucun message envoyé";
       if (device.last_message_at) messageState = device.unread ? `📨 ${device.unread} message(s) non lu(s)` : `✓ Dernier message lu · envoyé ${fmtAgo(device.last_message_at)}`;
       const unread = el("p", messageState, `margin:6px 0;font-size:.78rem;font-weight:900;color:${device.unread ? "#b8321b" : "#177245"}`);
       const actions = el("div", null, "display:flex;gap:5px;flex-wrap:wrap;margin-top:8px");
+      if (!confirmedNow) {
+        actions.append(actionButton("✅ Confirmer", "#0f766e", () => runAction("confirm", device.id, null, "Confirmer administrativement ce poste Labo 3 ? Cette confirmation est un indicateur et ne modifie pas son accès.")));
+      }
       actions.append(blockedNow
         ? actionButton("✅ Autoriser", "#177245", () => runAction("allow", device.id, null, "Réautoriser ce poste ?"))
         : actionButton("⛔ Bloquer", "#b8321b", () => runAction("block", device.id, null, "Bloquer immédiatement ce poste ?")));

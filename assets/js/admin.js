@@ -644,12 +644,12 @@
   function chargerModuleLaboDevicesAdminV303() {
     if (apiLaboDevicesAdminV303) return Promise.resolve(apiLaboDevicesAdminV303);
     if (promesseLaboDevicesAdminV303) return promesseLaboDevicesAdminV303;
-    var urlModule = "assets/js/modules/admin-labo-devices.js?v=306";
+    var urlModule = "assets/js/modules/admin-labo-devices.js?v=312";
     try {
       var scripts = document.querySelectorAll("script[src]");
       for (var i = 0; i < scripts.length; i++) {
         if ((scripts[i].src || "").indexOf("assets/js/admin.js") !== -1) {
-          urlModule = new URL("modules/admin-labo-devices.js?v=306", scripts[i].src).toString();
+          urlModule = new URL("modules/admin-labo-devices.js?v=312", scripts[i].src).toString();
           break;
         }
       }
