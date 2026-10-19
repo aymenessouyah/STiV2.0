@@ -3,18 +3,18 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v312";
+var CACHE = "sti-atelier-v313";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v312-labo-device-confirmation-1";
+var UPDATE_ID = "v313-labo-offline-repair-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
   { url: "./index.html", revision: "device-gate-v303" },
-  { url: "./assets/js/config.js", revision: "platform-version-v312" },
+  { url: "./assets/js/config.js", revision: "platform-version-v313" },
   { url: "./portail.html", revision: "password-recovery-ui-v308" },
   { url: "./admin.html", revision: "device-dashboard-v303" },
-  { url: "./assets/js/acces.js", revision: "labo-offline-session-v311" },
+  { url: "./assets/js/acces.js", revision: "labo-offline-restore-v313" },
   { url: "./assets/js/admin.js", revision: "labo-confirm-loader-v312" },
   { url: "./assets/js/portail.js", revision: "labo-offline-login-v311" },
   { url: "./assets/js/modules/password-recovery.js", revision: "password-recovery-module-v307" },
@@ -25,7 +25,7 @@ var UPDATE_FILES = [
   { url: "./assets/images/css3-cours-v9-sync-poster.jpg", revision: "css3-poster-v309" },
   { url: "./assets/js/modules/admin-mfa.js", revision: "mfa-module-v302" },
   { url: "./assets/js/modules/mobile-diagnostics.js", revision: "diagnostics-module-v302" },
-  { url: "./assets/js/modules/labo-device-client.js", revision: "labo-offline-messages-v311" },
+  { url: "./assets/js/modules/labo-device-client.js", revision: "labo-local-session-v313" },
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" }
 ];
 var CACHE_REVISIONS = "sti-update-revisions-v1";

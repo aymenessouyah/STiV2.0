@@ -1,4 +1,4 @@
-/* STI v311 — identité, localisation datée et messages ciblés du compte partagé elevelabo3 */
+/* STI v313 — identité, localisation datée et messages ciblés du compte partagé elevelabo3 */
 const TARGET_EMAIL = "elevelabo3@exemple.tn";
 const DB_NAME = "sti-labo-device-v303";
 const STORE = "identity";
@@ -225,12 +225,32 @@ export function createLaboDeviceClient(options) {
     el.style.background = blocked ? "#351514" : "#101820";
   }
 
+  function readLocalTargetUser() {
+    try {
+      const cached = JSON.parse(localStorage.getItem("sti-labo3-permanent") || localStorage.getItem("sti-session-cache") || "null");
+      if (cached && cached.statut === "actif" && isRestrictedLaboAccount(cached.email)) {
+        return { id: cached.id || "labo3-local", email: cached.email, localOnly: true };
+      }
+    } catch (_) {}
+    return null;
+  }
+
   async function getTargetSession() {
-    const result = await sb.auth.getSession();
+    let result = null;
+    try {
+      result = await withTimeout(sb.auth.getSession(), 2500, { data: { session: null } });
+    } catch (_) {}
     const session = result && result.data ? result.data.session : null;
-    if (!session || !session.user || !isRestrictedLaboAccount(session.user.email)) return { session, target: false };
-    currentUser = session.user;
-    return { session, target: true };
+    if (session && session.user && isRestrictedLaboAccount(session.user.email)) {
+      currentUser = session.user;
+      return { session, target: true };
+    }
+    const localUser = readLocalTargetUser();
+    if (localUser) {
+      currentUser = localUser;
+      return { session: null, target: true, localOnly: true };
+    }
+    return { session, target: false };
   }
 
   async function authorize() {
