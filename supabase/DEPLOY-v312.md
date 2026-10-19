@@ -6,7 +6,7 @@ La confirmation est un **indicateur administratif uniquement** : un nouveau post
 
 ## 1. Supabase SQL Editor
 
-Exécuter une seule fois :
+Exécuter une seule fois (le fichier est désormais autonome et crée aussi `public.labo_devices` si nécessaire) :
 
 `supabase/migrations/20261019_labo_device_confirmation_v312.sql`
 
