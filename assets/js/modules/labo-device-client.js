@@ -1,4 +1,4 @@
-/* STI v313 — identité, localisation datée et messages ciblés du compte partagé elevelabo3 */
+/* STI v315 — identité, localisation datée et messages ciblés du compte partagé elevelabo3 */
 const TARGET_EMAIL = "elevelabo3@exemple.tn";
 const DB_NAME = "sti-labo-device-v303";
 const STORE = "identity";
@@ -12,6 +12,11 @@ const MESSAGE_READ_KEY = "sti-labo-device-messages-read-v311";
 
 export function isRestrictedLaboAccount(email) {
   return String(email || "").trim().toLowerCase() === TARGET_EMAIL;
+}
+
+function isPortableLocalMode() {
+  const host = String(location.hostname || "").toLowerCase();
+  return location.protocol === "file:" || host === "127.0.0.1" || host === "localhost" || host === "[::1]" || host === "::1";
 }
 
 function withTimeout(promise, delay, fallback) {
@@ -257,6 +262,10 @@ export function createLaboDeviceClient(options) {
     const sessionInfo = await getTargetSession();
     if (!sessionInfo.target) return { ok: true, skipped: true };
     preserveLaboOfflineSession();
+    if (isPortableLocalMode()) {
+      removeGate();
+      return { ok: true, portable: true, offline: true, deviceId: "local-portable", name: "Poste Labo 3 local" };
+    }
     identity = identity || await getIdentity();
     if (!navigator.onLine) {
       if (readOfflineApproval(identity.deviceId)) {

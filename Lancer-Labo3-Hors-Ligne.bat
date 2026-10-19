@@ -1,33 +1,38 @@
 @echo off
 chcp 65001 >nul
-title STI V2.0 By AE — Poste Labo 3 (100%% Hors-Ligne)
+title STI V2.0 By AE — Poste Labo 3 hors Internet
 cd /d "%~dp0"
-
 echo ==============================================================
-echo   STI V2.0 By AE — Demarrage Hors-Ligne (Labo 3 : elevelabo3)
-echo   Tous les fichiers remplaces dans ce dossier sont actifs !
+echo   STI V2.0 By AE — Installation locale complete Labo 3
+echo   Aucun identifiant ni connexion Internet n'est necessaire.
 echo ==============================================================
 
-:: 1. Si PHP (XAMPP / Wamp / Laragon) est present sur le PC du Labo 3
 if exist "C:\xampp\php\php.exe" (
-    start "" "http://127.0.0.1:8088/index.html"
-    "C:\xampp\php\php.exe" -S 127.0.0.1:8088 -t "%~dp0"
-    goto :eof
+  start "Serveur STI Labo 3" cmd /k ""C:\xampp\php\php.exe" -S 127.0.0.1:8088 -t "%~dp0""
+  timeout /t 2 /nobreak >nul
+  start "" "http://127.0.0.1:8088/index.html"
+  exit /b
 )
 where php >nul 2>nul
-if %errorlevel%==0 (
-    start "" "http://127.0.0.1:8088/index.html"
-    php -S 127.0.0.1:8088 -t "%~dp0"
-    goto :eof
+if not errorlevel 1 (
+  start "Serveur STI Labo 3" cmd /k "php -S 127.0.0.1:8088 -t "%~dp0""
+  timeout /t 2 /nobreak >nul
+  start "" "http://127.0.0.1:8088/index.html"
+  exit /b
 )
-
-:: 2. Si Python est present sur le PC du Labo 3
 where python >nul 2>nul
-if %errorlevel%==0 (
-    start "" "http://127.0.0.1:8088/index.html"
-    python -m http.server 8088 --bind 127.0.0.1
-    goto :eof
+if not errorlevel 1 (
+  start "Serveur STI Labo 3" cmd /k "python -m http.server 8088 --bind 127.0.0.1"
+  timeout /t 2 /nobreak >nul
+  start "" "http://127.0.0.1:8088/index.html"
+  exit /b
+)
+where py >nul 2>nul
+if not errorlevel 1 (
+  start "Serveur STI Labo 3" cmd /k "py -3 -m http.server 8088 --bind 127.0.0.1"
+  timeout /t 2 /nobreak >nul
+  start "" "http://127.0.0.1:8088/index.html"
+  exit /b
 )
 
-:: 3. Sinon ouverture directe du fichier index.html local
-start "" "%~dp0index.html"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Lancer-Labo3-Hors-Ligne.ps1"

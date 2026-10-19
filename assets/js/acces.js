@@ -23,6 +23,57 @@
   function estCompteLaboRestreintV303(email) {
     return String(email || "").trim().toLowerCase() === "elevelabo3@exemple.tn";
   }
+  function estModePortableLocalV315() {
+    var host = String(location.hostname || "").toLowerCase();
+    return location.protocol === "file:" || host === "127.0.0.1" || host === "localhost" || host === "[::1]" || host === "::1";
+  }
+  function activerSessionPortableLaboV315() {
+    if (!estModePortableLocalV315()) return null;
+    var now = Date.now();
+    var obj = {
+      id: "labo3-portable-local",
+      email: "elevelabo3@exemple.tn",
+      nom: "Poste",
+      prenom: "Labo 3",
+      lycee: "Installation locale",
+      classe: "elevelabo3",
+      statut: "actif",
+      gold: true,
+      permanent: true,
+      deviceControlled: true,
+      portableNoLogin: true,
+      isAdmin: false,
+      ts: now
+    };
+    var json = JSON.stringify(obj);
+    try {
+      localStorage.removeItem("sti-force-exit");
+      localStorage.removeItem("sti-admin-gold");
+      localStorage.setItem("sti-gold", "1");
+      localStorage.setItem("sti-offline", String(now));
+      localStorage.setItem("sti-session-cache", json);
+      localStorage.setItem("sti-labo3-permanent", json);
+    } catch (e) {}
+    try {
+      sessionStorage.setItem("sti-offline", String(now));
+      sessionStorage.setItem("sti-session-cache", json);
+      sessionStorage.setItem("sti-bio-session-ok", "1");
+    } catch (e) {}
+    try { document.cookie = "sti_sess_cache=" + encodeURIComponent(json) + "; path=/; max-age=31536000; SameSite=Lax"; } catch (e) {}
+    window.__STI_LABO_PORTABLE_LOCAL = true;
+    return obj;
+  }
+  var sessionPortableLaboV315 = activerSessionPortableLaboV315();
+  function lancerDiagnosticPortableV315() {
+    if (!estModePortableLocalV315()) return;
+    import(cfg.RACINE + "assets/js/modules/labo-offline-diagnostics.js?v=315").then(function (m) {
+      if (m && typeof m.startLaboOfflineDiagnostics === "function") {
+        m.startLaboOfflineDiagnostics({ root: cfg.RACINE, version: Number(cfg.VERSION) || 315 });
+      }
+    }).catch(function () {});
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", lancerDiagnosticPortableV315, { once: true });
+  else setTimeout(lancerDiagnosticPortableV315, 0);
   function cacheLaboRestreintV303() {
     try {
       var c = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
@@ -36,6 +87,7 @@
     } catch (e) { return false; }
   }
   function masquerContenuLaboV303() {
+    if (estModePortableLocalV315()) return;
     if (!cacheLaboRestreintV303()) return;
     document.documentElement.classList.add("sti-labo-device-pending-v303");
     if (!document.getElementById("sti-labo-device-pending-style")) {
@@ -60,7 +112,7 @@
   var apiLaboDevicePageV303 = null;
   function chargerControlePosteLaboV303() {
     if (apiLaboDevicePageV303) return Promise.resolve(apiLaboDevicePageV303);
-    return import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=313").then(function (m) {
+    return import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=315").then(function (m) {
       if (!apiLaboDevicePageV303) {
         apiLaboDevicePageV303 = m.createLaboDeviceClient({ sb: sb, root: cfg.RACINE, notify: function (texte) {
           try { if (typeof afficherToastSynchro === "function") afficherToastSynchro(texte); } catch (e) {}

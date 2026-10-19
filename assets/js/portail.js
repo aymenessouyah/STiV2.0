@@ -10,6 +10,40 @@
       lock: function (name, acquireTimeout, fn) { return fn(); }
     }
   });
+  function estModePortableLocalV315() {
+    var host = String(location.hostname || "").toLowerCase();
+    return location.protocol === "file:" || host === "127.0.0.1" || host === "localhost" || host === "[::1]" || host === "::1";
+  }
+  function ouvrirLaboPortableSansLoginV315() {
+    if (!estModePortableLocalV315()) return false;
+    var h = String(location.hash || "").toLowerCase();
+    var href = String(location.href || "").toLowerCase();
+    if (h === "#admin" || href.indexOf("type=recovery") !== -1 || href.indexOf("access_token=") !== -1) return false;
+    var now = Date.now();
+    var obj = {
+      id: "labo3-portable-local", email: "elevelabo3@exemple.tn",
+      nom: "Poste", prenom: "Labo 3", lycee: "Installation locale",
+      classe: "elevelabo3", statut: "actif", gold: true,
+      permanent: true, deviceControlled: true, portableNoLogin: true,
+      isAdmin: false, ts: now
+    };
+    var json = JSON.stringify(obj);
+    try {
+      localStorage.removeItem("sti-force-exit");
+      localStorage.removeItem("sti-admin-gold");
+      localStorage.setItem("sti-gold", "1");
+      localStorage.setItem("sti-offline", String(now));
+      localStorage.setItem("sti-session-cache", json);
+      localStorage.setItem("sti-labo3-permanent", json);
+      sessionStorage.setItem("sti-offline", String(now));
+      sessionStorage.setItem("sti-session-cache", json);
+      sessionStorage.setItem("sti-bio-session-ok", "1");
+    } catch (e) {}
+    try { document.cookie = "sti_sess_cache=" + encodeURIComponent(json) + "; path=/; max-age=31536000; SameSite=Lax"; } catch (e) {}
+    location.replace(cfg.RACINE + "index.html");
+    return true;
+  }
+  if (ouvrirLaboPortableSansLoginV315()) return;
   /* Le module v307 traite lui-même les jetons de récupération afin de ne jamais
      confondre une session normale avec un lien « mot de passe oublié ». */
   var modeRecuperationMdpV307 = Boolean(
@@ -452,7 +486,7 @@
       return;
     }
     msg(navigator.onLine ? "🖥️ Identification sécurisée de cette machine…" : "📴 Vérification locale de cette machine…", "att");
-    import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=311").then(function (m) {
+    import(cfg.RACINE + "assets/js/modules/labo-device-client.js?v=315").then(function (m) {
       if (!apiLaboDevicePortailV303) {
         apiLaboDevicePortailV303 = m.createLaboDeviceClient({ sb: sb, root: cfg.RACINE, notify: msg });
       }
