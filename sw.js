@@ -6,19 +6,19 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v320-turnstile";
+var UPDATE_ID = "v321-turnstile-garde";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
   { url: "./index.html", revision: "device-gate-v303" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
-  { url: "./portail.html", revision: "portail-turnstile-v320" },
+  { url: "./portail.html", revision: "portail-turnstile-v321" },
   { url: "./admin.html", revision: "admin-airbus-cockpit-v316-24" },
   { url: "./assets/js/acces.js", revision: "dynamic-version-v316-1" },
   { url: "./assets/js/admin.js", revision: "admin-airbus-cockpit-v316-23" },
   { url: "./assets/css/admin-v19.css", revision: "admin-airbus-cockpit-v316-24" },
   { url: "./assets/icons/sti-logo-complet.png", revision: "official-full-logo-v316-20" },
-  { url: "./assets/js/portail.js", revision: "portail-turnstile-v320" },
+  { url: "./assets/js/portail.js", revision: "portail-turnstile-v321" },
   { url: "./assets/js/modules/password-recovery.js", revision: "password-recovery-module-v307" },
   { url: "./assets/js/protection.js", revision: "html5-chapter-label-escape-v316-1" },
   { url: "./assets/icons/STI_by_AE.ico", revision: "official-square-logo-v316-3" },

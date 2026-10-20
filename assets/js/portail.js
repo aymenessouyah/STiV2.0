@@ -725,6 +725,10 @@
       document.getElementById("c-captcha").value = "";
       return;
     }
+    if ((window.STI_AUTH || {}).CLE_TURNSTILE && document.getElementById("ts-connexion") && !TurnstileSTI.jeton("connexion")) {
+      msg("🛡️ Cochez d'abord la case Cloudflare « Verify you are human » (juste au-dessus du bouton), attendez la coche verte, puis cliquez Se connecter.", "err");
+      return;
+    }
     var attRythme = BouclierSTI.rythme("connexion", 2500);
     if (attRythme > 0) { msg("🛡️ Patientez " + attRythme + " s entre deux tentatives.", "err"); return; }
     if (!cap1.ok(document.getElementById("c-captcha").value)) {
@@ -956,6 +960,10 @@
     if (piege) { msg("❌ Envoi refusé. Merci de remplir le formulaire normalement.", "err"); cap2.reset(); return; }
     var attInsc = BouclierSTI.rythme("inscription", 5000);
     if (attInsc > 0) { msg("🛡️ Patientez " + attInsc + " s avant un nouvel envoi.", "err"); return; }
+    if ((window.STI_AUTH || {}).CLE_TURNSTILE && document.getElementById("ts-inscription") && !TurnstileSTI.jeton("inscription")) {
+      msg("🛡️ Cochez d'abord la case Cloudflare « Verify you are human » (juste au-dessus du bouton), attendez la coche verte, puis cliquez S'inscrire.", "err");
+      return;
+    }
     var quotaInsc = BouclierSTI.inscriptionAutorisee();
     if (!quotaInsc.ok) { msg("🛡️ Trop d'inscriptions depuis cet appareil. Réessayez dans " + quotaInsc.minutes + " min (protection anti-robots).", "err"); return; }
     var mdp = document.getElementById("i-mdp").value;
@@ -1116,6 +1124,10 @@
   /* ---------- mot de passe oublié ---------- */
   document.getElementById("f-oubli").addEventListener("submit", function (e) {
     e.preventDefault();
+    if ((window.STI_AUTH || {}).CLE_TURNSTILE && document.getElementById("ts-oubli") && !TurnstileSTI.jeton("oubli")) {
+      msg("🛡️ Cochez d'abord la case Cloudflare « Verify you are human », attendez la coche verte, puis réessayez.", "err");
+      return;
+    }
     var btn = e.target.querySelector(".btn"); btn.disabled = true;
     sb.auth.resetPasswordForEmail(document.getElementById("o-email").value.trim(), {
       redirectTo: cfg.RACINE + "portail.html",
