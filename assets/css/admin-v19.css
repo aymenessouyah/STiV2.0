@@ -787,3 +787,195 @@ body.cockpit-airbus .filtres-bar select{
   border-color:#72868f!important;
 }
 body.cockpit-airbus .filtres-bar input::placeholder{color:#aabdc5!important;opacity:1}
+
+/* ── v24 : contraste intégral des tableaux et boîtes administrateur ─────────
+   Les dialogues avioniques sont sombres par défaut. Les sous-panneaux clairs
+   conservent au contraire un texte sombre : aucune teinte héritée ne peut donc
+   se retrouver claire sur blanc ou sombre sur noir. */
+body.cockpit-airbus {
+  --v24-dialog-text:#dce9ee;
+  --v24-dialog-muted:#bdccd2;
+  --v24-dialog-dark:#202a30;
+  --v24-dialog-dark-muted:#3f4b52;
+}
+
+/* 4. Dernières connexions : lignes, identité et métadonnées éclaircies. */
+body.cockpit-airbus #tb-acces > tr {
+  background:#152129!important;
+  color:#edf6f8!important;
+}
+body.cockpit-airbus #tb-acces > tr:nth-child(even){background:#1a2830!important}
+body.cockpit-airbus #tb-acces > tr:hover{
+  background:#243844!important;
+  box-shadow:inset 4px 0 0 var(--v23-orange)!important;
+}
+body.cockpit-airbus #tb-acces td{color:#edf6f8!important}
+body.cockpit-airbus #tb-acces .nom-cliquable-fiche{
+  color:#8ee6ff!important;
+  text-decoration-color:#ffad75!important;
+}
+body.cockpit-airbus #tb-acces [style*="color:#5a5244"],
+body.cockpit-airbus #tb-acces [style*="color: #5a5244"]{color:#c8d7dd!important}
+body.cockpit-airbus #tb-acces td[colspan]{color:#c7d5dc!important}
+
+/* Texte normal des boîtes sombres : correction des anciennes couleurs papier. */
+body.cockpit-airbus .modal-boite p,
+body.cockpit-airbus .modal-boite label,
+body.cockpit-airbus .modal-boite small{color:var(--v24-dialog-muted)!important}
+body.cockpit-airbus .modal-boite [style*="color:#23201a"],
+body.cockpit-airbus .modal-boite [style*="color: #23201a"],
+body.cockpit-airbus .modal-boite [style*="color:#5a5244"],
+body.cockpit-airbus .modal-boite [style*="color: #5a5244"],
+body.cockpit-airbus .modal-boite [style*="color:#7a6f5d"],
+body.cockpit-airbus .modal-boite [style*="color: #7a6f5d"]{
+  color:var(--v24-dialog-text)!important;
+}
+body.cockpit-airbus #contenu-readme-admin{color:var(--v24-dialog-text)!important}
+body.cockpit-airbus #contenu-readme-admin h4{color:#ffb47b!important}
+body.cockpit-airbus #contenu-readme-admin code{color:#ffd3ae!important}
+
+/* Sous-panneaux papier volontairement clairs : texte foncé garanti. */
+body.cockpit-airbus .modal-boite :is(
+  div[style*="background:#fff"], div[style*="background: #fff"],
+  div[style*="background:#f9f1e3"], div[style*="background: #f9f1e3"],
+  div[style*="background:#f3ead9"], div[style*="background: #f3ead9"],
+  div[style*="background:#f3e8ff"], div[style*="background: #f3e8ff"],
+  section[style*="background:#fff"], article[style*="background:#fff"]
+){color:var(--v24-dialog-dark)!important}
+body.cockpit-airbus .modal-boite :is(
+  div[style*="background:#fff"], div[style*="background: #fff"],
+  div[style*="background:#f9f1e3"], div[style*="background: #f9f1e3"],
+  div[style*="background:#f3ead9"], div[style*="background: #f3ead9"],
+  div[style*="background:#f3e8ff"], div[style*="background: #f3e8ff"],
+  section[style*="background:#fff"], article[style*="background:#fff"]
+) :is(p,label,small,li){color:var(--v24-dialog-dark-muted)!important}
+body.cockpit-airbus .modal-boite :is(
+  div[style*="background:#fff"], div[style*="background: #fff"],
+  div[style*="background:#f9f1e3"], div[style*="background: #f9f1e3"],
+  div[style*="background:#f3ead9"], div[style*="background: #f3ead9"],
+  div[style*="background:#f3e8ff"], div[style*="background: #f3e8ff"]
+) :is([style*="color:#23201a"],[style*="color: #23201a"],[style*="color:#5a5244"],[style*="color: #5a5244"],[style*="color:#7a6f5d"],[style*="color: #7a6f5d"]){
+  color:var(--v24-dialog-dark-muted)!important;
+}
+
+/* Actions claires héritées de l'ancien thème : versions cockpit lisibles. */
+body.cockpit-airbus .modal-boite button[style*="background:#fff"],
+body.cockpit-airbus .modal-boite button[style*="background: #fff"]{
+  background:#172129!important;color:#eef7fb!important;border-color:#73858e!important;
+}
+body.cockpit-airbus .modal-boite button[style*="background:#e3f6e8"],
+body.cockpit-airbus .modal-boite button[style*="background: #e3f6e8"]{
+  background:#0b5031!important;color:#eafff0!important;border-color:#58c882!important;
+}
+body.cockpit-airbus .modal-boite button[style*="background:#fde2e6"],
+body.cockpit-airbus .modal-boite button[style*="background: #fde2e6"]{
+  background:#61201e!important;color:#fff1f0!important;border-color:#d86a64!important;
+}
+body.cockpit-airbus .modal-boite button[style*="background:#fff3e0"],
+body.cockpit-airbus .modal-boite button[style*="background: #fff3e0"]{
+  background:#542b16!important;color:#ffe0c5!important;border-color:#ff9854!important;
+}
+
+/* Centre de Sécurité : trois panneaux et toutes leurs commandes. */
+body.cockpit-airbus #modal-securite .modal-boite > div[style*="background:#fff"],
+body.cockpit-airbus #modal-securite .modal-boite > div[style*="background:#f9f1e3"]{
+  border-color:#647781!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.28),3px 3px 0 rgba(255,152,84,.28)!important;
+}
+body.cockpit-airbus #modal-securite .modal-boite > div[style*="background:#fff"] label,
+body.cockpit-airbus #modal-securite .modal-boite > div[style*="background:#fff"] span,
+body.cockpit-airbus #modal-securite .modal-boite > div[style*="background:#fff"] b,
+body.cockpit-airbus #modal-securite .modal-boite > div[style*="background:#fff"] code{
+  color:#263238!important;
+}
+body.cockpit-airbus #modal-securite .modal-boite > div[style*="background:#fff"] code{
+  background:#e8edf0!important;border:1px solid #7d8a90!important;padding:1px 4px;border-radius:3px;
+}
+
+/* Fiche élève : composants qui utilisaient encore le papier clair. */
+body.cockpit-airbus #modal-fiche-eleve #contenu-fiche-eleve{
+  background:#0c1318!important;color:var(--v24-dialog-text)!important;
+}
+body.cockpit-airbus #modal-fiche-eleve :is(.fiche-entete,.fiche-kpi,.fiche-modules-bar,.fiche-table-wrap,.fiche-mini-table){
+  background:#111b21!important;color:var(--v24-dialog-text)!important;border-color:#687b85!important;
+}
+body.cockpit-airbus #modal-fiche-eleve .fiche-kpi small{color:#b9cbd2!important}
+body.cockpit-airbus #modal-fiche-eleve .fiche-kpi b{color:#f4fafc!important}
+body.cockpit-airbus #modal-fiche-eleve .fiche-kpi span{color:#c6d5db!important}
+body.cockpit-airbus #modal-fiche-eleve .fiche-sec-titre{color:#ffb47b!important}
+body.cockpit-airbus #modal-fiche-eleve .fiche-bottom-bar{
+  background:#111b21!important;border-color:#687b85!important;
+}
+body.cockpit-airbus #modal-fiche-eleve .fiche-mini-table th{
+  background:#1c2a32!important;color:#ffd4b2!important;border-color:#4e626d!important;
+}
+body.cockpit-airbus #modal-fiche-eleve .fiche-mini-table td{
+  color:#e7f0f3!important;border-color:#30434d!important;
+}
+
+/* Petits écarts de contraste relevés pendant l'inspection. */
+body.cockpit-airbus .modal-boite .code-notif{color:#9b3512!important}
+body.cockpit-airbus #modal-kahoot-live span[style*="background:#ef4444"]{background:#b91c1c!important}
+body.cockpit-airbus #modal-kahoot-live span[style*="background:#d97706"]{background:#934806!important}
+body.cockpit-airbus #modal-kahoot-live span[style*="background:#16a34a"]{background:#08752d!important}
+body.cockpit-airbus #modal-ecoles #tab-ecole-lycees{
+  background:linear-gradient(180deg,#8a3b16,#4b210f)!important;color:#fff3e8!important;border-color:#ff9854!important;
+}
+
+/* ── v24.1 : finitions issues de l'audit automatique de contraste ── */
+body.cockpit-airbus #s-enligne{color:#70f39c!important}
+body.cockpit-airbus #s-actifs{color:#d0a6ff!important}
+body.cockpit-airbus #pied-haut-admin{
+  background:linear-gradient(180deg,#a83a16,#6f220c)!important;color:#fff!important;
+}
+body.cockpit-airbus .ca-ico.orange{
+  background:linear-gradient(135deg,#a83a16,#6f220c)!important;
+}
+body.cockpit-airbus .ca-ico[style*="#0284c7"]{
+  background:linear-gradient(135deg,#075985,#083d5b)!important;
+}
+body.cockpit-airbus .ca-ico[style*="#d97706"]{
+  background:linear-gradient(135deg,#92400e,#632b08)!important;
+}
+
+body.cockpit-airbus #modal-securite #btn-sec-teleporter{
+  background:linear-gradient(180deg,#a84318,#74280d)!important;
+  color:#fff4eb!important;border-color:#ff9b5b!important;
+}
+body.cockpit-airbus #modal-tableau-blanc #tb-live-statut-badge,
+body.cockpit-airbus #modal-tableau-blanc label[style*="background:#f3ead9"],
+body.cockpit-airbus #modal-tableau-blanc label[style*="background:#f3ead9"] :is(span,b){
+  color:#28343a!important;
+}
+body.cockpit-airbus #modal-coffre-partage #tab-coffre-code{
+  color:#eef7fb!important;
+}
+body.cockpit-airbus #modal-readme #contenu-readme-admin > div[style*="background:#f9f1e3"] code{
+  color:#7a2d0d!important;
+}
+body.cockpit-airbus #modal-readme #contenu-readme-admin > div[style*="background:#f9f1e3"] > div[style*="color:#d84315"]{
+  color:#8f2e0c!important;
+}
+body.cockpit-airbus #modal-readme .modal-actions a[style*="background:#f3ead9"]{
+  background:#172129!important;color:#eef7fb!important;border-color:#73858e!important;
+}
+body.cockpit-airbus #modal-verrou-ecran-admin .modal-boite > div[style*="linear-gradient"]{
+  background:linear-gradient(135deg,#9b4b00,#6e3300)!important;
+}
+body.cockpit-airbus #modal-fiche-eleve #btn-fermer-fiche{
+  background:#8f281f!important;color:#fff!important;border-color:#ef817a!important;
+}
+body.cockpit-airbus #modal-fiche-eleve #btn-fiche-bulletin-pdf{
+  background:linear-gradient(125deg,#17357d,#1749ad)!important;color:#fff!important;
+}
+
+@media(max-width:600px){
+  body.cockpit-airbus #modal-securite div:has(> #sec-teleport-cible){
+    grid-template-columns:1fr!important;
+  }
+  body.cockpit-airbus #modal-securite #sec-teleport-cible,
+  body.cockpit-airbus #modal-securite #sec-teleport-page,
+  body.cockpit-airbus #modal-securite #btn-sec-teleporter{
+    width:100%!important;min-width:0!important;
+  }
+}
