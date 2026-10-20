@@ -248,6 +248,37 @@
     };
   }
   var cap1 = fabriqueCaptcha("captcha-canvas", "captcha-refresh");
+  /* ---------- Cloudflare Turnstile : jeton anti-robot exige par Supabase ---------- */
+  var TurnstileSTI = (function () {
+    var widgets = {};
+    function charger(cb) {
+      if (window.turnstile) return cb();
+      var sc = document.createElement("script");
+      sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      sc.async = true; sc.onload = cb; sc.onerror = function () {};
+      document.head.appendChild(sc);
+    }
+    function initialiser() {
+      var cle = (window.STI_AUTH || {}).CLE_TURNSTILE;
+      if (!cle) return;
+      charger(function () {
+        try {
+          if (document.getElementById("ts-connexion")) widgets.connexion = turnstile.render("#ts-connexion", { sitekey: cle });
+          if (document.getElementById("ts-inscription")) widgets.inscription = turnstile.render("#ts-inscription", { sitekey: cle });
+          if (document.getElementById("ts-oubli")) widgets.oubli = turnstile.render("#ts-oubli", { sitekey: cle });
+        } catch (e) {}
+      });
+    }
+    function jeton(nom) {
+      try { return widgets[nom] !== undefined ? (turnstile.getResponse(widgets[nom]) || "") : ""; } catch (e) { return ""; }
+    }
+    function reset(nom) {
+      try { if (widgets[nom] !== undefined) turnstile.reset(widgets[nom]); } catch (e) {}
+    }
+    return { initialiser: initialiser, jeton: jeton, reset: reset };
+  })();
+  TurnstileSTI.initialiser();
+
   var cap2 = fabriqueCaptcha("captcha-canvas2", "captcha-refresh2");
 
   /* ---------- connexion hors-ligne (PC) : empreinte locale du 1er login ---------- */
@@ -775,7 +806,8 @@
     var timerConnOff = setTimeout(function () {
       if (!connexionResolue) tenterConnexionLocaleHorsLigne();
     }, navigator.onLine ? 12000 : 1200);
-    sb.auth.signInWithPassword({ email: emailConn, password: mdp }).then(function (r) {
+    sb.auth.signInWithPassword({ email: emailConn, password: mdp, options: { captchaToken: TurnstileSTI.jeton("connexion") } }).then(function (r) {
+      TurnstileSTI.reset("connexion");
       clearTimeout(timerConnOff);
       if (connexionResolue) return;
       btn.disabled = false;
@@ -952,8 +984,9 @@
       sb.auth.signUp({
         email: emailDeTel(tel),
         password: mdp,
-        options: { data: { phone: tel, nom: nom, prenom: prenom, lycee: lycee, classe: classe, wa_confirme: false } }
+        options: { data: { phone: tel, nom: nom, prenom: prenom, lycee: lycee, classe: classe, wa_confirme: false }, captchaToken: TurnstileSTI.jeton("inscription") }
       }).then(function (r) {
+        TurnstileSTI.reset("inscription");
         btn.disabled = false;
         if (r.error) {
           var m = /already registered/i.test(r.error.message) ? "Ce numéro de téléphone est déjà inscrit." : r.error.message;
@@ -978,8 +1011,9 @@
     sb.auth.signUp({
       email: emInsc,
       password: mdp,
-      options: { data: { nom: nom, prenom: prenom, lycee: lycee, classe: classe } }
+      options: { data: { nom: nom, prenom: prenom, lycee: lycee, classe: classe }, captchaToken: TurnstileSTI.jeton("inscription") }
     }).then(function (r) {
+      TurnstileSTI.reset("inscription");
       btn.disabled = false;
       if (r.error) { msg("❌ " + r.error.message, "err"); return; }
       if (r.data.session) sb.auth.signOut(); /* le compte repasse en attente ; l'admin valide */
@@ -1084,8 +1118,10 @@
     e.preventDefault();
     var btn = e.target.querySelector(".btn"); btn.disabled = true;
     sb.auth.resetPasswordForEmail(document.getElementById("o-email").value.trim(), {
-      redirectTo: cfg.RACINE + "portail.html"
+      redirectTo: cfg.RACINE + "portail.html",
+      captchaToken: TurnstileSTI.jeton("oubli")
     }).then(function (r) {
+      TurnstileSTI.reset("oubli");
       btn.disabled = false;
       if (r.error) { msg("❌ " + r.error.message, "err"); return; }
       msg("📧 Si cette adresse est enregistrée, un lien vient d’être envoyé. Vérifiez aussi le dossier spam. Le lien est temporaire et utilisable une seule fois.", "ok");
