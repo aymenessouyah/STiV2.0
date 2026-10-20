@@ -85,6 +85,60 @@
   var QUOTA_SUPABASE_OCTETS = 500 * 1024 * 1024; // 500 Mo (Plan Free Supabase)
   var dernierQuotaInfo = null;
   var dernierRpcQuotaTs = 0;
+  var supabaseConnectee = false;
+  var detailEtatSupabase = "Vérification de la connexion en cours";
+
+  function actualiserLibellesEtatSupabase() {
+    var icone = supabaseConnectee ? "🟢" : "🔴";
+    var libelle = supabaseConnectee ? "Supabase connectée" : "Supabase déconnectée";
+    var badge = document.getElementById("badge-supabase-quota");
+    var sous = document.getElementById("sous-supabase-quota");
+    var pied = document.getElementById("pied-supabase-quota");
+    var iconeBadge = document.getElementById("sb-etat-icone");
+    [badge, sous, pied].forEach(function (el) {
+      if (!el) return;
+      el.classList.toggle("connecte", supabaseConnectee);
+      el.classList.toggle("deconnecte", !supabaseConnectee);
+      el.setAttribute("data-supabase-connecte", supabaseConnectee ? "1" : "0");
+    });
+    if (iconeBadge) iconeBadge.textContent = icone;
+    if (dernierQuotaInfo) {
+      if (sous) {
+        sous.textContent =
+          icone + " 🗄️ Supabase : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.moRestants +
+          " Mo libres / 500 Mo · " + dernierQuotaInfo.strUtilise + " utilisés)";
+      }
+      if (pied) {
+        pied.textContent =
+          icone + " 🗄️ Supabase : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.strQteRestante +
+          " · " + dernierQuotaInfo.strUtilise + " utilisés)";
+      }
+    } else {
+      if (sous) sous.textContent = sous.textContent.replace(/^[🟢🔴]\s*/, icone + " ");
+      if (pied) pied.textContent = pied.textContent.replace(/^[🟢🔴]\s*/, icone + " ");
+    }
+    var infoQuota = dernierQuotaInfo
+      ? " · Quota : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.strQteRestante + ")"
+      : "";
+    var titreEtat = icone + " " + libelle + " — " + detailEtatSupabase + infoQuota;
+    [badge, sous, pied].forEach(function (el) {
+      if (el) el.title = titreEtat + " — Cliquer pour ouvrir l'Analyseur & Nettoyeur Intelligent";
+    });
+  }
+
+  function majEtatConnexionSupabase(connecte, detail) {
+    supabaseConnectee = Boolean(connecte && navigator.onLine !== false);
+    detailEtatSupabase = String(detail || (supabaseConnectee ? "Synchronisation active" : "Serveur injoignable"));
+    actualiserLibellesEtatSupabase();
+  }
+
+  majEtatConnexionSupabase(false, navigator.onLine === false ? "Appareil hors ligne" : "Vérification de la connexion en cours");
+  window.addEventListener("offline", function () {
+    majEtatConnexionSupabase(false, "Appareil hors ligne — dernières données conservées localement");
+  });
+  window.addEventListener("online", function () {
+    majEtatConnexionSupabase(false, "Réseau revenu — vérification de Supabase en cours");
+  });
 
   function formaterOctets(oct) {
     var n = Math.max(0, Number(oct) || 0);
@@ -114,6 +168,7 @@
       restant: restant,
       pctRestant: strPctRestant,
       pctUtilise: strPctUtilise,
+      moRestants: moRestants,
       strQteRestante: strQteRestante,
       strUtilise: strUtilise,
       nbProf: nbProfTotal || 0,
@@ -140,19 +195,8 @@
       elBadge.classList.remove("alerte", "danger");
       if (pctRestant < 10) elBadge.classList.add("danger");
       else if (pctRestant < 30) elBadge.classList.add("alerte");
-      elBadge.title =
-        "🗄️ Base Supabase (Quota 500 Mo) : " + strPctRestant + " restant (" + moRestants + " Mo libres sur 500 Mo) · " +
-        "Utilisé : " + strUtilise + " (" + strPctUtilise + ") · " +
-        (nbProfTotal || 0) + " profil(s) & " + (nbAccesTotal || 0) + " entrée(s) d'accès/messages/quiz";
     }
-    if (elSous) {
-      elSous.textContent =
-        "🗄️ Supabase : " + strPctRestant + " restant (" + moRestants + " Mo libres / 500 Mo · " + strUtilise + " utilisés)";
-    }
-    if (elPied) {
-      elPied.textContent =
-        "🗄️ Supabase : " + strPctRestant + " restant (" + strQteRestante + " · " + strUtilise + " utilisés)";
-    }
+    actualiserLibellesEtatSupabase();
   }
 
   function calculerQuotaSupabase(tousProfils, tousLesAcces, countProfilsExact, countAccesExact) {
@@ -233,8 +277,9 @@
     if (bars) bars.setAttribute("stroke", "#ffffff");
     if (svg) svg.setAttribute("title", info);
     if (titre) {
-      titre.style.color = coul;
+      titre.classList.toggle("hors-ligne", !enLigne);
       titre.setAttribute("title", info);
+      titre.setAttribute("aria-label", "Tableau de bord STI V2.0 — " + info.replace(/^[🟢🔴]\s*/, ""));
     }
   }
   majLogoReseauAdmin();
@@ -2349,7 +2394,10 @@
     if (!garderMsg) msg("Chargement optimisé…", "");
     var resolu = false;
     var timerOffAdmin = setTimeout(function () {
-      if (!resolu) chargerDepuisCacheAdmin(garderMsg, "Mode hors-ligne (serveur injoignable).");
+      if (!resolu) {
+        majEtatConnexionSupabase(false, "Serveur injoignable — affichage des dernières données locales");
+        chargerDepuisCacheAdmin(garderMsg, "Mode hors-ligne (serveur injoignable).");
+      }
     }, 3500);
     return Promise.all([
       selectionnerProfilsAdmin(true),
@@ -2358,6 +2406,7 @@
       clearTimeout(timerOffAdmin);
       if (res[0].error || res[1].error) throw (res[0].error || res[1].error);
       resolu = true;
+      majEtatConnexionSupabase(true, "Synchronisation active avec la base");
       var tous = res[0].data || [];
       var tousAcces = res[1].data || [];
       /* L’historique persistant provient uniquement de Supabase ; aucun ancien flux n’est aspiré en masse. */
@@ -2373,6 +2422,7 @@
       }
     }).catch(function (err) {
       clearTimeout(timerOffAdmin);
+      majEtatConnexionSupabase(false, (err && err.message) || "Impossible de joindre la base");
       if (!resolu && !chargerDepuisCacheAdmin(garderMsg, err && err.message)) {
         msg("❌ " + ((err && err.message) || "Impossible de joindre Supabase."), "err");
       }
@@ -2382,23 +2432,29 @@
   function requeteProfilsAdmin() {
     return selectionnerProfilsAdmin(true).then(function (res) {
       if (res.error) throw res.error;
+      majEtatConnexionSupabase(true, "Profils synchronisés avec la base");
       var tous = res.data || [];
       window.__stiCountProfils = typeof res.count === "number" ? res.count : tous.length;
       noterTraficAdmin(tous);
       var snap = sauvegarderSnapshotAdmin(tous, accesBrutsAdmin, signauxCompatBrutAdmin);
       appliquerDonneesAdmin(tous, accesBrutsAdmin, signauxCompatBrutAdmin, false, snap.ts);
-    }).catch(function () {});
+    }).catch(function (err) {
+      majEtatConnexionSupabase(false, (err && err.message) || "Impossible de synchroniser les profils");
+    });
   }
 
   function requeteAccesCompletAdmin() {
     return sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(TAILLE_PAGE_ACCES_ADMIN).then(function (res) {
       if (res.error) throw res.error;
+      majEtatConnexionSupabase(true, "Activités synchronisées avec la base");
       var tousAcces = res.data || [];
       window.__stiCountAcces = typeof res.count === "number" ? res.count : tousAcces.length;
       noterTraficAdmin(tousAcces);
       var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, tousAcces, signauxCompatBrutAdmin);
       appliquerDonneesAdmin(profilsBrutsAdmin, tousAcces, signauxCompatBrutAdmin, false, snap.ts);
-    }).catch(function () {});
+    }).catch(function (err) {
+      majEtatConnexionSupabase(false, (err && err.message) || "Impossible de synchroniser les activités");
+    });
   }
 
   function requeteDeltaAdmin() {
@@ -2423,6 +2479,7 @@
 
     return Promise.all([qAcces, pProfils]).then(function (res) {
       if (res[0].error || res[1].error) throw (res[0].error || res[1].error);
+      majEtatConnexionSupabase(true, "Synchronisation temps réel active");
       var nouveaux = res[0].data || [];
       var profilsModifies = res[1].data || [];
       noterTraficAdmin([nouveaux, profilsModifies]);
@@ -2432,7 +2489,8 @@
       var snap = sauvegarderSnapshotAdmin(fusionProfils, fusionAcces, signauxCompatBrutAdmin);
       appliquerDonneesAdmin(fusionProfils, fusionAcces, signauxCompatBrutAdmin, false, snap.ts);
       if (nouveaux.length >= 250 || profilsModifies.length >= 100) chargeAdminCompleteEnAttente = true;
-    }).catch(function () {
+    }).catch(function (err) {
+      majEtatConnexionSupabase(false, (err && err.message) || "Synchronisation temps réel interrompue");
       /* Le dernier instantané reste affiché ; la reconnexion déclenchera une réconciliation. */
     });
   }
@@ -2467,6 +2525,7 @@
 
   function charge(garderMsg, forcerComplet) {
     if (!navigator.onLine) {
+      majEtatConnexionSupabase(false, "Appareil hors ligne — dernières données conservées localement");
       chargerDepuisCacheAdmin(garderMsg, "Appareil hors-ligne (aucun cache enregistré).");
       return Promise.resolve();
     }
@@ -10557,6 +10616,7 @@
   var modalQuotaSb = document.getElementById("modal-quota-supabase");
   var badgeQuotaTop = document.getElementById("badge-supabase-quota");
   var sousQuotaTop = document.getElementById("sous-supabase-quota");
+  var piedQuotaTop = document.getElementById("pied-supabase-quota");
   var divRepartitionQuota = document.getElementById("contenu-repartition-quota");
   var btnPurgeLourds30j = document.getElementById("btn-purge-lourds-30j");
   var btnPurgeCoffrePj = document.getElementById("btn-purge-coffre-pj");
@@ -10625,6 +10685,7 @@
 
   if (badgeQuotaTop) badgeQuotaTop.addEventListener("click", ouvrirModalQuotaSupabase);
   if (sousQuotaTop) sousQuotaTop.addEventListener("click", ouvrirModalQuotaSupabase);
+  if (piedQuotaTop) piedQuotaTop.addEventListener("click", ouvrirModalQuotaSupabase);
   [btnFermerQuota, btnFermerQuotaX].forEach(function (b) {
     if (b) b.addEventListener("click", function () { if (modalQuotaSb) modalQuotaSb.classList.remove("visible"); });
   });
