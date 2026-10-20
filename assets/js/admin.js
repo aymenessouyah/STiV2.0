@@ -2620,13 +2620,13 @@
     var classeProf = classesActives.find(function (cl) { return /^prof$/i.test(String(cl || "").trim()); }) || "Prof";
     var classeLabo = classesActives.find(function (cl) { return estCompteElevelabo3("", cl); }) || "elevelabo3";
     var zones = classesEleves.map(function (cl) {
-      return { type: "classe", classe: cl, nom: cl, icone: "🏫" };
+      return { type: "classe", classe: cl, nom: cl, icone: "◈" };
     });
     while (zones.length < 4) {
-      zones.push({ type: "vide", classe: "", nom: "Classe —", icone: "🏫" });
+      zones.push({ type: "vide", classe: "", nom: "Classe —", icone: "◈" });
     }
-    zones.push({ type: "prof", classe: classeProf, nom: "PROF", icone: "👑" });
-    zones.push({ type: "labo", classe: classeLabo, nom: "LABO 3", icone: "💻" });
+    zones.push({ type: "prof", classe: classeProf, nom: "PROF", icone: "◆" });
+    zones.push({ type: "labo", classe: classeLabo, nom: "LABO 3", icone: "▣" });
     return zones;
   }
 
@@ -2701,7 +2701,7 @@
     var seuil24h = Date.now() - 24 * 60 * 60 * 1000;
     var cumul = { total: 0, online: 0, actifs24h: 0, attente: 0 };
     zonesAfficheurClasse.forEach(function (bouton, index) {
-      var zone = zones[index] || { type: "vide", classe: "", nom: "Classe —", icone: "🏫" };
+      var zone = zones[index] || { type: "vide", classe: "", nom: "Classe —", icone: "◈" };
       var statsZone = statistiquesZoneAfficheur(zone, seuil24h);
       renseignerZoneAfficheur(bouton, zone, statsZone);
       cumul.total += statsZone.total;
@@ -10849,16 +10849,31 @@
       "background:rgba(255,253,247,0.96);border:2px solid #23201a;border-radius:999px;padding:4px 7px;" +
       "box-shadow:3px 3px 0 #23201a;font:800 12px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#23201a;";
 
-    var outilsCaption = document.createElement("span");
+    var outilsCaption = document.createElement("button");
+    outilsCaption.type = "button";
     outilsCaption.id = "sti-tools-caption";
-    outilsCaption.innerHTML = '<b>COMMANDES</b><small id="sti-tools-state">MODE NORMAL</small>';
+    outilsCaption.setAttribute("aria-expanded", "false");
+    outilsCaption.setAttribute("aria-label", "Développer les commandes d’affichage");
+    outilsCaption.title = "Développer ou réduire les commandes — la barre flotte sans modifier la largeur de la page";
+    outilsCaption.innerHTML = '<b>CMD</b><small id="sti-tools-state">MODE NORMAL</small><span class="sti-tools-toggle-arrow" aria-hidden="true">›</span>';
+    outilsCaption.addEventListener("click", function () {
+      var ouvert = bar.classList.toggle("sti-tools-open");
+      outilsCaption.setAttribute("aria-expanded", ouvert ? "true" : "false");
+      outilsCaption.setAttribute("aria-label", ouvert ? "Réduire les commandes d’affichage" : "Développer les commandes d’affichage");
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key !== "Escape") return;
+      bar.classList.remove("sti-tools-open");
+      outilsCaption.setAttribute("aria-expanded", "false");
+      outilsCaption.setAttribute("aria-label", "Développer les commandes d’affichage");
+    });
 
     var btnFsAdm = document.createElement("button");
     btnFsAdm.type = "button";
     btnFsAdm.id = "sti-btn-pc-fullscreen";
     btnFsAdm.setAttribute("data-airbus-role", "PLEIN ÉCRAN");
     btnFsAdm.setAttribute("aria-pressed", "false");
-    btnFsAdm.innerHTML = "📽️ <span>Mode projection</span>";
+    btnFsAdm.innerHTML = "▣ <span>Mode projection</span>";
     btnFsAdm.title = "Mode projection : afficher le tableau de bord en plein écran, sans barre d’adresse";
     btnFsAdm.style.cssText =
       "display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;border:1.5px solid #23201a;" +
@@ -10867,7 +10882,7 @@
     function synchroniserLibelleProjection() {
       var projectionActive = Boolean(document.fullscreenElement || document.webkitFullscreenElement) ||
         document.documentElement.classList.contains("sti-kiosk-css-full") || Boolean(document.__stiCssFsEl);
-      btnFsAdm.innerHTML = projectionActive ? "📽️ <span>Projection active</span>" : "📽️ <span>Mode projection</span>";
+      btnFsAdm.innerHTML = projectionActive ? "▣ <span>Projection active</span>" : "▣ <span>Mode projection</span>";
       btnFsAdm.setAttribute("aria-pressed", projectionActive ? "true" : "false");
       var etatOutils = document.getElementById("sti-tools-state");
       if (etatOutils) etatOutils.textContent = projectionActive ? "MODE PROJECTION" : "MODE NORMAL";
@@ -10887,7 +10902,7 @@
     btnPin.id = "sti-btn-pc-pin";
     btnPin.setAttribute("data-airbus-role", "FENÊTRE SÉPARÉE");
     btnPin.setAttribute("aria-pressed", "false");
-    btnPin.innerHTML = "📌 <span>Fenêtre flottante</span>";
+    btnPin.innerHTML = "◇ <span>Fenêtre flottante</span>";
     btnPin.title = "Ouvrir une petite fenêtre séparée qui reste visible au-dessus des autres fenêtres";
     btnPin.style.cssText =
       "display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;border:1.5px solid #23201a;" +
@@ -10897,7 +10912,7 @@
         pipWinAdm.close();
         pipWinAdm = null;
         btnPin.style.background = "#101728";
-        btnPin.innerHTML = "📌 <span>Fenêtre flottante</span>";
+        btnPin.innerHTML = "◇ <span>Fenêtre flottante</span>";
         btnPin.setAttribute("aria-pressed", "false");
         return;
       }
@@ -10905,14 +10920,14 @@
         window.documentPictureInPicture.requestWindow({ width: 620, height: 740 }).then(function (pw) {
           pipWinAdm = pw;
           btnPin.style.background = "#177245";
-          btnPin.innerHTML = "📌 <span>Fenêtre active</span>";
+          btnPin.innerHTML = "◆ <span>Fenêtre active</span>";
           btnPin.setAttribute("aria-pressed", "true");
           pw.document.body.style.cssText = "margin:0;height:100vh;display:flex;flex-direction:column;background:#0d1526;";
           pw.document.body.innerHTML = '<iframe src="' + location.href.replace(/"/g, "&quot;") + '" style="flex:1;width:100%;border:0;background:#f9f1e3;"></iframe>';
           pw.addEventListener("pagehide", function () {
             pipWinAdm = null;
             btnPin.style.background = "#101728";
-            btnPin.innerHTML = "📌 <span>Fenêtre flottante</span>";
+            btnPin.innerHTML = "◇ <span>Fenêtre flottante</span>";
             btnPin.setAttribute("aria-pressed", "false");
           });
         }).catch(function () {
@@ -10933,7 +10948,7 @@
     bOut.id = "sti-btn-pc-zoom-out";
     bOut.setAttribute("data-airbus-role", "ZOOM −10 %");
     bOut.setAttribute("aria-label", "Réduire l’affichage de 10 pour cent");
-    bOut.textContent = "🔍−";
+    bOut.textContent = "−";
     bOut.title = "Réduire uniquement l’affichage du tableau de bord de 10 %";
     bOut.style.cssText = "padding:5px 8px;border-radius:999px;border:1.5px solid #23201a;background:#f3ead9;color:#23201a;font:900 11.5px/1 inherit;cursor:pointer;";
     bOut.onclick = function () { appliquerZ(lireZ() - 10); };
@@ -10953,7 +10968,7 @@
     bIn.id = "sti-btn-pc-zoom-in";
     bIn.setAttribute("data-airbus-role", "ZOOM +10 %");
     bIn.setAttribute("aria-label", "Agrandir l’affichage de 10 pour cent");
-    bIn.textContent = "🔍+";
+    bIn.textContent = "+";
     bIn.title = "Agrandir uniquement l’affichage du tableau de bord de 10 %";
     bIn.style.cssText = "padding:5px 8px;border-radius:999px;border:1.5px solid #23201a;background:#fff3b0;color:#23201a;font:900 11.5px/1 inherit;cursor:pointer;";
     bIn.onclick = function () { appliquerZ(lireZ() + 10); };
@@ -10973,7 +10988,7 @@
     bLaser.id = "sti-btn-pc-laser";
     bLaser.setAttribute("data-airbus-role", "3 ÉTATS");
     bLaser.setAttribute("aria-pressed", "false");
-    bLaser.innerHTML = "🔴 <span>Laser / guide-texte</span>";
+    bLaser.innerHTML = "● <span>Laser / guide-texte</span>";
     bLaser.title = "Projection : 1 clic = laser rouge · 2 clics = guide horizontal de lecture · 3 clics = désactivé";
     bLaser.style.cssText = "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
     bLaser.onclick = function () {
@@ -10995,15 +11010,15 @@
       modeLaserAdm = (modeLaserAdm + 1) % 3;
       if (modeLaserAdm === 0) {
         ovLaserAdm.style.display = "none"; dotLaserAdm.style.display = "none"; lineLaserAdm.style.display = "none";
-        bLaser.style.background = "#fffdf7"; bLaser.style.color = "#23201a"; bLaser.innerHTML = "🔴 <span>Laser / guide-texte</span>";
+        bLaser.style.background = "#fffdf7"; bLaser.style.color = "#23201a"; bLaser.innerHTML = "● <span>Laser / guide-texte</span>";
         bLaser.setAttribute("data-airbus-role", "3 ÉTATS"); bLaser.setAttribute("aria-pressed", "false");
       } else if (modeLaserAdm === 1) {
         ovLaserAdm.style.display = "block"; dotLaserAdm.style.display = "block"; lineLaserAdm.style.display = "none";
-        bLaser.style.background = "#dc2626"; bLaser.style.color = "#fff"; bLaser.innerHTML = "🔴 <span>Laser actif</span>";
+        bLaser.style.background = "#dc2626"; bLaser.style.color = "#fff"; bLaser.innerHTML = "● <span>Laser actif</span>";
         bLaser.setAttribute("data-airbus-role", "POINTEUR ROUGE"); bLaser.setAttribute("aria-pressed", "true");
       } else {
         ovLaserAdm.style.display = "block"; dotLaserAdm.style.display = "none"; lineLaserAdm.style.display = "block";
-        bLaser.style.background = "#d97706"; bLaser.style.color = "#fff"; bLaser.innerHTML = "📏 <span>Guide-texte actif</span>";
+        bLaser.style.background = "#d97706"; bLaser.style.color = "#fff"; bLaser.innerHTML = "━ <span>Guide-texte actif</span>";
         bLaser.setAttribute("data-airbus-role", "LIGNE DE LECTURE"); bLaser.setAttribute("aria-pressed", "true");
       }
     };
@@ -11036,7 +11051,7 @@
     bSplit.id = "sti-btn-pc-split";
     bSplit.setAttribute("data-airbus-role", "CÔTE À CÔTE");
     bSplit.setAttribute("aria-pressed", "false");
-    bSplit.innerHTML = "◫ <span>Deux vues</span>";
+    bSplit.innerHTML = "▥ <span>Deux vues</span>";
     bSplit.title = "Ouvrir une seconde page à droite du tableau de bord, en mode côte à côte";
     bSplit.style.cssText = "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
     bSplit.onclick = function () {
@@ -11044,11 +11059,11 @@
         splitAdm.remove();
         splitAdm = null;
         document.documentElement.style.width = "";
-        bSplit.style.background = "#fffdf7"; bSplit.style.color = "#23201a"; bSplit.innerHTML = "◫ <span>Deux vues</span>";
+        bSplit.style.background = "#fffdf7"; bSplit.style.color = "#23201a"; bSplit.innerHTML = "▥ <span>Deux vues</span>";
         bSplit.setAttribute("aria-pressed", "false");
         return;
       }
-      bSplit.style.background = "#0284c7"; bSplit.style.color = "#fff"; bSplit.innerHTML = "◫ <span>Deux vues actives</span>";
+      bSplit.style.background = "#0284c7"; bSplit.style.color = "#fff"; bSplit.innerHTML = "▥ <span>Deux vues actives</span>";
       bSplit.setAttribute("aria-pressed", "true");
       document.documentElement.style.width = "52vw";
       splitAdm = document.createElement("div");
