@@ -200,7 +200,39 @@
     background: #fde2e6; color: #c0392b; box-shadow: 3.5px 3.5px 0 #c0392b;
   }
 
-  /* ── Organisation par Pôles & Cartes de Sections (v116) ── */
+  /* ── Organisation du tableau de bord v316 ── */
+  .tableau-apercu {
+    background: linear-gradient(135deg, #fff9ec, #eef7ff);
+    border: 2.5px solid #23201a; border-radius: 18px;
+    padding: 13px 15px; margin-bottom: 16px;
+    box-shadow: 4px 4px 0 rgba(35,32,26,.85);
+  }
+  .tableau-apercu-entete {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .tableau-apercu-entete h2 { margin: 0; color: #23201a; font-size: 16px; }
+  .tableau-apercu-entete span { color: #7a6f5d; font-size: 11.5px; font-weight: 800; }
+  .tableau-apercu .stats { margin-bottom: 0; }
+  .tableau-apercu .alerte-demande { margin-bottom: 10px; }
+  .centre-actions-dashboard {
+    background: rgba(255,253,247,.72); border: 2px solid #d8cdbb;
+    border-radius: 18px; padding: 13px 14px; margin-bottom: 16px;
+  }
+  .centre-actions-dashboard .actions-principales { margin-bottom: 12px; }
+  .pole-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 20px; height: 20px; margin-left: 4px; padding: 0 5px;
+    border-radius: 999px; background: rgba(35,32,26,.12); font-size: 10px;
+  }
+  .pole-tab.actif .pole-count { background: #ffd54f; color: #23201a; }
+  .titre-gestion-detaillee {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 10px; flex-wrap: wrap; margin: 18px 0 8px;
+  }
+  .titre-gestion-detaillee h2 { margin: 0; color: #23201a; }
+  .titre-gestion-detaillee span { color: #7a6f5d; font-size: 11px; font-weight: 800; }
+
   .poles-header {
     display: flex; align-items: center; justify-content: space-between;
     gap: 10px; flex-wrap: wrap; margin-bottom: 10px;
@@ -604,6 +636,14 @@
     body.mob-outils-ouverts .actions-principales {
       display: grid;
     }
+    .tableau-apercu { padding: 10px; border-radius: 14px; margin-bottom: 10px; }
+    .tableau-apercu-entete { margin-bottom: 7px; }
+    .centre-actions-dashboard { display: none; padding: 9px; border-radius: 14px; margin-bottom: 10px; }
+    body.mob-outils-ouverts .centre-actions-dashboard { display: block; }
+    .centre-actions-dashboard .poles-header { display: none; }
+    .aide-windows-v316 { display: none; }
+    body.mob-outils-ouverts .aide-windows-v316 { display: block; }
+    .titre-gestion-detaillee { margin-top: 12px; }
     .carte-action {
       padding: 9px 10px; gap: 8px; border-radius: 13px;
       box-shadow: 2.5px 2.5px 0 #23201a;
@@ -1380,18 +1420,42 @@
       <button id="btn-badges-labo-top" type="button" hidden aria-hidden="true"></button>
 
       <button class="btn-util logout mob-extra" id="btn-logout" type="button">🚪 <span class="lbl-pc">Déconnexion</span><span class="lbl-mob">Sortir</span></button>
-      <button class="btn-util only-mob-flex" id="btn-mob-toggle-outils" type="button">🧰 Tous les outils &amp; actions (12) ▾</button>
+      <button class="btn-util only-mob-flex" id="btn-mob-toggle-outils" type="button">🧰 Tous les outils &amp; actions (14) ▾</button>
     </div>
   </header>
 
-  <!-- 2. CENTRE DE PILOTAGE PÉDAGOGIQUE ORGANISÉ EN 3 PÔLES THÉMATIQUES -->
+  <section class="tableau-apercu" id="vue-ensemble-admin" aria-labelledby="titre-vue-ensemble-admin">
+    <div class="tableau-apercu-entete">
+      <h2 id="titre-vue-ensemble-admin">📊 Vue d’ensemble</h2>
+      <span>Alertes et indicateurs essentiels en temps réel</span>
+    </div>
+  <div class="alerte-demande" id="alerte-attente">
+    <span id="alerte-attente-txt">🔔 Nouvelle(s) demande(s) d'inscription en attente !</span>
+  </div>
+
+  <!-- 3. COMPTEURS EN DIRECT (cliquables pour filtrer la liste ou aller aux connexions) -->
+  <div class="stats" id="stats">
+    <div class="stat" data-filtre="en_ligne" title="Cliquer pour filtrer les élèves en ligne"><b id="s-enligne" style="color:#177245">0</b><small>🟢 En ligne</small></div>
+    <div class="stat" id="stat-machines-labo3" title="Cliquer pour voir le détail des machines ouvertes avec le compte elevelabo3@exemple.tn" style="border-color:#0284c7;box-shadow:3px 3px 0 rgba(2,132,199,.45)"><b id="s-labo3-machines" style="color:#0284c7">0</b><small>💻 Postes Labo 3</small></div>
+    <div class="stat" data-filtre="*" title="Cliquer pour afficher tous les abonnés"><b id="s-total">0</b><small>👥 Abonnés</small></div>
+    <div class="stat" data-filtre="actif" title="Cliquer pour filtrer les abonnés actifs"><b id="s-actifs" style="color:#6d28d9">0</b><small>🟣 Actifs</small></div>
+    <div class="stat" data-filtre="en_attente" title="Cliquer pour filtrer les demandes en attente"><b id="s-attente" style="color:#b47d09">0</b><small>⏳ En attente</small></div>
+    <div class="stat" id="stat-connexions" data-scroll-cible="sec-dernieres-connexions" title="Cliquer pour aller directement à Dernières connexions"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
+  </div>
+  <div id="bandeau-machines-labo3" style="display:none;background:#f0f9ff;border:2px solid #0284c7;border-radius:16px;padding:12px 16px;margin-bottom:14px;box-shadow:3.5px 3.5px 0 rgba(2,132,199,.35);font-size:12.5px;color:#0c4a6e"></div>
+
+  </section>
+
+  <section class="centre-actions-dashboard" id="centre-actions-dashboard" aria-labelledby="titre-actions-dashboard">
+  <!-- 2. CENTRE DE PILOTAGE PÉDAGOGIQUE ORGANISÉ PAR CATÉGORIES -->
   <div class="poles-header">
-    <div style="font-size:13px;font-weight:900;color:#23201a">🧰 Boîte à outils du Professeur (filtrer par pôle) :</div>
-    <div class="poles-tabs" role="tablist" aria-label="Pôles d'actions du professeur">
-      <button type="button" class="pole-tab actif" data-pole="all">✨ Tout afficher (12)</button>
-      <button type="button" class="pole-tab" data-pole="seance">📡 1. Séance &amp; Direct (4)</button>
-      <button type="button" class="pole-tab" data-pole="eval">📝 2. Évaluations &amp; Corrections (5)</button>
-      <button type="button" class="pole-tab" data-pole="classe">🛡️ 3. Classe, Sécurité &amp; Suivi (3)</button>
+    <div id="titre-actions-dashboard" style="font-size:13px;font-weight:900;color:#23201a">🧰 Actions rapides — choisir une catégorie :</div>
+    <div class="poles-tabs" role="tablist" aria-label="Catégories d’actions du professeur">
+      <button type="button" class="pole-tab actif" data-pole="all"><span>✨ Tout afficher</span><span class="pole-count" data-pole-count>0</span></button>
+      <button type="button" class="pole-tab" data-pole="seance"><span>📡 Séance &amp; Direct</span><span class="pole-count" data-pole-count>0</span></button>
+      <button type="button" class="pole-tab" data-pole="eval"><span>📝 Évaluations</span><span class="pole-count" data-pole-count>0</span></button>
+      <button type="button" class="pole-tab" data-pole="classe"><span>🛡️ Classe &amp; Sécurité</span><span class="pole-count" data-pole-count>0</span></button>
+      <button type="button" class="pole-tab" data-pole="windows"><span>🪟 Application Windows</span><span class="pole-count" data-pole-count>0</span></button>
     </div>
   </div>
 
@@ -1470,7 +1534,7 @@
       </span>
     </button>
 
-    <!-- PÔLE 3 : CLASSE, SÉCURITÉ & SUIVI (5 cartes) -->
+    <!-- CLASSE & SÉCURITÉ (4 cartes) + APPLICATION WINDOWS (1 carte séparée) -->
     <button class="carte-action" id="btn-securite-card" data-pole-item="classe" type="button">
       <span class="ca-ico orange" style="background:linear-gradient(135deg,#fde2e6,#c0392b)">🛡️</span>
       <span class="ca-corps">
@@ -1487,7 +1551,7 @@
       </span>
     </button>
 
-    <a class="carte-action" id="btn-telecharger-labo3-windows" data-pole-item="classe"
+    <a class="carte-action" id="btn-telecharger-labo3-windows" data-pole-item="windows"
        href="https://github.com/aymenessouyah/STiV2.0/releases/download/windows-v316/STI-Labo3-Windows-v316.zip?v=dashboard-installation-6"
        download="STI-Labo3-Windows-v316.zip" title="Télécharger le ZIP d’installation destiné aux utilisateurs — le code source n’est pas nécessaire">
       <span class="ca-ico" style="background:linear-gradient(135deg,#bfdbfe,#1d4ed8);color:#fff">💾</span>
@@ -1565,25 +1629,16 @@
     <p class="aide-windows-note">Le code source est réservé aux développeurs : les utilisateurs ont uniquement besoin du ZIP d’installation.</p>
   </section>
 
-  <div class="alerte-demande" id="alerte-attente">
-    <span id="alerte-attente-txt">🔔 Nouvelle(s) demande(s) d'inscription en attente !</span>
-  </div>
+  </section>
 
-  <!-- 3. COMPTEURS EN DIRECT (cliquables pour filtrer la liste ou aller aux connexions) -->
-  <div class="stats" id="stats">
-    <div class="stat" data-filtre="en_ligne" title="Cliquer pour filtrer les élèves en ligne"><b id="s-enligne" style="color:#177245">0</b><small>🟢 En ligne</small></div>
-    <div class="stat" id="stat-machines-labo3" title="Cliquer pour voir le détail des machines ouvertes avec le compte elevelabo3@exemple.tn" style="border-color:#0284c7;box-shadow:3px 3px 0 rgba(2,132,199,.45)"><b id="s-labo3-machines" style="color:#0284c7">0</b><small>💻 Postes Labo 3</small></div>
-    <div class="stat" data-filtre="*" title="Cliquer pour afficher tous les abonnés"><b id="s-total">0</b><small>👥 Abonnés</small></div>
-    <div class="stat" data-filtre="actif" title="Cliquer pour filtrer les abonnés actifs"><b id="s-actifs" style="color:#6d28d9">0</b><small>🟣 Actifs</small></div>
-    <div class="stat" data-filtre="en_attente" title="Cliquer pour filtrer les demandes en attente"><b id="s-attente" style="color:#b47d09">0</b><small>⏳ En attente</small></div>
-    <div class="stat" id="stat-connexions" data-scroll-cible="sec-dernieres-connexions" title="Cliquer pour aller directement à Dernières connexions"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
+  <!-- 4. GESTION DÉTAILLÉE : BLOCS REPLIÉS AU DÉMARRAGE -->
+  <div class="titre-gestion-detaillee">
+    <h2>🗂️ Gestion détaillée</h2>
+    <span>Ouvrez uniquement la section dont vous avez besoin</span>
   </div>
-  <div id="bandeau-machines-labo3" style="display:none;background:#f0f9ff;border:2px solid #0284c7;border-radius:16px;padding:12px 16px;margin-bottom:14px;box-shadow:3.5px 3.5px 0 rgba(2,132,199,.35);font-size:12.5px;color:#0c4a6e"></div>
-
-  <!-- 4. BARRE D'ONGLETS DE NAVIGATION ENTRE LES 4 SECTIONS DE DONNÉES -->
   <nav class="nav-sections-admin" id="nav-sections-admin" aria-label="Navigation entre les sections du tableau de bord">
     <span class="nav-sections-lbl">📂 Afficher :</span>
-    <button type="button" class="btn-sec-tab actif" data-sec-cible="all">🗂️ Vue complète (4 sections)</button>
+    <button type="button" class="btn-sec-tab actif" data-sec-cible="all">🗂️ Tous les blocs repliés</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-abonnes">👥 1. Abonnés &amp; Classes</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-quiz">🏆 2. Quiz &amp; Bac Pratique</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-messages">📨 3. Messages &amp; Réponses</button>
@@ -1593,7 +1648,7 @@
   <div class="msg" id="msg"></div>
 
   <!-- SECTION 1 : LISTE DES ABONNÉS & GESTION DES CLASSES -->
-  <section class="carte-section-admin" id="bloc-sec-abonnes">
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-abonnes">
     <div id="sec-abonnes" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:14px">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <h2 style="margin:0">👥 1. Liste des Abonnés &amp; Classes <span id="note-tri" style="font-size:11px;color:#7a6f5d;font-weight:700"></span></h2>
@@ -1605,7 +1660,7 @@
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:800;color:#7a6f5d">
         <span>📅 Période :</span>
         <select id="sel-semaine" style="border:2px solid #23201a;border-radius:999px;padding:5px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12.5px"></select>
-        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-abonnes">▾ Réduire</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-abonnes">▸ Agrandir</button>
       </div>
     </div>
 
@@ -1663,7 +1718,7 @@
   </section>
 
   <!-- SECTION 2 : RÉSULTATS DES QUIZ & ATELIER BAC PRATIQUE -->
-  <section class="carte-section-admin" id="bloc-sec-quiz">
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-quiz">
     <div id="sec-resultats-quiz" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:16px">
       <h2 style="margin:0">🏆 2. Résultats des Quiz &amp; Atelier Bac Pratique</h2>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -1672,7 +1727,7 @@
         </select>
         <button type="button" class="btn-outil" id="btn-export-quiz-csv" title="Exporter les notes et résultats de Quiz au format Excel (CSV)">📥 Exporter Notes (CSV)</button>
         <button type="button" class="btn-outil" id="btn-ouvrir-purge-quiz" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer les résultats de Quiz et Bac Pratique en choisissant le mois cible">🗑️ Effacer par mois…</button>
-        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-quiz">▾ Réduire</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-quiz">▸ Agrandir</button>
       </div>
     </div>
     <div class="corps-section-admin">
@@ -1689,12 +1744,12 @@
   </section>
 
   <!-- SECTION 3 : SUIVI DE LECTURE DES MESSAGES DIFFUSÉS & RÉPONSES -->
-  <section class="carte-section-admin" id="bloc-sec-messages">
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-messages">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
       <h2 style="margin:0">📨 3. Suivi de lecture des messages &amp; réponses des élèves <span id="resume-suivi-msg" style="font-size:12px;color:#7a6f5d;font-weight:800;margin-left:6px"></span></h2>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <button type="button" class="btn-outil" id="btn-ouvrir-purge-msg" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer un message diffusé et son suivi de lecture/réponses">🗑️ Effacer par message…</button>
-        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-messages">▾ Réduire</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-messages">▸ Agrandir</button>
       </div>
     </div>
     <div class="corps-section-admin">
@@ -1717,7 +1772,7 @@
   </section>
 
   <!-- SECTION 4 : DERNIÈRES CONNEXIONS (TOUS ABONNÉS) -->
-  <section class="carte-section-admin" id="bloc-sec-connexions">
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-connexions">
     <div id="sec-dernieres-connexions" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:16px">
       <h2 style="margin:0">🕒 4. Dernières connexions (tous abonnés)</h2>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -1725,7 +1780,7 @@
           <option value="*">🏫 Toutes les classes</option>
         </select>
         <button type="button" class="btn-outil" id="btn-ouvrir-purge-acces" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer les connexions en choisissant le mois cible">🗑️ Effacer par mois…</button>
-        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-connexions">▾ Réduire</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-connexions">▸ Agrandir</button>
       </div>
     </div>
     <div class="corps-section-admin">
@@ -3327,6 +3382,7 @@
     /* Ergonomie Mobile : tiroir Outils & Actions, tiroir Filtres avancés et Barre de navigation basse */
     var btnMobOutils = document.getElementById("btn-mob-toggle-outils");
     var mobNavOutils = document.getElementById("mob-nav-outils");
+    var nbActionsDashboard = document.querySelectorAll("#grille-actions-principales [data-pole-item]").length;
     function basculerTiroirOutilsMob(forcerOuvert) {
       var ouv = typeof forcerOuvert === "boolean"
         ? forcerOuvert
@@ -3335,7 +3391,7 @@
       if (btnMobOutils) {
         btnMobOutils.textContent = ouv
           ? "🧰 Masquer les outils & actions ▴"
-          : "🧰 Tous les outils & actions (15) ▾";
+          : "🧰 Tous les outils & actions (" + nbActionsDashboard + ") ▾";
       }
       if (mobNavOutils) mobNavOutils.classList.toggle("actif", ouv);
     }
@@ -3456,16 +3512,29 @@
       });
     }
 
+    var cartesActionsDashboard = Array.from(document.querySelectorAll("#grille-actions-principales [data-pole-item]"));
+    var panneauAideWindows = document.getElementById("aide-windows-v316");
     document.querySelectorAll(".pole-tab[data-pole]").forEach(function (tab) {
+      var poleTab = tab.getAttribute("data-pole") || "all";
+      var compteur = tab.querySelector("[data-pole-count]");
+      if (compteur) {
+        compteur.textContent = String(poleTab === "all"
+          ? cartesActionsDashboard.length
+          : cartesActionsDashboard.filter(function (carte) { return carte.getAttribute("data-pole-item") === poleTab; }).length);
+      }
+      tab.setAttribute("aria-selected", tab.classList.contains("actif") ? "true" : "false");
       tab.addEventListener("click", function () {
         var pole = tab.getAttribute("data-pole") || "all";
         document.querySelectorAll(".pole-tab[data-pole]").forEach(function (t) {
-          t.classList.toggle("actif", t === tab);
+          var active = t === tab;
+          t.classList.toggle("actif", active);
+          t.setAttribute("aria-selected", active ? "true" : "false");
         });
-        document.querySelectorAll("#grille-actions-principales [data-pole-item]").forEach(function (carte) {
+        cartesActionsDashboard.forEach(function (carte) {
           var pItem = carte.getAttribute("data-pole-item");
           carte.style.display = (pole === "all" || pItem === pole) ? "" : "none";
         });
+        if (panneauAideWindows) panneauAideWindows.style.display = (pole === "all" || pole === "windows") ? "" : "none";
       });
     });
 
@@ -3479,10 +3548,13 @@
         if (!el) return;
         if (secId === "all" || secId === id) {
           el.style.display = "";
+          var btnRep = el.querySelector(".btn-replier-sec");
           if (secId === id) {
             el.classList.remove("sec-repliee");
-            var btnRep = el.querySelector(".btn-replier-sec");
             if (btnRep) btnRep.textContent = "▾ Réduire";
+          } else {
+            el.classList.add("sec-repliee");
+            if (btnRep) btnRep.textContent = "▸ Agrandir";
           }
         } else {
           el.style.display = "none";
@@ -3513,17 +3585,15 @@
     var statConnex = document.getElementById("stat-connexions");
     if (statConnex) {
       statConnex.addEventListener("click", function () {
-        var blocConn = document.getElementById("bloc-sec-connexions");
-        if (blocConn && blocConn.style.display === "none") {
-          afficherSectionCible("all", false);
-        }
-        if (blocConn) {
-          blocConn.classList.remove("sec-repliee");
-          var bRep = blocConn.querySelector(".btn-replier-sec");
-          if (bRep) bRep.textContent = "▾ Réduire";
-        }
+        afficherSectionCible("bloc-sec-connexions", true);
       });
     }
+
+    document.querySelectorAll("#stats .stat[data-filtre]").forEach(function (statFiltre) {
+      statFiltre.addEventListener("click", function () {
+        afficherSectionCible("bloc-sec-abonnes", true);
+      });
+    });
 
     document.querySelectorAll("#mob-bottom-nav .mob-nav-btn[data-mob-scroll]").forEach(function (btnNav) {
       btnNav.addEventListener("click", function () {
