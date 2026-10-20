@@ -6,14 +6,14 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v323-admin-beige-etat";
+var UPDATE_ID = "v324-admin-net";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
   { url: "./index.html", revision: "device-gate-v303" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
-  { url: "./admin.html", revision: "admin-beige-etat-v323" },
+  { url: "./admin.html", revision: "admin-net-v324" },
   { url: "./assets/js/acces.js", revision: "dynamic-version-v316-1" },
   { url: "./assets/js/admin.js", revision: "admin-airbus-cockpit-v316-23" },
   { url: "./assets/css/admin-v19.css", revision: "admin-airbus-cockpit-v316-24" },

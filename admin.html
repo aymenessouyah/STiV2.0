@@ -3525,8 +3525,8 @@
     --ab-green: #15803d;
     --ab-amber: #b45309;
     --ab-red: #dc2626;
-    --ab-white: #29241a;
-    --ab-muted: #71644e;
+    --ab-white: #211c12;
+    --ab-muted: #57492f;
   }
   html.admin-moderne body.cockpit-airbus {
     max-width: 1580px;
@@ -3878,6 +3878,87 @@
     border-color: #eda7a7 !important;
     box-shadow: 0 2px 8px rgba(198,40,40,.14) !important;
   }
+
+  /* ---- Lisibilite nette : aucun halo, contraste renforce, petits textes agrandis ---- */
+  html.admin-moderne body.cockpit-airbus {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+    font-size: 15px !important;
+  }
+  html.admin-moderne body.cockpit-airbus *:not(.afficheur-classe-avion):not(.afficheur-classe-avion *) {
+    text-shadow: none !important;
+    -webkit-text-stroke: 0 !important;
+  }
+  html.admin-moderne body.cockpit-airbus .nav-sections-admin { backdrop-filter: none !important; background: var(--ab-panel) !important; }
+  html.admin-moderne body.cockpit-airbus .sous {
+    color: var(--ab-muted) !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: .07em !important;
+  }
+  html.admin-moderne body.cockpit-airbus .barre-util .btn-util {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    letter-spacing: .01em !important;
+  }
+  html.admin-moderne body.cockpit-airbus .badge-temoin-examen,
+  html.admin-moderne body.cockpit-airbus .badge-admin-gold,
+  html.admin-moderne body.cockpit-airbus .badge-version,
+  html.admin-moderne body.cockpit-airbus .badge-supabase,
+  html.admin-moderne body.cockpit-airbus .supabase-etat-compact {
+    font-size: 10px !important;
+    font-weight: 850 !important;
+    letter-spacing: .02em !important;
+  }
+  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete > span,
+  html.admin-moderne body.cockpit-airbus .titre-gestion-detaillee > span,
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats::before,
+  html.admin-moderne body.cockpit-airbus .afficheur-mode-lbl {
+    color: var(--ab-muted) !important;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: .06em !important;
+  }
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat b {
+    color: #3730a3 !important;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 32px !important;
+    font-weight: 900 !important;
+  }
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat small,
+  html.admin-moderne body.cockpit-airbus .stat small {
+    color: var(--ab-muted) !important;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: .04em !important;
+  }
+  html.admin-moderne body.cockpit-airbus .btn-mode-afficheur,
+  html.admin-moderne body.cockpit-airbus .btn-sec-tab,
+  html.admin-moderne body.cockpit-airbus .pole-tab,
+  html.admin-moderne body.cockpit-airbus .btn-vue,
+  html.admin-moderne body.cockpit-airbus .btn-replier-sec {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+  }
+  html.admin-moderne body.cockpit-airbus table { font-size: 13px !important; }
+  html.admin-moderne body.cockpit-airbus th,
+  html.admin-moderne body.cockpit-airbus td { line-height: 1.35 !important; }
+  html.admin-moderne body.cockpit-airbus input,
+  html.admin-moderne body.cockpit-airbus select,
+  html.admin-moderne body.cockpit-airbus textarea {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+  }
+  html.admin-moderne body.cockpit-airbus #s-enligne { color: #15803d !important; }
+  html.admin-moderne body.cockpit-airbus #s-actifs { color: #6d28d9 !important; }
+  html.admin-moderne body.cockpit-airbus #s-labo3-machines { color: #0369a1 !important; }
+  html.admin-moderne body.cockpit-airbus #s-attente { color: #92400e !important; }
 </style>
 <script>
 /* Choix du theme admin : "moderne" (defaut) ou "ancien" (cockpit sombre), memorise sur l'appareil */
