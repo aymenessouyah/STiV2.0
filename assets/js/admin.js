@@ -360,6 +360,110 @@
   var bandeauLabo3ForceOuvert = false;
   var adminUid = null;
   var cibleSuppr = null, cibleMdp = null, cibleAff = null;
+  var CLE_FILE_ACTIONS_ADMIN = "sti-admin-actions-en-attente-v23";
+  var synchronisationActionsAdminEnCours = false;
+
+  function valeurFiltreClasseAdmin() {
+    var valeur = selFiltreClasse && selFiltreClasse.value ? selFiltreClasse.value : "*";
+    return valeur && valeur !== "*" ? valeur : "*";
+  }
+
+  function lireActionsAdminEnAttente() {
+    try {
+      var actions = JSON.parse(localStorage.getItem(CLE_FILE_ACTIONS_ADMIN) || "[]");
+      return Array.isArray(actions) ? actions : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function ecrireActionsAdminEnAttente(actions) {
+    try { localStorage.setItem(CLE_FILE_ACTIONS_ADMIN, JSON.stringify(actions || [])); } catch (e) {}
+  }
+
+  function empilerActionAdmin(action) {
+    if (!action || !action.type) return null;
+    var actions = lireActionsAdminEnAttente();
+    var entree = Object.assign({}, action, {
+      id: action.id || ("adm-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9)),
+      ts: Number(action.ts || Date.now())
+    });
+    if (entree.type === "profile_update" && entree.uid) {
+      var existante = actions.find(function (a) { return a.type === "profile_update" && a.uid === entree.uid; });
+      if (existante) {
+        existante.patch = Object.assign({}, existante.patch || {}, entree.patch || {});
+        existante.gold = entree.gold;
+        existante.ts = entree.ts;
+        ecrireActionsAdminEnAttente(actions);
+        return existante;
+      }
+    }
+    actions.push(entree);
+    ecrireActionsAdminEnAttente(actions.slice(-100));
+    return entree;
+  }
+
+  function majCacheLocalProfil(uid, patch) {
+    if (!uid || !patch) return;
+    function appliquer(liste) {
+      (liste || []).forEach(function (profil) {
+        if (profil && String(profil.id) === String(uid)) Object.assign(profil, patch);
+      });
+    }
+    appliquer(profilsBrutsAdmin);
+    appliquer(profils);
+    var snapshot = {
+      tous: profilsBrutsAdmin.slice(),
+      tousAcces: accesBrutsAdmin.slice(),
+      txtSignauxCompat: signauxCompatBrutAdmin || "",
+      ts: Date.now()
+    };
+    cacheAdminMemoire = snapshot;
+    ecrireCacheAdminIndexedDb(snapshot);
+    majFiltreClasses();
+    rendAbonnes();
+    majBandeauEtCompteursClasse();
+  }
+
+  function synchroniserActionsAdminEnAttente() {
+    if (synchronisationActionsAdminEnCours || !navigator.onLine) return Promise.resolve();
+    var actions = lireActionsAdminEnAttente();
+    if (!actions.length) return Promise.resolve();
+    synchronisationActionsAdminEnCours = true;
+    var restantes = actions.slice();
+    var nbReussies = 0;
+    var chaine = Promise.resolve();
+    actions.forEach(function (action) {
+      chaine = chaine.then(function () {
+        if (action.type === "profile_update" && action.uid) {
+          return sb.from("profiles").update(action.patch || {}).eq("id", action.uid).select("id").maybeSingle();
+        }
+        if (action.type === "cfg_ecoles" && action.payload) {
+          return sb.from("app_config_public").upsert({
+            id: "ecoles",
+            value: action.payload,
+            updated_at: new Date().toISOString()
+          }, { onConflict: "id" });
+        }
+        return { data: null, error: null };
+      }).then(function (resultat) {
+        if (resultat && resultat.error) return;
+        if (action.type === "profile_update" && (!resultat || !resultat.data || !resultat.data.id)) return;
+        restantes = restantes.filter(function (x) { return x.id !== action.id; });
+        nbReussies++;
+        ecrireActionsAdminEnAttente(restantes);
+      }).catch(function () {});
+    });
+    return chaine.then(function () {
+      synchronisationActionsAdminEnCours = false;
+      if (nbReussies > 0) charge(true, "profils");
+    }).catch(function () {
+      synchronisationActionsAdminEnCours = false;
+    });
+  }
+
+  window.addEventListener("online", function () { synchroniserActionsAdminEnAttente(); });
+  window.setTimeout(synchroniserActionsAdminEnAttente, 1800);
 
   function estCompteElevelabo3(pOuEmail, clOpt) {
     if (!pOuEmail && !clOpt) return false;
@@ -5672,6 +5776,10 @@
 
   function ouvrirAffectation(p) {
     cibleAff = p;
+    if (btnConfirmerAff) {
+      btnConfirmerAff.disabled = false;
+      btnConfirmerAff.textContent = "✓ Enregistrer les modifications";
+    }
     document.getElementById("aff-cible").textContent = contact(p);
     if (inpAffNom) inpAffNom.value = p.nom || "";
     if (inpAffPrenom) inpAffPrenom.value = p.prenom || "";
@@ -5755,23 +5863,48 @@
         lycee: nvLycee,
         classe: nvClasse
       };
-      modalAff.classList.remove("visible");
-      cibleAff = null;
+      var nomAffiche = ((nvNom || "") + " " + (nvPrenom || "")).trim() || contact(p);
+      function terminerEditionProfil() {
+        modalAff.classList.remove("visible");
+        cibleAff = null;
+        if (btnConfirmerAff) {
+          btnConfirmerAff.disabled = false;
+          btnConfirmerAff.textContent = "✓ Enregistrer les modifications";
+        }
+      }
 
-      majCacheLocalProfil(p.id, patch);
       if (!navigator.onLine) {
+        majCacheLocalProfil(p.id, patch);
         empilerActionAdmin({ type: "profile_update", uid: p.id, patch: patch, gold: estGold(p) });
-        msg("📴 Hors-ligne : informations de " + contact(p) + " mises à jour (« " + nvLyceeBase + " · " + nvClasse + " »).", "ok");
+        terminerEditionProfil();
+        msg("📴 Hors-ligne : Nom, Prénom, lycée et classe enregistrés localement pour " + nomAffiche + ". Synchronisation automatique au retour du réseau.", "ok");
         return;
       }
-      sb.from("profiles").update(patch).eq("id", p.id).then(function (r) {
-        if (r && r.error) {
+
+      if (btnConfirmerAff) {
+        btnConfirmerAff.disabled = true;
+        btnConfirmerAff.textContent = "Enregistrement…";
+      }
+      msg("Synchronisation de la fiche de " + nomAffiche + "…", "ok");
+      sb.from("profiles").update(patch).eq("id", p.id)
+        .select("id,nom,prenom,lycee,classe")
+        .maybeSingle()
+        .then(function (r) {
+          if (r && r.error) throw r.error;
+          if (!r || !r.data || !r.data.id) throw new Error("La modification n'a pas été confirmée par Supabase.");
+          majCacheLocalProfil(p.id, Object.assign({}, patch, r.data));
+          terminerEditionProfil();
+          msg("✅ Fiche mise à jour : " + nomAffiche + " · " + nvLyceeBase + " · " + nvClasse + ".", "ok");
+          charge(true, "profils");
+        })
+        .catch(function (erreur) {
           empilerActionAdmin({ type: "profile_update", uid: p.id, patch: patch, gold: estGold(p) });
-          return;
-        }
-        msg("✅ " + contact(p) + " → " + nvLyceeBase + " · " + nvClasse, "ok");
-        charge(true, "profils");
-      });
+          if (btnConfirmerAff) {
+            btnConfirmerAff.disabled = false;
+            btnConfirmerAff.textContent = "↻ Réessayer l’enregistrement";
+          }
+          msg("❌ Modification non confirmée par le serveur : " + ((erreur && erreur.message) || "accès refusé") + ". La saisie reste ouverte et a été placée en attente.", "err");
+        });
     });
   }
 
@@ -8637,7 +8770,7 @@
 
   function ouvrirModalAppel() {
     if (selAppelClasse) {
-      var valAct = (filtreClasse && filtreClasse !== "*") ? filtreClasse : (selAppelClasse.value || "*");
+      var valAct = (valeurFiltreClasseAdmin() && valeurFiltreClasseAdmin() !== "*") ? valeurFiltreClasseAdmin() : (selAppelClasse.value || "*");
       var classes = obtenirClassesActives();
       selAppelClasse.innerHTML = '<option value="*">🏫 Toutes les classes</option>';
       classes.forEach(function (c) {
@@ -9059,7 +9192,7 @@
 
   function ouvrirModalPalmares() {
     if (selPalmaresClasse) {
-      var valAct = (filtreClasse && filtreClasse !== "*") ? filtreClasse : (selPalmaresClasse.value || "*");
+      var valAct = (valeurFiltreClasseAdmin() && valeurFiltreClasseAdmin() !== "*") ? valeurFiltreClasseAdmin() : (selPalmaresClasse.value || "*");
       var classes = obtenirClassesActives();
       selPalmaresClasse.innerHTML = '<option value="*">🌐 Toutes les classes</option>';
       classes.forEach(function (c) {
@@ -9390,7 +9523,7 @@
 
   function peuplerCiblesCoffre() {
     if (!selCoffreCible) return;
-    var valAct = selCoffreCible.value || (filtreClasse && filtreClasse !== "*" ? filtreClasse : "*");
+    var valAct = selCoffreCible.value || (valeurFiltreClasseAdmin() && valeurFiltreClasseAdmin() !== "*" ? valeurFiltreClasseAdmin() : "*");
     var classes = obtenirClassesActives();
     selCoffreCible.innerHTML =
       '<option value="*">🌐 Toutes les classes</option>' +
@@ -9756,7 +9889,7 @@
 
   function peuplerCiblesKahoot() {
     if (!selKahootCible) return;
-    var valAct = selKahootCible.value || (filtreClasse && filtreClasse !== "*" ? filtreClasse : "*");
+    var valAct = selKahootCible.value || (valeurFiltreClasseAdmin() && valeurFiltreClasseAdmin() !== "*" ? valeurFiltreClasseAdmin() : "*");
     var classes = obtenirClassesActives();
     selKahootCible.innerHTML =
       '<option value="*">🌐 Toutes les classes</option>' +
@@ -10286,7 +10419,7 @@
 
   function peuplerBadgesClasse() {
     if (!selBadgesClasse) return;
-    var v = selBadgesClasse.value || (filtreClasse && filtreClasse !== "*" ? filtreClasse : "*");
+    var v = selBadgesClasse.value || (valeurFiltreClasseAdmin() && valeurFiltreClasseAdmin() !== "*" ? valeurFiltreClasseAdmin() : "*");
     var classes = obtenirClassesActives();
     selBadgesClasse.innerHTML = '<option value="*">🌐 Toutes les classes</option>';
     classes.forEach(function (c) {
@@ -10443,7 +10576,7 @@
   function peuplerGrilleClasses() {
     if (!selGrilleClasse) return;
     var classes = obtenirClassesActives();
-    var v = selGrilleClasse.value || (filtreClasse && filtreClasse !== "*" ? filtreClasse : (classes[0] || "*"));
+    var v = selGrilleClasse.value || (valeurFiltreClasseAdmin() && valeurFiltreClasseAdmin() !== "*" ? valeurFiltreClasseAdmin() : (classes[0] || "*"));
     selGrilleClasse.innerHTML = '<option value="*">🌐 Toutes les classes</option>';
     classes.forEach(function (c) {
       var o = document.createElement("option");
