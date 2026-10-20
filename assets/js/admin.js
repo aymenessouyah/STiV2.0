@@ -3109,7 +3109,8 @@
       liste.forEach(function (p) {
         var nd = document.createElement("div");
         var isG = estGold(p);
-        var estNdGold = isG && p.statut === "actif";
+        var estProfNd = /^prof$/i.test(String(p.classe || "").trim());
+        var estNdGold = (isG || estProfNd) && p.statut === "actif";
         var estOnNd = estEnLigne(p.id);
         nd.className = "noeud-abonne " + (estOnNd ? "nd-en_ligne" : (estNdGold ? "nd-gold" : ("nd-" + (p.statut || "en_attente"))));
         nd.title = "Cliquer pour ouvrir la fiche récapitulative complète de cet élève";
@@ -3280,7 +3281,8 @@
     var classesDispo = obtenirClassesActives();
     liste.forEach(function (p) {
       var tr = document.createElement("tr");
-      var estLigneGold = estGold(p) && p.statut === "actif";
+      var estProfLigne = /^prof$/i.test(String(p.classe || "").trim());
+      var estLigneGold = (estGold(p) || estProfLigne) && p.statut === "actif";
       var estOnLigne = estEnLigne(p.id);
       tr.className = estOnLigne ? "row-en_ligne" : (estLigneGold ? "row-gold" : ("row-" + (p.statut || "en_attente")));
       tr.title = "Cliquer pour voir toutes ses connexions et durées par semaine";

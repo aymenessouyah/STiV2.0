@@ -214,7 +214,36 @@
   .tableau-apercu-entete h2 { margin: 0; color: #23201a; font-size: 16px; }
   .tableau-apercu-entete span { color: #7a6f5d; font-size: 11.5px; font-weight: 800; }
   .tableau-apercu .stats { margin-bottom: 10px; }
-  .tableau-apercu .alerte-demande { margin-bottom: 10px; }
+  .tableau-apercu .alerte-demande { margin-bottom: 12px; }
+  .vue-ensemble-corps {
+    display: grid; grid-template-columns: minmax(430px, 590px) minmax(245px, 1fr);
+    align-items: center; gap: 18px;
+  }
+  .vue-compteur-classe, .vue-commandes-globales { min-width: 0; }
+  .vue-commandes-globales .stats {
+    display: grid; grid-template-columns: 1fr; gap: 8px; margin: 0;
+  }
+  .vue-commandes-globales .stat {
+    display: grid; grid-template-columns: 58px minmax(0, 1fr); align-items: center;
+    min-height: 53px; padding: 7px 11px; text-align: left;
+  }
+  .vue-commandes-globales .stat b {
+    display: flex; align-items: center; justify-content: center; align-self: stretch;
+    margin-right: 10px; border-right: 1.5px solid rgba(35,32,26,.2);
+    font: 1000 25px/1 Consolas, "Courier New", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .vue-commandes-globales .stat small {
+    display: block; font-size: 11px; line-height: 1.15; white-space: normal;
+  }
+  @media (max-width: 980px) {
+    .vue-ensemble-corps { grid-template-columns: 1fr; }
+    .vue-commandes-globales .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 520px) {
+    .vue-commandes-globales .stats { grid-template-columns: 1fr; }
+    .vue-commandes-globales .stat { min-height: 46px; grid-template-columns: 52px minmax(0, 1fr); }
+  }
 
   /* Afficheur numérique par classe — instrument circulaire inspiré de l’exemple aéronautique fourni */
   .afficheur-classe-avion {
@@ -682,12 +711,30 @@
     transform: translate(-2px, -2px);
     box-shadow: inset 0 0 0 1px #050708, 0 0 0 2px var(--nd-accent), 6px 7px 0 rgba(35,32,26,.7);
   }
-  .noeud-abonne.nd-en_ligne { --nd-accent: #4ade80; border-color: #3f6251; }
-  .noeud-abonne.nd-actif { --nd-accent: #a78bfa; border-color: #554878; }
-  .noeud-abonne.nd-gold { --nd-accent: #facc15; border-color: #756622; }
-  .noeud-abonne.nd-en_attente { --nd-accent: #fb923c; border-color: #7c4a25; }
-  .noeud-abonne.nd-exclu { --nd-accent: #f87171; border-color: #713c3c; }
-  .noeud-abonne.nd-suspendu { --nd-accent: #94a3b8; border-color: #4b5563; }
+  .noeud-abonne.nd-en_ligne {
+    --nd-accent: #22c55e; border-color: #135d37;
+    background: linear-gradient(145deg, #a7e8bd, #4fae73 58%, #8ddba8);
+  }
+  .noeud-abonne.nd-actif {
+    --nd-accent: #8b5cf6; border-color: #5b21b6;
+    background: linear-gradient(145deg, #d2c7ff, #9f87ed 58%, #c4b5fd);
+  }
+  .noeud-abonne.nd-gold {
+    --nd-accent: #facc15; border-color: #8a6810;
+    background: linear-gradient(145deg, #fff6b8, #e7ba31 58%, #ffe478);
+  }
+  .noeud-abonne.nd-en_attente {
+    --nd-accent: #d49a3a; border-color: #8b6a35;
+    background: linear-gradient(145deg, #fbf3e2, #d8bd8a 58%, #f5ead2);
+  }
+  .noeud-abonne.nd-exclu {
+    --nd-accent: #ef4444; border-color: #8f2f3c;
+    background: linear-gradient(145deg, #fde2e6, #dd8996 58%, #f9cfd5);
+  }
+  .noeud-abonne.nd-suspendu {
+    --nd-accent: #94a3b8; border-color: #59636f;
+    background: linear-gradient(145deg, #ece7dd, #aaa39a 58%, #ddd7cc);
+  }
   .noeud-cadran {
     position: relative; display: flex; flex-direction: column; gap: 8px;
     padding: 14px 12px 11px; border: 2px solid #050708; border-radius: 19px;
@@ -1679,16 +1726,8 @@
     <span id="alerte-attente-txt">🔔 Nouvelle(s) demande(s) d'inscription en attente !</span>
   </div>
 
-  <!-- 3. COMPTEURS EN DIRECT (cliquables pour filtrer la liste ou aller aux connexions) -->
-  <div class="stats" id="stats">
-    <div class="stat" data-filtre="en_ligne" title="Cliquer pour filtrer les élèves en ligne"><b id="s-enligne" style="color:#177245">0</b><small>🟢 En ligne</small></div>
-    <div class="stat" id="stat-machines-labo3" title="Cliquer pour voir le détail des machines ouvertes avec le compte elevelabo3@exemple.tn" style="border-color:#0284c7;box-shadow:3px 3px 0 rgba(2,132,199,.45)"><b id="s-labo3-machines" style="color:#0284c7">0</b><small>💻 Postes Labo 3</small></div>
-    <div class="stat" data-filtre="*" title="Cliquer pour afficher tous les abonnés"><b id="s-total">0</b><small>👥 Abonnés</small></div>
-    <div class="stat" data-filtre="actif" title="Cliquer pour filtrer les abonnés actifs"><b id="s-actifs" style="color:#6d28d9">0</b><small>🟣 Actifs</small></div>
-    <div class="stat" data-filtre="en_attente" title="Cliquer pour filtrer les demandes en attente"><b id="s-attente" style="color:#b47d09">0</b><small>⏳ En attente</small></div>
-    <div class="stat" id="stat-connexions" data-scroll-cible="sec-dernieres-connexions" title="Cliquer pour aller directement à Dernières connexions"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
-  </div>
-
+  <div class="vue-ensemble-corps">
+    <div class="vue-compteur-classe">
   <section class="afficheur-classe-avion" id="afficheur-classe-avion" aria-labelledby="titre-afficheur-classe">
     <span class="vis-instrument v1" aria-hidden="true"></span>
     <span class="vis-instrument v2" aria-hidden="true"></span>
@@ -1758,6 +1797,19 @@
       </div>
     </div>
   </section>
+    </div>
+    <aside class="vue-commandes-globales" aria-label="Compteurs et raccourcis globaux">
+  <!-- 3. COMPTEURS EN DIRECT (cliquables pour filtrer la liste ou aller aux connexions) -->
+  <div class="stats" id="stats">
+    <div class="stat" data-filtre="en_ligne" title="Cliquer pour filtrer les élèves en ligne"><b id="s-enligne" style="color:#177245">0</b><small>🟢 En ligne</small></div>
+    <div class="stat" id="stat-machines-labo3" title="Cliquer pour voir le détail des machines ouvertes avec le compte elevelabo3@exemple.tn" style="border-color:#0284c7;box-shadow:3px 3px 0 rgba(2,132,199,.45)"><b id="s-labo3-machines" style="color:#0284c7">0</b><small>💻 Postes Labo 3</small></div>
+    <div class="stat" data-filtre="*" title="Cliquer pour afficher tous les abonnés"><b id="s-total">0</b><small>👥 Abonnés</small></div>
+    <div class="stat" data-filtre="actif" title="Cliquer pour filtrer les abonnés actifs"><b id="s-actifs" style="color:#6d28d9">0</b><small>🟣 Actifs</small></div>
+    <div class="stat" data-filtre="en_attente" title="Cliquer pour filtrer les demandes en attente"><b id="s-attente" style="color:#b47d09">0</b><small>⏳ En attente</small></div>
+    <div class="stat" id="stat-connexions" data-scroll-cible="sec-dernieres-connexions" title="Cliquer pour aller directement à Dernières connexions"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
+  </div>
+    </aside>
+  </div>
 
   <div id="bandeau-machines-labo3" style="display:none;background:#f0f9ff;border:2px solid #0284c7;border-radius:16px;padding:12px 16px;margin-bottom:14px;box-shadow:3.5px 3.5px 0 rgba(2,132,199,.35);font-size:12.5px;color:#0c4a6e"></div>
 
@@ -3933,7 +3985,7 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
-  <script src="assets/js/admin.js?v=316-subscriber-cockpit-nodes-11"></script>
+  <script src="assets/js/admin.js?v=316-status-colors-overview-layout-12"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>
