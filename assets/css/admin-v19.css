@@ -1,0 +1,417 @@
+  /* Cockpit Airbus v19 validé : habillage de production sans supprimer les fonctions existantes. */
+  :root {
+    --v19-case:#68747a; --v19-case-hi:#9ba5a9; --v19-case-dark:#20292e;
+    --v19-screen:#00080c; --v19-cyan:#51d7ff; --v19-green:#62f08a;
+    --v19-amber:#ffc04b; --v19-red:#ff625b; --v19-white:#f2f7f9; --v19-muted:#94a7b0;
+  }
+  body.cockpit-airbus {
+    max-width:1560px !important;
+    padding:96px 18px 118px !important;
+    color:var(--v19-white) !important;
+    background:linear-gradient(#142630 0 95px,#11191e 260px,#030608 100%) fixed !important;
+  }
+  body.cockpit-airbus::before {
+    content:"" !important; position:absolute !important; z-index:-1 !important;
+    left:4%; right:4%; top:0; height:130px; pointer-events:none;
+    clip-path:polygon(5% 0,95% 0,100% 100%,0 100%);
+    border-left:18px solid #20292f; border-right:18px solid #20292f;
+    background:radial-gradient(ellipse at 50% 140%,#497087,#142a38 56%,#07131c) !important;
+    box-shadow:inset 0 -32px 44px rgba(0,0,0,.62);
+  }
+  body.cockpit-airbus::after {
+    content:""; position:absolute; z-index:-1; left:50%; top:0; width:12px; height:130px;
+    transform:translateX(-50%) skew(-8deg); background:#20292f; box-shadow:0 0 0 2px #0b1013;
+  }
+
+  /* Glareshield et identité */
+  body.cockpit-airbus .hero-admin {
+    position:relative; display:grid !important; grid-template-columns:minmax(380px,1.15fr) minmax(0,1.85fr);
+    align-items:center; gap:13px; margin:0 0 12px !important; padding:16px 18px !important;
+    border:2px solid #11171a !important; border-top:7px solid var(--v19-case-hi) !important;
+    border-radius:58px 58px 10px 10px !important;
+    background:linear-gradient(145deg,#707b80,#343e43 24%,#171e22 66%,#0e1417) !important;
+    box-shadow:inset 0 0 0 2px #535f64,inset 0 10px 22px rgba(255,255,255,.08),0 16px 30px rgba(0,0,0,.58) !important;
+  }
+  body.cockpit-airbus .hero-admin::before,
+  body.cockpit-airbus .hero-admin::after {
+    content:""; position:absolute; top:18px; width:10px; height:10px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#e0e4e6 0 15%,#68747a 22% 54%,#101518 62%);
+    box-shadow:0 0 0 1px #080b0d;
+  }
+  body.cockpit-airbus .hero-admin::before{left:22px} body.cockpit-airbus .hero-admin::after{right:22px}
+  body.cockpit-airbus .entete { min-width:0; gap:14px !important; }
+  body.cockpit-airbus .entete img {
+    width:68px !important; height:68px !important; flex:0 0 auto; object-fit:cover;
+    border:1px solid #a6b0b4 !important; border-radius:4px !important;
+    box-shadow:0 0 0 3px #0d1215,0 0 14px rgba(81,215,255,.2) !important;
+  }
+  body.cockpit-airbus .entete-txt { min-width:0; }
+  body.cockpit-airbus .entete-txt h1 { gap:7px !important; font-size:clamp(17px,1.55vw,24px) !important; }
+  body.cockpit-airbus .entete-txt h1 svg { display:none; }
+  body.cockpit-airbus #titre-tb-admin {
+    padding:0 !important; border:0 !important; border-radius:0 !important; min-height:0 !important;
+    background:transparent !important; color:#fff !important; box-shadow:none !important;
+    font:800 clamp(18px,1.65vw,25px)/1.05 "Segoe UI",Arial,sans-serif !important;
+    letter-spacing:.045em; text-transform:uppercase;
+  }
+  body.cockpit-airbus #titre-tb-admin::after { content:"  · A350"; color:var(--v19-green); font-family:Consolas,monospace; }
+  body.cockpit-airbus .sous { margin-top:6px; color:var(--v19-cyan) !important; font-size:9px !important; font-weight:900; letter-spacing:.14em; text-transform:uppercase; }
+  body.cockpit-airbus .badge-temoin-examen,
+  body.cockpit-airbus .badge-admin-gold,
+  body.cockpit-airbus .badge-version,
+  body.cockpit-airbus .badge-supabase {
+    min-height:28px; justify-content:center; margin:0 !important; padding:6px 9px !important;
+    border-radius:2px !important; background:#05090b !important; font-size:8px !important;
+    font-weight:900; letter-spacing:.07em; text-transform:uppercase; box-shadow:inset 0 0 8px #000 !important;
+  }
+  body.cockpit-airbus .badge-temoin-examen{color:var(--v19-green)!important;border-color:#3f8557!important}
+  body.cockpit-airbus .badge-admin-gold{color:#ffd45d!important;border-color:#9b7725!important}
+  body.cockpit-airbus .badge-version{color:var(--v19-cyan)!important;border-color:#40819a!important}
+  body.cockpit-airbus .badge-supabase {
+    grid-column:1/-1; color:var(--v19-green)!important; border-color:#3f8557!important;
+    background:linear-gradient(90deg,#06100b,#062416,#06100b),url("../icons/sti-logo-complet.png") center/82px no-repeat !important;
+  }
+  body.cockpit-airbus .entete-txt h1 { display:grid !important; grid-template-columns:repeat(3,max-content); }
+  body.cockpit-airbus #titre-tb-admin { grid-column:1/-1; }
+  body.cockpit-airbus .barre-util {
+    display:grid !important; grid-template-columns:repeat(5,minmax(98px,1fr)); align-items:stretch;
+    gap:6px !important; padding:9px !important; border:1px solid #7b878c; border-radius:5px;
+    background:linear-gradient(#333e43,#171e22); box-shadow:inset 0 0 0 2px #0d1215;
+  }
+  body.cockpit-airbus .barre-util .btn-util {
+    display:flex !important; min-height:33px !important; justify-content:center; padding:7px 8px !important;
+    color:#dce6ea !important; background:linear-gradient(#435057,#20282d) !important;
+    border:1px solid #89949a !important; border-radius:3px !important; font-size:8px !important;
+    font-weight:900; text-transform:uppercase; box-shadow:inset 0 1px rgba(255,255,255,.14),0 2px 3px #080b0d !important;
+  }
+  body.cockpit-airbus .barre-util .btn-util:hover { color:#fff !important; border-color:var(--v19-cyan)!important; }
+  body.cockpit-airbus .barre-util .btn-util.logout { color:#ffaaa5!important; border-color:#a74b47!important; background:linear-gradient(#49201e,#24100f)!important; }
+  body.cockpit-airbus .barre-util .sys-extra-item { display:none !important; }
+  body.cockpit-airbus .barre-util.systeme-ouvert .sys-extra-item { display:flex !important; }
+
+  /* Vue d’ensemble : alerte, six FCU puis écran intégré */
+  body.cockpit-airbus .tableau-apercu {
+    position:relative; padding:14px !important; border:2px solid #11171a !important; border-radius:13px !important;
+    background:linear-gradient(145deg,#748086,#374146 24%,#1a2226) !important;
+    box-shadow:inset 0 0 0 3px #929b9f,inset 0 0 0 7px #11171a,0 10px 18px rgba(0,0,0,.62) !important;
+  }
+  body.cockpit-airbus .tableau-apercu-entete {
+    margin:0 5px 10px !important; padding:9px 12px !important; border:1px solid #6f7a80 !important;
+    background:#141c20; border-radius:0 !important;
+  }
+  body.cockpit-airbus .tableau-apercu-entete h2 { color:#fff !important; font-size:13px !important; letter-spacing:.12em; text-transform:uppercase; }
+  body.cockpit-airbus .tableau-apercu-entete h2::before { content:"CAPT OIS · "; color:var(--v19-cyan); }
+  body.cockpit-airbus .tableau-apercu-entete > span { font:700 8px/1 Consolas; letter-spacing:.1em; text-transform:uppercase; }
+  body.cockpit-airbus .alerte-demande {
+    min-height:44px; margin:0 5px 10px !important; padding:10px 15px !important;
+    border:1px solid #c98c30 !important; border-left:9px solid var(--v19-amber) !important; border-radius:3px !important;
+    background:linear-gradient(90deg,#4e2b05,#171006) !important; color:#ffe0a0 !important;
+    font-size:12px !important; font-weight:850; box-shadow:inset 0 0 12px #130b02 !important;
+  }
+  body.cockpit-airbus .vue-ensemble-corps { display:flex !important; flex-direction:column; gap:11px !important; }
+  body.cockpit-airbus .vue-commandes-globales { order:-1; width:100%; }
+  body.cockpit-airbus .vue-commandes-globales .stats {
+    display:grid !important; grid-template-columns:repeat(6,minmax(0,1fr)) !important; gap:8px !important;
+    padding:18px 12px 11px; border:2px solid #7e898e; border-radius:7px;
+    background:linear-gradient(#20282d,#080d10); box-shadow:inset 0 0 0 3px #020405,inset 0 0 18px #000;
+  }
+  body.cockpit-airbus .vue-commandes-globales .stats::before {
+    content:"FCU · LIVE DATA SELECTOR"; position:absolute; margin-top:-12px; color:#8c9aa1;
+    font:700 8px/1 Consolas; letter-spacing:.18em;
+  }
+  body.cockpit-airbus .vue-commandes-globales .stat {
+    position:relative; min-height:82px !important; padding:15px 10px 10px 48px !important;
+    border:1px solid #657178 !important; border-radius:3px !important; background:#030709 !important;
+  }
+  body.cockpit-airbus .vue-commandes-globales .stat::before {
+    content:""; position:absolute; left:11px; top:25px; width:27px; height:27px; border:2px solid #9aa4a8; border-radius:50%;
+    background:repeating-conic-gradient(#0c1114 0 8deg,#5f696e 8deg 14deg); box-shadow:inset 0 0 0 5px #242d32,0 2px 4px #000;
+  }
+  body.cockpit-airbus .vue-commandes-globales .stat::after { content:""; position:absolute; left:24px; top:20px; width:3px; height:10px; background:#fff; }
+  body.cockpit-airbus .vue-commandes-globales .stat b { font:500 31px/.9 Consolas,monospace !important; text-shadow:0 0 9px currentColor; }
+  body.cockpit-airbus .vue-commandes-globales .stat small { font-size:7px !important; letter-spacing:.09em; }
+  body.cockpit-airbus .vue-compteur-classe { width:100%; }
+
+  /* Écran panoramique v19 */
+  body.cockpit-airbus .afficheur-classe-avion {
+    width:100% !important; max-width:none !important; margin:0 !important; padding:11px !important;
+    border:3px solid #0d1316 !important; border-radius:9px !important;
+    background:#222c31 !important; box-shadow:inset 0 0 0 2px #78848a,inset 0 0 15px #000 !important;
+  }
+  body.cockpit-airbus .vis-instrument { display:none; }
+  body.cockpit-airbus .afficheur-mode-bar {
+    max-width:none; margin:0 0 10px; padding:8px 10px; justify-content:center;
+    border:1px solid #6f7a80; border-radius:0; background:#141c20;
+  }
+  body.cockpit-airbus .afficheur-mode-lbl { color:#9aa8ae; font-size:8px; }
+  body.cockpit-airbus .btn-mode-afficheur {
+    min-width:118px; padding:9px 12px; border:1px solid #8c979c; border-radius:2px;
+    background:linear-gradient(#3a454b,#171e22); color:#c2ccd0; font-size:8px;
+  }
+  body.cockpit-airbus .btn-mode-afficheur.actif {
+    color:var(--v19-cyan); border-color:var(--v19-cyan); background:#063047;
+    box-shadow:0 0 8px rgba(81,215,255,.35);
+  }
+  body.cockpit-airbus .instrument-avion-bezel {
+    width:100% !important; max-width:none !important; height:auto !important; aspect-ratio:auto !important;
+    padding:11px !important; border:2px solid #0d1316 !important; border-radius:7px !important;
+    background:linear-gradient(135deg,#59666c,#242e33) !important; box-shadow:inset 0 0 0 2px #78848a,inset 0 0 15px #000 !important;
+  }
+  body.cockpit-airbus .instrument-avion-ecran {
+    width:100% !important; min-height:590px !important; height:auto !important; padding:22px !important;
+    border:2px solid #020406 !important; border-radius:3px !important;
+    background:radial-gradient(ellipse at 50% 30%,#07151b,#00070a 68%,#000) !important;
+  }
+  body.cockpit-airbus .afficheur-classe-entete { justify-content:space-between; margin:0 0 16px; padding-bottom:10px; border-bottom:1px solid #2a586a; }
+  body.cockpit-airbus .afficheur-classe-titre { color:#fff; font-size:14px; letter-spacing:.15em; text-align:left; }
+  body.cockpit-airbus .afficheur-classe-titre::before { content:"STI · "; color:var(--v19-cyan); }
+  body.cockpit-airbus .afficheur-classe-titre small { float:right; color:#77a4b7; font:700 8px/1 Consolas; }
+  body.cockpit-airbus .mode-ecran-large .afficheur-six-zones {
+    display:grid !important; grid-template-columns:210px 1fr 1fr 220px !important;
+    grid-template-rows:repeat(2,minmax(220px,1fr)) !important;
+    grid-template-areas:"total z1 z2 z5" "total z3 z4 z6" !important;
+    gap:10px 11px !important; min-height:455px !important;
+  }
+  body.cockpit-airbus .mode-ecran-large .afficheur-six-zones::before,
+  body.cockpit-airbus .mode-ecran-large .afficheur-six-zones::after { display:none !important; }
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur {
+    top:0 !important; min-height:220px !important; padding:17px !important; align-items:flex-start !important;
+    border-radius:0 !important; justify-content:space-between !important;
+  }
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur-entete { justify-content:flex-start; font-size:11px; }
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur-total { margin:11px 0 0; font-size:54px; }
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur-total-libelle { position:absolute; left:84px; top:68px; }
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur-mesures { margin-top:auto; padding-top:10px; }
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur-mesures > span { align-items:flex-start; }
+  body.cockpit-airbus .mode-ecran-large .afficheur-total-centre {
+    width:100% !important; min-height:100% !important; height:100% !important; aspect-ratio:auto !important;
+    flex-direction:column !important; gap:8px !important; padding:18px 12px !important; border-radius:0 !important;
+    background:linear-gradient(#071d11,#031009) !important;
+  }
+  body.cockpit-airbus .mode-ecran-large .afficheur-total-centre > strong { font-size:74px !important; }
+  body.cockpit-airbus .mode-ecran-large .afficheur-total-centre > small { max-width:none; text-align:center; }
+  body.cockpit-airbus .mode-ecran-large .total-centre-mesures {
+    width:100% !important; margin:14px 0 0 !important; padding:12px 0 0 !important;
+    border-left:0 !important; border-top:1px solid #34594a !important;
+  }
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur[data-zone-slot="5"],
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur[data-zone-slot="6"] { align-items:center !important; justify-content:center !important; }
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur[data-zone-slot="5"] .zone-afficheur-entete,
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur[data-zone-slot="6"] .zone-afficheur-entete { justify-content:center; }
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur[data-zone-slot="5"] .zone-afficheur-total-libelle,
+  body.cockpit-airbus .mode-ecran-large .zone-afficheur[data-zone-slot="6"] .zone-afficheur-total-libelle { position:static; }
+
+  /* Deux écrans : quatre classes à gauche, total / Prof / Labo à droite. */
+  body.cockpit-airbus .mode-deux-ecrans .afficheur-six-zones {
+    display:grid !important; grid-template-columns:1fr 1fr .9fr !important;
+    grid-template-rows:repeat(2,minmax(205px,1fr)) !important;
+    grid-template-areas:"z1 z2 total" "z3 z4 total" !important; gap:10px !important;
+  }
+  body.cockpit-airbus .mode-deux-ecrans .zone-afficheur[data-zone-slot="5"],
+  body.cockpit-airbus .mode-deux-ecrans .zone-afficheur[data-zone-slot="6"] {
+    position:absolute; right:12px; z-index:5; width:calc(30% - 20px); min-height:92px !important;
+  }
+  body.cockpit-airbus .mode-deux-ecrans .zone-afficheur[data-zone-slot="5"] { top:13px !important; }
+  body.cockpit-airbus .mode-deux-ecrans .zone-afficheur[data-zone-slot="6"] { bottom:13px !important; top:auto !important; }
+  body.cockpit-airbus .mode-deux-ecrans .afficheur-total-centre { padding-top:110px !important; padding-bottom:110px !important; }
+
+  /* Cadran rond : matériaux v19, fonctions dynamiques inchangées. */
+  body.cockpit-airbus .mode-cadran-rond { width:min(100%,760px) !important; padding:18px !important; border-radius:50% !important; }
+  body.cockpit-airbus .mode-cadran-rond .instrument-avion-bezel { width:min(100%,660px)!important; aspect-ratio:1!important; border-radius:50%!important; padding:15px!important; }
+  body.cockpit-airbus .mode-cadran-rond .instrument-avion-ecran { min-height:0!important; height:100%!important; border-radius:50%!important; padding:40px 44px 34px!important; }
+
+  body.cockpit-airbus .afficheur-classe-legende { color:var(--v19-green); font:700 8px/1.2 Consolas; letter-spacing:.06em; }
+
+  /* Pedestal et gestion détaillée */
+  body.cockpit-airbus .centre-actions-dashboard,
+  body.cockpit-airbus .aide-windows-v316,
+  body.cockpit-airbus .nav-sections-admin,
+  body.cockpit-airbus .carte-section-admin {
+    border:2px solid #0b1013 !important; border-radius:8px !important;
+    background:linear-gradient(#404b50,#1a2226) !important;
+    box-shadow:inset 0 0 0 2px #717c81,0 7px 12px #080b0d !important;
+  }
+  body.cockpit-airbus .centre-actions-dashboard { margin-top:13px; }
+  body.cockpit-airbus .poles-header { padding-bottom:10px; border-bottom:1px solid #66737a; }
+  body.cockpit-airbus .poles-header #titre-actions-dashboard { color:#fff !important; letter-spacing:.08em; text-transform:uppercase; }
+  body.cockpit-airbus .poles-header #titre-actions-dashboard::before { content:"CENTRE PEDESTAL · "; color:var(--v19-cyan); }
+  body.cockpit-airbus .actions-principales { grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:9px !important; }
+  body.cockpit-airbus .carte-action {
+    min-height:72px !important; border:1px solid #768187 !important; border-bottom:4px solid var(--v19-cyan) !important;
+    border-radius:3px !important; background:linear-gradient(#3c474d,#171e22) !important;
+  }
+  body.cockpit-airbus .carte-action:nth-child(3n+2){border-bottom-color:var(--v19-green)!important}
+  body.cockpit-airbus .carte-action:nth-child(3n){border-bottom-color:var(--v19-amber)!important}
+  body.cockpit-airbus .titre-gestion-detaillee { margin-top:15px; padding:0 4px; }
+  body.cockpit-airbus .titre-gestion-detaillee h2::before { content:"OIS · "; color:var(--v19-cyan); }
+
+  /* Dock de services : aucun bouton ne recouvre un autre. */
+  #sti-airbus-service-dock {
+    position:fixed; left:14px; bottom:78px; z-index:2147483644;
+    display:flex; flex-direction:column; align-items:stretch; gap:6px; width:190px;
+    padding:7px; border:2px solid #879399; border-radius:7px;
+    background:linear-gradient(#303a40,#11181c); box-shadow:inset 0 0 0 2px #080c0e,0 8px 20px rgba(0,0,0,.55);
+  }
+  #sti-airbus-service-dock::before { content:"AUX SERVICES"; padding:2px 5px 4px; color:#91a5af; font:700 8px/1 Consolas; letter-spacing:.15em; }
+  #sti-airbus-service-dock > button {
+    position:relative !important; inset:auto !important; width:100% !important; min-height:38px !important; height:auto !important;
+    display:flex !important; align-items:center !important; justify-content:flex-start !important; gap:7px !important;
+    padding:8px 10px !important; border:1px solid #748188 !important; border-radius:3px !important;
+    background:linear-gradient(#3b474d,#182024) !important; color:#e8f0f3 !important;
+    box-shadow:inset 0 1px rgba(255,255,255,.12),0 2px 3px #000 !important;
+    font:800 10px/1.1 "Segoe UI",Arial,sans-serif !important; text-align:left !important; cursor:pointer;
+  }
+  #sti-airbus-service-dock > button:hover { color:#fff !important; border-color:var(--v19-cyan)!important; filter:brightness(1.12); }
+  #sti-airbus-service-dock #sti-btn-sante{border-left:4px solid #c77dff!important}
+  #sti-airbus-service-dock #sti-btn-sauvegarde{border-left:4px solid var(--v19-green)!important}
+  #sti-airbus-service-dock #sti-btn-analytique{border-left:4px solid var(--v19-cyan)!important}
+  #sti-airbus-service-dock #btn-messenger-dock{border-left:4px solid #8b5cf6!important}
+  #sti-airbus-service-dock #btn-messenger-dock svg{width:21px;height:21px}
+
+  /* Boîte Outils / Projection / Laser / Guide-texte restaurée et toujours visible sur PC. */
+  #sti-pc-win-tools {
+    left:14px !important; right:auto !important; bottom:14px !important; z-index:2147483645 !important;
+    display:flex !important; align-items:center !important; gap:5px !important; max-width:calc(100vw - 28px) !important;
+    min-height:49px; padding:6px 8px !important; overflow-x:auto; overflow-y:hidden;
+    border:2px solid #8a969b !important; border-radius:7px !important;
+    background:linear-gradient(#303a40,#11181c) !important; color:#e8f0f3 !important;
+    box-shadow:inset 0 0 0 2px #080c0e,0 7px 18px rgba(0,0,0,.6) !important;
+    font-family:"Segoe UI",Arial,sans-serif !important;
+  }
+  #sti-pc-win-tools::before { content:"● NORMAL · OUTILS PROJECTION"; flex:0 0 auto; color:var(--v19-green); font:800 8px/1 Consolas; letter-spacing:.08em; padding:0 5px; }
+  #sti-pc-win-tools button {
+    flex:0 0 auto; min-height:32px !important; padding:7px 9px !important;
+    border:1px solid #748188 !important; border-radius:3px !important;
+    background:linear-gradient(#3b474d,#182024) !important; color:#e8f0f3 !important;
+    box-shadow:inset 0 1px rgba(255,255,255,.12),0 2px 3px #000 !important;
+    font:800 9px/1 "Segoe UI",Arial,sans-serif !important;
+  }
+  #sti-pc-win-tools button:hover { border-color:var(--v19-cyan)!important; color:#fff!important; }
+  #sti-pc-win-tools .sti-tools-separator { width:1px; height:24px; background:#59676d; flex:0 0 auto; }
+  #sti-admin-text-box {
+    position:fixed; left:14px; bottom:75px; z-index:2147483646; width:min(430px,calc(100vw - 28px));
+    display:none; padding:10px; border:2px solid #8a969b; border-radius:7px;
+    background:linear-gradient(#303a40,#11181c); box-shadow:0 10px 28px rgba(0,0,0,.72);
+  }
+  #sti-admin-text-box.visible{display:block}
+  #sti-admin-text-box textarea{width:100%;min-height:92px;padding:10px!important;resize:vertical}
+  #sti-admin-text-actions{display:flex;gap:6px;justify-content:flex-end;margin-top:7px}
+  #sti-admin-text-actions button{padding:7px 10px;border:1px solid #748188;border-radius:3px;background:#1e2a30;color:#fff;font-weight:800;cursor:pointer}
+  #sti-admin-projected-text {
+    position:fixed; z-index:2147483643; left:4vw; right:4vw; top:50%; transform:translateY(-50%);
+    display:none; padding:28px; border:3px solid var(--v19-amber); border-radius:8px;
+    background:rgba(0,7,11,.95); color:#fff; box-shadow:0 0 0 9999px rgba(0,0,0,.42),0 0 28px rgba(255,192,75,.5);
+    font:800 clamp(28px,5vw,72px)/1.18 "Segoe UI",Arial,sans-serif; text-align:center; white-space:pre-wrap;
+  }
+  #sti-admin-projected-text.visible{display:block}
+
+  /* Mise en évidence lors d’un accès direct depuis une classe. */
+  body.cockpit-airbus .classe-cible-flash { animation:v19ClassTarget 1.5s ease; }
+  @keyframes v19ClassTarget { 0%,100%{box-shadow:inset 0 0 8px #000} 35%{box-shadow:0 0 0 4px rgba(81,215,255,.4),0 0 24px var(--v19-cyan)} }
+
+  @media(max-width:1180px){
+    body.cockpit-airbus .hero-admin{grid-template-columns:1fr}
+    body.cockpit-airbus .barre-util{grid-template-columns:repeat(5,1fr)}
+    body.cockpit-airbus .mode-ecran-large .afficheur-six-zones{
+      grid-template-columns:185px 1fr 1fr!important; grid-template-rows:repeat(3,minmax(150px,1fr))!important;
+      grid-template-areas:"total z1 z2" "total z3 z4" "z5 z5 z6"!important;
+    }
+    body.cockpit-airbus .mode-ecran-large .afficheur-total-centre{min-height:100%!important}
+    body.cockpit-airbus .actions-principales{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  }
+  @media(max-width:760px){
+    body.cockpit-airbus{padding:56px 7px 154px!important}
+    body.cockpit-airbus::before{height:78px;left:5px;right:5px;border-left-width:8px;border-right-width:8px}
+    body.cockpit-airbus::after{height:78px;width:7px}
+    body.cockpit-airbus .hero-admin{padding:13px 10px!important;border-radius:34px 34px 9px 9px!important}
+    body.cockpit-airbus .entete img{width:57px!important;height:57px!important}
+    body.cockpit-airbus .entete-txt h1{grid-template-columns:repeat(2,max-content)!important}
+    body.cockpit-airbus .badge-supabase{grid-column:1/-1}
+    body.cockpit-airbus .barre-util{grid-template-columns:repeat(2,1fr)}
+    body.cockpit-airbus .barre-util .btn-util{font-size:7px!important}
+    body.cockpit-airbus .vue-commandes-globales .stats{grid-template-columns:repeat(2,1fr)!important;padding:18px 7px 8px}
+    body.cockpit-airbus .vue-commandes-globales .stat{min-height:70px!important;padding-left:40px!important}
+    body.cockpit-airbus .vue-commandes-globales .stat::before{left:8px;width:23px;height:23px}
+    body.cockpit-airbus .vue-commandes-globales .stat::after{left:19px}
+    body.cockpit-airbus .afficheur-mode-bar{display:grid;grid-template-columns:repeat(3,1fr)}
+    body.cockpit-airbus .afficheur-mode-lbl{grid-column:1/-1;text-align:left}
+    body.cockpit-airbus .btn-mode-afficheur{min-width:0;padding:8px 4px;font-size:6px}
+    body.cockpit-airbus .instrument-avion-ecran{min-height:0!important;padding:11px!important}
+    body.cockpit-airbus .afficheur-classe-titre{font-size:10px}
+    body.cockpit-airbus .afficheur-classe-titre small{display:none}
+    body.cockpit-airbus .mode-ecran-large .afficheur-six-zones,
+    body.cockpit-airbus .mode-deux-ecrans .afficheur-six-zones{
+      grid-template-columns:repeat(2,minmax(0,1fr))!important; grid-template-rows:auto repeat(3,minmax(132px,1fr))!important;
+      grid-template-areas:"total total" "z1 z2" "z3 z4" "z5 z6"!important; gap:7px!important;
+    }
+    body.cockpit-airbus .mode-ecran-large .zone-afficheur,
+    body.cockpit-airbus .mode-deux-ecrans .zone-afficheur{position:relative!important;inset:auto!important;width:auto!important;min-height:132px!important;padding:10px!important;align-items:flex-start!important;justify-content:space-between!important}
+    body.cockpit-airbus .mode-ecran-large .zone-afficheur-total,
+    body.cockpit-airbus .mode-deux-ecrans .zone-afficheur-total{font-size:36px!important}
+    body.cockpit-airbus .mode-ecran-large .zone-afficheur-total-libelle,
+    body.cockpit-airbus .mode-deux-ecrans .zone-afficheur-total-libelle{position:absolute!important;left:55px!important;top:49px!important}
+    body.cockpit-airbus .mode-ecran-large .afficheur-total-centre,
+    body.cockpit-airbus .mode-deux-ecrans .afficheur-total-centre{min-height:106px!important;height:auto!important;padding:12px!important;flex-direction:row!important}
+    body.cockpit-airbus .mode-ecran-large .afficheur-total-centre>strong,
+    body.cockpit-airbus .mode-deux-ecrans .afficheur-total-centre>strong{font-size:55px!important}
+    body.cockpit-airbus .mode-ecran-large .total-centre-mesures,
+    body.cockpit-airbus .mode-deux-ecrans .total-centre-mesures{width:52%!important;margin:0 0 0 auto!important;padding:0 0 0 8px!important;border-top:0!important;border-left:1px solid #34594a!important}
+    body.cockpit-airbus .mode-ecran-large .zone-afficheur[data-zone-slot="5"] .zone-afficheur-total-libelle,
+    body.cockpit-airbus .mode-ecran-large .zone-afficheur[data-zone-slot="6"] .zone-afficheur-total-libelle{position:static!important}
+    body.cockpit-airbus .actions-principales{grid-template-columns:1fr!important}
+    #sti-airbus-service-dock{
+      left:7px;right:7px;bottom:64px;width:auto;display:flex;flex-direction:row;overflow-x:auto;padding:5px;
+    }
+    #sti-airbus-service-dock::before{display:none}
+    #sti-airbus-service-dock>button{flex:0 0 auto!important;width:auto!important;min-height:38px!important;white-space:nowrap}
+    body.cockpit-airbus #sti-airbus-service-dock #btn-messenger-dock{display:flex!important}
+    #sti-pc-win-tools{display:none!important}
+    #sti-admin-text-box{bottom:118px}
+    body:has(.modal-fond.visible) #sti-airbus-service-dock,
+    body:has(#zone-detail.visible) #sti-airbus-service-dock{display:none!important}
+  }
+
+
+/* ── v20 : consoles fixes clarifiées et intégrées au cockpit ── */
+#sti-airbus-service-dock::before{content:"SYS · SERVICES ADMIN"!important;display:block;padding:4px 6px 7px!important;color:var(--v19-cyan)!important;font:800 8px/1 Consolas,monospace!important;letter-spacing:.15em!important;border-bottom:1px solid #405058}
+#sti-airbus-service-dock>button{display:grid!important;grid-template-columns:34px minmax(0,1fr)!important;grid-template-rows:auto auto!important;column-gap:8px!important;row-gap:2px!important;align-items:center!important;justify-items:stretch!important;min-height:50px!important;padding:7px 8px!important;border-color:#718087!important}
+#sti-airbus-service-dock .sti-airbus-code{grid-column:1;grid-row:1/3;display:grid;place-items:center;align-self:stretch;min-width:32px;border:1px solid #596a72;border-radius:2px;background:#070c0f;color:#e8f0f3;font:900 8px/1 Consolas,monospace;letter-spacing:.04em}
+#sti-airbus-service-dock .sti-airbus-main{grid-column:2;grid-row:1;display:flex;align-items:center;gap:6px;min-width:0;color:#f5fafc;font:850 9px/1.12 "Segoe UI",Arial,sans-serif;text-transform:uppercase}
+#sti-airbus-service-dock .sti-airbus-role{grid-column:2;grid-row:2;color:#8fa2ab;font:700 7px/1 Consolas,monospace;letter-spacing:.1em;text-transform:uppercase}
+#sti-airbus-service-dock #sti-btn-sante .sti-airbus-code{color:#d9a7ff;border-color:#8c55ae}
+#sti-airbus-service-dock #sti-btn-sauvegarde .sti-airbus-code{color:var(--v19-green);border-color:#3f8557}
+#sti-airbus-service-dock #sti-btn-analytique .sti-airbus-code{color:var(--v19-cyan);border-color:#40819a}
+#sti-airbus-service-dock #btn-messenger-dock .sti-airbus-code{color:#bd9cff;border-color:#7152a6}
+#sti-airbus-service-dock #btn-messenger-dock svg{width:17px!important;height:17px!important}
+#sti-pc-win-tools{position:fixed!important;left:14px!important;right:auto!important;bottom:14px!important;z-index:2147483645!important;border-radius:6px!important;padding:5px 7px!important;gap:4px!important}
+#sti-pc-win-tools::before{content:none!important}
+#sti-tools-caption{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;align-self:stretch;min-width:118px;padding:4px 9px 4px 6px;border-right:1px solid #53636b}
+#sti-tools-caption b{color:var(--v19-cyan);font:900 9px/1 Consolas,monospace;letter-spacing:.11em}
+#sti-tools-caption small{margin-top:4px;color:var(--v19-green);font:800 7px/1 Consolas,monospace;letter-spacing:.08em}
+#sti-pc-win-tools button{position:relative!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:center!important;gap:3px!important;border-radius:2px!important;min-height:41px!important}
+#sti-pc-win-tools button::after{content:attr(data-airbus-role);display:block;flex:0 0 100%;margin-top:1px;text-align:center;color:#93a6af;font:700 6px/1 Consolas,monospace;letter-spacing:.08em;text-transform:uppercase}
+#sti-pc-win-tools #sti-btn-pc-fullscreen{border-bottom:3px solid var(--v19-cyan)!important}
+#sti-pc-win-tools #sti-btn-pc-pin{border-bottom:3px solid #aab7bd!important}
+#sti-pc-win-tools #sti-btn-pc-zoom-out,#sti-pc-win-tools #sti-pc-zoom-lbl,#sti-pc-win-tools #sti-btn-pc-zoom-in{border-bottom:3px solid #7ea2b2!important}
+#sti-pc-win-tools #sti-btn-pc-laser{border-bottom:3px solid var(--v19-red)!important}
+#sti-pc-win-tools #sti-btn-admin-texte{border-bottom:3px solid var(--v19-amber)!important}
+#sti-pc-win-tools #sti-btn-pc-split{border-bottom:3px solid var(--v19-green)!important}
+#sti-pc-win-tools button[aria-pressed="true"]{background:linear-gradient(#0d5c36,#082a1c)!important;border-color:var(--v19-green)!important;color:#fff!important}
+@media(min-width:1250px){body.cockpit-airbus{padding-left:230px!important}body.cockpit-airbus::before{left:15%;right:3%}#sti-airbus-service-dock{top:auto!important;bottom:78px!important;width:202px!important}}
+@media(max-width:1249px) and (min-width:761px){
+ body.cockpit-airbus{padding-bottom:220px!important}
+ #sti-airbus-service-dock{left:14px!important;right:14px!important;top:auto!important;bottom:122px!important;width:auto!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;overflow:visible!important;padding:5px!important}
+ #sti-airbus-service-dock::before{display:none!important}#sti-airbus-service-dock>button{width:100%!important;min-width:0!important}
+ #sti-pc-win-tools{left:14px!important;right:14px!important;bottom:14px!important;width:auto!important;max-width:none!important;display:grid!important;grid-template-columns:105px repeat(4,minmax(0,1fr))!important;gap:4px!important;overflow:hidden!important}
+ #sti-tools-caption{grid-column:1;grid-row:1/3;min-width:0!important;padding:5px!important}#sti-pc-win-tools .sti-tools-separator{display:none!important}
+ #sti-pc-win-tools button{width:100%!important;min-width:0!important;padding:5px 4px!important;font-size:7.5px!important;white-space:normal!important}#sti-pc-win-tools button::after{font-size:5.5px!important}
+}
+@media(max-width:760px){
+ body.cockpit-airbus .entete{width:100%;gap:10px!important;align-items:flex-start!important}body.cockpit-airbus .entete-txt{flex:1 1 auto;width:calc(100% - 67px);overflow:hidden}
+ body.cockpit-airbus .entete-txt h1{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))!important;font-size:14px!important}body.cockpit-airbus #titre-tb-admin{width:100%;max-width:100%;font-size:14px!important;letter-spacing:.025em;white-space:normal;overflow-wrap:anywhere}
+ body.cockpit-airbus .badge-temoin-examen,body.cockpit-airbus .badge-admin-gold,body.cockpit-airbus .badge-version{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:7px!important}body.cockpit-airbus .badge-supabase{grid-column:1/-1;min-width:0;max-width:100%;white-space:normal;font-size:7px!important}
+ #sti-airbus-service-dock{left:7px!important;right:7px!important;top:auto!important;bottom:64px!important;width:auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;overflow:hidden!important;padding:4px!important;gap:4px!important}
+ #sti-airbus-service-dock::before{display:none!important}#sti-airbus-service-dock>button{width:100%!important;min-width:0!important;min-height:42px!important;padding:5px!important;display:flex!important;justify-content:center!important}
+ #sti-airbus-service-dock .sti-airbus-code,#sti-airbus-service-dock .sti-airbus-role{display:none!important}#sti-airbus-service-dock .sti-airbus-main{display:flex!important;justify-content:center!important;text-align:center!important;font-size:7px!important;white-space:normal!important}
+ body.cockpit-airbus #sti-airbus-service-dock #btn-messenger-dock{display:none!important}#sti-pc-win-tools{display:none!important}
+}

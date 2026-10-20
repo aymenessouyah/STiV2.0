@@ -2738,6 +2738,27 @@
     if (zone.type === "labo") bandeauLabo3ForceOuvert = true;
     rendAbonnes();
     if (zone.type === "labo") majBandeauEtCompteursClasse();
+
+    /* Accès direct : ouvrir la gestion des abonnés, conserver le filtre de
+       la classe choisie puis descendre immédiatement vers sa liste. */
+    var blocAbonnes = document.getElementById("bloc-sec-abonnes");
+    if (blocAbonnes) {
+      blocAbonnes.style.display = "";
+      blocAbonnes.classList.remove("sec-repliee");
+      var btnReduire = blocAbonnes.querySelector(".btn-replier-sec[data-replier='bloc-sec-abonnes']");
+      if (btnReduire) btnReduire.textContent = "▾ Réduire";
+    }
+    document.querySelectorAll(".btn-sec-tab[data-sec-cible]").forEach(function (onglet) {
+      onglet.classList.toggle("actif", onglet.getAttribute("data-sec-cible") === "bloc-sec-abonnes");
+    });
+    var cibleDirecte = document.getElementById("bandeau-classe-active") || document.getElementById("filtres-bar-abonnes") || blocAbonnes;
+    if (cibleDirecte) {
+      cibleDirecte.classList.remove("classe-cible-flash");
+      void cibleDirecte.offsetWidth;
+      cibleDirecte.classList.add("classe-cible-flash");
+      cibleDirecte.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(function () { cibleDirecte.classList.remove("classe-cible-flash"); }, 1800);
+    }
   }
 
   zonesAfficheurClasse.forEach(function (bouton) {
@@ -2749,6 +2770,14 @@
       if (selFiltreClasse) selFiltreClasse.value = "*";
       if (selFiltreStatut) selFiltreStatut.value = "*";
       rendAbonnes();
+      var blocAbonnes = document.getElementById("bloc-sec-abonnes");
+      if (blocAbonnes) {
+        blocAbonnes.style.display = "";
+        blocAbonnes.classList.remove("sec-repliee");
+        var btnReduire = blocAbonnes.querySelector(".btn-replier-sec[data-replier='bloc-sec-abonnes']");
+        if (btnReduire) btnReduire.textContent = "▾ Réduire";
+        blocAbonnes.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     });
   }
   window.setInterval(majAfficheurNumeriqueClasse, 30000);
@@ -8074,7 +8103,9 @@
     });
   }
 
-  [chkSessionUnique, chkEjectDevtools, chkAntiTricheOnglet, chkInactivite, selInactiviteMin, chkMultiAppareils, chkAntiCollage, chkMelangeQcm, chkCopyTrap, chkPleinEcran, chkFiligrane, chkSplitScreen].forEach(function (el) {
+  /* Le champ chkSessionUnique n’existe plus dans le HTML. Le référencer ici
+     arrêtait tout le script avant l’initialisation des commandes de projection. */
+  [chkEjectDevtools, chkAntiTricheOnglet, chkInactivite, selInactiviteMin, chkMultiAppareils, chkAntiCollage, chkMelangeQcm, chkCopyTrap, chkPleinEcran, chkFiligrane, chkSplitScreen].forEach(function (el) {
     if (!el) return;
     el.addEventListener("change", function () {
       sauvegarderEtDiffuserConfigSecurite({
@@ -10818,25 +10849,46 @@
       "background:rgba(255,253,247,0.96);border:2px solid #23201a;border-radius:999px;padding:4px 7px;" +
       "box-shadow:3px 3px 0 #23201a;font:800 12px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#23201a;";
 
+    var outilsCaption = document.createElement("span");
+    outilsCaption.id = "sti-tools-caption";
+    outilsCaption.innerHTML = '<b>COMMANDES</b><small id="sti-tools-state">MODE NORMAL</small>';
+
     var btnFsAdm = document.createElement("button");
     btnFsAdm.type = "button";
     btnFsAdm.id = "sti-btn-pc-fullscreen";
-    btnFsAdm.innerHTML = (document.fullscreenElement || document.webkitFullscreenElement) ? "⛶ <span>Plein écran actif</span>" : "⛶ <span>Sans adresse</span>";
-    btnFsAdm.title = "Masquer la barre d'adresse en haut sur PC (Mode Plein Écran application)";
+    btnFsAdm.setAttribute("data-airbus-role", "PLEIN ÉCRAN");
+    btnFsAdm.setAttribute("aria-pressed", "false");
+    btnFsAdm.innerHTML = "📽️ <span>Mode projection</span>";
+    btnFsAdm.title = "Mode projection : afficher le tableau de bord en plein écran, sans barre d’adresse";
     btnFsAdm.style.cssText =
       "display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;border:1.5px solid #23201a;" +
       "background:" + ((document.fullscreenElement || document.webkitFullscreenElement) ? "#177245" : "#fffdf7") + ";" +
       "color:" + ((document.fullscreenElement || document.webkitFullscreenElement) ? "#ffffff" : "#23201a") + ";font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    function synchroniserLibelleProjection() {
+      var projectionActive = Boolean(document.fullscreenElement || document.webkitFullscreenElement) ||
+        document.documentElement.classList.contains("sti-kiosk-css-full") || Boolean(document.__stiCssFsEl);
+      btnFsAdm.innerHTML = projectionActive ? "📽️ <span>Projection active</span>" : "📽️ <span>Mode projection</span>";
+      btnFsAdm.setAttribute("aria-pressed", projectionActive ? "true" : "false");
+      var etatOutils = document.getElementById("sti-tools-state");
+      if (etatOutils) etatOutils.textContent = projectionActive ? "MODE PROJECTION" : "MODE NORMAL";
+    }
     btnFsAdm.onclick = function () {
       if (typeof window.basculerPleinEcranSansAdressePC === "function") {
         window.basculerPleinEcranSansAdressePC(btnFsAdm);
+        window.setTimeout(synchroniserLibelleProjection, 0);
       }
     };
+    document.addEventListener("fullscreenchange", synchroniserLibelleProjection);
+    document.addEventListener("webkitfullscreenchange", synchroniserLibelleProjection);
+    synchroniserLibelleProjection();
 
     var btnPin = document.createElement("button");
     btnPin.type = "button";
-    btnPin.innerHTML = "📌 <span>1er plan</span>";
-    btnPin.title = "Garder le Tableau de bord STI V2.0 au 1er plan sur Windows";
+    btnPin.id = "sti-btn-pc-pin";
+    btnPin.setAttribute("data-airbus-role", "FENÊTRE SÉPARÉE");
+    btnPin.setAttribute("aria-pressed", "false");
+    btnPin.innerHTML = "📌 <span>Fenêtre flottante</span>";
+    btnPin.title = "Ouvrir une petite fenêtre séparée qui reste visible au-dessus des autres fenêtres";
     btnPin.style.cssText =
       "display:inline-flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;border:1.5px solid #23201a;" +
       "background:#101728;color:#fffdf7;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
@@ -10845,20 +10897,23 @@
         pipWinAdm.close();
         pipWinAdm = null;
         btnPin.style.background = "#101728";
-        btnPin.innerHTML = "📌 <span>1er plan</span>";
+        btnPin.innerHTML = "📌 <span>Fenêtre flottante</span>";
+        btnPin.setAttribute("aria-pressed", "false");
         return;
       }
       if (window.documentPictureInPicture && typeof window.documentPictureInPicture.requestWindow === "function") {
         window.documentPictureInPicture.requestWindow({ width: 620, height: 740 }).then(function (pw) {
           pipWinAdm = pw;
           btnPin.style.background = "#177245";
-          btnPin.innerHTML = "📌 <span>1er plan actif</span>";
+          btnPin.innerHTML = "📌 <span>Fenêtre active</span>";
+          btnPin.setAttribute("aria-pressed", "true");
           pw.document.body.style.cssText = "margin:0;height:100vh;display:flex;flex-direction:column;background:#0d1526;";
           pw.document.body.innerHTML = '<iframe src="' + location.href.replace(/"/g, "&quot;") + '" style="flex:1;width:100%;border:0;background:#f9f1e3;"></iframe>';
           pw.addEventListener("pagehide", function () {
             pipWinAdm = null;
             btnPin.style.background = "#101728";
-            btnPin.innerHTML = "📌 <span>1er plan</span>";
+            btnPin.innerHTML = "📌 <span>Fenêtre flottante</span>";
+            btnPin.setAttribute("aria-pressed", "false");
           });
         }).catch(function () {
           if (typeof window.basculerPleinEcranSansAdressePC === "function") window.basculerPleinEcranSansAdressePC();
@@ -10869,31 +10924,43 @@
     };
 
     var sep = document.createElement("span");
+    sep.className = "sti-tools-separator";
+    sep.setAttribute("aria-hidden", "true");
     sep.style.cssText = "width:1.5px;height:18px;background:rgba(35,32,26,0.22);margin:0 2px;";
 
     var bOut = document.createElement("button");
     bOut.type = "button";
+    bOut.id = "sti-btn-pc-zoom-out";
+    bOut.setAttribute("data-airbus-role", "ZOOM −10 %");
+    bOut.setAttribute("aria-label", "Réduire l’affichage de 10 pour cent");
     bOut.textContent = "🔍−";
-    bOut.title = "Zoom arrière (−10 %)";
+    bOut.title = "Réduire uniquement l’affichage du tableau de bord de 10 %";
     bOut.style.cssText = "padding:5px 8px;border-radius:999px;border:1.5px solid #23201a;background:#f3ead9;color:#23201a;font:900 11.5px/1 inherit;cursor:pointer;";
     bOut.onclick = function () { appliquerZ(lireZ() - 10); };
 
     var bLbl = document.createElement("button");
     bLbl.type = "button";
     bLbl.id = "sti-pc-zoom-lbl";
+    bLbl.setAttribute("data-airbus-role", "RÉINITIALISER");
+    bLbl.setAttribute("aria-label", "Réinitialiser le zoom à 100 pour cent");
     bLbl.textContent = lireZ() + "%";
-    bLbl.title = "Cliquer pour réinitialiser le zoom à 100 %";
+    bLbl.title = "Réinitialiser l’affichage du tableau de bord à 100 %";
     bLbl.style.cssText = "padding:5px 7px;border-radius:999px;border:none;background:transparent;color:#23201a;font:900 11.5px/1 inherit;cursor:pointer;min-width:42px;text-align:center;";
     bLbl.onclick = function () { appliquerZ(100); };
 
     var bIn = document.createElement("button");
     bIn.type = "button";
+    bIn.id = "sti-btn-pc-zoom-in";
+    bIn.setAttribute("data-airbus-role", "ZOOM +10 %");
+    bIn.setAttribute("aria-label", "Agrandir l’affichage de 10 pour cent");
     bIn.textContent = "🔍+";
-    bIn.title = "Zoom avant (+10 %)";
+    bIn.title = "Agrandir uniquement l’affichage du tableau de bord de 10 %";
     bIn.style.cssText = "padding:5px 8px;border-radius:999px;border:1.5px solid #23201a;background:#fff3b0;color:#23201a;font:900 11.5px/1 inherit;cursor:pointer;";
     bIn.onclick = function () { appliquerZ(lireZ() + 10); };
 
     var sep2 = document.createElement("span");
+    sep2.className = "sti-tools-separator";
+    sep2.setAttribute("aria-hidden", "true");
     sep2.style.cssText = "width:1.5px;height:18px;background:rgba(35,32,26,0.22);margin:0 2px;";
 
     /* 🔴 Pointeur Laser & Guide-ligne sur admin.html */
@@ -10903,8 +10970,11 @@
     var lineLaserAdm = null;
     var bLaser = document.createElement("button");
     bLaser.type = "button";
-    bLaser.innerHTML = "🔴 <span>Laser</span>";
-    bLaser.title = "Spécial Vidéo-projecteur : 1er clic = Pointeur Laser rouge | 2e clic = Règle lumineuse Guide-ligne | 3e clic = Désactiver";
+    bLaser.id = "sti-btn-pc-laser";
+    bLaser.setAttribute("data-airbus-role", "3 ÉTATS");
+    bLaser.setAttribute("aria-pressed", "false");
+    bLaser.innerHTML = "🔴 <span>Laser / guide-texte</span>";
+    bLaser.title = "Projection : 1 clic = laser rouge · 2 clics = guide horizontal de lecture · 3 clics = désactivé";
     bLaser.style.cssText = "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
     bLaser.onclick = function () {
       if (!ovLaserAdm) {
@@ -10925,32 +10995,61 @@
       modeLaserAdm = (modeLaserAdm + 1) % 3;
       if (modeLaserAdm === 0) {
         ovLaserAdm.style.display = "none"; dotLaserAdm.style.display = "none"; lineLaserAdm.style.display = "none";
-        bLaser.style.background = "#fffdf7"; bLaser.style.color = "#23201a"; bLaser.innerHTML = "🔴 <span>Laser</span>";
+        bLaser.style.background = "#fffdf7"; bLaser.style.color = "#23201a"; bLaser.innerHTML = "🔴 <span>Laser / guide-texte</span>";
+        bLaser.setAttribute("data-airbus-role", "3 ÉTATS"); bLaser.setAttribute("aria-pressed", "false");
       } else if (modeLaserAdm === 1) {
         ovLaserAdm.style.display = "block"; dotLaserAdm.style.display = "block"; lineLaserAdm.style.display = "none";
         bLaser.style.background = "#dc2626"; bLaser.style.color = "#fff"; bLaser.innerHTML = "🔴 <span>Laser actif</span>";
+        bLaser.setAttribute("data-airbus-role", "POINTEUR ROUGE"); bLaser.setAttribute("aria-pressed", "true");
       } else {
         ovLaserAdm.style.display = "block"; dotLaserAdm.style.display = "none"; lineLaserAdm.style.display = "block";
-        bLaser.style.background = "#d97706"; bLaser.style.color = "#fff"; bLaser.innerHTML = "📏 <span>Guide-ligne</span>";
+        bLaser.style.background = "#d97706"; bLaser.style.color = "#fff"; bLaser.innerHTML = "📏 <span>Guide-texte actif</span>";
+        bLaser.setAttribute("data-airbus-role", "LIGNE DE LECTURE"); bLaser.setAttribute("aria-pressed", "true");
       }
     };
+
+    /* T Texte projeté : saisie distincte du guide-texte pour éviter toute confusion. */
+    var bTexte = document.createElement("button");
+    bTexte.type = "button";
+    bTexte.id = "sti-btn-admin-texte";
+    bTexte.setAttribute("data-airbus-role", "MESSAGE GRAND FORMAT");
+    bTexte.setAttribute("aria-expanded", "false");
+    bTexte.innerHTML = "T <span>Texte projeté</span>";
+    bTexte.title = "Saisir puis afficher un message en grand sur le vidéoprojecteur — indépendant du guide de lecture";
+    var texteBox = document.createElement("div");
+    texteBox.id = "sti-admin-text-box";
+    texteBox.setAttribute("role", "dialog"); texteBox.setAttribute("aria-label", "Texte à projeter");
+    texteBox.innerHTML = '<label for="sti-admin-text-input" style="display:block;margin-bottom:7px;color:#51d7ff;font:900 10px/1 system-ui;letter-spacing:.08em">TEXTE À PROJETER</label>' + '<p style="margin:0 0 7px;color:#9fb1b9;font:700 9px/1.25 system-ui">Affiche un message en grand. Ce bouton ne commande ni le laser ni le guide de lecture.</p>' + '<textarea id="sti-admin-text-input" placeholder="Saisissez ici le texte à afficher en grand…"></textarea>' + '<div id="sti-admin-text-actions"><button type="button" id="sti-admin-text-hide">Effacer l’écran</button><button type="button" id="sti-admin-text-close">Fermer</button><button type="button" id="sti-admin-text-show">Afficher</button></div>';
+    var texteProjete = document.createElement("div"); texteProjete.id = "sti-admin-projected-text"; texteProjete.setAttribute("role", "status"); document.body.appendChild(texteProjete); document.body.appendChild(texteBox);
+    function fermerTexteProjete() { texteProjete.classList.remove("visible"); texteProjete.textContent = ""; bTexte.style.background = ""; bTexte.style.color = ""; bTexte.setAttribute("aria-pressed", "false"); }
+    bTexte.onclick = function () { var visible = texteBox.classList.toggle("visible"); bTexte.setAttribute("aria-expanded", visible ? "true" : "false"); if (visible) { var saisie = document.getElementById("sti-admin-text-input"); if (saisie) window.setTimeout(function () { saisie.focus(); }, 0); } };
+    var btnTexteShow = texteBox.querySelector("#sti-admin-text-show"), btnTexteHide = texteBox.querySelector("#sti-admin-text-hide"), btnTexteClose = texteBox.querySelector("#sti-admin-text-close");
+    if (btnTexteShow) btnTexteShow.onclick = function () { var saisie = texteBox.querySelector("#sti-admin-text-input"), texte = saisie ? saisie.value.trim() : ""; if (!texte) { if (saisie) saisie.focus(); return; } texteProjete.textContent = texte; texteProjete.classList.add("visible"); bTexte.style.background = "#0b6b3a"; bTexte.style.color = "#fff"; bTexte.setAttribute("aria-pressed", "true"); };
+    if (btnTexteHide) btnTexteHide.onclick = fermerTexteProjete;
+    if (btnTexteClose) btnTexteClose.onclick = function () { texteBox.classList.remove("visible"); bTexte.setAttribute("aria-expanded", "false"); };
+    document.addEventListener("keydown", function (ev) { if (ev.key !== "Escape") return; texteBox.classList.remove("visible"); bTexte.setAttribute("aria-expanded", "false"); fermerTexteProjete(); });
 
     /* ◫ Mode Écran Scindé « Côte-à-côte » (2 vues) sur admin.html */
     var splitAdm = null;
     var bSplit = document.createElement("button");
     bSplit.type = "button";
-    bSplit.innerHTML = "◫ <span>2 vues</span>";
-    bSplit.title = "Mode Écran Scindé Côte-à-côte : ouvrir une 2e vue à droite (Accueil, Bac Pratique, Cours…)";
+    bSplit.id = "sti-btn-pc-split";
+    bSplit.setAttribute("data-airbus-role", "CÔTE À CÔTE");
+    bSplit.setAttribute("aria-pressed", "false");
+    bSplit.innerHTML = "◫ <span>Deux vues</span>";
+    bSplit.title = "Ouvrir une seconde page à droite du tableau de bord, en mode côte à côte";
     bSplit.style.cssText = "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
     bSplit.onclick = function () {
       if (splitAdm) {
         splitAdm.remove();
         splitAdm = null;
         document.documentElement.style.width = "";
-        bSplit.style.background = "#fffdf7"; bSplit.style.color = "#23201a"; bSplit.innerHTML = "◫ <span>2 vues</span>";
+        bSplit.style.background = "#fffdf7"; bSplit.style.color = "#23201a"; bSplit.innerHTML = "◫ <span>Deux vues</span>";
+        bSplit.setAttribute("aria-pressed", "false");
         return;
       }
-      bSplit.style.background = "#0284c7"; bSplit.style.color = "#fff"; bSplit.innerHTML = "◫ <span>2 vues actif</span>";
+      bSplit.style.background = "#0284c7"; bSplit.style.color = "#fff"; bSplit.innerHTML = "◫ <span>Deux vues actives</span>";
+      bSplit.setAttribute("aria-pressed", "true");
       document.documentElement.style.width = "52vw";
       splitAdm = document.createElement("div");
       splitAdm.style.cssText = "position:fixed;top:0;right:0;bottom:0;width:48vw;z-index:2147483640;background:#fffdf7;border-left:3px solid #23201a;box-shadow:-6px 0 24px rgba(16,23,40,0.28);display:flex;flex-direction:column;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;";
@@ -10976,6 +11075,7 @@
       if (clEl) clEl.onclick = function () { bSplit.click(); };
     };
 
+    bar.appendChild(outilsCaption);
     bar.appendChild(btnFsAdm);
     bar.appendChild(btnPin);
     bar.appendChild(sep);
@@ -10984,6 +11084,7 @@
     bar.appendChild(bIn);
     bar.appendChild(sep2);
     bar.appendChild(bLaser);
+    bar.appendChild(bTexte);
     bar.appendChild(bSplit);
     document.body.appendChild(bar);
     var z0 = lireZ();

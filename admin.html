@@ -1682,7 +1682,7 @@
   <!-- 1. EN-TÊTE SUPÉRIEUR : Identité + Boutons utilitaires rapides -->
   <header class="hero-admin">
     <div class="entete">
-      <img src="assets/icons/sti-icon-512.png" alt="Logo STI" />
+      <img src="assets/icons/sti-logo-complet.png" alt="Logo STI by AE — L'Atelier du Web" />
       <div class="entete-txt">
         <h1>
           <svg id="svg-logo-tb-admin" width="25" height="25" viewBox="0 0 24 24" fill="none" aria-hidden="true" title="🟢 En ligne"><rect id="svg-logo-tb-rect" x="2.5" y="2.5" width="19" height="19" rx="5" stroke="#23201a" stroke-width="2" fill="#177245"/><path id="svg-logo-tb-bars" d="M7.5 16.5v-4.5M12 16.5V8M16.5 16.5V5.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
@@ -1692,7 +1692,7 @@
           <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v316</span>
           <span class="badge-supabase deconnecte" id="badge-supabase-quota" title="🔴 Supabase déconnectée — vérification en cours"><span id="sb-etat-icone" aria-hidden="true">🔴</span> 🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz</div>
+        <div class="sous">Airbus Integrated Cockpit · Centre d’opérations administrateur</div>
       </div>
     </div>
     <div class="barre-util">
@@ -1745,8 +1745,8 @@
     <span class="vis-instrument v3" aria-hidden="true"></span>
     <span class="vis-instrument v4" aria-hidden="true"></span>
     <div class="afficheur-mode-bar" role="group" aria-label="Mode de présentation de l'afficheur principal">
-      <span class="afficheur-mode-lbl">EFIS DISPLAY</span>
-      <button type="button" class="btn-mode-afficheur actif" data-mode-afficheur="ecran-large" aria-pressed="true">▭ Écran large</button>
+      <span class="afficheur-mode-lbl">CAPT OIS · SD PAGE</span>
+      <button type="button" class="btn-mode-afficheur actif" data-mode-afficheur="ecran-large" aria-pressed="true">▭ Écran panoramique</button>
       <button type="button" class="btn-mode-afficheur" data-mode-afficheur="deux-ecrans" aria-pressed="false">▣ Deux écrans</button>
       <button type="button" class="btn-mode-afficheur" data-mode-afficheur="cadran-rond" aria-pressed="false">◉ Cadran rond</button>
     </div>
@@ -3831,6 +3831,7 @@
     .mode-deux-ecrans .total-centre-mesures { width: 100%; margin: 0; padding: 4px 0 0; border-left: 0; border-top: 1px solid #34594a; }
   }
 </style>
+<link rel="stylesheet" href="assets/css/admin-v19.css?v=316-airbus-cockpit-20" />
 
   <div class="modal-fond" id="modal-fiche-eleve" role="dialog" aria-modal="true">
     <div class="modal-boite fiche-eleve-boite" id="boite-fiche-eleve">
@@ -4333,9 +4334,66 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
-  <script src="assets/js/admin.js?v=316-airbus-cockpit-16"></script>
+  <script src="assets/js/admin.js?v=316-airbus-cockpit-20"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>
+<script>
+  /* Dock v19 : regroupe les services flottants pour qu’aucun bouton n’en masque un autre. */
+  (function () {
+    function installerDockAirbus() {
+      var dock = document.getElementById("sti-airbus-service-dock");
+      if (!dock) {
+        dock = document.createElement("aside");
+        dock.id = "sti-airbus-service-dock";
+        dock.setAttribute("aria-label", "Services administrateur");
+        document.body.appendChild(dock);
+      }
+      var services = [
+        { id:"sti-btn-sante", code:"SYS 1", role:"DIAGNOSTIC TECHNIQUE", titre:"Santé du site — ouvrir le diagnostic technique et vérifier les services" },
+        { id:"sti-btn-sauvegarde", code:"DATA", role:"EXPORT DE SECOURS", titre:"Sauvegarde complète — télécharger une copie de secours des données" },
+        { id:"sti-btn-analytique", code:"PROG", role:"SUIVI DES ÉLÈVES", titre:"Progressions — consulter l’avancement pédagogique des élèves" },
+        { id:"btn-messenger-dock", code:"MSG", role:"DISCUSSIONS STI", titre:"Messenger STI — ouvrir les conversations avec les candidats" }
+      ];
+      services.forEach(function (service) {
+        var bouton = document.getElementById(service.id);
+        if (!bouton) return;
+        if (service.id === "btn-messenger-dock" && !bouton.querySelector(".sti-dock-label")) {
+          var libelle = document.createElement("span");
+          libelle.className = "sti-dock-label";
+          libelle.textContent = "Messenger STI";
+          bouton.appendChild(libelle);
+        }
+        if (bouton.getAttribute("data-airbus-decore") !== "1") {
+          var contenu = document.createElement("span");
+          contenu.className = "sti-airbus-main";
+          while (bouton.firstChild) contenu.appendChild(bouton.firstChild);
+          var code = document.createElement("span");
+          code.className = "sti-airbus-code";
+          code.textContent = service.code;
+          var role = document.createElement("span");
+          role.className = "sti-airbus-role";
+          role.textContent = service.role;
+          bouton.appendChild(code);
+          bouton.appendChild(contenu);
+          bouton.appendChild(role);
+          bouton.setAttribute("data-airbus-decore", "1");
+          bouton.setAttribute("aria-label", service.titre);
+          bouton.title = service.titre;
+        }
+        if (bouton.parentNode !== dock) dock.appendChild(bouton);
+      });
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", function () {
+        installerDockAirbus();
+        window.setTimeout(installerDockAirbus, 250);
+      });
+    } else {
+      installerDockAirbus();
+      window.setTimeout(installerDockAirbus, 250);
+    }
+  })();
+</script>
 </body>
 </html>
