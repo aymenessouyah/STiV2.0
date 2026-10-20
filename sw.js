@@ -6,14 +6,14 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v316-six-zone-overview-14";
+var UPDATE_ID = "v316-large-six-zone-display-15";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
   { url: "./index.html", revision: "device-gate-v303" },
   { url: "./assets/js/config.js", revision: "platform-version-v316" },
   { url: "./portail.html", revision: "password-recovery-ui-v308" },
-  { url: "./admin.html", revision: "admin-six-zone-overview-v316-14" },
+  { url: "./admin.html", revision: "admin-large-six-zone-display-v316-15" },
   { url: "./assets/js/acces.js", revision: "dynamic-version-v316-1" },
   { url: "./assets/js/admin.js", revision: "admin-six-zone-overview-v316-14" },
   { url: "./assets/js/portail.js", revision: "windows-native-auth-gate-v316" },
@@ -30,7 +30,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" },
   { url: "./assets/js/modules/labo-offline-diagnostics.js", revision: "offline-diagnostics-v315" },
   { url: "./exercices/series-exercices.html", revision: "sql-serie42-gestlocation-v316-1" },
-  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-six-zone-overview-14" },
+  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-large-six-zone-display-15" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
   { url: "./Lancer-Labo3-Hors-Ligne.ps1", revision: "portable-powershell-server-v315" }
 ];

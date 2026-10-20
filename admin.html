@@ -246,8 +246,8 @@
   .tableau-apercu .stats { margin-bottom: 10px; }
   .tableau-apercu .alerte-demande { margin-bottom: 12px; }
   .vue-ensemble-corps {
-    display: grid; grid-template-columns: minmax(430px, 590px) minmax(245px, 1fr);
-    align-items: center; gap: 18px;
+    display: grid; grid-template-columns: minmax(560px, 720px) minmax(260px, 1fr);
+    align-items: center; gap: 20px;
   }
   .vue-compteur-classe, .vue-commandes-globales { min-width: 0; }
   .vue-commandes-globales .stats {
@@ -277,8 +277,8 @@
 
   /* Grand afficheur aéronautique unique — 6 zones (4 classes, Prof et Labo 3) + total central */
   .afficheur-classe-avion {
-    position: relative; width: min(100%, 590px); margin: 0 auto 2px;
-    padding: 18px; border: 3px solid #5f6972; border-radius: 38px;
+    position: relative; width: min(100%, 720px); margin: 0 auto 2px;
+    padding: 20px; border: 3px solid #5f6972; border-radius: 42px;
     background: linear-gradient(145deg, #333b41 0%, #101519 48%, #2a3136 100%);
     color: #f4f8fb; box-shadow: inset 0 0 0 2px #090c0e, inset 0 0 26px rgba(0,0,0,.88), 5px 6px 0 rgba(35,32,26,.6);
   }
@@ -292,8 +292,8 @@
   .vis-instrument.v3 { bottom: 13px; left: 15px; }
   .vis-instrument.v4 { bottom: 13px; right: 15px; }
   .instrument-avion-bezel {
-    position: relative; width: min(100%, 510px); aspect-ratio: 1; margin: auto;
-    padding: 13px; border-radius: 50%;
+    position: relative; width: min(100%, 650px); aspect-ratio: 1; margin: auto;
+    padding: 16px; border-radius: 50%;
     background: linear-gradient(145deg, #55616b, #0a0f13 45%, #2d3740 72%, #11171c);
     border: 2px solid #020405;
     box-shadow: inset 0 0 13px #000, 0 0 0 2px #707b83, 0 0 22px rgba(0,0,0,.8);
@@ -301,7 +301,7 @@
   .instrument-avion-ecran {
     width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
     display: flex; flex-direction: column; justify-content: center;
-    padding: 31px 34px 26px;
+    padding: 40px 46px 34px;
     background:
       radial-gradient(circle at 50% 50%, rgba(42,66,79,.38) 0 14%, transparent 14.5%),
       radial-gradient(circle at 50% 50%, transparent 0 42%, rgba(65,91,106,.2) 42.5% 43%, transparent 43.5%),
@@ -310,22 +310,22 @@
     box-shadow: inset 0 0 35px #000, inset 0 0 0 1px #263746;
   }
   .afficheur-classe-entete {
-    display: flex; align-items: center; justify-content: center; margin: 0 0 5px;
+    display: flex; align-items: center; justify-content: center; margin: 0 0 7px;
   }
   .afficheur-classe-titre {
-    color: #d9e4eb; font-size: 11px; font-weight: 1000;
-    text-transform: uppercase; letter-spacing: .09em; text-align: center;
+    color: #f1f7fa; font-size: 14px; font-weight: 1000;
+    text-transform: uppercase; letter-spacing: .1em; text-align: center;
   }
   .afficheur-classe-titre small {
-    display: inline-block; margin-left: 5px; color: #7894a8; font-size: 7px; letter-spacing: .05em;
+    display: inline-block; margin-left: 7px; color: #8fb0c4; font-size: 9px; letter-spacing: .06em;
   }
   .afficheur-six-zones {
     position: relative; flex: 1; min-height: 0;
     display: grid;
-    grid-template-columns: minmax(0,1fr) minmax(76px,.84fr) minmax(0,1fr);
+    grid-template-columns: minmax(0,1fr) minmax(116px,.9fr) minmax(0,1fr);
     grid-template-rows: repeat(3, minmax(0,1fr));
     grid-template-areas: "z1 . z2" "z3 total z4" "z5 . z6";
-    align-items: center; gap: 5px 7px;
+    align-items: center; gap: 8px 11px;
   }
   .afficheur-six-zones::before, .afficheur-six-zones::after {
     content: ""; position: absolute; left: 50%; top: 50%; pointer-events: none; border-radius: 50%;
@@ -335,9 +335,9 @@
   .afficheur-six-zones::after { width: 34%; aspect-ratio: 1; border-style: dashed; }
   .zone-afficheur {
     --zone-accent: #52e878;
-    position: relative; z-index: 1; min-width: 0; min-height: 86px;
+    position: relative; z-index: 1; min-width: 0; min-height: 110px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 8px 5px 6px; overflow: hidden;
+    padding: 10px 8px 8px; overflow: hidden;
     border: 1.5px solid color-mix(in srgb, var(--zone-accent) 72%, #20303a);
     border-radius: 16px 7px 16px 7px;
     background: radial-gradient(circle at 50% 34%, color-mix(in srgb, var(--zone-accent) 13%, #071016), #03080c 68%);
@@ -355,33 +355,43 @@
   .zone-afficheur[data-zone-slot="4"] { grid-area: z4; --zone-accent: #2dd4bf; }
   .zone-afficheur[data-zone-slot="5"] { grid-area: z5; --zone-accent: #ffd54f; }
   .zone-afficheur[data-zone-slot="6"] { grid-area: z6; --zone-accent: #22d3ee; }
+  .zone-afficheur[data-zone-slot="1"], .zone-afficheur[data-zone-slot="2"] { top: 10px; }
+  .zone-afficheur[data-zone-slot="5"], .zone-afficheur[data-zone-slot="6"] { top: -13px; }
   .zone-afficheur-entete {
-    width: 100%; display: flex; align-items: center; justify-content: center; gap: 3px;
-    color: var(--zone-accent); font: 1000 8px/1.05 system-ui, sans-serif;
-    text-transform: uppercase; letter-spacing: .035em; white-space: nowrap; overflow: hidden;
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 4px;
+    color: var(--zone-accent); font: 1000 10.5px/1.05 system-ui, sans-serif;
+    text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; overflow: hidden;
   }
   .zone-afficheur-entete b { overflow: hidden; text-overflow: ellipsis; }
   .zone-afficheur-total {
-    margin: 2px 0 1px; color: var(--zone-accent);
-    font: 500 27px/.95 Consolas, "Courier New", monospace;
-    font-variant-numeric: tabular-nums; text-shadow: 0 0 8px currentColor;
+    margin: 4px 0 0; color: var(--zone-accent);
+    font: 500 37px/.92 Consolas, "Courier New", monospace;
+    font-variant-numeric: tabular-nums; text-shadow: 0 0 9px currentColor;
+  }
+  .zone-afficheur-total-libelle {
+    margin: 1px 0 5px; color: #8fa6b5; font: 1000 6.5px/1 system-ui, sans-serif;
+    text-transform: uppercase; letter-spacing: .08em;
   }
   .zone-afficheur-mesures {
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-    color: #a9beca; font: 900 7px/1 system-ui, sans-serif; white-space: nowrap;
+    width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
+    align-items: center; justify-content: center; gap: 5px;
+    padding-top: 5px; border-top: 1px solid rgba(143,166,181,.34);
+    color: #a9beca; white-space: nowrap;
   }
-  .zone-afficheur-mesures b { color: #f0f7fa; font-family: Consolas, "Courier New", monospace; }
+  .zone-afficheur-mesures > span { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 0; }
+  .zone-afficheur-mesures b { color: #f0f7fa; font: 900 13px/1 Consolas, "Courier New", monospace; }
+  .zone-afficheur-mesures small { color: #9eb2bf; font: 1000 6px/1 system-ui, sans-serif; letter-spacing: .025em; }
   .zone-afficheur-attente {
-    position: absolute; right: 3px; top: 3px; min-width: 18px; height: 18px;
-    display: inline-flex; align-items: center; justify-content: center; gap: 1px;
-    padding: 0 3px; border: 1px solid #ffedd5; border-radius: 999px;
-    background: #f97316; color: #160800; font: 1000 8px/1 system-ui, sans-serif;
+    position: absolute; right: 5px; top: 5px; min-width: 23px; height: 23px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 2px;
+    padding: 0 4px; border: 1px solid #ffedd5; border-radius: 999px;
+    background: #f97316; color: #160800; font: 1000 10px/1 system-ui, sans-serif;
     box-shadow: 0 0 8px rgba(249,115,22,.85);
   }
   .zone-afficheur-attente[hidden] { display: none; }
   .afficheur-total-centre {
     grid-area: total; position: relative; z-index: 2; align-self: center; justify-self: center;
-    width: min(100%, 112px); aspect-ratio: 1; border-radius: 50%; padding: 10px 6px;
+    width: min(100%, 148px); aspect-ratio: 1; border-radius: 50%; padding: 13px 8px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     border: 2px solid #a7f3d0; background: radial-gradient(circle, #123d2b 0, #06150f 63%, #020706 100%);
     color: #f0fff6; cursor: pointer;
@@ -390,21 +400,21 @@
   .afficheur-total-centre:hover { filter: brightness(1.12); }
   .afficheur-total-centre:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
   .afficheur-total-centre > span:first-child {
-    color: #a7f3d0; font: 1000 7px/1 system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase;
+    color: #a7f3d0; font: 1000 9px/1 system-ui, sans-serif; letter-spacing: .09em; text-transform: uppercase;
   }
   .afficheur-total-centre > strong {
-    margin: 2px 0 0; color: #55ed79; font: 500 35px/.92 Consolas, "Courier New", monospace;
-    font-variant-numeric: tabular-nums; text-shadow: 0 0 9px currentColor;
+    margin: 3px 0 1px; color: #55ed79; font: 500 47px/.9 Consolas, "Courier New", monospace;
+    font-variant-numeric: tabular-nums; text-shadow: 0 0 11px currentColor;
   }
-  .afficheur-total-centre > small { color: #8fa6b5; font: 900 5.7px/1.1 system-ui, sans-serif; text-transform: uppercase; }
+  .afficheur-total-centre > small { color: #9bb2bf; font: 900 7px/1.1 system-ui, sans-serif; text-transform: uppercase; }
   .total-centre-mesures {
-    display: grid; grid-template-columns: repeat(3,1fr); width: 92%; margin-top: 5px;
-    border-top: 1px solid #34594a; padding-top: 4px; color: #a9beca; font: 1000 6px/1 system-ui, sans-serif;
+    display: grid; grid-template-columns: repeat(3,1fr); width: 94%; margin-top: 7px;
+    border-top: 1px solid #34594a; padding-top: 6px; color: #b1c4cf; font: 1000 7px/1 system-ui, sans-serif;
   }
-  .total-centre-mesures b { display: block; margin-bottom: 1px; color: #fff; font: 900 9px/1 Consolas, monospace; }
+  .total-centre-mesures b { display: block; margin-bottom: 2px; color: #fff; font: 900 12px/1 Consolas, monospace; }
   .afficheur-classe-legende {
-    margin: 5px 8px 0; padding-top: 5px; border-top: 1px solid #50616d;
-    color: #8fa6b5; font: 800 7px/1.2 system-ui, sans-serif; text-align: center;
+    margin: 7px 10px 0; padding-top: 6px; border-top: 1px solid #50616d;
+    color: #9eb4c2; font: 800 9px/1.2 system-ui, sans-serif; text-align: center;
   }
   @media (max-width: 620px) {
     .afficheur-classe-avion { padding: 11px; border-radius: 27px; }
@@ -415,10 +425,15 @@
     .afficheur-classe-titre small { font-size: 5.5px; margin-left: 2px; }
     .afficheur-six-zones { grid-template-columns: minmax(0,1fr) minmax(62px,.78fr) minmax(0,1fr); gap: 3px 4px; }
     .zone-afficheur { min-height: 69px; padding: 5px 3px 4px; border-radius: 12px 5px 12px 5px; }
+    .zone-afficheur[data-zone-slot="1"], .zone-afficheur[data-zone-slot="2"] { top: 3px; }
+    .zone-afficheur[data-zone-slot="5"], .zone-afficheur[data-zone-slot="6"] { top: -5px; }
     .zone-afficheur-entete { font-size: 6px; gap: 1px; }
-    .zone-afficheur-total { font-size: 21px; }
-    .zone-afficheur-mesures { gap: 3px; font-size: 5.5px; }
-    .zone-afficheur-attente { min-width: 15px; height: 15px; font-size: 6px; }
+    .zone-afficheur-total { margin-top: 2px; font-size: 21px; }
+    .zone-afficheur-total-libelle { margin: 0 0 2px; font-size: 4.3px; }
+    .zone-afficheur-mesures { gap: 2px; padding-top: 2px; }
+    .zone-afficheur-mesures b { font-size: 7px; }
+    .zone-afficheur-mesures small { font-size: 3.8px; }
+    .zone-afficheur-attente { right: 2px; top: 2px; min-width: 15px; height: 15px; font-size: 6px; }
     .afficheur-total-centre { width: min(100%,88px); padding: 6px 3px; }
     .afficheur-total-centre > span:first-child { font-size: 5.4px; }
     .afficheur-total-centre > strong { font-size: 27px; }
@@ -1741,37 +1756,43 @@
           <button type="button" class="zone-afficheur" data-zone-slot="1" title="Afficher cette classe">
             <span class="zone-afficheur-entete"><span data-zone-icone>🏫</span><b data-zone-nom>Classe 1</b></span>
             <strong class="zone-afficheur-total" data-zone-total>00</strong>
-            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-total-libelle">ABONNÉS</span>
+            <span class="zone-afficheur-mesures"><span><b data-zone-online>00</b><small>🟢 EN LIGNE</small></span><span><b data-zone-24h>00</b><small>🕒 SUR 24 H</small></span></span>
             <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
           </button>
           <button type="button" class="zone-afficheur" data-zone-slot="2" title="Afficher cette classe">
             <span class="zone-afficheur-entete"><span data-zone-icone>🏫</span><b data-zone-nom>Classe 2</b></span>
             <strong class="zone-afficheur-total" data-zone-total>00</strong>
-            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-total-libelle">ABONNÉS</span>
+            <span class="zone-afficheur-mesures"><span><b data-zone-online>00</b><small>🟢 EN LIGNE</small></span><span><b data-zone-24h>00</b><small>🕒 SUR 24 H</small></span></span>
             <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
           </button>
           <button type="button" class="zone-afficheur" data-zone-slot="3" title="Afficher cette classe">
             <span class="zone-afficheur-entete"><span data-zone-icone>🏫</span><b data-zone-nom>Classe 3</b></span>
             <strong class="zone-afficheur-total" data-zone-total>00</strong>
-            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-total-libelle">ABONNÉS</span>
+            <span class="zone-afficheur-mesures"><span><b data-zone-online>00</b><small>🟢 EN LIGNE</small></span><span><b data-zone-24h>00</b><small>🕒 SUR 24 H</small></span></span>
             <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
           </button>
           <button type="button" class="zone-afficheur" data-zone-slot="4" title="Afficher cette classe">
             <span class="zone-afficheur-entete"><span data-zone-icone>🏫</span><b data-zone-nom>Classe 4</b></span>
             <strong class="zone-afficheur-total" data-zone-total>00</strong>
-            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-total-libelle">ABONNÉS</span>
+            <span class="zone-afficheur-mesures"><span><b data-zone-online>00</b><small>🟢 EN LIGNE</small></span><span><b data-zone-24h>00</b><small>🕒 SUR 24 H</small></span></span>
             <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
           </button>
           <button type="button" class="zone-afficheur" data-zone-slot="5" title="Afficher les professeurs">
             <span class="zone-afficheur-entete"><span data-zone-icone>👑</span><b data-zone-nom>PROF</b></span>
             <strong class="zone-afficheur-total" data-zone-total>00</strong>
-            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-total-libelle">ABONNÉS</span>
+            <span class="zone-afficheur-mesures"><span><b data-zone-online>00</b><small>🟢 EN LIGNE</small></span><span><b data-zone-24h>00</b><small>🕒 SUR 24 H</small></span></span>
             <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
           </button>
           <button type="button" class="zone-afficheur" data-zone-slot="6" title="Afficher les postes Labo 3">
             <span class="zone-afficheur-entete"><span data-zone-icone>💻</span><b data-zone-nom>LABO 3</b></span>
             <strong class="zone-afficheur-total" data-zone-total>00</strong>
-            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-total-libelle">POSTES</span>
+            <span class="zone-afficheur-mesures"><span><b data-zone-online>00</b><small>🟢 EN LIGNE</small></span><span><b data-zone-24h>00</b><small>🕒 SUR 24 H</small></span></span>
             <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
           </button>
 
