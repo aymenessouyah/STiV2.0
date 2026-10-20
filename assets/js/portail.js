@@ -609,6 +609,79 @@
     });
   }
 
+  /* ---------- Bouclier anti-robots v2 : verrouillage exponentiel, cadence, pieges inscription ---------- */
+  var BouclierSTI = (function () {
+    function lire(k, d) {
+      try {
+        var v = localStorage.getItem(k);
+        if (v === null || v === undefined) {
+          var m = document.cookie.match(new RegExp("(?:^|; )" + k + "=([^;]*)"));
+          v = m ? decodeURIComponent(m[1]) : null;
+        }
+        return v === null || v === undefined ? d : v;
+      } catch (e) { return d; }
+    }
+    function ecrire(k, v) {
+      try { localStorage.setItem(k, v); } catch (e) {}
+      try { document.cookie = k + "=" + encodeURIComponent(v) + "; path=/; max-age=86400; SameSite=Lax"; } catch (e) {}
+    }
+    function entier(k) { return parseInt(lire(k, "0"), 10) || 0; }
+    var DUREES = [120, 300, 900, 3600]; /* 2 min, 5 min, 15 min, 1 h */
+    function echecConnexion() {
+      var n = entier("sti-bruteforce-count") + 1;
+      if (n >= 5) {
+        var niv = entier("sti-bruteforce-niveau");
+        var d = DUREES[Math.min(niv, DUREES.length - 1)];
+        ecrire("sti-bruteforce-lock", String(Date.now() + d * 1000));
+        ecrire("sti-bruteforce-niveau", String(niv + 1));
+        ecrire("sti-bruteforce-count", "0");
+        return { verrouille: true, secondes: d };
+      }
+      ecrire("sti-bruteforce-count", String(n));
+      return { verrouille: false, numero: n, restants: 5 - n };
+    }
+    function succesConnexion() {
+      ecrire("sti-bruteforce-count", "0");
+      ecrire("sti-bruteforce-niveau", "0");
+      try { localStorage.removeItem("sti-bruteforce-lock"); } catch (e) {}
+    }
+    var derniers = {};
+    function rythme(cle, ms) {
+      var now = Date.now();
+      var last = derniers[cle] || entier("sti-rythme-" + cle);
+      if (now - last < ms) return Math.ceil((ms - (now - last)) / 1000);
+      derniers[cle] = now;
+      ecrire("sti-rythme-" + cle, String(now));
+      return 0;
+    }
+    function inscriptionAutorisee() {
+      var now = Date.now(), fen = 3600000, liste = [];
+      try { liste = JSON.parse(lire("sti-insc-tentatives", "[]")) || []; } catch (e) {}
+      liste = liste.filter(function (t) { return now - t < fen; });
+      if (liste.length >= 8) return { ok: false, minutes: Math.max(1, Math.ceil((fen - (now - liste[0])) / 60000)) };
+      liste.push(now);
+      ecrire("sti-insc-tentatives", JSON.stringify(liste));
+      return { ok: true };
+    }
+    var ouvertLe = Date.now();
+    function piegesPrets(form) {
+      if (!form || form.querySelector(".sti-leurre")) return;
+      var inp = document.createElement("input");
+      inp.type = "text"; inp.className = "sti-leurre"; inp.tabIndex = -1;
+      inp.autocomplete = "off"; inp.setAttribute("aria-hidden", "true");
+      inp.style.cssText = "position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;";
+      form.appendChild(inp);
+    }
+    function robotDetecte(form) {
+      var leurre = form ? form.querySelector(".sti-leurre") : null;
+      if (leurre && leurre.value) return "leurre";
+      if (Date.now() - ouvertLe < 4000) return "trop-rapide";
+      return "";
+    }
+    return { echecConnexion: echecConnexion, succesConnexion: succesConnexion, rythme: rythme, inscriptionAutorisee: inscriptionAutorisee, piegesPrets: piegesPrets, robotDetecte: robotDetecte };
+  })();
+  BouclierSTI.piegesPrets(document.getElementById("f-inscription"));
+
   /* ---------- connexion (avec bouclier Anti-brute-force : blocage 2 min après 5 échecs) ---------- */
   document.getElementById("f-connexion").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -621,7 +694,10 @@
       document.getElementById("c-captcha").value = "";
       return;
     }
+    var attRythme = BouclierSTI.rythme("connexion", 2500);
+    if (attRythme > 0) { msg("🛡️ Patientez " + attRythme + " s entre deux tentatives.", "err"); return; }
     if (!cap1.ok(document.getElementById("c-captcha").value)) {
+      BouclierSTI.echecConnexion();
       msg("❌ Code captcha incorrect.", "err"); cap1.reset();
       document.getElementById("c-captcha").value = "";
       return;
@@ -709,18 +785,12 @@
           return;
         }
         connexionResolue = true;
-        var nbEchecs = 1;
-        try {
-          nbEchecs = (parseInt(localStorage.getItem("sti-bruteforce-count") || "0", 10) || 0) + 1;
-          localStorage.setItem("sti-bruteforce-count", String(nbEchecs));
-        } catch (err) {}
+        var resBouclier = BouclierSTI.echecConnexion();
+        var nbEchecs = resBouclier.numero || 5;
         cap1.reset();
         document.getElementById("c-captcha").value = "";
-        if (nbEchecs >= 5) {
-          try {
-            localStorage.setItem("sti-bruteforce-lock", String(Date.now() + 120000));
-            localStorage.removeItem("sti-bruteforce-count");
-          } catch (err) {}
+        if (resBouclier.verrouille) {
+          var dureeVerrouMin = Math.round(resBouclier.secondes / 60);
           var alBrute = {
             type: "sec_alerte",
             id: "sa_bf_" + Date.now(),
@@ -728,19 +798,20 @@
             nom: idConn || emailConn || "Portail",
             classe: estSaisieAdmin ? "Compte Admin ciblé" : "Portail",
             alerte: "Anti-brute-force (5 échecs mot de passe)",
-            details: "5 tentatives erronées consécutives sur « " + (idConn || emailConn) + " » — verrouillé 2 min",
+            details: "5 tentatives erronées consécutives sur « " + (idConn || emailConn) + " » — verrouillé " + dureeVerrouMin + " min (bouclier exponentiel)",
             page: "portail.html",
             ts: new Date().toISOString()
           };
           try {
             sb.channel("sti-diffusion").send({ type: "broadcast", event: "sec_alerte", payload: alBrute });
           } catch (err) {}
-          msg("🛡️ Bouclier anti-brute-force activé : 5 échecs consécutifs. Connexion verrouillée pendant 2 minutes (professeur alerté).", "err");
+          msg("🛡️ Bouclier anti-brute-force activé : 5 échecs consécutifs. Connexion verrouillée pendant " + dureeVerrouMin + " minutes (professeur alerté).", "err");
           return;
         }
-        msg("❌ " + (r.error.message.indexOf("Invalid") === 0 ? ("Identifiant ou mot de passe incorrect (tentative " + nbEchecs + "/5).") : r.error.message), "err"); return;
+        msg("❌ " + (r.error.message.indexOf("Invalid") === 0 ? ("Identifiant ou mot de passe incorrect (tentative " + nbEchecs + "/5 — verrouillage au 5e échec).") : r.error.message), "err"); return;
       }
       connexionResolue = true;
+      BouclierSTI.succesConnexion();
       try {
         localStorage.removeItem("sti-bruteforce-count");
         localStorage.removeItem("sti-bruteforce-lock");
@@ -849,6 +920,12 @@
 
   document.getElementById("f-inscription").addEventListener("submit", function (e) {
     e.preventDefault();
+    var piege = BouclierSTI.robotDetecte(e.target);
+    if (piege) { msg("❌ Envoi refusé. Merci de remplir le formulaire normalement.", "err"); cap2.reset(); return; }
+    var attInsc = BouclierSTI.rythme("inscription", 5000);
+    if (attInsc > 0) { msg("🛡️ Patientez " + attInsc + " s avant un nouvel envoi.", "err"); return; }
+    var quotaInsc = BouclierSTI.inscriptionAutorisee();
+    if (!quotaInsc.ok) { msg("🛡️ Trop d'inscriptions depuis cet appareil. Réessayez dans " + quotaInsc.minutes + " min (protection anti-robots).", "err"); return; }
     var mdp = document.getElementById("i-mdp").value;
     if (mdp !== document.getElementById("i-mdp2").value) { msg("❌ Les deux mots de passe diffèrent.", "err"); return; }
     if (!cap2.ok(document.getElementById("i-captcha").value)) {
