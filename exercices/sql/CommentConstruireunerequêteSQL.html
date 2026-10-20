@@ -5,35 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Construire une requête SQL</title>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<script>
-/* Thème STI synchronisé : parent (modale) > choix mémorisé plateforme (sti-theme / theme). */
-(function () {
-  function themeParent() {
-    try {
-      if (window.parent && window.parent !== window) {
-        return window.parent.document.documentElement.getAttribute("data-theme") || "";
-      }
-    } catch (e) {}
-    return "";
-  }
-  function themeMemorise() {
-    try { return localStorage.getItem("sti-theme") || localStorage.getItem("theme") || ""; } catch (e) { return ""; }
-  }
-  function appliquer(v) {
-    if (v === "dark" || v === "light") document.documentElement.setAttribute("data-theme", v);
-  }
-  function synchroniser() { appliquer(themeParent() || themeMemorise()); }
-  synchroniser();
-  window.addEventListener("storage", function (e) {
-    if (e.key === "sti-theme" || e.key === "theme") appliquer(e.newValue);
-  });
-  window.setInterval(synchroniser, 900);
-})();
-</script>
 <style>
-:root{color-scheme:light;--bg:#f6eedc;--grid:#e7dcc3;--paper:#fffdf5;--ink:#101728;--muted:#6b6250;--line:#e2d3b4;--accent:#0e7c86;--onaccent:#fff;--margin:#f4511e;--ok:#16794c;--warn:#b45309;--info:#6b6250;--panel:#0c1424;--panel-ink:#e8eefc;--panel-accent:#8db8ff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0f172a;--grid:#1e293b;--paper:#1e293b;--ink:#f8fafc;--muted:#94a3b8;--line:#334155;--accent:#2dd4bf;--onaccent:#0f172a;--margin:#fb923c;--ok:#4ade80;--warn:#fbbf24;--info:#94a3b8;--panel:#0b1220;--panel-ink:#f8fafc;--panel-accent:#7dd3fc}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#0f172a;--grid:#1e293b;--paper:#1e293b;--ink:#f8fafc;--muted:#94a3b8;--line:#334155;--accent:#2dd4bf;--onaccent:#0f172a;--margin:#fb923c;--ok:#4ade80;--warn:#fbbf24;--info:#94a3b8;--panel:#0b1220;--panel-ink:#f8fafc;--panel-accent:#7dd3fc}
+:root{--bg:#fbfcfe;--grid:#dde6f4;--paper:#fff;--ink:#1b2440;--muted:#56627f;--line:#c4d0e4;--accent:#1f4fd8;--onaccent:#fff;--margin:#d23a3a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1526;--grid:#1a2440;--paper:#151d33;--ink:#e6ecfa;--muted:#9aa7c7;--line:#2c3860;--accent:#7fa6ff;--onaccent:#0f1526;--margin:#ff7b7b}}
+:root[data-theme="dark"]{--bg:#0f1526;--grid:#1a2440;--paper:#151d33;--ink:#e6ecfa;--muted:#9aa7c7;--line:#2c3860;--accent:#7fa6ff;--onaccent:#0f1526;--margin:#ff7b7b}
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
@@ -48,9 +23,10 @@ header p{margin:0 0 6px;color:var(--muted);max-width:70ch}
 .grille table{border-collapse:collapse;width:100%;min-width:560px;font-size:.93rem}
 .grille th,.grille td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
 .grille th{background:var(--accent);color:var(--onaccent)}
-.grille td:first-child{text-align:center;font-weight:700;width:2.6em}
-.grille td:last-child{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.85rem;white-space:nowrap}
+.grille td.num{text-align:center;font-weight:700;width:2.6em}
+.grille td.cl{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.85rem;white-space:nowrap}
 .grille p{margin:8px 0 0;font-size:.93rem}
+.pieges{grid-column:1/-1}
 .rules{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);padding:8px 12px;margin:10px 0;font-size:.95rem}
 code,.sql,.mono{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
 code{font-size:.88em}
@@ -63,6 +39,7 @@ h2{font-size:1.05rem;margin:0 0 2px;display:flex;align-items:center;gap:8px}
 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--onaccent);font-size:.85rem;flex:none}
 .kw{margin:0 0 10px;color:var(--muted);font-size:.9rem}
 .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
+.sub{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:2px 0 10px 14px;padding:6px 10px;border-left:3px dashed var(--accent);font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.85rem}
 select,input[type=text]{font:inherit;font-size:.95rem;padding:5px 7px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:3px;max-width:100%}
 input[type=text]{width:9.5em}
 .tb{margin:4px 0}
@@ -76,12 +53,12 @@ button:hover{background:var(--accent);color:var(--onaccent)}
 button.x{border-color:var(--line);color:var(--muted);padding:2px 8px}
 .hint{font-size:.88rem;color:var(--muted);margin:6px 0 0}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.panel{position:sticky;top:12px;background:var(--panel);color:var(--panel-ink);border:1px solid var(--line);border-radius:3px;padding:14px 16px;border-top:4px solid var(--margin)}
-.panel h2{color:var(--panel-ink)}
+.panel{position:sticky;top:12px;background:#101a38;color:#e8eefc;border-radius:3px;padding:14px 16px;border-top:4px solid var(--margin)}
+.panel h2{color:#e8eefc}
 .sql{white-space:pre-wrap;word-break:break-word;font-size:.92rem;line-height:1.7;margin:8px 0 12px;min-height:3em}
-.sql .k{color:var(--panel-accent);font-weight:700}
-.panel button{border-color:var(--panel-accent);color:var(--panel-accent)}
-.panel button:hover{background:var(--panel-accent);color:var(--panel)}
+.sql .k{color:#8db8ff;font-weight:700}
+.panel button{border-color:#8db8ff;color:#8db8ff}
+.panel button:hover{background:#8db8ff;color:#101a38}
 .msgs{list-style:none;padding:0;margin:12px 0 0;font-size:.9rem}
 .msgs li{padding:6px 0 6px 10px;border-left:3px solid;margin:6px 0}
 .msgs .w{border-color:#f0b35a}.msgs .i{border-color:#9aa7c7}.msgs .ok{border-color:#5fd394}
@@ -99,18 +76,29 @@ button.x{border-color:var(--line);color:var(--muted);padding:2px 8px}
     <div class="scroll"><table>
       <thead><tr><th>Étape</th><th>Question à se poser</th><th>Mots-clés repérables dans l’énoncé</th><th>Clause obtenue</th></tr></thead>
       <tbody>
-        <tr><td>1</td><td>Que veut-on afficher ?</td><td>« afficher », « donner », « lister », « quel est »</td><td>SELECT</td></tr>
-        <tr><td>2</td><td>Dans quelles tables se trouvent ces informations ?</td><td>noms d’entités : classe, élève, note</td><td>FROM + jointure dans le WHERE</td></tr>
-        <tr><td>3</td><td>Faut-il filtrer des lignes ?</td><td>« dont », « de la classe X », « supérieur à », « en 2025 »</td><td>WHERE</td></tr>
-        <tr><td>4</td><td>Faut-il calculer par paquet ?</td><td>« par classe », « pour chaque », « moyenne / nombre / total de »</td><td>GROUP BY + agrégat</td></tr>
-        <tr><td>5</td><td>Faut-il filtrer sur le résultat du calcul ?</td><td>« dont la moyenne dépasse », « ayant plus de 3 »</td><td>HAVING</td></tr>
+        <tr><td class="num">1</td><td>Que veut-on afficher ?</td><td>« afficher », « donner », « lister », « quel est »</td><td class="cl">SELECT</td></tr>
+        <tr><td class="num">2</td><td>Dans quelles tables se trouvent ces informations ?</td><td>noms d’entités : classe, élève, note</td><td class="cl">FROM + jointure dans le WHERE</td></tr>
+        <tr><td class="num">3</td><td>Faut-il filtrer des lignes ?</td><td>« dont », « de la classe X », « supérieur à », « en 2025 »</td><td class="cl">WHERE</td></tr>
+        <tr><td class="num">4</td><td>Faut-il calculer par paquet ?</td><td>« par classe », « pour chaque », « moyenne / nombre / total de »</td><td class="cl">GROUP BY + agrégat</td></tr>
+        <tr><td class="num">5</td><td>Faut-il filtrer sur le résultat du calcul ?</td><td>« dont la moyenne dépasse », « ayant plus de 3 »</td><td class="cl">HAVING</td></tr>
       </tbody>
     </table></div>
     <p><b>Étape finale :</b> « du plus grand au plus petit », « trié par » → <code>ORDER BY</code>.</p>
   </div>
-  <div class="rules"><b>Règles :</b> jointure écrite dans le <code>WHERE</code> sous la forme <code>table1.a = table2.a</code> (pas de <code>JOIN</code>) · aucune fonction (<code>COUNT</code>, <code>AVG</code>…) dans le <code>WHERE</code> : elles vont dans le <code>HAVING</code>.</div>
+  <div class="grille">
+    <div class="gt">Deux cas particuliers : sous-requête et auto-jointure</div>
+    <div class="scroll"><table>
+      <thead><tr><th>Situation</th><th>Mots-clés repérables dans l’énoncé</th><th>Outil</th><th>Où dans la page</th></tr></thead>
+      <tbody>
+        <tr><td>Il faut comparer à un résultat qu’on doit d’abord calculer</td><td>« supérieur à la moyenne générale », « le meilleur », « qui ont au moins une… », « qui n’ont jamais… »</td><td>Sous-requête : un <code>SELECT</code> entre parenthèses</td><td>Étape 4 (WHERE) ou étape 6 (HAVING) : coche « sous-requête »</td></tr>
+        <tr><td>La même table intervient deux fois</td><td>« deux élèves de la même classe », « plus âgé que », « les paires de… »</td><td>Auto-jointure : deux copies de la table, avec des alias (e1, e2)</td><td>Étape 2 : « Ajouter une copie d’une table »</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>Test :</b> si un calcul doit être fait <em>avant</em> de comparer → sous-requête. Si on compare des lignes d’une même table entre elles → auto-jointure.</p>
+  </div>
+  <div class="rules"><b>Règles :</b> jointure écrite dans le <code>WHERE</code> sous la forme <code>table1.a = table2.a</code> · aucune fonction (<code>COUNT</code>, <code>AVG</code>…) appliquée à une colonne du <code>WHERE</code> : elle va dans le <code>HAVING</code>, ou dans le <code>SELECT</code> d’une sous-requête.</div>
   <label for="enonce"><b>Énoncé</b> (recopie la question à résoudre)</label>
-  <textarea id="enonce" rows="2" placeholder="Ex. : Afficher, pour chaque classe, le libellé et la moyenne des notes, uniquement si la moyenne dépasse 12."></textarea>
+  <textarea id="enonce" rows="2" placeholder="Ex. : Afficher le nom des élèves dont une note dépasse la moyenne générale."></textarea>
   <details>
     <summary>Schéma de la base</summary>
     <p class="hint">Une table par ligne : <code>table(colonne1, colonne2)</code>. La clé primaire s’appelle <code>id</code>, la clé étrangère <code>id_table</code>.</p>
@@ -119,6 +107,19 @@ button.x{border-color:var(--line);color:var(--muted);padding:2px 8px}
   </details>
 </header>
 <main class="steps" id="steps"></main>
+<div class="grille pieges">
+  <div class="gt">Pièges à vérifier avant de valider</div>
+  <div class="scroll"><table>
+    <thead><tr><th>Vérification</th><th>Erreur fréquente</th></tr></thead>
+    <tbody>
+      <tr><td>Chaque colonne du <code>SELECT</code> est soit dans le <code>GROUP BY</code>, soit dans un agrégat</td><td>colonne oubliée dans <code>GROUP BY</code></td></tr>
+      <tr><td>Pas de fonction d’agrégat dans le <code>WHERE</code></td><td><code>WHERE AVG(x) &gt; 12</code> → utiliser <code>HAVING</code></td></tr>
+      <tr><td>Chaque lien entre deux tables a sa condition <code>table1.a = table2.a</code> dans le <code>WHERE</code></td><td>produit cartésien (trop de lignes)</td></tr>
+      <tr><td>Les alias sont utilisés partout</td><td><code>id</code> ambigu → écrire <code>classe.id</code> (ou <code>c.id</code> si la table a un alias)</td></tr>
+      <tr><td>« Pour chaque X » → <code>GROUP BY</code> sur X (via son <code>id</code>)</td><td>regrouper sur le nom : deux homonymes fusionnent</td></tr>
+    </tbody>
+  </table></div>
+</div>
 <aside class="panel" aria-live="polite">
   <h2>Ma requête</h2>
   <div class="sql" id="sql"></div>
@@ -132,97 +133,132 @@ const PRESETS={
 "Bibliothèque : livre, auteur, emprunt, adherent":"auteur(id, nom, pays)\nlivre(id, titre, annee, id_auteur)\nadherent(id, nom, ville)\nemprunt(id, id_livre, id_adherent, date_emprunt)",
 "Commerce : clients, commandes, produits":"client(id, nom, ville)\ncommande(id, id_client, date_cmd, total)\nproduit(id, designation, prix)\nligne(id, id_commande, id_produit, quantite)"
 };
-const FN=['COUNT','SUM','AVG','MIN','MAX'],OPS=['=','<>','>','<','>=','<=','LIKE'];
-const NEW={aggs:{fn:'AVG',col:'',alias:''},joins:{a:'',b:''},wh:{conn:'AND',col:'',op:'=',v:''},hv:{fn:'AVG',col:'',op:'>',v:''},ob:{key:'',dir:'ASC'}};
+const FN=['COUNT','SUM','AVG','MIN','MAX'],OPS=['=','<>','>','<','>=','<=','LIKE'],OPS_S=['=','<>','>','<','>=','<=','IN','NOT IN'],OPS_H=['=','<>','>','<','>=','<='],OPS_J=['=','<>','<','>'];
+const SUB={sub:false,sfn:'AVG',scol:'',sic:'',sio:'=',siv:''};
+const NEW={aggs:{fn:'AVG',col:'',alias:''},joins:{a:'',op:'=',b:''},wh:{conn:'AND',col:'',op:'=',v:'',...SUB},hv:{fn:'AVG',col:'',op:'>',v:'',...SUB},ob:{key:'',dir:'ASC'}};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let schema={},S;
-function fresh(){S={sel:[],aggs:[],distinct:false,extra:[],joins:[],wh:[],gb:[],hv:[],ob:[]}}
+function fresh(){S={sel:[],aggs:[],distinct:false,extra:[],copies:[],al:{},cn:0,joins:[],wh:[],gb:[],hv:[],ob:[]}}
 function parse(t){const o={};t.split('\n').forEach(l=>{const m=l.match(/^\s*(\w+)\s*\((.*)\)\s*$/);if(m)o[m[1]]=m[2].split(',').map(x=>x.trim()).filter(Boolean)});return o}
-const allCols=()=>Object.keys(schema).flatMap(t=>schema[t].map(c=>t+'.'+c));
-function tables(){const u=new Set(),add=x=>{if(x&&x.includes('.'))u.add(x.split('.')[0])};
-  S.sel.forEach(add);S.aggs.forEach(a=>add(a.col));S.joins.forEach(j=>{add(j.a);add(j.b)});S.wh.forEach(w=>add(w.col));S.gb.forEach(add);S.hv.forEach(h=>add(h.col));S.ob.forEach(o=>add(o.key));
-  return Object.keys(schema).filter(t=>u.has(t)||S.extra.includes(t))}
-function usedSet(){const T=tables();return new Set(T.filter(t=>!S.extra.includes(t)||isUsed(t)))}
-function isUsed(t){const p=t+'.',h=x=>x&&x.startsWith(p);
-  return S.sel.some(h)||S.aggs.some(a=>h(a.col))||S.joins.some(j=>h(j.a)||h(j.b))||S.wh.some(w=>h(w.col))||S.gb.some(h)||S.hv.some(x=>h(x.col))||S.ob.some(o=>h(o.key))}
+/* instances de tables : originales + copies (auto-jointure) */
+function inst(){const r=Object.keys(schema).map(t=>({id:t,t,a:(S.al[t]&&S.al[t].a)||t,base:true}));S.copies.forEach(c=>r.push({id:c.id,t:c.t,a:c.a||c.t,base:false}));return r}
+const lab=x=>{if(!x||!x.includes('.'))return x||'';const p=x.split('.'),n=inst().find(z=>z.id===p[0]);return (n?n.a:p[0])+'.'+p.slice(1).join('.')};
+const iname=n=>n.a===n.t?n.t:n.a+' ('+n.t+')';
+function freeAlias(t){const u=new Set([...Object.keys(schema),...S.copies.map(c=>c.a),...Object.values(S.al).map(x=>x.a)]);let n=1;while(u.has(t[0]+n))n++;return t[0]+n}
+function sync(){const has=new Set(S.copies.map(c=>c.t));
+  Object.keys(S.al).forEach(t=>{if(!has.has(t))delete S.al[t]});
+  has.forEach(t=>{if(!S.al[t]||!S.al[t].a)S.al[t]={a:freeAlias(t)}});
+  S.copies.forEach(c=>{if(!c.a)c.a=freeAlias(c.t)})}
+function refIds(){const u=new Set(),add=x=>{if(x&&x.includes('.'))u.add(x.split('.')[0])};
+  S.sel.forEach(add);S.aggs.forEach(a=>add(a.col));S.joins.forEach(j=>{add(j.a);add(j.b)});S.wh.forEach(w=>add(w.col));S.gb.forEach(add);S.hv.forEach(h=>add(h.col));S.ob.forEach(o=>add(o.key));return u}
+function inFrom(n,u){return !n.base||u.has(n.id)||S.extra.includes(n.id)||S.copies.some(c=>c.t===n.t)}
+function tables(){const u=refIds(),I=inst(),r=[];I.filter(n=>n.base).forEach(b=>{if(inFrom(b,u))r.push(b);I.filter(n=>!n.base&&n.t===b.t).forEach(c=>r.push(c))});return r}
+function purge(id){const k=x=>!(x&&x.split('.')[0]===id),z=x=>k(x)?x:'';
+  S.sel=S.sel.filter(k);S.gb=S.gb.filter(k);S.aggs.forEach(a=>a.col=z(a.col));S.joins.forEach(j=>{j.a=z(j.a);j.b=z(j.b)});S.wh.forEach(w=>w.col=z(w.col));S.hv.forEach(h=>h.col=z(h.col));S.ob.forEach(o=>o.key=z(o.key))}
 /* champs HTML */
 function colSel(k,i,f,val,star){let h='<option value="">— colonne —</option>'+(star?`<option value="*"${val==='*'?' selected':''}>* (toutes les lignes)</option>`:'');
-  for(const t in schema)h+=`<optgroup label="${t}">`+schema[t].map(c=>{const v=t+'.'+c;return `<option${v===val?' selected':''}>${v}</option>`}).join('')+'</optgroup>';
+  inst().forEach(n=>{h+=`<optgroup label="${iname(n)}">`+schema[n.t].map(c=>{const v=n.id+'.'+c;return `<option value="${v}"${v===val?' selected':''}>${n.a}.${c}</option>`}).join('')+'</optgroup>'});
   return `<select data-k="${k}" data-i="${i}" data-f="${f}" aria-label="colonne">${h}</select>`}
 const pick=(k,i,f,list,val)=>`<select data-k="${k}" data-i="${i}" data-f="${f}">${list.map(x=>`<option${x===val?' selected':''}>${x}</option>`).join('')}</select>`;
 const txt=(k,i,f,val,ph)=>`<input type="text" data-k="${k}" data-i="${i}" data-f="${f}" value="${esc(val)}" placeholder="${ph}" aria-label="${ph}">`;
 const del=(k,i)=>`<button class="x" data-act="del" data-k="${k}" data-i="${i}" aria-label="Supprimer cette ligne">×</button>`;
 const add=(k,l)=>`<button data-act="add" data-k="${k}">+ ${l}</button>`;
-const chips=(list,arr)=>Object.keys(schema).map(t=>`<div class="tb"><b>${t}</b>`+schema[t].map(c=>{const v=t+'.'+c;return `<label class="chip"><input type="checkbox" data-list="${list}" data-v="${v}"${arr.includes(v)?' checked':''}>${c}</label>`}).join('')+'</div>').join('');
+const chk=(k,i,f,on,l)=>`<label class="chip"><input type="checkbox" data-k="${k}" data-i="${i}" data-f="${f}"${on?' checked':''}>${l}</label>`;
+const chips=(list,arr)=>inst().map(n=>`<div class="tb"><b>${iname(n)}</b>`+schema[n.t].map(c=>{const v=n.id+'.'+c;return `<label class="chip"><input type="checkbox" data-list="${list}" data-v="${v}"${arr.includes(v)?' checked':''}>${c}</label>`}).join('')+'</div>').join('');
+function sub(k,i,o){
+  const t=o.scol?o.scol.split('.')[0]:'';
+  let bc='<option value="">— colonne —</option>';
+  Object.keys(schema).forEach(x=>{bc+=`<optgroup label="${x}">`+schema[x].map(c=>`<option value="${x}.${c}"${o.scol===x+'.'+c?' selected':''}>${x}.${c}</option>`).join('')+'</optgroup>'});
+  const fn=`<select data-k="${k}" data-i="${i}" data-f="sfn"><option value=""${o.sfn?'':' selected'}>(aucun calcul)</option>${FN.map(x=>`<option${x===o.sfn?' selected':''}>${x}</option>`).join('')}</select>`;
+  const ic=t?`<select data-k="${k}" data-i="${i}" data-f="sic"><option value="">(sans condition)</option>${schema[t].map(c=>`<option value="${t}.${c}"${o.sic===t+'.'+c?' selected':''}>${t}.${c}</option>`).join('')}</select>`:'';
+  return `<div class="sub"><span>( SELECT</span>${fn}<span>(</span><select data-k="${k}" data-i="${i}" data-f="scol">${bc}</select><span>) FROM <b>${t||'…'}</b>${t?' WHERE':''}</span>${ic}${o.sic?pick(k,i,'sio',OPS_H,o.sio)+txt(k,i,'siv',o.siv,'valeur'):''}<span>)</span></div>`}
 function step(n,title,kw,body){return `<section><h2><span class="n">${n}</span>${title}</h2><p class="kw">${kw}</p>${body}</section>`}
 function render(){
-  const T=tables();
+  sync();
+  const T=tables(),I=inst(),u=refIds();
   let h='';
   h+=step(1,'Que veut-on afficher ?','Mots de l’énoncé : afficher, donner, lister, quel est, combien…',
     '<b>Colonnes</b>'+chips('sel',S.sel)+
     '<p style="margin:10px 0 0"><b>Calculs</b> (nombre, somme, moyenne, minimum, maximum)</p>'+
     S.aggs.map((a,i)=>`<div class="row">${pick('aggs',i,'fn',FN,a.fn)}(${colSel('aggs',i,'col',a.col,true)}) AS ${txt('aggs',i,'alias',a.alias,'alias')}${del('aggs',i)}</div>`).join('')+
-    `<div class="row">${add('aggs','Ajouter un calcul')}<label class="chip"><input type="checkbox" data-act="distinct"${S.distinct?' checked':''}>DISTINCT (sans doublons)</label></div>`);
-  h+=step(2,'Dans quelles tables ?','Les tables des colonnes choisies sont cochées toute seules. Ajoute une table « pont » si elle sert à relier les autres.',
-    Object.keys(schema).map(t=>{const u=isUsed(t),on=u||S.extra.includes(t);return `<label class="chip"><input type="checkbox" data-list="extra" data-v="${t}"${on?' checked':''}${u?' disabled':''}><span class="mono">${t}</span></label>`}).join(''));
-  h+=step(3,'Comment relier les tables ?','Une condition <code>table1.a = table2.a</code> (clé primaire = clé étrangère) par lien : '+(T.length>1?`<b>${T.length} tables → ${T.length-1} condition(s)</b>`:'à partir de 2 tables')+'. Elles s’écrivent dans le WHERE.',
-    S.joins.map((j,i)=>`<div class="row">${colSel('joins',i,'a',j.a)} = ${colSel('joins',i,'b',j.b)}${del('joins',i)}</div>`).join('')+
-    `<div class="row">${add('joins','Ajouter une condition')}<button data-act="suggest">Suggérer les jointures</button></div>`);
-  h+=step(4,'Faut-il filtrer des lignes ?','Mots de l’énoncé : dont, de la classe…, supérieur à, en 2025… Colonnes seulement : <b>jamais de fonction</b> dans le WHERE.',
-    S.wh.map((w,i)=>`<div class="row">${i?pick('wh',i,'conn',['AND','OR'],w.conn):''}${colSel('wh',i,'col',w.col)}${pick('wh',i,'op',OPS,w.op)}${txt('wh',i,'v',w.v,'valeur')}${del('wh',i)}</div>`).join('')+
-    `<div class="row">${add('wh','Ajouter un filtre')}</div><p class="hint">Texte : écris-le sans guillemets, ils sont ajoutés pour toi. Pour LIKE, utilise % (ex. A%).</p>`);
+    `<div class="row">${add('aggs','Ajouter un calcul')}${chk('x',0,'distinct',S.distinct,'DISTINCT (sans doublons)').replace('data-k="x" data-i="0" data-f="distinct"','data-act="distinct"')}</div>`);
+  h+=step(2,'Dans quelles tables ?','Les tables des colonnes choisies sont cochées toutes seules. Ajoute une table « pont » si elle sert à relier les autres.',
+    I.filter(n=>n.base).map(n=>{const on=inFrom(n,u),lock=u.has(n.id)||S.copies.some(c=>c.t===n.t);return `<label class="chip"><input type="checkbox" data-list="extra" data-v="${n.id}"${on?' checked':''}${lock?' disabled':''}><span class="mono">${n.t}</span></label>`}).join('')+
+    '<p style="margin:10px 0 0"><b>La même table deux fois ?</b> (auto-jointure)</p>'+
+    S.copies.map((c,i)=>`<div class="row">copie de <select data-k="copies" data-i="${i}" data-f="t" aria-label="table copiée">${Object.keys(schema).map(x=>`<option${x===c.t?' selected':''}>${x}</option>`).join('')}</select> sous le nom ${txt('copies',i,'a',c.a,'alias')}${del('copies',i)}</div>`).join('')+
+    Object.keys(S.al).map(t=>`<div class="row"><span class="mono">${t}</span> (l’original) sous le nom ${txt('al',t,'a',S.al[t].a,'alias')}</div>`).join('')+
+    `<div class="row"><button data-act="addcopy">+ Ajouter une copie d’une table</button></div><p class="hint">Chaque exemplaire de la table a son alias. Ex. : « deux élèves de la même classe » → <code>eleve e1</code> et <code>eleve e2</code>.</p>`);
+  h+=step(3,'Comment relier les tables ?','Une condition <code>table1.a = table2.a</code> (clé primaire = clé étrangère) par lien : '+(T.length>1?`<b>${T.length} tables → ${T.length-1} condition(s) « = »</b>`:'à partir de 2 tables')+'. Elles s’écrivent dans le WHERE.',
+    S.joins.map((j,i)=>`<div class="row">${colSel('joins',i,'a',j.a)}${pick('joins',i,'op',OPS_J,j.op)}${colSel('joins',i,'b',j.b)}${del('joins',i)}</div>`).join('')+
+    `<div class="row">${add('joins','Ajouter une condition')}<button data-act="suggest">Suggérer les jointures</button></div><p class="hint">Auto-jointure : ajoute aussi une condition de comparaison, ex. <code>e1.id &lt;&gt; e2.id</code> pour ne pas associer un élève avec lui-même.</p>`);
+  h+=step(4,'Faut-il filtrer des lignes ?','Mots de l’énoncé : dont, de la classe…, supérieur à, en 2025… Pas de fonction sur la colonne du WHERE. Pour comparer à un calcul, coche « sous-requête ».',
+    S.wh.map((w,i)=>`<div class="row">${i?pick('wh',i,'conn',['AND','OR'],w.conn):''}${colSel('wh',i,'col',w.col)}${pick('wh',i,'op',w.sub?OPS_S:OPS,w.op)}${w.sub?'':txt('wh',i,'v',w.v,'valeur')}${chk('wh',i,'sub',w.sub,'sous-requête')}${del('wh',i)}</div>${w.sub?sub('wh',i,w):''}`).join('')+
+    `<div class="row">${add('wh','Ajouter un filtre')}</div><p class="hint">Texte : écris-le sans guillemets, ils sont ajoutés pour toi. Pour LIKE, utilise % (ex. A%). Avec une sous-requête : <code>=, &gt;, &lt;…</code> attendent une seule valeur (utilise un calcul), <code>IN</code> / <code>NOT IN</code> attendent une liste.</p>`);
   h+=step(5,'Faut-il calculer par groupe ?','Mots de l’énoncé : par, pour chaque, selon… avec un calcul (moyenne, nombre, total).',
     chips('gb',S.gb)+`<div class="row"><button data-act="autogb">Reprendre mes colonnes de l’étape 1</button></div><p class="hint">Règle : toute colonne affichée sans calcul doit être ici.</p>`);
-  h+=step(6,'Faut-il filtrer sur le résultat du calcul ?','Mots de l’énoncé : dont la moyenne dépasse…, ayant plus de… → HAVING (avec la fonction).',
-    S.hv.map((x,i)=>`<div class="row">${pick('hv',i,'fn',FN,x.fn)}(${colSel('hv',i,'col',x.col,true)})${pick('hv',i,'op',OPS.slice(0,6),x.op)}${txt('hv',i,'v',x.v,'valeur')}${del('hv',i)}</div>`).join('')+
+  h+=step(6,'Faut-il filtrer sur le résultat du calcul ?','Mots de l’énoncé : dont la moyenne dépasse…, ayant plus de… → HAVING (avec la fonction). « Plus que la moyenne générale » → sous-requête.',
+    S.hv.map((x,i)=>`<div class="row">${pick('hv',i,'fn',FN,x.fn)}(${colSel('hv',i,'col',x.col,true)})${pick('hv',i,'op',OPS_H,x.op)}${x.sub?'':txt('hv',i,'v',x.v,'valeur')}${chk('hv',i,'sub',x.sub,'sous-requête')}${del('hv',i)}</div>${x.sub?sub('hv',i,x):''}`).join('')+
     `<div class="row">${add('hv','Ajouter une condition')}</div>`);
-  const al=S.aggs.filter(a=>a.alias).map(a=>a.alias),ol=[...new Set([...al,...S.sel,...allCols()])];
+  const seen=new Set(),ol=[...S.aggs.filter(a=>a.alias).map(a=>[a.alias,a.alias]),...S.sel.map(x=>[x,lab(x)]),...I.flatMap(n=>schema[n.t].map(c=>[n.id+'.'+c,n.a+'.'+c]))].filter(p=>!seen.has(p[0])&&seen.add(p[0]));
   h+=step(7,'Faut-il trier ?','Mots de l’énoncé : du plus grand au plus petit, trié par, classé…',
-    S.ob.map((o,i)=>`<div class="row"><select data-k="ob" data-i="${i}" data-f="key"><option value="">— critère —</option>${ol.map(x=>`<option${x===o.key?' selected':''}>${x}</option>`).join('')}</select>${pick('ob',i,'dir',['ASC','DESC'],o.dir)}${del('ob',i)}</div>`).join('')+
+    S.ob.map((o,i)=>`<div class="row"><select data-k="ob" data-i="${i}" data-f="key"><option value="">— critère —</option>${ol.map(p=>`<option value="${esc(p[0])}"${p[0]===o.key?' selected':''}>${esc(p[1])}</option>`).join('')}</select>${pick('ob',i,'dir',['ASC','DESC'],o.dir)}${del('ob',i)}</div>`).join('')+
     `<div class="row">${add('ob','Ajouter un tri')}</div><p class="hint">ASC : croissant · DESC : décroissant.</p>`);
   $('#steps').innerHTML=h;out();
 }
 /* construction de la requête */
 function val(v){v=v.trim();if(!v)return '…';if(/^'.*'$/.test(v)||/^-?\d+([.,]\d+)?$/.test(v))return v.replace(/^(-?\d+),(\d+)$/,'$1.$2');return "'"+v.replace(/'/g,"''")+"'"}
+function subSQL(o){const c=o.scol||'…',t=o.scol?o.scol.split('.')[0]:'…';
+  return `(SELECT ${o.sfn?o.sfn+'('+c+')':c} FROM ${t}${o.sic?' WHERE '+o.sic+' '+o.sio+' '+val(o.siv):''})`}
 function build(){
-  const L=[],T=tables(),it=[...S.sel,...S.aggs.map(a=>`${a.fn}(${a.col||'…'})`+(a.alias?' AS '+a.alias:''))];
+  const L=[],T=tables(),it=[...S.sel.map(lab),...S.aggs.map(a=>`${a.fn}(${a.col?lab(a.col):'…'})`+(a.alias?' AS '+a.alias:''))];
   L.push(['SELECT',(S.distinct?'DISTINCT ':'')+(it.length?it.join(', '):'…')]);
-  L.push(['FROM',T.length?T.join(', '):'…']);
-  const c=S.joins.filter(j=>j.a||j.b).map(j=>`${j.a||'…'} = ${j.b||'…'}`),f=S.wh.filter(w=>w.col);
-  if(f.length){let s=f.map((w,i)=>(i?` ${w.conn} `:'')+`${w.col} ${w.op} ${val(w.v)}`).join('');if(c.length&&f.some((w,i)=>i&&w.conn==='OR'))s='('+s+')';c.push(s)}
+  L.push(['FROM',T.length?T.map(n=>n.a===n.t?n.t:n.t+' '+n.a).join(', '):'…']);
+  const c=S.joins.filter(j=>j.a||j.b).map(j=>`${j.a?lab(j.a):'…'} ${j.op} ${j.b?lab(j.b):'…'}`),f=S.wh.filter(w=>w.col);
+  if(f.length){let s=f.map((w,i)=>(i?` ${w.conn} `:'')+`${lab(w.col)} ${w.op} ${w.sub?subSQL(w):val(w.v)}`).join('');if(c.length&&f.some((w,i)=>i&&w.conn==='OR'))s='('+s+')';c.push(s)}
   if(c.length)L.push(['WHERE',c.join('\n  AND ')]);
-  if(S.gb.length)L.push(['GROUP BY',S.gb.join(', ')]);
+  if(S.gb.length)L.push(['GROUP BY',S.gb.map(lab).join(', ')]);
   const h=S.hv.filter(x=>x.col);
-  if(h.length)L.push(['HAVING',h.map(x=>`${x.fn}(${x.col}) ${x.op} ${val(x.v)}`).join(' AND ')]);
+  if(h.length)L.push(['HAVING',h.map(x=>`${x.fn}(${lab(x.col)}) ${x.op} ${x.sub?subSQL(x):val(x.v)}`).join(' AND ')]);
   const o=S.ob.filter(x=>x.key);
-  if(o.length)L.push(['ORDER BY',o.map(x=>x.key+(x.dir==='DESC'?' DESC':'')).join(', ')]);
+  if(o.length)L.push(['ORDER BY',o.map(x=>lab(x.key)+(x.dir==='DESC'?' DESC':'')).join(', ')]);
   return L}
 function checks(){
-  const m=[],T=tables(),has=S.sel.length||S.aggs.length;
+  const m=[],T=tables(),has=S.sel.length||S.aggs.length,id=x=>x.split('.')[0];
   if(!has)m.push(['w','Étape 1 : choisis au moins une colonne ou un calcul à afficher.']);
-  if(T.length>1){const n=S.joins.filter(j=>j.a&&j.b&&j.a!==j.b).length;
+  const al=T.map(n=>n.a);
+  if(new Set(al).size<al.length)m.push(['w','Deux tables ont le même nom ou alias : donne un alias différent à chaque exemplaire (étape 2).']);
+  if(T.length>1){const n=S.joins.filter(j=>j.op==='='&&j.a&&j.b&&id(j.a)!==id(j.b)).length;
     if(n<T.length-1)m.push(['w',`Jointure : ${T.length} tables demandent ${T.length-1} condition(s) table1.a = table2.a, il y en a ${n}. Sans cela, chaque ligne est associée à toutes les autres.`]);
-    else if(n>T.length-1)m.push(['i','Il y a plus de conditions de jointure que nécessaire : vérifie qu’elles sont toutes utiles.'])}
+    else if(n>T.length-1)m.push(['i','Il y a plus de conditions « = » que nécessaire : vérifie qu’elles sont toutes utiles.'])}
   if(S.joins.some(j=>(j.a&&!j.b)||(!j.a&&j.b)))m.push(['w','Étape 3 : une condition de jointure est incomplète.']);
-  if(S.joins.some(j=>j.a&&j.b&&j.a.split('.')[0]===j.b.split('.')[0]))m.push(['w','Une condition de jointure doit relier deux tables différentes.']);
-  if(S.wh.some(w=>w.col&&!w.v.trim()))m.push(['w','Étape 4 : un filtre n’a pas de valeur.']);
+  if(S.joins.some(j=>j.a&&j.b&&id(j.a)===id(j.b)))m.push(['w','Étape 3 : une condition doit comparer deux exemplaires de table différents (ex. e1 et e2).']);
+  if(S.wh.some(w=>w.col&&!w.sub&&!w.v.trim()))m.push(['w','Étape 4 : un filtre n’a pas de valeur.']);
   if(S.aggs.some(a=>!a.col))m.push(['w','Étape 1 : un calcul n’a pas de colonne.']);
   if(S.aggs.length||S.gb.length){const x=S.sel.filter(c=>!S.gb.includes(c));
-    if(x.length)m.push(['w',`GROUP BY : ${x.join(', ')} est affichée sans calcul, elle doit figurer dans le GROUP BY (étape 5).`])}
+    if(x.length)m.push(['w',`GROUP BY : ${x.map(lab).join(', ')} est affichée sans calcul, elle doit figurer dans le GROUP BY (étape 5).`])}
   if(S.gb.length&&!S.aggs.length)m.push(['i','GROUP BY sans calcul : veux-tu un nombre, une moyenne… par groupe ?']);
   if(S.hv.some(x=>x.col)&&!S.gb.length)m.push(['w','HAVING filtre des groupes : il faut un GROUP BY (étape 5).']);
-  if(S.hv.some(x=>x.col&&!x.v.trim()))m.push(['w','Étape 6 : une condition HAVING n’a pas de valeur.']);
+  if(S.hv.some(x=>x.col&&!x.sub&&!x.v.trim()))m.push(['w','Étape 6 : une condition HAVING n’a pas de valeur.']);
+  [...S.wh.filter(w=>w.col&&w.sub),...S.hv.filter(x=>x.col&&x.sub)].forEach(o=>{
+    if(!o.scol){m.push(['w','Sous-requête : choisis la colonne de son SELECT.']);return}
+    const inop=/IN/.test(o.op);
+    if(!inop&&!o.sfn)m.push(['w',`Sous-requête : avec « ${o.op} », elle doit renvoyer une seule valeur. Choisis un calcul (AVG, MAX…) ou utilise IN.`]);
+    if(inop&&o.sfn)m.push(['i','Sous-requête avec IN : elle doit renvoyer une liste de valeurs, le calcul n’est pas nécessaire.']);
+    if(o.sic&&!o.siv.trim())m.push(['w','Sous-requête : sa condition interne n’a pas de valeur.'])});
   if(!m.some(x=>x[0]==='w')&&has)m.push(['ok','Aucun problème détecté. Relis l’énoncé, puis teste la requête.']);
   return m}
 function out(){
   $('#sql').innerHTML=build().map(([k,t])=>`<span class="k">${k}</span> ${esc(t)}`).join('\n')+';';
   $('#msgs').innerHTML=checks().map(([c,t])=>`<li class="${c}">${esc(t)}</li>`).join('')}
 function suggest(){
-  const T=tables(),r=[],has=(a,b)=>r.some(j=>(j.a===a&&j.b===b)||(j.a===b&&j.b===a));
-  T.forEach(A=>T.forEach(B=>{if(A!==B&&schema[A].includes('id_'+B)&&schema[B].includes('id')&&!has(A+'.id_'+B,B+'.id'))r.push({a:A+'.id_'+B,b:B+'.id'})}));
-  T.forEach((A,i)=>T.slice(i+1).forEach(B=>{if(r.some(j=>[j.a,j.b].map(x=>x.split('.')[0]).sort().join()===[A,B].sort().join()))return;
-    const s=schema[A].find(c=>c!=='id'&&schema[B].includes(c));if(s)r.push({a:A+'.'+s,b:B+'.'+s})}));
+  const T=tables(),B=T.filter(n=>n.base),r=[],pair=j=>[j.a,j.b].map(x=>x.split('.')[0]).sort().join();
+  B.forEach(A=>B.forEach(X=>{if(A!==X&&schema[A.t].includes('id_'+X.t)&&schema[X.t].includes('id'))r.push({a:A.id+'.id_'+X.t,op:'=',b:X.id+'.id'})}));
+  B.forEach((A,i)=>B.slice(i+1).forEach(X=>{if(r.some(j=>pair(j)===[A.id,X.id].sort().join()))return;
+    const s=schema[A.t].find(c=>c!=='id'&&schema[X.t].includes(c));if(s)r.push({a:A.id+'.'+s,op:'=',b:X.id+'.'+s})}));
+  S.copies.forEach(c=>{const s=schema[c.t].find(x=>/^id_/.test(x))||schema[c.t].find(x=>x!=='id');
+    if(s)r.push({a:c.t+'.'+s,op:'=',b:c.id+'.'+s});
+    if(schema[c.t].includes('id'))r.push({a:c.t+'.id',op:'<>',b:c.id+'.id'})});
   return r}
 async function copy(){
   const t=build().map(([k,v])=>k+' '+v).join('\n')+';',b=$('#copybtn');
@@ -233,7 +269,8 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('button[data-act]');if(!b)return;
   const a=b.dataset.act,k=b.dataset.k,i=+b.dataset.i;
   if(a==='add')S[k].push({...NEW[k]});
-  else if(a==='del')S[k].splice(i,1);
+  else if(a==='del'){if(k==='copies')purge(S.copies[i].id);S[k].splice(i,1)}
+  else if(a==='addcopy')S.copies.push({id:'c'+(++S.cn),t:Object.keys(schema)[0],a:''});
   else if(a==='suggest')S.joins=suggest();
   else if(a==='autogb')S.gb=[...S.sel];
   else if(a==='reset')fresh();
@@ -245,10 +282,14 @@ document.addEventListener('change',e=>{
   if(t.id==='preset'){$('#schema').value=PRESETS[t.value];return}
   if(t.dataset.list){const arr=S[t.dataset.list],v=t.dataset.v,ix=arr.indexOf(v);if(t.checked){if(ix<0)arr.push(v)}else if(ix>=0)arr.splice(ix,1);render();return}
   if(t.dataset.act==='distinct'){S.distinct=t.checked;render();return}
-  if(t.tagName==='SELECT'&&t.dataset.f){S[t.dataset.k][t.dataset.i][t.dataset.f]=t.value;render()}});
+  if(t.dataset.f&&t.dataset.k){const k=t.dataset.k,f=t.dataset.f,o=S[k][t.dataset.i];
+    if(t.type==='checkbox'){o[f]=t.checked;if(f==='sub'){if(t.checked&&o.op==='LIKE')o.op='=';if(!t.checked&&/IN/.test(o.op))o.op='=';if(t.checked&&!o.sfn)o.sfn='AVG'}}
+    else{o[f]=t.value;if(f==='scol')o.sic='';if(k==='copies'&&f==='t')o.a='';
+      if(f==='op'&&o.sub){if(/IN/.test(o.op))o.sfn='';else if(!o.sfn)o.sfn='AVG'}}
+    render()}});
 document.addEventListener('input',e=>{
   const t=e.target;
-  if(t.dataset.f&&t.type==='text'){if(t.dataset.f==='alias')t.value=t.value.replace(/\W/g,'');S[t.dataset.k][t.dataset.i][t.dataset.f]=t.value;out()}});
+  if(t.dataset.f&&t.type==='text'){if(t.dataset.f==='alias'||t.dataset.f==='a')t.value=t.value.replace(/\W/g,'');S[t.dataset.k][t.dataset.i][t.dataset.f]=t.value;out()}});
 /* démarrage */
 $('#preset').innerHTML=Object.keys(PRESETS).map(k=>`<option>${k}</option>`).join('');
 $('#schema').value=PRESETS[Object.keys(PRESETS)[0]];
