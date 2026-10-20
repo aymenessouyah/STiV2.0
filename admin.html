@@ -304,6 +304,53 @@
   .ca-titre { font-size: 14px; font-weight: 900; color: #23201a; line-height: 1.2; }
   .ca-desc  { font-size: 11.5px; font-weight: 700; color: #7a6f5d; line-height: 1.25; }
 
+  /* Aide Windows v316 : informations destinées aux utilisateurs, séparées du code source */
+  .aide-windows-v316 {
+    background: linear-gradient(135deg, #eff6ff, #fffdf7);
+    border: 2.5px solid #1d4ed8; border-radius: 18px;
+    padding: 14px 16px; margin: 0 0 16px;
+    box-shadow: 4px 4px 0 rgba(29,78,216,.35);
+  }
+  .aide-windows-entete {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .aide-windows-entete h2 { margin: 0; color: #1e3a8a; font-size: 16px; }
+  .aide-windows-meta {
+    display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap;
+    font-size: 10.5px; font-weight: 900; color: #1e3a8a;
+  }
+  .aide-windows-meta span {
+    background: #fff; border: 1.5px solid #1d4ed8; border-radius: 999px; padding: 3px 8px;
+  }
+  .aide-windows-grille {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+  .aide-windows-grille details {
+    background: #fff; border: 2px solid #23201a; border-radius: 14px;
+    box-shadow: 2.5px 2.5px 0 rgba(35,32,26,.75); overflow: hidden;
+  }
+  .aide-windows-grille summary {
+    cursor: pointer; list-style: none; padding: 11px 13px;
+    color: #23201a; font-size: 12.5px; font-weight: 900;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .aide-windows-grille summary::-webkit-details-marker { display: none; }
+  .aide-windows-grille summary::after { content: "＋"; color: #1d4ed8; font-size: 18px; line-height: 1; }
+  .aide-windows-grille details[open] summary::after { content: "−"; }
+  .aide-windows-contenu {
+    border-top: 1.5px dashed #93c5fd; padding: 9px 13px 12px;
+    color: #4b5563; font-size: 11.5px; font-weight: 700; line-height: 1.45;
+  }
+  .aide-windows-contenu ol, .aide-windows-contenu ul { margin: 0; padding-left: 19px; }
+  .aide-windows-contenu li + li { margin-top: 4px; }
+  .aide-windows-note {
+    margin: 10px 0 0; color: #1e3a8a; font-size: 10.5px; font-weight: 900;
+  }
+  @media (max-width: 980px) {
+    .aide-windows-grille { grid-template-columns: 1fr; }
+  }
+
   /* ── 3) Cartes Statistiques en direct (cliquables pour filtrer) ── */
   .stats {
     display: grid;
@@ -1465,6 +1512,57 @@
         <span class="ca-desc">Classer les élèves les plus actifs en tête</span>
       </span>
     </button>
+  </section>
+
+  <section class="aide-windows-v316" id="aide-windows-v316" aria-labelledby="titre-aide-windows-v316">
+    <div class="aide-windows-entete">
+      <h2 id="titre-aide-windows-v316">🪟 Application Windows v316 — guide et assistance</h2>
+      <div class="aide-windows-meta" aria-label="Informations techniques">
+        <span>Windows 10/11 x64</span>
+        <span>72,5 Mo</span>
+        <span>Hors ligne après installation</span>
+      </div>
+    </div>
+    <div class="aide-windows-grille">
+      <details>
+        <summary>📘 Guide d’installation Windows</summary>
+        <div class="aide-windows-contenu">
+          <ol>
+            <li>Télécharger le ZIP d’installation v316.</li>
+            <li>Extraire complètement le fichier ZIP.</li>
+            <li>Lancer <strong>STI-Labo3-Windows-v316.exe</strong>.</li>
+            <li>Sélectionner le paquet <strong>.stipack</strong>, puis saisir le mot de passe initial.</li>
+          </ol>
+          <p class="aide-windows-note">Si le .stipack est placé à côté de l’installateur, l’installation démarre automatiquement.</p>
+        </div>
+      </details>
+      <details>
+        <summary>✨ Nouveautés de la v316</summary>
+        <div class="aide-windows-contenu">
+          <ul>
+            <li>Véritable fenêtre d’application Windows native.</li>
+            <li>Suppression automatique de l’ancienne version.</li>
+            <li>Application enregistrée dans les Applications installées.</li>
+            <li>Fonctionnement local complet sans Internet.</li>
+            <li>Mises à jour différentielles et lancement manuel possible.</li>
+            <li>Vrai logo STI et fermeture du serveur corrigée.</li>
+          </ul>
+        </div>
+      </details>
+      <details>
+        <summary>🛠️ Aide et dépannage</summary>
+        <div class="aide-windows-contenu">
+          <ul>
+            <li><strong>SmartScreen :</strong> choisir « Informations complémentaires », puis « Exécuter quand même ».</li>
+            <li><strong>WebView2 absent :</strong> installer Microsoft Edge WebView2 Runtime, puis relancer l’application.</li>
+            <li><strong>Ancienne icône :</strong> détacher l’ancien raccourci, puis épingler le nouveau.</li>
+            <li><strong>Installation interrompue :</strong> relancer l’EXE v316 ; la mise à niveau reprend proprement.</li>
+            <li><strong>Sans Internet :</strong> l’accès local reste disponible après la première installation.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+    <p class="aide-windows-note">Le code source est réservé aux développeurs : les utilisateurs ont uniquement besoin du ZIP d’installation.</p>
   </section>
 
   <div class="alerte-demande" id="alerte-attente">
