@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v316-airbus-cockpit-25";
+var UPDATE_ID = "v317-defis37";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -31,7 +31,8 @@ var UPDATE_FILES = [
   { url: "./assets/js/modules/labo-device-client.js", revision: "labo-portable-local-v315" },
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" },
   { url: "./assets/js/modules/labo-offline-diagnostics.js", revision: "offline-diagnostics-v315" },
-  { url: "./exercices/series-exercices.html", revision: "sql-serie42-gestlocation-v316-1" },
+  { url: "./exercices/series-exercices.html", revision: "js-37-defis-v317" },
+  { url: "./exercices/javascript/js-37-defis-tt.html", revision: "js-37-defis-theme-v317" },
   { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-airbus-cockpit-25" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
   { url: "./Lancer-Labo3-Hors-Ligne.ps1", revision: "portable-powershell-server-v315" }
