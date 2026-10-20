@@ -47,11 +47,9 @@
       }
     } catch (e) {}
     var elBadgeVer = document.getElementById("badge-version-admin");
-    var elSousVer = document.getElementById("sous-version-admin");
     var elPiedVer = document.getElementById("pied-version-admin");
     function majTexteVersion(v) {
       if (elBadgeVer) elBadgeVer.textContent = "🏷️ Version V2.0 · " + v;
-      if (elSousVer) elSousVer.textContent = "Version V2.0 (" + v + ")";
       if (elPiedVer) elPiedVer.textContent = "🏷️ Version active : STI V2.0 (" + v + ")";
     }
     majTexteVersion(versionDefaut);
@@ -92,10 +90,9 @@
     var icone = supabaseConnectee ? "🟢" : "🔴";
     var libelle = supabaseConnectee ? "Supabase connectée" : "Supabase déconnectée";
     var badge = document.getElementById("badge-supabase-quota");
-    var sous = document.getElementById("sous-supabase-quota");
     var pied = document.getElementById("pied-supabase-quota");
     var iconeBadge = document.getElementById("sb-etat-icone");
-    [badge, sous, pied].forEach(function (el) {
+    [badge, pied].forEach(function (el) {
       if (!el) return;
       el.classList.toggle("connecte", supabaseConnectee);
       el.classList.toggle("deconnecte", !supabaseConnectee);
@@ -103,25 +100,19 @@
     });
     if (iconeBadge) iconeBadge.textContent = icone;
     if (dernierQuotaInfo) {
-      if (sous) {
-        sous.textContent =
-          icone + " 🗄️ Supabase : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.moRestants +
-          " Mo libres / 500 Mo · " + dernierQuotaInfo.strUtilise + " utilisés)";
-      }
       if (pied) {
         pied.textContent =
           icone + " 🗄️ Supabase : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.strQteRestante +
           " · " + dernierQuotaInfo.strUtilise + " utilisés)";
       }
-    } else {
-      if (sous) sous.textContent = sous.textContent.replace(/^[🟢🔴]\s*/, icone + " ");
-      if (pied) pied.textContent = pied.textContent.replace(/^[🟢🔴]\s*/, icone + " ");
+    } else if (pied) {
+      pied.textContent = pied.textContent.replace(/^[🟢🔴]\s*/, icone + " ");
     }
     var infoQuota = dernierQuotaInfo
       ? " · Quota : " + dernierQuotaInfo.pctRestant + " restant (" + dernierQuotaInfo.strQteRestante + ")"
       : "";
     var titreEtat = icone + " " + libelle + " — " + detailEtatSupabase + infoQuota;
-    [badge, sous, pied].forEach(function (el) {
+    [badge, pied].forEach(function (el) {
       if (el) el.title = titreEtat + " — Cliquer pour ouvrir l'Analyseur & Nettoyeur Intelligent";
     });
   }
@@ -184,8 +175,6 @@
     var elPct = document.getElementById("sb-pct-restant");
     var elQte = document.getElementById("sb-qte-restante");
     var elBarre = document.getElementById("sb-jauge-barre");
-    var elSous = document.getElementById("sous-supabase-quota");
-    var elPied = document.getElementById("pied-supabase-quota");
 
     if (elPct) elPct.textContent = strPctRestant;
     if (elQte) elQte.textContent = strQteRestante;
@@ -2561,65 +2550,23 @@
   var btnVueNoeuds = document.getElementById("btn-vue-noeuds");
   var grilleNoeuds = document.getElementById("grille-noeuds-abonnes");
   var wrapTableAbonnes = document.getElementById("wrap-table-abonnes");
-  var selAfficheurClasse = document.getElementById("select-afficheur-classe");
-  var alerteAfficheurClasse = document.getElementById("alerte-afficheur-classe");
-  var compteurClasseTotal = document.getElementById("compteur-classe-total");
-  var compteurClassePresent = document.getElementById("compteur-classe-present");
-  var compteurClasse24h = document.getElementById("compteur-classe-24h");
-  var detailClasseTotal = document.getElementById("detail-classe-total");
-  var detailClassePresent = document.getElementById("detail-classe-present");
-  var detailClasse24h = document.getElementById("detail-classe-24h");
-  var texteAlerteAfficheurClasse = document.getElementById("texte-alerte-afficheur-classe");
+  var zonesAfficheurClasse = Array.prototype.slice.call(document.querySelectorAll(".zone-afficheur[data-zone-slot]"));
+  var instrumentTotalGlobal = document.getElementById("instrument-total-global");
+  var compteurAfficheurGlobalTotal = document.getElementById("compteur-afficheur-global-total");
+  var compteurAfficheurGlobalOnline = document.getElementById("compteur-afficheur-global-online");
+  var compteurAfficheurGlobal24h = document.getElementById("compteur-afficheur-global-24h");
+  var compteurAfficheurGlobalAttente = document.getElementById("compteur-afficheur-global-attente");
   var legendeAfficheurClasse = document.getElementById("legende-afficheur-classe");
-  var arcClassePresent = document.getElementById("arc-classe-present");
-  var niveauClasse24h = document.getElementById("niveau-classe-24h");
-  var pourcentageClasse24h = document.getElementById("pourcentage-classe-24h");
   var modeVueAbonnes = (typeof window !== "undefined" && window.innerWidth <= 768) ? "noeuds" : "liste";
   try {
     var vSauv = localStorage.getItem("sti-admin-vue-abonnes");
     if (vSauv === "noeuds" || vSauv === "liste") modeVueAbonnes = vSauv;
   } catch (e) {}
 
-  /* ---------- Afficheur numérique par classe : total, présents et activité des dernières 24 h ---------- */
+  /* ---------- Grand afficheur unique : 4 classes + Prof + Labo 3, avec total général au centre ---------- */
   function estClasseElevesAfficheur(classe) {
     var c = String(classe || "").trim();
-    return Boolean(c && c !== "—" && !/^prof$/i.test(c) && !/^elevelabo3$/i.test(c));
-  }
-
-  function classe3SiParDefaut(classes) {
-    return classes.find(function (cl) {
-      var n = String(cl || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-      return n.indexOf("3") === 0 && n.indexOf("si") !== -1;
-    }) || classes[0] || "";
-  }
-
-  function peuplerSelecteurAfficheurClasse() {
-    if (!selAfficheurClasse) return "";
-    var classes = obtenirClassesActives().filter(estClasseElevesAfficheur);
-    var actuelle = selAfficheurClasse.value;
-    var sauvegardee = "";
-    try { sauvegardee = localStorage.getItem("sti-admin-afficheur-classe") || ""; } catch (e) {}
-    var cible = classes.indexOf(actuelle) !== -1
-      ? actuelle
-      : (classes.indexOf(sauvegardee) !== -1 ? sauvegardee : classe3SiParDefaut(classes));
-    selAfficheurClasse.innerHTML = "";
-    if (!classes.length) {
-      var vide = document.createElement("option");
-      vide.value = "";
-      vide.textContent = "Aucune classe disponible";
-      selAfficheurClasse.appendChild(vide);
-      selAfficheurClasse.disabled = true;
-      return "";
-    }
-    selAfficheurClasse.disabled = false;
-    classes.forEach(function (cl) {
-      var opt = document.createElement("option");
-      opt.value = cl;
-      opt.textContent = "🏫 " + cl;
-      selAfficheurClasse.appendChild(opt);
-    });
-    selAfficheurClasse.value = cible;
-    return cible;
+    return Boolean(c && c !== "—" && !/^prof$/i.test(c) && !estCompteElevelabo3("", c));
   }
 
   function formatCompteurClasse(n) {
@@ -2627,81 +2574,142 @@
     return txt.length < 2 ? "0" + txt : txt;
   }
 
-  function pourcentageClasse(n, total) {
-    return total > 0 ? Math.round((n / total) * 100) : 0;
+  function obtenirSixZonesAfficheur() {
+    var classesActives = obtenirClassesActives();
+    var classesEleves = classesActives.filter(estClasseElevesAfficheur).slice(0, 4);
+    var classeProf = classesActives.find(function (cl) { return /^prof$/i.test(String(cl || "").trim()); }) || "Prof";
+    var classeLabo = classesActives.find(function (cl) { return estCompteElevelabo3("", cl); }) || "elevelabo3";
+    var zones = classesEleves.map(function (cl) {
+      return { type: "classe", classe: cl, nom: cl, icone: "🏫" };
+    });
+    while (zones.length < 4) {
+      zones.push({ type: "vide", classe: "", nom: "Classe —", icone: "🏫" });
+    }
+    zones.push({ type: "prof", classe: classeProf, nom: "PROF", icone: "👑" });
+    zones.push({ type: "labo", classe: classeLabo, nom: "LABO 3", icone: "💻" });
+    return zones;
   }
 
-  function majAfficheurNumeriqueClasse() {
-    if (!selAfficheurClasse) return;
-    var classe = peuplerSelecteurAfficheurClasse();
-    var profilsClasse = classe ? profils.filter(function (p) { return (p.classe || "—") === classe; }) : [];
-    var attente = profilsClasse.filter(function (p) { return p.statut === "en_attente"; }).length;
-    /* Une demande non confirmée et un compte exclu restent hors de l’effectif officiel. */
-    var eleves = profilsClasse.filter(function (p) { return p.statut !== "en_attente" && p.statut !== "exclu"; });
-    var idsClasse = {};
-    eleves.forEach(function (p) { idsClasse[p.id] = true; });
-    var presents = eleves.filter(function (p) { return estEnLigne(p.id); }).length;
-    var seuil24h = Date.now() - 24 * 60 * 60 * 1000;
+  function statistiquesZoneAfficheur(zone, seuil24h) {
+    if (!zone || zone.type === "vide") {
+      return { total: 0, online: 0, actifs24h: 0, attente: 0 };
+    }
+    if (zone.type === "labo") {
+      var infoMachines = calculerMachinesLabo3();
+      return {
+        total: infoMachines.connues.length,
+        online: infoMachines.ouvertes.length,
+        actifs24h: infoMachines.connues.filter(function (m) { return Number(m.ts) >= seuil24h; }).length,
+        attente: 0
+      };
+    }
+    var profilsZone = profils.filter(function (p) {
+      return String(p.classe || "").trim().toLowerCase() === String(zone.classe || "").trim().toLowerCase();
+    });
+    var attente = profilsZone.filter(function (p) { return p.statut === "en_attente"; }).length;
+    var confirmes = profilsZone.filter(function (p) { return p.statut !== "en_attente" && p.statut !== "exclu"; });
+    var idsZone = {};
+    confirmes.forEach(function (p) { idsZone[p.id] = true; });
     var vus24h = {};
     acces.forEach(function (a) {
-      if (!a || !idsClasse[a.user_id]) return;
+      if (!a || !idsZone[a.user_id]) return;
       var ts = new Date(a.fin || a.debut).getTime();
       if (!isNaN(ts) && ts >= seuil24h) vus24h[a.user_id] = true;
     });
-    /* La présence temps réel peut être plus récente que la dernière ligne d'accès persistée. */
-    eleves.forEach(function (p) { if (estEnLigne(p.id)) vus24h[p.id] = true; });
-    var presents24h = Object.keys(vus24h).length;
-    var total = eleves.length;
+    confirmes.forEach(function (p) { if (estEnLigne(p.id)) vus24h[p.id] = true; });
+    return {
+      total: confirmes.length,
+      online: confirmes.filter(function (p) { return estEnLigne(p.id); }).length,
+      actifs24h: Object.keys(vus24h).length,
+      attente: attente
+    };
+  }
 
-    if (compteurClasseTotal) compteurClasseTotal.textContent = formatCompteurClasse(total);
-    if (compteurClassePresent) compteurClassePresent.textContent = formatCompteurClasse(presents);
-    if (compteurClasse24h) compteurClasse24h.textContent = formatCompteurClasse(presents24h);
-    var pctPresent = Math.min(100, pourcentageClasse(presents, total));
-    var pct24h = Math.min(100, pourcentageClasse(presents24h, total));
-    if (detailClasseTotal) detailClasseTotal.textContent = total === 1 ? "élève confirmé" : "élèves confirmés";
-    if (detailClassePresent) detailClassePresent.textContent = pctPresent + " % de l’effectif";
-    if (detailClasse24h) detailClasse24h.textContent = pct24h + " % de l’effectif";
-    if (arcClassePresent) arcClassePresent.style.strokeDashoffset = String(100 - pctPresent);
-    if (niveauClasse24h) niveauClasse24h.style.height = pct24h + "%";
-    if (pourcentageClasse24h) pourcentageClasse24h.textContent = pct24h + "%";
+  function renseignerZoneAfficheur(bouton, zone, statsZone) {
+    if (!bouton) return;
+    var nom = bouton.querySelector("[data-zone-nom]");
+    var icone = bouton.querySelector("[data-zone-icone]");
+    var total = bouton.querySelector("[data-zone-total]");
+    var online = bouton.querySelector("[data-zone-online]");
+    var actif24h = bouton.querySelector("[data-zone-24h]");
+    var attente = bouton.querySelector("[data-zone-attente]");
+    if (nom) nom.textContent = zone.nom;
+    if (icone) icone.textContent = zone.icone;
+    if (total) total.textContent = formatCompteurClasse(statsZone.total);
+    if (online) online.textContent = formatCompteurClasse(statsZone.online);
+    if (actif24h) actif24h.textContent = formatCompteurClasse(statsZone.actifs24h);
+    if (attente) {
+      attente.hidden = statsZone.attente < 1;
+      var nbAttente = attente.querySelector("b");
+      if (nbAttente) nbAttente.textContent = statsZone.attente;
+    }
+    bouton.classList.toggle("actif", statsZone.online > 0);
+    bouton.classList.toggle("attente", statsZone.attente > 0);
+    bouton.disabled = zone.type === "vide";
+    bouton.__stiZoneAfficheur = zone;
+    bouton.setAttribute("data-zone-classe", zone.classe || "");
+    var unite = zone.type === "labo" ? "poste(s) connu(s)" : "abonné(s) confirmé(s)";
+    bouton.title = zone.nom + " : " + statsZone.total + " " + unite + " · " + statsZone.online +
+      " en ligne · " + statsZone.actifs24h + " actif(s) sur 24 h" +
+      (statsZone.attente ? " · " + statsZone.attente + " en attente" : "") + " — Cliquer pour filtrer la liste";
+    bouton.setAttribute("aria-label", bouton.title);
+  }
 
-    if (alerteAfficheurClasse && texteAlerteAfficheurClasse) {
-      alerteAfficheurClasse.classList.toggle("visible", attente > 0);
-      alerteAfficheurClasse.setAttribute("aria-hidden", attente > 0 ? "false" : "true");
-      texteAlerteAfficheurClasse.textContent = attente === 1
-        ? "1 nouvelle demande non confirmée"
-        : attente + " nouvelles demandes non confirmées";
+  function majAfficheurNumeriqueClasse() {
+    if (!zonesAfficheurClasse.length) return;
+    var zones = obtenirSixZonesAfficheur();
+    var seuil24h = Date.now() - 24 * 60 * 60 * 1000;
+    var cumul = { total: 0, online: 0, actifs24h: 0, attente: 0 };
+    zonesAfficheurClasse.forEach(function (bouton, index) {
+      var zone = zones[index] || { type: "vide", classe: "", nom: "Classe —", icone: "🏫" };
+      var statsZone = statistiquesZoneAfficheur(zone, seuil24h);
+      renseignerZoneAfficheur(bouton, zone, statsZone);
+      cumul.total += statsZone.total;
+      cumul.online += statsZone.online;
+      cumul.actifs24h += statsZone.actifs24h;
+      cumul.attente += statsZone.attente;
+    });
+    if (compteurAfficheurGlobalTotal) compteurAfficheurGlobalTotal.textContent = formatCompteurClasse(cumul.total);
+    if (compteurAfficheurGlobalOnline) compteurAfficheurGlobalOnline.textContent = formatCompteurClasse(cumul.online);
+    if (compteurAfficheurGlobal24h) compteurAfficheurGlobal24h.textContent = formatCompteurClasse(cumul.actifs24h);
+    if (compteurAfficheurGlobalAttente) compteurAfficheurGlobalAttente.textContent = formatCompteurClasse(cumul.attente);
+    if (instrumentTotalGlobal) {
+      instrumentTotalGlobal.title = "Total de tout : " + cumul.total + " abonnés/postes · " + cumul.online +
+        " en ligne · " + cumul.actifs24h + " actifs sur 24 h · " + cumul.attente + " en attente — Cliquer pour tout afficher";
+      instrumentTotalGlobal.setAttribute("aria-label", instrumentTotalGlobal.title);
     }
     if (legendeAfficheurClasse) {
-      legendeAfficheurClasse.textContent = classe
-        ? ("Classe " + classe + " · mise à jour " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }))
-        : "Aucune classe disponible.";
+      legendeAfficheurClasse.textContent = "4 classes · Prof · Labo 3 · total général au centre · mise à jour " +
+        new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     }
   }
 
-  function ouvrirListeDepuisAfficheur(statut) {
-    if (!selAfficheurClasse || !selAfficheurClasse.value) return;
+  function ouvrirListeDepuisZoneAfficheur(zone) {
+    if (!zone || zone.type === "vide") return;
     if (selFiltreLycee) selFiltreLycee.value = "*";
-    if (selFiltreClasse) selFiltreClasse.value = selAfficheurClasse.value;
-    var carte = document.querySelector('.stat[data-filtre="' + statut + '"]');
-    if (carte) carte.click();
-    else {
-      if (selFiltreStatut) selFiltreStatut.value = statut;
-      rendAbonnes();
+    if (selFiltreStatut) selFiltreStatut.value = "*";
+    if (selFiltreClasse) {
+      var optionExiste = Array.prototype.some.call(selFiltreClasse.options || [], function (opt) {
+        return opt.value === zone.classe;
+      });
+      selFiltreClasse.value = optionExiste ? zone.classe : "*";
     }
+    if (zone.type === "labo") bandeauLabo3ForceOuvert = true;
+    rendAbonnes();
+    if (zone.type === "labo") majBandeauEtCompteursClasse();
   }
 
-  if (selAfficheurClasse) {
-    selAfficheurClasse.addEventListener("change", function () {
-      try { localStorage.setItem("sti-admin-afficheur-classe", selAfficheurClasse.value); } catch (e) {}
-      majAfficheurNumeriqueClasse();
+  zonesAfficheurClasse.forEach(function (bouton) {
+    bouton.addEventListener("click", function () { ouvrirListeDepuisZoneAfficheur(bouton.__stiZoneAfficheur); });
+  });
+  if (instrumentTotalGlobal) {
+    instrumentTotalGlobal.addEventListener("click", function () {
+      if (selFiltreLycee) selFiltreLycee.value = "*";
+      if (selFiltreClasse) selFiltreClasse.value = "*";
+      if (selFiltreStatut) selFiltreStatut.value = "*";
+      rendAbonnes();
     });
   }
-  var instrumentClasseTotal = document.getElementById("instrument-classe-total");
-  var instrumentClassePresent = document.getElementById("instrument-classe-present");
-  if (instrumentClasseTotal) instrumentClasseTotal.addEventListener("click", function () { ouvrirListeDepuisAfficheur("*"); });
-  if (instrumentClassePresent) instrumentClassePresent.addEventListener("click", function () { ouvrirListeDepuisAfficheur("en_ligne"); });
-  if (alerteAfficheurClasse) alerteAfficheurClasse.addEventListener("click", function () { ouvrirListeDepuisAfficheur("en_attente"); });
   window.setInterval(majAfficheurNumeriqueClasse, 30000);
 
   function appliquerModeVueAbonnes(nvMode) { 
@@ -10615,7 +10623,6 @@
      ══════════════════════════════════════════════════════════════════════════ */
   var modalQuotaSb = document.getElementById("modal-quota-supabase");
   var badgeQuotaTop = document.getElementById("badge-supabase-quota");
-  var sousQuotaTop = document.getElementById("sous-supabase-quota");
   var piedQuotaTop = document.getElementById("pied-supabase-quota");
   var divRepartitionQuota = document.getElementById("contenu-repartition-quota");
   var btnPurgeLourds30j = document.getElementById("btn-purge-lourds-30j");
@@ -10684,7 +10691,6 @@
   }
 
   if (badgeQuotaTop) badgeQuotaTop.addEventListener("click", ouvrirModalQuotaSupabase);
-  if (sousQuotaTop) sousQuotaTop.addEventListener("click", ouvrirModalQuotaSupabase);
   if (piedQuotaTop) piedQuotaTop.addEventListener("click", ouvrirModalQuotaSupabase);
   [btnFermerQuota, btnFermerQuotaX].forEach(function (b) {
     if (b) b.addEventListener("click", function () { if (modalQuotaSb) modalQuotaSb.classList.remove("visible"); });

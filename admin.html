@@ -275,7 +275,7 @@
     .vue-commandes-globales .stat { min-height: 46px; grid-template-columns: 52px minmax(0, 1fr); }
   }
 
-  /* Afficheur numérique par classe — instrument circulaire inspiré de l’exemple aéronautique fourni */
+  /* Grand afficheur aéronautique unique — 6 zones (4 classes, Prof et Labo 3) + total central */
   .afficheur-classe-avion {
     position: relative; width: min(100%, 590px); margin: 0 auto 2px;
     padding: 18px; border: 3px solid #5f6972; border-radius: 38px;
@@ -301,167 +301,131 @@
   .instrument-avion-ecran {
     width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
     display: flex; flex-direction: column; justify-content: center;
-    padding: 38px 42px 31px;
-    background: radial-gradient(circle at 50% 42%, #071018 0, #020508 58%, #000 100%);
+    padding: 31px 34px 26px;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(42,66,79,.38) 0 14%, transparent 14.5%),
+      radial-gradient(circle at 50% 50%, transparent 0 42%, rgba(65,91,106,.2) 42.5% 43%, transparent 43.5%),
+      radial-gradient(circle at 50% 42%, #071018 0, #020508 58%, #000 100%);
     border: 2px solid #050709;
     box-shadow: inset 0 0 35px #000, inset 0 0 0 1px #263746;
   }
   .afficheur-classe-entete {
-    display: flex; align-items: center; justify-content: center; margin: 0 0 2px;
+    display: flex; align-items: center; justify-content: center; margin: 0 0 5px;
   }
   .afficheur-classe-titre {
-    color: #d9e4eb; font-size: 12px; font-weight: 1000;
-    text-transform: uppercase; letter-spacing: .1em; text-align: center;
+    color: #d9e4eb; font-size: 11px; font-weight: 1000;
+    text-transform: uppercase; letter-spacing: .09em; text-align: center;
   }
   .afficheur-classe-titre small {
-    display: inline-block; margin-left: 6px; color: #7894a8; font-size: 8px; letter-spacing: .05em;
+    display: inline-block; margin-left: 5px; color: #7894a8; font-size: 7px; letter-spacing: .05em;
   }
-  .afficheur-classe-instruments {
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
-    align-items: start; margin: 0 0 3px;
+  .afficheur-six-zones {
+    position: relative; flex: 1; min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(76px,.84fr) minmax(0,1fr);
+    grid-template-rows: repeat(3, minmax(0,1fr));
+    grid-template-areas: "z1 . z2" "z3 total z4" "z5 . z6";
+    align-items: center; gap: 5px 7px;
   }
-  .instrument-classe {
-    min-width: 0; color: inherit; text-align: center; font-family: inherit;
+  .afficheur-six-zones::before, .afficheur-six-zones::after {
+    content: ""; position: absolute; left: 50%; top: 50%; pointer-events: none; border-radius: 50%;
+    transform: translate(-50%,-50%); border: 1px solid rgba(97,135,155,.25);
   }
-  button.instrument-classe {
-    position: relative; min-height: 104px; padding: 0; border: 0;
-    background: transparent; cursor: pointer;
+  .afficheur-six-zones::before { width: 58%; aspect-ratio: 1; }
+  .afficheur-six-zones::after { width: 34%; aspect-ratio: 1; border-style: dashed; }
+  .zone-afficheur {
+    --zone-accent: #52e878;
+    position: relative; z-index: 1; min-width: 0; min-height: 86px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 8px 5px 6px; overflow: hidden;
+    border: 1.5px solid color-mix(in srgb, var(--zone-accent) 72%, #20303a);
+    border-radius: 16px 7px 16px 7px;
+    background: radial-gradient(circle at 50% 34%, color-mix(in srgb, var(--zone-accent) 13%, #071016), #03080c 68%);
+    color: #eef7fb; cursor: pointer;
+    box-shadow: inset 0 0 13px #000, 0 0 5px color-mix(in srgb, var(--zone-accent) 32%, transparent);
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
   }
-  button.instrument-classe:hover .arc-actif { filter: drop-shadow(0 0 5px currentColor); }
-  button.instrument-classe:focus-visible { outline: 2px solid #fff; outline-offset: 1px; border-radius: 12px; }
-  .instrument-arc-svg { width: 100%; height: 82px; overflow: visible; }
-  .arc-fond, .arc-actif {
-    fill: none; stroke-width: 8; stroke-linecap: round;
+  .zone-afficheur:hover { transform: translateY(-1px) scale(1.02); box-shadow: inset 0 0 13px #000, 0 0 10px var(--zone-accent); }
+  .zone-afficheur:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .zone-afficheur.actif { box-shadow: inset 0 0 13px #000, 0 0 12px color-mix(in srgb, var(--zone-accent) 75%, transparent); }
+  .zone-afficheur.attente { border-color: #fb923c; }
+  .zone-afficheur[data-zone-slot="1"] { grid-area: z1; --zone-accent: #38bdf8; }
+  .zone-afficheur[data-zone-slot="2"] { grid-area: z2; --zone-accent: #60a5fa; }
+  .zone-afficheur[data-zone-slot="3"] { grid-area: z3; --zone-accent: #4ade80; }
+  .zone-afficheur[data-zone-slot="4"] { grid-area: z4; --zone-accent: #2dd4bf; }
+  .zone-afficheur[data-zone-slot="5"] { grid-area: z5; --zone-accent: #ffd54f; }
+  .zone-afficheur[data-zone-slot="6"] { grid-area: z6; --zone-accent: #22d3ee; }
+  .zone-afficheur-entete {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 3px;
+    color: var(--zone-accent); font: 1000 8px/1.05 system-ui, sans-serif;
+    text-transform: uppercase; letter-spacing: .035em; white-space: nowrap; overflow: hidden;
   }
-  .arc-fond { stroke: #23313b; }
-  .arc-actif {
-    stroke-dasharray: 100; stroke-dashoffset: 0;
-    transition: stroke-dashoffset .55s ease; filter: drop-shadow(0 0 4px currentColor);
+  .zone-afficheur-entete b { overflow: hidden; text-overflow: ellipsis; }
+  .zone-afficheur-total {
+    margin: 2px 0 1px; color: var(--zone-accent);
+    font: 500 27px/.95 Consolas, "Courier New", monospace;
+    font-variant-numeric: tabular-nums; text-shadow: 0 0 8px currentColor;
   }
-  .instrument-total .arc-actif { stroke: #47d56d; color: #47d56d; }
-  .instrument-present .arc-actif { stroke: #50dd77; color: #50dd77; }
-  .repere-arc { fill: #ef4444; }
-  .instrument-classe-libelle {
-    position: absolute; left: 0; right: 0; top: 35px;
-    color: #f2f6f8; font-size: 10px; font-weight: 900;
-    text-transform: uppercase; letter-spacing: .05em;
+  .zone-afficheur-mesures {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    color: #a9beca; font: 900 7px/1 system-ui, sans-serif; white-space: nowrap;
   }
-  .instrument-classe-valeur {
-    position: absolute; left: 0; right: 0; top: 49px;
-    font-family: Consolas, "Courier New", monospace; font-size: 35px;
-    font-weight: 500; line-height: 1; letter-spacing: .04em; font-variant-numeric: tabular-nums;
-    text-shadow: 0 0 8px currentColor;
+  .zone-afficheur-mesures b { color: #f0f7fa; font-family: Consolas, "Courier New", monospace; }
+  .zone-afficheur-attente {
+    position: absolute; right: 3px; top: 3px; min-width: 18px; height: 18px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 1px;
+    padding: 0 3px; border: 1px solid #ffedd5; border-radius: 999px;
+    background: #f97316; color: #160800; font: 1000 8px/1 system-ui, sans-serif;
+    box-shadow: 0 0 8px rgba(249,115,22,.85);
   }
-  .instrument-total .instrument-classe-valeur { color: #55ed79; }
-  .instrument-present .instrument-classe-valeur { color: #55ed79; }
-  .instrument-classe-detail {
-    position: absolute; left: 0; right: 0; top: 84px;
-    overflow: hidden; color: #a8bac5; font-size: 8.5px;
-    font-weight: 800; white-space: nowrap; text-overflow: ellipsis;
+  .zone-afficheur-attente[hidden] { display: none; }
+  .afficheur-total-centre {
+    grid-area: total; position: relative; z-index: 2; align-self: center; justify-self: center;
+    width: min(100%, 112px); aspect-ratio: 1; border-radius: 50%; padding: 10px 6px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border: 2px solid #a7f3d0; background: radial-gradient(circle, #123d2b 0, #06150f 63%, #020706 100%);
+    color: #f0fff6; cursor: pointer;
+    box-shadow: inset 0 0 14px #000, 0 0 0 3px #1f3439, 0 0 15px rgba(82,232,120,.58);
   }
-  .afficheur-annunciator {
-    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: stretch;
-    gap: 7px; margin: 0 2px 8px;
+  .afficheur-total-centre:hover { filter: brightness(1.12); }
+  .afficheur-total-centre:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .afficheur-total-centre > span:first-child {
+    color: #a7f3d0; font: 1000 7px/1 system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase;
   }
-  .selecteur-classe-avion {
-    display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center;
-    background: #f7fafc; border: 2px solid #020304; color: #06090c;
-    min-width: 0; height: 34px;
+  .afficheur-total-centre > strong {
+    margin: 2px 0 0; color: #55ed79; font: 500 35px/.92 Consolas, "Courier New", monospace;
+    font-variant-numeric: tabular-nums; text-shadow: 0 0 9px currentColor;
   }
-  .selecteur-classe-avion label {
-    padding: 0 7px; font-size: 9px; font-weight: 1000; letter-spacing: .08em;
+  .afficheur-total-centre > small { color: #8fa6b5; font: 900 5.7px/1.1 system-ui, sans-serif; text-transform: uppercase; }
+  .total-centre-mesures {
+    display: grid; grid-template-columns: repeat(3,1fr); width: 92%; margin-top: 5px;
+    border-top: 1px solid #34594a; padding-top: 4px; color: #a9beca; font: 1000 6px/1 system-ui, sans-serif;
   }
-  #select-afficheur-classe {
-    min-width: 0; width: 100%; height: 100%; margin: 0; padding: 3px 22px 3px 7px;
-    border: 0; border-left: 1px solid #111; border-radius: 0;
-    background: #d9ff39; color: #071006; font: 1000 11px/1 system-ui, sans-serif;
-  }
-  .afficheur-alerte-attente {
-    display: none; align-items: center; justify-content: center; gap: 6px;
-    min-width: 82px; height: 34px; padding: 3px 8px;
-    border: 2px solid #020304; border-radius: 0; background: #f97316; color: #140700;
-    font-size: 8.5px; font-weight: 1000; cursor: pointer; text-transform: uppercase;
-  }
-  .afficheur-alerte-attente.visible { display: inline-flex; }
-  .afficheur-alerte-attente .signal-exclamation {
-    display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
-    width: 23px; height: 23px; border-radius: 50%; background: #ff7a00; color: #fff;
-    border: 2px solid #fff1d7; font: 1000 17px/1 system-ui, sans-serif;
-    box-shadow: 0 0 0 3px rgba(249,115,22,.24), 0 0 15px rgba(249,115,22,.95);
-    animation: signal-attente-orange 1.15s ease-in-out infinite;
-  }
-  @keyframes signal-attente-orange {
-    0%, 100% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(.88); filter: brightness(1.35); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .afficheur-alerte-attente .signal-exclamation { animation: none; }
-  }
-  .instrument-bas {
-    display: grid; grid-template-columns: 1.25fr .75fr; align-items: center;
-    gap: 12px; padding: 5px 10px 2px; border-top: 1px solid #50616d;
-  }
-  .instrument-24h {
-    position: relative; min-height: 83px; padding: 7px 4px 4px; text-align: left;
-  }
-  .instrument-24h .instrument-classe-libelle,
-  .instrument-24h .instrument-classe-valeur,
-  .instrument-24h .instrument-classe-detail { position: static; display: block; }
-  .instrument-24h .instrument-classe-libelle { color: #f5f7f8; font-size: 10px; }
-  .instrument-24h .instrument-classe-valeur { margin: 1px 0; color: #52e878; font-size: 36px; }
-  .instrument-24h .instrument-classe-detail { color: #9eb2bf; font-size: 8.5px; }
-  .reservoir-presence {
-    display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 8px;
-  }
-  .reservoir-corps {
-    position: relative; width: 34px; height: 76px; overflow: hidden;
-    border: 3px solid #e5edf2; border-radius: 15px 15px 9px 9px;
-    background: #0c1b22; box-shadow: inset 0 0 0 2px #1d313d;
-  }
-  .reservoir-niveau {
-    position: absolute; left: 3px; right: 3px; bottom: 3px; height: 0%;
-    min-height: 2px; border-radius: 10px 10px 5px 5px;
-    background: linear-gradient(#55e47b, #20b94d); box-shadow: 0 0 11px rgba(70,229,112,.8);
-    transition: height .55s ease;
-  }
-  .reservoir-texte strong {
-    display: block; color: #52e878; font: 500 24px/1 Consolas, "Courier New", monospace;
-    text-shadow: 0 0 7px currentColor;
-  }
-  .reservoir-texte span { display: block; margin-top: 3px; color: #a8bac5; font-size: 8px; font-weight: 900; }
+  .total-centre-mesures b { display: block; margin-bottom: 1px; color: #fff; font: 900 9px/1 Consolas, monospace; }
   .afficheur-classe-legende {
-    margin: 3px 5px 0; padding-top: 5px; border-top: 1px solid #50616d;
-    color: #8fa6b5; font: 800 8px/1.2 system-ui, sans-serif; text-align: center;
+    margin: 5px 8px 0; padding-top: 5px; border-top: 1px solid #50616d;
+    color: #8fa6b5; font: 800 7px/1.2 system-ui, sans-serif; text-align: center;
   }
   @media (max-width: 620px) {
-    .afficheur-classe-avion { padding: 12px; border-radius: 27px; }
-    .instrument-avion-bezel { padding: 9px; }
-    .instrument-avion-ecran { padding: 25px 25px 22px; }
-    .afficheur-classe-titre { font-size: 9px; }
-    .afficheur-classe-titre small { font-size: 6.5px; }
-    .afficheur-classe-instruments { gap: 4px; }
-    button.instrument-classe { min-height: 82px; }
-    .instrument-arc-svg { height: 64px; }
-    .instrument-classe-libelle { top: 27px; font-size: 7px; }
-    .instrument-classe-valeur { top: 38px; font-size: 27px; }
-    .instrument-classe-detail { top: 65px; font-size: 6.5px; }
-    .afficheur-annunciator { gap: 4px; margin-bottom: 4px; }
-    .selecteur-classe-avion { height: 29px; }
-    .selecteur-classe-avion label { padding: 0 4px; font-size: 6.5px; }
-    #select-afficheur-classe { font-size: 9px; padding-left: 4px; }
-    .afficheur-alerte-attente { min-width: 48px; height: 29px; padding: 2px 5px; }
-    .afficheur-alerte-attente .signal-exclamation { width: 19px; height: 19px; font-size: 14px; }
-    .afficheur-alerte-attente #texte-alerte-afficheur-classe { display: none; }
-    .instrument-bas { gap: 5px; padding: 3px 5px 0; }
-    .instrument-24h { min-height: 62px; padding-top: 4px; }
-    .instrument-24h .instrument-classe-libelle { font-size: 7px; }
-    .instrument-24h .instrument-classe-valeur { font-size: 27px; }
-    .instrument-24h .instrument-classe-detail { font-size: 6.5px; }
-    .reservoir-presence { grid-template-columns: 25px 1fr; gap: 5px; }
-    .reservoir-corps { width: 25px; height: 55px; border-width: 2px; }
-    .reservoir-texte strong { font-size: 17px; }
-    .reservoir-texte span { font-size: 6px; }
-    .afficheur-classe-legende { font-size: 6.5px; }
+    .afficheur-classe-avion { padding: 11px; border-radius: 27px; }
+    .instrument-avion-bezel { padding: 8px; }
+    .instrument-avion-ecran { padding: 25px 23px 21px; }
+    .afficheur-classe-entete { margin-bottom: 3px; }
+    .afficheur-classe-titre { font-size: 8px; letter-spacing: .06em; }
+    .afficheur-classe-titre small { font-size: 5.5px; margin-left: 2px; }
+    .afficheur-six-zones { grid-template-columns: minmax(0,1fr) minmax(62px,.78fr) minmax(0,1fr); gap: 3px 4px; }
+    .zone-afficheur { min-height: 69px; padding: 5px 3px 4px; border-radius: 12px 5px 12px 5px; }
+    .zone-afficheur-entete { font-size: 6px; gap: 1px; }
+    .zone-afficheur-total { font-size: 21px; }
+    .zone-afficheur-mesures { gap: 3px; font-size: 5.5px; }
+    .zone-afficheur-attente { min-width: 15px; height: 15px; font-size: 6px; }
+    .afficheur-total-centre { width: min(100%,88px); padding: 6px 3px; }
+    .afficheur-total-centre > span:first-child { font-size: 5.4px; }
+    .afficheur-total-centre > strong { font-size: 27px; }
+    .afficheur-total-centre > small { font-size: 4.3px; }
+    .total-centre-mesures { margin-top: 3px; padding-top: 3px; font-size: 4.4px; }
+    .total-centre-mesures b { font-size: 7px; }
+    .afficheur-classe-legende { margin-top: 3px; font-size: 5.5px; }
     .vis-instrument { width: 7px; height: 7px; }
   }
 
@@ -1713,7 +1677,7 @@
           <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">🏷️ Version V2.0 · v316</span>
           <span class="badge-supabase deconnecte" id="badge-supabase-quota" title="🔴 Supabase déconnectée — vérification en cours"><span id="sb-etat-icone" aria-hidden="true">🔴</span> 🗄️ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz · <strong id="sous-version-admin" style="color:#f4511e">Version V2.0 (v316)</strong> · <strong id="sous-supabase-quota" class="supabase-etat-compact deconnecte" title="🔴 Supabase déconnectée — vérification en cours">🔴 🗄️ Supabase : 99,8 % restant (499,2 Mo libres / 500 Mo)</strong></div>
+        <div class="sous">Pilotage en direct des classes, abonnés, durées hebdomadaires, contrôles chronométrés et quiz</div>
       </div>
     </div>
     <div class="barre-util">
@@ -1769,63 +1733,60 @@
       <div class="instrument-avion-ecran">
         <div class="afficheur-classe-entete">
           <div class="afficheur-classe-titre" id="titre-afficheur-classe">
-            STI — Présence classe <small>instrument temps réel</small>
+            Présence générale <small>6 zones</small>
           </div>
         </div>
 
-        <div class="afficheur-classe-instruments" aria-live="polite">
-          <button type="button" class="instrument-classe instrument-total" id="instrument-classe-total" title="Afficher tous les élèves confirmés de cette classe">
-            <svg class="instrument-arc-svg" viewBox="0 0 120 70" aria-hidden="true">
-              <path class="arc-fond" pathLength="100" d="M10 61 A50 50 0 0 1 110 61"></path>
-              <path class="arc-actif" id="arc-classe-total" pathLength="100" d="M10 61 A50 50 0 0 1 110 61"></path>
-              <circle class="repere-arc" cx="108" cy="46" r="3"></circle>
-            </svg>
-            <span class="instrument-classe-libelle">Effectif total</span>
-            <strong class="instrument-classe-valeur" id="compteur-classe-total">00</strong>
-            <span class="instrument-classe-detail" id="detail-classe-total">élèves confirmés</span>
+        <div class="afficheur-six-zones" id="afficheur-six-zones" aria-live="polite">
+          <button type="button" class="zone-afficheur" data-zone-slot="1" title="Afficher cette classe">
+            <span class="zone-afficheur-entete"><span data-zone-icone>🏫</span><b data-zone-nom>Classe 1</b></span>
+            <strong class="zone-afficheur-total" data-zone-total>00</strong>
+            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
           </button>
-          <button type="button" class="instrument-classe instrument-present" id="instrument-classe-present" title="Afficher les élèves actuellement présents">
-            <svg class="instrument-arc-svg" viewBox="0 0 120 70" aria-hidden="true">
-              <path class="arc-fond" pathLength="100" d="M10 61 A50 50 0 0 1 110 61"></path>
-              <path class="arc-actif" id="arc-classe-present" pathLength="100" d="M10 61 A50 50 0 0 1 110 61"></path>
-              <circle class="repere-arc" cx="108" cy="46" r="3"></circle>
-            </svg>
-            <span class="instrument-classe-libelle">Présents maintenant</span>
-            <strong class="instrument-classe-valeur" id="compteur-classe-present">00</strong>
-            <span class="instrument-classe-detail" id="detail-classe-present">0 % de l’effectif</span>
+          <button type="button" class="zone-afficheur" data-zone-slot="2" title="Afficher cette classe">
+            <span class="zone-afficheur-entete"><span data-zone-icone>🏫</span><b data-zone-nom>Classe 2</b></span>
+            <strong class="zone-afficheur-total" data-zone-total>00</strong>
+            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
           </button>
-        </div>
+          <button type="button" class="zone-afficheur" data-zone-slot="3" title="Afficher cette classe">
+            <span class="zone-afficheur-entete"><span data-zone-icone>🏫</span><b data-zone-nom>Classe 3</b></span>
+            <strong class="zone-afficheur-total" data-zone-total>00</strong>
+            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
+          </button>
+          <button type="button" class="zone-afficheur" data-zone-slot="4" title="Afficher cette classe">
+            <span class="zone-afficheur-entete"><span data-zone-icone>🏫</span><b data-zone-nom>Classe 4</b></span>
+            <strong class="zone-afficheur-total" data-zone-total>00</strong>
+            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
+          </button>
+          <button type="button" class="zone-afficheur" data-zone-slot="5" title="Afficher les professeurs">
+            <span class="zone-afficheur-entete"><span data-zone-icone>👑</span><b data-zone-nom>PROF</b></span>
+            <strong class="zone-afficheur-total" data-zone-total>00</strong>
+            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
+          </button>
+          <button type="button" class="zone-afficheur" data-zone-slot="6" title="Afficher les postes Labo 3">
+            <span class="zone-afficheur-entete"><span data-zone-icone>💻</span><b data-zone-nom>LABO 3</b></span>
+            <strong class="zone-afficheur-total" data-zone-total>00</strong>
+            <span class="zone-afficheur-mesures"><span>🟢 <b data-zone-online>00</b></span><span>🕒 <b data-zone-24h>00</b></span></span>
+            <span class="zone-afficheur-attente" data-zone-attente hidden>! <b>0</b></span>
+          </button>
 
-        <div class="afficheur-annunciator">
-          <div class="selecteur-classe-avion">
-            <label for="select-afficheur-classe">CLASSE</label>
-            <select id="select-afficheur-classe" aria-label="Classe affichée">
-              <option value="">Chargement…</option>
-            </select>
-          </div>
-          <button type="button" class="afficheur-alerte-attente" id="alerte-afficheur-classe" title="Afficher les demandes en attente de cette classe">
-            <span class="signal-exclamation" aria-hidden="true">!</span>
-            <span id="texte-alerte-afficheur-classe">Nouvelle demande non confirmée</span>
+          <button type="button" class="afficheur-total-centre" id="instrument-total-global" title="Afficher l'ensemble des abonnés et des postes">
+            <span>Total de tout</span>
+            <strong id="compteur-afficheur-global-total">00</strong>
+            <small>abonnés + postes</small>
+            <span class="total-centre-mesures">
+              <span><b id="compteur-afficheur-global-online">00</b>EN LIGNE</span>
+              <span><b id="compteur-afficheur-global-24h">00</b>SUR 24 H</span>
+              <span><b id="compteur-afficheur-global-attente">00</b>ATTENTE</span>
+            </span>
           </button>
         </div>
-
-        <div class="instrument-bas">
-          <div class="instrument-classe instrument-24h" title="Élèves distincts présents durant les dernières 24 heures">
-            <span class="instrument-classe-libelle">Présents sur 24 h</span>
-            <strong class="instrument-classe-valeur" id="compteur-classe-24h">00</strong>
-            <span class="instrument-classe-detail" id="detail-classe-24h">0 % de l’effectif</span>
-          </div>
-          <div class="reservoir-presence" aria-label="Taux de présence sur les dernières 24 heures">
-            <div class="reservoir-corps" aria-hidden="true">
-              <div class="reservoir-niveau" id="niveau-classe-24h"></div>
-            </div>
-            <div class="reservoir-texte">
-              <strong id="pourcentage-classe-24h">0%</strong>
-              <span>ACTIVITÉ<br>24 HEURES</span>
-            </div>
-          </div>
-        </div>
-        <p class="afficheur-classe-legende" id="legende-afficheur-classe">Les compteurs se mettent à jour automatiquement.</p>
+        <p class="afficheur-classe-legende" id="legende-afficheur-classe">4 classes · Prof · Labo 3 · total général au centre</p>
       </div>
     </div>
   </section>
@@ -4017,7 +3978,7 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
-  <script src="assets/js/admin.js?v=316-supabase-state-logo-13"></script>
+  <script src="assets/js/admin.js?v=316-six-zone-overview-14"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>
