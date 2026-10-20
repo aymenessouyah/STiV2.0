@@ -213,8 +213,105 @@
   }
   .tableau-apercu-entete h2 { margin: 0; color: #23201a; font-size: 16px; }
   .tableau-apercu-entete span { color: #7a6f5d; font-size: 11.5px; font-weight: 800; }
-  .tableau-apercu .stats { margin-bottom: 0; }
+  .tableau-apercu .stats { margin-bottom: 10px; }
   .tableau-apercu .alerte-demande { margin-bottom: 10px; }
+
+  /* Afficheur numérique de classe inspiré d’un tableau de bord d’avion */
+  .afficheur-classe-avion {
+    position: relative; overflow: hidden;
+    background: linear-gradient(145deg, #101d2b, #050a10 72%);
+    border: 3px solid #42566d; border-radius: 17px;
+    padding: 12px 14px 14px; color: #eef6ff;
+    box-shadow: inset 0 0 0 1px #0a0f15, inset 0 0 24px rgba(0,0,0,.75), 3px 3px 0 rgba(35,32,26,.65);
+  }
+  .afficheur-classe-avion::before, .afficheur-classe-avion::after {
+    content: ""; position: absolute; top: 8px; width: 7px; height: 7px;
+    border-radius: 50%; background: #7f8c99; box-shadow: inset 1px 1px 2px #dce5ec, 0 0 0 1px #02060a;
+  }
+  .afficheur-classe-avion::before { left: 8px; }
+  .afficheur-classe-avion::after { right: 8px; }
+  .afficheur-classe-entete {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px; flex-wrap: wrap; margin: 0 8px 10px;
+  }
+  .afficheur-classe-titre {
+    display: flex; align-items: center; gap: 8px; font-size: 12px;
+    font-weight: 900; text-transform: uppercase; letter-spacing: .09em; color: #d7e8f7;
+  }
+  .afficheur-classe-titre small {
+    color: #7f9cb5; font-size: 9px; letter-spacing: .05em;
+  }
+  #select-afficheur-classe {
+    min-width: 175px; max-width: 100%; margin: 0; padding: 6px 30px 6px 10px;
+    border: 1.5px solid #6f879e; border-radius: 8px; background: #07111b;
+    color: #f8fbff; font: 900 12px/1.2 system-ui, sans-serif;
+  }
+  .afficheur-alerte-attente {
+    display: none; align-items: center; gap: 7px; border: 1.5px solid #fb923c;
+    border-radius: 9px; background: rgba(194,65,12,.18); color: #fed7aa;
+    padding: 5px 9px; font-size: 10.5px; font-weight: 900; cursor: pointer;
+  }
+  .afficheur-alerte-attente.visible { display: inline-flex; }
+  .afficheur-alerte-attente .signal-exclamation {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%; background: #f97316;
+    color: #fff; font: 1000 18px/1 system-ui, sans-serif;
+    box-shadow: 0 0 0 4px rgba(249,115,22,.18), 0 0 15px rgba(249,115,22,.9);
+    animation: signal-attente-orange 1.15s ease-in-out infinite;
+  }
+  @keyframes signal-attente-orange {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(.9); opacity: .58; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .afficheur-alerte-attente .signal-exclamation { animation: none; }
+  }
+  .afficheur-classe-instruments {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;
+  }
+  .instrument-classe {
+    position: relative; min-width: 0; text-align: center;
+    background: linear-gradient(180deg, #020508, #091019);
+    border: 1.5px solid #4b5f72; border-radius: 12px; padding: 8px 7px 7px;
+    box-shadow: inset 0 0 14px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.09);
+  }
+  button.instrument-classe { color: inherit; cursor: pointer; font-family: inherit; }
+  button.instrument-classe:hover { border-color: #93c5fd; transform: translateY(-1px); }
+  .instrument-classe-libelle {
+    display: block; color: #9fb4c6; font-size: 9.5px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: .08em; white-space: nowrap;
+  }
+  .instrument-classe-valeur {
+    display: block; margin: 2px 0 1px; font-family: Consolas, "Courier New", monospace;
+    font-size: clamp(28px, 3.2vw, 43px); font-weight: 900; line-height: 1;
+    letter-spacing: .08em; text-shadow: 0 0 10px currentColor;
+    font-variant-numeric: tabular-nums;
+  }
+  .instrument-total .instrument-classe-valeur { color: #66d9ff; }
+  .instrument-present .instrument-classe-valeur { color: #6ee7a8; }
+  .instrument-24h .instrument-classe-valeur { color: #fbbf63; }
+  .instrument-classe-detail {
+    display: block; overflow: hidden; color: #7f9cb5; font-size: 9px;
+    font-weight: 800; white-space: nowrap; text-overflow: ellipsis;
+  }
+  .afficheur-classe-legende {
+    margin: 8px 3px 0; color: #7f9cb5; font-size: 9px; font-weight: 800;
+    text-align: right;
+  }
+  @media (max-width: 620px) {
+    .afficheur-classe-avion { padding: 10px 8px 11px; }
+    .afficheur-classe-entete { align-items: stretch; margin: 0 5px 8px; }
+    .afficheur-classe-titre { width: 100%; justify-content: space-between; font-size: 10.5px; }
+    #select-afficheur-classe { flex: 1; min-width: 130px; font-size: 11px; }
+    .afficheur-alerte-attente { padding: 4px 7px; font-size: 9px; }
+    .afficheur-alerte-attente .signal-exclamation { width: 21px; height: 21px; font-size: 16px; }
+    .afficheur-classe-instruments { gap: 5px; }
+    .instrument-classe { border-radius: 9px; padding: 7px 3px 6px; }
+    .instrument-classe-libelle { font-size: 7.5px; letter-spacing: .03em; }
+    .instrument-classe-valeur { font-size: 27px; }
+    .instrument-classe-detail { font-size: 7.5px; }
+  }
+
   .centre-actions-dashboard {
     background: rgba(255,253,247,.72); border: 2px solid #d8cdbb;
     border-radius: 18px; padding: 13px 14px; margin-bottom: 16px;
@@ -1442,6 +1539,41 @@
     <div class="stat" data-filtre="en_attente" title="Cliquer pour filtrer les demandes en attente"><b id="s-attente" style="color:#b47d09">0</b><small>⏳ En attente</small></div>
     <div class="stat" id="stat-connexions" data-scroll-cible="sec-dernieres-connexions" title="Cliquer pour aller directement à Dernières connexions"><b id="s-connex">0</b><small>🕒 Connexions</small></div>
   </div>
+
+  <section class="afficheur-classe-avion" id="afficheur-classe-avion" aria-labelledby="titre-afficheur-classe">
+    <div class="afficheur-classe-entete">
+      <div class="afficheur-classe-titre" id="titre-afficheur-classe">
+        <span>✈ Afficheur numérique de classe</span>
+        <small>Temps réel</small>
+      </div>
+      <select id="select-afficheur-classe" aria-label="Classe affichée">
+        <option value="">Chargement des classes…</option>
+      </select>
+      <button type="button" class="afficheur-alerte-attente" id="alerte-afficheur-classe" title="Afficher les demandes en attente de cette classe">
+        <span class="signal-exclamation" aria-hidden="true">!</span>
+        <span id="texte-alerte-afficheur-classe">Nouvelle demande non confirmée</span>
+      </button>
+    </div>
+    <div class="afficheur-classe-instruments" aria-live="polite">
+      <button type="button" class="instrument-classe instrument-total" id="instrument-classe-total" title="Afficher tous les élèves de cette classe">
+        <span class="instrument-classe-libelle">Effectif total</span>
+        <strong class="instrument-classe-valeur" id="compteur-classe-total">00</strong>
+        <span class="instrument-classe-detail" id="detail-classe-total">élèves confirmés</span>
+      </button>
+      <button type="button" class="instrument-classe instrument-present" id="instrument-classe-present" title="Afficher les élèves actuellement présents">
+        <span class="instrument-classe-libelle">Présents maintenant</span>
+        <strong class="instrument-classe-valeur" id="compteur-classe-present">00</strong>
+        <span class="instrument-classe-detail" id="detail-classe-present">0 % de l’effectif</span>
+      </button>
+      <div class="instrument-classe instrument-24h" title="Élèves distincts ayant accédé à la plateforme durant les dernières 24 heures">
+        <span class="instrument-classe-libelle">Présents sur 24 h</span>
+        <strong class="instrument-classe-valeur" id="compteur-classe-24h">00</strong>
+        <span class="instrument-classe-detail" id="detail-classe-24h">0 % de l’effectif</span>
+      </div>
+    </div>
+    <p class="afficheur-classe-legende" id="legende-afficheur-classe">Les compteurs se mettent à jour automatiquement.</p>
+  </section>
+
   <div id="bandeau-machines-labo3" style="display:none;background:#f0f9ff;border:2px solid #0284c7;border-radius:16px;padding:12px 16px;margin-bottom:14px;box-shadow:3.5px 3.5px 0 rgba(2,132,199,.35);font-size:12.5px;color:#0c4a6e"></div>
 
   </section>
@@ -3616,7 +3748,7 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
-  <script src="assets/js/admin.js?v=303-password-1"></script>
+  <script src="assets/js/admin.js?v=316-class-display-9"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>

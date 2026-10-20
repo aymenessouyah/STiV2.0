@@ -1537,6 +1537,7 @@
     if (elAct) elAct.textContent = st.actifs;
     if (elAtt) elAtt.textContent = st.attente;
     if (elCon) elCon.textContent = st.connex;
+    if (typeof majAfficheurNumeriqueClasse === "function") majAfficheurNumeriqueClasse();
 
     var bandeau = document.getElementById("bandeau-classe-active");
     if (!bandeau) return;
@@ -2501,13 +2502,142 @@
   var btnVueNoeuds = document.getElementById("btn-vue-noeuds");
   var grilleNoeuds = document.getElementById("grille-noeuds-abonnes");
   var wrapTableAbonnes = document.getElementById("wrap-table-abonnes");
+  var selAfficheurClasse = document.getElementById("select-afficheur-classe");
+  var alerteAfficheurClasse = document.getElementById("alerte-afficheur-classe");
+  var compteurClasseTotal = document.getElementById("compteur-classe-total");
+  var compteurClassePresent = document.getElementById("compteur-classe-present");
+  var compteurClasse24h = document.getElementById("compteur-classe-24h");
+  var detailClasseTotal = document.getElementById("detail-classe-total");
+  var detailClassePresent = document.getElementById("detail-classe-present");
+  var detailClasse24h = document.getElementById("detail-classe-24h");
+  var texteAlerteAfficheurClasse = document.getElementById("texte-alerte-afficheur-classe");
+  var legendeAfficheurClasse = document.getElementById("legende-afficheur-classe");
   var modeVueAbonnes = (typeof window !== "undefined" && window.innerWidth <= 768) ? "noeuds" : "liste";
   try {
     var vSauv = localStorage.getItem("sti-admin-vue-abonnes");
     if (vSauv === "noeuds" || vSauv === "liste") modeVueAbonnes = vSauv;
   } catch (e) {}
 
-  function appliquerModeVueAbonnes(nvMode) {
+  /* ---------- Afficheur numérique par classe : total, présents et activité des dernières 24 h ---------- */
+  function estClasseElevesAfficheur(classe) {
+    var c = String(classe || "").trim();
+    return Boolean(c && c !== "—" && !/^prof$/i.test(c) && !/^elevelabo3$/i.test(c));
+  }
+
+  function classe3SiParDefaut(classes) {
+    return classes.find(function (cl) {
+      var n = String(cl || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      return n.indexOf("3") === 0 && n.indexOf("si") !== -1;
+    }) || classes[0] || "";
+  }
+
+  function peuplerSelecteurAfficheurClasse() {
+    if (!selAfficheurClasse) return "";
+    var classes = obtenirClassesActives().filter(estClasseElevesAfficheur);
+    var actuelle = selAfficheurClasse.value;
+    var sauvegardee = "";
+    try { sauvegardee = localStorage.getItem("sti-admin-afficheur-classe") || ""; } catch (e) {}
+    var cible = classes.indexOf(actuelle) !== -1
+      ? actuelle
+      : (classes.indexOf(sauvegardee) !== -1 ? sauvegardee : classe3SiParDefaut(classes));
+    selAfficheurClasse.innerHTML = "";
+    if (!classes.length) {
+      var vide = document.createElement("option");
+      vide.value = "";
+      vide.textContent = "Aucune classe disponible";
+      selAfficheurClasse.appendChild(vide);
+      selAfficheurClasse.disabled = true;
+      return "";
+    }
+    selAfficheurClasse.disabled = false;
+    classes.forEach(function (cl) {
+      var opt = document.createElement("option");
+      opt.value = cl;
+      opt.textContent = "🏫 " + cl;
+      selAfficheurClasse.appendChild(opt);
+    });
+    selAfficheurClasse.value = cible;
+    return cible;
+  }
+
+  function formatCompteurClasse(n) {
+    var txt = String(Math.max(0, Number(n) || 0));
+    return txt.length < 2 ? "0" + txt : txt;
+  }
+
+  function pourcentageClasse(n, total) {
+    return total > 0 ? Math.round((n / total) * 100) : 0;
+  }
+
+  function majAfficheurNumeriqueClasse() {
+    if (!selAfficheurClasse) return;
+    var classe = peuplerSelecteurAfficheurClasse();
+    var profilsClasse = classe ? profils.filter(function (p) { return (p.classe || "—") === classe; }) : [];
+    var attente = profilsClasse.filter(function (p) { return p.statut === "en_attente"; }).length;
+    /* Une demande non confirmée et un compte exclu restent hors de l’effectif officiel. */
+    var eleves = profilsClasse.filter(function (p) { return p.statut !== "en_attente" && p.statut !== "exclu"; });
+    var idsClasse = {};
+    eleves.forEach(function (p) { idsClasse[p.id] = true; });
+    var presents = eleves.filter(function (p) { return estEnLigne(p.id); }).length;
+    var seuil24h = Date.now() - 24 * 60 * 60 * 1000;
+    var vus24h = {};
+    acces.forEach(function (a) {
+      if (!a || !idsClasse[a.user_id]) return;
+      var ts = new Date(a.fin || a.debut).getTime();
+      if (!isNaN(ts) && ts >= seuil24h) vus24h[a.user_id] = true;
+    });
+    /* La présence temps réel peut être plus récente que la dernière ligne d'accès persistée. */
+    eleves.forEach(function (p) { if (estEnLigne(p.id)) vus24h[p.id] = true; });
+    var presents24h = Object.keys(vus24h).length;
+    var total = eleves.length;
+
+    if (compteurClasseTotal) compteurClasseTotal.textContent = formatCompteurClasse(total);
+    if (compteurClassePresent) compteurClassePresent.textContent = formatCompteurClasse(presents);
+    if (compteurClasse24h) compteurClasse24h.textContent = formatCompteurClasse(presents24h);
+    if (detailClasseTotal) detailClasseTotal.textContent = total === 1 ? "élève confirmé" : "élèves confirmés";
+    if (detailClassePresent) detailClassePresent.textContent = pourcentageClasse(presents, total) + " % de l’effectif";
+    if (detailClasse24h) detailClasse24h.textContent = pourcentageClasse(presents24h, total) + " % de l’effectif";
+
+    if (alerteAfficheurClasse && texteAlerteAfficheurClasse) {
+      alerteAfficheurClasse.classList.toggle("visible", attente > 0);
+      alerteAfficheurClasse.setAttribute("aria-hidden", attente > 0 ? "false" : "true");
+      texteAlerteAfficheurClasse.textContent = attente === 1
+        ? "1 nouvelle demande non confirmée"
+        : attente + " nouvelles demandes non confirmées";
+    }
+    if (legendeAfficheurClasse) {
+      legendeAfficheurClasse.textContent = classe
+        ? ("Classe " + classe + " · mise à jour " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }))
+        : "Aucune classe disponible.";
+    }
+  }
+
+  function ouvrirListeDepuisAfficheur(statut) {
+    if (!selAfficheurClasse || !selAfficheurClasse.value) return;
+    if (selFiltreLycee) selFiltreLycee.value = "*";
+    if (selFiltreClasse) selFiltreClasse.value = selAfficheurClasse.value;
+    var carte = document.querySelector('.stat[data-filtre="' + statut + '"]');
+    if (carte) carte.click();
+    else {
+      if (selFiltreStatut) selFiltreStatut.value = statut;
+      rendAbonnes();
+    }
+  }
+
+  if (selAfficheurClasse) {
+    selAfficheurClasse.addEventListener("change", function () {
+      try { localStorage.setItem("sti-admin-afficheur-classe", selAfficheurClasse.value); } catch (e) {}
+      majAfficheurNumeriqueClasse();
+    });
+  }
+  var instrumentClasseTotal = document.getElementById("instrument-classe-total");
+  var instrumentClassePresent = document.getElementById("instrument-classe-present");
+  if (instrumentClasseTotal) instrumentClasseTotal.addEventListener("click", function () { ouvrirListeDepuisAfficheur("*"); });
+  if (instrumentClassePresent) instrumentClassePresent.addEventListener("click", function () { ouvrirListeDepuisAfficheur("en_ligne"); });
+  if (alerteAfficheurClasse) alerteAfficheurClasse.addEventListener("click", function () { ouvrirListeDepuisAfficheur("en_attente"); });
+  window.setInterval(majAfficheurNumeriqueClasse, 30000);
+
+  function appliquerModeVueAbonnes(nvMode) { 
     modeVueAbonnes = nvMode === "noeuds" ? "noeuds" : "liste";
     try { localStorage.setItem("sti-admin-vue-abonnes", modeVueAbonnes); } catch (e) {}
     if (btnVueListe) btnVueListe.classList.toggle("actif", modeVueAbonnes === "liste");

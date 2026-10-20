@@ -6,16 +6,16 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v316-dashboard-organized-8";
+var UPDATE_ID = "v316-class-digital-display-9";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
   { url: "./index.html", revision: "device-gate-v303" },
   { url: "./assets/js/config.js", revision: "platform-version-v316" },
   { url: "./portail.html", revision: "password-recovery-ui-v308" },
-  { url: "./admin.html", revision: "admin-dashboard-organized-v316-8" },
+  { url: "./admin.html", revision: "admin-class-digital-display-v316-9" },
   { url: "./assets/js/acces.js", revision: "dynamic-version-v316-1" },
-  { url: "./assets/js/admin.js", revision: "admin-password-forgotten-v316-1" },
+  { url: "./assets/js/admin.js", revision: "admin-class-digital-display-v316-9" },
   { url: "./assets/js/portail.js", revision: "windows-native-auth-gate-v316" },
   { url: "./assets/js/modules/password-recovery.js", revision: "password-recovery-module-v307" },
   { url: "./assets/js/protection.js", revision: "html5-chapter-label-escape-v316-1" },
@@ -30,7 +30,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" },
   { url: "./assets/js/modules/labo-offline-diagnostics.js", revision: "offline-diagnostics-v315" },
   { url: "./exercices/series-exercices.html", revision: "sql-serie42-gestlocation-v316-1" },
-  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-dashboard-organized-8" },
+  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-class-digital-display-9" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
   { url: "./Lancer-Labo3-Hors-Ligne.ps1", revision: "portable-powershell-server-v315" }
 ];
