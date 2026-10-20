@@ -248,6 +248,7 @@ function build(){
   if(h.length)L.push(['HAVING',h.map(x=>`${x.fn}(${lab(x.col)}) ${x.op} ${x.sub?subSQL(x):val(x.v)}`).join(' AND ')]);
   const o=S.ob.filter(x=>x.key);
   if(o.length)L.push(['ORDER BY',o.map(x=>lab(x.key)+(x.dir==='DESC'?' DESC':'')).join(', ')]);
+  else if(S.ob.length)L.push(['ORDER BY','… (choisis un critère à l’étape 7)']);
   return L}
 function checks(){
   const m=[],T=tables(),has=S.sel.length||S.aggs.length,id=x=>x.split('.')[0];
@@ -272,6 +273,7 @@ function checks(){
     if(!inop&&!o.sfn)m.push(['w',`Sous-requête : avec « ${o.op} », elle doit renvoyer une seule valeur. Choisis un calcul (AVG, MAX…) ou utilise IN.`]);
     if(inop&&o.sfn)m.push(['i','Sous-requête avec IN : elle doit renvoyer une liste de valeurs, le calcul n’est pas nécessaire.']);
     if(o.sic&&!o.siv.trim())m.push(['w','Sous-requête : sa condition interne n’a pas de valeur.'])});
+  if(S.ob.some(o=>!o.key))m.push(['i','Étape 7 : un tri est ajouté — choisis son critère (colonne ou alias) et le sens ASC / DESC, la clause ORDER BY se complétera ici.']);
   if(!m.some(x=>x[0]==='w')&&has)m.push(['ok','Aucun problème détecté. Relis l’énoncé, puis teste la requête.']);
   return m}
 function out(){
@@ -302,7 +304,8 @@ document.addEventListener('click',e=>{
   else if(a==='reset')fresh();
   else if(a==='copy'){copy();return}
   else if(a==='apply'){const p=parse($('#schema').value);if(!Object.keys(p).length)return;schema=p;fresh()}
-  render()});
+  render();
+  if(a==='add'&&k==='ob'){const sel=document.querySelector('select[data-k="ob"][data-f="key"]:last-of-type')||document.querySelector('select[data-k="ob"][data-f="key"]');if(sel){sel.focus();sel.scrollIntoView({block:'nearest',behavior:'smooth'})}}});
 document.addEventListener('change',e=>{
   const t=e.target;
   if(t.id==='preset'){$('#schema').value=PRESETS[t.value];return}
