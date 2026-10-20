@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>37 Défis JavaScript</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  :root{--bg:#0a0e1a;--surface:#141a2b;--border:rgba(255,255,255,.08);--border-hover:rgba(255,255,255,.2);--text:#e8eaf2;--muted:#8b92a8;--accent:#7c6df2;--ok:#22c55e;--warn:#f59e0b;--err:#ef4444;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+  html,body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .header{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:calc(12px + var(--safe-top)) 16px 12px}
+  .header-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .header-title{flex:1}
+  .header-title h1{font-size:1.15rem;font-weight:900;letter-spacing:-.3px;background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .header-title p{font-size:.72rem;color:var(--muted);font-weight:500;margin-top:2px}
+  .progress-pill{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);padding:7px 12px;border-radius:30px;font-size:.75rem;font-weight:800;flex-shrink:0}
+  .progress-pill .circle{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+  .progress-track{height:6px;background:rgba(255,255,255,.06);border-radius:10px;overflow:hidden}
+  .progress-fill{height:100%;background:linear-gradient(90deg,#a78bfa,#ec4899);border-radius:10px;transition:width .6s;width:2.7%;box-shadow:0 0 10px rgba(167,139,250,.6)}
+
+  /* ===== ONGLETS FAMILLES — RESPONSIVE ===== */
+  .familles-tabs{
+    position:sticky;top:calc(80px + var(--safe-top));z-index:90;
+    background:rgba(10,14,26,.92);backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    padding:10px 12px;
+    display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
+  }
+  .famille-tab{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:30px;background:var(--surface);border:1.5px solid var(--border);color:var(--muted);font-weight:700;font-size:.78rem;cursor:pointer;transition:all .25s;white-space:nowrap;font-family:inherit}
+  .famille-tab:hover{border-color:var(--border-hover);color:var(--text)}
+  .famille-tab.actif{color:white;border-color:transparent;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+  .famille-tab .tab-emoji{font-size:1rem}
+  .famille-tab .tab-count{font-size:.65rem;opacity:.7;background:rgba(255,255,255,.15);padding:2px 6px;border-radius:10px;font-weight:800}
+  .famille-tab.actif[data-fam="A"]{background:linear-gradient(135deg,#3b82f6,#60a5fa)}
+  .famille-tab.actif[data-fam="B"]{background:linear-gradient(135deg,#06b6d4,#22d3ee)}
+  .famille-tab.actif[data-fam="C"]{background:linear-gradient(135deg,#a855f7,#c084fc)}
+  .famille-tab.actif[data-fam="D"]{background:linear-gradient(135deg,#f97316,#fb923c)}
+  .famille-tab.actif[data-fam="E"]{background:linear-gradient(135deg,#22c55e,#4ade80)}
+  .famille-tab.actif[data-fam="F"]{background:linear-gradient(135deg,#eab308,#facc15);color:#1a1a2e}
+  .famille-tab.actif[data-fam="G"]{background:linear-gradient(135deg,#8b5cf6,#a78bfa)}
+  .famille-tab.actif[data-fam="H"]{background:linear-gradient(135deg,#ec4899,#f472b6)}
+  .famille-tab.actif[data-fam="I"]{background:linear-gradient(135deg,#14b8a6,#2dd4bf)}
+  .famille-tab.actif[data-fam="J"]{background:linear-gradient(135deg,#ef4444,#f87171)}
+  .famille-tab.actif[data-fam="K"]{background:linear-gradient(135deg,#6366f1,#818cf8)}
+
+  /* Sur mobile : scroll horizontal */
+  @media (max-width: 767px) {
+    .familles-tabs{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;justify-content:flex-start;scrollbar-width:none;-ms-overflow-style:none}
+    .familles-tabs::-webkit-scrollbar{display:none}
+  }
+
+  .main{max-width:1100px;margin:0 auto;padding:16px;padding-bottom:calc(30px + var(--safe-bottom))}
+  .famille-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:16px;border-radius:16px;background:var(--surface);border:1px solid var(--border);position:relative;overflow:hidden}
+  .famille-header::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--fam-color,#7c6df2)}
+  .famille-header .fh-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:var(--fam-color-bg);flex-shrink:0}
+  .famille-header h2{font-size:1.05rem;font-weight:800;margin-bottom:2px}
+  .famille-header p{font-size:.75rem;color:var(--muted);font-weight:500}
+  .grille{display:grid;grid-template-columns:1fr;gap:12px}
+  .card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;font-family:inherit;color:var(--text);text-align:left;width:100%}
+  .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--fam-color);opacity:.5;transition:opacity .25s}
+  .card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+  .card:hover::before{opacity:1}
+  .card.visite{background:rgba(34,197,94,.05);border-color:rgba(34,197,94,.25)}
+  .card.visite::before{background:var(--ok);opacity:1}
+  .card-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:var(--fam-color-bg);flex-shrink:0;position:relative}
+  .card.visite .card-icon::after{content:'✓';position:absolute;bottom:-4px;right:-4px;width:20px;height:20px;background:var(--ok);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;border:2px solid var(--bg);animation:popIn .3s}
+  @keyframes popIn{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+  .card-content{flex:1;min-width:0}
+  .card-title{font-size:.95rem;font-weight:700;margin-bottom:6px;line-height:1.3}
+  .card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .badge-niveau{font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:6px}
+  .badge-facile{background:rgba(34,197,94,.15);color:#4ade80}
+  .badge-moyen{background:rgba(245,158,11,.15);color:#fbbf24}
+  .badge-difficile{background:rgba(239,68,68,.15);color:#f87171}
+  .card-status{font-size:.68rem;font-weight:700;color:var(--muted)}
+  .card.visite .card-status{color:var(--ok)}
+  .card-arrow{font-size:1.2rem;color:var(--muted);flex-shrink:0;transition:transform .25s}
+  .card:hover .card-arrow{transform:translateX(4px);color:var(--fam-color)}
+  .overlay{position:fixed;inset:0;background:rgba(5,8,15,.75);backdrop-filter:blur(4px);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s}
+  .overlay.actif{opacity:1;pointer-events:auto}
+  .panneau{position:fixed;left:0;right:0;bottom:0;max-height:92vh;background:var(--surface);border-radius:24px 24px 0 0;border-top:1px solid var(--border);box-shadow:0 -20px 60px rgba(0,0,0,.6);z-index:200;transform:translateY(100%);transition:transform .4s;display:flex;flex-direction:column;overflow:hidden}
+  .panneau.ouvert{transform:translateY(0)}
+  .panneau-handle{padding:10px 0 4px;display:flex;justify-content:center;flex-shrink:0}
+  .panneau-handle::before{content:'';width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:10px}
+  .panneau-head{padding:8px 20px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0}
+  .panneau-head .ph-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--fam-color-bg);flex-shrink:0}
+  .panneau-head .ph-title{flex:1;font-size:1rem;font-weight:800;line-height:1.25}
+  .panneau-head .ph-close{width:36px;height:36px;border-radius:10px;background:#1a2236;border:1px solid var(--border);color:var(--muted);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit}
+  .panneau-head .ph-close:hover{color:var(--err);background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3)}
+  .panneau-body{padding:20px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+  .panneau-body::-webkit-scrollbar{width:6px}
+  .panneau-body::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:10px}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:.72rem;font-weight:800;margin-bottom:16px}
+  .badge-easy{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
+  .badge-med{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+  .badge-hard{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+  .enonce{background:rgba(124,109,242,.08);border:1px solid rgba(124,109,242,.2);border-left:3px solid var(--accent);border-radius:12px;padding:14px 16px;font-size:.85rem;line-height:1.65;color:#c8cee0;margin-bottom:18px}
+  .enonce strong{color:#a78bfa;font-weight:700}
+  .enonce code{background:rgba(0,0,0,.4);padding:2px 6px;border-radius:4px;color:#f472b6;font-family:'SF Mono',Consolas,monospace;font-size:.85em}
+  .field input,.field select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:#1a2236;color:var(--text);font-size:.95rem;font-family:inherit}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,109,242,.15)}
+  .field label{display:block;margin-bottom:6px;font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .field-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .field-row label{width:90px;margin-bottom:0;font-size:.75rem;flex-shrink:0}
+  .field-row input{flex:1;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:#1a2236;color:var(--text);font-size:.95rem;font-family:inherit}
+  .btn{background:linear-gradient(135deg,var(--accent),#ec4899);color:white;border:none;padding:12px 18px;border-radius:10px;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(124,109,242,.3);font-family:inherit;min-height:44px}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,109,242,.5)}
+  .btn+.btn{margin-left:6px}
+  .btn-secondary{background:#1a2236;border:1.5px solid var(--border);color:var(--text);box-shadow:none}
+  .btn-secondary:hover{background:#232d47;border-color:var(--border-hover);box-shadow:none}
+  .resultat{margin-top:16px;padding:14px 16px;background:#1a2236;border:1.5px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;font-size:.9rem;line-height:1.65;color:var(--text);min-height:20px;word-break:break-word}
+  .resultat.grand{font-size:1.5rem;letter-spacing:3px;font-weight:800;color:#a78bfa;text-align:center;padding:18px}
+  .resultat ul{margin-left:18px}
+  .resultat li{margin-bottom:4px}
+  .btn-correction{background:#1a2236;border:1.5px solid var(--border);color:var(--text);padding:12px 18px;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;width:100%;margin-top:16px;font-family:inherit;min-height:44px}
+  .btn-correction:hover{background:#232d47;border-color:var(--border-hover)}
+  .correction{display:none;margin-top:12px;background:#05070d;color:#b8c4dc;padding:16px;border-radius:10px;border:1px solid var(--border);border-left:3px solid #f59e0b;font-family:'SF Mono',Consolas,monospace;font-size:.76rem;line-height:1.6;width:100%;min-height:220px;resize:vertical;white-space:pre;overflow-x:auto}
+  .correction:focus{outline:none}
+  .barre{text-decoration:line-through;color:#f87171;font-weight:700;background:rgba(239,68,68,.1);padding:0 3px;border-radius:3px}
+  .tabs-forms{display:flex;gap:6px;margin-bottom:16px;background:#1a2236;padding:4px;border-radius:12px;border:1px solid var(--border)}
+  .tabs-forms button{flex:1;padding:10px 8px;border:none;border-radius:8px;background:transparent;color:var(--muted);font-weight:700;font-size:.75rem;cursor:pointer;font-family:inherit;min-height:40px}
+  .tabs-forms button.actif{background:linear-gradient(135deg,var(--accent),#ec4899);color:white}
+  .captcha-box{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:14px;background:#1a2236;border:1px solid var(--border);border-radius:12px}
+  .captcha-visual{position:relative;padding:12px 22px;background:rgba(0,0,0,.3);border-radius:10px;border:1.5px dashed var(--accent);flex:1;text-align:center}
+  .captcha-texte{font-size:22px;font-weight:800;letter-spacing:6px;font-style:italic;color:#a78bfa;user-select:none;font-family:'SF Mono',monospace}
+  .barre-captcha{position:absolute;top:50%;left:6px;right:6px;height:2px;background:#ef4444;transform-origin:center}
+  .grid-captcha{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0;max-width:290px;margin-left:auto;margin-right:auto}
+  .cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:36px;background:#1a2236;border:2px solid var(--border);border-radius:12px;cursor:pointer;user-select:none;transition:all .2s}
+  .cell:hover{border-color:var(--accent);transform:scale(1.05)}
+  .captcha-consigne{text-align:center;color:#a78bfa;font-weight:800;padding:10px 14px;background:rgba(124,109,242,.1);border:1px solid rgba(124,109,242,.25);border-radius:10px;margin-bottom:12px;font-size:.85rem}
+  .info-validation{width:100%;text-align:right;font-size:.72rem;font-weight:700;margin-bottom:8px}
+  .audio-box{padding:16px;background:#1a2236;border:1px solid var(--border);border-radius:12px;margin-bottom:14px;text-align:center}
+  .audio-emoji{font-size:3rem;margin-bottom:12px;display:block;transition:transform .2s}
+  .audio-emoji.playing{animation:bounceA 1s ease-in-out infinite}
+  @keyframes bounceA{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.15) rotate(5deg)}}
+  .audio-controls{display:flex;gap:10px;justify-content:center}
+  .array-box{display:flex;flex-wrap:wrap;gap:6px;padding:12px;background:#1a2236;border:1px solid var(--border);border-radius:10px;margin-bottom:14px;min-height:60px;align-items:center;justify-content:center}
+  .array-item{padding:6px 12px;background:rgba(124,109,242,.2);border:1px solid rgba(124,109,242,.4);border-radius:8px;font-weight:700;font-size:.85rem;color:#a78bfa}
+  .array-item .idx{opacity:.5;font-size:.7rem;margin-right:4px}
+  .quiz-progress{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:12px 14px;background:#1a2236;border-radius:10px;border:1px solid var(--border)}
+  .quiz-progress-bar{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden}
+  .quiz-progress-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#60a5fa);border-radius:10px;transition:width .4s;width:0%}
+  .quiz-progress-text{font-size:.78rem;font-weight:800;white-space:nowrap}
+  .quiz-question{background:#1a2236;border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;text-align:center}
+  .quiz-question-label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
+  .quiz-question-expr{font-family:'SF Mono',monospace;font-size:1.6rem;font-weight:800;color:#f472b6;padding:12px;background:rgba(0,0,0,.3);border-radius:8px;margin-bottom:16px;word-break:break-all}
+  .quiz-answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  @media (max-width:420px){.quiz-answers{grid-template-columns:1fr}}
+  .quiz-field label{display:block;font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+  .quiz-field input,.quiz-field select{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:#0f1523;color:var(--text);font-size:.95rem;font-family:inherit}
+  .quiz-field input:focus,.quiz-field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,109,242,.15)}
+  .quiz-field input.correct,.quiz-field select.correct{border-color:#22c55e;background:rgba(34,197,94,.1)}
+  .quiz-field input.wrong,.quiz-field select.wrong{border-color:#ef4444;background:rgba(239,68,68,.1)}
+  .quiz-feedback{padding:14px 16px;border-radius:10px;font-size:.88rem;line-height:1.6;margin-bottom:14px;min-height:20px;display:none}
+  .quiz-feedback.success{display:block;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#4ade80}
+  .quiz-feedback.error{display:block;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171}
+  .quiz-feedback code{background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;font-family:'SF Mono',monospace;color:#fbbf24}
+  .quiz-score{padding:16px;background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(99,102,241,.15));border:1px solid rgba(59,130,246,.3);border-radius:12px;text-align:center;margin-bottom:16px}
+  .quiz-score-value{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#3b82f6,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .quiz-score-label{font-size:.78rem;color:var(--muted);font-weight:600;margin-top:4px}
+  .quiz-done{padding:24px;background:#1a2236;border:1px solid var(--border);border-radius:12px;text-align:center}
+  .quiz-done-emoji{font-size:3rem;margin-bottom:12px;display:block}
+  .quiz-done h3{font-size:1.1rem;font-weight:800;margin-bottom:8px;color:#4ade80}
+  .quiz-done p{color:var(--muted);font-size:.88rem;line-height:1.6;margin-bottom:16px}
+  .solutions-tabs{display:flex;gap:6px;margin-bottom:14px;background:#1a2236;padding:4px;border-radius:12px;border:1px solid var(--border)}
+  .solutions-tabs button{flex:1;padding:10px 6px;border:none;border-radius:8px;background:transparent;color:var(--muted);font-weight:700;font-size:.72rem;cursor:pointer;font-family:inherit;min-height:44px;line-height:1.2}
+  .solutions-tabs button.actif{background:linear-gradient(135deg,var(--accent),#ec4899);color:white}
+  .solution-card{background:#1a2236;border:1.5px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;padding:16px;margin-bottom:14px}
+  .solution-card h4{font-size:.88rem;font-weight:800;color:#a78bfa;margin-bottom:10px}
+  .solution-card .avantages{font-size:.78rem;line-height:1.6;color:#c8cee0;margin-bottom:8px}
+  .solution-card .avantages strong{color:#4ade80}
+  .solution-card .inconvenients strong{color:#f87171}
+  .solution-card code{background:rgba(0,0,0,.4);padding:2px 6px;border-radius:4px;color:#f472b6;font-family:'SF Mono',monospace;font-size:.82em}
+  .solution-card pre{background:#05070d;padding:10px 12px;border-radius:8px;font-family:'SF Mono',monospace;font-size:.75rem;line-height:1.5;color:#b8c4dc;overflow-x:auto;margin-top:8px;white-space:pre}
+  .demo-result{margin-top:12px;padding:12px 14px;background:rgba(0,0,0,.3);border-radius:8px;font-size:1rem;color:var(--text);min-height:40px}
+  @media (min-width:640px){
+    .grille{grid-template-columns:repeat(2,1fr);gap:14px}
+    .panneau{left:auto;right:0;top:0;bottom:0;width:100%;max-width:520px;max-height:100vh;border-radius:0;border-left:1px solid var(--border);border-top:none;transform:translateX(100%)}
+    .panneau.ouvert{transform:translateX(0)}
+    .panneau-handle{display:none}
+  }
+  @media (min-width:900px){.grille{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-top">
+    <div class="header-title">
+      <h1>37 Défis JavaScript</h1>
+      <p>Bases · If/Switch · Boucles · Chaînes · Maths · Conversions · Dates · Formulaires · Tableau · Aléas · Média</p>
+    </div>
+    <div class="progress-pill">
+      <span class="circle"></span>
+      <span id="progress-text">1/37</span>
+    </div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+</header>
+
+<nav class="familles-tabs" id="familles-tabs"></nav>
+
+<main class="main">
+  <div id="famille-header-slot"></div>
+  <div class="grille" id="grille"></div>
+</main>
+
+<div class="overlay" id="overlay" onclick="fermerPanneau()"></div>
+
+<aside class="panneau" id="panneau">
+  <div class="panneau-handle"></div>
+  <div class="panneau-head">
+    <div class="ph-icon" id="ph-icon">📖</div>
+    <div class="ph-title" id="ph-title">Exercice</div>
+    <button class="ph-close" onclick="fermerPanneau()">✕</button>
+  </div>
+  <div class="panneau-body" id="panneau-body"></div>
+</aside>
+
+<script>
+/* ============================================================
+   DONNÉES — 37 exercices, 11 familles
+   ============================================================ */
+const FAMILLES = [
+  { id:"A", emoji:"📚", nom:"Bases", couleur:"#3b82f6", bg:"rgba(59,130,246,.15)", exercices:[
+    { id:1, emoji:"➕", titre:"Quiz : opérations & concaténations", niveau:"Facile" }
+  ]},
+  { id:"B", emoji:"🔀", nom:"If / Switch", couleur:"#06b6d4", bg:"rgba(6,182,212,.15)", exercices:[
+    { id:2, emoji:"🔀", titre:"Conditions : if / else / switch", niveau:"Facile" }
+  ]},
+  { id:"C", emoji:"🔁", nom:"Boucles", couleur:"#a855f7", bg:"rgba(168,85,247,.15)", exercices:[
+    { id:3, emoji:"🔁", titre:"Boucles : for / while / do...while", niveau:"Moyen" }
+  ]},
+  { id:"D", emoji:"🔤", nom:"Chaînes", couleur:"#f97316", bg:"rgba(249,115,22,.15)", exercices:[
+    { id:4, emoji:"✏️", titre:"Texte barré (3 solutions)", niveau:"Facile" },
+    { id:5, emoji:"🔡", titre:"Majuscules / minuscules", niveau:"Facile" },
+    { id:6, emoji:"✨", titre:"trim + concaténation", niveau:"Facile" },
+    { id:7, emoji:"🔍", titre:"indexOf / lastIndexOf (+p)", niveau:"Moyen" },
+    { id:8, emoji:"🔢", titre:"fromCharCode", niveau:"Moyen" },
+    { id:9, emoji:"✂️", titre:"substring", niveau:"Difficile" }
+  ]},
+  { id:"E", emoji:"🧮", nom:"Maths", couleur:"#22c55e", bg:"rgba(34,197,94,.15)", exercices:[
+    { id:10, emoji:"📐", titre:"abs / sqrt", niveau:"Facile" },
+    { id:11, emoji:"🔵", titre:"round / trunc", niveau:"Moyen" },
+    { id:12, emoji:"🎰", titre:"Math.random", niveau:"Moyen" }
+  ]},
+  { id:"F", emoji:"🔄", nom:"Conversions", couleur:"#eab308", bg:"rgba(234,179,8,.15)", exercices:[
+    { id:13, emoji:"🅰️", titre:"String(a)", niveau:"Facile" },
+    { id:14, emoji:"❓", titre:"isNaN / Number", niveau:"Moyen" },
+    { id:15, emoji:"💬", titre:"prompt()", niveau:"Moyen" },
+    { id:16, emoji:"🔢", titre:"parseInt / parseFloat", niveau:"Moyen" },
+    { id:17, emoji:"💻", titre:"toString(base)", niveau:"Difficile" }
+  ]},
+  { id:"G", emoji:"📅", nom:"Dates", couleur:"#8b5cf6", bg:"rgba(139,92,246,.15)", exercices:[
+    { id:18, emoji:"🕐", titre:"new Date() : date courante", niveau:"Facile" },
+    { id:19, emoji:"📆", titre:"new Date(ch) : depuis une chaîne", niveau:"Facile" },
+    { id:20, emoji:"🔍", titre:"getDate / getMonth / getFullYear", niveau:"Moyen" },
+    { id:21, emoji:"📋", titre:"toString() et formats d'affichage", niveau:"Moyen" },
+    { id:22, emoji:"📊", titre:"Rapport complet sur une date", niveau:"Difficile" }
+  ]},
+  { id:"H", emoji:"📝", nom:"Formulaires", couleur:"#ec4899", bg:"rgba(236,72,153,.15)", exercices:[
+    { id:23, emoji:"🔓", titre:"Activer / Désactiver", niveau:"Facile" },
+    { id:24, emoji:"✅", titre:"Contrôle formulaire", niveau:"Moyen" },
+    { id:25, emoji:"📋", titre:"3 formulaires", niveau:"Moyen" }
+  ]},
+  { id:"I", emoji:"📊", nom:"Tableau", couleur:"#14b8a6", bg:"rgba(20,184,166,.15)", exercices:[
+    { id:26, emoji:"📊", titre:"Créer un tableau", niveau:"Facile" },
+    { id:27, emoji:"🔍", titre:"Accéder aux éléments", niveau:"Facile" },
+    { id:28, emoji:"➕", titre:"Ajouter / Retirer", niveau:"Moyen" }
+  ]},
+  { id:"J", emoji:"🎲", nom:"Aléas & Captchas", couleur:"#ef4444", bg:"rgba(239,68,68,.15)", exercices:[
+    { id:29, emoji:"✂️", titre:"Caractère aléatoire d'une chaîne", niveau:"Facile" },
+    { id:30, emoji:"🎲", titre:"Entiers aléatoires", niveau:"Facile" },
+    { id:31, emoji:"🔠", titre:"Lettres aléatoires", niveau:"Facile" },
+    { id:32, emoji:"🎨", titre:"Couleur aléatoire", niveau:"Facile" },
+    { id:33, emoji:"🌈", titre:"Captcha multicolore", niveau:"Moyen" },
+    { id:34, emoji:"✏️", titre:"Captcha barré", niveau:"Moyen" },
+    { id:35, emoji:"🚲", titre:"Captcha vélo 3×3", niveau:"Difficile" }
+  ]},
+  { id:"K", emoji:"🎵", nom:"Média", couleur:"#6366f1", bg:"rgba(99,102,241,.15)", exercices:[
+    { id:36, emoji:"▶️", titre:"play() / pause()", niveau:"Facile" }
+  ]}
+];
+
+const TOTAL = FAMILLES.reduce((s,f)=>s+f.exercices.length,0);
+
+/* ============================================================
+   ÉTAT
+   ============================================================ */
+const STORAGE_KEY = "js_defis_v12";
+let visites = new Set();
+let familleActive = "A";
+
+function chargerVisites(){
+  try { const s=localStorage.getItem(STORAGE_KEY); if(s) visites=new Set(JSON.parse(s)); } catch(e){ visites=new Set(); }
+  if(visites.size===0) visites.add(1);
+}
+function sauvegarderVisites(){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(Array.from(visites))); }catch(e){} }
+
+/* ============================================================
+   RENDU
+   ============================================================ */
+function rendreOnglets(){
+  const nav = document.getElementById("familles-tabs");
+  nav.innerHTML = "";
+  FAMILLES.forEach(fam=>{
+    const nb = fam.exercices.filter(ex=>visites.has(ex.id)).length;
+    const btn = document.createElement("button");
+    btn.className = "famille-tab" + (fam.id===familleActive?" actif":"");
+    btn.dataset.fam = fam.id;
+    btn.innerHTML = `<span class="tab-emoji">${fam.emoji}</span><span>${fam.nom}</span><span class="tab-count">${nb}/${fam.exercices.length}</span>`;
+    btn.onclick = ()=>changerFamille(fam.id);
+    nav.appendChild(btn);
+  });
+}
+
+function rendreContenu(){
+  const fam = FAMILLES.find(f=>f.id===familleActive);
+  const nb = fam.exercices.filter(ex=>visites.has(ex.id)).length;
+  document.getElementById("famille-header-slot").innerHTML = `
+    <div class="famille-header" style="--fam-color:${fam.couleur};--fam-color-bg:${fam.bg};">
+      <div class="fh-icon">${fam.emoji}</div>
+      <div>
+        <h2>Famille ${fam.id} — ${fam.nom}</h2>
+        <p>${nb} sur ${fam.exercices.length} exercice${fam.exercices.length>1?'s':''} visité${nb>1?'s':''}</p>
+      </div>
+    </div>`;
+
+  const grille = document.getElementById("grille");
+  grille.innerHTML = "";
+  fam.exercices.forEach(ex=>{
+    const v = visites.has(ex.id);
+    const nivCls = ex.niveau==="Facile"?"badge-facile":ex.niveau==="Moyen"?"badge-moyen":"badge-difficile";
+    const stars = ex.niveau==="Facile"?"★":ex.niveau==="Moyen"?"★★":"★★★";
+    const card = document.createElement("button");
+    card.className = "card" + (v?" visite":"");
+    card.style.setProperty("--fam-color", fam.couleur);
+    card.style.setProperty("--fam-color-bg", fam.bg);
+    card.onclick = ()=>ouvrirExercice(ex.id);
+    card.innerHTML = `
+      <div class="card-icon">${ex.emoji}</div>
+      <div class="card-content">
+        <div class="card-title">${ex.titre}</div>
+        <div class="card-meta">
+          <span class="badge-niveau ${nivCls}">${stars} ${ex.niveau}</span>
+          <span class="card-status">${v?"✓ Déjà visité":"À découvrir"}</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>`;
+    grille.appendChild(card);
+  });
+}
+
+function changerFamille(id){ familleActive=id; rendreOnglets(); rendreContenu(); window.scrollTo({top:0,behavior:"smooth"}); }
+
+function majProgression(){
+  document.getElementById("progress-fill").style.width = (visites.size/TOTAL)*100 + "%";
+  document.getElementById("progress-text").textContent = visites.size + "/" + TOTAL;
+}
+
+/* ============================================================
+   OUVERTURE
+   ============================================================ */
+function ouvrirExercice(id){
+  const ex = trouverExercice(id);
+  const fam = trouverFamille(id);
+  if(!ex||!fam) return;
+  visites.add(id); sauvegarderVisites();
+  majProgression(); rendreOnglets(); rendreContenu();
+  document.getElementById("ph-icon").innerHTML = ex.emoji;
+  document.getElementById("ph-icon").style.background = fam.bg;
+  document.getElementById("ph-title").innerHTML = ex.titre;
+  document.getElementById("panneau-body").innerHTML = genererContenu(id);
+  document.getElementById("panneau").classList.add("ouvert");
+  document.getElementById("overlay").classList.add("actif");
+  document.body.style.overflow = "hidden";
+  initialiserExercice(id);
+}
+
+function fermerPanneau(){
+  document.getElementById("panneau").classList.remove("ouvert");
+  document.getElementById("overlay").classList.remove("actif");
+  document.body.style.overflow = "";
+  document.querySelectorAll("audio").forEach(a=>{ if(!a.paused) a.pause(); });
+}
+
+function trouverExercice(id){ for(const f of FAMILLES) for(const ex of f.exercices) if(ex.id===id) return ex; return null; }
+function trouverFamille(id){ for(const f of FAMILLES) for(const ex of f.exercices) if(ex.id===id) return f; return FAMILLES[0]; }
+
+function initialiserExercice(id){
+  if(id===1) quizInit();
+  if(id===2) ex2_afficher("if");
+  if(id===3) ex3_afficher("for");
+  if(id===4) ex4_afficher(1);
+  if(id===18) ex18_courante();
+  if(id===19) ex19_parser();
+  if(id===20) ex20_analyser();
+  if(id===21) ex21_formats();
+  if(id===22) ex22_rapport();
+  if(id===26) ex26_creer();
+  if(id===28) ex28_reset();
+  if(id===33) cap33_generer();
+  if(id===34) cap34_generer();
+  if(id===35) cap35_generer();
+}
+
+/* ============================================================
+   CONTENU HTML PAR EXERCICE
+   ============================================================ */
+function genererContenu(id){
+  const b = (n)=>{ if(n==="Facile") return '<span class="badge badge-easy">★ Facile</span>'; if(n==="Moyen") return '<span class="badge badge-med">★★ Moyen</span>'; return '<span class="badge badge-hard">★★★ Difficile</span>'; };
+
+  switch(id){
+    case 1: return `${b("Facile")}
+      <div class="enonce"><strong>🎯 Quiz : opérations & concaténations</strong><br><br>Indique la <strong>valeur</strong> et le <strong>type</strong> (<code>number</code>, <code>string</code>, <code>NaN</code>).<br>💡 Chaîne : écris sans guillemets.</div>
+      <div class="quiz-progress"><div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-fill"></div></div><span class="quiz-progress-text" id="quiz-progress-text">1 / 14</span></div>
+      <div class="quiz-score"><div class="quiz-score-value" id="quiz-score">0 / 14</div><div class="quiz-score-label">bonnes réponses</div></div>
+      <div id="quiz-zone"></div>
+      <button class="btn-correction" onclick="toggleCorrection(1)">Voir la correction</button>
+      <textarea class="correction" id="corr1" readonly></textarea>`;
+
+    case 2: return `${b("Facile")}
+      <div class="enonce"><strong>🔀 Conditions : if / else / switch</strong><br>Mention selon la note : ≥16 Très bien · 14–16 Bien · 12–14 Assez bien · 10–12 Passable · &lt;10 Insuffisant</div>
+      <div class="field-row"><label>Note (0–20)</label><input type="number" id="ex2_note" value="15" min="0" max="20" step="0.5"></div>
+      <div class="solutions-tabs">
+        <button class="actif" id="tab-if" onclick="ex2_afficher('if')">1️⃣ if / else</button>
+        <button id="tab-switch" onclick="ex2_afficher('switch')">2️⃣ switch</button>
+      </div>
+      <div id="ex2_zone"></div>
+      <button class="btn-correction" onclick="toggleCorrection(2)">Voir la correction</button>
+      <textarea class="correction" id="corr2" readonly></textarea>`;
+
+    case 3: return `${b("Moyen")}
+      <div class="enonce"><strong>🔁 Boucles : for / while / do...while</strong><br>1️⃣ <code>for</code> — connu<br>2️⃣ <code>while</code> — tant que<br>3️⃣ <code>do...while</code> — au moins 1 fois</div>
+      <div class="field-row"><label>Nombre n</label><input type="number" id="ex3_n" value="5" min="1" max="20"></div>
+      <div class="solutions-tabs">
+        <button class="actif" id="tab-for" onclick="ex3_afficher('for')">1️⃣ for</button>
+        <button id="tab-while" onclick="ex3_afficher('while')">2️⃣ while</button>
+        <button id="tab-dowhile" onclick="ex3_afficher('dowhile')">3️⃣ do...while</button>
+      </div>
+      <div id="ex3_zone"></div>
+      <button class="btn-correction" onclick="toggleCorrection(3)">Voir la correction</button>
+      <textarea class="correction" id="corr3" readonly></textarea>`;
+
+    case 4: return `${b("Facile")}
+      <div class="enonce"><strong>Énoncé :</strong> Remplace un mot par sa version <strong>barrée</strong>.<br>3 solutions :<br>1️⃣ <code>&lt;span class="barre"&gt;</code> + CSS<br>2️⃣ <code>&lt;del&gt;</code><br>3️⃣ <code>&lt;s&gt;</code></div>
+      <div class="field-row"><label>Phrase</label><input type="text" id="ex4_phrase" value="Je déteste les lundis matin"></div>
+      <div class="field-row"><label>Mot</label><input type="text" id="ex4_mot" value="déteste"></div>
+      <div class="solutions-tabs">
+        <button class="actif" id="tab-s1" onclick="ex4_afficher(1)">1️⃣ span+CSS</button>
+        <button id="tab-s2" onclick="ex4_afficher(2)">2️⃣ &lt;del&gt;</button>
+        <button id="tab-s3" onclick="ex4_afficher(3)">3️⃣ &lt;s&gt;</button>
+      </div>
+      <div id="ex4_zone"></div>
+      <button class="btn-correction" onclick="toggleCorrection(4)">Voir la correction</button>
+      <textarea class="correction" id="corr4" readonly></textarea>`;
+
+    case 5: return `${b("Facile")}<div class="enonce"><code>toLowerCase()</code> et <code>toUpperCase()</code>.</div><div class="field-row"><label>Chaîne</label><input type="text" id="ex5_ch" value="Bonjour Tunisie"></div><button class="btn" onclick="ex5_go()">🔡 Transformer</button><div class="resultat" id="ex5_res"></div><button class="btn-correction" onclick="toggleCorrection(5)">Voir la correction</button><textarea class="correction" id="corr5" readonly></textarea>`;
+
+    case 6: return `${b("Facile")}<div class="enonce"><code>trim()</code> + concaténation.</div><div class="field-row"><label>Chaîne 1</label><input type="text" id="ex6_a" value="   Bonjour   "></div><div class="field-row"><label>Chaîne 2</label><input type="text" id="ex6_b" value="   Tunisie   "></div><button class="btn" onclick="ex6_go()">✨ Nettoyer</button><div class="resultat" id="ex6_res"></div><button class="btn-correction" onclick="toggleCorrection(6)">Voir la correction</button><textarea class="correction" id="corr6" readonly></textarea>`;
+
+    case 7: return `${b("Moyen")}<div class="enonce"><code>indexOf(ch, p)</code> et <code>lastIndexOf(ch, p)</code>.</div><div class="field-row"><label>Chaîne</label><input type="text" id="ex7_ch" value="Mississippi"></div><div class="field-row"><label>Caractère</label><input type="text" id="ex7_car" value="s" maxlength="1"></div><div class="field-row"><label>Position p</label><input type="number" id="ex7_p" value="0"></div><button class="btn" onclick="ex7_go()">🔍 Analyser</button><div class="resultat" id="ex7_res"></div><button class="btn-correction" onclick="toggleCorrection(7)">Voir la correction</button><textarea class="correction" id="corr7" readonly></textarea>`;
+
+    case 8: return `${b("Moyen")}<div class="enonce"><code>String.fromCharCode()</code>.</div><div class="field-row"><label>Codes</label><input type="text" id="ex8_codes" value="72, 101, 108, 108, 111"></div><button class="btn" onclick="ex8_go()">🔢 Décoder</button><div class="resultat" id="ex8_res"></div><button class="btn-correction" onclick="toggleCorrection(8)">Voir la correction</button><textarea class="correction" id="corr8" readonly></textarea>`;
+
+    case 9: return `${b("Difficile")}<div class="enonce"><code>substring(d, f)</code>.</div><div class="field-row"><label>Chaîne</label><input type="text" id="ex9_ch" value="Mozilla"></div><div class="field-row"><label>Début</label><input type="number" id="ex9_d" value="0"></div><div class="field-row"><label>Fin</label><input type="number" id="ex9_f" value="3"></div><button class="btn" onclick="ex9_go()">✂️ Extraire</button><div class="resultat" id="ex9_res"></div><button class="btn-correction" onclick="toggleCorrection(9)">Voir la correction</button><textarea class="correction" id="corr9" readonly></textarea>`;
+
+    case 10: return `${b("Facile")}<div class="enonce"><code>Math.abs</code> et <code>Math.sqrt</code>.</div><div class="field-row"><label>Nombre</label><input type="number" id="ex10_n" value="-16"></div><button class="btn" onclick="ex10_go()">📐 Calculer</button><div class="resultat" id="ex10_res"></div><button class="btn-correction" onclick="toggleCorrection(10)">Voir la correction</button><textarea class="correction" id="corr10" readonly></textarea>`;
+
+    case 11: return `${b("Moyen")}<div class="enonce"><code>Math.round</code> vs <code>Math.trunc</code>.</div><div class="field-row"><label>Nombre</label><input type="number" id="ex11_n" value="3.7" step="0.1"></div><button class="btn" onclick="ex11_go()">🔵 Calculer</button><div class="resultat" id="ex11_res"></div><button class="btn-correction" onclick="toggleCorrection(11)">Voir la correction</button><textarea class="correction" id="corr11" readonly></textarea>`;
+
+    case 12: return `${b("Moyen")}<div class="enonce">10 nombres × 100.</div><button class="btn" onclick="ex12_go()">🎰 Générer</button><div class="resultat" id="ex12_res"></div><button class="btn-correction" onclick="toggleCorrection(12)">Voir la correction</button><textarea class="correction" id="corr12" readonly></textarea>`;
+
+    case 13: return `${b("Facile")}<div class="enonce"><code>String(a)</code>.</div><div class="field-row"><label>Nombre</label><input type="number" id="ex13_n" value="2025"></div><button class="btn" onclick="ex13_go()">🅰️ Tester</button><div class="resultat" id="ex13_res"></div><button class="btn-correction" onclick="toggleCorrection(13)">Voir la correction</button><textarea class="correction" id="corr13" readonly></textarea>`;
+
+    case 14: return `${b("Moyen")}<div class="enonce"><code>isNaN</code> / <code>Number</code>.</div><div class="field-row"><label>Valeur</label><input type="text" id="ex14_val" value="42.5"></div><button class="btn" onclick="ex14_go()">❓ Tester</button><div class="resultat" id="ex14_res"></div><button class="btn-correction" onclick="toggleCorrection(14)">Voir la correction</button><textarea class="correction" id="corr14" readonly></textarea>`;
+
+    case 15: return `${b("Moyen")}<div class="enonce"><code>prompt()</code>.</div><button class="btn" onclick="ex15_go()">💬 Demander</button><div class="resultat" id="ex15_res"></div><button class="btn-correction" onclick="toggleCorrection(15)">Voir la correction</button><textarea class="correction" id="corr15" readonly></textarea>`;
+
+    case 16: return `${b("Moyen")}<div class="enonce"><code>parseInt</code> vs <code>parseFloat</code> vs <code>Number</code>.</div><div class="field-row"><label>Chaîne</label><input type="text" id="ex16_val" value="42px"></div><button class="btn" onclick="ex16_go()">🔢 Tester</button><div class="resultat" id="ex16_res"></div><button class="btn-correction" onclick="toggleCorrection(16)">Voir la correction</button><textarea class="correction" id="corr16" readonly></textarea>`;
+
+    case 17: return `${b("Difficile")}<div class="enonce"><code>toString(base)</code>.</div><div class="field-row"><label>Nombre</label><input type="number" id="ex17_n" value="255"></div><button class="btn" onclick="ex17_go()">💻 Convertir</button><div class="resultat" id="ex17_res"></div><button class="btn-correction" onclick="toggleCorrection(17)">Voir la correction</button><textarea class="correction" id="corr17" readonly></textarea>`;
+
+    case 18: return `${b("Facile")}<div class="enonce"><strong>🎯 new Date()</strong> → date courante.</div><button class="btn" onclick="ex18_courante()">📅 Afficher</button><div class="resultat" id="ex18_res"></div><button class="btn-correction" onclick="toggleCorrection(18)">Voir la correction</button><textarea class="correction" id="corr18" readonly></textarea>`;
+
+    case 19: return `${b("Facile")}
+      <div class="enonce"><strong>🎯 new Date(ch)</strong> — formats ISO / Short / Long.</div>
+      <div class="field"><label>Format</label><select id="ex19_format" onchange="ex19_changerFormat()"><option value="2025-11-21">ISO "2025-11-21"</option><option value="11/21/2025">Short "11/21/2025"</option><option value="Nov 21 2025">Long "Nov 21 2025"</option><option value="21 Nov 2025">Long "21 Nov 2025"</option></select></div>
+      <div class="field-row"><label>Chaîne</label><input type="text" id="ex19_ch" value="2025-11-21"></div>
+      <button class="btn" onclick="ex19_parser()">🔍 Analyser</button>
+      <div class="resultat" id="ex19_res"></div>
+      <button class="btn-correction" onclick="toggleCorrection(19)">Voir la correction</button>
+      <textarea class="correction" id="corr19" readonly></textarea>`;
+
+    case 20: return `${b("Moyen")}<div class="enonce"><strong>getDate, getMonth, getFullYear, getDay</strong>.</div><div class="field-row"><label>Date</label><input type="date" id="ex20_date" value="2025-11-21"></div><button class="btn" onclick="ex20_analyser()">🔍 Analyser</button><div class="resultat" id="ex20_res"></div><button class="btn-correction" onclick="toggleCorrection(20)">Voir la correction</button><textarea class="correction" id="corr20" readonly></textarea>`;
+
+    case 21: return `${b("Moyen")}<div class="enonce"><strong>toString, toDateString, toTimeString, toISOString, toLocaleDateString</strong>.</div><div class="field-row"><label>Date</label><input type="date" id="ex21_date" value="2025-11-21"></div><button class="btn" onclick="ex21_formats()">📋 Formats</button><div class="resultat" id="ex21_res"></div><button class="btn-correction" onclick="toggleCorrection(21)">Voir la correction</button><textarea class="correction" id="corr21" readonly></textarea>`;
+
+    case 22: return `${b("Difficile")}<div class="enonce"><strong>Rapport complet</strong> sur une date.</div><div class="field-row"><label>Date</label><input type="date" id="ex22_date" value="2025-01-01"></div><button class="btn" onclick="ex22_rapport()">📊 Rapport</button><div class="resultat" id="ex22_res"></div><button class="btn-correction" onclick="toggleCorrection(22)">Voir la correction</button><textarea class="correction" id="corr22" readonly></textarea>`;
+
+    case 23: return `${b("Facile")}<div class="enonce">Basculer <code>disabled</code>.</div><div class="field-row"><label>Nom</label><input type="text" id="ex23_champ" value="Tunisie2025" disabled></div><button class="btn" onclick="ex23_activer()">🔓 Activer</button><button class="btn btn-secondary" onclick="ex23_desactiver()">🔒 Désactiver</button><button class="btn btn-secondary" onclick="ex23_basculer()">🔄 Basculer</button><div class="resultat" id="ex23_etat"></div><button class="btn-correction" onclick="toggleCorrection(23)">Voir la correction</button><textarea class="correction" id="corr23" readonly></textarea>`;
+
+    case 24: return `${b("Moyen")}
+      <div class="enonce">Contrôle en temps réel.</div>
+      <div class="field-row"><label>Nom</label><input type="text" id="ex24_nom" oninput="ex24_ctrl('nom')"></div><div class="info-validation" id="ex24_iNom"></div>
+      <div class="field-row"><label>Email</label><input type="text" id="ex24_email" oninput="ex24_ctrl('email')"></div><div class="info-validation" id="ex24_iEmail"></div>
+      <div class="field-row"><label>Âge</label><input type="text" id="ex24_age" oninput="ex24_ctrl('age')"></div><div class="info-validation" id="ex24_iAge"></div>
+      <button class="btn" onclick="ex24_valider()">✅ Valider</button><div class="resultat" id="ex24_global"></div>
+      <button class="btn-correction" onclick="toggleCorrection(24)">Voir la correction</button><textarea class="correction" id="corr24" readonly></textarea>`;
+
+    case 25: return `${b("Moyen")}
+      <div class="enonce">3 formulaires via <code>display</code>.</div>
+      <div class="tabs-forms">
+        <button class="actif" id="ex25_bCon" onclick="ex25_afficher('con')">Connexion</button>
+        <button id="ex25_bIns" onclick="ex25_afficher('ins')">Inscription</button>
+        <button id="ex25_bMdp" onclick="ex25_afficher('mdp')">Mot de passe</button>
+      </div>
+      <div id="ex25_fCon"><div class="field-row"><label>Email</label><input type="email" id="ex25_con_email"></div><div class="field-row"><label>Mot de passe</label><input type="password" id="ex25_con_pwd"></div><button class="btn" onclick="ex25_connexion()">Se connecter</button></div>
+      <div id="ex25_fIns" style="display:none"><div class="field-row"><label>Nom</label><input type="text" id="ex25_ins_nom"></div><div class="field-row"><label>Email</label><input type="email" id="ex25_ins_email"></div><div class="field-row"><label>Mot de passe</label><input type="password" id="ex25_ins_pwd"></div><div class="field-row"><label>Confirmer</label><input type="password" id="ex25_ins_pwd2"></div><button class="btn" onclick="ex25_inscrire()">S'inscrire</button></div>
+      <div id="ex25_fMdp" style="display:none"><div class="field-row"><label>Email</label><input type="email" id="ex25_mdp_email"></div><button class="btn" onclick="ex25_recuperer()">Envoyer</button></div>
+      <button class="btn-correction" onclick="toggleCorrection(25)">Voir la correction</button><textarea class="correction" id="corr25" readonly></textarea>`;
+
+    case 26: return `${b("Facile")}<div class="enonce">Créer tableau avec <code>[]</code>.</div><div class="array-box" id="ex26_tab"></div><button class="btn" onclick="ex26_creer()">📊 Créer</button><div class="resultat" id="ex26_res"></div><button class="btn-correction" onclick="toggleCorrection(26)">Voir la correction</button><textarea class="correction" id="corr26" readonly></textarea>`;
+
+    case 27: return `${b("Facile")}<div class="enonce">Accéder par <code>tab[i]</code>.</div><div class="field-row"><label>Tableau</label><input type="text" id="ex27_input" value="🍎, 🍌, 🍇, 🍊, 🍓"></div><div class="field-row"><label>Indice</label><input type="number" id="ex27_idx" value="0" min="0"></div><button class="btn" onclick="ex27_go()">🔍 Accéder</button><div class="resultat" id="ex27_res"></div><button class="btn-correction" onclick="toggleCorrection(27)">Voir la correction</button><textarea class="correction" id="corr27" readonly></textarea>`;
+
+    case 28: return `${b("Moyen")}<div class="enonce"><code>tab[tab.length] = val</code> et <code>tab.length -= 1</code>.</div><div class="array-box" id="ex28_tab"></div><div class="field-row"><label>Valeur</label><input type="text" id="ex28_val" placeholder="Nouvelle valeur..."></div><button class="btn" onclick="ex28_ajouter()">➕ Ajouter</button><button class="btn btn-secondary" onclick="ex28_retirer()">➖ Retirer</button><button class="btn btn-secondary" onclick="ex28_reset()">↻ Reset</button><div class="resultat" id="ex28_res"></div><button class="btn-correction" onclick="toggleCorrection(28)">Voir la correction</button><textarea class="correction" id="corr28" readonly></textarea>`;
+
+    case 29: return `${b("Facile")}<div class="enonce">Caractère aléatoire.</div><div class="field-row"><label>Chaîne</label><input type="text" id="ex29_ch" value="Bonjour Tunisie"></div><button class="btn" onclick="ex29_go()">✂️ Choisir</button><div class="resultat grand" id="ex29_res"></div><button class="btn-correction" onclick="toggleCorrection(29)">Voir la correction</button><textarea class="correction" id="corr29" readonly></textarea>`;
+
+    case 30: return `${b("Facile")}<div class="enonce">Entier aléatoire entre min et max.</div><div class="field-row"><label>Min</label><input type="number" id="min" value="1"></div><div class="field-row"><label>Max</label><input type="number" id="max" value="100"></div><button class="btn" onclick="ex30_go()">🎲 Générer</button><div class="resultat grand" id="ex30_res"></div><button class="btn-correction" onclick="toggleCorrection(30)">Voir la correction</button><textarea class="correction" id="corr30" readonly></textarea>`;
+
+    case 31: return `${b("Facile")}<div class="enonce">5 lettres aléatoires.</div><button class="btn" onclick="ex31_go()">🔠 Générer</button><div class="resultat grand" id="ex31_res"></div><button class="btn-correction" onclick="toggleCorrection(31)">Voir la correction</button><textarea class="correction" id="corr31" readonly></textarea>`;
+
+    case 32: return `${b("Facile")}<div class="enonce">Couleur #RRGGBB.</div><button class="btn" onclick="ex32_go()">🎨 Changer</button><div class="resultat grand" id="ex32_res"></div><button class="btn-correction" onclick="toggleCorrection(32)">Voir la correction</button><textarea class="correction" id="corr32" readonly></textarea>`;
+
+    case 33: return `${b("Moyen")}
+      <div class="enonce">Captcha multicolore.</div>
+      <div class="captcha-box"><div class="captcha-visual"><span id="cap33_texte" class="captcha-texte">??????</span></div><button class="btn btn-secondary" style="padding:10px 14px" onclick="cap33_generer()">↻</button></div>
+      <div class="field-row"><label>Code</label><input type="text" id="cap33_saisie" placeholder="Entrez le code"></div>
+      <button class="btn" onclick="cap33_verifier()">🌈 Vérifier</button>
+      <div class="resultat" id="cap33_res"></div>
+      <button class="btn-correction" onclick="toggleCorrection(33)">Voir la correction</button>
+      <textarea class="correction" id="corr33" readonly></textarea>`;
+
+    case 34: return `${b("Moyen")}
+      <div class="enonce">Captcha barré.</div>
+      <div class="captcha-box"><div class="captcha-visual"><span id="cap34_texte" class="captcha-texte">??????</span><div id="cap34_barre" class="barre-captcha"></div></div><button class="btn btn-secondary" style="padding:10px 14px" onclick="cap34_generer()">↻</button></div>
+      <div class="field-row"><label>Code</label><input type="text" id="cap34_saisie" placeholder="Entrez le code"></div>
+      <button class="btn" onclick="cap34_verifier()">✏️ Vérifier</button>
+      <div class="resultat" id="cap34_res"></div>
+      <button class="btn-correction" onclick="toggleCorrection(34)">Voir la correction</button>
+      <textarea class="correction" id="corr34" readonly></textarea>`;
+
+    case 35: return `${b("Difficile")}
+      <div class="enonce">Grille 3×3 — sélectionne les 🚲.</div>
+      <div class="captcha-consigne">🚲 Sélectionne tous les vélos</div>
+      <div class="grid-captcha" id="cap35_grid">
+        <div class="cell" id="cap35_cell0" onclick="cap35_toggle(0)"></div>
+        <div class="cell" id="cap35_cell1" onclick="cap35_toggle(1)"></div>
+        <div class="cell" id="cap35_cell2" onclick="cap35_toggle(2)"></div>
+        <div class="cell" id="cap35_cell3" onclick="cap35_toggle(3)"></div>
+        <div class="cell" id="cap35_cell4" onclick="cap35_toggle(4)"></div>
+        <div class="cell" id="cap35_cell5" onclick="cap35_toggle(5)"></div>
+        <div class="cell" id="cap35_cell6" onclick="cap35_toggle(6)"></div>
+        <div class="cell" id="cap35_cell7" onclick="cap35_toggle(7)"></div>
+        <div class="cell" id="cap35_cell8" onclick="cap35_toggle(8)"></div>
+      </div>
+      <button class="btn" onclick="cap35_verifier()">🚲 Vérifier</button>
+      <button class="btn btn-secondary" onclick="cap35_generer()">↻ Nouveau</button>
+      <div class="resultat" id="cap35_res"></div>
+      <button class="btn-correction" onclick="toggleCorrection(35)">Voir la correction</button>
+      <textarea class="correction" id="corr35" readonly></textarea>`;
+
+    case 36: return `${b("Facile")}
+      <div class="enonce">play() / pause().</div>
+      <div class="audio-box">
+        <span class="audio-emoji" id="ex36_emoji">🎵</span>
+        <div class="audio-controls">
+          <button class="btn" onclick="ex36_play()">▶️ play()</button>
+          <button class="btn btn-secondary" onclick="ex36_pause()">⏸️ pause()</button>
+        </div>
+        <audio id="ex36_audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="none"></audio>
+      </div>
+      <div class="resultat" id="ex36_res">État : en pause</div>
+      <button class="btn-correction" onclick="toggleCorrection(36)">Voir la correction</button>
+      <textarea class="correction" id="corr36" readonly></textarea>`;
+
+    default: return "";
+  }
+}
+
+/* ============================================================
+   EX 1 — QUIZ
+   ============================================================ */
+const QUIZ = [
+  {e:'5 + "6"', v:"56", t:"string"},
+  {e:'"5" + 6', v:"56", t:"string"},
+  {e:'"5" + "6"', v:"56", t:"string"},
+  {e:'5 + 6', v:"11", t:"number"},
+  {e:'5 - "6"', v:"-1", t:"number"},
+  {e:'5 - 6', v:"-1", t:"number"},
+  {e:'5 * "6"', v:"30", t:"number"},
+  {e:'"5" * 6', v:"30", t:"number"},
+  {e:'5 / "6"', v:"0.8333333333333334", t:"number"},
+  {e:'5 / "blabla"', v:"NaN", t:"NaN"},
+  {e:'"ab" + 6', v:"ab6", t:"string"},
+  {e:'"ab" + 6 + 5', v:"ab65", t:"string"},
+  {e:'6 + 5 + "ab"', v:"11ab", t:"string"},
+  {e:'"ab" - 6', v:"NaN", t:"NaN"}
+];
+let qi = 0, qs = 0, qDone = false;
+
+function quizInit(){ qi=0; qs=0; qDone=false; quizRendre(); }
+
+function quizRendre(){
+  const z = document.getElementById("quiz-zone");
+  if(!z) return;
+  if(qi >= QUIZ.length){
+    z.innerHTML = `<div class="quiz-done"><span class="quiz-done-emoji">🎉</span><h3>Quiz terminé !</h3><p>Score : <strong style="color:#4ade80">${qs} / ${QUIZ.length}</strong></p><button class="btn" onclick="quizInit()">🔄 Recommencer</button></div>`;
+    quizMaj(); return;
+  }
+  const q = QUIZ[qi];
+  z.innerHTML = `
+    <div class="quiz-question">
+      <div class="quiz-question-label">Question ${qi+1} / ${QUIZ.length}</div>
+      <div class="quiz-question-expr">${q.e}</div>
+      <div class="quiz-answers">
+        <div class="quiz-field"><label>Valeur</label><input type="text" id="q-val" placeholder="ex: 56"></div>
+        <div class="quiz-field"><label>Type</label><select id="q-type"><option value="">— Choisir —</option><option value="number">number</option><option value="string">string</option><option value="NaN">NaN</option></select></div>
+      </div>
+      <button class="btn" onclick="quizValider()" style="width:100%">✅ Valider</button>
+    </div>
+    <div class="quiz-feedback" id="q-fb"></div>`;
+  quizMaj();
+}
+
+function quizValider(){
+  if(qDone) return;
+  const q = QUIZ[qi];
+  const iV = document.getElementById("q-val"), iT = document.getElementById("q-type"), fb = document.getElementById("q-fb");
+  const rV = iV.value.trim(), rT = iT.value;
+  if(rV===""||rT===""){ fb.className="quiz-feedback error"; fb.innerHTML="⚠️ Remplis les deux champs."; return; }
+  let vOk = false;
+  if(q.v==="0.8333333333333334"){ const n=parseFloat(rV); if(!isNaN(n)&&Math.abs(n-0.8333333333333334)<0.01) vOk=true; }
+  else vOk = rV.toLowerCase()===q.v.toLowerCase();
+  const tOk = rT===q.t;
+  const all = vOk && tOk;
+  iV.className = vOk?"correct":"wrong";
+  iT.className = tOk?"correct":"wrong";
+  iV.disabled = iT.disabled = true;
+  if(all){ qs++; fb.className="quiz-feedback success"; fb.innerHTML=`✅ <code>${q.e}</code> = <code>${q.v}</code> (${q.t})`; }
+  else { fb.className="quiz-feedback error"; let d=""; if(!vOk)d+=`Valeur : <code>${q.v}</code><br>`; if(!tOk)d+=`Type : <code>${q.t}</code>`; fb.innerHTML=`❌ <code>${q.e}</code><br>${d}`; }
+  const nb = document.createElement("button");
+  nb.className="btn"; nb.style.width="100%"; nb.style.marginTop="12px";
+  nb.innerHTML = qi<QUIZ.length-1?"Suivant →":"Résultat 🎉";
+  nb.onclick = ()=>{ qi++; qDone=false; quizRendre(); };
+  fb.appendChild(nb);
+  qDone = true;
+  quizMaj();
+}
+
+function quizMaj(){
+  const f = document.getElementById("quiz-fill"), t = document.getElementById("quiz-progress-text"), s = document.getElementById("quiz-score");
+  if(f){ f.style.width = (qi/QUIZ.length*100)+"%"; }
+  if(t){ t.textContent = Math.min(qi+1,QUIZ.length) + " / " + QUIZ.length; }
+  if(s){ s.textContent = qs + " / " + QUIZ.length; }
+}
+
+/* ============================================================
+   EX 2 — IF/SWITCH
+   ============================================================ */
+function ex2_afficher(mode){
+  document.getElementById("tab-if").className = mode==="if"?"actif":"";
+  document.getElementById("tab-switch").className = mode==="switch"?"actif":"";
+  const z = document.getElementById("ex2_zone");
+  if(!z) return;
+  if(mode==="if"){
+    z.innerHTML = `<div class="solution-card"><h4>1️⃣ if / else if / else</h4><div class="avantages"><strong>✔ Avantages :</strong> simple, lisible, tests complexes.</div><div class="avantages inconvenients"><strong>✘ Inconvénients :</strong> long si beaucoup de cas.</div><pre>if (note >= 16) mention = "Très bien";
+else if (note >= 14) mention = "Bien";
+else if (note >= 12) mention = "Assez bien";
+else if (note >= 10) mention = "Passable";
+else mention = "Insuffisant";</pre><button class="btn" onclick="ex2_go('if')" style="margin-top:12px;width:100%">▶️ Tester</button><div class="demo-result" id="ex2_demo">Clique pour tester.</div></div>`;
+  } else {
+    z.innerHTML = `<div class="solution-card"><h4>2️⃣ switch(true)</h4><div class="avantages"><strong>✔ Avantages :</strong> lisible pour des plages.</div><div class="avantages inconvenients"><strong>✘ Inconvénients :</strong> switch(true) moins connu.</div><pre>switch (true) {
+  case note >= 16: mention = "Très bien"; break;
+  case note >= 14: mention = "Bien"; break;
+  case note >= 12: mention = "Assez bien"; break;
+  case note >= 10: mention = "Passable"; break;
+  default: mention = "Insuffisant";
+}</pre><button class="btn" onclick="ex2_go('switch')" style="margin-top:12px;width:100%">▶️ Tester</button><div class="demo-result" id="ex2_demo">Clique pour tester.</div></div>`;
+  }
+}
+
+function ex2_go(mode){
+  const note = Number(document.getElementById("ex2_note").value);
+  const r = document.getElementById("ex2_demo");
+  if(isNaN(note)||note<0||note>20){ r.innerHTML="❌ Note 0–20"; return; }
+  let m = "";
+  if(mode==="if"){
+    if(note>=16) m="Très bien"; else if(note>=14) m="Bien"; else if(note>=12) m="Assez bien"; else if(note>=10) m="Passable"; else m="Insuffisant";
+  } else {
+    switch(true){
+      case note>=16: m="Très bien"; break;
+      case note>=14: m="Bien"; break;
+      case note>=12: m="Assez bien"; break;
+      case note>=10: m="Passable"; break;
+      default: m="Insuffisant";
+    }
+  }
+  r.innerHTML = `Note : <strong>${note}</strong> → Mention : <strong style="color:#4ade80">${m}</strong>`;
+}
+
+/* ============================================================
+   EX 3 — BOUCLES
+   ============================================================ */
+function ex3_afficher(type){
+  document.getElementById("tab-for").className = type==="for"?"actif":"";
+  document.getElementById("tab-while").className = type==="while"?"actif":"";
+  document.getElementById("tab-dowhile").className = type==="dowhile"?"actif":"";
+  const z = document.getElementById("ex3_zone");
+  if(!z) return;
+  let html = "";
+  if(type==="for"){
+    html = `<div class="solution-card"><h4>1️⃣ for</h4><div class="avantages"><strong>✔ Avantages :</strong> compacte, nombre d'itérations <strong>connu</strong>.</div><div class="avantages inconvenients"><strong>✘ Inconvénients :</strong> risque de boucle infinie si incrément oublié.</div><pre>for (let i = 1; i <= n; i++) {
+  console.log("Tour n°" + i);
+}</pre><button class="btn" onclick="ex3_go('for')" style="margin-top:12px;width:100%">▶️ Exécuter</button><div class="demo-result" id="ex3_demo">Clique.</div></div>`;
+  } else if(type==="while"){
+    html = `<div class="solution-card"><h4>2️⃣ while</h4><div class="avantages"><strong>✔ Avantages :</strong> nombre d'itérations <strong>inconnu</strong>.</div><div class="avantages inconvenients"><strong>✘ Inconvénients :</strong> incrément manuel obligatoire.</div><pre>let i = 1;
+while (i <= n) {
+  console.log("Tour n°" + i);
+  i++;
+}</pre><button class="btn" onclick="ex3_go('while')" style="margin-top:12px;width:100%">▶️ Exécuter</button><div class="demo-result" id="ex3_demo">Clique.</div></div>`;
+  } else {
+    html = `<div class="solution-card"><h4>3️⃣ do...while</h4><div class="avantages"><strong>✔ Avantages :</strong> au moins 1 exécution.</div><div class="avantages inconvenients"><strong>✘ Inconvénients :</strong> test en fin de boucle.</div><pre>let i = 1;
+do {
+  console.log("Tour n°" + i);
+  i++;
+} while (i <= n);</pre><button class="btn" onclick="ex3_go('dowhile')" style="margin-top:12px;width:100%">▶️ Exécuter</button><div class="demo-result" id="ex3_demo">Clique.</div></div>`;
+  }
+  z.innerHTML = html;
+}
+
+function ex3_go(type){
+  const n = Number(document.getElementById("ex3_n").value);
+  const r = document.getElementById("ex3_demo");
+  if(isNaN(n)||n<1||n>20){ r.innerHTML="❌ n entre 1 et 20"; return; }
+  let t = [], i = 1;
+  if(type==="for"){ for(i=1;i<=n;i++) t.push("Tour n°"+i); }
+  else if(type==="while"){ while(i<=n){ t.push("Tour n°"+i); i++; } }
+  else { do { t.push("Tour n°"+i); i++; } while(i<=n); }
+  r.innerHTML = `<strong>${type}</strong> → ${t.join(" · ")}`;
+}
+
+/* ============================================================
+   EX 4 — TEXTE BARRÉ
+   ============================================================ */
+function ex4_afficher(n){
+  document.getElementById("tab-s1").className = n===1?"actif":"";
+  document.getElementById("tab-s2").className = n===2?"actif":"";
+  document.getElementById("tab-s3").className = n===3?"actif":"";
+  const z = document.getElementById("ex4_zone");
+  if(!z) return;
+  let html = "";
+  if(n===1){
+    html = `<div class="solution-card"><h4>1️⃣ &lt;span class="barre"&gt; + CSS</h4><div class="avantages"><strong>✔ Avantages :</strong> contrôle total du style.</div><div class="avantages inconvenients"><strong>✘ Inconvénients :</strong> nécessite une règle CSS.</div><pre>HTML : &lt;span class="barre"&gt;déteste&lt;/span&gt;
+CSS  : .barre { text-decoration: line-through; color: red; }</pre><button class="btn" onclick="ex4_go(1)" style="margin-top:12px;width:100%">▶️ Tester</button><div class="demo-result" id="ex4_demo"></div></div>`;
+  } else if(n===2){
+    html = `<div class="solution-card"><h4>2️⃣ &lt;del&gt;</h4><div class="avantages"><strong>✔ Avantages :</strong> sémantique (supprimé), barré natif.</div><div class="avantages inconvenients"><strong>✘ Inconvénients :</strong> style noir fin par défaut.</div><pre>HTML : &lt;del&gt;déteste&lt;/del&gt;</pre><button class="btn" onclick="ex4_go(2)" style="margin-top:12px;width:100%">▶️ Tester</button><div class="demo-result" id="ex4_demo"></div></div>`;
+  } else {
+    html = `<div class="solution-card"><h4>3️⃣ &lt;s&gt;</h4><div class="avantages"><strong>✔ Avantages :</strong> sémantique (obsolète), barré natif.</div><div class="avantages inconvenients"><strong>✘ Inconvénients :</strong> pas de notion de suppression.</div><pre>HTML : &lt;s&gt;déteste&lt;/s&gt;</pre><button class="btn" onclick="ex4_go(3)" style="margin-top:12px;width:100%">▶️ Tester</button><div class="demo-result" id="ex4_demo"></div></div>`;
+  }
+  z.innerHTML = html;
+}
+
+function ex4_go(n){
+  const p = document.getElementById("ex4_phrase").value;
+  const m = document.getElementById("ex4_mot").value.trim();
+  const r = document.getElementById("ex4_demo");
+  if(!m || p.indexOf(m)===-1){ r.innerHTML="❌ Mot introuvable"; return; }
+  let rep = "";
+  if(n===1) rep = "<span class='barre'>"+m+"</span>";
+  else if(n===2) rep = "<del>"+m+"</del>";
+  else rep = "<s>"+m+"</s>";
+  r.innerHTML = p.replace(m, rep);
+}
+
+/* ============================================================
+   EX 5-17
+   ============================================================ */
+function ex5_go(){ const c = document.getElementById("ex5_ch").value; document.getElementById("ex5_res").innerHTML = `<ul><li><strong>Min :</strong> ${c.toLowerCase()}</li><li><strong>Maj :</strong> ${c.toUpperCase()}</li></ul>`; }
+function ex6_go(){ const a = document.getElementById("ex6_a").value.trim(); const b = document.getElementById("ex6_b").value.trim(); document.getElementById("ex6_res").innerHTML = `<ul><li><strong>Avant :</strong> ${document.getElementById("ex6_a").value.length} / ${document.getElementById("ex6_b").value.length}</li><li><strong>Après :</strong> ${a.length} / ${b.length}</li><li><strong>Concat :</strong> ${a} ${b}</li></ul>`; }
+function ex7_go(){ const ch = document.getElementById("ex7_ch").value; const c = document.getElementById("ex7_car").value; const p = Number(document.getElementById("ex7_p").value); document.getElementById("ex7_res").innerHTML = `<ul><li><strong>Longueur :</strong> ${ch.length}</li><li><strong>indexOf("${c}", ${p}) :</strong> ${ch.indexOf(c,p)}</li><li><strong>lastIndexOf("${c}", ${p}) :</strong> ${ch.lastIndexOf(c,p)}</li><li><strong>indexOf("${c}") :</strong> ${ch.indexOf(c)}</li><li><strong>lastIndexOf("${c}") :</strong> ${ch.lastIndexOf(c)}</li></ul>`; }
+function ex8_go(){ const ps = document.getElementById("ex8_codes").value.split(","); let r = ""; ps.forEach(p=>{ const c = parseInt(p.trim(),10); if(!isNaN(c)) r += String.fromCharCode(c); }); document.getElementById("ex8_res").innerHTML = `<strong>${r}</strong>`; }
+function ex9_go(){ const ch = document.getElementById("ex9_ch").value; const d = Number(document.getElementById("ex9_d").value); const f = Number(document.getElementById("ex9_f").value); document.getElementById("ex9_res").innerHTML = `<ul><li><strong>substring(${d},${f}) :</strong> ${ch.substring(d,f)}</li><li><strong>substring(${d}) :</strong> ${ch.substring(d)}</li><li><strong>substring(${f},${d}) :</strong> ${ch.substring(f,d)}</li></ul>`; }
+function ex10_go(){ const n = Number(document.getElementById("ex10_n").value); const r = document.getElementById("ex10_res"); if(isNaN(n)){ r.innerHTML="❌ Nombre"; return; } let h = `<ul><li><strong>abs :</strong> ${Math.abs(n)}</li>`; h += n<0 ? `<li><strong>sqrt :</strong> impossible</li>` : `<li><strong>sqrt :</strong> ${Math.sqrt(n)}</li>`; r.innerHTML = h + "</ul>"; }
+function ex11_go(){ const n = Number(document.getElementById("ex11_n").value); document.getElementById("ex11_res").innerHTML = `<ul><li><strong>round :</strong> ${Math.round(n)}</li><li><strong>trunc :</strong> ${Math.trunc(n)}</li></ul>`; }
+function ex12_go(){ let h = "<ul>"; for(let i=0;i<10;i++){ const r=Math.random(); h += `<li>${(Math.round(r*10000)/10000)} → <strong>${Math.round(r*100)}</strong></li>`; } document.getElementById("ex12_res").innerHTML = h + "</ul>"; }
+function ex13_go(){ const n = Number(document.getElementById("ex13_n").value); const s = String(n); document.getElementById("ex13_res").innerHTML = `<ul><li><strong>String(n) :</strong> ${s} (${typeof s})</li><li><strong>String(n)+1 :</strong> ${s+1} (concat)</li><li><strong>n+1 :</strong> ${n+1} (addition)</li></ul>`; }
+function ex14_go(){ const v = document.getElementById("ex14_val").value; document.getElementById("ex14_res").innerHTML = `<ul><li><strong>isNaN :</strong> ${isNaN(v)}</li><li><strong>Number :</strong> ${Number(v)}</li></ul>`; }
+function ex15_go(){ const r = document.getElementById("ex15_res"); const s = prompt("Entrez un nombre :"); if(s===null){ r.innerHTML="❌ Annulé"; return; } if(s.trim()===""||isNaN(s)){ r.innerHTML="❌ Invalide : "+s; return; } const n = Number(s); r.innerHTML = `<ul><li><strong>Double :</strong> ${n*2}</li><li><strong>Carré :</strong> ${n*n}</li></ul>`; }
+function ex16_go(){ const v = document.getElementById("ex16_val").value; document.getElementById("ex16_res").innerHTML = `<ul><li><strong>parseInt :</strong> ${parseInt(v,10)}</li><li><strong>parseFloat :</strong> ${parseFloat(v)}</li><li><strong>Number :</strong> ${Number(v)}</li><li><strong>isNaN(Number) :</strong> ${isNaN(Number(v))}</li></ul>`; }
+function ex17_go(){ const n = Number(document.getElementById("ex17_n").value); document.getElementById("ex17_res").innerHTML = `<ul><li><strong>Base 2 :</strong> ${n.toString(2)}</li><li><strong>Base 8 :</strong> ${n.toString(8)}</li><li><strong>Base 16 :</strong> ${n.toString(16).toUpperCase()}</li></ul>`; }
+
+/* ============================================================
+   EX 18-22 DATES
+   ============================================================ */
+function ex18_courante(){ const d = new Date(); const r = document.getElementById("ex18_res"); if(!r) return; r.innerHTML = `<ul>
+    <li><strong>d.toString() :</strong> ${d.toString()}</li>
+    <li><strong>d.getDate() :</strong> ${d.getDate()} (1–31)</li>
+    <li><strong>d.getMonth() :</strong> ${d.getMonth()} (0–11, 0 = janvier)</li>
+    <li><strong>d.getMonth() + 1 :</strong> ${d.getMonth()+1}</li>
+    <li><strong>d.getFullYear() :</strong> ${d.getFullYear()}</li>
+    <li><strong>d.getDay() :</strong> ${d.getDay()} (0 = dimanche)</li>
+    <li><strong>Date.now() :</strong> ${Date.now()}</li>
+  </ul>`; }
+
+function ex19_changerFormat(){ document.getElementById("ex19_ch").value = document.getElementById("ex19_format").value; ex19_parser(); }
+
+function ex19_parser(){ const ch = document.getElementById("ex19_ch").value.trim(); const r = document.getElementById("ex19_res"); if(!r) return; if(ch===""){ r.innerHTML="⚠️ Saisir une chaîne"; return; } const d = new Date(ch); if(isNaN(d.getTime())){ r.innerHTML=`<span style="color:#ef4444">❌ Invalide : "${ch}"</span>`; return; } r.innerHTML = `<ul>
+    <li><strong>Chaîne :</strong> "${ch}"</li>
+    <li><strong>toString :</strong> ${d.toString()}</li>
+    <li><strong>getDate :</strong> ${d.getDate()}</li>
+    <li><strong>getMonth + 1 :</strong> ${d.getMonth()+1}</li>
+    <li><strong>getFullYear :</strong> ${d.getFullYear()}</li>
+    <li><strong>toISOString :</strong> ${d.toISOString()}</li>
+  </ul>`; }
+
+function ex20_analyser(){ const v = document.getElementById("ex20_date").value; const r = document.getElementById("ex20_res"); if(!r) return; if(v===""){ r.innerHTML="⚠️ Choisir une date"; return; } const d = new Date(v); if(isNaN(d.getTime())){ r.innerHTML="❌ Invalide"; return; } const j = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"]; const m = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]; r.innerHTML = `<ul>
+    <li><strong>getDate :</strong> ${d.getDate()}</li>
+    <li><strong>getMonth :</strong> ${d.getMonth()} → ${m[d.getMonth()]}</li>
+    <li><strong>getMonth + 1 :</strong> ${d.getMonth()+1}</li>
+    <li><strong>getFullYear :</strong> ${d.getFullYear()}</li>
+    <li><strong>getDay :</strong> ${d.getDay()} → ${j[d.getDay()]}</li>
+  </ul>`; }
+
+function ex21_formats(){ const v = document.getElementById("ex21_date").value; const r = document.getElementById("ex21_res"); if(!r) return; if(v===""){ r.innerHTML="⚠️ Choisir une date"; return; } const d = new Date(v+"T12:00:00"); if(isNaN(d.getTime())){ r.innerHTML="❌ Invalide"; return; } let jj = ""+d.getDate(); if(d.getDate()<10) jj="0"+jj; let mm = ""+(d.getMonth()+1); if(d.getMonth()+1<10) mm="0"+mm; r.innerHTML = `<ul>
+    <li><strong>toString :</strong> ${d.toString()}</li>
+    <li><strong>toDateString :</strong> ${d.toDateString()}</li>
+    <li><strong>toTimeString :</strong> ${d.toTimeString()}</li>
+    <li><strong>toISOString :</strong> ${d.toISOString()}</li>
+    <li><strong>toLocaleDateString(fr-FR) :</strong> ${d.toLocaleDateString("fr-FR")}</li>
+    <li><strong>Format JJ/MM/AAAA :</strong> ${jj}/${mm}/${d.getFullYear()}</li>
+  </ul>`; }
+
+function ex22_rapport(){ const v = document.getElementById("ex22_date").value; const r = document.getElementById("ex22_res"); if(!r) return; if(v===""){ r.innerHTML="⚠️ Choisir une date"; return; } const d = new Date(v); if(isNaN(d.getTime())){ r.innerHTML=`<span style="color:#ef4444">❌ Invalide</span>`; return; } const j = ["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"]; const m = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"]; const now = new Date(); const diffJ = Math.round(Math.abs(now-d)/(1000*60*60*24)); let jj = ""+d.getDate(); if(d.getDate()<10) jj="0"+jj; let mm = ""+(d.getMonth()+1); if(d.getMonth()+1<10) mm="0"+mm; r.innerHTML = `<ul>
+    <li><strong>toString :</strong> ${d.toString()}</li>
+    <li><strong>Jour :</strong> ${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}</li>
+    <li><strong>Jour de semaine :</strong> ${j[d.getDay()]}</li>
+    <li><strong>Format FR :</strong> ${jj}/${mm}/${d.getFullYear()}</li>
+    <li><strong>ISO :</strong> ${d.toISOString()}</li>
+    <li><strong>Timestamp :</strong> ${d.getTime()} ms</li>
+    <li><strong>Écart :</strong> ${diffJ} jour(s)</li>
+  </ul>`; }
+
+/* ============================================================
+   EX 23-25
+   ============================================================ */
+function ex23_etat(){ const c = document.getElementById("ex23_champ"), e = document.getElementById("ex23_etat"); if(c.disabled){ e.innerHTML="🔒 Désactivé"; e.style.color="#ef4444"; } else { e.innerHTML="🔓 Activé"; e.style.color="#22c55e"; } }
+function ex23_activer(){ document.getElementById("ex23_champ").disabled=false; ex23_etat(); }
+function ex23_desactiver(){ document.getElementById("ex23_champ").disabled=true; ex23_etat(); }
+function ex23_basculer(){ document.getElementById("ex23_champ").disabled=!document.getElementById("ex23_champ").disabled; ex23_etat(); }
+
+function ex24_ctrl(id){
+  const c = document.getElementById("ex24_"+id);
+  const i = document.getElementById("ex24_i"+id.charAt(0).toUpperCase()+id.substring(1));
+  const v = c.value;
+  let ok = false, msg = "";
+  if(id==="nom"){ if(v.trim().length>=3){ ok=true; msg="✅ Valide"; } else msg="❌ Min 3 car."; }
+  else if(id==="email"){ const a=v.indexOf("@"); const p=v.lastIndexOf("."); if(a>=1 && p>a+1 && p<v.length-1){ ok=true; msg="✅ Valide"; } else msg="❌ Invalide"; }
+  else if(id==="age"){ const n=Number(v); if(!isNaN(n)&&n>=18&&n<=120){ ok=true; msg="✅ Valide"; } else msg="❌ 18–120"; }
+  i.innerHTML = msg;
+  i.style.color = ok?"#22c55e":"#ef4444";
+  c.style.borderColor = ok?"#22c55e":"#ef4444";
+  return ok;
+}
+function ex24_valider(){ const v1 = ex24_ctrl("nom"), v2 = ex24_ctrl("email"), v3 = ex24_ctrl("age"); const g = document.getElementById("ex24_global"); if(v1&&v2&&v3){ g.innerHTML="✅ Formulaire valide !"; g.style.color="#22c55e"; } else { g.innerHTML="❌ Corrige les champs"; g.style.color="#ef4444"; } }
+
+function ex25_afficher(t){
+  document.getElementById("ex25_fCon").style.display = t==="con"?"block":"none";
+  document.getElementById("ex25_fIns").style.display = t==="ins"?"block":"none";
+  document.getElementById("ex25_fMdp").style.display = t==="mdp"?"block":"none";
+  document.getElementById("ex25_bCon").className = t==="con"?"actif":"";
+  document.getElementById("ex25_bIns").className = t==="ins"?"actif":"";
+  document.getElementById("ex25_bMdp").className = t==="mdp"?"actif":"";
+}
+function ex25_connexion(){ const e = document.getElementById("ex25_con_email").value; const p = document.getElementById("ex25_con_pwd").value; if(!e||!p){ alert("Veuillez remplir."); return; } alert("Connexion : "+e); }
+function ex25_inscrire(){ const p1 = document.getElementById("ex25_ins_pwd").value; const p2 = document.getElementById("ex25_ins_pwd2").value; if(p1===""||p1!==p2){ alert("Mots de passe différents !"); return; } alert("Inscription réussie !"); }
+function ex25_recuperer(){ const e = document.getElementById("ex25_mdp_email").value; if(e.indexOf("@")===-1){ alert("Email invalide"); return; } alert("Lien envoyé à "+e); }
+
+/* ============================================================
+   EX 26-28
+   ============================================================ */
+let ex26_tab = [];
+function ex26_creer(){
+  ex26_tab = ["🍎","🍌","🍇","🍊","🍓"];
+  const box = document.getElementById("ex26_tab");
+  box.innerHTML = "";
+  for(let i=0;i<ex26_tab.length;i++){
+    const el = document.createElement("div");
+    el.className = "array-item";
+    el.innerHTML = `<span class="idx">[${i}]</span>${ex26_tab[i]}`;
+    box.appendChild(el);
+  }
+  document.getElementById("ex26_res").innerHTML = `✅ Créé : <code>let tab = ["🍎","🍌","🍇","🍊","🍓"];</code><br><strong>tab.length</strong> = ${ex26_tab.length}`;
+}
+function ex27_go(){
+  const input = document.getElementById("ex27_input").value;
+  const idx = Number(document.getElementById("ex27_idx").value);
+  const arr = input.split(",").map(s=>s.trim());
+  const r = document.getElementById("ex27_res");
+  if(idx<0||idx>=arr.length){ r.innerHTML=`❌ Indice hors limites (0 à ${arr.length-1})`; return; }
+  r.innerHTML = `<ul><li><strong>tab[${idx}]</strong> = ${arr[idx]}</li><li><strong>tab[0]</strong> = ${arr[0]}</li><li><strong>tab[${arr.length-1}]</strong> = ${arr[arr.length-1]}</li><li><strong>length</strong> = ${arr.length}</li></ul>`;
+}
+let ex28_tab = ["🍎","🍌","🍇"];
+function ex28_reset(){ ex28_tab = ["🍎","🍌","🍇"]; ex28_afficher(); const r = document.getElementById("ex28_res"); if(r) r.innerHTML = "Tableau initial : <code>[\"🍎\",\"🍌\",\"🍇\"]</code>"; }
+function ex28_afficher(){
+  const box = document.getElementById("ex28_tab");
+  if(!box) return;
+  box.innerHTML = "";
+  for(let i=0;i<ex28_tab.length;i++){
+    const el = document.createElement("div");
+    el.className = "array-item";
+    el.innerHTML = `<span class="idx">[${i}]</span>${ex28_tab[i]}`;
+    box.appendChild(el);
+  }
+  if(ex28_tab.length===0) box.innerHTML = "<em style='color:#8b92a8;font-size:.8rem'>Tableau vide</em>";
+}
+function ex28_ajouter(){ const v = document.getElementById("ex28_val").value.trim(); if(v===""){ document.getElementById("ex28_res").innerHTML="❌ Saisir une valeur"; return; } ex28_tab[ex28_tab.length] = v; document.getElementById("ex28_val").value = ""; ex28_afficher(); document.getElementById("ex28_res").innerHTML = `✅ <code>tab[tab.length] = "${v}"</code> → length = ${ex28_tab.length}`; }
+function ex28_retirer(){ if(ex28_tab.length===0){ document.getElementById("ex28_res").innerHTML="❌ Tableau vide"; return; } const r = ex28_tab[ex28_tab.length-1]; ex28_tab.length = ex28_tab.length - 1; ex28_afficher(); document.getElementById("ex28_res").innerHTML = `✅ <code>tab.length -= 1</code> → retiré « ${r} » — length = ${ex28_tab.length}`; }
+
+/* ============================================================
+   EX 29-35
+   ============================================================ */
+function ex29_go(){ const ch = document.getElementById("ex29_ch").value; const r = document.getElementById("ex29_res"); if(ch.length===0){ r.innerHTML="❌ Chaîne vide"; return; } const i = Math.floor(Math.random()*ch.length); r.innerHTML = `${ch.substring(i,i+1)}<br><small style='font-size:.7rem;opacity:.6'>Indice ${i}</small>`; }
+function ex30_go(){ let a = Number(document.getElementById("min").value); let b = Number(document.getElementById("max").value); const r = document.getElementById("ex30_res"); if(isNaN(a)||isNaN(b)){ r.innerHTML="❌ Nombres"; return; } if(a>b){ const t=a; a=b; b=t; } r.innerHTML = Math.floor(Math.random()*(b-a+1))+a; }
+function ex31_go(){ let c = ""; for(let i=0;i<5;i++) c += String.fromCharCode(Math.floor(Math.random()*26)+65); document.getElementById("ex31_res").innerHTML = c; }
+function ex32_comp(){ let h = Math.floor(Math.random()*256).toString(16); if(h.length===1) h="0"+h; return h.toUpperCase(); }
+function ex32_go(){ const c = "#"+ex32_comp()+ex32_comp()+ex32_comp(); const r = document.getElementById("ex32_res"); r.innerHTML = c; r.style.color = c; }
+
+let cap33_code = "";
+function cap33_coul(){ const r = Math.floor(Math.random()*256), g = Math.floor(Math.random()*256), b = Math.floor(Math.random()*256); let hr=r.toString(16); if(hr.length===1)hr="0"+hr; let hg=g.toString(16); if(hg.length===1)hg="0"+hg; let hb=b.toString(16); if(hb.length===1)hb="0"+hb; return "#"+hr+hg+hb; }
+function cap33_generer(){
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for(let i=0;i<6;i++) code += chars.charAt(Math.floor(Math.random()*chars.length));
+  cap33_code = code;
+  let html = "";
+  for(let i=0;i<code.length;i++){
+    const c = cap33_coul();
+    html += `<span style="color:${c};text-shadow:0 0 8px ${c}">${code.charAt(i)}</span>`;
+  }
+  const el = document.getElementById("cap33_texte");
+  if(el){ el.innerHTML = html; document.getElementById("cap33_saisie").value=""; document.getElementById("cap33_res").innerHTML=""; }
+}
+function cap33_verifier(){ const s = document.getElementById("cap33_saisie").value.trim().toUpperCase(); const r = document.getElementById("cap33_res"); if(s===""){ r.innerHTML="⚠️ Saisir le code"; r.style.color="#f59e0b"; return; } if(s===cap33_code){ r.innerHTML="✅ Réussi !"; r.style.color="#22c55e"; } else { r.innerHTML="❌ Incorrect"; r.style.color="#ef4444"; } }
+
+let cap34_code = "";
+function cap34_generer(){
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for(let i=0;i<6;i++) code += chars.charAt(Math.floor(Math.random()*chars.length));
+  cap34_code = code;
+  const el = document.getElementById("cap34_texte");
+  if(el){
+    el.innerHTML = code;
+    document.getElementById("cap34_barre").style.transform = "rotate("+(Math.floor(Math.random()*41)-20)+"deg)";
+    document.getElementById("cap34_saisie").value="";
+    document.getElementById("cap34_res").innerHTML="";
+  }
+}
+function cap34_verifier(){ const s = document.getElementById("cap34_saisie").value.trim().toUpperCase(); const r = document.getElementById("cap34_res"); if(s===""){ r.innerHTML="⚠️ Saisir le code"; r.style.color="#f59e0b"; return; } if(s===cap34_code){ r.innerHTML="✅ Réussi !"; r.style.color="#22c55e"; } else { r.innerHTML="❌ Incorrect"; r.style.color="#ef4444"; } }
+
+let cap35_grille = [], cap35_indices = [], cap35_sel = [], cap35_termine = false;
+function cap35_generer(){
+  const pool = ["🚲","🚲","🚲","🚲","🚗","🌳","🏠","🐱","🍎"];
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
+  cap35_grille = pool;
+  cap35_indices = [];
+  for(let k=0;k<pool.length;k++) if(pool[k]==="🚲") cap35_indices[cap35_indices.length]=k;
+  cap35_sel = []; cap35_termine = false;
+  for(let n=0;n<9;n++){
+    const c = document.getElementById("cap35_cell"+n);
+    if(!c) return;
+    c.innerHTML = pool[n]; c.style.borderColor="rgba(255,255,255,.08)"; c.style.background="#1a2236";
+  }
+  const r = document.getElementById("cap35_res"); if(r) r.innerHTML="";
+}
+function cap35_toggle(n){
+  if(cap35_termine) return;
+  const c = document.getElementById("cap35_cell"+n);
+  let pos = -1;
+  for(let i=0;i<cap35_sel.length;i++) if(cap35_sel[i]===n){ pos=i; break; }
+  if(pos!==-1){
+    const nv = [];
+    for(let j=0;j<cap35_sel.length;j++) if(j!==pos) nv[nv.length]=cap35_sel[j];
+    cap35_sel = nv;
+    c.style.borderColor="rgba(255,255,255,.08)"; c.style.background="#1a2236";
+  } else {
+    cap35_sel[cap35_sel.length] = n;
+    c.style.borderColor="#22c55e"; c.style.background="rgba(34,197,94,.2)";
+  }
+}
+function cap35_verifier(){
+  const r = document.getElementById("cap35_res");
+  if(cap35_sel.length===0){ r.innerHTML="⚠️ Sélectionne au moins une image"; r.style.color="#f59e0b"; return; }
+  if(cap35_sel.length!==cap35_indices.length){ r.innerHTML="❌ Incorrect"; r.style.color="#ef4444"; cap35_generer(); return; }
+  let ok = true;
+  for(let i=0;i<cap35_indices.length;i++){
+    let t = false;
+    for(let j=0;j<cap35_sel.length;j++) if(cap35_sel[j]===cap35_indices[i]){ t=true; break; }
+    if(!t){ ok=false; break; }
+  }
+  if(ok){ r.innerHTML="🎉 Bravo !"; r.style.color="#22c55e"; cap35_termine=true; }
+  else { r.innerHTML="❌ Incorrect"; r.style.color="#ef4444"; cap35_generer(); }
+}
+
+/* ============================================================
+   EX 36 — MÉDIA
+   ============================================================ */
+function ex36_play(){
+  const a = document.getElementById("ex36_audio");
+  const r = document.getElementById("ex36_res");
+  const e = document.getElementById("ex36_emoji");
+  if(!a) return;
+  a.play().then(()=>{ r.innerHTML="▶️ Lecture (paused = false)"; r.style.color="#22c55e"; if(e) e.classList.add("playing"); })
+    .catch(err=>{ r.innerHTML="❌ "+err.message; r.style.color="#ef4444"; });
+}
+function ex36_pause(){
+  const a = document.getElementById("ex36_audio");
+  const r = document.getElementById("ex36_res");
+  const e = document.getElementById("ex36_emoji");
+  if(!a) return;
+  a.pause();
+  r.innerHTML="⏸️ Pause (paused = true)"; r.style.color="#f59e0b";
+  if(e) e.classList.remove("playing");
+}
+
+/* ============================================================
+   CORRECTIONS
+   ============================================================ */
+const CORR = {
+  1: `5 + "6"        // "56"     → string
+"5" + 6        // "56"     → string
+"5" + "6"      // "56"     → string
+5 + 6          // 11       → number
+5 - "6"        // -1       → number
+5 - 6          // -1       → number
+5 * "6"        // 30       → number
+"5" * 6        // 30       → number
+5 / "6"        // 0.8333…  → number
+5 / "blabla"   // NaN      → NaN
+"ab" + 6       // "ab6"    → string
+"ab" + 6 + 5   // "ab65"   → string
+6 + 5 + "ab"   // "11ab"   → string
+"ab" - 6       // NaN      → NaN`,
+  2: `// if / else
+if (note >= 16) return "Très bien";
+else if (note >= 14) return "Bien";
+else if (note >= 12) return "Assez bien";
+else if (note >= 10) return "Passable";
+else return "Insuffisant";
+
+// switch(true)
+switch (true) {
+  case note >= 16: return "Très bien";
+  case note >= 14: return "Bien";
+  case note >= 12: return "Assez bien";
+  case note >= 10: return "Passable";
+  default: return "Insuffisant";
+}`,
+  3: `// for
+for (let i = 1; i <= n; i++) console.log(i);
+
+// while
+let i = 1;
+while (i <= n) { console.log(i); i++; }
+
+// do...while
+let j = 1;
+do { console.log(j); j++; } while (j <= n);`,
+  4: `// Solution 1 : <span class="barre"> + CSS
+res.innerHTML = phrase.replace(mot, "<span class='barre'>"+mot+"</span>");
+/* .barre { text-decoration: line-through; color: red; } */
+
+// Solution 2 : <del>
+res.innerHTML = phrase.replace(mot, "<del>"+mot+"</del>");
+
+// Solution 3 : <s>
+res.innerHTML = phrase.replace(mot, "<s>"+mot+"</s>");`,
+  5: "const ch = 'Bonjour';\nconsole.log(ch.toLowerCase());\nconsole.log(ch.toUpperCase());",
+  6: "const a = '  Bonjour  '.trim();\nconst b = '  Tunisie  '.trim();\nconsole.log(a + ' ' + b);",
+  7: `const ch = "Mississippi";
+ch.indexOf("s");      // 2
+ch.indexOf("s", 3);   // 3
+ch.lastIndexOf("s");    // 6
+ch.lastIndexOf("s", 5); // 3`,
+  8: "String.fromCharCode(72, 101, 108, 108, 111); // 'Hello'",
+  9: `const ch = "Mozilla";
+ch.substring(0, 3); // "Moz"
+ch.substring(4);    // "lla"
+ch.substring(3, 0); // "Moz" (inversion)`,
+  10: "Math.abs(-16); // 16\nMath.sqrt(16); // 4\nMath.sqrt(-16); // NaN",
+  11: "Math.round(3.7); // 4\nMath.trunc(3.7); // 3",
+  12: "for (let i = 0; i < 10; i++) console.log(Math.random() * 100);",
+  13: `const n = 2025;
+const s = String(n);
+console.log(s + 1); // "20251"
+console.log(n + 1); // 2026`,
+  14: "isNaN('42.5');   // false\nisNaN('blabla'); // true\nNumber('blabla'); // NaN",
+  15: `const s = prompt("Nombre :");
+if (s === null || s.trim() === "" || isNaN(s)) alert("Invalide");
+else alert("Double : " + (Number(s) * 2));`,
+  16: `parseInt("42px");    // 42
+parseFloat("42px");  // 42
+Number("42px");      // NaN
+parseFloat("3.14abc"); // 3.14`,
+  17: `const n = 255;
+n.toString(2);  // "11111111"
+n.toString(8);  // "377"
+n.toString(16); // "ff"`,
+  18: `const d = new Date();
+d.toString();      // "Fri Nov 21 2025 18:14:07 GMT+0100"
+d.getDate();       // 21 (1–31)
+d.getMonth();      // 10 (0–11 : 0 = janvier)
+d.getMonth() + 1;  // 11
+d.getFullYear();   // 2025
+d.getDay();        // 5 (0 = dimanche)
+Date.now();        // timestamp ms`,
+  19: `// Format ISO (recommandé)
+new Date("2025-11-21");
+
+// Format Short US (MM/DD/YYYY) ⚠️
+new Date("11/21/2025");
+
+// Format Long
+new Date("Nov 21 2025");
+
+// Vérification
+isNaN(new Date("bonjour").getTime()); // true`,
+  20: `const d = new Date("2025-11-21");
+d.getDate();        // 21
+d.getMonth();       // 10 (janvier = 0)
+d.getMonth() + 1;   // 11
+d.getFullYear();    // 2025
+d.getDay();         // 5 (0 = dimanche)`,
+  21: `const d = new Date("2025-11-21T12:00:00");
+d.toString();      // "Fri Nov 21 2025 12:00:00..."
+d.toDateString();  // "Fri Nov 21 2025"
+d.toTimeString();  // "12:00:00 GMT+0100"
+d.toISOString();   // "2025-11-21T11:00:00.000Z"
+d.toLocaleDateString("fr-FR"); // "21/11/2025"`,
+  22: `const d = new Date("2025-01-01");
+if (isNaN(d.getTime())) return;
+const jour = d.getDate();
+const mois = d.getMonth();
+const annee = d.getFullYear();
+const jourSem = d.getDay();
+const diffJ = Math.round(Math.abs(new Date() - d) / (1000*60*60*24));`,
+  23: "champ.disabled = false; // activer\nchamp.disabled = true;  // désactiver\nchamp.disabled = !champ.disabled; // basculer",
+  24: "function estEmail(ch) {\n  const a = ch.indexOf('@'); if (a < 1) return false;\n  const p = ch.lastIndexOf('.');\n  return p > a + 1 && p < ch.length - 1;\n}",
+  25: "formCon.style.display = 'none';\nformIns.style.display = 'none';\nformMdp.style.display = 'none';\n// puis afficher le bon via 'block'",
+  26: "let tab = ['🍎', '🍌', '🍇', '🍊', '🍓'];\ntab.length; // 5",
+  27: "tab[0];              // premier\ntab[tab.length - 1]; // dernier\ntab[10];             // undefined",
+  28: "tab[tab.length] = '🍊';       // ajouter\ntab.length = tab.length - 1;  // retirer le dernier",
+  29: "const i = Math.floor(Math.random() * ch.length);\nconst car = ch.substring(i, i + 1);",
+  30: "Math.floor(Math.random() * (max - min + 1)) + min;",
+  31: "for (let i = 0; i < 5; i++)\n  c += String.fromCharCode(Math.floor(Math.random() * 26) + 65);",
+  32: "function comp() {\n  let h = Math.floor(Math.random() * 256).toString(16);\n  if (h.length === 1) h = '0' + h;\n  return h.toUpperCase();\n}\nconst couleur = '#' + comp() + comp() + comp();",
+  33: "for (let i = 0; i < code.length; i++) {\n  const c = couleurAleatoire();\n  html += `<span style=\"color:${c}\">${code.charAt(i)}</span>`;\n}",
+  34: "const angle = Math.floor(Math.random() * 41) - 20;\nbarre.style.transform = 'rotate(' + angle + 'deg)';",
+  35: "for (let i = pool.length - 1; i > 0; i--) {\n  const j = Math.floor(Math.random() * (i + 1));\n  [pool[i], pool[j]] = [pool[j], pool[i]];\n}",
+  36: "const audio = document.getElementById('ex36_audio');\naudio.play();\naudio.pause();\nconsole.log(audio.paused);"
+};
+
+function toggleCorrection(n){
+  const b = document.getElementById("corr"+n);
+  if(!b) return;
+  const btn = b.previousElementSibling;
+  if(b.style.display === "block"){
+    b.style.display = "none";
+    btn.innerHTML = "Voir la correction";
+  } else {
+    b.value = CORR[n] || "";
+    b.style.display = "block";
+    btn.innerHTML = "🙈 Masquer la correction";
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init(){
+  chargerVisites();
+  rendreOnglets();
+  rendreContenu();
+  majProgression();
+}
+document.addEventListener("keydown", e => { if(e.key === "Escape") fermerPanneau(); });
+init();
+</script>
+</body>
+</html>
