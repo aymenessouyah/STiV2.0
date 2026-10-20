@@ -5,10 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Construire une requête SQL</title>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script>
+/* Thème STI synchronisé : parent (modale) > choix mémorisé plateforme (sti-theme / theme). */
+(function () {
+  function themeParent() {
+    try {
+      if (window.parent && window.parent !== window) {
+        return window.parent.document.documentElement.getAttribute("data-theme") || "";
+      }
+    } catch (e) {}
+    return "";
+  }
+  function themeMemorise() {
+    try { return localStorage.getItem("sti-theme") || localStorage.getItem("theme") || ""; } catch (e) { return ""; }
+  }
+  function appliquer(v) {
+    if (v === "dark" || v === "light") document.documentElement.setAttribute("data-theme", v);
+  }
+  function synchroniser() { appliquer(themeParent() || themeMemorise()); }
+  synchroniser();
+  window.addEventListener("storage", function (e) {
+    if (e.key === "sti-theme" || e.key === "theme") appliquer(e.newValue);
+  });
+  window.setInterval(synchroniser, 900);
+})();
+</script>
 <style>
-:root{--bg:#fbfcfe;--grid:#dde6f4;--paper:#fff;--ink:#1b2440;--muted:#56627f;--line:#c4d0e4;--accent:#1f4fd8;--onaccent:#fff;--margin:#d23a3a}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1526;--grid:#1a2440;--paper:#151d33;--ink:#e6ecfa;--muted:#9aa7c7;--line:#2c3860;--accent:#7fa6ff;--onaccent:#0f1526;--margin:#ff7b7b}}
-:root[data-theme="dark"]{--bg:#0f1526;--grid:#1a2440;--paper:#151d33;--ink:#e6ecfa;--muted:#9aa7c7;--line:#2c3860;--accent:#7fa6ff;--onaccent:#0f1526;--margin:#ff7b7b}
+:root{color-scheme:light;--bg:#f6eedc;--grid:#e7dcc3;--paper:#fffdf5;--ink:#101728;--muted:#6b6250;--line:#e2d3b4;--accent:#0e7c86;--onaccent:#fff;--margin:#f4511e;--panel:#0c1424;--panel-ink:#e8eefc;--panel-accent:#8db8ff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0f172a;--grid:#1e293b;--paper:#1e293b;--ink:#f8fafc;--muted:#94a3b8;--line:#334155;--accent:#2dd4bf;--onaccent:#0f172a;--margin:#fb923c;--panel:#0b1220;--panel-ink:#f8fafc;--panel-accent:#7dd3fc}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0f172a;--grid:#1e293b;--paper:#1e293b;--ink:#f8fafc;--muted:#94a3b8;--line:#334155;--accent:#2dd4bf;--onaccent:#0f172a;--margin:#fb923c;--panel:#0b1220;--panel-ink:#f8fafc;--panel-accent:#7dd3fc}
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
@@ -53,12 +78,12 @@ button:hover{background:var(--accent);color:var(--onaccent)}
 button.x{border-color:var(--line);color:var(--muted);padding:2px 8px}
 .hint{font-size:.88rem;color:var(--muted);margin:6px 0 0}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.panel{position:sticky;top:12px;background:#101a38;color:#e8eefc;border-radius:3px;padding:14px 16px;border-top:4px solid var(--margin)}
-.panel h2{color:#e8eefc}
+.panel{position:sticky;top:12px;background:var(--panel);color:var(--panel-ink);border:1px solid var(--line);border-radius:3px;padding:14px 16px;border-top:4px solid var(--margin)}
+.panel h2{color:var(--panel-ink)}
 .sql{white-space:pre-wrap;word-break:break-word;font-size:.92rem;line-height:1.7;margin:8px 0 12px;min-height:3em}
-.sql .k{color:#8db8ff;font-weight:700}
-.panel button{border-color:#8db8ff;color:#8db8ff}
-.panel button:hover{background:#8db8ff;color:#101a38}
+.sql .k{color:var(--panel-accent);font-weight:700}
+.panel button{border-color:var(--panel-accent);color:var(--panel-accent)}
+.panel button:hover{background:var(--panel-accent);color:var(--panel)}
 .msgs{list-style:none;padding:0;margin:12px 0 0;font-size:.9rem}
 .msgs li{padding:6px 0 6px 10px;border-left:3px solid;margin:6px 0}
 .msgs .w{border-color:#f0b35a}.msgs .i{border-color:#9aa7c7}.msgs .ok{border-color:#5fd394}

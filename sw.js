@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v325-guide-sql";
+var UPDATE_ID = "v326-guide-sql-maj";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -32,7 +32,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" },
   { url: "./assets/js/modules/labo-offline-diagnostics.js", revision: "offline-diagnostics-v315" },
   { url: "./exercices/series-exercices.html", revision: "guide-sql-v325" },
-  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "guide-sql-v325" },
+  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "guide-sql-v326" },
   { url: "./exercices/javascript/js-37-defis-tt.html", revision: "js-37-defis-bimode-v318" },
   { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-airbus-cockpit-25" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
