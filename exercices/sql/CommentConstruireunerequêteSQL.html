@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Construire une requête SQL</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbfcfe;--grid:#dde6f4;--paper:#fff;--ink:#1b2440;--muted:#56627f;--line:#c4d0e4;--accent:#1f4fd8;--onaccent:#fff;--margin:#d23a3a;--ok:#1d7a46;--warn:#b45309;--info:#56627f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1526;--grid:#1a2440;--paper:#151d33;--ink:#e6ecfa;--muted:#9aa7c7;--line:#2c3860;--accent:#7fa6ff;--onaccent:#0f1526;--margin:#ff7b7b;--ok:#5fd394;--warn:#f0b35a;--info:#9aa7c7}}
+:root[data-theme="dark"]{--bg:#0f1526;--grid:#1a2440;--paper:#151d33;--ink:#e6ecfa;--muted:#9aa7c7;--line:#2c3860;--accent:#7fa6ff;--onaccent:#0f1526;--margin:#ff7b7b;--ok:#5fd394;--warn:#f0b35a;--info:#9aa7c7}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'Atkinson Hyperlegible',system-ui,Arial,sans-serif;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 48px;display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:0 22px;align-items:start}
+header{grid-column:1/-1;margin-bottom:14px}
+h1{font-size:1.6rem;margin:0 0 4px}
+header p{margin:0 0 6px;color:var(--muted);max-width:70ch}
+.grille{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--margin);padding:12px 16px 10px;margin:12px 0}
+.gt{font-size:1.1rem;font-weight:700;margin:0 0 8px}
+.scroll{overflow-x:auto}
+.grille table{border-collapse:collapse;width:100%;min-width:560px;font-size:.93rem}
+.grille th,.grille td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+.grille th{background:var(--accent);color:var(--onaccent)}
+.grille td:first-child{text-align:center;font-weight:700;width:2.6em}
+.grille td:last-child{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.85rem;white-space:nowrap}
+.grille p{margin:8px 0 0;font-size:.93rem}
+.rules{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);padding:8px 12px;margin:10px 0;font-size:.95rem}
+code,.sql,.mono{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}
+code{font-size:.88em}
+details{background:var(--paper);border:1px solid var(--line);padding:8px 12px;margin-top:8px}
+summary{cursor:pointer;font-weight:700}
+textarea{width:100%;font:inherit;padding:6px 8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:3px}
+#schema{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.85rem;min-height:96px}
+.steps section{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--margin);padding:12px 16px 14px;margin-bottom:12px}
+h2{font-size:1.05rem;margin:0 0 2px;display:flex;align-items:center;gap:8px}
+.n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--onaccent);font-size:.85rem;flex:none}
+.kw{margin:0 0 10px;color:var(--muted);font-size:.9rem}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
+select,input[type=text]{font:inherit;font-size:.95rem;padding:5px 7px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:3px;max-width:100%}
+input[type=text]{width:9.5em}
+.tb{margin:4px 0}
+.tb>b{display:inline-block;min-width:6.5em;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.85rem}
+.chip{display:inline-flex;align-items:center;gap:5px;margin:2px 4px 2px 0;padding:3px 9px;border:1px solid var(--line);border-radius:14px;cursor:pointer;font-size:.92rem}
+.chip:has(input:checked){background:var(--accent);color:var(--onaccent);border-color:var(--accent)}
+.chip:has(input:disabled){opacity:.85;cursor:default}
+.chip input{accent-color:var(--accent)}
+button{font:inherit;font-size:.92rem;cursor:pointer;padding:5px 11px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:3px}
+button:hover{background:var(--accent);color:var(--onaccent)}
+button.x{border-color:var(--line);color:var(--muted);padding:2px 8px}
+.hint{font-size:.88rem;color:var(--muted);margin:6px 0 0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.panel{position:sticky;top:12px;background:#101a38;color:#e8eefc;border-radius:3px;padding:14px 16px;border-top:4px solid var(--margin)}
+.panel h2{color:#e8eefc}
+.sql{white-space:pre-wrap;word-break:break-word;font-size:.92rem;line-height:1.7;margin:8px 0 12px;min-height:3em}
+.sql .k{color:#8db8ff;font-weight:700}
+.panel button{border-color:#8db8ff;color:#8db8ff}
+.panel button:hover{background:#8db8ff;color:#101a38}
+.msgs{list-style:none;padding:0;margin:12px 0 0;font-size:.9rem}
+.msgs li{padding:6px 0 6px 10px;border-left:3px solid;margin:6px 0}
+.msgs .w{border-color:#f0b35a}.msgs .i{border-color:#9aa7c7}.msgs .ok{border-color:#5fd394}
+@media (max-width:880px){.wrap{grid-template-columns:minmax(0,1fr)}header{order:-2}.panel{order:-1;position:static;margin-bottom:14px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Construire une requête SQL</h1>
+  <p>Pars de la question. Remplis les étapes dans l’ordre : la requête s’écrit à droite, et des remarques t’aident à la corriger.</p>
+  <div class="grille">
+    <div class="gt">Les 5 questions à se poser</div>
+    <div class="scroll"><table>
+      <thead><tr><th>Étape</th><th>Question à se poser</th><th>Mots-clés repérables dans l’énoncé</th><th>Clause obtenue</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Que veut-on afficher ?</td><td>« afficher », « donner », « lister », « quel est »</td><td>SELECT</td></tr>
+        <tr><td>2</td><td>Dans quelles tables se trouvent ces informations ?</td><td>noms d’entités : classe, élève, note</td><td>FROM + jointure dans le WHERE</td></tr>
+        <tr><td>3</td><td>Faut-il filtrer des lignes ?</td><td>« dont », « de la classe X », « supérieur à », « en 2025 »</td><td>WHERE</td></tr>
+        <tr><td>4</td><td>Faut-il calculer par paquet ?</td><td>« par classe », « pour chaque », « moyenne / nombre / total de »</td><td>GROUP BY + agrégat</td></tr>
+        <tr><td>5</td><td>Faut-il filtrer sur le résultat du calcul ?</td><td>« dont la moyenne dépasse », « ayant plus de 3 »</td><td>HAVING</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>Étape finale :</b> « du plus grand au plus petit », « trié par » → <code>ORDER BY</code>.</p>
+  </div>
+  <div class="rules"><b>Règles :</b> jointure écrite dans le <code>WHERE</code> sous la forme <code>table1.a = table2.a</code> (pas de <code>JOIN</code>) · aucune fonction (<code>COUNT</code>, <code>AVG</code>…) dans le <code>WHERE</code> : elles vont dans le <code>HAVING</code>.</div>
+  <label for="enonce"><b>Énoncé</b> (recopie la question à résoudre)</label>
+  <textarea id="enonce" rows="2" placeholder="Ex. : Afficher, pour chaque classe, le libellé et la moyenne des notes, uniquement si la moyenne dépasse 12."></textarea>
+  <details>
+    <summary>Schéma de la base</summary>
+    <p class="hint">Une table par ligne : <code>table(colonne1, colonne2)</code>. La clé primaire s’appelle <code>id</code>, la clé étrangère <code>id_table</code>.</p>
+    <div class="row"><select id="preset" aria-label="Schéma prédéfini"></select><button data-act="apply">Appliquer ce schéma</button></div>
+    <textarea id="schema" spellcheck="false"></textarea>
+  </details>
+</header>
+<main class="steps" id="steps"></main>
+<aside class="panel" aria-live="polite">
+  <h2>Ma requête</h2>
+  <div class="sql" id="sql"></div>
+  <div class="row"><button data-act="copy" id="copybtn">Copier</button><button data-act="reset">Recommencer</button></div>
+  <ul class="msgs" id="msgs"></ul>
+</aside>
+</div>
+<script>
+const PRESETS={
+"Lycée : classe, eleve, note":"classe(id, libelle)\neleve(id, nom, id_classe)\nnote(id, id_eleve, valeur)",
+"Bibliothèque : livre, auteur, emprunt, adherent":"auteur(id, nom, pays)\nlivre(id, titre, annee, id_auteur)\nadherent(id, nom, ville)\nemprunt(id, id_livre, id_adherent, date_emprunt)",
+"Commerce : clients, commandes, produits":"client(id, nom, ville)\ncommande(id, id_client, date_cmd, total)\nproduit(id, designation, prix)\nligne(id, id_commande, id_produit, quantite)"
+};
+const FN=['COUNT','SUM','AVG','MIN','MAX'],OPS=['=','<>','>','<','>=','<=','LIKE'];
+const NEW={aggs:{fn:'AVG',col:'',alias:''},joins:{a:'',b:''},wh:{conn:'AND',col:'',op:'=',v:''},hv:{fn:'AVG',col:'',op:'>',v:''},ob:{key:'',dir:'ASC'}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let schema={},S;
+function fresh(){S={sel:[],aggs:[],distinct:false,extra:[],joins:[],wh:[],gb:[],hv:[],ob:[]}}
+function parse(t){const o={};t.split('\n').forEach(l=>{const m=l.match(/^\s*(\w+)\s*\((.*)\)\s*$/);if(m)o[m[1]]=m[2].split(',').map(x=>x.trim()).filter(Boolean)});return o}
+const allCols=()=>Object.keys(schema).flatMap(t=>schema[t].map(c=>t+'.'+c));
+function tables(){const u=new Set(),add=x=>{if(x&&x.includes('.'))u.add(x.split('.')[0])};
+  S.sel.forEach(add);S.aggs.forEach(a=>add(a.col));S.joins.forEach(j=>{add(j.a);add(j.b)});S.wh.forEach(w=>add(w.col));S.gb.forEach(add);S.hv.forEach(h=>add(h.col));S.ob.forEach(o=>add(o.key));
+  return Object.keys(schema).filter(t=>u.has(t)||S.extra.includes(t))}
+function usedSet(){const T=tables();return new Set(T.filter(t=>!S.extra.includes(t)||isUsed(t)))}
+function isUsed(t){const p=t+'.',h=x=>x&&x.startsWith(p);
+  return S.sel.some(h)||S.aggs.some(a=>h(a.col))||S.joins.some(j=>h(j.a)||h(j.b))||S.wh.some(w=>h(w.col))||S.gb.some(h)||S.hv.some(x=>h(x.col))||S.ob.some(o=>h(o.key))}
+/* champs HTML */
+function colSel(k,i,f,val,star){let h='<option value="">— colonne —</option>'+(star?`<option value="*"${val==='*'?' selected':''}>* (toutes les lignes)</option>`:'');
+  for(const t in schema)h+=`<optgroup label="${t}">`+schema[t].map(c=>{const v=t+'.'+c;return `<option${v===val?' selected':''}>${v}</option>`}).join('')+'</optgroup>';
+  return `<select data-k="${k}" data-i="${i}" data-f="${f}" aria-label="colonne">${h}</select>`}
+const pick=(k,i,f,list,val)=>`<select data-k="${k}" data-i="${i}" data-f="${f}">${list.map(x=>`<option${x===val?' selected':''}>${x}</option>`).join('')}</select>`;
+const txt=(k,i,f,val,ph)=>`<input type="text" data-k="${k}" data-i="${i}" data-f="${f}" value="${esc(val)}" placeholder="${ph}" aria-label="${ph}">`;
+const del=(k,i)=>`<button class="x" data-act="del" data-k="${k}" data-i="${i}" aria-label="Supprimer cette ligne">×</button>`;
+const add=(k,l)=>`<button data-act="add" data-k="${k}">+ ${l}</button>`;
+const chips=(list,arr)=>Object.keys(schema).map(t=>`<div class="tb"><b>${t}</b>`+schema[t].map(c=>{const v=t+'.'+c;return `<label class="chip"><input type="checkbox" data-list="${list}" data-v="${v}"${arr.includes(v)?' checked':''}>${c}</label>`}).join('')+'</div>').join('');
+function step(n,title,kw,body){return `<section><h2><span class="n">${n}</span>${title}</h2><p class="kw">${kw}</p>${body}</section>`}
+function render(){
+  const T=tables();
+  let h='';
+  h+=step(1,'Que veut-on afficher ?','Mots de l’énoncé : afficher, donner, lister, quel est, combien…',
+    '<b>Colonnes</b>'+chips('sel',S.sel)+
+    '<p style="margin:10px 0 0"><b>Calculs</b> (nombre, somme, moyenne, minimum, maximum)</p>'+
+    S.aggs.map((a,i)=>`<div class="row">${pick('aggs',i,'fn',FN,a.fn)}(${colSel('aggs',i,'col',a.col,true)}) AS ${txt('aggs',i,'alias',a.alias,'alias')}${del('aggs',i)}</div>`).join('')+
+    `<div class="row">${add('aggs','Ajouter un calcul')}<label class="chip"><input type="checkbox" data-act="distinct"${S.distinct?' checked':''}>DISTINCT (sans doublons)</label></div>`);
+  h+=step(2,'Dans quelles tables ?','Les tables des colonnes choisies sont cochées toute seules. Ajoute une table « pont » si elle sert à relier les autres.',
+    Object.keys(schema).map(t=>{const u=isUsed(t),on=u||S.extra.includes(t);return `<label class="chip"><input type="checkbox" data-list="extra" data-v="${t}"${on?' checked':''}${u?' disabled':''}><span class="mono">${t}</span></label>`}).join(''));
+  h+=step(3,'Comment relier les tables ?','Une condition <code>table1.a = table2.a</code> (clé primaire = clé étrangère) par lien : '+(T.length>1?`<b>${T.length} tables → ${T.length-1} condition(s)</b>`:'à partir de 2 tables')+'. Elles s’écrivent dans le WHERE.',
+    S.joins.map((j,i)=>`<div class="row">${colSel('joins',i,'a',j.a)} = ${colSel('joins',i,'b',j.b)}${del('joins',i)}</div>`).join('')+
+    `<div class="row">${add('joins','Ajouter une condition')}<button data-act="suggest">Suggérer les jointures</button></div>`);
+  h+=step(4,'Faut-il filtrer des lignes ?','Mots de l’énoncé : dont, de la classe…, supérieur à, en 2025… Colonnes seulement : <b>jamais de fonction</b> dans le WHERE.',
+    S.wh.map((w,i)=>`<div class="row">${i?pick('wh',i,'conn',['AND','OR'],w.conn):''}${colSel('wh',i,'col',w.col)}${pick('wh',i,'op',OPS,w.op)}${txt('wh',i,'v',w.v,'valeur')}${del('wh',i)}</div>`).join('')+
+    `<div class="row">${add('wh','Ajouter un filtre')}</div><p class="hint">Texte : écris-le sans guillemets, ils sont ajoutés pour toi. Pour LIKE, utilise % (ex. A%).</p>`);
+  h+=step(5,'Faut-il calculer par groupe ?','Mots de l’énoncé : par, pour chaque, selon… avec un calcul (moyenne, nombre, total).',
+    chips('gb',S.gb)+`<div class="row"><button data-act="autogb">Reprendre mes colonnes de l’étape 1</button></div><p class="hint">Règle : toute colonne affichée sans calcul doit être ici.</p>`);
+  h+=step(6,'Faut-il filtrer sur le résultat du calcul ?','Mots de l’énoncé : dont la moyenne dépasse…, ayant plus de… → HAVING (avec la fonction).',
+    S.hv.map((x,i)=>`<div class="row">${pick('hv',i,'fn',FN,x.fn)}(${colSel('hv',i,'col',x.col,true)})${pick('hv',i,'op',OPS.slice(0,6),x.op)}${txt('hv',i,'v',x.v,'valeur')}${del('hv',i)}</div>`).join('')+
+    `<div class="row">${add('hv','Ajouter une condition')}</div>`);
+  const al=S.aggs.filter(a=>a.alias).map(a=>a.alias),ol=[...new Set([...al,...S.sel,...allCols()])];
+  h+=step(7,'Faut-il trier ?','Mots de l’énoncé : du plus grand au plus petit, trié par, classé…',
+    S.ob.map((o,i)=>`<div class="row"><select data-k="ob" data-i="${i}" data-f="key"><option value="">— critère —</option>${ol.map(x=>`<option${x===o.key?' selected':''}>${x}</option>`).join('')}</select>${pick('ob',i,'dir',['ASC','DESC'],o.dir)}${del('ob',i)}</div>`).join('')+
+    `<div class="row">${add('ob','Ajouter un tri')}</div><p class="hint">ASC : croissant · DESC : décroissant.</p>`);
+  $('#steps').innerHTML=h;out();
+}
+/* construction de la requête */
+function val(v){v=v.trim();if(!v)return '…';if(/^'.*'$/.test(v)||/^-?\d+([.,]\d+)?$/.test(v))return v.replace(/^(-?\d+),(\d+)$/,'$1.$2');return "'"+v.replace(/'/g,"''")+"'"}
+function build(){
+  const L=[],T=tables(),it=[...S.sel,...S.aggs.map(a=>`${a.fn}(${a.col||'…'})`+(a.alias?' AS '+a.alias:''))];
+  L.push(['SELECT',(S.distinct?'DISTINCT ':'')+(it.length?it.join(', '):'…')]);
+  L.push(['FROM',T.length?T.join(', '):'…']);
+  const c=S.joins.filter(j=>j.a||j.b).map(j=>`${j.a||'…'} = ${j.b||'…'}`),f=S.wh.filter(w=>w.col);
+  if(f.length){let s=f.map((w,i)=>(i?` ${w.conn} `:'')+`${w.col} ${w.op} ${val(w.v)}`).join('');if(c.length&&f.some((w,i)=>i&&w.conn==='OR'))s='('+s+')';c.push(s)}
+  if(c.length)L.push(['WHERE',c.join('\n  AND ')]);
+  if(S.gb.length)L.push(['GROUP BY',S.gb.join(', ')]);
+  const h=S.hv.filter(x=>x.col);
+  if(h.length)L.push(['HAVING',h.map(x=>`${x.fn}(${x.col}) ${x.op} ${val(x.v)}`).join(' AND ')]);
+  const o=S.ob.filter(x=>x.key);
+  if(o.length)L.push(['ORDER BY',o.map(x=>x.key+(x.dir==='DESC'?' DESC':'')).join(', ')]);
+  return L}
+function checks(){
+  const m=[],T=tables(),has=S.sel.length||S.aggs.length;
+  if(!has)m.push(['w','Étape 1 : choisis au moins une colonne ou un calcul à afficher.']);
+  if(T.length>1){const n=S.joins.filter(j=>j.a&&j.b&&j.a!==j.b).length;
+    if(n<T.length-1)m.push(['w',`Jointure : ${T.length} tables demandent ${T.length-1} condition(s) table1.a = table2.a, il y en a ${n}. Sans cela, chaque ligne est associée à toutes les autres.`]);
+    else if(n>T.length-1)m.push(['i','Il y a plus de conditions de jointure que nécessaire : vérifie qu’elles sont toutes utiles.'])}
+  if(S.joins.some(j=>(j.a&&!j.b)||(!j.a&&j.b)))m.push(['w','Étape 3 : une condition de jointure est incomplète.']);
+  if(S.joins.some(j=>j.a&&j.b&&j.a.split('.')[0]===j.b.split('.')[0]))m.push(['w','Une condition de jointure doit relier deux tables différentes.']);
+  if(S.wh.some(w=>w.col&&!w.v.trim()))m.push(['w','Étape 4 : un filtre n’a pas de valeur.']);
+  if(S.aggs.some(a=>!a.col))m.push(['w','Étape 1 : un calcul n’a pas de colonne.']);
+  if(S.aggs.length||S.gb.length){const x=S.sel.filter(c=>!S.gb.includes(c));
+    if(x.length)m.push(['w',`GROUP BY : ${x.join(', ')} est affichée sans calcul, elle doit figurer dans le GROUP BY (étape 5).`])}
+  if(S.gb.length&&!S.aggs.length)m.push(['i','GROUP BY sans calcul : veux-tu un nombre, une moyenne… par groupe ?']);
+  if(S.hv.some(x=>x.col)&&!S.gb.length)m.push(['w','HAVING filtre des groupes : il faut un GROUP BY (étape 5).']);
+  if(S.hv.some(x=>x.col&&!x.v.trim()))m.push(['w','Étape 6 : une condition HAVING n’a pas de valeur.']);
+  if(!m.some(x=>x[0]==='w')&&has)m.push(['ok','Aucun problème détecté. Relis l’énoncé, puis teste la requête.']);
+  return m}
+function out(){
+  $('#sql').innerHTML=build().map(([k,t])=>`<span class="k">${k}</span> ${esc(t)}`).join('\n')+';';
+  $('#msgs').innerHTML=checks().map(([c,t])=>`<li class="${c}">${esc(t)}</li>`).join('')}
+function suggest(){
+  const T=tables(),r=[],has=(a,b)=>r.some(j=>(j.a===a&&j.b===b)||(j.a===b&&j.b===a));
+  T.forEach(A=>T.forEach(B=>{if(A!==B&&schema[A].includes('id_'+B)&&schema[B].includes('id')&&!has(A+'.id_'+B,B+'.id'))r.push({a:A+'.id_'+B,b:B+'.id'})}));
+  T.forEach((A,i)=>T.slice(i+1).forEach(B=>{if(r.some(j=>[j.a,j.b].map(x=>x.split('.')[0]).sort().join()===[A,B].sort().join()))return;
+    const s=schema[A].find(c=>c!=='id'&&schema[B].includes(c));if(s)r.push({a:A+'.'+s,b:B+'.'+s})}));
+  return r}
+async function copy(){
+  const t=build().map(([k,v])=>k+' '+v).join('\n')+';',b=$('#copybtn');
+  try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}
+  b.textContent='Copié';setTimeout(()=>b.textContent='Copier',1400)}
+/* événements */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-act]');if(!b)return;
+  const a=b.dataset.act,k=b.dataset.k,i=+b.dataset.i;
+  if(a==='add')S[k].push({...NEW[k]});
+  else if(a==='del')S[k].splice(i,1);
+  else if(a==='suggest')S.joins=suggest();
+  else if(a==='autogb')S.gb=[...S.sel];
+  else if(a==='reset')fresh();
+  else if(a==='copy'){copy();return}
+  else if(a==='apply'){const p=parse($('#schema').value);if(!Object.keys(p).length)return;schema=p;fresh()}
+  render()});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='preset'){$('#schema').value=PRESETS[t.value];return}
+  if(t.dataset.list){const arr=S[t.dataset.list],v=t.dataset.v,ix=arr.indexOf(v);if(t.checked){if(ix<0)arr.push(v)}else if(ix>=0)arr.splice(ix,1);render();return}
+  if(t.dataset.act==='distinct'){S.distinct=t.checked;render();return}
+  if(t.tagName==='SELECT'&&t.dataset.f){S[t.dataset.k][t.dataset.i][t.dataset.f]=t.value;render()}});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.f&&t.type==='text'){if(t.dataset.f==='alias')t.value=t.value.replace(/\W/g,'');S[t.dataset.k][t.dataset.i][t.dataset.f]=t.value;out()}});
+/* démarrage */
+$('#preset').innerHTML=Object.keys(PRESETS).map(k=>`<option>${k}</option>`).join('');
+$('#schema').value=PRESETS[Object.keys(PRESETS)[0]];
+schema=parse($('#schema').value);fresh();render();
+</script>
+</body>
+</html>
