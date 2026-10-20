@@ -2557,11 +2557,51 @@
   var compteurAfficheurGlobal24h = document.getElementById("compteur-afficheur-global-24h");
   var compteurAfficheurGlobalAttente = document.getElementById("compteur-afficheur-global-attente");
   var legendeAfficheurClasse = document.getElementById("legende-afficheur-classe");
+  var afficheurPrincipal = document.getElementById("afficheur-classe-avion");
+  var boutonsModeAfficheur = Array.prototype.slice.call(document.querySelectorAll("[data-mode-afficheur]"));
+  var modeAfficheurActif = "ecran-large";
   var modeVueAbonnes = (typeof window !== "undefined" && window.innerWidth <= 768) ? "noeuds" : "liste";
   try {
     var vSauv = localStorage.getItem("sti-admin-vue-abonnes");
     if (vSauv === "noeuds" || vSauv === "liste") modeVueAbonnes = vSauv;
   } catch (e) {}
+
+  /* ---------- Choix administrateur : grand écran, deux écrans ou cadran rond ---------- */
+  function normaliserModeAfficheur(mode) {
+    return ["ecran-large", "deux-ecrans", "cadran-rond"].indexOf(mode) !== -1 ? mode : "ecran-large";
+  }
+
+  function libelleModeAfficheur(mode) {
+    if (mode === "deux-ecrans") return "Deux écrans cockpit";
+    if (mode === "cadran-rond") return "Cadran rond";
+    return "Grand écran multifonction";
+  }
+
+  function appliquerModeAfficheur(mode, memoriser) {
+    modeAfficheurActif = normaliserModeAfficheur(mode);
+    if (afficheurPrincipal) {
+      afficheurPrincipal.classList.remove("mode-ecran-large", "mode-deux-ecrans", "mode-cadran-rond");
+      afficheurPrincipal.classList.add("mode-" + modeAfficheurActif);
+      afficheurPrincipal.setAttribute("data-mode-actif", modeAfficheurActif);
+    }
+    boutonsModeAfficheur.forEach(function (btn) {
+      var actif = btn.getAttribute("data-mode-afficheur") === modeAfficheurActif;
+      btn.classList.toggle("actif", actif);
+      btn.setAttribute("aria-pressed", actif ? "true" : "false");
+    });
+    if (memoriser !== false) {
+      try { localStorage.setItem("sti-admin-mode-afficheur", modeAfficheurActif); } catch (e) {}
+    }
+    if (typeof majAfficheurNumeriqueClasse === "function") majAfficheurNumeriqueClasse();
+  }
+
+  boutonsModeAfficheur.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      appliquerModeAfficheur(btn.getAttribute("data-mode-afficheur"), true);
+    });
+  });
+  try { modeAfficheurActif = normaliserModeAfficheur(localStorage.getItem("sti-admin-mode-afficheur") || "ecran-large"); } catch (e) {}
+  appliquerModeAfficheur(modeAfficheurActif, false);
 
   /* ---------- Grand afficheur unique : 4 classes + Prof + Labo 3, avec total général au centre ---------- */
   function estClasseElevesAfficheur(classe) {
@@ -2679,7 +2719,8 @@
       instrumentTotalGlobal.setAttribute("aria-label", instrumentTotalGlobal.title);
     }
     if (legendeAfficheurClasse) {
-      legendeAfficheurClasse.textContent = "4 classes · Prof · Labo 3 · total général au centre · mise à jour " +
+      legendeAfficheurClasse.textContent = libelleModeAfficheur(modeAfficheurActif) +
+        " · 4 classes · Prof · Labo 3 · total général · mise à jour " +
         new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     }
   }
