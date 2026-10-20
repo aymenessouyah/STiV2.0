@@ -415,3 +415,56 @@
  #sti-airbus-service-dock .sti-airbus-code,#sti-airbus-service-dock .sti-airbus-role{display:none!important}#sti-airbus-service-dock .sti-airbus-main{display:flex!important;justify-content:center!important;text-align:center!important;font-size:7px!important;white-space:normal!important}
  body.cockpit-airbus #sti-airbus-service-dock #btn-messenger-dock{display:none!important}#sti-pc-win-tools{display:none!important}
 }
+
+/* ── v21 : pleine largeur et rail de services compact, extensible en surimpression ── */
+@media(min-width:761px){
+  body.cockpit-airbus{
+    width:100%!important;max-width:none!important;margin:0!important;
+    padding-left:14px!important;padding-right:14px!important;
+  }
+  body.cockpit-airbus::before{left:4%!important;right:4%!important}
+  #sti-airbus-service-dock{
+    left:10px!important;right:auto!important;top:auto!important;width:58px!important;
+    display:flex!important;flex-direction:column!important;grid-template-columns:none!important;
+    padding:5px!important;gap:5px!important;overflow:hidden!important;
+    transition:width .2s ease,box-shadow .2s ease!important;
+    box-shadow:inset 0 0 0 2px #0b1013,0 8px 20px rgba(0,0,0,.58)!important;
+  }
+  #sti-airbus-service-dock.sti-dock-open{
+    width:214px!important;
+    box-shadow:inset 0 0 0 2px #0b1013,0 12px 30px rgba(0,0,0,.72),0 0 18px rgba(81,215,255,.16)!important;
+  }
+  #sti-airbus-service-dock::before{display:none!important}
+  #sti-airbus-service-dock #sti-airbus-dock-toggle{
+    order:-1!important;position:relative!important;inset:auto!important;width:100%!important;height:38px!important;min-height:38px!important;
+    display:grid!important;grid-template-columns:34px minmax(0,1fr) 14px!important;grid-template-rows:1fr!important;
+    align-items:center!important;justify-items:center!important;column-gap:7px!important;padding:3px 6px!important;
+    border:1px solid #4d626d!important;border-left:4px solid var(--v19-cyan)!important;border-radius:3px!important;
+    background:linear-gradient(#27343a,#10171b)!important;color:#eef8fb!important;cursor:pointer!important;
+  }
+  #sti-airbus-dock-toggle::after{content:none!important}
+  #sti-airbus-dock-toggle .sti-dock-toggle-code{grid-column:1;color:var(--v19-cyan);font:900 9px/1 Consolas,monospace;letter-spacing:.08em}
+  #sti-airbus-dock-toggle .sti-dock-toggle-label{grid-column:2;justify-self:start;font:850 9px/1 "Segoe UI",Arial,sans-serif;text-transform:uppercase;white-space:nowrap}
+  #sti-airbus-dock-toggle .sti-dock-toggle-arrow{grid-column:3;color:var(--v19-green);font:900 18px/1 Consolas;transition:transform .2s ease}
+  #sti-airbus-service-dock.sti-dock-open #sti-airbus-dock-toggle .sti-dock-toggle-arrow{transform:rotate(180deg)}
+  #sti-airbus-service-dock:not(.sti-dock-open) #sti-airbus-dock-toggle{
+    grid-template-columns:34px 0 0!important;column-gap:0!important;padding:3px 5px!important;
+  }
+  #sti-airbus-service-dock:not(.sti-dock-open) .sti-dock-toggle-label,
+  #sti-airbus-service-dock:not(.sti-dock-open) .sti-dock-toggle-arrow,
+  #sti-airbus-service-dock:not(.sti-dock-open) .sti-airbus-main,
+  #sti-airbus-service-dock:not(.sti-dock-open) .sti-airbus-role{
+    width:0!important;opacity:0!important;visibility:hidden!important;overflow:hidden!important;
+  }
+  #sti-airbus-service-dock:not(.sti-dock-open)>button:not(#sti-airbus-dock-toggle){
+    grid-template-columns:34px 0!important;column-gap:0!important;padding-left:6px!important;padding-right:6px!important;
+  }
+  #sti-airbus-service-dock>button:not(#sti-airbus-dock-toggle){flex:0 0 auto!important;width:100%!important;min-width:0!important}
+}
+@media(min-width:1250px){#sti-airbus-service-dock{bottom:78px!important}}
+@media(max-width:1249px) and (min-width:761px){#sti-airbus-service-dock{bottom:122px!important}}
+@media(max-width:760px){#sti-airbus-dock-toggle{display:none!important}}
+@media(min-width:761px){
+  #sti-airbus-service-dock:not(.sti-dock-open)>button:not(#sti-airbus-dock-toggle){display:none!important}
+}
+@media(max-width:760px){body.cockpit-airbus #sti-airbus-service-dock #sti-airbus-dock-toggle{display:none!important}}

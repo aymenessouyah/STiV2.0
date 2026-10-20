@@ -3831,7 +3831,7 @@
     .mode-deux-ecrans .total-centre-mesures { width: 100%; margin: 0; padding: 4px 0 0; border-left: 0; border-top: 1px solid #34594a; }
   }
 </style>
-<link rel="stylesheet" href="assets/css/admin-v19.css?v=316-airbus-cockpit-20" />
+<link rel="stylesheet" href="assets/css/admin-v19.css?v=316-airbus-cockpit-21" />
 
   <div class="modal-fond" id="modal-fiche-eleve" role="dialog" aria-modal="true">
     <div class="modal-boite fiche-eleve-boite" id="boite-fiche-eleve">
@@ -4348,6 +4348,32 @@
         dock.id = "sti-airbus-service-dock";
         dock.setAttribute("aria-label", "Services administrateur");
         document.body.appendChild(dock);
+      }
+      var bascule = document.getElementById("sti-airbus-dock-toggle");
+      if (!bascule) {
+        bascule = document.createElement("button");
+        bascule.type = "button";
+        bascule.id = "sti-airbus-dock-toggle";
+        bascule.setAttribute("aria-expanded", "false");
+        bascule.setAttribute("aria-label", "Développer les services administrateur");
+        bascule.title = "Développer ou réduire les services — le panneau flotte sans modifier la largeur de la page";
+        bascule.innerHTML = '<span class="sti-dock-toggle-code">SYS</span><span class="sti-dock-toggle-label">Services</span><span class="sti-dock-toggle-arrow" aria-hidden="true">›</span>';
+        bascule.addEventListener("click", function () {
+          var ouvert = dock.classList.toggle("sti-dock-open");
+          bascule.setAttribute("aria-expanded", ouvert ? "true" : "false");
+          bascule.setAttribute("aria-label", ouvert ? "Réduire les services administrateur" : "Développer les services administrateur");
+        });
+        dock.insertBefore(bascule, dock.firstChild);
+      }
+      if (document.body.getAttribute("data-sti-dock-escape") !== "1") {
+        document.body.setAttribute("data-sti-dock-escape", "1");
+        document.addEventListener("keydown", function (ev) {
+          if (ev.key !== "Escape") return;
+          var panneau = document.getElementById("sti-airbus-service-dock");
+          var bouton = document.getElementById("sti-airbus-dock-toggle");
+          if (panneau) panneau.classList.remove("sti-dock-open");
+          if (bouton) bouton.setAttribute("aria-expanded", "false");
+        });
       }
       var services = [
         { id:"sti-btn-sante", code:"SYS 1", role:"DIAGNOSTIC TECHNIQUE", titre:"Santé du site — ouvrir le diagnostic technique et vérifier les services" },
