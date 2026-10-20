@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v324-admin-net";
+var UPDATE_ID = "v325-guide-sql";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -31,7 +31,8 @@ var UPDATE_FILES = [
   { url: "./assets/js/modules/labo-device-client.js", revision: "labo-portable-local-v315" },
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" },
   { url: "./assets/js/modules/labo-offline-diagnostics.js", revision: "offline-diagnostics-v315" },
-  { url: "./exercices/series-exercices.html", revision: "js-37-defis-v317" },
+  { url: "./exercices/series-exercices.html", revision: "guide-sql-v325" },
+  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "guide-sql-v325" },
   { url: "./exercices/javascript/js-37-defis-tt.html", revision: "js-37-defis-bimode-v318" },
   { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-airbus-cockpit-25" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
@@ -218,6 +219,7 @@ var SHELL = [
   "./exercices/sql/sql.html",
   "./exercices/sql/sql-correction.html",
   "./exercices/sql/atelier_sql_3_fenetres.html",
+  "./exercices/sql/CommentConstruireunerequêteSQL.html",
   "./exercices/javascript/Tp1-js.html",
   "./exercices/javascript/Tp1-Correction-js.html",
   "./exercices/javascript/Tp2-js.html",
@@ -623,6 +625,7 @@ var OFFLINE_LIST = [
   "./exercices/sql/Série 4.2 - GestLocation - Vidéo.mp4",
   "./exercices/sql/Série 4.2 - GestLocation - MySQL.sql",
   "./exercices/sql/atelier_sql_3_fenetres.html",
+  "./exercices/sql/CommentConstruireunerequêteSQL.html",
   "./exercices/sql/sql-correction.html",
   "./exercices/sql/sql.html",
   "./index.html",
