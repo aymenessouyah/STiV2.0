@@ -1696,6 +1696,7 @@
       </div>
     </div>
     <div class="barre-util">
+        <button class="btn-util" id="btn-bascule-theme" type="button" title="Basculer entre le theme moderne clair et l’ancien theme cockpit sombre">🎨 Thème : Moderne</button>
       <!-- 1. Accès directs prioritaires avec pastilles en temps réel -->
       <a class="btn-util" id="btn-accueil-site" href="index.html" title="Retourner à l'accueil du site STI"><span class="btn-util-glyph" aria-hidden="true">⌂</span> <span class="lbl-pc">Accueil au site</span><span class="lbl-mob">Accueil au site</span></a>
       <button class="btn-util" id="btn-messenger-top" type="button" title="Ouvrir la messagerie directe Messenger STI avec les candidats" style="background:#fff3e0;border-color:#f4511e;color:#d84315"><span class="btn-util-glyph" aria-hidden="true">◇</span> <span class="lbl-pc">Messenger</span><span class="lbl-mob">Chat</span> <span id="badge-msn-top" style="display:none;background:#ffd54f;color:#23201a;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
@@ -3505,134 +3506,136 @@
     }
   </style>
 
-<style id="airbus-cockpit-theme">
+
+<link rel="stylesheet" href="assets/css/admin-v19.css?v=316-airbus-cockpit-24" />
+<style id="theme-admin-moderne-clair">
   /* ═══════════════════════════════════════════════════════════════════════
-     COCKPIT AIRBUS — thème global du tableau de bord administrateur
-     Noir avionique, cyan système, vert normal, ambre attention, rouge alarme.
+     THEME ADMIN MODERNE CLAIR — tableau de bord administrateur
+     Fond clair plateforme, cartes blanches, indigo + orange STI, ombres douces.
+     (L'afficheur de classe reste un ecran sombre, comme un tableau LED.)
      ═══════════════════════════════════════════════════════════════════════ */
   :root {
-    --ab-bg: #05080b;
-    --ab-panel: #111820;
-    --ab-panel-2: #18222c;
-    --ab-screen: #020608;
-    --ab-line: #52616d;
-    --ab-line-soft: #2a3944;
-    --ab-cyan: #68d8ff;
-    --ab-green: #55e47b;
-    --ab-amber: #ffbf47;
-    --ab-red: #ff5b55;
-    --ab-white: #eef7fb;
-    --ab-muted: #9db0bd;
+    --ab-bg: #eef1f8;
+    --ab-panel: #ffffff;
+    --ab-panel-2: #f4f6fd;
+    --ab-screen: #0f172a;
+    --ab-line: #d4d9e6;
+    --ab-line-soft: #e3e7f2;
+    --ab-cyan: #4338ca;
+    --ab-green: #15803d;
+    --ab-amber: #b45309;
+    --ab-red: #dc2626;
+    --ab-white: #171a26;
+    --ab-muted: #5d6474;
   }
-  body.cockpit-airbus {
+  html.admin-moderne body.cockpit-airbus {
     max-width: 1580px;
-    color: var(--ab-white);
-    background:
-      linear-gradient(rgba(104,216,255,.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(104,216,255,.025) 1px, transparent 1px),
-      radial-gradient(circle at 50% -20%, #263743 0, #0b1117 42%, #04070a 100%);
-    background-size: 28px 28px, 28px 28px, auto;
+    color: var(--ab-white) !important;
+    background: var(--ab-bg) !important;
+    background-image: radial-gradient(circle, #d8deee 1px, transparent 1px) !important;
+    background-size: 26px 26px;
   }
-  body.cockpit-airbus::before {
+  html.admin-moderne body.cockpit-airbus::before {
     content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background: linear-gradient(115deg, transparent 0 48%, rgba(104,216,255,.025) 49%, transparent 50%);
+    background: linear-gradient(180deg, rgba(255,255,255,.75), transparent 260px);
   }
-  body.cockpit-airbus h2,
-  body.cockpit-airbus h3,
-  body.cockpit-airbus h4 { color: var(--ab-cyan) !important; letter-spacing: .025em; }
-  body.cockpit-airbus .hero-admin,
-  body.cockpit-airbus .tableau-apercu,
-  body.cockpit-airbus .centre-actions-dashboard,
-  body.cockpit-airbus .nav-sections-admin,
-  body.cockpit-airbus .carte-section-admin,
-  body.cockpit-airbus .aide-windows-v316,
-  body.cockpit-airbus #zone-detail {
+  html.admin-moderne body.cockpit-airbus h2,
+  html.admin-moderne body.cockpit-airbus h3,
+  html.admin-moderne body.cockpit-airbus h4 { color: #1e2242 !important; letter-spacing: .01em; }
+  html.admin-moderne body.cockpit-airbus .hero-admin,
+  html.admin-moderne body.cockpit-airbus .tableau-apercu,
+  html.admin-moderne body.cockpit-airbus .centre-actions-dashboard,
+  html.admin-moderne body.cockpit-airbus .nav-sections-admin,
+  html.admin-moderne body.cockpit-airbus .carte-section-admin,
+  html.admin-moderne body.cockpit-airbus .aide-windows-v316,
+  html.admin-moderne body.cockpit-airbus #zone-detail {
     color: var(--ab-white);
-    background: linear-gradient(145deg, #18212a, #0b1116 65%, #111a21) !important;
-    border: 2px solid var(--ab-line) !important;
-    border-radius: 8px !important;
-    box-shadow: inset 0 0 0 1px #020405, 0 5px 14px rgba(0,0,0,.55) !important;
+    background: #ffffff !important;
+    border: 1px solid var(--ab-line) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 30px rgba(23,26,38,.07) !important;
   }
-  body.cockpit-airbus .hero-admin { border-top: 4px solid #727f88 !important; }
-  body.cockpit-airbus .entete img {
-    border-color: var(--ab-line) !important; border-radius: 6px !important;
-    box-shadow: 0 0 0 2px #05080b, 0 0 12px rgba(104,216,255,.25) !important;
+  html.admin-moderne body.cockpit-airbus .hero-admin { border-top: 4px solid #f4511e !important; }
+  html.admin-moderne body.cockpit-airbus .entete img {
+    border-color: var(--ab-line) !important; border-radius: 14px !important;
+    box-shadow: 0 4px 14px rgba(23,26,38,.12) !important;
   }
-  body.cockpit-airbus #titre-tb-admin {
-    border-radius: 4px !important; background: #092b20 !important; color: var(--ab-green) !important;
-    border-color: #33775a !important; box-shadow: inset 0 0 8px #000 !important;
-    font-family: Consolas, "Courier New", monospace;
+  html.admin-moderne body.cockpit-airbus #titre-tb-admin {
+    border-radius: 999px !important; background: #e7f6ee !important; color: var(--ab-green) !important;
+    border: 1px solid #bfe6cf !important; box-shadow: none !important;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-weight: 800;
   }
-  body.cockpit-airbus #titre-tb-admin.hors-ligne { background: #391313 !important; color: #ff7972 !important; border-color: #943d38 !important; }
-  body.cockpit-airbus .sous,
-  body.cockpit-airbus .tableau-apercu-entete > span,
-  body.cockpit-airbus .titre-gestion-detaillee > span { color: var(--ab-muted) !important; }
-  body.cockpit-airbus .badge-temoin-examen,
-  body.cockpit-airbus .badge-admin-gold,
-  body.cockpit-airbus .badge-version,
-  body.cockpit-airbus .badge-supabase,
-  body.cockpit-airbus .supabase-etat-compact { border-radius: 4px !important; box-shadow: inset 0 0 7px rgba(0,0,0,.7) !important; }
-  body.cockpit-airbus .barre-util { gap: 7px; }
-  body.cockpit-airbus .btn-util:not(.logout),
-  body.cockpit-airbus .btn-outil,
-  body.cockpit-airbus .btn-vue,
-  body.cockpit-airbus .btn-replier-sec {
-    background: linear-gradient(#202b34,#11181e) !important;
-    color: var(--ab-cyan) !important; border: 1.5px solid var(--ab-line) !important;
-    border-radius: 4px !important; box-shadow: inset 0 0 7px #05080b !important;
+  html.admin-moderne body.cockpit-airbus #titre-tb-admin.hors-ligne { background: #fdecec !important; color: #b91c1c !important; border-color: #f3c2c2 !important; }
+  html.admin-moderne body.cockpit-airbus .sous,
+  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete > span,
+  html.admin-moderne body.cockpit-airbus .titre-gestion-detaillee > span { color: var(--ab-muted) !important; }
+  html.admin-moderne body.cockpit-airbus .badge-temoin-examen,
+  html.admin-moderne body.cockpit-airbus .badge-admin-gold,
+  html.admin-moderne body.cockpit-airbus .badge-version,
+  html.admin-moderne body.cockpit-airbus .badge-supabase,
+  html.admin-moderne body.cockpit-airbus .supabase-etat-compact { border-radius: 999px !important; box-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .barre-util { gap: 8px; }
+  html.admin-moderne body.cockpit-airbus .btn-util:not(.logout),
+  html.admin-moderne body.cockpit-airbus .btn-outil,
+  html.admin-moderne body.cockpit-airbus .btn-vue,
+  html.admin-moderne body.cockpit-airbus .btn-replier-sec {
+    background: #ffffff !important;
+    color: #333a4d !important; border: 1px solid var(--ab-line) !important;
+    border-radius: 999px !important; box-shadow: 0 2px 8px rgba(23,26,38,.05) !important;
+    transition: all .18s ease;
   }
-  body.cockpit-airbus .btn-util:hover,
-  body.cockpit-airbus .btn-outil:hover,
-  body.cockpit-airbus .btn-vue:hover,
-  body.cockpit-airbus .btn-replier-sec:hover {
-    color: #fff !important; border-color: var(--ab-cyan) !important; background: #263946 !important;
+  html.admin-moderne body.cockpit-airbus .btn-util:hover,
+  html.admin-moderne body.cockpit-airbus .btn-outil:hover,
+  html.admin-moderne body.cockpit-airbus .btn-vue:hover,
+  html.admin-moderne body.cockpit-airbus .btn-replier-sec:hover {
+    color: var(--ab-cyan) !important; border-color: var(--ab-cyan) !important; background: #f2f1fe !important; transform: translateY(-1px);
   }
-  body.cockpit-airbus .btn-util.on,
-  body.cockpit-airbus .btn-outil.vert,
-  body.cockpit-airbus .btn-vue.actif { color: var(--ab-green) !important; border-color: #3b8d5b !important; background: #09281b !important; }
-  body.cockpit-airbus .btn-util.logout { border-radius: 4px !important; background: #431616 !important; color: #ffb0aa !important; border-color: #a14843 !important; }
+  html.admin-moderne body.cockpit-airbus .btn-util.on,
+  html.admin-moderne body.cockpit-airbus .btn-outil.vert,
+  html.admin-moderne body.cockpit-airbus .btn-vue.actif { color: var(--ab-green) !important; border-color: #8fd0a8 !important; background: #e7f6ee !important; }
+  html.admin-moderne body.cockpit-airbus .btn-util.logout { border-radius: 999px !important; background: #fdecec !important; color: #b91c1c !important; border: 1px solid #f3c2c2 !important; }
 
-  body.cockpit-airbus .tableau-apercu-entete {
-    padding-bottom: 8px; border-bottom: 1px solid var(--ab-line-soft);
+  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete {
+    padding-bottom: 10px; border-bottom: 1px solid var(--ab-line-soft);
   }
-  body.cockpit-airbus .tableau-apercu-entete h2 { margin: 0 !important; }
-  body.cockpit-airbus .alerte-demande {
-    background: linear-gradient(90deg,#4a2c08,#211505) !important; color: #ffe1a1 !important;
-    border: 1.5px solid #ca8523 !important; border-left: 7px solid var(--ab-amber) !important;
-    border-radius: 4px !important; box-shadow: inset 0 0 10px #100900 !important;
+  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete h2 { margin: 0 !important; }
+  html.admin-moderne body.cockpit-airbus .alerte-demande {
+    background: #fff6e0 !important; color: #7c4a03 !important;
+    border: 1px solid #f0d48a !important; border-left: 6px solid #f5b942 !important;
+    border-radius: 12px !important; box-shadow: none !important;
   }
-  body.cockpit-airbus .vue-ensemble-corps { grid-template-columns: minmax(0,1fr) 292px; align-items: start; gap: 14px; }
-  body.cockpit-airbus .vue-commandes-globales .stats { gap: 8px; }
-  body.cockpit-airbus .vue-commandes-globales .stat,
-  body.cockpit-airbus .stat {
-    background: linear-gradient(145deg,#111920,#05090c) !important;
-    border: 1.5px solid var(--ab-line) !important; border-radius: 4px !important;
-    box-shadow: inset 0 0 9px #000 !important; color: var(--ab-white) !important;
+  html.admin-moderne body.cockpit-airbus .vue-ensemble-corps { grid-template-columns: minmax(0,1fr) 292px; align-items: start; gap: 16px; }
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats { gap: 10px; }
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat,
+  html.admin-moderne body.cockpit-airbus .stat {
+    background: #ffffff !important;
+    border: 1px solid var(--ab-line) !important; border-radius: 16px !important;
+    box-shadow: 0 6px 18px rgba(23,26,38,.05) !important; color: var(--ab-white) !important;
   }
-  body.cockpit-airbus .stat:hover { border-color: var(--ab-cyan) !important; background: #111f28 !important; }
-  body.cockpit-airbus .stat small { color: #c4d1d9 !important; letter-spacing: .09em; }
-  body.cockpit-airbus .vue-commandes-globales .stat { min-height: 72px; }
+  html.admin-moderne body.cockpit-airbus .stat:hover { border-color: var(--ab-cyan) !important; transform: translateY(-2px); }
+  html.admin-moderne body.cockpit-airbus .stat small { color: var(--ab-muted) !important; letter-spacing: .06em; }
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat { min-height: 72px; }
 
-  /* Sélecteur EFIS des trois présentations */
-  body.cockpit-airbus .afficheur-classe-avion {
-    max-width: none; background: linear-gradient(145deg,#343f47,#0b1014 52%,#202a31);
-    border-color: #76838c; border-radius: 10px; box-shadow: inset 0 0 0 2px #030506, inset 0 0 24px #000, 0 8px 14px rgba(0,0,0,.65);
+  /* Afficheur de classe : ecran volontairement sombre, cadre allege */
+  html.admin-moderne body.cockpit-airbus .afficheur-classe-avion {
+    max-width: none; background: linear-gradient(145deg,#2b3648,#141c2a 60%,#1e293b);
+    border-color: #475569; border-radius: 20px; box-shadow: 0 18px 40px rgba(15,23,42,.35);
   }
   .afficheur-mode-bar {
     position: relative; z-index: 6; display: flex; align-items: center; justify-content: center; gap: 6px;
     max-width: 760px; margin: 0 auto 10px; padding: 6px 8px;
-    background: #080d11; border: 1px solid #52616d; border-radius: 4px; box-shadow: inset 0 0 9px #000;
+    background: #ffffff; border: 1px solid var(--ab-line); border-radius: 999px; box-shadow: 0 4px 14px rgba(23,26,38,.06);
   }
-  .afficheur-mode-lbl { margin-right: auto; color: #8fa7b6; font: 1000 8px/1 Consolas, monospace; letter-spacing: .12em; }
+  .afficheur-mode-lbl { margin-right: auto; color: var(--ab-muted); font: 800 10px/1 system-ui, sans-serif; letter-spacing: .1em; }
   .btn-mode-afficheur {
-    border: 1px solid #52616d; border-radius: 3px; padding: 6px 10px;
-    background: #18222a; color: #9fb3bf; font: 900 9px/1 system-ui, sans-serif; cursor: pointer;
+    border: 1px solid var(--ab-line); border-radius: 999px; padding: 7px 12px;
+    background: #ffffff; color: #4a5163; font: 700 11px/1 system-ui, sans-serif; cursor: pointer;
   }
-  .btn-mode-afficheur:hover { color: #fff; border-color: var(--ab-cyan); }
-  .btn-mode-afficheur.actif { background: #08283a; color: var(--ab-cyan); border-color: var(--ab-cyan); box-shadow: 0 0 8px rgba(104,216,255,.34); }
-  body.cockpit-airbus .instrument-avion-ecran { background: linear-gradient(180deg,#03080b,#010304 72%,#05090c); }
+  .btn-mode-afficheur:hover { color: var(--ab-cyan); border-color: var(--ab-cyan); }
+  .btn-mode-afficheur.actif { background: var(--ab-cyan); color: #ffffff; border-color: var(--ab-cyan); box-shadow: 0 4px 12px rgba(67,56,202,.3); }
+  html.admin-moderne body.cockpit-airbus .instrument-avion-ecran { background: linear-gradient(180deg,#101a2c,#0a0f1c 72%,#0d1524); }
 
-  /* Mode 1 — grand écran multifonction Airbus */
+  /* Modes de l'afficheur (structure inchangee) */
   .afficheur-classe-avion.mode-ecran-large { width: 100%; padding: 12px; }
   .mode-ecran-large .instrument-avion-bezel,
   .mode-deux-ecrans .instrument-avion-bezel {
@@ -3664,8 +3667,6 @@
     width: min(390px,45%); margin: 0 0 0 auto; padding: 0 0 0 16px;
     border-top: 0; border-left: 1px solid #34594a;
   }
-
-  /* Mode 2 — deux écrans : classes à gauche, équipage/labo/total à droite */
   .afficheur-classe-avion.mode-deux-ecrans { width: 100%; padding: 12px; }
   .mode-deux-ecrans .afficheur-six-zones {
     display: grid; grid-template-columns: repeat(2,minmax(0,1fr)) .9fr 1.2fr;
@@ -3682,106 +3683,102 @@
     width: 100%; height: 100%; aspect-ratio: auto; border-radius: 4px; padding: 16px 8px;
   }
   .mode-deux-ecrans .afficheur-total-centre > strong { font-size: 55px; }
-
-  /* Mode 3 — cadran rond classique conservé */
   .afficheur-classe-avion.mode-cadran-rond { width: min(100%,720px); padding: 20px; margin-inline: auto; }
   .mode-cadran-rond .afficheur-mode-bar { max-width: 650px; }
 
-  /* Centre de pilotage et sections — panneaux Airbus */
-  body.cockpit-airbus .poles-tabs { background: #070b0e; border-color: var(--ab-line); border-radius: 5px; box-shadow: inset 0 0 7px #000; }
-  body.cockpit-airbus .pole-tab { color: #9eb1bd; border-radius: 3px; }
-  body.cockpit-airbus .pole-tab:hover { color: #fff; background: #1a2831; }
-  body.cockpit-airbus .pole-tab.actif { background: #082b3d; color: var(--ab-cyan); box-shadow: inset 0 0 7px #000; }
-  body.cockpit-airbus .pole-tab.actif .pole-count { background: var(--ab-cyan); color: #041017; }
-  body.cockpit-airbus .actions-principales { gap: 9px; }
-  body.cockpit-airbus .carte-action {
-    background: linear-gradient(145deg,#1a242c,#0b1015) !important; color: var(--ab-white) !important;
-    border: 1.5px solid var(--ab-line) !important; border-radius: 5px !important;
-    box-shadow: inset 0 0 8px rgba(0,0,0,.65) !important;
+  /* Centre de pilotage et sections — panneaux clairs */
+  html.admin-moderne body.cockpit-airbus .poles-tabs { background: #ffffff; border-color: var(--ab-line); border-radius: 14px; box-shadow: 0 4px 14px rgba(23,26,38,.05); }
+  html.admin-moderne body.cockpit-airbus .pole-tab { color: var(--ab-muted); border-radius: 10px; }
+  html.admin-moderne body.cockpit-airbus .pole-tab:hover { color: var(--ab-cyan); background: #f2f1fe; }
+  html.admin-moderne body.cockpit-airbus .pole-tab.actif { background: var(--ab-cyan); color: #ffffff; box-shadow: 0 4px 12px rgba(67,56,202,.3); }
+  html.admin-moderne body.cockpit-airbus .pole-tab.actif .pole-count { background: rgba(255,255,255,.25); color: #ffffff; }
+  html.admin-moderne body.cockpit-airbus .actions-principales { gap: 10px; }
+  html.admin-moderne body.cockpit-airbus .carte-action {
+    background: #ffffff !important; color: var(--ab-white) !important;
+    border: 1px solid var(--ab-line) !important; border-radius: 16px !important;
+    box-shadow: 0 6px 18px rgba(23,26,38,.05) !important; transition: all .18s ease;
   }
-  body.cockpit-airbus .carte-action:hover { border-color: var(--ab-cyan) !important; background: #152630 !important; transform: translateY(-1px); }
-  body.cockpit-airbus .carte-action.on { border-color: var(--ab-green) !important; background: #0b2a1c !important; }
-  body.cockpit-airbus .ca-ico { border-color: #63717a !important; border-radius: 4px !important; box-shadow: inset 0 0 5px rgba(0,0,0,.6) !important; }
-  body.cockpit-airbus .ca-titre { color: var(--ab-white) !important; }
-  body.cockpit-airbus .ca-desc { color: var(--ab-muted) !important; }
-  body.cockpit-airbus .aide-windows-entete h2,
-  body.cockpit-airbus .aide-windows-meta,
-  body.cockpit-airbus .aide-windows-note { color: var(--ab-cyan) !important; }
-  body.cockpit-airbus .aide-windows-meta span,
-  body.cockpit-airbus .aide-windows-grille details {
-    background: #0b1217 !important; color: var(--ab-white) !important; border-color: var(--ab-line) !important; border-radius: 4px !important;
+  html.admin-moderne body.cockpit-airbus .carte-action:hover { border-color: var(--ab-cyan) !important; transform: translateY(-2px); box-shadow: 0 12px 26px rgba(23,26,38,.1) !important; }
+  html.admin-moderne body.cockpit-airbus .carte-action.on { border-color: #8fd0a8 !important; background: #eefaf2 !important; }
+  html.admin-moderne body.cockpit-airbus .ca-ico { border-color: var(--ab-line) !important; border-radius: 12px !important; box-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .ca-titre { color: var(--ab-white) !important; }
+  html.admin-moderne body.cockpit-airbus .ca-desc { color: var(--ab-muted) !important; }
+  html.admin-moderne body.cockpit-airbus .aide-windows-entete h2,
+  html.admin-moderne body.cockpit-airbus .aide-windows-meta,
+  html.admin-moderne body.cockpit-airbus .aide-windows-note { color: var(--ab-cyan) !important; }
+  html.admin-moderne body.cockpit-airbus .aide-windows-meta span,
+  html.admin-moderne body.cockpit-airbus .aide-windows-grille details {
+    background: #ffffff !important; color: var(--ab-white) !important; border-color: var(--ab-line) !important; border-radius: 12px !important;
   }
-  body.cockpit-airbus .aide-windows-grille summary { color: var(--ab-white) !important; }
-  body.cockpit-airbus .aide-windows-contenu { color: var(--ab-muted) !important; border-color: #3b5969 !important; }
-  body.cockpit-airbus .nav-sections-admin { position: sticky; top: 6px; z-index: 50; }
-  body.cockpit-airbus .nav-sections-lbl { color: var(--ab-cyan); }
-  body.cockpit-airbus .btn-sec-tab { background: #131c23; color: #aebdc6; border: 1px solid var(--ab-line); border-radius: 3px; box-shadow: none; }
-  body.cockpit-airbus .btn-sec-tab:hover { background: #1b2b35; color: #fff; }
-  body.cockpit-airbus .btn-sec-tab.actif { background: #0a3042; color: var(--ab-cyan); border-color: var(--ab-cyan); box-shadow: inset 0 0 7px #000; }
-  body.cockpit-airbus .carte-section-admin { border-left: 5px solid #465a67 !important; }
-  body.cockpit-airbus .filtres-bar input,
-  body.cockpit-airbus .filtres-bar select,
-  body.cockpit-airbus #sel-semaine,
-  body.cockpit-airbus .modal-boite input,
-  body.cockpit-airbus .modal-boite select,
-  body.cockpit-airbus .modal-boite textarea {
-    background: #05090c !important; color: var(--ab-white) !important;
-    border: 1.5px solid var(--ab-line) !important; border-radius: 3px !important;
-    box-shadow: inset 0 0 6px #000 !important;
+  html.admin-moderne body.cockpit-airbus .aide-windows-grille summary { color: var(--ab-white) !important; }
+  html.admin-moderne body.cockpit-airbus .aide-windows-contenu { color: var(--ab-muted) !important; border-color: var(--ab-line) !important; }
+  html.admin-moderne body.cockpit-airbus .nav-sections-admin { position: sticky; top: 8px; z-index: 50; backdrop-filter: blur(8px); }
+  html.admin-moderne body.cockpit-airbus .nav-sections-lbl { color: var(--ab-cyan); }
+  html.admin-moderne body.cockpit-airbus .btn-sec-tab { background: #ffffff; color: #4a5163; border: 1px solid var(--ab-line); border-radius: 999px; box-shadow: none; }
+  html.admin-moderne body.cockpit-airbus .btn-sec-tab:hover { background: #f2f1fe; color: var(--ab-cyan); }
+  html.admin-moderne body.cockpit-airbus .btn-sec-tab.actif { background: var(--ab-cyan); color: #ffffff; border-color: var(--ab-cyan); box-shadow: 0 4px 12px rgba(67,56,202,.3); }
+  html.admin-moderne body.cockpit-airbus .carte-section-admin { border-left: 5px solid #f4511e !important; }
+  html.admin-moderne body.cockpit-airbus .filtres-bar input,
+  html.admin-moderne body.cockpit-airbus .filtres-bar select,
+  html.admin-moderne body.cockpit-airbus #sel-semaine,
+  html.admin-moderne body.cockpit-airbus .modal-boite input,
+  html.admin-moderne body.cockpit-airbus .modal-boite select,
+  html.admin-moderne body.cockpit-airbus .modal-boite textarea {
+    background: #ffffff !important; color: var(--ab-white) !important;
+    border: 1px solid var(--ab-line) !important; border-radius: 10px !important;
+    box-shadow: none !important;
   }
-  body.cockpit-airbus select,
-  body.cockpit-airbus textarea,
-  body.cockpit-airbus input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-  body.cockpit-airbus .pied-admin-version button {
-    background: #080d11 !important; color: #dce8ee !important;
-    border-color: #52616d !important; border-radius: 3px !important;
-    box-shadow: inset 0 0 5px #000 !important;
+  html.admin-moderne body.cockpit-airbus select,
+  html.admin-moderne body.cockpit-airbus textarea,
+  html.admin-moderne body.cockpit-airbus input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  html.admin-moderne body.cockpit-airbus .pied-admin-version button {
+    background: #ffffff !important; color: var(--ab-white) !important;
+    border-color: var(--ab-line) !important; border-radius: 10px !important;
+    box-shadow: none !important;
   }
-  body.cockpit-airbus input::placeholder { color: #7f929e; }
-  body.cockpit-airbus .choix-vue-abonnes { background: #070b0e; border-color: var(--ab-line); border-radius: 4px; }
-  body.cockpit-airbus .bandeau-classe { background: #0a2633; color: var(--ab-cyan); border-color: #3c8caf; border-radius: 4px; box-shadow: inset 0 0 8px #000; }
+  html.admin-moderne body.cockpit-airbus input:focus,
+  html.admin-moderne body.cockpit-airbus select:focus,
+  html.admin-moderne body.cockpit-airbus textarea:focus { outline: none; border-color: var(--ab-cyan) !important; box-shadow: 0 0 0 3px rgba(67,56,202,.15) !important; }
+  html.admin-moderne body.cockpit-airbus input::placeholder { color: #9aa1b5; }
+  html.admin-moderne body.cockpit-airbus .choix-vue-abonnes { background: #ffffff; border-color: var(--ab-line); border-radius: 12px; }
+  html.admin-moderne body.cockpit-airbus .bandeau-classe { background: var(--ab-panel-2); color: var(--ab-cyan); border-color: #cfc9f5; border-radius: 12px; box-shadow: none; }
 
-  body.cockpit-airbus .table-wrap { background: #070b0e; border-color: var(--ab-line); border-radius: 5px; box-shadow: inset 0 0 8px #000; }
-  body.cockpit-airbus table { color: #dce8ee; background: #070b0e; }
-  body.cockpit-airbus th { background: #1b2730 !important; color: var(--ab-cyan) !important; border-color: #40515d !important; }
-  body.cockpit-airbus td { border-color: #26353f !important; }
-  body.cockpit-airbus tbody tr:not(.row-en_ligne):not(.row-actif):not(.row-gold):not(.row-en_attente):not(.row-exclu):not(.row-suspendu) { background: #0b1116; color: #dce8ee; }
-  body.cockpit-airbus #tb-abonnes tr.row-en_ligne,
-  body.cockpit-airbus #tb-abonnes tr.row-actif,
-  body.cockpit-airbus #tb-abonnes tr.row-gold,
-  body.cockpit-airbus #tb-abonnes tr.row-en_attente,
-  body.cockpit-airbus #tb-abonnes tr.row-exclu,
-  body.cockpit-airbus #tb-abonnes tr.row-suspendu { color: #07100c !important; }
-  body.cockpit-airbus .act { background: #18232b; color: #dce8ee; border-color: #53636e; border-radius: 3px; }
-  body.cockpit-airbus .act:hover { color: var(--ab-cyan); border-color: var(--ab-cyan); }
+  html.admin-moderne body.cockpit-airbus .table-wrap { background: #ffffff; border-color: var(--ab-line); border-radius: 14px; box-shadow: 0 6px 18px rgba(23,26,38,.05); overflow: hidden; }
+  html.admin-moderne body.cockpit-airbus table { color: var(--ab-white); background: #ffffff; }
+  html.admin-moderne body.cockpit-airbus th { background: #eef0ff !important; color: var(--ab-cyan) !important; border-color: #dfe3f2 !important; }
+  html.admin-moderne body.cockpit-airbus td { border-color: #e7eaf3 !important; }
+  html.admin-moderne body.cockpit-airbus tbody tr:not(.row-en_ligne):not(.row-actif):not(.row-gold):not(.row-en_attente):not(.row-exclu):not(.row-suspendu) { background: #ffffff; color: var(--ab-white); }
+  html.admin-moderne body.cockpit-airbus tbody tr:hover { background: #f7f8ff; }
+  html.admin-moderne body.cockpit-airbus .act { background: #ffffff; color: #333a4d; border-color: var(--ab-line); border-radius: 8px; }
+  html.admin-moderne body.cockpit-airbus .act:hover { color: var(--ab-cyan); border-color: var(--ab-cyan); }
 
-  /* Fenêtres et boîtes de dialogue avioniques */
-  body.cockpit-airbus .modal-fond { background: rgba(0,4,7,.84); backdrop-filter: blur(5px); }
-  body.cockpit-airbus .modal-boite {
-    background: linear-gradient(145deg,#19232b,#0a0f13) !important; color: var(--ab-white) !important;
-    border: 2px solid #63727c !important; border-radius: 7px !important;
-    box-shadow: inset 0 0 0 1px #020405, 0 16px 44px #000 !important;
+  /* Fenetres et boites de dialogue claires */
+  html.admin-moderne body.cockpit-airbus .modal-fond { background: rgba(23,26,38,.55); backdrop-filter: blur(5px); }
+  html.admin-moderne body.cockpit-airbus .modal-boite {
+    background: #ffffff !important; color: var(--ab-white) !important;
+    border: 1px solid var(--ab-line) !important; border-radius: 18px !important;
+    box-shadow: 0 24px 60px rgba(23,26,38,.25) !important;
   }
-  body.cockpit-airbus .modal-boite h3 { color: var(--ab-cyan) !important; }
-  body.cockpit-airbus .modal-boite p,
-  body.cockpit-airbus .modal-boite label,
-  body.cockpit-airbus .modal-boite small { color: #b4c3cc; }
-  body.cockpit-airbus .modal-actions button { background: #172129; color: #dce8ee; border-color: #5c6c77; border-radius: 3px; }
-  body.cockpit-airbus .modal-actions .btn-valider { background: #0b5031 !important; color: #eafff0 !important; border-color: #4dba78 !important; }
-  body.cockpit-airbus .modal-actions .btn-danger { background: #61201e !important; color: #fff !important; border-color: #c95750 !important; }
-  body.cockpit-airbus .resume-classe-modal,
-  body.cockpit-airbus .wa-liste { background: #080d11 !important; color: #c7d5dd !important; border-color: #445560 !important; border-radius: 4px !important; }
-  body.cockpit-airbus .pied-admin-version { color: #8fa2ae; border-color: #3d4c56; }
-  body.cockpit-airbus .mob-bottom-nav { background: #0a0f13 !important; border-color: #62717b !important; }
-  body.cockpit-airbus .mob-nav-btn { color: #a8bac4 !important; }
-  body.cockpit-airbus .mob-nav-btn.actif { color: var(--ab-cyan) !important; }
-  body.cockpit-airbus .msn-admin-win,
-  body.cockpit-airbus .msn-sidebar,
-  body.cockpit-airbus .msn-chat-col { background: #0b1116 !important; color: var(--ab-white) !important; border-color: var(--ab-line) !important; }
+  html.admin-moderne body.cockpit-airbus .modal-boite h3 { color: #1e2242 !important; }
+  html.admin-moderne body.cockpit-airbus .modal-boite p,
+  html.admin-moderne body.cockpit-airbus .modal-boite label,
+  html.admin-moderne body.cockpit-airbus .modal-boite small { color: var(--ab-muted); }
+  html.admin-moderne body.cockpit-airbus .modal-actions button { background: #ffffff; color: #333a4d; border-color: var(--ab-line); border-radius: 10px; }
+  html.admin-moderne body.cockpit-airbus .modal-actions .btn-valider { background: var(--ab-green) !important; color: #ffffff !important; border-color: var(--ab-green) !important; }
+  html.admin-moderne body.cockpit-airbus .modal-actions .btn-danger { background: var(--ab-red) !important; color: #fff !important; border-color: var(--ab-red) !important; }
+  html.admin-moderne body.cockpit-airbus .resume-classe-modal,
+  html.admin-moderne body.cockpit-airbus .wa-liste { background: #f7f8fc !important; color: var(--ab-white) !important; border-color: var(--ab-line) !important; border-radius: 12px !important; }
+  html.admin-moderne body.cockpit-airbus .pied-admin-version { color: var(--ab-muted); border-color: var(--ab-line-soft); }
+  html.admin-moderne body.cockpit-airbus .mob-bottom-nav { background: rgba(255,255,255,.96) !important; border-color: var(--ab-line) !important; }
+  html.admin-moderne body.cockpit-airbus .mob-nav-btn { color: var(--ab-muted) !important; }
+  html.admin-moderne body.cockpit-airbus .mob-nav-btn.actif { color: var(--ab-cyan) !important; }
+  html.admin-moderne body.cockpit-airbus .msn-admin-win,
+  html.admin-moderne body.cockpit-airbus .msn-sidebar,
+  html.admin-moderne body.cockpit-airbus .msn-chat-col { background: #ffffff !important; color: var(--ab-white) !important; border-color: var(--ab-line) !important; }
 
   @media (max-width: 1180px) {
-    body.cockpit-airbus .vue-ensemble-corps { grid-template-columns: 1fr; }
-    body.cockpit-airbus .vue-commandes-globales .stats { grid-template-columns: repeat(3,minmax(0,1fr)); }
+    html.admin-moderne body.cockpit-airbus .vue-ensemble-corps { grid-template-columns: 1fr; }
+    html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats { grid-template-columns: repeat(3,minmax(0,1fr)); }
   }
   @media (max-width: 900px) {
     .mode-ecran-large .afficheur-six-zones,
@@ -3796,17 +3793,17 @@
     .mode-deux-ecrans .afficheur-six-zones::before { display: none; }
   }
   @media (max-width: 620px) {
-    body.cockpit-airbus { padding: 9px 8px 82px; }
-    body.cockpit-airbus .hero-admin,
-    body.cockpit-airbus .tableau-apercu,
-    body.cockpit-airbus .centre-actions-dashboard,
-    body.cockpit-airbus .carte-section-admin { border-radius: 6px !important; }
-    body.cockpit-airbus .vue-commandes-globales .stats { grid-template-columns: 1fr; }
+    html.admin-moderne body.cockpit-airbus { padding: 9px 8px 82px; }
+    html.admin-moderne body.cockpit-airbus .hero-admin,
+    html.admin-moderne body.cockpit-airbus .tableau-apercu,
+    html.admin-moderne body.cockpit-airbus .centre-actions-dashboard,
+    html.admin-moderne body.cockpit-airbus .carte-section-admin { border-radius: 14px !important; }
+    html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats { grid-template-columns: 1fr; }
     .afficheur-mode-bar { flex-wrap: wrap; justify-content: stretch; gap: 4px; }
     .afficheur-mode-lbl { width: 100%; margin: 0 0 2px; text-align: center; }
-    .btn-mode-afficheur { flex: 1 1 calc(33.333% - 4px); padding: 6px 3px; font-size: 7px; }
+    .btn-mode-afficheur { flex: 1 1 calc(33.333% - 4px); padding: 6px 3px; font-size: 10px; }
     .afficheur-classe-avion.mode-ecran-large,
-    .afficheur-classe-avion.mode-deux-ecrans { padding: 7px; border-radius: 7px; }
+    .afficheur-classe-avion.mode-deux-ecrans { padding: 7px; border-radius: 12px; }
     .mode-ecran-large .instrument-avion-bezel,
     .mode-deux-ecrans .instrument-avion-bezel { padding: 4px; border-radius: 7px; }
     .mode-ecran-large .instrument-avion-ecran,
@@ -3830,8 +3827,46 @@
     .mode-ecran-large .total-centre-mesures,
     .mode-deux-ecrans .total-centre-mesures { width: 100%; margin: 0; padding: 4px 0 0; border-left: 0; border-top: 1px solid #34594a; }
   }
+
+  /* ---- Bandes et conteneurs restés sombres dans admin-v19 ---- */
+  html.admin-moderne body.cockpit-airbus .barre-util { background: #f4f6fd !important; border: 1px solid var(--ab-line) !important; border-radius: 16px !important; box-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .barre-util .btn-util.logout { background: #fff1f0 !important; color: var(--ab-red) !important; border-color: #f3c1bb !important; }
+  html.admin-moderne body.cockpit-airbus #titre-tb-admin { color: var(--ab-white) !important; text-shadow: none !important; -webkit-text-stroke: 0 !important; }
+  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete { background: transparent !important; box-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete h2, html.admin-moderne body.cockpit-airbus .afficheur-mode-lbl { color: var(--ab-white) !important; text-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales { background: #f7f8fc !important; border: 1px solid var(--ab-line-soft) !important; border-radius: 14px !important; box-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .afficheur-mode-bar { background: #f7f8fc !important; border: 1px solid var(--ab-line-soft) !important; border-radius: 12px !important; box-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .stat .n { color: #4338ca !important; text-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .hero-admin .badge, html.admin-moderne body.cockpit-airbus .badge-admin { background: #eef2ff !important; color: #3730a3 !important; border: 1px solid #c7d2fe !important; text-shadow: none !important; box-shadow: none !important; }
+
+  /* ---- Derniers elements sombres (precis) ---- */
+  html.admin-moderne body.cockpit-airbus::before, html.admin-moderne body.cockpit-airbus::after { display: none !important; }
+  html.admin-moderne body.cockpit-airbus #titre-tb-admin { background: none !important; }
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats { background: #f7f8fc !important; border: 1px solid var(--ab-line-soft) !important; border-radius: 14px !important; box-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats::before { color: var(--ab-muted) !important; }
+  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat b { color: #4338ca !important; text-shadow: none !important; font-family: inherit !important; font-weight: 800 !important; }
+  html.admin-moderne body.cockpit-airbus .afficheur-classe-avion { background: #dde3f0 !important; border-color: #c3cbdf !important; box-shadow: 0 8px 22px rgba(31,38,64,.12) !important; }
+  html.admin-moderne body.cockpit-airbus .btn-mode-afficheur { background: #ffffff !important; color: var(--ab-white) !important; border: 1px solid var(--ab-line) !important; border-radius: 999px !important; box-shadow: none !important; text-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .btn-mode-afficheur.actif { background: #4338ca !important; color: #ffffff !important; border-color: #4338ca !important; }
+  html.admin-moderne body.cockpit-airbus .alerte-demande { background: #fff7e6 !important; color: #7c4a03 !important; border-color: #ecc887 !important; box-shadow: none !important; }
+
+  /* ---- Polissage final : titres et onglets ---- */
+  html.admin-moderne body.cockpit-airbus h2, html.admin-moderne body.cockpit-airbus h3, html.admin-moderne body.cockpit-airbus h4 { color: var(--ab-white) !important; text-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .carte-section-admin > h2 { color: var(--ab-white) !important; }
+  html.admin-moderne body.cockpit-airbus .btn-sec-tab { background: #ffffff !important; color: var(--ab-white) !important; border: 1px solid var(--ab-line) !important; border-radius: 999px !important; box-shadow: none !important; text-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .btn-sec-tab.actif { background: #f4511e !important; color: #ffffff !important; border-color: #f4511e !important; }
+  html.admin-moderne body.cockpit-airbus .afficheur-classe h2, html.admin-moderne body.cockpit-airbus .afficheur-classe h3 { color: #f2f6ff !important; }
+
+  /* ---- Titres precis (specificite egale, fichier charge apres) ---- */
+  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete h2, html.admin-moderne body.cockpit-airbus .titre-gestion-detaillee h2,
+  html.admin-moderne body.cockpit-airbus .carte-section-admin h2, html.admin-moderne body.cockpit-airbus .poles-header #titre-actions-dashboard { color: var(--ab-white) !important; }
+  html.admin-moderne body.cockpit-airbus .carte-action .ca-titre { color: var(--ab-white) !important; text-shadow: none !important; }
+  html.admin-moderne body.cockpit-airbus .carte-action .ca-corps { color: var(--ab-muted) !important; }
 </style>
-<link rel="stylesheet" href="assets/css/admin-v19.css?v=316-airbus-cockpit-24" />
+<script>
+/* Choix du theme admin : "moderne" (defaut) ou "ancien" (cockpit sombre), memorise sur l'appareil */
+(function(){try{var t=localStorage.getItem("sti-admin-theme");if(t!=="ancien"){document.documentElement.classList.add("admin-moderne");}}catch(e){document.documentElement.classList.add("admin-moderne");}})();
+</script>
 
   <div class="modal-fond" id="modal-fiche-eleve" role="dialog" aria-modal="true">
     <div class="modal-boite fiche-eleve-boite" id="boite-fiche-eleve">
@@ -4440,6 +4475,20 @@
       window.setTimeout(installerDockAirbus, 250);
     }
   })();
+</script>
+
+<script>
+(function(){
+  var b=document.getElementById("btn-bascule-theme");
+  if(!b) return;
+  function maj(){ b.textContent = document.documentElement.classList.contains("admin-moderne") ? "\U0001F3A8 Thème : Moderne" : "\U0001F3A8 Thème : Ancien"; }
+  b.addEventListener("click",function(){
+    var actif=document.documentElement.classList.toggle("admin-moderne");
+    try{ localStorage.setItem("sti-admin-theme", actif ? "moderne" : "ancien"); }catch(e){}
+    maj();
+  });
+  maj();
+})();
 </script>
 </body>
 </html>
