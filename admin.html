@@ -216,100 +216,194 @@
   .tableau-apercu .stats { margin-bottom: 10px; }
   .tableau-apercu .alerte-demande { margin-bottom: 10px; }
 
-  /* Afficheur numérique de classe inspiré d’un tableau de bord d’avion */
+  /* Afficheur numérique par classe — instrument circulaire inspiré de l’exemple aéronautique fourni */
   .afficheur-classe-avion {
-    position: relative; overflow: hidden;
-    background: linear-gradient(145deg, #101d2b, #050a10 72%);
-    border: 3px solid #42566d; border-radius: 17px;
-    padding: 12px 14px 14px; color: #eef6ff;
-    box-shadow: inset 0 0 0 1px #0a0f15, inset 0 0 24px rgba(0,0,0,.75), 3px 3px 0 rgba(35,32,26,.65);
+    position: relative; width: min(100%, 590px); margin: 0 auto 2px;
+    padding: 18px; border: 3px solid #5f6972; border-radius: 38px;
+    background: linear-gradient(145deg, #333b41 0%, #101519 48%, #2a3136 100%);
+    color: #f4f8fb; box-shadow: inset 0 0 0 2px #090c0e, inset 0 0 26px rgba(0,0,0,.88), 5px 6px 0 rgba(35,32,26,.6);
   }
-  .afficheur-classe-avion::before, .afficheur-classe-avion::after {
-    content: ""; position: absolute; top: 8px; width: 7px; height: 7px;
-    border-radius: 50%; background: #7f8c99; box-shadow: inset 1px 1px 2px #dce5ec, 0 0 0 1px #02060a;
+  .vis-instrument {
+    position: absolute; width: 10px; height: 10px; z-index: 4;
+    border-radius: 50%; background: radial-gradient(circle at 35% 30%, #b8c2c9 0 18%, #354149 24% 58%, #070a0c 64%);
+    box-shadow: 0 0 0 1px #020405;
   }
-  .afficheur-classe-avion::before { left: 8px; }
-  .afficheur-classe-avion::after { right: 8px; }
+  .vis-instrument.v1 { top: 13px; left: 15px; }
+  .vis-instrument.v2 { top: 13px; right: 15px; }
+  .vis-instrument.v3 { bottom: 13px; left: 15px; }
+  .vis-instrument.v4 { bottom: 13px; right: 15px; }
+  .instrument-avion-bezel {
+    position: relative; width: min(100%, 510px); aspect-ratio: 1; margin: auto;
+    padding: 13px; border-radius: 50%;
+    background: linear-gradient(145deg, #55616b, #0a0f13 45%, #2d3740 72%, #11171c);
+    border: 2px solid #020405;
+    box-shadow: inset 0 0 13px #000, 0 0 0 2px #707b83, 0 0 22px rgba(0,0,0,.8);
+  }
+  .instrument-avion-ecran {
+    width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 38px 42px 31px;
+    background: radial-gradient(circle at 50% 42%, #071018 0, #020508 58%, #000 100%);
+    border: 2px solid #050709;
+    box-shadow: inset 0 0 35px #000, inset 0 0 0 1px #263746;
+  }
   .afficheur-classe-entete {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; flex-wrap: wrap; margin: 0 8px 10px;
+    display: flex; align-items: center; justify-content: center; margin: 0 0 2px;
   }
   .afficheur-classe-titre {
-    display: flex; align-items: center; gap: 8px; font-size: 12px;
-    font-weight: 900; text-transform: uppercase; letter-spacing: .09em; color: #d7e8f7;
+    color: #d9e4eb; font-size: 12px; font-weight: 1000;
+    text-transform: uppercase; letter-spacing: .1em; text-align: center;
   }
   .afficheur-classe-titre small {
-    color: #7f9cb5; font-size: 9px; letter-spacing: .05em;
+    display: inline-block; margin-left: 6px; color: #7894a8; font-size: 8px; letter-spacing: .05em;
+  }
+  .afficheur-classe-instruments {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+    align-items: start; margin: 0 0 3px;
+  }
+  .instrument-classe {
+    min-width: 0; color: inherit; text-align: center; font-family: inherit;
+  }
+  button.instrument-classe {
+    position: relative; min-height: 104px; padding: 0; border: 0;
+    background: transparent; cursor: pointer;
+  }
+  button.instrument-classe:hover .arc-actif { filter: drop-shadow(0 0 5px currentColor); }
+  button.instrument-classe:focus-visible { outline: 2px solid #fff; outline-offset: 1px; border-radius: 12px; }
+  .instrument-arc-svg { width: 100%; height: 82px; overflow: visible; }
+  .arc-fond, .arc-actif {
+    fill: none; stroke-width: 8; stroke-linecap: round;
+  }
+  .arc-fond { stroke: #23313b; }
+  .arc-actif {
+    stroke-dasharray: 100; stroke-dashoffset: 0;
+    transition: stroke-dashoffset .55s ease; filter: drop-shadow(0 0 4px currentColor);
+  }
+  .instrument-total .arc-actif { stroke: #47d56d; color: #47d56d; }
+  .instrument-present .arc-actif { stroke: #50dd77; color: #50dd77; }
+  .repere-arc { fill: #ef4444; }
+  .instrument-classe-libelle {
+    position: absolute; left: 0; right: 0; top: 35px;
+    color: #f2f6f8; font-size: 10px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  .instrument-classe-valeur {
+    position: absolute; left: 0; right: 0; top: 49px;
+    font-family: Consolas, "Courier New", monospace; font-size: 35px;
+    font-weight: 500; line-height: 1; letter-spacing: .04em; font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 8px currentColor;
+  }
+  .instrument-total .instrument-classe-valeur { color: #55ed79; }
+  .instrument-present .instrument-classe-valeur { color: #55ed79; }
+  .instrument-classe-detail {
+    position: absolute; left: 0; right: 0; top: 84px;
+    overflow: hidden; color: #a8bac5; font-size: 8.5px;
+    font-weight: 800; white-space: nowrap; text-overflow: ellipsis;
+  }
+  .afficheur-annunciator {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: stretch;
+    gap: 7px; margin: 0 2px 8px;
+  }
+  .selecteur-classe-avion {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center;
+    background: #f7fafc; border: 2px solid #020304; color: #06090c;
+    min-width: 0; height: 34px;
+  }
+  .selecteur-classe-avion label {
+    padding: 0 7px; font-size: 9px; font-weight: 1000; letter-spacing: .08em;
   }
   #select-afficheur-classe {
-    min-width: 175px; max-width: 100%; margin: 0; padding: 6px 30px 6px 10px;
-    border: 1.5px solid #6f879e; border-radius: 8px; background: #07111b;
-    color: #f8fbff; font: 900 12px/1.2 system-ui, sans-serif;
+    min-width: 0; width: 100%; height: 100%; margin: 0; padding: 3px 22px 3px 7px;
+    border: 0; border-left: 1px solid #111; border-radius: 0;
+    background: #d9ff39; color: #071006; font: 1000 11px/1 system-ui, sans-serif;
   }
   .afficheur-alerte-attente {
-    display: none; align-items: center; gap: 7px; border: 1.5px solid #fb923c;
-    border-radius: 9px; background: rgba(194,65,12,.18); color: #fed7aa;
-    padding: 5px 9px; font-size: 10.5px; font-weight: 900; cursor: pointer;
+    display: none; align-items: center; justify-content: center; gap: 6px;
+    min-width: 82px; height: 34px; padding: 3px 8px;
+    border: 2px solid #020304; border-radius: 0; background: #f97316; color: #140700;
+    font-size: 8.5px; font-weight: 1000; cursor: pointer; text-transform: uppercase;
   }
   .afficheur-alerte-attente.visible { display: inline-flex; }
   .afficheur-alerte-attente .signal-exclamation {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 24px; height: 24px; border-radius: 50%; background: #f97316;
-    color: #fff; font: 1000 18px/1 system-ui, sans-serif;
-    box-shadow: 0 0 0 4px rgba(249,115,22,.18), 0 0 15px rgba(249,115,22,.9);
+    display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+    width: 23px; height: 23px; border-radius: 50%; background: #ff7a00; color: #fff;
+    border: 2px solid #fff1d7; font: 1000 17px/1 system-ui, sans-serif;
+    box-shadow: 0 0 0 3px rgba(249,115,22,.24), 0 0 15px rgba(249,115,22,.95);
     animation: signal-attente-orange 1.15s ease-in-out infinite;
   }
   @keyframes signal-attente-orange {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(.9); opacity: .58; }
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(.88); filter: brightness(1.35); }
   }
   @media (prefers-reduced-motion: reduce) {
     .afficheur-alerte-attente .signal-exclamation { animation: none; }
   }
-  .afficheur-classe-instruments {
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;
+  .instrument-bas {
+    display: grid; grid-template-columns: 1.25fr .75fr; align-items: center;
+    gap: 12px; padding: 5px 10px 2px; border-top: 1px solid #50616d;
   }
-  .instrument-classe {
-    position: relative; min-width: 0; text-align: center;
-    background: linear-gradient(180deg, #020508, #091019);
-    border: 1.5px solid #4b5f72; border-radius: 12px; padding: 8px 7px 7px;
-    box-shadow: inset 0 0 14px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.09);
+  .instrument-24h {
+    position: relative; min-height: 83px; padding: 7px 4px 4px; text-align: left;
   }
-  button.instrument-classe { color: inherit; cursor: pointer; font-family: inherit; }
-  button.instrument-classe:hover { border-color: #93c5fd; transform: translateY(-1px); }
-  .instrument-classe-libelle {
-    display: block; color: #9fb4c6; font-size: 9.5px; font-weight: 900;
-    text-transform: uppercase; letter-spacing: .08em; white-space: nowrap;
+  .instrument-24h .instrument-classe-libelle,
+  .instrument-24h .instrument-classe-valeur,
+  .instrument-24h .instrument-classe-detail { position: static; display: block; }
+  .instrument-24h .instrument-classe-libelle { color: #f5f7f8; font-size: 10px; }
+  .instrument-24h .instrument-classe-valeur { margin: 1px 0; color: #52e878; font-size: 36px; }
+  .instrument-24h .instrument-classe-detail { color: #9eb2bf; font-size: 8.5px; }
+  .reservoir-presence {
+    display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 8px;
   }
-  .instrument-classe-valeur {
-    display: block; margin: 2px 0 1px; font-family: Consolas, "Courier New", monospace;
-    font-size: clamp(28px, 3.2vw, 43px); font-weight: 900; line-height: 1;
-    letter-spacing: .08em; text-shadow: 0 0 10px currentColor;
-    font-variant-numeric: tabular-nums;
+  .reservoir-corps {
+    position: relative; width: 34px; height: 76px; overflow: hidden;
+    border: 3px solid #e5edf2; border-radius: 15px 15px 9px 9px;
+    background: #0c1b22; box-shadow: inset 0 0 0 2px #1d313d;
   }
-  .instrument-total .instrument-classe-valeur { color: #66d9ff; }
-  .instrument-present .instrument-classe-valeur { color: #6ee7a8; }
-  .instrument-24h .instrument-classe-valeur { color: #fbbf63; }
-  .instrument-classe-detail {
-    display: block; overflow: hidden; color: #7f9cb5; font-size: 9px;
-    font-weight: 800; white-space: nowrap; text-overflow: ellipsis;
+  .reservoir-niveau {
+    position: absolute; left: 3px; right: 3px; bottom: 3px; height: 0%;
+    min-height: 2px; border-radius: 10px 10px 5px 5px;
+    background: linear-gradient(#55e47b, #20b94d); box-shadow: 0 0 11px rgba(70,229,112,.8);
+    transition: height .55s ease;
   }
+  .reservoir-texte strong {
+    display: block; color: #52e878; font: 500 24px/1 Consolas, "Courier New", monospace;
+    text-shadow: 0 0 7px currentColor;
+  }
+  .reservoir-texte span { display: block; margin-top: 3px; color: #a8bac5; font-size: 8px; font-weight: 900; }
   .afficheur-classe-legende {
-    margin: 8px 3px 0; color: #7f9cb5; font-size: 9px; font-weight: 800;
-    text-align: right;
+    margin: 3px 5px 0; padding-top: 5px; border-top: 1px solid #50616d;
+    color: #8fa6b5; font: 800 8px/1.2 system-ui, sans-serif; text-align: center;
   }
   @media (max-width: 620px) {
-    .afficheur-classe-avion { padding: 10px 8px 11px; }
-    .afficheur-classe-entete { align-items: stretch; margin: 0 5px 8px; }
-    .afficheur-classe-titre { width: 100%; justify-content: space-between; font-size: 10.5px; }
-    #select-afficheur-classe { flex: 1; min-width: 130px; font-size: 11px; }
-    .afficheur-alerte-attente { padding: 4px 7px; font-size: 9px; }
-    .afficheur-alerte-attente .signal-exclamation { width: 21px; height: 21px; font-size: 16px; }
-    .afficheur-classe-instruments { gap: 5px; }
-    .instrument-classe { border-radius: 9px; padding: 7px 3px 6px; }
-    .instrument-classe-libelle { font-size: 7.5px; letter-spacing: .03em; }
-    .instrument-classe-valeur { font-size: 27px; }
-    .instrument-classe-detail { font-size: 7.5px; }
+    .afficheur-classe-avion { padding: 12px; border-radius: 27px; }
+    .instrument-avion-bezel { padding: 9px; }
+    .instrument-avion-ecran { padding: 25px 25px 22px; }
+    .afficheur-classe-titre { font-size: 9px; }
+    .afficheur-classe-titre small { font-size: 6.5px; }
+    .afficheur-classe-instruments { gap: 4px; }
+    button.instrument-classe { min-height: 82px; }
+    .instrument-arc-svg { height: 64px; }
+    .instrument-classe-libelle { top: 27px; font-size: 7px; }
+    .instrument-classe-valeur { top: 38px; font-size: 27px; }
+    .instrument-classe-detail { top: 65px; font-size: 6.5px; }
+    .afficheur-annunciator { gap: 4px; margin-bottom: 4px; }
+    .selecteur-classe-avion { height: 29px; }
+    .selecteur-classe-avion label { padding: 0 4px; font-size: 6.5px; }
+    #select-afficheur-classe { font-size: 9px; padding-left: 4px; }
+    .afficheur-alerte-attente { min-width: 48px; height: 29px; padding: 2px 5px; }
+    .afficheur-alerte-attente .signal-exclamation { width: 19px; height: 19px; font-size: 14px; }
+    .afficheur-alerte-attente #texte-alerte-afficheur-classe { display: none; }
+    .instrument-bas { gap: 5px; padding: 3px 5px 0; }
+    .instrument-24h { min-height: 62px; padding-top: 4px; }
+    .instrument-24h .instrument-classe-libelle { font-size: 7px; }
+    .instrument-24h .instrument-classe-valeur { font-size: 27px; }
+    .instrument-24h .instrument-classe-detail { font-size: 6.5px; }
+    .reservoir-presence { grid-template-columns: 25px 1fr; gap: 5px; }
+    .reservoir-corps { width: 25px; height: 55px; border-width: 2px; }
+    .reservoir-texte strong { font-size: 17px; }
+    .reservoir-texte span { font-size: 6px; }
+    .afficheur-classe-legende { font-size: 6.5px; }
+    .vis-instrument { width: 7px; height: 7px; }
   }
 
   .centre-actions-dashboard {
@@ -1541,37 +1635,73 @@
   </div>
 
   <section class="afficheur-classe-avion" id="afficheur-classe-avion" aria-labelledby="titre-afficheur-classe">
-    <div class="afficheur-classe-entete">
-      <div class="afficheur-classe-titre" id="titre-afficheur-classe">
-        <span>✈ Afficheur numérique de classe</span>
-        <small>Temps réel</small>
+    <span class="vis-instrument v1" aria-hidden="true"></span>
+    <span class="vis-instrument v2" aria-hidden="true"></span>
+    <span class="vis-instrument v3" aria-hidden="true"></span>
+    <span class="vis-instrument v4" aria-hidden="true"></span>
+    <div class="instrument-avion-bezel">
+      <div class="instrument-avion-ecran">
+        <div class="afficheur-classe-entete">
+          <div class="afficheur-classe-titre" id="titre-afficheur-classe">
+            STI — Présence classe <small>instrument temps réel</small>
+          </div>
+        </div>
+
+        <div class="afficheur-classe-instruments" aria-live="polite">
+          <button type="button" class="instrument-classe instrument-total" id="instrument-classe-total" title="Afficher tous les élèves confirmés de cette classe">
+            <svg class="instrument-arc-svg" viewBox="0 0 120 70" aria-hidden="true">
+              <path class="arc-fond" pathLength="100" d="M10 61 A50 50 0 0 1 110 61"></path>
+              <path class="arc-actif" id="arc-classe-total" pathLength="100" d="M10 61 A50 50 0 0 1 110 61"></path>
+              <circle class="repere-arc" cx="108" cy="46" r="3"></circle>
+            </svg>
+            <span class="instrument-classe-libelle">Effectif total</span>
+            <strong class="instrument-classe-valeur" id="compteur-classe-total">00</strong>
+            <span class="instrument-classe-detail" id="detail-classe-total">élèves confirmés</span>
+          </button>
+          <button type="button" class="instrument-classe instrument-present" id="instrument-classe-present" title="Afficher les élèves actuellement présents">
+            <svg class="instrument-arc-svg" viewBox="0 0 120 70" aria-hidden="true">
+              <path class="arc-fond" pathLength="100" d="M10 61 A50 50 0 0 1 110 61"></path>
+              <path class="arc-actif" id="arc-classe-present" pathLength="100" d="M10 61 A50 50 0 0 1 110 61"></path>
+              <circle class="repere-arc" cx="108" cy="46" r="3"></circle>
+            </svg>
+            <span class="instrument-classe-libelle">Présents maintenant</span>
+            <strong class="instrument-classe-valeur" id="compteur-classe-present">00</strong>
+            <span class="instrument-classe-detail" id="detail-classe-present">0 % de l’effectif</span>
+          </button>
+        </div>
+
+        <div class="afficheur-annunciator">
+          <div class="selecteur-classe-avion">
+            <label for="select-afficheur-classe">CLASSE</label>
+            <select id="select-afficheur-classe" aria-label="Classe affichée">
+              <option value="">Chargement…</option>
+            </select>
+          </div>
+          <button type="button" class="afficheur-alerte-attente" id="alerte-afficheur-classe" title="Afficher les demandes en attente de cette classe">
+            <span class="signal-exclamation" aria-hidden="true">!</span>
+            <span id="texte-alerte-afficheur-classe">Nouvelle demande non confirmée</span>
+          </button>
+        </div>
+
+        <div class="instrument-bas">
+          <div class="instrument-classe instrument-24h" title="Élèves distincts présents durant les dernières 24 heures">
+            <span class="instrument-classe-libelle">Présents sur 24 h</span>
+            <strong class="instrument-classe-valeur" id="compteur-classe-24h">00</strong>
+            <span class="instrument-classe-detail" id="detail-classe-24h">0 % de l’effectif</span>
+          </div>
+          <div class="reservoir-presence" aria-label="Taux de présence sur les dernières 24 heures">
+            <div class="reservoir-corps" aria-hidden="true">
+              <div class="reservoir-niveau" id="niveau-classe-24h"></div>
+            </div>
+            <div class="reservoir-texte">
+              <strong id="pourcentage-classe-24h">0%</strong>
+              <span>ACTIVITÉ<br>24 HEURES</span>
+            </div>
+          </div>
+        </div>
+        <p class="afficheur-classe-legende" id="legende-afficheur-classe">Les compteurs se mettent à jour automatiquement.</p>
       </div>
-      <select id="select-afficheur-classe" aria-label="Classe affichée">
-        <option value="">Chargement des classes…</option>
-      </select>
-      <button type="button" class="afficheur-alerte-attente" id="alerte-afficheur-classe" title="Afficher les demandes en attente de cette classe">
-        <span class="signal-exclamation" aria-hidden="true">!</span>
-        <span id="texte-alerte-afficheur-classe">Nouvelle demande non confirmée</span>
-      </button>
     </div>
-    <div class="afficheur-classe-instruments" aria-live="polite">
-      <button type="button" class="instrument-classe instrument-total" id="instrument-classe-total" title="Afficher tous les élèves de cette classe">
-        <span class="instrument-classe-libelle">Effectif total</span>
-        <strong class="instrument-classe-valeur" id="compteur-classe-total">00</strong>
-        <span class="instrument-classe-detail" id="detail-classe-total">élèves confirmés</span>
-      </button>
-      <button type="button" class="instrument-classe instrument-present" id="instrument-classe-present" title="Afficher les élèves actuellement présents">
-        <span class="instrument-classe-libelle">Présents maintenant</span>
-        <strong class="instrument-classe-valeur" id="compteur-classe-present">00</strong>
-        <span class="instrument-classe-detail" id="detail-classe-present">0 % de l’effectif</span>
-      </button>
-      <div class="instrument-classe instrument-24h" title="Élèves distincts ayant accédé à la plateforme durant les dernières 24 heures">
-        <span class="instrument-classe-libelle">Présents sur 24 h</span>
-        <strong class="instrument-classe-valeur" id="compteur-classe-24h">00</strong>
-        <span class="instrument-classe-detail" id="detail-classe-24h">0 % de l’effectif</span>
-      </div>
-    </div>
-    <p class="afficheur-classe-legende" id="legende-afficheur-classe">Les compteurs se mettent à jour automatiquement.</p>
   </section>
 
   <div id="bandeau-machines-labo3" style="display:none;background:#f0f9ff;border:2px solid #0284c7;border-radius:16px;padding:12px 16px;margin-bottom:14px;box-shadow:3.5px 3.5px 0 rgba(2,132,199,.35);font-size:12.5px;color:#0c4a6e"></div>
@@ -3748,7 +3878,7 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
-  <script src="assets/js/admin.js?v=316-class-display-9"></script>
+  <script src="assets/js/admin.js?v=316-class-cockpit-display-10"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>

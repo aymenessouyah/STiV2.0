@@ -2512,6 +2512,9 @@
   var detailClasse24h = document.getElementById("detail-classe-24h");
   var texteAlerteAfficheurClasse = document.getElementById("texte-alerte-afficheur-classe");
   var legendeAfficheurClasse = document.getElementById("legende-afficheur-classe");
+  var arcClassePresent = document.getElementById("arc-classe-present");
+  var niveauClasse24h = document.getElementById("niveau-classe-24h");
+  var pourcentageClasse24h = document.getElementById("pourcentage-classe-24h");
   var modeVueAbonnes = (typeof window !== "undefined" && window.innerWidth <= 768) ? "noeuds" : "liste";
   try {
     var vSauv = localStorage.getItem("sti-admin-vue-abonnes");
@@ -2594,9 +2597,14 @@
     if (compteurClasseTotal) compteurClasseTotal.textContent = formatCompteurClasse(total);
     if (compteurClassePresent) compteurClassePresent.textContent = formatCompteurClasse(presents);
     if (compteurClasse24h) compteurClasse24h.textContent = formatCompteurClasse(presents24h);
+    var pctPresent = Math.min(100, pourcentageClasse(presents, total));
+    var pct24h = Math.min(100, pourcentageClasse(presents24h, total));
     if (detailClasseTotal) detailClasseTotal.textContent = total === 1 ? "élève confirmé" : "élèves confirmés";
-    if (detailClassePresent) detailClassePresent.textContent = pourcentageClasse(presents, total) + " % de l’effectif";
-    if (detailClasse24h) detailClasse24h.textContent = pourcentageClasse(presents24h, total) + " % de l’effectif";
+    if (detailClassePresent) detailClassePresent.textContent = pctPresent + " % de l’effectif";
+    if (detailClasse24h) detailClasse24h.textContent = pct24h + " % de l’effectif";
+    if (arcClassePresent) arcClassePresent.style.strokeDashoffset = String(100 - pctPresent);
+    if (niveauClasse24h) niveauClasse24h.style.height = pct24h + "%";
+    if (pourcentageClasse24h) pourcentageClasse24h.textContent = pct24h + "%";
 
     if (alerteAfficheurClasse && texteAlerteAfficheurClasse) {
       alerteAfficheurClasse.classList.toggle("visible", attente > 0);
