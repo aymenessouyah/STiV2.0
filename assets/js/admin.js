@@ -3088,8 +3088,24 @@
       return;
     }
 
-    /* Rendu des Nœuds (Nom, Prénom, Classe, État de l'abonné) */
+    /* Rendu des Nœuds sous forme de mini-instruments aéronautiques. */
     if (grilleNoeuds) {
+      var acces24hParUser = {};
+      var seuilNoeud24h = Date.now() - 24 * 60 * 60 * 1000;
+      acces.forEach(function (a) {
+        var ts24 = new Date(a && (a.fin || a.debut)).getTime();
+        if (a && !isNaN(ts24) && ts24 >= seuilNoeud24h) {
+          acces24hParUser[a.user_id] = (acces24hParUser[a.user_id] || 0) + 1;
+        }
+      });
+      function formatDureeInstrumentNoeud(sec) {
+        sec = Math.max(0, Number(sec) || 0);
+        if (sec < 60) return "00m";
+        if (sec < 3600) return String(Math.round(sec / 60)).padStart(2, "0") + "m";
+        var h = Math.floor(sec / 3600);
+        var m = Math.round((sec % 3600) / 60);
+        return h + "h" + String(m).padStart(2, "0");
+      }
       liste.forEach(function (p) {
         var nd = document.createElement("div");
         var isG = estGold(p);
@@ -3099,6 +3115,8 @@
         nd.title = "Cliquer pour ouvrir la fiche récapitulative complète de cet élève";
         nd.addEventListener("click", function () { ouvrirFicheEleve(p); });
 
+        var cadranNd = document.createElement("div");
+        cadranNd.className = "noeud-cadran";
         var haut = document.createElement("div");
         haut.className = "noeud-haut";
 
@@ -3130,6 +3148,35 @@
           : contact(p);
         idBox.append(divNom, divSub);
         haut.append(pastille, idBox);
+        if (p.statut === "en_attente") {
+          var alerteNd = document.createElement("span");
+          alerteNd.className = "noeud-alerte-attente";
+          alerteNd.title = "Nouvelle demande non encore confirmée";
+          alerteNd.setAttribute("role", "status");
+          alerteNd.setAttribute("aria-label", "Nouvelle demande non encore confirmée");
+          alerteNd.innerHTML = "<b aria-hidden='true'>!</b><span>À confirmer</span>";
+          haut.appendChild(alerteNd);
+        }
+
+        var instrumentsNd = document.createElement("div");
+        instrumentsNd.className = "noeud-instruments";
+        function ajouterMiniInstrumentNoeud(libelle, valeur, classeCss, titre) {
+          var mini = document.createElement("div");
+          mini.className = "noeud-mini-instrument" + (classeCss ? " " + classeCss : "");
+          if (titre) mini.title = titre;
+          var lbl = document.createElement("small");
+          lbl.textContent = libelle;
+          var val = document.createElement("strong");
+          val.textContent = valeur;
+          mini.append(lbl, val);
+          instrumentsNd.appendChild(mini);
+        }
+        var nbConnexionsNd = counts[p.id] || 0;
+        var dureeNdSec = dureePourAbonne(p.id);
+        var nbAcces24Nd = acces24hParUser[p.id] || 0;
+        ajouterMiniInstrumentNoeud("Connexions", formatCompteurClasse(nbConnexionsNd), "", nbConnexionsNd + " connexion(s) enregistrée(s)");
+        ajouterMiniInstrumentNoeud("Durée", formatDureeInstrumentNoeud(dureeNdSec), "", "Durée de la période sélectionnée : " + fmtDuree(dureeNdSec));
+        ajouterMiniInstrumentNoeud("Accès 24 h", formatCompteurClasse(nbAcces24Nd), "nd-mini-24h", nbAcces24Nd + " accès durant les dernières 24 heures");
 
         var meta = document.createElement("div");
         meta.className = "noeud-meta";
@@ -3150,10 +3197,7 @@
           spEtat.className = "st " + (p.statut || "en_attente");
           spEtat.textContent = LIB[p.statut] || p.statut;
         }
-        var spDurNd = document.createElement("span");
-        spDurNd.style.cssText = "background:#fffdf7;border:1.5px solid #23201a;border-radius:999px;padding:2px 8px;font-size:10.5px;font-weight:900;color:#23201a;";
-        spDurNd.textContent = "⏱️ " + fmtDuree(dureePourAbonne(p.id));
-        meta.append(spCl, spDurNd, spEtat);
+        meta.append(spCl, spEtat);
 
         var modsNd = modulesConsultesPourUser(p.id);
         var bilNd = bilanProgressionMediaUser(p);
@@ -3227,7 +3271,8 @@
         }
         btnNd("🗑️", function () { supprimer(p); }, "del", "Supprimer");
 
-        nd.append(haut, meta, barreAct);
+        cadranNd.append(haut, instrumentsNd, meta);
+        nd.append(cadranNd, barreAct);
         grilleNoeuds.appendChild(nd);
       });
     }

@@ -658,89 +658,144 @@
   }
   .btn-vue:hover:not(.actif) { color: #f4511e; }
 
-  /* Vue en Nœuds des abonnés (Nom, Prénom, Classe, État) */
+  /* Vue en Nœuds — mini-instruments aéronautiques pour chaque abonné */
   .grille-noeuds {
-    display: none;
-    grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
-    gap: 12px; margin-bottom: 14px;
+    display: none; grid-template-columns: repeat(auto-fill, minmax(292px, 1fr));
+    gap: 14px; margin-bottom: 14px;
   }
   .grille-noeuds.visible { display: grid; }
   .noeud-abonne {
-    position: relative; display: flex; flex-direction: column; gap: 8px;
-    padding: 13px 14px; border-radius: 18px; border: 2px solid #23201a;
-    background: #fffdf7; box-shadow: 4px 4px 0 #23201a;
+    --nd-accent: #8b9bab; position: relative; display: flex; flex-direction: column; gap: 8px;
+    padding: 10px; border-radius: 24px; border: 3px solid #59656e;
+    background: linear-gradient(145deg, #31393f, #0e1317 56%, #252c31);
+    color: #eef6fa; box-shadow: inset 0 0 0 1px #050708, inset 0 0 18px rgba(0,0,0,.75), 4px 5px 0 rgba(35,32,26,.65);
     cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
   }
-  .noeud-abonne:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #f4511e; }
-  .noeud-abonne.nd-en_ligne { background: #a7e8bd; border-color: #135d37; }
-  .noeud-abonne.nd-actif { background: #c4b5fd; border-color: #5b21b6; }
-  .noeud-abonne.nd-gold { background: linear-gradient(135deg, #fff6b8 0%, #ffe478 100%); }
-  .noeud-abonne.nd-en_attente { background: #f5ead2; }
-  .noeud-abonne.nd-exclu { background: #fde2e6; }
-  .noeud-abonne.nd-suspendu { background: #ece7dd; }
-  .noeud-haut { display: flex; align-items: center; gap: 10px; }
+  .noeud-abonne::before, .noeud-abonne::after {
+    content: ""; position: absolute; top: 7px; z-index: 3; width: 7px; height: 7px;
+    border-radius: 50%; background: radial-gradient(circle at 35% 30%, #c1c9ce 0 18%, #3b474e 24% 58%, #070a0c 64%);
+    box-shadow: 0 0 0 1px #020405;
+  }
+  .noeud-abonne::before { left: 9px; }
+  .noeud-abonne::after { right: 9px; }
+  .noeud-abonne:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: inset 0 0 0 1px #050708, 0 0 0 2px var(--nd-accent), 6px 7px 0 rgba(35,32,26,.7);
+  }
+  .noeud-abonne.nd-en_ligne { --nd-accent: #4ade80; border-color: #3f6251; }
+  .noeud-abonne.nd-actif { --nd-accent: #a78bfa; border-color: #554878; }
+  .noeud-abonne.nd-gold { --nd-accent: #facc15; border-color: #756622; }
+  .noeud-abonne.nd-en_attente { --nd-accent: #fb923c; border-color: #7c4a25; }
+  .noeud-abonne.nd-exclu { --nd-accent: #f87171; border-color: #713c3c; }
+  .noeud-abonne.nd-suspendu { --nd-accent: #94a3b8; border-color: #4b5563; }
+  .noeud-cadran {
+    position: relative; display: flex; flex-direction: column; gap: 8px;
+    padding: 14px 12px 11px; border: 2px solid #050708; border-radius: 19px;
+    background: radial-gradient(circle at 50% 20%, #0b1720 0, #03070a 62%, #000 100%);
+    box-shadow: inset 0 0 22px #000, inset 0 0 0 1px #30414d, 0 0 0 1px #707a82;
+  }
+  .noeud-haut { display: flex; align-items: center; gap: 9px; min-width: 0; }
   .noeud-pastille {
-    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
-    background: #23201a; color: #ffb27a; border: 2px solid #23201a;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 13.5px; letter-spacing: .5px;
-    position: relative; box-shadow: 2px 2px 0 rgba(244,81,30,.45);
+    width: 43px; height: 43px; border-radius: 50%; flex-shrink: 0;
+    background: radial-gradient(circle, #132431 0, #020609 72%); color: var(--nd-accent);
+    border: 2px solid var(--nd-accent); display: flex; align-items: center; justify-content: center;
+    font-family: Consolas, "Courier New", monospace; font-weight: 900; font-size: 14px; letter-spacing: .5px;
+    position: relative; box-shadow: inset 0 0 10px #000, 0 0 9px color-mix(in srgb, var(--nd-accent) 58%, transparent);
   }
   .noeud-pastille .point-online {
     position: absolute; right: -2px; bottom: -2px; width: 12px; height: 12px;
-    border-radius: 50%; background: #17b26a; border: 2px solid #fffdf7;
-    box-shadow: 0 0 0 2px rgba(23,178,106,.35);
+    border-radius: 50%; background: #4ade80; border: 2px solid #06100a;
+    box-shadow: 0 0 8px #4ade80; animation: signal-attente-orange 1.4s ease-in-out infinite;
   }
   .noeud-identite { min-width: 0; flex: 1; }
   .noeud-nom {
-    font-weight: 900; font-size: 13.5px; color: #23201a; line-height: 1.2;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    color: #f4f8fa; font-weight: 1000; font-size: 13.5px; line-height: 1.15;
+    text-transform: uppercase; letter-spacing: .035em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .noeud-sub {
-    font-size: 11px; font-weight: 700; color: #5a5244; margin-top: 2px;
+    color: #8fa8b8; font-size: 9px; font-weight: 800; margin-top: 3px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
+  .noeud-alerte-attente {
+    display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto;
+    background: #f97316; color: #170800; border: 1px solid #ffb26f;
+    padding: 3px 6px; font-size: 7.5px; font-weight: 1000; text-transform: uppercase;
+  }
+  .noeud-alerte-attente span { display: none; }
+  .noeud-alerte-attente b {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 17px; height: 17px; border-radius: 50%; background: #ff7a00; color: #fff;
+    border: 1.5px solid #fff1d7; font-size: 12px; box-shadow: 0 0 8px #f97316;
+    animation: signal-attente-orange 1.15s ease-in-out infinite;
+  }
+  .noeud-instruments {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;
+    padding: 7px 0; border-top: 1px solid #435765; border-bottom: 1px solid #435765;
+  }
+  .noeud-mini-instrument {
+    position: relative; min-width: 0; min-height: 59px; padding: 6px 4px 4px;
+    text-align: center; border: 1px solid #344956; border-radius: 9px;
+    background: linear-gradient(#020507, #091119); box-shadow: inset 0 0 10px #000;
+  }
+  .noeud-mini-instrument::before {
+    content: ""; position: absolute; left: 12%; right: 12%; top: 4px; height: 3px;
+    border-radius: 999px; background: var(--nd-accent); box-shadow: 0 0 6px var(--nd-accent);
+  }
+  .noeud-mini-instrument small {
+    display: block; margin-top: 4px; color: #8fa8b8; font-size: 7px;
+    font-weight: 1000; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap;
+  }
+  .noeud-mini-instrument strong {
+    display: block; margin: 2px 0 0; color: #58ea7c;
+    font: 500 20px/1 Consolas, "Courier New", monospace;
+    text-shadow: 0 0 7px currentColor; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .noeud-mini-instrument.nd-mini-24h strong { color: #67d8ff; }
   .noeud-meta {
-    display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap;
-    padding-top: 7px; border-top: 1px dashed rgba(35,32,26,.18);
+    display: flex; align-items: center; gap: 5px; flex-wrap: wrap;
+    padding-top: 0; border-top: 0;
   }
   .noeud-classe {
     display: inline-flex; align-items: center; gap: 4px;
-    background: rgba(255,253,247,.85); border: 1.5px solid #23201a;
-    border-radius: 999px; padding: 2px 9px; font-size: 11px; font-weight: 900; color: #23201a;
+    background: #d9ff39; border: 1px solid #f2ffb0; border-radius: 0;
+    padding: 3px 7px; font-size: 9px; font-weight: 1000; color: #071006;
+  }
+  .noeud-meta .st, .noeud-meta .badge-online {
+    font-size: 8.5px !important; padding: 3px 7px !important; border-radius: 2px !important;
   }
   .noeud-actions {
-    display: flex; align-items: center; justify-content: flex-end; gap: 5px; margin-top: 4px; flex-wrap: wrap;
+    position: relative; display: flex; align-items: center; justify-content: center;
+    gap: 5px; margin: 0 4px 1px; padding: 7px 5px 1px; flex-wrap: wrap;
+    border-top: 1px solid #47555f;
   }
-  .noeud-actions .act { margin: 0; padding: 4px 8px; font-size: 11.5px; }
+  .noeud-actions .act {
+    margin: 0; min-width: 31px; padding: 4px 7px; font-size: 11px;
+    color: #e8f1f6; background: #09131b; border: 1px solid #61717d;
+    border-radius: 7px; box-shadow: inset 0 0 6px #000;
+  }
+  .noeud-actions .act:hover { color: #fff; border-color: var(--nd-accent); box-shadow: 0 0 7px var(--nd-accent); }
+  .noeud-actions .act.gold-on { color: #201800; background: #facc15; border-color: #ffe76b; }
+  .noeud-actions .act.del:hover { background: #b91c1c; border-color: #fb7185; }
 
   /* Éléments exclusifs à l'ergonomie mobile (masqués sur PC) */
   .only-mob-flex { display: none; }
   .mob-bottom-nav { display: none; }
 
   @media (max-width: 768px) {
-    .grille-noeuds { grid-template-columns: 1fr; gap: 10px; }
-    .noeud-abonne { padding: 12px 13px; border-radius: 15px; box-shadow: 3px 3px 0 #23201a; gap: 9px; }
-    .noeud-pastille { width: 38px; height: 38px; font-size: 13px; }
-    .noeud-nom { font-size: 14px; white-space: normal; }
-    .noeud-sub { font-size: 11.5px; white-space: normal; }
-    .noeud-classe { padding: 4px 11px; font-size: 12px; }
-    .noeud-actions {
-      justify-content: flex-start;
-      gap: 6px;
-      padding-top: 6px;
-      border-top: 1px dashed rgba(35,32,26,.18);
-    }
+    .grille-noeuds { grid-template-columns: 1fr; gap: 11px; }
+    .noeud-abonne { padding: 9px; border-radius: 21px; gap: 7px; }
+    .noeud-cadran { padding: 13px 10px 10px; border-radius: 17px; }
+    .noeud-pastille { width: 40px; height: 40px; font-size: 13px; }
+    .noeud-nom { font-size: 13px; white-space: normal; }
+    .noeud-sub { font-size: 9px; white-space: normal; }
+    .noeud-classe { padding: 3px 8px; font-size: 9px; }
+    .noeud-mini-instrument { min-height: 57px; }
+    .noeud-mini-instrument strong { font-size: 19px; }
+    .noeud-actions { justify-content: center; gap: 5px; padding-top: 7px; }
     .noeud-actions .act {
-      min-height: 34px;
-      min-width: 36px;
-      padding: 6px 10px;
-      font-size: 12.5px;
-      border-radius: 10px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 1.5px 1.5px 0 #23201a;
+      min-height: 32px; min-width: 34px; padding: 5px 8px; font-size: 12px;
+      border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: inset 0 0 6px #000;
     }
   }
 
@@ -3878,7 +3933,7 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
-  <script src="assets/js/admin.js?v=316-class-cockpit-display-10"></script>
+  <script src="assets/js/admin.js?v=316-subscriber-cockpit-nodes-11"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>
