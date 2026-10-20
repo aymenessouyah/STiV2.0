@@ -1124,6 +1124,21 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — TP Explore Tunisie (Float) : Code tapé comme un dactylo à gauche ➔ rendu actualisé en direct à droite (.mp4)"
       };
 
+      /* Les titres de chapitres contiennent parfois de vraies notations HTML
+         (par exemple « X. <iframe> »). Ils doivent rester du texte dans les
+         boutons et listes : ne jamais les injecter comme des balises DOM. */
+      function echapperHtmlMediaSTI(valeur) {
+        return String(valeur == null ? "" : valeur).replace(/[&<>"']/g, function (caractere) {
+          return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+          }[caractere];
+        });
+      }
+
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
       var STI_CHAPITRES_MEDIA = {
         "sql-initiation": [
@@ -1894,7 +1909,7 @@
         var chapsG = STI_CHAPITRES_MEDIA["php-guichet"] || [];
         if (selChapG) {
           selChapG.innerHTML = chapsG.map(function (c, idx) {
-            return '<option value="' + idx + '">📑 ' + c.label + '</option>';
+            return '<option value="' + idx + '">📑 ' + echapperHtmlMediaSTI(c.label) + '</option>';
           }).join("");
           selChapG.addEventListener("change", function () {
             var cIdx = parseInt(selChapG.value, 10) || 0;
@@ -2349,13 +2364,13 @@
         var pillsChapEl = document.getElementById("sti-video-modal-chap-pills");
         if (selChapEl) {
           selChapEl.innerHTML = chapsCible.map(function (c, idx) {
-            return '<option value="' + idx + '">📑 ' + c.label + '</option>';
+            return '<option value="' + idx + '">📑 ' + echapperHtmlMediaSTI(c.label) + '</option>';
           }).join("");
           selChapEl.style.display = chapsCible.length ? "" : "none";
         }
         if (pillsChapEl) {
           pillsChapEl.innerHTML = chapsCible.map(function (c, idx) {
-            return '<button type="button" data-chap-idx="' + idx + '" title="' + c.label.replace(/"/g, "&quot;") + '" style="flex-shrink:0;padding:4px 10px;border-radius:999px;border:1.5px solid ' + (idx === 0 ? '#86efac' : '#334155') + ';background:' + (idx === 0 ? '#177245' : '#1e293b') + ';color:' + (idx === 0 ? '#ffffff' : '#cbd5e1') + ';font:800 11px/1.1 system-ui,sans-serif;cursor:pointer;white-space:nowrap;">' + (c.short || c.label) + '</button>';
+            return '<button type="button" data-chap-idx="' + idx + '" title="' + echapperHtmlMediaSTI(c.label) + '" style="flex-shrink:0;padding:4px 10px;border-radius:999px;border:1.5px solid ' + (idx === 0 ? '#86efac' : '#334155') + ';background:' + (idx === 0 ? '#177245' : '#1e293b') + ';color:' + (idx === 0 ? '#ffffff' : '#cbd5e1') + ';font:800 11px/1.1 system-ui,sans-serif;cursor:pointer;white-space:nowrap;">' + echapperHtmlMediaSTI(c.short || c.label) + '</button>';
           }).join("");
           pillsChapEl.style.display = chapsCible.length ? "flex" : "none";
           var pillBtns = pillsChapEl.querySelectorAll("button[data-chap-idx]");
@@ -2539,7 +2554,7 @@
             selSql.setAttribute("aria-label", "Choisir un chapitre du cours SQL");
             selSql.style.cssText = "padding:9px 14px;border-radius:12px;border:3px solid #1a1a2e;background:#1e293b;color:#fde68a;font-weight:800;font-size:0.88rem;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;max-width:310px;";
             selSql.innerHTML = '<option value="">📑 Chapitre SQL (Audio / Vidéo)…</option>' + chapsSql.map(function (ch, idx) {
-              return '<option value="' + idx + '">' + ch.label + '</option>';
+              return '<option value="' + idx + '">' + echapperHtmlMediaSTI(ch.label) + '</option>';
             }).join("");
             sqlBar.appendChild(selSql);
             selSql.addEventListener("change", function () {
@@ -2770,7 +2785,7 @@
 
           var chapsCours = STI_CHAPITRES_MEDIA[cSlug] || [];
           var optsChapsHtml = '<option value="">📑 Chapitre (Audio / Vidéo)…</option>' + chapsCours.map(function (ch, idx) {
-            return '<option value="' + idx + '">' + ch.label + '</option>';
+            return '<option value="' + idx + '">' + echapperHtmlMediaSTI(ch.label) + '</option>';
           }).join("");
 
           var barEl = document.createElement("div");
@@ -3350,7 +3365,7 @@
             if (topSel.getAttribute("data-key") !== chapsKey) {
               topSel.setAttribute("data-key", chapsKey);
               topSel.innerHTML = chapsList.map(function (c, idx) {
-                return '<option value="' + idx + '">📑 ' + c.label + '</option>';
+                return '<option value="' + idx + '">📑 ' + echapperHtmlMediaSTI(c.label) + '</option>';
               }).join("");
             }
             topSel.style.display = "inline-block";
