@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Les 37 Défis — JavaScript • STI Quiz</title>
+<script>
+/* Theme plateforme STI : suit le mode clair/sombre enregistre (localStorage sti-theme/theme) */
+(function(){function ap(t){if(t!=="dark"&&t!=="light")return;document.documentElement.setAttribute("data-theme",t);document.documentElement.classList.toggle("dark-mode",t==="dark");}
+try{ap(localStorage.getItem("sti-theme")||localStorage.getItem("theme"));}catch(e){}
+window.addEventListener("storage",function(e){if(e.key==="sti-theme"||e.key==="theme")ap(e.newValue);});})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -181,6 +187,23 @@
     .panneau-handle{display:none}
   }
   @media (min-width:900px){.grille{grid-template-columns:repeat(3,1fr)}}
+
+  /* ===== MODE SOMBRE — suit la plateforme (html[data-theme="dark"]) ===== */
+  html[data-theme="dark"]{--bg:#0f172a;--surface:#1e293b;--border:#334155;--border-hover:#475569;--text:#f8fafc;--muted:#94a3b8;--accent:#818cf8;--accent-soft:#232347;--c-js:#eab308;--ok:#4ade80;--warn:#fbbf24;--err:#f87171;color-scheme:dark}
+  html[data-theme="dark"] body{background-image:radial-gradient(circle,rgba(148,163,184,.12) 1px,transparent 1px)}
+  html[data-theme="dark"] .header,html[data-theme="dark"] .familles-tabs{background:rgba(15,23,42,.92)}
+  html[data-theme="dark"] .progress-track{background:#1e293b}
+  html[data-theme="dark"] .enonce{border-color:#3b3b6d;color:#c7cbe8}
+  html[data-theme="dark"] .enonce code{background:#0f172a}
+  html[data-theme="dark"] .field input,html[data-theme="dark"] .field select,html[data-theme="dark"] .field-row input,html[data-theme="dark"] .quiz-field input,html[data-theme="dark"] .quiz-field select{background:#0f172a;color:var(--text)}
+  html[data-theme="dark"] .btn-secondary,html[data-theme="dark"] .btn-correction,html[data-theme="dark"] .panneau-head .ph-close{background:#1e293b;color:var(--text)}
+  html[data-theme="dark"] .resultat{background:#0f172a}
+  html[data-theme="dark"] .panneau-handle::before{background:#475569}
+  html[data-theme="dark"] .tabs-forms,html[data-theme="dark"] .solutions-tabs,html[data-theme="dark"] .captcha-box,html[data-theme="dark"] .cell,html[data-theme="dark"] .audio-box,html[data-theme="dark"] .array-box,html[data-theme="dark"] .quiz-progress,html[data-theme="dark"] .quiz-question,html[data-theme="dark"] .quiz-done,html[data-theme="dark"] .solution-card{background:#1e293b}
+  html[data-theme="dark"] .card.visite{background:rgba(34,197,94,.08)}
+  html[data-theme="dark"] .badge-facile,html[data-theme="dark"] .badge-easy{color:#4ade80}
+  html[data-theme="dark"] .badge-moyen,html[data-theme="dark"] .badge-med{color:#fbbf24}
+  html[data-theme="dark"] .badge-difficile,html[data-theme="dark"] .badge-hard{color:#f87171}
 </style>
 </head>
 <body>
