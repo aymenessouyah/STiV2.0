@@ -991,6 +991,7 @@
     }
 
     /* 5. Tableau des abonnés sur mobile : 1re colonne collante + boutons tactiles larges */
+    .table-wrap { overflow-x: auto !important; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
     .only-mob { display: table-cell; }
     .only-pc { display: none; }
     table { min-width: 580px; font-size: 12px; }
@@ -3743,7 +3744,7 @@
   html.admin-moderne body.cockpit-airbus .choix-vue-abonnes { background: var(--ab-panel); border-color: var(--ab-line); border-radius: 12px; }
   html.admin-moderne body.cockpit-airbus .bandeau-classe { background: var(--ab-panel-2); color: var(--ab-cyan); border-color: #cfc9f5; border-radius: 12px; box-shadow: none; }
 
-  html.admin-moderne body.cockpit-airbus .table-wrap { background: var(--ab-panel); border-color: var(--ab-line); border-radius: 14px; box-shadow: 0 6px 18px rgba(84,68,35,.05); overflow: hidden; }
+  html.admin-moderne body.cockpit-airbus .table-wrap { background: var(--ab-panel); border-color: var(--ab-line); border-radius: 14px; box-shadow: 0 6px 18px rgba(84,68,35,.05); overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
   html.admin-moderne body.cockpit-airbus table { color: var(--ab-white); background: var(--ab-panel); }
   html.admin-moderne body.cockpit-airbus th { background: #eef0ff !important; color: var(--ab-cyan) !important; border-color: #dfe3f2 !important; }
   html.admin-moderne body.cockpit-airbus td { border-color: #e7eaf3 !important; }

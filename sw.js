@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v344-complet-couvertures";
+var UPDATE_ID = "v345-tableaux-mobile";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -29,7 +29,7 @@ var UPDATE_FILES = [
   { url: "./index.html", revision: "index-v344" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
-  { url: "./admin.html", revision: "admin-net-v324" },
+  { url: "./admin.html", revision: "admin-v345" },
   { url: "./assets/js/acces.js", revision: "dynamic-version-v316-1" },
   { url: "./assets/js/admin.js", revision: "admin-airbus-cockpit-v316-23" },
   { url: "./assets/css/admin-v19.css", revision: "admin-airbus-cockpit-v316-24" },
