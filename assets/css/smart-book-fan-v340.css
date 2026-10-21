@@ -32,3 +32,14 @@
 @media(max-width:350px){.book-fan{height:281px}.book-cover{width:138px}.cover-3si{left:33px}.cover-4si{right:30px}.cover-badge>span{font-size:8px}}
 .camera-frame{width:100%;min-width:0;max-width:100%}
 @media(max-width:350px){.cover-4si{right:39px}.cover-3si{left:36px}}
+
+/* Ordre de lecture : introduction, couvertures, choix du manuel. */
+.hero{grid-template-areas:"intro visual" "controls visual";row-gap:0}
+.hero-intro{grid-area:intro}
+.hero-controls{grid-area:controls}
+.book-showcase{grid-area:visual}
+@media(max-width:760px){
+ .hero{grid-template-areas:"intro" "visual" "controls"}
+ .book-showcase{margin:10px auto 24px}
+ .hero-controls .book-picker{margin-top:0}
+}

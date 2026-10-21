@@ -2,8 +2,8 @@
   "version": 316,
   "generatedAt": "2026-10-21T10:15:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 592,
-  "totalBytes": 628587237,
+  "totalFiles": 593,
+  "totalBytes": 628598474,
   "files": [
     {
       "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf\"",
@@ -2867,8 +2867,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 55297,
-      "gitSha": "3631cb011e3a54eed7b5d2c7b8ccc6c1e23192aa"
+      "bytes": 55363,
+      "gitSha": "cafd2031be7f7b317fa94c77922137c20e80be24"
     },
     {
       "path": "assets/css/admin-v19.css",
@@ -2912,8 +2912,8 @@
     },
     {
       "path": "assets/css/smart-book.css",
-      "bytes": 9913,
-      "gitSha": "35f1d74fdce5f72bc9d4b4be41b93d176a21fb43"
+      "bytes": 10315,
+      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
     },
     {
       "path": "assets/data/smart-book-2026.json",
@@ -2937,8 +2937,8 @@
     },
     {
       "path": "livre-smart.html",
-      "bytes": 7023,
-      "gitSha": "6a5e0803cfa52026c27fb17c0730c0e53a736ff0"
+      "bytes": 7075,
+      "gitSha": "157bdfbd639caa9614a92851f596c38ea984a2d0"
     },
     {
       "path": "assets/data/smart-book-3si-2026.json",
@@ -2962,8 +2962,13 @@
     },
     {
       "path": "assets/css/smart-book-fan-v340.css",
-      "bytes": 9913,
-      "gitSha": "35f1d74fdce5f72bc9d4b4be41b93d176a21fb43"
+      "bytes": 10315,
+      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
+    },
+    {
+      "path": "assets/css/smart-book-fan-v341.css",
+      "bytes": 10315,
+      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
     }
   ],
   "windowsCompatible": true,
