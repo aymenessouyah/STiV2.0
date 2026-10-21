@@ -1697,7 +1697,7 @@
       </div>
     </div>
     <div class="barre-util">
-        <button class="btn-util" id="btn-bascule-theme" type="button" title="Basculer entre le theme moderne clair et l’ancien theme cockpit sombre">🎨 Thème : Moderne</button>
+        <button class="btn-util" id="btn-bascule-theme" type="button" title="Changer de theme du tableau de bord : Moderne (clair), Marine (passerelle sombre) ou Ancien (cockpit) — choix memorise">🎨 Thème : Moderne</button>
       <!-- 1. Accès directs prioritaires avec pastilles en temps réel -->
       <a class="btn-util" id="btn-accueil-site" href="index.html" title="Retourner à l'accueil du site STI"><span class="btn-util-glyph" aria-hidden="true">⌂</span> <span class="lbl-pc">Accueil au site</span><span class="lbl-mob">Accueil au site</span></a>
       <button class="btn-util" id="btn-messenger-top" type="button" title="Ouvrir la messagerie directe Messenger STI avec les candidats" style="background:#fff3e0;border-color:#f4511e;color:#d84315"><span class="btn-util-glyph" aria-hidden="true">◇</span> <span class="lbl-pc">Messenger</span><span class="lbl-mob">Chat</span> <span id="badge-msn-top" style="display:none;background:#ffd54f;color:#23201a;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
@@ -1729,6 +1729,18 @@
       <button class="btn-util only-mob-flex" id="btn-mob-toggle-outils" type="button"><span class="btn-util-glyph" aria-hidden="true">▦</span> Tous les outils &amp; actions (14) ▾</button>
     </div>
   </header>
+
+  <!-- v352 · Bande telemetrie du pont (theme Marine uniquement) : miroir en lecture seule des compteurs existants -->
+  <div id="bande-telemetrie" role="region" aria-label="Telemetrie du pont">
+    <div class="tl-tuile"><span class="tl-etq">Horloge de bord</span><b class="tl-val" id="tl-horloge">--:--:--</b><span class="tl-ss" id="tl-date">—</span></div>
+    <div class="tl-tuile"><span class="tl-etq">Supabase</span><b class="tl-val vert" id="tl-supabase">…</b><span class="tl-ss" id="tl-base">base : —</span></div>
+    <div class="tl-tuile"><span class="tl-etq">Reseau</span><b class="tl-val vert" id="tl-reseau">…</b><span class="tl-ss">poste de commande</span></div>
+    <div class="tl-tuile"><span class="tl-etq">Plateforme</span><b class="tl-val" id="tl-version">…</b><span class="tl-ss">STI V2.0</span></div>
+    <div class="tl-tuile"><span class="tl-etq">En ligne</span><b class="tl-val vert" id="tl-enligne">…</b><span class="tl-ss">candidats connectes</span></div>
+    <div class="tl-tuile"><span class="tl-etq">Actifs</span><b class="tl-val" id="tl-actifs">…</b><span class="tl-ss">comptes actifs</span></div>
+    <div class="tl-tuile"><span class="tl-etq">En attente</span><b class="tl-val ambre" id="tl-attente">…</b><span class="tl-ss">validations requises</span></div>
+    <div class="tl-tuile"><span class="tl-etq">Labo 3</span><b class="tl-val" id="tl-labo3">…</b><span class="tl-ss">machines du labo</span></div>
+  </div>
 
   <section class="tableau-apercu" id="vue-ensemble-admin" aria-labelledby="titre-vue-ensemble-admin">
     <div class="tableau-apercu-entete">
@@ -3991,10 +4003,192 @@
   html.admin-moderne body.cockpit-airbus #s-actifs { color: #6d28d9 !important; }
   html.admin-moderne body.cockpit-airbus #s-labo3-machines { color: #0369a1 !important; }
   html.admin-moderne body.cockpit-airbus #s-attente { color: #92400e !important; }
+<style id="theme-admin-marine">
+  /* ═══════════════════════════════════════════════════════════════════════
+     THEME ADMIN MARINE — « passerelle de bord » (inspire des consoles navales)
+     Fond bleu nuit, panneaux console, tuiles cyan / vert / ambre,
+     micro-etiquettes techniques. Memes blocs, memes fonctions que les
+     themes Moderne et Ancien : seule la peau change (+ bande telemetrie).
+     ═══════════════════════════════════════════════════════════════════════ */
+  #bande-telemetrie { display: none; }
+  html.admin-marine body.cockpit-airbus {
+    --mr-bg: #060b13; --mr-panel: #0c1523; --mr-panel-2: #0a111e;
+    --mr-line: #1e3049; --mr-line-2: #2a4568;
+    --mr-txt: #d9e8f7; --mr-mut: #7e97b0;
+    --mr-cyan: #3cc7dc; --mr-green: #2fd68f; --mr-amber: #f2b04a; --mr-red: #ff6a5c;
+    max-width: 1580px;
+    color: var(--mr-txt) !important;
+    background-color: var(--mr-bg) !important;
+    background-image: radial-gradient(circle, rgba(60,199,220,.10) 1px, transparent 1px) !important;
+    background-size: 26px 26px;
+  }
+  html.admin-marine body.cockpit-airbus::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(60,199,220,.07), transparent 300px);
+  }
+  html.admin-marine body.cockpit-airbus h2,
+  html.admin-marine body.cockpit-airbus h3,
+  html.admin-marine body.cockpit-airbus h4 { color: #eaf4fd !important; letter-spacing: .01em; }
+  html.admin-marine body.cockpit-airbus .hero-admin,
+  html.admin-marine body.cockpit-airbus .tableau-apercu,
+  html.admin-marine body.cockpit-airbus .centre-actions-dashboard,
+  html.admin-marine body.cockpit-airbus .nav-sections-admin,
+  html.admin-marine body.cockpit-airbus .carte-section-admin,
+  html.admin-marine body.cockpit-airbus .aide-windows-v316,
+  html.admin-marine body.cockpit-airbus #zone-detail {
+    background: var(--mr-panel) !important;
+    border: 1px solid var(--mr-line) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 26px rgba(0,0,0,.42), inset 0 1px 0 rgba(120,190,230,.06) !important;
+    color: var(--mr-txt) !important;
+  }
+  html.admin-marine body.cockpit-airbus .hero-admin { border-top: 3px solid var(--mr-cyan) !important; }
+  html.admin-marine body.cockpit-airbus .entete img { filter: drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
+  html.admin-marine body.cockpit-airbus #titre-tb-admin {
+    background: rgba(47,214,143,.10) !important; color: var(--mr-green) !important;
+    border: 1px solid rgba(47,214,143,.45) !important; text-shadow: none !important; -webkit-text-stroke: 0 !important;
+  }
+  html.admin-marine body.cockpit-airbus #titre-tb-admin.hors-ligne { background: rgba(255,106,92,.12) !important; color: var(--mr-red) !important; border-color: rgba(255,106,92,.5) !important; }
+  html.admin-marine body.cockpit-airbus .sous,
+  html.admin-marine body.cockpit-airbus .tableau-apercu-entete > span,
+  html.admin-marine body.cockpit-airbus .titre-gestion-detaillee > span { color: var(--mr-mut) !important; }
+  html.admin-marine body.cockpit-airbus .badge-version,
+  html.admin-marine body.cockpit-airbus .badge-supabase,
+  html.admin-marine body.cockpit-airbus .badge-temoin-examen,
+  html.admin-marine body.cockpit-airbus .badge-admin-gold {
+    background: #0e1e33 !important; color: #a9d3ea !important;
+    border: 1px solid var(--mr-line-2) !important; box-shadow: none !important; text-shadow: none !important;
+  }
+  html.admin-marine body.cockpit-airbus .badge-admin-gold { color: var(--mr-amber) !important; border-color: rgba(242,176,74,.55) !important; }
+  html.admin-marine body.cockpit-airbus .jauge-sb-mini { background: #12263f !important; }
+  /* — Bande telemetrie du pont (visible uniquement en theme Marine) — */
+  html.admin-marine #bande-telemetrie {
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px;
+    margin: 10px 0 14px; font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+  html.admin-marine #bande-telemetrie .tl-tuile {
+    background: linear-gradient(180deg, #0d1a2c, #0a141f); border: 1px solid var(--mr-line);
+    border-radius: 6px; padding: 7px 10px 8px; min-width: 0;
+  }
+  html.admin-marine #bande-telemetrie .tl-etq {
+    display: block; font-size: 9px; font-weight: 700; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--mr-amber); margin-bottom: 3px; white-space: nowrap;
+  }
+  html.admin-marine #bande-telemetrie .tl-val {
+    display: block; font-size: 17px; font-weight: 700; color: var(--mr-cyan);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.15;
+  }
+  html.admin-marine #bande-telemetrie .tl-val.vert { color: var(--mr-green); }
+  html.admin-marine #bande-telemetrie .tl-val.ambre { color: var(--mr-amber); }
+  html.admin-marine #bande-telemetrie .tl-ss {
+    display: block; font-size: 9.5px; color: var(--mr-mut); letter-spacing: .06em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  @media (max-width: 1100px) { html.admin-marine #bande-telemetrie { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 560px) { html.admin-marine #bande-telemetrie { grid-template-columns: repeat(2, 1fr); } }
+  /* — Tuiles statistiques facon circuits — */
+  html.admin-marine body.cockpit-airbus .vue-commandes-globales .stat,
+  html.admin-marine body.cockpit-airbus .stat {
+    background: linear-gradient(180deg, #0e1c30, #0a141f) !important;
+    border: 1px solid var(--mr-line) !important; border-radius: 6px !important;
+    box-shadow: inset 0 1px 0 rgba(120,190,230,.07) !important;
+  }
+  html.admin-marine body.cockpit-airbus .stat b {
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; color: var(--mr-cyan) !important;
+  }
+  html.admin-marine body.cockpit-airbus .stat small {
+    color: var(--mr-mut) !important; text-transform: uppercase; letter-spacing: .12em; font-size: 9.5px !important;
+  }
+  html.admin-marine body.cockpit-airbus #s-enligne { color: var(--mr-green) !important; }
+  html.admin-marine body.cockpit-airbus #s-actifs { color: #b18cff !important; }
+  html.admin-marine body.cockpit-airbus #s-labo3-machines { color: var(--mr-cyan) !important; }
+  html.admin-marine body.cockpit-airbus #s-attente { color: var(--mr-amber) !important; }
+  /* — Titres de sections : micro-etiquettes de console — */
+  html.admin-marine body.cockpit-airbus .carte-section-admin > h2,
+  html.admin-marine body.cockpit-airbus .tableau-apercu-entete h2,
+  html.admin-marine body.cockpit-airbus .titre-gestion-detaillee h2 {
+    text-transform: uppercase; letter-spacing: .13em; font-size: 13px !important; color: #9fd8e8 !important;
+  }
+  /* — Boutons : tuiles de commande — */
+  html.admin-marine body.cockpit-airbus .barre-util .btn-util,
+  html.admin-marine body.cockpit-airbus .btn-util:not(.logout),
+  html.admin-marine body.cockpit-airbus .btn-outil,
+  html.admin-marine body.cockpit-airbus .btn-vue,
+  html.admin-marine body.cockpit-airbus .btn-sec-tab,
+  html.admin-marine body.cockpit-airbus .btn-replier-sec {
+    background: #10203a !important; color: #cfe6f7 !important;
+    border: 1px solid #274a6b !important; box-shadow: 0 3px 8px rgba(0,0,0,.35) !important; text-shadow: none !important;
+  }
+  html.admin-marine body.cockpit-airbus .btn-util:hover,
+  html.admin-marine body.cockpit-airbus .btn-outil:hover,
+  html.admin-marine body.cockpit-airbus .btn-vue:hover,
+  html.admin-marine body.cockpit-airbus .btn-sec-tab:hover,
+  html.admin-marine body.cockpit-airbus .btn-replier-sec:hover {
+    background: #14304f !important; border-color: var(--mr-cyan) !important; color: #fff !important;
+  }
+  html.admin-marine body.cockpit-airbus .btn-util.on,
+  html.admin-marine body.cockpit-airbus .btn-vue.actif,
+  html.admin-marine body.cockpit-airbus .btn-sec-tab.actif,
+  html.admin-marine body.cockpit-airbus .carte-action.on {
+    background: rgba(47,214,143,.16) !important; border-color: var(--mr-green) !important; color: #d9ffef !important;
+  }
+  html.admin-marine body.cockpit-airbus .btn-util.logout {
+    background: rgba(255,106,92,.14) !important; color: #ffb3ab !important; border: 1px solid rgba(255,106,92,.55) !important;
+  }
+  html.admin-marine body.cockpit-airbus .carte-action {
+    background: var(--mr-panel-2) !important; border: 1px solid var(--mr-line) !important; border-radius: 8px !important;
+  }
+  html.admin-marine body.cockpit-airbus .carte-action:hover { border-color: var(--mr-cyan) !important; }
+  html.admin-marine body.cockpit-airbus .ca-titre { color: #eaf4fd !important; }
+  html.admin-marine body.cockpit-airbus .ca-desc { color: var(--mr-mut) !important; }
+  /* — Tableaux — */
+  html.admin-marine body.cockpit-airbus .table-wrap {
+    background: #0a1320 !important; border: 1px solid var(--mr-line) !important;
+    border-radius: 8px !important; box-shadow: none !important;
+  }
+  html.admin-marine body.cockpit-airbus table { background: transparent !important; color: var(--mr-txt) !important; }
+  html.admin-marine body.cockpit-airbus th {
+    background: #0e1c30 !important; color: #8fb8d8 !important;
+    text-transform: uppercase; letter-spacing: .1em; font-size: 10.5px !important;
+    border-color: var(--mr-line) !important;
+  }
+  html.admin-marine body.cockpit-airbus td { border-color: #16283f !important; color: var(--mr-txt) !important; }
+  html.admin-marine body.cockpit-airbus tbody tr:hover { background: #0f1f36 !important; }
+  /* — Formulaires — */
+  html.admin-marine body.cockpit-airbus input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  html.admin-marine body.cockpit-airbus select,
+  html.admin-marine body.cockpit-airbus textarea {
+    background: #0a1424 !important; color: var(--mr-txt) !important;
+    border: 1px solid #22405f !important; border-radius: 6px !important; box-shadow: none !important;
+  }
+  html.admin-marine body.cockpit-airbus input::placeholder { color: #55708c !important; }
+  html.admin-marine body.cockpit-airbus input:focus,
+  html.admin-marine body.cockpit-airbus select:focus,
+  html.admin-marine body.cockpit-airbus textarea:focus { border-color: var(--mr-cyan) !important; outline: none !important; }
+  /* — Modales & panneaux secondaires — */
+  html.admin-marine body.cockpit-airbus .modal-boite {
+    background: var(--mr-panel) !important; color: var(--mr-txt) !important;
+    border: 1px solid var(--mr-line-2) !important; border-radius: 10px !important;
+    box-shadow: 0 24px 60px rgba(0,0,0,.6) !important;
+  }
+  html.admin-marine body.cockpit-airbus .modal-boite h3 { color: #eaf4fd !important; }
+  html.admin-marine body.cockpit-airbus .modal-boite p { color: var(--mr-mut) !important; }
+  html.admin-marine body.cockpit-airbus .graph-boite { background: var(--mr-panel-2) !important; border-color: var(--mr-line) !important; box-shadow: none !important; }
+  html.admin-marine body.cockpit-airbus .graph-boite h3 { color: #9fd8e8 !important; }
+  html.admin-marine body.cockpit-airbus .aide-windows-grille details { background: var(--mr-panel-2) !important; border-color: var(--mr-line) !important; }
+  html.admin-marine body.cockpit-airbus .aide-windows-grille summary { color: #eaf4fd !important; }
+  html.admin-marine body.cockpit-airbus .alerte-demande { background: rgba(242,176,74,.10) !important; border-color: rgba(242,176,74,.5) !important; color: #ffd9a0 !important; }
+  html.admin-marine body.cockpit-airbus .poles-tabs { background: #0a141f !important; border: 1px solid var(--mr-line) !important; box-shadow: none !important; }
+  html.admin-marine body.cockpit-airbus .pole-tab { background: #10203a !important; color: #cfe6f7 !important; border: 1px solid #274a6b !important; }
+  html.admin-marine body.cockpit-airbus .pole-tab.actif { background: rgba(60,199,220,.18) !important; color: #aee9f7 !important; border-color: var(--mr-cyan) !important; }
+  html.admin-marine body.cockpit-airbus .pole-count { background: #0e1e33 !important; color: var(--mr-amber) !important; }
+  html.admin-marine body.cockpit-airbus .aide-windows-meta span { background: #0e1e33 !important; color: #a9d3ea !important; border: 1px solid var(--mr-line-2) !important; }
+  @media print { html.admin-marine #bande-telemetrie { display: none !important; } }
+</style>
 </style>
 <script>
 /* Choix du theme admin : "moderne" (defaut) ou "ancien" (cockpit sombre), memorise sur l'appareil */
-(function(){try{var t=localStorage.getItem("sti-admin-theme");if(t!=="ancien"){document.documentElement.classList.add("admin-moderne");}}catch(e){document.documentElement.classList.add("admin-moderne");}})();
+(function(){try{var t=localStorage.getItem("sti-admin-theme");if(t==="marine"){document.documentElement.classList.add("admin-marine");}else if(t!=="ancien"){document.documentElement.classList.add("admin-moderne");}}catch(e){document.documentElement.classList.add("admin-moderne");}})();
 </script>
 
   <div class="modal-fond" id="modal-fiche-eleve" role="dialog" aria-modal="true">
@@ -4611,13 +4805,62 @@
 (function(){
   var b=document.getElementById("btn-bascule-theme");
   if(!b) return;
-  function maj(){ b.textContent = document.documentElement.classList.contains("admin-moderne") ? "\U0001F3A8 Thème : Moderne" : "\U0001F3A8 Thème : Ancien"; }
-  b.addEventListener("click",function(){
-    var actif=document.documentElement.classList.toggle("admin-moderne");
-    try{ localStorage.setItem("sti-admin-theme", actif ? "moderne" : "ancien"); }catch(e){}
+  /* v352 : trois themes en cycle — Moderne (clair) -> Marine (passerelle) -> Ancien (cockpit) */
+  function themeCourant(){
+    var h=document.documentElement.classList;
+    return h.contains("admin-marine") ? "marine" : (h.contains("admin-moderne") ? "moderne" : "ancien");
+  }
+  function appliquer(t){
+    var h=document.documentElement.classList;
+    h.toggle("admin-moderne", t==="moderne");
+    h.toggle("admin-marine", t==="marine");
+    try{ localStorage.setItem("sti-admin-theme", t); }catch(e){}
     maj();
+  }
+  function maj(){
+    var t=themeCourant();
+    b.textContent = "🎨 Thème : " + (t==="marine" ? "Marine" : (t==="moderne" ? "Moderne" : "Ancien"));
+  }
+  b.addEventListener("click",function(){
+    var t=themeCourant();
+    appliquer(t==="moderne" ? "marine" : (t==="marine" ? "ancien" : "moderne"));
   });
   maj();
+})();
+</script>
+<script>
+/* v352 · Telemetrie du pont (theme Marine) : horloge + miroir lecture seule
+   des indicateurs deja calcules par le tableau de bord. Aucune requete ajoutee. */
+(function(){
+  function el(id){ return document.getElementById(id); }
+  function copie(srcId, dstId){
+    var s=el(srcId), d=el(dstId);
+    if(s && d){ var v=(s.textContent||"").trim(); if(v && d.textContent!==v) d.textContent=v; }
+  }
+  function majTelemetrie(){
+    var bande=el("bande-telemetrie");
+    if(!bande || bande.offsetParent===null && getComputedStyle(bande).display==="none") return;
+    var now=new Date(), p=function(n){ return String(n).padStart(2,"0"); };
+    var h=el("tl-horloge"); if(h) h.textContent=p(now.getHours())+":"+p(now.getMinutes())+":"+p(now.getSeconds());
+    var dt=el("tl-date"); if(dt) dt.textContent=now.toLocaleDateString("fr-FR",{weekday:"short", day:"2-digit", month:"short", year:"numeric"});
+    var badge=el("badge-supabase-quota"), tl=el("tl-supabase");
+    if(badge && tl){
+      var connecte=badge.getAttribute("data-supabase-connecte")==="1" || badge.classList.contains("connecte");
+      tl.textContent=connecte ? "EN LIGNE" : "HORS LIGNE";
+      tl.className="tl-val " + (connecte ? "vert" : "ambre");
+    }
+    var pct=el("sb-pct-restant"), qte=el("sb-qte-restante"), base=el("tl-base");
+    if(base){ var parts=[]; if(pct && pct.textContent.trim()) parts.push(pct.textContent.trim()+" restant"); if(qte && qte.textContent.trim()) parts.push(qte.textContent.trim()); if(parts.length) base.textContent="base : "+parts.join(" · "); }
+    var res=el("tl-reseau");
+    if(res){ var en=navigator.onLine; res.textContent=en ? "EN LIGNE" : "HORS LIGNE"; res.className="tl-val " + (en ? "vert" : "ambre"); }
+    copie("badge-version-admin","tl-version");
+    copie("s-enligne","tl-enligne");
+    copie("s-actifs","tl-actifs");
+    copie("s-attente","tl-attente");
+    copie("s-labo3-machines","tl-labo3");
+  }
+  setInterval(majTelemetrie, 1000);
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", majTelemetrie); else majTelemetrie();
 })();
 </script>
 </body>
