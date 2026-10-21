@@ -34,6 +34,7 @@
   .module { flex:none; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; border-radius:999px; color:#fff; background:var(--indigo) }
   .module.css3 { background:#7c3aed } .module.javascript { background:#b47d09 } .module.sql { background:#177245 } .module.php { background:#4f5b93 }
   .en { font-size:13.5px; font-weight:700; color:#b4552d; margin-top:5px }
+  .en-badge { display:inline-block; background:#1d4ed8; color:#fff; font-size:9.5px; font-weight:800; letter-spacing:.06em; padding:2px 6px; border-radius:5px; vertical-align:2px; margin-right:3px }
   .ar { direction:rtl; text-align:right; font-size:20px; font-weight:700; color:var(--indigo); margin:7px 0 6px; line-height:1.5 }
   .def { font-size:13px; line-height:1.55; color:#3c4454 }
   .def code { background:#eef0ff; border:1px solid #d8dcf5; border-radius:5px; padding:0 5px; font-size:12px; color:#3730a3 }
@@ -169,7 +170,7 @@ function afficher() {
     if (q && cible.indexOf(q) === -1 && normaliser(t.ar).indexOf(q) === -1 && t.ar.indexOf(document.getElementById("q").value.trim()) === -1) return;
     n++;
     html += '<article class="carte"><div class="fr"><span>' + t.fr + '</span><span class="module ' + t.m + '">' + NOMS_MODULES[t.m] + '</span></div>' +
-      '<div class="en">🇬🇧 ' + t.en + '</div><div class="ar" lang="ar">' + t.ar + '</div><p class="def">' + t.d + '</p></article>';
+      '<div class="en"><span class="en-badge">EN</span> ' + t.en + '</div><div class="ar" lang="ar">' + t.ar + '</div><p class="def">' + t.d + '</p></article>';
   });
   grille.innerHTML = html;
   compteur.textContent = n + " terme" + (n > 1 ? "s" : "") + " affiché" + (n > 1 ? "s" : "");

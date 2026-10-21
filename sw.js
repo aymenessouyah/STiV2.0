@@ -6,11 +6,11 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v348-glossaire-en";
+var UPDATE_ID = "v349-glossaire-badge-en";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./glossaire.html", revision: "glossaire-en-v348" },
+  { url: "./glossaire.html", revision: "glossaire-badge-en-v349" },
   { url: "./assets/js/graphiques-activite.js", revision: "glossaire-graphiques-v347" },
   { url: "./assets/js/reprendre.js", revision: "reprendre-sombre-v343" },
   { url: "./assets/css/smart-book-fan-v341.css", revision: "smart-books-v341" },
