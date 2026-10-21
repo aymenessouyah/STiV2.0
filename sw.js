@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v330-smart-book-2026";
+var UPDATE_ID = "v331-carte-smart-book";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -20,7 +20,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/smart-book.js", revision: "smart-book-v330" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-book-v330" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
-  { url: "./index.html", revision: "smart-book-v330" },
+  { url: "./index.html", revision: "index-v331" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
   { url: "./admin.html", revision: "admin-net-v324" },
