@@ -1,63 +1,55 @@
 {
-  "edition": "STI Smart Book — 2026",
-  "pages": 74,
-  "fiches": 69,
+  "edition": "4ème SI — 2026",
+  "bookId": "4si-2026",
+  "niveau": "4ème SI",
   "items": [
     {
       "fiche": 1,
       "page": 6,
       "titre": "Structure d’un document HTML5",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
-      "section": "1. Éléments d'en-tête / 1er niveau"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete"
     },
     {
       "fiche": 2,
       "page": 7,
       "titre": "Syntaxe, attributs et imbrication",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#attributs-evenements",
-      "section": "7. Attributs Globaux & Événements"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#attributs-evenements"
     },
     {
       "fiche": 3,
       "page": 8,
       "titre": "Texte, liens et contenus multimédias",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#texte-media",
-      "section": "6. Structuration de texte & média"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#texte-media"
     },
     {
       "fiche": 4,
       "page": 9,
       "titre": "Listes, tableaux et structure sémantique",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#tableaux",
-      "section": "5. Tableaux"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#tableaux"
     },
     {
       "fiche": 5,
       "page": 10,
       "titre": "Formulaires : saisie et transmission",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#formulaires",
-      "section": "9. Formulaires & Types d'Input (Annexe A. Essouyah)"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#formulaires"
     },
     {
       "fiche": 6,
       "page": 11,
       "titre": "Formulaires : options et aide-mémoire",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#formulaires",
-      "section": "9. Formulaires & Types d'Input (Annexe A. Essouyah)"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#formulaires"
     },
     {
       "fiche": 7,
       "page": 12,
       "titre": "Cadres intégrés et cibles de navigation",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#iframe",
-      "section": "10. Intégrer une page dans une autre : <iframe>"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#iframe"
     },
     {
       "fiche": 8,
       "page": 13,
       "titre": "Attributs globaux, datalist et événements HTML",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#attributs-evenements",
-      "section": "7. Attributs Globaux & Événements"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#attributs-evenements"
     },
     {
       "fiche": 9,
@@ -129,351 +121,513 @@
       "fiche": 20,
       "page": 25,
       "titre": "Intégration, variables et types",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
-      "section": "Variables : portée et déclaration"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3"
     },
     {
       "fiche": 21,
       "page": 26,
       "titre": "Opérateurs, conversions et dialogues",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec5",
-      "section": "Entrées / sorties"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec5"
     },
     {
       "fiche": 22,
       "page": 27,
       "titre": "Conditions et choix multiples",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec12",
-      "section": "Structures conditionnelles"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec12"
     },
     {
       "fiche": 23,
       "page": 28,
       "titre": "Boucles et accumulation",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec13",
-      "section": "Boucles"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec13"
     },
     {
       "fiche": 24,
       "page": 29,
       "titre": "TP : jeu de devinettes",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec16",
-      "section": "Exercices"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec16"
     },
     {
       "fiche": 25,
       "page": 30,
       "titre": "DOM : sélectionner et modifier des éléments",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15",
-      "section": "Manipulation du DOM"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15"
     },
     {
       "fiche": 26,
       "page": 31,
       "titre": "DOM : lire et contrôler un formulaire",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15",
-      "section": "Manipulation du DOM"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15"
     },
     {
       "fiche": 27,
       "page": 32,
       "titre": "Fonctions, portée et événements",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec14",
-      "section": "Fonctions"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec14"
     },
     {
       "fiche": 28,
       "page": 33,
       "titre": "Nombres, chaînes et méthodes usuelles",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec9",
-      "section": "Chaînes de caractères (ch : objet String)"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec9"
     },
     {
       "fiche": 29,
       "page": 34,
       "titre": "Tableaux et parcours",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec10",
-      "section": "Tableaux"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec10"
     },
     {
       "fiche": 30,
       "page": 35,
       "titre": "Dates, temporisation et horloge numérique",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec11",
-      "section": "Objet Date (d : objet Date)"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec11"
     },
     {
       "fiche": 31,
       "page": 36,
       "titre": "Compléments : Math, chaînes et sorties",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec8",
-      "section": "Math"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec8"
     },
     {
       "fiche": 32,
       "page": 37,
       "titre": "Médias, styles et dates de formulaire",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15",
-      "section": "Manipulation du DOM"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15"
     },
     {
       "fiche": 33,
       "page": 38,
       "titre": "Notions relationnelles et contraintes",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#intro",
-      "section": "1. Introduction : BD & SQL"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#intro"
     },
     {
       "fiche": 34,
       "page": 39,
       "titre": "SQL : commandes et types MySQL",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-create",
-      "section": "CREATE TABLE : Normes et Différences entre les Types"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-create"
     },
     {
       "fiche": 35,
       "page": 40,
       "titre": "Création des tables : gestion des locations",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-constraints",
-      "section": "Détail de CREATE TABLE, REFERENCES & ON DELETE CASCADE"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-constraints"
     },
     {
       "fiche": 36,
       "page": 41,
       "titre": "Modifier et supprimer une structure",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-alter",
-      "section": "ALTER TABLE détaillé (Modifications de structure)"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-alter"
     },
     {
       "fiche": 37,
       "page": 42,
       "titre": "Insérer, modifier et supprimer des lignes",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-insert",
-      "section": "INSERT INTO (Les différents cas d'insertion de données)"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-insert"
     },
     {
       "fiche": 38,
       "page": 43,
       "titre": "Base commerciale : schéma des exercices",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-create",
-      "section": "CREATE TABLE : Normes et Différences entre les Types"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-create"
     },
     {
       "fiche": 39,
       "page": 44,
       "titre": "SELECT, filtres et expressions",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select",
-      "section": "SELECT, Clauses & Opérateurs"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select"
     },
     {
       "fiche": 40,
       "page": 45,
       "titre": "Agrégats, tri et sous-requêtes",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-aggr",
-      "section": "Fonctions d'agrégation (Statistiques)"
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-aggr"
     },
     {
       "fiche": 41,
       "page": 46,
-      "titre": "GROUP BY, HAVING et jointures",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-groupby",
-      "section": "La clause GROUP BY : regrouper les lignes pour calculer par catégorie"
+      "titre": "Construire une requête SQL : la méthode",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select"
     },
     {
       "fiche": 42,
       "page": 47,
-      "titre": "Fonctions SQL sur les chaînes",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-strings",
-      "section": "Fonctions de chaînes de caractères"
+      "titre": "Construire une requête SQL : cas particuliers",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select"
     },
     {
       "fiche": 43,
       "page": 48,
-      "titre": "Fonctions SQL sur les dates et heures",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-dates",
-      "section": "Fonctions de gestion des dates et heures"
+      "titre": "GROUP BY, HAVING et jointures",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-groupby"
     },
     {
       "fiche": 44,
       "page": 49,
-      "titre": "Jointures STI, mises à jour croisées et LCD",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-update-jointure",
-      "section": "UPDATE avec Jointure (Mise à jour croisée entre 2 tables : a.x = b.x )"
+      "titre": "Fonctions SQL sur les chaînes",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-strings"
     },
     {
       "fiche": 45,
       "page": 50,
-      "titre": "Principe client-serveur et environnement",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1",
-      "section": "1. Introduction au langage PHP"
+      "titre": "Fonctions SQL sur les dates et heures",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-dates"
     },
     {
       "fiche": 46,
       "page": 51,
-      "titre": "Variables, types, constantes et opérateurs",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s2",
-      "section": "2. Types de données, variables et opérateurs"
+      "titre": "Jointures dans WHERE et mises à jour croisées",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-update-jointure"
     },
     {
       "fiche": 47,
       "page": 52,
-      "titre": "Formulaires : lecture, validation et affichage",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s7",
-      "section": "7. Variables superglobales et fonctions diverses"
+      "titre": "Principe client-serveur et environnement",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1"
     },
     {
       "fiche": 48,
       "page": 53,
-      "titre": "Conditions, boucles et fonctions",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s2",
-      "section": "2. Types de données, variables et opérateurs"
+      "titre": "Variables, types, constantes et opérateurs",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s2"
     },
     {
       "fiche": 49,
       "page": 54,
-      "titre": "Tableaux, parcours avec foreach et tris",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s5",
-      "section": "5. Les tableaux"
+      "titre": "Formulaires : GET, POST, isset et empty",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s7"
     },
     {
       "fiche": 50,
       "page": 55,
-      "titre": "Chaînes et fonctions usuelles",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s4",
-      "section": "4. Les chaînes de caractères"
+      "titre": "Conditions, boucles et fonctions",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s2"
     },
     {
       "fiche": 51,
       "page": 56,
-      "titre": "Dates et heures : timestamp et checkdate",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s6-1",
-      "section": "6.1 checkdate — vérifier une date"
+      "titre": "Tableaux, parcours avec for et tris",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s5"
     },
     {
       "fiche": 52,
       "page": 57,
-      "titre": "Dates et heures : date et getdate",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s6-2",
-      "section": "6.2 date — formater une date"
+      "titre": "Chaînes et fonctions usuelles",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s4"
     },
     {
       "fiche": 53,
       "page": 58,
-      "titre": "Dates et heures : time et mktime",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s6-5",
-      "section": "6.5 mktime — construire un timestamp"
+      "titre": "Dates et heures : timestamp et checkdate",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s6-1"
     },
     {
       "fiche": 54,
       "page": 59,
-      "titre": "Dates et heures : strtotime et calculs",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s6-6",
-      "section": "6.6 strtotime — interpréter une date en format anglais"
+      "titre": "Dates et heures : date et getdate",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s6-2"
     },
     {
       "fiche": 55,
       "page": 60,
-      "titre": "MySQLi procédural : connexion et lecture",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s8-6",
-      "section": "8.6 Se connecter et gérer les erreurs"
+      "titre": "Dates et heures : time et mktime",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s6-5"
     },
     {
       "fiche": 56,
       "page": 61,
-      "titre": "MySQLi procédural : requêtes préparées",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s8",
-      "section": "8. Utiliser MySQL avec PHP"
+      "titre": "Dates et heures : strtotime et calculs",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s6-6"
     },
     {
       "fiche": 57,
       "page": 62,
-      "titre": "TP : répertoire de sites en MySQLi procédural",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s8",
-      "section": "8. Utiliser MySQL avec PHP"
+      "titre": "MySQLi procédural : connexion et requête fixe",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s8-2"
     },
     {
       "fiche": 58,
       "page": 63,
-      "titre": "Fonctions complémentaires et superglobales",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s7",
-      "section": "7. Variables superglobales et fonctions diverses"
+      "titre": "include, require et organisation des fichiers",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1"
     },
     {
       "fiche": 59,
       "page": 64,
-      "titre": "MySQLi : types de résultats et fonctions fetch",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s8-4",
-      "section": "8.4 mysqli_fetch_array() et mysqli_fetch_row()"
+      "titre": "MySQLi : SELECT, INSERT, UPDATE et DELETE",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s8-3"
     },
     {
       "fiche": 60,
       "page": 65,
-      "titre": "Projet 1 : gestion des élèves — énoncé et base",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s9",
-      "section": "9. 🧩 Exercice de synthèse"
+      "titre": "Conversions, guillemets et fonctions arithmétiques",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s2"
     },
     {
       "fiche": 61,
       "page": 66,
-      "titre": "Projet 1 : formulaire et validation JavaScript",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s9",
-      "section": "9. 🧩 Exercice de synthèse"
+      "titre": "MySQLi : lecture des résultats et saisie numérique",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s8-4"
     },
     {
       "fiche": 62,
       "page": 67,
-      "titre": "Projet 1 : connexion et insertion PHP",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s9",
-      "section": "9. 🧩 Exercice de synthèse"
+      "titre": "Niveaux d’erreur PHP : tableau et exemples",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1"
     },
     {
       "fiche": 63,
       "page": 68,
-      "titre": "Projet 1 : liste, modification et statistiques",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s9",
-      "section": "9. 🧩 Exercice de synthèse"
+      "titre": "Comprendre les erreurs PHP et les diagnostics",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1"
     },
     {
       "fiche": 64,
       "page": 69,
-      "titre": "Projet 2 : recharge électrique — énoncé et base",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s10",
-      "section": "10. 🧩 Exercice de synthèse N°2 — Recharge voiture électrique"
+      "titre": "Projet 1 : gestion des élèves — énoncé et base",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s9"
     },
     {
       "fiche": 65,
       "page": 70,
-      "titre": "Projet 2 : horaires et insertion paramétrée",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s10",
-      "section": "10. 🧩 Exercice de synthèse N°2 — Recharge voiture électrique"
+      "titre": "Projet 1 : validation par caractères",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s9"
     },
     {
       "fiche": 66,
       "page": 71,
-      "titre": "Projet 2 : statistiques, coûts et tests",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s10",
-      "section": "10. 🧩 Exercice de synthèse N°2 — Recharge voiture électrique"
+      "titre": "Projet 1 : formulaire et validation JavaScript",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s9"
     },
     {
       "fiche": 67,
       "page": 72,
-      "titre": "Synthèse et contrôle des acquis",
-      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours",
-      "section": "Cours"
+      "titre": "Projet 1 : connexion et insertion pédagogique",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s9"
     },
     {
       "fiche": 68,
       "page": 73,
-      "titre": "Révision : questions et réponses essentielles",
-      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#modules",
-      "section": "Choisissez votre quiz"
+      "titre": "Projet 1 : lecture, modification et statistiques",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s9"
     },
     {
       "fiche": 69,
       "page": 74,
+      "titre": "Projet 2 : recharge électrique — énoncé et base",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s10"
+    },
+    {
+      "fiche": 70,
+      "page": 75,
+      "titre": "Projet 2 : horaires et insertion pédagogique",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s10"
+    },
+    {
+      "fiche": 71,
+      "page": 76,
+      "titre": "Projet 2 : statistiques, coûts et tests",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s10"
+    },
+    {
+      "fiche": 72,
+      "page": 77,
+      "titre": "Méthode de résolution et lecture de programme",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours"
+    },
+    {
+      "fiche": 73,
+      "page": 78,
+      "titre": "Erreurs fréquentes et réflexes de correction",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours"
+    },
+    {
+      "fiche": 74,
+      "page": 79,
+      "titre": "Tests, vérification et checklist de remise",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours"
+    },
+    {
+      "fiche": 75,
+      "page": 80,
+      "titre": "Synthèse et contrôle des acquis",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours"
+    },
+    {
+      "fiche": 76,
+      "page": 81,
+      "titre": "Révision : questions et réponses essentielles",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours"
+    },
+    {
+      "fiche": 77,
+      "page": 82,
       "titre": "Sources, périmètre et conventions de cette édition",
-      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours",
-      "section": "Cours"
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours"
+    },
+    {
+      "fiche": 78,
+      "page": 83,
+      "titre": "HTML5 — balises et attributs — tableau p. 83",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "section": "HTML5 — balises et attributs",
+      "kind": "recap"
+    },
+    {
+      "fiche": 79,
+      "page": 84,
+      "titre": "HTML5 — balises et attributs — tableau p. 84",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "section": "HTML5 — balises et attributs",
+      "kind": "recap"
+    },
+    {
+      "fiche": 80,
+      "page": 85,
+      "titre": "HTML5 — balises et attributs — tableau p. 85",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "section": "HTML5 — balises et attributs",
+      "kind": "recap"
+    },
+    {
+      "fiche": 81,
+      "page": 86,
+      "titre": "HTML5 — balises et attributs — tableau p. 86",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "section": "HTML5 — balises et attributs",
+      "kind": "recap"
+    },
+    {
+      "fiche": 82,
+      "page": 87,
+      "titre": "CSS3 — aide-mémoire par thèmes — tableau p. 87",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "section": "CSS3 — aide-mémoire par thèmes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 83,
+      "page": 88,
+      "titre": "CSS3 — aide-mémoire par thèmes — tableau p. 88",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "section": "CSS3 — aide-mémoire par thèmes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 84,
+      "page": 89,
+      "titre": "CSS3 — aide-mémoire par thèmes — tableau p. 89",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "section": "CSS3 — aide-mémoire par thèmes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 85,
+      "page": 90,
+      "titre": "CSS3 — aide-mémoire par thèmes — tableau p. 90",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "section": "CSS3 — aide-mémoire par thèmes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 86,
+      "page": 91,
+      "titre": "JavaScript — syntaxe et API utilisées — tableau p. 91",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "section": "JavaScript — syntaxe et API utilisées",
+      "kind": "recap"
+    },
+    {
+      "fiche": 87,
+      "page": 92,
+      "titre": "JavaScript — syntaxe et API utilisées — tableau p. 92",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "section": "JavaScript — syntaxe et API utilisées",
+      "kind": "recap"
+    },
+    {
+      "fiche": 88,
+      "page": 93,
+      "titre": "JavaScript — syntaxe et API utilisées — tableau p. 93",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "section": "JavaScript — syntaxe et API utilisées",
+      "kind": "recap"
+    },
+    {
+      "fiche": 89,
+      "page": 94,
+      "titre": "JavaScript — syntaxe et API utilisées — tableau p. 94",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "section": "JavaScript — syntaxe et API utilisées",
+      "kind": "recap"
+    },
+    {
+      "fiche": 90,
+      "page": 95,
+      "titre": "Bases de données et SQL — synthèse — tableau p. 95",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#intro",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#intro",
+      "section": "Bases de données et SQL — synthèse",
+      "kind": "recap"
+    },
+    {
+      "fiche": 91,
+      "page": 96,
+      "titre": "Bases de données et SQL — synthèse — tableau p. 96",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#intro",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#intro",
+      "section": "Bases de données et SQL — synthèse",
+      "kind": "recap"
+    },
+    {
+      "fiche": 92,
+      "page": 97,
+      "titre": "PHP procédural — fonctions et syntaxes — tableau p. 97",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1",
+      "section": "PHP procédural — fonctions et syntaxes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 93,
+      "page": 98,
+      "titre": "PHP procédural — fonctions et syntaxes — tableau p. 98",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1",
+      "section": "PHP procédural — fonctions et syntaxes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 94,
+      "page": 99,
+      "titre": "PHP procédural — fonctions et syntaxes — tableau p. 99",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1",
+      "section": "PHP procédural — fonctions et syntaxes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 95,
+      "page": 100,
+      "titre": "PHP procédural — fonctions et syntaxes — tableau p. 100",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/cours/php.html#s1",
+      "section": "PHP procédural — fonctions et syntaxes",
+      "kind": "recap"
     }
-  ]
+  ],
+  "pages": 100,
+  "fiches": 95
 }

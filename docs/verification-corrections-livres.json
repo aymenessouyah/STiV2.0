@@ -1,0 +1,50 @@
+{
+  "3si": {
+    "signets": 67,
+    "ouverture_signets": "UseOutlines",
+    "contre_exemples_js_rouges": true,
+    "pages": 72,
+    "pages_indexees": 68,
+    "qr_valides": 68,
+    "qr_invalides": [],
+    "hors_page": [],
+    "code_hors_boite": [],
+    "texte_sur_pied_page": [],
+    "liens": 238,
+    "balises_html_recap": 76,
+    "entrees_css": 83,
+    "fonctions_methodes_js": 54,
+    "fonctions_constructions_php": 0,
+    "debut_sections": {
+      "html": 58,
+      "css": 62,
+      "js": 67,
+      "bd": 71
+    }
+  },
+  "4si": {
+    "signets": 93,
+    "ouverture_signets": "UseOutlines",
+    "contre_exemples_js_rouges": true,
+    "pages": 100,
+    "pages_indexees": 95,
+    "qr_valides": 95,
+    "qr_invalides": [],
+    "hors_page": [],
+    "code_hors_boite": [],
+    "texte_sur_pied_page": [],
+    "liens": 340,
+    "balises_html_recap": 74,
+    "entrees_css": 72,
+    "fonctions_methodes_js": 57,
+    "fonctions_constructions_php": 64,
+    "debut_sections": {
+      "html": 83,
+      "css": 87,
+      "js": 91,
+      "bd": 95,
+      "php": 97
+    },
+    "contre_exemple_rouge": true
+  }
+}

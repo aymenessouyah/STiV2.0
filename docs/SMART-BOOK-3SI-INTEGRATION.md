@@ -1,54 +1,67 @@
-# Publier le manuel connecté de 3ème SI
+# Publication — livres avec schémas et tableaux récapitulatifs
 
-## Ce que contient le ZIP
+## Paquet actuel
 
-Un complément à la plateforme existante, **pas une sauvegarde complète du dépôt** : nouveau PDF et index 3ème SI, scanner commun aux deux éditions, styles, service worker, manifeste hors ligne, tests et documentation. Le PDF et l’index de 4ème SI ne sont pas remplacés. Aucun fichier de cours, de connexion ou d’administration n’est modifié.
+**STI-Livres-Recapitulatifs-Integration.zip** remplace les paquets précédents. Il contient le scanner commun, les deux index, les deux nouveaux PDF, le manifeste et la mise à jour hors ligne, les tests et la documentation.
 
-Base de préparation : commit `1c29d5240b8c829e55c7f6ffb1981035d2ddc35f`.
+- 3SI : 72 pages ; 53 fiches + 15 pages de tableaux ; 68 pages indexées.
+- 4SI : 100 pages ; 77 fiches + 18 pages de tableaux ; 95 pages indexées.
 
-## Sur téléphone, dans GitHub Codespaces
+Les pages du cours antérieur restent au même numéro ; les récapitulatifs sont ajoutés après les pages 54 et 76. Les titres PHP, certains liens de référence et les index ont également été corrigés dans les versions récentes.
 
-1. Ouvrir le Codespace du dépôt **STiV2.0**, puis son terminal à la racine du dépôt.
-2. Exécuter `git status --short`. S’il y a des modifications personnelles, les sauvegarder/committer avant de continuer. Puis exécuter `git pull --ff-only`.
-3. Si les fichiers du scanner, `sw.js` ou le manifeste ont changé depuis le commit indiqué ci-dessus, comparer les changements avant d’extraire le ZIP : l’extraction écrase les fichiers de même nom.
-4. Télécharger `STI-Smart-Book-3SI-Integration.zip` depuis cette conversation et le téléverser dans le dossier racine du Codespace, avec l’explorateur de fichiers.
-5. Exécuter :
+Base Git de préparation : `1c29d5240b8c829e55c7f6ffb1981035d2ddc35f`. Ce ZIP est un complément au dépôt, pas une sauvegarde complète. Vérifier les changements ultérieurs du scanner, du service worker et du manifeste avant d’écraser ces fichiers.
+
+## Dans Codespaces, sur ordinateur
+
+À la racine du dépôt :
 
 ```bash
-python -m zipfile -e STI-Smart-Book-3SI-Integration.zip .
+git status --short
+```
+
+Si des modifications personnelles apparaissent, les sauvegarder avant de continuer. Puis `git pull --ff-only`. Téléverser le ZIP à la racine et, après comparaison des fichiers modifiés depuis la base indiquée, exécuter :
+
+```bash
+python -m zipfile -e STI-Livres-Recapitulatifs-Integration.zip .
 python tests/test_smart_books_3si.py
 git diff --stat
 ```
 
-Les six tests doivent réussir sur la base de préparation. Si seul le contrôle du PDF 4SI échoue parce que vous l’avez volontairement remplacé depuis, vérifier la modification et adapter son empreinte attendue ainsi que son entrée dans le manifeste ; ne pas restaurer automatiquement un ancien PDF.
+Les six tests doivent réussir. En cas d’échec, ne pas pousser avant d’avoir identifié la cause. Le test du PDF 4SI vérifie cette livraison précise : un remplacement volontaire nécessite une nouvelle empreinte cohérente dans le test et le manifeste.
 
-6. Vérifier les fichiers, puis publier :
+Publier uniquement les fichiers concernés :
 
 ```bash
-git add livre-smart.html assets/css/smart-book.css assets/js/smart-book.js assets/data/smart-book-3si-2026.json documents/livre/sti-smart-book-3si-2026.pdf sw.js offline-complete-manifest.json tests/test_smart_books_3si.py docs/SMART-BOOK-3SI-INTEGRATION.md docs/SMART-BOOK-3SI-COMPARAISON.md docs/verification_liens_3si.json
-git commit -m "Ajouter le Smart Book 3SI et le scanner multi-manuels"
+git add livre-smart.html assets/css/smart-book.css assets/js/smart-book.js assets/data/smart-book-3si-2026.json assets/data/smart-book-2026.json documents/livre/sti-smart-book-3si-2026.pdf documents/livre/sti-smart-book-2026.pdf sw.js offline-complete-manifest.json tests/test_smart_books_3si.py docs/SMART-BOOK-3SI-INTEGRATION.md docs/SMART-BOOK-3SI-COMPARAISON.md docs/SMART-BOOK-VERIFICATION.md docs/verification_liens_3si.json docs/verification-corrections-livres.json
+
+git commit -m "Simplifier JavaScript et PHP et ajouter les signets par familles"
 git push
 ```
 
-Le ZIP téléversé n’est volontairement pas ajouté au commit. Attendre la réussite du déploiement GitHub Pages habituel du dépôt.
+Attendre la réussite de GitHub Pages. Le ZIP ne doit pas être ajouté au commit.
 
-## Vérification après publication
+## Contrôles après publication
 
-- Ouvrir **Scanner mon livre** depuis la plateforme. Si une ancienne interface persiste, fermer les onglets de la plateforme et la rouvrir après la mise à jour du service worker.
-- Choisir **3ème SI** : 54 pages, 50 fiches ; vérifier le téléchargement du nouveau PDF.
-- Rechercher la page **46** : « SELECT simple : choisir les colonnes ».
-- Photographier le QR de cette page alors que le scanner affiche 4ème SI : il doit passer automatiquement à 3ème SI et proposer la bonne leçon.
-- Tester aussi un ancien QR du manuel 4ème SI et sa recherche par page : 74 pages, 69 fiches.
-- Vérifier sur le vrai téléphone l’autorisation caméra, puis l’ouverture d’un cours avec le compte utilisateur habituel. Les protections existantes restent en place.
+- Scanner : choisir 3SI, vérifier 72 pages, puis chercher les pages 52, 53, 54, 58 et 72.
+- Choisir 4SI, vérifier 100 pages, puis chercher les pages 67, 68, 77, 78, 79, 83, 97 et 100.
+- Télécharger les deux PDF, ouvrir le sommaire et cliquer les nouvelles rubriques de tableaux.
+- Scanner le QR d’une nouvelle page 3SI lorsque 4SI est sélectionné : le manuel doit changer automatiquement.
+- Vérifier sur le vrai téléphone l’autorisation caméra et l’accès à un cours avec le compte habituel.
 
-## Hors ligne et retour arrière
+Publier les PDF et les index ensemble. Le nom du cache existant est conservé ; les PDF ne sont pas ajoutés au téléchargement automatique. Le manifeste d’installation complète volontaire contient leurs nouvelles empreintes.
 
-Le service worker conserve le nom du cache existant et les anciennes révisions cumulatives. Les petites ressources du scanner et le nouvel index sont mis à jour de manière incrémentale ; les PDF ne sont pas ajoutés au téléchargement automatique. Le PDF 3SI est inscrit au manifeste d’installation complète volontaire.
+Cette mise à jour ne modifie ni les protections d’accès, ni les pages de cours partagées, ni les fonctions d’administration. Pour annuler une publication, faire un `git revert` du commit puis `git push`, sans écraser les modifications personnelles.
 
-Pour annuler une publication, utiliser `git revert` sur le commit d’intégration, puis `git push`. Ne pas employer `reset --hard` sur des modifications personnelles.
+**L’assistant n’a effectué aucun push ni déploiement.**
 
-## Alternative pour une personne à l’aise avec Git
+## Cette révision
+- Méthodes JavaScript demandées retirées des cours, TP et tableaux.
+- Number.isFinite et Option : contre-exemples rouges et barrés uniquement.
+- PHP : sans sprintf ni preg_match ; nouvelle fiche sur les types d’erreurs.
+- Signets PDF hiérarchisés par familles ; aucune modification du menu de la plateforme.
 
-Le fichier séparé `STI-Smart-Book-3SI.patch` contient le même différentiel, PDF binaire inclus. Sur une copie propre et compatible, `git apply --check STI-Smart-Book-3SI.patch` permet de contrôler la compatibilité avant `git apply STI-Smart-Book-3SI.patch`. Utiliser **soit** le ZIP, **soit** le patch, pas les deux.
+## Tableau des erreurs PHP
+Le tableau enrichi est ajouté page 67, avant les explications détaillées page 68. L’exemple Deprecated emploie strlen(null), car le paramètre hostname de mysqli_connect est nullable. Les messages sont indicatifs et les exemples volontairement fautifs. Cache : v337-erreurs-php-tableau.
 
-**Cette livraison est prête à intégrer ; elle n’a pas encore été publiée par l’assistant.**
+## Fiches méthode — révision actuelle
+Trois fiches adaptées dans chaque livre : méthode de résolution et traçage ; erreurs fréquentes ; tests et checklist. Pages 52 à 54 en 3SI et 77 à 79 en 4SI. Nouvelle famille de signets PDF. Pas de nouvelle série d’exercices. Cache : v338-fiches-methode. Les QR des fiches méthode ouvrent l’accueil des cours ; aucune nouvelle page de cours n’a été publiée sur la plateforme.

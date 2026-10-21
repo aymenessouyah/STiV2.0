@@ -5,53 +5,14 @@
   let base = new URL('./', location.href);
   let publicBase = new URL('https://aymenessouyah.github.io/STiV2.0/');
   let books = {
-    '4si-2026': { title: '4ème SI — 2026', level: '4ème SI', data: 'assets/data/smart-book-2026.json', pdf: 'documents/livre/sti-smart-book-2026.pdf', pages: 74, fiches: 69, boundary: 'Manuel de 4ème SI : SQL et PHP inclus.' },
-    '3si-2026': { title: '3ème SI — 2026', level: '3ème SI', data: 'assets/data/smart-book-3si-2026.json', pdf: 'documents/livre/sti-smart-book-3si-2026.pdf', pages: 54, fiches: 50, boundary: 'Sans PHP. SQL limité à SELECT sur une table, avec filtres et tri ; sans jointure, sous-requête ni agrégat.' }
+    '4si-2026': { title: '4ème SI — 2026', level: '4ème SI', data: 'assets/data/smart-book-2026.json', pdf: 'documents/livre/sti-smart-book-2026.pdf', pages: 100, fiches: 95, lessons: 77, recapPages: 18, boundary: 'Manuel de 4ème SI : SQL et PHP inclus.' },
+    '3si-2026': { title: '3ème SI — 2026', level: '3ème SI', data: 'assets/data/smart-book-3si-2026.json', pdf: 'documents/livre/sti-smart-book-3si-2026.pdf', pages: 72, fiches: 68, lessons: 53, recapPages: 15, boundary: 'Sans PHP. SQL limité à SELECT sur une table, avec filtres et tri ; sans jointure, sous-requête ni agrégat.' }
   };
   let bookId = '4si-2026', items = [], cache = {}, ready = false;
   let stream = null, scanning = false, timer = null, generation = 0, loadGeneration = 0;
   let detector = null, imageBusy = false;
   let canvas = document.createElement('canvas');
   let context = canvas.getContext('2d', { willReadFrequently: true });
-
-  /* --- Filtrage des manuels selon le profil connecté (cache de session STI) ---
-     Élève 3SI → manuel 3ème SI ; élève 4SI → manuel 4ème SI ;
-     admin, prof et comptes GOLD → les deux manuels.
-     Visiteur non identifié : aucun filtrage (comportement inchangé). */
-  let manuelsAutorises = (function () {
-    try {
-      let brut = null;
-      try { brut = localStorage.getItem('sti-session-cache'); } catch (e) {}
-      if (!brut) { try { brut = sessionStorage.getItem('sti-session-cache'); } catch (e) {} }
-      if (!brut) { try { brut = localStorage.getItem('sti-labo3-permanent'); } catch (e) {} }
-      let c = brut ? JSON.parse(brut) : null;
-      let drapeauGold = false;
-      try { drapeauGold = localStorage.getItem('sti-admin-gold') === '1' || localStorage.getItem('sti-gold') === '1'; } catch (e) {}
-      if (!c && !drapeauGold) return null;
-      let classe = String((c && c.classe) || '').trim().toUpperCase().replace(/[\s._\-]+/g, '');
-      let lycee = String((c && c.lycee) || '');
-      let estAdmin = Boolean(c && c.isAdmin) || drapeauGold;
-      /* elevelabo3 : reconnu par sa classe OU par son e-mail (comme acces.js) */
-      let classeMin = classe.toLowerCase();
-      try { classeMin = classeMin.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch (e) {}
-      let email = String((c && c.email) || '').trim().toLowerCase();
-      let estLabo3 = classeMin === 'elevelabo3' || /^elevelabo3(?:@|$)/i.test(email);
-      let estProf = estLabo3 || classeMin === 'prof' || classeMin === 'professeur' || classeMin === 'enseignant' || classeMin === 'enseignante';
-      let identite = [c && c.nom, c && c.prenom, c && c.email].join(' ').toLowerCase();
-      try { identite = identite.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch (e) {}
-      let estGoldPlateforme = identite.indexOf('issaoui') !== -1 && identite.indexOf('amel') !== -1;
-      let estGold = Boolean(c && (c.isGold || c.gold === true)) || /\bGOLD\b/i.test(lycee) || classe.indexOf('GOLD') !== -1 || estGoldPlateforme;
-      if (estAdmin || estProf || estGold) return Object.keys(books);
-      if (/^4(E|EME)?SI/.test(classe)) return ['4si-2026'];
-      if (/^3(E|EME)?SI/.test(classe)) return ['3si-2026'];
-      return null;
-    } catch (e) { return null; }
-  })();
-  function manuelPermis(id) { return !manuelsAutorises || manuelsAutorises.includes(id); }
-  function filtrerSelectManuels() {
-    if (!manuelsAutorises || manuelsAutorises.length >= Object.keys(books).length) return;
-    Array.from($('book-select').options).forEach(function (o) { if (!manuelsAutorises.includes(o.value)) o.remove(); });
-  }
   function message(text, error) {
     $('global-status').textContent = text;
     $('global-status').classList.toggle('error', Boolean(error));
@@ -100,19 +61,14 @@
       let a = document.createElement('a'); a.className = 'catalog-item'; a.href = localURL(item.url);
       let badge = document.createElement('span'); badge.className = 'page-badge'; badge.textContent = 'p. ' + item.page;
       let title = document.createElement('span'); title.textContent = item.titre;
-      let sub = document.createElement('small'); sub.textContent = books[bookId].level + ' · FICHE ' + String(item.fiche).padStart(2, '0'); title.append(sub);
+      let sub = document.createElement('small'); sub.textContent = books[bookId].level + (item.kind === 'recap' ? ' · TABLEAU RÉCAPITULATIF' : ' · FICHE ' + String(item.fiche).padStart(2, '0')); title.append(sub);
       let arrow = document.createElement('span'); arrow.className = 'arrow'; arrow.textContent = '↗'; arrow.setAttribute('aria-hidden', 'true');
       a.append(badge, title, arrow); fragment.append(a);
     });
-    $('catalog-list').append(fragment); $('count').textContent = filtered.length + ' fiche(s) sur ' + items.length + ' · ' + books[bookId].level;
+    $('catalog-list').append(fragment); $('count').textContent = filtered.length + ' repère(s) sur ' + items.length + ' · ' + books[bookId].level;
   }
   async function loadBook(id) {
     if (!Object.hasOwn(books, id)) throw new Error('Édition inconnue.');
-    if (!manuelPermis(id)) {
-      message('Ce manuel est réservé aux élèves de ' + books[id].level + '.', true);
-      if (manuelsAutorises && bookId !== manuelsAutorises[0]) return loadBook(manuelsAutorises[0]);
-      return false;
-    }
     let request = ++loadGeneration;
     ready = false; stopCamera(); setControls(false);
     $('result').hidden = true; $('scan-status').textContent = '';
@@ -123,7 +79,7 @@
       bookId = id; items = data.items; let book = books[id];
       $('book-select').value = id; $('page-number').max = String(book.pages); $('page-number').value = '';
       $('search').value = ''; $('book-level').textContent = 'LE MANUEL CONNECTÉ · ' + book.level;
-      $('book-edition').textContent = book.title; $('book-size').textContent = book.pages + ' pages · ' + book.fiches + ' fiches';
+      $('book-edition').textContent = book.title; $('book-size').textContent = book.pages + ' pages · ' + book.lessons + ' fiches + ' + book.recapPages + ' pages de tableaux';
       $('book-boundary').textContent = book.boundary;
       $('download-book').href = book.pdf;
       $('cover-subjects').textContent = id === '3si-2026' ? 'HTML5 · CSS3 · JavaScript · SQL simple' : 'HTML5 · CSS3 · JavaScript · SQL · PHP';
@@ -150,7 +106,7 @@
       message('Saisissez un numéro entier de 1 à ' + books[bookId].pages + ' pour ce manuel.', true); $('result').hidden = true; return false;
     }
     let item = items.find(function (entry) { return entry.page === page; });
-    if (item) showResult(item, 'PAGE ' + item.page + ' · FICHE ' + item.fiche);
+    if (item) showResult(item, 'PAGE ' + item.page + (item.kind === 'recap' ? ' · TABLEAU RÉCAPITULATIF' : ' · FICHE ' + item.fiche));
     else showResult({ titre: page === 1 ? 'Couverture du manuel' : 'Sommaire et mode d’emploi', url: publicBase.href + 'index.html#cours' }, 'PAGE ' + page + ' · ACCUEIL DES COURS');
     return true;
   }
@@ -161,11 +117,6 @@
       if ([...u.searchParams.keys()].some(function (key) { return !['livre', 'page'].includes(key); })) return false;
       let id = u.searchParams.get('livre');
       if (!Object.hasOwn(books, id)) return false;
-      if (!manuelPermis(id)) {
-        stopCamera();
-        $('scan-status').textContent = 'Ce QR appartient au manuel ' + books[id].level + ', réservé à ce niveau.';
-        return true;
-      }
       let raw = u.searchParams.get('page');
       if (raw !== null && (!/^\d+$/.test(raw) || Number(raw) < 1 || Number(raw) > books[id].pages)) return false;
       stopCamera();
@@ -181,11 +132,6 @@
       return true;
     }
     // Les QR directs déjà imprimés du manuel 4SI restent compatibles.
-    if (!manuelPermis('4si-2026')) {
-      stopCamera();
-      $('scan-status').textContent = 'Ce QR appartient au manuel 4ème SI, réservé à ce niveau.';
-      return true;
-    }
     if (u.search) return false;
     let data = await getIndex('4si-2026');
     let peers = data.items.filter(function (item) { return item.url === u.href; });
@@ -273,8 +219,6 @@
     if ('BarcodeDetector' in window) { try { let formats = await window.BarcodeDetector.getSupportedFormats(); if (formats.includes('qr_code')) detector = new window.BarcodeDetector({ formats: ['qr_code'] }); } catch (_) {} }
     let query = new URLSearchParams(location.search), id = query.get('livre') || '4si-2026', raw = query.get('page');
     if (!Object.hasOwn(books, id)) id = '4si-2026';
-    filtrerSelectManuels();
-    if (!manuelPermis(id)) id = manuelsAutorises[0];
     if (await loadBook(id) && raw !== null) { $('page-number').value = raw; pageResult(Number(raw)); }
   }
   init();

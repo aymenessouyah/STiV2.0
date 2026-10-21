@@ -1,8 +1,8 @@
 {
   "edition": "3ème SI — 2026",
   "bookId": "3si-2026",
-  "pages": 54,
-  "fiches": 50,
+  "pages": 72,
+  "fiches": 68,
   "niveau": "3ème SI",
   "items": [
     {
@@ -337,23 +337,179 @@
     {
       "fiche": 48,
       "page": 52,
-      "titre": "Aide-mémoire HTML5, CSS3 et JavaScript",
+      "titre": "Méthode de résolution et lecture de programme",
       "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours",
       "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=52"
     },
     {
       "fiche": 49,
       "page": 53,
-      "titre": "SQL : bilan de niveau et auto-évaluation",
-      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select",
+      "titre": "Erreurs fréquentes et réflexes de correction",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours",
       "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=53"
     },
     {
       "fiche": 50,
       "page": 54,
-      "titre": "Sources et utilisation du livre connecté",
+      "titre": "Tests, vérification et checklist de remise",
       "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours",
       "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=54"
+    },
+    {
+      "fiche": 51,
+      "page": 55,
+      "titre": "Aide-mémoire HTML5, CSS3 et JavaScript",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=55"
+    },
+    {
+      "fiche": 52,
+      "page": 56,
+      "titre": "SQL : bilan de niveau et auto-évaluation",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=56"
+    },
+    {
+      "fiche": 53,
+      "page": 57,
+      "titre": "Sources et utilisation du livre connecté",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=57"
+    },
+    {
+      "fiche": 54,
+      "page": 58,
+      "titre": "HTML5 — balises et attributs — tableau p. 58",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=58",
+      "section": "HTML5 — balises et attributs",
+      "kind": "recap"
+    },
+    {
+      "fiche": 55,
+      "page": 59,
+      "titre": "HTML5 — balises et attributs — tableau p. 59",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=59",
+      "section": "HTML5 — balises et attributs",
+      "kind": "recap"
+    },
+    {
+      "fiche": 56,
+      "page": 60,
+      "titre": "HTML5 — balises et attributs — tableau p. 60",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=60",
+      "section": "HTML5 — balises et attributs",
+      "kind": "recap"
+    },
+    {
+      "fiche": 57,
+      "page": 61,
+      "titre": "HTML5 — balises et attributs — tableau p. 61",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=61",
+      "section": "HTML5 — balises et attributs",
+      "kind": "recap"
+    },
+    {
+      "fiche": 58,
+      "page": 62,
+      "titre": "CSS3 — aide-mémoire par thèmes — tableau p. 62",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=62",
+      "section": "CSS3 — aide-mémoire par thèmes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 59,
+      "page": 63,
+      "titre": "CSS3 — aide-mémoire par thèmes — tableau p. 63",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=63",
+      "section": "CSS3 — aide-mémoire par thèmes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 60,
+      "page": 64,
+      "titre": "CSS3 — aide-mémoire par thèmes — tableau p. 64",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=64",
+      "section": "CSS3 — aide-mémoire par thèmes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 61,
+      "page": 65,
+      "titre": "CSS3 — aide-mémoire par thèmes — tableau p. 65",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=65",
+      "section": "CSS3 — aide-mémoire par thèmes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 62,
+      "page": 66,
+      "titre": "CSS3 — aide-mémoire par thèmes — tableau p. 66",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=66",
+      "section": "CSS3 — aide-mémoire par thèmes",
+      "kind": "recap"
+    },
+    {
+      "fiche": 63,
+      "page": 67,
+      "titre": "JavaScript — syntaxe et API utilisées — tableau p. 67",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=67",
+      "section": "JavaScript — syntaxe et API utilisées",
+      "kind": "recap"
+    },
+    {
+      "fiche": 64,
+      "page": 68,
+      "titre": "JavaScript — syntaxe et API utilisées — tableau p. 68",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=68",
+      "section": "JavaScript — syntaxe et API utilisées",
+      "kind": "recap"
+    },
+    {
+      "fiche": 65,
+      "page": 69,
+      "titre": "JavaScript — syntaxe et API utilisées — tableau p. 69",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=69",
+      "section": "JavaScript — syntaxe et API utilisées",
+      "kind": "recap"
+    },
+    {
+      "fiche": 66,
+      "page": 70,
+      "titre": "JavaScript — syntaxe et API utilisées — tableau p. 70",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=70",
+      "section": "JavaScript — syntaxe et API utilisées",
+      "kind": "recap"
+    },
+    {
+      "fiche": 67,
+      "page": 71,
+      "titre": "Bases de données et SQL — synthèse — tableau p. 71",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#intro",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=71",
+      "section": "Bases de données et SQL — synthèse",
+      "kind": "recap"
+    },
+    {
+      "fiche": 68,
+      "page": 72,
+      "titre": "Bases de données et SQL — synthèse — tableau p. 72",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#intro",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=72",
+      "section": "Bases de données et SQL — synthèse",
+      "kind": "recap"
     }
   ]
 }
