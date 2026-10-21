@@ -6,11 +6,21 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v329-video-sql-guide-texte";
+var UPDATE_ID = "v330-smart-book-2026";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./index.html", revision: "device-gate-v303" },
+  { url: "./cours/php-mysqli.html", revision: "smart-book-v330" },
+  { url: "./cours/php.html", revision: "smart-book-v330" },
+  { url: "./cours/sql-bases-ldd-lmd-lcd.html", revision: "smart-book-v330" },
+  { url: "./cours/javascript.html", revision: "smart-book-v330" },
+  { url: "./cours/html5.html", revision: "smart-book-v330" },
+  { url: "./livre-smart.html", revision: "smart-book-v330" },
+  { url: "./assets/css/smart-book.css", revision: "smart-book-v330" },
+  { url: "./assets/js/smart-book.js", revision: "smart-book-v330" },
+  { url: "./assets/data/smart-book-2026.json", revision: "smart-book-v330" },
+  { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
+  { url: "./index.html", revision: "smart-book-v330" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
   { url: "./admin.html", revision: "admin-net-v324" },
@@ -23,8 +33,8 @@ var UPDATE_FILES = [
   { url: "./assets/js/protection.js", revision: "video-sql-guide-texte-v329" },
   { url: "./assets/icons/STI_by_AE.ico", revision: "official-square-logo-v316-3" },
   { url: "./assets/js/sante.js", revision: "sante-video-paths-v309-hotfix-1" },
-  { url: "./cours/css3.html", revision: "remove-video-access-v311" },
-  { url: "./cours/sql.html", revision: "video-sql-guide-texte-v329" },
+  { url: "./cours/css3.html", revision: "smart-book-v330" },
+  { url: "./cours/sql.html", revision: "smart-book-v330" },
   { url: "./assets/subtitles/css3-cours-v9-sync-fr.vtt", revision: "css3-vtt-sync-v309" },
   { url: "./assets/images/css3-cours-v9-sync-poster.jpg", revision: "css3-poster-v309" },
   { url: "./assets/js/modules/admin-mfa.js", revision: "mfa-module-v302" },
@@ -35,7 +45,7 @@ var UPDATE_FILES = [
   { url: "./exercices/series-exercices.html", revision: "video-sql-guide-texte-v329" },
   { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "guide-sql-v328" },
   { url: "./exercices/javascript/js-37-defis-tt.html", revision: "js-37-defis-bimode-v318" },
-  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v329-video-sql-guide-texte" },
+  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v330-smart-book" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
   { url: "./Lancer-Labo3-Hors-Ligne.ps1", revision: "portable-powershell-server-v315" }
 ];
