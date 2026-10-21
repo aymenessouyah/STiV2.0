@@ -19,3 +19,6 @@ Les deux livres utilisent les accès par indices demandés et des boucles classi
 
 ### Fiches méthode ajoutées
 Le livre 3SI comprend maintenant 53 fiches et 15 pages de tableaux, soit 72 pages avec couverture et sommaire. Le livre 4SI atteint 100 pages. Aucun ajout au périmètre SQL de 3SI et aucune réintroduction des méthodes exclues.
+
+### Aperçu des deux manuels
+La page scanner présente maintenant les deux vraies couvertures simultanément en éventail, avec sélection de l’édition au clic, y compris sur mobile. Aucun changement aux contenus des PDF.

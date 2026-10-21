@@ -2,8 +2,8 @@
   "version": 316,
   "generatedAt": "2026-10-21T10:15:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 589,
-  "totalBytes": 628424955,
+  "totalFiles": 591,
+  "totalBytes": 628577223,
   "files": [
     {
       "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf\"",
@@ -2867,8 +2867,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 55021,
-      "gitSha": "ce054be8b77e0b30766ff3fb9f1d4798752b2788"
+      "bytes": 55205,
+      "gitSha": "c9a9200f10c8031adf82b88542d4d69aec1d2423"
     },
     {
       "path": "assets/css/admin-v19.css",
@@ -2912,8 +2912,8 @@
     },
     {
       "path": "assets/css/smart-book.css",
-      "bytes": 7355,
-      "gitSha": "9d45c044401516e638abab5fbccf19a43bb101b6"
+      "bytes": 9913,
+      "gitSha": "35f1d74fdce5f72bc9d4b4be41b93d176a21fb43"
     },
     {
       "path": "assets/data/smart-book-2026.json",
@@ -2922,8 +2922,8 @@
     },
     {
       "path": "assets/js/smart-book.js",
-      "bytes": 15112,
-      "gitSha": "32e6a6232fad80e04aa75b2d2e68468f8a3bef1c"
+      "bytes": 15509,
+      "gitSha": "1e654ed7ba97670c854810673972ccfb24ff67f1"
     },
     {
       "path": "assets/vendor/jsqr/jsQR.js",
@@ -2937,8 +2937,8 @@
     },
     {
       "path": "livre-smart.html",
-      "bytes": 6209,
-      "gitSha": "682a5182766cfa0d2611025b82601fb5f552801b"
+      "bytes": 7014,
+      "gitSha": "2f886ecbd36da8b985738967ec67fc8f73acbda9"
     },
     {
       "path": "assets/data/smart-book-3si-2026.json",
@@ -2949,6 +2949,16 @@
       "path": "documents/livre/sti-smart-book-3si-2026.pdf",
       "bytes": 2372738,
       "gitSha": "fd77a9ff781e3273e483e41b8df2e258d70f27f0"
+    },
+    {
+      "path": "assets/images/smart-books/couverture-3si.jpg",
+      "bytes": 76951,
+      "gitSha": "fe05da5dceb49e19093bd675e98c267e148e90ba"
+    },
+    {
+      "path": "assets/images/smart-books/couverture-4si.jpg",
+      "bytes": 71373,
+      "gitSha": "870b16d8582da0b077a95ed7ede2c8fc11527c0e"
     }
   ],
   "windowsCompatible": true,

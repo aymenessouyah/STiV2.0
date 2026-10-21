@@ -43,6 +43,8 @@
   function setControls(enabled) {
     ['photo', 'start-camera', 'find-page', 'search'].forEach(function (id) { $(id).disabled = !enabled || imageBusy; });
     $('book-select').disabled = !enabled || imageBusy;
+    $('preview-3si').disabled = !enabled || imageBusy;
+    $('preview-4si').disabled = !enabled || imageBusy;
   }
   function stopCamera() {
     generation++; scanning = false; clearTimeout(timer);
@@ -82,7 +84,8 @@
       $('book-edition').textContent = book.title; $('book-size').textContent = book.pages + ' pages · ' + book.lessons + ' fiches + ' + book.recapPages + ' pages de tableaux';
       $('book-boundary').textContent = book.boundary;
       $('download-book').href = book.pdf;
-      $('cover-subjects').textContent = id === '3si-2026' ? 'HTML5 · CSS3 · JavaScript · SQL simple' : 'HTML5 · CSS3 · JavaScript · SQL · PHP';
+      $('preview-3si').setAttribute('aria-pressed', String(id === '3si-2026'));
+      $('preview-4si').setAttribute('aria-pressed', String(id === '4si-2026'));
       ready = true; setControls(true); renderCatalog();
       message(book.title + ' prêt : QR, photo ou recherche par page.');
       let u = new URL(location.href); u.searchParams.set('livre', id); u.searchParams.delete('page');
@@ -91,6 +94,7 @@
     } catch (error) {
       if (request !== loadGeneration) return false;
       $('book-select').disabled = false;
+      $('preview-3si').disabled = false; $('preview-4si').disabled = false;
       message('Impossible de charger ce manuel. Actualisez avec Internet ou choisissez l’autre édition.', true);
       return false;
     }
@@ -207,6 +211,8 @@
     } catch (_) { $('scan-status').textContent = 'Image non lisible. Essayez un JPG/PNG ou saisissez le numéro de page.'; }
     finally { URL.revokeObjectURL(blob); imageBusy = false; setControls(ready); event.target.value = ''; }
   }
+  $('preview-3si').addEventListener('click', function () { if (!imageBusy) loadBook('3si-2026'); });
+  $('preview-4si').addEventListener('click', function () { if (!imageBusy) loadBook('4si-2026'); });
   $('book-select').addEventListener('change', function () { loadBook($('book-select').value); });
   $('page-form').addEventListener('submit', function (event) { event.preventDefault(); if (ready) pageResult(Number($('page-number').value)); });
   $('search').addEventListener('input', renderCatalog);

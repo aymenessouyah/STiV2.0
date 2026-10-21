@@ -33,6 +33,18 @@ class SmartBooks(unittest.TestCase):
         self.assertIn('value="3si-2026"', html)
         self.assertIn('value="4si-2026"', html)
 
+    def test_deux_couvertures(self):
+        html = (ROOT / 'livre-smart.html').read_text()
+        js = (ROOT / 'assets/js/smart-book.js').read_text()
+        for level in ['3si','4si']:
+            path = 'assets/images/smart-books/couverture-' + level + '.jpg'
+            self.assertIn(path, html)
+            self.assertTrue((ROOT / path).is_file())
+            self.assertIn('id="preview-' + level + '"', html)
+            self.assertIn("$('preview-" + level + "').addEventListener('click'", js)
+        self.assertIn('aria-pressed="true"', html)
+        self.assertNotIn('id="cover-subjects"', html)
+
     def test_syntaxe_javascript(self):
         if not shutil.which('node'):
             self.skipTest('Node.js absent')
@@ -43,7 +55,7 @@ class SmartBooks(unittest.TestCase):
         sw = (ROOT / 'sw.js').read_text()
         updates = sw.split('var UPDATE_FILES = [', 1)[1].split('];', 1)[0]
         self.assertIn('smart-book-3si-2026.json', updates)
-        self.assertIn('v338-fiches-methode', sw)
+        self.assertIn('v339-deux-couvertures', sw)
         self.assertNotIn('.pdf', updates)
         self.assertIn('var CACHE = "sti-atelier-v316";', sw)
 
@@ -51,7 +63,7 @@ class SmartBooks(unittest.TestCase):
         manifest = json.loads((ROOT / 'offline-complete-manifest.json').read_text())
         self.assertEqual(manifest['totalFiles'], len(manifest['files']))
         self.assertEqual(manifest['totalBytes'], sum(x['bytes'] for x in manifest['files']))
-        for path in ['sw.js', 'livre-smart.html', 'assets/css/smart-book.css', 'assets/js/smart-book.js', 'assets/data/smart-book-3si-2026.json', 'assets/data/smart-book-2026.json', 'documents/livre/sti-smart-book-3si-2026.pdf']:
+        for path in ['sw.js', 'livre-smart.html', 'assets/css/smart-book.css', 'assets/js/smart-book.js', 'assets/images/smart-books/couverture-3si.jpg', 'assets/images/smart-books/couverture-4si.jpg', 'assets/data/smart-book-3si-2026.json', 'assets/data/smart-book-2026.json', 'documents/livre/sti-smart-book-3si-2026.pdf']:
             entry = next(x for x in manifest['files'] if x['path'] == path)
             content = (ROOT / path).read_bytes()
             self.assertEqual(entry['bytes'], len(content))

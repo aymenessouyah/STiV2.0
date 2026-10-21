@@ -48,3 +48,21 @@ Les fiches sont regroupées dans une nouvelle famille « Fiches méthode », apr
 Les PDF, index de recherche, nombres de pages, documents et empreintes sont synchronisés. Révision de cache : **v338-fiches-methode**.
 
 Les QR des nouvelles fiches méthode ouvrent l’accueil des cours ; ils ne prétendent pas pointer vers de nouvelles pages web dédiées. Aucun nouveau cours web n’a été publié et aucun envoi authentifié au dépôt n’a été effectué.
+
+
+## Correction de la page « Une page papier »
+- Le livre générique a été remplacé par les deux couvertures réelles des PDF actuels.
+- Disposition en éventail : 3SI bleu à gauche, 4SI vert à droite, inclinés et superposés comme deux cartes de belote.
+- Un clic ou une activation clavier sélectionne le livre ; le menu, le téléchargement PDF, le catalogue et la limite de pages sont synchronisés.
+- Les couvertures restent visibles sur mobile et disposent de textes alternatifs et d’un état aria-pressed.
+- Images locales, sans CDN ni génération d’illustration artificielle.
+- Révision active : **v339-deux-couvertures**, avec les deux JPEG ajoutés au manifeste et à la mise à jour de cache.
+
+### Vérifications de cette correction
+- Sélection des deux livres au clic vérifiée dans Chromium : bon PDF et limites 72 / 100 pages.
+- 172 recherches par numéro de page : titres et destinations corrects, aucun écart.
+- Deux images chargées et aucun débordement horizontal aux largeurs 320, 390, 768, 820, 1000, 1024, 1280 et 1440 px.
+- Console navigateur sans erreur ni avertissement.
+- Sept tests d’intégration, dont un nouveau contrôle des deux couvertures et de leurs images locales.
+- PDF inchangés par rapport à la livraison « Fiches méthode ».
+- ZIP actualisé : les deux nouveaux JPEG doivent être publiés avec les fichiers HTML/CSS/JS. Aucun déploiement automatique effectué.

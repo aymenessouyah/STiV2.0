@@ -65,3 +65,8 @@ Le tableau enrichi est ajouté page 67, avant les explications détaillées page
 
 ## Fiches méthode — révision actuelle
 Trois fiches adaptées dans chaque livre : méthode de résolution et traçage ; erreurs fréquentes ; tests et checklist. Pages 52 à 54 en 3SI et 77 à 79 en 4SI. Nouvelle famille de signets PDF. Pas de nouvelle série d’exercices. Cache : v338-fiches-methode. Les QR des fiches méthode ouvrent l’accueil des cours ; aucune nouvelle page de cours n’a été publiée sur la plateforme.
+
+## Page scanner — deux couvertures en éventail
+La zone « Une page papier. Le cours à portée de main. » affiche désormais les deux couvertures réelles, bleue 3SI et verte 4SI, inclinées et superposées comme deux cartes de belote. Les deux restent visibles sur mobile. Cliquer une couverture sélectionne son édition et synchronise le menu, le PDF à télécharger, les nombres de pages et le catalogue.
+
+Deux nouveaux fichiers sont inclus : assets/images/smart-books/couverture-3si.jpg et couverture-4si.jpg. Bien extraire ces images avec le HTML, le CSS et le JavaScript. Les PDF restent ceux de 72 et 100 pages. La révision active du cache devient v339-deux-couvertures. Aucun déploiement automatique n’est réalisé par la livraison du ZIP.
