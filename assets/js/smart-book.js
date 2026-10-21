@@ -3,6 +3,35 @@
   'use strict';
   let $ = function (id) { return document.getElementById(id); };
   let base = new URL('./', location.href);
+  /* v351 : « Retour aux cours » doit ramener à la page d'où l'on vient
+     (page de cours, quiz ou exercice), pas toujours à l'accueil.
+     Origine : le referrer de même origine en priorité (il écrase l'ancienne
+     valeur), sinon la dernière origine mémorisée dans l'onglet.
+     Repli inchangé : index.html#cours. */
+  (function configurerRetourCours() {
+    let back = document.querySelector('.topbar .back');
+    if (!back) return;
+    const CLE_RETOUR = 'sti-retour-livre';
+    function estPageLivre(p) { return /livre-smart\.html$/.test(p); }
+    function estAccueil(p) { return /(^|\/)index\.html$/.test(p) || /\/$/.test(p); }
+    let cible = '';
+    if (document.referrer) {
+      try {
+        let ref = new URL(document.referrer);
+        if (ref.origin === location.origin && !estPageLivre(ref.pathname) && !estAccueil(ref.pathname)) {
+          cible = ref.pathname + ref.search + ref.hash;
+          try { sessionStorage.setItem(CLE_RETOUR, cible); } catch (e) {}
+        }
+      } catch (e) {}
+    }
+    if (!cible) {
+      try { cible = sessionStorage.getItem(CLE_RETOUR) || ''; } catch (e) {}
+    }
+    if (cible && !estPageLivre(cible.split(/[?#]/)[0]) && !estAccueil(cible.split(/[?#]/)[0])) {
+      back.setAttribute('href', cible);
+      back.textContent = '← Retour à ma page';
+    }
+  })();
   let publicBase = new URL('https://aymenessouyah.github.io/STiV2.0/');
   let books = {
     '4si-2026': { title: '4ème SI — 2026', level: '4ème SI', data: 'assets/data/smart-book-2026.json', pdf: 'documents/livre/sti-smart-book-2026.pdf', pages: 100, fiches: 95, lessons: 77, recapPages: 18, boundary: 'Manuel de 4ème SI : SQL et PHP inclus.' },

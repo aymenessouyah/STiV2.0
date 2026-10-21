@@ -541,6 +541,17 @@
       .nav-cover:focus-visible { z-index: 4; outline: 3px solid var(--accent); outline-offset: 3px; }
       .nav-books .nav-link { padding: 6px 8px; }
 
+      /* v351 : le texte animé « Systèmes et Technologies de l'Informatique »
+         (haut gauche) n'est plus rogné par le bouton « Cours » : la marque
+         garde sa largeur, et la navigation passe sur une seconde ligne
+         quand la place manque au lieu d'écraser la définition. */
+      .brand { flex: 0 0 auto; }
+      .topbar-inner { flex-wrap: wrap; }
+      .nav { flex-wrap: wrap; justify-content: flex-end; }
+      @media (max-width: 1240px) and (min-width: 701px) {
+        .nav { order: 3; flex: 1 1 100%; justify-content: flex-start; }
+      }
+
       /* Bouton thème */
       .theme-toggle {
         position: relative;

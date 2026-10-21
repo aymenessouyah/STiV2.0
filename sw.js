@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v350-version-affichee";
+var UPDATE_ID = "v351-livre-retour";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -19,16 +19,16 @@ var UPDATE_FILES = [
   { url: "./assets/images/smart-books/couverture-4si.jpg", revision: "smart-books-v339" },
   { url: "./assets/data/smart-book-3si-2026.json", revision: "smart-books-v339" },
   { url: "./cours/php-mysqli.html", revision: "smart-book-v330" },
-  { url: "./cours/php.html", revision: "smart-book-v330" },
-  { url: "./cours/sql-bases-ldd-lmd-lcd.html", revision: "smart-book-v330" },
-  { url: "./cours/javascript.html", revision: "smart-book-v330" },
-  { url: "./cours/html5.html", revision: "smart-book-v330" },
+  { url: "./cours/php.html", revision: "cours-livre-v351" },
+  { url: "./cours/sql-bases-ldd-lmd-lcd.html", revision: "cours-livre-v351" },
+  { url: "./cours/javascript.html", revision: "cours-livre-v351" },
+  { url: "./cours/html5.html", revision: "cours-livre-v351" },
   { url: "./livre-smart.html", revision: "smart-books-v341" },
   { url: "./assets/css/smart-book.css", revision: "smart-books-v341" },
-  { url: "./assets/js/smart-book.js", revision: "smart-books-v339" },
+  { url: "./assets/js/smart-book.js", revision: "smart-book-retour-v351" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-books-v339" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
-  { url: "./index.html", revision: "index-v348" },
+  { url: "./index.html", revision: "index-v351" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
   { url: "./admin.html", revision: "admin-v350" },
@@ -41,8 +41,8 @@ var UPDATE_FILES = [
   { url: "./assets/js/protection.js", revision: "video-sql-guide-texte-v329" },
   { url: "./assets/icons/STI_by_AE.ico", revision: "official-square-logo-v316-3" },
   { url: "./assets/js/sante.js", revision: "sante-video-paths-v309-hotfix-1" },
-  { url: "./cours/css3.html", revision: "smart-book-v330" },
-  { url: "./cours/sql.html", revision: "smart-book-v330" },
+  { url: "./cours/css3.html", revision: "cours-livre-v351" },
+  { url: "./cours/sql.html", revision: "cours-livre-v351" },
   { url: "./assets/subtitles/css3-cours-v9-sync-fr.vtt", revision: "css3-vtt-sync-v309" },
   { url: "./assets/images/css3-cours-v9-sync-poster.jpg", revision: "css3-poster-v309" },
   { url: "./assets/js/modules/admin-mfa.js", revision: "mfa-module-v302" },

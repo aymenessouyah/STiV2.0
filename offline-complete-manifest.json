@@ -1,9 +1,9 @@
 {
   "version": 316,
-  "generatedAt": "2026-10-21T21:42:43Z",
+  "generatedAt": "2026-10-21T22:07:42Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 595,
-  "totalBytes": 628652067,
+  "totalBytes": 628664356,
   "files": [
     {
       "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf\"",
@@ -572,8 +572,8 @@
     },
     {
       "path": "assets/js/smart-book.js",
-      "bytes": 15509,
-      "gitSha": "1e654ed7ba97670c854810673972ccfb24ff67f1"
+      "bytes": 16841,
+      "gitSha": "5df8ed695e1621d90f8b819e6afd303189de1fb2"
     },
     {
       "path": "assets/js/supabase-umd.js",
@@ -777,8 +777,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 193232,
-      "gitSha": "b2394e011ccd5a3f2006cd4d52a16f6ce6abe232"
+      "bytes": 194907,
+      "gitSha": "7cdc1719ea2024aaa4a56b0a66a391b682079651"
     },
     {
       "path": "cours/datalist.html",
@@ -792,13 +792,13 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 198518,
-      "gitSha": "bbfdb80b00b216299b46903e186104d2631772e4"
+      "bytes": 200193,
+      "gitSha": "e447b4237669e2d629a1264184359d84a8e8be4d"
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 174991,
-      "gitSha": "debcaecc9ae66f325fc7c8b269d78ab68513a9d6"
+      "bytes": 176666,
+      "gitSha": "2d5bb4d72a1d285ddb51f139134d5787ba32baf0"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -812,13 +812,13 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 212694,
-      "gitSha": "82afc4785835d1aac6259bbbc41e8456b465dfe4"
+      "bytes": 214694,
+      "gitSha": "7ce57d2ac90aaa6cc4599307498a6ea6aca4b34f"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
-      "bytes": 26341,
-      "gitSha": "670125b531a7df91cc2515f34163343964151906"
+      "bytes": 28016,
+      "gitSha": "e14154374ee2936d96dbc7de759c9a5de5988250"
     },
     {
       "path": "cours/sql-contraintes.html",
@@ -827,8 +827,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 513335,
-      "gitSha": "dbc158de6165a3ec763a023891702c7faacef65c"
+      "bytes": 515010,
+      "gitSha": "30b9952c645394a29c1a73ee1d3cb57f3bb89b52"
     },
     {
       "path": "cssanimee/cours.js",
@@ -2462,8 +2462,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 182646,
-      "gitSha": "77d69552d0570496f0909a1536d8cd7bc43aa02e"
+      "bytes": 183220,
+      "gitSha": "a7eb054100b7a8fd156dbf9c1ac690c46f7cb04a"
     },
     {
       "path": "livre-smart.html",
@@ -2977,8 +2977,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 55591,
-      "gitSha": "e6313d5b33caaffe921b3b162de999a75c02fbfe"
+      "bytes": 55599,
+      "gitSha": "63b939fbf28af265e094cceaed84019991194ab9"
     }
   ],
   "windowsCompatible": true,

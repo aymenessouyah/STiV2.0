@@ -29,6 +29,18 @@
         border-color: #b4552d !important;
         color: #fff !important;
       }
+      #stix-nav .stix-books{display:inline-flex;align-items:center;gap:7px;padding:3px 11px 3px 5px;border-radius:999px;background:#162330;border:1px solid #79858e;box-shadow:0 6px 18px rgba(0,0,0,.28)}
+      #stix-nav .stix-fan{position:relative;width:46px;height:38px;flex:none}
+      #stix-nav .stix-cover{position:absolute;top:1px;width:24px;line-height:0;border:1px solid #d6dcdf;border-radius:3px;background:#fff;box-shadow:0 4px 8px rgba(0,0,0,.35);transform-origin:50% 100%;transition:transform .25s ease}
+      #stix-nav .stix-cover img{display:block;width:100%;height:auto;border-radius:2px;pointer-events:none}
+      #stix-nav .stix-cover.c3{left:0;transform:rotate(-13deg);z-index:1}
+      #stix-nav .stix-cover.c4{right:0;top:3px;transform:rotate(12deg);z-index:2}
+      #stix-nav .stix-books:hover .stix-cover.c3{transform:rotate(-18deg) translateY(-2px)}
+      #stix-nav .stix-books:hover .stix-cover.c4{transform:rotate(17deg) translateY(-2px)}
+      #stix-nav .stix-cover:hover{z-index:4}
+      #stix-nav .stix-books a:hover{background:transparent!important;border-color:transparent!important}
+      #stix-nav .stix-book-label{color:#fff;text-decoration:none;white-space:nowrap;padding:5px 2px}
+      #stix-nav .stix-book-label:hover{color:#ffd54f!important}
       #btn-magique-php-recap {
         position: fixed;
         top: calc(var(--header-h, 60px) + 10px);
@@ -215,7 +227,7 @@
           white-space: nowrap;
         "
         >🎯 Quiz</a
-      >
+      ><span class="stix-books"><span class="stix-fan"><a class="stix-cover c3" href="../livre-smart.html?livre=3si-2026" aria-label="Livre connecté — manuel 3ème SI, 72 pages" title="Manuel 3ème SI — 72 pages"><img src="../assets/images/smart-books/couverture-3si.jpg" width="714" height="1011" alt="" loading="lazy" decoding="async"></a><a class="stix-cover c4" href="../livre-smart.html?livre=4si-2026" aria-label="Livre connecté — manuel 4ème SI, 100 pages" title="Manuel 4ème SI — 100 pages"><img src="../assets/images/smart-books/couverture-4si.jpg" width="714" height="1011" alt="" loading="lazy" decoding="async"></a></span><a class="stix-book-label" href="../livre-smart.html">📖 Livre connecté</a></span>
     </nav>
 
     <header class="top">
