@@ -6,10 +6,15 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v339-deux-couvertures";
+var UPDATE_ID = "v340-annexes-texte";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./documents/annexes/annexe-html5.pdf.html", revision: "annexes-texte-v340" },
+  { url: "./documents/annexes/annexe-css3.pdf.html", revision: "annexes-texte-v340" },
+  { url: "./documents/annexes/annexe-javascript.pdf.html", revision: "annexes-texte-v340" },
+  { url: "./documents/annexes/annexe-php.pdf.html", revision: "annexes-texte-v340" },
+  { url: "./documents/annexes/annexe-sql.pdf.html", revision: "annexes-texte-v340" },
   { url: "./assets/images/smart-books/couverture-3si.jpg", revision: "smart-books-v339" },
   { url: "./assets/images/smart-books/couverture-4si.jpg", revision: "smart-books-v339" },
   { url: "./assets/data/smart-book-3si-2026.json", revision: "smart-books-v339" },
