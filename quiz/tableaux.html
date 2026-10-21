@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, noai, noimageai" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'" />
+<link rel="icon" href="../assets/icons/STI_by_AE.ico" />
+<title>Quiz des tableaux — STI V2.0</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #f9f1e3; color: #23201a;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding: 18px 14px 48px;
+  }
+  .qt-wrap { max-width: 860px; margin: 0 auto; }
+  .qt-nav {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .qt-nav a, .qt-nav .qt-pastille {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px;
+    background: #fffdf7; color: #23201a; text-decoration: none; border: 2px solid #23201a;
+    box-shadow: 2.5px 2.5px 0 #23201a; font-weight: 800; font-size: 13px;
+  }
+  .qt-nav a:hover { background: #ffe9d6; border-color: #f4511e; }
+  .qt-carte {
+    background: #fffdf7; border: 2px solid #23201a; border-radius: 20px;
+    box-shadow: 6px 6px 0 rgba(244,81,30,.4); padding: 22px 20px;
+  }
+  .qt-carte h1 { font-size: 24px; margin-bottom: 6px; }
+  .qt-carte h1 em { font-style: normal; color: #f4511e; }
+  .qt-sous { color: #5a5244; font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
+  .qt-modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .qt-module {
+    text-align: left; cursor: pointer; background: #fffdf7; border: 2px solid #23201a; border-radius: 16px;
+    box-shadow: 3.5px 3.5px 0 rgba(244,81,30,.35); padding: 14px; font: inherit;
+    transition: transform .08s ease, border-color .15s ease;
+  }
+  .qt-module:hover { border-color: #f4511e; transform: translateY(-2px); }
+  .qt-module .qt-mod-ico { font-size: 22px; }
+  .qt-module .qt-mod-nom { display: block; font-weight: 900; font-size: 16px; margin: 4px 0 2px; }
+  .qt-module .qt-mod-reste { display: block; color: #5a5244; font-size: 12px; font-weight: 700; }
+  .qt-module.epuise { opacity: .55; }
+  .qt-barre {
+    height: 12px; background: #fff; border: 2px solid #23201a; border-radius: 999px; overflow: hidden;
+    margin: 12px 0 18px;
+  }
+  .qt-barre i { display: block; height: 100%; background: linear-gradient(90deg, #f4511e, #ff8a50); width: 0; transition: width .3s ease; }
+  .qt-qmeta { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 12px; font-weight: 800; color: #5a5244; margin-bottom: 8px; }
+  .qt-qmeta .qt-badge { background: #f9f1e3; border: 1.5px solid #23201a; border-radius: 999px; padding: 2px 10px; color: #23201a; }
+  .qt-question { font-size: 18px; font-weight: 800; line-height: 1.45; margin-bottom: 16px; overflow-wrap: break-word; }
+  .qt-choix { display: grid; gap: 10px; }
+  .qt-choix-btn {
+    text-align: left; cursor: pointer; font: inherit; font-size: 14.5px; line-height: 1.4;
+    background: #fff; border: 2px solid #23201a; border-radius: 14px; padding: 12px 14px;
+    box-shadow: 2.5px 2.5px 0 rgba(35,32,26,.8); overflow-wrap: break-word;
+  }
+  .qt-choix-btn:hover { border-color: #f4511e; background: #fff8ef; }
+  .qt-choix-btn.choisi { background: #ffe9d6; border-color: #f4511e; box-shadow: 2.5px 2.5px 0 #f4511e; }
+  .qt-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .qt-btn {
+    cursor: pointer; font: inherit; font-weight: 900; font-size: 14px; padding: 11px 18px;
+    border-radius: 999px; border: 2px solid #23201a; background: linear-gradient(120deg, #f4511e, #ff8a50);
+    color: #fff; box-shadow: 3px 3px 0 #23201a;
+  }
+  .qt-btn.secondaire { background: #fffdf7; color: #23201a; }
+  .qt-btn.secondaire:hover { background: #ffe9d6; border-color: #f4511e; }
+  .qt-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .qt-score { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+  .qt-correction { border: 2px solid #23201a; border-radius: 14px; padding: 14px; margin-bottom: 12px; background: #fff; }
+  .qt-correction.ok { border-color: #177245; background: #eefaf2; }
+  .qt-correction.ko { border-color: #c0392b; background: #fdf0ef; }
+  .qt-correction .qt-cq { font-weight: 800; margin-bottom: 8px; line-height: 1.45; overflow-wrap: break-word; }
+  .qt-correction .qt-ligne { font-size: 13.5px; line-height: 1.5; margin: 3px 0; overflow-wrap: break-word; }
+  .qt-correction .qt-ref { display: inline-block; margin-top: 8px; font-size: 11.5px; font-weight: 800; background: #f9f1e3; border: 1.5px solid #23201a; border-radius: 999px; padding: 2px 10px; }
+  .qt-verrou { text-align: center; padding: 26px 10px; }
+  .qt-verrou .qt-gros { font-size: 40px; margin-bottom: 10px; }
+  @media print { .qt-nav, .qt-actions { display: none !important; } body { background: #fff; } .qt-carte { box-shadow: none; } }
+</style>
+</head>
+<body>
+  <div class="qt-wrap">
+    <nav class="qt-nav" aria-label="Navigation du quiz">
+      <a href="../index.html#cours">← Retour aux cours</a>
+      <span class="qt-pastille">📚 Quiz des tableaux · réservé aux abonnés</span>
+      <a href="../livre-smart.html">📖 Mon livre</a>
+    </nav>
+    <main class="qt-carte" id="qt-app">
+      <h1>Quiz <em>des tableaux</em></h1>
+      <p class="qt-sous">Chargement des questions…</p>
+    </main>
+  </div>
+  <script src="../assets/js/supabase-umd.js"></script>
+  <script src="../assets/js/config.js?v=227"></script>
+  <script src="../assets/js/acces.js?v=227"></script>
+  <script src="../assets/js/quiz-tableaux.js?v=356" defer></script>
+</body>
+</html>

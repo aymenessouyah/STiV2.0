@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v355-style-carte";
+var UPDATE_ID = "v356-quiz-tableaux";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -28,7 +28,10 @@ var UPDATE_FILES = [
   { url: "./assets/js/smart-book.js", revision: "smart-book-retour-v351" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-books-v339" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
-  { url: "./index.html", revision: "index-v351" },
+  { url: "./index.html", revision: "index-v356" },
+  { url: "./quiz/tableaux.html", revision: "quiz-tableaux-v356" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-tableaux-v356" },
+  { url: "./assets/data/quiz-banque.json", revision: "quiz-tableaux-v356" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
   { url: "./admin.html", revision: "admin-v355" },
@@ -264,6 +267,7 @@ var SHELL = [
   "./quiz/html-css.html",
   "./quiz/javascript.html",
   "./quiz/php.html",
+  "./quiz/tableaux.html",
   "./quiz/pp.html",
   "./quiz/sql.html",
   "./projets/sti0/index.html",
@@ -287,6 +291,8 @@ var OFFLINE_LIST = [
   "./assets/audio/guichet-etapes.mp3",
   "./assets/audio/css-positionnement.mp3",
   "./assets/audio/css-animee.mp3",
+  "./assets/js/quiz-tableaux.js",
+  "./assets/data/quiz-banque.json",
   "./assets/audio/sql-cours.mp3",
   "./assets/css/atelier-pages.css",
   "./assets/css/atelier-php.css",
