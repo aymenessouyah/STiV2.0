@@ -13,6 +13,36 @@
   let detector = null, imageBusy = false;
   let canvas = document.createElement('canvas');
   let context = canvas.getContext('2d', { willReadFrequently: true });
+
+  /* --- Filtrage des manuels selon le profil connecté (cache de session STI) ---
+     Élève 3SI → manuel 3ème SI ; élève 4SI → manuel 4ème SI ;
+     admin, prof et comptes GOLD → les deux manuels.
+     Visiteur non identifié : aucun filtrage (comportement inchangé). */
+  let manuelsAutorises = (function () {
+    try {
+      let brut = null;
+      try { brut = localStorage.getItem('sti-session-cache'); } catch (e) {}
+      if (!brut) { try { brut = sessionStorage.getItem('sti-session-cache'); } catch (e) {} }
+      let c = brut ? JSON.parse(brut) : null;
+      let drapeauGold = false;
+      try { drapeauGold = localStorage.getItem('sti-admin-gold') === '1' || localStorage.getItem('sti-gold') === '1'; } catch (e) {}
+      if (!c && !drapeauGold) return null;
+      let classe = String((c && c.classe) || '').trim().toUpperCase().replace(/[\s._\-]+/g, '');
+      let lycee = String((c && c.lycee) || '');
+      let estAdmin = Boolean(c && c.isAdmin) || drapeauGold;
+      let estProf = classe === 'PROF' || classe.indexOf('PROF') === 0 || classe === 'ELEVELABO3';
+      let estGold = Boolean(c && (c.isGold || c.gold === true)) || /\bGOLD\b/i.test(lycee) || classe.indexOf('GOLD') !== -1;
+      if (estAdmin || estProf || estGold) return Object.keys(books);
+      if (/^4(E|EME)?SI/.test(classe)) return ['4si-2026'];
+      if (/^3(E|EME)?SI/.test(classe)) return ['3si-2026'];
+      return null;
+    } catch (e) { return null; }
+  })();
+  function manuelPermis(id) { return !manuelsAutorises || manuelsAutorises.includes(id); }
+  function filtrerSelectManuels() {
+    if (!manuelsAutorises || manuelsAutorises.length >= Object.keys(books).length) return;
+    Array.from($('book-select').options).forEach(function (o) { if (!manuelsAutorises.includes(o.value)) o.remove(); });
+  }
   function message(text, error) {
     $('global-status').textContent = text;
     $('global-status').classList.toggle('error', Boolean(error));
@@ -69,6 +99,11 @@
   }
   async function loadBook(id) {
     if (!Object.hasOwn(books, id)) throw new Error('Édition inconnue.');
+    if (!manuelPermis(id)) {
+      message('Ce manuel est réservé aux élèves de ' + books[id].level + '.', true);
+      if (manuelsAutorises && bookId !== manuelsAutorises[0]) return loadBook(manuelsAutorises[0]);
+      return false;
+    }
     let request = ++loadGeneration;
     ready = false; stopCamera(); setControls(false);
     $('result').hidden = true; $('scan-status').textContent = '';
@@ -117,6 +152,11 @@
       if ([...u.searchParams.keys()].some(function (key) { return !['livre', 'page'].includes(key); })) return false;
       let id = u.searchParams.get('livre');
       if (!Object.hasOwn(books, id)) return false;
+      if (!manuelPermis(id)) {
+        stopCamera();
+        $('scan-status').textContent = 'Ce QR appartient au manuel ' + books[id].level + ', réservé à ce niveau.';
+        return true;
+      }
       let raw = u.searchParams.get('page');
       if (raw !== null && (!/^\d+$/.test(raw) || Number(raw) < 1 || Number(raw) > books[id].pages)) return false;
       stopCamera();
@@ -132,6 +172,11 @@
       return true;
     }
     // Les QR directs déjà imprimés du manuel 4SI restent compatibles.
+    if (!manuelPermis('4si-2026')) {
+      stopCamera();
+      $('scan-status').textContent = 'Ce QR appartient au manuel 4ème SI, réservé à ce niveau.';
+      return true;
+    }
     if (u.search) return false;
     let data = await getIndex('4si-2026');
     let peers = data.items.filter(function (item) { return item.url === u.href; });
@@ -219,6 +264,8 @@
     if ('BarcodeDetector' in window) { try { let formats = await window.BarcodeDetector.getSupportedFormats(); if (formats.includes('qr_code')) detector = new window.BarcodeDetector({ formats: ['qr_code'] }); } catch (_) {} }
     let query = new URLSearchParams(location.search), id = query.get('livre') || '4si-2026', raw = query.get('page');
     if (!Object.hasOwn(books, id)) id = '4si-2026';
+    filtrerSelectManuels();
+    if (!manuelPermis(id)) id = manuelsAutorises[0];
     if (await loadBook(id) && raw !== null) { $('page-number').value = raw; pageResult(Number(raw)); }
   }
   init();

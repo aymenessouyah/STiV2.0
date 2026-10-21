@@ -43,7 +43,7 @@ class SmartBooks(unittest.TestCase):
         sw = (ROOT / 'sw.js').read_text()
         updates = sw.split('var UPDATE_FILES = [', 1)[1].split('];', 1)[0]
         self.assertIn('smart-book-3si-2026.json', updates)
-        self.assertIn('v332-smart-books-3si-4si', sw)
+        self.assertIn('v333-smart-books-par-niveau', sw)
         self.assertNotIn('.pdf', updates)
         self.assertIn('var CACHE = "sti-atelier-v316";', sw)
 
