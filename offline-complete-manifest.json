@@ -1,9 +1,9 @@
 {
   "version": 316,
-  "generatedAt": "2026-10-21T17:16:29Z",
+  "generatedAt": "2026-10-21T10:15:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 591,
-  "totalBytes": 629338935,
+  "totalFiles": 592,
+  "totalBytes": 628587237,
   "files": [
     {
       "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf\"",
@@ -827,8 +827,8 @@
     },
     {
       "path": "documents/annexes/annexe-css3.pdf.html",
-      "bytes": 371752,
-      "gitSha": "a4c5dbddc48e1fe81f11111c5a614d713a129ea5"
+      "bytes": 4787,
+      "gitSha": "297c17d4432f0c152f006b38a018a27a8c5a2dad"
     },
     {
       "path": "documents/annexes/annexe-html5.pdf",
@@ -867,8 +867,8 @@
     },
     {
       "path": "documents/annexes/annexe-html5.pdf.html",
-      "bytes": 62640,
-      "gitSha": "3c2f86a9eb9d7b75418a596860ee4f2da9472c54"
+      "bytes": 4470,
+      "gitSha": "3fbfe1b2fb5c3acc78dc2e0d92572a1863737607"
     },
     {
       "path": "documents/annexes/annexe-javascript.pdf",
@@ -897,8 +897,8 @@
     },
     {
       "path": "documents/annexes/annexe-javascript.pdf.html",
-      "bytes": 106478,
-      "gitSha": "71e491aafce4a5eeb28570eeede8aca718daf8c2"
+      "bytes": 4317,
+      "gitSha": "e152e754bea10170c4c4f80e4cf4096a2f230222"
     },
     {
       "path": "documents/annexes/annexe-php.pdf",
@@ -957,8 +957,8 @@
     },
     {
       "path": "documents/annexes/annexe-php.pdf.html",
-      "bytes": 208246,
-      "gitSha": "9607e6f32591176a70d67afb256b54b86786f418"
+      "bytes": 4874,
+      "gitSha": "e2513608239d215690ae2fdc8f76b668b94820fa"
     },
     {
       "path": "documents/annexes/annexe-sql.pdf",
@@ -1002,8 +1002,8 @@
     },
     {
       "path": "documents/annexes/annexe-sql.pdf.html",
-      "bytes": 35329,
-      "gitSha": "c361b8787421780a4e0297cf9728f3e67b2fef53"
+      "bytes": 4722,
+      "gitSha": "b66d1750f1c5023f103e7edc4fc7f6b2f330a3c0"
     },
     {
       "path": "documents/bd/ecole.sql",
@@ -2867,8 +2867,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 55642,
-      "gitSha": "5f015d1ae4dc33172fe4d66c5cde0f2af3237686"
+      "bytes": 55297,
+      "gitSha": "3631cb011e3a54eed7b5d2c7b8ccc6c1e23192aa"
     },
     {
       "path": "assets/css/admin-v19.css",
@@ -2937,8 +2937,8 @@
     },
     {
       "path": "livre-smart.html",
-      "bytes": 7014,
-      "gitSha": "2f886ecbd36da8b985738967ec67fc8f73acbda9"
+      "bytes": 7023,
+      "gitSha": "6a5e0803cfa52026c27fb17c0730c0e53a736ff0"
     },
     {
       "path": "assets/data/smart-book-3si-2026.json",
@@ -2959,6 +2959,11 @@
       "path": "assets/images/smart-books/couverture-4si.jpg",
       "bytes": 71373,
       "gitSha": "870b16d8582da0b077a95ed7ede2c8fc11527c0e"
+    },
+    {
+      "path": "assets/css/smart-book-fan-v340.css",
+      "bytes": 9913,
+      "gitSha": "35f1d74fdce5f72bc9d4b4be41b93d176a21fb43"
     }
   ],
   "windowsCompatible": true,
