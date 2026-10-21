@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v328-guide-sql-tri";
+var UPDATE_ID = "v329-video-sql-guide-texte";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -20,10 +20,11 @@ var UPDATE_FILES = [
   { url: "./assets/icons/sti-logo-complet.png", revision: "official-full-logo-v316-20" },
   { url: "./assets/js/portail.js", revision: "portail-turnstile-v321" },
   { url: "./assets/js/modules/password-recovery.js", revision: "password-recovery-module-v307" },
-  { url: "./assets/js/protection.js", revision: "html5-chapter-label-escape-v316-1" },
+  { url: "./assets/js/protection.js", revision: "video-sql-guide-texte-v329" },
   { url: "./assets/icons/STI_by_AE.ico", revision: "official-square-logo-v316-3" },
   { url: "./assets/js/sante.js", revision: "sante-video-paths-v309-hotfix-1" },
   { url: "./cours/css3.html", revision: "remove-video-access-v311" },
+  { url: "./cours/sql.html", revision: "video-sql-guide-texte-v329" },
   { url: "./assets/subtitles/css3-cours-v9-sync-fr.vtt", revision: "css3-vtt-sync-v309" },
   { url: "./assets/images/css3-cours-v9-sync-poster.jpg", revision: "css3-poster-v309" },
   { url: "./assets/js/modules/admin-mfa.js", revision: "mfa-module-v302" },
@@ -31,10 +32,10 @@ var UPDATE_FILES = [
   { url: "./assets/js/modules/labo-device-client.js", revision: "labo-portable-local-v315" },
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" },
   { url: "./assets/js/modules/labo-offline-diagnostics.js", revision: "offline-diagnostics-v315" },
-  { url: "./exercices/series-exercices.html", revision: "guide-sql-v328" },
+  { url: "./exercices/series-exercices.html", revision: "video-sql-guide-texte-v329" },
   { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "guide-sql-v328" },
   { url: "./exercices/javascript/js-37-defis-tt.html", revision: "js-37-defis-bimode-v318" },
-  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v316-airbus-cockpit-25" },
+  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v329-video-sql-guide-texte" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
   { url: "./Lancer-Labo3-Hors-Ligne.ps1", revision: "portable-powershell-server-v315" }
 ];
@@ -758,6 +759,12 @@ var OFFLINE_LIST = [
   "./assets/subtitles/css3-cours-v9-sync-fr.vtt",
   "./assets/videos/javascript-cours.mp4",
   "./assets/videos/php-cours.mp4",
+  "./exercices/sql/sql-construire-requete-guide-texte.mp4",
+  "./assets/images/sql-construire-requete-guide-texte-poster.jpg",
+  "./assets/subtitles/sql-construire-requete-guide-texte-fr.srt",
+  "./documents/sql/Documentation-Construire-Requete-SQL-Guide-Texte.docx",
+  "./documents/sql/Documentation-Construire-Requete-SQL-Guide-Texte.pdf",
+  "./documents/sql/transcription-construire-requete-sql-guide-texte.md",
   "./robots.txt",
   "./sitemap.xml"
 ];

@@ -1032,8 +1032,8 @@
         title: "🎥 Cours SQL Full HD — Synchronisation phrase→cible, ALTER puis DROP TABLE/DATABASE détaillé, marteaux visuels muets & LMD"
       };
       var VIDEO_SQL_INIT_INFO = {
-        file: "sql-cours-v7.mp4?v=280",
-        title: "🎥 Cours SQL Full HD — Synchronisation phrase→cible, ALTER puis DROP TABLE/DATABASE détaillé, marteaux visuels muets & LMD"
+        file: "sql-construire-requete-guide-texte.mp4?v=329",
+        title: "🎥 Construire une requête SQL — 7 étapes, sous-requêtes, auto-jointures & Guide-Texte synchronisé (8 min 45)"
       };
       /* v275 : supprimer immédiatement les anciennes vidéos SQL du cache persistant.
          Le nouveau nom sql-cours-v7.mp4 garantit que la version à 11 chapitres remplace bien toute ancienne copie. */
@@ -1142,17 +1142,16 @@
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
       var STI_CHAPITRES_MEDIA = {
         "sql-initiation": [
-          { t: 0.00, short: "1. Bienvenue & Acteurs", label: "00:00 · 1. Bienvenue STI V2.0 By A.E puis Client, SGBD et Archives", sel: "#intro-bd" },
-          { t: 41.42, short: "2. Clés & Avion PK→FK", label: "00:41 · 2. Tables, clé simple/composée, graphique/textuel et Avion exact PK Mère → FK Fille", sel: "#intro-cles" },
-          { t: 90.24, short: "3. Chantier CREATE TABLE", label: "01:30 · 3. Chef de chantier et CREATE TABLE détaillé", sel: "#ldd" },
-          { t: 140.54, short: "4. Types & Tailles", label: "02:21 · 4. Types SQL et tailles expliqués", sel: "#ldd" },
-          { t: 196.56, short: "5. CASCADE approfondi", label: "03:17 · 5. Contraintes, RESTRICT/NO ACTION, CASCADE et SET NULL", sel: "#ldd" },
-          { t: 268.70, short: "6. ALTER TABLE", label: "04:29 · 6. Le chantier continue : ALTER TABLE détaillé, sans marteaux", sel: "#ldd" },
-          { t: 326.45, short: "7. DROP TABLE/DATABASE", label: "05:26 · 7. DROP TABLE, IF EXISTS, ordre Fille/Mère et DROP DATABASE — marteaux visuels muets", sel: "#ldd" },
-          { t: 377.14, short: "8. Camion & INSERT", label: "06:17 · 8. Chantier terminé : camion de déménagement et INSERT détaillé", sel: "#lmd" },
-          { t: 433.27, short: "9. UPDATE & SELECT", label: "07:13 · 9. Avatar UPDATE, DELETE avec WHERE et inspection SELECT", sel: "#lmd-select" },
-          { t: 480.41, short: "10. [4ème SI] Avancé", label: "08:00 · 10. [Spécial 4ème SI] Jointure, GROUP BY/HAVING et sous-requête", sel: "#lmd-jointure" },
-          { t: 518.98, short: "11. Merci & Suite", label: "08:39 · 11. Synthèse, cours et exercices sur STI puis merci pour votre attention", sel: "#intro" }
+          { t: 0.00, short: "1. Introduction", label: "00:00 · 1. Bienvenue STI V2.0 et page Comment créer une requête SQL SELECT", sel: "#intro" },
+          { t: 51.38, short: "2. Questions & 7 étapes", label: "00:51 · 2. Les 5 questions et les 7 étapes de construction", sel: "#lmd-select" },
+          { t: 103.99, short: "3. SELECT", label: "01:44 · 3. SELECT, agrégats, alias et DISTINCT", sel: "#lmd-select" },
+          { t: 157.18, short: "4. FROM & tables", label: "02:37 · 4. FROM, tables utiles, table pont et alias", sel: "#lmd-jointure" },
+          { t: 202.03, short: "5. Jointures", label: "03:22 · 5. Relier les tables dans WHERE et éviter le produit cartésien", sel: "#lmd-jointure" },
+          { t: 252.03, short: "6. WHERE & sous-requête", label: "04:12 · 6. Filtres de lignes et sous-requête calculée avant comparaison", sel: "#lmd-select" },
+          { t: 305.29, short: "7. GROUP BY & HAVING", label: "05:05 · 7. Calculer par groupe puis filtrer les groupes", sel: "#lmd-jointure" },
+          { t: 356.18, short: "8. ORDER BY & contrôles", label: "05:56 · 8. Trier, corriger les remarques automatiques et tester", sel: "#lmd-select" },
+          { t: 408.76, short: "9. Auto-jointure", label: "06:49 · 9. Deux exemplaires d’une même table avec alias distincts", sel: "#lmd-jointure" },
+          { t: 461.21, short: "10. Assemblage complet", label: "07:41 · 10. Requête complète et synthèse de la méthode", sel: "#lmd-select" }
         ],
         "html5-cours": [
           { t: 0.00, short: "I. Squelette", label: "00:00 · I. Squelette HTML5 (<head>, <meta>, <link>, <script>)", sel: "#entete" },
@@ -1624,7 +1623,8 @@
       }
 
       function resoudreUrlVideoSqlInit() {
-        return prefixeAssetsSTI() + "videos/" + VIDEO_SQL_INIT_INFO.file;
+        var racineSqlGuide = prefixeAssetsSTI().replace(/assets\/?$/, "");
+        return racineSqlGuide + "exercices/sql/" + VIDEO_SQL_INIT_INFO.file;
       }
 
       function resoudreUrlVideoHtml5() {
