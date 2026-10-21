@@ -1,0 +1,359 @@
+{
+  "edition": "3ème SI — 2026",
+  "bookId": "3si-2026",
+  "pages": 54,
+  "fiches": 50,
+  "niveau": "3ème SI",
+  "items": [
+    {
+      "fiche": 1,
+      "page": 5,
+      "titre": "Structure d’un document HTML5",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#entete",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=5"
+    },
+    {
+      "fiche": 2,
+      "page": 6,
+      "titre": "Syntaxe, attributs et imbrication",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#attributs-evenements",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=6"
+    },
+    {
+      "fiche": 3,
+      "page": 7,
+      "titre": "Texte, liens et contenus multimédias",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#texte-media",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=7"
+    },
+    {
+      "fiche": 4,
+      "page": 8,
+      "titre": "Images cliquables : map et area",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#texte-media",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=8"
+    },
+    {
+      "fiche": 5,
+      "page": 9,
+      "titre": "Listes, tableaux et structure sémantique",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#tableaux",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=9"
+    },
+    {
+      "fiche": 6,
+      "page": 10,
+      "titre": "Formulaires : saisie et transmission",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#formulaires",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=10"
+    },
+    {
+      "fiche": 7,
+      "page": 11,
+      "titre": "Formulaires : options et aide-mémoire",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#formulaires",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=11"
+    },
+    {
+      "fiche": 8,
+      "page": 12,
+      "titre": "Cadres intégrés et cibles de navigation",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#iframe",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=12"
+    },
+    {
+      "fiche": 9,
+      "page": 13,
+      "titre": "Attributs globaux, datalist et événements HTML",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#attributs-evenements",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=13"
+    },
+    {
+      "fiche": 10,
+      "page": 14,
+      "titre": "Syntaxe et intégration des styles",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=14"
+    },
+    {
+      "fiche": 11,
+      "page": 15,
+      "titre": "Sélecteurs, classes et identifiants",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-1",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=15"
+    },
+    {
+      "fiche": 12,
+      "page": 16,
+      "titre": "Unités et modèle de boîte",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-4",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=16"
+    },
+    {
+      "fiche": 13,
+      "page": 17,
+      "titre": "Texte, couleurs, bordures et arrière-plans",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=17"
+    },
+    {
+      "fiche": 14,
+      "page": 18,
+      "titre": "Positionnement : relative et absolute",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-5",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=18"
+    },
+    {
+      "fiche": 15,
+      "page": 19,
+      "titre": "Positionnement : fixed et sticky",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-5",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=19"
+    },
+    {
+      "fiche": 16,
+      "page": 20,
+      "titre": "Mise en page avec float et clear",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-5",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=20"
+    },
+    {
+      "fiche": 17,
+      "page": 21,
+      "titre": "Flexbox, affichage et débordement",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-5",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=21"
+    },
+    {
+      "fiche": 18,
+      "page": 22,
+      "titre": "Liens, listes, tableaux et ombres",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-7",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=22"
+    },
+    {
+      "fiche": 19,
+      "page": 23,
+      "titre": "Filtres et transformations 2D",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-8",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=23"
+    },
+    {
+      "fiche": 20,
+      "page": 24,
+      "titre": "Transitions et animations",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-8",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=24"
+    },
+    {
+      "fiche": 21,
+      "page": 25,
+      "titre": "Transitions : durée, délai et progression",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-8",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=25"
+    },
+    {
+      "fiche": 22,
+      "page": 26,
+      "titre": "Animations : répétition, direction et remplissage",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/css3.html#point-8",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=26"
+    },
+    {
+      "fiche": 23,
+      "page": 27,
+      "titre": "Intégration, variables et types",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec3",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=27"
+    },
+    {
+      "fiche": 24,
+      "page": 28,
+      "titre": "Opérateurs, conversions et dialogues",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec5",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=28"
+    },
+    {
+      "fiche": 25,
+      "page": 29,
+      "titre": "Conditions et choix multiples",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec12",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=29"
+    },
+    {
+      "fiche": 26,
+      "page": 30,
+      "titre": "Boucles et accumulation",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec13",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=30"
+    },
+    {
+      "fiche": 27,
+      "page": 31,
+      "titre": "TP : jeu de devinettes",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec16",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=31"
+    },
+    {
+      "fiche": 28,
+      "page": 32,
+      "titre": "DOM : sélectionner et modifier des éléments",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=32"
+    },
+    {
+      "fiche": 29,
+      "page": 33,
+      "titre": "DOM : lire et contrôler un formulaire",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=33"
+    },
+    {
+      "fiche": 30,
+      "page": 34,
+      "titre": "Fonctions, portée et événements",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec14",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=34"
+    },
+    {
+      "fiche": 31,
+      "page": 35,
+      "titre": "Nombres, chaînes et méthodes usuelles",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec9",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=35"
+    },
+    {
+      "fiche": 32,
+      "page": 36,
+      "titre": "Tableaux et parcours",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec10",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=36"
+    },
+    {
+      "fiche": 33,
+      "page": 37,
+      "titre": "Dates, temporisation et horloge numérique",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec11",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=37"
+    },
+    {
+      "fiche": 34,
+      "page": 38,
+      "titre": "Compléments : Math, chaînes et sorties",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec8",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=38"
+    },
+    {
+      "fiche": 35,
+      "page": 39,
+      "titre": "Médias, styles et dates de formulaire",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=39"
+    },
+    {
+      "fiche": 36,
+      "page": 40,
+      "titre": "Notions relationnelles et contraintes",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#intro",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=40"
+    },
+    {
+      "fiche": 37,
+      "page": 41,
+      "titre": "SQL : commandes et types MySQL",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-create",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=41"
+    },
+    {
+      "fiche": 38,
+      "page": 42,
+      "titre": "Création des tables : gestion des locations",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-constraints",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=42"
+    },
+    {
+      "fiche": 39,
+      "page": 43,
+      "titre": "Modifier et supprimer une structure",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-alter",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=43"
+    },
+    {
+      "fiche": 40,
+      "page": 44,
+      "titre": "Insérer, modifier et supprimer des lignes",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-insert",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=44"
+    },
+    {
+      "fiche": 41,
+      "page": 45,
+      "titre": "Base école : tables et données des exercices",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#ldd-create",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=45"
+    },
+    {
+      "fiche": 42,
+      "page": 46,
+      "titre": "SELECT simple : choisir les colonnes",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=46"
+    },
+    {
+      "fiche": 43,
+      "page": 47,
+      "titre": "WHERE : comparaisons, logique et valeurs absentes",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=47"
+    },
+    {
+      "fiche": 44,
+      "page": 48,
+      "titre": "BETWEEN, IN, LIKE et ORDER BY",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=48"
+    },
+    {
+      "fiche": 45,
+      "page": 49,
+      "titre": "TP 1 : mini-site du Lycée Rafèha",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/html5.html#formulaires",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=49"
+    },
+    {
+      "fiche": 46,
+      "page": 50,
+      "titre": "TP 2 : formulaire contrôlé avec JavaScript",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/javascript.html#sec15",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=50"
+    },
+    {
+      "fiche": 47,
+      "page": 51,
+      "titre": "TP 3 : sélection simple — énoncé et corrigé",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=51"
+    },
+    {
+      "fiche": 48,
+      "page": 52,
+      "titre": "Aide-mémoire HTML5, CSS3 et JavaScript",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=52"
+    },
+    {
+      "fiche": 49,
+      "page": 53,
+      "titre": "SQL : bilan de niveau et auto-évaluation",
+      "url": "https://aymenessouyah.github.io/STiV2.0/cours/sql.html#lmd-select",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=53"
+    },
+    {
+      "fiche": 50,
+      "page": 54,
+      "titre": "Sources et utilisation du livre connecté",
+      "url": "https://aymenessouyah.github.io/STiV2.0/index.html#cours",
+      "qr_url": "https://aymenessouyah.github.io/STiV2.0/livre-smart.html?livre=3si-2026&page=54"
+    }
+  ]
+}

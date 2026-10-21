@@ -6,18 +6,19 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v331-carte-smart-book";
+var UPDATE_ID = "v332-smart-books-3si-4si";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/data/smart-book-3si-2026.json", revision: "smart-books-v332" },
   { url: "./cours/php-mysqli.html", revision: "smart-book-v330" },
   { url: "./cours/php.html", revision: "smart-book-v330" },
   { url: "./cours/sql-bases-ldd-lmd-lcd.html", revision: "smart-book-v330" },
   { url: "./cours/javascript.html", revision: "smart-book-v330" },
   { url: "./cours/html5.html", revision: "smart-book-v330" },
-  { url: "./livre-smart.html", revision: "smart-book-v330" },
-  { url: "./assets/css/smart-book.css", revision: "smart-book-v330" },
-  { url: "./assets/js/smart-book.js", revision: "smart-book-v330" },
+  { url: "./livre-smart.html", revision: "smart-books-v332" },
+  { url: "./assets/css/smart-book.css", revision: "smart-books-v332" },
+  { url: "./assets/js/smart-book.js", revision: "smart-books-v332" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-book-v330" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
   { url: "./index.html", revision: "index-v331" },
@@ -45,7 +46,7 @@ var UPDATE_FILES = [
   { url: "./exercices/series-exercices.html", revision: "video-sql-guide-texte-v329" },
   { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "guide-sql-v328" },
   { url: "./exercices/javascript/js-37-defis-tt.html", revision: "js-37-defis-bimode-v318" },
-  { url: "./offline-complete-manifest.json", revision: "offline-complete-manifest-v330-smart-book" },
+  { url: "./offline-complete-manifest.json", revision: "smart-books-v332" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
   { url: "./Lancer-Labo3-Hors-Ligne.ps1", revision: "portable-powershell-server-v315" }
 ];
