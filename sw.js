@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v343-reprendre-sombre";
+var UPDATE_ID = "v344-complet-couvertures";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -26,7 +26,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/smart-book.js", revision: "smart-books-v339" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-books-v339" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
-  { url: "./index.html", revision: "index-v342" },
+  { url: "./index.html", revision: "index-v344" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
   { url: "./admin.html", revision: "admin-net-v324" },

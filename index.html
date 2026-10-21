@@ -3199,6 +3199,27 @@
         #complet .annexe-card .go svg { display: none }
         #complet .annexe-card.absent { opacity: 0.72; cursor: progress }
         #complet .annexe-card.absent .go { color: var(--muted, #6b6250); font-weight: 700 }
+        /* Vrai aperçu du livre à la place de l'emoji (même habillage que la page Scanner) */
+        #complet .annexe-cover {
+          width: 86px;
+          margin-bottom: 14px;
+          line-height: 0;
+        }
+        #complet .annexe-cover img {
+          display: block;
+          width: 100%;
+          height: auto;
+          border: 1px solid #d6dcdf;
+          border-radius: 8px;
+          background: #fff;
+          box-shadow: 0 14px 22px rgba(22, 35, 48, 0.18), 0 3px 6px rgba(22, 35, 48, 0.1);
+          transform: rotate(-2deg);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        #complet .annexe-card:hover .annexe-cover img {
+          transform: rotate(0deg) translateY(-4px);
+          box-shadow: 0 20px 30px rgba(22, 35, 48, 0.24), 0 4px 8px rgba(22, 35, 48, 0.12);
+        }
       </style>
       <section class="annexes" id="complet">
         <div class="section-head reveal">
@@ -3207,13 +3228,13 @@
         </div>
         <div class="annexes-grid">
           <a href="livre-smart.html?livre=3si-2026" class="annexe-card reveal" data-complet="3eme">
-            <div class="annexe-icon">📕</div>
+            <div class="annexe-cover"><img src="assets/images/smart-books/couverture-3si.jpg" width="714" height="1011" alt="Aperçu du manuel STI Smart Book 3ème SI" loading="lazy" decoding="async" /></div>
             <h4>STI Smart Book 3ème SI</h4>
             <p>Le manuel interactif de 3ème SI : 54 pages, 50 fiches — scannez les codes QR du livre papier ou ouvrez chaque leçon en ligne.</p>
             <span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></span>
           </a>
           <a href="livre-smart.html" class="annexe-card reveal sti-4si-only" data-complet="4eme">
-            <div class="annexe-icon">📗</div>
+            <div class="annexe-cover"><img src="assets/images/smart-books/couverture-4si.jpg" width="714" height="1011" alt="Aperçu du manuel STI Smart Book 4ème SI" loading="lazy" decoding="async" /></div>
             <h4>STI Smart Book 4ème SI</h4>
             <p>Le manuel interactif de 4ème SI : 74 pages, 69 fiches — scannez les codes QR du livre papier ou ouvrez chaque leçon en ligne.</p>
             <span class="go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg></span>
