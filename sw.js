@@ -6,10 +6,11 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v342-nav-livres";
+var UPDATE_ID = "v343-reprendre-sombre";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/reprendre.js", revision: "reprendre-sombre-v343" },
   { url: "./assets/css/smart-book-fan-v341.css", revision: "smart-books-v341" },
   { url: "./assets/css/smart-book-fan-v340.css", revision: "smart-books-v341" },
   { url: "./assets/images/smart-books/couverture-3si.jpg", revision: "smart-books-v339" },

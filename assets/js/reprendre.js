@@ -1,4 +1,5 @@
-/* ═══ STI REPRENDRE (v257) — « Continuer où je m'étais arrêté » ═══
+/* ═══ STI REPRENDRE (v343) — « Continuer où je m'étais arrêté » ═══
+   v343 : carte lisible en thème sombre (styles en classes, fond/texte adaptés).
    Lit les progressions locales (déjà synchronisées cloud par sync-progressions.js) :
    vidéo en cours la plus récente, sinon prochaine notion non acquise du tableau de bord. */
 (function () {
@@ -42,13 +43,27 @@
       }
     }
     if (!titre) return; /* aucun historique : on n'affiche rien */
+    /* Styles en classes (et non en ligne) pour suivre le thème clair/sombre,
+       y compris lorsque l'utilisateur bascule le thème sans recharger. */
+    if (!document.getElementById("sti-reprendre-css")) {
+      var style = document.createElement("style");
+      style.id = "sti-reprendre-css";
+      style.textContent =
+        "#sti-reprendre{max-width:1100px;margin:22px auto;padding:0 16px;}" +
+        ".sti-reprendre-carte{border:3px solid #1a1a2e;border-radius:18px;padding:20px 24px;background:linear-gradient(120deg,#fff8ec,#ffe9d6);box-shadow:6px 6px 0 #1a1a2e;color:#1a1a2e;}" +
+        ".sti-reprendre-carte h2{margin:0 0 8px;font-size:1.5rem;color:inherit;}" +
+        ".sti-reprendre-carte p{margin:0 0 14px;font-size:1.05rem;line-height:1.5;color:inherit;}" +
+        ".sti-reprendre-btn{display:inline-block;padding:12px 20px;border-radius:12px;border:3px solid #1a1a2e;background:linear-gradient(120deg,#f4511e,#d81b60);color:#fff;font-weight:800;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;}" +
+        "[data-theme=\"dark\"] .sti-reprendre-carte{background:linear-gradient(120deg,#26313f,#1a2431);border-color:#0b1118;box-shadow:6px 6px 0 rgba(0,0,0,.55);color:#eef3f6;}" +
+        "[data-theme=\"dark\"] .sti-reprendre-btn{border-color:#0b1118;box-shadow:4px 4px 0 rgba(0,0,0,.55);color:#fff;}";
+      document.head.appendChild(style);
+    }
     var section = document.createElement("section");
     section.id = "sti-reprendre";
-    section.setAttribute("style", "max-width:1100px;margin:22px auto;padding:0 16px;");
-    section.innerHTML = '<div style="border:3px solid #1a1a2e;border-radius:18px;padding:20px 24px;background:linear-gradient(120deg,#fff8ec,#ffe9d6);box-shadow:6px 6px 0 #1a1a2e;">'
-      + '<h2 style="margin:0 0 8px;font-size:1.5rem;">' + titre + '</h2>'
-      + '<p style="margin:0 0 14px;font-size:1.05rem;line-height:1.5;">' + texte + '</p>'
-      + '<a href="' + lien + '" style="display:inline-block;padding:12px 20px;border-radius:12px;border:3px solid #1a1a2e;background:linear-gradient(120deg,#f4511e,#d81b60);color:#fff;font-weight:800;text-decoration:none;box-shadow:4px 4px 0 #1a1a2e;">' + bouton + '</a></div>';
+    section.innerHTML = '<div class="sti-reprendre-carte">'
+      + '<h2>' + titre + '</h2>'
+      + '<p>' + texte + '</p>'
+      + '<a class="sti-reprendre-btn" href="' + lien + '">' + bouton + '</a></div>';
     hero.insertAdjacentElement("afterend", section);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(construire, 400); });
