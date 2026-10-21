@@ -1,9 +1,9 @@
 {
   "version": 316,
-  "generatedAt": "2026-10-21T21:23:57Z",
+  "generatedAt": "2026-10-21T21:42:43Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 595,
-  "totalBytes": 628648914,
+  "totalBytes": 628652067,
   "files": [
     {
       "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf\"",
@@ -72,8 +72,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 281677,
-      "gitSha": "89a187ab5a25d48734626825190ca0d2998b10be"
+      "bytes": 281676,
+      "gitSha": "12ffe14346fa3cb0e40a9aa3754caf0a9834a932"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -487,13 +487,13 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 752646,
-      "gitSha": "e6f52f79cfa6a8958174ebf0e6a66237e1c7b65e"
+      "bytes": 754753,
+      "gitSha": "69f83f0204e768e1567146b377f5a25f7e0bbf71"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 523881,
-      "gitSha": "5514b01d8d6d0006eeed386e26fd90e1aeb11ead"
+      "bytes": 524932,
+      "gitSha": "646bb9d8820b90a69eff26a436759b4c930ab579"
     },
     {
       "path": "assets/js/analytique.js",
@@ -2977,8 +2977,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 55595,
-      "gitSha": "2725db312704024f1eb881445ea738490ecebc8c"
+      "bytes": 55591,
+      "gitSha": "e6313d5b33caaffe921b3b162de999a75c02fbfe"
     }
   ],
   "windowsCompatible": true,

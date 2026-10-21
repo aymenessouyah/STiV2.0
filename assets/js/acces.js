@@ -316,10 +316,14 @@
             var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
             var verSrv = m && m[1] ? parseInt(m[1], 10) : 0;
             if (!verSrv) return;
+            /* v350 : le numero AFFICHE suit UPDATE_ID (v349, v350...) ; verSrv (cache v316) ne sert qu'a la logique interne. */
+            var mAff = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
+            var verAff = mAff && mAff[1] ? parseInt(mAff[1], 10) : verSrv;
+            try { localStorage.setItem("sti-version-affichee", String(verAff)); } catch (e) {}
             var hEl = document.getElementById("sti-pan-version-head");
             var fEl = document.getElementById("sti-pan-version-foot");
-            if (hEl) hEl.textContent = "STiV2.0." + verSrv;
-            if (fEl) fEl.textContent = "STiV2.0." + verSrv;
+            if (hEl) hEl.textContent = "STiV2.0." + verAff;
+            if (fEl) fEl.textContent = "STiV2.0." + verAff;
 
             var verLoc = 0;
             try { verLoc = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0; } catch (e) {}
@@ -2259,6 +2263,7 @@
     var majManuelleHorsLigneEnCours = false;
     var versionAvantClicHorsLigne = 0;
     var versionServeurDetecteeClic = 0;
+    var versionAfficheeDetecteeClic = 0; /* v350 : numero UPDATE_ID, pour les libelles uniquement */
     btnOff.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -2286,7 +2291,12 @@
           if (verSrv > 0) {
             versionServeurDetecteeClic = verSrv;
             try { localStorage.setItem("sti-version-installee", String(verSrv)); } catch (err) {}
-            var lblVer = "STiV2.0." + verSrv;
+            /* v350 : affichage = numero UPDATE_ID (v349, v350...), pas le numero de cache (316). */
+            var mAff2 = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
+            var verAff2 = mAff2 && mAff2[1] ? parseInt(mAff2[1], 10) : verSrv;
+            versionAfficheeDetecteeClic = verAff2;
+            try { localStorage.setItem("sti-version-affichee", String(verAff2)); } catch (err) {}
+            var lblVer = "STiV2.0." + verAff2;
             var hEl = document.getElementById("sti-pan-version-head");
             var fEl = document.getElementById("sti-pan-version-foot");
             if (hEl) hEl.textContent = lblVer;
@@ -2327,6 +2337,8 @@
           var mCache = String(evt.data.cache).match(/sti-atelier-v(\d+)/i);
           if (mCache && mCache[1]) {
             var numC = parseInt(mCache[1], 10);
+            /* v350 : le nom de cache reste v316 par conception ; afficher le numero de mise a jour memorise si connu. */
+            try { numC = parseInt(localStorage.getItem("sti-version-affichee") || "0", 10) || numC; } catch (e) {}
             var lblC = "STiV2.0." + numC;
             var hElC = document.getElementById("sti-pan-version-head");
             var fElC = document.getElementById("sti-pan-version-foot");
@@ -2338,7 +2350,7 @@
         if (pct >= 100) {
           try { localStorage.setItem("sti-precache-100", "1"); } catch (e) {}
           btnOff.textContent = versionServeurDetecteeClic
-            ? ("✅ À jour · v2.0." + versionServeurDetecteeClic)
+            ? ("✅ À jour · v2.0." + (versionAfficheeDetecteeClic || versionServeurDetecteeClic))
             : "✅ Prêt hors-ligne";
           btnOff.style.background = "#e3f6e8";
           btnOff.style.color = "#177245";
@@ -2396,14 +2408,27 @@
     pan.appendChild(badgeVerRoue);
 
     (function majVersionRoueCandidat() {
-      function appliquerNumVer(num) {
+      /* v350 : la roue affiche le numero de MISE A JOUR (UPDATE_ID de sw.js : v349, v350...),
+         et non le numero du cache "sti-atelier-v316", fige par conception depuis l'architecture v316.
+         Le numero de cache ne sert qu'en repli (hors-ligne, avant tout contact serveur). */
+      var numVerPrioritaireApplique = false;
+      function appliquerNumVer(num, prioritaire) {
         if (!num) return;
+        if (numVerPrioritaireApplique && !prioritaire) return;
+        if (prioritaire) {
+          numVerPrioritaireApplique = true;
+          try { localStorage.setItem("sti-version-affichee", String(num)); } catch (e) {}
+        }
         var label = "STiV2.0." + num;
         var hEl = document.getElementById("sti-pan-version-head");
         var fEl = document.getElementById("sti-pan-version-foot");
         if (hEl) hEl.textContent = label;
         if (fEl) fEl.textContent = label;
       }
+      try {
+        var numVerMem = parseInt(localStorage.getItem("sti-version-affichee") || "0", 10) || 0;
+        if (numVerMem > 0) appliquerNumVer(numVerMem, true);
+      } catch (e) {}
       if (window.caches && caches.keys) {
         caches.keys().then(function (cles) {
           var nums = [];
@@ -2413,7 +2438,7 @@
           });
           if (nums.length) {
             nums.sort(function (a, b) { return b - a; });
-            appliquerNumVer(nums[0]);
+            appliquerNumVer(nums[0], false);
           }
         }).catch(function () {});
       }
@@ -2421,8 +2446,10 @@
         fetch(cfg.RACINE + "sw.js", { cache: "no-store" })
           .then(function (r) { return r && r.ok ? r.text() : ""; })
           .then(function (txt) {
+            var mUpd = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
+            if (mUpd && mUpd[1]) { appliquerNumVer(parseInt(mUpd[1], 10), true); return; }
             var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
-            if (m && m[1]) appliquerNumVer(parseInt(m[1], 10));
+            if (m && m[1]) appliquerNumVer(parseInt(m[1], 10), false);
           })
           .catch(function () {});
       }

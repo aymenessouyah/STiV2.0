@@ -53,8 +53,24 @@
       if (elPiedVer) elPiedVer.textContent = "🏷️ Version active : STI V2.0 (" + v + ")";
     }
     majTexteVersion(versionDefaut);
+    /* v350 : le numero AFFICHE suit UPDATE_ID de sw.js (v349, v350...) ; le nom de cache
+       "sti-atelier-v316" est fige par conception et ne sert qu'en repli hors-ligne. */
+    var versionAfficheePrioritaire = false;
+    if (typeof fetch === "function") {
+      fetch("sw.js?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r && r.ok ? r.text() : ""; })
+        .then(function (txt) {
+          var mUpd = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
+          if (mUpd && mUpd[1]) {
+            versionAfficheePrioritaire = true;
+            majTexteVersion("v" + mUpd[1]);
+          }
+        })
+        .catch(function () {});
+    }
     if (window.caches && caches.keys) {
       caches.keys().then(function (cles) {
+        if (versionAfficheePrioritaire) return;
         var nums = [];
         (cles || []).forEach(function (k) {
           var m = String(k).match(/sti-atelier-v(\d+)/i);
@@ -10534,8 +10550,11 @@
         .then(function (r) { return r && r.ok ? r.text() : ""; })
         .catch(function () { return ""; })
         .then(function (txt) {
+          /* v350 : annoncer le numero de mise a jour (UPDATE_ID), pas le numero de cache fige v316 :
+             cote eleve, une cible superieure a la version locale est acceptee meme hors fenetre 24 h. */
+          var mUpd3 = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
           var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
-          var verStr = (m && m[1]) ? ("v" + m[1]) : ("v" + ((cfg && cfg.VERSION) || 230));
+          var verStr = (mUpd3 && mUpd3[1]) ? ("v" + mUpd3[1]) : ((m && m[1]) ? ("v" + m[1]) : ("v" + ((cfg && cfg.VERSION) || 230)));
           var payloadUpd = {
             type: "force_update",
             version: verStr,

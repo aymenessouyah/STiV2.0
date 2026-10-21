@@ -55,7 +55,7 @@ class SmartBooks(unittest.TestCase):
         sw = (ROOT / 'sw.js').read_text()
         updates = sw.split('var UPDATE_FILES = [', 1)[1].split('];', 1)[0]
         self.assertIn('smart-book-3si-2026.json', updates)
-        self.assertIn('v349-glossaire-badge-en', sw)
+        self.assertIn('v350-version-affichee', sw)
         # Les vrais PDF lourds restent exclus du delta ; les pages .pdf.html (HTML leger) sont autorisees.
         self.assertNotIn('.pdf"', updates)
         self.assertIn('var CACHE = "sti-atelier-v316";', sw)
