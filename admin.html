@@ -2187,6 +2187,37 @@
     </div>
   </section>
 
+  <!-- SECTION 5 : GRAPHIQUES D'ACTIVITÉ -->
+  <style id="graphiques-style">
+    .graph-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 860px) { .graph-grille { grid-template-columns: 1fr; } }
+    .graph-boite { background: #fffdf7; border: 2px solid #23201a; border-radius: 14px; padding: 12px 14px; box-shadow: 4px 4px 0 rgba(244,81,30,.35); }
+    .graph-boite h3 { margin: 0 0 8px; font-size: 13px; color: #23201a; }
+    .graph-boite canvas { width: 100%; display: block; }
+    html.admin-moderne body.cockpit-airbus .graph-boite { background: var(--ab-panel); border-color: var(--ab-line); box-shadow: none; }
+    html.admin-moderne body.cockpit-airbus .graph-boite h3 { color: var(--ab-white); }
+  </style>
+  <section class="carte-section-admin" id="bloc-sec-graphiques">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
+      <h2 style="margin:0">📊 5. Activité de la plateforme</h2>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <select id="graph-periode" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Période des graphiques">
+          <option value="7">7 derniers jours</option>
+          <option value="14" selected>14 derniers jours</option>
+          <option value="30">30 derniers jours</option>
+        </select>
+        <button type="button" class="btn-outil" id="btn-graph-charger">↻ Actualiser</button>
+      </div>
+    </div>
+    <div class="corps-section-admin">
+      <p id="graph-resume" style="font-size:12.5px;color:#7a6f5d;margin:0 0 10px">Les graphiques se chargent automatiquement…</p>
+      <div class="graph-grille">
+        <div class="graph-boite"><h3>📅 Connexions par jour</h3><canvas id="graph-jours" height="190"></canvas></div>
+        <div class="graph-boite"><h3>🔥 Pages les plus consultées</h3><canvas id="graph-pages" height="190"></canvas></div>
+      </div>
+    </div>
+  </section>
+
   <!-- Boîte de suppression des connexions par mois cible -->
   <div class="modal-fond" id="modal-purge-acces" role="dialog" aria-modal="true">
     <div class="modal-boite" style="max-width:430px">
@@ -4473,6 +4504,7 @@
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
   <script src="assets/js/admin.js?v=316-airbus-cockpit-23"></script>
+  <script src="assets/js/graphiques-activite.js?v=347"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" />
+<title>Glossaire FR ⇄ AR — STI by AE</title>
+<link rel="icon" href="assets/icons/STI_by_AE.ico">
+<style>
+  :root { --bg:#f6eedc; --ink:#101728; --line:#e2d3b4; --edge:#101728; --accent:#f4511e; --surface:#fffdf5; --muted:#6b6250; --indigo:#4338ca; }
+  * { box-sizing:border-box; margin:0 }
+  body { font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif; color:var(--ink); background-color:var(--bg);
+    background-image:radial-gradient(circle, rgba(16,23,40,.13) 1.15px, transparent 1.15px),linear-gradient(180deg, rgba(248,168,107,.28) 0%, rgba(248,168,107,0) 340px);
+    background-repeat:repeat,no-repeat; background-size:23px 23px,100% 100%; }
+  .barre { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    padding:12px 18px; background:var(--surface); border-bottom:2.5px solid var(--edge); }
+  .barre h1 { font-size:clamp(14px,2.8vw,18px); font-weight:800 }
+  .barre .nb { font-size:11px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.08em }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:999px; border:2px solid var(--edge);
+    font:800 12px/1 inherit; text-decoration:none; cursor:pointer; background:var(--surface); color:var(--ink); box-shadow:2.5px 2.5px 0 var(--edge); }
+  .btn:hover { transform:translate(-1px,-1px); box-shadow:3.5px 3.5px 0 var(--edge) }
+  main { max-width:1060px; margin:0 auto; padding:24px 16px 60px }
+  .recherche { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px }
+  .recherche input { flex:1; min-width:220px; padding:13px 16px; font-size:16px; border:2.5px solid var(--edge); border-radius:14px; background:#fff; color:var(--ink); box-shadow:3px 3px 0 rgba(16,23,40,.25) }
+  .recherche input:focus { outline:3px solid rgba(67,56,202,.35); outline-offset:1px }
+  .compteur { font-size:12.5px; font-weight:700; color:var(--muted) }
+  .filtres { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px }
+  .filtre { padding:8px 15px; border-radius:999px; border:2px solid var(--edge); background:var(--surface); color:var(--ink);
+    font:800 12.5px/1 inherit; cursor:pointer; box-shadow:2px 2px 0 var(--edge) }
+  .filtre.actif { background:var(--ink); color:#f9f1e3; box-shadow:2px 2px 0 var(--accent) }
+  .grille { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px }
+  .carte { background:#fff; border:2px solid var(--edge); border-radius:14px; padding:14px 15px; box-shadow:5px 5px 0 rgba(16,23,40,.14) }
+  .carte .fr { font-size:16.5px; font-weight:800; display:flex; align-items:center; justify-content:space-between; gap:8px }
+  .module { flex:none; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; border-radius:999px; color:#fff; background:var(--indigo) }
+  .module.css3 { background:#7c3aed } .module.javascript { background:#b47d09 } .module.sql { background:#177245 } .module.php { background:#4f5b93 }
+  .ar { direction:rtl; text-align:right; font-size:20px; font-weight:700; color:var(--indigo); margin:7px 0 6px; line-height:1.5 }
+  .def { font-size:13px; line-height:1.55; color:#3c4454 }
+  .def code { background:#eef0ff; border:1px solid #d8dcf5; border-radius:5px; padding:0 5px; font-size:12px; color:#3730a3 }
+  .vide { display:none; text-align:center; padding:34px 12px; font-weight:700; color:var(--muted) }
+  .pied { text-align:center; margin-top:30px }
+  @media print { .barre,.recherche,.filtres,.pied { display:none } body { background:#fff } .carte { box-shadow:none; break-inside:avoid } }
+</style>
+</head>
+<body>
+<header class="barre">
+  <div>
+    <h1>📖 Glossaire FR ⇄ AR — Termes techniques STI</h1>
+    <div class="nb">HTML5 · CSS3 · JavaScript · SQL · PHP — Tapez un mot en français ou en arabe</div>
+  </div>
+  <a class="btn" href="index.html">← Retour à l'accueil</a>
+</header>
+<main>
+  <div class="recherche">
+    <input id="q" type="search" placeholder="🔍 Chercher : jointure, boucle, وسم, متغيّر…" aria-label="Rechercher un terme">
+    <span class="compteur" id="compteur"></span>
+  </div>
+  <div class="filtres" role="group" aria-label="Filtrer par module">
+    <button type="button" class="filtre actif" data-m="tous">Tous</button>
+    <button type="button" class="filtre" data-m="html5">🌐 HTML5</button>
+    <button type="button" class="filtre" data-m="css3">🎨 CSS3</button>
+    <button type="button" class="filtre" data-m="javascript">📜 JavaScript</button>
+    <button type="button" class="filtre" data-m="sql">🗄️ SQL</button>
+    <button type="button" class="filtre" data-m="php">🐘 PHP</button>
+  </div>
+  <div class="grille" id="grille"></div>
+  <div class="vide" id="vide">Aucun terme ne correspond à votre recherche. Essayez un autre mot (en français ou en arabe).</div>
+  <div class="pied"><a class="btn" href="index.html#cours">← Retour aux cours</a></div>
+</main>
+<script>
+var TERMES = [
+  /* ═══ HTML5 ═══ */
+  { m:"html5", fr:"Balise", ar:"وسم", d:"Mot-clé entre <code>&lt; &gt;</code> qui décrit un élément de la page : <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>…" },
+  { m:"html5", fr:"Élément", ar:"عنصر", d:"Ensemble formé par la balise ouvrante, le contenu et la balise fermante." },
+  { m:"html5", fr:"Attribut", ar:"خاصية", d:"Information ajoutée dans la balise ouvrante : <code>href</code>, <code>src</code>, <code>alt</code>, <code>id</code>…" },
+  { m:"html5", fr:"En-tête", ar:"ترويسة", d:"Partie haute de la page, souvent dans <code>&lt;header&gt;</code> : logo, titre, navigation." },
+  { m:"html5", fr:"Pied de page", ar:"تذييل الصفحة", d:"Partie basse de la page (<code>&lt;footer&gt;</code>) : copyright, contacts, liens utiles." },
+  { m:"html5", fr:"Lien hypertexte", ar:"رابط تشعّبي", d:"Texte ou image cliquable (<code>&lt;a href=…&gt;</code>) qui mène vers une autre page ou section." },
+  { m:"html5", fr:"Formulaire", ar:"استمارة / نموذج", d:"Zone de saisie (<code>&lt;form&gt;</code>) permettant à l'utilisateur d'envoyer des données." },
+  { m:"html5", fr:"Champ de saisie", ar:"حقل إدخال", d:"Case d'un formulaire où l'on tape ou choisit une valeur : <code>&lt;input&gt;</code>, <code>&lt;select&gt;</code>, <code>&lt;textarea&gt;</code>." },
+  { m:"html5", fr:"Bouton", ar:"زر", d:"Élément cliquable qui déclenche une action : <code>&lt;button&gt;</code> ou <code>&lt;input type=\"submit\"&gt;</code>." },
+  { m:"html5", fr:"Liste", ar:"قائمة", d:"Suite d'éléments <code>&lt;li&gt;</code> dans <code>&lt;ul&gt;</code> (à puces) ou <code>&lt;ol&gt;</code> (numérotée)." },
+  { m:"html5", fr:"Tableau (HTML)", ar:"جدول", d:"Présentation en lignes et colonnes avec <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;td&gt;</code>." },
+  { m:"html5", fr:"Image", ar:"صورة", d:"S'affiche avec <code>&lt;img src=\"…\" alt=\"…\"&gt;</code> ; <code>alt</code> décrit l'image si elle ne charge pas." },
+  { m:"html5", fr:"Ancre", ar:"مرساة", d:"Lien interne vers une partie de la même page : <code>href=\"#section\"</code>." },
+  { m:"html5", fr:"Paragraphe", ar:"فقرة", d:"Bloc de texte créé par la balise <code>&lt;p&gt;</code>." },
+  { m:"html5", fr:"Titre (h1…h6)", ar:"عنوان", d:"Titres de niveaux décroissants : <code>&lt;h1&gt;</code> le plus important, jusqu'à <code>&lt;h6&gt;</code>." },
+  /* ═══ CSS3 ═══ */
+  { m:"css3", fr:"Sélecteur", ar:"مُحدِّد", d:"Désigne à quel(s) élément(s) la règle s'applique : <code>p</code>, <code>.classe</code>, <code>#id</code>…" },
+  { m:"css3", fr:"Propriété", ar:"خاصية", d:"Caractéristique modifiée : <code>color</code>, <code>margin</code>, <code>font-size</code>…" },
+  { m:"css3", fr:"Valeur", ar:"قيمة", d:"Réglage donné à une propriété : <code>color: red;</code> → la valeur est <code>red</code>." },
+  { m:"css3", fr:"Classe", ar:"صنف / فئة", d:"Nom réutilisable appliqué avec <code>class=\"…\"</code>, ciblé en CSS par un point : <code>.bouton</code>." },
+  { m:"css3", fr:"Identifiant (id)", ar:"مُعرِّف", d:"Nom unique d'un élément (<code>id=\"…\"</code>), ciblé en CSS par <code>#</code>." },
+  { m:"css3", fr:"Marge externe (margin)", ar:"هامش خارجي", d:"Espace entre la bordure de l'élément et ce qui l'entoure." },
+  { m:"css3", fr:"Marge interne (padding)", ar:"حشوة داخلية", d:"Espace entre le contenu et la bordure de l'élément." },
+  { m:"css3", fr:"Bordure (border)", ar:"حدود / إطار", d:"Ligne autour de l'élément : épaisseur, style et couleur (<code>2px solid black</code>)." },
+  { m:"css3", fr:"Arrière-plan", ar:"خلفية", d:"Couleur ou image derrière l'élément : <code>background</code>." },
+  { m:"css3", fr:"Police de caractères", ar:"خط", d:"Forme des lettres : <code>font-family</code>, taille <code>font-size</code>, graisse <code>font-weight</code>." },
+  { m:"css3", fr:"Affichage (display)", ar:"نمط العرض", d:"Manière d'afficher l'élément : <code>block</code>, <code>inline</code>, <code>flex</code>, <code>grid</code>, <code>none</code>." },
+  { m:"css3", fr:"Flexbox", ar:"العلب المرنة", d:"Système d'alignement d'éléments en ligne ou en colonne (<code>display: flex</code>)." },
+  { m:"css3", fr:"Grille (Grid)", ar:"شبكة", d:"Mise en page en lignes et colonnes simultanées (<code>display: grid</code>)." },
+  { m:"css3", fr:"Survol (:hover)", ar:"التمرير فوق العنصر", d:"État quand la souris passe au-dessus de l'élément ; permet de changer son style." },
+  { m:"css3", fr:"Media Query", ar:"استعلام الوسائط", d:"Règle qui adapte le style à la taille d'écran : <code>@media (max-width: 600px)</code> — base du responsive." },
+  /* ═══ JavaScript ═══ */
+  { m:"javascript", fr:"Variable", ar:"متغيّر", d:"Boîte nommée qui conserve une valeur réutilisable : <code>let age = 17;</code>" },
+  { m:"javascript", fr:"Constante", ar:"ثابت", d:"Valeur qui ne change plus après création : <code>const PI = 3.14;</code>" },
+  { m:"javascript", fr:"Fonction", ar:"دالّة", d:"Bloc de code réutilisable qui s'exécute quand on l'appelle : <code>function nom() { … }</code>" },
+  { m:"javascript", fr:"Paramètre", ar:"وسيط", d:"Valeur reçue par une fonction pour travailler : <code>function somme(a, b)</code>." },
+  { m:"javascript", fr:"Valeur de retour", ar:"قيمة الإرجاع", d:"Résultat renvoyé par une fonction grâce au mot-clé <code>return</code>." },
+  { m:"javascript", fr:"Tableau (JS)", ar:"مصفوفة", d:"Liste ordonnée de valeurs dans une seule variable : <code>let t = [10, 20, 30];</code>" },
+  { m:"javascript", fr:"Objet", ar:"كائن", d:"Ensemble de propriétés nom/valeur : <code>{ nom: \"Ali\", age: 17 }</code>." },
+  { m:"javascript", fr:"Chaîne de caractères", ar:"سلسلة حروف", d:"Texte entre guillemets : <code>\"Bonjour\"</code> ou <code>'Bonjour'</code>." },
+  { m:"javascript", fr:"Boucle", ar:"حلقة تكرار", d:"Répète des instructions : <code>for</code>, <code>while</code>, <code>do…while</code>." },
+  { m:"javascript", fr:"Condition", ar:"شرط", d:"Test qui choisit les instructions à exécuter : <code>if / else</code>, <code>switch</code>." },
+  { m:"javascript", fr:"Événement", ar:"حدث", d:"Action détectée par le programme : clic, touche, envoi de formulaire (<code>addEventListener</code>)." },
+  { m:"javascript", fr:"Opérateur", ar:"عامل", d:"Symbole qui calcule ou compare : <code>+  −  *  /  ==  ===  &gt;  &lt;  &&  ||</code>" },
+  { m:"javascript", fr:"Indice", ar:"فهرس / دليل", d:"Position d'un élément dans un tableau, en commençant par 0 : <code>t[0]</code> est le premier." },
+  { m:"javascript", fr:"Fonction fléchée", ar:"دالّة سهمية", d:"Écriture courte d'une fonction : <code>const f = (x) =&gt; x * 2;</code>" },
+  { m:"javascript", fr:"DOM", ar:"نموذج كائن المستند", d:"Représentation de la page que JavaScript peut lire et modifier (<code>document.getElementById</code>…)." },
+  /* ═══ SQL ═══ */
+  { m:"sql", fr:"Base de données", ar:"قاعدة بيانات", d:"Ensemble organisé de tableaux liés, géré par un SGBD comme MySQL." },
+  { m:"sql", fr:"Table", ar:"جدول", d:"Ensemble de données en lignes et colonnes sur un même sujet (élèves, produits…)." },
+  { m:"sql", fr:"Colonne / Champ", ar:"عمود / حقل", d:"Caractéristique décrite pour chaque ligne : nom, prénom, note…" },
+  { m:"sql", fr:"Ligne / Enregistrement", ar:"سطر / تسجيلة", d:"Un cas complet dans une table : un élève, un produit, une commande." },
+  { m:"sql", fr:"Clé primaire", ar:"مفتاح رئيسي", d:"Colonne qui identifie chaque ligne sans doublon (<code>PRIMARY KEY</code>)." },
+  { m:"sql", fr:"Clé étrangère", ar:"مفتاح خارجي", d:"Colonne qui fait le lien vers la clé primaire d'une autre table (<code>FOREIGN KEY</code>)." },
+  { m:"sql", fr:"Requête", ar:"استعلام", d:"Ordre SQL envoyé à la base : <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>…" },
+  { m:"sql", fr:"Sélection (SELECT)", ar:"اختيار / انتقاء", d:"Lit et affiche des données : <code>SELECT colonnes FROM table WHERE condition;</code>" },
+  { m:"sql", fr:"Condition (WHERE)", ar:"شرط", d:"Filtre qui ne garde que les lignes concernées : <code>WHERE note &gt;= 10</code>." },
+  { m:"sql", fr:"Jointure (JOIN)", ar:"وصل / ربط الجداول", d:"Réunit des colonnes de plusieurs tables grâce aux clés : <code>… JOIN … ON …</code>" },
+  { m:"sql", fr:"Tri (ORDER BY)", ar:"ترتيب / فرز", d:"Classe le résultat : <code>ORDER BY nom ASC</code> (croissant) ou <code>DESC</code> (décroissant)." },
+  { m:"sql", fr:"Regroupement (GROUP BY)", ar:"تجميع", d:"Regroupe les lignes ayant la même valeur pour calculer par groupe." },
+  { m:"sql", fr:"Fonction d'agrégation", ar:"دالّة تجميع", d:"Calcule un résumé : <code>COUNT</code>, <code>SUM</code>, <code>AVG</code> (moyenne), <code>MAX</code>, <code>MIN</code>." },
+  { m:"sql", fr:"Insertion (INSERT)", ar:"إدراج", d:"Ajoute une nouvelle ligne : <code>INSERT INTO table VALUES (…);</code>" },
+  { m:"sql", fr:"Mise à jour / Suppression", ar:"تحديث / حذف", d:"<code>UPDATE … SET …</code> modifie, <code>DELETE FROM …</code> supprime — toujours avec <code>WHERE</code> ciblé !" },
+  /* ═══ PHP ═══ */
+  { m:"php", fr:"Variable (PHP)", ar:"متغيّر", d:"Commence toujours par <code>$</code> : <code>$nom = \"Ali\";</code>" },
+  { m:"php", fr:"Fonction (PHP)", ar:"دالّة", d:"Bloc réutilisable déclaré par <code>function</code>, ou fonction intégrée comme <code>strlen()</code>." },
+  { m:"php", fr:"Tableau associatif", ar:"مصفوفة ترابطية", d:"Tableau dont les indices sont des chaînes : <code>[\"nom\" =&gt; \"Ali\", \"age\" =&gt; 17]</code>." },
+  { m:"php", fr:"Affichage (echo)", ar:"عرض / طباعة", d:"Envoie du texte vers la page : <code>echo \"Bonjour\";</code>" },
+  { m:"php", fr:"Session", ar:"جلسة", d:"Mémoire côté serveur qui suit un visiteur de page en page (<code>$_SESSION</code>), ex. après connexion." },
+  { m:"php", fr:"Cookie", ar:"ملف تعريف الارتباط", d:"Petit fichier déposé dans le navigateur pour reconnaître le visiteur plus tard." },
+  { m:"php", fr:"Serveur", ar:"خادم", d:"Ordinateur (ou logiciel comme Apache) qui exécute le PHP et envoie les pages demandées." },
+  { m:"php", fr:"Requête préparée", ar:"استعلام مُجهّز", d:"Requête SQL à trous (<code>?</code>) remplie séparément : protège contre l'injection SQL avec MySQLi." },
+  { m:"php", fr:"Superglobale", ar:"متغيّر شامل", d:"Variable disponible partout : <code>$_GET</code>, <code>$_POST</code>, <code>$_SESSION</code>, <code>$_FILES</code>…" },
+  { m:"php", fr:"Formulaire (PHP)", ar:"استمارة", d:"Ses données arrivent dans <code>$_GET</code> (URL) ou <code>$_POST</code> (envoi discret)." },
+  { m:"php", fr:"Inclusion (include)", ar:"تضمين", d:"Insère un autre fichier PHP : <code>include \"entete.php\";</code> pour réutiliser en-têtes et fonctions." },
+  { m:"php", fr:"Chaîne de caractères (PHP)", ar:"سلسلة حروف", d:"Texte entre <code>'…'</code> ou <code>\"…\"</code> ; se colle avec le point : <code>\"a\" . \"b\"</code>." },
+  { m:"php", fr:"Boucle (PHP)", ar:"حلقة تكرار", d:"<code>for</code>, <code>while</code>, et <code>foreach</code> très pratique pour parcourir les tableaux." },
+  { m:"php", fr:"Condition (PHP)", ar:"شرط", d:"<code>if / elseif / else</code> choisissent le code à exécuter selon un test vrai ou faux." },
+  { m:"php", fr:"MySQLi", ar:"امتداد الاتصال بقاعدة MySQL", d:"Extension PHP qui dialogue avec MySQL : connexion, requêtes, résultats (procédural ou objet)." }
+];
+
+var NOMS_MODULES = { html5:"HTML5", css3:"CSS3", javascript:"JavaScript", sql:"SQL", php:"PHP" };
+var grille = document.getElementById("grille");
+var compteur = document.getElementById("compteur");
+var vide = document.getElementById("vide");
+var moduleActif = "tous";
+
+function normaliser(t) {
+  return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+function afficher() {
+  var q = normaliser(document.getElementById("q").value.trim());
+  var html = "", n = 0;
+  TERMES.forEach(function (t) {
+    if (moduleActif !== "tous" && t.m !== moduleActif) return;
+    var cible = normaliser(t.fr + " " + t.d) + " " + t.ar;
+    if (q && cible.indexOf(q) === -1 && normaliser(t.ar).indexOf(q) === -1 && t.ar.indexOf(document.getElementById("q").value.trim()) === -1) return;
+    n++;
+    html += '<article class="carte"><div class="fr"><span>' + t.fr + '</span><span class="module ' + t.m + '">' + NOMS_MODULES[t.m] + '</span></div>' +
+      '<div class="ar" lang="ar">' + t.ar + '</div><p class="def">' + t.d + '</p></article>';
+  });
+  grille.innerHTML = html;
+  compteur.textContent = n + " terme" + (n > 1 ? "s" : "") + " affiché" + (n > 1 ? "s" : "");
+  vide.style.display = n ? "none" : "block";
+}
+document.getElementById("q").addEventListener("input", afficher);
+document.querySelectorAll(".filtre").forEach(function (b) {
+  b.addEventListener("click", function () {
+    document.querySelectorAll(".filtre").forEach(function (x) { x.classList.remove("actif"); });
+    b.classList.add("actif");
+    moduleActif = b.getAttribute("data-m");
+    afficher();
+  });
+});
+afficher();
+</script>
+</body>
+</html>

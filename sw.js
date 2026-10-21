@@ -6,10 +6,12 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v346-complet-pages";
+var UPDATE_ID = "v347-glossaire-graphiques";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./glossaire.html", revision: "glossaire-graphiques-v347" },
+  { url: "./assets/js/graphiques-activite.js", revision: "glossaire-graphiques-v347" },
   { url: "./assets/js/reprendre.js", revision: "reprendre-sombre-v343" },
   { url: "./assets/css/smart-book-fan-v341.css", revision: "smart-books-v341" },
   { url: "./assets/css/smart-book-fan-v340.css", revision: "smart-books-v341" },
@@ -26,10 +28,10 @@ var UPDATE_FILES = [
   { url: "./assets/js/smart-book.js", revision: "smart-books-v339" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-books-v339" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
-  { url: "./index.html", revision: "index-v346" },
+  { url: "./index.html", revision: "index-v347" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
-  { url: "./admin.html", revision: "admin-v345" },
+  { url: "./admin.html", revision: "admin-v347" },
   { url: "./assets/js/acces.js", revision: "dynamic-version-v316-1" },
   { url: "./assets/js/admin.js", revision: "admin-airbus-cockpit-v316-23" },
   { url: "./assets/css/admin-v19.css", revision: "admin-airbus-cockpit-v316-24" },

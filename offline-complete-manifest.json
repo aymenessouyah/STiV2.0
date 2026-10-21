@@ -1,9 +1,9 @@
 {
   "version": 316,
-  "generatedAt": "2026-10-21T20:55:03Z",
+  "generatedAt": "2026-10-21T21:08:27Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 593,
-  "totalBytes": 628617932,
+  "totalFiles": 595,
+  "totalBytes": 628647300,
   "files": [
     {
       "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf\"",
@@ -72,8 +72,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 279526,
-      "gitSha": "2ca67c534669ad2be8f256831b369386cbb3a92d"
+      "bytes": 281677,
+      "gitSha": "89a187ab5a25d48734626825190ca0d2998b10be"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -161,6 +161,11 @@
       "gitSha": "aa8bc524d60b419c862ddb6fe3f22a8e2eacf060"
     },
     {
+      "path": "assets/css/admin-v19.css",
+      "bytes": 62320,
+      "gitSha": "296f74b6ef30ee10c6485326ab52decf4d3376f1"
+    },
+    {
       "path": "assets/css/atelier-pages.css",
       "bytes": 41382,
       "gitSha": "b16d1d16f3ba9f7e965b3f5b98e252b00016e78d"
@@ -201,6 +206,21 @@
       "gitSha": "86a8c68764125f93f578dfa9213591ebd8f9529d"
     },
     {
+      "path": "assets/css/smart-book-fan-v340.css",
+      "bytes": 10315,
+      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
+    },
+    {
+      "path": "assets/css/smart-book-fan-v341.css",
+      "bytes": 10315,
+      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
+    },
+    {
+      "path": "assets/css/smart-book.css",
+      "bytes": 10315,
+      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
+    },
+    {
       "path": "assets/css/sql.css",
       "bytes": 13498,
       "gitSha": "8b66f593497b193ee0d399ac3023ef3400202333"
@@ -214,6 +234,16 @@
       "path": "assets/data/nouveautes.json",
       "bytes": 19933,
       "gitSha": "85247890c2dc3134b16915d234dc19ebbe11bbed"
+    },
+    {
+      "path": "assets/data/smart-book-2026.json",
+      "bytes": 20972,
+      "gitSha": "e28cd827066552577dfcfaaa99db4b990dd2c1be"
+    },
+    {
+      "path": "assets/data/smart-book-3si-2026.json",
+      "bytes": 20956,
+      "gitSha": "00a1633b4fc7e8c6651f531b840926ef520e80f3"
     },
     {
       "path": "assets/fontawesome/LICENSE.txt",
@@ -289,6 +319,11 @@
       "path": "assets/icons/sti-icon-512.png",
       "bytes": 263851,
       "gitSha": "a4c24be08e8774a8a7222a542e0be4757b4dba52"
+    },
+    {
+      "path": "assets/icons/sti-logo-complet.png",
+      "bytes": 40947,
+      "gitSha": "fdf36e642d19d43059d01c8c2b77d7b12e1d4c06"
     },
     {
       "path": "assets/images/JavaScript_logo.svg",
@@ -386,6 +421,21 @@
       "gitSha": "e78441e915abad464d13bab146789982461de334"
     },
     {
+      "path": "assets/images/smart-books/couverture-3si.jpg",
+      "bytes": 76951,
+      "gitSha": "fe05da5dceb49e19093bd675e98c267e148e90ba"
+    },
+    {
+      "path": "assets/images/smart-books/couverture-4si.jpg",
+      "bytes": 71373,
+      "gitSha": "870b16d8582da0b077a95ed7ede2c8fc11527c0e"
+    },
+    {
+      "path": "assets/images/sql-construire-requete-guide-texte-poster.jpg",
+      "bytes": 170893,
+      "gitSha": "33519ed3c4cb9758b635e515c1d07a743a8232d4"
+    },
+    {
       "path": "assets/images/sql-initiation-poster.avif",
       "bytes": 17507,
       "gitSha": "8920dedef353075ab0dee77ca58b9d2938a2595e"
@@ -456,6 +506,11 @@
       "gitSha": "e5a26b99dc50e55bbba544a20099f5268ff6c7e4"
     },
     {
+      "path": "assets/js/graphiques-activite.js",
+      "bytes": 7044,
+      "gitSha": "c26fb6b006c7ab2de1442b5f9b0875e3ac1a7a0d"
+    },
+    {
       "path": "assets/js/modules/admin-labo-devices.js",
       "bytes": 25865,
       "gitSha": "0586c3e800a3bc54cec5a74fc878c6d631d83208"
@@ -516,6 +571,11 @@
       "gitSha": "756735b3a99e3269f866cf8b2857d647b77f618a"
     },
     {
+      "path": "assets/js/smart-book.js",
+      "bytes": 15509,
+      "gitSha": "1e654ed7ba97670c854810673972ccfb24ff67f1"
+    },
+    {
       "path": "assets/js/supabase-umd.js",
       "bytes": 218237,
       "gitSha": "2bc3404568adf1da6456b4dbd58aeeb3893060f7"
@@ -566,6 +626,11 @@
       "gitSha": "f7e40b42612b1dabb22876cc2f5be2a1bfa61c21"
     },
     {
+      "path": "assets/subtitles/sql-construire-requete-guide-texte-fr.srt",
+      "bytes": 3868,
+      "gitSha": "c44d1f80c468cd1e31fc123b4c6001df552453c9"
+    },
+    {
       "path": "assets/vendor/hls.LICENSE",
       "bytes": 1338,
       "gitSha": "5123bda03fe34fd3859bdf6bbc7f6640eb14bf03"
@@ -574,6 +639,11 @@
       "path": "assets/vendor/hls.min.js",
       "bytes": 414359,
       "gitSha": "39f5277d8f682b78b126bdc8a86ce7e122492fdb"
+    },
+    {
+      "path": "assets/vendor/jsqr/jsQR.js",
+      "bytes": 256885,
+      "gitSha": "429896a9d087eb3977cf67521f738d01af17c808"
     },
     {
       "path": "assets/video/flower.webm",
@@ -1781,6 +1851,26 @@
       "gitSha": "1cee746b7a0c0248ca06dc7aa2f48ec08941b317"
     },
     {
+      "path": "documents/livre/sti-smart-book-2026.pdf",
+      "bytes": 2290144,
+      "gitSha": "c93246822dc18f2bd727260ed0415573ffc9442e"
+    },
+    {
+      "path": "documents/livre/sti-smart-book-3si-2026.pdf",
+      "bytes": 2372738,
+      "gitSha": "fd77a9ff781e3273e483e41b8df2e258d70f27f0"
+    },
+    {
+      "path": "documents/sql/Documentation-Construire-Requete-SQL-Guide-Texte.docx",
+      "bytes": 60198,
+      "gitSha": "c4edc6694f4de619d5dadff8af99641f6ec0c733"
+    },
+    {
+      "path": "documents/sql/Documentation-Construire-Requete-SQL-Guide-Texte.pdf",
+      "bytes": 104146,
+      "gitSha": "5779cb22cf72df9853b22ab27b1f13155937997c"
+    },
+    {
       "path": "documents/sql/README-sync.md",
       "bytes": 812,
       "gitSha": "5057f6b6a3ca7cad259c961022c0656c06f06def"
@@ -1794,6 +1884,11 @@
       "path": "documents/sql/sti_progressions.sql",
       "bytes": 1627,
       "gitSha": "903e7dd010661423d98e816b620beaf281cf1904"
+    },
+    {
+      "path": "documents/sql/transcription-construire-requete-sql-guide-texte.md",
+      "bytes": 13616,
+      "gitSha": "bf401ead88244b684d79aa90ece8a05268182ad9"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.docx",
@@ -2346,6 +2441,11 @@
       "gitSha": "317f96859f39d1e68ef3e2c0c9d51856faa3bd68"
     },
     {
+      "path": "exercices/sql/sql-construire-requete-guide-texte.mp4",
+      "bytes": 34718314,
+      "gitSha": "feba6744f35cfe2c9cf5262327b3608825acc77e"
+    },
+    {
       "path": "exercices/sql/sql-correction.html",
       "bytes": 32188,
       "gitSha": "bdd67e384168447153fc262a7eb13fbf65964e5d"
@@ -2356,9 +2456,19 @@
       "gitSha": "a3e9c2f41541581934a357902eecc4c9efa9909f"
     },
     {
+      "path": "glossaire.html",
+      "bytes": 18968,
+      "gitSha": "6c8f12211057e35d7763771e7c4bb7a171c56797"
+    },
+    {
       "path": "index.html",
-      "bytes": 181591,
-      "gitSha": "3f5f837f98a90510c6146f4bf0afa3c50aaedf68"
+      "bytes": 182631,
+      "gitSha": "af76488efe06ca29408e877bbec4b66655c23cbd"
+    },
+    {
+      "path": "livre-smart.html",
+      "bytes": 7075,
+      "gitSha": "157bdfbd639caa9614a92851f596c38ea984a2d0"
     },
     {
       "path": "manifest.webmanifest",
@@ -2867,108 +2977,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 55434,
-      "gitSha": "f3ac1a23b15f6a419245ac431f1fd25bce3f5ebd"
-    },
-    {
-      "path": "assets/css/admin-v19.css",
-      "bytes": 62320,
-      "gitSha": "296f74b6ef30ee10c6485326ab52decf4d3376f1"
-    },
-    {
-      "path": "assets/icons/sti-logo-complet.png",
-      "bytes": 40947,
-      "gitSha": "fdf36e642d19d43059d01c8c2b77d7b12e1d4c06"
-    },
-    {
-      "path": "exercices/sql/sql-construire-requete-guide-texte.mp4",
-      "bytes": 34718314,
-      "gitSha": "feba6744f35cfe2c9cf5262327b3608825acc77e"
-    },
-    {
-      "path": "assets/images/sql-construire-requete-guide-texte-poster.jpg",
-      "bytes": 170893,
-      "gitSha": "33519ed3c4cb9758b635e515c1d07a743a8232d4"
-    },
-    {
-      "path": "assets/subtitles/sql-construire-requete-guide-texte-fr.srt",
-      "bytes": 3868,
-      "gitSha": "c44d1f80c468cd1e31fc123b4c6001df552453c9"
-    },
-    {
-      "path": "documents/sql/Documentation-Construire-Requete-SQL-Guide-Texte.docx",
-      "bytes": 60198,
-      "gitSha": "c4edc6694f4de619d5dadff8af99641f6ec0c733"
-    },
-    {
-      "path": "documents/sql/Documentation-Construire-Requete-SQL-Guide-Texte.pdf",
-      "bytes": 104146,
-      "gitSha": "5779cb22cf72df9853b22ab27b1f13155937997c"
-    },
-    {
-      "path": "documents/sql/transcription-construire-requete-sql-guide-texte.md",
-      "bytes": 13616,
-      "gitSha": "bf401ead88244b684d79aa90ece8a05268182ad9"
-    },
-    {
-      "path": "assets/css/smart-book.css",
-      "bytes": 10315,
-      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
-    },
-    {
-      "path": "assets/data/smart-book-2026.json",
-      "bytes": 20972,
-      "gitSha": "e28cd827066552577dfcfaaa99db4b990dd2c1be"
-    },
-    {
-      "path": "assets/js/smart-book.js",
-      "bytes": 15509,
-      "gitSha": "1e654ed7ba97670c854810673972ccfb24ff67f1"
-    },
-    {
-      "path": "assets/vendor/jsqr/jsQR.js",
-      "bytes": 256885,
-      "gitSha": "429896a9d087eb3977cf67521f738d01af17c808"
-    },
-    {
-      "path": "documents/livre/sti-smart-book-2026.pdf",
-      "bytes": 2290144,
-      "gitSha": "c93246822dc18f2bd727260ed0415573ffc9442e"
-    },
-    {
-      "path": "livre-smart.html",
-      "bytes": 7075,
-      "gitSha": "157bdfbd639caa9614a92851f596c38ea984a2d0"
-    },
-    {
-      "path": "assets/data/smart-book-3si-2026.json",
-      "bytes": 20956,
-      "gitSha": "00a1633b4fc7e8c6651f531b840926ef520e80f3"
-    },
-    {
-      "path": "documents/livre/sti-smart-book-3si-2026.pdf",
-      "bytes": 2372738,
-      "gitSha": "fd77a9ff781e3273e483e41b8df2e258d70f27f0"
-    },
-    {
-      "path": "assets/images/smart-books/couverture-3si.jpg",
-      "bytes": 76951,
-      "gitSha": "fe05da5dceb49e19093bd675e98c267e148e90ba"
-    },
-    {
-      "path": "assets/images/smart-books/couverture-4si.jpg",
-      "bytes": 71373,
-      "gitSha": "870b16d8582da0b077a95ed7ede2c8fc11527c0e"
-    },
-    {
-      "path": "assets/css/smart-book-fan-v340.css",
-      "bytes": 10315,
-      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
-    },
-    {
-      "path": "assets/css/smart-book-fan-v341.css",
-      "bytes": 10315,
-      "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
+      "bytes": 55599,
+      "gitSha": "e0585d315edcf5303d57cd282cf25330e46eab8d"
     }
   ],
   "windowsCompatible": true,
