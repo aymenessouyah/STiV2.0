@@ -1,9 +1,9 @@
 {
  "version": 316,
- "generatedAt": "2026-10-21T15:30:00Z",
+ "generatedAt": "2026-10-21T16:05:00Z",
  "scope": "installation-complete-windows-sans-doublons-de-casse",
  "totalFiles": 589,
- "totalBytes": 626254844,
+ "totalBytes": 626255666,
  "files": [
   {
    "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf\"",
@@ -2867,8 +2867,8 @@
   },
   {
    "path": "sw.js",
-   "bytes": 55027,
-   "gitSha": "1e04a4963d7b7bfdba7b29498dca03c436f9e7e5"
+   "bytes": 55021,
+   "gitSha": "cb48eb2ac72e5258c9396132eeec1495d002dcc8"
   },
   {
    "path": "assets/css/admin-v19.css",
@@ -2922,8 +2922,8 @@
   },
   {
    "path": "assets/js/smart-book.js",
-   "bytes": 17405,
-   "gitSha": "b07a9d39bae6bc4c1f009c7d96d4a68f56f8b3f3"
+   "bytes": 18233,
+   "gitSha": "43ed5c2bc276eed1b95dd32bc4fb4004cea42a23"
   },
   {
    "path": "assets/vendor/jsqr/jsQR.js",

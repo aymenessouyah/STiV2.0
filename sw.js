@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v333-smart-books-par-niveau";
+var UPDATE_ID = "v334-smart-book-labo3";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -18,7 +18,7 @@ var UPDATE_FILES = [
   { url: "./cours/html5.html", revision: "smart-book-v330" },
   { url: "./livre-smart.html", revision: "smart-books-v332" },
   { url: "./assets/css/smart-book.css", revision: "smart-books-v332" },
-  { url: "./assets/js/smart-book.js", revision: "smart-book-v333" },
+  { url: "./assets/js/smart-book.js", revision: "smart-book-v334" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-book-v330" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
   { url: "./index.html", revision: "index-v333" },

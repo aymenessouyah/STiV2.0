@@ -23,6 +23,7 @@
       let brut = null;
       try { brut = localStorage.getItem('sti-session-cache'); } catch (e) {}
       if (!brut) { try { brut = sessionStorage.getItem('sti-session-cache'); } catch (e) {} }
+      if (!brut) { try { brut = localStorage.getItem('sti-labo3-permanent'); } catch (e) {} }
       let c = brut ? JSON.parse(brut) : null;
       let drapeauGold = false;
       try { drapeauGold = localStorage.getItem('sti-admin-gold') === '1' || localStorage.getItem('sti-gold') === '1'; } catch (e) {}
@@ -30,8 +31,16 @@
       let classe = String((c && c.classe) || '').trim().toUpperCase().replace(/[\s._\-]+/g, '');
       let lycee = String((c && c.lycee) || '');
       let estAdmin = Boolean(c && c.isAdmin) || drapeauGold;
-      let estProf = classe === 'PROF' || classe.indexOf('PROF') === 0 || classe === 'ELEVELABO3';
-      let estGold = Boolean(c && (c.isGold || c.gold === true)) || /\bGOLD\b/i.test(lycee) || classe.indexOf('GOLD') !== -1;
+      /* elevelabo3 : reconnu par sa classe OU par son e-mail (comme acces.js) */
+      let classeMin = classe.toLowerCase();
+      try { classeMin = classeMin.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch (e) {}
+      let email = String((c && c.email) || '').trim().toLowerCase();
+      let estLabo3 = classeMin === 'elevelabo3' || /^elevelabo3(?:@|$)/i.test(email);
+      let estProf = estLabo3 || classeMin === 'prof' || classeMin === 'professeur' || classeMin === 'enseignant' || classeMin === 'enseignante';
+      let identite = [c && c.nom, c && c.prenom, c && c.email].join(' ').toLowerCase();
+      try { identite = identite.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch (e) {}
+      let estGoldPlateforme = identite.indexOf('issaoui') !== -1 && identite.indexOf('amel') !== -1;
+      let estGold = Boolean(c && (c.isGold || c.gold === true)) || /\bGOLD\b/i.test(lycee) || classe.indexOf('GOLD') !== -1 || estGoldPlateforme;
       if (estAdmin || estProf || estGold) return Object.keys(books);
       if (/^4(E|EME)?SI/.test(classe)) return ['4si-2026'];
       if (/^3(E|EME)?SI/.test(classe)) return ['3si-2026'];
