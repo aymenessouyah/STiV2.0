@@ -5599,6 +5599,12 @@ background-repeat: repeat;</pre>
         var duree = state.elapsed;
         var note = noteFinale(pct);
         if (window.STIQuizSync) STIQuizSync.enregistrer("html-css", score, total);
+        if (window.STIQuizSync && STIQuizSync.enregistrerReponses)
+          STIQuizSync.enregistrerReponses("html-css", null, state.session.filter(function (q) {
+            return q.answer !== null && q.answer !== undefined;
+          }).map(function (q) {
+            return { id: STIQuizSync.hash(q.text), enonce: q.text, ok: q.options[q.answer].ok };
+          }));
 
         // En-tête du bilan
         var badge = $("#gradeBadge");

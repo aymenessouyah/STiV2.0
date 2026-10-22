@@ -1,4 +1,4 @@
-/* ═══ STI — Admin : détail synchronisé des quiz (v358, vues v363, alertes+progression v364) ═══
+/* ═══ STI — Admin : détail synchronisé des quiz (v358, vues v363-v364, questions v365) ═══
    Lit la table centrale sti_quiz_parties (chaque partie jouée, tous
    appareils) et affiche, par élève et par quiz : nombre de parties,
    dernier score, meilleur score, pourcentage — avec le détail complet
@@ -8,6 +8,7 @@
   "use strict";
   var client = null;
   var donnees = null;      // lignes brutes sti_quiz_parties
+  var reponses = null;     // lignes sti_quiz_reponses (v365) : null = table absente
   var profilsParId = {};   // user_id -> profil
   var enCours = false;
   var vueActuelle = "classes";   // classes | jours | top3
@@ -65,6 +66,10 @@
     enCours = true;
     resume.textContent = "Chargement des résultats synchronisés…";
     try {
+      var rr = await s.from("sti_quiz_reponses").select("user_id,email,quiz,module,question_id,enonce,correct,cree_le")
+        .order("cree_le", { ascending: false }).limit(8000)
+        .then(function (r) { return r; }, function () { return { data: null }; });
+      reponses = rr && !rr.error && rr.data ? rr.data : null;
       var [rp, rf] = await Promise.all([
         s.from("sti_quiz_parties").select("user_id,email,quiz,module,score,total,cree_le")
           .order("cree_le", { ascending: false }).limit(5000),
@@ -156,7 +161,7 @@
         "<td style=\"text-align:center\">" + g.pctMoyen + " %</td>" +
         "<td style=\"text-align:center\">▸</td></tr>" +
         '<tr class="quiz-sync-detail" id="quiz-sync-detail-' + idx + '" style="display:none"><td colspan="8" style="background:#f9f1e3;font-size:12.5px;line-height:1.7">' +
-          "<strong>📋 Toutes les parties (" + g.nb + ") :</strong>" + detail + "</td></tr>";
+          "<strong>📋 Toutes les parties (" + g.nb + ") :</strong>" + detail + questionsRateesEleve(g.rep.user_id) + "</td></tr>";
     }).join("");
     tb.querySelectorAll("tr[data-idx]").forEach(function (tr) {
       tr.addEventListener("click", function () {
@@ -216,6 +221,7 @@
     if (vueActuelle === "jours") zone.innerHTML = vueJours();
     else if (vueActuelle === "alertes") { zone.innerHTML = vueAlertes(); brancherClasses(zone); brancherNoms(zone); }
     else if (vueActuelle === "progression") { zone.innerHTML = vueProgression(); brancherClasses(zone); }
+    else if (vueActuelle === "questions") { zone.innerHTML = vueQuestions(); brancherQuestions(zone); }
     else if (vueActuelle === "top3") { zone.innerHTML = vueTop3(); brancherClasses(zone); }
     else { zone.innerHTML = vueClasses(); brancherClasses(zone); }
     if (classeOuverte) rendreClasse();
@@ -403,6 +409,142 @@
     zone.querySelectorAll("[data-classe-nom]").forEach(function (el) {
       el.addEventListener("click", function () { ouvrirClasse(el.getAttribute("data-classe-nom")); });
     });
+  }
+
+  /* ═══ v365 : analyse par question ═══ */
+  var quizQuestionFiltre = "*";
+  var questionSel = null;
+  var questionsAffichees = [];
+
+  function questionsRateesEleve(uid) {
+    if (!reponses || !reponses.length) return "";
+    var par = {};
+    reponses.forEach(function (r) {
+      if (r.user_id !== uid || r.correct) return;
+      var cle = r.quiz + "|" + (r.module || "") + "|" + r.question_id;
+      if (!par[cle]) par[cle] = { enonce: r.enonce, quiz: r.quiz, module: r.module, nb: 0 };
+      par[cle].nb++;
+    });
+    var liste = Object.keys(par).map(function (k) { return par[k]; })
+      .sort(function (a, b) { return b.nb - a.nb; }).slice(0, 5);
+    if (!liste.length) return "";
+    return '<div style="margin-top:6px"><strong>❌ Questions les plus ratées :</strong>' + liste.map(function (q) {
+      return "<div>• (" + esc(LIBELLE_QUIZ[q.quiz] || q.quiz) + (q.module ? " · " + esc(LIBELLE_MODULE[q.module] || q.module) : "") + ") " +
+        esc((q.enonce || q.question_id || "").slice(0, 110)) + " — <strong>" + q.nb + " échec(s)</strong></div>";
+    }).join("") + "</div>";
+  }
+
+  function agregerQuestions() {
+    var par = {};
+    (reponses || []).forEach(function (r) {
+      if (quizQuestionFiltre !== "*" && r.quiz !== quizQuestionFiltre) return;
+      var cle = r.quiz + "|" + (r.module || "") + "|" + r.question_id;
+      if (!par[cle]) par[cle] = { cle: cle, quiz: r.quiz, module: r.module, question_id: r.question_id, enonce: "", tentatives: 0, echecs: 0 };
+      var g = par[cle];
+      g.tentatives++;
+      if (!r.correct) g.echecs++;
+      if (!g.enonce && r.enonce) g.enonce = r.enonce;
+    });
+    return Object.keys(par).map(function (k) {
+      var g = par[k];
+      g.pctEchec = g.tentatives ? Math.round((g.echecs * 1000) / g.tentatives) / 10 : 0;
+      return g;
+    });
+  }
+
+  function vueQuestions() {
+    if (reponses === null) {
+      return '<div style="border:2px dashed #c0392b;border-radius:14px;background:#fffdf7;padding:12px 14px;margin:0 0 12px">' +
+        "<strong>⚠️ Analyse par question pas encore active.</strong>" +
+        '<p style="font-size:12.5px;margin:6px 0 0">Exécutez <strong>MIGRATION-v365-REPONSES.sql</strong> dans Supabase (SQL Editor), puis cliquez sur « ↻ Actualiser ». Les nouvelles parties des élèves enverront alors le détail question par question.</p></div>';
+    }
+    if (!reponses.length) {
+      return '<p style="color:#7a6f5d;font-size:12.5px">Aucune réponse détaillée pour le moment : le détail question par question arrive avec les nouvelles parties jouées.</p>';
+    }
+    var quizPresents = {};
+    reponses.forEach(function (r) { quizPresents[r.quiz] = 1; });
+    var options = '<option value="*">Tous les quiz</option>' + Object.keys(quizPresents).sort().map(function (q) {
+      return '<option value="' + esc(q) + '"' + (quizQuestionFiltre === q ? " selected" : "") + ">" + esc(LIBELLE_QUIZ[q] || q) + "</option>";
+    }).join("");
+    /* synthese par quiz */
+    var parQuiz = {};
+    reponses.forEach(function (r) {
+      if (!parQuiz[r.quiz]) parQuiz[r.quiz] = { t: 0, ok: 0 };
+      parQuiz[r.quiz].t++;
+      if (r.correct) parQuiz[r.quiz].ok++;
+    });
+    var synthese = Object.keys(parQuiz).sort().map(function (q) {
+      var g = parQuiz[q], pr = Math.round((g.ok * 1000) / g.t) / 10;
+      return "<span style=\"display:inline-block;border:1.5px solid #23201a;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;margin:0 6px 6px 0\">" +
+        esc(LIBELLE_QUIZ[q] || q) + " : " + pr + " % de réussite (" + g.t + " rép.)</span>";
+    }).join("");
+    var toutes = agregerQuestions();
+    questionsAffichees = toutes.filter(function (g) { return g.tentatives >= 2 && g.echecs > 0; })
+      .sort(function (a, b) { return (b.pctEchec - a.pctEchec) || (b.tentatives - a.tentatives); }).slice(0, 40);
+    var h = '<div style="margin:0 0 8px">' + synthese + "</div>" +
+      '<label style="font-size:12.5px;font-weight:800">Quiz : <select id="filtre-questions-quiz" style="border:2px solid #23201a;border-radius:999px;padding:5px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px">' + options + "</select></label>";
+    if (!questionsAffichees.length) {
+      return h + '<p style="color:#7a6f5d;font-size:12.5px;margin-top:8px">Pas encore de question assez répondue (au moins 2 tentatives) avec des échecs.</p>';
+    }
+    h += '<div class="table-wrap" style="margin-top:8px"><table><thead><tr><th>Question</th><th>Quiz</th><th>Tentatives</th><th>Échecs</th><th>% échec</th><th></th></tr></thead><tbody>';
+    questionsAffichees.forEach(function (g, i) {
+      h += '<tr data-question="' + i + '" style="cursor:pointer" title="Voir les élèves en échec sur cette question">' +
+        '<td style="font-weight:700">' + esc((g.enonce || g.question_id || "").slice(0, 130)) + "</td>" +
+        "<td>" + esc(LIBELLE_QUIZ[g.quiz] || g.quiz) + (g.module ? '<div style="font-size:11px;color:#7a6f5d">' + esc(LIBELLE_MODULE[g.module] || g.module) + "</div>" : "") + "</td>" +
+        '<td style="text-align:center;font-weight:800">' + g.tentatives + "</td>" +
+        '<td style="text-align:center;font-weight:800">' + g.echecs + "</td>" +
+        '<td style="text-align:center"><strong style="color:#c0392b">' + g.pctEchec + ' %</strong><div style="height:8px;border-radius:4px;background:#c0392b;width:' + Math.min(100, g.pctEchec) + '%;margin-top:3px"></div></td>' +
+        '<td style="text-align:center">▸</td></tr>';
+    });
+    h += "</tbody></table></div>" +
+      '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 4px">Questions répondues au moins 2 fois, triées par taux d\'échec. Cliquez sur une question pour voir les élèves en échec.</p><div id="question-eleves"></div>';
+    return h;
+  }
+
+  function brancherQuestions(zone) {
+    var sel = zone.querySelector("#filtre-questions-quiz");
+    if (sel) sel.addEventListener("change", function () {
+      quizQuestionFiltre = sel.value;
+      questionSel = null;
+      afficherStats();
+    });
+    zone.querySelectorAll("[data-question]").forEach(function (tr) {
+      tr.addEventListener("click", function () {
+        var g = questionsAffichees[parseInt(tr.getAttribute("data-question"), 10)];
+        if (g) { questionSel = g.cle; rendreElevesQuestion(zone, g); }
+      });
+    });
+    if (questionSel) {
+      for (var i = 0; i < questionsAffichees.length; i++) {
+        if (questionsAffichees[i].cle === questionSel) { rendreElevesQuestion(zone, questionsAffichees[i]); break; }
+      }
+    }
+  }
+
+  function rendreElevesQuestion(zone, g) {
+    var dest = zone.querySelector("#question-eleves");
+    if (!dest) return;
+    var par = {};
+    (reponses || []).forEach(function (r) {
+      var cle = r.quiz + "|" + (r.module || "") + "|" + r.question_id;
+      if (cle !== g.cle || r.correct) return;
+      if (!par[r.user_id]) par[r.user_id] = { rep: r, nb: 0, derniere: r.cree_le };
+      par[r.user_id].nb++;
+      if (new Date(r.cree_le) > new Date(par[r.user_id].derniere)) par[r.user_id].derniere = r.cree_le;
+    });
+    var eleves = Object.keys(par).map(function (k) { return par[k]; })
+      .sort(function (a, b) { return (b.nb - a.nb) || (new Date(b.derniere) - new Date(a.derniere)); });
+    if (!eleves.length) { dest.innerHTML = ""; return; }
+    dest.innerHTML = '<div style="border:2px solid #c0392b;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:8px 0 12px">' +
+      '<strong style="color:#c0392b">❌ Élèves en échec sur cette question (' + eleves.length + ")</strong>" +
+      '<p style="font-size:12.5px;margin:4px 0 8px">« ' + esc((g.enonce || "").slice(0, 160)) + " »</p>" +
+      '<div class="table-wrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Échecs</th><th>Dernier échec</th></tr></thead><tbody>' +
+      eleves.map(function (e) {
+        return "<tr><td style=\"font-weight:800\">" + esc(nomEleve(e.rep)) + "</td><td>" + esc(classeEleve(e.rep)) + "</td>" +
+          '<td style="text-align:center;font-weight:900;color:#c0392b">' + e.nb + "</td>" +
+          '<td style="font-size:12px">' + esc(fmtDate(e.derniere)) + "</td></tr>";
+      }).join("") + "</tbody></table></div></div>";
+    dest.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   function brancherClasses(zone) {

@@ -1,4 +1,4 @@
-/* ═══ STI — Synchronisation centrale des quiz (v358, maj v362) ═══
+/* ═══ STI — Synchronisation centrale des quiz (v358, maj v362, réponses v365) ═══
    Partagé par toutes les pages quiz. Enregistre CHAQUE partie jouée dans
    Supabase (sti_quiz_parties : score, total, %, date — rejouable à l'infini)
    et synchronise les questions déjà vues du Quiz des tableaux
@@ -77,6 +77,7 @@
       }
       sauverFile(reste);
     }
+    await viderFileRep(s, u);
     var fv = lireFileVus();
     if (fv.length) {
       var lignes = fv.map(function (v) {
@@ -104,6 +105,67 @@
     var f = lireFileVus();
     ids.forEach(function (id) { f.push({ module: String(module), question_id: String(id) }); });
     sauverFileVus(f);
+  }
+
+  /* ---------- Réponses question par question (v365) ---------- */
+  function hashTxt(t) {
+    var h = 5381, x = String(t == null ? "" : t);
+    for (var i = 0; i < x.length; i++) h = (((h << 5) + h) ^ x.charCodeAt(i)) >>> 0;
+    return "h" + h.toString(36);
+  }
+  var CLE_FILE_REP = "sti-quiz-sync-rep-v1";
+  function lireFileRep() {
+    try { return JSON.parse(localStorage.getItem(CLE_FILE_REP) || "[]"); } catch (e) { return []; }
+  }
+  function sauverFileRep(f) {
+    try { localStorage.setItem(CLE_FILE_REP, JSON.stringify(f.slice(-500))); } catch (e) {}
+  }
+  function mettreRepEnFile(lignes) {
+    var f = lireFileRep();
+    lignes.forEach(function (l) {
+      f.push({ quiz: l.quiz, module: l.module, question_id: l.question_id, enonce: l.enonce, correct: l.correct });
+    });
+    sauverFileRep(f);
+  }
+  async function enregistrerReponses(quiz, module, liste) {
+    if (!quiz || !liste || !liste.length) return false;
+    var s = sb();
+    var u = await utilisateur();
+    if (!s || !u || sansScore(u)) return false;
+    var lignes = [];
+    liste.slice(0, 120).forEach(function (r) {
+      if (!r) return;
+      lignes.push({
+        user_id: u.id, email: u.email, quiz: String(quiz),
+        module: module ? String(module) : null,
+        question_id: String(r.id != null && r.id !== "" ? r.id : hashTxt(r.enonce)),
+        enonce: String(r.enonce == null ? "" : r.enonce).slice(0, 200),
+        correct: !!r.ok
+      });
+    });
+    if (!lignes.length) return false;
+    try {
+      for (var i = 0; i < lignes.length; i += 200) {
+        var r2 = await s.from("sti_quiz_reponses").insert(lignes.slice(i, i + 200));
+        if (r2.error) { mettreRepEnFile(lignes); return false; }
+      }
+      return true;
+    } catch (e) { mettreRepEnFile(lignes); return false; }
+  }
+  async function viderFileRep(s, u) {
+    var f = lireFileRep();
+    if (!f.length) return;
+    var lignes = f.map(function (l) {
+      return { user_id: u.id, email: u.email, quiz: l.quiz, module: l.module,
+               question_id: l.question_id, enonce: l.enonce, correct: l.correct };
+    });
+    try {
+      for (var i = 0; i < lignes.length; i += 200) {
+        var r = await s.from("sti_quiz_reponses").insert(lignes.slice(i, i + 200));
+        if (r.error) return;
+      }
+      sauverFileRep([]);
+    } catch (e) {}
   }
 
   /* ---------- API publique ---------- */
@@ -186,6 +248,8 @@
 
   window.STIQuizSync = {
     enregistrer: enregistrer,
+    enregistrerReponses: enregistrerReponses,
+    hash: hashTxt,
     resume: resume,
     chargerVus: chargerVus,
     marquerVus: marquerVus,

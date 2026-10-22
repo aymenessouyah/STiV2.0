@@ -43348,6 +43348,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
             : ""
         }`;
         if (window.STIQuizSync) STIQuizSync.enregistrer("php", quiz.correct, total);
+        if (window.STIQuizSync && STIQuizSync.enregistrerReponses)
+          STIQuizSync.enregistrerReponses("php", null, quiz.answers.map(function (a) {
+            return { id: STIQuizSync.hash(a.q.q), enonce: a.q.q, ok: a.correct };
+          }));
         $("resScore").textContent =
           "⭐ " + quiz.score.toLocaleString("fr-FR") + " pts";
         $("resAcc").textContent = "🎯 " + acc + " % de réussite";

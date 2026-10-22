@@ -270,6 +270,11 @@
       etat.resultats = etat.resultats.slice(-200);
       sauverEtat(etat);
       if (window.STIQuizSync) STIQuizSync.enregistrer("tableaux", bonnes.length, repondues.length, s.module);
+      if (window.STIQuizSync && STIQuizSync.enregistrerReponses)
+        STIQuizSync.enregistrerReponses("tableaux", s.module, repondues.map(function (it) {
+          return { id: it.ref.id != null ? "tab-" + it.ref.id : STIQuizSync.hash(it.ref.q),
+                   enonce: it.ref.q, ok: it.choix[it.choixEleve] === it.ref.bonne };
+        }));
     }
     var erreurs = repondues.filter(function (it) { return it.choix[it.choixEleve] !== it.ref.bonne; });
     var pct = repondues.length ? Math.round((bonnes.length / repondues.length) * 100) : 0;

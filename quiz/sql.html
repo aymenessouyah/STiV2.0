@@ -43038,6 +43038,10 @@ LIMIT 5;</textarea
         $("resReview").innerHTML = "";
         afficherPointsFaibles(total);
         if (window.STIQuizSync) STIQuizSync.enregistrer("sql", Q.correct, total);
+        if (window.STIQuizSync && STIQuizSync.enregistrerReponses)
+          STIQuizSync.enregistrerReponses("sql", null, Q.log.filter(function (a) { return !a.skipped; }).map(function (a) {
+            return { id: "sql-" + a.q.id, enonce: a.q.q, ok: a.good };
+          }));
         $("btn-haut").classList.remove("hidden");
         $("resReplay").onclick = () => {
           $("resultsOverlay").classList.add("hidden");

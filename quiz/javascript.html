@@ -29576,6 +29576,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
           stockageEcrire("js_quiz_total_answered", this.stats.totalAnswered);
           if (window.STIQuizSync && this.answeredCount > 0)
             STIQuizSync.enregistrer("javascript", this.correctCount, this.answeredCount);
+            if (STIQuizSync.enregistrerReponses)
+              STIQuizSync.enregistrerReponses("javascript", null, this.journal.map(function (j) {
+                return { id: STIQuizSync.hash(j.title), enonce: j.title, ok: j.correct };
+              }));
 
           confetti({
             particleCount: 120,
