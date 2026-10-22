@@ -1,4 +1,4 @@
-/* ═══ STI — Synchronisation centrale des quiz (v358) ═══
+/* ═══ STI — Synchronisation centrale des quiz (v358, maj v362) ═══
    Partagé par toutes les pages quiz. Enregistre CHAQUE partie jouée dans
    Supabase (sti_quiz_parties : score, total, %, date — rejouable à l'infini)
    et synchronise les questions déjà vues du Quiz des tableaux
@@ -6,16 +6,31 @@
    - Silencieux si l'élève n'est pas connecté ou si les tables n'existent
      pas encore : le comportement local des quiz reste inchangé.
    - File d'attente locale : une partie non envoyée (hors ligne) est
-     conservée et retentée au chargement suivant. */
+     conservée et retentée au chargement suivant ET dès le retour de la
+     connexion (événement « online »), sans recharger la page.
+   - Exception : le compte laboratoire (elevelabo3@exemple.tn) n'envoie
+     AUCUN score en ligne (compte partagé de classe) ; ses quiz restent
+     en distribution aléatoire locale et sa banque se met à jour avec
+     le site, comme pour tous. */
 (function () {
   "use strict";
   var CLE_FILE = "sti-quiz-sync-file-v1";
+  var CLE_FILE_VUS = "sti-quiz-sync-vus-v1";
+  var COMPTES_SANS_SCORE = ["elevelabo3@exemple.tn"];
+  function sansScore(u) {
+    return !!(u && u.email && COMPTES_SANS_SCORE.indexOf(String(u.email).toLowerCase()) !== -1);
+  }
   var client = null;
   var promesseUser = null;
 
   function sb() {
     if (!window.supabase || !window.STI_AUTH) return null;
-    if (!client) client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE);
+    if (!client) {
+      client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE);
+      try {
+        client.auth.onAuthStateChange(function () { promesseUser = null; });
+      } catch (e) {}
+    }
     return client;
   }
   function utilisateur() {
@@ -50,17 +65,45 @@
   async function viderFile() {
     var s = sb();
     var u = await utilisateur();
-    if (!s || !u) return;
+    if (!s || !u || sansScore(u)) return;
     var f = lireFile();
-    if (!f.length) return;
-    var reste = [];
-    for (var i = 0; i < f.length; i++) {
-      try {
-        var r = await s.from("sti_quiz_parties").insert(f[i]);
-        if (r.error) reste.push(f[i]);
-      } catch (e) { reste.push(f[i]); }
+    if (f.length) {
+      var reste = [];
+      for (var i = 0; i < f.length; i++) {
+        try {
+          var r = await s.from("sti_quiz_parties").insert(f[i]);
+          if (r.error) reste.push(f[i]);
+        } catch (e) { reste.push(f[i]); }
+      }
+      sauverFile(reste);
     }
-    sauverFile(reste);
+    var fv = lireFileVus();
+    if (fv.length) {
+      var lignes = fv.map(function (v) {
+        return { user_id: u.id, module: String(v.module), question_id: String(v.question_id) };
+      });
+      try {
+        var ok = true;
+        for (var j = 0; j < lignes.length; j += 200) {
+          var rv = await s.from("sti_quiz_vus").upsert(lignes.slice(j, j + 200), {
+            onConflict: "user_id,module,question_id", ignoreDuplicates: true
+          });
+          if (rv.error) { ok = false; break; }
+        }
+        if (ok) sauverFileVus([]);
+      } catch (e) {}
+    }
+  }
+  function lireFileVus() {
+    try { return JSON.parse(localStorage.getItem(CLE_FILE_VUS) || "[]"); } catch (e) { return []; }
+  }
+  function sauverFileVus(f) {
+    try { localStorage.setItem(CLE_FILE_VUS, JSON.stringify(f.slice(-2000))); } catch (e) {}
+  }
+  function mettreVusEnFile(module, ids) {
+    var f = lireFileVus();
+    ids.forEach(function (id) { f.push({ module: String(module), question_id: String(id) }); });
+    sauverFileVus(f);
   }
 
   /* ---------- API publique ---------- */
@@ -70,7 +113,7 @@
     if (!quiz || isNaN(score) || isNaN(total) || total <= 0 || score < 0 || score > total) return false;
     var s = sb();
     var u = await utilisateur();
-    if (!s || !u) return false;
+    if (!s || !u || sansScore(u)) return false;
     var ligne = {
       user_id: u.id, email: u.email, quiz: String(quiz),
       module: module ? String(module) : null, score: score, total: total
@@ -86,6 +129,7 @@
     var s = sb();
     var u = await utilisateur();
     if (!s || !u) return null;
+    if (sansScore(u)) return { parties: 0, dernier: null, meilleur: null };
     try {
       var q = s.from("sti_quiz_parties").select("score,total,module,cree_le")
         .order("cree_le", { ascending: false }).limit(300);
@@ -108,7 +152,7 @@
   async function chargerVus() {
     var s = sb();
     var u = await utilisateur();
-    if (!s || !u) return null;
+    if (!s || !u || sansScore(u)) return null;
     try {
       var r = await s.from("sti_quiz_vus").select("module,question_id").limit(5000);
       if (r.error || !r.data) return null;
@@ -125,6 +169,7 @@
     var s = sb();
     var u = await utilisateur();
     if (!s || !u || !module || !ids || !ids.length) return false;
+    if (sansScore(u)) return false;
     var lignes = ids.map(function (id) {
       return { user_id: u.id, module: String(module), question_id: String(id) };
     });
@@ -133,10 +178,10 @@
         var r = await s.from("sti_quiz_vus").upsert(lignes.slice(i, i + 200), {
           onConflict: "user_id,module,question_id", ignoreDuplicates: true
         });
-        if (r.error) return false;
+        if (r.error) { mettreVusEnFile(module, ids); return false; }
       }
       return true;
-    } catch (e) { return false; }
+    } catch (e) { mettreVusEnFile(module, ids); return false; }
   }
 
   window.STIQuizSync = {
@@ -149,4 +194,5 @@
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", viderFile);
   else viderFile();
+  window.addEventListener("online", viderFile);
 })();
