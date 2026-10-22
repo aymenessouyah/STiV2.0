@@ -42,6 +42,7 @@
   .pied { text-align:center; margin-top:30px }
   @media print { .barre,.recherche,.filtres,.pied { display:none } body { background:#fff } .carte { box-shadow:none; break-inside:avoid } }
 </style>
+  <link rel="manifest" href="manifest.webmanifest" />
 </head>
 <body>
 <header class="barre">
@@ -187,5 +188,8 @@ document.querySelectorAll(".filtre").forEach(function (b) {
 });
 afficher();
 </script>
+<script src="assets/js/supabase-umd.js"></script>
+<script src="assets/js/config.js?v=256"></script>
+<script src="assets/js/acces.js?v=378"></script>
 </body>
 </html>

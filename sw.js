@@ -6,10 +6,13 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v377-roue-livre-smart";
+var UPDATE_ID = "v378-roue-glossaire-nouveautes-revision";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./glossaire.html", revision: "roue-pages-v378" },
+  { url: "./nouveautes.html", revision: "roue-pages-v378" },
+  { url: "./revision-erreurs.html", revision: "roue-pages-v378" },
   { url: "./livre-smart.html", revision: "roue-livre-smart-v377" },
   { url: "./assets/js/acces.js", revision: "version-badge-v374" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },
