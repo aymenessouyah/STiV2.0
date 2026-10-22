@@ -12,6 +12,84 @@
   })();
   if (chemin === "portail.html" || chemin === "admin.html") return;
 
+  /* ---------- v371 : installation de l'application (PWA) ---------- */
+  var stiBipV371 = null;
+  window.__stiPwaEstInstallee = function () {
+    try {
+      if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return true;
+      if (window.matchMedia && window.matchMedia("(display-mode: fullscreen)").matches) return true;
+      if (window.navigator.standalone === true) return true;
+    } catch (e) {}
+    try { return localStorage.getItem("sti-pwa-installee") === "1"; } catch (e2) {}
+    return false;
+  };
+  window.addEventListener("beforeinstallprompt", function (ev) {
+    ev.preventDefault();
+    stiBipV371 = ev;
+    try { localStorage.removeItem("sti-pwa-refus"); } catch (e) {}
+    try { window.__stiMajBoutonInstaller(); } catch (e2) {}
+  });
+  window.addEventListener("appinstalled", function () {
+    stiBipV371 = null;
+    try { localStorage.setItem("sti-pwa-installee", "1"); } catch (e) {}
+    try { window.__stiMajBoutonInstaller(); } catch (e2) {}
+  });
+  window.__stiMajBoutonInstaller = function () {
+    var wrap = document.getElementById("sti-pan-install-wrap");
+    if (!wrap) return;
+    var styleBtn = "display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin:0;border:1px solid rgba(14,116,144,.45);border-radius:12px;padding:8px 8px;font-weight:900;font-size:11.3px;line-height:1.25;cursor:pointer;text-align:center;box-sizing:border-box;background:linear-gradient(120deg,#e0fbff,#a5f3fc);color:#0e3a46;box-shadow:0 1px 3px rgba(13,21,38,.07),inset 0 1px 0 rgba(255,255,255,.6)";
+    if (window.__stiPwaEstInstallee()) {
+      wrap.style.display = "block";
+      wrap.innerHTML = "<div style='margin-top:4px;font-size:9.8px;font-weight:800;color:#177245;text-align:center'>✅ Application installée — ouvrez-la depuis l'écran d'accueil.</div>";
+      return;
+    }
+    var iosV371 = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    var refus = false;
+    try { refus = localStorage.getItem("sti-pwa-refus") === "1"; } catch (e) {}
+    if (stiBipV371 && !refus) {
+      wrap.style.display = "block";
+      wrap.innerHTML = "<button type='button' id='sti-pan-install-btn' style='" + styleBtn + "'>📲 Installer l'application STI V2.0</button>" +
+        "<div style='margin-top:3px;font-size:9.5px;color:#475569;text-align:center'>Icône sur l'écran d'accueil, plein écran, cours et quiz hors-ligne.</div>";
+      var btnP = document.getElementById("sti-pan-install-btn");
+      if (btnP) btnP.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+          stiBipV371.prompt();
+          if (stiBipV371.userChoice) {
+            stiBipV371.userChoice.then(function (ch) {
+              if (ch && ch.outcome !== "accepted") { try { localStorage.setItem("sti-pwa-refus", "1"); } catch (er) {} }
+              stiBipV371 = null;
+              try { window.__stiMajBoutonInstaller(); } catch (er2) {}
+            });
+          }
+        } catch (er3) {}
+      });
+      return;
+    }
+    if (iosV371) {
+      wrap.style.display = "block";
+      wrap.innerHTML = "<button type='button' id='sti-pan-install-btn' style='" + styleBtn + "'>📲 Installer sur iPhone / iPad</button>" +
+        "<div id='sti-pan-install-aide' style='display:none;margin-top:4px;padding:6px 8px;border:1px dashed rgba(14,116,144,.5);border-radius:10px;font-size:9.8px;font-weight:800;color:#0e3a46;text-align:center;box-sizing:border-box'>Sur Safari : appuyez sur le bouton Partager ⬆️, puis « Sur l'écran d'accueil ».</div>";
+      var btnI = document.getElementById("sti-pan-install-btn");
+      if (btnI) btnI.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var aide = document.getElementById("sti-pan-install-aide");
+        if (aide) aide.style.display = aide.style.display === "none" ? "block" : "none";
+      });
+      return;
+    }
+    var androidV371 = /Android/i.test(navigator.userAgent);
+    if (androidV371 && !refus) {
+      wrap.style.display = "block";
+      wrap.innerHTML = "<div style='margin-top:4px;font-size:9.8px;font-weight:800;color:#475569;text-align:center'>💡 Menu ⋮ de Chrome → « Installer l'application » pour un accès hors-ligne complet.</div>";
+      return;
+    }
+    wrap.style.display = "none";
+    wrap.innerHTML = "";
+  };
+
   var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
     auth: {
       persistSession: true,
@@ -1974,6 +2052,8 @@
       ".sti-roue-wrap.sti-theme-sombre div[style*=\"color:#23201a\"]{color:#e8eef7!important}" +
       ".sti-roue-wrap.sti-theme-sombre #sti-ma-duree-sem{color:#5eead4!important}" +
       ".sti-roue-wrap.sti-theme-sombre #sti-pan-prog-media [style*=\"color:#475569\"]{color:#a9bcd8!important}" +
+      ".sti-roue-wrap.sti-theme-sombre #sti-pan-install-btn{background:linear-gradient(120deg,rgba(34,211,238,.30),rgba(14,116,144,.55))!important;color:#e8f6ff!important;border-color:rgba(255,255,255,.25)!important}" +
+      ".sti-roue-wrap.sti-theme-sombre #sti-pan-install-wrap [style*=\"color:#475569\"]{color:#a9bcd8!important}" +
       ".sti-roue-wrap.sti-theme-sombre [style*=\"text-transform:uppercase\"]{color:#8fa3c4!important}" +
       ".sti-roue-wrap.sti-theme-sombre #sti-pan-prog-track{background:rgba(255,255,255,.14)!important}" +
       ".sti-roue-wrap.sti-theme-sombre #sti-pan-labos{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.10)!important}" +
@@ -2093,7 +2173,9 @@
         "<div id='sti-pan-prog-badges' style='margin-top:3px'>" + initProgPan.badgesMod + "</div>" +
         "<div id='sti-pan-prog-media'>" + initProgPan.resumeMedia + "</div>" +
         "<div id='sti-ma-duree-sem' style='margin-top:4px;font-size:10.5px;font-weight:800;color:#177245'>⏱️ Cette semaine : calcul…</div>" +
+        "<div id='sti-pan-install-wrap' style='display:none;margin-top:5px'></div>" +
       "</div>";
+    try { window.__stiMajBoutonInstaller(); } catch (e) {}
 
     window.__stiMajProgressionPan = function () {
       try {
@@ -2628,6 +2710,7 @@
       window.__stiMajBadgeRoue();
       setTimeout(window.__stiMajBadgeRoue, 2000);
       setTimeout(window.__stiMajBadgeRoue, 5000);
+      try { window.__stiMajBoutonInstaller(); } catch (e) {}
     }
 
     if (window === window.top) {

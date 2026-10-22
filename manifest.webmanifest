@@ -1,7 +1,7 @@
 {
-  "name": "STI by AE — L'Atelier du Web",
-  "short_name": "STI by AE",
-  "description": "Cours, exercices, quiz HTML5, CSS3, JavaScript, SQL et PHP — Lycée Raféha.",
+  "name": "STI V2.0 By AE — Cours, Quiz & Labo",
+  "short_name": "STI V2.0",
+  "description": "Cours, exercices, quiz et laboratoires HTML5, CSS3, JavaScript, SQL et PHP — Lycée Raféha.",
   "id": "sti-by-ae-atelier",
   "start_url": "./",
   "scope": "./",
