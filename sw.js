@@ -6,17 +6,17 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v389-recherche-globale-etendue";
+var UPDATE_ID = "v390-signets-veilleuse";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./glossaire.html", revision: "index-recherche-v389" },
-  { url: "./nouveautes.html", revision: "index-recherche-v389" },
-  { url: "./revision-erreurs.html", revision: "index-recherche-v389" },
-  { url: "./livre-smart.html", revision: "index-recherche-v389" },
-  { url: "./index.html", revision: "index-recherche-v389" },
+  { url: "./glossaire.html", revision: "signets-veilleuse-v390" },
+  { url: "./nouveautes.html", revision: "signets-veilleuse-v390" },
+  { url: "./revision-erreurs.html", revision: "signets-veilleuse-v390" },
+  { url: "./livre-smart.html", revision: "signets-veilleuse-v390" },
+  { url: "./index.html", revision: "signets-veilleuse-v390" },
   { url: "./assets/js/retour-livre-smart.js", revision: "retour-intelligent-v380" },
-  { url: "./assets/js/acces.js", revision: "index-recherche-v389" },
+  { url: "./assets/js/acces.js", revision: "signets-veilleuse-v390" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },
   { url: "./manifest.webmanifest", revision: "pwa-install-v371" },
   { url: "./glossaire.html", revision: "glossaire-arabe-patch-v373" },

@@ -2038,6 +2038,37 @@
   }
 
   /* ---------- roue « mon compte » chic + Progression personnelle + Écrire au prof ---------- */
+  /* ===== v390 : mode veilleuse (teinte chaude, par appareil) ===== */
+  function appliquerVeilleuseGlobale() {
+    var on = false;
+    try { on = localStorage.getItem("sti-veilleuse") === "1"; } catch (e) {}
+    var v = document.getElementById("sti-veilleuse-voile");
+    if (on && !v) {
+      v = document.createElement("div");
+      v.id = "sti-veilleuse-voile";
+      v.setAttribute("aria-hidden", "true");
+      (document.body || document.documentElement).appendChild(v);
+    } else if (!on && v && v.parentNode) {
+      v.parentNode.removeChild(v);
+    }
+  }
+  window.__stiAppliquerVeilleuse = appliquerVeilleuseGlobale;
+  (function injecterStylesV390() {
+    try {
+      var st = document.createElement("style");
+      st.id = "sti-style-v390";
+      st.textContent =
+        "#sti-veilleuse-voile{position:fixed;inset:0;z-index:9998;pointer-events:none;background:rgba(255,166,84,.15);mix-blend-mode:multiply}" +
+        "@media print{#sti-veilleuse-voile{display:none!important}}" +
+        ".sti-roue-wrap.sti-theme-sombre #sti-pan-signets-tuile{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.16)!important}" +
+        ".sti-roue-wrap.sti-theme-sombre #sti-pan-signets a{color:#e8eef7!important}" +
+        ".sti-roue-wrap.sti-theme-sombre #sti-pan-signets-tuile button{border-color:rgba(255,255,255,.25)!important}" +
+        ".sti-roue-wrap.sti-theme-sombre #sti-pan-signets-vide{color:#8fa3c4!important}";
+      (document.head || document.documentElement).appendChild(st);
+    } catch (e) {}
+    try { appliquerVeilleuseGlobale(); } catch (e) {}
+  })();
+
   function panneauCompte(user, profil) {
     if (estDansIframeModale()) return;
     if (user && String(user.email || "").trim().toLowerCase() === ADMIN_MAIL_STRICT) {
@@ -2564,6 +2595,86 @@
     badgeVerRoue.textContent = "STiV2.0." + window.__stiVerAffichee();
     badgeVerRoue.style.cssText = "margin-top:7px;padding-top:6px;border-top:1px solid rgba(35,32,26,.08);text-align:center;font-size:10px;font-weight:900;color:#7a6f5d;letter-spacing:.4px;";
     pan.appendChild(badgeVerRoue);
+    /* ===== v390 : « Mes pages » (signets) + bascule veilleuse ===== */
+    (function () {
+      var CLE_SIGN = "sti-signets";
+      var CLE_VEIL = "sti-veilleuse";
+      function lireSignets() {
+        try { return JSON.parse(localStorage.getItem(CLE_SIGN) || "[]"); } catch (e) { return []; }
+      }
+      function ecrireSignets(l) {
+        try { localStorage.setItem(CLE_SIGN, JSON.stringify(l.slice(0, 12))); } catch (e) {}
+      }
+      var tuile = document.createElement("div");
+      tuile.id = "sti-pan-signets-tuile";
+      tuile.style.cssText = "margin-top:7px;padding:7px 9px;border:1px dashed rgba(35,32,26,.25);border-radius:12px;background:rgba(255,255,255,.45)";
+      var titre = document.createElement("div");
+      titre.style.cssText = "display:flex;justify-content:space-between;align-items:center;gap:6px";
+      var lbl = document.createElement("span");
+      lbl.textContent = "📌 Mes pages";
+      lbl.style.cssText = "font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;color:#7a6f5d";
+      var btnAdd = document.createElement("button");
+      btnAdd.type = "button";
+      btnAdd.textContent = "＋ Épingler cette page";
+      btnAdd.style.cssText = "border:1px solid rgba(35,32,26,.25);background:#f4511e;color:#fff;border-radius:999px;padding:3px 10px;font-size:10px;font-weight:900;cursor:pointer";
+      titre.appendChild(lbl); titre.appendChild(btnAdd);
+      tuile.appendChild(titre);
+      var liste = document.createElement("div");
+      liste.id = "sti-pan-signets";
+      liste.style.cssText = "margin-top:5px;display:flex;flex-direction:column;gap:3px";
+      tuile.appendChild(liste);
+      function rendreListe() {
+        var sg = lireSignets();
+        if (!sg.length) {
+          liste.innerHTML = "<div id='sti-pan-signets-vide' style='font-size:10.5px;color:#7a6f5d;font-weight:700'>Aucune page épinglée — enregistrez vos chapitres à revoir et retrouvez-les ici, même hors connexion.</div>";
+          return;
+        }
+        liste.innerHTML = sg.map(function (s, i) {
+          return "<div style='display:flex;align-items:center;gap:6px'>" +
+            "<a href='" + esc(s.u) + "' style='flex:1;min-width:0;font-size:11px;font-weight:800;color:#23201a;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>▸ " + esc(s.t) + "</a>" +
+            "<button type='button' data-ret='" + i + "' title='Retirer cette page' style='border:none;background:none;color:#c0392b;font-size:11px;font-weight:900;cursor:pointer;padding:0 3px'>✕</button></div>";
+        }).join("");
+        var btns = liste.querySelectorAll("[data-ret]");
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].addEventListener("click", function (ev) {
+            var idx = parseInt(ev.currentTarget.getAttribute("data-ret"), 10);
+            var l2 = lireSignets();
+            l2.splice(idx, 1);
+            ecrireSignets(l2);
+            rendreListe();
+          });
+        }
+      }
+      rendreListe();
+      btnAdd.addEventListener("click", function () {
+        var l3 = lireSignets();
+        var u = location.pathname + location.search + location.hash;
+        var t2 = String(document.title || u).replace(/\s*[\u2014\u2013-]\s*STI.*$/i, "").trim() || u;
+        var deja = -1;
+        for (var i = 0; i < l3.length; i++) { if (l3[i].u === u) deja = i; }
+        if (deja !== -1) l3.splice(deja, 1);
+        l3.unshift({ t: t2.slice(0, 70), u: u, ts: Date.now() });
+        ecrireSignets(l3);
+        rendreListe();
+        btnAdd.textContent = "✓ Épinglée";
+        setTimeout(function () { btnAdd.textContent = "＋ Épingler cette page"; }, 1400);
+      });
+      var btnVeil = document.createElement("button");
+      btnVeil.type = "button";
+      function libelleVeil(on) { btnVeil.textContent = on ? "🌙 Veilleuse : activée" : "☀️ Veilleuse : désactivée"; }
+      var etatV = false;
+      try { etatV = localStorage.getItem(CLE_VEIL) === "1"; } catch (e) {}
+      libelleVeil(etatV);
+      btnVeil.style.cssText = "margin-top:5px;width:100%;border:1px solid rgba(35,32,26,.2);background:rgba(255,196,120,.25);color:#23201a;border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:900;cursor:pointer";
+      tuile.appendChild(btnVeil);
+      btnVeil.addEventListener("click", function () {
+        var on2 = false;
+        try { on2 = localStorage.getItem(CLE_VEIL) !== "1"; localStorage.setItem(CLE_VEIL, on2 ? "1" : "0"); } catch (e) { return; }
+        try { window.__stiAppliquerVeilleuse(); } catch (e) {}
+        libelleVeil(on2);
+      });
+      pan.insertBefore(tuile, badgeVerRoue);
+    })();
 
     (function majVersionRoueCandidat() {
       /* v350 : la roue affiche le numero de MISE A JOUR (UPDATE_ID de sw.js : v349, v350...),
