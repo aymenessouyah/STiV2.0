@@ -2201,6 +2201,50 @@
               sauterChapitreModale(cur + 1);
             });
           }
+          /* v391 : reprise cloud — puce « Reprendre à mm:ss » dans la modale vidéo */
+          (function () {
+            var slugRep = overlay.getAttribute("data-slug") || "";
+            if (!slugRep || !mVid) return;
+            var cleRep = "video:" + slugRep;
+            var posee = false;
+            function retirerPuce() {
+              try {
+                var o = (mCard || overlay).querySelector("[data-sti-reprise]");
+                if (o && o.parentNode) o.parentNode.removeChild(o);
+              } catch (eX) {}
+            }
+            function afficherPuceReprise() {
+              if (posee) return;
+              posee = true;
+              try {
+                var mapRep = window.lireProgressionMediaSTI ? window.lireProgressionMediaSTI() : {};
+                var eRep = mapRep[cleRep];
+                if (!eRep || eRep.done) return;
+                var secRep = Math.round(Number(eRep.sec) || 0);
+                var durRep = Number(mVid.duration) || Number(eRep.dur) || 0;
+                if (secRep < 15 || (durRep > 0 && secRep > durRep - 20)) return;
+                retirerPuce();
+                var mm = Math.floor(secRep / 60), ss = secRep % 60;
+                var puce = document.createElement("button");
+                puce.type = "button";
+                puce.setAttribute("data-sti-reprise", "1");
+                puce.textContent = "⏪ Reprendre à " + (mm < 10 ? "0" + mm : mm) + ":" + (ss < 10 ? "0" + ss : ss);
+                puce.setAttribute("style", "position:absolute;left:12px;bottom:64px;z-index:95;border:1.5px solid #86efac;background:rgba(15,23,42,.92);color:#e2e8f0;border-radius:999px;padding:7px 14px;font:800 12.5px system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4)");
+                var hote = mCard || overlay;
+                try { if (window.getComputedStyle(hote).position === "static") hote.style.position = "relative"; } catch (eP) {}
+                hote.appendChild(puce);
+                var minuterie = setTimeout(retirerPuce, 14000);
+                puce.addEventListener("click", function (evRep) {
+                  if (evRep && evRep.stopPropagation) evRep.stopPropagation();
+                  clearTimeout(minuterie);
+                  try { mVid.currentTime = secRep; } catch (eS) {}
+                  retirerPuce();
+                });
+              } catch (eR) {}
+            }
+            mVid.addEventListener("loadedmetadata", afficherPuceReprise);
+            mVid.addEventListener("play", retirerPuce);
+          })();
           if (mVid) {
             mVid.addEventListener("timeupdate", function () {
               var slugAct = overlay.getAttribute("data-slug") || "";

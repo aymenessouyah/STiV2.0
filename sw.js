@@ -6,15 +6,16 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v390-signets-veilleuse";
+var UPDATE_ID = "v391-reprise-multi-appareils";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./glossaire.html", revision: "signets-veilleuse-v390" },
-  { url: "./nouveautes.html", revision: "signets-veilleuse-v390" },
-  { url: "./revision-erreurs.html", revision: "signets-veilleuse-v390" },
-  { url: "./livre-smart.html", revision: "signets-veilleuse-v390" },
-  { url: "./index.html", revision: "signets-veilleuse-v390" },
+  { url: "./assets/js/sync-progressions.js", revision: "sync-general-v391" },
+  { url: "./glossaire.html", revision: "sync-general-v391" },
+  { url: "./nouveautes.html", revision: "sync-general-v391" },
+  { url: "./revision-erreurs.html", revision: "sync-general-v391" },
+  { url: "./livre-smart.html", revision: "sync-general-v391" },
+  { url: "./index.html", revision: "sync-general-v391" },
   { url: "./assets/js/retour-livre-smart.js", revision: "retour-intelligent-v380" },
   { url: "./assets/js/acces.js", revision: "signets-veilleuse-v390" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },

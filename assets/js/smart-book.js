@@ -141,6 +141,12 @@
     let item = items.find(function (entry) { return entry.page === page; });
     if (item) showResult(item, 'PAGE ' + item.page + (item.kind === 'recap' ? ' · TABLEAU RÉCAPITULATIF' : ' · FICHE ' + item.fiche));
     else showResult({ titre: page === 1 ? 'Couverture du manuel' : 'Sommaire et mode d’emploi', url: publicBase.href + 'index.html#cours' }, 'PAGE ' + page + ' · ACCUEIL DES COURS');
+    /* v391 : mémorise la dernière page lue par manuel (synchronisée entre appareils par sync-progressions.js) */
+    try {
+      let sauve = JSON.parse(localStorage.getItem('sti-livre-page-v1') || '{}') || {};
+      sauve[bookId] = page;
+      localStorage.setItem('sti-livre-page-v1', JSON.stringify(sauve));
+    } catch (_) {}
     return true;
   }
   async function decoded(text) {
@@ -254,7 +260,17 @@
     if ('BarcodeDetector' in window) { try { let formats = await window.BarcodeDetector.getSupportedFormats(); if (formats.includes('qr_code')) detector = new window.BarcodeDetector({ formats: ['qr_code'] }); } catch (_) {} }
     let query = new URLSearchParams(location.search), id = query.get('livre') || '4si-2026', raw = query.get('page');
     if (!Object.hasOwn(books, id)) id = '4si-2026';
-    if (await loadBook(id) && raw !== null) { $('page-number').value = raw; pageResult(Number(raw)); }
+    if (await loadBook(id)) {
+      if (raw !== null) { $('page-number').value = raw; pageResult(Number(raw)); }
+      else {
+        /* v391 : reprise automatique à la dernière page lue (tous appareils) */
+        try {
+          let sauveInit = JSON.parse(localStorage.getItem('sti-livre-page-v1') || '{}') || {};
+          let pg = Number(sauveInit[id]);
+          if (pg >= 1 && pg <= books[id].pages) { $('page-number').value = pg; pageResult(pg); message('📖 Reprise à la page ' + pg + ' — votre dernière lecture, retrouvée sur cet appareil.'); }
+        } catch (_) {}
+      }
+    }
   }
   init();
 })();
