@@ -50,7 +50,10 @@
     <h1>📖 Glossaire FR · EN · AR — Termes techniques STI</h1>
     <div class="nb">HTML5 · CSS3 · JavaScript · SQL · PHP — Cherchez en français, en anglais ou en arabe</div>
   </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button type="button" id="btn-recherche-globale" class="btn">🔍 Recherche globale (Ctrl+K)</button>
   <a class="btn" href="index.html">← Retour à l'accueil</a>
+  </div>
 </header>
 <main>
   <div class="recherche">
@@ -178,6 +181,7 @@ function afficher() {
   vide.style.display = n ? "none" : "block";
 }
 document.getElementById("q").addEventListener("input", afficher);
+(function(){try{var mm=decodeURIComponent(location.hash||"").match(/^#mot=(.+)$/);if(mm){var qel=document.getElementById("q");qel.value=mm[1];afficher();setTimeout(function(){try{qel.focus();}catch(e){}},80);}var gb=document.getElementById("btn-recherche-globale");if(gb)gb.addEventListener("click",function(){try{window.ouvrirRechercheGlobaleSTI("");}catch(e){}});}catch(e){}})();
 document.querySelectorAll(".filtre").forEach(function (b) {
   b.addEventListener("click", function () {
     document.querySelectorAll(".filtre").forEach(function (x) { x.classList.remove("actif"); });
@@ -190,6 +194,6 @@ afficher();
 </script>
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=256"></script>
-<script src="assets/js/acces.js?v=378"></script>
+<script src="assets/js/acces.js?v=389"></script>
 </body>
 </html>

@@ -6,16 +6,17 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v388-palette-ctrlk-annulation";
+var UPDATE_ID = "v389-recherche-globale-etendue";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./glossaire.html", revision: "roue-pages-v378" },
-  { url: "./nouveautes.html", revision: "roue-pages-v378" },
-  { url: "./revision-erreurs.html", revision: "roue-pages-v378" },
-  { url: "./livre-smart.html", revision: "retour-intelligent-v380" },
+  { url: "./glossaire.html", revision: "index-recherche-v389" },
+  { url: "./nouveautes.html", revision: "index-recherche-v389" },
+  { url: "./revision-erreurs.html", revision: "index-recherche-v389" },
+  { url: "./livre-smart.html", revision: "index-recherche-v389" },
+  { url: "./index.html", revision: "index-recherche-v389" },
   { url: "./assets/js/retour-livre-smart.js", revision: "retour-intelligent-v380" },
-  { url: "./assets/js/acces.js", revision: "version-badge-v374" },
+  { url: "./assets/js/acces.js", revision: "index-recherche-v389" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },
   { url: "./manifest.webmanifest", revision: "pwa-install-v371" },
   { url: "./glossaire.html", revision: "glossaire-arabe-patch-v373" },
