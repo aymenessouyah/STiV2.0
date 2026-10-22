@@ -1698,6 +1698,18 @@
     @media (max-width:760px){.sti-groupe-txt i{display:none}.sti-groupe-nav{gap:5px}.sti-groupe-puce{font-size:11px;padding:4px 10px}}
     @media print{.sti-groupe-nav,.sti-groupe-haut{display:none!important}}
   </style>
+  <style id="style-tiroir-v381">
+    @media(min-width:1181px){
+      .barre-util .btn-util.mob-extra{display:none}
+      body.mob-outils-ouverts .barre-util .btn-util.mob-extra{display:inline-flex}
+      .barre-util .only-mob-flex{display:inline-flex}
+      body.mob-outils-ouverts .barre-util .sys-extra-item{display:none!important}
+      body.mob-outils-ouverts .barre-util.systeme-ouvert .sys-extra-item{display:flex!important}
+      #btn-accueil-site{font-size:14px!important;padding:10px 18px!important;font-weight:900;box-shadow:0 2px 0 rgba(35,32,26,.18),0 6px 16px -6px rgba(13,21,38,.35)}
+      #btn-accueil-site .btn-util-glyph{font-size:19px!important;width:auto!important;height:auto!important;flex-basis:auto!important}
+    }
+    @media print{#btn-mob-toggle-outils{display:none!important}.barre-util .btn-util{display:none!important}#btn-accueil-site,#btn-messenger-top,#btn-mob-toggle-outils{display:inline-flex!important}}
+  </style>
 </head>
 <body class="cockpit-airbus">
 
@@ -1718,13 +1730,13 @@
       </div>
     </div>
     <div class="barre-util">
-        <button class="btn-util" id="btn-bascule-theme" type="button" title="Basculer entre le mode Clair et le mode Sombre du tableau de bord — choix memorise">🎨 Mode : Clair</button>
       <!-- 1. Accès directs prioritaires avec pastilles en temps réel -->
       <a class="btn-util" id="btn-accueil-site" href="index.html" title="Retourner à l'accueil du site STI"><span class="btn-util-glyph" aria-hidden="true">⌂</span> <span class="lbl-pc">Accueil au site</span><span class="lbl-mob">Accueil au site</span></a>
       <button class="btn-util" id="btn-messenger-top" type="button" title="Ouvrir la messagerie directe Messenger STI avec les candidats" style="background:#fff3e0;border-color:#f4511e;color:#d84315"><span class="btn-util-glyph" aria-hidden="true">◇</span> <span class="lbl-pc">Messenger</span><span class="lbl-mob">Chat</span> <span id="badge-msn-top" style="display:none;background:#ffd54f;color:#23201a;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util" id="btn-flash-top" type="button" title="Lancer une Question Flash / Sondage Live en classe" style="background:#fff8e1;border-color:#d97706;color:#b45309"><span class="btn-util-glyph" aria-hidden="true">ϟ</span> <span class="lbl-pc">Question Flash</span><span class="lbl-mob">Flash</span></button>
-      <button class="btn-util" id="btn-appel-top" type="button" title="Feuille d'appel &amp; présence automatique du jour par classe (Présents vs Absents)" style="background:#e3f6e8;border-color:#177245;color:#177245"><span class="btn-util-glyph" aria-hidden="true">▤</span> <span class="lbl-pc">Appel / Présence</span><span class="lbl-mob">Appel</span></button>
-      <button class="btn-util" id="btn-securite-top" type="button" title="Centre de Sécurité : Mode Examen / Verrouillage, Sessions Supabase, Éjection F12 &amp; Journal d'alertes" style="background:#fde2e6;border-color:#c0392b;color:#a61b29"><span class="btn-util-glyph" aria-hidden="true">◆</span> <span class="lbl-pc">Sécurité</span><span class="lbl-mob">Sécu</span> <span id="badge-sec-top" style="display:none;background:#c0392b;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
+        <button class="btn-util mob-extra" id="btn-bascule-theme" type="button" title="Basculer entre le mode Clair et le mode Sombre du tableau de bord — choix memorise">🎨 Mode : Clair</button>
+      <button class="btn-util mob-extra" id="btn-flash-top" type="button" title="Lancer une Question Flash / Sondage Live en classe" style="background:#fff8e1;border-color:#d97706;color:#b45309"><span class="btn-util-glyph" aria-hidden="true">ϟ</span> <span class="lbl-pc">Question Flash</span><span class="lbl-mob">Flash</span></button>
+      <button class="btn-util mob-extra" id="btn-appel-top" type="button" title="Feuille d'appel &amp; présence automatique du jour par classe (Présents vs Absents)" style="background:#e3f6e8;border-color:#177245;color:#177245"><span class="btn-util-glyph" aria-hidden="true">▤</span> <span class="lbl-pc">Appel / Présence</span><span class="lbl-mob">Appel</span></button>
+      <button class="btn-util mob-extra" id="btn-securite-top" type="button" title="Centre de Sécurité : Mode Examen / Verrouillage, Sessions Supabase, Éjection F12 &amp; Journal d'alertes" style="background:#fde2e6;border-color:#c0392b;color:#a61b29"><span class="btn-util-glyph" aria-hidden="true">◆</span> <span class="lbl-pc">Sécurité</span><span class="lbl-mob">Sécu</span> <span id="badge-sec-top" style="display:none;background:#c0392b;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
       <button class="btn-util mob-extra" id="btn-mains-top" type="button" title="File d'attente des élèves ayant levé la main pour demander de l'aide en TP" style="background:#ede9fe;border-color:#6d28d9;color:#6d28d9"><span class="btn-util-glyph" aria-hidden="true">△</span> <span class="lbl-pc">Mains levées</span><span class="lbl-mob">Aide</span> <span id="badge-mains-top" style="display:none;background:#6d28d9;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
       <button class="btn-util mob-extra" id="btn-palmares-top" type="button" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)" style="background:linear-gradient(120deg,#fff3b0,#ffd54f);border-color:#23201a;color:#6d4c00"><span class="btn-util-glyph" aria-hidden="true">★</span> <span class="lbl-pc">Palmarès</span><span class="lbl-mob">Top 3</span></button>
       <button class="btn-util mob-extra" id="btn-refresh" type="button" title="Rafraîchir immédiatement toutes les données"><span class="btn-util-glyph" aria-hidden="true">↻</span> <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
@@ -1747,7 +1759,7 @@
       <button id="btn-badges-labo-top" type="button" hidden aria-hidden="true"></button>
 
       <button class="btn-util logout mob-extra" id="btn-logout" type="button"><span class="btn-util-glyph" aria-hidden="true">■</span> <span class="lbl-pc">Déconnexion</span><span class="lbl-mob">Sortir</span></button>
-      <button class="btn-util only-mob-flex" id="btn-mob-toggle-outils" type="button"><span class="btn-util-glyph" aria-hidden="true">▦</span> Tous les outils &amp; actions (14) ▾</button>
+      <button class="btn-util only-mob-flex" id="btn-mob-toggle-outils" type="button" title="Afficher ou masquer tous les outils et actions regroups"><span class="btn-util-glyph" aria-hidden="true">🧰</span> Tous les outils &amp; actions ▾</button>
     </div>
   </header>
 
@@ -4616,7 +4628,7 @@
     /* Ergonomie Mobile : tiroir Outils & Actions, tiroir Filtres avancés et Barre de navigation basse */
     var btnMobOutils = document.getElementById("btn-mob-toggle-outils");
     var mobNavOutils = document.getElementById("mob-nav-outils");
-    var nbActionsDashboard = document.querySelectorAll("#grille-actions-principales [data-pole-item]").length;
+    var nbActionsDashboard = document.querySelectorAll(".barre-util .btn-util.mob-extra:not(#btn-mob-toggle-outils):not([hidden])").length;
     function basculerTiroirOutilsMob(forcerOuvert) {
       var ouv = typeof forcerOuvert === "boolean"
         ? forcerOuvert
@@ -4632,6 +4644,8 @@
     if (btnMobOutils) {
       btnMobOutils.addEventListener("click", function () { basculerTiroirOutilsMob(); });
     }
+    /* v381 : le nombre est affiche des le chargement */
+    try { basculerTiroirOutilsMob(document.body.classList.contains("mob-outils-ouverts")); } catch (eI) {}
     if (mobNavOutils) {
       mobNavOutils.addEventListener("click", function () {
         var vaOuvrir = !document.body.classList.contains("mob-outils-ouverts");
