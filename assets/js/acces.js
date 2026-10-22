@@ -1967,11 +1967,24 @@
       ".sti-pan button:active{transform:translateY(0) scale(.98)}" +
       ".sti-pan button:focus-visible{outline:2px solid #f4511e;outline-offset:2px}" +
       ".sti-pan button.sti-tuile::before{content:attr(data-ic);flex:0 0 auto;width:25px;height:25px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:13.5px;line-height:1;background:var(--sti-ic-bg,rgba(35,32,26,.08));box-shadow:inset 0 0 0 1px rgba(35,32,26,.06)}" +
+      ".sti-roue-wrap.sti-theme-sombre .sti-pan{background:rgba(13,21,38,.88)!important;border-color:rgba(255,255,255,.14)!important;outline-color:rgba(255,255,255,.05)!important;color:#e8eef7!important;box-shadow:0 28px 64px -12px rgba(13,21,38,.6),0 4px 18px rgba(13,21,38,.3)!important}" +
+      ".sti-roue-wrap.sti-theme-sombre #sti-pan-lycee,.sti-roue-wrap.sti-theme-sombre #sti-pan-version-foot{color:#8fa3c4!important}" +
+      ".sti-roue-wrap.sti-theme-sombre #sti-pan-version-foot{border-top-color:rgba(255,255,255,.12)!important}" +
+      ".sti-roue-wrap.sti-theme-sombre #sti-pan-close-x,.sti-roue-wrap.sti-theme-sombre #sti-pan-theme{background:rgba(255,255,255,.08)!important;color:#e8eef7!important;border-color:rgba(255,255,255,.18)!important}" +
+      ".sti-roue-wrap.sti-theme-sombre div[style*=\"color:#23201a\"]{color:#e8eef7!important}" +
+      ".sti-roue-wrap.sti-theme-sombre #sti-ma-duree-sem{color:#5eead4!important}" +
+      ".sti-roue-wrap.sti-theme-sombre #sti-pan-prog-media [style*=\"color:#475569\"]{color:#a9bcd8!important}" +
+      ".sti-roue-wrap.sti-theme-sombre [style*=\"text-transform:uppercase\"]{color:#8fa3c4!important}" +
+      ".sti-roue-wrap.sti-theme-sombre #sti-pan-prog-track{background:rgba(255,255,255,.14)!important}" +
+      ".sti-roue-wrap.sti-theme-sombre #sti-pan-labos{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.10)!important}" +
       "@media (prefers-reduced-motion: reduce){.sti-roue,.sti-wrap,.sti-pan{transition:none!important;animation:none!important}}";
     document.head.appendChild(st);
 
+    var themeRoueSombre = false;
+    try { themeRoueSombre = localStorage.getItem("sti-roue-theme") === "sombre"; } catch (e) {}
     var wrap = document.createElement("div");
     wrap.id = "sti-roue-wrap";
+    if (themeRoueSombre) wrap.classList.add("sti-theme-sombre");
     wrap.className = "sti-no-print";
     wrap.style.cssText = "position:fixed;right:10px;top:50%;transform:translateY(-50%);z-index:2147483646;display:flex;align-items:center;";
 
@@ -2059,7 +2072,8 @@
 
     pan.innerHTML =
       "<div style='display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px'>" +
-        "<button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1px solid rgba(35,32,26,.18);background:rgba(35,32,26,.06);color:#23201a;border-radius:9px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
+        "<span style='display:flex;gap:5px;align-items:center'><button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1px solid rgba(35,32,26,.18);background:rgba(35,32,26,.06);color:#23201a;border-radius:9px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
+        "<button type='button' id='sti-pan-theme' title='Thème de la roue : clair / sombre' style='border:1px solid rgba(35,32,26,.18);background:rgba(35,32,26,.06);color:#23201a;border-radius:9px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer'>🌙</button></span>" +
         "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:none;border-radius:999px;padding:2px 9px;font-size:10px;font-weight:900;box-shadow:0 3px 10px rgba(180,120,0,.35)'>👑 GOLD</span>" +
           "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:none;border-radius:999px;padding:2px 8px;box-shadow:0 3px 10px rgba(13,21,38,.35);font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0." + String((cfg && cfg.VERSION) || 316) + "</span>" +
@@ -2075,7 +2089,7 @@
       "</div>" +
       "<div style='margin-top:6px;padding-top:6px;border-top:1px dashed #e2d5be;text-align:left'>" +
         "<div style='display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:#23201a'><span>📈 Progression</span><span id='sti-pan-prog-pct' style='color:#f4511e'>" + initProgPan.pctProg + "%</span></div>" +
-        "<div style='height:7px;border-radius:99px;background:rgba(35,32,26,.10);margin-top:5px;overflow:hidden'><div id='sti-pan-prog-bar' style='height:100%;width:" + initProgPan.pctProg + "%;border-radius:99px;background:linear-gradient(90deg,#ff8a5c,#f4511e);transition:width .8s cubic-bezier(.22,1,.36,1)'></div></div>" +
+        "<div id='sti-pan-prog-track' style='height:7px;border-radius:99px;background:rgba(35,32,26,.10);margin-top:5px;overflow:hidden'><div id='sti-pan-prog-bar' style='height:100%;width:" + initProgPan.pctProg + "%;border-radius:99px;background:linear-gradient(90deg,#ff8a5c,#f4511e);transition:width .8s cubic-bezier(.22,1,.36,1)'></div></div>" +
         "<div id='sti-pan-prog-badges' style='margin-top:3px'>" + initProgPan.badgesMod + "</div>" +
         "<div id='sti-pan-prog-media'>" + initProgPan.resumeMedia + "</div>" +
         "<div id='sti-ma-duree-sem' style='margin-top:4px;font-size:10.5px;font-weight:800;color:#177245'>⏱️ Cette semaine : calcul…</div>" +
@@ -2197,6 +2211,7 @@
     btnToggleLabos.style.cssText = "display:block;width:100%;margin:8px 0 0;border:none;background:linear-gradient(135deg,#1c2739,#101728);color:#ffd54f;border-radius:12px;padding:9px 10px;font-weight:900;font-size:11.5px;cursor:pointer;text-align:center;box-shadow:0 8px 20px -8px rgba(13,21,38,.55);";
 
     var gridLabos = document.createElement("div");
+    gridLabos.id = "sti-pan-labos";
     gridLabos.style.cssText = "display:none;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;padding:8px;background:rgba(35,32,26,.045);border:1px solid rgba(35,32,26,.08);border-radius:14px;";
 
     btnToggleLabos.addEventListener("click", function (e) {
@@ -2511,9 +2526,28 @@
     var anneauRoue = document.createElement("div");
     anneauRoue.id = "sti-roue-anneau";
     anneauRoue.title = "Progression : " + initProgPan.pctProg + " %";
-    anneauRoue.style.cssText = "width:62px;height:62px;border-radius:50%;padding:4px;box-sizing:border-box;background:conic-gradient(#f4511e 0% " + initProgPan.pctProg + "%, rgba(35,32,26,.15) " + initProgPan.pctProg + "% 100%);box-shadow:0 14px 30px -10px rgba(13,21,38,.35);";
+    anneauRoue.style.cssText = "position:relative;width:62px;height:62px;border-radius:50%;padding:4px;box-sizing:border-box;background:conic-gradient(#f4511e 0% " + initProgPan.pctProg + "%, rgba(35,32,26,.15) " + initProgPan.pctProg + "% 100%);box-shadow:0 14px 30px -10px rgba(13,21,38,.35);";
     anneauRoue.appendChild(btn);
+    var badgeRoue = document.createElement("span");
+    badgeRoue.id = "sti-roue-badge";
+    badgeRoue.title = "Nouveaux fichiers TP du professeur";
+    badgeRoue.style.cssText = "position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#e53935;color:#fff;font:900 11px/20px system-ui,sans-serif;text-align:center;border:2px solid #fff;box-shadow:0 4px 10px rgba(229,57,53,.5);z-index:3;display:none;box-sizing:border-box;";
+    anneauRoue.appendChild(badgeRoue);
     porte.appendChild(anneauRoue);
+    window.__stiMajBadgeRoue = function () {
+      try {
+        var b = document.getElementById("sti-roue-badge");
+        if (!b) return;
+        var ouvertLe = 0;
+        try { ouvertLe = parseInt(localStorage.getItem("sti-coffre-ouvert-le") || "0", 10) || 0; } catch (e) {}
+        var n = 0;
+        if (typeof obtenirFichiersCoffrePourMoi === "function") {
+          obtenirFichiersCoffrePourMoi().forEach(function (it) { if (Number(it.ts || 0) > ouvertLe) n++; });
+        }
+        b.textContent = n > 9 ? "9+" : String(n);
+        b.style.display = n > 0 ? "block" : "none";
+      } catch (e) {}
+    };
 
     var ouvert = false;
     function ouvrir() {
@@ -2558,6 +2592,17 @@
         }
       });
     }
+    var btnThemePan = pan.querySelector("#sti-pan-theme");
+    if (btnThemePan) {
+      btnThemePan.textContent = themeRoueSombre ? "☀️" : "🌙";
+      btnThemePan.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var sombre = wrap.classList.toggle("sti-theme-sombre");
+        try { localStorage.setItem("sti-roue-theme", sombre ? "sombre" : "clair"); } catch (err) {}
+        btnThemePan.textContent = sombre ? "☀️" : "🌙";
+      });
+    }
     var btnCloseXPan = pan.querySelector("#sti-pan-close-x");
     if (btnCloseXPan) {
       btnCloseXPan.addEventListener("click", function (e) {
@@ -2579,6 +2624,11 @@
     wrap.appendChild(pan);
     wrap.appendChild(porte);
     (document.body || document.documentElement).appendChild(wrap);
+    if (typeof window.__stiMajBadgeRoue === "function") {
+      window.__stiMajBadgeRoue();
+      setTimeout(window.__stiMajBadgeRoue, 2000);
+      setTimeout(window.__stiMajBadgeRoue, 5000);
+    }
 
     if (window === window.top) {
       installerBoutonMessengerGlobal(false, user.id, profil.classe || "");
@@ -11960,6 +12010,7 @@
       btnPan.style.background = mesFichiers.length ? "#ffd54f" : "#fef3c7";
       btnPan.style.color = "#23201a";
     }
+    if (typeof window.__stiMajBadgeRoue === "function") window.__stiMajBadgeRoue();
   }
 
   function afficherNotificationNouveauFichierCoffre(item) {
@@ -12042,6 +12093,8 @@
   };
 
   window.ouvrirCoffreTpEleveSTI = function () {
+    try { localStorage.setItem("sti-coffre-ouvert-le", String(Date.now())); } catch (e) {}
+    if (typeof window.__stiMajBadgeRoue === "function") window.__stiMajBadgeRoue();
     var ex = document.getElementById("sti-modal-coffre-eleve");
     if (ex) { ex.remove(); return; }
 
