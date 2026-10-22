@@ -10,7 +10,8 @@ var UPDATE_ID = "v358-quiz-sync";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./assets/js/acces.js", revision: "pwa-install-v371" },
+  { url: "./assets/js/acces.js", revision: "sombre-site-v372" },
+  { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },
   { url: "./manifest.webmanifest", revision: "pwa-install-v371" },
   { url: "./glossaire.html", revision: "glossaire-badge-en-v349" },
   { url: "./assets/js/graphiques-activite.js", revision: "glossaire-graphiques-v347" },

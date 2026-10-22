@@ -1,0 +1,104 @@
+/* v372 — Thème sombre UNIVERSEL (site entier, hors pages déjà sombres).
+   Activé par acces.js via html[data-theme='dark'] + html.dark-mode,
+   uniquement quand la page est claire (détection runtime).
+   Le panneau de la roue suit le même état (classe sti-theme-sombre). */
+
+/* 1) Variables racine (index, atelier.css, glossaire…) */
+html[data-theme='dark']{
+  color-scheme:dark;
+  --bg:#0b1220;--surface:#101a2e;--surface-2:#0d1526;
+  --border:#26344f;--border-strong:#35496e;
+  --ink:#e6edf7;--muted:#9fb0cc;
+  --accent:#8b93f8;--accent-2:#b39dfa;--accent-soft:#1b2340;
+  --topbar-bg:rgba(11,18,32,.82);
+  --cream:#0f1728;--paper:#101a2e;--line:#26344f;
+}
+html[data-theme='dark'] body,html.dark-mode body{
+  background:#0b1220!important;
+  background-image:none!important;
+  color:#e6edf7;
+}
+
+/* 2) Cartes et conteneurs en lignes de style (motifs Creme/Gris clairs du site) */
+html[data-theme='dark'] [style*="background:#fff"],
+html[data-theme='dark'] [style*="background: #fff"],
+html[data-theme='dark'] [style*="background:#f8fafc"],html[data-theme='dark'] [style*="background: #f8fafc"],
+html[data-theme='dark'] [style*="background:#f8f9fd"],html[data-theme='dark'] [style*="background:#f4f5fa"],
+html[data-theme='dark'] [style*="background:#f1f5f9"],html[data-theme='dark'] [style*="background:#faf7ef"],
+html[data-theme='dark'] [style*="background:#fdf6e3"],html[data-theme='dark'] [style*="background:#f6f8fa"]{
+  background:#131e33!important;
+}
+html[data-theme='dark'] [style*="background:#f9f1e3"],
+html[data-theme='dark'] [style*="background: #f9f1e3"],
+html[data-theme='dark'] [style*="background:#fff7ec"],
+html[data-theme='dark'] [style*="background:#f3e9d8"],
+html[data-theme='dark'] [style*="background:#fffdf7"],
+html[data-theme='dark'] [style*="background:#fffdf8"],
+html[data-theme='dark'] [style*="background:#fffcf3"],
+html[data-theme='dark'] [style*="background:#fffdf6"]{
+  background:#101a2e!important;
+}
+html[data-theme='dark'] [style*="background:rgba(255,255,255"],
+html[data-theme='dark'] [style*="background: rgba(255,255,255"]{
+  background:rgba(255,255,255,.05)!important;
+}
+
+/* 3) Textes sombres → clairs (titres, corps, labels) */
+html[data-theme='dark'] [style*="color:#23201a"],html[data-theme='dark'] [style*="color: #23201a"],
+html[data-theme='dark'] [style*="color:#0f172a"],html[data-theme='dark'] [style*="color:#1e293b"],
+html[data-theme='dark'] [style*="color:#334155"],html[data-theme='dark'] [style*="color:#0f1726"],
+html[data-theme='dark'] [style*="color:#111827"],html[data-theme='dark'] [style*="color:#1f2937"],
+html[data-theme='dark'] [style*="color:#23272f"],html[data-theme='dark'] [style*="color:#2b3446"]{
+  color:#e8eef7!important;
+}
+html[data-theme='dark'] [style*="color:#475569"],html[data-theme='dark'] [style*="color:#64748b"],
+html[data-theme='dark'] [style*="color:#5c6275"],html[data-theme='dark'] [style*="color:#6b7280"],
+html[data-theme='dark'] [style*="color:#7a6f5d"],html[data-theme='dark'] [style*="color:#78716c"],
+html[data-theme='dark'] [style*="color:#555"],html[data-theme='dark'] [style*="color:#666"]{
+  color:#a9bcd8!important;
+}
+
+/* 4) Bordures claires → discret sur fond sombre */
+html[data-theme='dark'] [style*="border:1px solid #ddd"],html[data-theme='dark'] [style*="border:1px solid #e2e8f0"],
+html[data-theme='dark'] [style*="border:1px solid #e5e7eb"],html[data-theme='dark'] [style*="border:1px solid #cbd5e1"],
+html[data-theme='dark'] [style*="border:1px solid #e3e5f0"],html[data-theme='dark'] [style*="border:1px solid #cfc3a9"],
+html[data-theme='dark'] [style*="border:1px solid #e2d5be"],html[data-theme='dark'] [style*="border:1px solid #d2d5e6"],
+html[data-theme='dark'] [style*="border:1px dashed #cfc3a9"],html[data-theme='dark'] [style*="border:1px dashed #e2d5be"]{
+  border-color:rgba(255,255,255,.16)!important;
+}
+
+/* 5) Tables : en-tetes et rayures */
+html[data-theme='dark'] thead th,html[data-theme='dark'] thead td{
+  background:#1a2740!important;color:#e8eef7!important;border-color:rgba(255,255,255,.14)!important;
+}
+html[data-theme='dark'] table th,html[data-theme='dark'] table td{border-color:rgba(255,255,255,.10)!important}
+html[data-theme='dark'] table{border-color:rgba(255,255,255,.14)!important}
+html[data-theme='dark'] tbody tr:nth-child(even) td{background:rgba(255,255,255,.028)!important}
+
+/* 6) Blocs de code : preserve les terminaux déjà sombres, fonce les clairs */
+html[data-theme='dark'] pre:not([style*="background:#0"]):not([style*="background:#1"]):not([style*="background:#2"]):not([style*="background: #0"]):not([style*="background: #1"]):not([style*="background: #2"]){
+  background:#0d1526!important;border:1px solid rgba(255,255,255,.10);border-radius:10px;color:#d7e3f4;
+}
+html[data-theme='dark'] pre code{color:inherit}
+html[data-theme='dark'] blockquote{background:rgba(255,255,255,.045)!important;border-left-color:#f4511e;color:#dbe5f5}
+html[data-theme='dark'] hr{border-color:rgba(255,255,255,.14)}
+
+/* 7) Champs de saisie natifs (sans style) */
+html[data-theme='dark'] input:not([type=button]):not([type=submit]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([style]),
+html[data-theme='dark'] select:not([style]),
+html[data-theme='dark'] textarea:not([style]){
+  background:#0f1728!important;color:#e8eef7!important;border:1px solid rgba(255,255,255,.22);
+}
+html[data-theme='dark'] input::placeholder,html[data-theme='dark'] textarea::placeholder{color:#7487a8!important}
+
+/* 8) Select natif et cases */
+html[data-theme='dark'] select option{background:#101a2e;color:#e8eef7}
+
+/* 9) Ombres portées blanches → ombres douces sur sombre */
+html[data-theme='dark'] [style*="box-shadow:0 10px"],html[data-theme='dark'] [style*="box-shadow:0 6px"],
+html[data-theme='dark'] [style*="box-shadow:0 4px"],html[data-theme='dark'] [style*="box-shadow:0 2px"]{
+  box-shadow:0 4px 16px rgba(0,0,0,.45)!important;
+}
+
+/* 10) Images pleine largeur un peu atténuées sur fond sombre */
+html[data-theme='dark'] .hero img,html[data-theme='dark'] figure img{filter:brightness(.92)}

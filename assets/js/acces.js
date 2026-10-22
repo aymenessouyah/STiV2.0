@@ -90,6 +90,17 @@
     wrap.innerHTML = "";
   };
 
+  /* v372 : le theme sombre est pose avant le premier rendu (anti-flash) */
+  (function () {
+    try {
+      var thDev = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "";
+      if (thDev === "dark" && document.documentElement) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.classList.add("dark-mode");
+      }
+    } catch (ePre) {}
+  })();
+
   var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
     auth: {
       persistSession: true,
@@ -2061,7 +2072,7 @@
     document.head.appendChild(st);
 
     var themeRoueSombre = false;
-    try { themeRoueSombre = localStorage.getItem("sti-roue-theme") === "sombre"; } catch (e) {}
+    try { themeRoueSombre = localStorage.getItem("sti-roue-theme") === "sombre" || localStorage.getItem("sti-theme") === "dark"; } catch (e) {}
     var wrap = document.createElement("div");
     wrap.id = "sti-roue-wrap";
     if (themeRoueSombre) wrap.classList.add("sti-theme-sombre");
@@ -2153,7 +2164,7 @@
     pan.innerHTML =
       "<div style='display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px'>" +
         "<span style='display:flex;gap:5px;align-items:center'><button type='button' id='sti-pan-close-x' title='Fermer le panneau' style='border:1px solid rgba(35,32,26,.18);background:rgba(35,32,26,.06);color:#23201a;border-radius:9px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer'>✕</button>" +
-        "<button type='button' id='sti-pan-theme' title='Thème de la roue : clair / sombre' style='border:1px solid rgba(35,32,26,.18);background:rgba(35,32,26,.06);color:#23201a;border-radius:9px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer'>🌙</button></span>" +
+        "<button type='button' id='sti-pan-theme' title='Thème du site ET de la roue : clair / sombre' style='border:1px solid rgba(35,32,26,.18);background:rgba(35,32,26,.06);color:#23201a;border-radius:9px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer'>🌙</button></span>" +
         "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:none;border-radius:999px;padding:2px 9px;font-size:10px;font-weight:900;box-shadow:0 3px 10px rgba(180,120,0,.35)'>👑 GOLD</span>" +
           "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:none;border-radius:999px;padding:2px 8px;box-shadow:0 3px 10px rgba(13,21,38,.35);font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0." + String((cfg && cfg.VERSION) || 316) + "</span>" +
@@ -2680,8 +2691,13 @@
       btnThemePan.addEventListener("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
-        var sombre = wrap.classList.toggle("sti-theme-sombre");
-        try { localStorage.setItem("sti-roue-theme", sombre ? "sombre" : "clair"); } catch (err) {}
+        var sombre = !document.documentElement.classList.contains("dark-mode");
+        if (window.__stiThemeGlobalAppliquer) {
+          window.__stiThemeGlobalAppliquer(sombre ? "dark" : "light");
+        } else {
+          wrap.classList.toggle("sti-theme-sombre", sombre);
+          try { localStorage.setItem("sti-roue-theme", sombre ? "sombre" : "clair"); } catch (err) {}
+        }
         btnThemePan.textContent = sombre ? "☀️" : "🌙";
       });
     }
@@ -13693,15 +13709,14 @@
       if (!ev || !ev.key) return;
       /* 1. Mode Sombre / Clair synchronisé sur tous les onglets ouverts */
       if (ev.key === "theme" || ev.key === "sti-theme" || ev.key === "sti-sql-theme") {
-        var nvTheme = ev.newValue || "light";
-        var isDark = nvTheme === "dark";
-        document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-        document.documentElement.classList.toggle("dark-mode", isDark);
-        if (document.body) document.body.classList.toggle("dark-mode", isDark);
+        if (window.__stiThemeGlobalAppliquer) {
+          window.__stiThemeGlobalAppliquer(ev.newValue || "light");
+        }
+        var nvDark = (ev.newValue === "dark");
         var btnTh = document.getElementById("theme-toggle") || document.querySelector("[data-theme-toggle]");
         if (btnTh && btnTh.textContent) {
-          if (isDark && btnTh.textContent.indexOf("🌙") !== -1) btnTh.textContent = btnTh.textContent.replace("🌙", "☀️");
-          else if (!isDark && btnTh.textContent.indexOf("☀️") !== -1) btnTh.textContent = btnTh.textContent.replace("☀️", "🌙");
+          if (nvDark && btnTh.textContent.indexOf("🌙") !== -1) btnTh.textContent = btnTh.textContent.replace("🌙", "☀️");
+          else if (!nvDark && btnTh.textContent.indexOf("☀️") !== -1) btnTh.textContent = btnTh.textContent.replace("☀️", "🌙");
         }
         return;
       }
@@ -13838,19 +13853,67 @@
       document.head.appendChild(stDark);
     }
 
+    function pageClairePourSombreV372() {
+      try {
+        var path = (location.pathname || "") + " " + (location.search || "");
+        if (/\/quiz\/|\/tests\/|\/documents\/(annexes|complet)\//.test(path)) return false;
+        if (/livre-smart\.html$/i.test(path)) return false;
+        var el = document.body || document.documentElement;
+        var cs = getComputedStyle(el);
+        var m = (cs.backgroundColor || "").match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+        if (!m) return true;
+        if (m[4] !== undefined && parseFloat(m[4]) === 0) {
+          cs = getComputedStyle(document.documentElement);
+          m = (cs.backgroundColor || "").match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+          if (!m) return true;
+          if (m[4] !== undefined && parseFloat(m[4]) === 0) return true;
+        }
+        var lum = (0.2126 * parseInt(m[1], 10) + 0.7152 * parseInt(m[2], 10) + 0.0722 * parseInt(m[3], 10)) / 255;
+        return lum > 0.55;
+      } catch (e) { return true; }
+    }
+    function majLienSombreV372(on) {
+      var lnk = document.getElementById("sti-sombre-css-v372");
+      if (on && !lnk) {
+        lnk = document.createElement("link");
+        lnk.id = "sti-sombre-css-v372";
+        lnk.rel = "stylesheet";
+        lnk.href = cfg.RACINE + "assets/css/sombre-universel-v372.css?v=372";
+        document.head.appendChild(lnk);
+      } else if (!on && lnk) {
+        lnk.parentNode.removeChild(lnk);
+      }
+    }
     function appliquerThemeGlobal(th) {
       var isDark = (th === "dark");
       document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
       document.documentElement.classList.toggle("dark-mode", isDark);
       if (document.body) document.body.classList.toggle("dark-mode", isDark);
+      try { majLienSombreV372(isDark && pageClairePourSombreV372()); } catch (eC) {}
+      try {
+        localStorage.setItem("sti-theme", isDark ? "dark" : "light");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        localStorage.setItem("sti-roue-theme", isDark ? "sombre" : "clair");
+      } catch (eT) {}
+      /* v372 : la roue suit le theme du site (et inversement) */
+      try {
+        var wr = document.querySelector(".sti-roue-wrap");
+        if (wr) wr.classList.toggle("sti-theme-sombre", isDark);
+        var btPan = document.getElementById("sti-pan-theme");
+        if (btPan) btPan.textContent = isDark ? "☀️" : "🌙";
+      } catch (eR) {}
       var bUniv = document.getElementById("sti-universal-theme-btn");
       if (bUniv) {
         bUniv.innerHTML = isDark ? "☀️ Mode Clair" : "🌙 Mode Sombre";
       }
     }
+    window.__stiThemeGlobalAppliquer = function (th) { try { appliquerThemeGlobal(th); } catch (e) {} };
 
     var sauvTh = "";
     try { sauvTh = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || ""; } catch (e) {}
+    if (sauvTh !== "dark" && sauvTh !== "light") {
+      try { sauvTh = localStorage.getItem("sti-roue-theme") === "sombre" ? "dark" : "light"; } catch (eL) {}
+    }
     if (sauvTh === "dark" || sauvTh === "light") {
       appliquerThemeGlobal(sauvTh);
     }
