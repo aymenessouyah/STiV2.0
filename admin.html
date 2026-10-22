@@ -1698,11 +1698,12 @@
     @media (max-width:760px){.sti-groupe-txt i{display:none}.sti-groupe-nav{gap:5px}.sti-groupe-puce{font-size:11px;padding:4px 10px}}
     @media print{.sti-groupe-nav,.sti-groupe-haut{display:none!important}}
   </style>
-  <style id="style-tiroir-v381">
-    @media(min-width:1181px){
-      .barre-util .btn-util.mob-extra{display:none}
-      body.mob-outils-ouverts .barre-util .btn-util.mob-extra{display:inline-flex}
+  <style id="style-tiroir-v382">
+    @media(min-width:769px){
+      .barre-util .btn-util.mob-extra{display:none!important}
+      body.mob-outils-ouverts .barre-util .btn-util.mob-extra{display:inline-flex!important}
       .barre-util .only-mob-flex{display:inline-flex}
+      body:not(.mob-outils-ouverts) .barre-util .sys-extra-item{display:none!important}
       body.mob-outils-ouverts .barre-util .sys-extra-item{display:none!important}
       body.mob-outils-ouverts .barre-util.systeme-ouvert .sys-extra-item{display:flex!important}
       #btn-accueil-site{font-size:14px!important;padding:10px 18px!important;font-weight:900;box-shadow:0 2px 0 rgba(35,32,26,.18),0 6px 16px -6px rgba(13,21,38,.35)}
