@@ -1,4 +1,4 @@
-/* ═══ STI — Admin : détail synchronisé des quiz (v358, vues v363) ═══
+/* ═══ STI — Admin : détail synchronisé des quiz (v358, vues v363, alertes+progression v364) ═══
    Lit la table centrale sti_quiz_parties (chaque partie jouée, tous
    appareils) et affiche, par élève et par quiz : nombre de parties,
    dernier score, meilleur score, pourcentage — avec le détail complet
@@ -182,7 +182,9 @@
       var parties = g.parties.slice().sort(function (x, y) { return new Date(y.cree_le) - new Date(x.cree_le); });
       var meilleur = parties[0], somme = 0;
       parties.forEach(function (l) { somme += pct(l); if (pct(l) > pct(meilleur)) meilleur = l; });
+      var premier = parties[parties.length - 1];
       return { uid: uid, rep: g.rep, parties: parties, nb: parties.length, dernier: parties[0],
+               premier: premier, delta: Math.round((pct(parties[0]) - pct(premier)) * 10) / 10,
                meilleur: meilleur, pctMoyen: Math.round((somme / parties.length) * 10) / 10,
                classe: classeEleve(g.rep) };
     });
@@ -212,6 +214,8 @@
       b.style.color = actif ? "#fffdf7" : "#23201a";
     });
     if (vueActuelle === "jours") zone.innerHTML = vueJours();
+    else if (vueActuelle === "alertes") { zone.innerHTML = vueAlertes(); brancherClasses(zone); brancherNoms(zone); }
+    else if (vueActuelle === "progression") { zone.innerHTML = vueProgression(); brancherClasses(zone); }
     else if (vueActuelle === "top3") { zone.innerHTML = vueTop3(); brancherClasses(zone); }
     else { zone.innerHTML = vueClasses(); brancherClasses(zone); }
     if (classeOuverte) rendreClasse();
@@ -290,6 +294,117 @@
     return h + '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 12px">Classement par % moyen de toutes les parties (départage : nombre de parties). Cliquez sur une classe pour le détail par candidat.</p>';
   }
 
+  function joursDepuis(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return 9999;
+    return Math.floor((Date.now() - d.getTime()) / 86400000);
+  }
+
+  function vueAlertes() {
+    var eleves = agregerEleves(lignesStats());
+    var difficulte = eleves.filter(function (e) { return e.nb >= 2 && e.pctMoyen < 50; })
+      .sort(function (a, b) { return a.pctMoyen - b.pctMoyen; });
+    var inactifs = eleves.filter(function (e) { return joursDepuis(e.dernier.cree_le) >= 7; })
+      .sort(function (a, b) { return joursDepuis(b.dernier.cree_le) - joursDepuis(a.dernier.cree_le); });
+    var joues = {};
+    eleves.forEach(function (e) { joues[e.uid] = 1; });
+    var jamais = Object.keys(profilsParId).map(function (id) { return profilsParId[id]; })
+      .filter(function (pr) {
+        return pr && (pr.classe || "").trim() && !joues[pr.id] &&
+          (pr.email || "").toLowerCase() !== EMAIL_LABO;
+      });
+    var classes = agregerClasses(lignesStats());
+    function idxClasse(nom) {
+      for (var i = 0; i < classes.length; i++) if (classes[i].classe === nom) return i;
+      return -1;
+    }
+    var h = "";
+    /* — en difficulte — */
+    h += '<div style="border:2px solid #c0392b;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:0 0 10px">' +
+      '<strong style="color:#c0392b">🔴 En difficulté (% moyen &lt; 50 %, au moins 2 parties) : ' + difficulte.length + "</strong>";
+    if (difficulte.length) {
+      h += '<div class="table-wrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Parties</th><th>% moyen</th><th>Dernier score</th></tr></thead><tbody>';
+      difficulte.forEach(function (e) {
+        var ci = idxClasse(e.classe);
+        h += '<tr' + (ci >= 0 ? ' data-classe="' + ci + '" style="cursor:pointer" title="Ouvrir la classe"' : "") + ">" +
+          '<td style="font-weight:800">' + esc(nomEleve(e.rep)) + "</td>" +
+          "<td>" + esc(e.classe) + "</td>" +
+          '<td style="text-align:center;font-weight:800">' + e.nb + "</td>" +
+          '<td style="text-align:center;font-weight:900;color:#c0392b">' + e.pctMoyen + " %</td>" +
+          "<td>" + e.dernier.score + "/" + e.dernier.total + " (" + pct(e.dernier) + ' %)<div style="font-size:11px;color:#7a6f5d">' + esc(fmtDate(e.dernier.cree_le)) + "</div></td></tr>";
+      });
+      h += "</tbody></table></div>";
+    } else h += '<p style="font-size:12.5px;color:#177245;margin:6px 0 2px">✅ Aucun élève en difficulté. Bravo !</p>';
+    h += "</div>";
+    /* — inactifs — */
+    h += '<div style="border:2px solid #e67e22;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:0 0 10px">' +
+      '<strong style="color:#b95f06">😴 Inactifs depuis 7 jours ou plus : ' + inactifs.length + "</strong>";
+    if (inactifs.length) {
+      h += '<div class="table-wrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Dernière partie</th><th>Inactivité</th><th>% moyen</th></tr></thead><tbody>';
+      inactifs.forEach(function (e) {
+        var ci = idxClasse(e.classe), j = joursDepuis(e.dernier.cree_le);
+        h += '<tr' + (ci >= 0 ? ' data-classe="' + ci + '" style="cursor:pointer" title="Ouvrir la classe"' : "") + ">" +
+          '<td style="font-weight:800">' + esc(nomEleve(e.rep)) + "</td>" +
+          "<td>" + esc(e.classe) + "</td>" +
+          '<td style="font-size:12px">' + esc(fmtDate(e.dernier.cree_le)) + "</td>" +
+          '<td style="text-align:center;font-weight:900;color:#b95f06">' + (j >= 9000 ? "—" : j + " j") + "</td>" +
+          '<td style="text-align:center">' + e.pctMoyen + " %</td></tr>";
+      });
+      h += "</tbody></table></div>";
+    } else h += '<p style="font-size:12.5px;color:#177245;margin:6px 0 2px">✅ Tous les élèves actifs ont joué cette semaine.</p>';
+    h += "</div>";
+    /* — jamais joue — */
+    h += '<div style="border:2px solid #23201a;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:0 0 12px">' +
+      '<strong>🌱 Inscrits n\'ayant jamais joué : ' + jamais.length + "</strong>";
+    if (jamais.length) {
+      h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">' +
+        jamais.slice(0, 60).map(function (pr) {
+          return '<span data-classe-nom="' + esc(pr.classe) + '" style="cursor:pointer;border:1.5px solid #23201a;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700" title="Ouvrir la classe ' + esc(pr.classe) + '">' +
+            esc(((pr.nom || "") + " " + (pr.prenom || "")).trim() || pr.email || "") +
+            ' <span style="color:#7a6f5d">(' + esc(pr.classe) + ")</span></span>";
+        }).join("") + "</div>" +
+        (jamais.length > 60 ? '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 0">… et ' + (jamais.length - 60) + " autre(s).</p>" : "");
+    } else h += '<p style="font-size:12.5px;color:#177245;margin:6px 0 2px">✅ Tous les inscrits ont au moins une partie.</p>';
+    h += '<p style="font-size:12px;color:#7a6f5d;margin:8px 0 0">Compte labo exclu. Cliquez sur un élève (ou sa classe) pour ouvrir le détail de la classe.</p></div>';
+    return h;
+  }
+
+  function vueProgression() {
+    var eleves = agregerEleves(lignesStats()).filter(function (e) { return e.nb >= 2; });
+    if (!eleves.length) return '<p style="color:#7a6f5d;font-size:12.5px">Pas encore assez de données (il faut au moins 2 parties par élève).</p>';
+    var classes = agregerClasses(lignesStats());
+    function idxClasse(nom) {
+      for (var i = 0; i < classes.length; i++) if (classes[i].classe === nom) return i;
+      return -1;
+    }
+    eleves.sort(function (a, b) { return (b.delta - a.delta) || (b.nb - a.nb); });
+    var prog = eleves.filter(function (e) { return e.delta > 0; }).length;
+    var baisse = eleves.filter(function (e) { return e.delta < 0; }).length;
+    var h = '<p style="font-size:12.5px;margin:0 0 8px">📈 <strong>' + prog + "</strong> en progrès · <strong>" + baisse +
+      "</strong> en baisse · <strong>" + (eleves.length - prog - baisse) + "</strong> stables (écart entre la première et la dernière partie, tous quiz confondus).</p>" +
+      '<div class="table-wrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Parties</th><th>Premier score</th><th>Dernier score</th><th>Écart</th></tr></thead><tbody>';
+    eleves.forEach(function (e) {
+      var ci = idxClasse(e.classe);
+      var couleur = e.delta > 0 ? "#177245" : (e.delta < 0 ? "#c0392b" : "#7a6f5d");
+      var fleche = e.delta > 0 ? "↗" : (e.delta < 0 ? "↘" : "→");
+      h += '<tr' + (ci >= 0 ? ' data-classe="' + ci + '" style="cursor:pointer" title="Ouvrir la classe"' : "") + ">" +
+        '<td style="font-weight:800">' + esc(nomEleve(e.rep)) + "</td>" +
+        "<td>" + esc(e.classe) + "</td>" +
+        '<td style="text-align:center;font-weight:800">' + e.nb + "</td>" +
+        "<td>" + e.premier.score + "/" + e.premier.total + " (" + pct(e.premier) + ' %)<div style="font-size:11px;color:#7a6f5d">' + esc(fmtDate(e.premier.cree_le)) + "</div></td>" +
+        "<td><strong>" + e.dernier.score + "/" + e.dernier.total + "</strong> (" + pct(e.dernier) + ' %)<div style="font-size:11px;color:#7a6f5d">' + esc(fmtDate(e.dernier.cree_le)) + "</div></td>" +
+        '<td style="text-align:center;font-weight:900;color:' + couleur + '">' + fleche + " " + (e.delta > 0 ? "+" : "") + e.delta + " pt</td></tr>";
+    });
+    return h + "</tbody></table></div>" +
+      '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 12px">Cliquez sur une ligne pour ouvrir le détail de sa classe.</p>';
+  }
+
+  function brancherNoms(zone) {
+    zone.querySelectorAll("[data-classe-nom]").forEach(function (el) {
+      el.addEventListener("click", function () { ouvrirClasse(el.getAttribute("data-classe-nom")); });
+    });
+  }
+
   function brancherClasses(zone) {
     zone.querySelectorAll("[data-classe]").forEach(function (el) {
       el.addEventListener("click", function () {
@@ -332,7 +447,8 @@
         '<td style="text-align:center;font-weight:800">' + e.nb + "</td>" +
         "<td><strong>" + e.dernier.score + "/" + e.dernier.total + "</strong> (" + pct(e.dernier) + ' %)<div style="font-size:11px;color:#7a6f5d">' + esc(fmtDate(e.dernier.cree_le)) + "</div></td>" +
         '<td><strong style="color:#177245">' + e.meilleur.score + "/" + e.meilleur.total + "</strong> (" + pct(e.meilleur) + " %)</td>" +
-        '<td style="text-align:center">' + e.pctMoyen + " %</td>" +
+        '<td style="text-align:center">' + e.pctMoyen + " %" +
+          (e.nb > 1 ? '<div style="font-size:11px;font-weight:800;color:' + (e.delta > 0 ? "#177245" : (e.delta < 0 ? "#c0392b" : "#7a6f5d")) + '">Δ ' + (e.delta > 0 ? "+" : "") + e.delta + " pt</div>" : "") + "</td>" +
         '<td style="text-align:center">▸</td></tr>' +
         '<tr class="detail-eleve-classe" id="detail-eleve-' + i + '" style="display:none"><td colspan="6" style="background:#f9f1e3;font-size:12.5px;line-height:1.7"><strong>📋 Parties (' + e.nb + ") :</strong>" + det + "</td></tr>";
     });
