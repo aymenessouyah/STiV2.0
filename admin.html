@@ -1727,6 +1727,59 @@
     html.admin-ardoise .fiche-appel-jour{background:#241f18;color:#f3ead9;border-color:#cbbca2}
     @media print{.fiche-actions,.fiche-appel-jour{display:none!important}}
   </style>
+  <style id="style-lisibilite-v385">
+    /* ---- A) Fiche eleve : inversion complete en mode Sombre (ardoise) ---- */
+    html.admin-ardoise body.cockpit-airbus #contenu-fiche-eleve{color:var(--ad-txt)!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-entete{background:var(--ad-panel-2)!important;border-color:var(--ad-line)!important;color:var(--ad-txt)!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-kpi{background:var(--ad-panel)!important;border-color:var(--ad-line)!important;box-shadow:2px 2px 0 #0f0d0a!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-kpi small{color:var(--ad-mut)!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-kpi b{color:#ffffff!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-kpi span{color:var(--ad-mut)!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-modules-bar{background:var(--ad-panel)!important;border-color:var(--ad-line)!important;color:var(--ad-txt)!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-sec-titre{color:#ffb38a!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-table-wrap{background:var(--ad-panel-2)!important;border-color:var(--ad-line)!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-mini-table{background:transparent!important;color:var(--ad-txt)!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-mini-table th{background:#3a3122!important;color:#ffffff!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-mini-table td{border-bottom-color:#3a3122!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-bottom-bar{background:var(--ad-panel-2)!important;border-top-color:#0f0d0a!important}
+    html.admin-ardoise body.cockpit-airbus .fiche-avatar{box-shadow:2px 2px 0 #0f0d0a!important}
+    html.admin-ardoise body.cockpit-airbus .nom-cliquable-fiche{color:var(--ad-txt)!important}
+    /* ---- B) Styles inline du JS dans TOUTES les fenetres modales ---- */
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="color:#7a6f5d"]{color:var(--ad-mut)!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="color:#5a5244"]{color:#cfc3a8!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="color:#23201a"]{color:var(--ad-txt)!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="color:#177245"]{color:#7fe0a0!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="color:#14532d"]{color:#9be6b8!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="color:#78350f"]{color:#ffd166!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="color:#c0392b"]{color:#ff9c9c!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="color:#d84315"]{color:#ff8a50!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="color:#f4511e"]{color:#ff9d85!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="background:#f3ead9"]{background:#3a3122!important;color:#e8dcc2!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="background:#f9f1e3"]{background:var(--ad-panel)!important;color:var(--ad-txt)!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="background:#fffdf7"]{background:var(--ad-panel)!important;color:var(--ad-txt)!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="background:#ffffff"]{background:var(--ad-panel)!important;color:var(--ad-txt)!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="background:#e3f6e8"]{background:#153722!important;color:#9fe8bd!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="background:#dcfce7"]{background:#14351f!important;color:#9be6b8!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="background:#fef3c7"]{background:#3f3210!important;color:#ffd166!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="background:#fde2e6"]{background:#41171d!important;color:#ff9c9c!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="background:#fff3e0"]{background:#3f2a10!important;color:#ffb27a!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="border:2px solid #23201a"],
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="border:1.5px solid #23201a"],
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="border:2.5px solid #23201a"]{border-color:var(--ad-line)!important}
+    html.admin-ardoise body.cockpit-airbus .modal-fond [style*="border-bottom:2px solid #23201a"]{border-bottom-color:var(--ad-line)!important}
+    /* ---- C) Tables des sections du tableau de bord (hors fenetre) en Sombre ---- */
+    html.admin-ardoise body.cockpit-airbus .carte-section-admin table [style*="color:#7a6f5d"]{color:var(--ad-mut)!important}
+    html.admin-ardoise body.cockpit-airbus .carte-section-admin table [style*="color:#23201a"]{color:var(--ad-txt)!important}
+    html.admin-ardoise body.cockpit-airbus .carte-section-admin table [style*="color:#177245"]{color:#7fe0a0!important}
+    html.admin-ardoise body.cockpit-airbus .carte-section-admin table [style*="color:#d84315"]{color:#ff8a50!important}
+    html.admin-ardoise body.cockpit-airbus .carte-section-admin table [style*="background:#fff3e0"]{background:#3f2a10!important;color:#ffb27a!important}
+    html.admin-ardoise body.cockpit-airbus .carte-section-admin table [style*="background:#e3f6e8"]{background:#153722!important;color:#9fe8bd!important}
+    /* ---- D) Mode Clair : renforcement des beiges trop faibles (pastilles de progression) ---- */
+    html.admin-moderne body.cockpit-airbus .modal-fond [style*="background:#f3ead9"][style*="color:#7a6f5d"]{color:#4f4636!important;border-color:#a99a79!important}
+    html.admin-moderne body.cockpit-airbus .modal-fond [style*="color:#7a6f5d"]{color:#655a45!important}
+    html.admin-moderne body.cockpit-airbus .carte-section-admin table [style*="color:#7a6f5d"]{color:#655a45!important}
+    .modal-fond [style*="font-size:10.5px"]{font-size:11.5px!important}
+  </style>
 </head>
 <body class="cockpit-airbus">
 
