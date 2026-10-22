@@ -101,6 +101,15 @@
     } catch (ePre) {}
   })();
 
+  /* v374 : le numero affiche (roue, en-tete et pied) suit la version en ligne */
+  window.__stiVerAffichee = function () {
+    try {
+      var v = parseInt(localStorage.getItem("sti-version-affichee") || "0", 10) || 0;
+      if (v > 0) return String(v);
+    } catch (e) {}
+    return String((cfg && cfg.VERSION) || 316);
+  };
+
   var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
     auth: {
       persistSession: true,
@@ -2167,7 +2176,7 @@
         "<button type='button' id='sti-pan-theme' title='Thème du site ET de la roue : clair / sombre' style='border:1px solid rgba(35,32,26,.18);background:rgba(35,32,26,.06);color:#23201a;border-radius:9px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer'>🌙</button></span>" +
         "<div style='display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end'>" +
           "<span id='sti-badge-gold' style='display:" + (isG ? "inline-block" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#6d4c00;border:none;border-radius:999px;padding:2px 9px;font-size:10px;font-weight:900;box-shadow:0 3px 10px rgba(180,120,0,.35)'>👑 GOLD</span>" +
-          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:none;border-radius:999px;padding:2px 8px;box-shadow:0 3px 10px rgba(13,21,38,.35);font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0." + String((cfg && cfg.VERSION) || 316) + "</span>" +
+          "<span id='sti-pan-version-head' style='background:#101728;color:#ffd54f;border:none;border-radius:999px;padding:2px 8px;box-shadow:0 3px 10px rgba(13,21,38,.35);font-size:9.5px;font-weight:900;letter-spacing:.3px'>STiV2.0." + window.__stiVerAffichee() + "</span>" +
           "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
         "</div>" +
       "</div>" +
@@ -2552,7 +2561,7 @@
 
     var badgeVerRoue = document.createElement("div");
     badgeVerRoue.id = "sti-pan-version-foot";
-    badgeVerRoue.textContent = "STiV2.0.215";
+    badgeVerRoue.textContent = "STiV2.0." + window.__stiVerAffichee();
     badgeVerRoue.style.cssText = "margin-top:7px;padding-top:6px;border-top:1px solid rgba(35,32,26,.08);text-align:center;font-size:10px;font-weight:900;color:#7a6f5d;letter-spacing:.4px;";
     pan.appendChild(badgeVerRoue);
 
