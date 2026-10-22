@@ -4234,6 +4234,8 @@
       htmlSemaines +
       "<div class='fiche-sec-titre'>🏆 Notes des Quiz &amp; Atelier Bac Pratique (" + stQ.nb + ")</div>" +
       htmlQuiz +
+      "<div class='fiche-sec-titre'>🎯 Parties synchronisées — historique complet des scores en ligne</div>" +
+      "<div class='fiche-parties-sync' id='fiche-parties-sync'><span style='color:#7a6f5d;font-size:11.5px'>⏳ Chargement de l'historique en ligne…</span></div>" +
       "<div class='fiche-sec-titre' id='sec-fiche-connexions'>🕒 Connexions &amp; pages consultées (" + (toutVoirAccesFiche ? sesAcces.length : Math.min(10, sesAcces.length)) + " / " + nbCon + ")</div>" +
       htmlAcces +
       "<div class='fiche-sec-titre'>💬 Messages lus &amp; questions de l'élève (" + msgsEl.length + ")</div>" +
@@ -4244,6 +4246,79 @@
       btnPlusAccFiche.addEventListener("click", function () {
         toutVoirAccesFiche = !toutVoirAccesFiche;
         ouvrirFicheEleve(p, { focusConnexions: true });
+      });
+    }
+
+    /* v384 Dossier eleve : actions directes, appel du jour, parties synchronisees */
+    var elAppelJour = document.createElement("div");
+    elAppelJour.className = "fiche-appel-jour";
+    var jourIsoFiche = dateIsoJourLocale();
+    var accesJourFiche = sesAcces.filter(function (a) { return dateIsoJourLocale(a.debut) === jourIsoFiche; });
+    if (accesJourFiche.length) {
+      var tPremFiche = accesJourFiche.reduce(function (m, a) { var t2 = new Date(a.debut).getTime(); return (t2 && t2 < m) ? t2 : m; }, Infinity);
+      var hPremFiche = isFinite(tPremFiche) ? new Date(tPremFiche).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "—";
+      elAppelJour.innerHTML = "📋 Appel du jour : <b style='color:#177245'>✅ Présent</b> · " + accesJourFiche.length + " session(s) · 1re connexion " + echHtml(hPremFiche);
+      elAppelJour.style.borderColor = "#177245";
+    } else {
+      elAppelJour.innerHTML = "📋 Appel du jour : <b style='color:#c0392b'>⚪ Pas encore connecté</b>";
+      elAppelJour.style.borderColor = "#c0392b";
+    }
+    var barreFicheActions = document.createElement("div");
+    barreFicheActions.className = "fiche-actions";
+    function btnFicheAct(txtF, titF, clsF, fnF) {
+      var bF = document.createElement("button");
+      bF.type = "button";
+      bF.className = "fiche-btn" + (clsF ? " " + clsF : "");
+      bF.textContent = txtF;
+      bF.title = titF;
+      bF.addEventListener("click", function (e) { e.stopPropagation(); fermerFicheEleve(); fnF(); });
+      barreFicheActions.appendChild(bF);
+    }
+    btnFicheAct("✉️ Message", "Envoyer un message personnel à cet élève", "", function () { ouvrirMessageCandidat(p, ""); });
+    btnFicheAct("🔑 Mot de passe", "Générer et enregistrer un mot de passe temporaire", "", function () { nouveauMdp(p); });
+    btnFicheAct("✏️ Identité", "Modifier Nom, Prénom, Lycée ou Classe", "", function () { ouvrirAffectation(p); });
+    if (p.statut === "actif") {
+      btnFicheAct("⏸️ Suspendre", "Passer cet abonné en statut suspendu", "", function () { changeStatut(p, "suspendu"); });
+    } else {
+      btnFicheAct("✅ Activer", "Réactiver cet abonné", "ok", function () { changeStatut(p, "actif"); });
+    }
+    if (p.statut !== "exclu") {
+      btnFicheAct("⛔ Exclure", "Exclure ce candidat (avec confirmation)", "danger", function () { changeStatut(p, "exclu"); });
+    }
+    btnFicheAct(estGold(p) ? "🔒 Retirer Gold" : "👑 Donner Gold", "Basculer le statut Gold (capture et impression)", "", function () { basculerGold(p); });
+    var estPauseFiche = Boolean(cfgSecuriteAdmin.pausesUids && cfgSecuriteAdmin.pausesUids[p.id]);
+    btnFicheAct(estPauseFiche ? "▶️ Reprendre l'écran" : "⏸️ Figer l'écran", "Mettre ou lever la pause d'écran de cet élève", "", function () { basculerPauseEleve(p); });
+    var enteteFicheEl = contenuFicheEleve.querySelector(".fiche-entete");
+    if (enteteFicheEl && enteteFicheEl.parentNode) {
+      enteteFicheEl.parentNode.insertBefore(elAppelJour, enteteFicheEl.nextSibling);
+      enteteFicheEl.parentNode.insertBefore(barreFicheActions, elAppelJour.nextSibling);
+    }
+    var boxPartiesSync = document.getElementById("fiche-parties-sync");
+    if (boxPartiesSync && sb && sb.from) {
+      sb.from("sti_quiz_parties").select("quiz,module,score,total,cree_le").eq("user_id", p.id).order("cree_le", { ascending: false }).limit(60).then(function (r) {
+        if (!eleveFicheActif || eleveFicheActif.id !== p.id) return;
+        var box = document.getElementById("fiche-parties-sync");
+        if (!box) return;
+        if (r && r.error) { box.innerHTML = "<span style='color:#c0392b;font-size:11.5px'>⚠️ Historique indisponible (réseau ?).</span>"; return; }
+        var rowsP = (r && r.data) || [];
+        if (!rowsP.length) { box.innerHTML = "<span style='color:#7a6f5d;font-size:11.5px'>Aucune partie synchronisée pour ce compte.</span>"; return; }
+        var totPct = 0, nbPct = 0;
+        var htmlP = "<div class='fiche-table-wrap'><table class='fiche-mini-table'><thead><tr><th>Quiz</th><th>Module</th><th>Score</th><th>Réussite</th><th>Date</th></tr></thead><tbody>";
+        rowsP.forEach(function (x) {
+          var sc = Number(x.score) || 0;
+          var tt = Number(x.total) || 0;
+          var pct = tt > 0 ? Math.round((100 * sc) / tt) : 0;
+          if (tt > 0) { totPct += pct; nbPct++; }
+          htmlP += "<tr><td><b>" + echHtml(x.quiz || "—") + "</b></td><td>" + echHtml(x.module || "—") + "</td><td class='col-nowrap'>" + sc + " / " + tt + "</td><td class='col-nowrap' style='font-weight:900;color:" + (pct >= 70 ? "#177245" : (pct >= 50 ? "#b45309" : "#c0392b")) + "'>" + pct + " %</td><td class='col-nowrap'>" + echHtml(fmtDate(x.cree_le)) + "</td></tr>";
+        });
+        htmlP += "</tbody></table></div>";
+        if (nbPct) {
+          htmlP += "<div style='margin-top:6px;font-size:11.5px;font-weight:900'>📈 " + rowsP.length + " partie(s) conservée(s) · moyenne " + (Math.round((totPct / nbPct) * 10) / 10) + " % de réussite</div>";
+        }
+        box.innerHTML = htmlP;
+      }).catch(function () {
+        var box2 = document.getElementById("fiche-parties-sync");
+        if (box2) box2.innerHTML = "<span style='color:#c0392b;font-size:11.5px'>⚠️ Historique indisponible (réseau ?).</span>";
       });
     }
 
