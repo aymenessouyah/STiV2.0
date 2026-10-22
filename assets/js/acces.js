@@ -1966,6 +1966,7 @@
       ".sti-pan button:hover{filter:brightness(1.05);transform:translateY(-1px)}" +
       ".sti-pan button:active{transform:translateY(0) scale(.98)}" +
       ".sti-pan button:focus-visible{outline:2px solid #f4511e;outline-offset:2px}" +
+      ".sti-pan button.sti-tuile::before{content:attr(data-ic);flex:0 0 auto;width:25px;height:25px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:13.5px;line-height:1;background:var(--sti-ic-bg,rgba(35,32,26,.08));box-shadow:inset 0 0 0 1px rgba(35,32,26,.06)}" +
       "@media (prefers-reduced-motion: reduce){.sti-roue,.sti-wrap,.sti-pan{transition:none!important;animation:none!important}}";
     document.head.appendChild(st);
 
@@ -2091,6 +2092,11 @@
         if (elMed) elMed.innerHTML = pr.resumeMedia;
         var elBar = document.getElementById("sti-pan-prog-bar");
         if (elBar) elBar.style.width = pr.pctProg + "%";
+        var elAnneau = document.getElementById("sti-roue-anneau");
+        if (elAnneau) {
+          elAnneau.style.background = "conic-gradient(#f4511e 0% " + pr.pctProg + "%, rgba(35,32,26,.15) " + pr.pctProg + "% 100%)";
+          elAnneau.title = "Progression : " + pr.pctProg + " %";
+        }
       } catch (e) {}
     };
 
@@ -2102,9 +2108,12 @@
 
     var btnSearchPan = document.createElement("button");
     btnSearchPan.type = "button";
-    btnSearchPan.textContent = "🔍 Recherche";
+    btnSearchPan.className = "sti-tuile";
+    btnSearchPan.setAttribute("data-ic", "🔍");
+    btnSearchPan.textContent = "Recherche";
     btnSearchPan.title = "Recherche globale rapide dans tous les cours (Ctrl+K)";
     btnSearchPan.style.cssText = styleBtnCompact + "background:linear-gradient(120deg,#fffdf7,#f3ead9);color:#23201a;";
+    btnSearchPan.style.setProperty("--sti-ic-bg", "rgba(56,189,248,.22)");
     btnSearchPan.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -2145,9 +2154,12 @@
 
     var btnProf = document.createElement("button");
     btnProf.type = "button";
-    btnProf.textContent = "💬 Écrire au prof";
+    btnProf.className = "sti-tuile";
+    btnProf.setAttribute("data-ic", "💬");
+    btnProf.textContent = "Écrire au prof";
     btnProf.title = "Ouvrir la discussion Messenger STI avec le professeur";
     btnProf.style.cssText = styleBtnCompact + "background:#fff3e0;border-color:#f4511e;color:#d84315;font-weight:900;";
+    btnProf.style.setProperty("--sti-ic-bg", "rgba(244,81,30,.20)");
     btnProf.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -2160,9 +2172,12 @@
 
     var btnSosPan = document.createElement("button");
     btnSosPan.type = "button";
-    btnSosPan.textContent = "📸 SOS Capture / Envoyer mon code au prof";
+    btnSosPan.className = "sti-tuile";
+    btnSosPan.setAttribute("data-ic", "📸");
+    btnSosPan.textContent = "SOS Capture / Envoyer mon code au prof";
     btnSosPan.title = "Capturer en 1 clic cette page et votre code pour les envoyer à M. Essouyah dans Messenger STI";
     btnSosPan.style.cssText = styleBtnCompact + "margin-top:6px;background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;font-weight:900;box-shadow:0 8px 18px -6px rgba(217,164,32,.55);";
+    btnSosPan.style.setProperty("--sti-ic-bg", "rgba(255,255,255,.45)");
     btnSosPan.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -2390,8 +2405,11 @@
     var btnImp = document.createElement("button");
     btnImp.id = "sti-btn-print-gold";
     btnImp.type = "button";
-    btnImp.textContent = estUserAdminStrict ? "⚡ Flash" : "🖨️ Imprimer";
+    btnImp.className = "sti-tuile";
+    btnImp.setAttribute("data-ic", estUserAdminStrict ? "⚡" : "🖨️");
+    btnImp.textContent = estUserAdminStrict ? "Flash" : "Imprimer";
     btnImp.style.cssText = styleBtnCompact + "display:" + ((isG || estUserAdminStrict) ? "flex" : "none") + ";background:linear-gradient(120deg,#fff3b0,#ffd54f);color:#23201a;font-weight:900;box-shadow:0 8px 18px -6px rgba(217,164,32,.55);";
+    btnImp.style.setProperty("--sti-ic-bg", "rgba(146,64,14,.16)");
     btnImp.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -2403,8 +2421,11 @@
     var out = document.createElement("button");
     out.id = "sti-out";
     out.type = "button";
-    out.textContent = "🚪 Déconnexion";
+    out.className = "sti-tuile";
+    out.setAttribute("data-ic", "🚪");
+    out.textContent = "Déconnexion";
     out.style.cssText = styleBtnCompact + ((isG || estUserAdminStrict) ? "grid-column:1 / -1;margin-top:0;" : "") + "border:1.5px solid #23201a;background:#fff;color:#c0392b;font-weight:900;";
+    out.style.setProperty("--sti-ic-bg", "rgba(192,57,43,.14)");
     out.addEventListener("click", function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -2487,7 +2508,12 @@
     btn.style.cssText = "display:flex;align-items:center;justify-content:center;width:54px;height:54px;border-radius:50%;border:1px solid rgba(255,255,255,.55);background:" +
       (isG ? "linear-gradient(135deg,#ffe082,#ffb300 62%,#f59e0b)" : "linear-gradient(135deg,#ff9a62,#f4511e 62%,#e64a19)") +
       ";font-size:24px;line-height:1;cursor:pointer;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.25);box-shadow:0 14px 30px -8px rgba(244,81,30,.55),inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -3px 8px rgba(0,0,0,.12);";
-    porte.appendChild(btn);
+    var anneauRoue = document.createElement("div");
+    anneauRoue.id = "sti-roue-anneau";
+    anneauRoue.title = "Progression : " + initProgPan.pctProg + " %";
+    anneauRoue.style.cssText = "width:62px;height:62px;border-radius:50%;padding:4px;box-sizing:border-box;background:conic-gradient(#f4511e 0% " + initProgPan.pctProg + "%, rgba(35,32,26,.15) " + initProgPan.pctProg + "% 100%);box-shadow:0 14px 30px -10px rgba(13,21,38,.35);";
+    anneauRoue.appendChild(btn);
+    porte.appendChild(anneauRoue);
 
     var ouvert = false;
     function ouvrir() {
