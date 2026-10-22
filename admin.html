@@ -2150,6 +2150,14 @@
           </div>
         </div>
         <p id="quiz-sync-resume" style="font-size:12.5px;color:#7a6f5d;margin:0 0 10px">Chargement…</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px">
+          <strong style="font-size:12.5px">📊 Vues :</strong>
+          <button type="button" class="btn-vue-quiz" data-vue="classes" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#23201a;color:#fffdf7;font-weight:800;font-size:12px;cursor:pointer">🏫 Par classe</button>
+          <button type="button" class="btn-vue-quiz" data-vue="jours" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">📅 Par jour</button>
+          <button type="button" class="btn-vue-quiz" data-vue="top3" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">🏆 Top 3 par classe</button>
+        </div>
+        <div id="vue-quiz-stats"></div>
+        <div id="vue-quiz-classe" style="display:none"></div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Élève</th><th>Classe</th><th>Quiz</th><th>Parties</th><th>Dernier score</th><th>Meilleur score</th><th>% moyen</th><th></th></tr></thead>

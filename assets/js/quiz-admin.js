@@ -1,4 +1,4 @@
-/* ═══ STI — Admin : détail synchronisé des quiz (v358) ═══
+/* ═══ STI — Admin : détail synchronisé des quiz (v358, vues v363) ═══
    Lit la table centrale sti_quiz_parties (chaque partie jouée, tous
    appareils) et affiche, par élève et par quiz : nombre de parties,
    dernier score, meilleur score, pourcentage — avec le détail complet
@@ -10,6 +10,8 @@
   var donnees = null;      // lignes brutes sti_quiz_parties
   var profilsParId = {};   // user_id -> profil
   var enCours = false;
+  var vueActuelle = "classes";   // classes | jours | top3
+  var classeOuverte = null;
 
   var LIBELLE_QUIZ = {
     "html-css": "🌐 HTML5 & CSS3",
@@ -65,7 +67,7 @@
     try {
       var [rp, rf] = await Promise.all([
         s.from("sti_quiz_parties").select("user_id,email,quiz,module,score,total,cree_le")
-          .order("cree_le", { ascending: false }).limit(2000),
+          .order("cree_le", { ascending: false }).limit(5000),
         s.from("profiles").select("id,email,nom,prenom,classe").limit(2000)
       ]);
       if (rp.error) throw rp.error;
@@ -80,6 +82,7 @@
           "<strong>MIGRATION-v358-QUIZ-SYNC.sql</strong> dans Supabase (SQL Editor), puis cliquez sur Actualiser.";
       } else {
         resume.textContent = "⚠️ Impossible de charger les résultats des quiz : " + msg;
+    var vs = $("vue-quiz-stats"); if (vs) vs.innerHTML = "";
       }
       tb.innerHTML = "";
     } finally { enCours = false; }
@@ -125,10 +128,11 @@
   function afficher() {
     var resume = $("quiz-sync-resume"), tb = $("tb-quiz-sync");
     if (!resume || !tb) return;
+    afficherStats();
     var liste = groupesFiltres();
     var nbParties = (donnees || []).length;
     resume.textContent = nbParties
-      ? nbParties + " partie(s) synchronisée(s)" + (nbParties >= 2000 ? " (les 2000 plus récentes)" : "") +
+      ? nbParties + " partie(s) synchronisée(s)" + (nbParties >= 5000 ? " (les 5000 plus récentes)" : "") +
         " · " + liste.length + " ligne(s) élève × quiz affichée(s). Cliquez sur une ligne pour le détail de chaque partie."
       : "Aucune partie synchronisée pour le moment (les quiz joués par les élèves connectés apparaîtront ici).";
     if (!liste.length) {
@@ -162,11 +166,199 @@
     });
   }
 
+  /* ═══ v363 : vues statistiques (par classe, par jour, Top 3, détail) ═══ */
+  var EMAIL_LABO = "elevelabo3@exemple.tn";
+  function estLabo(l) { return (l.email || "").toLowerCase() === EMAIL_LABO; }
+  function lignesStats() { return (donnees || []).filter(function (l) { return !estLabo(l); }); }
+
+  function agregerEleves(lignes) {
+    var par = {};
+    lignes.forEach(function (l) {
+      if (!par[l.user_id]) par[l.user_id] = { rep: l, parties: [] };
+      par[l.user_id].parties.push(l);
+    });
+    return Object.keys(par).map(function (uid) {
+      var g = par[uid];
+      var parties = g.parties.slice().sort(function (x, y) { return new Date(y.cree_le) - new Date(x.cree_le); });
+      var meilleur = parties[0], somme = 0;
+      parties.forEach(function (l) { somme += pct(l); if (pct(l) > pct(meilleur)) meilleur = l; });
+      return { uid: uid, rep: g.rep, parties: parties, nb: parties.length, dernier: parties[0],
+               meilleur: meilleur, pctMoyen: Math.round((somme / parties.length) * 10) / 10,
+               classe: classeEleve(g.rep) };
+    });
+  }
+  function agregerClasses(lignes) {
+    var eleves = agregerEleves(lignes);
+    var par = {};
+    eleves.forEach(function (e) {
+      var c = e.classe || "—";
+      if (!par[c]) par[c] = { classe: c, eleves: [], parties: 0, somme: 0, derniere: null };
+      par[c].eleves.push(e); par[c].parties += e.nb; par[c].somme += e.pctMoyen * e.nb;
+      if (!par[c].derniere || new Date(e.dernier.cree_le) > new Date(par[c].derniere)) par[c].derniere = e.dernier.cree_le;
+    });
+    return Object.keys(par).map(function (c) {
+      var g = par[c];
+      g.pctMoyen = g.parties ? Math.round((g.somme / g.parties) * 10) / 10 : 0;
+      return g;
+    }).sort(function (a, b) { return a.classe.localeCompare(b.classe, "fr"); });
+  }
+
+  function afficherStats() {
+    var zone = $("vue-quiz-stats");
+    if (!zone || !donnees) return;
+    document.querySelectorAll(".btn-vue-quiz").forEach(function (b) {
+      var actif = b.getAttribute("data-vue") === vueActuelle;
+      b.style.background = actif ? "#23201a" : "#fffdf7";
+      b.style.color = actif ? "#fffdf7" : "#23201a";
+    });
+    if (vueActuelle === "jours") zone.innerHTML = vueJours();
+    else if (vueActuelle === "top3") { zone.innerHTML = vueTop3(); brancherClasses(zone); }
+    else { zone.innerHTML = vueClasses(); brancherClasses(zone); }
+    if (classeOuverte) rendreClasse();
+  }
+
+  function vueClasses() {
+    var classes = agregerClasses(lignesStats());
+    if (!classes.length) return '<p style="color:#7a6f5d;font-size:12.5px">Aucune donnée pour le moment.</p>';
+    var h = '<div class="table-wrap"><table><thead><tr><th>Classe</th><th>Élèves actifs</th><th>Parties</th><th>% moyen</th><th>Dernière activité</th><th></th></tr></thead><tbody>';
+    classes.forEach(function (g, i) {
+      h += '<tr data-classe="' + i + '" style="cursor:pointer" title="Ouvrir le détail de cette classe">' +
+        '<td style="font-weight:800">🏫 ' + esc(g.classe) + "</td>" +
+        '<td style="text-align:center;font-weight:800">' + g.eleves.length + "</td>" +
+        '<td style="text-align:center;font-weight:800">' + g.parties + "</td>" +
+        '<td style="text-align:center">' + g.pctMoyen + " %</td>" +
+        '<td style="font-size:12px">' + esc(fmtDate(g.derniere)) + "</td>" +
+        '<td style="text-align:center">▸</td></tr>';
+    });
+    return h + "</tbody></table></div>" +
+      '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 12px">Cliquez sur une classe pour le détail par candidat. (Compte labo partagé exclu des statistiques.)</p>';
+  }
+
+  function vueJours() {
+    var lignes = lignesStats();
+    var jours = [], idx = {};
+    for (var i = 13; i >= 0; i--) {
+      var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i);
+      var cle = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+      idx[cle] = { date: new Date(d), parties: 0, somme: 0, eleves: {} };
+      jours.push(idx[cle]);
+    }
+    lignes.forEach(function (l) {
+      var d = new Date(l.cree_le);
+      var cle = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+      var j = idx[cle];
+      if (!j) return;
+      j.parties++; j.somme += pct(l); j.eleves[l.user_id] = 1;
+    });
+    var maxi = 1;
+    jours.forEach(function (j) { if (j.parties > maxi) maxi = j.parties; });
+    var h = '<div class="table-wrap"><table><thead><tr><th>Jour</th><th>Parties</th><th>Élèves actifs</th><th>% moyen</th><th style="min-width:140px">Activité</th></tr></thead><tbody>';
+    jours.slice().reverse().forEach(function (j) {
+      var etiquette = j.date.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+      var pm = j.parties ? Math.round((j.somme / j.parties) * 10) / 10 : 0;
+      h += "<tr>" +
+        '<td style="font-weight:800">' + esc(etiquette) + "</td>" +
+        '<td style="text-align:center;font-weight:800">' + j.parties + "</td>" +
+        '<td style="text-align:center">' + Object.keys(j.eleves).length + "</td>" +
+        '<td style="text-align:center">' + (j.parties ? pm + " %" : "—") + "</td>" +
+        '<td><div style="height:12px;border-radius:6px;background:#f4511e;width:' + Math.round((j.parties / maxi) * 100) + '%;min-width:' + (j.parties ? 6 : 0) + 'px"></div></td></tr>';
+    });
+    return h + "</tbody></table></div>" +
+      '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 12px">14 derniers jours (parties synchronisées, compte labo exclu).</p>';
+  }
+
+  function vueTop3() {
+    var classes = agregerClasses(lignesStats());
+    if (!classes.length) return '<p style="color:#7a6f5d;font-size:12.5px">Aucune donnée pour le moment.</p>';
+    var medailles = ["🥇", "🥈", "🥉"];
+    var h = "";
+    classes.forEach(function (g, i) {
+      var top = g.eleves.slice().sort(function (a, b) {
+        return (b.pctMoyen - a.pctMoyen) || (b.nb - a.nb);
+      }).slice(0, 3);
+      h += '<div style="border:2px solid #23201a;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:0 0 10px">' +
+        '<div data-classe="' + i + '" style="cursor:pointer;font-weight:900;font-size:14px" title="Ouvrir le détail de cette classe">🏫 ' + esc(g.classe) +
+        ' <span style="font-size:11px;color:#7a6f5d;font-weight:700">(' + g.eleves.length + " élève(s), " + g.parties + " partie(s)) — ouvrir ▸</span></div>";
+      h += top.map(function (e, r) {
+        return '<div style="display:flex;gap:8px;align-items:center;padding:4px 0;font-size:13px">' +
+          '<span style="font-size:17px">' + medailles[r] + "</span>" +
+          '<strong>' + esc(nomEleve(e.rep)) + "</strong>" +
+          '<span style="color:#7a6f5d;font-size:12px">' + e.nb + " partie(s) · % moyen " + e.pctMoyen + " % · meilleur " + e.meilleur.score + "/" + e.meilleur.total + " (" + pct(e.meilleur) + " %)</span></div>";
+      }).join("");
+      h += "</div>";
+    });
+    return h + '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 12px">Classement par % moyen de toutes les parties (départage : nombre de parties). Cliquez sur une classe pour le détail par candidat.</p>';
+  }
+
+  function brancherClasses(zone) {
+    zone.querySelectorAll("[data-classe]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        var classes = agregerClasses(lignesStats());
+        var g = classes[parseInt(el.getAttribute("data-classe"), 10)];
+        if (g) ouvrirClasse(g.classe);
+      });
+    });
+  }
+
+  function ouvrirClasse(classe) {
+    classeOuverte = classe;
+    rendreClasse();
+    var z = $("vue-quiz-classe");
+    if (z) z.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function rendreClasse() {
+    var zone = $("vue-quiz-classe");
+    if (!zone || !donnees) return;
+    var classes = agregerClasses(lignesStats());
+    var g = null;
+    classes.forEach(function (c) { if (c.classe === classeOuverte) g = c; });
+    if (!g) { zone.style.display = "none"; classeOuverte = null; return; }
+    zone.style.display = "";
+    var eleves = g.eleves.slice().sort(function (a, b) { return (b.pctMoyen - a.pctMoyen) || (b.nb - a.nb); });
+    var h = '<div style="border:2.5px solid #1f4257;border-radius:14px;background:#fffdf7;padding:12px 14px;margin:14px 0">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">' +
+      '<strong style="font-size:15px">🏫 Détail quiz — classe ' + esc(g.classe) + "</strong>" +
+      '<button type="button" id="btn-fermer-classe" style="border:2px solid #23201a;border-radius:999px;padding:4px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">✕ Fermer</button></div>' +
+      '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 10px">' + g.eleves.length + " élève(s) actifs · " + g.parties + " partie(s) · % moyen " + g.pctMoyen + " %. Cliquez sur un candidat pour le détail de ses parties.</p>" +
+      '<div class="table-wrap"><table><thead><tr><th>Candidat</th><th>Parties</th><th>Dernier score</th><th>Meilleur score</th><th>% moyen</th><th></th></tr></thead><tbody>';
+    eleves.forEach(function (e, i) {
+      var det = e.parties.map(function (l) {
+        return "<div>🗓️ " + esc(fmtDate(l.cree_le)) + " — " + esc(nomQuiz(l)) + " : <strong>" + l.score + "/" + l.total + "</strong> (" + pct(l) + " %)</div>";
+      }).join("");
+      h += '<tr data-eleve="' + i + '" style="cursor:pointer">' +
+        '<td style="font-weight:800">' + esc(nomEleve(e.rep)) +
+          '<div style="font-weight:600;font-size:11px;color:#7a6f5d">' + esc(e.rep.email || "") + "</div></td>" +
+        '<td style="text-align:center;font-weight:800">' + e.nb + "</td>" +
+        "<td><strong>" + e.dernier.score + "/" + e.dernier.total + "</strong> (" + pct(e.dernier) + ' %)<div style="font-size:11px;color:#7a6f5d">' + esc(fmtDate(e.dernier.cree_le)) + "</div></td>" +
+        '<td><strong style="color:#177245">' + e.meilleur.score + "/" + e.meilleur.total + "</strong> (" + pct(e.meilleur) + " %)</td>" +
+        '<td style="text-align:center">' + e.pctMoyen + " %</td>" +
+        '<td style="text-align:center">▸</td></tr>' +
+        '<tr class="detail-eleve-classe" id="detail-eleve-' + i + '" style="display:none"><td colspan="6" style="background:#f9f1e3;font-size:12.5px;line-height:1.7"><strong>📋 Parties (' + e.nb + ") :</strong>" + det + "</td></tr>";
+    });
+    h += "</tbody></table></div></div>";
+    zone.innerHTML = h;
+    var bf = $("btn-fermer-classe");
+    if (bf) bf.addEventListener("click", function () { classeOuverte = null; zone.style.display = "none"; zone.innerHTML = ""; });
+    zone.querySelectorAll("tr[data-eleve]").forEach(function (tr) {
+      tr.addEventListener("click", function () {
+        var det = $("detail-eleve-" + tr.getAttribute("data-eleve"));
+        if (det) det.style.display = det.style.display === "none" ? "" : "none";
+      });
+    });
+  }
+
   function init() {
     var tb = $("tb-quiz-sync");
     if (!tb) return;
     var btn = $("btn-quiz-sync-charger");
     if (btn) btn.addEventListener("click", charger);
+    document.querySelectorAll(".btn-vue-quiz").forEach(function (b) {
+      b.addEventListener("click", function () {
+        vueActuelle = b.getAttribute("data-vue");
+        if (donnees) afficherStats();
+      });
+    });
     var sel = $("filtre-quiz-sync-quiz");
     if (sel) sel.addEventListener("change", function () { if (donnees) afficher(); });
     var rech = $("rech-quiz-sync");
