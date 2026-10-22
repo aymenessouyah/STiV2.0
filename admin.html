@@ -2034,6 +2034,7 @@
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-quiz">🏆 2. Quiz &amp; Bac Pratique</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-messages">📨 3. Messages &amp; Réponses</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-connexions">🕒 4. Dernières Connexions</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-aide">❓ Aide &amp; rappels</button>
   </nav>
 
   <div class="msg" id="msg"></div>
@@ -2168,6 +2169,58 @@
           </table>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- SECTION AIDE : EXPLICATIONS & RAPPELS (quiz synchronisés) -->
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-aide">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
+      <h2 style="margin:0">❓ Aide &amp; rappels — statistiques des quiz</h2>
+      <button type="button" class="btn-replier-sec" data-replier="bloc-sec-aide">▸ Agrandir</button>
+    </div>
+    <div class="corps-section-admin" style="font-size:13.5px;line-height:1.7">
+
+      <h3 style="margin:14px 0 6px">🔄 Comment les scores arrivent-ils ici ?</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li>Les quiz sont <strong>réservés aux abonnés connectés</strong> et <strong>rejouables à l'infini</strong> : <strong>chaque partie est conservée</strong> (score, %, date) — d'où le dernier score, le meilleur score, le % moyen et le nombre de parties.</li>
+        <li><strong>En ligne</strong> : la partie est envoyée immédiatement à la fin du quiz. <strong>Hors ligne</strong> : elle attend dans une file sur l'appareil, puis part <strong>automatiquement dès le retour d'Internet</strong> (ou au prochain quiz ouvert) — rien n'est perdu.</li>
+        <li>Le tirage est <strong>aléatoire sans jamais répéter</strong> une question déjà vue, sur <strong>tous les appareils</strong> de l'élève (historique des « vus » synchronisé).</li>
+        <li>La <strong>classe</strong> affichée vient du profil de l'élève (section « 👥 1. Abonnés &amp; Classes ») : si une classe est fausse ou vide, corrigez-la là-bas.</li>
+        <li>Bouton <strong>↻ Actualiser</strong> : recharge les données (affichage limité aux <strong>5 000 parties</strong> et <strong>8 000 réponses</strong> les plus récentes).</li>
+      </ul>
+
+      <h3 style="margin:16px 0 6px">📊 Les vues du bloc « Résultats des Quiz »</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li><strong>Tableau détaillé</strong> (sous les vues) : une ligne par élève × quiz ; cliquez sur une ligne pour voir <strong>toutes ses parties</strong> et ses <strong>questions les plus ratées</strong>.</li>
+        <li><strong>🏫 Par classe</strong> : élèves actifs, parties, % moyen, dernière activité. <strong>Cliquez sur une classe</strong> → détail par candidat ; cliquez sur un candidat → ses parties.</li>
+        <li><strong>📅 Par jour</strong> : activité des <strong>14 derniers jours</strong> (parties, élèves actifs, % moyen, barre d'activité).</li>
+        <li><strong>🏆 Top 3 par classe</strong> : podium 🥇🥈🥉 classé par <strong>% moyen</strong> de toutes les parties (départage : nombre de parties).</li>
+        <li><strong>📈 Progression</strong> : écart entre la <strong>première</strong> et la <strong>dernière</strong> partie de chaque élève (en points : ↗ progrès, ↘ baisse) ; le même « Δ » apparaît dans le détail par classe.</li>
+        <li><strong>🔍 Questions ratées</strong> : % de réussite par quiz, puis les <strong>questions les plus échouées</strong> (au moins 2 tentatives), filtrables par quiz. <strong>Cliquez sur une question</strong> → les élèves en échec dessus, pour savoir quoi réexpliquer en classe.</li>
+      </ul>
+
+      <h3 style="margin:16px 0 6px">🚨 Les alertes (seuils automatiques)</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li><strong>🔴 En difficulté</strong> : % moyen <strong>inférieur à 50 %</strong> avec <strong>au moins 2 parties</strong>.</li>
+        <li><strong>😴 Inactifs</strong> : aucune partie depuis <strong>7 jours ou plus</strong>.</li>
+        <li><strong>🌱 Jamais joué</strong> : inscrits (avec une classe renseignée) sans aucune partie synchronisée.</li>
+        <li>Cliquez sur un élève d'une alerte pour ouvrir le détail de sa classe.</li>
+      </ul>
+
+      <h3 style="margin:16px 0 6px">🔬 Compte laboratoire (elevelabo3)</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li>Le compte partagé du labo <strong>n'envoie aucun score en ligne</strong> : ses quiz restent en <strong>distribution aléatoire locale</strong> à chaque poste, et il est <strong>exclu de toutes les statistiques</strong> ci-dessus.</li>
+        <li>Sa banque de questions se met à jour avec le site, comme pour tous les comptes.</li>
+      </ul>
+
+      <h3 style="margin:16px 0 6px">🛠️ Rappels techniques</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li>Données (Supabase) : <code>sti_quiz_parties</code> (chaque partie), <code>sti_quiz_vus</code> (questions déjà vues), <code>sti_quiz_reponses</code> (détail question par question, depuis la v365 — <strong>nouvelles parties uniquement</strong>).</li>
+        <li>Si une vue affiche « table absente », exécutez le fichier de migration correspondant dans Supabase (SQL Editor) : <code>MIGRATION-v358-QUIZ-SYNC.sql</code> puis <code>MIGRATION-v365-REPONSES.sql</code>, puis cliquez sur ↻ Actualiser.</li>
+        <li>Conventions appliquées partout (site + livres) : PHP avec <strong><code>die()</code> uniquement</strong>, <code>is_numeric()</code>, jointures SQL en <code>WHERE t1.x = t2.x</code> ; le hors-programme indispensable est <strong>barré en rouge</strong>, jamais supprimé.</li>
+        <li>Le <strong>README</strong> du dépôt GitHub documente toute la plateforme (contenus, publication, historique des versions).</li>
+      </ul>
+
     </div>
   </section>
 
@@ -4714,7 +4767,7 @@
     });
 
     function afficherSectionCible(secId, defiler) {
-      var toutes = ["bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-messages", "bloc-sec-connexions"];
+      var toutes = ["bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-messages", "bloc-sec-connexions", "bloc-sec-aide"];
       document.querySelectorAll(".btn-sec-tab[data-sec-cible]").forEach(function (b) {
         b.classList.toggle("actif", b.getAttribute("data-sec-cible") === secId);
       });
