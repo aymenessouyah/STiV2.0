@@ -888,7 +888,7 @@ function ex23_basculer(){ document.getElementById("ex23_champ").disabled=!docume
 
 function ex24_ctrl(id){
   const c = document.getElementById("ex24_"+id);
-  const i = document.getElementById("ex24_i"+id.charAt(0).toUpperCase()+id.substring(1));
+  const i = document.getElementById("ex24_i"+id[0].toUpperCase()+id.substring(1));
   const v = c.value;
   let ok = false, msg = "";
   if(id==="nom"){ if(v.trim().length>=3){ ok=true; msg="✅ Valide"; } else msg="❌ Min 3 car."; }
@@ -968,12 +968,12 @@ function cap33_coul(){ const r = Math.floor(Math.random()*256), g = Math.floor(M
 function cap33_generer(){
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
-  for(let i=0;i<6;i++) code += chars.charAt(Math.floor(Math.random()*chars.length));
+  for(let i=0;i<6;i++) code += chars[Math.floor(Math.random()*chars.length)];
   cap33_code = code;
   let html = "";
   for(let i=0;i<code.length;i++){
     const c = cap33_coul();
-    html += `<span style="color:${c};text-shadow:0 0 8px ${c}">${code.charAt(i)}</span>`;
+    html += `<span style="color:${c};text-shadow:0 0 8px ${c}">${code[i]}</span>`;
   }
   const el = document.getElementById("cap33_texte");
   if(el){ el.innerHTML = html; document.getElementById("cap33_saisie").value=""; document.getElementById("cap33_res").innerHTML=""; }
@@ -984,7 +984,7 @@ let cap34_code = "";
 function cap34_generer(){
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
-  for(let i=0;i<6;i++) code += chars.charAt(Math.floor(Math.random()*chars.length));
+  for(let i=0;i<6;i++) code += chars[Math.floor(Math.random()*chars.length)];
   cap34_code = code;
   const el = document.getElementById("cap34_texte");
   if(el){
@@ -1192,7 +1192,7 @@ const diffJ = Math.round(Math.abs(new Date() - d) / (1000*60*60*24));`,
   30: "Math.floor(Math.random() * (max - min + 1)) + min;",
   31: "for (let i = 0; i < 5; i++)\n  c += String.fromCharCode(Math.floor(Math.random() * 26) + 65);",
   32: "function comp() {\n  let h = Math.floor(Math.random() * 256).toString(16);\n  if (h.length === 1) h = '0' + h;\n  return h.toUpperCase();\n}\nconst couleur = '#' + comp() + comp() + comp();",
-  33: "for (let i = 0; i < code.length; i++) {\n  const c = couleurAleatoire();\n  html += `<span style=\"color:${c}\">${code.charAt(i)}</span>`;\n}",
+  33: "for (let i = 0; i < code.length; i++) {\n  const c = couleurAleatoire();\n  html += `<span style=\"color:${c}\">${code[i]}</span>`;\n}",
   34: "const angle = Math.floor(Math.random() * 41) - 20;\nbarre.style.transform = 'rotate(' + angle + 'deg)';",
   35: "for (let i = pool.length - 1; i > 0; i--) {\n  const j = Math.floor(Math.random() * (i + 1));\n  [pool[i], pool[j]] = [pool[j], pool[i]];\n}",
   36: "const audio = document.getElementById('ex36_audio');\naudio.play();\naudio.pause();\nconsole.log(audio.paused);"

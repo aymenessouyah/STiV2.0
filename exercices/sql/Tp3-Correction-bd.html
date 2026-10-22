@@ -213,7 +213,8 @@
         }
       }
 </style>
-  </head>
+  <style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
+</head>
   <body>
 <!-- STI navigation croisée -->
 <style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../../cours/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours SQL</a><a href="../../quiz/sql.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🎯 Quiz</a><a href="../../exercices/series-exercices.html#bdd" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">≡ Séries</a></nav>
@@ -517,7 +518,7 @@ HAVING AVG(SAL) <= ALL (
     GROUP BY PROF
 );</pre>
       <div class="why-box">
-        <strong>Pourquoi l'utilisation de cette solution ?</strong> On calcule le salaire moyen par profession avec <code>GROUP BY PROF</code> et on utilise <code>HAVING AVG(SAL) &lt;= ALL (...)</code> (ou <code>ORDER BY sal_moy_min ASC LIMIT 1</code>) pour retenir la profession ayant la moyenne la plus basse.
+        <strong>Pourquoi l'utilisation de cette solution ?</strong> On calcule le salaire moyen par profession avec <code>GROUP BY PROF</code> et on utilise <code>HAVING AVG(SAL) &lt;= <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">ALL</s> (...)</code> (ou <code>ORDER BY sal_moy_min ASC LIMIT 1</code>) pour retenir la profession ayant la moyenne la plus basse.
       </div>
     </div>
     <h2>V. Corrigé Exercice 3 — Gestion des Notes Annuelles (Questions 1 à 5)</h2>

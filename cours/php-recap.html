@@ -330,6 +330,7 @@ if (location.search.indexOf("embed=1") !== -1 || window.self !== window.top) {
   document.documentElement.classList.add("is-embed");
 }
 </script>
+<style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
 </head>
 <body>
 <div class="topbar-recap">
@@ -487,7 +488,7 @@ nom <input type="text" id="n4" value="Ali" size="8">
     <p class="cap">Code PHP simulé</p><div class="code" id="cd7"></div>
     <p class="cap">Résultat</p><div class="out" id="o7"></div>
   </div>
-  <p class="note"><b>Attention :</b> <code>strpos()</code> peut renvoyer la position <code>0</code>. Il faut donc tester le résultat avec <code>=== false</code> pour distinguer « non trouvé » de « trouvé au début ». Pour le texte UTF-8 accentué, <code>strlen()</code>, <code>strrev()</code>, <code>strtolower()</code> et <code>strtoupper()</code> ont des limites ; des fonctions multioctets comme <code>mb_strlen()</code> et <code>mb_strtolower()</code> peuvent être nécessaires.</p>
+  <p class="note"><b>Attention :</b> <code>strpos()</code> peut renvoyer la position <code>0</code>. Il faut donc tester le résultat avec <code>=== false</code> pour distinguer « non trouvé » de « trouvé au début ». Pour le texte UTF-8 accentué, <code>strlen()</code>, <code>strrev()</code>, <code>strtolower()</code> et <code>strtoupper()</code> ont des limites (elles comptent et transforment la chaîne octet par octet).</p>
 </section>
 
 <section id="t8" class="sec card">
@@ -496,7 +497,7 @@ nom <input type="text" id="n4" value="Ali" size="8">
 <div class="card"><b>abs() — valeur absolue</b><div class="code"><div>$n = abs(-15);</div><div>echo $n; // 15</div></div><p>Renvoie la distance à zéro : <code>abs(-7.5)</code> donne <code>7.5</code>.</p></div>
 <div class="card"><b>sqrt() — racine carrée</b><div class="code"><div>$n = sqrt(81);</div><div>echo $n; // 9</div></div><p><code>sqrt(2)</code> donne environ <code>1.4142</code>. Pour une valeur négative, le résultat réel n'est pas défini.</p></div>
 <div class="card"><b>round() — arrondir</b><div class="code"><div>round(3.6);    // 4</div><div>round(3.14159, 2); // 3.14</div></div><p>Le deuxième argument indique le nombre de chiffres après la virgule.</p></div>
-<div class="card"><b>rand() — nombre pseudo-aléatoire</b><div class="code"><div>$n = rand(1, 6);</div><div>echo $n; // entier de 1 à 6</div></div><p>Les deux bornes sont incluses. Pour un tirage sécurisé, utiliser plutôt <code>random_int()</code>.</p></div>
+<div class="card"><b>rand() — nombre pseudo-aléatoire</b><div class="code"><div>$n = rand(1, 6);</div><div>echo $n; // entier de 1 à 6</div></div><p>Les deux bornes sont incluses.</p></div>
 </div>
 <h3 style="font-size:1rem">Tester une fonction</h3>
 <div class="row"><select id="mathFn"><option value="abs">abs(-12.5)</option><option value="sqrt">sqrt(81)</option><option value="round">round(3.14159, 2)</option><option value="rand">rand(1, 6)</option></select><button class="btn p" id="mathGo">▶ Calculer</button></div>
@@ -656,7 +657,7 @@ Cette règle vaut pour <b>toute</b> requête : INSERT (<code>VALUES ('$nom', $ag
 <tr><td><a class="fn" href="#m-fetchrow"><code>mysqli_fetch_row</code></a></td><td>indices numériques seulement</td><td><code>$ligne[1]</code></td></tr>
 <tr><td><code>mysqli_fetch_array</code></td><td>indices numériques <b>et</b> noms des colonnes</td><td><code>$ligne[1]</code> ou <code>$ligne['nom']</code></td></tr>
 </tbody></table>
-<p class="note">L'accès par le nom de colonne est plus lisible et ne dépend pas de l'ordre des colonnes. <code>mysqli_fetch_array($res, MYSQLI_ASSOC)</code> ou <code>mysqli_fetch_assoc($res)</code> ne gardent que les noms.</p>
+<p class="note">L'accès par le nom de colonne est plus lisible et ne dépend pas de l'ordre des colonnes. <code>mysqli_fetch_array($res, MYSQLI_ASSOC)</code> ou <code><s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res)</code> ne gardent que les noms.</p>
 </div>
 
 <!-- mysqli_close -->
@@ -672,7 +673,7 @@ Cette règle vaut pour <b>toute</b> requête : INSERT (<code>VALUES ('$nom', $ag
 <pre>&lt;?php
 $cnx = mysqli_connect("localhost", "root", "", "lycee");
 if (!$cnx) {
-    die("Connexion impossible : " . mysqli_connect_error());
+    die("Connexion impossible");
 }
 
 $nom = $_POST['nom'];
@@ -892,8 +893,8 @@ let tkm1=0;
 function codeM1(){
   const f=document.querySelector('input[name=fm1]:checked').value;
   const L=f==='1'
-    ?['$cnx = mysqli_connect("localhost", "root", "");','if (!$cnx) die("Connexion impossible : " . mysqli_connect_error());','if (!mysqli_select_db($cnx, "lycee")) die("BD introuvable : " . mysqli_error($cnx));','echo "Connexion réussie";']
-    :['$cnx = mysqli_connect("localhost", "root", "", "lycee");','if (!$cnx) die("Connexion impossible : " . mysqli_connect_error());','echo "Connexion réussie";'];
+    ?['$cnx = mysqli_connect("localhost", "root", "");','if (!$cnx) die("Connexion impossible");','if (!mysqli_select_db($cnx, "lycee")) die("BD introuvable : " . mysqli_error($cnx));','echo "Connexion réussie";']
+    :['$cnx = mysqli_connect("localhost", "root", "", "lycee");','if (!$cnx) die("Connexion impossible");','echo "Connexion réussie";'];
   $('cdm1').innerHTML=L.map(l=>`<div>${esc(l)}</div>`).join('');
   return f;
 }

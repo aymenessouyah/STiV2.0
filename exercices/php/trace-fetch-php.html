@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noai, noimageai">
-  <title>Visualiseur Pas-à-Pas : Boucle while &amp; mysqli_fetch_assoc / fetch_row / fetch_array</title>
+  <title>Visualiseur Pas-à-Pas : Boucle while &amp; <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s> / fetch_row / fetch_array</title>
   <link rel="icon" href="../../assets/icons/STI_by_AE.ico">
   <link rel="stylesheet" href="../../assets/css/protection.css?v=227">
   <script src="../../assets/js/protection.js?v=227"></script>
@@ -92,6 +92,7 @@
       font: 700 12.2px Consolas, monospace; margin: 3px 4px 3px 0;
     }
   </style>
+<style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
 </head>
 <body>
   <div class="wrap-tr">
@@ -104,7 +105,7 @@
     </table>
 
     <div class="barre-modes">
-      <button type="button" id="mode-assoc" class="btn-mode actif">1️⃣ mysqli_fetch_assoc($res)</button>
+      <button type="button" id="mode-assoc" class="btn-mode actif">1️⃣ <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res)</button>
       <button type="button" id="mode-row" class="btn-mode">2️⃣ mysqli_fetch_row($res)</button>
       <button type="button" id="mode-array" class="btn-mode">3️⃣ mysqli_fetch_array($res)</button>
       <button type="button" id="mode-count" class="btn-mode">4️⃣ mysqli_num_rows($res) vs SELECT COUNT(*)</button>
@@ -175,11 +176,11 @@ echo "Nombre d'admis : " . $nbAdmis;</pre>
 $res = mysqli_query($con, $req);
 // ⚠️ $res contient TOUJOURS 1 seule ligne avec la colonne 'nb' !
 // mysqli_num_rows($res) vaudrait 1 (PIÈGE DU BAC !)
-$lig = mysqli_fetch_assoc($res); // ou mysqli_fetch_row($res)
+$lig = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res); // ou mysqli_fetch_row($res)
 $nbAdmis = $lig["nb"];           // Vaut 4 !
 echo "Nombre d'admis : " . $nbAdmis;</pre>
           <p style="font-size:13px;margin-top:8px">
-            👉 <b>Règle d'or du Bac :</b> Avec <code>SELECT COUNT(*) AS nb</code>, il faut <b>toujours</b> extraire l'unique ligne avec <code>mysqli_fetch_assoc($res)</code> (puis lire <code>$lig["nb"]</code>) ou <code>mysqli_fetch_row($res)</code> (puis lire <code>$lig[0]</code>).
+            👉 <b>Règle d'or du Bac :</b> Avec <code>SELECT COUNT(*) AS nb</code>, il faut <b>toujours</b> extraire l'unique ligne avec <code><s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res)</code> (puis lire <code>$lig["nb"]</code>) ou <code>mysqli_fetch_row($res)</code> (puis lire <code>$lig[0]</code>).
           </p>
         </div>
       </div>
@@ -261,7 +262,7 @@ echo "Nombre d'admis : " . $nbAdmis;</pre>
         document.getElementById("tbody-curseur-sql").innerHTML = htmlSql;
 
         /* 2. Script PHP selon le mode */
-        var fnFetch = modeActuel === "assoc" ? "mysqli_fetch_assoc" : (modeActuel === "row" ? "mysqli_fetch_row" : "mysqli_fetch_array");
+        var fnFetch = modeActuel === "assoc" ? "<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>" : (modeActuel === "row" ? "mysqli_fetch_row" : "mysqli_fetch_array");
         var exprId  = modeActuel === "row" ? "$t[0]" : '$t["Id"]';
         var exprNp  = modeActuel === "row" ? "$t[1]" : '$t["Nom_prenom"]';
         var exprMoy = modeActuel === "row" ? "$t[2]" : '$t["Moyenne"]';
@@ -300,7 +301,7 @@ echo "Nombre d'admis : " . $nbAdmis;</pre>
               '<span class="var-pill">$t["Nom_prenom"] = "' + lig.Nom_prenom + '"</span>' +
               '<span class="var-pill">$t["Moyenne"] = "' + lig.Moyenne + '"</span>' +
               '<span class="var-pill">$t["DateNaissance"] = "' + lig.DateNaissance + '"</span>' +
-              '<div style="font-size:12px;color:#b91c1c;margin-top:4px;font-weight:700">⚠️ Avec <code>mysqli_fetch_assoc</code>, <code>$t[0]</code> n\'existe pas !</div>';
+              '<div style="font-size:12px;color:#b91c1c;margin-top:4px;font-weight:700">⚠️ Avec <code><s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s></code>, <code>$t[0]</code> n\'existe pas !</div>';
           } else if (modeActuel === "row") {
             varcles =
               '<span class="var-pill">$t[0] = "' + lig.Id + '"</span>' +

@@ -463,7 +463,8 @@
         }
       }
     </style>
-  </head>
+  <style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
+</head>
   <body>
 <!-- STI navigation croisée -->
 <style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../cours/php.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours PHP</a><a href="../quiz/php.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🎯 Quiz</a><a href="../exercices/series-exercices.html#php" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">≡ Séries</a></nav>
@@ -520,7 +521,7 @@
   const alphabet = " AZERTYUIOPQSDFGJKLMWXCVBN";
   let nb = 0;
   for(let i = 0; i &lt; ch.length; i++) {
-    if (alphabet.indexOf(ch.charAt(i)) &gt;= 0) nb++;
+    if (alphabet.indexOf(ch[i]) &gt;= 0) nb++;
   }
   return (ch.length == nb);
 }</code></pre>
@@ -554,7 +555,7 @@
     document.getElementById("npa").innerHTML = "Attention";
     ok = false;
   }
-  let tableauomt = np.split(" ");
+  let tableauomt = np.<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">split</s>(" ");
   let tailletableaumont = tableauomt.length;
   if (tailletableaumont &gt; 5) {
     document.getElementById("npa").style.color = "red";
@@ -619,7 +620,7 @@
     msg = "mail invalide chaîne non alphanumérique avant @"; ok1 = false;
   }
   let ap = mail.value.substring(mail.value.indexOf("@") + 1);
-  let tabap = ap.split('.');
+  let tabap = ap.<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">split</s>('.');
   if ((tabap.length &lt; 1) || (tabap.length &gt; 3)) {
     msg = "il faut avoir au max 3 mots séparés par point après @"; ok2 = false;
   } else {
@@ -707,7 +708,7 @@
             uniquement sur l'élément <code>form</code>, et non sur
             <code>button</code> ou <code>input submit</code>.
           </div>
-          <pre><code>document.getElementById("f").addEventListener("submit", verif);
+          <pre><code>document.getElementById("f").<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">addEventListener</s>("submit", verif);
 // ===&gt; provoque une erreur si "f" n'est pas un form</code></pre>
         </div>
       </section>
@@ -2688,7 +2689,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                array mysqli_fetch_row($res) | array mysqli_fetch_assoc($res)
+                array mysqli_fetch_row($res) | array <tspan style="text-decoration:line-through;fill:#c0392b">mysqli_fetch_assoc</tspan>($res)
               </text>
               <text
                 x="40"
@@ -2746,7 +2747,7 @@
                 font-family="Courier New"
                 fill="#0d1117"
               >
-                mysqli_fetch_assoc($result) → accès par nom du champ
+                <tspan style="text-decoration:line-through;fill:#c0392b">mysqli_fetch_assoc</tspan>($result) → accès par nom du champ
               </text>
               <text x="40" y="760" font-size="13" fill="#0d1117">
                 INSERT, UPDATE, DELETE retournent un booléen (True/False) ou
@@ -3111,7 +3112,7 @@
                 fill="#555"
               >
                 Alternative : echo "&lt;td&gt;" . $row[0] . "&lt;/td&gt;" — ou
-                mysqli_fetch_assoc pour un accès par nom.
+                <tspan style="text-decoration:line-through;fill:#c0392b">mysqli_fetch_assoc</tspan> pour un accès par nom.
               </text>
             </svg>
             <div class="img-caption">
@@ -3138,7 +3139,7 @@
         const alphabet = " AZERTYUIOPQSDFGJKLMWXCVBN";
         let nb = 0;
         for (let i = 0; i < ch.length; i++) {
-          if (alphabet.indexOf(ch.charAt(i)) >= 0) nb++;
+          if (alphabet.indexOf(ch[i]) >= 0) nb++;
         }
         return ch.length == nb;
       }
@@ -3147,7 +3148,7 @@
         const car = " AZERTYUIOPQSDFGJKLMWXCVBN0123456789";
         let nb = 0;
         for (let i = 0; i < ch.length; i++) {
-          if (car.indexOf(ch.charAt(i).toUpperCase()) >= 0) nb++;
+          if (car.indexOf(ch[i].toUpperCase()) >= 0) nb++;
         }
         return ch.length == nb;
       }

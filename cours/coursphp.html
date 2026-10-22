@@ -1375,7 +1375,7 @@ if ($nb == 0) {
         <pre><code>&lt;?php
 $connexion = mysqli_connect("localhost", "root", "");
 if (!$connexion) {
-   die("Connexion échouée : " . mysqli_connect_error());
+   die("Connexion échouée");
 }
 mysqli_select_db($connexion, "ecole");
 ?&gt;</code></pre>

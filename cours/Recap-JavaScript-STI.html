@@ -2542,7 +2542,8 @@
         }
       }
     </style>
-  </head>
+  <style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
+</head>
   <body class="scanlines">
     <!-- Calques de fond (identiques à cours/javascript.html) -->
     <div class="bg-mesh"></div>
@@ -2990,7 +2991,7 @@ note = 17;</pre>
                   <li><code>ch.length</code> : longueur de la chaîne</li>
                   <li><code>ch.toUpperCase()</code> / <code>ch.toLowerCase()</code></li>
                   <li><code>ch.trim()</code> : supprime les espaces au début et à la fin</li>
-                  <li><code>ch[i]</code> : caractère à la position <code>i</code> (et <code>ch.charCodeAt(i)</code>)</li>
+                  <li><code>ch[i]</code> : caractère à la position <code>i</code> (et <code>ch.<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">charCodeAt</s>(i)</code>)</li>
                   <li><code>ch.indexOf(s)</code> / <code>ch.lastIndexOf(s)</code> : position d’une sous-chaîne (<code>-1</code> si absente)</li>
                   <li><code>ch.substring(indiceA, indiceB)</code> : extrait une sous-chaîne de <code>indiceA</code> à <code>indiceB</code> (non compris)</li>
                   <li><code>ch.replace(a, b)</code> : remplace la 1ère occurrence de <code>a</code> par <code>b</code></li>
@@ -3040,9 +3041,9 @@ String.fromCharCode(97);           // "a"
 String.fromCharCode(66, 97, 99);   // "Bac"
 String.fromCharCode(83, 84, 73);   // "STI"
 
-// Opération inverse avec charCodeAt(i) :
+// Opération inverse avec <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">charCodeAt</s>(i) :
 let mot = "STI";
-mot.charCodeAt(0);                 // 83 (code de "S")</pre>
+mot.<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">charCodeAt</s>(0);                 // 83 (code de "S")</pre>
                 <div class="tip">
                   Retenez les plages ASCII utiles au Bac : <code>"0"</code> à <code>"9"</code> (48 à 57),
                   <code>"A"</code> à <code>"Z"</code> (65 à 90), et <code>"a"</code> à <code>"z"</code> (97 à 122).
@@ -3070,8 +3071,8 @@ mot.charCodeAt(0);                 // 83 (code de "S")</pre>
                 <pre>let notes = [12, 15, 9, 17];
 notes.length;      // 4
 notes[0];          // 12
-notes.push(14);    // ajoute à la fin
-notes.pop();       // retire le dernier</pre>
+notes.<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">push</s>(14);    // ajoute à la fin
+notes.<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">pop</s>();       // retire le dernier</pre>
               </div>
               <div class="card">
                 <h3>Fonctions</h3>

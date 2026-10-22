@@ -223,6 +223,7 @@
     .feedback-box.ok { display: block; background: var(--ok-bg); color: var(--ok-ink); border-color: #16a34a; }
     .feedback-box.ko { display: block; background: var(--ko-bg); color: var(--ko-ink); border-color: #dc2626; }
   </style>
+<style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
 </head>
 <body>
   <div class="wrap-ord">
@@ -293,11 +294,11 @@
           court: "2. statistiques.php (Catégorie)",
           titre: "Défi 2 — Affichage trié par Catégorie (initiale de Id) et séparation Nom / Prénom",
           consigne: "Chaque Id commence par une lettre majuscule (= Catégorie). Remettez dans l'ordre le script statistiques.php qui trie les élèves par Catégorie et sépare le Nom et le Prénom grâce à l'espace.",
-          explication: "On exécute SELECT ... ORDER BY LEFT(Id, 1) ASC, on parcourt les lignes avec while ($t = mysqli_fetch_assoc($res)), on extrait la Catégorie avec substr($t['Id'], 0, 1) et on coupe Nom_prenom au premier espace avec strpos().",
+          explication: "On exécute SELECT ... ORDER BY LEFT(Id, 1) ASC, on parcourt les lignes avec while ($t = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res)), on extrait la Catégorie avec substr($t['Id'], 0, 1) et on coupe Nom_prenom au premier espace avec strpos().",
           lignes: [
             '$con = mysqli_connect("localhost", "root", "", "bd_lycee");',
             '$res = mysqli_query($con, "SELECT Id, Nom_prenom, Moyenne, DateNaissance FROM eleves ORDER BY LEFT(Id, 1) ASC");',
-            'while ($t = mysqli_fetch_assoc($res)) {',
+            'while ($t = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res)) {',
             '  $cat = substr($t["Id"], 0, 1);',
             '  $pos = strpos($t["Nom_prenom"], " ");',
             '  $nom = substr($t["Nom_prenom"], 0, $pos); $prenom = substr($t["Nom_prenom"], $pos + 1);',
@@ -310,12 +311,12 @@
           court: "3. SELECT COUNT(*) vs fetch",
           titre: "Défi 3 — Calculer un effectif avec SELECT COUNT(*) AS total en PHP",
           consigne: "Attention au piège du Bac : SELECT COUNT(*) renvoie toujours 1 ligne ! Remettez dans l'ordre les instructions permettant de lire et d'afficher la valeur réelle du compteur.",
-          explication: "Avec SELECT COUNT(*) AS total, mysqli_num_rows($res) vaut toujours 1. Il faut donc appeler mysqli_fetch_assoc($res) (ou mysqli_fetch_row) puis afficher $lig['total'].",
+          explication: "Avec SELECT COUNT(*) AS total, mysqli_num_rows($res) vaut toujours 1. Il faut donc appeler <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res) (ou mysqli_fetch_row) puis afficher $lig['total'].",
           lignes: [
             '$con = mysqli_connect("localhost", "root", "", "bd_lycee");',
             '$req = "SELECT COUNT(*) AS total FROM eleves WHERE Moyenne >= 10";',
             '$res = mysqli_query($con, $req);',
-            '$lig = mysqli_fetch_assoc($res);',
+            '$lig = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res);',
             '$nbAdmis = $lig["total"];',
             'echo "Nombre d\'élèves admis : " . $nbAdmis;',
             'mysqli_close($con);'

@@ -200,8 +200,12 @@ echo "&lt;br&gt;";
 echo "Note maximale : " . max($notes) . "&lt;br&gt;";
 echo "Note minimale : " . min($notes) . "&lt;br&gt;";
 
-// 3. Calcul de la moyenne générale
-$moyenne = array_sum($notes) / count($notes);
+// 3. Calcul de la moyenne générale (somme calculée par une boucle)
+$somme = 0;
+foreach ($notes as $note) {
+    $somme = $somme + $note;
+}
+$moyenne = $somme / count($notes);
 echo "Moyenne générale : " . round($moyenne, 2);
 ?&gt;</pre
         >
@@ -213,8 +217,14 @@ echo "Moyenne générale : " . round($moyenne, 2);
 &lt;?php
 $villes = array("Tunis", "Sfax", "Sousse", "Bizerte", "Gabès");
 
-// Recherche avec in_array
-if (in_array("Sfax", $villes)) {
+// Recherche par parcours du tableau, élément par élément
+$trouve = false;
+foreach ($villes as $ville) {
+    if ($ville == "Sfax") {
+        $trouve = true;
+    }
+}
+if ($trouve) {
     echo "La ville de Sfax existe bien dans le tableau.";
 } else {
     echo "La ville de Sfax n'a pas été trouvée.";

@@ -109,7 +109,8 @@
         padding-top: 5px;
       }
     </style>
-  </head>
+  <style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
+</head>
   <body>
 <!-- STI navigation croisée -->
 <style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../../cours/javascript.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours JavaScript</a><a href="../../quiz/javascript.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🎯 Quiz</a><a href="../../exercices/series-exercices.html#javascript" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">≡ Séries</a></nav>
@@ -169,7 +170,7 @@
 function estChiffres(ch) {
   if (ch.length === 0) return false;
   for (let i = 0; i < ch.length; i++) {
-    let c = ch.charAt(i);
+    let c = ch[i];
     if (c < '0' || c > '9') return false;
   }
   return true;
@@ -180,7 +181,7 @@ function estAlphabetique(ch) {
   if (ch.length === 0) return false;
   let temp = ch.toUpperCase();
   for (let i = 0; i < temp.length; i++) {
-    let c = temp.charAt(i);
+    let c = temp[i];
     if ((c < 'A' || c > 'Z') && c !== ' ') return false;
   }
   return true;
@@ -230,20 +231,20 @@ function genererListe() {
   while (listeNombres.length < n) {
     let num = Math.floor(Math.random() * 100) + 1;
     if (listeNombres.indexOf(num) === -1) {
-      listeNombres.push(num);
+      listeNombres.<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">push</s>(num);
     }
   }
 
-  document.getElementById("minVal").value = Math.min.apply(null, listeNombres);
-  document.getElementById("maxVal").value = Math.max.apply(null, listeNombres);
+  document.getElementById("minVal").value = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">Math.min.apply</s>(null, listeNombres);
+  document.getElementById("maxVal").value = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">Math.max.apply</s>(null, listeNombres);
 }
 
 function deviner() {
   let choix = parseInt(document.getElementById("valeurSaisie").value);
   if (listeNombres.indexOf(choix) !== -1) {
-    alert("Vous avez gagné ! Liste : " + listeNombres.join(", "));
+    alert("Vous avez gagné ! Liste : " + listeNombres.<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">join</s>(", "));
   } else {
-    alert("Vous avez perdu ! Liste : " + listeNombres.join(", "));
+    alert("Vous avez perdu ! Liste : " + listeNombres.<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">join</s>(", "));
   }
 }</code></pre>
 
@@ -265,15 +266,15 @@ function deviner() {
     return alert("L'identifiant doit comporter au moins 6 caractères !");
   }
 
-  let premierCar = identifiant.charAt(0);
-  let dernierCar = identifiant.charAt(identifiant.length - 1);
+  let premierCar = identifiant[0];
+  let dernierCar = identifiant[identifiant.length - 1];
   if (!estLettre(premierCar) || !estLettre(dernierCar)) {
     return alert("L'identifiant doit commencer et se terminer par une lettre !");
   }
 
   let nbPoints = 0;
   for (let i = 0; i < identifiant.length; i++) {
-    let c = identifiant.charAt(i);
+    let c = identifiant[i];
     if (c === '.') {
       nbPoints++;
     } else if (!estLettre(c) && (c < '0' || c > '9')) {
@@ -310,10 +311,10 @@ function deviner() {
 
   let bonnes = 0, mauvaises = 0;
 
-  let q1 = document.querySelector('input[name="q1"]:checked');
+  let q1 = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">document.querySelector</s>('input[name="q1"]:checked');
   if (q1 && q1.value === "+,-,*,/") bonnes++; else mauvaises++;
 
-  let q2 = document.querySelector('input[name="q2"]:checked');
+  let q2 = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">document.querySelector</s>('input[name="q2"]:checked');
   if (q2 && q2.value === "MOD") bonnes++; else mauvaises++;
 
   let q3 = document.getElementById("q3_select").value;

@@ -83,7 +83,7 @@ On ajoute qu'il faut avoir au max 5 mots</td>
 				    //pour que la variable i ne soit visiualisée que dans la boucle for on utiulise &quot;let&quot;<br>
 				    for(let i=0;i&lt;ch.length;i++)<br>
 				    {<br>
-				    if (alphabet.indexOf(ch.charAt(i))&gt;=0) <br>
+				    if (alphabet.indexOf(ch[i])&gt;=0) <br>
 				    nb++;<br>
 				    }<br>
 				    return (ch.length==nb);<br>
@@ -164,7 +164,7 @@ On ajoute qu'il faut avoir au max 5 mots</td>
 				    let nb=0;<br>
 				    for(let i=0;i&lt;ch.length;i++)<br>
 				    {<br>
-				    if (chiffre.indexOf(ch.charAt(i))&gt;=0) <br>
+				    if (chiffre.indexOf(ch[i])&gt;=0) <br>
 				    nb++;<br>
 				    }<br>
 				    return (ch.length==nb);<br>
@@ -251,7 +251,7 @@ On ajoute qu'il faut avoir au max 5 mots</td>
 				    const alphanum=&quot;AZERTYUIOPMLKJHGFDSQWXCVBN.0123456789&quot;;<br>
 				    let ok = true;<br>
 				    for (let i = 0;i&lt;ch.length; i++)<br>
-				    if (alphanum.indexOf(ch.charAt(i).toUpperCase())&lt;0)<br>
+				    if (alphanum.indexOf(ch[i].toUpperCase())&lt;0)<br>
 				    ok =false;<br>
 				    return ok;<br>
 				    }<br>
@@ -576,7 +576,7 @@ On prépare une fonction pour vérifier les chaines alphabétiques<br>
 			      //pour que la variable i ne soit visiualisée que dans la boucle for on utiulise &quot;let&quot;<br>
 			      for(let i=0;i&lt;ch.length;i++)<br>
 			      {<br>
-			      if (alphabet.indexOf(ch.charAt(i))&gt;=0) <br>
+			      if (alphabet.indexOf(ch[i])&gt;=0) <br>
 			      nb++;<br>
 			      }<br>
 			      return (ch.length==nb);<br>
@@ -608,7 +608,7 @@ const chiffre=&quot;0123456789&quot;;<br>
 let nb=0;<br>
 for(let i=0;i&lt;ch.length;i++)<br>
 {<br>
-if (chiffre.indexOf(ch.charAt(i))&gt;=0) <br>
+if (chiffre.indexOf(ch[i])&gt;=0) <br>
 nb++;<br>
 }<br>
 return (ch.length==nb);<br>

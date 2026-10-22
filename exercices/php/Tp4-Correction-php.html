@@ -53,7 +53,8 @@
       }
     </style>
     <script>window.__APP_OK = true;</script>
-  </head>
+  <style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
+</head>
   <body>
     <style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style>
     <nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;">
@@ -82,7 +83,7 @@ $con = mysqli_connect("localhost", "root", "", "bd_ecole");
 
 // Vérification de la réussite de la connexion
 if (!$con) {
-    die("Erreur de connexion à la base de données : " . mysqli_connect_error());
+    die("Erreur de connexion à la base de données");
 }
 ?&gt;</pre>
 
@@ -122,7 +123,7 @@ mysqli_close($con);
     <div class="note-box">
       <strong>Rappel de cours (Différence entre les 3 fonctions fetch) :</strong><br />
       • <code>mysqli_fetch_row($res)</code> : renvoie un tableau indicé numériquement (<code>$t[0]</code>, <code>$t[1]</code>, <code>$t[2]</code>).<br />
-      • <code>mysqli_fetch_assoc($res)</code> : renvoie un tableau associatif indexé par les noms des colonnes (<code>$t["Id"]</code>, <code>$t["Nom_prenom"]</code>).<br />
+      • <code><s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res)</code> : renvoie un tableau associatif indexé par les noms des colonnes (<code>$t["Id"]</code>, <code>$t["Nom_prenom"]</code>).<br />
       • <code>mysqli_fetch_array($res)</code> : renvoie un tableau acceptant à la fois les indices numériques ET les noms de colonnes.
     </div>
     <pre>&lt;?php
@@ -140,7 +141,7 @@ if (mysqli_num_rows($res) == 0) {
     echo "&lt;table border='1' cellpadding='6'&gt;";
     echo "&lt;tr&gt;&lt;th&gt;Catégorie&lt;/th&gt;&lt;th&gt;Id&lt;/th&gt;&lt;th&gt;Nom&lt;/th&gt;&lt;th&gt;Prénom&lt;/th&gt;&lt;th&gt;Moyenne&lt;/th&gt;&lt;/tr&gt;";
 
-    while ($t = mysqli_fetch_assoc($res)) {
+    while ($t = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res)) {
         $cat = substr($t["Id"], 0, 1);           // Initiale de l'Id = Catégorie
         $pos = strpos($t["Nom_prenom"], " ");    // Position du 1er espace
         $nom = substr($t["Nom_prenom"], 0, $pos);
@@ -170,7 +171,7 @@ echo "Nombre d'admis (Méthode A) : " . $nb1 . "&lt;br&gt;";
 
 // --- MÉTHODE B : Avec SELECT COUNT(*) AS nb (renvoie toujours 1 seule ligne !) ---
 $r2 = mysqli_query($con, "SELECT COUNT(*) AS nb FROM eleves WHERE Moyenne &gt;= 10");
-$lig = mysqli_fetch_assoc($r2); // ou mysqli_fetch_row($r2) avec $lig[0]
+$lig = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($r2); // ou mysqli_fetch_row($r2) avec $lig[0]
 $nb2 = $lig["nb"];
 echo "Nombre d'admis (Méthode B) : " . $nb2 . "&lt;br&gt;";
 
