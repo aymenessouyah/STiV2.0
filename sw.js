@@ -13,7 +13,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/acces.js", revision: "sombre-site-v372" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },
   { url: "./manifest.webmanifest", revision: "pwa-install-v371" },
-  { url: "./glossaire.html", revision: "glossaire-badge-en-v349" },
+  { url: "./glossaire.html", revision: "glossaire-arabe-patch-v373" },
   { url: "./assets/js/graphiques-activite.js", revision: "glossaire-graphiques-v347" },
   { url: "./assets/js/reprendre.js", revision: "reprendre-sombre-v343" },
   { url: "./assets/css/smart-book-fan-v341.css", revision: "smart-books-v341" },
