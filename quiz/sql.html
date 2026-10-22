@@ -40777,7 +40777,7 @@ LIMIT 5;</textarea
           cat: "write",
           diff: "Difficile",
           q: "Que fait cette expression dans un UPDATE ?",
-          code: "-- Supprimer le dernier caractère d'une colonne\nSET nom_colonne = SUBSTR(nom_colonne, 1, CHAR_LENGTH(nom_colonne) - 1)",
+          code: "-- Supprimer le dernier caractère d'une colonne\nSET nom_colonne = SUBSTR(nom_colonne, 1, LENGTH(nom_colonne) - 1)",
           answers: [
             "Elle garde tous les caractères sauf le dernier",
             "Elle garde seulement le dernier caractère",
@@ -40786,8 +40786,8 @@ LIMIT 5;</textarea
           ],
           correct: 0,
           explain:
-            "CHAR_LENGTH donne la longueur de la chaîne ; en retirant 1, SUBSTR extrait du début jusqu'à l'avant-dernier caractère. C'est le nettoyage inverse du cas précédent.",
-          hint: "Relis la notion : CHAR_LENGTH donne la longueur de la chaîne ; en retirant 1, SUBSTR extrait du début jusqu'à l'avant-dernier caractère.",
+            "LENGTH donne la longueur de la chaîne ; en retirant 1, SUBSTR extrait du début jusqu'à l'avant-dernier caractère. C'est le nettoyage inverse du cas précédent.",
+          hint: "Relis la notion : LENGTH donne la longueur de la chaîne ; en retirant 1, SUBSTR extrait du début jusqu'à l'avant-dernier caractère.",
           id: 54,
         },
         {
