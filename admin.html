@@ -1677,6 +1677,27 @@
     }
   }
 </style>
+
+  <style id="style-groupes-v375">
+    .sti-groupe-nav{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 2px}
+    .sti-groupe-puce{border:1px solid rgba(35,32,26,.16);background:#fffdf7;color:#23201a;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:900;text-decoration:none;box-shadow:0 1px 3px rgba(13,21,38,.06)}
+    .sti-groupe-puce:hover{border-color:#f4511e;color:#c73e10}
+    .sti-groupe-tete{display:flex;align-items:center;gap:9px;margin:24px 2px 9px;padding:9px 13px;border-radius:14px;background:linear-gradient(120deg,#fffdf7,#f3e9d8);border:1px solid rgba(35,32,26,.14);scroll-margin-top:14px}
+    .sti-groupe-ico{font-size:19px;line-height:1}
+    .sti-groupe-txt{display:flex;flex-direction:column;gap:1px;min-width:0}
+    .sti-groupe-txt b{font-size:14.5px;letter-spacing:.01em;color:#23201a}
+    .sti-groupe-txt i{font-style:normal;font-size:11px;color:#7a6f5d;font-weight:700}
+    .sti-groupe-haut{margin-left:auto;border:1px solid rgba(35,32,26,.16);background:#fffdf7;color:#23201a;border-radius:9px;padding:2px 9px;font-size:12px;font-weight:900;text-decoration:none}
+    .sti-groupe-haut:hover{border-color:#f4511e;color:#c73e10}
+    html.admin-ardoise .sti-groupe-puce{background:rgba(255,255,255,.06);color:#e8eef7;border-color:rgba(255,255,255,.16)}
+    html.admin-ardoise .sti-groupe-puce:hover{border-color:#ffd54f;color:#ffd54f}
+    html.admin-ardoise .sti-groupe-tete{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12)}
+    html.admin-ardoise .sti-groupe-txt b{color:#e8eef7}
+    html.admin-ardoise .sti-groupe-txt i{color:#8fa3c4}
+    html.admin-ardoise .sti-groupe-haut{background:rgba(255,255,255,.06);color:#e8eef7;border-color:rgba(255,255,255,.16)}
+    @media (max-width:760px){.sti-groupe-txt i{display:none}.sti-groupe-nav{gap:5px}.sti-groupe-puce{font-size:11px;padding:4px 10px}}
+    @media print{.sti-groupe-nav,.sti-groupe-haut{display:none!important}}
+  </style>
 </head>
 <body class="cockpit-airbus">
 
@@ -1837,6 +1858,22 @@
 
   </section>
 
+<div class="sti-groupe-nav" aria-label="Groupes du tableau de bord"><a class="sti-groupe-puce" href="#grp-outils">🧰 Outils</a><a class="sti-groupe-puce" href="#grp-scolarite">🎓 Scolarité — candidats</a><a class="sti-groupe-puce" href="#grp-classe">🏫 Gestion de classe</a><a class="sti-groupe-puce" href="#grp-connexion">🔐 Connexions</a></div>
+  <div class="msg" id="msg"></div>
+  <div class="titre-gestion-detaillee">
+    <h2>▤ Gestion détaillée</h2>
+    <span>Ouvrez uniquement la section dont vous avez besoin</span>
+  </div>
+  <nav class="nav-sections-admin" id="nav-sections-admin" aria-label="Navigation entre les sections du tableau de bord">
+    <span class="nav-sections-lbl">📂 Afficher :</span>
+    <button type="button" class="btn-sec-tab actif" data-sec-cible="all">🗂️ Tous les blocs repliés</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-abonnes">👥 Abonnés &amp; Classes</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-quiz">🏆 Quiz &amp; Bac Pratique</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-messages">📨 Messages &amp; Réponses</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-connexions">🕒 Dernières Connexions</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-aide">❓ Aide &amp; rappels</button>
+  </nav>
+<div class="sti-groupe-tete" id="grp-outils"><span class="sti-groupe-ico" aria-hidden="true">🧰</span><span class="sti-groupe-txt"><b>Outils du professeur</b><i>Actions rapides par pôles, application Windows, guides et mesure d’activité</i></span><a class="sti-groupe-haut" href="#vue-ensemble-admin" title="Revenir a la vue d’ensemble">↑</a></div>
   <section class="centre-actions-dashboard" id="centre-actions-dashboard" aria-labelledby="titre-actions-dashboard">
   <!-- 2. CENTRE DE PILOTAGE PÉDAGOGIQUE ORGANISÉ PAR CATÉGORIES -->
   <div class="poles-header">
@@ -2021,29 +2058,178 @@
   </section>
 
   </section>
+  <style id="graphiques-style">
+    .graph-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 860px) { .graph-grille { grid-template-columns: 1fr; } }
+    .graph-boite { background: #fffdf7; border: 2px solid #23201a; border-radius: 14px; padding: 12px 14px; box-shadow: 4px 4px 0 rgba(244,81,30,.35); }
+    .graph-boite h3 { margin: 0 0 8px; font-size: 13px; color: #23201a; }
+    .graph-boite canvas { width: 100%; display: block; }
+    html.admin-moderne body.cockpit-airbus .graph-boite { background: var(--ab-panel); border-color: var(--ab-line); box-shadow: none; }
+    html.admin-moderne body.cockpit-airbus .graph-boite h3 { color: var(--ab-white); }
+  </style>
+  <section class="carte-section-admin" id="bloc-sec-graphiques">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
+      <h2 style="margin:0">📊 Activité de la plateforme</h2>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <select id="graph-periode" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Période des graphiques">
+          <option value="7">7 derniers jours</option>
+          <option value="14" selected>14 derniers jours</option>
+          <option value="30">30 derniers jours</option>
+        </select>
+        <button type="button" class="btn-outil" id="btn-graph-charger">↻ Actualiser</button>
+      </div>
+    </div>
+    <div class="corps-section-admin">
+      <p id="graph-resume" style="font-size:12.5px;color:#7a6f5d;margin:0 0 10px">Les graphiques se chargent automatiquement…</p>
+      <div class="graph-grille">
+        <div class="graph-boite"><h3>📅 Connexions par jour</h3><canvas id="graph-jours" height="190"></canvas></div>
+        <div class="graph-boite"><h3>🔥 Pages les plus consultées</h3><canvas id="graph-pages" height="190"></canvas></div>
+      </div>
+    </div>
+  </section>
+<div class="sti-groupe-tete" id="grp-scolarite"><span class="sti-groupe-ico" aria-hidden="true">🎓</span><span class="sti-groupe-txt"><b>Scolarité — tout ce qui intéresse les candidats</b><i>Résultats des quiz et du Bac Pratique, rappels statistiques, lecture des messages</i></span><a class="sti-groupe-haut" href="#vue-ensemble-admin" title="Revenir a la vue d’ensemble">↑</a></div>
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-quiz">
+    <div id="sec-resultats-quiz" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:16px">
+      <h2 style="margin:0">🏆 Résultats des Quiz &amp; Atelier Bac Pratique</h2>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <select id="filtre-quiz-classe" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer les résultats de Quiz par classe">
+          <option value="*">🏫 Toutes les classes</option>
+        </select>
+        <button type="button" class="btn-outil" id="btn-export-quiz-csv" title="Exporter les notes et résultats de Quiz au format Excel (CSV)">📥 Exporter Notes (CSV)</button>
+        <button type="button" class="btn-outil" id="btn-ouvrir-purge-quiz" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer les résultats de Quiz et Bac Pratique en choisissant le mois cible">🗑️ Effacer par mois…</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-quiz">▸ Agrandir</button>
+      </div>
+    </div>
+    <div class="corps-section-admin">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Candidat (Nom, Prénom &amp; Contact)</th><th>Lycée / Classe</th><th>Épreuve / Quiz</th><th>Score / Note</th><th>Date</th></tr></thead>
+          <tbody id="tb-quiz"></tbody>
+        </table>
+      </div>
+      <div id="wrap-voir-plus-quiz" style="display:none;text-align:center;margin:10px 0 4px">
+        <button type="button" class="btn-outil" id="btn-voir-plus-quiz">➕ Voir plus</button>
+      </div>
 
-  <!-- 4. GESTION DÉTAILLÉE : BLOCS REPLIÉS AU DÉMARRAGE -->
-  <div class="titre-gestion-detaillee">
-    <h2>▤ Gestion détaillée</h2>
-    <span>Ouvrez uniquement la section dont vous avez besoin</span>
-  </div>
-  <nav class="nav-sections-admin" id="nav-sections-admin" aria-label="Navigation entre les sections du tableau de bord">
-    <span class="nav-sections-lbl">📂 Afficher :</span>
-    <button type="button" class="btn-sec-tab actif" data-sec-cible="all">🗂️ Tous les blocs repliés</button>
-    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-abonnes">👥 1. Abonnés &amp; Classes</button>
-    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-quiz">🏆 2. Quiz &amp; Bac Pratique</button>
-    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-messages">📨 3. Messages &amp; Réponses</button>
-    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-connexions">🕒 4. Dernières Connexions</button>
-    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-aide">❓ Aide &amp; rappels</button>
-  </nav>
+      <!-- Détail synchronisé des quiz (v358) : chaque partie, tous appareils -->
+      <div style="margin-top:20px;border-top:2px dashed #d8cbb2;padding-top:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 8px">
+          <h3 style="margin:0;font-size:15px">📋 Détail synchronisé des quiz <span style="font-size:11px;color:#7a6f5d;font-weight:700">(toutes les parties, tous appareils — cliquez sur une ligne)</span></h3>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <select id="filtre-quiz-sync-quiz" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer par quiz">
+              <option value="*">🎯 Tous les quiz</option>
+              <option value="html-css">🌐 HTML5 &amp; CSS3</option>
+              <option value="javascript">⚡ JavaScript</option>
+              <option value="sql">🗄️ SQL (BD)</option>
+              <option value="php">🐘 PHP</option>
+              <option value="tableaux">🃏 Quiz des tableaux</option>
+            </select>
+            <input id="rech-quiz-sync" type="search" placeholder="🔎 Nom, e-mail, classe…" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:700;font-size:12px;min-width:180px" title="Rechercher un élève">
+            <button type="button" class="btn-outil" id="btn-quiz-sync-charger">↻ Actualiser</button>
+          </div>
+        </div>
+        <p id="quiz-sync-resume" style="font-size:12.5px;color:#7a6f5d;margin:0 0 10px">Chargement…</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px">
+          <strong style="font-size:12.5px">📊 Vues :</strong>
+          <button type="button" class="btn-vue-quiz" data-vue="classes" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#23201a;color:#fffdf7;font-weight:800;font-size:12px;cursor:pointer">🏫 Par classe</button>
+          <button type="button" class="btn-vue-quiz" data-vue="jours" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">📅 Par jour</button>
+          <button type="button" class="btn-vue-quiz" data-vue="top3" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">🏆 Top 3 par classe</button>
+          <button type="button" class="btn-vue-quiz" data-vue="alertes" style="border:2px solid #c0392b;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#c0392b;font-weight:800;font-size:12px;cursor:pointer">🚨 Alertes</button>
+          <button type="button" class="btn-vue-quiz" data-vue="progression" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">📈 Progression</button>
+          <button type="button" class="btn-vue-quiz" data-vue="questions" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">🔍 Questions ratées</button>
+        </div>
+        <div id="vue-quiz-stats"></div>
+        <div id="vue-quiz-classe" style="display:none"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Élève</th><th>Classe</th><th>Quiz</th><th>Parties</th><th>Dernier score</th><th>Meilleur score</th><th>% moyen</th><th></th></tr></thead>
+            <tbody id="tb-quiz-sync"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-aide">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
+      <h2 style="margin:0">❓ Aide &amp; rappels — statistiques des quiz</h2>
+      <button type="button" class="btn-replier-sec" data-replier="bloc-sec-aide">▸ Agrandir</button>
+    </div>
+    <div class="corps-section-admin" style="font-size:13.5px;line-height:1.7">
 
-  <div class="msg" id="msg"></div>
+      <h3 style="margin:14px 0 6px">🔄 Comment les scores arrivent-ils ici ?</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li>Les quiz sont <strong>réservés aux abonnés connectés</strong> et <strong>rejouables à l'infini</strong> : <strong>chaque partie est conservée</strong> (score, %, date) — d'où le dernier score, le meilleur score, le % moyen et le nombre de parties.</li>
+        <li><strong>En ligne</strong> : la partie est envoyée immédiatement à la fin du quiz. <strong>Hors ligne</strong> : elle attend dans une file sur l'appareil, puis part <strong>automatiquement dès le retour d'Internet</strong> (ou au prochain quiz ouvert) — rien n'est perdu.</li>
+        <li>Le tirage est <strong>aléatoire sans jamais répéter</strong> une question déjà vue, sur <strong>tous les appareils</strong> de l'élève (historique des « vus » synchronisé).</li>
+        <li>La <strong>classe</strong> affichée vient du profil de l'élève (section « 👥 1. Abonnés &amp; Classes ») : si une classe est fausse ou vide, corrigez-la là-bas.</li>
+        <li>Bouton <strong>↻ Actualiser</strong> : recharge les données (affichage limité aux <strong>5 000 parties</strong> et <strong>8 000 réponses</strong> les plus récentes).</li>
+      </ul>
 
-  <!-- SECTION 1 : LISTE DES ABONNÉS & GESTION DES CLASSES -->
+      <h3 style="margin:16px 0 6px">📊 Les vues du bloc « Résultats des Quiz »</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li><strong>Tableau détaillé</strong> (sous les vues) : une ligne par élève × quiz ; cliquez sur une ligne pour voir <strong>toutes ses parties</strong> et ses <strong>questions les plus ratées</strong>.</li>
+        <li><strong>🏫 Par classe</strong> : élèves actifs, parties, % moyen, dernière activité. <strong>Cliquez sur une classe</strong> → détail par candidat ; cliquez sur un candidat → ses parties.</li>
+        <li><strong>📅 Par jour</strong> : activité des <strong>14 derniers jours</strong> (parties, élèves actifs, % moyen, barre d'activité).</li>
+        <li><strong>🏆 Top 3 par classe</strong> : podium 🥇🥈🥉 classé par <strong>% moyen</strong> de toutes les parties (départage : nombre de parties).</li>
+        <li><strong>📈 Progression</strong> : écart entre la <strong>première</strong> et la <strong>dernière</strong> partie de chaque élève (en points : ↗ progrès, ↘ baisse) ; le même « Δ » apparaît dans le détail par classe.</li>
+        <li><strong>🔍 Questions ratées</strong> : % de réussite par quiz, puis les <strong>questions les plus échouées</strong> (au moins 2 tentatives), filtrables par quiz. <strong>Cliquez sur une question</strong> → les élèves en échec dessus, pour savoir quoi réexpliquer en classe.</li>
+      </ul>
+
+      <h3 style="margin:16px 0 6px">🚨 Les alertes (seuils automatiques)</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li><strong>🔴 En difficulté</strong> : % moyen <strong>inférieur à 50 %</strong> avec <strong>au moins 2 parties</strong>.</li>
+        <li><strong>😴 Inactifs</strong> : aucune partie depuis <strong>7 jours ou plus</strong>.</li>
+        <li><strong>🌱 Jamais joué</strong> : inscrits (avec une classe renseignée) sans aucune partie synchronisée.</li>
+        <li>Cliquez sur un élève d'une alerte pour ouvrir le détail de sa classe.</li>
+      </ul>
+
+      <h3 style="margin:16px 0 6px">🔬 Compte laboratoire (elevelabo3)</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li>Le compte partagé du labo <strong>n'envoie aucun score en ligne</strong> : ses quiz restent en <strong>distribution aléatoire locale</strong> à chaque poste, et il est <strong>exclu de toutes les statistiques</strong> ci-dessus.</li>
+        <li>Sa banque de questions se met à jour avec le site, comme pour tous les comptes.</li>
+      </ul>
+
+      <h3 style="margin:16px 0 6px">🛠️ Rappels techniques</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li>Données (Supabase) : <code>sti_quiz_parties</code> (chaque partie), <code>sti_quiz_vus</code> (questions déjà vues), <code>sti_quiz_reponses</code> (détail question par question, depuis la v365 — <strong>nouvelles parties uniquement</strong>).</li>
+        <li>Si une vue affiche « table absente », exécutez le fichier de migration correspondant dans Supabase (SQL Editor) : <code>MIGRATION-v358-QUIZ-SYNC.sql</code> puis <code>MIGRATION-v365-REPONSES.sql</code>, puis cliquez sur ↻ Actualiser.</li>
+        <li>Conventions appliquées partout (site + livres) : PHP avec <strong><code>die()</code> uniquement</strong>, <code>is_numeric()</code>, jointures SQL en <code>WHERE t1.x = t2.x</code> ; le hors-programme indispensable est <strong>barré en rouge</strong>, jamais supprimé.</li>
+        <li>Le <strong>README</strong> du dépôt GitHub documente toute la plateforme (contenus, publication, historique des versions).</li>
+      </ul>
+
+    </div>
+  </section>
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-messages">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
+      <h2 style="margin:0">📨 Suivi de lecture des messages &amp; réponses des élèves <span id="resume-suivi-msg" style="font-size:12px;color:#7a6f5d;font-weight:800;margin-left:6px"></span></h2>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn-outil" id="btn-ouvrir-purge-msg" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer un message diffusé et son suivi de lecture/réponses">🗑️ Effacer par message…</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-messages">▸ Agrandir</button>
+      </div>
+    </div>
+    <div class="corps-section-admin">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+        <select id="sel-suivi-msg" style="border:2px solid #23201a;border-radius:10px;padding:7px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:13px;min-width:260px;max-width:100%">
+          <option value="">Aucun message diffusé pour le moment</option>
+        </select>
+        <div id="apercu-suivi-msg" style="font-size:13px;color:#23201a;background:#fffdf7;border:1.5px dashed #f4511e;border-radius:10px;padding:7px 12px;flex:1;min-width:220px;display:none"></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Candidat (Nom, Prénom &amp; Contact)</th><th>Lycée / Classe</th><th>État</th><th>💬 Réponse / Question de l'élève</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="tb-suivi-msg"></tbody>
+        </table>
+      </div>
+      <div id="wrap-voir-plus-suivi" style="display:none;text-align:center;margin:10px 0 4px">
+        <button type="button" class="btn-outil" id="btn-voir-plus-suivi">➕ Voir plus</button>
+      </div>
+    </div>
+  </section>
+<div class="sti-groupe-tete" id="grp-classe"><span class="sti-groupe-ico" aria-hidden="true">🏫</span><span class="sti-groupe-txt"><b>Gestion de la classe</b><i>Abonnés, classes, vues par jour et par élève — l’afficheur de salle reste dans la vue d’ensemble</i></span><a class="sti-groupe-haut" href="#vue-ensemble-admin" title="Revenir a la vue d’ensemble">↑</a></div>
   <section class="carte-section-admin sec-repliee" id="bloc-sec-abonnes">
     <div id="sec-abonnes" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:14px">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <h2 style="margin:0">👥 1. Liste des Abonnés &amp; Classes <span id="note-tri" style="font-size:11px;color:#7a6f5d;font-weight:700"></span></h2>
+        <h2 style="margin:0">👥 Liste des Abonnés &amp; Classes <span id="note-tri" style="font-size:11px;color:#7a6f5d;font-weight:700"></span></h2>
         <div class="choix-vue-abonnes" role="tablist" aria-label="Mode d'affichage des abonnés">
           <button type="button" class="btn-vue actif" id="btn-vue-liste" data-vue="liste" title="Afficher le tableau détaillé complet">📋 Liste détaillée</button>
           <button type="button" class="btn-vue" id="btn-vue-noeuds" data-vue="noeuds" title="Afficher sous forme de cartes / nœuds (idéal sur mobile)">🔵 Nœuds</button>
@@ -2108,154 +2294,10 @@
       </div>
     </div>
   </section>
-
-  <!-- SECTION 2 : RÉSULTATS DES QUIZ & ATELIER BAC PRATIQUE -->
-  <section class="carte-section-admin sec-repliee" id="bloc-sec-quiz">
-    <div id="sec-resultats-quiz" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:16px">
-      <h2 style="margin:0">🏆 2. Résultats des Quiz &amp; Atelier Bac Pratique</h2>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <select id="filtre-quiz-classe" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer les résultats de Quiz par classe">
-          <option value="*">🏫 Toutes les classes</option>
-        </select>
-        <button type="button" class="btn-outil" id="btn-export-quiz-csv" title="Exporter les notes et résultats de Quiz au format Excel (CSV)">📥 Exporter Notes (CSV)</button>
-        <button type="button" class="btn-outil" id="btn-ouvrir-purge-quiz" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer les résultats de Quiz et Bac Pratique en choisissant le mois cible">🗑️ Effacer par mois…</button>
-        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-quiz">▸ Agrandir</button>
-      </div>
-    </div>
-    <div class="corps-section-admin">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Candidat (Nom, Prénom &amp; Contact)</th><th>Lycée / Classe</th><th>Épreuve / Quiz</th><th>Score / Note</th><th>Date</th></tr></thead>
-          <tbody id="tb-quiz"></tbody>
-        </table>
-      </div>
-      <div id="wrap-voir-plus-quiz" style="display:none;text-align:center;margin:10px 0 4px">
-        <button type="button" class="btn-outil" id="btn-voir-plus-quiz">➕ Voir plus</button>
-      </div>
-
-      <!-- Détail synchronisé des quiz (v358) : chaque partie, tous appareils -->
-      <div style="margin-top:20px;border-top:2px dashed #d8cbb2;padding-top:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 8px">
-          <h3 style="margin:0;font-size:15px">📋 Détail synchronisé des quiz <span style="font-size:11px;color:#7a6f5d;font-weight:700">(toutes les parties, tous appareils — cliquez sur une ligne)</span></h3>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <select id="filtre-quiz-sync-quiz" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer par quiz">
-              <option value="*">🎯 Tous les quiz</option>
-              <option value="html-css">🌐 HTML5 &amp; CSS3</option>
-              <option value="javascript">⚡ JavaScript</option>
-              <option value="sql">🗄️ SQL (BD)</option>
-              <option value="php">🐘 PHP</option>
-              <option value="tableaux">🃏 Quiz des tableaux</option>
-            </select>
-            <input id="rech-quiz-sync" type="search" placeholder="🔎 Nom, e-mail, classe…" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:700;font-size:12px;min-width:180px" title="Rechercher un élève">
-            <button type="button" class="btn-outil" id="btn-quiz-sync-charger">↻ Actualiser</button>
-          </div>
-        </div>
-        <p id="quiz-sync-resume" style="font-size:12.5px;color:#7a6f5d;margin:0 0 10px">Chargement…</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px">
-          <strong style="font-size:12.5px">📊 Vues :</strong>
-          <button type="button" class="btn-vue-quiz" data-vue="classes" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#23201a;color:#fffdf7;font-weight:800;font-size:12px;cursor:pointer">🏫 Par classe</button>
-          <button type="button" class="btn-vue-quiz" data-vue="jours" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">📅 Par jour</button>
-          <button type="button" class="btn-vue-quiz" data-vue="top3" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">🏆 Top 3 par classe</button>
-          <button type="button" class="btn-vue-quiz" data-vue="alertes" style="border:2px solid #c0392b;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#c0392b;font-weight:800;font-size:12px;cursor:pointer">🚨 Alertes</button>
-          <button type="button" class="btn-vue-quiz" data-vue="progression" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">📈 Progression</button>
-          <button type="button" class="btn-vue-quiz" data-vue="questions" style="border:2px solid #23201a;border-radius:999px;padding:5px 14px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">🔍 Questions ratées</button>
-        </div>
-        <div id="vue-quiz-stats"></div>
-        <div id="vue-quiz-classe" style="display:none"></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Élève</th><th>Classe</th><th>Quiz</th><th>Parties</th><th>Dernier score</th><th>Meilleur score</th><th>% moyen</th><th></th></tr></thead>
-            <tbody id="tb-quiz-sync"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION AIDE : EXPLICATIONS & RAPPELS (quiz synchronisés) -->
-  <section class="carte-section-admin sec-repliee" id="bloc-sec-aide">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
-      <h2 style="margin:0">❓ Aide &amp; rappels — statistiques des quiz</h2>
-      <button type="button" class="btn-replier-sec" data-replier="bloc-sec-aide">▸ Agrandir</button>
-    </div>
-    <div class="corps-section-admin" style="font-size:13.5px;line-height:1.7">
-
-      <h3 style="margin:14px 0 6px">🔄 Comment les scores arrivent-ils ici ?</h3>
-      <ul style="margin:0;padding-left:20px">
-        <li>Les quiz sont <strong>réservés aux abonnés connectés</strong> et <strong>rejouables à l'infini</strong> : <strong>chaque partie est conservée</strong> (score, %, date) — d'où le dernier score, le meilleur score, le % moyen et le nombre de parties.</li>
-        <li><strong>En ligne</strong> : la partie est envoyée immédiatement à la fin du quiz. <strong>Hors ligne</strong> : elle attend dans une file sur l'appareil, puis part <strong>automatiquement dès le retour d'Internet</strong> (ou au prochain quiz ouvert) — rien n'est perdu.</li>
-        <li>Le tirage est <strong>aléatoire sans jamais répéter</strong> une question déjà vue, sur <strong>tous les appareils</strong> de l'élève (historique des « vus » synchronisé).</li>
-        <li>La <strong>classe</strong> affichée vient du profil de l'élève (section « 👥 1. Abonnés &amp; Classes ») : si une classe est fausse ou vide, corrigez-la là-bas.</li>
-        <li>Bouton <strong>↻ Actualiser</strong> : recharge les données (affichage limité aux <strong>5 000 parties</strong> et <strong>8 000 réponses</strong> les plus récentes).</li>
-      </ul>
-
-      <h3 style="margin:16px 0 6px">📊 Les vues du bloc « Résultats des Quiz »</h3>
-      <ul style="margin:0;padding-left:20px">
-        <li><strong>Tableau détaillé</strong> (sous les vues) : une ligne par élève × quiz ; cliquez sur une ligne pour voir <strong>toutes ses parties</strong> et ses <strong>questions les plus ratées</strong>.</li>
-        <li><strong>🏫 Par classe</strong> : élèves actifs, parties, % moyen, dernière activité. <strong>Cliquez sur une classe</strong> → détail par candidat ; cliquez sur un candidat → ses parties.</li>
-        <li><strong>📅 Par jour</strong> : activité des <strong>14 derniers jours</strong> (parties, élèves actifs, % moyen, barre d'activité).</li>
-        <li><strong>🏆 Top 3 par classe</strong> : podium 🥇🥈🥉 classé par <strong>% moyen</strong> de toutes les parties (départage : nombre de parties).</li>
-        <li><strong>📈 Progression</strong> : écart entre la <strong>première</strong> et la <strong>dernière</strong> partie de chaque élève (en points : ↗ progrès, ↘ baisse) ; le même « Δ » apparaît dans le détail par classe.</li>
-        <li><strong>🔍 Questions ratées</strong> : % de réussite par quiz, puis les <strong>questions les plus échouées</strong> (au moins 2 tentatives), filtrables par quiz. <strong>Cliquez sur une question</strong> → les élèves en échec dessus, pour savoir quoi réexpliquer en classe.</li>
-      </ul>
-
-      <h3 style="margin:16px 0 6px">🚨 Les alertes (seuils automatiques)</h3>
-      <ul style="margin:0;padding-left:20px">
-        <li><strong>🔴 En difficulté</strong> : % moyen <strong>inférieur à 50 %</strong> avec <strong>au moins 2 parties</strong>.</li>
-        <li><strong>😴 Inactifs</strong> : aucune partie depuis <strong>7 jours ou plus</strong>.</li>
-        <li><strong>🌱 Jamais joué</strong> : inscrits (avec une classe renseignée) sans aucune partie synchronisée.</li>
-        <li>Cliquez sur un élève d'une alerte pour ouvrir le détail de sa classe.</li>
-      </ul>
-
-      <h3 style="margin:16px 0 6px">🔬 Compte laboratoire (elevelabo3)</h3>
-      <ul style="margin:0;padding-left:20px">
-        <li>Le compte partagé du labo <strong>n'envoie aucun score en ligne</strong> : ses quiz restent en <strong>distribution aléatoire locale</strong> à chaque poste, et il est <strong>exclu de toutes les statistiques</strong> ci-dessus.</li>
-        <li>Sa banque de questions se met à jour avec le site, comme pour tous les comptes.</li>
-      </ul>
-
-      <h3 style="margin:16px 0 6px">🛠️ Rappels techniques</h3>
-      <ul style="margin:0;padding-left:20px">
-        <li>Données (Supabase) : <code>sti_quiz_parties</code> (chaque partie), <code>sti_quiz_vus</code> (questions déjà vues), <code>sti_quiz_reponses</code> (détail question par question, depuis la v365 — <strong>nouvelles parties uniquement</strong>).</li>
-        <li>Si une vue affiche « table absente », exécutez le fichier de migration correspondant dans Supabase (SQL Editor) : <code>MIGRATION-v358-QUIZ-SYNC.sql</code> puis <code>MIGRATION-v365-REPONSES.sql</code>, puis cliquez sur ↻ Actualiser.</li>
-        <li>Conventions appliquées partout (site + livres) : PHP avec <strong><code>die()</code> uniquement</strong>, <code>is_numeric()</code>, jointures SQL en <code>WHERE t1.x = t2.x</code> ; le hors-programme indispensable est <strong>barré en rouge</strong>, jamais supprimé.</li>
-        <li>Le <strong>README</strong> du dépôt GitHub documente toute la plateforme (contenus, publication, historique des versions).</li>
-      </ul>
-
-    </div>
-  </section>
-
-  <!-- SECTION 3 : SUIVI DE LECTURE DES MESSAGES DIFFUSÉS & RÉPONSES -->
-  <section class="carte-section-admin sec-repliee" id="bloc-sec-messages">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
-      <h2 style="margin:0">📨 3. Suivi de lecture des messages &amp; réponses des élèves <span id="resume-suivi-msg" style="font-size:12px;color:#7a6f5d;font-weight:800;margin-left:6px"></span></h2>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <button type="button" class="btn-outil" id="btn-ouvrir-purge-msg" style="background:#fde2e6;color:#c0392b;border-color:#c0392b;box-shadow:2px 2px 0 #c0392b" title="Effacer un message diffusé et son suivi de lecture/réponses">🗑️ Effacer par message…</button>
-        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-messages">▸ Agrandir</button>
-      </div>
-    </div>
-    <div class="corps-section-admin">
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
-        <select id="sel-suivi-msg" style="border:2px solid #23201a;border-radius:10px;padding:7px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:13px;min-width:260px;max-width:100%">
-          <option value="">Aucun message diffusé pour le moment</option>
-        </select>
-        <div id="apercu-suivi-msg" style="font-size:13px;color:#23201a;background:#fffdf7;border:1.5px dashed #f4511e;border-radius:10px;padding:7px 12px;flex:1;min-width:220px;display:none"></div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Candidat (Nom, Prénom &amp; Contact)</th><th>Lycée / Classe</th><th>État</th><th>💬 Réponse / Question de l'élève</th><th>Date</th><th>Action</th></tr></thead>
-          <tbody id="tb-suivi-msg"></tbody>
-        </table>
-      </div>
-      <div id="wrap-voir-plus-suivi" style="display:none;text-align:center;margin:10px 0 4px">
-        <button type="button" class="btn-outil" id="btn-voir-plus-suivi">➕ Voir plus</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 4 : DERNIÈRES CONNEXIONS (TOUS ABONNÉS) -->
+<div class="sti-groupe-tete" id="grp-connexion"><span class="sti-groupe-ico" aria-hidden="true">🔐</span><span class="sti-groupe-txt"><b>Connexions</b><i>Dernières connexions de tous les abonnés</i></span><a class="sti-groupe-haut" href="#vue-ensemble-admin" title="Revenir a la vue d’ensemble">↑</a></div>
   <section class="carte-section-admin sec-repliee" id="bloc-sec-connexions">
     <div id="sec-dernieres-connexions" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:16px">
-      <h2 style="margin:0">🕒 4. Dernières connexions (tous abonnés)</h2>
+      <h2 style="margin:0">🕒 Dernières connexions (tous abonnés)</h2>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <select id="filtre-acces-classe" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer les dernières connexions par classe">
           <option value="*">🏫 Toutes les classes</option>
@@ -2273,37 +2315,6 @@
       </div>
       <div id="wrap-voir-plus-acces" style="display:none;text-align:center;margin:10px 0 4px">
         <button type="button" class="btn-outil" id="btn-voir-plus-acces">➕ Voir plus</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 5 : GRAPHIQUES D'ACTIVITÉ -->
-  <style id="graphiques-style">
-    .graph-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 860px) { .graph-grille { grid-template-columns: 1fr; } }
-    .graph-boite { background: #fffdf7; border: 2px solid #23201a; border-radius: 14px; padding: 12px 14px; box-shadow: 4px 4px 0 rgba(244,81,30,.35); }
-    .graph-boite h3 { margin: 0 0 8px; font-size: 13px; color: #23201a; }
-    .graph-boite canvas { width: 100%; display: block; }
-    html.admin-moderne body.cockpit-airbus .graph-boite { background: var(--ab-panel); border-color: var(--ab-line); box-shadow: none; }
-    html.admin-moderne body.cockpit-airbus .graph-boite h3 { color: var(--ab-white); }
-  </style>
-  <section class="carte-section-admin" id="bloc-sec-graphiques">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px">
-      <h2 style="margin:0">📊 5. Activité de la plateforme</h2>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <select id="graph-periode" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Période des graphiques">
-          <option value="7">7 derniers jours</option>
-          <option value="14" selected>14 derniers jours</option>
-          <option value="30">30 derniers jours</option>
-        </select>
-        <button type="button" class="btn-outil" id="btn-graph-charger">↻ Actualiser</button>
-      </div>
-    </div>
-    <div class="corps-section-admin">
-      <p id="graph-resume" style="font-size:12.5px;color:#7a6f5d;margin:0 0 10px">Les graphiques se chargent automatiquement…</p>
-      <div class="graph-grille">
-        <div class="graph-boite"><h3>📅 Connexions par jour</h3><canvas id="graph-jours" height="190"></canvas></div>
-        <div class="graph-boite"><h3>🔥 Pages les plus consultées</h3><canvas id="graph-pages" height="190"></canvas></div>
       </div>
     </div>
   </section>
@@ -4403,7 +4414,7 @@
           <li><b>Organisation claire en 4 zones (PC &amp; Mobile)</b> :
             <b>(1) En-tête épuré</b> avec témoin réseau, jauge Supabase cliquable, raccourcis live et tiroir <code>⚙️ Système &amp; Plus ▾</code> ;
             <b>(2) Boîte à outils classée en 3 Pôles par onglets</b> (<i>📡 1. Séance &amp; Direct</i>, <i>📝 2. Évaluations &amp; Corrections</i>, <i>🛡️ 3. Classe, Sécurité &amp; Suivi</i>) ;
-            <b>(3) 5 Compteurs live &amp; Barre de navigation des 4 sections repliables</b> (<i>👥 1. Abonnés &amp; Classes</i>, <i>🏆 2. Quiz &amp; Bac</i>, <i>📨 3. Messages &amp; Réponses</i>, <i>🕒 4. Dernières Connexions</i>) ;
+            <b>(3) 5 Compteurs live &amp; Barre de navigation des 4 sections repliables</b> (<i>👥 Abonnés &amp; Classes</i>, <i>🏆 Quiz &amp; Bac</i>, <i>📨 Messages &amp; Réponses</i>, <i>🕒 Dernières Connexions</i>) ;
             <b>(4) Barre mobile fixe au pouce (<code>#mob-bottom-nav</code>)</b> masquée automatiquement à l'ouverture du Chat Messenger ou d'une modale.</li>
           <li><b>✅ Confirmation systématique à 2 boutons (<code>Annuler</code> et <code>Confirmer</code>)</b> : active sur chaque opération de changement ou de suppression concernant les <b>classes</b>, les <b>lycées</b> et les <b>candidats</b> (suppression, renommage, changement de classe, changement de statut, bascule 👑 Gold, pause écran et activation groupée).</li>
           <li><b>📥 Copies &amp; TP rendus (<code>/20</code>), 🧮 Grille Devoirs (<code>DC / DS</code> + CSV Eduserv), 📊 QCM Live Kahoot, 🪪 Badges Labo, 📄 Bulletin PDF A4 &amp; 🧹 Nettoyeur Intelligent Supabase</b>.</li>
