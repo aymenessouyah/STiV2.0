@@ -1,5 +1,5 @@
 {
- "genere": "depuis les tableaux recapitulatifs des Smart Books (annexes v340)",
+ "genere": "tableaux recapitulatifs des Smart Books (annexes v340) + Les 37 Defis JavaScript + Recap PHP (cours)",
  "questions": [
   {
    "id": "f23398171b",
@@ -7868,6 +7868,2728 @@
     "Exploitation d’une requête SQL : Extrait la ligne sous forme d’un tableau associatif",
     "On peut initialiser les éléments d’un tableau en utilisant la fonction array().",
     "Suite à une requête d’insertion, on veut afficher le numéro auto incrémenté"
+   ]
+  },
+  {
+   "id": "c654261e98",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "À quelle famille appartient le défi « Quiz : opérations & concaténations » des 37 Défis JavaScript ?",
+   "bonne": "Bases",
+   "choix_faux": [
+    "Conversions",
+    "Dates",
+    "Boucles"
+   ]
+  },
+  {
+   "id": "307280602e",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille If / Switch — défi n°2 « Conditions : if / else / switch »",
+   "q": "À quelle famille appartient le défi « Conditions : if / else / switch » des 37 Défis JavaScript ?",
+   "bonne": "If / Switch",
+   "choix_faux": [
+    "Aléas & Captchas",
+    "Média",
+    "Tableau"
+   ]
+  },
+  {
+   "id": "37b4e40a61",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Boucles — défi n°3 « Boucles : for / while / do...while »",
+   "q": "À quelle famille appartient le défi « Boucles : for / while / do...while » des 37 Défis JavaScript ?",
+   "bonne": "Boucles",
+   "choix_faux": [
+    "Formulaires",
+    "Dates",
+    "Aléas & Captchas"
+   ]
+  },
+  {
+   "id": "9b086a5614",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Chaînes — défi n°4 « Texte barré (3 solutions) »",
+   "q": "À quelle famille appartient le défi « Texte barré (3 solutions) » des 37 Défis JavaScript ?",
+   "bonne": "Chaînes",
+   "choix_faux": [
+    "Bases",
+    "Média",
+    "Tableau"
+   ]
+  },
+  {
+   "id": "add034a63d",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Chaînes — défi n°5 « Majuscules / minuscules »",
+   "q": "À quelle famille appartient le défi « Majuscules / minuscules » des 37 Défis JavaScript ?",
+   "bonne": "Chaînes",
+   "choix_faux": [
+    "Conversions",
+    "If / Switch",
+    "Aléas & Captchas"
+   ]
+  },
+  {
+   "id": "c7b580554f",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Chaînes — défi n°6 « trim + concaténation »",
+   "q": "À quelle famille appartient le défi « trim + concaténation » des 37 Défis JavaScript ?",
+   "bonne": "Chaînes",
+   "choix_faux": [
+    "Maths",
+    "If / Switch",
+    "Boucles"
+   ]
+  },
+  {
+   "id": "6277e210f9",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Chaînes — défi n°7 « indexOf / lastIndexOf (+p) »",
+   "q": "À quelle famille appartient le défi « indexOf / lastIndexOf (+p) » des 37 Défis JavaScript ?",
+   "bonne": "Chaînes",
+   "choix_faux": [
+    "Maths",
+    "Tableau",
+    "If / Switch"
+   ]
+  },
+  {
+   "id": "ff97636a77",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Chaînes — défi n°8 « fromCharCode »",
+   "q": "À quelle famille appartient le défi « fromCharCode » des 37 Défis JavaScript ?",
+   "bonne": "Chaînes",
+   "choix_faux": [
+    "Maths",
+    "Formulaires",
+    "If / Switch"
+   ]
+  },
+  {
+   "id": "abbfb72c6c",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Chaînes — défi n°9 « substring »",
+   "q": "À quelle famille appartient le défi « substring » des 37 Défis JavaScript ?",
+   "bonne": "Chaînes",
+   "choix_faux": [
+    "Tableau",
+    "Conversions",
+    "Boucles"
+   ]
+  },
+  {
+   "id": "fadc100f18",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Maths — défi n°10 « abs / sqrt »",
+   "q": "À quelle famille appartient le défi « abs / sqrt » des 37 Défis JavaScript ?",
+   "bonne": "Maths",
+   "choix_faux": [
+    "Aléas & Captchas",
+    "If / Switch",
+    "Conversions"
+   ]
+  },
+  {
+   "id": "2bf7fd476d",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Maths — défi n°11 « round / trunc »",
+   "q": "À quelle famille appartient le défi « round / trunc » des 37 Défis JavaScript ?",
+   "bonne": "Maths",
+   "choix_faux": [
+    "Formulaires",
+    "Dates",
+    "Chaînes"
+   ]
+  },
+  {
+   "id": "f0bba51170",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Maths — défi n°12 « Math.random »",
+   "q": "À quelle famille appartient le défi « Math.random » des 37 Défis JavaScript ?",
+   "bonne": "Maths",
+   "choix_faux": [
+    "Aléas & Captchas",
+    "Dates",
+    "Boucles"
+   ]
+  },
+  {
+   "id": "d4899d400c",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Conversions — défi n°13 « String(a) »",
+   "q": "À quelle famille appartient le défi « String(a) » des 37 Défis JavaScript ?",
+   "bonne": "Conversions",
+   "choix_faux": [
+    "Formulaires",
+    "Tableau",
+    "Chaînes"
+   ]
+  },
+  {
+   "id": "578c4fdd06",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Conversions — défi n°14 « isNaN / Number »",
+   "q": "À quelle famille appartient le défi « isNaN / Number » des 37 Défis JavaScript ?",
+   "bonne": "Conversions",
+   "choix_faux": [
+    "Chaînes",
+    "Tableau",
+    "Dates"
+   ]
+  },
+  {
+   "id": "8b02f1bcd6",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Conversions — défi n°15 « prompt() »",
+   "q": "À quelle famille appartient le défi « prompt() » des 37 Défis JavaScript ?",
+   "bonne": "Conversions",
+   "choix_faux": [
+    "Média",
+    "Formulaires",
+    "Tableau"
+   ]
+  },
+  {
+   "id": "77e0d554a5",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Conversions — défi n°16 « parseInt / parseFloat »",
+   "q": "À quelle famille appartient le défi « parseInt / parseFloat » des 37 Défis JavaScript ?",
+   "bonne": "Conversions",
+   "choix_faux": [
+    "Chaînes",
+    "Média",
+    "Aléas & Captchas"
+   ]
+  },
+  {
+   "id": "40ef2e0c9d",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Conversions — défi n°17 « toString(base) »",
+   "q": "À quelle famille appartient le défi « toString(base) » des 37 Défis JavaScript ?",
+   "bonne": "Conversions",
+   "choix_faux": [
+    "Dates",
+    "Chaînes",
+    "Tableau"
+   ]
+  },
+  {
+   "id": "cafe37514f",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Dates — défi n°18 « new Date() : date courante »",
+   "q": "À quelle famille appartient le défi « new Date() : date courante » des 37 Défis JavaScript ?",
+   "bonne": "Dates",
+   "choix_faux": [
+    "If / Switch",
+    "Maths",
+    "Conversions"
+   ]
+  },
+  {
+   "id": "218dbd10b3",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Dates — défi n°19 « new Date(ch) : depuis une chaîne »",
+   "q": "À quelle famille appartient le défi « new Date(ch) : depuis une chaîne » des 37 Défis JavaScript ?",
+   "bonne": "Dates",
+   "choix_faux": [
+    "If / Switch",
+    "Média",
+    "Tableau"
+   ]
+  },
+  {
+   "id": "2b1c6a851e",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Dates — défi n°20 « getDate / getMonth / getFullYear »",
+   "q": "À quelle famille appartient le défi « getDate / getMonth / getFullYear » des 37 Défis JavaScript ?",
+   "bonne": "Dates",
+   "choix_faux": [
+    "Formulaires",
+    "If / Switch",
+    "Chaînes"
+   ]
+  },
+  {
+   "id": "39b9133ffc",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Dates — défi n°21 « toString() et formats d'affichage »",
+   "q": "À quelle famille appartient le défi « toString() et formats d'affichage » des 37 Défis JavaScript ?",
+   "bonne": "Dates",
+   "choix_faux": [
+    "Maths",
+    "Conversions",
+    "Chaînes"
+   ]
+  },
+  {
+   "id": "a97705e6e0",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Dates — défi n°22 « Rapport complet sur une date »",
+   "q": "À quelle famille appartient le défi « Rapport complet sur une date » des 37 Défis JavaScript ?",
+   "bonne": "Dates",
+   "choix_faux": [
+    "Bases",
+    "Maths",
+    "Média"
+   ]
+  },
+  {
+   "id": "74720d0a0f",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Formulaires — défi n°23 « Activer / Désactiver »",
+   "q": "À quelle famille appartient le défi « Activer / Désactiver » des 37 Défis JavaScript ?",
+   "bonne": "Formulaires",
+   "choix_faux": [
+    "Conversions",
+    "Média",
+    "Dates"
+   ]
+  },
+  {
+   "id": "288ba6e54a",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Formulaires — défi n°24 « Contrôle formulaire »",
+   "q": "À quelle famille appartient le défi « Contrôle formulaire » des 37 Défis JavaScript ?",
+   "bonne": "Formulaires",
+   "choix_faux": [
+    "Tableau",
+    "Boucles",
+    "Maths"
+   ]
+  },
+  {
+   "id": "51324e7580",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Formulaires — défi n°25 « 3 formulaires »",
+   "q": "À quelle famille appartient le défi « 3 formulaires » des 37 Défis JavaScript ?",
+   "bonne": "Formulaires",
+   "choix_faux": [
+    "Bases",
+    "Tableau",
+    "Maths"
+   ]
+  },
+  {
+   "id": "bd07bd402b",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Tableau — défi n°26 « Créer un tableau »",
+   "q": "À quelle famille appartient le défi « Créer un tableau » des 37 Défis JavaScript ?",
+   "bonne": "Tableau",
+   "choix_faux": [
+    "Dates",
+    "Aléas & Captchas",
+    "Maths"
+   ]
+  },
+  {
+   "id": "69e3b351ae",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Tableau — défi n°27 « Accéder aux éléments »",
+   "q": "À quelle famille appartient le défi « Accéder aux éléments » des 37 Défis JavaScript ?",
+   "bonne": "Tableau",
+   "choix_faux": [
+    "If / Switch",
+    "Média",
+    "Dates"
+   ]
+  },
+  {
+   "id": "bc4db105b0",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Tableau — défi n°28 « Ajouter / Retirer »",
+   "q": "À quelle famille appartient le défi « Ajouter / Retirer » des 37 Défis JavaScript ?",
+   "bonne": "Tableau",
+   "choix_faux": [
+    "If / Switch",
+    "Média",
+    "Dates"
+   ]
+  },
+  {
+   "id": "9d0b9f2001",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Aléas & Captchas — défi n°29 « Caractère aléatoire d'une chaîne »",
+   "q": "À quelle famille appartient le défi « Caractère aléatoire d'une chaîne » des 37 Défis JavaScript ?",
+   "bonne": "Aléas & Captchas",
+   "choix_faux": [
+    "Tableau",
+    "Formulaires",
+    "If / Switch"
+   ]
+  },
+  {
+   "id": "5b78aea460",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Aléas & Captchas — défi n°30 « Entiers aléatoires »",
+   "q": "À quelle famille appartient le défi « Entiers aléatoires » des 37 Défis JavaScript ?",
+   "bonne": "Aléas & Captchas",
+   "choix_faux": [
+    "Boucles",
+    "Bases",
+    "Tableau"
+   ]
+  },
+  {
+   "id": "381c6cd73c",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Aléas & Captchas — défi n°31 « Lettres aléatoires »",
+   "q": "À quelle famille appartient le défi « Lettres aléatoires » des 37 Défis JavaScript ?",
+   "bonne": "Aléas & Captchas",
+   "choix_faux": [
+    "Boucles",
+    "If / Switch",
+    "Tableau"
+   ]
+  },
+  {
+   "id": "90a3e2dfcb",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Aléas & Captchas — défi n°32 « Couleur aléatoire »",
+   "q": "À quelle famille appartient le défi « Couleur aléatoire » des 37 Défis JavaScript ?",
+   "bonne": "Aléas & Captchas",
+   "choix_faux": [
+    "Média",
+    "Tableau",
+    "Bases"
+   ]
+  },
+  {
+   "id": "181f3609ef",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Aléas & Captchas — défi n°33 « Captcha multicolore »",
+   "q": "À quelle famille appartient le défi « Captcha multicolore » des 37 Défis JavaScript ?",
+   "bonne": "Aléas & Captchas",
+   "choix_faux": [
+    "Tableau",
+    "Chaînes",
+    "If / Switch"
+   ]
+  },
+  {
+   "id": "d252b8a198",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Aléas & Captchas — défi n°34 « Captcha barré »",
+   "q": "À quelle famille appartient le défi « Captcha barré » des 37 Défis JavaScript ?",
+   "bonne": "Aléas & Captchas",
+   "choix_faux": [
+    "Chaînes",
+    "Boucles",
+    "If / Switch"
+   ]
+  },
+  {
+   "id": "960dc820f4",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Aléas & Captchas — défi n°35 « Captcha vélo 3×3 »",
+   "q": "À quelle famille appartient le défi « Captcha vélo 3×3 » des 37 Défis JavaScript ?",
+   "bonne": "Aléas & Captchas",
+   "choix_faux": [
+    "Tableau",
+    "Formulaires",
+    "If / Switch"
+   ]
+  },
+  {
+   "id": "e56a19a85e",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "famille",
+   "ref": "37 Défis · famille Média — défi n°36 « play() / pause() »",
+   "q": "À quelle famille appartient le défi « play() / pause() » des 37 Défis JavaScript ?",
+   "bonne": "Média",
+   "choix_faux": [
+    "Conversions",
+    "Bases",
+    "Boucles"
+   ]
+  },
+  {
+   "id": "f3f3954b06",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "enonce",
+   "ref": "37 Défis · famille Chaînes — défi n°5 « Majuscules / minuscules »",
+   "q": "Quel défi des 37 Défis correspond à cet énoncé : « toLowerCase() et toUpperCase() . » ?",
+   "bonne": "Majuscules / minuscules",
+   "choix_faux": [
+    "Captcha multicolore",
+    "new Date() : date courante",
+    "Activer / Désactiver"
+   ]
+  },
+  {
+   "id": "b8909ff68a",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "enonce",
+   "ref": "37 Défis · famille Maths — défi n°12 « Math.random »",
+   "q": "Quel défi des 37 Défis correspond à cet énoncé : « 10 nombres × 100. » ?",
+   "bonne": "Math.random",
+   "choix_faux": [
+    "Captcha barré",
+    "play() / pause()",
+    "abs / sqrt"
+   ]
+  },
+  {
+   "id": "857dec0f14",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "enonce",
+   "ref": "37 Défis · famille Formulaires — défi n°23 « Activer / Désactiver »",
+   "q": "Quel défi des 37 Défis correspond à cet énoncé : « Basculer disabled . » ?",
+   "bonne": "Activer / Désactiver",
+   "choix_faux": [
+    "Couleur aléatoire",
+    "trim + concaténation",
+    "Accéder aux éléments"
+   ]
+  },
+  {
+   "id": "dbe64cf950",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "enonce",
+   "ref": "37 Défis · famille Tableau — défi n°28 « Ajouter / Retirer »",
+   "q": "Quel défi des 37 Défis correspond à cet énoncé : « tab[tab.length] = val et tab.length -= 1 . » ?",
+   "bonne": "Ajouter / Retirer",
+   "choix_faux": [
+    "Activer / Désactiver",
+    "Accéder aux éléments",
+    "Lettres aléatoires"
+   ]
+  },
+  {
+   "id": "30cc1e984a",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "enonce",
+   "ref": "37 Défis · famille Aléas & Captchas — défi n°30 « Entiers aléatoires »",
+   "q": "Quel défi des 37 Défis correspond à cet énoncé : « Entier aléatoire entre min et max. » ?",
+   "bonne": "Entiers aléatoires",
+   "choix_faux": [
+    "Créer un tableau",
+    "Captcha multicolore",
+    "Lettres aléatoires"
+   ]
+  },
+  {
+   "id": "010506a038",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "enonce",
+   "ref": "37 Défis · famille Aléas & Captchas — défi n°35 « Captcha vélo 3×3 »",
+   "q": "Quel défi des 37 Défis correspond à cet énoncé : « Grille 3×3 — sélectionne les 🚲. » ?",
+   "bonne": "Captcha vélo 3×3",
+   "choix_faux": [
+    "3 formulaires",
+    "toString(base)",
+    "Entiers aléatoires"
+   ]
+  },
+  {
+   "id": "80d612cdb9",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Chaînes — défi n°5 « Majuscules / minuscules »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « Majuscules / minuscules » des 37 Défis ?",
+   "bonne": "toLowerCase() / toUpperCase()",
+   "choix_faux": [
+    "String.fromCharCode()",
+    "lastIndexOf() / indexOf()",
+    "substring()"
+   ]
+  },
+  {
+   "id": "99e93c8ced",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Chaînes — défi n°6 « trim + concaténation »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « trim + concaténation » des 37 Défis ?",
+   "bonne": "trim()",
+   "choix_faux": [
+    "play() / pause()",
+    "Date()",
+    "prompt()"
+   ]
+  },
+  {
+   "id": "d535211349",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Chaînes — défi n°7 « indexOf / lastIndexOf (+p) »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « indexOf / lastIndexOf (+p) » des 37 Défis ?",
+   "bonne": "lastIndexOf() / indexOf()",
+   "choix_faux": [
+    "substring()",
+    "toLowerCase() / toUpperCase()",
+    "Date()"
+   ]
+  },
+  {
+   "id": "a492faffc2",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Chaînes — défi n°8 « fromCharCode »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « fromCharCode » des 37 Défis ?",
+   "bonne": "String.fromCharCode()",
+   "choix_faux": [
+    "String()",
+    "prompt()",
+    "play() / pause()"
+   ]
+  },
+  {
+   "id": "407a36d3f7",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Chaînes — défi n°9 « substring »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « substring » des 37 Défis ?",
+   "bonne": "substring()",
+   "choix_faux": [
+    "prompt()",
+    "play() / pause()",
+    "String.fromCharCode()"
+   ]
+  },
+  {
+   "id": "1043139bd5",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Conversions — défi n°13 « String(a) »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « String(a) » des 37 Défis ?",
+   "bonne": "String()",
+   "choix_faux": [
+    "trim()",
+    "Date()",
+    "toString()"
+   ]
+  },
+  {
+   "id": "6f64fb14f8",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Conversions — défi n°15 « prompt() »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « prompt() » des 37 Défis ?",
+   "bonne": "prompt()",
+   "choix_faux": [
+    "lastIndexOf() / indexOf()",
+    "toLowerCase() / toUpperCase()",
+    "String()"
+   ]
+  },
+  {
+   "id": "c6e3add015",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Conversions — défi n°17 « toString(base) »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « toString(base) » des 37 Défis ?",
+   "bonne": "toString()",
+   "choix_faux": [
+    "lastIndexOf() / indexOf()",
+    "trim()",
+    "toLowerCase() / toUpperCase()"
+   ]
+  },
+  {
+   "id": "1b6062d7d6",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Dates — défi n°18 « new Date() : date courante »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « new Date() : date courante » des 37 Défis ?",
+   "bonne": "Date()",
+   "choix_faux": [
+    "toString()",
+    "prompt()",
+    "play() / pause()"
+   ]
+  },
+  {
+   "id": "49de28bf77",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "37 Défis · famille Média — défi n°36 « play() / pause() »",
+   "q": "Quelle fonction (ou méthode) est au cœur du défi « play() / pause() » des 37 Défis ?",
+   "bonne": "play() / pause()",
+   "choix_faux": [
+    "Date()",
+    "prompt()",
+    "String()"
+   ]
+  },
+  {
+   "id": "5051803174",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « 5 + \"6\" » ? (valeur et type)",
+   "bonne": "« 56 » — une chaîne (string)",
+   "choix_faux": [
+    "NaN — pas un nombre",
+    "-1 — un nombre (number)",
+    "30 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "6ef02fa707",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « \"5\" + 6 » ? (valeur et type)",
+   "bonne": "« 56 » — une chaîne (string)",
+   "choix_faux": [
+    "« 11ab » — une chaîne (string)",
+    "0.8333333333333334 — un nombre (number)",
+    "NaN — pas un nombre"
+   ]
+  },
+  {
+   "id": "0f2eb04089",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « \"5\" + \"6\" » ? (valeur et type)",
+   "bonne": "« 56 » — une chaîne (string)",
+   "choix_faux": [
+    "NaN — pas un nombre",
+    "0.8333333333333334 — un nombre (number)",
+    "-1 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "3d1d707c0d",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « 5 + 6 » ? (valeur et type)",
+   "bonne": "11 — un nombre (number)",
+   "choix_faux": [
+    "« ab65 » — une chaîne (string)",
+    "« ab6 » — une chaîne (string)",
+    "« 56 » — une chaîne (string)"
+   ]
+  },
+  {
+   "id": "96780e36e8",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « 5 - \"6\" » ? (valeur et type)",
+   "bonne": "-1 — un nombre (number)",
+   "choix_faux": [
+    "30 — un nombre (number)",
+    "NaN — pas un nombre",
+    "0.8333333333333334 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "26b25b6021",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « 5 - 6 » ? (valeur et type)",
+   "bonne": "-1 — un nombre (number)",
+   "choix_faux": [
+    "« 56 » — une chaîne (string)",
+    "« ab6 » — une chaîne (string)",
+    "11 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "e9623e6d7c",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « 5 * \"6\" » ? (valeur et type)",
+   "bonne": "30 — un nombre (number)",
+   "choix_faux": [
+    "« 56 » — une chaîne (string)",
+    "« ab6 » — une chaîne (string)",
+    "« ab65 » — une chaîne (string)"
+   ]
+  },
+  {
+   "id": "6b8348a1ef",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « \"5\" * 6 » ? (valeur et type)",
+   "bonne": "30 — un nombre (number)",
+   "choix_faux": [
+    "-1 — un nombre (number)",
+    "« 56 » — une chaîne (string)",
+    "« 11ab » — une chaîne (string)"
+   ]
+  },
+  {
+   "id": "4b8a743e21",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « 5 / \"6\" » ? (valeur et type)",
+   "bonne": "0.8333333333333334 — un nombre (number)",
+   "choix_faux": [
+    "« ab6 » — une chaîne (string)",
+    "« 56 » — une chaîne (string)",
+    "30 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "560713e3d1",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « 5 / \"blabla\" » ? (valeur et type)",
+   "bonne": "NaN — pas un nombre",
+   "choix_faux": [
+    "30 — un nombre (number)",
+    "« 56 » — une chaîne (string)",
+    "0.8333333333333334 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "5ceb6d91c8",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « \"ab\" + 6 » ? (valeur et type)",
+   "bonne": "« ab6 » — une chaîne (string)",
+   "choix_faux": [
+    "11 — un nombre (number)",
+    "« 11ab » — une chaîne (string)",
+    "0.8333333333333334 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "078f2fa853",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « \"ab\" + 6 + 5 » ? (valeur et type)",
+   "bonne": "« ab65 » — une chaîne (string)",
+   "choix_faux": [
+    "« 11ab » — une chaîne (string)",
+    "11 — un nombre (number)",
+    "-1 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "5d5d827184",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « 6 + 5 + \"ab\" » ? (valeur et type)",
+   "bonne": "« 11ab » — une chaîne (string)",
+   "choix_faux": [
+    "« 56 » — une chaîne (string)",
+    "30 — un nombre (number)",
+    "-1 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "40e2be2040",
+   "module": "defis",
+   "niveaux": [
+    "3si",
+    "4si"
+   ],
+   "type": "expr",
+   "ref": "37 Défis · famille Bases — défi n°1 « Quiz : opérations & concaténations »",
+   "q": "Que vaut l'expression JavaScript « \"ab\" - 6 » ? (valeur et type)",
+   "bonne": "NaN — pas un nombre",
+   "choix_faux": [
+    "« 56 » — une chaîne (string)",
+    "« ab6 » — une chaîne (string)",
+    "30 — un nombre (number)"
+   ]
+  },
+  {
+   "id": "be13fb77fc",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « substr() »",
+   "q": "À quoi sert « substr() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Extrait 4 caractères à partir de l'indice 3 (les indices commencent à 0).",
+   "choix_faux": [
+    "Renvoie la valeur du premier octet de la chaîne (65 pour « A » en ASCII).",
+    "Inverse l'ordre des caractères.",
+    "Convertit les lettres ASCII en majuscules."
+   ]
+  },
+  {
+   "id": "e6f7ccc1ba",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « substr() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « $ch = \"Informatique\"; echo substr($ch, 3, 4); » ?",
+   "bonne": "orma",
+   "choix_faux": [
+    "BONJOUR STI",
+    "7",
+    "0"
+   ]
+  },
+  {
+   "id": "9ed07ef420",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « trim() »",
+   "q": "À quoi sert « trim() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Supprime les espaces (et certains caractères blancs) au début et à la fin.",
+   "choix_faux": [
+    "Renvoie le caractère correspondant au code ASCII 65.",
+    "Assemble les éléments d'un tableau en une chaîne en plaçant le séparateur entre eux.",
+    "Renvoie la longueur de la chaîne en octets."
+   ]
+  },
+  {
+   "id": "4782437049",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « trim() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « $ch = \" Ali \"; echo \"[\" . trim($ch) . \"]\"; » ?",
+   "bonne": "[Ali]",
+   "choix_faux": [
+    "Array ( [0] => rouge [1] => vert [2] => bleu )",
+    "BONJOUR STI",
+    "bonjour sti"
+   ]
+  },
+  {
+   "id": "c36ae20d2c",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « strlen() »",
+   "q": "À quoi sert « strlen() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Renvoie la longueur de la chaîne en octets.",
+   "choix_faux": [
+    "Découpe une chaîne à chaque occurrence du séparateur et renvoie un tableau.",
+    "Extrait 4 caractères à partir de l'indice 3 (les indices commencent à 0).",
+    "Convertit les lettres ASCII en majuscules."
+   ]
+  },
+  {
+   "id": "76ea0dd909",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « strlen() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « $ch = \"Bonjour\"; echo strlen($ch); » ?",
+   "bonne": "7",
+   "choix_faux": [
+    "Le chien dort.",
+    "orma",
+    "Array ( [0] => rouge [1] => vert [2] => bleu )"
+   ]
+  },
+  {
+   "id": "e1a7349ecc",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « implode() »",
+   "q": "À quoi sert « implode() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Assemble les éléments d'un tableau en une chaîne en plaçant le séparateur entre eux.",
+   "choix_faux": [
+    "Extrait 4 caractères à partir de l'indice 3 (les indices commencent à 0).",
+    "Compare deux chaînes : 0 si elles sont identiques, une valeur négative ou positive sinon.",
+    "Renvoie le caractère correspondant au code ASCII 65."
+   ]
+  },
+  {
+   "id": "ba0466d6e0",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « implode() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « $t = [\"Ali\", \"Sami\", \"Amel\"]; echo implode(\" - \", $t); » ?",
+   "bonne": "Ali - Sami - Amel",
+   "choix_faux": [
+    "ITS",
+    "0",
+    "8"
+   ]
+  },
+  {
+   "id": "506c6d9293",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « explode() »",
+   "q": "À quoi sert « explode() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Découpe une chaîne à chaque occurrence du séparateur et renvoie un tableau.",
+   "choix_faux": [
+    "Renvoie la position de la première occurrence, à partir de 0. Renvoie false si le texte n'est pas trouvé.",
+    "Renvoie le caractère correspondant au code ASCII 65.",
+    "Extrait 4 caractères à partir de l'indice 3 (les indices commencent à 0)."
+   ]
+  },
+  {
+   "id": "4be752bba7",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « explode() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « $ch = \"rouge,vert,bleu\"; print_r(explode(\",\", $ch)); » ?",
+   "bonne": "Array ( [0] => rouge [1] => vert [2] => bleu )",
+   "choix_faux": [
+    "[Ali]",
+    "0",
+    "7"
+   ]
+  },
+  {
+   "id": "ddc3d89f7d",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « str_replace() »",
+   "q": "À quoi sert « str_replace() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Remplace toutes les occurrences du modèle recherché par le texte de remplacement.",
+   "choix_faux": [
+    "Renvoie la longueur de la chaîne en octets.",
+    "Assemble les éléments d'un tableau en une chaîne en plaçant le séparateur entre eux.",
+    "Renvoie la valeur du premier octet de la chaîne (65 pour « A » en ASCII)."
+   ]
+  },
+  {
+   "id": "ab1bba00f0",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « str_replace() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « echo str_replace(\"chat\", \"chien\", \"Le chat dort.\"); » ?",
+   "bonne": "Le chien dort.",
+   "choix_faux": [
+    "65",
+    "ITS",
+    "8"
+   ]
+  },
+  {
+   "id": "e855e94051",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « chr() »",
+   "q": "À quoi sert « chr() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Renvoie le caractère correspondant au code ASCII 65.",
+   "choix_faux": [
+    "Inverse l'ordre des caractères.",
+    "Renvoie la valeur du premier octet de la chaîne (65 pour « A » en ASCII).",
+    "Assemble les éléments d'un tableau en une chaîne en plaçant le séparateur entre eux."
+   ]
+  },
+  {
+   "id": "65312a635b",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « chr() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « echo chr(65); » ?",
+   "bonne": "A",
+   "choix_faux": [
+    "Array ( [0] => rouge [1] => vert [2] => bleu )",
+    "0",
+    "ITS"
+   ]
+  },
+  {
+   "id": "fb5d0b38e1",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « ord() »",
+   "q": "À quoi sert « ord() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Renvoie la valeur du premier octet de la chaîne (65 pour « A » en ASCII).",
+   "choix_faux": [
+    "Compare deux chaînes : 0 si elles sont identiques, une valeur négative ou positive sinon.",
+    "Renvoie le caractère correspondant au code ASCII 65.",
+    "Remplace toutes les occurrences du modèle recherché par le texte de remplacement."
+   ]
+  },
+  {
+   "id": "87928acdab",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « ord() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « echo ord(\"A\"); » ?",
+   "bonne": "65",
+   "choix_faux": [
+    "8",
+    "ITS",
+    "7"
+   ]
+  },
+  {
+   "id": "e534ea10bc",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « strpos() »",
+   "q": "À quoi sert « strpos() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Renvoie la position de la première occurrence, à partir de 0. Renvoie false si le texte n'est pas trouvé.",
+   "choix_faux": [
+    "Remplace toutes les occurrences du modèle recherché par le texte de remplacement.",
+    "Supprime les espaces (et certains caractères blancs) au début et à la fin.",
+    "Découpe une chaîne à chaque occurrence du séparateur et renvoie un tableau."
+   ]
+  },
+  {
+   "id": "0c82252152",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « strpos() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « echo strpos(\"Bonjour tout le monde\", \"tout\"); » ?",
+   "bonne": "8",
+   "choix_faux": [
+    "ITS",
+    "7",
+    "Ali - Sami - Amel"
+   ]
+  },
+  {
+   "id": "347c75dce1",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « strcmp() »",
+   "q": "À quoi sert « strcmp() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Compare deux chaînes : 0 si elles sont identiques, une valeur négative ou positive sinon.",
+   "choix_faux": [
+    "Convertit les lettres ASCII en majuscules.",
+    "Renvoie le caractère correspondant au code ASCII 65.",
+    "Extrait 4 caractères à partir de l'indice 3 (les indices commencent à 0)."
+   ]
+  },
+  {
+   "id": "209c639e2d",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « strcmp() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « echo strcmp(\"abc\", \"abc\"); » ?",
+   "bonne": "0",
+   "choix_faux": [
+    "bonjour sti",
+    "Ali - Sami - Amel",
+    "7"
+   ]
+  },
+  {
+   "id": "f1705d6916",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « strrev() »",
+   "q": "À quoi sert « strrev() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Inverse l'ordre des caractères.",
+   "choix_faux": [
+    "Renvoie la longueur de la chaîne en octets.",
+    "Compare deux chaînes : 0 si elles sont identiques, une valeur négative ou positive sinon.",
+    "Assemble les éléments d'un tableau en une chaîne en plaçant le séparateur entre eux."
+   ]
+  },
+  {
+   "id": "f716e9f474",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « strrev() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « echo strrev(\"STI\"); » ?",
+   "bonne": "ITS",
+   "choix_faux": [
+    "65",
+    "7",
+    "[Ali]"
+   ]
+  },
+  {
+   "id": "1d2cd33192",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « strtolower() »",
+   "q": "À quoi sert « strtolower() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Convertit les lettres ASCII en minuscules.",
+   "choix_faux": [
+    "Découpe une chaîne à chaque occurrence du séparateur et renvoie un tableau.",
+    "Renvoie la longueur de la chaîne en octets.",
+    "Remplace toutes les occurrences du modèle recherché par le texte de remplacement."
+   ]
+  },
+  {
+   "id": "fd9124ce4b",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « strtolower() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « echo strtolower(\"Bonjour STI\"); » ?",
+   "bonne": "bonjour sti",
+   "choix_faux": [
+    "orma",
+    "ITS",
+    "[Ali]"
+   ]
+  },
+  {
+   "id": "efcae588cc",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fonction",
+   "ref": "Récap PHP · Chaînes — « strtoupper() »",
+   "q": "À quoi sert « strtoupper() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Convertit les lettres ASCII en majuscules.",
+   "choix_faux": [
+    "Inverse l'ordre des caractères.",
+    "Compare deux chaînes : 0 si elles sont identiques, une valeur négative ou positive sinon.",
+    "Extrait 4 caractères à partir de l'indice 3 (les indices commencent à 0)."
+   ]
+  },
+  {
+   "id": "953fbef370",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "exemple",
+   "ref": "Récap PHP · Chaînes — « strtoupper() »",
+   "q": "En PHP, qu'obtient-on avec ce code du Récap : « echo strtoupper(\"Bonjour STI\"); » ?",
+   "bonne": "BONJOUR STI",
+   "choix_faux": [
+    "Ali - Sami - Amel",
+    "8",
+    "[Ali]"
+   ]
+  },
+  {
+   "id": "9ad778f084",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "date",
+   "ref": "Récap PHP · Date et formats — code « Y »",
+   "q": "Dans la fonction PHP date(), que signifie le code « Y » ?",
+   "bonne": "Année sur 4 chiffres",
+   "choix_faux": [
+    "Secondes (00–59)",
+    "Année sur 2 chiffres",
+    "Mois sur 2 chiffres (01–12)"
+   ]
+  },
+  {
+   "id": "ced584496f",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "dateinv",
+   "ref": "Récap PHP · Date et formats — code « Y »",
+   "q": "Dans la fonction PHP date(), quel code signifie « année sur 4 chiffres » ?",
+   "bonne": "Y",
+   "choix_faux": [
+    "y",
+    "j",
+    "i"
+   ]
+  },
+  {
+   "id": "ab84197589",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "date",
+   "ref": "Récap PHP · Date et formats — code « y »",
+   "q": "Dans la fonction PHP date(), que signifie le code « y » ?",
+   "bonne": "Année sur 2 chiffres",
+   "choix_faux": [
+    "Jour sans zéro initial",
+    "Secondes (00–59)",
+    "Heure au format 24 h (00–23)"
+   ]
+  },
+  {
+   "id": "6bf35c6ad2",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "dateinv",
+   "ref": "Récap PHP · Date et formats — code « y »",
+   "q": "Dans la fonction PHP date(), quel code signifie « année sur 2 chiffres » ?",
+   "bonne": "y",
+   "choix_faux": [
+    "j",
+    "s",
+    "d"
+   ]
+  },
+  {
+   "id": "f82150aa38",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "date",
+   "ref": "Récap PHP · Date et formats — code « m »",
+   "q": "Dans la fonction PHP date(), que signifie le code « m » ?",
+   "bonne": "Mois sur 2 chiffres (01–12)",
+   "choix_faux": [
+    "Secondes (00–59)",
+    "Année sur 4 chiffres",
+    "Jour du mois sur 2 chiffres (01–31)"
+   ]
+  },
+  {
+   "id": "77f207c349",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "dateinv",
+   "ref": "Récap PHP · Date et formats — code « m »",
+   "q": "Dans la fonction PHP date(), quel code signifie « mois sur 2 chiffres (01–12) » ?",
+   "bonne": "m",
+   "choix_faux": [
+    "Y",
+    "H",
+    "i"
+   ]
+  },
+  {
+   "id": "dbcedddb59",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "date",
+   "ref": "Récap PHP · Date et formats — code « n »",
+   "q": "Dans la fonction PHP date(), que signifie le code « n » ?",
+   "bonne": "Mois sans zéro initial",
+   "choix_faux": [
+    "Minutes (00–59)",
+    "Secondes (00–59)",
+    "Jour sans zéro initial"
+   ]
+  },
+  {
+   "id": "c88a3ba4b0",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "dateinv",
+   "ref": "Récap PHP · Date et formats — code « n »",
+   "q": "Dans la fonction PHP date(), quel code signifie « mois sans zéro initial » ?",
+   "bonne": "n",
+   "choix_faux": [
+    "d",
+    "Y",
+    "i"
+   ]
+  },
+  {
+   "id": "039eb5f565",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "date",
+   "ref": "Récap PHP · Date et formats — code « d »",
+   "q": "Dans la fonction PHP date(), que signifie le code « d » ?",
+   "bonne": "Jour du mois sur 2 chiffres (01–31)",
+   "choix_faux": [
+    "Jour sans zéro initial",
+    "Année sur 2 chiffres",
+    "Secondes (00–59)"
+   ]
+  },
+  {
+   "id": "8fa07ec5a6",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "dateinv",
+   "ref": "Récap PHP · Date et formats — code « d »",
+   "q": "Dans la fonction PHP date(), quel code signifie « jour du mois sur 2 chiffres (01–31) » ?",
+   "bonne": "d",
+   "choix_faux": [
+    "m",
+    "y",
+    "Y"
+   ]
+  },
+  {
+   "id": "73e05e8fa0",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "date",
+   "ref": "Récap PHP · Date et formats — code « j »",
+   "q": "Dans la fonction PHP date(), que signifie le code « j » ?",
+   "bonne": "Jour sans zéro initial",
+   "choix_faux": [
+    "Secondes (00–59)",
+    "Mois sans zéro initial",
+    "Année sur 4 chiffres"
+   ]
+  },
+  {
+   "id": "b97822eb8b",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "dateinv",
+   "ref": "Récap PHP · Date et formats — code « j »",
+   "q": "Dans la fonction PHP date(), quel code signifie « jour sans zéro initial » ?",
+   "bonne": "j",
+   "choix_faux": [
+    "d",
+    "i",
+    "H"
+   ]
+  },
+  {
+   "id": "a7728dbd7d",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "date",
+   "ref": "Récap PHP · Date et formats — code « H »",
+   "q": "Dans la fonction PHP date(), que signifie le code « H » ?",
+   "bonne": "Heure au format 24 h (00–23)",
+   "choix_faux": [
+    "Année sur 4 chiffres",
+    "Mois sans zéro initial",
+    "Secondes (00–59)"
+   ]
+  },
+  {
+   "id": "a09c3d8bcf",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "dateinv",
+   "ref": "Récap PHP · Date et formats — code « H »",
+   "q": "Dans la fonction PHP date(), quel code signifie « heure au format 24 h (00–23) » ?",
+   "bonne": "H",
+   "choix_faux": [
+    "s",
+    "m",
+    "Y"
+   ]
+  },
+  {
+   "id": "1199553f4f",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "date",
+   "ref": "Récap PHP · Date et formats — code « i »",
+   "q": "Dans la fonction PHP date(), que signifie le code « i » ?",
+   "bonne": "Minutes (00–59)",
+   "choix_faux": [
+    "Heure au format 24 h (00–23)",
+    "Mois sans zéro initial",
+    "Année sur 4 chiffres"
+   ]
+  },
+  {
+   "id": "10b3c1a862",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "dateinv",
+   "ref": "Récap PHP · Date et formats — code « i »",
+   "q": "Dans la fonction PHP date(), quel code signifie « minutes (00–59) » ?",
+   "bonne": "i",
+   "choix_faux": [
+    "Y",
+    "d",
+    "j"
+   ]
+  },
+  {
+   "id": "ee355773b8",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "date",
+   "ref": "Récap PHP · Date et formats — code « s »",
+   "q": "Dans la fonction PHP date(), que signifie le code « s » ?",
+   "bonne": "Secondes (00–59)",
+   "choix_faux": [
+    "Jour sans zéro initial",
+    "Minutes (00–59)",
+    "Mois sans zéro initial"
+   ]
+  },
+  {
+   "id": "ea7228abe1",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "dateinv",
+   "ref": "Récap PHP · Date et formats — code « s »",
+   "q": "Dans la fonction PHP date(), quel code signifie « secondes (00–59) » ?",
+   "bonne": "s",
+   "choix_faux": [
+    "Y",
+    "j",
+    "n"
+   ]
+  },
+  {
+   "id": "ea41095e96",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqli",
+   "ref": "Récap PHP · mysqli — « mysqli_connect() »",
+   "q": "Quel est le rôle de « mysqli_connect() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Ouvre la connexion au serveur MySQL",
+   "choix_faux": [
+    "Ferme la connexion",
+    "Lit la ligne suivante (tableau indicé)",
+    "Lit la ligne suivante (indices + noms de colonnes)"
+   ]
+  },
+  {
+   "id": "f9f33f6d75",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqlival",
+   "ref": "Récap PHP · mysqli — « mysqli_connect() »",
+   "q": "Que renvoie « mysqli_connect() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "identifiant de connexion, ou false",
+   "choix_faux": [
+    "un tableau, ou NULL à la fin",
+    "true / false",
+    "SELECT : objet résultat ; INSERT / UPDATE : true ; erreur : false"
+   ]
+  },
+  {
+   "id": "e9557ee0ae",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqli",
+   "ref": "Récap PHP · mysqli — « mysqli_select_db() »",
+   "q": "Quel est le rôle de « mysqli_select_db() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Choisit la base de données",
+   "choix_faux": [
+    "Lit la ligne suivante (tableau indicé)",
+    "Lit la ligne suivante (indices + noms de colonnes)",
+    "Compte les lignes d'un résultat SELECT"
+   ]
+  },
+  {
+   "id": "6348fc391b",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqlival",
+   "ref": "Récap PHP · mysqli — « mysqli_select_db() »",
+   "q": "Que renvoie « mysqli_select_db() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "true / false",
+   "choix_faux": [
+    "identifiant de connexion, ou false",
+    "un tableau, ou NULL à la fin",
+    "true"
+   ]
+  },
+  {
+   "id": "81452946bf",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqli",
+   "ref": "Récap PHP · mysqli — « mysqli_query() »",
+   "q": "Quel est le rôle de « mysqli_query() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Envoie une requête SQL au serveur",
+   "choix_faux": [
+    "Compte les lignes d'un résultat SELECT",
+    "Lit la ligne suivante (indices + noms de colonnes)",
+    "Ouvre la connexion au serveur MySQL"
+   ]
+  },
+  {
+   "id": "727fe646a9",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqlival",
+   "ref": "Récap PHP · mysqli — « mysqli_query() »",
+   "q": "Que renvoie « mysqli_query() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "SELECT : objet résultat ; INSERT / UPDATE : true ; erreur : false",
+   "choix_faux": [
+    "un tableau, ou NULL à la fin",
+    "un entier",
+    "true"
+   ]
+  },
+  {
+   "id": "4c8f09d40d",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqli",
+   "ref": "Récap PHP · mysqli — « mysqli_num_rows() »",
+   "q": "Quel est le rôle de « mysqli_num_rows() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Compte les lignes d'un résultat SELECT",
+   "choix_faux": [
+    "Ouvre la connexion au serveur MySQL",
+    "Choisit la base de données",
+    "Lit la ligne suivante (indices + noms de colonnes)"
+   ]
+  },
+  {
+   "id": "16e9f6ef2e",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqlival",
+   "ref": "Récap PHP · mysqli — « mysqli_num_rows() »",
+   "q": "Que renvoie « mysqli_num_rows() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "un entier",
+   "choix_faux": [
+    "SELECT : objet résultat ; INSERT / UPDATE : true ; erreur : false",
+    "un tableau, ou NULL à la fin",
+    "identifiant de connexion, ou false"
+   ]
+  },
+  {
+   "id": "d285821d47",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqli",
+   "ref": "Récap PHP · mysqli — « mysqli_fetch_row() »",
+   "q": "Quel est le rôle de « mysqli_fetch_row() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Lit la ligne suivante (tableau indicé)",
+   "choix_faux": [
+    "Lit la ligne suivante (indices + noms de colonnes)",
+    "Envoie une requête SQL au serveur",
+    "Compte les lignes d'un résultat SELECT"
+   ]
+  },
+  {
+   "id": "758dc213c5",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqlival",
+   "ref": "Récap PHP · mysqli — « mysqli_fetch_row() »",
+   "q": "Que renvoie « mysqli_fetch_row() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "un tableau, ou NULL à la fin",
+   "choix_faux": [
+    "true / false",
+    "SELECT : objet résultat ; INSERT / UPDATE : true ; erreur : false",
+    "identifiant de connexion, ou false"
+   ]
+  },
+  {
+   "id": "a6bebe4f4c",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqli",
+   "ref": "Récap PHP · mysqli — « mysqli_fetch_array() »",
+   "q": "Quel est le rôle de « mysqli_fetch_array() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Lit la ligne suivante (indices + noms de colonnes)",
+   "choix_faux": [
+    "Lit la ligne suivante (tableau indicé)",
+    "Compte les lignes d'un résultat SELECT",
+    "Ouvre la connexion au serveur MySQL"
+   ]
+  },
+  {
+   "id": "0a8ec6800c",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqlival",
+   "ref": "Récap PHP · mysqli — « mysqli_fetch_array() »",
+   "q": "Que renvoie « mysqli_fetch_array() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "un tableau, ou NULL à la fin",
+   "choix_faux": [
+    "un entier",
+    "SELECT : objet résultat ; INSERT / UPDATE : true ; erreur : false",
+    "true"
+   ]
+  },
+  {
+   "id": "f05d5fdf26",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqli",
+   "ref": "Récap PHP · mysqli — « mysqli_close() »",
+   "q": "Quel est le rôle de « mysqli_close() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Ferme la connexion",
+   "choix_faux": [
+    "Lit la ligne suivante (tableau indicé)",
+    "Choisit la base de données",
+    "Lit la ligne suivante (indices + noms de colonnes)"
+   ]
+  },
+  {
+   "id": "a487267c0a",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "mysqlival",
+   "ref": "Récap PHP · mysqli — « mysqli_close() »",
+   "q": "Que renvoie « mysqli_close() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "true",
+   "choix_faux": [
+    "identifiant de connexion, ou false",
+    "un tableau, ou NULL à la fin",
+    "SELECT : objet résultat ; INSERT / UPDATE : true ; erreur : false"
+   ]
+  },
+  {
+   "id": "06cb384574",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "selectdb",
+   "ref": "Récap PHP · mysqli — mysqli_select_db()",
+   "q": "Avec mysqli_select_db(), si la base existe, que renvoie la fonction ?",
+   "bonne": "true",
+   "choix_faux": [
+    "false",
+    "un objet résultat (mysqli_result)",
+    "NULL"
+   ]
+  },
+  {
+   "id": "f805f7565a",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "selectdb",
+   "ref": "Récap PHP · mysqli — mysqli_select_db()",
+   "q": "Avec mysqli_select_db(), si la base n'existe pas, que renvoie la fonction ?",
+   "bonne": "false",
+   "choix_faux": [
+    "true",
+    "un objet résultat (mysqli_result)",
+    "NULL"
+   ]
+  },
+  {
+   "id": "e813eda0d4",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "query",
+   "ref": "Récap PHP · mysqli — mysqli_query()",
+   "q": "Dans le Récap PHP, si une requête SELECT réussit, que vaut $res ?",
+   "bonne": "un objet résultat (mysqli_result)",
+   "choix_faux": [
+    "false",
+    "true",
+    "un tableau de lignes"
+   ]
+  },
+  {
+   "id": "5a747d7bd5",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "query",
+   "ref": "Récap PHP · mysqli — mysqli_query()",
+   "q": "Dans le Récap PHP, si une requête INSERT réussit, que vaut $res ?",
+   "bonne": "true",
+   "choix_faux": [
+    "false",
+    "un tableau de lignes",
+    "un objet résultat (mysqli_result)"
+   ]
+  },
+  {
+   "id": "22ec0c8551",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "query",
+   "ref": "Récap PHP · mysqli — mysqli_query()",
+   "q": "Dans le Récap PHP, si une requête UPDATE (et DELETE) réussit, que vaut $res ?",
+   "bonne": "true",
+   "choix_faux": [
+    "un objet résultat (mysqli_result)",
+    "un tableau de lignes",
+    "false"
+   ]
+  },
+  {
+   "id": "bde789fa2b",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "query",
+   "ref": "Récap PHP · mysqli — mysqli_query()",
+   "q": "Dans le Récap PHP, si une requête envoyée par mysqli_query() est en erreur, que vaut $res ?",
+   "bonne": "false",
+   "choix_faux": [
+    "un objet résultat (mysqli_result)",
+    "un entier (le nombre de lignes)",
+    "NULL"
+   ]
+  },
+  {
+   "id": "5186f4069e",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "types",
+   "ref": "Récap PHP · mysqli — types des champs",
+   "q": "Dans une requête SQL écrite en PHP, comment s'écrit un champ de type « INT, FLOAT, DECIMAL (nombres) » ?",
+   "bonne": "sans apostrophes",
+   "choix_faux": [
+    "avec des crochets [ ]",
+    "avec ' '",
+    "avec des guillemets doubles"
+   ]
+  },
+  {
+   "id": "02ab03b610",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "types",
+   "ref": "Récap PHP · mysqli — types des champs",
+   "q": "Dans une requête SQL écrite en PHP, comment s'écrit un champ de type « CHAR, VARCHAR, TEXT (texte) » ?",
+   "bonne": "avec ' '",
+   "choix_faux": [
+    "avec des crochets [ ]",
+    "avec des guillemets doubles",
+    "sans apostrophes"
+   ]
+  },
+  {
+   "id": "a18da06828",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "types",
+   "ref": "Récap PHP · mysqli — types des champs",
+   "q": "Dans une requête SQL écrite en PHP, comment s'écrit un champ de type « DATE, DATETIME » ?",
+   "bonne": "avec ' '",
+   "choix_faux": [
+    "avec des crochets [ ]",
+    "avec des guillemets doubles",
+    "sans apostrophes"
+   ]
+  },
+  {
+   "id": "c68a2ad95e",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fetch",
+   "ref": "Récap PHP · mysqli — mysqli_fetch_row",
+   "q": "Que renvoie « mysqli_fetch_row » comme tableau (d'après le Récap PHP) ?",
+   "bonne": "indices numériques seulement",
+   "choix_faux": [
+    "indices numériques et noms des colonnes",
+    "un objet résultat (mysqli_result)",
+    "une chaîne de caractères"
+   ]
+  },
+  {
+   "id": "7af855cbd5",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fetchacc",
+   "ref": "Récap PHP · mysqli — mysqli_fetch_row",
+   "q": "Avec « mysqli_fetch_row », comment accède-t-on à une valeur du tableau renvoyé (d'après le Récap PHP) ?",
+   "bonne": "$ligne[1]",
+   "choix_faux": [
+    "$ligne[1] ou $ligne['nom']",
+    "$ligne->nom",
+    "$ligne.nom"
+   ]
+  },
+  {
+   "id": "ebc8b1b84d",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fetch",
+   "ref": "Récap PHP · mysqli — mysqli_fetch_array",
+   "q": "Que renvoie « mysqli_fetch_array » comme tableau (d'après le Récap PHP) ?",
+   "bonne": "indices numériques et noms des colonnes",
+   "choix_faux": [
+    "un objet résultat (mysqli_result)",
+    "indices numériques seulement",
+    "une chaîne de caractères"
+   ]
+  },
+  {
+   "id": "ba160ea8dd",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fetchacc",
+   "ref": "Récap PHP · mysqli — mysqli_fetch_array",
+   "q": "Avec « mysqli_fetch_array », comment accède-t-on à une valeur du tableau renvoyé (d'après le Récap PHP) ?",
+   "bonne": "$ligne[1] ou $ligne['nom']",
+   "choix_faux": [
+    "$ligne[1]",
+    "$ligne->nom",
+    "$ligne.nom"
+   ]
+  },
+  {
+   "id": "1baa6b8f62",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "isset",
+   "ref": "Récap PHP · isset / empty — $_POST['nom']",
+   "q": "En PHP, si le champ « nom » est absent (non envoyé), que valent isset($_POST['nom']) et empty($_POST['nom']) ?",
+   "bonne": "isset = false, empty = true",
+   "choix_faux": [
+    "isset = true, empty = true",
+    "isset = false, empty = false",
+    "isset = true, empty = false"
+   ]
+  },
+  {
+   "id": "898554a525",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "isset",
+   "ref": "Récap PHP · isset / empty — $_POST['nom']",
+   "q": "En PHP, si le champ « nom » contient une chaîne vide '', que valent isset($_POST['nom']) et empty($_POST['nom']) ?",
+   "bonne": "isset = true, empty = true",
+   "choix_faux": [
+    "isset = false, empty = true",
+    "isset = false, empty = false",
+    "isset = true, empty = false"
+   ]
+  },
+  {
+   "id": "b1d10cf4fb",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "isset",
+   "ref": "Récap PHP · isset / empty — $_POST['nom']",
+   "q": "En PHP, si le champ « nom » contient '0', que valent isset($_POST['nom']) et empty($_POST['nom']) ?",
+   "bonne": "isset = true, empty = true",
+   "choix_faux": [
+    "isset = true, empty = false",
+    "isset = false, empty = true",
+    "isset = false, empty = false"
+   ]
+  },
+  {
+   "id": "4943efb39e",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "isset",
+   "ref": "Récap PHP · isset / empty — $_POST['nom']",
+   "q": "En PHP, si le champ « nom » contient 'abc', que valent isset($_POST['nom']) et empty($_POST['nom']) ?",
+   "bonne": "isset = true, empty = false",
+   "choix_faux": [
+    "isset = true, empty = true",
+    "isset = false, empty = true",
+    "isset = false, empty = false"
+   ]
+  },
+  {
+   "id": "e7a247c4f0",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — 'Bonjour $nom'",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : 'Bonjour $nom' ?",
+   "bonne": "Bonjour $nom",
+   "choix_faux": [
+    "SELECT * FROM etudiant WHERE nom='$nom'",
+    "Nom : Ali",
+    "C'est $nom"
+   ]
+  },
+  {
+   "id": "0cc4425c9d",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — \"Bonjour $nom\"",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : \"Bonjour $nom\" ?",
+   "bonne": "Bonjour Ali",
+   "choix_faux": [
+    "SELECT * FROM etudiant WHERE nom='$nom'",
+    "Il dit \"salut\" à Ali",
+    "Bonjour $nom"
+   ]
+  },
+  {
+   "id": "7bf65016e3",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — 'Ligne 1\\nLigne 2'",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : 'Ligne 1\\nLigne 2' ?",
+   "bonne": "Ligne 1\\nLigne 2",
+   "choix_faux": [
+    "Parse error",
+    "SELECT * FROM etudiant WHERE nom='Ali'",
+    "Ligne 1 ⏎ Ligne 2"
+   ]
+  },
+  {
+   "id": "9c06edc3dc",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — \"Ligne 1\\nLigne 2\"",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : \"Ligne 1\\nLigne 2\" ?",
+   "bonne": "Ligne 1 ⏎ Ligne 2",
+   "choix_faux": [
+    "Bonjour Ali",
+    "Parse error",
+    "Ligne 1\\nLigne 2"
+   ]
+  },
+  {
+   "id": "7531dacfa9",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — 'C\\'est $nom'",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : 'C\\'est $nom' ?",
+   "bonne": "C'est $nom",
+   "choix_faux": [
+    "Bonjour $nom",
+    "Il dit \"salut\" à Ali",
+    "Nom : Ali"
+   ]
+  },
+  {
+   "id": "80dc9d5722",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — \"Il dit \\\"salut\\\" à $nom\"",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : \"Il dit \\\"salut\\\" à $nom\" ?",
+   "bonne": "Il dit \"salut\" à Ali",
+   "choix_faux": [
+    "Bonjour Ali",
+    "Parse error",
+    "C'est $nom"
+   ]
+  },
+  {
+   "id": "50c3f22e3c",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — \"SELECT * FROM etudiant WHERE nom='$nom'\"",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : \"SELECT * FROM etudiant WHERE nom='$nom'\" ?",
+   "bonne": "SELECT * FROM etudiant WHERE nom='Ali'",
+   "choix_faux": [
+    "Nom : Ali",
+    "Ligne 1\\nLigne 2",
+    "SELECT * FROM etudiant WHERE nom='$nom'"
+   ]
+  },
+  {
+   "id": "a933264c2c",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — 'SELECT * FROM etudiant WHERE nom=\\'$nom\\''",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : 'SELECT * FROM etudiant WHERE nom=\\'$nom\\'' ?",
+   "bonne": "SELECT * FROM etudiant WHERE nom='$nom'",
+   "choix_faux": [
+    "C'est $nom",
+    "Bonjour $nom",
+    "Nom : Ali"
+   ]
+  },
+  {
+   "id": "cfa4b6cc62",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — 'SELECT * FROM etudiant WHERE nom=\\'' . $nom . '\\''",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : 'SELECT * FROM etudiant WHERE nom=\\'' . $nom . '\\'' ?",
+   "bonne": "SELECT * FROM etudiant WHERE nom='Ali'",
+   "choix_faux": [
+    "Ligne 1\\nLigne 2",
+    "SELECT * FROM etudiant WHERE nom='$nom'",
+    "Parse error"
+   ]
+  },
+  {
+   "id": "0df29ff34b",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — \"Nom : $_POST['nom']\"",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : \"Nom : $_POST['nom']\" ?",
+   "bonne": "Parse error",
+   "choix_faux": [
+    "Bonjour $nom",
+    "Bonjour Ali",
+    "Nom : Ali"
+   ]
+  },
+  {
+   "id": "83149a0fc9",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "guillemets",
+   "ref": "Récap PHP · Guillemets — \"Nom : {$_POST['nom']}\"",
+   "q": "En PHP, qu'affiche ce code (avec $nom = « Ali ») : \"Nom : {$_POST['nom']}\" ?",
+   "bonne": "Nom : Ali",
+   "choix_faux": [
+    "Bonjour Ali",
+    "Bonjour $nom",
+    "C'est $nom"
+   ]
+  },
+  {
+   "id": "a9bfb7e866",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques — abs()",
+   "q": "En PHP, que renvoie abs(-15) ?",
+   "bonne": "15",
+   "choix_faux": [
+    "7.5",
+    "0",
+    "9"
+   ]
+  },
+  {
+   "id": "e2891e7c91",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques — abs()",
+   "q": "En PHP, que renvoie abs(-7.5) ?",
+   "bonne": "7.5",
+   "choix_faux": [
+    "-7.5",
+    "15",
+    "7"
+   ]
+  },
+  {
+   "id": "01ed0d1b70",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques — sqrt()",
+   "q": "En PHP, que renvoie sqrt(81) ?",
+   "bonne": "9",
+   "choix_faux": [
+    "1.4142",
+    "3",
+    "40.5"
+   ]
+  },
+  {
+   "id": "781a9dcd38",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques — sqrt()",
+   "q": "En PHP, que renvoie environ sqrt(2) ?",
+   "bonne": "1.4142",
+   "choix_faux": [
+    "1",
+    "1.5",
+    "0.7071"
+   ]
+  },
+  {
+   "id": "e0f02b3361",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques — round()",
+   "q": "En PHP, que renvoie round(3.6) ?",
+   "bonne": "4",
+   "choix_faux": [
+    "3",
+    "6",
+    "3.14"
+   ]
+  },
+  {
+   "id": "264cc29d7a",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques — round()",
+   "q": "En PHP, que renvoie round(3.14159, 2) ?",
+   "bonne": "3.14",
+   "choix_faux": [
+    "3",
+    "3.15",
+    "4"
+   ]
+  },
+  {
+   "id": "85999c7c22",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques — rand()",
+   "q": "En PHP, que renvoie rand(1, 6) ?",
+   "bonne": "Un entier entre 1 et 6, les deux bornes incluses",
+   "choix_faux": [
+    "Un entier entre 0 et 5",
+    "Toujours 1 ou 6",
+    "Un réel entre 1 et 6"
+   ]
+  },
+  {
+   "id": "e504302caa",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques",
+   "q": "À quoi sert « abs() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Renvoie la valeur absolue (la distance à zéro)",
+   "choix_faux": [
+    "Arrondit un nombre",
+    "Tire un nombre pseudo-aléatoire",
+    "Renvoie la racine carrée"
+   ]
+  },
+  {
+   "id": "79e13340b7",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques",
+   "q": "À quoi sert « sqrt() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Renvoie la racine carrée",
+   "choix_faux": [
+    "Arrondit un nombre",
+    "Renvoie la valeur absolue (la distance à zéro)",
+    "Tire un nombre pseudo-aléatoire"
+   ]
+  },
+  {
+   "id": "8909e9a62b",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · Fonctions arithmétiques",
+   "q": "À quoi sert « round() » en PHP (d'après le Récap PHP) ?",
+   "bonne": "Arrondit un nombre (le 2e argument donne le nombre de décimales)",
+   "choix_faux": [
+    "Renvoie la valeur absolue (la distance à zéro)",
+    "Tire un nombre pseudo-aléatoire",
+    "Renvoie la racine carrée"
+   ]
+  },
+  {
+   "id": "0963c3533b",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · include / require",
+   "q": "En PHP, si le fichier demandé par include est absent, que se passe-t-il (d'après le Récap PHP) ?",
+   "bonne": "Un simple Warning, et le script continue",
+   "choix_faux": [
+    "Warning puis Fatal error : le script s'arrête",
+    "Le script redémarre",
+    "Rien, aucune erreur"
+   ]
+  },
+  {
+   "id": "e30c486cf1",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · include / require",
+   "q": "En PHP, si le fichier demandé par require est absent, que se passe-t-il (d'après le Récap PHP) ?",
+   "bonne": "Warning puis Fatal error : le script s'arrête",
+   "choix_faux": [
+    "Un simple Warning, et le script continue",
+    "Rien, aucune erreur",
+    "Le fichier est créé automatiquement"
+   ]
+  },
+  {
+   "id": "0a5ed871ca",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · GET / POST",
+   "q": "D'après le Récap PHP, comment voyagent les données envoyées par la méthode GET ?",
+   "bonne": "Elles sont visibles dans l'URL (limitées : pas pour les mots de passe)",
+   "choix_faux": [
+    "Elles sont stockées dans la base de données",
+    "Elles sont envoyées par e-mail",
+    "Elles sont dans le corps de la requête, invisibles dans l'URL"
+   ]
+  },
+  {
+   "id": "c6c967ceb5",
+   "module": "recap-php",
+   "niveaux": [
+    "4si"
+   ],
+   "type": "fait",
+   "ref": "Récap PHP · GET / POST",
+   "q": "D'après le Récap PHP, comment voyagent les données envoyées par la méthode POST ?",
+   "bonne": "Elles sont dans le corps de la requête, invisibles dans l'URL",
+   "choix_faux": [
+    "Elles sont visibles dans l'URL (limitées : pas pour les mots de passe)",
+    "Elles restent dans le navigateur",
+    "Elles sont stockées dans un cookie"
    ]
   }
  ]

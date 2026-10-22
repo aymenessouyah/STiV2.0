@@ -1,24 +1,18 @@
 {
   "version": 316,
-  "generatedAt": "2026-10-21T23:54:48Z",
+  "generatedAt": "2026-10-22T00:08:55Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 598,
-  "totalBytes": 628964690,
+  "totalBytes": 629035490,
   "files": [
     {
-      "path": "quiz/tableaux.html",
-      "bytes": 5956,
-      "gitSha": "8699e80b066edc916a2a77c9d8c005c4ab740692"
+      "path": "quiz/tableaux.html", "bytes": 5956, "gitSha": "ffd11c5d84dd03f570076659263b5043f3d88736"
     },
     {
-      "path": "assets/js/quiz-tableaux.js",
-      "bytes": 14946,
-      "gitSha": "3e9e0187309f59214f47e8dc512db05ae3b12b52"
+      "path": "assets/js/quiz-tableaux.js", "bytes": 15149, "gitSha": "0c05c199ae4235fd3a4b3e8d131143bc4e63ecf0"
     },
     {
-      "path": "assets/data/quiz-banque.json",
-      "bytes": 260503,
-      "gitSha": "2c4d14befc18629ddb3bb3ac4bf96796da6bb378"
+      "path": "assets/data/quiz-banque.json", "bytes": 331065, "gitSha": "a38d0645352893495b8e3389af65b0cad18b0021"
     },
 
     {
@@ -2477,7 +2471,7 @@
       "gitSha": "f64bb1c36cc619a0a5bf09ba017c2fc7f6c3b160"
     },
     {
-      "path": "index.html", "bytes": 184399, "gitSha": "9554d21b4882b16154e922706bb6b2b4779efd71"
+      "path": "index.html", "bytes": 184433, "gitSha": "4399b06af6d66f7ff8a631ae975665f5bb487dcb"
     },
     {
       "path": "livre-smart.html",
@@ -2990,7 +2984,7 @@
       "gitSha": "37bcf8639e998e7a2f84b9dffb04113f13edc609"
     },
     {
-      "path": "sw.js", "bytes": 55915, "gitSha": "1b745f9ae5e3a0b6aab10159f27f125bdfac11ae"
+      "path": "sw.js", "bytes": 55916, "gitSha": "4b9649dba3e932818f5c5c5612bea12f53ba9184"
     }
   ],
   "windowsCompatible": true,

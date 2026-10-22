@@ -10,8 +10,8 @@
   "use strict";
   var NB_PAR_SESSION = 10;
   var CLE_STOCKAGE = "sti-quiz-tableaux-v1";
-  var LIBELLE_MODULE = { html5: "HTML5", css3: "CSS3", javascript: "JavaScript", sql: "SQL", php: "PHP" };
-  var ICO_MODULE = { html5: "🌐", css3: "🎨", javascript: "⚡", sql: "🗄️", php: "🐘" };
+  var LIBELLE_MODULE = { html5: "HTML5", css3: "CSS3", javascript: "JavaScript", sql: "SQL", php: "PHP", defis: "37 Défis JS", "recap-php": "Récap PHP" };
+  var ICO_MODULE = { html5: "🌐", css3: "🎨", javascript: "⚡", sql: "🗄️", php: "🐘", defis: "🎯", "recap-php": "🧾" };
   var app = document.getElementById("qt-app");
   if (!app) return;
 
@@ -127,7 +127,8 @@
     } else {
       niveauxHtml = '<p class="qt-sous">Niveau détecté : <strong>' +
         (niveauDetecte === "3si" ? "3ème SI" : "4ème SI") + "</strong> (" + esc(session.classe || "") +
-        "). Les questions viennent uniquement des tableaux récapitulatifs de votre livre : " +
+        "). Les questions viennent uniquement des contenus de la plateforme : tableaux récapitulatifs de votre livre et 37 Défis JavaScript" +
+        (niveauDetecte === "4si" ? " et Récap PHP" : "") + " : " +
         "à chaque session, le tirage est aléatoire et une question déjà répondue ne revient jamais (tant qu'il en reste).</p>";
     }
     var modules = Object.keys(LIBELLE_MODULE).filter(function (m) {

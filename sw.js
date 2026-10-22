@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v356-quiz-tableaux";
+var UPDATE_ID = "v357-quiz-defis-recap";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -28,10 +28,10 @@ var UPDATE_FILES = [
   { url: "./assets/js/smart-book.js", revision: "smart-book-retour-v351" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-books-v339" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
-  { url: "./index.html", revision: "index-v356" },
-  { url: "./quiz/tableaux.html", revision: "quiz-tableaux-v356" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-tableaux-v356" },
-  { url: "./assets/data/quiz-banque.json", revision: "quiz-tableaux-v356" },
+  { url: "./index.html", revision: "index-v357" },
+  { url: "./quiz/tableaux.html", revision: "quiz-tableaux-v357" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-tableaux-v357" },
+  { url: "./assets/data/quiz-banque.json", revision: "quiz-banque-v357" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
   { url: "./admin.html", revision: "admin-v355" },
