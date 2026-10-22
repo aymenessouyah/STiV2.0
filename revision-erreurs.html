@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔁 Retravailler mes erreurs — STI By A'e</title>
+<link rel="icon" href="assets/img/sti-icon-192.png">
+<script src="assets/js/supabase-umd.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/quiz-sync.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: "Segoe UI", system-ui, sans-serif; background:#0d1526; color:#eef2f8; min-height:100vh; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 28px 16px 60px; }
+  header { text-align:center; margin-bottom: 8px; }
+  header .logo { font-size: 44px; }
+  h1 { margin: 6px 0 4px; font-size: 28px; }
+  h1 em { color:#ff8c42; font-style: normal; }
+  .sous { color:#9fb2cc; font-size: 14.5px; margin: 0 auto 22px; max-width: 640px; text-align:center; line-height:1.6; }
+  .stats { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom: 24px; }
+  .stat { background:#16233c; border:1.5px solid #2b3d5f; border-radius:14px; padding:12px 20px; text-align:center; min-width:150px; }
+  .stat .n { font-size:26px; font-weight:900; }
+  .stat .l { font-size:12px; color:#9fb2cc; font-weight:700; }
+  .cartes { display:grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap:14px; }
+  .carte { background:#16233c; border:1.5px solid #2b3d5f; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px; }
+  .carte h2 { margin:0; font-size:17px; }
+  .carte .nb { font-size:13px; color:#9fb2cc; }
+  .carte .nb strong { color:#ff6b6b; }
+  .carte .nb .ok { color:#2ecc9e; }
+  .carte ul { margin:4px 0; padding-left:18px; font-size:12.5px; color:#c7d3e6; line-height:1.55; }
+  .btn { margin-top:auto; display:inline-block; text-align:center; background:#ff8c42; color:#1a1a2e; font-weight:900;
+         border:none; border-radius:999px; padding:11px 18px; font-size:14px; cursor:pointer; text-decoration:none; }
+  .btn:hover { background:#ffa25e; }
+  .btn:disabled { background:#3a4a68; color:#8fa3c4; cursor:not-allowed; }
+  .msg { text-align:center; color:#9fb2cc; font-size:15px; padding:34px 10px; line-height:1.7; }
+  .msg .gros { font-size:40px; display:block; margin-bottom:8px; }
+  .retour { display:inline-block; margin-top:26px; color:#9fb2cc; font-weight:700; text-decoration:none; }
+  .retour:hover { color:#fff; }
+  .note { margin-top:22px; font-size:12.5px; color:#7e93b5; text-align:center; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">🔁</div>
+    <h1>Retravailler <em>mes erreurs</em></h1>
+  </header>
+  <p class="sous">Voici les questions que tu as <strong>ratées</strong> dans les quiz. Rejoue-les en mode révision,
+     uniquement entre elles, jusqu'à les maîtriser : dès que ta dernière réponse à une question est juste, elle sort de la liste. 💪</p>
+
+  <div class="stats" id="stats" style="display:none">
+    <div class="stat"><div class="n" id="st-rater" style="color:#ff6b6b">–</div><div class="l">questions à retravailler</div></div>
+    <div class="stat"><div class="n" id="st-maitrisees" style="color:#2ecc9e">–</div><div class="l">questions maîtrisées</div></div>
+  </div>
+
+  <div id="contenu"><div class="msg"><span class="gros">⏳</span>Chargement de tes résultats…</div></div>
+
+  <div style="text-align:center"><a class="retour" href="index.html">← Retour à l'accueil</a></div>
+  <p class="note">Le mode révision utilise tes parties synchronisées (depuis la mise en place du détail par question).
+     Tes réponses en mode révision comptent aussi : elles mettent à jour tes listes et tes statistiques.</p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var LIBELLE_QUIZ = { "html-css": "🌐 HTML5 & CSS3", "javascript": "⚡ JavaScript", "sql": "🗄️ SQL (BD)", "php": "🐘 PHP", "tableaux": "🃏 Quiz des tableaux" };
+  var LIBELLE_MODULE = { html5: "HTML5", css3: "CSS3", javascript: "JavaScript", sql: "SQL", php: "PHP", defis: "37 Défis JS", "recap-php": "Récap PHP", mix: "Mix" };
+  var PAGES = { "html-css": "quiz/html-css.html", "javascript": "quiz/javascript.html", "sql": "quiz/sql.html", "php": "quiz/php.html", "tableaux": "quiz/tableaux.html" };
+  var contenu = document.getElementById("contenu");
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  function msg(html) { contenu.innerHTML = '<div class="msg">' + html + "</div>"; }
+
+  async function demarrer() {
+    if (!window.supabase || !window.STI_AUTH) { msg('<span class="gros">⚠️</span>Service indisponible pour le moment.'); return; }
+    var client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE);
+    var u = null;
+    try {
+      var r = await client.auth.getUser();
+      if (r && r.data) u = r.data.user;
+    } catch (e) {}
+    if (!u) {
+      msg('<span class="gros">🔒</span>Cette page est réservée aux abonnés connectés.<br><a class="btn" href="portail.html">Se connecter</a>');
+      return;
+    }
+    var rows = null;
+    try {
+      var rr = await client.from("sti_quiz_reponses")
+        .select("quiz,module,question_id,enonce,correct,cree_le")
+        .order("cree_le", { ascending: false }).limit(4000);
+      if (!rr.error) rows = rr.data || [];
+    } catch (e) {}
+    if (rows === null) { msg('<span class="gros">⚠️</span>Impossible de charger tes résultats (connexion ?). Réessaie dans un instant.'); return; }
+    if (!rows.length) {
+      msg('<span class="gros">🎯</span>Aucune réponse détaillée pour le moment.<br>Joue un quiz : tes questions ratées apparaîtront ici automatiquement.');
+      return;
+    }
+    /* derniere reponse par question (rows tries du plus recent au plus ancien) */
+    var parQuestion = {};
+    rows.forEach(function (r) {
+      var cle = r.quiz + "|" + (r.module || "") + "|" + r.question_id;
+      if (!parQuestion[cle]) parQuestion[cle] = { rep: r, aRate: false, dernierCorrect: r.correct };
+      if (!r.correct) parQuestion[cle].aRate = true;
+    });
+    var groupes = {}, totalRater = 0, totalMaitrisees = 0;
+    Object.keys(parQuestion).forEach(function (cle) {
+      var q = parQuestion[cle], r = q.rep;
+      var gcle = r.quiz + "|" + (r.module || "");
+      if (!groupes[gcle]) groupes[gcle] = { quiz: r.quiz, module: r.module || null, aRetravailler: [], maitrisees: 0 };
+      if (!q.dernierCorrect) { groupes[gcle].aRetravailler.push(r); totalRater++; }
+      else if (q.aRate) { groupes[gcle].maitrisees++; totalMaitrisees++; }
+    });
+    document.getElementById("stats").style.display = "";
+    document.getElementById("st-rater").textContent = totalRater;
+    document.getElementById("st-maitrisees").textContent = totalMaitrisees;
+    var cles = Object.keys(groupes).sort();
+    if (!cles.length || totalRater === 0) {
+      msg('<span class="gros">🏆</span>Bravo, tu n\'as <strong>aucune question à retravailler</strong> : toutes tes dernières réponses sont justes !<br>Continue à jouer pour garder le rythme.');
+      return;
+    }
+    contenu.innerHTML = '<div class="cartes">' + cles.map(function (gcle, i) {
+      var g = groupes[gcle];
+      var nom = (LIBELLE_QUIZ[g.quiz] || g.quiz) + (g.module ? " · " + (LIBELLE_MODULE[g.module] || g.module) : "");
+      var apercu = g.aRetravailler.slice(0, 3).map(function (r) {
+        return "<li>" + esc((r.enonce || "").slice(0, 90)) + "</li>";
+      }).join("");
+      return '<div class="carte"><h2>' + esc(nom) + "</h2>" +
+        '<div class="nb"><strong>' + g.aRetravailler.length + " question(s) à retravailler</strong>" +
+        (g.maitrisees ? ' · <span class="ok">' + g.maitrisees + " maîtrisée(s)</span>" : "") + "</div>" +
+        (apercu ? "<ul>" + apercu + "</ul>" : "") +
+        '<button type="button" class="btn" data-groupe="' + i + '"' + (g.aRetravailler.length ? "" : " disabled") + ">▶ Retravailler ces questions</button></div>";
+    }).join("") + "</div>";
+    contenu.querySelectorAll("[data-groupe]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var g = groupes[cles[parseInt(b.getAttribute("data-groupe"), 10)]];
+        if (!g || !g.aRetravailler.length) return;
+        var ids = g.aRetravailler.map(function (r) { return r.question_id; });
+        if (window.STIQuizSync && STIQuizSync.preparerRevision) STIQuizSync.preparerRevision(g.quiz, ids);
+        var url = PAGES[g.quiz] + "?revision=erreurs";
+        if (g.quiz === "tableaux" && g.module) url += "&module=" + encodeURIComponent(g.module);
+        window.location.href = url;
+      });
+    });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+  else demarrer();
+})();
+</script>
+</body>
+</html>

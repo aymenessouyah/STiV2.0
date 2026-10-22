@@ -216,9 +216,18 @@
   /* ---------- Session de quiz ---------- */
   var sessionQuiz = null;
   function demarrer(module) {
-    var pool = vivier(niveauChoisi, module);
+    var revTab = window.STIQuizSync && STIQuizSync.revisionIds ? STIQuizSync.revisionIds("tableaux") : null;
+    var pool;
+    if (revTab) {
+      var baseTab = niveauChoisi ? questionsPour(niveauChoisi, module)
+        : banque.filter(function (q) { return module === "mix" || q.module === module; });
+      pool = baseTab.filter(function (q) { return revTab.indexOf("tab-" + q.id) !== -1; });
+      if (!pool.length) pool = vivier(niveauChoisi, module);
+    } else {
+      pool = vivier(niveauChoisi, module);
+    }
     if (!pool.length) { afficherAccueil(); return; }
-    var tirees = melanger(pool).slice(0, NB_PAR_SESSION).map(function (q) {
+    var tirees = melanger(pool).slice(0, revTab ? pool.length : NB_PAR_SESSION).map(function (q) {
       return { ref: q, choix: melanger([q.bonne].concat(q.choix_faux)), choixEleve: -1 };
     });
     sessionQuiz = { module: module, questions: tirees, index: 0, mode: "officiel" };
@@ -326,7 +335,11 @@
     .then(function (data) {
       banque = (data && data.questions) || [];
       if (!banque.length) throw new Error("banque vide");
-      afficherAccueil();
+      var revTab2 = window.STIQuizSync && STIQuizSync.revisionIds ? STIQuizSync.revisionIds("tableaux") : null;
+      var modRev = null;
+      try { modRev = new URLSearchParams(window.location.search).get("module"); } catch (e) {}
+      if (revTab2 && modRev) demarrer(modRev);
+      else afficherAccueil();
       fusionnerVusDistants();
     })
     .catch(function () {

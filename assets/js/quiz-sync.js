@@ -1,4 +1,4 @@
-/* ═══ STI — Synchronisation centrale des quiz (v358, maj v362, réponses v365) ═══
+/* ═══ STI — Synchronisation centrale des quiz (v358, maj v362, réponses v365, révision v367) ═══
    Partagé par toutes les pages quiz. Enregistre CHAQUE partie jouée dans
    Supabase (sti_quiz_parties : score, total, %, date — rejouable à l'infini)
    et synchronise les questions déjà vues du Quiz des tableaux
@@ -250,11 +250,34 @@
     enregistrer: enregistrer,
     enregistrerReponses: enregistrerReponses,
     hash: hashTxt,
+    preparerRevision: preparerRevision,
+    revisionIds: revisionIds,
+    quitterRevision: quitterRevision,
     resume: resume,
     chargerVus: chargerVus,
     marquerVus: marquerVus,
     utilisateur: utilisateur
   };
+
+  /* ---------- Mode « Retravailler mes erreurs » (v367) ---------- */
+  var CLE_REVISION = "sti-revision-erreurs-v1";
+  function preparerRevision(quiz, ids) {
+    try {
+      localStorage.setItem(CLE_REVISION, JSON.stringify({ quiz: String(quiz), ids: ids || [], ts: Date.now() }));
+    } catch (e) {}
+  }
+  function revisionIds(quiz) {
+    try {
+      if (!/[?&]revision=erreurs/.test(window.location.search || "")) return null;
+      var h = JSON.parse(localStorage.getItem(CLE_REVISION) || "null");
+      if (!h || h.quiz !== quiz || !h.ids || !h.ids.length) return null;
+      if (Date.now() - (h.ts || 0) > 2 * 3600 * 1000) return null;
+      return h.ids;
+    } catch (e) { return null; }
+  }
+  function quitterRevision() {
+    try { localStorage.removeItem(CLE_REVISION); } catch (e) {}
+  }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", viderFile);
   else viderFile();

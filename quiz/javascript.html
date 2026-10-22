@@ -29120,7 +29120,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         }
 
         shuffleQuestions() {
-          return [...QUESTIONS_DB].sort(() => Math.random() - 0.5);
+          var revJs = window.STIQuizSync && STIQuizSync.revisionIds ? STIQuizSync.revisionIds("javascript") : null;
+          var baseJs = QUESTIONS_DB;
+          if (revJs) {
+            var fJs = QUESTIONS_DB.filter((q) => revJs.indexOf(STIQuizSync.hash(q.title)) !== -1);
+            if (fJs.length) baseJs = fJs;
+          }
+          return [...baseJs].sort(() => Math.random() - 0.5);
         }
 
         start(mode = "arcade") {

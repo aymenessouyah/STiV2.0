@@ -42497,7 +42497,20 @@ LIMIT 5;</textarea
         duel: { label: "DUEL CONTRE L'IA", color: "#7B61FF", time: 20, nb: 8 },
         daily: { label: "DÉFI DU JOUR", color: "#B8F135", time: 30, nb: 5 },
       };
+      function banqueQuestionsSql() {
+        var revSql2 = window.STIQuizSync && STIQuizSync.revisionIds ? STIQuizSync.revisionIds("sql") : null;
+        if (revSql2) {
+          var f2 = QUESTIONS.filter((q) => revSql2.indexOf("sql-" + q.id) !== -1);
+          if (f2.length) return f2;
+        }
+        return QUESTIONS;
+      }
       function pickQuestions(mode, cat = "all") {
+        var revSql = window.STIQuizSync && STIQuizSync.revisionIds ? STIQuizSync.revisionIds("sql") : null;
+        if (revSql) {
+          var fRev = QUESTIONS.filter((q) => revSql.indexOf("sql-" + q.id) !== -1);
+          if (fRev.length) return shuffle(fRev);
+        }
         let pool =
           cat === "all"
             ? [...QUESTIONS]
@@ -42883,14 +42896,14 @@ LIMIT 5;</textarea
         Q.index++;
         if (Q.mode === "chrono") {
           if (Q.index >= Q.questions.length) {
-            Q.questions = [...Q.questions, ...shuffle(QUESTIONS)];
+            Q.questions = [...Q.questions, ...shuffle(banqueQuestionsSql())];
           }
           renderQuestion();
           return;
         }
         if (Q.mode === "sansfaute") {
           if (Q.index >= Q.questions.length) {
-            Q.questions = [...Q.questions, ...shuffle(QUESTIONS)];
+            Q.questions = [...Q.questions, ...shuffle(banqueQuestionsSql())];
           }
           if (Q.index >= 20) {
             endQuiz("end");

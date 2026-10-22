@@ -5117,6 +5117,11 @@ background-repeat: repeat;</pre>
       var ADVANCE_DELAY = 180;
 
       function pool() {
+        var revHc = window.STIQuizSync && STIQuizSync.revisionIds ? STIQuizSync.revisionIds("html-css") : null;
+        if (revHc) {
+          var fHc = BANQUE.filter(function (q) { return revHc.indexOf(STIQuizSync.hash(q.text)) !== -1; });
+          if (fHc.length) return fHc;
+        }
         if (state.cat === "all") return BANQUE;
         return BANQUE.filter(function (q) {
           return q.cat === state.cat;

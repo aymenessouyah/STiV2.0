@@ -42741,6 +42741,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         } questions</span>`;
       }
       function filteredPool(countOnly) {
+        var revPhp = window.STIQuizSync && STIQuizSync.revisionIds ? STIQuizSync.revisionIds("php") : null;
+        if (revPhp) {
+          let pr = QUESTIONS.filter((q) => revPhp.indexOf(STIQuizSync.hash(q.q)) !== -1);
+          if (pr.length) return pr;
+        }
         let p = QUESTIONS.filter(
           (q) =>
             selCats.has(q.cat) && (selDiff === "Mixed" || q.diff === selDiff)
