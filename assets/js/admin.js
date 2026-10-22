@@ -3303,6 +3303,12 @@
           }
           msg("✅ Classe de " + contact(p) + " changée en « " + nvClasse + " ».", "ok");
           charge(true, "profils");
+          offrirAnnulation("Classe de " + contact(p) + " déplacée vers « " + nvClasse + " »", function () {
+            sb.from("profiles").update({ classe: ancienneClasse }).eq("id", p.id).then(function () {
+              msg("↩️ Classe précédente rétablie pour " + contact(p) + " (« " + ancienneClasse + " »).", "ok");
+              charge(true, "profils");
+            });
+          });
         });
       }
     });
@@ -5282,11 +5288,20 @@
       resumeTxt: "🏫 Classe : " + (p.classe || "—") + " · Statut actuel : " + (LIB[p.statut] || p.statut),
       danger: estDanger,
       onConfirmer: function () {
+        var avantStatut = p.statut;
         sb.from("profiles").update({ statut: statut }).eq("id", p.id).then(function (r) {
           if (r.error) { msg("❌ " + r.error.message, "err"); return; }
           diffuserSignalStatut(p.id, statut, estGold(p));
           msg("✅ " + contact(p) + " → " + libSt, "ok");
           charge(true, "profils");
+          offrirAnnulation("Statut de " + contact(p) + " changé en « " + libSt + " »", function () {
+            sb.from("profiles").update({ statut: avantStatut }).eq("id", p.id).then(function (r2) {
+              if (r2 && r2.error) { msg("❌ Annulation impossible : " + r2.error.message, "err"); return; }
+              diffuserSignalStatut(p.id, avantStatut, estGold(p));
+              msg("↩️ Statut précédent rétabli pour " + contact(p) + " (« " + (LIB[avantStatut] || avantStatut) + " »).", "ok");
+              charge(true, "profils");
+            });
+          });
         });
       }
     });
@@ -5306,6 +5321,8 @@
       resumeTxt: "🏛️ Lycée : " + baseLycee + " · 🏫 Classe : " + (p.classe || "—"),
       danger: !nvGold,
       onConfirmer: function () {
+        var avantLyceeG = p.lycee;
+        var avantStatutG = p.statut;
         sb.from("profiles").update({ lycee: nvLycee, statut: nvStatut }).eq("id", p.id).then(function (r) {
           if (r.error) { msg("❌ " + r.error.message, "err"); return; }
           diffuserSignalStatut(p.id, nvStatut, nvGold);
@@ -5316,6 +5333,14 @@
             "ok"
           );
           charge(true, "profils");
+          offrirAnnulation((nvGold ? "👑 Gold accordé à " : "🔒 Gold retiré de ") + contact(p), function () {
+            sb.from("profiles").update({ lycee: avantLyceeG, statut: avantStatutG }).eq("id", p.id).then(function (r2) {
+              if (r2 && r2.error) { msg("❌ Annulation impossible : " + r2.error.message, "err"); return; }
+              diffuserSignalStatut(p.id, avantStatutG, String(avantLyceeG || "").toUpperCase().indexOf("GOLD") !== -1);
+              msg("↩️ Statut Gold précédent rétabli pour " + contact(p) + ".", "ok");
+              charge(true, "profils");
+            });
+          });
         });
       }
     });
@@ -5977,6 +6002,7 @@
         btnConfirmerAff.textContent = "Enregistrement…";
       }
       msg("Synchronisation de la fiche de " + nomAffiche + "…", "ok");
+      var avantFiche = { nom: p.nom, prenom: p.prenom, lycee: p.lycee, classe: p.classe };
       sb.from("profiles").update(patch).eq("id", p.id)
         .select("id,nom,prenom,lycee,classe")
         .maybeSingle()
@@ -5987,6 +6013,14 @@
           terminerEditionProfil();
           msg("✅ Fiche mise à jour : " + nomAffiche + " · " + nvLyceeBase + " · " + nvClasse + ".", "ok");
           charge(true, "profils");
+          offrirAnnulation("Fiche de " + nomAffiche + " modifiée", function () {
+            sb.from("profiles").update(avantFiche).eq("id", p.id).then(function (r3) {
+              if (r3 && r3.error) { msg("❌ Annulation impossible : " + r3.error.message, "err"); return; }
+              majCacheLocalProfil(p.id, avantFiche);
+              msg("↩️ Fiche précédente rétablie pour " + nomAffiche + ".", "ok");
+              charge(true, "profils");
+            });
+          });
         })
         .catch(function (erreur) {
           empilerActionAdmin({ type: "profile_update", uid: p.id, patch: patch, gold: estGold(p) });
@@ -11331,5 +11365,106 @@
     document.body.appendChild(bar);
     var z0 = lireZ();
     if (z0 !== 100) appliquerZ(z0);
+  })();
+
+  /* ==================== v388 : palette Ctrl+K + toast d'annulation ==================== */
+  function offrirAnnulation(texteAnnul, fnRetour) {
+    try {
+      var ancien = document.getElementById("sti-toast-annul");
+      if (ancien && ancien.parentNode) ancien.parentNode.removeChild(ancien);
+      var tToast = document.createElement("div");
+      tToast.id = "sti-toast-annul";
+      tToast.className = "sti-toast-annul";
+      tToast.innerHTML = '<span class="sti-toast-txt"></span><small class="sti-toast-restant">15 s</small><button type="button">↩️ Annuler</button>';
+      tToast.querySelector(".sti-toast-txt").textContent = texteAnnul;
+      document.body.appendChild(tToast);
+      var reste = 15;
+      var petit = tToast.querySelector(".sti-toast-restant");
+      var itv = setInterval(function () {
+        reste--;
+        if (petit) petit.textContent = reste > 0 ? (reste + " s") : "expiré";
+        if (reste <= 0) { clearInterval(itv); tToast.classList.add("expire"); }
+      }, 1000);
+      tToast.querySelector("button").addEventListener("click", function () {
+        if (reste <= 0) return;
+        clearInterval(itv);
+        if (tToast.parentNode) tToast.parentNode.removeChild(tToast);
+        try { fnRetour(); } catch (e) {}
+      });
+      setTimeout(function () { if (tToast.parentNode) tToast.parentNode.removeChild(tToast); }, 16500);
+    } catch (e) {}
+  }
+  (function () {
+    var pal = null, palInput = null, palList = null, palIndex = -1, palItems = [];
+    function palNormaliser(s) {
+      return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+    function palCreer() {
+      if (pal) return;
+      pal = document.createElement("div");
+      pal.id = "sti-palette-k";
+      pal.innerHTML = '<div class="sti-palette-boite"><input id="sti-palette-inp" type="text" autocomplete="off" spellcheck="false" placeholder="🔍 Un élève (nom, classe, e-mail) ou une section…"><div id="sti-palette-liste"></div><div class="sti-palette-aide">↑ ↓ naviguer · ↩ ouvrir · Échap fermer · Ctrl+K pour rappeler</div></div>';
+      document.body.appendChild(pal);
+      palInput = document.getElementById("sti-palette-inp");
+      palList = document.getElementById("sti-palette-liste");
+      pal.addEventListener("mousedown", function (e) { if (e.target === pal) palFermer(); });
+      palInput.addEventListener("input", palChercher);
+      palInput.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowDown") { e.preventDefault(); palMove(1); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); palMove(-1); }
+        else if (e.key === "Enter") { e.preventDefault(); palValider(); }
+        else if (e.key === "Escape") { e.preventDefault(); palFermer(); }
+      });
+    }
+    function palOuvrir() { palCreer(); pal.classList.add("visible"); palInput.value = ""; palChercher(); setTimeout(function () { try { palInput.focus(); } catch (e) {} }, 15); }
+    function palFermer() { if (pal) pal.classList.remove("visible"); }
+    function palMove(d) { if (!palItems.length) return; palIndex = (palIndex + d + palItems.length) % palItems.length; palSurligner(); }
+    function palSurligner() {
+      var es = palList.querySelectorAll(".sti-palette-item");
+      for (var i = 0; i < es.length; i++) es[i].classList.toggle("sel", i === palIndex);
+    }
+    function palChercher() {
+      var q = palNormaliser(String(palInput.value || "").trim());
+      palItems = []; palIndex = -1;
+      if (q.length < 2) { palList.innerHTML = '<div class="sti-palette-vide">Tapez au moins 2 lettres…</div>'; return; }
+      var mots = q.split(/\s+/);
+      try {
+        (profils || []).forEach(function (pe) {
+          var blob = palNormaliser([pe.prenom, pe.nom, pe.email, pe.classe, pe.lycee].join(" "));
+          var ok = mots.every(function (m) { return blob.indexOf(m) !== -1; });
+          if (ok) palItems.push({ type: "eleve", p: pe, label: nomPrenomTexte(pe) || pe.email || "?", sub: (pe.classe || "—") + " · " + (LIB[pe.statut] || pe.statut || "—") });
+        });
+      } catch (e) {}
+      var secs = document.querySelectorAll(".btn-sec-tab");
+      for (var i2 = 0; i2 < secs.length; i2++) {
+        var lab = String(secs[i2].textContent || "").trim();
+        if (lab && mots.every((function (labN) { return function (m) { return palNormaliser(labN).indexOf(m) !== -1; }; })(lab))) palItems.push({ type: "section", el: secs[i2], label: lab, sub: "Section du tableau de bord" });
+      }
+      palItems.sort(function (a, b) { return (a.type === "section" ? 0 : 1) - (b.type === "section" ? 0 : 1) || String(a.label).localeCompare(String(b.label), "fr"); });
+      palItems = palItems.slice(0, 14);
+      if (!palItems.length) { palList.innerHTML = '<div class="sti-palette-vide">Aucun résultat pour « ' + echHtml(q) + " »</div>"; return; }
+      palList.innerHTML = palItems.map(function (it, idx) {
+        return '<div class="sti-palette-item" data-i="' + idx + '"><span class="sti-palette-ico">' + (it.type === "eleve" ? "👤" : "📂") + '</span><span class="sti-palette-txt"><b>' + echHtml(it.label) + "</b><small>" + echHtml(it.sub) + "</small></span></div>";
+      }).join("");
+      var divs = palList.querySelectorAll(".sti-palette-item");
+      for (var j = 0; j < divs.length; j++) {
+        (function (el, idx2) { el.addEventListener("click", function () { palIndex = idx2; palValider(); }); })(divs[j], j);
+      }
+      palIndex = 0; palSurligner();
+    }
+    function palValider() {
+      var itP = palItems[palIndex] || (palItems.length === 1 ? palItems[0] : null);
+      if (!itP) return;
+      if (itP.type === "eleve") { palFermer(); ouvrirFicheEleve(itP.p); }
+      else { palFermer(); try { itP.el.click(); } catch (e) {} }
+    }
+    document.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
+        e.preventDefault();
+        if (pal && pal.classList.contains("visible")) palFermer(); else palOuvrir();
+      } else if (e.key === "Escape" && pal && pal.classList.contains("visible")) {
+        palFermer();
+      }
+    });
   })();
 })();

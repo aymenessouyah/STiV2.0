@@ -1819,6 +1819,33 @@
     .st.suspendu{color:#6a5f4a!important;border:1.5px solid #9a8b6d}
     html.admin-ardoise body.cockpit-airbus .st.suspendu{background:rgba(179,164,136,.16)!important;color:#d9cfba!important;border:1.5px solid #6f6249!important}
   </style>
+  <style id="style-palette-v388">
+    #sti-palette-k{position:fixed;inset:0;background:rgba(20,16,10,.55);z-index:99998;display:none}
+    #sti-palette-k.visible{display:block}
+    .sti-palette-boite{max-width:560px;margin:11vh auto 0;background:#fffdf7;border:2.5px solid #23201a;border-radius:16px;box-shadow:6px 6px 0 #f4511e;overflow:hidden}
+    .sti-palette-boite input{display:block;width:100%;box-sizing:border-box;border:none;border-bottom:2px solid #e7dcc8;padding:14px 16px;font:inherit;font-size:15px;font-weight:800;background:transparent;color:inherit;outline:none}
+    #sti-palette-liste{max-height:52vh;overflow-y:auto}
+    .sti-palette-item{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-bottom:1px solid #f0e7d6}
+    .sti-palette-item.sel,.sti-palette-item:hover{background:#f3ead9}
+    .sti-palette-ico{font-size:16px;flex-shrink:0}
+    .sti-palette-txt{display:flex;flex-direction:column;min-width:0}
+    .sti-palette-txt b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sti-palette-txt small{font-size:11px;color:#7a6f5d;font-weight:700}
+    .sti-palette-vide{padding:14px 16px;font-size:12.5px;color:#7a6f5d;font-weight:700}
+    .sti-palette-aide{padding:7px 14px;font-size:10.5px;color:#7a6f5d;background:#f9f1e3;border-top:2px solid #e7dcc8;font-weight:800}
+    .sti-toast-annul{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:99999;display:flex;align-items:center;gap:12px;background:#23201a;color:#f5eddc;border:2px solid #f4511e;border-radius:999px;padding:9px 10px 9px 18px;font-size:12.5px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:min(560px,92vw)}
+    .sti-toast-annul button{border:2px solid #f5eddc;background:transparent;color:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap}
+    .sti-toast-annul button:hover{background:#f4511e;border-color:#f4511e}
+    .sti-toast-annul small{color:#b3a488;white-space:nowrap}
+    .sti-toast-annul.expire{opacity:.45}
+    html.admin-ardoise .sti-palette-boite{background:#2b241b;color:#f5eddc;border-color:#0f0d0a}
+    html.admin-ardoise .sti-palette-boite input{border-bottom-color:#55482e;color:#f5eddc}
+    html.admin-ardoise .sti-palette-item{border-bottom-color:#3a3122}
+    html.admin-ardoise .sti-palette-item.sel,html.admin-ardoise .sti-palette-item:hover{background:#3a3122}
+    html.admin-ardoise .sti-palette-txt small,html.admin-ardoise .sti-palette-vide,html.admin-ardoise .sti-palette-aide{color:#b3a488}
+    html.admin-ardoise .sti-palette-aide{background:#241e16;border-top-color:#55482e}
+    @media(max-width:640px){.sti-palette-boite{margin:6vh 10px 0}}
+  </style>
 </head>
 <body class="cockpit-airbus">
 
