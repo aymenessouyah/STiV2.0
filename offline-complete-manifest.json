@@ -1,15 +1,26 @@
 {
   "version": 316,
-  "generatedAt": "2026-10-22T00:08:55Z",
+  "generatedAt": "2026-10-22T00:22:51Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 598,
-  "totalBytes": 629035490,
+  "totalFiles": 600,
+  "totalBytes": 629053316,
   "files": [
     {
-      "path": "quiz/tableaux.html", "bytes": 5956, "gitSha": "ffd11c5d84dd03f570076659263b5043f3d88736"
+      "path": "assets/js/quiz-sync.js",
+      "bytes": 5296,
+      "gitSha": "5881935b17b5fab7124a27509e31e80b3c030a98"
     },
     {
-      "path": "assets/js/quiz-tableaux.js", "bytes": 15149, "gitSha": "0c05c199ae4235fd3a4b3e8d131143bc4e63ecf0"
+      "path": "assets/js/quiz-admin.js",
+      "bytes": 8169,
+      "gitSha": "9acfe416fe79ad999c208e7587f1db6cc151d404"
+    },
+
+    {
+      "path": "quiz/tableaux.html", "bytes": 6020, "gitSha": "81a4eb778768524f20e5e32e393fdf2d3a35e7b6"
+    },
+    {
+      "path": "assets/js/quiz-tableaux.js", "bytes": 16343, "gitSha": "4d4aa9cc71a32e229ed097157236988e7f1d6be8"
     },
     {
       "path": "assets/data/quiz-banque.json", "bytes": 331065, "gitSha": "a38d0645352893495b8e3389af65b0cad18b0021"
@@ -81,9 +92,7 @@
       "gitSha": "bc3a5e1a926e95a3baa293ff060516596c68c363"
     },
     {
-      "path": "admin.html",
-      "bytes": 299110,
-      "gitSha": "71688ba82e820882270e9618f495febef2267770"
+      "path": "admin.html", "bytes": 301186, "gitSha": "3cbcb1b429724c4cc5a628b870ad800bdd3b1089"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -2944,19 +2953,13 @@
       "gitSha": "f90185c0fe06e331d04aecda8256300518797d97"
     },
     {
-      "path": "quiz/html-css.html",
-      "bytes": 208459,
-      "gitSha": "5ad862d0a861639ad30f6f98881685ed02fc270a"
+      "path": "quiz/html-css.html", "bytes": 208598, "gitSha": "f3f1133939bfec0c408084e75ff14eff6a8db556"
     },
     {
-      "path": "quiz/javascript.html",
-      "bytes": 1076534,
-      "gitSha": "ea90249d12d9abaf7c5af73ae0eae77f1906714e"
+      "path": "quiz/javascript.html", "bytes": 1076740, "gitSha": "3e6dfd43e6a7ea7237004c43b27c3784342acd5d"
     },
     {
-      "path": "quiz/php.html",
-      "bytes": 1743235,
-      "gitSha": "f62b9089a3648a9545a51746eb4fb2e190dcd68f"
+      "path": "quiz/php.html", "bytes": 1743376, "gitSha": "51c7a6c0b6823237c7b1a1879facc27aaac0ce87"
     },
     {
       "path": "quiz/pp.html",
@@ -2964,9 +2967,7 @@
       "gitSha": "7127f39f88a5bbad518389e6f26aea4998298406"
     },
     {
-      "path": "quiz/sql.html",
-      "bytes": 1863518,
-      "gitSha": "c88b6a8479adc2b5e6a30aad1d39907dc001b42d"
+      "path": "quiz/sql.html", "bytes": 1863656, "gitSha": "f1e826ba111806bc0e9ccf60b9b8362a4534bad1"
     },
     {
       "path": "robots.txt",
@@ -2984,7 +2985,7 @@
       "gitSha": "37bcf8639e998e7a2f84b9dffb04113f13edc609"
     },
     {
-      "path": "sw.js", "bytes": 55916, "gitSha": "4b9649dba3e932818f5c5c5612bea12f53ba9184"
+      "path": "sw.js", "bytes": 56319, "gitSha": "8eb7920da3e15875ae31a44bcc75e3972ef1ddf7"
     }
   ],
   "windowsCompatible": true,

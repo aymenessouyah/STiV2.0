@@ -2131,6 +2131,32 @@
       <div id="wrap-voir-plus-quiz" style="display:none;text-align:center;margin:10px 0 4px">
         <button type="button" class="btn-outil" id="btn-voir-plus-quiz">➕ Voir plus</button>
       </div>
+
+      <!-- Détail synchronisé des quiz (v358) : chaque partie, tous appareils -->
+      <div style="margin-top:20px;border-top:2px dashed #d8cbb2;padding-top:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 8px">
+          <h3 style="margin:0;font-size:15px">📋 Détail synchronisé des quiz <span style="font-size:11px;color:#7a6f5d;font-weight:700">(toutes les parties, tous appareils — cliquez sur une ligne)</span></h3>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <select id="filtre-quiz-sync-quiz" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px" title="Filtrer par quiz">
+              <option value="*">🎯 Tous les quiz</option>
+              <option value="html-css">🌐 HTML5 &amp; CSS3</option>
+              <option value="javascript">⚡ JavaScript</option>
+              <option value="sql">🗄️ SQL (BD)</option>
+              <option value="php">🐘 PHP</option>
+              <option value="tableaux">🃏 Quiz des tableaux</option>
+            </select>
+            <input id="rech-quiz-sync" type="search" placeholder="🔎 Nom, e-mail, classe…" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:700;font-size:12px;min-width:180px" title="Rechercher un élève">
+            <button type="button" class="btn-outil" id="btn-quiz-sync-charger">↻ Actualiser</button>
+          </div>
+        </div>
+        <p id="quiz-sync-resume" style="font-size:12.5px;color:#7a6f5d;margin:0 0 10px">Chargement…</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Élève</th><th>Classe</th><th>Quiz</th><th>Parties</th><th>Dernier score</th><th>Meilleur score</th><th>% moyen</th><th></th></tr></thead>
+            <tbody id="tb-quiz-sync"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -4756,6 +4782,7 @@
 <script src="assets/js/protection.js?v=302" defer></script>
   <script src="assets/js/admin.js?v=350-version-affichee"></script>
   <script src="assets/js/graphiques-activite.js?v=347"></script>
+  <script src="assets/js/quiz-admin.js?v=358"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>

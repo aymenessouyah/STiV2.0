@@ -43347,6 +43347,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             ? " · mode examen (rien n'était révélé pendant l'épreuve)"
             : ""
         }`;
+        if (window.STIQuizSync) STIQuizSync.enregistrer("php", quiz.correct, total);
         $("resScore").textContent =
           "⭐ " + quiz.score.toLocaleString("fr-FR") + " pts";
         $("resAcc").textContent = "🎯 " + acc + " % de réussite";
@@ -45353,6 +45354,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/config.js?v=227"></script>
+<script src="../assets/js/quiz-sync.js?v=358"></script>
 <script src="../assets/js/acces.js?v=227"></script>
 </body>
 </html>

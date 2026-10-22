@@ -5598,6 +5598,7 @@ background-repeat: repeat;</pre>
         var pct = total ? (score / total) * 100 : 0;
         var duree = state.elapsed;
         var note = noteFinale(pct);
+        if (window.STIQuizSync) STIQuizSync.enregistrer("html-css", score, total);
 
         // En-tête du bilan
         var badge = $("#gradeBadge");
@@ -6388,6 +6389,7 @@ background-repeat: repeat;</pre>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/config.js?v=227"></script>
+<script src="../assets/js/quiz-sync.js?v=358"></script>
 <script src="../assets/js/acces.js?v=227"></script>
 </body>
 </html>

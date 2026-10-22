@@ -82,11 +82,38 @@
   }
   function marquerVus(questionsRepondues) {
     var etat = etatEleve();
+    var parModule = {};
     questionsRepondues.forEach(function (q) {
       if (!etat.vus[q.module]) etat.vus[q.module] = [];
       if (etat.vus[q.module].indexOf(q.id) === -1) etat.vus[q.module].push(q.id);
+      if (!parModule[q.module]) parModule[q.module] = [];
+      parModule[q.module].push(q.id);
     });
     sauverEtat(etat);
+    if (window.STIQuizSync) {
+      Object.keys(parModule).forEach(function (m) { STIQuizSync.marquerVus(m, parModule[m]); });
+    }
+  }
+
+  /* Fusion avec l'historique central (autres appareils) : union des deux,
+     puis renvoi de l'historique complet vers le serveur (idempotent). */
+  function fusionnerVusDistants() {
+    if (!window.STIQuizSync) return;
+    STIQuizSync.chargerVus().then(function (distants) {
+      if (!distants) return;
+      var etat = etatEleve();
+      Object.keys(distants).forEach(function (m) {
+        if (!etat.vus[m]) etat.vus[m] = [];
+        distants[m].forEach(function (id) {
+          if (etat.vus[m].indexOf(id) === -1) etat.vus[m].push(id);
+        });
+      });
+      sauverEtat(etat);
+      Object.keys(etat.vus).forEach(function (m) {
+        if (etat.vus[m].length) STIQuizSync.marquerVus(m, etat.vus[m]);
+      });
+      if (!sessionQuiz) afficherAccueil();
+    }).catch(function () {});
   }
 
   /* ---------- Banque ---------- */
@@ -242,6 +269,7 @@
       });
       etat.resultats = etat.resultats.slice(-200);
       sauverEtat(etat);
+      if (window.STIQuizSync) STIQuizSync.enregistrer("tableaux", bonnes.length, repondues.length, s.module);
     }
     var erreurs = repondues.filter(function (it) { return it.choix[it.choixEleve] !== it.ref.bonne; });
     var pct = repondues.length ? Math.round((bonnes.length / repondues.length) * 100) : 0;
@@ -294,6 +322,7 @@
       banque = (data && data.questions) || [];
       if (!banque.length) throw new Error("banque vide");
       afficherAccueil();
+      fusionnerVusDistants();
     })
     .catch(function () {
       app.innerHTML = "<h1>Quiz <em>des tableaux</em></h1>" +

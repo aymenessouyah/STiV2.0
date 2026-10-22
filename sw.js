@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v357-quiz-defis-recap";
+var UPDATE_ID = "v358-quiz-sync";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -29,12 +29,18 @@ var UPDATE_FILES = [
   { url: "./assets/data/smart-book-2026.json", revision: "smart-books-v339" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
   { url: "./index.html", revision: "index-v357" },
-  { url: "./quiz/tableaux.html", revision: "quiz-tableaux-v357" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-tableaux-v357" },
+  { url: "./quiz/tableaux.html", revision: "quiz-tableaux-v358" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-tableaux-v358" },
+  { url: "./assets/js/quiz-sync.js", revision: "quiz-sync-v358" },
+  { url: "./assets/js/quiz-admin.js", revision: "quiz-admin-v358" },
+  { url: "./quiz/html-css.html", revision: "quiz-sync-v358" },
+  { url: "./quiz/javascript.html", revision: "quiz-sync-v358" },
+  { url: "./quiz/sql.html", revision: "quiz-sync-v358" },
+  { url: "./quiz/php.html", revision: "quiz-sync-v358" },
   { url: "./assets/data/quiz-banque.json", revision: "quiz-banque-v357" },
   { url: "./assets/js/config.js", revision: "config-turnstile-v320" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
-  { url: "./admin.html", revision: "admin-v355" },
+  { url: "./admin.html", revision: "admin-v358" },
   { url: "./assets/js/acces.js", revision: "version-affichee-v350" },
   { url: "./assets/js/admin.js", revision: "admin-version-affichee-v350" },
   { url: "./assets/css/admin-v19.css", revision: "admin-airbus-cockpit-v316-24" },
@@ -292,6 +298,7 @@ var OFFLINE_LIST = [
   "./assets/audio/css-positionnement.mp3",
   "./assets/audio/css-animee.mp3",
   "./assets/js/quiz-tableaux.js",
+  "./assets/js/quiz-sync.js",
   "./assets/data/quiz-banque.json",
   "./assets/audio/sql-cours.mp3",
   "./assets/css/atelier-pages.css",

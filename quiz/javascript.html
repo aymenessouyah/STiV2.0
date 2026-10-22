@@ -29574,6 +29574,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
             stockageEcrire("js_quiz_high_score", this.score);
           }
           stockageEcrire("js_quiz_total_answered", this.stats.totalAnswered);
+          if (window.STIQuizSync && this.answeredCount > 0)
+            STIQuizSync.enregistrer("javascript", this.correctCount, this.answeredCount);
 
           confetti({
             particleCount: 120,
@@ -29802,6 +29804,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/config.js?v=227"></script>
+<script src="../assets/js/quiz-sync.js?v=358"></script>
 <script src="../assets/js/acces.js?v=227"></script>
 </body>
 </html>
