@@ -9302,7 +9302,7 @@
     /* --- Séries d'exercices & Annexes --- */
     { tech: "all", badge: "✏️ Exercices", title: "Séries d'exercices corrigés (CSS3, JS, BD/SQL, PHP)", sub: "Exercices progressifs et problèmes types Bac", url: "exercices/series-exercices.html", kw: "exercices series td corrige revision entrainement" },
     { tech: "all", badge: "📄 Annexe", title: "Annexe officielle HTML5 / CSS3 / JavaScript", sub: "Aide-mémoire officiel des balises, propriétés et méthodes", url: "documents/annexes/annexe-html-css-js.pdf.html", kw: "annexe pdf html css javascript aide memoire" },
-    { tech: "sql", badge: "📄 Annexe", title: "Annexe officielle SQL", sub: "Aide-mémoire officiel des commandes LDD et LMD", url: "documents/annexes/annexe-sql.pdf.html", kw: "annexe pdf sql aide memoire" }
+    { tech: "sql", badge: "📄 Annexe", title: "Annexe officielle SQL", sub: "Aide-mémoire officiel des commandes LDD et LMD", url: "documents/annexes/annexe-sql.pdf.html", kw: "annexe pdf sql aide memoire" },
     /* --- v389 : extension de l'index de recherche globale — termes du glossaire et fiches des Smart Books (generes au build, ne pas editer a la main) --- */
     { tech: "htmlcss", badge: "📔 Glossaire · HTML5", title: "Balise", sub: "EN : Tag · AR : وسم · Mot-clé entre < > qui décrit un élément de la page : <p>, <h1>…", url: "glossaire.html#mot=Balise", kw: "balise tag mot-clé entre < > qui décrit un élément de la page : <p>, <h1>… html5" },
     { tech: "htmlcss", badge: "📔 Glossaire · HTML5", title: "Élément", sub: "EN : Element · AR : عنصر · Ensemble formé par la balise ouvrante, le contenu et la balise fermante.", url: "glossaire.html#mot=%C3%89l%C3%A9ment", kw: "élément element ensemble formé par la balise ouvrante, le contenu et la balise fermante. html5" },
