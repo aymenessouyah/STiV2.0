@@ -4245,7 +4245,15 @@
       "<div class='fiche-sec-titre' id='sec-fiche-connexions'>🕒 Connexions &amp; pages consultées (" + (toutVoirAccesFiche ? sesAcces.length : Math.min(10, sesAcces.length)) + " / " + nbCon + ")</div>" +
       htmlAcces +
       "<div class='fiche-sec-titre'>💬 Messages lus &amp; questions de l'élève (" + msgsEl.length + ")</div>" +
-      htmlMsgs;
+      htmlMsgs +
+      "<div class='fiche-sec-titre'>📝 Mes observations — carnet privé, visible par vous seul</div>" +
+      "<div class='fiche-obs'>" +
+        "<div class='fiche-obs-liste' id='fiche-obs-liste'><span style='color:#7a6f5d;font-size:11.5px;font-weight:700'>⏳ Chargement des observations…</span></div>" +
+        "<div style='display:flex;gap:8px;align-items:flex-start;margin-top:8px;flex-wrap:wrap'>" +
+          "<textarea id='fiche-obs-texte' maxlength='500' rows='2' placeholder='Constat, contexte, décision du conseil… (500 caractères ; jamais visible par l'élève)' style='flex:1 1 260px;min-width:200px;font:700 12px/1.5 system-ui,sans-serif;color:#23201a;background:#fffdf5;border:2px solid #e2d5be;border-radius:10px;padding:8px 10px;resize:vertical'></textarea>" +
+          "<button type='button' class='btn-outil' id='btn-fiche-obs-ajouter'>➕ Ajouter</button>" +
+        "</div>" +
+      "</div>";
 
     var btnPlusAccFiche = document.getElementById("btn-fiche-voir-plus-acces");
     if (btnPlusAccFiche) {
@@ -4254,6 +4262,8 @@
         ouvrirFicheEleve(p, { focusConnexions: true });
       });
     }
+
+    chargerObsFiche(p);
 
     /* v384 Dossier eleve : actions directes, appel du jour, parties synchronisees */
     var elAppelJour = document.createElement("div");
@@ -11663,4 +11673,67 @@
       });
     });
   })();
+
+  /* ==================== v397 : Observations privées de l'enseignant (sti_observations) ==================== */
+  var obsEnVolFiche = false;
+  function fhObs(d) {
+    var x = new Date(d);
+    if (isNaN(x.getTime())) return "";
+    return x.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) + " " + x.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  }
+  function rendreObsFiche(items, err) {
+    var el = document.getElementById("fiche-obs-liste");
+    if (!el) return;
+    if (err) { el.innerHTML = "<span style='color:#b45309;font-size:11.5px;font-weight:800'>⚠️ " + echHtml(err) + "</span>"; return; }
+    if (!items || !items.length) { el.innerHTML = "<span style='color:#7a6f5d;font-size:11.5px;font-weight:700'>Aucune observation pour le moment — notez la première ci-dessous.</span>"; return; }
+    var h = "";
+    items.forEach(function (o) {
+      h += "<div class='fiche-obs-ligne'>" +
+        "<div class='fiche-obs-texte'>" + echHtml(String(o.texte || "")).replace(/\n/g, "<br>") + "</div>" +
+        "<div class='fiche-obs-meta'>" + fhObs(o.cree_le) + " <button type='button' class='fiche-obs-suppr' data-obs='" + o.id + "' title='Effacer cette observation'>✕</button></div>" +
+        "</div>";
+    });
+    el.innerHTML = h;
+    Array.prototype.forEach.call(el.querySelectorAll(".fiche-obs-suppr"), function (b) {
+      b.addEventListener("click", function () {
+        var id = b.getAttribute("data-obs");
+        b.disabled = true;
+        sb.from("sti_observations").delete().eq("id", id).then(function (res) {
+          if (res.error) { b.disabled = false; rendreObsFiche(null, "Suppression refusée : " + res.error.message); return; }
+          if (eleveFicheActif) chargerObsFiche(eleveFicheActif);
+        });
+      });
+    });
+  }
+  function chargerObsFiche(p) {
+    var zone = document.getElementById("fiche-obs-liste");
+    if (!zone || !p) return;
+    var ta = document.getElementById("fiche-obs-texte");
+    var bt = document.getElementById("btn-fiche-obs-ajouter");
+    if (bt && ta) {
+      bt.onclick = function () {
+        var v = String(ta.value || "").trim();
+        if (!v) { ta.focus(); return; }
+        if (obsEnVolFiche) return;
+        obsEnVolFiche = true; bt.disabled = true; bt.textContent = "⏳ Enregistrement…";
+        sb.from("sti_observations").insert({ eleve: p.id, texte: v.slice(0, 500) }).then(function (res) {
+          obsEnVolFiche = false; bt.disabled = false; bt.textContent = "➕ Ajouter";
+          if (res.error) {
+            rendreObsFiche(null, /relation|does not exist|not find/i.test(res.error.message || "") ? "table sti_observations absente — exécutez une fois documents/sql/sti_observations.sql dans l'éditeur SQL Supabase, puis rouvrez la fiche" : "Envoi refusé : " + res.error.message);
+            return;
+          }
+          ta.value = "";
+          if (eleveFicheActif && eleveFicheActif.id === p.id) chargerObsFiche(p);
+        });
+      };
+    }
+    sb.from("sti_observations").select("id,texte,cree_le").eq("eleve", p.id).order("cree_le", { ascending: false }).limit(100).then(function (res) {
+      if (eleveFicheActif && eleveFicheActif.id !== p.id) return;
+      if (res.error) {
+        rendreObsFiche(null, /relation|does not exist|not find/i.test(res.error.message || "") ? "Observations non encore activées : lancez une fois le script documents/sql/sti_observations.sql dans l'éditeur SQL de Supabase." : res.error.message);
+        return;
+      }
+      rendreObsFiche(res.data || []);
+    });
+  }
 })();
