@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v408-cote-instant";
+var UPDATE_ID = "v409-cote-instant";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -25,8 +25,8 @@ var UPDATE_FILES = [
   { url: "./nouveautes.html", revision: "sync-general-v391" },
   { url: "./revision-erreurs.html", revision: "sync-general-v391" },
   { url: "./livre-smart.html", revision: "sync-general-v391" },
-  { url: "./index.html", revision: "cote-instant-v408" },
-  { url: "./assets/js/cote-ticker.js", revision: "cote-instant-v408" },
+  { url: "./index.html", revision: "cote-instant-v409" },
+  { url: "./assets/js/cote-ticker.js", revision: "cote-instant-v409" },
   { url: "./assets/js/retour-livre-smart.js", revision: "retour-intelligent-v380" },
   { url: "./assets/js/acces.js", revision: "signets-veilleuse-v390" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },
@@ -59,7 +59,7 @@ var UPDATE_FILES = [
   { url: "./quiz/sql.html", revision: "quiz-sync-v358" },
   { url: "./quiz/php.html", revision: "quiz-sync-v358" },
   { url: "./assets/data/quiz-banque.json", revision: "quiz-banque-v357" },
-  { url: "./assets/js/config.js", revision: "preconnect-v408" },
+  { url: "./assets/js/config.js", revision: "preconnect-v409" },
   { url: "./portail.html", revision: "portail-turnstile-v321" },
   { url: "./admin.html", revision: "admin-v358" },
   { url: "./assets/js/acces.js", revision: "version-affichee-v350" },

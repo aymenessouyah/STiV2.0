@@ -10,7 +10,7 @@
      hors du premier écran (y≈1135) et les news devenaient invisibles. Il reste en
      haut de page sur TOUTES les tailles ; le CSS ≤700px en fait une carte compacte. */
 
-  var MOTEUR = "v408"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
+  var MOTEUR = "v409"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
   var STI_COTE = {
     maj: "23/10/2026",
     tech: [
@@ -65,7 +65,7 @@
     STI_COTE.tech.forEach(function (t) { g.appendChild(itemTech(t)); });
     return g;
   }
-  /* Rendu continu droite → gauche : la piste = deux moitiés identiques, chaque moitié répétée
+  /* Sens (v409, retour usage) : droite → gauche. Piste = deux moitiés identiques, chaque moitié répétée
      assez de fois pour dépasser la largeur d'écran (pas de trou même avec deux news seulement). */
   function render(news) {
     var moitie = 1;
