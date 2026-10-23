@@ -1,10 +1,10 @@
 # 📚 STI By A'e — Plateforme STI (3ᵉ & 4ᵉ SI)
 
-Plateforme éducative interactive pour les **Sciences et Technologies de l'Informatique** (sections **3SI** et **4SI**, programme Tunisien) : cours complets avec vidéos, exercices corrigés, **livres connectés (Smart Books) avec QR codes**, quiz synchronisés entre appareils et tableau de bord enseignant complet.
+Plateforme éducative interactive pour les **Sciences et Technologies de l'Informatique** (sections **3SI** et **4SI**, programme Tunisien) : cours complets avec vidéos, exercices corrigés, **livres connectés (Smart Books) avec QR codes**, quiz synchronisés entre appareils, **reprise de progression multi-appareils**, recherche globale, signets, mode veilleuse, journal d'erreurs et tableau de bord enseignant complet.
 
 > 🌐 **Site en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Hébergement** : GitHub Pages (site statique) + Supabase (comptes & données)
+> 🏗️ **Hébergement** : GitHub Pages (site statique) + Supabase (comptes & données) — PWA installable, fonctionne hors-ligne
 
 ---
 
@@ -13,12 +13,13 @@ Plateforme éducative interactive pour les **Sciences et Technologies de l'Infor
 1. [Contenus pédagogiques](#-contenus-pédagogiques)
 2. [Comptes & accès](#-comptes--accès)
 3. [Quiz : règles et synchronisation](#-quiz--règles-et-synchronisation)
-4. [Tableau de bord admin](#-tableau-de-bord-admin)
-5. [Architecture technique](#-architecture-technique)
-6. [Base de données & migrations](#-base-de-données--migrations)
-7. [Publication & maintenance](#-publication--maintenance)
-8. [Conventions du code enseigné](#-conventions-du-code-enseigné)
-9. [Historique des versions](#-historique-des-versions)
+4. [Progression multi-appareils](#-progression-multi-appareils)
+5. [Tableau de bord admin](#-tableau-de-bord-admin)
+6. [Architecture technique](#-architecture-technique)
+7. [Base de données & migrations](#-base-de-données--migrations)
+8. [Publication & maintenance](#-publication--maintenance)
+9. [Conventions du code enseigné](#-conventions-du-code-enseigné)
+10. [Historique des versions](#-historique-des-versions)
 
 ---
 
@@ -29,8 +30,10 @@ Plateforme éducative interactive pour les **Sciences et Technologies de l'Infor
   - *4ᵉ SI* (100 pages) et *3ᵉ SI* (72 pages) : fiches de cours, exercices et **tableaux récapitulatifs** finaux.
   - **Un QR code par page** : il ouvre la partie du site correspondante (`livre-smart.html?livre=…&page=N`). La pagination imprimée ne doit donc **jamais** changer sans régénérer les QR.
   - Les tableaux des livres sont la **source officielle** du contenu des quiz.
+  - Le lecteur connecté **mémorise la dernière page lue** par manuel et y reprend la lecture (depuis n'importe quel appareil).
 - **Annexes officielles** du programme (`documents/annexes/`) : mêmes couleurs, même format ; le code hors programme indispensable y est **barré en rouge** (classe `.hp`), jamais supprimé.
 - **Exercices & séries SQL corrigées**, défis JavaScript, récapitulatifs PHP, épreuves du Bac pratique.
+- **Pensé 3G** : toutes les images en chargement différé, et les démos vidéo lourdes (ex. animation `display` du chapitre CSS3) en `preload="none"` — zéro octet téléchargé avant d'appuyer sur ▶.
 
 ## 👤 Comptes & accès
 
@@ -41,7 +44,7 @@ Plateforme éducative interactive pour les **Sciences et Technologies de l'Infor
 
 ## 🏆 Quiz : règles et synchronisation
 
-- **Banques séparées 3SI et 4SI**, questions limitées strictement aux sources autorisées : tableaux récapitulatifs des 2 livres, 37 Défis JavaScript et Récap PHP.
+- **Banques séparées 3SI et 4SI**, questions limitées strictement aux sources autorisées : tableaux récapitulatifs des 2 livres, 37 Défis JavaScript et Récap PHP. La banque consolidée est publiée dans `assets/data/quiz-banque.json` (635 questions).
 - **Tirage aléatoire à chaque visite, sans jamais répéter** une question déjà vue — sur **tous les appareils** de l'élève (table `sti_quiz_vus`).
 - **Rejouables à l'infini** : **chaque partie est conservée** (score, total, %, date) dans `sti_quiz_parties`, ce qui donne dernier score, meilleur score, % moyen, nombre de parties et l'historique détaillé.
 - **Fonctionnement de la synchronisation** (`assets/js/quiz-sync.js`) :
@@ -51,9 +54,15 @@ Plateforme éducative interactive pour les **Sciences et Technologies de l'Infor
 - **Détail question par question** (depuis la v365) : chaque réponse (énoncé, juste/faux) part dans `sti_quiz_reponses` pour l'analyse des questions les plus ratées.
 - 🔬 **Exception compte labo** (`elevelabo3@exemple.tn`) : **aucun score en ligne** (compte partagé par toute la classe) ; distribution aléatoire **locale** à chaque poste ; banque de quiz mise à jour avec le site, comme pour tous. Il est **exclu des statistiques** de l'admin.
 
+## ☁️ Progression multi-appareils (depuis v391)
+
+Le script `assets/js/sync-progressions.js` (chargé sur les **117 pages** du site) miroir bidirectionnel de tout ce qui porte la préférence `sti-*` dans la table cloud `sti_progressions` : avancement du tableau de bord, **progression vidéo/audio par chapitre** (reprise automatique à la seconde près, puce « ⏪ Reprendre à mm:ss »), **dernière page de Smart Book**, signets, veilleuse. Sans session ni connexion, le site fonctionne exactement comme avant (local uniquement).
+
+**Journal d'erreurs (v394)** : le même module signale silencieusement les erreurs JS, promesses rejetées et ressources introuvables des pages élèves vers `sti_diagnostics` — uniquement pour les élèves connectés, une même erreur au plus tous les 3 jours par appareil, arrêt automatique après 2 échecs réseau (table absente). `?diags=off` dans l'URL coupe le rapport pendant les tests.
+
 ## 🛠️ Tableau de bord admin
 
-Page `admin.html` (2 modes d'affichage : Clair / Sombre). Sections : Abonnés & Classes, Quiz & Bac Pratique, Messages & Réponses, Dernières Connexions — plus une **aide intégrée « ❓ Aide & rappels »**.
+Page `admin.html` (**2 modes seulement : Clair / Sombre**, style « carte de visite », même palette partout, tout lisible dans les deux thèmes). Groupes de navigation : Outils, Scolarité, Classe, Connexion — plus une **aide intégrée « ❓ Aide & rappels »**, la **recherche globale Ctrl+K** (v389, partagée avec le panneau de recherche des élèves : 302 entrées), et le raccourci d'**annulation des dernières actions** (v388).
 
 Dans le bloc des résultats de quiz synchronisés (`assets/js/quiz-admin.js`) :
 
@@ -67,35 +76,52 @@ Dans le bloc des résultats de quiz synchronisés (`assets/js/quiz-admin.js`) :
 | 📈 **Progression** | Premier → dernier score, écart en points (+ Δ dans le détail par classe) |
 | 🔍 **Questions ratées** | % de réussite par quiz, questions les plus échouées (≥ 2 tentatives), élèves en échec par question |
 
+Dans la **Vue d'ensemble** (en bas des cartes) :
+
+| Bloc | Contenu |
+|---|---|
+| 🗺️ **Carte des difficultés par chapitre** (v392) | Par classe : % d'écoutes vidéo/audio terminées (relevés `PROG_MEDIA`), % de réussite aux quiz du module, temps moyen sur les pages ; signaux 🟢🟠🔴 — calculée à la demande, aucune requête au chargement |
+| 🧾 **Journal des erreurs** (v394) | 200 dernières lignes signalées par les pages élèves, élève identifié, filtre « non lues », marquage lu / tout marquer lu |
+
 La **classe** affichée vient du champ `classe` du profil (section Abonnés). Limites d'affichage : 5 000 parties et 8 000 réponses les plus récentes.
 
 ## 🧱 Architecture technique
 
-- **GitHub Pages** : site 100 % statique (HTML/CSS/JS), PWA installable et utilisable hors-ligne (service worker).
-- **Supabase** : authentification, profils et tables des quiz, protégées par **RLS** (chaque élève ne voit que ses données ; l'admin lit tout via `est_admin()`).
+- **GitHub Pages** : site 100 % statique (HTML/CSS/JS), PWA installable et utilisable hors-ligne (service worker `sw.js` à manifeste d'update cumulatif).
+- **Supabase** : authentification, profils et tables protégées par **RLS** (chaque élève ne voit que ses données ; l'admin lit via politique par e-mail `auth.jwt()`). L'accès Supabase n'existe **que** dans `assets/js/*.js` (jamais de PHP, jamais inline dans les pages).
 - Fichiers clés :
+  - `assets/js/acces.js` — cœur de la plateforme (verrou d'accès, panneau Mon Compte, recherche, signets, veilleuse, progression média) — **851 Ko, chargé sur toutes les pages SAUF `portail.html` et `admin.html`** ;
+  - `assets/js/sync-progressions.js` — miroir cloud `sti-*` + journal d'erreurs ;
+  - `assets/js/protection.js` — lecteur vidéo/chapitrage, reprise de lecture ;
   - `assets/js/quiz-sync.js` — synchronisation des quiz (parties, vus, réponses, file hors-ligne, exception labo) ;
   - `assets/js/quiz-tableaux.js` — moteur du Quiz des tableaux ;
   - `assets/js/quiz-admin.js` — statistiques quiz du tableau de bord ;
-  - `quiz/*.html` — les 5 quiz (html-css, javascript, sql, php, tableaux) ;
+  - `assets/js/smart-book.js` — lecteur des 2 manuels connectés ;
+  - `assets/js/supabase-umd.js` — le SDK est **local** (aucune dépendance CDN, fonctionne en salle sans Internet) ;
+  - `quiz/*.html` — les 6 quiz (html-css, javascript, sql, php, pp, tableaux) ;
   - `admin.html` — tableau de bord (aide intégrée incluse).
 
 ## 🗄️ Base de données & migrations
 
-À exécuter **une seule fois** dans Supabase (SQL Editor), dans l'ordre :
+À exécuter **une seule fois** dans Supabase (SQL Editor) — toutes déjà appliquées en production :
 
 | Fichier | Objet |
 |---|---|
 | `MIGRATION-v358-QUIZ-SYNC.sql` | Tables `sti_quiz_parties` et `sti_quiz_vus` |
 | `MIGRATION-v365-REPONSES.sql` | Table `sti_quiz_reponses` (détail question par question) |
+| `documents/sql/sti_progressions.sql` | Table `sti_progressions` (miroir de progression multi-appareils) |
+| `documents/sql/sti_progressions-admin.sql` | Politique « admin lit tout » pour `sti_progressions` |
+| `documents/sql/sti_diagnostics.sql` | Table `sti_diagnostics` + RLS (journal d'erreurs : l'élève insère, l'admin lit/marque) |
 
 Sauvegarde automatique des profils vers Google Drive (Apps Script `sauvegarde-auto-drive`, un seul fichier `.json.gz` conservé).
 
 ## 🚀 Publication & maintenance
 
 - Publication sur GitHub via **clé SSH de déploiement** (deploy key avec accès en écriture, enregistrée dans les paramètres du dépôt) — aucun jeton à manipuler.
-- Convention de commits : `vNNN Description courte` ; vérifier après chaque push la présence des changements sur le site en ligne.
+- Convention de commits : `vNNN Description courte` ; vérifier après chaque push la présence des changements sur le site en ligne (cache CDN ~10 min, forcer avec `?z=…`).
+- **Règle de cache-buster** : toute modification de `acces.js` ⇒ incrémenter `?v=` **sur chacune des 117 pages** (compteurs indépendants par page) et déclarer la nouvelle révision dans `UPDATE_FILES` du `sw.js` + changer `UPDATE_ID`. Pages hors `sw.js` = invisibles du cache offline.
 - ⚠️ Ne jamais stocker de secret (jeton, clé privée, clé Turnstile *Secret*) dans le dépôt ou dans les messages.
+- Le dépôt est à l'état **v395** ; l'audit de conformité cours/livres/exercices/quiz ↔ annexes (23/10) est consigné à la racine : `RAPPORT-conformite-annexes.md`.
 
 ## ✍️ Conventions du code enseigné
 
@@ -117,6 +143,19 @@ Harmonisées sur **tous** les supports (site, livres, fiches) :
 | v364 | Admin : Alertes (difficulté, inactivité, jamais joué) et Progression |
 | v365 | Analyse par question : questions les plus ratées, élèves en échec |
 | v366 | README refait ; aide intégrée « ❓ Aide & rappels » dans l'admin |
+| v367 | Quiz rejouables à l'infini avec historique complet des parties |
+| v371–v373 | PWA installable ; thème sombre universel du site ; glossaire arabe + graphiques d'activité |
+| v375 | Admin : navigation en 4 groupes (Outils, Scolarité, Classe, Connexion) |
+| v380 | Retour intelligent du lecteur Smart Book vers la page du QR |
+| v383–v387 | Lisibilité de l'admin dans les 2 thèmes (palette unifiée, secours inline, fiche élève inversée) |
+| v388 | Admin : recherche rapide Ctrl+K et annulation des dernières actions |
+| v389 | Recherche globale sur tout le site (panneau partagé élèves/admin, 302 entrées) |
+| v390 | Signets de pages + mode veilleuse (lecture nocturne) |
+| v391 | Reprise multi-appareils : miroir cloud des progressions (vidéos, tableau de bord, livre), puce « Reprendre à mm:ss » ; v391b : chemins relatifs corrigés sur les sous-répertoires |
+| v392 | 🗺️ Carte des difficultés par chapitre dans la Vue d'ensemble admin |
+| v393 | Allègement 3G (démo `display` en `preload="none"`) ; liens des 3 vraies annexes dans la recherche |
+| v394 | 🧾 Journal d'erreurs des pages élèves (table `sti_diagnostics`, RLS, vue admin) |
+| v395 | Révision générale : 63 pages rattrapées au cache-buster ; SDK Supabase local partout ; page énoncé du formulaire reconnectée à la synchro |
 
 ---
 
