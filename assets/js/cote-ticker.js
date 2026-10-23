@@ -5,6 +5,30 @@
 (function () {
   "use strict";
 
+  /* --- Mobile (≤700px) : le bandeau se glisse sous le hero, après les gros boutons
+     « Choisir un quiz » / « Voir les cours & exercices », pour ne rien pousser hors cadre.
+     PC : il reste sous la barre de navigation. La bascule suit les changements de largeur. --- */
+  (function placerCote() {
+    try {
+      if (!window.matchMedia) return;
+      var mq = matchMedia("(max-width:700px)");
+      var appliquer = function () {
+        var cote = document.getElementById("cote-sti");
+        var main = document.querySelector("main.wrap");
+        var hero = main && main.querySelector("section.hero");
+        if (!cote || !main || !hero) return;
+        if (mq.matches) {
+          if (cote.parentNode !== main) main.insertBefore(cote, hero.nextSibling);
+        } else if (cote.parentNode === main) {
+          document.body.insertBefore(cote, main);
+        }
+      };
+      appliquer();
+      if (mq.addEventListener) mq.addEventListener("change", appliquer);
+      else if (mq.addListener) mq.addListener(appliquer);
+    } catch (e) {}
+  })();
+
   var STI_COTE = {
     maj: "23/10/2026",
     tech: [

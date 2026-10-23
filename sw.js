@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v400-cote-ticker";
+var UPDATE_ID = "v401-cote-mobile";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -24,8 +24,8 @@ var UPDATE_FILES = [
   { url: "./nouveautes.html", revision: "sync-general-v391" },
   { url: "./revision-erreurs.html", revision: "sync-general-v391" },
   { url: "./livre-smart.html", revision: "sync-general-v391" },
-  { url: "./index.html", revision: "cote-ticker-v400" },
-  { url: "./assets/js/cote-ticker.js", revision: "cote-ticker-v400" },
+  { url: "./index.html", revision: "cote-mobile-v401" },
+  { url: "./assets/js/cote-ticker.js", revision: "cote-mobile-v401" },
   { url: "./assets/js/retour-livre-smart.js", revision: "retour-intelligent-v380" },
   { url: "./assets/js/acces.js", revision: "signets-veilleuse-v390" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },

@@ -163,6 +163,7 @@ Harmonisées sur **tous** les supports (site, livres, fiches) :
 | v398 | ⚙️ Tiroir « Système & Plus » : Flash, Appel, Top 3, Aide, Maj rangés sous le plus/moins de la barre d’outils |
 | v399 | 🧹 Suppression du second tiroir « Tous les outils & actions » — un seul point d’entrée vers les outils du tableau de bord |
 | v400 | 📟 « La Cote » sur la page d’accueil : bandeau défilant type tableau de bourse — cotation officielle des technos (HTML5 Living Standard, CSS3, JavaScript ES2026, SQL:2023, PHP 8.5.12) + les 5 dernières nouvelles lues dans ce README |
+| v401 | 📱 Mobile : le bandeau « La Cote » glisse sous le hero (après les boutons quiz & cours) au lieu de les pousser hors écran ; étiquettes allégées et bandeau compact sous 700px |
 
 ---
 
