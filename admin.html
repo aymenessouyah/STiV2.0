@@ -921,15 +921,6 @@
     body.mob-outils-ouverts .barre-util .btn-util.mob-extra {
       display: inline-flex;
     }
-    #btn-mob-toggle-outils {
-      grid-column: 1 / -1;
-      background: #23201a;
-      color: #ffd54f;
-      border-color: #f4511e;
-      font-size: 12px;
-      min-height: 36px;
-      box-shadow: 2px 2px 0 #f4511e;
-    }
 
     /* 2. Les 6 cartes d'action principales repliées par défaut sur mobile (ouvertes avec le tiroir Outils) */
     .actions-principales {
@@ -1699,7 +1690,6 @@
     @media print{.sti-groupe-nav,.sti-groupe-haut{display:none!important}}
   </style>
   <style id="style-tiroir-v383">
-    #btn-mob-toggle-outils{display:inline-flex!important;align-items:center;gap:6px}
     @media(min-width:769px){
       .barre-util .btn-util.mob-extra{display:none!important}
       body.mob-outils-ouverts .barre-util .btn-util.mob-extra{display:inline-flex!important}
@@ -1710,7 +1700,7 @@
       #btn-accueil-site{font-size:14px!important;padding:10px 18px!important;font-weight:900;box-shadow:0 2px 0 rgba(35,32,26,.18),0 6px 16px -6px rgba(13,21,38,.35)}
       #btn-accueil-site .btn-util-glyph{font-size:19px!important;width:auto!important;height:auto!important;flex-basis:auto!important}
     }
-    @media print{#btn-mob-toggle-outils{display:none!important}.barre-util .btn-util{display:none!important}#btn-accueil-site,#btn-messenger-top,#btn-mob-toggle-outils{display:inline-flex!important}}
+    @media print{.barre-util .btn-util{display:none!important}#btn-accueil-site,#btn-messenger-top{display:inline-flex!important}}
   </style>
   <style id="style-dossier-v384">
     .fiche-actions{display:flex;flex-wrap:wrap;gap:7px;padding:10px 0 12px;margin-bottom:10px;border-bottom:2px dashed #cbbca2}
@@ -1964,7 +1954,6 @@
       <button id="btn-badges-labo-top" type="button" hidden aria-hidden="true"></button>
 
       <button class="btn-util logout mob-extra" id="btn-logout" type="button"><span class="btn-util-glyph" aria-hidden="true">■</span> <span class="lbl-pc">Déconnexion</span><span class="lbl-mob">Sortir</span></button>
-      <button class="btn-util" id="btn-mob-toggle-outils" type="button" title="Afficher ou masquer tous les outils et actions regroups"><span class="btn-util-glyph" aria-hidden="true">🧰</span> Tous les outils &amp; actions ▾</button>
     </div>
   </header>
 
@@ -4857,32 +4846,17 @@
     window.addEventListener("scroll", majBtnTop, { passive: true });
     majBtnTop();
 
-    /* Ergonomie Mobile : tiroir Outils & Actions, tiroir Filtres avancés et Barre de navigation basse */
-    var btnMobOutils = document.getElementById("btn-mob-toggle-outils");
+    /* v399 — Ergonomie Mobile : le tiroir « 🧰 Tous les outils » a été supprimé (il
+       doublonnait avec « ⚙️ Système & Plus »). La barre d'outils est donc toujours
+       ouverte ; le bouton « Outils » de la barre de navigation basse ouvre désormais
+       directement le tiroir Système & Plus, en haut de page. */
+    document.body.classList.add("mob-outils-ouverts");
     var mobNavOutils = document.getElementById("mob-nav-outils");
-    var nbActionsDashboard = document.querySelectorAll(".barre-util .btn-util.mob-extra:not(#btn-mob-toggle-outils):not([hidden])").length;
-    function basculerTiroirOutilsMob(forcerOuvert) {
-      var ouv = typeof forcerOuvert === "boolean"
-        ? forcerOuvert
-        : !document.body.classList.contains("mob-outils-ouverts");
-      document.body.classList.toggle("mob-outils-ouverts", ouv);
-      if (btnMobOutils) {
-        btnMobOutils.textContent = ouv
-          ? "🧰 Masquer les outils & actions ▴"
-          : "🧰 Tous les outils & actions (" + nbActionsDashboard + ") ▾";
-      }
-      if (mobNavOutils) mobNavOutils.classList.toggle("actif", ouv);
-    }
-    if (btnMobOutils) {
-      btnMobOutils.addEventListener("click", function () { basculerTiroirOutilsMob(); });
-    }
-    /* v381 : le nombre est affiche des le chargement */
-    try { basculerTiroirOutilsMob(document.body.classList.contains("mob-outils-ouverts")); } catch (eI) {}
     if (mobNavOutils) {
       mobNavOutils.addEventListener("click", function () {
-        var vaOuvrir = !document.body.classList.contains("mob-outils-ouverts");
-        basculerTiroirOutilsMob(vaOuvrir);
-        if (vaOuvrir) window.scrollTo({ top: 0, behavior: "smooth" });
+        var bSysBar = document.getElementById("btn-toggle-sys-bar");
+        if (bSysBar) bSysBar.click();
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
     }
 
