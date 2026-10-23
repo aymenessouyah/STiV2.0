@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="robots" content="noai, noimageai" />
+<meta name="description" content="SQL de poche : exécutez de vraies requêtes SELECT, jointures, GROUP BY et contraintes sur les bases du cours — moteur local, sans serveur ni connexion." />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+<meta name="color-scheme" content="dark light" />
+<link rel="icon" href="../assets/icons/STI_by_AE.ico" />
+<title>SQL de poche — Base interactive du cours</title>
+<style>
+:root{--bg:#f6eedc;--ink:#101728;--line:#e2d3b4;--card:#fffdf5;--accent:#f4511e;--muted:#6b6250;--ok:#177245;--ko:#c0392b;--code:#182034}
+html.dark,html[data-theme="dark"]{--bg:#101728;--ink:#f5eddc;--line:#2b3a55;--card:#162330;--accent:#ff9d85;--muted:#9aa7b8;--ok:#5eead4;--ko:#ff9c9c;--code:#0b1220}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 system-ui,'Segoe UI',Arial,sans-serif;padding:18px clamp(12px,4vw,40px) 60px}
+a{color:var(--accent)}
+.sqlp-boite{max-width:1180px;margin:0 auto}
+h1{font-size:clamp(22px,4vw,31px);margin:.2em 0 .1em}
+h1 .poulpe{filter:saturate(1.2)}
+.sous-titre{color:var(--muted);font-size:13.5px;max-width:82ch}
+.nav-haut{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.nav-haut a{font:700 12.5px/1 system-ui,sans-serif;text-decoration:none;border:2px solid var(--ink);border-radius:999px;padding:8px 14px;background:var(--card);color:var(--ink)}
+.nav-haut a.plein{background:var(--accent);border-color:var(--accent);color:#fff}
+html.dark .nav-haut a.plein,html[data-theme="dark"] .nav-haut a.plein{color:#101728}
+.bases{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 2px}
+.sqlp-base{font:800 12.5px/1.2 system-ui,sans-serif;border:2px solid var(--ink);border-radius:999px;background:var(--card);color:var(--ink);padding:9px 14px;cursor:pointer}
+.sqlp-base.active{background:var(--accent);border-color:var(--accent);color:#fff}
+html.dark .sqlp-base.active,html[data-theme="dark"] .sqlp-base.active{color:#101728}
+.grille{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media(max-width:900px){.grille{grid-template-columns:1fr}}
+.carte{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:4px 4px 0 var(--line)}
+.carte h2{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:2px 0 8px}
+#sqlp-editeur{width:100%;min-height:190px;resize:vertical;background:var(--code);color:#f9f1e3;border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font:14px/1.6 Consolas,Menlo,monospace;tab-size:2}
+.ligne-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.btn{font:800 13px/1 system-ui,sans-serif;border:2px solid var(--ink);border-radius:999px;padding:10px 16px;cursor:pointer;background:var(--card);color:var(--ink)}
+.btn.plein{background:var(--accent);border-color:var(--accent);color:#fff}
+html.dark .btn.plein,html[data-theme="dark"] .btn.plein{color:#101728}
+#sqlp-etat{font-size:12px;color:var(--muted);font-weight:700;margin:8px 2px 0}
+.sqlp-bloc{margin-top:14px;border-top:1.5px dashed var(--line);padding-top:10px}
+.sqlp-sql{margin:0 0 6px}
+.sqlp-sql code{font:12px/1.5 Consolas,Menlo,monospace;background:rgba(24,32,52,.08);border-radius:6px;padding:2px 7px;word-break:break-word}
+html.dark .sqlp-sql code,html[data-theme="dark"] .sqlp-sql code{background:rgba(249,241,227,.09)}
+.sqlp-defiles{overflow-x:auto;border:1.5px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{background:var(--bg);text-align:left;padding:7px 10px;border-bottom:2px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+td{padding:6px 10px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+.sqlp-erreur{color:var(--ko);font-weight:800;margin:6px 0 0}
+.sqlp-info{color:var(--muted);font-size:12.5px;margin:6px 0 0}
+ul.sqlp-liste{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.sqlp-lien{display:block;width:100%;text-align:left;border:1.5px solid var(--line);border-radius:10px;background:transparent;color:inherit;padding:7px 10px;cursor:pointer;font-size:12.5px}
+.sqlp-lien b{color:var(--accent)}
+.sqlp-lien small{color:var(--muted);font-weight:700}
+.sqlp-x{border:0;background:transparent;color:var(--muted);cursor:pointer;font-weight:900;padding:2px 6px}
+details.ref{margin-top:14px;border:2px solid var(--line);border-radius:14px;background:var(--card);padding:2px 14px 10px}
+details.ref summary{cursor:pointer;font-weight:800;padding:10px 0;color:var(--ink)}
+.ref td:first-child{white-space:nowrap;font-family:Consolas,Menlo,monospace;font-size:12px}
+.pied{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
+@media print{.nav-haut,.bases,.ligne-btns,ul.sqlp-liste{display:none}}
+</style>
+</head>
+<body>
+<div class="sqlp-boite">
+  <p class="nav-haut"><a href="sql.html">← Retour au cours SQL</a><a href="sql-contraintes.html">Chapitre contraintes</a><a class="plein" href="../quiz/sql.html">🎯 Quiz SQL</a></p>
+  <h1><span class="poulpe">🐬</span> SQL de poche</h1>
+  <p class="sous-titre">Le vrai moteur, les vraies bases du cours, zéro serveur : vos requêtes s'exécutent <b>dans ce navigateur</b> (moteur SQLite local). SELECT, jointures en <code>WHERE t1.x = t2.x</code> (la convention du cours), GROUP BY, HAVING, sous-requêtes, CREATE/INSERT avec contraintes : tout est accepté et <b>corrigé sur place</b>. Rien n'est noté, rien n'est envoyé nulle part — et l'élève sans connexion Internet en profite pareil.</p>
+
+  <div class="bases" id="sqlp-bases"></div>
+  <p class="sqlp-info" id="sqlp-desc-note">Au premier ▶, un fichier local d'environ 700 Ko se charge une seule fois puis reste en cache. Les bases se reconstruisent identiques au cours ; vos CREATE/INSERT/UPDATE/personnels sont rejoués à chaque ouverture (et suivent l'élève via la synchro cloud).</p>
+
+  <div class="grille">
+    <section class="carte">
+      <h2>Votre requête</h2>
+      <textarea id="sqlp-editeur" spellcheck="false" placeholder="SELECT Nom, Prenom&#10;FROM ETUDIANT&#10;WHERE Sexe = 'F'&#10;ORDER BY Nom;"></textarea>
+      <div class="ligne-btns">
+        <button type="button" class="btn plein" id="sqlp-btn-lancer">▶ Exécuter (Ctrl+Entrée)</button>
+        <button type="button" class="btn" id="sqlp-btn-garder">⭐ Garder</button>
+        <button type="button" class="btn" id="sqlp-btn-vider">✕ Vider</button>
+        <button type="button" class="btn" id="sqlp-btn-reset">↺ Recharger la base à l'identique</button>
+      </div>
+      <p id="sqlp-etat">Prêt — choisissez une base ou un exemple, puis Exécuter.</p>
+      <div id="sqlp-resultats"></div>
+    </section>
+    <aside>
+      <section class="carte"><h2>Tables de cette base</h2><ul class="sqlp-liste" id="sqlp-tables"></ul></section>
+      <section class="carte" style="margin-top:12px"><h2>Exemples du cours</h2><ul class="sqlp-liste" id="sqlp-exemples"></ul></section>
+      <section class="carte" style="margin-top:12px"><h2>Vos dernières requêtes</h2><ul class="sqlp-liste" id="sqlp-hist"></ul></section>
+      <section class="carte" style="margin-top:12px"><h2>Gardées</h2><ul class="sqlp-liste" id="sqlp-fav"></ul></section>
+    </aside>
+  </div>
+
+  <details class="ref">
+    <summary>📖 Rappel de syntaxe (conventions du cours) & petit dictionnaire du moteur de poche</summary>
+    <p style="font-size:13px;color:var(--muted);margin:4px 0 8px">Dans le cours et au Bac : jointures <b>uniquement</b> en <code>WHERE table1.colonne = table2.colonne</code>, jamais <code>JOIN … ON</code>. Le moteur de poche accepte heureusement exactement cette écriture.</p>
+    <div class="sqlp-defiles"><table>
+      <thead><tr><th>Ce que le cours écrit</th><th>Ici (moteur SQLite)</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td>SELECT … FROM … WHERE …</td><td>identique</td><td>Sélection</td></tr>
+        <tr><td>COUNT(*), SUM, AVG, MIN, MAX</td><td>identiques</td><td>Agrégats avec GROUP BY / HAVING</td></tr>
+        <tr><td>LIKE 'B%z', BETWEEN, IN, IS NULL</td><td>identiques</td><td>Filtres</td></tr>
+        <tr><td>ROUND(x,2), UPPER, LOWER, LENGTH, SUBSTR</td><td>identiques</td><td>Fonctions courantes</td></tr>
+        <tr><td>NVL(note, 0) / IFNULL</td><td>ifnull(note, 0)</td><td>Valeur de repli</td></tr>
+        <tr><td>SYSDATE</td><td>date('now')</td><td>Date du jour</td></tr>
+        <tr><td>DATEADD</td><td>date('2024-03-05','+2 months')</td><td>Calcul de date</td></tr>
+        <tr><td>CREATE TABLE … PRIMARY KEY / NOT NULL / UNIQUE / CHECK / FOREIGN KEY</td><td>identiques — et <b>appliquées pour de vrai</b></td><td>Le chapitre contraintes prend vie</td></tr>
+      </tbody>
+    </table></div>
+    <p style="font-size:12.5px;color:var(--muted)">Dates : elles sont stockées en texte ISO <code>AAAA-MM-JJ</code> pour que les tris fonctionnent. Le moteur est <b>SQLite</b>, pas MySQL : les fonctions maison du cours MySQL (MONTHS_BETWEEN,格式化 diverses) peuvent refuser — l'erreur affichée l'explique, c'est aussi ça, apprendre à lire une erreur.</p>
+  </details>
+
+  <p class="pied">SQL de poche — v396 de la plateforme STI By A'e · moteur <a href="https://sql.js.org" rel="noopener">sql.js</a> (MIT) hébergé localement dans <code>assets/js/sqljs/</code> · aucune donnée ne quitte l'appareil, sauf vos progressions déjà synchronisées.</p>
+</div>
+<script src="../assets/js/supabase-umd.js"></script>
+<script src="../assets/js/config.js?v=256"></script>
+<script src="../assets/js/acces.js?v=396"></script>
+<script src="../assets/js/sync-progressions.js"></script>
+<script src="../assets/js/sql-playground.js?v=396" defer></script>
+</body>
+</html>
