@@ -11,7 +11,7 @@
    - Soulève les flotteurs fixes du bas (messenger, thème universel, pastille de synchro…) d'une
      hauteur de barre pile pour qu'ils restent cliquables au-dessus du bandeau.
    - S'adapte au thème clair/sombre via les tokens atelier (--surface/--ink/--accent) avec
-     valeurs de repli littérales pour les pages qui ne chargent pas ces tokens (portail, admin…). */
+     valeurs de repli littérales pour les pages qui ne chargent pas ces tokens (portail…). EXCLUSION : le tableau de bord (admin) ne reçoit rien (consigne auteur v414). */
 (function () {
   "use strict";
   if (window.__STI_BNAV) return;
@@ -21,6 +21,11 @@
   var root = doc.documentElement;
   if (!/^https?:$/.test(location.protocol)) return;
   if (location.pathname.indexOf("/tests/") !== -1) return; /* harnais internes : rien ne doit bouger */
+  /* Consigne de l'auteur (v414) : « ne pas toucher la page tableau de bord ».
+     Sur /admin.html, on sort AVANT même d'injecter le style : layout, flotteurs et padding
+     du tableau de bord restent exactement ceux de la version précédente. */
+  var pnNet = location.pathname.replace(/\/$/, "");
+  if (/(^|\/)admin(\.html)?$/i.test(pnNet)) return;
 
   /* Racine réelle du site. On ne fait PAS confiance à STI_AUTH.RACINE : son regex ignore
      les pages utilitaires à la racine (glossaire, nouveautes, livre-smart…) et produit alors
@@ -91,7 +96,7 @@
   /* ---------- état actif ---------- */
   /* L'état actif se déduit du chemin seul — jamais du titre : plusieurs pages partagent
      « STI Quiz » dans leur <title> et l'historique avait surligné le mauvais onglet. */
-  var UTILES = /(^|\/)(glossaire|nouveautes|bac-pratique|memo-veille-bac|outils-js-bac|pieges-bac|revision-erreurs|livre-smart|admin|carte-visite)\.html/i;
+  var UTILES = /(^|\/)(glossaire|nouveautes|bac-pratique|memo-veille-bac|outils-js-bac|pieges-bac|revision-erreurs|livre-smart|carte-visite)\.html/i;
   function sectionActive() {
     var p = location.pathname.replace(/^\/STiV2\.0/i, "");
     var h = location.hash || "";
@@ -201,4 +206,19 @@
   window.addEventListener("hashchange", majActif);
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", appliquer);
   else appliquer();
+
+  /* Visite (v414) : certaines pages reconstruisent le <body> APRÈS nous — portail.js qui
+     relit la session, vues de quiz… — et le bandeau se retrouve effacé avec. On observe
+     simplement les retraits : la barre revient dès qu'elle disparaît alors qu'elle devrait être là.
+     (construire() garde son garde-fou « si #sti-bnav existe déjà, ne rien faire ».) */
+  if (!window.__STI_BNAV_WATCH) {
+    window.__STI_BNAV_WATCH = true;
+    try {
+      var mo = new MutationObserver(function () {
+        if (mq && mq.matches && !doc.getElementById("sti-bnav")) construire();
+      });
+      mo.observe(doc.documentElement, { childList: true, subtree: true });
+    } catch (e) {}
+    setTimeout(function () { if (mq && mq.matches) construire(); }, 2500);
+  }
 })();

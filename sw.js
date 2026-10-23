@@ -6,10 +6,13 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v413-barre-basse";
+var UPDATE_ID = "v414-tableau-de-bord-epargne";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/mobile-nav.js", revision: "bnav-admin-out-v414" },
+  { url: "./assets/js/config.js", revision: "bnav-admin-out-v414" },
+  { url: "./index.html", revision: "bnav-admin-out-v414" },
   { url: "./assets/js/config.js", revision: "bnav-mobile-v413" },
   { url: "./assets/js/mobile-nav.js", revision: "bnav-mobile-v413" },
   { url: "./index.html", revision: "bnav-mobile-v413" },
