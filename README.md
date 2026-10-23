@@ -158,6 +158,11 @@ Harmonisées sur **tous** les supports (site, livres, fiches) :
 | v393 | Allègement 3G (démo `display` en `preload="none"`) ; liens des 3 vraies annexes dans la recherche |
 | v394 | 🧾 Journal d'erreurs des pages élèves (table `sti_diagnostics`, RLS, vue admin) |
 | v395 | Révision générale : 63 pages rattrapées au cache-buster ; SDK Supabase local partout ; page énoncé du formulaire reconnectée à la synchro |
+| v396 | 🧪 SQL de poche : `cours/sql-playground.html` — SQLite wasm 100 % local, 3 bases de révision, historique & favoris hors-ligne |
+| v397 | 📓 Carnet d’observations de la classe : table `sti_observations` (RLS prof, purge liée à l’élève) |
+| v398 | ⚙️ Tiroir « Système & Plus » : Flash, Appel, Top 3, Aide, Maj rangés sous le plus/moins de la barre d’outils |
+| v399 | 🧹 Suppression du second tiroir « Tous les outils & actions » — un seul point d’entrée vers les outils du tableau de bord |
+| v400 | 📟 « La Cote » sur la page d’accueil : bandeau défilant type tableau de bourse — cotation officielle des technos (HTML5 Living Standard, CSS3, JavaScript ES2026, SQL:2023, PHP 8.5.12) + les 5 dernières nouvelles lues dans ce README |
 
 ---
 

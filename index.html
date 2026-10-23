@@ -2534,6 +2534,35 @@
       </div>
     </header>
 
+    <!-- ======================= La Cote STI : tableau de bourse des technologies ======================= -->
+    <style>
+      #cote-sti{position:relative;display:flex;align-items:stretch;overflow:hidden;background:linear-gradient(180deg,#0b101d,#141b2e);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(110,231,183,.28);color:#c7cbe2;font-family:"SF Mono",SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace}
+      #cote-sti .cote-etiq{display:flex;align-items:center;gap:8px;padding:0 14px;font-size:13px;font-weight:800;letter-spacing:.14em;color:#6ee7b7;background:rgba(110,231,183,.07);border-right:1px solid rgba(255,255,255,.08);white-space:nowrap;z-index:2}
+      #cote-sti .cote-clignot{width:8px;height:8px;border-radius:50%;background:#6ee7b7;box-shadow:0 0 9px #6ee7b7;animation:cote-bip 1.6s steps(2, start) infinite}
+      @keyframes cote-bip{50%{opacity:.22}}
+      #cote-sti .cote-ecran{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 26px,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,transparent,#000 26px,#000 calc(100% - 26px),transparent)}
+      #cote-sti .cote-piste{display:inline-flex;align-items:center;gap:30px;padding:9px 30px;white-space:nowrap;will-change:transform;animation:cote-defile linear infinite}
+      @keyframes cote-defile{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+      #cote-sti:hover .cote-piste,#cote-sti:focus-within .cote-piste{animation-play-state:paused}
+      #cote-sti .cote-item{display:inline-flex;align-items:center;gap:8px;font-size:14.5px}
+      #cote-sti .cote-sym{font-weight:900;letter-spacing:.06em}
+      #cote-sti .cote-up{color:#6ee7b7;font-weight:800}
+      #cote-sti .cote-det{color:#8b93b8;font-size:12.5px}
+      #cote-sti .cote-news{color:#fbbf24;font-weight:700}
+      #cote-sti .cote-sec{color:#5eead4;letter-spacing:.12em;font-weight:800;font-size:12.5px}
+      #cote-sti a.cote-plus{display:flex;align-items:center;padding:0 14px;font-size:12.5px;font-weight:800;letter-spacing:.06em;color:#c7cbe2;background:rgba(255,255,255,.04);border-left:1px solid rgba(255,255,255,.08);text-decoration:none;white-space:nowrap;z-index:2}
+      #cote-sti a.cote-plus:hover{color:#6ee7b7}
+      @media (max-width:640px){#cote-sti .cote-etiq .cote-txt{display:none}#cote-sti .cote-item{font-size:13px}}
+      @media (prefers-reduced-motion:reduce){#cote-sti .cote-piste{animation:none;white-space:normal;flex-wrap:wrap}#cote-sti .cote-clignot{animation:none}}
+    </style>
+    <aside id="cote-sti" aria-label="La Cote STI : versions officielles des technologies et dernières nouvelles">
+      <div class="cote-etiq"><span class="cote-clignot" aria-hidden="true"></span><span class="cote-txt">LA&nbsp;COTE&nbsp;&middot;&nbsp;STI</span></div>
+      <div class="cote-ecran"><div class="cote-piste" id="cote-piste" aria-hidden="true"><span class="cote-news">🔔 Cote en cours de chargement…</span></div></div>
+      <a class="cote-plus" href="./nouveautes.html" title="Tout l’historique des versions STI">HISTORIQUE &#9656;</a>
+      <noscript><span style="padding:0 12px;font-size:12.5px;color:#fbbf24">Cotation du 23/10/2026 : HTML5 &middot; CSS3 &middot; JavaScript ES2026 &middot; SQL:2023 &middot; PHP 8.5.12</span></noscript>
+    </aside>
+    <script src="./assets/js/cote-ticker.js" defer></script>
+
     <main class="wrap">
       <!-- ======================= Hero ======================= -->
       <section class="hero">
