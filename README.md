@@ -168,6 +168,7 @@ Harmonisées sur **tous** les supports (site, livres, fiches) :
 | v403 | 🐛 Correction régie news : le module s’exécutait avant la fin du parse de `admin.html` (la modale vit en fin de `<body>`), le bouton « News du bandeau » était donc inerte — initialisation désormais différée à `DOMContentLoaded` ; cache-buster `admin.js?v=403-regie-news` |
 | v404 | 🔄 News de la régie lues en « no-store » (plus de copie périmée du navigateur) et relecture automatique au retour d’onglet : après « Enregistrer » dans l’admin, le bandeau de l’accueil passe à jour sans rechargement |
 | v405 | 🏷️ Le bandeau affiche son « MOTEUR vNNN » en clair + cache-buster `?v=` sur le module : fini de deviner si l’écran montre une vieille copie du cache |
+| v406 | ⏱️→ Sens de défilement inversé (gauche → droite) + dans la régie news, case « News visibles sur l’accueil » : décochée, le bandeau retire les news (liste conservée, rien ne sont supprimées) et n’affiche plus que la corbeille tech |
 
 ---
 

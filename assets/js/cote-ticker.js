@@ -30,7 +30,7 @@
     } catch (e) {}
   })();
 
-  var MOTEUR = "v405"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
+  var MOTEUR = "v406"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
   var STI_COTE = {
     maj: "23/10/2026",
     tech: [
@@ -77,8 +77,10 @@
   }
   function construireGroupe(news) {
     var g = document.createDocumentFragment();
-    g.appendChild(span("cote-sec", "DERNI\u00c8RES NOUVELLES"));
-    news.forEach(function (n) { g.appendChild(itemNews(n)); });
+    if (news && news.length) {
+      g.appendChild(span("cote-sec", "DERNI\u00c8RES NOUVELLES"));
+      news.forEach(function (n) { g.appendChild(itemNews(n)); });
+    }
     g.appendChild(span("cote-sec", "CORBEILLE TECH \u00b7 MOTEUR " + MOTEUR + " \u00b7 COT\u00c9E AU " + STI_COTE.maj));
     STI_COTE.tech.forEach(function (t) { g.appendChild(itemTech(t)); });
     return g;
@@ -130,7 +132,7 @@
       .then(function (r) { return r && r.ok ? r.json() : []; })
       .then(function (rows) {
         var v = rows && rows[0] && rows[0].value;
-        cb(normaliser(v && v.liste));
+        cb({ liste: normaliser(v && v.liste), actif: !(v && v.actif === false) });
       })
       .catch(function () { cb(null); });
   }
@@ -155,8 +157,11 @@
   }
   function demarrer() {
     render(STI_COTE.news_secours.map(function (t) { return { t: t, c: "#fbbf24" }; }));
-    lireAdmin(function (liste) {
-      if (liste) { render(liste); return; }
+    lireAdmin(function (etat) {
+      if (etat) {
+        if (etat.actif === false) { render(null); return; }
+        if (etat.liste) { render(etat.liste); return; }
+      }
       lireReadme(function (n) {
         if (n.length) render(n);
       });
@@ -165,7 +170,11 @@
   /* v404 : retour d'onglet = relecture des news — après un enregistrement dans l'admin,
      le bandeau se met à jour sans recharger la page. */
   var rafraichir = function () {
-    lireAdmin(function (liste) { if (liste) render(liste); });
+    lireAdmin(function (etat) {
+      if (!etat) return;
+      if (etat.actif === false) { render(null); return; }
+      if (etat.liste) render(etat.liste);
+    });
   };
   try {
     document.addEventListener("visibilitychange", function () {

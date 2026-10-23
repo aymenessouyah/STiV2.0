@@ -5211,6 +5211,8 @@
       #modal-news-bandeau .news-form{display:flex;gap:8px;margin:12px 0 4px}
       #modal-news-bandeau .news-form input[type=text]{flex:1;min-width:0;border:1.5px solid var(--border,#cccccc);border-radius:9px;padding:7px 10px;font-size:.9rem;background:var(--surface-2,#f8f9fd);color:inherit}
       #modal-news-bandeau .news-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+      #modal-news-bandeau .news-switch{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:800;color:#006064;cursor:pointer;user-select:none}
+      #modal-news-bandeau .news-switch input{width:16px;height:16px;accent-color:#00838f;cursor:pointer}
       #modal-news-bandeau .news-btn{border-radius:10px;padding:8px 14px;font-weight:800;cursor:pointer;border:1.5px solid #23201a}
       #modal-news-bandeau .news-btn.ajout{background:#ede9fe;color:#6d28d9}
       #modal-news-bandeau .news-btn.ok{background:#e7f6ec;color:#177245}
@@ -5230,6 +5232,7 @@
           <button type="button" class="news-btn ajout" id="news-ajouter">➕ Ajouter</button>
         </div>
         <div class="news-actions">
+          <label class="news-switch" title="Décochez pour retirer toute news du bandeau — la liste est conservée, rien n’est supprimé"><input type="checkbox" id="news-actif" checked> News visibles sur l’accueil</label>
           <span id="news-compteur"></span>
           <button type="button" class="news-btn ok" id="news-enregistrer">💾 Enregistrer sur le site</button>
           <button type="button" class="news-btn fermer" id="news-fermer">Fermer</button>

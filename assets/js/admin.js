@@ -11816,6 +11816,8 @@
       .then(function (rows) {
         var v = rows && rows[0] && rows[0].value;
         liste = nettoyer(v && v.liste);
+        var swL = $("news-actif");
+        if (swL) swL.checked = !(v && v.actif === false);
         modif = false;
         rendre();
         majStatut(rows && rows[0] && rows[0].updated_at ? "Derni\u00e8re version : " + new Date(rows[0].updated_at).toLocaleString("fr-FR") : "Liste vide pour l\u2019instant \u2014 le README sert de repli.", null);
@@ -11845,7 +11847,8 @@
     if (!tk) { majStatut("Session expir\u00e9e : reconnectez-vous pour enregistrer.", "err"); return; }
     var b = this;
     enVol = true; b.disabled = true; b.textContent = "\u23f3 Envoi\u2026";
-    var payload = { liste: nettoyer(liste), maj: Date.now() };
+    var sw = $("news-actif");
+    var payload = { liste: nettoyer(liste), actif: !(sw && sw.checked === false), maj: Date.now() };
     fetch(cfg.URL + "/rest/v1/app_config_public", {
       method: "POST",
       headers: { apikey: cfg.CLE, "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates", Authorization: "Bearer " + tk },
