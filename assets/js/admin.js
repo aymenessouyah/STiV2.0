@@ -11575,4 +11575,92 @@
       });
     });
   })();
+
+  /* ==================== v394 : Journal des erreurs (Vue d'ensemble) ==================== */
+  (function () {
+    var btnR = document.getElementById("btn-journal-rafraichir");
+    var btnT = document.getElementById("btn-journal-marquer-tout");
+    var elEtat = document.getElementById("journal-err-etat");
+    var elCorps = document.getElementById("journal-err-corps");
+    var chkLu = document.getElementById("journal-err-non-lus");
+    if (!btnR || !elEtat || !elCorps) return;
+    var dernieres = [];
+    function qui(uid) {
+      var p = null;
+      try { (profils || []).forEach(function (x) { if (!p && x.id === uid) p = x; }); } catch (e) {}
+      if (!p) return "<small>compte supprimé</small>";
+      var n = (String(p.prenom || "") + " " + String(p.nom || "")).trim();
+      return echHtml(n || String(p.email || "—")) + (p.classe ? " <small>(" + echHtml(String(p.classe)) + ")</small>" : "");
+    }
+    function fh(d) {
+      var x = new Date(d);
+      if (isNaN(x.getTime())) return "—";
+      return x.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }) + " " + x.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    }
+    function rendre() {
+      var sel = (chkLu && chkLu.checked) ? dernieres.filter(function (r) { return !r.vu; }) : dernieres;
+      var nNon = 0;
+      dernieres.forEach(function (r) { if (!r.vu) nNon++; });
+      if (btnT) btnT.style.display = (nNon > 0) ? "" : "none";
+      if (!sel.length) {
+        elCorps.innerHTML = dernieres.length ? "<p class='journal-vide'>Rien en non lu — tout est marqué ✔</p>" : "<p class='journal-vide'>Aucune erreur signalée — le site tourne bien 🎉</p>";
+        return;
+      }
+      var html = "<table class='journal-table'><thead><tr><th>Quand</th><th>Qui</th><th>Page</th><th>Type</th><th>Message</th><th>État</th><th></th></tr></thead><tbody>";
+      sel.forEach(function (r) {
+        var msg = String(r.message || "");
+        if (msg.length > 110) msg = msg.slice(0, 110) + "…";
+        var info = String(r.detail || "") + (r.agent ? "\n---\n" + r.agent : "") + (r.resolution ? "\nécran " + r.resolution : "");
+        html += "<tr" + (r.vu ? "" : " class='journal-non-lu'") + ">" +
+          "<td>" + fh(r.cree_le) + "</td><td>" + qui(r.user_id) + "</td>" +
+          "<td><small>" + echHtml(String(r.page || "—")) + "</small></td>" +
+          "<td>" + (r.genre === "ressource" ? "🧩 ressource" : r.genre === "promise" ? "🤝 promesse" : "⚡ JS") + (r.en_ligne === false ? "<br><small>hors-ligne</small>" : "") + "</td>" +
+          "<td title=\"" + echHtml(info).replace(/"/g, "&quot;") + "\"><code>" + echHtml(msg) + "</code></td>" +
+          "<td>" + (r.vu ? "<span class='journal-lu'>✔ lue</span>" : "<span class='journal-nouveau'>nouvelle</span>") + "</td>" +
+          "<td>" + (r.vu ? "" : "<button type='button' class='btn-outil btn-journal-lu' data-id='" + r.id + "'>Marquer lue</button>") + "</td></tr>";
+      });
+      html += "</tbody></table>";
+      elCorps.innerHTML = html;
+    }
+    function majEtat() {
+      var nNon = 0;
+      dernieres.forEach(function (r) { if (!r.vu) nNon++; });
+      elEtat.textContent = dernieres.length ? dernieres.length + " ligne(s) · " + nNon + " non lue(s) · " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "Aucune ligne dans sti_diagnostics pour le moment";
+    }
+    btnR.addEventListener("click", function () {
+      btnR.disabled = true; btnR.textContent = "⏳ Lecture…";
+      elEtat.textContent = "Lecture du journal…";
+      sb.from("sti_diagnostics").select("id,user_id,page,genre,message,detail,agent,resolution,en_ligne,vu,cree_le").order("cree_le", { ascending: false }).limit(200).then(function (res) {
+        btnR.disabled = false; btnR.textContent = "🔄 Rafraîchir";
+        if (res.error) {
+          dernieres = []; rendre();
+          elEtat.textContent = "⚠️ " + (/relation|does not exist|404/i.test(res.error.message || "") ? "table sti_diagnostics absente — exécutez une fois le script documents/sql/sti_diagnostics.sql dans l'éditeur SQL Supabase, puis réessayez" : res.error.message);
+          return;
+        }
+        dernieres = res.data || [];
+        majEtat(); rendre();
+      });
+    });
+    if (btnT) btnT.addEventListener("click", function () {
+      btnT.disabled = true;
+      sb.from("sti_diagnostics").update({ vu: true }).eq("vu", false).then(function (res) {
+        btnT.disabled = false;
+        if (res.error) { elEtat.textContent = "⚠️ Marquage refusé : " + res.error.message; return; }
+        dernieres.forEach(function (r) { r.vu = true; });
+        majEtat(); rendre();
+      });
+    });
+    if (chkLu) chkLu.addEventListener("change", rendre);
+    elCorps.addEventListener("click", function (ev) {
+      var b = ev.target && ev.target.closest ? ev.target.closest(".btn-journal-lu") : null;
+      if (!b) return;
+      var id = b.getAttribute("data-id");
+      b.disabled = true;
+      sb.from("sti_diagnostics").update({ vu: true }).eq("id", id).then(function (res) {
+        if (res.error) { b.disabled = false; elEtat.textContent = "⚠️ " + res.error.message; return; }
+        dernieres.forEach(function (r) { if (String(r.id) === String(id)) r.vu = true; });
+        majEtat(); rendre();
+      });
+    });
+  })();
 })();

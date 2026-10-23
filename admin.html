@@ -1875,6 +1875,33 @@
     html.admin-ardoise .carte-diff-vert{background:#14351f;color:#9be6b8;border-color:#1e5c36}
     html.admin-ardoise .carte-diff-nom b{color:#ff9d85}
     @media print{#carte-difficultes-admin .carte-diff-outils{display:none}}
+    .journal-err-v394{background:#fffdf7;border:2px solid #23201a;border-radius:16px;padding:12px 16px;margin-top:12px;box-shadow:4px 4px 0 rgba(244,81,30,.45)}
+    .journal-err-entete{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+    .journal-err-entete b{font-size:14px;color:#23201a}
+    .journal-err-entete span{font-size:11px;color:#7a6f5d;font-weight:700}
+    .journal-err-outils{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;font-weight:800;color:#23201a}
+    .journal-err-filtre{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:#23201a;font-weight:800}
+    .journal-err-filtre input{width:15px;height:15px;accent-color:#f4511e}
+    #journal-err-etat{font-size:11px;color:#7a6f5d;font-weight:700}
+    .journal-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11.5px}
+    .journal-table th{background:#f3ead9;border:1.5px solid #23201a;padding:6px 8px;font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:#23201a;text-align:left}
+    .journal-table td{border:1.5px solid #e2d5be;padding:6px 8px;background:#fff;color:#23201a;font-weight:700;vertical-align:top}
+    .journal-table td small{color:#7a6f5d;font-weight:700}
+    .journal-table code{font-size:11px;background:rgba(35,32,26,.07);padding:1px 6px;border-radius:6px;word-break:break-word}
+    .journal-non-lu td{background:#fff8e1}
+    .journal-nouveau{display:inline-block;padding:2px 8px;border-radius:999px;border:1.5px solid #b45309;background:#fef3c7;color:#78350f;font-size:10px;font-weight:900;white-space:nowrap}
+    .journal-lu{color:#177245;font-weight:900}
+    .journal-vide{font-size:12.5px;color:#177245;font-weight:800;margin:10px 0 2px}
+    .btn-journal-lu{font-size:10.5px;padding:3px 9px}
+    html.admin-ardoise .journal-err-v394{background:#2b241b;border-color:#0f0d0a}
+    html.admin-ardoise .journal-err-entete b,html.admin-ardoise .journal-err-outils,html.admin-ardoise .journal-err-filtre{color:#f5eddc}
+    html.admin-ardoise .journal-err-entete span,html.admin-ardoise #journal-err-etat{color:#b3a488}
+    html.admin-ardoise .journal-table th{background:#3a3122;color:#f5eddc;border-color:#55482e}
+    html.admin-ardoise .journal-table td{background:#241e16;color:#f5eddc;border-color:#3a3122}
+    html.admin-ardoise .journal-table td small{color:#8fa3c4}
+    html.admin-ardoise .journal-non-lu td{background:#3a3110}
+    html.admin-ardoise .journal-table code{background:rgba(245,237,220,.08);color:#f5eddc}
+    @media print{#journal-erreurs-admin .journal-err-outils{display:none}}
   </style>
 </head>
 <body class="cockpit-airbus">
@@ -2045,6 +2072,20 @@
       <small id="carte-diff-etat">Aucune donnée pour le moment — cliquez sur Générer.</small>
     </div>
     <div id="carte-diff-corps"></div>
+  </div>
+
+  <div class="journal-err-v394" id="journal-erreurs-admin">
+    <div class="journal-err-entete">
+      <b>🧾 Journal des erreurs</b>
+      <span>Erreurs JS, promesses et ressources signalées par les pages des élèves — 200 dernières</span>
+    </div>
+    <div class="journal-err-outils">
+      <button type="button" class="btn-outil" id="btn-journal-rafraichir">🔄 Rafraîchir</button>
+      <button type="button" class="btn-outil" id="btn-journal-marquer-tout" style="display:none">✔️ Tout marquer lu</button>
+      <label class="journal-err-filtre"><input type="checkbox" id="journal-err-non-lus" checked> Non lues seulement</label>
+      <small id="journal-err-etat">Pas encore interrogé — cliquez sur Rafraîchir.</small>
+    </div>
+    <div id="journal-err-corps"></div>
   </div>
 
   </section>

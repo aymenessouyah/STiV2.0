@@ -103,3 +103,88 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer); else demarrer();
 })();
+
+/* ═══════════════ v394 — Journal d'erreurs élèves (table sti_diagnostics) ═══════════════
+   Signale en silence les erreurs JS, les promesses rejetées et les ressources
+   introuvables vers Supabase, pour que le professeur les voie dans l'admin.
+   Règles de discrétion : rien n'est envoyé sans session élève ; une même erreur
+   n'est renvoyée qu'au-delà de 3 jours (par appareil) ; au bout de 2 échecs
+   réseau consécutifs (table pas encore créée ?), on arrête sans rien casser. */
+(function () {
+  "use strict";
+  var cfgD = window.STI_AUTH || { URL: "https://vywujxmepvcbgedgmger.supabase.co", CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn" };
+  var CLE_VUES = "sti-diags-vues";
+  var MAX_LIGNES = 200, MAX_PAR_PAGE = 8, DELAI_REENVOI = 2592e5;
+  var echecs = 0, envoys = 0, enVol = false, sessionD = null;
+  function lireSessionD() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i) || "";
+        if (k.indexOf("sb-") === 0 && k.indexOf("-auth-token") !== -1) {
+          var v = JSON.parse(localStorage.getItem(k) || "null");
+          if (v && v.access_token && v.user && v.user.id) return { token: v.access_token, id: v.user.id };
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+  function vues() { try { return JSON.parse(localStorage.getItem(CLE_VUES) || "{}") || {}; } catch (e) { return {}; } }
+  function dejaVue(c) { var m = vues()[c]; return m ? (Date.now() - m) < DELAI_REENVOI : false; }
+  function noterVue(c) {
+    try {
+      var m = vues(), now = Date.now();
+      Object.keys(m).forEach(function (k) { if (now - m[k] > 2592e6) delete m[k]; });
+      m[c] = now;
+      var ks = Object.keys(m);
+      if (ks.length > MAX_LIGNES) { ks.sort(function (a, b) { return m[a] - m[b]; }); for (var q = 0; q < ks.length - MAX_LIGNES; q++) delete m[ks[q]]; }
+      localStorage.setItem(CLE_VUES, JSON.stringify(m));
+    } catch (e) {}
+  }
+  function pageCourte() { try { return (location.pathname.replace(/^\/STiV2\.0/, "") || "/").slice(0, 180); } catch (e) { return "?"; } }
+  function signaler(genre, message, detail) {
+    try {
+      message = String(message || "erreur inconnue").slice(0, 400);
+      if (/chrome-extension|moz-extension|favicon|non-error/i.test(message + (detail || ""))) return;
+      if (location.search.indexOf("diags=off") !== -1) return;
+      var c = genre + "|" + message + "|" + String(detail || "").slice(0, 120);
+      if (dejaVue(c)) return;
+      sessionD = sessionD || lireSessionD();
+      if (!sessionD || echecs >= 2 || envoys >= MAX_PAR_PAGE) return;
+      envoys++; noterVue(c);
+      var corps = {
+        page: pageCourte(), genre: genre, message: message,
+        detail: String(detail || "").slice(0, 1800),
+        agent: String(navigator.userAgent || "").slice(0, 300),
+        resolution: (screen.width || 0) + "x" + (screen.height || 0),
+        en_ligne: navigator.onLine !== false
+      };
+      enVol = true;
+      fetch(cfgD.URL + "/rest/v1/sti_diagnostics", {
+        method: "POST",
+        headers: { "apikey": cfgD.CLE, "Authorization": "Bearer " + sessionD.token, "Content-Type": "application/json", "Prefer": "return=minimal" },
+        body: JSON.stringify(corps)
+      }).then(function (r) { if (!r.ok) echecs++; }, function () { echecs++; }).then(function () { enVol = false; });
+    } catch (e) {}
+  }
+  window.addEventListener("error", function (ev) {
+    if (enVol) return;
+    try {
+      var el = ev.target;
+      if (el && el !== window && (el.tagName === "SCRIPT" || el.tagName === "IMG" || el.tagName === "LINK" || el.tagName === "VIDEO" || el.tagName === "AUDIO")) {
+        signaler("ressource", "Chargement raté : " + el.tagName + " " + String(el.src || el.href || "").replace(location.origin, "").slice(-140), "element=" + String(el.tagName).toLowerCase());
+        return;
+      }
+      var pile = (ev.error && ev.error.stack) ? String(ev.error.stack).slice(0, 1700) : "";
+      var src = ev.filename ? String(ev.filename).replace(location.origin, "") + ":" + (ev.lineno || 0) + ":" + (ev.colno || 0) : "";
+      signaler("js", ev.message || "Erreur JS sans message", src + (pile ? "\n" + pile : ""));
+    } catch (e) {}
+  }, true);
+  window.addEventListener("unhandledrejection", function (ev) {
+    try {
+      var r = ev.reason;
+      signaler("promise", (r && r.message) ? r.message : String(r || "rejet sans motif").slice(0, 380), r && r.stack ? String(r.stack).slice(0, 1700) : "");
+    } catch (e) {}
+  });
+  function demarrerD() { sessionD = lireSessionD(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrerD); else setTimeout(demarrerD, 1500);
+})();
