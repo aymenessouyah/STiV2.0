@@ -6,10 +6,14 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v417-racine-reglee-partout";
+var UPDATE_ID = "v418-barre-cinq-et-roue-nuage";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/mobile-nav.js", revision: "bnav-roue-v418" },
+  { url: "./assets/js/roue-nuage.js", revision: "bnav-roue-v418" },
+  { url: "./assets/js/config.js", revision: "bnav-roue-v418" },
+  { url: "./index.html", revision: "bnav-roue-v418" },
   { url: "./assets/js/config.js", revision: "racine-v417" },
   { url: "./assets/js/mobile-nav.js", revision: "racine-v417" },
   { url: "./index.html", revision: "racine-v417" },

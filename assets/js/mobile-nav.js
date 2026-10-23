@@ -51,13 +51,14 @@
     "#sti-bnav{display:none}",
     "@media (max-width:700px){",
     "html.sti-bnav-on body{padding-bottom:calc(var(--sti-bnav-h) + 10px)}",
-    "#sti-bnav{display:grid;grid-template-columns:repeat(4,1fr);align-items:stretch;position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:var(--surface,#fffcf3);border-top:1.5px solid var(--border,#e7d9bd);padding-bottom:env(safe-area-inset-bottom,0px);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;box-shadow:0 -6px 18px rgba(15,23,38,.10)}",
+    "#sti-bnav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:var(--surface,#fffcf3);border-top:1.5px solid var(--border,#e7d9bd);padding-bottom:env(safe-area-inset-bottom,0px);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;box-shadow:0 -6px 18px rgba(15,23,38,.10)}",
     "html[data-theme='dark'] #sti-bnav{background:var(--surface,#121a2b);border-top-color:var(--border,#26314c)}",
     "#sti-bnav *{box-sizing:border-box}",
     "html[data-theme='dark'] #sti-bnav .sti-bnav-i{color:var(--muted,#9aa7c4)}",
     "#sti-bnav .sti-bnav-i{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;padding:7px 4px 6px;margin:0;color:var(--muted,#6b6250);text-decoration:none;text-transform:none;font:800 10.5px/1 system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.02em;white-space:nowrap;-webkit-tap-highlight-color:transparent;background:none;border:0;box-shadow:none;transform:none;cursor:pointer;width:100%;transition:none}",
     "#sti-bnav .sti-bnav-i svg{display:block;width:21px;height:21px;margin:0;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}",
     "#sti-bnav .sti-bnav-i span{display:block}",
+    "@media (max-width:400px){#sti-bnav .sti-bnav-i{font-size:9px;gap:2px}}",
     "html.sti-modal-open #sti-bnav,html.sti-msn-mob-open #sti-bnav{display:none!important}",
     /* flotteurs existants du bas de page : on les pose au-dessus de la barre, sans les toucher ailleurs */
     "html.sti-bnav-on #sti-btn-messenger-global{bottom:calc(var(--sti-bnav-h) + 10px)!important}",
@@ -95,6 +96,7 @@
     var s = '<svg viewBox="0 0 24 24" aria-hidden="true">';
     if (nom === "accueil") s += '<path d="M3 10.6 12 3.2l9 7.4"/><path d="M5.6 9.4V20.4h12.8V9.4"/><path d="M10 20.4v-5.2h4v5.2"/>';
     if (nom === "exercices") s += '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7.5h7M9 11h5"/>';
+    if (nom === "cours") s += '<path d="M12 6.4C10.4 4.9 7.4 4.4 4.4 5.1v12.8c3-.7 6-.2 7.6 1.3 1.6-1.5 4.6-2 7.6-1.3V5.1c-3-.7-6-.2-7.6 1.3z"/><path d="M12 6.4v12.8"/>';
     if (nom === "quiz") s += '<circle cx="12" cy="12" r="9"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4"/><path d="M12 17.3h.01"/>';
     if (nom === "autres") s += '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>';
     return s + "</svg>";
@@ -110,9 +112,11 @@
     if (h === "#modules") return "quiz";
     if (h === "#exercices") return "exercices";
     if (/\/(quiz|exercices)\//i.test(p) || /series-exercices/i.test(p)) return h === "#modules" ? "quiz" : (/\/(quiz)\//.test(p) ? "quiz" : "exercices");
+    if (h === "#cours") return "cours";
+    if (/\/(cours)\//i.test(p)) return "cours";
     if (/\/(index\.html)?$/i.test(p) && !UTILES.test(p)) return "accueil";
     if (/\/portail\.html/i.test(p)) return "accueil";
-    if (UTILES.test(p) || /\/(cours|documents)\//i.test(p)) return "autres";
+    if (UTILES.test(p) || /\/(documents)\//i.test(p)) return "autres";
     return "";
   }
   function majActif() {
@@ -134,6 +138,7 @@
 
     var items = [
       { cle: "accueil", lib: "Accueil", href: R + "index.html", ico: "accueil" },
+      { cle: "cours", lib: "Cours", href: R + "index.html#cours", ico: "cours" },
       { cle: "exercices", lib: "Exercices", href: R + "exercices/series-exercices.html", ico: "exercices" },
       { cle: "quiz", lib: "Quiz", href: R + "index.html#modules", ico: "quiz" }
     ];
@@ -165,17 +170,16 @@
     sheet.setAttribute("role", "dialog");
     sheet.setAttribute("aria-label", "Autres sections du site");
     var liens = [
-      ["Cours", "#cours", "sur l'accueil"],
+      ["Les 25 pièges du Bac", "pieges-bac.html", "à lire avant l'épreuve"],
+      ["Atelier épreuve pratique", "bac-pratique.html", "🧪 BAC STI · TP noté"],
+      ["Les 10 fonctions JavaScript", "outils-js-bac.html", "atelier & générateur"],
       ["Scanner mon livre", "livre-smart.html", "3SI + 4SI"],
       ["Progression", "#progress", "sur l'accueil"],
       ["Conseils", "#conseils", "sur l'accueil"],
       ["Nouveautés", "nouveautes.html", ""],
       ["Glossaire", "glossaire.html", ""],
-      ["BAC pratique", "bac-pratique.html", ""],
       ["Révision des erreurs", "revision-erreurs.html", ""],
       ["Mémo veille", "memo-veille-bac.html", ""],
-      ["Outils JS du bac", "outils-js-bac.html", ""],
-      ["Pièges du Bac", "pieges-bac.html", ""],
       ["Portail / compte", "portail.html", ""]
     ];
     liens.forEach(function (l) {
@@ -211,6 +215,19 @@
     else if (mq.addListener) mq.addListener(appliquer);
   }
   window.addEventListener("hashchange", majActif);
+  /* v418 (consigne auteur) : la pastille « Progression synchronisée (cloud) » et le bouton
+     « 📶 Normal » (diagnostic réseau) quittent les bords de la page pour la roue ⚙️. Leur
+     logique vit dans roue-nuage.js, chargé ici — donc uniquement sur les pages où le module
+     de barre tourne (jamais sur le tableau de bord, jamais en fichier://). */
+  (function chargerRoueNuage() {
+    try {
+      var sc = doc.createElement("script");
+      sc.src = R + "assets/js/roue-nuage.js?v=418";
+      sc.async = true;
+      (doc.head || doc.documentElement).appendChild(sc);
+    } catch (e) {}
+  })();
+
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", appliquer);
   else appliquer();
 
