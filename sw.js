@@ -6,10 +6,17 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v420-barre-sur-viewport";
+var UPDATE_ID = "v421-clic-leger-barre-fantome";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/config.js", revision: "clic21" },
+  { url: "./assets/js/mobile-nav.js", revision: "clic21" },
+  { url: "./assets/js/roue-nuage.js", revision: "clic21" },
+  { url: "./cours/html5.html", revision: "clic21" },
+  { url: "./cours/courshtml5.html", revision: "clic21" },
+  { url: "./exercices/series-exercices.html", revision: "clic21" },
+  { url: "./index.html", revision: "clic21" },
   { url: "./assets/js/mobile-nav.js", revision: "bnav-vue-v420" },
   { url: "./assets/js/roue-nuage.js", revision: "bnav-vue-v420" },
   { url: "./assets/js/config.js", revision: "bnav-vue-v420" },

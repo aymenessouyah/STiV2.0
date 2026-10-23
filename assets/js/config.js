@@ -35,8 +35,49 @@ window.STI_AUTH = {
       var m = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
       base = m ? location.origin + m[1] + "/" : location.origin + pn.slice(0, pn.lastIndexOf("/") + 1);
     } catch (e) {}
-    s.src = base + "assets/js/mobile-nav.js?v=420";
+    s.src = base + "assets/js/mobile-nav.js?v=421";
     s.async = true;
     (document.head || document.documentElement).appendChild(s);
+  } catch (e) {}
+})();
+
+/* v421 (consigne auteur n°5) : « la barre du bas disparaît un instant quand on choisit un
+   bouton ». Entre le rendu d'une nouvelle page et l'injection de la barre par mobile-nav.js,
+   une bande vide occupait le bas de l'écran. Comme config.js est un script bloquant présent
+   sur toutes les pages, il peint dès le parsing le GABARIT de la barre mémorisé à la visite
+   précédente (couleurs, hauteur, bordure réelles — non cliquable) ; mobile-nav.js l'efface à
+   l'instant où la vraie barre est installée, donc aucun flash. Pages exclues : tableau de bord
+   et harnais de tests (mêmes règles que le module) ; sous 700 px seulement ; repli total si
+   rien n'a été mémorisé — la page est alors exactement comme avant. */
+(function () {
+  try {
+    if (!/^https?:$/.test(location.protocol)) return;
+    if (window.__STI_BNAV || document.getElementById("sti-bnav")) return;
+    if (!window.matchMedia || !window.matchMedia("(max-width: 700px)").matches) return;
+    var pn = location.pathname;
+    if (pn.indexOf("/tests/") !== -1) return;
+    if (/(^|\/)admin(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;
+    var d = JSON.parse(localStorage.getItem("sti-bnav-skel") || "null");
+    if (!d || !d.h || typeof d.f !== "string" || !/^#[0-9a-f]{3,8}$|^rgba?\(/i.test(d.f)) return;
+    if (Date.now() - (d.t || 0) > 45 * 24 * 3600 * 1000) return;
+    var head = document.head || document.documentElement;
+    var style = document.createElement("style");
+    style.id = "sti-bnav-skel-css";
+    style.textContent = "@media (max-width:700px){html:not(.sti-bnav-on) #sti-bnav-skel{display:block;position:fixed;left:0;right:0;bottom:0;height:" + d.h + "px;background:" + d.f + ";border-top:" + (d.brd || "1.5px") + " solid " + (d.b || "#e7d9bd") + ";z-index:2147483000;pointer-events:none}}";
+    var sk = document.createElement("div");
+    sk.id = "sti-bnav-skel";
+    sk.setAttribute("aria-hidden", "true");
+    head.appendChild(style);
+    /* En tête de document, <body> n'existe pas encore : on greffe le gabarit sur <html>,
+       le navigateur le peint quand même (position:fixed) et mobile-nav.js l'effacera. */
+    (document.body || document.documentElement).appendChild(sk);
+    setTimeout(function () {
+      try {
+        if (!document.getElementById("sti-bnav")) {
+          var a = document.getElementById("sti-bnav-skel"); if (a) a.remove();
+          var c = document.getElementById("sti-bnav-skel-css"); if (c) c.remove();
+        }
+      } catch (e) {}
+    }, 5000);
   } catch (e) {}
 })();

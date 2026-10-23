@@ -91,6 +91,7 @@
     "#sti-bnav-sheet .sti-bnav-l{display:flex;align-items:center;gap:9px;padding:12px 12px;border:1.5px solid var(--border,#e7d9bd);border-radius:12px;text-decoration:none;font:800 12.5px/1.2 system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink,#0f1726);background:var(--surface-2,#f6eedc);margin:0;box-shadow:none;text-align:left}",
     "#sti-bnav-sheet .sti-bnav-l b{font-weight:800}",
     "@media (max-width:700px){html.sti-bnav-on #sti-bnav{}}",
+    "@media (max-width:700px){#stix-nav a[href$=\"index.html#cours\"]{display:none!important}}", /* v420→421 (consigne n°4) : « cours du site » masqué sur mobile */
     "@media print{#sti-bnav,#sti-bnav-sheet,#sti-bnav-voile{display:none!important}html.sti-bnav-on body{padding-bottom:0!important}}"
   ].join("");
   var st = doc.createElement("style");
@@ -172,6 +173,12 @@
     voile.id = "sti-bnav-voile";
     doc.body.appendChild(voile);
 
+    /* v421 (consigne n°5) : la barre « disparaissait un instant » entre le rendu d'une page
+       et l'injection de la barre. config.js a pu peindre un gabarit (même couleur, même
+       hauteur, non cliquable) dès le parsing : on l'efface à l'instant où la vraie barre est là. */
+    var skel0 = doc.getElementById("sti-bnav-skel"); if (skel0) skel0.remove();
+    var skel1 = doc.getElementById("sti-bnav-skel-css"); if (skel1) skel1.remove();
+
     var sheet = doc.createElement("div");
     sheet.id = "sti-bnav-sheet";
     sheet.setAttribute("role", "dialog");
@@ -207,6 +214,55 @@
     doc.addEventListener("keydown", function (e) { if (e.key === "Escape") ouvrirSheet(false); });
     sheet.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("a")) ouvrirSheet(false); });
     window.addEventListener("resize", function () { if (!mq.matches) ouvrirSheet(false); });
+
+    /* v421 (consignes n°2 et n°3) : un onglet — ou un lien du tiroir — qui pointe vers la page
+       où l'on est déjà ne doit PAS « recharger toute la plateforme ». On reste dans le document
+       et on fait ce que l'utilisateur attend : remonter en haut (Accueil, ou un onglet déjà
+       actif) ou glisser jusqu'à la section demandée (#cours, #modules…). Le titre actif suit. */
+    function clicSansRecharge(e) {
+      if (e.defaultPrevented || e.button > 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
+      if (!a) return;
+      var u;
+      try { u = new URL(a.href, location.href); } catch (er) { return; }
+      if (u.origin !== location.origin || u.pathname !== location.pathname) return; /* vrai changement de page : navigation normale */
+      e.preventDefault();
+      var hash = (u.hash || "").replace(/^#/, "");
+      if (hash) {
+        var el = doc.getElementById(hash) || doc.querySelector('[name="' + hash + '"]');
+        if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        else window.scrollTo({ top: 0, behavior: "smooth" });
+        try { history.pushState(null, "", u.pathname + (u.search || "") + "#" + hash); } catch (er) { try { location.hash = hash; } catch (e2) {} }
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        try { if (location.hash) history.pushState(null, "", u.pathname + (u.search || "")); } catch (er) {}
+      }
+      majActif();
+    }
+    nav.addEventListener("click", clicSansRecharge);
+    sheet.addEventListener("click", clicSansRecharge);
+
+    /* Mémoriser le dessin de la barre (couleurs + hauteur) pour le gabarit de config.js. */
+    try {
+      var cs = getComputedStyle(nav);
+      var r = nav.getBoundingClientRect();
+      var h = Math.max(48, Math.min(96, Math.round(r.height)));
+      if (cs.backgroundColor && cs.backgroundColor !== "rgba(0, 0, 0, 0)") {
+        localStorage.setItem("sti-bnav-skel", JSON.stringify({ t: Date.now(), h: h, f: cs.backgroundColor, b: cs.borderTopColor, brd: cs.borderTopWidth || "1.5px" }));
+      }
+    } catch (e) {}
+
+    /* Préchauffage : les deux destinations hors-document des onglets sont demandées à l'inactivité,
+       si bien qu'un clic « Accueil/Exercices » depuis un long cours repart d'un cache chaud. */
+    try {
+      var prechauffe = function () {
+        [R + "index.html", R + "exercices/series-exercices.html"].forEach(function (href) {
+          try { fetch(href, { priority: "low" }).then(function (r) { return r.blob ? r.blob() : null; }).catch(function () {}); } catch (e) {}
+        });
+      };
+      if (window.requestIdleCallback) requestIdleCallback(prechauffe, { timeout: 4000 });
+      else setTimeout(prechauffe, 2500);
+    } catch (e) {}
   }
 
   /* ---------- activation selon la largeur ---------- */
@@ -229,7 +285,7 @@
   (function chargerRoueNuage() {
     try {
       var sc = doc.createElement("script");
-      sc.src = R + "assets/js/roue-nuage.js?v=420";
+      sc.src = R + "assets/js/roue-nuage.js?v=421";
       sc.async = true;
       (doc.head || doc.documentElement).appendChild(sc);
     } catch (e) {}
