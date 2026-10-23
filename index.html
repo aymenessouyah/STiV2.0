@@ -548,6 +548,17 @@
       .brand { flex: 0 0 auto; }
       .topbar-inner { flex-wrap: wrap; }
       .nav { flex-wrap: wrap; justify-content: flex-end; }
+
+      /* v410 : sur téléphone (≤700px), le bouton clair/sombre ne tombe plus à la
+         ligne suivante. La marque accepte de se raccourcir (la définition animée
+         passe à la trappe, elle est décorative ici), et la ligne reste unique.
+         L'aménagement v351 (retour à la ligne volontaire) est conservé au-delà. */
+      @media (max-width: 700px) {
+        .topbar-inner { flex-wrap: nowrap; }
+        .brand { flex: 0 1 auto; min-width: 0; }
+        .wordmark small { display: none; }
+        .nav { flex: 0 0 auto; }
+      }
       @media (max-width: 1240px) and (min-width: 701px) {
         .nav { order: 3; flex: 1 1 100%; justify-content: flex-start; }
       }
@@ -2535,7 +2546,7 @@
     </header>
 
     <!-- ======================= La Cote STI : tableau de bourse des technologies ======================= -->
-    <script src="./assets/js/config.js?v=409"></script>
+    <script src="./assets/js/config.js?v=410"></script>
     <script>
       /* v407 : pré-connexion Supabase dès le haut de page — le bandeau récupère les news de la régie
          sans attendre le coût froid DNS+TLS de la première requête (gagnat typique : 300–900 ms). */
@@ -2575,7 +2586,7 @@
       <div class="cote-ecran"><div class="cote-piste" id="cote-piste" aria-hidden="true"><span class="cote-news">🔔 Cote en cours de chargement…</span></div></div>
       <noscript><span style="padding:0 12px;font-size:12.5px;color:#fbbf24">Cotation du 23/10/2026 : HTML5 &middot; CSS3 &middot; JavaScript ES2026 &middot; SQL:2023 &middot; PHP 8.5.12</span></noscript>
     </aside>
-    <script src="./assets/js/cote-ticker.js?v=409" defer></script>
+    <script src="./assets/js/cote-ticker.js?v=410" defer></script>
 
     <main class="wrap">
       <!-- ======================= Hero ======================= -->
