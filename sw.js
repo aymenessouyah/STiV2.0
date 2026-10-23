@@ -6,12 +6,12 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v402-ticker-news";
+var UPDATE_ID = "v403-regie-news";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./assets/js/admin.js", revision: "ticker-news-v402" },
-  { url: "./admin.html", revision: "ticker-news-v402" },
+  { url: "./assets/js/admin.js", revision: "regie-news-v403" },
+  { url: "./admin.html", revision: "regie-news-v403" },
   { url: "./admin.html", revision: "outil-unique-v399" },
   { url: "./cours/sql-playground.html", revision: "sql-de-poche-v396" },
   { url: "./assets/js/sql-playground.js", revision: "moteur-sql-local-v396" },

@@ -11746,6 +11746,9 @@
    pas de second client Supabase, l’état de session reste unique. */
 (function () {
   "use strict";
+  /* v403 : le script étant classique et la modale située en fin de <body>, l'initiale
+     attend la fin du parse — sinon getElementById renvoie null et le bouton reste inerte. */
+  function initRegieNews() {
   var cfg = window.STI_AUTH || {};
   if (!cfg.URL || !cfg.CLE) return;
   var btn = document.getElementById("btn-news-top");
@@ -11860,4 +11863,7 @@
       })
       .catch(function () { enVol = false; b.disabled = false; b.textContent = "\ud83d\udcbe Enregistrer sur le site"; majStatut("Envoi impossible (réseau ?).", "err"); });
   };
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initRegieNews);
+  else initRegieNews();
 })();
