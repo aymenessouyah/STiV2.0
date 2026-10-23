@@ -1935,6 +1935,7 @@
       <button class="btn-util mob-extra sys-extra-item" id="btn-mains-top" type="button" title="File d'attente des élèves ayant levé la main pour demander de l'aide en TP" style="background:#ede9fe;border-color:#6d28d9;color:#6d28d9"><span class="btn-util-glyph" aria-hidden="true">△</span> <span class="lbl-pc">Mains levées</span><span class="lbl-mob">Aide</span> <span id="badge-mains-top" style="display:none;background:#6d28d9;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
       <button class="btn-util mob-extra sys-extra-item" id="btn-palmares-top" type="button" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)" style="background:linear-gradient(120deg,#fff3b0,#ffd54f);border-color:#23201a;color:#6d4c00"><span class="btn-util-glyph" aria-hidden="true">★</span> <span class="lbl-pc">Palmarès</span><span class="lbl-mob">Top 3</span></button>
       <button class="btn-util mob-extra sys-extra-item" id="btn-refresh" type="button" title="Rafraîchir immédiatement toutes les données"><span class="btn-util-glyph" aria-hidden="true">↻</span> <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-news-top" type="button" title="Régie des news du bandeau « La Cote » de la page d’accueil : saisie, couleurs, ordre, suppression" style="background:#e0f7fa;border-color:#00838f;color:#006064"><span class="btn-util-glyph" aria-hidden="true">📰</span> <span class="lbl-pc">News du bandeau</span><span class="lbl-mob">News</span></button>
 
       <!-- 2. Tiroir « ⚙️ Système & Plus » (évite l'encombrement de l'en-tête sur PC) -->
       <button class="btn-util mob-extra" id="btn-toggle-sys-bar" type="button" title="Afficher ou masquer les outils système (Carte visite, Docteur STI, PIN, README, Alertes)" style="background:#23201a;color:#ffd54f"><span class="btn-util-glyph" aria-hidden="true">⚙</span> <span class="lbl-pc">Système &amp; Plus ▾</span><span class="lbl-mob">Plus ▾</span></button>
@@ -5196,5 +5197,45 @@
 })();
 </script>
 
-</body>
+<!-- ======================= v402 : régie « News du bandeau » (La Cote de l’accueil) ======================= -->
+    <style>
+      #modal-news-bandeau{display:none;position:fixed;inset:0;z-index:9990;background:rgba(10,12,20,.55);align-items:center;justify-content:center;padding:14px}
+      #modal-news-bandeau .news-boite{width:min(660px,100%);max-height:88vh;overflow:auto;background:var(--surface,#ffffff);color:var(--ink,#181a24);border:1.5px solid var(--border,#d8dbe8);border-radius:16px;padding:16px 18px;box-shadow:0 18px 60px rgba(0,0,0,.35)}
+      #modal-news-bandeau .news-titre{font-size:1.05rem;font-weight:900;margin:0 0 4px}
+      #modal-news-bandeau .news-sous{font-size:.8rem;color:var(--muted,#5c6275);margin:0 0 12px}
+      #modal-news-bandeau .news-row{display:flex;gap:8px;align-items:center;margin:6px 0}
+      #modal-news-bandeau .news-row input[type=color]{width:38px;height:34px;border:1.5px solid var(--border,#cccccc);border-radius:9px;background:none;padding:2px;cursor:pointer;flex:0 0 auto}
+      #modal-news-bandeau .news-row input[type=text]{flex:1;min-width:0;border:1.5px solid var(--border,#cccccc);border-radius:9px;padding:7px 10px;font-size:.9rem;background:var(--surface-2,#f8f9fd);color:inherit}
+      #modal-news-bandeau .news-row button{border:1.5px solid var(--border,#cccccc);background:var(--surface-2,#f8f9fd);color:inherit;border-radius:9px;min-width:34px;height:34px;font-weight:900;cursor:pointer}
+      #modal-news-bandeau .news-row .news-remise{color:#a61b29;border-color:#c0392b}
+      #modal-news-bandeau .news-form{display:flex;gap:8px;margin:12px 0 4px}
+      #modal-news-bandeau .news-form input[type=text]{flex:1;min-width:0;border:1.5px solid var(--border,#cccccc);border-radius:9px;padding:7px 10px;font-size:.9rem;background:var(--surface-2,#f8f9fd);color:inherit}
+      #modal-news-bandeau .news-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+      #modal-news-bandeau .news-btn{border-radius:10px;padding:8px 14px;font-weight:800;cursor:pointer;border:1.5px solid #23201a}
+      #modal-news-bandeau .news-btn.ajout{background:#ede9fe;color:#6d28d9}
+      #modal-news-bandeau .news-btn.ok{background:#e7f6ec;color:#177245}
+      #modal-news-bandeau .news-btn.fermer{background:#f1f2f8;color:inherit}
+      #modal-news-bandeau #news-statut{font-size:.78rem;font-weight:700;flex:1;text-align:right}
+      #modal-news-bandeau .news-vide{font-size:.82rem;color:var(--muted,#5c6275);padding:8px 2px}
+      #modal-news-bandeau #news-compteur{font-size:.78rem;color:var(--muted,#5c6275)}
+    </style>
+    <div id="modal-news-bandeau" role="dialog" aria-modal="true" aria-label="Régie des news du bandeau La Cote">
+      <div class="news-boite">
+        <h3 class="news-titre">📰 News du bandeau « La Cote » (page d’accueil)</h3>
+        <p class="news-sous">Jusqu’à 12 messages, lus dans l’ordre par le bandeau défilant ; chacun avec sa couleur. ↑ ↓ pour l’ordre, ✕ pour supprimer. Tant que la liste est vide, l’accueil affiche les dernières lignes du README.</p>
+        <div id="news-liste"></div>
+        <div class="news-form">
+          <input type="color" id="news-couleur" value="#fbbf24" title="Couleur du nouveau message">
+          <input type="text" id="news-texte" maxlength="140" placeholder="Texte de la news (140 caractères max)…">
+          <button type="button" class="news-btn ajout" id="news-ajouter">➕ Ajouter</button>
+        </div>
+        <div class="news-actions">
+          <span id="news-compteur"></span>
+          <button type="button" class="news-btn ok" id="news-enregistrer">💾 Enregistrer sur le site</button>
+          <button type="button" class="news-btn fermer" id="news-fermer">Fermer</button>
+          <span id="news-statut"></span>
+        </div>
+      </div>
+    </div>
+    </body>
 </html>

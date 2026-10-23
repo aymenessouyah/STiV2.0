@@ -11737,3 +11737,127 @@
     });
   }
 })();
+
+
+/* ============================ v402 : régie « News du bandeau » (La Cote de l’accueil) ============================
+   Saisie/couleurs/ordre/suppression des news affichées en continu sur l’accueil.
+   Stockage : table app_config_public, ligne id = "ticker_news" (lecture publique, écriture
+   réservée à l’admin par RLS — même mécanisme que la config des lycées). REST + bearer :
+   pas de second client Supabase, l’état de session reste unique. */
+(function () {
+  "use strict";
+  var cfg = window.STI_AUTH || {};
+  if (!cfg.URL || !cfg.CLE) return;
+  var btn = document.getElementById("btn-news-top");
+  var modal = document.getElementById("modal-news-bandeau");
+  if (!btn || !modal) return;
+  function $(id) { return document.getElementById(id); }
+  var zoneListe = $("news-liste"), statut = $("news-statut"), inT = $("news-texte"), inC = $("news-couleur");
+  var liste = [], modif = false, enVol = false;
+  function hexOk(v) { return /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(String(v || "")); }
+  function nettoyer(l) {
+    var out = [];
+    (l || []).forEach(function (x) {
+      var t = String((x && x.t) || "").replace(/\s+/g, " ").trim().slice(0, 140);
+      if (t && out.length < 12) out.push({ t: t, c: hexOk(x && x.c) ? x.c : "#fbbf24" });
+    });
+    return out;
+  }
+  function bearer() {
+    try {
+      var k = "";
+      for (var i = 0; i < localStorage.length; i++) {
+        var c = localStorage.key(i);
+        if (c && c.indexOf("sb-") === 0 && c.indexOf("-auth-token") > 0) { k = c; break; }
+      }
+      if (!k) return "";
+      var o = JSON.parse(localStorage.getItem(k) || "{}");
+      return (o.currentSession && o.currentSession.access_token) || o.access_token || "";
+    } catch (e) { return ""; }
+  }
+  function majStatut(txt, ton) {
+    statut.textContent = txt || "";
+    statut.style.color = ton === "err" ? "#c0392b" : (ton === "ok" ? "#177245" : "#5c6275");
+  }
+  function rendre() {
+    zoneListe.innerHTML = "";
+    if (!liste.length) {
+      var v = document.createElement("div");
+      v.className = "news-vide";
+      v.textContent = "Aucune news saisie \u2192 l\u2019accueil affiche les derni\u00e8res lignes du README.";
+      zoneListe.appendChild(v);
+    }
+    liste.forEach(function (it, i) {
+      var row = document.createElement("div"); row.className = "news-row";
+      var c = document.createElement("input"); c.type = "color"; c.value = hexOk(it.c) ? it.c : "#fbbf24"; c.title = "Couleur";
+      var t = document.createElement("input"); t.type = "text"; t.value = it.t; t.maxLength = 140;
+      var up = document.createElement("button"); up.type = "button"; up.textContent = "\u2191"; up.title = "Monter";
+      var dn = document.createElement("button"); dn.type = "button"; dn.textContent = "\u2193"; dn.title = "Descendre";
+      var rm = document.createElement("button"); rm.type = "button"; rm.textContent = "\u2715"; rm.title = "Supprimer"; rm.className = "news-remise";
+      c.oninput = function () { it.c = c.value; modif = true; };
+      t.oninput = function () { it.t = t.value; modif = true; };
+      up.onclick = function () { if (i > 0) { var o = liste.splice(i, 1)[0]; liste.splice(i - 1, 0, o); modif = true; rendre(); } };
+      dn.onclick = function () { if (i < liste.length - 1) { var o2 = liste.splice(i, 1)[0]; liste.splice(i + 1, 0, o2); modif = true; rendre(); } };
+      rm.onclick = function () { liste.splice(i, 1); modif = true; rendre(); };
+      row.appendChild(c); row.appendChild(t); row.appendChild(up); row.appendChild(dn); row.appendChild(rm);
+      zoneListe.appendChild(row);
+    });
+    $("news-compteur").textContent = liste.length + "/12 news";
+  }
+  function charger() {
+    var h = { apikey: cfg.CLE, Accept: "application/json" };
+    var tk = bearer();
+    if (tk) h.Authorization = "Bearer " + tk;
+    fetch(cfg.URL + "/rest/v1/app_config_public?select=value,updated_at&id=eq.ticker_news", { headers: h })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (rows) {
+        var v = rows && rows[0] && rows[0].value;
+        liste = nettoyer(v && v.liste);
+        modif = false;
+        rendre();
+        majStatut(rows && rows[0] && rows[0].updated_at ? "Derni\u00e8re version : " + new Date(rows[0].updated_at).toLocaleString("fr-FR") : "Liste vide pour l\u2019instant \u2014 le README sert de repli.", null);
+      })
+      .catch(function () { majStatut("Lecture impossible (r\u00e9seau ?) \u2014 le README sert de repli sur l\u2019accueil.", "err"); });
+  }
+  btn.onclick = function () { modal.style.display = "flex"; charger(); };
+  $("news-fermer").onclick = function () {
+    if (modif && !window.confirm("Des modifications ne sont pas enregistrees. Fermer quand meme ?")) return;
+    modal.style.display = "none";
+  };
+  modal.addEventListener("click", function (e) { if (e.target === modal) $("news-fermer").onclick(); });
+  $("news-ajouter").onclick = function () {
+    var v = String(inT.value || "").trim();
+    if (!v) { inT.focus(); return; }
+    if (liste.length >= 12) { majStatut("Maximum atteint : 12 news.", "err"); return; }
+    liste.push({ t: v.slice(0, 140), c: hexOk(inC.value) ? inC.value : "#fbbf24" });
+    inT.value = "";
+    modif = true;
+    rendre();
+    inT.focus();
+  };
+  inT.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("news-ajouter").onclick(); } });
+  $("news-enregistrer").onclick = function () {
+    if (enVol) return;
+    var tk = bearer();
+    if (!tk) { majStatut("Session expir\u00e9e : reconnectez-vous pour enregistrer.", "err"); return; }
+    var b = this;
+    enVol = true; b.disabled = true; b.textContent = "\u23f3 Envoi\u2026";
+    var payload = { liste: nettoyer(liste), maj: Date.now() };
+    fetch(cfg.URL + "/rest/v1/app_config_public", {
+      method: "POST",
+      headers: { apikey: cfg.CLE, "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates", Authorization: "Bearer " + tk },
+      body: JSON.stringify({ id: "ticker_news", value: payload, updated_at: new Date().toISOString() })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (res) {
+        enVol = false; b.disabled = false; b.textContent = "\ud83d\udcbe Enregistrer sur le site";
+        if (res && res.message) {
+          majStatut("Refusé par la base : " + res.message.slice(0, 140), "err");
+          return;
+        }
+        liste = nettoyer(payload.liste); modif = false; rendre();
+        majStatut("Enregistré \u2014 l\u2019accueil affiche la nouvelle cote \u00e0 son prochain chargement.", "ok");
+      })
+      .catch(function () { enVol = false; b.disabled = false; b.textContent = "\ud83d\udcbe Enregistrer sur le site"; majStatut("Envoi impossible (réseau ?).", "err"); });
+  };
+})();

@@ -1,7 +1,8 @@
-/* STI by AE — « La Cote » : bandeau type tableau de bourse (page d'accueil).
-   Cote officielle des technologies enseignées + dernières nouvelles du README.
-   Pour revoir la cotation : modifier STI_COTE ci-dessous (une seule source de vérité).
-   Aucune dépendance externe ; le fil d'actualité lit README.md (même origine, déjà pré-cache hors-ligne). */
+/* STI by AE — « La Cote » : bandeau type tableau de bourse (page d'accueil) + régie mobile.
+   Sources des news, par ordre de préférence : 1) liste saisie par l'admin (table app_config_public,
+   ligne « ticker_news », couverte de couleur) ; 2) dernieres lignes du README ; 3) secours intégré.
+   Cotations tech : STI_COTE ci-dessous (une seule source de vérité).
+   Aucune dépendance externe. */
 (function () {
   "use strict";
 
@@ -58,6 +59,9 @@
     if (style) s.setAttribute("style", style);
     return s;
   }
+  function couleurSure(c) {
+    return /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(String(c || "")) ? c : "#fbbf24";
+  }
   function itemTech(t) {
     var it = span("cote-item", "");
     it.appendChild(span("cote-sym", t.nom, "color:" + t.couleur));
@@ -65,12 +69,12 @@
     it.appendChild(span("cote-det", t.det));
     return it;
   }
-  function itemNews(txt) {
+  function itemNews(n) {
     var it = span("cote-item", "");
-    it.appendChild(span("cote-news", "\ud83d\udd14 " + txt));
+    it.appendChild(span("cote-news", "\ud83d\udd14 " + n.t, "color:" + couleurSure(n.c)));
     return it;
   }
-  function construire(news) {
+  function construireGroupe(news) {
     var g = document.createDocumentFragment();
     g.appendChild(span("cote-sec", "DERNI\u00c8RES NOUVELLES"));
     news.forEach(function (n) { g.appendChild(itemNews(n)); });
@@ -78,23 +82,59 @@
     STI_COTE.tech.forEach(function (t) { g.appendChild(itemTech(t)); });
     return g;
   }
+  /* Rendu continu droite → gauche : la piste = deux moitiés identiques, chaque moitié répétée
+     assez de fois pour dépasser la largeur d'écran (pas de trou même avec deux news seulement). */
   function render(news) {
-    while (piste.firstChild) piste.removeChild(piste.firstChild);
-    piste.appendChild(construire(news));
-    if (!reduce) {
-      var clone = construire(news);
-      clone.setAttribute("aria-hidden", "true");
-      piste.appendChild(clone);
-      requestAnimationFrame(function () {
-        var moitie = Math.max(piste.scrollWidth / 2, 1);
-        piste.style.animationDuration = Math.max(30, Math.round(moitie / 55)) + "s";
-      });
+    var moitie = 1;
+    function reconstruire() {
+      while (piste.firstChild) piste.removeChild(piste.firstChild);
+      var i;
+      for (i = 0; i < moitie; i++) piste.appendChild(construireGroupe(news));
+      for (i = 0; i < moitie; i++) {
+        var g = construireGroupe(news);
+        g.setAttribute("aria-hidden", "true");
+        piste.appendChild(g);
+      }
     }
+    if (reduce) {
+      while (piste.firstChild) piste.removeChild(piste.firstChild);
+      piste.appendChild(construireGroupe(news));
+      return;
+    }
+    var cible = Math.max((window.innerWidth || 900) * 1.15, 480);
+    reconstruire();
+    requestAnimationFrame(function () {
+      while (moitie < 4 && (piste.scrollWidth || 0) / 2 < cible) { moitie++; reconstruire(); }
+      var demi = Math.max((piste.scrollWidth || 0) / 2, 1);
+      piste.style.animationDuration = Math.max(26, Math.round(demi / 55)) + "s";
+    });
   }
 
-  render(STI_COTE.news_secours);
-
-  if (window.fetch) {
+  function normaliser(l) {
+    if (!l || !l.length) return null;
+    var out = [];
+    for (var i = 0; i < l.length && out.length < 12; i++) {
+      var t = String((l[i] && l[i].t) || "").replace(/\s+/g, " ").trim().slice(0, 140);
+      if (t) out.push({ t: t, c: couleurSure(l[i].c) });
+    }
+    return out.length ? out : null;
+  }
+  function lireAdmin(cb) {
+    var a = window.STI_AUTH || {};
+    if (!a.URL || !a.CLE || !window.fetch) { cb(null); return; }
+    fetch(a.URL + "/rest/v1/app_config_public?select=value&id=eq.ticker_news", {
+      headers: { apikey: a.CLE, Accept: "application/json" },
+      cache: "default"
+    })
+      .then(function (r) { return r && r.ok ? r.json() : []; })
+      .then(function (rows) {
+        var v = rows && rows[0] && rows[0].value;
+        cb(normaliser(v && v.liste));
+      })
+      .catch(function () { cb(null); });
+  }
+  function lireReadme(cb) {
+    if (!window.fetch) { cb([]); return; }
     fetch("./README.md", { cache: "default" })
       .then(function (r) { return r && r.ok ? r.text() : ""; })
       .then(function (txt) {
@@ -106,10 +146,21 @@
           var ver = (cel[1] || "").trim();
           var desc = (cel[2] || "").replace(/[*`]/g, "").replace(/\s+/g, " ").trim();
           if (desc.length > 92) desc = desc.slice(0, 89) + "\u2026";
-          return ver + " \u2014 " + desc;
-        }).filter(function (s) { return s.length > 8; });
-        if (cinq.length) render(cinq);
+          return { t: ver + " \u2014 " + desc, c: "#fbbf24" };
+        }).filter(function (o) { return o.t.length > 8; });
+        cb(cinq);
       })
-      .catch(function () {});
+      .catch(function () { cb([]); });
   }
+  function demarrer() {
+    render(STI_COTE.news_secours.map(function (t) { return { t: t, c: "#fbbf24" }; }));
+    lireAdmin(function (liste) {
+      if (liste) { render(liste); return; }
+      lireReadme(function (n) {
+        if (n.length) render(n);
+      });
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
+  else demarrer();
 })();
