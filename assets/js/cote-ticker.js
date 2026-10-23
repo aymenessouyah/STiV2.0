@@ -123,8 +123,8 @@
     var a = window.STI_AUTH || {};
     if (!a.URL || !a.CLE || !window.fetch) { cb(null); return; }
     fetch(a.URL + "/rest/v1/app_config_public?select=value&id=eq.ticker_news", {
-      headers: { apikey: a.CLE, Accept: "application/json" },
-      cache: "default"
+      headers: { apikey: a.CLE, Accept: "application/json", "Cache-Control": "no-cache" },
+      cache: "no-store"
     })
       .then(function (r) { return r && r.ok ? r.json() : []; })
       .then(function (rows) {
@@ -161,6 +161,17 @@
       });
     });
   }
+  /* v404 : retour d'onglet = relecture des news — après un enregistrement dans l'admin,
+     le bandeau se met à jour sans recharger la page. */
+  var rafraichir = function () {
+    lireAdmin(function (liste) { if (liste) render(liste); });
+  };
+  try {
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) rafraichir();
+    });
+  } catch (e) {}
+
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
   else demarrer();
 })();
