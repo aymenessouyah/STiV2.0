@@ -6,12 +6,12 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v397-observations-fiche";
+var UPDATE_ID = "v398-tiroir-raccourcis";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
   { url: "./assets/js/admin.js", revision: "observations-v397" },
-  { url: "./admin.html", revision: "observations-v397" },
+  { url: "./admin.html", revision: "tiroir-raccourcis-v398" },
   { url: "./cours/sql-playground.html", revision: "sql-de-poche-v396" },
   { url: "./assets/js/sql-playground.js", revision: "moteur-sql-local-v396" },
   { url: "./memo-veille-bac.html", revision: "supabase-local-v395" },
