@@ -9412,7 +9412,9 @@
 
     /* --- Séries d'exercices & Annexes --- */
     { tech: "all", badge: "✏️ Exercices", title: "Séries d'exercices corrigés (CSS3, JS, BD/SQL, PHP)", sub: "Exercices progressifs et problèmes types Bac", url: "exercices/series-exercices.html", kw: "exercices series td corrige revision entrainement" },
-    { tech: "all", badge: "📄 Annexe", title: "Annexe officielle HTML5 / CSS3 / JavaScript", sub: "Aide-mémoire officiel des balises, propriétés et méthodes", url: "documents/annexes/annexe-html-css-js.pdf.html", kw: "annexe pdf html css javascript aide memoire" },
+    { tech: "all", badge: "📄 Annexe", title: "Annexe officielle HTML5", sub: "Aide-mémoire des balises et attributs HTML", url: "documents/annexes/annexe-html5.pdf.html", kw: "annexe pdf html5 balises structure aide memoire" },
+    { tech: "all", badge: "📄 Annexe", title: "Annexe officielle CSS3", sub: "Aide-mémoire des propriétés et sélecteurs CSS", url: "documents/annexes/annexe-css3.pdf.html", kw: "annexe pdf css3 proprietes selecteurs couleurs aide memoire" },
+    { tech: "all", badge: "📄 Annexe", title: "Annexe officielle JavaScript", sub: "Aide-mémoire des méthodes et objets JS", url: "documents/annexes/annexe-javascript.pdf.html", kw: "annexe pdf javascript methodes objets dom aide memoire" },
     { tech: "sql", badge: "📄 Annexe", title: "Annexe officielle SQL", sub: "Aide-mémoire officiel des commandes LDD et LMD", url: "documents/annexes/annexe-sql.pdf.html", kw: "annexe pdf sql aide memoire" },
     /* --- v389 : extension de l'index de recherche globale — termes du glossaire et fiches des Smart Books (generes au build, ne pas editer a la main) --- */
     { tech: "htmlcss", badge: "📔 Glossaire · HTML5", title: "Balise", sub: "EN : Tag · AR : وسم · Mot-clé entre < > qui décrit un élément de la page : <p>, <h1>…", url: "glossaire.html#mot=Balise", kw: "balise tag mot-clé entre < > qui décrit un élément de la page : <p>, <h1>… html5" },

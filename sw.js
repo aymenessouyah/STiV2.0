@@ -6,10 +6,12 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v392-carte-difficultes-admin";
+var UPDATE_ID = "v393-demo-display-3g";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/acces.js", revision: "annexes-recherchees-v393" },
+  { url: "./cours/css3.html", revision: "demo-display-3g-v393" },
   { url: "./assets/js/sync-progressions.js", revision: "sync-general-v391" },
   { url: "./glossaire.html", revision: "sync-general-v391" },
   { url: "./nouveautes.html", revision: "sync-general-v391" },
