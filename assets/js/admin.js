@@ -11467,4 +11467,112 @@
       }
     });
   })();
+
+  /* ==================== v392 : Carte des difficultes par chapitre (Vue d'ensemble) ==================== */
+  (function () {
+    var CHAPITRES = [
+      { cle: "HTML5", slug: "html5-cours", quiz: ["html-css"], pages: ["cours/html5.html", "cours/courshtml5.html", "cours/fiche-revision-html5.html", "cours/datalist.html"] },
+      { cle: "CSS3", slug: "css3-cours", quiz: ["html-css"], pages: ["cours/css3.html", "cours/courscss3.html"] },
+      { cle: "JavaScript", slug: "javascript-cours", quiz: ["javascript"], pages: ["cours/javascript.html", "cours/Recap-JavaScript-STI.html"] },
+      { cle: "SQL", slug: "sql-cours", quiz: ["sql", "pp"], pages: ["cours/sql.html", "cours/sql-bases-ldd-lmd-lcd.html", "cours/sql-contraintes.html"] },
+      { cle: "PHP & MySQLi", slug: "php-cours", quiz: ["php"], pages: ["cours/php.html", "cours/coursphp.html", "cours/php-recap.html", "cours/PHP-recap.html", "cours/php-mysqli.html"] }
+    ];
+    var btnGen = document.getElementById("btn-carte-diff-generer");
+    var selClasse = document.getElementById("carte-diff-classe");
+    var elEtat = document.getElementById("carte-diff-etat");
+    var elCorps = document.getElementById("carte-diff-corps");
+    if (!btnGen || !selClasse || !elEtat || !elCorps) return;
+    function remplirClasses() {
+      try {
+        var vus = {}; var opts = "";
+        (profils || []).forEach(function (p) { var c = String(p.classe || "").trim(); if (c && !vus[c]) vus[c] = 1; });
+        Object.keys(vus).sort().forEach(function (c) { opts += "<option value='" + echHtml(c) + "'>" + echHtml(c) + "</option>"; });
+        var garde = selClasse.value;
+        selClasse.innerHTML = "<option value='*'>Toutes les classes</option>" + opts;
+        if (garde) { try { selClasse.value = garde; } catch (e) {} }
+      } catch (e) {}
+    }
+    setTimeout(remplirClasses, 900);
+    btnGen.addEventListener("click", function () {
+      btnGen.disabled = true; btnGen.textContent = "\u23f3 Calcul\u2026";
+      elEtat.textContent = "Collecte des progressions synchronis\u00e9es et des sessions\u2026";
+      Promise.all([
+        sb.from("acces").select("user_id,lieu,debut").eq("page", "PROG_MEDIA").order("debut", { ascending: false }).limit(4000),
+        sb.from("acces").select("user_id,page,duree_sec,debut").neq("page", "PROG_MEDIA").order("debut", { ascending: false }).limit(8000),
+        sb.from("sti_quiz_parties").select("user_id,quiz,module,score,total").order("cree_le", { ascending: false }).limit(6000)
+      ]).then(function (res) {
+        btnGen.disabled = false; btnGen.textContent = "\ud83d\udcca G\u00e9n\u00e9rer la carte";
+        if (!res[0] || res[0].error) { elEtat.textContent = "\u26a0\ufe0f Progressions m\u00e9dia illisibles : " + ((res[0] && res[0].error && res[0].error.message) || "r\u00e9seau"); return; }
+        var pm = res[0].data || [];
+        var sess = (res[1] && !res[1].error && res[1].data) || [];
+        var quiz = (res[2] && !res[2].error && res[2].data) || [];
+        var classe = selClasse.value;
+        var eleves = (profils || []).filter(function (p) {
+          if (p.statut !== "actif") return false;
+          return classe === "*" ? true : String(p.classe || "") === classe;
+        });
+        var ids = {}; eleves.forEach(function (p) { ids[p.id] = 1; });
+        var n = eleves.length || 1;
+        var progUser = {};
+        pm.forEach(function (r) {
+          if (!ids[r.user_id] || progUser[r.user_id]) return;
+          try { progUser[r.user_id] = (JSON.parse(r.lieu || "{}").m) || {}; } catch (e) { progUser[r.user_id] = {}; }
+        });
+        var vusParChap = {}; var tempsUserChap = {};
+        CHAPITRES.forEach(function (c) { vusParChap[c.cle] = 0; tempsUserChap[c.cle] = {}; });
+        Object.keys(progUser).forEach(function (uid) {
+          var m = progUser[uid] || {};
+          CHAPITRES.forEach(function (c) {
+            var best = 0;
+            Object.keys(m).forEach(function (k) {
+              if ((k === "video:" + c.slug || k === "audio:" + c.slug) && (m[k] || 0) > best) best = m[k];
+            });
+            if (best >= 88) vusParChap[c.cle]++;
+          });
+        });
+        sess.forEach(function (r) {
+          if (!ids[r.user_id]) return;
+          var pg = String(r.page || "").split("#")[0];
+          CHAPITRES.forEach(function (c) {
+            if (c.pages.indexOf(pg) === -1) return;
+            tempsUserChap[c.cle][r.user_id] = (tempsUserChap[c.cle][r.user_id] || 0) + (Number(r.duree_sec) || 0);
+          });
+        });
+        var quizChap = {};
+        CHAPITRES.forEach(function (c) { quizChap[c.cle] = { tot: 0, n: 0 }; });
+        quiz.forEach(function (q) {
+          if (!ids[q.user_id]) return;
+          CHAPITRES.forEach(function (c) {
+            if (c.quiz.indexOf(String(q.module || "")) === -1 && c.quiz.indexOf(String(q.quiz || "")) === -1) return;
+            var tt = Number(q.total) || 0; var sc = Number(q.score) || 0;
+            if (tt > 0) { quizChap[c.cle].tot += (sc / tt) * 100; quizChap[c.cle].n++; }
+          });
+        });
+        var html = "<table class='carte-diff-table'><thead><tr><th>Chapitre</th><th>\ud83d\udcfa \u00c9coute termin\u00e9e</th><th>\ud83c\udfaf R\u00e9ussite quiz</th><th>\u23f1\ufe0f Temps moyen</th><th>Signal</th></tr></thead><tbody>";
+        CHAPITRES.forEach(function (c) {
+          var vusPct = Math.round((vusParChap[c.cle] / n) * 100);
+          var qm = quizChap[c.cle];
+          var qPct = qm.n ? Math.round(qm.tot / qm.n) : null;
+          var tU = tempsUserChap[c.cle]; var tMoy = 0; var nbT = 0;
+          Object.keys(tU).forEach(function (u) { tMoy += tU[u]; nbT++; });
+          var tMin = nbT ? Math.round(tMoy / nbT / 60) : 0;
+          var signal = "vert"; var lbl = "\ud83d\udfe2 Ma\u00eetris\u00e9";
+          if (vusPct < 25 || (qPct != null && qPct < 45)) { signal = "rouge"; lbl = "\ud83d\udd34 Difficile"; }
+          else if (vusPct < 60 || (qPct != null && qPct < 65)) { signal = "orange"; lbl = "\ud83d\udfe0 \u00c0 consolider"; }
+          html += "<tr><td class='carte-diff-nom'><b>" + echHtml(c.cle) + "</b><br><small>" + nbT + " \u00e9l\u00e8ve(s) ont ouvert les pages</small></td>" +
+            "<td>" + vusParChap[c.cle] + "/" + eleves.length + " (" + vusPct + " %)</td>" +
+            "<td>" + (qPct == null ? "\u2014" : qPct + " % <small>(" + qm.n + " partie(s))</small>") + "</td>" +
+            "<td>" + (tMin ? tMin + " min" : "\u2014") + "</td>" +
+            "<td><span class='carte-diff-signal carte-diff-" + signal + "'>" + lbl + "</span></td></tr>";
+        });
+        html += "</tbody></table>";
+        elCorps.innerHTML = html;
+        elEtat.textContent = "\u00c9l\u00e8ves : " + eleves.length + (classe === "*" ? " (toutes classes)" : " (" + classe + ")") + " \u00b7 sources : " + pm.length + " relev\u00e9s m\u00e9dia, " + sess.length + " sessions, " + quiz.length + " parties de quiz \u00b7 " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+        remplirClasses();
+      }).catch(function (err) {
+        btnGen.disabled = false; btnGen.textContent = "\ud83d\udcca G\u00e9n\u00e9rer la carte";
+        elEtat.textContent = "\u274c Erreur : " + ((err && err.message) || "r\u00e9seau");
+      });
+    });
+  })();
 })();

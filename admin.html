@@ -1846,6 +1846,36 @@
     html.admin-ardoise .sti-palette-aide{background:#241e16;border-top-color:#55482e}
     @media(max-width:640px){.sti-palette-boite{margin:6vh 10px 0}}
   </style>
+  <style id="style-carte-diff-v392">
+    .carte-diff-v392{background:#fffdf7;border:2px solid #23201a;border-radius:16px;padding:12px 16px;margin-top:12px;box-shadow:4px 4px 0 rgba(244,81,30,.45)}
+    .carte-diff-entete{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+    .carte-diff-entete b{font-size:14px;color:#23201a}
+    .carte-diff-entete span{font-size:11px;color:#7a6f5d;font-weight:700}
+    .carte-diff-outils{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;font-weight:800;color:#23201a}
+    .carte-diff-outils select{font:inherit;border:2px solid #23201a;border-radius:999px;padding:5px 12px;background:#fff;color:#23201a}
+    #carte-diff-etat{font-size:11px;color:#7a6f5d;font-weight:700}
+    .carte-diff-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+    .carte-diff-table th{background:#f3ead9;border:1.5px solid #23201a;padding:7px 9px;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:#23201a}
+    .carte-diff-table td{border:1.5px solid #e2d5be;padding:7px 9px;background:#fff;color:#23201a;font-weight:700;vertical-align:top}
+    .carte-diff-table td small{color:#7a6f5d;font-weight:700}
+    .carte-diff-signal{display:inline-block;padding:2px 9px;border-radius:999px;border:1.5px solid;font-size:10.5px;font-weight:900;white-space:nowrap}
+    .carte-diff-rouge{background:#fde2e6;border-color:#c0392b;color:#c0392b}
+    .carte-diff-orange{background:#fef3c7;border-color:#b45309;color:#78350f}
+    .carte-diff-vert{background:#dcfce7;border-color:#177245;color:#177245}
+    .carte-diff-nom b{color:#f4511e}
+    html.admin-ardoise .carte-diff-v392{background:#2b241b;border-color:#0f0d0a;color:#f5eddc}
+    html.admin-ardoise .carte-diff-entete b,html.admin-ardoise .carte-diff-outils{color:#f5eddc}
+    html.admin-ardoise .carte-diff-entete span,html.admin-ardoise #carte-diff-etat{color:#b3a488}
+    html.admin-ardoise .carte-diff-outils select{background:#241e16;color:#f5eddc;border-color:#55482e}
+    html.admin-ardoise .carte-diff-table th{background:#3a3122;color:#f5eddc;border-color:#55482e}
+    html.admin-ardoise .carte-diff-table td{background:#241e16;color:#f5eddc;border-color:#3a3122}
+    html.admin-ardoise .carte-diff-table td small{color:#8fa3c4}
+    html.admin-ardoise .carte-diff-rouge{background:#41171d;color:#ff9c9c;border-color:#7a2a30}
+    html.admin-ardoise .carte-diff-orange{background:#3f3210;color:#ffd166;border-color:#6b5310}
+    html.admin-ardoise .carte-diff-vert{background:#14351f;color:#9be6b8;border-color:#1e5c36}
+    html.admin-ardoise .carte-diff-nom b{color:#ff9d85}
+    @media print{#carte-difficultes-admin .carte-diff-outils{display:none}}
+  </style>
 </head>
 <body class="cockpit-airbus">
 
@@ -2003,6 +2033,19 @@
   </div>
 
   <div id="bandeau-machines-labo3" style="display:none;background:#f0f9ff;border:2px solid #0284c7;border-radius:16px;padding:12px 16px;margin-bottom:14px;box-shadow:3.5px 3.5px 0 rgba(2,132,199,.35);font-size:12.5px;color:#0c4a6e"></div>
+
+  <div class="carte-diff-v392" id="carte-difficultes-admin">
+    <div class="carte-diff-entete">
+      <b>🗺️ Carte des difficultés par chapitre</b>
+      <span>Écoutes terminées, réussite aux quiz et temps moyen — calculées à la demande depuis les données synchronisées</span>
+    </div>
+    <div class="carte-diff-outils">
+      <label>Classe : <select id="carte-diff-classe"><option value="*">Toutes les classes</option></select></label>
+      <button type="button" class="btn-outil" id="btn-carte-diff-generer">📊 Générer la carte</button>
+      <small id="carte-diff-etat">Aucune donnée pour le moment — cliquez sur Générer.</small>
+    </div>
+    <div id="carte-diff-corps"></div>
+  </div>
 
   </section>
 
