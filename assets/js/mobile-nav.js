@@ -50,8 +50,8 @@
     ":root{--sti-bnav-h:calc(56px + env(safe-area-inset-bottom,0px))}",
     "#sti-bnav{display:none}",
     "@media (max-width:700px){",
-    "html.sti-bnav-on body{padding-bottom:calc(var(--sti-bnav-h) + 10px)}",
-    "#sti-bnav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:var(--surface,#fffcf3);border-top:1.5px solid var(--border,#e7d9bd);padding-bottom:env(safe-area-inset-bottom,0px);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;box-shadow:0 -6px 18px rgba(15,23,38,.10)}",
+    "html.sti-bnav-on body{padding-bottom:calc(var(--sti-bnav-h) + 10px + var(--sti-bnav-bas,0px))}",
+    "#sti-bnav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;position:fixed;left:0;right:0;bottom:var(--sti-bnav-bas,0px);z-index:2147483000;background:var(--surface,#fffcf3);border-top:1.5px solid var(--border,#e7d9bd);padding-bottom:env(safe-area-inset-bottom,0px);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;box-shadow:0 -6px 18px rgba(15,23,38,.10)}",
     "html[data-theme='dark'] #sti-bnav{background:var(--surface,#121a2b);border-top-color:var(--border,#26314c)}",
     "#sti-bnav *{box-sizing:border-box}",
     "html[data-theme='dark'] #sti-bnav .sti-bnav-i{color:var(--muted,#9aa7c4)}",
@@ -61,20 +61,27 @@
     "@media (max-width:400px){#sti-bnav .sti-bnav-i{font-size:9px;gap:2px}}",
     "html.sti-modal-open #sti-bnav,html.sti-msn-mob-open #sti-bnav{display:none!important}",
     /* flotteurs existants du bas de page : on les pose au-dessus de la barre, sans les toucher ailleurs */
-    "html.sti-bnav-on #sti-btn-messenger-global{bottom:calc(var(--sti-bnav-h) + 10px)!important}",
-    "html.sti-bnav-on #sti-msn-bulle-attention{bottom:calc(var(--sti-bnav-h) + 64px)!important}",
-    "html.sti-bnav-on #sti-auto-to-top{bottom:calc(var(--sti-bnav-h) + 10px)!important}",
+    "html.sti-bnav-on #sti-btn-messenger-global{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 10px)!important}",
+    "html.sti-bnav-on #sti-msn-bulle-attention{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 64px)!important}",
+    "html.sti-bnav-on #sti-auto-to-top{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 118px)!important}",
+    /* v420 (consigne n°2) : idem pour les boutons « haut de page » natifs des pages cours
+       (#to-top des pages CSS/SQL/PHP, #backToTop des pages HTML5). Attention à l'étage :
+       la pastille de diagnostic du labo occupe déjà la bande 14→51 px au-dessus de la barre
+       (règle plus bas), ces boutons-là sont donc posés AU-DESSUS d'elle (+118), sinon leurs
+       clics sont volés par la pastille — z-index 150 contre ~2147483xxx. Le bouton universel
+       monte à l'étage +118 pour la même raison (il cohabite avec la pastille sur l'accueil). */
+    "html.sti-bnav-on #to-top,html.sti-bnav-on #backToTop,html.sti-bnav-on #backToTopBtn,html.sti-bnav-on .to-top,html.sti-bnav-on .back-to-top-btn{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 118px)!important}",
     /* Consigne auteur v414→v416 : le bouton de thème flottant en bas à gauche est éliminé de
        toutes les pages (la création est coupée dans acces.js ; ce plug neutralise les anciennes
        copies d'acces.js qui traîneraient encore dans un cache). Le thème reste accessible :
        barre du haut (bouton Jour/Nuit) + roue ⚙️. */
     "#sti-universal-theme-btn{display:none!important}",
-    "html.sti-bnav-on #sti-sync-pastille{bottom:calc(var(--sti-bnav-h) + 14px)!important}",
-    "html.sti-bnav-on #sti-diagnostic-donnees,html.sti-bnav-on #sti-labo-offline-diagnostic-button{bottom:calc(var(--sti-bnav-h) + 14px)!important}",
+    "html.sti-bnav-on #sti-sync-pastille{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 14px)!important}",
+    "html.sti-bnav-on #sti-diagnostic-donnees,html.sti-bnav-on #sti-labo-offline-diagnostic-button{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 14px)!important}",
     "}",
     /* tiroir « Autres » */
     "#sti-bnav-voile{display:none;position:fixed;inset:0;z-index:2147482990;background:rgba(13,18,30,.45)}",
-    "#sti-bnav-sheet{display:none;position:fixed;left:0;right:0;bottom:var(--sti-bnav-h,56px);z-index:2147482995;max-height:62vh;overflow-y:auto;padding:14px 12px calc(14px + env(safe-area-inset-bottom,0px));gap:8px;grid-template-columns:1fr 1fr;background:var(--surface,#fffcf3);border-top:1.5px solid var(--border,#e7d9bd);border-radius:16px 16px 0 0;box-shadow:0 -10px 24px rgba(15,23,38,.20);font-family:system-ui,-apple-system,'Segoe UI',sans-serif}",
+    "#sti-bnav-sheet{display:none;position:fixed;left:0;right:0;bottom:calc(var(--sti-bnav-h,56px) + var(--sti-bnav-bas,0px));z-index:2147482995;max-height:62vh;overflow-y:auto;padding:14px 12px calc(14px + env(safe-area-inset-bottom,0px));gap:8px;grid-template-columns:1fr 1fr;background:var(--surface,#fffcf3);border-top:1.5px solid var(--border,#e7d9bd);border-radius:16px 16px 0 0;box-shadow:0 -10px 24px rgba(15,23,38,.20);font-family:system-ui,-apple-system,'Segoe UI',sans-serif}",
     "html[data-theme='dark'] #sti-bnav-sheet{background:var(--surface,#121a2b);border-top-color:var(--border,#26314c)}",
     "html.sti-bnav-sheet-open #sti-bnav-voile{display:block}",
     "html.sti-bnav-sheet-open #sti-bnav-sheet{display:grid}",
@@ -222,10 +229,32 @@
   (function chargerRoueNuage() {
     try {
       var sc = doc.createElement("script");
-      sc.src = R + "assets/js/roue-nuage.js?v=418";
+      sc.src = R + "assets/js/roue-nuage.js?v=420";
       sc.async = true;
       (doc.head || doc.documentElement).appendChild(sc);
     } catch (e) {}
+  })();
+
+  /* v420 (consigne n°1) : « quand on monte en haut complètement, la barre en bas se cache ».
+     Sur téléphone, revenir en haut du page fait réapparaître la barre d'URL (Chrome Android)
+     ou la barre d'onglets (Safari iOS) : elle se peint PAR-DESSUS le bas de l'écran, et un
+     élément `position:fixed;bottom:0` n'en sait rien → la barre semblait disparaître (surtout
+     visible sur les longs cours html5/css3/sql, qu'on parcourt de haut en bas). La visualViewport
+     connaît la zone réellement visible : on en déduit la hauteur d'UI et on pose tout le matériel
+     fixé en bas juste au-dessus. Sur ordinateur la différence est nulle → strictement inchangé. */
+  (function suivreVue() {
+    var vv = window.visualViewport;
+    if (!vv || !vv.addEventListener) return;
+    function caler() {
+      var bas = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+      var cur = doc.documentElement.style.getPropertyValue("--sti-bnav-bas");
+      if (cur !== bas + "px") doc.documentElement.style.setProperty("--sti-bnav-bas", bas + "px");
+    }
+    vv.addEventListener("resize", caler);
+    vv.addEventListener("scroll", caler);
+    window.addEventListener("resize", caler, { passive: true });
+    window.addEventListener("orientationchange", function () { setTimeout(caler, 120); });
+    caler();
   })();
 
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", appliquer);
