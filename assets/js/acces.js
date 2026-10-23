@@ -14279,7 +14279,12 @@
       appliquerThemeGlobal(sauvTh);
     }
 
-    if (document.body && !document.getElementById("theme-toggle") && !document.querySelector("[data-theme-toggle]")) {
+    /* v416 (consigne auteur) : le bouton flottant « ☀️/🌙 Mode » en bas à gauche est éliminé de
+       toutes les pages — le mode sombre/clair se pilote déjà par le bouton de la barre du haut
+       (conservé v410/v411) et par le panneau thème de la roue ⚙️. On ne crée plus le bouton ;
+       l'application du thème enregistré, tout au long de cette fonction, reste inchangée. */
+    var creerBoutonThemeFlottant = false;
+    if (creerBoutonThemeFlottant && document.body && !document.getElementById("theme-toggle") && !document.querySelector("[data-theme-toggle]")) {
       var bTh = document.createElement("button");
       bTh.type = "button";
       bTh.id = "sti-universal-theme-btn";

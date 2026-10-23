@@ -6,10 +6,15 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v415-manifeste-corrige";
+var UPDATE_ID = "v416-haut-souleve-theme-flottant-hors-jeu";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/acces.js", revision: "bnet-haut-v416" },
+  { url: "./assets/js/mobile-nav.js", revision: "bnet-haut-v416" },
+  { url: "./assets/js/config.js", revision: "bnet-haut-v416" },
+  { url: "./index.html", revision: "bnet-haut-v416" },
+  { url: "./memo-veille-bac.html", revision: "bnet-haut-v416" },
   { url: "./assets/js/mobile-nav.js", revision: "bnav-admin-out-v414" },
   { url: "./assets/js/config.js", revision: "bnav-admin-out-v414" },
   { url: "./index.html", revision: "bnav-admin-out-v414" },

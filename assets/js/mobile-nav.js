@@ -60,7 +60,12 @@
     /* flotteurs existants du bas de page : on les pose au-dessus de la barre, sans les toucher ailleurs */
     "html.sti-bnav-on #sti-btn-messenger-global{bottom:calc(var(--sti-bnav-h) + 10px)!important}",
     "html.sti-bnav-on #sti-msn-bulle-attention{bottom:calc(var(--sti-bnav-h) + 64px)!important}",
-    "html.sti-bnav-on #sti-universal-theme-btn{bottom:calc(var(--sti-bnav-h) + 52px)!important}",
+    "html.sti-bnav-on #sti-auto-to-top{bottom:calc(var(--sti-bnav-h) + 10px)!important}",
+    /* Consigne auteur v414→v416 : le bouton de thème flottant en bas à gauche est éliminé de
+       toutes les pages (la création est coupée dans acces.js ; ce plug neutralise les anciennes
+       copies d'acces.js qui traîneraient encore dans un cache). Le thème reste accessible :
+       barre du haut (bouton Jour/Nuit) + roue ⚙️. */
+    "#sti-universal-theme-btn{display:none!important}",
     "html.sti-bnav-on #sti-sync-pastille{bottom:calc(var(--sti-bnav-h) + 14px)!important}",
     "html.sti-bnav-on #sti-diagnostic-donnees,html.sti-bnav-on #sti-labo-offline-diagnostic-button{bottom:calc(var(--sti-bnav-h) + 14px)!important}",
     "}",
