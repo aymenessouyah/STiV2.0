@@ -135,6 +135,7 @@ Harmonisées sur **tous** les supports (site, livres, fiches) :
 
 ## 🕘 Historique des versions
 
+- **v413 — barre de navigation mobile en bas de l'écran** : sur toutes les pages en dessous de 700 px, une barre fixe propose Accueil · Exercices · Quiz · Autres ; « Autres » ouvre un tiroir vers les autres sections (cours, livres, progression, glossaire, outils du bac, portail…). Elle se masque avec les modales, soulève les flotteurs du bas et respecte le thème clair/sombre. Mécanisme : injection depuis config.js (+ script direct sur les 2 pages orphelines), sw `v413-barre-basse`.
 | Version | Contenu |
 |---|---|
 | v358 | Synchronisation centrale des quiz (parties + questions vues entre appareils) |
