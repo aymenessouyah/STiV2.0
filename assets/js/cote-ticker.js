@@ -30,6 +30,7 @@
     } catch (e) {}
   })();
 
+  var MOTEUR = "v405"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
   var STI_COTE = {
     maj: "23/10/2026",
     tech: [
@@ -78,7 +79,7 @@
     var g = document.createDocumentFragment();
     g.appendChild(span("cote-sec", "DERNI\u00c8RES NOUVELLES"));
     news.forEach(function (n) { g.appendChild(itemNews(n)); });
-    g.appendChild(span("cote-sec", "CORBEILLE TECH \u00b7 COT\u00c9E AU " + STI_COTE.maj));
+    g.appendChild(span("cote-sec", "CORBEILLE TECH \u00b7 MOTEUR " + MOTEUR + " \u00b7 COT\u00c9E AU " + STI_COTE.maj));
     STI_COTE.tech.forEach(function (t) { g.appendChild(itemTech(t)); });
     return g;
   }
