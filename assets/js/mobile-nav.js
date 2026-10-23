@@ -27,7 +27,9 @@
   var pnNet = location.pathname.replace(/\/$/, "");
   if (/(^|\/)admin(\.html)?$/i.test(pnNet)) return;
 
-  /* Racine réelle du site. On ne fait PAS confiance à STI_AUTH.RACINE : son regex ignore
+  /* Racine réelle du site, recalculée ici (depuis v417 le STI_AUTH.RACINE de config.js est
+     devenu correct partout, mais le module reste autonome — un vieux cache de config.js ne
+     doit pas casser la barre). Sans confiance : son ancien regex ignorait
      les pages utilitaires à la racine (glossaire, nouveautes, livre-smart…) et produit alors
      « /glossaire.html/ » — des liens morts. Algorithme sûr : on coupe au premier segment de
      section connu (/cours/, /quiz/, /exercices/…), sinon on retire le nom de fichier ; le

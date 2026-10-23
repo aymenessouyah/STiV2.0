@@ -6,10 +6,13 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v416-haut-souleve-theme-flottant-hors-jeu";
+var UPDATE_ID = "v417-racine-reglee-partout";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/config.js", revision: "racine-v417" },
+  { url: "./assets/js/mobile-nav.js", revision: "racine-v417" },
+  { url: "./index.html", revision: "racine-v417" },
   { url: "./assets/js/acces.js", revision: "bnet-haut-v416" },
   { url: "./assets/js/mobile-nav.js", revision: "bnet-haut-v416" },
   { url: "./assets/js/config.js", revision: "bnet-haut-v416" },
