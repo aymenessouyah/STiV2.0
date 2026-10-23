@@ -135,6 +135,7 @@ Harmonisées sur **tous** les supports (site, livres, fiches) :
 
 ## 🕘 Historique des versions
 
+- **v415 — correction du manifeste du service worker** : l'entrée du guide SQL ajoutée en v413 était mal orthographiée (« unereête » au lieu de « requête ») et renvoyait un 404 lors de la migration incrémentale ; chemin corrigé (forme accentuée brute, comme les autres entrées) et révision `bnav-admin-out-v415` pour que les clients déjà passés par v413 retentent le téléchargement. sw `v415-manifeste-corrige`.
 - **v414 — précisions barre mobile** : le tableau de bord (admin.html) est explicitement exclu du mécanisme (aucun style, aucune barre, aucun padding) ; les boutons flottants existants (messenger, thème clair/sombre universel, pastille de synchro, diagnostics) sont garantis visibles et cliquables au-dessus de la barre. sw `v414-tableau-de-bord-epargne`.
 - **v413 — barre de navigation mobile en bas de l'écran** : sur toutes les pages en dessous de 700 px, une barre fixe propose Accueil · Exercices · Quiz · Autres ; « Autres » ouvre un tiroir vers les autres sections (cours, livres, progression, glossaire, outils du bac, portail…). Elle se masque avec les modales, soulève les flotteurs du bas et respecte le thème clair/sombre. Mécanisme : injection depuis config.js (+ script direct sur les 2 pages orphelines), sw `v413-barre-basse`.
 | Version | Contenu |

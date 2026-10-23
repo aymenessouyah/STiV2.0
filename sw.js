@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v414-tableau-de-bord-epargne";
+var UPDATE_ID = "v415-manifeste-corrige";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
@@ -17,7 +17,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/mobile-nav.js", revision: "bnav-mobile-v413" },
   { url: "./index.html", revision: "bnav-mobile-v413" },
   { url: "./exercices/javascript/js-37-defis-tt.html", revision: "bnav-mobile-v413" },
-  { url: "./exercices/sql/CommentConstruireunere%C3%AAteSQL.html", revision: "bnav-mobile-v413" },
+  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "bnav-admin-out-v415" },
   { url: "./assets/js/admin.js", revision: "news-switch-v406" },
   { url: "./admin.html", revision: "news-switch-v406" },
   { url: "./admin.html", revision: "outil-unique-v399" },
