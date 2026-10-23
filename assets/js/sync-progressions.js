@@ -57,6 +57,19 @@
             localStorage.setItem(CLE_SYNC_MAJ, String(distant));
             dernierHash = hash(collecter());
             pastille("☁️ Progression restaurée depuis le cloud", "#e8f5e9");
+            /* Consigne auteur v422 : l'annonce de restauration ne reste affichée QUE deux
+               secondes, puis la pastille retrouve son état ordinaire « synchronisée » —
+               et seulement si rien d'autre ne l'a remplacée entre-temps (une coupure réseau
+               survenue pendant le compte à rebours annonce « cet appareil seulement » et
+               garde la main). La pastille elle-même ne disparaît pas : en v418 l'auteur
+               l'a voulue durables dans la roue ⚙️, c'est le message qui est temporaire. */
+            setTimeout(function () {
+              try {
+                var elA = document.getElementById("sti-sync-pastille");
+                if (elA && String(elA.textContent).indexOf("Progression restaurée") !== -1)
+                  pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9");
+              } catch (eA) {}
+            }, 2000);
             /* Mettre à jour les cases à cocher en mémoire sans recharger la page ni bloquer le nouvel onglet */
             try {
               var cbs = document.getElementsByClassName("bord-notion");
