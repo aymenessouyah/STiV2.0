@@ -10005,7 +10005,10 @@
       var toast = document.createElement("div");
       toast.id = "sti-resume-toast";
       toast.className = "sti-no-print";
-      toast.style.cssText = "position:fixed;left:14px;bottom:14px;z-index:2147483644;background:#fffdf7;color:#23201a;border:2.5px solid #23201a;border-radius:16px;padding:10px 13px;box-shadow:5px 5px 0 #f4511e,0 12px 28px rgba(0,0,0,.3);display:flex;align-items:center;gap:10px;max-width:min(430px,calc(100vw - 90px));font:700 12.5px/1.35 system-ui,'Segoe UI',sans-serif;color-scheme:light;";
+      /* v419 (consigne auteur) : la bulle se place à GAUCHE, au MILIEU vertical — en miroir de
+         la roue ⚙️ (droite, milieu) — et plus en bas à gauche, où elle chevauchait la barre de
+         navigation mobile et le tiroir. */
+      toast.style.cssText = "position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:2147483644;background:#fffdf7;color:#23201a;border:2.5px solid #23201a;border-radius:16px;padding:10px 13px;box-shadow:5px 5px 0 #f4511e,0 12px 28px rgba(0,0,0,.3);display:flex;align-items:center;gap:10px;max-width:min(430px,calc(100vw - 96px));font:700 12.5px/1.35 system-ui,'Segoe UI',sans-serif;color-scheme:light;";
       var labelChap = saved.sectionTitle ? saved.sectionTitle : ("Progression " + saved.pct + " %");
       toast.innerHTML =
         "<span style='font-size:18px;flex-shrink:0'>📍</span>" +

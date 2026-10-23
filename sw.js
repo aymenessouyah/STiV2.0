@@ -6,10 +6,12 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v418-barre-cinq-et-roue-nuage";
+var UPDATE_ID = "v419-bulle-milieu-gauche";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/acces.js", revision: "resume-milieu-v419" },
+  { url: "./index.html", revision: "resume-milieu-v419" },
   { url: "./assets/js/mobile-nav.js", revision: "bnav-roue-v418" },
   { url: "./assets/js/roue-nuage.js", revision: "bnav-roue-v418" },
   { url: "./assets/js/config.js", revision: "bnav-roue-v418" },
