@@ -285,7 +285,7 @@
   (function chargerRoueNuage() {
     try {
       var sc = doc.createElement("script");
-      sc.src = R + "assets/js/roue-nuage.js?v=421";
+      sc.src = R + "assets/js/roue-nuage.js?v=423";
       sc.async = true;
       (doc.head || doc.documentElement).appendChild(sc);
     } catch (e) {}

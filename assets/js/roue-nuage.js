@@ -5,7 +5,8 @@
    (pastille de sync-progressions.js, boîtier de mobile-diagnostics.js) dans un bloc
    « ☁️ Nuage & réseau » du panneau de la roue, où ils gardent toute leur vie (texte en direct,
    détail au clic, Actualiser, Libérer le cache, mise à jour toutes les 5 s…).
-   Hors roue, ils sont masqués (classe .dans-roue : seuls visibles). Si le module ne peut pas
+   Hors roue, ils sont masqués (classe .dans-roue : seuls visibles). Depuis v423, le
+   boîtier Normal/Économie est masqué MÊME sur les pages sans roue : il ne vit que dans la roue. Si le module ne peut pas
    tourner (page sans roue, ancien cache), rien ne change : les flotteurs restent comme avant —
    la règle de masquage vit ICI et ne s'applique donc que si cette logique est active.
    Le panneau de la roue pouvant être reconstruit à chaque ouverture, une veille légère re-verse
@@ -22,9 +23,13 @@
   var st = doc.createElement("style");
   st.id = "sti-roue-nuage-css";
   st.textContent =
-    /* le masquage ne s'active qu'une fois la roue ⚙️ repérée sur la page : sans roue, rien
-       ne disparaît jamais (les modules d'origine gardent leurs flotteurs tels quels) */
-    "html.sti-roue-dispo #sti-sync-pastille:not(.dans-roue),html.sti-roue-dispo #sti-diagnostic-donnees:not(.dans-roue){display:none!important}" +
+    /* v423 (consigne auteur, « idem pour Normal — le laisser dans la roue seulement ») :
+       le boîtier « 📶 Normal / Économie » est masqué PARTOUT hors de la roue, y compris sur les
+       pages qui n'ont pas de roue — il n'existe plus qu'à l'intérieur du panneau. La pastille
+       cloud, elle, garde la règle de v418 (masquée seulement quand la roue est là), car c'est
+       elle qui porte les annonces dont l'auteur veut vérifier l'affichage (v422). */
+    "#sti-diagnostic-donnees:not(.dans-roue){display:none!important}" +
+    "html.sti-roue-dispo #sti-sync-pastille:not(.dans-roue){display:none!important}" +
     "#sti-pan-nuage .dans-roue{width:100%;max-width:none;box-sizing:border-box}" +
     "#sti-pan-nuage #sti-diagnostic-detail{max-height:32vh;overflow:auto}";
   (doc.head || doc.documentElement).appendChild(st);

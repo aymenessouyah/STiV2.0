@@ -6,10 +6,14 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v422-annonce-restauration-2s";
+var UPDATE_ID = "v423-normal-dans-la-roue-seule";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/roue-nuage.js", revision: "roue-seule-v423" },
+  { url: "./assets/js/config.js", revision: "roue-seule-v423" },
+  { url: "./assets/js/mobile-nav.js", revision: "roue-seule-v423" },
+  { url: "./index.html", revision: "roue-seule-v423" },
   { url: "./assets/js/sync-progressions.js", revision: "annonce22" },
   { url: "./assets/js/config.js", revision: "clic21" },
   { url: "./assets/js/mobile-nav.js", revision: "clic21" },
