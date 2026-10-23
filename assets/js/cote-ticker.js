@@ -6,31 +6,11 @@
 (function () {
   "use strict";
 
-  /* --- Mobile (≤700px) : le bandeau se glisse sous le hero, après les gros boutons
-     « Choisir un quiz » / « Voir les cours & exercices », pour ne rien pousser hors cadre.
-     PC : il reste sous la barre de navigation. La bascule suit les changements de largeur. --- */
-  (function placerCote() {
-    try {
-      if (!window.matchMedia) return;
-      var mq = matchMedia("(max-width:700px)");
-      var appliquer = function () {
-        var cote = document.getElementById("cote-sti");
-        var main = document.querySelector("main.wrap");
-        var hero = main && main.querySelector("section.hero");
-        if (!cote || !main || !hero) return;
-        if (mq.matches) {
-          if (cote.parentNode !== main) main.insertBefore(cote, hero.nextSibling);
-        } else if (cote.parentNode === main) {
-          document.body.insertBefore(cote, main);
-        }
-      };
-      appliquer();
-      if (mq.addEventListener) mq.addEventListener("change", appliquer);
-      else if (mq.addListener) mq.addListener(appliquer);
-    } catch (e) {}
-  })();
+  /* v408 : plus de déplacement JS sous le hero — sur mobile le bandeau était poussé
+     hors du premier écran (y≈1135) et les news devenaient invisibles. Il reste en
+     haut de page sur TOUTES les tailles ; le CSS ≤700px en fait une carte compacte. */
 
-  var MOTEUR = "v407"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
+  var MOTEUR = "v408"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
   var STI_COTE = {
     maj: "23/10/2026",
     tech: [
@@ -95,7 +75,10 @@
       for (i = 0; i < moitie; i++) piste.appendChild(construireGroupe(news));
       for (i = 0; i < moitie; i++) {
         var g = construireGroupe(news);
-        g.setAttribute("aria-hidden", "true");
+        /* v408 : setAttribute est interdit sur un DocumentFragment (TypeError en vrai
+           navigateur) — on marque chaque enfant de la moitié dupliquée, un par un. */
+        var kids = g.childNodes ? Array.prototype.slice.call(g.childNodes) : [];
+        for (var k = 0; k < kids.length; k++) { try { kids[k].setAttribute("aria-hidden", "true"); } catch (e0) {} }
         piste.appendChild(g);
       }
     }
@@ -105,7 +88,11 @@
       return;
     }
     var cible = Math.max((window.innerWidth || 900) * 1.15, 480);
-    reconstruire();
+    try { reconstruire(); } catch (errR) {
+      /* le bandeau doit vivre même si une reconstruite échoue : rendu simple en secours */
+      while (piste.firstChild) piste.removeChild(piste.firstChild);
+      piste.appendChild(construireGroupe(news));
+    }
     requestAnimationFrame(function () {
       while (moitie < 4 && (piste.scrollWidth || 0) / 2 < cible) { moitie++; reconstruire(); }
       var demi = Math.max((piste.scrollWidth || 0) / 2, 1);
