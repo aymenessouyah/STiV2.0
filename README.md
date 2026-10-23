@@ -107,6 +107,8 @@ La **classe** affichée vient du champ `classe` du profil (section Abonnés). Li
 
 | Fichier | Objet |
 |---|---|
+| `MIGRATION-v312-CONFIRMATION-POSTES.sql` | Confirmation des postes du labo |
+| `MIGRATION-v314-LABO3-COMPLETE.sql` | Complément salle informatique (labo 3) |
 | `MIGRATION-v358-QUIZ-SYNC.sql` | Tables `sti_quiz_parties` et `sti_quiz_vus` |
 | `MIGRATION-v365-REPONSES.sql` | Table `sti_quiz_reponses` (détail question par question) |
 | `documents/sql/sti_progressions.sql` | Table `sti_progressions` (miroir de progression multi-appareils) |
