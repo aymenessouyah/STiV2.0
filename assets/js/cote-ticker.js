@@ -10,7 +10,7 @@
      hors du premier écran (y≈1135) et les news devenaient invisibles. Il reste en
      haut de page sur TOUTES les tailles ; le CSS ≤700px en fait une carte compacte. */
 
-  var MOTEUR = "v410"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
+  var MOTEUR = "v411"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
   var STI_COTE = {
     maj: "23/10/2026",
     tech: [
