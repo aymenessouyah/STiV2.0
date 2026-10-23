@@ -169,6 +169,7 @@ Harmonisées sur **tous** les supports (site, livres, fiches) :
 | v404 | 🔄 News de la régie lues en « no-store » (plus de copie périmée du navigateur) et relecture automatique au retour d’onglet : après « Enregistrer » dans l’admin, le bandeau de l’accueil passe à jour sans rechargement |
 | v405 | 🏷️ Le bandeau affiche son « MOTEUR vNNN » en clair + cache-buster `?v=` sur le module : fini de deviner si l’écran montre une vieille copie du cache |
 | v406 | ⏱️→ Sens de défilement inversé (gauche → droite) + dans la régie news, case « News visibles sur l’accueil » : décochée, le bandeau retire les news (liste conservée, rien ne sont supprimées) et n’affiche plus que la corbeille tech |
+| v407 | ⚡ Le bandeau ne montre plus jamais de vieux texte en attendant la réponse : premier cadre = corbeille tech seule, les news de la régie arrivent dès la réponse (timeout 3,5 s + pré-connexion Supabase en haut de page pour tuer le froid TLS) |
 
 ---
 

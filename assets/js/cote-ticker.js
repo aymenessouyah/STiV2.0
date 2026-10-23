@@ -30,7 +30,7 @@
     } catch (e) {}
   })();
 
-  var MOTEUR = "v406"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
+  var MOTEUR = "v407"; /* visible dans le bandeau : permet de vérifier d’un coup d’œil que l’élève (ou l’admin) fait bien tourner la version du jour */
   var STI_COTE = {
     maj: "23/10/2026",
     tech: [
@@ -125,16 +125,26 @@
   function lireAdmin(cb) {
     var a = window.STI_AUTH || {};
     if (!a.URL || !a.CLE || !window.fetch) { cb(null); return; }
-    fetch(a.URL + "/rest/v1/app_config_public?select=value&id=eq.ticker_news", {
+    var fait = false;
+    var once = function (x) { if (!fait) { fait = true; cb(x); } };
+    var opts = {
       headers: { apikey: a.CLE, Accept: "application/json", "Cache-Control": "no-cache" },
       cache: "no-store"
-    })
+    };
+    try {
+      if (typeof AbortController !== "undefined") {
+        var ctl = new AbortController();
+        opts.signal = ctl.signal;
+        setTimeout(function () { try { ctl.abort(); } catch (e) {} }, 3500);
+      }
+    } catch (e) {}
+    fetch(a.URL + "/rest/v1/app_config_public?select=value&id=eq.ticker_news", opts)
       .then(function (r) { return r && r.ok ? r.json() : []; })
       .then(function (rows) {
         var v = rows && rows[0] && rows[0].value;
-        cb({ liste: normaliser(v && v.liste), actif: !(v && v.actif === false) });
+        once({ liste: normaliser(v && v.liste), actif: !(v && v.actif === false) });
       })
-      .catch(function () { cb(null); });
+      .catch(function () { once(null); });
   }
   function lireReadme(cb) {
     if (!window.fetch) { cb([]); return; }
@@ -156,15 +166,27 @@
       .catch(function () { cb([]); });
   }
   function demarrer() {
-    render(STI_COTE.news_secours.map(function (t) { return { t: t, c: "#fbbf24" }; }));
+    /* v407 : premier cadre = corbeille tech seule, sans aucun « vieux texte ».
+       Les news de la régie glissent dedans dès réception ; en cas d'échec réseau,
+       le repli README/secours s'affiche à la place (et jamais avant la réponse). */
+    render(null);
+    var secouru = false;
+    function secoursRapide() {
+      if (secouru) return;
+      secouru = true;
+      lireReadme(function (n) {
+        if (n.length) render(n);
+        else render(STI_COTE.news_secours.map(function (t) { return { t: t, c: "#fbbf24" }; }));
+      });
+    }
+    var delai = setTimeout(secoursRapide, 3500);
     lireAdmin(function (etat) {
+      clearTimeout(delai);
       if (etat) {
         if (etat.actif === false) { render(null); return; }
         if (etat.liste) { render(etat.liste); return; }
       }
-      lireReadme(function (n) {
-        if (n.length) render(n);
-      });
+      secoursRapide();
     });
   }
   /* v404 : retour d'onglet = relecture des news — après un enregistrement dans l'admin,
