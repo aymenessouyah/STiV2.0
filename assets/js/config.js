@@ -20,6 +20,31 @@ window.STI_AUTH = {
   ADMIN: "aymenessouyah@gmail.com"
 };
 
+/* v441 : si Supabase renvoie un lien « mot de passe oublié » sur Site URL (index.html ou une autre
+   page au lieu de portail.html), transférer immédiatement ?search et #hash intacts vers portail.html
+   avant que acces.js ne restaure une ancienne session ou n'écrase les jetons avec #connexion. */
+(function () {
+  try {
+    if (typeof location === "undefined" || !/^https?:$/.test(location.protocol)) return;
+    var pn = String(location.pathname || "").replace(/\/+$/, "");
+    if (pn.indexOf("/tests/") !== -1 || /(^|\/)portail(\.html)?$/i.test(pn)) return;
+    var qs = new URLSearchParams(location.search || "");
+    var hs = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+    var errCode = String(qs.get("error_code") || hs.get("error_code") || "");
+    var errDesc = String(qs.get("error_description") || hs.get("error_description") || "");
+    var estRecup = qs.get("mode") === "recovery" ||
+      qs.get("type") === "recovery" ||
+      hs.get("type") === "recovery" ||
+      Boolean(qs.get("token_hash") || hs.get("token_hash")) ||
+      Boolean(hs.get("access_token") && hs.get("refresh_token")) ||
+      /^(otp_expired|otp_disabled|flow_state_expired|flow_state_not_found|bad_code_verifier)$/i.test(errCode) ||
+      Boolean((qs.get("error") === "access_denied" || hs.get("error") === "access_denied") && /otp|expired|token|recovery/i.test(errDesc));
+    if (estRecup && window.STI_AUTH && window.STI_AUTH.RACINE) {
+      location.replace(window.STI_AUTH.RACINE + "portail.html" + (location.search || "") + (location.hash || ""));
+    }
+  } catch (e) {}
+})();
+
 /* v413 — barre de navigation mobile en bas d'écran (Accueil · Exercices · Quiz · Autres).
    Le chargeur vit ici car config.js est le seul script présent sur TOUTES les pages du site :
    rien à toucher dans les 33 fichiers HTML. Toute la logique est dans assets/js/mobile-nav.js

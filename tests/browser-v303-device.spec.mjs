@@ -120,3 +120,28 @@ test('lien de récupération expiré clairement signalé', async ({ page }) => {
   await expect(page.locator('#b-nouveau-mdp')).toBeDisabled();
   await expect(page.locator('#b-nouveau-lien')).toBeEnabled();
 });
+
+test('secours v441 : collage d’un lien localhost:3000 ou saisie d’un code à 6 chiffres', async ({ page }) => {
+  await page.goto('/tests/password-recovery-harness.html');
+  await page.locator('#tab-oubli').click();
+  await page.locator('#btn-toggle-secours-oubli').click();
+  await expect(page.locator('#zone-secours-oubli')).toBeVisible();
+
+  await page.locator('#o-code-oubli').fill('https://vywujxmepvcbgedgmger.supabase.co/auth/v1/verify?token=0705f3b2996621153c0a8dfd504b537bcd2ad8df6ecfc11c84ce0f79&type=recovery&redirect_to=http://localhost:3000');
+  await page.locator('#b-verif-oubli').click();
+
+  await expect(page.locator('#f-nouveau-mdp')).toBeVisible();
+  await expect(page.locator('.onglets')).toBeHidden();
+  await expect(page.locator('#msg')).toContainText('Lien vérifié');
+
+  await page.locator('#n-mdp').fill('NouveauMdp2026!');
+  await page.locator('#n-mdp2').fill('NouveauMdp2026!');
+  await page.locator('#b-nouveau-mdp').click();
+  await expect(page.locator('#msg')).toContainText('Mot de passe modifié');
+  await expect(page.locator('.onglets')).toBeVisible();
+
+  const calls = await page.evaluate(() => window.__calls);
+  expect(calls.some(c => c.name === 'verifyOtp' && c.args.token_hash === '0705f3b2996621153c0a8dfd504b537bcd2ad8df6ecfc11c84ce0f79' && c.args.type === 'recovery')).toBeTruthy();
+  expect(calls.some(c => c.name === 'updateUser' && c.args.password === 'NouveauMdp2026!')).toBeTruthy();
+});
+

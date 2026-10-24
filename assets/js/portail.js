@@ -412,6 +412,8 @@
         }
       }
       document.getElementById("zone-code").hidden = true;
+      var fNouveauMdp = document.getElementById("f-nouveau-mdp");
+      if (fNouveauMdp) fNouveauMdp.hidden = true;
       Object.keys(tabs).forEach(function (t) {
         document.getElementById(tabs[t]).hidden = t !== id;
         document.getElementById(t).classList.toggle("actif", t === id);
@@ -444,7 +446,7 @@
     msg("📨 Saisissez votre adresse pour recevoir un nouveau lien de récupération.", "att");
   }
 
-  if (modeRecuperationMdpV307 && window.STI_PASSWORD_RECOVERY) {
+  if (window.STI_PASSWORD_RECOVERY) {
     window.STI_PASSWORD_RECOVERY.start({
       sb: sb,
       root: cfg.RACINE,
@@ -1136,7 +1138,7 @@
       TurnstileSTI.reset("oubli");
       btn.disabled = false;
       if (r.error) { msg("❌ " + r.error.message, "err"); return; }
-      msg("📧 Si cette adresse est enregistrée, un lien vient d’être envoyé. Vérifiez aussi le dossier spam. Le lien est temporaire et utilisable une seule fois.", "ok");
+      msg("📧 Si cette adresse est enregistrée, un e-mail « Reset your password » vient d’être envoyé (vérifiez aussi le dossier spam). Cliquez sur « Reset password » dans l’e-mail : le lien est temporaire et utilisable une seule fois.", "ok");
     });
   });
 
