@@ -438,6 +438,16 @@
       (doc.head || doc.documentElement).appendChild(sc3);
     } catch (e) {}
   })();
+  /* v432 (consigne auteur) : l'anneau autour du ⚙️ montre le niveau de couverture du site
+     (pages vues / 126 pages de contenu), journal synchronisé par la voie « sti- » existante. */
+  (function chargerRoueCouverture() {
+    try {
+      var sc4 = doc.createElement("script");
+      sc4.src = R + "assets/js/roue-couverture.js?v=432";
+      sc4.async = true;
+      (doc.head || doc.documentElement).appendChild(sc4);
+    } catch (e) {}
+  })();
 
   /* v420 (consigne n°1) : « quand on monte en haut complètement, la barre en bas se cache ».
      Sur téléphone, revenir en haut du page fait réapparaître la barre d'URL (Chrome Android)

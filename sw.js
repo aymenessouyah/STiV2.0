@@ -6,16 +6,17 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v431-initiales";
+var UPDATE_ID = "v432-couverture";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/roue-couverture.js", revision: "couverture-v432" },
   { url: "./assets/js/roue-initiales.js", revision: "initiales-v431" },
   { url: "./assets/js/roue-nuage.js", revision: "annonce-2s-v430" },
   { url: "./assets/js/roue-habillage.js", revision: "roue-habillee-v429" },
-  { url: "./assets/js/mobile-nav.js", revision: "initiales-v431" },
+  { url: "./assets/js/mobile-nav.js", revision: "couverture-v432" },
   
-  { url: "./assets/js/config.js", revision: "initiales-v431" },
+  { url: "./assets/js/config.js", revision: "couverture-v432" },
   { url: "./assets/js/mobile-nav.js", revision: "prerendu-v427" },
   { url: "./assets/js/config.js", revision: "prerendu-v427" },
   { url: "./cours/javascript.html", revision: "logo-menu-v426" },
