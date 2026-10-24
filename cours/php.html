@@ -4120,5 +4120,37 @@ mysqli_close($connexion);
       })();
     </script>
   <aside aria-label="Manuel connecté" style="text-align:center;padding:16px;font:600 13px system-ui;"><a href="../livre-smart.html">📖 Scanner mon livre STI — page, photo ou QR code</a></aside>
+<script id="stix-logo-menu">
+/* v424 (consigne auteur) : le bouton du haut-gauche qui contient le logo (PHP)
+   devient LUI SEUL le menu de la page — sur mobile. On ne réécrit rien : le clic du logo
+   actionne le bouton de sommaire existant (même état aria, même ouverture animée) ;
+   stopImmediatePropagation en capture évite les réflexes « clic hors du menu = fermeture »
+   du module, qui refermaient le sommaire dans la seconde même où le logo venait de l'ouvrir.
+   Le ☰ distinct est retiré de l'affichage (une seule entrée). Au-delà de 820 px,
+   le logo garde son rôle « haut de page » (href #top conservé). */
+(function () {
+  var mq = window.matchMedia ? window.matchMedia("(max-width: 820px)") : null;
+  var btn = document.getElementById("menu-btn");
+  var brand = document.querySelector("header .brand") || document.querySelector("a.brand");
+  if (!btn || !brand) return;
+  var st = document.createElement("style");
+  st.id = "stix-logo-menu-css";
+  st.textContent = "@media (max-width:820px){#menu-btn{display:none!important}header .brand{cursor:pointer}body.nav-open header.top{z-index:41;background:color-mix(in srgb, var(--bg) 97%, transparent);-webkit-backdrop-filter:none;backdrop-filter:none}nav.side{padding-top:calc(64px + env(safe-area-inset-top, 0px))}}";
+  document.head.appendChild(st);
+  brand.addEventListener("click", function (e) {
+    if (!mq || !mq.matches) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    btn.click();
+  }, true);
+  function sync() {
+    var open = btn.getAttribute("aria-expanded") === "true";
+    brand.setAttribute("aria-expanded", String(open));
+    brand.setAttribute("aria-label", (btn.getAttribute("aria-label") || "Ouvrir le sommaire").replace(/^Ouvrir/, open ? "Fermer" : "Ouvrir") + " (logo-menu)");
+  }
+  try { new MutationObserver(sync).observe(btn, { attributes: true, attributeFilter: ["aria-expanded", "aria-label"] }); } catch (e) {}
+  sync();
+})();
+</script>
 </body>
 </html>

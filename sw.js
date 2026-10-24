@@ -6,10 +6,15 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v423-normal-dans-la-roue-seule";
+var UPDATE_ID = "v424-logo-menu";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./cours/css3.html", revision: "logo-menu-v424" },
+  { url: "./cours/courscss3.html", revision: "logo-menu-v424" },
+  { url: "./cours/sql.html", revision: "logo-menu-v424" },
+  { url: "./cours/php.html", revision: "logo-menu-v424" },
+  { url: "./cours/coursphp.html", revision: "logo-menu-v424" },
   { url: "./assets/js/roue-nuage.js", revision: "roue-seule-v423" },
   { url: "./assets/js/config.js", revision: "roue-seule-v423" },
   { url: "./assets/js/mobile-nav.js", revision: "roue-seule-v423" },
