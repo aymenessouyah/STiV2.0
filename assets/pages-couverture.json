@@ -1,6 +1,6 @@
 {
 "gen": "v434",
-"n": 124,
+"n": 125,
 "pages": [
 "bac-pratique.html",
 "carte-visite.html",
@@ -93,6 +93,7 @@
 "exercices/sql/tp4-correction-bd.html",
 "glossaire.html",
 "livre-smart.html",
+"ma-fiche-revision.html",
 "memo-veille-bac.html",
 "nouveautes.html",
 "outils-js-bac.html",

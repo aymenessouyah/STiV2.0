@@ -6,11 +6,15 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v435-couverture-admin";
+var UPDATE_ID = "v436-revision-fiche-rappels";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./assets/js/admin-couverture.js", revision: "risque-v435" },
+  { url: "./assets/js/roue-revision.js", revision: "revision-v436" },
+  { url: "./assets/js/rappels-locaux.js", revision: "rappels-v436" },
+  { url: "./assets/js/mobile-nav.js", revision: "revision-v436" },
+  { url: "./ma-fiche-revision.html", revision: "revision-v436" },
+  { url: "./admin.html", revision: "risque-v435" },
   { url: "./assets/js/roue-couverture.js", revision: "manifeste-v434" },
   { url: "./assets/js/mobile-nav.js", revision: "manifeste-v434" },
   { url: "./assets/js/config.js", revision: "manifeste-v434" },

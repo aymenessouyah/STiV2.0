@@ -21,7 +21,9 @@
     }
     var dark = t === "dark";
     if (t === "dark") { r.setAttribute("data-theme", "dark"); r.classList.add("dark", "dark-mode"); }
-    else if (t === "light") { r.removeAttribute("data-theme"); r.classList.remove("dark", "dark-mode"); }
+    else if (t === "light") { /* v436 : le portail sait maintenant être CLAIR — on pose l'attribut
+        explicitement pour que la palette claire s'applique (les autres pages ne changent pas). */
+      r.setAttribute("data-theme", "light"); r.classList.remove("dark", "dark-mode"); }
     if (!/^https?:$/.test(location.protocol)) return;
     if (!window.matchMedia || !window.matchMedia("(max-width: 700px)").matches) return;
     if (window.__STI_BNAV || document.getElementById("sti-bnav")) return;
@@ -95,6 +97,41 @@
     --pop-lg: 7px 7px 0 var(--edge);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ═══ v436 — palette CLAIRE du portail (consigne auteur n°8) ═══
+     Le portail était sombre quel que soit le choix mémorisé. Désormais : thème mémorisé
+     « dark » → sombre (identique à avant), « light » → cette palette, aucun choix →
+     sombre (comportement historique conservé). Aucune autre page n'est touchée. */
+  html[data-theme="light"] {
+    color-scheme: light;
+    --bg: #f7f2e7;
+    --surface: #fffdf7;
+    --surface-2: #f3ead9;
+    --border: #d8c9ad;
+    --edge: #23201a;
+    --ink: #23201a;
+    --muted: #6f6455;
+    --accent: #e2542a;
+    --accent-2: #b8451f;
+    --accent-soft: #fdeee6;
+    --term-bg: #fffdf7;
+    --pop-sm: 2.5px 2.5px 0 var(--edge);
+    --pop: 4px 4px 0 var(--edge);
+    --pop-lg: 7px 7px 0 var(--edge);
+  }
+  html[data-theme="light"] body {
+    background: var(--bg);
+    background-image: radial-gradient(circle, #dfd5c2 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+  html[data-theme="light"] input, html[data-theme="light"] textarea { color: var(--ink); }
+  #sti-portail-theme {
+    position: fixed; top: 12px; right: 12px; z-index: 9999; cursor: pointer;
+    border: 2px solid var(--edge); background: var(--surface); color: var(--ink);
+    border-radius: 999px; padding: 7px 13px; font: 900 12px system-ui, sans-serif;
+    box-shadow: var(--pop-sm); transition: transform .18s ease;
+  }
+  #sti-portail-theme:hover { transform: translateY(-1px); }
+  @media print { #sti-portail-theme { display: none; } }
   /* Fond mode sombre identique à index.html (« L'Atelier » dark : #0d1526 + halo orange + grille de points) */
   body {
     min-height: 100vh; display: flex; align-items: center; justify-content: center;
@@ -508,5 +545,39 @@
 <script src="assets/js/modules/password-recovery.js?v=307"></script>
 <script src="assets/js/portail.js?v=321"></script>
 <script src="assets/js/sync-progressions.js"></script>
+<script>
+/* v436 : bascule de thème depuis le portail, mémorisée comme partout ailleurs (sti-theme),
+   donc la préférence choisie ici s'applique ensuite à toutes les pages. */
+(function () {
+  /* v436 : le portail reconstruit son DOM à l'ouverture des onglets — le bouton est donc
+     (re)créé par script et ré-attaché s'il disparaît, au lieu d'être dans le HTML statique. */
+  var r = document.documentElement;
+  function bouton() {
+    var b = document.getElementById("sti-portail-theme");
+    if (b) return b;
+    if (!document.body) return null;
+    b = document.createElement("button");
+    b.type = "button";
+    b.id = "sti-portail-theme";
+    b.title = "Changer de thème (clair / sombre)";
+    document.body.appendChild(b);
+    b.addEventListener("click", function () {
+      var dark = !sombre();
+      peindre(dark);
+      try { localStorage.setItem("sti-theme", dark ? "dark" : "light"); } catch (e) {}
+    });
+    b.textContent = sombre() ? "🌙 Thème sombre" : "☀️ Thème clair";
+    return b;
+  }
+  function sombre() { return r.getAttribute("data-theme") === "dark" || r.classList.contains("dark"); }
+  function peindre(dark) {
+    if (dark) { r.setAttribute("data-theme", "dark"); r.classList.add("dark", "dark-mode"); }
+    else { r.setAttribute("data-theme", "light"); r.classList.remove("dark", "dark-mode"); }
+    var bb = bouton(); if (bb) bb.textContent = dark ? "🌙 Thème sombre" : "☀️ Thème clair";
+  }
+  bouton();
+  setInterval(bouton, 1200);
+})();
+</script>
 </body>
 </html>
