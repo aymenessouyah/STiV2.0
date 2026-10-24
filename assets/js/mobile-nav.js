@@ -414,6 +414,20 @@
       (doc.head || doc.documentElement).appendChild(sc);
     } catch (e) {}
   })();
+  /* v429 (consigne auteur : « on veut améliorer la roue » → look & ergonomie) : habillage du
+     panneau ⚙️ (cartes, pastilles rondes, cibles 40 px, animation d'ouverture, scrollbar visible)
+     + micro-correction runtime du thème sombre (la classe « sti-theme-sombre » est écrasée par
+     acces.js à chaque construction du wrap, et le chemin « thème global » de 🌙 ne la posait
+     jamais). Purement visuel : zéro contenu touché, zéro logique modifiée ; décharger ce fichier
+     ramène la roue à son look v428. */
+  (function chargerRoueHabillage() {
+    try {
+      var sc2 = doc.createElement("script");
+      sc2.src = R + "assets/js/roue-habillage.js?v=429";
+      sc2.async = true;
+      (doc.head || doc.documentElement).appendChild(sc2);
+    } catch (e) {}
+  })();
 
   /* v420 (consigne n°1) : « quand on monte en haut complètement, la barre en bas se cache ».
      Sur téléphone, revenir en haut du page fait réapparaître la barre d'URL (Chrome Android)
