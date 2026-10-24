@@ -70,7 +70,7 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="color-scheme" content="dark" />
-    <title>Annexe JavaScript — Cours · 3ème/4ème SI</title>
+    <title>JavaScript — Cours · 3ème/4ème SI</title>
 
     <!-- Prism en mode manuel : la coloration est lancée après préparation des blocs <pre> -->
     <script>
@@ -2644,7 +2644,7 @@
             <span class="js-badge">JS</span>
             <span class="brand-text">
               <span class="brand-name">
-                Annexe <em>JavaScript</em>
+                <em>JavaScript</em>
                 <span class="ver">3ème/4ème SI</span>
               </span>
               <span class="brand-sub"
@@ -2741,7 +2741,7 @@
           <div class="eyebrow">
             <span class="ping"></span>3ème/4ème SI — Web &amp; bases de données
           </div>
-          <h1 class="title-glow">Annexe JavaScript</h1>
+          <h1 class="title-glow">JavaScript</h1>
           <p>
             Référence rapide : opérateurs, fonctions natives, chaînes, tableaux,
             dates et manipulation du DOM.
@@ -5005,5 +5005,52 @@ function changer() {
 <script src="../assets/js/config.js?v=425"></script>
 <script src="../assets/js/acces.js?v=228"></script>
   <script src="../assets/js/sync-progressions.js" defer></script>
+<script id="stix-logo-menu">
+/* v426 (consigne auteur) : le bouton du haut-gauche qui contient le logo JavaScript devient
+   LUI SEUL le menu de la page — sur mobile (≤ 900 px, le seuil du ☰ de cette fiche). Le clic du
+   logo actionne #menu-btn (le tiroir #side s'ouvre avec sa propre animation, on ne réécrit
+   rien) ; le ☰ distinct est retiré de l'affichage. La page ne gérant pas aria-expanded, notre
+   script le pose lui-même pour le tiroir comme pour le logo. Au-delà de 900 px (et sur
+   ordinateur), le logo garde son rôle « haut de page ». Titre de page : « JavaScript » (plus
+   « Annexe JavaScript ») — titre, bandeau et marque ; le badge de conformité et le lien
+   « ANNEXE JS » (PDF officiel) sont conservés. */
+(function () {
+  var mq = window.matchMedia ? window.matchMedia("(max-width: 900px)") : null;
+  var btn = document.getElementById("menu-btn");
+  var side = document.getElementById("side");
+  var brand = document.querySelector("nav.topbar a.logo") || document.querySelector("a.logo");
+  if (!btn || !side || !brand) return;
+  var st = document.createElement("style");
+  st.id = "stix-logo-menu-css";
+  st.textContent = "@media (max-width:900px){.menu-btn{display:none!important}nav.topbar a.logo{cursor:pointer}}";
+  document.head.appendChild(st);
+  function majEtat() {
+    var open = side.classList.contains("open");
+    btn.setAttribute("aria-expanded", String(open));
+    btn.setAttribute("aria-label", open ? "Fermer le sommaire" : "Ouvrir le sommaire");
+  }
+  /* interception tout en tête de la propagation (document, capture — ce script est
+     antérieur aux écouteurs différés de la page) : le gestionnaire global « clic sur
+     lien ancre = défilement doux » ne doit pas partir au top quand le logo ouvre le menu. */
+  document.addEventListener("click", function (e) {
+    if (!mq || !mq.matches) return;
+    var t = e.target;
+    if (!t || !brand.contains(t === brand ? brand : (t.nodeType === 1 ? t : t.parentElement))) return;
+    e.preventDefault();
+    e.stopPropagation();
+    btn.click();
+    majEtat();
+  }, true);
+  /* le tiroir est la source de vérité (le module page le ferme aussi par ses liens) :
+     son observateur tient l'aria du bouton ET du logo à jour dans tous les cas. */
+  new MutationObserver(function () { majEtat(); syncBrand(); }).observe(side, { attributes: true, attributeFilter: ["class"] });
+  var syncBrand = function () {
+    brand.setAttribute("aria-expanded", btn.getAttribute("aria-expanded") || "false");
+    brand.setAttribute("aria-label", (btn.getAttribute("aria-label") || "Ouvrir le sommaire") + " (logo-menu)");
+  };
+  new MutationObserver(syncBrand).observe(btn, { attributes: true, attributeFilter: ["aria-expanded", "aria-label"] });
+  majEtat(); syncBrand();
+})();
+</script>
 </body>
 </html>
