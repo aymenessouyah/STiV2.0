@@ -241,7 +241,7 @@
           court: "Ex 2. fetch_row vs fetch_assoc",
           titre: "Exercice 2 — statistiques.php : parcours associatif des élèves par Catégorie",
           symptome: "Problème : Dans la boucle while, les colonnes sont lues par leur nom ($t['Id'], $t['Nom_prenom']), mais la ligne 4 utilise mysqli_fetch_row($res) ! Corrigez la ligne 4.",
-          indice: "Remplacez mysqli_fetch_row($res) par <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res) (ou mysqli_fetch_array($res)).",
+          indice: "Remplacez mysqli_fetch_row($res) par <s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>($res) (ou mysqli_fetch_array($res)).",
           lignes: [
             '<?php',
             '$con = mysqli_connect("localhost", "root", "", "bd_ecole");',
@@ -253,16 +253,16 @@
             'mysqli_close($con); ?>'
           ],
           idxFautif: 3,
-          correctFix: 'while ($t = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res)) {',
-          motsCles: ["<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>", "mysqli_fetch_array"],
-          explication: "mysqli_fetch_row($res) ne fournit que les indices numériques ($t[0], $t[1]). Pour lire $t['Id'] et $t['Nom_prenom'], il faut <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res) ou mysqli_fetch_array($res)."
+          correctFix: 'while ($t = <s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>($res)) {',
+          motsCles: ["<s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>", "mysqli_fetch_array"],
+          explication: "mysqli_fetch_row($res) ne fournit que les indices numériques ($t[0], $t[1]). Pour lire $t['Id'] et $t['Nom_prenom'], il faut <s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>($res) ou mysqli_fetch_array($res)."
         },
         {
           id: "b3",
           court: "Ex 3. SELECT COUNT(*)",
           titre: "Exercice 3 — effectif.php : lire la valeur retournée par SELECT COUNT(*) AS nb",
           symptome: "Problème : La requête SELECT COUNT(*) AS nb renvoie toujours 1 seule ligne, donc mysqli_num_rows($res) à la ligne 4 vaut toujours 1 ! Corrigez la ligne 4 pour extraire $lig['nb'].",
-          indice: "Extrayez la ligne avec $lig = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res); puis lisez $nbAdmis = $lig['nb'];",
+          indice: "Extrayez la ligne avec $lig = <s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>($res); puis lisez $nbAdmis = $lig['nb'];",
           lignes: [
             '<?php',
             '$con = mysqli_connect("localhost", "root", "", "bd_ecole");',
@@ -272,9 +272,9 @@
             'mysqli_close($con); ?>'
           ],
           idxFautif: 3,
-          correctFix: '$lig = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res); $nbAdmis = $lig["nb"];',
-          motsCles: ["<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>", "mysqli_fetch_row", "mysqli_fetch_array"],
-          explication: "Avec SELECT COUNT(*) AS nb, le résultat est une ligne unique contenant la colonne 'nb'. On l'extrait avec $lig = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res); puis $nbAdmis = $lig['nb'];."
+          correctFix: '$lig = <s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>($res); $nbAdmis = $lig["nb"];',
+          motsCles: ["<s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>", "mysqli_fetch_row", "mysqli_fetch_array"],
+          explication: "Avec SELECT COUNT(*) AS nb, le résultat est une ligne unique contenant la colonne 'nb'. On l'extrait avec $lig = <s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>($res); puis $nbAdmis = $lig['nb'];."
         },
         {
           id: "b4",
@@ -303,7 +303,7 @@
           indice: "Utilisez strpos($t[\"Nom_prenom\"], \" \") pour trouver la position de l'espace.",
           lignes: [
             '$res = mysqli_query($con, "SELECT Id, Nom_prenom, Moyenne FROM eleves ORDER BY LEFT(Id, 1) ASC");',
-            'while ($t = <s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>($res)) {',
+            'while ($t = <s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>($res)) {',
             '  $cat = substr($t["Id"], 0, 1);',
             '  $np = $t["Nom_prenom"];',
             '  $pos = strpos($np, ",");',

@@ -321,7 +321,7 @@ echo "Nombre d'admis : " . $nbAdmis;</pre>
         document.getElementById("tbody-curseur-sql").innerHTML = htmlSql;
 
         /* 2. Script PHP selon le mode */
-        var fnFetch = modeActuel === "assoc" ? "<s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s>" : (modeActuel === "row" ? "mysqli_fetch_row" : "mysqli_fetch_array");
+        var fnFetch = modeActuel === "assoc" ? "<s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s>" : (modeActuel === "row" ? "mysqli_fetch_row" : "mysqli_fetch_array");
         var exprId  = modeActuel === "row" ? "$t[0]" : '$t["Id"]';
         var exprNp  = modeActuel === "row" ? "$t[1]" : '$t["Nom_prenom"]';
         var exprMoy = modeActuel === "row" ? "$t[2]" : '$t["Moyenne"]';
@@ -360,7 +360,7 @@ echo "Nombre d'admis : " . $nbAdmis;</pre>
               '<span class="var-pill">$t["Nom_prenom"] = "' + lig.Nom_prenom + '"</span>' +
               '<span class="var-pill">$t["Moyenne"] = "' + lig.Moyenne + '"</span>' +
               '<span class="var-pill">$t["DateNaissance"] = "' + lig.DateNaissance + '"</span>' +
-              '<div style="font-size:12px;color:#b91c1c;margin-top:4px;font-weight:700">⚠️ Avec <code><s class="hp" title="Hors programme : absent des tableaux du programme — à ne pas apprendre">mysqli_fetch_assoc</s></code>, <code>$t[0]</code> n\'existe pas !</div>';
+              '<div style="font-size:12px;color:#b91c1c;margin-top:4px;font-weight:700">⚠️ Avec <code><s class=&quot;hp&quot; title=&quot;Hors programme : absent des tableaux du programme — à ne pas apprendre&quot;>mysqli_fetch_assoc</s></code>, <code>$t[0]</code> n\'existe pas !</div>';
           } else if (modeActuel === "row") {
             varcles =
               '<span class="var-pill">$t[0] = "' + lig.Id + '"</span>' +
