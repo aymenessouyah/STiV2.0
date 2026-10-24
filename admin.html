@@ -2104,6 +2104,22 @@
     <div id="couv-corps"></div>
   </div>
 
+  <div class="carte-diff-v392" id="revision-admin">
+    <div class="carte-diff-entete">
+      <b>🔁 Suivi de la révision espacée</b>
+      <span>Qui révise vraiment : journaux J+1 / J+3 / J+7 synchronisés depuis la roue des élèves — lectures seules, rien n'est modifié</span>
+    </div>
+    <div class="carte-diff-outils">
+      <label>Classe : <select id="rev-classe"><option value="*">Toutes les classes</option></select></label>
+      <label>Adhésion mini. <input type="number" id="rev-adhesion" value="50" min="0" max="100" step="5" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> %</label>
+      <label>Retard signalé à <input type="number" id="rev-retard" value="3" min="1" max="60" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> page(s)</label>
+      <button type="button" class="btn-outil" id="btn-rev-generer">📊 Calculer</button>
+      <button type="button" class="btn-outil" id="btn-rev-csv" style="border-color:#16a34a;color:#14532d">📥 Exporter le suivi (CSV)</button>
+      <small id="rev-etat">Aucune donnée pour le moment — cliquez sur Calculer.</small>
+    </div>
+    <div id="rev-corps"></div>
+  </div>
+
   <div class="journal-err-v394" id="journal-erreurs-admin">
     <div class="journal-err-entete">
       <b>🧾 Journal des erreurs</b>
@@ -5106,6 +5122,7 @@
 <script src="assets/js/protection.js?v=302" defer></script>
   <script src="assets/js/admin.js?v=403-regie-news"></script>
   <script src="assets/js/admin-couverture.js?v=435"></script>
+  <script src="assets/js/admin-revision.js?v=438"></script>
   <script src="assets/js/graphiques-activite.js?v=347"></script>
   <script src="assets/js/quiz-admin.js?v=358"></script>
 <script src="assets/js/analytique.js"></script>
