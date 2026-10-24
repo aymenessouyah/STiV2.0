@@ -443,7 +443,7 @@
   (function chargerRoueCouverture() {
     try {
       var sc4 = doc.createElement("script");
-      sc4.src = R + "assets/js/roue-couverture.js?v=432";
+      sc4.src = R + "assets/js/roue-couverture.js?v=434";
       sc4.async = true;
       (doc.head || doc.documentElement).appendChild(sc4);
     } catch (e) {}

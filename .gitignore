@@ -1,3 +1,7 @@
 node_modules/
 test-results/
 playwright-report/
+
+# harnais de test local (copies de secours, jamais publiées depuis git)
+/_headers/
+/cours/sql/index.html

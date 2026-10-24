@@ -57,9 +57,20 @@
     "quiz/javascript.html", "quiz/php.html", "quiz/pp.html", "quiz/sql.html",
     "quiz/tableaux.html", "revision-erreurs.html"
   ];
-  var TOTAL = PAGES.length;
+  /* v434 (gain d'audit A5) : la liste embarquée est d'abord PURGÉE des doublons et
+     normalisée en minuscules (le journal est en minuscules : « PHP-recap » y était mort),
+     puis le MANIFESTE GÉNÉRÉ AU BUILD (tools/pages-couverture.py →
+     assets/pages-couverture.json) la REMPLACE si disponible. Liste embarquée = filet
+     hors-ligne ; plus aucun total codé à la main. Drapeau lisible : __STI_COUV_SOURCE. */
   var MAP = {};
-  for (var i0 = 0; i0 < TOTAL; i0++) MAP[PAGES[i0]] = 1;
+  var L = [];
+  for (var i0 = 0; i0 < PAGES.length; i0++) {
+    var k0 = String(PAGES[i0]).toLowerCase();
+    if (!MAP[k0]) { MAP[k0] = 1; L.push(k0); }
+  }
+  PAGES = L;
+  var TOTAL = PAGES.length;
+  window.__STI_COUV_SOURCE = "liste embarquée (repli)";
   var CLE = "sti-pages-vues-v432";
 
   function slugActuel() {
@@ -95,7 +106,7 @@
     var bg = "conic-gradient(#f4511e 0% " + c.pct + "%, rgba(35,32,26,.15) " + c.pct + "% 100%)";
     if (a !== elMemo || a.style.getPropertyValue("background") !== bgMemo) {
       a.style.setProperty("background", bg, "important");
-      var tt = "\ud83d\uddfa Couverture du site : " + c.pct + " % \u00b7 " + c.n + " page" + (c.n > 1 ? "s" : "") + " vue" + (c.n > 1 ? "s" : "") + " sur " + TOTAL;
+      var tt = "\ud83d\uddfa Couverture du site : " + c.pct + " % \u00b7 " + c.n + " page" + (c.n > 1 ? "s" : "") + " vue" + (c.n > 1 ? "s" : "") + " sur " + TOTAL + " · " + (window.__STI_COUV_SOURCE || "liste embarquée");
       a.setAttribute("title", tt);
       try { bgMemo = a.style.getPropertyValue("background"); elMemo = a; } catch (e) { bgMemo = bg; elMemo = a; }
       if (bgMemo.indexOf("conic-gradient") !== 0) a.style.setProperty("background", bg, "important");
@@ -109,6 +120,29 @@
   /* L'anneau naît après validation de session : veille légère jusqu'à son apparition,
      puis re-peinture immédiate à chaque fois qu'on y touche (acces.js repeint « Progression »
      à chaque ouverture du panneau — notre valeur reprend la main à la milliseconde). */
+  /* v434 : chargement du manifeste du build (chemin racine calculé comme dans config.js). */
+  if (window.fetch) {
+    try {
+      var pn = location.pathname || "";
+      var mm = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
+      var BASE = mm ? location.origin + mm[1] + "/" : location.origin + pn.slice(0, pn.lastIndexOf("/") + 1);
+      window.__STI_COUV_MANIFEST = false;
+      fetch(BASE + "assets/pages-couverture.json", { cache: "no-cache" }).then(function (r) {
+        return r.ok ? r.json() : null;
+      }).then(function (j) {
+        if (!j || !j.pages || j.pages.length < 50) return;
+        var set = {}, out = [];
+        for (var i = 0; i < j.pages.length; i++) {
+          var s2 = String(j.pages[i]).toLowerCase();
+          if (!set[s2]) { set[s2] = 1; out.push(s2); }
+        }
+        PAGES = out; MAP = set; TOTAL = out.length;
+        window.__STI_COUV_MANIFEST = true;
+        window.__STI_COUV_SOURCE = "manifeste du build";
+        marquer(); majAnneau();
+      }).catch(function () {});
+    } catch (eM) {}
+  }
   majAnneau(); marquer();
   setInterval(function () { marquer(); majAnneau(); }, 800);
   try { window.addEventListener("storage", majAnneau); } catch (e3) {}

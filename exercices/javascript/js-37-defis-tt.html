@@ -10,7 +10,8 @@
 try{ap(localStorage.getItem("sti-theme")||localStorage.getItem("theme"));}catch(e){}
 window.addEventListener("storage",function(e){if(e.key==="sti-theme"||e.key==="theme")ap(e.newValue);});})();
 </script>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><!-- v434 CLS : la police arrive avant le premier reflow -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   :root{--bg:#f4f5f9;--surface:#ffffff;--border:#e1e4ec;--border-hover:#c3c9da;--text:#14161f;--muted:#5b6172;--accent:#4338ca;--accent-soft:#eceafd;--c-js:#b8860b;--ok:#15803d;--warn:#b45309;--err:#dc2626;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
