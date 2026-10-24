@@ -263,6 +263,38 @@
       if (window.requestIdleCallback) requestIdleCallback(prechauffe, { timeout: 4000 });
       else setTimeout(prechauffe, 2500);
     } catch (e) {}
+
+    /* v427 (consigne auteur) : « mettre tout dans une seule page pour ne plus voir la barre
+       disparaître entre deux pages ». On ne fusionne rien — on donne au navigateur le moyen
+       d'arriver au même résultat : le PRÉRENDU (Speculation Rules). Dès que la barre est en
+       place, Chrome/Edge préparent en arrière-plan une vraie instance des pages visées par
+       ses onglets (barre déjà installée, thème déjà posé, scripts déjà réchauffés). Au geste
+       — survol, ou simple appui — la bascule est instantanée : aucune frame « sans barre »,
+       la navigation donne le rendu d'une page unique sans en être une. Les navigateurs qui
+       ne connaissent pas la fonctionnalité ignorent la règle EN SILENCE : on reste exactement
+       au comportement v425 (gabarit peint dès le premier rendu). Aucun fichier de contenu
+       n'est touché, le tableau de bord ne reçoit rien (module exclu comme avant). */
+    try {
+      /* grammaire réellement livrée par le moteur (Chrome 121+) : « where », pas « sources » —
+         vérifié en direct : ce build 156 avertit « unknown key: sources ». Un seul sélecteur
+         CSS combiné couvre les onglets de la barre et les liens du tiroir « Autres ». */
+      var spec = {
+        prerender: [{
+          where: { selector_matches: "#sti-bnav a, #sti-bnav-sheet a" },
+          eagerness: "moderate"
+        }]
+      };
+      if (window.speculationRules && typeof window.speculationRules.addRules === "function") {
+        window.speculationRules.addRules(spec);
+      } else {
+        /* Chrome/Edge 121-124 : la balise <script type="speculationrules"> est comprise,
+           pas encore l'API JS. Même grammaire, voie d'expression différente. */
+        var stSpec = doc.createElement("script");
+        stSpec.type = "speculationrules";
+        stSpec.textContent = JSON.stringify(spec);
+        (doc.head || root).appendChild(stSpec);
+      }
+    } catch (eSpec) {}
   }
 
   /* ---------- activation selon la largeur ---------- */

@@ -6,10 +6,12 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v426-javascript-logo-menu";
+var UPDATE_ID = "v427-prerendu-barre";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/mobile-nav.js", revision: "prerendu-v427" },
+  { url: "./assets/js/config.js", revision: "prerendu-v427" },
   { url: "./cours/javascript.html", revision: "logo-menu-v426" },
   { url: "./index.html", revision: "early-boot-v425" },
   { url: "./exercices/series-exercices.html", revision: "early-boot-v425" },
