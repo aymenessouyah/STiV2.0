@@ -1893,6 +1893,18 @@
     html.admin-ardoise .journal-table code{background:rgba(245,237,220,.08);color:#f5eddc}
     @media print{#journal-erreurs-admin .journal-err-outils{display:none}}
   </style>
+  <style id="style-couv-v435">
+    .couv-resume{margin:10px 0 2px;font-size:12px;font-weight:800;color:#23201a}
+    .couv-vide{font-size:12.5px;color:#177245;font-weight:800;margin:8px 0 2px}
+    .couv-jauge{display:inline-block;width:74px;height:9px;border:1.5px solid #23201a;border-radius:999px;background:#fff;overflow:hidden;vertical-align:middle}
+    .couv-jauge i{display:block;height:100%;background:#f4511e}
+    .couv-ligne.couv-risque .couv-jauge i{background:#c0392b}
+    .couv-ligne.couv-ok .couv-jauge i{background:#177245}
+    .couv-sig{display:inline-block;padding:2px 8px;border-radius:999px;border:1.5px solid;font-size:10.5px;font-weight:900;margin:1px 2px}
+    html.admin-ardoise .couv-resume{color:#f5eddc}
+    html.admin-ardoise .couv-jauge{background:#241e16;border-color:#55482e}
+    @media print{#couverture-risque-admin .carte-diff-outils{display:none}}
+  </style>
   <style id="style-obs-v397">
     .fiche-obs{margin:2px 0 12px}
     .fiche-obs-ligne{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;border:1.5px solid #e2d5be;background:#fffdf5;border-radius:10px;padding:8px 11px;margin-top:6px}
@@ -2074,6 +2086,22 @@
       <small id="carte-diff-etat">Aucune donnée pour le moment — cliquez sur Générer.</small>
     </div>
     <div id="carte-diff-corps"></div>
+  </div>
+
+  <div class="carte-diff-v392" id="couverture-risque-admin">
+    <div class="carte-diff-entete">
+      <b>🗺 Couverture du site &amp; élèves à risque</b>
+      <span>Pages réellement consultées par chaque élève (journal synchronisé de la roue) — calculé à la demande, rien n'est modifié</span>
+    </div>
+    <div class="carte-diff-outils">
+      <label>Classe : <select id="couv-classe"><option value="*">Toutes les classes</option></select></label>
+      <label>Couverture mini. <input type="number" id="couv-seuil" value="25" min="0" max="100" step="5" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> %</label>
+      <label>Inactif depuis <input type="number" id="couv-jours" value="14" min="1" max="120" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> j</label>
+      <button type="button" class="btn-outil" id="btn-couv-generer">📊 Calculer</button>
+      <button type="button" class="btn-outil" id="btn-couv-csv" style="border-color:#16a34a;color:#14532d">📥 Exporter « à risque » (CSV)</button>
+      <small id="couv-etat">Aucune donnée pour le moment — cliquez sur Calculer.</small>
+    </div>
+    <div id="couv-corps"></div>
   </div>
 
   <div class="journal-err-v394" id="journal-erreurs-admin">
@@ -5077,6 +5105,7 @@
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
   <script src="assets/js/admin.js?v=403-regie-news"></script>
+  <script src="assets/js/admin-couverture.js?v=435"></script>
   <script src="assets/js/graphiques-activite.js?v=347"></script>
   <script src="assets/js/quiz-admin.js?v=358"></script>
 <script src="assets/js/analytique.js"></script>
