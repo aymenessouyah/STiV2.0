@@ -92,7 +92,11 @@
     "#sti-bnav-sheet .sti-bnav-l b{font-weight:800}",
     "@media (max-width:700px){html.sti-bnav-on #sti-bnav{}}",
     "@media (max-width:700px){#stix-nav a[href$=\"index.html#cours\"]{display:none!important}}", /* v420→421 (consigne n°4) : « cours du site » masqué sur mobile */
-    "@media print{#sti-bnav,#sti-bnav-sheet,#sti-bnav-voile{display:none!important}html.sti-bnav-on body{padding-bottom:0!important}}"
+    "@media (max-width:700px){#sti-bnav{transition:transform .28s ease}}",
+    "@media (max-width:700px){html.sti-barres-cachees #sti-bnav{transform:translateY(150%)}}",
+    "@media (max-width:700px){.sti-barre-suivie{transition:transform .28s ease}}",
+    "@media (max-width:700px){html.sti-barres-cachees .sti-barre-suivie.sti-barre-roulee{transform:translateY(-105%)}}",
+    "@media print{#sti-bnav,#sti-bnav-sheet,#sti-bnav-voile{display:none!important}html.sti-bnav-on body{padding-bottom:0!important}html.sti-barres-cachees .sti-barre-suivie{transform:none!important}}"
   ].join("");
   var st = doc.createElement("style");
   st.id = "sti-bnav-css";
@@ -136,6 +140,86 @@
   }
 
   /* ---------- construction ---------- */
+  /* ---------- v428 : les deux barres se roulent au défilement (pages cours + exercices) ----------
+     Consigne auteur : « en mode mobile, pour toutes les pages cours ainsi que la page exercices,
+     afficher les 2 barres ; quand l'utilisateur défile vers le bas les 2 barres se cachent,
+     dès qu'il commence à remonter elles se réaffichent ». Le haut de l'écran étant occupé par
+     un en-tête différent sur chaque fiche (header.topbar, nav.topbar, header.top…), la barre du
+     haut est RECONNAÎTRE par sa nature plutôt que par une liste de sélecteurs : premier header/
+     nav collant (fixed ou sticky) posé à bord supérieur, qui fait la largeur et moins de 45 %
+     de la hauteur d'écran. Rien de trouvé → seule la barre du bas se roule (aucune page ne casse).
+     Le roulement est suspendu tant qu'un menu de sommaire, le tiroir « Autres » ou une boîte
+     modale est ouvert — on ne cache jamais ce que le lecteur est en train de consulter. */
+  function trouverBarreHaut() {
+    try {
+      var cands = doc.querySelectorAll("header, nav, [class*='topbar'], [class*='barre-haut'], [id*='barre-haut']");
+      var vh = window.innerHeight || 800;
+      for (var i = 0; i < cands.length; i++) {
+        var el = cands[i];
+        if (el.id === "sti-bnav" || el.id === "sti-bnav-sheet" || el.id === "sti-bnav-voile") continue;
+        if (el.closest && el.closest("#sti-bnav, #sti-bnav-sheet")) continue;
+        var cs = window.getComputedStyle(el);
+        if (cs.position !== "fixed" && cs.position !== "sticky") continue;
+        if (cs.display === "none" || cs.visibility === "hidden") continue;
+        var r = el.getBoundingClientRect();
+        if (r.height < 36 || r.height > vh * 0.45) continue;
+        if (r.width < (window.innerWidth || 900) * 0.6) continue;
+        if (r.top < -4 || r.top > 8) continue;
+        return el;
+      }
+    } catch (e) {}
+    return null;
+  }
+  var barreHaut = null;
+  function choisirBarreHaut() {
+    if (barreHaut && barreHaut.classList) barreHaut.classList.remove("sti-barre-suivie", "sti-barre-roulee");
+    barreHaut = trouverBarreHaut();
+    if (barreHaut) barreHaut.classList.add("sti-barre-suivie");
+  }
+  function roulementSuspendu() {
+    try {
+      if (root.classList.contains("sti-modal-open") || root.classList.contains("sti-bnav-sheet-open")) return true;
+      if (doc.body && doc.body.classList.contains("nav-open")) return true;
+      if (doc.querySelector("nav.toc-nav.is-open, #side.open, #sidebar.menu-open, .sidebar.menu-open")) return true;
+      /* html5/courshtml5 : leur menu de logo (antérieur à v424) ouvre un « .menu-open » posé
+         sur le panneau latéral — même respect : rien ne se cache pendant la lecture du sommaire. */
+      if (doc.querySelector(".menu-open")) return true;
+    } catch (e) {}
+    return false;
+  }
+  function installerBarresQuiSeRoulent() {
+    if (window.__STI_BNAV_ROULE) return;
+    window.__STI_BNAV_ROULE = true;
+    choisirBarreHaut();
+    var y0 = window.scrollY || root.scrollTop || 0;
+    var roule = false;
+    var enAttente = 0;
+    function montrer() {
+      if (!roule) return;
+      roule = false;
+      root.classList.remove("sti-barres-cachees");
+      if (barreHaut) barreHaut.classList.remove("sti-barre-roulee");
+    }
+    function cacher() {
+      if (roule) return;
+      roule = true;
+      root.classList.add("sti-barres-cachees");
+      if (barreHaut) barreHaut.classList.add("sti-barre-roulee");
+    }
+    window.addEventListener("scroll", function () {
+      if (enAttente) return;
+      enAttente = window.requestAnimationFrame(function () {
+        enAttente = 0;
+        var y = window.scrollY || root.scrollTop || 0;
+        if (roulementSuspendu() || y <= 48) { montrer(); y0 = y; return; }
+        var d = y - y0;
+        if (d > 10) { cacher(); y0 = y; }
+        else if (d < -8) { montrer(); y0 = y; }
+      });
+    }, { passive: true });
+    window.addEventListener("resize", function () { choisirBarreHaut(); }, { passive: true });
+  }
+
   function construire() {
     if (doc.getElementById("sti-bnav")) return;
     var actif = sectionActive();
@@ -263,6 +347,14 @@
       if (window.requestIdleCallback) requestIdleCallback(prechauffe, { timeout: 4000 });
       else setTimeout(prechauffe, 2500);
     } catch (e) {}
+
+    /* v428 (consigne auteur) : sur les pages cours et la page exercices, les deux barres se
+       roulent au défilement — cachées en descendant, revenues en remontant, façon application.
+       Portée stricte : /cours/ (toutes les fiches) et exercices/series-exercices.html. */
+    try {
+      var pnV428 = location.pathname;
+      if (/\/cours\//.test(pnV428) || /\/exercices\/series-exercices\.html/.test(pnV428)) installerBarresQuiSeRoulent();
+    } catch (eRoule) {}
 
     /* v427 (consigne auteur) : « mettre tout dans une seule page pour ne plus voir la barre
        disparaître entre deux pages ». On ne fusionne rien — on donne au navigateur le moyen
