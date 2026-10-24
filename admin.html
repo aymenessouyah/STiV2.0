@@ -2120,6 +2120,22 @@
     <div id="rev-corps"></div>
   </div>
 
+  <div class="carte-diff-v392" id="erreurs-admin">
+    <div class="carte-diff-entete">
+      <b>🧠 Analyse par type d'erreur</b>
+      <span>Ne sait pas · sait mais se trompe · maîtrise, à partir des réponses question par question déjà enregistrées — lectures seules</span>
+    </div>
+    <div class="carte-diff-outils">
+      <label>Classe : <select id="err-classe"><option value="*">Toutes les classes</option></select></label>
+      <label>Profil dès <input type="number" id="err-min" value="3" min="1" max="50" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> réponse(s)</label>
+      <button type="button" class="btn-outil" id="btn-err-generer">📊 Analyser</button>
+      <button type="button" class="btn-outil" id="btn-err-csv" style="border-color:#16a34a;color:#14532d">📥 Exporter (CSV)</button>
+      <small id="err-etat">Aucune donnée pour le moment — cliquez sur Analyser.</small>
+    </div>
+    <div id="err-corps"></div>
+    <div id="err-questions" style="margin-top:12px"></div>
+  </div>
+
   <div class="journal-err-v394" id="journal-erreurs-admin">
     <div class="journal-err-entete">
       <b>🧾 Journal des erreurs</b>
@@ -5123,6 +5139,8 @@
   <script src="assets/js/admin.js?v=403-regie-news"></script>
   <script src="assets/js/admin-couverture.js?v=435"></script>
   <script src="assets/js/admin-revision.js?v=438"></script>
+  <script src="assets/js/admin-erreurs.js?v=439"></script>
+  <script src="assets/js/admin-mdp.js?v=440"></script>
   <script src="assets/js/graphiques-activite.js?v=347"></script>
   <script src="assets/js/quiz-admin.js?v=358"></script>
 <script src="assets/js/analytique.js"></script>

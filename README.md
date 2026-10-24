@@ -179,6 +179,8 @@ Harmonisées sur **tous** les supports (site, livres, fiches) :
 | v393 | Allègement 3G (démo `display` en `preload="none"`) ; liens des 3 vraies annexes dans la recherche |
 | v394 | 🧾 Journal d'erreurs des pages élèves (table `sti_diagnostics`, RLS, vue admin) |
 | v395 | Révision générale : 63 pages rattrapées au cache-buster ; SDK Supabase local partout ; page énoncé du formulaire reconnectée à la synchro |
+| v440 | 🔑 **changer le mot de passe admin depuis le tableau de bord** (vérification de l'ancien mot de passe + option « déconnecter mes autres appareils ») |
+| v439 | 🎯 **plan de révision jusqu'au bac** (date d'épreuve → chapitres restants → pages/jour, dans la roue) + 🧠 **analyse par type d'erreur** côté prof (ne sait pas / sait mais se trompe / maîtrise) et **questions suspectes** |
 | v438 | 🔁 Tableau de bord : **suivi de la révision espacée** (qui révise vraiment — adhésion, pages en retard, pages acquises, quiz faibles) + export CSV · module additif `assets/js/admin-revision.js` |
 | v437 | 🩹 corrige l'affichage de l'échéance de révision (« J+2 » → **J+1 / J+3 / J+7**, intervalles réels) dans le panneau de la roue et sur la fiche |
 | v436 | 🔁 **révision espacée** dans la roue (pages à revoir à J+1/J+3/J+7 + quiz < 10/20, bouton ✔), 🖨 **fiche de révision imprimable** (`ma-fiche-revision.html`), 🔔 **rappels locaux** opt-in (une notification par jour max, zéro serveur), 🌗 **thème clair du portail** de connexion |

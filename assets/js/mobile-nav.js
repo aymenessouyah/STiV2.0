@@ -450,6 +450,9 @@
       var sc6 = doc.createElement("script");
       sc6.src = R + "assets/js/rappels-locaux.js?v=436";
       sc6.async = true; (doc.head || doc.documentElement).appendChild(sc6);
+      var sc7 = doc.createElement("script");
+      sc7.src = R + "assets/js/roue-plan.js?v=439";
+      sc7.async = true; (doc.head || doc.documentElement).appendChild(sc7);
       sc4.async = true;
       (doc.head || doc.documentElement).appendChild(sc4);
     } catch (e) {}
