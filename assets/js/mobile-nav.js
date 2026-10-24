@@ -428,6 +428,16 @@
       (doc.head || doc.documentElement).appendChild(sc2);
     } catch (e) {}
   })();
+  /* v431 (consigne auteur) : le centre du ⚙️ porte les initiales du compte (P.N) — module
+     additif, voir roue-initiales.js. */
+  (function chargerRoueInitiales() {
+    try {
+      var sc3 = doc.createElement("script");
+      sc3.src = R + "assets/js/roue-initiales.js?v=431";
+      sc3.async = true;
+      (doc.head || doc.documentElement).appendChild(sc3);
+    } catch (e) {}
+  })();
 
   /* v420 (consigne n°1) : « quand on monte en haut complètement, la barre en bas se cache ».
      Sur téléphone, revenir en haut du page fait réapparaître la barre d'URL (Chrome Android)
