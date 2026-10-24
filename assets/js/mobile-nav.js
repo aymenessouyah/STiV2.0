@@ -445,7 +445,7 @@
       var sc4 = doc.createElement("script");
       sc4.src = R + "assets/js/roue-couverture.js?v=434";
       var sc5 = doc.createElement("script");
-      sc5.src = R + "assets/js/roue-revision.js?v=436";
+      sc5.src = R + "assets/js/roue-revision.js?v=437";
       sc5.async = true; (doc.head || doc.documentElement).appendChild(sc5);
       var sc6 = doc.createElement("script");
       sc6.src = R + "assets/js/rappels-locaux.js?v=436";

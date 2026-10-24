@@ -6,10 +6,12 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v436-revision-fiche-rappels";
+var UPDATE_ID = "v437-libelle-jn";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/roue-revision.js", revision: "libelle-jn-v437" },
+  { url: "./assets/js/mobile-nav.js", revision: "libelle-jn-v437" },
   { url: "./assets/js/roue-revision.js", revision: "revision-v436" },
   { url: "./assets/js/rappels-locaux.js", revision: "rappels-v436" },
   { url: "./assets/js/mobile-nav.js", revision: "revision-v436" },

@@ -79,7 +79,7 @@
       var etape = Math.min(ETAPES.length - 1, Math.max(0, Number(e.etape) || 0));
       var echeance = base + ETAPES[etape] * JOUR;
       if (maintenant >= echeance) {
-        out.push({ type: "page", slug: p, etape: etape + 1, retard: Math.floor((maintenant - echeance) / JOUR), href: p });
+        out.push({ type: "page", slug: p, etape: ETAPES[etape], rang: etape + 1, retard: Math.floor((maintenant - echeance) / JOUR), href: p });
       }
     });
     out.sort(function (a, b) { return b.retard - a.retard; });
