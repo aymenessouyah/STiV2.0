@@ -409,7 +409,7 @@
   (function chargerRoueNuage() {
     try {
       var sc = doc.createElement("script");
-      sc.src = R + "assets/js/roue-nuage.js?v=423";
+      sc.src = R + "assets/js/roue-nuage.js?v=430";
       sc.async = true;
       (doc.head || doc.documentElement).appendChild(sc);
     } catch (e) {}

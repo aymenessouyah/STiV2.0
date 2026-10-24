@@ -10,7 +10,16 @@
    tourner (page sans roue, ancien cache), rien ne change : les flotteurs restent comme avant —
    la règle de masquage vit ICI et ne s'applique donc que si cette logique est active.
    Le panneau de la roue pouvant être reconstruit à chaque ouverture, une veille légère re-verse
-   les éléments dès qu'ils manquent au panneau ouvert. */
+   les éléments dès qu'ils manquent au panneau ouvert.
+   v430 (consigne auteur : « la boîte "Progression : cet appareil seulement" gêne
+   l'affichage des autres ») : la pastille quitte le flux de la carte. Elle devient une
+   ANNONCE FLOTTANTE en overlay sous la carte « Nuage & réseau » (hors flux → plus rien
+   n'est poussé), visible DEUX SECONDES à chaque ouverture du panneau et à chaque changement
+   d'état (« restaurée », « synchronisée », « cet appareil seulement »…), puis masquée
+   (opacité/visibilité, pointer-events:none — on peut cliquer à travers). Le boîtier
+   diagnostic « 📶 Normal » reste, lui, durable dans la carte comme en v418 : seul le
+   message de synchro est temporaire. Les couleurs d'état de sync-progressions.js sont
+   conservées (le module les pose en dur sur el.style.background, on ne les écrase pas). */
 (function () {
   "use strict";
   if (window.__STI_ROUE_NUAGE) return;
@@ -31,6 +40,10 @@
     "#sti-diagnostic-donnees:not(.dans-roue){display:none!important}" +
     "html.sti-roue-dispo #sti-sync-pastille:not(.dans-roue){display:none!important}" +
     "#sti-pan-nuage .dans-roue{width:100%;max-width:none;box-sizing:border-box}" +
+    /* v430 — la pastille n'est PLUS dans le flux : bulle overlay sous la carte, 2 s, puis disparaît */
+    "#sti-pan-nuage{position:relative}" +
+    "#sti-pan-nuage #sti-sync-pastille.dans-roue{position:absolute!important;top:100%!important;bottom:auto!important;left:6px!important;right:6px!important;width:auto!important;max-width:none!important;margin:6px 0 0!important;z-index:4;text-align:center;opacity:0;visibility:hidden;transform:translateY(-6px);pointer-events:none;transition:opacity .25s ease,transform .25s ease,visibility .25s}" +
+    "#sti-pan-nuage #sti-sync-pastille.dans-roue.sti-show{opacity:1;visibility:visible;transform:none}" +
     "#sti-pan-nuage #sti-diagnostic-detail{max-height:32vh;overflow:auto}";
   (doc.head || doc.documentElement).appendChild(st);
 
@@ -68,17 +81,45 @@
       if (bloc && bloc.contains(el)) continue; /* déjà en place */
       if (!bloc) bloc = blocDans(p);
       if (!el.getAttribute("data-style-original")) el.setAttribute("data-style-original", el.getAttribute("style") || "");
-      el.setAttribute("style", "position:static;width:100%;max-width:none;box-sizing:border-box" + (el.id === "sti-diagnostic-donnees" ? ";margin:0" : ""));
+      if (el.id === "sti-sync-pastille") {
+        /* v430 : on garde la couleur d'état posée par sync-progressions.js (fond en dur),
+           tout le reste vient de la feuille ci-dessus. On ne remet JAMAIS width:100%/static. */
+        var bg = el.style.background || "";
+        el.setAttribute("style", "box-sizing:border-box" + (bg ? ";background:" + bg : ""));
+      } else {
+        el.setAttribute("style", "position:static;width:100%;max-width:none;box-sizing:border-box" + (el.id === "sti-diagnostic-donnees" ? ";margin:0" : ""));
+      }
       el.classList.add("dans-roue");
       bloc.appendChild(el);
     }
     /* si le bloc a été créé mais qu'aucun élément n'est encore né (sync en retard), on garde le bloc */
+    annoncerSiEtat(p);
+  }
+
+  /* ---------- v430 : la pastille s'annonce 2 s puis s'efface ---------- */
+  var dernierTexte = null;
+  var minuteurAnnonce = null;
+  function annoncer(past) {
+    past.classList.add("sti-show");
+    if (minuteurAnnonce) clearTimeout(minuteurAnnonce);
+    minuteurAnnonce = setTimeout(function () {
+      past.classList.remove("sti-show");
+      minuteurAnnonce = null;
+    }, 2000);
+  }
+  function annoncerSiEtat(p) {
+    var pas = doc.getElementById("sti-sync-pastille");
+    var bloc = p.querySelector("#sti-pan-nuage");
+    if (!pas || !bloc || !bloc.contains(pas)) return;
+    var t = String(pas.textContent);
+    if (t !== dernierTexte) { dernierTexte = t; annoncer(pas); }
   }
 
   function lier() {
     var btn = doc.getElementById("sti-roue-btn");
     if (btn) {
       btn.addEventListener("click", function () {
+        dernierTexte = null; /* v430 : réarme l'annonce de 2 s à chaque ouverture */
         setTimeout(verser, 40);
         setTimeout(verser, 400);
       });
