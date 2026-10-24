@@ -11,6 +11,25 @@
     return p.split("/").pop() || "index.html";
   })();
   if (chemin === "portail.html" || chemin === "admin.html") return;
+  /* v441 : ne jamais écraser un lien de récupération Supabase arrivé sur index.html (Site URL) */
+  try {
+    var qsRecV441 = new URLSearchParams(location.search || "");
+    var hsRecV441 = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+    var errCodeRecV441 = String(qsRecV441.get("error_code") || hsRecV441.get("error_code") || "");
+    var errDescRecV441 = String(qsRecV441.get("error_description") || hsRecV441.get("error_description") || "");
+    if (
+      qsRecV441.get("mode") === "recovery" ||
+      qsRecV441.get("type") === "recovery" ||
+      hsRecV441.get("type") === "recovery" ||
+      Boolean(qsRecV441.get("token_hash") || hsRecV441.get("token_hash")) ||
+      Boolean(hsRecV441.get("access_token") && hsRecV441.get("refresh_token")) ||
+      /^(otp_expired|otp_disabled|flow_state_expired|flow_state_not_found|bad_code_verifier)$/i.test(errCodeRecV441) ||
+      Boolean((qsRecV441.get("error") === "access_denied" || hsRecV441.get("error") === "access_denied") && /otp|expired|token|recovery/i.test(errDescRecV441))
+    ) {
+      location.replace(cfg.RACINE + "portail.html" + (location.search || "") + (location.hash || ""));
+      return;
+    }
+  } catch (e) {}
 
   /* ---------- v371 : installation de l'application (PWA) ---------- */
   var stiBipV371 = null;

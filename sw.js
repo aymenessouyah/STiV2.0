@@ -6,10 +6,16 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v440-mdp-admin";
+var UPDATE_ID = "v441-password-recovery-redirect-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./portail.html", revision: "recovery-v441" },
+  { url: "./assets/js/portail.js", revision: "recovery-v441" },
+  { url: "./assets/js/modules/password-recovery.js", revision: "recovery-v441" },
+  { url: "./assets/js/admin-mdp.js", revision: "recovery-v441" },
+  { url: "./assets/js/config.js", revision: "recovery-v441" },
+  { url: "./assets/js/acces.js", revision: "recovery-v441" },
   { url: "./assets/js/roue-revision.js", revision: "libelle-jn-v437" },
   { url: "./assets/js/mobile-nav.js", revision: "libelle-jn-v437" },
   { url: "./assets/js/roue-revision.js", revision: "revision-v436" },
@@ -963,6 +969,7 @@ async function actualiserFichiersConcernes() {
       }
       var rep = await fetch(u, { cache: "reload" });
       if (rep && rep.ok) {
+        try { await cache.delete(u, { ignoreSearch: true }); } catch (eDel) {}
         await cache.put(u, rep.clone());
         await revisions.put(marker, new Response(UPDATE_ID));
       }
@@ -1139,7 +1146,8 @@ self.addEventListener("fetch", function (evt) {
             var copie = rep.clone();
             var copieNue = rep.clone();
             caches.open(CACHE).then(function (c) {
-              c.put(req, copie);
+              var contientJeton = /(?:^|[?&])(token_hash|token|code|access_token|refresh_token)=/i.test(url.search || "");
+              if (!contientJeton) c.put(req, copie);
               if (url.search) {
                 var urlNue = new URL(req.url);
                 urlNue.search = "";

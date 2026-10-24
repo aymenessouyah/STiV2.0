@@ -301,6 +301,7 @@
     text-decoration: none; box-shadow: 2px 2px 0 var(--edge);
   }
   .qr-btn-carte:hover { border-color: var(--accent); color: var(--accent); }
+  [hidden] { display: none !important; }
   form[hidden] { display: none; }
   .canal { display: flex; gap: 8px; margin-bottom: 14px; }
   .canal button {
@@ -457,6 +458,15 @@
       <span class="champ"><span class="ico">✉️</span><input id="o-email" type="email" required placeholder="vous@exemple.tn" autocomplete="email" /></span>
       <div id="ts-oubli" style="margin:10px 0"></div>
       <button class="btn" type="submit">📨 Recevoir le lien de réinitialisation</button>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--border)">
+        <button type="button" id="btn-toggle-secours-oubli" class="btn btn-sec" style="margin-top:0">🔗 Le clic dans l’e-mail ouvre une page vide ? Coller le lien ici</button>
+        <div id="zone-secours-oubli" hidden style="margin-top:10px;background:var(--surface-2);border:1.5px dashed var(--accent);border-radius:12px;padding:12px">
+          <label for="o-code-oubli" style="margin-top:0">Lien « Reset password » reçu par e-mail</label>
+          <span class="champ"><span class="ico">🔗</span><input id="o-code-oubli" type="text" placeholder="Collez ici le lien du bouton Reset password" autocomplete="off" /></span>
+          <p style="font-size:11px;line-height:1.45;color:var(--muted);margin:6px 0 0">Faites un clic droit (ou appui long sur téléphone) sur « Reset password » dans l’e-mail → <b>Copier le lien</b> (ou copiez l’adresse de la page ouverte), puis collez-le ici.</p>
+          <button class="btn" type="button" id="b-verif-oubli" style="margin-top:10px">🔓 Vérifier le lien et choisir un nouveau mot de passe</button>
+        </div>
+      </div>
       <p style="font-size:11.5px;line-height:1.45;color:var(--muted);margin:9px 0 0">Compte créé uniquement avec un numéro WhatsApp ? Contactez l’administrateur : aucune adresse e-mail réelle n’est associée à ce type de compte.</p>
     </form>
 
@@ -467,6 +477,10 @@
       <span class="champ"><span class="ico">🔒</span><input id="n-mdp" type="password" required minlength="8" placeholder="••••••••" autocomplete="new-password" /></span>
       <label for="n-mdp2">Confirmez le nouveau mot de passe</label>
       <span class="champ"><span class="ico">🔒</span><input id="n-mdp2" type="password" required minlength="8" placeholder="••••••••" autocomplete="new-password" /></span>
+      <div id="zone-mfa-nouveau-mdp" hidden>
+        <label for="n-mfa-totp">🛡️ Code double authentification TOTP (6 chiffres)</label>
+        <span class="champ"><span class="ico">🛡️</span><input id="n-mfa-totp" type="text" inputmode="numeric" maxlength="6" placeholder="Code à 6 chiffres (application Authenticator)" autocomplete="one-time-code" /></span>
+      </div>
       <button class="btn" id="b-nouveau-mdp" type="submit" disabled>✅ Enregistrer le nouveau mot de passe</button>
       <button class="btn btn-sec" id="b-nouveau-lien" type="button">📨 Demander un nouveau lien</button>
     </form>
