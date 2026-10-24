@@ -6,10 +6,17 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v424-logo-menu";
+var UPDATE_ID = "v425-navigation-sans-coupure";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./index.html", revision: "early-boot-v425" },
+  { url: "./exercices/series-exercices.html", revision: "early-boot-v425" },
+  { url: "./assets/js/config.js", revision: "early-boot-v425" },
+  { url: "./assets/js/mobile-nav.js", revision: "early-boot-v425" },
+  { url: "./cours/html5.html", revision: "early-boot-v425" },
+  { url: "./cours/sql.html", revision: "early-boot-v425" },
+  { url: "./cours/php.html", revision: "early-boot-v425" },
   { url: "./cours/css3.html", revision: "logo-menu-v424" },
   { url: "./cours/courscss3.html", revision: "logo-menu-v424" },
   { url: "./cours/sql.html", revision: "logo-menu-v424" },

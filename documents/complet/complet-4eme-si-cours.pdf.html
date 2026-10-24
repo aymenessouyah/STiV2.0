@@ -1,6 +1,65 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<script id="sti-early-boot">
+/* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
+   bas disparaît quelques millisecondes ; idem exercices qui s'affiche en clair avant de se
+   rattraper ». Cause : la barre et le thème étaient peints par les scripts de FIN de page.
+   Ces quelques lignes, placées tout en tête (avant la moindre CSS), peignent dès le premier
+   instant 1°) le thème mémorisé (html.dark + [data-theme], les deux écritures du site) et
+   2°) le gabarit de la barre mémorisé à la visite précédente (mêmes ids que le gabarit v421 :
+   si config.js le trouve déjà, il passe). Non cliquable, effacé par mobile-nav.js à
+   l'installation de la vraie barre. Zéro régression si rien n'est mémorisé ou si une CSP stricte
+   bloque l'inline : on reste exactement au comportement v424. */
+(function () {
+  try {
+    var r = document.documentElement;
+    var t = "";
+    try { t = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || ""; } catch (eT) {}
+    if (t !== "dark" && t !== "light") {
+      try { t = localStorage.getItem("sti-roue-theme") === "sombre" ? "dark" : ""; } catch (eT2) {}
+    }
+    var dark = t === "dark";
+    if (t === "dark") { r.setAttribute("data-theme", "dark"); r.classList.add("dark", "dark-mode"); }
+    else if (t === "light") { r.removeAttribute("data-theme"); r.classList.remove("dark", "dark-mode"); }
+    if (!/^https?:$/.test(location.protocol)) return;
+    if (!window.matchMedia || !window.matchMedia("(max-width: 700px)").matches) return;
+    if (window.__STI_BNAV || document.getElementById("sti-bnav")) return;
+    var pn = location.pathname;
+    if (pn.indexOf("/tests/") !== -1) return;
+    if (/(^|\/)admin(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;
+    var d = JSON.parse(localStorage.getItem("sti-bnav-skel") || "null");
+    if (!d || !d.h || typeof d.f !== "string" || !/^#[0-9a-f]{3,8}$|^rgba?\([\d.,\s]+\)$/i.test(d.f)) return;
+    if (Date.now() - (d.t || 0) > 45 * 24 * 3600 * 1000) return;
+    var b = /^#[0-9a-f]{3,8}$|^rgba?\([\d.,\s]+\)$/i.test(d.b || "") ? d.b : "#e7d9bd";
+    var brd = /^[\d.]+px$/.test(d.brd || "") ? d.brd : "1.5px";
+    /* le gabarit a été mesiné dans un thème, la page s'ouvre dans l'autre : couleurs de repli
+       littérales du module (jamais le fond du thème inverse). */
+    if ((d.th === "dark") !== dark) {
+      b = dark ? "#26314c" : "#e7d9bd";
+      d.f = dark ? "#121a2b" : "#fffcf3";
+    }
+    var st = document.createElement("style");
+    st.id = "sti-bnav-skel-css";
+    st.textContent = "@media (max-width:700px){html:not(.sti-bnav-on) #sti-bnav-skel{display:block;position:fixed;left:0;right:0;bottom:0;height:" + d.h + "px;background:" + d.f + ";border-top:" + brd + " solid " + b + ";z-index:2147483000;pointer-events:none}}";
+    var sk = document.createElement("div");
+    sk.id = "sti-bnav-skel";
+    sk.setAttribute("aria-hidden", "true");
+    r.appendChild(st);
+    r.appendChild(sk);
+    /* filet de sécurité : si la vraie barre ne vient jamais (module absent, réseau en panne),
+       le gabarit ne doit pas traîner une éternité. */
+    setTimeout(function () {
+      try {
+        if (!document.getElementById("sti-bnav")) {
+          var a = document.getElementById("sti-bnav-skel"); if (a) a.remove();
+          var c = document.getElementById("sti-bnav-skel-css"); if (c) c.remove();
+        }
+      } catch (eS) {}
+    }, 5000);
+  } catch (e) {}
+})();
+</script>
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -121,7 +180,7 @@
   </nav>
 <script>window.__APP_OK = true;</script>
 <script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=193"></script>
+<script src="../../assets/js/config.js?v=425"></script>
 <script src="../../assets/js/acces.js?v=195"></script>
   <script src="../../assets/js/sync-progressions.js" defer></script>
 </body>

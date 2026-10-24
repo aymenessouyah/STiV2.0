@@ -35,7 +35,7 @@ window.STI_AUTH = {
       var m = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
       base = m ? location.origin + m[1] + "/" : location.origin + pn.slice(0, pn.lastIndexOf("/") + 1);
     } catch (e) {}
-    s.src = base + "assets/js/mobile-nav.js?v=423";
+    s.src = base + "assets/js/mobile-nav.js?v=425";
     s.async = true;
     (document.head || document.documentElement).appendChild(s);
   } catch (e) {}
@@ -54,6 +54,8 @@ window.STI_AUTH = {
     if (!/^https?:$/.test(location.protocol)) return;
     if (window.__STI_BNAV || document.getElementById("sti-bnav")) return;
     if (!window.matchMedia || !window.matchMedia("(max-width: 700px)").matches) return;
+    /* v425 : <head> porte déjà le gabarit (sti-early-boot) -> on ne le peint pas deux fois. */
+    if (document.getElementById("sti-bnav-skel")) return;
     var pn = location.pathname;
     if (pn.indexOf("/tests/") !== -1) return;
     if (/(^|\/)admin(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;

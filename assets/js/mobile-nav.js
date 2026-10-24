@@ -248,7 +248,7 @@
       var r = nav.getBoundingClientRect();
       var h = Math.max(48, Math.min(96, Math.round(r.height)));
       if (cs.backgroundColor && cs.backgroundColor !== "rgba(0, 0, 0, 0)") {
-        localStorage.setItem("sti-bnav-skel", JSON.stringify({ t: Date.now(), h: h, f: cs.backgroundColor, b: cs.borderTopColor, brd: cs.borderTopWidth || "1.5px" }));
+        localStorage.setItem("sti-bnav-skel", JSON.stringify({ t: Date.now(), h: h, f: cs.backgroundColor, b: cs.borderTopColor, brd: cs.borderTopWidth || "1.5px", th: root.getAttribute("data-theme") === "dark" || root.classList.contains("dark") ? "dark" : "light" }));
       }
     } catch (e) {}
 
