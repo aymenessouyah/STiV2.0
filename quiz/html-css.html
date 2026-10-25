@@ -3239,6 +3239,10 @@
     <div class="toasts" id="toasts" aria-live="polite"></div>
     <canvas id="confettiCanvas" class="hidden" aria-hidden="true"></canvas>
 
+    <script src="../assets/js/supabase-umd.js"></script>
+    <script src="../assets/js/config.js?v=425"></script>
+    <script src="../assets/js/quiz-sync.js?v=455"></script>
+
     <script>
       /* ==============================================================
          1. DONNÉES — banque de questions, démos, icônes, conseils
@@ -5441,7 +5445,13 @@ background-repeat: repeat;</pre>
          8. PARTIE : tirage aléatoire
          ============================================================== */
       function nouvellePartie() {
-        var tirees = shuffle(pool()).slice(0, nbQuestions());
+        var revHcActif =
+          window.STIQuizSync && STIQuizSync.revisionIds
+            ? STIQuizSync.revisionIds("html-css")
+            : null;
+        var basePool = pool();
+        var limite = revHcActif && revHcActif.length ? basePool.length : nbQuestions();
+        var tirees = shuffle(basePool).slice(0, limite);
         state.session = tirees.map(function (q) {
           var propositions = q.options.map(function (texte, i) {
             return { text: texte, ok: i === q.correct };
@@ -5451,9 +5461,22 @@ background-repeat: repeat;</pre>
             text: q.text,
             options: shuffle(propositions),
             answer: null,
+            _synced: false,
           };
         });
+        for (var i = 2; i < state.session.length; i++) {
+          var i0 = state.session[i - 2].options.findIndex(function (o) { return o.ok; });
+          var i1 = state.session[i - 1].options.findIndex(function (o) { return o.ok; });
+          var i2 = state.session[i].options.findIndex(function (o) { return o.ok; });
+          if (i2 !== -1 && i2 === i1 && i2 === i0 && state.session[i].options.length > 1) {
+            var alt = (i2 + 1) % state.session[i].options.length;
+            var tmp = state.session[i].options[i2];
+            state.session[i].options[i2] = state.session[i].options[alt];
+            state.session[i].options[alt] = tmp;
+          }
+        }
         state.index = 0;
+        state.partySynced = false;
       }
 
       function ouvrirOverlay(id) {
@@ -5655,6 +5678,32 @@ background-repeat: repeat;</pre>
 
       var SEUIL_FAIBLE = 70; // % de réussite minimum attendu par thème
 
+      function synchroniserPartieHtmlCss(finaliserPartie) {
+        if (!window.STIQuizSync || !state || !state.session || !state.session.length) return;
+        var repondues = state.session.filter(function (q) {
+          return q.answer !== null && q.answer !== undefined;
+        });
+        var nonSync = repondues.filter(function (q) { return !q._synced; });
+        if (STIQuizSync.enregistrerReponses && nonSync.length) {
+          nonSync.forEach(function (q) { q._synced = true; });
+          STIQuizSync.enregistrerReponses(
+            "html-css",
+            null,
+            nonSync.map(function (q) {
+              return { id: STIQuizSync.hash(q.text), enonce: q.text, ok: q.options[q.answer].ok };
+            })
+          );
+        }
+        if (finaliserPartie && !state.partySynced && repondues.length > 0 && STIQuizSync.enregistrer) {
+          state.partySynced = true;
+          var nbBonnes = repondues.filter(function (q) { return q.options[q.answer].ok; }).length;
+          STIQuizSync.enregistrer("html-css", nbBonnes, finaliserPartie === "complet" ? state.session.length : repondues.length);
+        }
+      }
+      window.addEventListener("pagehide", function () {
+        synchroniserPartieHtmlCss(true);
+      });
+
       function afficherResultat() {
         arreterChrono();
 
@@ -5663,13 +5712,10 @@ background-repeat: repeat;</pre>
         var pct = total ? (score / total) * 100 : 0;
         var duree = state.elapsed;
         var note = noteFinale(pct);
-        if (window.STIQuizSync) STIQuizSync.enregistrer("html-css", score, total);
-        if (window.STIQuizSync && STIQuizSync.enregistrerReponses)
-          STIQuizSync.enregistrerReponses("html-css", null, state.session.filter(function (q) {
-            return q.answer !== null && q.answer !== undefined;
-          }).map(function (q) {
-            return { id: STIQuizSync.hash(q.text), enonce: q.text, ok: q.options[q.answer].ok };
-          }));
+        synchroniserPartieHtmlCss("complet");
+        if (window.STIQuizSync && STIQuizSync.quitterRevision) {
+          STIQuizSync.quitterRevision();
+        }
 
         // En-tête du bilan
         var badge = $("#gradeBadge");
@@ -6278,9 +6324,10 @@ background-repeat: repeat;</pre>
       $("#quitBtn").addEventListener("click", function () {
         ouvrirModale(
           "Quitter la partie ?",
-          "La partie en cours sera perdue : un nouveau tirage sera effectué au prochain lancement.",
+          "Les réponses déjà données seront enregistrées ; un nouveau tirage sera effectué au prochain lancement.",
           "Quitter",
           function () {
+            synchroniserPartieHtmlCss(true);
             fermerOverlay("quizOverlay");
             window.scrollTo({
               top: $("#setup").offsetTop - 80,
@@ -6451,6 +6498,17 @@ background-repeat: repeat;</pre>
         // La grille de thèmes est générée après le premier passage du reveal :
         // on observe une seconde fois pour les nouvelles tuiles.
         setTimeout(initReveal, 40);
+
+        var revInitHc =
+          window.STIQuizSync && STIQuizSync.revisionIds
+            ? STIQuizSync.revisionIds("html-css")
+            : null;
+        if (revInitHc && revInitHc.length) {
+          setTimeout(function () {
+            lancerPartie();
+            toast("Mode révision : " + state.session.length + " erreur(s) à retravailler", "🔁");
+          }, 0);
+        }
       })();
     </script>
     
@@ -6458,9 +6516,6 @@ background-repeat: repeat;</pre>
 <link rel="stylesheet" href="../assets/css/protection.css?v=227" />
 <script src="../assets/js/protection.js?v=227" defer></script>
 <!-- /Protection -->
-<script src="../assets/js/supabase-umd.js"></script>
-<script src="../assets/js/config.js?v=425"></script>
-<script src="../assets/js/quiz-sync.js?v=358"></script>
 <script src="../assets/js/acces.js?v=453"></script>
   <script src="../assets/js/sync-progressions.js" defer></script>
 </body>

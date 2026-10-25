@@ -230,7 +230,7 @@
     var tirees = melanger(pool).slice(0, revTab ? pool.length : NB_PAR_SESSION).map(function (q) {
       return { ref: q, choix: melanger([q.bonne].concat(q.choix_faux)), choixEleve: -1 };
     });
-    sessionQuiz = { module: module, questions: tirees, index: 0, mode: "officiel" };
+    sessionQuiz = { module: module, questions: tirees, index: 0, mode: "officiel", synchronise: false };
     afficherQuestion();
   }
 
@@ -265,11 +265,13 @@
     document.getElementById("qt-arreter").addEventListener("click", terminer);
   }
 
-  function terminer() {
-    var s = sessionQuiz;
+  function synchroniserSessionTableaux(s) {
+    if (!s || s.synchronise) return;
     var repondues = s.questions.filter(function (it) { return it.choixEleve !== -1; });
+    if (!repondues.length) return;
+    s.synchronise = true;
     var bonnes = repondues.filter(function (it) { return it.choix[it.choixEleve] === it.ref.bonne; });
-    if (s.mode === "officiel" && repondues.length) {
+    if (s.mode === "officiel") {
       marquerVus(repondues.map(function (it) { return it.ref; }));
       var etat = etatEleve();
       etat.resultats.push({
@@ -279,12 +281,25 @@
       etat.resultats = etat.resultats.slice(-200);
       sauverEtat(etat);
       if (window.STIQuizSync) STIQuizSync.enregistrer("tableaux", bonnes.length, repondues.length, s.module);
-      if (window.STIQuizSync && STIQuizSync.enregistrerReponses)
-        STIQuizSync.enregistrerReponses("tableaux", s.module, repondues.map(function (it) {
-          return { id: it.ref.id != null ? "tab-" + it.ref.id : STIQuizSync.hash(it.ref.q),
-                   enonce: it.ref.q, ok: it.choix[it.choixEleve] === it.ref.bonne };
-        }));
     }
+    if (window.STIQuizSync && STIQuizSync.enregistrerReponses) {
+      STIQuizSync.enregistrerReponses("tableaux", s.module, repondues.map(function (it) {
+        return { id: it.ref.id != null ? "tab-" + it.ref.id : STIQuizSync.hash(it.ref.q),
+                 enonce: it.ref.q, ok: it.choix[it.choixEleve] === it.ref.bonne };
+      }));
+    }
+  }
+
+  window.addEventListener("pagehide", function () {
+    if (sessionQuiz && !sessionQuiz.synchronise) synchroniserSessionTableaux(sessionQuiz);
+  });
+
+  function terminer() {
+    var s = sessionQuiz;
+    var repondues = s.questions.filter(function (it) { return it.choixEleve !== -1; });
+    var bonnes = repondues.filter(function (it) { return it.choix[it.choixEleve] === it.ref.bonne; });
+    synchroniserSessionTableaux(s);
+    if (window.STIQuizSync && STIQuizSync.quitterRevision) STIQuizSync.quitterRevision();
     var erreurs = repondues.filter(function (it) { return it.choix[it.choixEleve] !== it.ref.bonne; });
     var pct = repondues.length ? Math.round((bonnes.length / repondues.length) * 100) : 0;
     app.innerHTML =
@@ -311,11 +326,12 @@
       (s.mode === "officiel"
         ? '<button type="button" class="qt-btn" id="qt-encore">🎲 Nouvelles questions</button>'
         : "") +
-      '<button type="button" class="qt-btn secondaire" id="qt-accueil">← Choisir un autre module</button></div>';
+      '<button type="button" class="qt-btn secondaire" id="qt-accueil">← Choisir un autre module</button>' +
+      '<a class="qt-btn secondaire" style="text-decoration:none" href="../index.html#modules">← Retour aux quiz</a></div>';
     var bErr = document.getElementById("qt-erreurs");
     if (bErr) bErr.addEventListener("click", function () {
       sessionQuiz = {
-        module: s.module, mode: "erreurs",
+        module: s.module, mode: "erreurs", synchronise: false,
         questions: erreurs.map(function (it) {
           return { ref: it.ref, choix: melanger(it.choix), choixEleve: -1 };
         }),

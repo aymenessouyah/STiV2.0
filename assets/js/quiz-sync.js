@@ -1,22 +1,32 @@
-/* ═══ STI — Synchronisation centrale des quiz (v358, maj v362, réponses v365, révision v367) ═══
+/* ═══ STI — Synchronisation centrale des quiz (v358, maj v362, réponses v365, révision v367, fiabilité v455) ═══
    Partagé par toutes les pages quiz. Enregistre CHAQUE partie jouée dans
    Supabase (sti_quiz_parties : score, total, %, date — rejouable à l'infini)
-   et synchronise les questions déjà vues du Quiz des tableaux
+   et les réponses question par question (sti_quiz_reponses : alimente « Mes erreurs »),
+   ainsi que les questions déjà vues du Quiz des tableaux
    (sti_quiz_vus : tirage sans jamais répéter, entre appareils).
+   - File d'attente locale write-ahead (v455) : toute partie ou liste de réponses
+     est inscrite immédiatement en localStorage AVANT la requête réseau, puis
+     retirée dès confirmation d'insertion. Même si l'élève clique sur « Retour »
+     dans la foulée, rien n'est perdu : la page suivante (accueil ou « Mes erreurs »)
+     vide automatiquement la file avant lecture.
    - Silencieux si l'élève n'est pas connecté ou si les tables n'existent
      pas encore : le comportement local des quiz reste inchangé.
-   - File d'attente locale : une partie non envoyée (hors ligne) est
-     conservée et retentée au chargement suivant ET dès le retour de la
-     connexion (événement « online »), sans recharger la page.
    - Exception : le compte laboratoire (elevelabo3@exemple.tn) n'envoie
-     AUCUN score en ligne (compte partagé de classe) ; ses quiz restent
-     en distribution aléatoire locale et sa banque se met à jour avec
-     le site, comme pour tous. */
+     AUCUN score en ligne (compte partagé de classe). */
 (function () {
   "use strict";
   var CLE_FILE = "sti-quiz-sync-file-v1";
   var CLE_FILE_VUS = "sti-quiz-sync-vus-v1";
+  var CLE_FILE_REP = "sti-quiz-sync-rep-v1";
   var COMPTES_SANS_SCORE = ["elevelabo3@exemple.tn"];
+  var seqSync = 0;
+  var promesseVidage = null;
+  var cidsEnVol = {};
+
+  function nouveauCid() {
+    seqSync = (seqSync + 1) % 1000000;
+    return "c-" + Date.now().toString(36) + "-" + seqSync.toString(36) + "-" + Math.random().toString(36).slice(2, 6);
+  }
   function sansScore(u) {
     return !!(u && u.email && COMPTES_SANS_SCORE.indexOf(String(u.email).toLowerCase()) !== -1);
   }
@@ -33,11 +43,38 @@
     }
     return client;
   }
+
+  function utilisateurDepuisStockageLocal() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || !/^sb-.*-auth-token$/.test(k)) continue;
+        var brut = localStorage.getItem(k);
+        if (!brut) continue;
+        var parsed = JSON.parse(brut);
+        var u = (parsed && parsed.user) || (parsed && parsed.currentSession && parsed.currentSession.user) || null;
+        if (u && u.id) return { id: String(u.id), email: u.email || null };
+      }
+    } catch (e) {}
+    return null;
+  }
+
   function utilisateur() {
     if (promesseUser) return promesseUser;
     promesseUser = (async function () {
       var s = sb();
-      if (!s) return null;
+      if (!s) return utilisateurDepuisStockageLocal();
+      try {
+        if (s.auth && typeof s.auth.getSession === "function") {
+          var rs = await s.auth.getSession();
+          if (rs && rs.data && rs.data.session && rs.data.session.user) {
+            var us = rs.data.session.user;
+            return { id: us.id, email: us.email || null };
+          }
+        }
+      } catch (e0) {}
+      var loc = utilisateurDepuisStockageLocal();
+      if (loc) return loc;
       try {
         var r = await s.auth.getUser();
         if (r && r.data && r.data.user) return { id: r.data.user.id, email: r.data.user.email || null };
@@ -50,32 +87,201 @@
     return total > 0 ? Math.round((score * 1000) / total) / 10 : 0;
   }
 
-  /* ---------- File d'attente locale ---------- */
+  /* ---------- File d'attente locale (parties) ---------- */
   function lireFile() {
     try { return JSON.parse(localStorage.getItem(CLE_FILE) || "[]"); } catch (e) { return []; }
   }
   function sauverFile(f) {
-    try { localStorage.setItem(CLE_FILE, JSON.stringify(f.slice(-50))); } catch (e) {}
+    try { localStorage.setItem(CLE_FILE, JSON.stringify(f.slice(-80))); } catch (e) {}
   }
   function mettreEnFile(ligne) {
     var f = lireFile();
     f.push(ligne);
     sauverFile(f);
   }
-  async function viderFile() {
+  function retirerCidFile(cid) {
+    if (!cid) return;
+    var f = lireFile().filter(function (x) { return !x || x._cid !== cid; });
+    sauverFile(f);
+  }
+
+  /* ---------- File d'attente locale (questions vues Tableaux) ---------- */
+  function lireFileVus() {
+    try { return JSON.parse(localStorage.getItem(CLE_FILE_VUS) || "[]"); } catch (e) { return []; }
+  }
+  function sauverFileVus(f) {
+    try { localStorage.setItem(CLE_FILE_VUS, JSON.stringify(f.slice(-2000))); } catch (e) {}
+  }
+  function mettreVusEnFile(module, ids) {
+    var f = lireFileVus();
+    ids.forEach(function (id) { f.push({ module: String(module), question_id: String(id) }); });
+    sauverFileVus(f);
+  }
+
+  /* ---------- Réponses question par question (v365 / write-ahead v455) ---------- */
+  function hashTxt(t) {
+    var h = 5381, x = String(t == null ? "" : t);
+    for (var i = 0; i < x.length; i++) h = (((h << 5) + h) ^ x.charCodeAt(i)) >>> 0;
+    return "h" + h.toString(36);
+  }
+  function lireFileRep() {
+    try { return JSON.parse(localStorage.getItem(CLE_FILE_REP) || "[]"); } catch (e) { return []; }
+  }
+  function sauverFileRep(f) {
+    try { localStorage.setItem(CLE_FILE_REP, JSON.stringify(f.slice(-600))); } catch (e) {}
+  }
+  function mettreRepEnFile(lignes, cid) {
+    var f = lireFileRep();
+    lignes.forEach(function (l) {
+      f.push({
+        _cid: cid || l._cid || null,
+        quiz: l.quiz,
+        module: l.module,
+        question_id: l.question_id,
+        enonce: l.enonce,
+        correct: !!l.correct
+      });
+    });
+    sauverFileRep(f);
+  }
+  function retirerCidRep(cid) {
+    if (!cid) return;
+    var f = lireFileRep().filter(function (x) { return !x || x._cid !== cid; });
+    sauverFileRep(f);
+  }
+
+  async function enregistrerReponses(quiz, module, liste) {
+    if (!quiz || !liste || !liste.length) return false;
+    var preLignes = [];
+    liste.slice(0, 120).forEach(function (r) {
+      if (!r) return;
+      preLignes.push({
+        quiz: String(quiz),
+        module: module ? String(module) : null,
+        question_id: String(r.id != null && r.id !== "" ? r.id : hashTxt(r.enonce)),
+        enonce: String(r.enonce == null ? "" : r.enonce).slice(0, 200),
+        correct: !!r.ok
+      });
+    });
+    if (!preLignes.length) return false;
+
+    /* Sauvegarde locale immédiate AVANT tout await (survit à un clic immédiat sur « Retour ») */
+    var cid = nouveauCid();
+    cidsEnVol[cid] = true;
+    mettreRepEnFile(preLignes, cid);
+
+    try {
+      var s = sb();
+      var u = await utilisateur();
+      if (sansScore(u)) {
+        retirerCidRep(cid);
+        return false;
+      }
+      if (!s || !u) return false;
+      var lignes = preLignes.map(function (l) {
+        return {
+          user_id: u.id,
+          email: u.email,
+          quiz: l.quiz,
+          module: l.module,
+          question_id: l.question_id,
+          enonce: l.enonce,
+          correct: l.correct
+        };
+      });
+      for (var i = 0; i < lignes.length; i += 200) {
+        var r2 = await s.from("sti_quiz_reponses").insert(lignes.slice(i, i + 200));
+        if (r2.error) return false;
+      }
+      retirerCidRep(cid);
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      delete cidsEnVol[cid];
+    }
+  }
+
+  async function viderFileRep(s, u) {
+    var tout = lireFileRep();
+    var prets = tout.filter(function (l) { return l && (!l._cid || !cidsEnVol[l._cid]); });
+    if (!prets.length) return;
+    var lignes = prets.map(function (l) {
+      return {
+        user_id: u.id,
+        email: u.email,
+        quiz: String(l.quiz),
+        module: l.module ? String(l.module) : null,
+        question_id: String(l.question_id),
+        enonce: String(l.enonce == null ? "" : l.enonce).slice(0, 200),
+        correct: !!l.correct
+      };
+    });
+    try {
+      for (var i = 0; i < lignes.length; i += 200) {
+        var r = await s.from("sti_quiz_reponses").insert(lignes.slice(i, i + 200));
+        if (r.error) return;
+      }
+      var envoyes = new Set(prets);
+      var restant = lireFileRep().filter(function (l) {
+        if (!l) return false;
+        if (l._cid && cidsEnVol[l._cid]) return true;
+        for (var k = 0; k < prets.length; k++) {
+          if (prets[k]._cid && l._cid === prets[k]._cid) return false;
+          if (!prets[k]._cid && !l._cid && l.quiz === prets[k].quiz && l.question_id === prets[k].question_id && l.enonce === prets[k].enonce) return false;
+        }
+        return !envoyes.has(l);
+      });
+      sauverFileRep(restant);
+    } catch (e) {}
+  }
+
+  async function viderFileInterne() {
     var s = sb();
     var u = await utilisateur();
-    if (!s || !u || sansScore(u)) return;
+    if (!s || !u) return;
+    if (sansScore(u)) {
+      sauverFile([]);
+      sauverFileRep([]);
+      sauverFileVus([]);
+      return;
+    }
     var f = lireFile();
-    if (f.length) {
-      var reste = [];
-      for (var i = 0; i < f.length; i++) {
+    var prets = f.filter(function (x) { return x && (!x._cid || !cidsEnVol[x._cid]); });
+    if (prets.length) {
+      var cidsEchec = {};
+      var restesSansCid = [];
+      for (var i = 0; i < prets.length; i++) {
+        var item = prets[i];
+        var payload = {
+          user_id: item.user_id || u.id,
+          email: item.email !== undefined ? item.email : u.email,
+          quiz: String(item.quiz),
+          module: item.module ? String(item.module) : null,
+          score: parseInt(item.score, 10),
+          total: parseInt(item.total, 10)
+        };
+        if (!payload.quiz || isNaN(payload.score) || isNaN(payload.total) || payload.total <= 0) continue;
         try {
-          var r = await s.from("sti_quiz_parties").insert(f[i]);
-          if (r.error) reste.push(f[i]);
-        } catch (e) { reste.push(f[i]); }
+          var r = await s.from("sti_quiz_parties").insert(payload);
+          if (r.error) {
+            if (item._cid) cidsEchec[item._cid] = true;
+            else restesSansCid.push(item);
+          }
+        } catch (e) {
+          if (item._cid) cidsEchec[item._cid] = true;
+          else restesSansCid.push(item);
+        }
       }
-      sauverFile(reste);
+      var cidsTraites = {};
+      prets.forEach(function (p) { if (p._cid) cidsTraites[p._cid] = true; });
+      var nouvFile = lireFile().filter(function (x) {
+        if (!x) return false;
+        if (x._cid && cidsEnVol[x._cid]) return true;
+        if (x._cid && cidsTraites[x._cid]) return !!cidsEchec[x._cid];
+        return false;
+      }).concat(restesSansCid);
+      sauverFile(nouvFile);
     }
     await viderFileRep(s, u);
     var fv = lireFileVus();
@@ -95,77 +301,13 @@
       } catch (e) {}
     }
   }
-  function lireFileVus() {
-    try { return JSON.parse(localStorage.getItem(CLE_FILE_VUS) || "[]"); } catch (e) { return []; }
-  }
-  function sauverFileVus(f) {
-    try { localStorage.setItem(CLE_FILE_VUS, JSON.stringify(f.slice(-2000))); } catch (e) {}
-  }
-  function mettreVusEnFile(module, ids) {
-    var f = lireFileVus();
-    ids.forEach(function (id) { f.push({ module: String(module), question_id: String(id) }); });
-    sauverFileVus(f);
-  }
 
-  /* ---------- Réponses question par question (v365) ---------- */
-  function hashTxt(t) {
-    var h = 5381, x = String(t == null ? "" : t);
-    for (var i = 0; i < x.length; i++) h = (((h << 5) + h) ^ x.charCodeAt(i)) >>> 0;
-    return "h" + h.toString(36);
-  }
-  var CLE_FILE_REP = "sti-quiz-sync-rep-v1";
-  function lireFileRep() {
-    try { return JSON.parse(localStorage.getItem(CLE_FILE_REP) || "[]"); } catch (e) { return []; }
-  }
-  function sauverFileRep(f) {
-    try { localStorage.setItem(CLE_FILE_REP, JSON.stringify(f.slice(-500))); } catch (e) {}
-  }
-  function mettreRepEnFile(lignes) {
-    var f = lireFileRep();
-    lignes.forEach(function (l) {
-      f.push({ quiz: l.quiz, module: l.module, question_id: l.question_id, enonce: l.enonce, correct: l.correct });
+  function viderFile() {
+    if (promesseVidage) return promesseVidage;
+    promesseVidage = viderFileInterne().catch(function () {}).then(function () {
+      promesseVidage = null;
     });
-    sauverFileRep(f);
-  }
-  async function enregistrerReponses(quiz, module, liste) {
-    if (!quiz || !liste || !liste.length) return false;
-    var s = sb();
-    var u = await utilisateur();
-    if (!s || !u || sansScore(u)) return false;
-    var lignes = [];
-    liste.slice(0, 120).forEach(function (r) {
-      if (!r) return;
-      lignes.push({
-        user_id: u.id, email: u.email, quiz: String(quiz),
-        module: module ? String(module) : null,
-        question_id: String(r.id != null && r.id !== "" ? r.id : hashTxt(r.enonce)),
-        enonce: String(r.enonce == null ? "" : r.enonce).slice(0, 200),
-        correct: !!r.ok
-      });
-    });
-    if (!lignes.length) return false;
-    try {
-      for (var i = 0; i < lignes.length; i += 200) {
-        var r2 = await s.from("sti_quiz_reponses").insert(lignes.slice(i, i + 200));
-        if (r2.error) { mettreRepEnFile(lignes); return false; }
-      }
-      return true;
-    } catch (e) { mettreRepEnFile(lignes); return false; }
-  }
-  async function viderFileRep(s, u) {
-    var f = lireFileRep();
-    if (!f.length) return;
-    var lignes = f.map(function (l) {
-      return { user_id: u.id, email: u.email, quiz: l.quiz, module: l.module,
-               question_id: l.question_id, enonce: l.enonce, correct: l.correct };
-    });
-    try {
-      for (var i = 0; i < lignes.length; i += 200) {
-        var r = await s.from("sti_quiz_reponses").insert(lignes.slice(i, i + 200));
-        if (r.error) return;
-      }
-      sauverFileRep([]);
-    } catch (e) {}
+    return promesseVidage;
   }
 
   /* ---------- API publique ---------- */
@@ -173,18 +315,43 @@
     score = parseInt(score, 10);
     total = parseInt(total, 10);
     if (!quiz || isNaN(score) || isNaN(total) || total <= 0 || score < 0 || score > total) return false;
-    var s = sb();
-    var u = await utilisateur();
-    if (!s || !u || sansScore(u)) return false;
-    var ligne = {
-      user_id: u.id, email: u.email, quiz: String(quiz),
-      module: module ? String(module) : null, score: score, total: total
-    };
+
+    /* Sauvegarde locale immédiate AVANT tout await */
+    var cid = nouveauCid();
+    cidsEnVol[cid] = true;
+    mettreEnFile({
+      _cid: cid,
+      quiz: String(quiz),
+      module: module ? String(module) : null,
+      score: score,
+      total: total
+    });
+
     try {
+      var s = sb();
+      var u = await utilisateur();
+      if (sansScore(u)) {
+        retirerCidFile(cid);
+        return false;
+      }
+      if (!s || !u) return false;
+      var ligne = {
+        user_id: u.id,
+        email: u.email,
+        quiz: String(quiz),
+        module: module ? String(module) : null,
+        score: score,
+        total: total
+      };
       var r = await s.from("sti_quiz_parties").insert(ligne);
-      if (r.error) { mettreEnFile(ligne); return false; }
+      if (r.error) return false;
+      retirerCidFile(cid);
       return true;
-    } catch (e) { mettreEnFile(ligne); return false; }
+    } catch (e) {
+      return false;
+    } finally {
+      delete cidsEnVol[cid];
+    }
   }
 
   async function resume(quiz) {
@@ -246,19 +413,6 @@
     } catch (e) { mettreVusEnFile(module, ids); return false; }
   }
 
-  window.STIQuizSync = {
-    enregistrer: enregistrer,
-    enregistrerReponses: enregistrerReponses,
-    hash: hashTxt,
-    preparerRevision: preparerRevision,
-    revisionIds: revisionIds,
-    quitterRevision: quitterRevision,
-    resume: resume,
-    chargerVus: chargerVus,
-    marquerVus: marquerVus,
-    utilisateur: utilisateur
-  };
-
   /* ---------- Mode « Retravailler mes erreurs » (v367) ---------- */
   var CLE_REVISION = "sti-revision-erreurs-v1";
   function preparerRevision(quiz, ids) {
@@ -278,6 +432,20 @@
   function quitterRevision() {
     try { localStorage.removeItem(CLE_REVISION); } catch (e) {}
   }
+
+  window.STIQuizSync = {
+    enregistrer: enregistrer,
+    enregistrerReponses: enregistrerReponses,
+    viderFile: viderFile,
+    hash: hashTxt,
+    preparerRevision: preparerRevision,
+    revisionIds: revisionIds,
+    quitterRevision: quitterRevision,
+    resume: resume,
+    chargerVus: chargerVus,
+    marquerVus: marquerVus,
+    utilisateur: utilisateur
+  };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", viderFile);
   else viderFile();
