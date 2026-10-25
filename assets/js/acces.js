@@ -31,6 +31,78 @@
     }
   } catch (e) {}
 
+  /* ---------- v445 : Validation et compression carrée légère (144x144 <= 48 Ko) de la photo élève ---------- */
+  function photoUrlSureSTI(u) {
+    var s = String(u || "").trim();
+    if (!/^data:image\/(jpeg|jpg|png|webp);base64,[A-Za-z0-9+/=\s]+$/i.test(s)) return "";
+    s = s.replace(/\s+/g, "");
+    if (s.length > 65536) return "";
+    return s;
+  }
+  function compresserPhotoCarreeSTI(file, onOk, onErr) {
+    if (!file || !/^image\//i.test(file.type || "")) {
+      if (onErr) onErr("Veuillez sélectionner une image (JPEG, PNG ou WebP).");
+      return;
+    }
+    if (file.size > 12 * 1024 * 1024) {
+      if (onErr) onErr("Image trop volumineuse (maximum 12 Mo avant compression).");
+      return;
+    }
+    var fr = new FileReader();
+    fr.onerror = function () { if (onErr) onErr("Impossible de lire le fichier image."); };
+    fr.onload = function () {
+      var img = new Image();
+      img.onerror = function () { if (onErr) onErr("Format d'image non reconnu."); };
+      img.onload = function () {
+        try {
+          var w = img.naturalWidth || img.width || 0;
+          var h = img.naturalHeight || img.height || 0;
+          if (!w || !h) { if (onErr) onErr("Dimensions d'image invalides."); return; }
+          var side = Math.min(w, h);
+          var sx = Math.floor((w - side) / 2);
+          var sy = Math.floor((h - side) * 0.35); /* cadrage portrait naturel légèrement haut */
+          if (sy < 0) sy = 0;
+          if (sy + side > h) sy = h - side;
+          var cible = 144;
+          var cv = document.createElement("canvas");
+          cv.width = cible;
+          cv.height = cible;
+          var ctx = cv.getContext("2d");
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, cible, cible);
+          ctx.drawImage(img, sx, sy, side, side, 0, 0, cible, cible);
+          var out = "";
+          var quals = [0.80, 0.70, 0.58, 0.46];
+          for (var qi = 0; qi < quals.length; qi++) {
+            var essaiW = "";
+            try { essaiW = cv.toDataURL("image/webp", quals[qi]); } catch (eW) { essaiW = ""; }
+            if (essaiW && /^data:image\/webp;base64,/i.test(essaiW) && essaiW.length <= 46000) {
+              out = essaiW;
+              break;
+            }
+            var essaiJ = cv.toDataURL("image/jpeg", quals[qi]);
+            if (essaiJ && essaiJ.length <= 46000) {
+              out = essaiJ;
+              break;
+            }
+          }
+          out = photoUrlSureSTI(out);
+          if (!out) {
+            if (onErr) onErr("Impossible de compresser la photo sous 45 Ko.");
+            return;
+          }
+          if (onOk) onOk(out);
+        } catch (errC) {
+          if (onErr) onErr("Erreur lors du recadrage de la photo.");
+        }
+      };
+      img.src = String(fr.result || "");
+    };
+    fr.readAsDataURL(file);
+  }
+  window.__stiCompresserPhotoCarree = compresserPhotoCarreeSTI;
+  window.__stiPhotoUrlSure = photoUrlSureSTI;
+
   /* ---------- v371 : installation de l'application (PWA) ---------- */
   var stiBipV371 = null;
   window.__stiPwaEstInstallee = function () {
@@ -889,11 +961,16 @@
     if (btnImp) btnImp.style.display = ok ? "block" : "none";
     var btnRoue = document.getElementById("sti-roue-btn");
     if (btnRoue) {
-      btnRoue.textContent = "⚙️";
       btnRoue.title = ok ? "Mon compte GOLD (capture & impression autorisées)" : "Mon compte";
       btnRoue.style.background = ok
         ? "radial-gradient(circle at 32% 30%,#fff6b3,#ffb300 68%)"
         : "radial-gradient(circle at 32% 30%,#ffb27a,#f4511e 68%)";
+      if (!btnRoue.querySelector("img.sti-roue-photo-img") && !btnRoue.getAttribute("data-sti-init")) {
+        btnRoue.textContent = "⚙️";
+      }
+      if (window.__stiRafraichirRoueAvatar) {
+        try { window.__stiRafraichirRoueAvatar(); } catch (eR) {}
+      }
     }
     var elLycee = document.getElementById("sti-pan-lycee");
     if (elLycee && arguments.length > 1 && arguments[1]) {
@@ -1184,9 +1261,9 @@
       /* 1. ENVOYER la file d'attente hors-ligne (scores Quiz/Bac, durées d'étude, questions au prof) */
       envoyerFileHorsLigneIdb(user);
 
-      /* 2. RECEVOIR et mettre à jour les données personnelles du candidat depuis Supabase (statut, Gold, classe, lycée, nom, prénom, téléphone, durée semaine, scores Quiz) */
+      /* 2. RECEVOIR et mettre à jour les données personnelles du candidat depuis Supabase (statut, Gold, classe, lycée, nom, prénom, téléphone, photo, durée semaine, scores Quiz) */
       if ((user.email || "").toLowerCase() !== (cfg.ADMIN || "").toLowerCase()) {
-        sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone").eq("id", user.id).maybeSingle().then(function (rp) {
+        sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone,photo_url,photo_attente").eq("id", user.id).maybeSingle().then(function (rp) {
           syncProfilEnCours = false;
           if (!rp || rp.error || !rp.data) return;
           try { sessionStorage.setItem("sti-profil-sync-ts", String(Date.now())); } catch (e) {}
@@ -1212,12 +1289,14 @@
           appliquerVerrou4SI(isLaboS ? "elevelabo3" : currentClasse, false);
           try {
             var ancC = lireCacheSessionLocal() || {};
-            ecrireCacheSessionLocal({
+            var nvSessSync = {
               id: user.id,
               email: rp.data.email || user.email,
               phone: rp.data.phone || ancC.phone || "",
               nom: rp.data.nom || ancC.nom || "",
               prenom: rp.data.prenom || ancC.prenom || "",
+              photo_url: ("photo_url" in rp.data) ? photoUrlSureSTI(rp.data.photo_url) : photoUrlSureSTI(ancC.photo_url),
+              photo_attente: ("photo_attente" in rp.data) ? photoUrlSureSTI(rp.data.photo_attente) : photoUrlSureSTI(ancC.photo_attente),
               user_metadata: user.user_metadata || ancC.user_metadata || {},
               lycee: rp.data.lycee || ancC.lycee || "—",
               classe: rp.data.classe || ancC.classe || "—",
@@ -1226,7 +1305,10 @@
               permanent: isLaboS,
               isAdmin: false,
               ts: Date.now()
-            });
+            };
+            ecrireCacheSessionLocal(nvSessSync);
+            if (window.__stiMajAvatarComptePan) window.__stiMajAvatarComptePan(nvSessSync);
+            if (window.__stiRafraichirRoueAvatar) window.__stiRafraichirRoueAvatar();
           } catch (e) {}
         }).catch(function () {
           syncProfilEnCours = false;
@@ -1825,6 +1907,8 @@
             email: user.email,
             nom: rp.data.nom || "",
             prenom: rp.data.prenom || "",
+            photo_url: ("photo_url" in rp.data) ? photoUrlSureSTI(rp.data.photo_url) : photoUrlSureSTI(ancCache.photo_url),
+            photo_attente: ("photo_attente" in rp.data) ? photoUrlSureSTI(rp.data.photo_attente) : photoUrlSureSTI(ancCache.photo_attente),
             user_metadata: user.user_metadata || ancCache.user_metadata || {},
             lycee: rp.data.lycee || "—",
             classe: rp.data.classe || (isLaboP ? "elevelabo3" : "—"),
@@ -1836,6 +1920,8 @@
             ts: Date.now()
           };
           ecrireCacheSessionLocal(objSess);
+          if (window.__stiMajAvatarComptePan) window.__stiMajAvatarComptePan(objSess);
+          if (window.__stiRafraichirRoueAvatar) window.__stiRafraichirRoueAvatar();
           if (isLaboP) {
             localStorage.setItem("sti-labo3-permanent", JSON.stringify(objSess));
           } else {
@@ -1896,7 +1982,7 @@
       }
     }, 2000);
 
-    sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone").eq("id", user.id).maybeSingle().then(function (rp) {
+    sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone,photo_url,photo_attente").eq("id", user.id).maybeSingle().then(function (rp) {
       clearTimeout(timerProfilOff);
       if (!rp || rp.error) {
         var cacheProfilErreur = lireCacheSessionLocal();
@@ -1939,7 +2025,7 @@
     window.__stiSurveillanceActive = true;
     function verifDirecte() {
       if (enSortie || !navigator.onLine) return;
-      sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone").eq("id", uid).maybeSingle().then(function (rp) {
+      sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone,photo_url,photo_attente").eq("id", uid).maybeSingle().then(function (rp) {
         if (rp && !rp.error && rp.data) {
           try { sessionStorage.setItem("sti-profil-sync-ts", String(Date.now())); } catch (e) {}
         }
@@ -2230,13 +2316,17 @@
           "<span style='color:#7a6f5d;font-size:9.5px;font-weight:900;text-transform:uppercase;letter-spacing:.8px'>Mon Compte STI</span>" +
         "</div>" +
       "</div>" +
-      "<div style='display:flex;align-items:center;gap:10px;margin:4px 0 2px'>" +
-        "<div aria-hidden='true' style='flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ff9a62,#f4511e);color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 6px 14px -4px rgba(244,81,30,.55)'>" + esc(initialesPan) + "</div>" +
+      "<div style='display:flex;align-items:center;gap:9px;margin:4px 0 2px;text-align:left'>" +
+        "<div id='sti-pan-avatar-box' role='button' tabindex='0' title='Cliquer pour proposer ou modifier ma photo de profil' style='flex:0 0 auto;width:42px;height:42px;border-radius:50%;overflow:hidden;cursor:pointer;background:linear-gradient(135deg,#ff9a62,#f4511e);color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 6px 14px -4px rgba(244,81,30,.55)'>" + esc(initialesPan) + "</div>" +
         "<div style='flex:1;min-width:0'>" +
           "<div id='sti-pan-login' style='font-weight:900;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(affLogin) + "</div>" +
           "<div id='sti-pan-lycee' style='color:#7a6f5d;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(lyceePropre(profil)) + " · " + esc(profil.classe || "—") + "</div>" +
         "</div>" +
+        "<button type='button' id='sti-pan-photo-btn' title='Proposer une photo de profil (validée par le professeur)' style='flex:0 0 auto;border:1px solid rgba(35,32,26,.22);background:#fffdf7;color:#23201a;border-radius:999px;padding:4px 9px;font-size:10.5px;font-weight:900;cursor:pointer'>📷 Photo</button>" +
+        "<input type='file' id='sti-pan-photo-inp' accept='image/*' style='display:none' />" +
       "</div>" +
+      "<div id='sti-pan-photo-attente-bar' style='display:none;align-items:center;gap:7px;margin-top:5px;padding:5px 8px;border-radius:10px;background:#fffbeb;color:#78350f;border:1px solid #f59e0b;text-align:left'></div>" +
+      "<div id='sti-pan-photo-msg' style='display:none;margin-top:4px;font-size:10px;font-weight:800;text-align:left'></div>" +
       "<div style='margin-top:6px;padding-top:6px;border-top:1px dashed #e2d5be;text-align:left'>" +
         "<div style='display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:#23201a'><span>📈 Progression</span><span id='sti-pan-prog-pct' style='color:#f4511e'>" + initProgPan.pctProg + "%</span></div>" +
         "<div id='sti-pan-prog-track' style='height:7px;border-radius:99px;background:rgba(35,32,26,.10);margin-top:5px;overflow:hidden'><div id='sti-pan-prog-bar' style='height:100%;width:" + initProgPan.pctProg + "%;border-radius:99px;background:linear-gradient(90deg,#ff8a5c,#f4511e);transition:width .8s cubic-bezier(.22,1,.36,1)'></div></div>" +
@@ -2246,6 +2336,110 @@
         "<div id='sti-pan-install-wrap' style='display:none;margin-top:5px'></div>" +
       "</div>";
     try { window.__stiMajBoutonInstaller(); } catch (e) {}
+
+    /* v445 : Gestion complète de la photo élève dans le panneau de la roue (proposer / annuler / synchronisation temps réel) */
+    (function initialiserPhotoElevePanneau() {
+      var avBox = pan.querySelector("#sti-pan-avatar-box");
+      var btnPh = pan.querySelector("#sti-pan-photo-btn");
+      var inpPh = pan.querySelector("#sti-pan-photo-inp");
+      var barAtt = pan.querySelector("#sti-pan-photo-attente-bar");
+      var msgPh = pan.querySelector("#sti-pan-photo-msg");
+      function afficherMsgPh(txt, estErr) {
+        if (!msgPh) return;
+        if (!txt) { msgPh.style.display = "none"; msgPh.textContent = ""; return; }
+        msgPh.style.display = "block";
+        msgPh.style.color = estErr ? "#b91c1c" : "#15803d";
+        msgPh.textContent = txt;
+      }
+      function rendreAvatarEtAttente(srcProfil) {
+        var cLoc = lireCacheSessionLocal() || {};
+        var phOk = photoUrlSureSTI((srcProfil && ("photo_url" in srcProfil)) ? srcProfil.photo_url : (cLoc.photo_url || (profil && profil.photo_url)));
+        var phAtt = photoUrlSureSTI((srcProfil && ("photo_attente" in srcProfil)) ? srcProfil.photo_attente : (cLoc.photo_attente || (profil && profil.photo_attente)));
+        if (avBox) {
+          if (phOk) {
+            avBox.innerHTML = "<img src='" + esc(phOk) + "' alt='' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block' />";
+          } else {
+            avBox.textContent = initialesPan;
+          }
+        }
+        if (btnPh) {
+          btnPh.textContent = phOk ? "📷 Changer" : "📷 Photo";
+        }
+        if (barAtt) {
+          if (phAtt) {
+            barAtt.style.display = "flex";
+            barAtt.innerHTML =
+              "<img src='" + esc(phAtt) + "' alt='' style='width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid #d97706;flex-shrink:0' />" +
+              "<span style='flex:1;min-width:0;font-size:9.8px;font-weight:800;line-height:1.25;color:#78350f'>⏳ Photo en attente de validation du prof</span>" +
+              "<button type='button' id='sti-pan-photo-annuler' title='Retirer la photo en attente' style='border:1px solid #d97706;background:#fff;color:#92400e;border-radius:7px;padding:2px 6px;font-size:9.5px;font-weight:900;cursor:pointer;flex-shrink:0'>✕</button>";
+            var bAnn = barAtt.querySelector("#sti-pan-photo-annuler");
+            if (bAnn) {
+              bAnn.addEventListener("click", function (ev) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                if (!navigator.onLine) { afficherMsgPh("📴 Connexion requise pour annuler.", true); return; }
+                bAnn.disabled = true;
+                sb.rpc("eleve_proposer_photo", { p_data_url: null }).then(function (r) {
+                  if (r && r.error) throw r.error;
+                  var cMaj = lireCacheSessionLocal() || {};
+                  cMaj.photo_attente = "";
+                  ecrireCacheSessionLocal(cMaj);
+                  rendreAvatarEtAttente({ photo_url: cMaj.photo_url || "", photo_attente: "" });
+                  afficherMsgPh("↩️ Proposition de photo retirée.", false);
+                }).catch(function (er) {
+                  bAnn.disabled = false;
+                  afficherMsgPh("❌ " + ((er && er.message) || "Erreur serveur"), true);
+                });
+              });
+            }
+          } else {
+            barAtt.style.display = "none";
+            barAtt.innerHTML = "";
+          }
+        }
+      }
+      window.__stiMajAvatarComptePan = rendreAvatarEtAttente;
+      rendreAvatarEtAttente(profil);
+
+      function ouvrirSelecteurPh(ev) {
+        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+        if (!inpPh) return;
+        inpPh.value = "";
+        inpPh.click();
+      }
+      if (btnPh) btnPh.addEventListener("click", ouvrirSelecteurPh);
+      if (avBox) {
+        avBox.addEventListener("click", ouvrirSelecteurPh);
+        avBox.addEventListener("keydown", function (ev) {
+          if (ev.key === "Enter" || ev.key === " ") ouvrirSelecteurPh(ev);
+        });
+      }
+      if (inpPh) {
+        inpPh.addEventListener("change", function () {
+          var f = inpPh.files && inpPh.files[0];
+          if (!f) return;
+          if (!navigator.onLine) {
+            afficherMsgPh("📴 Connexion Internet requise pour envoyer votre photo.", true);
+            return;
+          }
+          afficherMsgPh("⏳ Recadrage et envoi au professeur…", false);
+          compresserPhotoCarreeSTI(f, function (dataUrl) {
+            sb.rpc("eleve_proposer_photo", { p_data_url: dataUrl }).then(function (r) {
+              if (r && r.error) throw r.error;
+              var cMaj = lireCacheSessionLocal() || {};
+              cMaj.photo_attente = dataUrl;
+              ecrireCacheSessionLocal(cMaj);
+              rendreAvatarEtAttente({ photo_url: cMaj.photo_url || "", photo_attente: dataUrl });
+              afficherMsgPh("✅ Photo envoyée ! Elle s'affichera dès validation par le professeur.", false);
+            }).catch(function (er) {
+              afficherMsgPh("❌ Envoi refusé : " + ((er && er.message) || "erreur Supabase"), true);
+            });
+          }, function (errMsg) {
+            afficherMsgPh("❌ " + errMsg, true);
+          });
+        });
+      }
+    })();
 
     window.__stiMajProgressionPan = function () {
       try {
@@ -2760,6 +2954,17 @@
     anneauRoue.title = "Progression : " + initProgPan.pctProg + " %";
     anneauRoue.style.cssText = "position:relative;width:62px;height:62px;border-radius:50%;padding:4px;box-sizing:border-box;background:conic-gradient(#f4511e 0% " + initProgPan.pctProg + "%, rgba(35,32,26,.15) " + initProgPan.pctProg + "% 100%);box-shadow:0 14px 30px -10px rgba(13,21,38,.35);";
     anneauRoue.appendChild(btn);
+    if (window.__stiRafraichirRoueAvatar) {
+      setTimeout(function () { try { window.__stiRafraichirRoueAvatar(); } catch (eR) {} }, 0);
+    } else {
+      var phBtnInit = photoUrlSureSTI((profil && profil.photo_url) || ((lireCacheSessionLocal() || {}).photo_url));
+      if (phBtnInit) {
+        btn.textContent = "";
+        btn.style.padding = "0";
+        btn.style.overflow = "hidden";
+        btn.innerHTML = "<img class='sti-roue-photo-img' src='" + esc(phBtnInit) + "' alt='' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;pointer-events:none' />";
+      }
+    }
     var badgeRoue = document.createElement("span");
     badgeRoue.id = "sti-roue-badge";
     badgeRoue.title = "Nouveaux fichiers TP du professeur";
@@ -8095,10 +8300,14 @@
         var onL = estEnLigneCandSite(p.id);
         var dotColor = onL ? "#31a24c" : "#8b5cf6";
         var ini = initialesCandSite(p);
+        var phCandSite = photoUrlSureSTI(p && p.photo_url);
+        var innerAvSite = phCandSite
+          ? "<img src='" + esc(phCandSite) + "' alt='' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block' />"
+          : esc(ini);
         b.style.cssText = "display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;border:none;background:" +
           (act ? "#e7f3ff" : (nl > 0 ? "#f0f2f5" : "transparent")) + ";text-align:left;width:100%";
         b.innerHTML =
-          "<div style='position:relative;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center;flex-shrink:0'>" + esc(ini) + "<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:" + dotColor + ";border:2px solid #fff'></span></div>" +
+          "<div style='position:relative;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center;flex-shrink:0'>" + innerAvSite + "<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:" + dotColor + ";border:2px solid #fff'></span></div>" +
           "<div style='min-width:0;flex:1'>" +
             "<div style='font-size:13px;font-weight:" + (nl > 0 ? "800" : "600") + ";color:#050505;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'><span style='display:inline-block;width:8.5px;height:8.5px;border-radius:50%;background:" + dotColor + ";margin-right:6px;vertical-align:middle'></span>" + esc(nomContactCand(p)) + "</div>" +
             "<div style='font-size:11px;color:" + (nl > 0 ? "#0084ff;font-weight:700" : "#65676b") + ";white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>🏫 " + esc(p.classe || "—") + " · " + (onL ? "En ligne" : "Hors ligne") + "</div>" +
@@ -8162,7 +8371,10 @@
       var onLP = estEnLigneCandSite(p.id);
       var dotColP = onLP ? "#31a24c" : "#8b5cf6";
       if (elHeadAv) {
-        elHeadAv.innerHTML = esc(initialesCandSite(p)) + "<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:" + dotColP + ";border:2px solid #fff'></span>";
+        var phHeadSite = photoUrlSureSTI(p && p.photo_url);
+        elHeadAv.innerHTML = (phHeadSite
+          ? "<img src='" + esc(phHeadSite) + "' alt='' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block' />"
+          : esc(initialesCandSite(p))) + "<span style='position:absolute;right:0;bottom:0;width:10px;height:10px;border-radius:50%;background:" + dotColP + ";border:2px solid #fff'></span>";
       }
       elNom.innerHTML = "<span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:" + dotColP + ";margin-right:6px;vertical-align:middle'></span>" + esc(nomContactCand(p));
       elSub.textContent = (onLP ? "En ligne" : "Hors ligne") + " · 🏫 " + (p.classe || "—") + " · 🏛️ " + (p.lycee || "—").replace(/\s*\|\s*GOLD$/i, "");
