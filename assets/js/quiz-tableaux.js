@@ -148,6 +148,7 @@
       if (!distants) return;
       var etat = etatEleve();
       Object.keys(distants).forEach(function (m) {
+        if (!Object.prototype.hasOwnProperty.call(LIBELLE_MODULE, m)) return;
         if (!etat.vus[m]) etat.vus[m] = [];
         distants[m].forEach(function (id) {
           if (etat.vus[m].indexOf(id) === -1) etat.vus[m].push(id);
@@ -155,6 +156,7 @@
       });
       sauverEtat(etat);
       Object.keys(etat.vus).forEach(function (m) {
+        if (!Object.prototype.hasOwnProperty.call(LIBELLE_MODULE, m)) return;
         if (etat.vus[m].length) STIQuizSync.marquerVus(m, etat.vus[m]);
       });
       if (!sessionQuiz) afficherAccueil();
@@ -172,6 +174,7 @@
     var dejaVus = {};
     var etat = etatEleve();
     Object.keys(etat.vus).forEach(function (m) {
+      if (!Object.prototype.hasOwnProperty.call(LIBELLE_MODULE, m)) return;
       if (module === "mix" || m === module) etat.vus[m].forEach(function (id) { dejaVus[id] = true; });
     });
     return questionsPour(niveau, module).filter(function (q) { return !dejaVus[q.id]; });
@@ -219,11 +222,13 @@
     var resteMix = vivier(niveauChoisi, "mix").length;
     app.innerHTML =
       "<h1>Quiz <em>des tableaux</em></h1>" + niveauxHtml +
+      '<div id="qt-cloud-bilan" style="margin:0 0 12px"></div>' +
+      '<div id="qt-reprise-cloud" style="margin:0 0 14px"></div>' +
       '<div class="qt-modules">' + cartes + "</div>" +
       '<div class="qt-actions"><button type="button" class="qt-btn" data-module="mix" ' +
       (resteMix === 0 ? "disabled" : "") + ">🎲 Mix de tous les tableaux (" + resteMix + " restantes)</button>" +
       '<button type="button" class="qt-btn secondaire" id="qt-reinit">↺ Réinitialiser un module épuisé</button></div>' +
-      '<p class="qt-sous" style="margin-top:14px">Session de ' + NB_PAR_SESSION + " questions, correction détaillée à la fin, puis mode « Revoir mes erreurs ».</p>";
+      '<p class="qt-sous" style="margin-top:14px">Session de ' + NB_PAR_SESSION + " questions, score et ordre des questions synchronisés sur Supabase, puis mode « Réviser encore une autre fois ».</p>";
     app.querySelectorAll("[data-module]").forEach(function (b) {
       b.addEventListener("click", function () { demarrer(b.getAttribute("data-module")); });
     });
@@ -232,6 +237,92 @@
     });
     var reinit = document.getElementById("qt-reinit");
     if (reinit) reinit.addEventListener("click", afficherReinit);
+    hydraterBilanEtSessionCloudTableaux();
+  }
+
+  function hydraterBilanEtSessionCloudTableaux() {
+    if (!window.STIQuizSync) return;
+    if (typeof STIQuizSync.resume === "function") {
+      STIQuizSync.resume("tableaux").then(function (res) {
+        var el = document.getElementById("qt-cloud-bilan");
+        if (!el || !res || !res.parties) return;
+        el.innerHTML =
+          '<div style="padding:10px 14px;border-radius:12px;border:1.5px solid rgba(16,185,129,.4);background:rgba(16,185,129,.09);font-size:13px;font-weight:700">' +
+          "☁️ <strong>Scores Supabase :</strong> " + res.parties + " partie" + (res.parties > 1 ? "s" : "") +
+          (res.meilleur ? " · 🏆 Meilleur : <strong>" + res.meilleur.score + "/" + res.meilleur.total + "</strong> (" + res.meilleur.pct + " %)" : "") +
+          (res.dernier ? " · 🕒 Dernier : <strong>" + res.dernier.score + "/" + res.dernier.total + "</strong> (" + res.dernier.pct + " %)" : "") +
+          "</div>";
+      }).catch(function () {});
+    }
+    if (typeof STIQuizSync.chargerSession === "function") {
+      STIQuizSync.chargerSession("tableaux").then(function (sauv) {
+        var zone = document.getElementById("qt-reprise-cloud");
+        if (!zone || !sauv || !Array.isArray(sauv.ordre_questions) || !sauv.ordre_questions.length) return;
+        var idx = Math.min(Math.max(0, parseInt(sauv.index_courant, 10) || 0), sauv.ordre_questions.length - 1);
+        var modLib = LIBELLE_MODULE[sauv.module] || "Mix de tous les tableaux";
+        zone.innerHTML =
+          '<div style="padding:12px 15px;border-radius:14px;border:2px solid #f59e0b;background:rgba(245,158,11,.12);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px">' +
+          '<div style="font-size:13.5px"><strong>☁️ Partie en cours sauvegardée sur Supabase</strong> (' + esc(modLib) + ")<br>" +
+          "Question <strong>" + (idx + 1) + "/" + sauv.ordre_questions.length + "</strong> · Score conservé : <strong>" + (sauv.score || 0) + " bonne" + ((sauv.score || 0) > 1 ? "s" : "") + "</strong> · Ordre exact des questions conservé.</div>" +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+          '<button type="button" class="qt-btn" id="qt-reprendre-cloud">▶️ Reprendre la partie</button>' +
+          '<button type="button" class="qt-btn secondaire" id="qt-ignorer-cloud">✕ Nouvelle partie</button>' +
+          "</div></div>";
+        var btnRep = document.getElementById("qt-reprendre-cloud");
+        if (btnRep) btnRep.addEventListener("click", function () { reprendreSessionTableaux(sauv); });
+        var btnIgn = document.getElementById("qt-ignorer-cloud");
+        if (btnIgn) btnIgn.addEventListener("click", function () {
+          if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("tableaux");
+          zone.innerHTML = "";
+        });
+      }).catch(function () {});
+    }
+  }
+
+  function reprendreSessionTableaux(sauv) {
+    if (!sauv || !Array.isArray(sauv.ordre_questions) || !banque) return;
+    var parId = {};
+    banque.forEach(function (q) { parId[String(q.id)] = q; });
+    var restaurees = [];
+    sauv.ordre_questions.forEach(function (it) {
+      var ref = parId[String(it.qid)];
+      if (!ref) return;
+      var choix = Array.isArray(it.choix) && it.choix.length === ref.choix.length ? it.choix.slice() : melanger(ref.choix);
+      var ce = typeof it.choixEleve === "number" ? it.choixEleve : -1;
+      restaurees.push({ ref: ref, choix: choix, choixEleve: ce });
+    });
+    if (!restaurees.length) return;
+    if (sauv.etat_meta && sauv.etat_meta.niveau && !niveauDetecte) {
+      niveauChoisi = sauv.etat_meta.niveau;
+    }
+    sessionQuiz = {
+      module: sauv.module || "mix",
+      questions: restaurees,
+      index: Math.min(Math.max(0, parseInt(sauv.index_courant, 10) || 0), restaurees.length - 1),
+      mode: sauv.mode || "officiel",
+      synchronise: false
+    };
+    afficherQuestion();
+  }
+
+  function sauvegarderProgressionTableauxCloud() {
+    var s = sessionQuiz;
+    if (!s || s.synchronise || !window.STIQuizSync || typeof STIQuizSync.sauverSession !== "function") return;
+    var bonnesCourantes = s.questions.filter(function (it) {
+      return it.choixEleve !== -1 && it.choix[it.choixEleve] === it.ref.bonne;
+    }).length;
+    STIQuizSync.sauverSession("tableaux", {
+      module: s.module || "mix",
+      mode: s.mode || "officiel",
+      score: bonnesCourantes,
+      points: bonnesCourantes * 10,
+      total: s.questions.length,
+      index_courant: s.index,
+      ordre_questions: s.questions.map(function (it) {
+        return { qid: it.ref.id, choix: it.choix, choixEleve: it.choixEleve };
+      }),
+      etat_meta: { niveau: niveauChoisi }
+    });
   }
 
   function afficherReinit() {
@@ -267,7 +358,9 @@
       etat3.vus = {};
       sauverEtat(etat3);
       if (window.STIQuizSync && typeof STIQuizSync.reinitialiserVus === "function") {
-        STIQuizSync.reinitialiserVus("*");
+        Object.keys(LIBELLE_MODULE).forEach(function (m) {
+          STIQuizSync.reinitialiserVus(m);
+        });
       }
       afficherAccueil();
     });
@@ -292,6 +385,7 @@
       melanger(pool).slice(0, revTab ? pool.length : NB_PAR_SESSION)
     );
     sessionQuiz = { module: module, questions: tirees, index: 0, mode: "officiel", synchronise: false };
+    sauvegarderProgressionTableauxCloud();
     afficherQuestion();
   }
 
@@ -303,7 +397,7 @@
     var nbDejaRepondues = s.questions.filter(function (it) { return it.choixEleve !== -1; }).length;
     app.innerHTML =
       '<div class="qt-qmeta"><span class="qt-badge">' + ICO_MODULE[q.module] + " " + LIBELLE_MODULE[q.module] + "</span>" +
-      "<span>Question " + (s.index + 1) + " / " + s.questions.length + (s.mode === "erreurs" ? " · entraînement" : "") + "</span></div>" +
+      "<span>Question " + (s.index + 1) + " / " + s.questions.length + (s.mode === "erreurs" ? " · révision erreurs" : (s.mode === "reviser_encore" ? " · réviser encore" : "")) + "</span></div>" +
       '<div class="qt-barre"><i style="width:' + pct + '%"></i></div>' +
       '<p class="qt-question">' + esc(q.q) + "</p>" +
       '<div class="qt-choix">' + item.choix.map(function (c, i) {
@@ -318,13 +412,17 @@
     app.querySelectorAll("[data-choix]").forEach(function (b) {
       b.addEventListener("click", function () {
         item.choixEleve = parseInt(b.getAttribute("data-choix"), 10);
+        sauvegarderProgressionTableauxCloud();
         afficherQuestion();
       });
     });
     document.getElementById("qt-suivant").addEventListener("click", function () {
       s.index++;
       if (s.index >= s.questions.length) terminer();
-      else afficherQuestion();
+      else {
+        sauvegarderProgressionTableauxCloud();
+        afficherQuestion();
+      }
     });
     document.getElementById("qt-arreter").addEventListener("click", terminer);
   }
@@ -335,7 +433,15 @@
     if (!repondues.length) return;
     s.synchronise = true;
     var bonnes = repondues.filter(function (it) { return it.choix[it.choixEleve] === it.ref.bonne; });
-    if (s.mode === "officiel") {
+    var ordreFinal = repondues.map(function (it, idx) {
+      return {
+        rang: idx + 1,
+        id: it.ref.id != null ? "tab-" + it.ref.id : (window.STIQuizSync ? STIQuizSync.hash(it.ref.q) : String(idx + 1)),
+        enonce: it.ref.q,
+        ok: it.choix[it.choixEleve] === it.ref.bonne
+      };
+    });
+    if (s.mode === "officiel" || s.mode === "reviser_encore") {
       marquerVus(repondues.map(function (it) { return it.ref; }));
       var etat = etatEleve();
       etat.resultats.push({
@@ -344,7 +450,14 @@
       });
       etat.resultats = etat.resultats.slice(-200);
       sauverEtat(etat);
-      if (window.STIQuizSync) STIQuizSync.enregistrer("tableaux", bonnes.length, repondues.length, s.module);
+      if (window.STIQuizSync) {
+        STIQuizSync.enregistrer("tableaux", bonnes.length, repondues.length, s.module, {
+          points: bonnes.length * 10,
+          ordre_questions: ordreFinal
+        });
+      }
+    } else if (window.STIQuizSync && STIQuizSync.effacerSession) {
+      STIQuizSync.effacerSession("tableaux");
     }
     if (window.STIQuizSync && STIQuizSync.enregistrerReponses) {
       STIQuizSync.enregistrerReponses("tableaux", s.module, repondues.map(function (it) {
@@ -365,6 +478,7 @@
     if (!repondues.length) {
       s.synchronise = true;
       sessionQuiz = null;
+      if (window.STIQuizSync && STIQuizSync.effacerSession) STIQuizSync.effacerSession("tableaux");
       if (window.STIQuizSync && STIQuizSync.quitterRevision) STIQuizSync.quitterRevision();
       afficherAccueil();
       return;
@@ -431,18 +545,29 @@
       (erreurs.length
         ? '<button type="button" class="qt-btn" id="qt-erreurs">🎯 Revoir mes erreurs (' + erreurs.length + ")</button>"
         : "") +
-      (s.mode === "officiel"
-        ? '<button type="button" class="qt-btn" id="qt-encore">🎲 Nouvelles questions</button>'
-        : "") +
+      '<button type="button" class="qt-btn" id="qt-reviser-encore">🔁 Réviser encore une autre fois (même série)</button>' +
+      '<button type="button" class="qt-btn" id="qt-encore">🎲 Nouvelles questions</button>' +
       '<button type="button" class="qt-btn secondaire" id="qt-accueil">← Choisir un autre module</button>' +
       '<a class="qt-btn secondaire" style="text-decoration:none" href="../index.html#modules">← Retour aux quiz</a></div>';
     var bErr = document.getElementById("qt-erreurs");
     if (bErr) bErr.addEventListener("click", function () {
       sessionQuiz = {
         module: s.module, mode: "erreurs", synchronise: false,
-        questions: preparerQuestionsMelangees(melanger(erreurs.map(function (it) { return it.ref; }))),
+        questions: preparerQuestionsMelangees(erreurs.map(function (it) { return it.ref; })),
         index: 0
       };
+      sauvegarderProgressionTableauxCloud();
+      afficherQuestion();
+    });
+    var bRevEncore = document.getElementById("qt-reviser-encore");
+    if (bRevEncore) bRevEncore.addEventListener("click", function () {
+      /* Garde exactement le même ordre de questions pour vérifier sa progression, avec choix A/B/C/D remélangés */
+      sessionQuiz = {
+        module: s.module, mode: "reviser_encore", synchronise: false,
+        questions: preparerQuestionsMelangees(s.questions.map(function (it) { return it.ref; })),
+        index: 0
+      };
+      sauvegarderProgressionTableauxCloud();
       afficherQuestion();
     });
     var bEnc = document.getElementById("qt-encore");

@@ -27183,6 +27183,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
           </div>
         </div>
 
+        <!-- Bilan & Reprise Cloud Supabase -->
+        <div id="js-cloud-bilan" class="max-w-3xl mx-auto mb-3 text-left"></div>
+        <div id="js-cloud-reprise" class="max-w-3xl mx-auto mb-4 text-left"></div>
+
         <!-- Cartes de mode -->
         <div
           class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-3xl mx-auto"
@@ -27483,12 +27487,26 @@ Check your Browserslist config to be sure that your targets are set up correctly
           <!-- Points faibles : ce bloc est rempli à la fin de la partie -->
           <div id="points-faibles" class="hidden text-left space-y-3"></div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <button
+              id="js-retry-errors-btn"
+              onclick="game.retryErrors()"
+              class="hidden py-3 px-4 rounded-xl bg-rose-500 text-white font-bold font-heading hover:bg-rose-400 transition-all active:scale-95"
+            >
+              🎯 RÉVISER MES ERREURS
+            </button>
+            <button
+              id="js-revise-again-btn"
+              onclick="game.reviseSameSeries()"
+              class="py-3 px-4 rounded-xl border border-yellow-400/50 bg-yellow-400/15 text-yellow-300 font-bold font-heading hover:bg-yellow-400/25 transition-all active:scale-95"
+            >
+              🔁 RÉVISER ENCORE UNE AUTRE FOIS
+            </button>
             <button
               onclick="game.retry()"
               class="py-3 px-4 rounded-xl bg-yellow-400 text-black font-bold font-heading hover:bg-yellow-300 hover:shadow-[0_0_28px_rgba(247,223,30,0.45)] transition-all active:scale-95"
             >
-              REJOUER 🔁
+              🎲 NOUVEAU TIRAGE
             </button>
             <button
               onclick="game.showHome()"
@@ -27499,7 +27517,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             <a
               href="../index.html#modules"
               onclick="if (window.game && game.syncProgress) game.syncProgress(true);"
-              class="py-3 px-4 rounded-xl border border-gray-700 bg-gray-800 text-gray-300 font-mono-code text-sm hover:text-white hover:bg-gray-700 transition-all active:scale-95 text-center"
+              class="sm:col-span-2 py-3 px-4 rounded-xl border border-gray-700 bg-gray-800 text-gray-300 font-mono-code text-sm hover:text-white hover:bg-gray-700 transition-all active:scale-95 text-center"
             >
               ◀ RETOUR AUX QUIZ
             </a>
@@ -29196,7 +29214,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=425"></script>
-    <script src="../assets/js/quiz-sync.js?v=458"></script>
+    <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <!-- ==== MOTEUR DU JEU ==== -->
     <script>
@@ -29290,12 +29308,21 @@ Check your Browserslist config to be sure that your targets are set up correctly
           };
           this.initDom();
           this.updateHomeStats();
+          window.addEventListener("sti-cloud-restored", () => {
+            this.stats.totalAnswered =
+              parseInt(stockageLire("js_quiz_total_answered", "0"), 10) || 0;
+            this.stats.highScore =
+              parseInt(stockageLire("js_quiz_high_score", "0"), 10) || 0;
+            this.updateHomeStats();
+          });
           const revInit =
             window.STIQuizSync && STIQuizSync.revisionIds
               ? STIQuizSync.revisionIds("javascript")
               : null;
           if (revInit && revInit.length) {
             setTimeout(() => this.start("revision"), 0);
+          } else {
+            this.hydrateCloudJs();
           }
         }
 
@@ -29352,12 +29379,192 @@ Check your Browserslist config to be sure that your targets are set up correctly
             STIQuizSync.enregistrer
           ) {
             this.partySynced = true;
+            if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function") {
+              STIQuizSync.noterQuestionsVuesQuiz(
+                "q_js",
+                this.journal.map((j) => STIQuizSync.hash(j.title))
+              );
+            }
+            const ordreFinalJs = this.journal.map((j, idx) => ({
+              rang: idx + 1,
+              id: STIQuizSync.hash(j.title),
+              enonce: j.title,
+              ok: !!j.correct,
+            }));
             STIQuizSync.enregistrer(
               "javascript",
               this.correctCount,
-              this.answeredCount
+              this.answeredCount,
+              this.mode || "arcade",
+              { points: this.score, ordre_questions: ordreFinalJs }
             );
+            setTimeout(() => this.hydrateCloudJs(), 350);
           }
+        }
+
+        saveActiveSessionCloud(nextIdxOverride = null) {
+          if (
+            !window.STIQuizSync ||
+            typeof STIQuizSync.sauverSession !== "function" ||
+            this.partySynced ||
+            !this.questions ||
+            !this.questions.length
+          ) {
+            return;
+          }
+          const idxToSave =
+            typeof nextIdxOverride === "number"
+              ? nextIdxOverride
+              : this.currentQuestionIdx;
+          if (
+            (this.mode === "arcade" || this.mode === "revision") &&
+            idxToSave >= this.questions.length
+          ) {
+            return;
+          }
+          STIQuizSync.sauverSession("javascript", {
+            module: this.mode || "arcade",
+            mode: this.mode || "arcade",
+            score: this.correctCount,
+            points: this.score,
+            total: this.questions.length,
+            index_courant: idxToSave,
+            ordre_questions: this.questions.slice(0, 120),
+            etat_meta: {
+              combo: this.combo,
+              maxCombo: this.maxCombo,
+              lives: this.lives,
+              bossHp: this.bossHp,
+              answeredCount: this.answeredCount,
+              timeBonusTotal: this.timeBonusTotal,
+              journal: this.journal,
+            },
+          });
+        }
+
+        hydrateCloudJs() {
+          if (!window.STIQuizSync) return;
+          if (typeof STIQuizSync.synchroniserVusQuizDepuisCloud === "function") {
+            STIQuizSync.synchroniserVusQuizDepuisCloud("q_js");
+          }
+          if (typeof STIQuizSync.resume === "function") {
+            STIQuizSync.resume("javascript")
+              .then((res) => {
+                if (!res) return;
+                if (res.meilleurPoints && res.meilleurPoints > this.stats.highScore) {
+                  this.stats.highScore = res.meilleurPoints;
+                  stockageEcrire("js_quiz_high_score", this.stats.highScore);
+                }
+                if (res.totalQuestions && res.totalQuestions > this.stats.totalAnswered) {
+                  this.stats.totalAnswered = res.totalQuestions;
+                  stockageEcrire("js_quiz_total_answered", this.stats.totalAnswered);
+                }
+                this.updateHomeStats();
+                const z = document.getElementById("js-cloud-bilan");
+                if (!z || !res.parties) return;
+                z.innerHTML =
+                  '<div class="glass-panel rounded-xl px-4 py-2.5 border border-emerald-500/35 text-xs font-mono-code text-gray-200 flex flex-wrap items-center justify-between gap-2">' +
+                  "<span>☁️ <strong class=\"text-emerald-300\">Scores Supabase :</strong> " +
+                  res.parties +
+                  " partie" +
+                  (res.parties > 1 ? "s" : "") +
+                  (res.meilleur
+                    ? " · 🏆 Meilleur : <strong class=\"text-yellow-300\">" +
+                      res.meilleur.score +
+                      "/" +
+                      res.meilleur.total +
+                      "</strong> (" +
+                      res.meilleur.pct +
+                      " %)"
+                    : "") +
+                  (res.dernier
+                    ? " · 🕒 Dernier : <strong>" +
+                      res.dernier.score +
+                      "/" +
+                      res.dernier.total +
+                      "</strong> (" +
+                      res.dernier.pct +
+                      " %)"
+                    : "") +
+                  "</span></div>";
+              })
+              .catch(() => {});
+          }
+          if (typeof STIQuizSync.chargerSession === "function") {
+            STIQuizSync.chargerSession("javascript")
+              .then((sauv) => {
+                const zr = document.getElementById("js-cloud-reprise");
+                if (
+                  !zr ||
+                  !sauv ||
+                  !Array.isArray(sauv.ordre_questions) ||
+                  !sauv.ordre_questions.length
+                ) {
+                  return;
+                }
+                const idx = Math.min(
+                  Math.max(0, parseInt(sauv.index_courant, 10) || 0),
+                  sauv.ordre_questions.length - 1
+                );
+                zr.innerHTML =
+                  '<div class="glass-panel rounded-xl p-4 border border-yellow-400/50 flex flex-wrap items-center justify-between gap-3">' +
+                  '<div class="text-xs font-mono-code text-gray-200"><strong class="text-yellow-300">☁️ Partie en cours sauvegardée sur Supabase</strong><div class="text-gray-400 mt-1">Question <strong class="text-white">' +
+                  (idx + 1) +
+                  "/" +
+                  sauv.ordre_questions.length +
+                  "</strong> · Score conservé : <strong class=\"text-emerald-300\">" +
+                  (sauv.points || 0) +
+                  " pts (" +
+                  (sauv.score || 0) +
+                  " juste" +
+                  ((sauv.score || 0) > 1 ? "s" : "") +
+                  ")</strong> · Ordre des questions conservé.</div></div>" +
+                  '<div class="flex gap-2 flex-wrap">' +
+                  '<button type="button" id="js-resume-cloud-btn" class="px-3.5 py-2 rounded-lg bg-yellow-400 text-black font-bold font-heading text-xs hover:bg-yellow-300">▶️ REPRENDRE</button>' +
+                  '<button type="button" id="js-discard-cloud-btn" class="px-3 py-2 rounded-lg border border-gray-600 bg-gray-800 text-gray-300 font-mono-code text-xs hover:text-white">✕ NOUVELLE</button>' +
+                  "</div></div>";
+                const bR = document.getElementById("js-resume-cloud-btn");
+                if (bR) {
+                  bR.onclick = () => {
+                    zr.innerHTML = "";
+                    this.resumeSavedSessionJs(sauv);
+                  };
+                }
+                const bD = document.getElementById("js-discard-cloud-btn");
+                if (bD) {
+                  bD.onclick = () => {
+                    if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("javascript");
+                    zr.innerHTML = "";
+                  };
+                }
+              })
+              .catch(() => {});
+          }
+        }
+
+        resumeSavedSessionJs(sauv) {
+          soundManager.init();
+          soundManager.playClick();
+          const meta = sauv.etat_meta || {};
+          this.mode = sauv.mode || "arcade";
+          this.score = Number(sauv.points) || 0;
+          this.correctCount = Number(sauv.score) || 0;
+          this.combo = Number(meta.combo) || 1;
+          this.maxCombo = Number(meta.maxCombo) || 1;
+          this.lives = meta.lives !== undefined ? Number(meta.lives) : 3;
+          this.bossHp = meta.bossHp !== undefined ? Number(meta.bossHp) : 100;
+          this.bossMaxHp = 100;
+          this.answeredCount = Number(meta.answeredCount) || 0;
+          this.timeBonusTotal = Number(meta.timeBonusTotal) || 0;
+          this.journal = Array.isArray(meta.journal) ? meta.journal : [];
+          this.syncedJournalLen = this.journal.length;
+          this.partySynced = false;
+          this.questions = sauv.ordre_questions;
+          this.currentQuestionIdx = Math.min(
+            Math.max(0, parseInt(sauv.index_courant, 10) || 0),
+            this.questions.length - 1
+          );
+          this._openGameplayUiJs("☁️ PARTIE REPRISE DEPUIS SUPABASE ⚡");
         }
 
         endEarly() {
@@ -29410,6 +29617,9 @@ Check your Browserslist config to be sure that your targets are set up correctly
             return;
           }
           clearInterval(this.timer);
+          if (this.answeredCount === 0 && window.STIQuizSync && STIQuizSync.effacerSession) {
+            STIQuizSync.effacerSession("javascript");
+          }
           this.syncProgress(true);
           soundManager.playClick();
           document.getElementById("screen-start").classList.remove("hidden");
@@ -29419,31 +29629,20 @@ Check your Browserslist config to be sure that your targets are set up correctly
           document.getElementById("nav-stats").classList.remove("flex");
           document.getElementById("btn-haut").classList.add("hidden");
           this.updateHomeStats();
+          this.hydrateCloudJs();
         }
 
-        shuffleQuestions() {
-          var revJs =
-            window.STIQuizSync && STIQuizSync.revisionIds
-              ? STIQuizSync.revisionIds("javascript")
-              : null;
-          var baseJs = QUESTIONS_DB;
-          if (revJs) {
-            var fJs = QUESTIONS_DB.filter(
-              (q) => revJs.indexOf(STIQuizSync.hash(q.title)) !== -1
-            );
-            if (fJs.length) baseJs = fJs;
-          }
-          const tirage = melangerTableau(baseJs).map((q) => {
-            const ordre = melangerTableau(
-              q.options.map((_, idx) => idx)
-            );
+        prepareQuestionsFromBaseJs(baseList) {
+          const tirage = baseList.map((q) => {
+            const src =
+              QUESTIONS_DB.find((orig) => orig.title === q.title) || q;
+            const ordre = melangerTableau(src.options.map((_, idx) => idx));
             return {
-              ...q,
-              options: ordre.map((idx) => q.options[idx]),
-              answer: ordre.indexOf(q.answer),
+              ...src,
+              options: ordre.map((idx) => src.options[idx]),
+              answer: ordre.indexOf(src.answer),
             };
           });
-          // Éviter toute série de 3 réponses consécutives à la même position
           for (let i = 2; i < tirage.length; i++) {
             if (
               tirage[i].answer === tirage[i - 1].answer &&
@@ -29461,7 +29660,34 @@ Check your Browserslist config to be sure that your targets are set up correctly
           return tirage;
         }
 
-        start(mode = "arcade") {
+        shuffleQuestions() {
+          var revJs =
+            window.STIQuizSync && STIQuizSync.revisionIds
+              ? STIQuizSync.revisionIds("javascript")
+              : null;
+          var baseJs = QUESTIONS_DB;
+          if (revJs) {
+            var fJs = QUESTIONS_DB.filter(
+              (q) => revJs.indexOf(STIQuizSync.hash(q.title)) !== -1
+            );
+            if (fJs.length) baseJs = fJs;
+          }
+          let melangees = melangerTableau(baseJs);
+          if (
+            !revJs &&
+            window.STIQuizSync &&
+            typeof STIQuizSync.ordonnerAvecQuestionsNonVues === "function"
+          ) {
+            melangees = STIQuizSync.ordonnerAvecQuestionsNonVues(
+              "q_js",
+              melangees,
+              (q) => STIQuizSync.hash(q.title)
+            );
+          }
+          return this.prepareQuestionsFromBaseJs(melangees);
+        }
+
+        start(mode = "arcade", customQuestions = null) {
           soundManager.init();
           soundManager.playClick();
           this.mode = mode;
@@ -29478,10 +29704,24 @@ Check your Browserslist config to be sure that your targets are set up correctly
           this.partySynced = false;
           this.bossHp = this.bossMaxHp = 100;
 
-          this.questions = this.shuffleQuestions();
-          if (this.mode === "arcade")
-            this.questions = this.questions.slice(0, 10);
+          if (Array.isArray(customQuestions) && customQuestions.length) {
+            this.questions = this.prepareQuestionsFromBaseJs(customQuestions);
+          } else {
+            this.questions = this.shuffleQuestions();
+            if (this.mode === "arcade")
+              this.questions = this.questions.slice(0, 10);
+          }
+          this.saveActiveSessionCloud(0);
+          this._openGameplayUiJs(
+            mode === "boss"
+              ? "COMBAT DE BOSS : ÉCRASE LE RAMASSE-MIETTES 👾"
+              : mode === "revision"
+              ? `🔁 MODE RÉVISION : ${this.questions.length} QUESTION(S) À RETRAVAILLER`
+              : "GO ! DÉBOGUE VITE ⚡"
+          );
+        }
 
+        _openGameplayUiJs(toastText) {
           document.getElementById("screen-start").classList.add("hidden");
           document.getElementById("screen-result").classList.add("hidden");
           document.getElementById("screen-gameplay").classList.remove("hidden");
@@ -29519,14 +29759,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           this.buildProgressDots();
           this.updateStatsDisplay();
           this.renderQuestion();
-          this.toast(
-            mode === "boss"
-              ? "COMBAT DE BOSS : ÉCRASE LE RAMASSE-MIETTES 👾"
-              : mode === "revision"
-              ? `🔁 MODE RÉVISION : ${this.questions.length} ERREUR(S) À RETRAVAILLER`
-              : "GO ! DÉBOGUE VITE ⚡",
-            this.mode === "boss" ? "#00f3ff" : "#f7df1e"
-          );
+          this.toast(toastText, this.mode === "boss" ? "#00f3ff" : "#f7df1e");
         }
 
         buildProgressDots() {
@@ -29893,6 +30126,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
               : "CONTINUER ➔";
           }
           box.classList.remove("hidden");
+          this.syncProgress(false);
+          this.saveActiveSessionCloud(this.currentQuestionIdx + 1);
         }
 
         nextQuestion() {
@@ -30189,6 +30424,15 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
           bloc.innerHTML = html;
           bloc.classList.remove("hidden");
+          const btnErrJs = document.getElementById("js-retry-errors-btn");
+          if (btnErrJs) {
+            if (erreurs.length > 0) {
+              btnErrJs.textContent = `🎯 RÉVISER MES ERREURS (${erreurs.length})`;
+              btnErrJs.classList.remove("hidden");
+            } else {
+              btnErrJs.classList.add("hidden");
+            }
+          }
         }
 
         animateNumber(id, target, duration, format) {
@@ -30203,8 +30447,33 @@ Check your Browserslist config to be sure that your targets are set up correctly
           requestAnimationFrame(frame);
         }
 
+        retryErrors() {
+          const titresErr = this.journal
+            .filter((e) => !e.correct)
+            .map((e) => e.title);
+          const liste = titresErr
+            .map((t) => QUESTIONS_DB.find((q) => q.title === t))
+            .filter(Boolean);
+          if (!liste.length) return;
+          this.start("revision", liste);
+        }
+
+        reviseSameSeries() {
+          const titresSerie = this.journal.length
+            ? this.journal.map((e) => e.title)
+            : this.questions.map((q) => q.title);
+          const liste = titresSerie
+            .map((t) => QUESTIONS_DB.find((q) => q.title === t))
+            .filter(Boolean);
+          if (!liste.length) {
+            this.retry();
+            return;
+          }
+          this.start(this.mode === "boss" || this.mode === "survival" ? "revision" : this.mode, liste);
+        }
+
         retry() {
-          this.start(this.mode);
+          this.start(this.mode === "revision" ? "arcade" : this.mode);
         }
       }
 

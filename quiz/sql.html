@@ -38700,6 +38700,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
       <!-- MODES -->
       <section id="modes" class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+        <div id="sqlCloudBilan" class="max-w-4xl mx-auto mb-4"></div>
+        <div id="sqlCloudReprise" class="max-w-4xl mx-auto mb-6"></div>
         <div class="text-center reveal">
           <span class="sticker px-4 py-1.5 bg-[#E3DCFF] text-xs"
             >🎮 CHOISIS TON MODE</span
@@ -39571,10 +39573,22 @@ LIMIT 5;</textarea
           <div id="points-faibles" class="hidden mt-5 text-left"></div>
           <div class="mt-5 flex flex-wrap justify-center gap-2">
             <button
+              id="resRetryErrors"
+              class="hidden brutal-btn px-5 py-3 bg-[#FF5D5D] text-white"
+            >
+              🎯 Réviser mes erreurs
+            </button>
+            <button
+              id="resReviseAgain"
+              class="brutal-btn px-5 py-3 bg-[#FFD23F] text-[#1A1A2E]"
+            >
+              🔁 Réviser encore une autre fois
+            </button>
+            <button
               id="resReplay"
               class="brutal-btn px-6 py-3 bg-[#7B61FF] text-white"
             >
-              🔁 Rejouer
+              🎲 Nouveau tirage
             </button>
             <button
               onclick="toggleReview()"
@@ -39705,7 +39719,7 @@ LIMIT 5;</textarea
 
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=425"></script>
-    <script src="../assets/js/quiz-sync.js?v=458"></script>
+    <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <script>
       /* ============ HELPERS & STATE ============ */
@@ -42674,6 +42688,16 @@ LIMIT 5;</textarea
           pool = pool.filter((q) => BONUS_CULTURE_SQL_IDS.indexOf(q.id) === -1);
         }
         pool = shuffle(pool);
+        if (
+          window.STIQuizSync &&
+          typeof STIQuizSync.ordonnerAvecQuestionsNonVues === "function"
+        ) {
+          pool = STIQuizSync.ordonnerAvecQuestionsNonVues(
+            "q_sql",
+            pool,
+            (q) => "sql-" + q.id
+          );
+        }
         if (mode === "daily") {
           return preparerQuestionsSql(pool.slice(0, Math.min(5, pool.length)));
         }
@@ -42682,11 +42706,18 @@ LIMIT 5;</textarea
           pool.slice(0, Math.min(MODE_CFG[mode].nb, pool.length))
         );
       }
-      function startQuiz(mode, cat = "all") {
+      function startQuiz(mode, cat = "all", customQuestionsRaw = null) {
         playClick();
         majModeExamen();
         $("btn-haut").classList.add("hidden");
-        const qs = pickQuestions(mode, cat);
+        const qs =
+          Array.isArray(customQuestionsRaw) && customQuestionsRaw.length
+            ? preparerQuestionsSql(
+                customQuestionsRaw.map(
+                  (r) => QUESTIONS.find((orig) => orig.id === r.id) || r
+                )
+              )
+            : pickQuestions(mode, cat);
         Q = {
           mode,
           cat,
@@ -42708,21 +42739,27 @@ LIMIT 5;</textarea
           start: Date.now(),
         };
         if (mode === "chrono") Q.timeLeft = 60;
+        sauvegarderSessionSqlCloud(0);
+        ouvrirOverlayQuizSql();
+        toast(
+          `Mode <b>${esc(MODE_CFG[mode].label)}</b> lancé. Bonne chance, ${esc(S.pseudo)} !`,
+          "🚀"
+        );
+      }
+      function ouvrirOverlayQuizSql() {
+        const mode = Q.mode;
+        const cat = Q.cat;
         $("quizOverlay").classList.remove("hidden");
         document.body.style.overflow = "hidden";
-        const cfg = MODE_CFG[mode];
+        const cfg = MODE_CFG[mode] || MODE_CFG.classique;
         $("quizModeBadge").textContent =
-          cfg.label + (cat !== "all" ? " • " + CATS[cat].short : "");
+          cfg.label + (cat !== "all" && CATS[cat] ? " • " + CATS[cat].short : "");
         $("quizModeBadge").style.background = cfg.color;
         $("quizModeBadge").style.color = mode === "duel" ? "#fff" : "#1A1A2E";
         $("livesBox").classList.toggle("hidden", mode !== "sansfaute");
         $("botBox").classList.toggle("hidden", mode !== "duel");
         updateLifelines();
         renderQuestion();
-        toast(
-          `Mode <b>${esc(cfg.label)}</b> lancé. Bonne chance, ${esc(S.pseudo)} !`,
-          "🚀"
-        );
       }
       function updateLifelines() {
         $("lifelineFifty").disabled = !Q.lifelines.fifty;
@@ -42898,6 +42935,8 @@ LIMIT 5;</textarea
           if (Q.lives !== null) Q.lives--;
         }
         Q.log.push({ q, user: idx, good });
+        synchroniserPartieSql(false);
+        sauvegarderSessionSqlCloud(Q.index + 1);
         setTimeout(() => {
           if (!Q) return;
           if (Q.mode === "sansfaute" && Q.lives <= 0) {
@@ -42990,6 +43029,8 @@ LIMIT 5;</textarea
         }</div>`;
         $("nextBtn").disabled = false;
         Q.log.push({ q, user: idx, good });
+        synchroniserPartieSql(false);
+        sauvegarderSessionSqlCloud(Q.index + 1);
         if (Q.mode === "sansfaute" && Q.lives <= 0) {
           $("nextBtn").textContent = "Voir résultats 💀";
         }
@@ -43098,7 +43139,183 @@ LIMIT 5;</textarea
           STIQuizSync.enregistrer
         ) {
           Q._partySynced = true;
-          STIQuizSync.enregistrer("sql", Q.correct, repondues.length || toutesLog.length);
+          if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function" && repondues.length) {
+            STIQuizSync.noterQuestionsVuesQuiz(
+              "q_sql",
+              repondues.map((a) => "sql-" + a.q.id)
+            );
+          }
+          const ordreFinalSql = toutesLog.map((a, idx) => ({
+            rang: idx + 1,
+            id: "sql-" + a.q.id,
+            enonce: a.q.q,
+            ok: Boolean(!a.skipped && a.good),
+          }));
+          STIQuizSync.enregistrer(
+            "sql",
+            Q.correct,
+            repondues.length || toutesLog.length,
+            Q.cat && Q.cat !== "all" ? Q.cat : Q.mode || null,
+            { points: Q.score, ordre_questions: ordreFinalSql }
+          );
+          setTimeout(hydraterCloudSql, 350);
+        }
+      }
+      function sauvegarderSessionSqlCloud(nextIdxOverride = null) {
+        if (
+          !Q ||
+          Q._partySynced ||
+          !window.STIQuizSync ||
+          typeof STIQuizSync.sauverSession !== "function" ||
+          !Array.isArray(Q.questions) ||
+          !Q.questions.length
+        ) {
+          return;
+        }
+        const idxNext = typeof nextIdxOverride === "number" ? nextIdxOverride : Q.index;
+        if (Q.mode !== "chrono" && Q.mode !== "sansfaute" && idxNext >= Q.questions.length) {
+          return;
+        }
+        STIQuizSync.sauverSession("sql", {
+          module: Q.cat || "all",
+          mode: Q.mode || "classique",
+          score: Q.correct || 0,
+          points: Q.score || 0,
+          total: Q.questions.length,
+          index_courant: idxNext,
+          ordre_questions: Q.questions.slice(0, 140),
+          etat_meta: {
+            combo: Q.combo || 0,
+            bestCombo: Q.bestCombo || 0,
+            answered: Q.answered || 0,
+            lives: Q.lives,
+            lifelines: Q.lifelines,
+            botScore: Q.botScore || 0,
+            botCorrect: Q.botCorrect || 0,
+            log: Q.log || [],
+          },
+        });
+      }
+      function hydraterCloudSql() {
+        if (!window.STIQuizSync) return;
+        if (typeof STIQuizSync.synchroniserVusQuizDepuisCloud === "function") {
+          STIQuizSync.synchroniserVusQuizDepuisCloud("q_sql");
+        }
+        if (typeof STIQuizSync.resume === "function") {
+          STIQuizSync.resume("sql")
+            .then((res) => {
+              if (!res) return;
+              if (res.totalQuestions && res.totalQuestions > (S.totalAnswered || 0)) {
+                S.totalAnswered = res.totalQuestions;
+                S.totalCorrect = Math.max(S.totalCorrect || 0, res.totalBonnes || 0);
+                save();
+              }
+              const z = $("sqlCloudBilan");
+              if (!z || !res.parties) return;
+              z.innerHTML =
+                '<div class="brutal p-3.5 !rounded-2xl text-xs sm:text-sm font-extrabold flex flex-wrap items-center justify-between gap-2" style="background:var(--card)">' +
+                "<span>☁️ <b class=\"text-[#7B61FF]\">Scores Supabase :</b> " +
+                res.parties +
+                " partie" +
+                (res.parties > 1 ? "s" : "") +
+                (res.meilleur
+                  ? " · 🏆 Meilleur : <b class=\"text-[#0E7A5B]\">" +
+                    res.meilleur.score +
+                    "/" +
+                    res.meilleur.total +
+                    "</b> (" +
+                    res.meilleur.pct +
+                    " %)"
+                  : "") +
+                (res.dernier
+                  ? " · 🕒 Dernier : <b>" +
+                    res.dernier.score +
+                    "/" +
+                    res.dernier.total +
+                    "</b> (" +
+                    res.dernier.pct +
+                    " %)"
+                  : "") +
+                "</span></div>";
+            })
+            .catch(() => {});
+        }
+        if (typeof STIQuizSync.chargerSession === "function") {
+          STIQuizSync.chargerSession("sql")
+            .then((sauv) => {
+              const zr = $("sqlCloudReprise");
+              if (
+                !zr ||
+                !sauv ||
+                !Array.isArray(sauv.ordre_questions) ||
+                !sauv.ordre_questions.length
+              ) {
+                return;
+              }
+              const idx = Math.min(
+                Math.max(0, parseInt(sauv.index_courant, 10) || 0),
+                sauv.ordre_questions.length - 1
+              );
+              zr.innerHTML =
+                '<div class="brutal p-4 !rounded-2xl flex flex-wrap items-center justify-between gap-3" style="background:#FFF8DB;color:#1a1a2e">' +
+                '<div class="text-xs sm:text-sm font-extrabold"><div>☁️ <b>Partie SQL en cours sauvegardée sur Supabase</b></div><div class="opacity-80 mt-0.5">Question <b>' +
+                (idx + 1) +
+                "/" +
+                sauv.ordre_questions.length +
+                "</b> · Score conservé : <b>" +
+                (sauv.points || 0) +
+                " pts (" +
+                (sauv.score || 0) +
+                " bonne" +
+                ((sauv.score || 0) > 1 ? "s" : "") +
+                ")</b> · Ordre des questions conservé.</div></div>" +
+                '<div class="flex gap-2 flex-wrap">' +
+                '<button type="button" id="sqlResumeCloudBtn" class="brutal-btn px-4 py-2 bg-[#7B61FF] text-white text-xs">▶️ Reprendre</button>' +
+                '<button type="button" id="sqlDiscardCloudBtn" class="brutal-btn px-3 py-2 bg-white text-[#1A1A2E] text-xs">✕ Nouvelle</button>' +
+                "</div></div>";
+              const bR = $("sqlResumeCloudBtn");
+              if (bR) {
+                bR.onclick = () => {
+                  zr.innerHTML = "";
+                  const meta = sauv.etat_meta || {};
+                  const mode = MODE_CFG[sauv.mode] ? sauv.mode : "classique";
+                  Q = {
+                    mode,
+                    cat: sauv.module || "all",
+                    questions: sauv.ordre_questions,
+                    index: idx,
+                    score: Number(sauv.points) || 0,
+                    combo: Number(meta.combo) || 0,
+                    bestCombo: Number(meta.bestCombo) || 0,
+                    correct: Number(sauv.score) || 0,
+                    answered: Number(meta.answered) || 0,
+                    lives: meta.lives !== undefined ? meta.lives : mode === "sansfaute" ? 3 : null,
+                    timeLeft: MODE_CFG[mode].time,
+                    perQ: MODE_CFG[mode].time,
+                    lock: false,
+                    log: Array.isArray(meta.log) ? meta.log : [],
+                    _syncedLen: Array.isArray(meta.log) ? meta.log.length : 0,
+                    lifelines: meta.lifelines || { fifty: true, hint: true, skip: true },
+                    botScore: Number(meta.botScore) || 0,
+                    botCorrect: Number(meta.botCorrect) || 0,
+                    start: Date.now(),
+                  };
+                  if (mode === "chrono") Q.timeLeft = 60;
+                  majModeExamen();
+                  $("btn-haut").classList.add("hidden");
+                  ouvrirOverlayQuizSql();
+                  toast("Partie SQL reprise depuis Supabase !", "☁️");
+                };
+              }
+              const bD = $("sqlDiscardCloudBtn");
+              if (bD) {
+                bD.onclick = () => {
+                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("sql");
+                  zr.innerHTML = "";
+                };
+              }
+            })
+            .catch(() => {});
         }
       }
       window.addEventListener("pagehide", () => {
@@ -43119,6 +43336,9 @@ LIMIT 5;</textarea
         }
         clearInterval(timerInt);
         clearTimeout(botTimeout);
+        if (window.STIQuizSync && STIQuizSync.effacerSession) {
+          STIQuizSync.effacerSession("sql");
+        }
         $("quizOverlay").classList.add("hidden");
         document.body.style.overflow = "";
         Q = null;
@@ -43244,9 +43464,40 @@ LIMIT 5;</textarea
           STIQuizSync.quitterRevision();
         }
         $("btn-haut").classList.remove("hidden");
+        const fautesSql = (Q.log || []).filter((l) => !l.good).map((l) => l.q);
+        const serieMemeOrdreSql = (Q.log && Q.log.length
+          ? Q.log.map((l) => l.q)
+          : Q.questions.slice()
+        );
+        const modeCourantSql = Q.mode;
+        const catCouranteSql = Q.cat;
+        const btnErrSql = $("resRetryErrors");
+        if (btnErrSql) {
+          if (fautesSql.length > 0) {
+            btnErrSql.textContent = `🎯 Réviser mes erreurs (${fautesSql.length})`;
+            btnErrSql.classList.remove("hidden");
+            btnErrSql.onclick = () => {
+              $("resultsOverlay").classList.add("hidden");
+              startQuiz("classique", catCouranteSql, fautesSql);
+            };
+          } else {
+            btnErrSql.classList.add("hidden");
+          }
+        }
+        const btnEncoreSql = $("resReviseAgain");
+        if (btnEncoreSql) {
+          btnEncoreSql.onclick = () => {
+            $("resultsOverlay").classList.add("hidden");
+            startQuiz(
+              modeCourantSql === "chrono" ? "classique" : modeCourantSql,
+              catCouranteSql,
+              serieMemeOrdreSql
+            );
+          };
+        }
         $("resReplay").onclick = () => {
           $("resultsOverlay").classList.add("hidden");
-          startQuiz(Q.mode, Q.cat);
+          startQuiz(modeCourantSql, catCouranteSql);
         };
         if (acc >= 60 || winDuel) {
           try { boom(true); } catch (eB) {}
@@ -44674,7 +44925,18 @@ LIMIT 5;</textarea
         $("soundBtn").textContent = S.sound ? "🔊" : "🔇";
         if (revAutoSql && revAutoSql.length) {
           setTimeout(() => startQuiz("classique", "all"), 0);
+        } else {
+          hydraterCloudSql();
         }
+      });
+      window.addEventListener("sti-cloud-restored", () => {
+        try {
+          const lu = JSON.parse(localStorage.getItem("sqlQuestV3") || "null");
+          if (lu && typeof S === "object") {
+            Object.assign(S, lu);
+            if (typeof renderAll === "function") renderAll();
+          }
+        } catch (e) {}
       });
       document.addEventListener("keydown", (e) => {
         if (

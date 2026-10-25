@@ -38778,6 +38778,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
     <!-- SETUP -->
     <section id="setup" class="max-w-7xl mx-auto px-4 md:px-6 mt-12">
+      <div id="phpCloudBilan" class="mb-4"></div>
+      <div id="phpCloudReprise" class="mb-5"></div>
       <div class="flex items-end justify-between flex-wrap gap-3">
         <div>
           <div
@@ -39569,10 +39571,24 @@ Check your Browserslist config to be sure that your targets are set up correctly
         </div>
         <div class="mt-5 flex flex-wrap justify-center gap-3 pb-8">
           <button
+            id="phpRetryErrorsBtn"
+            onclick="retakeErrorsPhp()"
+            class="hidden rounded-2xl px-6 py-3 font-extrabold bg-rose-500 hover:bg-rose-400 text-white transition"
+          >
+            🎯 Réviser mes erreurs
+          </button>
+          <button
+            id="phpReviseAgainBtn"
+            onclick="retakeSameSeriesPhp()"
+            class="glass rounded-2xl px-6 py-3 font-extrabold text-amber-300 border border-amber-400/40 hover:bg-amber-400/10"
+          >
+            🔁 Réviser encore une autre fois
+          </button>
+          <button
             onclick="retake()"
             class="btn-php rounded-2xl px-7 py-3 font-extrabold"
           >
-            <i class="fa-solid fa-rotate-right"></i> Refaire le quiz
+            <i class="fa-solid fa-rotate-right"></i> Nouveau tirage
           </button>
           <button
             onclick="closeResults()"
@@ -39768,7 +39784,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=425"></script>
-    <script src="../assets/js/quiz-sync.js?v=458"></script>
+    <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <script>
       /* ============ DATA ============ */
@@ -42704,22 +42720,38 @@ Check your Browserslist config to be sure that your targets are set up correctly
             : null;
         if (revInitPhp && revInitPhp.length) {
           setTimeout(() => startQuiz(), 0);
+        } else {
+          hydraterCloudPhp();
         }
+        window.addEventListener("sti-cloud-restored", () => {
+          try {
+            const uLu = JSON.parse(memoLire(CLE_LOCALE + "user", "null"));
+            if (uLu && typeof uLu === "object") {
+              user = Object.assign(user, uLu);
+              updateNav();
+            }
+          } catch (e) {}
+        });
       }
       function updateNav() {
-        $("navStreak").textContent = user.streak || 0;
-        $("navXP").textContent = (user.xp || 0).toLocaleString() + " XP";
-        $("navLevel").textContent = Math.floor((user.xp || 0) / 1000) + 1;
-        $("xpBar").style.width = ((user.xp || 0) % 1000) / 10 + "%";
-        $("loginLabel").textContent = user.name ? user.name : "Connexion";
-        $("loginBtn").innerHTML = `<span class="text-base">${
-          user.avatar || "🐘"
-        }</span><span class="hidden sm:inline">${
-          user.name ? escapeHtml(user.name) : "Connexion"
-        }</span>`;
-        $("bestScoreLabel").textContent = user.best
-          ? user.best.toLocaleString("fr-FR") + " pts"
-          : "—";
+        if ($("navStreak")) $("navStreak").textContent = user.streak || 0;
+        if ($("navXP")) $("navXP").textContent = (user.xp || 0).toLocaleString() + " XP";
+        if ($("navLevel")) $("navLevel").textContent = Math.floor((user.xp || 0) / 1000) + 1;
+        if ($("xpBar")) $("xpBar").style.width = ((user.xp || 0) % 1000) / 10 + "%";
+        if ($("loginBtn")) {
+          $("loginBtn").innerHTML = `<span class="text-base">${
+            user.avatar || "🐘"
+          }</span><span id="loginLabel" class="hidden sm:inline">${
+            user.name ? escapeHtml(user.name) : "Connexion"
+          }</span>`;
+        } else if ($("loginLabel")) {
+          $("loginLabel").textContent = user.name ? user.name : "Connexion";
+        }
+        if ($("bestScoreLabel")) {
+          $("bestScoreLabel").textContent = user.best
+            ? user.best.toLocaleString("fr-FR") + " pts"
+            : "—";
+        }
       }
       function saveUser() {
         memoEcrire(CLE_LOCALE + "user", JSON.stringify(user));
@@ -42907,31 +42939,22 @@ Check your Browserslist config to be sure that your targets are set up correctly
         }
         return a;
       }
-      function startQuiz() {
-        let pool = filteredPool();
-        if (!selCats.size) {
-          toast("⚠️ Choisissez au moins un monde !", "red");
-          return;
-        }
-        if (!pool.length) {
-          toast("⚠️ Aucune question : essayez la difficulté Mixte.", "red");
-          return;
-        }
-        const revPhpActif =
-          window.STIQuizSync && STIQuizSync.revisionIds
-            ? STIQuizSync.revisionIds("php")
-            : null;
-        const want = revPhpActif && revPhpActif.length ? pool.length : +$("qCount").value;
-        if ($("shuffleOpt")) $("shuffleOpt").checked = true;
-        pool = shuffle(pool).slice(0, Math.min(want, pool.length));
-        pool.forEach((q, idxQ) => {
+      function preparerListePhp(listeSource) {
+        const copies = listeSource.map((src) => {
+          const orig =
+            QUESTIONS.find(
+              (cand) => cand.q === src.q && (cand.code || "") === (src.code || "")
+            ) || src;
+          return Object.assign({}, orig);
+        });
+        copies.forEach((q, idxQ) => {
           const order = shuffle([0, 1, 2, 3]);
           q._opts = order.map((i) => q.options[i]);
           q._ans = order.indexOf(q.answer);
           if (
             idxQ >= 2 &&
-            q._ans === pool[idxQ - 1]._ans &&
-            q._ans === pool[idxQ - 2]._ans &&
+            q._ans === copies[idxQ - 1]._ans &&
+            q._ans === copies[idxQ - 2]._ans &&
             q._opts.length > 1
           ) {
             const cur = q._ans;
@@ -42944,6 +42967,46 @@ Check your Browserslist config to be sure that your targets are set up correctly
             q._ans = alt;
           }
         });
+        return copies;
+      }
+      function startQuiz(customListRaw = null) {
+        let pool;
+        if (Array.isArray(customListRaw) && customListRaw.length) {
+          pool = preparerListePhp(customListRaw);
+        } else {
+          if (!selCats.size) {
+            toast("⚠️ Choisissez au moins un monde !", "red");
+            return;
+          }
+          pool = filteredPool();
+          if (!pool.length) {
+            toast("⚠️ Aucune question : essayez la difficulté Mixte.", "red");
+            return;
+          }
+          const revPhpActif =
+            window.STIQuizSync && STIQuizSync.revisionIds
+              ? STIQuizSync.revisionIds("php")
+              : null;
+          const want =
+            revPhpActif && revPhpActif.length ? pool.length : +$("qCount").value;
+          if ($("shuffleOpt")) $("shuffleOpt").checked = true;
+          let melangeesPhp = shuffle(pool);
+          if (
+            !revPhpActif &&
+            window.STIQuizSync &&
+            typeof STIQuizSync.ordonnerAvecQuestionsNonVues === "function"
+          ) {
+            melangeesPhp = STIQuizSync.ordonnerAvecQuestionsNonVues(
+              "q_php",
+              melangeesPhp,
+              idQuestionPhp,
+              Math.min(want, melangeesPhp.length)
+            );
+          } else {
+            melangeesPhp = melangeesPhp.slice(0, Math.min(want, melangeesPhp.length));
+          }
+          pool = preparerListePhp(melangeesPhp);
+        }
         quiz = {
           list: pool,
           idx: 0,
@@ -42962,6 +43025,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           hintUsed: false,
           malus: 0,
         };
+        sauvegarderSessionPhpCloud(0);
         appliquerModeExamen();
         $("quizOverlay").classList.remove("hidden");
         requestAnimationFrame(() => ($("quizOverlay").style.opacity = 1));
@@ -43209,6 +43273,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
         $("qProgressBar").style.width =
           ((quiz.idx + 1) / quiz.list.length) * 100 + "%";
         updateStreakUI();
+        synchroniserPartiePhp(false);
+        sauvegarderSessionPhpCloud(quiz.idx + 1);
         const isLast = quiz.idx === quiz.list.length - 1;
         $("nextBtn").innerHTML = isLast
           ? "Voir l'évaluation 🏁"
@@ -43245,6 +43311,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
           pts: 0,
           skipped: true,
         });
+        synchroniserPartiePhp(false);
+        sauvegarderSessionPhpCloud(quiz.idx + 1);
         revealSkip();
       }
       function revealSkip() {
@@ -43344,7 +43412,177 @@ Check your Browserslist config to be sure that your targets are set up correctly
           STIQuizSync.enregistrer
         ) {
           quiz._partySynced = true;
-          STIQuizSync.enregistrer("php", quiz.correct, quiz.answers.length);
+          if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function") {
+            STIQuizSync.noterQuestionsVuesQuiz(
+              "q_php",
+              quiz.answers.map((a) => idQuestionPhp(a.q))
+            );
+          }
+          const ordreFinalPhp = quiz.answers.map((a, idx) => ({
+            rang: idx + 1,
+            id: idQuestionPhp(a.q),
+            enonce: enonceQuestionPhp(a.q),
+            ok: !!a.correct,
+          }));
+          STIQuizSync.enregistrer(
+            "php",
+            quiz.correct,
+            quiz.answers.length,
+            quiz.mode || null,
+            { points: quiz.score, ordre_questions: ordreFinalPhp }
+          );
+          setTimeout(hydraterCloudPhp, 350);
+        }
+      }
+      function sauvegarderSessionPhpCloud(nextIdxOverride = null) {
+        if (
+          !quiz ||
+          quiz._partySynced ||
+          !window.STIQuizSync ||
+          typeof STIQuizSync.sauverSession !== "function" ||
+          !Array.isArray(quiz.list) ||
+          !quiz.list.length
+        ) {
+          return;
+        }
+        const idxNext =
+          typeof nextIdxOverride === "number" ? nextIdxOverride : quiz.idx;
+        if (idxNext >= quiz.list.length) return;
+        STIQuizSync.sauverSession("php", {
+          module: quiz.mode || "classic",
+          mode: quiz.mode || "classic",
+          score: quiz.correct || 0,
+          points: quiz.score || 0,
+          total: quiz.list.length,
+          index_courant: idxNext,
+          ordre_questions: quiz.list.slice(0, 180),
+          etat_meta: {
+            streak: quiz.streak || 0,
+            maxStreak: quiz.maxStreak || 0,
+            fifty: quiz.fifty !== false,
+            answers: quiz.answers || [],
+          },
+        });
+      }
+      function hydraterCloudPhp() {
+        if (!window.STIQuizSync) return;
+        if (typeof STIQuizSync.synchroniserVusQuizDepuisCloud === "function") {
+          STIQuizSync.synchroniserVusQuizDepuisCloud("q_php");
+        }
+        if (typeof STIQuizSync.resume === "function") {
+          STIQuizSync.resume("php")
+            .then((res) => {
+              if (!res) return;
+              if (res.meilleurPoints && res.meilleurPoints > (user.best || 0)) {
+                user.best = res.meilleurPoints;
+                saveUser();
+              }
+              const z = $("phpCloudBilan");
+              if (!z || !res.parties) return;
+              z.innerHTML =
+                '<div class="glass rounded-2xl px-4 py-3 border border-emerald-400/30 text-xs sm:text-sm flex flex-wrap items-center justify-between gap-2">' +
+                "<span>☁️ <b class=\"text-emerald-300\">Scores Supabase :</b> " +
+                res.parties +
+                " partie" +
+                (res.parties > 1 ? "s" : "") +
+                (res.meilleur
+                  ? " · 🏆 Meilleur : <b class=\"text-lime-300\">" +
+                    res.meilleur.score +
+                    "/" +
+                    res.meilleur.total +
+                    "</b> (" +
+                    res.meilleur.pct +
+                    " %)"
+                  : "") +
+                (res.dernier
+                  ? " · 🕒 Dernier : <b>" +
+                    res.dernier.score +
+                    "/" +
+                    res.dernier.total +
+                    "</b> (" +
+                    res.dernier.pct +
+                    " %)"
+                  : "") +
+                "</span></div>";
+            })
+            .catch(() => {});
+        }
+        if (typeof STIQuizSync.chargerSession === "function") {
+          STIQuizSync.chargerSession("php")
+            .then((sauv) => {
+              const zr = $("phpCloudReprise");
+              if (
+                !zr ||
+                !sauv ||
+                !Array.isArray(sauv.ordre_questions) ||
+                !sauv.ordre_questions.length
+              ) {
+                return;
+              }
+              const idx = Math.min(
+                Math.max(0, parseInt(sauv.index_courant, 10) || 0),
+                sauv.ordre_questions.length - 1
+              );
+              zr.innerHTML =
+                '<div class="glass rounded-2xl p-4 border border-cyan-400/45 flex flex-wrap items-center justify-between gap-3">' +
+                '<div class="text-xs sm:text-sm"><b class="text-cyan-300">☁️ Partie PHP en cours sauvegardée sur Supabase</b><div class="text-slate-300 mt-1">Question <b>' +
+                (idx + 1) +
+                "/" +
+                sauv.ordre_questions.length +
+                "</b> · Score conservé : <b class=\"text-lime-300\">" +
+                (sauv.points || 0) +
+                " pts (" +
+                (sauv.score || 0) +
+                " bonne" +
+                ((sauv.score || 0) > 1 ? "s" : "") +
+                ")</b> · Ordre exact des questions conservé.</div></div>" +
+                '<div class="flex gap-2 flex-wrap">' +
+                '<button type="button" id="phpResumeCloudBtn" class="btn-php rounded-xl px-4 py-2 font-extrabold text-xs">▶️ Reprendre</button>' +
+                '<button type="button" id="phpDiscardCloudBtn" class="glass rounded-xl px-3 py-2 font-bold text-xs hover:bg-white/10">✕ Nouvelle</button>' +
+                "</div></div>";
+              const bR = $("phpResumeCloudBtn");
+              if (bR) {
+                bR.onclick = () => {
+                  zr.innerHTML = "";
+                  const meta = sauv.etat_meta || {};
+                  quiz = {
+                    list: sauv.ordre_questions,
+                    idx,
+                    score: Number(sauv.points) || 0,
+                    correct: Number(sauv.score) || 0,
+                    streak: Number(meta.streak) || 0,
+                    maxStreak: Number(meta.maxStreak) || 0,
+                    answers: Array.isArray(meta.answers) ? meta.answers : [],
+                    _syncedLen: Array.isArray(meta.answers) ? meta.answers.length : 0,
+                    start: Date.now(),
+                    elapsed: 0,
+                    fifty: meta.fifty !== false,
+                    hint: false,
+                    skipUsed: false,
+                    locked: false,
+                    mode: sauv.mode || selMode,
+                    hintUsed: false,
+                    malus: 0,
+                  };
+                  appliquerModeExamen();
+                  $("quizOverlay").classList.remove("hidden");
+                  requestAnimationFrame(() => ($("quizOverlay").style.opacity = 1));
+                  document.body.style.overflow = "hidden";
+                  $("qScore").textContent = quiz.score.toLocaleString();
+                  renderQ();
+                  startGlobalTimer();
+                  toast("☁️ Partie PHP reprise depuis Supabase !", "cyan");
+                };
+              }
+              const bD = $("phpDiscardCloudBtn");
+              if (bD) {
+                bD.onclick = () => {
+                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("php");
+                  zr.innerHTML = "";
+                };
+              }
+            })
+            .catch(() => {});
         }
       }
       window.addEventListener("pagehide", () => {
@@ -43364,6 +43602,9 @@ Check your Browserslist config to be sure that your targets are set up correctly
         }
         clearInterval(perQInt);
         clearInterval(timerInt);
+        if (window.STIQuizSync && STIQuizSync.effacerSession) {
+          STIQuizSync.effacerSession("php");
+        }
         document.body.classList.remove("examen");
         $("quizOverlay").style.opacity = 0;
         setTimeout(() => {
@@ -43415,6 +43656,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
               ? quiz.answers.length
               : quiz.list.length,
           acc = total ? Math.round((quiz.correct / total) * 100) : 0;
+        synchroniserPartiePhp(true);
+        if (window.STIQuizSync && STIQuizSync.quitterRevision) {
+          STIQuizSync.quitterRevision();
+        }
         // xp
         const xpGain =
           quiz.score +
@@ -43424,27 +43669,30 @@ Check your Browserslist config to be sure that your targets are set up correctly
         user.xp += xpGain;
         user.streak = Math.max(user.streak, quiz.maxStreak);
         if (quiz.score > user.best) user.best = quiz.score;
-        saveUser();
+        try {
+          saveUser();
+        } catch (eSu) {}
         const newLevel = Math.floor(user.xp / 1000) + 1;
-        history.unshift({
-          date: new Date().toLocaleDateString("fr-FR"),
-          score: quiz.score,
-          acc,
-          n: total,
-          mode: quiz.mode,
-          xp: xpGain,
-        });
-        history = history.slice(0, 8);
-        memoEcrire(CLE_LOCALE + "hist", JSON.stringify(history));
-        renderHistory();
-        // board
-        boardExtra.push({
-          name: user.name,
-          avatar: user.avatar,
-          score: quiz.score,
-        });
-        memoEcrire(CLE_LOCALE + "board", JSON.stringify(boardExtra.slice(-10)));
-        renderBoard();
+        try {
+          history.unshift({
+            date: new Date().toLocaleDateString("fr-FR"),
+            score: quiz.score,
+            acc,
+            n: total,
+            mode: quiz.mode,
+            xp: xpGain,
+          });
+          history = history.slice(0, 8);
+          memoEcrire(CLE_LOCALE + "hist", JSON.stringify(history));
+          renderHistory();
+          boardExtra.push({
+            name: user.name,
+            avatar: user.avatar,
+            score: quiz.score,
+          });
+          memoEcrire(CLE_LOCALE + "board", JSON.stringify(boardExtra.slice(-10)));
+          renderBoard();
+        } catch (eHist) {}
         // grade
         let grade, msg;
         if (died && quiz.correct < 2) {
@@ -43560,6 +43808,16 @@ Check your Browserslist config to be sure that your targets are set up correctly
           requestAnimationFrame(() => ($("resultsOverlay").style.opacity = 1));
           document.body.style.overflow = "hidden";
           afficherPointsFaibles();
+          const nbFautesPhp = (quiz.answers || []).filter((a) => !a.correct).length;
+          const btnErrPhp = $("phpRetryErrorsBtn");
+          if (btnErrPhp) {
+            if (nbFautesPhp > 0) {
+              btnErrPhp.textContent = `🎯 Réviser mes erreurs (${nbFautesPhp})`;
+              btnErrPhp.classList.remove("hidden");
+            } else {
+              btnErrPhp.classList.add("hidden");
+            }
+          }
           try {
             drawCharts();
           } catch (eCh) {}
@@ -43661,6 +43919,30 @@ Check your Browserslist config to be sure that your targets are set up correctly
           startQuiz();
         }, 300);
       }
+      function retakeErrorsPhp() {
+        const fautes = (quiz && quiz.answers ? quiz.answers : [])
+          .filter((a) => !a.correct)
+          .map((a) => a.q);
+        if (!fautes.length) return;
+        $("resultsOverlay").style.opacity = 0;
+        setTimeout(() => {
+          $("resultsOverlay").classList.add("hidden");
+          startQuiz(fautes);
+        }, 300);
+      }
+      function retakeSameSeriesPhp() {
+        const serie =
+          quiz && quiz.answers && quiz.answers.length
+            ? quiz.answers.map((a) => a.q)
+            : quiz && quiz.list
+            ? quiz.list.slice()
+            : null;
+        $("resultsOverlay").style.opacity = 0;
+        setTimeout(() => {
+          $("resultsOverlay").classList.add("hidden");
+          startQuiz(serie && serie.length ? serie : null);
+        }, 300);
+      }
       /* Ajouts QuizPHP insérés ici */
 
       /* ============ Ajouts QuizPHP : examen, points faibles, retour en haut ============ */
@@ -43710,6 +43992,8 @@ Check your Browserslist config to be sure that your targets are set up correctly
           quiz.answers.push({ q, picked: i, correct: false, pts: 0 });
         }
         updateStreakUI();
+        synchroniserPartiePhp(false);
+        sauvegarderSessionPhpCloud(quiz.idx + 1);
         setTimeout(() => {
           if (quiz.idx >= quiz.list.length - 1) endQuiz(false);
           else {

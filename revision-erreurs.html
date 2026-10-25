@@ -66,7 +66,7 @@
 <link rel="icon" href="assets/icons/sti-icon-192.png">
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=425"></script>
-<script src="assets/js/quiz-sync.js?v=458"></script>
+<script src="assets/js/quiz-sync.js?v=460"></script>
 <style>
   :root {
     --bg: #f6efe3;
@@ -187,7 +187,14 @@
 
   async function demarrer() {
     if (!window.supabase || !window.STI_AUTH) { msg('<span class="gros">⚠️</span>Service indisponible pour le moment.'); return; }
-    var client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE);
+    var client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false,
+        lock: function (name, acquireTimeout, fn) { return fn(); }
+      }
+    });
     var u = null;
     try {
       var r = await client.auth.getUser();
@@ -255,35 +262,61 @@
       var q = parQuestion[cle], r = q.rep;
       var modGroupe = q.moduleCanonique || r.module || "";
       var gcle = r.quiz + "|" + modGroupe;
-      if (!groupes[gcle]) groupes[gcle] = { quiz: r.quiz, module: modGroupe || null, aRetravailler: [], maitrisees: 0 };
+      if (!groupes[gcle]) groupes[gcle] = { quiz: r.quiz, module: modGroupe || null, aRetravailler: [], dejaMaitrisees: [], maitrisees: 0 };
       if (!q.dernierCorrect) { groupes[gcle].aRetravailler.push(r); totalRater++; }
-      else if (q.aRate) { groupes[gcle].maitrisees++; totalMaitrisees++; }
+      else if (q.aRate) { groupes[gcle].dejaMaitrisees.push(r); groupes[gcle].maitrisees++; totalMaitrisees++; }
     });
     document.getElementById("stats").style.display = "";
     document.getElementById("st-rater").textContent = totalRater;
     document.getElementById("st-maitrisees").textContent = totalMaitrisees;
     var cles = Object.keys(groupes).sort();
-    if (!cles.length || totalRater === 0) {
+    if (!cles.length || (totalRater === 0 && totalMaitrisees === 0)) {
       msg('<span class="gros">🏆</span>Bravo, tu n\'as <strong>aucune question à retravailler</strong> : toutes tes dernières réponses sont justes !<br>Continue à jouer pour garder le rythme.');
       return;
     }
-    contenu.innerHTML = '<div class="cartes">' + cles.map(function (gcle, i) {
+    var banniereMaitrise = "";
+    if (totalRater === 0 && totalMaitrisees > 0) {
+      banniereMaitrise = '<div class="msg" style="margin-bottom:16px"><span class="gros">🏆</span>Bravo, tu as maîtrisé toutes tes erreurs ! Tu peux <strong>réviser encore une autre fois</strong> tes anciennes fautes ci-dessous pour consolider ton score.</div>';
+    }
+    contenu.innerHTML = banniereMaitrise + '<div class="cartes">' + cles.map(function (gcle, i) {
       var g = groupes[gcle];
+      if (!g.aRetravailler.length && !g.dejaMaitrisees.length) return "";
       var nom = (LIBELLE_QUIZ[g.quiz] || g.quiz) + (g.module ? " · " + (LIBELLE_MODULE[g.module] || g.module) : "");
-      var apercu = g.aRetravailler.slice(0, 3).map(function (r) {
+      var sourceApercu = g.aRetravailler.length ? g.aRetravailler : g.dejaMaitrisees;
+      var apercu = sourceApercu.slice(0, 3).map(function (r) {
         return "<li>" + esc((r.enonce || "").slice(0, 90)) + "</li>";
       }).join("");
+      var toutesFautes = g.aRetravailler.concat(g.dejaMaitrisees);
       return '<div class="carte"><h2>' + esc(nom) + "</h2>" +
-        '<div class="nb"><strong>' + g.aRetravailler.length + " question(s) à retravailler</strong>" +
+        '<div class="nb">' + (g.aRetravailler.length ? '<strong>' + g.aRetravailler.length + " question(s) à retravailler</strong>" : '<span class="ok">0 en attente</span>') +
         (g.maitrisees ? ' · <span class="ok">' + g.maitrisees + " maîtrisée(s)</span>" : "") + "</div>" +
         (apercu ? "<ul>" + apercu + "</ul>" : "") +
-        '<button type="button" class="btn" data-groupe="' + i + '"' + (g.aRetravailler.length ? "" : " disabled") + ">▶ Retravailler ces questions</button></div>";
+        (g.aRetravailler.length
+          ? '<button type="button" class="btn" data-groupe="' + i + '">▶ Retravailler ces questions (' + g.aRetravailler.length + ")</button>"
+          : "") +
+        (g.dejaMaitrisees.length
+          ? '<button type="button" class="btn" data-reviser-tout="' + i + '" style="margin-top:6px;' + (g.aRetravailler.length ? 'background:transparent;color:var(--ink)' : '') + '">🔁 Réviser encore une autre fois (' + toutesFautes.length + ")</button>"
+          : "") +
+        "</div>";
     }).join("") + "</div>";
     contenu.querySelectorAll("[data-groupe]").forEach(function (b) {
       b.addEventListener("click", function () {
         var g = groupes[cles[parseInt(b.getAttribute("data-groupe"), 10)]];
         if (!g || !g.aRetravailler.length) return;
         var ids = g.aRetravailler.map(function (r) { return r.question_id; });
+        if (window.STIQuizSync && STIQuizSync.preparerRevision) STIQuizSync.preparerRevision(g.quiz, ids);
+        var url = PAGES[g.quiz] + "?revision=erreurs";
+        if (g.quiz === "tableaux" && g.module) url += "&module=" + encodeURIComponent(g.module);
+        window.location.href = url;
+      });
+    });
+    contenu.querySelectorAll("[data-reviser-tout]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var g = groupes[cles[parseInt(b.getAttribute("data-reviser-tout"), 10)]];
+        if (!g) return;
+        var toutes = g.aRetravailler.concat(g.dejaMaitrisees);
+        if (!toutes.length) return;
+        var ids = toutes.map(function (r) { return r.question_id; });
         if (window.STIQuizSync && STIQuizSync.preparerRevision) STIQuizSync.preparerRevision(g.quiz, ids);
         var url = PAGES[g.quiz] + "?revision=erreurs";
         if (g.quiz === "tableaux" && g.module) url += "&module=" + encodeURIComponent(g.module);
