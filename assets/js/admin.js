@@ -5500,6 +5500,8 @@
       htmlQuiz +
       "<div class='fiche-sec-titre'>🎯 Parties synchronisées — historique complet des scores en ligne</div>" +
       "<div class='fiche-parties-sync' id='fiche-parties-sync'><span style='color:#7a6f5d;font-size:11.5px'>⏳ Chargement de l'historique en ligne…</span></div>" +
+      "<div class='fiche-sec-titre'>🧪 Séries d'exercices, TP &amp; Devoirs Blancs synchronisés (/20 &amp; ⭐ À revoir)</div>" +
+      "<div class='fiche-parties-sync' id='fiche-exercices-sync'><span style='color:#7a6f5d;font-size:11.5px'>⏳ Chargement du suivi des exercices…</span></div>" +
       "<div class='fiche-sec-titre' id='sec-fiche-connexions'>🕒 Connexions &amp; pages consultées (" + (toutVoirAccesFiche ? sesAcces.length : Math.min(10, sesAcces.length)) + " / " + nbCon + ")</div>" +
       htmlAcces +
       "<div class='fiche-sec-titre'>💬 Messages lus &amp; questions de l'élève (" + msgsEl.length + ")</div>" +
@@ -5627,6 +5629,82 @@
         var box2 = document.getElementById("fiche-parties-sync");
         if (box2) box2.innerHTML = "<span style='color:#c0392b;font-size:11.5px'>⚠️ Historique indisponible (réseau ?).</span>";
       });
+    }
+
+    /* v451 : Suivi synchronisé des séries d'exercices, TP & Devoirs Blancs (/20 & ⭐ À revoir) */
+    var boxExoSync = document.getElementById("fiche-exercices-sync");
+    if (boxExoSync) {
+      var TITRES_EXO_ADM = {
+        "ia-css-1": "Série Interactive 1 — HTML5 & Formulaires",
+        "ia-css-2": "Série Interactive 2 — Flexbox & CSS3",
+        "ia-js-1": "Série Interactive 1 — Traces & Boucles JS",
+        "ia-js-2": "Série Interactive 2 — String, DOM & verif()",
+        "ia-sql-1": "Série Interactive 1 — LDD & Requêtes SQL",
+        "ia-sql-2": "Série Interactive 2 — Jointures & GROUP BY",
+        "ia-php-1": "Série Interactive 1 — $_POST, Chaînes & date()",
+        "ia-php-2": "Série Interactive 2 — Cycle MySQLi Procédural",
+        "dc-css-1": "⏱️ Devoir Contrôle N°1 — HTML5 & CSS3",
+        "dc-js-1": "⏱️ Devoir Contrôle N°2 — JavaScript & DOM",
+        "ds-sql-1": "⏱️ Devoir Synthèse — Base GEST_CLUB (SQL)",
+        "bac-blanc-4si-1": "🏆 Bac Blanc 4e SI — TunisAir-Vols"
+      };
+      var afficherSuiviExoAdmin = function (rawSuivi, majCloud) {
+        var boxE = document.getElementById("fiche-exercices-sync");
+        if (!boxE) return;
+        var mapExo = {};
+        if (typeof rawSuivi === "string") {
+          try { mapExo = JSON.parse(rawSuivi) || {}; } catch (eP) { mapExo = {}; }
+        } else if (rawSuivi && typeof rawSuivi === "object") {
+          mapExo = rawSuivi;
+        }
+        var clesE = Object.keys(mapExo).filter(function (k) {
+          var v = mapExo[k];
+          return v && (v.statut === "done" || v.statut === "doing" || v.etoile || typeof v.note20 === "number");
+        });
+        if (!clesE.length) {
+          boxE.innerHTML = "<span style='color:#7a6f5d;font-size:11.5px'>Aucune série d'exercices ou copie de Devoir Blanc synchronisée pour cet élève.</span>";
+          return;
+        }
+        clesE.sort(function (a, b) {
+          var va = mapExo[a] || {}, vb = mapExo[b] || {};
+          if (Boolean(vb.etoile) !== Boolean(va.etoile)) return vb.etoile ? 1 : -1;
+          return Number(vb.maj || 0) - Number(va.maj || 0);
+        });
+        var nDone = 0, nDoing = 0, nStar = 0, notesE = [];
+        var hExo = "<div class='fiche-table-wrap'><table class='fiche-mini-table'><thead><tr><th>Série / TP / Devoir</th><th>État</th><th>Note /20</th><th>Priorité élève</th></tr></thead><tbody>";
+        clesE.forEach(function (k) {
+          var v = mapExo[k] || {};
+          if (v.statut === "done") nDone++;
+          else if (v.statut === "doing") nDoing++;
+          if (v.etoile) nStar++;
+          if (typeof v.note20 === "number" && !isNaN(v.note20)) notesE.push(v.note20);
+          var tit = TITRES_EXO_ADM[k] || v.titre || k.replace(/^exo:/, "");
+          var stTxt = v.statut === "done" ? "✅ Terminé" : (v.statut === "doing" ? "⏳ En cours" : "⬜ À faire");
+          var nTxt = typeof v.note20 === "number" ? (v.note20 + " / 20") : "—";
+          var colN = typeof v.note20 === "number" ? (v.note20 >= 12 ? "#177245" : "#c0392b") : "inherit";
+          hExo += "<tr><td><b>" + echHtml(tit) + "</b></td><td class='col-nowrap'>" + stTxt + "</td><td class='col-nowrap' style='font-weight:900;color:" + colN + "'>" + echHtml(nTxt) + "</td><td class='col-nowrap'>" + (v.etoile ? "⭐ <b style='color:#b45309'>À revoir</b>" : "—") + "</td></tr>";
+        });
+        hExo += "</tbody></table></div>";
+        var moyE = notesE.length ? (" · moyenne <b>" + (Math.round((notesE.reduce(function (s, n) { return s + n; }, 0) / notesE.length) * 10) / 10) + " / 20</b>") : "";
+        hExo += "<div style='margin-top:6px;font-size:11.5px;font-weight:900'>📊 ✅ " + nDone + " validé(s) · ⏳ " + nDoing + " en cours · ⭐ " + nStar + " à revoir" + moyE + (majCloud ? (" · sync " + echHtml(fmtDate(majCloud))) : "") + "</div>";
+        boxE.innerHTML = hExo;
+      };
+      if (sb && sb.from) {
+        sb.from("sti_progressions").select("donnees,maj").eq("user_id", p.id).maybeSingle().then(function (rE) {
+          if (!eleveFicheActif || eleveFicheActif.id !== p.id) return;
+          if (rE && rE.error) {
+            boxExoSync.innerHTML = "<span style='color:#c0392b;font-size:11.5px'>⚠️ Suivi exercices indisponible (réseau ?).</span>";
+            return;
+          }
+          var dObj = rE && rE.data && rE.data.donnees;
+          afficherSuiviExoAdmin(dObj && dObj["sti-exo-suivi-v1"], rE && rE.data && rE.data.maj);
+        }).catch(function () {
+          var bErr = document.getElementById("fiche-exercices-sync");
+          if (bErr) bErr.innerHTML = "<span style='color:#c0392b;font-size:11.5px'>⚠️ Suivi exercices indisponible (réseau ?).</span>";
+        });
+      } else {
+        afficherSuiviExoAdmin(null, null);
+      }
     }
 
     var etaitOuvert = modalFicheEleve.classList.contains("visible");

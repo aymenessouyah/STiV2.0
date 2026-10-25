@@ -896,11 +896,11 @@ test('v450 : Chantier des Exercices — Portail enrichi, Atelier Auto-Corrigé (
   const mobileNavJs = read('assets/js/mobile-nav.js');
   const swJs = read('sw.js');
 
-  // 1) Chargement universel & manifeste SW v450
-  assert.match(swJs, /v450-chantier-exercices-1/);
-  assert.match(accesJs, /exercices-atelier\.js\?v=450/);
-  assert.match(mobileNavJs, /exercices-atelier\.js\?v=450/);
-  assert.match(seriesHtml, /exercices-atelier\.js\?v=450/);
+  // 1) Chargement universel & manifeste SW v450+
+  assert.match(swJs, /chantier-exercices-v450/);
+  assert.match(accesJs, /exercices-atelier\.js\?v=45\d/);
+  assert.match(mobileNavJs, /exercices-atelier\.js\?v=45\d/);
+  assert.match(seriesHtml, /exercices-atelier\.js\?v=45\d/);
   assert.doesNotMatch(seriesHtml, /#4338ca/i);
 
   // 2) Atelier interactif auto-corrigé (/20) sur les 4 matières + protection 4e SI
@@ -976,6 +976,96 @@ test('v450 : Chantier des Exercices — Portail enrichi, Atelier Auto-Corrigé (
   store.set('sti-session-cache', JSON.stringify({ classe: '4SI2', isAdmin: true }));
   assert.equal(winStub.STI_EXO_ATELIER.estCorrigeVerrouille('javascript'), false);
 });
+
+test('v451 : Étape 2 du Chantier des Exercices — Devoirs Blancs chronométrés (/20), Diagnostic Zéro-Piège Bac sur TP et suivi dans Fiche Révision & Admin', () => {
+  const devoirsHtml = read('exercices/devoirs-blancs-bac.html');
+  const seriesHtml = read('exercices/series-exercices.html');
+  const atelierJs = read('assets/js/exercices-atelier.js');
+  const ficheHtml = read('ma-fiche-revision.html');
+  const adminJs = read('assets/js/admin.js');
+  const swJs = read('sw.js');
+
+  // 1) Simulateur de Devoirs Blancs chronométrés (/20) pour DC, DS et Bac Blanc 4e SI
+  assert.match(devoirsHtml, /id:\s*"dc-css-1"/);
+  assert.match(devoirsHtml, /id:\s*"dc-js-1"/);
+  assert.match(devoirsHtml, /id:\s*"ds-sql-1"/);
+  assert.match(devoirsHtml, /id:\s*"bac-blanc-4si-1"[\s\S]*?only4si:\s*true/);
+  assert.match(devoirsHtml, /sti-exo-devoirs-copies-v1/);
+  assert.match(devoirsHtml, /estCorrigeVerrouille/);
+
+  // 2) Intégration des 4 cartes Devoirs Blancs (/20) dans series-exercices.html
+  assert.match(seriesHtml, /data-devoir-id="dc-css-1"/);
+  assert.match(seriesHtml, /data-devoir-id="dc-js-1"/);
+  assert.match(seriesHtml, /data-devoir-id="ds-sql-1"/);
+  assert.match(seriesHtml, /data-devoir-id="bac-blanc-4si-1"/);
+
+  // 3) Fiche de révision A4 + Dossier Élève Admin + Service Worker v451
+  assert.match(ficheHtml, /id="sec-exercices-suivi"/);
+  assert.match(ficheHtml, /id="fiche-exercices"/);
+  assert.match(ficheHtml, /sti-exo-suivi-v1/);
+  assert.match(adminJs, /id='fiche-exercices-sync'/);
+  assert.match(adminJs, /sti_progressions[\s\S]*?sti-exo-suivi-v1/);
+  assert.match(swJs, /UPDATE_ID\s*=\s*"v451-chantier-exercices-2"/);
+
+  // 4) Test comportemental VM du Diagnostic Zéro-Piège Bac (SQL, PHP/MySQLi, JavaScript)
+  const store = new Map();
+  const mkStorage = (m) => ({
+    getItem: (k) => (m.has(k) ? m.get(k) : null),
+    setItem: (k, v) => m.set(k, String(v)),
+    removeItem: (k) => m.delete(k)
+  });
+  const docStub = {
+    readyState: 'loading',
+    title: 'Test Diagnostic TP',
+    documentElement: { classList: { contains: () => false }, appendChild() {} },
+    head: { appendChild() {} },
+    body: { classList: { add() {}, toggle() {} }, appendChild() {}, insertBefore() {} },
+    getElementById: () => null,
+    querySelector: () => null,
+    querySelectorAll: () => [],
+    createElement: () => ({ style: {}, classList: { add() {}, remove() {}, toggle() {} }, setAttribute() {}, addEventListener() {}, appendChild() {} }),
+    addEventListener() {}
+  };
+  const winStub = {
+    location: { pathname: '/exercices/sql/Tp2-bd.html', search: '', hash: '' },
+    document: docStub,
+    localStorage: mkStorage(store),
+    sessionStorage: mkStorage(new Map()),
+    addEventListener() {}
+  };
+  winStub.window = winStub;
+  vm.runInNewContext(atelierJs, winStub);
+
+  const diag = winStub.STI_EXO_ATELIER.diagnostiquerReponseQuestionTP;
+  assert.equal(typeof diag, 'function');
+
+  // SQL : agrégation dans WHERE détectée
+  const rSqlPiege1 = diag('sql', 'Afficher les clubs ayant plus de 2 adhérents', 'SELECT idClub FROM Adherent WHERE COUNT(*) > 2 GROUP BY idClub;');
+  assert.equal(rSqlPiege1.ok, false);
+  assert.ok(rSqlPiege1.alertes.some(a => /HAVING/i.test(a)));
+
+  // SQL : DELETE * FROM détecté
+  const rSqlPiege2 = diag('sql', 'Supprimer les adhérents inactifs', 'DELETE * FROM Adherent WHERE actif = 0;');
+  assert.equal(rSqlPiege2.ok, false);
+  assert.ok(rSqlPiege2.alertes.some(a => /DELETE FROM/i.test(a)));
+
+  // SQL valide : validé sans fausse alerte
+  const rSqlOk = diag('sql', 'Afficher la liste des villes sans doublon', 'SELECT DISTINCT ville FROM Adherent ORDER BY ville ASC;');
+  assert.equal(rSqlOk.ok, true);
+
+  // PHP : mysqli_query($req, $con) inversé + mysqli_num_rows sur INSERT détectés
+  const rPhpPiege = diag('php', 'Insérer un adhérent', '$req = "INSERT INTO T VALUES (1)"; $res = mysqli_query($req, $con); if (mysqli_num_rows($res) > 0) echo "OK";');
+  assert.equal(rPhpPiege.ok, false);
+  assert.ok(rPhpPiege.alertes.some(a => /mysqli_query\(\$con/i.test(a)));
+  assert.ok(rPhpPiege.alertes.some(a => /mysqli_affected_rows/i.test(a)));
+
+  // JS : comparaison chaînée + getElementByID détectés
+  const rJsPiege = diag('javascript', 'Vérifier une lettre majuscule', "var c = document.getElementByID('nom').value; if ('A' <= c <= 'Z') return true;");
+  assert.equal(rJsPiege.ok, false);
+  assert.ok(rJsPiege.alertes.some(a => /getElementById/.test(a)));
+  assert.ok(rJsPiege.alertes.some(a => /&&/.test(a)));
+});
+
 
 
 

@@ -43,7 +43,7 @@
       /* v450 : Chargement automatique du moteur d'exercices interactifs sur toutes les pages /exercices/ */
       if (String(location.pathname || "").indexOf("/exercices/") !== -1 && !window.__STI_EXERCICES_ATELIER_V450 && !document.querySelector("script[src*='exercices-atelier.js']")) {
         var scExo = document.createElement("script");
-        scExo.src = (cfg.RACINE || "") + "assets/js/exercices-atelier.js?v=450";
+        scExo.src = (cfg.RACINE || "") + "assets/js/exercices-atelier.js?v=451";
         scExo.defer = true;
         (document.head || document.documentElement).appendChild(scExo);
       }

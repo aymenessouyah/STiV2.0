@@ -1361,6 +1361,8 @@
           statut: total >= 12 ? "done" : "doing",
           etoile: Boolean(anc.etoile),
           note20: meilleur,
+          titre: serie.titre,
+          matiere: serie.matiere,
           maj: Date.now()
         };
         ecrireJson(CLE_SUIVI, suivi);
@@ -1566,7 +1568,7 @@
   <script src="../assets/js/supabase-umd.js"></script>
   <script src="../assets/js/config.js?v=425"></script>
   <script src="../assets/js/acces.js?v=450"></script>
-  <script src="../assets/js/exercices-atelier.js?v=450" defer></script>
+  <script src="../assets/js/exercices-atelier.js?v=451" defer></script>
   <script src="../assets/js/sync-progressions.js" defer></script>
 </body>
 </html>

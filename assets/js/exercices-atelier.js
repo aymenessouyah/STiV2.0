@@ -310,7 +310,7 @@
       "html.dark body.sti-feuille-tp code{background:#0f172a !important;color:#fda4af !important}" +
       "html.dark body.sti-feuille-tp #sti-tp-toolbar{background:#1e293b;color:#f8fafc;border-color:#475569}" +
       "html.dark body.sti-feuille-tp .sti-tp-input,html.dark body.sti-feuille-tp .sti-tp-textarea{background:#0f172a;color:#f8fafc;border-color:#475569}}" +
-      "@media print{#sti-tp-toolbar,#sti-modal-indice-corrige,#sti-overlay-corrige-tp-lock,.sti-tp-zone-q.vide{display:none !important}}";
+      "@media print{#sti-tp-toolbar,#sti-modal-indice-corrige,#sti-overlay-corrige-tp-lock,.sti-tp-diag-bar,.sti-tp-zone-q.vide{display:none !important}}";
     (document.head || document.documentElement).appendChild(st);
   }
 
@@ -443,6 +443,8 @@
   function calculerExoIdPourCarte(card, secId, index) {
     var btnIa = card.querySelector("[data-ia-serie]");
     if (btnIa) return btnIa.getAttribute("data-ia-serie");
+    var btnDev = card.querySelector("[data-devoir-id]");
+    if (btnDev) return btnDev.getAttribute("data-devoir-id");
     var btnEn = card.querySelector(".exo-actions button.enonce, .exo-actions a.enonce");
     if (btnEn) {
       var onc = btnEn.getAttribute("onclick") || btnEn.getAttribute("href") || "";
@@ -484,6 +486,7 @@
         '</div>' +
         '<div class="sti-ed-cta-group">' +
           '<a class="sti-ed-cta vert" href="atelier-interactif-bac.html">🧪 Atelier Auto-Corrigé (/20)</a>' +
+          '<a class="sti-ed-cta" href="devoirs-blancs-bac.html" style="background:#0e7c86;color:#fff">⏱️ Devoirs Blancs DC/DS/Bac (/20)</a>' +
           '<button type="button" class="sti-ed-cta sec" id="sti-ed-btn-random" title="Choisir une série à travailler au hasard">🎲 Série au hasard</button>' +
           (estAdminActif() ? '<a class="sti-ed-cta" href="../admin.html#corriges-tp" title="Ouvrir le contrôle en direct des corrigés TP dans le tableau de bord Professeur">🛡️ Verrou Corrigés TP (Prof)</a>' : '') +
         '</div>' +
@@ -573,7 +576,7 @@
           var suivi = lireJson(CLE_SUIVI, {});
           var cur = (suivi[exoId] && suivi[exoId].statut) || "todo";
           var suiv = cur === "todo" ? "doing" : (cur === "doing" ? "done" : "todo");
-          suivi[exoId] = Object.assign({}, suivi[exoId] || {}, { statut: suiv, maj: Date.now() });
+          suivi[exoId] = Object.assign({}, suivi[exoId] || {}, { statut: suiv, titre: titreTxt, matiere: secInfo.mat, maj: Date.now() });
           ecrireJson(CLE_SUIVI, suivi);
           rafraichirSuiviPortail();
         });
@@ -581,7 +584,7 @@
         bar.querySelector('[data-role="etoile"]').addEventListener("click", function () {
           var suivi = lireJson(CLE_SUIVI, {});
           var anc = suivi[exoId] || { statut: "todo" };
-          suivi[exoId] = Object.assign({}, anc, { etoile: !anc.etoile, maj: Date.now() });
+          suivi[exoId] = Object.assign({}, anc, { etoile: !anc.etoile, titre: titreTxt, matiere: secInfo.mat, maj: Date.now() });
           ecrireJson(CLE_SUIVI, suivi);
           rafraichirSuiviPortail();
         });
@@ -592,7 +595,7 @@
             exoIdCourantModal = exoId;
             var suivi = lireJson(CLE_SUIVI, {});
             if (!suivi[exoId] || !suivi[exoId].statut || suivi[exoId].statut === "todo") {
-              suivi[exoId] = Object.assign({}, suivi[exoId] || {}, { statut: "doing", maj: Date.now() });
+              suivi[exoId] = Object.assign({}, suivi[exoId] || {}, { statut: "doing", titre: titreTxt, matiere: secInfo.mat, maj: Date.now() });
               ecrireJson(CLE_SUIVI, suivi);
               rafraichirSuiviPortail();
             }
@@ -932,10 +935,129 @@
     ]
   };
 
+  /* ---------- v451 : Diagnostic syntaxique hors-ligne « Zéro-Piège Bac » ---------- */
+  function compterOccurrences(str, ch) {
+    var n = 0;
+    for (var i = 0; i < str.length; i++) if (str.charAt(i) === ch) n++;
+    return n;
+  }
+
+  function diagnostiquerReponseQuestionTP(matiere, enonceQuestion, codeSaisi) {
+    var m = normaliserMatiere(matiere);
+    var code = String(codeSaisi || "").trim();
+    var qLow = String(enonceQuestion || "").toLowerCase();
+    var alertes = [];
+    var validations = [];
+
+    if (!code) {
+      return { ok: false, alertes: ["Écrivez d'abord votre réponse ou requête dans la zone ci-dessus avant de lancer le diagnostic."], validations: [] };
+    }
+
+    if (compterOccurrences(code, "(") !== compterOccurrences(code, ")")) {
+      alertes.push("Parenthèses déséquilibrées : vérifiez qu'à chaque '(' correspond une ')'.");
+    }
+
+    if (m === "sql") {
+      var up = code.toUpperCase().replace(/\s+/g, " ");
+      if (compterOccurrences(code, "'") % 2 !== 0) {
+        alertes.push("Apostrophes simples (') non refermées autour d'une chaîne ou date SQL.");
+      }
+      if (/DELETE\s+\*\s+FROM/i.test(up)) {
+        alertes.push("Piège Bac SQL : n'écrivez jamais d'étoile * dans DELETE FROM nom_table !");
+      }
+      var idxWhere = up.indexOf(" WHERE ");
+      var idxGroup = up.indexOf(" GROUP BY ");
+      var idxHaving = up.indexOf(" HAVING ");
+      var idxOrder = up.indexOf(" ORDER BY ");
+      if (idxWhere !== -1) {
+        var finWhere = Math.min(
+          idxGroup !== -1 ? idxGroup : up.length,
+          idxHaving !== -1 ? idxHaving : up.length,
+          idxOrder !== -1 ? idxOrder : up.length
+        );
+        var blocWhere = up.slice(idxWhere, finWhere);
+        if (/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(/.test(blocWhere) && blocWhere.indexOf("SELECT ") === -1) {
+          alertes.push("Piège Bac SQL : interdit d'utiliser une fonction d'agrégation (COUNT/SUM/AVG/MIN/MAX) dans WHERE ! Placez ce filtre dans HAVING après GROUP BY.");
+        }
+      }
+      if (idxGroup !== -1 && idxWhere !== -1 && idxGroup < idxWhere) {
+        alertes.push("Ordre des clauses invalide : WHERE doit obligatoirement précéder GROUP BY.");
+      }
+      if (idxHaving !== -1 && idxGroup !== -1 && idxHaving < idxGroup) {
+        alertes.push("Ordre des clauses invalide : HAVING se place toujours APRÈS GROUP BY.");
+      }
+      if (idxOrder !== -1 && ((idxWhere !== -1 && idxOrder < idxWhere) || (idxGroup !== -1 && idxOrder < idxGroup) || (idxHaving !== -1 && idxOrder < idxHaving))) {
+        alertes.push("Ordre des clauses invalide : ORDER BY doit toujours être la toute dernière clause.");
+      }
+      if (/cr[eé]er\s+(la\s+structure|les\s+tables|la\s+table)/.test(qLow) && up.indexOf("CREATE TABLE") === -1) {
+        alertes.push("L'énoncé demande une création de structure : utilisez CREATE TABLE ... (...).");
+      }
+      if (/(ajouter\s+la\s+colonne|modifier\s+la\s+colonne|supprimer\s+la\s+colonne|ajouter\s+la\s+contrainte|valeur\s+par\s+d[eé]faut)/.test(qLow) && up.indexOf("ALTER TABLE") === -1) {
+        alertes.push("Pour modifier la structure d'une table existante, utilisez ALTER TABLE nom_table ...");
+      }
+      if (/cl[eé]\s+[eé]trang[eè]re/.test(qLow) && (!/FOREIGN KEY\s*\(/.test(up) || !/REFERENCES\s+\w+\s*\(/.test(up))) {
+        alertes.push("Vérifiez la syntaxe complète : FOREIGN KEY (colonne_fille) REFERENCES TableMere(colonne_mere).");
+      }
+      if (!alertes.length) {
+        if (/^(SELECT|CREATE|ALTER|INSERT|UPDATE|DELETE|DROP)\b/.test(up)) {
+          validations.push("Structure SQL cohérente et aucun piège classique du Bac détecté !");
+          if (!/;\s*$/.test(code)) validations.push("Conseil : pensez à terminer votre commande SQL par un point-virgule (;).");
+        } else {
+          alertes.push("Commencez votre requête par un mot-clé SQL valide (SELECT, CREATE TABLE, ALTER TABLE, INSERT INTO, UPDATE ou DELETE FROM).");
+        }
+      }
+    } else if (m === "php") {
+      if (compterOccurrences(code, "{") !== compterOccurrences(code, "}")) {
+        alertes.push("Accolades { } déséquilibrées dans votre bloc PHP.");
+      }
+      if (/mysqli_query\s*\(\s*\$?(req|sql|q|query)/i.test(code) || /mysqli_query\s*\(\s*["']/.test(code)) {
+        alertes.push("Piège Bac MySQLi : dans mysqli_query($con, $req), la connexion $con doit toujours être le 1er argument !");
+      }
+      if (/mysqli_num_rows/i.test(code) && /\b(INSERT|UPDATE|DELETE)\b/i.test(code) && !/\bSELECT\b/i.test(code)) {
+        alertes.push("Piège n°1 Bac Pratique : mysqli_num_rows($res) ne marche que sur SELECT ! Après INSERT/UPDATE/DELETE, utilisez mysqli_affected_rows($con).");
+      }
+      if (/mysqli_fetch_assoc/i.test(code)) {
+        alertes.push("Attention programme officiel : préférez mysqli_fetch_array($res) ou mysqli_fetch_row($res) (mysqli_fetch_assoc est hors tableau officiel).");
+      }
+      if (/echo\s+[^;]*["'][^"']*["']\s*\+\s*\$/i.test(code) || /\$\w+\s*\+\s*["']/.test(code)) {
+        alertes.push("Piège PHP vs JS : en PHP, la concaténation de chaînes s'écrit avec le point (.) et non avec '+' !");
+      }
+      if (!/[;}\?>]\s*$/.test(code)) {
+        alertes.push("N'oubliez pas le point-virgule (;) à la fin de votre instruction PHP.");
+      }
+      if (!alertes.length) {
+        validations.push("Syntaxe PHP/MySQLi propre : aucun piège classique du Bac détecté !");
+      }
+    } else if (m === "javascript") {
+      if (compterOccurrences(code, "{") !== compterOccurrences(code, "}")) {
+        alertes.push("Accolades { } déséquilibrées dans votre code JavaScript.");
+      }
+      if (/getElementByID|getelementbyid/.test(code)) {
+        alertes.push("Attention à la casse exacte du DOM : écrivez document.getElementById(...) avec 'I' majuscule et 'd' minuscule !");
+      }
+      if (/['"0-9a-zA-Z_]+\s*<=?\s*\w+\s*<=?\s*['"0-9a-zA-Z_]+/.test(code)) {
+        alertes.push("Piège JS : n'écrivez jamais a <= x <= b ! Séparez en deux comparaisons reliées par && : (x >= a) && (x <= b).");
+      }
+      if (/if\s*\([^=!<>]*[^=!<>]=[^=][^)]*\)/.test(code)) {
+        alertes.push("Attention dans if (...) : '=' est une affectation ! Utilisez '==' ou '===' pour comparer.");
+      }
+      if (/onsubmit\s*=\s*["']\s*\w+\s*\(\s*\)\s*;?\s*["']/i.test(code)) {
+        alertes.push("N'oubliez pas 'return' dans onsubmit=\"return verif()\" pour bloquer l'envoi en cas d'erreur !");
+      }
+      if (!alertes.length) {
+        validations.push("Aucun piège syntaxique JavaScript du Bac détecté dans votre réponse !");
+      }
+    } else {
+      if (!alertes.length) validations.push("Réponse enregistrée proprement !");
+    }
+
+    return { ok: alertes.length === 0, alertes: alertes, validations: validations };
+  }
+
   function estFeuilleEnonceTP() {
     var p = String(location.pathname || "").toLowerCase();
     if (p.indexOf("/exercices/") === -1) return false;
-    if (p.indexOf("series-exercices.html") !== -1 || p.indexOf("atelier-interactif-bac.html") !== -1 || p.indexOf("resume-fonctions-standards.html") !== -1) return false;
+    if (p.indexOf("series-exercices.html") !== -1 || p.indexOf("atelier-interactif-bac.html") !== -1 || p.indexOf("devoirs-blancs-bac.html") !== -1 || p.indexOf("resume-fonctions-standards.html") !== -1) return false;
     if (estPageCorrigeDirecte(p)) return false;
     if (p.indexOf("js-37-defis") !== -1 || p.indexOf("ordre-php-bac") !== -1 || p.indexOf("debogage-php-bac") !== -1 || p.indexOf("trace-fetch-php") !== -1 || p.indexOf("atelier_sql_3_fenetres") !== -1 || p.indexOf("commentconstruire") !== -1) return false;
     return true;
@@ -996,10 +1118,11 @@
       }
     });
 
-    /* 2. Ajouter des zones de rédaction sous les questions <ol><li> (SQL, PHP, JS) */
+    /* 2. Ajouter des zones de rédaction + Vérificateur Zéro-Piège Bac sous les questions <ol><li> (SQL, PHP, JS) */
     var nbZonesQ = 0;
     document.querySelectorAll("ol > li").forEach(function (li, idxLi) {
       if (li.closest("#stix-nav")) return;
+      var texteQuestion = (li.textContent || "").trim();
       var cleQ = "q_" + idxLi;
       var wrap = document.createElement("div");
       var valInit = mesRep[cleQ] || "";
@@ -1011,14 +1134,63 @@
         ? "✍️ Écrivez votre requête SQL ici (sauvegarde automatique)…"
         : (matiere === "php" ? "✍️ Écrivez votre code PHP / réponse ici (sauvegarde automatique)…" : "✍️ Votre réponse / code (sauvegarde automatique)…");
       ta.value = valInit;
+
+      var diagBar = document.createElement("div");
+      diagBar.className = "sti-tp-diag-bar";
+      diagBar.style.cssText = "display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px";
+      var btnDiag = document.createElement("button");
+      btnDiag.type = "button";
+      btnDiag.style.cssText = "font:700 11px " + FONT_COMIC + ";padding:3px 9px;border-radius:999px;border:1.5px solid #18202c;background:#e6f7ed;color:#14532d;cursor:pointer";
+      btnDiag.textContent = matiere === "sql" ? "🩺 Vérifier ma requête SQL" : "🩺 Diagnostic Zéro-Piège Bac";
+
+      var boxDiag = document.createElement("div");
+      boxDiag.style.cssText = "display:none;margin-top:5px;padding:7px 10px;border-radius:8px;font-size:12px;line-height:1.4";
+
+      btnDiag.addEventListener("click", function () {
+        var res = diagnostiquerReponseQuestionTP(matiere, texteQuestion, ta.value);
+        boxDiag.style.display = "block";
+        if (res.ok) {
+          boxDiag.style.background = "#dcfce7";
+          boxDiag.style.color = "#14532d";
+          boxDiag.style.border = "1.5px solid #15803d";
+          boxDiag.innerHTML = "✅ " + res.validations.map(echap).join("<br>💡 ");
+        } else {
+          boxDiag.style.background = "#fee2e2";
+          boxDiag.style.color = "#7f1d1d";
+          boxDiag.style.border = "1.5px solid #dc2626";
+          boxDiag.innerHTML = "⚠️ " + res.alertes.map(echap).join("<br>⚠️ ");
+        }
+      });
+      diagBar.appendChild(btnDiag);
+
+      if (matiere === "sql") {
+        var btnLaboSql = document.createElement("a");
+        btnLaboSql.href = "../../cours/sql-playground.html";
+        btnLaboSql.target = "_blank";
+        btnLaboSql.rel = "noopener";
+        btnLaboSql.style.cssText = "font:700 11px " + FONT_COMIC + ";padding:3px 9px;border-radius:999px;border:1.5px solid #18202c;background:#e0f5f6;color:#0e7c86;text-decoration:none";
+        btnLaboSql.textContent = "🗄️ Copier & Tester au Labo SQL ↗";
+        btnLaboSql.addEventListener("click", function () {
+          try {
+            if (ta.value.trim() && navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(ta.value.trim());
+            }
+          } catch (eCp) {}
+        });
+        diagBar.appendChild(btnLaboSql);
+      }
+
       ta.addEventListener("input", function () {
         var b = lireJson(CLE_BROUILLONS, {});
         if (!b[cleTpRel]) b[cleTpRel] = {};
         b[cleTpRel][cleQ] = ta.value;
         ecrireJson(CLE_BROUILLONS, b);
         wrap.classList.toggle("vide", !ta.value.trim());
+        boxDiag.style.display = "none";
       });
       wrap.appendChild(ta);
+      wrap.appendChild(diagBar);
+      wrap.appendChild(boxDiag);
       li.appendChild(wrap);
       nbZonesQ++;
     });
@@ -1071,6 +1243,8 @@
           statut: note20 >= 12 ? "done" : "doing",
           etoile: Boolean(anc.etoile),
           note20: Math.max(Number(anc.note20 || 0), note20),
+          titre: titreDoc,
+          matiere: matiere,
           maj: Date.now()
         };
         ecrireJson(CLE_SUIVI, sMaj);
@@ -1100,7 +1274,7 @@
     btnDone.addEventListener("click", function () {
       var sMaj = lireJson(CLE_SUIVI, {});
       var cur = sMaj[cleTpRel] && sMaj[cleTpRel].statut === "done";
-      sMaj[cleTpRel] = Object.assign({}, sMaj[cleTpRel] || {}, { statut: cur ? "doing" : "done", maj: Date.now() });
+      sMaj[cleTpRel] = Object.assign({}, sMaj[cleTpRel] || {}, { statut: cur ? "doing" : "done", titre: titreDoc, matiere: matiere, maj: Date.now() });
       ecrireJson(CLE_SUIVI, sMaj);
       btnDone.textContent = cur ? "⬜ Marquer terminé" : "✅ TP Terminé";
     });
@@ -1132,7 +1306,8 @@
     estCorrigeVerrouille: estCorrigeVerrouille,
     sontIndicesAutorises: sontIndicesAutorises,
     ouvrirModaleIndiceOuVerrou: ouvrirModaleIndiceOuVerrou,
-    rafraichirSuiviPortail: rafraichirSuiviPortail
+    rafraichirSuiviPortail: rafraichirSuiviPortail,
+    diagnostiquerReponseQuestionTP: diagnostiquerReponseQuestionTP
   };
 
   function demarrer() {
