@@ -206,14 +206,14 @@
 &lt;?php
 $chaine = "  Developpement Web  ";
 
-// 1. Supprimer les espaces superflus (trim)
+// 1. Supprimer les espaces superflus (trim)[cite: 9]
 $chaine_epuree = trim($chaine);
 echo "Chaîne épurée : " . $chaine_epuree . "&lt;br&gt;";
 
-// 2. Longueur de la chaîne (strlen)
+// 2. Longueur de la chaîne (strlen)[cite: 9]
 echo "Longueur : " . strlen($chaine_epuree) . "&lt;br&gt;";
 
-// 3. En majuscules (strtoupper) et minuscules (strtolower)
+// 3. En majuscules (strtoupper) et minuscules (strtolower)[cite: 9]
 echo "Majuscules : " . strtoupper($chaine_epuree) . "&lt;br&gt;";
 echo "Minuscules : " . strtolower($chaine_epuree) . "&lt;br&gt;";
 ?&gt;</pre
@@ -228,15 +228,15 @@ echo "Minuscules : " . strtolower($chaine_epuree) . "&lt;br&gt;";
 &lt;?php
 $ch = "Programmation";
 
-// 1. Extraire "gramme" (substr : position 3, longueur 6)
+// 1. Extraire "gramme" (substr : position 3, longueur 6)[cite: 9]
 $extrait = substr($ch, 3, 6);
 echo "Extrait : " . $extrait . "&lt;br&gt;";
 
-// 2. Inverser l'ordre des caractères (strrev)
+// 2. Inverser l'ordre des caractères (strrev)[cite: 9]
 $inverse = strrev($ch);
 echo "Chaîne inversée : " . $inverse . "&lt;br&gt;";
 
-// 3. Trouver la position de la première occurrence de "m" (strpos)
+// 3. Trouver la position de la première occurrence de "m" (strpos)[cite: 9]
 $pos = strpos($ch, "m", 0);
 echo "Position de 'm' : " . $pos . "&lt;br&gt;";
 ?&gt;</pre
@@ -249,7 +249,7 @@ echo "Position de 'm' : " . $pos . "&lt;br&gt;";
 &lt;?php
 $phrase = "La programmation en PHP est utile";
 
-// Remplacer 'a' par 'e' (str_replace)
+// Remplacer 'a' par 'e' (str_replace)[cite: 9]
 $resultat = str_replace("a", "e", $phrase);
 echo "Résultat : " . $resultat;
 ?&gt;</pre
@@ -265,11 +265,11 @@ echo "Résultat : " . $resultat;
 $str1 = "Informatique";
 $str2 = "informatique";
 
-// 1. Comparaison sensible à la casse (strcmp)
+// 1. Comparaison sensible à la casse (strcmp)[cite: 9]
 $comp1 = strcmp($str1, $str2);
 echo "Comparaison (strcmp) : " . $comp1 . "&lt;br&gt;";
 
-// 2. Comparaison insensible à la casse (strcasecmp)
+// 2. Comparaison insensible à la casse (strcasecmp)[cite: 9]
 $comp2 = strcasecmp($str1, $str2);
 echo "Comparaison (strcasecmp) : " . $comp2 . "&lt;br&gt;";
 ?&gt;</pre
@@ -280,11 +280,11 @@ echo "Comparaison (strcasecmp) : " . $comp2 . "&lt;br&gt;";
         <strong>Exercice 5 : Fonctions ASCII (chr et ord)</strong>
         <pre>
 &lt;?php
-// 1. Caractère à partir du code ASCII 65 (chr)
+// 1. Caractère à partir du code ASCII 65 (chr)[cite: 9]
 $car = chr(65);
 echo "Le caractère pour le code ASCII 65 est : " . $car . "&lt;br&gt;";
 
-// 2. Valeur ASCII du premier caractère de 'B' (ord)
+// 2. Valeur ASCII du premier caractère de 'B' (ord)[cite: 9]
 $code = ord('B');
 echo "La valeur ASCII de 'B' est : " . $code;
 ?&gt;</pre

@@ -98,17 +98,17 @@
     </script>
     <style>
       :root {
-        --bg: #f6eedc;
-        --surface: #fffdf5;
-        --border: #e2d3b4;
+        --bg: #f4f5f9;
+        --surface: #ffffff;
+        --border: #e1e4ec;
         --ink: #14161f;
         --muted: #5b6172;
-        --accent: #e84e1b;
-        --accent-soft: #ffe4d6;
+        --accent: #4338ca;
+        --accent-soft: #eceafd;
         --c-css: #e4572e;
         --c-js: #b8860b;
         --c-bdd: #0e7c86;
-        --c-php: #15803d;
+        --c-php: #4c51bf;
         --radius: 14px;
       }
 
@@ -880,19 +880,19 @@
         >
           <img
             class="topbar-logo"
-            src="../assets/icons/sti-icon-512.png"
-            alt="Logo STI V2.0"
+            src="../assets/icons/STI_by_AE.ico"
+            alt="Logo STI By A.E"
             onerror="this.style.display='none'"
           />
           <div class="wordmark">
-            STI :<span> Exercices, Séries &amp; Projets</span>
+            STI :<span> Exercices, Séries, Projets.</span>
           </div>
         </a>
         <nav aria-label="Sommaire des 4 matières">
           <ul class="bar-nav">
             <li>
               <a href="#css3" style="--c: var(--c-css)"
-                ><span aria-hidden="true">🎨</span><span class="l-long">HTML5 &amp; CSS3</span><span class="l-short">CSS</span></a
+                ><span aria-hidden="true">🎨</span><span>CSS3</span></a
               >
             </li>
             <li>
@@ -937,74 +937,23 @@
         </p>
       </section>
 
-      <!-- HTML5 & CSS3 -->
+      <!-- CSS3 -->
       <section class="subject" id="css3">
         <div class="subject-head">
           <div class="icon">🎨</div>
           <div>
-            <h2>HTML5 &amp; CSS3</h2>
-            <p>Structure sémantique, formulaires, mise en page et animations</p>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"><a href="../cours/html5.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#101728;border:2px solid #101728;box-shadow:2px 2px 0 #f4511e;">🌐 Cours HTML5</a> <a href="../cours/css3.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">🎨 Cours CSS3</a> <a href="../quiz/html-css.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a> <a href="atelier-interactif-bac.html?matiere=css3" style="font:700 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#15803d;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">🧪 Séries Auto-Corrigées (/20)</a></div>
+            <h2>CSS3</h2>
+            <p>Mise en forme, mise en page et animations</p>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"><a href="../cours/html5.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#101728;border:2px solid #101728;box-shadow:2px 2px 0 #f4511e;">🌐 Cours HTML5</a> <a href="../cours/css3.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">🎨 Cours CSS3</a> <a href="../quiz/html-css.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a></div>
           </div>
         </div>
         <div class="exo-grid">
           <div class="exo-card">
-            <div class="exo-level">Débutant · Auto-corrigé /20</div>
-            <h3>🧪 Série Interactive 1 — Structure HTML5 &amp; Formulaires Validés</h3>
-            <p>
-              5 exercices interactifs notés sur /20 : balises sémantiques, <code>&lt;label for&gt;</code>, <code>pattern</code> CIN, boutons radio et <code>onsubmit="return verif()"</code>.
-            </p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-ia-serie="ia-css-1"
-                onclick="openPdfModal('atelier-interactif-bac.html?matiere=css3&serie=ia-css-1', 'HTML5 & CSS3 — Série Interactive 1 (/20)')"
-              >
-                🧪 Pratiquer (/20)
-              </button>
-              <a class="corrige" href="atelier-interactif-bac.html?matiere=css3&serie=ia-css-1">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Intermédiaire · Auto-corrigé /20</div>
-            <h3>🧪 Série Interactive 2 — Flexbox, Float, Modèle de Boîte &amp; Transitions</h3>
-            <p>
-              5 défis CSS3 auto-corrigés sur /20 : <code>justify-content</code>, <code>clear: both</code>, <code>box-sizing: border-box</code>, pseudo-classe <code>:focus</code> et <code>border-radius</code>.
-            </p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-ia-serie="ia-css-2"
-                onclick="openPdfModal('atelier-interactif-bac.html?matiere=css3&serie=ia-css-2', 'HTML5 & CSS3 — Série Interactive 2 (/20)')"
-              >
-                🧪 Pratiquer (/20)
-              </button>
-              <a class="corrige" href="atelier-interactif-bac.html?matiere=css3&serie=ia-css-2">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Avancé · Devoir Chronométré 45 min · /20</div>
-            <h3>⏱️ Devoir de Contrôle N°1 — HTML5 Sémantique, Formulaires &amp; CSS3</h3>
-            <p>
-              8 questions barémées sur /20 avec chronomètre examen (45 min) ou mode guidé : balises HTML5, <code>pattern</code> CIN, radio, Flexbox, <code>box-sizing</code> et transition CSS3.
-            </p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-devoir-id="dc-css-1"
-                onclick="openPdfModal('devoirs-blancs-bac.html?devoir=dc-css-1', 'DC N°1 — HTML5 & CSS3 (/20)')"
-              >
-                ⏱️ Passer le DC (/20)
-              </button>
-              <a class="corrige" href="devoirs-blancs-bac.html?devoir=dc-css-1">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card">
             <div class="exo-level">Débutant</div>
-            <h3>TP 1 — Structure &amp; Balises sémantiques</h3>
+            <h3>TP 1 — Structure & Balises sémantiques</h3>
             <p>
               Création d'une page HTML/CSS à l'aide des balises structurantes
-              (<code>header</code>, <code>nav</code>, <code>section</code>, <code>article</code>, <code>aside</code>, <code>footer</code>).
+              (header, nav, section, article, aside, footer.
             </p>
             <div class="exo-actions">
               <button
@@ -1012,51 +961,6 @@
                 onclick="openPdfModal('html-css/TP1-css.pdf.html', 'TP 1 — Structure & Balises sémantiques')"
               >
                 Énoncé
-              </button>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Débutant</div>
-            <h3>Atelier Tableaux HTML5 — Emploi du temps</h3>
-            <p>
-              Structuration d'un emploi du temps scolaire avec fusion de cellules (<code>rowspan</code>, <code>colspan</code>), <code>thead</code>, <code>tbody</code> et mise en forme CSS.
-            </p>
-            <div class="exo-actions">
-              <button
-                class="enonce"
-                onclick="openPdfModal('html-css/emploi-temps/emploidutemps.html', 'HTML5 — Emploi du temps (rowspan & colspan)')"
-              >
-                Aperçu &amp; Modèle
-              </button>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Débutant</div>
-            <h3>TP Formulaire d'inscription HTML5 &amp; CSS3</h3>
-            <p>
-              Conception complète d'un formulaire d'inscription structuré avec contrôles HTML5 natifs et habillage CSS3.
-            </p>
-            <div class="exo-actions">
-              <button
-                class="enonce"
-                onclick="openPdfModal('html-css/formulaire-inscription.pdf.html', 'TP Formulaire d\'inscription HTML5 & CSS3')"
-              >
-                Énoncé
-              </button>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Intermédiaire</div>
-            <h3>Atelier Effets CSS3 — <code>box-shadow</code> &amp; <code>text-shadow</code></h3>
-            <p>
-              Maîtriser les ombres portées de boîtes et de textes en CSS3 avec exemples visuels et paramètres détaillés.
-            </p>
-            <div class="exo-actions">
-              <button
-                class="enonce"
-                onclick="openPdfModal('html-css/box-shadow-text-shadow-css3.html', 'CSS3 — Ombres box-shadow & text-shadow')"
-              >
-                Ouvrir l'atelier
               </button>
             </div>
           </div>
@@ -1294,65 +1198,20 @@
           <div>
             <h2>JavaScript</h2>
             <p>Logique, fonctions et manipulation du DOM</p>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"><a href="../cours/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">📚 Cours</a> <a href="../quiz/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a> <a href="atelier-interactif-bac.html?matiere=javascript" style="font:700 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#15803d;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">🧪 Séries Auto-Corrigées (/20)</a></div>
+            <div style="display:flex;gap:8px;margin-top:10px;"><a href="../cours/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">📚 Cours</a> <a href="../quiz/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a></div>
           </div>
         </div>
         <div class="exo-grid">
           <div class="exo-card">
-            <div class="exo-level">Débutant · Auto-corrigé /20</div>
-            <h3>🧪 Série Interactive 1 — Traces, Opérateurs &amp; Boucles JS</h3>
-            <p>5 défis auto-corrigés sur /20 : modulo <code>%</code>, post-incrémentation <code>x++</code>, conditions composées <code>&amp;&amp;</code>, boucle <code>for</code> et <code>isNaN()</code>.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-ia-serie="ia-js-1"
-                onclick="openPdfModal('atelier-interactif-bac.html?matiere=javascript&serie=ia-js-1', 'JavaScript — Série Interactive 1 (/20)')"
-              >
-                🧪 Pratiquer (/20)
-              </button>
-              <a class="corrige" href="atelier-interactif-bac.html?matiere=javascript&serie=ia-js-1">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Intermédiaire · Auto-corrigé /20</div>
-            <h3>🧪 Série Interactive 2 — Chaînes <code>String</code>, DOM &amp; <code>verif()</code></h3>
-            <p>5 défis auto-corrigés sur /20 : <code>substring</code>, <code>indexOf</code>, <code>getElementById().value</code>, <code>selectedIndex</code> et boutons radio <code>getElementsByName()</code>.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-ia-serie="ia-js-2"
-                onclick="openPdfModal('atelier-interactif-bac.html?matiere=javascript&serie=ia-js-2', 'JavaScript — Série Interactive 2 (/20)')"
-              >
-                🧪 Pratiquer (/20)
-              </button>
-              <a class="corrige" href="atelier-interactif-bac.html?matiere=javascript&serie=ia-js-2">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Avancé · Devoir Chronométré 45 min · /20</div>
-            <h3>⏱️ Devoir de Contrôle N°2 — JavaScript Algorithmique, <code>String</code> &amp; Validation DOM</h3>
-            <p>8 questions barémées sur /20 (sans Regex, méthode algorithmique STI) : traces, <code>estAlpha()</code>, <code>estChiffres()</code>, <code>selectedIndex</code> et <code>verif()</code> complet.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-devoir-id="dc-js-1"
-                onclick="openPdfModal('devoirs-blancs-bac.html?devoir=dc-js-1', 'DC N°2 — JavaScript & DOM (/20)')"
-              >
-                ⏱️ Passer le DC (/20)
-              </button>
-              <a class="corrige" href="devoirs-blancs-bac.html?devoir=dc-js-1">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Débutant · Feuille interactive /20</div>
+            <div class="exo-level">Débutant</div>
             <h3>Série 1 — Variables et opérateurs</h3>
-            <p>Types de données, opérateurs et structures de contrôle (tableaux interactifs auto-corrigés sur /20).</p>
+            <p>Types de données, opérateurs et structures de contrôle.</p>
             <div class="exo-actions">
               <button
                 class="enonce"
                 onclick="openPdfModal('javascript/Tp1-js.html', 'JavaScript — Série 1')"
               >
-                Énoncé interactif
+                Énoncé
               </button>
               <button
                 class="corrige"
@@ -1363,17 +1222,20 @@
             </div>
           </div>
           <div class="exo-card">
-            <div class="exo-level">Intermédiaire · Feuille interactive /20</div>
-            <h3>Série 2 — Fonctions, événements et méthodes DOM</h3>
+            <div class="exo-level">Intermédiaire</div>
+            <h3>Série 2 — Fonctions et méthodes d'accès</h3>
             <p>
-              Maîtriser les déclencheurs d'événements JavaScript et les méthodes d'accès au DOM (<code>getElementById</code>, <code>innerHTML</code>, <code>value</code>) avec tableau auto-corrigé sur /20.
+              Maîtriser les déclencheurs d'événements JavaScript sur les
+              éléments HTML. Utiliser les méthodes d'accès et de modification du
+              DOM (getElementById, innerHTML, value). Comprendre les différences
+              clés entre événements réactifs .
             </p>
             <div class="exo-actions">
               <button
                 class="enonce"
                 onclick="openPdfModal('javascript/Tp2-js.html', 'JavaScript — Série 2')"
               >
-                Énoncé interactif
+                Énoncé
               </button>
               <button
                 class="corrige"
@@ -1386,10 +1248,12 @@
           <div class="exo-card">
             <div class="exo-level">Avancé</div>
             <h3>
-              Série 3 — Manipulation des objets prédéfinis <code>Date</code>, <code>String</code>, <code>Array</code> et <code>Math</code>
+              Série 3 —Manipulation des objets prédéfinis `Date`, `String`,
+              `Array`, `Math`
             </h3>
             <p>
-              Exercices d'application sur les méthodes standards de <code>Date</code>, <code>String</code>, <code>Array</code> et <code>Math</code>.
+              Manipulation des objets prédéfinis `Date`, `String`, `Array`,
+              `Math`.
             </p>
             <div class="exo-actions">
               <button
@@ -1409,13 +1273,15 @@
           <div class="exo-card">
             <div class="exo-level">Avancé</div>
             <h3>
-              Série 4 — Propriétés et fonctions prédéfinies (<code>Math</code>, <code>String</code>, <code>Date</code>, <code>Array</code>)
+              Série 4 —Comprendre les objets, les propriétés et les fonctions
+              prédéfinies en JavaScript (`Math`, `String`, `Date`, `Array`,
+              objets littéraux
             </h3>
-            <p>Approfondissement sur les objets natifs, les conversions et les calculs appliqués aux formulaires.</p>
+            <p>.</p>
             <div class="exo-actions">
               <button
                 class="enonce"
-                onclick="openPdfModal('javascript/Tp4-js.html', 'JavaScript — Série 4')"
+                onclick="openPdfModal('javascript/Tp4-js.html', 'JavaScript — Série ')"
               >
                 Énoncé
               </button>
@@ -1429,8 +1295,8 @@
           </div>
           <div class="exo-card">
             <div class="exo-level">Avancé</div>
-            <h3>Série 5 — Objet <code>String</code></h3>
-            <p>Maîtrise complète des fonctions prédéfinies sur les chaînes de caractères (<code>length</code>, <code>charAt</code>, <code>indexOf</code>, <code>substring</code>).</p>
+            <h3>Série 5 — Objet String</h3>
+            <p>les fonctions prédifinies sur String</p>
             <div class="exo-actions">
               <button
                 class="enonce"
@@ -1467,18 +1333,56 @@
 
           <div class="exo-card">
             <div class="exo-level">Avancé</div>
-            <h3>Projet Carte bancaire animée (HTML5 + CSS3 + JS)</h3>
-            <p>Formulaire interactif temps réel avec retournement 3D de la carte, formatage dynamique et contrôle de validité.</p>
+            <h3>Projet 1: Récap HTML+CSS3 - Projet des fleurs</h3>
+            <p>Formulaire, transition animation....</p>
             <div class="exo-actions">
               <button
                 class="enonce"
-                onclick="openPdfModal('../projets/carte-bancaire/enonce-tp-carte-bancaire.html', 'JavaScript — Carte Bancaire Animée')"
+                onclick="openPdfModal('../projets/fleurs/media/projet-fleurs-4sti-eleve.pdf.html', 'CSS3 — Projet Fleurs 1')"
               >
                 Énoncé
               </button>
               <button
                 class="corrige"
-                onclick="openPdfModal('../projets/carte-bancaire/cb.html', 'JavaScript — Corrigé Carte Bancaire Animée')"
+                onclick="openPdfModal('../projets/fleurs/index.html', 'CSS3 — Corrigé Projet Fleurs ')"
+              >
+                Aperçu + Corrigé
+              </button>
+            </div>
+          </div>
+          <div class="exo-card">
+            <div class="exo-level">Avancé</div>
+            <h3>Projet 2: Récap html-css3 - Projet des fleurs</h3>
+            <p>Formulaire, transition animation....</p>
+            <div class="exo-actions">
+              <button
+                class="enonce"
+                onclick="openPdfModal('../projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire%20inscription.pdf.html', 'CSS3 — Projet 2')"
+              >
+                Énoncé
+              </button>
+              <button
+                class="corrige"
+                onclick="openPdfModal('../projets/formulaire-inscription/cvFleurs.html', 'CSS3 — Corrigé Projet 2')"
+              >
+                Aperçu + Corrigé
+              </button>
+            </div>
+          </div>
+          <div class="exo-card">
+            <div class="exo-level">Avancé</div>
+            <h3>Projet 3: Récap HTML+CSS3 - Projet Carte bancaire animée</h3>
+            <p>Formulaire, transition animation....</p>
+            <div class="exo-actions">
+              <button
+                class="enonce"
+                onclick="openPdfModal('../projets/carte-bancaire/enonce-tp-carte-bancaire.html', 'JavaScript — Carte Bancaire Animée Projet 3')"
+              >
+                Énoncé
+              </button>
+              <button
+                class="corrige"
+                onclick="openPdfModal('../projets/carte-bancaire/cb.html', 'JavaScript — Corrigé Carte Bancaire Animée Projet 3')"
               >
                 Aperçu + Corrigé
               </button>
@@ -1498,65 +1402,6 @@
           </div>
         </div>
         <div class="exo-grid">
-          <div class="exo-card">
-            <div class="exo-level">Débutant · Auto-corrigé /20</div>
-            <h3>🧪 Série Interactive 1 — LDD (<code>CREATE / ALTER</code>) &amp; Requêtes LMD</h3>
-            <p>5 requêtes et questions auto-corrigées sur /20 : <code>ALTER TABLE</code>, <code>FOREIGN KEY</code>, <code>SELECT DISTINCT</code>, <code>LIKE</code> et <code>UPDATE</code>.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-ia-serie="ia-sql-1"
-                onclick="openPdfModal('atelier-interactif-bac.html?matiere=sql&serie=ia-sql-1', 'Base de données — Série Interactive 1 (/20)')"
-              >
-                🧪 Pratiquer (/20)
-              </button>
-              <a class="corrige" href="atelier-interactif-bac.html?matiere=sql&serie=ia-sql-1">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card sti-4si-only">
-            <div class="exo-level">Avancé · Auto-corrigé /20 · 🎓 4<sup>e</sup> SI</div>
-            <h3>🧪 Série Interactive 2 — Jointures, <code>GROUP BY / HAVING</code> &amp; Dates</h3>
-            <p>5 défis SQL Bac auto-corrigés sur /20 : ordre des clauses, <code>HAVING COUNT(*)</code>, <code>YEAR(CURDATE())</code>, sous-requête <code>NOT IN</code> et <code>DATEDIFF</code>.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-ia-serie="ia-sql-2"
-                onclick="openPdfModal('atelier-interactif-bac.html?matiere=sql&serie=ia-sql-2', 'Base de données — Série Interactive 2 (/20)')"
-              >
-                🧪 Pratiquer (/20)
-              </button>
-              <a class="corrige" href="atelier-interactif-bac.html?matiere=sql&serie=ia-sql-2">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Avancé · Devoir de Synthèse 60 min · /20</div>
-            <h3>⏱️ Devoir de Synthèse — Base de Données <code>GEST_CLUB</code> (LDD &amp; Requêtes SQL)</h3>
-            <p>8 requêtes barémées sur /20 (60 min) sur un schéma relationnel complet à 3 tables : <code>ALTER TABLE</code>, <code>FOREIGN KEY</code>, jointures, <code>GROUP BY / HAVING</code> et sous-requête.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-devoir-id="ds-sql-1"
-                onclick="openPdfModal('devoirs-blancs-bac.html?devoir=ds-sql-1', 'DS — Base de Données SQL (/20)')"
-              >
-                ⏱️ Passer le DS (/20)
-              </button>
-              <a class="corrige" href="devoirs-blancs-bac.html?devoir=ds-sql-1">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Interactif · 3 Fenêtres</div>
-            <h3>🖥️ Atelier SQL à 3 Fenêtres (Schéma · Requête · Résultat)</h3>
-            <p>Entraînement visuel simultané avec le schéma relationnel, la zone d'écriture SQL et l'aperçu du jeu d'enregistrement.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                onclick="openPdfModal('sql/atelier_sql_3_fenetres.html', 'Base de données — Atelier SQL 3 Fenêtres')"
-              >
-                🖥️ Ouvrir l'atelier
-              </button>
-              <a class="corrige" href="sql/atelier_sql_3_fenetres.html">⧉ Plein écran</a>
-            </div>
-          </div>
           <div class="exo-card">
             <div class="exo-level">Débutant</div>
             <h3>Série 1 — Requêtes LDD simples</h3>
@@ -1768,55 +1613,10 @@
           <div>
             <h2>PHP <span style="display:inline-block;background:#f4511e;color:#fff;font-size:11px;font-weight:800;padding:2px 9px;border-radius:999px;vertical-align:middle;margin-left:6px">🎓 Réservé 4<sup>e</sup> SI (1 à 5)</span></h2>
             <p>Variables, formulaires et connexion à une base · Espace réservé aux classes de 4<sup>e</sup> SI (1, 2, 3, 4 ou 5)</p>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"><a href="../cours/php.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">📚 Cours</a> <a href="../quiz/php.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a> <a href="atelier-interactif-bac.html?matiere=php" style="font:700 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#15803d;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">🧪 Séries Auto-Corrigées (/20)</a></div>
+            <div style="display:flex;gap:8px;margin-top:10px;"><a href="../cours/php.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">📚 Cours</a> <a href="../quiz/php.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a></div>
           </div>
         </div>
         <div class="exo-grid">
-          <div class="exo-card">
-            <div class="exo-level">Débutant · Auto-corrigé /20</div>
-            <h3>🧪 Série Interactive 1 — <code>$_POST</code>, Chaînes, Tableaux &amp; <code>date()</code></h3>
-            <p>5 exercices PHP notés sur /20 : récupération <code>$_POST</code>, concaténation par le point <code>.</code>, <code>substr()</code>, <code>strlen()</code> et <code>date("Y-m-d")</code>.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-ia-serie="ia-php-1"
-                onclick="openPdfModal('atelier-interactif-bac.html?matiere=php&serie=ia-php-1', 'PHP — Série Interactive 1 (/20)')"
-              >
-                🧪 Pratiquer (/20)
-              </button>
-              <a class="corrige" href="atelier-interactif-bac.html?matiere=php&serie=ia-php-1">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card">
-            <div class="exo-level">Bac Pratique · Auto-corrigé /20</div>
-            <h3>🧪 Série Interactive 2 — Cycle MySQLi Procédural Complet</h3>
-            <p>5 défis Bac Pratique notés sur /20 : <code>mysqli_connect</code>, <code>mysqli_query($con, $req)</code>, <code>affected_rows</code> vs <code>num_rows</code>, <code>mysqli_fetch_array</code> et <code>mysqli_close</code>.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-ia-serie="ia-php-2"
-                onclick="openPdfModal('atelier-interactif-bac.html?matiere=php&serie=ia-php-2', 'PHP & MySQLi — Série Interactive 2 (/20)')"
-              >
-                🧪 Pratiquer (/20)
-              </button>
-              <a class="corrige" href="atelier-interactif-bac.html?matiere=php&serie=ia-php-2">⧉ Plein écran</a>
-            </div>
-          </div>
-          <div class="exo-card sti-4si-only">
-            <div class="exo-level">Bac Blanc Transversal 60 min · /20 · 🎓 4<sup>e</sup> SI</div>
-            <h3>🏆 Sujet Type Bac STI Complet — Projet « TunisAir-Vols » (SQL + Web + JS + PHP/MySQLi)</h3>
-            <p>Épreuve transversale intégrale sur /20 (8 questions, 60 min) croisant SQL, formulaire HTML5/CSS3, contrôle JavaScript et traitement PHP/MySQLi procédural.</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
-              <button
-                class="enonce"
-                data-devoir-id="bac-blanc-4si-1"
-                onclick="openPdfModal('devoirs-blancs-bac.html?devoir=bac-blanc-4si-1', 'Bac Blanc Transversal 4e SI (/20)')"
-              >
-                🏆 Passer le Bac Blanc (/20)
-              </button>
-              <a class="corrige" href="devoirs-blancs-bac.html?devoir=bac-blanc-4si-1">⧉ Plein écran</a>
-            </div>
-          </div>
           <div class="exo-card">
             <div class="exo-level">Débutant</div>
             <h3>Série 1 — Variables, chaînes, Date et tableaux</h3>
@@ -1838,8 +1638,8 @@
           </div>
           <div class="exo-card">
             <div class="exo-level">Intermédiaire</div>
-            <h3>Série 2 — Fonctions sur les chaînes de caractères</h3>
-            <p>Manipulation des fonctions standards relatives aux chaînes de caractères en PHP.</p>
+            <h3>Série 2 —</h3>
+            <p>Les fonctions relatives aux chaînes de caractères.</p>
             <div class="exo-actions">
               <button
                 class="enonce"
@@ -1858,7 +1658,7 @@
           <div class="exo-card">
             <div class="exo-level">Avancé</div>
             <h3>Série 3 — Manipulation des Tableaux en PHP</h3>
-            <p>Tableaux indexés et associatifs, parcours <code>foreach</code>, recherche et traitement de données en PHP.</p>
+            <p>.</p>
             <div class="exo-actions">
               <button
                 class="enonce"
@@ -2262,8 +2062,8 @@
           "html,body{width:100%;height:100%;margin:0}" +
           "body{display:grid;grid-template-rows:auto minmax(0,1fr);background:#e9ebf2;color:#14161f;font-family:Arial,sans-serif}" +
           ".barre{display:flex;align-items:center;gap:16px;min-height:64px;padding:10px 18px;background:#fff;border-bottom:1px solid #e1e4ec}" +
-          ".retour{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;padding:10px 14px;border-radius:9px;background:#e84e1b;color:#fff;text-decoration:none;font-weight:700}" +
-          ".retour:hover{background:#c2410c}" +
+          ".retour{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;padding:10px 14px;border-radius:9px;background:#4338ca;color:#fff;text-decoration:none;font-weight:700}" +
+          ".retour:hover{background:#3529b6}" +
           ".titre{min-width:0;flex:1}" +
           ".titre strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:1rem}" +
           ".titre span{display:block;margin-top:3px;color:#5b6172;font-size:.82rem}" +
@@ -2512,8 +2312,7 @@
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/config.js?v=425"></script>
-<script src="../assets/js/acces.js?v=450"></script>
-  <script src="../assets/js/exercices-atelier.js?v=451" defer></script>
+<script src="../assets/js/acces.js?v=289"></script>
   <script src="../assets/js/sync-progressions.js" defer></script>
 </body>
 </html>

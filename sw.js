@@ -6,26 +6,10 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v451-chantier-exercices-2";
+var UPDATE_ID = "v449-rayonsx-surligneur-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./exercices/devoirs-blancs-bac.html", revision: "chantier-exercices-v451" },
-  { url: "./assets/js/exercices-atelier.js", revision: "chantier-exercices-v451" },
-  { url: "./exercices/atelier-interactif-bac.html", revision: "chantier-exercices-v451" },
-  { url: "./exercices/series-exercices.html", revision: "chantier-exercices-v451" },
-  { url: "./ma-fiche-revision.html", revision: "chantier-exercices-v451" },
-  { url: "./admin.html", revision: "chantier-exercices-v451" },
-  { url: "./assets/js/admin.js", revision: "chantier-exercices-v451" },
-  { url: "./assets/js/acces.js", revision: "chantier-exercices-v451" },
-  { url: "./assets/js/mobile-nav.js", revision: "chantier-exercices-v451" },
-  { url: "./assets/js/exercices-atelier.js", revision: "chantier-exercices-v450" },
-  { url: "./exercices/atelier-interactif-bac.html", revision: "chantier-exercices-v450" },
-  { url: "./exercices/series-exercices.html", revision: "chantier-exercices-v450" },
-  { url: "./admin.html", revision: "chantier-exercices-v450" },
-  { url: "./assets/js/admin.js", revision: "chantier-exercices-v450" },
-  { url: "./assets/js/acces.js", revision: "chantier-exercices-v450" },
-  { url: "./assets/js/mobile-nav.js", revision: "chantier-exercices-v450" },
   { url: "./assets/js/rayonsx-surligneur.js", revision: "rayonsx-surligneur-v449" },
   { url: "./assets/js/mobile-nav.js", revision: "rayonsx-surligneur-v449" },
   { url: "./assets/js/acces.js", revision: "rayonsx-surligneur-v449" },

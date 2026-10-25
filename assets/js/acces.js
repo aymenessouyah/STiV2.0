@@ -34,19 +34,11 @@
   /* ---------- v449 : Chargement universel du module Rayons X HTML/CSS & Surligneur Fluo ---------- */
   (function chargerRayonsXEtSurligneurSTI() {
     try {
-      if (!window.__STI_RAYONSX_SURLIGNEUR_ACTIF && !document.querySelector("script[src*='rayonsx-surligneur.js']")) {
-        var scRx = document.createElement("script");
-        scRx.src = (cfg.RACINE || "") + "assets/js/rayonsx-surligneur.js?v=449";
-        scRx.async = true;
-        (document.head || document.documentElement).appendChild(scRx);
-      }
-      /* v450 : Chargement automatique du moteur d'exercices interactifs sur toutes les pages /exercices/ */
-      if (String(location.pathname || "").indexOf("/exercices/") !== -1 && !window.__STI_EXERCICES_ATELIER_V450 && !document.querySelector("script[src*='exercices-atelier.js']")) {
-        var scExo = document.createElement("script");
-        scExo.src = (cfg.RACINE || "") + "assets/js/exercices-atelier.js?v=451";
-        scExo.defer = true;
-        (document.head || document.documentElement).appendChild(scExo);
-      }
+      if (window.__STI_RAYONSX_SURLIGNEUR_ACTIF || document.querySelector("script[src*='rayonsx-surligneur.js']")) return;
+      var scRx = document.createElement("script");
+      scRx.src = (cfg.RACINE || "") + "assets/js/rayonsx-surligneur.js?v=449";
+      scRx.async = true;
+      (document.head || document.documentElement).appendChild(scRx);
     } catch (e) {}
   })();
 
@@ -392,14 +384,6 @@
     filigraneActif: true,
     antiSplitScreen: true,
     pausesUids: {},
-    corrigesVerrou: {
-      actif: false,
-      cible: "*",
-      matieres: { css3: false, javascript: false, sql: false, php: false },
-      indicesAutorises: true,
-      finMs: 0,
-      motif: ""
-    },
     dernierTeleport: null,
     ts: 0
   };
@@ -5628,14 +5612,6 @@
     filigraneActif: true,
     antiSplitScreen: true,
     pausesUids: {},
-    corrigesVerrou: {
-      actif: false,
-      cible: "*",
-      matieres: { css3: false, javascript: false, sql: false, php: false },
-      indicesAutorises: true,
-      finMs: 0,
-      motif: ""
-    },
     dernierTeleport: null,
     ts: 0
   };
@@ -5954,7 +5930,6 @@
     if (cfgSecurite.dernierTeleport) appliquerTeleportation(cfgSecurite.dernierTeleport);
     if (typeof verifierPleinEcranExamen === "function") verifierPleinEcranExamen();
     if (typeof verifierSplitScreenExamen === "function") verifierSplitScreenExamen();
-    try { window.dispatchEvent(new CustomEvent("sti:sec-config-maj", { detail: cfgSecurite })); } catch (eEv) {}
   }
 
   /* Charger la dernière configuration de sécurité depuis Supabase au démarrage (avec cache mémoire 45 s entre pages) */

@@ -456,11 +456,6 @@
       var sc8 = doc.createElement("script");
       sc8.src = R + "assets/js/rayonsx-surligneur.js?v=449";
       sc8.async = true; (doc.head || doc.documentElement).appendChild(sc8);
-      if (String(location.pathname || "").indexOf("/exercices/") !== -1 && !doc.querySelector("script[src*='exercices-atelier.js']")) {
-        var sc9 = doc.createElement("script");
-        sc9.src = R + "assets/js/exercices-atelier.js?v=451";
-        sc9.defer = true; (doc.head || doc.documentElement).appendChild(sc9);
-      }
       sc4.async = true;
       (doc.head || doc.documentElement).appendChild(sc4);
     } catch (e) {}

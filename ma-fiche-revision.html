@@ -85,21 +85,7 @@
   </div>
   <div class="fluo-liste" id="fiche-fluo-liste"><p class="vide">Chargement de vos passages surlignés…</p></div>
 
-  <h2 id="sec-exercices-suivi">5. 🧪 Mes séries d'exercices, TP &amp; Devoirs Blancs (<span id="fiche-exo-resume">0</span>)</h2>
-  <div id="fiche-exo-kpis" style="margin:6px 0 8px;font-size:12px;color:#334155"></div>
-  <table id="fiche-exercices">
-    <thead>
-      <tr>
-        <th>Série / TP / Devoir Blanc</th>
-        <th>Matière</th>
-        <th>État &amp; Note /20</th>
-        <th>Priorité</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <h2>6. Mes notes manuscrites</h2>
+  <h2>5. Mes notes manuscrites</h2>
   <div class="notes">(à remplir à la main après impression : formules à retenir, erreurs à ne pas refaire…)</div>
 </main>
 <script src="assets/js/rayonsx-surligneur.js?v=449"></script>
@@ -221,87 +207,6 @@
   window.addEventListener("sti-surlignages-maj", rendrePassagesFluoFiche);
   window.addEventListener("storage", rendrePassagesFluoFiche);
   rendrePassagesFluoFiche();
-
-  /* v451 : Rendu des séries d'exercices, TP & Devoirs Blancs (/20 & ⭐ À revoir) */
-  var TITRES_EXO_CONNUS = {
-    "ia-css-1": { t: "Série Interactive 1 — Structure HTML5 & Formulaires", m: "HTML5 & CSS3", u: "exercices/atelier-interactif-bac.html?matiere=css3&serie=ia-css-1" },
-    "ia-css-2": { t: "Série Interactive 2 — Flexbox, Float & Modèle de Boîte", m: "HTML5 & CSS3", u: "exercices/atelier-interactif-bac.html?matiere=css3&serie=ia-css-2" },
-    "ia-js-1":  { t: "Série Interactive 1 — Traces, Opérateurs & Boucles JS", m: "JavaScript", u: "exercices/atelier-interactif-bac.html?matiere=javascript&serie=ia-js-1" },
-    "ia-js-2":  { t: "Série Interactive 2 — Chaînes String, DOM & verif()", m: "JavaScript", u: "exercices/atelier-interactif-bac.html?matiere=javascript&serie=ia-js-2" },
-    "ia-sql-1": { t: "Série Interactive 1 — LDD (CREATE/ALTER) & Requêtes LMD", m: "SQL / BDD", u: "exercices/atelier-interactif-bac.html?matiere=sql&serie=ia-sql-1" },
-    "ia-sql-2": { t: "Série Interactive 2 — Jointures, GROUP BY / HAVING & Dates", m: "SQL / BDD", u: "exercices/atelier-interactif-bac.html?matiere=sql&serie=ia-sql-2" },
-    "ia-php-1": { t: "Série Interactive 1 — $_POST, Chaînes & date()", m: "PHP & MySQLi", u: "exercices/atelier-interactif-bac.html?matiere=php&serie=ia-php-1" },
-    "ia-php-2": { t: "Série Interactive 2 — Cycle MySQLi Procédural", m: "PHP & MySQLi", u: "exercices/atelier-interactif-bac.html?matiere=php&serie=ia-php-2" },
-    "dc-css-1": { t: "⏱️ Devoir de Contrôle N°1 — HTML5 & CSS3", m: "HTML5 & CSS3", u: "exercices/devoirs-blancs-bac.html?devoir=dc-css-1" },
-    "dc-js-1":  { t: "⏱️ Devoir de Contrôle N°2 — JavaScript & DOM", m: "JavaScript", u: "exercices/devoirs-blancs-bac.html?devoir=dc-js-1" },
-    "ds-sql-1": { t: "⏱️ Devoir de Synthèse — Base de Données GEST_CLUB", m: "SQL / BDD", u: "exercices/devoirs-blancs-bac.html?devoir=ds-sql-1" },
-    "bac-blanc-4si-1": { t: "🏆 Sujet Type Bac STI Complet — TunisAir-Vols (4e SI)", m: "Transversal 4e SI", u: "exercices/devoirs-blancs-bac.html?devoir=bac-blanc-4si-1" }
-  };
-  function libMatiereExo(m, cle) {
-    var s = String(m || cle || "").toLowerCase();
-    if (s.indexOf("transversal") !== -1 || s.indexOf("bac-blanc") !== -1) return "Transversal 4e SI";
-    if (s.indexOf("php") !== -1) return "PHP & MySQLi";
-    if (s.indexOf("sql") !== -1 || s.indexOf("bdd") !== -1 || s.indexOf("-bd") !== -1) return "SQL / BDD";
-    if (s.indexOf("js") !== -1 || s.indexOf("javascript") !== -1) return "JavaScript";
-    return "HTML5 & CSS3";
-  }
-  function rendreSuiviExercicesFiche() {
-    var tbExo = document.querySelector("#fiche-exercices tbody");
-    var kpiEl = document.getElementById("fiche-exo-kpis");
-    var resEl = document.getElementById("fiche-exo-resume");
-    if (!tbExo) return;
-    var suivi = {};
-    try { suivi = JSON.parse(localStorage.getItem("sti-exo-suivi-v1") || "{}") || {}; } catch (e) {}
-    var cles = Object.keys(suivi).filter(function (k) {
-      var v = suivi[k];
-      return v && (v.statut === "done" || v.statut === "doing" || v.etoile || v.note20 !== undefined);
-    });
-    if (resEl) resEl.textContent = String(cles.length);
-    if (!cles.length) {
-      if (kpiEl) kpiEl.innerHTML = "Rendez-vous dans <a href='exercices/series-exercices.html'><b>Séries d'exercices</b></a> ou <a href='exercices/devoirs-blancs-bac.html'><b>Devoirs Blancs (/20)</b></a> pour enregistrer votre avancement.";
-      tbExo.innerHTML = "<tr><td colspan='4' class='vide'>Aucune série ou devoir blanc suivi pour le moment.</td></tr>";
-      return;
-    }
-    /* Trier : ⭐ À revoir d'abord, puis notes /20, puis date récente */
-    cles.sort(function (a, b) {
-      var va = suivi[a] || {}, vb = suivi[b] || {};
-      if (Boolean(vb.etoile) !== Boolean(va.etoile)) return vb.etoile ? 1 : -1;
-      return Number(vb.maj || 0) - Number(va.maj || 0);
-    });
-    var nbDone = 0, nbDoing = 0, nbStar = 0, notes = [];
-    var lignesExo = "";
-    cles.forEach(function (k) {
-      var v = suivi[k] || {};
-      if (v.statut === "done") nbDone++;
-      else if (v.statut === "doing") nbDoing++;
-      if (v.etoile) nbStar++;
-      if (typeof v.note20 === "number" && !isNaN(v.note20)) notes.push(v.note20);
-      var connu = TITRES_EXO_CONNUS[k];
-      var titre = (connu && connu.t) || v.titre || k.replace(/^exo:/, "");
-      var mat = (connu && connu.m) || libMatiereExo(v.matiere, k);
-      var lien = (connu && connu.u) || (k.indexOf("exo:") === 0 && /\.html$/i.test(k) ? ("exercices/" + k.slice(4)) : "exercices/series-exercices.html");
-      var txtEtat = v.statut === "done" ? "✅ Terminé" : (v.statut === "doing" ? "⏳ En cours" : "⬜ À faire");
-      if (typeof v.note20 === "number") txtEtat += " · <b>" + v.note20 + "/20</b>";
-      var clsEtat = (typeof v.note20 === "number" ? (v.note20 >= 12 ? "ok" : "warn") : (v.statut === "done" ? "ok" : ""));
-      var txtPrio = v.etoile ? "⭐ <b>À revoir avant devoir</b>" : (typeof v.note20 === "number" && v.note20 < 10 ? "🔴 À retravailler" : "—");
-      lignesExo +=
-        "<tr>" +
-          "<td><a href='" + ech(lien) + "' style='color:inherit;text-decoration:none;font-weight:600'>" + ech(titre) + "</a></td>" +
-          "<td>" + ech(mat) + "</td>" +
-          "<td class='" + clsEtat + "'>" + txtEtat + "</td>" +
-          "<td class='" + (v.etoile ? "warn" : "") + "'>" + txtPrio + "</td>" +
-        "</tr>";
-    });
-    var moyTxt = notes.length
-      ? (" · 🏆 Moyenne exercices/devoirs : <b>" + (Math.round((notes.reduce(function (s, n) { return s + n; }, 0) / notes.length) * 10) / 10) + "/20</b>")
-      : "";
-    if (kpiEl) {
-      kpiEl.innerHTML = "✅ <b>" + nbDone + "</b> validé(s) · ⏳ <b>" + nbDoing + "</b> en cours · ⭐ <b>" + nbStar + "</b> marqué(s) à revoir" + moyTxt;
-    }
-    tbExo.innerHTML = lignesExo;
-  }
-  window.addEventListener("storage", rendreSuiviExercicesFiche);
-  rendreSuiviExercicesFiche();
 })();
 </script>
 </body>
