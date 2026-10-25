@@ -3990,6 +3990,153 @@ html.admin-ardoise .tb-badge-photo-attente {
   display: none;
 }
 
+/* v451 : Fiche Conseil de Classe & Impression A4 par classe en 1 clic */
+.btn-vue-conseil {
+  border-color: rgba(16, 185, 129, 0.45) !important;
+}
+
+.modal-conseil-box {
+  width: min(1180px, 97vw) !important;
+}
+
+.conseil-toggle-obs {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  border-radius: 11px !important;
+  border: 1px solid var(--adm-border-strong) !important;
+  background: var(--adm-surface-2) !important;
+  color: var(--adm-text) !important;
+  font-family: var(--adm-font) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+.conseil-kpi-bar {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)) !important;
+  gap: 10px !important;
+  padding: 10px 18px 4px !important;
+}
+
+.conseil-kpi-card {
+  background: var(--adm-surface-2) !important;
+  border: 1px solid var(--adm-border-strong) !important;
+  border-radius: 14px !important;
+  padding: 10px 14px !important;
+  font-family: var(--adm-font) !important;
+}
+
+.conseil-kpi-card small {
+  display: block !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--adm-muted) !important;
+}
+
+.conseil-kpi-card b {
+  display: block !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  color: var(--adm-text) !important;
+  margin-top: 2px !important;
+}
+
+.conseil-table-wrap {
+  padding: 10px 18px 18px !important;
+  overflow-x: auto !important;
+  max-height: 62vh !important;
+  overflow-y: auto !important;
+}
+
+.conseil-table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  font-family: var(--adm-font) !important;
+  font-size: 12.5px !important;
+}
+
+.conseil-table th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 2 !important;
+  background: var(--adm-surface-3) !important;
+  color: var(--adm-text) !important;
+  font-weight: 900 !important;
+  text-align: left !important;
+  padding: 10px 10px !important;
+  border-bottom: 1.5px solid var(--adm-border-strong) !important;
+  white-space: nowrap !important;
+}
+
+.conseil-table td {
+  padding: 9px 10px !important;
+  border-bottom: 1px solid var(--adm-border) !important;
+  color: var(--adm-text) !important;
+  vertical-align: middle !important;
+}
+
+.conseil-table tbody tr:hover td {
+  background: var(--adm-surface-2) !important;
+}
+
+.conseil-eleve-cell {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.conseil-avatar-img {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  object-fit: cover !important;
+  border: 1.5px solid var(--adm-border-strong) !important;
+  flex-shrink: 0 !important;
+}
+
+.conseil-avatar-ini {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  background: var(--adm-surface-3) !important;
+  color: var(--adm-text) !important;
+  border: 1.5px solid var(--adm-border-strong) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 900 !important;
+  font-size: 13px !important;
+  flex-shrink: 0 !important;
+}
+
+.conseil-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  border: 1px solid var(--adm-border-strong) !important;
+  background: var(--adm-surface-3) !important;
+}
+
+.conseil-pill.tb { background: rgba(16, 185, 129, 0.18) !important; color: #10b981 !important; border-color: rgba(16, 185, 129, 0.4) !important; }
+.conseil-pill.bien { background: rgba(20, 184, 166, 0.18) !important; color: #14b8a6 !important; border-color: rgba(20, 184, 166, 0.4) !important; }
+.conseil-pill.moy { background: rgba(245, 158, 11, 0.18) !important; color: #f59e0b !important; border-color: rgba(245, 158, 11, 0.4) !important; }
+.conseil-pill.frag { background: rgba(239, 68, 68, 0.16) !important; color: #ef4444 !important; border-color: rgba(239, 68, 68, 0.4) !important; }
+
+.conseil-obs-box {
+  font-size: 11.5px !important;
+  line-height: 1.4 !important;
+  max-width: 290px !important;
+}
+
 @media print {
   .barre-util,
   .nav-sections-admin,
@@ -4001,6 +4148,7 @@ html.admin-ardoise .tb-badge-photo-attente {
   #sti-airbus-service-dock,
   #sti-zoom-photo-eleve,
   #modal-trombinoscope-admin,
+  #modal-conseil-classe-admin,
   #modal-carte-candidat-admin,
   #adm-studio-photo-overlay {
     display: none !important;
@@ -4022,6 +4170,6 @@ html.admin-ardoise .tb-badge-photo-attente {
     padding: 10mm 8mm !important;
     background: #ffffff !important;
     color: #0f172a !important;
-    font-family: "Comic Sans MS", "Comic Neue", sans-serif !important;
+    font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", "Chalkboard SE", cursive, sans-serif !important;
   }
 }

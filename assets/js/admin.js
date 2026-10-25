@@ -701,6 +701,9 @@
       if (typeof rafraichirTrombinoscopeSiOuvert === "function") {
         try { rafraichirTrombinoscopeSiOuvert(); } catch (eTr) {}
       }
+      if (typeof rafraichirConseilClasseSiOuvert === "function") {
+        try { rafraichirConseilClasseSiOuvert(); } catch (eCc2) {}
+      }
       if (typeof rafraichirCarteCandidatAdminSiOuverte === "function") {
         try { rafraichirCarteCandidatAdminSiOuverte(profFrais); } catch (eCc) {}
       }
@@ -1513,49 +1516,447 @@
     );
   }
 
-  (function initialiserEvenementsTrombinoscopeEtCarte() {
-    var btnOuv = document.getElementById("btn-ouvrir-trombinoscope");
-    var btnFer = document.getElementById("btn-fermer-trombinoscope");
-    var btnImp = document.getElementById("btn-imprimer-trombinoscope");
-    var modTr = document.getElementById("modal-trombinoscope-admin");
-    if (btnOuv) btnOuv.addEventListener("click", ouvrirTrombinoscopeAdmin);
-    if (btnFer) btnFer.addEventListener("click", fermerTrombinoscopeAdmin);
-    if (btnImp) btnImp.addEventListener("click", imprimerTrombinoscopeAdmin);
-    if (modTr) modTr.addEventListener("click", function (ev) { if (ev.target === modTr) fermerTrombinoscopeAdmin(); });
+  /* ==================== v451 : Fiche Conseil de Classe & Impression A4 en 1 clic ==================== */
+  var observationsParEleveConseil = {};
+  var observationsConseilChargees = false;
 
-    ["trombi-filtre-classe", "trombi-filtre-lycee", "trombi-filtre-etat"].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.addEventListener("change", rendreTrombinoscopeAdmin);
-    });
-    var inpR = document.getElementById("trombi-recherche");
-    if (inpR) inpR.addEventListener("input", rendreTrombinoscopeAdmin);
+  function chargerObservationsLotConseil(forcer) {
+    if (!sb || typeof sb.from !== "function") return Promise.resolve();
+    if (observationsConseilChargees && !forcer) return Promise.resolve();
+    return sb.from("sti_observations")
+      .select("id,eleve,texte,cree_le")
+      .order("cree_le", { ascending: false })
+      .limit(500)
+      .then(function (res) {
+        if (res && !res.error && Array.isArray(res.data)) {
+          var map = {};
+          res.data.forEach(function (o) {
+            if (!o || !o.eleve) return;
+            if (!map[o.eleve]) map[o.eleve] = [];
+            map[o.eleve].push(o);
+          });
+          observationsParEleveConseil = map;
+          observationsConseilChargees = true;
+        }
+      })
+      .catch(function () {});
+  }
 
-    var modCc = document.getElementById("modal-carte-candidat-admin");
-    var fCc1 = document.getElementById("btn-fermer-carte-candidat-admin");
-    var fCc2 = document.getElementById("btn-fermer-carte-candidat-bas");
-    var btnDlCc = document.getElementById("btn-dl-carte-candidat-png");
-    var btnPrCc = document.getElementById("btn-print-carte-candidat");
-    var btnRecCc = document.getElementById("btn-recadrer-depuis-carte");
-    function fermerCc() { if (modCc) modCc.classList.remove("ouvert"); }
-    if (fCc1) fCc1.addEventListener("click", fermerCc);
-    if (fCc2) fCc2.addEventListener("click", fermerCc);
-    if (modCc) modCc.addEventListener("click", function (ev) { if (ev.target === modCc) fermerCc(); });
-    if (btnDlCc) btnDlCc.addEventListener("click", function () { telechargerCarteCandidatPngHD(candidatCarteAdminActif, btnDlCc); });
-    if (btnPrCc) btnPrCc.addEventListener("click", function () {
-      if (!candidatCarteAdminActif) return;
-      lancerImpressionFeuilleDediee(
-        "<div style='max-width:460px;margin:24px auto'>" + construireHtmlCarteCandidatSTI(candidatCarteAdminActif) + "</div>"
-      );
-    });
-    if (btnRecCc) btnRecCc.addEventListener("click", function () {
-      if (candidatCarteAdminActif) ouvrirStudioPhotoAdmin(candidatCarteAdminActif);
-    });
-    document.addEventListener("keydown", function (ev) {
-      if (ev.key === "Escape") {
-        fermerCc();
-        fermerTrombinoscopeAdmin();
+  function appreciationAutoConseil(stQ, secSem, secTot) {
+    var moy = stQ && stQ.moyenne20 != null ? stQ.moyenne20 : null;
+    if (moy != null) {
+      if (moy >= 15) return { cls: "tb", txt: "🌟 Très bon bilan" };
+      if (moy >= 12) return { cls: "bien", txt: "👍 Travail sérieux" };
+      if (moy >= 10) return { cls: "moy", txt: "⚡ Acquis à consolider" };
+      return { cls: "frag", txt: "⚠️ Soutien recommandé" };
+    }
+    if ((secSem || 0) >= 1800 || (secTot || 0) >= 3600) {
+      return { cls: "bien", txt: "📚 Révision régulière" };
+    }
+    if ((secTot || 0) > 0) {
+      return { cls: "moy", txt: "⏳ Quiz à compléter" };
+    }
+    return { cls: "frag", txt: "⚪ Aucune activité" };
+  }
+
+  function peuplerFiltresConseilClasseAdmin() {
+    var selCl = document.getElementById("conseil-filtre-classe");
+    var selLy = document.getElementById("conseil-filtre-lycee");
+    var mainCl = document.getElementById("filtre-classe");
+    var mainLy = document.getElementById("filtre-lycee");
+    if (selCl) {
+      var classesMap = {};
+      profils.forEach(function (p) {
+        if (p && p.classe && !estClasseProfLabo(p.classe)) classesMap[p.classe] = true;
+      });
+      var clList = Object.keys(classesMap).sort(function (a, b) { return a.localeCompare(b, "fr"); });
+      var prevCl = selCl.getAttribute("data-init") ? selCl.value : ((mainCl && mainCl.value !== "*") ? mainCl.value : (clList[0] || "*"));
+      selCl.innerHTML = "<option value='*'>🏫 Toutes les classes</option>" +
+        clList.map(function (c) { return "<option value='" + echHtml(c) + "'>🏫 " + echHtml(c) + "</option>"; }).join("");
+      selCl.value = (prevCl !== "*" && classesMap[prevCl]) ? prevCl : "*";
+      selCl.setAttribute("data-init", "1");
+    }
+    if (selLy) {
+      var lyMap = {};
+      profils.forEach(function (p) {
+        var l = lyceePropre(p);
+        if (l && l !== "—" && !estClasseProfLabo(p.classe)) lyMap[l] = true;
+      });
+      var lyList = Object.keys(lyMap).sort(function (a, b) { return a.localeCompare(b, "fr"); });
+      var prevLy = selLy.getAttribute("data-init") ? selLy.value : ((mainLy && mainLy.value !== "*") ? mainLy.value : "*");
+      selLy.innerHTML = "<option value='*'>🏛️ Tous les lycées</option>" +
+        lyList.map(function (l) { return "<option value='" + echHtml(l) + "'>🏛️ " + echHtml(l) + "</option>"; }).join("");
+      selLy.value = (prevLy !== "*" && lyMap[prevLy]) ? prevLy : "*";
+      selLy.setAttribute("data-init", "1");
+    }
+  }
+
+  function obtenirElevesFiltresConseilClasse() {
+    var selCl = document.getElementById("conseil-filtre-classe");
+    var selLy = document.getElementById("conseil-filtre-lycee");
+    var selTri = document.getElementById("conseil-filtre-tri");
+    var inpR = document.getElementById("conseil-recherche");
+    var fCl = (selCl && selCl.value) || "*";
+    var fLy = (selLy && selLy.value) || "*";
+    var tri = (selTri && selTri.value) || "alpha";
+    var q = String((inpR && inpR.value) || "").trim().toLowerCase();
+
+    var rows = profils.filter(function (p) {
+      if (!p || estClasseProfLabo(p.classe)) return false;
+      if (p.statut === "bloque" || p.statut === "supprime") return false;
+      if (p.statut !== "actif" && !estGold(p)) return false;
+      if (fCl !== "*" && String(p.classe || "") !== fCl) return false;
+      if (fLy !== "*" && lyceePropre(p) !== fLy) return false;
+      if (q) {
+        var hay = (nomPrenomTexte(p) + " " + (p.email || "") + " " + (p.classe || "")).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
       }
+      return true;
+    }).map(function (p) {
+      var secSem = dureePourAbonne(p.id);
+      var secTot = dureesTotales[p.id] || 0;
+      var stQ = statsQuizPourUser(p.id);
+      var mods = modulesConsultesPourUser(p.id);
+      var bil = bilanProgressionMediaUser(p);
+      var obs = observationsParEleveConseil[p.id] || [];
+      return {
+        p: p,
+        np: nomPrenomTexte(p) || contact(p),
+        secSem: secSem,
+        secTot: secTot,
+        nbCon: counts[p.id] || 0,
+        stQ: stQ,
+        mods: mods,
+        bil: bil,
+        obs: obs,
+        appr: appreciationAutoConseil(stQ, secSem, secTot)
+      };
     });
+
+    rows.sort(function (a, b) {
+      if (tri === "quiz") {
+        var ma = a.stQ.moyenne20 != null ? a.stQ.moyenne20 : -1;
+        var mb = b.stQ.moyenne20 != null ? b.stQ.moyenne20 : -1;
+        if (mb !== ma) return mb - ma;
+      } else if (tri === "temps") {
+        if (b.secSem !== a.secSem) return b.secSem - a.secSem;
+        if (b.secTot !== a.secTot) return b.secTot - a.secTot;
+      }
+      return a.np.localeCompare(b.np, "fr");
+    });
+
+    return rows;
+  }
+
+  function calculerSyntheseConseilClasse(rows) {
+    var nb = rows.length;
+    var notes = [];
+    var totSem = 0;
+    var totCumul = 0;
+    var nbObs = 0;
+    rows.forEach(function (r) {
+      if (r.stQ.moyenne20 != null) notes.push(r.stQ.moyenne20);
+      totSem += r.secSem || 0;
+      totCumul += r.secTot || 0;
+      if (r.obs && r.obs.length) nbObs += 1;
+    });
+    var moyClasse = notes.length
+      ? (Math.round((notes.reduce(function (a, b) { return a + b; }, 0) / notes.length) * 10) / 10)
+      : null;
+    var moySecEleve = nb ? Math.round(totCumul / nb) : 0;
+    return {
+      nb: nb,
+      nbEvaluesQuiz: notes.length,
+      moyClasse: moyClasse,
+      totSem: totSem,
+      totCumul: totCumul,
+      moySecEleve: moySecEleve,
+      nbObs: nbObs
+    };
+  }
+
+  function rendreConseilClasseAdmin() {
+    var wrap = document.getElementById("conseil-table-wrap");
+    var kpiBar = document.getElementById("conseil-kpi-bar");
+    var resTxt = document.getElementById("conseil-resume-stats");
+    var chkObs = document.getElementById("conseil-inclure-obs");
+    if (!wrap) return;
+    var inclureObs = !chkObs || chkObs.checked;
+    var rows = obtenirElevesFiltresConseilClasse();
+    var syn = calculerSyntheseConseilClasse(rows);
+    var selCl = document.getElementById("conseil-filtre-classe");
+    var selSem = document.getElementById("sel-semaine");
+    var lblCl = (selCl && selCl.value !== "*") ? ("Classe " + selCl.value) : "Toutes les classes";
+    var lblPer = (selSem && selSem.options && selSem.selectedIndex >= 0) ? selSem.options[selSem.selectedIndex].text : "Période active";
+
+    if (resTxt) {
+      resTxt.textContent = lblCl + " · " + syn.nb + " élève(s) actif(s) · " + lblPer;
+    }
+    if (kpiBar) {
+      kpiBar.innerHTML =
+        "<div class='conseil-kpi-card'><small>👥 Effectif retenu</small><b>" + syn.nb + " élève(s)</b></div>" +
+        "<div class='conseil-kpi-card'><small>🏆 Moyenne Quiz de la classe</small><b>" + (syn.moyClasse != null ? (syn.moyClasse + " / 20") : "—") + " <span style='font-size:11.5px;font-weight:700;color:var(--adm-muted)'>(" + syn.nbEvaluesQuiz + "/" + syn.nb + " évalués)</span></b></div>" +
+        "<div class='conseil-kpi-card'><small>⏱️ Temps moyen cumulé / élève</small><b>" + echHtml(fmtDureeCumul(syn.moySecEleve)) + "</b></div>" +
+        "<div class='conseil-kpi-card'><small>📝 Dossiers avec observations</small><b>" + syn.nbObs + " / " + syn.nb + "</b></div>";
+    }
+
+    if (!rows.length) {
+      wrap.innerHTML = "<div style='padding:26px;text-align:center;color:var(--adm-muted);font-weight:800'>Aucun élève actif ne correspond aux filtres sélectionnés.</div>";
+      return;
+    }
+
+    var thead =
+      "<thead><tr>" +
+        "<th>#</th>" +
+        "<th>Élève</th>" +
+        "<th>Assiduité (Période / Total)</th>" +
+        "<th>Quiz (/20)</th>" +
+        "<th>Progression Cours &amp; Médias</th>" +
+        (inclureObs ? "<th>Appréciation &amp; Observations</th>" : "<th>Appréciation</th>") +
+        "<th>Actions</th>" +
+      "</tr></thead>";
+
+    var tbody = "<tbody>" + rows.map(function (r, idx) {
+      var ph = photoEleveSureAdmin(r.p.photo_url);
+      var ini = initialesPourProfil(r.p);
+      var avatarHtml = ph
+        ? "<img class='conseil-avatar-img' src='" + echHtml(ph) + "' alt='' />"
+        : "<span class='conseil-avatar-ini'>" + echHtml(ini) + "</span>";
+      var qTxt = r.stQ.moyenne20 != null
+        ? ("<b>" + r.stQ.moyenne20 + " / 20</b> <span style='font-size:11px;color:var(--adm-muted)'>(" + r.stQ.nb + " quiz)</span>")
+        : "<span style='color:var(--adm-muted)'>Aucun quiz</span>";
+      var modsTxt = r.mods.length ? r.mods.join(", ") : "Aucun module";
+      var mediaTxt = "🎬 " + r.bil.nbVidDone + "/" + r.bil.totVid + " · 🔊 " + r.bil.nbAudDone + "/" + r.bil.totAud;
+      var derniereObs = (r.obs && r.obs.length) ? String(r.obs[0].texte || "") : "";
+
+      return (
+        "<tr data-uid-conseil='" + echHtml(r.p.id) + "'>" +
+          "<td style='font-weight:900;color:var(--adm-muted)'>" + (idx + 1) + "</td>" +
+          "<td><div class='conseil-eleve-cell'>" + avatarHtml +
+            "<div><div style='font-weight:900'>" + echHtml(r.np) + (estGold(r.p) ? " 👑" : "") + "</div>" +
+            "<div style='font-size:11px;color:var(--adm-muted)'>🏫 " + echHtml(r.p.classe || "—") + " · " + echHtml(lyceePropre(r.p)) + "</div></div>" +
+          "</div></td>" +
+          "<td><div><b>⏱️ " + echHtml(fmtDureeCumul(r.secSem)) + "</b></div>" +
+            "<div style='font-size:11px;color:var(--adm-muted)'>Cumul : " + echHtml(fmtDureeCumul(r.secTot)) + " · " + r.nbCon + " accès</div></td>" +
+          "<td>" + qTxt + "</td>" +
+          "<td><div style='font-weight:800;font-size:11.5px'>" + echHtml(modsTxt) + "</div>" +
+            "<div style='font-size:11px;color:var(--adm-muted)'>" + mediaTxt + "</div></td>" +
+          "<td><div class='conseil-obs-box'><span class='conseil-pill " + r.appr.cls + "'>" + echHtml(r.appr.txt) + "</span>" +
+            (inclureObs && derniereObs ? ("<div style='margin-top:4px;opacity:.92'>📝 " + echHtml(derniereObs) + "</div>") : "") +
+          "</div></td>" +
+          "<td style='white-space:nowrap'>" +
+            "<button type='button' class='trombi-act-btn btn-conseil-note' data-uid='" + echHtml(r.p.id) + "' title='Ajouter une observation rapide pour le conseil de classe'>➕ Note</button> " +
+            "<button type='button' class='trombi-act-btn btn-conseil-fiche' data-uid='" + echHtml(r.p.id) + "' title='Ouvrir le dossier complet de cet élève'>📂 Fiche</button>" +
+          "</td>" +
+        "</tr>"
+      );
+    }).join("") + "</tbody>";
+
+    wrap.innerHTML = "<table class='conseil-table'>" + thead + tbody + "</table>";
+
+    Array.prototype.forEach.call(wrap.querySelectorAll(".btn-conseil-fiche"), function (b) {
+      b.addEventListener("click", function () {
+        var uid = b.getAttribute("data-uid");
+        var cible = profils.find(function (x) { return x && String(x.id) === String(uid); });
+        if (cible) {
+          fermerConseilClasseAdmin();
+          ouvrirFicheEleve(cible);
+        }
+      });
+    });
+
+    Array.prototype.forEach.call(wrap.querySelectorAll(".btn-conseil-note"), function (b) {
+      b.addEventListener("click", function () {
+        var uid = b.getAttribute("data-uid");
+        var cible = profils.find(function (x) { return x && String(x.id) === String(uid); });
+        if (!cible) return;
+        var saisie = window.prompt("📝 Observation Conseil de Classe pour " + (nomPrenomTexte(cible) || contact(cible)) + " :", "");
+        if (!saisie || !String(saisie).trim()) return;
+        var propre = String(saisie).trim().slice(0, 500);
+        if (sb && typeof sb.from === "function") {
+          sb.from("sti_observations").insert({ eleve: cible.id, texte: propre }).then(function (res) {
+            if (res && res.error) {
+              if (typeof toastAdmin === "function") toastAdmin("⚠️ Observation non enregistrée : " + res.error.message, "err");
+              return;
+            }
+            if (!observationsParEleveConseil[cible.id]) observationsParEleveConseil[cible.id] = [];
+            observationsParEleveConseil[cible.id].unshift({ id: Date.now(), eleve: cible.id, texte: propre, cree_le: new Date().toISOString() });
+            rendreConseilClasseAdmin();
+            if (typeof toastAdmin === "function") toastAdmin("✅ Observation ajoutée pour le conseil de classe.", "ok");
+          });
+        }
+      });
+    });
+  }
+
+  function ouvrirConseilClasseAdmin() {
+    var mod = document.getElementById("modal-conseil-classe-admin");
+    if (!mod) return;
+    peuplerFiltresConseilClasseAdmin();
+    rendreConseilClasseAdmin();
+    mod.classList.add("ouvert");
+    chargerObservationsLotConseil(true).then(function () {
+      if (mod.classList.contains("ouvert")) rendreConseilClasseAdmin();
+    });
+  }
+
+  function fermerConseilClasseAdmin() {
+    var mod = document.getElementById("modal-conseil-classe-admin");
+    if (mod) mod.classList.remove("ouvert");
+  }
+
+  function rafraichirConseilClasseSiOuvert() {
+    var mod = document.getElementById("modal-conseil-classe-admin");
+    if (mod && mod.classList.contains("ouvert")) {
+      peuplerFiltresConseilClasseAdmin();
+      rendreConseilClasseAdmin();
+    }
+  }
+
+  function imprimerConseilClasseAdmin() {
+    var rows = obtenirElevesFiltresConseilClasse();
+    var syn = calculerSyntheseConseilClasse(rows);
+    var selCl = document.getElementById("conseil-filtre-classe");
+    var selLy = document.getElementById("conseil-filtre-lycee");
+    var selSem = document.getElementById("sel-semaine");
+    var chkObs = document.getElementById("conseil-inclure-obs");
+    var inclureObs = !chkObs || chkObs.checked;
+    var titreCl = (selCl && selCl.value !== "*") ? ("Classe " + selCl.value) : "Toutes les classes";
+    var titreLy = (selLy && selLy.value !== "*") ? (" · " + selLy.value) : "";
+    var lblPer = (selSem && selSem.options && selSem.selectedIndex >= 0) ? selSem.options[selSem.selectedIndex].text : "Période active";
+    var dateStr = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+
+    var lignesHtml = rows.map(function (r, idx) {
+      var ph = photoEleveSureAdmin(r.p.photo_url);
+      var ini = initialesPourProfil(r.p);
+      var portrait = ph
+        ? "<img src='" + echHtml(ph) + "' alt='' style='width:34px;height:34px;object-fit:cover;border-radius:8px;border:1.5px solid #0f172a;flex-shrink:0' />"
+        : "<span style='width:34px;height:34px;border-radius:8px;border:1.5px solid #0f172a;background:#e2e8f0;color:#0f172a;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0'>" + echHtml(ini) + "</span>";
+      var qStr = r.stQ.moyenne20 != null ? (r.stQ.moyenne20 + " / 20 (" + r.stQ.nb + ")") : "—";
+      var progStr = (r.mods.length ? r.mods.join(", ") : "—") + " · Vid " + r.bil.nbVidDone + "/" + r.bil.totVid + " · Aud " + r.bil.nbAudDone + "/" + r.bil.totAud;
+      var derniereObs = (r.obs && r.obs.length) ? String(r.obs[0].texte || "") : "";
+      var obsCell = echHtml(r.appr.txt) + (inclureObs && derniereObs ? (" — " + echHtml(derniereObs)) : "");
+
+      return (
+        "<tr style='page-break-inside:avoid;break-inside:avoid'>" +
+          "<td style='border:1px solid #94a3b8;padding:5px 6px;text-align:center;font-size:10.5px;font-weight:900'>" + (idx + 1) + "</td>" +
+          "<td style='border:1px solid #94a3b8;padding:5px 7px'><div style='display:flex;align-items:center;gap:7px'>" + portrait +
+            "<div><div style='font-size:11.5px;font-weight:900;color:#0f172a'>" + echHtml(r.np) + "</div>" +
+            "<div style='font-size:9.5px;color:#475569;font-weight:700'>" + echHtml(r.p.classe || "—") + (estGold(r.p) ? " · Gold" : "") + "</div></div>" +
+          "</div></td>" +
+          "<td style='border:1px solid #94a3b8;padding:5px 7px;font-size:10.5px'><b>" + echHtml(fmtDureeCumul(r.secSem)) + "</b><br><span style='color:#475569;font-size:9.5px'>Total : " + echHtml(fmtDureeCumul(r.secTot)) + "</span></td>" +
+          "<td style='border:1px solid #94a3b8;padding:5px 7px;text-align:center;font-size:11px;font-weight:900'>" + echHtml(qStr) + "</td>" +
+          "<td style='border:1px solid #94a3b8;padding:5px 7px;font-size:10px;line-height:1.3'>" + echHtml(progStr) + "</td>" +
+          "<td style='border:1px solid #94a3b8;padding:5px 7px;font-size:10px;line-height:1.35'>" + obsCell + "</td>" +
+        "</tr>"
+      );
+    }).join("");
+
+    lancerImpressionFeuilleDediee(
+      "<div style='font-family:\"Comic Sans MS\",\"Comic Sans\",\"Comic Neue\",\"Chalkboard SE\",cursive,sans-serif;color:#0f172a'>" +
+        "<div style='display:flex;align-items:center;justify-content:space-between;border-bottom:2.5px solid #0f172a;padding-bottom:10px;margin-bottom:12px'>" +
+          "<div style='display:flex;align-items:center;gap:10px'>" +
+            "<img src='assets/icons/sti-icon-512.png' alt='' style='width:44px;height:44px;border-radius:10px' />" +
+            "<div>" +
+              "<div style='font-size:17px;font-weight:900'>FICHE CONSEIL DE CLASSE STI V2.0 — " + echHtml(titreCl + titreLy) + "</div>" +
+              "<div style='font-size:11px;color:#334155;font-weight:700'>Prof. Aymen Essouyah · " + echHtml(lblPer) + " · Édité le " + echHtml(dateStr) + "</div>" +
+            "</div>" +
+          "</div>" +
+          "<img src='assets/images/qr-stiv2.png' alt='' style='width:44px;height:44px' />" +
+        "</div>" +
+        "<div style='display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px'>" +
+          "<div style='border:1.5px solid #0f172a;border-radius:10px;padding:6px 10px;background:#f8fafc'><div style='font-size:9.5px;color:#475569;font-weight:800'>EFFECTIF ACTIF</div><div style='font-size:14px;font-weight:900'>" + syn.nb + " élève(s)</div></div>" +
+          "<div style='border:1.5px solid #0f172a;border-radius:10px;padding:6px 10px;background:#f8fafc'><div style='font-size:9.5px;color:#475569;font-weight:800'>MOYENNE QUIZ CLASSE</div><div style='font-size:14px;font-weight:900'>" + (syn.moyClasse != null ? (syn.moyClasse + " / 20") : "—") + "</div></div>" +
+          "<div style='border:1.5px solid #0f172a;border-radius:10px;padding:6px 10px;background:#f8fafc'><div style='font-size:9.5px;color:#475569;font-weight:800'>TEMPS MOYEN / ÉLÈVE</div><div style='font-size:14px;font-weight:900'>" + echHtml(fmtDureeCumul(syn.moySecEleve)) + "</div></div>" +
+          "<div style='border:1.5px solid #0f172a;border-radius:10px;padding:6px 10px;background:#f8fafc'><div style='font-size:9.5px;color:#475569;font-weight:800'>ÉLÈVES ÉVALUÉS (QUIZ)</div><div style='font-size:14px;font-weight:900'>" + syn.nbEvaluesQuiz + " / " + syn.nb + "</div></div>" +
+        "</div>" +
+        "<table style='width:100%;border-collapse:collapse'>" +
+          "<thead><tr style='background:#e2e8f0'>" +
+            "<th style='border:1.5px solid #0f172a;padding:6px;font-size:10.5px;width:28px'>#</th>" +
+            "<th style='border:1.5px solid #0f172a;padding:6px;text-align:left;font-size:10.5px'>Candidat</th>" +
+            "<th style='border:1.5px solid #0f172a;padding:6px;text-align:left;font-size:10.5px'>Révision</th>" +
+            "<th style='border:1.5px solid #0f172a;padding:6px;text-align:center;font-size:10.5px'>Moy. Quiz</th>" +
+            "<th style='border:1.5px solid #0f172a;padding:6px;text-align:left;font-size:10.5px'>Cours &amp; Médias</th>" +
+            "<th style='border:1.5px solid #0f172a;padding:6px;text-align:left;font-size:10.5px'>" + (inclureObs ? "Appréciation &amp; Observations" : "Appréciation") + "</th>" +
+          "</tr></thead>" +
+          "<tbody>" + lignesHtml + "</tbody>" +
+        "</table>" +
+        "<div style='display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:8px;border-top:1px dashed #64748b;font-size:10.5px;color:#334155;font-weight:700'>" +
+          "<span>Plateforme STI by AE V2.0 — Section Sciences de l'Informatique (3e &amp; 4e SI)</span>" +
+          "<span>Visa de l'enseignant : M. Aymen Essouyah ______________________</span>" +
+        "</div>" +
+      "</div>"
+    );
+  }
+
+  (function initialiserEvenementsTrombinoscopeEtCarte() {
+    function brancherModalesClasseEtCarte() {
+      var btnOuv = document.getElementById("btn-ouvrir-trombinoscope");
+      var btnFer = document.getElementById("btn-fermer-trombinoscope");
+      var btnImp = document.getElementById("btn-imprimer-trombinoscope");
+      var modTr = document.getElementById("modal-trombinoscope-admin");
+      if (btnOuv) btnOuv.addEventListener("click", ouvrirTrombinoscopeAdmin);
+      if (btnFer) btnFer.addEventListener("click", fermerTrombinoscopeAdmin);
+      if (btnImp) btnImp.addEventListener("click", imprimerTrombinoscopeAdmin);
+      if (modTr) modTr.addEventListener("click", function (ev) { if (ev.target === modTr) fermerTrombinoscopeAdmin(); });
+
+      ["trombi-filtre-classe", "trombi-filtre-lycee", "trombi-filtre-etat"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener("change", rendreTrombinoscopeAdmin);
+      });
+      var inpR = document.getElementById("trombi-recherche");
+      if (inpR) inpR.addEventListener("input", rendreTrombinoscopeAdmin);
+
+      /* v451 : Événements Fiche Conseil de Classe */
+      var btnOuvCons = document.getElementById("btn-ouvrir-conseil-classe");
+      var btnFerCons = document.getElementById("btn-fermer-conseil-classe");
+      var btnImpCons = document.getElementById("btn-imprimer-conseil-classe");
+      var modCons = document.getElementById("modal-conseil-classe-admin");
+      if (btnOuvCons) btnOuvCons.addEventListener("click", ouvrirConseilClasseAdmin);
+      if (btnFerCons) btnFerCons.addEventListener("click", fermerConseilClasseAdmin);
+      if (btnImpCons) btnImpCons.addEventListener("click", imprimerConseilClasseAdmin);
+      if (modCons) modCons.addEventListener("click", function (ev) { if (ev.target === modCons) fermerConseilClasseAdmin(); });
+
+      ["conseil-filtre-classe", "conseil-filtre-lycee", "conseil-filtre-tri", "conseil-inclure-obs"].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener("change", rendreConseilClasseAdmin);
+      });
+      var inpConsR = document.getElementById("conseil-recherche");
+      if (inpConsR) inpConsR.addEventListener("input", rendreConseilClasseAdmin);
+
+      var modCc = document.getElementById("modal-carte-candidat-admin");
+      var fCc1 = document.getElementById("btn-fermer-carte-candidat-admin");
+      var fCc2 = document.getElementById("btn-fermer-carte-candidat-bas");
+      var btnDlCc = document.getElementById("btn-dl-carte-candidat-png");
+      var btnPrCc = document.getElementById("btn-print-carte-candidat");
+      var btnRecCc = document.getElementById("btn-recadrer-depuis-carte");
+      function fermerCc() { if (modCc) modCc.classList.remove("ouvert"); }
+      if (fCc1) fCc1.addEventListener("click", fermerCc);
+      if (fCc2) fCc2.addEventListener("click", fermerCc);
+      if (modCc) modCc.addEventListener("click", function (ev) { if (ev.target === modCc) fermerCc(); });
+      if (btnDlCc) btnDlCc.addEventListener("click", function () { telechargerCarteCandidatPngHD(candidatCarteAdminActif, btnDlCc); });
+      if (btnPrCc) btnPrCc.addEventListener("click", function () {
+        if (!candidatCarteAdminActif) return;
+        lancerImpressionFeuilleDediee(
+          "<div style='max-width:460px;margin:24px auto'>" + construireHtmlCarteCandidatSTI(candidatCarteAdminActif) + "</div>"
+        );
+      });
+      if (btnRecCc) btnRecCc.addEventListener("click", function () {
+        if (candidatCarteAdminActif) ouvrirStudioPhotoAdmin(candidatCarteAdminActif);
+      });
+      document.addEventListener("keydown", function (ev) {
+        if (ev.key === "Escape") {
+          fermerCc();
+          fermerTrombinoscopeAdmin();
+          fermerConseilClasseAdmin();
+        }
+      });
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", brancherModalesClasseEtCarte);
+    } else {
+      brancherModalesClasseEtCarte();
+    }
   })();
 
   function synchroniserActionsAdminEnAttente() {

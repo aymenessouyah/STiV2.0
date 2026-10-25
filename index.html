@@ -3078,33 +3078,6 @@
           >
             🗂️ Fichiers TP du Prof
           </button>
-          <button
-            type="button"
-            class="filter-chip"
-            id="btnHomeSplitCode"
-            title="Mode Comparateur Côte à Côte : lire l'énoncé ou l'annexe à gauche et coder en direct à droite"
-            style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
-          >
-            🌗 Écran Partagé (Énoncé + Code)
-          </button>
-          <button
-            type="button"
-            class="filter-chip"
-            id="btnHomeDocteur"
-            title="Docteur STI : diagnostic technique (Cache, Réseau, Stockage) et réparation en 1 clic"
-            style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
-          >
-            🩺 Docteur STI
-          </button>
-          <button
-            type="button"
-            class="filter-chip"
-            id="btnHomeMainLevee"
-            title="Lever la main pour demander de l'aide au professeur en salle de TP"
-            style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
-          >
-            🙋‍♂️ Lever la main (TP)
-          </button>
         </div>
       </div>
 
@@ -4855,24 +4828,6 @@
             if (typeof window.ouvrirCoffreTpEleveSTI === "function") window.ouvrirCoffreTpEleveSTI();
           });
         }
-        var btnHomeSp = document.getElementById("btnHomeSplitCode");
-        if (btnHomeSp) {
-          btnHomeSp.addEventListener("click", function () {
-            if (typeof window.ouvrirEcranPartageEnonceCodeSTI === "function") window.ouvrirEcranPartageEnonceCodeSTI();
-          });
-        }
-        var btnHomeDoc = document.getElementById("btnHomeDocteur");
-        if (btnHomeDoc) {
-          btnHomeDoc.addEventListener("click", function () {
-            if (typeof window.ouvrirDocteurSTI === "function") window.ouvrirDocteurSTI();
-          });
-        }
-        var btnHomeMl = document.getElementById("btnHomeMainLevee");
-        if (btnHomeMl) {
-          btnHomeMl.addEventListener("click", function () {
-            if (typeof window.basculerMainLeveeSTI === "function") window.basculerMainLeveeSTI();
-          });
-        }
 
         window.__stiMajBadgeFlashcards = function () {
           var el = document.getElementById("flashcardsBadgeCount");
@@ -5240,14 +5195,14 @@
 <!-- /Protection -->
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=425"></script>
-<script src="assets/js/acces.js?v=450"></script>
+<script src="assets/js/acces.js?v=451"></script>
 <script src="assets/js/sync-progressions.js"></script>
 <section id="nouveautes" style="max-width:1100px;margin:26px auto;padding:0 16px;">
   <h2 style="font-size:1.7rem;">🆕 Nouveautés de la plateforme</h2>
   <p>Les dernières mises en ligne — un badge <b>NOUVEAU</b> signale ce qui est paru depuis votre dernière visite. <a href="nouveautes.html"><b>Tout l'historique ➜</b></a></p>
   <div id="sti-nouveautes" data-racine="./" data-limite="4"><p>⏳ Chargement du journal…</p></div>
 </section>
-<script src="assets/js/nouveautes.js"></script>
+<script src="assets/js/nouveautes.js?v=451"></script>
 <script src="assets/js/reprendre.js"></script>
 </body>
 </html>

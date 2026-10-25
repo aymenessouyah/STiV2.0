@@ -1937,7 +1937,7 @@
     })();
   </script>
   <link rel="stylesheet" href="assets/fonts/fonts.css" />
-  <link rel="stylesheet" href="assets/css/admin-saas.css?v=448" />
+  <link rel="stylesheet" href="assets/css/admin-saas.css?v=451" />
 </head>
 <body class="cockpit-airbus">
 
@@ -2619,6 +2619,7 @@
           <button type="button" class="btn-vue actif" id="btn-vue-liste" data-vue="liste" title="Afficher le tableau détaillé complet">📋 Liste détaillée</button>
           <button type="button" class="btn-vue" id="btn-vue-noeuds" data-vue="noeuds" title="Afficher sous forme de cartes profil (idéal sur mobile)">🪪 Cartes</button>
           <button type="button" class="btn-vue btn-vue-trombi" id="btn-ouvrir-trombinoscope" title="Ouvrir la planche Trombinoscope par classe (projection &amp; impression A4)">📸 Trombinoscope</button>
+          <button type="button" class="btn-vue btn-vue-conseil" id="btn-ouvrir-conseil-classe" title="Ouvrir la Fiche Conseil de Classe &amp; Bilan A4 imprimable en 1 clic">📋 Conseil de Classe</button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:600;color:var(--adm-muted)">
@@ -4519,7 +4520,7 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
-  <script src="assets/js/admin.js?v=448-trombi-recadrage"></script>
+  <script src="assets/js/admin.js?v=451-conseil-classe"></script>
   <script src="assets/js/admin-couverture.js?v=435"></script>
   <script src="assets/js/admin-revision.js?v=438"></script>
   <script src="assets/js/admin-erreurs.js?v=439"></script>
@@ -5105,6 +5106,45 @@
           <input type="search" id="trombi-recherche" placeholder="🔎 Filtrer un nom / prénom…" aria-label="Rechercher un candidat dans le trombinoscope" />
         </div>
         <div class="trombi-grille" id="trombi-grille"></div>
+      </div>
+    </div>
+
+    <!-- v451 : Modale Fiche Conseil de Classe & Impression A4 par classe en 1 clic -->
+    <div class="modal-trombi-overlay" id="modal-conseil-classe-admin" role="dialog" aria-modal="true" aria-labelledby="titre-modal-conseil-classe">
+      <div class="modal-trombi-box modal-conseil-box">
+        <div class="modal-trombi-head">
+          <div style="display:flex;align-items:center;gap:12px">
+            <img src="assets/icons/sti-icon-512.png" alt="Logo officiel STI V2.0" style="width:44px;height:44px;border-radius:12px;border:1.5px solid var(--adm-border-strong);flex-shrink:0" />
+            <div>
+              <h3 id="titre-modal-conseil-classe">📋 Fiche Conseil de Classe &amp; Bilan A4 — STI V2.0</h3>
+              <p id="conseil-resume-stats">Chargement du bilan de classe…</p>
+            </div>
+          </div>
+          <div class="modal-trombi-head-actions">
+            <label class="conseil-toggle-obs" title="Afficher ou masquer les observations privées de l'enseignant à l'écran et à l'impression A4">
+              <input type="checkbox" id="conseil-inclure-obs" checked />
+              <span>📝 Observations prof</span>
+            </label>
+            <button type="button" class="trombi-btn imprimer" id="btn-imprimer-conseil-classe">🖨️ Imprimer Fiche A4</button>
+            <button type="button" class="trombi-btn fermer" id="btn-fermer-conseil-classe" aria-label="Fermer la fiche conseil de classe">✕ Fermer</button>
+          </div>
+        </div>
+        <div class="modal-trombi-filtres">
+          <select id="conseil-filtre-classe" aria-label="Filtrer la fiche conseil par classe">
+            <option value="*">🏫 Toutes les classes</option>
+          </select>
+          <select id="conseil-filtre-lycee" aria-label="Filtrer la fiche conseil par lycée">
+            <option value="*">🏛️ Tous les lycées</option>
+          </select>
+          <select id="conseil-filtre-tri" aria-label="Trier les élèves de la classe">
+            <option value="alpha">🔤 Tri : Ordre alphabétique</option>
+            <option value="quiz">🏆 Tri : Moyenne Quiz (/20) décroissante</option>
+            <option value="temps">⏱️ Tri : Temps de révision décroissant</option>
+          </select>
+          <input type="search" id="conseil-recherche" placeholder="🔎 Filtrer un élève (nom, prénom)…" aria-label="Rechercher un élève dans la fiche conseil" />
+        </div>
+        <div class="conseil-kpi-bar" id="conseil-kpi-bar"></div>
+        <div class="conseil-table-wrap" id="conseil-table-wrap"></div>
       </div>
     </div>
 

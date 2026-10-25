@@ -58,19 +58,126 @@
     }, 5000);
   } catch (e) {}
 })();
-</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nouveautés — STI By AE</title>
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nouveautés — STI By AE V2.0</title>
 <link rel="icon" href="assets/icons/sti-icon-192.png">
-<style>body{font-family:system-ui,'Segoe UI',sans-serif;background:#f6efe3;color:#1a1a2e;margin:0}main{max-width:900px;margin:0 auto;padding:28px 18px}h1{font-size:2rem}.retour{font-weight:800;color:#d84315}</style>
-  <link rel="manifest" href="manifest.webmanifest" />
-</head><body><main>
-<p><a class="retour" href="index.html">← Retour à l'accueil</a></p>
-<h1>🆕 Nouveautés de la plateforme STI By AE</h1>
-<p>Tout ce qui a été mis en ligne, des plus récents aux plus anciens. Le badge <b>NOUVEAU</b> signale ce qui est paru depuis votre dernière visite.</p>
-<div id="sti-nouveautes" data-racine="./" data-limite="50"><p>⏳ Chargement du journal…</p></div>
-<script src="assets/js/nouveautes.js"></script>
-</main><script src="assets/js/supabase-umd.js"></script>
+<link rel="manifest" href="manifest.webmanifest" />
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background:
+      radial-gradient(600px 340px at 8% 5%, rgba(255,152,0,.14), transparent 65%),
+      #f6efe3;
+    color: #1a1a2e;
+    margin: 0;
+    padding-bottom: 72px;
+  }
+  html.dark body,
+  html.dark-mode body,
+  html[data-theme="dark"] body {
+    background:
+      radial-gradient(600px 340px at 8% 5%, rgba(249,115,22,.12), transparent 65%),
+      #0b1120;
+    color: #f1f5f9;
+  }
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 28px 18px 40px;
+  }
+  .news-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .retour {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    font-weight: 800;
+    color: #d84315;
+    background: #fffdf7;
+    border: 2px solid #23201a;
+    border-radius: 999px;
+    padding: 7px 14px;
+    box-shadow: 2px 2px 0 #23201a;
+  }
+  html.dark .retour,
+  html.dark-mode .retour,
+  html[data-theme="dark"] .retour {
+    background: #162033;
+    color: #fb923c;
+    border-color: #334155;
+    box-shadow: 2px 2px 0 #090d16;
+  }
+  .news-hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fffdf7;
+    border: 2.5px solid #23201a;
+    border-radius: 20px;
+    padding: 18px 20px;
+    box-shadow: 5px 5px 0 #23201a;
+    margin-bottom: 18px;
+  }
+  html.dark .news-hero,
+  html.dark-mode .news-hero,
+  html[data-theme="dark"] .news-hero {
+    background: #131c2e;
+    border-color: #334155;
+    box-shadow: 5px 5px 0 #090d16;
+  }
+  .news-hero-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 2px solid #23201a;
+    flex-shrink: 0;
+  }
+  html.dark .news-hero-logo,
+  html.dark-mode .news-hero-logo,
+  html[data-theme="dark"] .news-hero-logo {
+    border-color: #475569;
+  }
+  .news-hero h1 {
+    font-size: clamp(1.35rem, 3vw, 1.85rem);
+    margin: 0 0 6px;
+    line-height: 1.2;
+  }
+  .news-hero p {
+    margin: 0;
+    font-size: .95rem;
+    line-height: 1.5;
+    opacity: .9;
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="news-topbar">
+    <a class="retour" href="index.html">← Retour à l'accueil</a>
+  </div>
+  <header class="news-hero">
+    <img class="news-hero-logo" src="assets/icons/sti-icon-512.png" alt="Logo officiel STI By AE V2.0" width="60" height="60">
+    <div>
+      <h1>🆕 Nouveautés de la plateforme STI By AE V2.0</h1>
+      <p>Tout ce qui a été mis en ligne, des mises à jour les plus récentes aux plus anciennes. Le badge <b>NOUVEAU</b> signale ce qui est paru depuis votre dernière visite.</p>
+    </div>
+  </header>
+  <div id="sti-nouveautes" data-racine="./" data-limite="60"><p>⏳ Chargement du journal…</p></div>
+</main>
+<script src="assets/js/nouveautes.js?v=451"></script>
+<script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=425"></script>
-<script src="assets/js/acces.js?v=391"></script>
-  <script src="assets/js/sync-progressions.js" defer></script>
+<script src="assets/js/acces.js?v=451"></script>
+<script src="assets/js/sync-progressions.js" defer></script>
 </body></html>

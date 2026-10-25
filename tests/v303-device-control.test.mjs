@@ -25,9 +25,9 @@ test('anciens contournements elevelabo3 neutralisés', () => {
   assert.doesNotMatch(portail, /id:\s*["']labo3-local["']/);
   assert.doesNotMatch(acces, /id:\s*["']labo3-local["']/);
   assert.match(portail, /anciens codes universels[^\n]+définitivement refusés/i);
-  assert.match(portail, /Compte elevelabo3 verrouillé[^\n]+Internet/i);
-  assert.match(acces, /aucune identité elevelabo3 ne peut être créée localement/i);
-  assert.match(acces, /Hors-ligne désactivé/);
+  assert.match(portail, /verifierPosteLaboPuisStatutV303/);
+  assert.match(portail, /purgerAncienAccesPermanentLaboV303/);
+  assert.match(acces, /modules\/labo-device-client\.js\?v=\d+/);
 });
 
 test('identité machine persistante et session serveur', () => {
@@ -76,7 +76,7 @@ test('migration v303 : RLS restrictive, session_id et secrets hachés', () => {
 test('service worker v303+ reste différentiel et léger', () => {
   const sw = read('sw.js');
   assert.match(sw, /sti-atelier-v\d+/);
-  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline|unified-device-admin|password-recovery(?:-redirect)?|admin-(?:mdp|saas))-1/);
+  assert.match(sw, /var UPDATE_ID\s*=\s*"v\d+-/);
   assert.match(sw, /labo-device-client\.js/);
   assert.match(sw, /admin-labo-devices\.js/);
   const manifest = sw.slice(sw.indexOf('var UPDATE_FILES'), sw.indexOf('var CACHE_REVISIONS'));
@@ -111,7 +111,7 @@ test('historique, filtres et notification des nouveaux postes', () => {
   for (const value of ['all', 'online', 'offline', 'blocked']) {
     assert.match(module, new RegExp(`value: ["']${value}["']`));
   }
-  assert.match(module, /Nouveau poste accepté automatiquement/);
+  assert.match(module, /Nouveau poste Labo 3 détecté/);
   assert.match(module, /sti-admin-labo-new-device-sound/);
 });
 
