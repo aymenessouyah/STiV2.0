@@ -65,11 +65,25 @@
       .catch(function () { return null; });
   }
   function noteSur20(txt) {
-    var m = String(txt == null ? "" : txt).match(/(\d+(?:[.,]\d+)?)\s*(?:\/\s*(\d+))?/);
-    if (!m) return null;
-    var n = parseFloat(String(m[1]).replace(",", ".")), sur = m[2] ? parseFloat(m[2]) : 20;
-    if (!sur) return null;
-    return Math.round((n * 20 / sur) * 10) / 10;
+    var s = String(txt == null ? "" : txt).trim();
+    if (!s || (/\bpts?\b/i.test(s) && !/\/\s*\d+/.test(s) && !/%/.test(s))) return null;
+    var mFrac = s.match(/(\d+(?:[.,]\d+)?)\s*\/\s*(\d+(?:[.,]\d+)?)/);
+    if (mFrac) {
+      var n = parseFloat(mFrac[1].replace(",", ".")), sur = parseFloat(mFrac[2].replace(",", "."));
+      if (!isFinite(n) || !isFinite(sur) || sur <= 0 || n < 0 || n > sur) return null;
+      return Math.round((n * 20 / sur) * 10) / 10;
+    }
+    var mPct = s.match(/(\d+(?:[.,]\d+)?)\s*%/);
+    if (mPct) {
+      var pct = parseFloat(mPct[1].replace(",", "."));
+      if (!isFinite(pct) || pct < 0 || pct > 100) return null;
+      return Math.round((pct * 20 / 100) * 10) / 10;
+    }
+    if (/^\d+(?:[.,]\d+)?$/.test(s)) {
+      var v = parseFloat(s.replace(",", "."));
+      if (isFinite(v) && v >= 0 && v <= 20) return Math.round(v * 10) / 10;
+    }
+    return null;
   }
   /* Fonction PURE (testable) : données brutes → lignes de suivi. */
   function analyser(profils, progRows, pages) {
@@ -219,7 +233,14 @@
       if (!pages) { etat("⚠️ Manifeste assets/pages-couverture.json introuvable — lancez tools/pages-couverture.py.", "#b91c1c"); return; }
       remplirClasses(profils);
       var classe = elClasse ? elClasse.value : "*";
-      var actifs = profils.filter(function (p) { return String(p.statut || "actif") === "actif" && (classe === "*" || String(p.classe || "").trim() === classe); });
+      var actifs = profils.filter(function (p) {
+        if (String(p.statut || "actif") !== "actif") return false;
+        var cl = String(p.classe || "").trim();
+        var em = String(p.email || "").trim().toLowerCase();
+        if (em === "elevelabo3@exemple.tn" || em === "aymenessouyah@gmail.com") return false;
+        if (classe === "*" && /^(prof|professeur|enseignant|admin|elevelabo3|labo3)$/i.test(cl)) return false;
+        return classe === "*" || cl === classe;
+      });
       dernier = analyser(actifs, res[1] && res[1].data, pages);
       rendre(dernier);
       var nbR = dernier.filter(function (l) { return l.risque !== "ok"; }).length;

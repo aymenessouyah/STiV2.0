@@ -1937,7 +1937,7 @@
     })();
   </script>
   <link rel="stylesheet" href="assets/fonts/fonts.css" />
-  <link rel="stylesheet" href="assets/css/admin-saas.css?v=462" />
+  <link rel="stylesheet" href="assets/css/admin-saas.css?v=463" />
 </head>
 <body class="cockpit-airbus">
 
@@ -2251,7 +2251,9 @@
   </div>
   <nav class="nav-sections-admin" id="nav-sections-admin" aria-label="Navigation entre les sections du tableau de bord">
     <span class="nav-sections-lbl">📂 Afficher :</span>
+    <button type="button" class="btn-sec-tab" data-sec-cible="open-all">📂 Tout déplier</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="all">🗂️ Tout replier</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-graphiques">📊 Activité</button>
     <button type="button" class="btn-sec-tab actif" data-sec-cible="bloc-sec-abonnes">👥 Abonnés &amp; Classes</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-quiz">🏆 Quiz &amp; Bac Pratique</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-messages">📨 Messages &amp; Réponses</button>
@@ -2462,6 +2464,7 @@
           <option value="30">30 derniers jours</option>
         </select>
         <button type="button" class="btn-outil" id="btn-graph-charger">↻ Actualiser</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-graphiques" aria-expanded="true">▾ Réduire</button>
       </div>
     </div>
     <div class="corps-section-admin">
@@ -2873,6 +2876,7 @@
         <option value="quiz/javascript.html">🎯 Quiz JavaScript</option>
         <option value="quiz/php.html">🎯 Quiz PHP</option>
         <option value="quiz/sql.html">🎯 Quiz SQL</option>
+        <option value="quiz/tableaux.html">🎯 Quiz des tableaux</option>
         <option value="exercices/series-exercices.html">🏋️ Séries d'exercices</option>
       </select>
       <label style="font-size:12px;font-weight:800;display:block;margin-bottom:4px">⏳ Durée du contrôle :</label>
@@ -4270,7 +4274,16 @@
     }
     if (bp) {
       bp.addEventListener("click", function () {
-        window.print();
+        if (typeof window.__stiImprimerFeuilleDedieeAdmin === "function" && readmeBody) {
+          window.__stiImprimerFeuilleDedieeAdmin(
+            "<div style='font-family:\"Comic Sans MS\",\"Comic Sans\",\"Comic Neue\",cursive,sans-serif;color:#0f172a'>" +
+              "<h1 style='margin:0 0 10px;font-size:19px;border-bottom:2px solid #0f172a;padding-bottom:6px'>📖 Documentation officielle — Plateforme STI By A'e V2.0</h1>" +
+              readmeBody.innerHTML +
+            "</div>"
+          );
+        } else {
+          window.print();
+        }
       });
     }
 
@@ -4446,28 +4459,40 @@
     });
 
     function afficherSectionCible(secId, defiler) {
-      var toutes = ["bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-messages", "bloc-sec-connexions", "bloc-sec-aide"];
+      var toutes = ["bloc-sec-graphiques", "bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-messages", "bloc-sec-connexions", "bloc-sec-aide"];
       document.querySelectorAll(".btn-sec-tab[data-sec-cible]").forEach(function (b) {
         b.classList.toggle("actif", b.getAttribute("data-sec-cible") === secId);
       });
       toutes.forEach(function (id) {
         var el = document.getElementById(id);
         if (!el) return;
-        if (secId === "all" || secId === id) {
+        if (secId === "open-all" || secId === "all" || secId === id) {
           el.style.display = "";
           var btnRep = el.querySelector(".btn-replier-sec");
-          if (secId === id) {
+          if (secId === "open-all" || secId === id) {
             el.classList.remove("sec-repliee");
-            if (btnRep) btnRep.textContent = "▾ Réduire";
+            if (btnRep) { btnRep.textContent = "▾ Réduire"; btnRep.setAttribute("aria-expanded", "true"); }
           } else {
             el.classList.add("sec-repliee");
-            if (btnRep) btnRep.textContent = "▸ Agrandir";
+            if (btnRep) { btnRep.textContent = "▸ Agrandir"; btnRep.setAttribute("aria-expanded", "false"); }
           }
         } else {
           el.style.display = "none";
         }
       });
-      if (defiler && secId !== "all") {
+      var grpMap = {
+        "grp-scolarite": ["bloc-sec-quiz", "bloc-sec-messages"],
+        "grp-classe": ["bloc-sec-abonnes"],
+        "grp-connexion": ["bloc-sec-connexions"],
+        "grp-guide": ["bloc-sec-aide"]
+      };
+      Object.keys(grpMap).forEach(function (gid) {
+        var gEl = document.getElementById(gid);
+        if (!gEl) return;
+        var vis = (secId === "open-all" || secId === "all") || grpMap[gid].indexOf(secId) !== -1;
+        gEl.style.display = vis ? "" : "none";
+      });
+      if (defiler && secId !== "all" && secId !== "open-all") {
         var cible = document.getElementById(secId);
         if (cible) cible.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -4523,15 +4548,15 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=461" defer></script>
-  <script src="assets/js/admin.js?v=462-carte-boutons"></script>
-  <script src="assets/js/admin-couverture.js?v=435"></script>
-  <script src="assets/js/admin-revision.js?v=438"></script>
-  <script src="assets/js/admin-erreurs.js?v=457"></script>
+  <script src="assets/js/admin.js?v=463-audit-complet"></script>
+  <script src="assets/js/admin-couverture.js?v=463"></script>
+  <script src="assets/js/admin-revision.js?v=463"></script>
+  <script src="assets/js/admin-erreurs.js?v=463"></script>
   <script src="assets/js/admin-mdp.js?v=443"></script>
-  <script src="assets/js/graphiques-activite.js?v=347"></script>
-  <script src="assets/js/quiz-admin.js?v=460"></script>
-<script src="assets/js/analytique.js"></script>
-<script src="assets/js/sauvegarde.js"></script>
+  <script src="assets/js/graphiques-activite.js?v=463"></script>
+  <script src="assets/js/quiz-admin.js?v=463"></script>
+<script src="assets/js/analytique.js?v=463"></script>
+<script src="assets/js/sauvegarde.js?v=463"></script>
 <script src="assets/js/sante.js?v=260"></script>
 <script>
   /* v446 : Ruban compact horizontal des services & outils flottants — Messenger (#btn-messenger-dock) reste autonome et toujours au 1er plan. */

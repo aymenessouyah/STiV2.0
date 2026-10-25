@@ -71,12 +71,26 @@
     });
   }
   function noteChiffree(txt) {
-    var m = String(txt || "").match(/(\d+(?:[.,]\d+)?)\s*(?:\/\s*(\d+))?/);
-    if (!m) return null;
-    var n = parseFloat(String(m[1]).replace(",", "."));
-    var sur = m[2] ? parseFloat(m[2]) : 20;
-    if (!sur) return null;
-    return Math.round((n * 20 / sur) * 10) / 10;
+    var s = String(txt == null ? "" : txt).trim();
+    if (!s || /\bpts?\b/i.test(s) && !/\/\s*\d+/.test(s) && !/%/.test(s)) return null;
+    var mFrac = s.match(/(\d+(?:[.,]\d+)?)\s*\/\s*(\d+(?:[.,]\d+)?)/);
+    if (mFrac) {
+      var n = parseFloat(mFrac[1].replace(",", "."));
+      var sur = parseFloat(mFrac[2].replace(",", "."));
+      if (!isFinite(n) || !isFinite(sur) || sur <= 0 || n < 0 || n > sur) return null;
+      return Math.round((n * 20 / sur) * 10) / 10;
+    }
+    var mPct = s.match(/(\d+(?:[.,]\d+)?)\s*%/);
+    if (mPct) {
+      var pct = parseFloat(mPct[1].replace(",", "."));
+      if (!isFinite(pct) || pct < 0 || pct > 100) return null;
+      return Math.round((pct * 20 / 100) * 10) / 10;
+    }
+    if (/^\d+(?:[.,]\d+)?$/.test(s)) {
+      var v = parseFloat(s.replace(",", "."));
+      if (isFinite(v) && v >= 0 && v <= 20) return Math.round(v * 10) / 10;
+    }
+    return null;
   }
   /* 2°) ce qui est dû aujourd'hui : pages arrivées à échéance + quiz faibles */
   function dus() {

@@ -3,14 +3,33 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v322";
+var CACHE = "sti-atelier-v323";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v462-carte-boutons";
-/* Historique lots : v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v463-audit-complet";
+/* Historique lots : v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "audit-complet-v463" },
+  { url: "./assets/js/admin.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/acces.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/sync-progressions.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/roue-revision.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/mobile-nav.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/admin-couverture.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/admin-revision.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/admin-erreurs.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/quiz-admin.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/graphiques-activite.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/analytique.js", revision: "audit-complet-v463" },
+  { url: "./assets/js/sauvegarde.js", revision: "audit-complet-v463" },
+  { url: "./cours/sql-playground.html", revision: "audit-complet-v463" },
+  { url: "./documents/complet/fiche-memento-synthese.html", revision: "audit-complet-v463" },
+  { url: "./documents/enonces/enonce-serie4-a4.html", revision: "audit-complet-v463" },
+  { url: "./documents/enonces/enonce-serie5-a4.html", revision: "audit-complet-v463" },
+  { url: "./exercices/javascript/js-37-defis-tt.html", revision: "audit-complet-v463" },
+  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "audit-complet-v463" },
   { url: "./admin.html", revision: "carte-boutons-v462" },
   { url: "./assets/css/admin-saas.css", revision: "carte-boutons-v462" },
   { url: "./assets/js/admin.js", revision: "carte-boutons-v462" },

@@ -374,8 +374,13 @@
     eleves.forEach(function (e) { joues[e.uid] = 1; });
     var jamais = Object.keys(profilsParId).map(function (id) { return profilsParId[id]; })
       .filter(function (pr) {
-        return pr && (pr.classe || "").trim() && !joues[pr.id] &&
-          (pr.email || "").toLowerCase() !== EMAIL_LABO;
+        var cl = String((pr && pr.classe) || "").trim();
+        var em = String((pr && pr.email) || "").trim().toLowerCase();
+        return pr && cl && !joues[pr.id] &&
+          String(pr.statut || "actif") === "actif" &&
+          em !== EMAIL_LABO &&
+          em !== "aymenessouyah@gmail.com" &&
+          !/^(prof|professeur|enseignant|admin|elevelabo3|labo3)$/i.test(cl);
       });
     var classes = agregerClasses(lignesStats());
     function idxClasse(nom) {
@@ -509,6 +514,9 @@
     var par = {};
     var dernierParEleve = {};
     (reponses || []).forEach(function (r) {
+      if (!r || String(r.email || "").trim().toLowerCase() === EMAIL_LABO) return;
+      var prU = r.user_id && profilsParId ? profilsParId[r.user_id] : null;
+      if (prU && String(prU.email || "").trim().toLowerCase() === EMAIL_LABO) return;
       if (quizQuestionFiltre !== "*" && r.quiz !== quizQuestionFiltre) return;
       var cle = r.quiz + "|" + r.question_id;
       if (!par[cle]) par[cle] = { cle: cle, quiz: r.quiz, module: r.module, question_id: r.question_id, enonce: "", tentatives: 0, echecs: 0, nonMaitrises: 0 };
@@ -706,7 +714,9 @@
       if (mod) qr = qr.eq("module", mod);
       await qr;
       try {
-        await s.from("sti_quiz_sessions").delete().eq("user_id", uid).eq("quiz", quiz);
+        var qs = s.from("sti_quiz_sessions").delete().eq("user_id", uid).eq("quiz", quiz);
+        if (mod) qs = qs.eq("mode", mod);
+        await qs;
       } catch (eS) {}
       await charger();
     } catch (e) {
@@ -743,7 +753,7 @@
     var h = '<div style="border:2.5px solid #1f4257;border-radius:14px;background:#fffdf7;padding:12px 14px;margin:14px 0">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">' +
       '<strong style="font-size:15px">🏫 Détail quiz — classe ' + esc(g.classe) + "</strong>" +
-      '<button type="button" id="btn-fermer-classe" style="border:2px solid #23201a;border-radius:999px;padding:4px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">✕ Fermer</button></div>' +
+      '<button type="button" id="btn-fermer-vue-quiz-classe" style="border:2px solid #23201a;border-radius:999px;padding:4px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">✕ Fermer</button></div>' +
       '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 10px">' + g.eleves.length + " élève(s) actifs · " + g.parties + " partie(s) · % moyen " + g.pctMoyen + " %. Cliquez sur un candidat pour le détail de ses parties.</p>" +
       '<div class="table-wrap"><table><thead><tr><th>Candidat</th><th>Parties</th><th>Dernier score</th><th>Meilleur score</th><th>% moyen</th><th></th></tr></thead><tbody>';
     eleves.forEach(function (e, i) {
@@ -763,7 +773,7 @@
     });
     h += "</tbody></table></div></div>";
     zone.innerHTML = h;
-    var bf = $("btn-fermer-classe");
+    var bf = zone.querySelector("#btn-fermer-vue-quiz-classe");
     if (bf) bf.addEventListener("click", function () { classeOuverte = null; zone.style.display = "none"; zone.innerHTML = ""; });
     zone.querySelectorAll("tr[data-eleve]").forEach(function (tr) {
       tr.addEventListener("click", function () {
