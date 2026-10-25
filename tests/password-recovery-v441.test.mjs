@@ -773,7 +773,7 @@ test('v445 : la photo élève remplace la boîte des initiales dans le tableau d
   assert.doesNotMatch(compFn, /createObjectURL/);
 
   assert.match(adminHtml, /id="alerte-photos-attente"/);
-  assert.match(adminHtml, /admin-saas\.css\?v=445/);
+  assert.match(adminHtml, /admin-saas\.css\?v=4\d{2}/);
   assert.match(adminHtml, /admin\.js\?v=445-photos-eleves/);
   assert.match(adminCss, /\.noeud-pastille-img/);
   assert.match(adminCss, /\.noeud-photo-attente-box/);
@@ -783,7 +783,27 @@ test('v445 : la photo élève remplace la boîte des initiales dans le tableau d
   assert.match(adminJs, /noeud-pastille-img/);
   assert.match(adminJs, /tb-mini-avatar/);
   assert.match(adminJs, /fiche-avatar-img/);
-  assert.match(swJs, /v445-student-photos-1/);
+  assert.match(swJs, /student-photos-v445/);
+});
+
+test('v446 : Messenger reste autonome au 1er plan, les boutons Services/CMD sont réduits en ruban compact et les 3 modes de l\'afficheur principal sont distincts', () => {
+  const adminHtml = read('admin.html');
+  const adminCss = read('assets/css/admin-saas.css');
+  const swJs = read('sw.js');
+
+  // 1) Messenger (#btn-messenger-dock) n'est plus absorbé ni caché dans #sti-airbus-service-dock
+  const dockScript = adminHtml.slice(adminHtml.indexOf('function installerDockAirbus'), adminHtml.indexOf('installerDockAirbus();\n      window.setTimeout'));
+  assert.doesNotMatch(dockScript, /btn-messenger-dock/);
+  assert.match(adminHtml, /sti-ruban-flottant-admin/);
+  assert.match(adminCss, /#sti-ruban-flottant-admin\s*\{[\s\S]*?flex-direction:\s*row\s*!important/);
+  assert.match(adminCss, /#sti-pc-win-tools:not\(\.sti-tools-open\)\s*>\s*:not\(#sti-tools-caption\)\s*\{\s*display:\s*none\s*!important/);
+  assert.match(adminCss, /#sti-airbus-service-dock:not\(\.sti-dock-open\)\s*>\s*button:not\(#sti-airbus-dock-toggle\)\s*\{\s*display:\s*none\s*!important/);
+
+  // 2) Les 3 modes de #afficheur-classe-avion ont chacun leur architecture visuelle propre
+  assert.match(adminCss, /\.mode-ecran-large\s+\.afficheur-six-zones[\s\S]*?repeat\(6,\s*minmax\(0,\s*1fr\)\)/);
+  assert.match(adminCss, /\.afficheur-classe-avion\.mode-deux-ecrans\s+\.afficheur-six-zones[\s\S]*?"ecranG z1 z2"/);
+  assert.match(adminCss, /\.afficheur-classe-avion\.mode-cadran-rond\s+#instrument-total-global[\s\S]*?border-radius:\s*50%\s*!important/);
+  assert.match(swJs, /v446-ruban-modes-1/);
 });
 
 
