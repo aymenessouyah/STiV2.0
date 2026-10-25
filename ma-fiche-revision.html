@@ -26,10 +26,24 @@
   a.btn.sec{background:transparent;color:var(--ink)}
   .notes{border:1.5px dashed var(--muted);border-radius:10px;min-height:90px;padding:8px;font-size:12px;color:var(--muted)}
   .vide{color:var(--muted);font-style:italic}
+  .fluo-filtres{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+  .fluo-filtres button{padding:4px 11px;font-size:11px;background:var(--pap);color:var(--ink);border:1.5px solid var(--edge)}
+  .fluo-filtres button.actif{background:var(--edge);color:#fde047}
+  .fluo-liste{display:flex;flex-direction:column;gap:8px}
+  .fluo-item{border:1.5px solid var(--muted);border-radius:10px;padding:8px 11px;background:var(--pap);page-break-inside:avoid;break-inside:avoid}
+  .fluo-item.col-jaune{border-left:6px solid #eab308;background:rgba(253,224,71,.16)}
+  .fluo-item.col-vert{border-left:6px solid #16a34a;background:rgba(134,239,172,.16)}
+  .fluo-item.col-rose{border-left:6px solid #db2777;background:rgba(249,168,212,.16)}
+  .fluo-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:11px;font-weight:800;margin-bottom:4px}
+  .fluo-texte{font-size:12.5px;line-height:1.45;font-weight:600}
+  .fluo-note{margin-top:4px;font-size:11.5px;font-weight:800;color:var(--warn)}
+  .fluo-act-ecran{display:inline-flex;align-items:center;gap:6px}
+  .fluo-act-ecran a{font-size:11px;font-weight:900;color:#0284c7;text-decoration:none}
+  .fluo-act-ecran button{padding:2px 6px;font-size:10.5px;border-width:1px;background:transparent;color:var(--ink)}
   @media print{
     body{background:#fff;padding:0}
     .feuille{box-shadow:none;border:0;max-width:none;padding:0}
-    .barre{display:none!important}
+    .barre,.fluo-filtres,.fluo-act-ecran{display:none!important}
     h2{page-break-after:avoid}
     table{page-break-inside:auto}
     tr{page-break-inside:avoid}
@@ -62,9 +76,19 @@
   <h2>3. Mes quiz</h2>
   <table id="fiche-quiz"><thead><tr><th>Quiz</th><th>Dernière note</th><th>Conseil</th></tr></thead><tbody></tbody></table>
 
-  <h2>4. Mes notes</h2>
+  <h2 id="sec-surlignages">4. 🖍️ Mes passages surlignés dans les cours (<span id="fiche-fluo-nb">0</span>)</h2>
+  <div class="fluo-filtres" id="fiche-fluo-filtres">
+    <button type="button" class="actif" data-col="*">✨ Tous</button>
+    <button type="button" data-col="jaune">🟡 Important</button>
+    <button type="button" data-col="vert">🟢 Syntaxe / Définition</button>
+    <button type="button" data-col="rose">🩷 Piège Bac</button>
+  </div>
+  <div class="fluo-liste" id="fiche-fluo-liste"><p class="vide">Chargement de vos passages surlignés…</p></div>
+
+  <h2>5. Mes notes manuscrites</h2>
   <div class="notes">(à remplir à la main après impression : formules à retenir, erreurs à ne pas refaire…)</div>
 </main>
+<script src="assets/js/rayonsx-surligneur.js?v=449"></script>
 <script src="assets/js/roue-revision.js?v=436"></script>
 <script>
 (function(){
@@ -115,6 +139,74 @@
     });
     tb3.innerHTML=h3||"<tr><td colspan='3' class='vide'>Aucun quiz enregistré pour le moment.</td></tr>";
   }).catch(function(){txt("fiche-couverture","⚠️ Manifeste des pages indisponible (hors ligne).");});
+
+  /* v449 : Rendu interactif & imprimable de tous les passages surlignés dans les cours */
+  var filtreFluoActif = "*";
+  var LABELS_FLUO = {
+    jaune: "🟡 Important",
+    vert: "🟢 Syntaxe / Définition",
+    rose: "🩷 Piège Bac"
+  };
+  function rendrePassagesFluoFiche() {
+    var cont = document.getElementById("fiche-fluo-liste");
+    var nbEl = document.getElementById("fiche-fluo-nb");
+    if (!cont) return;
+    var tous = [];
+    try { tous = JSON.parse(localStorage.getItem("sti-surlignages-v1") || "[]") || []; } catch (e) {}
+    if (!Array.isArray(tous)) tous = [];
+    if (nbEl) nbEl.textContent = String(tous.length);
+    var liste = filtreFluoActif === "*" ? tous : tous.filter(function (x) { return x && x.couleur === filtreFluoActif; });
+    if (!liste.length) {
+      cont.innerHTML = "<p class='vide'>" + (tous.length
+        ? "Aucun passage dans cette couleur."
+        : "Aucun passage surligné pour le moment — dans un cours, cliquez sur 🖍️ Surligneur (ou Alt+H) pour marquer les règles importantes en jaune, vert ou rose.") + "</p>";
+      return;
+    }
+    cont.innerHTML = "";
+    liste.forEach(function (it) {
+      var col = (it.couleur === "vert" || it.couleur === "rose") ? it.couleur : "jaune";
+      var div = document.createElement("div");
+      div.className = "fluo-item col-" + col;
+      div.innerHTML =
+        "<div class='fluo-meta'>" +
+          "<span>" + ech(LABELS_FLUO[col] || LABELS_FLUO.jaune) + " · <b>" + ech(it.matiere || "Cours") + "</b> — " + ech(it.titrePage || it.page || "") + "</span>" +
+          "<span class='fluo-act-ecran'>" +
+            "<a href='" + ech((it.page || "index.html") + "?fluo=" + encodeURIComponent(it.id || "")) + "'>↗ Revoir dans le cours</a>" +
+            "<button type='button' data-del-fluo='" + ech(it.id || "") + "' title='Retirer ce passage'>✕</button>" +
+          "</span>" +
+        "</div>" +
+        "<div class='fluo-texte'>« " + ech(it.texte || "") + " »</div>" +
+        (it.note ? ("<div class='fluo-note'>📌 " + ech(it.note) + "</div>") : "");
+      var bDel = div.querySelector("[data-del-fluo]");
+      if (bDel) {
+        bDel.addEventListener("click", function () {
+          if (window.STI_SURLIGNEUR && window.STI_SURLIGNEUR.supprimer) {
+            window.STI_SURLIGNEUR.supprimer(it.id);
+          } else {
+            var reste = tous.filter(function (x) { return x && x.id !== it.id; });
+            try { localStorage.setItem("sti-surlignages-v1", JSON.stringify(reste)); } catch (e2) {}
+          }
+          rendrePassagesFluoFiche();
+        });
+      }
+      cont.appendChild(div);
+    });
+  }
+  var barFluoF = document.getElementById("fiche-fluo-filtres");
+  if (barFluoF) {
+    Array.prototype.forEach.call(barFluoF.querySelectorAll("button[data-col]"), function (b) {
+      b.addEventListener("click", function () {
+        filtreFluoActif = b.getAttribute("data-col") || "*";
+        Array.prototype.forEach.call(barFluoF.querySelectorAll("button[data-col]"), function (x) {
+          x.classList.toggle("actif", x === b);
+        });
+        rendrePassagesFluoFiche();
+      });
+    });
+  }
+  window.addEventListener("sti-surlignages-maj", rendrePassagesFluoFiche);
+  window.addEventListener("storage", rendrePassagesFluoFiche);
+  rendrePassagesFluoFiche();
 })();
 </script>
 </body>
