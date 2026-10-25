@@ -1290,6 +1290,237 @@ test('v455 (comportemental VM) : Quiz JS mélange les options, persiste en write
   assert.equal(win.gameRev.questions.length, 2);
 });
 
+test('v456 : consolidation complète Quiz Lots A, B et C (RLS DELETE, admin.html, pp.html, docimologie SQL/PHP et mode sombre Tableaux sous CSP stricte)', () => {
+  const migSql = read('supabase/migrations/20261025_quiz_consolidation_v456.sql');
+  const adminHtml = read('admin.html');
+  const quizAdminJs = read('assets/js/quiz-admin.js');
+  const syncJs = read('assets/js/quiz-sync.js');
+  const tabHtml = read('quiz/tableaux.html');
+  const tabJs = read('assets/js/quiz-tableaux.js');
+  const tabBootJs = read('assets/js/quiz-tableaux-boot.js');
+  const ppHtml = read('quiz/pp.html');
+  const phpHtml = read('quiz/php.html');
+  const sqlHtml = read('quiz/sql.html');
+  const accesJs = read('assets/js/acces.js');
+  const swJs = read('sw.js');
+
+  // Lot A : migration RLS DELETE + admin.html listes d'examen/téléportation + redirection pp.html
+  assert.match(migSql, /create policy sti_quiz_vus_suppression on public\.sti_quiz_vus/i);
+  assert.match(migSql, /create policy sti_quiz_parties_suppression_admin on public\.sti_quiz_parties/i);
+  assert.match(migSql, /create policy sti_quiz_reponses_suppression_admin on public\.sti_quiz_reponses/i);
+  assert.match(migSql, /grant delete on public\.sti_quiz_vus to authenticated/i);
+  assert.match(migSql, /sti_quiz_reponses_quiz_check/i);
+
+  assert.doesNotMatch(adminHtml, /<option value="quiz\/pp\.html">/);
+  assert.equal((adminHtml.match(/<option value="quiz\/tableaux\.html">/g) || []).length, 2);
+  assert.equal((adminHtml.match(/<option value="revision-erreurs\.html">/g) || []).length, 2);
+  assert.match(adminHtml, /id="btn-quiz-sync-csv"/);
+  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=456/);
+  assert.match(adminHtml, /admin\.js\?v=4\d{2}-/);
+
+  assert.match(ppHtml, /window\.location\.replace\(cible\)/);
+  assert.doesNotMatch(ppHtml, /const QUESTIONS\s*=/);
+
+  // Lot B : quiz-admin.js (pagination, maîtrise, export CSV, purge) + docimologie PHP & SQL
+  assert.match(quizAdminJs, /async function lireToutPagine/);
+  assert.match(quizAdminJs, /function exporterCsv\(\)/);
+  assert.match(quizAdminJs, /async function purgerGroupeEleve/);
+  assert.match(quizAdminJs, /66 Défis JS & HTML/);
+  assert.match(quizAdminJs, /corrigée depuis/);
+  assert.match(syncJs, /reinitialiserVus:\s*reinitialiserVus/);
+  assert.match(tabJs, /STIQuizSync\.reinitialiserVus/);
+
+  const phpDb = vm.runInNewContext('(' + phpHtml.match(/const QUESTIONS = (\[[\s\S]*?\n      \]);/)[1] + ')');
+  assert.equal(phpDb.length, 176);
+  let phpLong = 0;
+  phpDb.forEach((q, idx) => {
+    assert.ok(['Facile', 'Moyen', 'Difficile'].includes(q.diff), `PHP[${idx}] difficulté FR (${q.diff})`);
+    assert.equal(new Set(q.options.map((o) => o.trim())).size, 4, `PHP[${idx}] 4 choix distincts`);
+    const cLen = q.options[q.answer].length;
+    const maxW = Math.max(...q.options.filter((_, k) => k !== q.answer).map((o) => o.length));
+    if (cLen > maxW) phpLong++;
+  });
+  assert.ok(phpLong / phpDb.length <= 0.35, `Biais de longueur PHP maîtrisé : ${phpLong}/${phpDb.length}`);
+
+  const sqlDb = vm.runInNewContext('(' + sqlHtml.match(/const QUESTIONS = (\[[\s\S]*?\n      \]);/)[1] + ')');
+  assert.equal(sqlDb.length, 140);
+  let sqlLong = 0;
+  sqlDb.forEach((q, idx) => {
+    assert.equal(new Set(q.answers.map((o) => o.trim())).size, 4, `SQL[${idx}] 4 choix distincts`);
+    const cLen = q.answers[q.correct].length;
+    const maxW = Math.max(...q.answers.filter((_, k) => k !== q.correct).map((o) => o.length));
+    if (cLen > maxW) sqlLong++;
+  });
+  assert.ok(sqlLong / sqlDb.length <= 0.35, `Biais de longueur SQL maîtrisé : ${sqlLong}/${sqlDb.length}`);
+
+  // Lot C : quiz/tableaux.html CSP stricte sans script inline + mode sombre sans FOUC + acces.js .qt-score
+  assert.match(tabHtml, /script-src 'self'/);
+  const inlineScripts = [...tabHtml.matchAll(/<script(?![^>]*\bsrc=)[^>]*>/gi)];
+  assert.equal(inlineScripts.length, 0, 'Aucun script inline dans quiz/tableaux.html (respect CSP script-src self)');
+  assert.match(tabHtml, /quiz-tableaux-boot\.js\?v=456/);
+  assert.match(tabHtml, /protection\.js\?v=227/);
+  assert.match(tabHtml, /html\.dark,\s*html\.dark-mode,\s*html\[data-theme="dark"\]/);
+  assert.doesNotMatch(tabHtml, /#4338ca|#4f46e5/i);
+  assert.match(tabHtml, /id="qt-theme-toggle"/);
+  assert.match(tabBootJs, /localStorage\.getItem\("sti-theme"\)/);
+
+  assert.match(accesJs, /nomQuiz = "Quiz Tableaux"/);
+  assert.match(accesJs, /document\.querySelector\("\.qt-score"\)/);
+  assert.match(accesJs, /document\.getElementById\("quizModeBadge"\)/);
+  assert.match(swJs, /v456-quiz-lots-abc/);
+  assert.match(swJs, /quiz-lots-abc-v456/);
+});
+
+test('v456 (comportemental VM) : pagination PostgREST > 1000 lignes, purge persistante sti_quiz_vus (hors-ligne + reconnexion) et boot thème sombre Tableaux', async () => {
+  const syncJs = read('assets/js/quiz-sync.js');
+  const tabBootJs = read('assets/js/quiz-tableaux-boot.js');
+
+  const store = new Map();
+  const storage = {
+    get length() { return store.size; },
+    key(i) { return [...store.keys()][i] || null; },
+    getItem(k) { return store.has(k) ? store.get(k) : null; },
+    setItem(k, v) { store.set(k, String(v)); },
+    removeItem(k) { store.delete(k); },
+  };
+  storage.setItem('sb-vywujxmepvcbgedgmger-auth-token', JSON.stringify({
+    user: { id: '9824a4f2-484e-4afa-9746-d366f06a462d', email: 'eleve4si@exemple.tn' },
+  }));
+  storage.setItem('sti-theme', 'dark');
+
+  // 2 350 réponses côté serveur + 2 modules dans sti_quiz_vus
+  const remoteReponses = Array.from({ length: 2350 }, (_, idx) => ({
+    quiz: 'sql',
+    module: null,
+    question_id: 'sql-' + idx,
+    enonce: 'Question #' + idx,
+    correct: idx % 2 === 0,
+    cree_le: new Date(Date.now() - idx * 1000).toISOString(),
+  }));
+  let remoteVus = [
+    { user_id: '9824a4f2-484e-4afa-9746-d366f06a462d', module: 'html5', question_id: 'h1' },
+    { user_id: '9824a4f2-484e-4afa-9746-d366f06a462d', module: 'html5', question_id: 'h2' },
+    { user_id: '9824a4f2-484e-4afa-9746-d366f06a462d', module: 'css3', question_id: 'c1' },
+  ];
+  let offline = false;
+  const rangeCalls = [];
+
+  const classes = new Set();
+  const attrs = new Map();
+  let toggleClick = null;
+  const toggleBtn = {
+    textContent: '🌙 Sombre',
+    setAttribute(k, v) { attrs.set('btn:' + k, v); },
+    addEventListener(ev, fn) { if (ev === 'click') toggleClick = fn; },
+  };
+  const docEl = {
+    setAttribute(k, v) { attrs.set(k, v); },
+    getAttribute(k) { return attrs.get(k) || null; },
+    removeAttribute(k) { attrs.delete(k); },
+    classList: {
+      add(...cs) { cs.forEach((c) => classes.add(c)); },
+      remove(...cs) { cs.forEach((c) => classes.delete(c)); },
+      contains(c) { return classes.has(c); },
+    },
+  };
+
+  const win = {
+    localStorage: storage,
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'anon' },
+    location: { protocol: 'https:', search: '' },
+    supabase: {
+      createClient() {
+        return {
+          auth: {
+            onAuthStateChange() {},
+            async getSession() {
+              return { data: { session: { user: { id: '9824a4f2-484e-4afa-9746-d366f06a462d', email: 'eleve4si@exemple.tn' } } } };
+            },
+          },
+          from(tbl) {
+            if (tbl === 'sti_quiz_reponses') {
+              return {
+                select() { return this; },
+                eq() { return this; },
+                order() { return this; },
+                async range(from, to) {
+                  if (offline) return { data: null, error: { message: 'offline' } };
+                  rangeCalls.push([from, to]);
+                  return { data: remoteReponses.slice(from, to + 1), error: null };
+                },
+              };
+            }
+            if (tbl === 'sti_quiz_vus') {
+              let delFilters = null;
+              return {
+                select() { return this; },
+                delete() { delFilters = {}; return this; },
+                eq(col, val) { if (delFilters) delFilters[col] = val; return this; },
+                async range(from, to) {
+                  if (offline) return { data: null, error: { message: 'offline' } };
+                  return { data: remoteVus.slice(from, to + 1), error: null };
+                },
+                then(resolve) {
+                  if (!delFilters) return resolve({ data: [], error: null });
+                  if (offline) return resolve({ error: { message: 'offline' } });
+                  remoteVus = remoteVus.filter((v) => !(
+                    (!delFilters.user_id || v.user_id === delFilters.user_id) &&
+                    (!delFilters.module || v.module === delFilters.module)
+                  ));
+                  return resolve({ error: null });
+                },
+              };
+            }
+            return {};
+          },
+        };
+      },
+    },
+    document: {
+      readyState: 'complete',
+      documentElement: docEl,
+      getElementById(id) { return id === 'qt-theme-toggle' ? toggleBtn : null; },
+      addEventListener() {},
+    },
+    addEventListener() {},
+    console,
+    Math, Date, JSON, Promise, Set, Array, Object, String, Number, Boolean, RegExp, Error, parseInt, parseFloat, isNaN,
+  };
+  win.window = win;
+  const ctx = vm.createContext(win);
+  vm.runInContext(tabBootJs, ctx, { filename: 'quiz-tableaux-boot.js' });
+  vm.runInContext(syncJs, ctx, { filename: 'quiz-sync.js' });
+
+  // 1) Boot thème sombre immédiat + bascule Clair/Sombre
+  assert.equal(docEl.classList.contains('dark'), true);
+  assert.equal(docEl.getAttribute('data-theme'), 'dark');
+  assert.equal(toggleBtn.textContent, '☀️ Clair');
+  toggleClick();
+  assert.equal(docEl.classList.contains('dark'), false);
+  assert.equal(storage.getItem('sti-theme'), 'light');
+  assert.equal(toggleBtn.textContent, '🌙 Sombre');
+
+  // 2) Lecture paginée > 1000 lignes (3 pages .range : 0..999, 1000..1999, 2000..3999)
+  const reps = await win.STIQuizSync.chargerReponses(4000);
+  assert.equal(reps.length, 2350);
+  assert.equal(rangeCalls.length, 3);
+  assert.deepEqual(rangeCalls[0], [0, 999]);
+  assert.deepEqual(rangeCalls[1], [1000, 1999]);
+
+  // 3) Réinitialisation d'un module épuisé hors-ligne puis reconnexion : aucune résurrection
+  offline = true;
+  const okOff = await win.STIQuizSync.reinitialiserVus('html5');
+  assert.equal(okOff, false);
+  assert.deepEqual(JSON.parse(storage.getItem('sti-quiz-sync-vus-purge-v1') || '[]'), ['html5']);
+
+  offline = false;
+  const vusApres = await win.STIQuizSync.chargerVus();
+  assert.equal(vusApres.html5, undefined, 'Le module html5 réinitialisé a bien été purgé sur Supabase à la reconnexion');
+  assert.deepEqual(Array.from(vusApres.css3), ['c1'], 'Les autres modules restent intacts');
+  assert.deepEqual(JSON.parse(storage.getItem('sti-quiz-sync-vus-purge-v1') || '[]'), []);
+});
+
+
 
 
 

@@ -2510,6 +2510,7 @@
               <option value="tableaux">🃏 Quiz des tableaux</option>
             </select>
             <input id="rech-quiz-sync" type="search" placeholder="🔎 Nom, e-mail, classe…" style="border:2px solid #23201a;border-radius:999px;padding:6px 12px;background:#fffdf7;color:#23201a;font-weight:700;font-size:12px;min-width:180px" title="Rechercher un élève">
+            <button type="button" class="btn-outil" id="btn-quiz-sync-csv" title="Exporter la sélection en CSV (Excel)">📥 Exporter CSV</button>
             <button type="button" class="btn-outil" id="btn-quiz-sync-charger">↻ Actualiser</button>
           </div>
         </div>
@@ -2547,7 +2548,7 @@
         <li><strong>En ligne</strong> : la partie est envoyée immédiatement à la fin du quiz. <strong>Hors ligne</strong> : elle attend dans une file sur l'appareil, puis part <strong>automatiquement dès le retour d'Internet</strong> (ou au prochain quiz ouvert) — rien n'est perdu.</li>
         <li>Le tirage est <strong>aléatoire sans jamais répéter</strong> une question déjà vue, sur <strong>tous les appareils</strong> de l'élève (historique des « vus » synchronisé).</li>
         <li>La <strong>classe</strong> affichée vient du profil de l'élève (section « 👥 1. Abonnés &amp; Classes ») : si une classe est fausse ou vide, corrigez-la là-bas.</li>
-        <li>Bouton <strong>↻ Actualiser</strong> : recharge les données (affichage limité aux <strong>5 000 parties</strong> et <strong>8 000 réponses</strong> les plus récentes).</li>
+        <li>Bouton <strong>↻ Actualiser</strong> : recharge les données par tranches paginées (jusqu'à <strong>10 000 parties</strong> et <strong>20 000 réponses</strong>) · Bouton <strong>📥 Exporter CSV</strong> : télécharge la sélection au format Excel (UTF-8).</li>
       </ul>
 
       <h3 style="margin:16px 0 6px">📊 Les vues du bloc « Résultats des Quiz »</h3>
@@ -3225,7 +3226,8 @@
               <option value="quiz/javascript.html">📝 Quiz JavaScript (quiz/javascript.html)</option>
               <option value="quiz/sql.html">📝 Quiz SQL (quiz/sql.html)</option>
               <option value="quiz/php.html">📝 Quiz PHP &amp; MySQLi (quiz/php.html)</option>
-              <option value="quiz/pp.html">📝 Quiz Programmation PHP (quiz/pp.html)</option>
+              <option value="quiz/tableaux.html">🃏 Quiz des tableaux (quiz/tableaux.html)</option>
+              <option value="revision-erreurs.html">🔁 Révision « Mes erreurs » (revision-erreurs.html)</option>
             </select>
           </div>
           <div>
@@ -3276,7 +3278,8 @@
               <option value="quiz/javascript.html">📝 Quiz JavaScript</option>
               <option value="quiz/sql.html">📝 Quiz SQL</option>
               <option value="quiz/php.html">📝 Quiz PHP &amp; MySQLi</option>
-              <option value="quiz/pp.html">📝 Quiz Programmation PHP</option>
+              <option value="quiz/tableaux.html">🃏 Quiz des tableaux</option>
+              <option value="revision-erreurs.html">🔁 Révision « Mes erreurs »</option>
             </select>
             <button type="button" id="btn-sec-teleporter" style="border:2px solid #23201a;border-radius:999px;padding:7px 14px;font-size:12px;font-weight:900;background:linear-gradient(120deg,#f4511e,#ff8a50);color:#fff;cursor:pointer;box-shadow:2px 2px 0 #23201a;white-space:nowrap">🚀 Ouvrir sur leurs écrans</button>
           </div>
@@ -4526,7 +4529,7 @@
   <script src="assets/js/admin-erreurs.js?v=439"></script>
   <script src="assets/js/admin-mdp.js?v=443"></script>
   <script src="assets/js/graphiques-activite.js?v=347"></script>
-  <script src="assets/js/quiz-admin.js?v=358"></script>
+  <script src="assets/js/quiz-admin.js?v=456"></script>
 <script src="assets/js/analytique.js"></script>
 <script src="assets/js/sauvegarde.js"></script>
 <script src="assets/js/sante.js?v=260"></script>

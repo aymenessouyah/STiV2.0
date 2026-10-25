@@ -10,7 +10,7 @@
   "use strict";
   var NB_PAR_SESSION = 10;
   var CLE_STOCKAGE = "sti-quiz-tableaux-v1";
-  var LIBELLE_MODULE = { html5: "HTML5", css3: "CSS3", javascript: "JavaScript", sql: "SQL", php: "PHP", defis: "37 Défis JS", "recap-php": "Récap PHP" };
+  var LIBELLE_MODULE = { html5: "HTML5", css3: "CSS3", javascript: "JavaScript", sql: "SQL", php: "PHP", defis: "66 Défis JS & HTML", "recap-php": "Récap PHP" };
   var ICO_MODULE = { html5: "🌐", css3: "🎨", javascript: "⚡", sql: "🗄️", php: "🐘", defis: "🎯", "recap-php": "🧾" };
   var app = document.getElementById("qt-app");
   if (!app) return;
@@ -154,7 +154,7 @@
     } else {
       niveauxHtml = '<p class="qt-sous">Niveau détecté : <strong>' +
         (niveauDetecte === "3si" ? "3ème SI" : "4ème SI") + "</strong> (" + esc(session.classe || "") +
-        "). Les questions viennent uniquement des contenus de la plateforme : tableaux récapitulatifs de votre livre et 37 Défis JavaScript" +
+        "). Les questions viennent uniquement des contenus de la plateforme : tableaux récapitulatifs de votre livre et 66 Défis JS &amp; HTML" +
         (niveauDetecte === "4si" ? " et Récap PHP" : "") + " : " +
         "à chaque session, le tirage est aléatoire et une question déjà répondue ne revient jamais (tant qu'il en reste).</p>";
     }
@@ -201,14 +201,30 @@
           '</span><span class="qt-mod-nom">' + LIBELLE_MODULE[m] + '</span><span class="qt-mod-reste">' +
           etat.vus[m].length + " questions vues</span></button>";
       }).join("") + "</div>" +
-      '<div class="qt-actions"><button type="button" class="qt-btn secondaire" id="qt-retour">← Retour</button></div>';
+      '<div class="qt-actions">' +
+      (modules.length > 1 ? '<button type="button" class="qt-btn" id="qt-reinit-tout">↺ Tout réinitialiser</button>' : "") +
+      '<button type="button" class="qt-btn secondaire" id="qt-retour">← Retour</button></div>';
     app.querySelectorAll("[data-reinit]").forEach(function (b) {
       b.addEventListener("click", function () {
+        var mod = b.getAttribute("data-reinit");
         var etat2 = etatEleve();
-        etat2.vus[b.getAttribute("data-reinit")] = [];
+        etat2.vus[mod] = [];
         sauverEtat(etat2);
+        if (window.STIQuizSync && typeof STIQuizSync.reinitialiserVus === "function") {
+          STIQuizSync.reinitialiserVus(mod);
+        }
         afficherAccueil();
       });
+    });
+    var btnTout = document.getElementById("qt-reinit-tout");
+    if (btnTout) btnTout.addEventListener("click", function () {
+      var etat3 = etatEleve();
+      etat3.vus = {};
+      sauverEtat(etat3);
+      if (window.STIQuizSync && typeof STIQuizSync.reinitialiserVus === "function") {
+        STIQuizSync.reinitialiserVus("*");
+      }
+      afficherAccueil();
     });
     document.getElementById("qt-retour").addEventListener("click", afficherAccueil);
   }
@@ -285,6 +301,7 @@
     if (window.STIQuizSync && STIQuizSync.enregistrerReponses) {
       STIQuizSync.enregistrerReponses("tableaux", s.module, repondues.map(function (it) {
         return { id: it.ref.id != null ? "tab-" + it.ref.id : STIQuizSync.hash(it.ref.q),
+                 module: it.ref.module || s.module,
                  enonce: it.ref.q, ok: it.choix[it.choixEleve] === it.ref.bonne };
       }));
     }
@@ -354,7 +371,7 @@
       var revTab2 = window.STIQuizSync && STIQuizSync.revisionIds ? STIQuizSync.revisionIds("tableaux") : null;
       var modRev = null;
       try { modRev = new URLSearchParams(window.location.search).get("module"); } catch (e) {}
-      if (revTab2 && modRev) demarrer(modRev);
+      if (revTab2) demarrer(modRev || "mix");
       else afficherAccueil();
       fusionnerVusDistants();
     })

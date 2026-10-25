@@ -38845,19 +38845,19 @@ Check your Browserslist config to be sure that your targets are set up correctly
                   Mixte
                 </button>
                 <button
-                  data-diff="Easy"
+                  data-diff="Facile"
                   class="diff-pill glass rounded-full px-4 py-2 text-sm font-bold border border-white/10"
                 >
                   Facile
                 </button>
                 <button
-                  data-diff="Medium"
+                  data-diff="Moyen"
                   class="diff-pill glass rounded-full px-4 py-2 text-sm font-bold border border-white/10"
                 >
                   Moyen
                 </button>
                 <button
-                  data-diff="Hard"
+                  data-diff="Difficile"
                   class="diff-pill glass rounded-full px-4 py-2 text-sm font-bold border border-white/10"
                 >
                   Difficile
@@ -39833,7 +39833,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
       const CATNAME = {};
       CATS.forEach((c) => (CATNAME[c.id] = c.name));
       const nomCat = (id) => CATNAME[id] || id;
-      const DIFF_FR = { Easy: "Facile", Medium: "Moyen", Hard: "Difficile" };
+      const DIFF_FR = { Facile: "Facile", Moyen: "Moyen", Difficile: "Difficile", Easy: "Facile", Medium: "Moyen", Hard: "Difficile" };
       const diffFr = (d) => DIFF_FR[d] || d;
       const MODE_FR = {
         practice: "Entraînement",
@@ -39845,11 +39845,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
       const QUESTIONS = [
         {
           "cat": "fond",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que signifie le sigle PHP ?",
           "code": null,
           "options": [
-            "Pre Hypertext Processor",
+            "Programmable Hypertext Page Processor Engine",
             "Personal Home Page Hypertext Preprocessor",
             "Personal Hypertext Pages",
             "Preprocessed Hypertext Page"
@@ -39860,7 +39860,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "À quoi sert le langage PHP ?",
           "code": null,
           "options": [
@@ -39875,7 +39875,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "PHP est un langage…",
           "code": null,
           "options": [
@@ -39890,12 +39890,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que reçoit le navigateur du client ?",
           "code": null,
           "options": [
             "Le code PHP source",
-            "Le code PHP chiffré",
+            "Le script PHP chiffré que le navigateur décode localement",
             "Le résultat, sous forme de HTML « classique »",
             "Uniquement les balises <?php ?>"
           ],
@@ -39905,7 +39905,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Qu'est-ce qui distingue PHP de JavaScript ?",
           "code": null,
           "options": [
@@ -39920,7 +39920,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Dans l'analogie du restaurant, qui est le « chef cuisinier » ?",
           "code": null,
           "options": [
@@ -39935,7 +39935,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Dans l'analogie du guichet d'une banque, qui joue le rôle du « système central » ?",
           "code": null,
           "options": [
@@ -39950,7 +39950,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quelles balises encadrent un script PHP ?",
           "code": "???\necho \"Bonjour tout le monde !\";\n???",
           "options": [
@@ -39965,11 +39965,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Par quoi se termine chaque instruction PHP ?",
           "code": "<?php\necho \"Bonjour\"\n?>",
           "options": [
-            "Par rien du tout",
+            "Par un retour à la ligne obligatoire sans aucun symbole",
             "Par un point-virgule ;",
             "Par un point .",
             "Par deux-points :"
@@ -39980,7 +39980,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Comment écrit-on un commentaire sur une seule ligne ?",
           "code": null,
           "options": [
@@ -39995,7 +39995,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait l'instruction echo ?",
           "code": "<?php\necho \"Bonjour tout le monde !\";\n?>",
           "options": [
@@ -40010,12 +40010,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quel est le rôle du serveur Web dans la chaîne client / serveur ?",
           "code": null,
           "options": [
             "Il valide les formulaires dans le navigateur",
-            "Il exécute les requêtes SQL à la place de PHP",
+            "Il exécute lui-même les requêtes SQL sans passer par le moteur PHP",
             "Il transmet les demandes et renvoie la page générée au client",
             "Il remplace MySQL"
           ],
@@ -40025,12 +40025,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "fond",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "L'internaute fait « afficher le code source de la page » dans son navigateur : que voit-il ?",
           "code": null,
           "options": [
             "Le script PHP complet",
-            "Le code PHP et le HTML",
+            "Le code PHP d'origine mêlé aux balises HTML de la page",
             "Le contenu de la base MySQL",
             "Le HTML généré, jamais le code PHP"
           ],
@@ -40040,7 +40040,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Par quel symbole commence toute variable PHP ?",
           "code": "<?php\n???nom = \"Ali\";\n?>",
           "options": [
@@ -40055,12 +40055,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Faut-il déclarer le type d'une variable avant de l'utiliser ?",
           "code": "<?php\n$age = 17;\n$moyenne = 14.5;\n?>",
           "options": [
             "Oui, entre accolades {int}",
-            "Oui, avec l'instruction var",
+            "Oui, en précédant toujours la variable du mot-clé var ou let",
             "Non : PHP est à typage dynamique",
             "Oui, avec l'instruction int"
           ],
@@ -40070,7 +40070,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quel est le type de la variable $age ?",
           "code": "<?php\n$age = 17;\n?>",
           "options": [
@@ -40085,7 +40085,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quel est le type de la variable $moyenne ?",
           "code": "<?php\n$moyenne = 14.5;\n?>",
           "options": [
@@ -40100,7 +40100,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quel est le type de la variable $actif ?",
           "code": "<?php\n$actif = true;\n?>",
           "options": [
@@ -40115,7 +40115,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quel type correspond à un tableau PHP ?",
           "code": null,
           "options": [
@@ -40130,7 +40130,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Comment définit-on une constante en PHP ?",
           "code": "<?php\n???(\"ECOLE\", \"Lycée Rafèha\");\nprint ECOLE;\n?>",
           "options": [
@@ -40145,7 +40145,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Une constante définie par define() commence-t-elle par $ ?",
           "code": "<?php\ndefine(\"ECOLE\", \"Lycée Rafèha\");\n?>",
           "options": [
@@ -40160,7 +40160,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Qu'affiche ce script ?",
           "code": "<?php\ndefine(\"ECOLE\", \"Lycée Rafèha\");\necho (\"<HR>\" . ECOLE);\n?>",
           "options": [
@@ -40175,14 +40175,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait l'écriture (int) devant une valeur ?",
           "code": "<?php\n$age = (int)$_POST['age'];\n?>",
           "options": [
             "Elle arrondit à deux décimales",
             "Elle crée un nouvel entier",
             "Elle convertit la valeur en entier (transtypage)",
-            "Elle teste si la valeur est un entier"
+            "Elle vérifie simplement si la valeur reçue est déjà entière"
           ],
           "answer": 2,
           "explain": "(int) est un <b>transtypage</b> : la valeur est convertie en entier. Le cours liste aussi (float), (string), (bool) et (array).",
@@ -40190,13 +40190,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle est la liste correcte des transtypages du cours ?",
           "code": null,
           "options": [
             "(int) (float) (string) (bool) (array)",
             "(toInt) (toFloat) (toArray)",
-            "(int) (real) (text) (true)",
+            "(integer) (decimal) (varchar) (boolean) (tableau)",
             "(entier) (reel) (chaine)"
           ],
           "answer": 0,
@@ -40205,7 +40205,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que retourne gettype($x) si $x vaut 2.3 ?",
           "code": "<?php\n$x = 2.3;\necho gettype($x);\n?>",
           "options": [
@@ -40220,7 +40220,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Qu'affiche ce script ?",
           "code": "<?php\n$x = 2.3;\nsettype($x, \"integer\");\necho $x;\n?>",
           "options": [
@@ -40235,7 +40235,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que valent $val puis $val2 ?",
           "code": "<?php\n$val = isset($x);\nunset($x);\n$val2 = isset($x);\n?>",
           "options": [
@@ -40250,7 +40250,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que teste la fonction isset($v) ?",
           "code": null,
           "options": [
@@ -40265,7 +40265,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle fonction détruit une variable ?",
           "code": "<?php\nunset($x);\n?>",
           "options": [
@@ -40280,7 +40280,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle fonction teste qu'une variable est une chaîne ?",
           "code": null,
           "options": [
@@ -40295,11 +40295,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle est la différence entre = et == ?",
           "code": "<?php\n$a = 5;      // ?\n$a == 5;     // ?\n?>",
           "options": [
-            "= compare, == affecte",
+            "= teste l'égalité de deux valeurs, tandis que == affecte",
             "Les deux sont identiques",
             "= affecte une valeur, == compare deux valeurs",
             "== sert uniquement pour les chaînes"
@@ -40310,7 +40310,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que signifie l'opérateur <> en PHP ?",
           "code": "<?php\nif ($a <> $b) { echo \"différentes\"; }\n?>",
           "options": [
@@ -40325,7 +40325,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quels symboles représentent respectivement ET et OU logiques ?",
           "code": null,
           "options": [
@@ -40340,7 +40340,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que fait l'opérateur ! en PHP ?",
           "code": "<?php\nif (!$connexion) { die(\"échec\"); }\n?>",
           "options": [
@@ -40355,7 +40355,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quel opérateur concatène deux chaînes de caractères ?",
           "code": "<?php\necho \"Nous sommes le : \" . $d;\n?>",
           "options": [
@@ -40370,7 +40370,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que vaut $t après ce calcul ?",
           "code": "<?php\n$t = 10 % 3;\n?>",
           "options": [
@@ -40385,13 +40385,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que fait la fonction abs(-7) ?",
           "code": "<?php\necho abs(-7);\n?>",
           "options": [
             "Elle renvoie -7",
             "Elle renvoie 0",
-            "Elle arrondit à 7.0",
+            "Elle arrondit le nombre négatif à une décimale (-7.0)",
             "Elle renvoie 7 (valeur absolue)"
           ],
           "answer": 3,
@@ -40400,7 +40400,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que renvoie sqrt(16) ?",
           "code": "<?php\necho sqrt(16);\n?>",
           "options": [
@@ -40415,7 +40415,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie round(3.6) ?",
           "code": "<?php\necho round(3.6);\n?>",
           "options": [
@@ -40430,7 +40430,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait rand(1,10) ?",
           "code": "<?php\necho rand(1,10);\n?>",
           "options": [
@@ -40445,7 +40445,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "types",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que fait l'opérateur += dans $i += 3 ?",
           "code": "<?php\n$i = 2;\n$i += 3;\necho $i;\n?>",
           "options": [
@@ -40460,7 +40460,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Qu'affiche ce script ?",
           "code": "<?php\n$s = \"Il était une fois\";\nprint $s[4];\n?>",
           "options": [
@@ -40475,7 +40475,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que renvoie strlen(\"Bonjour\") ?",
           "code": "<?php\necho strlen(\"Bonjour\");\n?>",
           "options": [
@@ -40490,7 +40490,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait la fonction substr() ?",
           "code": null,
           "options": [
@@ -40505,12 +40505,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait la fonction trim() ?",
           "code": null,
           "options": [
             "Elle compte les caractères",
-            "Elle coupe la chaîne en morceaux",
+            "Elle découpe la chaîne en sous-chaînes à chaque espace trouvé",
             "Elle met la chaîne en majuscules",
             "Elle nettoie la chaîne (espaces en début et fin)"
           ],
@@ -40520,11 +40520,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait implode(\",\", $array) ?",
           "code": "<?php\n$array = array('lastname','email','phone');\necho implode(\",\", $array);\n?>",
           "options": [
-            "Elle transforme une chaîne en tableau",
+            "Elle découpe une chaîne en plusieurs éléments d'un tableau indexé",
             "Elle transforme un tableau en chaîne (séparée par des virgules)",
             "Elle compte les éléments du tableau",
             "Elle inverse l'ordre du tableau"
@@ -40535,7 +40535,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Qu'affiche ce script ?",
           "code": "<?php\n$pieces = explode(\" \", \"a b c\");\necho $pieces[0];\n?>",
           "options": [
@@ -40550,7 +40550,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie strpos(\"ABCDEFGH\", 'CD') ?",
           "code": "<?php\necho strpos(\"ABCDEFGH\", 'CD');\n?>",
           "options": [
@@ -40565,13 +40565,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait la fonction str_replace() ?",
           "code": null,
           "options": [
             "Elle inverse une chaîne",
             "Elle remplace les occurrences d'un texte par un autre",
-            "Elle compare deux chaînes",
+            "Elle compare deux chaînes caractère par caractère sans tenir compte de la casse",
             "Elle supprime une chaîne"
           ],
           "answer": 1,
@@ -40580,7 +40580,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "À quoi servent chr() et ord() ?",
           "code": null,
           "options": [
@@ -40595,12 +40595,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait la fonction strrev() ?",
           "code": "<?php\necho strrev(\"PHP\");\n?>",
           "options": [
             "Elle inverse la chaîne (affiche PHP à l'envers, « PHP » ici identique)",
-            "Elle met la chaîne en minuscules",
+            "Elle convertit chaque lettre majuscule de la chaîne en minuscule",
             "Elle renvoie le contraire de la comparaison",
             "Elle supprime les espaces"
           ],
@@ -40610,7 +40610,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que renvoie strtoupper(\"php\") ?",
           "code": "<?php\necho strtoupper(\"php\");\n?>",
           "options": [
@@ -40625,12 +40625,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que renvoie strtolower(\"SAMI\") ?",
           "code": "<?php\necho strtolower(\"SAMI\");\n?>",
           "options": [
             "Sami",
-            "Sami ",
+            "SaMi",
             "SAMI",
             "sami"
           ],
@@ -40640,7 +40640,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que renvoie strcmp(\"abc\", \"abc\") ?",
           "code": "<?php\necho strcmp(\"abc\", \"abc\");\n?>",
           "options": [
@@ -40655,7 +40655,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Dans le tableau du cours, à quoi sert strpos() ?",
           "code": null,
           "options": [
@@ -40670,7 +40670,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "chaine",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Qu'affiche ce script ?",
           "code": "<?php\n$s = \"Bonjour\";\necho strtoupper(substr($s, 0, 3));\n?>",
           "options": [
@@ -40685,7 +40685,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quel est l'indice du premier élément d'un tableau à indices entiers ?",
           "code": "<?php\n$notes = array(12, 8, 17, 5);\n?>",
           "options": [
@@ -40700,7 +40700,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Comment appelle-t-on le tableau $vente ?",
           "code": "<?php\n$vente = array(\"lundi\"=>7, \"mardi\"=>5, \"jeudi\"=>9);\n?>",
           "options": [
@@ -40715,7 +40715,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Qu'affiche ce script ?",
           "code": "<?php\n$vente = array(\"lundi\"=>7, \"mardi\"=>5, \"jeudi\"=>9);\necho $vente[\"mardi\"];\n?>",
           "options": [
@@ -40730,7 +40730,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Les valeurs d'un même tableau PHP peuvent-elles avoir des types différents ?",
           "code": null,
           "options": [
@@ -40745,7 +40745,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait la fonction sort($notes) ?",
           "code": "<?php\n$notes = array(12, 8, 17, 5);\nsort($notes);\n?>",
           "options": [
@@ -40760,7 +40760,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Qu'affiche ce script ?",
           "code": "<?php\n$notes = array(12, 8, 17, 5);\nsort($notes);\nprint_r($notes);\n?>",
           "options": [
@@ -40775,7 +40775,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle fonction trie un tableau associatif par ses clés ?",
           "code": null,
           "options": [
@@ -40790,12 +40790,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait krsort() ?",
           "code": null,
           "options": [
             "Elle trie un tableau par clés, dans l'ordre décroissant",
-            "Elle trie les valeurs en décroissant",
+            "Elle trie uniquement les valeurs du tableau dans l'ordre décroissant",
             "Elle inverse l'ordre des valeurs",
             "Elle supprime les clés"
           ],
@@ -40805,7 +40805,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "À quoi servent current() et key() dans le parcours d'un tableau ?",
           "code": null,
           "options": [
@@ -40820,7 +40820,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que font reset() et end() ?",
           "code": null,
           "options": [
@@ -40835,7 +40835,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait next() sur un tableau ?",
           "code": null,
           "options": [
@@ -40850,7 +40850,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "À quoi sert sizeof() ?",
           "code": "<?php\n$notes = array(12, 8, 17, 5);\necho sizeof($notes);\n?>",
           "options": [
@@ -40865,7 +40865,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait print_r($notes) ?",
           "code": "<?php\n$notes = array(12, 8, 17, 5);\nprint_r($notes);\n?>",
           "options": [
@@ -40880,11 +40880,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que contient $pieces après ce code ?",
           "code": "<?php\n$pieces = explode(\" \", \"a b c\");\n?>",
           "options": [
-            "Une chaîne « a b c »",
+            "Une seule chaîne concaténée contenant « a b c » avec espaces",
             "Un tableau de 3 éléments : \"a\", \"b\", \"c\"",
             "Un tableau associatif",
             "Un tableau vide"
@@ -40895,7 +40895,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Comment lire la valeur du jeudi dans ce tableau ?",
           "code": "<?php\n$vente = array(\"lundi\"=>7, \"mardi\"=>5, \"jeudi\"=>9);\n$v = ???;\n?>",
           "options": [
@@ -40910,7 +40910,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "tableau",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que vaudra $dernier ?",
           "code": "<?php\n$notes = array(12, 8, 17, 5);\n$dernier = end($notes);\n?>",
           "options": [
@@ -40925,11 +40925,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Qu'est-ce qu'un timestamp en PHP ?",
           "code": null,
           "options": [
-            "Une chaîne au format jj/mm/aaaa",
+            "Une chaîne formatée automatiquement selon le fuseau jj/mm/aaaa hh:mm:ss",
             "Un entier : le nombre de secondes depuis le 1ᵉʳ janvier 1970 à 00:00:00 GMT",
             "Le nombre de jours depuis l'an 2000",
             "Un tableau contenant l'heure et la date"
@@ -40940,7 +40940,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quel est le rôle de checkdate() ?",
           "code": null,
           "options": [
@@ -40955,7 +40955,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quel est l'ordre des arguments de checkdate() ?",
           "code": "<?php\ncheckdate(9, 24, 2026);\n?>",
           "options": [
@@ -40970,7 +40970,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie checkdate(9, 24, 2026) ?",
           "code": "<?php\n$m=9; $j=24; $a=2026;\nif (checkdate($m,$j,$a)==true) $d=$j.\"/\".$m.\"/\".$a;\n?>",
           "options": [
@@ -40985,7 +40985,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que renvoie checkdate(2, 30, 2026) ?",
           "code": "<?php\necho checkdate(2, 30, 2026);\n?>",
           "options": [
@@ -41000,7 +41000,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelles bornes checkdate() accepte-t-elle pour l'année et le mois ?",
           "code": null,
           "options": [
@@ -41015,7 +41015,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Les années bissextiles sont-elles prises en compte par checkdate() ?",
           "code": null,
           "options": [
@@ -41030,12 +41030,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que fait la fonction date(\"Y-m-d H:i:s\") ?",
           "code": "<?php\n$d = date(\"Y-m-d H:i:s\");\necho (\"Nous sommes le : \" . $d);\n?>",
           "options": [
             "Elle formate une date et la retourne sous forme de chaîne",
-            "Elle renvoie un timestamp",
+            "Elle renvoie le timestamp entier correspondant à minuit pile",
             "Elle enregistre la date dans la base",
             "Elle vérifie la validité d'une date"
           ],
@@ -41045,7 +41045,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Dans le format de date(), que représente la lettre Y ?",
           "code": "<?php\necho date(\"Y-m-d\");\n?>",
           "options": [
@@ -41060,7 +41060,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Dans le format de date(), que représente la lettre i ?",
           "code": "<?php\necho date(\"H:i:s\");\n?>",
           "options": [
@@ -41075,7 +41075,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait date() si aucun timestamp n'est fourni en second argument ?",
           "code": "<?php\necho date(\"d-m-Y\");\n?>",
           "options": [
@@ -41090,12 +41090,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que retourne la fonction getdate() ?",
           "code": "<?php\n$a = getdate();\n?>",
           "options": [
             "Un booléen",
-            "Une chaîne formatée",
+            "Une chaîne déjà mise en forme prête à être affichée par echo",
             "Un tableau associatif d'informations de date et d'heure",
             "Un timestamp"
           ],
@@ -41105,7 +41105,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Dans le tableau renvoyé par getdate(), que contient la clé « mday » ?",
           "code": "<?php\n$a = getdate();\necho $a[\"mday\"];\n?>",
           "options": [
@@ -41120,7 +41120,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Quelle clé de getdate() contient le NOM du mois (ex. « September ») ?",
           "code": null,
           "options": [
@@ -41135,7 +41135,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que contient la clé « weekday » du tableau getdate() ?",
           "code": null,
           "options": [
@@ -41150,7 +41150,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que renvoie time() ?",
           "code": "<?php\n$a = time();\n?>",
           "options": [
@@ -41165,7 +41165,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quel est l'ordre des arguments de mktime() ?",
           "code": "<?php\n$ns = mktime($h, $mn, $s, $m, $j, $a);\n?>",
           "options": [
@@ -41180,7 +41180,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que construit la fonction mktime() ?",
           "code": "<?php\n$ns = mktime(10, 30, 0, 9, 24, 2026);\n?>",
           "options": [
@@ -41195,13 +41195,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que se passe-t-il si on omet des arguments de mktime() ?",
           "code": null,
           "options": [
             "Ils peuvent être omis de droite à gauche : tout argument manquant prend la valeur courante",
             "La fonction renvoie false",
-            "Les arguments manquants valent tous 0",
+            "Ils peuvent être omis de gauche à droite : tout argument omis est remplacé par 0",
             "Il faut obligatoirement donner les 6 arguments"
           ],
           "answer": 0,
@@ -41210,7 +41210,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que vaut l'argument is_dst de mktime() si l'heure d'été est appliquée ?",
           "code": null,
           "options": [
@@ -41225,13 +41225,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait strtotime(\"10 September 2026\") ?",
           "code": "<?php\n$b = strtotime(\"10 September 2026\");\n?>",
           "options": [
             "Elle renvoie le nom du mois",
             "Elle affiche « 10 September 2026 »",
-            "Elle vérifie que la date est valide",
+            "Elle vérifie uniquement si la date écrite en anglais existe au calendrier",
             "Elle transforme cette date (écrite en anglais) en timestamp"
           ],
           "answer": 3,
@@ -41240,7 +41240,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie strtotime(\"+1 day\") ?",
           "code": "<?php\n$c = strtotime(\"+1 day\");\n?>",
           "options": [
@@ -41255,7 +41255,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Quelle expression relative strtotime() accepte-t-elle ?",
           "code": "<?php\n$e = strtotime(\"+1 week 2 days 4 hours 2 seconds\");\n?>",
           "options": [
@@ -41270,13 +41270,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie strtotime(\"now\") ?",
           "code": "<?php\n$a = strtotime(\"now\");\n?>",
           "options": [
             "Le timestamp de la date et de l'heure actuelles",
             "La date de demain",
-            "La chaîne « maintenant »",
+            "La chaîne de caractères littérale « now » au format jj/mm/aaaa",
             "Un tableau getdate()"
           ],
           "answer": 0,
@@ -41285,11 +41285,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "date",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Sur un site dynamique, à quoi sert de convertir une date en timestamp ?",
           "code": null,
           "options": [
-            "À afficher la date en français",
+            "À traduire automatiquement le nom des mois et des jours en français",
             "À calculer plus tard une différence, donc une durée",
             "À trier les chaînes de caractères",
             "À rien : c'est simplement une formalité"
@@ -41300,7 +41300,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que contient la superglobale $_GET ?",
           "code": "<?php\n$q = $_GET['q'];\n?>",
           "options": [
@@ -41315,13 +41315,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que contient la superglobale $_POST ?",
           "code": "<?php\n$nom = $_POST['nom'];\n?>",
           "options": [
             "Les valeurs envoyées par un formulaire en méthode POST",
             "Les fichiers du serveur",
-            "Les valeurs passées dans l'URL",
+            "Les paramètres visibles transmis directement dans la barre d'adresse URL",
             "Les erreurs de PHP"
           ],
           "answer": 0,
@@ -41330,7 +41330,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait la fonction die(\"message\") ?",
           "code": "<?php\nif (!isset($nom) || $nom==\"\") die(\"Le nom est obligatoire.\");\n?>",
           "options": [
@@ -41345,11 +41345,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait ce code si le champ nom est vide ?",
           "code": "<?php\n$nom = $_POST['nom'];\nif (!isset($nom) || $nom==\"\") die(\"Le nom est obligatoire.\");\necho \"Bonjour \" . $nom;\n?>",
           "options": [
-            "Le script continue normalement",
+            "Le script poursuit l'exécution et insère une chaîne vide dans la base",
             "Le script exécute un INSERT",
             "Le script affiche « Bonjour » seul",
             "Le script s'arrête et affiche « Le nom est obligatoire. »"
@@ -41360,7 +41360,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait la fonction require() ?",
           "code": "<?php\nrequire(\"entete.php\");\n?>",
           "options": [
@@ -41375,7 +41375,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle superglobale donne la méthode de la requête HTTP ?",
           "code": "<?php\nif ($_SERVER[\"REQUEST_METHOD\"] == \"POST\") { /* … */ }\n?>",
           "options": [
@@ -41390,7 +41390,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Comment récupère-t-on le nom envoyé par un formulaire POST ?",
           "code": "<?php\n$nom = ???;\n?>",
           "options": [
@@ -41405,7 +41405,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait ce formulaire HTML ?",
           "code": "<form method=\"post\" action=\"inscription.php\">\n  Nom : <input type=\"text\" name=\"nom\"><br>\n  Âge : <input type=\"text\" name=\"age\"><br>\n  <input type=\"submit\" value=\"Envoyer\">\n</form>",
           "options": [
@@ -41420,7 +41420,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Avec method=\"get\", où se retrouvent les valeurs du formulaire ?",
           "code": null,
           "options": [
@@ -41435,7 +41435,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait le bouton <input type=\"submit\" value=\"Envoyer\"> ?",
           "code": null,
           "options": [
@@ -41450,7 +41450,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Pourquoi tester isset($nom) avant de l'utiliser ?",
           "code": "<?php\n$nom = $_POST['nom'];\nif (!isset($nom) || $nom==\"\") die(\"Le nom est obligatoire.\");\n?>",
           "options": [
@@ -41465,11 +41465,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que fait $age = (int)$_POST['age']; dans inscription.php ?",
           "code": "<?php\n$nom = $_POST['nom'];\n$age = (int)$_POST['age'];\n?>",
           "options": [
-            "Elle vérifie que l'âge est un nombre entier",
+            "Elle vérifie sans rien modifier que l'âge saisi est bien un entier valide",
             "Elle transforme l'âge en chaîne de caractères",
             "Elle supprime l'âge du formulaire",
             "Elle convertit la valeur reçue en entier avant de l'utiliser"
@@ -41480,7 +41480,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "super",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quel est le lien entre le nom d'un champ HTML et $_POST ?",
           "code": "<input type=\"text\" name=\"nom\">",
           "options": [
@@ -41495,7 +41495,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quelle extension PHP permet de dialoguer avec MySQL en procédural ?",
           "code": null,
           "options": [
@@ -41510,14 +41510,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Pourquoi utiliser MySQLi plutôt que les fonctions mysql_* ?",
           "code": null,
           "options": [
             "Les anciennes fonctions mysql_* (sans « i ») sont obsolètes",
             "mysql_* ne savent pas faire de SELECT",
             "MySQLi est plus joli à écrire",
-            "mysql_* n'existent plus dans le langage"
+            "Les anciennes fonctions mysql_* n'acceptaient aucune requête de type SELECT"
           ],
           "answer": 0,
           "explain": "Le cours le précise en encadré : « Les anciennes fonctions <b>mysql_*</b> (sans « i ») sont obsolètes : utiliser MySQLi. »",
@@ -41525,7 +41525,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Quelle est l'étape n°1 du circuit d'une requête ?",
           "code": "<?php\n$connexion = mysqli_connect(\"localhost\", \"root\", \"\");\n?>",
           "options": [
@@ -41540,7 +41540,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait mysqli_select_db($connexion, \"ecole\") ?",
           "code": "<?php\nmysqli_select_db($connexion, \"ecole\");\n?>",
           "options": [
@@ -41555,7 +41555,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle est l'étape n°4 du circuit d'une requête ?",
           "code": "<?php\nmysqli_query($connexion, $requete);\n?>",
           "options": [
@@ -41570,7 +41570,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait mysqli_close($connexion) ?",
           "code": "<?php\nmysqli_close($connexion);\n?>",
           "options": [
@@ -41585,7 +41585,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie mysqli_connect() en cas d'échec ?",
           "code": "<?php\n$connexion = mysqli_connect(\"localhost\", \"root\", \"\");\nif (!$connexion) { … }\n?>",
           "options": [
@@ -41600,7 +41600,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait ce code si la connexion échoue ?",
           "code": "<?php\n$connexion = mysqli_connect(\"localhost\", \"root\", \"\");\nif (!$connexion) {\n  die(\"Connexion échouée\");\n}\n?>",
           "options": [
@@ -41615,7 +41615,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie mysqli_error($connexion) ?",
           "code": "<?php\n$res = mysqli_query($connexion, \"SELECT …\");\nif (!$res) echo mysqli_error($connexion);\n?>",
           "options": [
@@ -41630,12 +41630,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que font ces arguments : mysqli_connect(\"localhost\", \"root\", \"\") ?",
           "code": null,
           "options": [
             "Connexion à l'hôte local, utilisateur root, mot de passe vide",
-            "Connexion avec un mot de passe root",
+            "Connexion distante au serveur root avec un mot de passe chiffré par défaut",
             "Connexion à root sur Internet",
             "Création d'une base « localhost »"
           ],
@@ -41645,11 +41645,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Comment éviter les injections SQL selon le cours ?",
           "code": null,
           "options": [
-            "Écrire toutes les requêtes en majuscules",
+            "Écrire systématiquement tous les mots-clés SQL en lettres majuscules",
             "Contrôler et échapper les données saisies avant de les insérer dans une requête",
             "Utiliser seulement la méthode GET",
             "Fermer la connexion juste après la requête"
@@ -41660,7 +41660,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Dans le circuit du cours, à quelle étape écrit-on la requête SQL ?",
           "code": "<?php\n$req = \"SELECT nom FROM eleves\";\n?>",
           "options": [
@@ -41675,7 +41675,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Dans l'analogie du cours, que représente le « badge » remis au coursier ?",
           "code": "<?php\n$conn = mysqli_connect(\"localhost\",\"root\",\"\",\"ecole\");\n?>",
           "options": [
@@ -41690,11 +41690,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Dans l'animation, que se passe-t-il si le coursier n'a pas le badge ?",
           "code": null,
           "options": [
-            "MySQL répond quand même",
+            "MySQL exécute malgré tout la requête en utilisant la dernière connexion ouverte",
             "Le script redémarre",
             "mysqli_query() échoue : la requête ne peut pas être exécutée",
             "Le badge est recréé automatiquement"
@@ -41705,7 +41705,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie mysqli_select_db() ?",
           "code": null,
           "options": [
@@ -41720,11 +41720,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "mysql",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quel est l'ordre correct du circuit d'une requête ?",
           "code": null,
           "options": [
-            "Connexion → fermeture → requête → exécution",
+            "Connexion → sélection de la base → fermeture → exécution → lecture des lignes",
             "Connexion → sélection de la base → requête → exécution → exploitation → fermeture",
             "Requête → connexion → fermeture → exploitation",
             "Sélection de la base → connexion → exécution → fermeture"
@@ -41735,7 +41735,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie mysqli_query() pour un SELECT ?",
           "code": "<?php\n$res = mysqli_query($connexion, \"SELECT nom FROM eleves\");\n?>",
           "options": [
@@ -41750,7 +41750,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie mysqli_query() pour un INSERT ?",
           "code": "<?php\n$ok = mysqli_query($connexion, \"INSERT INTO eleves (nom) VALUES ('Sami')\");\n?>",
           "options": [
@@ -41765,7 +41765,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle fonction parcourt les lignes d'un SELECT ?",
           "code": "<?php\nwhile ($ligne = mysqli_fetch_array($res)) {\n  echo $ligne[\"nom\"] . \"<br>\";\n}\n?>",
           "options": [
@@ -41780,11 +41780,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que retourne mysqli_fetch_array() par défaut ?",
           "code": "<?php\n$ligne = mysqli_fetch_array($res);\necho $ligne[\"nom\"];\necho $ligne[0];\n?>",
           "options": [
-            "Un tableau uniquement associatif",
+            "Un tableau exclusivement associatif indexé par les noms des colonnes",
             "Un tableau uniquement numérique",
             "Une chaîne de caractères",
             "Un tableau à la fois associatif et numérique"
@@ -41795,7 +41795,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que retourne mysqli_fetch_row() ?",
           "code": "<?php\nwhile ($row = mysqli_fetch_row($res2)) {\n  echo $row[0] . \" a pour moyenne \" . $row[1];\n}\n?>",
           "options": [
@@ -41810,11 +41810,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que vaut $row[\"nom\"] après un mysqli_fetch_row() ?",
           "code": "<?php\n$row = mysqli_fetch_row($res);\necho $row[\"nom\"];\n?>",
           "options": [
-            "Une erreur fatale de PHP",
+            "PHP déclenche immédiatement une erreur fatale qui interrompt tout le script",
             "La valeur de la colonne nom",
             "Rien : la clé « nom » n'existe pas dans ce tableau",
             "0"
@@ -41825,7 +41825,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que retourne mysqli_fetch_array() quand il n'y a plus de ligne ?",
           "code": "<?php\n$ligne = mysqli_fetch_array($res);\n?>",
           "options": [
@@ -41840,7 +41840,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que compte mysqli_num_rows($resultat) ?",
           "code": "<?php\n$nb = mysqli_num_rows($resultat);\n?>",
           "options": [
@@ -41855,7 +41855,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle fonction donne le nombre de lignes touchées par un UPDATE ?",
           "code": "<?php\nmysqli_query($connexion, $req2);\necho mysqli_affected_rows($connexion) . \" ligne(s) modifiée(s).\";\n?>",
           "options": [
@@ -41870,7 +41870,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que renvoie mysqli_insert_id($connexion) ?",
           "code": "<?php\n$req = \"INSERT INTO eleves (nom, moyenne) VALUES ('Ali', 14.5)\";\nmysqli_query($connexion, $req);\necho \"Nouvel id : \" . mysqli_insert_id($connexion);\n?>",
           "options": [
@@ -41885,14 +41885,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Peut-on utiliser mysqli_fetch_array() après un INSERT ?",
           "code": null,
           "options": [
             "Oui, si on a mis LIMIT 1",
             "Non : un INSERT ne renvoie pas de résultat à parcourir",
             "Oui, elle renvoie true",
-            "Oui, elle renvoie la ligne insérée"
+            "Oui, elle renvoie un tableau contenant les valeurs de la ligne tout juste insérée"
           ],
           "answer": 1,
           "explain": "Le cours insiste : l'effet d'un INSERT se lit via <b>mysqli_affected_rows()</b> ou <b>mysqli_insert_id()</b>, « jamais via mysqli_fetch_array() ».",
@@ -41900,7 +41900,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait ce code ?",
           "code": "<?php\n$req = \"DELETE FROM eleves WHERE nom = 'Ali'\";\nmysqli_query($connexion, $req);\n?>",
           "options": [
@@ -41915,12 +41915,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait ce code ?",
           "code": "<?php\n$req2 = \"UPDATE eleves SET moyenne = 15 WHERE nom = 'Ali'\";\nmysqli_query($connexion, $req2);\n?>",
           "options": [
             "Il modifie la moyenne d'Ali pour la mettre à 15",
-            "Il ajoute un élève nommé Ali",
+            "Il insère dans la table un nouvel élève prénommé Ali avec la moyenne 15",
             "Il supprime la moyenne d'Ali",
             "Il crée la colonne moyenne"
           ],
@@ -41930,14 +41930,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que fait la boucle while ($ligne = mysqli_fetch_array($res)) ?",
           "code": null,
           "options": [
             "Elle compte les lignes du résultat",
             "Elle insère des lignes dans la table",
             "Elle lit les lignes une par une et s'arrête quand il n'y en a plus",
-            "Elle lit toujours la même première ligne"
+            "Elle relit indéfiniment la toute première ligne renvoyée par la requête SQL"
           ],
           "answer": 2,
           "explain": "mysqli_fetch_array() extrait la ligne courante et <b>avance automatiquement au suivant</b> à chaque appel ; la boucle s'arrête quand il n'y a plus de ligne.",
@@ -41945,7 +41945,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que renvoie mysqli_query() en cas d'erreur de syntaxe SQL ?",
           "code": "<?php\n$res = mysqli_query($connexion, \"SELCT nom FROM eleves\");\nif (!$res) echo mysqli_error($connexion);\n?>",
           "options": [
@@ -41960,11 +41960,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait ORDER BY nom dans une requête ?",
           "code": "<?php\n$req = \"SELECT id, nom, age, moyenne FROM eleves ORDER BY nom\";\n?>",
           "options": [
-            "Elle limite à un seul nom",
+            "Elle ne conserve dans le résultat que les lignes ayant un nom distinct",
             "Elle trie les lignes par ordre alphabétique du nom",
             "Elle compte les noms",
             "Elle renomme la colonne nom"
@@ -41975,14 +41975,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait SELECT COUNT(*) AS nb FROM eleves ?",
           "code": "<?php\n$total = mysqli_query($connexion, \"SELECT COUNT(*) AS nb FROM eleves\");\n$ligneTotal = mysqli_fetch_array($total);\n?>",
           "options": [
             "Elle supprime un élève",
             "Elle crée la colonne nb",
             "Elle compte les élèves et nomme la colonne « nb »",
-            "Elle additionne les moyennes"
+            "Elle calcule la somme de toutes les valeurs numériques et la renomme « nb »"
           ],
           "answer": 2,
           "explain": "<b>COUNT(*)</b> compte les lignes, et <b>AS nb</b> donne un alias à la colonne du résultat : on lit ensuite $ligneTotal[\"nb\"].",
@@ -41990,12 +41990,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que fait SELECT AVG(moyenne) AS m FROM eleves ?",
           "code": "<?php\n$moy = mysqli_query($connexion, \"SELECT AVG(moyenne) AS m FROM eleves\");\n$ligneMoy = mysqli_fetch_array($moy);\necho round($ligneMoy[\"m\"], 2);\n?>",
           "options": [
             "Elle calcule la moyenne de la colonne moyenne",
-            "Elle compte le nombre de moyennes",
+            "Elle compte le nombre total d'élèves ayant une moyenne supérieure à dix",
             "Elle supprime les moyennes nulles",
             "Elle trie par moyenne"
           ],
@@ -42005,13 +42005,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que fait ORDER BY moyenne DESC LIMIT 1 ?",
           "code": "<?php\n$max = mysqli_query($connexion, \"SELECT nom, moyenne FROM eleves ORDER BY moyenne DESC LIMIT 1\");\n?>",
           "options": [
             "Elle renvoie la plus mauvaise moyenne",
             "Elle renvoie la meilleure moyenne (une seule ligne)",
-            "Elle renvoie toutes les moyennes triées",
+            "Elle trie toutes les moyennes par ordre décroissant sans limiter l'affichage",
             "Elle efface les autres lignes"
           ],
           "answer": 1,
@@ -42020,12 +42020,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "crud",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que fait cette requête de statistiques ?",
           "code": "$parTranche = mysqli_query($connexion,\n \"SELECT CASE WHEN moyenne>=10 THEN 'Admis' ELSE 'Non admis' END AS statut, COUNT(*) AS nb\n  FROM eleves GROUP BY statut\");",
           "options": [
             "Elle modifie les moyennes inférieures à 10",
-            "Elle affiche toutes les moyennes une par une",
+            "Elle trie individuellement tous les élèves selon leur moyenne générale",
             "Elle supprime les élèves non admis",
             "Elle regroupe les élèves en deux catégories : Admis et Non admis"
           ],
@@ -42035,7 +42035,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Dans l'animation, que représente la « guichetière » ?",
           "code": null,
           "options": [
@@ -42050,7 +42050,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Dans l'animation, qui est « le coursier » ?",
           "code": null,
           "options": [
@@ -42065,7 +42065,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Easy",
+          "diff": "Facile",
           "q": "Que représentent « l'administration (SGBD) » et « les archives (BD) » ?",
           "code": null,
           "options": [
@@ -42080,11 +42080,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Qui contrôle les champs nom, téléphone et email ?",
           "code": null,
           "options": [
-            "Le serveur Web, avant l'envoi",
+            "Le serveur Apache lui-même, avant même de transmettre la requête au navigateur",
             "La fonction JavaScript controleFeuille(), dans le navigateur",
             "Le script PHP, sur le serveur",
             "MySQL, avant l'INSERT"
@@ -42095,7 +42095,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Comment la fonction JavaScript est-elle appelée par le formulaire ?",
           "code": "<form id=\"feuille\" onsubmit=\"return controleFeuille()\">",
           "options": [
@@ -42110,14 +42110,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait la fonction si le champ « Nom » est vide ?",
           "code": "if (f.nom.value.trim() === '') {\n  alert('Nom obligatoire'); return false;\n}",
           "options": [
             "Elle affiche une alerte et la feuille est refusée (return false)",
             "Elle envoie quand même le formulaire",
             "Elle vide les autres champs",
-            "Elle insère un nom par défaut"
+            "Elle remplit automatiquement le champ avec la valeur « Anonyme » puis envoie"
           ],
           "answer": 0,
           "explain": "Le premier contrôle vérifie que le nom est rempli : sinon <b>alert(...)</b> puis <b>return false</b>, et la feuille ne part pas au serveur.",
@@ -42125,13 +42125,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Comment le téléphone est-il validé dans controle.js ?",
           "code": "for (let k = 0; k < tel.length; k++) {\n  let c = tel[k];\n  if ((c < '0' || c > '9') && c !== ' ' && c !== '+') bon = false;\n}",
           "options": [
             "On ne valide pas le téléphone",
             "Une boucle for vérifie chaque caractère : chiffres, espaces ou « + » uniquement",
-            "Une expression régulière très longue",
+            "Une fonction prédéfinie de MySQL appelée automatiquement avant l'enregistrement",
             "Une fonction PHP côté serveur"
           ],
           "answer": 1,
@@ -42140,11 +42140,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Quelle condition l'email doit-il respecter ?",
           "code": "if (aro < 1 || pt < aro + 2) { alert('Email invalide'); return false; }",
           "options": [
-            "Deux « @ » obligatoires",
+            "Au moins deux symboles « @ » séparés par un point dans le nom de domaine",
             "Un point avant le « @ »",
             "Au moins 10 caractères",
             "Un « @ » présent, et un point après lui"
@@ -42155,7 +42155,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quand la feuille part-elle vers le serveur ?",
           "code": null,
           "options": [
@@ -42170,7 +42170,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Avec quelle méthode les données arrivent-elles à PHP ?",
           "code": "// côté PHP\n$nom   = $_POST['nom'];\n$tel   = $_POST['tel'];\n$email = $_POST['email'];",
           "options": [
@@ -42185,13 +42185,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Dans l'animation, à quoi sert le badge $conn ?",
           "code": "$conn = mysqli_connect(\"localhost\",\"root\",\"\",\"ecole\");",
           "options": [
             "C'est l'identifiant du client",
             "C'est le mot de passe de MySQL",
-            "C'est le nom de la base de données",
+            "C'est le nom de la table cible à rappeler au début de chaque requête SQL",
             "C'est la ressource de connexion, à présenter à chaque requête"
           ],
           "answer": 3,
@@ -42200,7 +42200,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Pour un INSERT, que répond l'administration au coursier ?",
           "code": "$res = mysqli_query($conn, $sql);\nif ($res) { echo \"Élève enregistré\"; }",
           "options": [
@@ -42215,12 +42215,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Pour un SELECT, que prépare l'administration ?",
           "code": "$sql = \"SELECT * FROM eleves\";\n$res = mysqli_query($conn, $sql);\nwhile ($row = mysqli_fetch_row($res)) {\n    echo '<option value=\"'.$row[0].'\">'.$row[0].' · '.$row[1].'</option>';\n}",
           "options": [
             "Rien du tout : le SELECT ne renvoie rien",
-            "Une réponse true/false",
+            "Une simple valeur booléenne true indiquant que la table contient des lignes",
             "Une « armoire » $res : un tiroir (une ligne) par enregistrement",
             "Une simple chaîne de caractères"
           ],
@@ -42230,12 +42230,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Pourquoi la boucle while s'arrête-t-elle ?",
           "code": "while ($row = mysqli_fetch_row($res)) { … }",
           "options": [
             "Parce que mysqli_fetch_row() renvoie null quand il n'y a plus de ligne",
-            "Parce que $res devient false",
+            "Parce que la variable $res est automatiquement détruite dès la première lecture",
             "Parce que la table est vide au départ",
             "Elle ne s'arrête pas"
           ],
@@ -42245,14 +42245,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que contient la page retournée au client pour un SELECT ?",
           "code": null,
           "options": [
             "Un simple message « OK »",
             "Une liste <select> avec une <option> par élève",
             "Une image du résultat",
-            "Un tableau HTML"
+            "Un tableau HTML complet comportant une bordure autour de chaque colonne"
           ],
           "answer": 1,
           "explain": "Dans l'animation, le coursier rapporte une page contenant une liste <b><select></b> avec 4 <b><option></b> (Ali, Sara, Omar, Lina) — un élève par ligne.",
@@ -42260,7 +42260,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait mysqli_close($conn) à la fin de l'animation ?",
           "code": "$conn = mysqli_connect(\"localhost\",\"root\",\"\",\"ecole\");\n// … requêtes …\nmysqli_close($conn);",
           "options": [
@@ -42275,13 +42275,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "guichet",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que recommande l'animation pour se protéger des injections SQL en production ?",
           "code": null,
           "options": [
             "Utiliser les requêtes préparées (mysqli_prepare)",
             "Écrire les noms en majuscules",
-            "Éviter MySQLi et revenir à mysql_*",
+            "Remplacer systématiquement l'extension MySQLi par les anciennes fonctions mysql_*",
             "Ne jamais utiliser de formulaire"
           ],
           "answer": 0,
@@ -42290,7 +42290,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle table commune utilisent les 4 pages complètes du cours ?",
           "code": null,
           "options": [
@@ -42305,13 +42305,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait la page ajouter.php ?",
           "code": "<?php\nif ($_SERVER[\"REQUEST_METHOD\"] == \"POST\") {\n  $nom = $_POST['nom'];\n  $age = (int)$_POST['age'];\n  $moyenne = (float)$_POST['moyenne'];\n  …\n}",
           "options": [
             "Elle supprime un élève",
             "Elle affiche la liste des élèves",
-            "Elle modifie la moyenne d'un élève",
+            "Elle met à jour la moyenne générale d'un élève existant envoyé en méthode GET",
             "Elle insère un nouvel élève quand le formulaire est envoyé en POST"
           ],
           "answer": 3,
@@ -42320,7 +42320,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Qu'affiche ajouter.php en cas de succès ?",
           "code": "<?php\nif (mysqli_query($connexion, $req)) {\n  echo \"Élève ajouté (id = \" . mysqli_insert_id($connexion) . \").\";\n} else {\n  echo \"Erreur : \" . mysqli_error($connexion);\n}\n?>",
           "options": [
@@ -42335,7 +42335,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait liste.php ?",
           "code": "<?php\n$req = \"SELECT id, nom, age, moyenne FROM eleves ORDER BY nom\";\n$resultat = mysqli_query($connexion, $req);\n?>",
           "options": [
@@ -42350,13 +42350,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que fait <?php echo $ligne[\"moyenne\"]; ?> dans liste.php ?",
           "code": "<td><?php echo $ligne[\"moyenne\"]; ?></td>",
           "options": [
             "Il affiche la moyenne de la ligne courante dans la cellule du tableau",
             "Il trie les lignes par moyenne",
-            "Il calcule la moyenne de tous les élèves",
+            "Il recalcule et affiche la moyenne générale de l'ensemble des élèves listés",
             "Il modifie la moyenne"
           ],
           "answer": 0,
@@ -42365,7 +42365,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que signifie cette ligne de liste.php ?",
           "code": "<p><?php echo mysqli_num_rows($resultat); ?> élève(s) au total.</p>",
           "options": [
@@ -42380,12 +42380,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait modifier.php ?",
           "code": "<?php\n$req = \"UPDATE eleves SET moyenne = $moyenne WHERE id = $id\";\nmysqli_query($connexion, $req);\nif (mysqli_affected_rows($connexion) > 0) { echo \"Moyenne mise à jour…\"; }",
           "options": [
             "Elle supprime un élève",
-            "Elle liste les élèves par id",
+            "Elle affiche la liste complète des élèves triée par identifiant croissant",
             "Elle ajoute un élève",
             "Elle met à jour la moyenne d'un élève désigné par son id"
           ],
@@ -42395,13 +42395,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Que signifie le message « Aucune ligne modifiée (id introuvable ?) » ?",
           "code": "<?php\nif (mysqli_affected_rows($connexion) > 0) { … } else { echo \"Aucune ligne modifiée (id introuvable ?).\"; }\n?>",
           "options": [
             "mysqli_affected_rows() vaut 0 : aucun élève ne porte cet id",
             "La moyenne est égale à zéro",
-            "La connexion a échoué",
+            "La connexion au serveur MySQL s'est interrompue avant la lecture de l'identifiant",
             "La table eleves n'existe pas"
           ],
           "answer": 0,
@@ -42410,7 +42410,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Dans statistiques.php, que fait round($ligneMoy[\"m\"], 2) ?",
           "code": "<?php\n$moy = mysqli_query($connexion, \"SELECT AVG(moyenne) AS m FROM eleves\");\n$ligneMoy = mysqli_fetch_array($moy);\necho \"Moyenne générale : \" . round($ligneMoy[\"m\"], 2) . \"<br>\";\n?>",
           "options": [
@@ -42425,7 +42425,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que fait le champ <input name=\"moyenne\" type=\"number\" step=\"0.01\"> ?",
           "code": null,
           "options": [
@@ -42440,11 +42440,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Hard",
+          "diff": "Difficile",
           "q": "Pourquoi les 4 pages font-elles toutes le même début de code ?",
           "code": "<?php\n$connexion = mysqli_connect(\"localhost\", \"root\", \"\");\nmysqli_select_db($connexion, \"ecole\");\n?>",
           "options": [
-            "Pour éviter d'écrire des requêtes SQL",
+            "Pour exécuter automatiquement les quatre requêtes SQL en une seule transaction",
             "Parce qu'elles utilisent la même table et le même schéma de connexion",
             "Pour occuper le serveur",
             "Parce que PHP l'exige"
@@ -42455,7 +42455,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Quelle page affiche une répartition entre admis et non admis ?",
           "code": null,
           "options": [
@@ -42470,14 +42470,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
         },
         {
           "cat": "pages",
-          "diff": "Medium",
+          "diff": "Moyen",
           "q": "Que teste la condition if ($_SERVER[\"REQUEST_METHOD\"] == \"POST\") dans ajouter.php ?",
           "code": null,
           "options": [
             "Que le formulaire a bien été envoyé avant de traiter les données",
             "Que l'utilisateur est connecté",
             "Que la table eleves existe",
-            "Que la connexion MySQL est active"
+            "Que la connexion au serveur MySQL est bien ouverte avant d'afficher la page HTML"
           ],
           "answer": 0,
           "explain": "Le test évite de traiter des champs vides au premier affichage : les données ne sont traitées que lorsque le formulaire a été envoyé en POST.",
@@ -42826,7 +42826,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           cats[Math.floor(Math.random() * cats.length)].id,
           cats[Math.floor(Math.random() * cats.length)].id,
         ]);
-        selDiff = ["Mixed", "Easy", "Medium", "Hard"][
+        selDiff = ["Mixed", "Facile", "Moyen", "Difficile"][
           Math.floor(Math.random() * 4)
         ];
         selMode = ["practice", "exam", "death"][Math.floor(Math.random() * 3)];
@@ -42853,7 +42853,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
       function quickStart(kind) {
         if (kind === "eclair") {
           selCats = new Set(CATS.map((c) => c.id));
-          selDiff = "Hard";
+          selDiff = "Difficile";
           selMode = "death";
           $("qCount").value = 10;
         }
@@ -42951,7 +42951,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         playTone(600, 0.08, "sine");
       }
       function diffMult(d) {
-        return d === "Easy" ? 1 : d === "Medium" ? 1.5 : 2;
+        return d === "Facile" || d === "Easy" ? 1 : d === "Moyen" || d === "Medium" ? 1.5 : 2;
       }
       function ptsFor(q, timeBonus) {
         return Math.round(
@@ -43012,9 +43012,9 @@ Check your Browserslist config to be sure that your targets are set up correctly
         db.textContent = diffFr(q.diff).toUpperCase();
         db.className =
           "text-[11px] font-mono font-bold px-2.5 py-1 rounded-full " +
-          (q.diff === "Easy"
+          (q.diff === "Facile" || q.diff === "Easy"
             ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
-            : q.diff === "Medium"
+            : q.diff === "Moyen" || q.diff === "Medium"
             ? "bg-amber-500/20 text-amber-300 border border-amber-400/30"
             : "bg-red-500/20 text-red-300 border border-red-400/30");
         $("qModeBadge").textContent =
@@ -43870,10 +43870,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
               ) => `<div class="rounded-2xl border border-white/10 bg-black/30 p-3 text-sm">
   <div class="flex gap-2 items-center flex-wrap"><span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-200 border border-indigo-400/20">${escapeHtml(
     nomCat(q.cat)
-  )}</span><span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
-                q.diff === "Easy"
+              )}</span><span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+                q.diff === "Facile" || q.diff === "Easy"
                   ? "bg-emerald-500/15 text-emerald-300"
-                  : q.diff === "Medium"
+                  : q.diff === "Moyen" || q.diff === "Medium"
                   ? "bg-amber-500/15 text-amber-300"
                   : "bg-red-500/15 text-red-300"
               }">${diffFr(

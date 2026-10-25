@@ -2075,6 +2075,7 @@
     var nomQuiz = "Quiz STI";
     if (p.indexOf("html-css") !== -1) nomQuiz = "Quiz HTML/CSS";
     else if (p.indexOf("javascript") !== -1) nomQuiz = "Quiz JS";
+    else if (p.indexOf("tableaux") !== -1) nomQuiz = "Quiz Tableaux";
     else if (p.indexOf("pp.html") !== -1) nomQuiz = "Défi PHP";
     else if (p.indexOf("php") !== -1) nomQuiz = "Quiz PHP";
     else if (p.indexOf("sql") !== -1) nomQuiz = "Quiz SQL";
@@ -2113,6 +2114,16 @@
         var mPct2 = tRes.match(/(\d+)\s*%/);
         var s20p = mPct2 ? Math.round((parseInt(mPct2[1], 10) / 100) * 20) : null;
         return { note: s20p != null ? (s20p + "/20 (" + tRes + ")") : tRes, sur20: s20p != null ? s20p : 15 };
+      }
+      /* 4. Quiz des tableaux : .qt-score (ex: "8 / 10 bonnes réponses (80 %)") */
+      var qtSc = document.querySelector(".qt-score");
+      if (qtSc && qtSc.textContent && qtSc.textContent.trim()) {
+        var txtQt = qtSc.textContent.trim();
+        var mQt = txtQt.match(/(\d+)\s*\/\s*(\d+)/);
+        if (mQt && parseInt(mQt[2], 10) > 0) {
+          var s20qt = (parseInt(mQt[1], 10) / parseInt(mQt[2], 10)) * 20;
+          return { note: mQt[1] + "/" + mQt[2] + " (" + Math.round(s20qt) + "/20)", sur20: Math.round(s20qt * 10) / 10 };
+        }
       }
       /* Score en direct pendant la partie */
       var liveEl = document.getElementById("heroScore") || document.getElementById("stat-score") || document.getElementById("qScore") || document.getElementById("quizScore");
@@ -5942,6 +5953,17 @@
     var cLoc = lireCacheSessionLocal() || {};
     var maCl = currentClasse || cLoc.classe || "";
     if (cfgSecurite.verrouActif && estCibleParVerrou(cfgSecurite.verrouCible, maCl)) return true;
+    if (location.pathname.toLowerCase().indexOf("/quiz/") !== -1) {
+      var badgesExam = [
+        document.getElementById("qMode"),
+        document.getElementById("qModeBadge"),
+        document.getElementById("quizModeBadge")
+      ];
+      for (var bi = 0; bi < badgesExam.length; bi++) {
+        var bEl = badgesExam[bi];
+        if (bEl && bEl.offsetParent !== null && /EXAM/i.test(bEl.textContent || "")) return true;
+      }
+    }
     return false;
   }
 

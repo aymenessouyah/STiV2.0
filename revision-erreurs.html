@@ -162,7 +162,7 @@
 (function () {
   "use strict";
   var LIBELLE_QUIZ = { "html-css": "🌐 HTML5 & CSS3", "javascript": "⚡ JavaScript", "sql": "🗄️ SQL (BD)", "php": "🐘 PHP", "tableaux": "🃏 Quiz des tableaux" };
-  var LIBELLE_MODULE = { html5: "HTML5", css3: "CSS3", javascript: "JavaScript", sql: "SQL", php: "PHP", defis: "37 Défis JS", "recap-php": "Récap PHP", mix: "Mix" };
+  var LIBELLE_MODULE = { html5: "HTML5", css3: "CSS3", javascript: "JavaScript", sql: "SQL", php: "PHP", defis: "66 Défis JS & HTML", "recap-php": "Récap PHP", mix: "🎲 Mix", revision: "🎯 Révision erreurs" };
   var PAGES = { "html-css": "quiz/html-css.html", "javascript": "quiz/javascript.html", "sql": "quiz/sql.html", "php": "quiz/php.html", "tableaux": "quiz/tableaux.html" };
   var contenu = document.getElementById("contenu");
 
@@ -188,28 +188,48 @@
     }
     var rows = null;
     try {
-      var rr = await client.from("sti_quiz_reponses")
-        .select("quiz,module,question_id,enonce,correct,cree_le")
-        .order("cree_le", { ascending: false }).limit(4000);
-      if (!rr.error) rows = rr.data || [];
+      if (window.STIQuizSync && typeof window.STIQuizSync.chargerReponses === "function") {
+        rows = await window.STIQuizSync.chargerReponses(8000);
+      }
+      if (rows === null) {
+        var cumul = [];
+        for (var off = 0; off < 8000; off += 1000) {
+          var rr = await client.from("sti_quiz_reponses")
+            .select("quiz,module,question_id,enonce,correct,cree_le")
+            .eq("user_id", u.id)
+            .order("cree_le", { ascending: false })
+            .range(off, off + 999);
+          if (rr.error) { cumul = null; break; }
+          var lot = rr.data || [];
+          cumul = cumul.concat(lot);
+          if (lot.length < 1000) break;
+        }
+        rows = cumul;
+      }
     } catch (e) {}
     if (rows === null) { msg('<span class="gros">⚠️</span>Impossible de charger tes résultats (connexion ?). Réessaie dans un instant.'); return; }
     if (!rows.length) {
       msg('<span class="gros">🎯</span>Aucune réponse détaillée pour le moment.<br>Joue un quiz : tes questions ratées apparaîtront ici automatiquement.');
       return;
     }
-    /* derniere reponse par question (rows tries du plus recent au plus ancien) */
+    /* derniere reponse par question (rows tries du plus recent au plus ancien ; cle unifiee par quiz + question_id v456) */
     var parQuestion = {};
     rows.forEach(function (r) {
-      var cle = r.quiz + "|" + (r.module || "") + "|" + r.question_id;
-      if (!parQuestion[cle]) parQuestion[cle] = { rep: r, aRate: false, dernierCorrect: r.correct };
+      var cle = r.quiz + "|" + r.question_id;
+      if (!parQuestion[cle]) {
+        parQuestion[cle] = { rep: r, moduleCanonique: null, aRate: false, dernierCorrect: !!r.correct };
+      }
+      if (r.module && r.module !== "mix" && r.module !== "revision" && !parQuestion[cle].moduleCanonique) {
+        parQuestion[cle].moduleCanonique = r.module;
+      }
       if (!r.correct) parQuestion[cle].aRate = true;
     });
     var groupes = {}, totalRater = 0, totalMaitrisees = 0;
     Object.keys(parQuestion).forEach(function (cle) {
       var q = parQuestion[cle], r = q.rep;
-      var gcle = r.quiz + "|" + (r.module || "");
-      if (!groupes[gcle]) groupes[gcle] = { quiz: r.quiz, module: r.module || null, aRetravailler: [], maitrisees: 0 };
+      var modGroupe = q.moduleCanonique || r.module || "";
+      var gcle = r.quiz + "|" + modGroupe;
+      if (!groupes[gcle]) groupes[gcle] = { quiz: r.quiz, module: modGroupe || null, aRetravailler: [], maitrisees: 0 };
       if (!q.dernierCorrect) { groupes[gcle].aRetravailler.push(r); totalRater++; }
       else if (q.aRate) { groupes[gcle].maitrisees++; totalMaitrisees++; }
     });
