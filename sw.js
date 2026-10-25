@@ -6,15 +6,10 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v452-banc-essai-live";
+var UPDATE_ID = "v451-chantier-exercices-2";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
-  { url: "./banc-essai-bac.html", revision: "banc-essai-live-v452" },
-  { url: "./assets/js/banc-essai-bac.js", revision: "banc-essai-live-v452" },
-  { url: "./index.html", revision: "banc-essai-live-v452" },
-  { url: "./assets/js/exercices-atelier.js", revision: "banc-essai-live-v452" },
-  { url: "./ma-fiche-revision.html", revision: "banc-essai-live-v452" },
   { url: "./exercices/devoirs-blancs-bac.html", revision: "chantier-exercices-v451" },
   { url: "./assets/js/exercices-atelier.js", revision: "chantier-exercices-v451" },
   { url: "./exercices/atelier-interactif-bac.html", revision: "chantier-exercices-v451" },
