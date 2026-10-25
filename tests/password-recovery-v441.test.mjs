@@ -679,7 +679,7 @@ test('v443 : le bouton clé (#sti-mdp-btn-top) est directement visible en mode m
   // 1) Design system SaaS chargé dans <head> + initialisation thème à 0 ms + polices modernes + logo d'installation PWA
   const headHtml = adminHtml.slice(0, adminHtml.indexOf('</head>'));
   assert.match(headHtml, /assets\/fonts\/fonts\.css/);
-  assert.match(headHtml, /assets\/css\/admin-saas\.css\?v=444/);
+  assert.match(headHtml, /assets\/css\/admin-saas\.css\?v=4\d{2}/);
   assert.match(headHtml, /sti-admin-theme/);
   assert.match(adminHtml, /class="entete-logo-install"><img src="assets\/icons\/sti-icon-512\.png"/);
   assert.match(adminCss, /"Comic Sans MS"/);
@@ -744,6 +744,46 @@ test('v444 : le badge officiel Administrateur STI V2.0 est intégré dans le tab
   assert.match(adminCss, /\.badge-sti-id-card\s*\{/);
   assert.match(adminCss, /\.b-sti-statut\.hors-ligne\s*\{[\s\S]*?color:\s*var\(--adm-red\)\s*!important/);
   assert.match(swJs, /admin-aymen\.jpg/);
+});
+
+test('v445 : la photo élève remplace la boîte des initiales dans le tableau de bord et la roue avec validation Admin 1-clic', () => {
+  const sql = read('supabase/migrations/20261025_student_photos_v445.sql');
+  const adminHtml = read('admin.html');
+  const adminCss = read('assets/css/admin-saas.css');
+  const adminJs = read('assets/js/admin.js');
+  const accesJs = read('assets/js/acces.js');
+  const roueInitJs = read('assets/js/roue-initiales.js');
+  const mobileNavJs = read('assets/js/mobile-nav.js');
+  const swJs = read('sw.js');
+
+  assert.match(sql, /photo_url\s+text/);
+  assert.match(sql, /photo_attente\s+text/);
+  assert.match(sql, /eleve_proposer_photo/);
+  assert.match(sql, /admin_gerer_photo_eleve/);
+
+  assert.match(roueInitJs, /sti-roue-photo-img/);
+  assert.match(roueInitJs, /__stiRafraichirRoueAvatar/);
+  assert.match(mobileNavJs, /roue-initiales\.js\?v=445/);
+
+  assert.match(accesJs, /eleve_proposer_photo/);
+  assert.match(accesJs, /sti-pan-avatar-box/);
+  assert.match(accesJs, /sti-pan-photo-btn/);
+  const compFn = accesJs.slice(accesJs.indexOf('function compresserPhotoCarreeSTI'), accesJs.indexOf('window.__stiCompresserPhotoCarree'));
+  assert.match(compFn, /readAsDataURL/);
+  assert.doesNotMatch(compFn, /createObjectURL/);
+
+  assert.match(adminHtml, /id="alerte-photos-attente"/);
+  assert.match(adminHtml, /admin-saas\.css\?v=445/);
+  assert.match(adminHtml, /admin\.js\?v=445-photos-eleves/);
+  assert.match(adminCss, /\.noeud-pastille-img/);
+  assert.match(adminCss, /\.noeud-photo-attente-box/);
+  assert.match(adminCss, /\.tb-mini-avatar/);
+  assert.match(adminCss, /\.fiche-photo-moderation/);
+  assert.match(adminJs, /admin_gerer_photo_eleve/);
+  assert.match(adminJs, /noeud-pastille-img/);
+  assert.match(adminJs, /tb-mini-avatar/);
+  assert.match(adminJs, /fiche-avatar-img/);
+  assert.match(swJs, /v445-student-photos-1/);
 });
 
 

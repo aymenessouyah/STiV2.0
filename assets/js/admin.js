@@ -36,6 +36,69 @@
     return s;
   }
 
+  /* v445 : Validation & compression CSP-safe (FileReader + canvas 144x144, sans blob:) des photos élèves */
+  function photoEleveSureAdmin(u) {
+    var s = String(u || "").trim();
+    if (!s || s.length > 65536) return "";
+    if (!/^data:image\/(jpeg|jpg|png|webp);base64,[a-z0-9+/=]+$/i.test(s)) return "";
+    return s;
+  }
+
+  function compresserPhotoEleveAdmin(file, onOk, onErr) {
+    if (!file || !/^image\/(jpeg|jpg|png|webp)$/i.test(file.type || "")) {
+      if (onErr) onErr("Veuillez sélectionner une image JPG, PNG ou WebP.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      if (onErr) onErr("Image trop lourde (maximum 10 Mo avant compression).");
+      return;
+    }
+    var lecteur = new FileReader();
+    lecteur.onerror = function () {
+      if (onErr) onErr("Lecture du fichier photo impossible.");
+    };
+    lecteur.onload = function () {
+      var srcData = String(lecteur.result || "");
+      var img = new Image();
+      img.onerror = function () {
+        if (onErr) onErr("Format d'image invalide.");
+      };
+      img.onload = function () {
+        try {
+          var w = img.naturalWidth || img.width || 144;
+          var h = img.naturalHeight || img.height || 144;
+          var cote = Math.min(w, h);
+          var sx = Math.max(0, Math.floor((w - cote) / 2));
+          var sy = Math.max(0, Math.floor((h - cote) / 2));
+          var taille = 144;
+          var cv = document.createElement("canvas");
+          cv.width = taille;
+          cv.height = taille;
+          var ctx = cv.getContext("2d");
+          ctx.fillStyle = "#1e293b";
+          ctx.fillRect(0, 0, taille, taille);
+          ctx.drawImage(img, sx, sy, cote, cote, 0, 0, taille, taille);
+          var out = cv.toDataURL("image/webp", 0.80);
+          if (!/^data:image\/webp;base64,/i.test(out) || out.length > 46000) {
+            out = cv.toDataURL("image/jpeg", 0.78);
+          }
+          if (out.length > 46000) {
+            out = cv.toDataURL("image/jpeg", 0.62);
+          }
+          if (!photoEleveSureAdmin(out)) {
+            if (onErr) onErr("Impossible de compresser cette photo sous la limite autorisée.");
+            return;
+          }
+          if (onOk) onOk(out);
+        } catch (err) {
+          if (onErr) onErr("Erreur de redimensionnement de la photo.");
+        }
+      };
+      img.src = srcData;
+    };
+    lecteur.readAsDataURL(file);
+  }
+
   /* Affichage dynamique du numéro de version du tableau de bord & du cache PWA */
   (function afficherVersionAdmin() {
     var versionDefaut = "v66";
@@ -365,7 +428,8 @@
   var chargeAdminCompleteEnAttente = false;
   var derniereApplicationAdminTs = 0;
   var OCTETS_RESEAU_ADMIN_SESSION = 0;
-  var COLONNES_PROFILS_ADMIN = "id,email,phone,nom,prenom,lycee,classe,statut,cree_le";
+  var COLONNES_PROFILS_ADMIN_BASE = "id,email,phone,nom,prenom,lycee,classe,statut,cree_le";
+  var COLONNES_PROFILS_ADMIN = COLONNES_PROFILS_ADMIN_BASE + ",photo_url,photo_attente,photo_attente_le";
   var COLONNES_ACCES_ADMIN = "id,user_id,debut,fin,duree_sec,lieu,page";
   var dureesSemaine = {}, dureesTotales = {}, semainesDispo = [];
   var messagesDiffuses = [], lecturesParMsg = {}, reponsesParMsg = {}, fichiersParMsg = {}, questionsLibres = [];
@@ -439,6 +503,105 @@
     majFiltreClasses();
     rendAbonnes();
     majBandeauEtCompteursClasse();
+    if (typeof verifierNouvellesDemandes === "function") verifierNouvellesDemandes();
+  }
+
+  /* v445 : Gestion Admin 1-clic des photos élèves (valider / refuser / definir / supprimer) */
+  var inputPhotoEleveAdminGlobal = null;
+  var profilPhotoCibleAdmin = null;
+
+  function gererPhotoEleveAdmin(p, action, dataUrl, onDone) {
+    if (!p || !p.id) return;
+    var patchOptimiste = { updated_at: new Date().toISOString() };
+    if (action === "valider") {
+      if (!photoEleveSureAdmin(p.photo_attente)) return;
+      patchOptimiste.photo_url = photoEleveSureAdmin(p.photo_attente);
+      patchOptimiste.photo_attente = null;
+      patchOptimiste.photo_attente_le = null;
+    } else if (action === "refuser") {
+      patchOptimiste.photo_attente = null;
+      patchOptimiste.photo_attente_le = null;
+    } else if (action === "definir") {
+      if (!photoEleveSureAdmin(dataUrl)) return;
+      patchOptimiste.photo_url = photoEleveSureAdmin(dataUrl);
+      patchOptimiste.photo_attente = null;
+      patchOptimiste.photo_attente_le = null;
+    } else if (action === "supprimer") {
+      patchOptimiste.photo_url = null;
+      patchOptimiste.photo_attente = null;
+      patchOptimiste.photo_attente_le = null;
+    } else {
+      return;
+    }
+
+    function finaliserSuccesPhoto() {
+      majCacheLocalProfil(p.id, patchOptimiste);
+      var profFrais = profils.find(function (it) { return it && String(it.id) === String(p.id); }) || Object.assign({}, p, patchOptimiste);
+      if (typeof modalFicheEleve !== "undefined" && modalFicheEleve && modalFicheEleve.classList.contains("ouvert") &&
+          typeof ficheEleveCourant !== "undefined" && ficheEleveCourant && String(ficheEleveCourant.id) === String(p.id)) {
+        ouvrirFicheEleve(profFrais);
+      }
+      if (typeof peindreListeUsersMessengerAdmin === "function") {
+        try { peindreListeUsersMessengerAdmin(); } catch (eM1) {}
+      }
+      if (typeof peindreConversationMessengerAdmin === "function") {
+        try { peindreConversationMessengerAdmin(); } catch (eM2) {}
+      }
+      if (typeof toastAdmin === "function") {
+        var msgToast = action === "valider"
+          ? "✅ Photo de l'élève validée et activée partout (Tableau de bord + Roue)."
+          : (action === "refuser"
+            ? "🗑️ Proposition de photo refusée."
+            : (action === "definir" ? "📷 Photo de l'élève enregistrée et activée." : "🗑️ Photo de l'élève retirée."));
+        toastAdmin(msgToast, "ok");
+      }
+      if (onDone) onDone(true);
+    }
+
+    if (sb && typeof sb.rpc === "function") {
+      sb.rpc("admin_gerer_photo_eleve", {
+        p_uid: p.id,
+        p_action: action,
+        p_data_url: action === "definir" ? patchOptimiste.photo_url : null
+      }).then(function (res) {
+        if (res && res.error) {
+          if (typeof toastAdmin === "function") toastAdmin("⚠️ Erreur photo : " + (res.error.message || "opération refusée"), "err");
+          if (onDone) onDone(false);
+          return;
+        }
+        finaliserSuccesPhoto();
+      }).catch(function () {
+        if (typeof toastAdmin === "function") toastAdmin("⚠️ Connexion interrompue pendant la mise à jour de la photo.", "err");
+        if (onDone) onDone(false);
+      });
+    } else {
+      finaliserSuccesPhoto();
+    }
+  }
+
+  function declencherUploadPhotoEleveAdmin(p) {
+    if (!p || !p.id) return;
+    profilPhotoCibleAdmin = p;
+    if (!inputPhotoEleveAdminGlobal) {
+      inputPhotoEleveAdminGlobal = document.createElement("input");
+      inputPhotoEleveAdminGlobal.type = "file";
+      inputPhotoEleveAdminGlobal.accept = "image/jpeg,image/png,image/webp";
+      inputPhotoEleveAdminGlobal.style.display = "none";
+      document.body.appendChild(inputPhotoEleveAdminGlobal);
+      inputPhotoEleveAdminGlobal.addEventListener("change", function () {
+        var f = inputPhotoEleveAdminGlobal.files && inputPhotoEleveAdminGlobal.files[0];
+        inputPhotoEleveAdminGlobal.value = "";
+        var cible = profilPhotoCibleAdmin;
+        if (!f || !cible) return;
+        compresserPhotoEleveAdmin(f, function (dataUrl) {
+          gererPhotoEleveAdmin(cible, "definir", dataUrl);
+        }, function (msgErr) {
+          if (typeof toastAdmin === "function") toastAdmin("⚠️ " + msgErr, "err");
+          else alert(msgErr);
+        });
+      });
+    }
+    inputPhotoEleveAdminGlobal.click();
   }
 
   function synchroniserActionsAdminEnAttente() {
@@ -1404,6 +1567,23 @@
       } else {
         bAl.classList.remove("visible");
         document.title = "Tableau de bord — STI V2.0";
+      }
+    }
+    var photosAtt = profils.filter(function (p) { return !!photoEleveSureAdmin(p && p.photo_attente); });
+    var bAlPh = document.getElementById("alerte-photos-attente");
+    var tAlPh = document.getElementById("alerte-photos-attente-txt");
+    if (bAlPh && tAlPh) {
+      if (photosAtt.length > 0) {
+        bAlPh.classList.add("visible");
+        tAlPh.textContent = "📸 " + photosAtt.length + " photo(s) de profil d'élève(s) en attente de validation : " +
+          photosAtt.map(function (p) { return nomPrenomTexte(p) || contact(p); }).join(" · ") +
+          " — Cliquer pour examiner";
+        bAlPh.onclick = function () {
+          if (photosAtt[0]) ouvrirFicheEleve(photosAtt[0]);
+        };
+      } else {
+        bAlPh.classList.remove("visible");
+        bAlPh.onclick = null;
       }
     }
     var vus = {};
@@ -2482,9 +2662,9 @@
     var options = avecCount ? { count: "exact" } : undefined;
     var cols = COLONNES_PROFILS_ADMIN + (supportDeltaProfilsAdmin === false ? "" : ",updated_at");
     return sb.from("profiles").select(cols, options).order("cree_le", { ascending: false }).then(function (r) {
-      if (r && r.error && supportDeltaProfilsAdmin !== false && /updated_at|column/i.test(r.error.message || "")) {
+      if (r && r.error && /updated_at|photo_|column/i.test(r.error.message || "")) {
         supportDeltaProfilsAdmin = false;
-        return sb.from("profiles").select(COLONNES_PROFILS_ADMIN, options).order("cree_le", { ascending: false });
+        return sb.from("profiles").select(COLONNES_PROFILS_ADMIN_BASE, options).order("cree_le", { ascending: false });
       }
       if (r && !r.error && cols.indexOf("updated_at") !== -1) supportDeltaProfilsAdmin = true;
       return r;
@@ -3385,13 +3565,23 @@
         haut.className = "noeud-haut";
 
         var pastille = document.createElement("div");
-        pastille.className = "noeud-pastille";
+        var photoValideeNd = photoEleveSureAdmin(p.photo_url);
+        var photoAttenteNd = photoEleveSureAdmin(p.photo_attente);
+        pastille.className = "noeud-pastille" + (photoValideeNd ? " avec-photo" : "");
         var ini = (
           ((p.prenom || "").trim().charAt(0) || "") +
           ((p.nom || "").trim().charAt(0) || "")
         ).toUpperCase();
         if (!ini) ini = (contact(p).replace(/[^a-zA-Z0-9]/g, "").slice(0, 2) || "ST").toUpperCase();
-        pastille.textContent = ini;
+        if (photoValideeNd) {
+          var imgPastille = document.createElement("img");
+          imgPastille.className = "noeud-pastille-img";
+          imgPastille.src = photoValideeNd;
+          imgPastille.alt = "";
+          pastille.appendChild(imgPastille);
+        } else {
+          pastille.textContent = ini;
+        }
         if (estEnLigne(p.id)) {
           var ptOn = document.createElement("span");
           ptOn.className = "point-online";
@@ -3420,6 +3610,43 @@
           alerteNd.setAttribute("aria-label", "Nouvelle demande non encore confirmée");
           alerteNd.innerHTML = "<b aria-hidden='true'>!</b><span>À confirmer</span>";
           haut.appendChild(alerteNd);
+        }
+
+        var blocPhotoAttenteNd = null;
+        if (photoAttenteNd) {
+          blocPhotoAttenteNd = document.createElement("div");
+          blocPhotoAttenteNd.className = "noeud-photo-attente-box";
+          var gPhNd = document.createElement("div");
+          gPhNd.className = "noeud-photo-attente-gauche";
+          var imgAttNd = document.createElement("img");
+          imgAttNd.src = photoAttenteNd;
+          imgAttNd.alt = "Photo proposée";
+          var lblAttNd = document.createElement("span");
+          lblAttNd.textContent = "📸 Photo proposée";
+          gPhNd.append(imgAttNd, lblAttNd);
+
+          var btnsPhNd = document.createElement("div");
+          btnsPhNd.className = "noeud-photo-attente-btns";
+          var btnValPhNd = document.createElement("button");
+          btnValPhNd.type = "button";
+          btnValPhNd.className = "btn-mod-photo valider";
+          btnValPhNd.textContent = "✅ Valider";
+          btnValPhNd.title = "Valider cette photo en 1 clic";
+          btnValPhNd.addEventListener("click", function (evPh) {
+            evPh.stopPropagation();
+            gererPhotoEleveAdmin(p, "valider");
+          });
+          var btnRefPhNd = document.createElement("button");
+          btnRefPhNd.type = "button";
+          btnRefPhNd.className = "btn-mod-photo refuser";
+          btnRefPhNd.textContent = "✕";
+          btnRefPhNd.title = "Refuser cette proposition de photo";
+          btnRefPhNd.addEventListener("click", function (evPh2) {
+            evPh2.stopPropagation();
+            gererPhotoEleveAdmin(p, "refuser");
+          });
+          btnsPhNd.append(btnValPhNd, btnRefPhNd);
+          blocPhotoAttenteNd.append(gPhNd, btnsPhNd);
         }
 
         var instrumentsNd = document.createElement("div");
@@ -3529,13 +3756,18 @@
           btnNd("✅", function () { changeStatut(p, "actif"); }, "", "Activer l'abonné");
         }
         btnNd("👑", function () { basculerGold(p); }, isG ? "gold-on" : "", isG ? "Retirer Gold" : "Accorder Gold");
+        btnNd("📷", function () { declencherUploadPhotoEleveAdmin(p); }, "", "Ajouter ou modifier la photo de cet élève");
         btnNd("✏️", function () { ouvrirAffectation(p); }, "", "Modifier Nom, Prénom, Lycée ou Classe");
         if (p.statut !== "exclu") {
           btnNd("⛔", function () { changeStatut(p, "exclu"); }, "", "Exclure");
         }
         btnNd("🗑️", function () { supprimer(p); }, "del", "Supprimer");
 
-        cadranNd.append(haut, instrumentsNd, meta);
+        if (blocPhotoAttenteNd) {
+          cadranNd.append(haut, blocPhotoAttenteNd, instrumentsNd, meta);
+        } else {
+          cadranNd.append(haut, instrumentsNd, meta);
+        }
         nd.append(cadranNd, barreAct);
         grilleNoeuds.appendChild(nd);
       });
@@ -3556,16 +3788,44 @@
       tdNom.style.fontWeight = "800";
       var ligneIdentite = document.createElement("div");
       var npTxt = nomPrenomTexte(p);
+      var miniAvTb = document.createElement("span");
+      miniAvTb.className = "tb-mini-avatar";
+      var photoRow = photoEleveSureAdmin(p.photo_url);
+      var iniRow = (
+        ((p.prenom || "").trim().charAt(0) || "") +
+        ((p.nom || "").trim().charAt(0) || "")
+      ).toUpperCase() || (contact(p).replace(/[^a-zA-Z0-9]/g, "").slice(0, 2) || "ST").toUpperCase();
+      if (photoRow) {
+        var imgRow = document.createElement("img");
+        imgRow.src = photoRow;
+        imgRow.alt = "";
+        miniAvTb.appendChild(imgRow);
+      } else {
+        miniAvTb.textContent = iniRow;
+      }
+      ligneIdentite.appendChild(miniAvTb);
       var spNom = document.createElement("span");
       spNom.className = "nom-cliquable-fiche";
       spNom.title = "Cliquer pour ouvrir la fiche récapitulative complète de cet élève";
-      spNom.textContent = npTxt ? ("👤 " + npTxt) : "👤 Non renseigné";
+      spNom.textContent = npTxt ? npTxt : "Non renseigné";
       if (!npTxt) spNom.style.cssText = "color:#7a6f5d;font-weight:700;font-size:12px;";
       spNom.addEventListener("click", function (e) {
         e.stopPropagation();
         ouvrirFicheEleve(p);
       });
       ligneIdentite.appendChild(spNom);
+      if (photoEleveSureAdmin(p.photo_attente)) {
+        var bPhAttTb = document.createElement("button");
+        bPhAttTb.type = "button";
+        bPhAttTb.className = "tb-badge-photo-attente";
+        bPhAttTb.textContent = "📸 À valider";
+        bPhAttTb.title = "Cliquer pour valider ou refuser la photo proposée par l'élève";
+        bPhAttTb.addEventListener("click", function (ePhTb) {
+          ePhTb.stopPropagation();
+          ouvrirFicheEleve(p);
+        });
+        ligneIdentite.appendChild(bPhAttTb);
+      }
       var btnEditNom = document.createElement("button");
       btnEditNom.type = "button";
       btnEditNom.className = "btn-edit-inline";
@@ -4213,14 +4473,40 @@
         "</tbody></table></div>";
     }
 
+    var photoFicheVal = photoEleveSureAdmin(p.photo_url);
+    var photoFicheAtt = photoEleveSureAdmin(p.photo_attente);
+    var htmlAvatarFiche = photoFicheVal
+      ? ("<div class='fiche-avatar avec-photo'><img class='fiche-avatar-img' src='" + echHtml(photoFicheVal) + "' alt='' /></div>")
+      : ("<div class='fiche-avatar'>" + echHtml(ini) + "</div>");
+    var htmlModerationPhotoFiche = photoFicheAtt
+      ? ("<div class='fiche-photo-moderation'>" +
+          "<div class='fiche-photo-moderation-info'>" +
+            "<img src='" + echHtml(photoFicheAtt) + "' alt='Photo proposée par l&#39;élève' />" +
+            "<div>" +
+              "<div style='font-size:13px;font-weight:900;color:#b45309'>📸 Nouvelle photo proposée par l'élève</div>" +
+              "<div style='font-size:11.5px;font-weight:700;color:#78350f'>En attente de votre validation pour remplacer l'initiale dans le Tableau de bord et la Roue.</div>" +
+            "</div>" +
+          "</div>" +
+          "<div style='display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap'>" +
+            "<button type='button' class='btn-mod-photo valider' id='btn-fiche-valider-photo'>✅ Valider la photo</button>" +
+            "<button type='button' class='btn-mod-photo refuser' id='btn-fiche-refuser-photo'>❌ Refuser</button>" +
+          "</div>" +
+        "</div>")
+      : "";
+
     contenuFicheEleve.innerHTML =
+      htmlModerationPhotoFiche +
       "<div class='fiche-entete'>" +
         "<div style='display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 260px'>" +
-          "<div class='fiche-avatar'>" + echHtml(ini) + "</div>" +
+          htmlAvatarFiche +
           "<div style='min-width:0;flex:1'>" +
             "<div style='font-size:16px;font-weight:900;color:#23201a;word-break:break-word'>" + echHtml(np) + "</div>" +
             "<div style='font-size:12px;color:#5a5244;font-weight:800'>🏛️ " + echHtml(lyceePropre(p)) + " · 🏫 <b>" + echHtml(p.classe || "—") + "</b></div>" +
             "<div style='font-size:11.5px;color:#7a6f5d;font-weight:700;margin-top:2px;word-break:break-word'>" + echHtml(ctc) + " · Inscrit le " + echHtml(fmtDate(p.cree_le)) + "</div>" +
+            "<div class='fiche-photo-actions'>" +
+              "<button type='button' class='fiche-photo-btn' id='btn-fiche-upload-photo'>📷 " + (photoFicheVal ? "Changer photo" : "Ajouter photo") + "</button>" +
+              (photoFicheVal ? "<button type='button' class='fiche-photo-btn suppr' id='btn-fiche-suppr-photo'>🗑️ Retirer photo</button>" : "") +
+            "</div>" +
           "</div>" +
         "</div>" +
         "<div style='display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px'>" +
@@ -4260,6 +4546,33 @@
       btnPlusAccFiche.addEventListener("click", function () {
         toutVoirAccesFiche = !toutVoirAccesFiche;
         ouvrirFicheEleve(p, { focusConnexions: true });
+      });
+    }
+
+    var btnFicheValPh = document.getElementById("btn-fiche-valider-photo");
+    if (btnFicheValPh) {
+      btnFicheValPh.addEventListener("click", function () {
+        gererPhotoEleveAdmin(p, "valider");
+      });
+    }
+    var btnFicheRefPh = document.getElementById("btn-fiche-refuser-photo");
+    if (btnFicheRefPh) {
+      btnFicheRefPh.addEventListener("click", function () {
+        gererPhotoEleveAdmin(p, "refuser");
+      });
+    }
+    var btnFicheUplPh = document.getElementById("btn-fiche-upload-photo");
+    if (btnFicheUplPh) {
+      btnFicheUplPh.addEventListener("click", function () {
+        declencherUploadPhotoEleveAdmin(p);
+      });
+    }
+    var btnFicheSupPh = document.getElementById("btn-fiche-suppr-photo");
+    if (btnFicheSupPh) {
+      btnFicheSupPh.addEventListener("click", function () {
+        if (window.confirm("Retirer la photo de profil de cet élève et revenir à ses initiales ?")) {
+          gererPhotoEleveAdmin(p, "supprimer");
+        }
       });
     }
 
@@ -7434,9 +7747,13 @@
         bAv.title = contact(it.p) + " (En ligne)";
         bAv.style.cssText = "border:none;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:50px;max-width:54px;flex-shrink:0";
         var prenomCourt = (it.p.prenom || contact(it.p) || "").trim().split(/\s+/)[0] || "Élève";
+        var phOnlineMsn = photoEleveSureAdmin(it.p.photo_url);
+        var htmlCoeurOnlineMsn = phOnlineMsn
+          ? ("<img src='" + echHtml(phOnlineMsn) + "' alt='' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block' />")
+          : echHtml(initialesPourProfil(it.p));
         bAv.innerHTML =
           "<div style='position:relative;width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,132,255,.25)'>" +
-            echHtml(initialesPourProfil(it.p)) +
+            htmlCoeurOnlineMsn +
             "<span style='position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:#31a24c;border:2px solid #fff'></span>" +
           "</div>" +
           "<span style='font-size:10px;font-weight:600;color:#050505;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>" + echHtml(prenomCourt) + "</span>";
@@ -7496,8 +7813,13 @@
         : ((p.classe || "—") + " · " + (it.online ? "En ligne" : "Hors ligne"));
       var dotColor = it.online ? "#31a24c" : "#8b5cf6";
 
+      var phRowMsn = photoEleveSureAdmin(p.photo_url);
+      var htmlAvRowMsn = phRowMsn
+        ? ("<img src='" + echHtml(phRowMsn) + "' alt='' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block' />")
+        : echHtml(ini);
+
       row.innerHTML =
-        "<div class='msn-av'>" + echHtml(ini) + "<span class='msn-av-dot" + (it.online ? " online" : "") + "'></span></div>" +
+        "<div class='msn-av'>" + htmlAvRowMsn + "<span class='msn-av-dot" + (it.online ? " online" : "") + "'></span></div>" +
         "<div class='msn-u-meta'>" +
           "<div class='msn-u-nom'><span style='display:inline-block;width:8.5px;height:8.5px;border-radius:50%;background:" + dotColor + ";margin-right:6px;vertical-align:middle' title='" + (it.online ? "En ligne" : "Hors ligne (abonné)") + "'></span>" + echHtml(contact(p)) + "</div>" +
           "<div class='msn-u-sub' style='color:" + (it.nonRep > 0 ? "#050505;font-weight:700" : "#65676b") + "'>" + echHtml(p.classe || "—") + " · " + echHtml(subTxt) + "</div>" +
@@ -7624,8 +7946,12 @@
 
     var onL = estEnLigne(p.id);
     var dotColHead = onL ? "#31a24c" : "#8b5cf6";
+    var phHeadMsn = photoEleveSureAdmin(p.photo_url);
+    var htmlCoeurHeadMsn = phHeadMsn
+      ? ("<img src='" + echHtml(phHeadMsn) + "' alt='' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block' />")
+      : echHtml(initialesPourProfil(p));
     if (msnHeadAv) {
-      msnHeadAv.innerHTML = echHtml(initialesPourProfil(p)) + "<span class='msn-av-dot" + (onL ? " online" : "") + "' id='msn-head-dot'></span>";
+      msnHeadAv.innerHTML = htmlCoeurHeadMsn + "<span class='msn-av-dot" + (onL ? " online" : "") + "' id='msn-head-dot'></span>";
     }
     if (msnHeadNom) {
       msnHeadNom.innerHTML = "<span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:" + dotColHead + ";margin-right:6px;vertical-align:middle'></span>" + echHtml(contact(p));
@@ -7653,10 +7979,13 @@
     }
 
     var iniCand = initialesPourProfil(p);
+    var htmlCoeurCandMsn = phHeadMsn
+      ? ("<img src='" + echHtml(phHeadMsn) + "' alt='' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block' />")
+      : echHtml(iniCand);
     var carteProfilCand =
       "<div style='display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 12px 10px'>" +
         "<div style='position:relative;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#0084ff,#7638fa);color:#fff;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,132,255,.25);margin-bottom:8px'>" +
-          echHtml(iniCand) +
+          htmlCoeurCandMsn +
           "<span style='position:absolute;right:2px;bottom:2px;width:13px;height:13px;border-radius:50%;background:" + dotColHead + ";border:2px solid #fff'></span>" +
         "</div>" +
         "<div style='font-size:15px;font-weight:800;color:#050505'><span style='display:inline-block;width:9px;height:9px;border-radius:50%;background:" + dotColHead + ";margin-right:6px;vertical-align:middle'></span>" + echHtml(contact(p)) + "</div>" +
