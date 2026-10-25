@@ -3105,15 +3105,6 @@
           >
             🙋‍♂️ Lever la main (TP)
           </button>
-          <button
-            type="button"
-            class="filter-chip"
-            id="btnHomeMessenger"
-            title="Ouvrir Messenger STI (Discuter en direct et envoyer des fichiers 📎)"
-            style="border-color:color-mix(in srgb,var(--accent) 55%,var(--border));font-weight:800"
-          >
-            💬 Messenger STI
-          </button>
         </div>
       </div>
 
@@ -4882,17 +4873,6 @@
             if (typeof window.basculerMainLeveeSTI === "function") window.basculerMainLeveeSTI();
           });
         }
-        var btnHomeMsn = document.getElementById("btnHomeMessenger");
-        if (btnHomeMsn) {
-          btnHomeMsn.addEventListener("click", function () {
-            if (typeof window.ouvrirMessengerSTI === "function") {
-              window.ouvrirMessengerSTI();
-            } else {
-              var bGlobal = document.getElementById("sti-btn-messenger-global");
-              if (bGlobal) bGlobal.click();
-            }
-          });
-        }
 
         window.__stiMajBadgeFlashcards = function () {
           var el = document.getElementById("flashcardsBadgeCount");
@@ -5260,7 +5240,7 @@
 <!-- /Protection -->
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=425"></script>
-<script src="assets/js/acces.js?v=423"></script>
+<script src="assets/js/acces.js?v=450"></script>
 <script src="assets/js/sync-progressions.js"></script>
 <section id="nouveautes" style="max-width:1100px;margin:26px auto;padding:0 16px;">
   <h2 style="font-size:1.7rem;">🆕 Nouveautés de la plateforme</h2>
