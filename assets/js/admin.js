@@ -2991,6 +2991,14 @@
     filigraneActif: true,
     antiSplitScreen: true,
     pausesUids: {},
+    corrigesVerrou: {
+      actif: false,
+      cible: "*",
+      matieres: { css3: false, javascript: false, sql: false, php: false },
+      indicesAutorises: true,
+      finMs: 0,
+      motif: "Séance TP en cours : cherchez d'abord par vous-même à l'aide des indices avant l'ouverture du corrigé par M. Essouyah."
+    },
     dernierTeleport: null,
     purgeAlertesTs: 0,
     ts: 0
@@ -9492,6 +9500,134 @@
     if (btnSecCard) {
       btnSecCard.classList.toggle("on", Boolean(cfgSecuriteAdmin.verrouActif));
     }
+    majUiCorrigesTpAdmin();
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     🔒 v450 : CONTRÔLE EN DIRECT DES CORRIGÉS TP (EXERCICES)
+     ══════════════════════════════════════════════════════════ */
+  var modalCorrigesTp = document.getElementById("modal-corriges-tp");
+  var btnCorrigesTpCard = document.getElementById("btn-corriges-tp-card");
+  var badgeCorrigesTpTop = document.getElementById("badge-corriges-tp-top");
+  var badgeCtpStatut = document.getElementById("ctp-statut-badge");
+  var selCtpCible = document.getElementById("ctp-cible");
+  var selCtpDuree = document.getElementById("ctp-duree");
+  var chkCtpCss3 = document.getElementById("ctp-mat-css3");
+  var chkCtpJs = document.getElementById("ctp-mat-javascript");
+  var chkCtpSql = document.getElementById("ctp-mat-sql");
+  var chkCtpPhp = document.getElementById("ctp-mat-php");
+  var chkCtpIndices = document.getElementById("ctp-indices-autorises");
+  var inpCtpMotif = document.getElementById("ctp-motif");
+
+  function majUiCorrigesTpAdmin() {
+    var cv = (cfgSecuriteAdmin && cfgSecuriteAdmin.corrigesVerrou) || { actif: false, cible: "*", matieres: {}, indicesAutorises: true, finMs: 0 };
+    if (selCtpCible) {
+      var valActCtp = cv.cible || selCtpCible.value || "*";
+      var classesAct = typeof obtenirClassesActives === "function" ? obtenirClassesActives() : [];
+      selCtpCible.innerHTML =
+        '<option value="*">🌐 Toutes les classes</option>' +
+        '<option value="3SI">🏫 Toutes les 3e SI</option>' +
+        '<option value="4SI">🏫 Toutes les 4e SI</option>';
+      classesAct.forEach(function (c) {
+        var opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = "🏫 Classe " + c + " uniquement";
+        selCtpCible.appendChild(opt);
+      });
+      selCtpCible.value = valActCtp;
+    }
+    var mats = cv.matieres || {};
+    if (chkCtpCss3) chkCtpCss3.checked = Boolean(mats.css3);
+    if (chkCtpJs) chkCtpJs.checked = Boolean(mats.javascript);
+    if (chkCtpSql) chkCtpSql.checked = Boolean(mats.sql);
+    if (chkCtpPhp) chkCtpPhp.checked = Boolean(mats.php);
+    if (chkCtpIndices) chkCtpIndices.checked = cv.indicesAutorises !== false;
+    if (inpCtpMotif && cv.motif) inpCtpMotif.value = cv.motif;
+
+    var nbMats = ["css3", "javascript", "sql", "php"].filter(function (k) { return Boolean(mats[k]); }).length;
+    var estVerrou = Boolean(cv.actif && nbMats > 0);
+    var txtReste = "";
+    if (estVerrou && Number(cv.finMs || 0) > Date.now()) {
+      var minR = Math.max(1, Math.ceil((Number(cv.finMs) - Date.now()) / 60000));
+      txtReste = " · " + minR + "m";
+    }
+    if (badgeCorrigesTpTop) {
+      badgeCorrigesTpTop.style.background = estVerrou ? "#c0392b" : "#15803d";
+      badgeCorrigesTpTop.textContent = estVerrou ? ("🔒 " + nbMats + " mat." + txtReste) : "Ouverts";
+    }
+    if (badgeCtpStatut) {
+      badgeCtpStatut.style.background = estVerrou ? "#fee2e2" : "#e3f6e8";
+      badgeCtpStatut.style.color = estVerrou ? "#b91c1c" : "#177245";
+      badgeCtpStatut.style.borderColor = estVerrou ? "#b91c1c" : "#177245";
+      badgeCtpStatut.textContent = estVerrou
+        ? ("🔒 " + nbMats + " matière(s) masquée(s)" + (cv.cible && cv.cible !== "*" ? " (" + cv.cible + ")" : ""))
+        : "● Corrigés ouverts";
+    }
+    if (btnCorrigesTpCard) btnCorrigesTpCard.classList.toggle("on", estVerrou);
+  }
+
+  function ouvrirModalCorrigesTp() {
+    majUiCorrigesTpAdmin();
+    if (modalCorrigesTp) modalCorrigesTp.classList.add("visible");
+  }
+
+  if (btnCorrigesTpCard) btnCorrigesTpCard.addEventListener("click", ouvrirModalCorrigesTp);
+  var btnFermerCtpX = document.getElementById("btn-fermer-corriges-tp-x");
+  if (btnFermerCtpX) btnFermerCtpX.addEventListener("click", function () { if (modalCorrigesTp) modalCorrigesTp.classList.remove("visible"); });
+  if (modalCorrigesTp) {
+    modalCorrigesTp.addEventListener("click", function (e) {
+      if (e.target === modalCorrigesTp) modalCorrigesTp.classList.remove("visible");
+    });
+  }
+  var btnCtpToutCocher = document.getElementById("btn-ctp-tout-cocher");
+  if (btnCtpToutCocher) btnCtpToutCocher.addEventListener("click", function () {
+    [chkCtpCss3, chkCtpJs, chkCtpSql, chkCtpPhp].forEach(function (c) { if (c) c.checked = true; });
+  });
+  var btnCtpToutDecocher = document.getElementById("btn-ctp-tout-decocher");
+  if (btnCtpToutDecocher) btnCtpToutDecocher.addEventListener("click", function () {
+    [chkCtpCss3, chkCtpJs, chkCtpSql, chkCtpPhp].forEach(function (c) { if (c) c.checked = false; });
+  });
+  var btnCtpAppliquer = document.getElementById("btn-ctp-appliquer");
+  if (btnCtpAppliquer) btnCtpAppliquer.addEventListener("click", function () {
+    var mats = {
+      css3: Boolean(chkCtpCss3 && chkCtpCss3.checked),
+      javascript: Boolean(chkCtpJs && chkCtpJs.checked),
+      sql: Boolean(chkCtpSql && chkCtpSql.checked),
+      php: Boolean(chkCtpPhp && chkCtpPhp.checked)
+    };
+    var nb = Object.keys(mats).filter(function (k) { return mats[k]; }).length;
+    if (!nb) {
+      msg("⚠️ Cochez au moins une matière à verrouiller (ou cliquez sur « Rouvrir tous les corrigés »).", "err");
+      return;
+    }
+    var durMin = parseInt((selCtpDuree && selCtpDuree.value) || "0", 10) || 0;
+    var cible = (selCtpCible && selCtpCible.value) || "*";
+    sauvegarderEtDiffuserConfigSecurite({
+      corrigesVerrou: {
+        actif: true,
+        cible: cible,
+        matieres: mats,
+        indicesAutorises: Boolean(!chkCtpIndices || chkCtpIndices.checked),
+        finMs: durMin > 0 ? (Date.now() + durMin * 60000) : 0,
+        motif: String((inpCtpMotif && inpCtpMotif.value) || "").trim() || "Séance TP en cours : cherchez d'abord par vous-même avant l'ouverture du corrigé."
+      }
+    }, "🔒 Corrigés TP masqués en direct (" + nb + " matière(s) · cible : " + (cible === "*" ? "Toutes classes" : cible) + ").");
+  });
+  var btnCtpDeverrouiller = document.getElementById("btn-ctp-deverrouiller");
+  if (btnCtpDeverrouiller) btnCtpDeverrouiller.addEventListener("click", function () {
+    sauvegarderEtDiffuserConfigSecurite({
+      corrigesVerrou: {
+        actif: false,
+        cible: "*",
+        matieres: { css3: false, javascript: false, sql: false, php: false },
+        indicesAutorises: true,
+        finMs: 0,
+        motif: String((inpCtpMotif && inpCtpMotif.value) || "").trim()
+      }
+    }, "🔓 Tous les corrigés d'exercices sont de nouveau ouverts pour les élèves.");
+  });
+  if (location.hash === "#corriges-tp") {
+    setTimeout(ouvrirModalCorrigesTp, 350);
   }
 
   setInterval(function () {
@@ -9503,6 +9639,19 @@
         }, "⏰ Fin du minuteur d'examen : l'accès aux cours a été déverrouillé automatiquement.");
       } else {
         majUiConfigSecurite();
+      }
+    }
+    if (cfgSecuriteAdmin && cfgSecuriteAdmin.corrigesVerrou && cfgSecuriteAdmin.corrigesVerrou.actif && Number(cfgSecuriteAdmin.corrigesVerrou.finMs || 0) > 0) {
+      if (Date.now() >= Number(cfgSecuriteAdmin.corrigesVerrou.finMs)) {
+        sauvegarderEtDiffuserConfigSecurite({
+          corrigesVerrou: Object.assign({}, cfgSecuriteAdmin.corrigesVerrou, {
+            actif: false,
+            matieres: { css3: false, javascript: false, sql: false, php: false },
+            finMs: 0
+          })
+        }, "⏰ Fin de la séance TP : les corrigés d'exercices ont été rouverts automatiquement.");
+      } else {
+        majUiCorrigesTpAdmin();
       }
     }
   }, 1000);

@@ -883,7 +883,98 @@ test('v449 : Rayons X HTML/CSS (Box-Model, Sémantique & Flexbox) + Surligneur F
   assert.match(ficheHtml, /id="sec-surlignages"/);
   assert.match(ficheHtml, /id="fiche-fluo-liste"/);
   assert.match(ficheHtml, /sti-surlignages-v1/);
-  assert.match(swJs, /v449-rayonsx-surligneur-1/);
+  assert.match(swJs, /rayonsx-surligneur-v449/);
+});
+
+test('v450 : Chantier des Exercices — Portail enrichi, Atelier Auto-Corrigé (/20) 4 matières, Indices progressifs & Verrouillage Admin TP', () => {
+  const atelierJs = read('assets/js/exercices-atelier.js');
+  const iaHtml = read('exercices/atelier-interactif-bac.html');
+  const seriesHtml = read('exercices/series-exercices.html');
+  const adminHtml = read('admin.html');
+  const adminJs = read('assets/js/admin.js');
+  const accesJs = read('assets/js/acces.js');
+  const mobileNavJs = read('assets/js/mobile-nav.js');
+  const swJs = read('sw.js');
+
+  // 1) Chargement universel & manifeste SW v450
+  assert.match(swJs, /v450-chantier-exercices-1/);
+  assert.match(accesJs, /exercices-atelier\.js\?v=450/);
+  assert.match(mobileNavJs, /exercices-atelier\.js\?v=450/);
+  assert.match(seriesHtml, /exercices-atelier\.js\?v=450/);
+  assert.doesNotMatch(seriesHtml, /#4338ca/i);
+
+  // 2) Atelier interactif auto-corrigé (/20) sur les 4 matières + protection 4e SI
+  for (const sid of ['ia-css-1', 'ia-css-2', 'ia-js-1', 'ia-js-2', 'ia-sql-1', 'ia-sql-2', 'ia-php-1', 'ia-php-2']) {
+    assert.ok(iaHtml.includes(`id: "${sid}"`), `Série interactive manquante : ${sid}`);
+    assert.ok(seriesHtml.includes(`data-ia-serie="${sid}"`), `Carte portail manquante : ${sid}`);
+  }
+  assert.match(iaHtml, /sti-4si-only/);
+  assert.match(iaHtml, /sti-icon-512\.png/);
+  assert.doesNotMatch(iaHtml, /#4338ca|#4f46e5/i);
+  assert.match(seriesHtml, /Série 2 — Fonctions sur les chaînes de caractères/);
+
+  // 3) Contrôle en direct des corrigés TP depuis admin.html + admin.js
+  assert.match(adminHtml, /id="btn-corriges-tp-card"/);
+  assert.match(adminHtml, /id="modal-corriges-tp"/);
+  assert.match(adminJs, /corrigesVerrou/);
+  assert.match(adminJs, /function majUiCorrigesTpAdmin/);
+  assert.match(accesJs, /sti:sec-config-maj/);
+
+  // 4) Test comportemental VM du verrouillage TP par matière, classe, admin et expiration
+  const store = new Map();
+  const sessStore = new Map();
+  const mkStorage = (m) => ({
+    getItem: (k) => (m.has(k) ? m.get(k) : null),
+    setItem: (k, v) => m.set(k, String(v)),
+    removeItem: (k) => m.delete(k)
+  });
+  const docStub = {
+    readyState: 'loading',
+    title: 'Test Exercices',
+    documentElement: { classList: { contains: () => false }, appendChild() {} },
+    head: { appendChild() {} },
+    body: { classList: { add() {}, toggle() {} }, appendChild() {}, insertBefore() {} },
+    getElementById: () => null,
+    querySelector: () => null,
+    querySelectorAll: () => [],
+    createElement: () => ({ style: {}, classList: { add() {}, remove() {}, toggle() {} }, setAttribute() {}, addEventListener() {}, appendChild() {} }),
+    addEventListener() {}
+  };
+  const winStub = {
+    location: { pathname: '/exercices/series-exercices.html', search: '', hash: '' },
+    document: docStub,
+    localStorage: mkStorage(store),
+    sessionStorage: mkStorage(sessStore),
+    addEventListener() {}
+  };
+  winStub.window = winStub;
+  vm.runInNewContext(atelierJs, winStub);
+
+  assert.ok(winStub.STI_EXO_ATELIER, 'API STI_EXO_ATELIER exposée');
+  assert.equal(winStub.STI_EXO_ATELIER.estCorrigeVerrouille('javascript'), false);
+
+  // Verrouillage actif pour 4SI sur JavaScript et SQL
+  store.set('sti-session-cache', JSON.stringify({ classe: '4SI2', isAdmin: false }));
+  store.set('sti-sec-config', JSON.stringify({
+    corrigesVerrou: {
+      actif: true,
+      cible: '4SI',
+      matieres: { css3: false, javascript: true, sql: true, php: false },
+      indicesAutorises: true,
+      finMs: Date.now() + 60000
+    }
+  }));
+  assert.equal(winStub.STI_EXO_ATELIER.estCorrigeVerrouille('javascript'), true);
+  assert.equal(winStub.STI_EXO_ATELIER.estCorrigeVerrouille('bdd'), true);
+  assert.equal(winStub.STI_EXO_ATELIER.estCorrigeVerrouille('css3'), false);
+
+  // Un élève de 3SI1 n'est pas bloqué par un verrou ciblé 4SI
+  store.set('sti-session-cache', JSON.stringify({ classe: '3SI1', isAdmin: false }));
+  assert.equal(winStub.STI_EXO_ATELIER.estCorrigeVerrouille('javascript'), false);
+
+  // Le compte Admin garde toujours l'accès libre
+  store.set('sti-session-cache', JSON.stringify({ classe: '4SI2', isAdmin: true }));
+  assert.equal(winStub.STI_EXO_ATELIER.estCorrigeVerrouille('javascript'), false);
 });
 
 

@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script id="sti-early-boot">
+(function () {
+  try {
+    var r = document.documentElement;
+    var t = "";
+    try { t = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || ""; } catch (eT) {}
+    if (t !== "dark" && t !== "light") {
+      try { t = localStorage.getItem("sti-roue-theme") === "sombre" ? "dark" : ""; } catch (eT2) {}
+    }
+    if (t === "dark") { r.setAttribute("data-theme", "dark"); r.classList.add("dark", "dark-mode"); }
+    else if (t === "light") { r.removeAttribute("data-theme"); r.classList.remove("dark", "dark-mode"); }
+  } catch (e) {}
+})();
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noai, noimageai" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <title>🧪 Atelier d'Exercices Auto-Corrigés (/20) — STI V2.0</title>
+  <link rel="icon" href="../assets/icons/sti-icon-512.png" />
+  <style id="sti-4si-zero-flash">
+    html:not(.sti-4si-autorise) .sti-4si-only { display: none !important; }
+  </style>
+  <script>
+    (function () {
+      try {
+        var isAdm = localStorage.getItem("sti-admin-gold") === "1";
+        var perm = JSON.parse(localStorage.getItem("sti-labo3-permanent") || "null");
+        var c = perm || JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+        if (c && c.isAdmin) isAdm = true;
+        var cl = String((c && c.classe) || "").trim().toUpperCase().replace(/[\s._\-]+/g, "");
+        var clNorm = cl.normalize ? cl.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : cl;
+        var ok4 = isAdm || clNorm === "ELEVELABO3" || clNorm === "PROF" || clNorm === "PROFESSEUR" || clNorm === "ENSEIGNANT" || clNorm.indexOf("GOLD") !== -1 || /^4(E|ÈME|EME)?SI([1-5])?$/i.test(cl);
+        if (ok4) document.documentElement.classList.add("sti-4si-autorise");
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root {
+      --bg: #f6eedc;
+      --surface: #fffdf6;
+      --surface-2: #f1e6cf;
+      --ink: #18202c;
+      --muted: #5f5747;
+      --edge: #18202c;
+      --line: #decfae;
+      --coral: #e84e1b;
+      --emerald: #15803d;
+      --emerald-bg: #e6f7ed;
+      --amber: #b45309;
+      --amber-bg: #fef3c7;
+      --teal: #0e7c86;
+      --teal-bg: #e0f5f6;
+      --danger: #b91c1c;
+      --danger-bg: #fee2e2;
+      --font-ui: "Comic Sans MS", "Comic Sans", "Comic Neue", "Chalkboard SE", cursive, sans-serif;
+      --font-code: "Consolas", "IBM Plex Mono", "Courier New", monospace;
+    }
+    html.dark {
+      --bg: #121820;
+      --surface: #1b2430;
+      --surface-2: #243040;
+      --ink: #f5efe2;
+      --muted: #b7ad9a;
+      --edge: #090d12;
+      --line: #334155;
+      --emerald-bg: rgba(21, 128, 61, 0.22);
+      --amber-bg: rgba(180, 83, 9, 0.24);
+      --teal-bg: rgba(14, 124, 134, 0.24);
+      --danger-bg: rgba(185, 28, 28, 0.24);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-ui);
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, rgba(24,32,44,0.1) 1px, transparent 1px);
+      background-size: 22px 22px;
+      color: var(--ink);
+      padding-bottom: 84px;
+    }
+    .ia-top {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--surface);
+      border-bottom: 2.5px solid var(--edge);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .ia-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .ia-brand img {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      border: 2px solid var(--edge);
+      background: #fff;
+    }
+    .ia-brand strong {
+      font-size: 1.05rem;
+      display: block;
+    }
+    .ia-brand span {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .ia-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ia-btn {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 0.84rem;
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 2px solid var(--edge);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 2.5px 2.5px 0 var(--edge);
+      transition: transform 0.12s ease;
+    }
+    .ia-btn:hover { transform: translate(-1px, -1px); }
+    .ia-btn.prim { background: var(--coral); color: #fff; }
+    .ia-btn.ok { background: var(--emerald); color: #fff; }
+    .ia-btn.teal { background: var(--teal); color: #fff; }
+    .ia-wrap {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 18px 18px 36px;
+    }
+    .ia-lock-banner {
+      display: none;
+      margin-bottom: 14px;
+      padding: 11px 16px;
+      border-radius: 14px;
+      border: 2px solid var(--danger);
+      background: var(--danger-bg);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 0.88rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .ia-lock-banner.visible { display: flex; }
+    .ia-mat-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .ia-mat-tab {
+      font-family: var(--font-ui);
+      padding: 11px 14px;
+      border-radius: 16px;
+      border: 2.5px solid var(--edge);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+      box-shadow: 3px 3px 0 var(--edge);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-weight: 700;
+    }
+    .ia-mat-tab.actif {
+      background: var(--coral);
+      color: #fff;
+    }
+    .ia-mat-tab[data-mat="javascript"].actif { background: #c98a00; color: #fff; }
+    .ia-mat-tab[data-mat="sql"].actif { background: #0e7c86; color: #fff; }
+    .ia-mat-tab[data-mat="php"].actif { background: #15803d; color: #fff; }
+    .ia-serie-pills {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .ia-serie-pill {
+      font-family: var(--font-ui);
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 2px solid var(--edge);
+      background: var(--surface-2);
+      color: var(--ink);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.86rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .ia-serie-pill.actif {
+      background: var(--ink);
+      color: var(--surface);
+      box-shadow: 2.5px 2.5px 0 var(--coral);
+    }
+    .ia-hero {
+      background: var(--surface);
+      border: 2.5px solid var(--edge);
+      border-radius: 18px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      box-shadow: 4px 4px 0 var(--edge);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .ia-hero h1 {
+      margin: 0 0 5px;
+      font-size: 1.25rem;
+    }
+    .ia-hero p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .ia-score-box {
+      padding: 10px 16px;
+      border-radius: 14px;
+      border: 2px solid var(--edge);
+      background: var(--emerald-bg);
+      text-align: center;
+      min-width: 145px;
+    }
+    .ia-score-box strong {
+      font-size: 1.45rem;
+      display: block;
+      color: var(--emerald);
+    }
+    html.dark .ia-score-box strong { color: #4ade80; }
+    .ia-score-box span {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .ia-q-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .ia-q-card {
+      background: var(--surface);
+      border: 2.5px solid var(--edge);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 3.5px 3.5px 0 var(--edge);
+    }
+    .ia-q-card.correcte { border-color: var(--emerald); }
+    .ia-q-card.erronee { border-color: var(--danger); }
+    .ia-q-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 9px;
+      flex-wrap: wrap;
+    }
+    .ia-q-num {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1.5px solid var(--edge);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .ia-q-pts {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--teal);
+    }
+    html.dark .ia-q-pts { color: #5eead4; }
+    .ia-q-enonce {
+      font-size: 0.96rem;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .ia-code-pre {
+      font-family: var(--font-code);
+      font-size: 0.86rem;
+      background: #141b24;
+      color: #f8fafc;
+      padding: 11px 14px;
+      border-radius: 11px;
+      border: 2px solid var(--edge);
+      overflow-x: auto;
+      margin: 8px 0 12px;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+    .ia-input-code {
+      width: 100%;
+      font-family: var(--font-code);
+      font-size: 0.92rem;
+      padding: 10px 12px;
+      border-radius: 11px;
+      border: 2px solid var(--edge);
+      background: var(--bg);
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    textarea.ia-input-code {
+      min-height: 76px;
+      resize: vertical;
+    }
+    .ia-choix-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .ia-choix-opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 2px solid var(--line);
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 0.88rem;
+    }
+    .ia-choix-opt:hover { border-color: var(--coral); }
+    .ia-choix-opt input { margin-top: 3px; accent-color: var(--coral); }
+    .ia-choix-opt code {
+      font-family: var(--font-code);
+      font-size: 0.85rem;
+    }
+    .ia-q-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .ia-mini-btn {
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1.8px solid var(--edge);
+      background: var(--surface-2);
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .ia-mini-btn.verif { background: var(--emerald); color: #fff; }
+    .ia-mini-btn.indice { background: var(--amber-bg); color: var(--ink); }
+    .ia-box-info {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 13px;
+      border-radius: 12px;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      border: 1.8px solid var(--edge);
+    }
+    .ia-box-info.visible { display: block; }
+    .ia-box-info.indice-box { background: var(--amber-bg); }
+    .ia-box-info.ok-box { background: var(--emerald-bg); }
+    .ia-box-info.err-box { background: var(--danger-bg); }
+    .ia-box-info.sol-box { background: var(--teal-bg); }
+    .ia-box-info code {
+      font-family: var(--font-code);
+      background: rgba(0,0,0,0.08);
+      padding: 1px 5px;
+      border-radius: 5px;
+    }
+    .ia-bottom-bar {
+      margin-top: 22px;
+      padding: 16px 20px;
+      border-radius: 18px;
+      border: 2.5px solid var(--edge);
+      background: var(--surface);
+      box-shadow: 4px 4px 0 var(--edge);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    @media print {
+      .ia-top-actions, .ia-q-actions, .ia-mat-tabs, .ia-serie-pills, #stix-nav { display: none !important; }
+      body { background: #fff !important; color: #000 !important; padding: 0 !important; }
+      .ia-q-card, .ia-hero, .ia-bottom-bar { box-shadow: none !important; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="ia-top">
+    <a class="ia-brand" href="series-exercices.html">
+      <img src="../assets/icons/sti-icon-512.png" alt="Logo STI V2.0" />
+      <div>
+        <strong>🧪 Atelier Interactif Auto-Corrigé (/20)</strong>
+        <span>Entraînement progressif Bac STI · Indices à 2 niveaux · Synchronisé Cloud</span>
+      </div>
+    </a>
+    <div class="ia-top-actions">
+      <button type="button" class="ia-btn" id="btn-ia-imprimer" title="Imprimer cette feuille avec mes réponses">🖨️ Imprimer</button>
+      <button type="button" class="ia-btn" id="btn-ia-reset" title="Effacer mes réponses sur cette série">↺ Réinitialiser la série</button>
+      <a class="ia-btn prim" href="series-exercices.html">← Portail des Séries</a>
+    </div>
+  </header>
+
+  <main class="ia-wrap">
+    <div class="ia-lock-banner" id="ia-lock-banner" role="status">
+      <span id="ia-lock-banner-txt">🔒 Séance TP en cours : le professeur a temporairement masqué les corrigés de cette matière. Les indices méthodologiques et la vérification de vos réponses restent disponibles !</span>
+    </div>
+
+    <div class="ia-mat-tabs" role="tablist" aria-label="Choisir la matière">
+      <button type="button" class="ia-mat-tab actif" data-mat="css3">
+        <span>🎨 HTML5 &amp; CSS3</span>
+        <span id="ia-stat-css3">2 séries</span>
+      </button>
+      <button type="button" class="ia-mat-tab" data-mat="javascript">
+        <span>⚡ JavaScript</span>
+        <span id="ia-stat-javascript">2 séries</span>
+      </button>
+      <button type="button" class="ia-mat-tab" data-mat="sql">
+        <span>🗄️ Base de données (SQL)</span>
+        <span id="ia-stat-sql">2 séries</span>
+      </button>
+      <button type="button" class="ia-mat-tab sti-4si-only" data-mat="php">
+        <span>🐘 PHP &amp; MySQLi (4e SI)</span>
+        <span id="ia-stat-php">2 séries</span>
+      </button>
+    </div>
+
+    <div class="ia-serie-pills" id="ia-serie-pills"></div>
+
+    <section class="ia-hero">
+      <div style="flex:1;min-width:240px">
+        <h1 id="ia-serie-titre">Chargement de la série…</h1>
+        <p id="ia-serie-desc"></p>
+      </div>
+      <div class="ia-score-box">
+        <strong id="ia-score-val">— / 20</strong>
+        <span id="ia-score-sub">Répondez puis vérifiez</span>
+      </div>
+    </section>
+
+    <div class="ia-q-list" id="ia-q-list"></div>
+
+    <div class="ia-bottom-bar">
+      <div>
+        <strong id="ia-bilan-txt" style="font-size:1rem">✍️ Complétez les 5 exercices de la série pour calculer votre note sur /20.</strong>
+        <div style="font-size:0.82rem;color:var(--muted);margin-top:3px">💡 Astuce : utilisez d'abord les indices progressifs avant de consulter le corrigé détaillé.</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="ia-btn ok" id="btn-ia-tout-verifier">🏆 Calculer ma note (/20)</button>
+        <a class="ia-btn teal" href="series-exercices.html" id="lien-ia-retour-mat">📚 Retour aux séries</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    window.__APP_OK = true;
+    (function () {
+      "use strict";
+
+      var CLE_SUIVI = "sti-exo-suivi-v1";
+      var CLE_REP_IA = "sti-exo-ia-reponses-v1";
+
+      function est4SIAutorise() {
+        return document.documentElement.classList.contains("sti-4si-autorise");
+      }
+
+      function normCode(s) {
+        return String(s || "")
+          .trim()
+          .replace(/\s+/g, " ")
+          .replace(/\s*([=();,<>+\-*\/{}:\[\]])\s*/g, "$1")
+          .toLowerCase();
+      }
+
+      var SERIES_IA = [
+        /* ==================== 1. HTML5 & CSS3 ==================== */
+        {
+          id: "ia-css-1",
+          matiere: "css3",
+          niveau: "3e & 4e SI",
+          titre: "🎨 Série Interactive 1 — Structure HTML5 & Formulaires Validés",
+          desc: "Maîtrisez les balises sémantiques, l'association label/input et les attributs de contrôle HTML5 exigés au Bac.",
+          questions: [
+            {
+              id: "q1",
+              type: "choix",
+              pts: 4,
+              enonce: "Quelle écriture relie correctement l'étiquette « Numéro CIN » au champ de saisie ayant <code>id=\"cin\"</code> pour l'accessibilité et le clic ?",
+              options: [
+                { v: "a", t: "<code>&lt;label name=\"cin\"&gt;Numéro CIN&lt;/label&gt;</code>" },
+                { v: "b", t: "<code>&lt;label for=\"cin\"&gt;Numéro CIN&lt;/label&gt;</code>" },
+                { v: "c", t: "<code>&lt;label id=\"cin\"&gt;Numéro CIN&lt;/label&gt;</code>" },
+                { v: "d", t: "<code>&lt;caption for=\"cin\"&gt;Numéro CIN&lt;/caption&gt;</code>" }
+              ],
+              attendu: "b",
+              indice1: "L'attribut de la balise <label> doit pointer exactement vers la valeur de l'attribut id du champ <input>.",
+              indice2: "En HTML5, le couple officiel est <label for=\"identifiant\"> associé à <input id=\"identifiant\">.",
+              explication: "<code>&lt;label for=\"cin\"&gt;</code> associe l'étiquette à l'élément dont l'attribut <code>id</code> vaut <code>\"cin\"</code>."
+            },
+            {
+              id: "q2",
+              type: "code",
+              pts: 4,
+              enonce: "Écrivez l'attribut HTML5 (avec sa valeur) permettant d'imposer exactement <strong>8 chiffres</strong> sur un champ <code>&lt;input type=\"text\" ...&gt;</code> pour un numéro CIN tunisien :",
+              codeContexte: "<input type=\"text\" id=\"cin\" name=\"cin\" required ________ >",
+              placeholder: "Ex: pattern=\"...\"",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/'/g, '"').replace(/\s+/g, "");
+                return /^pattern="(\[0-9\]\{8\}|\\d\{8\})"$/.test(s);
+              },
+              indice1: "Utilisez l'attribut d'expression régulière HTML5 qui vérifie le format de saisie.",
+              indice2: "L'attribut s'appelle pattern=\"...\" avec la classe [0-9] répétée {8} fois.",
+              explication: "Corrigé : <code>pattern=\"[0-9]{8}\"</code> (ou <code>pattern=\"\\d{8}\"</code>) impose exactement 8 chiffres."
+            },
+            {
+              id: "q3",
+              type: "choix",
+              pts: 4,
+              enonce: "Sur la balise <code>&lt;form action=\"ajout.php\" method=\"post\" ...&gt;</code>, quel attribut empêche réellement l'envoi du formulaire lorsque <code>verif()</code> retourne <code>false</code> ?",
+              options: [
+                { v: "a", t: "<code>onclick=\"verif()\"</code>" },
+                { v: "b", t: "<code>onsubmit=\"verif()\"</code>" },
+                { v: "c", t: "<code>onsubmit=\"return verif()\"</code>" },
+                { v: "d", t: "<code>onchange=\"return verif()\"</code>" }
+              ],
+              attendu: "c",
+              indice1: "L'événement se place sur <form> au moment de la soumission, et la valeur booléenne doit être renvoyée au navigateur.",
+              indice2: "Sans le mot-clé return devant verif(), le formulaire part vers ajout.php même si verif() retourne false !",
+              explication: "Piège classique du Bac : il faut obligatoirement écrire <code>onsubmit=\"return verif()\"</code>."
+            },
+            {
+              id: "q4",
+              type: "code",
+              pts: 4,
+              enonce: "Quelle balise HTML5 sémantique regroupe les liens principaux du menu de navigation d'une page Web ? (écrivez le nom ou la balise ouvrante)",
+              placeholder: "Ex: <...>",
+              verif: function (val) {
+                var s = normCode(val).replace(/[<>\/]/g, "");
+                return s === "nav";
+              },
+              indice1: "Ce n'est ni <header>, ni <menu>, ni <aside> : c'est une balise HTML5 de 3 lettres.",
+              indice2: "Elle vient du mot « navigation ».",
+              explication: "La balise structurante dédiée au menu principal est <code>&lt;nav&gt;...&lt;/nav&gt;</code>."
+            },
+            {
+              id: "q5",
+              type: "choix",
+              pts: 4,
+              enonce: "Pour que 3 boutons radio (<code>Débutant</code>, <code>Moyen</code>, <code>Avancé</code>) soient mutuellement exclusifs (un seul choix possible), ils doivent partager :",
+              options: [
+                { v: "a", t: "Le même attribut <code>id</code>" },
+                { v: "b", t: "Le même attribut <code>name</code>" },
+                { v: "c", t: "Le même attribut <code>value</code>" },
+                { v: "d", t: "L'attribut <code>checked</code> sur les trois" }
+              ],
+              attendu: "b",
+              indice1: "En HTML, un id doit toujours être unique dans la page, et value différencie la valeur envoyée au serveur.",
+              indice2: "C'est l'attribut qui sert aussi à document.getElementsByName(...) en JavaScript et $_POST[...] en PHP.",
+              explication: "Des boutons <code>type=\"radio\"</code> appartiennent au même groupe exclusif lorsqu'ils ont exactement le même attribut <code>name</code>."
+            }
+          ]
+        },
+        {
+          id: "ia-css-2",
+          matiere: "css3",
+          niveau: "3e & 4e SI",
+          titre: "🎨 Série Interactive 2 — CSS3 : Flexbox, Float, Modèle de Boîte & Transitions",
+          desc: "Vérifiez votre maîtrise des mises en page CSS3 (Flexbox vs Float), des sélecteurs et des effets visuels du programme.",
+          questions: [
+            {
+              id: "q1",
+              type: "code",
+              pts: 4,
+              enonce: "Dans un conteneur ayant <code>display: flex;</code>, écrivez la déclaration CSS permettant de répartir les blocs horizontalement avec un espace égal entre eux (premier collé à gauche, dernier collé à droite) :",
+              codeContexte: ".ligne {\n  display: flex;\n  ___________________________\n}",
+              placeholder: "propriete: valeur;",
+              verif: function (val) {
+                var s = normCode(val).replace(/;$/, "");
+                return s === "justify-content:space-between";
+              },
+              indice1: "Sur l'axe principal horizontal, on utilise la propriété justify-content.",
+              indice2: "La valeur qui met l'espace uniquement ENTRE les éléments est space-between.",
+              explication: "Corrigé : <code>justify-content: space-between;</code>."
+            },
+            {
+              id: "q2",
+              type: "code",
+              pts: 4,
+              enonce: "Après deux colonnes placées côte à côte avec <code>float: left;</code>, quelle déclaration CSS sur <code>footer</code> l'oblige à revenir à la ligne en dessous des flottants ?",
+              codeContexte: "footer {\n  ______________\n}",
+              placeholder: "propriete: valeur;",
+              verif: function (val) {
+                var s = normCode(val).replace(/;$/, "");
+                return s === "clear:both" || s === "clear:left";
+              },
+              indice1: "C'est la propriété compagnon indispensable de float pour annuler l'habillage flottant.",
+              indice2: "Utilisez clear avec la valeur qui libère les deux côtés (both).",
+              explication: "Corrigé : <code>clear: both;</code> (ou <code>clear: left;</code> si seuls des flottants gauches précèdent)."
+            },
+            {
+              id: "q3",
+              type: "choix",
+              pts: 4,
+              enonce: "Quelle règle CSS inclut le <code>padding</code> et la <code>border</code> à l'intérieur de la largeur <code>width: 800px</code> déclarée ?",
+              options: [
+                { v: "a", t: "<code>box-model: inner-box;</code>" },
+                { v: "b", t: "<code>box-sizing: border-box;</code>" },
+                { v: "c", t: "<code>box-sizing: content-box;</code>" },
+                { v: "d", t: "<code>overflow: hidden;</code>" }
+              ],
+              attendu: "b",
+              indice1: "Par défaut en CSS, width vaut content-box (le padding et la bordure s'ajoutent en dehors).",
+              indice2: "On veut que la boîte soit mesurée jusqu'à la bordure incluse.",
+              explication: "<code>box-sizing: border-box;</code> garantit qu'un bloc de <code>width: 800px</code> garde exactement 800 px même avec du padding et une bordure."
+            },
+            {
+              id: "q4",
+              type: "choix",
+              pts: 4,
+              enonce: "Quel sélecteur CSS cible uniquement les champs <code>&lt;input&gt;</code> situés à l'intérieur de l'élément ayant <code>id=\"inscription\"</code> lorsqu'ils ont le curseur actif ?",
+              options: [
+                { v: "a", t: "<code>.inscription input:hover</code>" },
+                { v: "b", t: "<code>#inscription input:focus</code>" },
+                { v: "c", t: "<code>#inscription > focus</code>" },
+                { v: "d", t: "<code>input#inscription:active</code>" }
+              ],
+              attendu: "b",
+              indice1: "Un identifiant se sélectionne avec # et l'état de saisie clavier d'un champ est une pseudo-classe précise.",
+              indice2: "Combinez #inscription, un espace (descendant) et input:focus.",
+              explication: "<code>#inscription input:focus</code> cible tout <code>input</code> descendant de <code>#inscription</code> qui reçoit le focus."
+            },
+            {
+              id: "q5",
+              type: "code",
+              pts: 4,
+              enonce: "Écrivez la déclaration CSS qui arrondit les 4 coins d'une carte avec un rayon de <code>12px</code> :",
+              placeholder: "propriete: valeur;",
+              verif: function (val) {
+                var s = normCode(val).replace(/;$/, "");
+                return s === "border-radius:12px";
+              },
+              indice1: "La propriété commence par border- suivi du mot anglais pour « rayon ».",
+              indice2: "Écrivez border-radius: 12px;",
+              explication: "Corrigé : <code>border-radius: 12px;</code>."
+            }
+          ]
+        },
+
+        /* ==================== 2. JAVASCRIPT ==================== */
+        {
+          id: "ia-js-1",
+          matiere: "javascript",
+          niveau: "3e & 4e SI",
+          titre: "⚡ Série Interactive 1 — Traces, Opérateurs & Boucles JavaScript",
+          desc: "Évaluez sans erreur les expressions arithmétiques, logiques et les boucles tombant aux devoirs écrits.",
+          questions: [
+            {
+              id: "q1",
+              type: "code",
+              pts: 4,
+              enonce: "Quelle est la valeur exacte stockée dans <code>r</code> après l'exécution de ce code ?",
+              codeContexte: "let a = 17;\nlet b = 5;\nlet r = (a % b) * 2 + (a > 20 ? 10 : 1);",
+              placeholder: "Valeur numérique exacte",
+              verif: function (val) {
+                return String(val || "").trim() === "5";
+              },
+              indice1: "Calculez d'abord le reste de la division entière 17 % 5, puis testez si 17 > 20.",
+              indice2: "17 = 5 × 3 + 2 donc 17 % 5 vaut 2. Ensuite 2 * 2 = 4, et (17 > 20) est faux donc on ajoute 1.",
+              explication: "<code>17 % 5 = 2</code> ; <code>2 * 2 = 4</code> ; comme <code>17 &gt; 20</code> est faux, l'opérateur ternaire vaut <code>1</code>. Total : <code>5</code>."
+            },
+            {
+              id: "q2",
+              type: "code",
+              pts: 4,
+              enonce: "Qu'affiche <code>console.log(y + \"-\" + x)</code> à la fin de ces 3 lignes ?",
+              codeContexte: "let x = 4;\nlet y = x++;\nconsole.log(y + \"-\" + x);",
+              placeholder: "Ex: 4-4",
+              verif: function (val) {
+                return String(val || "").trim().replace(/\s+/g, "") === "4-5";
+              },
+              indice1: "Attention à la post-incrémentation x++ : y reçoit l'ancienne valeur de x AVANT que x n'augmente de 1.",
+              indice2: "y prend 4, puis x devient 5.",
+              explication: "Avec <code>y = x++</code> (post-incrémentation), <code>y</code> reçoit <code>4</code> puis <code>x</code> passe à <code>5</code>, donc l'affichage est <code>4-5</code>."
+            },
+            {
+              id: "q3",
+              type: "choix",
+              pts: 4,
+              enonce: "Quelle condition JavaScript vérifie qu'un caractère <code>c</code> est une lettre majuscule comprise entre <code>'A'</code> et <code>'Z'</code> ?",
+              options: [
+                { v: "a", t: "<code>'A' &lt;= c &lt;= 'Z'</code>" },
+                { v: "b", t: "<code>(c &gt;= 'A') &amp;&amp; (c &lt;= 'Z')</code>" },
+                { v: "c", t: "<code>(c &gt;= 'A') || (c &lt;= 'Z')</code>" },
+                { v: "d", t: "<code>c.isUpper() == true</code>" }
+              ],
+              attendu: "b",
+              indice1: "En JavaScript, on ne peut jamais enchaîner deux comparaisons sous la forme a <= x <= b.",
+              indice2: "Il faut que les DEUX conditions soient vraies simultanément : opérateur ET logique &&.",
+              explication: "En JS, on écrit obligatoirement <code>(c &gt;= 'A') &amp;&amp; (c &lt;= 'Z')</code>. Avec <code>||</code>, n'importe quel caractère vérifierait l'une des deux inégalités !"
+            },
+            {
+              id: "q4",
+              type: "code",
+              pts: 4,
+              enonce: "Quelle valeur contient la variable <code>s</code> à la sortie de cette boucle <code>for</code> ?",
+              codeContexte: "let s = 0;\nfor (let i = 1; i <= 6; i += 2) {\n  s = s + i;\n}",
+              placeholder: "Valeur finale de s",
+              verif: function (val) {
+                return String(val || "").trim() === "9";
+              },
+              indice1: "Regardez le pas de progression : i += 2 (i prend uniquement les valeurs impaires).",
+              indice2: "i vaut successivement 1, puis 3, puis 5, puis 7 (arrêt car 7 > 6). Calculez 1 + 3 + 5.",
+              explication: "Les tours de boucle s'exécutent pour <code>i = 1</code>, <code>i = 3</code> et <code>i = 5</code> : <code>0 + 1 + 3 + 5 = 9</code>."
+            },
+            {
+              id: "q5",
+              type: "choix",
+              pts: 4,
+              enonce: "Que retourne <code>isNaN(\"12A4\")</code> en JavaScript ?",
+              options: [
+                { v: "a", t: "<code>false</code> (car la chaîne commence par 12)" },
+                { v: "b", t: "<code>true</code> (car \"12A4\" n'est pas un nombre valide)" },
+                { v: "c", t: "<code>12</code>" },
+                { v: "d", t: "<code>NaN</code>" }
+              ],
+              attendu: "b",
+              indice1: "Contrairement à parseInt(\"12A4\") qui lit 12, isNaN teste la conversion complète de toute la chaîne.",
+              indice2: "isNaN signifie « Is Not a Number » : comme \"12A4\" contient 'A', ce n'est pas un nombre.",
+              explication: "<code>isNaN(\"12A4\")</code> renvoie <code>true</code> (alors que <code>parseInt(\"12A4\")</code> renverrait <code>12</code> — d'où l'utilité de <code>isNaN(ch)</code> dans les contrôles Bac !)."
+            }
+          ]
+        },
+        {
+          id: "ia-js-2",
+          matiere: "javascript",
+          niveau: "3e & 4e SI",
+          titre: "⚡ Série Interactive 2 — Chaînes String, DOM & Contrôle Bac verif()",
+          desc: "Entraînez-vous sur substring, indexOf, charAt, getElementById et les contrôles de saisie types du Bac STI.",
+          questions: [
+            {
+              id: "q1",
+              type: "code",
+              pts: 4,
+              enonce: "Quelle chaîne exacte contient <code>res</code> après ces instructions ?",
+              codeContexte: "let ch = \"BAC_STI_2026\";\nlet res = ch.substring(4, 7);",
+              placeholder: "Texte obtenu (sans guillemets)",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/^["']|["']$/g, "");
+                return s === "STI";
+              },
+              indice1: "Les indices commencent à 0 : B(0) A(1) C(2) _(3) S(4) T(5) I(6) _(7).",
+              indice2: "Dans ch.substring(debut, fin), le caractère à l'indice fin (7) est EXCLU !",
+              explication: "Aux positions 4, 5 et 6 (7 exclu) de <code>\"BAC_STI_2026\"</code>, on extrait <code>\"STI\"</code>."
+            },
+            {
+              id: "q2",
+              type: "code",
+              pts: 4,
+              enonce: "Écrivez l'instruction JavaScript qui récupère la valeur saisie dans le champ HTML ayant <code>id=\"nom\"</code> et la stocke dans <code>let nom = ...</code> :",
+              codeContexte: "let nom = ____________________________________;",
+              placeholder: "document.getElementById(...).value",
+              verif: function (val) {
+                var s = normCode(val).replace(/;$/, "").replace(/'/g, '"');
+                return s === 'document.getelementbyid("nom").value' || s === 'let nom=document.getelementbyid("nom").value';
+              },
+              indice1: "Utilisez document.getElementById(...) en respectant les majuscules E, B, I.",
+              indice2: "N'oubliez pas la propriété .value à la fin pour lire le texte tapé dans le champ !",
+              explication: "Corrigé : <code>document.getElementById(\"nom\").value</code> (attention à la casse exacte : <code>Id</code> et non <code>ID</code>)."
+            },
+            {
+              id: "q3",
+              type: "choix",
+              pts: 4,
+              enonce: "Sur une liste déroulante <code>&lt;select id=\"ville\"&gt;</code> dont la 1re option est <code>\"-- Choisir --\"</code>, comment tester qu'aucune ville n'a été choisie ?",
+              options: [
+                { v: "a", t: "<code>document.getElementById(\"ville\").checked == false</code>" },
+                { v: "b", t: "<code>document.getElementById(\"ville\").selectedIndex == 0</code>" },
+                { v: "c", t: "<code>document.getElementById(\"ville\").length == 0</code>" },
+                { v: "d", t: "<code>document.getElementsByName(\"ville\").index == -1</code>" }
+              ],
+              attendu: "b",
+              indice1: "Les options d'un <select> sont numérotées à partir de 0.",
+              indice2: "La propriété officielle du DOM pour connaître le numéro de l'option sélectionnée est selectedIndex.",
+              explication: "Si la première option d'invite (indice <code>0</code>) est restée affichée, <code>document.getElementById(\"ville\").selectedIndex == 0</code> est vrai."
+            },
+            {
+              id: "q4",
+              type: "code",
+              pts: 4,
+              enonce: "Que renvoie <code>\"tunisie\".indexOf(\"A\")</code> ?",
+              placeholder: "Résultat numérique",
+              verif: function (val) {
+                return String(val || "").trim() === "-1";
+              },
+              indice1: "Cherchez si la lettre 'A' apparaît dans la chaîne \"tunisie\".",
+              indice2: "Quand indexOf ne trouve pas la sous-chaîne recherchée, il retourne toujours une valeur négative précise.",
+              explication: "Lorsque le caractère ou la sous-chaîne est introuvable, <code>indexOf(...)</code> retourne <code>-1</code>."
+            },
+            {
+              id: "q5",
+              type: "choix",
+              pts: 4,
+              enonce: "Pour vérifier qu'au moins un des deux boutons radio <code>name=\"genre\"</code> est coché :",
+              options: [
+                { v: "a", t: "<code>let r = document.getElementsByName(\"genre\"); if (!r[0].checked &amp;&amp; !r[1].checked) { ... }</code>" },
+                { v: "b", t: "<code>if (document.getElementById(\"genre\").checked == false) { ... }</code>" },
+                { v: "c", t: "<code>let r = document.getElementsByName(\"genre\"); if (!r[0].checked || !r[1].checked) { ... }</code>" },
+                { v: "d", t: "<code>if (document.getElementsByName(\"genre\").value == \"\") { ... }</code>" }
+              ],
+              attendu: "a",
+              indice1: "getElementsByName renvoie un tableau de nœuds r[0], r[1]... et l'erreur survient quand AUCUN des deux n'est coché.",
+              indice2: "« Aucun coché » se traduit par : r[0] non coché ET (&&) r[1] non coché !",
+              explication: "Piège très fréquent : il y a erreur si le premier n'est pas coché <strong>ET</strong> le second n'est pas coché : <code>!r[0].checked &amp;&amp; !r[1].checked</code>."
+            }
+          ]
+        },
+
+        /* ==================== 3. SQL ==================== */
+        {
+          id: "ia-sql-1",
+          matiere: "sql",
+          niveau: "3e & 4e SI",
+          titre: "🗄️ Série Interactive 1 — SQL : LDD (CREATE / ALTER) & LMD Fondamental",
+          desc: "Entraînez-vous aux commandes de définition de structure, clés étrangères et requêtes de filtrage SQL.",
+          questions: [
+            {
+              id: "q1",
+              type: "code",
+              pts: 4,
+              enonce: "Écrivez la requête SQL permettant d'ajouter la colonne <code>Email VARCHAR(60) NOT NULL</code> dans la table existante <code>CLIENT</code> :",
+              placeholder: "ALTER TABLE ...",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/;$/, "").replace(/\s+/g, " ").toUpperCase();
+                return /^ALTER TABLE CLIENT ADD (COLUMN )?EMAIL VARCHAR\s*\(\s*60\s*\) NOT NULL$/.test(s);
+              },
+              indice1: "Pour modifier la structure d'une table existante, on utilise la commande LDD ALTER TABLE.",
+              indice2: "Syntaxe : ALTER TABLE CLIENT ADD Email VARCHAR(60) NOT NULL;",
+              explication: "Corrigé : <code>ALTER TABLE CLIENT ADD Email VARCHAR(60) NOT NULL;</code>."
+            },
+            {
+              id: "q2",
+              type: "choix",
+              pts: 4,
+              enonce: "Dans <code>CREATE TABLE SEJOUR</code>, quelle syntaxe déclare correctement <code>num_pat</code> comme clé étrangère faisant référence à <code>PATIENT(num_pat)</code> en cascade ?",
+              options: [
+                { v: "a", t: "<code>FOREIGN KEY num_pat REFERENCES PATIENT.num_pat CASCADE</code>" },
+                { v: "b", t: "<code>FOREIGN KEY (num_pat) REFERENCES PATIENT(num_pat) ON DELETE CASCADE</code>" },
+                { v: "c", t: "<code>PRIMARY FOREIGN KEY (num_pat) FROM PATIENT(num_pat)</code>" },
+                { v: "d", t: "<code>REFERENCES (num_pat) TO PATIENT(num_pat)</code>" }
+              ],
+              attendu: "b",
+              indice1: "La colonne locale ET la colonne mère doivent toutes deux être entourées de parenthèses.",
+              indice2: "Syntaxe : FOREIGN KEY (col_fille) REFERENCES TABLE_MERE(col_mere) ON DELETE CASCADE.",
+              explication: "Corrigé : <code>FOREIGN KEY (num_pat) REFERENCES PATIENT(num_pat) ON DELETE CASCADE</code>."
+            },
+            {
+              id: "q3",
+              type: "code",
+              pts: 4,
+              enonce: "Écrivez la requête SQL qui affiche sans doublons la liste des villes (colonne <code>Ville</code>) de la table <code>ELEVE</code> :",
+              placeholder: "SELECT ...",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/;$/, "").replace(/\s+/g, " ").toUpperCase();
+                return s === "SELECT DISTINCT VILLE FROM ELEVE";
+              },
+              indice1: "Quel mot-clé placé juste après SELECT élimine les lignes en double ?",
+              indice2: "Utilisez SELECT DISTINCT Ville FROM ELEVE;",
+              explication: "Corrigé : <code>SELECT DISTINCT Ville FROM ELEVE;</code>."
+            },
+            {
+              id: "q4",
+              type: "choix",
+              pts: 4,
+              enonce: "Quel filtre <code>WHERE</code> sélectionne les clients dont le <code>Nom</code> commence par <code>'B'</code> et comporte au moins 3 caractères ?",
+              options: [
+                { v: "a", t: "<code>WHERE Nom LIKE 'B*__'</code>" },
+                { v: "b", t: "<code>WHERE Nom LIKE 'B__%'</code>" },
+                { v: "c", t: "<code>WHERE Nom = 'B__%'</code>" },
+                { v: "d", t: "<code>WHERE Nom LIKE '%B__'</code>" }
+              ],
+              attendu: "b",
+              indice1: "En SQL, le joker '_' représente exactement 1 caractère et '%' représente 0, 1 ou plusieurs caractères.",
+              indice2: "Commence par 'B' (1 car.) + au moins 2 autres caractères ('__') + suite éventuelle ('%') avec l'opérateur LIKE.",
+              explication: "<code>WHERE Nom LIKE 'B__%'</code> impose <code>B</code> en 1re position suivi d'au moins deux caractères (<code>__</code>), puis éventuellement d'autres (<code>%</code>)."
+            },
+            {
+              id: "q5",
+              type: "code",
+              pts: 4,
+              enonce: "Écrivez la requête SQL qui augmente de <code>10%</code> le prix (<code>Prix = Prix * 1.10</code>) de tous les articles de la table <code>ARTICLE</code> dont la <code>Categorie</code> vaut <code>'Info'</code> :",
+              placeholder: "UPDATE ARTICLE SET ...",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/;$/, "").replace(/"/g, "'").replace(/\s+/g, " ").toUpperCase();
+                return /^UPDATE ARTICLE SET PRIX\s*=\s*PRIX\s*\*\s*1\.10?\s+WHERE CATEGORIE\s*=\s*'INFO'$/.test(s);
+              },
+              indice1: "Pour modifier des données existantes (LMD), utilisez UPDATE nom_table SET ... WHERE ...",
+              indice2: "UPDATE ARTICLE SET Prix = Prix * 1.10 WHERE Categorie = 'Info';",
+              explication: "Corrigé : <code>UPDATE ARTICLE SET Prix = Prix * 1.10 WHERE Categorie = 'Info';</code>."
+            }
+          ]
+        },
+        {
+          id: "ia-sql-2",
+          matiere: "sql",
+          only4si: true,
+          niveau: "4e SI · Bac",
+          titre: "🗄️ Série Interactive 2 — SQL Avancé : Jointures, GROUP BY / HAVING & Dates (4e SI)",
+          desc: "Maîtrisez les requêtes multi-tables, les fonctions d'agrégation et les fonctions de date du Bac STI.",
+          questions: [
+            {
+              id: "q1",
+              type: "choix",
+              pts: 4,
+              enonce: "Quel est l'ordre syntaxique OBLIGATOIRE des clauses dans une requête <code>SELECT</code> complète en SQL ?",
+              options: [
+                { v: "a", t: "<code>SELECT → FROM → GROUP BY → WHERE → HAVING → ORDER BY</code>" },
+                { v: "b", t: "<code>SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY</code>" },
+                { v: "c", t: "<code>SELECT → WHERE → FROM → HAVING → GROUP BY → ORDER BY</code>" },
+                { v: "d", t: "<code>SELECT → FROM → WHERE → HAVING → GROUP BY → ORDER BY</code>" }
+              ],
+              attendu: "b",
+              indice1: "WHERE filtre les lignes individuelles AVANT le regroupement, tandis que HAVING filtre les groupes APRÈS GROUP BY.",
+              indice2: "ORDER BY est toujours la toute dernière clause de la requête.",
+              explication: "Ordre immuable : <code>SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ...</code>."
+            },
+            {
+              id: "q2",
+              type: "code",
+              pts: 4,
+              enonce: "Soit la table <code>LOCATION(idLoc, cinCli, immat, nbJours)</code>. Écrivez la requête affichant chaque <code>cinCli</code> et son nombre de locations <code>COUNT(*)</code> uniquement pour les clients ayant effectué <strong>au moins 3 locations</strong> :",
+              placeholder: "SELECT cinCli, COUNT(*) FROM LOCATION ...",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/;$/, "").replace(/\s+/g, " ").toUpperCase();
+                return /^SELECT CINCLI\s*,\s*COUNT\(\*\)(\s+AS\s+\w+)?\s+FROM LOCATION GROUP BY CINCLI HAVING COUNT\(\*\)\s*>=\s*3$/.test(s);
+              },
+              indice1: "On regroupe par cinCli (GROUP BY cinCli), puis on filtre sur une fonction d'agrégation COUNT(*).",
+              indice2: "Interdit de mettre COUNT(*) dans WHERE ! Utilisez HAVING COUNT(*) >= 3 après GROUP BY cinCli.",
+              explication: "Corrigé : <code>SELECT cinCli, COUNT(*) FROM LOCATION GROUP BY cinCli HAVING COUNT(*) &gt;= 3;</code>."
+            },
+            {
+              id: "q3",
+              type: "choix",
+              pts: 4,
+              enonce: "Quelle condition sélectionne les locations enregistrées durant l'année en cours dans MySQL ?",
+              options: [
+                { v: "a", t: "<code>WHERE YEAR(dateLoc) = YEAR(CURDATE())</code>" },
+                { v: "b", t: "<code>WHERE DATEYEAR(dateLoc) = TODAY()</code>" },
+                { v: "c", t: "<code>WHERE dateLoc.getFullYear() = NOW()</code>" },
+                { v: "d", t: "<code>WHERE EXTRACT_YEAR(dateLoc) == CURRENT()</code>" }
+              ],
+              attendu: "a",
+              indice1: "En SQL/MySQL, getFullYear() n'existe pas (c'est du JavaScript !).",
+              indice2: "La fonction SQL qui extrait l'année est YEAR(...) et la date du jour est CURDATE() (ou NOW()).",
+              explication: "<code>YEAR(dateLoc) = YEAR(CURDATE())</code> compare l'année de <code>dateLoc</code> à l'année de la date système."
+            },
+            {
+              id: "q4",
+              type: "choix",
+              pts: 4,
+              enonce: "Comment afficher les voitures de <code>VOITURE(immat, marque)</code> qui n'ont <strong>jamais</strong> été louées dans <code>LOCATION(idLoc, immat)</code> ?",
+              options: [
+                { v: "a", t: "<code>SELECT * FROM VOITURE V, LOCATION L WHERE V.immat != L.immat;</code>" },
+                { v: "b", t: "<code>SELECT * FROM VOITURE WHERE immat NOT IN (SELECT immat FROM LOCATION);</code>" },
+                { v: "c", t: "<code>SELECT * FROM VOITURE HAVING COUNT(immat) = 0;</code>" },
+                { v: "d", t: "<code>SELECT * FROM VOITURE WHERE immat = NULL;</code>" }
+              ],
+              attendu: "b",
+              indice1: "Attention au piège classique : une jointure avec != fait un produit cartésien erroné !",
+              indice2: "Utilisez une sous-requête avec l'opérateur d'absence NOT IN (SELECT immat FROM LOCATION).",
+              explication: "Pour trouver les éléments « jamais utilisés », le patron officiel du Bac est <code>WHERE cle NOT IN (SELECT cle FROM TABLE_FILLE)</code>."
+            },
+            {
+              id: "q5",
+              type: "code",
+              pts: 4,
+              enonce: "Quelle fonction MySQL calcule le nombre de jours d'écart entre deux dates <code>dateRetour</code> et <code>dateDepart</code> ? (écrivez l'appel exact)",
+              placeholder: "Ex: FONCTION(dateRetour, dateDepart)",
+              verif: function (val) {
+                var s = normCode(val).replace(/;$/, "");
+                return s === "datediff(dateretour,datedepart)";
+              },
+              indice1: "La fonction SQL porte le nom anglais de « différence de dates » en un seul mot.",
+              indice2: "Attention à l'ordre MySQL : DATEDIFF(date_fin, date_debut) renvoie date_fin - date_debut.",
+              explication: "Corrigé : <code>DATEDIFF(dateRetour, dateDepart)</code>."
+            }
+          ]
+        },
+
+        /* ==================== 4. PHP & MYSQLI (4e SI) ==================== */
+        {
+          id: "ia-php-1",
+          matiere: "php",
+          only4si: true,
+          niveau: "4e SI",
+          titre: "🐘 Série Interactive 1 — PHP : $_POST, Chaînes, Tableaux & Dates",
+          desc: "Vérifiez la syntaxe PHP côté serveur : superglobales, concaténation par le point (.) et fonctions standards.",
+          questions: [
+            {
+              id: "q1",
+              type: "code",
+              pts: 4,
+              enonce: "Écrivez l'instruction PHP qui récupère la valeur du champ HTML <code>name=\"cin\"</code> envoyé par <code>method=\"post\"</code> dans la variable <code>$cin</code> :",
+              placeholder: "$cin = ...;",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/;$/, "").replace(/'/g, '"').replace(/\s+/g, "");
+                return s === '$cin=$_POST["cin"]';
+              },
+              indice1: "En PHP, toute variable commence par $ et les données POST sont dans le tableau associatif superglobal $_POST.",
+              indice2: "Attention aux majuscules obligatoires : $_POST[\"cin\"];",
+              explication: "Corrigé : <code>$cin = $_POST[\"cin\"];</code>."
+            },
+            {
+              id: "q2",
+              type: "choix",
+              pts: 4,
+              enonce: "Quel opérateur réalise la <strong>concaténation</strong> de deux chaînes en PHP (contrairement au <code>+</code> de JavaScript) ?",
+              options: [
+                { v: "a", t: "L'opérateur <code>+</code> : <code>\"Bonjour \" + $nom</code>" },
+                { v: "b", t: "L'opérateur point <code>.</code> : <code>\"Bonjour \" . $nom</code>" },
+                { v: "c", t: "L'opérateur <code>&amp;</code> : <code>\"Bonjour \" &amp; $nom</code>" },
+                { v: "d", t: "La méthode <code>$nom.concat()</code>" }
+              ],
+              attendu: "b",
+              indice1: "En PHP, l'opérateur + tente toujours une addition numérique !",
+              indice2: "C'est le point (.) qui colle deux chaînes en PHP.",
+              explication: "En PHP, la concaténation s'écrit avec le point : <code>\"Bonjour \" . $nom</code>."
+            },
+            {
+              id: "q3",
+              type: "code",
+              pts: 4,
+              enonce: "Quelle valeur renvoie l'expression PHP <code>substr(\"4SI2-2026\", 0, 4)</code> ?",
+              placeholder: "Texte obtenu",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/^["']|["']$/g, "");
+                return s === "4SI2";
+              },
+              indice1: "Attention à la différence entre JS substring(debut, fin) et PHP substr($ch, debut, LONGUEUR) !",
+              indice2: "À partir de l'indice 0, on prend 4 caractères de longueur.",
+              explication: "<code>substr(\"4SI2-2026\", 0, 4)</code> extrait 4 caractères depuis l'indice 0, soit <code>\"4SI2\"</code>."
+            },
+            {
+              id: "q4",
+              type: "code",
+              pts: 4,
+              enonce: "Écrivez l'appel PHP qui retourne la date système au format SQL <code>\"2026-10-25\"</code> (Année sur 4 chiffres-mois-jour) :",
+              placeholder: "date(\"...\")",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/;$/, "").replace(/'/g, '"').replace(/\s+/g, "");
+                return s === 'date("Y-m-d")';
+              },
+              indice1: "Utilisez la fonction PHP date(...) avec les bons codes de format.",
+              indice2: "Y (majuscule) = année sur 4 chiffres, m = mois sur 2 chiffres, d = jour sur 2 chiffres.",
+              explication: "Corrigé : <code>date(\"Y-m-d\")</code>."
+            },
+            {
+              id: "q5",
+              type: "choix",
+              pts: 4,
+              enonce: "Quelle fonction PHP renvoie la longueur (nombre d'octets/caractères ASCII) d'une chaîne <code>$ch</code> ?",
+              options: [
+                { v: "a", t: "<code>$ch.length</code>" },
+                { v: "b", t: "<code>length($ch)</code>" },
+                { v: "c", t: "<code>strlen($ch)</code>" },
+                { v: "d", t: "<code>count($ch)</code>" }
+              ],
+              attendu: "c",
+              indice1: "$ch.length est du JavaScript et LENGTH(ch) est du SQL !",
+              indice2: "En PHP, les fonctions de chaînes commencent souvent par str...",
+              explication: "En PHP, la longueur d'une chaîne s'obtient avec <code>strlen($ch)</code>."
+            }
+          ]
+        },
+        {
+          id: "ia-php-2",
+          matiere: "php",
+          only4si: true,
+          niveau: "4e SI · Bac Pratique",
+          titre: "🐘 Série Interactive 2 — PHP & MySQLi : Connexion, Requêtes & Parcours Bac",
+          desc: "Évitez tous les pièges MySQLi du Bac Pratique : mysqli_connect, num_rows vs affected_rows et boucle while.",
+          questions: [
+            {
+              id: "q1",
+              type: "code",
+              pts: 4,
+              enonce: "Complétez l'instruction PHP de connexion locale à la base de données nommée <code>bd_bac</code> (utilisateur <code>root</code>, mot de passe vide) :",
+              codeContexte: "$con = _____________________________________________________;",
+              placeholder: "mysqli_connect(...)",
+              verif: function (val) {
+                var s = String(val || "").trim().replace(/;$/, "").replace(/'/g, '"').replace(/\s+/g, "");
+                s = s.replace(/^\$con=/, "");
+                return s === 'mysqli_connect("localhost","root","","bd_bac")' || s === 'mysqli_connect("127.0.0.1","root","","bd_bac")';
+              },
+              indice1: "La fonction procédurale MySQLi prend 4 arguments dans un ordre précis : serveur, utilisateur, mot de passe, nom de la BD.",
+              indice2: "mysqli_connect(\"localhost\", \"root\", \"\", \"bd_bac\")",
+              explication: "Corrigé : <code>$con = mysqli_connect(\"localhost\", \"root\", \"\", \"bd_bac\");</code>."
+            },
+            {
+              id: "q2",
+              type: "choix",
+              pts: 4,
+              enonce: "Quel est l'ordre exact des paramètres de <code>mysqli_query</code> en mode procédural ?",
+              options: [
+                { v: "a", t: "<code>mysqli_query($req, $con)</code>" },
+                { v: "b", t: "<code>mysqli_query($con, $req)</code>" },
+                { v: "c", t: "<code>mysqli_query(\"bd_bac\", $req)</code>" },
+                { v: "d", t: "<code>$con-&gt;mysqli_query($req, true)</code>" }
+              ],
+              attendu: "b",
+              indice1: "Contrairement à l'ancienne extension obsolète mysql_query, toutes les fonctions mysqli_* commencent par le même 1er argument.",
+              indice2: "Le lien de connexion $con est TOUJOURS le 1er argument !",
+              explication: "En MySQLi procédural, la connexion passe toujours en premier : <code>mysqli_query($con, $req)</code>."
+            },
+            {
+              id: "q3",
+              type: "choix",
+              pts: 4,
+              enonce: "Après une requête <code>INSERT INTO</code>, <code>UPDATE</code> ou <code>DELETE</code>, quelle fonction permet de savoir combien de lignes ont été ajoutées/modifiées ?",
+              options: [
+                { v: "a", t: "<code>mysqli_num_rows($res)</code>" },
+                { v: "b", t: "<code>mysqli_affected_rows($con)</code>" },
+                { v: "c", t: "<code>mysqli_count_rows($res)</code>" },
+                { v: "d", t: "<code>mysqli_fetch_row($con)</code>" }
+              ],
+              attendu: "b",
+              indice1: "Piège n°1 au Bac : mysqli_num_rows($res) ne fonctionne QUE sur un résultat de SELECT ! Sur un INSERT, $res est un booléen.",
+              indice2: "On interroge la connexion $con sur le nombre de lignes affectées.",
+              explication: "<code>mysqli_affected_rows($con)</code> s'utilise après <code>INSERT / UPDATE / DELETE</code> (avec <code>$con</code>), tandis que <code>mysqli_num_rows($res)</code> s'utilise après <code>SELECT</code> (avec <code>$res</code>)."
+            },
+            {
+              id: "q4",
+              type: "choix",
+              pts: 4,
+              enonce: "Avec <code>$res = mysqli_query($con, \"SELECT Nom, Moyenne FROM ELEVE\");</code>, quelle boucle parcourt toutes les lignes retournées selon le programme officiel ?",
+              options: [
+                { v: "a", t: "<code>while ($t = mysqli_fetch_array($res)) { echo $t[0] . \" : \" . $t[1]; }</code>" },
+                { v: "b", t: "<code>for ($t in mysqli_query($res)) { echo $t.Nom; }</code>" },
+                { v: "c", t: "<code>while ($t = mysqli_num_rows($res)) { echo $t[\"Nom\"]; }</code>" },
+                { v: "d", t: "<code>foreach ($res-&gt;rows as $t) { print($t); }</code>" }
+              ],
+              attendu: "a",
+              indice1: "À chaque tour de boucle while, une fonction extrait la ligne courante du jeu de résultats $res dans un tableau $t.",
+              indice2: "mysqli_fetch_array($res) permet d'accéder aux colonnes par indice ($t[0]) ou par nom ($t['Nom']).",
+              explication: "<code>while ($t = mysqli_fetch_array($res))</code> lit chaque enregistrement jusqu'à la fin du curseur (<code>null/false</code>)."
+            },
+            {
+              id: "q5",
+              type: "code",
+              pts: 4,
+              enonce: "Écrivez l'instruction PHP qui ferme proprement la connexion MySQLi stockée dans <code>$con</code> à la fin du script :",
+              placeholder: "mysqli_...(...);",
+              verif: function (val) {
+                var s = normCode(val).replace(/;$/, "");
+                return s === "mysqli_close($con)";
+              },
+              indice1: "La fonction commence par mysqli_ suivi du verbe anglais « fermer ».",
+              indice2: "Passez $con entre parenthèses : mysqli_close($con);",
+              explication: "Corrigé : <code>mysqli_close($con);</code>."
+            }
+          ]
+        }
+      ];
+
+      function lireJson(cle, def) {
+        try {
+          var v = JSON.parse(localStorage.getItem(cle) || "null");
+          return v && typeof v === "object" ? v : def;
+        } catch (e) { return def; }
+      }
+      function ecrireJson(cle, val) {
+        try {
+          localStorage.setItem(cle, JSON.stringify(val));
+          localStorage.setItem("sti-sync-maj", String(Date.now()));
+        } catch (e) {}
+      }
+
+      function estCorrigeVerrouille(matiere) {
+        if (window.STI_EXO_ATELIER && typeof window.STI_EXO_ATELIER.estCorrigeVerrouille === "function") {
+          return window.STI_EXO_ATELIER.estCorrigeVerrouille(matiere);
+        }
+        try {
+          if (localStorage.getItem("sti-admin-gold") === "1") return false;
+          var cfgSec = JSON.parse(localStorage.getItem("sti-sec-config") || "null");
+          if (!cfgSec || !cfgSec.corrigesVerrou || !cfgSec.corrigesVerrou.actif) return false;
+          var cv = cfgSec.corrigesVerrou;
+          if (cv.finMs && Number(cv.finMs) > 0 && Date.now() >= Number(cv.finMs)) return false;
+          var m = matiere === "bdd" ? "sql" : matiere;
+          return Boolean(cv.matieres && cv.matieres[m]);
+        } catch (e) { return false; }
+      }
+
+      function sontIndicesAutorises() {
+        try {
+          if (localStorage.getItem("sti-admin-gold") === "1") return true;
+          var cfgSec = JSON.parse(localStorage.getItem("sti-sec-config") || "null");
+          if (cfgSec && cfgSec.corrigesVerrou && cfgSec.corrigesVerrou.actif) {
+            return cfgSec.corrigesVerrou.indicesAutorises !== false;
+          }
+        } catch (e) {}
+        return true;
+      }
+
+      var params = new URLSearchParams(location.search || "");
+      var matiereActive = (params.get("matiere") || "css3").toLowerCase();
+      if (matiereActive === "bdd") matiereActive = "sql";
+      if (matiereActive === "php" && !est4SIAutorise()) matiereActive = "css3";
+      if (["css3", "javascript", "sql", "php"].indexOf(matiereActive) === -1) matiereActive = "css3";
+
+      var serieActiveId = params.get("serie") || "";
+      var etatIndices = {}; // cle serieId:qId -> niveau (0,1,2)
+      var etatEssais = {};  // cle serieId:qId -> true
+
+      function seriesPourMatiere(mat) {
+        return SERIES_IA.filter(function (s) {
+          if (s.only4si && !est4SIAutorise()) return false;
+          return s.matiere === mat;
+        });
+      }
+
+      function majCompteursOnglets() {
+        var suivi = lireJson(CLE_SUIVI, {});
+        ["css3", "javascript", "sql", "php"].forEach(function (m) {
+          var el = document.getElementById("ia-stat-" + m);
+          if (!el) return;
+          var liste = seriesPourMatiere(m);
+          var faites = liste.filter(function (s) { return suivi[s.id] && suivi[s.id].statut === "done"; }).length;
+          el.textContent = faites + " / " + liste.length + " validées";
+        });
+      }
+
+      function majBanniereVerrou() {
+        var ban = document.getElementById("ia-lock-banner");
+        var txt = document.getElementById("ia-lock-banner-txt");
+        if (!ban) return;
+        var verrou = estCorrigeVerrouille(matiereActive);
+        ban.classList.toggle("visible", verrou);
+        if (verrou && txt) {
+          var indOk = sontIndicesAutorises();
+          txt.textContent = "🔒 Séance TP en cours : M. Essouyah a temporairement masqué les corrigés détaillés de cette matière." +
+            (indOk ? " Vous pouvez toujours utiliser les indices progressifs 💡 et calculer votre note sur /20 !" : " Mode évaluation : cherchez et vérifiez vos réponses en autonomie !");
+        }
+      }
+
+      function obtenirSerieCourante() {
+        var dispo = seriesPourMatiere(matiereActive);
+        if (!dispo.length) dispo = seriesPourMatiere("css3");
+        var tr = dispo.find(function (s) { return s.id === serieActiveId; });
+        if (!tr) {
+          tr = dispo[0];
+          serieActiveId = tr ? tr.id : "";
+        }
+        return tr;
+      }
+
+      function echap(s) {
+        return String(s || "").replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+
+      function sauvegarderReponseLocale(serieId, qId, valeur) {
+        var tout = lireJson(CLE_REP_IA, {});
+        if (!tout[serieId]) tout[serieId] = {};
+        tout[serieId][qId] = valeur;
+        ecrireJson(CLE_REP_IA, tout);
+      }
+
+      function lireReponseLocale(serieId, qId) {
+        var tout = lireJson(CLE_REP_IA, {});
+        return (tout[serieId] && tout[serieId][qId]) || "";
+      }
+
+      function evaluerQuestion(serie, q, afficherFeedback) {
+        var card = document.getElementById("ia-card-" + q.id);
+        var fb = document.getElementById("ia-fb-" + q.id);
+        if (!card) return 0;
+        var rep = "";
+        if (q.type === "choix") {
+          var coche = card.querySelector('input[type="radio"]:checked');
+          rep = coche ? coche.value : "";
+        } else {
+          var champ = card.querySelector(".ia-input-code");
+          rep = champ ? champ.value : "";
+        }
+        sauvegarderReponseLocale(serie.id, q.id, rep);
+        if (String(rep).trim() !== "") etatEssais[serie.id + ":" + q.id] = true;
+
+        var ok = false;
+        if (q.type === "choix") ok = (rep === q.attendu);
+        else if (typeof q.verif === "function") ok = Boolean(q.verif(rep));
+
+        if (afficherFeedback) {
+          card.classList.remove("correcte", "erronee");
+          card.classList.add(ok ? "correcte" : "erronee");
+          if (fb) {
+            fb.className = "ia-box-info visible " + (ok ? "ok-box" : "err-box");
+            if (ok) {
+              fb.innerHTML = "✅ <strong>Bravo (+4 pts) !</strong> Réponse exacte conforme au programme STI.";
+            } else if (!String(rep).trim()) {
+              fb.innerHTML = "⚠️ Aucune réponse saisie pour cette question. Utilisez <strong>💡 Indice 1</strong> si vous bloquez !";
+            } else {
+              fb.innerHTML = "❌ <strong>Pas tout à fait.</strong> Vérifiez la syntaxe exacte (majuscules, parenthèses, mots-clés) ou cliquez sur <strong>💡 Indice</strong>.";
+            }
+          }
+        }
+        return ok ? q.pts : 0;
+      }
+
+      function calculerNoteSerie(serie) {
+        var total = 0;
+        serie.questions.forEach(function (q) {
+          total += evaluerQuestion(serie, q, true);
+        });
+        var scVal = document.getElementById("ia-score-val");
+        var scSub = document.getElementById("ia-score-sub");
+        var bil = document.getElementById("ia-bilan-txt");
+        if (scVal) scVal.textContent = total + " / 20";
+        if (scSub) {
+          scSub.textContent = total >= 16 ? "🌟 Excellent niveau Bac !" : (total >= 10 ? "👍 Série validée !" : "💪 Continuez avec les indices !");
+        }
+        if (bil) {
+          bil.textContent = total >= 12
+            ? ("🏆 Bravo ! Vous avez obtenu " + total + "/20 — cette série est marquée « Terminée ✅ » sur votre portail !")
+            : ("📊 Score actuel : " + total + "/20. Corrigez les cartes en rouge à l'aide des indices pour dépasser 12/20 !");
+        }
+        var suivi = lireJson(CLE_SUIVI, {});
+        var anc = suivi[serie.id] || {};
+        var meilleur = Math.max(Number(anc.note20 || 0), total);
+        suivi[serie.id] = {
+          statut: total >= 12 ? "done" : "doing",
+          etoile: Boolean(anc.etoile),
+          note20: meilleur,
+          maj: Date.now()
+        };
+        ecrireJson(CLE_SUIVI, suivi);
+        majCompteursOnglets();
+        rendrePillsSeries();
+      }
+
+      function rendrePillsSeries() {
+        var cont = document.getElementById("ia-serie-pills");
+        if (!cont) return;
+        var suivi = lireJson(CLE_SUIVI, {});
+        var dispo = seriesPourMatiere(matiereActive);
+        cont.innerHTML = "";
+        dispo.forEach(function (s) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "ia-serie-pill" + (s.id === serieActiveId ? " actif" : "");
+          var st = suivi[s.id];
+          var badge = st && st.note20 !== undefined ? (" · 🏆 " + st.note20 + "/20") : "";
+          var coche = st && st.statut === "done" ? "✅ " : "";
+          b.textContent = coche + s.titre + badge;
+          b.addEventListener("click", function () {
+            serieActiveId = s.id;
+            rendreTout();
+          });
+          cont.appendChild(b);
+        });
+      }
+
+      function rendreQuestions(serie) {
+        var list = document.getElementById("ia-q-list");
+        if (!list || !serie) return;
+        list.innerHTML = "";
+
+        serie.questions.forEach(function (q, idx) {
+          var card = document.createElement("article");
+          card.className = "ia-q-card";
+          card.id = "ia-card-" + q.id;
+          var valSauv = lireReponseLocale(serie.id, q.id);
+
+          var zoneSaisie = "";
+          if (q.type === "choix") {
+            zoneSaisie = '<div class="ia-choix-grid">' + q.options.map(function (o) {
+              var chk = valSauv === o.v ? " checked" : "";
+              return '<label class="ia-choix-opt"><input type="radio" name="rad_' + serie.id + '_' + q.id + '" value="' + echap(o.v) + '"' + chk + ' /><span>' + o.t + '</span></label>';
+            }).join("") + '</div>';
+          } else {
+            zoneSaisie = '<input type="text" class="ia-input-code" value="' + echap(valSauv) + '" placeholder="' + echap(q.placeholder || "Votre réponse…") + '" autocomplete="off" spellcheck="false" />';
+          }
+
+          card.innerHTML =
+            '<div class="ia-q-head">' +
+              '<span class="ia-q-num">Question ' + (idx + 1) + ' / ' + serie.questions.length + ' · ' + echap(serie.niveau) + '</span>' +
+              '<span class="ia-q-pts">🎯 ' + q.pts + ' points</span>' +
+            '</div>' +
+            '<div class="ia-q-enonce">' + q.enonce + '</div>' +
+            (q.codeContexte ? '<pre class="ia-code-pre">' + echap(q.codeContexte) + '</pre>' : '') +
+            zoneSaisie +
+            '<div class="ia-q-actions">' +
+              '<button type="button" class="ia-mini-btn verif" data-act="verif">✅ Vérifier</button>' +
+              '<button type="button" class="ia-mini-btn indice" data-act="indice">💡 Indice 1 (Méthode)</button>' +
+              '<button type="button" class="ia-mini-btn" data-act="corrige">📖 Explication / Corrigé</button>' +
+            '</div>' +
+            '<div class="ia-box-info indice-box" id="ia-ind-' + q.id + '"></div>' +
+            '<div class="ia-box-info" id="ia-fb-' + q.id + '"></div>' +
+            '<div class="ia-box-info sol-box" id="ia-sol-' + q.id + '"></div>';
+
+          var btnVerif = card.querySelector('[data-act="verif"]');
+          var btnInd = card.querySelector('[data-act="indice"]');
+          var btnSol = card.querySelector('[data-act="corrige"]');
+          var boxInd = card.querySelector('#ia-ind-' + q.id);
+          var boxSol = card.querySelector('#ia-sol-' + q.id);
+          var cleQ = serie.id + ":" + q.id;
+
+          card.addEventListener("input", function () {
+            var ch = card.querySelector(".ia-input-code");
+            if (ch) sauvegarderReponseLocale(serie.id, q.id, ch.value);
+          });
+          card.addEventListener("change", function () {
+            var rd = card.querySelector('input[type="radio"]:checked');
+            if (rd) sauvegarderReponseLocale(serie.id, q.id, rd.value);
+          });
+
+          btnVerif.addEventListener("click", function () {
+            evaluerQuestion(serie, q, true);
+          });
+
+          btnInd.addEventListener("click", function () {
+            if (!sontIndicesAutorises()) {
+              boxInd.className = "ia-box-info indice-box visible";
+              boxInd.innerHTML = "🔒 <strong>Mode évaluation :</strong> les indices sont temporairement désactivés par le professeur.";
+              return;
+            }
+            var niv = (etatIndices[cleQ] || 0) + 1;
+            etatIndices[cleQ] = Math.min(2, niv);
+            boxInd.className = "ia-box-info indice-box visible";
+            if (etatIndices[cleQ] === 1) {
+              boxInd.innerHTML = "💡 <strong>Indice 1 (Méthode) :</strong> " + echap(q.indice1);
+              btnInd.textContent = "💡 Indice 2 (Syntaxe Bac)";
+            } else {
+              boxInd.innerHTML = "💡 <strong>Indice 1 :</strong> " + echap(q.indice1) + "<br>🔑 <strong>Indice 2 (Syntaxe Bac) :</strong> " + echap(q.indice2);
+              btnInd.textContent = "💡 Indices affichés (2/2)";
+            }
+          });
+
+          btnSol.addEventListener("click", function () {
+            if (estCorrigeVerrouille(serie.matiere)) {
+              boxSol.className = "ia-box-info err-box visible";
+              boxSol.innerHTML = "🔒 <strong>Corrigé verrouillé par le professeur (Séance TP en cours) :</strong> testez votre réponse avec <em>✅ Vérifier</em>" +
+                (sontIndicesAutorises() ? " ou aidez-vous du bouton <em>💡 Indice</em> !" : " !");
+              return;
+            }
+            var nivVu = etatIndices[cleQ] || 0;
+            var aEssaye = Boolean(etatEssais[cleQ]);
+            if (!aEssaye && nivVu < 1) {
+              etatIndices[cleQ] = 1;
+              boxInd.className = "ia-box-info indice-box visible";
+              boxInd.innerHTML = "💡 <strong>Coup de pouce avant le corrigé :</strong> " + echap(q.indice1) +
+                "<br><span style='font-size:0.8rem;opacity:0.85'>👉 Essayez de répondre ou cliquez une 2e fois sur « 📖 Explication / Corrigé » pour révéler la solution complète.</span>";
+              btnInd.textContent = "💡 Indice 2 (Syntaxe Bac)";
+              return;
+            }
+            boxSol.className = "ia-box-info sol-box visible";
+            boxSol.innerHTML = "📖 <strong>Explication &amp; Corrigé officiel :</strong> " + q.explication;
+          });
+
+          list.appendChild(card);
+        });
+      }
+
+      function rendreTout() {
+        var serie = obtenirSerieCourante();
+        if (!serie) return;
+        document.querySelectorAll(".ia-mat-tab[data-mat]").forEach(function (t) {
+          t.classList.toggle("actif", t.getAttribute("data-mat") === matiereActive);
+        });
+        majCompteursOnglets();
+        majBanniereVerrou();
+        rendrePillsSeries();
+
+        var elTit = document.getElementById("ia-serie-titre");
+        var elDesc = document.getElementById("ia-serie-desc");
+        var scVal = document.getElementById("ia-score-val");
+        var scSub = document.getElementById("ia-score-sub");
+        var lienRet = document.getElementById("lien-ia-retour-mat");
+
+        if (elTit) elTit.textContent = serie.titre;
+        if (elDesc) elDesc.textContent = serie.desc;
+        if (lienRet) lienRet.href = "series-exercices.html#" + (matiereActive === "sql" ? "bdd" : matiereActive);
+
+        var suivi = lireJson(CLE_SUIVI, {});
+        var st = suivi[serie.id];
+        if (scVal) scVal.textContent = (st && st.note20 !== undefined ? st.note20 : "—") + " / 20";
+        if (scSub) scSub.textContent = (st && st.note20 !== undefined) ? "Meilleur score enregistré" : "Répondez puis vérifiez";
+
+        rendreQuestions(serie);
+      }
+
+      document.querySelectorAll(".ia-mat-tab[data-mat]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var m = btn.getAttribute("data-mat");
+          if (m === "php" && !est4SIAutorise()) return;
+          matiereActive = m;
+          serieActiveId = "";
+          rendreTout();
+        });
+      });
+
+      document.getElementById("btn-ia-tout-verifier").addEventListener("click", function () {
+        var serie = obtenirSerieCourante();
+        if (serie) calculerNoteSerie(serie);
+      });
+
+      document.getElementById("btn-ia-reset").addEventListener("click", function () {
+        var serie = obtenirSerieCourante();
+        if (!serie) return;
+        var tout = lireJson(CLE_REP_IA, {});
+        delete tout[serie.id];
+        ecrireJson(CLE_REP_IA, tout);
+        rendreTout();
+      });
+
+      document.getElementById("btn-ia-imprimer").addEventListener("click", function () {
+        window.print();
+      });
+
+      window.addEventListener("sti:sec-config-maj", function () {
+        majBanniereVerrou();
+      });
+      window.addEventListener("storage", function (e) {
+        if (!e || !e.key || e.key === "sti-sec-config" || e.key === CLE_SUIVI) {
+          majBanniereVerrou();
+          majCompteursOnglets();
+        }
+      });
+
+      rendreTout();
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../assets/css/protection.css?v=227" />
+  <script src="../assets/js/protection.js?v=288" defer></script>
+  <script src="../assets/js/supabase-umd.js"></script>
+  <script src="../assets/js/config.js?v=425"></script>
+  <script src="../assets/js/acces.js?v=450"></script>
+  <script src="../assets/js/exercices-atelier.js?v=450" defer></script>
+  <script src="../assets/js/sync-progressions.js" defer></script>
+</body>
+</html>
