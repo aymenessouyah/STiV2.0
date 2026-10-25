@@ -1096,15 +1096,35 @@
   }
 
   function telechargerCarteCandidatPngHD(p, btnCible) {
-    if (!p) return;
+    if (!p) {
+      if (btnCible) {
+        var t0 = btnCible.textContent;
+        btnCible.textContent = "⚠️ Aucun abonné sélectionné";
+        setTimeout(function () { btnCible.textContent = t0; }, 1600);
+      }
+      return;
+    }
     var txtOrig = btnCible ? btnCible.textContent : "";
-    if (btnCible) btnCible.textContent = "⏳ Génération PNG HD…";
+    if (btnCible) {
+      btnCible.disabled = true;
+      btnCible.textContent = "⏳ Génération PNG HD…";
+    }
     function chargerIm(src) {
       return new Promise(function (resolve) {
         if (!src) { resolve(null); return; }
+        var done = false;
+        function fin(val) {
+          if (done) return;
+          done = true;
+          resolve(val);
+        }
+        var timer = setTimeout(function () { fin(null); }, 4000);
         var im = new Image();
-        im.onload = function () { resolve(im); };
-        im.onerror = function () { resolve(null); };
+        if (/^https?:\/\//i.test(String(src))) {
+          im.crossOrigin = "anonymous";
+        }
+        im.onload = function () { clearTimeout(timer); fin(im); };
+        im.onerror = function () { clearTimeout(timer); fin(null); };
         im.src = src;
       });
     }
@@ -1117,13 +1137,7 @@
       ctx.arcTo(x, y, x + w, y, r);
       ctx.closePath();
     }
-    var phSrc = photoEleveSureAdmin(p.photo_url);
-    Promise.all([
-      chargerIm("assets/icons/sti-icon-512.png"),
-      chargerIm(phSrc),
-      chargerIm("assets/images/qr-stiv2.png")
-    ]).then(function (imgs) {
-      var logo = imgs[0], photo = imgs[1], qr = imgs[2];
+    function dessinerCarteSurCanvas(logo, photo, qr) {
       var cv = document.createElement("canvas");
       cv.width = 1600;
       cv.height = 1010;
@@ -1229,17 +1243,37 @@
         ctx.drawImage(qr, 1352, 818, 132, 132);
       }
       ctx.restore();
+      return cv;
+    }
 
+    var phSrc = photoEleveSureAdmin(p.photo_url);
+    Promise.all([
+      chargerIm("assets/icons/sti-icon-512.png"),
+      chargerIm(phSrc),
+      chargerIm("assets/images/qr-stiv2.png")
+    ]).then(function (imgs) {
+      var dataUrl = "";
+      try {
+        dataUrl = dessinerCarteSurCanvas(imgs[0], imgs[1], imgs[2]).toDataURL("image/png");
+      } catch (eCors) {
+        dataUrl = dessinerCarteSurCanvas(imgs[0], null, imgs[2]).toDataURL("image/png");
+      }
       var a = document.createElement("a");
       var slug = String(nomPrenomTexte(p) || "candidat").replace(/[^A-Za-z0-9_-]+/g, "-");
       a.download = "Carte-STI-V2-" + slug + ".png";
-      a.href = cv.toDataURL("image/png");
+      a.href = dataUrl;
       document.body.appendChild(a);
       a.click();
       a.remove();
       if (btnCible) {
+        btnCible.disabled = false;
         btnCible.textContent = "✅ Carte PNG téléchargée !";
         setTimeout(function () { btnCible.textContent = txtOrig; }, 2000);
+      }
+    }).catch(function () {
+      if (btnCible) {
+        btnCible.disabled = false;
+        btnCible.textContent = txtOrig || "📥 Télécharger en PNG HD";
       }
     });
   }
@@ -1251,6 +1285,8 @@
     var cont = document.getElementById("conteneur-carte-candidat-admin");
     if (!mod || !cont) return;
     cont.innerHTML = construireHtmlCarteCandidatSTI(p);
+    mod.hidden = false;
+    mod.setAttribute("aria-hidden", "false");
     mod.classList.add("ouvert");
   }
 
@@ -1930,23 +1966,36 @@
       var btnDlCc = document.getElementById("btn-dl-carte-candidat-png");
       var btnPrCc = document.getElementById("btn-print-carte-candidat");
       var btnRecCc = document.getElementById("btn-recadrer-depuis-carte");
-      function fermerCc() { if (modCc) modCc.classList.remove("ouvert"); }
-      if (fCc1) fCc1.addEventListener("click", fermerCc);
-      if (fCc2) fCc2.addEventListener("click", fermerCc);
+      function fermerCc() {
+        if (!modCc) return;
+        modCc.classList.remove("ouvert");
+        modCc.hidden = true;
+        modCc.setAttribute("aria-hidden", "true");
+      }
+      if (fCc1) fCc1.addEventListener("click", function (ev) { ev.preventDefault(); fermerCc(); });
+      if (fCc2) fCc2.addEventListener("click", function (ev) { ev.preventDefault(); fermerCc(); });
       if (modCc) modCc.addEventListener("click", function (ev) { if (ev.target === modCc) fermerCc(); });
-      if (btnDlCc) btnDlCc.addEventListener("click", function () { telechargerCarteCandidatPngHD(candidatCarteAdminActif, btnDlCc); });
-      if (btnPrCc) btnPrCc.addEventListener("click", function () {
+      if (btnDlCc) btnDlCc.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        telechargerCarteCandidatPngHD(candidatCarteAdminActif, btnDlCc);
+      });
+      if (btnPrCc) btnPrCc.addEventListener("click", function (ev) {
+        ev.preventDefault();
         if (!candidatCarteAdminActif) return;
         lancerImpressionFeuilleDediee(
           "<div style='max-width:460px;margin:24px auto'>" + construireHtmlCarteCandidatSTI(candidatCarteAdminActif) + "</div>"
         );
       });
-      if (btnRecCc) btnRecCc.addEventListener("click", function () {
+      if (btnRecCc) btnRecCc.addEventListener("click", function (ev) {
+        ev.preventDefault();
         if (candidatCarteAdminActif) ouvrirStudioPhotoAdmin(candidatCarteAdminActif);
       });
       document.addEventListener("keydown", function (ev) {
         if (ev.key === "Escape") {
-          fermerCc();
+          if (modCc && modCc.classList.contains("ouvert")) {
+            fermerCc();
+            return;
+          }
           fermerTrombinoscopeAdmin();
           fermerConseilClasseAdmin();
         }

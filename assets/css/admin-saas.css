@@ -3152,26 +3152,34 @@ html.admin-ardoise .badge-sti-id-card {
   display: block !important;
 }
 
-/* Modal Grand Format HD du Badge Administrateur STI V2.0 */
-#modal-badge-admin-sti {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 10020;
-  background: rgba(8, 12, 20, 0.72);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
+/* Modal Grand Format HD du Badge Administrateur & Carte Officielle d'Abonné STI V2.0 */
+#modal-badge-admin-sti,
+#modal-carte-candidat-admin,
+.modal-badge-sti-overlay {
+  display: none !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 128000 !important;
+  background: rgba(8, 12, 20, 0.76) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  overflow-y: auto !important;
 }
 
-#modal-badge-admin-sti.ouvert {
+#modal-badge-admin-sti.ouvert,
+#modal-carte-candidat-admin.ouvert,
+.modal-badge-sti-overlay.ouvert {
   display: flex !important;
 }
 
-.modal-badge-sti-boite {
+.modal-badge-sti-boite,
+.modal-badge-sti-box {
   width: min(540px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
   background: var(--adm-glass-strong) !important;
   color: var(--adm-text) !important;
   border: 1.5px solid var(--adm-border-strong) !important;
@@ -3180,7 +3188,8 @@ html.admin-ardoise .badge-sti-id-card {
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55) !important;
 }
 
-.modal-badge-sti-entete {
+.modal-badge-sti-entete,
+.modal-badge-sti-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3188,13 +3197,15 @@ html.admin-ardoise .badge-sti-id-card {
   margin-bottom: 12px;
 }
 
-.modal-badge-sti-entete h3 {
+.modal-badge-sti-entete h3,
+.modal-badge-sti-top h3 {
   font-size: 16px !important;
   font-weight: 800 !important;
   margin: 0 !important;
 }
 
-.modal-badge-sti-fermer {
+.modal-badge-sti-fermer,
+.modal-badge-sti-close {
   width: 34px;
   height: 34px;
   border-radius: 999px;
@@ -3203,6 +3214,16 @@ html.admin-ardoise .badge-sti-id-card {
   color: var(--adm-text);
   font-weight: 800;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal-badge-sti-fermer:hover,
+.modal-badge-sti-close:hover {
+  border-color: var(--adm-red) !important;
+  color: var(--adm-red) !important;
 }
 
 /* Version agrandie dans la modale */
@@ -4150,6 +4171,9 @@ html.admin-ardoise .tb-badge-photo-attente {
   #modal-trombinoscope-admin,
   #modal-conseil-classe-admin,
   #modal-carte-candidat-admin,
+  #modal-carte-candidat-admin.ouvert,
+  #modal-badge-admin-sti,
+  #modal-badge-admin-sti.ouvert,
   #adm-studio-photo-overlay {
     display: none !important;
   }

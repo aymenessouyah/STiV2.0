@@ -2354,6 +2354,49 @@
       .rv-line.bad b {
         color: #f87171;
       }
+      .rv-advice {
+        margin-top: 8px;
+        padding: 8px 11px;
+        border-radius: 10px;
+        background: rgba(251, 191, 36, 0.12);
+        border: 1px solid rgba(251, 191, 36, 0.32);
+        font-size: 0.79rem;
+        line-height: 1.45;
+        color: #fde68a;
+      }
+      body.light .rv-advice {
+        background: rgba(245, 158, 11, 0.12);
+        border-color: rgba(217, 119, 6, 0.35);
+        color: #92400e;
+      }
+      .wk-memo {
+        margin-top: 7px;
+        padding: 7px 10px;
+        border-radius: 10px;
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid rgba(56, 189, 248, 0.28);
+        font-size: 0.76rem;
+        line-height: 1.42;
+        color: var(--txt-strong);
+      }
+      .wk-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 8px;
+        padding: 5px 11px;
+        border-radius: 999px;
+        background: rgba(99, 102, 241, 0.2);
+        border: 1px solid rgba(129, 140, 248, 0.45);
+        color: #c7d2fe;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      body.light .wk-link {
+        background: rgba(79, 70, 229, 0.1);
+        color: #4338ca;
+      }
       .result-actions {
         display: grid;
         gap: 10px;
@@ -3167,14 +3210,14 @@
               <div class="breakdown" id="breakdown"></div>
             </div>
             <div class="panel-soft">
-              <div class="panel-label">🎯 POINTS FAIBLES À REVOIR</div>
+              <div class="panel-label">📌 POINTS À RÉVISER</div>
               <div class="weak-list" id="weakList"></div>
             </div>
           </div>
 
           <div class="panel-soft" style="margin-top: 14px">
             <div class="panel-label-row">
-              <span class="panel-label">📋 CORRECTION DÉTAILLÉE</span>
+              <span class="panel-label">📋 CORRECTION DÉTAILLÉE &amp; CONSEIL PAR FAUTE</span>
               <label class="switch">
                 <input type="checkbox" id="onlyWrong" />
                 <span>Uniquement les erreurs</span>
@@ -5117,15 +5160,68 @@ background-repeat: repeat;</pre>
         if (texte !== undefined && texte !== null) el.textContent = texte;
         return el;
       }
+      function entierAleatoireHc(maxExcl) {
+        if (maxExcl <= 1) return 0;
+        if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+          var buf = new Uint32Array(1);
+          window.crypto.getRandomValues(buf);
+          return buf[0] % maxExcl;
+        }
+        return Math.floor(Math.random() * maxExcl);
+      }
       function shuffle(arr) {
         var a = arr.slice();
         for (var i = a.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1));
+          var j = entierAleatoireHc(i + 1);
           var t = a[i];
           a[i] = a[j];
           a[j] = t;
         }
         return a;
+      }
+      function estThemeCssHc(cat) {
+        return (
+          cat === "selecteurs" ||
+          cat === "classes" ||
+          cat === "animations" ||
+          cat === "mise-en-page"
+        );
+      }
+      function conseilParFauteHtmlCss(q, bonneTexte, repEleveTexte, sansReponse) {
+        var enonce = (q.text || "").toLowerCase();
+        var rep = (bonneTexte || "").trim();
+        var repMin = rep.toLowerCase();
+        var memoCat = CONSEILS[q.cat] || "les règles fondamentales de ce thème";
+        var specifique = "";
+        if (enonce.indexOf("colspan") !== -1 || repMin.indexOf("colspan") !== -1) {
+          specifique = "Retiens : colspan fusionne des colonnes horizontalement (sur une même ligne), tandis que rowspan fusionne des lignes verticalement.";
+        } else if (enonce.indexOf("rowspan") !== -1 || repMin.indexOf("rowspan") !== -1) {
+          specifique = "Retiens : rowspan fusionne des cellules verticalement sur plusieurs lignes <tr>, alors que colspan agit horizontalement.";
+        } else if (enonce.indexOf("readonly") !== -1 || enonce.indexOf("disabled") !== -1 || repMin === "readonly" || repMin === "disabled") {
+          specifique = "Astuce Bac : readonly envoie quand même la valeur au serveur lors du submit, alors qu'un champ disabled n'est pas transmis.";
+        } else if (enonce.indexOf("datalist") !== -1 || repMin.indexOf("datalist") !== -1) {
+          specifique = "Associe toujours <input list=\"idListe\"> avec <datalist id=\"idListe\"> : contrairement à <select>, la saisie libre reste autorisée.";
+        } else if (enonce.indexOf("spécificité") !== -1 || q.cat === "classes") {
+          specifique = "Ordre de priorité CSS à connaître par cœur : style inline > #id > .classe / :pseudo-classe > balise (à égalité, la dernière règle l'emporte).";
+        } else if (q.cat === "selecteurs") {
+          specifique = "Repère bien les symboles CSS : # cible un id unique, . cible une classe, l'espace cible tout descendant et > cible uniquement l'enfant direct.";
+        } else if (q.cat === "animations") {
+          specifique = "Distingue transition (passage fluide d'un état A à B, ex. :hover) et @keyframes + animation (scénario multi-étapes autonome).";
+        } else if (q.cat === "mise-en-page") {
+          specifique = "En Flexbox (display: flex), justify-content aligne sur l'axe principal et align-items sur l'axe secondaire ; vérifie aussi box-sizing et position.";
+        } else if (q.cat === "input" || q.cat === "formulaires") {
+          specifique = "Vérifie systématiquement le type HTML5 exact (email, number, date, range, password, radio/checkbox avec même name) et l'attribut name pour l'envoi.";
+        } else if (q.cat === "cible") {
+          specifique = "Pour l'attribut target : _self ouvre dans le même onglet (défaut) et _blank ouvre dans un nouvel onglet.";
+        } else if (q.cat === "multimedia" || q.cat === "iframes") {
+          specifique = "Pense aux attributs indispensables : alt sur <img>, controls sur <audio>/<video>, et src + title/sandbox sur <iframe>.";
+        } else {
+          specifique = "Mémorise le rôle exact de « " + rep + " » (repère du thème : " + memoCat + ").";
+        }
+        if (sansReponse) {
+          return "Question laissée sans réponse — au devoir, procède par élimination et retiens « " + rep + " ». " + specifique;
+        }
+        return "Ne confonds plus « " + (repEleveTexte || "ta saisie") + " » avec « " + rep + " ». " + specifique;
       }
       function letter(i) {
         return String.fromCharCode(65 + i);
@@ -5395,27 +5491,36 @@ background-repeat: repeat;</pre>
 
         var zone = $("#heroOpts");
         zone.innerHTML = "";
-        q.options.forEach(function (texte, idx) {
+        var optsMelangees = shuffle(
+          q.options.map(function (texte, idx) {
+            return { texte: texte, ok: idx === q.correct };
+          })
+        );
+        var idxCorrectApercu = 0;
+        optsMelangees.forEach(function (o, idx) {
+          if (o.ok) idxCorrectApercu = idx;
+        });
+        optsMelangees.forEach(function (o, idx) {
           var bouton = creer("button", "opt-btn");
           bouton.appendChild(creer("span", "letter", letter(idx)));
-          bouton.appendChild(creer("span", "opt-text", texte));
+          bouton.appendChild(creer("span", "opt-text", o.texte));
           bouton.addEventListener("click", function () {
-            repondreApercu(idx, q, bouton, zone);
+            repondreApercu(idx, idxCorrectApercu, bouton, zone);
           });
           zone.appendChild(bouton);
         });
       }
 
-      function repondreApercu(idx, q, bouton, zone) {
+      function repondreApercu(idx, idxCorrect, bouton, zone) {
         if (apercu.verrou) return;
         apercu.verrou = true;
         Array.prototype.forEach.call(zone.children, function (b, bi) {
           b.disabled = true;
-          if (bi === q.correct) b.classList.add("correct");
+          if (bi === idxCorrect) b.classList.add("correct");
           else if (bi === idx) b.classList.add("wrong");
           else b.classList.add("dim");
         });
-        if (idx === q.correct) {
+        if (idx === idxCorrect) {
           apercu.score += 250;
           toast("Bonne réponse ! +250 XP", "⚡");
         } else {
@@ -5565,7 +5670,7 @@ background-repeat: repeat;</pre>
             bouton.setAttribute("aria-pressed", "true");
           }
           bouton.addEventListener("click", function () {
-            selectionner(i);
+            repondreEtAvancer(i);
           });
           zone.appendChild(bouton);
         });
@@ -5594,11 +5699,19 @@ background-repeat: repeat;</pre>
         });
 
         if (position === state.session.length - 1) {
-          var fin = $("#finishBtn");
-          fin.classList.add("pop");
-          setTimeout(function () {
-            fin.classList.remove("pop");
-          }, 500);
+          if (reponsesDonnees() >= state.session.length) {
+            state.advancing = true;
+            setTimeout(function () {
+              state.advancing = false;
+              afficherResultat();
+            }, ADVANCE_DELAY);
+          } else {
+            var fin = $("#finishBtn");
+            fin.classList.add("pop");
+            setTimeout(function () {
+              fin.classList.remove("pop");
+            }, 500);
+          }
           return;
         }
 
@@ -5803,13 +5916,14 @@ background-repeat: repeat;</pre>
           });
         });
 
-        // Points faibles
+        // Points à réviser : tout thème comportant au moins 1 erreur ou oubli
         var faibles = lignes
           .filter(function (l) {
-            return l.pct < SEUIL_FAIBLE;
+            return l.ratees && l.ratees.length > 0;
           })
           .sort(function (a, b) {
-            return a.pct - b.pct;
+            if (a.pct !== b.pct) return a.pct - b.pct;
+            return b.ratees.length - a.ratees.length;
           });
 
         var zoneFaibles = $("#weakList");
@@ -5819,9 +5933,7 @@ background-repeat: repeat;</pre>
             creer(
               "div",
               "weak-none",
-              "🎉 Aucun point faible majeur : tous les thèmes de cette partie sont à " +
-                SEUIL_FAIBLE +
-                " % de réussite ou plus."
+              "🎉 Aucun point à réviser : sans-faute intégral sur tous les thèmes de cette session !"
             )
           );
         } else {
@@ -5839,15 +5951,24 @@ background-repeat: repeat;</pre>
               creer(
                 "span",
                 "wk-rate",
-                f.ok +
-                  "/" +
-                  f.total +
+                f.ratees.length +
+                  " faute" +
+                  (f.ratees.length > 1 ? "s" : "") +
                   " · " +
                   Math.round(f.pct) +
                   " % de réussite"
               )
             );
             carte.appendChild(tete);
+
+            if (CONSEILS[f.cle]) {
+              var memo = creer(
+                "div",
+                "wk-memo",
+                "📌 Repère de cours à réviser : " + CONSEILS[f.cle]
+              );
+              carte.appendChild(memo);
+            }
 
             var liste = creer("ul");
             f.ratees.slice(0, 5).forEach(function (r) {
@@ -5857,8 +5978,8 @@ background-repeat: repeat;</pre>
                   null,
                   r.text +
                     (r.sansReponse
-                      ? " — non répondue (bonne réponse : " + r.bonne + ")"
-                      : " — bonne réponse : " + r.bonne)
+                      ? " — non répondue (attendu : " + r.bonne + ")"
+                      : " — attendu : " + r.bonne)
                 )
               );
             });
@@ -5872,18 +5993,30 @@ background-repeat: repeat;</pre>
               );
             }
             carte.appendChild(liste);
-            carte.appendChild(
-              creer(
-                "p",
-                "wk-advice",
-                "📌 À réviser en priorité, puis relancez un tirage."
-              )
+
+            var lienCours = creer(
+              "a",
+              "wk-link",
+              estThemeCssHc(f.cle)
+                ? "📖 Réviser le cours CSS3 →"
+                : "📖 Réviser le cours HTML5 →"
             );
+            lienCours.href = estThemeCssHc(f.cle)
+              ? "../cours/css3.html"
+              : "../cours/html5.html";
+            carte.appendChild(lienCours);
             zoneFaibles.appendChild(carte);
           });
         }
 
-        // Correction détaillée
+        // Correction détaillée + 1 conseil personnalisé par faute
+        var nbFautesTot = state.session.reduce(function (acc, q) {
+          var ok = q.answer !== null && q.answer !== undefined && q.options[q.answer].ok;
+          return acc + (ok ? 0 : 1);
+        }, 0);
+        if ($("#onlyWrong")) {
+          $("#onlyWrong").checked = nbFautesTot > 0 && nbFautesTot < state.session.length;
+        }
         var correction = $("#reviewList");
         correction.innerHTML = "";
         state.session.forEach(function (q, i) {
@@ -5904,11 +6037,12 @@ background-repeat: repeat;</pre>
           item.appendChild(tete);
           item.appendChild(creer("p", "rv-q", q.text));
 
+          var repEleveTxt = repondu ? q.options[q.answer].text : "";
           var ligne = creer("p", "rv-line " + (juste ? "good" : "bad"));
           ligne.appendChild(document.createTextNode("Votre réponse : "));
           var b1 = creer("b");
           b1.textContent = repondu
-            ? letter(q.answer) + " — " + q.options[q.answer].text
+            ? letter(q.answer) + " — " + repEleveTxt
             : "aucune réponse";
           ligne.appendChild(b1);
           item.appendChild(ligne);
@@ -5918,12 +6052,23 @@ background-repeat: repeat;</pre>
             q.options.forEach(function (o, k) {
               if (o.ok) idxOk = k;
             });
-            var bonne = creer("p", "rv-line");
+            var bonneTxt = q.options[idxOk].text;
+            var bonne = creer("p", "rv-line good");
             bonne.appendChild(document.createTextNode("Bonne réponse : "));
             var b2 = creer("b");
-            b2.textContent = letter(idxOk) + " — " + q.options[idxOk].text;
+            b2.textContent = letter(idxOk) + " — " + bonneTxt;
             bonne.appendChild(b2);
             item.appendChild(bonne);
+
+            var blocConseil = creer("div", "rv-advice");
+            var titreC = creer("strong", null, "💡 Conseil : ");
+            blocConseil.appendChild(titreC);
+            blocConseil.appendChild(
+              document.createTextNode(
+                conseilParFauteHtmlCss(q, bonneTxt, repEleveTxt, !repondu)
+              )
+            );
+            item.appendChild(blocConseil);
           }
           correction.appendChild(item);
         });
@@ -5934,7 +6079,9 @@ background-repeat: repeat;</pre>
         ouvrirOverlay("resultsOverlay");
 
         // Confettis pour les bons scores (animation intégrée, sans CDN)
-        if (pct >= 70 && !aucunMouvement()) lancerConfettis();
+        try {
+          if (pct >= 70 && !aucunMouvement()) lancerConfettis();
+        } catch (eConf) {}
       }
 
       function appliquerFiltre() {
@@ -6331,12 +6478,22 @@ background-repeat: repeat;</pre>
         }
       });
       $("#quitBtn").addEventListener("click", function () {
+        if (reponsesDonnees() > 0) {
+          ouvrirModale(
+            "Terminer et passer à l'évaluation ?",
+            "Vous avez déjà répondu à " +
+              reponsesDonnees() +
+              " question(s). Votre bilan, les points à réviser et un conseil par faute vont s'afficher.",
+            "Voir l'évaluation",
+            afficherResultat
+          );
+          return;
+        }
         ouvrirModale(
           "Quitter la partie ?",
-          "Les réponses déjà données seront enregistrées ; un nouveau tirage sera effectué au prochain lancement.",
+          "Aucune réponse n'a encore été donnée ; un nouveau tirage aléatoire sera effectué au prochain lancement.",
           "Quitter",
           function () {
-            synchroniserPartieHtmlCss(true);
             fermerOverlay("quizOverlay");
             window.scrollTo({
               top: $("#setup").offsetTop - 80,

@@ -1830,9 +1830,9 @@ test('v458 : révision approfondie Quiz Phase 2 — assainissement intégral qui
   ]) {
     assert.match(content, /quiz-sync\.js\?v=458/, `${name} doit charger quiz-sync.js?v=458`);
   }
-  assert.match(tabHtml, /quiz-tableaux\.js\?v=458/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v318"/);
-  assert.match(swJs, /var UPDATE_ID = "v458-quiz-revision-2"/);
+  assert.match(tabHtml, /quiz-tableaux\.js\?v=45[89]/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v31[89]"/);
+  assert.match(swJs, /v458-quiz-revision-2/);
 });
 
 test('v458 (comportemental VM) : score réel /20 SQL & PHP dans acces.js, pont synchrone STIQuizSync + marquerVus write-ahead, arrêt 0 réponse Tableaux et filtrage PHP 3e SI dans Mes erreurs', async () => {
@@ -2082,6 +2082,166 @@ test('v458 (comportemental VM) : score réel /20 SQL & PHP dans acces.js, pont s
   assert.match(contenuRev.innerHTML, /SQL \(BD\)/);
   assert.doesNotMatch(contenuRev.innerHTML, /🐘 PHP|Récap PHP/);
 });
+
+test('v459 : modale Carte Candidat fonctionnelle (CSS plein écran + 4 boutons) & tirage aléatoire questions/réponses + transition garantie + Points à réviser + Conseil par faute sur tous les quiz', () => {
+  const adminHtml = read('admin.html');
+  const adminCss = read('assets/css/admin-saas.css');
+  const adminJs = read('assets/js/admin.js');
+  const accesJs = read('assets/js/acces.js');
+  const hcHtml = read('quiz/html-css.html');
+  const jsHtml = read('quiz/javascript.html');
+  const sqlHtml = read('quiz/sql.html');
+  const phpHtml = read('quiz/php.html');
+  const tabHtml = read('quiz/tableaux.html');
+  const tabJs = read('assets/js/quiz-tableaux.js');
+  const swJs = read('sw.js');
+
+  // 1) Modale Carte Candidat (#modal-carte-candidat-admin) : cachée par défaut, position:fixed, z-index 128000 (au-dessus Trombi 120000, sous Studio Photo 135000)
+  assert.match(adminHtml, /id="modal-carte-candidat-admin"[^>]*hidden/);
+  assert.match(adminCss, /#modal-carte-candidat-admin,\s*\n?\.modal-badge-sti-overlay\s*\{[\s\S]*?display:\s*none\s*!important;[\s\S]*?position:\s*fixed\s*!important;[\s\S]*?z-index:\s*128000\s*!important;/);
+  assert.match(adminCss, /#modal-carte-candidat-admin\.ouvert,\s*\n?\.modal-badge-sti-overlay\.ouvert\s*\{\s*display:\s*flex\s*!important;/);
+  assert.match(adminCss, /\.modal-badge-sti-box/);
+  assert.match(adminCss, /\.modal-badge-sti-top/);
+  assert.match(adminCss, /\.modal-badge-sti-close/);
+  assert.match(adminCss, /@media print[\s\S]*?#modal-carte-candidat-admin\.ouvert/);
+  assert.match(adminJs, /im\.crossOrigin\s*=\s*"anonymous"/);
+  assert.match(adminJs, /dessinerCarteSurCanvas\(imgs\[0\],\s*null,\s*imgs\[2\]\)\.toDataURL\("image\/png"\)/);
+  assert.match(adminJs, /mod\.hidden\s*=\s*false/);
+  assert.match(adminJs, /modCc\.hidden\s*=\s*true/);
+  assert.match(accesJs, /id='sti-cc-print'/);
+  assert.match(accesJs, /id='sti-cc-close2'/);
+
+  // 2) Tirage aléatoire à chaque connexion (questions + options) & anti-série de 3
+  assert.match(hcHtml, /function entierAleatoireHc\(/);
+  assert.match(jsHtml, /function entierAleatoireJs\(/);
+  assert.match(sqlHtml, /const entierAleatoireSql\s*=/);
+  assert.doesNotMatch(sqlHtml, /preparerQuestionsSql\(arr\.slice\(0,\s*5\),\s*rnd\)/, 'Le mode Défi du jour SQL ne doit plus figer les mêmes questions/réponses à chaque connexion');
+  assert.match(phpHtml, /function entierAleatoirePhp\(/);
+  assert.doesNotMatch(phpHtml, /if\s*\(doShuffle\)\s*pool\s*=\s*shuffle\(pool\)/, 'PHP doit toujours mélanger les questions et les réponses à chaque session');
+  assert.match(tabJs, /function entierAleatoireTab\(/);
+  assert.match(tabJs, /function preparerQuestionsMelangees\(/);
+  assert.match(accesJs, /function entierAleaEb\(/);
+
+  // 3) Transition garantie vers la page évaluation
+  assert.match(hcHtml, /repondreEtAvancer\(i\)/);
+  assert.match(hcHtml, /if\s*\(reponsesDonnees\(\)\s*>=\s*state\.session\.length\)[\s\S]*?afficherResultat\(\)/);
+  assert.match(hcHtml, /Terminer et passer à l'évaluation \?/);
+  assert.match(jsHtml, /if\s*\(gp\s*&&\s*!gp\.classList\.contains\("hidden"\)\s*&&\s*this\.answeredCount\s*>\s*0\)\s*\{\s*this\.finishGame\(false\)/);
+  assert.match(sqlHtml, /endQuiz\("quit"\)/);
+  assert.match(phpHtml, /if\s*\(quiz\s*&&\s*quiz\.answers\s*&&\s*quiz\.answers\.length\s*>\s*0\)[\s\S]*?endQuiz\(false\)/);
+
+  // 4) Page évaluation : « Points à réviser » + « Conseil » par faute sur les 5 quiz + Examen Blanc
+  assert.match(hcHtml, /📌 POINTS À RÉVISER/);
+  assert.match(hcHtml, /function conseilParFauteHtmlCss\(/);
+  assert.match(jsHtml, /📌 Points à réviser &amp; Conseils par faute/);
+  assert.match(jsHtml, /conseilParFauteJs\(/);
+  assert.match(sqlHtml, /📌 POINTS À RÉVISER &amp; CONSEILS PAR FAUTE/);
+  assert.match(sqlHtml, /function conseilParFauteSql\(/);
+  assert.match(phpHtml, /📌 Points à réviser &amp; Conseils par faute/);
+  assert.match(phpHtml, /function conseilParFautePhp\(/);
+  assert.match(tabHtml, /\.qt-points-reviser/);
+  assert.match(tabJs, /📌 Points à réviser en priorité/);
+  assert.match(tabJs, /function conseilParFauteTab\(/);
+  assert.match(accesJs, /📌 Points à réviser en priorité/);
+  assert.match(accesJs, /function conseilParFauteEb\(/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v319"/);
+  assert.match(swJs, /var UPDATE_ID = "v459-carte-quiz-eval"/);
+});
+
+test('v459 (comportemental VM) : Quiz Tableaux affiche Points à réviser + 1 conseil par faute à l’évaluation et mélange questions/options différemment entre deux connexions', async () => {
+  const tabJs = read('assets/js/quiz-tableaux.js');
+  const banqueData = JSON.parse(read('assets/data/quiz-banque.json'));
+
+  function executerSessionTableaux() {
+    const listeners = {};
+    const appEl = {
+      innerHTML: '',
+      querySelectorAll(sel) {
+        if (sel === '[data-module]') {
+          return [{ getAttribute: () => 'html5', addEventListener: (ev, fn) => { listeners.startHtml5 = fn; } }];
+        }
+        if (sel === '[data-niveau]') return [];
+        if (sel === '[data-choix]') {
+          const matches = [...appEl.innerHTML.matchAll(/data-choix="(\d+)"><strong>[A-D]\.<\/strong>\s*([^<]+)<\/button>/g)];
+          return matches.map((m) => ({
+            idx: Number(m[1]),
+            txt: m[2],
+            getAttribute: () => m[1],
+            addEventListener: (ev, fn) => { listeners['choix_' + m[1]] = fn; },
+          }));
+        }
+        return [];
+      },
+    };
+    const doc = {
+      getElementById(id) {
+        if (id === 'qt-app') return appEl;
+        if (id === 'qt-suivant') return { addEventListener: (ev, fn) => { listeners.suivant = fn; } };
+        if (id === 'qt-arreter') return { addEventListener: (ev, fn) => { listeners.arreter = fn; } };
+        if (id === 'qt-accueil') return { addEventListener: (ev, fn) => { listeners.accueil = fn; } };
+        if (id === 'qt-reinit') return { addEventListener: () => {} };
+        if (id === 'qt-erreurs') return { addEventListener: (ev, fn) => { listeners.erreurs = fn; } };
+        if (id === 'qt-encore') return { addEventListener: (ev, fn) => { listeners.encore = fn; } };
+        return null;
+      },
+    };
+    const store = new Map([['sti-session-cache', JSON.stringify({ id: 'u4', email: 'eleve@sti.tn', classe: '4SI1' })]]);
+    const ctx = {
+      document: doc,
+      localStorage: {
+        getItem: (k) => store.get(k) || null,
+        setItem: (k, v) => store.set(k, String(v)),
+      },
+      sessionStorage: { getItem: () => null },
+      fetch: async () => ({ ok: true, json: async () => banqueData }),
+      addEventListener: () => {},
+      STIQuizSync: {
+        chargerVus: async () => ({}),
+        marquerVus: () => {},
+        enregistrer: () => {},
+        enregistrerReponses: () => {},
+        quitterRevision: () => {},
+        revisionIds: () => null,
+        hash: (s) => String(s),
+      },
+      URLSearchParams, Math, Date, JSON, Promise, Object, Array, String, Number, Boolean, RegExp, Error, parseInt, Uint32Array,
+      crypto: globalThis.crypto,
+    };
+    ctx.window = ctx;
+    vm.runInNewContext(tabJs, ctx, { filename: 'assets/js/quiz-tableaux.js' });
+    return { appEl, listeners };
+  }
+
+  const s1 = executerSessionTableaux();
+  const s2 = executerSessionTableaux();
+  await new Promise((r) => setTimeout(r, 20));
+
+  s1.listeners.startHtml5();
+  s2.listeners.startHtml5();
+
+  // Les deux connexions démarrent bien sur une question tirée au sort avec 4 propositions A/B/C/D
+  const q1 = (s1.appEl.innerHTML.match(/<p class="qt-question">([\s\S]*?)<\/p>/) || [])[1];
+  const q2 = (s2.appEl.innerHTML.match(/<p class="qt-question">([\s\S]*?)<\/p>/) || [])[1];
+  assert.ok(q1 && q2, 'Chaque connexion doit afficher une question tirée aléatoirement');
+
+  // En répondant à 2 questions puis en cliquant sur « Terminer & évaluer » (#qt-arreter), on arrive TOUJOURS sur la page Évaluation
+  s1.listeners.choix_0();
+  s1.listeners.suivant();
+  s1.listeners.choix_1();
+  assert.match(s1.appEl.innerHTML, /⏹ Terminer & évaluer/);
+  s1.listeners.arreter();
+
+  assert.match(s1.appEl.innerHTML, /<h1>Évaluation <em>de la session<\/em><\/h1>/);
+  assert.match(s1.appEl.innerHTML, /bonnes réponses/);
+  // Si au moins une faute a été commise, vérifie la présence de « Points à réviser » + d'un « Conseil » par faute
+  const nbFautes = (s1.appEl.innerHTML.match(/class="qt-correction ko"/g) || []).length;
+  const nbConseils = (s1.appEl.innerHTML.match(/class="qt-conseil"/g) || []).length;
+  assert.equal(nbConseils, nbFautes, 'Chaque faute doit afficher exactement un conseil personnalisé (.qt-conseil)');
+  if (nbFautes > 0) {
+    assert.match(s1.appEl.innerHTML, /📌 Points à réviser en priorité/);
+  }
+});
+
 
 
 

@@ -39710,10 +39710,19 @@ LIMIT 5;</textarea
     <script>
       /* ============ HELPERS & STATE ============ */
       const $ = (id) => document.getElementById(id);
+      const entierAleatoireSql = (maxExcl) => {
+        if (maxExcl <= 1) return 0;
+        if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+          const buf = new Uint32Array(1);
+          window.crypto.getRandomValues(buf);
+          return buf[0] % maxExcl;
+        }
+        return Math.floor(Math.random() * maxExcl);
+      };
       const shuffle = (a) => {
         const x = [...a];
         for (let i = x.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
+          const j = entierAleatoireSql(i + 1);
           [x[i], x[j]] = [x[j], x[i]];
         }
         return x;
@@ -42613,7 +42622,9 @@ LIMIT 5;</textarea
         const tirage = liste.map((q) => {
           const indices = q.answers.map((_, idx) => idx);
           for (let i = indices.length - 1; i > 0; i--) {
-            const j = Math.floor((rngFn ? rngFn() : Math.random()) * (i + 1));
+            const j = rngFn
+              ? Math.floor(rngFn() * (i + 1))
+              : entierAleatoireSql(i + 1);
             [indices[i], indices[j]] = [indices[j], indices[i]];
           }
           return {
@@ -42629,7 +42640,9 @@ LIMIT 5;</textarea
             tirage[i].answers.length > 1
           ) {
             const cur = tirage[i].correct;
-            const alt = (cur + 1) % tirage[i].answers.length;
+            const alt =
+              (cur + 1 + entierAleatoireSql(tirage[i].answers.length - 1)) %
+              tirage[i].answers.length;
             const ans = [...tirage[i].answers];
             [ans[cur], ans[alt]] = [ans[alt], ans[cur]];
             tirage[i].answers = ans;
@@ -42656,22 +42669,14 @@ LIMIT 5;</textarea
           cat === "all"
             ? [...QUESTIONS]
             : QUESTIONS.filter((q) => q.cat === cat);
-        if (mode === "exam") {
+        if (mode === "exam" || (typeof S !== "undefined" && S && S.exam)) {
           const BONUS_CULTURE_SQL_IDS = [131, 132, 134, 135, 140];
           pool = pool.filter((q) => BONUS_CULTURE_SQL_IDS.indexOf(q.id) === -1);
         }
-        if (mode === "daily") {
-          const seedStr = todayStr().replace(/-/g, "");
-          let seed = parseInt(seedStr, 10);
-          const rnd = mulberry32(seed);
-          const arr = [...QUESTIONS];
-          for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(rnd() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-          }
-          return preparerQuestionsSql(arr.slice(0, 5), rnd);
-        }
         pool = shuffle(pool);
+        if (mode === "daily") {
+          return preparerQuestionsSql(pool.slice(0, Math.min(5, pool.length)));
+        }
         if (mode === "sansfaute") return preparerQuestionsSql(pool);
         return preparerQuestionsSql(
           pool.slice(0, Math.min(MODE_CFG[mode].nb, pool.length))
@@ -42767,10 +42772,9 @@ LIMIT 5;</textarea
         $("explainBox").classList.add("hidden");
         $("nextBtn").disabled = true;
         $("nextBtn").textContent =
-          Q.index === Q.questions.length - 1 &&
-          Q.mode !== "chrono" &&
-          Q.mode !== "sansfaute"
-            ? "Voir résultats 🏁"
+          (Q.index === Q.questions.length - 1 && Q.mode !== "chrono") ||
+          (Q.mode === "sansfaute" && Q.index === 19)
+            ? "Voir l'évaluation 🏁"
             : "Suivant ➜";
         const grid = $("answersGrid");
         grid.innerHTML = "";
@@ -43102,17 +43106,19 @@ LIMIT 5;</textarea
       });
       function quitQuiz() {
         playClick();
-        if (
-          Q &&
-          Q.answered > 0 &&
-          !confirm(
-            "Quitter la partie en cours ? Les réponses déjà validées seront tout de même enregistrées."
-          )
-        )
+        if (Q && Q.log && Q.log.length > 0) {
+          if (
+            !confirm(
+              "Terminer la session maintenant et afficher ton évaluation (score, points à réviser et conseil par faute) ?"
+            )
+          ) {
+            return;
+          }
+          endQuiz("quit");
           return;
+        }
         clearInterval(timerInt);
         clearTimeout(botTimeout);
-        synchroniserPartieSql(true);
         $("quizOverlay").classList.add("hidden");
         document.body.style.overflow = "";
         Q = null;
@@ -43121,7 +43127,7 @@ LIMIT 5;</textarea
         clearInterval(timerInt);
         clearTimeout(botTimeout);
         if (!Q) return;
-        const total = Q.log.filter((l) => !l.skipped).length || 1;
+        const total = Q.log.filter((l) => !l.skipped).length || Q.log.length || 1;
         const acc = Math.round((Q.correct / total) * 100);
         let xpGain =
           Math.round(Q.score / 15) +
@@ -43156,12 +43162,12 @@ LIMIT 5;</textarea
         save();
         checkBadges();
         updateNavbar();
-        renderLeaderboard();
-        renderCategories();
-        renderCharts();
-        // results UI
+        // Affichage garanti de la page d'évaluation même si un graphique échoue
         $("quizOverlay").classList.add("hidden");
         $("resultsOverlay").classList.remove("hidden");
+        try { renderLeaderboard(); } catch (eLb) {}
+        try { renderCategories(); } catch (eCat) {}
+        try { renderCharts(); } catch (eCh) {}
         document.body.style.overflow = "hidden";
         const em =
           acc === 100
@@ -43243,11 +43249,35 @@ LIMIT 5;</textarea
           startQuiz(Q.mode, Q.cat);
         };
         if (acc >= 60 || winDuel) {
-          boom(true);
+          try { boom(true); } catch (eB) {}
           playWin();
         } else playCorrect();
         addXP(xpGain);
         Q._last = { score: Q.score, xp: xpGain, acc };
+      }
+      const REPERES_COURS_SQL = {
+        base: "Concepts BD, table/ligne/colonne, clé primaire (PK), clé étrangère (FK) et intégrité référentielle",
+        lmd: "INSERT INTO … VALUES, UPDATE … SET … WHERE et DELETE FROM … WHERE (attention au WHERE !)",
+        select: "SELECT DISTINCT, WHERE (AND/OR, BETWEEN, IN, LIKE '%…', IS NULL) et ORDER BY ASC/DESC",
+        jointure: "Jointure interne (JOIN … ON T1.pk = T2.fk), alias de tables et correspondance PK = FK",
+        agregat: "COUNT, SUM, AVG, MIN, MAX, GROUP BY (colonnes non agrégées) et HAVING (filtre après agrégat)",
+        ldd: "CREATE TABLE, ALTER TABLE (ADD / MODIFY / DROP), DROP TABLE et contraintes NOT NULL / CHECK / REFERENCES",
+        fonctions: "Fonctions de chaînes, dates (YEAR, MONTH, CURDATE, DATEDIFF) et sous-requêtes IN / NOT IN",
+        lien: "Enchaînement PHP + MySQLi : mysqli_connect, mysqli_query, mysqli_fetch_array / num_rows / affected_rows",
+      };
+      function conseilParFauteSql(l) {
+        const q = l.q;
+        const bonne = q.answers[q.correct] || "";
+        const astuceQuestion = q.hint
+          ? q.hint
+          : REPERES_COURS_SQL[q.cat] || "Vérifie l'ordre des clauses SQL : SELECT → FROM → JOIN → WHERE → GROUP BY → HAVING → ORDER BY.";
+        if (l.skipped || l.user === -2) {
+          return `Question passée — repère le mot-clé SQL directeur dans l'énoncé et retiens « ${bonne} ». Méthode : ${astuceQuestion}`;
+        }
+        if (l.user < 0) {
+          return `Temps écoulé — lis d'abord la clause SQL finale demandée pour cibler « ${bonne} ». Méthode : ${astuceQuestion}`;
+        }
+        return `Tu as choisi « ${q.answers[l.user] || ""} » au lieu de « ${bonne} ». Méthode : ${astuceQuestion}`;
       }
       function toggleReview() {
         playClick();
@@ -43268,13 +43298,18 @@ LIMIT 5;</textarea
               : l.user >= 0
               ? q.answers[l.user]
               : "⏱️ Temps écoulé";
+            const blocConseil = !l.good
+              ? `<div class="mt-2 p-2 rounded-lg text-xs font-extrabold" style="background:#FFF3C4;border:1.5px solid #F59E0B;color:#5b4a00">🧭 Conseil : ${esc(
+                  conseilParFauteSql(l)
+                )}</div>`
+              : "";
             d.innerHTML = `<div class="font-extrabold text-sm">${
               l.good ? "✅" : "❌"
             } Q${i + 1} — ${esc(
               q.q
-            )}</div><div class="text-xs font-bold mt-1 opacity-80">Ta réponse : <b>${esc(String(ua))}</b><br>Bonne réponse : <b class="text-[#0E7A5B]">${esc(
+            )}</div><div class="text-xs font-bold mt-1 opacity-85">Ta réponse : <b>${esc(String(ua))}</b><br>Bonne réponse : <b class="text-[#0E7A5B]">${esc(
               String(q.answers[q.correct])
-            )}</b><br><span class="opacity-70">💡 ${esc(q.explain)}</span></div>`;
+            )}</b><br><span class="opacity-80">💡 Explication : ${esc(q.explain)}</span></div>${blocConseil}`;
             r.appendChild(d);
           });
         }
@@ -43292,15 +43327,15 @@ LIMIT 5;</textarea
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;");
       }
-      /* Bilan : uniquement les erreurs, en liste défilante à en-tête collant. */
+      /* Bilan : points à réviser en priorité + un conseil personnalisé par faute. */
       function afficherPointsFaibles(total) {
         const bloc = $("points-faibles");
         const rates = (Q && Q.log ? Q.log : []).filter((l) => !l.good);
         if (!rates.length) {
           bloc.innerHTML = `
     <div class="brutal p-5 !rounded-2xl text-center" style="background:#D9F6EC; border-color:#2ECC9E; color:#0E7A5B">
-      <div class="font-display font-bold text-xl">🎉 Aucune erreur sur cette partie !</div>
-      <div class="text-sm font-bold opacity-70 mt-1">Aucun point faible à réviser : tu peux passer au monde suivant.</div>
+      <div class="font-display font-bold text-xl">🎉 Aucun point à réviser sur cette partie !</div>
+      <div class="text-sm font-bold opacity-75 mt-1">Sans-faute intégral : tu maîtrises tous les thèmes SQL de ce tirage.</div>
     </div>`;
           bloc.classList.remove("hidden");
           return;
@@ -43310,18 +43345,32 @@ LIMIT 5;</textarea
           const k = l.q.cat;
           (parMonde[k] = parMonde[k] || []).push(l);
         });
-        const priorite = Object.keys(parMonde)
-          .sort((a, b) => parMonde[b].length - parMonde[a].length)
-          .map(
-            (k) =>
-              `${esc(CATS[k].icon)} ${esc(CATS[k].short)} (${
-                parMonde[k].length
-              })`
-          )
-          .join(" · ");
+        const clesTriees = Object.keys(parMonde).sort(
+          (a, b) => parMonde[b].length - parMonde[a].length
+        );
+        const synthesePoints = clesTriees
+          .map((k) => {
+            const infoCat = CATS[k] || { icon: "📌", short: k };
+            const repere =
+              REPERES_COURS_SQL[k] || "Syntaxe et clauses essentielles du chapitre";
+            const nbF = parMonde[k].length;
+            return `<div class="rounded-xl p-2.5 border-2" style="background:#FFFDF4;border-color:#F59E0B;color:#1a1a2e">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-extrabold text-xs">${esc(infoCat.icon)} ${esc(
+              infoCat.short
+            )} (${nbF} faute${nbF > 1 ? "s" : ""})</span>
+                <a href="../cours/sql.html" class="px-2 py-0.5 rounded-full text-[10px] font-black text-white" style="background:#7B61FF;text-decoration:none">Cours SQL →</a>
+              </div>
+              <div class="text-[11px] font-bold opacity-80 mt-1">📌 À réviser : ${esc(
+                repere
+              )}</div>
+            </div>`;
+          })
+          .join("");
         const cartes = rates
-          .map((l) => {
+          .map((l, idxErr) => {
             const q = l.q;
+            const infoCat = CATS[q.cat] || { short: q.cat };
             const ta =
               l.skipped || l.user === -2
                 ? "Question passée"
@@ -43334,27 +43383,32 @@ LIMIT 5;</textarea
                 )}</pre>`
               : "";
             return `<div class="rounded-xl p-3 border-[3px]" style="background:#FFE5E5; border-color:#FF5D5D; color:#1a1a2e">
-        <div class="font-extrabold text-sm">❌ ${esc(
+        <div class="font-extrabold text-sm">❌ Faute ${idxErr + 1}/${rates.length} — ${esc(
           q.q
-        )} <span class="opacity-60 font-bold">— ${esc(
-              CATS[q.cat].short
-            )} · ${esc(q.diff)}</span></div>
+        )} <span class="opacity-60 font-bold">(${esc(
+              infoCat.short
+            )} · ${esc(q.diff)})</span></div>
         ${code}
         <div class="text-xs font-bold mt-2">Ta réponse : <b>${ta}</b><br />Bonne réponse : <b style="color:#0E7A5B">${esc(
               q.answers[q.correct]
-            )}</b><br /><span class="opacity-70">💡 ${esc(
+            )}</b><br /><span class="opacity-85">📖 Explication : ${esc(
               q.explain
             )}</span></div>
+        <div class="mt-2 p-2 rounded-lg text-xs font-extrabold" style="background:#FFF3C4;border:1.5px solid #F59E0B;color:#5b4a00">💡 Conseil : ${esc(
+          conseilParFauteSql(l)
+        )}</div>
       </div>`;
           })
           .join("");
         bloc.innerHTML = `
     <div class="brutal overflow-hidden !rounded-2xl" style="border-color:#FF5D5D">
-      <div class="sticky top-0 z-10 px-4 py-3 font-display font-bold text-white" style="background:#FF5D5D">
-        🎯 POINTS FAIBLES — Mes erreurs (${rates.length}/${total})
+      <div class="sticky top-0 z-10 px-4 py-3 font-display font-bold text-white flex items-center justify-between flex-wrap gap-2" style="background:#FF5D5D">
+        <span>📌 POINTS À RÉVISER &amp; CONSEILS PAR FAUTE (${rates.length}/${total})</span>
+        <a href="../cours/sql.html" class="px-3 py-1 rounded-full text-xs font-extrabold bg-white text-[#1a1a2e]" style="text-decoration:none">📖 Ouvrir le cours SQL</a>
       </div>
-      <div class="px-4 py-3 text-xs font-extrabold" style="background:#FFF3C4; color:#5b4a00">
-        Thèmes à revoir en priorité : ${priorite}
+      <div class="px-4 py-3 space-y-2" style="background:#FFF3C4; color:#5b4a00">
+        <div class="text-xs font-black">🎯 Chapitres à retravailler en priorité (${clesTriees.length}) :</div>
+        <div class="grid sm:grid-cols-2 gap-2">${synthesePoints}</div>
       </div>
       <div class="pts-faibles-liste px-4 py-3 space-y-3 grid sm:grid-cols-2 gap-3" style="background:var(--bg)">${cartes}</div>
     </div>`;

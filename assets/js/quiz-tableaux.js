@@ -12,6 +12,15 @@
   var CLE_STOCKAGE = "sti-quiz-tableaux-v1";
   var LIBELLE_MODULE = { html5: "HTML5", css3: "CSS3", javascript: "JavaScript", sql: "SQL", php: "PHP", defis: "66 Défis JS & HTML", "recap-php": "Récap PHP" };
   var ICO_MODULE = { html5: "🌐", css3: "🎨", javascript: "⚡", sql: "🗄️", php: "🐘", defis: "🎯", "recap-php": "🧾" };
+  var LIEN_COURS_MODULE = {
+    html5: "../cours/html5.html",
+    css3: "../cours/css3.html",
+    javascript: "../cours/javascript.html",
+    sql: "../cours/sql.html",
+    php: "../cours/php.html",
+    defis: "../defis-javascript.html",
+    "recap-php": "../cours/php.html"
+  };
   var app = document.getElementById("qt-app");
   if (!app) return;
 
@@ -20,13 +29,49 @@
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
+  function entierAleatoireTab(maxExcl) {
+    if (maxExcl <= 1) return 0;
+    if (typeof window !== "undefined" && window.crypto && typeof window.crypto.getRandomValues === "function") {
+      var buf = new Uint32Array(1);
+      window.crypto.getRandomValues(buf);
+      return buf[0] % maxExcl;
+    }
+    return Math.floor(Math.random() * maxExcl);
+  }
   function melanger(tab) {
     var a = tab.slice();
     for (var i = a.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
+      var j = entierAleatoireTab(i + 1);
       var t = a[i]; a[i] = a[j]; a[j] = t;
     }
     return a;
+  }
+  function preparerQuestionsMelangees(liste) {
+    var tirees = liste.map(function (q) {
+      return { ref: q, choix: melanger([q.bonne].concat(q.choix_faux)), choixEleve: -1 };
+    });
+    for (var i = 2; i < tirees.length; i++) {
+      var p0 = tirees[i - 2].choix.indexOf(tirees[i - 2].ref.bonne);
+      var p1 = tirees[i - 1].choix.indexOf(tirees[i - 1].ref.bonne);
+      var p2 = tirees[i].choix.indexOf(tirees[i].ref.bonne);
+      if (p2 !== -1 && p2 === p1 && p2 === p0 && tirees[i].choix.length > 1) {
+        var alt = (p2 + 1 + entierAleatoireTab(tirees[i].choix.length - 1)) % tirees[i].choix.length;
+        var tmp = tirees[i].choix[p2];
+        tirees[i].choix[p2] = tirees[i].choix[alt];
+        tirees[i].choix[alt] = tmp;
+      }
+    }
+    return tirees;
+  }
+  function conseilParFauteTab(it) {
+    var q = it.ref;
+    var choisie = it.choix[it.choixEleve] || "";
+    var modLbl = LIBELLE_MODULE[q.module] || q.module;
+    var base = 'Ne confonds plus « ' + choisie + ' » avec « ' + q.bonne + ' » : ';
+    if (q.type === "inv") {
+      return base + 'associe directement la définition demandée à l\u2019élément exact « ' + q.ref + ' » dans le tableau récapitulatif ' + modLbl + '.';
+    }
+    return base + 'relis la ligne « ' + q.ref + ' » du tableau récapitulatif ' + modLbl + ' dans ton Smart Book et retiens la formulation exacte « ' + q.bonne + ' ».';
   }
 
   /* ---------- Session et niveau ---------- */
@@ -243,9 +288,9 @@
       pool = vivier(niveauChoisi, module);
     }
     if (!pool.length) { afficherAccueil(); return; }
-    var tirees = melanger(pool).slice(0, revTab ? pool.length : NB_PAR_SESSION).map(function (q) {
-      return { ref: q, choix: melanger([q.bonne].concat(q.choix_faux)), choixEleve: -1 };
-    });
+    var tirees = preparerQuestionsMelangees(
+      melanger(pool).slice(0, revTab ? pool.length : NB_PAR_SESSION)
+    );
     sessionQuiz = { module: module, questions: tirees, index: 0, mode: "officiel", synchronise: false };
     afficherQuestion();
   }
@@ -255,18 +300,21 @@
     var item = s.questions[s.index];
     var q = item.ref;
     var pct = Math.round((s.index / s.questions.length) * 100);
+    var nbDejaRepondues = s.questions.filter(function (it) { return it.choixEleve !== -1; }).length;
     app.innerHTML =
       '<div class="qt-qmeta"><span class="qt-badge">' + ICO_MODULE[q.module] + " " + LIBELLE_MODULE[q.module] + "</span>" +
       "<span>Question " + (s.index + 1) + " / " + s.questions.length + (s.mode === "erreurs" ? " · entraînement" : "") + "</span></div>" +
       '<div class="qt-barre"><i style="width:' + pct + '%"></i></div>' +
       '<p class="qt-question">' + esc(q.q) + "</p>" +
       '<div class="qt-choix">' + item.choix.map(function (c, i) {
-        return '<button type="button" class="qt-choix-btn' + (item.choixEleve === i ? " choisi" : "") + '" data-choix="' + i + '">' + esc(c) + "</button>";
+        return '<button type="button" class="qt-choix-btn' + (item.choixEleve === i ? " choisi" : "") + '" data-choix="' + i + '">' +
+          "<strong>" + String.fromCharCode(65 + i) + ".</strong> " + esc(c) + "</button>";
       }).join("") + "</div>" +
       '<div class="qt-actions">' +
       '<button type="button" class="qt-btn" id="qt-suivant" ' + (item.choixEleve === -1 ? "disabled" : "") + ">" +
-      (s.index + 1 === s.questions.length ? "Terminer ✓" : "Question suivante →") + "</button>" +
-      '<button type="button" class="qt-btn secondaire" id="qt-arreter">Arrêter</button></div>';
+      (s.index + 1 === s.questions.length ? "🏁 Voir l'évaluation ✓" : "Question suivante →") + "</button>" +
+      '<button type="button" class="qt-btn secondaire" id="qt-arreter">' +
+      (nbDejaRepondues > 0 ? "⏹ Terminer & évaluer" : "Arrêter") + "</button></div>";
     app.querySelectorAll("[data-choix]").forEach(function (b) {
       b.addEventListener("click", function () {
         item.choixEleve = parseInt(b.getAttribute("data-choix"), 10);
@@ -326,12 +374,47 @@
     if (window.STIQuizSync && STIQuizSync.quitterRevision) STIQuizSync.quitterRevision();
     var erreurs = repondues.filter(function (it) { return it.choix[it.choixEleve] !== it.ref.bonne; });
     var pct = repondues.length ? Math.round((bonnes.length / repondues.length) * 100) : 0;
+
+    var blocPointsAReviser = "";
+    if (erreurs.length > 0) {
+      var parModErr = {};
+      erreurs.forEach(function (it) {
+        var m = it.ref.module;
+        if (!parModErr[m]) parModErr[m] = { count: 0, refs: [] };
+        parModErr[m].count++;
+        if (it.ref.ref && parModErr[m].refs.indexOf(it.ref.ref) === -1) {
+          parModErr[m].refs.push(it.ref.ref);
+        }
+      });
+      var modsTries = Object.keys(parModErr).sort(function (a, b) {
+        return parModErr[b].count - parModErr[a].count;
+      });
+      blocPointsAReviser =
+        '<section class="qt-points-reviser" aria-label="Points à réviser">' +
+        "<h2>📌 Points à réviser en priorité (" + erreurs.length + " faute" + (erreurs.length > 1 ? "s" : "") + ")</h2>" +
+        '<div class="qt-points-grille">' +
+        modsTries.map(function (m) {
+          var info = parModErr[m];
+          var urlCours = LIEN_COURS_MODULE[m] || "../livre-smart.html";
+          return '<div class="qt-point-carte">' +
+            '<div class="qt-point-entete">' +
+              "<span>" + (ICO_MODULE[m] || "📌") + " " + esc(LIBELLE_MODULE[m] || m) + " (" + info.count + ")</span>" +
+              '<a class="qt-point-lien" href="' + esc(urlCours) + '">📖 Cours →</a>' +
+            "</div>" +
+            '<p class="qt-point-refs">Notions à revoir : ' + esc(info.refs.slice(0, 6).join(" · ")) +
+              (info.refs.length > 6 ? "…" : "") + "</p>" +
+          "</div>";
+        }).join("") +
+        "</div></section>";
+    }
+
     app.innerHTML =
-      "<h1>Résultat <em>" + (s.mode === "erreurs" ? "de l'entraînement" : "de la session") + "</em></h1>" +
+      "<h1>Évaluation <em>" + (s.mode === "erreurs" ? "de l'entraînement" : "de la session") + "</em></h1>" +
       '<p class="qt-score">' + bonnes.length + " / " + repondues.length + " bonnes réponses (" + pct + " %)</p>" +
       '<p class="qt-sous">' + (erreurs.length === 0 && repondues.length
-        ? "Sans faute, bravo ! 🎉"
-        : "Correction détaillée ci-dessous : la bonne réponse et la ligne du tableau d\u2019où elle vient.") + "</p>" +
+        ? "Sans faute, bravo ! Aucun point à réviser sur ce tirage 🎉"
+        : "Retrouvez ci-dessous vos points à réviser en priorité ainsi qu\u2019un conseil personnalisé pour chaque faute.") + "</p>" +
+      blocPointsAReviser +
       repondues.map(function (it) {
         var ok = it.choix[it.choixEleve] === it.ref.bonne;
         return '<div class="qt-correction ' + (ok ? "ok" : "ko") + '">' +
@@ -339,7 +422,8 @@
           (ok
             ? '<p class="qt-ligne">Bonne réponse : <strong>' + esc(it.ref.bonne) + "</strong></p>"
             : '<p class="qt-ligne">Ta réponse : ' + esc(it.choix[it.choixEleve]) + "</p>" +
-              '<p class="qt-ligne">Bonne réponse : <strong>' + esc(it.ref.bonne) + "</strong></p>") +
+              '<p class="qt-ligne">Bonne réponse : <strong>' + esc(it.ref.bonne) + "</strong></p>" +
+              '<div class="qt-conseil">💡 <strong>Conseil :</strong> ' + esc(conseilParFauteTab(it)) + "</div>") +
           '<span class="qt-ref">' + ICO_MODULE[it.ref.module] + " Tableau " + LIBELLE_MODULE[it.ref.module] +
           " — « " + esc(it.ref.ref) + " »</span></div>";
       }).join("") +
@@ -356,9 +440,7 @@
     if (bErr) bErr.addEventListener("click", function () {
       sessionQuiz = {
         module: s.module, mode: "erreurs", synchronise: false,
-        questions: erreurs.map(function (it) {
-          return { ref: it.ref, choix: melanger(it.choix), choixEleve: -1 };
-        }),
+        questions: preparerQuestionsMelangees(melanger(erreurs.map(function (it) { return it.ref; }))),
         index: 0
       };
       afficherQuestion();
