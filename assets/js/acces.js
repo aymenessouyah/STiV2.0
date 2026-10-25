@@ -2322,7 +2322,10 @@
           "<div id='sti-pan-login' style='font-weight:900;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(affLogin) + "</div>" +
           "<div id='sti-pan-lycee' style='color:#7a6f5d;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(lyceePropre(profil)) + " · " + esc(profil.classe || "—") + "</div>" +
         "</div>" +
-        "<button type='button' id='sti-pan-photo-btn' title='Proposer une photo de profil (validée par le professeur)' style='flex:0 0 auto;border:1px solid rgba(35,32,26,.22);background:#fffdf7;color:#23201a;border-radius:999px;padding:4px 9px;font-size:10.5px;font-weight:900;cursor:pointer'>📷 Photo</button>" +
+        "<div style='display:flex;flex-direction:column;gap:4px;flex:0 0 auto'>" +
+          "<button type='button' id='sti-pan-photo-btn' title='Prendre ou recadrer ma photo de profil (validée par le professeur)' style='border:1px solid rgba(35,32,26,.22);background:#fffdf7;color:#23201a;border-radius:999px;padding:3px 9px;font-size:10px;font-weight:900;cursor:pointer'>📷 Photo</button>" +
+          "<button type='button' id='sti-pan-carte-eleve-btn' title='Afficher et télécharger ma Carte Officielle STI V2.0' style='border:1px solid #0284c7;background:#f0f9ff;color:#0369a1;border-radius:999px;padding:3px 9px;font-size:10px;font-weight:900;cursor:pointer'>🪪 Ma Carte</button>" +
+        "</div>" +
         "<input type='file' id='sti-pan-photo-inp' accept='image/*' style='display:none' />" +
       "</div>" +
       "<div id='sti-pan-photo-attente-bar' style='display:none;align-items:center;gap:7px;margin-top:5px;padding:5px 8px;border-radius:10px;background:#fffbeb;color:#78350f;border:1px solid #f59e0b;text-align:left'></div>" +
@@ -2401,44 +2404,356 @@
       window.__stiMajAvatarComptePan = rendreAvatarEtAttente;
       rendreAvatarEtAttente(profil);
 
-      function ouvrirSelecteurPh(ev) {
-        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
-        if (!inpPh) return;
-        inpPh.value = "";
-        inpPh.click();
+      function envoyerPhotoDataUrlEleve(dataUrl) {
+        if (!navigator.onLine) {
+          afficherMsgPh("📴 Connexion Internet requise pour envoyer votre photo.", true);
+          return;
+        }
+        afficherMsgPh("⏳ Envoi de la photo recadrée au professeur…", false);
+        sb.rpc("eleve_proposer_photo", { p_data_url: dataUrl }).then(function (r) {
+          if (r && r.error) throw r.error;
+          var cMaj = lireCacheSessionLocal() || {};
+          cMaj.photo_attente = dataUrl;
+          ecrireCacheSessionLocal(cMaj);
+          rendreAvatarEtAttente({ photo_url: cMaj.photo_url || "", photo_attente: dataUrl });
+          afficherMsgPh("✅ Photo envoyée ! Elle s'affichera dès validation par le professeur.", false);
+        }).catch(function (er) {
+          afficherMsgPh("❌ Envoi refusé : " + ((er && er.message) || "erreur Supabase"), true);
+        });
       }
-      if (btnPh) btnPh.addEventListener("click", ouvrirSelecteurPh);
+
+      /* v448 : Studio Recadrage Photo Interactif (glisser + zoom + caméra) côté Élève */
+      var studioElDom = null;
+      function ouvrirStudioPhotoEleveSTI(ev) {
+        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+        if (!studioElDom) {
+          var ov = document.createElement("div");
+          ov.id = "sti-studio-photo-eleve-ov";
+          ov.style.cssText = "position:fixed;inset:0;z-index:2147483645;background:rgba(15,23,42,.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:14px;font-family:'Comic Sans MS','Comic Neue',system-ui,sans-serif;";
+          ov.innerHTML =
+            "<div style='width:min(390px,95vw);background:#fffdf7;color:#23201a;border:2px solid #23201a;border-radius:22px;padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.48)'>" +
+              "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px'>" +
+                "<strong style='font-size:14.5px;font-weight:900'>📸 Recadrer ma photo STI</strong>" +
+                "<button type='button' id='sti-stu-close' style='border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:3px 8px;font-weight:900;cursor:pointer'>✕</button>" +
+              "</div>" +
+              "<div style='display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:8px'>" +
+                "<button type='button' id='sti-stu-file' style='border:1.5px solid #23201a;background:#fff;border-radius:999px;padding:5px 11px;font-size:11px;font-weight:900;cursor:pointer'>📁 Choisir une image</button>" +
+                "<button type='button' id='sti-stu-cam' style='border:1.5px solid #0284c7;background:#f0f9ff;color:#0369a1;border-radius:999px;padding:5px 11px;font-size:11px;font-weight:900;cursor:pointer'>🎥 Caméra / Webcam</button>" +
+                "<button type='button' id='sti-stu-snap' style='display:none;border:1.5px solid #15803d;background:#16a34a;color:#fff;border-radius:999px;padding:5px 12px;font-size:11px;font-weight:900;cursor:pointer'>📸 Capturer</button>" +
+              "</div>" +
+              "<div id='sti-stu-stage' style='position:relative;width:220px;height:220px;margin:8px auto;border-radius:26px;overflow:hidden;background:#0f172a;border:2.5px solid #f4511e;touch-action:none;user-select:none;cursor:grab'>" +
+                "<canvas id='sti-stu-cv' width='220' height='220' style='width:220px;height:220px;display:block'></canvas>" +
+                "<video id='sti-stu-vid' autoplay playsinline muted style='display:none;position:absolute;inset:0;width:220px;height:220px;object-fit:cover;transform:scaleX(-1)'></video>" +
+                "<div style='position:absolute;inset:14px;border-radius:50%;border:2px dashed rgba(255,255,255,.65);box-shadow:0 0 0 999px rgba(15,23,42,.34);pointer-events:none'></div>" +
+              "</div>" +
+              "<div style='display:flex;align-items:center;gap:8px;margin:8px 0 4px'>" +
+                "<span style='font-size:11px;font-weight:900'>🔍 Zoom</span>" +
+                "<input type='range' id='sti-stu-zoom' min='100' max='300' value='100' style='flex:1;accent-color:#f4511e' />" +
+                "<button type='button' id='sti-stu-reset' title='Recentrer' style='border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:2px 7px;font-weight:900;cursor:pointer'>↺</button>" +
+              "</div>" +
+              "<div id='sti-stu-hint' style='font-size:10.5px;color:#5a5244;text-align:center;font-weight:700;margin-bottom:10px'>Glissez l'image et zoomez pour centrer votre visage dans le cercle.</div>" +
+              "<div style='display:flex;justify-content:flex-end;gap:7px'>" +
+                "<button type='button' id='sti-stu-cancel' style='border:1px solid #cbd5e1;background:#fff;border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:800;cursor:pointer'>Annuler</button>" +
+                "<button type='button' id='sti-stu-ok' style='border:1.5px solid #15803d;background:linear-gradient(135deg,#22c55e,#15803d);color:#fff;border-radius:999px;padding:6px 14px;font-size:11.5px;font-weight:900;cursor:pointer'>✅ Envoyer au prof</button>" +
+              "</div>" +
+            "</div>";
+          document.body.appendChild(ov);
+
+          var cvS = ov.querySelector("#sti-stu-cv");
+          var ctxS = cvS.getContext("2d");
+          var vidS = ov.querySelector("#sti-stu-vid");
+          var stgS = ov.querySelector("#sti-stu-stage");
+          var rngS = ov.querySelector("#sti-stu-zoom");
+          var snapB = ov.querySelector("#sti-stu-snap");
+          var hintS = ov.querySelector("#sti-stu-hint");
+          var st = { img: null, zoom: 1, ox: 0, oy: 0, drag: false, sx: 0, sy: 0, stream: null };
+
+          function stopCamS() {
+            if (st.stream) {
+              try { st.stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+              st.stream = null;
+            }
+            try { vidS.srcObject = null; } catch (e2) {}
+            vidS.style.display = "none";
+            snapB.style.display = "none";
+          }
+          function drawS() {
+            ctxS.fillStyle = "#1e293b";
+            ctxS.fillRect(0, 0, 220, 220);
+            if (!st.img) {
+              ctxS.fillStyle = "#94a3b8";
+              ctxS.font = "700 12px 'Comic Sans MS', sans-serif";
+              ctxS.textAlign = "center";
+              ctxS.fillText("Choisissez une photo", 110, 104);
+              ctxS.fillText("ou activez la caméra", 110, 122);
+              return;
+            }
+            var iw = st.img.naturalWidth || st.img.width || 220;
+            var ih = st.img.naturalHeight || st.img.height || 220;
+            var sc = Math.max(220 / iw, 220 / ih) * st.zoom;
+            var dw = iw * sc, dh = ih * sc;
+            var mx = Math.max(0, (dw - 220) / 2), my = Math.max(0, (dh - 220) / 2);
+            if (st.ox > mx) st.ox = mx;
+            if (st.ox < -mx) st.ox = -mx;
+            if (st.oy > my) st.oy = my;
+            if (st.oy < -my) st.oy = -my;
+            ctxS.drawImage(st.img, (220 - dw) / 2 + st.ox, (220 - dh) / 2 + st.oy, dw, dh);
+          }
+          function loadUrlS(u) {
+            stopCamS();
+            if (!u) { st.img = null; drawS(); return; }
+            var im = new Image();
+            im.onload = function () { st.img = im; st.zoom = 1; st.ox = 0; st.oy = 0; rngS.value = "100"; drawS(); };
+            im.src = u;
+          }
+          function closeS() { stopCamS(); ov.style.display = "none"; }
+
+          ov.querySelector("#sti-stu-close").addEventListener("click", closeS);
+          ov.querySelector("#sti-stu-cancel").addEventListener("click", closeS);
+          ov.addEventListener("click", function (e2) { if (e2.target === ov) closeS(); });
+          ov.querySelector("#sti-stu-file").addEventListener("click", function () { if (inpPh) { inpPh.value = ""; inpPh.click(); } });
+          ov.querySelector("#sti-stu-cam").addEventListener("click", function () {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+              hintS.textContent = "⚠️ Caméra indisponible — cliquez sur « Choisir une image ».";
+              return;
+            }
+            stopCamS();
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 640 } }, audio: false }).then(function (str) {
+              st.stream = str;
+              vidS.srcObject = str;
+              vidS.style.display = "block";
+              snapB.style.display = "inline-block";
+              hintS.textContent = "🎥 Placez votre visage dans le cercle puis cliquez sur « 📸 Capturer ».";
+            }).catch(function () {
+              hintS.textContent = "⚠️ Accès caméra refusé — cliquez sur « Choisir une image ».";
+            });
+          });
+          snapB.addEventListener("click", function () {
+            if (!st.stream) return;
+            var vw = vidS.videoWidth || 480, vh = vidS.videoHeight || 480;
+            var tmp = document.createElement("canvas");
+            tmp.width = vw; tmp.height = vh;
+            var tc = tmp.getContext("2d");
+            tc.translate(vw, 0); tc.scale(-1, 1);
+            tc.drawImage(vidS, 0, 0, vw, vh);
+            hintS.textContent = "✅ Photo prise ! Ajustez le zoom si besoin puis validez.";
+            loadUrlS(tmp.toDataURL("image/jpeg", 0.90));
+          });
+          rngS.addEventListener("input", function () { st.zoom = Math.max(1, Math.min(3, (Number(rngS.value) || 100) / 100)); drawS(); });
+          ov.querySelector("#sti-stu-reset").addEventListener("click", function () { st.zoom = 1; st.ox = 0; st.oy = 0; rngS.value = "100"; drawS(); });
+
+          stgS.addEventListener("pointerdown", function (e2) {
+            if (!st.img || vidS.style.display === "block") return;
+            st.drag = true; st.sx = e2.clientX - st.ox; st.sy = e2.clientY - st.oy;
+            try { stgS.setPointerCapture(e2.pointerId); } catch (e3) {}
+          });
+          stgS.addEventListener("pointermove", function (e2) {
+            if (!st.drag) return;
+            st.ox = e2.clientX - st.sx; st.oy = e2.clientY - st.sy; drawS();
+          });
+          stgS.addEventListener("pointerup", function () { st.drag = false; });
+          stgS.addEventListener("pointercancel", function () { st.drag = false; });
+          stgS.addEventListener("wheel", function (e2) {
+            if (!st.img || vidS.style.display === "block") return;
+            e2.preventDefault();
+            var nv = Math.max(100, Math.min(300, (Number(rngS.value) || 100) + (e2.deltaY < 0 ? 12 : -12)));
+            rngS.value = String(nv); st.zoom = nv / 100; drawS();
+          }, { passive: false });
+
+          ov.querySelector("#sti-stu-ok").addEventListener("click", function () {
+            if (vidS.style.display === "block" && st.stream) { snapB.click(); return; }
+            if (!st.img) { hintS.textContent = "⚠️ Choisissez d'abord une image ou prenez une photo."; return; }
+            drawS();
+            var out = cvS.toDataURL("image/webp", 0.80);
+            if (!/^data:image\/webp;base64,/i.test(out) || out.length > 46000) out = cvS.toDataURL("image/jpeg", 0.78);
+            if (out.length > 46000) out = cvS.toDataURL("image/jpeg", 0.62);
+            if (out.length > 46000) out = cvS.toDataURL("image/jpeg", 0.48);
+            if (!photoUrlSureSTI(out)) { hintS.textContent = "⚠️ Impossible de compresser sous la limite autorisée."; return; }
+            closeS();
+            envoyerPhotoDataUrlEleve(out);
+          });
+
+          studioElDom = { ov: ov, load: loadUrlS, hint: hintS };
+        }
+        var cLoc = lireCacheSessionLocal() || {};
+        var deja = photoUrlSureSTI(cLoc.photo_attente || cLoc.photo_url || (profil && (profil.photo_attente || profil.photo_url)));
+        studioElDom.load(deja || "");
+        studioElDom.ov.style.display = "flex";
+      }
+
+      if (btnPh) btnPh.addEventListener("click", ouvrirStudioPhotoEleveSTI);
       if (avBox) {
-        avBox.addEventListener("click", ouvrirSelecteurPh);
+        avBox.addEventListener("click", ouvrirStudioPhotoEleveSTI);
         avBox.addEventListener("keydown", function (ev) {
-          if (ev.key === "Enter" || ev.key === " ") ouvrirSelecteurPh(ev);
+          if (ev.key === "Enter" || ev.key === " ") ouvrirStudioPhotoEleveSTI(ev);
         });
       }
       if (inpPh) {
         inpPh.addEventListener("change", function () {
           var f = inpPh.files && inpPh.files[0];
           if (!f) return;
-          if (!navigator.onLine) {
-            afficherMsgPh("📴 Connexion Internet requise pour envoyer votre photo.", true);
+          if (f.size > 12 * 1024 * 1024) {
+            afficherMsgPh("❌ Image trop volumineuse (max 12 Mo).", true);
             return;
           }
-          afficherMsgPh("⏳ Recadrage et envoi au professeur…", false);
-          compresserPhotoCarreeSTI(f, function (dataUrl) {
-            sb.rpc("eleve_proposer_photo", { p_data_url: dataUrl }).then(function (r) {
-              if (r && r.error) throw r.error;
-              var cMaj = lireCacheSessionLocal() || {};
-              cMaj.photo_attente = dataUrl;
-              ecrireCacheSessionLocal(cMaj);
-              rendreAvatarEtAttente({ photo_url: cMaj.photo_url || "", photo_attente: dataUrl });
-              afficherMsgPh("✅ Photo envoyée ! Elle s'affichera dès validation par le professeur.", false);
-            }).catch(function (er) {
-              afficherMsgPh("❌ Envoi refusé : " + ((er && er.message) || "erreur Supabase"), true);
-            });
-          }, function (errMsg) {
-            afficherMsgPh("❌ " + errMsg, true);
-          });
+          var rd = new FileReader();
+          rd.onload = function () {
+            var dUrl = String(rd.result || "");
+            if (studioElDom && studioElDom.ov.style.display === "flex") {
+              studioElDom.hint.textContent = "Glissez l'image et zoomez pour centrer votre visage.";
+              studioElDom.load(dUrl);
+            } else {
+              compresserPhotoCarreeSTI(f, envoyerPhotoDataUrlEleve, function (errMsg) { afficherMsgPh("❌ " + errMsg, true); });
+            }
+          };
+          rd.readAsDataURL(f);
         });
       }
+
+      /* v448 : Carte Officielle d'Abonné STI V2.0 côté Élève (Roue) */
+      var btnCarteEl = pan.querySelector("#sti-pan-carte-eleve-btn");
+      var modalCarteEl = null;
+      function matriculeEleveSTI(pr) {
+        var cl = String((pr && pr.classe) || "STI").replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 5) || "STI";
+        var raw = String((pr && (pr.id || pr.userId || pr.email)) || "0000");
+        var h = 0;
+        for (var i = 0; i < raw.length; i++) h = ((h * 31) + raw.charCodeAt(i)) % 10000;
+        return "STI-" + cl + "-" + String(1000 + (h % 9000));
+      }
+      function ouvrirCarteOfficielleEleveSTI(ev) {
+        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+        var R = (cfg && cfg.RACINE) || "";
+        var cLoc = lireCacheSessionLocal() || {};
+        var phOk = photoUrlSureSTI(cLoc.photo_url || (profil && profil.photo_url));
+        var isG = Boolean(cLoc.isGold || (profil && (profil.gold === true || /\|\s*GOLD$/i.test(profil.lycee || ""))));
+        var nomAff = (((cLoc.nom || (profil && profil.nom) || "").toUpperCase() + " " + (cLoc.prenom || (profil && profil.prenom) || "")).trim()) || affLogin || "Candidat STI";
+        var clAff = cLoc.classe || (profil && profil.classe) || "—";
+        var lyAff = lyceePropre(profil) || cLoc.lycee || "—";
+        var matAff = matriculeEleveSTI({ id: cLoc.userId || (profil && profil.id), email: cLoc.email || (profil && profil.email), classe: clAff });
+        var pctEl = pan.querySelector("#sti-pan-prog-pct");
+        var progTxt = (pctEl && pctEl.textContent) ? pctEl.textContent.trim() : (initProgPan.pctProg + "%");
+
+        if (!modalCarteEl) {
+          modalCarteEl = document.createElement("div");
+          modalCarteEl.id = "sti-modale-carte-candidat";
+          modalCarteEl.style.cssText = "position:fixed;inset:0;z-index:2147483644;background:rgba(15,23,42,.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:14px;font-family:'Comic Sans MS','Comic Neue',system-ui,sans-serif;";
+          document.body.appendChild(modalCarteEl);
+          modalCarteEl.addEventListener("click", function (e2) { if (e2.target === modalCarteEl) modalCarteEl.style.display = "none"; });
+        }
+
+        var roleBg = isG ? "linear-gradient(135deg,#fde047,#d97706)" : "linear-gradient(135deg,#0ea5e9,#0369a1)";
+        var roleFg = isG ? "#451a03" : "#ffffff";
+        var roleLbl = isG ? "👑 MEMBRE GOLD" : "🎓 CANDIDAT OFFICIEL";
+        var avHtml = phOk
+          ? "<img src='" + esc(phOk) + "' alt='' style='width:100%;height:100%;object-fit:cover;border-radius:50%;display:block' />"
+          : "<div style='width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900'>" + esc(initialesPan) + "</div>";
+
+        modalCarteEl.innerHTML =
+          "<div style='width:min(460px,96vw);background:#0f172a;border:1.5px solid rgba(255,255,255,.16);border-radius:24px;padding:18px;box-shadow:0 28px 64px rgba(0,0,0,.55);color:#f8fafc'>" +
+            "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:12px'>" +
+              "<strong style='font-size:15px;font-weight:900'>🪪 Ma Carte Officielle STI V2.0</strong>" +
+              "<button type='button' id='sti-cc-close' style='border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;border-radius:9px;padding:3px 9px;font-weight:900;cursor:pointer'>✕</button>" +
+            "</div>" +
+            "<div id='sti-cc-card-box' style='background:linear-gradient(145deg,#ffffff,#f1f5f9);color:#0f172a;border-radius:20px;border:3px solid " + (isG ? "#d97706" : "#0284c7") + ";overflow:hidden;box-shadow:0 16px 36px rgba(0,0,0,.32)'>" +
+              "<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px 8px'>" +
+                "<div style='display:flex;align-items:center;gap:8px'>" +
+                  "<img src='" + esc(R + "assets/icons/sti-icon-512.png") + "' alt='' style='width:34px;height:34px;border-radius:9px' />" +
+                  "<span style='font-size:18px;font-weight:900;color:#0f172a'>STI <em style='font-style:normal;color:#f4511e'>V2.0</em></span>" +
+                "</div>" +
+                "<span style='padding:4px 10px;border-radius:999px;background:" + roleBg + ";color:" + roleFg + ";font-size:10px;font-weight:900'>" + roleLbl + "</span>" +
+              "</div>" +
+              "<div style='display:flex;align-items:center;gap:14px;padding:8px 14px 12px'>" +
+                "<div style='position:relative;flex:0 0 84px;width:84px;height:84px;border-radius:50%;padding:3px;background:" + roleBg + "'>" +
+                  avHtml +
+                "</div>" +
+                "<div style='flex:1;min-width:0;text-align:left'>" +
+                  "<div style='font-size:9px;font-weight:800;color:#64748b'>NOM &amp; PRÉNOM</div>" +
+                  "<div style='font-size:15px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(nomAff) + "</div>" +
+                  "<div style='display:flex;gap:12px;margin-top:5px'>" +
+                    "<div><div style='font-size:8.5px;font-weight:800;color:#64748b'>ID CANDIDAT</div><div style='font-size:11px;font-weight:900'>" + esc(matAff) + "</div></div>" +
+                    "<div><div style='font-size:8.5px;font-weight:800;color:#64748b'>PROGRESSION</div><div style='font-size:11px;font-weight:900;color:#15803d'>● " + esc(progTxt) + "</div></div>" +
+                  "</div>" +
+                  "<div style='margin-top:5px'><div style='font-size:8.5px;font-weight:800;color:#64748b'>CLASSE &amp; LYCÉE</div><div style='font-size:11.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + esc(clAff + " · " + lyAff) + "</div></div>" +
+                "</div>" +
+              "</div>" +
+              "<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px;background:#e2e8f0;border-top:1px solid #cbd5e1'>" +
+                "<div style='text-align:left'>" +
+                  "<div style='font-size:10.5px;font-weight:900;color:#0f172a'>STI V2.0 — Plateforme Technologique</div>" +
+                  "<div style='font-size:9.5px;font-weight:700;color:#475569'>Carte Officielle d'Abonné · By Aymen Essouyah</div>" +
+                "</div>" +
+                "<img src='" + esc(R + "assets/images/qr-stiv2.png") + "' alt='QR' style='width:42px;height:42px;border-radius:7px;background:#fff;padding:2px' />" +
+              "</div>" +
+            "</div>" +
+            "<div style='display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px'>" +
+              "<button type='button' id='sti-cc-dl' style='border:none;background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;border-radius:999px;padding:8px 15px;font-size:12px;font-weight:900;cursor:pointer'>📥 Télécharger en PNG HD</button>" +
+              "<button type='button' id='sti-cc-photo' style='border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer'>📷 " + (phOk ? "Changer ma photo" : "Ajouter ma photo") + "</button>" +
+            "</div>" +
+          "</div>";
+
+        modalCarteEl.querySelector("#sti-cc-close").addEventListener("click", function () { modalCarteEl.style.display = "none"; });
+        modalCarteEl.querySelector("#sti-cc-photo").addEventListener("click", function () {
+          modalCarteEl.style.display = "none";
+          ouvrirStudioPhotoEleveSTI();
+        });
+        modalCarteEl.querySelector("#sti-cc-dl").addEventListener("click", function () {
+          var bDl = modalCarteEl.querySelector("#sti-cc-dl");
+          bDl.textContent = "⏳ Génération PNG HD…";
+          function loadIm(u) {
+            return new Promise(function (res) {
+              if (!u) { res(null); return; }
+              var i = new Image();
+              i.onload = function () { res(i); };
+              i.onerror = function () { res(null); };
+              i.src = u;
+            });
+          }
+          function rr(c, x, y, w, h, r) {
+            c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r);
+            c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+          }
+          Promise.all([loadIm(R + "assets/icons/sti-icon-512.png"), loadIm(phOk), loadIm(R + "assets/images/qr-stiv2.png")]).then(function (ims) {
+            var cv = document.createElement("canvas");
+            cv.width = 1600; cv.height = 1010;
+            var cx = cv.getContext("2d");
+            var acc = isG ? "#d97706" : "#0284c7";
+            var ff = '"Comic Sans MS", "Comic Neue", sans-serif';
+            rr(cx, 24, 24, 1552, 962, 64);
+            cx.fillStyle = "#f8fafc"; cx.fill();
+            cx.lineWidth = 8; cx.strokeStyle = acc; cx.stroke();
+            cx.save(); rr(cx, 28, 28, 1544, 954, 60); cx.clip();
+            cx.fillStyle = "#e2e8f0"; cx.fillRect(24, 790, 1552, 196);
+            if (ims[0]) cx.drawImage(ims[0], 96, 82, 120, 120);
+            cx.fillStyle = "#0f172a"; cx.font = "900 66px " + ff; cx.fillText("STI V2.0", 238, 164);
+            rr(cx, 1050, 96, 440, 86, 43); cx.fillStyle = acc; cx.fill();
+            cx.fillStyle = "#ffffff"; cx.font = "900 30px " + ff; cx.textAlign = "center";
+            cx.fillText(isG ? "👑 MEMBRE GOLD" : "🎓 CANDIDAT STI", 1270, 150); cx.textAlign = "left";
+            cx.save(); cx.beginPath(); cx.arc(285, 485, 168, 0, Math.PI * 2); cx.closePath();
+            cx.fillStyle = "#0f172a"; cx.fill(); cx.lineWidth = 10; cx.strokeStyle = acc; cx.stroke(); cx.clip();
+            if (ims[1]) cx.drawImage(ims[1], 117, 317, 336, 336);
+            else { cx.fillStyle = "#fff"; cx.font = "900 108px " + ff; cx.textAlign = "center"; cx.fillText(initialesPan, 285, 522); cx.textAlign = "left"; }
+            cx.restore();
+            cx.fillStyle = "#64748b"; cx.font = "800 24px " + ff;
+            cx.fillText("NOM & PRÉNOM :", 520, 345); cx.fillText("ID CANDIDAT :", 520, 490); cx.fillText("PROGRESSION :", 1040, 490); cx.fillText("CLASSE & LYCÉE :", 520, 628);
+            cx.fillStyle = "#0f172a"; cx.font = "900 50px " + ff; cx.fillText(nomAff.slice(0, 32), 520, 405);
+            cx.font = "900 38px " + ff; cx.fillText(matAff, 520, 540);
+            cx.fillStyle = "#15803d"; cx.fillText("● " + progTxt, 1040, 540);
+            cx.fillStyle = "#0f172a"; cx.fillText((clAff + " · " + lyAff).slice(0, 42), 520, 680);
+            cx.font = "900 32px " + ff; cx.fillText("STI V2.0 — Plateforme Technologique & Services", 96, 868);
+            cx.fillStyle = "#475569"; cx.font = "700 26px " + ff; cx.fillText("Carte Officielle d'Abonné · By Aymen Essouyah", 96, 916);
+            if (ims[2]) { rr(cx, 1344, 810, 148, 148, 22); cx.fillStyle = "#fff"; cx.fill(); cx.drawImage(ims[2], 1352, 818, 132, 132); }
+            cx.restore();
+            var a = document.createElement("a");
+            a.download = "Ma-Carte-STI-V2.png";
+            a.href = cv.toDataURL("image/png");
+            document.body.appendChild(a); a.click(); a.remove();
+            bDl.textContent = "✅ Carte PNG téléchargée !";
+            setTimeout(function () { bDl.textContent = "📥 Télécharger en PNG HD"; }, 2000);
+          });
+        });
+
+        modalCarteEl.style.display = "flex";
+      }
+      if (btnCarteEl) btnCarteEl.addEventListener("click", ouvrirCarteOfficielleEleveSTI);
     })();
 
     window.__stiMajProgressionPan = function () {
