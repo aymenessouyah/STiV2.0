@@ -6,10 +6,19 @@
 var CACHE = "sti-atelier-v317";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v454-retrait-nav-conseils";
+var UPDATE_ID = "v455-revision-quiz";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/quiz-sync.js", revision: "revision-quiz-v455" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "revision-quiz-v455" },
+  { url: "./revision-erreurs.html", revision: "revision-quiz-v455" },
+  { url: "./quiz/javascript.html", revision: "revision-quiz-v455" },
+  { url: "./quiz/html-css.html", revision: "revision-quiz-v455" },
+  { url: "./quiz/sql.html", revision: "revision-quiz-v455" },
+  { url: "./quiz/php.html", revision: "revision-quiz-v455" },
+  { url: "./quiz/pp.html", revision: "revision-quiz-v455" },
+  { url: "./quiz/tableaux.html", revision: "revision-quiz-v455" },
   { url: "./index.html", revision: "retrait-nav-conseils-v454" },
   { url: "./ma-fiche-revision.html", revision: "unif-acces-themes-v453" },
   { url: "./glossaire.html", revision: "unif-acces-themes-v453" },

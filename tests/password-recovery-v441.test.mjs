@@ -1030,8 +1030,266 @@ test('v454 : retrait du bouton « Conseils » dans la barre de navigation du hau
   assert.doesNotMatch(indexHtml, /<a\s+class="nav-link"\s+href="#conseils">/);
   assert.doesNotMatch(indexHtml, /<a\s+class="mobile-menu-link"\s+href="#conseils">/);
   assert.match(indexHtml, /<section\s+class="tips reveal"\s+id="conseils">/);
-  assert.match(swJs, /v454-retrait-nav-conseils/);
+  assert.match(swJs, /retrait-nav-conseils-v454/);
 });
+
+test('v455 : révision complète des Quiz — propositions mélangées, boutons Retour vers #modules et synchro « Mes erreurs »', () => {
+  const revErrHtml = read('revision-erreurs.html');
+  const tabHtml = read('quiz/tableaux.html');
+  const tabJs = read('assets/js/quiz-tableaux.js');
+  const jsHtml = read('quiz/javascript.html');
+  const hcHtml = read('quiz/html-css.html');
+  const sqlHtml = read('quiz/sql.html');
+  const phpHtml = read('quiz/php.html');
+  const ppHtml = read('quiz/pp.html');
+  const syncJs = read('assets/js/quiz-sync.js');
+  const swJs = read('sw.js');
+
+  // 1) Tous les boutons Retour mènent à la section Quiz (index.html#modules / ../index.html#modules)
+  assert.doesNotMatch(revErrHtml, /href="index\.html"/);
+  assert.equal((revErrHtml.match(/href="index\.html#modules"/g) || []).length, 2);
+  assert.doesNotMatch(tabHtml, /href="\.\.\/index\.html#cours"/);
+  assert.match(tabHtml, /href="\.\.\/index\.html#modules"/);
+  assert.match(tabJs, /href="\.\.\/index\.html#modules"/);
+  for (const h of [jsHtml, hcHtml, sqlHtml, phpHtml, ppHtml]) {
+    assert.match(h, /href="\.\.\/index\.html#modules"/);
+    assert.doesNotMatch(h, /href="\.\.\/index\.html(?:"|#(?!modules))/);
+  }
+
+  // 2) Répartition équilibrée des réponses dans les banques statiques JS, SQL et PHP (zéro série successive à 0)
+  const jsM = jsHtml.match(/const QUESTIONS_DB = (\[[\s\S]*?\]);\s*<\/script>/);
+  assert.ok(jsM, 'QUESTIONS_DB présent dans quiz/javascript.html');
+  const jsDb = vm.runInNewContext('(' + jsM[1] + ')');
+  assert.equal(jsDb.length, 106);
+  for (let k = 0; k < 4; k++) {
+    const n = jsDb.filter((q) => q.answer === k).length;
+    assert.ok(n >= 25 && n <= 28, `JS answer=${k} équilibré (${n})`);
+  }
+  for (let i = 1; i < jsDb.length; i++) {
+    assert.notEqual(jsDb[i].answer, jsDb[i - 1].answer, `Pas de doublon adjacent JS à ${i}`);
+  }
+
+  const sqlM = sqlHtml.match(/const QUESTIONS = (\[[\s\S]*?\n      \]);/);
+  assert.ok(sqlM, 'QUESTIONS présent dans quiz/sql.html');
+  const sqlDb = vm.runInNewContext('(' + sqlM[1] + ')');
+  assert.equal(sqlDb.length, 140);
+  for (let k = 0; k < 4; k++) {
+    assert.equal(sqlDb.filter((q) => q.correct === k).length, 35);
+  }
+
+  const phpM = phpHtml.match(/const QUESTIONS = (\[[\s\S]*?\n      \]);/);
+  assert.ok(phpM, 'QUESTIONS présent dans quiz/php.html');
+  const phpDb = vm.runInNewContext('(' + phpM[1] + ')');
+  assert.equal(phpDb.length, 176);
+  for (let k = 0; k < 4; k++) {
+    assert.equal(phpDb.filter((q) => q.answer === k).length, 44);
+  }
+
+  // 3) quiz-sync.js chargé AVANT le moteur de jeu sur JS, HTML/CSS, SQL et PHP + viderFile avant lecture dans revision-erreurs.html
+  assert.ok(jsHtml.indexOf('quiz-sync.js?v=455') < jsHtml.indexOf('class QuizGame'));
+  assert.ok(hcHtml.indexOf('quiz-sync.js?v=455') < hcHtml.indexOf('function nouvellePartie'));
+  assert.ok(sqlHtml.indexOf('quiz-sync.js?v=455') < sqlHtml.indexOf('function pickQuestions'));
+  assert.ok(phpHtml.indexOf('quiz-sync.js?v=455') < phpHtml.indexOf('function startQuiz'));
+  assert.match(revErrHtml, /STIQuizSync\.viderFile\(\)/);
+  assert.match(syncJs, /viderFile:\s*viderFile/);
+  assert.match(swJs, /revision-quiz-v455/);
+});
+
+test('v455 (comportemental VM) : Quiz JS mélange les options, persiste en write-ahead avant navigation et relance automatiquement ?revision=erreurs', async () => {
+  const syncJs = read('assets/js/quiz-sync.js');
+  const jsHtml = read('quiz/javascript.html');
+
+  const insertedParties = [];
+  const insertedReponses = [];
+  let blockNetwork = true;
+
+  const storage = {
+    _d: {
+      'sb-vywujxmepvcbgedgmger-auth-token': JSON.stringify({
+        user: { id: '9824a4f2-484e-4afa-9746-d366f06a462d', email: 'aa@exemple.tn' },
+      }),
+    },
+    get length() { return Object.keys(this._d).length; },
+    key(i) { return Object.keys(this._d)[i] ?? null; },
+    getItem(k) { return Object.prototype.hasOwnProperty.call(this._d, k) ? this._d[k] : null; },
+    setItem(k, v) { this._d[k] = String(v); },
+    removeItem(k) { delete this._d[k]; },
+  };
+
+  function makeEl() {
+    const classes = new Set(['hidden']);
+    const el = {
+      style: {},
+      innerText: '',
+      textContent: '',
+      innerHTML: '',
+      disabled: false,
+      children: [],
+      classList: {
+        add(...cs) { cs.forEach((c) => classes.add(c)); },
+        remove(...cs) { cs.forEach((c) => classes.delete(c)); },
+        toggle(c, f) {
+          if (f === undefined) {
+            if (classes.has(c)) { classes.delete(c); return false; }
+            classes.add(c); return true;
+          }
+          if (f) classes.add(c); else classes.delete(c);
+          return !!f;
+        },
+        contains(c) { return classes.has(c); },
+      },
+      appendChild(ch) { el.children.push(ch); return ch; },
+      remove() {},
+      querySelector() { return makeEl(); },
+      querySelectorAll() { return []; },
+      addEventListener() {},
+      getContext() { return new Proxy({}, { get: () => () => {} }); },
+    };
+    return el;
+  }
+
+  const els = {};
+  const getEl = (id) => (els[id] || (els[id] = makeEl()));
+  let optionBtns = [];
+
+  const win = {
+    location: { protocol: 'https:', origin: 'https://sti.example', pathname: '/quiz/javascript.html', search: '', hash: '' },
+    localStorage: storage,
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'anon-test' },
+    supabase: {
+      createClient() {
+        return {
+          auth: {
+            onAuthStateChange() {},
+            async getSession() {
+              return { data: { session: { user: { id: '9824a4f2-484e-4afa-9746-d366f06a462d', email: 'aa@exemple.tn' } } } };
+            },
+            async getUser() {
+              return { data: { user: { id: '9824a4f2-484e-4afa-9746-d366f06a462d', email: 'aa@exemple.tn' } } };
+            },
+          },
+          from(tbl) {
+            return {
+              async insert(payload) {
+                if (blockNetwork) return { error: { message: 'aborted on navigation' } };
+                if (tbl === 'sti_quiz_parties') insertedParties.push(payload);
+                if (tbl === 'sti_quiz_reponses') insertedReponses.push(...(Array.isArray(payload) ? payload : [payload]));
+                return { error: null };
+              },
+            };
+          },
+        };
+      },
+    },
+    soundManager: {
+      init() {}, playClick() {}, playHover() {}, playTick() {}, playCorrect() {}, playWrong() {}, playCombo() {}, playVictory() {}, toggleMute() {},
+    },
+    confetti() {},
+    Prism: { highlightElement() {} },
+    document: {
+      readyState: 'complete',
+      documentElement: makeEl(),
+      head: makeEl(),
+      body: makeEl(),
+      createElement() {
+        const b = makeEl();
+        optionBtns.push(b);
+        return b;
+      },
+      getElementById: getEl,
+      querySelector: () => makeEl(),
+      querySelectorAll: (sel) => (sel === '.option-btn' ? optionBtns : []),
+      addEventListener() {},
+    },
+    addEventListener() {},
+    requestAnimationFrame() {},
+    setTimeout(fn) { return 1; },
+    clearTimeout() {},
+    setInterval() { return 1; },
+    clearInterval() {},
+    performance: { now: () => 0 },
+    console,
+    Math, Date, JSON, Promise, Set, Array, Object, String, Number, Boolean, RegExp, Error, parseInt, parseFloat, isNaN,
+  };
+  win.window = win;
+  win.globalThis = win;
+
+  const ctx = vm.createContext(win);
+  vm.runInContext(syncJs, ctx, { filename: 'quiz-sync.js' });
+
+  const dbScript = jsHtml.match(/const QUESTIONS_DB = \[[\s\S]*?\];(?=\s*<\/script>)/)[0];
+  const engineScript = jsHtml.match(/<!-- ==== MOTEUR DU JEU ==== -->\s*<script>([\s\S]*?)<\/script>/)[1];
+  vm.runInContext(dbScript + '\nwindow.QUESTIONS_DB = QUESTIONS_DB;\n' + engineScript + '\nwindow.game = game;', ctx, { filename: 'javascript-quiz.js' });
+
+  // 1) Vérifier le mélange dynamique + absence de 3 réponses consécutives au même indice + intégrité de la bonne réponse
+  const byTitle = new Map(win.QUESTIONS_DB.map((q) => [q.title, q.options[q.answer]]));
+  win.game.start('arcade');
+  assert.equal(win.game.questions.length, 10);
+  for (let i = 0; i < win.game.questions.length; i++) {
+    const q = win.game.questions[i];
+    assert.equal(q.options[q.answer], byTitle.get(q.title));
+    if (i >= 2) {
+      assert.ok(
+        !(q.answer === win.game.questions[i - 1].answer && q.answer === win.game.questions[i - 2].answer),
+        'Jamais 3 réponses consécutives à la même position'
+      );
+    }
+  }
+
+  // 2) Répondre à 3 questions (1 juste, 2 fausses) puis quitter via showHome() alors que le réseau est coupé/avorté
+  const q0 = win.game.questions[0];
+  optionBtns = [];
+  win.game.renderQuestion();
+  win.game.handleAnswer(q0.answer); // juste
+
+  win.game.nextQuestion();
+  const q1 = win.game.questions[1];
+  optionBtns = [];
+  win.game.renderQuestion();
+  win.game.handleAnswer((q1.answer + 1) % 4); // fausse
+
+  win.game.nextQuestion();
+  const q2 = win.game.questions[2];
+  optionBtns = [];
+  win.game.renderQuestion();
+  win.game.handleAnswer((q2.answer + 2) % 4); // fausse
+
+  // Quitter immédiatement (comme un clic sur Retour / Menu) alors que la requête réseau échoue
+  win.game.showHome();
+
+  // La file write-ahead locale contient DÉJÀ les 3 réponses et la partie avant même tout succès réseau !
+  const queuedRep = JSON.parse(storage.getItem('sti-quiz-sync-rep-v1') || '[]');
+  const queuedParties = JSON.parse(storage.getItem('sti-quiz-sync-file-v1') || '[]');
+  assert.equal(queuedRep.length, 3);
+  assert.equal(queuedRep.filter((r) => !r.correct).length, 2);
+  assert.equal(queuedParties.length, 1);
+
+  // Attendre la résolution de la tentative avortée, puis réactiver le réseau et appeler viderFile() (comme sur revision-erreurs.html)
+  await new Promise((r) => setImmediate(r));
+  blockNetwork = false;
+  await win.STIQuizSync.viderFile();
+
+  assert.equal(insertedParties.length, 1);
+  assert.equal(insertedParties[0].quiz, 'javascript');
+  assert.equal(insertedParties[0].score, 1);
+  assert.equal(insertedParties[0].total, 3);
+  assert.equal(insertedReponses.length, 3);
+  assert.equal(JSON.parse(storage.getItem('sti-quiz-sync-rep-v1') || '[]').length, 0);
+
+  // 3) Simuler le clic « Retravailler ces questions » depuis revision-erreurs.html -> ?revision=erreurs démarre uniquement sur les 2 erreurs
+  const errIds = insertedReponses.filter((r) => !r.correct).map((r) => r.question_id);
+  assert.equal(errIds.length, 2);
+  win.STIQuizSync.preparerRevision('javascript', errIds);
+  win.location.search = '?revision=erreurs';
+
+  let autoStarted = false;
+  win.setTimeout = (fn) => { fn(); autoStarted = true; return 1; };
+  vm.runInContext('window.gameRev = new game.constructor();', ctx);
+  assert.equal(autoStarted, true);
+  assert.equal(win.gameRev.mode, 'revision');
+  assert.equal(win.gameRev.questions.length, 2);
+});
+
 
 
 
