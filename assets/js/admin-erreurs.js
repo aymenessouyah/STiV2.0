@@ -247,7 +247,14 @@
       if (!rep.length) { etat("⚠️ Aucune réponse de quiz enregistrée (table sti_quiz_reponses vide).", "#b45309"); }
       remplirClasses(profils);
       var classe = elClasse ? elClasse.value : "*";
-      var actifs = profils.filter(function (p) { return String(p.statut || "actif") === "actif" && (classe === "*" || String(p.classe || "").trim() === classe); });
+      var actifs = profils.filter(function (p) {
+        if (String(p.statut || "actif") !== "actif") return false;
+        var cl = String(p.classe || "").trim();
+        var em = String(p.email || "").trim().toLowerCase();
+        if (em === "elevelabo3@exemple.tn" || em === "aymenessouyah@gmail.com") return false;
+        if (classe === "*" && /^(prof|professeur|enseignant|admin|elevelabo3|labo3)$/i.test(cl)) return false;
+        return classe === "*" || cl === classe;
+      });
       var ids = {}; actifs.forEach(function (p) { ids[p.id] = 1; });
       var repClasse = rep.filter(function (r) { return r && ids[r.user_id]; });
       var out = analyser(actifs, repClasse, minRep);

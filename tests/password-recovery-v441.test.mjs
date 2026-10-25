@@ -1312,10 +1312,10 @@ test('v456 : consolidation complète Quiz Lots A, B et C (RLS DELETE, admin.html
   assert.match(migSql, /sti_quiz_reponses_quiz_check/i);
 
   assert.doesNotMatch(adminHtml, /<option value="quiz\/pp\.html">/);
-  assert.equal((adminHtml.match(/<option value="quiz\/tableaux\.html">/g) || []).length, 2);
+  assert.ok((adminHtml.match(/<option value="quiz\/tableaux\.html">/g) || []).length >= 2);
   assert.equal((adminHtml.match(/<option value="revision-erreurs\.html">/g) || []).length, 2);
   assert.match(adminHtml, /id="btn-quiz-sync-csv"/);
-  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=4(56|60)/);
+  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=4\d{2}/);
   assert.match(adminHtml, /admin\.js\?v=4\d{2}-/);
 
   assert.match(ppHtml, /window\.location\.replace\(cible\)/);
@@ -1569,7 +1569,7 @@ test('v457 (Lot D — audit final Quiz) : couverture 124 pages, cache-buster uni
   ]) {
     assert.match(content, /quiz-sync\.js\?v=4[56]\d/, `${name} doit charger quiz-sync.js?v=457+`);
   }
-  assert.match(adminHtml, /admin-erreurs\.js\?v=457/);
+  assert.match(adminHtml, /admin-erreurs\.js\?v=4\d{2}/);
   assert.match(swJs, /v457-quiz-lot-d/);
   assert.match(swJs, /"\.\/assets\/js\/quiz-tableaux-boot\.js"/);
   assert.ok(offlineManifest.files.some((f) => f.path === 'assets/js/quiz-tableaux-boot.js'));
@@ -2677,8 +2677,8 @@ test('v462 : restauration complète des 4 boutons de la Carte Officielle STI V2.
   const swJs = read('sw.js');
 
   // 1) Chargement versionné + CSS de secours critique intégré dans admin.html
-  assert.match(adminHtml, /assets\/css\/admin-saas\.css\?v=462/);
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=462-carte-boutons/);
+  assert.match(adminHtml, /assets\/css\/admin-saas\.css\?v=4\d{2}/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=4\d{2}-/);
   assert.match(adminHtml, /id="style-carte-candidat-secours-v462"/);
   assert.match(adminHtml, /\[hidden\]\{display:none!important\}/);
 
@@ -2702,11 +2702,11 @@ test('v462 : restauration complète des 4 boutons de la Carte Officielle STI V2.
   assert.match(accesJs, /id='sti-cc-close2'\s+class='sti-cc-btn sti-cc-btn-ghost'/);
 
   // 4) Service Worker v462 : actualisation des 4 fichiers + priorité au CACHE actif + purge inter-caches
-  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v322"/);
-  assert.match(swJs, /var UPDATE_ID\s*=\s*"v462-carte-boutons"/);
+  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v3\d{2}"/);
+  assert.match(swJs, /var UPDATE_ID\s*=\s*"v4\d{2}-/);
   for (const cible of ['./admin.html', './assets/css/admin-saas.css', './assets/js/admin.js', './assets/js/acces.js']) {
     const esc = cible.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    assert.match(swJs, new RegExp(`url:\\s*"${esc}",\\s*revision:\\s*"carte-boutons-v462"`));
+    assert.match(swJs, new RegExp(`url:\\s*"${esc}",\\s*revision:\\s*"[a-z0-9-]+-v4\\d{2}"`));
   }
   assert.match(swJs, /var cActif\s*=\s*await caches\.open\(CACHE\);/);
   assert.match(swJs, /await ancC\.delete\(u,\s*\{\s*ignoreSearch:\s*true\s*\}\);/);
@@ -2843,6 +2843,172 @@ test('v462 : restauration complète des 4 boutons de la Carte Officielle STI V2.
   assert.equal(els['modal-carte-candidat-admin'].hidden, true, 'Le bouton Fermer du bas doit masquer la modale');
   assert.equal(els['modal-carte-candidat-admin'].classList.contains('ouvert'), false);
 });
+
+test('v463 : révision intégrale du suivi élève, des compteurs, des quiz, des boutons et des éléments du tableau de bord', () => {
+  const adminHtml = read('admin.html');
+  const adminJs = read('assets/js/admin.js');
+  const accesJs = read('assets/js/acces.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const roueRevJs = read('assets/js/roue-revision.js');
+  const admRevJs = read('assets/js/admin-revision.js');
+  const admCouvJs = read('assets/js/admin-couverture.js');
+  const admErrJs = read('assets/js/admin-erreurs.js');
+  const quizAdminJs = read('assets/js/quiz-admin.js');
+  const graphJs = read('assets/js/graphiques-activite.js');
+  const anaJs = read('assets/js/analytique.js');
+  const sauvJs = read('assets/js/sauvegarde.js');
+  const sqlPlayHtml = read('cours/sql-playground.html');
+  const swJs = read('sw.js');
+
+  // 1) Zéro ID dupliqué dans admin.html et fin de la collision dynamique #btn-fermer-classe dans quiz-admin.js
+  const ids = [...adminHtml.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
+  const seen = new Set();
+  const dups = [];
+  for (const id of ids) {
+    if (seen.has(id)) dups.push(id);
+    seen.add(id);
+  }
+  assert.deepEqual(dups, [], 'Aucun id dupliqué dans admin.html');
+  assert.match(quizAdminJs, /id="btn-fermer-vue-quiz-classe"/);
+  assert.doesNotMatch(quizAdminJs, /id="btn-fermer-classe"/);
+
+  // 2) Fin des ReferenceError sur nettoyerLycee / aLeStatutGold dans admin.js
+  assert.doesNotMatch(adminJs, /\bnettoyerLycee\s*\(/);
+  assert.doesNotMatch(adminJs, /\baLeStatutGold\s*\(/);
+
+  // 3) Navigation des sections, Contrôle minute (quiz/tableaux.html), impression dédiée et fermeture Escape sécurisée
+  assert.match(adminHtml, /data-sec-cible="open-all"/);
+  assert.match(adminHtml, /data-sec-cible="bloc-sec-graphiques"/);
+  assert.match(adminHtml, /data-replier="bloc-sec-graphiques"/);
+  assert.equal((adminHtml.match(/<option value="quiz\/tableaux\.html">/g) || []).length, 3);
+  assert.match(adminJs, /window\.__stiImprimerFeuilleDedieeAdmin = lancerImpressionFeuilleDediee/);
+  assert.match(adminJs, /derniere\.id !== "modal-verrou-ecran-admin"/);
+  assert.match(adminJs, /o\.session && o\.session\.access_token/);
+
+  // 4) Purge mensuelle sécurisée : protection explicite des quiz, messages, contrôles, flashcards, copies, coffre et config
+  for (const motif of ['QUIZ:%', 'MSG_%', 'CTRL_%', 'FLASH_%', 'KAHOOT_%', 'COPIE_%', 'COFFRE_%', 'SEC_CONFIG', 'TABLEAU_BLANC']) {
+    assert.ok(adminJs.includes(motif), `Purge acces doit protéger ${motif}`);
+  }
+
+  // 5) Suivi complet (Pages /124, Cours, Exercices, Vidéos, Audios, Quiz) + réconciliation sti_quiz_parties
+  assert.match(adminJs, /function bilanSuiviCompletEleve\(p\)/);
+  assert.match(adminJs, /function selectionnerQuizPartiesAdmin\(\)/);
+  assert.match(adminJs, /function completerHistoriqueAccesArrierePlan\(\)/);
+  assert.match(accesJs, /pg === "PROG_MEDIA"/);
+  assert.match(accesJs, /payload\.sur20 != null \|\|/);
+
+  // 6) Isolation multi-élèves sur PC partagé, exclusions auth/admin et fusions monotones dans sync-progressions.js
+  for (const cleEx of ['sti-cred', 'sti-offline', 'sti-sec-config', 'sti-admin-palette']) {
+    assert.ok(syncProgJs.includes(cleEx), `${cleEx} doit être exclue de sti_progressions`);
+  }
+  assert.match(syncProgJs, /function isolerComptePartageSiBesoin\(uid\)/);
+  assert.match(syncProgJs, /function scoreValideSync\(v\)/);
+
+  // 7) Graphiques d'activité sans pseudo-événements ni #4338ca, Analytique complète et Sauvegarde paginée 8 tables
+  assert.match(graphJs, /function estVisiteNavigationGraphique\(page\)/);
+  assert.doesNotMatch(graphJs, /#4338ca/i);
+  assert.match(anaJs, /sti_quiz_parties/);
+  for (const tbl of ['profiles', 'acces', 'sti_progressions', 'sti_quiz_parties', 'sti_quiz_reponses', 'sti_quiz_vus', 'sti_observations', 'labo_devices']) {
+    assert.ok(sauvJs.includes(`"${tbl}"`), `sauvegarde.js doit paginer ${tbl}`);
+  }
+
+  // 8) Couverture des pages de contenu et CSP Supabase sur cours/sql-playground.html + Service Worker v323/v463
+  assert.match(sqlPlayHtml, /connect-src 'self' https:\/\/vywujxmepvcbgedgmger\.supabase\.co wss:\/\/vywujxmepvcbgedgmger\.supabase\.co/);
+  for (const pgTrack of [
+    'documents/complet/fiche-memento-synthese.html',
+    'documents/enonces/enonce-serie4-a4.html',
+    'documents/enonces/enonce-serie5-a4.html',
+    'exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html',
+    'exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html',
+    'exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html',
+    'exercices/javascript/js-37-defis-tt.html',
+    'exercices/sql/CommentConstruireunerequêteSQL.html',
+  ]) {
+    const html = read(pgTrack);
+    assert.match(html, /config\.js/, `${pgTrack} doit charger config.js`);
+    assert.match(html, /acces\.js/, `${pgTrack} doit charger acces.js`);
+    assert.match(html, /sync-progressions\.js/, `${pgTrack} doit charger sync-progressions.js`);
+  }
+  assert.match(admRevJs, /elevelabo3@exemple\.tn/);
+  assert.match(admCouvJs, /elevelabo3@exemple\.tn/);
+  assert.match(admErrJs, /elevelabo3@exemple\.tn/);
+  assert.match(swJs, /sti-atelier-v323/);
+  assert.match(swJs, /v463-audit-complet/);
+});
+
+test('v463 (comportemental VM) : rejet des points bruts non notés ("1791", "450 pts") et fusion monotone multi-appareils dans sync-progressions / admin-revision / roue-revision', () => {
+  const admRevJs = read('assets/js/admin-revision.js');
+  const roueRevJs = read('assets/js/roue-revision.js');
+  const adminJs = read('assets/js/admin.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+
+  // 1) STI_SUIVI_REVISION.analyser ignore les points bruts d'entraînement ("1791", "450 pts") mais retient /N, % et [0..20]
+  const dummyEl = () => ({ addEventListener: () => {}, style: {}, value: '' });
+  const ctxRev = vm.createContext({
+    window: {},
+    document: { getElementById: () => dummyEl(), readyState: 'complete' },
+  });
+  vm.runInContext(admRevJs, ctxRev);
+  const res = ctxRev.window.STI_SUIVI_REVISION.analyser(
+    [{ id: 'u1', nom: 'ABED', prenom: 'Ala', classe: '4eme SI2', email: 'ala@sti.tn', statut: 'actif' }],
+    [{
+      user_id: 'u1',
+      email: 'ala@sti.tn',
+      donnees: {
+        'sti-revision-v436': JSON.stringify({
+          'cours/sql.html': { vu: new Date().toISOString(), etape: 1 },
+          'cours/php.html': { vu: new Date().toISOString(), etape: 1 },
+        }),
+        'sti-mes-scores': JSON.stringify({
+          'Quiz SQL': '1791',
+          'Quiz JS': '450 pts',
+          'Quiz PHP': '18/24 (75%)',
+          'Quiz HTML': '8/20',
+        }),
+      },
+    }],
+    ['cours/sql.html', 'cours/php.html']
+  );
+  assert.equal(res.length, 1);
+  // Seul Quiz HTML (8/20 < 10) est compté faible ; Quiz PHP (15/20) est validé et "1791" / "450 pts" sont ignorés !
+  assert.equal(res[0].quizFaibles, 1);
+
+  // 2) roue-revision.js : noteChiffree convertit X/Y et X% sur 20 et rejette "1791" / "320 pts"
+  const fnMatch = roueRevJs.match(/function noteChiffree\(txt\)\s*\{[\s\S]*?\n  \}/);
+  assert.ok(fnMatch, 'noteChiffree présente dans roue-revision.js');
+  const noteChiffree = vm.runInNewContext('(' + fnMatch[0] + ')');
+  assert.equal(noteChiffree('1791'), null);
+  assert.equal(noteChiffree('320 pts'), null);
+  assert.equal(noteChiffree('25/20'), null);
+  assert.equal(noteChiffree('15/20'), 15);
+  assert.equal(noteChiffree('18/24 (75%)'), 15);
+  assert.equal(noteChiffree('80%'), 16);
+  assert.equal(noteChiffree('13,5'), 13.5);
+
+  // 3) admin.js : extraireNoteSur20 rejette les points bruts ("1791") mais calcule correctement les vraies notes /20
+  const extMatch = adminJs.match(/function extraireNoteSur20\(txt\)\s*\{[\s\S]*?\n  \}/);
+  assert.ok(extMatch, 'extraireNoteSur20 présente dans admin.js');
+  const extraireNoteSur20 = vm.runInNewContext('(' + extMatch[0] + ')');
+  assert.equal(extraireNoteSur20('1791'), null);
+  assert.equal(extraireNoteSur20('420 pts'), null);
+  assert.equal(extraireNoteSur20('28/20'), null);
+  assert.equal(extraireNoteSur20('16/20'), 16);
+  assert.equal(extraireNoteSur20('18/24 (75%)'), 15);
+  assert.equal(extraireNoteSur20('85%'), 17);
+
+  // 4) sync-progressions.js : fusionnerMediaProgMonotone préserve le maxPct / done de chaque média sur tous les appareils
+  const fusMatch = syncProgJs.match(/function fusionnerMediaProgMonotone\(rawLoc, rawDist\)\s*\{[\s\S]*?\n  \}/);
+  assert.ok(fusMatch, 'fusionnerMediaProgMonotone présente dans sync-progressions.js');
+  const fusionnerMedia = vm.runInNewContext('(' + fusMatch[0] + ')');
+  const mediaFus = JSON.parse(fusionnerMedia(
+    JSON.stringify({ 'video:sql-s1': { pct: 90, maxPct: 90, dur: 120, done: true, ts: 100 } }),
+    JSON.stringify({ 'video:sql-s1': { pct: 20, maxPct: 20, dur: 120, done: false, ts: 200 }, 'audio:html-s1': { pct: 60, maxPct: 60, dur: 90, done: false, ts: 150 } })
+  ));
+  assert.equal(mediaFus['video:sql-s1'].done, true);
+  assert.equal(mediaFus['video:sql-s1'].maxPct, 100);
+  assert.equal(mediaFus['audio:html-s1'].maxPct, 60);
+});
+
 
 
 

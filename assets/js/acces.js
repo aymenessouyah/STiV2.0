@@ -6,11 +6,19 @@
   if (!cfg || cfg.URL.indexOf("https://") !== 0) return;
   var chemin = (function () {
     var p = location.pathname || "";
-    var mSub = p.match(/\/(cssanimee|Positionnement-animee|projets\/[^/]+)\/(?:index\.html)?$/i);
-    if (mSub) return mSub[1] + "/index.html";
-    return p.split("/").pop() || "index.html";
+    try { p = decodeURIComponent(p); } catch (eDec) {}
+    p = p.replace(/\\/g, "/").replace(/^\/+/, "");
+    p = p.replace(/^(?:stiv2\.0\/)+/i, "");
+    var mKnown = p.match(/(?:^|\/)((?:cours|quiz|exercices|documents|annexes|projets|cssanimee|Positionnement-animee|tests)\/.+)$/i);
+    if (mKnown) {
+      var rel = mKnown[1];
+      if (/\/$/.test(rel)) rel += "index.html";
+      return rel;
+    }
+    var base = p.split("/").pop() || "index.html";
+    return base;
   })();
-  if (chemin === "portail.html" || chemin === "admin.html") return;
+  if (chemin === "portail.html" || chemin === "admin.html" || /(?:^|\/)(?:portail|admin)\.html$/i.test(chemin)) return;
   /* v441 : ne jamais écraser un lien de récupération Supabase arrivé sur index.html (Site URL) */
   try {
     var qsRecV441 = new URLSearchParams(location.search || "");
@@ -1406,14 +1414,41 @@
         if (pg.indexOf("QUIZ:") === 0) {
           try {
             var qz = JSON.parse(a.lieu || "{}");
-            if (qz && qz.quiz && qz.note) mesScores[qz.quiz] = qz.note;
+            if (qz && qz.quiz && qz.note && (qz.sur20 != null || /(\/\s*\d+|%)/.test(String(qz.note)))) {
+              mesScores[qz.quiz] = qz.note;
+            }
           } catch (e) {}
           return;
         }
-        if (pg.indexOf("MSG_") === 0 || pg.indexOf("CTRL_") === 0) return;
-        tot += Number(a.duree_sec || 0);
+        if (
+          pg === "CFG_ECOLES" ||
+          pg === "SEC_CONFIG" ||
+          pg === "SUPPR_ACCES" ||
+          pg === "TABLEAU_BLANC" ||
+          pg === "PROG_MEDIA" ||
+          pg.indexOf("MSG_") === 0 ||
+          pg.indexOf("CTRL_") === 0 ||
+          pg.indexOf("FLASH_") === 0 ||
+          pg.indexOf("KAHOOT_") === 0 ||
+          pg.indexOf("COFFRE_TP") === 0 ||
+          pg.indexOf("COPIE_") === 0 ||
+          pg.indexOf("SEC_") === 0 ||
+          pg.indexOf("MAIN_LEVEE:") === 0 ||
+          pg.indexOf("ADMIN_") === 0
+        ) return;
+        tot += Math.max(0, Number(a.duree_sec || 0));
       });
       try {
+        Object.keys(mesScores).forEach(function (kSc) {
+          var vSc = String(mesScores[kSc] == null ? "" : mesScores[kSc]).trim();
+          if (!vSc) { delete mesScores[kSc]; return; }
+          if (!/\/\s*\d+/.test(vSc) && !/%/.test(vSc)) {
+            var nBrut = parseFloat(vSc.replace(",", "."));
+            if (!isFinite(nBrut) || nBrut < 0 || nBrut > 20 || /pts?\b/i.test(vSc)) {
+              delete mesScores[kSc];
+            }
+          }
+        });
         localStorage.setItem("sti-duree-sem-cache", String(tot));
         localStorage.setItem("sti-mes-scores", JSON.stringify(mesScores));
       } catch (e) {}
@@ -1437,8 +1472,10 @@
     };
     try {
       var mesScores = JSON.parse(localStorage.getItem("sti-mes-scores") || "{}");
-      mesScores[nomQuiz] = payload.note;
-      localStorage.setItem("sti-mes-scores", JSON.stringify(mesScores));
+      if (payload.sur20 != null || /(\/\s*\d+|%)/.test(payload.note)) {
+        mesScores[nomQuiz] = payload.note;
+        localStorage.setItem("sti-mes-scores", JSON.stringify(mesScores));
+      }
     } catch (e) {}
     var row = {
       user_id: currentUid,

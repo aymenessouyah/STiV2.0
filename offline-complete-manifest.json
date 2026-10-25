@@ -1,9 +1,9 @@
 {
   "version": "v460-quiz-supabase-ordre",
-  "generatedAt": "2026-10-25T20:36:20.395Z",
+  "generatedAt": "2026-10-25T21:48:14.378Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 605,
-  "totalBytes": 631218271,
+  "totalBytes": 631266700,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
@@ -12,8 +12,8 @@
     },
     {
       "path": "assets/js/quiz-admin.js",
-      "bytes": 45007,
-      "gitSha": "b9be3877aab939dd464250f6684f7fecbad7ef10"
+      "bytes": 45608,
+      "gitSha": "1c995bd96fa932ffd0c694c8e3c451cbba4b32ec"
     },
     {
       "path": "quiz/tableaux.html",
@@ -97,8 +97,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 325165,
-      "gitSha": "55c9ae047fb663596dbe012553071d6532f10733"
+      "bytes": 326836,
+      "gitSha": "78bde93a9e837d37f51e00bd9b9c06217071608f"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -512,18 +512,18 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 909451,
-      "gitSha": "5b653d851651a8b00792be8bdb573ea209eccb9a"
+      "bytes": 910925,
+      "gitSha": "2cc30bf71f7ca5a2f67991b24f037b56d4c90ec7"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 662560,
-      "gitSha": "f11ff7d40bfc01ab041e15630537c4b56a2d0795"
+      "bytes": 688915,
+      "gitSha": "47f4d773ad3cfbbc897b09bcdb8f6f42faccc540"
     },
     {
       "path": "assets/js/analytique.js",
-      "bytes": 6837,
-      "gitSha": "9e5c8655bedb56325c6cfd4e373052c2e363c8e2"
+      "bytes": 12447,
+      "gitSha": "1ff4a5b850feb65d22dbf8c028b04e6af91a3f52"
     },
     {
       "path": "assets/js/config.js",
@@ -532,8 +532,8 @@
     },
     {
       "path": "assets/js/graphiques-activite.js",
-      "bytes": 7044,
-      "gitSha": "c26fb6b006c7ab2de1442b5f9b0875e3ac1a7a0d"
+      "bytes": 9980,
+      "gitSha": "00bffd79fe0072e990d0109f8d0c2a5f824b6dd5"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -592,8 +592,8 @@
     },
     {
       "path": "assets/js/sauvegarde.js",
-      "bytes": 6173,
-      "gitSha": "756735b3a99e3269f866cf8b2857d647b77f618a"
+      "bytes": 7875,
+      "gitSha": "9701ddcbfd8bbbd9acc5635b13f2e952719e9a25"
     },
     {
       "path": "assets/js/smart-book.js",
@@ -607,8 +607,8 @@
     },
     {
       "path": "assets/js/sync-progressions.js",
-      "bytes": 18969,
-      "gitSha": "b64af56bd95bcb41aa196019347e83df1de6168d"
+      "bytes": 23003,
+      "gitSha": "a69a12d5ce64608bd8d9b7933d85fdb88d5b0ee6"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -1847,8 +1847,8 @@
     },
     {
       "path": "documents/complet/fiche-memento-synthese.html",
-      "bytes": 6561,
-      "gitSha": "1f3552af9f75802c8f01dceaf51561bbd70b43af"
+      "bytes": 6801,
+      "gitSha": "83b83989967b04413f29e87c009c66a6c9beeb42"
     },
     {
       "path": "documents/complet/fiche-memento-synthese.pdf",
@@ -1867,13 +1867,13 @@
     },
     {
       "path": "documents/enonces/enonce-serie4-a4.html",
-      "bytes": 6574,
-      "gitSha": "baefffda2607035f5217ac539a5d436943314e6d"
+      "bytes": 6814,
+      "gitSha": "c50e3b9d3f79606e7c0e144059bc35d7746e472c"
     },
     {
       "path": "documents/enonces/enonce-serie5-a4.html",
-      "bytes": 5764,
-      "gitSha": "1cee746b7a0c0248ca06dc7aa2f48ec08941b317"
+      "bytes": 6004,
+      "gitSha": "5e13cec79c7ade4f4d512ee51b9accbefddc6f16"
     },
     {
       "path": "documents/livre/sti-smart-book-2026.pdf",
@@ -2037,18 +2037,18 @@
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html",
-      "bytes": 27344,
-      "gitSha": "7372c455d00ac1cb85453fa8974d1c9126540993"
+      "bytes": 27636,
+      "gitSha": "3ffb40953b9b8f57de1ad8789046c13f24d83461"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html",
-      "bytes": 27350,
-      "gitSha": "0974ecf56fe89cfd14a41121b82dab5a25642110"
+      "bytes": 27642,
+      "gitSha": "469e764385e1caf3ab74ebb530ed51f964ecf43b"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html",
-      "bytes": 27332,
-      "gitSha": "d9e8e892fcbc773f5444243329e484fac8e93654"
+      "bytes": 27624,
+      "gitSha": "12f803fc1eb0b6c8a812346effe30c49b2c97631"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-flex.css",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 73117,
-      "gitSha": "2e0253f822d85ce1e2ff03e46c7bb31b651495e3"
+      "bytes": 74614,
+      "gitSha": "c82525cf05b3b04586dd8aceb81f2b04a3548164"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
@@ -3022,13 +3022,13 @@
     },
     {
       "path": "assets/js/roue-revision.js",
-      "bytes": 12353,
-      "gitSha": "182912a7b4d7a0f794592413ca6d21f9989a9595"
+      "bytes": 12983,
+      "gitSha": "1c224927c2f840a7d8ccac689e4dd82b10ba3b7d"
     },
     {
       "path": "assets/js/admin-erreurs.js",
-      "bytes": 15772,
-      "gitSha": "cb1198c9512f21d3b1f2909ffd63ce213a5dc4ba"
+      "bytes": 16095,
+      "gitSha": "2aab0506e1cebff37864fac2ee9af05b42cf8c70"
     }
   ],
   "windowsCompatible": true,

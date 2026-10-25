@@ -11,6 +11,16 @@
     "sti-session-cache",
     "sti-admin-gold",
     "sti-gold",
+    "sti-cred",
+    "sti-offline",
+    "sti-bio-nav-ts",
+    "sti-bio-lease-ts",
+    "sti-bio-click-nav-ts",
+    "sti-bio-session-ok",
+    "sti-sec-config",
+    "sti-admin-theme",
+    "sti-admin-palette",
+    "sti-admin-badge-mob-repli",
     "sti-quiz-sync-file-v1",
     "sti-quiz-sync-vus-v1",
     "sti-quiz-sync-vus-purge-v1",
@@ -111,9 +121,13 @@
     try {
       var prevUid = localStorage.getItem(CLE_SYNC_UID) || "";
       if (prevUid && prevUid !== uid) {
-        localStorage.removeItem("sti-media-prog-v1");
-        localStorage.removeItem("sti-chapitres-vus");
-        localStorage.removeItem("sti-revised-courses");
+        var garderUi = { "sti-theme": 1, "sti-pc-zoom": 1, "sti-veilleuse": 1 };
+        var aPurger = [];
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i) || "";
+          if (k && !garderUi[k] && estCleSynchronisable(k)) aPurger.push(k);
+        }
+        aPurger.forEach(function (kRem) { try { localStorage.removeItem(kRem); } catch (eRem) {} });
         localStorage.removeItem(CLE_SYNC_MAJ);
         dernierHash = "";
       }
@@ -130,13 +144,80 @@
             return;
           } catch (eMed) {}
         }
-        if (k === "sti-chapitres-vus" || k === "sti-revised-courses") {
+        if (k === "sti-pages-vues-v432") {
+          try {
+            var pvLoc = JSON.parse(localStorage.getItem(k) || "{}") || {};
+            var pvDist = (typeof d[k] === "string" ? JSON.parse(d[k] || "{}") : d[k]) || {};
+            var pvOut = {};
+            Object.keys(pvDist).forEach(function (pg) { pvOut[pg] = pvDist[pg]; });
+            Object.keys(pvLoc).forEach(function (pg) {
+              if (!pvOut[pg]) { pvOut[pg] = pvLoc[pg]; return; }
+              var tA = Number(pvOut[pg]) || 0, tB = Number(pvLoc[pg]) || 0;
+              pvOut[pg] = (tA > 0 && tB > 0) ? Math.min(tA, tB) : (tB || tA || 1);
+            });
+            localStorage.setItem(k, JSON.stringify(pvOut));
+            return;
+          } catch (ePv) {}
+        }
+        if (k === "sti-revision-v436") {
+          try {
+            var rvLoc = JSON.parse(localStorage.getItem(k) || "{}") || {};
+            var rvDist = (typeof d[k] === "string" ? JSON.parse(d[k] || "{}") : d[k]) || {};
+            var rvOut = {};
+            Object.keys(rvDist).forEach(function (pg) { rvOut[pg] = rvDist[pg]; });
+            Object.keys(rvLoc).forEach(function (pg) {
+              var a = rvOut[pg], b = rvLoc[pg];
+              if (!a || typeof a !== "object") { rvOut[pg] = b; return; }
+              if (!b || typeof b !== "object") return;
+              var etA = Number(a.etape) || 0, etB = Number(b.etape) || 0;
+              rvOut[pg] = etB > etA ? b : (etA > etB ? a : ((new Date(b.dernier || b.vu || 0).getTime() || 0) >= (new Date(a.dernier || a.vu || 0).getTime() || 0) ? b : a));
+            });
+            localStorage.setItem(k, JSON.stringify(rvOut));
+            return;
+          } catch (eRv) {}
+        }
+        if (k === "sti-mes-scores") {
+          try {
+            var scLoc = JSON.parse(localStorage.getItem(k) || "{}") || {};
+            var scDist = (typeof d[k] === "string" ? JSON.parse(d[k] || "{}") : d[k]) || {};
+            var scOut = {};
+            function scoreValideSync(v) {
+              var s = String(v == null ? "" : v).trim();
+              if (!s) return false;
+              if (/\/\s*\d+/.test(s) || /%/.test(s)) return true;
+              if (/\bpts?\b/i.test(s)) return false;
+              var nb = parseFloat(s.replace(",", "."));
+              return isFinite(nb) && nb >= 0 && nb <= 20;
+            }
+            Object.keys(scDist).forEach(function (qz) { if (scoreValideSync(scDist[qz])) scOut[qz] = scDist[qz]; });
+            Object.keys(scLoc).forEach(function (qz) { if (scoreValideSync(scLoc[qz])) scOut[qz] = scLoc[qz]; });
+            localStorage.setItem(k, JSON.stringify(scOut));
+            return;
+          } catch (eSc) {}
+        }
+        if (k === "sti-chapitres-vus" || k === "sti-revised-courses" || k === "sti-pieges-bac-ok" || k === "sti-flashcards-mastered" || k === "sti-exos-faits") {
           try {
             var cLoc = JSON.parse(localStorage.getItem(k) || "{}") || {};
             var cDist = (typeof d[k] === "string" ? JSON.parse(d[k] || "{}") : d[k]) || {};
-            localStorage.setItem(k, JSON.stringify(Object.assign({}, cDist, cLoc)));
+            if (Array.isArray(cLoc) || Array.isArray(cDist)) {
+              var uArr = {};
+              (Array.isArray(cDist) ? cDist : []).concat(Array.isArray(cLoc) ? cLoc : []).forEach(function (x) { if (x != null) uArr[String(x)] = x; });
+              localStorage.setItem(k, JSON.stringify(Object.keys(uArr).map(function (kx) { return uArr[kx]; })));
+            } else {
+              localStorage.setItem(k, JSON.stringify(Object.assign({}, cDist, cLoc)));
+            }
             return;
           } catch (eCh) {}
+        }
+        if (k === "sti-derniere-visite") {
+          try {
+            var dvLoc = localStorage.getItem(k) || "";
+            var dvDist = String(d[k] || "");
+            var tL = new Date(dvLoc || 0).getTime() || 0;
+            var tD = new Date(dvDist || 0).getTime() || 0;
+            localStorage.setItem(k, tL >= tD ? dvLoc : dvDist);
+            return;
+          } catch (eDv) {}
         }
         if (k === "js_quiz_high_score" || k === "js_quiz_total_answered") {
           var vLoc = parseInt(localStorage.getItem(k) || "0", 10) || 0;

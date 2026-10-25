@@ -573,10 +573,12 @@
   var triParAcces = false;
   var profils = [], acces = [], counts = {};
   /* Jeux bruts conservés localement : les sondages de 20 s ne récupèrent que les lignes nouvelles. */
-  var profilsBrutsAdmin = [], accesBrutsAdmin = [], progressionsCloudBrutesAdmin = [], signauxCompatBrutAdmin = "";
+  var profilsBrutsAdmin = [], accesBrutsAdmin = [], progressionsCloudBrutesAdmin = [], quizPartiesCloudAdmin = [], signauxCompatBrutAdmin = "";
   var dernierIdAccesAdmin = 0;
   var dernierProfilUpdatedAtAdmin = "";
   var dernierProgressionMajAdmin = "";
+  var dernierQuizPartieCreeLeAdmin = "";
+  var paginationArrierePlanAccesEnCours = false;
   var supportDeltaProfilsAdmin = null;
   var historiqueAdminEnCours = false;
   var TAILLE_PAGE_ACCES_ADMIN = 100;
@@ -592,6 +594,7 @@
   var questionsFlash = [], reponsesFlash = {};
   var scoresParUser = {}, listeResultatsQuiz = [], progMediaParUser = {}, progMediaLiveBuffer = {};
   var chapitresVusCloudParUser = {}, pagesVuesCloudParUser = {};
+  var exosCloudParUser = {}, scoresCloudParUser = {}, derniereVisiteCloudParUser = {}, revisionCloudParUser = {};
   var enLigneMap = {}; /* uid -> { ts: ms, page: str } */
   var machinesLabo3Live = {}; /* code #XXXX -> { code, appareil, page, ts } */
   var bandeauLabo3ForceOuvert = false;
@@ -1614,6 +1617,7 @@
       setTimeout(nettoyer, 1200);
     }, 80);
   }
+  window.__stiImprimerFeuilleDedieeAdmin = lancerImpressionFeuilleDediee;
 
   function imprimerTrombinoscopeAdmin() {
     var liste = obtenirProfilsFiltresTrombinoscope();
@@ -1861,7 +1865,8 @@
         ? ("<b>" + r.stQ.moyenne20 + " / 20</b> <span style='font-size:11px;color:var(--adm-muted)'>(" + r.stQ.nb + " quiz)</span>")
         : "<span style='color:var(--adm-muted)'>Aucun quiz</span>";
       var modsTxt = r.mods.length ? r.mods.join(", ") : "Aucun module";
-      var mediaTxt = "🎬 " + r.bil.resumeCourtVid + " · 🔊 " + r.bil.resumeCourtAud;
+      var suivCons = bilanSuiviCompletEleve(r.p);
+      var mediaTxt = "📄 " + suivCons.nbPages + "/" + suivCons.totalPagesSite + " p. · ✏️ " + suivCons.nbExos + " ex. · 🎬 " + r.bil.resumeCourtVid + " · 🔊 " + r.bil.resumeCourtAud;
       var derniereObs = (r.obs && r.obs.length) ? String(r.obs[0].texte || "") : "";
 
       return (
@@ -3481,6 +3486,9 @@
       if (Array.isArray(c.progressionsCloud) && c.progressionsCloud.length) {
         progressionsCloudBrutesAdmin = c.progressionsCloud.slice();
       }
+      if (Array.isArray(c.quizPartiesCloud) && c.quizPartiesCloud.length) {
+        quizPartiesCloudAdmin = c.quizPartiesCloud.slice();
+      }
       appliquerDonneesAdmin(c.tous, c.tousAcces || [], c.txtSignauxCompat || "", true, c.ts);
       return true;
     }
@@ -3625,8 +3633,62 @@
       if (pgVues && typeof pgVues === "object") {
         if (!pagesVuesCloudParUser[uid]) pagesVuesCloudParUser[uid] = {};
         Object.keys(pgVues).forEach(function (pk) {
-          if (pgVues[pk]) pagesVuesCloudParUser[uid][pk] = true;
+          if (pgVues[pk]) pagesVuesCloudParUser[uid][String(pk).replace(/^\/+/, "").split("?")[0].split("#")[0]] = true;
         });
+      }
+
+      if (!exosCloudParUser[uid]) exosCloudParUser[uid] = {};
+      var exFaits = parserObjetJsonSoupleAdmin(d["sti-exos-faits"]);
+      if (Array.isArray(exFaits)) {
+        exFaits.forEach(function (ek) { if (ek) exosCloudParUser[uid]["exo:" + String(ek)] = true; });
+      } else if (exFaits && typeof exFaits === "object") {
+        Object.keys(exFaits).forEach(function (ek) { if (exFaits[ek]) exosCloudParUser[uid]["exo:" + ek] = true; });
+      }
+      var fcMast = parserObjetJsonSoupleAdmin(d["sti-flashcards-mastered"]);
+      if (Array.isArray(fcMast)) {
+        fcMast.forEach(function (fk) { if (fk != null) exosCloudParUser[uid]["fc:" + String(fk)] = true; });
+      } else if (fcMast && typeof fcMast === "object") {
+        Object.keys(fcMast).forEach(function (fk) { if (fcMast[fk]) exosCloudParUser[uid]["fc:" + fk] = true; });
+      }
+      var piegesOk = parserObjetJsonSoupleAdmin(d["sti-pieges-bac-ok"]);
+      if (Array.isArray(piegesOk)) {
+        piegesOk.forEach(function (pk2) { if (pk2 != null) exosCloudParUser[uid]["piege:" + String(pk2)] = true; });
+      } else if (piegesOk && typeof piegesOk === "object") {
+        Object.keys(piegesOk).forEach(function (pk2) { if (piegesOk[pk2]) exosCloudParUser[uid]["piege:" + pk2] = true; });
+      }
+      Object.keys(d).forEach(function (dk) {
+        if (dk.indexOf("sti-autosave-v1:") === 0 && d[dk]) {
+          exosCloudParUser[uid]["auto:" + dk.slice(16)] = true;
+        }
+      });
+
+      var scCloud = parserObjetJsonSoupleAdmin(d["sti-mes-scores"]);
+      if (scCloud && typeof scCloud === "object") {
+        if (!scoresCloudParUser[uid]) scoresCloudParUser[uid] = {};
+        Object.keys(scCloud).forEach(function (qk) {
+          var vNote = String(scCloud[qk] == null ? "" : scCloud[qk]).trim();
+          if (extraireNoteSur20(vNote) != null) {
+            scoresCloudParUser[uid][qk] = vNote;
+          }
+        });
+      }
+
+      var dvObj = parserObjetJsonSoupleAdmin(d["sti-derniere-visite"]);
+      var tsVis = Math.max(
+        Number((dvObj && (dvObj.ts || dvObj.t)) || 0) || (dvObj && dvObj.date ? (new Date(dvObj.date).getTime() || 0) : 0),
+        majStr ? (new Date(majStr).getTime() || 0) : 0
+      );
+      if (tsVis > ((derniereVisiteCloudParUser[uid] && derniereVisiteCloudParUser[uid].ts) || 0)) {
+        derniereVisiteCloudParUser[uid] = {
+          ts: tsVis,
+          iso: new Date(tsVis).toISOString(),
+          page: (dvObj && (dvObj.page || dvObj.titre)) || "progression cloud"
+        };
+      }
+
+      var revObj = parserObjetJsonSoupleAdmin(d["sti-revision-v436"]);
+      if (revObj && typeof revObj === "object") {
+        revisionCloudParUser[uid] = revObj;
       }
     });
 
@@ -3645,6 +3707,10 @@
     progMediaParUser = {};
     chapitresVusCloudParUser = {};
     pagesVuesCloudParUser = {};
+    exosCloudParUser = {};
+    scoresCloudParUser = {};
+    derniereVisiteCloudParUser = {};
+    revisionCloudParUser = {};
     fusionnerProgressionsCloudDansMaps(tousProfils || profilsBrutsAdmin);
     return progMediaParUser;
   };
@@ -3742,6 +3808,10 @@
     progMediaParUser = {};
     chapitresVusCloudParUser = {};
     pagesVuesCloudParUser = {};
+    exosCloudParUser = {};
+    scoresCloudParUser = {};
+    derniereVisiteCloudParUser = {};
+    revisionCloudParUser = {};
     listeResultatsQuiz = [];
     fusionnerProgressionsCloudDansMaps(tous);
     idsAccesParMsg = {};
@@ -3975,12 +4045,25 @@
             }
           }
         } else if (pg.indexOf("QUIZ:") === 0) {
+          if (adminIds[a.user_id]) return;
           var nomQ = pg.slice(5);
-          var infoQ = { quiz: nomQ, note: (a.duree_sec || 0) + "/20", ts: a.debut };
+          var infoQ = { quiz: nomQ, note: "", ts: a.debut, score: null, total: null, note20: null };
           try {
             var parsedQ = JSON.parse(a.lieu || "{}");
-            if (parsedQ && parsedQ.note) infoQ = parsedQ;
+            if (parsedQ && typeof parsedQ === "object") {
+              infoQ.quiz = parsedQ.quiz || nomQ;
+              infoQ.ts = parsedQ.ts || a.debut;
+              if (parsedQ.score != null) infoQ.score = Number(parsedQ.score);
+              if (parsedQ.total != null) infoQ.total = Number(parsedQ.total);
+              if (parsedQ.note20 != null) infoQ.note20 = Number(parsedQ.note20);
+              if (parsedQ.note) infoQ.note = String(parsedQ.note);
+              else if (parsedQ.score != null && parsedQ.total) infoQ.note = parsedQ.score + "/" + parsedQ.total;
+              else if (parsedQ.note20 != null) infoQ.note = parsedQ.note20 + "/20";
+            }
           } catch (e) {}
+          if (!infoQ.note && Number(a.duree_sec) > 0) infoQ.note = Number(a.duree_sec) + "/20";
+          var n20Log = infoQ.note20 != null && isFinite(infoQ.note20) ? Math.round(infoQ.note20 * 10) / 10 : extraireNoteSur20(infoQ.note);
+          if (n20Log == null) return;
           var tsQuiz = infoQ.ts || a.debut;
           if (estQuizPurge(tsQuiz)) return;
           if (!scoresParUser[a.user_id]) scoresParUser[a.user_id] = {};
@@ -3990,10 +4073,96 @@
             uid: a.user_id,
             nomQ: nomQ,
             quiz: infoQ.quiz || nomQ,
-            note: infoQ.note || "—",
+            note: infoQ.note,
+            score: infoQ.score != null ? infoQ.score : n20Log,
+            total: infoQ.total || 20,
+            note20: n20Log,
             ts: tsQuiz
           });
         }
+      });
+
+      /* Réconciliation complète avec sti_quiz_parties + scores cloud (sti_progressions) */
+      var LIB_QUIZ_SYNC_ADMIN = {
+        "html-css": "Quiz HTML5 & CSS3",
+        "javascript": "Quiz JavaScript",
+        "sql": "Quiz SQL",
+        "php": "Quiz PHP",
+        "tableaux": "Quiz Tableaux"
+      };
+      var laboIdsQuiz = {};
+      tous.forEach(function (pr) {
+        if (!pr || !pr.id) return;
+        var emL = String(pr.email || "").trim().toLowerCase();
+        if (emL === "elevelabo3@exemple.tn" || /^elevelabo3$/i.test(String(pr.classe || "").trim())) laboIdsQuiz[pr.id] = true;
+      });
+      var clesQuizDeja = {};
+      listeResultatsQuiz.forEach(function (q) {
+        var minTs = Math.floor((new Date(q.ts || 0).getTime() || 0) / 120000);
+        clesQuizDeja[q.uid + "|" + String(q.quiz || q.nomQ).toLowerCase() + "|" + minTs] = true;
+      });
+      (quizPartiesCloudAdmin || []).forEach(function (qp) {
+        if (!qp || !qp.user_id || adminIds[qp.user_id] || laboIdsQuiz[qp.user_id]) return;
+        var scP = Number(qp.score), totP = Number(qp.total);
+        if (!isFinite(scP) || !isFinite(totP) || totP <= 0 || scP < 0 || scP > totP) return;
+        var tsP = qp.cree_le || "";
+        if (tsP && tsP > dernierQuizPartieCreeLeAdmin) dernierQuizPartieCreeLeAdmin = tsP;
+        if (tsP && estQuizPurge(tsP)) return;
+        var nomLib = LIB_QUIZ_SYNC_ADMIN[qp.quiz] || ("Quiz " + String(qp.quiz || "STI"));
+        if (qp.quiz === "tableaux" && qp.module && qp.module !== "*") {
+          nomLib = "Quiz Tableaux (" + String(qp.module).toUpperCase() + ")";
+        }
+        var pctP = Math.round((scP * 100) / totP);
+        var n20P = Math.round(((scP * 20) / totP) * 10) / 10;
+        var noteFmt = scP + "/" + totP + " (" + pctP + "%)";
+        if (!scoresParUser[qp.user_id]) scoresParUser[qp.user_id] = {};
+        if (!scoresParUser[qp.user_id][nomLib]) scoresParUser[qp.user_id][nomLib] = noteFmt;
+        var minTsP = Math.floor((new Date(tsP || 0).getTime() || 0) / 120000);
+        var cleDedup = qp.user_id + "|" + nomLib.toLowerCase() + "|" + minTsP;
+        var cleDedupBase = qp.user_id + "|" + (LIB_QUIZ_SYNC_ADMIN[qp.quiz] || nomLib).toLowerCase() + "|" + minTsP;
+        if (!clesQuizDeja[cleDedup] && !clesQuizDeja[cleDedupBase]) {
+          clesQuizDeja[cleDedup] = true;
+          listeResultatsQuiz.push({
+            id: "qp_" + (qp.id || (qp.user_id + "_" + tsP)),
+            uid: qp.user_id,
+            nomQ: nomLib,
+            quiz: nomLib,
+            note: noteFmt,
+            score: scP,
+            total: totP,
+            note20: n20P,
+            ts: tsP
+          });
+        }
+      });
+      Object.keys(scoresCloudParUser || {}).forEach(function (uidSc) {
+        if (adminIds[uidSc] || laboIdsQuiz[uidSc]) return;
+        var mapC = scoresCloudParUser[uidSc] || {};
+        Object.keys(mapC).forEach(function (nomSc) {
+          var n20C = extraireNoteSur20(mapC[nomSc]);
+          if (n20C == null) return;
+          if (!scoresParUser[uidSc]) scoresParUser[uidSc] = {};
+          if (!scoresParUser[uidSc][nomSc]) scoresParUser[uidSc][nomSc] = mapC[nomSc];
+          var dejaQuizUser = listeResultatsQuiz.some(function (x) {
+            return x.uid === uidSc && String(x.quiz || x.nomQ).toLowerCase() === String(nomSc).toLowerCase();
+          });
+          if (!dejaQuizUser) {
+            listeResultatsQuiz.push({
+              id: "prog_" + uidSc + "_" + nomSc,
+              uid: uidSc,
+              nomQ: nomSc,
+              quiz: nomSc,
+              note: mapC[nomSc],
+              score: n20C,
+              total: 20,
+              note20: n20C,
+              ts: (derniereVisiteCloudParUser[uidSc] && derniereVisiteCloudParUser[uidSc].iso) || ""
+            });
+          }
+        });
+      });
+      listeResultatsQuiz.sort(function (a, b) {
+        return String(b.ts || "").localeCompare(String(a.ts || ""));
       });
 
       if (txtSignauxCompat) {
@@ -4227,11 +4396,71 @@
       tous: tous,
       tousAcces: tousAcces,
       progressionsCloud: progressionsCloudBrutesAdmin.slice(),
+      quizPartiesCloud: quizPartiesCloudAdmin.slice(),
       txtSignauxCompat: txtSignauxCompat || "",
       ts: Date.now()
     };
     ecrireCacheAdminIndexedDb(snapshot);
     return snapshot;
+  }
+
+  function fusionnerQuizPartiesAdmin(nouveaux) {
+    var map = {};
+    quizPartiesCloudAdmin.concat(nouveaux || []).forEach(function (q) {
+      if (!q) return;
+      var cle = q.id != null ? ("id:" + q.id) : (String(q.user_id || "") + "|" + String(q.quiz || "") + "|" + String(q.cree_le || ""));
+      if (cle) map[cle] = q;
+    });
+    return Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) {
+      return String(b.cree_le || "").localeCompare(String(a.cree_le || ""));
+    });
+  }
+
+  function selectionnerQuizPartiesAdmin() {
+    return sb.from("sti_quiz_parties")
+      .select("id,user_id,email,quiz,module,score,total,cree_le")
+      .order("cree_le", { ascending: false })
+      .limit(5000)
+      .then(function (r) {
+        if (r && r.error) return { data: [], error: null };
+        return { data: (r && r.data) || [], error: null };
+      })
+      .catch(function () { return { data: [], error: null }; });
+  }
+
+  function completerHistoriqueAccesArrierePlan() {
+    if (paginationArrierePlanAccesEnCours || !navigator.onLine) return;
+    var totalServeur = Number(window.__stiCountAcces) || 0;
+    if (!totalServeur || accesBrutsAdmin.length >= totalServeur || accesBrutsAdmin.length >= 5000) return;
+    paginationArrierePlanAccesEnCours = true;
+    function lotSuivant() {
+      if (!navigator.onLine || accesBrutsAdmin.length >= 5000) {
+        paginationArrierePlanAccesEnCours = false;
+        return;
+      }
+      var minId = accesBrutsAdmin.reduce(function (mn, a) {
+        var id = Number(a && a.id) || 0;
+        return id && (!mn || id < mn) ? id : mn;
+      }, 0);
+      if (!minId) { paginationArrierePlanAccesEnCours = false; return; }
+      sb.from("acces").select(COLONNES_ACCES_ADMIN).lt("id", minId)
+        .order("id", { ascending: false }).limit(500).then(function (r) {
+          if (r && !r.error && Array.isArray(r.data) && r.data.length) {
+            noterTraficAdmin(r.data);
+            var fusion = fusionnerAccesAdmin(r.data);
+            var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, fusion, signauxCompatBrutAdmin);
+            appliquerDonneesAdmin(profilsBrutsAdmin, fusion, signauxCompatBrutAdmin, false, snap.ts);
+            if (r.data.length >= 500 && fusion.length < 5000) {
+              setTimeout(lotSuivant, 180);
+              return;
+            }
+          }
+          paginationArrierePlanAccesEnCours = false;
+        }).catch(function () {
+          paginationArrierePlanAccesEnCours = false;
+        });
+    }
+    setTimeout(lotSuivant, 250);
   }
 
   function fusionnerProgressionsAdmin(nouveaux) {
@@ -4328,7 +4557,8 @@
       selectionnerProfilsAdmin(true),
       sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(TAILLE_PAGE_ACCES_ADMIN),
       selectionnerProgressionsAdmin(),
-      selectionnerAccesProgMediaAdmin()
+      selectionnerAccesProgMediaAdmin(),
+      selectionnerQuizPartiesAdmin()
     ]).then(function (res) {
       clearTimeout(timerOffAdmin);
       if (res[0].error || res[1].error) throw (res[0].error || res[1].error);
@@ -4347,13 +4577,17 @@
       if (res[2] && Array.isArray(res[2].data)) {
         progressionsCloudBrutesAdmin = fusionnerProgressionsAdmin(res[2].data);
       }
+      if (res[4] && Array.isArray(res[4].data)) {
+        quizPartiesCloudAdmin = fusionnerQuizPartiesAdmin(res[4].data);
+      }
       /* L’historique persistant provient uniquement de Supabase ; aucun ancien flux n’est aspiré en masse. */
       var txtSignauxCompat = "";
       window.__stiCountProfils = typeof res[0].count === "number" ? res[0].count : tous.length;
       window.__stiCountAcces = typeof res[1].count === "number" ? res[1].count : pageAcces.length;
-      noterTraficAdmin([tous, tousAcces, progressionsCloudBrutesAdmin, txtSignauxCompat]);
+      noterTraficAdmin([tous, tousAcces, progressionsCloudBrutesAdmin, quizPartiesCloudAdmin, txtSignauxCompat]);
       var snap = sauvegarderSnapshotAdmin(tous, tousAcces, txtSignauxCompat);
       appliquerDonneesAdmin(tous, tousAcces, txtSignauxCompat, false, snap.ts);
+      completerHistoriqueAccesArrierePlan();
       if (!garderMsg) {
         var ko = window.__STI_ADMIN_DATA_USAGE ? window.__STI_ADMIN_DATA_USAGE.ko : 0;
         msg("✅ " + profils.length + " abonné(s), " + acces.length + " activité(s) · session réseau : " + ko + " Ko.", "ok");
@@ -4422,16 +4656,27 @@
       return { data: (r && r.data) || [], error: null };
     }).catch(function () { return { data: [], error: null }; });
 
-    return Promise.all([qAcces, pProfils, pProgressions]).then(function (res) {
+    var qQuizP = sb.from("sti_quiz_parties").select("id,user_id,email,quiz,module,score,total,cree_le");
+    if (dernierQuizPartieCreeLeAdmin) qQuizP = qQuizP.gt("cree_le", dernierQuizPartieCreeLeAdmin);
+    var pQuizParties = qQuizP.order("cree_le", { ascending: true }).limit(200).then(function (r) {
+      if (r && r.error) return { data: [], error: null };
+      return { data: (r && r.data) || [], error: null };
+    }).catch(function () { return { data: [], error: null }; });
+
+    return Promise.all([qAcces, pProfils, pProgressions, pQuizParties]).then(function (res) {
       if (res[0].error || res[1].error) throw (res[0].error || res[1].error);
       majEtatConnexionSupabase(true, "Synchronisation temps réel active");
       var nouveaux = res[0].data || [];
       var profilsModifies = res[1].data || [];
       var progModifiees = (res[2] && res[2].data) || [];
-      noterTraficAdmin([nouveaux, profilsModifies, progModifiees]);
-      if (!nouveaux.length && !profilsModifies.length && !progModifiees.length) return;
+      var quizModifiees = (res[3] && res[3].data) || [];
+      noterTraficAdmin([nouveaux, profilsModifies, progModifiees, quizModifiees]);
+      if (!nouveaux.length && !profilsModifies.length && !progModifiees.length && !quizModifiees.length) return;
       if (progModifiees.length) {
         progressionsCloudBrutesAdmin = fusionnerProgressionsAdmin(progModifiees);
+      }
+      if (quizModifiees.length) {
+        quizPartiesCloudAdmin = fusionnerQuizPartiesAdmin(quizModifiees);
       }
       var fusionAcces = fusionnerAccesAdmin(nouveaux);
       var fusionProfils = fusionnerProfilsAdmin(profilsModifies);
@@ -4922,18 +5167,80 @@
   /* Point 3 : Export Excel (CSV UTF-8 avec BOM) */
   /* ---------- Extraction d'une note sur 20, statistiques par élève & Fiche récapitulative ---------- */
   function extraireNoteSur20(txt) {
-    var s = String(txt || "");
-    var m20 = s.match(/(\d+(?:[.,]\d+)?)\s*\/\s*20/);
-    if (m20) return parseFloat(m20[1].replace(",", "."));
+    var s = String(txt == null ? "" : txt).trim();
+    if (!s || (/\bpts?\b/i.test(s) && !/\/\s*\d+/.test(s) && !/%/.test(s))) return null;
     var mFrac = s.match(/(\d+(?:[.,]\d+)?)\s*\/\s*(\d+(?:[.,]\d+)?)/);
     if (mFrac) {
+      var num = parseFloat(mFrac[1].replace(",", "."));
       var den = parseFloat(mFrac[2].replace(",", "."));
-      if (den > 0) return (parseFloat(mFrac[1].replace(",", ".")) / den) * 20;
+      if (!isFinite(num) || !isFinite(den) || den <= 0 || num < 0 || num > den) return null;
+      return Math.round(((num / den) * 20) * 10) / 10;
     }
     var mPct = s.match(/(\d+(?:[.,]\d+)?)\s*%/);
-    if (mPct) return (parseFloat(mPct[1].replace(",", ".")) / 100) * 20;
+    if (mPct) {
+      var pct = parseFloat(mPct[1].replace(",", "."));
+      if (!isFinite(pct) || pct < 0 || pct > 100) return null;
+      return Math.round(((pct / 100) * 20) * 10) / 10;
+    }
+    if (/^\d+(?:[.,]\d+)?$/.test(s)) {
+      var n = parseFloat(s.replace(",", "."));
+      if (isFinite(n) && n >= 0 && n <= 20) return Math.round(n * 10) / 10;
+    }
     return null;
   }
+  window.__stiExtraireNoteSur20Admin = extraireNoteSur20;
+
+  function bilanSuiviCompletEleve(p) {
+    var uid = p ? p.id : "";
+    var pagesMap = {};
+    var coursMap = {};
+    var exosMap = {};
+    if (uid && pagesVuesCloudParUser[uid]) {
+      Object.keys(pagesVuesCloudParUser[uid]).forEach(function (pk) {
+        if (!pagesVuesCloudParUser[uid][pk]) return;
+        var normP = String(pk).replace(/^\/+/, "").split("?")[0].split("#")[0];
+        if (!normP) return;
+        pagesMap[normP] = true;
+        if (/^(cours|cssanimee|Positionnement-animee)\//i.test(normP)) coursMap[normP.toLowerCase()] = true;
+        if (/^(exercices|projets)\//i.test(normP)) exosMap["pg:" + normP.toLowerCase()] = true;
+      });
+    }
+    if (uid && chapitresVusCloudParUser[uid]) {
+      Object.keys(chapitresVusCloudParUser[uid]).forEach(function (ck) {
+        if (chapitresVusCloudParUser[uid][ck]) coursMap["chap:" + String(ck).toUpperCase()] = true;
+      });
+    }
+    if (uid && exosCloudParUser[uid]) {
+      Object.keys(exosCloudParUser[uid]).forEach(function (ek) {
+        if (exosCloudParUser[uid][ek]) exosMap[ek] = true;
+      });
+    }
+    acces.forEach(function (a) {
+      if (!uid || a.user_id !== uid || !a.page) return;
+      var pgN = String(a.page).replace(/^\/+/, "").split("?")[0].split("#")[0];
+      if (!pgN) return;
+      pagesMap[pgN] = true;
+      if (/^(cours|cssanimee|Positionnement-animee)\//i.test(pgN)) coursMap[pgN.toLowerCase()] = true;
+      if (/^(exercices|projets)\//i.test(pgN)) exosMap["pg:" + pgN.toLowerCase()] = true;
+    });
+    var bilMed = bilanProgressionMediaUser(p);
+    var stQ = statsQuizPourUser(uid);
+    var mods = modulesConsultesPourUser(uid);
+    return {
+      nbPages: Object.keys(pagesMap).length,
+      totalPagesSite: 124,
+      nbCours: Math.max(Object.keys(coursMap).length, mods.filter(function (m) { return m !== "Exercices" && m !== "Bac/Projet"; }).length),
+      nbExos: Object.keys(exosMap).length,
+      nbVidVues: bilMed.nbVidVues,
+      totVid: bilMed.totVid,
+      nbAudVues: bilMed.nbAudVues,
+      totAud: bilMed.totAud,
+      nbQuiz: stQ.nb,
+      moyenneQuiz20: stQ.moyenne20,
+      derniereVisiteCloud: (uid && derniereVisiteCloudParUser[uid]) || null
+    };
+  }
+  window.__stiBilanSuiviCompletEleve = bilanSuiviCompletEleve;
 
   function statsQuizPourUser(uid) {
     var items = listeResultatsQuiz.filter(function (q) { return q.uid === uid; });
@@ -4981,6 +5288,18 @@
     }
     Object.keys(pgCloud).forEach(function (pk) {
       if (pgCloud[pk]) classerPageConsultee(pk);
+    });
+    var exCloud = exosCloudParUser[uid] || {};
+    if (Object.keys(exCloud).length > 0) vus["Exercices"] = true;
+    listeResultatsQuiz.forEach(function (qr) {
+      if (qr.uid !== uid) return;
+      vus["Quiz"] = true;
+      var qn = String(qr.quiz || "").toLowerCase();
+      if (qn.indexOf("html") !== -1) vus["HTML5"] = true;
+      if (qn.indexOf("css") !== -1) vus["CSS3"] = true;
+      if (qn.indexOf("js") !== -1 || qn.indexOf("javascript") !== -1) vus["JS"] = true;
+      if (qn.indexOf("sql") !== -1) vus["SQL"] = true;
+      if (qn.indexOf("php") !== -1) vus["PHP"] = true;
     });
     acces.forEach(function (a) {
       if (a.user_id !== uid) return;
@@ -5156,6 +5475,9 @@
         "Nb Connexions",
         "Duree periode",
         "Duree cumulee",
+        "Pages vues (/124)",
+        "Cours consultes",
+        "Exercices travailles",
         "Moyenne Quiz (/20)",
         "Nb Quiz passes",
         "Scores Quiz / Bac",
@@ -5172,6 +5494,7 @@
         var stQ = statsQuizPourUser(p.id);
         var mods = modulesConsultesPourUser(p.id).join(", ") || "—";
         var bilCsv = bilanProgressionMediaUser(p);
+        var suivCsv = bilanSuiviCompletEleve(p);
         var progCsvTxt = "Videos: " + bilCsv.resumeCourtVid +
           (bilCsv.listV.length ? (" (" + bilCsv.listV.join(", ") + ")") : "") +
           " | Audios: " + bilCsv.resumeCourtAud +
@@ -5188,6 +5511,9 @@
           counts[p.id] || 0,
           fmtDureeCumul(dureePourAbonne(p.id)),
           fmtDureeCumul(dureesTotales[p.id] || 0),
+          suivCsv.nbPages + "/" + suivCsv.totalPagesSite,
+          suivCsv.nbCours,
+          suivCsv.nbExos,
           stQ.moyenne20 != null ? (String(stQ.moyenne20).replace(".", ",") + "/20") : "—",
           stQ.nb,
           scTxt,
@@ -5457,18 +5783,21 @@
 
         var modsNd = modulesConsultesPourUser(p.id);
         var bilNd = bilanProgressionMediaUser(p);
-        if (modsNd.length || bilNd.hasAnyMedia) {
+        var suivNd = bilanSuiviCompletEleve(p);
+        if (modsNd.length || bilNd.hasAnyMedia || suivNd.nbPages || suivNd.nbExos) {
           var spProgNd = document.createElement("span");
           spProgNd.style.cssText = "background:#e3f6e8;border:1.5px solid #177245;border-radius:999px;padding:2px 8px;font-size:10px;font-weight:900;color:#14532d;";
-          var txtPNd = "📚 " + modsNd.length + " mod.";
-          if (bilNd.nbVidVues) {
-            txtPNd += " · 🎥 " + bilNd.resumeCourtVid;
-          }
-          if (bilNd.nbAudVues) {
-            txtPNd += " · 🔊 " + bilNd.resumeCourtAud;
-          }
-          spProgNd.textContent = txtPNd;
-          spProgNd.title = "Modules : " + (modsNd.join(", ") || "—") +
+          var partsPNd = [];
+          if (suivNd.nbPages) partsPNd.push("📄 " + suivNd.nbPages + "/" + suivNd.totalPagesSite);
+          if (modsNd.length) partsPNd.push("📚 " + modsNd.length + " mod.");
+          if (suivNd.nbExos) partsPNd.push("✏️ " + suivNd.nbExos + " ex.");
+          if (bilNd.nbVidVues) partsPNd.push("🎥 " + bilNd.resumeCourtVid);
+          if (bilNd.nbAudVues) partsPNd.push("🔊 " + bilNd.resumeCourtAud);
+          spProgNd.textContent = partsPNd.join(" · ");
+          spProgNd.title = "Pages vues : " + suivNd.nbPages + "/" + suivNd.totalPagesSite +
+            " | Cours : " + suivNd.nbCours +
+            " | Exercices : " + suivNd.nbExos +
+            " | Modules : " + (modsNd.join(", ") || "—") +
             (bilNd.listV.length ? (" | Vidéos : " + bilNd.listV.join(", ")) : "") +
             (bilNd.listA.length ? (" | Audios : " + bilNd.listA.join(", ")) : "");
           meta.appendChild(spProgNd);
@@ -5691,9 +6020,23 @@
 
       var modsLigne = modulesConsultesPourUser(p.id);
       var bilLigne = bilanProgressionMediaUser(p);
-      if (modsLigne.length || bilLigne.hasAnyMedia) {
+      var suivLigne = bilanSuiviCompletEleve(p);
+      if (modsLigne.length || bilLigne.hasAnyMedia || suivLigne.nbPages || suivLigne.nbExos) {
         var divProgL = document.createElement("div");
         divProgL.style.cssText = "display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;";
+        if (suivLigne.nbPages) {
+          var bPgL = document.createElement("span");
+          bPgL.style.cssText = "display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;border:1px solid #0f766e;background:#ccfbf1;color:#115e59;";
+          bPgL.textContent = "📄 " + suivLigne.nbPages + "/" + suivLigne.totalPagesSite + " pages";
+          bPgL.title = "Pages uniques consultées sur la plateforme (" + suivLigne.nbCours + " cours · " + suivLigne.nbExos + " exercices)";
+          divProgL.appendChild(bPgL);
+        }
+        if (suivLigne.nbExos) {
+          var bExL = document.createElement("span");
+          bExL.style.cssText = "display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;border:1px solid #b45309;background:#fef3c7;color:#78350f;";
+          bExL.textContent = "✏️ " + suivLigne.nbExos + " exo(s)";
+          divProgL.appendChild(bExL);
+        }
         if (modsLigne.length) {
           var bModL = document.createElement("span");
           bModL.style.cssText = "display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;border:1px solid #177245;background:#e3f6e8;color:#177245;";
@@ -6285,10 +6628,10 @@
       "<div class='fiche-kpis'>" +
         "<div class='fiche-kpi'><small>⏱️ Temps (période)</small><b style='color:#d84315'>" + echHtml(fmtDureeCumul(secSem)) + "</b><span>Cumul total : " + echHtml(fmtDureeCumul(secTot)) + " (" + nbCon + " sess.)</span></div>" +
         "<div class='fiche-kpi'><small>🏆 Moyenne Quiz / Bac</small><b style='color:#177245'>" + (stQ.moyenne20 != null ? (stQ.moyenne20 + " / 20") : "—") + "</b><span>" + stQ.nb + " épreuve(s) passée(s)</span></div>" +
-        "<div class='fiche-kpi'><small>📚 Modules &amp; Médias</small><b>" + mods.length + " module(s)</b><span>🎬 " + echHtml(bilFiche.resumeCourtVid) + " · 🔊 " + echHtml(bilFiche.resumeCourtAud) + "</span></div>" +
-        "<div class='fiche-kpi'><small>💬 Suivi messages</small><b>" + msgsEl.length + " interaction(s)</b><span>Lectures &amp; réponses au prof</span></div>" +
+        "<div class='fiche-kpi'><small>📄 Pages · Cours · Exos</small><b style='color:#0f766e'>" + bilanSuiviCompletEleve(p).nbPages + " / 124 p.</b><span>📚 " + bilanSuiviCompletEleve(p).nbCours + " cours · ✏️ " + bilanSuiviCompletEleve(p).nbExos + " exo(s)</span></div>" +
+        "<div class='fiche-kpi'><small>🎬 Vidéos · 🔊 Audios · 💬 Msg</small><b>🎬 " + echHtml(bilFiche.resumeCourtVid) + "</b><span>🔊 " + echHtml(bilFiche.resumeCourtAud) + " · 💬 " + msgsEl.length + " msg</span></div>" +
       "</div>" +
-      "<div class='fiche-modules-bar'><span>📚 Modules consultés :</span> " + htmlMods + "</div>" +
+      "<div class='fiche-modules-bar'><span>📚 Modules consultés (" + mods.length + ") :</span> " + htmlMods + "</div>" +
       htmlMediaProgFiche +
       "<div class='fiche-modules-bar'><span>📱 Appareil(s) détecté(s) (" + infoApp.nb + ") :</span> " + htmlAppareils + "</div>" +
       htmlSemaines +
@@ -6458,6 +6801,20 @@
     if (e.key === "Escape") {
       if (modalFicheEleve && modalFicheEleve.classList.contains("visible")) {
         fermerFicheEleve();
+        return;
+      }
+      var modNewsEsc = document.getElementById("modal-news-bandeau");
+      if (modNewsEsc && modNewsEsc.style.display === "flex") {
+        var btnNFermer = document.getElementById("news-fermer");
+        if (btnNFermer) btnNFermer.click(); else modNewsEsc.style.display = "none";
+        return;
+      }
+      var ouvertes = document.querySelectorAll(".modal-fond.visible");
+      if (ouvertes && ouvertes.length) {
+        var derniere = ouvertes[ouvertes.length - 1];
+        if (derniere && derniere.id !== "modal-verrou-ecran-admin") {
+          derniere.classList.remove("visible");
+        }
       }
     }
   });
@@ -6484,7 +6841,14 @@
   }
   if (btnImprimerFiche) {
     btnImprimerFiche.addEventListener("click", function () {
-      window.print();
+      if (!contenuFicheEleve) { window.print(); return; }
+      var npImp = eleveFicheActif ? (nomPrenomTexte(eleveFicheActif) || contact(eleveFicheActif)) : "Élève";
+      lancerImpressionFeuilleDediee(
+        "<div style='font-family:\"Comic Sans MS\",\"Comic Sans\",\"Comic Neue\",cursive,sans-serif;color:#0f172a'>" +
+          "<h1 style='margin:0 0 10px;font-size:18px;border-bottom:2.5px solid #0f172a;padding-bottom:6px'>📊 Fiche Récapitulative STI V2.0 — " + echHtml(npImp) + "</h1>" +
+          contenuFicheEleve.innerHTML +
+        "</div>"
+      );
     });
   }
   if (btnExportFicheCsv) {
@@ -6493,6 +6857,8 @@
       if (!p) return;
       var stQ = statsQuizPourUser(p.id);
       var mods = modulesConsultesPourUser(p.id);
+      var suivF = bilanSuiviCompletEleve(p);
+      var bilF = bilanProgressionMediaUser(p);
       var sesAcces = acces.filter(function (a) { return a.user_id === p.id; });
       var lignes = [
         '"Champ";"Valeur"',
@@ -6505,6 +6871,11 @@
         '"Compte Gold";"' + (estGold(p) ? "OUI" : "NON") + '"',
         '"Duree periode";"' + fmtDureeCumul(dureePourAbonne(p.id)) + '"',
         '"Duree cumulee";"' + fmtDureeCumul(dureesTotales[p.id] || 0) + '"',
+        '"Pages vues (/124)";"' + suivF.nbPages + '/124"',
+        '"Cours consultes";"' + suivF.nbCours + '"',
+        '"Exercices travailles";"' + suivF.nbExos + '"',
+        '"Videos (.mp4)";"' + String(bilF.resumeCourtVid).replace(/"/g, '""') + '"',
+        '"Audios (.mp3)";"' + String(bilF.resumeCourtAud).replace(/"/g, '""') + '"',
         '"Moyenne Quiz (/20)";"' + (stQ.moyenne20 != null ? String(stQ.moyenne20).replace(".", ",") : "—") + '"',
         '"Modules consultes";"' + mods.join(", ") + '"',
         "",
@@ -6995,7 +7366,18 @@
       cfgEcoles.purgesMois[ym] = Date.now();
       sauvegarderCfgEcoles();
 
-      var suppression = sb.from("acces").delete().neq("page", "PROG_MEDIA").neq("page", "CFG_ECOLES");
+      var suppression = sb.from("acces").delete()
+        .neq("page", "PROG_MEDIA").neq("page", "CFG_ECOLES")
+        .neq("page", "SEC_CONFIG")
+        .neq("page", "SUPPR_ACCES")
+        .neq("page", "TABLEAU_BLANC")
+        .not("page", "like", "QUIZ:%")
+        .not("page", "like", "MSG_%")
+        .not("page", "like", "CTRL_%")
+        .not("page", "like", "FLASH_%")
+        .not("page", "like", "KAHOOT_%")
+        .not("page", "like", "COPIE_%")
+        .not("page", "like", "COFFRE_%");
       if (ym === "*") {
         suppression = suppression.gt("id", 0);
       } else {
@@ -7014,7 +7396,14 @@
         var idsCharges = ciblesChargees.map(function (a) { return a.id; }).filter(Boolean);
         var reste = accesBrutsAdmin.filter(function (a) {
           var pgA = String((a && a.page) || "");
-          if (pgA === "PROG_MEDIA" || pgA === "CFG_ECOLES") return true;
+          if (
+            pgA === "PROG_MEDIA" || pgA === "CFG_ECOLES" || pgA === "SEC_CONFIG" ||
+            pgA === "SUPPR_ACCES" || pgA === "TABLEAU_BLANC" ||
+            pgA.indexOf("QUIZ:") === 0 || pgA.indexOf("MSG_") === 0 ||
+            pgA.indexOf("CTRL_") === 0 || pgA.indexOf("FLASH_") === 0 ||
+            pgA.indexOf("KAHOOT_") === 0 || pgA.indexOf("COPIE_") === 0 ||
+            pgA.indexOf("COFFRE_") === 0
+          ) return true;
           return ym === "*" ? false : (cleMois(a.debut) !== ym);
         });
         retirerAccesDuCacheAdmin(idsCharges);
@@ -10880,6 +11269,34 @@
       }
     });
 
+    (quizPartiesCloudAdmin || []).forEach(function (qp) {
+      if (!qp || !qp.user_id || !qp.cree_le) return;
+      if (dateIsoJourLocale(qp.cree_le) !== jourCible) return;
+      var tQp = new Date(qp.cree_le).getTime() || 0;
+      if (!mapPres[qp.user_id] || tQp > mapPres[qp.user_id].ts) {
+        mapPres[qp.user_id] = {
+          ts: tQp,
+          debut: qp.cree_le,
+          page: "quiz/" + String(qp.quiz || "sti") + ".html",
+          lieu: "Partie quiz synchronisée"
+        };
+      }
+    });
+
+    Object.keys(derniereVisiteCloudParUser || {}).forEach(function (uidDv) {
+      var dv = derniereVisiteCloudParUser[uidDv];
+      if (!dv || !dv.ts) return;
+      if (dateIsoJourLocale(dv.ts) !== jourCible) return;
+      if (!mapPres[uidDv] || dv.ts > mapPres[uidDv].ts) {
+        mapPres[uidDv] = {
+          ts: dv.ts,
+          debut: dv.iso || new Date(dv.ts).toISOString(),
+          page: dv.page || "progression cloud",
+          lieu: "Progression synchronisée"
+        };
+      }
+    });
+
     if (estAujourdhui) {
       Object.keys(enLigneMap).forEach(function (uid) {
         if (estEnLigne(uid) && !mapPres[uid]) {
@@ -10894,7 +11311,11 @@
     }
 
     var candidats = profils.filter(function (p) {
-      if (p.statut === "exclu") return false;
+      if (!p || p.statut !== "actif") return false;
+      var clP = String(p.classe || "").trim();
+      var emP = String(p.email || "").trim().toLowerCase();
+      if (emP === "elevelabo3@exemple.tn") return false;
+      if ((!clFiltre || clFiltre === "*") && /^(prof|professeur|enseignant|admin|elevelabo3|labo3)$/i.test(clP)) return false;
       if (clFiltre && clFiltre !== "*" && p.classe !== clFiltre) return false;
       return true;
     }).sort(function (a, b) {
@@ -11046,7 +11467,36 @@
   });
 
   if (btnAppelImprimer) {
-    btnAppelImprimer.addEventListener("click", function () { window.print(); });
+    btnAppelImprimer.addEventListener("click", function () {
+      var bilan = calculerAppelDuJour();
+      var libClImp = bilan.classe === "*" ? "Toutes les classes" : ("Classe " + bilan.classe);
+      var rowsHtml = bilan.lignes.map(function (it, idx) {
+        var p = it.profil;
+        var np = nomPrenomTexte(p) || contact(p);
+        return "<tr>" +
+          "<td>" + (idx + 1) + "</td>" +
+          "<td><b>" + echHtml(np) + "</b></td>" +
+          "<td>" + echHtml(p.classe || "—") + "</td>" +
+          "<td style='font-weight:900;color:" + (it.present ? "#15803d" : "#c0392b") + "'>" + (it.present ? "🟢 PRÉSENT" : "🔴 ABSENT") + "</td>" +
+          "<td>" + (it.info ? echHtml(fmtDate(it.info.debut) + " · " + (it.info.page || "")) : "—") + "</td>" +
+          "<td>" + echHtml(it.appareil || "—") + "</td>" +
+        "</tr>";
+      }).join("");
+      lancerImpressionFeuilleDediee(
+        "<div style='font-family:\"Comic Sans MS\",\"Comic Sans\",\"Comic Neue\",cursive,sans-serif;color:#0f172a'>" +
+          "<h1 style='margin:0 0 6px;font-size:18px;border-bottom:2.5px solid #0f172a;padding-bottom:6px'>📋 Feuille d'Appel &amp; Présence STI V2.0 — " + echHtml(libClImp) + "</h1>" +
+          "<p style='margin:0 0 10px;font-size:12.5px;font-weight:800'>📅 Séance du " + echHtml(bilan.jour) + " · Effectif : " + bilan.total + " · 🟢 Présents : " + bilan.presents + " · 🔴 Absents : " + bilan.absents + "</p>" +
+          "<table style='width:100%;border-collapse:collapse;font-size:11.5px'><thead><tr style='background:#f1f5f9'>" +
+            "<th style='border:1px solid #94a3b8;padding:5px 7px;text-align:left'>#</th>" +
+            "<th style='border:1px solid #94a3b8;padding:5px 7px;text-align:left'>Candidat</th>" +
+            "<th style='border:1px solid #94a3b8;padding:5px 7px;text-align:left'>Classe</th>" +
+            "<th style='border:1px solid #94a3b8;padding:5px 7px;text-align:left'>Présence</th>" +
+            "<th style='border:1px solid #94a3b8;padding:5px 7px;text-align:left'>Heure &amp; Page</th>" +
+            "<th style='border:1px solid #94a3b8;padding:5px 7px;text-align:left'>Appareil</th>" +
+          "</tr></thead><tbody>" + (rowsHtml || "<tr><td colspan='6' style='padding:12px;text-align:center'>Aucun élève</td></tr>") + "</tbody></table>" +
+        "</div>"
+      );
+    });
   }
   if (btnAppelExportCsv) {
     btnAppelExportCsv.addEventListener("click", function () {
@@ -11924,25 +12374,28 @@
       var p = eleveFicheActif;
       var uid = p.id;
       var nomComplet = ((p.nom || "") + " " + (p.prenom || "")).trim() || p.email || p.phone || "Candidat";
-      var lyceePropre = nettoyerLycee(p.lycee) || "Lycée";
+      var lyceeAff = lyceePropre(p) || "Lycée";
       var secTot = (dureesTotales && dureesTotales[uid]) || 0;
       var semAct = cleSemaine(new Date().toISOString());
       var secHeb = (dureesSemaine && dureesSemaine[semAct] && dureesSemaine[semAct][uid]) || 0;
-      var nbVisites = (counts && counts[uid]) || 0;
+      var suivBull = bilanSuiviCompletEleve(p);
+      var bilBull = bilanProgressionMediaUser(p);
 
       var qList = (listeResultatsQuiz || []).filter(function (q) { return q.uid === uid; });
-      var sommeQ = 0;
+      var sommeQ = 0, nbQValides = 0;
       var parMod = {};
       qList.forEach(function (q) {
-        var n20 = Number(q.note20 || 0);
+        var n20 = (q.note20 != null && isFinite(Number(q.note20))) ? Number(q.note20) : extraireNoteSur20(q.note);
+        if (n20 == null) return;
         sommeQ += n20;
+        nbQValides++;
         var m = q.quiz || "Général";
         if (!parMod[m]) parMod[m] = { nb: 0, sum: 0, max: 0 };
         parMod[m].nb++;
         parMod[m].sum += n20;
         if (n20 > parMod[m].max) parMod[m].max = n20;
       });
-      var moyGen = qList.length ? (Math.round((sommeQ / qList.length) * 100) / 100) : null;
+      var moyGen = nbQValides ? (Math.round((sommeQ / nbQValides) * 100) / 100) : null;
 
       var flashTot = 0, flashOk = 0;
       (questionsFlash || []).forEach(function (fq) {
@@ -11973,54 +12426,30 @@
       }
 
       var rowsDerniersQuiz = qList.slice(0, 8).map(function (q) {
-        return "<tr><td>" + echHtml(fmtDate(q.ts)) + "</td><td><b>" + echHtml(q.quiz || "Quiz") + "</b></td><td>" + echHtml(String(q.score || 0) + "/" + String(q.total || 20)) + "</td><td><b>" + echHtml(String(q.note20 || 0)) + " / 20</b></td></tr>";
+        var n20 = (q.note20 != null && isFinite(Number(q.note20))) ? Number(q.note20) : (extraireNoteSur20(q.note) || 0);
+        var scBrut = (q.score != null && q.total) ? (q.score + "/" + q.total) : (q.note || "—");
+        return "<tr><td>" + echHtml(fmtDate(q.ts)) + "</td><td><b>" + echHtml(q.quiz || "Quiz") + "</b></td><td>" + echHtml(String(scBrut)) + "</td><td><b>" + echHtml(String(n20)) + " / 20</b></td></tr>";
       }).join("");
       if (!rowsDerniersQuiz) {
         rowsDerniersQuiz = "<tr><td colspan='4' style='text-align:center;color:#64748b'>Aucun historique de quiz</td></tr>";
       }
 
-      var htmlDoc =
-        "<!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'><title>Bilan STI - " + echHtml(nomComplet) + "</title>" +
-        "<style>" +
-        "@page{size:A4;margin:12mm}" +
-        "body{font-family:'Segoe UI',system-ui,sans-serif;color:#1e293b;margin:0;padding:18px;background:#fff;font-size:12.5px;line-height:1.45}" +
-        ".hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #23201a;padding-bottom:10px;margin-bottom:14px}" +
-        ".hdr-left h1{margin:0;font-size:20px;color:#d84315;font-weight:900}" +
-        ".hdr-left p{margin:2px 0 0;font-size:12px;color:#475569;font-weight:700}" +
-        ".hdr-right{text-align:right;font-size:11.5px;font-weight:700;color:#334155}" +
-        ".id-box{background:#f8fafc;border:2px solid #23201a;border-radius:12px;padding:11px 14px;margin-bottom:14px;display:grid;grid-template-columns:1fr 1fr;gap:6px}" +
-        ".kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}" +
-        ".kpi{border:2px solid #23201a;border-radius:10px;padding:8px 10px;background:#fffdf7;text-align:center}" +
-        ".kpi small{display:block;font-size:10px;text-transform:uppercase;color:#64748b;font-weight:800}" +
-        ".kpi b{display:block;font-size:16px;color:#23201a;margin-top:2px;font-weight:900}" +
-        "h2{font-size:14px;margin:12px 0 6px;color:#23201a;border-left:4px solid #f4511e;padding-left:8px}" +
-        "table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px}" +
-        "th,td{border:1.5px solid #cbd5e1;padding:6px 9px;text-align:left}" +
-        "th{background:#f1f5f9;font-weight:900;color:#1e293b}" +
-        ".appr-box{border:2px solid #23201a;border-radius:12px;padding:10px 12px;background:#fffbeb;margin-top:10px}" +
-        ".sign-row{display:flex;justify-content:space-between;margin-top:18px;font-weight:800;font-size:12px}" +
-        ".no-print{display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px}" +
-        "@media print{.no-print{display:none!important}}" +
-        "</style></head><body class='sti-pdf-doc'>" +
-        "<div class='no-print'>" +
-          "<button onclick='window.print()' style='border:2px solid #23201a;border-radius:999px;padding:8px 18px;font-weight:900;background:#177245;color:#fff;cursor:pointer'>🖨️ Imprimer / Enregistrer en PDF (A4)</button>" +
-          "<button onclick='window.close()' style='border:2px solid #23201a;border-radius:999px;padding:8px 14px;font-weight:800;background:#fff;cursor:pointer'>✕ Fermer</button>" +
-        "</div>" +
+      var corpsHtml =
         "<div class='hdr'>" +
           "<div class='hdr-left'><h1>📚 STI By A'e — Bilan Pédagogique Individuel</h1><p>Sciences et Technologies de l'Informatique (HTML5 · CSS3 · JavaScript · SQL · PHP/MySQLi)</p></div>" +
           "<div class='hdr-right'><div><b>Professeur :</b> M. Aymen Essouyah</div><div><b>Date d'édition :</b> " + echHtml(new Date().toLocaleDateString("fr-FR")) + "</div></div>" +
         "</div>" +
         "<div class='id-box'>" +
-          "<div><b>Élève (Nom &amp; Prénom) :</b> " + echHtml(nomComplet) + (aLeStatutGold(p) ? " 👑 Gold" : "") + "</div>" +
+          "<div><b>Élève (Nom &amp; Prénom) :</b> " + echHtml(nomComplet) + (estGold(p) ? " 👑 Gold" : "") + "</div>" +
           "<div><b>Classe :</b> " + echHtml(p.classe || "—") + "</div>" +
-          "<div><b>Établissement :</b> " + echHtml(lyceePropre) + "</div>" +
+          "<div><b>Établissement :</b> " + echHtml(lyceeAff) + "</div>" +
           "<div><b>Contact :</b> " + echHtml(p.email || p.phone || "—") + "</div>" +
         "</div>" +
         "<div class='kpis'>" +
           "<div class='kpi'><small>Moyenne Quiz</small><b>" + (moyGen != null ? moyGen + " / 20" : "—") + "</b></div>" +
-          "<div class='kpi'><small>Temps total d'étude</small><b>" + echHtml(fmtDuree(secTot)) + "</b></div>" +
-          "<div class='kpi'><small>Durée cette semaine</small><b>" + echHtml(fmtDuree(secHeb)) + "</b></div>" +
-          "<div class='kpi'><small>Flash &amp; Copies TP</small><b>" + flashOk + "/" + flashTot + " · " + copiesEl.length + " TP</b></div>" +
+          "<div class='kpi'><small>Pages · Cours · Exos</small><b>" + suivBull.nbPages + "/124 · " + suivBull.nbCours + "c · " + suivBull.nbExos + "e</b></div>" +
+          "<div class='kpi'><small>Vidéos · Audios</small><b>🎬 " + echHtml(bilBull.resumeCourtVid) + " · 🔊 " + echHtml(bilBull.resumeCourtAud) + "</b></div>" +
+          "<div class='kpi'><small>Temps d'étude</small><b>" + echHtml(fmtDuree(secTot)) + " (" + echHtml(fmtDuree(secHeb)) + " sem.)</b></div>" +
         "</div>" +
         "<h2>📊 1. Synthèse des résultats par module</h2>" +
         "<table><thead><tr><th>Module / Chapitre</th><th>Nombre de Quiz</th><th>Moyenne (/20)</th><th>Meilleure note</th></tr></thead><tbody>" + rowsModules + "</tbody></table>" +
@@ -12033,16 +12462,47 @@
         "<div class='sign-row'>" +
           "<div>Signature de l'élève / Parent :<br><br>___________________________</div>" +
           "<div style='text-align:right'>Signature du Professeur (M. Aymen Essouyah) :<br><br>___________________________</div>" +
+        "</div>";
+
+      var cssBull =
+        "@page{size:A4;margin:12mm}" +
+        "body,.sti-bull-wrap{font-family:'Comic Sans MS','Comic Sans','Comic Neue','Chalkboard SE',cursive,sans-serif;color:#1e293b;margin:0;padding:18px;background:#fff;font-size:12.5px;line-height:1.45}" +
+        ".hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #23201a;padding-bottom:10px;margin-bottom:14px}" +
+        ".hdr-left h1{margin:0;font-size:20px;color:#15803d;font-weight:900}" +
+        ".hdr-left p{margin:2px 0 0;font-size:12px;color:#475569;font-weight:700}" +
+        ".hdr-right{text-align:right;font-size:11.5px;font-weight:700;color:#334155}" +
+        ".id-box{background:#f8fafc;border:2px solid #23201a;border-radius:12px;padding:11px 14px;margin-bottom:14px;display:grid;grid-template-columns:1fr 1fr;gap:6px}" +
+        ".kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}" +
+        ".kpi{border:2px solid #23201a;border-radius:10px;padding:8px 10px;background:#fffdf7;text-align:center}" +
+        ".kpi small{display:block;font-size:10px;text-transform:uppercase;color:#64748b;font-weight:800}" +
+        ".kpi b{display:block;font-size:14px;color:#23201a;margin-top:2px;font-weight:900}" +
+        "h2{font-size:14px;margin:12px 0 6px;color:#23201a;border-left:4px solid #15803d;padding-left:8px}" +
+        "table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px}" +
+        "th,td{border:1.5px solid #cbd5e1;padding:6px 9px;text-align:left}" +
+        "th{background:#f1f5f9;font-weight:900;color:#1e293b}" +
+        ".appr-box{border:2px solid #23201a;border-radius:12px;padding:10px 12px;background:#fffbeb;margin-top:10px}" +
+        ".sign-row{display:flex;justify-content:space-between;margin-top:18px;font-weight:800;font-size:12px}" +
+        ".no-print{display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px}" +
+        "@media print{.no-print{display:none!important}}";
+
+      var htmlDoc =
+        "<!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'><title>Bilan STI - " + echHtml(nomComplet) + "</title>" +
+        "<style>" + cssBull + "</style></head><body class='sti-pdf-doc'>" +
+        "<div class='no-print'>" +
+          "<button onclick='window.print()' style='border:2px solid #23201a;border-radius:999px;padding:8px 18px;font-weight:900;background:#177245;color:#fff;cursor:pointer'>🖨️ Imprimer / Enregistrer en PDF (A4)</button>" +
+          "<button onclick='window.close()' style='border:2px solid #23201a;border-radius:999px;padding:8px 14px;font-weight:800;background:#fff;cursor:pointer'>✕ Fermer</button>" +
         "</div>" +
+        corpsHtml +
         "</body></html>";
 
-      var w = window.open("", "_blank");
-      if (w) {
+      var w = null;
+      try { w = window.open("", "_blank"); } catch (eW) { w = null; }
+      if (w && w.document) {
         w.document.open();
         w.document.write(htmlDoc);
         w.document.close();
       } else {
-        msg("⚠️ Veuillez autoriser l'ouverture de l'onglet d'impression.", "err");
+        lancerImpressionFeuilleDediee("<style>" + cssBull + "</style><div class='sti-bull-wrap'>" + corpsHtml + "</div>");
       }
     });
   }
@@ -12634,10 +13094,10 @@
         nom: p.nom || "",
         prenom: p.prenom || "",
         classe: p.classe || "—",
-        lycee: nettoyerLycee(p.lycee) || "Lycée",
+        lycee: lyceePropre(p) || "Lycée",
         email: p.email || "",
         phone: p.phone || "",
-        gold: aLeStatutGold(p)
+        gold: estGold(p)
       };
     });
     return map;
@@ -12741,9 +13201,7 @@
         );
       }).join("");
 
-      var doc =
-        "<!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'><title>Badges Labo STI - " + echHtml(clTxt) + "</title>" +
-        "<style>@page{size:A4;margin:10mm}body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;padding:12px;color:#1e293b}" +
+      var cssBadges = "@page{size:A4;margin:10mm}body,.sti-badges-wrap{font-family:'Comic Sans MS','Comic Sans','Comic Neue',cursive,sans-serif;margin:0;padding:12px;color:#1e293b}" +
         "h1{font-size:17px;margin:0 0 10px;border-bottom:2px solid #23201a;padding-bottom:6px}" +
         ".grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}" +
         ".badge{border:2px dashed #23201a;border-radius:12px;padding:10px;background:#fffdf7;page-break-inside:avoid}" +
@@ -12751,12 +13209,17 @@
         ".b-nom{font-size:13.5px;font-weight:900;color:#23201a;margin-bottom:6px}" +
         ".b-code{background:#141a24;color:#fde047;font:900 18px monospace;letter-spacing:.16em;text-align:center;padding:6px;border-radius:8px;border:1.5px solid #23201a}" +
         ".b-sub{font-size:10px;color:#475569;text-align:center;margin-top:5px;font-weight:700}" +
-        "@media print{.no-print{display:none!important}}</style></head><body class='sti-pdf-doc'>" +
+        "@media print{.no-print{display:none!important}}";
+      var innerBadges = "<h1>🪪 Planche de Badges d'Accès Rapide au Laboratoire — " + echHtml(clTxt) + " (" + eleves.length + " élèves)</h1><div class='grid'>" + cardsHtml + "</div>";
+      var doc =
+        "<!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'><title>Badges Labo STI - " + echHtml(clTxt) + "</title>" +
+        "<style>" + cssBadges + "</style></head><body class='sti-pdf-doc'>" +
         "<div class='no-print' style='margin-bottom:10px;text-align:right'><button onclick='window.print()' style='padding:7px 16px;font-weight:900;background:#177245;color:#fff;border:2px solid #23201a;border-radius:999px;cursor:pointer'>🖨️ Imprimer / PDF</button></div>" +
-        "<h1>🪪 Planche de Badges d'Accès Rapide au Laboratoire — " + echHtml(clTxt) + " (" + eleves.length + " élèves)</h1>" +
-        "<div class='grid'>" + cardsHtml + "</div></body></html>";
-      var w = window.open("", "_blank");
-      if (w) { w.document.open(); w.document.write(doc); w.document.close(); }
+        innerBadges + "</body></html>";
+      var w = null;
+      try { w = window.open("", "_blank"); } catch (eB) { w = null; }
+      if (w && w.document) { w.document.open(); w.document.write(doc); w.document.close(); }
+      else { lancerImpressionFeuilleDediee("<style>" + cssBadges + "</style><div class='sti-badges-wrap'>" + innerBadges + "</div>"); }
     });
   }
   [btnFermerBadges, btnFermerBadgesX].forEach(function (b) {
@@ -13002,7 +13465,7 @@
         sb.from("acces").insert({
           user_id: p.id,
           page: "QUIZ:" + epNom,
-          lieu: JSON.stringify({ quiz: epNom, score: r.total, total: 20, note20: r.total, ts: new Date().toISOString() }),
+          lieu: JSON.stringify({ quiz: epNom, note: r.total + "/20", score: r.total, total: 20, note20: r.total, ts: new Date().toISOString() }),
           duree_sec: 0
         }).then(function () {});
         try {
@@ -13062,9 +13525,13 @@
         var r = mapEp[p.id] || {};
         return "<tr><td>" + (idx + 1) + "</td><td><b>" + echHtml(((p.nom || "") + " " + (p.prenom || "")).trim()) + "</b></td><td>" + echHtml(p.classe || "—") + "</td><td>" + (r.p1 != null && r.p1 !== "" ? r.p1 : "—") + "</td><td>" + (r.p2 != null && r.p2 !== "" ? r.p2 : "—") + "</td><td>" + (r.p3 != null && r.p3 !== "" ? r.p3 : "—") + "</td><td>" + (r.p4 != null && r.p4 !== "" ? r.p4 : "—") + "</td><td><b>" + (r.total != null && r.total !== "" ? (r.total + " / 20") : "—") + "</b></td><td>" + echHtml(r.obs || "") + "</td></tr>";
       }).join("");
-      var doc = "<!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'><title>PV Notes - " + echHtml(epNom) + "</title><style>@page{size:A4;margin:12mm}body{font-family:'Segoe UI',sans-serif;font-size:12px;color:#1e293b}h1{font-size:17px;margin:0 0 8px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #94a3b8;padding:6px 8px;text-align:left}th{background:#f1f5f9}@media print{.no-print{display:none!important}}</style></head><body class='sti-pdf-doc'><div class='no-print' style='text-align:right;margin-bottom:8px'><button onclick='window.print()' style='padding:7px 15px;font-weight:900;background:#177245;color:#fff;border:2px solid #23201a;border-radius:999px;cursor:pointer'>🖨️ Imprimer PV A4</button></div><h1>📋 Procès-Verbal de Notes STI — " + echHtml(epNom) + " (Classe : " + echHtml(clNom) + ")</h1><p><b>Professeur :</b> M. Aymen Essouyah · <b>Date :</b> " + echHtml(new Date().toLocaleDateString("fr-FR")) + "</p><table><thead><tr><th>#</th><th>Nom &amp; Prénom</th><th>Classe</th><th>P1 (/6)</th><th>P2 (/6)</th><th>P3 (/4)</th><th>P4 (/4)</th><th>Total (/20)</th><th>Observation</th></tr></thead><tbody>" + rows + "</tbody></table></body></html>";
-      var w = window.open("", "_blank");
-      if (w) { w.document.open(); w.document.write(doc); w.document.close(); }
+      var cssPv = "@page{size:A4;margin:12mm}body,.sti-pv-wrap{font-family:'Comic Sans MS','Comic Sans','Comic Neue',cursive,sans-serif;font-size:12px;color:#1e293b}h1{font-size:17px;margin:0 0 8px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #94a3b8;padding:6px 8px;text-align:left}th{background:#f1f5f9}@media print{.no-print{display:none!important}}";
+      var innerPv = "<h1>📋 Procès-Verbal de Notes STI — " + echHtml(epNom) + " (Classe : " + echHtml(clNom) + ")</h1><p><b>Professeur :</b> M. Aymen Essouyah · <b>Date :</b> " + echHtml(new Date().toLocaleDateString("fr-FR")) + "</p><table><thead><tr><th>#</th><th>Nom &amp; Prénom</th><th>Classe</th><th>P1 (/6)</th><th>P2 (/6)</th><th>P3 (/4)</th><th>P4 (/4)</th><th>Total (/20)</th><th>Observation</th></tr></thead><tbody>" + rows + "</tbody></table>";
+      var doc = "<!DOCTYPE html><html lang='fr'><head><meta charset='UTF-8'><title>PV Notes - " + echHtml(epNom) + "</title><style>" + cssPv + "</style></head><body class='sti-pdf-doc'><div class='no-print' style='text-align:right;margin-bottom:8px'><button onclick='window.print()' style='padding:7px 15px;font-weight:900;background:#177245;color:#fff;border:2px solid #23201a;border-radius:999px;cursor:pointer'>🖨️ Imprimer PV A4</button></div>" + innerPv + "</body></html>";
+      var w = null;
+      try { w = window.open("", "_blank"); } catch (ePv) { w = null; }
+      if (w && w.document) { w.document.open(); w.document.write(doc); w.document.close(); }
+      else { lancerImpressionFeuilleDediee("<style>" + cssPv + "</style><div class='sti-pv-wrap'>" + innerPv + "</div>"); }
     });
   }
 
@@ -13588,11 +14055,11 @@
   /* ==================== v392 : Carte des difficultes par chapitre (Vue d'ensemble) ==================== */
   (function () {
     var CHAPITRES = [
-      { cle: "HTML5", slug: "html5-cours", quiz: ["html-css"], pages: ["cours/html5.html", "cours/courshtml5.html", "cours/fiche-revision-html5.html", "cours/datalist.html"] },
-      { cle: "CSS3", slug: "css3-cours", quiz: ["html-css"], pages: ["cours/css3.html", "cours/courscss3.html"] },
-      { cle: "JavaScript", slug: "javascript-cours", quiz: ["javascript"], pages: ["cours/javascript.html", "cours/Recap-JavaScript-STI.html"] },
-      { cle: "SQL", slug: "sql-cours", quiz: ["sql", "pp"], pages: ["cours/sql.html", "cours/sql-bases-ldd-lmd-lcd.html", "cours/sql-contraintes.html"] },
-      { cle: "PHP & MySQLi", slug: "php-cours", quiz: ["php"], pages: ["cours/php.html", "cours/coursphp.html", "cours/php-recap.html", "cours/PHP-recap.html", "cours/php-mysqli.html"] }
+      { cle: "HTML5", slug: "html5-cours", chap: "HTML5", quiz: ["html-css", "html"], pages: ["cours/html5.html", "cours/courshtml5.html", "cours/fiche-revision-html5.html", "cours/datalist.html"] },
+      { cle: "CSS3", slug: "css3-cours", chap: "CSS3", quiz: ["html-css", "css"], pages: ["cours/css3.html", "cours/courscss3.html", "Positionnement-animee/index.html", "cssanimee/index.html"] },
+      { cle: "JavaScript", slug: "javascript-cours", chap: "JS", quiz: ["javascript", "js"], pages: ["cours/javascript.html", "cours/Recap-JavaScript-STI.html"] },
+      { cle: "SQL", slug: "sql-cours", chap: "SQL", quiz: ["sql"], pages: ["cours/sql.html", "cours/sql-bases-ldd-lmd-lcd.html", "cours/sql-contraintes.html", "cours/sql-playground.html"] },
+      { cle: "PHP & MySQLi", slug: "php-cours", chap: "PHP", quiz: ["php"], pages: ["cours/php.html", "cours/coursphp.html", "cours/php-recap.html", "cours/PHP-recap.html", "cours/php-mysqli.html"] }
     ];
     var btnGen = document.getElementById("btn-carte-diff-generer");
     var selClasse = document.getElementById("carte-diff-classe");
@@ -13631,7 +14098,11 @@
         var classe = selClasse.value;
         var eleves = (profils || []).filter(function (p) {
           if (p.statut !== "actif") return false;
-          return classe === "*" ? true : String(p.classe || "") === classe;
+          var clD = String(p.classe || "").trim();
+          var emD = String(p.email || "").trim().toLowerCase();
+          if (emD === "elevelabo3@exemple.tn") return false;
+          if (classe === "*" && /^(prof|professeur|enseignant|admin|elevelabo3|labo3)$/i.test(clD)) return false;
+          return classe === "*" ? true : clD === classe;
         });
         var ids = {}, uidParMail = {};
         eleves.forEach(function (p) {
@@ -13639,12 +14110,30 @@
           if (p.email) uidParMail[String(p.email).trim().toLowerCase()] = p.id;
         });
         var n = eleves.length || 1;
-        var progUser = {};
+        var progUser = {}, pagesOuvertesChap = {};
+        CHAPITRES.forEach(function (c) { pagesOuvertesChap[c.cle] = {}; });
         progsCloud.forEach(function (r) {
           var uId = (r && r.user_id) || (r && r.email ? uidParMail[String(r.email).trim().toLowerCase()] : "");
           if (!uId || !ids[uId]) return;
           var dObj = parserObjetJsonSoupleAdmin(r.donnees);
-          var mpObj = dObj && parserObjetJsonSoupleAdmin(dObj["sti-media-prog-v1"]);
+          if (!dObj) return;
+          var pvObj = parserObjetJsonSoupleAdmin(dObj["sti-pages-vues-v432"]);
+          if (pvObj && typeof pvObj === "object") {
+            Object.keys(pvObj).forEach(function (pk) {
+              if (!pvObj[pk]) return;
+              var pNorm = String(pk).replace(/^\/+/, "").split("?")[0].split("#")[0];
+              CHAPITRES.forEach(function (c) {
+                if (c.pages.indexOf(pNorm) !== -1) pagesOuvertesChap[c.cle][uId] = 1;
+              });
+            });
+          }
+          var chObj = parserObjetJsonSoupleAdmin(dObj["sti-chapitres-vus"]);
+          if (chObj && typeof chObj === "object") {
+            CHAPITRES.forEach(function (c) {
+              if (chObj[c.chap]) pagesOuvertesChap[c.cle][uId] = 1;
+            });
+          }
+          var mpObj = parserObjetJsonSoupleAdmin(dObj["sti-media-prog-v1"]);
           if (!mpObj || typeof mpObj !== "object") return;
           if (!progUser[uId]) progUser[uId] = {};
           Object.keys(mpObj).forEach(function (mk) {
@@ -13678,9 +14167,10 @@
         });
         sess.forEach(function (r) {
           if (!ids[r.user_id]) return;
-          var pg = String(r.page || "").split("#")[0];
+          var pg = String(r.page || "").replace(/^\/+/, "").split("?")[0].split("#")[0];
           CHAPITRES.forEach(function (c) {
             if (c.pages.indexOf(pg) === -1) return;
+            pagesOuvertesChap[c.cle][r.user_id] = 1;
             tempsUserChap[c.cle][r.user_id] = (tempsUserChap[c.cle][r.user_id] || 0) + (Number(r.duree_sec) || 0);
           });
         });
@@ -13689,7 +14179,12 @@
         quiz.forEach(function (q) {
           if (!ids[q.user_id]) return;
           CHAPITRES.forEach(function (c) {
-            if (c.quiz.indexOf(String(q.module || "")) === -1 && c.quiz.indexOf(String(q.quiz || "")) === -1) return;
+            var qSlug = String(q.quiz || "");
+            var mSlug = String(q.module || "");
+            var matchQ = (qSlug === "tableaux")
+              ? (c.quiz.indexOf(mSlug) !== -1 || mSlug === "*")
+              : (c.quiz.indexOf(qSlug) !== -1 || c.quiz.indexOf(mSlug) !== -1);
+            if (!matchQ) return;
             var tt = Number(q.total) || 0; var sc = Number(q.score) || 0;
             if (tt > 0) { quizChap[c.cle].tot += (sc / tt) * 100; quizChap[c.cle].n++; }
           });
@@ -13703,11 +14198,12 @@
           var qPct = qm.n ? Math.round(qm.tot / qm.n) : null;
           var tU = tempsUserChap[c.cle]; var tMoy = 0; var nbT = 0;
           Object.keys(tU).forEach(function (u) { tMoy += tU[u]; nbT++; });
+          var nbPagesOuv = Math.max(nbT, Object.keys(pagesOuvertesChap[c.cle] || {}).length);
           var tMin = nbT ? Math.round(tMoy / nbT / 60) : 0;
           var signal = "vert"; var lbl = "\ud83d\udfe2 Ma\u00eetris\u00e9";
           if (consultPct < 25 || (qPct != null && qPct < 45)) { signal = "rouge"; lbl = "\ud83d\udd34 Difficile"; }
           else if (consultPct < 60 || (qPct != null && qPct < 65)) { signal = "orange"; lbl = "\ud83d\udfe0 \u00c0 consolider"; }
-          html += "<tr><td class='carte-diff-nom'><b>" + echHtml(c.cle) + "</b><br><small>" + nbT + " \u00e9l\u00e8ve(s) ont ouvert les pages</small></td>" +
+          html += "<tr><td class='carte-diff-nom'><b>" + echHtml(c.cle) + "</b><br><small>" + nbPagesOuv + " \u00e9l\u00e8ve(s) ont ouvert les pages</small></td>" +
             "<td>" + totConsult + "/" + eleves.length + " (" + consultPct + " %)" + (nbEnt ? " <small>(" + vusParChap[c.cle] + " \u2705 \u00b7 " + nbEnt + " \u23f3)</small>" : "") + "</td>" +
             "<td>" + (qPct == null ? "\u2014" : qPct + " % <small>(" + qm.n + " partie(s))</small>") + "</td>" +
             "<td>" + (tMin ? tMin + " min" : "\u2014") + "</td>" +
@@ -13913,7 +14409,7 @@
       }
       if (!k) return "";
       var o = JSON.parse(localStorage.getItem(k) || "{}");
-      return (o.currentSession && o.currentSession.access_token) || o.access_token || "";
+      return (o.session && o.session.access_token) || (o.currentSession && o.currentSession.access_token) || o.access_token || "";
     } catch (e) { return ""; }
   }
   function majStatut(txt, ton) {
