@@ -27,7 +27,7 @@
     "bac-pratique.html", "carte-visite.html", "cours/annexe-fleuriste-html5.html", "cours/courscss3.html",
     "cours/courshtml5.html", "cours/coursphp.html", "cours/css3.html", "cours/datalist.html",
     "cours/fiche-revision-html5.html", "cours/html5.html", "cours/javascript.html", "cours/php-mysqli.html",
-    "cours/php-recap.html", "cours/php-recap.html", "cours/php.html", "cours/recap-javascript-sti.html",
+    "cours/php-recap.html", "cours/php.html", "cours/recap-javascript-sti.html",
     "cours/sql-bases-ldd-lmd-lcd.html", "cours/sql-contraintes.html", "cours/sql-playground.html", "cours/sql.html",
     "cssanimee/index.html", "documents/annexes/annexe-css3.pdf.html", "documents/annexes/annexe-html5.pdf.html", "documents/annexes/annexe-javascript.pdf.html",
     "documents/annexes/annexe-php.pdf.html", "documents/annexes/annexe-sql.pdf.html", "documents/complet/complet-3eme-si-bd.pdf.html", "documents/complet/complet-3eme-si.pdf.html",
@@ -53,8 +53,8 @@
     "projets/formulaire-inscription/enonce/cvfleurs-énoncé/formulaire inscription.pdf.html", "projets/site-tunisie/correction-details/carte-timbre-droite-haut.html", "projets/site-tunisie/enonce.html", "projets/site-tunisie/index.html",
     "projets/site-tunisie/pages/accueil.html", "projets/site-tunisie/pages/centre.html", "projets/site-tunisie/pages/nord.html", "projets/site-tunisie/pages/sud.html",
     "projets/site-tunisie/site-tunisie-correction-animation-html-css.html", "projets/sti0/index.html", "projets/sti0/projetsti0.pdf.html", "projets/sti0/sondage.html",
-    "projets/sti0/sondage.html", "projets/sti0/statistiques.html", "projets/sti0/statistiques.html", "quiz/html-css.html",
-    "quiz/javascript.html", "quiz/php.html", "quiz/pp.html", "quiz/sql.html",
+    "projets/sti0/statistiques.html", "quiz/html-css.html",
+    "quiz/javascript.html", "quiz/php.html", "quiz/sql.html",
     "quiz/tableaux.html", "revision-erreurs.html"
   ];
   /* v434 (gain d'audit A5) : la liste embarquée est d'abord PURGÉE des doublons et

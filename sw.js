@@ -6,10 +6,24 @@
 var CACHE = "sti-atelier-v317";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v456-quiz-lots-abc";
-/* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
+var UPDATE_ID = "v457-quiz-lot-d";
+/* Historique lots : v456-quiz-lots-abc, v358-quiz-sync
+   Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./index.html", revision: "quiz-lot-d-v457" },
+  { url: "./admin.html", revision: "quiz-lot-d-v457" },
+  { url: "./revision-erreurs.html", revision: "quiz-lot-d-v457" },
+  { url: "./quiz/html-css.html", revision: "quiz-lot-d-v457" },
+  { url: "./quiz/javascript.html", revision: "quiz-lot-d-v457" },
+  { url: "./quiz/sql.html", revision: "quiz-lot-d-v457" },
+  { url: "./quiz/php.html", revision: "quiz-lot-d-v457" },
+  { url: "./quiz/tableaux.html", revision: "quiz-lot-d-v457" },
+  { url: "./assets/pages-couverture.json", revision: "quiz-lot-d-v457" },
+  { url: "./assets/js/roue-couverture.js", revision: "quiz-lot-d-v457" },
+  { url: "./assets/js/roue-revision.js", revision: "quiz-lot-d-v457" },
+  { url: "./assets/js/admin-erreurs.js", revision: "quiz-lot-d-v457" },
+  { url: "./assets/js/acces.js", revision: "quiz-lot-d-v457" },
   { url: "./assets/js/quiz-sync.js", revision: "quiz-lots-abc-v456" },
   { url: "./assets/js/quiz-tableaux.js", revision: "quiz-lots-abc-v456" },
   { url: "./assets/js/quiz-tableaux-boot.js", revision: "quiz-lots-abc-v456" },
@@ -470,6 +484,7 @@ var OFFLINE_LIST = [
   "./assets/audio/css-positionnement.mp3",
   "./assets/audio/css-animee.mp3",
   "./assets/js/quiz-tableaux.js",
+  "./assets/js/quiz-tableaux-boot.js",
   "./assets/js/quiz-sync.js",
   "./assets/data/quiz-banque.json",
   "./assets/audio/sql-cours.mp3",

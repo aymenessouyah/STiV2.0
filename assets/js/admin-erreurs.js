@@ -26,7 +26,26 @@
 
   var cfg = window.STI_AUTH || { URL: "https://vywujxmepvcbgedgmger.supabase.co", CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn" };
   var MAX_LIGNES = 20000, SEUIL_FAIBLE = 25, MIN_REPONSES_SUSPECTE = 8;
+  var EMAIL_LABO = "elevelabo3@exemple.tn";
   var client = null, dernier = [], dernierQ = [];
+
+  async function lireToutPagine(fabriquerRequete, maxLignes, taillePage) {
+    var pas = taillePage || 1000;
+    var plafond = maxLignes || MAX_LIGNES;
+    var cumul = [];
+    for (var offset = 0; offset < plafond; offset += pas) {
+      var fin = Math.min(offset + pas, plafond) - 1;
+      var req = fabriquerRequete();
+      var r = (req && typeof req.range === "function")
+        ? await req.range(offset, fin)
+        : await req.limit(plafond);
+      if (r && r.error) return { data: null, error: r.error };
+      var lot = (r && r.data) || [];
+      cumul = cumul.concat(lot);
+      if (!req || typeof req.range !== "function" || lot.length < (fin - offset + 1)) break;
+    }
+    return { data: cumul, error: null };
+  }
 
   var elClasse = doc.getElementById("err-classe");
   var elMin = doc.getElementById("err-min");
@@ -50,27 +69,42 @@
   /* Fonction PURE (testable) : réponses brutes + profils → profils d'erreur par élève + questions. */
   function analyser(profils, reponses, minReponses) {
     minReponses = minReponses || 1;
-    var parEleve = {};      /* uid -> { q: { qid: {ok, ko, enonce, quiz} } } */
+    var parEleve = {};      /* uid -> { q: { qid: {ok, ko, enonce, quiz, dernierCorrect, dernierTs} } } */
     var parQuestion = {};   /* quiz|qid -> {n, ok, enonce, quiz} */
-    (reponses || []).forEach(function (r) {
+    (reponses || []).forEach(function (r, idxOrdre) {
       if (!r || !r.user_id || !r.question_id) return;
+      if (String(r.email || "").toLowerCase() === EMAIL_LABO) return;
       var uid = r.user_id, qid = String(r.question_id), quiz = String(r.quiz || "");
       var cle = quiz + "|" + qid;
       var e = parEleve[uid] || (parEleve[uid] = {});
-      var q = e[cle] || (e[cle] = { ok: 0, ko: 0, enonce: r.enonce || "", quiz: quiz });
+      var ts = r.cree_le ? new Date(r.cree_le).getTime() : null;
+      var q = e[cle];
+      if (!q) {
+        q = e[cle] = { ok: 0, ko: 0, enonce: r.enonce || "", quiz: quiz, dernierCorrect: !!r.correct, dernierTs: ts, premierIdx: idxOrdre };
+      } else if (ts !== null && !isNaN(ts) && (q.dernierTs === null || isNaN(q.dernierTs) || ts > q.dernierTs)) {
+        q.dernierTs = ts;
+        q.dernierCorrect = !!r.correct;
+      } else if (ts === null && q.dernierTs === null) {
+        /* Sans horodatage (appels synchrones en ordre chronologique), la dernière entrée fait foi */
+        q.dernierCorrect = !!r.correct;
+      }
+      if (!q.enonce && r.enonce) q.enonce = r.enonce;
       if (r.correct) q.ok++; else q.ko++;
       var g = parQuestion[cle] || (parQuestion[cle] = { n: 0, ok: 0, enonce: r.enonce || "", quiz: quiz, qid: qid });
+      if (!g.enonce && r.enonce) g.enonce = r.enonce;
       g.n++; if (r.correct) g.ok++;
     });
 
-    var lignes = (profils || []).map(function (p) {
+    var lignes = (profils || []).filter(function (p) {
+      return p && String(p.email || "").toLowerCase() !== EMAIL_LABO;
+    }).map(function (p) {
       var e = parEleve[p.id] || {};
       var jamais = 0, instable = 0, maitrise = 0, detailJamais = [];
       Object.keys(e).forEach(function (cle) {
         var q = e[cle];
         if (!q.ok && q.ko) { jamais++; if (detailJamais.length < 4) detailJamais.push(q.enonce || cle); }
+        else if (q.ok && (!q.ko || (q.dernierCorrect && q.ok >= q.ko))) maitrise++;
         else if (q.ok && q.ko) instable++;
-        else if (q.ok) maitrise++;
       });
       var total = jamais + instable + maitrise;
       var profil = total >= minReponses
@@ -195,13 +229,19 @@
     if (!c) { etat("⚠️ Supabase indisponible dans cette page.", "#b91c1c"); return Promise.reject(new Error("no client")); }
     var minRep = Math.max(1, parseInt(elMin && elMin.value, 10) || 1);
     btnCalc.disabled = true;
-    etat("⏳ Lecture des réponses question par question…");
+    etat("⏳ Lecture paginée des réponses question par question…");
     return Promise.all([
-      c.from("profiles").select("id,email,nom,prenom,classe,statut").limit(3000),
-      c.from("sti_quiz_reponses").select("user_id,quiz,module,question_id,enonce,correct").limit(MAX_LIGNES),
+      lireToutPagine(function () { return c.from("profiles").select("id,email,nom,prenom,classe,statut"); }, 3000, 1000),
+      lireToutPagine(function () {
+        return c.from("sti_quiz_reponses")
+          .select("user_id,email,quiz,module,question_id,enonce,correct,cree_le")
+          .order("cree_le", { ascending: false });
+      }, MAX_LIGNES, 1000),
     ]).then(function (res) {
       btnCalc.disabled = false;
-      var profils = (res[0] && !res[0].error && res[0].data) || [];
+      var profils = ((res[0] && !res[0].error && res[0].data) || []).filter(function (p) {
+        return p && String(p.email || "").toLowerCase() !== EMAIL_LABO;
+      });
       var rep = (res[1] && !res[1].error && res[1].data) || [];
       if (!profils.length) { etat("⚠️ Profils illisibles : " + ((res[0] && res[0].error && res[0].error.message) || "aucun élève (session admin ?)"), "#b91c1c"); return; }
       if (!rep.length) { etat("⚠️ Aucune réponse de quiz enregistrée (table sti_quiz_reponses vide).", "#b45309"); }

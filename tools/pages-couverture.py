@@ -15,7 +15,7 @@ import subprocess
 import sys
 
 RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EXCLUS_PIED = {"404.html", "admin.html", "offline.html", "index.html", "tests/index.html"}
+EXCLUS_PIED = {"404.html", "admin.html", "offline.html", "index.html", "quiz/pp.html", "tests/index.html"}
 EXCLUS_DOSSIERS = ("tests/", "node_modules/", "backups/")
 
 

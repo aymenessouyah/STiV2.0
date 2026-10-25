@@ -1,6 +1,6 @@
 {
 "gen": "v434",
-"n": 125,
+"n": 124,
 "pages": [
 "bac-pratique.html",
 "carte-visite.html",
@@ -123,7 +123,6 @@
 "quiz/html-css.html",
 "quiz/javascript.html",
 "quiz/php.html",
-"quiz/pp.html",
 "quiz/sql.html",
 "quiz/tableaux.html",
 "revision-erreurs.html"

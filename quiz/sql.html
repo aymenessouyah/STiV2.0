@@ -39705,7 +39705,7 @@ LIMIT 5;</textarea
 
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=425"></script>
-    <script src="../assets/js/quiz-sync.js?v=455"></script>
+    <script src="../assets/js/quiz-sync.js?v=457"></script>
 
     <script>
       /* ============ HELPERS & STATE ============ */
@@ -42074,7 +42074,7 @@ LIMIT 5;</textarea
         },
         {
           "cat": "adv",
-          "diff": "Difficile",
+          "diff": "Expert",
           "q": "Quelle est la différence entre UNION et UNION ALL ?",
           "code": "SELECT nom FROM Clients UNION SELECT nom FROM Prospects;",
           "answers": [
@@ -42084,13 +42084,13 @@ LIMIT 5;</textarea
             "UNION supprime les doublons, UNION ALL les garde (plus rapide)"
           ],
           "correct": 3,
-          "explain": "UNION fait un DISTINCT implicite (plus lent). UNION ALL empile tout, plus rapide.",
+          "explain": "<strong>[Bonus Culture BD — hors épreuve Bac]</strong> UNION fait un DISTINCT implicite (plus lent). UNION ALL empile tout, plus rapide.",
           "hint": "ALL = tout, même les doublons.",
           "id": 131
         },
         {
           "cat": "adv",
-          "diff": "Difficile",
+          "diff": "Expert",
           "q": "Que fait CASE WHEN ?",
           "code": "SELECT nom, CASE WHEN note>=10 THEN 'Admis' ELSE 'Recale' END AS res FROM Etudiants;",
           "answers": [
@@ -42100,7 +42100,7 @@ LIMIT 5;</textarea
             "Une boucle"
           ],
           "correct": 0,
-          "explain": "CASE permet des conditions ligne par ligne, comme un if/else. Indispensable pour les rapports !",
+          "explain": "<strong>[Bonus Culture BD — hors épreuve Bac]</strong> CASE permet des conditions ligne par ligne, comme un if/else. Indispensable pour les rapports !",
           "hint": "CASE = cas : dans tel cas, affiche ceci.",
           "id": 132
         },
@@ -42132,7 +42132,7 @@ LIMIT 5;</textarea
             "Une requête temporaire nommée et réutilisable"
           ],
           "correct": 3,
-          "explain": "CTE = Common Table Expression. Plus lisible que les sous-requêtes géantes. Peut être récursive !",
+          "explain": "<strong>[Bonus Culture BD — hors épreuve Bac]</strong> CTE = Common Table Expression. Plus lisible que les sous-requêtes géantes. Peut être récursive !",
           "hint": "WITH = avec, on définit un bloc nommé avant le SELECT.",
           "id": 134
         },
@@ -42148,7 +42148,7 @@ LIMIT 5;</textarea
             "VIEW"
           ],
           "correct": 1,
-          "explain": "Un INDEX est comme le sommaire d'un livre : il accélère la recherche dans le WHERE, dans les conditions de liaison et dans le ORDER BY.",
+          "explain": "<strong>[Bonus Culture BD — hors épreuve Bac]</strong> Un INDEX est comme le sommaire d'un livre : il accélère la recherche dans le WHERE, dans les conditions de liaison et dans le ORDER BY.",
           "hint": "Comme l'index d'un livre pour retrouver vite.",
           "id": 135
         },
@@ -42218,7 +42218,7 @@ LIMIT 5;</textarea
         },
         {
           "cat": "ddl",
-          "diff": "Difficile",
+          "diff": "Expert",
           "q": "Quelle affirmation sur DROP / DELETE / TRUNCATE est VRAIE ?",
           "code": "-- 3 façons de supprimer, 3 effets !",
           "answers": [
@@ -42228,7 +42228,7 @@ LIMIT 5;</textarea
             "TRUNCATE supprime la base entière"
           ],
           "correct": 0,
-          "explain": "DROP = table détruite. DELETE = lignes (avec WHERE, rollback possible). TRUNCATE = vidage rapide total.",
+          "explain": "<strong>[Bonus Culture BD — hors épreuve Bac]</strong> DROP = table détruite. DELETE = lignes (avec WHERE, rollback possible). TRUNCATE = vidage rapide total.",
           "hint": "DROP = on drop la table entière !",
           "id": 140
         },
@@ -42656,6 +42656,10 @@ LIMIT 5;</textarea
           cat === "all"
             ? [...QUESTIONS]
             : QUESTIONS.filter((q) => q.cat === cat);
+        if (mode === "exam") {
+          const BONUS_CULTURE_SQL_IDS = [131, 132, 134, 135, 140];
+          pool = pool.filter((q) => BONUS_CULTURE_SQL_IDS.indexOf(q.id) === -1);
+        }
         if (mode === "daily") {
           const seedStr = todayStr().replace(/-/g, "");
           let seed = parseInt(seedStr, 10);
@@ -43069,27 +43073,28 @@ LIMIT 5;</textarea
       }
       function synchroniserPartieSql(finaliserPartie = false) {
         if (!Q || !window.STIQuizSync) return;
-        const repondues = Q.log.filter((a) => !a.skipped);
+        const toutesLog = Q.log || [];
+        const repondues = toutesLog.filter((a) => !a.skipped);
         const deja = Q._syncedLen || 0;
-        if (STIQuizSync.enregistrerReponses && repondues.length > deja) {
-          const nouvelles = repondues.slice(deja);
-          Q._syncedLen = repondues.length;
+        if (STIQuizSync.enregistrerReponses && toutesLog.length > deja) {
+          const nouvelles = toutesLog.slice(deja);
+          Q._syncedLen = toutesLog.length;
           STIQuizSync.enregistrerReponses(
             "sql",
             null,
             nouvelles.map(function (a) {
-              return { id: "sql-" + a.q.id, enonce: a.q.q, ok: a.good };
+              return { id: "sql-" + a.q.id, enonce: a.q.q, ok: Boolean(!a.skipped && a.good) };
             })
           );
         }
         if (
           finaliserPartie &&
           !Q._partySynced &&
-          repondues.length > 0 &&
+          toutesLog.length > 0 &&
           STIQuizSync.enregistrer
         ) {
           Q._partySynced = true;
-          STIQuizSync.enregistrer("sql", Q.correct, repondues.length);
+          STIQuizSync.enregistrer("sql", Q.correct, repondues.length || toutesLog.length);
         }
       }
       window.addEventListener("pagehide", () => {
