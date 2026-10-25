@@ -31,6 +31,17 @@
     }
   } catch (e) {}
 
+  /* ---------- v449 : Chargement universel du module Rayons X HTML/CSS & Surligneur Fluo ---------- */
+  (function chargerRayonsXEtSurligneurSTI() {
+    try {
+      if (window.__STI_RAYONSX_SURLIGNEUR_ACTIF || document.querySelector("script[src*='rayonsx-surligneur.js']")) return;
+      var scRx = document.createElement("script");
+      scRx.src = (cfg.RACINE || "") + "assets/js/rayonsx-surligneur.js?v=449";
+      scRx.async = true;
+      (document.head || document.documentElement).appendChild(scRx);
+    } catch (e) {}
+  })();
+
   /* ---------- v445 : Validation et compression carrée légère (144x144 <= 48 Ko) de la photo élève ---------- */
   function photoUrlSureSTI(u) {
     var s = String(u || "").trim();
@@ -2865,6 +2876,35 @@
     });
     pan.appendChild(btnSosPan);
 
+    /* v449 : Accès direct en 1 clic à 🦴 Rayons X HTML/CSS et 🖍️ Surligneur Fluo (sans ouvrir le tiroir) */
+    var gridEtudeDirecte = document.createElement("div");
+    gridEtudeDirecte.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px;";
+    var btnDirectXray = document.createElement("button");
+    btnDirectXray.type = "button";
+    btnDirectXray.textContent = "🦴 Rayons X CSS";
+    btnDirectXray.title = "Visualiser en direct le Box-Model (margin/padding/content), les balises HTML5 et Flexbox (Alt+X)";
+    btnDirectXray.style.cssText = styleBtnCompact + "border-color:#0284c7;background:#e0f2fe;color:#0369a1;font-weight:900;";
+    btnDirectXray.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fermer();
+      if (window.basculerRayonsXSTI) window.basculerRayonsXSTI();
+    });
+    var btnDirectFluo = document.createElement("button");
+    btnDirectFluo.type = "button";
+    btnDirectFluo.textContent = "🖍️ Surligneur Fluo";
+    btnDirectFluo.title = "Surligner le cours en Jaune / Vert / Rose et retrouver ses passages dans Ma Fiche de Révision (Alt+H)";
+    btnDirectFluo.style.cssText = styleBtnCompact + "border-color:#ca8a04;background:#fef9c3;color:#713f12;font-weight:900;";
+    btnDirectFluo.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      fermer();
+      if (window.basculerSurligneurSTI) window.basculerSurligneurSTI();
+    });
+    gridEtudeDirecte.appendChild(btnDirectXray);
+    gridEtudeDirecte.appendChild(btnDirectFluo);
+    pan.appendChild(gridEtudeDirecte);
+
     /* 2. Tiroir pliable « 🧰 Laboratoires & Outils de révision » (évite que la fenêtre dépasse la hauteur de la page) */
     var btnToggleLabos = document.createElement("button");
     btnToggleLabos.type = "button";
@@ -2927,6 +2967,21 @@
     });
     ajouterOutilGrille("📋 Constructeur", "Constructeur Visuel Tableaux / Formulaires / Flexbox", "background:#fff;color:#23201a;", function () {
       if (window.ouvrirConstructeurVisuelSTI) window.ouvrirConstructeurVisuelSTI("table");
+    });
+    ajouterOutilGrille("🦴 Rayons X CSS", "Visualiseur Box-Model, balises HTML5, Flexbox & Formulaires (Alt+X)", "border-color:#0284c7;background:#e0f2fe;color:#0369a1;font-weight:900;", function () {
+      if (window.basculerRayonsXSTI) window.basculerRayonsXSTI();
+    });
+    var btnRoueFluo = ajouterOutilGrille("🖍️ Surligneur", "Surligner les cours en Jaune / Vert / Rose et les retrouver dans Ma Fiche de Révision (Alt+H)", "border-color:#ca8a04;background:#fef9c3;color:#713f12;font-weight:900;", function () {
+      if (window.basculerSurligneurSTI) window.basculerSurligneurSTI();
+    });
+    btnRoueFluo.id = "sti-btn-roue-fluo";
+    try {
+      var nbFlInit = (window.STI_SURLIGNEUR && window.STI_SURLIGNEUR.lireTous) ? window.STI_SURLIGNEUR.lireTous().length : (JSON.parse(localStorage.getItem("sti-surlignages-v1") || "[]") || []).length;
+      if (nbFlInit > 0) btnRoueFluo.textContent = "🖍️ Surligneur (" + nbFlInit + ")";
+    } catch (eFl) {}
+    ajouterOutilGrille("📑 Passages Fluo", "Voir tous mes passages surlignés et ouvrir Ma Fiche de Révision", "border-color:#db2777;background:#fdf2f8;color:#831843;font-weight:900;", function () {
+      if (window.ouvrirMesPassagesSurlignesSTI) window.ouvrirMesPassagesSurlignesSTI();
+      else location.href = cfg.RACINE + "ma-fiche-revision.html#sec-surlignages";
     });
     ajouterOutilGrille("📝 Mes notes", "Carnet de notes de révision personnelles (Alt+N)", "background:#fff;color:#23201a;", function () {
       if (window.ouvrirCarnetNotesSTI) window.ouvrirCarnetNotesSTI();
@@ -6668,7 +6723,7 @@
     }
     /* Compenser le zoom sur les contrôles flottants pour qu'ils gardent une taille fixe à l'écran */
     var inv = z === 100 ? "" : ((10000 / z).toFixed(2) + "%");
-    var idsFlottants = ["sti-pc-win-tools", "sti-btn-messenger-global", "sti-roue-wrap", "sti-badge-admin-flottant", "sti-split-view-panel", "sti-laser-overlay", "sti-sandbox-modal", "sti-browser-console-panel"];
+    var idsFlottants = ["sti-pc-win-tools", "sti-btn-messenger-global", "sti-roue-wrap", "sti-badge-admin-flottant", "sti-split-view-panel", "sti-laser-overlay", "sti-sandbox-modal", "sti-browser-console-panel", "sti-xray-hud", "sti-fluo-hud"];
     for (var i = 0; i < idsFlottants.length; i++) {
       var elF = document.getElementById(idsFlottants[i]);
       if (elF) elF.style.zoom = inv;
@@ -8325,6 +8380,34 @@
       window.ouvrirConsoleNavigateurSTI(btnConsole);
     };
 
+    /* v449 : Bouton 🦴 Rayons X HTML / CSS (Box-Model, Sémantique & Flexbox) */
+    var btnXray = document.createElement("button");
+    btnXray.type = "button";
+    btnXray.id = "sti-btn-pc-xray";
+    btnXray.innerHTML = "🦴 <span>Rayons X</span>";
+    btnXray.title = "Visualiseur Rayons X HTML / CSS : inspecter le Box-Model (margin, padding, content), les balises HTML5, Flexbox et les formulaires (Alt+X)";
+    btnXray.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnXray.onclick = function () {
+      if (window.basculerRayonsXSTI) window.basculerRayonsXSTI();
+    };
+
+    /* v449 : Bouton 🖍️ Surligneur Fluo sur les cours (Jaune / Vert / Rose) */
+    var btnFluo = document.createElement("button");
+    btnFluo.type = "button";
+    btnFluo.id = "sti-btn-pc-fluo";
+    var nbFlPc = 0;
+    try { nbFlPc = (JSON.parse(localStorage.getItem("sti-surlignages-v1") || "[]") || []).length; } catch (eFp) {}
+    btnFluo.innerHTML = "🖍️ <span>Fluo" + (nbFlPc > 0 ? " (" + nbFlPc + ")" : "") + "</span>";
+    btnFluo.title = "Surligneur Fluo (Jaune Important / Vert Syntaxe / Rose Piège Bac) sauvegardé dans Ma Fiche de Révision (Alt+H)";
+    btnFluo.style.cssText =
+      "display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;border:1.5px solid #23201a;" +
+      "background:#fffdf7;color:#23201a;font:800 11.5px/1 inherit;cursor:pointer;white-space:nowrap;";
+    btnFluo.onclick = function () {
+      if (window.basculerSurligneurSTI) window.basculerSurligneurSTI();
+    };
+
     var btnFs = document.createElement("button");
     btnFs.type = "button";
     btnFs.id = "sti-btn-pc-fullscreen";
@@ -8351,6 +8434,8 @@
     itemsWrap.appendChild(btnSplit);
     itemsWrap.appendChild(btnSandbox);
     itemsWrap.appendChild(btnConsole);
+    itemsWrap.appendChild(btnXray);
+    itemsWrap.appendChild(btnFluo);
     bar.appendChild(btnToggle);
     bar.appendChild(itemsWrap);
     (document.body || document.documentElement).appendChild(bar);

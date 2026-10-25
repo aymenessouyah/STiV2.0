@@ -6,10 +6,14 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v448-trombi-carte-recadrage-1";
+var UPDATE_ID = "v449-rayonsx-surligneur-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/rayonsx-surligneur.js", revision: "rayonsx-surligneur-v449" },
+  { url: "./assets/js/mobile-nav.js", revision: "rayonsx-surligneur-v449" },
+  { url: "./assets/js/acces.js", revision: "rayonsx-surligneur-v449" },
+  { url: "./ma-fiche-revision.html", revision: "rayonsx-surligneur-v449" },
   { url: "./admin.html", revision: "trombi-carte-recadrage-v448" },
   { url: "./assets/css/admin-saas.css", revision: "trombi-carte-recadrage-v448" },
   { url: "./assets/js/admin.js", revision: "trombi-carte-recadrage-v448" },

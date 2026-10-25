@@ -854,7 +854,36 @@ test('v448 : Trombinoscope par classe, Carte Officielle Candidat STI V2.0, Studi
   assert.match(adminJs, /getUserMedia/);
   assert.match(accesJs, /function ouvrirStudioPhotoEleveSTI/);
   assert.doesNotMatch(accesJs.slice(accesJs.indexOf('function ouvrirStudioPhotoEleveSTI'), accesJs.indexOf('function ouvrirCarteOfficielleEleveSTI')), /createObjectURL/);
-  assert.match(swJs, /v448-trombi-carte-recadrage-1/);
+  assert.match(swJs, /trombi-carte-recadrage-v448/);
+});
+
+test('v449 : Rayons X HTML/CSS (Box-Model, Sémantique & Flexbox) + Surligneur Fluo synchronisé avec ma-fiche-revision.html', () => {
+  const rxJs = read('assets/js/rayonsx-surligneur.js');
+  const mobileNavJs = read('assets/js/mobile-nav.js');
+  const accesJs = read('assets/js/acces.js');
+  const ficheHtml = read('ma-fiche-revision.html');
+  const swJs = read('sw.js');
+
+  // 1) Chargement universel + boutons dans la Roue et la barre d'outils PC
+  assert.match(mobileNavJs, /rayonsx-surligneur\.js\?v=449/);
+  assert.match(accesJs, /rayonsx-surligneur\.js\?v=449/);
+  assert.match(accesJs, /basculerRayonsXSTI/);
+  assert.match(accesJs, /basculerSurligneurSTI/);
+  assert.match(accesJs, /id = "sti-btn-pc-xray"/);
+  assert.match(accesJs, /id = "sti-btn-pc-fluo"/);
+
+  // 2) Surligneur Fluo (3 couleurs Jaune / Vert / Rose + Gomme + stockage sti-surlignages-v1)
+  assert.match(rxJs, /sti-surlignages-v1/);
+  assert.match(rxJs, /window\.basculerRayonsXSTI\s*=\s*basculerRayonsXSTI/);
+  assert.match(rxJs, /window\.basculerSurligneurSTI\s*=\s*basculerSurligneurSTI/);
+  assert.match(rxJs, /window\.STI_SURLIGNEUR/);
+  assert.doesNotMatch(rxJs, /\bonclick\s*=\s*["']/i); // 100% compatible CSP stricte (aucun handler inline HTML)
+
+  // 3) Intégration complète dans ma-fiche-revision.html (filtres couleurs + impression A4)
+  assert.match(ficheHtml, /id="sec-surlignages"/);
+  assert.match(ficheHtml, /id="fiche-fluo-liste"/);
+  assert.match(ficheHtml, /sti-surlignages-v1/);
+  assert.match(swJs, /v449-rayonsx-surligneur-1/);
 });
 
 
