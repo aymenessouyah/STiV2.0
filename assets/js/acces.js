@@ -2752,24 +2752,58 @@
             "</div>" +
             "<div style='display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px'>" +
               "<button type='button' id='sti-cc-dl' style='border:none;background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;border-radius:999px;padding:8px 15px;font-size:12px;font-weight:900;cursor:pointer'>📥 Télécharger en PNG HD</button>" +
-              "<button type='button' id='sti-cc-photo' style='border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer'>📷 " + (phOk ? "Changer ma photo" : "Ajouter ma photo") + "</button>" +
+              "<button type='button' id='sti-cc-print' style='border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer'>🖨️ Imprimer la carte</button>" +
+              "<button type='button' id='sti-cc-photo' style='border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer'>📷 " + (phOk ? "Photo / Recadrer" : "Ajouter ma photo") + "</button>" +
+              "<button type='button' id='sti-cc-close2' style='border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer'>Fermer</button>" +
             "</div>" +
           "</div>";
 
         modalCarteEl.querySelector("#sti-cc-close").addEventListener("click", function () { modalCarteEl.style.display = "none"; });
+        modalCarteEl.querySelector("#sti-cc-close2").addEventListener("click", function () { modalCarteEl.style.display = "none"; });
+        modalCarteEl.querySelector("#sti-cc-print").addEventListener("click", function () {
+          var box = modalCarteEl.querySelector("#sti-cc-card-box");
+          if (!box) return;
+          var sh = document.getElementById("sti-print-sheet-eleve-cc");
+          if (!sh) {
+            sh = document.createElement("div");
+            sh.id = "sti-print-sheet-eleve-cc";
+            document.body.appendChild(sh);
+          }
+          var stPr = document.getElementById("sti-print-style-eleve-cc");
+          if (!stPr) {
+            stPr = document.createElement("style");
+            stPr.id = "sti-print-style-eleve-cc";
+            stPr.textContent = "#sti-print-sheet-eleve-cc{display:none}@media print{body.sti-printing-eleve-cc>*:not(#sti-print-sheet-eleve-cc){display:none!important}body.sti-printing-eleve-cc #sti-print-sheet-eleve-cc{display:block!important;padding:18mm 10mm;background:#fff!important}}";
+            document.head.appendChild(stPr);
+          }
+          sh.innerHTML = "<div style='max-width:440px;margin:20px auto'>" + box.outerHTML + "</div>";
+          document.body.classList.add("sti-printing-eleve-cc");
+          var nettoie = function () {
+            document.body.classList.remove("sti-printing-eleve-cc");
+            sh.innerHTML = "";
+            window.removeEventListener("afterprint", nettoie);
+          };
+          window.addEventListener("afterprint", nettoie);
+          setTimeout(function () { window.print(); setTimeout(nettoie, 1500); }, 80);
+        });
         modalCarteEl.querySelector("#sti-cc-photo").addEventListener("click", function () {
           modalCarteEl.style.display = "none";
           ouvrirStudioPhotoEleveSTI();
         });
         modalCarteEl.querySelector("#sti-cc-dl").addEventListener("click", function () {
           var bDl = modalCarteEl.querySelector("#sti-cc-dl");
+          bDl.disabled = true;
           bDl.textContent = "⏳ Génération PNG HD…";
           function loadIm(u) {
             return new Promise(function (res) {
               if (!u) { res(null); return; }
+              var done = false;
+              var fin = function (v) { if (done) return; done = true; res(v); };
+              var tmr = setTimeout(function () { fin(null); }, 4000);
               var i = new Image();
-              i.onload = function () { res(i); };
-              i.onerror = function () { res(null); };
+              if (/^https?:\/\//i.test(String(u))) i.crossOrigin = "anonymous";
+              i.onload = function () { clearTimeout(tmr); fin(i); };
+              i.onerror = function () { clearTimeout(tmr); fin(null); };
               i.src = u;
             });
           }
@@ -2777,7 +2811,7 @@
             c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r);
             c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
           }
-          Promise.all([loadIm(R + "assets/icons/sti-icon-512.png"), loadIm(phOk), loadIm(R + "assets/images/qr-stiv2.png")]).then(function (ims) {
+          function dessinerCv(imLogo, imPhoto, imQr) {
             var cv = document.createElement("canvas");
             cv.width = 1600; cv.height = 1010;
             var cx = cv.getContext("2d");
@@ -2788,14 +2822,14 @@
             cx.lineWidth = 8; cx.strokeStyle = acc; cx.stroke();
             cx.save(); rr(cx, 28, 28, 1544, 954, 60); cx.clip();
             cx.fillStyle = "#e2e8f0"; cx.fillRect(24, 790, 1552, 196);
-            if (ims[0]) cx.drawImage(ims[0], 96, 82, 120, 120);
+            if (imLogo) cx.drawImage(imLogo, 96, 82, 120, 120);
             cx.fillStyle = "#0f172a"; cx.font = "900 66px " + ff; cx.fillText("STI V2.0", 238, 164);
             rr(cx, 1050, 96, 440, 86, 43); cx.fillStyle = acc; cx.fill();
             cx.fillStyle = "#ffffff"; cx.font = "900 30px " + ff; cx.textAlign = "center";
             cx.fillText(isG ? "👑 MEMBRE GOLD" : "🎓 CANDIDAT STI", 1270, 150); cx.textAlign = "left";
             cx.save(); cx.beginPath(); cx.arc(285, 485, 168, 0, Math.PI * 2); cx.closePath();
             cx.fillStyle = "#0f172a"; cx.fill(); cx.lineWidth = 10; cx.strokeStyle = acc; cx.stroke(); cx.clip();
-            if (ims[1]) cx.drawImage(ims[1], 117, 317, 336, 336);
+            if (imPhoto) cx.drawImage(imPhoto, 117, 317, 336, 336);
             else { cx.fillStyle = "#fff"; cx.font = "900 108px " + ff; cx.textAlign = "center"; cx.fillText(initialesPan, 285, 522); cx.textAlign = "left"; }
             cx.restore();
             cx.fillStyle = "#64748b"; cx.font = "800 24px " + ff;
@@ -2806,14 +2840,27 @@
             cx.fillStyle = "#0f172a"; cx.fillText((clAff + " · " + lyAff).slice(0, 42), 520, 680);
             cx.font = "900 32px " + ff; cx.fillText("STI V2.0 — Plateforme Technologique & Services", 96, 868);
             cx.fillStyle = "#475569"; cx.font = "700 26px " + ff; cx.fillText("Carte Officielle d'Abonné · By Aymen Essouyah", 96, 916);
-            if (ims[2]) { rr(cx, 1344, 810, 148, 148, 22); cx.fillStyle = "#fff"; cx.fill(); cx.drawImage(ims[2], 1352, 818, 132, 132); }
+            if (imQr) { rr(cx, 1344, 810, 148, 148, 22); cx.fillStyle = "#fff"; cx.fill(); cx.drawImage(imQr, 1352, 818, 132, 132); }
             cx.restore();
+            return cv;
+          }
+          Promise.all([loadIm(R + "assets/icons/sti-icon-512.png"), loadIm(phOk), loadIm(R + "assets/images/qr-stiv2.png")]).then(function (ims) {
+            var dataUrl = "";
+            try {
+              dataUrl = dessinerCv(ims[0], ims[1], ims[2]).toDataURL("image/png");
+            } catch (eCors) {
+              dataUrl = dessinerCv(ims[0], null, ims[2]).toDataURL("image/png");
+            }
             var a = document.createElement("a");
             a.download = "Ma-Carte-STI-V2.png";
-            a.href = cv.toDataURL("image/png");
+            a.href = dataUrl;
             document.body.appendChild(a); a.click(); a.remove();
+            bDl.disabled = false;
             bDl.textContent = "✅ Carte PNG téléchargée !";
             setTimeout(function () { bDl.textContent = "📥 Télécharger en PNG HD"; }, 2000);
+          }).catch(function () {
+            bDl.disabled = false;
+            bDl.textContent = "📥 Télécharger en PNG HD";
           });
         });
 
@@ -12494,47 +12541,55 @@
     var cLoc = lireCacheSessionLocal() || {};
     var maCl = currentClasse || cLoc.classe || "";
     var ok4SI = estAutorise4SI(maCl, estSessionAdminVerifiee());
-    var melangeQcm = (typeof cfgSecurite === "undefined" || cfgSecurite.melangeQcmActif !== false);
+    var melangeQcm = true;
+    function entierAleaEb(maxExcl) {
+      if (maxExcl <= 1) return 0;
+      if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+        var u = new Uint32Array(1);
+        window.crypto.getRandomValues(u);
+        return u[0] % maxExcl;
+      }
+      return Math.floor(Math.random() * maxExcl);
+    }
+    function melangerEb(arr) {
+      var cp = arr.slice();
+      for (var i = cp.length - 1; i > 0; i--) {
+        var r = entierAleaEb(i + 1);
+        var tmp = cp[i];
+        cp[i] = cp[r];
+        cp[r] = tmp;
+      }
+      return cp;
+    }
 
-    var baseQuestions = BANQUE_EXAMEN_BLANC_STI.filter(function (q) {
+    var baseQuestions = melangerEb(BANQUE_EXAMEN_BLANC_STI.filter(function (q) {
       if (!ok4SI && q.chap === "PHP") return false;
       return true;
-    }).map(function (q) {
-      /* Copie profonde avec mélange aléatoire des choix A/B/C/D par élève si activé */
-      var paires = q.opts.map(function (txt, idx) {
+    }));
+    var questions = baseQuestions.slice(0, 20).map(function (q, idxQ, arrRef) {
+      /* Copie profonde avec mélange aléatoire frais des choix A/B/C/D à chaque connexion */
+      var paires = melangerEb(q.opts.map(function (txt, idx) {
         return { txt: txt, ok: idx === q.rep };
-      });
-      if (melangeQcm) {
-        for (var i = paires.length - 1; i > 0; i--) {
-          var r = Math.floor(Math.random() * (i + 1));
-          var tmp = paires[i];
-          paires[i] = paires[r];
-          paires[r] = tmp;
-        }
-      }
+      }));
       var nvRep = 0;
-      var nvOpts = paires.map(function (p, idx) {
-        if (p.ok) nvRep = idx;
-        return p.txt;
-      });
+      paires.forEach(function (p, idx) { if (p.ok) nvRep = idx; });
+      if (idxQ >= 2 && arrRef[idxQ - 1] && arrRef[idxQ - 2] &&
+          arrRef[idxQ - 1]._repTmp === nvRep && arrRef[idxQ - 2]._repTmp === nvRep && paires.length > 1) {
+        var cible = (nvRep + 1 + entierAleaEb(paires.length - 1)) % paires.length;
+        var sw = paires[nvRep];
+        paires[nvRep] = paires[cible];
+        paires[cible] = sw;
+        nvRep = cible;
+      }
+      q._repTmp = nvRep;
       return {
         chap: q.chap,
         q: q.q,
-        opts: nvOpts,
+        opts: paires.map(function (p) { return p.txt; }),
         rep: nvRep,
         exp: q.exp
       };
     });
-
-    if (melangeQcm) {
-      for (var k = baseQuestions.length - 1; k > 0; k--) {
-        var rk = Math.floor(Math.random() * (k + 1));
-        var tq = baseQuestions[k];
-        baseQuestions[k] = baseQuestions[rk];
-        baseQuestions[rk] = tq;
-      }
-    }
-    var questions = baseQuestions.slice(0, 20);
 
     var reponsesEleve = {};
     var termine = false;
@@ -12617,6 +12672,51 @@
           "</div>" +
           "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px'>" + barresHtml + "</div>";
         bodyEl.appendChild(bilanRadar);
+
+        var liensChapEb = {
+          HTML5: { url: R + "cours/html5.html", focus: "balises sémantiques, formulaires HTML5, tableaux (rowspan/colspan) et multimédia" },
+          CSS3: { url: R + "cours/css3.html", focus: "sélecteurs (#id, .classe, pseudo-classes), modèle de boîte et Flexbox" },
+          JavaScript: { url: R + "cours/javascript.html", focus: "DOM (getElementById, .value), conversions (Number/isNaN), chaînes et événements" },
+          SQL: { url: R + "cours/sql.html", focus: "SELECT/WHERE/ORDER BY, jointures PK=FK, GROUP BY/HAVING et LMD (INSERT/UPDATE/DELETE)" },
+          PHP: { url: R + "cours/php.html", focus: "$_POST/$_GET, isset(), concaténation (.), mysqli_connect/query/fetch_array/num_rows" }
+        };
+        var chapsAReviser = Object.keys(statsChap).filter(function (ch) {
+          return statsChap[ch].ok < statsChap[ch].tot;
+        }).sort(function (a, b) {
+          return (statsChap[a].ok / statsChap[a].tot) - (statsChap[b].ok / statsChap[b].tot);
+        });
+        var blocPtsRev = document.createElement("div");
+        blocPtsRev.style.cssText = "background:#fffdf7;border:2.5px solid #23201a;border-radius:16px;padding:13px 15px;box-shadow:3px 3px 0 #f4511e;";
+        if (!chapsAReviser.length) {
+          blocPtsRev.innerHTML = "<strong style='font-size:14px;font-weight:900;color:#177245'>🎉 Points à réviser : Aucun point faible détecté — sans-faute intégral !</strong>";
+        } else {
+          blocPtsRev.innerHTML =
+            "<div style='font-size:14px;font-weight:900;color:#c0392b;margin-bottom:8px'>📌 Points à réviser en priorité (" + chapsAReviser.length + " chapitre" + (chapsAReviser.length > 1 ? "s" : "") + ")</div>" +
+            "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px'>" +
+            chapsAReviser.map(function (ch) {
+              var st = statsChap[ch];
+              var nbErr = st.tot - st.ok;
+              var info = liensChapEb[ch] || { url: R + "index.html#modules", focus: "notions essentielles du chapitre " + ch };
+              return "<div style='background:#fff5f5;border:1.5px solid #e11d48;border-radius:11px;padding:9px 11px'>" +
+                "<div style='display:flex;justify-content:space-between;align-items:center;gap:6px'>" +
+                  "<strong style='font-size:12.5px;color:#9f1239'>📖 " + esc(ch) + " (" + nbErr + " faute" + (nbErr > 1 ? "s" : "") + ")</strong>" +
+                  "<a href='" + esc(info.url) + "' style='font-size:11px;font-weight:900;color:#fff;background:#e11d48;padding:2px 8px;border-radius:999px;text-decoration:none'>Réviser →</a>" +
+                "</div>" +
+                "<div style='font-size:11.5px;color:#475569;margin-top:4px;font-weight:700'>À retravailler : " + esc(info.focus) + ".</div>" +
+              "</div>";
+            }).join("") +
+            "</div>";
+        }
+        bodyEl.appendChild(blocPtsRev);
+      }
+
+      function conseilParFauteEb(q, repIdx) {
+        var bonneTxt = q.opts[q.rep] || "";
+        var sansRep = typeof repIdx !== "number";
+        var base = sansRep
+          ? "Ne laisse aucune question vide au Bac STI : élimine d'abord les syntaxes étrangères au chapitre " + q.chap + ", puis retiens la forme exacte « " + bonneTxt + " »."
+          : "Tu as confondu « " + (q.opts[repIdx] || "") + " » avec « " + bonneTxt + " » : relis l'énoncé mot par mot et mémorise la syntaxe officielle « " + bonneTxt + " » (chapitre " + q.chap + ").";
+        return base;
       }
 
       questions.forEach(function (q, idx) {
@@ -12644,7 +12744,10 @@
           "</div>" +
           "<div style='font-size:13.5px;font-weight:800;margin-bottom:8px;color:#23201a'>" + esc(q.q) + "</div>" +
           "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px'>" + optsHtml + "</div>" +
-          (termine ? ("<div style='margin-top:8px;padding:7px 10px;border-radius:8px;background:#f3ead9;font-size:12px;font-weight:700;color:#23201a'>💡 <b>Explication :</b> " + esc(q.exp) + "</div>") : "");
+          (termine
+            ? ("<div style='margin-top:8px;padding:7px 10px;border-radius:8px;background:#f3ead9;font-size:12px;font-weight:700;color:#23201a'>💡 <b>Explication :</b> " + esc(q.exp) + "</div>" +
+               (!estOk ? "<div style='margin-top:6px;padding:7px 10px;border-radius:8px;background:#fff1f2;border:1.5px solid #fda4af;font-size:12px;font-weight:800;color:#9f1239'>🧭 <b>Conseil pour cette faute :</b> " + esc(conseilParFauteEb(q, repEl)) + "</div>" : ""))
+            : "");
 
         bodyEl.appendChild(card);
       });
@@ -12681,6 +12784,10 @@
 
     btnSubmit.addEventListener("click", corrigerExamen);
     function fermerEb() {
+      if (!termine && Object.keys(reponsesEleve).length > 0) {
+        corrigerExamen();
+        return;
+      }
       clearInterval(ivTimer);
       fond.remove();
     }

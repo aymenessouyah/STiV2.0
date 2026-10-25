@@ -39490,16 +39490,20 @@ Check your Browserslist config to be sure that your targets are set up correctly
           id="pointsFaibles"
           class="mt-6 glass rounded-3xl p-5 md:p-6 border !border-amber-400/20"
         >
-          <h4 class="font-extrabold flex items-center gap-2">
-            <i class="fa-solid fa-triangle-exclamation text-amber-300"></i> Vos
-            points faibles
-            <span id="pfCount" class="text-xs font-mono text-slate-400"></span>
-          </h4>
-          <div id="pfList" class="mt-3 grid md:grid-cols-2 gap-2"></div>
-          <div class="text-xs text-slate-400 mt-3">
-            La revue complète ci-dessous liste chaque erreur avec sa correction
-            et l'explication du cours.
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <h4 class="font-extrabold flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation text-amber-300"></i>
+              📌 Points à réviser &amp; Conseils par faute
+              <span id="pfCount" class="text-xs font-mono text-slate-400"></span>
+            </h4>
+            <a
+              href="../cours/php.html"
+              class="px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-200 text-xs font-bold hover:bg-amber-400/30"
+              >📖 Réviser le cours PHP →</a
+            >
           </div>
+          <div id="pfList" class="mt-3 grid md:grid-cols-2 gap-2"></div>
+          <div id="pfMistakes" class="mt-4 space-y-2.5"></div>
         </div>
         <div class="mt-6 grid md:grid-cols-3 gap-4">
           <div class="glass rounded-3xl p-5">
@@ -42886,10 +42890,19 @@ Check your Browserslist config to be sure that your targets are set up correctly
       }
 
       /* ============ QUIZ ENGINE ============ */
+      function entierAleatoirePhp(maxExcl) {
+        if (maxExcl <= 1) return 0;
+        if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+          const buf = new Uint32Array(1);
+          window.crypto.getRandomValues(buf);
+          return buf[0] % maxExcl;
+        }
+        return Math.floor(Math.random() * maxExcl);
+      }
       function shuffle(a) {
         a = [...a];
         for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
+          const j = entierAleatoirePhp(i + 1);
           [a[i], a[j]] = [a[j], a[i]];
         }
         return a;
@@ -42909,20 +42922,28 @@ Check your Browserslist config to be sure that your targets are set up correctly
             ? STIQuizSync.revisionIds("php")
             : null;
         const want = revPhpActif && revPhpActif.length ? pool.length : +$("qCount").value;
-        const doShuffle = $("shuffleOpt").checked;
-        if (doShuffle) pool = shuffle(pool);
-        pool = pool.slice(0, Math.min(want, pool.length));
-        if (doShuffle)
-          pool.forEach((q) => {
-            const order = shuffle([0, 1, 2, 3]);
-            q._opts = order.map((i) => q.options[i]);
-            q._ans = order.indexOf(q.answer);
-          });
-        else
-          pool.forEach((q) => {
-            q._opts = [...q.options];
-            q._ans = q.answer;
-          });
+        if ($("shuffleOpt")) $("shuffleOpt").checked = true;
+        pool = shuffle(pool).slice(0, Math.min(want, pool.length));
+        pool.forEach((q, idxQ) => {
+          const order = shuffle([0, 1, 2, 3]);
+          q._opts = order.map((i) => q.options[i]);
+          q._ans = order.indexOf(q.answer);
+          if (
+            idxQ >= 2 &&
+            q._ans === pool[idxQ - 1]._ans &&
+            q._ans === pool[idxQ - 2]._ans &&
+            q._opts.length > 1
+          ) {
+            const cur = q._ans;
+            const alt =
+              (cur + 1 + entierAleatoirePhp(q._opts.length - 1)) %
+              q._opts.length;
+            const cp = [...q._opts];
+            [cp[cur], cp[alt]] = [cp[alt], cp[cur]];
+            q._opts = cp;
+            q._ans = alt;
+          }
+        });
         quiz = {
           list: pool,
           idx: 0,
@@ -43190,7 +43211,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         updateStreakUI();
         const isLast = quiz.idx === quiz.list.length - 1;
         $("nextBtn").innerHTML = isLast
-          ? "Voir le bilan 🏁"
+          ? "Voir l'évaluation 🏁"
           : 'Question suivante <i class="fa-solid fa-arrow-right"></i>';
         $("nextBtn").classList.remove("hidden");
       }
@@ -43242,6 +43263,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
           q
         );
         updateStreakUI();
+        const isLastSkip = quiz.idx === quiz.list.length - 1;
+        $("nextBtn").innerHTML = isLastSkip
+          ? "Voir l'évaluation 🏁"
+          : 'Question suivante <i class="fa-solid fa-arrow-right"></i>';
         $("nextBtn").classList.remove("hidden");
       }
       function useFifty() {
@@ -43326,9 +43351,19 @@ Check your Browserslist config to be sure that your targets are set up correctly
         synchroniserPartiePhp(true);
       });
       function quitQuiz() {
+        if (quiz && quiz.answers && quiz.answers.length > 0) {
+          if (
+            !confirm(
+              "Terminer la partie maintenant et afficher votre évaluation (score, points à réviser et conseil par faute) ?"
+            )
+          ) {
+            return;
+          }
+          endQuiz(false);
+          return;
+        }
         clearInterval(perQInt);
         clearInterval(timerInt);
-        synchroniserPartiePhp(true);
         document.body.classList.remove("examen");
         $("quizOverlay").style.opacity = 0;
         setTimeout(() => {
@@ -43375,7 +43410,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
         clearInterval(timerInt);
         document.body.classList.remove("examen");
         quiz.elapsed = Math.round((Date.now() - quiz.start) / 1000);
-        const total = quiz.list.length,
+        const total =
+            quiz.answers.length > 0 && quiz.answers.length < quiz.list.length
+              ? quiz.answers.length
+              : quiz.list.length,
           acc = total ? Math.round((quiz.correct / total) * 100) : 0;
         // xp
         const xpGain =
@@ -43502,43 +43540,53 @@ Check your Browserslist config to be sure that your targets are set up correctly
             )}</span> ${
               a.pts ? `· <span class="text-lime-300">+${a.pts} pts</span>` : ""
             }</div>
-   <div class="text-xs text-slate-300 mt-1">💡 ${a.q.explain}</div></div>
+   <div class="text-xs text-slate-300 mt-1">💡 ${a.q.explain}</div>${
+              !a.correct
+                ? `<div class="mt-1.5 p-2 rounded-xl bg-amber-500/10 border border-amber-400/30 text-xs text-amber-200">🧭 <b>Conseil :</b> ${escapeHtml(
+                    conseilParFautePhp(a)
+                  )}</div>`
+                : ""
+            }</div>
    <span class="text-[10px] font-mono bg-white/10 rounded-full px-2 py-0.5 shrink-0">${nomCat(
      a.q.cat
    )}</span></div></div>`;
           })
           .join("");
-        // hide quiz, show results
+        // hide quiz, show results (transition garantie vers la page évaluation)
         $("quizOverlay").style.opacity = 0;
         setTimeout(() => {
           $("quizOverlay").classList.add("hidden");
           $("resultsOverlay").classList.remove("hidden");
           requestAnimationFrame(() => ($("resultsOverlay").style.opacity = 1));
           document.body.style.overflow = "hidden";
-          drawCharts();
           afficherPointsFaibles();
-          if (acc >= 60) {
-            confetti({ particleCount: 160, spread: 100, origin: { y: 0.3 } });
-            setTimeout(
-              () =>
-                confetti({
-                  particleCount: 80,
-                  angle: 60,
-                  spread: 60,
-                  origin: { x: 0 },
-                }),
-              300
-            );
-            setTimeout(
-              () =>
-                confetti({
-                  particleCount: 80,
-                  angle: 120,
-                  spread: 60,
-                  origin: { x: 1 },
-                }),
-              500
-            );
+          try {
+            drawCharts();
+          } catch (eCh) {}
+          if (acc >= 60 && typeof confetti === "function") {
+            try {
+              confetti({ particleCount: 160, spread: 100, origin: { y: 0.3 } });
+              setTimeout(
+                () =>
+                  confetti({
+                    particleCount: 80,
+                    angle: 60,
+                    spread: 60,
+                    origin: { x: 0 },
+                  }),
+                300
+              );
+              setTimeout(
+                () =>
+                  confetti({
+                    particleCount: 80,
+                    angle: 120,
+                    spread: 60,
+                    origin: { x: 1 },
+                  }),
+                500
+              );
+            } catch (eCf) {}
           }
           playTone(660, 0.15);
           setTimeout(() => playTone(880, 0.15), 150);
@@ -43670,8 +43718,35 @@ Check your Browserslist config to be sure that your targets are set up correctly
           }
         }, 200);
       }
+      const REPERES_COURS_PHP = {
+        fond: "Balises <?php … ?>, variables précédées de $, echo/print, point-virgule obligatoire et commentaires",
+        types: "Types scalaires, transtypage (int)/(float), isset() vs empty() et opérateurs === vs ==",
+        chaine: "Concaténation avec le point (.), strlen(), substr(), strpos(), strtolower()/strtoupper() et trim()",
+        tableau: "Tableaux indexés et associatifs ($t['cle']), count($t), foreach ($t as $k => $v) et in_array()",
+        date: "date('Y-m-d H:i:s'), strtotime(), time() et formats d'affichage de dates en PHP",
+        super: "$_POST['champ'], $_GET['param'], $_SERVER et vérification systématique avec isset()",
+        mysql: "mysqli_connect('localhost','root','','bd'), test d'erreur, mysqli_set_charset et mysqli_close($con)",
+        crud: "mysqli_query($con, $req), mysqli_num_rows($res) sur SELECT et mysqli_affected_rows($con) sur INSERT/UPDATE/DELETE",
+        guichet: "Liaison HTML <form action='…' method='POST'> → récupération PHP via l'attribut name='…'",
+        pages: "Squelette complet d'une page CRUD Bac STI : connexion → contrôle isset → requête SQL → affichage / retour",
+      };
+      function conseilParFautePhp(a) {
+        const q = a.q;
+        const bonne = q._opts[q._ans] || "";
+        const methode = q.hint
+          ? q.hint.replace(/<[^>]+>/g, "")
+          : REPERES_COURS_PHP[q.cat] || "Vérifie les $ sur les variables, le point (.) de concaténation et la fonction MySQLi attendue.";
+        if (a.skipped) {
+          return `Question passée — repère l'opération PHP/MySQLi centrale et retiens « ${bonne} ». Repère : ${methode}`;
+        }
+        if (a.timedOut || a.picked < 0) {
+          return `Temps écoulé — identifie d'abord la fonction ou l'opérateur clé menant à « ${bonne} ». Repère : ${methode}`;
+        }
+        return `Ne confonds plus « ${q._opts[a.picked] || ""} » avec « ${bonne} ». Repère : ${methode}`;
+      }
       function afficherPointsFaibles() {
         const zone = $("pfList");
+        const zoneFautes = $("pfMistakes");
         if (!zone || !quiz) return;
         const parCat = {};
         quiz.answers.forEach((a) => {
@@ -43684,11 +43759,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
           (x, y) => parCat[y].faux - parCat[x].faux
         );
         const pb = ids.filter((c) => parCat[c].faux > 0);
+        const erreurs = quiz.answers.filter((a) => !a.correct);
         $("pfCount").textContent = pb.length
-          ? "(" + pb.length + " monde(s) à revoir)"
-          : "";
+          ? "(" + pb.length + " chapitre(s) à réviser · " + erreurs.length + " faute(s))"
+          : "(Sans-faute !)";
         if (!ids.length) {
           zone.innerHTML = "";
+          if (zoneFautes) zoneFautes.innerHTML = "";
           return;
         }
         zone.innerHTML = ids
@@ -43696,12 +43773,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
             const d = parCat[c],
               pct = Math.round(((d.total - d.faux) / d.total) * 100);
             const ok = d.faux === 0;
+            const repere = REPERES_COURS_PHP[c] || "";
             return (
-              '<div class="pf-item ' +
+              '<div class="pf-item flex-col !items-stretch gap-1.5 ' +
               (ok ? "pf-ok" : "") +
               '">' +
+              '<div class="flex items-center gap-2.5">' +
               '<span class="text-lg">' +
-              (ok ? "✅" : "⚠️") +
+              (ok ? "✅" : "📌") +
               "</span>" +
               '<div class="flex-1 min-w-0"><div class="font-bold text-sm truncate">' +
               escapeHtml(nomCat(c)) +
@@ -43711,7 +43790,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
               " / " +
               d.total +
               " justes" +
-              (ok ? " — rien à revoir" : " — " + d.faux + " erreur(s)") +
+              (ok ? " — maîtrisé" : " — " + d.faux + " faute(s) à réviser") +
               "</div></div>" +
               '<div class="pf-bar"><i style="width:' +
               pct +
@@ -43720,10 +43799,57 @@ Check your Browserslist config to be sure that your targets are set up correctly
               (ok ? "text-emerald-300" : "text-amber-300") +
               '">' +
               pct +
-              "%</span></div>"
+              "%</span></div>" +
+              (!ok && repere
+                ? '<div class="text-[11px] text-amber-200/90 bg-amber-500/10 border border-amber-400/20 rounded-lg px-2.5 py-1">À réviser : ' +
+                  escapeHtml(repere) +
+                  "</div>"
+                : "") +
+              "</div>"
             );
           })
           .join("");
+
+        if (zoneFautes) {
+          if (!erreurs.length) {
+            zoneFautes.innerHTML =
+              '<div class="rounded-2xl bg-emerald-500/10 border border-emerald-400/30 p-3 text-xs text-emerald-300 font-bold">🎉 Aucune faute sur cette session : tous les points PHP &amp; MySQLi testés sont acquis !</div>';
+          } else {
+            zoneFautes.innerHTML =
+              '<div class="text-xs font-extrabold text-amber-300 uppercase tracking-wider">💡 Un conseil ciblé pour chacune de vos fautes (' +
+              erreurs.length +
+              ") :</div>" +
+              '<div class="max-h-72 overflow-y-auto space-y-2 pr-1">' +
+              erreurs
+                .map(
+                  (a, idx) =>
+                    '<div class="rounded-2xl bg-red-500/10 border border-red-400/25 p-3 text-xs space-y-1">' +
+                    '<div class="flex items-center justify-between gap-2">' +
+                    '<span class="font-bold text-slate-100">❌ Faute ' +
+                    (idx + 1) +
+                    " — " +
+                    escapeHtml(a.q.q) +
+                    "</span>" +
+                    '<span class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-amber-200 shrink-0">' +
+                    escapeHtml(nomCat(a.q.cat)) +
+                    "</span></div>" +
+                    '<div class="font-mono text-[11px] text-slate-300">Votre réponse : <span class="text-red-300">' +
+                    (a.picked >= 0
+                      ? escapeHtml(a.q._opts[a.picked])
+                      : a.skipped
+                      ? "passée"
+                      : "temps écoulé") +
+                    '</span> · Attendu : <span class="text-emerald-300 font-bold">' +
+                    escapeHtml(a.q._opts[a.q._ans]) +
+                    "</span></div>" +
+                    '<div class="p-2 rounded-xl bg-amber-500/10 border border-amber-400/30 text-amber-200">💡 <b>Conseil :</b> ' +
+                    escapeHtml(conseilParFautePhp(a)) +
+                    "</div></div>"
+                )
+                .join("") +
+              "</div>";
+          }
+        }
       }
       function versLeHaut() {
         window.scrollTo({ top: 0, behavior: "smooth" });

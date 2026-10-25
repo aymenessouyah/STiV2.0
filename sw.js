@@ -3,14 +3,24 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v318";
+var CACHE = "sti-atelier-v319";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v458-quiz-revision-2";
-/* Historique lots : v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v459-carte-quiz-eval";
+/* Historique lots : v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "carte-quiz-eval-v459" },
+  { url: "./assets/css/admin-saas.css", revision: "carte-quiz-eval-v459" },
+  { url: "./assets/js/admin.js", revision: "carte-quiz-eval-v459" },
+  { url: "./assets/js/acces.js", revision: "carte-quiz-eval-v459" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "carte-quiz-eval-v459" },
+  { url: "./quiz/html-css.html", revision: "carte-quiz-eval-v459" },
+  { url: "./quiz/javascript.html", revision: "carte-quiz-eval-v459" },
+  { url: "./quiz/sql.html", revision: "carte-quiz-eval-v459" },
+  { url: "./quiz/php.html", revision: "carte-quiz-eval-v459" },
+  { url: "./quiz/tableaux.html", revision: "carte-quiz-eval-v459" },
   { url: "./assets/data/quiz-banque.json", revision: "quiz-revision-2-v458" },
   { url: "./assets/js/quiz-sync.js", revision: "quiz-revision-2-v458" },
   { url: "./assets/js/quiz-tableaux.js", revision: "quiz-revision-2-v458" },

@@ -29217,13 +29217,29 @@ Check your Browserslist config to be sure that your targets are set up correctly
           /* stockage indisponible */
         }
       }
+      function entierAleatoireJs(maxExcl) {
+        if (maxExcl <= 1) return 0;
+        if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+          const buf = new Uint32Array(1);
+          window.crypto.getRandomValues(buf);
+          return buf[0] % maxExcl;
+        }
+        return Math.floor(Math.random() * maxExcl);
+      }
       function melangerTableau(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
+          const j = entierAleatoireJs(i + 1);
           [a[i], a[j]] = [a[j], a[i]];
         }
         return a;
+      }
+      function lancerConfettisSursJs(opts) {
+        if (typeof confetti === "function") {
+          try {
+            confetti(opts);
+          } catch (e) {}
+        }
       }
 
       const PRAISE = [
@@ -29388,6 +29404,11 @@ Check your Browserslist config to be sure that your targets are set up correctly
         }
 
         showHome() {
+          const gp = document.getElementById("screen-gameplay");
+          if (gp && !gp.classList.contains("hidden") && this.answeredCount > 0) {
+            this.finishGame(false);
+            return;
+          }
           clearInterval(this.timer);
           this.syncProgress(true);
           soundManager.playClick();
@@ -29794,14 +29815,14 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
           if (this.combo >= 2) {
             soundManager.playCombo(this.combo);
-            confetti({
+            lancerConfettisSursJs({
               particleCount: 20 + this.combo * 8,
               spread: 55,
               origin: { y: 0.7 },
               colors: ["#f7df1e", "#ff2d78", "#00f3ff", "#22ff88"],
             });
           } else {
-            confetti({
+            lancerConfettisSursJs({
               particleCount: 12,
               spread: 40,
               origin: { y: 0.7 },
@@ -29860,6 +29881,17 @@ Check your Browserslist config to be sure that your targets are set up correctly
               "mt-4 p-4 rounded-xl bg-rose-950/25 border border-rose-500/40 text-xs sm:text-sm text-gray-300 font-mono-code space-y-2 animate-popIn";
           }
           document.getElementById("explanation-text").innerText = text;
+          const btnNext = box.querySelector("button");
+          if (btnNext) {
+            const estFin =
+              (this.mode === "survival" && this.lives <= 0) ||
+              (this.mode === "boss" && this.bossHp <= 0) ||
+              ((this.mode === "arcade" || this.mode === "revision") &&
+                this.currentQuestionIdx >= this.questions.length - 1);
+            btnNext.textContent = estFin
+              ? "VOIR L'ÉVALUATION 🏁"
+              : "CONTINUER ➔";
+          }
           box.classList.remove("hidden");
         }
 
@@ -29912,7 +29944,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
             STIQuizSync.quitterRevision();
           }
 
-          confetti({
+          document.getElementById("screen-gameplay").classList.add("hidden");
+          document.getElementById("screen-result").classList.remove("hidden");
+          document.getElementById("nav-stats").classList.add("hidden");
+          document.getElementById("nav-stats").classList.remove("flex");
+
+          lancerConfettisSursJs({
             particleCount: 120,
             spread: 80,
             origin: { y: 0.6 },
@@ -29920,7 +29957,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           });
           setTimeout(
             () =>
-              confetti({
+              lancerConfettisSursJs({
                 particleCount: 60,
                 angle: 60,
                 spread: 60,
@@ -29930,7 +29967,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           );
           setTimeout(
             () =>
-              confetti({
+              lancerConfettisSursJs({
                 particleCount: 60,
                 angle: 120,
                 spread: 60,
@@ -29938,11 +29975,6 @@ Check your Browserslist config to be sure that your targets are set up correctly
               }),
             400
           );
-
-          document.getElementById("screen-gameplay").classList.add("hidden");
-          document.getElementById("screen-result").classList.remove("hidden");
-          document.getElementById("nav-stats").classList.add("hidden");
-          document.getElementById("nav-stats").classList.remove("flex");
 
           const acc = this.answeredCount
             ? Math.round((this.correctCount / this.answeredCount) * 100)
@@ -30014,7 +30046,32 @@ Check your Browserslist config to be sure that your targets are set up correctly
           document.getElementById("btn-haut").classList.remove("hidden");
         }
 
-        /* Points faibles : thèmes à revoir en priorité et liste défilante des erreurs */
+        conseilParFauteJs(e) {
+          const cat = String(e.category || "").toLowerCase();
+          const code = String(e.code || "").toLowerCase();
+          let astuce = "";
+          if (cat.includes("chaîne") || code.includes("substring") || code.includes("charat") || code.includes("indexof") || code.includes(".length")) {
+            astuce = "Trace les indices caractère par caractère dès 0 : length est une propriété (sans parenthèses) et substring(debut, fin) exclut l'indice fin.";
+          } else if (cat.includes("conversion") || cat.includes("type") || code.includes("parseint") || code.includes("number(") || code.includes("isnan") || code.includes("typeof")) {
+            astuce = "Vérifie toujours le type avant d'additionner : '+' avec une chaîne concatène, alors que Number(ch) / parseInt(ch, 10) convertit en nombre et isNaN(x) teste la validité.";
+          } else if (cat.includes("dom") || cat.includes("formulaire") || code.includes("getelementbyid") || code.includes(".value") || code.includes(".checked")) {
+            astuce = "Sur un formulaire HTML, lis .value pour un champ texte/select, .checked pour radio/checkbox, et retourne false pour bloquer l'envoi invalide.";
+          } else if (cat.includes("boucle") || code.includes("for") || code.includes("while")) {
+            astuce = "Déroule les 2 premières itérations au brouillon en suivant la condition d'arrêt et le pas d'incrémentation.";
+          } else if (cat.includes("tableau") || code.includes("push") || code.includes("splice") || code.includes("[")) {
+            astuce = "Un tableau JS commence à l'indice 0 et son dernier élément est à tab[tab.length - 1].";
+          } else if (cat.includes("math") || cat.includes("date")) {
+            astuce = "En JS, Math.floor tronque vers le bas, Math.round arrondit, et getMonth() renvoie un mois compris entre 0 (janvier) et 11 (décembre).";
+          } else {
+            astuce = "Exécute mentalement chaque ligne dans l'ordre en notant le type et la valeur exacte de chaque variable avant de conclure.";
+          }
+          if (e.choix === null) {
+            return "Temps écoulé — repère d'abord l'opération clé qui mène à « " + e.bonneReponse + " ». " + astuce;
+          }
+          return "Ne confonds plus « " + e.choix + " » avec « " + e.bonneReponse + " ». " + astuce;
+        }
+
+        /* Points à réviser : thèmes à revoir en priorité + 1 conseil personnalisé par faute */
         afficherPointsFaibles() {
           const bloc = document.getElementById("points-faibles");
           if (!this.journal.length) {
@@ -30042,36 +30099,54 @@ Check your Browserslist config to be sure that your targets are set up correctly
           const erreurs = this.journal.filter((e) => !e.correct);
 
           let html =
-            '<h3 class="font-heading text-base font-bold text-white flex items-center gap-2">🎯 Points faibles</h3>';
+            '<h3 class="font-heading text-base font-bold text-white flex items-center gap-2">📌 Points à réviser &amp; Conseils par faute</h3>';
 
           if (!erreurs.length) {
             html +=
               '<p class="text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 font-mono-code">' +
-              "Aucune erreur sur cette partie : rien à revoir, continue comme ça !</p>";
+              "🎉 Aucun point à réviser sur cette session : sans-faute intégral, continue comme ça !</p>";
           } else {
             html +=
-              '<div class="rounded-xl border border-rose-500/30 bg-rose-950/20 p-3 space-y-2">' +
-              '<p class="text-[11px] font-mono-code text-rose-300">Thèmes à revoir en priorité :</p>' +
+              '<div class="rounded-xl border border-rose-500/30 bg-rose-950/20 p-3 space-y-2.5">' +
+              '<div class="flex items-center justify-between gap-2 flex-wrap">' +
+              '<p class="text-[11px] font-mono-code font-bold text-rose-300">📌 Points à réviser en priorité (' +
+              faibles.length +
+              " thème" +
+              (faibles.length > 1 ? "s" : "") +
+              ") :</p>" +
+              '<div class="flex gap-1.5 flex-wrap">' +
+              '<a href="../cours/javascript.html" class="px-2.5 py-1 rounded-full bg-yellow-400/15 border border-yellow-400/40 text-yellow-300 text-[10px] font-mono-code font-bold hover:bg-yellow-400/25">📖 Cours JS →</a>' +
+              '<a href="../defis-javascript.html" class="px-2.5 py-1 rounded-full bg-cyan-400/15 border border-cyan-400/40 text-cyan-300 text-[10px] font-mono-code font-bold hover:bg-cyan-400/25">⚡ Défis JS →</a>' +
+              "</div></div>" +
               '<div class="flex flex-wrap gap-1.5">' +
               faibles
-                .map(
-                  (c) =>
+                .map((c) => {
+                  const pctOk = Math.round(
+                    ((themes[c].total - themes[c].erreurs) / themes[c].total) *
+                      100
+                  );
+                  return (
                     '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[11px] font-mono-code">' +
                     this.escapeHtml(c) +
                     ' <b class="text-rose-200">×' +
                     themes[c].erreurs +
-                    "</b></span>"
-                )
+                    " faute" +
+                    (themes[c].erreurs > 1 ? "s" : "") +
+                    " (" +
+                    pctOk +
+                    "%)</b></span>"
+                  );
+                })
                 .join("") +
               "</div></div>";
 
             html +=
-              '<div class="max-h-72 overflow-y-auto rounded-xl border border-gray-700 bg-gray-900/80">' +
+              '<div class="max-h-80 overflow-y-auto rounded-xl border border-gray-700 bg-gray-900/80">' +
               '<div class="sticky top-0 z-10 px-3 py-2 bg-gray-900/95 border-b border-gray-700 flex items-center justify-between">' +
-              '<span class="text-[11px] font-mono-code text-gray-200">Mes erreurs (' +
+              '<span class="text-[11px] font-mono-code text-gray-200">💡 Détail de tes fautes &amp; conseil par faute (' +
               erreurs.length +
               ")</span>" +
-              '<span class="text-[10px] font-mono-code text-gray-500">liste défilante</span></div>' +
+              '<span class="text-[10px] font-mono-code text-gray-500">1 conseil / faute</span></div>' +
               '<ul class="divide-y divide-gray-800">' +
               erreurs
                 .map(
@@ -30081,7 +30156,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
                     '<span class="text-[10px] font-mono-code uppercase px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">' +
                     this.escapeHtml(e.category) +
                     "</span>" +
-                    '<span class="text-[10px] font-mono-code text-gray-500">erreur ' +
+                    '<span class="text-[10px] font-mono-code text-gray-500">faute ' +
                     (i + 1) +
                     " / " +
                     erreurs.length +
@@ -30100,9 +30175,12 @@ Check your Browserslist config to be sure that your targets are set up correctly
                       : '<p class="text-[11px] font-mono-code text-rose-300">✘ Ta réponse : ' +
                         this.escapeHtml(e.choix) +
                         "</p>") +
-                    '<p class="text-[11px] text-gray-400 leading-relaxed">' +
+                    '<p class="text-[11px] text-gray-300 leading-relaxed">📖 <b>Explication :</b> ' +
                     this.escapeHtml(e.explication) +
                     "</p>" +
+                    '<div class="mt-1 p-2 rounded-lg bg-amber-500/10 border border-amber-400/30 text-[11px] text-amber-200 leading-relaxed">💡 <b>Conseil :</b> ' +
+                    this.escapeHtml(this.conseilParFauteJs(e)) +
+                    "</div>" +
                     "</li>"
                 )
                 .join("") +
