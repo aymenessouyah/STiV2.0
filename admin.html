@@ -7,7 +7,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; font-src 'self' data:; worker-src 'self'; manifest-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
 <link rel="icon" href="assets/icons/STI_by_AE.ico" />
 <link rel="manifest" href="manifest.webmanifest" />
 <title>Tableau de bord — STI V2.0</title>
@@ -1937,7 +1937,7 @@
     })();
   </script>
   <link rel="stylesheet" href="assets/fonts/fonts.css" />
-  <link rel="stylesheet" href="assets/css/admin-saas.css?v=447" />
+  <link rel="stylesheet" href="assets/css/admin-saas.css?v=448" />
 </head>
 <body class="cockpit-airbus">
 
@@ -2060,8 +2060,9 @@
   <div class="alerte-demande" id="alerte-attente">
     <span id="alerte-attente-txt">🔔 Nouvelle(s) demande(s) d'inscription en attente !</span>
   </div>
-  <div class="alerte-demande alerte-photos-attente" id="alerte-photos-attente" role="button" tabindex="0" title="Cliquer pour examiner et valider en 1 clic les photos proposées par les élèves">
-    <span id="alerte-photos-attente-txt">📸 Nouvelle(s) photo(s) de profil d'élève(s) en attente de validation !</span>
+  <div class="alerte-demande alerte-photos-attente" id="alerte-photos-attente" title="Examiner ou approuver en 1 clic toutes les photos proposées par les élèves">
+    <span id="alerte-photos-attente-txt" role="button" tabindex="0">📸 Nouvelle(s) photo(s) de profil d'élève(s) en attente de validation !</span>
+    <button type="button" class="btn-alerte-tout-valider-photos" id="btn-valider-toutes-photos-attente" title="Approuver immédiatement toutes les photos proposées en attente">✅ Approuver toutes les photos (0)</button>
   </div>
 
   <div class="vue-ensemble-corps">
@@ -2617,6 +2618,7 @@
         <div class="choix-vue-abonnes" role="tablist" aria-label="Mode d'affichage des abonnés">
           <button type="button" class="btn-vue actif" id="btn-vue-liste" data-vue="liste" title="Afficher le tableau détaillé complet">📋 Liste détaillée</button>
           <button type="button" class="btn-vue" id="btn-vue-noeuds" data-vue="noeuds" title="Afficher sous forme de cartes profil (idéal sur mobile)">🪪 Cartes</button>
+          <button type="button" class="btn-vue btn-vue-trombi" id="btn-ouvrir-trombinoscope" title="Ouvrir la planche Trombinoscope par classe (projection &amp; impression A4)">📸 Trombinoscope</button>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:600;color:var(--adm-muted)">
@@ -4517,7 +4519,7 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=302" defer></script>
-  <script src="assets/js/admin.js?v=447-zoom-photo"></script>
+  <script src="assets/js/admin.js?v=448-trombi-recadrage"></script>
   <script src="assets/js/admin-couverture.js?v=435"></script>
   <script src="assets/js/admin-revision.js?v=438"></script>
   <script src="assets/js/admin-erreurs.js?v=439"></script>
@@ -5070,5 +5072,60 @@
       }
     })();
     </script>
+
+    <!-- v448 : Modale Trombinoscope par classe (projection & impression A4) -->
+    <div class="modal-trombi-overlay" id="modal-trombinoscope-admin" role="dialog" aria-modal="true" aria-labelledby="titre-modal-trombinoscope">
+      <div class="modal-trombi-box">
+        <div class="modal-trombi-head">
+          <div>
+            <h3 id="titre-modal-trombinoscope">📸 Trombinoscope Officiel par Classe — STI V2.0</h3>
+            <p id="trombi-resume-stats">Chargement des candidats…</p>
+          </div>
+          <div class="modal-trombi-head-actions">
+            <button type="button" class="trombi-btn valider-lot" id="trombi-btn-valider-lot" style="display:none">✅ Tout approuver (0)</button>
+            <button type="button" class="trombi-btn imprimer" id="btn-imprimer-trombinoscope">🖨️ Imprimer Planche A4</button>
+            <button type="button" class="trombi-btn fermer" id="btn-fermer-trombinoscope" aria-label="Fermer le trombinoscope">✕ Fermer</button>
+          </div>
+        </div>
+        <div class="modal-trombi-filtres">
+          <select id="trombi-filtre-classe" aria-label="Filtrer par classe">
+            <option value="*">🏫 Toutes les classes</option>
+          </select>
+          <select id="trombi-filtre-lycee" aria-label="Filtrer par lycée">
+            <option value="*">🏛️ Tous les lycées</option>
+          </select>
+          <select id="trombi-filtre-etat" aria-label="Filtrer par état photo ou connexion">
+            <option value="actifs">✅ Candidats actifs &amp; Gold</option>
+            <option value="*">📌 Tous les inscrits (sauf exclus)</option>
+            <option value="en_ligne">🟢 En ligne maintenant</option>
+            <option value="avec_photo">📷 Avec photo validée</option>
+            <option value="sans_photo">⚪ Sans photo (initiales)</option>
+            <option value="photo_attente">⏳ Photo en attente de validation</option>
+          </select>
+          <input type="search" id="trombi-recherche" placeholder="🔎 Filtrer un nom / prénom…" aria-label="Rechercher un candidat dans le trombinoscope" />
+        </div>
+        <div class="trombi-grille" id="trombi-grille"></div>
+      </div>
+    </div>
+
+    <!-- v448 : Modale Carte Officielle Candidat STI V2.0 (aperçu, téléchargement PNG HD & impression) -->
+    <div class="modal-badge-sti-overlay" id="modal-carte-candidat-admin" role="dialog" aria-modal="true" aria-labelledby="titre-modal-carte-candidat">
+      <div class="modal-badge-sti-box">
+        <div class="modal-badge-sti-top">
+          <h3 id="titre-modal-carte-candidat">🪪 Carte Officielle d'Abonné STI V2.0</h3>
+          <button type="button" class="modal-badge-sti-close" id="btn-fermer-carte-candidat-admin" aria-label="Fermer">✕</button>
+        </div>
+        <div id="conteneur-carte-candidat-admin"></div>
+        <div class="modal-badge-sti-actions">
+          <button type="button" class="modal-badge-sti-btn primaire" id="btn-dl-carte-candidat-png">📥 Télécharger en PNG HD</button>
+          <button type="button" class="modal-badge-sti-btn" id="btn-print-carte-candidat">🖨️ Imprimer la carte</button>
+          <button type="button" class="modal-badge-sti-btn" id="btn-recadrer-depuis-carte">📷 Photo / Recadrer</button>
+          <button type="button" class="modal-badge-sti-btn" id="btn-fermer-carte-candidat-bas">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- v448 : Feuille d'impression dédiée A4 (Trombinoscope ou Carte individuelle) -->
+    <div id="sti-print-sheet-trombi" aria-hidden="true"></div>
     </body>
 </html>

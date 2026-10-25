@@ -140,6 +140,7 @@
       if (!src) return null;
       if (img.closest && (
         img.closest(".noeud-abonne") ||
+        img.closest(".trombi-carte") ||
         img.closest("#tb-abonnes") ||
         img.closest("#zone-detail") ||
         img.closest("#contenu-fiche-eleve") ||
@@ -153,6 +154,11 @@
     function extraireLibelleCandidat(img) {
       try {
         if (!img || !img.closest) return "";
+        var tc = img.closest(".trombi-carte");
+        if (tc) {
+          var tNom = tc.querySelector(".trombi-nom");
+          if (tNom && tNom.textContent) return tNom.textContent.trim();
+        }
         var nd = img.closest(".noeud-abonne");
         if (nd) {
           var elNom = nd.querySelector(".noeud-nom");
@@ -655,15 +661,17 @@
     if (typeof verifierNouvellesDemandes === "function") verifierNouvellesDemandes();
   }
 
-  /* v445 : Gestion Admin 1-clic des photos élèves (valider / refuser / definir / supprimer) */
+  /* v445 / v448 : Gestion Admin 1-clic & en lot des photos élèves + Studio Recadrage + Trombinoscope + Carte Candidat */
   var inputPhotoEleveAdminGlobal = null;
   var profilPhotoCibleAdmin = null;
+  var lotValidationPhotosEnCours = false;
 
-  function gererPhotoEleveAdmin(p, action, dataUrl, onDone) {
+  function gererPhotoEleveAdmin(p, action, dataUrl, onDone, optsPhoto) {
     if (!p || !p.id) return;
+    var silencieux = !!(optsPhoto && optsPhoto.silencieux);
     var patchOptimiste = { updated_at: new Date().toISOString() };
     if (action === "valider") {
-      if (!photoEleveSureAdmin(p.photo_attente)) return;
+      if (!photoEleveSureAdmin(p.photo_attente)) { if (onDone) onDone(false); return; }
       patchOptimiste.photo_url = photoEleveSureAdmin(p.photo_attente);
       patchOptimiste.photo_attente = null;
       patchOptimiste.photo_attente_le = null;
@@ -671,7 +679,7 @@
       patchOptimiste.photo_attente = null;
       patchOptimiste.photo_attente_le = null;
     } else if (action === "definir") {
-      if (!photoEleveSureAdmin(dataUrl)) return;
+      if (!photoEleveSureAdmin(dataUrl)) { if (onDone) onDone(false); return; }
       patchOptimiste.photo_url = photoEleveSureAdmin(dataUrl);
       patchOptimiste.photo_attente = null;
       patchOptimiste.photo_attente_le = null;
@@ -686,9 +694,15 @@
     function finaliserSuccesPhoto() {
       majCacheLocalProfil(p.id, patchOptimiste);
       var profFrais = profils.find(function (it) { return it && String(it.id) === String(p.id); }) || Object.assign({}, p, patchOptimiste);
-      if (typeof modalFicheEleve !== "undefined" && modalFicheEleve && modalFicheEleve.classList.contains("ouvert") &&
-          typeof ficheEleveCourant !== "undefined" && ficheEleveCourant && String(ficheEleveCourant.id) === String(p.id)) {
+      if (typeof modalFicheEleve !== "undefined" && modalFicheEleve && modalFicheEleve.classList.contains("visible") &&
+          typeof eleveFicheActif !== "undefined" && eleveFicheActif && String(eleveFicheActif.id) === String(p.id)) {
         ouvrirFicheEleve(profFrais);
+      }
+      if (typeof rafraichirTrombinoscopeSiOuvert === "function") {
+        try { rafraichirTrombinoscopeSiOuvert(); } catch (eTr) {}
+      }
+      if (typeof rafraichirCarteCandidatAdminSiOuverte === "function") {
+        try { rafraichirCarteCandidatAdminSiOuverte(profFrais); } catch (eCc) {}
       }
       if (typeof peindreListeUsersMessengerAdmin === "function") {
         try { peindreListeUsersMessengerAdmin(); } catch (eM1) {}
@@ -696,12 +710,12 @@
       if (typeof peindreConversationMessengerAdmin === "function") {
         try { peindreConversationMessengerAdmin(); } catch (eM2) {}
       }
-      if (typeof toastAdmin === "function") {
+      if (!silencieux && typeof toastAdmin === "function") {
         var msgToast = action === "valider"
           ? "✅ Photo de l'élève validée et activée partout (Tableau de bord + Roue)."
           : (action === "refuser"
             ? "🗑️ Proposition de photo refusée."
-            : (action === "definir" ? "📷 Photo de l'élève enregistrée et activée." : "🗑️ Photo de l'élève retirée."));
+            : (action === "definir" ? "📷 Photo de l'élève recadrée et enregistrée." : "🗑️ Photo de l'élève retirée."));
         toastAdmin(msgToast, "ok");
       }
       if (onDone) onDone(true);
@@ -714,13 +728,13 @@
         p_data_url: action === "definir" ? patchOptimiste.photo_url : null
       }).then(function (res) {
         if (res && res.error) {
-          if (typeof toastAdmin === "function") toastAdmin("⚠️ Erreur photo : " + (res.error.message || "opération refusée"), "err");
+          if (!silencieux && typeof toastAdmin === "function") toastAdmin("⚠️ Erreur photo : " + (res.error.message || "opération refusée"), "err");
           if (onDone) onDone(false);
           return;
         }
         finaliserSuccesPhoto();
       }).catch(function () {
-        if (typeof toastAdmin === "function") toastAdmin("⚠️ Connexion interrompue pendant la mise à jour de la photo.", "err");
+        if (!silencieux && typeof toastAdmin === "function") toastAdmin("⚠️ Connexion interrompue pendant la mise à jour de la photo.", "err");
         if (onDone) onDone(false);
       });
     } else {
@@ -728,30 +742,821 @@
     }
   }
 
-  function declencherUploadPhotoEleveAdmin(p) {
+  /* v448 : Approbation en 1 clic de toutes les photos en attente */
+  function validerToutesPhotosAttenteAdmin(listeSource) {
+    if (lotValidationPhotosEnCours) return;
+    var base = Array.isArray(listeSource) ? listeSource : profils;
+    var attente = base.filter(function (p) { return !!(p && p.id && photoEleveSureAdmin(p.photo_attente)); });
+    if (!attente.length) {
+      if (typeof toastAdmin === "function") toastAdmin("ℹ️ Aucune photo en attente à valider.", "info");
+      return;
+    }
+    lotValidationPhotosEnCours = true;
+    var btnBanniere = document.getElementById("btn-valider-toutes-photos-attente");
+    var btnTrombi = document.getElementById("trombi-btn-valider-lot");
+    if (btnBanniere) btnBanniere.disabled = true;
+    if (btnTrombi) btnTrombi.disabled = true;
+
+    var idx = 0;
+    var okCount = 0;
+    function suivant() {
+      if (idx >= attente.length) {
+        lotValidationPhotosEnCours = false;
+        if (btnBanniere) btnBanniere.disabled = false;
+        if (btnTrombi) btnTrombi.disabled = false;
+        if (typeof rafraichirTrombinoscopeSiOuvert === "function") rafraichirTrombinoscopeSiOuvert();
+        if (typeof toastAdmin === "function") {
+          toastAdmin("✅ " + okCount + " / " + attente.length + " photo(s) d'élève(s) approuvée(s) et activée(s) !", okCount > 0 ? "ok" : "err");
+        }
+        return;
+      }
+      var cur = attente[idx++];
+      if (btnBanniere) btnBanniere.textContent = "⏳ Validation " + idx + "/" + attente.length + "…";
+      if (btnTrombi) btnTrombi.textContent = "⏳ " + idx + "/" + attente.length + "…";
+      gererPhotoEleveAdmin(cur, "valider", null, function (ok) {
+        if (ok) okCount++;
+        suivant();
+      }, { silencieux: true });
+    }
+    suivant();
+  }
+
+  /* v448 : Studio Recadrage Photo Interactif (glisser + zoom + webcam) côté Admin */
+  var studioPhotoAdminDom = null;
+  function ouvrirStudioPhotoAdmin(p) {
     if (!p || !p.id) return;
     profilPhotoCibleAdmin = p;
-    if (!inputPhotoEleveAdminGlobal) {
-      inputPhotoEleveAdminGlobal = document.createElement("input");
-      inputPhotoEleveAdminGlobal.type = "file";
-      inputPhotoEleveAdminGlobal.accept = "image/jpeg,image/png,image/webp";
-      inputPhotoEleveAdminGlobal.style.display = "none";
-      document.body.appendChild(inputPhotoEleveAdminGlobal);
-      inputPhotoEleveAdminGlobal.addEventListener("change", function () {
-        var f = inputPhotoEleveAdminGlobal.files && inputPhotoEleveAdminGlobal.files[0];
-        inputPhotoEleveAdminGlobal.value = "";
-        var cible = profilPhotoCibleAdmin;
-        if (!f || !cible) return;
-        compresserPhotoEleveAdmin(f, function (dataUrl) {
-          gererPhotoEleveAdmin(cible, "definir", dataUrl);
-        }, function (msgErr) {
-          if (typeof toastAdmin === "function") toastAdmin("⚠️ " + msgErr, "err");
-          else alert(msgErr);
+    if (!studioPhotoAdminDom) {
+      var ov = document.createElement("div");
+      ov.id = "adm-studio-photo-overlay";
+      ov.setAttribute("role", "dialog");
+      ov.setAttribute("aria-modal", "true");
+      ov.innerHTML =
+        "<div class='studio-photo-box'>" +
+          "<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px'>" +
+            "<strong id='adm-studio-photo-titre' style='font-size:15px;font-weight:900'>📸 Studio Photo Candidat</strong>" +
+            "<button type='button' id='adm-studio-fermer' class='trombi-act-btn' style='padding:4px 9px'>✕</button>" +
+          "</div>" +
+          "<div style='display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-bottom:6px'>" +
+            "<button type='button' id='adm-studio-btn-file' class='trombi-btn' style='padding:6px 12px;font-size:11.5px'>📁 Choisir une image</button>" +
+            "<button type='button' id='adm-studio-btn-cam' class='trombi-btn' style='padding:6px 12px;font-size:11.5px'>🎥 Webcam / Caméra</button>" +
+            "<button type='button' id='adm-studio-btn-snap' class='trombi-btn valider-lot' style='display:none;padding:6px 12px;font-size:11.5px'>📸 Capturer</button>" +
+            "<input type='file' id='adm-studio-inp-file' accept='image/jpeg,image/png,image/webp' style='display:none' />" +
+          "</div>" +
+          "<div class='studio-photo-stage' id='adm-studio-stage' title='Glisser avec la souris ou le doigt pour centrer le visage'>" +
+            "<canvas id='adm-studio-canvas' width='220' height='220' style='width:220px;height:220px;display:block'></canvas>" +
+            "<video id='adm-studio-video' autoplay playsinline muted style='display:none;position:absolute;inset:0;width:220px;height:220px;object-fit:cover;transform:scaleX(-1)'></video>" +
+            "<div class='studio-photo-guide'></div>" +
+          "</div>" +
+          "<div style='display:flex;align-items:center;gap:8px;margin:8px 0 4px'>" +
+            "<span style='font-size:11.5px;font-weight:800'>🔍 Zoom</span>" +
+            "<input type='range' id='adm-studio-zoom' min='100' max='300' value='100' style='flex:1;accent-color:var(--adm-accent)' />" +
+            "<button type='button' id='adm-studio-reset' class='trombi-act-btn' title='Recentrer'>↺</button>" +
+          "</div>" +
+          "<div id='adm-studio-aide' style='font-size:11px;color:var(--adm-muted);text-align:center;margin-bottom:10px;font-weight:700'>Glissez l'image et ajustez le zoom pour centrer le visage dans le cercle.</div>" +
+          "<div style='display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap'>" +
+            "<button type='button' id='adm-studio-annuler' class='trombi-btn' style='padding:7px 13px;font-size:12px'>Annuler</button>" +
+            "<button type='button' id='adm-studio-valider' class='trombi-btn valider-lot' style='padding:7px 15px;font-size:12px'>✅ Enregistrer ce cadrage</button>" +
+          "</div>" +
+        "</div>";
+      document.body.appendChild(ov);
+
+      var cv = ov.querySelector("#adm-studio-canvas");
+      var ctx = cv.getContext("2d");
+      var vid = ov.querySelector("#adm-studio-video");
+      var stage = ov.querySelector("#adm-studio-stage");
+      var rng = ov.querySelector("#adm-studio-zoom");
+      var inpF = ov.querySelector("#adm-studio-inp-file");
+      var btnSnap = ov.querySelector("#adm-studio-btn-snap");
+      var aide = ov.querySelector("#adm-studio-aide");
+      var state = { img: null, zoom: 1, ox: 0, oy: 0, drag: false, sx: 0, sy: 0, stream: null };
+
+      function stopCam() {
+        if (state.stream) {
+          try { state.stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+          state.stream = null;
+        }
+        try { vid.srcObject = null; } catch (e2) {}
+        vid.style.display = "none";
+        btnSnap.style.display = "none";
+      }
+
+      function dessiner() {
+        ctx.fillStyle = "#1e293b";
+        ctx.fillRect(0, 0, 220, 220);
+        if (!state.img) {
+          ctx.fillStyle = "#94a3b8";
+          ctx.font = "700 12px 'Comic Sans MS', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("Choisissez une photo", 110, 104);
+          ctx.fillText("ou activez la webcam", 110, 122);
+          return;
+        }
+        var iw = state.img.naturalWidth || state.img.width || 220;
+        var ih = state.img.naturalHeight || state.img.height || 220;
+        var baseScale = Math.max(220 / iw, 220 / ih);
+        var sc = baseScale * state.zoom;
+        var dw = iw * sc;
+        var dh = ih * sc;
+        var maxOx = Math.max(0, (dw - 220) / 2);
+        var maxOy = Math.max(0, (dh - 220) / 2);
+        if (state.ox > maxOx) state.ox = maxOx;
+        if (state.ox < -maxOx) state.ox = -maxOx;
+        if (state.oy > maxOy) state.oy = maxOy;
+        if (state.oy < -maxOy) state.oy = -maxOy;
+        var dx = (220 - dw) / 2 + state.ox;
+        var dy = (220 - dh) / 2 + state.oy;
+        ctx.drawImage(state.img, dx, dy, dw, dh);
+      }
+
+      function chargerDataUrlDansStudio(dUrl) {
+        stopCam();
+        if (!dUrl) { state.img = null; dessiner(); return; }
+        var im = new Image();
+        im.onload = function () {
+          state.img = im;
+          state.zoom = 1;
+          state.ox = 0;
+          state.oy = 0;
+          rng.value = "100";
+          dessiner();
+        };
+        im.src = dUrl;
+      }
+
+      function fermerStudio() {
+        stopCam();
+        ov.classList.remove("ouvert");
+      }
+
+      ov.querySelector("#adm-studio-fermer").addEventListener("click", fermerStudio);
+      ov.querySelector("#adm-studio-annuler").addEventListener("click", fermerStudio);
+      ov.addEventListener("click", function (ev) { if (ev.target === ov) fermerStudio(); });
+      ov.querySelector("#adm-studio-btn-file").addEventListener("click", function () { inpF.value = ""; inpF.click(); });
+      inpF.addEventListener("change", function () {
+        var f = inpF.files && inpF.files[0];
+        if (!f) return;
+        if (f.size > 12 * 1024 * 1024) { aide.textContent = "⚠️ Image trop volumineuse (max 12 Mo)."; return; }
+        var rd = new FileReader();
+        rd.onload = function () {
+          aide.textContent = "Glissez l'image et ajustez le zoom pour centrer le visage.";
+          chargerDataUrlDansStudio(String(rd.result || ""));
+        };
+        rd.readAsDataURL(f);
+      });
+
+      ov.querySelector("#adm-studio-btn-cam").addEventListener("click", function () {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          aide.textContent = "⚠️ Caméra non disponible sur ce navigateur — utilisez « Choisir une image ».";
+          return;
+        }
+        stopCam();
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 640 } }, audio: false }).then(function (str) {
+          state.stream = str;
+          vid.srcObject = str;
+          vid.style.display = "block";
+          btnSnap.style.display = "inline-block";
+          aide.textContent = "🎥 Placez le visage dans le cercle puis cliquez sur « 📸 Capturer ».";
+        }).catch(function () {
+          aide.textContent = "⚠️ Accès caméra refusé ou indisponible — utilisez « Choisir une image ».";
         });
       });
+
+      btnSnap.addEventListener("click", function () {
+        if (!state.stream) return;
+        var vw = vid.videoWidth || 480;
+        var vh = vid.videoHeight || 480;
+        var tmp = document.createElement("canvas");
+        tmp.width = vw;
+        tmp.height = vh;
+        var tctx = tmp.getContext("2d");
+        tctx.translate(vw, 0);
+        tctx.scale(-1, 1);
+        tctx.drawImage(vid, 0, 0, vw, vh);
+        var snapUrl = tmp.toDataURL("image/jpeg", 0.90);
+        aide.textContent = "✅ Photo capturée ! Ajustez le zoom/cadrage si besoin.";
+        chargerDataUrlDansStudio(snapUrl);
+      });
+
+      rng.addEventListener("input", function () {
+        state.zoom = Math.max(1, Math.min(3, (Number(rng.value) || 100) / 100));
+        dessiner();
+      });
+      ov.querySelector("#adm-studio-reset").addEventListener("click", function () {
+        state.zoom = 1; state.ox = 0; state.oy = 0; rng.value = "100"; dessiner();
+      });
+
+      stage.addEventListener("pointerdown", function (ev) {
+        if (!state.img || vid.style.display === "block") return;
+        state.drag = true;
+        state.sx = ev.clientX - state.ox;
+        state.sy = ev.clientY - state.oy;
+        try { stage.setPointerCapture(ev.pointerId); } catch (e) {}
+      });
+      stage.addEventListener("pointermove", function (ev) {
+        if (!state.drag) return;
+        state.ox = ev.clientX - state.sx;
+        state.oy = ev.clientY - state.sy;
+        dessiner();
+      });
+      stage.addEventListener("pointerup", function () { state.drag = false; });
+      stage.addEventListener("pointercancel", function () { state.drag = false; });
+      stage.addEventListener("wheel", function (ev) {
+        if (!state.img || vid.style.display === "block") return;
+        ev.preventDefault();
+        var nv = Math.max(100, Math.min(300, (Number(rng.value) || 100) + (ev.deltaY < 0 ? 12 : -12)));
+        rng.value = String(nv);
+        state.zoom = nv / 100;
+        dessiner();
+      }, { passive: false });
+
+      ov.querySelector("#adm-studio-valider").addEventListener("click", function () {
+        if (vid.style.display === "block" && state.stream) {
+          btnSnap.click();
+          return;
+        }
+        if (!state.img || !profilPhotoCibleAdmin) {
+          aide.textContent = "⚠️ Choisissez d'abord une image ou prenez une photo.";
+          return;
+        }
+        dessiner();
+        var out = cv.toDataURL("image/webp", 0.80);
+        if (!/^data:image\/webp;base64,/i.test(out) || out.length > 46000) out = cv.toDataURL("image/jpeg", 0.78);
+        if (out.length > 46000) out = cv.toDataURL("image/jpeg", 0.62);
+        if (out.length > 46000) out = cv.toDataURL("image/jpeg", 0.48);
+        if (!photoEleveSureAdmin(out)) {
+          aide.textContent = "⚠️ Impossible de compresser sous la limite autorisée.";
+          return;
+        }
+        var cible = profilPhotoCibleAdmin;
+        fermerStudio();
+        gererPhotoEleveAdmin(cible, "definir", out);
+      });
+
+      studioPhotoAdminDom = {
+        ov: ov,
+        charger: chargerDataUrlDansStudio,
+        titre: ov.querySelector("#adm-studio-photo-titre"),
+        aide: aide,
+        inpF: inpF
+      };
     }
-    inputPhotoEleveAdminGlobal.click();
+
+    var nomC = nomPrenomTexte(p) || contact(p) || "Candidat";
+    studioPhotoAdminDom.titre.textContent = "📸 Photo — " + nomC;
+    var existante = photoEleveSureAdmin(p.photo_attente) || photoEleveSureAdmin(p.photo_url);
+    studioPhotoAdminDom.aide.textContent = existante
+      ? "Glissez/zoomez pour recadrer, ou choisissez une nouvelle photo / webcam."
+      : "Importez une image ou utilisez la caméra, puis centrez le visage.";
+    studioPhotoAdminDom.charger(existante || "");
+    studioPhotoAdminDom.ov.classList.add("ouvert");
+    if (!existante) {
+      setTimeout(function () {
+        try { studioPhotoAdminDom.inpF.value = ""; } catch (e) {}
+      }, 40);
+    }
   }
+
+  function declencherUploadPhotoEleveAdmin(p) {
+    ouvrirStudioPhotoAdmin(p);
+  }
+
+  /* v448 : Trombinoscope par classe & Carte Officielle Candidat STI V2.0 (Admin) */
+  var candidatCarteAdminActif = null;
+  function idMatriculeCandidatSTI(p) {
+    var cl = String((p && p.classe) || "STI").replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 5) || "STI";
+    var raw = String((p && (p.id || p.email)) || "0000");
+    var h = 0;
+    for (var i = 0; i < raw.length; i++) h = ((h * 31) + raw.charCodeAt(i)) % 10000;
+    return "STI-" + cl + "-" + String(1000 + (h % 9000));
+  }
+
+  function construireHtmlCarteCandidatSTI(p) {
+    var ph = photoEleveSureAdmin(p && p.photo_url);
+    var ini = initialesPourProfil(p);
+    var isG = estGold(p);
+    var enL = estEnLigne(p && p.id);
+    var np = nomPrenomTexte(p) || (p && p.email) || "Candidat STI";
+    var cl = (p && p.classe) || "—";
+    var lyc = lyceePropre(p);
+    var mat = idMatriculeCandidatSTI(p);
+    var roleCls = isG ? "b-sti-role-pill gold" : "b-sti-role-pill candidat";
+    var roleTxt = isG ? "👑 ABONNÉ GOLD" : "🎓 CANDIDAT OFFICIEL";
+    var stTxt = enL ? "● EN LIGNE" : (p && p.statut === "actif" ? "● ACTIF" : ("● " + String((p && p.statut) || "INSCRIT").toUpperCase()));
+    var avatarHtml = ph
+      ? "<img class='b-sti-avatar-img' src='" + echHtml(ph) + "' alt='' />"
+      : "<div class='b-sti-avatar-ini'>" + echHtml(ini) + "</div>";
+    return (
+      "<div class='badge-sti-id-card badge-sti-modal-card' id='carte-candidat-sti-visuel'>" +
+        "<div class='b-sti-head'>" +
+          "<div class='b-sti-brand'>" +
+            "<span class='b-sti-logo-box'><img src='assets/icons/sti-icon-512.png' alt='Logo STI V2.0' /></span>" +
+            "<span class='b-sti-brand-txt'><b>STI</b> <em>V2.0</em></span>" +
+          "</div>" +
+          "<span class='" + roleCls + "'>" + roleTxt + "</span>" +
+        "</div>" +
+        "<div class='b-sti-body'>" +
+          "<div class='b-sti-avatar-col'>" +
+            "<div class='b-sti-avatar-ring'>" + avatarHtml + "</div>" +
+            "<span class='b-sti-avatar-seal'><img src='assets/icons/sti-icon-512.png' alt='' aria-hidden='true' /></span>" +
+          "</div>" +
+          "<div class='b-sti-fields'>" +
+            "<div class='b-sti-field'>" +
+              "<span class='b-sti-lbl'>NOM &amp; PRÉNOM :</span>" +
+              "<strong class='b-sti-val b-sti-nom'>" + echHtml(np) + "</strong>" +
+            "</div>" +
+            "<div class='b-sti-field-grid'>" +
+              "<div class='b-sti-field'>" +
+                "<span class='b-sti-lbl'>ID CANDIDAT :</span>" +
+                "<strong class='b-sti-val b-sti-mono'>" + echHtml(mat) + "</strong>" +
+              "</div>" +
+              "<div class='b-sti-field'>" +
+                "<span class='b-sti-lbl'>STATUT :</span>" +
+                "<strong class='b-sti-val b-sti-statut'>" + echHtml(stTxt) + "</strong>" +
+              "</div>" +
+            "</div>" +
+            "<div class='b-sti-field'>" +
+              "<span class='b-sti-lbl'>CLASSE &amp; ÉTABLISSEMENT :</span>" +
+              "<strong class='b-sti-val b-sti-fn'>" + echHtml(cl + " · " + lyc) + "</strong>" +
+            "</div>" +
+          "</div>" +
+        "</div>" +
+        "<div class='b-sti-foot'>" +
+          "<div class='b-sti-foot-txt'>" +
+            "<strong>STI V2.0 — Plateforme Technologique &amp; Services</strong>" +
+            "<span>Carte Officielle d'Abonné · Année 2026/2027 · By A'e</span>" +
+          "</div>" +
+          "<span class='b-sti-qr-box'><img src='assets/images/qr-stiv2.png' alt='QR STI V2.0' /></span>" +
+        "</div>" +
+      "</div>"
+    );
+  }
+
+  function telechargerCarteCandidatPngHD(p, btnCible) {
+    if (!p) return;
+    var txtOrig = btnCible ? btnCible.textContent : "";
+    if (btnCible) btnCible.textContent = "⏳ Génération PNG HD…";
+    function chargerIm(src) {
+      return new Promise(function (resolve) {
+        if (!src) { resolve(null); return; }
+        var im = new Image();
+        im.onload = function () { resolve(im); };
+        im.onerror = function () { resolve(null); };
+        im.src = src;
+      });
+    }
+    function rRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+    var phSrc = photoEleveSureAdmin(p.photo_url);
+    Promise.all([
+      chargerIm("assets/icons/sti-icon-512.png"),
+      chargerIm(phSrc),
+      chargerIm("assets/images/qr-stiv2.png")
+    ]).then(function (imgs) {
+      var logo = imgs[0], photo = imgs[1], qr = imgs[2];
+      var cv = document.createElement("canvas");
+      cv.width = 1600;
+      cv.height = 1010;
+      var ctx = cv.getContext("2d");
+      var isG = estGold(p);
+      var accent = isG ? "#d97706" : "#0284c7";
+      var fontFam = '"Comic Sans MS", "Comic Neue", cursive, sans-serif';
+
+      rRect(ctx, 24, 24, 1552, 962, 64);
+      var gBg = ctx.createLinearGradient(0, 0, 1600, 1010);
+      gBg.addColorStop(0, "#ffffff");
+      gBg.addColorStop(1, "#f1f5f9");
+      ctx.fillStyle = gBg;
+      ctx.fill();
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = accent;
+      ctx.stroke();
+
+      ctx.save();
+      rRect(ctx, 28, 28, 1544, 954, 60);
+      ctx.clip();
+      ctx.fillStyle = "#e2e8f0";
+      ctx.fillRect(24, 790, 1552, 196);
+
+      if (logo) {
+        ctx.save();
+        rRect(ctx, 96, 82, 120, 120, 28);
+        ctx.clip();
+        ctx.drawImage(logo, 96, 82, 120, 120);
+        ctx.restore();
+      }
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 66px " + fontFam;
+      ctx.fillText("STI V2.0", 238, 164);
+
+      rRect(ctx, 1060, 96, 430, 86, 43);
+      ctx.fillStyle = isG ? "#f59e0b" : "#0284c7";
+      ctx.fill();
+      ctx.fillStyle = isG ? "#451a03" : "#ffffff";
+      ctx.font = "900 30px " + fontFam;
+      ctx.textAlign = "center";
+      ctx.fillText(isG ? "👑 ABONNÉ GOLD" : "🎓 CANDIDAT STI", 1275, 150);
+      ctx.textAlign = "left";
+
+      /* Avatar rond */
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(285, 485, 168, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fillStyle = "#0f172a";
+      ctx.fill();
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = accent;
+      ctx.stroke();
+      ctx.clip();
+      if (photo) {
+        ctx.drawImage(photo, 117, 317, 336, 336);
+      } else {
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "900 108px " + fontFam;
+        ctx.textAlign = "center";
+        ctx.fillText(initialesPourProfil(p), 285, 522);
+        ctx.textAlign = "left";
+      }
+      ctx.restore();
+
+      var np = (nomPrenomTexte(p) || p.email || "Candidat STI").slice(0, 34);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "800 24px " + fontFam;
+      ctx.fillText("NOM & PRÉNOM :", 520, 345);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 50px " + fontFam;
+      ctx.fillText(np, 520, 405);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "800 24px " + fontFam;
+      ctx.fillText("ID CANDIDAT :", 520, 490);
+      ctx.fillText("STATUT :", 1040, 490);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 38px " + fontFam;
+      ctx.fillText(idMatriculeCandidatSTI(p), 520, 540);
+      ctx.fillStyle = "#15803d";
+      ctx.fillText("● ACTIF", 1040, 540);
+
+      ctx.fillStyle = "#64748b";
+      ctx.font = "800 24px " + fontFam;
+      ctx.fillText("CLASSE & ÉTABLISSEMENT :", 520, 628);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 38px " + fontFam;
+      ctx.fillText(((p.classe || "—") + " · " + lyceePropre(p)).slice(0, 42), 520, 680);
+
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 32px " + fontFam;
+      ctx.fillText("STI V2.0 — Plateforme Technologique & Services", 96, 868);
+      ctx.fillStyle = "#475569";
+      ctx.font = "700 26px " + fontFam;
+      ctx.fillText("Carte Officielle d'Abonné · By Aymen Essouyah", 96, 916);
+
+      if (qr) {
+        rRect(ctx, 1344, 810, 148, 148, 22);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.drawImage(qr, 1352, 818, 132, 132);
+      }
+      ctx.restore();
+
+      var a = document.createElement("a");
+      var slug = String(nomPrenomTexte(p) || "candidat").replace(/[^A-Za-z0-9_-]+/g, "-");
+      a.download = "Carte-STI-V2-" + slug + ".png";
+      a.href = cv.toDataURL("image/png");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      if (btnCible) {
+        btnCible.textContent = "✅ Carte PNG téléchargée !";
+        setTimeout(function () { btnCible.textContent = txtOrig; }, 2000);
+      }
+    });
+  }
+
+  function ouvrirCarteCandidatAdmin(p) {
+    if (!p) return;
+    candidatCarteAdminActif = p;
+    var mod = document.getElementById("modal-carte-candidat-admin");
+    var cont = document.getElementById("conteneur-carte-candidat-admin");
+    if (!mod || !cont) return;
+    cont.innerHTML = construireHtmlCarteCandidatSTI(p);
+    mod.classList.add("ouvert");
+  }
+
+  function rafraichirCarteCandidatAdminSiOuverte(profFrais) {
+    var mod = document.getElementById("modal-carte-candidat-admin");
+    if (!mod || !mod.classList.contains("ouvert") || !candidatCarteAdminActif) return;
+    if (profFrais && String(profFrais.id) === String(candidatCarteAdminActif.id)) {
+      candidatCarteAdminActif = profFrais;
+      var cont = document.getElementById("conteneur-carte-candidat-admin");
+      if (cont) cont.innerHTML = construireHtmlCarteCandidatSTI(profFrais);
+    }
+  }
+
+  function obtenirProfilsFiltresTrombinoscope() {
+    var selCl = document.getElementById("trombi-filtre-classe");
+    var selLy = document.getElementById("trombi-filtre-lycee");
+    var selEt = document.getElementById("trombi-filtre-etat");
+    var inpRech = document.getElementById("trombi-recherche");
+    var vCl = selCl ? selCl.value : "*";
+    var vLy = selLy ? selLy.value : "*";
+    var vEt = selEt ? selEt.value : "actifs";
+    var q = inpRech ? String(inpRech.value || "").trim().toLowerCase() : "";
+
+    return profils.filter(function (p) {
+      if (!p || estClasseProfLabo(p.classe)) return false;
+      if (vCl !== "*" && String(p.classe || "—") !== vCl) return false;
+      if (vLy !== "*" && lyceePropre(p) !== vLy) return false;
+      if (vEt === "actifs" && p.statut !== "actif" && !estGold(p)) return false;
+      if (vEt === "*" && p.statut === "exclu") return false;
+      if (vEt === "en_ligne" && !estEnLigne(p.id)) return false;
+      if (vEt === "avec_photo" && !photoEleveSureAdmin(p.photo_url)) return false;
+      if (vEt === "sans_photo" && !!photoEleveSureAdmin(p.photo_url)) return false;
+      if (vEt === "photo_attente" && !photoEleveSureAdmin(p.photo_attente)) return false;
+      if (q) {
+        var hay = (nomPrenomTexte(p) + " " + (p.email || "") + " " + (p.classe || "") + " " + lyceePropre(p)).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    }).sort(function (a, b) {
+      var ca = String(a.classe || "").localeCompare(String(b.classe || ""), "fr");
+      if (ca !== 0) return ca;
+      return nomPrenomTexte(a).localeCompare(nomPrenomTexte(b), "fr");
+    });
+  }
+
+  function rendreTrombinoscopeAdmin() {
+    var grille = document.getElementById("trombi-grille");
+    var statsEl = document.getElementById("trombi-resume-stats");
+    var btnLot = document.getElementById("trombi-btn-valider-lot");
+    if (!grille) return;
+    var liste = obtenirProfilsFiltresTrombinoscope();
+    var nbPhoto = liste.filter(function (p) { return !!photoEleveSureAdmin(p.photo_url); }).length;
+    var nbOnline = liste.filter(function (p) { return estEnLigne(p.id); }).length;
+    var attenteListe = liste.filter(function (p) { return !!photoEleveSureAdmin(p.photo_attente); });
+
+    if (statsEl) {
+      statsEl.textContent = "👥 " + liste.length + " candidat(s) · 📷 " + nbPhoto + " avec photo validée · 🟢 " + nbOnline + " en ligne maintenant";
+    }
+    if (btnLot) {
+      if (attenteListe.length > 0) {
+        btnLot.style.display = "inline-flex";
+        btnLot.textContent = "✅ Tout approuver (" + attenteListe.length + ")";
+        btnLot.onclick = function () { validerToutesPhotosAttenteAdmin(attenteListe); };
+      } else {
+        btnLot.style.display = "none";
+      }
+    }
+
+    if (!liste.length) {
+      grille.innerHTML = "<div style='grid-column:1/-1;text-align:center;padding:36px 16px;color:var(--adm-muted);font-weight:800'>Aucun candidat ne correspond aux filtres sélectionnés.</div>";
+      return;
+    }
+
+    grille.innerHTML = "";
+    liste.forEach(function (p) {
+      var ph = photoEleveSureAdmin(p.photo_url);
+      var phAtt = photoEleveSureAdmin(p.photo_attente);
+      var enL = estEnLigne(p.id);
+      var isG = estGold(p);
+      var ini = initialesPourProfil(p);
+      var np = nomPrenomTexte(p) || contact(p);
+
+      var card = document.createElement("div");
+      card.className = "trombi-carte" + (enL ? " est-en-ligne" : "");
+
+      var wrapP = document.createElement("div");
+      wrapP.className = "trombi-portrait-wrap";
+      var port = document.createElement("div");
+      port.className = "trombi-portrait";
+      if (ph) {
+        var im = document.createElement("img");
+        im.src = ph;
+        im.alt = np;
+        port.appendChild(im);
+      } else {
+        port.textContent = ini;
+      }
+      wrapP.appendChild(port);
+      if (isG) {
+        var cr = document.createElement("span");
+        cr.className = "trombi-crown-gold";
+        cr.textContent = "👑 GOLD";
+        wrapP.appendChild(cr);
+      }
+      if (enL) {
+        var dot = document.createElement("span");
+        dot.className = "trombi-dot-online";
+        dot.title = "En ligne maintenant";
+        wrapP.appendChild(dot);
+      }
+      card.appendChild(wrapP);
+
+      var nomDiv = document.createElement("div");
+      nomDiv.className = "trombi-nom";
+      nomDiv.textContent = np;
+      card.appendChild(nomDiv);
+
+      var metaDiv = document.createElement("div");
+      metaDiv.className = "trombi-meta";
+      metaDiv.textContent = "🏫 " + (p.classe || "—") + " · " + lyceePropre(p);
+      card.appendChild(metaDiv);
+
+      if (phAtt) {
+        var strip = document.createElement("div");
+        strip.className = "trombi-attente-strip";
+        strip.innerHTML =
+          "<img src='" + echHtml(phAtt) + "' alt='Photo en attente' />" +
+          "<span style='font-size:10px;font-weight:900;color:#b45309'>⏳ À valider</span>" +
+          "<span style='display:inline-flex;gap:3px'>" +
+            "<button type='button' class='btn-mod-photo valider' style='padding:2px 6px;font-size:10px' title='Approuver cette photo'>✅</button>" +
+            "<button type='button' class='btn-mod-photo refuser' style='padding:2px 6px;font-size:10px' title='Refuser'>❌</button>" +
+          "</span>";
+        var btnsM = strip.querySelectorAll("button");
+        btnsM[0].addEventListener("click", function (ev) { ev.stopPropagation(); gererPhotoEleveAdmin(p, "valider"); });
+        btnsM[1].addEventListener("click", function (ev) { ev.stopPropagation(); gererPhotoEleveAdmin(p, "refuser"); });
+        card.appendChild(strip);
+      }
+
+      var acts = document.createElement("div");
+      acts.className = "trombi-actions";
+      function mkBtn(lbl, tit, fn) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "trombi-act-btn";
+        b.textContent = lbl;
+        b.title = tit;
+        b.addEventListener("click", function (ev) { ev.stopPropagation(); fn(); });
+        acts.appendChild(b);
+      }
+      mkBtn("🪪 Carte", "Ouvrir la Carte Officielle STI V2.0 de cet élève", function () { ouvrirCarteCandidatAdmin(p); });
+      mkBtn("📷 Photo", "Ajouter ou recadrer la photo de cet élève", function () { ouvrirStudioPhotoAdmin(p); });
+      mkBtn("📂 Fiche", "Ouvrir le dossier complet de l'élève", function () {
+        fermerTrombinoscopeAdmin();
+        ouvrirFicheEleve(p);
+      });
+      card.appendChild(acts);
+      grille.appendChild(card);
+    });
+  }
+
+  function peuplerFiltresTrombinoscopeAdmin() {
+    var selCl = document.getElementById("trombi-filtre-classe");
+    var selLy = document.getElementById("trombi-filtre-lycee");
+    var mainCl = document.getElementById("filtre-classe");
+    var mainLy = document.getElementById("filtre-lycee");
+    if (selCl) {
+      var classesMap = {};
+      profils.forEach(function (p) {
+        if (p && p.classe && !estClasseProfLabo(p.classe)) classesMap[p.classe] = true;
+      });
+      var clList = Object.keys(classesMap).sort(function (a, b) { return a.localeCompare(b, "fr"); });
+      var prevCl = selCl.getAttribute("data-init") ? selCl.value : ((mainCl && mainCl.value !== "*") ? mainCl.value : "*");
+      selCl.innerHTML = "<option value='*'>🏫 Toutes les classes</option>" +
+        clList.map(function (c) { return "<option value='" + echHtml(c) + "'>🏫 " + echHtml(c) + "</option>"; }).join("");
+      selCl.value = (prevCl !== "*" && classesMap[prevCl]) ? prevCl : "*";
+      selCl.setAttribute("data-init", "1");
+    }
+    if (selLy) {
+      var lyMap = {};
+      profils.forEach(function (p) {
+        var l = lyceePropre(p);
+        if (l && l !== "—" && !estClasseProfLabo(p.classe)) lyMap[l] = true;
+      });
+      var lyList = Object.keys(lyMap).sort(function (a, b) { return a.localeCompare(b, "fr"); });
+      var prevLy = selLy.getAttribute("data-init") ? selLy.value : ((mainLy && mainLy.value !== "*") ? mainLy.value : "*");
+      selLy.innerHTML = "<option value='*'>🏛️ Tous les lycées</option>" +
+        lyList.map(function (l) { return "<option value='" + echHtml(l) + "'>🏛️ " + echHtml(l) + "</option>"; }).join("");
+      selLy.value = (prevLy !== "*" && lyMap[prevLy]) ? prevLy : "*";
+      selLy.setAttribute("data-init", "1");
+    }
+  }
+
+  function ouvrirTrombinoscopeAdmin() {
+    var mod = document.getElementById("modal-trombinoscope-admin");
+    if (!mod) return;
+    peuplerFiltresTrombinoscopeAdmin();
+    rendreTrombinoscopeAdmin();
+    mod.classList.add("ouvert");
+  }
+
+  function fermerTrombinoscopeAdmin() {
+    var mod = document.getElementById("modal-trombinoscope-admin");
+    if (mod) mod.classList.remove("ouvert");
+  }
+
+  function rafraichirTrombinoscopeSiOuvert() {
+    var mod = document.getElementById("modal-trombinoscope-admin");
+    if (mod && mod.classList.contains("ouvert")) {
+      peuplerFiltresTrombinoscopeAdmin();
+      rendreTrombinoscopeAdmin();
+    }
+  }
+
+  function lancerImpressionFeuilleDediee(htmlContenu) {
+    var sheet = document.getElementById("sti-print-sheet-trombi");
+    if (!sheet) { window.print(); return; }
+    sheet.innerHTML = htmlContenu;
+    document.body.classList.add("impression-trombi-active");
+    var nettoyer = function () {
+      document.body.classList.remove("impression-trombi-active");
+      window.removeEventListener("afterprint", nettoyer);
+    };
+    window.addEventListener("afterprint", nettoyer);
+    setTimeout(function () {
+      window.print();
+      setTimeout(nettoyer, 1200);
+    }, 80);
+  }
+
+  function imprimerTrombinoscopeAdmin() {
+    var liste = obtenirProfilsFiltresTrombinoscope();
+    var selCl = document.getElementById("trombi-filtre-classe");
+    var titreCl = (selCl && selCl.value !== "*") ? ("Classe " + selCl.value) : "Toutes les classes";
+    var dateStr = new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+    var cartesHtml = liste.map(function (p) {
+      var ph = photoEleveSureAdmin(p.photo_url);
+      var ini = initialesPourProfil(p);
+      var np = nomPrenomTexte(p) || contact(p);
+      var portrait = ph
+        ? "<img src='" + echHtml(ph) + "' alt='' style='width:88px;height:88px;object-fit:cover;border-radius:16px;border:2px solid #0f172a;display:block;margin:0 auto 6px' />"
+        : "<div style='width:88px;height:88px;border-radius:16px;border:2px solid #0f172a;background:#e2e8f0;color:#0f172a;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;margin:0 auto 6px'>" + echHtml(ini) + "</div>";
+      return (
+        "<div style='border:1.5px solid #cbd5e1;border-radius:14px;padding:10px 6px;text-align:center;page-break-inside:avoid;break-inside:avoid'>" +
+          portrait +
+          "<div style='font-size:11.5px;font-weight:900;color:#0f172a;line-height:1.2'>" + echHtml(np) + "</div>" +
+          "<div style='font-size:10px;font-weight:700;color:#475569;margin-top:2px'>" + echHtml((p.classe || "—") + (estGold(p) ? " · 👑 Gold" : "")) + "</div>" +
+        "</div>"
+      );
+    }).join("");
+
+    lancerImpressionFeuilleDediee(
+      "<div style='display:flex;align-items:center;justify-content:space-between;border-bottom:2.5px solid #0f172a;padding-bottom:10px;margin-bottom:14px'>" +
+        "<div style='display:flex;align-items:center;gap:10px'>" +
+          "<img src='assets/icons/sti-icon-512.png' alt='' style='width:42px;height:42px;border-radius:10px' />" +
+          "<div>" +
+            "<div style='font-size:18px;font-weight:900'>Trombinoscope Officiel STI V2.0 — " + echHtml(titreCl) + "</div>" +
+            "<div style='font-size:11.5px;color:#475569;font-weight:700'>Prof. Aymen Essouyah · Édité le " + echHtml(dateStr) + " · Effectif : " + liste.length + " candidat(s)</div>" +
+          "</div>" +
+        "</div>" +
+        "<img src='assets/images/qr-stiv2.png' alt='' style='width:44px;height:44px' />" +
+      "</div>" +
+      "<div style='display:grid;grid-template-columns:repeat(5, minmax(0, 1fr));gap:10px'>" + cartesHtml + "</div>"
+    );
+  }
+
+  (function initialiserEvenementsTrombinoscopeEtCarte() {
+    var btnOuv = document.getElementById("btn-ouvrir-trombinoscope");
+    var btnFer = document.getElementById("btn-fermer-trombinoscope");
+    var btnImp = document.getElementById("btn-imprimer-trombinoscope");
+    var modTr = document.getElementById("modal-trombinoscope-admin");
+    if (btnOuv) btnOuv.addEventListener("click", ouvrirTrombinoscopeAdmin);
+    if (btnFer) btnFer.addEventListener("click", fermerTrombinoscopeAdmin);
+    if (btnImp) btnImp.addEventListener("click", imprimerTrombinoscopeAdmin);
+    if (modTr) modTr.addEventListener("click", function (ev) { if (ev.target === modTr) fermerTrombinoscopeAdmin(); });
+
+    ["trombi-filtre-classe", "trombi-filtre-lycee", "trombi-filtre-etat"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener("change", rendreTrombinoscopeAdmin);
+    });
+    var inpR = document.getElementById("trombi-recherche");
+    if (inpR) inpR.addEventListener("input", rendreTrombinoscopeAdmin);
+
+    var modCc = document.getElementById("modal-carte-candidat-admin");
+    var fCc1 = document.getElementById("btn-fermer-carte-candidat-admin");
+    var fCc2 = document.getElementById("btn-fermer-carte-candidat-bas");
+    var btnDlCc = document.getElementById("btn-dl-carte-candidat-png");
+    var btnPrCc = document.getElementById("btn-print-carte-candidat");
+    var btnRecCc = document.getElementById("btn-recadrer-depuis-carte");
+    function fermerCc() { if (modCc) modCc.classList.remove("ouvert"); }
+    if (fCc1) fCc1.addEventListener("click", fermerCc);
+    if (fCc2) fCc2.addEventListener("click", fermerCc);
+    if (modCc) modCc.addEventListener("click", function (ev) { if (ev.target === modCc) fermerCc(); });
+    if (btnDlCc) btnDlCc.addEventListener("click", function () { telechargerCarteCandidatPngHD(candidatCarteAdminActif, btnDlCc); });
+    if (btnPrCc) btnPrCc.addEventListener("click", function () {
+      if (!candidatCarteAdminActif) return;
+      lancerImpressionFeuilleDediee(
+        "<div style='max-width:460px;margin:24px auto'>" + construireHtmlCarteCandidatSTI(candidatCarteAdminActif) + "</div>"
+      );
+    });
+    if (btnRecCc) btnRecCc.addEventListener("click", function () {
+      if (candidatCarteAdminActif) ouvrirStudioPhotoAdmin(candidatCarteAdminActif);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") {
+        fermerCc();
+        fermerTrombinoscopeAdmin();
+      }
+    });
+  })();
 
   function synchroniserActionsAdminEnAttente() {
     if (synchronisationActionsAdminEnCours || !navigator.onLine) return Promise.resolve();
@@ -1721,18 +2526,27 @@
     var photosAtt = profils.filter(function (p) { return !!photoEleveSureAdmin(p && p.photo_attente); });
     var bAlPh = document.getElementById("alerte-photos-attente");
     var tAlPh = document.getElementById("alerte-photos-attente-txt");
+    var btnLotPh = document.getElementById("btn-valider-toutes-photos-attente");
     if (bAlPh && tAlPh) {
       if (photosAtt.length > 0) {
         bAlPh.classList.add("visible");
         tAlPh.textContent = "📸 " + photosAtt.length + " photo(s) de profil d'élève(s) en attente de validation : " +
           photosAtt.map(function (p) { return nomPrenomTexte(p) || contact(p); }).join(" · ") +
           " — Cliquer pour examiner";
-        bAlPh.onclick = function () {
+        tAlPh.onclick = function () {
           if (photosAtt[0]) ouvrirFicheEleve(photosAtt[0]);
         };
+        if (btnLotPh && !lotValidationPhotosEnCours) {
+          btnLotPh.textContent = "✅ Approuver toutes les photos (" + photosAtt.length + ")";
+          btnLotPh.onclick = function (ev) {
+            ev.stopPropagation();
+            validerToutesPhotosAttenteAdmin(photosAtt);
+          };
+        }
       } else {
         bAlPh.classList.remove("visible");
-        bAlPh.onclick = null;
+        tAlPh.onclick = null;
+        if (btnLotPh) btnLotPh.onclick = null;
       }
     }
     var vus = {};
@@ -4653,7 +5467,8 @@
             "<div style='font-size:12px;color:#5a5244;font-weight:800'>🏛️ " + echHtml(lyceePropre(p)) + " · 🏫 <b>" + echHtml(p.classe || "—") + "</b></div>" +
             "<div style='font-size:11.5px;color:#7a6f5d;font-weight:700;margin-top:2px;word-break:break-word'>" + echHtml(ctc) + " · Inscrit le " + echHtml(fmtDate(p.cree_le)) + "</div>" +
             "<div class='fiche-photo-actions'>" +
-              "<button type='button' class='fiche-photo-btn' id='btn-fiche-upload-photo'>📷 " + (photoFicheVal ? "Changer photo" : "Ajouter photo") + "</button>" +
+              "<button type='button' class='fiche-photo-btn' id='btn-fiche-upload-photo'>📷 " + (photoFicheVal ? "Photo / Recadrer" : "Ajouter photo") + "</button>" +
+              "<button type='button' class='fiche-photo-btn' id='btn-fiche-carte-sti'>🪪 Carte STI V2.0</button>" +
               (photoFicheVal ? "<button type='button' class='fiche-photo-btn suppr' id='btn-fiche-suppr-photo'>🗑️ Retirer photo</button>" : "") +
             "</div>" +
           "</div>" +
@@ -4714,6 +5529,12 @@
     if (btnFicheUplPh) {
       btnFicheUplPh.addEventListener("click", function () {
         declencherUploadPhotoEleveAdmin(p);
+      });
+    }
+    var btnFicheCarteSti = document.getElementById("btn-fiche-carte-sti");
+    if (btnFicheCarteSti) {
+      btnFicheCarteSti.addEventListener("click", function () {
+        ouvrirCarteCandidatAdmin(p);
       });
     }
     var btnFicheSupPh = document.getElementById("btn-fiche-suppr-photo");

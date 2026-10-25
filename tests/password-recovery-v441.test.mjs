@@ -818,7 +818,43 @@ test('v447 : le survol de la photo du candidat déclenche son agrandissement HD 
   assert.match(adminJs, /installerLoupePhotoEleveAdmin/);
   assert.match(adminJs, /sti-zoom-photo-eleve/);
   assert.match(roueInitJs, /sti-site-zoom-photo-pop/);
-  assert.match(swJs, /v447-zoom-photo-1/);
+  assert.match(swJs, /zoom-photo-v447/);
+});
+
+test('v448 : Trombinoscope par classe, Carte Officielle Candidat STI V2.0, Studio Recadrage + Webcam et validation photo en lot', () => {
+  const adminHtml = read('admin.html');
+  const adminCss = read('assets/css/admin-saas.css');
+  const adminJs = read('assets/js/admin.js');
+  const accesJs = read('assets/js/acces.js');
+  const swJs = read('sw.js');
+
+  // 1) Bouton « Approuver toutes les photos (N) » + validation en lot
+  assert.match(adminHtml, /id="btn-valider-toutes-photos-attente"/);
+  assert.match(adminJs, /function validerToutesPhotosAttenteAdmin/);
+  assert.match(adminCss, /\.btn-alerte-tout-valider-photos/);
+
+  // 2) Trombinoscope par classe + impression A4 sans popup
+  assert.match(adminHtml, /id="btn-ouvrir-trombinoscope"/);
+  assert.match(adminHtml, /id="modal-trombinoscope-admin"/);
+  assert.match(adminHtml, /id="sti-print-sheet-trombi"/);
+  assert.match(adminJs, /function ouvrirTrombinoscopeAdmin/);
+  assert.match(adminJs, /function imprimerTrombinoscopeAdmin/);
+  assert.match(adminCss, /body\.impression-trombi-active #sti-print-sheet-trombi/);
+
+  // 3) Carte Officielle Candidat STI V2.0 (Admin + Roue Élève) & export PNG HD 1600x1010
+  assert.match(adminHtml, /id="modal-carte-candidat-admin"/);
+  assert.match(adminJs, /function ouvrirCarteCandidatAdmin/);
+  assert.match(adminJs, /function telechargerCarteCandidatPngHD/);
+  assert.match(accesJs, /sti-pan-carte-eleve-btn/);
+  assert.match(accesJs, /function ouvrirCarteOfficielleEleveSTI/);
+  assert.match(accesJs, /sti-modale-carte-candidat/);
+
+  // 4) Studio Recadrage Photo Interactif (glisser + zoom + webcam, 100% dataURL sans createObjectURL)
+  assert.match(adminJs, /function ouvrirStudioPhotoAdmin/);
+  assert.match(adminJs, /getUserMedia/);
+  assert.match(accesJs, /function ouvrirStudioPhotoEleveSTI/);
+  assert.doesNotMatch(accesJs.slice(accesJs.indexOf('function ouvrirStudioPhotoEleveSTI'), accesJs.indexOf('function ouvrirCarteOfficielleEleveSTI')), /createObjectURL/);
+  assert.match(swJs, /v448-trombi-carte-recadrage-1/);
 });
 
 
