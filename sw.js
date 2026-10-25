@@ -6,10 +6,16 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v442-admin-mdp-1";
+var UPDATE_ID = "v443-admin-saas-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "admin-saas-v443-atelier" },
+  { url: "./assets/css/admin-saas.css", revision: "admin-saas-v443-atelier" },
+  { url: "./assets/js/admin-mdp.js", revision: "admin-saas-v443-atelier" },
+  { url: "./assets/fonts/fonts.css", revision: "admin-saas-v443-atelier" },
+  { url: "./assets/fonts/comic-neue-latin-400.woff2", revision: "admin-saas-v443-atelier" },
+  { url: "./assets/fonts/comic-neue-latin-700.woff2", revision: "admin-saas-v443-atelier" },
   { url: "./admin.html", revision: "admin-mdp-v442" },
   { url: "./assets/js/admin-mdp.js", revision: "admin-mdp-v442" },
   { url: "./portail.html", revision: "recovery-v441" },
@@ -276,6 +282,7 @@ var SHELL = [
   "./index.html",
   "./portail.html",
   "./admin.html",
+  "./assets/css/admin-saas.css",
   "./bac-pratique.html",
   "./pieges-bac.html",
   "./memo-veille-bac.html",

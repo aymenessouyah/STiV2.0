@@ -411,12 +411,12 @@ test('v441 : récupération mot de passe Admin avec MFA TOTP active (élévation
   assert.match(messages.at(-1).txt, /Mot de passe modifié/);
 });
 
-test('v442 : admin.html autorise Cloudflare Turnstile dans la CSP et charge admin-mdp.js?v=442', () => {
+test('v442+ : admin.html autorise Cloudflare Turnstile dans la CSP et charge admin-mdp.js?v=443', () => {
   const adminHtml = read('admin.html');
   assert.match(adminHtml, /script-src[^;]*https:\/\/challenges\.cloudflare\.com/);
   assert.match(adminHtml, /frame-src[^;]*https:\/\/challenges\.cloudflare\.com/);
   assert.match(adminHtml, /connect-src[^;]*https:\/\/challenges\.cloudflare\.com/);
-  assert.match(adminHtml, /assets\/js\/admin-mdp\.js\?v=442/);
+  assert.match(adminHtml, /assets\/js\/admin-mdp\.js\?v=443/);
 });
 
 test('v442 : admin-mdp.js vérifie Turnstile + MFA AAL2, met à jour sti-cred, révoque uniquement scope=others et distingue les erreurs', async () => {
@@ -670,6 +670,64 @@ test('v442 : admin-mdp.js vérifie Turnstile + MFA AAL2, met à jour sti-cred, r
   assert.notEqual(credMaj.h, 'ancien-hash');
   assert.match(credMaj.h, /^[0-9a-f]{64}$/);
 });
+
+test('v443 : le bouton clé (#sti-mdp-btn-top) est directement visible en mode mobile sans ouvrir « Plus ▾ » et admin.html utilise le design system SaaS unifié', () => {
+  const adminHtml = read('admin.html');
+  const adminCss = read('assets/css/admin-saas.css');
+  const adminMdp = read('assets/js/admin-mdp.js');
+
+  // 1) Design system SaaS chargé dans <head> + initialisation thème à 0 ms + polices modernes + logo d'installation PWA
+  const headHtml = adminHtml.slice(0, adminHtml.indexOf('</head>'));
+  assert.match(headHtml, /assets\/fonts\/fonts\.css/);
+  assert.match(headHtml, /assets\/css\/admin-saas\.css\?v=443/);
+  assert.match(headHtml, /sti-admin-theme/);
+  assert.match(adminHtml, /class="entete-logo-install"><img src="assets\/icons\/sti-icon-512\.png"/);
+  assert.match(adminCss, /"Comic Sans MS"/);
+  assert.match(adminCss, /font-family:\s*"Comic Neue"/);
+
+  // Vérifie la conservation de l'indicateur réseau Vert (connecté) / Rouge (.hors-ligne) sur #titre-tb-admin
+  assert.match(adminCss, /#titre-tb-admin\s*\{[\s\S]*?color:\s*var\(--adm-green\)\s*!important/);
+  assert.match(adminCss, /#titre-tb-admin\.hors-ligne\s*\{[\s\S]*?color:\s*var\(--adm-red\)\s*!important/);
+
+  // 2) Les anciens blocs contradictoires (Airbus en plein <body>, carte-visite néo-brutaliste) ont été purgés
+  assert.doesNotMatch(adminHtml, /admin-v19\.css/);
+  assert.doesNotMatch(adminHtml, /id="theme-admin-moderne-clair"/);
+  assert.doesNotMatch(adminHtml, /id="theme-admin-carte"/);
+
+  // 3) Le bouton #sti-mdp-btn-top n'a NI sys-extra-item NI mob-extra qui le cacherait sur mobile
+  assert.doesNotMatch(adminMdp, /bTop\.className\s*=[^;]*sys-extra-item/);
+  assert.doesNotMatch(adminMdp, /bTop\.className\s*=[^;]*mob-extra/);
+  assert.match(adminMdp, /bTop\.className\s*=\s*"btn-util sti-mdp-top-direct"/);
+  assert.match(adminMdp, /el\("btn-securite-top"\)/);
+
+  // 4) Le CSS mobile garantit l'affichage direct de #sti-mdp-btn-top et dégage le pied de page au-dessus de #mob-bottom-nav
+  assert.match(adminCss, /@media\s*\(max-width:\s*768px\)[\s\S]*#sti-mdp-btn-top\s*\{\s*display:\s*inline-flex\s*!important/);
+  assert.match(adminCss, /calc\(92px\s*\+\s*env\(safe-area-inset-bottom/);
+
+  // 5) Tous les points d'ancrage interactifs de admin.js sont préservés à 100 %
+  for (const id of [
+    'vue-ensemble-admin',
+    'afficheur-classe-avion',
+    'instrument-total-global',
+    'stats',
+    'centre-actions-dashboard',
+    'bloc-sec-abonnes',
+    'tb-abonnes',
+    'grille-noeuds-abonnes',
+    'carte-difficultes-admin',
+    'couverture-risque-admin',
+    'revision-admin',
+    'erreurs-admin',
+    'journal-erreurs-admin',
+    'mob-bottom-nav',
+    'btn-bascule-theme',
+    'btn-securite-top',
+    'btn-logout',
+  ]) {
+    assert.match(adminHtml, new RegExp(`id="${id}"`), `ID manquant dans admin.html : #${id}`);
+  }
+});
+
 
 
 
