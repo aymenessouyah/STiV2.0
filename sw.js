@@ -6,10 +6,19 @@
 var CACHE = "sti-atelier-v317";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v450-messenger-roue-admin-only";
+var UPDATE_ID = "v451-conseil-classe-nouveautes-marque";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./nouveautes.html", revision: "conseil-classe-nouveautes-marque-v451" },
+  { url: "./assets/js/nouveautes.js", revision: "conseil-classe-nouveautes-marque-v451" },
+  { url: "./assets/data/nouveautes.json", revision: "conseil-classe-nouveautes-marque-v451" },
+  { url: "./assets/js/acces.js", revision: "conseil-classe-nouveautes-marque-v451" },
+  { url: "./index.html", revision: "conseil-classe-nouveautes-marque-v451" },
+  { url: "./carte-visite.html", revision: "conseil-classe-nouveautes-marque-v451" },
+  { url: "./admin.html", revision: "conseil-classe-nouveautes-marque-v451" },
+  { url: "./assets/js/admin.js", revision: "conseil-classe-nouveautes-marque-v451" },
+  { url: "./assets/css/admin-saas.css", revision: "conseil-classe-nouveautes-marque-v451" },
   { url: "./assets/js/acces.js", revision: "messenger-roue-admin-only-v450" },
   { url: "./index.html", revision: "messenger-roue-admin-only-v450" },
   { url: "./carte-visite.html", revision: "messenger-roue-admin-only-v450" },

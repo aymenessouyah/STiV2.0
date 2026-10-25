@@ -912,7 +912,84 @@ test('v450 : bouton Messenger éliminé de toutes les pages du site et conservé
   assert.match(adminHtml, /id="btn-messenger-top"/);
   assert.match(adminHtml, /id="btn-messenger-dock"/);
   assert.match(adminHtml, /id="sti-messenger-admin"/);
-  assert.match(swJs, /v450-messenger-roue-admin-only/);
+  assert.match(swJs, /messenger-roue-admin-only-v450/);
+});
+
+test('v451 : nouveautés sans undefined + mode sombre, barre PC recalée à gauche & accueil épuré, carte-visite alignée marque STI V2.0, et Fiche Conseil de Classe A4', async () => {
+  const nouveautesHtml = read('nouveautes.html');
+  const nouveautesJs = read('assets/js/nouveautes.js');
+  const nouveautesJson = JSON.parse(read('assets/data/nouveautes.json'));
+  const accesJs = read('assets/js/acces.js');
+  const indexHtml = read('index.html');
+  const carteHtml = read('carte-visite.html');
+  const adminHtml = read('admin.html');
+  const adminJs = read('assets/js/admin.js');
+  const adminCss = read('assets/css/admin-saas.css');
+  const swJs = read('sw.js');
+
+  // 1) Journal des nouveautés : JSON valide jusqu'à v451, rendu DOM sans "undefined" et support thème sombre
+  assert.ok(Array.isArray(nouveautesJson) && nouveautesJson.length >= 15);
+  assert.equal(nouveautesJson[0].version, 'v451');
+  assert.match(nouveautesHtml, /html\.dark body/);
+  assert.match(nouveautesHtml, /assets\/icons\/sti-icon-512\.png/);
+
+  const boite = {
+    innerHTML: '',
+    getAttribute(k) {
+      if (k === 'data-racine') return './';
+      if (k === 'data-limite') return '10';
+      return null;
+    },
+    querySelectorAll() { return []; }
+  };
+  const headStyles = [];
+  const ctx = vm.createContext({
+    document: {
+      getElementById(id) { return id === 'sti-nouveautes' ? boite : null; },
+      createElement() { return { id: '', textContent: '' }; },
+      head: { appendChild(st) { headStyles.push(st); } }
+    },
+    localStorage: {
+      getItem() { return '2026-10-20'; },
+      setItem() {}
+    },
+    fetch() {
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(nouveautesJson)
+      });
+    },
+    console
+  });
+  vm.runInContext(nouveautesJs, ctx);
+  await new Promise((r) => setTimeout(r, 20));
+  assert.doesNotMatch(boite.innerHTML, /undefined/i);
+  assert.match(boite.innerHTML, /v451/);
+  assert.match(boite.innerHTML, /NOUVEAU/);
+  assert.ok(headStyles.length === 1 && /html\.dark \.sti-news-card/.test(headStyles[0].textContent));
+
+  // 2) Barre PC Windows #sti-pc-win-tools recalée à left:14px + boutons doublons supprimés sur index.html
+  assert.match(accesJs, /bar\.id\s*=\s*"sti-pc-win-tools"[\s\S]{0,220}left:14px;bottom:14px/);
+  assert.doesNotMatch(indexHtml, /id="btnHomeSplitCode"/);
+  assert.doesNotMatch(indexHtml, /id="btnHomeDocteur"/);
+  assert.doesNotMatch(indexHtml, /id="btnHomeMainLevee"/);
+
+  // 3) carte-visite.html : logo officiel sti-icon-512.png + QR officiel qr-stiv2.png, zéro base64 résiduel
+  assert.doesNotMatch(carteHtml, /data:image\/png;base64/i);
+  assert.match(carteHtml, /id="img-logo"\s+src="assets\/icons\/sti-icon-512\.png"/);
+  assert.match(carteHtml, /id="img-qr"\s+src="assets\/images\/qr-stiv2\.png"/);
+  assert.match(carteHtml, /id="modal-img-qr"\s+src="assets\/images\/qr-stiv2\.png"/);
+
+  // 4) Fiche Conseil de Classe A4 en 1 clic dans admin.html / admin.js / admin-saas.css
+  assert.match(adminHtml, /id="btn-ouvrir-conseil-classe"/);
+  assert.match(adminHtml, /id="modal-conseil-classe-admin"/);
+  assert.match(adminHtml, /id="btn-imprimer-conseil-classe"/);
+  assert.match(adminJs, /function ouvrirConseilClasseAdmin\s*\(/);
+  assert.match(adminJs, /function imprimerConseilClasseAdmin\s*\(/);
+  assert.match(adminJs, /FICHE CONSEIL DE CLASSE STI V2\.0/);
+  assert.match(adminCss, /#modal-conseil-classe-admin/);
+  assert.match(swJs, /v451-conseil-classe-nouveautes-marque/);
 });
 
 

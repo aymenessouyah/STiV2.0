@@ -8153,7 +8153,7 @@
     bar.id = "sti-pc-win-tools";
     bar.className = "sti-no-print";
     bar.style.cssText =
-      "position:fixed;left:68px;bottom:14px;z-index:2147483645;display:inline-flex;align-items:center;gap:4px;" +
+      "position:fixed;left:14px;bottom:14px;z-index:2147483645;display:inline-flex;align-items:center;gap:4px;" +
       "background:rgba(255,253,247,0.96);border:2px solid #23201a;border-radius:999px;padding:3px;" +
       "box-shadow:3px 3px 0 #23201a;font:800 12px/1 system-ui,-apple-system,'Segoe UI',sans-serif;color:#23201a;transition:all .18s ease;";
 

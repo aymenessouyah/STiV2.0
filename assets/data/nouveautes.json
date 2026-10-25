@@ -1,5 +1,95 @@
 [
   {
+    "version": "v451",
+    "date": "2026-10-25",
+    "categorie": "Tableau de bord & Suivi",
+    "icone": "📋",
+    "titre": "Fiche Conseil de Classe A4 en 1 clic, carte de visite harmonisée et journal rénové",
+    "resume": "Le tableau de bord professeur permet désormais de générer et d’imprimer en un clic une Fiche Conseil de Classe A4 complète par classe (3SI, 4SI ou lycée) regroupant photo de l’élève, temps de révision, moyenne aux quiz sur 20, progression multimédia et observations pédagogiques. En parallèle, la carte de visite électronique adopte le logo et le QR officiels STI V2.0, les pages d’accueil et de cours sont épurées de leurs boutons redondants avec la Roue, et le journal des nouveautés prend en charge les thèmes clair et sombre.",
+    "lien": "carte-visite.html",
+    "libelleLien": "Voir la carte de visite officielle"
+  },
+  {
+    "version": "v450",
+    "date": "2026-10-25",
+    "categorie": "Interface & Roue",
+    "icone": "💬",
+    "titre": "Épuration de l’écran : la messagerie regroupée dans « Écrire au prof » sur la Roue",
+    "resume": "Pour offrir un confort de lecture maximal sur ordinateur comme sur mobile, la bulle flottante Messenger n’encombre plus le bas des pages de cours, de quiz et d’exercices : les élèves retrouvent directement leur canal d’échange avec l’enseignant via l’entrée « Écrire au prof » au cœur de la Roue STI.",
+    "lien": "index.html",
+    "libelleLien": "Ouvrir l’accueil STI V2.0"
+  },
+  {
+    "version": "v449",
+    "date": "2026-10-24",
+    "categorie": "Cours & Outils d'étude",
+    "icone": "🖍️",
+    "titre": "Rayons X CSS et Surligneur Fluo synchronisés avec Ma Fiche de Révision",
+    "resume": "L’outil Rayons X inspecte en direct le modèle de boîte CSS (marges, bordures, espacements et dimensions) de n’importe quel élément de cours, tandis que le Surligneur Fluo 3 couleurs mémorise vos passages essentiels et les rassemble automatiquement dans Ma Fiche de Révision imprimable.",
+    "lien": "ma-fiche.html",
+    "libelleLien": "Ouvrir Ma Fiche de Révision"
+  },
+  {
+    "version": "v448",
+    "date": "2026-10-24",
+    "categorie": "Interface & Roue",
+    "icone": "🪪",
+    "titre": "Carte Officielle d’Abonné STI V2.0, Studio Photo recadré et Trombinoscope de classe",
+    "resume": "Chaque élève abonné dispose de sa Carte Officielle STI V2.0 téléchargeable en PNG haute définition depuis la Roue, avec photo de profil recadrée au carré ou prise à la webcam, validation enseignant et impression du Trombinoscope officiel par classe.",
+    "lien": "portail.html",
+    "libelleLien": "Accéder à mon profil STI"
+  },
+  {
+    "version": "v445",
+    "date": "2026-10-23",
+    "categorie": "Interface & Roue",
+    "icone": "📸",
+    "titre": "Votre photo de profil au centre de la Roue STI et du suivi pédagogique",
+    "resume": "Une fois validée par l’enseignant, la photo de profil de l’élève s’affiche automatiquement au centre de la Roue STI sur toutes les pages de révision, tout en conservant l’anneau de progression et un basculement instantané sur les initiales si aucune photo n’est définie.",
+    "lien": "index.html",
+    "libelleLien": "Découvrir sur la plateforme"
+  },
+  {
+    "version": "v443",
+    "date": "2026-10-22",
+    "categorie": "Tableau de bord & Suivi",
+    "icone": "🎨",
+    "titre": "Nouvelle ergonomie Bento et univers visuels sur l’espace enseignant",
+    "resume": "Refonte de la lisibilité et des performances temps réel du tableau de bord avec recherche rapide multi-critères, navigation fluide, thèmes visuels personnalisables (Classique, Forêt, Cyber, Pop, Spotify) et pagination allégée des journaux.",
+    "lien": "index.html",
+    "libelleLien": "Retour à la plateforme"
+  },
+  {
+    "version": "v441",
+    "date": "2026-10-21",
+    "categorie": "Plateforme & Sécurité",
+    "icone": "🔐",
+    "titre": "Récupération autonome de mot de passe par code OTP à 8 chiffres",
+    "resume": "En cas d’oubli de mot de passe sur le portail STI, les élèves abonnés peuvent désormais réinitialiser leur accès en toute autonomie grâce à un code de vérification sécurisé envoyé par e-mail, sans quitter la page de connexion.",
+    "lien": "portail.html",
+    "libelleLien": "Ouvrir le portail d’accès"
+  },
+  {
+    "version": "v317",
+    "date": "2026-10-20",
+    "categorie": "Cours & Outils d'étude",
+    "icone": "⚡",
+    "titre": "Mode hors-ligne PWA consolidé et navigation instantanée sans coupure",
+    "resume": "Mise à niveau du cache Service Worker et de l’amorçage précoce du thème clair/sombre et de la barre mobile afin d’éliminer tout clignotement visuel lors du passage entre l’accueil, les cours animés, les quiz et l’Atelier Bac Pratique.",
+    "lien": "bac-pratique.html",
+    "libelleLien": "Ouvrir l’Atelier Bac Pratique"
+  },
+  {
+    "version": "v309",
+    "date": "2026-10-19",
+    "categorie": "Cours & Outils d'étude",
+    "icone": "🎬",
+    "titre": "Vidéo CSS3 v9 resynchronisée avec bascule automatique Full HD / 720p mobile",
+    "resume": "Publication du master vidéo CSS3 v9 parfaitement synchronisé avec ses sous-titres français WebVTT et sa version allégée 720p pour smartphones, accompagnée d’un diagnostic automatique de disponibilité des médias.",
+    "lien": "cours/css3.html#css-video-access",
+    "libelleLien": "Lancer le cours vidéo CSS3"
+  },
+  {
     "version": "v299",
     "date": "2026-10-18",
     "categorie": "Accessibilité vidéo CSS3",

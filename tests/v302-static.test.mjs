@@ -64,7 +64,11 @@ test('HLS CSS3 cohérent, trois renditions et plages d’octets', () => {
     assert.ok(statSync(join(root, `assets/streams/css3-v302/css3-${q}p.m4s`)).size > 1_000_000);
   }
   const protection = lire('assets/js/protection.js');
-  assert.match(protection, /streams\/css3-v302\/master\.m3u8/);
+  assert.match(protection, /var VIDEO_CSS3_INFO\s*=\s*\{/);
+  assert.match(protection, /css3-cours-v9-sync\.mp4\?v=309/);
+  assert.match(protection, /mobileFile:\s*"css3-cours-v9-sync-mobile-720p\.mp4\?v=309"/);
+  assert.match(protection, /subtitlesFile:\s*"subtitles\/css3-cours-v9-sync-fr\.vtt\?v=309"/);
+  assert.match(protection, /hlsFile:\s*""/);
   assert.match(protection, /vendor\/hls\.min\.js/);
 });
 
