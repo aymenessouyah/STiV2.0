@@ -65,12 +65,13 @@
       };
       img.onload = function () {
         try {
-          var w = img.naturalWidth || img.width || 144;
-          var h = img.naturalHeight || img.height || 144;
+          var w = img.naturalWidth || img.width || 220;
+          var h = img.naturalHeight || img.height || 220;
           var cote = Math.min(w, h);
           var sx = Math.max(0, Math.floor((w - cote) / 2));
-          var sy = Math.max(0, Math.floor((h - cote) / 2));
-          var taille = 144;
+          var sy = Math.max(0, Math.floor((h - cote) * 0.35));
+          if (sy + cote > h) sy = Math.max(0, h - cote);
+          var taille = 220;
           var cv = document.createElement("canvas");
           cv.width = taille;
           cv.height = taille;
@@ -85,6 +86,9 @@
           if (out.length > 46000) {
             out = cv.toDataURL("image/jpeg", 0.62);
           }
+          if (out.length > 46000) {
+            out = cv.toDataURL("image/jpeg", 0.48);
+          }
           if (!photoEleveSureAdmin(out)) {
             if (onErr) onErr("Impossible de compresser cette photo sous la limite autorisée.");
             return;
@@ -98,6 +102,151 @@
     };
     lecteur.readAsDataURL(file);
   }
+
+  /* v447 : Loupe flottante automatique au survol de n'importe quelle photo candidat dans le Tableau de bord */
+  (function installerLoupePhotoEleveAdmin() {
+    var pop = null;
+    var popImg = null;
+    var popLbl = null;
+    var cibleActive = null;
+
+    function assurerPop() {
+      if (pop) return pop;
+      pop = document.createElement("div");
+      pop.id = "sti-zoom-photo-eleve";
+      pop.setAttribute("aria-hidden", "true");
+      popImg = document.createElement("img");
+      popImg.alt = "";
+      popLbl = document.createElement("div");
+      popLbl.className = "sti-zoom-photo-lbl";
+      pop.appendChild(popImg);
+      pop.appendChild(popLbl);
+      (document.body || document.documentElement).appendChild(pop);
+      return pop;
+    }
+
+    function trouverImgCandidat(el) {
+      if (!el || el.nodeType !== 1) return null;
+      var img = null;
+      if (el.tagName === "IMG") {
+        img = el;
+      } else if (el.querySelector) {
+        if (el.classList && (el.classList.contains("noeud-pastille") || el.classList.contains("tb-mini-avatar") || el.classList.contains("fiche-avatar") || el.classList.contains("msn-av"))) {
+          img = el.querySelector("img");
+        }
+      }
+      if (!img) return null;
+      var src = photoEleveSureAdmin(img.getAttribute("src") || "");
+      if (!src) return null;
+      if (img.closest && (
+        img.closest(".noeud-abonne") ||
+        img.closest("#tb-abonnes") ||
+        img.closest("#zone-detail") ||
+        img.closest("#contenu-fiche-eleve") ||
+        img.closest(".msn-admin-win")
+      )) {
+        return img;
+      }
+      return null;
+    }
+
+    function extraireLibelleCandidat(img) {
+      try {
+        if (!img || !img.closest) return "";
+        var nd = img.closest(".noeud-abonne");
+        if (nd) {
+          var elNom = nd.querySelector(".noeud-nom");
+          if (elNom && elNom.textContent) return elNom.textContent.trim();
+        }
+        var tr = img.closest("tr");
+        if (tr) {
+          var sp = tr.querySelector(".nom-cliquable-fiche");
+          if (sp && sp.textContent) return sp.textContent.trim();
+        }
+        var fiche = img.closest("#contenu-fiche-eleve") || img.closest("#zone-detail");
+        if (fiche) {
+          var ent = fiche.querySelector(".fiche-entete");
+          if (ent) {
+            var premierTitre = ent.querySelector("div[style*='font-size:16px']");
+            if (premierTitre && premierTitre.textContent) return premierTitre.textContent.trim();
+          }
+        }
+        var msnItem = img.closest(".msn-user-item");
+        if (msnItem) {
+          var uNom = msnItem.querySelector(".msn-u-nom");
+          if (uNom && uNom.textContent) return uNom.textContent.trim();
+        }
+        var msnHead = img.closest(".msn-chat-head");
+        if (msnHead) {
+          var hNom = document.getElementById("msn-head-nom");
+          if (hNom && hNom.textContent) return hNom.textContent.trim();
+        }
+        var bAv = img.closest("button[title]");
+        if (bAv && bAv.title) return bAv.title.trim();
+      } catch (e) {}
+      return "";
+    }
+
+    function positionnerPop(ancre) {
+      if (!pop || !ancre || !ancre.getBoundingClientRect) return;
+      var r = ancre.getBoundingClientRect();
+      var pw = 196;
+      var ph = popLbl && popLbl.style.display !== "none" ? 218 : 196;
+      var vw = window.innerWidth || document.documentElement.clientWidth || 1024;
+      var vh = window.innerHeight || document.documentElement.clientHeight || 768;
+      var left = r.right + 12;
+      if (left + pw + 10 > vw) {
+        left = r.left - pw - 12;
+      }
+      if (left < 10) {
+        left = Math.max(10, Math.min(vw - pw - 10, Math.round(r.left + r.width / 2 - pw / 2)));
+      }
+      var top = Math.round(r.top + r.height / 2 - ph / 2);
+      if (top + ph + 10 > vh) top = vh - ph - 10;
+      if (top < 10) top = 10;
+      pop.style.left = left + "px";
+      pop.style.top = top + "px";
+    }
+
+    function masquerLoupe() {
+      cibleActive = null;
+      if (pop) pop.classList.remove("visible");
+    }
+
+    document.addEventListener("mouseover", function (ev) {
+      if (window.matchMedia && window.matchMedia("(hover: none)").matches) return;
+      var img = trouverImgCandidat(ev.target);
+      if (!img) {
+        if (cibleActive) masquerLoupe();
+        return;
+      }
+      if (cibleActive === img && pop && pop.classList.contains("visible")) return;
+      cibleActive = img;
+      assurerPop();
+      popImg.src = img.getAttribute("src");
+      var lbl = extraireLibelleCandidat(img);
+      if (lbl) {
+        popLbl.textContent = lbl;
+        popLbl.style.display = "block";
+      } else {
+        popLbl.textContent = "";
+        popLbl.style.display = "none";
+      }
+      positionnerPop(img);
+      pop.classList.add("visible");
+    }, true);
+
+    document.addEventListener("mouseout", function (ev) {
+      if (!cibleActive) return;
+      var vers = ev.relatedTarget;
+      if (vers && (vers === cibleActive || (cibleActive.parentNode && cibleActive.parentNode.contains(vers)))) return;
+      masquerLoupe();
+    }, true);
+
+    window.addEventListener("scroll", masquerLoupe, true);
+    window.addEventListener("mousedown", masquerLoupe, true);
+    window.addEventListener("blur", masquerLoupe);
+  })();
 
   /* Affichage dynamique du numéro de version du tableau de bord & du cache PWA */
   (function afficherVersionAdmin() {

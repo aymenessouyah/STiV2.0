@@ -6,10 +6,16 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v446-ruban-modes-1";
+var UPDATE_ID = "v447-zoom-photo-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "zoom-photo-v447" },
+  { url: "./assets/css/admin-saas.css", revision: "zoom-photo-v447" },
+  { url: "./assets/js/admin.js", revision: "zoom-photo-v447" },
+  { url: "./assets/js/acces.js", revision: "zoom-photo-v447" },
+  { url: "./assets/js/roue-initiales.js", revision: "zoom-photo-v447" },
+  { url: "./assets/js/mobile-nav.js", revision: "zoom-photo-v447" },
   { url: "./admin.html", revision: "ruban-modes-v446" },
   { url: "./assets/css/admin-saas.css", revision: "ruban-modes-v446" },
   { url: "./admin.html", revision: "student-photos-v445" },
