@@ -19,6 +19,9 @@
   var CLE_FILE_VUS = "sti-quiz-sync-vus-v1";
   var CLE_PURGE_VUS = "sti-quiz-sync-vus-purge-v1";
   var CLE_FILE_REP = "sti-quiz-sync-rep-v1";
+  var CLE_SESSIONS = "sti-quiz-sessions-actives-v1";
+  var CLE_PURGE_SESSIONS = "sti-quiz-sessions-purge-v1";
+  var CLE_VUS_LOCAL_QUIZ = "sti-quiz-vus-ordre-v1";
   var COMPTES_SANS_SCORE = ["elevelabo3@exemple.tn"];
   var seqSync = 0;
   var promesseVidage = null;
@@ -37,20 +40,30 @@
   function sb() {
     if (!window.supabase || !window.STI_AUTH) return null;
     if (!client) {
-      client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE);
+      client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: false,
+          lock: function (name, acquireTimeout, fn) { return fn(); }
+        }
+      });
       try {
-        client.auth.onAuthStateChange(function () { promesseUser = null; });
+        if (client && client.auth && typeof client.auth.onAuthStateChange === "function") {
+          client.auth.onAuthStateChange(function () { promesseUser = null; });
+        }
       } catch (e) {}
     }
     return client;
   }
 
-  function utilisateurDepuisStockageLocal() {
+  function lireUserDepuisStore(st) {
+    if (!st) return null;
     try {
-      for (var i = 0; i < localStorage.length; i++) {
-        var k = localStorage.key(i);
+      for (var i = 0; i < st.length; i++) {
+        var k = st.key(i);
         if (!k || !/^sb-.*-auth-token$/.test(k)) continue;
-        var brut = localStorage.getItem(k);
+        var brut = st.getItem(k);
         if (!brut) continue;
         var parsed = JSON.parse(brut);
         var u = (parsed && parsed.user) || (parsed && parsed.currentSession && parsed.currentSession.user) || null;
@@ -58,6 +71,11 @@
       }
     } catch (e) {}
     return null;
+  }
+
+  function utilisateurDepuisStockageLocal() {
+    return lireUserDepuisStore(typeof localStorage !== "undefined" ? localStorage : null) ||
+           lireUserDepuisStore(typeof sessionStorage !== "undefined" ? sessionStorage : null);
   }
 
   function utilisateur() {
@@ -314,10 +332,26 @@
           score: parseInt(item.score, 10),
           total: parseInt(item.total, 10)
         };
+        if (item.points !== undefined && item.points !== null && !isNaN(parseInt(item.points, 10))) {
+          payload.points = parseInt(item.points, 10);
+        }
+        if (Array.isArray(item.ordre_questions)) {
+          payload.ordre_questions = item.ordre_questions;
+        }
         if (!payload.quiz || isNaN(payload.score) || isNaN(payload.total) || payload.total <= 0) continue;
         try {
           var r = await s.from("sti_quiz_parties").insert(payload);
-          if (r.error) {
+          if (r && r.error && (payload.points !== undefined || payload.ordre_questions !== undefined)) {
+            r = await s.from("sti_quiz_parties").insert({
+              user_id: payload.user_id,
+              email: payload.email,
+              quiz: payload.quiz,
+              module: payload.module,
+              score: payload.score,
+              total: payload.total
+            });
+          }
+          if (r && r.error) {
             if (item._cid) cidsEchec[item._cid] = true;
             else restesSansCid.push(item);
           }
@@ -383,6 +417,284 @@
         }
       } catch (e) {}
     }
+    await viderSessionsActives(s, u);
+  }
+
+  /* ---------- Sessions actives en cours (score + ordre exact des questions dans Supabase v460) ---------- */
+  function lireSessionsLocales() {
+    try { return JSON.parse(localStorage.getItem(CLE_SESSIONS) || "{}") || {}; } catch (e) { return {}; }
+  }
+  function sauverSessionsLocales(obj) {
+    try { localStorage.setItem(CLE_SESSIONS, JSON.stringify(obj || {})); } catch (e) {}
+  }
+  function lirePurgeSessions() {
+    try { return JSON.parse(localStorage.getItem(CLE_PURGE_SESSIONS) || "[]") || []; } catch (e) { return []; }
+  }
+  function sauverPurgeSessions(arr) {
+    try {
+      var u = [];
+      (arr || []).forEach(function (q) { var k = String(q || ""); if (k && u.indexOf(k) === -1) u.push(k); });
+      localStorage.setItem(CLE_PURGE_SESSIONS, JSON.stringify(u.slice(-20)));
+    } catch (e) {}
+  }
+
+  async function viderSessionsActives(s, u) {
+    if (!s || !u || typeof s.from !== "function") return;
+    var purgesS = lirePurgeSessions();
+    if (purgesS.length) {
+      var restantP = [];
+      for (var i = 0; i < purgesS.length; i++) {
+        var qz = purgesS[i];
+        try {
+          var tbD = s.from("sti_quiz_sessions");
+          if (tbD && typeof tbD.delete === "function") {
+            var rD = await tbD.delete().eq("user_id", u.id).eq("quiz", qz);
+            if (rD && rD.error) restantP.push(qz);
+          }
+        } catch (eD) { restantP.push(qz); }
+      }
+      sauverPurgeSessions(restantP);
+    }
+    var mapS = lireSessionsLocales();
+    var cles = Object.keys(mapS);
+    var modifie = false;
+    for (var j = 0; j < cles.length; j++) {
+      var cle = cles[j];
+      var st = mapS[cle];
+      if (!st || !st._dirty) continue;
+      if (st.user_id && st.user_id !== u.id) continue;
+      try {
+        var tbU = s.from("sti_quiz_sessions");
+        if (!tbU || typeof tbU.upsert !== "function") continue;
+        var row = {
+          user_id: u.id,
+          email: u.email,
+          quiz: String(st.quiz),
+          module: String(st.module || "*"),
+          mode: st.mode ? String(st.mode) : null,
+          statut: "en_cours",
+          score: Math.max(0, parseInt(st.score, 10) || 0),
+          points: parseInt(st.points, 10) || 0,
+          total: Math.max(1, parseInt(st.total, 10) || 1),
+          index_courant: Math.max(0, parseInt(st.index_courant, 10) || 0),
+          ordre_questions: Array.isArray(st.ordre_questions) ? st.ordre_questions : [],
+          etat_meta: st.etat_meta && typeof st.etat_meta === "object" ? st.etat_meta : {},
+          maj: st.maj || new Date().toISOString()
+        };
+        var rU = await tbU.upsert(row, { onConflict: "user_id,quiz" });
+        if (!rU || !rU.error) {
+          st.user_id = u.id;
+          st._dirty = false;
+          modifie = true;
+        }
+      } catch (eU) {}
+    }
+    if (modifie) sauverSessionsLocales(mapS);
+  }
+
+  async function sauverSession(quiz, etat) {
+    if (!quiz || !etat || !Array.isArray(etat.ordre_questions) || !etat.ordre_questions.length) return false;
+    var qz = String(quiz);
+    var uLoc = utilisateurDepuisStockageLocal();
+    if (sansScore(uLoc)) return false;
+    var isoNow = new Date().toISOString();
+    var entree = {
+      user_id: uLoc ? uLoc.id : null,
+      quiz: qz,
+      module: String(etat.module || "*"),
+      mode: etat.mode ? String(etat.mode) : null,
+      statut: "en_cours",
+      score: Math.max(0, parseInt(etat.score, 10) || 0),
+      points: parseInt(etat.points, 10) || 0,
+      total: Math.max(1, parseInt(etat.total, 10) || etat.ordre_questions.length || 1),
+      index_courant: Math.max(0, parseInt(etat.index_courant, 10) || 0),
+      ordre_questions: etat.ordre_questions,
+      etat_meta: etat.etat_meta && typeof etat.etat_meta === "object" ? etat.etat_meta : {},
+      maj: isoNow,
+      _dirty: true
+    };
+    /* Write-ahead synchrone immédiat avant tout await */
+    sauverPurgeSessions(lirePurgeSessions().filter(function (x) { return x !== qz; }));
+    var mapLoc = lireSessionsLocales();
+    mapLoc[qz] = entree;
+    sauverSessionsLocales(mapLoc);
+
+    try {
+      var s = sb();
+      var u = await utilisateur();
+      if (sansScore(u)) {
+        var mClean = lireSessionsLocales();
+        delete mClean[qz];
+        sauverSessionsLocales(mClean);
+        return false;
+      }
+      if (!s || !u || typeof s.from !== "function") return false;
+      var tb = s.from("sti_quiz_sessions");
+      if (!tb || typeof tb.upsert !== "function") return false;
+      var payload = {
+        user_id: u.id,
+        email: u.email,
+        quiz: qz,
+        module: entree.module,
+        mode: entree.mode,
+        statut: "en_cours",
+        score: entree.score,
+        points: entree.points,
+        total: entree.total,
+        index_courant: entree.index_courant,
+        ordre_questions: entree.ordre_questions,
+        etat_meta: entree.etat_meta,
+        maj: isoNow
+      };
+      var r = await tb.upsert(payload, { onConflict: "user_id,quiz" });
+      if (r && r.error) return false;
+      var mapApres = lireSessionsLocales();
+      if (mapApres[qz] && mapApres[qz].maj === isoNow) {
+        mapApres[qz].user_id = u.id;
+        mapApres[qz]._dirty = false;
+        sauverSessionsLocales(mapApres);
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function chargerSession(quiz) {
+    if (!quiz) return null;
+    var qz = String(quiz);
+    var enPurge = lirePurgeSessions().indexOf(qz) !== -1;
+    var mapLoc = lireSessionsLocales();
+    var loc = !enPurge ? (mapLoc[qz] || null) : null;
+    try {
+      var s = sb();
+      var u = await utilisateur();
+      if (sansScore(u)) return null;
+      if (loc && loc.user_id && u && loc.user_id !== u.id) loc = null;
+      if (!s || !u || typeof s.from !== "function") return loc;
+      if (enPurge) {
+        await viderSessionsActives(s, u);
+        return null;
+      }
+      var tb = s.from("sti_quiz_sessions");
+      if (!tb || typeof tb.select !== "function") return loc;
+      var q = tb.select("quiz,module,mode,statut,score,points,total,index_courant,ordre_questions,etat_meta,maj")
+        .eq("user_id", u.id)
+        .eq("quiz", qz)
+        .limit(1);
+      var r = await q;
+      if (r && !r.error && Array.isArray(r.data) && r.data.length) {
+        var dist = r.data[0];
+        if (dist && dist.statut === "en_cours" && Array.isArray(dist.ordre_questions) && dist.ordre_questions.length) {
+          var tDist = new Date(dist.maj || 0).getTime() || 0;
+          var tLoc = loc ? (new Date(loc.maj || 0).getTime() || 0) : 0;
+          if (!loc || tDist >= tLoc) {
+            dist.user_id = u.id;
+            dist._dirty = false;
+            var m2 = lireSessionsLocales();
+            m2[qz] = dist;
+            sauverSessionsLocales(m2);
+            return dist;
+          }
+        }
+      }
+      if (loc && loc._dirty) {
+        viderSessionsActives(s, u).catch(function () {});
+      }
+      return loc;
+    } catch (e) {
+      return loc;
+    }
+  }
+
+  async function effacerSession(quiz) {
+    if (!quiz) return false;
+    var qz = String(quiz);
+    var mapLoc = lireSessionsLocales();
+    if (mapLoc[qz]) {
+      delete mapLoc[qz];
+      sauverSessionsLocales(mapLoc);
+    }
+    var p = lirePurgeSessions();
+    p.push(qz);
+    sauverPurgeSessions(p);
+    try {
+      var s = sb();
+      var u = await utilisateur();
+      if (!s || !u || sansScore(u) || typeof s.from !== "function") {
+        if (sansScore(u)) sauverPurgeSessions(lirePurgeSessions().filter(function (x) { return x !== qz; }));
+        return false;
+      }
+      var tb = s.from("sti_quiz_sessions");
+      if (!tb || typeof tb.delete !== "function") return false;
+      var r = await tb.delete().eq("user_id", u.id).eq("quiz", qz);
+      if (r && r.error) return false;
+      sauverPurgeSessions(lirePurgeSessions().filter(function (x) { return x !== qz; }));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /* ---------- Gestion locale + Supabase des questions déjà vues sur tous les quiz ---------- */
+  function lireVusQuizLocal() {
+    try { return JSON.parse(localStorage.getItem(CLE_VUS_LOCAL_QUIZ) || "{}") || {}; } catch (e) { return {}; }
+  }
+  function sauverVusQuizLocal(obj) {
+    try { localStorage.setItem(CLE_VUS_LOCAL_QUIZ, JSON.stringify(obj || {})); } catch (e) {}
+  }
+  function noterQuestionsVuesQuiz(cleModuleVus, ids) {
+    if (!cleModuleVus || !Array.isArray(ids) || !ids.length) return;
+    var tout = lireVusQuizLocal();
+    if (!Array.isArray(tout[cleModuleVus])) tout[cleModuleVus] = [];
+    ids.forEach(function (id) {
+      var s = String(id);
+      if (s && tout[cleModuleVus].indexOf(s) === -1) tout[cleModuleVus].push(s);
+    });
+    sauverVusQuizLocal(tout);
+    marquerVus(cleModuleVus, ids);
+  }
+  function synchroniserVusQuizDepuisCloud(cleModuleVus) {
+    if (!cleModuleVus) return Promise.resolve([]);
+    return chargerVus().then(function (dist) {
+      var tout = lireVusQuizLocal();
+      if (!Array.isArray(tout[cleModuleVus])) tout[cleModuleVus] = [];
+      if (dist && Array.isArray(dist[cleModuleVus])) {
+        dist[cleModuleVus].forEach(function (id) {
+          var s = String(id);
+          if (s && tout[cleModuleVus].indexOf(s) === -1) tout[cleModuleVus].push(s);
+        });
+        sauverVusQuizLocal(tout);
+      }
+      return tout[cleModuleVus];
+    }).catch(function () {
+      var tout = lireVusQuizLocal();
+      return Array.isArray(tout[cleModuleVus]) ? tout[cleModuleVus] : [];
+    });
+  }
+  function ordonnerAvecQuestionsNonVues(cleModuleVus, poolMelange, getIdFn, nbMax) {
+    if (!Array.isArray(poolMelange) || !poolMelange.length) return [];
+    var tout = lireVusQuizLocal();
+    var vusArr = Array.isArray(tout[cleModuleVus]) ? tout[cleModuleVus] : [];
+    if (!vusArr.length) return typeof nbMax === "number" ? poolMelange.slice(0, nbMax) : poolMelange.slice();
+    var deja = {};
+    vusArr.forEach(function (id) { deja[String(id)] = true; });
+    var jamaisVues = [];
+    var dejaVues = [];
+    poolMelange.forEach(function (q) {
+      var qid = String(getIdFn(q));
+      if (deja[qid]) dejaVues.push(q);
+      else jamaisVues.push(q);
+    });
+    if (!jamaisVues.length) {
+      /* Vivier complet parcouru : nouveau cycle aléatoire propre sur Supabase + local */
+      tout[cleModuleVus] = [];
+      sauverVusQuizLocal(tout);
+      reinitialiserVus(cleModuleVus);
+      return typeof nbMax === "number" ? poolMelange.slice(0, nbMax) : poolMelange.slice();
+    }
+    var combine = jamaisVues.concat(dejaVues);
+    return typeof nbMax === "number" ? combine.slice(0, nbMax) : combine;
   }
 
   function viderFile() {
@@ -402,10 +714,14 @@
   };
 
   /* ---------- API publique ---------- */
-  async function enregistrer(quiz, score, total, module) {
+  async function enregistrer(quiz, score, total, module, meta) {
     score = parseInt(score, 10);
     total = parseInt(total, 10);
     if (!quiz || isNaN(score) || isNaN(total) || total <= 0 || score < 0 || score > total) return false;
+    var pointsOpt = (meta && meta.points !== undefined && meta.points !== null && !isNaN(parseInt(meta.points, 10)))
+      ? parseInt(meta.points, 10)
+      : null;
+    var ordreOpt = (meta && Array.isArray(meta.ordre_questions)) ? meta.ordre_questions.slice(0, 200) : null;
 
     /* Notification immédiate vers acces.js / sti-mes-scores (note réelle /20 avant tout départ de page) */
     var sur20Calc = Math.round((score / total) * 200) / 10;
@@ -418,6 +734,7 @@
         nomQuiz: nomAcces,
         score: score,
         total: total,
+        points: pointsOpt,
         pct: pctCalc,
         sur20: sur20Calc,
         note: noteAcces,
@@ -428,16 +745,22 @@
       }
     } catch (ePont) {}
 
+    /* Une fois la partie terminée, purger toute session « en_cours » correspondante */
+    effacerSession(String(quiz));
+
     /* Sauvegarde locale immédiate AVANT tout await */
     var cid = nouveauCid();
     cidsEnVol[cid] = true;
-    mettreEnFile({
+    var itemFile = {
       _cid: cid,
       quiz: String(quiz),
       module: module ? String(module) : null,
       score: score,
       total: total
-    });
+    };
+    if (pointsOpt !== null) itemFile.points = pointsOpt;
+    if (ordreOpt !== null) itemFile.ordre_questions = ordreOpt;
+    mettreEnFile(itemFile);
 
     try {
       var s = sb();
@@ -455,8 +778,20 @@
         score: score,
         total: total
       };
+      if (pointsOpt !== null) ligne.points = pointsOpt;
+      if (ordreOpt !== null) ligne.ordre_questions = ordreOpt;
       var r = await s.from("sti_quiz_parties").insert(ligne);
-      if (r.error) return false;
+      if (r && r.error && (pointsOpt !== null || ordreOpt !== null)) {
+        r = await s.from("sti_quiz_parties").insert({
+          user_id: u.id,
+          email: u.email,
+          quiz: String(quiz),
+          module: module ? String(module) : null,
+          score: score,
+          total: total
+        });
+      }
+      if (r && r.error) return false;
       retirerCidFile(cid);
       return true;
     } catch (e) {
@@ -469,24 +804,71 @@
   async function resume(quiz) {
     var s = sb();
     var u = await utilisateur();
-    if (!s || !u) return null;
-    if (sansScore(u)) return { parties: 0, dernier: null, meilleur: null };
+    var enAttente = lireFile().filter(function (f) { return f && (!quiz || f.quiz === quiz); });
+    if (!s || !u) {
+      if (!enAttente.length) return null;
+      var locLignes = enAttente.slice().reverse().map(function (f) {
+        return { score: f.score, total: f.total, points: f.points || null, module: f.module || null, cree_le: new Date().toISOString() };
+      });
+      var mLoc = locLignes[0];
+      locLignes.forEach(function (l) { if (pctDe(l.score, l.total) > pctDe(mLoc.score, mLoc.total)) mLoc = l; });
+      return {
+        parties: locLignes.length,
+        dernier: { score: locLignes[0].score, total: locLignes[0].total, points: locLignes[0].points, pct: pctDe(locLignes[0].score, locLignes[0].total), date: locLignes[0].cree_le, module: locLignes[0].module },
+        meilleur: { score: mLoc.score, total: mLoc.total, points: mLoc.points, pct: pctDe(mLoc.score, mLoc.total), date: mLoc.cree_le, module: mLoc.module },
+        meilleurPoints: locLignes.reduce(function (mx, l) { return Math.max(mx, Number(l.points) || 0); }, 0),
+        totalQuestions: locLignes.reduce(function (sm, l) { return sm + (Number(l.total) || 0); }, 0),
+        totalBonnes: locLignes.reduce(function (sm, l) { return sm + (Number(l.score) || 0); }, 0)
+      };
+    }
+    if (sansScore(u)) return { parties: 0, dernier: null, meilleur: null, meilleurPoints: 0, totalQuestions: 0, totalBonnes: 0 };
     try {
-      var q = s.from("sti_quiz_parties").select("score,total,module,cree_le")
+      await viderFile();
+      var q = s.from("sti_quiz_parties").select("score,total,points,module,ordre_questions,cree_le")
+        .eq("user_id", u.id)
         .order("cree_le", { ascending: false }).limit(300);
       if (quiz) q = q.eq("quiz", quiz);
       var r = await q;
-      if (r.error || !r.data) return null;
+      if (r && r.error) {
+        var qFb = s.from("sti_quiz_parties").select("score,total,module,cree_le")
+          .eq("user_id", u.id)
+          .order("cree_le", { ascending: false }).limit(300);
+        if (quiz) qFb = qFb.eq("quiz", quiz);
+        r = await qFb;
+      }
+      if (!r || r.error || !r.data) return null;
       var lignes = r.data;
-      if (!lignes.length) return { parties: 0, dernier: null, meilleur: null };
+      if (!lignes.length) return { parties: 0, dernier: null, meilleur: null, meilleurPoints: 0, totalQuestions: 0, totalBonnes: 0 };
       var meilleur = lignes[0];
+      var meilleurPoints = 0;
+      var totalQuestions = 0;
+      var totalBonnes = 0;
       lignes.forEach(function (l) {
         if (pctDe(l.score, l.total) > pctDe(meilleur.score, meilleur.total)) meilleur = l;
+        if ((Number(l.points) || 0) > meilleurPoints) meilleurPoints = Number(l.points) || 0;
+        totalQuestions += Number(l.total) || 0;
+        totalBonnes += Number(l.score) || 0;
       });
       function forme(l) {
-        return { score: l.score, total: l.total, pct: pctDe(l.score, l.total), date: l.cree_le, module: l.module || null };
+        return {
+          score: l.score,
+          total: l.total,
+          points: l.points != null ? l.points : null,
+          pct: pctDe(l.score, l.total),
+          sur20: Math.round((l.score / Math.max(1, l.total)) * 200) / 10,
+          date: l.cree_le,
+          module: l.module || null,
+          ordre_questions: l.ordre_questions || null
+        };
       }
-      return { parties: lignes.length, dernier: forme(lignes[0]), meilleur: forme(meilleur) };
+      return {
+        parties: lignes.length,
+        dernier: forme(lignes[0]),
+        meilleur: forme(meilleur),
+        meilleurPoints: meilleurPoints,
+        totalQuestions: totalQuestions,
+        totalBonnes: totalBonnes
+      };
     } catch (e) { return null; }
   }
 
@@ -643,6 +1025,12 @@
     chargerVus: chargerVus,
     marquerVus: marquerVus,
     reinitialiserVus: reinitialiserVus,
+    sauverSession: sauverSession,
+    chargerSession: chargerSession,
+    effacerSession: effacerSession,
+    noterQuestionsVuesQuiz: noterQuestionsVuesQuiz,
+    synchroniserVusQuizDepuisCloud: synchroniserVusQuizDepuisCloud,
+    ordonnerAvecQuestionsNonVues: ordonnerAvecQuestionsNonVues,
     utilisateur: utilisateur
   };
 

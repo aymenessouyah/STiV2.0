@@ -1,29 +1,29 @@
 {
-  "version": 317,
-  "generatedAt": "2026-10-25T19:00:00Z",
+  "version": "v460-quiz-supabase-ordre",
+  "generatedAt": "2026-10-25T20:09:45.447Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 605,
-  "totalBytes": 631110114,
+  "totalBytes": 631180878,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
-      "bytes": 22920,
-      "gitSha": "8e0ddc47e4498ef6c29df58137fb775f7410201c"
+      "bytes": 38595,
+      "gitSha": "cab33c6a76d07696d369540cfa6501d1197f237b"
     },
     {
       "path": "assets/js/quiz-admin.js",
-      "bytes": 43728,
-      "gitSha": "134aabdb886d6d891a25dc04b48364bdff037d1e"
+      "bytes": 45007,
+      "gitSha": "b9be3877aab939dd464250f6684f7fecbad7ef10"
     },
     {
       "path": "quiz/tableaux.html",
-      "bytes": 9678,
-      "gitSha": "6429c232baa39593251414b74304c1d3a31757df"
+      "bytes": 9684,
+      "gitSha": "fabda0fc3a8da65054fbd8240bc71d7be91cd751"
     },
     {
       "path": "assets/js/quiz-tableaux.js",
-      "bytes": 23069,
-      "gitSha": "f856b0e8aaa174d13c66afc73b2cd4de7298e9ca"
+      "bytes": 29835,
+      "gitSha": "a658f6b95441b124df55914ceb476e5f8a33976b"
     },
     {
       "path": "assets/data/quiz-banque.json",
@@ -98,7 +98,7 @@
     {
       "path": "admin.html",
       "bytes": 322176,
-      "gitSha": "86b14918cd38301b22a70895d63796892b7877c5"
+      "gitSha": "f13bc24c87fa1fe0d54817e7ce3ad4e99107bec7"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -607,8 +607,8 @@
     },
     {
       "path": "assets/js/sync-progressions.js",
-      "bytes": 11472,
-      "gitSha": "61cbbf686f471a848c421bedccc66447832492bf"
+      "bytes": 14348,
+      "gitSha": "8300540f44565522084d45b5300c0d6c0bd8edcc"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -2962,18 +2962,18 @@
     },
     {
       "path": "quiz/html-css.html",
-      "bytes": 224243,
-      "gitSha": "f8c4cbed508198ada3aee032598f2ec2fc527537"
+      "bytes": 233703,
+      "gitSha": "d2ec9fa818c2eeb3a22a58e80af47f7c8805a90c"
     },
     {
       "path": "quiz/javascript.html",
-      "bytes": 1093412,
-      "gitSha": "ccb8abf1f28a08e1d8c376a88f0ddead02b7bb63"
+      "bytes": 1105215,
+      "gitSha": "779b78bafcbf2c1332bd2703d349c30d6f9d7e0c"
     },
     {
       "path": "quiz/php.html",
-      "bytes": 1761724,
-      "gitSha": "afa6e588d7dd48e1afadd6abb71b18bf86d482d5"
+      "bytes": 1773074,
+      "gitSha": "83d162ccadd740fb75108ab2cf22ccd5bac7cfd4"
     },
     {
       "path": "quiz/pp.html",
@@ -2982,8 +2982,8 @@
     },
     {
       "path": "quiz/sql.html",
-      "bytes": 1881508,
-      "gitSha": "01efae3b836dab2fe293d671045bd5bc5a3d9302"
+      "bytes": 1892212,
+      "gitSha": "0f0d82e5604621235a8d0d5c9746bfc0bbd8dc0f"
     },
     {
       "path": "robots.txt",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 70680,
-      "gitSha": "8942e4cefcb4cd6b1df2c2388347d99503547a32"
+      "bytes": 71525,
+      "gitSha": "9ac9e5aaa84d9ff9bfa5c9104e442a25eee16535"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",

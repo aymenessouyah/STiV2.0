@@ -93,9 +93,18 @@
       var [rp, rf] = await Promise.all([
         lireToutPagine(function () {
           return s.from("sti_quiz_parties")
-            .select("user_id,email,quiz,module,score,total,cree_le")
+            .select("user_id,email,quiz,module,score,total,points,ordre_questions,cree_le")
             .order("cree_le", { ascending: false });
-        }, 10000, 1000),
+        }, 10000, 1000).then(function (r) {
+          if (r && r.error) {
+            return lireToutPagine(function () {
+              return s.from("sti_quiz_parties")
+                .select("user_id,email,quiz,module,score,total,cree_le")
+                .order("cree_le", { ascending: false });
+            }, 10000, 1000);
+          }
+          return r;
+        }),
         lireToutPagine(function () {
           return s.from("profiles").select("id,email,nom,prenom,classe");
         }, 3000, 1000)
@@ -172,8 +181,17 @@
     tb.innerHTML = liste.map(function (g, idx) {
       var d = g.dernier, m = g.meilleur;
       var detail = g.parties.map(function (l) {
+        var ptsTxt = (l.points != null && !isNaN(Number(l.points))) ? " · ⭐ " + Number(l.points) + " pts" : "";
+        var blocOrdre = "";
+        if (Array.isArray(l.ordre_questions) && l.ordre_questions.length) {
+          blocOrdre = '<details style="margin:2px 0 6px 20px"><summary style="cursor:pointer;color:#177245;font-weight:800;font-size:11.5px">🔢 Ordre exact des ' +
+            l.ordre_questions.length + ' questions tirées</summary><ol style="margin:4px 0 6px 18px;padding:0;font-size:11.5px;line-height:1.5">' +
+            l.ordre_questions.map(function (oq) {
+              return "<li>" + (oq && oq.ok ? "✅ " : "❌ ") + esc((oq && oq.enonce) || (oq && oq.id) || "") + "</li>";
+            }).join("") + "</ol></details>";
+        }
         return "<div>🗓️ " + esc(fmtDate(l.cree_le)) + " — <strong>" + l.score + "/" + l.total +
-          "</strong> (" + pct(l) + " %)</div>";
+          "</strong> (" + pct(l) + " %)" + ptsTxt + blocOrdre + "</div>";
       }).join("");
       var modAttr = g.rep.module == null ? "" : g.rep.module;
       return "<tr data-idx=\"" + idx + "\" style=\"cursor:pointer\" title=\"Cliquer pour le détail des parties\">" +
@@ -687,6 +705,9 @@
       var qr = s.from("sti_quiz_reponses").delete().eq("user_id", uid).eq("quiz", quiz);
       if (mod) qr = qr.eq("module", mod);
       await qr;
+      try {
+        await s.from("sti_quiz_sessions").delete().eq("user_id", uid).eq("quiz", quiz);
+      } catch (eS) {}
       await charger();
     } catch (e) {
       window.alert("⚠️ Suppression refusée ou échouée : " + ((e && e.message) || String(e)));

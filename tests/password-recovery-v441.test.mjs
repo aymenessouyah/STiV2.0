@@ -1315,7 +1315,7 @@ test('v456 : consolidation complète Quiz Lots A, B et C (RLS DELETE, admin.html
   assert.equal((adminHtml.match(/<option value="quiz\/tableaux\.html">/g) || []).length, 2);
   assert.equal((adminHtml.match(/<option value="revision-erreurs\.html">/g) || []).length, 2);
   assert.match(adminHtml, /id="btn-quiz-sync-csv"/);
-  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=456/);
+  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=4(56|60)/);
   assert.match(adminHtml, /admin\.js\?v=4\d{2}-/);
 
   assert.match(ppHtml, /window\.location\.replace\(cible\)/);
@@ -1567,7 +1567,7 @@ test('v457 (Lot D — audit final Quiz) : couverture 124 pages, cache-buster uni
     ['quiz/tableaux.html', tabHtml],
     ['revision-erreurs.html', revErrHtml],
   ]) {
-    assert.match(content, /quiz-sync\.js\?v=45[789]/, `${name} doit charger quiz-sync.js?v=457+`);
+    assert.match(content, /quiz-sync\.js\?v=4[56]\d/, `${name} doit charger quiz-sync.js?v=457+`);
   }
   assert.match(adminHtml, /admin-erreurs\.js\?v=457/);
   assert.match(swJs, /v457-quiz-lot-d/);
@@ -1828,10 +1828,10 @@ test('v458 : révision approfondie Quiz Phase 2 — assainissement intégral qui
     ['quiz/tableaux.html', tabHtml],
     ['revision-erreurs.html', revErrHtml],
   ]) {
-    assert.match(content, /quiz-sync\.js\?v=458/, `${name} doit charger quiz-sync.js?v=458`);
+    assert.match(content, /quiz-sync\.js\?v=4(58|59|60)/, `${name} doit charger quiz-sync.js?v=458+`);
   }
-  assert.match(tabHtml, /quiz-tableaux\.js\?v=45[89]/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v31[89]"/);
+  assert.match(tabHtml, /quiz-tableaux\.js\?v=4(58|59|60)/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3(18|19|20)"/);
   assert.match(swJs, /v458-quiz-revision-2/);
 });
 
@@ -2144,8 +2144,8 @@ test('v459 : modale Carte Candidat fonctionnelle (CSS plein écran + 4 boutons) 
   assert.match(tabJs, /function conseilParFauteTab\(/);
   assert.match(accesJs, /📌 Points à réviser en priorité/);
   assert.match(accesJs, /function conseilParFauteEb\(/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v319"/);
-  assert.match(swJs, /var UPDATE_ID = "v459-carte-quiz-eval"/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3(19|20)"/);
+  assert.match(swJs, /v459-carte-quiz-eval/);
 });
 
 test('v459 (comportemental VM) : Quiz Tableaux affiche Points à réviser + 1 conseil par faute à l’évaluation et mélange questions/options différemment entre deux connexions', async () => {
@@ -2241,6 +2241,276 @@ test('v459 (comportemental VM) : Quiz Tableaux affiche Points à réviser + 1 co
     assert.match(s1.appEl.innerHTML, /📌 Points à réviser en priorité/);
   }
 });
+
+test('v460 (structure & migration) : liaison Supabase scores + ordre des questions (sti_quiz_sessions + sti_quiz_parties.ordre_questions), correctif crash updateNav PHP et Réviser encore une autre fois sur les 5 quiz', () => {
+  const migSql = read('supabase/migrations/20261025_quiz_sessions_ordre_v460.sql');
+  const syncJs = read('assets/js/quiz-sync.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const tabJs = read('assets/js/quiz-tableaux.js');
+  const quizAdminJs = read('assets/js/quiz-admin.js');
+  const hcHtml = read('quiz/html-css.html');
+  const jsHtml = read('quiz/javascript.html');
+  const sqlHtml = read('quiz/sql.html');
+  const phpHtml = read('quiz/php.html');
+  const tabHtml = read('quiz/tableaux.html');
+  const revErrHtml = read('revision-erreurs.html');
+  const swJs = read('sw.js');
+
+  // 1) Migration SQL v460 : sti_quiz_parties (points, ordre_questions) + table sti_quiz_sessions avec RLS et GRANT
+  assert.match(migSql, /alter table public\.sti_quiz_parties[\s\S]*add column if not exists ordre_questions jsonb/i);
+  assert.match(migSql, /create table if not exists public\.sti_quiz_sessions/i);
+  assert.match(migSql, /enable row level security/i);
+  assert.match(migSql, /grant select, insert, update, delete on public\.sti_quiz_sessions to authenticated/i);
+
+  // 2) STIQuizSync v460 : sauverSession, chargerSession, effacerSession, ordre_questions + filtrage user_id dans resume()
+  assert.match(syncJs, /sauverSession:\s*sauverSession/);
+  assert.match(syncJs, /chargerSession:\s*chargerSession/);
+  assert.match(syncJs, /effacerSession:\s*effacerSession/);
+  assert.match(syncJs, /\.from\("sti_quiz_sessions"\)/);
+  assert.match(syncJs, /\.eq\("user_id",\s*u\.id\)/);
+
+  // 3) sync-progressions.js : synchronisation cloud des clés de quiz autonomes avec fusion monotone des meilleurs scores
+  for (const cle of ['js_quiz_high_score', 'sqlQuestV3', 'quizphp_v1_user']) {
+    assert.ok(syncProgJs.includes(`"${cle}"`), `sync-progressions.js doit synchroniser ${cle}`);
+  }
+
+  // 4) Correctif du crash de production quiz/php.html (sti_diagnostics id=24) : #loginBtn préserve #loginLabel + synchroniserPartiePhp au début de endQuiz
+  assert.match(phpHtml, /id="loginLabel"/);
+  assert.doesNotMatch(phpHtml, /\$\("loginLabel"\)\.textContent\s*=\s*user\.name[\s\S]{0,160}\$\("loginBtn"\)\.innerHTML\s*=\s*`<span class="text-base">\$\{[\s\S]{0,80}<span class="hidden sm:inline">/);
+
+  // 5) Les 5 quiz + revision-erreurs offrent la reprise Supabase (score + ordre) ET « Réviser encore une autre fois » + « Réviser mes erreurs »
+  assert.match(hcHtml, /sauvegarderSessionHtmlCssCloud/);
+  assert.match(hcHtml, /Réviser encore une autre fois/);
+  assert.match(jsHtml, /saveActiveSessionCloud/);
+  assert.match(jsHtml, /RÉVISER ENCORE UNE AUTRE FOIS/);
+  assert.match(sqlHtml, /sauvegarderSessionSqlCloud/);
+  assert.match(sqlHtml, /Réviser encore une autre fois/);
+  assert.match(phpHtml, /sauvegarderSessionPhpCloud/);
+  assert.match(phpHtml, /Réviser encore une autre fois/);
+  assert.match(tabJs, /sauvegarderProgressionTableauxCloud/);
+  assert.match(tabJs, /Réviser encore une autre fois/);
+  assert.match(revErrHtml, /Réviser encore une autre fois/);
+  assert.match(quizAdminJs, /Ordre exact des/);
+
+  // 6) Cache-busters v460 & Service Worker v320
+  for (const [name, content] of [
+    ['quiz/html-css.html', hcHtml],
+    ['quiz/javascript.html', jsHtml],
+    ['quiz/sql.html', sqlHtml],
+    ['quiz/php.html', phpHtml],
+    ['quiz/tableaux.html', tabHtml],
+    ['revision-erreurs.html', revErrHtml],
+  ]) {
+    assert.match(content, /quiz-sync\.js\?v=460/, `${name} doit charger quiz-sync.js?v=460`);
+  }
+  assert.match(swJs, /var CACHE = "sti-atelier-v320"/);
+  assert.match(swJs, /var UPDATE_ID = "v460-quiz-supabase-ordre"/);
+});
+
+test('v460 (comportemental VM) : sauvegarde et reprise exacte du score + ordre des questions sur Supabase (sti_quiz_sessions + sti_quiz_parties) et non-régression updateNav PHP', async () => {
+  const syncJs = read('assets/js/quiz-sync.js');
+  const phpHtml = read('quiz/php.html');
+
+  // Simulation d'une base Supabase en mémoire (sti_quiz_sessions + sti_quiz_parties)
+  const cloudSessions = [];
+  const cloudParties = [
+    // Ligne d'un AUTRE élève : resume() ne doit JAMAIS l'agréger avec l'élève connecté !
+    { user_id: 'other-user-999', quiz: 'sql', score: 20, total: 20, points: 9999, module: 'all', cree_le: '2026-10-25T10:00:00Z' },
+  ];
+
+  function creerFauxClientSupabase(userId, email) {
+    return {
+      auth: {
+        getUser: async () => ({ data: { user: { id: userId, email } } }),
+        onAuthStateChange: () => {},
+      },
+      from(table) {
+        if (table === 'sti_quiz_sessions') {
+          return {
+            async upsert(row) {
+              const idx = cloudSessions.findIndex((r) => r.user_id === row.user_id && r.quiz === row.quiz);
+              if (idx >= 0) cloudSessions[idx] = { ...row };
+              else cloudSessions.push({ ...row });
+              return { error: null };
+            },
+            select() {
+              const filters = {};
+              const builder = {
+                eq(col, val) { filters[col] = val; return builder; },
+                limit() {
+                  const data = cloudSessions.filter((r) =>
+                    Object.keys(filters).every((k) => r[k] === filters[k])
+                  );
+                  return Promise.resolve({ data, error: null });
+                },
+              };
+              return builder;
+            },
+            delete() {
+              const filters = {};
+              const builder = {
+                eq(col, val) {
+                  filters[col] = val;
+                  if (filters.user_id && filters.quiz) {
+                    for (let i = cloudSessions.length - 1; i >= 0; i--) {
+                      if (cloudSessions[i].user_id === filters.user_id && cloudSessions[i].quiz === filters.quiz) {
+                        cloudSessions.splice(i, 1);
+                      }
+                    }
+                    return Promise.resolve({ error: null });
+                  }
+                  return builder;
+                },
+              };
+              return builder;
+            },
+          };
+        }
+        if (table === 'sti_quiz_parties') {
+          return {
+            async insert(row) {
+              cloudParties.unshift({ ...row, cree_le: new Date().toISOString() });
+              return { error: null };
+            },
+            select() {
+              const filters = {};
+              const builder = {
+                eq(col, val) { filters[col] = val; return builder; },
+                order() { return builder; },
+                limit() { return builder; },
+                then(resolve, reject) {
+                  const data = cloudParties.filter((r) =>
+                    Object.keys(filters).every((k) => r[k] === filters[k])
+                  );
+                  return Promise.resolve({ data, error: null }).then(resolve, reject);
+                },
+              };
+              return builder;
+            },
+          };
+        }
+        return {
+          select: () => ({ order: () => ({ range: async () => ({ data: [], error: null }) }) }),
+          upsert: async () => ({ error: null }),
+          delete: () => ({ eq: () => Promise.resolve({ error: null }) }),
+        };
+      },
+    };
+  }
+
+  function creerAppareilVM(userId, email) {
+    const store = new Map();
+    store.set('sb-vywujxmepvcbgedgmger-auth-token', JSON.stringify({ user: { id: userId, email } }));
+    const storage = {
+      get length() { return store.size; },
+      key: (i) => Array.from(store.keys())[i] || null,
+      getItem: (k) => (store.has(k) ? store.get(k) : null),
+      setItem: (k, v) => store.set(k, String(v)),
+      removeItem: (k) => store.delete(k),
+    };
+    const ctx = {
+      STI_AUTH: { URL: 'https://example.supabase.co', CLE: 'anon' },
+      supabase: { createClient: () => creerFauxClientSupabase(userId, email) },
+      localStorage: storage,
+      sessionStorage: storage,
+      document: { visibilityState: 'visible', addEventListener: () => {} },
+      location: { search: '' },
+      addEventListener: () => {},
+      Date, Math, JSON, Array, Object, String, Number, Boolean, RegExp, Set, Promise, parseInt, isNaN,
+    };
+    ctx.window = ctx;
+    vm.runInNewContext(syncJs, ctx, { filename: 'assets/js/quiz-sync.js' });
+    return ctx;
+  }
+
+  // Appareil A (ex. Smartphone) : démarre un quiz SQL avec un ordre précis de 4 questions et un score intermédiaire de 2/2 (340 pts)
+  const appA = creerAppareilVM('eleve-123', 'eleve123@sti.tn');
+  const ordreInitial = [
+    { id: 42, q: 'Quelle clause filtre après GROUP BY ?', answers: ['HAVING', 'WHERE', 'ORDER BY', 'DISTINCT'], correct: 0 },
+    { id: 7, q: 'Que signifie PK ?', answers: ['Clé étrangère', 'Clé primaire', 'Index secondaire', 'Vue'], correct: 1 },
+    { id: 99, q: 'Quel mot-clé élimine les doublons ?', answers: ['UNIQUE', 'DISTINCT', 'GROUP', 'ONLY'], correct: 1 },
+    { id: 15, q: 'Quelle commande modifie une ligne ?', answers: ['ALTER', 'INSERT', 'UPDATE', 'SELECT'], correct: 2 },
+  ];
+  const okSave = await appA.STIQuizSync.sauverSession('sql', {
+    module: 'agregat',
+    mode: 'classique',
+    score: 2,
+    points: 340,
+    total: 4,
+    index_courant: 2,
+    ordre_questions: ordreInitial,
+    etat_meta: { combo: 2 },
+  });
+  assert.equal(okSave, true, 'sauverSession doit persister la session active dans sti_quiz_sessions sur Supabase');
+  assert.equal(cloudSessions.length, 1);
+
+  // Appareil B (ex. PC du labo, localStorage vierge) : récupère exactement le score (2, 340 pts), l'index (2) et l'ordre des questions [42, 7, 99, 15] !
+  const appB = creerAppareilVM('eleve-123', 'eleve123@sti.tn');
+  const reprise = await appB.STIQuizSync.chargerSession('sql');
+  assert.ok(reprise, 'L’élève doit retrouver sa partie en cours sur un autre appareil via Supabase');
+  assert.equal(reprise.score, 2);
+  assert.equal(reprise.points, 340);
+  assert.equal(reprise.index_courant, 2);
+  assert.deepEqual(
+    Array.from(reprise.ordre_questions, (q) => q.id),
+    [42, 7, 99, 15],
+    'L’ordre exact des questions tirées doit être intégralement conservé via Supabase'
+  );
+  assert.deepEqual(
+    Array.from(reprise.ordre_questions[0].answers),
+    ['HAVING', 'WHERE', 'ORDER BY', 'DISTINCT'],
+    'L’ordre exact des propositions A/B/C/D doit aussi être conservé'
+  );
+
+  // Fin de partie sur l'Appareil B : enregistrer() sauvegarde le score final + ordre_questions dans sti_quiz_parties ET purge sti_quiz_sessions
+  const ordreFinal = [
+    { rang: 1, id: 'sql-42', enonce: ordreInitial[0].q, ok: true },
+    { rang: 2, id: 'sql-7', enonce: ordreInitial[1].q, ok: true },
+    { rang: 3, id: 'sql-99', enonce: ordreInitial[2].q, ok: false },
+    { rang: 4, id: 'sql-15', enonce: ordreInitial[3].q, ok: true },
+  ];
+  const okParty = await appB.STIQuizSync.enregistrer('sql', 3, 4, 'agregat', {
+    points: 520,
+    ordre_questions: ordreFinal,
+  });
+  assert.equal(okParty, true);
+  assert.equal(cloudSessions.length, 0, 'La session en_cours doit être purgée de sti_quiz_sessions dès la fin de partie');
+
+  // Vérifie resume('sql') : strictement filtré sur eleve-123 (ignore other-user-999 à 20/20 !) et restitue score + points + ordre_questions
+  const bilan = await appA.STIQuizSync.resume('sql');
+  assert.equal(bilan.parties, 1, 'resume() ne doit compter que les parties de l’utilisateur connecté');
+  assert.equal(bilan.meilleur.score, 3);
+  assert.equal(bilan.meilleur.total, 4);
+  assert.equal(bilan.meilleurPoints, 520);
+  assert.equal(Array.from(bilan.dernier.ordre_questions).length, 4);
+
+  // Non-régression directe du crash de production quiz/php.html : appeler updateNav() 3 fois de suite ne doit JAMAIS jeter TypeError
+  const mUpdateNav = phpHtml.match(/function updateNav\(\)\s*\{[\s\S]*?\n      \}/);
+  assert.ok(mUpdateNav, 'updateNav() doit exister dans quiz/php.html');
+  const fakeEls = {
+    navStreak: { textContent: '' },
+    navXP: { textContent: '' },
+    navLevel: { textContent: '' },
+    xpBar: { style: {} },
+    loginBtn: { innerHTML: '<span id="loginLabel">Connexion</span>' },
+    loginLabel: { textContent: 'Connexion' },
+    bestScoreLabel: { textContent: '' },
+  };
+  const phpCtx = {
+    user: { name: 'Mariem', avatar: '🐘', xp: 2450, streak: 4, best: 1800 },
+    escapeHtml: (s) => String(s),
+    $: (id) => {
+      if (id === 'loginLabel') {
+        return fakeEls.loginBtn.innerHTML.includes('id="loginLabel"') ? fakeEls.loginLabel : null;
+      }
+      return fakeEls[id] || null;
+    },
+  };
+  vm.runInNewContext(mUpdateNav[0] + '; updateNav(); updateNav(); updateNav();', phpCtx);
+  assert.match(fakeEls.loginBtn.innerHTML, /id="loginLabel"/);
+  assert.match(fakeEls.loginBtn.innerHTML, /Mariem/);
+});
+
 
 
 

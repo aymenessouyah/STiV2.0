@@ -2898,9 +2898,12 @@
             Composez votre <span class="gradient-text">partie idéale</span>
           </h2>
           <p>
-            Mode, thème, nombre de questions : trois réglages et c'est parti.
+            Mode, thème, nombre de questions : score et ordre des questions synchronisés sur Supabase.
           </p>
         </div>
+
+        <div id="hcCloudBilan" style="margin-bottom: 14px"></div>
+        <div id="hcCloudReprise" style="margin-bottom: 16px"></div>
 
         <div class="setup-grid">
           <!-- Colonne 1 : mode + nombre -->
@@ -3227,8 +3230,14 @@
           </div>
 
           <div class="result-actions">
+            <button class="btn-primary hidden" id="retryErrorsBtn" style="color: #fff">
+              🎯 Réviser mes erreurs
+            </button>
+            <button class="btn-glass" id="reviseAgainBtn">
+              🔁 Réviser encore une autre fois
+            </button>
             <button class="btn-primary" id="replayBtn" style="color: #fff">
-              🔁 Nouveau tirage
+              🎲 Nouveau tirage
             </button>
             <button class="btn-glass" id="setupBtn">
               ⚙️ Modifier les réglages
@@ -3284,7 +3293,7 @@
 
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=425"></script>
-    <script src="../assets/js/quiz-sync.js?v=458"></script>
+    <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <script>
       /* ==============================================================
@@ -5547,19 +5556,15 @@ background-repeat: repeat;</pre>
       }
 
       /* ==============================================================
-         8. PARTIE : tirage aléatoire
+         8. PARTIE : tirage aléatoire + synchronisation Supabase (score & ordre)
          ============================================================== */
-      function nouvellePartie() {
-        var revHcActif =
-          window.STIQuizSync && STIQuizSync.revisionIds
-            ? STIQuizSync.revisionIds("html-css")
-            : null;
-        var basePool = pool();
-        var limite = revHcActif && revHcActif.length ? basePool.length : nbQuestions();
-        var tirees = shuffle(basePool).slice(0, limite);
-        state.session = tirees.map(function (q) {
-          var propositions = q.options.map(function (texte, i) {
-            return { text: texte, ok: i === q.correct };
+      function preparerSessionDepuisListeHc(listeBrute) {
+        var sessionCalc = listeBrute.map(function (q) {
+          var propositions = q.options.map(function (opt, i) {
+            if (opt && typeof opt === "object" && "ok" in opt) {
+              return { text: opt.text, ok: !!opt.ok };
+            }
+            return { text: opt, ok: i === q.correct };
           });
           return {
             cat: q.cat,
@@ -5569,19 +5574,165 @@ background-repeat: repeat;</pre>
             _synced: false,
           };
         });
-        for (var i = 2; i < state.session.length; i++) {
-          var i0 = state.session[i - 2].options.findIndex(function (o) { return o.ok; });
-          var i1 = state.session[i - 1].options.findIndex(function (o) { return o.ok; });
-          var i2 = state.session[i].options.findIndex(function (o) { return o.ok; });
-          if (i2 !== -1 && i2 === i1 && i2 === i0 && state.session[i].options.length > 1) {
-            var alt = (i2 + 1) % state.session[i].options.length;
-            var tmp = state.session[i].options[i2];
-            state.session[i].options[i2] = state.session[i].options[alt];
-            state.session[i].options[alt] = tmp;
+        for (var i = 2; i < sessionCalc.length; i++) {
+          var i0 = sessionCalc[i - 2].options.findIndex(function (o) { return o.ok; });
+          var i1 = sessionCalc[i - 1].options.findIndex(function (o) { return o.ok; });
+          var i2 = sessionCalc[i].options.findIndex(function (o) { return o.ok; });
+          if (i2 !== -1 && i2 === i1 && i2 === i0 && sessionCalc[i].options.length > 1) {
+            var alt = (i2 + 1) % sessionCalc[i].options.length;
+            var tmp = sessionCalc[i].options[i2];
+            sessionCalc[i].options[i2] = sessionCalc[i].options[alt];
+            sessionCalc[i].options[alt] = tmp;
           }
         }
+        return sessionCalc;
+      }
+
+      function nouvellePartie() {
+        var revHcActif =
+          window.STIQuizSync && STIQuizSync.revisionIds
+            ? STIQuizSync.revisionIds("html-css")
+            : null;
+        var basePool = pool();
+        var limite = revHcActif && revHcActif.length ? basePool.length : nbQuestions();
+        var melangees = shuffle(basePool);
+        var tirees =
+          !revHcActif &&
+          window.STIQuizSync &&
+          typeof STIQuizSync.ordonnerAvecQuestionsNonVues === "function"
+            ? STIQuizSync.ordonnerAvecQuestionsNonVues(
+                "q_htmlcss",
+                melangees,
+                function (q) {
+                  return STIQuizSync.hash(q.text);
+                },
+                limite
+              )
+            : melangees.slice(0, limite);
+        state.session = preparerSessionDepuisListeHc(tirees);
         state.index = 0;
         state.partySynced = false;
+      }
+
+      function sauvegarderSessionHtmlCssCloud() {
+        if (
+          !window.STIQuizSync ||
+          typeof STIQuizSync.sauverSession !== "function" ||
+          !state ||
+          !state.session ||
+          !state.session.length ||
+          state.partySynced
+        ) {
+          return;
+        }
+        var nbOk = bonnesReponses();
+        STIQuizSync.sauverSession("html-css", {
+          module: state.cat || "all",
+          mode: state.mode || "classic",
+          score: nbOk,
+          points: nbOk * 100,
+          total: state.session.length,
+          index_courant: state.index || 0,
+          ordre_questions: state.session.map(function (q) {
+            return {
+              cat: q.cat,
+              text: q.text,
+              options: q.options,
+              answer: q.answer,
+            };
+          }),
+          etat_meta: { elapsed: state.elapsed || 0, cat: state.cat || "all", mode: state.mode || "classic" },
+        });
+      }
+
+      function hydraterCloudHtmlCss() {
+        if (!window.STIQuizSync) return;
+        if (typeof STIQuizSync.synchroniserVusQuizDepuisCloud === "function") {
+          STIQuizSync.synchroniserVusQuizDepuisCloud("q_htmlcss");
+        }
+        if (typeof STIQuizSync.resume === "function") {
+          STIQuizSync.resume("html-css").then(function (res) {
+            var z = $("#hcCloudBilan");
+            if (!z || !res || !res.parties) return;
+            z.innerHTML =
+              '<div class="glass panel" style="padding:12px 16px;font-size:.9rem;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">' +
+              "<span>☁️ <strong>Scores Supabase :</strong> " +
+              res.parties +
+              " partie" +
+              (res.parties > 1 ? "s" : "") +
+              (res.meilleur
+                ? " · 🏆 Meilleur : <strong>" +
+                  res.meilleur.score +
+                  "/" +
+                  res.meilleur.total +
+                  "</strong> (" +
+                  res.meilleur.pct +
+                  " %)"
+                : "") +
+              (res.dernier
+                ? " · 🕒 Dernier : <strong>" +
+                  res.dernier.score +
+                  "/" +
+                  res.dernier.total +
+                  "</strong> (" +
+                  res.dernier.pct +
+                  " %)"
+                : "") +
+              "</span></div>";
+          }).catch(function () {});
+        }
+        if (typeof STIQuizSync.chargerSession === "function") {
+          STIQuizSync.chargerSession("html-css").then(function (sauv) {
+            var zr = $("#hcCloudReprise");
+            if (!zr || !sauv || !Array.isArray(sauv.ordre_questions) || !sauv.ordre_questions.length) return;
+            var idx = Math.min(Math.max(0, parseInt(sauv.index_courant, 10) || 0), sauv.ordre_questions.length - 1);
+            zr.innerHTML =
+              '<div class="glass panel" style="padding:14px 18px;border:1.5px solid rgba(56,189,248,.55);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">' +
+              '<div><strong>☁️ Partie en cours sauvegardée sur Supabase</strong><div class="hint" style="margin-top:3px">Question <strong>' +
+              (idx + 1) +
+              "/" +
+              sauv.ordre_questions.length +
+              "</strong> · Score conservé : <strong>" +
+              (sauv.score || 0) +
+              " bonne" +
+              ((sauv.score || 0) > 1 ? "s" : "") +
+              "</strong> · Ordre exact des questions conservé.</div></div>" +
+              '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+              '<button type="button" class="btn-primary" id="hcResumeBtn" style="color:#fff">▶️ Reprendre la partie</button>' +
+              '<button type="button" class="btn-glass" id="hcDiscardBtn">✕ Nouvelle partie</button>' +
+              "</div></div>";
+            var bR = $("#hcResumeBtn");
+            if (bR) {
+              bR.addEventListener("click", function () {
+                state.cat = (sauv.etat_meta && sauv.etat_meta.cat) || sauv.module || "all";
+                state.mode = (sauv.etat_meta && sauv.etat_meta.mode) || sauv.mode || "classic";
+                state.elapsed = (sauv.etat_meta && Number(sauv.etat_meta.elapsed)) || 0;
+                state.session = sauv.ordre_questions.map(function (q) {
+                  return {
+                    cat: q.cat || "struct",
+                    text: q.text,
+                    options: Array.isArray(q.options) ? q.options : [],
+                    answer: q.answer !== undefined ? q.answer : null,
+                    _synced: q.answer !== null && q.answer !== undefined,
+                  };
+                });
+                state.index = idx;
+                state.partySynced = false;
+                zr.innerHTML = "";
+                rendreQuestion();
+                ouvrirOverlay("quizOverlay");
+                demarrerChrono();
+              });
+            }
+            var bD = $("#hcDiscardBtn");
+            if (bD) {
+              bD.addEventListener("click", function () {
+                if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("html-css");
+                zr.innerHTML = "";
+              });
+            }
+          }).catch(function () {});
+        }
       }
 
       function ouvrirOverlay(id) {
@@ -5680,9 +5831,12 @@ background-repeat: repeat;</pre>
         var q = state.session[state.index];
         if (!q) return;
         q.answer = i;
+        q._synced = false;
         rendreOptions();
         $("#repliedPill").textContent =
           "Répondu : " + reponsesDonnees() + "/" + state.session.length;
+        synchroniserPartieHtmlCss(false);
+        sauvegarderSessionHtmlCssCloud();
       }
 
       function repondreEtAvancer(i) {
@@ -5726,6 +5880,7 @@ background-repeat: repeat;</pre>
         if (i < 0 || i >= state.session.length) return;
         state.advancing = false;
         state.index = i;
+        sauvegarderSessionHtmlCssCloud();
         rendreQuestion();
         var ov = $("#quizOverlay");
         if (ov) ov.scrollTop = 0;
@@ -5813,7 +5968,25 @@ background-repeat: repeat;</pre>
         if (finaliserPartie && !state.partySynced && (repondues.length > 0 || finaliserPartie === "complet") && STIQuizSync.enregistrer) {
           state.partySynced = true;
           var nbBonnes = repondues.filter(function (q) { return q.options[q.answer] && q.options[q.answer].ok; }).length;
-          STIQuizSync.enregistrer("html-css", nbBonnes, finaliserPartie === "complet" ? state.session.length : repondues.length);
+          var listeFinale = finaliserPartie === "complet" ? state.session : repondues;
+          var ordreFinal = listeFinale.map(function (q, idx) {
+            var estOk = q.answer !== null && q.answer !== undefined && q.options[q.answer] && q.options[q.answer].ok;
+            return { rang: idx + 1, id: STIQuizSync.hash(q.text), enonce: q.text, ok: !!estOk };
+          });
+          if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function" && repondues.length) {
+            STIQuizSync.noterQuestionsVuesQuiz(
+              "q_htmlcss",
+              repondues.map(function (q) { return STIQuizSync.hash(q.text); })
+            );
+          }
+          STIQuizSync.enregistrer(
+            "html-css",
+            nbBonnes,
+            listeFinale.length,
+            state.cat && state.cat !== "all" ? state.cat : null,
+            { points: nbBonnes * 100, ordre_questions: ordreFinal }
+          );
+          setTimeout(hydraterCloudHtmlCss, 350);
         }
       }
       window.addEventListener("pagehide", function () {
@@ -6014,6 +6187,15 @@ background-repeat: repeat;</pre>
           var ok = q.answer !== null && q.answer !== undefined && q.options[q.answer].ok;
           return acc + (ok ? 0 : 1);
         }, 0);
+        var btnErrHc = $("#retryErrorsBtn");
+        if (btnErrHc) {
+          if (nbFautesTot > 0) {
+            btnErrHc.textContent = "🎯 Réviser mes erreurs (" + nbFautesTot + ")";
+            btnErrHc.classList.remove("hidden");
+          } else {
+            btnErrHc.classList.add("hidden");
+          }
+        }
         if ($("#onlyWrong")) {
           $("#onlyWrong").checked = nbFautesTot > 0 && nbFautesTot < state.session.length;
         }
@@ -6385,6 +6567,39 @@ background-repeat: repeat;</pre>
           toast("Aucune question dans ce thème", "⚠️");
           return;
         }
+        fermerOverlay("resultsOverlay");
+        sauvegarderSessionHtmlCssCloud();
+        rendreQuestion();
+        ouvrirOverlay("quizOverlay");
+        demarrerChrono();
+      }
+
+      function lancerRevisionErreursHc() {
+        var fautes = (state.session || []).filter(function (q) {
+          return !(q.answer !== null && q.answer !== undefined && q.options[q.answer] && q.options[q.answer].ok);
+        });
+        if (!fautes.length) return;
+        state.session = preparerSessionDepuisListeHc(fautes);
+        state.index = 0;
+        state.partySynced = false;
+        fermerOverlay("resultsOverlay");
+        sauvegarderSessionHtmlCssCloud();
+        rendreQuestion();
+        ouvrirOverlay("quizOverlay");
+        demarrerChrono();
+      }
+
+      function lancerReviserEncoreHc() {
+        if (!state.session || !state.session.length) {
+          lancerPartie();
+          return;
+        }
+        /* Conserve exactement l'ordre des questions de la série avec choix remélangés */
+        state.session = preparerSessionDepuisListeHc(state.session);
+        state.index = 0;
+        state.partySynced = false;
+        fermerOverlay("resultsOverlay");
+        sauvegarderSessionHtmlCssCloud();
         rendreQuestion();
         ouvrirOverlay("quizOverlay");
         demarrerChrono();
@@ -6494,6 +6709,9 @@ background-repeat: repeat;</pre>
           "Aucune réponse n'a encore été donnée ; un nouveau tirage aléatoire sera effectué au prochain lancement.",
           "Quitter",
           function () {
+            if (window.STIQuizSync && STIQuizSync.effacerSession) {
+              STIQuizSync.effacerSession("html-css");
+            }
             fermerOverlay("quizOverlay");
             window.scrollTo({
               top: $("#setup").offsetTop - 80,
@@ -6516,6 +6734,12 @@ background-repeat: repeat;</pre>
       // Résultat
       $("#onlyWrong").addEventListener("change", appliquerFiltre);
       $("#replayBtn").addEventListener("click", lancerPartie);
+      if ($("#retryErrorsBtn")) {
+        $("#retryErrorsBtn").addEventListener("click", lancerRevisionErreursHc);
+      }
+      if ($("#reviseAgainBtn")) {
+        $("#reviseAgainBtn").addEventListener("click", lancerReviserEncoreHc);
+      }
       $("#setupBtn").addEventListener("click", retourReglages);
       $("#tickerToggle").addEventListener("click", function () {
         var replie = $("#errorTicker").classList.toggle("collapsed");
@@ -6684,6 +6908,8 @@ background-repeat: repeat;</pre>
             lancerPartie();
             toast("Mode révision : " + state.session.length + " erreur(s) à retravailler", "🔁");
           }, 0);
+        } else {
+          hydraterCloudHtmlCss();
         }
       })();
     </script>

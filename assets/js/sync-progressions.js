@@ -6,33 +6,106 @@
 (function () {
   "use strict";
   var CLE_SYNC_MAJ = "sti-sync-maj";
-  var EXCLUES = ["sti-session-cache", "sti-admin-gold", "sti-gold", CLE_SYNC_MAJ];
+  var EXCLUES = [
+    "sti-session-cache",
+    "sti-admin-gold",
+    "sti-gold",
+    "sti-quiz-sync-file-v1",
+    "sti-quiz-sync-vus-v1",
+    "sti-quiz-sync-vus-purge-v1",
+    "sti-quiz-sync-rep-v1",
+    "sti-quiz-sessions-actives-v1",
+    "sti-quiz-sessions-purge-v1",
+    CLE_SYNC_MAJ
+  ];
+  var CLES_QUIZ_CLOUD = [
+    "js_quiz_high_score",
+    "js_quiz_total_answered",
+    "sqlQuestV3",
+    "quizphp_v1_user",
+    "quizphp_v1_hist",
+    "quizphp_v1_board"
+  ];
   var cfg = window.STI_AUTH || { URL: "https://vywujxmepvcbgedgmger.supabase.co", CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn" };
   var session = null, dernierHash = "", minuteur = null;
 
-  function lireSession() {
+  function lireSessionDepuisStore(st) {
+    if (!st) return null;
     try {
-      for (var i = 0; i < localStorage.length; i++) {
-        var k = localStorage.key(i) || "";
+      for (var i = 0; i < st.length; i++) {
+        var k = st.key(i) || "";
         if (k.indexOf("sb-") === 0 && k.indexOf("-auth-token") !== -1) {
-          var v = JSON.parse(localStorage.getItem(k) || "null");
+          var v = JSON.parse(st.getItem(k) || "null");
           if (v && v.access_token && v.user && v.user.id) return { token: v.access_token, id: v.user.id, email: v.user.email || "" };
         }
       }
     } catch (e) {}
     return null;
   }
+  function lireSession() {
+    return lireSessionDepuisStore(typeof localStorage !== "undefined" ? localStorage : null) ||
+           lireSessionDepuisStore(typeof sessionStorage !== "undefined" ? sessionStorage : null);
+  }
+  function estCleSynchronisable(k) {
+    if (!k || EXCLUES.indexOf(k) !== -1) return false;
+    return k.indexOf("sti-") === 0 || CLES_QUIZ_CLOUD.indexOf(k) !== -1;
+  }
   function collecter() {
     var d = {};
     for (var i = 0; i < localStorage.length; i++) {
       var k = localStorage.key(i) || "";
-      if (k.indexOf("sti-") === 0 && EXCLUES.indexOf(k) === -1) { try { d[k] = localStorage.getItem(k); } catch (e) {} }
+      if (estCleSynchronisable(k)) { try { d[k] = localStorage.getItem(k); } catch (e) {} }
     }
     return d;
   }
   function hash(d) { try { return JSON.stringify(d).length + ":" + Object.keys(d).sort().join(","); } catch (e) { return ""; } }
   function appliquer(d) {
-    try { Object.keys(d || {}).forEach(function (k) { if (k.indexOf("sti-") === 0 && EXCLUES.indexOf(k) === -1 && d[k] != null) localStorage.setItem(k, d[k]); }); } catch (e) {}
+    try {
+      Object.keys(d || {}).forEach(function (k) {
+        if (!estCleSynchronisable(k) || d[k] == null) return;
+        if (k === "js_quiz_high_score" || k === "js_quiz_total_answered") {
+          var vLoc = parseInt(localStorage.getItem(k) || "0", 10) || 0;
+          var vDist = parseInt(d[k], 10) || 0;
+          localStorage.setItem(k, String(Math.max(vLoc, vDist)));
+          return;
+        }
+        if (k === "quizphp_v1_user") {
+          try {
+            var uLoc = JSON.parse(localStorage.getItem(k) || "null") || {};
+            var uDist = JSON.parse(d[k]) || {};
+            uDist.xp = Math.max(Number(uLoc.xp) || 0, Number(uDist.xp) || 0);
+            uDist.best = Math.max(Number(uLoc.best) || 0, Number(uDist.best) || 0);
+            uDist.streak = Math.max(Number(uLoc.streak) || 0, Number(uDist.streak) || 0);
+            localStorage.setItem(k, JSON.stringify(uDist));
+            return;
+          } catch (ePhp) {}
+        }
+        if (k === "sqlQuestV3") {
+          try {
+            var sLoc = JSON.parse(localStorage.getItem(k) || "null");
+            var sDist = JSON.parse(d[k]);
+            if (sLoc && sDist) {
+              sDist.xp = Math.max(Number(sLoc.xp) || 0, Number(sDist.xp) || 0);
+              sDist.level = Math.max(Number(sLoc.level) || 1, Number(sDist.level) || 1);
+              sDist.totalAnswered = Math.max(Number(sLoc.totalAnswered) || 0, Number(sDist.totalAnswered) || 0);
+              sDist.totalCorrect = Math.max(Number(sLoc.totalCorrect) || 0, Number(sDist.totalCorrect) || 0);
+              sDist.bestCombo = Math.max(Number(sLoc.bestCombo) || 0, Number(sDist.bestCombo) || 0);
+              if (sLoc.best && sDist.best) {
+                Object.keys(sLoc.best).forEach(function (m) {
+                  sDist.best[m] = Math.max(Number(sLoc.best[m]) || 0, Number(sDist.best[m]) || 0);
+                });
+              }
+              localStorage.setItem(k, JSON.stringify(sDist));
+              return;
+            }
+          } catch (eSql) {}
+        }
+        localStorage.setItem(k, d[k]);
+      });
+      if (typeof window !== "undefined" && typeof window.dispatchEvent === "function" && typeof CustomEvent === "function") {
+        window.dispatchEvent(new CustomEvent("sti-cloud-restored"));
+      }
+    } catch (e) {}
   }
   function pastille(texte, couleur) {
     var el = document.getElementById("sti-sync-pastille");
