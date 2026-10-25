@@ -573,9 +573,10 @@
   var triParAcces = false;
   var profils = [], acces = [], counts = {};
   /* Jeux bruts conservés localement : les sondages de 20 s ne récupèrent que les lignes nouvelles. */
-  var profilsBrutsAdmin = [], accesBrutsAdmin = [], signauxCompatBrutAdmin = "";
+  var profilsBrutsAdmin = [], accesBrutsAdmin = [], progressionsCloudBrutesAdmin = [], signauxCompatBrutAdmin = "";
   var dernierIdAccesAdmin = 0;
   var dernierProfilUpdatedAtAdmin = "";
+  var dernierProgressionMajAdmin = "";
   var supportDeltaProfilsAdmin = null;
   var historiqueAdminEnCours = false;
   var TAILLE_PAGE_ACCES_ADMIN = 100;
@@ -589,7 +590,8 @@
   var dureesSemaine = {}, dureesTotales = {}, semainesDispo = [];
   var messagesDiffuses = [], lecturesParMsg = {}, reponsesParMsg = {}, fichiersParMsg = {}, questionsLibres = [];
   var questionsFlash = [], reponsesFlash = {};
-  var scoresParUser = {}, listeResultatsQuiz = [], progMediaParUser = {};
+  var scoresParUser = {}, listeResultatsQuiz = [], progMediaParUser = {}, progMediaLiveBuffer = {};
+  var chapitresVusCloudParUser = {}, pagesVuesCloudParUser = {};
   var enLigneMap = {}; /* uid -> { ts: ms, page: str } */
   var machinesLabo3Live = {}; /* code #XXXX -> { code, appareil, page, ts } */
   var bandeauLabo3ForceOuvert = false;
@@ -650,6 +652,7 @@
     var snapshot = {
       tous: profilsBrutsAdmin.slice(),
       tousAcces: accesBrutsAdmin.slice(),
+      progressionsCloud: progressionsCloudBrutesAdmin.slice(),
       txtSignauxCompat: signauxCompatBrutAdmin || "",
       ts: Date.now()
     };
@@ -1762,7 +1765,7 @@
         ? ("<b>" + r.stQ.moyenne20 + " / 20</b> <span style='font-size:11px;color:var(--adm-muted)'>(" + r.stQ.nb + " quiz)</span>")
         : "<span style='color:var(--adm-muted)'>Aucun quiz</span>";
       var modsTxt = r.mods.length ? r.mods.join(", ") : "Aucun module";
-      var mediaTxt = "🎬 " + r.bil.nbVidDone + "/" + r.bil.totVid + " · 🔊 " + r.bil.nbAudDone + "/" + r.bil.totAud;
+      var mediaTxt = "🎬 " + r.bil.resumeCourtVid + " · 🔊 " + r.bil.resumeCourtAud;
       var derniereObs = (r.obs && r.obs.length) ? String(r.obs[0].texte || "") : "";
 
       return (
@@ -2818,12 +2821,17 @@
         .on("broadcast", { event: "prog_media" }, function (p) {
           if (p && p.payload && p.payload.uid && p.payload.m && typeof p.payload.m === "object") {
             var uidP = p.payload.uid;
+            if (!progMediaLiveBuffer[uidP]) progMediaLiveBuffer[uidP] = {};
             if (!progMediaParUser[uidP]) progMediaParUser[uidP] = {};
             Object.keys(p.payload.m).forEach(function (k) {
               var vP = Number(p.payload.m[k]) || 0;
+              if (vP > (progMediaLiveBuffer[uidP][k] || 0)) progMediaLiveBuffer[uidP][k] = vP;
               if (vP > (progMediaParUser[uidP][k] || 0)) progMediaParUser[uidP][k] = vP;
             });
             rendAbonnes();
+            if (modalFicheEleve && modalFicheEleve.classList.contains("visible") && eleveFicheActif && eleveFicheActif.id === uidP) {
+              ouvrirFicheEleve(eleveFicheActif);
+            }
           }
         })
         .on("broadcast", { event: "flash_rep" }, function (p) {
@@ -3402,6 +3410,9 @@
       if (!c || !Array.isArray(c.tous)) return false;
       if (Number(c.ts || 0) < derniereApplicationAdminTs) return true;
       cacheAdminMemoire = c;
+      if (Array.isArray(c.progressionsCloud) && c.progressionsCloud.length) {
+        progressionsCloudBrutesAdmin = c.progressionsCloud.slice();
+      }
       appliquerDonneesAdmin(c.tous, c.tousAcces || [], c.txtSignauxCompat || "", true, c.ts);
       return true;
     }
@@ -3474,6 +3485,101 @@
     }
     return false;
   }
+
+  function parserObjetJsonSoupleAdmin(val) {
+    if (!val) return null;
+    if (typeof val === "object") return val;
+    if (typeof val === "string") {
+      try { return JSON.parse(val); } catch (e) { return null; }
+    }
+    return null;
+  }
+
+  function extrairePctMediaEntreeAdmin(it) {
+    if (it == null) return 0;
+    if (typeof it === "number") return Math.max(0, Math.min(100, Math.round(it)));
+    if (typeof it === "object") {
+      var maxP = Math.max(Number(it.maxPct) || 0, Number(it.pct) || 0);
+      if (!maxP && (Number(it.sec) || 0) >= 2) {
+        var dur = Number(it.dur) || 0;
+        maxP = dur > 2 ? Math.max(1, Math.round((Number(it.sec) / dur) * 100)) : 1;
+      }
+      if (it.done || maxP >= 88) return 100;
+      return Math.max(0, Math.min(99, Math.round(maxP)));
+    }
+    return 0;
+  }
+
+  function fusionnerProgressionsCloudDansMaps(tousProfils) {
+    var uidParEmail = {};
+    (tousProfils || []).forEach(function (p) {
+      if (p && p.id && p.email) uidParEmail[String(p.email).trim().toLowerCase()] = p.id;
+    });
+    (progressionsCloudBrutesAdmin || []).forEach(function (r) {
+      if (!r) return;
+      var majStr = String(r.maj || "");
+      if (majStr && majStr > dernierProgressionMajAdmin) dernierProgressionMajAdmin = majStr;
+      var uid = r.user_id || (r.email ? uidParEmail[String(r.email).trim().toLowerCase()] : "");
+      if (!uid) return;
+      var d = parserObjetJsonSoupleAdmin(r.donnees);
+      if (!d) return;
+
+      var mProg = parserObjetJsonSoupleAdmin(d["sti-media-prog-v1"]);
+      if (mProg && typeof mProg === "object") {
+        if (!progMediaParUser[uid]) progMediaParUser[uid] = {};
+        Object.keys(mProg).forEach(function (k) {
+          if (k.indexOf("video:") !== 0 && k.indexOf("audio:") !== 0) return;
+          var pct = extrairePctMediaEntreeAdmin(mProg[k]);
+          if (pct > (progMediaParUser[uid][k] || 0)) {
+            progMediaParUser[uid][k] = pct;
+          }
+        });
+      }
+
+      var chVus = parserObjetJsonSoupleAdmin(d["sti-chapitres-vus"]);
+      if (chVus && typeof chVus === "object") {
+        if (!chapitresVusCloudParUser[uid]) chapitresVusCloudParUser[uid] = {};
+        Object.keys(chVus).forEach(function (ck) {
+          if (chVus[ck]) chapitresVusCloudParUser[uid][String(ck).toUpperCase()] = true;
+        });
+      }
+      var revC = parserObjetJsonSoupleAdmin(d["sti-revised-courses"]);
+      if (revC && typeof revC === "object") {
+        if (!chapitresVusCloudParUser[uid]) chapitresVusCloudParUser[uid] = {};
+        var mapRevC = { html: "HTML5", html5: "HTML5", css: "CSS3", css3: "CSS3", js: "JS", javascript: "JS", sql: "SQL", php: "PHP" };
+        Object.keys(revC).forEach(function (rk) {
+          var mNom = mapRevC[String(rk).toLowerCase()];
+          if (revC[rk] && mNom) chapitresVusCloudParUser[uid][mNom] = true;
+        });
+      }
+
+      var pgVues = parserObjetJsonSoupleAdmin(d["sti-pages-vues-v432"]);
+      if (pgVues && typeof pgVues === "object") {
+        if (!pagesVuesCloudParUser[uid]) pagesVuesCloudParUser[uid] = {};
+        Object.keys(pgVues).forEach(function (pk) {
+          if (pgVues[pk]) pagesVuesCloudParUser[uid][pk] = true;
+        });
+      }
+    });
+
+    Object.keys(progMediaLiveBuffer || {}).forEach(function (uidL) {
+      var mL = progMediaLiveBuffer[uidL];
+      if (!mL || typeof mL !== "object") return;
+      if (!progMediaParUser[uidL]) progMediaParUser[uidL] = {};
+      Object.keys(mL).forEach(function (k) {
+        var vL = Number(mL[k]) || 0;
+        if (vL > (progMediaParUser[uidL][k] || 0)) progMediaParUser[uidL][k] = vL;
+      });
+    });
+  }
+  window.__stiInjecterProgressionsCloudTest = function (lignesProg, tousProfils) {
+    progressionsCloudBrutesAdmin = Array.isArray(lignesProg) ? lignesProg.slice() : [];
+    progMediaParUser = {};
+    chapitresVusCloudParUser = {};
+    pagesVuesCloudParUser = {};
+    fusionnerProgressionsCloudDansMaps(tousProfils || profilsBrutsAdmin);
+    return progMediaParUser;
+  };
 
   function appliquerDonneesAdmin(tous, tousAcces, txtSignauxCompat, estHorsLigne, tsCache) {
     profilsBrutsAdmin = Array.isArray(tous) ? tous.slice() : [];
@@ -3566,7 +3672,10 @@
     reponsesFlash = {};
     scoresParUser = {};
     progMediaParUser = {};
+    chapitresVusCloudParUser = {};
+    pagesVuesCloudParUser = {};
     listeResultatsQuiz = [];
+    fusionnerProgressionsCloudDansMaps(tous);
     idsAccesParMsg = {};
     var mapSecAlertes = {};
     var mapMainsTmp = {};
@@ -4046,9 +4155,55 @@
   }
 
   function sauvegarderSnapshotAdmin(tous, tousAcces, txtSignauxCompat) {
-    var snapshot = { tous: tous, tousAcces: tousAcces, txtSignauxCompat: txtSignauxCompat || "", ts: Date.now() };
+    var snapshot = {
+      tous: tous,
+      tousAcces: tousAcces,
+      progressionsCloud: progressionsCloudBrutesAdmin.slice(),
+      txtSignauxCompat: txtSignauxCompat || "",
+      ts: Date.now()
+    };
     ecrireCacheAdminIndexedDb(snapshot);
     return snapshot;
+  }
+
+  function fusionnerProgressionsAdmin(nouveaux) {
+    var map = {};
+    var sansCle = [];
+    progressionsCloudBrutesAdmin.concat(nouveaux || []).forEach(function (r) {
+      if (!r) return;
+      var cle = r.user_id || (r.email ? ("mail:" + String(r.email).trim().toLowerCase()) : "");
+      if (!cle) { sansCle.push(r); return; }
+      var ex = map[cle];
+      if (!ex || String(r.maj || "") >= String(ex.maj || "")) {
+        map[cle] = r;
+      }
+    });
+    return Object.keys(map).map(function (k) { return map[k]; }).concat(sansCle);
+  }
+
+  function selectionnerProgressionsAdmin() {
+    return sb.from("sti_progressions")
+      .select("user_id,email,donnees,maj")
+      .order("maj", { ascending: false })
+      .limit(1000)
+      .then(function (r) {
+        if (r && r.error) return { data: [], error: null };
+        return { data: (r && r.data) || [], error: null };
+      })
+      .catch(function () { return { data: [], error: null }; });
+  }
+
+  function selectionnerAccesProgMediaAdmin() {
+    return sb.from("acces")
+      .select(COLONNES_ACCES_ADMIN)
+      .eq("page", "PROG_MEDIA")
+      .order("id", { ascending: false })
+      .limit(600)
+      .then(function (r) {
+        if (r && r.error) return { data: [], error: null };
+        return { data: (r && r.data) || [], error: null };
+      })
+      .catch(function () { return { data: [], error: null }; });
   }
 
   function retirerAccesDuCacheAdmin(ids) {
@@ -4103,19 +4258,32 @@
     }, 3500);
     return Promise.all([
       selectionnerProfilsAdmin(true),
-      sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(TAILLE_PAGE_ACCES_ADMIN)
+      sb.from("acces").select(COLONNES_ACCES_ADMIN, { count: "exact" }).order("id", { ascending: false }).limit(TAILLE_PAGE_ACCES_ADMIN),
+      selectionnerProgressionsAdmin(),
+      selectionnerAccesProgMediaAdmin()
     ]).then(function (res) {
       clearTimeout(timerOffAdmin);
       if (res[0].error || res[1].error) throw (res[0].error || res[1].error);
       resolu = true;
       majEtatConnexionSupabase(true, "Synchronisation active avec la base");
       var tous = res[0].data || [];
-      var tousAcces = res[1].data || [];
+      var pageAcces = res[1].data || [];
+      var extraProgMedia = (res[3] && res[3].data) || [];
+      var mapAcc = {};
+      pageAcces.concat(extraProgMedia).forEach(function (a) {
+        if (a && a.id != null) mapAcc[String(a.id)] = a;
+      });
+      var tousAcces = Object.keys(mapAcc).map(function (k) { return mapAcc[k]; }).sort(function (a, b) {
+        return (Number(b.id) || 0) - (Number(a.id) || 0);
+      });
+      if (res[2] && Array.isArray(res[2].data)) {
+        progressionsCloudBrutesAdmin = fusionnerProgressionsAdmin(res[2].data);
+      }
       /* L’historique persistant provient uniquement de Supabase ; aucun ancien flux n’est aspiré en masse. */
       var txtSignauxCompat = "";
       window.__stiCountProfils = typeof res[0].count === "number" ? res[0].count : tous.length;
-      window.__stiCountAcces = typeof res[1].count === "number" ? res[1].count : tousAcces.length;
-      noterTraficAdmin([tous, tousAcces, txtSignauxCompat]);
+      window.__stiCountAcces = typeof res[1].count === "number" ? res[1].count : pageAcces.length;
+      noterTraficAdmin([tous, tousAcces, progressionsCloudBrutesAdmin, txtSignauxCompat]);
       var snap = sauvegarderSnapshotAdmin(tous, tousAcces, txtSignauxCompat);
       appliquerDonneesAdmin(tous, tousAcces, txtSignauxCompat, false, snap.ts);
       if (!garderMsg) {
@@ -4179,18 +4347,33 @@
       });
     }
 
-    return Promise.all([qAcces, pProfils]).then(function (res) {
+    var qProg = sb.from("sti_progressions").select("user_id,email,donnees,maj");
+    if (dernierProgressionMajAdmin) qProg = qProg.gt("maj", dernierProgressionMajAdmin);
+    var pProgressions = qProg.order("maj", { ascending: true }).limit(200).then(function (r) {
+      if (r && r.error) return { data: [], error: null };
+      return { data: (r && r.data) || [], error: null };
+    }).catch(function () { return { data: [], error: null }; });
+
+    return Promise.all([qAcces, pProfils, pProgressions]).then(function (res) {
       if (res[0].error || res[1].error) throw (res[0].error || res[1].error);
       majEtatConnexionSupabase(true, "Synchronisation temps réel active");
       var nouveaux = res[0].data || [];
       var profilsModifies = res[1].data || [];
-      noterTraficAdmin([nouveaux, profilsModifies]);
-      if (!nouveaux.length && !profilsModifies.length) return;
+      var progModifiees = (res[2] && res[2].data) || [];
+      noterTraficAdmin([nouveaux, profilsModifies, progModifiees]);
+      if (!nouveaux.length && !profilsModifies.length && !progModifiees.length) return;
+      if (progModifiees.length) {
+        progressionsCloudBrutesAdmin = fusionnerProgressionsAdmin(progModifiees);
+      }
       var fusionAcces = fusionnerAccesAdmin(nouveaux);
       var fusionProfils = fusionnerProfilsAdmin(profilsModifies);
       var snap = sauvegarderSnapshotAdmin(fusionProfils, fusionAcces, signauxCompatBrutAdmin);
       appliquerDonneesAdmin(fusionProfils, fusionAcces, signauxCompatBrutAdmin, false, snap.ts);
-      if (nouveaux.length >= 250 || profilsModifies.length >= 100) chargeAdminCompleteEnAttente = true;
+      if (modalFicheEleve && modalFicheEleve.classList.contains("visible") && eleveFicheActif) {
+        var ficheMaj = profils.find(function (x) { return x && x.id === eleveFicheActif.id; }) || eleveFicheActif;
+        ouvrirFicheEleve(ficheMaj);
+      }
+      if (nouveaux.length >= 250 || profilsModifies.length >= 100 || progModifiees.length >= 200) chargeAdminCompleteEnAttente = true;
     }).catch(function (err) {
       majEtatConnexionSupabase(false, (err && err.message) || "Synchronisation temps réel interrompue");
       /* Le dernier instantané reste affiché ; la reconnexion déclenchera une réconciliation. */
@@ -4704,30 +4887,102 @@
   function modulesConsultesPourUser(uid) {
     var vus = {};
     var pm = progMediaParUser[uid] || {};
-    if (pm["video:html5-cours"] || pm["audio:html5-cours"]) vus["HTML5"] = true;
-    if (pm["video:css3-cours"] || pm["audio:css3-cours"] || pm["video:css-positionnement"] || pm["video:css-animee"]) vus["CSS3"] = true;
-    if (pm["video:javascript-cours"] || pm["audio:javascript-cours"]) vus["JS"] = true;
-    if (pm["video:sql-cours"] || pm["audio:sql-cours"]) vus["SQL"] = true;
-    if (pm["video:php-cours"] || pm["audio:php-cours"] || pm["video:php-guichet"]) vus["PHP"] = true;
-    acces.forEach(function (a) {
-      if (a.user_id !== uid) return;
-      var pg = String(a.page || "").toLowerCase();
+    var chCloud = chapitresVusCloudParUser[uid] || {};
+    var pgCloud = pagesVuesCloudParUser[uid] || {};
+    Object.keys(chCloud).forEach(function (ck) {
+      if (chCloud[ck]) vus[ck] = true;
+    });
+    Object.keys(pm).forEach(function (mk) {
+      if (!(Number(pm[mk]) >= 1)) return;
+      if (mk.indexOf("html5") !== -1) vus["HTML5"] = true;
+      if (mk.indexOf("css") !== -1 || mk.indexOf("explore-tunisie") !== -1) vus["CSS3"] = true;
+      if (mk.indexOf("javascript") !== -1) vus["JS"] = true;
+      if (mk.indexOf("sql") !== -1) vus["SQL"] = true;
+      if (mk.indexOf("php") !== -1) vus["PHP"] = true;
+    });
+    function classerPageConsultee(pgBrut) {
+      var pg = String(pgBrut || "").toLowerCase();
+      if (!pg) return;
       if (pg.indexOf("html5") !== -1 || pg.indexOf("datalist") !== -1) vus["HTML5"] = true;
-      if (pg.indexOf("css") !== -1 || pg.indexOf("positionnement") !== -1) vus["CSS3"] = true;
-      if (pg.indexOf("javascript") !== -1) vus["JS"] = true;
-      if (pg.indexOf("sql") !== -1) vus["SQL"] = true;
+      if (pg.indexOf("css") !== -1 || pg.indexOf("positionnement") !== -1 || pg.indexOf("explore_tunisie") !== -1 || pg.indexOf("site-tunisie") !== -1) vus["CSS3"] = true;
+      if (pg.indexOf("javascript") !== -1 || pg.indexOf("tp1-js") !== -1 || pg.indexOf("tp2-js") !== -1 || pg.indexOf("tp3-js") !== -1 || pg.indexOf("tp4-js") !== -1 || pg.indexOf("tp5-js") !== -1) vus["JS"] = true;
+      if (pg.indexOf("sql") !== -1 || pg.indexOf("-bd") !== -1) vus["SQL"] = true;
       if (pg.indexOf("php") !== -1) vus["PHP"] = true;
       if (pg.indexOf("exercice") !== -1 || pg.indexOf("fonctions-standards") !== -1) vus["Exercices"] = true;
       if (pg.indexOf("bac-pratique") !== -1 || pg.indexOf("sti0") !== -1) vus["Bac/Projet"] = true;
+    }
+    Object.keys(pgCloud).forEach(function (pk) {
+      if (pgCloud[pk]) classerPageConsultee(pk);
+    });
+    acces.forEach(function (a) {
+      if (a.user_id !== uid) return;
+      classerPageConsultee(a.page);
     });
     return Object.keys(vus);
   }
 
+  function estProfil4SIAdmin(p) {
+    if (!p) return false;
+    if (estGold(p)) return true;
+    var cl = String(p.classe || "").trim().toUpperCase().replace(/[\s._\-]+/g, "");
+    if (!cl) return false;
+    if (cl === "PROF" || cl === "ADMIN" || cl === "ENSEIGNANT" || cl.indexOf("PROF") !== -1 || cl.indexOf("LABO") !== -1 || cl.indexOf("GOLD") !== -1) {
+      return true;
+    }
+    return /^4(E|È|EME|ÈME)?SI[0-9]*$/i.test(cl) || /^4(E|È|EME|ÈME)/i.test(cl);
+  }
+  window.__stiEstProfil4SIAdmin = estProfil4SIAdmin;
+
+  var LIBELLES_VIDEOS_SUPP_ADMIN = {
+    "video:php-cours": "Cours PHP",
+    "video:php-guichet": "Guichet PHP/MySQLi",
+    "video:php-synthese": "Synthèse PHP",
+    "video:explore-tunisie-flex": "TP Tunisie (Flex)",
+    "video:explore-tunisie-float": "TP Tunisie (Float)",
+    "video:sql-serie1": "SQL Série 1",
+    "video:sql-serie2": "SQL Série 2",
+    "video:sql-serie3": "SQL Série 3",
+    "video:sql-serie4": "SQL Série 4",
+    "video:sql-serie5": "SQL Série 5",
+    "video:sql-serie6": "SQL Série 6",
+    "video:sql-guide-requete": "Guide Requête SQL",
+    "video:css-displayanim": "Display CSS Animé"
+  };
+
+  var LIBELLES_AUDIOS_SUPP_ADMIN = {
+    "audio:php-cours": "Audio PHP",
+    "audio:php-guichet": "Audio Guichet PHP",
+    "audio:guichet-etapes": "Audio Guichet PHP",
+    "audio:css-positionnement": "Audio Positionnement",
+    "audio:css-animee": "Audio CSS Décoration",
+    "audio:sql-serie1": "Audio SQL Série 1",
+    "audio:sql-serie2": "Audio SQL Série 2",
+    "audio:sql-serie3": "Audio SQL Série 3",
+    "audio:sql-serie4": "Audio SQL Série 4",
+    "audio:sql-serie5": "Audio SQL Série 5",
+    "audio:sql-serie6": "Audio SQL Série 6"
+  };
+
+  function libelleCompteurMediaAdmin(nbDone, nbEnCours, tot, modeEntete) {
+    var vues = (nbDone || 0) + (nbEnCours || 0);
+    if (!vues) return "0/" + tot;
+    if (nbDone > 0 && !nbEnCours) return nbDone + "/" + tot + " ✅";
+    if (!nbDone && nbEnCours > 0) {
+      return modeEntete ? (vues + "/" + tot + " · " + nbEnCours + " ⏳ en cours") : (vues + "/" + tot + " ⏳");
+    }
+    return modeEntete
+      ? (vues + "/" + tot + " · " + nbDone + " ✅, " + nbEnCours + " ⏳")
+      : (vues + "/" + tot + " (" + nbDone + "✅·" + nbEnCours + "⏳)");
+  }
+
   function bilanProgressionMediaUser(p) {
     var uid = p ? p.id : "";
-    var pm = (uid && progMediaParUser[uid]) ? progMediaParUser[uid] : {};
-    var cl = String((p && p.classe) || "").toUpperCase().replace(/\s+/g, "");
-    var ok4 = cl === "PROF" || cl === "ELEVELABO3" || /^4SI[1-5]?$/.test(cl);
+    var pmBrut = (uid && progMediaParUser[uid]) ? progMediaParUser[uid] : {};
+    var pm = Object.assign({}, pmBrut);
+    if (pm["audio:guichet-etapes"] && (!pm["audio:php-guichet"] || pm["audio:guichet-etapes"] > pm["audio:php-guichet"])) {
+      pm["audio:php-guichet"] = pm["audio:guichet-etapes"];
+    }
+    var ok4 = estProfil4SIAdmin(p);
     var catVideos = [
       { key: "video:html5-cours", label: "Cours HTML5" },
       { key: "video:css3-cours", label: "Cours CSS3" },
@@ -4740,6 +4995,16 @@
       catVideos.push({ key: "video:php-cours", label: "Cours PHP" });
       catVideos.push({ key: "video:php-guichet", label: "Guichet PHP/MySQLi" });
     }
+    var mapDejaVid = {};
+    catVideos.forEach(function (v) { mapDejaVid[v.key] = true; });
+    Object.keys(pm).forEach(function (k) {
+      if (k.indexOf("video:") !== 0 || mapDejaVid[k]) return;
+      if ((Number(pm[k]) || 0) < 1) return;
+      mapDejaVid[k] = true;
+      var lblV = LIBELLES_VIDEOS_SUPP_ADMIN[k] || ("Vidéo " + k.slice(6).replace(/-/g, " "));
+      catVideos.push({ key: k, label: lblV });
+    });
+
     var catAudios = [
       { key: "audio:html5-cours", label: "Audio HTML5" },
       { key: "audio:css3-cours", label: "Audio CSS3" },
@@ -4749,13 +5014,23 @@
     if (ok4) {
       catAudios.push({ key: "audio:php-cours", label: "Audio PHP" });
     }
+    var mapDejaAud = {};
+    catAudios.forEach(function (a) { mapDejaAud[a.key] = true; });
+    Object.keys(pm).forEach(function (k) {
+      if (k.indexOf("audio:") !== 0 || k === "audio:guichet-etapes" || mapDejaAud[k]) return;
+      if ((Number(pm[k]) || 0) < 1) return;
+      mapDejaAud[k] = true;
+      var lblA = LIBELLES_AUDIOS_SUPP_ADMIN[k] || ("Audio " + k.slice(6).replace(/-/g, " "));
+      catAudios.push({ key: k, label: lblA });
+    });
+
     var nbVidDone = 0, nbVidEnCours = 0, listV = [];
     catVideos.forEach(function (v) {
       var pct = Number(pm[v.key]) || 0;
       if (pct >= 88) {
         nbVidDone++;
         listV.push(v.label + " (✅ 100%)");
-      } else if (pct >= 10) {
+      } else if (pct >= 1) {
         nbVidEnCours++;
         listV.push(v.label + " (⏳ " + pct + "%)");
       }
@@ -4766,11 +5041,13 @@
       if (pct >= 88) {
         nbAudDone++;
         listA.push(a.label + " (✅ 100%)");
-      } else if (pct >= 10) {
+      } else if (pct >= 1) {
         nbAudEnCours++;
         listA.push(a.label + " (⏳ " + pct + "%)");
       }
     });
+    var nbVidVues = nbVidDone + nbVidEnCours;
+    var nbAudVues = nbAudDone + nbAudEnCours;
     return {
       ok4: ok4,
       catVideos: catVideos,
@@ -4778,15 +5055,22 @@
       pm: pm,
       nbVidDone: nbVidDone,
       nbVidEnCours: nbVidEnCours,
+      nbVidVues: nbVidVues,
       totVid: catVideos.length,
       nbAudDone: nbAudDone,
       nbAudEnCours: nbAudEnCours,
+      nbAudVues: nbAudVues,
       totAud: catAudios.length,
+      resumeCourtVid: libelleCompteurMediaAdmin(nbVidDone, nbVidEnCours, catVideos.length, false),
+      resumeCourtAud: libelleCompteurMediaAdmin(nbAudDone, nbAudEnCours, catAudios.length, false),
+      resumeEnteteVid: libelleCompteurMediaAdmin(nbVidDone, nbVidEnCours, catVideos.length, true),
+      resumeEnteteAud: libelleCompteurMediaAdmin(nbAudDone, nbAudEnCours, catAudios.length, true),
       listV: listV,
       listA: listA,
-      hasAnyMedia: (nbVidDone + nbVidEnCours + nbAudDone + nbAudEnCours) > 0
+      hasAnyMedia: (nbVidVues + nbAudVues) > 0
     };
   }
+  window.__stiBilanProgressionMediaUser = bilanProgressionMediaUser;
 
   if (btnExportCsv) {
     btnExportCsv.addEventListener("click", function () {
@@ -4820,9 +5104,9 @@
         var stQ = statsQuizPourUser(p.id);
         var mods = modulesConsultesPourUser(p.id).join(", ") || "—";
         var bilCsv = bilanProgressionMediaUser(p);
-        var progCsvTxt = "Videos: " + bilCsv.nbVidDone + "/" + bilCsv.totVid +
+        var progCsvTxt = "Videos: " + bilCsv.resumeCourtVid +
           (bilCsv.listV.length ? (" (" + bilCsv.listV.join(", ") + ")") : "") +
-          " | Audios: " + bilCsv.nbAudDone + "/" + bilCsv.totAud +
+          " | Audios: " + bilCsv.resumeCourtAud +
           (bilCsv.listA.length ? (" (" + bilCsv.listA.join(", ") + ")") : "");
         var cols = [
           (p.nom || "—").trim(),
@@ -5109,11 +5393,11 @@
           var spProgNd = document.createElement("span");
           spProgNd.style.cssText = "background:#e3f6e8;border:1.5px solid #177245;border-radius:999px;padding:2px 8px;font-size:10px;font-weight:900;color:#14532d;";
           var txtPNd = "📚 " + modsNd.length + " mod.";
-          if (bilNd.nbVidDone || bilNd.nbVidEnCours) {
-            txtPNd += " · 🎥 " + bilNd.nbVidDone + "/" + bilNd.totVid + (bilNd.nbVidEnCours ? (" (⏳" + bilNd.nbVidEnCours + ")") : " ✅");
+          if (bilNd.nbVidVues) {
+            txtPNd += " · 🎥 " + bilNd.resumeCourtVid;
           }
-          if (bilNd.nbAudDone || bilNd.nbAudEnCours) {
-            txtPNd += " · 🔊 " + bilNd.nbAudDone + "/" + bilNd.totAud + (bilNd.nbAudEnCours ? (" (⏳" + bilNd.nbAudEnCours + ")") : " ✅");
+          if (bilNd.nbAudVues) {
+            txtPNd += " · 🔊 " + bilNd.resumeCourtAud;
           }
           spProgNd.textContent = txtPNd;
           spProgNd.title = "Modules : " + (modsNd.join(", ") || "—") +
@@ -5348,17 +5632,19 @@
           bModL.textContent = "📚 " + modsLigne.join(" · ") + " ✔";
           divProgL.appendChild(bModL);
         }
-        if (bilLigne.nbVidDone || bilLigne.nbVidEnCours) {
+        if (bilLigne.nbVidVues) {
           var bVidL = document.createElement("span");
-          bVidL.style.cssText = "display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;border:1px solid #16a34a;background:#dcfce7;color:#14532d;";
-          bVidL.textContent = "🎥 Vidéos : " + bilLigne.nbVidDone + "/" + bilLigne.totVid + " ✅" + (bilLigne.nbVidEnCours ? (" (⏳" + bilLigne.nbVidEnCours + ")") : "");
+          bVidL.style.cssText = "display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;border:1px solid " +
+            (bilLigne.nbVidDone ? "#16a34a;background:#dcfce7;color:#14532d;" : "#d97706;background:#fef3c7;color:#78350f;");
+          bVidL.textContent = "🎥 Vidéos : " + bilLigne.resumeCourtVid;
           bVidL.title = bilLigne.listV.join(" | ");
           divProgL.appendChild(bVidL);
         }
-        if (bilLigne.nbAudDone || bilLigne.nbAudEnCours) {
+        if (bilLigne.nbAudVues) {
           var bAudL = document.createElement("span");
-          bAudL.style.cssText = "display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;border:1px solid #0284c7;background:#e0f2fe;color:#075985;";
-          bAudL.textContent = "🔊 Audios : " + bilLigne.nbAudDone + "/" + bilLigne.totAud + " ✅" + (bilLigne.nbAudEnCours ? (" (⏳" + bilLigne.nbAudEnCours + ")") : "");
+          bAudL.style.cssText = "display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;border:1px solid " +
+            (bilLigne.nbAudDone ? "#0284c7;background:#e0f2fe;color:#075985;" : "#d97706;background:#fef3c7;color:#78350f;");
+          bAudL.textContent = "🔊 Audios : " + bilLigne.resumeCourtAud;
           bAudL.title = bilLigne.listA.join(" | ");
           divProgL.appendChild(bAudL);
         }
@@ -5784,27 +6070,27 @@
     var htmlBadgesVidFiche = bilFiche.catVideos.map(function (v) {
       var pct = Number(bilFiche.pm[v.key]) || 0;
       var estVu = pct >= 88;
-      var enC = !estVu && pct >= 10;
+      var enC = !estVu && pct >= 1;
       var styleB = estVu
         ? "background:#dcfce7;color:#14532d;border-color:#16a34a"
         : (enC ? "background:#fef3c7;color:#78350f;border-color:#f59e0b" : "background:#f3ead9;color:#7a6f5d;border-color:#cbbca2");
-      var icTxt = estVu ? "✅ Vu" : (enC ? ("⏳ " + pct + "%") : "⚪ 0%");
+      var icTxt = estVu ? "✅ Vu (100%)" : (enC ? ("⏳ " + pct + "%") : "⚪ 0%");
       return "<span style='display:inline-block;padding:3px 9px;margin:2px;border-radius:999px;border:1.5px solid;font-size:10.5px;font-weight:900;" + styleB + "'>🎥 " + echHtml(v.label) + " : " + icTxt + "</span>";
     }).join("");
     var htmlBadgesAudFiche = bilFiche.catAudios.map(function (a) {
       var pct = Number(bilFiche.pm[a.key]) || 0;
       var estVu = pct >= 88;
-      var enC = !estVu && pct >= 10;
+      var enC = !estVu && pct >= 1;
       var styleB = estVu
         ? "background:#dcfce7;color:#14532d;border-color:#16a34a"
         : (enC ? "background:#fef3c7;color:#78350f;border-color:#f59e0b" : "background:#f3ead9;color:#7a6f5d;border-color:#cbbca2");
-      var icTxt = estVu ? "✅ Écouté" : (enC ? ("⏳ " + pct + "%") : "⚪ 0%");
+      var icTxt = estVu ? "✅ Écouté (100%)" : (enC ? ("⏳ " + pct + "%") : "⚪ 0%");
       return "<span style='display:inline-block;padding:3px 9px;margin:2px;border-radius:999px;border:1.5px solid;font-size:10.5px;font-weight:900;" + styleB + "'>🔊 " + echHtml(a.label) + " : " + icTxt + "</span>";
     }).join("");
     var htmlMediaProgFiche =
       "<div class='fiche-modules-bar' style='flex-direction:column;align-items:flex-start;gap:4px'>" +
-        "<div><span>🎬 Vidéos (.mp4) vues (" + bilFiche.nbVidDone + "/" + bilFiche.totVid + " ✅) :</span> " + htmlBadgesVidFiche + "</div>" +
-        "<div><span>🔊 Audios (.mp3) écoutés (" + bilFiche.nbAudDone + "/" + bilFiche.totAud + " ✅) :</span> " + htmlBadgesAudFiche + "</div>" +
+        "<div><span>🎬 Vidéos (.mp4) vues (" + echHtml(bilFiche.resumeEnteteVid) + ") :</span> " + htmlBadgesVidFiche + "</div>" +
+        "<div><span>🔊 Audios (.mp3) écoutés (" + echHtml(bilFiche.resumeEnteteAud) + ") :</span> " + htmlBadgesAudFiche + "</div>" +
       "</div>";
 
     var infoApp = appareilsPourUser(p.id);
@@ -5931,7 +6217,7 @@
       "<div class='fiche-kpis'>" +
         "<div class='fiche-kpi'><small>⏱️ Temps (période)</small><b style='color:#d84315'>" + echHtml(fmtDureeCumul(secSem)) + "</b><span>Cumul total : " + echHtml(fmtDureeCumul(secTot)) + " (" + nbCon + " sess.)</span></div>" +
         "<div class='fiche-kpi'><small>🏆 Moyenne Quiz / Bac</small><b style='color:#177245'>" + (stQ.moyenne20 != null ? (stQ.moyenne20 + " / 20") : "—") + "</b><span>" + stQ.nb + " épreuve(s) passée(s)</span></div>" +
-        "<div class='fiche-kpi'><small>📚 Modules consultés</small><b>" + mods.length + " module(s)</b><span>Cours &amp; supports étudiés</span></div>" +
+        "<div class='fiche-kpi'><small>📚 Modules &amp; Médias</small><b>" + mods.length + " module(s)</b><span>🎬 " + echHtml(bilFiche.resumeCourtVid) + " · 🔊 " + echHtml(bilFiche.resumeCourtAud) + "</span></div>" +
         "<div class='fiche-kpi'><small>💬 Suivi messages</small><b>" + msgsEl.length + " interaction(s)</b><span>Lectures &amp; réponses au prof</span></div>" +
       "</div>" +
       "<div class='fiche-modules-bar'><span>📚 Modules consultés :</span> " + htmlMods + "</div>" +
@@ -6641,7 +6927,7 @@
       cfgEcoles.purgesMois[ym] = Date.now();
       sauvegarderCfgEcoles();
 
-      var suppression = sb.from("acces").delete();
+      var suppression = sb.from("acces").delete().neq("page", "PROG_MEDIA").neq("page", "CFG_ECOLES");
       if (ym === "*") {
         suppression = suppression.gt("id", 0);
       } else {
@@ -6658,7 +6944,11 @@
       suppression.then(function (r) {
         if (r.error) throw r.error;
         var idsCharges = ciblesChargees.map(function (a) { return a.id; }).filter(Boolean);
-        var reste = ym === "*" ? [] : accesBrutsAdmin.filter(function (a) { return cleMois(a.debut) !== ym; });
+        var reste = accesBrutsAdmin.filter(function (a) {
+          var pgA = String((a && a.page) || "");
+          if (pgA === "PROG_MEDIA" || pgA === "CFG_ECOLES") return true;
+          return ym === "*" ? false : (cleMois(a.debut) !== ym);
+        });
         retirerAccesDuCacheAdmin(idsCharges);
         var snap = sauvegarderSnapshotAdmin(profilsBrutsAdmin, reste, signauxCompatBrutAdmin);
         appliquerDonneesAdmin(profilsBrutsAdmin, reste, signauxCompatBrutAdmin, false, snap.ts);
@@ -13258,27 +13548,55 @@
       Promise.all([
         sb.from("acces").select("user_id,lieu,debut").eq("page", "PROG_MEDIA").order("debut", { ascending: false }).limit(4000),
         sb.from("acces").select("user_id,page,duree_sec,debut").neq("page", "PROG_MEDIA").order("debut", { ascending: false }).limit(8000),
-        sb.from("sti_quiz_parties").select("user_id,quiz,module,score,total").order("cree_le", { ascending: false }).limit(6000)
+        sb.from("sti_quiz_parties").select("user_id,quiz,module,score,total").order("cree_le", { ascending: false }).limit(6000),
+        selectionnerProgressionsAdmin()
       ]).then(function (res) {
         btnGen.disabled = false; btnGen.textContent = "\ud83d\udcca G\u00e9n\u00e9rer la carte";
-        if (!res[0] || res[0].error) { elEtat.textContent = "\u26a0\ufe0f Progressions m\u00e9dia illisibles : " + ((res[0] && res[0].error && res[0].error.message) || "r\u00e9seau"); return; }
-        var pm = res[0].data || [];
+        if ((!res[0] || res[0].error) && (!res[3] || !res[3].data || !res[3].data.length)) {
+          elEtat.textContent = "\u26a0\ufe0f Progressions m\u00e9dia illisibles : " + ((res[0] && res[0].error && res[0].error.message) || "r\u00e9seau");
+          return;
+        }
+        var pm = (res[0] && !res[0].error && res[0].data) || [];
         var sess = (res[1] && !res[1].error && res[1].data) || [];
         var quiz = (res[2] && !res[2].error && res[2].data) || [];
+        var progsCloud = (res[3] && res[3].data) || progressionsCloudBrutesAdmin || [];
         var classe = selClasse.value;
         var eleves = (profils || []).filter(function (p) {
           if (p.statut !== "actif") return false;
           return classe === "*" ? true : String(p.classe || "") === classe;
         });
-        var ids = {}; eleves.forEach(function (p) { ids[p.id] = 1; });
+        var ids = {}, uidParMail = {};
+        eleves.forEach(function (p) {
+          ids[p.id] = 1;
+          if (p.email) uidParMail[String(p.email).trim().toLowerCase()] = p.id;
+        });
         var n = eleves.length || 1;
         var progUser = {};
-        pm.forEach(function (r) {
-          if (!ids[r.user_id] || progUser[r.user_id]) return;
-          try { progUser[r.user_id] = (JSON.parse(r.lieu || "{}").m) || {}; } catch (e) { progUser[r.user_id] = {}; }
+        progsCloud.forEach(function (r) {
+          var uId = (r && r.user_id) || (r && r.email ? uidParMail[String(r.email).trim().toLowerCase()] : "");
+          if (!uId || !ids[uId]) return;
+          var dObj = parserObjetJsonSoupleAdmin(r.donnees);
+          var mpObj = dObj && parserObjetJsonSoupleAdmin(dObj["sti-media-prog-v1"]);
+          if (!mpObj || typeof mpObj !== "object") return;
+          if (!progUser[uId]) progUser[uId] = {};
+          Object.keys(mpObj).forEach(function (mk) {
+            var vPct = extrairePctMediaEntreeAdmin(mpObj[mk]);
+            if (vPct > (progUser[uId][mk] || 0)) progUser[uId][mk] = vPct;
+          });
         });
-        var vusParChap = {}; var tempsUserChap = {};
-        CHAPITRES.forEach(function (c) { vusParChap[c.cle] = 0; tempsUserChap[c.cle] = {}; });
+        pm.forEach(function (r) {
+          if (!ids[r.user_id]) return;
+          if (!progUser[r.user_id]) progUser[r.user_id] = {};
+          try {
+            var mObj = (JSON.parse(r.lieu || "{}").m) || {};
+            Object.keys(mObj).forEach(function (mk) {
+              var vPct = Number(mObj[mk]) || 0;
+              if (vPct > (progUser[r.user_id][mk] || 0)) progUser[r.user_id][mk] = vPct;
+            });
+          } catch (e) {}
+        });
+        var vusParChap = {}, entamesParChap = {}; var tempsUserChap = {};
+        CHAPITRES.forEach(function (c) { vusParChap[c.cle] = 0; entamesParChap[c.cle] = 0; tempsUserChap[c.cle] = {}; });
         Object.keys(progUser).forEach(function (uid) {
           var m = progUser[uid] || {};
           CHAPITRES.forEach(function (c) {
@@ -13287,6 +13605,7 @@
               if ((k === "video:" + c.slug || k === "audio:" + c.slug) && (m[k] || 0) > best) best = m[k];
             });
             if (best >= 88) vusParChap[c.cle]++;
+            else if (best >= 1) entamesParChap[c.cle]++;
           });
         });
         sess.forEach(function (r) {
@@ -13309,24 +13628,26 @@
         });
         var html = "<table class='carte-diff-table'><thead><tr><th>Chapitre</th><th>\ud83d\udcfa \u00c9coute termin\u00e9e</th><th>\ud83c\udfaf R\u00e9ussite quiz</th><th>\u23f1\ufe0f Temps moyen</th><th>Signal</th></tr></thead><tbody>";
         CHAPITRES.forEach(function (c) {
-          var vusPct = Math.round((vusParChap[c.cle] / n) * 100);
+          var nbEnt = entamesParChap[c.cle] || 0;
+          var totConsult = vusParChap[c.cle] + nbEnt;
+          var consultPct = Math.round((totConsult / n) * 100);
           var qm = quizChap[c.cle];
           var qPct = qm.n ? Math.round(qm.tot / qm.n) : null;
           var tU = tempsUserChap[c.cle]; var tMoy = 0; var nbT = 0;
           Object.keys(tU).forEach(function (u) { tMoy += tU[u]; nbT++; });
           var tMin = nbT ? Math.round(tMoy / nbT / 60) : 0;
           var signal = "vert"; var lbl = "\ud83d\udfe2 Ma\u00eetris\u00e9";
-          if (vusPct < 25 || (qPct != null && qPct < 45)) { signal = "rouge"; lbl = "\ud83d\udd34 Difficile"; }
-          else if (vusPct < 60 || (qPct != null && qPct < 65)) { signal = "orange"; lbl = "\ud83d\udfe0 \u00c0 consolider"; }
+          if (consultPct < 25 || (qPct != null && qPct < 45)) { signal = "rouge"; lbl = "\ud83d\udd34 Difficile"; }
+          else if (consultPct < 60 || (qPct != null && qPct < 65)) { signal = "orange"; lbl = "\ud83d\udfe0 \u00c0 consolider"; }
           html += "<tr><td class='carte-diff-nom'><b>" + echHtml(c.cle) + "</b><br><small>" + nbT + " \u00e9l\u00e8ve(s) ont ouvert les pages</small></td>" +
-            "<td>" + vusParChap[c.cle] + "/" + eleves.length + " (" + vusPct + " %)</td>" +
+            "<td>" + totConsult + "/" + eleves.length + " (" + consultPct + " %)" + (nbEnt ? " <small>(" + vusParChap[c.cle] + " \u2705 \u00b7 " + nbEnt + " \u23f3)</small>" : "") + "</td>" +
             "<td>" + (qPct == null ? "\u2014" : qPct + " % <small>(" + qm.n + " partie(s))</small>") + "</td>" +
             "<td>" + (tMin ? tMin + " min" : "\u2014") + "</td>" +
             "<td><span class='carte-diff-signal carte-diff-" + signal + "'>" + lbl + "</span></td></tr>";
         });
         html += "</tbody></table>";
         elCorps.innerHTML = html;
-        elEtat.textContent = "\u00c9l\u00e8ves : " + eleves.length + (classe === "*" ? " (toutes classes)" : " (" + classe + ")") + " \u00b7 sources : " + pm.length + " relev\u00e9s m\u00e9dia, " + sess.length + " sessions, " + quiz.length + " parties de quiz \u00b7 " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+        elEtat.textContent = "\u00c9l\u00e8ves : " + eleves.length + (classe === "*" ? " (toutes classes)" : " (" + classe + ")") + " \u00b7 sources : " + Object.keys(progUser).length + " progressions m\u00e9dia cloud, " + sess.length + " sessions, " + quiz.length + " parties de quiz \u00b7 " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
         remplirClasses();
       }).catch(function (err) {
         btnGen.disabled = false; btnGen.textContent = "\ud83d\udcca G\u00e9n\u00e9rer la carte";

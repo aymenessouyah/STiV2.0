@@ -1831,7 +1831,7 @@ test('v458 : révision approfondie Quiz Phase 2 — assainissement intégral qui
     assert.match(content, /quiz-sync\.js\?v=4(58|59|60)/, `${name} doit charger quiz-sync.js?v=458+`);
   }
   assert.match(tabHtml, /quiz-tableaux\.js\?v=4(58|59|60)/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v3(18|19|20)"/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}"/);
   assert.match(swJs, /v458-quiz-revision-2/);
 });
 
@@ -2144,7 +2144,7 @@ test('v459 : modale Carte Candidat fonctionnelle (CSS plein écran + 4 boutons) 
   assert.match(tabJs, /function conseilParFauteTab\(/);
   assert.match(accesJs, /📌 Points à réviser en priorité/);
   assert.match(accesJs, /function conseilParFauteEb\(/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v3(19|20)"/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}"/);
   assert.match(swJs, /v459-carte-quiz-eval/);
 });
 
@@ -2303,8 +2303,8 @@ test('v460 (structure & migration) : liaison Supabase scores + ordre des questio
   ]) {
     assert.match(content, /quiz-sync\.js\?v=460/, `${name} doit charger quiz-sync.js?v=460`);
   }
-  assert.match(swJs, /var CACHE = "sti-atelier-v320"/);
-  assert.match(swJs, /var UPDATE_ID = "v460-quiz-supabase-ordre"/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}"/);
+  assert.match(swJs, /v460-quiz-supabase-ordre/);
 });
 
 test('v460 (comportemental VM) : sauvegarde et reprise exacte du score + ordre des questions sur Supabase (sti_quiz_sessions + sti_quiz_parties) et non-régression updateNav PHP', async () => {
@@ -2510,6 +2510,165 @@ test('v460 (comportemental VM) : sauvegarde et reprise exacte du score + ordre d
   assert.match(fakeEls.loginBtn.innerHTML, /id="loginLabel"/);
   assert.match(fakeEls.loginBtn.innerHTML, /Mariem/);
 });
+
+test('v461 (structure) : compteurs vidéos (.mp4) & audios (.mp3) reliés à sti_progressions + PROG_MEDIA, détection 4eme SI1/SI2, suivi universel des lecteurs et protection contre la purge acces', () => {
+  const adminJs = read('assets/js/admin.js');
+  const protJs = read('assets/js/protection.js');
+  const accesJs = read('assets/js/acces.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const adminHtml = read('admin.html');
+  const swJs = read('sw.js');
+
+  // 1) admin.js : fusion sti_progressions + PROG_MEDIA + détection 4eme SI1/SI2 + protection purge
+  assert.match(adminJs, /function selectionnerProgressionsAdmin\(\)/);
+  assert.match(adminJs, /function fusionnerProgressionsCloudDansMaps\(/);
+  assert.match(adminJs, /function estProfil4SIAdmin\(p\)/);
+  assert.match(adminJs, /function libelleCompteurMediaAdmin\(/);
+  assert.match(adminJs, /neq\("page", "PROG_MEDIA"\)\.neq\("page", "CFG_ECOLES"\)/);
+  assert.match(adminJs, /video:explore-tunisie-flex/);
+  assert.match(adminJs, /audio:css-positionnement/);
+
+  // 2) protection.js : suivi universel <video>/<audio> + alias guichet-etapes / displayanim / sql-guide-requete
+  assert.match(protJs, /function resoudreCleMediaDepuisUrlSTI\(/);
+  assert.match(protJs, /function installerSuiviUniverselMediasSTI\(\)/);
+  assert.match(protJs, /"guichet-etapes": "php-guichet"/);
+
+  // 3) acces.js + sync-progressions.js : synchro exacte dès 1%, hachage FNV-1a sensible au contenu et fusion monotone
+  assert.match(accesJs, /if \(p >= 1\)/);
+  assert.match(syncProgJs, /function fusionnerMediaProgMonotone\(/);
+  assert.match(syncProgJs, /function isolerComptePartageSiBesoin\(/);
+
+  // 4) Cache-busters v461 + Service Worker v321
+  assert.match(adminHtml, /admin\.js\?v=461-compteurs-media/);
+  assert.match(adminHtml, /protection\.js\?v=461/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v321"/);
+  assert.match(swJs, /var UPDATE_ID = "v461-compteurs-media"/);
+});
+
+test('v461 (comportemental VM) : ABED Ala (4eme SI2) remonte 1/8 vidéo (73%) depuis sti_progressions même après purge acces, suivi <10% + TP Tunisie/CSS animé et hachage contenu sync-progressions', () => {
+  const adminJs = read('assets/js/admin.js');
+  const protJs = read('assets/js/protection.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+
+  // A) Extraction et vérification directe de la chaîne de calcul Admin (parser + fusion sti_progressions + classes 4eme SI + bilanProgressionMediaUser)
+  const mParser = adminJs.match(/function parserObjetJsonSoupleAdmin\(val\)[\s\S]*?function appliquerDonneesAdmin\(/);
+  const mBilan = adminJs.match(/function estProfil4SIAdmin\(p\)[\s\S]*?window\.__stiBilanProgressionMediaUser = bilanProgressionMediaUser;/);
+  assert.ok(mParser && mBilan, 'Les fonctions de fusion sti_progressions et bilanProgressionMediaUser doivent être présentes dans admin.js');
+  const codeAdminCalc = mParser[0].replace(/function appliquerDonneesAdmin\($/, '') + '\n' + mBilan[0];
+
+  const ctxAdmin = {
+    window: {},
+    estGold: (p) => /\|\s*GOLD$/i.test(String((p && p.lycee) || '')),
+    progressionsCloudBrutesAdmin: [],
+    dernierProgressionMajAdmin: '',
+    progMediaParUser: {},
+    progMediaLiveBuffer: {},
+    chapitresVusCloudParUser: {},
+    pagesVuesCloudParUser: {},
+    profilsBrutsAdmin: [],
+  };
+  vm.runInNewContext(codeAdminCalc, ctxAdmin);
+
+  // Cas réel de production : ABED Ala (4eme SI2) avec acces purgé mais sti_progressions contenant video:php-cours à 73%
+  const abedAla = {
+    id: '65b2f281-a612-45cc-98c6-f6f9931ea5dc',
+    email: 'alaabed7890@gmail.com',
+    nom: 'ABED',
+    prenom: 'Ala',
+    classe: '4eme SI2',
+    lycee: 'Lycée Houmet Souk',
+    statut: 'actif',
+  };
+  const eleve3SI = {
+    id: 'eleve-3si-001',
+    email: 'eleve3si@gmail.com',
+    nom: 'BEN ALI',
+    prenom: 'Sami',
+    classe: '3eme SI1',
+    lycee: 'Lycée Rafèha',
+    statut: 'actif',
+  };
+
+  ctxAdmin.window.__stiInjecterProgressionsCloudTest([
+    {
+      user_id: abedAla.id,
+      email: abedAla.email,
+      maj: '2026-10-25T08:00:00Z',
+      donnees: {
+        'sti-media-prog-v1': JSON.stringify({
+          'video:php-cours': { pct: 73, maxPct: 73, sec: 478, dur: 659, done: false, ts: 1792530000000 },
+        }),
+      },
+    },
+    {
+      user_id: eleve3SI.id,
+      email: eleve3SI.email,
+      maj: '2026-10-25T08:05:00Z',
+      donnees: {
+        'sti-media-prog-v1': JSON.stringify({
+          'video:explore-tunisie-flex': { pct: 77, maxPct: 77, sec: 223, dur: 290, done: false, ts: 1792530100000 },
+          'audio:css-positionnement': { pct: 6, maxPct: 6, sec: 18, dur: 300, done: false, ts: 1792530200000 },
+          'audio:sql-cours': { pct: 100, maxPct: 100, sec: 0, dur: 622, done: true, ts: 1792530300000 },
+        }),
+      },
+    },
+  ], [abedAla, eleve3SI]);
+
+  assert.equal(ctxAdmin.window.__stiEstProfil4SIAdmin(abedAla), true, '4eme SI2 doit être reconnu comme classe 4e SI');
+  assert.equal(ctxAdmin.window.__stiEstProfil4SIAdmin({ classe: '4eme SI1' }), true, '4eme SI1 doit être reconnu comme classe 4e SI');
+  assert.equal(ctxAdmin.window.__stiEstProfil4SIAdmin(eleve3SI), false, '3eme SI1 ne doit pas être classé en 4e SI');
+
+  const bilAla = ctxAdmin.window.__stiBilanProgressionMediaUser(abedAla);
+  assert.equal(bilAla.ok4, true);
+  assert.equal(bilAla.totVid, 8, 'Un élève de 4eme SI2 a 8 vidéos de base (incluant PHP & Guichet)');
+  assert.equal(bilAla.totAud, 5, 'Un élève de 4eme SI2 a 5 audios de base (incluant Audio PHP)');
+  assert.equal(bilAla.nbVidVues, 1, 'Le compteur vidéo d’ABED Ala doit afficher 1 vidéo consultée (et non 0)');
+  assert.equal(bilAla.nbVidEnCours, 1);
+  assert.equal(bilAla.nbVidDone, 0);
+  assert.equal(bilAla.resumeCourtVid, '1/8 ⏳');
+  assert.equal(bilAla.resumeEnteteVid, '1/8 · 1 ⏳ en cours');
+  assert.ok(Array.from(bilAla.listV).includes('Cours PHP (⏳ 73%)'));
+
+  const bil3SI = ctxAdmin.window.__stiBilanProgressionMediaUser(eleve3SI);
+  assert.equal(bil3SI.ok4, false);
+  assert.equal(bil3SI.nbVidVues, 1, 'TP Tunisie Flex (77%) doit être comptabilisé dans les vidéos vues');
+  assert.equal(bil3SI.nbAudVues, 2, 'Audio SQL (100%) + Audio Positionnement (6% < 10%) doivent tous deux être comptabilisés');
+  assert.equal(bil3SI.nbAudDone, 1);
+  assert.equal(bil3SI.nbAudEnCours, 1);
+  assert.equal(bil3SI.resumeCourtAud, '2/5 (1✅·1⏳)');
+
+  // B) Résolution universelle des URLs vidéo/audio dans protection.js
+  const mResUrl = protJs.match(/function resoudreCleMediaDepuisUrlSTI\(urlBrute, tagHint\)[\s\S]*?window\.resoudreCleMediaDepuisUrlSTI = resoudreCleMediaDepuisUrlSTI;/);
+  assert.ok(mResUrl, 'resoudreCleMediaDepuisUrlSTI doit exister dans protection.js');
+  const ctxProt = { window: {} };
+  vm.runInNewContext(mResUrl[0], ctxProt);
+  const resCle = ctxProt.window.resoudreCleMediaDepuisUrlSTI;
+  assert.equal(resCle('../assets/audio/css-positionnement.mp3?v=2', 'AUDIO'), 'audio:css-positionnement');
+  assert.equal(resCle('../assets/audio/css-animee.mp3', 'AUDIO'), 'audio:css-animee');
+  assert.equal(resCle('../assets/audio/guichet-etapes.mp3', 'AUDIO'), 'audio:php-guichet');
+  assert.equal(resCle('../assets/videos/php-synthese.mp4', 'VIDEO'), 'video:php-synthese');
+  assert.equal(resCle('../assets/videos/displayanim.mp4', 'VIDEO'), 'video:css-displayanim');
+  assert.equal(resCle('assets/videos/sql-construire-requete-guide-texte.mp4', 'VIDEO'), 'video:sql-guide-requete');
+  assert.equal(resCle('assets/audio/foret.mp3', 'AUDIO'), '', 'Le son d’ambiance foret.mp3 doit être ignoré');
+
+  // C) sync-progressions.js : hash(d) sensible aux variations de même longueur (12% -> 73%) + fusion monotone
+  const mHashSync = syncProgJs.match(/function hash\(d\)[\s\S]*?function isolerComptePartageSiBesoin\(uid\)/);
+  assert.ok(mHashSync, 'hash() et fusionnerMediaProgMonotone() doivent exister dans sync-progressions.js');
+  const ctxSync = {};
+  vm.runInNewContext(mHashSync[0].replace(/function isolerComptePartageSiBesoin\(uid\)$/, ''), ctxSync);
+  const h12 = ctxSync.hash({ 'sti-media-prog-v1': '{"video:php-cours":{"pct":12,"maxPct":12,"sec":105}}' });
+  const h73 = ctxSync.hash({ 'sti-media-prog-v1': '{"video:php-cours":{"pct":73,"maxPct":73,"sec":478}}' });
+  assert.notEqual(h12, h73, 'hash(d) doit changer quand maxPct passe de 12% à 73% même à longueur JSON identique');
+
+  const mergedJson = ctxSync.fusionnerMediaProgMonotone(
+    JSON.stringify({ 'video:php-cours': { pct: 80, maxPct: 80, sec: 520, dur: 659, done: false, ts: 200 } }),
+    JSON.stringify({ 'video:php-cours': { pct: 40, maxPct: 40, sec: 260, dur: 659, done: false, ts: 100 }, 'audio:sql-cours': { pct: 100, maxPct: 100, sec: 0, dur: 622, done: true, ts: 150 } })
+  );
+  const merged = JSON.parse(mergedJson);
+  assert.equal(merged['video:php-cours'].maxPct, 80, 'La progression locale plus avancée ne doit jamais être écrasée par une copie cloud plus ancienne');
+  assert.equal(merged['audio:sql-cours'].done, true, 'Les médias terminés sur un autre appareil doivent être conservés');
+});
+
 
 
 

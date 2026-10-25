@@ -6,6 +6,7 @@
 (function () {
   "use strict";
   var CLE_SYNC_MAJ = "sti-sync-maj";
+  var CLE_SYNC_UID = "sti-sync-uid";
   var EXCLUES = [
     "sti-session-cache",
     "sti-admin-gold",
@@ -16,7 +17,8 @@
     "sti-quiz-sync-rep-v1",
     "sti-quiz-sessions-actives-v1",
     "sti-quiz-sessions-purge-v1",
-    CLE_SYNC_MAJ
+    CLE_SYNC_MAJ,
+    CLE_SYNC_UID
   ];
   var CLES_QUIZ_CLOUD = [
     "js_quiz_high_score",
@@ -58,11 +60,84 @@
     }
     return d;
   }
-  function hash(d) { try { return JSON.stringify(d).length + ":" + Object.keys(d).sort().join(","); } catch (e) { return ""; } }
+  function hash(d) {
+    try {
+      var ks = Object.keys(d || {}).sort();
+      var h = 2166136261;
+      var len = 0;
+      for (var i = 0; i < ks.length; i++) {
+        var s = ks[i] + "=" + String(d[ks[i]] == null ? "" : d[ks[i]]) + "|";
+        len += s.length;
+        for (var j = 0; j < s.length; j++) {
+          h ^= s.charCodeAt(j);
+          h = Math.imul ? Math.imul(h, 16777619) : ((h * 16777619) | 0);
+        }
+      }
+      return (h >>> 0).toString(36) + ":" + len + ":" + ks.length;
+    } catch (e) { return ""; }
+  }
+  function fusionnerMediaProgMonotone(rawLoc, rawDist) {
+    var mLoc = {}, mDist = {};
+    try { mLoc = (typeof rawLoc === "string" ? JSON.parse(rawLoc || "{}") : rawLoc) || {}; } catch (e1) { mLoc = {}; }
+    try { mDist = (typeof rawDist === "string" ? JSON.parse(rawDist || "{}") : rawDist) || {}; } catch (e2) { mDist = {}; }
+    var out = {};
+    var cles = {};
+    Object.keys(mDist).forEach(function (c) { cles[c] = 1; });
+    Object.keys(mLoc).forEach(function (c) { cles[c] = 1; });
+    Object.keys(cles).forEach(function (c) {
+      var a = mLoc[c];
+      var b = mDist[c];
+      if (!a || typeof a !== "object") { out[c] = b; return; }
+      if (!b || typeof b !== "object") { out[c] = a; return; }
+      var maxPct = Math.max(Number(a.maxPct) || 0, Number(b.maxPct) || 0, Number(a.pct) || 0, Number(b.pct) || 0);
+      var done = Boolean(a.done || b.done || maxPct >= 88);
+      if (done) maxPct = 100;
+      var tsA = Number(a.ts) || 0;
+      var tsB = Number(b.ts) || 0;
+      var recent = tsA >= tsB ? a : b;
+      out[c] = {
+        pct: done ? 100 : Math.max(Number(recent.pct) || 0, maxPct > 0 ? 1 : 0),
+        maxPct: maxPct,
+        sec: done ? 0 : (Number(recent.sec) || Number(a.sec) || Number(b.sec) || 0),
+        dur: Math.max(Number(a.dur) || 0, Number(b.dur) || 0),
+        done: done,
+        ts: Math.max(tsA, tsB)
+      };
+    });
+    return JSON.stringify(out);
+  }
+  function isolerComptePartageSiBesoin(uid) {
+    if (!uid) return;
+    try {
+      var prevUid = localStorage.getItem(CLE_SYNC_UID) || "";
+      if (prevUid && prevUid !== uid) {
+        localStorage.removeItem("sti-media-prog-v1");
+        localStorage.removeItem("sti-chapitres-vus");
+        localStorage.removeItem("sti-revised-courses");
+        localStorage.removeItem(CLE_SYNC_MAJ);
+        dernierHash = "";
+      }
+      localStorage.setItem(CLE_SYNC_UID, uid);
+    } catch (e) {}
+  }
   function appliquer(d) {
     try {
       Object.keys(d || {}).forEach(function (k) {
         if (!estCleSynchronisable(k) || d[k] == null) return;
+        if (k === "sti-media-prog-v1") {
+          try {
+            localStorage.setItem(k, fusionnerMediaProgMonotone(localStorage.getItem(k), d[k]));
+            return;
+          } catch (eMed) {}
+        }
+        if (k === "sti-chapitres-vus" || k === "sti-revised-courses") {
+          try {
+            var cLoc = JSON.parse(localStorage.getItem(k) || "{}") || {};
+            var cDist = (typeof d[k] === "string" ? JSON.parse(d[k] || "{}") : d[k]) || {};
+            localStorage.setItem(k, JSON.stringify(Object.assign({}, cDist, cLoc)));
+            return;
+          } catch (eCh) {}
+        }
         if (k === "js_quiz_high_score" || k === "js_quiz_total_answered") {
           var vLoc = parseInt(localStorage.getItem(k) || "0", 10) || 0;
           var vDist = parseInt(d[k], 10) || 0;
@@ -119,17 +194,24 @@
   function entetes() { return { "apikey": cfg.CLE, "Authorization": "Bearer " + session.token, "Content-Type": "application/json" }; }
   function tirer() {
     if (!session) { pastille("💾 Progression : cet appareil seulement", "#fff3e0"); return; }
+    isolerComptePartageSiBesoin(session.id);
     fetch(cfg.URL + "/rest/v1/sti_progressions?user_id=eq." + encodeURIComponent(session.id) + "&select=donnees,maj", { headers: entetes() })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function (lignes) {
         if (lignes && lignes.length) {
           var distant = new Date(lignes[0].maj).getTime() || 0;
           var local = parseInt(localStorage.getItem(CLE_SYNC_MAJ) || "0", 10) || 0;
-          if (distant > local && lignes[0].donnees) {
+          if (lignes[0].donnees && (distant > local || !local)) {
+            var avantHash = hash(collecter());
             appliquer(lignes[0].donnees);
             localStorage.setItem(CLE_SYNC_MAJ, String(distant));
-            dernierHash = hash(collecter());
+            var apresHash = hash(collecter());
+            dernierHash = apresHash;
             pastille("☁️ Progression restaurée depuis le cloud", "#e8f5e9");
+            if (avantHash && avantHash !== apresHash) {
+              /* Si la fusion monotone a conservé des avancées locales plus récentes, les pousser aussi au cloud */
+              setTimeout(function () { pousser(true); }, 600);
+            }
             /* Consigne auteur v422 : l'annonce de restauration ne reste affichée QUE deux
                secondes, puis la pastille retrouve son état ordinaire « synchronisée » —
                et seulement si rien d'autre ne l'a remplacée entre-temps (une coupure réseau
@@ -158,6 +240,14 @@
               }
             } catch (e) {}
             return;
+          } else if (lignes[0].donnees && lignes[0].donnees["sti-media-prog-v1"]) {
+            /* Même si local >= distant, fusionner de façon monotone toute progression média distante manquante */
+            try {
+              var fusionM = fusionnerMediaProgMonotone(localStorage.getItem("sti-media-prog-v1"), lignes[0].donnees["sti-media-prog-v1"]);
+              if (fusionM !== localStorage.getItem("sti-media-prog-v1")) {
+                localStorage.setItem("sti-media-prog-v1", fusionM);
+              }
+            } catch (eFm) {}
           }
         }
         pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9"); pousser(true);
@@ -165,25 +255,45 @@
       .catch(function () { pastille("💾 Progression : cet appareil seulement", "#fff3e0"); });
   }
   function pousser(force) {
+    session = session || lireSession();
     if (!session) return;
+    isolerComptePartageSiBesoin(session.id);
     var d = collecter(), h = hash(d);
     if (!force && h === dernierHash) return;
     dernierHash = h;
     var maj = new Date().toISOString();
-    fetch(cfg.URL + "/rest/v1/sti_progressions", {
+    var bodyStr = JSON.stringify({ user_id: session.id, email: session.email, donnees: d, maj: maj });
+    var optsFetch = {
       method: "POST",
       headers: (function () { var e = entetes(); e["Prefer"] = "resolution=merge-duplicates"; return e; })(),
-      body: JSON.stringify({ user_id: session.id, email: session.email, donnees: d, maj: maj })
-    }).then(function (r) {
+      body: bodyStr
+    };
+    if (force && bodyStr.length < 60000) optsFetch.keepalive = true;
+    fetch(cfg.URL + "/rest/v1/sti_progressions", optsFetch).then(function (r) {
       if (r.ok) { localStorage.setItem(CLE_SYNC_MAJ, String(new Date(maj).getTime())); pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9"); }
       else pastille("💾 Progression : cet appareil seulement", "#fff3e0");
     }).catch(function () { pastille("💾 Progression : cet appareil seulement", "#fff3e0"); });
   }
+  var timerPushMedia = null;
   function demarrer() {
     if (!document.body) { setTimeout(demarrer, 300); return; }
     session = lireSession();
     tirer();
-    minuteur = setInterval(function () { session = session || lireSession(); pousser(false); }, 5000);
+    minuteur = setInterval(function () {
+      var nvSess = lireSession();
+      if (nvSess && (!session || nvSess.id !== session.id)) {
+        session = nvSess;
+        tirer();
+        return;
+      }
+      session = nvSess || session;
+      pousser(false);
+    }, 5000);
+    window.addEventListener("sti-media-prog-updated", function () {
+      if (timerPushMedia) clearTimeout(timerPushMedia);
+      timerPushMedia = setTimeout(function () { timerPushMedia = null; pousser(false); }, 1800);
+    });
+    window.addEventListener("pagehide", function () { pousser(true); });
     window.addEventListener("beforeunload", function () { pousser(true); });
     document.addEventListener("visibilitychange", function () { if (document.hidden) pousser(true); });
   }

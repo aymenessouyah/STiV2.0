@@ -3,14 +3,19 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v320";
+var CACHE = "sti-atelier-v321";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v460-quiz-supabase-ordre";
-/* Historique lots : v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v461-compteurs-media";
+/* Historique lots : v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/admin.js", revision: "compteurs-media-v461" },
+  { url: "./assets/js/protection.js", revision: "compteurs-media-v461" },
+  { url: "./assets/js/acces.js", revision: "compteurs-media-v461" },
+  { url: "./assets/js/sync-progressions.js", revision: "compteurs-media-v461" },
+  { url: "./admin.html", revision: "compteurs-media-v461" },
   { url: "./assets/js/quiz-sync.js", revision: "quiz-supabase-ordre-v460" },
   { url: "./assets/js/sync-progressions.js", revision: "quiz-supabase-ordre-v460" },
   { url: "./assets/js/quiz-tableaux.js", revision: "quiz-supabase-ordre-v460" },

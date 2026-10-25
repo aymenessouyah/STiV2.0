@@ -1414,23 +1414,54 @@
         } catch (e) {}
       }
 
+      function resoudreCleMediaDepuisUrlSTI(urlBrute, tagHint) {
+        if (!urlBrute || typeof urlBrute !== "string") return "";
+        var u = urlBrute.split("#")[0].split("?")[0].toLowerCase();
+        if (!u || u.indexOf("data:") === 0 || u.indexOf("blob:") === 0) return "";
+        if (u.indexOf("foret.mp3") !== -1 || u.indexOf("ambient") !== -1) return "";
+        var mNom = u.match(/\/([^\/]+)\.(mp4|webm|m3u8|mp3|ogg|wav|m4a)$/i) || u.match(/^([^\/]+)\.(mp4|webm|m3u8|mp3|ogg|wav|m4a)$/i);
+        if (!mNom) return "";
+        var base = mNom[1];
+        var ext = mNom[2].toLowerCase();
+        var estAudio = (tagHint === "AUDIO") || ext === "mp3" || ext === "ogg" || ext === "wav" || ext === "m4a";
+        var prefix = estAudio ? "audio:" : "video:";
+        var alias = {
+          "guichet-etapes": "php-guichet",
+          "sql-construire-requete-guide-texte": "sql-guide-requete",
+          "displayanim": "css-displayanim"
+        };
+        var slug = alias[base] || base;
+        if (!estAudio && u.indexOf("/hls/") !== -1) {
+          var mHls = u.match(/\/hls\/([^\/]+)\//i);
+          if (mHls && mHls[1]) slug = alias[mHls[1].toLowerCase()] || mHls[1].toLowerCase();
+        }
+        return prefix + slug;
+      }
+      window.resoudreCleMediaDepuisUrlSTI = resoudreCleMediaDepuisUrlSTI;
+
       function enregistrerProgressionMediaSTI(cle, sec, dur, forceDone) {
         if (!cle) return;
         var s = Math.max(0, Number(sec) || 0);
         var d = Math.max(0, Number(dur) || 0);
-        if (!forceDone && s < 2.5) return;
+        if (!forceDone && s < 2) return;
         var map = lireProgressionMediaSTI();
+        var dejaPresent = Boolean(map[cle]);
         var prev = map[cle] || { pct: 0, maxPct: 0, sec: 0, done: false };
-        var pct = (d > 2) ? Math.min(100, Math.round((s / d) * 100)) : (prev.pct || 5);
+        var pct = forceDone
+          ? 100
+          : ((d > 2) ? Math.min(100, Math.max(1, Math.round((s / d) * 100))) : Math.max(1, prev.pct || 5));
         var maxPct = Math.max(prev.maxPct || 0, pct);
         var isDone = Boolean(forceDone || prev.done || maxPct >= 88);
         if (isDone) maxPct = 100;
-        var changed = (prev.done !== isDone) || (Math.abs((prev.maxPct || 0) - maxPct) >= 2) || (Math.abs((prev.sec || 0) - Math.round(s)) >= 4);
+        var prevMax = Number(prev.maxPct) || 0;
+        var premiereFois = !dejaPresent || prevMax < 1;
+        var secSauv = isDone ? 0 : ((s < 0.5 && (prev.sec || 0) > 2) ? prev.sec : Math.round(s));
+        var changed = premiereFois || (prev.done !== isDone) || (maxPct !== prevMax) || (Math.abs((prev.sec || 0) - secSauv) >= 3);
         map[cle] = {
           pct: pct,
           maxPct: maxPct,
-          sec: isDone ? 0 : Math.round(s),
-          dur: Math.round(d),
+          sec: secSauv,
+          dur: Math.round(d || prev.dur || 0),
           done: isDone,
           ts: Date.now()
         };
@@ -1440,21 +1471,120 @@
           } catch (e) {}
           if (isDone) synchroniserRevisionDepuisMedia(cle);
           rafraichirBadgesProgressionSTI();
-          var oldTier = Math.floor((prev.maxPct || 0) / 25);
-          var newTier = isDone ? 4 : Math.floor(maxPct / 25);
-          if ((isDone && !prev.done) || newTier > oldTier) {
+          try {
+            if (typeof window.dispatchEvent === "function" && typeof CustomEvent === "function") {
+              window.dispatchEvent(new CustomEvent("sti-media-prog-updated", { detail: { cle: cle, entry: map[cle] } }));
+            }
+          } catch (eEv) {}
+          try {
+            if (window.self !== window.top && window.parent && window.parent !== window) {
+              window.parent.postMessage({ type: "STI_MEDIA_PROG_IFRAME", cle: cle, sec: s, dur: d, forceDone: Boolean(forceDone) }, "*");
+            }
+          } catch (eIf) {}
+          var oldStep = Math.floor(prevMax / 5);
+          var newStep = isDone ? 20 : Math.floor(maxPct / 5);
+          if (premiereFois || (isDone && !prev.done) || newStep > oldStep) {
             if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
-              window.synchroniserProgressionMediaServeurSTI(isDone);
+              window.synchroniserProgressionMediaServeurSTI(Boolean(isDone || premiereFois));
             }
           }
         }
       }
       window.enregistrerProgressionMediaSTI = enregistrerProgressionMediaSTI;
 
+      (function installerSuiviUniverselMediasSTI() {
+        if (window.__stiUniversalMediaTrackerInstalled) return;
+        window.__stiUniversalMediaTrackerInstalled = true;
+
+        function clePourElementMedia(el) {
+          if (!el || (el.tagName !== "VIDEO" && el.tagName !== "AUDIO")) return "";
+          var attrCle = el.getAttribute && el.getAttribute("data-sti-media-key");
+          if (attrCle) return attrCle;
+          var overlay = el.closest && el.closest("#sti-video-modal-overlay[data-slug]");
+          if (overlay && el.tagName === "VIDEO") {
+            var sl = overlay.getAttribute("data-slug") || "";
+            if (sl) return "video:" + sl;
+          }
+          var src = el.currentSrc || el.src || (el.getAttribute && el.getAttribute("src")) || "";
+          if (!src && el.querySelector) {
+            var sEl = el.querySelector("source[src]");
+            if (sEl) src = sEl.src || sEl.getAttribute("src") || "";
+          }
+          return resoudreCleMediaDepuisUrlSTI(src, el.tagName);
+        }
+
+        function attacherSuiviElementMedia(el) {
+          if (!el || el.__stiMediaSuiviAttache) return;
+          el.__stiMediaSuiviAttache = true;
+          el.addEventListener("timeupdate", function () {
+            if (el.paused) return;
+            var cle = clePourElementMedia(el);
+            if (cle) enregistrerProgressionMediaSTI(cle, el.currentTime, el.duration, false);
+          });
+          el.addEventListener("pause", function () {
+            var cle = clePourElementMedia(el);
+            if (cle && el.currentTime >= 2) {
+              enregistrerProgressionMediaSTI(cle, el.currentTime, el.duration, false);
+              if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+                window.synchroniserProgressionMediaServeurSTI(true);
+              }
+            }
+          });
+          el.addEventListener("ended", function () {
+            var cle = clePourElementMedia(el);
+            if (cle) {
+              var dFin = (el.duration && isFinite(el.duration) && el.duration > 0) ? el.duration : Math.max(el.currentTime || 0, 60);
+              enregistrerProgressionMediaSTI(cle, dFin, dFin, true);
+              if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+                window.synchroniserProgressionMediaServeurSTI(true);
+              }
+            }
+          });
+        }
+
+        try {
+          if (typeof HTMLMediaElement !== "undefined" && HTMLMediaElement.prototype && typeof HTMLMediaElement.prototype.play === "function" && !HTMLMediaElement.prototype.__stiPlayHooked) {
+            var playOrig = HTMLMediaElement.prototype.play;
+            HTMLMediaElement.prototype.__stiPlayHooked = true;
+            HTMLMediaElement.prototype.play = function () {
+              try { attacherSuiviElementMedia(this); } catch (eA) {}
+              return playOrig.apply(this, arguments);
+            };
+          }
+        } catch (eHook) {}
+
+        document.addEventListener("play", function (ev) {
+          if (ev && ev.target) attacherSuiviElementMedia(ev.target);
+        }, true);
+        document.addEventListener("timeupdate", function (ev) {
+          var el = ev && ev.target;
+          if (!el || el.__stiMediaSuiviAttache || el.paused) return;
+          attacherSuiviElementMedia(el);
+          var cle = clePourElementMedia(el);
+          if (cle) enregistrerProgressionMediaSTI(cle, el.currentTime, el.duration, false);
+        }, true);
+
+        window.addEventListener("message", function (ev) {
+          var d = ev && ev.data;
+          if (!d || d.type !== "STI_MEDIA_PROG_IFRAME" || !d.cle) return;
+          enregistrerProgressionMediaSTI(String(d.cle), Number(d.sec) || 0, Number(d.dur) || 0, Boolean(d.forceDone));
+        });
+
+        function flushMediaServeur() {
+          if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+            try { window.synchroniserProgressionMediaServeurSTI(true); } catch (eF) {}
+          }
+        }
+        window.addEventListener("pagehide", flushMediaServeur);
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) flushMediaServeur();
+        });
+      })();
+
       function badgeProgTexteCourt(entry) {
         if (!entry) return "";
         if (entry.done) return "✅ Vu";
-        if ((entry.maxPct || 0) >= 2) return "⏳ " + entry.maxPct + "%";
+        if ((entry.maxPct || 0) >= 1) return "⏳ " + entry.maxPct + "%";
         return "";
       }
 
@@ -1463,7 +1593,7 @@
         var map = lireProgressionMediaSTI();
         var entry = map[cleMedia];
         var span = btn.querySelector(".sti-prog-pill");
-        if (!entry || (!entry.done && (entry.maxPct || 0) < 2)) {
+        if (!entry || (!entry.done && (entry.maxPct || 0) < 1)) {
           if (span) span.remove();
           return;
         }
