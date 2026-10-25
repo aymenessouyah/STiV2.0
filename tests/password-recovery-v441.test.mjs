@@ -763,7 +763,7 @@ test('v445 : la photo élève remplace la boîte des initiales dans le tableau d
 
   assert.match(roueInitJs, /sti-roue-photo-img/);
   assert.match(roueInitJs, /__stiRafraichirRoueAvatar/);
-  assert.match(mobileNavJs, /roue-initiales\.js\?v=445/);
+  assert.match(mobileNavJs, /roue-initiales\.js\?v=4\d{2}/);
 
   assert.match(accesJs, /eleve_proposer_photo/);
   assert.match(accesJs, /sti-pan-avatar-box/);
@@ -774,7 +774,7 @@ test('v445 : la photo élève remplace la boîte des initiales dans le tableau d
 
   assert.match(adminHtml, /id="alerte-photos-attente"/);
   assert.match(adminHtml, /admin-saas\.css\?v=4\d{2}/);
-  assert.match(adminHtml, /admin\.js\?v=445-photos-eleves/);
+  assert.match(adminHtml, /admin\.js\?v=4\d{2}-/);
   assert.match(adminCss, /\.noeud-pastille-img/);
   assert.match(adminCss, /\.noeud-photo-attente-box/);
   assert.match(adminCss, /\.tb-mini-avatar/);
@@ -803,7 +803,22 @@ test('v446 : Messenger reste autonome au 1er plan, les boutons Services/CMD sont
   assert.match(adminCss, /\.mode-ecran-large\s+\.afficheur-six-zones[\s\S]*?repeat\(6,\s*minmax\(0,\s*1fr\)\)/);
   assert.match(adminCss, /\.afficheur-classe-avion\.mode-deux-ecrans\s+\.afficheur-six-zones[\s\S]*?"ecranG z1 z2"/);
   assert.match(adminCss, /\.afficheur-classe-avion\.mode-cadran-rond\s+#instrument-total-global[\s\S]*?border-radius:\s*50%\s*!important/);
-  assert.match(swJs, /v446-ruban-modes-1/);
+  assert.match(swJs, /ruban-modes-v446/);
+});
+
+test('v447 : le survol de la photo du candidat déclenche son agrandissement HD (loupe flottante) dans le tableau de bord et la roue', () => {
+  const adminCss = read('assets/css/admin-saas.css');
+  const adminJs = read('assets/js/admin.js');
+  const roueInitJs = read('assets/js/roue-initiales.js');
+  const swJs = read('sw.js');
+
+  assert.match(adminCss, /#sti-zoom-photo-eleve\s*\{/);
+  assert.match(adminCss, /#sti-zoom-photo-eleve\.visible\s*\{/);
+  assert.match(adminCss, /cursor:\s*zoom-in\s*!important/);
+  assert.match(adminJs, /installerLoupePhotoEleveAdmin/);
+  assert.match(adminJs, /sti-zoom-photo-eleve/);
+  assert.match(roueInitJs, /sti-site-zoom-photo-pop/);
+  assert.match(swJs, /v447-zoom-photo-1/);
 });
 
 

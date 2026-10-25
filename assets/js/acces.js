@@ -63,7 +63,7 @@
           var sy = Math.floor((h - side) * 0.35); /* cadrage portrait naturel légèrement haut */
           if (sy < 0) sy = 0;
           if (sy + side > h) sy = h - side;
-          var cible = 144;
+          var cible = 220;
           var cv = document.createElement("canvas");
           cv.width = cible;
           cv.height = cible;

@@ -433,7 +433,7 @@
   (function chargerRoueInitiales() {
     try {
       var sc3 = doc.createElement("script");
-      sc3.src = R + "assets/js/roue-initiales.js?v=445";
+      sc3.src = R + "assets/js/roue-initiales.js?v=447";
       sc3.async = true;
       (doc.head || doc.documentElement).appendChild(sc3);
     } catch (e) {}
