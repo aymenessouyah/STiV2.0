@@ -927,9 +927,9 @@ test('v451 : nouveautés sans undefined + mode sombre, barre PC recalée à gauc
   const adminCss = read('assets/css/admin-saas.css');
   const swJs = read('sw.js');
 
-  // 1) Journal des nouveautés : JSON valide jusqu'à v451, rendu DOM sans "undefined" et support thème sombre
+  // 1) Journal des nouveautés : JSON valide jusqu'à v451+, rendu DOM sans "undefined" et support thème sombre
   assert.ok(Array.isArray(nouveautesJson) && nouveautesJson.length >= 15);
-  assert.equal(nouveautesJson[0].version, 'v451');
+  assert.ok(nouveautesJson.some((x) => x.version === 'v451'));
   assert.match(nouveautesHtml, /html\.dark body/);
   assert.match(nouveautesHtml, /assets\/icons\/sti-icon-512\.png/);
 
@@ -989,7 +989,38 @@ test('v451 : nouveautés sans undefined + mode sombre, barre PC recalée à gauc
   assert.match(adminJs, /function imprimerConseilClasseAdmin\s*\(/);
   assert.match(adminJs, /FICHE CONSEIL DE CLASSE STI V2\.0/);
   assert.match(adminCss, /#modal-conseil-classe-admin/);
-  assert.match(swJs, /v451-conseil-classe-nouveautes-marque/);
+  assert.match(swJs, /conseil-classe-nouveautes-marque-v451/);
+});
+
+test('v453 : unification de acces.js?v=453 sur tout le site + Roue sur ma-fiche-revision.html + Clair/Sombre harmonisé sur glossaire, revision-erreurs et 404', () => {
+  const ficheHtml = read('ma-fiche-revision.html');
+  const glossaireHtml = read('glossaire.html');
+  const revErrHtml = read('revision-erreurs.html');
+  const page404Html = read('404.html');
+  const nouveautesJson = JSON.parse(read('assets/data/nouveautes.json'));
+  const swJs = read('sw.js');
+
+  // 1) ma-fiche-revision.html charge config.js?v=425 et acces.js?v=453, et aucun lien cassé vers ma-fiche.html dans nouveautes.json
+  assert.match(ficheHtml, /assets\/js\/config\.js\?v=425/);
+  assert.match(ficheHtml, /assets\/js\/acces\.js\?v=453/);
+  assert.ok(nouveautesJson.every((n) => n.lien !== 'ma-fiche.html'));
+  assert.ok(nouveautesJson.some((n) => n.lien === 'ma-fiche-revision.html'));
+
+  // 2) glossaire.html, revision-erreurs.html et 404.html supportent Clair/Sombre + logo officiel sti-icon-512.png
+  assert.match(glossaireHtml, /html\.dark,\s*html\.dark-mode,\s*html\[data-theme="dark"\]/);
+  assert.match(glossaireHtml, /assets\/icons\/sti-icon-512\.png/);
+  assert.doesNotMatch(glossaireHtml, /#4338ca/i);
+
+  assert.match(revErrHtml, /--bg:\s*#f6efe3/);
+  assert.match(revErrHtml, /html\.dark,\s*html\.dark-mode,\s*html\[data-theme="dark"\]/);
+  assert.match(revErrHtml, /assets\/icons\/sti-icon-512\.png/);
+  assert.match(revErrHtml, /assets\/js\/acces\.js\?v=453/);
+
+  assert.match(page404Html, /prefers-color-scheme:\s*dark/);
+  assert.match(page404Html, /assets\/icons\/sti-icon-512\.png/);
+  assert.match(page404Html, /default-src 'none'/);
+
+  assert.match(swJs, /v453-unif-acces-themes/);
 });
 
 

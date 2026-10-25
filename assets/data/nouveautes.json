@@ -1,5 +1,15 @@
 [
   {
+    "version": "v453",
+    "date": "2026-10-25",
+    "categorie": "Interface & Roue",
+    "icone": "🌗",
+    "titre": "Unification de la Roue sur tout le site et mode Clair / Sombre harmonisé",
+    "resume": "Toutes les pages de cours, d’exercices, de quiz et d’outils chargent désormais la version unifiée de la Roue STI et de la barre d’étude, y compris sur Ma Fiche de Révision. Les pages Glossaire FR·EN·AR, Retravailler mes erreurs et 404 adoptent pleinement les thèmes clair et sombre ainsi que la charte officielle STI V2.0.",
+    "lien": "glossaire.html",
+    "libelleLien": "Ouvrir le Glossaire trilingue"
+  },
+  {
     "version": "v451",
     "date": "2026-10-25",
     "categorie": "Tableau de bord & Suivi",
@@ -26,7 +36,7 @@
     "icone": "🖍️",
     "titre": "Rayons X CSS et Surligneur Fluo synchronisés avec Ma Fiche de Révision",
     "resume": "L’outil Rayons X inspecte en direct le modèle de boîte CSS (marges, bordures, espacements et dimensions) de n’importe quel élément de cours, tandis que le Surligneur Fluo 3 couleurs mémorise vos passages essentiels et les rassemble automatiquement dans Ma Fiche de Révision imprimable.",
-    "lien": "ma-fiche.html",
+    "lien": "ma-fiche-revision.html",
     "libelleLien": "Ouvrir Ma Fiche de Révision"
   },
   {

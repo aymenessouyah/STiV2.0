@@ -62,58 +62,93 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🔁 Retravailler mes erreurs — STI By A'e</title>
+<title>🔁 Retravailler mes erreurs — STI By A'e V2.0</title>
 <link rel="icon" href="assets/icons/sti-icon-192.png">
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js"></script>
+<script src="assets/js/config.js?v=425"></script>
 <script src="assets/js/quiz-sync.js"></script>
 <style>
+  :root {
+    --bg: #f6efe3;
+    --ink: #1a1a2e;
+    --card: #fffdf7;
+    --edge: #23201a;
+    --muted: #645a49;
+    --list: #3c4454;
+    --acc: #d84315;
+    --acc-hover: #bf360c;
+    --acc-ink: #ffffff;
+    --bad: #c62828;
+    --good: #177245;
+    --shadow: 4px 4px 0 #23201a;
+  }
+  html.dark, html.dark-mode, html[data-theme="dark"] {
+    --bg: #0d1526;
+    --ink: #eef2f8;
+    --card: #16233c;
+    --edge: #2b3d5f;
+    --muted: #9fb2cc;
+    --list: #c7d3e6;
+    --acc: #ff8c42;
+    --acc-hover: #ffa25e;
+    --acc-ink: #1a1a2e;
+    --bad: #ff6b6b;
+    --good: #2ecc9e;
+    --shadow: 4px 4px 0 #070c17;
+  }
   * { box-sizing: border-box; }
-  body { margin:0; font-family: "Segoe UI", system-ui, sans-serif; background:#0d1526; color:#eef2f8; min-height:100vh; }
-  .wrap { max-width: 920px; margin: 0 auto; padding: 28px 16px 60px; }
+  body { margin:0; font-family: "Segoe UI", system-ui, sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 24px 16px 76px; }
+  .topbar-rev { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom: 18px; }
+  .pill-nav { display:inline-flex; align-items:center; gap:6px; text-decoration:none; font-weight:800; font-size:13px; color:var(--ink); background:var(--card); border:2px solid var(--edge); border-radius:999px; padding:7px 14px; box-shadow:2px 2px 0 var(--edge); }
+  .pill-nav:hover { transform: translate(-1px, -1px); }
   header { text-align:center; margin-bottom: 8px; }
-  header .logo { font-size: 44px; }
-  h1 { margin: 6px 0 4px; font-size: 28px; }
-  h1 em { color:#ff8c42; font-style: normal; }
-  .sous { color:#9fb2cc; font-size: 14.5px; margin: 0 auto 22px; max-width: 640px; text-align:center; line-height:1.6; }
+  header .logo-wrap { display:inline-flex; align-items:center; justify-content:center; gap:10px; margin-bottom:4px; }
+  header .logo-img { width:52px; height:52px; border-radius:14px; border:2px solid var(--edge); object-fit:cover; }
+  h1 { margin: 6px 0 4px; font-size: clamp(23px, 4vw, 29px); }
+  h1 em { color:var(--acc); font-style: normal; }
+  .sous { color:var(--muted); font-size: 14.5px; margin: 0 auto 22px; max-width: 650px; text-align:center; line-height:1.6; }
   .stats { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom: 24px; }
-  .stat { background:#16233c; border:1.5px solid #2b3d5f; border-radius:14px; padding:12px 20px; text-align:center; min-width:150px; }
+  .stat { background:var(--card); border:2px solid var(--edge); border-radius:14px; padding:12px 20px; text-align:center; min-width:155px; box-shadow:var(--shadow); }
   .stat .n { font-size:26px; font-weight:900; }
-  .stat .l { font-size:12px; color:#9fb2cc; font-weight:700; }
+  .stat .l { font-size:12px; color:var(--muted); font-weight:700; }
   .cartes { display:grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap:14px; }
-  .carte { background:#16233c; border:1.5px solid #2b3d5f; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px; }
+  .carte { background:var(--card); border:2px solid var(--edge); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow); }
   .carte h2 { margin:0; font-size:17px; }
-  .carte .nb { font-size:13px; color:#9fb2cc; }
-  .carte .nb strong { color:#ff6b6b; }
-  .carte .nb .ok { color:#2ecc9e; }
-  .carte ul { margin:4px 0; padding-left:18px; font-size:12.5px; color:#c7d3e6; line-height:1.55; }
-  .btn { margin-top:auto; display:inline-block; text-align:center; background:#ff8c42; color:#1a1a2e; font-weight:900;
-         border:none; border-radius:999px; padding:11px 18px; font-size:14px; cursor:pointer; text-decoration:none; }
-  .btn:hover { background:#ffa25e; }
-  .btn:disabled { background:#3a4a68; color:#8fa3c4; cursor:not-allowed; }
-  .msg { text-align:center; color:#9fb2cc; font-size:15px; padding:34px 10px; line-height:1.7; }
+  .carte .nb { font-size:13px; color:var(--muted); }
+  .carte .nb strong { color:var(--bad); }
+  .carte .nb .ok { color:var(--good); font-weight:800; }
+  .carte ul { margin:4px 0; padding-left:18px; font-size:12.5px; color:var(--list); line-height:1.55; }
+  .btn { margin-top:auto; display:inline-block; text-align:center; background:var(--acc); color:var(--acc-ink); font-weight:900;
+         border:2px solid var(--edge); border-radius:999px; padding:10px 18px; font-size:14px; cursor:pointer; text-decoration:none; }
+  .btn:hover { background:var(--acc-hover); }
+  .btn:disabled { background:#94a3b8; color:#1e293b; cursor:not-allowed; }
+  .msg { text-align:center; color:var(--muted); background:var(--card); border:2px solid var(--edge); border-radius:18px; box-shadow:var(--shadow); font-size:15px; padding:32px 16px; line-height:1.7; }
   .msg .gros { font-size:40px; display:block; margin-bottom:8px; }
-  .retour { display:inline-block; margin-top:26px; color:#9fb2cc; font-weight:700; text-decoration:none; }
-  .retour:hover { color:#fff; }
-  .note { margin-top:22px; font-size:12.5px; color:#7e93b5; text-align:center; line-height:1.6; }
+  .retour { display:inline-block; margin-top:26px; color:var(--acc); font-weight:800; text-decoration:none; }
+  .retour:hover { text-decoration:underline; }
+  .note { margin-top:22px; font-size:12.5px; color:var(--muted); text-align:center; line-height:1.6; }
 </style>
   <link rel="manifest" href="manifest.webmanifest" />
 </head>
 <body>
 <div class="wrap">
+  <div class="topbar-rev">
+    <a class="pill-nav" href="index.html">← Retour à l'accueil</a>
+    <a class="pill-nav" href="ma-fiche-revision.html">🖨 Ma fiche de révision (imprimable)</a>
+  </div>
   <header>
-    <div class="logo">🔁</div>
-    <h1>Retravailler <em>mes erreurs</em></h1>
+    <div class="logo-wrap">
+      <img class="logo-img" src="assets/icons/sti-icon-512.png" alt="Logo officiel STI V2.0" width="52" height="52">
+    </div>
+    <h1>🔁 Retravailler <em>mes erreurs</em></h1>
   </header>
   <p class="sous">Voici les questions que tu as <strong>ratées</strong> dans les quiz. Rejoue-les en mode révision,
      uniquement entre elles, jusqu'à les maîtriser : dès que ta dernière réponse à une question est juste, elle sort de la liste. 💪</p>
 
-  <!-- v436 : accès direct à la fiche de révision imprimable (additif, même facture que le site) -->
-  <p style="margin:2px 0 14px"><a href="ma-fiche-revision.html" style="display:inline-block;text-decoration:none;font-weight:900;font-size:12.5px;border:2px solid currentColor;border-radius:999px;padding:7px 14px">🖨 Ma fiche de révision (imprimable)</a></p>
-
   <div class="stats" id="stats" style="display:none">
-    <div class="stat"><div class="n" id="st-rater" style="color:#ff6b6b">–</div><div class="l">questions à retravailler</div></div>
-    <div class="stat"><div class="n" id="st-maitrisees" style="color:#2ecc9e">–</div><div class="l">questions maîtrisées</div></div>
+    <div class="stat"><div class="n" id="st-rater" style="color:var(--bad)">–</div><div class="l">questions à retravailler</div></div>
+    <div class="stat"><div class="n" id="st-maitrisees" style="color:var(--good)">–</div><div class="l">questions maîtrisées</div></div>
   </div>
 
   <div id="contenu"><div class="msg"><span class="gros">⏳</span>Chargement de tes résultats…</div></div>
@@ -212,7 +247,7 @@
   else demarrer();
 })();
 </script>
-<script src="assets/js/acces.js?v=391"></script>
+<script src="assets/js/acces.js?v=453"></script>
   <script src="assets/js/sync-progressions.js" defer></script>
 </body>
 </html>
