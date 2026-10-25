@@ -1917,46 +1917,67 @@
     html.admin-ardoise .fiche-obs-suppr{color:#ff9c9c}
     @media print{#fiche-obs .fiche-obs-ligne{border-color:#bbb}}
   </style>
+  <script>
+    /* Initialisation du thème et de l'univers chromatique à 0 ms dans <head> (zéro flash visuel) */
+    (function () {
+      try {
+        var p = localStorage.getItem("sti-admin-palette") || "foret";
+        if (["foret", "cyber", "pop", "spotify"].indexOf(p) === -1) p = "foret";
+        document.documentElement.setAttribute("data-sti-palette", p);
+        var t = localStorage.getItem("sti-admin-theme");
+        if (t === "moderne") {
+          document.documentElement.classList.add("admin-moderne");
+        } else {
+          document.documentElement.classList.add("admin-ardoise");
+        }
+      } catch (e) {
+        document.documentElement.setAttribute("data-sti-palette", "foret");
+        document.documentElement.classList.add("admin-ardoise");
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="assets/css/admin-saas.css?v=443" />
 </head>
 <body class="cockpit-airbus">
 
   <!-- 1. EN-TÊTE SUPÉRIEUR : Identité + Boutons utilitaires rapides -->
   <header class="hero-admin">
     <div class="entete">
-      <img src="assets/icons/sti-logo-complet.png" alt="Logo STI by AE — L'Atelier du Web" />
+      <span class="entete-logo-install"><img src="assets/icons/sti-icon-512.png" alt="Logo STI V2.0 — Application installée" /></span>
       <div class="entete-txt">
         <h1>
-          <svg id="svg-logo-tb-admin" width="25" height="25" viewBox="0 0 24 24" fill="none" aria-hidden="true" title="🟢 En ligne"><rect id="svg-logo-tb-rect" x="2.5" y="2.5" width="19" height="19" rx="5" stroke="#23201a" stroke-width="2" fill="#177245"/><path id="svg-logo-tb-bars" d="M7.5 16.5v-4.5M12 16.5V8M16.5 16.5V5.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
+          <svg id="svg-logo-tb-admin" width="25" height="25" viewBox="0 0 24 24" fill="none" aria-hidden="true" title="🟢 En ligne"><rect id="svg-logo-tb-rect" x="2.5" y="2.5" width="19" height="19" rx="5" stroke="transparent" stroke-width="1.5" fill="#10b981"/><path id="svg-logo-tb-bars" d="M7.5 16.5v-4.5M12 16.5V8M16.5 16.5V5.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
           <span id="titre-tb-admin" title="🟢 En ligne">Tableau de bord STI V2.0</span>
           <span class="badge-temoin-examen" id="badge-temoin-examen" role="button" tabindex="0" title="🟢 Accès aux cours ouvert — Cliquer pour ouvrir le Centre de Sécurité / Mode Examen">● Accès ouvert</span>
-          <span class="badge-admin-gold">◆ Admin Gold</span>
-          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">▰ Version V2.0 · v316</span>
-          <span class="badge-supabase deconnecte" id="badge-supabase-quota" title="🔴 Supabase déconnectée — vérification en cours"><span id="sb-etat-icone" aria-hidden="true">🔴</span> ▣ Supabase : <b id="sb-pct-restant">99,8 %</b> restant (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
+          <span class="badge-admin-gold">👑 Admin Gold</span>
+          <span class="badge-version" id="badge-version-admin" title="Cliquer pour vérifier les mises à jour de la plateforme">Version V2.0</span>
+          <span class="badge-supabase deconnecte" id="badge-supabase-quota" title="🔴 Supabase déconnectée — vérification en cours"><span id="sb-etat-icone" aria-hidden="true">🔴</span> Supabase : <b id="sb-pct-restant">99,8 %</b> (<span id="sb-qte-restante">499,2 Mo / 500 Mo</span>)<span class="jauge-sb-mini" aria-hidden="true"><i id="sb-jauge-barre" style="width:99.8%"></i></span></span>
         </h1>
-        <div class="sous">Centre d’opérations administrateur</div>
+        <div class="sous">Pilotage pédagogique, suivi temps réel des classes et administration sécurisée</div>
       </div>
     </div>
     <div class="barre-util">
-      <!-- 1. Accès directs prioritaires avec pastilles — Flash / Appel / Top 3 / Aide / Maj rangés dans le Plus du tiroir (v398) -->
-      <a class="btn-util" id="btn-accueil-site" href="index.html" title="Retourner à l'accueil du site STI"><span class="btn-util-glyph" aria-hidden="true">⌂</span> <span class="lbl-pc">Accueil au site</span><span class="lbl-mob">Accueil au site</span></a>
-      <button class="btn-util" id="btn-messenger-top" type="button" title="Ouvrir la messagerie directe Messenger STI avec les candidats" style="background:#fff3e0;border-color:#f4511e;color:#d84315"><span class="btn-util-glyph" aria-hidden="true">◇</span> <span class="lbl-pc">Messenger</span><span class="lbl-mob">Chat</span> <span id="badge-msn-top" style="display:none;background:#ffd54f;color:#23201a;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-        <button class="btn-util mob-extra" id="btn-bascule-theme" type="button" title="Basculer entre le mode Clair et le mode Sombre du tableau de bord — choix memorise">🎨 Mode : Clair</button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-flash-top" type="button" title="Lancer une Question Flash / Sondage Live en classe" style="background:#fff8e1;border-color:#d97706;color:#b45309"><span class="btn-util-glyph" aria-hidden="true">ϟ</span> <span class="lbl-pc">Question Flash</span><span class="lbl-mob">Flash</span></button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-appel-top" type="button" title="Feuille d'appel &amp; présence automatique du jour par classe (Présents vs Absents)" style="background:#e3f6e8;border-color:#177245;color:#177245"><span class="btn-util-glyph" aria-hidden="true">▤</span> <span class="lbl-pc">Appel / Présence</span><span class="lbl-mob">Appel</span></button>
-      <button class="btn-util mob-extra" id="btn-securite-top" type="button" title="Centre de Sécurité : Mode Examen / Verrouillage, Sessions Supabase, Éjection F12 &amp; Journal d'alertes" style="background:#fde2e6;border-color:#c0392b;color:#a61b29"><span class="btn-util-glyph" aria-hidden="true">◆</span> <span class="lbl-pc">Sécurité</span><span class="lbl-mob">Sécu</span> <span id="badge-sec-top" style="display:none;background:#c0392b;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-mains-top" type="button" title="File d'attente des élèves ayant levé la main pour demander de l'aide en TP" style="background:#ede9fe;border-color:#6d28d9;color:#6d28d9"><span class="btn-util-glyph" aria-hidden="true">△</span> <span class="lbl-pc">Mains levées</span><span class="lbl-mob">Aide</span> <span id="badge-mains-top" style="display:none;background:#6d28d9;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:999px;border:1.5px solid #23201a;margin-left:3px">0</span></button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-palmares-top" type="button" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)" style="background:linear-gradient(120deg,#fff3b0,#ffd54f);border-color:#23201a;color:#6d4c00"><span class="btn-util-glyph" aria-hidden="true">★</span> <span class="lbl-pc">Palmarès</span><span class="lbl-mob">Top 3</span></button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-refresh" type="button" title="Rafraîchir immédiatement toutes les données"><span class="btn-util-glyph" aria-hidden="true">↻</span> <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-news-top" type="button" title="Régie des news du bandeau « La Cote » de la page d’accueil : saisie, couleurs, ordre, suppression" style="background:#e0f7fa;border-color:#00838f;color:#006064"><span class="btn-util-glyph" aria-hidden="true">📰</span> <span class="lbl-pc">News du bandeau</span><span class="lbl-mob">News</span></button>
+      <!-- 1. Accès directs prioritaires — lisibles sur PC et directement accessibles en mode mobile (dont 🔑 Mot de passe injecté après Sécurité) -->
+      <a class="btn-util" id="btn-accueil-site" href="index.html" title="Retourner à l'accueil du site STI"><span class="btn-util-glyph" aria-hidden="true">🏠</span> <span class="lbl-pc">Accueil au site</span><span class="lbl-mob">Accueil au site</span></a>
+      <button class="btn-util" id="btn-messenger-top" type="button" title="Ouvrir la messagerie directe Messenger STI avec les candidats"><span class="btn-util-glyph" aria-hidden="true">💬</span> <span class="lbl-pc">Messenger</span><span class="lbl-mob">Chat</span> <span id="badge-msn-top" style="display:none;background:#0d9488;color:#fff;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:3px">0</span></button>
+      <button class="btn-util mob-extra" id="btn-securite-top" type="button" title="Centre de Sécurité : Mode Examen / Verrouillage, Sessions Supabase, Éjection F12 &amp; Journal d'alertes"><span class="btn-util-glyph" aria-hidden="true">🛡️</span> <span class="lbl-pc">Sécurité</span><span class="lbl-mob">Sécu</span> <span id="badge-sec-top" style="display:none;background:#dc2626;color:#fff;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:3px">0</span></button>
+      <button class="btn-util mob-extra" id="btn-palette-admin" type="button" title="Changer d'univers chromatique : Pin &amp; Or · Synthwave · Pop Studio · Spotify">🌲 <span class="lbl-pc">Pin &amp; Or</span><span class="lbl-mob">Univers</span></button>
+      <button class="btn-util mob-extra" id="btn-bascule-theme" type="button" title="Basculer entre le mode Clair et le mode Sombre du tableau de bord — choix memorise">🎨 Mode : Clair</button>
+      <button class="btn-util mob-extra" id="btn-toggle-sys-bar" type="button" title="Afficher ou masquer les outils complémentaires (Question Flash, Appel, Mains levées, Palmarès, News, Carte visite, Docteur STI, PIN, README, Alertes)"><span class="btn-util-glyph" aria-hidden="true">⚙</span> <span class="lbl-pc">Système &amp; Plus ▾</span><span class="lbl-mob">Plus ▾</span></button>
 
-      <!-- 2. Tiroir « ⚙️ Système & Plus » (évite l'encombrement de l'en-tête sur PC) -->
-      <button class="btn-util mob-extra" id="btn-toggle-sys-bar" type="button" title="Afficher ou masquer les outils système (Carte visite, Docteur STI, PIN, README, Alertes)" style="background:#23201a;color:#ffd54f"><span class="btn-util-glyph" aria-hidden="true">⚙</span> <span class="lbl-pc">Système &amp; Plus ▾</span><span class="lbl-mob">Plus ▾</span></button>
-
-      <a class="btn-util mob-extra sys-extra-item" href="carte-visite.html" title="Ouvrir et partager la carte de visite électronique avec QR code"><span class="btn-util-glyph" aria-hidden="true">▧</span> <span class="lbl-pc">Carte visite</span><span class="lbl-mob">Carte</span></a>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-force-update-eleves" type="button" title="Docteur STI : Forcer tous les écrans d'élèves connectés à vider leur vieux cache et recharger immédiatement la dernière version" style="background:#f0fdf4;border-color:#15803d;color:#166534"><span class="btn-util-glyph" aria-hidden="true">+</span> <span class="lbl-pc">Forcer Maj Élèves</span><span class="lbl-mob">Maj Élèves</span></button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-verrou-ecran-admin" type="button" title="Verrouiller instantanément l'écran du tableau de bord par code PIN quand vous vous déplacez en salle de classe"><span class="btn-util-glyph" aria-hidden="true">■</span> <span class="lbl-pc">Verrouiller PIN</span><span class="lbl-mob">PIN</span></button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-readme-admin" type="button" title="Consulter la documentation complète de la plateforme (README)"><span class="btn-util-glyph" aria-hidden="true">▧</span> <span class="lbl-pc">README</span><span class="lbl-mob">README</span></button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-notif" type="button"><span class="btn-util-glyph" aria-hidden="true">●</span> <span class="lbl-pc">Notifications</span><span class="lbl-mob">Alertes</span></button>
+      <!-- 2. Outils complémentaires repliables en un clic -->
+      <button class="btn-util mob-extra sys-extra-item" id="btn-flash-top" type="button" title="Lancer une Question Flash / Sondage Live en classe"><span class="btn-util-glyph" aria-hidden="true">⚡</span> <span class="lbl-pc">Question Flash</span><span class="lbl-mob">Flash</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-appel-top" type="button" title="Feuille d'appel &amp; présence automatique du jour par classe (Présents vs Absents)"><span class="btn-util-glyph" aria-hidden="true">📋</span> <span class="lbl-pc">Appel / Présence</span><span class="lbl-mob">Appel</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-mains-top" type="button" title="File d'attente des élèves ayant levé la main pour demander de l'aide en TP"><span class="btn-util-glyph" aria-hidden="true">🙋</span> <span class="lbl-pc">Mains levées</span><span class="lbl-mob">Aide</span> <span id="badge-mains-top" style="display:none;background:#7c3aed;color:#fff;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:3px">0</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-palmares-top" type="button" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)"><span class="btn-util-glyph" aria-hidden="true">🏆</span> <span class="lbl-pc">Palmarès</span><span class="lbl-mob">Top 3</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-refresh" type="button" title="Rafraîchir immédiatement toutes les données"><span class="btn-util-glyph" aria-hidden="true">🔄</span> <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-news-top" type="button" title="Régie des news du bandeau « La Cote » de la page d’accueil : saisie, couleurs, ordre, suppression"><span class="btn-util-glyph" aria-hidden="true">📰</span> <span class="lbl-pc">News du bandeau</span><span class="lbl-mob">News</span></button>
+      <a class="btn-util mob-extra sys-extra-item" href="carte-visite.html" title="Ouvrir et partager la carte de visite électronique avec QR code"><span class="btn-util-glyph" aria-hidden="true">🪪</span> <span class="lbl-pc">Carte visite</span><span class="lbl-mob">Carte</span></a>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-force-update-eleves" type="button" title="Docteur STI : Forcer tous les écrans d'élèves connectés à vider leur vieux cache et recharger immédiatement la dernière version"><span class="btn-util-glyph" aria-hidden="true">🚀</span> <span class="lbl-pc">Forcer Maj Élèves</span><span class="lbl-mob">Maj Élèves</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-verrou-ecran-admin" type="button" title="Verrouiller instantanément l'écran du tableau de bord par code PIN quand vous vous déplacez en salle de classe"><span class="btn-util-glyph" aria-hidden="true">🔒</span> <span class="lbl-pc">Verrouiller PIN</span><span class="lbl-mob">PIN</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-readme-admin" type="button" title="Consulter la documentation complète de la plateforme (README)"><span class="btn-util-glyph" aria-hidden="true">📖</span> <span class="lbl-pc">README</span><span class="lbl-mob">README</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-notif" type="button"><span class="btn-util-glyph" aria-hidden="true">🔔</span> <span class="lbl-pc">Notifications</span><span class="lbl-mob">Alertes</span></button>
 
       <!-- Boutons relais invisibles conservés pour compatibilité JS (leurs actions sont sur les grandes cartes ci-dessous) -->
       <button id="btn-kahoot-top" type="button" hidden aria-hidden="true"></button>
@@ -1966,13 +1987,13 @@
       <button id="btn-grille-devoirs-top" type="button" hidden aria-hidden="true"></button>
       <button id="btn-badges-labo-top" type="button" hidden aria-hidden="true"></button>
 
-      <button class="btn-util logout mob-extra" id="btn-logout" type="button"><span class="btn-util-glyph" aria-hidden="true">■</span> <span class="lbl-pc">Déconnexion</span><span class="lbl-mob">Sortir</span></button>
+      <button class="btn-util logout mob-extra" id="btn-logout" type="button"><span class="btn-util-glyph" aria-hidden="true">🚪</span> <span class="lbl-pc">Déconnexion</span><span class="lbl-mob">Sortir</span></button>
     </div>
   </header>
 
   <section class="tableau-apercu" id="vue-ensemble-admin" aria-labelledby="titre-vue-ensemble-admin">
     <div class="tableau-apercu-entete">
-      <h2 id="titre-vue-ensemble-admin">▥ Vue d’ensemble</h2>
+      <h2 id="titre-vue-ensemble-admin">📊 Vue d’ensemble en temps réel</h2>
       <span>Alertes et indicateurs essentiels en temps réel</span>
     </div>
   <div class="alerte-demande" id="alerte-attente">
@@ -2075,6 +2096,9 @@
 
   <div id="bandeau-machines-labo3" style="display:none;background:#f0f9ff;border:2px solid #0284c7;border-radius:16px;padding:12px 16px;margin-bottom:14px;box-shadow:3.5px 3.5px 0 rgba(2,132,199,.35);font-size:12.5px;color:#0c4a6e"></div>
 
+  <details class="adm-diagnostics-tiroir">
+    <summary><span>🔬 Diagnostics pédagogiques avancés &amp; Journal technique <small style="font-weight:500;color:var(--adm-muted);margin-left:6px">(difficultés, couverture, révision espacée, analyse d’erreurs, logs JS)</small></span></summary>
+    <div class="adm-diagnostics-corps">
   <div class="carte-diff-v392" id="carte-difficultes-admin">
     <div class="carte-diff-entete">
       <b>🗺️ Carte des difficultés par chapitre</b>
@@ -2095,10 +2119,10 @@
     </div>
     <div class="carte-diff-outils">
       <label>Classe : <select id="couv-classe"><option value="*">Toutes les classes</option></select></label>
-      <label>Couverture mini. <input type="number" id="couv-seuil" value="25" min="0" max="100" step="5" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> %</label>
-      <label>Inactif depuis <input type="number" id="couv-jours" value="14" min="1" max="120" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> j</label>
+      <label>Couverture mini. <input type="number" id="couv-seuil" value="25" min="0" max="100" step="5" style="width:64px"> %</label>
+      <label>Inactif depuis <input type="number" id="couv-jours" value="14" min="1" max="120" style="width:64px"> j</label>
       <button type="button" class="btn-outil" id="btn-couv-generer">📊 Calculer</button>
-      <button type="button" class="btn-outil" id="btn-couv-csv" style="border-color:#16a34a;color:#14532d">📥 Exporter « à risque » (CSV)</button>
+      <button type="button" class="btn-outil vert" id="btn-couv-csv">📥 Exporter « à risque » (CSV)</button>
       <small id="couv-etat">Aucune donnée pour le moment — cliquez sur Calculer.</small>
     </div>
     <div id="couv-corps"></div>
@@ -2111,10 +2135,10 @@
     </div>
     <div class="carte-diff-outils">
       <label>Classe : <select id="rev-classe"><option value="*">Toutes les classes</option></select></label>
-      <label>Adhésion mini. <input type="number" id="rev-adhesion" value="50" min="0" max="100" step="5" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> %</label>
-      <label>Retard signalé à <input type="number" id="rev-retard" value="3" min="1" max="60" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> page(s)</label>
+      <label>Adhésion mini. <input type="number" id="rev-adhesion" value="50" min="0" max="100" step="5" style="width:64px"> %</label>
+      <label>Retard signalé à <input type="number" id="rev-retard" value="3" min="1" max="60" style="width:64px"> page(s)</label>
       <button type="button" class="btn-outil" id="btn-rev-generer">📊 Calculer</button>
-      <button type="button" class="btn-outil" id="btn-rev-csv" style="border-color:#16a34a;color:#14532d">📥 Exporter le suivi (CSV)</button>
+      <button type="button" class="btn-outil vert" id="btn-rev-csv">📥 Exporter le suivi (CSV)</button>
       <small id="rev-etat">Aucune donnée pour le moment — cliquez sur Calculer.</small>
     </div>
     <div id="rev-corps"></div>
@@ -2127,9 +2151,9 @@
     </div>
     <div class="carte-diff-outils">
       <label>Classe : <select id="err-classe"><option value="*">Toutes les classes</option></select></label>
-      <label>Profil dès <input type="number" id="err-min" value="3" min="1" max="50" style="width:64px;font:inherit;border:2px solid #23201a;border-radius:8px;padding:2px 6px;background:#fff;color:#23201a"> réponse(s)</label>
+      <label>Profil dès <input type="number" id="err-min" value="3" min="1" max="50" style="width:64px"> réponse(s)</label>
       <button type="button" class="btn-outil" id="btn-err-generer">📊 Analyser</button>
-      <button type="button" class="btn-outil" id="btn-err-csv" style="border-color:#16a34a;color:#14532d">📥 Exporter (CSV)</button>
+      <button type="button" class="btn-outil vert" id="btn-err-csv">📥 Exporter (CSV)</button>
       <small id="err-etat">Aucune donnée pour le moment — cliquez sur Analyser.</small>
     </div>
     <div id="err-corps"></div>
@@ -2149,6 +2173,8 @@
     </div>
     <div id="journal-err-corps"></div>
   </div>
+    </div>
+  </details>
 
   </section>
 
@@ -2160,8 +2186,8 @@
   </div>
   <nav class="nav-sections-admin" id="nav-sections-admin" aria-label="Navigation entre les sections du tableau de bord">
     <span class="nav-sections-lbl">📂 Afficher :</span>
-    <button type="button" class="btn-sec-tab actif" data-sec-cible="all">🗂️ Tous les blocs repliés</button>
-    <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-abonnes">👥 Abonnés &amp; Classes</button>
+    <button type="button" class="btn-sec-tab" data-sec-cible="all">🗂️ Tout replier</button>
+    <button type="button" class="btn-sec-tab actif" data-sec-cible="bloc-sec-abonnes">👥 Abonnés &amp; Classes</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-quiz">🏆 Quiz &amp; Bac Pratique</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-messages">📨 Messages &amp; Réponses</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-connexions">🕒 Dernières Connexions</button>
@@ -2520,19 +2546,19 @@
     </div>
   </section>
 <div class="sti-groupe-tete" id="grp-classe"><span class="sti-groupe-ico" aria-hidden="true">🏫</span><span class="sti-groupe-txt"><b>Gestion de la classe</b><i>Abonnés, classes, vues par jour et par élève — l’afficheur de salle reste dans la vue d’ensemble</i></span><a class="sti-groupe-haut" href="#vue-ensemble-admin" title="Revenir a la vue d’ensemble">↑</a></div>
-  <section class="carte-section-admin sec-repliee" id="bloc-sec-abonnes">
+  <section class="carte-section-admin" id="bloc-sec-abonnes">
     <div id="sec-abonnes" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;scroll-margin-top:14px">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <h2 style="margin:0">👥 Liste des Abonnés &amp; Classes <span id="note-tri" style="font-size:11px;color:#7a6f5d;font-weight:700"></span></h2>
+        <h2 style="margin:0">👥 Liste des Abonnés &amp; Classes <span id="note-tri" style="font-size:11.5px;color:var(--adm-muted);font-weight:600"></span></h2>
         <div class="choix-vue-abonnes" role="tablist" aria-label="Mode d'affichage des abonnés">
           <button type="button" class="btn-vue actif" id="btn-vue-liste" data-vue="liste" title="Afficher le tableau détaillé complet">📋 Liste détaillée</button>
-          <button type="button" class="btn-vue" id="btn-vue-noeuds" data-vue="noeuds" title="Afficher sous forme de cartes / nœuds (idéal sur mobile)">🔵 Nœuds</button>
+          <button type="button" class="btn-vue" id="btn-vue-noeuds" data-vue="noeuds" title="Afficher sous forme de cartes profil (idéal sur mobile)">🪪 Cartes</button>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:800;color:#7a6f5d">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;font-weight:600;color:var(--adm-muted)">
         <span>📅 Période :</span>
-        <select id="sel-semaine" style="border:2px solid #23201a;border-radius:999px;padding:5px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12.5px"></select>
-        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-abonnes">▸ Agrandir</button>
+        <select id="sel-semaine"></select>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-abonnes" aria-expanded="true">▾ Réduire</button>
       </div>
     </div>
 
@@ -3599,7 +3625,7 @@
         <button type="button" id="btn-grille-imprimer-pv" style="border:2px solid #23201a;border-radius:999px;padding:7px 14px;font-size:12px;font-weight:900;background:#e0f2fe;color:#0369a1;cursor:pointer">🖨️ Imprimer PV de notes A4</button>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button type="button" id="btn-grille-export-csv" style="border:2px solid #23201a;border-radius:999px;padding:7px 14px;font-size:12px;font-weight:900;background:#e3f6e8;color:#177245;cursor:pointer">📥 Exporter CSV (Eduserv / Excel)</button>
-          <button type="button" id="btn-grille-publier" style="border:2px solid #23201a;border-radius:999px;padding:7px 16px;font-size:12.5px;font-weight:900;background:linear-gradient(125deg,#4f46e5,#3730a3);color:#fff;cursor:pointer;box-shadow:2px 2px 0 #23201a">💾 Enregistrer &amp; Publier aux élèves</button>
+          <button type="button" id="btn-grille-publier" style="border:1.5px solid var(--adm-accent,#0f766e);border-radius:999px;padding:7px 16px;font-size:12.5px;font-weight:800;background:var(--adm-grad-primary,linear-gradient(135deg,#0f766e,#16a34a));color:var(--adm-accent-ink,#fff);cursor:pointer;box-shadow:0 6px 16px -4px rgba(15,118,110,.38)">💾 Enregistrer &amp; Publier aux élèves</button>
           <button type="button" id="btn-fermer-grille" style="border:2px solid #23201a;border-radius:999px;padding:7px 14px;font-size:12px;font-weight:800;background:#fff;cursor:pointer">Fermer</button>
         </div>
       </div>
@@ -3934,715 +3960,6 @@
   </style>
 
 
-<link rel="stylesheet" href="assets/css/admin-v19.css?v=316-airbus-cockpit-24" />
-<style id="theme-admin-moderne-clair">
-  /* ═══════════════════════════════════════════════════════════════════════
-     THEME ADMIN MODERNE CLAIR — tableau de bord administrateur
-     Fond beige / blanc casse, cartes blanc casse, indigo + orange STI, ombres douces.
-     (L'afficheur de classe reste un ecran sombre, comme un tableau LED.)
-     ═══════════════════════════════════════════════════════════════════════ */
-  :root {
-    --ab-bg: #f3ecdd;
-    --ab-panel: #fffdf6;
-    --ab-panel-2: #f7efdd;
-    --ab-screen: #0f172a;
-    --ab-line: #d9cdae;
-    --ab-line-soft: #eadfc8;
-    --ab-cyan: #4338ca;
-    --ab-green: #15803d;
-    --ab-amber: #b45309;
-    --ab-red: #dc2626;
-    --ab-white: #211c12;
-    --ab-muted: #57492f;
-  }
-  html.admin-moderne body.cockpit-airbus {
-    max-width: 1580px;
-    color: var(--ab-white) !important;
-    background: var(--ab-bg) !important;
-    background-image: radial-gradient(circle, #d9c9a3 1px, transparent 1px) !important;
-    background-size: 26px 26px;
-  }
-  html.admin-moderne body.cockpit-airbus::before {
-    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background: linear-gradient(180deg, rgba(255,255,255,.75), transparent 260px);
-  }
-  html.admin-moderne body.cockpit-airbus h2,
-  html.admin-moderne body.cockpit-airbus h3,
-  html.admin-moderne body.cockpit-airbus h4 { color: #29241a !important; letter-spacing: .01em; }
-  html.admin-moderne body.cockpit-airbus .hero-admin,
-  html.admin-moderne body.cockpit-airbus .tableau-apercu,
-  html.admin-moderne body.cockpit-airbus .centre-actions-dashboard,
-  html.admin-moderne body.cockpit-airbus .nav-sections-admin,
-  html.admin-moderne body.cockpit-airbus .carte-section-admin,
-  html.admin-moderne body.cockpit-airbus .aide-windows-v316,
-  html.admin-moderne body.cockpit-airbus #zone-detail {
-    color: var(--ab-white);
-    background: var(--ab-panel) !important;
-    border: 1px solid var(--ab-line) !important;
-    border-radius: 18px !important;
-    box-shadow: 0 10px 30px rgba(84,68,35,.07) !important;
-  }
-  html.admin-moderne body.cockpit-airbus .hero-admin { border-top: 4px solid #f4511e !important; }
-  html.admin-moderne body.cockpit-airbus .entete img {
-    border-color: var(--ab-line) !important; border-radius: 14px !important;
-    box-shadow: 0 4px 14px rgba(84,68,35,.12) !important;
-  }
-  html.admin-moderne body.cockpit-airbus #titre-tb-admin {
-    border-radius: 999px !important; background: #e7f6ee !important; color: var(--ab-green) !important;
-    border: 1px solid #bfe6cf !important; box-shadow: none !important;
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-weight: 800;
-  }
-  html.admin-moderne body.cockpit-airbus #titre-tb-admin.hors-ligne { background: #fdecec !important; color: #b91c1c !important; border-color: #f3c2c2 !important; }
-  html.admin-moderne body.cockpit-airbus .sous,
-  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete > span,
-  html.admin-moderne body.cockpit-airbus .titre-gestion-detaillee > span { color: var(--ab-muted) !important; }
-  html.admin-moderne body.cockpit-airbus .badge-temoin-examen,
-  html.admin-moderne body.cockpit-airbus .badge-admin-gold,
-  html.admin-moderne body.cockpit-airbus .badge-version,
-  html.admin-moderne body.cockpit-airbus .badge-supabase,
-  html.admin-moderne body.cockpit-airbus .supabase-etat-compact { border-radius: 999px !important; box-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .barre-util { gap: 8px; }
-  html.admin-moderne body.cockpit-airbus .btn-util:not(.logout),
-  html.admin-moderne body.cockpit-airbus .btn-outil,
-  html.admin-moderne body.cockpit-airbus .btn-vue,
-  html.admin-moderne body.cockpit-airbus .btn-replier-sec {
-    background: var(--ab-panel) !important;
-    color: #38311f !important; border: 1px solid var(--ab-line) !important;
-    border-radius: 999px !important; box-shadow: 0 2px 8px rgba(84,68,35,.05) !important;
-    transition: all .18s ease;
-  }
-  html.admin-moderne body.cockpit-airbus .btn-util:hover,
-  html.admin-moderne body.cockpit-airbus .btn-outil:hover,
-  html.admin-moderne body.cockpit-airbus .btn-vue:hover,
-  html.admin-moderne body.cockpit-airbus .btn-replier-sec:hover {
-    color: var(--ab-cyan) !important; border-color: var(--ab-cyan) !important; background: #f3ead3 !important; transform: translateY(-1px);
-  }
-  html.admin-moderne body.cockpit-airbus .btn-util.on,
-  html.admin-moderne body.cockpit-airbus .btn-outil.vert,
-  html.admin-moderne body.cockpit-airbus .btn-vue.actif { color: var(--ab-green) !important; border-color: #8fd0a8 !important; background: #e7f6ee !important; }
-  html.admin-moderne body.cockpit-airbus .btn-util.logout { border-radius: 999px !important; background: #fdecec !important; color: #b91c1c !important; border: 1px solid #f3c2c2 !important; }
-
-  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete {
-    padding-bottom: 10px; border-bottom: 1px solid var(--ab-line-soft);
-  }
-  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete h2 { margin: 0 !important; }
-  html.admin-moderne body.cockpit-airbus .alerte-demande {
-    background: #fff6e0 !important; color: #7c4a03 !important;
-    border: 1px solid #f0d48a !important; border-left: 6px solid #f5b942 !important;
-    border-radius: 12px !important; box-shadow: none !important;
-  }
-  html.admin-moderne body.cockpit-airbus .vue-ensemble-corps { grid-template-columns: minmax(0,1fr) 292px; align-items: start; gap: 16px; }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats { gap: 10px; }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat,
-  html.admin-moderne body.cockpit-airbus .stat {
-    background: var(--ab-panel) !important;
-    border: 1px solid var(--ab-line) !important; border-radius: 16px !important;
-    box-shadow: 0 6px 18px rgba(84,68,35,.05) !important; color: var(--ab-white) !important;
-  }
-  html.admin-moderne body.cockpit-airbus .stat:hover { border-color: var(--ab-cyan) !important; transform: translateY(-2px); }
-  html.admin-moderne body.cockpit-airbus .stat small { color: var(--ab-muted) !important; letter-spacing: .06em; }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat { min-height: 72px; }
-
-  /* Afficheur de classe : ecran volontairement sombre, cadre allege */
-  html.admin-moderne body.cockpit-airbus .afficheur-classe-avion {
-    max-width: none; background: linear-gradient(145deg,#2b3648,#141c2a 60%,#1e293b);
-    border-color: #475569; border-radius: 20px; box-shadow: 0 18px 40px rgba(15,23,42,.35);
-  }
-  .afficheur-mode-bar {
-    position: relative; z-index: 6; display: flex; align-items: center; justify-content: center; gap: 6px;
-    max-width: 760px; margin: 0 auto 10px; padding: 6px 8px;
-    background: var(--ab-panel); border: 1px solid var(--ab-line); border-radius: 999px; box-shadow: 0 4px 14px rgba(84,68,35,.06);
-  }
-  .afficheur-mode-lbl { margin-right: auto; color: var(--ab-muted); font: 800 10px/1 system-ui, sans-serif; letter-spacing: .1em; }
-  .btn-mode-afficheur {
-    border: 1px solid var(--ab-line); border-radius: 999px; padding: 7px 12px;
-    background: var(--ab-panel); color: #655a43; font: 700 11px/1 system-ui, sans-serif; cursor: pointer;
-  }
-  .btn-mode-afficheur:hover { color: var(--ab-cyan); border-color: var(--ab-cyan); }
-  .btn-mode-afficheur.actif { background: var(--ab-cyan); color: #ffffff; border-color: var(--ab-cyan); box-shadow: 0 4px 12px rgba(67,56,202,.3); }
-  html.admin-moderne body.cockpit-airbus .instrument-avion-ecran { background: linear-gradient(180deg,#101a2c,#0a0f1c 72%,#0d1524); }
-
-  /* Modes de l'afficheur (structure inchangee) */
-  .afficheur-classe-avion.mode-ecran-large { width: 100%; padding: 12px; }
-  .mode-ecran-large .instrument-avion-bezel,
-  .mode-deux-ecrans .instrument-avion-bezel {
-    width: 100%; max-width: none; aspect-ratio: auto; padding: 7px; border-radius: 12px;
-  }
-  .mode-ecran-large .instrument-avion-ecran,
-  .mode-deux-ecrans .instrument-avion-ecran {
-    min-height: 548px; height: auto; border-radius: 7px; padding: 22px 24px 18px;
-  }
-  .mode-ecran-large .afficheur-six-zones {
-    display: grid; grid-template-columns: repeat(3,minmax(0,1fr));
-    grid-template-rows: auto repeat(2,minmax(145px,1fr));
-    grid-template-areas: "total total total" "z1 z2 z3" "z4 z5 z6";
-    gap: 11px; min-height: 465px;
-  }
-  .mode-ecran-large .afficheur-six-zones::before,
-  .mode-ecran-large .afficheur-six-zones::after,
-  .mode-deux-ecrans .afficheur-six-zones::after { display: none; }
-  .mode-ecran-large .zone-afficheur,
-  .mode-deux-ecrans .zone-afficheur { top: 0 !important; min-height: 145px; border-radius: 4px; }
-  .mode-ecran-large .afficheur-total-centre {
-    width: 100%; min-height: 112px; aspect-ratio: auto; border-radius: 4px;
-    display: flex; flex-direction: row; gap: 18px; padding: 12px 20px;
-    background: linear-gradient(90deg,#071711,#0a2b1d,#071711);
-  }
-  .mode-ecran-large .afficheur-total-centre > strong { font-size: 54px; }
-  .mode-ecran-large .afficheur-total-centre > small { max-width: 80px; }
-  .mode-ecran-large .total-centre-mesures {
-    width: min(390px,45%); margin: 0 0 0 auto; padding: 0 0 0 16px;
-    border-top: 0; border-left: 1px solid #34594a;
-  }
-  .afficheur-classe-avion.mode-deux-ecrans { width: 100%; padding: 12px; }
-  .mode-deux-ecrans .afficheur-six-zones {
-    display: grid; grid-template-columns: repeat(2,minmax(0,1fr)) .9fr 1.2fr;
-    grid-template-rows: repeat(2,minmax(205px,1fr));
-    grid-template-areas: "z1 z2 z5 total" "z3 z4 z6 total";
-    gap: 11px; min-height: 430px;
-  }
-  .mode-deux-ecrans .afficheur-six-zones::before {
-    display: block; left: 50%; top: 0; bottom: 0; width: 2px; height: 100%;
-    border: 0; border-radius: 0; transform: none;
-    background: linear-gradient(transparent,#6a7b87 8%,#6a7b87 92%,transparent);
-  }
-  .mode-deux-ecrans .afficheur-total-centre {
-    width: 100%; height: 100%; aspect-ratio: auto; border-radius: 4px; padding: 16px 8px;
-  }
-  .mode-deux-ecrans .afficheur-total-centre > strong { font-size: 55px; }
-  .afficheur-classe-avion.mode-cadran-rond { width: min(100%,720px); padding: 20px; margin-inline: auto; }
-  .mode-cadran-rond .afficheur-mode-bar { max-width: 650px; }
-
-  /* Centre de pilotage et sections — panneaux clairs */
-  html.admin-moderne body.cockpit-airbus .poles-tabs { background: var(--ab-panel); border-color: var(--ab-line); border-radius: 14px; box-shadow: 0 4px 14px rgba(84,68,35,.05); }
-  html.admin-moderne body.cockpit-airbus .pole-tab { color: var(--ab-muted); border-radius: 10px; }
-  html.admin-moderne body.cockpit-airbus .pole-tab:hover { color: var(--ab-cyan); background: #f3ead3; }
-  html.admin-moderne body.cockpit-airbus .pole-tab.actif { background: var(--ab-cyan); color: #ffffff; box-shadow: 0 4px 12px rgba(67,56,202,.3); }
-  html.admin-moderne body.cockpit-airbus .pole-tab.actif .pole-count { background: rgba(255,255,255,.25); color: #ffffff; }
-  html.admin-moderne body.cockpit-airbus .actions-principales { gap: 10px; }
-  html.admin-moderne body.cockpit-airbus .carte-action {
-    background: var(--ab-panel) !important; color: var(--ab-white) !important;
-    border: 1px solid var(--ab-line) !important; border-radius: 16px !important;
-    box-shadow: 0 6px 18px rgba(84,68,35,.05) !important; transition: all .18s ease;
-  }
-  html.admin-moderne body.cockpit-airbus .carte-action:hover { border-color: var(--ab-cyan) !important; transform: translateY(-2px); box-shadow: 0 12px 26px rgba(84,68,35,.1) !important; }
-  html.admin-moderne body.cockpit-airbus .carte-action.on { border-color: #8fd0a8 !important; background: #eefaf2 !important; }
-  html.admin-moderne body.cockpit-airbus .ca-ico { border-color: var(--ab-line) !important; border-radius: 12px !important; box-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .ca-titre { color: var(--ab-white) !important; }
-  html.admin-moderne body.cockpit-airbus .ca-desc { color: var(--ab-muted) !important; }
-  html.admin-moderne body.cockpit-airbus .aide-windows-entete h2,
-  html.admin-moderne body.cockpit-airbus .aide-windows-meta,
-  html.admin-moderne body.cockpit-airbus .aide-windows-note { color: var(--ab-cyan) !important; }
-  html.admin-moderne body.cockpit-airbus .aide-windows-meta span,
-  html.admin-moderne body.cockpit-airbus .aide-windows-grille details {
-    background: var(--ab-panel) !important; color: var(--ab-white) !important; border-color: var(--ab-line) !important; border-radius: 12px !important;
-  }
-  html.admin-moderne body.cockpit-airbus .aide-windows-grille summary { color: var(--ab-white) !important; }
-  html.admin-moderne body.cockpit-airbus .aide-windows-contenu { color: var(--ab-muted) !important; border-color: var(--ab-line) !important; }
-  html.admin-moderne body.cockpit-airbus .nav-sections-admin { position: sticky; top: 8px; z-index: 50; backdrop-filter: blur(8px); }
-  html.admin-moderne body.cockpit-airbus .nav-sections-lbl { color: var(--ab-cyan); }
-  html.admin-moderne body.cockpit-airbus .btn-sec-tab { background: var(--ab-panel); color: #655a43; border: 1px solid var(--ab-line); border-radius: 999px; box-shadow: none; }
-  html.admin-moderne body.cockpit-airbus .btn-sec-tab:hover { background: #f3ead3; color: var(--ab-cyan); }
-  html.admin-moderne body.cockpit-airbus .btn-sec-tab.actif { background: var(--ab-cyan); color: #ffffff; border-color: var(--ab-cyan); box-shadow: 0 4px 12px rgba(67,56,202,.3); }
-  html.admin-moderne body.cockpit-airbus .carte-section-admin { border-left: 5px solid #f4511e !important; }
-  html.admin-moderne body.cockpit-airbus .filtres-bar input,
-  html.admin-moderne body.cockpit-airbus .filtres-bar select,
-  html.admin-moderne body.cockpit-airbus #sel-semaine,
-  html.admin-moderne body.cockpit-airbus .modal-boite input,
-  html.admin-moderne body.cockpit-airbus .modal-boite select,
-  html.admin-moderne body.cockpit-airbus .modal-boite textarea {
-    background: var(--ab-panel) !important; color: var(--ab-white) !important;
-    border: 1px solid var(--ab-line) !important; border-radius: 10px !important;
-    box-shadow: none !important;
-  }
-  html.admin-moderne body.cockpit-airbus select,
-  html.admin-moderne body.cockpit-airbus textarea,
-  html.admin-moderne body.cockpit-airbus input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-  html.admin-moderne body.cockpit-airbus .pied-admin-version button {
-    background: var(--ab-panel) !important; color: var(--ab-white) !important;
-    border-color: var(--ab-line) !important; border-radius: 10px !important;
-    box-shadow: none !important;
-  }
-  html.admin-moderne body.cockpit-airbus input:focus,
-  html.admin-moderne body.cockpit-airbus select:focus,
-  html.admin-moderne body.cockpit-airbus textarea:focus { outline: none; border-color: var(--ab-cyan) !important; box-shadow: 0 0 0 3px rgba(67,56,202,.15) !important; }
-  html.admin-moderne body.cockpit-airbus input::placeholder { color: #9aa1b5; }
-  html.admin-moderne body.cockpit-airbus .choix-vue-abonnes { background: var(--ab-panel); border-color: var(--ab-line); border-radius: 12px; }
-  html.admin-moderne body.cockpit-airbus .bandeau-classe { background: var(--ab-panel-2); color: var(--ab-cyan); border-color: #cfc9f5; border-radius: 12px; box-shadow: none; }
-
-  html.admin-moderne body.cockpit-airbus .table-wrap { background: var(--ab-panel); border-color: var(--ab-line); border-radius: 14px; box-shadow: 0 6px 18px rgba(84,68,35,.05); overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
-  html.admin-moderne body.cockpit-airbus table { color: var(--ab-white); background: var(--ab-panel); }
-  html.admin-moderne body.cockpit-airbus th { background: #eef0ff !important; color: var(--ab-cyan) !important; border-color: #dfe3f2 !important; }
-  html.admin-moderne body.cockpit-airbus td { border-color: #e7eaf3 !important; }
-  html.admin-moderne body.cockpit-airbus tbody tr:not(.row-en_ligne):not(.row-actif):not(.row-gold):not(.row-en_attente):not(.row-exclu):not(.row-suspendu) { background: var(--ab-panel); color: var(--ab-white); }
-  html.admin-moderne body.cockpit-airbus tbody tr:hover { background: #f7f8ff; }
-  html.admin-moderne body.cockpit-airbus .act { background: var(--ab-panel); color: #38311f; border-color: var(--ab-line); border-radius: 8px; }
-  html.admin-moderne body.cockpit-airbus .act:hover { color: var(--ab-cyan); border-color: var(--ab-cyan); }
-
-  /* Fenetres et boites de dialogue claires */
-  html.admin-moderne body.cockpit-airbus .modal-fond { background: rgba(84,68,35,.55); backdrop-filter: blur(5px); }
-  html.admin-moderne body.cockpit-airbus .modal-boite {
-    background: var(--ab-panel) !important; color: var(--ab-white) !important;
-    border: 1px solid var(--ab-line) !important; border-radius: 18px !important;
-    box-shadow: 0 24px 60px rgba(84,68,35,.25) !important;
-  }
-  html.admin-moderne body.cockpit-airbus .modal-boite h3 { color: #29241a !important; }
-  html.admin-moderne body.cockpit-airbus .modal-boite p,
-  html.admin-moderne body.cockpit-airbus .modal-boite label,
-  html.admin-moderne body.cockpit-airbus .modal-boite small { color: var(--ab-muted); }
-  html.admin-moderne body.cockpit-airbus .modal-actions button { background: var(--ab-panel); color: #38311f; border-color: var(--ab-line); border-radius: 10px; }
-  html.admin-moderne body.cockpit-airbus .modal-actions .btn-valider { background: var(--ab-green) !important; color: #ffffff !important; border-color: var(--ab-green) !important; }
-  html.admin-moderne body.cockpit-airbus .modal-actions .btn-danger { background: var(--ab-red) !important; color: #fff !important; border-color: var(--ab-red) !important; }
-  html.admin-moderne body.cockpit-airbus .resume-classe-modal,
-  html.admin-moderne body.cockpit-airbus .wa-liste { background: var(--ab-panel-2) !important; color: var(--ab-white) !important; border-color: var(--ab-line) !important; border-radius: 12px !important; }
-  html.admin-moderne body.cockpit-airbus .pied-admin-version { color: var(--ab-muted); border-color: var(--ab-line-soft); }
-  html.admin-moderne body.cockpit-airbus .mob-bottom-nav { background: rgba(255,255,255,.96) !important; border-color: var(--ab-line) !important; }
-  html.admin-moderne body.cockpit-airbus .mob-nav-btn { color: var(--ab-muted) !important; }
-  html.admin-moderne body.cockpit-airbus .mob-nav-btn.actif { color: var(--ab-cyan) !important; }
-  html.admin-moderne body.cockpit-airbus .msn-admin-win,
-  html.admin-moderne body.cockpit-airbus .msn-sidebar,
-  html.admin-moderne body.cockpit-airbus .msn-chat-col { background: var(--ab-panel) !important; color: var(--ab-white) !important; border-color: var(--ab-line) !important; }
-
-  @media (max-width: 1180px) {
-    html.admin-moderne body.cockpit-airbus .vue-ensemble-corps { grid-template-columns: 1fr; }
-    html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats { grid-template-columns: repeat(3,minmax(0,1fr)); }
-  }
-  @media (max-width: 900px) {
-    .mode-ecran-large .afficheur-six-zones,
-    .mode-deux-ecrans .afficheur-six-zones {
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      grid-template-rows: auto repeat(3,minmax(118px,1fr));
-      grid-template-areas: "total total" "z1 z2" "z3 z4" "z5 z6";
-      min-height: 0;
-    }
-    .mode-ecran-large .afficheur-total-centre,
-    .mode-deux-ecrans .afficheur-total-centre { min-height: 100px; height: auto; flex-direction: row; }
-    .mode-deux-ecrans .afficheur-six-zones::before { display: none; }
-  }
-  @media (max-width: 620px) {
-    html.admin-moderne body.cockpit-airbus { padding: 9px 8px 82px; }
-    html.admin-moderne body.cockpit-airbus .hero-admin,
-    html.admin-moderne body.cockpit-airbus .tableau-apercu,
-    html.admin-moderne body.cockpit-airbus .centre-actions-dashboard,
-    html.admin-moderne body.cockpit-airbus .carte-section-admin { border-radius: 14px !important; }
-    html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats { grid-template-columns: 1fr; }
-    .afficheur-mode-bar { flex-wrap: wrap; justify-content: stretch; gap: 4px; }
-    .afficheur-mode-lbl { width: 100%; margin: 0 0 2px; text-align: center; }
-    .btn-mode-afficheur { flex: 1 1 calc(33.333% - 4px); padding: 6px 3px; font-size: 10px; }
-    .afficheur-classe-avion.mode-ecran-large,
-    .afficheur-classe-avion.mode-deux-ecrans { padding: 7px; border-radius: 12px; }
-    .mode-ecran-large .instrument-avion-bezel,
-    .mode-deux-ecrans .instrument-avion-bezel { padding: 4px; border-radius: 7px; }
-    .mode-ecran-large .instrument-avion-ecran,
-    .mode-deux-ecrans .instrument-avion-ecran { min-height: 0; padding: 13px 9px 10px; border-radius: 4px; }
-    .mode-ecran-large .zone-afficheur,
-    .mode-deux-ecrans .zone-afficheur { min-height: 104px; padding: 7px 5px; }
-    .mode-ecran-large .zone-afficheur-entete,
-    .mode-deux-ecrans .zone-afficheur-entete { font-size: 8px; }
-    .mode-ecran-large .zone-afficheur-total,
-    .mode-deux-ecrans .zone-afficheur-total { font-size: 30px; }
-    .mode-ecran-large .zone-afficheur-total-libelle,
-    .mode-deux-ecrans .zone-afficheur-total-libelle { font-size: 5px; }
-    .mode-ecran-large .zone-afficheur-mesures b,
-    .mode-deux-ecrans .zone-afficheur-mesures b { font-size: 10px; }
-    .mode-ecran-large .zone-afficheur-mesures small,
-    .mode-deux-ecrans .zone-afficheur-mesures small { font-size: 4.5px; }
-    .mode-ecran-large .afficheur-total-centre,
-    .mode-deux-ecrans .afficheur-total-centre { flex-wrap: wrap; gap: 5px 10px; padding: 8px; }
-    .mode-ecran-large .afficheur-total-centre > strong,
-    .mode-deux-ecrans .afficheur-total-centre > strong { font-size: 38px; }
-    .mode-ecran-large .total-centre-mesures,
-    .mode-deux-ecrans .total-centre-mesures { width: 100%; margin: 0; padding: 4px 0 0; border-left: 0; border-top: 1px solid #34594a; }
-  }
-
-  /* ---- Bandes et conteneurs restés sombres dans admin-v19 ---- */
-  html.admin-moderne body.cockpit-airbus .barre-util { background: var(--ab-panel-2) !important; border: 1px solid var(--ab-line) !important; border-radius: 16px !important; box-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .barre-util .btn-util.logout { background: #fff1f0 !important; color: var(--ab-red) !important; border-color: #f3c1bb !important; }
-  html.admin-moderne body.cockpit-airbus #titre-tb-admin { color: var(--ab-white) !important; text-shadow: none !important; -webkit-text-stroke: 0 !important; }
-  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete { background: transparent !important; box-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete h2, html.admin-moderne body.cockpit-airbus .afficheur-mode-lbl { color: var(--ab-white) !important; text-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales { background: var(--ab-panel-2) !important; border: 1px solid var(--ab-line-soft) !important; border-radius: 14px !important; box-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .afficheur-mode-bar { background: var(--ab-panel-2) !important; border: 1px solid var(--ab-line-soft) !important; border-radius: 12px !important; box-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .stat .n { color: #4338ca !important; text-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .hero-admin .badge, html.admin-moderne body.cockpit-airbus .badge-admin { background: #f4ead2 !important; color: #3730a3 !important; border: 1px solid #d8c8a2 !important; text-shadow: none !important; box-shadow: none !important; }
-
-  /* ---- Derniers elements sombres (precis) ---- */
-  html.admin-moderne body.cockpit-airbus::before, html.admin-moderne body.cockpit-airbus::after { display: none !important; }
-  html.admin-moderne body.cockpit-airbus #titre-tb-admin { background: none !important; }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats { background: var(--ab-panel-2) !important; border: 1px solid var(--ab-line-soft) !important; border-radius: 14px !important; box-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats::before { color: var(--ab-muted) !important; }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat b { color: #4338ca !important; text-shadow: none !important; font-family: inherit !important; font-weight: 800 !important; }
-  html.admin-moderne body.cockpit-airbus .afficheur-classe-avion { background: #e9dfca !important; border-color: #d2c19c !important; box-shadow: 0 8px 22px rgba(84,68,35,.12) !important; }
-  html.admin-moderne body.cockpit-airbus .btn-mode-afficheur { background: var(--ab-panel) !important; color: var(--ab-white) !important; border: 1px solid var(--ab-line) !important; border-radius: 999px !important; box-shadow: none !important; text-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .btn-mode-afficheur.actif { background: #4338ca !important; color: #ffffff !important; border-color: #4338ca !important; }
-  html.admin-moderne body.cockpit-airbus .alerte-demande { background: #fff7e6 !important; color: #7c4a03 !important; border-color: #ecc887 !important; box-shadow: none !important; }
-
-  /* ---- Polissage final : titres et onglets ---- */
-  html.admin-moderne body.cockpit-airbus h2, html.admin-moderne body.cockpit-airbus h3, html.admin-moderne body.cockpit-airbus h4 { color: var(--ab-white) !important; text-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .carte-section-admin > h2 { color: var(--ab-white) !important; }
-  html.admin-moderne body.cockpit-airbus .btn-sec-tab { background: var(--ab-panel) !important; color: var(--ab-white) !important; border: 1px solid var(--ab-line) !important; border-radius: 999px !important; box-shadow: none !important; text-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .btn-sec-tab.actif { background: #f4511e !important; color: #ffffff !important; border-color: #f4511e !important; }
-  html.admin-moderne body.cockpit-airbus .afficheur-classe h2, html.admin-moderne body.cockpit-airbus .afficheur-classe h3 { color: #f2f6ff !important; }
-
-  /* ---- Titres precis (specificite egale, fichier charge apres) ---- */
-  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete h2, html.admin-moderne body.cockpit-airbus .titre-gestion-detaillee h2,
-  html.admin-moderne body.cockpit-airbus .carte-section-admin h2, html.admin-moderne body.cockpit-airbus .poles-header #titre-actions-dashboard { color: var(--ab-white) !important; }
-  html.admin-moderne body.cockpit-airbus .carte-action .ca-titre { color: var(--ab-white) !important; text-shadow: none !important; }
-  html.admin-moderne body.cockpit-airbus .carte-action .ca-corps { color: var(--ab-muted) !important; }
-
-  /* ---- Ajustement demande : titre colore selon la connexion + fond beige ---- */
-  html.admin-moderne body.cockpit-airbus #titre-tb-admin {
-    background: #e8f6ec !important;
-    color: #147a3d !important;
-    border: 1px solid #93d3a4 !important;
-    box-shadow: 0 2px 8px rgba(20,122,61,.14) !important;
-    text-shadow: none !important;
-    -webkit-text-stroke: 0 !important;
-  }
-  html.admin-moderne body.cockpit-airbus #titre-tb-admin.hors-ligne {
-    background: #fdecec !important;
-    color: #c62828 !important;
-    border-color: #eda7a7 !important;
-    box-shadow: 0 2px 8px rgba(198,40,40,.14) !important;
-  }
-
-  /* ---- Lisibilite nette : aucun halo, contraste renforce, petits textes agrandis ---- */
-  html.admin-moderne body.cockpit-airbus {
-    -webkit-font-smoothing: antialiased !important;
-    -moz-osx-font-smoothing: grayscale !important;
-    text-rendering: optimizeLegibility !important;
-    font-size: 15px !important;
-  }
-  html.admin-moderne body.cockpit-airbus *:not(.afficheur-classe-avion):not(.afficheur-classe-avion *) {
-    text-shadow: none !important;
-    -webkit-text-stroke: 0 !important;
-  }
-  html.admin-moderne body.cockpit-airbus .nav-sections-admin { backdrop-filter: none !important; background: var(--ab-panel) !important; }
-  html.admin-moderne body.cockpit-airbus .sous {
-    color: var(--ab-muted) !important;
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    letter-spacing: .07em !important;
-  }
-  html.admin-moderne body.cockpit-airbus .barre-util .btn-util {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
-    font-size: 10.5px !important;
-    font-weight: 800 !important;
-    line-height: 1.25 !important;
-    letter-spacing: .01em !important;
-  }
-  html.admin-moderne body.cockpit-airbus .badge-temoin-examen,
-  html.admin-moderne body.cockpit-airbus .badge-admin-gold,
-  html.admin-moderne body.cockpit-airbus .badge-version,
-  html.admin-moderne body.cockpit-airbus .badge-supabase,
-  html.admin-moderne body.cockpit-airbus .supabase-etat-compact {
-    font-size: 10px !important;
-    font-weight: 850 !important;
-    letter-spacing: .02em !important;
-  }
-  html.admin-moderne body.cockpit-airbus .tableau-apercu-entete > span,
-  html.admin-moderne body.cockpit-airbus .titre-gestion-detaillee > span,
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stats::before,
-  html.admin-moderne body.cockpit-airbus .afficheur-mode-lbl {
-    color: var(--ab-muted) !important;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
-    font-size: 10px !important;
-    font-weight: 800 !important;
-    letter-spacing: .06em !important;
-  }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat b {
-    color: #3730a3 !important;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
-    font-size: 32px !important;
-    font-weight: 900 !important;
-  }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat small,
-  html.admin-moderne body.cockpit-airbus .stat small {
-    color: var(--ab-muted) !important;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
-    font-size: 10px !important;
-    font-weight: 800 !important;
-    letter-spacing: .04em !important;
-  }
-  html.admin-moderne body.cockpit-airbus .btn-mode-afficheur,
-  html.admin-moderne body.cockpit-airbus .btn-sec-tab,
-  html.admin-moderne body.cockpit-airbus .pole-tab,
-  html.admin-moderne body.cockpit-airbus .btn-vue,
-  html.admin-moderne body.cockpit-airbus .btn-replier-sec {
-    font-size: 11px !important;
-    font-weight: 800 !important;
-    line-height: 1.25 !important;
-  }
-  html.admin-moderne body.cockpit-airbus table { font-size: 13px !important; }
-  html.admin-moderne body.cockpit-airbus th,
-  html.admin-moderne body.cockpit-airbus td { line-height: 1.35 !important; }
-  html.admin-moderne body.cockpit-airbus input,
-  html.admin-moderne body.cockpit-airbus select,
-  html.admin-moderne body.cockpit-airbus textarea {
-    font-size: 13px !important;
-    font-weight: 600 !important;
-  }
-  html.admin-moderne body.cockpit-airbus #s-enligne { color: #15803d !important; }
-  html.admin-moderne body.cockpit-airbus #s-actifs { color: #6d28d9 !important; }
-  html.admin-moderne body.cockpit-airbus #s-labo3-machines { color: #0369a1 !important; }
-  html.admin-moderne body.cockpit-airbus #s-attente { color: #92400e !important; }
-
-</style>
-<style id="theme-admin-carte">
-  /* ═══════════════════════════════════════════════════════════════════════
-     STYLE « CARTE DE VISITE » — les deux modes du tableau de bord (v355)
-     Clair : la charte de carte-visite.html (beige #f9f1e3, cartes #fffdf7,
-     bordures franches #23201a, ombres decalees orange #f4511e, boutons pill).
-     Sombre : la meme charte en nuance nuit (fond brun sombre, cartes
-     sombres a bordure franche, memes accents orange / jaune / vert).
-     Vue d'ensemble : l'afficheur « Airbus » est masque ; les indicateurs
-     deviennent de simples cartes statistiques, comme sur la carte.
-     ═══════════════════════════════════════════════════════════════════════ */
-
-  /* — Vue d'ensemble simple, commune aux deux modes — */
-  body.cockpit-airbus .vue-compteur-classe { display: none !important; }
-  body.cockpit-airbus .vue-ensemble-corps { grid-template-columns: 1fr !important; }
-  body.cockpit-airbus .vue-commandes-globales .stats {
-    display: grid !important; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)) !important; gap: 12px !important;
-  }
-  body.cockpit-airbus .vue-commandes-globales .stat {
-    display: flex !important; flex-direction: column; align-items: center; justify-content: center;
-    gap: 2px; min-height: 92px; padding: 12px 10px; text-align: center; border-radius: 16px !important;
-  }
-  body.cockpit-airbus .vue-commandes-globales .stat b {
-    display: block; margin: 0; border: 0; font-size: 30px !important; line-height: 1.05;
-  }
-  body.cockpit-airbus .vue-commandes-globales .stat small { font-size: 11.5px !important; }
-
-  /* ═══ MODE CLAIR — charte carte de visite ═══ */
-  html.admin-moderne body.cockpit-airbus {
-    background-color: #f9f1e3 !important;
-    background-image: radial-gradient(720px 300px at 85% -60px, rgba(244,81,30,.14), transparent 70%) !important;
-    color: #23201a !important;
-  }
-  html.admin-moderne body.cockpit-airbus .hero-admin,
-  html.admin-moderne body.cockpit-airbus .tableau-apercu,
-  html.admin-moderne body.cockpit-airbus .centre-actions-dashboard,
-  html.admin-moderne body.cockpit-airbus .nav-sections-admin,
-  html.admin-moderne body.cockpit-airbus .carte-section-admin,
-  html.admin-moderne body.cockpit-airbus .aide-windows-v316,
-  html.admin-moderne body.cockpit-airbus #zone-detail {
-    background: #fffdf7 !important; border: 2px solid #23201a !important; border-radius: 18px !important;
-    box-shadow: 5px 5px 0 rgba(244,81,30,.38) !important; color: #23201a !important;
-  }
-  html.admin-moderne body.cockpit-airbus .hero-admin { border-top: 2px solid #23201a !important; }
-  html.admin-moderne body.cockpit-airbus .barre-util .btn-util,
-  html.admin-moderne body.cockpit-airbus .btn-util:not(.logout),
-  html.admin-moderne body.cockpit-airbus .btn-outil,
-  html.admin-moderne body.cockpit-airbus .btn-sec-tab,
-  html.admin-moderne body.cockpit-airbus .btn-replier-sec {
-    background: #fffdf7 !important; color: #23201a !important;
-    border: 2px solid #23201a !important; border-radius: 999px !important;
-    box-shadow: 2.5px 2.5px 0 #23201a !important; text-shadow: none !important;
-  }
-  html.admin-moderne body.cockpit-airbus .btn-util:hover,
-  html.admin-moderne body.cockpit-airbus .btn-outil:hover,
-  html.admin-moderne body.cockpit-airbus .btn-sec-tab:hover,
-  html.admin-moderne body.cockpit-airbus .btn-replier-sec:hover {
-    background: #ffe9d6 !important; border-color: #f4511e !important; color: #23201a !important;
-  }
-  html.admin-moderne body.cockpit-airbus .btn-util.on,
-  html.admin-moderne body.cockpit-airbus .btn-vue.actif,
-  html.admin-moderne body.cockpit-airbus .btn-sec-tab.actif {
-    background: linear-gradient(120deg, #f4511e, #ff8a50) !important; color: #fff !important;
-    border-color: #23201a !important; box-shadow: 2.5px 2.5px 0 #23201a !important;
-  }
-  html.admin-moderne body.cockpit-airbus .poles-tabs {
-    background: #fffdf7 !important; border: 2px solid #23201a !important; border-radius: 999px !important;
-    box-shadow: 3px 3px 0 rgba(244,81,30,.35) !important;
-  }
-  html.admin-moderne body.cockpit-airbus .pole-tab {
-    background: transparent !important; color: #5a5244 !important; border: 2px solid transparent !important; border-radius: 999px !important;
-  }
-  html.admin-moderne body.cockpit-airbus .pole-tab.actif {
-    background: linear-gradient(120deg, #f4511e, #ff8a50) !important; color: #fff !important; border-color: #23201a !important;
-  }
-  html.admin-moderne body.cockpit-airbus .vue-commandes-globales .stat,
-  html.admin-moderne body.cockpit-airbus .stat {
-    background: #fffdf7 !important; border: 2px solid #23201a !important; border-radius: 16px !important;
-    box-shadow: 4px 4px 0 rgba(244,81,30,.42) !important;
-  }
-  html.admin-moderne body.cockpit-airbus .carte-action {
-    background: #fffdf7 !important; border: 2px solid #23201a !important; border-radius: 16px !important;
-    box-shadow: 3px 3px 0 rgba(244,81,30,.30) !important;
-  }
-  html.admin-moderne body.cockpit-airbus .carte-action:hover { border-color: #f4511e !important; }
-  html.admin-moderne body.cockpit-airbus .choix-vue-abonnes {
-    background: #f9f1e3 !important; border: 2px solid #23201a !important; box-shadow: 2px 2px 0 #23201a !important;
-  }
-  html.admin-moderne body.cockpit-airbus .filtres-bar {
-    background: #fffdf7 !important; border: 2px solid #23201a !important; border-radius: 16px !important;
-    box-shadow: 3px 3px 0 rgba(244,81,30,.35) !important;
-  }
-  html.admin-moderne body.cockpit-airbus .table-wrap {
-    background: #fffdf7 !important; border: 2px solid #23201a !important; border-radius: 16px !important;
-    box-shadow: 5px 5px 0 rgba(244,81,30,.40) !important;
-  }
-  html.admin-moderne body.cockpit-airbus th { background: #f9f1e3 !important; color: #23201a !important; }
-
-  /* ═══ MODE SOMBRE — la meme charte, en nuance nuit ═══ */
-  html.admin-ardoise body.cockpit-airbus {
-    --ad-bg: #1d1712; --ad-panel: #2b241b; --ad-panel-2: #241e16;
-    --ad-line: #55482e; --ad-txt: #f5eddc; --ad-mut: #b3a488;
-    --ad-orange: #f4511e; --ad-jaune: #ffd54f; --ad-vert: #3ec165; --ad-ciel: #57b7e6;
-    max-width: 1580px;
-    color: var(--ad-txt) !important;
-    background-color: var(--ad-bg) !important;
-    background-image: radial-gradient(720px 300px at 85% -60px, rgba(244,81,30,.10), transparent 70%) !important;
-  }
-  html.admin-ardoise body.cockpit-airbus h2,
-  html.admin-ardoise body.cockpit-airbus h3,
-  html.admin-ardoise body.cockpit-airbus h4 { color: #f7efdd !important; }
-  html.admin-ardoise body.cockpit-airbus .hero-admin,
-  html.admin-ardoise body.cockpit-airbus .tableau-apercu,
-  html.admin-ardoise body.cockpit-airbus .centre-actions-dashboard,
-  html.admin-ardoise body.cockpit-airbus .nav-sections-admin,
-  html.admin-ardoise body.cockpit-airbus .carte-section-admin,
-  html.admin-ardoise body.cockpit-airbus .aide-windows-v316,
-  html.admin-ardoise body.cockpit-airbus #zone-detail {
-    background: var(--ad-panel) !important;
-    border: 2px solid #0f0d0a !important; border-radius: 18px !important;
-    box-shadow: 5px 5px 0 rgba(244,81,30,.25) !important;
-    color: var(--ad-txt) !important;
-  }
-  html.admin-ardoise body.cockpit-airbus #titre-tb-admin {
-    background: rgba(62,193,101,.12) !important; color: #7fe6a8 !important;
-    border: 1.5px solid rgba(62,193,101,.5) !important; text-shadow: none !important; -webkit-text-stroke: 0 !important;
-  }
-  html.admin-ardoise body.cockpit-airbus #titre-tb-admin.hors-ligne { background: rgba(244,81,30,.14) !important; color: #ff9d85 !important; border-color: rgba(244,81,30,.55) !important; }
-  html.admin-ardoise body.cockpit-airbus .sous,
-  html.admin-ardoise body.cockpit-airbus .tableau-apercu-entete > span,
-  html.admin-ardoise body.cockpit-airbus .titre-gestion-detaillee > span { color: var(--ad-mut) !important; }
-  html.admin-ardoise body.cockpit-airbus .badge-version,
-  html.admin-ardoise body.cockpit-airbus .badge-supabase,
-  html.admin-ardoise body.cockpit-airbus .badge-temoin-examen,
-  html.admin-ardoise body.cockpit-airbus .badge-admin-gold {
-    background: #1d1712 !important; color: #e8dcc2 !important;
-    border: 1.5px solid var(--ad-line) !important; box-shadow: none !important; text-shadow: none !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .badge-admin-gold { color: var(--ad-jaune) !important; border-color: rgba(255,213,79,.55) !important; }
-  html.admin-ardoise body.cockpit-airbus .jauge-sb-mini { background: #14110c !important; }
-  html.admin-ardoise body.cockpit-airbus .barre-util .btn-util,
-  html.admin-ardoise body.cockpit-airbus .btn-util:not(.logout),
-  html.admin-ardoise body.cockpit-airbus .btn-outil,
-  html.admin-ardoise body.cockpit-airbus .btn-sec-tab,
-  html.admin-ardoise body.cockpit-airbus .btn-replier-sec {
-    background: #241e16 !important; color: var(--ad-txt) !important;
-    border: 2px solid #0f0d0a !important; border-radius: 999px !important;
-    box-shadow: 2.5px 2.5px 0 rgba(0,0,0,.55) !important; text-shadow: none !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .btn-util:hover,
-  html.admin-ardoise body.cockpit-airbus .btn-outil:hover,
-  html.admin-ardoise body.cockpit-airbus .btn-sec-tab:hover,
-  html.admin-ardoise body.cockpit-airbus .btn-replier-sec:hover {
-    background: #33291a !important; border-color: var(--ad-orange) !important; color: #fff !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .btn-util.on,
-  html.admin-ardoise body.cockpit-airbus .btn-vue.actif,
-  html.admin-ardoise body.cockpit-airbus .btn-sec-tab.actif,
-  html.admin-ardoise body.cockpit-airbus .carte-action.on {
-    background: linear-gradient(120deg, #f4511e, #ff8a50) !important; color: #fff !important;
-    border-color: #0f0d0a !important; box-shadow: 2.5px 2.5px 0 rgba(0,0,0,.55) !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .btn-util.logout {
-    background: rgba(244,81,30,.16) !important; color: #ffb59f !important; border: 2px solid rgba(244,81,30,.6) !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .poles-tabs {
-    background: #241e16 !important; border: 2px solid #0f0d0a !important; border-radius: 999px !important; box-shadow: none !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .pole-tab {
-    background: transparent !important; color: var(--ad-mut) !important; border: 2px solid transparent !important; border-radius: 999px !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .pole-tab.actif {
-    background: linear-gradient(120deg, #f4511e, #ff8a50) !important; color: #fff !important; border-color: #0f0d0a !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .pole-count { background: #14110c !important; color: var(--ad-jaune) !important; }
-  html.admin-ardoise body.cockpit-airbus .vue-commandes-globales .stat,
-  html.admin-ardoise body.cockpit-airbus .stat {
-    background: var(--ad-panel) !important; border: 2px solid #0f0d0a !important; border-radius: 16px !important;
-    box-shadow: 4px 4px 0 rgba(244,81,30,.25) !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .stat b { color: var(--ad-ciel) !important; }
-  html.admin-ardoise body.cockpit-airbus .stat small { color: var(--ad-mut) !important; }
-  html.admin-ardoise body.cockpit-airbus #s-enligne { color: #4ade80 !important; }
-  html.admin-ardoise body.cockpit-airbus #s-actifs { color: #b9a5ff !important; }
-  html.admin-ardoise body.cockpit-airbus #s-labo3-machines { color: var(--ad-ciel) !important; }
-  html.admin-ardoise body.cockpit-airbus #s-attente { color: var(--ad-jaune) !important; }
-  html.admin-ardoise body.cockpit-airbus .carte-action {
-    background: var(--ad-panel-2) !important; border: 2px solid #0f0d0a !important; border-radius: 16px !important;
-    box-shadow: 3px 3px 0 rgba(0,0,0,.45) !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .carte-action:hover { border-color: var(--ad-orange) !important; }
-  html.admin-ardoise body.cockpit-airbus .ca-titre { color: #f7efdd !important; }
-  html.admin-ardoise body.cockpit-airbus .ca-desc { color: var(--ad-mut) !important; }
-  html.admin-ardoise body.cockpit-airbus .choix-vue-abonnes {
-    background: #1d1712 !important; border: 2px solid #0f0d0a !important; box-shadow: none !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .filtres-bar {
-    background: var(--ad-panel-2) !important; border: 2px solid #0f0d0a !important; border-radius: 16px !important; box-shadow: none !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .table-wrap {
-    background: #1d1712 !important; border: 2px solid #0f0d0a !important;
-    border-radius: 16px !important; box-shadow: none !important;
-  }
-  html.admin-ardoise body.cockpit-airbus table { background: transparent !important; color: var(--ad-txt) !important; }
-  html.admin-ardoise body.cockpit-airbus th {
-    background: #241e16 !important; color: #d8c9a3 !important;
-    border-color: #14110c !important;
-  }
-  html.admin-ardoise body.cockpit-airbus td { border-color: #2c2618 !important; color: var(--ad-txt) !important; }
-  html.admin-ardoise body.cockpit-airbus tbody tr:hover { background: #33291a !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-en_ligne { background: #12351f !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-en_ligne:hover { background: #17452a !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-actif { background: #2c2350 !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-actif:hover { background: #372b63 !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-gold { background: linear-gradient(90deg, #3a2f08, #4a3c0a) !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-gold:hover { background: linear-gradient(90deg, #4a3c0a, #5a4a0e) !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-en_attente { background: #33291a !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-en_attente:hover { background: #3f3320 !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-exclu { background: #3d1a20 !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-exclu:hover { background: #4a2027 !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-suspendu { background: #2a251c !important; }
-  html.admin-ardoise body.cockpit-airbus #tb-abonnes tr.row-suspendu:hover { background: #332d21 !important; }
-  html.admin-ardoise body.cockpit-airbus input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-  html.admin-ardoise body.cockpit-airbus select,
-  html.admin-ardoise body.cockpit-airbus textarea {
-    background: #1d1712 !important; color: var(--ad-txt) !important;
-    border: 1.5px solid var(--ad-line) !important; border-radius: 10px !important; box-shadow: none !important;
-  }
-  html.admin-ardoise body.cockpit-airbus input::placeholder { color: #6f6249 !important; }
-  html.admin-ardoise body.cockpit-airbus input:focus,
-  html.admin-ardoise body.cockpit-airbus select:focus,
-  html.admin-ardoise body.cockpit-airbus textarea:focus { border-color: var(--ad-orange) !important; outline: none !important; }
-  html.admin-ardoise body.cockpit-airbus .modal-boite {
-    background: var(--ad-panel) !important; color: var(--ad-txt) !important;
-    border: 2px solid #0f0d0a !important; border-radius: 18px !important;
-    box-shadow: 0 24px 60px rgba(0,0,0,.65) !important;
-  }
-  html.admin-ardoise body.cockpit-airbus .modal-boite h3 { color: #f7efdd !important; }
-  html.admin-ardoise body.cockpit-airbus .modal-boite p { color: var(--ad-mut) !important; }
-  html.admin-ardoise body.cockpit-airbus .graph-boite { background: var(--ad-panel-2) !important; border-color: #0f0d0a !important; box-shadow: none !important; }
-  html.admin-ardoise body.cockpit-airbus .graph-boite h3 { color: #f7efdd !important; }
-  html.admin-ardoise body.cockpit-airbus .aide-windows-grille details { background: var(--ad-panel-2) !important; border-color: #0f0d0a !important; }
-  html.admin-ardoise body.cockpit-airbus .aide-windows-grille summary { color: #f7efdd !important; }
-  html.admin-ardoise body.cockpit-airbus .aide-windows-meta span { background: #1d1712 !important; color: #e8dcc2 !important; border: 1.5px solid var(--ad-line) !important; }
-  html.admin-ardoise body.cockpit-airbus .alerte-demande { background: rgba(255,213,79,.10) !important; border-color: rgba(255,213,79,.5) !important; color: #ffe1a8 !important; }
-  html.admin-ardoise body.cockpit-airbus #titre-actions-dashboard { color: #f7efdd !important; }
-  html.admin-moderne body.cockpit-airbus .aide-windows-entete h2,
-  html.admin-moderne body.cockpit-airbus .aide-windows-v316 h2,
-  html.admin-moderne body.cockpit-airbus .aide-windows-v316 h3 { color: #23201a !important; }
-</style>
-
-<script>
-/* Choix du theme admin : "moderne" (defaut) ou "ancien" (cockpit sombre), memorise sur l'appareil */
-(function(){try{var t=localStorage.getItem("sti-admin-theme");if(t==="ardoise"||t==="ancien"){document.documentElement.classList.add("admin-ardoise");}else{document.documentElement.classList.add("admin-moderne");}}catch(e){document.documentElement.classList.add("admin-moderne");}})(); /* v354 : deux modes — Clair (admin-moderne) / Sombre (admin-ardoise) ; l'ancien reglage "ancien" vaut Sombre */
-</script>
-
   <div class="modal-fond" id="modal-fiche-eleve" role="dialog" aria-modal="true">
     <div class="modal-boite fiche-eleve-boite" id="boite-fiche-eleve">
       <div class="fiche-top-bar">
@@ -4823,30 +4140,30 @@
   >▲ Haut</button>
 
   <footer class="pied-admin-version">
-    Plateforme STI V2.0 © Aymen Essouyah — Lycée Raféha · <span id="pied-version-admin">▰ Version active : STI V2.0 (v316)</span> · <span id="pied-supabase-quota" class="supabase-etat-compact deconnecte" title="🔴 Supabase déconnectée — vérification en cours">● ▣ Supabase : 99,8 % restant (499,2 Mo / 500 Mo)</span> · <button type="button" id="pied-readme-admin" style="border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">▧ README</button> · <button type="button" id="pied-haut-admin" style="border:1.5px solid #23201a;background:#f4511e;color:#fff;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer">▲ Haut</button>
+    <span>Plateforme STI V2.0 © Aymen Essouyah — Lycée Raféha</span> · <span id="pied-version-admin">Version active : STI V2.0</span> · <span id="pied-supabase-quota" class="supabase-etat-compact deconnecte" title="🔴 Supabase déconnectée — vérification en cours">● Supabase : 99,8 % restant (499,2 Mo / 500 Mo)</span> · <button type="button" id="pied-readme-admin">📖 README</button> · <button type="button" id="pied-haut-admin">▲ Haut</button>
   </footer>
 
   <!-- Barre de navigation rapide mobile fixe en bas d'écran (visible uniquement sur smartphone ≤ 768px) -->
   <nav class="mob-bottom-nav" id="mob-bottom-nav" aria-label="Navigation rapide mobile">
     <button type="button" class="mob-nav-btn actif" data-mob-scroll="sec-abonnes">
-      <span class="ico">◎</span>
+      <span class="ico">👥</span>
       <span>Abonnés</span>
     </button>
     <button type="button" class="mob-nav-btn" id="mob-nav-chat">
-      <span class="ico">◇</span>
+      <span class="ico">💬</span>
       <span>Chat</span>
       <span class="mob-nav-badge" id="badge-msn-mob-nav" style="display:none">0</span>
     </button>
     <button type="button" class="mob-nav-btn" id="mob-nav-outils">
-      <span class="ico">▦</span>
+      <span class="ico">🧰</span>
       <span>Outils</span>
     </button>
     <button type="button" class="mob-nav-btn" data-mob-scroll="sec-resultats-quiz">
-      <span class="ico">★</span>
+      <span class="ico">🏆</span>
       <span>Quiz</span>
     </button>
     <button type="button" class="mob-nav-btn" data-mob-scroll="sec-dernieres-connexions">
-      <span class="ico">◷</span>
+      <span class="ico">🕒</span>
       <span>Connexions</span>
     </button>
   </nav>
@@ -5140,7 +4457,7 @@
   <script src="assets/js/admin-couverture.js?v=435"></script>
   <script src="assets/js/admin-revision.js?v=438"></script>
   <script src="assets/js/admin-erreurs.js?v=439"></script>
-  <script src="assets/js/admin-mdp.js?v=442"></script>
+  <script src="assets/js/admin-mdp.js?v=443"></script>
   <script src="assets/js/graphiques-activite.js?v=347"></script>
   <script src="assets/js/quiz-admin.js?v=358"></script>
 <script src="assets/js/analytique.js"></script>
@@ -5248,16 +4565,56 @@
 <script>
 (function(){
   var b=document.getElementById("btn-bascule-theme");
-  if(!b) return;
-  /* v354 : deux modes seulement — Clair (defaut) et Sombre, choix memorise */
-  function maj(){ b.textContent = document.documentElement.classList.contains("admin-ardoise") ? "🎨 Mode : Sombre" : "🎨 Mode : Clair"; }
-  b.addEventListener("click",function(){
-    var sombre=document.documentElement.classList.toggle("admin-ardoise");
-    document.documentElement.classList.toggle("admin-moderne", !sombre);
-    try{ localStorage.setItem("sti-admin-theme", sombre ? "ardoise" : "moderne"); }catch(e){}
+  if(b){
+    /* v443 Atelier 4 Univers : bascule Clair / Sombre + sélecteur des 4 univers chromatiques */
+    var PALETTES = [
+      { id: "foret",   ico: "🌲", pc: "Pin &amp; Or",  mob: "Pin" },
+      { id: "cyber",   ico: "⚡", pc: "Synthwave",     mob: "Néon" },
+      { id: "pop",     ico: "🎨", pc: "Pop Studio",    mob: "Pop" },
+      { id: "spotify", ico: "🌿", pc: "Émeraude",      mob: "Studio" }
+    ];
+    var bp = document.getElementById("btn-palette-admin");
+    function maj(){
+      var sombre = document.documentElement.classList.contains("admin-ardoise");
+      b.setAttribute("aria-pressed", sombre ? "true" : "false");
+      b.innerHTML = sombre
+        ? '<span class="btn-util-glyph" aria-hidden="true">☀️</span> <span class="lbl-pc">Mode Clair</span><span class="lbl-mob">Clair</span>'
+        : '<span class="btn-util-glyph" aria-hidden="true">🌙</span> <span class="lbl-pc">Mode Sombre</span><span class="lbl-mob">Sombre</span>';
+      if(bp){
+        var cur = document.documentElement.getAttribute("data-sti-palette") || "foret";
+        var meta = PALETTES[0];
+        for(var i=0;i<PALETTES.length;i++){ if(PALETTES[i].id===cur) meta=PALETTES[i]; }
+        bp.innerHTML = '<span class="btn-util-glyph" aria-hidden="true">' + meta.ico + '</span> <span class="lbl-pc">' + meta.pc + '</span><span class="lbl-mob">' + meta.mob + '</span>';
+      }
+    }
+    if(bp){
+      bp.addEventListener("click",function(){
+        var cur = document.documentElement.getAttribute("data-sti-palette") || "foret";
+        var idx = 0;
+        for(var i=0;i<PALETTES.length;i++){ if(PALETTES[i].id===cur) idx=(i+1)%PALETTES.length; }
+        var nxt = PALETTES[idx].id;
+        document.documentElement.setAttribute("data-sti-palette", nxt);
+        try{ localStorage.setItem("sti-admin-palette", nxt); }catch(e){}
+        maj();
+      });
+    }
+    b.addEventListener("click",function(){
+      var sombre=document.documentElement.classList.toggle("admin-ardoise");
+      document.documentElement.classList.toggle("admin-moderne", !sombre);
+      try{ localStorage.setItem("sti-admin-theme", sombre ? "ardoise" : "moderne"); }catch(e){}
+      maj();
+    });
     maj();
-  });
-  maj();
+  }
+  /* Projecteur réfractif interactif sur les tuiles Bento, capsules de classes et cartes d'actions */
+  document.addEventListener("pointermove", function(ev){
+    if(ev.pointerType === "touch") return;
+    var c = ev.target && ev.target.closest ? ev.target.closest(".stat, .zone-afficheur, .carte-action") : null;
+    if(!c) return;
+    var r = c.getBoundingClientRect();
+    c.style.setProperty("--mx", Math.round(ev.clientX - r.left) + "px");
+    c.style.setProperty("--my", Math.round(ev.clientY - r.top) + "px");
+  }, { passive: true });
 })();
 </script>
 

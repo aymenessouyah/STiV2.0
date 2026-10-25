@@ -76,7 +76,7 @@ test('migration v303 : RLS restrictive, session_id et secrets hachés', () => {
 test('service worker v303+ reste différentiel et léger', () => {
   const sw = read('sw.js');
   assert.match(sw, /sti-atelier-v\d+/);
-  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline|unified-device-admin|password-recovery(?:-redirect)?|admin-mdp)-1/);
+  assert.match(sw, /v\d+-(?:labo-devices|visible-labo-controls|device-location-offline|unified-device-admin|password-recovery(?:-redirect)?|admin-(?:mdp|saas))-1/);
   assert.match(sw, /labo-device-client\.js/);
   assert.match(sw, /admin-labo-devices\.js/);
   const manifest = sw.slice(sw.indexOf('var UPDATE_FILES'), sw.indexOf('var CACHE_REVISIONS'));
