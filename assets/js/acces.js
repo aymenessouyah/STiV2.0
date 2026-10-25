@@ -2739,6 +2739,21 @@
         var pctEl = pan.querySelector("#sti-pan-prog-pct");
         var progTxt = (pctEl && pctEl.textContent) ? pctEl.textContent.trim() : (initProgPan.pctProg + "%");
 
+        if (!document.getElementById("sti-style-modale-carte-candidat")) {
+          var stCcMod = document.createElement("style");
+          stCcMod.id = "sti-style-modale-carte-candidat";
+          stCcMod.textContent =
+            "#sti-modale-carte-candidat .sti-cc-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin-top:16px!important}" +
+            "#sti-modale-carte-candidat .sti-cc-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:42px!important;padding:10px 14px!important;border-radius:13px!important;border:1.5px solid rgba(255,255,255,.24)!important;background:rgba(30,41,59,.92)!important;color:#f8fafc!important;font-family:'Comic Sans MS','Comic Neue',system-ui,sans-serif!important;font-size:12.5px!important;font-weight:800!important;line-height:1.25!important;text-align:center!important;text-decoration:none!important;white-space:nowrap!important;cursor:pointer!important;box-shadow:0 2px 8px rgba(0,0,0,.22)!important;transition:transform .14s ease,border-color .14s ease,filter .14s ease!important}" +
+            "#sti-modale-carte-candidat .sti-cc-btn:hover:not(:disabled){border-color:#38bdf8!important;transform:translateY(-1px)!important}" +
+            "#sti-modale-carte-candidat .sti-cc-btn:disabled{opacity:.68!important;cursor:wait!important}" +
+            "#sti-modale-carte-candidat .sti-cc-btn-primary{background:linear-gradient(135deg,#0ea5e9,#0284c7)!important;color:#fff!important;border-color:transparent!important;font-weight:900!important;box-shadow:0 6px 18px rgba(14,165,233,.32)!important}" +
+            "#sti-modale-carte-candidat .sti-cc-btn-primary:hover:not(:disabled){filter:brightness(1.07)!important;border-color:transparent!important}" +
+            "#sti-modale-carte-candidat .sti-cc-btn-ghost:hover:not(:disabled){border-color:#f87171!important;color:#fecaca!important}" +
+            "@media(max-width:460px){#sti-modale-carte-candidat .sti-cc-actions{grid-template-columns:1fr!important}}";
+          (document.head || document.documentElement).appendChild(stCcMod);
+        }
+
         if (!modalCarteEl) {
           modalCarteEl = document.createElement("div");
           modalCarteEl.id = "sti-modale-carte-candidat";
@@ -2790,11 +2805,11 @@
                 "<img src='" + esc(R + "assets/images/qr-stiv2.png") + "' alt='QR' style='width:42px;height:42px;border-radius:7px;background:#fff;padding:2px' />" +
               "</div>" +
             "</div>" +
-            "<div style='display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px'>" +
-              "<button type='button' id='sti-cc-dl' style='border:none;background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;border-radius:999px;padding:8px 15px;font-size:12px;font-weight:900;cursor:pointer'>📥 Télécharger en PNG HD</button>" +
-              "<button type='button' id='sti-cc-print' style='border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer'>🖨️ Imprimer la carte</button>" +
-              "<button type='button' id='sti-cc-photo' style='border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer'>📷 " + (phOk ? "Photo / Recadrer" : "Ajouter ma photo") + "</button>" +
-              "<button type='button' id='sti-cc-close2' style='border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer'>Fermer</button>" +
+            "<div class='sti-cc-actions'>" +
+              "<button type='button' id='sti-cc-dl' class='sti-cc-btn sti-cc-btn-primary'>📥 Télécharger en PNG HD</button>" +
+              "<button type='button' id='sti-cc-print' class='sti-cc-btn'>🖨️ Imprimer la carte</button>" +
+              "<button type='button' id='sti-cc-photo' class='sti-cc-btn'>📷 " + (phOk ? "Photo / Recadrer" : "Ajouter ma photo") + "</button>" +
+              "<button type='button' id='sti-cc-close2' class='sti-cc-btn sti-cc-btn-ghost'>Fermer</button>" +
             "</div>" +
           "</div>";
 
@@ -2813,7 +2828,7 @@
           if (!stPr) {
             stPr = document.createElement("style");
             stPr.id = "sti-print-style-eleve-cc";
-            stPr.textContent = "#sti-print-sheet-eleve-cc{display:none}@media print{body.sti-printing-eleve-cc>*:not(#sti-print-sheet-eleve-cc){display:none!important}body.sti-printing-eleve-cc #sti-print-sheet-eleve-cc{display:block!important;padding:18mm 10mm;background:#fff!important}}";
+            stPr.textContent = "#sti-print-sheet-eleve-cc{display:none}@media print{body.sti-printing-eleve-cc>*:not(#sti-print-sheet-eleve-cc){display:none!important}body.sti-printing-eleve-cc #sti-print-sheet-eleve-cc{display:block!important;padding:18mm 10mm;background:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body.sti-printing-eleve-cc #sti-print-sheet-eleve-cc *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}";
             document.head.appendChild(stPr);
           }
           sh.innerHTML = "<div style='max-width:440px;margin:20px auto'>" + box.outerHTML + "</div>";

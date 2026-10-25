@@ -2096,9 +2096,9 @@ test('v459 : modale Carte Candidat fonctionnelle (CSS plein écran + 4 boutons) 
   const tabJs = read('assets/js/quiz-tableaux.js');
   const swJs = read('sw.js');
 
-  // 1) Modale Carte Candidat (#modal-carte-candidat-admin) : cachée par défaut, position:fixed, z-index 128000 (au-dessus Trombi 120000, sous Studio Photo 135000)
+  // 1) Modale Carte Candidat (#modal-carte-candidat-admin) : cachée par défaut, position:fixed, z-index au-dessus Trombi & Fiche Élève, sous Studio Photo
   assert.match(adminHtml, /id="modal-carte-candidat-admin"[^>]*hidden/);
-  assert.match(adminCss, /#modal-carte-candidat-admin,\s*\n?\.modal-badge-sti-overlay\s*\{[\s\S]*?display:\s*none\s*!important;[\s\S]*?position:\s*fixed\s*!important;[\s\S]*?z-index:\s*128000\s*!important;/);
+  assert.match(adminCss, /#modal-carte-candidat-admin,\s*\n?\.modal-badge-sti-overlay\s*\{[\s\S]*?display:\s*none\s*!important;[\s\S]*?position:\s*fixed\s*!important;[\s\S]*?z-index:\s*\d+\s*!important;/);
   assert.match(adminCss, /#modal-carte-candidat-admin\.ouvert,\s*\n?\.modal-badge-sti-overlay\.ouvert\s*\{\s*display:\s*flex\s*!important;/);
   assert.match(adminCss, /\.modal-badge-sti-box/);
   assert.match(adminCss, /\.modal-badge-sti-top/);
@@ -2538,11 +2538,11 @@ test('v461 (structure) : compteurs vidéos (.mp4) & audios (.mp3) reliés à sti
   assert.match(syncProgJs, /function fusionnerMediaProgMonotone\(/);
   assert.match(syncProgJs, /function isolerComptePartageSiBesoin\(/);
 
-  // 4) Cache-busters v461 + Service Worker v321
-  assert.match(adminHtml, /admin\.js\?v=461-compteurs-media/);
+  // 4) Cache-busters v461+ + Service Worker v321+
+  assert.match(adminHtml, /admin\.js\?v=4\d{2}-/);
   assert.match(adminHtml, /protection\.js\?v=461/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v321"/);
-  assert.match(swJs, /var UPDATE_ID = "v461-compteurs-media"/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}"/);
+  assert.match(swJs, /compteurs-media-v461/);
 });
 
 test('v461 (comportemental VM) : ABED Ala (4eme SI2) remonte 1/8 vidéo (73%) depuis sti_progressions même après purge acces, suivi <10% + TP Tunisie/CSS animé et hachage contenu sync-progressions', () => {
@@ -2668,6 +2668,182 @@ test('v461 (comportemental VM) : ABED Ala (4eme SI2) remonte 1/8 vidéo (73%) de
   assert.equal(merged['video:php-cours'].maxPct, 80, 'La progression locale plus avancée ne doit jamais être écrasée par une copie cloud plus ancienne');
   assert.equal(merged['audio:sql-cours'].done, true, 'Les médias terminés sur un autre appareil doivent être conservés');
 });
+
+test('v462 : restauration complète des 4 boutons de la Carte Officielle STI V2.0 (PNG HD, Imprimer, Photo/Recadrer, Fermer), hiérarchie z-index et purge SW', async () => {
+  const adminHtml = read('admin.html');
+  const adminCss = read('assets/css/admin-saas.css');
+  const adminJs = read('assets/js/admin.js');
+  const accesJs = read('assets/js/acces.js');
+  const swJs = read('sw.js');
+
+  // 1) Chargement versionné + CSS de secours critique intégré dans admin.html
+  assert.match(adminHtml, /assets\/css\/admin-saas\.css\?v=462/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=462-carte-boutons/);
+  assert.match(adminHtml, /id="style-carte-candidat-secours-v462"/);
+  assert.match(adminHtml, /\[hidden\]\{display:none!important\}/);
+
+  // 2) Hiérarchie stricte des z-index : Studio Photo > Carte Candidat > Trombinoscope > Fiche Élève (.modal-fond)
+  const zFond = Number((adminCss.match(/\.modal-fond\s*\{\s*z-index:\s*(\d+)\s*!important;/) || [])[1]);
+  const zTrombi = Number((adminCss.match(/\.modal-trombi-overlay\s*\{[\s\S]*?z-index:\s*(\d+)\s*!important;/) || [])[1]);
+  const zCarte = Number((adminCss.match(/#modal-carte-candidat-admin,\s*\.modal-badge-sti-overlay\s*\{[\s\S]*?z-index:\s*(\d+)\s*!important;/) || [])[1]);
+  const zStudio = Number((adminCss.match(/#adm-studio-photo-overlay\s*\{[\s\S]*?z-index:\s*(\d+)\s*!important;/) || [])[1]);
+  assert.ok(zFond > 0 && zFond < zTrombi, `z-index .modal-fond (${zFond}) < .modal-trombi-overlay (${zTrombi})`);
+  assert.ok(zTrombi < zCarte, `z-index .modal-trombi-overlay (${zTrombi}) < #modal-carte-candidat-admin (${zCarte})`);
+  assert.ok(zCarte < zStudio, `z-index #modal-carte-candidat-admin (${zCarte}) < #adm-studio-photo-overlay (${zStudio})`);
+
+  // 3) Protection !important des 4 boutons dans admin-saas.css + acces.js
+  assert.match(adminCss, /#modal-carte-candidat-admin\s+\.modal-badge-sti-actions\s*\{\s*display:\s*grid\s*!important;\s*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)\s*!important;/);
+  assert.match(adminCss, /\.modal-badge-sti-btn\s*\{[\s\S]*?padding:\s*10px\s+14px\s*!important;[\s\S]*?border-radius:\s*13px\s*!important;/);
+  assert.match(accesJs, /id\s*=\s*"sti-style-modale-carte-candidat"/);
+  assert.match(accesJs, /class='sti-cc-actions'/);
+  assert.match(accesJs, /id='sti-cc-dl'\s+class='sti-cc-btn sti-cc-btn-primary'/);
+  assert.match(accesJs, /id='sti-cc-print'\s+class='sti-cc-btn'/);
+  assert.match(accesJs, /id='sti-cc-photo'\s+class='sti-cc-btn'/);
+  assert.match(accesJs, /id='sti-cc-close2'\s+class='sti-cc-btn sti-cc-btn-ghost'/);
+
+  // 4) Service Worker v462 : actualisation des 4 fichiers + priorité au CACHE actif + purge inter-caches
+  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v322"/);
+  assert.match(swJs, /var UPDATE_ID\s*=\s*"v462-carte-boutons"/);
+  for (const cible of ['./admin.html', './assets/css/admin-saas.css', './assets/js/admin.js', './assets/js/acces.js']) {
+    const esc = cible.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.match(swJs, new RegExp(`url:\\s*"${esc}",\\s*revision:\\s*"carte-boutons-v462"`));
+  }
+  assert.match(swJs, /var cActif\s*=\s*await caches\.open\(CACHE\);/);
+  assert.match(swJs, /await ancC\.delete\(u,\s*\{\s*ignoreSearch:\s*true\s*\}\);/);
+
+  // 5) Test comportemental VM des 4 boutons de #modal-carte-candidat-admin (PNG HD, Imprimer, Photo/Recadrer, Fermer)
+  function mkEl(id = '', tag = 'div') {
+    const attrs = {};
+    const listeners = {};
+    const classes = new Set();
+    return {
+      id,
+      tagName: tag.toUpperCase(),
+      hidden: id === 'modal-carte-candidat-admin',
+      disabled: false,
+      innerHTML: '',
+      textContent: '',
+      download: '',
+      href: '',
+      style: {},
+      classList: {
+        add: (...cs) => cs.forEach((c) => classes.add(c)),
+        remove: (...cs) => cs.forEach((c) => classes.delete(c)),
+        contains: (c) => classes.has(c)
+      },
+      setAttribute: (k, v) => { attrs[k] = String(v); },
+      getAttribute: (k) => (k in attrs ? attrs[k] : null),
+      addEventListener: (ev, fn) => { (listeners[ev] = listeners[ev] || []).push(fn); },
+      dispatch: (ev, extra = {}) => {
+        (listeners[ev] || []).forEach((fn) => fn({ preventDefault() {}, target: extra.target || null, ...extra }));
+      },
+      click() { this.dispatch('click', { target: this }); },
+      remove() {}
+    };
+  }
+
+  const els = {
+    'modal-carte-candidat-admin': mkEl('modal-carte-candidat-admin'),
+    'conteneur-carte-candidat-admin': mkEl('conteneur-carte-candidat-admin'),
+    'btn-fermer-carte-candidat-admin': mkEl('btn-fermer-carte-candidat-admin', 'button'),
+    'btn-fermer-carte-candidat-bas': mkEl('btn-fermer-carte-candidat-bas', 'button'),
+    'btn-dl-carte-candidat-png': mkEl('btn-dl-carte-candidat-png', 'button'),
+    'btn-print-carte-candidat': mkEl('btn-print-carte-candidat', 'button'),
+    'btn-recadrer-depuis-carte': mkEl('btn-recadrer-depuis-carte', 'button'),
+    'sti-print-sheet-trombi': mkEl('sti-print-sheet-trombi')
+  };
+  const bodyEl = mkEl('body', 'body');
+  const telechargements = [];
+  let printAppele = 0;
+  let studioOuvertPour = null;
+
+  const startIdx = adminJs.indexOf('var candidatCarteAdminActif = null;');
+  const endIdx = adminJs.indexOf('function obtenirProfilsFiltresTrombinoscope()');
+  assert.ok(startIdx > 0 && endIdx > startIdx, 'Bloc Carte Candidat localisé dans admin.js');
+  const extraitCarte = adminJs.slice(startIdx, endIdx);
+
+  const ctx = {
+    echHtml: (s) => String(s == null ? '' : s),
+    estGold: () => true,
+    estEnLigne: () => true,
+    photoEleveSureAdmin: (u) => u || '',
+    initialesPourProfil: () => 'AE',
+    nomPrenomTexte: (p) => `${p.nom} ${p.prenom}`,
+    contact: (p) => p.email,
+    lyceePropre: (p) => p.lycee,
+    bilanProgressionMediaUser: () => ({ pct: 84 }),
+    lancerImpressionFeuilleDediee: (html) => {
+      els['sti-print-sheet-trombi'].innerHTML = html;
+      bodyEl.classList.add('impression-trombi-active');
+      printAppele++;
+    },
+    ouvrirStudioPhotoAdmin: (p) => { studioOuvertPour = p; },
+    setTimeout: (fn) => { fn(); return 1; },
+    clearTimeout: () => {},
+    getComputedStyle: () => ({ getPropertyValue: () => '#10b981' }),
+    Image: function () {
+      const im = { width: 128, height: 128, onload: null, onerror: null };
+      Object.defineProperty(im, 'src', { set() { if (im.onload) Promise.resolve().then(() => im.onload()); } });
+      return im;
+    },
+    document: {
+      documentElement: {},
+      body: {
+        appendChild: (a) => { if (a.tagName === 'A') telechargements.push(a); },
+        classList: bodyEl.classList
+      },
+      getElementById: (id) => els[id] || null,
+      createElement: (tag) => {
+        if (tag === 'canvas') {
+          return {
+            width: 0,
+            height: 0,
+            getContext: () => ({
+              beginPath() {}, moveTo() {}, arcTo() {}, closePath() {}, arc() {},
+              save() {}, restore() {}, clip() {}, fill() {}, stroke() {},
+              fillRect() {}, fillText() {}, drawImage() {},
+              createLinearGradient: () => ({ addColorStop() {} }),
+              measureText: () => ({ width: 90 })
+            }),
+            toDataURL: () => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB'
+          };
+        }
+        return mkEl('', tag);
+      }
+    }
+  };
+
+  vm.runInNewContext(extraitCarte, ctx);
+  const eleveTest = { id: 'u-462', nom: 'ABED', prenom: 'Ala', email: 'ala@sti.tn', classe: '4eme SI2', lycee: 'Lycée Gafsa' };
+  ctx.ouvrirCarteCandidatAdmin(eleveTest);
+
+  assert.equal(els['modal-carte-candidat-admin'].hidden, false);
+  assert.equal(els['modal-carte-candidat-admin'].classList.contains('ouvert'), true);
+  assert.match(els['conteneur-carte-candidat-admin'].innerHTML, /ABED Ala/);
+
+  // Clic 1 : Télécharger en PNG HD
+  els['btn-dl-carte-candidat-png'].click();
+  await new Promise((r) => setImmediate(r));
+  await new Promise((r) => setImmediate(r));
+  assert.equal(telechargements.length, 1, 'Le bouton PNG HD doit déclencher le téléchargement');
+  assert.match(telechargements[0].download, /^Carte-STI-V2-ABED-Ala\.png$/);
+  assert.equal(els['btn-dl-carte-candidat-png'].disabled, false, 'Le bouton PNG HD doit redevenir cliquable immédiatement');
+
+  // Clic 2 : Imprimer la carte
+  els['btn-print-carte-candidat'].click();
+  assert.equal(printAppele, 1, 'Le bouton Imprimer la carte doit préparer et lancer la feuille dédiée');
+  assert.match(els['sti-print-sheet-trombi'].innerHTML, /ABED Ala/);
+
+  // Clic 3 : Photo / Recadrer
+  els['btn-recadrer-depuis-carte'].click();
+  assert.equal(studioOuvertPour.id, 'u-462', 'Le bouton Photo / Recadrer doit ouvrir le studio photo pour cet élève');
+
+  // Clic 4 : Fermer
+  els['btn-fermer-carte-candidat-bas'].click();
+  assert.equal(els['modal-carte-candidat-admin'].hidden, true, 'Le bouton Fermer du bas doit masquer la modale');
+  assert.equal(els['modal-carte-candidat-admin'].classList.contains('ouvert'), false);
+});
+
 
 
 

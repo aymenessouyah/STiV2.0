@@ -1140,7 +1140,7 @@
   }
   .modal-fond {
     position: fixed; inset: 0; background: rgba(35,32,26,.6); display: none;
-    align-items: center; justify-content: center; z-index: 2147483647 !important; padding: 14px;
+    align-items: center; justify-content: center; z-index: 2147483640 !important; padding: 14px;
   }
   .modal-fond.visible { display: flex; }
   .modal-boite {
@@ -1937,7 +1937,7 @@
     })();
   </script>
   <link rel="stylesheet" href="assets/fonts/fonts.css" />
-  <link rel="stylesheet" href="assets/css/admin-saas.css?v=459" />
+  <link rel="stylesheet" href="assets/css/admin-saas.css?v=462" />
 </head>
 <body class="cockpit-airbus">
 
@@ -4523,7 +4523,7 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=227"></script>
 <script src="assets/js/protection.js?v=461" defer></script>
-  <script src="assets/js/admin.js?v=461-compteurs-media"></script>
+  <script src="assets/js/admin.js?v=462-carte-boutons"></script>
   <script src="assets/js/admin-couverture.js?v=435"></script>
   <script src="assets/js/admin-revision.js?v=438"></script>
   <script src="assets/js/admin-erreurs.js?v=457"></script>
@@ -5151,7 +5151,24 @@
       </div>
     </div>
 
-    <!-- v448 : Modale Carte Officielle Candidat STI V2.0 (aperçu, téléchargement PNG HD & impression) -->
+    <!-- v448 / v462 : Modale Carte Officielle Candidat STI V2.0 (styles critiques autonomes + aperçu, téléchargement PNG HD, impression & studio photo) -->
+    <style id="style-carte-candidat-secours-v462">
+      [hidden]{display:none!important}
+      #modal-carte-candidat-admin,.modal-badge-sti-overlay{display:none;position:fixed;inset:0;z-index:2147483645;background:rgba(8,12,20,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+      #modal-carte-candidat-admin.ouvert,.modal-badge-sti-overlay.ouvert{display:flex}
+      .modal-badge-sti-box,.modal-badge-sti-boite{width:min(540px,100%);max-height:calc(100vh - 32px);overflow-y:auto;background:var(--adm-glass-strong,#0f172a);color:var(--adm-text,#f8fafc);border:1.5px solid var(--adm-border-strong,rgba(255,255,255,.18));border-radius:24px;padding:18px 20px;box-shadow:0 28px 70px rgba(0,0,0,.55)}
+      .modal-badge-sti-top,.modal-badge-sti-entete{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+      .modal-badge-sti-close,.modal-badge-sti-fermer{width:34px;height:34px;padding:0;border-radius:999px;border:1.5px solid var(--adm-border-strong,rgba(255,255,255,.22));background:var(--adm-surface-2,rgba(255,255,255,.08));color:var(--adm-text,#f8fafc);font-size:14px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+      #modal-carte-candidat-admin .modal-badge-sti-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+      .modal-badge-sti-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+      .modal-badge-sti-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:10px 14px;border-radius:13px;border:1.5px solid var(--adm-border-strong,rgba(148,163,184,.36));background:var(--adm-surface-2,#1e293b);color:var(--adm-text,#f8fafc);font-family:var(--adm-font,"Comic Sans MS","Comic Neue",sans-serif);font-size:12.5px;font-weight:800;line-height:1.25;text-decoration:none;white-space:nowrap;cursor:pointer;flex:1 1 auto}
+      .modal-badge-sti-btn.primaire{background:var(--adm-grad-primary,linear-gradient(135deg,#10b981,#059669));color:var(--adm-accent-ink,#fff);border-color:transparent}
+      #adm-studio-photo-overlay{display:none;position:fixed;inset:0;z-index:2147483646;background:rgba(8,12,20,.82);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:16px}
+      #adm-studio-photo-overlay.ouvert{display:flex}
+      #sti-print-sheet-trombi{display:none}
+      @media(max-width:460px){#modal-carte-candidat-admin .modal-badge-sti-actions{grid-template-columns:1fr}}
+      @media print{body.impression-trombi-active>*:not(#sti-print-sheet-trombi){display:none!important}body.impression-trombi-active #sti-print-sheet-trombi{display:block!important;padding:10mm 8mm!important;background:#fff!important;color:#0f172a!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
+    </style>
     <div class="modal-badge-sti-overlay" id="modal-carte-candidat-admin" role="dialog" aria-modal="true" aria-hidden="true" hidden aria-labelledby="titre-modal-carte-candidat">
       <div class="modal-badge-sti-box">
         <div class="modal-badge-sti-top">

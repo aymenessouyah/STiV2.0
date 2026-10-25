@@ -664,10 +664,34 @@
     if (typeof verifierNouvellesDemandes === "function") verifierNouvellesDemandes();
   }
 
-  /* v445 / v448 : Gestion Admin 1-clic & en lot des photos élèves + Studio Recadrage + Trombinoscope + Carte Candidat */
+  /* v445 / v448 / v462 : Gestion Admin 1-clic & en lot des photos élèves + Studio Recadrage + Trombinoscope + Carte Candidat */
   var inputPhotoEleveAdminGlobal = null;
   var profilPhotoCibleAdmin = null;
   var lotValidationPhotosEnCours = false;
+  var timerToastAdmin = null;
+
+  function toastAdmin(msg, type) {
+    if (!msg || typeof document === "undefined" || !document.body) return;
+    var el = document.getElementById("sti-toast-admin-v462");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "sti-toast-admin-v462";
+      el.setAttribute("role", "status");
+      el.setAttribute("aria-live", "polite");
+      document.body.appendChild(el);
+    }
+    var bord = type === "err" ? "#ef4444" : (type === "info" ? "#38bdf8" : "#10b981");
+    el.style.cssText =
+      "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147483647;" +
+      "background:#0f172a;color:#f8fafc;border:2px solid " + bord + ";border-radius:999px;" +
+      "padding:9px 18px;font:800 12.5px/1.35 var(--adm-font,'Comic Sans MS',sans-serif);" +
+      "box-shadow:0 14px 34px rgba(0,0,0,.45);max-width:min(560px,92vw);text-align:center;pointer-events:none;";
+    el.textContent = String(msg);
+    if (timerToastAdmin) clearTimeout(timerToastAdmin);
+    timerToastAdmin = setTimeout(function () {
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+    }, 3200);
+  }
 
   function gererPhotoEleveAdmin(p, action, dataUrl, onDone, optsPhoto) {
     if (!p || !p.id) return;
@@ -1271,22 +1295,94 @@
       if (btnCible) {
         btnCible.disabled = false;
         btnCible.textContent = "✅ Carte PNG téléchargée !";
-        setTimeout(function () { btnCible.textContent = txtOrig; }, 2000);
+        if (btnCible._timerResetLbl) clearTimeout(btnCible._timerResetLbl);
+        btnCible._timerResetLbl = setTimeout(function () {
+          btnCible.textContent = "📥 Télécharger en PNG HD";
+        }, 2000);
       }
     }).catch(function () {
       if (btnCible) {
         btnCible.disabled = false;
-        btnCible.textContent = txtOrig || "📥 Télécharger en PNG HD";
+        btnCible.textContent = "📥 Télécharger en PNG HD";
       }
     });
+  }
+
+  function fermerCarteCandidatAdmin() {
+    var modCc = document.getElementById("modal-carte-candidat-admin");
+    if (!modCc) return;
+    modCc.classList.remove("ouvert");
+    modCc.hidden = true;
+    modCc.setAttribute("aria-hidden", "true");
+  }
+
+  function assurerBranchementCarteCandidatAdmin() {
+    var modCc = document.getElementById("modal-carte-candidat-admin");
+    var fCc1 = document.getElementById("btn-fermer-carte-candidat-admin");
+    var fCc2 = document.getElementById("btn-fermer-carte-candidat-bas");
+    var btnDlCc = document.getElementById("btn-dl-carte-candidat-png");
+    var btnPrCc = document.getElementById("btn-print-carte-candidat");
+    var btnRecCc = document.getElementById("btn-recadrer-depuis-carte");
+
+    if (modCc && modCc.getAttribute("data-carte-overlay-bound") !== "1") {
+      modCc.setAttribute("data-carte-overlay-bound", "1");
+      modCc.addEventListener("click", function (ev) {
+        if (ev.target === modCc) fermerCarteCandidatAdmin();
+      });
+    }
+    if (fCc1 && fCc1.getAttribute("data-carte-btn-bound") !== "1") {
+      fCc1.setAttribute("data-carte-btn-bound", "1");
+      fCc1.addEventListener("click", function (ev) {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        fermerCarteCandidatAdmin();
+      });
+    }
+    if (fCc2 && fCc2.getAttribute("data-carte-btn-bound") !== "1") {
+      fCc2.setAttribute("data-carte-btn-bound", "1");
+      fCc2.addEventListener("click", function (ev) {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        fermerCarteCandidatAdmin();
+      });
+    }
+    if (btnDlCc && btnDlCc.getAttribute("data-carte-btn-bound") !== "1") {
+      btnDlCc.setAttribute("data-carte-btn-bound", "1");
+      btnDlCc.addEventListener("click", function (ev) {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        telechargerCarteCandidatPngHD(candidatCarteAdminActif, btnDlCc);
+      });
+    }
+    if (btnPrCc && btnPrCc.getAttribute("data-carte-btn-bound") !== "1") {
+      btnPrCc.setAttribute("data-carte-btn-bound", "1");
+      btnPrCc.addEventListener("click", function (ev) {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        if (!candidatCarteAdminActif) return;
+        lancerImpressionFeuilleDediee(
+          "<div style='max-width:460px;margin:24px auto'>" + construireHtmlCarteCandidatSTI(candidatCarteAdminActif) + "</div>"
+        );
+      });
+    }
+    if (btnRecCc && btnRecCc.getAttribute("data-carte-btn-bound") !== "1") {
+      btnRecCc.setAttribute("data-carte-btn-bound", "1");
+      btnRecCc.addEventListener("click", function (ev) {
+        if (ev && ev.preventDefault) ev.preventDefault();
+        if (candidatCarteAdminActif) ouvrirStudioPhotoAdmin(candidatCarteAdminActif);
+      });
+    }
   }
 
   function ouvrirCarteCandidatAdmin(p) {
     if (!p) return;
     candidatCarteAdminActif = p;
+    assurerBranchementCarteCandidatAdmin();
     var mod = document.getElementById("modal-carte-candidat-admin");
     var cont = document.getElementById("conteneur-carte-candidat-admin");
     if (!mod || !cont) return;
+    var btnDl = document.getElementById("btn-dl-carte-candidat-png");
+    if (btnDl) {
+      if (btnDl._timerResetLbl) clearTimeout(btnDl._timerResetLbl);
+      btnDl.disabled = false;
+      btnDl.textContent = "📥 Télécharger en PNG HD";
+    }
     cont.innerHTML = construireHtmlCarteCandidatSTI(p);
     mod.hidden = false;
     mod.setAttribute("aria-hidden", "false");
@@ -1963,40 +2059,12 @@
       var inpConsR = document.getElementById("conseil-recherche");
       if (inpConsR) inpConsR.addEventListener("input", rendreConseilClasseAdmin);
 
-      var modCc = document.getElementById("modal-carte-candidat-admin");
-      var fCc1 = document.getElementById("btn-fermer-carte-candidat-admin");
-      var fCc2 = document.getElementById("btn-fermer-carte-candidat-bas");
-      var btnDlCc = document.getElementById("btn-dl-carte-candidat-png");
-      var btnPrCc = document.getElementById("btn-print-carte-candidat");
-      var btnRecCc = document.getElementById("btn-recadrer-depuis-carte");
-      function fermerCc() {
-        if (!modCc) return;
-        modCc.classList.remove("ouvert");
-        modCc.hidden = true;
-        modCc.setAttribute("aria-hidden", "true");
-      }
-      if (fCc1) fCc1.addEventListener("click", function (ev) { ev.preventDefault(); fermerCc(); });
-      if (fCc2) fCc2.addEventListener("click", function (ev) { ev.preventDefault(); fermerCc(); });
-      if (modCc) modCc.addEventListener("click", function (ev) { if (ev.target === modCc) fermerCc(); });
-      if (btnDlCc) btnDlCc.addEventListener("click", function (ev) {
-        ev.preventDefault();
-        telechargerCarteCandidatPngHD(candidatCarteAdminActif, btnDlCc);
-      });
-      if (btnPrCc) btnPrCc.addEventListener("click", function (ev) {
-        ev.preventDefault();
-        if (!candidatCarteAdminActif) return;
-        lancerImpressionFeuilleDediee(
-          "<div style='max-width:460px;margin:24px auto'>" + construireHtmlCarteCandidatSTI(candidatCarteAdminActif) + "</div>"
-        );
-      });
-      if (btnRecCc) btnRecCc.addEventListener("click", function (ev) {
-        ev.preventDefault();
-        if (candidatCarteAdminActif) ouvrirStudioPhotoAdmin(candidatCarteAdminActif);
-      });
+      assurerBranchementCarteCandidatAdmin();
       document.addEventListener("keydown", function (ev) {
         if (ev.key === "Escape") {
-          if (modCc && modCc.classList.contains("ouvert")) {
-            fermerCc();
+          var modCcEsc = document.getElementById("modal-carte-candidat-admin");
+          if (modCcEsc && modCcEsc.classList.contains("ouvert")) {
+            fermerCarteCandidatAdmin();
             return;
           }
           fermerTrombinoscopeAdmin();
@@ -6236,7 +6304,7 @@
       "<div class='fiche-obs'>" +
         "<div class='fiche-obs-liste' id='fiche-obs-liste'><span style='color:#7a6f5d;font-size:11.5px;font-weight:700'>⏳ Chargement des observations…</span></div>" +
         "<div style='display:flex;gap:8px;align-items:flex-start;margin-top:8px;flex-wrap:wrap'>" +
-          "<textarea id='fiche-obs-texte' maxlength='500' rows='2' placeholder='Constat, contexte, décision du conseil… (500 caractères ; jamais visible par l'élève)' style='flex:1 1 260px;min-width:200px;font:700 12px/1.5 system-ui,sans-serif;color:#23201a;background:#fffdf5;border:2px solid #e2d5be;border-radius:10px;padding:8px 10px;resize:vertical'></textarea>" +
+          "<textarea id='fiche-obs-texte' maxlength='500' rows='2' placeholder='Constat, contexte, décision du conseil… (500 caractères ; jamais visible par l&#39;élève)' style='flex:1 1 260px;min-width:200px;font:700 12px/1.5 system-ui,sans-serif;color:#23201a;background:#fffdf5;border:2px solid #e2d5be;border-radius:10px;padding:8px 10px;resize:vertical'></textarea>" +
           "<button type='button' class='btn-outil' id='btn-fiche-obs-ajouter'>➕ Ajouter</button>" +
         "</div>" +
       "</div>";

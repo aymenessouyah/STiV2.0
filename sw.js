@@ -3,14 +3,18 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v321";
+var CACHE = "sti-atelier-v322";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v461-compteurs-media";
-/* Historique lots : v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v462-carte-boutons";
+/* Historique lots : v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "carte-boutons-v462" },
+  { url: "./assets/css/admin-saas.css", revision: "carte-boutons-v462" },
+  { url: "./assets/js/admin.js", revision: "carte-boutons-v462" },
+  { url: "./assets/js/acces.js", revision: "carte-boutons-v462" },
   { url: "./assets/js/admin.js", revision: "compteurs-media-v461" },
   { url: "./assets/js/protection.js", revision: "compteurs-media-v461" },
   { url: "./assets/js/acces.js", revision: "compteurs-media-v461" },
@@ -1078,6 +1082,8 @@ async function prechargerSequentiel(forcerMajCode) {
 async function actualiserFichiersConcernes() {
   var cache = await caches.open(CACHE);
   var revisions = await caches.open(CACHE_REVISIONS);
+  var nomsCaches = [];
+  try { nomsCaches = await caches.keys(); } catch (eKeys) {}
   await Promise.allSettled(UPDATE_FILES.map(async function (item) {
     var u = typeof item === "string" ? item : item.url;
     var revision = typeof item === "string" ? UPDATE_ID : item.revision;
@@ -1096,6 +1102,15 @@ async function actualiserFichiersConcernes() {
       var rep = await fetch(u, { cache: "reload" });
       if (rep && rep.ok) {
         try { await cache.delete(u, { ignoreSearch: true }); } catch (eDel) {}
+        for (var idxC = 0; idxC < nomsCaches.length; idxC++) {
+          var nomC = nomsCaches[idxC];
+          if (nomC && nomC !== CACHE && nomC !== CACHE_VIDEOS_LABO && nomC.indexOf("sti-atelier-") === 0) {
+            try {
+              var ancC = await caches.open(nomC);
+              await ancC.delete(u, { ignoreSearch: true });
+            } catch (eAncDel) {}
+          }
+        }
         await cache.put(u, rep.clone());
         await revisions.put(marker, new Response(UPDATE_ID));
       }
@@ -1181,6 +1196,13 @@ self.addEventListener("message", function (evt) {
 });
 
 async function chercherDansCache(req, url) {
+  try {
+    var cActif = await caches.open(CACHE);
+    var mActifExact = await cActif.match(req);
+    if (mActifExact) { signalerCacheEviteSTI(mActifExact); rafraichirLRUExistantSTI(req, mActifExact, CACHE, "runtime"); return mActifExact; }
+    var mActif = await cActif.match(req, { ignoreSearch: true });
+    if (mActif) { signalerCacheEviteSTI(mActif); rafraichirLRUExistantSTI(req, mActif, CACHE, "runtime"); return mActif; }
+  } catch (eActif) {}
   var mExact = await caches.match(req);
   if (mExact) { signalerCacheEviteSTI(mExact); rafraichirLRUExistantSTI(req, mExact, CACHE, "runtime"); return mExact; }
   var m = await caches.match(req, { ignoreSearch: true });
