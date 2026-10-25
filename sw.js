@@ -6,10 +6,17 @@
 var CACHE = "sti-atelier-v317";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v451-conseil-classe-nouveautes-marque";
+var UPDATE_ID = "v453-unif-acces-themes";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./ma-fiche-revision.html", revision: "unif-acces-themes-v453" },
+  { url: "./glossaire.html", revision: "unif-acces-themes-v453" },
+  { url: "./revision-erreurs.html", revision: "unif-acces-themes-v453" },
+  { url: "./404.html", revision: "unif-acces-themes-v453" },
+  { url: "./assets/data/nouveautes.json", revision: "unif-acces-themes-v453" },
+  { url: "./index.html", revision: "unif-acces-themes-v453" },
+  { url: "./nouveautes.html", revision: "unif-acces-themes-v453" },
   { url: "./nouveautes.html", revision: "conseil-classe-nouveautes-marque-v451" },
   { url: "./assets/js/nouveautes.js", revision: "conseil-classe-nouveautes-marque-v451" },
   { url: "./assets/data/nouveautes.json", revision: "conseil-classe-nouveautes-marque-v451" },

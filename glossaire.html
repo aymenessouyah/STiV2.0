@@ -63,51 +63,63 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" />
-<title>Glossaire FR · EN · AR — STI by AE</title>
-<link rel="icon" href="assets/icons/STI_by_AE.ico">
+<title>Glossaire FR · EN · AR — STI by AE V2.0</title>
+<link rel="icon" href="assets/icons/sti-icon-192.png">
 <style>
-  :root { --bg:#f6eedc; --ink:#101728; --line:#e2d3b4; --edge:#101728; --accent:#f4511e; --surface:#fffdf5; --muted:#6b6250; --indigo:#4338ca; }
+  :root { --bg:#f6eedc; --ink:#101728; --line:#e2d3b4; --edge:#101728; --accent:#f4511e; --surface:#fffdf5; --card:#ffffff; --muted:#6b6250; --teal:#0f766e; --def:#3c4454; --code-bg:#fef3c7; --code-brd:#fde68a; --code-ink:#92400e; --en:#b4552d; }
+  html.dark, html.dark-mode, html[data-theme="dark"] {
+    --bg:#0b1120; --ink:#f1f5f9; --line:#1e293b; --edge:#334155; --accent:#fb923c; --surface:#131c2e; --card:#162033; --muted:#94a3b8; --teal:#2dd4bf; --def:#cbd5e1; --code-bg:rgba(249,115,22,.14); --code-brd:rgba(251,146,60,.32); --code-ink:#fdba74; --en:#fdba74;
+  }
   * { box-sizing:border-box; margin:0 }
   body { font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif; color:var(--ink); background-color:var(--bg);
-    background-image:radial-gradient(circle, rgba(16,23,40,.13) 1.15px, transparent 1.15px),linear-gradient(180deg, rgba(248,168,107,.28) 0%, rgba(248,168,107,0) 340px);
+    background-image:radial-gradient(circle, rgba(16,23,40,.11) 1.15px, transparent 1.15px),linear-gradient(180deg, rgba(248,168,107,.22) 0%, rgba(248,168,107,0) 340px);
     background-repeat:repeat,no-repeat; background-size:23px 23px,100% 100%; }
+  html.dark body, html.dark-mode body, html[data-theme="dark"] body {
+    background-image:radial-gradient(circle, rgba(148,163,184,.1) 1.15px, transparent 1.15px),linear-gradient(180deg, rgba(249,115,22,.12) 0%, rgba(249,115,22,0) 340px);
+  }
   .barre { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
     padding:12px 18px; background:var(--surface); border-bottom:2.5px solid var(--edge); }
+  .barre-id { display:flex; align-items:center; gap:11px }
+  .barre-logo { width:40px; height:40px; border-radius:10px; border:2px solid var(--edge); object-fit:cover; flex-shrink:0 }
   .barre h1 { font-size:clamp(14px,2.8vw,18px); font-weight:800 }
   .barre .nb { font-size:11px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.08em }
   .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:999px; border:2px solid var(--edge);
     font:800 12px/1 inherit; text-decoration:none; cursor:pointer; background:var(--surface); color:var(--ink); box-shadow:2.5px 2.5px 0 var(--edge); }
   .btn:hover { transform:translate(-1px,-1px); box-shadow:3.5px 3.5px 0 var(--edge) }
-  main { max-width:1060px; margin:0 auto; padding:24px 16px 60px }
+  main { max-width:1060px; margin:0 auto; padding:24px 16px 76px }
   .recherche { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px }
-  .recherche input { flex:1; min-width:220px; padding:13px 16px; font-size:16px; border:2.5px solid var(--edge); border-radius:14px; background:#fff; color:var(--ink); box-shadow:3px 3px 0 rgba(16,23,40,.25) }
-  .recherche input:focus { outline:3px solid rgba(67,56,202,.35); outline-offset:1px }
+  .recherche input { flex:1; min-width:220px; padding:13px 16px; font-size:16px; border:2.5px solid var(--edge); border-radius:14px; background:var(--card); color:var(--ink); box-shadow:3px 3px 0 rgba(16,23,40,.22) }
+  .recherche input:focus { outline:3px solid rgba(15,118,110,.35); outline-offset:1px }
   .compteur { font-size:12.5px; font-weight:700; color:var(--muted) }
   .filtres { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px }
   .filtre { padding:8px 15px; border-radius:999px; border:2px solid var(--edge); background:var(--surface); color:var(--ink);
     font:800 12.5px/1 inherit; cursor:pointer; box-shadow:2px 2px 0 var(--edge) }
-  .filtre.actif { background:var(--ink); color:#f9f1e3; box-shadow:2px 2px 0 var(--accent) }
+  .filtre.actif { background:var(--accent); color:#fff; border-color:var(--edge); box-shadow:2px 2px 0 var(--edge) }
+  html.dark .filtre.actif, html.dark-mode .filtre.actif, html[data-theme="dark"] .filtre.actif { color:#0f172a }
   .grille { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px }
-  .carte { background:#fff; border:2px solid var(--edge); border-radius:14px; padding:14px 15px; box-shadow:5px 5px 0 rgba(16,23,40,.14) }
+  .carte { background:var(--card); border:2px solid var(--edge); border-radius:14px; padding:14px 15px; box-shadow:5px 5px 0 rgba(16,23,40,.16) }
   .carte .fr { font-size:16.5px; font-weight:800; display:flex; align-items:center; justify-content:space-between; gap:8px }
-  .module { flex:none; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; border-radius:999px; color:#fff; background:var(--indigo) }
-  .module.css3 { background:#7c3aed } .module.javascript { background:#b47d09 } .module.sql { background:#177245 } .module.php { background:#4f5b93 }
-  .en { font-size:13.5px; font-weight:700; color:#b4552d; margin-top:5px }
-  .en-badge { display:inline-block; background:#1d4ed8; color:#fff; font-size:9.5px; font-weight:800; letter-spacing:.06em; padding:2px 6px; border-radius:5px; vertical-align:2px; margin-right:3px }
-  .ar { direction:rtl; text-align:right; font-size:20px; font-weight:700; color:var(--indigo); margin:7px 0 6px; line-height:1.5 }
-  .def { font-size:13px; line-height:1.55; color:#3c4454 }
-  .def code { background:#eef0ff; border:1px solid #d8dcf5; border-radius:5px; padding:0 5px; font-size:12px; color:#3730a3 }
+  .module { flex:none; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; border-radius:999px; color:#fff; background:#d84315 }
+  .module.css3 { background:#0284c7 } .module.javascript { background:#b47d09 } .module.sql { background:#177245 } .module.php { background:#0f766e }
+  .en { font-size:13.5px; font-weight:700; color:var(--en); margin-top:5px }
+  .en-badge { display:inline-block; background:#0369a1; color:#fff; font-size:9.5px; font-weight:800; letter-spacing:.06em; padding:2px 6px; border-radius:5px; vertical-align:2px; margin-right:3px }
+  .ar { direction:rtl; text-align:right; font-size:20px; font-weight:700; color:var(--teal); margin:7px 0 6px; line-height:1.5 }
+  .def { font-size:13px; line-height:1.55; color:var(--def) }
+  .def code { background:var(--code-bg); border:1px solid var(--code-brd); border-radius:5px; padding:0 5px; font-size:12px; color:var(--code-ink) }
   .vide { display:none; text-align:center; padding:34px 12px; font-weight:700; color:var(--muted) }
   .pied { text-align:center; margin-top:30px }
-  @media print { .barre,.recherche,.filtres,.pied { display:none } body { background:#fff } .carte { box-shadow:none; break-inside:avoid } }
+  @media print { .barre,.recherche,.filtres,.pied,#sti-roue-wrap,#sti-bnav,#sti-pc-win-tools { display:none!important } body { background:#fff!important; color:#000!important } .carte { background:#fff!important; color:#000!important; box-shadow:none; break-inside:avoid } }
 </style>
   <link rel="manifest" href="manifest.webmanifest" />
 </head>
 <body>
 <header class="barre">
-  <div>
-    <h1>📖 Glossaire FR · EN · AR — Termes techniques STI</h1>
-    <div class="nb">HTML5 · CSS3 · JavaScript · SQL · PHP — Cherchez en français, en anglais ou en arabe</div>
+  <div class="barre-id">
+    <img class="barre-logo" src="assets/icons/sti-icon-512.png" alt="Logo officiel STI V2.0" width="40" height="40">
+    <div>
+      <h1>📖 Glossaire FR · EN · AR — Termes techniques STI</h1>
+      <div class="nb">HTML5 · CSS3 · JavaScript · SQL · PHP — Cherchez en français, en anglais ou en arabe</div>
+    </div>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
   <button type="button" id="btn-recherche-globale" class="btn">🔍 Recherche globale (Ctrl+K)</button>
@@ -253,7 +265,7 @@ afficher();
 </script>
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=425"></script>
-<script src="assets/js/acces.js?v=391"></script>
+<script src="assets/js/acces.js?v=453"></script>
   <script src="assets/js/sync-progressions.js" defer></script>
 </body>
 </html>
