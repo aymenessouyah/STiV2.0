@@ -68,11 +68,34 @@
     var total = (pages || []).length || 1;
     var setPages = {}; (pages || []).forEach(function (x) { setPages[x] = 1; });
     var journal = {}, maj = {};
+    var mapChapPage = { HTML5: "cours/html5.html", CSS3: "cours/css3.html", JS: "cours/javascript.html", SQL: "cours/sql.html", PHP: "cours/php.html" };
     (progRows || []).forEach(function (r) {
       var d = r && r.donnees; if (typeof d === "string") { try { d = JSON.parse(d); } catch (e) { d = null; } }
       if (!d) return;
       var j = d[JE_PAGES]; if (typeof j === "string") { try { j = JSON.parse(j); } catch (e) { j = null; } }
-      journal[r.user_id] = j || {}; maj[r.user_id] = r.maj || null;
+      var acc = Object.assign({}, j || {});
+      var bk = d["sti-reading-bookmarks"]; if (typeof bk === "string") { try { bk = JSON.parse(bk); } catch (e2) { bk = null; } }
+      if (bk && typeof bk === "object") {
+        Object.keys(bk).forEach(function (k) {
+          var rel = bk[k] && bk[k].relUrl ? String(bk[k].relUrl).replace(/^\/+/, "").split("?")[0].split("#")[0] : "";
+          if (rel) acc[rel] = 1;
+        });
+      }
+      var rev = d["sti-revision-v436"]; if (typeof rev === "string") { try { rev = JSON.parse(rev); } catch (e3) { rev = null; } }
+      if (rev && typeof rev === "object") {
+        Object.keys(rev).forEach(function (k) {
+          var relR = String(k).replace(/^\/+/, "").split("?")[0].split("#")[0];
+          if (relR) acc[relR] = 1;
+        });
+      }
+      var ch = d["sti-chapitres-vus"]; if (typeof ch === "string") { try { ch = JSON.parse(ch); } catch (e4) { ch = null; } }
+      if (ch && typeof ch === "object") {
+        Object.keys(ch).forEach(function (k) {
+          var pgC = mapChapPage[String(k).toUpperCase()];
+          if (ch[k] && pgC) acc[pgC] = 1;
+        });
+      }
+      journal[r.user_id] = acc; maj[r.user_id] = r.maj || null;
     });
     var quiz = {}, acces = {};
     (quizRows || []).forEach(function (q) {

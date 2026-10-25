@@ -3629,11 +3629,43 @@
         });
       }
 
+      if (!pagesVuesCloudParUser[uid]) pagesVuesCloudParUser[uid] = {};
       var pgVues = parserObjetJsonSoupleAdmin(d["sti-pages-vues-v432"]);
       if (pgVues && typeof pgVues === "object") {
-        if (!pagesVuesCloudParUser[uid]) pagesVuesCloudParUser[uid] = {};
         Object.keys(pgVues).forEach(function (pk) {
           if (pgVues[pk]) pagesVuesCloudParUser[uid][String(pk).replace(/^\/+/, "").split("?")[0].split("#")[0]] = true;
+        });
+      }
+      var bkVues = parserObjetJsonSoupleAdmin(d["sti-reading-bookmarks"]);
+      if (bkVues && typeof bkVues === "object") {
+        Object.keys(bkVues).forEach(function (bk) {
+          var itemBk = bkVues[bk];
+          var relBk = itemBk && itemBk.relUrl ? String(itemBk.relUrl).replace(/^\/+/, "").split("?")[0].split("#")[0] : "";
+          if (relBk && !/^(?:portail|admin)\.html$/i.test(relBk)) pagesVuesCloudParUser[uid][relBk] = true;
+        });
+      }
+      var lastRd = parserObjetJsonSoupleAdmin(d["sti-last-reading"]);
+      if (lastRd && lastRd.relUrl) {
+        var relLr = String(lastRd.relUrl).replace(/^\/+/, "").split("?")[0].split("#")[0];
+        if (relLr && !/^(?:portail|admin)\.html$/i.test(relLr)) pagesVuesCloudParUser[uid][relLr] = true;
+      }
+      var mapChapVersPage = {
+        HTML5: "cours/html5.html",
+        CSS3: "cours/css3.html",
+        JS: "cours/javascript.html",
+        SQL: "cours/sql.html",
+        PHP: "cours/php.html"
+      };
+      Object.keys(chapitresVusCloudParUser[uid] || {}).forEach(function (ckP) {
+        if (chapitresVusCloudParUser[uid][ckP] && mapChapVersPage[ckP]) {
+          pagesVuesCloudParUser[uid][mapChapVersPage[ckP]] = true;
+        }
+      });
+      var revTmp = parserObjetJsonSoupleAdmin(d["sti-revision-v436"]);
+      if (revTmp && typeof revTmp === "object") {
+        Object.keys(revTmp).forEach(function (rkP) {
+          var cleanRk = String(rkP).replace(/^\/+/, "").split("?")[0].split("#")[0];
+          if (cleanRk && !/^(?:portail|admin)\.html$/i.test(cleanRk)) pagesVuesCloudParUser[uid][cleanRk] = true;
         });
       }
 
@@ -5195,19 +5227,36 @@
     var pagesMap = {};
     var coursMap = {};
     var exosMap = {};
+    var mapChapCours = {
+      HTML5: "cours/html5.html",
+      CSS3: "cours/css3.html",
+      JS: "cours/javascript.html",
+      JAVASCRIPT: "cours/javascript.html",
+      SQL: "cours/sql.html",
+      PHP: "cours/php.html"
+    };
+    function estPagePedagogiqueBilan(pg) {
+      if (!pg || pg.indexOf(":") !== -1) return false;
+      if (/^(?:PROG_MEDIA|CFG_ECOLES|TABLEAU_BLANC|MSG_|COFFRE_TP|COPIE_|SEC_|MAIN_LEVEE|KAHOOT_|FLASH_)/i.test(pg)) return false;
+      if (/^(?:portail|admin)\.html$/i.test(pg)) return false;
+      return true;
+    }
     if (uid && pagesVuesCloudParUser[uid]) {
       Object.keys(pagesVuesCloudParUser[uid]).forEach(function (pk) {
         if (!pagesVuesCloudParUser[uid][pk]) return;
         var normP = String(pk).replace(/^\/+/, "").split("?")[0].split("#")[0];
-        if (!normP) return;
-        pagesMap[normP] = true;
+        if (!estPagePedagogiqueBilan(normP)) return;
+        pagesMap[normP.toLowerCase()] = true;
         if (/^(cours|cssanimee|Positionnement-animee)\//i.test(normP)) coursMap[normP.toLowerCase()] = true;
         if (/^(exercices|projets)\//i.test(normP)) exosMap["pg:" + normP.toLowerCase()] = true;
       });
     }
     if (uid && chapitresVusCloudParUser[uid]) {
       Object.keys(chapitresVusCloudParUser[uid]).forEach(function (ck) {
-        if (chapitresVusCloudParUser[uid][ck]) coursMap["chap:" + String(ck).toUpperCase()] = true;
+        if (!chapitresVusCloudParUser[uid][ck]) return;
+        var cleUp = String(ck).toUpperCase();
+        var cleCanon = mapChapCours[cleUp] || ("chap:" + cleUp);
+        coursMap[cleCanon] = true;
       });
     }
     if (uid && exosCloudParUser[uid]) {
@@ -5218,8 +5267,8 @@
     acces.forEach(function (a) {
       if (!uid || a.user_id !== uid || !a.page) return;
       var pgN = String(a.page).replace(/^\/+/, "").split("?")[0].split("#")[0];
-      if (!pgN) return;
-      pagesMap[pgN] = true;
+      if (!estPagePedagogiqueBilan(pgN)) return;
+      pagesMap[pgN.toLowerCase()] = true;
       if (/^(cours|cssanimee|Positionnement-animee)\//i.test(pgN)) coursMap[pgN.toLowerCase()] = true;
       if (/^(exercices|projets)\//i.test(pgN)) exosMap["pg:" + pgN.toLowerCase()] = true;
     });
@@ -10130,7 +10179,8 @@
     if (msnHeadWa) {
       msnHeadWa.style.display = telP ? "inline-block" : "none";
       msnHeadWa.onclick = function () {
-        var ch = telP.replace(/\D/g, "");
+        var ch = String(telP || "").replace(/\D/g, "");
+        if (!ch) return;
         var txt = (msnChatInp && msnChatInp.value.trim()) || "Bonjour " + contact(p) + ", ";
         window.open("https://wa.me/" + ch + "?text=" + encodeURIComponent(txt), "_blank", "noopener");
       };
@@ -13566,7 +13616,7 @@
       quiz: { lbl: "🏆 Notes de Quiz & Profils élèves (🔒 Protégés)", nb: (profils || []).length, octets: (profils || []).length * 420, col: "#6d28d9" }
     };
 
-    (tousAcces || []).forEach(function (a) {
+    (accesBrutsAdmin || []).forEach(function (a) {
       var pg = String(a.page || "");
       var taille = 140 + pg.length + String(a.lieu || "").length;
       if (pg.indexOf("COFFRE_TP") === 0) {
@@ -13618,19 +13668,21 @@
 
   if (btnPurgeLourds30j) {
     btnPurgeLourds30j.addEventListener("click", function () {
+      if (typeof window.confirm === "function" && !window.confirm("Purger les fichiers du Coffre TP et pièces jointes Messenger de plus de 30 jours ?")) return;
       var limIso = new Date(Date.now() - 30 * 86400000).toISOString();
       Promise.all([
         sb.from("acces").delete().like("page", "COFFRE_TP%").lt("debut", limIso),
         sb.from("acces").delete().like("page", "MSG_%").lt("debut", limIso)
       ]).then(function () {
         msg("🧹 Fichiers lourds et pièces jointes de plus de 30 jours purgés avec succès !", "ok");
-        charger(true);
+        requeteCompleteAdmin(true);
         setTimeout(analyserRepartitionQuotaSupabase, 800);
       });
     });
   }
   if (btnPurgeCoffrePj) {
     btnPurgeCoffrePj.addEventListener("click", function () {
+      if (typeof window.confirm === "function" && !window.confirm("Purger toutes les pièces jointes Messenger et les fichiers du Coffre TP (profils et quiz conservés) ?")) return;
       Promise.all([
         sb.from("acces").delete().like("page", "COFFRE_TP%"),
         sb.from("acces").delete().like("page", "MSG_%")
@@ -13638,20 +13690,21 @@
         window.__stiListeCoffreAdmin = [];
         rendListeCoffreAdmin();
         msg("🗑️ Pièces jointes Messenger et fichiers du Coffre TP purgés (profils et quiz intacts) !", "ok");
-        charger(true);
+        requeteCompleteAdmin(true);
         setTimeout(analyserRepartitionQuotaSupabase, 800);
       });
     });
   }
   if (btnPurgeJournauxTech) {
     btnPurgeJournauxTech.addEventListener("click", function () {
+      if (typeof window.confirm === "function" && !window.confirm("Purger les journaux techniques, alertes de sécurité et votes Kahoot temporaires (profils et quiz conservés) ?")) return;
       Promise.all([
         sb.from("acces").delete().like("page", "SEC_ALERTE:%"),
         sb.from("acces").delete().like("page", "MAIN_LEVEE:%"),
         sb.from("acces").delete().like("page", "KAHOOT_%")
       ]).then(function () {
         msg("🛡️ Journaux techniques, alertes et votes temporaires purgés (profils et quiz intacts) !", "ok");
-        charger(true);
+        requeteCompleteAdmin(true);
         setTimeout(analyserRepartitionQuotaSupabase, 800);
       });
     });

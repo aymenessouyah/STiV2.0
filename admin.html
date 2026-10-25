@@ -4264,7 +4264,11 @@
     if (bf2) bf2.addEventListener("click", fermerReadme);
     if (brh && readmeBody) {
       brh.addEventListener("click", function () {
-        readmeBody.scrollTo({ top: 0, behavior: "smooth" });
+        if (typeof readmeBody.scrollTo === "function") {
+          readmeBody.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          readmeBody.scrollTop = 0;
+        }
       });
     }
     if (mod) {
@@ -4546,17 +4550,17 @@
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=227"></script>
+<script src="assets/js/config.js?v=464"></script>
 <script src="assets/js/protection.js?v=461" defer></script>
-  <script src="assets/js/admin.js?v=463-audit-complet"></script>
-  <script src="assets/js/admin-couverture.js?v=463"></script>
+  <script src="assets/js/admin.js?v=464-verif-e2e"></script>
+  <script src="assets/js/admin-couverture.js?v=464"></script>
   <script src="assets/js/admin-revision.js?v=463"></script>
   <script src="assets/js/admin-erreurs.js?v=463"></script>
   <script src="assets/js/admin-mdp.js?v=443"></script>
   <script src="assets/js/graphiques-activite.js?v=463"></script>
   <script src="assets/js/quiz-admin.js?v=463"></script>
 <script src="assets/js/analytique.js?v=463"></script>
-<script src="assets/js/sauvegarde.js?v=463"></script>
+<script src="assets/js/sauvegarde.js?v=464"></script>
 <script src="assets/js/sante.js?v=260"></script>
 <script>
   /* v446 : Ruban compact horizontal des services & outils flottants — Messenger (#btn-messenger-dock) reste autonome et toujours au 1er plan. */
