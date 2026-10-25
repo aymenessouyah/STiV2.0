@@ -39705,7 +39705,7 @@ LIMIT 5;</textarea
 
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=425"></script>
-    <script src="../assets/js/quiz-sync.js?v=457"></script>
+    <script src="../assets/js/quiz-sync.js?v=458"></script>
 
     <script>
       /* ============ HELPERS & STATE ============ */
@@ -42387,10 +42387,10 @@ LIMIT 5;</textarea
           }`;
           r.innerHTML = `<span class="font-display font-bold w-7 text-center opacity-60">${
             i + 4
-          }</span><span class="text-2xl">${
+          }</span><span class="text-2xl">${esc(
             p.avatar
-          }</span><span class="font-extrabold text-sm flex-1 truncate">${
-            p.me ? p.name + " (toi) ⭐" : p.name
+          )}</span><span class="font-extrabold text-sm flex-1 truncate">${
+            p.me ? esc(p.name) + " (toi) ⭐" : esc(p.name)
           }</span><span class="text-xs font-extrabold bg-black/5 dark:bg-white/10 px-2 py-1 rounded-full">${
             p.xp
           } XP</span>`;
@@ -42715,7 +42715,7 @@ LIMIT 5;</textarea
         updateLifelines();
         renderQuestion();
         toast(
-          `Mode <b>${cfg.label}</b> lancé. Bonne chance, ${S.pseudo} !`,
+          `Mode <b>${esc(cfg.label)}</b> lancé. Bonne chance, ${esc(S.pseudo)} !`,
           "🚀"
         );
       }
@@ -42779,7 +42779,7 @@ LIMIT 5;</textarea
           const b = document.createElement("button");
           b.className = "answer-btn";
           b.id = "ans" + i;
-          b.innerHTML = `<span class="inline-flex w-7 h-7 rounded-lg bg-[#1A1A2E] text-white font-display font-bold text-sm items-center justify-center mr-2">${letters[i]}</span><span>${a}</span>`;
+          b.innerHTML = `<span class="inline-flex w-7 h-7 rounded-lg bg-[#1A1A2E] text-white font-display font-bold text-sm items-center justify-center mr-2">${letters[i]}</span><span>${esc(String(a))}</span>`;
           b.onclick = () => selectAnswer(i);
           grid.appendChild(b);
         });
@@ -43270,11 +43270,11 @@ LIMIT 5;</textarea
               : "⏱️ Temps écoulé";
             d.innerHTML = `<div class="font-extrabold text-sm">${
               l.good ? "✅" : "❌"
-            } Q${i + 1} — ${
+            } Q${i + 1} — ${esc(
               q.q
-            }</div><div class="text-xs font-bold mt-1 opacity-80">Ta réponse : <b>${ua}</b><br>Bonne réponse : <b class="text-[#0E7A5B]">${
-              q.answers[q.correct]
-            }</b><br><span class="opacity-70">💡 ${q.explain}</span></div>`;
+            )}</div><div class="text-xs font-bold mt-1 opacity-80">Ta réponse : <b>${esc(String(ua))}</b><br>Bonne réponse : <b class="text-[#0E7A5B]">${esc(
+              String(q.answers[q.correct])
+            )}</b><br><span class="opacity-70">💡 ${esc(q.explain)}</span></div>`;
             r.appendChild(d);
           });
         }
@@ -44376,7 +44376,7 @@ LIMIT 5;</textarea
             grid.appendChild(d);
           });
         if (!grid.children.length)
-          grid.innerHTML = `<div class="col-span-full brutal p-8 text-center font-bold opacity-60">😕 Aucune fiche pour « ${q} ». Essaie « jointure », « like » ou « index ».</div>`;
+          grid.innerHTML = `<div class="col-span-full brutal p-8 text-center font-bold opacity-60">😕 Aucune fiche pour « ${esc(q)} ». Essaie « jointure », « like » ou « index ».</div>`;
       }
       function copyCode(btn) {
         playClick();
@@ -44511,11 +44511,21 @@ LIMIT 5;</textarea
         boom(true);
         $("onboardingModal").classList.add("hidden");
         document.body.style.overflow = "";
-        toast(`Bienvenue <b>${S.pseudo}</b> ! +50 XP offerts 🎁`, "👋");
+        toast(`Bienvenue <b>${esc(S.pseudo)}</b> ! +50 XP offerts 🎁`, "👋");
         addXP(50);
       }
       function initTheme() {
-        const dark = memoLire("sqlQuestTheme") === "dark";
+        let t = "";
+        try {
+          t = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "";
+          if (t !== "dark" && t !== "light") {
+            const tr = localStorage.getItem("sti-roue-theme") || "";
+            if (tr === "sombre") t = "dark";
+            else if (tr === "clair") t = "light";
+          }
+        } catch (e) {}
+        if (t !== "dark" && t !== "light") t = memoLire("sqlQuestTheme") || "";
+        const dark = t === "dark";
         document.documentElement.classList.toggle("dark", dark);
         $("themeBtn").textContent = dark ? "☀️" : "🌙";
       }
@@ -44630,7 +44640,13 @@ LIMIT 5;</textarea
       $("themeBtn").onclick = () => {
         playClick();
         const d = document.documentElement.classList.toggle("dark");
-        memoEcrire("sqlQuestTheme", d ? "dark" : "light");
+        const mode = d ? "dark" : "light";
+        memoEcrire("sqlQuestTheme", mode);
+        try {
+          localStorage.setItem("sti-theme", mode);
+          localStorage.setItem("theme", mode);
+          localStorage.setItem("sti-roue-theme", d ? "sombre" : "clair");
+        } catch (e) {}
         $("themeBtn").textContent = d ? "☀️" : "🌙";
         renderCharts();
       };

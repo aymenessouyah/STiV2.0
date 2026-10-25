@@ -113,9 +113,16 @@
   function sauverFileVus(f) {
     try { localStorage.setItem(CLE_FILE_VUS, JSON.stringify(f.slice(-2000))); } catch (e) {}
   }
-  function mettreVusEnFile(module, ids) {
+  function mettreVusEnFile(module, ids, cid) {
     var f = lireFileVus();
-    ids.forEach(function (id) { f.push({ module: String(module), question_id: String(id) }); });
+    ids.forEach(function (id) {
+      f.push({ _cid: cid || null, module: String(module), question_id: String(id) });
+    });
+    sauverFileVus(f);
+  }
+  function retirerCidVus(cid) {
+    if (!cid) return;
+    var f = lireFileVus().filter(function (v) { return !v || v._cid !== cid; });
     sauverFileVus(f);
   }
   function lirePurgeVus() {
@@ -349,7 +356,7 @@
       }
       sauverPurgeVus(purgesRestantes);
     }
-    var fv = lireFileVus();
+    var fv = lireFileVus().filter(function (v) { return v && (!v._cid || !cidsEnVol[v._cid]); });
     if (fv.length) {
       var lignes = fv.map(function (v) {
         return { user_id: u.id, module: String(v.module), question_id: String(v.question_id) };
@@ -362,7 +369,18 @@
           });
           if (rv.error) { ok = false; break; }
         }
-        if (ok) sauverFileVus([]);
+        if (ok) {
+          var envoyesVus = new Set(fv);
+          sauverFileVus(lireFileVus().filter(function (v) {
+            if (!v) return false;
+            if (v._cid && cidsEnVol[v._cid]) return true;
+            for (var kv = 0; kv < fv.length; kv++) {
+              if (fv[kv]._cid && v._cid === fv[kv]._cid) return false;
+              if (!fv[kv]._cid && !v._cid && v.module === fv[kv].module && v.question_id === fv[kv].question_id) return false;
+            }
+            return !envoyesVus.has(v);
+          }));
+        }
       } catch (e) {}
     }
   }
@@ -375,11 +393,40 @@
     return promesseVidage;
   }
 
+  var NOMS_QUIZ_ACCES = {
+    "html-css": "Quiz HTML/CSS",
+    "javascript": "Quiz JS",
+    "sql": "Quiz SQL",
+    "php": "Quiz PHP",
+    "tableaux": "Quiz Tableaux"
+  };
+
   /* ---------- API publique ---------- */
   async function enregistrer(quiz, score, total, module) {
     score = parseInt(score, 10);
     total = parseInt(total, 10);
     if (!quiz || isNaN(score) || isNaN(total) || total <= 0 || score < 0 || score > total) return false;
+
+    /* Notification immédiate vers acces.js / sti-mes-scores (note réelle /20 avant tout départ de page) */
+    var sur20Calc = Math.round((score / total) * 200) / 10;
+    var pctCalc = Math.round((score * 100) / total);
+    var nomAcces = NOMS_QUIZ_ACCES[String(quiz)] || ("Quiz " + String(quiz));
+    var noteAcces = score + "/" + total + " (" + Math.round(sur20Calc) + "/20 · " + pctCalc + "%)";
+    try {
+      window.__stiDernierScoreQuiz = {
+        quiz: String(quiz),
+        nomQuiz: nomAcces,
+        score: score,
+        total: total,
+        pct: pctCalc,
+        sur20: sur20Calc,
+        note: noteAcces,
+        ts: Date.now()
+      };
+      if (typeof window.__notifierScoreQuizAccesSTI === "function") {
+        window.__notifierScoreQuizAccesSTI(nomAcces, noteAcces, sur20Calc);
+      }
+    } catch (ePont) {}
 
     /* Sauvegarde locale immédiate AVANT tout await */
     var cid = nouveauCid();
@@ -460,29 +507,46 @@
       r.data.forEach(function (l) {
         if (!l || enPurge[l.module]) return;
         if (!sortie[l.module]) sortie[l.module] = [];
-        sortie[l.module].push(l.question_id);
+        if (sortie[l.module].indexOf(l.question_id) === -1) sortie[l.module].push(l.question_id);
+      });
+      lireFileVus().forEach(function (v) {
+        if (!v || !v.module || enPurge[v.module]) return;
+        if (!sortie[v.module]) sortie[v.module] = [];
+        if (sortie[v.module].indexOf(v.question_id) === -1) sortie[v.module].push(v.question_id);
       });
       return sortie;
     } catch (e) { return null; }
   }
 
   async function marquerVus(module, ids) {
-    var s = sb();
-    var u = await utilisateur();
-    if (!s || !u || !module || !ids || !ids.length) return false;
-    if (sansScore(u)) return false;
-    var lignes = ids.map(function (id) {
-      return { user_id: u.id, module: String(module), question_id: String(id) };
-    });
+    if (!module || !ids || !ids.length) return false;
+    var cid = nouveauCid();
+    cidsEnVol[cid] = true;
+    mettreVusEnFile(module, ids, cid);
     try {
+      var s = sb();
+      var u = await utilisateur();
+      if (sansScore(u)) {
+        retirerCidVus(cid);
+        return false;
+      }
+      if (!s || !u) return false;
+      var lignes = ids.map(function (id) {
+        return { user_id: u.id, module: String(module), question_id: String(id) };
+      });
       for (var i = 0; i < lignes.length; i += 200) {
         var r = await s.from("sti_quiz_vus").upsert(lignes.slice(i, i + 200), {
           onConflict: "user_id,module,question_id", ignoreDuplicates: true
         });
-        if (r.error) { mettreVusEnFile(module, ids); return false; }
+        if (r.error) return false;
       }
+      retirerCidVus(cid);
       return true;
-    } catch (e) { mettreVusEnFile(module, ids); return false; }
+    } catch (e) {
+      return false;
+    } finally {
+      delete cidsEnVol[cid];
+    }
   }
 
   async function reinitialiserVus(module) {

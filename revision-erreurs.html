@@ -66,7 +66,7 @@
 <link rel="icon" href="assets/icons/sti-icon-192.png">
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=425"></script>
-<script src="assets/js/quiz-sync.js?v=457"></script>
+<script src="assets/js/quiz-sync.js?v=458"></script>
 <style>
   :root {
     --bg: #f6efe3;
@@ -171,6 +171,20 @@
   }
   function msg(html) { contenu.innerHTML = '<div class="msg">' + html + "</div>"; }
 
+  function estEleve3SI() {
+    var bruts = [];
+    try { bruts.push(localStorage.getItem("sti-session-cache")); } catch (e) {}
+    try { bruts.push(sessionStorage.getItem("sti-session-cache")); } catch (e2) {}
+    for (var i = 0; i < bruts.length; i++) {
+      if (!bruts[i]) continue;
+      try {
+        var c = JSON.parse(bruts[i]);
+        if (c && c.role !== "admin" && /^3/.test(String(c.classe || "").trim())) return true;
+      } catch (e3) {}
+    }
+    return false;
+  }
+
   async function demarrer() {
     if (!window.supabase || !window.STI_AUTH) { msg('<span class="gros">⚠️</span>Service indisponible pour le moment.'); return; }
     var client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE);
@@ -179,6 +193,9 @@
       var r = await client.auth.getUser();
       if (r && r.data) u = r.data.user;
     } catch (e) {}
+    if (!u && window.STIQuizSync && typeof window.STIQuizSync.utilisateur === "function") {
+      try { u = await window.STIQuizSync.utilisateur(); } catch (eU) {}
+    }
     if (!u) {
       msg('<span class="gros">🔒</span>Cette page est réservée aux abonnés connectés.<br><a class="btn" href="portail.html">Se connecter</a>');
       return;
@@ -208,6 +225,15 @@
       }
     } catch (e) {}
     if (rows === null) { msg('<span class="gros">⚠️</span>Impossible de charger tes résultats (connexion ?). Réessaie dans un instant.'); return; }
+    var filtrerPhp3SI = estEleve3SI();
+    rows = rows.filter(function (r) {
+      if (!r || !PAGES[r.quiz]) return false;
+      if (filtrerPhp3SI) {
+        if (r.quiz === "php") return false;
+        if (r.quiz === "tableaux" && (r.module === "php" || r.module === "recap-php")) return false;
+      }
+      return true;
+    });
     if (!rows.length) {
       msg('<span class="gros">🎯</span>Aucune réponse détaillée pour le moment.<br>Joue un quiz : tes questions ratées apparaîtront ici automatiquement.');
       return;

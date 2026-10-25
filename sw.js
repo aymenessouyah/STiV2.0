@@ -3,14 +3,24 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v317";
+var CACHE = "sti-atelier-v318";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v457-quiz-lot-d";
-/* Historique lots : v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v458-quiz-revision-2";
+/* Historique lots : v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/data/quiz-banque.json", revision: "quiz-revision-2-v458" },
+  { url: "./assets/js/quiz-sync.js", revision: "quiz-revision-2-v458" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-revision-2-v458" },
+  { url: "./assets/js/acces.js", revision: "quiz-revision-2-v458" },
+  { url: "./revision-erreurs.html", revision: "quiz-revision-2-v458" },
+  { url: "./quiz/html-css.html", revision: "quiz-revision-2-v458" },
+  { url: "./quiz/javascript.html", revision: "quiz-revision-2-v458" },
+  { url: "./quiz/sql.html", revision: "quiz-revision-2-v458" },
+  { url: "./quiz/php.html", revision: "quiz-revision-2-v458" },
+  { url: "./quiz/tableaux.html", revision: "quiz-revision-2-v458" },
   { url: "./index.html", revision: "quiz-lot-d-v457" },
   { url: "./admin.html", revision: "quiz-lot-d-v457" },
   { url: "./revision-erreurs.html", revision: "quiz-lot-d-v457" },
