@@ -411,4 +411,265 @@ test('v441 : récupération mot de passe Admin avec MFA TOTP active (élévation
   assert.match(messages.at(-1).txt, /Mot de passe modifié/);
 });
 
+test('v442 : admin.html autorise Cloudflare Turnstile dans la CSP et charge admin-mdp.js?v=442', () => {
+  const adminHtml = read('admin.html');
+  assert.match(adminHtml, /script-src[^;]*https:\/\/challenges\.cloudflare\.com/);
+  assert.match(adminHtml, /frame-src[^;]*https:\/\/challenges\.cloudflare\.com/);
+  assert.match(adminHtml, /connect-src[^;]*https:\/\/challenges\.cloudflare\.com/);
+  assert.match(adminHtml, /assets\/js\/admin-mdp\.js\?v=442/);
+});
+
+test('v442 : admin-mdp.js vérifie Turnstile + MFA AAL2, met à jour sti-cred, révoque uniquement scope=others et distingue les erreurs', async () => {
+  const adminMdpCode = read('assets/js/admin-mdp.js');
+
+  function makeDom() {
+    const byId = new Map();
+    const docListeners = {};
+
+    function parseInnerHtml(parent, html) {
+      const tagRe = /<(div|b|button|label|input|span)\b([^>]*)>/gi;
+      let m;
+      while ((m = tagRe.exec(html)) !== null) {
+        const tag = m[1].toLowerCase();
+        const attrs = m[2] || '';
+        const idMatch = attrs.match(/\bid=['"]([^'"]+)['"]/i);
+        const typeMatch = attrs.match(/\btype=['"]([^'"]+)['"]/i);
+        const checked = /\bchecked\b/i.test(attrs);
+        const el = createNode(tag);
+        if (typeMatch) el.type = typeMatch[1];
+        if (tag === 'input' && el.type === 'checkbox') el.checked = checked;
+        if (idMatch) {
+          el.id = idMatch[1];
+          byId.set(el.id, el);
+        }
+        parent.children.push(el);
+      }
+    }
+
+    function createNode(tag) {
+      const listeners = {};
+      const node = {
+        tagName: String(tag || 'div').toUpperCase(),
+        id: '',
+        type: '',
+        value: '',
+        checked: false,
+        disabled: false,
+        textContent: '',
+        className: '',
+        title: '',
+        style: { display: '' },
+        children: [],
+        parentNode: null,
+        set innerHTML(h) {
+          this._html = h;
+          parseInnerHtml(this, h);
+        },
+        get innerHTML() { return this._html || ''; },
+        setAttribute(k, v) {
+          if (k === 'style') {
+            const dm = String(v).match(/display\s*:\s*([^;]+)/i);
+            if (dm) this.style.display = dm[1].trim();
+          }
+        },
+        appendChild(ch) {
+          ch.parentNode = this;
+          this.children.push(ch);
+          if (ch.id) byId.set(ch.id, ch);
+          return ch;
+        },
+        insertBefore(ch) {
+          ch.parentNode = this;
+          this.children.push(ch);
+          if (ch.id) byId.set(ch.id, ch);
+          return ch;
+        },
+        addEventListener(type, fn) { (listeners[type] ||= []).push(fn); },
+        dispatch(type, ev = {}) { (listeners[type] || []).forEach(fn => fn(ev)); },
+        focus() {}
+      };
+      return node;
+    }
+
+    const body = createNode('body');
+    body.classList = { contains: c => c === 'admin' };
+    const head = createNode('head');
+    const pied = createNode('button');
+    pied.id = 'pied-readme-admin';
+    const topReadme = createNode('button');
+    topReadme.id = 'btn-readme-admin';
+    body.appendChild(pied);
+    body.appendChild(topReadme);
+
+    const document = {
+      readyState: 'complete',
+      body,
+      head,
+      documentElement: body,
+      cookie: '',
+      getElementById: id => byId.get(id) || null,
+      createElement: tag => createNode(tag),
+      addEventListener(type, fn) { (docListeners[type] ||= []).push(fn); }
+    };
+    return { document, byId };
+  }
+
+  const { document, byId } = makeDom();
+  const storage = new Map([
+    ['sti-cred', JSON.stringify({ email: 'aymenessouyah@gmail.com', h: 'ancien-hash', isAdmin: true })],
+    ['sti-session-cache', JSON.stringify({ id: 'adm-1', email: 'aymenessouyah@gmail.com', statut: 'actif', gold: true, isAdmin: true, ts: 1 })]
+  ]);
+
+  let tsToken = '';
+  let tsResets = 0;
+  const calls = [];
+  let currentAal = 'aal2';
+  let acceptTotp = '123456';
+
+  const mockClient = {
+    auth: {
+      signInWithPassword: async args => {
+        calls.push({ fn: 'signInWithPassword', args });
+        if (!args.options || !args.options.captchaToken) {
+          return { data: null, error: new Error('captcha verification process failed') };
+        }
+        if (args.password !== 'AncienMdpSecret!') {
+          return { data: null, error: new Error('Invalid login credentials') };
+        }
+        currentAal = 'aal1'; // signInWithPassword crée une nouvelle session AAL1
+        return { data: { user: { id: 'adm-1', email: args.email }, session: { access_token: 'jwt-1' } }, error: null };
+      },
+      mfa: {
+        getAuthenticatorAssuranceLevel: async () => ({ data: { currentLevel: currentAal, nextLevel: 'aal2' }, error: null }),
+        listFactors: async () => ({ data: { totp: [{ id: 'totp-adm-1', status: 'verified' }] }, error: null }),
+        challenge: async args => {
+          calls.push({ fn: 'mfa.challenge', args });
+          return { data: { id: 'ch-adm-1' }, error: null };
+        },
+        verify: async args => {
+          calls.push({ fn: 'mfa.verify', args });
+          if (args.code !== acceptTotp) {
+            return { data: null, error: new Error('Invalid TOTP code') };
+          }
+          currentAal = 'aal2';
+          return { data: {}, error: null };
+        }
+      },
+      updateUser: async args => {
+        calls.push({ fn: 'updateUser', args, aal: currentAal });
+        if (currentAal !== 'aal2') return { data: null, error: new Error('Insufficient AAL: aal2 required') };
+        return { data: { user: { id: 'adm-1', email: 'aymenessouyah@gmail.com' } }, error: null };
+      },
+      signOut: async args => {
+        calls.push({ fn: 'signOut', args });
+        return { error: null };
+      }
+    }
+  };
+
+  const sandbox = {
+    crypto: globalThis.crypto,
+    TextEncoder: globalThis.TextEncoder,
+    Uint8Array: globalThis.Uint8Array,
+    Promise,
+    JSON,
+    Date,
+    String,
+    Boolean,
+    setTimeout: fn => { fn(); return 0; },
+    setInterval: () => 0,
+    location: {
+      protocol: 'https:',
+      href: 'https://aymenessouyah.github.io/STiV2.0/admin.html',
+      replace() {}
+    },
+    localStorage: {
+      get length() { return storage.size; },
+      key: i => Array.from(storage.keys())[i] || null,
+      getItem: k => (storage.has(k) ? storage.get(k) : null),
+      setItem: (k, v) => storage.set(k, String(v)),
+      removeItem: k => storage.delete(k)
+    },
+    sessionStorage: {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {}
+    },
+    document,
+    window: null
+  };
+  sandbox.window = Object.assign(sandbox, {
+    STI_AUTH: {
+      URL: 'https://vywujxmepvcbgedgmger.supabase.co',
+      CLE: 'sb_publishable_test',
+      CLE_TURNSTILE: '0x4AAAAAAFeMDzetHdIs1MmC',
+      RACINE: 'https://aymenessouyah.github.io/STiV2.0/',
+      ADMIN: 'aymenessouyah@gmail.com'
+    },
+    __STI_ADMIN_MDP_CLIENT: mockClient,
+    turnstile: {
+      render: () => 'wid-adm-1',
+      getResponse: () => tsToken,
+      reset: () => { tsResets++; tsToken = ''; }
+    }
+  });
+
+  vm.runInNewContext(adminMdpCode, sandbox);
+  assert.ok(byId.get('sti-mdp-btn'), 'bouton pied de page créé');
+  assert.ok(byId.get('sti-mdp-btn-top'), 'bouton barre supérieure créé');
+
+  const api = sandbox.window.STI_ADMIN_MDP;
+  api.ouvrir();
+  await new Promise(r => setTimeout(r, 15));
+  assert.equal(byId.get('mdp-totp-wrap').style.display, 'block');
+  assert.equal(byId.get('mdp-turnstile-wrap').style.display, 'block');
+
+  // 1) Sans jeton Turnstile -> message clair demandant la case Cloudflare (aucun appel réseau inutile)
+  byId.get('mdp-ancien').value = 'AncienMdpSecret!';
+  byId.get('mdp-nouveau').value = 'NouveauMdpAdmin2026!';
+  byId.get('mdp-confirm').value = 'NouveauMdpAdmin2026!';
+  byId.get('mdp-totp').value = '123456';
+  const r0 = await api.valider();
+  assert.equal(r0, false);
+  assert.match(byId.get('mdp-msg').textContent, /Cloudflare/i);
+  assert.equal(calls.length, 0);
+
+  // 2) Mauvais mot de passe actuel avec Turnstile valide -> "Mot de passe actuel incorrect."
+  tsToken = 'ts-jeton-1';
+  byId.get('mdp-ancien').value = 'MauvaisMdp!';
+  const r1 = await api.valider();
+  assert.equal(r1, false);
+  assert.match(byId.get('mdp-msg').textContent, /Mot de passe actuel incorrect/);
+  assert.equal(tsResets, 1);
+
+  // 3) Bon mot de passe actuel + Turnstile valide, mais code TOTP expiré au 1er essai ->
+  //    au 2e essai avec le nouveau code TOTP, inutile de re-soumettre signInWithPassword / Turnstile !
+  byId.get('mdp-ancien').dispatch('input');
+  byId.get('mdp-ancien').value = 'AncienMdpSecret!';
+  byId.get('mdp-totp').value = '000000';
+  tsToken = 'ts-jeton-2';
+  const r2 = await api.valider();
+  assert.equal(r2, false);
+  assert.match(byId.get('mdp-msg').textContent, /Code TOTP à 6 chiffres incorrect ou expiré/);
+  const nbSignInApresEssai2 = calls.filter(c => c.fn === 'signInWithPassword').length;
+  assert.equal(nbSignInApresEssai2, 2);
+
+  // Correction du seul code TOTP (tsToken est vide car consommé, mais ancien est déjà vérifié < 90s)
+  byId.get('mdp-totp').value = '123456';
+  const r3 = await api.valider();
+  assert.equal(r3, true);
+  assert.equal(calls.filter(c => c.fn === 'signInWithPassword').length, 2, 'aucun signInWithPassword redondant');
+  assert.equal(calls.some(c => c.fn === 'updateUser' && c.args.password === 'NouveauMdpAdmin2026!' && c.aal === 'aal2'), true);
+  assert.equal(calls.some(c => c.fn === 'signOut' && c.args.scope === 'others'), true);
+  assert.match(byId.get('mdp-msg').textContent, /Mot de passe modifié et autres appareils déconnectés/);
+
+  // Vérifie que sti-cred a bien été mis à jour avec le hash SHA-256 du NOUVEAU mot de passe
+  const credMaj = JSON.parse(storage.get('sti-cred'));
+  assert.equal(credMaj.email, 'aymenessouyah@gmail.com');
+  assert.equal(credMaj.isAdmin, true);
+  assert.notEqual(credMaj.h, 'ancien-hash');
+  assert.match(credMaj.h, /^[0-9a-f]{64}$/);
+});
+
+
 
