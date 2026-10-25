@@ -6,10 +6,13 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v443-admin-saas-1";
+var UPDATE_ID = "v444-admin-badge-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "admin-badge-v444" },
+  { url: "./assets/css/admin-saas.css", revision: "admin-badge-v444" },
+  { url: "./assets/images/admin-aymen.jpg", revision: "admin-badge-v444" },
   { url: "./admin.html", revision: "admin-saas-v443-atelier" },
   { url: "./assets/css/admin-saas.css", revision: "admin-saas-v443-atelier" },
   { url: "./assets/js/admin-mdp.js", revision: "admin-saas-v443-atelier" },
@@ -438,6 +441,7 @@ var OFFLINE_LIST = [
   "./assets/images/lycee_logo.png",
   "./assets/images/qr-code-site.png",
   "./assets/images/qr-stiv2.png",
+  "./assets/images/admin-aymen.jpg",
   "./assets/images/sti-course-pause-qr.png",
   "./assets/images/php-guichet-v10-poster.jpg",
   "./assets/js/acces.js",

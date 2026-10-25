@@ -2480,9 +2480,506 @@ html[data-sti-palette="pop"] .stat,
 html[data-sti-palette="pop"] .zone-afficheur,
 html[data-sti-palette="pop"] .carte-action,
 html[data-sti-palette="pop"] .noeud-abonne,
-html[data-sti-palette="pop"] .nav-sections-admin {
+html[data-sti-palette="pop"] .nav-sections-admin,
+html[data-sti-palette="pop"] .badge-sti-id-card {
   border-width: 2px !important;
   border-color: var(--adm-border-strong) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v444 : BADGE OFFICIEL ADMINISTRATEUR STI V2.0 (CR80 ID Card + Logo STI + Photo)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.hero-admin-main {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 15px !important;
+  min-width: 0;
+  flex: 1 1 0%;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-admin-badge-slot {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+@media (min-width: 1080px) {
+  .hero-admin {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 20px !important;
+  }
+
+  .hero-admin-badge-slot {
+    flex: 0 0 406px !important;
+    width: 406px !important;
+    max-width: 406px !important;
+  }
+}
+
+.b-sti-mob-bar {
+  display: none;
+}
+
+/* Carte physique CR80 fidèle au gabarit officiel STI V2.0 */
+.badge-sti-id-card {
+  --bcard-bg: linear-gradient(155deg, #ffffff 0%, #f5f7fb 100%);
+  --bcard-foot: rgba(15, 23, 42, 0.045);
+  --bcard-line: rgba(15, 23, 42, 0.10);
+  --bcard-ink: #0f172a;
+  --bcard-sub: #526077;
+  --bcard-ring-inner: #ffffff;
+  background: var(--bcard-bg) !important;
+  color: var(--bcard-ink) !important;
+  border: 1.5px solid var(--adm-border-strong) !important;
+  border-radius: 18px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 14px 32px -12px rgba(15, 23, 42, 0.26) !important;
+  overflow: hidden !important;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease, border-color 0.2s ease !important;
+  position: relative;
+}
+
+html.admin-ardoise .badge-sti-id-card {
+  --bcard-bg: linear-gradient(155deg, var(--adm-surface-2) 0%, var(--adm-glass-strong) 100%);
+  --bcard-foot: rgba(0, 0, 0, 0.26);
+  --bcard-line: rgba(255, 255, 255, 0.11);
+  --bcard-ink: var(--adm-text);
+  --bcard-sub: var(--adm-muted);
+  --bcard-ring-inner: var(--adm-surface);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 16px 36px -10px rgba(0, 0, 0, 0.55) !important;
+}
+
+.badge-sti-id-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--adm-accent) !important;
+  box-shadow:
+    0 18px 36px -12px var(--adm-glow-accent),
+    0 10px 24px -10px rgba(0, 0, 0, 0.32) !important;
+}
+
+.badge-sti-id-card:focus-visible {
+  outline: 2.5px solid var(--adm-accent) !important;
+  outline-offset: 2px;
+}
+
+/* Filigrane diagonal discret type carte sécurisée */
+.badge-sti-id-card::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -18%;
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--adm-accent-soft) 0%, transparent 72%);
+  pointer-events: none;
+}
+
+.b-sti-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 11px 14px 8px !important;
+  position: relative;
+  z-index: 1;
+}
+
+.b-sti-brand {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.b-sti-logo-box {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9px !important;
+  overflow: hidden !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #101816 !important;
+  border: 1.5px solid var(--adm-border-strong) !important;
+  box-shadow: 0 4px 10px -3px var(--adm-glow-accent) !important;
+  flex-shrink: 0 !important;
+}
+
+.b-sti-logo-box img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transform: scale(1.44) !important;
+  display: block !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.b-sti-brand-txt {
+  font-size: 16px !important;
+  line-height: 1 !important;
+  color: var(--bcard-ink) !important;
+  letter-spacing: -0.01em;
+}
+
+.b-sti-brand-txt b {
+  font-weight: 900 !important;
+}
+
+.b-sti-brand-txt em {
+  font-style: normal !important;
+  font-weight: 700 !important;
+  color: var(--adm-accent) !important;
+}
+
+.b-sti-role-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 3.5px 10px !important;
+  border-radius: 999px !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  background: var(--adm-accent-soft) !important;
+  color: var(--adm-accent) !important;
+  border: 1px solid var(--adm-accent-border) !important;
+}
+
+.b-sti-body {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 4px 14px 11px !important;
+  position: relative;
+  z-index: 1;
+}
+
+.b-sti-avatar-col {
+  position: relative !important;
+  width: 92px !important;
+  height: 92px !important;
+  flex-shrink: 0 !important;
+}
+
+.b-sti-avatar-ring {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  padding: 3px !important;
+  background: var(--adm-grad-primary) !important;
+  box-shadow: 0 8px 20px -6px var(--adm-glow-accent) !important;
+}
+
+.b-sti-avatar-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: 50% 42% !important;
+  border-radius: 50% !important;
+  border: 2.5px solid var(--bcard-ring-inner) !important;
+  display: block !important;
+  background: #1e293b !important;
+}
+
+/* Sceau officiel STI [AE] appliqué en médaillon sur la photo de l'administrateur */
+.b-sti-avatar-seal {
+  position: absolute !important;
+  right: -2px !important;
+  bottom: -2px !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: #101816 !important;
+  border: 2px solid var(--bcard-ring-inner) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.36) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.b-sti-avatar-seal img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transform: scale(1.44) !important;
+  display: block !important;
+}
+
+.b-sti-fields {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+}
+
+.b-sti-field {
+  display: flex !important;
+  flex-direction: column !important;
+  line-height: 1.18 !important;
+  min-width: 0 !important;
+}
+
+.b-sti-field-grid {
+  display: grid !important;
+  grid-template-columns: 1.1fr 0.9fr !important;
+  gap: 8px !important;
+}
+
+.b-sti-lbl {
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  color: var(--bcard-sub) !important;
+}
+
+.b-sti-val {
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  color: var(--bcard-ink) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.b-sti-nom {
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em;
+}
+
+.b-sti-mono {
+  font-family: var(--adm-mono) !important;
+  font-size: 12px !important;
+}
+
+.b-sti-statut {
+  color: var(--adm-green) !important;
+  font-weight: 900 !important;
+}
+
+.b-sti-statut.hors-ligne {
+  color: var(--adm-red) !important;
+}
+
+.b-sti-foot {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 7px 14px !important;
+  background: var(--bcard-foot) !important;
+  border-top: 1px solid var(--bcard-line) !important;
+  position: relative;
+  z-index: 1;
+}
+
+.b-sti-foot-txt {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5px !important;
+  min-width: 0 !important;
+}
+
+.b-sti-foot-txt strong {
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  color: var(--bcard-ink) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.b-sti-foot-txt span {
+  font-size: 10px !important;
+  color: var(--bcard-sub) !important;
+}
+
+.b-sti-zoom-hint {
+  color: var(--adm-accent) !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  margin-left: 4px;
+}
+
+.b-sti-qr-box {
+  width: 42px !important;
+  height: 42px !important;
+  padding: 3px !important;
+  border-radius: 7px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.16) !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.b-sti-qr-box img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* Modal Grand Format HD du Badge Administrateur STI V2.0 */
+#modal-badge-admin-sti {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10020;
+  background: rgba(8, 12, 20, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+#modal-badge-admin-sti.ouvert {
+  display: flex !important;
+}
+
+.modal-badge-sti-boite {
+  width: min(540px, 100%);
+  background: var(--adm-glass-strong) !important;
+  color: var(--adm-text) !important;
+  border: 1.5px solid var(--adm-border-strong) !important;
+  border-radius: 24px !important;
+  padding: 18px 20px !important;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55) !important;
+}
+
+.modal-badge-sti-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.modal-badge-sti-entete h3 {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+}
+
+.modal-badge-sti-fermer {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--adm-border-strong);
+  background: var(--adm-surface-2);
+  color: var(--adm-text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* Version agrandie dans la modale */
+#modal-badge-admin-sti .badge-sti-id-card {
+  cursor: default;
+}
+#modal-badge-admin-sti .badge-sti-id-card:hover {
+  transform: none;
+}
+#modal-badge-admin-sti .b-sti-avatar-col {
+  width: 116px !important;
+  height: 116px !important;
+}
+#modal-badge-admin-sti .b-sti-avatar-seal {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 10px !important;
+}
+#modal-badge-admin-sti .b-sti-nom {
+  font-size: 18px !important;
+}
+#modal-badge-admin-sti .b-sti-val:not(.b-sti-nom) {
+  font-size: 13.5px !important;
+}
+#modal-badge-admin-sti .b-sti-qr-box {
+  width: 56px !important;
+  height: 56px !important;
+}
+
+.modal-badge-sti-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.modal-badge-sti-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--adm-border-strong);
+  background: var(--adm-surface-2);
+  color: var(--adm-text) !important;
+  font-size: 12.5px;
+  font-weight: 800;
+  text-decoration: none !important;
+  cursor: pointer;
+  flex: 1 1 auto;
+}
+
+.modal-badge-sti-btn.primaire {
+  background: var(--adm-grad-primary) !important;
+  color: var(--adm-accent-ink) !important;
+  border-color: transparent !important;
+}
+
+@media (max-width: 768px) {
+  .b-sti-mob-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 7px !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    color: var(--adm-text-2) !important;
+  }
+
+  .b-sti-mob-toggle {
+    padding: 3px 10px !important;
+    border-radius: 999px !important;
+    border: 1px solid var(--adm-border-strong) !important;
+    background: var(--adm-surface-2) !important;
+    color: var(--adm-text) !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    cursor: pointer;
+  }
+
+  .hero-admin-badge-slot.repli-mob .badge-sti-id-card {
+    display: none !important;
+  }
+
+  .b-sti-avatar-col {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  .b-sti-nom {
+    font-size: 14px !important;
+  }
 }
 
 @media print {

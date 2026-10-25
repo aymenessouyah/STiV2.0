@@ -1937,12 +1937,13 @@
     })();
   </script>
   <link rel="stylesheet" href="assets/fonts/fonts.css" />
-  <link rel="stylesheet" href="assets/css/admin-saas.css?v=443" />
+  <link rel="stylesheet" href="assets/css/admin-saas.css?v=444" />
 </head>
 <body class="cockpit-airbus">
 
-  <!-- 1. EN-TÊTE SUPÉRIEUR : Identité + Boutons utilitaires rapides -->
+  <!-- 1. EN-TÊTE SUPÉRIEUR : Identité + Boutons utilitaires rapides + Badge Officiel Administrateur STI V2.0 -->
   <header class="hero-admin">
+    <div class="hero-admin-main">
     <div class="entete">
       <span class="entete-logo-install"><img src="assets/icons/sti-icon-512.png" alt="Logo STI V2.0 — Application installée" /></span>
       <div class="entete-txt">
@@ -1989,6 +1990,66 @@
 
       <button class="btn-util logout mob-extra" id="btn-logout" type="button"><span class="btn-util-glyph" aria-hidden="true">🚪</span> <span class="lbl-pc">Déconnexion</span><span class="lbl-mob">Sortir</span></button>
     </div>
+    </div>
+
+    <!-- v444 : Badge officiel d'identité Administrateur STI V2.0 (Logo STI + Photo Admin + QR officiel) -->
+    <aside class="hero-admin-badge-slot" id="slot-badge-admin-sti" aria-label="Badge officiel Administrateur STI V2.0">
+      <div class="b-sti-mob-bar">
+        <span>🪪 Badge Officiel STI V2.0</span>
+        <button type="button" class="b-sti-mob-toggle" id="btn-toggle-badge-mob" aria-expanded="true">Masquer ▴</button>
+      </div>
+      <div class="badge-sti-id-card" id="badge-admin-sti-carte" role="button" tabindex="0" title="Cliquer pour agrandir, télécharger en PNG HD ou imprimer le badge Administrateur STI V2.0">
+        <div class="b-sti-head">
+          <div class="b-sti-brand">
+            <span class="b-sti-logo-box"><img src="assets/icons/sti-icon-512.png" alt="Logo officiel STI V2.0" /></span>
+            <span class="b-sti-brand-txt"><b>STI</b> <em>V2.0</em></span>
+          </div>
+          <span class="b-sti-role-pill">👑 ADMINISTRATEUR</span>
+        </div>
+
+        <div class="b-sti-body">
+          <div class="b-sti-avatar-col">
+            <div class="b-sti-avatar-ring">
+              <img class="b-sti-avatar-img" src="assets/images/admin-aymen.jpg" alt="Photo Administrateur STI V2.0 — Aymen Essouyah" />
+            </div>
+            <span class="b-sti-avatar-seal" title="Photo certifiée avec sceau officiel STI by AE">
+              <img src="assets/icons/sti-icon-512.png" alt="" aria-hidden="true" />
+            </span>
+          </div>
+
+          <div class="b-sti-fields">
+            <div class="b-sti-field">
+              <span class="b-sti-lbl">NOM &amp; PRÉNOM :</span>
+              <strong class="b-sti-val b-sti-nom">ESSOUYAH Aymen</strong>
+            </div>
+            <div class="b-sti-field-grid">
+              <div class="b-sti-field">
+                <span class="b-sti-lbl">ID ADMIN :</span>
+                <strong class="b-sti-val b-sti-mono">STI-AE-0001</strong>
+              </div>
+              <div class="b-sti-field">
+                <span class="b-sti-lbl">STATUT :</span>
+                <strong class="b-sti-val b-sti-statut" id="badge-sti-statut-live">● ACTIF</strong>
+              </div>
+            </div>
+            <div class="b-sti-field">
+              <span class="b-sti-lbl">FONCTION :</span>
+              <strong class="b-sti-val b-sti-fn">Prof. Informatique (3e &amp; 4e SI)</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="b-sti-foot">
+          <div class="b-sti-foot-txt">
+            <strong>STI V2.0 — Plateforme Technologique &amp; Services</strong>
+            <span>Valide : Accès Permanent · By A'e 📅 <u class="b-sti-zoom-hint">🔍 Agrandir / PNG</u></span>
+          </div>
+          <span class="b-sti-qr-box" title="QR Code officiel de la plateforme STI V2.0">
+            <img src="assets/images/qr-stiv2.png" alt="QR Code STI V2.0" />
+          </span>
+        </div>
+      </div>
+    </aside>
   </header>
 
   <section class="tableau-apercu" id="vue-ensemble-admin" aria-labelledby="titre-vue-ensemble-admin">
@@ -4661,5 +4722,330 @@
         </div>
       </div>
     </div>
+
+    <!-- ======================= v444 : Modale Grand Format & Export PNG HD du Badge Administrateur STI V2.0 ======================= -->
+    <div id="modal-badge-admin-sti" role="dialog" aria-modal="true" aria-labelledby="titre-modal-badge-sti">
+      <div class="modal-badge-sti-boite">
+        <div class="modal-badge-sti-entete">
+          <h3 id="titre-modal-badge-sti">🪪 Badge Officiel Administrateur — STI V2.0</h3>
+          <button type="button" class="modal-badge-sti-fermer" id="btn-fermer-modal-badge" aria-label="Fermer l'aperçu du badge">✕</button>
+        </div>
+
+        <div class="badge-sti-id-card" id="badge-admin-sti-carte-hd">
+          <div class="b-sti-head">
+            <div class="b-sti-brand">
+              <span class="b-sti-logo-box"><img src="assets/icons/sti-icon-512.png" alt="Logo officiel STI V2.0" /></span>
+              <span class="b-sti-brand-txt"><b>STI</b> <em>V2.0</em></span>
+            </div>
+            <span class="b-sti-role-pill">👑 ADMINISTRATEUR</span>
+          </div>
+
+          <div class="b-sti-body">
+            <div class="b-sti-avatar-col">
+              <div class="b-sti-avatar-ring">
+                <img class="b-sti-avatar-img" src="assets/images/admin-aymen.jpg" alt="Photo Administrateur STI V2.0 — Aymen Essouyah" />
+              </div>
+              <span class="b-sti-avatar-seal" title="Photo certifiée avec sceau officiel STI by AE">
+                <img src="assets/icons/sti-icon-512.png" alt="" aria-hidden="true" />
+              </span>
+            </div>
+
+            <div class="b-sti-fields">
+              <div class="b-sti-field">
+                <span class="b-sti-lbl">NOM &amp; PRÉNOM :</span>
+                <strong class="b-sti-val b-sti-nom">ESSOUYAH Aymen</strong>
+              </div>
+              <div class="b-sti-field-grid">
+                <div class="b-sti-field">
+                  <span class="b-sti-lbl">ID ADMIN :</span>
+                  <strong class="b-sti-val b-sti-mono">STI-AE-0001</strong>
+                </div>
+                <div class="b-sti-field">
+                  <span class="b-sti-lbl">STATUT :</span>
+                  <strong class="b-sti-val b-sti-statut" id="modal-badge-sti-statut">● ACTIF</strong>
+                </div>
+              </div>
+              <div class="b-sti-field">
+                <span class="b-sti-lbl">FONCTION :</span>
+                <strong class="b-sti-val b-sti-fn">Prof. Informatique (3e &amp; 4e SI)</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="b-sti-foot">
+            <div class="b-sti-foot-txt">
+              <strong>STI V2.0 — Plateforme Technologique &amp; Services</strong>
+              <span>Valide : Accès Permanent · By A'e 📅</span>
+            </div>
+            <span class="b-sti-qr-box" title="QR Code officiel de la plateforme STI V2.0">
+              <img src="assets/images/qr-stiv2.png" alt="QR Code STI V2.0" />
+            </span>
+          </div>
+        </div>
+
+        <div class="modal-badge-sti-actions">
+          <button type="button" class="modal-badge-sti-btn primaire" id="btn-dl-badge-admin-png">📥 Télécharger en PNG HD</button>
+          <a class="modal-badge-sti-btn" href="carte-visite.html">🪪 Carte de visite QR</a>
+          <button type="button" class="modal-badge-sti-btn" id="btn-fermer-modal-badge-bas">Fermer</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    (function () {
+      var carte = document.getElementById("badge-admin-sti-carte");
+      var slot = document.getElementById("slot-badge-admin-sti");
+      var btnMob = document.getElementById("btn-toggle-badge-mob");
+      var modal = document.getElementById("modal-badge-admin-sti");
+      var btnClose = document.getElementById("btn-fermer-modal-badge");
+      var btnCloseBas = document.getElementById("btn-fermer-modal-badge-bas");
+      var btnDl = document.getElementById("btn-dl-badge-admin-png");
+      var titreTb = document.getElementById("titre-tb-admin");
+      var stLive = document.getElementById("badge-sti-statut-live");
+      var stModal = document.getElementById("modal-badge-sti-statut");
+
+      /* 1) Synchronisation automatique du statut ACTIF / HORS LIGNE avec l'indicateur réseau du tableau de bord */
+      function syncStatutBadge() {
+        var horsLigne = !!(titreTb && titreTb.classList.contains("hors-ligne"));
+        [stLive, stModal].forEach(function (el) {
+          if (!el) return;
+          el.classList.toggle("hors-ligne", horsLigne);
+          el.textContent = horsLigne ? "● HORS LIGNE" : "● ACTIF";
+        });
+      }
+      if (titreTb && typeof MutationObserver !== "undefined") {
+        new MutationObserver(syncStatutBadge).observe(titreTb, { attributes: true, attributeFilter: ["class"] });
+      }
+      window.addEventListener("online", syncStatutBadge);
+      window.addEventListener("offline", syncStatutBadge);
+      syncStatutBadge();
+
+      /* 2) Repli/dépli rapide sur smartphone (mémorisé dans localStorage) */
+      if (slot && btnMob) {
+        var replie = false;
+        try { replie = localStorage.getItem("sti-admin-badge-mob-repli") === "1"; } catch (e) {}
+        function majMob() {
+          slot.classList.toggle("repli-mob", replie);
+          btnMob.setAttribute("aria-expanded", replie ? "false" : "true");
+          btnMob.textContent = replie ? "Afficher ▾" : "Masquer ▴";
+        }
+        btnMob.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          replie = !replie;
+          try { localStorage.setItem("sti-admin-badge-mob-repli", replie ? "1" : "0"); } catch (e) {}
+          majMob();
+        });
+        majMob();
+      }
+
+      /* 3) Ouverture / fermeture de l'aperçu Grand Format HD */
+      function ouvrirModal() {
+        if (!modal) return;
+        syncStatutBadge();
+        modal.classList.add("ouvert");
+      }
+      function fermerModal() {
+        if (!modal) return;
+        modal.classList.remove("ouvert");
+      }
+      if (carte) {
+        carte.addEventListener("click", ouvrirModal);
+        carte.addEventListener("keydown", function (ev) {
+          if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            ouvrirModal();
+          }
+        });
+      }
+      if (btnClose) btnClose.addEventListener("click", fermerModal);
+      if (btnCloseBas) btnCloseBas.addEventListener("click", fermerModal);
+      if (modal) {
+        modal.addEventListener("click", function (ev) {
+          if (ev.target === modal) fermerModal();
+        });
+      }
+      document.addEventListener("keydown", function (ev) {
+        if (ev.key === "Escape" && modal && modal.classList.contains("ouvert")) fermerModal();
+      });
+
+      /* 4) Génération Canvas 1600x1010 px HD hors-ligne du Badge Officiel STI V2.0 */
+      function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+      }
+      function chargerImg(src) {
+        return new Promise(function (resolve, reject) {
+          var im = new Image();
+          im.onload = function () { resolve(im); };
+          im.onerror = reject;
+          im.src = src;
+        });
+      }
+      if (btnDl) {
+        btnDl.addEventListener("click", function () {
+          var txtInit = btnDl.textContent;
+          btnDl.textContent = "⏳ Génération HD…";
+          Promise.all([
+            chargerImg("assets/icons/sti-icon-512.png"),
+            chargerImg("assets/images/admin-aymen.jpg"),
+            chargerImg("assets/images/qr-stiv2.png")
+          ]).then(function (imgs) {
+            var logo = imgs[0], photo = imgs[1], qr = imgs[2];
+            var cv = document.createElement("canvas");
+            cv.width = 1600;
+            cv.height = 1010;
+            var ctx = cv.getContext("2d");
+            var cs = getComputedStyle(document.documentElement);
+            var accent = (cs.getPropertyValue("--adm-accent") || "#15803d").trim();
+            var fontFam = '"Comic Sans MS", "Comic Neue", cursive, sans-serif';
+
+            /* Fond carte CR80 nacré haute définition */
+            roundRect(ctx, 24, 24, 1552, 962, 64);
+            var gBg = ctx.createLinearGradient(0, 0, 1600, 1010);
+            gBg.addColorStop(0, "#ffffff");
+            gBg.addColorStop(1, "#f2f6fb");
+            ctx.fillStyle = gBg;
+            ctx.fill();
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = accent;
+            ctx.stroke();
+
+            /* Bandeau inférieur */
+            ctx.save();
+            roundRect(ctx, 27, 27, 1546, 956, 61);
+            ctx.clip();
+            ctx.fillStyle = "#e9eff7";
+            ctx.fillRect(24, 790, 1552, 196);
+            ctx.strokeStyle = "rgba(15,23,42,0.12)";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(24, 790);
+            ctx.lineTo(1576, 790);
+            ctx.stroke();
+
+            /* En-tête : Logo STI officiel recadré + STI V2.0 */
+            ctx.save();
+            roundRect(ctx, 96, 82, 124, 124, 30);
+            ctx.fillStyle = "#101816";
+            ctx.fill();
+            ctx.clip();
+            var padL = logo.width * 0.15;
+            ctx.drawImage(logo, padL, padL, logo.width - padL * 2, logo.height - padL * 2, 96, 82, 124, 124);
+            ctx.restore();
+
+            ctx.font = "900 66px " + fontFam;
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText("STI", 246, 166);
+            var wSti = ctx.measureText("STI ").width;
+            ctx.font = "700 62px " + fontFam;
+            ctx.fillStyle = accent;
+            ctx.fillText("V2.0", 246 + wSti, 166);
+
+            /* Capsule ADMINISTRATEUR */
+            roundRect(ctx, 1050, 96, 446, 92, 46);
+            ctx.fillStyle = "rgba(21,128,61,0.12)";
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = accent;
+            ctx.stroke();
+            ctx.font = "900 34px " + fontFam;
+            ctx.fillStyle = "#0f172a";
+            ctx.textAlign = "center";
+            ctx.fillText("👑 ADMINISTRATEUR", 1273, 155);
+            ctx.textAlign = "left";
+
+            /* Portrait circulaire de l'administrateur + Sceau STI */
+            var cx = 315, cy = 492, rOut = 212;
+            ctx.beginPath();
+            ctx.arc(cx, cy, rOut, 0, Math.PI * 2);
+            ctx.fillStyle = accent;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx, cy, rOut - 14, 0, Math.PI * 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.fill();
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy, rOut - 26, 0, Math.PI * 2);
+            ctx.clip();
+            ctx.drawImage(photo, cx - (rOut - 26), cy - (rOut - 26), (rOut - 26) * 2, (rOut - 26) * 2);
+            ctx.restore();
+
+            /* Sceau STI appliqué en bas à droite de la photo */
+            ctx.save();
+            roundRect(ctx, cx + 112, cy + 112, 112, 112, 28);
+            ctx.fillStyle = "#101816";
+            ctx.fill();
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = "#ffffff";
+            ctx.stroke();
+            ctx.clip();
+            ctx.drawImage(logo, padL, padL, logo.width - padL * 2, logo.height - padL * 2, cx + 112, cy + 112, 112, 112);
+            ctx.restore();
+
+            /* Champs d'identité à droite */
+            var fx = 610;
+            ctx.font = "700 28px " + fontFam;
+            ctx.fillStyle = "#526077";
+            ctx.fillText("NOM & PRÉNOM :", fx, 326);
+            ctx.font = "900 60px " + fontFam;
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText("ESSOUYAH Aymen", fx, 394);
+
+            ctx.font = "700 28px " + fontFam;
+            ctx.fillStyle = "#526077";
+            ctx.fillText("ID ADMIN :", fx, 480);
+            ctx.fillText("STATUT :", fx + 455, 480);
+
+            ctx.font = "900 44px " + fontFam;
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText("STI-AE-0001", fx, 536);
+            ctx.fillStyle = "#15803d";
+            ctx.fillText("● ACTIF", fx + 455, 536);
+
+            ctx.font = "700 28px " + fontFam;
+            ctx.fillStyle = "#526077";
+            ctx.fillText("FONCTION & SECTION :", fx, 624);
+            ctx.font = "800 40px " + fontFam;
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText("Prof. Informatique STI (3e & 4e SI)", fx, 678);
+
+            /* Pied de carte + QR Code officiel STI V2.0 */
+            ctx.font = "800 34px " + fontFam;
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText("STI V2.0 — Plateforme Technologique & Services", 96, 868);
+            ctx.font = "700 28px " + fontFam;
+            ctx.fillStyle = "#526077";
+            ctx.fillText("Valide : Accès Permanent · Fondateur STI by AE", 96, 922);
+
+            roundRect(ctx, 1340, 808, 156, 156, 22);
+            ctx.fillStyle = "#ffffff";
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "rgba(15,23,42,0.2)";
+            ctx.stroke();
+            ctx.drawImage(qr, 1352, 820, 132, 132);
+            ctx.restore();
+
+            var a = document.createElement("a");
+            a.download = "Badge-Admin-STI-V2-Aymen-Essouyah.png";
+            a.href = cv.toDataURL("image/png");
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            btnDl.textContent = "✅ Badge PNG téléchargé !";
+            setTimeout(function () { btnDl.textContent = txtInit; }, 2200);
+          }).catch(function () {
+            btnDl.textContent = txtInit;
+          });
+        });
+      }
+    })();
+    </script>
     </body>
 </html>
