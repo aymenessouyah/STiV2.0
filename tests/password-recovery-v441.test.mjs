@@ -1020,7 +1020,17 @@ test('v453 : unification de acces.js?v=453 sur tout le site + Roue sur ma-fiche-
   assert.match(page404Html, /assets\/icons\/sti-icon-512\.png/);
   assert.match(page404Html, /default-src 'none'/);
 
-  assert.match(swJs, /v453-unif-acces-themes/);
+  assert.match(swJs, /unif-acces-themes-v453/);
+});
+
+test('v454 : retrait du bouton « Conseils » dans la barre de navigation du haut sur index.html', () => {
+  const indexHtml = read('index.html');
+  const swJs = read('sw.js');
+
+  assert.doesNotMatch(indexHtml, /<a\s+class="nav-link"\s+href="#conseils">/);
+  assert.doesNotMatch(indexHtml, /<a\s+class="mobile-menu-link"\s+href="#conseils">/);
+  assert.match(indexHtml, /<section\s+class="tips reveal"\s+id="conseils">/);
+  assert.match(swJs, /v454-retrait-nav-conseils/);
 });
 
 

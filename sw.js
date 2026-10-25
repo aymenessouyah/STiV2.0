@@ -6,10 +6,11 @@
 var CACHE = "sti-atelier-v317";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v453-unif-acces-themes";
+var UPDATE_ID = "v454-retrait-nav-conseils";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./index.html", revision: "retrait-nav-conseils-v454" },
   { url: "./ma-fiche-revision.html", revision: "unif-acces-themes-v453" },
   { url: "./glossaire.html", revision: "unif-acces-themes-v453" },
   { url: "./revision-erreurs.html", revision: "unif-acces-themes-v453" },
