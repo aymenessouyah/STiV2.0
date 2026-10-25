@@ -279,7 +279,7 @@
       var connu = TITRES_EXO_CONNUS[k];
       var titre = (connu && connu.t) || v.titre || k.replace(/^exo:/, "");
       var mat = (connu && connu.m) || libMatiereExo(v.matiere, k);
-      var lien = (connu && connu.u) || (k.indexOf("exo:") === 0 && /\.html$/i.test(k) ? ("exercices/" + k.slice(4)) : "exercices/series-exercices.html");
+      var lien = (connu && connu.u) || v.url || (k.indexOf("be-") === 0 ? ("banc-essai-bac.html?defi=" + encodeURIComponent(k)) : (k.indexOf("exo:") === 0 && /\.html$/i.test(k) ? ("exercices/" + k.slice(4)) : "exercices/series-exercices.html"));
       var txtEtat = v.statut === "done" ? "✅ Terminé" : (v.statut === "doing" ? "⏳ En cours" : "⬜ À faire");
       if (typeof v.note20 === "number") txtEtat += " · <b>" + v.note20 + "/20</b>";
       var clsEtat = (typeof v.note20 === "number" ? (v.note20 >= 12 ? "ok" : "warn") : (v.statut === "done" ? "ok" : ""));

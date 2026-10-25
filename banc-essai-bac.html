@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <script id="sti-early-boot">
+  (function () {
+    try {
+      var r = document.documentElement;
+      var t = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "";
+      if (t !== "dark" && t !== "light") {
+        t = localStorage.getItem("sti-roue-theme") === "sombre" ? "dark" : "";
+      }
+      if (t === "dark") { r.setAttribute("data-theme", "dark"); r.classList.add("dark", "dark-mode"); }
+      else if (t === "light") { r.removeAttribute("data-theme"); r.classList.remove("dark", "dark-mode"); }
+
+      var est4si = false;
+      if (localStorage.getItem("sti-admin-gold") === "1") est4si = true;
+      var c = JSON.parse(localStorage.getItem("sti-session-cache") || "null");
+      if (c && (c.isAdmin || /^4\s*si[1-5]?$/i.test(String(c.classe || "").trim()))) est4si = true;
+      var l3 = JSON.parse(localStorage.getItem("sti-labo3-permanent") || "null");
+      if (l3 && /^4\s*si[1-5]?$/i.test(String(l3.classe || "").trim())) est4si = true;
+      if (est4si) r.classList.add("sti-4si-autorise");
+    } catch (e) {}
+  })();
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚡ Banc d'Essai Code Live (60 Tests Réels) — STI V2.0</title>
+  <link rel="icon" type="image/png" href="assets/icons/sti-icon-192.png" />
+  <style id="sti-4si-zero-flash">
+    html:not(.sti-4si-autorise) .sti-4si-only { display: none !important; }
+  </style>
+  <style>
+    :root {
+      --bg: #f6f4ec;
+      --surface: #fffdf8;
+      --surface-2: #edf5ef;
+      --ink: #16221c;
+      --muted: #4b5e54;
+      --border: #16221c;
+      --forest: #15803d;
+      --teal: #0e7c86;
+      --gold: #ca8a04;
+      --rose: #be123c;
+      --code-bg: #101917;
+      --code-ink: #ecfdf5;
+      --comic: "Comic Sans MS", "Comic Sans", "Comic Neue", "Chalkboard SE", cursive, sans-serif;
+    }
+    html.dark, [data-theme="dark"] {
+      --bg: #0d1613;
+      --surface: #15231e;
+      --surface-2: #1c2f28;
+      --ink: #f0fdf4;
+      --muted: #a7f3d0;
+      --border: #38594c;
+      --code-bg: #08100d;
+      --code-ink: #ecfdf5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0 0 84px;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--comic);
+      line-height: 1.5;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 18px;
+      background: var(--surface);
+      border-bottom: 3px solid var(--border);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      border: 2px solid var(--border);
+      background: #fff;
+    }
+    .brand strong { font-size: 1.05rem; display: block; line-height: 1.15; }
+    .brand small { font-size: 0.75rem; color: var(--muted); font-weight: 700; }
+
+    .btn-pill {
+      font-family: var(--comic);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--surface-2);
+      color: var(--ink);
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 2px 2px 0 var(--border);
+      transition: transform 0.12s ease;
+    }
+    .btn-pill:hover { transform: translate(-1px, -1px); }
+    .btn-pill.prim { background: var(--forest); color: #fff; border-color: #16221c; }
+    .btn-pill.teal { background: var(--teal); color: #fff; border-color: #16221c; }
+    .btn-pill.gold { background: #fef3c7; color: #78350f; border-color: #b45309; }
+    .btn-pill.rose { background: #ffe4e6; color: #881337; border-color: #be123c; }
+
+    .wrap {
+      max-width: 1320px;
+      margin: 16px auto;
+      padding: 0 14px;
+    }
+
+    /* Bento Hero */
+    .hero-bento {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 16px 20px;
+      border-radius: 20px;
+      border: 3px solid var(--border);
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+      box-shadow: 5px 5px 0 var(--forest);
+      margin-bottom: 14px;
+    }
+    .hero-bento h1 { margin: 0 0 4px; font-size: 1.32rem; }
+    .hero-bento p { margin: 0; font-size: 0.86rem; color: var(--muted); }
+    .kpis { display: flex; gap: 10px; flex-wrap: wrap; }
+    .kpi {
+      padding: 8px 14px;
+      border-radius: 14px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      text-align: center;
+      min-width: 112px;
+    }
+    .kpi b { display: block; font-size: 1.15rem; color: var(--forest); }
+    .kpi small { font-size: 0.72rem; color: var(--muted); font-weight: 700; }
+
+    /* Filtres matières & ruban défis */
+    .mat-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .mat-tab {
+      font-family: var(--comic);
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .mat-tab.active {
+      background: var(--teal);
+      color: #fff;
+      box-shadow: 3px 3px 0 var(--border);
+    }
+
+    .defis-ribbon {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 10px;
+      margin-bottom: 12px;
+    }
+    .defi-chip {
+      flex: 0 0 auto;
+      font-family: var(--comic);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 8px 13px;
+      border-radius: 13px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .defi-chip.active {
+      background: var(--forest);
+      color: #fff;
+      box-shadow: 3px 3px 0 var(--border);
+    }
+    .defi-chip .sc {
+      font-size: 0.72rem;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: rgba(22, 34, 28, 0.12);
+    }
+    .defi-chip.active .sc { background: rgba(255, 255, 255, 0.24); color: #fff; }
+
+    /* Grille Studio Split-Screen */
+    .studio-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .studio-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 3px solid var(--border);
+      border-radius: 20px;
+      padding: 16px 18px;
+      box-shadow: 4px 4px 0 var(--border);
+    }
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .badge-niv {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+    }
+    .consigne-box {
+      padding: 11px 13px;
+      border-radius: 13px;
+      background: var(--surface-2);
+      border: 2px solid var(--border);
+      font-size: 0.85rem;
+      white-space: pre-line;
+      margin-bottom: 10px;
+    }
+    .schema-ref {
+      margin-bottom: 10px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1.8px dashed var(--teal);
+      background: rgba(14, 124, 134, 0.08);
+      font-size: 0.78rem;
+    }
+    .schema-ref summary { cursor: pointer; font-weight: 700; color: var(--teal); }
+
+    .code-editor {
+      width: 100%;
+      min-height: 290px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 2.5px solid var(--border);
+      background: var(--code-bg);
+      color: var(--code-ink);
+      font-family: Consolas, "Fira Code", "Courier New", monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      resize: vertical;
+      tab-size: 2;
+    }
+    .code-editor:focus {
+      outline: none;
+      border-color: var(--forest);
+      box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.25);
+    }
+
+    .editor-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .hint-drawer {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 13px;
+      border-radius: 12px;
+      border: 2px solid #d97706;
+      background: #fef3c7;
+      color: #451a03;
+      font-size: 0.84rem;
+    }
+
+    /* Aperçu Live & Résultats des 6 Tests */
+    .live-preview-box {
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      background: #ffffff;
+      color: #16221c;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .live-preview-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 12px;
+      background: var(--surface-2);
+      color: var(--ink);
+      border-bottom: 2px solid var(--border);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .live-preview-body {
+      padding: 12px;
+      min-height: 155px;
+      max-height: 310px;
+      overflow: auto;
+    }
+    #iframe-preview-html {
+      width: 100%;
+      height: 225px;
+      border: 0;
+      background: #fff;
+      display: block;
+    }
+
+    .sql-grid-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Consolas, monospace;
+      font-size: 0.78rem;
+      margin-top: 4px;
+    }
+    .sql-grid-table th, .sql-grid-table td {
+      border: 1px solid #94a3b8;
+      padding: 4px 7px;
+      text-align: left;
+    }
+    .sql-grid-table th {
+      background: #e2e8f0;
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .score-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 2px solid var(--border);
+      background: var(--surface-2);
+      margin-bottom: 10px;
+    }
+    .score-banner b { font-size: 1.08rem; }
+
+    .tests-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .test-item {
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      transition: transform 0.15s ease;
+    }
+    .test-item.pass {
+      border-color: #15803d;
+      background: rgba(21, 128, 61, 0.1);
+    }
+    .test-item.fail {
+      border-color: #be123c;
+      background: rgba(190, 18, 60, 0.08);
+    }
+    .test-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.83rem;
+      font-weight: 700;
+    }
+    .test-item-detail {
+      margin-top: 3px;
+      font-size: 0.77rem;
+      color: var(--muted);
+    }
+    .toast-js-manual {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 11px;
+      border-radius: 9px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <img src="assets/icons/sti-icon-512.png" alt="Logo STI V2.0" />
+      <div>
+        <strong>⚡ Banc d'Essai Code Live STI</strong>
+        <small>Robot Auto-Testeur (6 cas réels par défi) · HTML5/CSS3 · JS · SQL (WASM) · PHP/MySQLi</small>
+      </div>
+    </a>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+      <a class="btn-pill" href="exercices/series-exercices.html">📚 Portail Exercices</a>
+      <a class="btn-pill" href="exercices/devoirs-blancs-bac.html">⏱️ Devoirs Blancs /20</a>
+      <a class="btn-pill" href="ma-fiche-revision.html#sec-exercices-suivi">📄 Ma Fiche Révision</a>
+      <button type="button" class="btn-pill" id="btn-theme">🌙 Thème</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero-bento">
+      <div style="max-width:740px">
+        <h1>🤖 Écrivez votre code, le Robot Bac teste 6 scénarios réels en direct !</h1>
+        <p>
+          Chaque défi exécute réellement votre code (rendu DOM/CSS3, formulaires JS sans Regex, base SQL WebAssembly avec jeu d'essai caché anti-triche, et requêtes HTTP <code>$_POST</code> PHP/MySQLi) et synchronise votre note sur <b>/20</b>.
+        </p>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b id="kpi-tests-ok">0 / 60</b><small>Cas de tests validés</small></div>
+        <div class="kpi"><b id="kpi-defis-20">0 / 10</b><small>Défis réussis (20/20)</small></div>
+        <div class="kpi"><b id="kpi-moyenne">—</b><small>Moyenne /20</small></div>
+      </div>
+    </section>
+
+    <nav class="mat-bar" id="mat-bar" aria-label="Filtrer par matière">
+      <button type="button" class="mat-tab active" data-mat="all">✨ Tous les défis</button>
+      <button type="button" class="mat-tab" data-mat="css3">🎨 HTML5 &amp; CSS3 (2)</button>
+      <button type="button" class="mat-tab" data-mat="javascript">⚡ JavaScript DOM (3)</button>
+      <button type="button" class="mat-tab" data-mat="sql">🗄️ SQL WebAssembly (3)</button>
+      <button type="button" class="mat-tab sti-4si-only" data-mat="php">🐘 PHP &amp; MySQLi (2 · 4e SI)</button>
+    </nav>
+
+    <div class="defis-ribbon" id="defis-ribbon"></div>
+
+    <div class="studio-grid">
+      <!-- COLONNE GAUCHE : CONSIGNE + ÉDITEUR CODE -->
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="badge-niv" id="defi-niveau">—</span>
+            <h2 id="defi-titre" style="margin:6px 0 2px;font-size:1.12rem">—</h2>
+            <div id="defi-resume" style="font-size:0.8rem;color:var(--muted)"></div>
+          </div>
+          <button type="button" class="btn-pill gold" id="btn-etoile-banc" title="Marquer à revoir dans Ma Fiche Révision">☆ À revoir</button>
+        </div>
+
+        <div class="consigne-box" id="defi-consigne"></div>
+
+        <details class="schema-ref" id="schema-sql-details" style="display:none">
+          <summary>🗄️ Voir les tables initiales en mémoire (CLUB &amp; ADHERENT — 7 adhérents)</summary>
+          <div style="margin-top:7px;overflow-x:auto">
+            <div><b>CLUB :</b> (1, 'Robotique STI', 80) · (2, 'CyberSecurite', 120) · (3, 'Developpement Web', 90) · (4, 'Echecs Lycee', 50)</div>
+            <div style="margin-top:4px"><b>ADHERENT :</b> ('09112233','Ben Ali','Amine','Gafsa',2025,1) · ('09223344','Trabelsi','Sarra','Tunis',2026,1) · ('09334455','Gharbi','Youssef','Sfax',2025,2) · ('09445566','Mansouri','Ines','Gafsa',2024,3) · ('09556677','Khelifi','Rania','Gafsa',2026,3) · ('09667788','Zaied','Sami','Tunis',2025,3) · ('09778899','Ayari','Nour','Sousse',2026,4)</div>
+          </div>
+        </details>
+
+        <textarea id="code-editor" class="code-editor" spellcheck="false" aria-label="Éditeur de code du défi"></textarea>
+
+        <div class="editor-actions">
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <button type="button" class="btn-pill prim" id="btn-run-tests">▶️ Lancer les 6 Tests (Ctrl+Entrée)</button>
+            <button type="button" class="btn-pill gold" id="btn-indice-1">💡 Indice 1</button>
+            <button type="button" class="btn-pill gold" id="btn-indice-2">🧭 Indice 2</button>
+          </div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <button type="button" class="btn-pill" id="btn-reset-code">🔄 Code initial</button>
+            <button type="button" class="btn-pill rose" id="btn-solution">📖 Solution modèle</button>
+          </div>
+        </div>
+
+        <div class="hint-drawer" id="hint-drawer"></div>
+      </section>
+
+      <!-- COLONNE DROITE : APERÇU LIVE + 6 TESTS AUTOMATIQUES -->
+      <section class="panel">
+        <div class="live-preview-box">
+          <div class="live-preview-bar">
+            <span id="preview-title">🖥️ Aperçu &amp; Exécution en Direct</span>
+            <span id="preview-engine-tag" style="font-size:0.73rem;color:var(--teal)">Prêt</span>
+          </div>
+          <div class="live-preview-body" id="live-preview-body"></div>
+        </div>
+
+        <div class="score-banner">
+          <div>
+            <b id="res-verdict">🤖 Prêt à tester votre code</b>
+            <div id="res-sub" style="font-size:0.78rem;color:var(--muted)">Cliquez sur « ▶️ Lancer les 6 Tests » pour obtenir votre diagnostic ligne par ligne.</div>
+          </div>
+          <span class="btn-pill prim" id="res-note-pill" style="pointer-events:none">— / 20</span>
+        </div>
+
+        <div class="tests-list" id="tests-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="assets/js/acces.js?v=452" defer></script>
+  <script src="assets/js/exercices-atelier.js?v=452" defer></script>
+  <script src="assets/js/banc-essai-bac.js?v=452"></script>
+  <script>
+  (function () {
+    "use strict";
+    var API = window.STI_BANC_ESSAI;
+    if (!API) return;
+
+    function estAutorise4SI() {
+      return document.documentElement.classList.contains("sti-4si-autorise");
+    }
+    function lireJson(cle, def) {
+      try { var v = JSON.parse(localStorage.getItem(cle) || "null"); return v && typeof v === "object" ? v : def; } catch (e) { return def; }
+    }
+    function ecrireJson(cle, val) {
+      try { localStorage.setItem(cle, JSON.stringify(val)); } catch (e) {}
+    }
+    function echap(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    var defisVisibles = function () {
+      var aut = estAutorise4SI();
+      return API.DEFIS.filter(function (d) { return !d.only4si || aut; });
+    };
+
+    var params = new URLSearchParams(location.search || "");
+    var filtreMat = params.get("matiere") || "all";
+    if (filtreMat === "php" && !estAutorise4SI()) filtreMat = "all";
+
+    var listeInit = defisVisibles();
+    var defiActif = listeInit.find(function (d) { return d.id === params.get("defi"); }) || listeInit[0];
+    var editor = document.getElementById("code-editor");
+    var previewBody = document.getElementById("live-preview-body");
+    var hintDrawer = document.getElementById("hint-drawer");
+
+    function majKpisGlobaux() {
+      var etatBanc = lireJson(API.CLE_BANC, {});
+      var visibles = defisVisibles();
+      var totTestsOk = 0;
+      var nbDefis20 = 0;
+      var notes = [];
+      visibles.forEach(function (d) {
+        var sv = etatBanc[d.id];
+        if (sv && typeof sv.reussis === "number") totTestsOk += sv.reussis;
+        if (sv && typeof sv.note20 === "number") {
+          notes.push(sv.note20);
+          if (sv.note20 >= 20) nbDefis20++;
+        }
+      });
+      document.getElementById("kpi-tests-ok").textContent = totTestsOk + " / " + (visibles.length * 6);
+      document.getElementById("kpi-defis-20").textContent = nbDefis20 + " / " + visibles.length;
+      document.getElementById("kpi-moyenne").textContent = notes.length
+        ? ((Math.round((notes.reduce(function (s, n) { return s + n; }, 0) / notes.length) * 10) / 10) + " / 20")
+        : "—";
+    }
+
+    function rendreRubanDefis() {
+      var etatBanc = lireJson(API.CLE_BANC, {});
+      var ruban = document.getElementById("defis-ribbon");
+      var visibles = defisVisibles().filter(function (d) {
+        return filtreMat === "all" || d.matiere === filtreMat;
+      });
+      if (!visibles.some(function (d) { return d.id === defiActif.id; }) && visibles.length) {
+        defiActif = visibles[0];
+      }
+      ruban.innerHTML = visibles.map(function (d, idx) {
+        var sv = etatBanc[d.id];
+        var scTxt = sv && sv.note20 !== undefined ? (sv.note20 + "/20") : "0/6";
+        var ic = sv && sv.note20 >= 20 ? "🏆 " : "";
+        return '<button type="button" class="defi-chip' + (d.id === defiActif.id ? ' active' : '') + '" data-defi="' + d.id + '">' +
+          '<span>' + ic + echap(d.titre.split("—")[0].trim()) + '</span>' +
+          '<span class="sc">' + scTxt + '</span>' +
+        '</button>';
+      }).join("");
+      ruban.querySelectorAll("[data-defi]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          var nv = defisVisibles().find(function (x) { return x.id === b.getAttribute("data-defi"); });
+          if (nv) chargerDefi(nv);
+        });
+      });
+    }
+
+    function rendreTableSqlHtml(tbl) {
+      if (!tbl || !tbl.columns || !tbl.columns.length) {
+        return "<div style='font-size:0.8rem;color:#64748b'><i>Aucune ligne retournée.</i></div>";
+      }
+      var h = "<table class='sql-grid-table'><thead><tr>" +
+        tbl.columns.map(function (c) { return "<th>" + echap(c) + "</th>"; }).join("") +
+        "</tr></thead><tbody>";
+      (tbl.values || []).forEach(function (row) {
+        h += "<tr>" + row.map(function (v) { return "<td>" + echap(v) + "</td>"; }).join("") + "</tr>";
+      });
+      h += "</tbody></table>";
+      return h;
+    }
+
+    function majApercuInitialDefi() {
+      var tag = document.getElementById("preview-engine-tag");
+      if (defiActif.matiere === "css3") {
+        tag.textContent = "🎨 Rendu HTML5/CSS3 Temps Réel";
+        previewBody.style.padding = "0";
+        previewBody.innerHTML = '<iframe id="iframe-preview-html" sandbox="allow-same-origin" title="Aperçu HTML5/CSS3"></iframe>';
+        var ifr = document.getElementById("iframe-preview-html");
+        if (ifr) ifr.srcdoc = editor.value;
+      } else if (defiActif.matiere === "javascript") {
+        tag.textContent = "⚡ Formulaire DOM Interactif";
+        previewBody.style.padding = "12px";
+        previewBody.innerHTML = (defiActif.formHtml || "") + '<div id="toast-js-manual" class="toast-js-manual"></div>';
+        var btnMan = document.getElementById("btn-tester-manuel-js");
+        if (btnMan) {
+          btnMan.addEventListener("click", function () {
+            var toast = document.getElementById("toast-js-manual");
+            var alertes = [];
+            try {
+              var fnNom = defiActif.id === "be-js-3" ? "calculerTotal()" : "verif()";
+              var fn = new Function("alert", editor.value + "\n; return " + fnNom + ";");
+              var ret = fn(function (m) { alertes.push(String(m)); });
+              toast.style.display = "block";
+              if (ret === true) {
+                toast.style.background = "#dcfce7"; toast.style.color = "#14532d";
+                toast.textContent = "✅ Retour : true (Formulaire validé !)";
+              } else {
+                toast.style.background = "#fee2e2"; toast.style.color = "#7f1d1d";
+                toast.textContent = "🛑 Retour : " + JSON.stringify(ret) + (alertes.length ? (" · alert(\"" + alertes.join(" | ") + "\")") : " (aucun alert appelé)");
+              }
+            } catch (errM) {
+              toast.style.display = "block";
+              toast.style.background = "#fee2e2"; toast.style.color = "#7f1d1d";
+              toast.textContent = "⚠️ Erreur JS : " + errM.message;
+            }
+          });
+        }
+      } else if (defiActif.matiere === "sql") {
+        tag.textContent = "🗄️ SQLite WebAssembly Local (sql-wasm)";
+        previewBody.style.padding = "12px";
+        previewBody.innerHTML = "<div style='font-size:0.83rem;color:#334155'>Cliquez sur <b>▶️ Lancer les 6 Tests</b> pour exécuter votre SQL sur la base en mémoire et comparer votre table à la table attendue.</div>";
+      } else {
+        tag.textContent = "🐘 Simulateur $_POST + Base SQL";
+        previewBody.style.padding = "12px";
+        previewBody.innerHTML = "<div style='font-size:0.83rem;color:#334155'>Cliquez sur <b>▶️ Lancer les 6 Tests</b> pour envoyer les requêtes HTTP <code>$_POST</code> d'essai et inspecter la sortie <code>echo</code> + la table <code>ADHERENT</code>.</div>";
+      }
+    }
+
+    function majBoutonEtoile() {
+      var suivi = lireJson(API.CLE_SUIVI, {});
+      var st = suivi[defiActif.id] || {};
+      var b = document.getElementById("btn-etoile-banc");
+      b.textContent = st.etoile ? "⭐ À revoir" : "☆ À revoir";
+    }
+
+    function chargerDefi(d) {
+      defiActif = d;
+      var etatBanc = lireJson(API.CLE_BANC, {});
+      var sauvegarde = etatBanc[d.id] || {};
+
+      document.getElementById("defi-niveau").textContent = d.niveau;
+      document.getElementById("defi-titre").textContent = d.titre;
+      document.getElementById("defi-resume").textContent = d.resume;
+      document.getElementById("defi-consigne").textContent = d.consigne;
+      document.getElementById("schema-sql-details").style.display = (d.matiere === "sql" || d.matiere === "php") ? "block" : "none";
+
+      editor.value = sauvegarde.code !== undefined ? sauvegarde.code : d.starter;
+      hintDrawer.style.display = "none";
+      majBoutonEtoile();
+      rendreRubanDefis();
+      majApercuInitialDefi();
+
+      document.getElementById("res-verdict").textContent = sauvegarde.note20 !== undefined
+        ? ("Dernier score enregistré : " + sauvegarde.reussis + " / 6 tests validés")
+        : "🤖 Prêt à tester les 6 scénarios du défi";
+      document.getElementById("res-note-pill").textContent = sauvegarde.note20 !== undefined ? (sauvegarde.note20 + " / 20") : "— / 20";
+      document.getElementById("tests-list").innerHTML = "";
+    }
+
+    function executerTestsActifs() {
+      var code = editor.value;
+      var btnRun = document.getElementById("btn-run-tests");
+      btnRun.disabled = true;
+      btnRun.textContent = "⏳ Exécution des 6 tests…";
+
+      API.evaluerDefiAsync(defiActif, code).then(function (res) {
+        btnRun.disabled = false;
+        btnRun.textContent = "▶️ Lancer les 6 Tests (Ctrl+Entrée)";
+
+        /* Mettre à jour l'aperçu selon la matière */
+        if (res.typeApercu === "html") {
+          var ifr = document.getElementById("iframe-preview-html");
+          if (ifr) ifr.srcdoc = code;
+        } else if (res.typeApercu === "sql") {
+          previewBody.innerHTML =
+            "<div style='display:grid;grid-template-columns:1fr 1fr;gap:10px'>" +
+              "<div><strong style='font-size:0.8rem;color:#0e7c86'>📊 Votre résultat SQL :</strong>" + rendreTableSqlHtml(res.tableObtenue) + "</div>" +
+              "<div><strong style='font-size:0.8rem;color:#15803d'>🎯 Résultat attendu :</strong>" + rendreTableSqlHtml(res.tableAttendue) + "</div>" +
+            "</div>";
+        } else if (res.typeApercu === "php") {
+          previewBody.innerHTML =
+            "<div style='padding:8px 10px;border-radius:9px;background:#f8fafc;border:1px solid #cbd5e1;font-size:0.8rem;margin-bottom:8px'>" + (res.echoHtml || "") + "</div>" +
+            "<div><strong style='font-size:0.78rem;color:#0e7c86'>🗄️ État de la table ADHERENT après exécution :</strong>" + rendreTableSqlHtml(res.tableObtenue) + "</div>";
+        }
+
+        /* Afficher les 6 cartes de tests */
+        document.getElementById("res-verdict").textContent = res.toutValide
+          ? "🏆 Bravo ! 6 / 6 cas de tests validés !"
+          : ("🧪 " + res.reussis + " / " + res.total + " cas de tests validés");
+        document.getElementById("res-sub").textContent = res.toutValide
+          ? "Score maximal 20/20 enregistré dans votre suivi et synchronisé avec votre fiche."
+          : "Corrigez les points signalés en rouge ci-dessous puis relancez les tests.";
+        document.getElementById("res-note-pill").textContent = res.note20 + " / 20";
+
+        document.getElementById("tests-list").innerHTML = res.tests.map(function (t) {
+          return '<div class="test-item ' + (t.ok ? 'pass' : 'fail') + '">' +
+            '<div class="test-item-top">' +
+              '<span>' + (t.ok ? '✅ ' : '❌ ') + echap(t.nom) + '</span>' +
+              '<span>' + (t.ok ? 'OK' : 'À corriger') + '</span>' +
+            '</div>' +
+            '<div class="test-item-detail">' + echap(t.detail || '') + '</div>' +
+          '</div>';
+        }).join("");
+
+        /* Persister dans sti-banc-essai-v1 + sti-exo-suivi-v1 */
+        var etatBanc = lireJson(API.CLE_BANC, {});
+        var ancB = etatBanc[defiActif.id] || {};
+        var meilleur = Math.max(Number(ancB.note20 || 0), res.note20);
+        etatBanc[defiActif.id] = {
+          code: code,
+          reussis: Math.max(Number(ancB.reussis || 0), res.reussis),
+          note20: meilleur,
+          maj: Date.now()
+        };
+        ecrireJson(API.CLE_BANC, etatBanc);
+
+        var suivi = lireJson(API.CLE_SUIVI, {});
+        var ancS = suivi[defiActif.id] || {};
+        suivi[defiActif.id] = {
+          statut: meilleur >= 14 ? "done" : "doing",
+          etoile: Boolean(ancS.etoile),
+          note20: meilleur,
+          titre: "⚡ Banc d'Essai — " + defiActif.titre,
+          matiere: defiActif.matiere,
+          url: "banc-essai-bac.html?defi=" + defiActif.id,
+          maj: Date.now()
+        };
+        ecrireJson(API.CLE_SUIVI, suivi);
+
+        majKpisGlobaux();
+        rendreRubanDefis();
+      }).catch(function (err) {
+        btnRun.disabled = false;
+        btnRun.textContent = "▶️ Lancer les 6 Tests (Ctrl+Entrée)";
+        document.getElementById("res-verdict").textContent = "⚠️ Erreur d'exécution : " + err.message;
+      });
+    }
+
+    /* Saisie live : sauvegarde auto + mise à jour instantanée iframe HTML/CSS */
+    editor.addEventListener("input", function () {
+      var etatBanc = lireJson(API.CLE_BANC, {});
+      etatBanc[defiActif.id] = Object.assign({}, etatBanc[defiActif.id] || {}, { code: editor.value });
+      ecrireJson(API.CLE_BANC, etatBanc);
+      if (defiActif.matiere === "css3") {
+        var ifr = document.getElementById("iframe-preview-html");
+        if (ifr) ifr.srcdoc = editor.value;
+      }
+    });
+
+    /* Support touche Tab et raccourci Ctrl+Entrée dans l'éditeur */
+    editor.addEventListener("keydown", function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        executerTestsActifs();
+        return;
+      }
+      if (e.key === "Tab") {
+        e.preventDefault();
+        var s = editor.selectionStart, end = editor.selectionEnd;
+        editor.value = editor.value.substring(0, s) + "  " + editor.value.substring(end);
+        editor.selectionStart = editor.selectionEnd = s + 2;
+      }
+    });
+
+    document.getElementById("btn-run-tests").addEventListener("click", executerTestsActifs);
+
+    document.getElementById("btn-indice-1").addEventListener("click", function () {
+      hintDrawer.style.display = "block";
+      hintDrawer.innerHTML = "<b>💡 Indice méthodologique 1 :</b> " + echap(defiActif.indice1);
+    });
+    document.getElementById("btn-indice-2").addEventListener("click", function () {
+      hintDrawer.style.display = "block";
+      hintDrawer.innerHTML = "<b>🧭 Indice détaillé 2 :</b> " + echap(defiActif.indice2);
+    });
+
+    document.getElementById("btn-reset-code").addEventListener("click", function () {
+      if (!confirm("Réinitialiser votre code à l'état de départ de ce défi ?")) return;
+      editor.value = defiActif.starter;
+      majApercuInitialDefi();
+    });
+
+    document.getElementById("btn-solution").addEventListener("click", function () {
+      if (window.STI_EXO_ATELIER && window.STI_EXO_ATELIER.estCorrigeVerrouille(defiActif.matiere)) {
+        window.STI_EXO_ATELIER.ouvrirModaleIndiceOuVerrou({
+          exoId: defiActif.id,
+          matiere: defiActif.matiere,
+          titre: defiActif.titre,
+          desc: defiActif.resume,
+          onOuvrirCorrige: function () {}
+        });
+        return;
+      }
+      if (!confirm("Afficher la solution modèle commentée dans l'éditeur ? Essayez d'abord les 2 indices !")) return;
+      editor.value = defiActif.solution;
+      majApercuInitialDefi();
+    });
+
+    document.getElementById("btn-etoile-banc").addEventListener("click", function () {
+      var suivi = lireJson(API.CLE_SUIVI, {});
+      var anc = suivi[defiActif.id] || { statut: "todo" };
+      suivi[defiActif.id] = Object.assign({}, anc, {
+        etoile: !anc.etoile,
+        titre: "⚡ Banc d'Essai — " + defiActif.titre,
+        matiere: defiActif.matiere,
+        url: "banc-essai-bac.html?defi=" + defiActif.id,
+        maj: Date.now()
+      });
+      ecrireJson(API.CLE_SUIVI, suivi);
+      majBoutonEtoile();
+    });
+
+    document.querySelectorAll("#mat-bar .mat-tab").forEach(function (tab) {
+      if (tab.getAttribute("data-mat") === filtreMat) {
+        document.querySelectorAll("#mat-bar .mat-tab").forEach(function (x) { x.classList.remove("active"); });
+        tab.classList.add("active");
+      }
+      tab.addEventListener("click", function () {
+        filtreMat = tab.getAttribute("data-mat");
+        document.querySelectorAll("#mat-bar .mat-tab").forEach(function (x) { x.classList.toggle("active", x === tab); });
+        rendreRubanDefis();
+        chargerDefi(defiActif);
+      });
+    });
+
+    document.getElementById("btn-theme").addEventListener("click", function () {
+      var d = !document.documentElement.classList.contains("dark");
+      document.documentElement.classList.toggle("dark", d);
+      document.documentElement.classList.toggle("dark-mode", d);
+      if (d) document.documentElement.setAttribute("data-theme", "dark");
+      else document.documentElement.removeAttribute("data-theme");
+      try { localStorage.setItem("sti-theme", d ? "dark" : "light"); localStorage.setItem("theme", d ? "dark" : "light"); } catch (e) {}
+    });
+
+    majKpisGlobaux();
+    chargerDefi(defiActif);
+  })();
+  </script>
+</body>
+</html>

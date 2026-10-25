@@ -1005,7 +1005,7 @@ test('v451 : Étape 2 du Chantier des Exercices — Devoirs Blancs chronométré
   assert.match(ficheHtml, /sti-exo-suivi-v1/);
   assert.match(adminJs, /id='fiche-exercices-sync'/);
   assert.match(adminJs, /sti_progressions[\s\S]*?sti-exo-suivi-v1/);
-  assert.match(swJs, /UPDATE_ID\s*=\s*"v451-chantier-exercices-2"/);
+  assert.match(swJs, /chantier-exercices-v451/);
 
   // 4) Test comportemental VM du Diagnostic Zéro-Piège Bac (SQL, PHP/MySQLi, JavaScript)
   const store = new Map();
@@ -1065,6 +1065,50 @@ test('v451 : Étape 2 du Chantier des Exercices — Devoirs Blancs chronométré
   assert.ok(rJsPiege.alertes.some(a => /getElementById/.test(a)));
   assert.ok(rJsPiege.alertes.some(a => /&&/.test(a)));
 });
+
+test('v452 : Banc d\'Essai Code Live STI — 10 défis × 6 tests automatiques réels (HTML5/CSS3, JS sans Regex, SQL WebAssembly & PHP/MySQLi)', async () => {
+  const { createRequire } = await import('node:module');
+  const pathMod = await import('node:path');
+  const req = createRequire(import.meta.url);
+  const initSqlJs = req('../assets/js/sqljs/sql-wasm.js');
+  const SQLMod = await initSqlJs({
+    locateFile: (f) => pathMod.join(process.cwd(), 'assets/js/sqljs', f)
+  });
+
+  const bancHtml = read('banc-essai-bac.html');
+  const bancJs = read('assets/js/banc-essai-bac.js');
+  const indexHtml = read('index.html');
+  const swJs = read('sw.js');
+
+  assert.match(bancHtml, /sti-icon-512\.png/);
+  assert.match(bancHtml, /Comic Sans MS/);
+  assert.doesNotMatch(bancHtml, /#4f46e5|#4338ca/i);
+  assert.match(indexHtml, /href="banc-essai-bac\.html"/);
+  assert.match(swJs, /UPDATE_ID\s*=\s*"v452-banc-essai-live"/);
+
+  const ctx = { window: {} };
+  ctx.globalThis = ctx;
+  ctx.window = ctx;
+  vm.runInNewContext(bancJs, ctx);
+  const api = ctx.STI_BANC_ESSAI;
+  assert.equal(api.DEFIS.length, 10);
+
+  for (const d of api.DEFIS) {
+    const rStart = await api.evaluerDefiAsync(d, d.starter, { sqlModule: SQLMod });
+    assert.equal(rStart.toutValide, false, `Le code de départ ne doit pas valider 6/6 sur ${d.id}`);
+
+    const rSol = await api.evaluerDefiAsync(d, d.solution, { sqlModule: SQLMod });
+    assert.equal(rSol.reussis, 6, `La solution modèle doit valider 6/6 sur ${d.id}`);
+    assert.equal(rSol.note20, 20, `La solution modèle doit obtenir 20/20 sur ${d.id}`);
+  }
+
+  // Vérifier que l'utilisation d'une Regex en JS est bien sanctionnée par le robot
+  const dJs1 = api.DEFIS.find(x => x.id === 'be-js-1');
+  const codeAvecRegex = "function estChiffres(ch){ return /^[0-9]+$/.test(ch); } function estAlphaEspace(ch){ return /^[A-Za-z ]+$/.test(ch) && ch.trim().length>0; }";
+  const rReg = await api.evaluerDefiAsync(dJs1, codeAvecRegex);
+  assert.equal(rReg.toutValide, false, 'Une solution JS utilisant une Regex doit échouer le test de conformité Bac STI');
+});
+
 
 
 

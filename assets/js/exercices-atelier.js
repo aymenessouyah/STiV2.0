@@ -485,6 +485,7 @@
           '</div>' +
         '</div>' +
         '<div class="sti-ed-cta-group">' +
+          '<a class="sti-ed-cta" href="../banc-essai-bac.html" style="background:#16221c;color:#4ade80;border-color:#15803d">⚡ Banc d\'Essai Code Live (60 Tests)</a>' +
           '<a class="sti-ed-cta vert" href="atelier-interactif-bac.html">🧪 Atelier Auto-Corrigé (/20)</a>' +
           '<a class="sti-ed-cta" href="devoirs-blancs-bac.html" style="background:#0e7c86;color:#fff">⏱️ Devoirs Blancs DC/DS/Bac (/20)</a>' +
           '<button type="button" class="sti-ed-cta sec" id="sti-ed-btn-random" title="Choisir une série à travailler au hasard">🎲 Série au hasard</button>' +
