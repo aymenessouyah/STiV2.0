@@ -1086,10 +1086,10 @@ test('v455 : révision complète des Quiz — propositions mélangées, boutons 
   }
 
   // 3) quiz-sync.js chargé AVANT le moteur de jeu sur JS, HTML/CSS, SQL et PHP + viderFile avant lecture dans revision-erreurs.html
-  assert.ok(jsHtml.indexOf('quiz-sync.js?v=455') < jsHtml.indexOf('class QuizGame'));
-  assert.ok(hcHtml.indexOf('quiz-sync.js?v=455') < hcHtml.indexOf('function nouvellePartie'));
-  assert.ok(sqlHtml.indexOf('quiz-sync.js?v=455') < sqlHtml.indexOf('function pickQuestions'));
-  assert.ok(phpHtml.indexOf('quiz-sync.js?v=455') < phpHtml.indexOf('function startQuiz'));
+  assert.ok(jsHtml.indexOf('quiz-sync.js?v=457') < jsHtml.indexOf('class QuizGame'));
+  assert.ok(hcHtml.indexOf('quiz-sync.js?v=457') < hcHtml.indexOf('function nouvellePartie'));
+  assert.ok(sqlHtml.indexOf('quiz-sync.js?v=457') < sqlHtml.indexOf('function pickQuestions'));
+  assert.ok(phpHtml.indexOf('quiz-sync.js?v=457') < phpHtml.indexOf('function startQuiz'));
   assert.match(revErrHtml, /STIQuizSync\.viderFile\(\)/);
   assert.match(syncJs, /viderFile:\s*viderFile/);
   assert.match(swJs, /revision-quiz-v455/);
@@ -1518,6 +1518,257 @@ test('v456 (comportemental VM) : pagination PostgREST > 1000 lignes, purge persi
   assert.equal(vusApres.html5, undefined, 'Le module html5 réinitialisé a bien été purgé sur Supabase à la reconnexion');
   assert.deepEqual(Array.from(vusApres.css3), ['c1'], 'Les autres modules restent intacts');
   assert.deepEqual(JSON.parse(storage.getItem('sti-quiz-sync-vus-purge-v1') || '[]'), []);
+});
+
+test('v457 (Lot D — audit final Quiz) : couverture 124 pages, cache-buster unifié ?v=457, SQL hors-Bac filtré en Examen, Examen Blanc 45 Qs et accueil #modules', () => {
+  const indexHtml = read('index.html');
+  const adminHtml = read('admin.html');
+  const revErrHtml = read('revision-erreurs.html');
+  const hcHtml = read('quiz/html-css.html');
+  const jsHtml = read('quiz/javascript.html');
+  const sqlHtml = read('quiz/sql.html');
+  const phpHtml = read('quiz/php.html');
+  const tabHtml = read('quiz/tableaux.html');
+  const accesJs = read('assets/js/acces.js');
+  const swJs = read('sw.js');
+  const couvJson = JSON.parse(read('assets/pages-couverture.json'));
+  const roueCouvJs = read('assets/js/roue-couverture.js');
+  const pyCouv = read('tools/pages-couverture.py');
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  // 1) Questions sautées/non répondues incluses comme ok:false à la fin de partie HTML/CSS & SQL
+  assert.match(hcHtml, /finaliserPartie === "complet"\s*\?\s*state\.session\.filter\(function \(q\) \{ return !q\._synced; \}\)/);
+  assert.match(sqlHtml, /ok:\s*Boolean\(!a\.skipped && a\.good\)/);
+
+  // 2) quiz/pp.html retiré de la couverture (124 pages exactes, zéro doublon dans le repli roue-couverture.js)
+  assert.match(pyCouv, /"quiz\/pp\.html"/);
+  assert.equal(couvJson.n, 124);
+  assert.equal(couvJson.pages.length, 124);
+  assert.ok(!couvJson.pages.includes('quiz/pp.html'));
+  assert.ok(!roueCouvJs.includes('"quiz/pp.html"'));
+  const secM = roueCouvJs.match(/var PAGES = \[([\s\S]*?)\];/);
+  assert.ok(secM, 'PAGES présent dans roue-couverture.js');
+  const secoursArr = vm.runInNewContext('[' + secM[1] + ']');
+  assert.equal(secoursArr.length, new Set(secoursArr).size, 'Aucun doublon dans PAGES');
+
+  // 5) Accueil #modules actualisé (1 244 / 886 questions, 66 Défis JS & HTML, plus de mention erronée "sans compte")
+  assert.match(indexHtml, /Cinq quiz &amp; révision ciblée \(1 244 questions\)/);
+  assert.match(indexHtml, /Quatre quiz &amp; révision ciblée \(886 questions\)/);
+  assert.match(indexHtml, /des 66 Défis JS &amp; HTML/);
+  assert.ok(!indexHtml.includes('des 37 Défis JavaScript'));
+  assert.ok(!indexHtml.includes('modules auto-corrigés — sans compte'));
+
+  // 6) Cache-buster unifié quiz-sync.js?v=457 + manifeste hors-ligne & Service Worker v457
+  for (const [name, content] of [
+    ['quiz/html-css.html', hcHtml],
+    ['quiz/javascript.html', jsHtml],
+    ['quiz/sql.html', sqlHtml],
+    ['quiz/php.html', phpHtml],
+    ['quiz/tableaux.html', tabHtml],
+    ['revision-erreurs.html', revErrHtml],
+  ]) {
+    assert.match(content, /quiz-sync\.js\?v=457/, `${name} doit charger quiz-sync.js?v=457`);
+  }
+  assert.match(adminHtml, /admin-erreurs\.js\?v=457/);
+  assert.match(swJs, /var UPDATE_ID = "v457-quiz-lot-d"/);
+  assert.match(swJs, /"\.\/assets\/js\/quiz-tableaux-boot\.js"/);
+  assert.ok(offlineManifest.files.some((f) => f.path === 'assets/js/quiz-tableaux-boot.js'));
+
+  // 7) 5 questions SQL hors-Bac badgées Bonus Culture BD et exclues du mode Examen + Examen Blanc STI à 45 questions
+  assert.match(sqlHtml, /const BONUS_CULTURE_SQL_IDS = \[131, 132, 134, 135, 140\]/);
+  assert.match(sqlHtml, /BONUS_CULTURE_SQL_IDS\.indexOf\(q\.id\) === -1/);
+  const sqlM = sqlHtml.match(/const QUESTIONS = (\[[\s\S]*?\n      \]);/);
+  const sqlDb = vm.runInNewContext('(' + sqlM[1] + ')');
+  for (const bonusId of [131, 132, 134, 135, 140]) {
+    const q = sqlDb.find((x) => x.id === bonusId);
+    assert.ok(q, `Question SQL #${bonusId} présente`);
+    assert.equal(q.diff, 'Expert');
+    assert.match(q.explain, /\[Bonus Culture BD — hors épreuve Bac\]/);
+  }
+  const exM = accesJs.match(/var BANQUE_EXAMEN_BLANC_STI = (\[[\s\S]*?\n  \]);/);
+  assert.ok(exM, 'BANQUE_EXAMEN_BLANC_STI présente dans acces.js');
+  const exBank = vm.runInNewContext('(' + exM[1] + ')');
+  assert.equal(exBank.length, 45);
+  for (const chap of ['HTML5', 'CSS3', 'JS', 'SQL', 'PHP']) {
+    assert.equal(exBank.filter((q) => q.chap === chap).length, 9, `9 questions attendues pour ${chap}`);
+  }
+});
+
+test('v457 (comportemental VM) : roue-revision.js résout les URLs depuis /cours/* + route Quiz Tableaux, et admin-erreurs.js pagine + diplôme les erreurs corrigées', async () => {
+  const roueRevJs = read('assets/js/roue-revision.js');
+  const admErrJs = read('assets/js/admin-erreurs.js');
+
+  // A) Exécution de roue-revision.js depuis une sous-page (/cours/javascript.html, STI_ROOT="../")
+  const storageRev = {
+    _d: {
+      'sti-revision-v436': JSON.stringify({
+        'cours/sql.html': { vu: new Date(Date.now() - 86400000 * 2).toISOString(), etape: 0, dernier: null },
+      }),
+      'sti-mes-scores': JSON.stringify({
+        'Quiz Tableaux (HTML5)': '06/20',
+      }),
+    },
+    getItem(k) { return Object.prototype.hasOwnProperty.call(this._d, k) ? this._d[k] : null; },
+    setItem(k, v) { this._d[k] = String(v); },
+  };
+  let blocRev = null;
+  const panEl = {
+    offsetParent: {},
+    querySelector(sel) { return sel === '#sti-pan-revision' ? blocRev : null; },
+    appendChild(el) { blocRev = el; return el; },
+  };
+  const winRev = {
+    STI_ROOT: '../',
+    localStorage: storageRev,
+    location: { protocol: 'https:', origin: 'https://sti.example', pathname: '/exercices/sql/sql.html', href: 'https://sti.example/exercices/sql/sql.html' },
+    document: {
+      readyState: 'complete',
+      title: 'JavaScript',
+      head: { appendChild() {} },
+      body: { appendChild() {} },
+      getElementById() { return null; },
+      querySelector(sel) { return sel === '.sti-pan.ouvert' ? panEl : null; },
+      createElement() {
+        return {
+          id: '',
+          innerHTML: '',
+          textContent: '',
+          setAttribute() {},
+          addEventListener() {},
+          querySelector() { return null; },
+          querySelectorAll() { return []; },
+          remove() {},
+        };
+      },
+      addEventListener() {},
+    },
+    fetch(url) {
+      winRev._fetchedManifestUrl = url;
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({ pages: ['cours/javascript.html', 'cours/sql.html', 'quiz/tableaux.html'] }) });
+    },
+    setTimeout() {},
+    setInterval() { return 1; },
+    Promise, Math, Date, JSON, Object, Array, String, Number, Boolean, RegExp, parseInt, parseFloat, isNaN,
+  };
+  winRev.window = winRev;
+  winRev.location = winRev.location;
+  vm.runInNewContext(roueRevJs, winRev, { filename: 'roue-revision.js' });
+  assert.equal(winRev._fetchedManifestUrl, 'https://sti.example/assets/pages-couverture.json');
+  const dRev = winRev.STI_REVISION.dus();
+  assert.equal(dRev.pages[0].href, 'https://sti.example/cours/sql.html');
+  assert.equal(dRev.quiz[0].href, 'https://sti.example/quiz/tableaux.html');
+  const renderedHtml = blocRev ? blocRev.innerHTML : '';
+  assert.match(renderedHtml, /href='https:\/\/sti\.example\/cours\/sql\.html'|href="https:\/\/sti\.example\/cours\/sql\.html"/, 'Lien de cours résolu à la racine même depuis /exercices/sql/sql.html');
+  assert.match(renderedHtml, /href='https:\/\/sti\.example\/quiz\/tableaux\.html'|href="https:\/\/sti\.example\/quiz\/tableaux\.html"/, 'Quiz Tableaux routé vers quiz/tableaux.html (et non html-css.html)');
+  assert.match(renderedHtml, /href='https:\/\/sti\.example\/ma-fiche-revision\.html'|href="https:\/\/sti\.example\/ma-fiche-revision\.html"/, 'Lien Ma fiche résolu à la racine');
+  assert.match(roueRevJs, /a\.setAttribute\("href",\s*versRacine\("revision-erreurs\.html"\)\)/, 'Repli 3SI vers revision-erreurs.html résolu via versRacine');
+
+  // B) Exécution de admin-erreurs.js : exclusion elevelabo3, graduation vers Maîtrise et pagination .range() > 1000 lignes
+  const rangeCalls = [];
+  const makeFakeRows = (total) => ({
+    select() { return this; },
+    order() { return this; },
+    async range(from, to) {
+      rangeCalls.push([from, to]);
+      const rows = [];
+      for (let i = from; i <= Math.min(to, total - 1); i++) {
+        rows.push({
+          user_id: 'u1',
+          email: 'eleve1@exemple.tn',
+          quiz: 'sql',
+          module: 'sql',
+          question_id: 'q' + (i % 5),
+          enonce: 'Question ' + (i % 5),
+          correct: i < 200, // les plus récentes (tri DESC, indices 0..199) sont justes !
+          cree_le: new Date(Date.now() - i * 1000).toISOString(),
+        });
+      }
+      return { data: rows, error: null };
+    },
+  });
+  const elMap = {};
+  const getAdmEl = (id) => (elMap[id] || (elMap[id] = {
+    value: '1',
+    disabled: false,
+    textContent: '',
+    innerHTML: '',
+    style: {},
+    addEventListener() {},
+    querySelectorAll() { return []; },
+  }));
+  const winAdm = {
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'anon-test' },
+    supabase: {
+      createClient() {
+        return {
+          from(tbl) {
+            if (tbl === 'profiles') {
+              return {
+                select() {
+                  return {
+                    async range(from) {
+                      if (from > 0) return { data: [], error: null };
+                      return {
+                        data: [
+                          { id: 'u1', email: 'eleve1@exemple.tn', nom: 'Ben Ali', prenom: 'Sami', classe: '4SI1', statut: 'actif' },
+                          { id: 'ulabo', email: 'elevelabo3@exemple.tn', nom: 'Labo', prenom: 'Trois', classe: '4SI1', statut: 'actif' },
+                        ],
+                        error: null,
+                      };
+                    },
+                  };
+                },
+              };
+            }
+            return makeFakeRows(1450);
+          },
+        };
+      },
+    },
+    document: {
+      getElementById: getAdmEl,
+      createElement() { return { click() {} }; },
+    },
+    Blob: class {},
+    URL: { createObjectURL: () => '', revokeObjectURL: () => {} },
+    Math, Date, JSON, Promise, Object, Array, String, Number, Boolean, RegExp, Error, parseInt, isNaN,
+  };
+  winAdm.window = winAdm;
+  vm.runInNewContext(admErrJs, winAdm, { filename: 'admin-erreurs.js' });
+
+  // Test direct de STI_TYPES_ERREUR.analyser :
+  const res = winAdm.STI_TYPES_ERREUR.analyser(
+    [
+      { id: 'u1', email: 'eleve1@exemple.tn', nom: 'Ben Ali', prenom: 'Sami', classe: '4SI1' },
+      { id: 'ulabo', email: 'elevelabo3@exemple.tn', nom: 'Labo', prenom: '3', classe: '4SI1' },
+    ],
+    [
+      // q_remediee : ratée à t=1000, puis réussie dans Mes erreurs à t=2000 (passée en ordre DESC comme Supabase) -> Maîtrise !
+      { user_id: 'u1', quiz: 'sql', question_id: 'q_remediee', correct: true, cree_le: '2026-10-25T12:00:00Z' },
+      { user_id: 'u1', quiz: 'sql', question_id: 'q_remediee', correct: false, cree_le: '2026-10-24T12:00:00Z' },
+      // q_rechute : réussie à t=1000, puis ratée à t=2000 -> Sait mais se trompe (instable) !
+      { user_id: 'u1', quiz: 'sql', question_id: 'q_rechute', correct: false, cree_le: '2026-10-25T12:00:00Z' },
+      { user_id: 'u1', quiz: 'sql', question_id: 'q_rechute', correct: true, cree_le: '2026-10-24T12:00:00Z' },
+      // q_jamais : toujours ratée -> Ne sait pas !
+      { user_id: 'u1', quiz: 'sql', question_id: 'q_jamais', correct: false, cree_le: '2026-10-25T12:00:00Z' },
+      // Compte partagé labo ignoré
+      { user_id: 'ulabo', email: 'elevelabo3@exemple.tn', quiz: 'sql', question_id: 'q_jamais', correct: false, cree_le: '2026-10-25T12:00:00Z' },
+    ],
+    1
+  );
+  assert.equal(res.lignes.length, 1, 'elevelabo3@exemple.tn est exclu de l’analyse');
+  assert.equal(res.lignes[0].maitrise, 1, 'La question retravaillée avec succès passe en Maîtrise');
+  assert.equal(res.lignes[0].instable, 1, 'La question rechutée reste en Sait mais se trompe');
+  assert.equal(res.lignes[0].jamais, 1, 'La question jamais réussie est en Ne sait pas');
+
+  // Test de la pagination > 1000 lignes de calculer() :
+  const calcFn = winAdm.STI_TYPES_ERREUR.calculer;
+  if (typeof calcFn === 'function') {
+    await calcFn();
+  }
+  assert.equal(rangeCalls.length, 2, '2 pages .range() lues pour 1 450 réponses');
+  assert.deepEqual(Array.from(rangeCalls[0]), [0, 999]);
+  assert.deepEqual(Array.from(rangeCalls[1]), [1000, 1999]);
 });
 
 

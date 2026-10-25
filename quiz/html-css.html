@@ -3241,7 +3241,7 @@
 
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=425"></script>
-    <script src="../assets/js/quiz-sync.js?v=455"></script>
+    <script src="../assets/js/quiz-sync.js?v=457"></script>
 
     <script>
       /* ==============================================================
@@ -5683,20 +5683,23 @@ background-repeat: repeat;</pre>
         var repondues = state.session.filter(function (q) {
           return q.answer !== null && q.answer !== undefined;
         });
-        var nonSync = repondues.filter(function (q) { return !q._synced; });
-        if (STIQuizSync.enregistrerReponses && nonSync.length) {
-          nonSync.forEach(function (q) { q._synced = true; });
+        var aSynchroniser = finaliserPartie === "complet"
+          ? state.session.filter(function (q) { return !q._synced; })
+          : repondues.filter(function (q) { return !q._synced; });
+        if (STIQuizSync.enregistrerReponses && aSynchroniser.length) {
+          aSynchroniser.forEach(function (q) { q._synced = true; });
           STIQuizSync.enregistrerReponses(
             "html-css",
             null,
-            nonSync.map(function (q) {
-              return { id: STIQuizSync.hash(q.text), enonce: q.text, ok: q.options[q.answer].ok };
+            aSynchroniser.map(function (q) {
+              var estJuste = q.answer !== null && q.answer !== undefined && q.options[q.answer] && q.options[q.answer].ok;
+              return { id: STIQuizSync.hash(q.text), enonce: q.text, ok: !!estJuste };
             })
           );
         }
-        if (finaliserPartie && !state.partySynced && repondues.length > 0 && STIQuizSync.enregistrer) {
+        if (finaliserPartie && !state.partySynced && (repondues.length > 0 || finaliserPartie === "complet") && STIQuizSync.enregistrer) {
           state.partySynced = true;
-          var nbBonnes = repondues.filter(function (q) { return q.options[q.answer].ok; }).length;
+          var nbBonnes = repondues.filter(function (q) { return q.options[q.answer] && q.options[q.answer].ok; }).length;
           STIQuizSync.enregistrer("html-css", nbBonnes, finaliserPartie === "complet" ? state.session.length : repondues.length);
         }
       }

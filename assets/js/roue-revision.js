@@ -36,17 +36,26 @@
     if (/\/$/.test(p)) p += "index.html";
     return p;
   }
+  function racineSite() {
+    try {
+      var orig = location.origin && location.origin !== "null" ? location.origin : "";
+      var pn = location.pathname || "";
+      var mm = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//i);
+      if (mm) return orig + mm[1] + "/";
+      if (typeof window.STI_ROOT === "string" && window.STI_ROOT) return window.STI_ROOT;
+      return orig + pn.slice(0, pn.lastIndexOf("/") + 1);
+    } catch (eB) {
+      return "./";
+    }
+  }
+  function versRacine(rel) {
+    var r = String(rel || "").replace(/^\/+/, "");
+    if (/^https?:\/\//i.test(r)) return r;
+    return racineSite() + r;
+  }
   function pagesManifeste() {
     if (manifeste) return Promise.resolve(manifeste);
-    /* racine du site calculée comme dans config.js (les pages vivent à des profondeurs
-       différentes : un chemin relatif pointerait sur /cours/assets/… et ferait un 404) */
-    var base = "./";
-    try {
-      var pn = location.pathname || "";
-      var mm = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
-      base = mm ? location.origin + mm[1] + "/" : location.origin + pn.slice(0, pn.lastIndexOf("/") + 1);
-    } catch (eB) {}
-    return fetch(base + "assets/pages-couverture.json", { cache: "no-cache" })
+    return fetch(versRacine("assets/pages-couverture.json"), { cache: "no-cache" })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) { manifeste = (j && j.pages ? j.pages : []).map(function (x) { return String(x).toLowerCase(); }); return manifeste; })
       .catch(function () { manifeste = []; return manifeste; });
@@ -79,7 +88,7 @@
       var etape = Math.min(ETAPES.length - 1, Math.max(0, Number(e.etape) || 0));
       var echeance = base + ETAPES[etape] * JOUR;
       if (maintenant >= echeance) {
-        out.push({ type: "page", slug: p, etape: ETAPES[etape], rang: etape + 1, retard: Math.floor((maintenant - echeance) / JOUR), href: p });
+        out.push({ type: "page", slug: p, etape: ETAPES[etape], rang: etape + 1, retard: Math.floor((maintenant - echeance) / JOUR), href: versRacine(p) });
       }
     });
     out.sort(function (a, b) { return b.retard - a.retard; });
@@ -88,8 +97,12 @@
     nomsQuiz.forEach(function (nom) {
       var note = noteChiffree((function () { try { return JSON.parse(localStorage.getItem("sti-mes-scores"))[nom]; } catch (e) { return null; } })());
       if (note !== null && note < 10) {
-        var href = /^bac/i.test(nom) ? "bac-pratique.html" : (/php/i.test(nom) ? "quiz/php.html" : (/sql/i.test(nom) ? "quiz/sql.html" : (/javascript|js/i.test(nom) ? "quiz/javascript.html" : "quiz/html-css.html")));
-        quiz.push({ type: "quiz", nom: nom, note: note, href: href, retard: 1 });
+        var cibleQuiz = /^bac/i.test(nom) ? "bac-pratique.html"
+          : (/tableaux/i.test(nom) ? "quiz/tableaux.html"
+          : (/php/i.test(nom) ? "quiz/php.html"
+          : (/sql/i.test(nom) ? "quiz/sql.html"
+          : (/javascript|js/i.test(nom) ? "quiz/javascript.html" : "quiz/html-css.html"))));
+        quiz.push({ type: "quiz", nom: nom, note: note, href: versRacine(cibleQuiz), retard: 1 });
       }
     });
     return { pages: out, quiz: quiz, total: out.length + quiz.length };
@@ -154,7 +167,7 @@
       });
     }
     html += "<div style='display:flex;gap:6px;margin-top:1px'>" +
-      "<a href='ma-fiche-revision.html' style='flex:1 1 auto;text-align:center;text-decoration:none;border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:4px 8px;font:900 10.5px system-ui,sans-serif'>🖨 Ma fiche de révision</a>" +
+      "<a href='" + versRacine("ma-fiche-revision.html") + "' style='flex:1 1 auto;text-align:center;text-decoration:none;border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:4px 8px;font:900 10.5px system-ui,sans-serif'>🖨 Ma fiche de révision</a>" +
       "<button type='button' id='sti-pan-rappel-btn' style='flex:1 1 auto;border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:4px 8px;font:900 10.5px system-ui,sans-serif;cursor:pointer'>🔔 Rappels</button>" +
       "</div>";
     b.innerHTML = html;
@@ -164,7 +177,7 @@
     Array.prototype.forEach.call(b.querySelectorAll(".sti-rev-ligne a"), function (a) {
       try {
         if (getComputedStyle(a).display === "none") {
-          a.setAttribute("href", "revision-erreurs.html");
+          a.setAttribute("href", versRacine("revision-erreurs.html"));
           a.style.setProperty("display", "block", "important");
         }
       } catch (e) {}
@@ -183,7 +196,7 @@
     if (rb) rb.addEventListener("click", function () {
       if (window.STI_RAPPELS && window.STI_RAPPELS.demander) { window.STI_RAPPELS.demander(rb); return; }
       var s = doc.createElement("script");
-      s.src = (doc.currentScript && doc.currentScript.src ? doc.currentScript.src.replace(/roue-revision\.js.*$/, "") : "assets/js/") + "rappels-locaux.js?v=436";
+      s.src = (doc.currentScript && doc.currentScript.src ? doc.currentScript.src.replace(/roue-revision\.js.*$/, "") : versRacine("assets/js/")) + "rappels-locaux.js?v=436";
       s.onload = function () { try { window.STI_RAPPELS.demander(rb); } catch (e) {} };
       (doc.head || doc.documentElement).appendChild(s);
     });
