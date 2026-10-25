@@ -6,10 +6,21 @@
 var CACHE = "sti-atelier-v317";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v455-revision-quiz";
+var UPDATE_ID = "v456-quiz-lots-abc";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/quiz-sync.js", revision: "quiz-lots-abc-v456" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-lots-abc-v456" },
+  { url: "./assets/js/quiz-tableaux-boot.js", revision: "quiz-lots-abc-v456" },
+  { url: "./assets/js/quiz-admin.js", revision: "quiz-lots-abc-v456" },
+  { url: "./assets/js/acces.js", revision: "quiz-lots-abc-v456" },
+  { url: "./admin.html", revision: "quiz-lots-abc-v456" },
+  { url: "./revision-erreurs.html", revision: "quiz-lots-abc-v456" },
+  { url: "./quiz/tableaux.html", revision: "quiz-lots-abc-v456" },
+  { url: "./quiz/sql.html", revision: "quiz-lots-abc-v456" },
+  { url: "./quiz/php.html", revision: "quiz-lots-abc-v456" },
+  { url: "./quiz/pp.html", revision: "quiz-lots-abc-v456" },
   { url: "./assets/js/quiz-sync.js", revision: "revision-quiz-v455" },
   { url: "./assets/js/quiz-tableaux.js", revision: "revision-quiz-v455" },
   { url: "./revision-erreurs.html", revision: "revision-quiz-v455" },

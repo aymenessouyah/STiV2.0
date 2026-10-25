@@ -40030,7 +40030,7 @@ LIMIT 5;</textarea
           "q": "À quoi sert le langage SQL ?",
           "code": "SELECT marque, modele FROM Vehicule;",
           "answers": [
-            "À dessiner le schéma d'une base",
+            "À dessiner graphiquement les formulaires et les pages web d'une application",
             "À installer le SGBD sur un serveur",
             "À mettre en forme les pages web",
             "À communiquer avec une base de données relationnelle"
@@ -40048,7 +40048,7 @@ LIMIT 5;</textarea
           "answers": [
             "Éviter les redondances et garantir la cohérence des données",
             "Remplacer complètement les programmes en JavaScript",
-            "Compresser les fichiers pour gagner de la place",
+            "Compresser automatiquement toutes les tables sur le disque pour économiser la mémoire",
             "Empêcher l'utilisateur d'écrire des requêtes"
           ],
           "correct": 0,
@@ -40110,7 +40110,7 @@ LIMIT 5;</textarea
           "q": "Que renvoie le SGBD après une requête SELECT ?",
           "code": "SELECT nom_Cli FROM Client WHERE ville = 'Tunis';",
           "answers": [
-            "Une confirmation d'écriture dans la base",
+            "Un simple code numérique confirmant que la table a bien été verrouillée en lecture",
             "Le nombre total de clients de la base",
             "Le résultat de la recherche (les lignes demandées)",
             "Rien du tout : il faut réécrire la table"
@@ -40142,7 +40142,7 @@ LIMIT 5;</textarea
           "q": "À quoi sert la commande USE Gestion_Location; ?",
           "code": "-- Sélectionner et activer la base de données\nUSE Gestion_Location;",
           "answers": [
-            "À afficher la liste des tables de la base",
+            "À afficher immédiatement le contenu détaillé de toutes les tables de Gestion_Location",
             "À sélectionner la base sur laquelle on va travailler",
             "À créer une copie de la base",
             "À supprimer la base si elle existe déjà"
@@ -40158,7 +40158,7 @@ LIMIT 5;</textarea
           "q": "Que fait DROP DATABASE Gestion_Location; ?",
           "code": "-- Supprimer une base de données entière du SGBD\nDROP DATABASE Gestion_Location;",
           "answers": [
-            "Il vide les tables mais garde leurs structures",
+            "Il vide toutes les lignes des tables tout en conservant intacte leur structure",
             "Il met la base en lecture seule",
             "Il renomme la base en Gestion_Location_old",
             "Il supprime définitivement la base et toutes ses tables"
@@ -40191,7 +40191,7 @@ LIMIT 5;</textarea
           "code": "-- Deux commandes, deux effets différents\nDROP TABLE Client;\nDELETE FROM Client;",
           "answers": [
             "DROP agit sur les colonnes, DELETE sur les tables",
-            "DROP supprime des lignes, DELETE supprime la structure",
+            "DROP vide uniquement les enregistrements, tandis que DELETE détruit toute la structure",
             "DROP supprime la structure et les données, DELETE ne supprime que des lignes",
             "Les deux commandes suppriment la table entière"
           ],
@@ -40270,7 +40270,7 @@ LIMIT 5;</textarea
           "q": "Quelle est la différence entre VARCHAR(30) et CHAR(30) ?",
           "code": "nom_Cli VARCHAR(30)      -- 'Ali'\ncode_postal CHAR(5)      -- '1002 '",
           "answers": [
-            "VARCHAR est réservé aux nombres, CHAR aux lettres",
+            "VARCHAR est réservé aux chaînes numériques, tandis que CHAR n'accepte que des lettres",
             "VARCHAR a une longueur variable, CHAR a une longueur fixe complétée par des espaces",
             "Les deux sont strictement identiques",
             "VARCHAR accepte 30 caractères, CHAR seulement 5"
@@ -40288,7 +40288,7 @@ LIMIT 5;</textarea
           "answers": [
             "Parce qu'il convertit automatiquement en minuscules",
             "Parce qu'il interdit les majuscules",
-            "Parce qu'il complète le texte par des espaces",
+            "Parce qu'il complète systématiquement les noms courts par des espaces jusqu'à 30 caractères",
             "Parce que l'espace pris s'adapte à la longueur réelle du texte"
           ],
           "correct": 3,
@@ -40383,7 +40383,7 @@ LIMIT 5;</textarea
           "code": "nom_Cli VARCHAR(30) NOT NULL",
           "answers": [
             "La valeur est obligatoire pour chaque ligne",
-            "La colonne est une clé étrangère",
+            "La colonne référence automatiquement la clé primaire d'une autre table de la base",
             "La valeur doit être un nombre",
             "La valeur par défaut est vide"
           ],
@@ -40416,7 +40416,7 @@ LIMIT 5;</textarea
           "answers": [
             "DEFAULT",
             "ORDER BY",
-            "PRIMARY KEY",
+            "PRIMARY KEY (...) REFERENCES TableParente",
             "FOREIGN KEY ... REFERENCES"
           ],
           "correct": 3,
@@ -40446,7 +40446,7 @@ LIMIT 5;</textarea
           "q": "Que se passe-t-il avec ON DELETE RESTRICT ?",
           "code": "CONSTRAINT fk_loc_client\n  FOREIGN KEY (NCIN_Cli)\n  REFERENCES Client(NCIN_Cli)\n  ON DELETE RESTRICT",
           "answers": [
-            "Le SGBD supprime aussi les locations du client",
+            "Le SGBD supprime automatiquement en cascade toutes les locations associées à ce client",
             "Le SGBD remplace la clé du client par NULL",
             "Le SGBD bloque la suppression du client tant qu'il a des locations",
             "Le SGBD supprime toute la base"
@@ -40464,7 +40464,7 @@ LIMIT 5;</textarea
           "answers": [
             "À chiffrer les données de la base",
             "À renommer automatiquement les colonnes",
-            "À accélérer l'affichage des résultats",
+            "À trier automatiquement les clés primaires par ordre croissant lors de chaque insertion",
             "À empêcher qu'une ligne enfant référence une ligne parente inexistante"
           ],
           "correct": 3,
@@ -40590,7 +40590,7 @@ LIMIT 5;</textarea
           "q": "Que crée cette instruction ?",
           "code": "ALTER TABLE Location\n  ADD PRIMARY KEY (immat_Vehicule, NCIN_Cli, date_loc);",
           "answers": [
-            "Trois clés primaires indépendantes",
+            "Trois clés primaires indépendantes appliquées séparément sur chacune des colonnes",
             "Trois nouvelles colonnes",
             "Une clé étrangère vers trois tables",
             "Une clé primaire composée des trois colonnes"
@@ -40625,7 +40625,7 @@ LIMIT 5;</textarea
             "À vider la table temporairement",
             "À supprimer puis recréer la table",
             "À désactiver puis réactiver les contraintes pendant une opération lourde",
-            "À bloquer l'accès des autres utilisateurs"
+            "À chiffrer puis déchiffrer les clés primaires de la table pour protéger les accès"
           ],
           "correct": 2,
           "explain": "On désactive temporairement les vérifications pour accélérer une série d'insertions ou de mises à jour, puis on les réactive pour retrouver la garantie d'intégrité.",
@@ -40640,7 +40640,7 @@ LIMIT 5;</textarea
           "answers": [
             "À ajouter une règle de validation à une table qui existe déjà",
             "À afficher les valeurs interdites",
-            "À supprimer les lignes hors intervalle",
+            "À supprimer automatiquement toutes les lignes existantes qui ne respectent pas la condition",
             "À créer un index sur la colonne"
           ],
           "correct": 0,
@@ -40670,7 +40670,7 @@ LIMIT 5;</textarea
           "q": "Que faut-il respecter dans cette insertion implicite ?",
           "code": "-- Cas 2 : insertion sans lister les colonnes\nINSERT INTO Client\nVALUES ('87654321', 'Mouna Riahi', 'Sfax');",
           "answers": [
-            "Peu importe : le SGBD reconnaît chaque valeur",
+            "Aucun ordre particulier : le SGBD associe chaque valeur selon son type de données",
             "L'ordre alphabétique des colonnes",
             "L'ordre des lignes déjà présentes dans la table",
             "L'ordre exact des colonnes tel qu'il a été défini à la création"
@@ -40705,7 +40705,7 @@ LIMIT 5;</textarea
             "En séparant les groupes par le mot AND",
             "C'est impossible : une requête = une ligne",
             "En séparant les groupes de valeurs par des virgules",
-            "En écrivant deux commandes INSERT INTO"
+            "En répétant obligatoirement le mot-clé INSERT INTO devant chaque nouveau tuple ajouté"
           ],
           "correct": 2,
           "explain": "Après VALUES, chaque tuple entre parenthèses représente une ligne : il suffit de les séparer par des virgules. C'est plus rapide qu'une série d'INSERT séparés.",
@@ -40718,7 +40718,7 @@ LIMIT 5;</textarea
           "q": "Que fait cette insertion par sous-requête ?",
           "code": "-- Cas 5 : insertion par sous-requête\nINSERT INTO ClientArchive (NCIN_Cli, nom_Cli)\nSELECT NCIN_Cli, nom_Cli\nFROM Client\nWHERE ville = 'Bizerte';",
           "answers": [
-            "Il fusionne les deux tables en une seule",
+            "Il fusionne physiquement Client et ClientArchive en une seule table permanente",
             "Il crée la table ClientArchive puis la vide",
             "Il affiche les clients de Bizerte sans rien insérer",
             "Il copie dans ClientArchive les lignes renvoyées par le SELECT"
@@ -40734,7 +40734,7 @@ LIMIT 5;</textarea
           "q": "Que se passe-t-il si l'on insère une location pour un client inexistant ?",
           "code": "INSERT INTO Location (id_location, NCIN_Cli, immat_Vehicule)\nVALUES (7, '99999999', 'AB123CD');",
           "answers": [
-            "La location est créée avec un client NULL",
+            "La location est tout de même enregistrée en remplaçant automatiquement le client par NULL",
             "Le SGBD refuse l'insertion : la clé étrangère n'existe pas",
             "Le client est créé automatiquement",
             "La table Client est vidée"
@@ -40798,7 +40798,7 @@ LIMIT 5;</textarea
           "q": "Que fait cette mise à jour ?",
           "code": "-- Augmentation de salaires selon ancienneté\nUPDATE Employé\nSET Salaire = Salaire * 1.15\nWHERE anciennete > 10;",
           "answers": [
-            "Elle fixe tous les salaires à 1,15",
+            "Elle remplace le salaire de tous les employés de l'entreprise par la valeur fixe 1,15",
             "Elle supprime les employés anciens",
             "Elle ajoute 10 à tous les salaires",
             "Elle augmente de 15 % le salaire des employés ayant plus de 10 ans d'ancienneté"
@@ -40831,7 +40831,7 @@ LIMIT 5;</textarea
           "code": "-- Supprimer le premier caractère d'une colonne\nUPDATE table\nSET nom_colonne = SUBSTR(nom_colonne, 2)\nWHERE condition;",
           "answers": [
             "Il supprime la première ligne de la table",
-            "Il ajoute un caractère au début",
+            "Il concatène un caractère supplémentaire tout au début de chaque valeur de la colonne",
             "Il réécrit la colonne en laissant de côté le premier caractère",
             "Il supprime la colonne entière"
           ],
@@ -40862,7 +40862,7 @@ LIMIT 5;</textarea
           "q": "Quelle précaution prendre avant un UPDATE avec jointure (a.x = b.x) ?",
           "code": "-- Mise à jour croisée entre deux tables (forme a.x = b.x)\nUPDATE Client c, Location l\nSET c.ville = 'Tunis'\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND l.id_location = 1;",
           "answers": [
-            "Convertir les colonnes de jointure en VARCHAR",
+            "Convertir préalablement les deux colonnes de jointure NCIN_Cli au format texte VARCHAR",
             "Vérifier que la jointure c.NCIN_Cli = l.NCIN_Cli ne duplique pas les lignes cibles",
             "Supprimer la clé étrangère de la table cible",
             "Désactiver la base de données"
@@ -40878,7 +40878,7 @@ LIMIT 5;</textarea
           "q": "Quelle syntaxe met correctement à jour la ville d'un client via une jointure (forme a.x = b.x) ?",
           "code": "-- Mettre à jour la ville du client ayant effectué la location n° 1\n-- Tables : Client c (NCIN_Cli, nom_Cli, ville) et Location l (id_location, NCIN_Cli, date_loc)",
           "answers": [
-            "UPDATE Client c, Location l SET c.ville = 'Tunis';",
+            "UPDATE Client c JOIN Location l SET c.ville = 'Tunis' ON c.NCIN_Cli = l.NCIN_Cli WHERE id = 1;",
             "UPDATE Client SET ville = Location.ville;",
             "UPDATE Client c, Location l SET c.ville = 'Tunis' WHERE c.NCIN_Cli = l.NCIN_Cli AND l.id_location = 1;",
             "UPDATE Client c WHERE l.id_location = 1;"
@@ -40895,7 +40895,7 @@ LIMIT 5;</textarea
           "code": "-- Mise à jour croisée entre Client c et Location l\nUPDATE Client c, Location l\nSET c.ville = 'Tunis'\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND l.id_location = 1;",
           "answers": [
             "Elle relie chaque location au client possédant le même NCIN_Cli",
-            "Elle supprime les clients sans location",
+            "Elle supprime définitivement de la table Client tous les clients n'ayant aucune location",
             "Elle trie les clients par numéro de CIN",
             "Elle crée une nouvelle table Location"
           ],
@@ -40926,7 +40926,7 @@ LIMIT 5;</textarea
           "q": "Que fait cette suppression ?",
           "code": "DELETE FROM Location\nWHERE duree_loc = 0;",
           "answers": [
-            "Elle met la durée des locations à 0",
+            "Elle remplace par NULL la durée de toutes les locations enregistrées dans la table",
             "Elle supprime la colonne duree_loc",
             "Elle supprime toutes les locations",
             "Elle supprime les locations dont la durée vaut 0"
@@ -40944,7 +40944,7 @@ LIMIT 5;</textarea
           "answers": [
             "Toutes les lignes de la table sont supprimées, la table reste vide",
             "Seule la première ligne est supprimée",
-            "La table entière est supprimée du SGBD",
+            "La structure complète de la table est définitivement supprimée de la base de données",
             "Le SGBD refuse la commande"
           ],
           "correct": 0,
@@ -40976,7 +40976,7 @@ LIMIT 5;</textarea
           "answers": [
             "Oui, avec la commande UNDO DROP",
             "Oui, en relançant la même commande",
-            "Oui, la table est placée en corbeille pendant 24 h",
+            "Oui, car le SGBD conserve automatiquement la table supprimée dans un journal d'annulation",
             "Non : la suppression est définitive, d'où l'importance de vérifier avant"
           ],
           "correct": 3,
@@ -41023,7 +41023,7 @@ LIMIT 5;</textarea
           "code": "SELECT nom_Cli\nFROM Client\nWHERE ville = 'Tunis';",
           "answers": [
             "« Quels sont les noms des clients qui habitent à Tunis ? »",
-            "« Combien y a-t-il de clients à Tunis ? »",
+            "« Quel est le nombre exact de clients enregistrés qui habitent dans la ville de Tunis ? »",
             "« Quelles villes habitent les clients ? »",
             "« Ajoute un client de Tunis »"
           ],
@@ -41071,7 +41071,7 @@ LIMIT 5;</textarea
           "code": "SELECT nom_Cli FROM Client\nWHERE nom_Cli LIKE 'A%';",
           "answers": [
             "À comparer une chaîne selon un modèle (recherche partielle)",
-            "À comparer deux nombres entre eux",
+            "À vérifier l'égalité stricte entre deux valeurs numériques décimales dans une condition",
             "À trier les chaînes par longueur",
             "À convertir une chaîne en majuscules"
           ],
@@ -41103,7 +41103,7 @@ LIMIT 5;</textarea
           "code": "SELECT Cod_cli, count(*) AS \"Nombre d'achat\"\nFROM ventes\nGROUP BY Cod_cli;",
           "answers": [
             "À créer une colonne Cod_cli",
-            "À trier les clients par code",
+            "À trier l'affichage final des factures par ordre croissant du code client Cod_cli",
             "À supprimer les clients sans achat",
             "À regrouper les lignes par client pour calculer une statistique"
           ],
@@ -41118,7 +41118,7 @@ LIMIT 5;</textarea
           "q": "Que renvoie ce regroupement par code client ?",
           "code": "SELECT Cod_cli, count(*) AS \"Nombre d'achat\"\nFROM ventes\nGROUP BY Cod_cli\nHAVING count(*) >= 2;",
           "answers": [
-            "Toutes les ventes triées par client",
+            "La liste détaillée de toutes les ventes triées par client dès le premier achat enregistré",
             "Une ligne par client avec son nombre d'achats, seulement si ce nombre atteint 2",
             "Le nombre total de ventes de la table",
             "Une erreur : HAVING s'utilise sans GROUP BY"
@@ -41137,7 +41137,7 @@ LIMIT 5;</textarea
             "Les deux sont interchangeables",
             "HAVING s'utilise uniquement avec ORDER BY",
             "WHERE filtre les lignes avant le regroupement, HAVING filtre les groupes après",
-            "WHERE filtre les groupes, HAVING filtre les lignes"
+            "WHERE filtre les groupes après calcul des agrégats, tandis que HAVING filtre chaque ligne"
           ],
           "correct": 2,
           "explain": "WHERE s'applique aux lignes individuelles, avant que GROUP BY ne les rassemble ; HAVING s'applique aux groupes obtenus, avec leurs résultats d'agrégation.",
@@ -41153,7 +41153,7 @@ LIMIT 5;</textarea
             "Il trie le résultat par nom, du plus petit au plus grand",
             "Il renomme la colonne nom_Cli",
             "Il ne garde qu'un seul nom",
-            "Il regroupe les clients par nom"
+            "Il regroupe toutes les lignes portant le même nom_Cli en une seule ligne résumée"
           ],
           "correct": 0,
           "explain": "ORDER BY place les lignes dans l'ordre croissant de la colonne citée (c'est le sens par défaut, équivalent à ASC).",
@@ -41246,7 +41246,7 @@ LIMIT 5;</textarea
           "q": "Que renvoie cette somme ?",
           "code": "SELECT sum(pa_art) FROM articles;",
           "answers": [
-            "Le prix d'achat le plus élevé",
+            "Le prix d'achat unitaire le plus élevé parmi l'ensemble des articles de la table",
             "La somme des prix d'achat de tous les articles",
             "Le prix d'achat moyen",
             "Le nombre d'articles"
@@ -41296,7 +41296,7 @@ LIMIT 5;</textarea
           "answers": [
             "Non : count(*) exige un alias AS",
             "Oui : la fonction s'applique alors à toute la table (ou aux lignes filtrées)",
-            "Non : GROUP BY est obligatoire avec count(*)",
+            "Non : toute fonction d'agrégation comme count(*) exige obligatoirement une clause GROUP BY",
             "Oui, mais le résultat est toujours 1"
           ],
           "correct": 1,
@@ -41310,7 +41310,7 @@ LIMIT 5;</textarea
           "q": "Avec quoi MAX et MIN sont-elles souvent combinées ?",
           "code": "-- Article le plus cher\nSELECT des_art FROM articles\nWHERE pv_art = (SELECT max(pv_art) FROM articles);",
           "answers": [
-            "Avec la clause INSERT INTO",
+            "Avec la commande ALTER TABLE, pour fixer la borne maximale autorisée sur une colonne",
             "Avec la commande DROP TABLE",
             "Avec la clause USE",
             "Avec des sous-requêtes, pour comparer une valeur au maximum"
@@ -41327,7 +41327,7 @@ LIMIT 5;</textarea
           "code": "SELECT id, CONCAT(prenom, ' ', nom) AS affichage_nom\nFROM utilisateur;",
           "answers": [
             "Il assemble le prénom et le nom en une seule chaîne, séparés par un espace",
-            "Il compare le prénom et le nom",
+            "Il compare alphabétiquement le prénom et le nom puis renvoie la chaîne la plus longue",
             "Il supprime les espaces du nom",
             "Il additionne deux nombres"
           ],
@@ -41345,7 +41345,7 @@ LIMIT 5;</textarea
             "Il vérifie que le téléphone est vide",
             "Il convertit le téléphone en nombre",
             "Il ne garde que les téléphones de moins de 10 caractères",
-            "Il coupe le téléphone au 10e caractère"
+            "Il tronque automatiquement chaque numéro de téléphone pour n'en garder que 10 chiffres"
           ],
           "correct": 2,
           "explain": "LENGTH renvoie la longueur de la chaîne (en octets) : le WHERE conserve donc les numéros trop courts, sans doute incomplets.",
@@ -41550,7 +41550,7 @@ LIMIT 5;</textarea
           "q": "Pourquoi écrire DEFAULT CURRENT_TIMESTAMP plutôt que NOW() dans chaque INSERT ?",
           "code": "date_loc TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
           "answers": [
-            "Parce que NOW() ne fonctionne pas en MySQL",
+            "Parce que la fonction NOW() est interdite à l'intérieur d'une requête INSERT INTO en SQL",
             "Parce que la valeur est alors remplie automatiquement, sans la préciser à chaque insertion",
             "Parce que DEFAULT remplace la clé primaire",
             "Parce que CURRENT_TIMESTAMP est un type de colonne"
@@ -41568,7 +41568,7 @@ LIMIT 5;</textarea
           "answers": [
             "À convertir une date en texte",
             "À comparer deux chaînes de caractères",
-            "À ajouter trois mois à une date",
+            "À ajouter automatiquement un nombre donné de jours ou de mois à une date existante",
             "À calculer l'écart entre deux dates selon une unité donnée"
           ],
           "correct": 3,
@@ -41886,7 +41886,7 @@ LIMIT 5;</textarea
           "q": "Que fait cette requête de jointure (forme a.x = b.x) sur deux tables ?",
           "code": "SELECT c.nom_Cli, c.ville, l.id_location, l.date_loc\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli;",
           "answers": [
-            "Elle garde toutes les lignes de la table Client même sans location",
+            "Elle conserve tous les clients de la table Client, même ceux qui n'ont aucune location enregistrée",
             "Elle retourne uniquement les lignes qui se correspondent dans les 2 tables (c.NCIN_Cli = l.NCIN_Cli)",
             "Elle garde toutes les lignes des 2 tables sans condition",
             "Elle mélange les lignes au hasard"
@@ -41902,7 +41902,7 @@ LIMIT 5;</textarea
           "q": "Un client qui n'a effectué aucune location apparaît-il dans ce résultat ?",
           "code": "SELECT c.nom_Cli, l.id_location\nFROM Client c, Location l\nWHERE c.NCIN_Cli = l.NCIN_Cli;",
           "answers": [
-            "Oui, à condition d'ajouter DISTINCT",
+            "Oui, il apparaît une seule fois dans le résultat à condition d'ajouter le mot-clé DISTINCT",
             "Oui, il apparaît avec un id_location égal à 0",
             "Non : aucune ligne de Location ne vérifie c.NCIN_Cli = l.NCIN_Cli pour ce client",
             "Oui, avec NULL à droite"
@@ -41921,7 +41921,7 @@ LIMIT 5;</textarea
             "À relier chaque ligne de la 1re table à sa correspondance dans la 2de (même attribut immat_Vehicule)",
             "À renommer les tables du FROM",
             "Au tri final du résultat",
-            "À filtrer les groupes après regroupement"
+            "À regrouper les véhicules identiques afin de compter automatiquement le nombre de locations"
           ],
           "correct": 0,
           "explain": "La condition de jointure a.x = b.x (ici v.immat_Vehicule = l.immat_Vehicule, clé primaire d'un côté et clé étrangère de même nom de l'autre) relie les lignes des deux tables. Les autres filtres s'ajoutent ensuite avec AND.",
@@ -41950,7 +41950,7 @@ LIMIT 5;</textarea
           "q": "Comment relie-t-on les 3 tables Client c, Location l et Vehicule v ?",
           "code": "SELECT c.nom_Cli, v.marque, l.date_loc\nFROM Client c, Location l, Vehicule v\nWHERE c.NCIN_Cli = l.NCIN_Cli\n  AND v.immat_Vehicule = l.immat_Vehicule;",
           "answers": [
-            "Elle relie les tables sans aucune condition",
+            "Elle met les trois tables dans la clause FROM sans écrire de condition dans le WHERE",
             "Elle supprime les véhicules loués",
             "Elle interroge trois bases de données différentes",
             "Elle relie les 3 tables avec deux conditions de la forme a.x = b.x séparées par AND"
@@ -41968,7 +41968,7 @@ LIMIT 5;</textarea
           "answers": [
             "Écrire la sous-requête NOT EXISTS (ou NOT IN) avec l.NCIN_Cli = c.NCIN_Cli",
             "Trier par nom_Cli puis garder la première ligne",
-            "Écrire FROM Client c, Location l WHERE c.NCIN_Cli = l.NCIN_Cli",
+            "Écrire une jointure classique FROM Client c, Location l WHERE c.NCIN_Cli != l.NCIN_Cli",
             "Ajouter DISTINCT devant la colonne nom_Cli"
           ],
           "correct": 0,
@@ -42017,7 +42017,7 @@ LIMIT 5;</textarea
             "Il joint deux tables",
             "Il regroupe les lignes identiques pour calculer des agrégats",
             "Il trie les résultats",
-            "Il supprime les doublons"
+            "Il supprime physiquement de la table toutes les lignes qui possèdent des valeurs dupliquées"
           ],
           "correct": 1,
           "explain": "GROUP BY rassemble les lignes ayant mêmes valeurs pour appliquer COUNT, SUM, AVG...",
@@ -42064,7 +42064,7 @@ LIMIT 5;</textarea
           "answers": [
             "Une requête sauvegardée",
             "Une requête imbriquée dans une autre",
-            "Deux requêtes avec UNION",
+            "Deux requêtes indépendantes exécutées l'une après l'autre et séparées par un point-virgule",
             "Une requête en commentaire"
           ],
           "correct": 1,
@@ -42078,7 +42078,7 @@ LIMIT 5;</textarea
           "q": "Quelle est la différence entre UNION et UNION ALL ?",
           "code": "SELECT nom FROM Clients UNION SELECT nom FROM Prospects;",
           "answers": [
-            "UNION garde les doublons, UNION ALL les supprime",
+            "UNION conserve toutes les lignes dupliquées, tandis que UNION ALL élimine les doublons",
             "Ce sont des synonymes",
             "UNION ALL trie, UNION non",
             "UNION supprime les doublons, UNION ALL les garde (plus rapide)"
@@ -42096,7 +42096,7 @@ LIMIT 5;</textarea
           "answers": [
             "Un if/else pour créer une colonne calculée",
             "Une jointure",
-            "Un filtre de groupes",
+            "Un filtre appliqué après GROUP BY pour éliminer les groupes ne vérifiant pas la condition",
             "Une boucle"
           ],
           "correct": 0,
@@ -42111,7 +42111,7 @@ LIMIT 5;</textarea
           "code": "SELECT * FROM Client c WHERE EXISTS (SELECT 1 FROM Location l WHERE l.NCIN_Cli = c.NCIN_Cli);",
           "answers": [
             "Compte les lignes",
-            "Vérifie si une colonne existe",
+            "Vérifie dans le schéma si la table ou la colonne citée existe bien dans la base",
             "Teste si la sous-requête retourne au moins une ligne",
             "Teste si une valeur est NULL"
           ],
@@ -42128,7 +42128,7 @@ LIMIT 5;</textarea
           "answers": [
             "Une nouvelle table physique",
             "Un index",
-            "Une vue permanente",
+            "Une vue permanente stockée sur le disque et partagée entre toutes les sessions",
             "Une requête temporaire nommée et réutilisable"
           ],
           "correct": 3,
@@ -42224,7 +42224,7 @@ LIMIT 5;</textarea
           "answers": [
             "DROP supprime la table, DELETE des lignes (filtrable), TRUNCATE vide vite toute la table",
             "Ce sont des synonymes",
-            "DELETE supprime la table",
+            "DELETE détruit la structure de la table, DROP vide les lignes et TRUNCATE filtre avec WHERE",
             "TRUNCATE supprime la base entière"
           ],
           "correct": 0,
@@ -42238,7 +42238,7 @@ LIMIT 5;</textarea
           "q": "Que fait une FOREIGN KEY ?",
           "code": "FOREIGN KEY (NCIN_Cli) REFERENCES Client(NCIN_Cli)",
           "answers": [
-            "Elle crée un index trié",
+            "Elle génère automatiquement un compteur entier auto-incrémenté sur la table enfant",
             "Elle empêche les NULL",
             "Elle lie une colonne à la clé primaire de même nom d'une autre table",
             "Elle rend une colonne unique"

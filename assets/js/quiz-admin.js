@@ -23,8 +23,26 @@
   };
   var LIBELLE_MODULE = {
     html5: "HTML5", css3: "CSS3", javascript: "JavaScript", sql: "SQL",
-    php: "PHP", defis: "37 Défis JS", "recap-php": "Récap PHP", mix: "Mix"
+    php: "PHP", defis: "66 Défis JS & HTML", "recap-php": "Récap PHP", mix: "🎲 Mix", revision: "🎯 Révision erreurs"
   };
+
+  async function lireToutPagine(fabriquerRequete, maxLignes, taillePage) {
+    var pas = taillePage || 1000;
+    var plafond = maxLignes || 10000;
+    var cumul = [];
+    for (var offset = 0; offset < plafond; offset += pas) {
+      var fin = Math.min(offset + pas, plafond) - 1;
+      var req = fabriquerRequete();
+      var r = (req && typeof req.range === "function")
+        ? await req.range(offset, fin)
+        : await req.limit(plafond);
+      if (r && r.error) return { data: null, error: r.error };
+      var lot = (r && r.data) || [];
+      cumul = cumul.concat(lot);
+      if (!req || typeof req.range !== "function" || lot.length < (fin - offset + 1)) break;
+    }
+    return { data: cumul, error: null };
+  }
 
   function $(id) { return document.getElementById(id); }
   function sb() {
@@ -66,14 +84,21 @@
     enCours = true;
     resume.textContent = "Chargement des résultats synchronisés…";
     try {
-      var rr = await s.from("sti_quiz_reponses").select("user_id,email,quiz,module,question_id,enonce,correct,cree_le")
-        .order("cree_le", { ascending: false }).limit(8000)
-        .then(function (r) { return r; }, function () { return { data: null }; });
+      var rr = await lireToutPagine(function () {
+        return s.from("sti_quiz_reponses")
+          .select("user_id,email,quiz,module,question_id,enonce,correct,cree_le")
+          .order("cree_le", { ascending: false });
+      }, 20000, 1000).then(function (r) { return r; }, function () { return { data: null }; });
       reponses = rr && !rr.error && rr.data ? rr.data : null;
       var [rp, rf] = await Promise.all([
-        s.from("sti_quiz_parties").select("user_id,email,quiz,module,score,total,cree_le")
-          .order("cree_le", { ascending: false }).limit(5000),
-        s.from("profiles").select("id,email,nom,prenom,classe").limit(2000)
+        lireToutPagine(function () {
+          return s.from("sti_quiz_parties")
+            .select("user_id,email,quiz,module,score,total,cree_le")
+            .order("cree_le", { ascending: false });
+        }, 10000, 1000),
+        lireToutPagine(function () {
+          return s.from("profiles").select("id,email,nom,prenom,classe");
+        }, 3000, 1000)
       ]);
       if (rp.error) throw rp.error;
       donnees = rp.data || [];
@@ -137,7 +162,7 @@
     var liste = groupesFiltres();
     var nbParties = (donnees || []).length;
     resume.textContent = nbParties
-      ? nbParties + " partie(s) synchronisée(s)" + (nbParties >= 5000 ? " (les 5000 plus récentes)" : "") +
+      ? nbParties + " partie(s) synchronisée(s)" + (nbParties >= 10000 ? " (les 10 000 plus récentes)" : "") +
         " · " + liste.length + " ligne(s) élève × quiz affichée(s). Cliquez sur une ligne pour le détail de chaque partie."
       : "Aucune partie synchronisée pour le moment (les quiz joués par les élèves connectés apparaîtront ici).";
     if (!liste.length) {
@@ -150,6 +175,7 @@
         return "<div>🗓️ " + esc(fmtDate(l.cree_le)) + " — <strong>" + l.score + "/" + l.total +
           "</strong> (" + pct(l) + " %)</div>";
       }).join("");
+      var modAttr = g.rep.module == null ? "" : g.rep.module;
       return "<tr data-idx=\"" + idx + "\" style=\"cursor:pointer\" title=\"Cliquer pour le détail des parties\">" +
         "<td style=\"font-weight:800\">" + esc(nomEleve(g.rep)) +
           '<div style="font-weight:600;font-size:11px;color:#7a6f5d">' + esc(g.rep.email || "") + "</div></td>" +
@@ -161,12 +187,26 @@
         "<td style=\"text-align:center\">" + g.pctMoyen + " %</td>" +
         "<td style=\"text-align:center\">▸</td></tr>" +
         '<tr class="quiz-sync-detail" id="quiz-sync-detail-' + idx + '" style="display:none"><td colspan="8" style="background:#f9f1e3;font-size:12.5px;line-height:1.7">' +
-          "<strong>📋 Toutes les parties (" + g.nb + ") :</strong>" + detail + questionsRateesEleve(g.rep.user_id) + "</td></tr>";
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">' +
+          "<strong>📋 Toutes les parties (" + g.nb + ") :</strong>" +
+          '<button type="button" class="btn-purger-quiz-eleve" data-uid="' + esc(g.rep.user_id) + '" data-quiz="' + esc(g.rep.quiz) + '" data-module="' + esc(modAttr) + '" data-label="' + esc(nomEleve(g.rep) + " — " + nomQuiz(g.rep)) + '" style="border:1.5px solid #c0392b;border-radius:999px;padding:3px 10px;background:#fffdf7;color:#c0392b;font-weight:800;font-size:11.5px;cursor:pointer">🗑️ Purger ce quiz</button>' +
+          "</div>" + detail + questionsRateesEleve(g.rep.user_id, g.rep.quiz, g.rep.module) + "</td></tr>";
     }).join("");
     tb.querySelectorAll("tr[data-idx]").forEach(function (tr) {
       tr.addEventListener("click", function () {
         var det = $("quiz-sync-detail-" + tr.getAttribute("data-idx"));
         if (det) det.style.display = det.style.display === "none" ? "" : "none";
+      });
+    });
+    tb.querySelectorAll(".btn-purger-quiz-eleve").forEach(function (btnP) {
+      btnP.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        purgerGroupeEleve(
+          btnP.getAttribute("data-uid"),
+          btnP.getAttribute("data-quiz"),
+          btnP.getAttribute("data-module"),
+          btnP.getAttribute("data-label")
+        );
       });
     });
   }
@@ -411,39 +451,61 @@
     });
   }
 
-  /* ═══ v365 : analyse par question ═══ */
+  /* ═══ v365 / v456 : analyse par question (avec distinction « encore à retravailler » vs « corrigée depuis ») ═══ */
   var quizQuestionFiltre = "*";
   var questionSel = null;
   var questionsAffichees = [];
 
-  function questionsRateesEleve(uid) {
+  function questionsRateesEleve(uid, quizFiltre, moduleFiltre) {
     if (!reponses || !reponses.length) return "";
     var par = {};
+    /* reponses est trie du plus recent au plus ancien (cree_le DESC) */
     reponses.forEach(function (r) {
-      if (r.user_id !== uid || r.correct) return;
-      var cle = r.quiz + "|" + (r.module || "") + "|" + r.question_id;
-      if (!par[cle]) par[cle] = { enonce: r.enonce, quiz: r.quiz, module: r.module, nb: 0 };
-      par[cle].nb++;
+      if (r.user_id !== uid) return;
+      if (quizFiltre && r.quiz !== quizFiltre) return;
+      if (quizFiltre === "tableaux" && moduleFiltre && moduleFiltre !== "mix" && moduleFiltre !== "revision" && r.module && r.module !== "mix" && r.module !== "revision" && r.module !== moduleFiltre) return;
+      var cle = r.quiz + "|" + r.question_id;
+      if (!par[cle]) {
+        par[cle] = { enonce: r.enonce, quiz: r.quiz, module: r.module, nb: 0, dernierCorrect: !!r.correct };
+      }
+      if (!r.correct) par[cle].nb++;
+      if (!par[cle].enonce && r.enonce) par[cle].enonce = r.enonce;
     });
     var liste = Object.keys(par).map(function (k) { return par[k]; })
-      .sort(function (a, b) { return b.nb - a.nb; }).slice(0, 5);
+      .filter(function (q) { return q.nb > 0; })
+      .sort(function (a, b) {
+        if (a.dernierCorrect !== b.dernierCorrect) return a.dernierCorrect ? 1 : -1;
+        return b.nb - a.nb;
+      }).slice(0, 6);
     if (!liste.length) return "";
-    return '<div style="margin-top:6px"><strong>❌ Questions les plus ratées :</strong>' + liste.map(function (q) {
+    return '<div style="margin-top:6px"><strong>❌ Questions ratées sur ce quiz :</strong>' + liste.map(function (q) {
+      var badgeEtat = q.dernierCorrect
+        ? '<span style="color:#177245;font-weight:800">✅ corrigée depuis</span>'
+        : '<span style="color:#c0392b;font-weight:800">🔴 à retravailler</span>';
       return "<div>• (" + esc(LIBELLE_QUIZ[q.quiz] || q.quiz) + (q.module ? " · " + esc(LIBELLE_MODULE[q.module] || q.module) : "") + ") " +
-        esc((q.enonce || q.question_id || "").slice(0, 110)) + " — <strong>" + q.nb + " échec(s)</strong></div>";
+        esc((q.enonce || "").slice(0, 110)) + " — <strong>" + q.nb + " échec(s)</strong> · " + badgeEtat + "</div>";
     }).join("") + "</div>";
   }
 
   function agregerQuestions() {
     var par = {};
+    var dernierParEleve = {};
     (reponses || []).forEach(function (r) {
       if (quizQuestionFiltre !== "*" && r.quiz !== quizQuestionFiltre) return;
-      var cle = r.quiz + "|" + (r.module || "") + "|" + r.question_id;
-      if (!par[cle]) par[cle] = { cle: cle, quiz: r.quiz, module: r.module, question_id: r.question_id, enonce: "", tentatives: 0, echecs: 0 };
+      var cle = r.quiz + "|" + r.question_id;
+      if (!par[cle]) par[cle] = { cle: cle, quiz: r.quiz, module: r.module, question_id: r.question_id, enonce: "", tentatives: 0, echecs: 0, nonMaitrises: 0 };
       var g = par[cle];
       g.tentatives++;
       if (!r.correct) g.echecs++;
       if (!g.enonce && r.enonce) g.enonce = r.enonce;
+      if ((!g.module || g.module === "mix" || g.module === "revision") && r.module && r.module !== "mix" && r.module !== "revision") {
+        g.module = r.module;
+      }
+      var cleU = cle + "|" + r.user_id;
+      if (!(cleU in dernierParEleve)) {
+        dernierParEleve[cleU] = !!r.correct;
+        if (!r.correct) g.nonMaitrises++;
+      }
     });
     return Object.keys(par).map(function (k) {
       var g = par[k];
@@ -480,24 +542,28 @@
     }).join("");
     var toutes = agregerQuestions();
     questionsAffichees = toutes.filter(function (g) { return g.tentatives >= 2 && g.echecs > 0; })
-      .sort(function (a, b) { return (b.pctEchec - a.pctEchec) || (b.tentatives - a.tentatives); }).slice(0, 40);
+      .sort(function (a, b) { return (b.nonMaitrises - a.nonMaitrises) || (b.pctEchec - a.pctEchec) || (b.tentatives - a.tentatives); }).slice(0, 40);
     var h = '<div style="margin:0 0 8px">' + synthese + "</div>" +
       '<label style="font-size:12.5px;font-weight:800">Quiz : <select id="filtre-questions-quiz" style="border:2px solid #23201a;border-radius:999px;padding:5px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px">' + options + "</select></label>";
     if (!questionsAffichees.length) {
       return h + '<p style="color:#7a6f5d;font-size:12.5px;margin-top:8px">Pas encore de question assez répondue (au moins 2 tentatives) avec des échecs.</p>';
     }
-    h += '<div class="table-wrap" style="margin-top:8px"><table><thead><tr><th>Question</th><th>Quiz</th><th>Tentatives</th><th>Échecs</th><th>% échec</th><th></th></tr></thead><tbody>';
+    h += '<div class="table-wrap" style="margin-top:8px"><table><thead><tr><th>Question</th><th>Quiz</th><th>Tentatives</th><th>Échecs</th><th>% échec</th><th>Maîtrise actuelle</th><th></th></tr></thead><tbody>';
     questionsAffichees.forEach(function (g, i) {
-      h += '<tr data-question="' + i + '" style="cursor:pointer" title="Voir les élèves en échec sur cette question">' +
+      var etatMaitrise = g.nonMaitrises > 0
+        ? '<span style="color:#c0392b;font-weight:800">🔴 ' + g.nonMaitrises + " à revoir</span>"
+        : '<span style="color:#177245;font-weight:800">✅ Maîtrisée</span>';
+      h += '<tr data-question="' + i + '" style="cursor:pointer" title="Voir les élèves ayant échoué sur cette question">' +
         '<td style="font-weight:700">' + esc((g.enonce || g.question_id || "").slice(0, 130)) + "</td>" +
         "<td>" + esc(LIBELLE_QUIZ[g.quiz] || g.quiz) + (g.module ? '<div style="font-size:11px;color:#7a6f5d">' + esc(LIBELLE_MODULE[g.module] || g.module) + "</div>" : "") + "</td>" +
         '<td style="text-align:center;font-weight:800">' + g.tentatives + "</td>" +
         '<td style="text-align:center;font-weight:800">' + g.echecs + "</td>" +
         '<td style="text-align:center"><strong style="color:#c0392b">' + g.pctEchec + ' %</strong><div style="height:8px;border-radius:4px;background:#c0392b;width:' + Math.min(100, g.pctEchec) + '%;margin-top:3px"></div></td>' +
+        '<td style="text-align:center;font-size:12px">' + etatMaitrise + "</td>" +
         '<td style="text-align:center">▸</td></tr>';
     });
     h += "</tbody></table></div>" +
-      '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 4px">Questions répondues au moins 2 fois, triées par taux d\'échec. Cliquez sur une question pour voir les élèves en échec.</p><div id="question-eleves"></div>';
+      '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 4px">Questions répondues au moins 2 fois, triées par nombre d\'élèves encore non maîtrisés puis taux d\'échec. Cliquez sur une question pour le détail.</p><div id="question-eleves"></div>';
     return h;
   }
 
@@ -526,25 +592,105 @@
     if (!dest) return;
     var par = {};
     (reponses || []).forEach(function (r) {
-      var cle = r.quiz + "|" + (r.module || "") + "|" + r.question_id;
-      if (cle !== g.cle || r.correct) return;
-      if (!par[r.user_id]) par[r.user_id] = { rep: r, nb: 0, derniere: r.cree_le };
-      par[r.user_id].nb++;
-      if (new Date(r.cree_le) > new Date(par[r.user_id].derniere)) par[r.user_id].derniere = r.cree_le;
+      var cle = r.quiz + "|" + r.question_id;
+      if (cle !== g.cle) return;
+      if (!par[r.user_id]) par[r.user_id] = { rep: r, nb: 0, derniere: r.cree_le, dernierCorrect: !!r.correct };
+      if (!r.correct) {
+        par[r.user_id].nb++;
+        if (new Date(r.cree_le) > new Date(par[r.user_id].derniere)) par[r.user_id].derniere = r.cree_le;
+      }
     });
     var eleves = Object.keys(par).map(function (k) { return par[k]; })
-      .sort(function (a, b) { return (b.nb - a.nb) || (new Date(b.derniere) - new Date(a.derniere)); });
+      .filter(function (e) { return e.nb > 0; })
+      .sort(function (a, b) {
+        if (a.dernierCorrect !== b.dernierCorrect) return a.dernierCorrect ? 1 : -1;
+        return (b.nb - a.nb) || (new Date(b.derniere) - new Date(a.derniere));
+      });
     if (!eleves.length) { dest.innerHTML = ""; return; }
     dest.innerHTML = '<div style="border:2px solid #c0392b;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:8px 0 12px">' +
-      '<strong style="color:#c0392b">❌ Élèves en échec sur cette question (' + eleves.length + ")</strong>" +
+      '<strong style="color:#c0392b">❌ Élèves ayant échoué sur cette question (' + eleves.length + ")</strong>" +
       '<p style="font-size:12.5px;margin:4px 0 8px">« ' + esc((g.enonce || "").slice(0, 160)) + " »</p>" +
-      '<div class="table-wrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Échecs</th><th>Dernier échec</th></tr></thead><tbody>' +
+      '<div class="table-wrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Échecs</th><th>Statut actuel</th><th>Dernier échec</th></tr></thead><tbody>' +
       eleves.map(function (e) {
+        var st = e.dernierCorrect
+          ? '<span style="color:#177245;font-weight:800">✅ Corrigée depuis</span>'
+          : '<span style="color:#c0392b;font-weight:800">🔴 À retravailler</span>';
         return "<tr><td style=\"font-weight:800\">" + esc(nomEleve(e.rep)) + "</td><td>" + esc(classeEleve(e.rep)) + "</td>" +
           '<td style="text-align:center;font-weight:900;color:#c0392b">' + e.nb + "</td>" +
+          '<td style="text-align:center;font-size:12px">' + st + "</td>" +
           '<td style="font-size:12px">' + esc(fmtDate(e.derniere)) + "</td></tr>";
       }).join("") + "</tbody></table></div></div>";
     dest.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function csvCell(val) {
+    var s = String(val == null ? "" : val).replace(/\r?\n/g, " ").trim();
+    if (/[;"\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function exporterCsv() {
+    var liste = groupesFiltres();
+    if (!liste.length) {
+      window.alert("Aucun résultat de quiz à exporter pour la sélection actuelle.");
+      return;
+    }
+    var entete = ["Élève", "E-mail", "Classe", "Quiz", "Module", "Parties", "Dernier score", "Dernier %", "Date dernière partie", "Meilleur score", "Meilleur %", "% moyen"];
+    var lignesCsv = [entete.map(csvCell).join(";")];
+    liste.forEach(function (g) {
+      var d = g.dernier, m = g.meilleur;
+      lignesCsv.push([
+        nomEleve(g.rep),
+        g.rep.email || "",
+        classeEleve(g.rep),
+        LIBELLE_QUIZ[g.rep.quiz] || g.rep.quiz,
+        g.rep.module ? (LIBELLE_MODULE[g.rep.module] || g.rep.module) : "",
+        g.nb,
+        d.score + "/" + d.total,
+        String(pct(d)).replace(".", ","),
+        fmtDate(d.cree_le),
+        m.score + "/" + m.total,
+        String(pct(m)).replace(".", ","),
+        String(g.pctMoyen).replace(".", ",")
+      ].map(csvCell).join(";"));
+    });
+    var contenuCsv = "\uFEFF" + lignesCsv.join("\r\n");
+    var a = document.createElement("a");
+    var dateIso = new Date().toISOString().slice(0, 10);
+    a.setAttribute("download", "sti-resultats-quiz-" + dateIso + ".csv");
+    if (window.Blob && window.URL && typeof window.URL.createObjectURL === "function") {
+      var blob = new Blob([contenuCsv], { type: "text/csv;charset=utf-8;" });
+      var url = URL.createObjectURL(blob);
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { try { URL.revokeObjectURL(url); } catch (e) {} }, 2000);
+    } else {
+      a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(contenuCsv);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  }
+
+  async function purgerGroupeEleve(uid, quiz, mod, label) {
+    if (!uid || !quiz) return;
+    if (!window.confirm("Confirmer la suppression définitive des parties et réponses enregistrées pour :\n\n" + (label || uid + " / " + quiz) + " ?")) return;
+    var s = sb();
+    if (!s) return;
+    try {
+      var qp = s.from("sti_quiz_parties").delete().eq("user_id", uid).eq("quiz", quiz);
+      qp = mod ? qp.eq("module", mod) : qp.is("module", null);
+      var rp = await qp;
+      if (rp && rp.error) throw rp.error;
+      var qr = s.from("sti_quiz_reponses").delete().eq("user_id", uid).eq("quiz", quiz);
+      if (mod) qr = qr.eq("module", mod);
+      await qr;
+      await charger();
+    } catch (e) {
+      window.alert("⚠️ Suppression refusée ou échouée : " + ((e && e.message) || String(e)));
+    }
   }
 
   function brancherClasses(zone) {
@@ -611,6 +757,8 @@
     if (!tb) return;
     var btn = $("btn-quiz-sync-charger");
     if (btn) btn.addEventListener("click", charger);
+    var btnCsv = $("btn-quiz-sync-csv");
+    if (btnCsv) btnCsv.addEventListener("click", exporterCsv);
     document.querySelectorAll(".btn-vue-quiz").forEach(function (b) {
       b.addEventListener("click", function () {
         vueActuelle = b.getAttribute("data-vue");

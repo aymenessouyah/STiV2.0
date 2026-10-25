@@ -17,6 +17,7 @@
   "use strict";
   var CLE_FILE = "sti-quiz-sync-file-v1";
   var CLE_FILE_VUS = "sti-quiz-sync-vus-v1";
+  var CLE_PURGE_VUS = "sti-quiz-sync-vus-purge-v1";
   var CLE_FILE_REP = "sti-quiz-sync-rep-v1";
   var COMPTES_SANS_SCORE = ["elevelabo3@exemple.tn"];
   var seqSync = 0;
@@ -105,7 +106,7 @@
     sauverFile(f);
   }
 
-  /* ---------- File d'attente locale (questions vues Tableaux) ---------- */
+  /* ---------- File d'attente locale (questions vues Tableaux + purges modules épuisés v456) ---------- */
   function lireFileVus() {
     try { return JSON.parse(localStorage.getItem(CLE_FILE_VUS) || "[]"); } catch (e) { return []; }
   }
@@ -116,6 +117,50 @@
     var f = lireFileVus();
     ids.forEach(function (id) { f.push({ module: String(module), question_id: String(id) }); });
     sauverFileVus(f);
+  }
+  function lirePurgeVus() {
+    try { return JSON.parse(localStorage.getItem(CLE_PURGE_VUS) || "[]"); } catch (e) { return []; }
+  }
+  function sauverPurgeVus(liste) {
+    try {
+      var uniq = [];
+      (liste || []).forEach(function (m) {
+        var s = String(m || "");
+        if (s && uniq.indexOf(s) === -1) uniq.push(s);
+      });
+      localStorage.setItem(CLE_PURGE_VUS, JSON.stringify(uniq.slice(-30)));
+    } catch (e) {}
+  }
+  function retirerModuleFileVus(module) {
+    var mod = String(module || "");
+    if (!mod) return;
+    var f = mod === "*" ? [] : lireFileVus().filter(function (v) { return v && String(v.module) !== mod; });
+    sauverFileVus(f);
+  }
+  function retirerModulePurgeVus(module) {
+    var mod = String(module || "");
+    if (!mod) return;
+    if (mod === "*") { sauverPurgeVus([]); return; }
+    sauverPurgeVus(lirePurgeVus().filter(function (m) { return m !== mod; }));
+  }
+
+  /* ---------- Lecture paginée PostgREST (> 1 000 lignes v456) ---------- */
+  async function lireToutPagine(fabriquerRequete, maxLignes, taillePage) {
+    var pas = taillePage || 1000;
+    var plafond = maxLignes || 5000;
+    var cumul = [];
+    for (var offset = 0; offset < plafond; offset += pas) {
+      var fin = Math.min(offset + pas, plafond) - 1;
+      var req = fabriquerRequete();
+      var r = (req && typeof req.range === "function")
+        ? await req.range(offset, fin)
+        : await req.limit(plafond);
+      if (r && r.error) return { data: null, error: r.error };
+      var lot = (r && r.data) || [];
+      cumul = cumul.concat(lot);
+      if (!req || typeof req.range !== "function" || lot.length < (fin - offset + 1)) break;
+    }
+    return { data: cumul, error: null };
   }
 
   /* ---------- Réponses question par question (v365 / write-ahead v455) ---------- */
@@ -157,7 +202,7 @@
       if (!r) return;
       preLignes.push({
         quiz: String(quiz),
-        module: module ? String(module) : null,
+        module: r.module ? String(r.module) : (module ? String(module) : null),
         question_id: String(r.id != null && r.id !== "" ? r.id : hashTxt(r.enonce)),
         enonce: String(r.enonce == null ? "" : r.enonce).slice(0, 200),
         correct: !!r.ok
@@ -244,6 +289,7 @@
       sauverFile([]);
       sauverFileRep([]);
       sauverFileVus([]);
+      sauverPurgeVus([]);
       return;
     }
     var f = lireFile();
@@ -284,6 +330,25 @@
       sauverFile(nouvFile);
     }
     await viderFileRep(s, u);
+    var purges = lirePurgeVus();
+    if (purges.length && typeof s.from === "function") {
+      var purgesRestantes = [];
+      for (var p = 0; p < purges.length; p++) {
+        var modP = String(purges[p] || "");
+        if (!modP) continue;
+        try {
+          var tblDel = s.from("sti_quiz_vus");
+          if (!tblDel || typeof tblDel.delete !== "function") { purgesRestantes.push(modP); continue; }
+          var qDel = tblDel.delete().eq("user_id", u.id);
+          if (modP !== "*") qDel = qDel.eq("module", modP);
+          var rDel = await qDel;
+          if (rDel && rDel.error) purgesRestantes.push(modP);
+        } catch (eDel) {
+          purgesRestantes.push(modP);
+        }
+      }
+      sauverPurgeVus(purgesRestantes);
+    }
     var fv = lireFileVus();
     if (fv.length) {
       var lignes = fv.map(function (v) {
@@ -383,10 +448,17 @@
     var u = await utilisateur();
     if (!s || !u || sansScore(u)) return null;
     try {
-      var r = await s.from("sti_quiz_vus").select("module,question_id").limit(5000);
+      await viderFile();
+      var r = await lireToutPagine(function () {
+        return s.from("sti_quiz_vus").select("module,question_id").eq("user_id", u.id);
+      }, 6000, 1000);
       if (r.error || !r.data) return null;
+      var enPurge = {};
+      lirePurgeVus().forEach(function (m) { enPurge[m] = true; });
+      if (enPurge["*"]) return {};
       var sortie = {};
       r.data.forEach(function (l) {
+        if (!l || enPurge[l.module]) return;
         if (!sortie[l.module]) sortie[l.module] = [];
         sortie[l.module].push(l.question_id);
       });
@@ -413,6 +485,66 @@
     } catch (e) { mettreVusEnFile(module, ids); return false; }
   }
 
+  async function reinitialiserVus(module) {
+    var mod = String(module || "");
+    if (!mod) return false;
+    retirerModuleFileVus(mod);
+    var pActuel = lirePurgeVus();
+    pActuel.push(mod);
+    sauverPurgeVus(pActuel);
+    try {
+      var s = sb();
+      var u = await utilisateur();
+      if (sansScore(u)) {
+        retirerModulePurgeVus(mod);
+        return false;
+      }
+      if (!s || !u) return false;
+      var tblDel = s.from("sti_quiz_vus");
+      if (!tblDel || typeof tblDel.delete !== "function") return false;
+      var qDel = tblDel.delete().eq("user_id", u.id);
+      if (mod !== "*") qDel = qDel.eq("module", mod);
+      var r = await qDel;
+      if (r && r.error) return false;
+      retirerModulePurgeVus(mod);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function chargerReponses(maxLignes) {
+    var s = sb();
+    var u = await utilisateur();
+    if (!s || !u) return null;
+    if (sansScore(u)) return [];
+    try {
+      await viderFile();
+    } catch (eV) {}
+    var distantes = null;
+    try {
+      var r = await lireToutPagine(function () {
+        return s.from("sti_quiz_reponses")
+          .select("quiz,module,question_id,enonce,correct,cree_le")
+          .eq("user_id", u.id)
+          .order("cree_le", { ascending: false });
+      }, maxLignes || 6000, 1000);
+      if (!r.error && r.data) distantes = r.data;
+    } catch (eR) {}
+    var locales = lireFileRep().slice().reverse().map(function (l) {
+      return {
+        quiz: l.quiz,
+        module: l.module || null,
+        question_id: l.question_id,
+        enonce: l.enonce || "",
+        correct: !!l.correct,
+        cree_le: new Date().toISOString()
+      };
+    });
+    if (distantes === null) return locales.length ? locales : null;
+    return locales.concat(distantes);
+  }
+
   /* ---------- Mode « Retravailler mes erreurs » (v367) ---------- */
   var CLE_REVISION = "sti-revision-erreurs-v1";
   function preparerRevision(quiz, ids) {
@@ -436,6 +568,8 @@
   window.STIQuizSync = {
     enregistrer: enregistrer,
     enregistrerReponses: enregistrerReponses,
+    chargerReponses: chargerReponses,
+    lireToutPagine: lireToutPagine,
     viderFile: viderFile,
     hash: hashTxt,
     preparerRevision: preparerRevision,
@@ -444,6 +578,7 @@
     resume: resume,
     chargerVus: chargerVus,
     marquerVus: marquerVus,
+    reinitialiserVus: reinitialiserVus,
     utilisateur: utilisateur
   };
 
