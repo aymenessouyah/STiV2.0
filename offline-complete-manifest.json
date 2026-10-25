@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-25T20:36:20.395Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 605,
-  "totalBytes": 631209477,
+  "totalBytes": 631218271,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
@@ -97,8 +97,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 322177,
-      "gitSha": "9a790d6e9753a6b6d2b2dc700c3d24a5f9e66994"
+      "bytes": 325165,
+      "gitSha": "55c9ae047fb663596dbe012553071d6532f10733"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -512,13 +512,13 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 907697,
-      "gitSha": "4f981468839d93df5dfbf9ce5c15d7f039213423"
+      "bytes": 909451,
+      "gitSha": "5b653d851651a8b00792be8bdb573ea209eccb9a"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 659724,
-      "gitSha": "4106f17a90ed836a99473018c5bc9d36386c079e"
+      "bytes": 662560,
+      "gitSha": "f11ff7d40bfc01ab041e15630537c4b56a2d0795"
     },
     {
       "path": "assets/js/analytique.js",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 71901,
-      "gitSha": "5ec1e4464e8e67eb5de561f8d5673edd162a4e9b"
+      "bytes": 73117,
+      "gitSha": "2e0253f822d85ce1e2ff03e46c7bb31b651495e3"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
