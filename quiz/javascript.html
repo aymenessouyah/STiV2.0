@@ -27954,7 +27954,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             "12",
             "12.5",
             "\"12,5\"",
-            "NaN : la virgule décimale n'est pas reconnue"
+            "NaN"
           ],
           "answer": 3,
           "explanation": "Number() n'accepte que le point décimal : « 12,5 » donne NaN. Pour convertir un réel on utilise parseFloat(« 12,5 ») après avoir remplacé la virgule, ou Number(« 12.5 »)."
@@ -27965,9 +27965,9 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "title": "Que renvoie ce parseInt() ?",
           "code": "console.log(parseInt(\"42px\"));",
           "options": [
-            "42 : la conversion s'arrête au premier caractère non numérique",
+            "42",
             "NaN",
-            "43 : la valeur est arrondie",
+            "43",
             "\"42px\""
           ],
           "answer": 0,
@@ -28093,7 +28093,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "options": [
             "2",
             "2.5",
-            "3 : avec .5, l'arrondi se fait vers le haut",
+            "3",
             "3.5"
           ],
           "answer": 2,
@@ -28108,7 +28108,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             "4.9",
             "NaN",
             "5",
-            "4 : la partie décimale est supprimée sans arrondir"
+            "4"
           ],
           "answer": 3,
           "explanation": "Math.trunc() retire la partie décimale sans arrondir : 4.9 → 4 (alors que Math.round(4.9) donnerait 5)."
@@ -28259,10 +28259,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "title": "Que produit ce parcours de tableau ?",
           "code": "let fruits = [\"pomme\", \"poire\", \"kiwi\"];\nfor (let f of fruits) {\n  console.log(f);\n}",
           "options": [
-            "Les trois fruits, un par ligne : pomme, poire, kiwi",
-            "Les indices 0, 1 et 2",
-            "undefined trois fois",
-            "Le nombre 3"
+            "pomme, poire, kiwi (un par ligne)",
+            "Les indices 0, 1 et 2 (un par ligne)",
+            "undefined affiché trois fois",
+            "La longueur 3 affichée une fois"
           ],
           "answer": 0,
           "explanation": "for…of parcourt directement les valeurs d'un tableau : la variable f prend successivement chaque élément du tableau."
@@ -28274,7 +28274,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "code": "let d = new Date(2025, 0, 15);\nconsole.log(d.getMonth());",
           "options": [
             "\"janvier\"",
-            "0 : dans cet objet, janvier correspond au mois 0",
+            "0",
             "2025",
             "1"
           ],
@@ -28329,9 +28329,9 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "title": "Quelle structure permet de tester une valeur parmi plusieurs cas fixes ?",
           "code": "switch (jour) {\n  case 0:\n    nom = \"Dimanche\";\n    break;\n  default:\n    nom = \"Jour ouvré\";\n}",
           "options": [
-            "parseInt",
-            "while … do",
-            "for … of",
+            "if … else if … else",
+            "do … while (condition)",
+            "try … catch … finally",
             "switch … case … break … default"
           ],
           "answer": 3,
@@ -28344,9 +28344,9 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "code": "switch (2) {\n  case 1:\n    console.log(\"un\");\n  case 2:\n    console.log(\"deux\");\n  case 3:\n    console.log(\"trois\");\n}",
           "options": [
             "deux uniquement",
-            "deux, puis trois : les break ont été oubliés",
-            "un, deux, trois",
-            "Rien du tout"
+            "deux, puis trois",
+            "un, deux, puis trois",
+            "Rien n'est affiché"
           ],
           "answer": 1,
           "explanation": "Sans break à la fin d'un case, l'exécution continue dans les cas suivants : on affiche « deux » puis « trois ». C'est l'erreur classique du switch."
@@ -28385,10 +28385,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "title": "Que fait ce do…while avec une condition fausse ?",
           "code": "let i = 5;\ndo {\n  console.log(i);\n  i++;\n} while (i < 3);",
           "options": [
-            "Il n'affiche rien",
-            "Il affiche 5 une seule fois : le bloc s'exécute avant le test",
-            "Il affiche 5 puis 6",
-            "Il provoque une erreur"
+            "Il n'affiche rien du tout",
+            "Il affiche 5 une seule fois",
+            "Il affiche 5 puis 6 à l'écran",
+            "Il provoque une boucle infinie"
           ],
           "answer": 1,
           "explanation": "Avec do…while, le bloc s'exécute au moins une fois, même si la condition est fausse : le test vient après. Ici 5 est affiché, puis la condition 6 < 3 est fausse et la boucle s'arrête."
@@ -28399,10 +28399,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "title": "Que fait l'instruction continue ici ?",
           "code": "for (let i = 1; i <= 5; i++) {\n  if (i === 3) continue;\n  console.log(i);\n}",
           "options": [
-            "1, 2 : la boucle s'arrête à 3",
+            "1, 2",
             "4, 5",
             "1, 2, 3, 4, 5",
-            "1, 2, 4, 5 : l'itération 3 est sautée"
+            "1, 2, 4, 5"
           ],
           "answer": 3,
           "explanation": "continue passe immédiatement à l'itération suivante, sans exécuter le reste du bloc : seul le 3 n'est pas affiché."
@@ -28413,7 +28413,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "title": "Et que fait break dans la même boucle ?",
           "code": "for (let i = 1; i <= 5; i++) {\n  if (i === 3) break;\n  console.log(i);\n}",
           "options": [
-            "1, 2 : la boucle est quittée définitivement à 3",
+            "1, 2",
             "Rien n'est affiché",
             "1, 2, 4, 5",
             "1, 2, 3"
@@ -28889,10 +28889,10 @@ Check your Browserslist config to be sure that your targets are set up correctly
           "title": "Que fait substring() quand les indices sont inversés ?",
           "code": "let s = \"Mozilla\";\nconsole.log(s.substring(4, 1));",
           "options": [
-            "Il ne renvoie aucun caractère",
-            "Il renvoie zilla",
-            "Il renvoie zil",
-            "Il échange les deux bornes : les caractères 1 à 3, soit ozi"
+            "Il renvoie la chaîne vide \"\"",
+            "Il renvoie \"zilla\"",
+            "Il renvoie \"zil\"",
+            "Il renvoie \"ozi\""
           ],
           "answer": 3,
           "explanation": "Si le second indice est plus petit que le premier, JavaScript les inverse automatiquement : substring(4, 1) équivaut à substring(1, 4), soit « ozi »."
@@ -29196,7 +29196,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=425"></script>
-    <script src="../assets/js/quiz-sync.js?v=457"></script>
+    <script src="../assets/js/quiz-sync.js?v=458"></script>
 
     <!-- ==== MOTEUR DU JEU ==== -->
     <script>
@@ -29631,7 +29631,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           <span class="w-7 h-7 shrink-0 rounded-lg bg-gray-700 text-gray-300 group-hover:bg-yellow-400 group-hover:text-black flex items-center justify-center text-xs font-bold transition-colors">${
             index + 1
           }</span>
-          <span class="text-gray-200 group-hover:text-white font-medium truncate">${this.escapeHtml(
+          <span class="text-gray-200 group-hover:text-white font-medium break-words leading-snug">${this.escapeHtml(
             optText
           )}</span>
         </span>

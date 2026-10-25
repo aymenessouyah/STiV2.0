@@ -2082,14 +2082,20 @@
 
     var dernierEnvoye = "";
 
+    function overlayResultatsVisible() {
+      var ov = document.getElementById("resultsOverlay");
+      if (!ov) return true;
+      return !ov.classList.contains("hidden");
+    }
+
     function extraireScoreCourant() {
-      /* 1. Quiz HTML/CSS : #finalScore (ex: 16/20) */
+      /* 1. Quiz HTML/CSS : #resultsOverlay visible + #finalScore (ex: 16/20) */
       var fs = document.getElementById("finalScore");
-      if (fs && fs.textContent && fs.textContent.trim() !== "0/0") {
+      if (fs && overlayResultatsVisible() && fs.textContent && fs.textContent.trim() !== "0/0") {
         var txt1 = fs.textContent.trim();
         var m1 = txt1.match(/(\d+)\s*\/\s*(\d+)/);
         if (m1 && parseInt(m1[2], 10) > 0) {
-          var s20 = (parseInt(m1[1], 10) / parseInt(m1[2], 10)) * 20;
+          var s20 = Math.round((parseInt(m1[1], 10) / parseInt(m1[2], 10)) * 200) / 10;
           return { note: txt1 + " (" + Math.round(s20) + "/20)", sur20: s20 };
         }
       }
@@ -2102,18 +2108,36 @@
         var scTxt = sc ? sc.textContent.trim() : "";
         var mPct = pctTxt.match(/(\d+)/);
         if (mPct) {
-          var s20js = Math.round((parseInt(mPct[1], 10) / 100) * 20);
-          return { note: s20js + "/20 (" + pctTxt + " · " + scTxt + " pts)", sur20: s20js };
+          var s20js = Math.round((parseInt(mPct[1], 10) / 100) * 200) / 10;
+          return { note: Math.round(s20js) + "/20 (" + pctTxt + (scTxt ? " · " + scTxt + " pts" : "") + ")", sur20: s20js };
         }
       }
-      /* 3. Quiz PHP / SQL / PP : #resultsOverlay ou #resScore */
+      /* 3. Quiz PHP / SQL : #resultsOverlay visible + précision réelle (#resAcc / #resStatsGrid / #certScore) */
       var resEl = document.getElementById("resScore");
-      var certEl = document.getElementById("certScore");
-      if (resEl && resEl.textContent.trim() && resEl.textContent.trim() !== "0") {
-        var tRes = (certEl && certEl.textContent.trim()) ? certEl.textContent.trim() : resEl.textContent.trim();
-        var mPct2 = tRes.match(/(\d+)\s*%/);
-        var s20p = mPct2 ? Math.round((parseInt(mPct2[1], 10) / 100) * 20) : null;
-        return { note: s20p != null ? (s20p + "/20 (" + tRes + ")") : tRes, sur20: s20p != null ? s20p : 15 };
+      if (resEl && overlayResultatsVisible() && resEl.textContent.trim()) {
+        var ptsBruts = resEl.textContent.trim();
+        var accPhp = document.getElementById("resAcc");
+        var statsSql = document.getElementById("resStatsGrid");
+        var certEl = document.getElementById("certScore");
+        if (statsSql && statsSql.textContent) {
+          var mFracSql = statsSql.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+          if (mFracSql && parseInt(mFracSql[2], 10) > 0) {
+            var s20sql = Math.round((parseInt(mFracSql[1], 10) / parseInt(mFracSql[2], 10)) * 200) / 10;
+            return {
+              note: mFracSql[1] + "/" + mFracSql[2] + " (" + Math.round(s20sql) + "/20 · " + ptsBruts + " pts)",
+              sur20: s20sql
+            };
+          }
+        }
+        var txtPrecision = (accPhp && accPhp.textContent ? accPhp.textContent.trim() : "") ||
+          (certEl && certEl.textContent ? certEl.textContent.trim() : "") ||
+          (statsSql && statsSql.textContent ? statsSql.textContent.trim() : "");
+        var mPct2 = txtPrecision.match(/(\d+)\s*%/);
+        if (mPct2) {
+          var pctVal = Math.min(100, Math.max(0, parseInt(mPct2[1], 10)));
+          var s20p = Math.round((pctVal / 100) * 200) / 10;
+          return { note: Math.round(s20p) + "/20 (" + pctVal + "% · " + ptsBruts + ")", sur20: s20p };
+        }
       }
       /* 4. Quiz des tableaux : .qt-score (ex: "8 / 10 bonnes réponses (80 %)") */
       var qtSc = document.querySelector(".qt-score");
@@ -2121,11 +2145,16 @@
         var txtQt = qtSc.textContent.trim();
         var mQt = txtQt.match(/(\d+)\s*\/\s*(\d+)/);
         if (mQt && parseInt(mQt[2], 10) > 0) {
-          var s20qt = (parseInt(mQt[1], 10) / parseInt(mQt[2], 10)) * 20;
-          return { note: mQt[1] + "/" + mQt[2] + " (" + Math.round(s20qt) + "/20)", sur20: Math.round(s20qt * 10) / 10 };
+          var s20qt = Math.round((parseInt(mQt[1], 10) / parseInt(mQt[2], 10)) * 200) / 10;
+          return { note: mQt[1] + "/" + mQt[2] + " (" + Math.round(s20qt) + "/20)", sur20: s20qt };
         }
       }
-      /* Score en direct pendant la partie */
+      /* 5. Pont direct STIQuizSync (si l'écran vient tout juste de se fermer ou de s'ouvrir) */
+      var dSync = window.__stiDernierScoreQuiz;
+      if (dSync && dSync.nomQuiz === nomQuiz && typeof dSync.sur20 === "number" && (Date.now() - (dSync.ts || 0) < 15000)) {
+        return { note: dSync.note, sur20: dSync.sur20 };
+      }
+      /* Score en direct pendant la partie (uniquement pour envoi manuel, sur20 = null) */
       var liveEl = document.getElementById("heroScore") || document.getElementById("stat-score") || document.getElementById("qScore") || document.getElementById("quizScore");
       if (liveEl && liveEl.textContent.trim() && liveEl.textContent.trim() !== "0" && liveEl.textContent.trim() !== "Score : 0") {
         return { note: liveEl.textContent.trim() + " pts", sur20: null };
@@ -2153,11 +2182,26 @@
     });
     (document.body || document.documentElement).appendChild(btnScore);
 
-    /* Envoi automatique dès que l'écran de résultat final apparaît */
+    /* Pont synchrone déclenché par STIQuizSync.enregistrer dès la fin d'une partie (sans attendre 3 s) */
+    var dernierTsAuto = 0;
+    window.__notifierScoreQuizAccesSTI = function (nomCible, noteCible, sur20Cible) {
+      if (!noteCible || typeof sur20Cible !== "number") return;
+      var cleDedup = String(Math.round(sur20Cible * 10));
+      if (dernierEnvoye === noteCible || (Date.now() - dernierTsAuto < 4000 && dernierEnvoye.indexOf(Math.round(sur20Cible) + "/20") !== -1)) return;
+      dernierEnvoye = noteCible;
+      dernierTsAuto = Date.now();
+      window.enregistrerScoreQuizSTI(nomCible || nomQuiz, noteCible, sur20Cible);
+      btnScore.textContent = "✅ Score final transmis (" + noteCible + ")";
+      void cleDedup;
+    };
+
+    /* Envoi automatique de secours dès que l'écran de résultat final apparaît */
     setInterval(function () {
       var info = extraireScoreCourant();
       if (info && info.sur20 != null && info.note !== dernierEnvoye) {
+        if (Date.now() - dernierTsAuto < 8000 && dernierEnvoye.indexOf(Math.round(info.sur20) + "/20") !== -1) return;
         dernierEnvoye = info.note;
+        dernierTsAuto = Date.now();
         window.enregistrerScoreQuizSTI(nomQuiz, info.note, info.sur20);
         btnScore.textContent = "✅ Score final transmis (" + info.note + ")";
       }

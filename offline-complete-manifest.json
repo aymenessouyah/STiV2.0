@@ -3,12 +3,12 @@
   "generatedAt": "2026-10-25T19:00:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 605,
-  "totalBytes": 631075499,
+  "totalBytes": 631071628,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
-      "bytes": 20639,
-      "gitSha": "9309b14382bca595f82a2e3b0d0714510b09a293"
+      "bytes": 22920,
+      "gitSha": "8e0ddc47e4498ef6c29df58137fb775f7410201c"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -18,17 +18,17 @@
     {
       "path": "quiz/tableaux.html",
       "bytes": 8465,
-      "gitSha": "decb80b8b58cf488ed69937fb2d28111c283f384"
+      "gitSha": "74d5c3fb4b1075cf6fe1b4baf18ce479a1b7ba0e"
     },
     {
       "path": "assets/js/quiz-tableaux.js",
-      "bytes": 18963,
-      "gitSha": "525b3986d7b693e34021aed58d19ce9a663dec82"
+      "bytes": 19183,
+      "gitSha": "0499803f7e0247e6a563f47a6e9971f1b8a093e5"
     },
     {
       "path": "assets/data/quiz-banque.json",
-      "bytes": 331065,
-      "gitSha": "a38d0645352893495b8e3389af65b0cad18b0021"
+      "bytes": 319995,
+      "gitSha": "63f5ec696fd37511642fc4dfb5e7e0d38954ad2e"
     },
     {
       "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf\"",
@@ -512,8 +512,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 894504,
-      "gitSha": "0adf02bb2a73ed14614977912139b805add71cbb"
+      "bytes": 897013,
+      "gitSha": "74b5b6b1227cef807cb195bfa5fc422650980866"
     },
     {
       "path": "assets/js/admin.js",
@@ -2962,18 +2962,18 @@
     },
     {
       "path": "quiz/html-css.html",
-      "bytes": 215598,
-      "gitSha": "542657f0c94bfea57af2b5a6cf380ced1fee6b9a"
+      "bytes": 216662,
+      "gitSha": "09d85bea5bf1581a52a05b1e3d861816f6edd3d5"
     },
     {
       "path": "quiz/javascript.html",
-      "bytes": 1088578,
-      "gitSha": "f7effaa8c328c9ceaecc7c9e3a71dedbba8c7b9d"
+      "bytes": 1088230,
+      "gitSha": "c2a527eb199541d8b52938369a11df5fbdffdedd"
     },
     {
       "path": "quiz/php.html",
       "bytes": 1754846,
-      "gitSha": "ddec2318ebc38034bbfc78a9d71690cdadf6b558"
+      "gitSha": "8df4587596caa02e196af7fa3bb5a2882546e0de"
     },
     {
       "path": "quiz/pp.html",
@@ -2982,8 +2982,8 @@
     },
     {
       "path": "quiz/sql.html",
-      "bytes": 1876649,
-      "gitSha": "e9a07c6e5f9c128a61aa276af6dcca6ca40429a3"
+      "bytes": 1877393,
+      "gitSha": "8851942491a88379b1de844a2da3ede571dd7760"
     },
     {
       "path": "robots.txt",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 69240,
-      "gitSha": "f65bbbdb6595909e341c07198c1ba207fe8b5af4"
+      "bytes": 69969,
+      "gitSha": "be70c949041906d3731815f431f7c0e57b907a68"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",

@@ -3241,7 +3241,7 @@
 
     <script src="../assets/js/supabase-umd.js"></script>
     <script src="../assets/js/config.js?v=425"></script>
-    <script src="../assets/js/quiz-sync.js?v=457"></script>
+    <script src="../assets/js/quiz-sync.js?v=458"></script>
 
     <script>
       /* ==============================================================
@@ -4126,9 +4126,9 @@
               text: "Que fait autocomplete='off' sur un champ input ?",
               options: [
                 "Empêche la suggestion automatique du navigateur",
-                "Efface le champ",
-                "Désactive le champ",
-                "Valide le champ",
+                "Efface automatiquement le contenu à chaque clic",
+                "Désactive la soumission du champ vers le serveur",
+                "Force le contrôle de validité avant la saisie",
               ],
               correct: 0,
             },
@@ -4141,9 +4141,9 @@
               text: "Que fait l'attribut name d'un input ?",
               options: [
                 "Il nomme la donnée envoyée au serveur",
-                "Il affiche un titre",
-                "Il style le champ",
-                "Il définit sa largeur",
+                "Il affiche une infobulle au survol",
+                "Il relie une feuille de style externe",
+                "Il fixe le nombre maximal de caractères",
               ],
               correct: 0,
             },
@@ -4172,9 +4172,9 @@
               text: "Que doit-on écrire à l'intérieur d'une datalist ?",
               options: [
                 "Uniquement des éléments option",
-                "Des div",
-                "Des input",
-                "Du texte libre",
+                "Uniquement des conteneurs div",
+                "Uniquement des champs input",
+                "Du texte libre sans balises",
               ],
               correct: 0,
             },
@@ -4550,9 +4550,9 @@
               text: "Que fait justify-content: space-between ?",
               options: [
                 "Répartit les éléments avec un espace entre eux",
-                "Centre les éléments",
-                "Les empile verticalement",
-                "Les aligne à droite",
+                "Centre tous les éléments au milieu de la ligne",
+                "Empile les éléments de haut en bas en colonne",
+                "Aligne tous les éléments contre le bord droit",
               ],
               correct: 0,
             },
@@ -6211,13 +6211,19 @@ background-repeat: repeat;</pre>
       }
 
       /* ==============================================================
-         15. THÈME CLAIR / SOMBRE (même clé que la page d'accueil)
+         15. THÈME CLAIR / SOMBRE (partagé avec tout le site STI)
          ============================================================== */
-      function appliquerTheme(clair) {
+      function appliquerTheme(clair, persisterGlobal) {
         document.body.classList.toggle("light", clair);
         $("#themeBtn").textContent = clair ? "☀️" : "🌙";
         try {
-          localStorage.setItem("quizzora_theme", clair ? "light" : "dark");
+          var mode = clair ? "light" : "dark";
+          localStorage.setItem("quizzora_theme", mode);
+          if (persisterGlobal !== false) {
+            localStorage.setItem("sti-theme", mode);
+            localStorage.setItem("theme", mode);
+            localStorage.setItem("sti-roue-theme", clair ? "clair" : "sombre");
+          }
         } catch (e) {
           /* stockage indisponible */
         }
@@ -6470,14 +6476,24 @@ background-repeat: repeat;</pre>
          19. INITIALISATION
          ============================================================== */
       (function init() {
-        // Thème mémorisé (partagé avec la page d'accueil)
+        // Thème mémorisé (partagé avec la page d'accueil et la roue STI)
         var clair = false;
         try {
-          clair = localStorage.getItem("quizzora_theme") === "light";
+          var tGlobal = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "";
+          if (tGlobal !== "light" && tGlobal !== "dark") {
+            var tRoue = localStorage.getItem("sti-roue-theme") || "";
+            if (tRoue === "clair") tGlobal = "light";
+            else if (tRoue === "sombre") tGlobal = "dark";
+          }
+          if (tGlobal === "light" || tGlobal === "dark") {
+            clair = tGlobal === "light";
+          } else {
+            clair = localStorage.getItem("quizzora_theme") === "light";
+          }
         } catch (e) {
           clair = false;
         }
-        appliquerTheme(clair);
+        appliquerTheme(clair, false);
 
         // Compteurs du hero
         $("#heroBankCount").textContent = BANQUE.length + " questions";

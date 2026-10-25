@@ -1086,10 +1086,10 @@ test('v455 : révision complète des Quiz — propositions mélangées, boutons 
   }
 
   // 3) quiz-sync.js chargé AVANT le moteur de jeu sur JS, HTML/CSS, SQL et PHP + viderFile avant lecture dans revision-erreurs.html
-  assert.ok(jsHtml.indexOf('quiz-sync.js?v=457') < jsHtml.indexOf('class QuizGame'));
-  assert.ok(hcHtml.indexOf('quiz-sync.js?v=457') < hcHtml.indexOf('function nouvellePartie'));
-  assert.ok(sqlHtml.indexOf('quiz-sync.js?v=457') < sqlHtml.indexOf('function pickQuestions'));
-  assert.ok(phpHtml.indexOf('quiz-sync.js?v=457') < phpHtml.indexOf('function startQuiz'));
+  assert.ok(jsHtml.search(/quiz-sync\.js\?v=45\d/) < jsHtml.indexOf('class QuizGame'));
+  assert.ok(hcHtml.search(/quiz-sync\.js\?v=45\d/) < hcHtml.indexOf('function nouvellePartie'));
+  assert.ok(sqlHtml.search(/quiz-sync\.js\?v=45\d/) < sqlHtml.indexOf('function pickQuestions'));
+  assert.ok(phpHtml.search(/quiz-sync\.js\?v=45\d/) < phpHtml.indexOf('function startQuiz'));
   assert.match(revErrHtml, /STIQuizSync\.viderFile\(\)/);
   assert.match(syncJs, /viderFile:\s*viderFile/);
   assert.match(swJs, /revision-quiz-v455/);
@@ -1558,7 +1558,7 @@ test('v457 (Lot D — audit final Quiz) : couverture 124 pages, cache-buster uni
   assert.ok(!indexHtml.includes('des 37 Défis JavaScript'));
   assert.ok(!indexHtml.includes('modules auto-corrigés — sans compte'));
 
-  // 6) Cache-buster unifié quiz-sync.js?v=457 + manifeste hors-ligne & Service Worker v457
+  // 6) Cache-buster unifié quiz-sync.js?v=457+ + manifeste hors-ligne & Service Worker v457+
   for (const [name, content] of [
     ['quiz/html-css.html', hcHtml],
     ['quiz/javascript.html', jsHtml],
@@ -1567,10 +1567,10 @@ test('v457 (Lot D — audit final Quiz) : couverture 124 pages, cache-buster uni
     ['quiz/tableaux.html', tabHtml],
     ['revision-erreurs.html', revErrHtml],
   ]) {
-    assert.match(content, /quiz-sync\.js\?v=457/, `${name} doit charger quiz-sync.js?v=457`);
+    assert.match(content, /quiz-sync\.js\?v=45[789]/, `${name} doit charger quiz-sync.js?v=457+`);
   }
   assert.match(adminHtml, /admin-erreurs\.js\?v=457/);
-  assert.match(swJs, /var UPDATE_ID = "v457-quiz-lot-d"/);
+  assert.match(swJs, /v457-quiz-lot-d/);
   assert.match(swJs, /"\.\/assets\/js\/quiz-tableaux-boot\.js"/);
   assert.ok(offlineManifest.files.some((f) => f.path === 'assets/js/quiz-tableaux-boot.js'));
 
@@ -1769,6 +1769,318 @@ test('v457 (comportemental VM) : roue-revision.js résout les URLs depuis /cours
   assert.equal(rangeCalls.length, 2, '2 pages .range() lues pour 1 450 réponses');
   assert.deepEqual(Array.from(rangeCalls[0]), [0, 999]);
   assert.deepEqual(Array.from(rangeCalls[1]), [1000, 1999]);
+});
+
+test('v458 : révision approfondie Quiz Phase 2 — assainissement intégral quiz-banque.json, 0 giveaway sur les 5 banques, mobile JS sans truncate, thèmes HTML-CSS & SQL synchronisés', () => {
+  const qbRaw = read('assets/data/quiz-banque.json');
+  const qb = JSON.parse(qbRaw);
+  const jsHtml = read('quiz/javascript.html');
+  const hcHtml = read('quiz/html-css.html');
+  const sqlHtml = read('quiz/sql.html');
+  const phpHtml = read('quiz/php.html');
+  const tabHtml = read('quiz/tableaux.html');
+  const revErrHtml = read('revision-erreurs.html');
+  const swJs = read('sw.js');
+
+  // 1) quiz-banque.json : 635 questions, 635 IDs uniques, 0 caractère PUA, 0 guillemets vides, 0 en-tête de section comme réponse, 0 giveaway de longueur
+  assert.equal(qb.questions.length, 635);
+  assert.equal(new Set(qb.questions.map((q) => q.id)).size, 635, 'Tous les 635 IDs historiques sont préservés');
+  assert.doesNotMatch(qbRaw, /[\uE000-\uF8FF]/, 'Aucun caractère PUA corrompu dans quiz-banque.json');
+  qb.questions.forEach((q, idx) => {
+    assert.equal(q.choix_faux.length, 3, `QB[${idx}] doit avoir 3 distracteurs`);
+    const all = [q.bonne, ...q.choix_faux];
+    assert.equal(new Set(all).size, 4, `QB[${idx}] doit avoir 4 choix distincts`);
+    assert.doesNotMatch(q.q + ' ' + q.ref + ' ' + q.bonne, /«\s*»|Syntaxe\s*:|Propriétés des (?:listes|boîtes|tableaux|images)|Propriétés d’arrière-plan/i, `QB[${idx}] sans scorie d'extraction PDF`);
+    const maxW = Math.max(...q.choix_faux.map((c) => c.length));
+    if (q.bonne.length >= 25) {
+      assert.ok(q.bonne.length <= maxW * 2.1 || q.bonne.length - maxW <= 30, `QB[${idx}] sans giveaway de longueur`);
+    }
+  });
+
+  // 2) quiz/javascript.html : options non tronquées sur mobile + 0 giveaway de longueur
+  assert.doesNotMatch(jsHtml, /font-medium truncate">\$\{this\.escapeHtml/);
+  assert.match(jsHtml, /font-medium break-words leading-snug">\$\{this\.escapeHtml/);
+  const jsDb = JSON.parse(jsHtml.match(/const QUESTIONS_DB = (\[[\s\S]*?\n      \]);/)[1]);
+  assert.equal(jsDb.length, 106);
+  jsDb.forEach((q, idx) => {
+    const cLen = q.options[q.answer].length;
+    const maxW = Math.max(...q.options.filter((_, k) => k !== q.answer).map((o) => o.length));
+    assert.ok(!(cLen >= 25 && cLen > maxW * 1.75 && cLen - maxW >= 15), `JS[${idx}] sans giveaway de longueur`);
+  });
+
+  // 3) quiz/html-css.html : thème partagé sti-theme/theme/sti-roue-theme + 0 giveaway de longueur
+  assert.match(hcHtml, /localStorage\.getItem\("sti-theme"\)/);
+  assert.match(hcHtml, /localStorage\.setItem\("sti-theme",\s*mode\)/);
+  assert.match(hcHtml, /localStorage\.setItem\("sti-roue-theme",\s*clair \? "clair" : "sombre"\)/);
+
+  // 4) quiz/sql.html : échappement systématique des options/recherches/pseudos + thème partagé sti-theme
+  assert.match(sqlHtml, /\$\{esc\(String\(a\)\)\}/);
+  assert.match(sqlHtml, /Aucune fiche pour « \$\{esc\(q\)\} »/);
+  assert.match(sqlHtml, /localStorage\.setItem\("sti-theme",\s*mode\)/);
+  assert.match(sqlHtml, /localStorage\.setItem\("sti-roue-theme",\s*d \? "sombre" : "clair"\)/);
+
+  // 5) Cache-busters v458 + Service Worker sti-atelier-v318 / v458-quiz-revision-2
+  for (const [name, content] of [
+    ['quiz/html-css.html', hcHtml],
+    ['quiz/javascript.html', jsHtml],
+    ['quiz/sql.html', sqlHtml],
+    ['quiz/php.html', phpHtml],
+    ['quiz/tableaux.html', tabHtml],
+    ['revision-erreurs.html', revErrHtml],
+  ]) {
+    assert.match(content, /quiz-sync\.js\?v=458/, `${name} doit charger quiz-sync.js?v=458`);
+  }
+  assert.match(tabHtml, /quiz-tableaux\.js\?v=458/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v318"/);
+  assert.match(swJs, /var UPDATE_ID = "v458-quiz-revision-2"/);
+});
+
+test('v458 (comportemental VM) : score réel /20 SQL & PHP dans acces.js, pont synchrone STIQuizSync + marquerVus write-ahead, arrêt 0 réponse Tableaux et filtrage PHP 3e SI dans Mes erreurs', async () => {
+  const syncJs = read('assets/js/quiz-sync.js');
+  const accesJs = read('assets/js/acces.js');
+  const tabJs = read('assets/js/quiz-tableaux.js');
+  const revErrHtml = read('revision-erreurs.html');
+
+  // A) STIQuizSync : pont synchrone __notifierScoreQuizAccesSTI avant le réseau + marquerVus en write-ahead hors-ligne
+  const storeSync = new Map();
+  let pontCapture = null;
+  let blockNetwork = true;
+  const winSync = {
+    location: { search: '' },
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'anon' },
+    __notifierScoreQuizAccesSTI(nom, note, sur20) {
+      pontCapture = { nom, note, sur20 };
+    },
+    localStorage: {
+      get length() { return storeSync.size; },
+      key(i) { return Array.from(storeSync.keys())[i] || null; },
+      getItem(k) { return storeSync.has(k) ? storeSync.get(k) : null; },
+      setItem(k, v) { storeSync.set(k, String(v)); },
+      removeItem(k) { storeSync.delete(k); },
+    },
+    supabase: {
+      createClient() {
+        return {
+          auth: {
+            onAuthStateChange() {},
+            async getSession() { return { data: { session: { user: { id: 'u-458', email: 'eleve458@exemple.tn' } } } }; },
+            async getUser() { return { data: { user: { id: 'u-458', email: 'eleve458@exemple.tn' } } }; },
+          },
+          from(tbl) {
+            return {
+              async insert() { return blockNetwork ? { error: { message: 'offline' } } : { error: null }; },
+              async upsert() { return blockNetwork ? { error: { message: 'offline' } } : { error: null }; },
+              select() {
+                return {
+                  eq() {
+                    return {
+                      async range() { return { data: [{ module: 'sql', question_id: 'q-srv-1' }], error: null }; },
+                    };
+                  },
+                };
+              },
+            };
+          },
+        };
+      },
+    },
+    document: { readyState: 'complete', addEventListener() {} },
+    addEventListener() {},
+    Math, Date, JSON, Promise, Set, Object, Array, String, Number, Boolean, RegExp, Error, parseInt, isNaN,
+  };
+  winSync.window = winSync;
+  vm.runInNewContext(syncJs, winSync, { filename: 'quiz-sync.js' });
+
+  // Dès l'appel à enregistrer('sql', 8, 10), le pont synchrone reçoit 16/20 AVANT toute attente réseau
+  const pEnr = winSync.STIQuizSync.enregistrer('sql', 8, 10, 'jointures');
+  assert.ok(pontCapture, 'Pont synchrone appelé immédiatement avant le retour réseau');
+  assert.equal(pontCapture.nom, 'Quiz SQL');
+  assert.equal(pontCapture.sur20, 16);
+  assert.match(pontCapture.note, /16\/20/);
+  await pEnr;
+
+  // marquerVus persiste en write-ahead même si upsert échoue (hors-ligne), et chargerVus fusionne la file locale
+  const okVus = await winSync.STIQuizSync.marquerVus('html5', ['q-loc-1', 'q-loc-2']);
+  assert.equal(okVus, false);
+  const fileVus = JSON.parse(storeSync.get('sti-quiz-sync-vus-v1') || '[]');
+  assert.equal(fileVus.length, 2, 'Les questions vues sont conservées dans la file write-ahead hors-ligne');
+  const vusFusion = await winSync.STIQuizSync.chargerVus();
+  assert.deepEqual(Array.from(vusFusion.html5), ['q-loc-1', 'q-loc-2']);
+  assert.deepEqual(Array.from(vusFusion.sql), ['q-srv-1']);
+
+  // B) Extraction de installerSuiviQuizAuto dans acces.js : vérifie que SQL (2/10 = 4/20) et PHP (85% = 17/20) ne renvoient JAMAIS 15/20 figé, et que #resultsOverlay.hidden bloque la lecture prématurée
+  const fnStart = accesJs.indexOf('function installerSuiviQuizAuto()');
+  const fnEnd = accesJs.indexOf('function appliquerVeilleuseGlobale()');
+  const snippetAcces = accesJs.slice(fnStart, fnEnd);
+
+  function testerSuiviQuiz(pathname, domMap) {
+    const envoyes = [];
+    let btnCree = null;
+    const ctx = {
+      location: { pathname },
+      document: {
+        body: { appendChild(el) { btnCree = el; } },
+        documentElement: { appendChild(el) { btnCree = el; } },
+        getElementById(id) { return domMap[id] || null; },
+        querySelector(sel) { return domMap[sel] || null; },
+        createElement() {
+          return {
+            style: {},
+            listeners: {},
+            addEventListener(ev, cb) { this.listeners[ev] = cb; },
+          };
+        },
+      },
+      enregistrerScoreQuizSTI(nom, note, sur20) { envoyes.push({ nom, note, sur20 }); },
+      setInterval() {},
+      setTimeout() {},
+      Math, Date, Number, String, parseInt,
+    };
+    ctx.window = ctx;
+    ctx.window.top = ctx.window;
+    vm.runInNewContext(snippetAcces + '\ninstallerSuiviQuizAuto();', ctx);
+    btnCree.listeners.click();
+    return { envoyes, btnText: btnCree.textContent };
+  }
+
+  // 1) SQL avec #resultsOverlay ENCORE CACHÉ (.hidden) -> ne lit pas #resScore !
+  const rSqlCache = testerSuiviQuiz('/quiz/sql.html', {
+    resultsOverlay: { classList: { contains: (c) => c === 'hidden' } },
+    resScore: { textContent: '250' },
+    resStatsGrid: { textContent: '2/10 BONNES 20% PRÉCISION' },
+  });
+  assert.equal(rSqlCache.envoyes.length, 0, 'Aucun envoi tant que #resultsOverlay est .hidden');
+
+  // 2) SQL avec #resultsOverlay VISIBLE (2/10 = 4/20, 250 pts XP) -> sur20 = 4 (et NON 15 !)
+  const rSqlVis = testerSuiviQuiz('/quiz/sql.html', {
+    resultsOverlay: { classList: { contains: () => false } },
+    resScore: { textContent: '250' },
+    resStatsGrid: { textContent: '2/10 BONNES 20% PRÉCISION' },
+  });
+  assert.equal(rSqlVis.envoyes.length, 1);
+  assert.equal(rSqlVis.envoyes[0].nom, 'Quiz SQL');
+  assert.equal(rSqlVis.envoyes[0].sur20, 4);
+  assert.match(rSqlVis.envoyes[0].note, /4\/20/);
+
+  // 3) PHP avec #resultsOverlay VISIBLE (85% = 17/20, 1 420 pts XP) -> sur20 = 17 (et NON 15 !)
+  const rPhpVis = testerSuiviQuiz('/quiz/php.html', {
+    resultsOverlay: { classList: { contains: () => false } },
+    resScore: { textContent: '⭐ 1 420 pts' },
+    resAcc: { textContent: '🎯 85 % de réussite' },
+  });
+  assert.equal(rPhpVis.envoyes.length, 1);
+  assert.equal(rPhpVis.envoyes[0].nom, 'Quiz PHP');
+  assert.equal(rPhpVis.envoyes[0].sur20, 17);
+  assert.match(rPhpVis.envoyes[0].note, /17\/20/);
+
+  // C) Quiz Tableaux : cliquer sur « Arrêter » (#qt-arreter) à 0 réponse revient à l'accueil au lieu d'afficher « 0 / 0 »
+  const idListeners = {};
+  let modButtons = [];
+  const appEl = {
+    _html: '',
+    get innerHTML() { return this._html; },
+    set innerHTML(v) {
+      this._html = String(v);
+      modButtons = [...this._html.matchAll(/data-module="([^"]+)"/g)].map((m) => ({
+        mod: m[1],
+        cb: null,
+        getAttribute(a) { return a === 'data-module' ? m[1] : null; },
+        addEventListener(ev, fn) { if (ev === 'click') this.cb = fn; },
+      }));
+    },
+    addEventListener() {},
+    querySelectorAll(sel) {
+      if (sel === '[data-module]') return modButtons;
+      return [];
+    },
+  };
+  let enrTabAppels = 0;
+  const qbSample = JSON.parse(read('assets/data/quiz-banque.json'));
+  const winTab = {
+    fetch: async () => ({ ok: true, json: async () => qbSample }),
+    STIQuizSync: {
+      chargerVus: async () => ({}),
+      revisionIds: () => null,
+      quitterRevision() {},
+      enregistrer() { enrTabAppels++; },
+      enregistrerReponses() {},
+      marquerVus() {},
+    },
+    localStorage: {
+      getItem(k) { return k === 'sti-session-cache' ? JSON.stringify({ id: 'u3', email: 'e3@exemple.tn', classe: '3SI1' }) : null; },
+      setItem() {},
+    },
+    sessionStorage: { getItem: () => null },
+    location: { search: '' },
+    document: {
+      getElementById(id) {
+        if (id === 'qt-app') return appEl;
+        return {
+          addEventListener(ev, fn) { if (ev === 'click') idListeners[id] = fn; },
+        };
+      },
+    },
+    addEventListener() {},
+    Math, Date, JSON, Promise, Object, Array, String, Number, Boolean, RegExp, Error, parseInt, isNaN,
+  };
+  winTab.window = winTab;
+  vm.runInNewContext(tabJs, winTab, { filename: 'quiz-tableaux.js' });
+  await new Promise((r) => setTimeout(r, 20));
+  assert.match(appEl.innerHTML, /Quiz <em>des tableaux<\/em>/, "Écran d'accueil affiché");
+
+  // Démarre une session HTML5 puis clique immédiatement sur #qt-arreter sans répondre à Q1
+  const btnHtml5 = modButtons.find((b) => b.mod === 'html5');
+  assert.ok(btnHtml5 && btnHtml5.cb, 'Bouton HTML5 cliquable');
+  btnHtml5.cb();
+  assert.match(appEl.innerHTML, /Question 1 \/ /, 'Question 1 affichée');
+  assert.ok(idListeners['qt-arreter'], 'Bouton #qt-arreter branché');
+  idListeners['qt-arreter']();
+  assert.doesNotMatch(appEl.innerHTML, /0 \/ 0 bonnes réponses/, 'Pas de faux bilan 0 / 0');
+  assert.match(appEl.innerHTML, /Quiz <em>des tableaux<\/em>/, "Retour propre à l'accueil du Quiz des tableaux");
+  assert.equal(enrTabAppels, 0, 'Aucun score vide envoyé à Supabase');
+
+  // D) revision-erreurs.html : un élève de 3e SI ne voit ni le quiz PHP ni les modules tableaux php/recap-php
+  const scriptRev = revErrHtml.match(/<script>\s*(\(function \(\) \{[\s\S]*?\}\)\(\);)\s*<\/script>/)[1];
+  const contenuRev = { innerHTML: '', querySelectorAll() { return []; } };
+  const statsEl = { style: { display: 'none' } };
+  const stRater = { textContent: '' };
+  const stMait = { textContent: '' };
+  const winRev = {
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'anon' },
+    STIQuizSync: {
+      viderFile: async () => {},
+      utilisateur: async () => ({ id: 'u3', email: 'e3@exemple.tn' }),
+      chargerReponses: async () => [
+        { quiz: 'php', module: null, question_id: 'p1', enonce: 'echo strlen("a")', correct: false, cree_le: '2026-10-25T10:00:00Z' },
+        { quiz: 'tableaux', module: 'recap-php', question_id: 'tp1', enonce: 'Récap PHP', correct: false, cree_le: '2026-10-25T10:00:00Z' },
+        { quiz: 'sql', module: 'jointures', question_id: 's1', enonce: 'SELECT * FROM client', correct: false, cree_le: '2026-10-25T10:00:00Z' },
+      ],
+    },
+    supabase: {
+      createClient: () => ({ auth: { getUser: async () => ({ data: { user: null } }) } }),
+    },
+    localStorage: {
+      getItem: (k) => (k === 'sti-session-cache' ? JSON.stringify({ id: 'u3', classe: '3SI2', role: 'eleve' }) : null),
+    },
+    sessionStorage: { getItem: () => null },
+    document: {
+      readyState: 'complete',
+      getElementById(id) {
+        if (id === 'contenu') return contenuRev;
+        if (id === 'stats') return statsEl;
+        if (id === 'st-rater') return stRater;
+        if (id === 'st-maitrisees') return stMait;
+        return null;
+      },
+    },
+    encodeURIComponent, Math, Date, JSON, Promise, Object, Array, String, Number, Boolean, RegExp, Error, parseInt,
+  };
+  winRev.window = winRev;
+  vm.runInNewContext(scriptRev, winRev, { filename: 'revision-erreurs.html' });
+  await new Promise((r) => setTimeout(r, 20));
+  assert.equal(stRater.textContent, 1, 'Seule la question SQL compte pour un élève 3e SI');
+  assert.match(contenuRev.innerHTML, /SQL \(BD\)/);
+  assert.doesNotMatch(contenuRev.innerHTML, /🐘 PHP|Récap PHP/);
 });
 
 

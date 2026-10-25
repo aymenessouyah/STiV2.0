@@ -314,6 +314,13 @@
   function terminer() {
     var s = sessionQuiz;
     var repondues = s.questions.filter(function (it) { return it.choixEleve !== -1; });
+    if (!repondues.length) {
+      s.synchronise = true;
+      sessionQuiz = null;
+      if (window.STIQuizSync && STIQuizSync.quitterRevision) STIQuizSync.quitterRevision();
+      afficherAccueil();
+      return;
+    }
     var bonnes = repondues.filter(function (it) { return it.choix[it.choixEleve] === it.ref.bonne; });
     synchroniserSessionTableaux(s);
     if (window.STIQuizSync && STIQuizSync.quitterRevision) STIQuizSync.quitterRevision();
