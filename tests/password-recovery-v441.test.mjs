@@ -883,7 +883,36 @@ test('v449 : Rayons X HTML/CSS (Box-Model, Sémantique & Flexbox) + Surligneur F
   assert.match(ficheHtml, /id="sec-surlignages"/);
   assert.match(ficheHtml, /id="fiche-fluo-liste"/);
   assert.match(ficheHtml, /sti-surlignages-v1/);
-  assert.match(swJs, /v449-rayonsx-surligneur-1/);
+  assert.match(swJs, /rayonsx-surligneur-v449/);
+});
+
+test('v450 : bouton Messenger éliminé de toutes les pages du site et conservé uniquement dans la roue (« Écrire au prof ») et dans admin.html', () => {
+  const indexHtml = read('index.html');
+  const carteHtml = read('carte-visite.html');
+  const adminHtml = read('admin.html');
+  const accesJs = read('assets/js/acces.js');
+  const swJs = read('sw.js');
+
+  // 1) Éliminé sur index.html et carte-visite.html
+  assert.doesNotMatch(indexHtml, /id="btnHomeMessenger"/);
+  assert.doesNotMatch(carteHtml, /index\.html#messenger/);
+
+  // 2) Aucun bouton flottant Messenger global, ni bulle minimisée élève, ni bouton Messenger latéral Admin sur les pages de cours
+  assert.doesNotMatch(accesJs, /btn\.id\s*=\s*"sti-btn-messenger-global"/);
+  assert.doesNotMatch(accesJs, /b\.id\s*=\s*"sti-msn-bulle-eleve"/);
+  assert.doesNotMatch(accesJs, /btnMsnAdm\.className\s*=\s*"sti-btn-msn-adm-side"/);
+  assert.doesNotMatch(accesJs, /id=['"]sti-msn-el-min['"]/);
+
+  // 3) Conservé dans la roue élève (« Écrire au prof ») avec badge des messages non lus
+  assert.match(accesJs, /btnProf\.id\s*=\s*"sti-roue-btn-ecrire-prof"/);
+  assert.match(accesJs, /btnProf\.textContent\s*=\s*"Écrire au prof"/);
+  assert.match(accesJs, /ouvrirBoiteQuestionProf\(user\.id,\s*profil\.classe\s*\|\|\s*""\)/);
+
+  // 4) Conservé intact dans le tableau de bord de l'administrateur (admin.html)
+  assert.match(adminHtml, /id="btn-messenger-top"/);
+  assert.match(adminHtml, /id="btn-messenger-dock"/);
+  assert.match(adminHtml, /id="sti-messenger-admin"/);
+  assert.match(swJs, /v450-messenger-roue-admin-only/);
 });
 
 

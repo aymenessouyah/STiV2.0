@@ -2840,6 +2840,7 @@
 
     var btnProf = document.createElement("button");
     btnProf.type = "button";
+    btnProf.id = "sti-roue-btn-ecrire-prof";
     btnProf.className = "sti-tuile";
     btnProf.setAttribute("data-ic", "💬");
     btnProf.textContent = "Écrire au prof";
@@ -2853,6 +2854,12 @@
       ouvrirBoiteQuestionProf(user.id, profil.classe || "");
     });
     gridPrio.appendChild(btnProf);
+    try {
+      var stNonLusInitRoue = compterMessagesNonLusEleve(user.id);
+      if (stNonLusInitRoue && stNonLusInitRoue.nb > 0) {
+        btnProf.innerHTML = "Écrire au prof <span id='sti-badge-roue-ecrire-prof' style='margin-left:auto;background:#e41e3f;color:#fff;padding:1px 6px;border-radius:999px;font-size:10px;font-weight:900;line-height:1.3'>" + stNonLusInitRoue.nb + "</span>";
+      }
+    } catch (eMsnRoue) {}
 
     pan.appendChild(gridPrio);
 
@@ -4071,79 +4078,26 @@
     });
   }
 
-  function afficherBulleAttentionMessenger(msgObj, uid, maClasse, nb) {
-    installerStylesMessengerMobile();
+  function afficherBulleAttentionMessenger() {
     var ex = document.getElementById("sti-msn-bulle-attention");
     if (ex) ex.remove();
-    if (!nb || nb <= 0) return;
-    if (document.getElementById("sti-messenger-eleve") || document.getElementById("sti-messenger-admin-site")) return;
-
-    var apercu = "";
-    if (msgObj) {
-      apercu = msgObj.texte || (msgObj.fichier ? ("📎 Fichier joint : " + msgObj.fichier.nom) : "");
-    }
-    if (apercu.length > 85) apercu = apercu.slice(0, 85) + "…";
-
-    var bulle = document.createElement("div");
-    bulle.id = "sti-msn-bulle-attention";
-    bulle.className = "sti-no-print";
-    bulle.style.cssText =
-      "position:fixed;left:14px;bottom:64px;z-index:2147483646;max-width:min(330px,calc(100vw - 28px));" +
-      "background:linear-gradient(135deg,#fffdf7 0%,#fff3e0 100%);color:#23201a;border:2.5px solid #23201a;" +
-      "border-radius:16px;padding:11px 13px;box-shadow:4px 4px 0 #f4511e,0 14px 32px rgba(0,0,0,.28);" +
-      "font:800 12px/1.38 system-ui,'Segoe UI',sans-serif;cursor:pointer;";
-    bulle.innerHTML =
-      "<div style='display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px'>" +
-        "<span style='color:#c0392b;font-weight:900;font-size:12.5px'>🔔 " + (nb > 1 ? (nb + " nouveaux messages") : "Nouveau message") + " de M. Essouyah !</span>" +
-        "<button type='button' id='sti-msn-att-close' style='border:1px solid #23201a;background:#fff;color:#23201a;border-radius:999px;padding:1px 6px;font-size:10px;font-weight:900;cursor:pointer'>✕</button>" +
-      "</div>" +
-      (apercu ? ("<div style='color:#23201a;font-weight:700;background:#fff;border-left:3px solid #f4511e;padding:5px 8px;border-radius:7px;margin-bottom:7px;word-break:break-word'>« " + esc(apercu) + " »</div>") : "") +
-      "<div style='display:flex;align-items:center;justify-content:space-between;gap:6px'>" +
-        "<span style='font-size:11px;color:#d84315;font-weight:900'>⬇ Cliquez pour ouvrir Messenger STI</span>" +
-        "<span style='background:#f4511e;color:#fff;border:1.5px solid #23201a;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:900'>💬 Lire</span>" +
-      "</div>";
-
-    var btnCloseAtt = bulle.querySelector("#sti-msn-att-close");
-    if (btnCloseAtt) {
-      btnCloseAtt.addEventListener("click", function (ev) {
-        ev.stopPropagation();
-        bulle.remove();
-      });
-    }
-    bulle.addEventListener("click", function () {
-      bulle.remove();
-      ouvrirBoiteQuestionProf(uid || currentUid || "eleve", maClasse || currentClasse || "", msgObj && msgObj.id);
-    });
-    (document.body || document.documentElement).appendChild(bulle);
   }
 
-  function majBadgeMessengerGlobal(nb, msgObj, uid, maClasse) {
+  function majBadgeMessengerGlobal(nb) {
     var btnGlobal = document.getElementById("sti-btn-messenger-global");
-    var btnHome = document.getElementById("btnHomeMessenger");
-    var b = document.getElementById("sti-badge-msn-global");
+    if (btnGlobal) btnGlobal.remove();
+    var bulleAtt = document.getElementById("sti-msn-bulle-attention");
+    if (bulleAtt) bulleAtt.remove();
+    var btnRoueProf = document.getElementById("sti-roue-btn-ecrire-prof");
     if (nb > 0) {
-      if (b) {
-        b.textContent = String(nb);
-        b.style.display = "inline-flex";
-      }
-      if (btnGlobal) btnGlobal.classList.add("sti-msn-alerte");
-      if (btnHome) {
-        btnHome.classList.add("sti-msn-alerte");
-        btnHome.innerHTML = "💬 Messenger STI <span style='background:#ffd54f;color:#23201a;padding:1px 6px;border-radius:999px;font-size:11px;font-weight:900;border:1.5px solid #23201a'>🔔 " + nb + "</span>";
+      if (btnRoueProf) {
+        btnRoueProf.innerHTML = "Écrire au prof <span id='sti-badge-roue-ecrire-prof' style='margin-left:auto;background:#e41e3f;color:#fff;padding:1px 6px;border-radius:999px;font-size:10px;font-weight:900;line-height:1.3'>" + Number(nb) + "</span>";
       }
       clignoterTitreNouveauMsg(nb);
-      if (msgObj) {
-        afficherBulleAttentionMessenger(msgObj, uid, maClasse, nb);
-      }
     } else {
-      if (b) b.style.display = "none";
-      if (btnGlobal) btnGlobal.classList.remove("sti-msn-alerte");
-      if (btnHome) {
-        btnHome.classList.remove("sti-msn-alerte");
-        btnHome.textContent = "💬 Messenger STI";
+      if (btnRoueProf) {
+        btnRoueProf.textContent = "Écrire au prof";
       }
-      var bulleAtt = document.getElementById("sti-msn-bulle-attention");
-      if (bulleAtt) bulleAtt.remove();
       arreterClignotementTitreMsg();
     }
   }
@@ -4515,7 +4469,6 @@
             "</div>" +
           "</div>" +
           "<div style='display:flex;align-items:center;gap:4px;flex-shrink:0'>" +
-            "<button type='button' id='sti-msn-el-min' class='sti-meta-icon-btn' title='Réduire la discussion' style='color:#0084ff;font-weight:800;font-size:16px'>—</button>" +
             "<button type='button' id='sti-msn-el-close' class='sti-meta-icon-btn' title='Fermer' style='color:#0084ff;font-weight:700;font-size:15px'>✕</button>" +
           "</div>" +
         "</div>" +
@@ -4763,11 +4716,6 @@
         win.remove();
         synchroniserViewportMessengerSite();
       });
-      win.querySelector("#sti-msn-el-min").addEventListener("click", function () {
-        win.remove();
-        synchroniserViewportMessengerSite();
-        afficherBulleMinimiseeEleve(uid, maClasse, 0);
-      });
       win.querySelector("#sti-msn-el-form").addEventListener("submit", function (e) {
         e.preventDefault();
         var inp = win.querySelector("#sti-msn-el-inp");
@@ -4985,26 +4933,9 @@
     feed.scrollTop = feed.scrollHeight;
   }
 
-  function afficherBulleMinimiseeEleve(uid, maClasse, nbNonLus) {
+  function afficherBulleMinimiseeEleve() {
     var ex = document.getElementById("sti-msn-bulle-eleve");
     if (ex) ex.remove();
-    var b = document.createElement("button");
-    b.type = "button";
-    b.id = "sti-msn-bulle-eleve";
-    b.className = "sti-no-print";
-    b.title = "Ouvrir la discussion Messenger avec M. Essouyah";
-    b.style.cssText =
-      "position:fixed;right:16px;bottom:68px;z-index:2147483646;width:54px;height:54px;border-radius:50%;" +
-      "border:2px solid #ffffff;background:linear-gradient(135deg,#0099ff 0%,#7638fa 52%,#ff5280 100%);color:#fff;font-size:22px;" +
-      "display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,132,255,.38),0 2px 8px rgba(0,0,0,.18);";
-    b.innerHTML = ICO_META_MSN_SVG.replace("width='20' height='20'", "width='28' height='28'") + (nbNonLus > 0
-      ? ("<span style='position:absolute;top:-4px;right:-4px;background:#e41e3f;color:#fff;border:2px solid #fff;border-radius:999px;padding:1px 6px;font:800 10.5px system-ui,sans-serif'>" + nbNonLus + "</span>")
-      : "");
-    b.addEventListener("click", function () {
-      b.remove();
-      ouvrirBoiteQuestionProf(uid, maClasse);
-    });
-    (document.body || document.documentElement).appendChild(b);
   }
 
   /* ---------- Point 6 : Bandeau de Contrôle / Test chronométré lancé par l'Admin ---------- */
@@ -6626,35 +6557,8 @@
     installerStylesMessengerMobile();
     var ex = document.getElementById("sti-btn-messenger-global");
     if (ex) ex.remove();
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.id = "sti-btn-messenger-global";
-    btn.className = "sti-no-print";
-    btn.title = estAdmin
-      ? "Ouvrir Messenger STI (Discuter en direct avec les candidats)"
-      : "Ouvrir Messenger STI (Discuter avec M. Essouyah & envoyer des fichiers 📎)";
-    btn.style.cssText =
-      "position:fixed;left:14px;bottom:14px;z-index:2147483645;width:46px;height:46px;padding:0;" +
-      "display:inline-flex;align-items:center;justify-content:center;border-radius:50%;" +
-      "border:2px solid #ffffff;background:#ffffff;color:#fff;cursor:pointer;" +
-      "box-shadow:0 6px 20px rgba(0,132,255,.38),0 2px 8px rgba(0,0,0,.22);transition:transform .15s ease;";
-    btn.innerHTML =
-      ICO_META_MSN_SVG.replace("width='20' height='20'", "width='32' height='32'") +
-      "<span id='sti-badge-msn-global' style='display:none;position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;align-items:center;justify-content:center;background:#e41e3f;color:#fff;font:800 10.5px/1 system-ui,sans-serif;padding:0 5px;border-radius:999px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25)'>0</span>";
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (estAdmin) {
-        var wAdm = document.getElementById("sti-messenger-admin-site");
-        if (wAdm) { wAdm.remove(); synchroniserViewportMessengerSite(); return; }
-        ouvrirMessengerAdminSurSite();
-      } else {
-        var wEl = document.getElementById("sti-messenger-eleve");
-        if (wEl) { wEl.remove(); synchroniserViewportMessengerSite(); return; }
-        ouvrirBoiteQuestionProf(uid || currentUid || "eleve", maClasse || currentClasse || "");
-      }
-    });
-    (document.body || document.documentElement).appendChild(btn);
+    var exBulle = document.getElementById("sti-msn-bulle-eleve");
+    if (exBulle) exBulle.remove();
 
     if (!estAdmin) {
       var stInit = compterMessagesNonLusEleve(uid || currentUid || "eleve");
@@ -6665,27 +6569,21 @@
 
     if (location.hash === "#messenger") {
       try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
-      setTimeout(function () {
-        if (estAdmin) ouvrirMessengerAdminSurSite();
-        else ouvrirBoiteQuestionProf(uid || currentUid || "eleve", maClasse || currentClasse || "");
-      }, 250);
+      if (!estAdmin) {
+        setTimeout(function () {
+          ouvrirBoiteQuestionProf(uid || currentUid || "eleve", maClasse || currentClasse || "");
+        }, 250);
+      }
     }
     installerOutilsPcWindowsSTI();
   }
 
-  /* Installation immédiate dès le chargement de la page pour que 💬 Messenger STI et la barre PC Windows soient visibles sur 100 % des pages sans attendre le réseau */
-  (function initBoutonMessengerImmediat() {
+  /* v450 : aucun bouton Messenger flottant sur les pages du site (uniquement « Écrire au prof » dans la roue élève et Messenger dans admin.html) */
+  (function initOutilsPcImmediat() {
     function poser() {
+      var ex = document.getElementById("sti-btn-messenger-global");
+      if (ex) ex.remove();
       installerOutilsPcWindowsSTI();
-      if (window !== window.top) {
-        try {
-          if (window.top && window.top.document && window.top.document.getElementById("sti-btn-messenger-global")) return;
-        } catch (e) {}
-      }
-      if (document.getElementById("sti-btn-messenger-global")) return;
-      var c = lireCacheSessionLocal();
-      var isAdm = estSessionAdminVerifiee();
-      installerBoutonMessengerGlobal(isAdm, (c && c.id) || currentUid || "eleve", (c && c.classe) || currentClasse || "");
     }
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", poser);
@@ -9487,20 +9385,6 @@
     window.addEventListener("online", majCouleurLogoAdmin);
     window.addEventListener("offline", majCouleurLogoAdmin);
 
-    var btnMsnAdm = document.createElement("button");
-    btnMsnAdm.type = "button";
-    btnMsnAdm.className = "sti-btn-msn-adm-side";
-    btnMsnAdm.textContent = "💬";
-    btnMsnAdm.title = "Ouvrir Messenger STI sur cette page";
-    btnMsnAdm.style.cssText = "background:linear-gradient(125deg,#23201a,#f4511e);color:#fff;border:2px solid #23201a;border-radius:999px;padding:8px 11px;font:900 15px/1 system-ui,'Segoe UI',sans-serif;cursor:pointer;box-shadow:3px 3px 0 #23201a;";
-    btnMsnAdm.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      var wAdm = document.getElementById("sti-messenger-admin-site");
-      if (wAdm) { wAdm.remove(); return; }
-      ouvrirMessengerAdminSurSite();
-    });
-
     var btnFlashAdm = document.createElement("button");
     btnFlashAdm.type = "button";
     btnFlashAdm.textContent = "⚡";
@@ -9535,13 +9419,12 @@
     });
 
     cont.appendChild(b);
-    cont.appendChild(btnMsnAdm);
     cont.appendChild(btnFlashAdm);
     cont.appendChild(btnTbAdm);
     cont.appendChild(btnCoffreAdm);
     (document.body || document.documentElement).appendChild(cont);
 
-    installerBoutonMessengerGlobal(true, currentUid || "admin", "Admin");
+    installerOutilsPcWindowsSTI();
 
     function verifAttente() {
       sb.from("profiles").select("id,email,phone,nom,prenom,statut").eq("statut", "en_attente").then(function (r) {

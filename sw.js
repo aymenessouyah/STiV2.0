@@ -3,13 +3,16 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v316";
+var CACHE = "sti-atelier-v317";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v449-rayonsx-surligneur-1";
+var UPDATE_ID = "v450-messenger-roue-admin-only";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./assets/js/acces.js", revision: "messenger-roue-admin-only-v450" },
+  { url: "./index.html", revision: "messenger-roue-admin-only-v450" },
+  { url: "./carte-visite.html", revision: "messenger-roue-admin-only-v450" },
   { url: "./assets/js/rayonsx-surligneur.js", revision: "rayonsx-surligneur-v449" },
   { url: "./assets/js/mobile-nav.js", revision: "rayonsx-surligneur-v449" },
   { url: "./assets/js/acces.js", revision: "rayonsx-surligneur-v449" },
