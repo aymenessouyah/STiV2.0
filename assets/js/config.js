@@ -11,7 +11,7 @@ window.STI_AUTH = {
            « …/glossaire.html/ » et les redirections/acces de acces.js tombaient dans un 404.
            Nouveau calcul général : on coupe au premier segment de section connu ; sinon on
            retire simplement le nom de fichier. Les cas listés avant gardent le même résultat. */
-        var pn = location.pathname;
+        var pn = String(location.pathname || "").replace(/(\.html?)\/+$/i, "$1");
         var m = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
         var base = m ? m[1] + "/" : pn.slice(0, pn.lastIndexOf("/") + 1);
         return location.origin + base;
@@ -56,11 +56,11 @@ window.STI_AUTH = {
     var s = document.createElement("script");
     var base = "./";
     try {
-      var pn = location.pathname;
+      var pn = String(location.pathname || "").replace(/(\.html?)\/+$/i, "$1");
       var m = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
       base = m ? location.origin + m[1] + "/" : location.origin + pn.slice(0, pn.lastIndexOf("/") + 1);
     } catch (e) {}
-    s.src = base + "assets/js/mobile-nav.js?v=434";
+    s.src = base + "assets/js/mobile-nav.js?v=464";
     s.async = true;
     (document.head || document.documentElement).appendChild(s);
   } catch (e) {}

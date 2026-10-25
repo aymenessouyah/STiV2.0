@@ -80,7 +80,7 @@ export function initMobileDiagnostics(options) {
       if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: "STI_STORAGE_STATUS" });
     });
     liberer.addEventListener("click", function () {
-      if (!confirm("Libérer uniquement les fichiers temporaires les moins récemment utilisés ? Les téléchargements hors ligne volontaires sont conservés.")) return;
+      if (typeof window !== "undefined" && typeof window.confirm === "function" && !window.confirm("Libérer uniquement les fichiers temporaires les moins récemment utilisés ? Les téléchargements hors ligne volontaires sont conservés.")) return;
       if (navigator.serviceWorker && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: "STI_EVICT_RUNTIME" });
     });
     panneau.append(pre, actualiser, liberer);

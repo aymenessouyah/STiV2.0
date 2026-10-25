@@ -20,6 +20,7 @@
           var v = JSON.parse(localStorage.getItem(k) || "null");
           if (v && v.access_token) return v.access_token;
           if (v && v.currentSession && v.currentSession.access_token) return v.currentSession.access_token;
+          if (v && v.session && v.session.access_token) return v.session.access_token;
         }
       }
     } catch (e) {}
@@ -81,7 +82,20 @@
     var sortie = { genere_le: new Date().toISOString(), plateforme: "STI By AE V2.0", cloud: {}, erreurs: {}, local: locales() };
     var chaines = tables.map(function (t) {
       return lireTablePaginee(t, token, 30000)
-        .then(function (lignes) { sortie.cloud[t] = lignes; })
+        .then(function (lignes) {
+          if (t === "labo_devices" && (!lignes || !lignes.length)) {
+            return fetch(cfg.URL + "/rest/v1/rpc/admin_labo_devices_list", {
+              method: "POST",
+              headers: { "apikey": cfg.CLE, "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+              body: "{}"
+            }).then(function (rRpc) { return rRpc.ok ? rRpc.json() : []; })
+              .then(function (dRpc) {
+                var arrRpc = Array.isArray(dRpc) ? dRpc : (dRpc && Array.isArray(dRpc.devices) ? dRpc.devices : []);
+                sortie.cloud[t] = arrRpc.length ? arrRpc : lignes;
+              }).catch(function () { sortie.cloud[t] = lignes; });
+          }
+          sortie.cloud[t] = lignes;
+        })
         .catch(function (e) { sortie.erreurs[t] = String(e); sortie.cloud[t] = null; });
     });
     Promise.all(chaines).then(function () {

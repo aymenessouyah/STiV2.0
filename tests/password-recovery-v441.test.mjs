@@ -2932,7 +2932,7 @@ test('v463 : révision intégrale du suivi élève, des compteurs, des quiz, des
   assert.match(admRevJs, /elevelabo3@exemple\.tn/);
   assert.match(admCouvJs, /elevelabo3@exemple\.tn/);
   assert.match(admErrJs, /elevelabo3@exemple\.tn/);
-  assert.match(swJs, /sti-atelier-v323/);
+  assert.match(swJs, /sti-atelier-v3\d{2}/);
   assert.match(swJs, /v463-audit-complet/);
 });
 
@@ -3007,6 +3007,67 @@ test('v463 (comportemental VM) : rejet des points bruts non notés ("1791", "450
   assert.equal(mediaFus['video:sql-s1'].done, true);
   assert.equal(mediaFus['video:sql-s1'].maxPct, 100);
   assert.equal(mediaFus['audio:html-s1'].maxPct, 60);
+});
+
+test('v464 : correctifs issus du test fonctionnel E2E (purges quota sans ReferenceError, WhatsApp sans téléphone, couverture bookmarks/chapitres, config.js .html/, sauvegarde labo_devices)', () => {
+  const adminJs = read('assets/js/admin.js');
+  const admCouvJs = read('assets/js/admin-couverture.js');
+  const configJs = read('assets/js/config.js');
+  const sauvJs = read('assets/js/sauvegarde.js');
+  const mobDiagJs = read('assets/js/modules/mobile-diagnostics.js');
+  const swJs = read('sw.js');
+
+  // 1) Aucun appel orphelin charger(true) ni tousAcces hors portée dans admin.js
+  assert.doesNotMatch(adminJs, /\bcharger\s*\(\s*true\s*\)/);
+  assert.doesNotMatch(adminJs, /\(tousAcces\s*\|\|\s*\[\]\)\.forEach/);
+  assert.match(adminJs, /requeteCompleteAdmin\(true\)/);
+  assert.match(adminJs, /\(accesBrutsAdmin\s*\|\|\s*\[\]\)\.forEach/);
+
+  // 2) Bouton WhatsApp Messenger sécurisé quand phone est null
+  assert.match(adminJs, /var ch = String\(telP \|\| ""\)\.replace\(\/\\D\/g, ""\)/);
+
+  // 3) Couverture des pages vues consolidée avec sti-reading-bookmarks et sti-chapitres-vus
+  assert.match(adminJs, /d\["sti-reading-bookmarks"\]/);
+  assert.match(admCouvJs, /d\["sti-reading-bookmarks"\]/);
+
+  // 4) config.js protège contre les URLs se terminant par .html/ et charge mobile-nav.js?v=464
+  assert.match(configJs, /replace\(\/\(\\\.html\?\)\\\/\+\$\/i,\s*"\$1"\)/);
+  assert.match(configJs, /mobile-nav\.js\?v=464/);
+
+  // 5) sauvegarde.js : fallback RPC admin_labo_devices_list + mobile-diagnostics.js window.confirm
+  assert.match(sauvJs, /admin_labo_devices_list/);
+  assert.match(mobDiagJs, /window\.confirm/);
+  assert.match(swJs, /sti-atelier-v324/);
+  assert.match(swJs, /v464-verif-e2e/);
+
+  // 6) Test comportemental VM sur admin-couverture.js : une élève avec sti-reading-bookmarks / sti-chapitres-vus n'est plus à 0 page vue
+  const dummyEl = () => ({ addEventListener: () => {}, style: {}, value: '*' });
+  const ctxCouv = vm.createContext({
+    window: {},
+    document: { getElementById: () => dummyEl(), readyState: 'complete' },
+  });
+  vm.runInContext(admCouvJs, ctxCouv);
+  const lignes = ctxCouv.window.STI_COUV_ADMIN.analyser(
+    [{ id: 'uAya', nom: 'Baldi', prenom: 'Aya', classe: '3eme SI1', email: 'ayabaldinwa@gmail.com', statut: 'actif' }],
+    [{
+      user_id: 'uAya',
+      maj: '2026-10-19T21:23:14Z',
+      donnees: {
+        'sti-chapitres-vus': JSON.stringify({ HTML5: 1, CSS3: 1, SQL: 1 }),
+        'sti-reading-bookmarks': JSON.stringify({
+          html5: { relUrl: 'cours/html5.html', pct: 100 },
+          css3: { relUrl: 'cours/css3.html', pct: 73 },
+          sql: { relUrl: 'cours/sql.html', pct: 10 },
+        }),
+      },
+    }],
+    [],
+    [],
+    ['cours/html5.html', 'cours/css3.html', 'cours/sql.html', 'cours/javascript.html']
+  );
+  assert.equal(lignes.length, 1);
+  assert.equal(lignes[0].vues, 3);
+  assert.equal(lignes[0].pct, 75);
 });
 
 

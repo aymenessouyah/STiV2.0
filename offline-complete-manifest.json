@@ -1,9 +1,9 @@
 {
   "version": "v460-quiz-supabase-ordre",
-  "generatedAt": "2026-10-25T21:48:14.378Z",
+  "generatedAt": "2026-10-25T22:15:27.509Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 605,
-  "totalBytes": 631266700,
+  "totalBytes": 631271175,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
@@ -97,8 +97,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 326836,
-      "gitSha": "78bde93a9e837d37f51e00bd9b9c06217071608f"
+      "bytes": 326954,
+      "gitSha": "fb2da2cf660091ffdfc5afe81e83797c9f6613ce"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -517,8 +517,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 688915,
-      "gitSha": "47f4d773ad3cfbbc897b09bcdb8f6f42faccc540"
+      "bytes": 691875,
+      "gitSha": "8920f259591d3411ad832adc4d1e378f0aaab38f"
     },
     {
       "path": "assets/js/analytique.js",
@@ -527,8 +527,8 @@
     },
     {
       "path": "assets/js/config.js",
-      "bytes": 6504,
-      "gitSha": "1a3b849db08061b929e66679c38de594bc642912"
+      "bytes": 6596,
+      "gitSha": "968b2111560f4695486ac9251ca7e5c56b911268"
     },
     {
       "path": "assets/js/graphiques-activite.js",
@@ -557,8 +557,8 @@
     },
     {
       "path": "assets/js/modules/mobile-diagnostics.js",
-      "bytes": 6458,
-      "gitSha": "55a4a1764aa1931a6442ed62a173233d2ad699f0"
+      "bytes": 6538,
+      "gitSha": "1851723223da7b68d46d7b960ad3cc3b9aa1b44b"
     },
     {
       "path": "assets/js/modules/password-recovery.js",
@@ -592,8 +592,8 @@
     },
     {
       "path": "assets/js/sauvegarde.js",
-      "bytes": 7875,
-      "gitSha": "9701ddcbfd8bbbd9acc5635b13f2e952719e9a25"
+      "bytes": 8676,
+      "gitSha": "83a67a46abac260ac9b799e164c7bbfc027e61b6"
     },
     {
       "path": "assets/js/smart-book.js",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 74614,
-      "gitSha": "c82525cf05b3b04586dd8aceb81f2b04a3548164"
+      "bytes": 75038,
+      "gitSha": "7ad2bfc76b36bc2ed477aa89320154283ad76ef9"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",

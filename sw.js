@@ -3,14 +3,20 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v323";
+var CACHE = "sti-atelier-v324";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v463-audit-complet";
-/* Historique lots : v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v464-verif-e2e";
+/* Historique lots : v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "verif-e2e-v464" },
+  { url: "./assets/js/admin.js", revision: "verif-e2e-v464" },
+  { url: "./assets/js/admin-couverture.js", revision: "verif-e2e-v464" },
+  { url: "./assets/js/config.js", revision: "verif-e2e-v464" },
+  { url: "./assets/js/sauvegarde.js", revision: "verif-e2e-v464" },
+  { url: "./assets/js/modules/mobile-diagnostics.js", revision: "verif-e2e-v464" },
   { url: "./admin.html", revision: "audit-complet-v463" },
   { url: "./assets/js/admin.js", revision: "audit-complet-v463" },
   { url: "./assets/js/acces.js", revision: "audit-complet-v463" },
