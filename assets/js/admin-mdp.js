@@ -1,15 +1,15 @@
-/* ═════════ STI v440 — CHANGER LE MOT DE PASSE ADMIN DEPUIS LE TABLEAU DE BORD ═════════
-   Jusqu'ici, changer le mot de passe obligeait à passer par l'e-mail « mot de passe oublié »
-   (ou par Supabase). Ce module ajoute un bouton « 🔑 Changer mon mot de passe » dans le
-   tableau de bord : il VÉRIFIE D'ABORD l'ancien mot de passe (re-connexion Supabase), puis
-   enregistre le nouveau et, si la case est cochée, déconnecte les autres appareils.
+/* ═════════ STI v442 — CHANGER LE MOT DE PASSE ADMIN DEPUIS LE TABLEAU DE BORD ═════════
+   Bouton « 🔑 Changer mon mot de passe » dans le tableau de bord administrateur :
+   1°) Vérifie d'abord le mot de passe actuel via Supabase Auth AVEC jeton Cloudflare Turnstile
+       (requis par la protection anti-bot Supabase sur signInWithPassword) ;
+   2°) Élève automatiquement la session au niveau AAL2 (TOTP 6 chiffres) si un facteur MFA est actif ;
+   3°) Enregistre le nouveau mot de passe (sb.auth.updateUser), met à jour l'empreinte locale SHA-256
+       (sti-cred) et, si la case est cochée, révoque uniquement les autres appareils (scope: "others")
+       afin de ne pas couper ni désynchroniser la session administrateur en cours.
 
-   - Monté uniquement si la page contient la marque du tableau de bord (admin) : aucun effet
-     ailleurs, aucun chargement sur les pages élèves.
-   - Aucun mot de passe n'est stocké ni écrit dans le dépôt : tout passe par Supabase Auth
-     (sb.auth.signInWithPassword → sb.auth.updateUser → signOut global optionnel).
+   - Monté uniquement sur admin.html : aucun chargement ni effet sur les pages élèves.
    - Règles imposées : 8 caractères minimum, les deux saisies identiques, nouveau ≠ ancien.
-   - API de test : window.STI_ADMIN_MDP.{ouvrir, fermer, valider}.
+   - API de test : window.STI_ADMIN_MDP.{ouvrir, fermer, valider, MIN_CAR}.
 */
 (function () {
   "use strict";
@@ -23,6 +23,27 @@
   var client = null;
   var MIN_CAR = 8;
   var facteurTotpId = null;
+  var tsWidgetId = null;
+  var tsChargementEnCours = false;
+  var tsEchecChargement = false;
+  var ancienVerifieVal = "";
+  var ancienVerifieTs = 0;
+
+  function sb() {
+    if (window.__STI_ADMIN_MDP_CLIENT) return window.__STI_ADMIN_MDP_CLIENT;
+    if (client) return client;
+    try {
+      client = window.supabase.createClient(cfg.URL, cfg.CLE, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: false,
+          lock: function (name, acquireTimeout, fn) { return fn(); }
+        }
+      });
+    } catch (e) { client = null; }
+    return client;
+  }
 
   function detecterFacteurTotp(c) {
     if (!c || !c.auth || !c.auth.mfa || typeof c.auth.mfa.listFactors !== "function") return Promise.resolve(null);
@@ -34,11 +55,165 @@
     }).catch(function () { return null; });
   }
 
-  function sb() {
-    if (client) return client;
-    try { client = window.supabase.createClient(cfg.URL, cfg.CLE, { auth: { persistSession: true, autoRefreshToken: false } }); } catch (e) { client = null; }
-    return client;
+  function detecterMfaRequise(c) {
+    if (!c || !c.auth || !c.auth.mfa || typeof c.auth.mfa.listFactors !== "function") {
+      return Promise.resolve({ factorId: null, needVerify: false });
+    }
+    var pAal = typeof c.auth.mfa.getAuthenticatorAssuranceLevel === "function"
+      ? c.auth.mfa.getAuthenticatorAssuranceLevel()
+      : Promise.resolve({ data: { currentLevel: "aal1" } });
+    return Promise.all([pAal, detecterFacteurTotp(c)]).then(function (res) {
+      var aal = (res[0] && res[0].data) || {};
+      var fid = res[1] || null;
+      return { factorId: fid, needVerify: Boolean(fid && aal.currentLevel !== "aal2") };
+    }).catch(function () { return { factorId: null, needVerify: false }; });
   }
+
+  function cleTurnstile() {
+    return String((cfg && cfg.CLE_TURNSTILE) || "").trim();
+  }
+
+  function turnstileActifSurPage() {
+    if (!cleTurnstile()) return false;
+    if (window.turnstile) return true;
+    try {
+      return typeof location !== "undefined" && /^https?:$/i.test(location.protocol || "");
+    } catch (e) { return false; }
+  }
+
+  function chargerScriptTurnstile(cb) {
+    if (window.turnstile) return cb();
+    if (tsChargementEnCours) return;
+    tsChargementEnCours = true;
+    tsEchecChargement = false;
+    var sc = doc.createElement("script");
+    sc.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    sc.async = true;
+    sc.onload = function () { tsChargementEnCours = false; cb(); };
+    sc.onerror = function () { tsChargementEnCours = false; tsEchecChargement = true; };
+    (doc.head || doc.documentElement).appendChild(sc);
+  }
+
+  function initialiserTurnstile() {
+    var wrap = el("mdp-turnstile-wrap");
+    var cont = el("mdp-turnstile");
+    var cle = cleTurnstile();
+    if (!wrap || !cont || !turnstileActifSurPage()) {
+      if (wrap) wrap.style.display = "none";
+      return;
+    }
+    wrap.style.display = "block";
+    if (window.turnstile && tsWidgetId !== null) {
+      try { window.turnstile.reset(tsWidgetId); return; } catch (e) { tsWidgetId = null; }
+    }
+    chargerScriptTurnstile(function () {
+      if (!window.turnstile || tsWidgetId !== null) return;
+      try {
+        cont.innerHTML = "";
+        tsWidgetId = window.turnstile.render("#mdp-turnstile", {
+          sitekey: cle,
+          theme: "light"
+        });
+      } catch (e) {
+        tsEchecChargement = true;
+      }
+    });
+  }
+
+  function jetonTurnstile() {
+    try {
+      if (window.turnstile && tsWidgetId !== null) {
+        return String(window.turnstile.getResponse(tsWidgetId) || "").trim();
+      }
+    } catch (e) {}
+    return "";
+  }
+
+  function resetTurnstile() {
+    try {
+      if (window.turnstile && tsWidgetId !== null) window.turnstile.reset(tsWidgetId);
+    } catch (e) {}
+  }
+
+  function sha256Hex(texte) {
+    try {
+      if (typeof crypto === "undefined" || !crypto.subtle || typeof TextEncoder === "undefined") {
+        return Promise.resolve("");
+      }
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(texte || ""))).then(function (buf) {
+        return Array.prototype.map.call(new Uint8Array(buf), function (x) {
+          return ("0" + x.toString(16)).slice(-2);
+        }).join("");
+      }).catch(function () { return ""; });
+    } catch (e) {
+      return Promise.resolve("");
+    }
+  }
+
+  function majEmpreinteLocaleAdmin(email, nouveauMdp) {
+    var em = String(email || "").trim().toLowerCase();
+    if (!em) return Promise.resolve();
+    return sha256Hex(nouveauMdp).then(function (h) {
+      try {
+        if (h) {
+          localStorage.setItem("sti-cred", JSON.stringify({ email: em, h: h, isAdmin: true }));
+        } else {
+          localStorage.removeItem("sti-cred");
+        }
+        var nowStr = String(Date.now());
+        localStorage.setItem("sti-gold", "1");
+        localStorage.setItem("sti-admin-gold", "1");
+        localStorage.setItem("sti-offline", nowStr);
+        var c = JSON.parse(localStorage.getItem("sti-session-cache") || "null") || {};
+        c.email = em;
+        c.statut = "actif";
+        c.gold = true;
+        c.isAdmin = true;
+        c.ts = Date.now();
+        var json = JSON.stringify(c);
+        localStorage.setItem("sti-session-cache", json);
+        try { sessionStorage.setItem("sti-session-cache", json); } catch (e2) {}
+      } catch (e) {}
+    });
+  }
+
+  function purgerCachesSessionAdmin() {
+    [
+      "sti-gold", "sti-admin-gold", "sti-offline", "sti-session-cache",
+      "sti-cred", "sti-bio-nav-ts", "sti-bio-lease-ts", "sti-bio-click-nav-ts"
+    ].forEach(function (k) {
+      try { localStorage.removeItem(k); } catch (e) {}
+    });
+    ["sti-session-cache", "sti-offline", "sti-bio-session-ok"].forEach(function (k) {
+      try { sessionStorage.removeItem(k); } catch (e) {}
+    });
+    try { doc.cookie = "sti_sess_cache=; path=/; max-age=0; SameSite=Lax"; } catch (e) {}
+  }
+
+  function traduireErreurAuth(err, surVerifAncien) {
+    var brut = String((err && (err.message || err.error_description || err.code || err.error_code)) || err || "").trim();
+    if (/captcha/i.test(brut)) {
+      return "Vérification anti-robot (Cloudflare Turnstile) requise ou expirée : cochez la case de sécurité puis recliquez Enregistrer.";
+    }
+    if (/invalid login credentials|invalid_credentials|wrong password|invalid email or password/i.test(brut)) {
+      return "Mot de passe actuel incorrect.";
+    }
+    if (/rate limit|too many requests|over_request_rate_limit/i.test(brut)) {
+      return "Trop de tentatives rapprochées. Patientez 1 minute puis réessayez.";
+    }
+    if (/aal2|insufficient_aal|mfa/i.test(brut)) {
+      return "Validation double authentification (code TOTP à 6 chiffres) requise avant de modifier le mot de passe.";
+    }
+    if (/same password|different from the old/i.test(brut)) {
+      return "Choisissez un mot de passe différent de l'actuel.";
+    }
+    if (/fetch|network|failed to fetch|load failed|timeout/i.test(brut)) {
+      return "Connexion réseau indisponible : impossible de joindre Supabase.";
+    }
+    if (brut) return brut;
+    return surVerifAncien ? "Impossible de vérifier le mot de passe actuel." : "Échec de la modification du mot de passe.";
+  }
+
   function emailAdmin() {
     try {
       if (cfg.ADMIN) return String(cfg.ADMIN).trim();
@@ -52,6 +227,7 @@
     } catch (e) {}
     return "";
   }
+
   function el(id) { return doc.getElementById(id); }
   function message(t, couleur) {
     var m = el("mdp-msg");
@@ -60,13 +236,22 @@
     m.style.color = couleur || "#23201a";
   }
 
+  function reinitialiserMemoireAncien() {
+    ancienVerifieVal = "";
+    ancienVerifieTs = 0;
+  }
+
+  function ancienDejaVerifieOk(ancien) {
+    return Boolean(ancien && ancienVerifieVal === ancien && (Date.now() - ancienVerifieTs) < 90000);
+  }
+
   function construire() {
     if (el("sti-mdp-modal")) return el("sti-mdp-modal");
     var ov = doc.createElement("div");
     ov.id = "sti-mdp-modal";
-    ov.setAttribute("style", "position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:rgba(12,16,26,.55);padding:16px");
+    ov.setAttribute("style", "position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:rgba(12,16,26,.55);padding:16px;overflow-y:auto");
     ov.innerHTML =
-      "<div role='dialog' aria-modal='true' aria-labelledby='mdp-titre' style='width:min(420px,100%);background:#fffdf7;color:#23201a;border:2px solid #23201a;border-radius:16px;box-shadow:6px 6px 0 rgba(244,81,30,.45);padding:18px 18px 14px;font-family:system-ui,Segoe UI,sans-serif'>" +
+      "<div role='dialog' aria-modal='true' aria-labelledby='mdp-titre' style='width:min(430px,100%);background:#fffdf7;color:#23201a;border:2px solid #23201a;border-radius:16px;box-shadow:6px 6px 0 rgba(244,81,30,.45);padding:18px 18px 14px;font-family:system-ui,Segoe UI,sans-serif'>" +
         "<div style='display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px'>" +
           "<b id='mdp-titre' style='font-size:15px'>🔑 Changer mon mot de passe</b>" +
           "<button type='button' id='mdp-fermer' title='Fermer' style='border:0;background:transparent;font-size:18px;font-weight:900;cursor:pointer;color:#23201a'>✕</button>" +
@@ -82,6 +267,10 @@
           "<label style='display:block;font-size:11.5px;font-weight:900;margin-bottom:3px' for='mdp-totp'>🛡️ Code double authentification TOTP (6 chiffres)</label>" +
           "<input id='mdp-totp' type='text' inputmode='numeric' maxlength='6' autocomplete='one-time-code' placeholder='Code à 6 chiffres (Authenticator)' style='width:100%;box-sizing:border-box;font:900 14px system-ui;letter-spacing:2px;border:2px solid #23201a;border-radius:10px;padding:8px 10px;background:#fff;color:#23201a'>" +
         "</div>" +
+        "<div id='mdp-turnstile-wrap' style='display:none;margin:2px 0 10px'>" +
+          "<div style='font-size:11px;font-weight:800;color:#7a6f5d;margin-bottom:4px'>🛡️ Vérification anti-robot (Cloudflare)</div>" +
+          "<div id='mdp-turnstile' style='min-height:65px'></div>" +
+        "</div>" +
         "<label style='display:flex;gap:7px;align-items:flex-start;font-size:11.5px;font-weight:800;margin-bottom:10px;cursor:pointer'>" +
           "<input id='mdp-deconnecter' type='checkbox' checked style='margin-top:2px;width:15px;height:15px;accent-color:#f4511e'>" +
           "<span>Déconnecter mes autres appareils (téléphone, labo…)</span></label>" +
@@ -96,27 +285,47 @@
     el("mdp-annuler").addEventListener("click", fermer);
     ov.addEventListener("click", function (e) { if (e.target === ov) fermer(); });
     el("mdp-valider").addEventListener("click", valider);
+    el("mdp-ancien").addEventListener("input", reinitialiserMemoireAncien);
     doc.addEventListener("keydown", function (e) { if (e.key === "Escape" && ov.style.display !== "none") fermer(); });
     return ov;
   }
+
   function bouton() {
-    if (el("sti-mdp-btn")) return el("sti-mdp-btn");
-    var b = doc.createElement("button");
-    b.type = "button";
-    b.id = "sti-mdp-btn";
-    b.textContent = "🔑 Changer mon mot de passe";
-    b.title = "Modifier le mot de passe du compte administrateur (vérification de l'ancien mot de passe)";
-    b.setAttribute("style", "border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer;margin-left:6px");
-    b.addEventListener("click", ouvrir);
-    var pied = el("pied-readme-admin");
-    if (pied && pied.parentNode) pied.parentNode.insertBefore(b, pied);
-    else doc.body.appendChild(b);
-    return b;
+    var bPied = el("sti-mdp-btn");
+    if (!bPied) {
+      bPied = doc.createElement("button");
+      bPied.type = "button";
+      bPied.id = "sti-mdp-btn";
+      bPied.textContent = "🔑 Changer mon mot de passe";
+      bPied.title = "Modifier le mot de passe du compte administrateur (vérification de l'ancien mot de passe)";
+      bPied.setAttribute("style", "border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;cursor:pointer;margin-left:6px");
+      bPied.addEventListener("click", ouvrir);
+      var pied = el("pied-readme-admin");
+      if (pied && pied.parentNode) pied.parentNode.insertBefore(bPied, pied);
+      else if (doc.body) doc.body.appendChild(bPied);
+    }
+    var bTop = el("sti-mdp-btn-top");
+    var refTop = el("btn-readme-admin");
+    if (!bTop && refTop && refTop.parentNode) {
+      bTop = doc.createElement("button");
+      bTop.type = "button";
+      bTop.id = "sti-mdp-btn-top";
+      bTop.className = "btn-util mob-extra sys-extra-item";
+      bTop.title = "Changer le mot de passe du compte administrateur";
+      bTop.innerHTML = "<span class='btn-util-glyph' aria-hidden='true'>🔑</span> <span class='lbl-pc'>Mot de passe</span><span class='lbl-mob'>Mdp</span>";
+      bTop.addEventListener("click", ouvrir);
+      refTop.parentNode.insertBefore(bTop, refTop);
+    }
+    return bPied;
   }
+
   function ouvrir() {
     construire();
+    reinitialiserMemoireAncien();
     el("mdp-compte").textContent = emailAdmin() || "(session admin)";
-    el("mdp-ancien").value = ""; el("mdp-nouveau").value = ""; el("mdp-confirm").value = "";
+    el("mdp-ancien").value = "";
+    el("mdp-nouveau").value = "";
+    el("mdp-confirm").value = "";
     if (el("mdp-totp")) el("mdp-totp").value = "";
     facteurTotpId = null;
     if (el("mdp-totp-wrap")) el("mdp-totp-wrap").style.display = "none";
@@ -124,11 +333,18 @@
       facteurTotpId = fid;
       if (el("mdp-totp-wrap")) el("mdp-totp-wrap").style.display = fid ? "block" : "none";
     });
+    initialiserTurnstile();
     message("");
     el("sti-mdp-modal").style.display = "flex";
     setTimeout(function () { try { el("mdp-ancien").focus(); } catch (e) {} }, 60);
   }
-  function fermer() { var m = el("sti-mdp-modal"); if (m) m.style.display = "none"; }
+
+  function fermer() {
+    reinitialiserMemoireAncien();
+    var m = el("sti-mdp-modal");
+    if (m) m.style.display = "none";
+  }
+
   function valider() {
     var c = sb();
     if (!c) { message("⚠️ Supabase indisponible.", "#b91c1c"); return Promise.reject(new Error("no client")); }
@@ -145,47 +361,99 @@
       message("⚠️ Saisissez le code TOTP à 6 chiffres de votre application Authenticator.", "#b45309");
       return Promise.resolve(false);
     }
+
+    var dejaVerifie = ancienDejaVerifieOk(ancien);
+    var jetonTs = "";
+    if (!dejaVerifie && turnstileActifSurPage()) {
+      jetonTs = jetonTurnstile();
+      if (!jetonTs) {
+        if (tsEchecChargement) {
+          message("⚠️ Le widget Cloudflare Turnstile n'a pas pu charger (bloqueur ou réseau). Désactivez tout bloqueur de contenu sur cette page ou utilisez « Mot de passe oublié » sur portail.html.", "#b45309");
+        } else {
+          if (tsWidgetId === null) initialiserTurnstile();
+          message("🛡️ Cochez d'abord la vérification anti-robot Cloudflare (attendez la coche verte), puis cliquez Enregistrer.", "#b45309");
+        }
+        return Promise.resolve(false);
+      }
+    }
+
     var btn = el("mdp-valider");
     if (btn) { btn.disabled = true; btn.textContent = "⏳ Vérification…"; }
-    message("Vérification de votre mot de passe actuel…", "#7a6f5d");
-    /* 1°) vérifier l'ancien mot de passe en se ré-authentifiant (aucun secret stocké) */
-    return c.auth.signInWithPassword({ email: email, password: ancien }).then(function (r) {
-      if (r && r.error) throw new Error("Mot de passe actuel incorrect.");
-      /* 1b°) si le compte admin a un facteur TOTP actif, élever la nouvelle session au niveau AAL2 */
-      return detecterFacteurTotp(c).then(function (fid) {
-        var cibleFid = fid || facteurTotpId;
+
+    /* 1°) Vérifier l'ancien mot de passe (avec captchaToken Turnstile exigé par Supabase) */
+    var etapeVerifAncien = dejaVerifie
+      ? Promise.resolve()
+      : (function () {
+          message("Vérification de votre mot de passe actuel…", "#7a6f5d");
+          var opts = jetonTs ? { captchaToken: jetonTs } : undefined;
+          var args = opts ? { email: email, password: ancien, options: opts } : { email: email, password: ancien };
+          return c.auth.signInWithPassword(args).then(function (r) {
+            resetTurnstile();
+            if (r && r.error) throw new Error(traduireErreurAuth(r.error, true));
+            ancienVerifieVal = ancien;
+            ancienVerifieTs = Date.now();
+          }, function (err) {
+            resetTurnstile();
+            throw new Error(traduireErreurAuth(err, true));
+          });
+        })();
+
+    /* 1b°) Si le compte admin a un facteur TOTP actif et que la session n'est pas encore AAL2, l'élever */
+    return etapeVerifAncien.then(function () {
+      return detecterMfaRequise(c).then(function (etatMfa) {
+        var cibleFid = etatMfa.factorId || facteurTotpId;
         if (!cibleFid) return null;
         facteurTotpId = cibleFid;
         if (el("mdp-totp-wrap")) el("mdp-totp-wrap").style.display = "block";
+        if (!etatMfa.needVerify) return null;
         if (codeTotp.length !== 6) {
           throw new Error("Ce compte est protégé par MFA : saisissez votre code TOTP à 6 chiffres puis cliquez Enregistrer.");
         }
         message("Validation du second facteur TOTP…", "#7a6f5d");
         return c.auth.mfa.challenge({ factorId: cibleFid }).then(function (ch) {
-          if (ch && ch.error) throw ch.error;
+          if (ch && ch.error) throw new Error(traduireErreurAuth(ch.error, false));
           return c.auth.mfa.verify({ factorId: cibleFid, challengeId: ch.data.id, code: codeTotp });
         }).then(function (vr) {
-          if (vr && vr.error) throw new Error("Code TOTP incorrect ou expiré.");
+          if (vr && vr.error) throw new Error("Code TOTP à 6 chiffres incorrect ou expiré. Saisissez le nouveau code affiché dans Authenticator.");
         });
       });
     }).then(function () {
       message("Enregistrement du nouveau mot de passe…", "#7a6f5d");
-      /* 2°) enregistrer le nouveau */
+      /* 2°) Enregistrer le nouveau mot de passe sur la session authentifiée (AAL2) */
       return c.auth.updateUser({ password: nouveau });
     }).then(function (r2) {
-      if (r2 && r2.error) throw r2.error;
+      if (r2 && r2.error) throw new Error(traduireErreurAuth(r2.error, false));
+      reinitialiserMemoireAncien();
+      /* 3°) Mettre à jour l'empreinte locale hors-ligne (sti-cred) et le cache admin de cet appareil */
+      return majEmpreinteLocaleAdmin(email, nouveau);
+    }).then(function () {
       var deco = el("mdp-deconnecter") ? el("mdp-deconnecter").checked : false;
-      message("✅ Mot de passe modifié.", "#16a34a");
+      el("mdp-ancien").value = "";
+      el("mdp-nouveau").value = "";
+      el("mdp-confirm").value = "";
+      if (el("mdp-totp")) el("mdp-totp").value = "";
       if (btn) { btn.disabled = false; btn.textContent = "Enregistrer"; }
-      if (deco) {
-        /* 3°) couper les sessions des autres appareils puis reconnexion propre sur celui-ci */
-        return c.auth.signOut({ scope: "global" }).then(function () {
-          message("✅ Mot de passe modifié. Reconnexion nécessaire…", "#16a34a");
-          setTimeout(function () { location.href = "portail.html"; }, 1400);
-        }).catch(function () {});
+      if (!deco) {
+        message("✅ Mot de passe modifié avec succès.", "#16a34a");
+        return true;
       }
-      el("mdp-ancien").value = ""; el("mdp-nouveau").value = ""; el("mdp-confirm").value = "";
-      return true;
+      /* 4°) Révoquer uniquement les AUTRES appareils (scope: "others") pour conserver cette session AAL2 active */
+      return c.auth.signOut({ scope: "others" }).then(function (rOut) {
+        if (rOut && rOut.error) {
+          /* Repli défensif si le serveur ne supportait pas scope=others : déconnexion globale propre */
+          purgerCachesSessionAdmin();
+          return c.auth.signOut({ scope: "global" }).catch(function () {}).then(function () {
+            message("✅ Mot de passe modifié. Reconnexion propre en cours…", "#16a34a");
+            setTimeout(function () { location.replace((cfg.RACINE || "./") + "portail.html#deconnecte"); }, 1200);
+            return true;
+          });
+        }
+        message("✅ Mot de passe modifié et autres appareils déconnectés.", "#16a34a");
+        return true;
+      }).catch(function () {
+        message("✅ Mot de passe modifié.", "#16a34a");
+        return true;
+      });
     }).catch(function (e) {
       if (btn) { btn.disabled = false; btn.textContent = "Enregistrer"; }
       message("❌ " + (e && e.message ? e.message : "échec de la modification."), "#b91c1c");
@@ -195,6 +463,6 @@
 
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", function () { bouton(); });
   else bouton();
-  setInterval(function () { if (!el("sti-mdp-btn") && el("pied-readme-admin")) bouton(); }, 2000);
+  setInterval(function () { if ((!el("sti-mdp-btn") && el("pied-readme-admin")) || (!el("sti-mdp-btn-top") && el("btn-readme-admin"))) bouton(); }, 2000);
   try { window.STI_ADMIN_MDP = { ouvrir: ouvrir, fermer: fermer, valider: valider, MIN_CAR: MIN_CAR }; } catch (e) {}
 })();

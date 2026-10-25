@@ -6,10 +6,12 @@
 var CACHE = "sti-atelier-v316";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v441-password-recovery-redirect-1";
+var UPDATE_ID = "v442-admin-mdp-1";
 /* Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "admin-mdp-v442" },
+  { url: "./assets/js/admin-mdp.js", revision: "admin-mdp-v442" },
   { url: "./portail.html", revision: "recovery-v441" },
   { url: "./assets/js/portail.js", revision: "recovery-v441" },
   { url: "./assets/js/modules/password-recovery.js", revision: "recovery-v441" },
