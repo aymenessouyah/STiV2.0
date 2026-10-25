@@ -679,7 +679,7 @@ test('v443 : le bouton clé (#sti-mdp-btn-top) est directement visible en mode m
   // 1) Design system SaaS chargé dans <head> + initialisation thème à 0 ms + polices modernes + logo d'installation PWA
   const headHtml = adminHtml.slice(0, adminHtml.indexOf('</head>'));
   assert.match(headHtml, /assets\/fonts\/fonts\.css/);
-  assert.match(headHtml, /assets\/css\/admin-saas\.css\?v=443/);
+  assert.match(headHtml, /assets\/css\/admin-saas\.css\?v=444/);
   assert.match(headHtml, /sti-admin-theme/);
   assert.match(adminHtml, /class="entete-logo-install"><img src="assets\/icons\/sti-icon-512\.png"/);
   assert.match(adminCss, /"Comic Sans MS"/);
@@ -727,6 +727,25 @@ test('v443 : le bouton clé (#sti-mdp-btn-top) est directement visible en mode m
     assert.match(adminHtml, new RegExp(`id="${id}"`), `ID manquant dans admin.html : #${id}`);
   }
 });
+
+test('v444 : le badge officiel Administrateur STI V2.0 est intégré dans le tableau de bord avec le logo STI, la photo admin et le QR officiel', () => {
+  const adminHtml = read('admin.html');
+  const adminCss = read('assets/css/admin-saas.css');
+  const swJs = read('sw.js');
+
+  assert.match(adminHtml, /id="badge-admin-sti-carte"/);
+  assert.match(adminHtml, /id="modal-badge-admin-sti"/);
+  assert.match(adminHtml, /id="badge-sti-statut-live"/);
+  assert.match(adminHtml, /ESSOUYAH Aymen/);
+  assert.match(adminHtml, /class="b-sti-logo-box"><img src="assets\/icons\/sti-icon-512\.png"/);
+  assert.match(adminHtml, /class="b-sti-avatar-img" src="assets\/images\/admin-aymen\.jpg"/);
+  assert.match(adminHtml, /class="b-sti-avatar-seal"[\s\S]*?assets\/icons\/sti-icon-512\.png/);
+  assert.match(adminHtml, /assets\/images\/qr-stiv2\.png/);
+  assert.match(adminCss, /\.badge-sti-id-card\s*\{/);
+  assert.match(adminCss, /\.b-sti-statut\.hors-ligne\s*\{[\s\S]*?color:\s*var\(--adm-red\)\s*!important/);
+  assert.match(swJs, /admin-aymen\.jpg/);
+});
+
 
 
 
