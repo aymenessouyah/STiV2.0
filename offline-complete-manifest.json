@@ -1,9 +1,9 @@
 {
   "version": "v460-quiz-supabase-ordre",
-  "generatedAt": "2026-10-25T20:09:45.447Z",
+  "generatedAt": "2026-10-25T20:36:20.395Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 605,
-  "totalBytes": 631180878,
+  "totalBytes": 631209477,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
@@ -97,8 +97,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 322176,
-      "gitSha": "f13bc24c87fa1fe0d54817e7ce3ad4e99107bec7"
+      "bytes": 322177,
+      "gitSha": "9a790d6e9753a6b6d2b2dc700c3d24a5f9e66994"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -512,13 +512,13 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 904381,
-      "gitSha": "af33a06b6070b53f376ee8d6393c06119c7adf08"
+      "bytes": 907697,
+      "gitSha": "4f981468839d93df5dfbf9ce5c15d7f039213423"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 645864,
-      "gitSha": "21e1d99e73e944677d4925827934ff7e18f99313"
+      "bytes": 659724,
+      "gitSha": "4106f17a90ed836a99473018c5bc9d36386c079e"
     },
     {
       "path": "assets/js/analytique.js",
@@ -577,8 +577,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 195455,
-      "gitSha": "9de22fdf64a98d4431dc60678a61b87e4f69815d"
+      "bytes": 201880,
+      "gitSha": "0cc69e62f149c347c397165d450d78c2fcd87a6b"
     },
     {
       "path": "assets/js/reprendre.js",
@@ -607,8 +607,8 @@
     },
     {
       "path": "assets/js/sync-progressions.js",
-      "bytes": 14348,
-      "gitSha": "8300540f44565522084d45b5300c0d6c0bd8edcc"
+      "bytes": 18969,
+      "gitSha": "b64af56bd95bcb41aa196019347e83df1de6168d"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 71525,
-      "gitSha": "9ac9e5aaa84d9ff9bfa5c9104e442a25eee16535"
+      "bytes": 71901,
+      "gitSha": "5ec1e4464e8e67eb5de561f8d5673edd162a4e9b"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",

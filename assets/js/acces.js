@@ -1461,28 +1461,44 @@
   };
 
   /* ---------- Synchronisation de la progression Vidéos (.mp4) & Audios (.mp3) vers l'Admin ---------- */
+  var dernierSyncMediaTs = 0;
   window.synchroniserProgressionMediaServeurSTI = function (forceNow) {
     if (!currentUid || currentUid === "offline-user") return;
     try {
+      var maintenant = Date.now();
+      if (!forceNow && (maintenant - dernierSyncMediaTs) < 8000) return;
       var rawM = JSON.parse(localStorage.getItem("sti-media-prog-v1") || "{}") || {};
       var compactM = {};
       var nbKeys = 0;
       Object.keys(rawM).forEach(function (k) {
         var it = rawM[k];
         if (!it) return;
-        var p = it.done ? 100 : (Math.floor((it.maxPct || 0) / 10) * 10);
-        if (p >= 10) {
+        var p = 0;
+        if (typeof it === "number") {
+          p = Math.max(0, Math.min(100, Math.round(it)));
+        } else if (typeof it === "object") {
+          var maxP = Math.max(Number(it.maxPct) || 0, Number(it.pct) || 0);
+          if (!maxP && (Number(it.sec) || 0) >= 2) maxP = 1;
+          p = (it.done || maxP >= 88) ? 100 : Math.min(99, Math.round(maxP));
+        }
+        if (p >= 1) {
           compactM[k] = p;
           nbKeys++;
         }
       });
       if (!nbKeys) return;
-      var hashStr = JSON.stringify(compactM);
+      var sortedKeys = Object.keys(compactM).sort();
+      var orderedM = {};
+      for (var si = 0; si < sortedKeys.length; si++) orderedM[sortedKeys[si]] = compactM[sortedKeys[si]];
+      var hashStr = currentUid + ":" + JSON.stringify(orderedM);
       var prevHash = localStorage.getItem("sti-prog-sync-hash") || "";
-      if (!forceNow && hashStr === prevHash) return;
+      if (hashStr === prevHash && !forceNow) return;
+      /* Même en mode forceNow (pause / fermeture), éviter les doublons strictement identiques déjà poussés dans les 120 dernières secondes */
+      if (hashStr === prevHash && (maintenant - dernierSyncMediaTs) < 120000) return;
+      dernierSyncMediaTs = maintenant;
       localStorage.setItem("sti-prog-sync-hash", hashStr);
       var tsIso = new Date().toISOString();
-      var payloadProg = { m: compactM, ts: Date.now() };
+      var payloadProg = { m: orderedM, ts: maintenant };
       var rowProg = {
         user_id: currentUid,
         page: "PROG_MEDIA",
@@ -1502,7 +1518,7 @@
         sb.channel("sti-diffusion").send({
           type: "broadcast",
           event: "prog_media",
-          payload: { uid: currentUid, m: compactM, ts: payloadProg.ts }
+          payload: { uid: currentUid, m: orderedM, ts: payloadProg.ts }
         });
       } catch (e2) {}
     } catch (e) {}
@@ -2335,10 +2351,10 @@
         var bestPct = Math.max(vPct, aPct);
         var ok = Boolean(vus[m] || vDone || aDone);
         if (ok) nbVus++;
-        var suffix = (vDone || aDone) ? " ✅" : (bestPct >= 2 ? (" ⏳" + bestPct + "%") : (ok ? " ✔" : ""));
+        var suffix = (vDone || aDone) ? " ✅" : (bestPct >= 1 ? (" ⏳" + bestPct + "%") : (ok ? " ✔" : ""));
         var bgCol = (vDone || aDone)
           ? "#dcfce7;color:#14532d;border-color:#16a34a"
-          : (bestPct >= 2 ? "#fef3c7;color:#78350f;border-color:#f59e0b" : (ok ? "#e3f6e8;color:#177245;border-color:#23201a" : "#f3ead9;color:#7a6f5d;border-color:#23201a"));
+          : (bestPct >= 1 ? "#fef3c7;color:#78350f;border-color:#f59e0b" : (ok ? "#e3f6e8;color:#177245;border-color:#23201a" : "#f3ead9;color:#7a6f5d;border-color:#23201a"));
         return "<span style='display:inline-block;padding:1px 5px;margin:1px;border-radius:5px;font-size:9.5px;font-weight:800;border:1px solid;" +
           "background:" + bgCol + "'>" + m + suffix + "</span>";
       }).join("");
@@ -2349,23 +2365,47 @@
       var audKeys = ok4SI
         ? ["html5-cours", "css3-cours", "javascript-cours", "sql-cours", "php-cours"]
         : ["html5-cours", "css3-cours", "javascript-cours", "sql-cours"];
+      Object.keys(mProg).forEach(function (mk) {
+        var me = mProg[mk];
+        var mp = me && (me.done ? 100 : Math.max(Number(me.maxPct) || 0, Number(me.pct) || 0));
+        if (!mp || mp < 1) return;
+        if (mk.indexOf("video:") === 0) {
+          var vSl = mk.slice(6);
+          if (vidKeys.indexOf(vSl) === -1) vidKeys.push(vSl);
+        } else if (mk.indexOf("audio:") === 0) {
+          var aSl = mk.slice(6);
+          if (audKeys.indexOf(aSl) === -1) audKeys.push(aSl);
+        }
+      });
       var nbVidDone = 0, nbVidEnCours = 0;
       for (var vi = 0; vi < vidKeys.length; vi++) {
         var ve = mProg["video:" + vidKeys[vi]];
-        if (ve && ve.done) nbVidDone++;
-        else if (ve && (ve.maxPct || 0) >= 2) nbVidEnCours++;
+        var vMax = ve ? Math.max(Number(ve.maxPct) || 0, Number(ve.pct) || 0) : 0;
+        if (ve && (ve.done || vMax >= 88)) nbVidDone++;
+        else if (vMax >= 1) nbVidEnCours++;
       }
       var nbAudDone = 0, nbAudEnCours = 0;
       for (var ai = 0; ai < audKeys.length; ai++) {
         var ae = mProg["audio:" + audKeys[ai]];
-        if (ae && ae.done) nbAudDone++;
-        else if (ae && (ae.maxPct || 0) >= 2) nbAudEnCours++;
+        var aMax = ae ? Math.max(Number(ae.maxPct) || 0, Number(ae.pct) || 0) : 0;
+        if (ae && (ae.done || aMax >= 88)) nbAudDone++;
+        else if (aMax >= 1) nbAudEnCours++;
       }
-      var pctProg = Math.round(((nbVus + nbVidDone + nbAudDone) / (mods.length + vidKeys.length + audKeys.length)) * 100);
+      var nbVidVues = nbVidDone + nbVidEnCours;
+      var nbAudVues = nbAudDone + nbAudEnCours;
+      var pctProg = Math.round(((nbVus + nbVidDone + nbAudDone + (nbVidEnCours + nbAudEnCours) * 0.5) / (mods.length + vidKeys.length + audKeys.length)) * 100);
+      var txtVidPan = nbVidVues
+        ? ("<b style='color:" + (nbVidDone ? "#177245" : "#b45309") + "'>" + nbVidVues + "/" + vidKeys.length + "</b>" +
+           (nbVidDone && nbVidEnCours ? " <span style='color:#177245'>(" + nbVidDone + "✅·" + nbVidEnCours + "⏳)</span>" : (nbVidDone ? " <span style='color:#177245'>✅</span>" : " <span style='color:#b45309'>⏳</span>")))
+        : ("<b style='color:#64748b'>0/" + vidKeys.length + "</b>");
+      var txtAudPan = nbAudVues
+        ? ("<b style='color:" + (nbAudDone ? "#177245" : "#b45309") + "'>" + nbAudVues + "/" + audKeys.length + "</b>" +
+           (nbAudDone && nbAudEnCours ? " <span style='color:#177245'>(" + nbAudDone + "✅·" + nbAudEnCours + "⏳)</span>" : (nbAudDone ? " <span style='color:#177245'>✅</span>" : " <span style='color:#b45309'>⏳</span>")))
+        : ("<b style='color:#64748b'>0/" + audKeys.length + "</b>");
       var resumeMedia =
         "<div style='margin-top:3px;font-size:9.8px;font-weight:800;color:#475569;display:flex;justify-content:space-between;gap:4px;flex-wrap:wrap'>" +
-          "<span>🎥 Vidéos : <b style='color:#177245'>" + nbVidDone + "/" + vidKeys.length + " ✅</b>" + (nbVidEnCours ? " <span style='color:#b45309'>(⏳" + nbVidEnCours + ")</span>" : "") + "</span>" +
-          "<span>🔊 Audios : <b style='color:#177245'>" + nbAudDone + "/" + audKeys.length + " ✅</b>" + (nbAudEnCours ? " <span style='color:#b45309'>(⏳" + nbAudEnCours + ")</span>" : "") + "</span>" +
+          "<span>🎥 Vidéos : " + txtVidPan + "</span>" +
+          "<span>🔊 Audios : " + txtAudPan + "</span>" +
         "</div>";
       return { pctProg: pctProg, badgesMod: badgesMod, resumeMedia: resumeMedia };
     }
@@ -2887,6 +2927,23 @@
         }
       } catch (e) {}
     };
+    if (!window.__stiPanMediaListenersBound) {
+      window.__stiPanMediaListenersBound = true;
+      window.addEventListener("sti-media-prog-updated", function () {
+        if (typeof window.__stiMajProgressionPan === "function") window.__stiMajProgressionPan();
+      });
+      window.addEventListener("sti-cloud-restored", function () {
+        if (typeof window.__stiMajProgressionPan === "function") window.__stiMajProgressionPan();
+        if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+          setTimeout(function () { window.synchroniserProgressionMediaServeurSTI(false); }, 600);
+        }
+      });
+    }
+    setTimeout(function () {
+      if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+        window.synchroniserProgressionMediaServeurSTI(false);
+      }
+    }, 1200);
 
     var styleBtnCompact = "display:flex;align-items:center;justify-content:center;gap:5px;width:100%;margin:0;border:1px solid rgba(35,32,26,.28);border-radius:12px;padding:8px 8px;font-weight:800;font-size:11.3px;line-height:1.2;cursor:pointer;text-align:center;box-sizing:border-box;box-shadow:0 1px 3px rgba(13,21,38,.07),inset 0 1px 0 rgba(255,255,255,.55);";
 
@@ -5288,11 +5345,12 @@
     /* Vérifier si cet élève est ciblé */
     var cibUp = cible.toUpperCase();
     var estCible = false;
+    var maClNorm = String(maCl || "").replace(/[\s._\-]+/g, "");
     if (cible === "*") estCible = true;
     else if (cibUp.indexOf("UID:") === 0) estCible = (cible.slice(4) === monUid);
-    else if (cibUp === "3SI") estCible = (maCl.indexOf("3SI") === 0);
-    else if (cibUp === "4SI") estCible = (maCl.indexOf("4SI") === 0 || maCl === "ELEVELABO3");
-    else estCible = (maCl === cibUp);
+    else if (cibUp === "3SI") estCible = /^3(E|È|EME|ÈME)?SI/i.test(maClNorm);
+    else if (cibUp === "4SI") estCible = (/^4(E|È|EME|ÈME)?SI/i.test(maClNorm) || maClNorm === "ELEVELABO3");
+    else estCible = (maCl === cibUp || maClNorm === cibUp.replace(/[\s._\-]+/g, ""));
 
     if (!estCible) return;
     if (tb.id && tb.id === dernierTbLiveIdFerme) return;
