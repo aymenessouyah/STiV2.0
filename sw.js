@@ -3,14 +3,26 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v331";
+var CACHE = "sti-atelier-v332";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v471-tester-tout-e2e";
-/* Historique caches : sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v472-test-plateforme-complet";
+/* Historique caches : sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./index.html", revision: "test-plateforme-v472" },
+  { url: "./admin.html", revision: "test-plateforme-v472" },
+  { url: "./ma-fiche-revision.html", revision: "test-plateforme-v472" },
+  { url: "./README.md", revision: "test-plateforme-v472" },
+  { url: "./quiz/php.html", revision: "test-plateforme-v472" },
+  { url: "./quiz/sql.html", revision: "test-plateforme-v472" },
+  { url: "./assets/data/nouveautes.json", revision: "test-plateforme-v472" },
+  { url: "./assets/js/acces.js", revision: "test-plateforme-v472" },
+  { url: "./assets/js/roue-plan.js", revision: "test-plateforme-v472" },
+  { url: "./assets/js/reprendre.js", revision: "test-plateforme-v472" },
+  { url: "./assets/js/mobile-nav.js", revision: "test-plateforme-v472" },
+  { url: "./offline-complete-manifest.json", revision: "test-plateforme-v472" },
   { url: "./index.html", revision: "tester-tout-v471" },
   { url: "./admin.html", revision: "tester-tout-v471" },
   { url: "./ma-fiche-revision.html", revision: "tester-tout-v471" },

@@ -758,6 +758,7 @@
       "html:not(.sti-4si-autorise) a[href*='bac-pratique.html']," +
       "html:not(.sti-4si-autorise) a[href*='cours/php.html']," +
       "html:not(.sti-4si-autorise) a[href*='cours/coursphp.html']," +
+      "html:not(.sti-4si-autorise) a[href*='cours/php-recap.html']," +
       "html:not(.sti-4si-autorise) a[href*='cours/php-mysqli.html']," +
       "html:not(.sti-4si-autorise) a[href*='annexe-php']," +
       "html:not(.sti-4si-autorise) a[href*='complet-4eme-si']," +
@@ -862,6 +863,7 @@
         'a[href*="bac-pratique.html"]',
         'a[href*="cours/php.html"]',
         'a[href*="cours/coursphp.html"]',
+        'a[href*="cours/php-recap.html"]',
         'a[href*="cours/php-mysqli.html"]',
         'a[href*="annexe-php"]',
         'a[href*="complet-4eme-si"]',

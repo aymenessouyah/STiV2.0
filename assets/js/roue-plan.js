@@ -58,11 +58,23 @@
     Object.keys(rev).forEach(function (p) { vus[String(p).toLowerCase()] = 1; });
     return vus;
   }
+  function est3SIStrict() {
+    try {
+      var cs = objet("sti-session-cache");
+      if (cs.isAdmin || cs.isGold || /\bGOLD\b/i.test(String(cs.lycee || "")) || /\bGOLD\b/i.test(String(cs.classe || ""))) return false;
+      var cl = String(cs.classe || "").trim().toUpperCase().replace(/[\s._\-]+/g, "");
+      return /^3(E|ÈME|EME)?SI([1-5])?$/i.test(cl);
+    } catch (e) { return false; }
+  }
+  function chapitresActifs(exclurePhp) {
+    return exclurePhp ? CHAPITRES.filter(function (c) { return c.cle !== "PHP & MySQLi"; }) : CHAPITRES;
+  }
   /* Fonction PURE (testable) : date + pages vues → état du plan. */
-  function plan(dateIso, vus) {
+  function plan(dateIso, vus, exclurePhp) {
     var jr = joursRestants(dateIso);
+    var listeChap = chapitresActifs(exclurePhp);
     var restants = [], totalRestant = 0, faits = 0;
-    CHAPITRES.forEach(function (ch) {
+    listeChap.forEach(function (ch) {
       var reste = ch.pages.filter(function (p) { return !vus[p]; });
       faits += ch.pages.length - reste.length;
       totalRestant += reste.length;
@@ -74,14 +86,14 @@
     else if (jr !== null && jr <= 0) parJour = totalRestant ? totalRestant : 0;
     return {
       date: dateIso || null, jours: jr, chapitres: restants, chapitresRestants: chapitresRestants.length,
-      pagesRestantes: totalRestant, pagesFaites: faits + (CHAPITRES.reduce(function (s, c) { return s + c.pages.length; }, 0) ? 0 : 0),
-      totalChapitres: CHAPITRES.length, parJour: parJour,
+      pagesRestantes: totalRestant, pagesFaites: faits + (listeChap.reduce(function (s, c) { return s + c.pages.length; }, 0) ? 0 : 0),
+      totalChapitres: listeChap.length, parJour: parJour,
       /* le « programme du jour » : les 2 premiers chapitres non terminés */
       programme: chapitresRestants.slice(0, 2).map(function (c) { return { cle: c.cle, pages: c.reste.slice(0, Math.max(1, parJour || 1)) }; }),
       retard: (jr !== null && jr < 0 && totalRestant > 0),
     };
   }
-  function etat() { return plan(lireDateIso(), pagesVues()); }
+  function etat() { return plan(lireDateIso(), pagesVues(), est3SIStrict()); }
   function definirDate(iso) {
     try {
       var propre = iso ? String(iso).trim().slice(0, 10) : "";

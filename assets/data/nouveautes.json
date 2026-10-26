@@ -1,5 +1,15 @@
 [
   {
+    "version": "v472",
+    "date": "2026-10-26",
+    "categorie": "Quiz & Suivi Élève",
+    "icone": "🔬",
+    "titre": "Audit forensique intégral : explications Quiz PHP & SQL réparées et cohérence 3ᵉ SI hors PHP dans le plan & la fiche",
+    "resume": "Seconde passe d’exécution forensique sur les 5 moteurs de quiz, le Service Worker, Supabase et le parcours 3ᵉ SI / 4ᵉ SI : affichage fidèle des balises de code (<?php, <HR>, <>, <input>, <select>) dans les explications et bilans de Quiz PHP et Quiz SQL, et filtrage automatique du chapitre PHP pour les élèves de 3ᵉ SI dans « Plan jusqu’au bac », « Ma fiche de révision », « Reprendre » et le masquage zéro-flash.",
+    "lien": "quiz/sql.html",
+    "libelleLien": "Ouvrir le Quiz SQL"
+  },
+  {
     "version": "v471",
     "date": "2026-10-26",
     "categorie": "Plateforme & Fiabilité",

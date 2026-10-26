@@ -4,8 +4,8 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `22` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v331`)
-> 📌 **Version active** : **v471** (`sti-atelier-v331` — 26 octobre 2026)
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `22` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v332`)
+> 📌 **Version active** : **v472** (`sti-atelier-v332` — 26 octobre 2026)
 
 ---
 
@@ -208,6 +208,7 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 | v469 | Pagination PostgREST intégrale (> 1 000 lignes) dans `admin.js`, `admin-couverture.js`, `admin-revision.js` et `graphiques-activite.js`, parité hors-ligne 124/124 et ancre `#annexe-html5` (`sti-atelier-v329`) |
 | v470 | Validation fonctionnelle E2E en 9 points : tirage aléatoire neuf à chaque connexion, isolation multi-élèves des files quiz, reprise Tableaux réparée, retours `bfcache` 0 ms préservant `history.state` (Quiz, Cours, Exercices), auto-sync Google Drive multi-appareils avec secours direct et réécriture complète des README (`sti-atelier-v330`) |
 | v471 | Vérification intégrale de bout en bout (« Tester tout ») : résolution exacte de casse Git sur les 48 pages mixtes dans `roue-revision.js` (zéro 404 GitHub Pages), routage fidèle des vidéos et podcasts dans `reprendre.js` (HTML5, CSS3, JS, SQL, PHP & animations), durcissement XSS de la roue et 43 contrôles temps réel dans `sante.js` (`sti-atelier-v331`) |
+| v472 | Audit forensique de toute la plateforme : réparation du rendu HTML des explications de `quiz/php.html` (`<?php`, `<HR>`, `<>`, `<input>`, `<select>`) et du bilan `quiz/sql.html` (`<strong>`), filtrage cohérent 3ᵉ SI hors PHP dans `roue-plan.js`, `ma-fiche-revision.html`, `reprendre.js` et `acces.js` (`sti-atelier-v332`) |
 
 ---
 

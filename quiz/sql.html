@@ -43024,9 +43024,9 @@ LIMIT 5;</textarea
           good ? "text-[#0E7A5B]" : "text-[#B91C1C]"
         }">${good ? "✅ Bonne réponse !" : "❌ Mauvaise réponse."} ${
           timeout ? "(temps écoulé)" : ""
-        }</div><div class="text-sm font-bold mt-1 opacity-80">💡 ${
+        }</div><div class="text-sm font-bold mt-1 opacity-80">💡 ${fmtExplainSql(
           q.explain
-        }</div>`;
+        )}</div>`;
         $("nextBtn").disabled = false;
         Q.log.push({ q, user: idx, good });
         synchroniserPartieSql(false);
@@ -43560,7 +43560,7 @@ LIMIT 5;</textarea
               q.q
             )}</div><div class="text-xs font-bold mt-1 opacity-85">Ta réponse : <b>${esc(String(ua))}</b><br>Bonne réponse : <b class="text-[#0E7A5B]">${esc(
               String(q.answers[q.correct])
-            )}</b><br><span class="opacity-80">💡 Explication : ${esc(q.explain)}</span></div>${blocConseil}`;
+            )}</b><br><span class="opacity-80">💡 Explication : ${fmtExplainSql(q.explain)}</span></div>${blocConseil}`;
             r.appendChild(d);
           });
         }
@@ -43577,6 +43577,9 @@ LIMIT 5;</textarea
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;");
+      }
+      function fmtExplainSql(txt) {
+        return esc(txt).replace(/&lt;(\/?(?:strong|b|code|em|i))&gt;/gi, "<$1>");
       }
       /* Bilan : points à réviser en priorité + un conseil personnalisé par faute. */
       function afficherPointsFaibles(total) {
