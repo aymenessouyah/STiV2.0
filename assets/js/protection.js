@@ -3638,7 +3638,31 @@
         g.style.opacity = "1";
       }
 
-      setInterval(majPositionGuide, 120);
+      /* v474 : ne faire tourner la scrutation rapide (120 ms) QUE lorsqu'une lecture audio vocale est réellement en cours (0 % CPU au repos) */
+      var timerGuideRapide = null;
+      function demarrerSuiviGuideRapide() {
+        if (timerGuideRapide) return;
+        timerGuideRapide = setInterval(function () {
+          majPositionGuide();
+          if (!window.__stiVoiceSessionActive && (!window.__stiActiveVoiceAudio || window.__stiActiveVoiceAudio.paused || window.__stiActiveVoiceAudio.ended)) {
+            clearInterval(timerGuideRapide);
+            timerGuideRapide = null;
+          }
+        }, 120);
+      }
+      document.addEventListener("play", function (ev) {
+        var t = ev && ev.target;
+        if (t && t.tagName === "AUDIO") {
+          majPositionGuide();
+          demarrerSuiviGuideRapide();
+        }
+      }, true);
+      setInterval(function () {
+        if (window.__stiVoiceSessionActive || (window.__stiActiveVoiceAudio && !window.__stiActiveVoiceAudio.paused)) {
+          demarrerSuiviGuideRapide();
+          majPositionGuide();
+        }
+      }, 2500);
       window.addEventListener("scroll", function () {
         if (window.__stiVoiceSessionActive) majPositionGuide();
       }, { passive: true });

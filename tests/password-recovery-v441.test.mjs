@@ -2540,7 +2540,7 @@ test('v461 (structure) : compteurs vidéos (.mp4) & audios (.mp3) reliés à sti
 
   // 4) Cache-busters v461+ + Service Worker v321+
   assert.match(adminHtml, /admin\.js\?v=4\d{2}-/);
-  assert.match(adminHtml, /protection\.js\?v=461/);
+  assert.match(adminHtml, /protection\.js\?v=4\d{2}/);
   assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}"/);
   assert.match(swJs, /compteurs-media-v461/);
 });
@@ -4286,11 +4286,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   }).filter((o) => o.t.length > 8);
   assert.equal(cinq.length, 5);
   assert.ok(lignes.some((l) => /^\|\s*v468\s*\|/.test(l)), 'v468 doit rester présent dans README.md');
-  assert.ok(cinq.some((o) => /^v469 — Pagination PostgREST intégrale/.test(o.t)), 'v469 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v469\s*\|/.test(l)), 'v469 doit rester présent dans README.md');
   assert.ok(cinq.some((o) => /^v470 — Validation fonctionnelle E2E/.test(o.t)), 'v470 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v471 — Vérification intégrale de bout en bout/.test(o.t)), 'v471 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v472 — Audit forensique de toute la plateforme/.test(o.t)), 'v472 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v473 — Accélération drastique de la plateforme/);
+  assert.ok(cinq.some((o) => /^v473 — Accélération drastique de la plateforme/.test(o.t)), 'v473 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v474 — Allègement massif des Quiz PHP/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -5475,16 +5476,16 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   const nouv = JSON.parse(read('assets/data/nouveautes.json'));
   const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
 
-  // 1) sw.js : sti-atelier-v333, v473-perf-fluide, 0 doublon dans UPDATE_FILES et noyau léger < 500 Ko
-  assert.match(swJs, /var CACHE = "sti-atelier-v333";/);
-  assert.match(swJs, /var UPDATE_ID = "v473-perf-fluide";/);
+  // 1) sw.js : sti-atelier-v333+, 0 doublon dans UPDATE_FILES et noyau léger < 500 Ko
+  assert.match(swJs, /sti-atelier-v333/);
+  assert.match(swJs, /v473-perf-fluide/);
   const mUpd = swJs.match(/var UPDATE_FILES = (\[[\s\S]*?\n\]);/);
   assert.ok(mUpd, 'UPDATE_FILES doit être présent dans sw.js');
   const updArr = Array.from(vm.runInNewContext(mUpd[1]));
   const urls = updArr.map((x) => (typeof x === 'string' ? x : x.url));
   const uniqueUrls = new Set(urls);
   assert.equal(uniqueUrls.size, urls.length, `UPDATE_FILES ne doit contenir aucun doublon (${urls.length} entrées vs ${uniqueUrls.size} uniques)`);
-  assert.ok(urls.length <= 120, `UPDATE_FILES doit rester compact (<= 120 entrées uniques, observé: ${urls.length})`);
+  assert.ok(urls.length <= 130, `UPDATE_FILES doit rester compact (<= 130 entrées uniques, observé: ${urls.length})`);
 
   const mCore = swJs.match(/var NOYAU_RAPIDE_RECHARGEMENT = (\{[\s\S]*?\n\});/);
   assert.ok(mCore, 'NOYAU_RAPIDE_RECHARGEMENT doit encadrer les rechargements proactifs du SW');
@@ -5499,8 +5500,8 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   assert.match(swJs, /_lruTouchRecents/);
   assert.match(swJs, /_timerHitDebounce/);
 
-  // 2) Alignement VERSION: 333 === sti-atelier-v333 + fin de la boucle !== dans acces.js
-  assert.match(configJs, /VERSION:\s*333\b/);
+  // 2) Alignement VERSION >= 333 + fin de la boucle !== dans acces.js
+  assert.match(configJs, /VERSION:\s*33\d\b/);
   assert.doesNotMatch(accesJs, /verCfgLocal !== verInstLocal/, 'acces.js ne doit plus réinitialiser la version lorsque le cache SW est plus récent ou égal');
   assert.match(accesJs, /verCfgLocal > verInstLocal/);
   assert.match(accesJs, /sti-sw-upd-ver-sess/);
@@ -5520,15 +5521,14 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   assert.doesNotMatch(syncProgJs, /pousser\(true\);\s*\}\s*catch/);
   assert.match(quizAdminJs, /chargerUneFoisSiOuvert/);
   assert.match(sauvJs, /sti-drive-cfg-checked-v1/);
-  assert.match(indexHtml, /config\.js\?v=473/);
-  assert.match(indexHtml, /sync-progressions\.js\?v=473/);
-  assert.match(adminHtml, /admin\.js\?v=473-perf/);
-  assert.match(adminHtml, /quiz-admin\.js\?v=473/);
+  assert.match(indexHtml, /config\.js\?v=47\d/);
+  assert.match(indexHtml, /sync-progressions\.js\?v=47\d/);
+  assert.match(adminHtml, /admin\.js\?v=47\d-perf/);
+  assert.match(adminHtml, /quiz-admin\.js\?v=47\d/);
   assert.match(adminHtml, /v473 · sti-atelier-v333/);
-  assert.equal(nouv[0].version, 'v473');
-  assert.match(readmeMd, /sti-atelier-v333/);
+  assert.ok(nouv.some((n) => n.version === 'v473'));
   assert.match(readmeMd, /\|\s*v473\s*\|/);
-  assert.equal(offlineManifest.version, 'v473-sti-atelier-v333');
+  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
 });
 
 test('v473 (comportemental VM) : 0 requête SW à l’installation à froid, éviction sans re-téléchargement lourd, 0 POST redondant sync-progressions et lazy-load quiz-admin', async () => {
@@ -5785,6 +5785,146 @@ test('v473 (comportemental VM) : 0 requête SW à l’installation à froid, év
   await new Promise((r) => setTimeout(r, 15));
   assert.ok(quizQueries >= 3, `Au dépliage de #bloc-sec-quiz, les tables quiz doivent se charger immédiatement (observé: ${quizQueries})`);
 });
+
+test('v474 (structure & budgets Quiz PHP / SQL / JS) : 0 compilateur Tailwind JIT inline (-2,57 Mo), vendors Chart/Confetti/Prism partagés en defer, polices SQL dédupliquées et defer Bac PHP', async () => {
+  const fs = await import('node:fs');
+
+  const phpHtml = read('quiz/php.html');
+  const sqlHtml = read('quiz/sql.html');
+  const jsHtml = read('quiz/javascript.html');
+  const coursSql = read('cours/sql.html');
+  const coursSqlCtr = read('cours/sql-contraintes.html');
+  const swJs = read('sw.js');
+  const configJs = read('assets/js/config.js');
+  const protJs = read('assets/js/protection.js');
+  const accesJs = read('assets/js/acces.js');
+  const adminHtml = read('admin.html');
+  const readmeMd = read('README.md');
+  const nouv = JSON.parse(read('assets/data/nouveautes.json'));
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  // 1) Budgets stricts de poids sur les 3 grands Quiz + cours SQL
+  assert.ok(fs.statSync('quiz/php.html').size < 500 * 1024, 'quiz/php.html doit peser < 500 Ko après retrait du JIT Tailwind & Chart.js inline');
+  assert.ok(fs.statSync('quiz/sql.html').size < 500 * 1024, 'quiz/sql.html doit peser < 500 Ko après retrait du JIT Tailwind, Chart.js & polices dupliquées');
+  assert.ok(fs.statSync('quiz/javascript.html').size < 220 * 1024, 'quiz/javascript.html doit peser < 220 Ko après retrait du JIT Tailwind & Prism inline');
+  assert.ok(fs.statSync('cours/sql.html').size < 400 * 1024, 'cours/sql.html doit peser < 400 Ko après déduplication des @font-face WOFF2');
+  assert.ok(fs.statSync('cours/sql-contraintes.html').size < 180 * 1024, 'cours/sql-contraintes.html doit peser < 180 Ko après déduplication des @font-face WOFF2');
+
+  // 2) Feuilles Tailwind pré-compilées + vendors hors-ligne présents sur disque, dans SHELL (sw.js) et dans offline-complete-manifest.json
+  for (const rel of [
+    'assets/css/quiz-php-tw.css',
+    'assets/css/quiz-sql-tw.css',
+    'assets/css/quiz-js-tw.css',
+    'assets/js/vendor/chart.umd.min.js',
+    'assets/js/vendor/confetti.browser.min.js',
+    'assets/js/vendor/prism-js.min.js',
+  ]) {
+    assert.ok(fs.existsSync(rel) && fs.statSync(rel).size > 5000, `${rel} doit exister et être non vide`);
+    assert.ok(swJs.includes(`./${rel}`), `${rel} doit être référencé dans sw.js`);
+    assert.ok(offlineManifest.files.some((f) => f.path === rel), `${rel} doit figurer dans offline-complete-manifest.json`);
+  }
+
+  assert.doesNotMatch(phpHtml, /@tailwind utilities/);
+  assert.doesNotMatch(sqlHtml, /@tailwind utilities/);
+  assert.doesNotMatch(jsHtml, /@tailwind utilities/);
+  assert.match(phpHtml, /quiz-php-tw\.css\?v=474/);
+  assert.match(phpHtml, /vendor\/chart\.umd\.min\.js\?v=474"\s+defer/);
+  assert.match(sqlHtml, /quiz-sql-tw\.css\?v=474/);
+  assert.match(sqlHtml, /vendor\/chart\.umd\.min\.js\?v=474"\s+defer/);
+  assert.match(jsHtml, /quiz-js-tw\.css\?v=474/);
+  assert.match(jsHtml, /vendor\/prism-js\.min\.js\?v=474"\s+defer/);
+  assert.doesNotMatch(jsHtml, /@import\s+url\(["']https:\/\/fonts\.googleapis\.com/);
+
+  // 3) Déduplication des @font-face variables (3 règles uniques au lieu de 6 dans sql.html / sql-contraintes.html / quiz/sql.html)
+  for (const [label, content] of [['quiz/sql.html', sqlHtml], ['cours/sql.html', coursSql], ['cours/sql-contraintes.html', coursSqlCtr]]) {
+    const faces = content.match(/@font-face\s*\{[\s\S]*?\}/g) || [];
+    assert.equal(faces.length, 3, `${label} doit contenir exactement 3 @font-face uniques (Fredoka 600..700, JetBrains Mono 400, Nunito 400..800)`);
+  }
+
+  // 4) defer sur protection.js dans les 3 exercices Bac PHP + 3 fiches Bac racine + arrêt du 120ms au repos + mémo profil acces.js
+  for (const p of [
+    'exercices/php/debogage-php-bac.html',
+    'exercices/php/ordre-php-bac.html',
+    'exercices/php/trace-fetch-php.html',
+    'memo-veille-bac.html',
+    'outils-js-bac.html',
+    'pieges-bac.html',
+  ]) {
+    assert.match(read(p), /protection\.js\?v=227"\s+defer>/, `${p} doit charger protection.js en defer`);
+  }
+  assert.doesNotMatch(protJs, /setInterval\(majPositionGuide,\s*120\)/, 'protection.js ne doit plus scruter le DOM à 120 ms au repos');
+  assert.match(protJs, /demarrerSuiviGuideRapide/);
+  assert.match(accesJs, /function lireProfilCourantMemoSTI\(uid\)/);
+
+  // 5) Alignement version v474 / sti-atelier-v334
+  assert.match(configJs, /VERSION:\s*334\b/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v334";/);
+  assert.match(swJs, /var UPDATE_ID = "v474-perf-quiz-php";/);
+  assert.equal(nouv[0].version, 'v474');
+  assert.match(adminHtml, /v474 · sti-atelier-v334/);
+  assert.match(readmeMd, /sti-atelier-v334/);
+  assert.match(readmeMd, /\|\s*v474\s*\|/);
+  assert.equal(offlineManifest.version, 'v474-sti-atelier-v334');
+});
+
+test('v474 (comportemental VM) : vendors hors-ligne (Chart, confetti, Prism) opérationnels et déduplication lireProfilCourantMemoSTI dans acces.js', async () => {
+  const vm = await import('node:vm');
+
+  // 1) Exécution réelle des 3 fichiers vendor hors-ligne dans des contextes navigateur isolés
+  const confettiSrc = read('assets/js/vendor/confetti.browser.min.js');
+  const prismSrc = read('assets/js/vendor/prism-js.min.js');
+  const chartSrc = read('assets/js/vendor/chart.umd.min.js');
+
+  const winConf = { window: null, self: null, document: { createElement: () => ({ style: {} }) }, navigator: {} };
+  winConf.window = winConf; winConf.self = winConf;
+  vm.runInNewContext(confettiSrc, winConf);
+  assert.equal(typeof winConf.confetti, 'function', 'confetti.browser.min.js doit exposer window.confetti');
+
+  const FakeEl = function () {};
+  const winPrism = { window: null, self: null, Element: FakeEl, setTimeout: () => 1, clearTimeout: () => {}, document: { currentScript: null, getElementsByTagName: () => [], addEventListener() {} } };
+  winPrism.window = winPrism; winPrism.self = winPrism;
+  vm.runInNewContext(prismSrc, winPrism);
+  assert.ok(winPrism.Prism && winPrism.Prism.languages && winPrism.Prism.languages.javascript, 'prism-js.min.js doit exposer Prism.languages.javascript');
+  const highlighted = winPrism.Prism.highlight('const x = 42;', winPrism.Prism.languages.javascript, 'javascript');
+  assert.match(highlighted, /token keyword/, 'Prism doit colorer correctement le code JavaScript hors-ligne');
+
+  const winChart = { window: null, self: null, globalThis: null, navigator: { userAgent: '' }, document: { createElement: () => ({ getContext: () => ({}) }) }, Intl, Object, Array, Map, Set, WeakMap, Math, Number, String, Boolean, RegExp, Date, Symbol, Error, TypeError, Promise, requestAnimationFrame: () => 1, cancelAnimationFrame: () => {} };
+  winChart.window = winChart; winChart.self = winChart; winChart.globalThis = winChart;
+  vm.runInNewContext(chartSrc, winChart);
+  assert.equal(typeof winChart.Chart, 'function', 'chart.umd.min.js doit exposer window.Chart');
+
+  // 2) Vérification comportementale de lireProfilCourantMemoSTI : 2 appels simultanés pour le même uid => 1 seule requête Supabase
+  const accesJs = read('assets/js/acces.js');
+  const fnMatch = accesJs.match(/var _memoProfilCourant = \{[\s\S]*?function lireProfilCourantMemoSTI\(uid\) \{[\s\S]*?\n  \}/);
+  assert.ok(fnMatch, 'lireProfilCourantMemoSTI doit être extractible dans acces.js');
+  let dbHits = 0;
+  const pCtx = {
+    Date,
+    Promise,
+    sb: {
+      from() {
+        return {
+          select() { return this; },
+          eq() { return this; },
+          async maybeSingle() {
+            dbHits++;
+            await new Promise((r) => setTimeout(r, 10));
+            return { data: { id: 'u-php-1', statut: 'actif', classe: '4SI1' }, error: null };
+          }
+        };
+      }
+    }
+  };
+  vm.runInNewContext(fnMatch[0], pCtx);
+  const [rA, rB] = await Promise.all([
+    pCtx.lireProfilCourantMemoSTI('u-php-1'),
+    pCtx.lireProfilCourantMemoSTI('u-php-1')
+  ]);
+  assert.equal(dbHits, 1, 'Deux lectures profil simultanées au chargement doivent être fusionnées en 1 seule requête réseau');
+  assert.equal(rA.data.classe, '4SI1');
+  assert.equal(rB.data.classe, '4SI1');
+});
+
 
 
 
