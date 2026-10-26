@@ -258,14 +258,24 @@
 
   /* Affichage dynamique du numéro de version du tableau de bord & du cache PWA */
   (function afficherVersionAdmin() {
-    var versionDefaut = "v66";
+    var numScript = 0;
     try {
       var scripts = document.querySelectorAll('script[src*="admin.js"]');
       if (scripts.length) {
         var m = scripts[0].src.match(/[?&]v=(\d+)/);
-        if (m && m[1]) versionDefaut = "v" + m[1];
+        if (m && m[1]) numScript = parseInt(m[1], 10) || 0;
       }
     } catch (e) {}
+    var numCfgAdm = (cfg && Number(cfg.VERSION_AFFICHEE)) || 0;
+    var numBaseAdm = Math.max(numScript, numCfgAdm);
+    var versionDefaut = numBaseAdm > 0 ? ("v" + numBaseAdm) : "v66";
+    var estReloadAdm = false;
+    try {
+      var navAdm = (typeof performance !== "undefined" && performance.getEntriesByType) ? performance.getEntriesByType("navigation") : null;
+      if (navAdm && navAdm[0] && navAdm[0].type === "reload") estReloadAdm = true;
+      else if (typeof performance !== "undefined" && performance.navigation && performance.navigation.type === 1) estReloadAdm = true;
+    } catch (eNavA) {}
+
     var elBadgeVer = document.getElementById("badge-version-admin");
     var elPiedVer = document.getElementById("pied-version-admin");
     function majTexteVersion(v) {
@@ -273,26 +283,45 @@
       if (elPiedVer) elPiedVer.textContent = "🏷️ Version active : STI V2.0 (" + v + ")";
     }
     majTexteVersion(versionDefaut);
-    /* v350 : le numero AFFICHE suit UPDATE_ID de sw.js (v349, v350...) ; le nom de cache
-       "sti-atelier-v316" est fige par conception et ne sert qu'en repli hors-ligne. */
-    var versionAfficheePrioritaire = false;
-    var verSessAdm = "";
-    try { verSessAdm = sessionStorage.getItem("sti-sw-upd-ver-sess") || ""; } catch (eSA) {}
-    if (verSessAdm) {
-      versionAfficheePrioritaire = true;
-      majTexteVersion("v" + verSessAdm);
-    } else if (typeof fetch === "function") {
-      fetch("sw.js?t=" + Date.now(), { cache: "no-store" })
+    /* v350 / v477 : le numero AFFICHE suit UPDATE_ID de sw.js (et ne descend jamais sous cfg.VERSION_AFFICHEE) */
+    var versionAfficheePrioritaire = numBaseAdm > 0;
+    function interrogerVersionSwAdmin(forcerReloadSiNouvelle) {
+      if (typeof fetch !== "function") return Promise.resolve(0);
+      return fetch("sw.js?t=" + Date.now(), { cache: "no-store" })
         .then(function (r) { return r && r.ok ? r.text() : ""; })
         .then(function (txt) {
+          var mCacheSw = String(txt || "").match(/sti-atelier-v(\d+)/i);
+          var nCacheSw = (mCacheSw && mCacheSw[1]) ? (parseInt(mCacheSw[1], 10) || 0) : 0;
+          if (nCacheSw > 0) {
+            try { localStorage.setItem("sti-version-installee", String(nCacheSw)); } catch (eCI) {}
+          }
           var mUpd = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
           if (mUpd && mUpd[1]) {
+            var nUpdAdm = Math.max(parseInt(mUpd[1], 10) || 0, numBaseAdm);
             versionAfficheePrioritaire = true;
-            try { sessionStorage.setItem("sti-sw-upd-ver-sess", String(mUpd[1])); } catch (eSA2) {}
-            majTexteVersion("v" + mUpd[1]);
+            try {
+              sessionStorage.setItem("sti-sw-upd-ver-sess", String(nUpdAdm));
+              localStorage.setItem("sti-version-affichee", String(nUpdAdm));
+            } catch (eSA2) {}
+            majTexteVersion("v" + nUpdAdm);
+            if (forcerReloadSiNouvelle && parseInt(mUpd[1], 10) > numBaseAdm) {
+              setTimeout(function () { location.reload(); }, 350);
+            }
+            return nUpdAdm;
           }
+          return 0;
         })
-        .catch(function () {});
+        .catch(function () { return 0; });
+    }
+
+    var verSessAdm = "";
+    try { verSessAdm = sessionStorage.getItem("sti-sw-upd-ver-sess") || ""; } catch (eSA) {}
+    var verSessNumAdm = parseInt(verSessAdm || "0", 10) || 0;
+    if (!estReloadAdm && verSessNumAdm > 0 && verSessNumAdm >= numBaseAdm) {
+      versionAfficheePrioritaire = true;
+      majTexteVersion("v" + verSessNumAdm);
+    } else {
+      interrogerVersionSwAdmin(false);
     }
     if (window.caches && caches.keys) {
       caches.keys().then(function (cles) {
@@ -310,12 +339,29 @@
     }
     if (elBadgeVer) {
       elBadgeVer.addEventListener("click", function () {
-        msg("🔄 Vérification de la dernière version (" + elBadgeVer.textContent + ")…", "ok");
+        try {
+          sessionStorage.removeItem("sti-sw-upd-ver-sess");
+          sessionStorage.removeItem("sti-admin-sw-synced");
+        } catch (eClrB) {}
+        msg("🔄 Vérification de la dernière version en ligne…", "ok");
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker.getRegistrations().then(function (regs) {
-            regs.forEach(function (r) { r.update(); });
+            regs.forEach(function (r) {
+              r.update().then(function () {
+                var swW = r.waiting || r.installing || r.active || navigator.serviceWorker.controller;
+                if (swW) {
+                  try { swW.postMessage({ type: "FORCE_REFRESH_VERSION" }); } catch (e) {}
+                  try { swW.postMessage({ type: "SKIP_WAITING" }); } catch (e) {}
+                }
+              }).catch(function () {});
+            });
           });
         }
+        interrogerVersionSwAdmin(true).then(function (nVer) {
+          if (nVer > 0) {
+            msg("✅ Plateforme alignée sur la version v" + nVer + ".", "ok");
+          }
+        });
         charge(false, true);
       });
     }
@@ -484,11 +530,17 @@
   })();
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js").then(function (reg) {
+    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {
+      var cleSyncCible = "v" + ((cfg && (cfg.VERSION_AFFICHEE || cfg.VERSION)) || "477");
       var dejaSyncAdm = "";
-      try { dejaSyncAdm = sessionStorage.getItem("sti-admin-sw-synced") || ""; } catch (eSwA) {}
-      if (dejaSyncAdm === "v473") return;
-      try { sessionStorage.setItem("sti-admin-sw-synced", "v473"); } catch (eSwA2) {}
+      var estReloadSwAdm = false;
+      try {
+        dejaSyncAdm = sessionStorage.getItem("sti-admin-sw-synced") || "";
+        var navSwA = (typeof performance !== "undefined" && performance.getEntriesByType) ? performance.getEntriesByType("navigation") : null;
+        if (navSwA && navSwA[0] && navSwA[0].type === "reload") estReloadSwAdm = true;
+      } catch (eSwA) {}
+      if (dejaSyncAdm === cleSyncCible && !estReloadSwAdm) return;
+      try { sessionStorage.setItem("sti-admin-sw-synced", cleSyncCible); } catch (eSwA2) {}
       if (reg) reg.update().catch(function () {});
       setTimeout(function () {
         try {
@@ -497,6 +549,15 @@
         } catch (e) {}
       }, 6000);
     }).catch(function () {});
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      try {
+        var verActAdm = localStorage.getItem("sti-version-installee") || String((cfg && cfg.VERSION) || "latest");
+        if (sessionStorage.getItem("sti-sw-reload-ver") === verActAdm) return;
+        sessionStorage.setItem("sti-sw-reload-ver", verActAdm);
+        sessionStorage.removeItem("sti-sw-upd-ver-sess");
+      } catch (eCA) {}
+      location.reload();
+    });
   }
 
   /* Indicateur visuel En ligne (Vert) / Hors ligne (Rouge) sur le logo et le titre Tableau de bord STI V2.0 */

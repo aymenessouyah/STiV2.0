@@ -142,7 +142,7 @@
       content="STI by AE"
     />
     <link rel="stylesheet" href="assets/fonts/fonts.css" />
-    <link rel="preload" href="assets/js/config.js?v=476" as="script" />
+    <link rel="preload" href="assets/js/config.js?v=477" as="script" />
     <style id="sti-4si-zero-flash">
       html:not(.sti-4si-autorise) .sti-4si-only,
       html:not(.sti-4si-autorise) a[href*="bac-pratique.html"],
@@ -2646,7 +2646,7 @@
     </header>
 
     <!-- ======================= La Cote STI : tableau de bourse des technologies ======================= -->
-    <script src="./assets/js/config.js?v=476"></script>
+    <script src="./assets/js/config.js?v=477"></script>
     <script>
       /* v407 : pré-connexion Supabase dès le haut de page — le bandeau récupère les news de la régie
          sans attendre le coût froid DNS+TLS de la première requête (gagnat typique : 300–900 ms). */
@@ -5184,11 +5184,17 @@
     <script>
       (function () {
         var regSW = null;
-        function verifierMajSwAvecCooldown() {
+        var estReloadIdx = false;
+        try {
+          var navIdx = (typeof performance !== "undefined" && performance.getEntriesByType) ? performance.getEntriesByType("navigation") : null;
+          if (navIdx && navIdx[0] && navIdx[0].type === "reload") estReloadIdx = true;
+          else if (typeof performance !== "undefined" && performance.navigation && performance.navigation.type === 1) estReloadIdx = true;
+        } catch (eNIdx) {}
+        function verifierMajSwAvecCooldown(forcerReload) {
           if (!regSW) return;
           try {
             var lastUpd = parseInt(sessionStorage.getItem("sti-idx-sw-upd") || "0", 10) || 0;
-            if (Date.now() - lastUpd < 900000) return;
+            if (!forcerReload && Date.now() - lastUpd < 90000) return;
             sessionStorage.setItem("sti-idx-sw-upd", String(Date.now()));
           } catch (e) {}
           regSW.update().catch(function () {});
@@ -5198,25 +5204,26 @@
             .register("./sw.js", { updateViaCache: "none" })
             .then(function (reg) {
               regSW = reg;
-              verifierMajSwAvecCooldown();
+              verifierMajSwAvecCooldown(estReloadIdx);
             })
             .catch(function () {});
           navigator.serviceWorker.addEventListener(
             "controllerchange",
             function () {
               try {
-                var verAct = localStorage.getItem("sti-version-installee") || "latest";
+                var verAct = localStorage.getItem("sti-version-installee") || String((window.STI_AUTH && window.STI_AUTH.VERSION) || "latest");
                 if (sessionStorage.getItem("sti-sw-reload-ver") === verAct) return;
                 sessionStorage.setItem("sti-sw-reload-ver", verAct);
+                sessionStorage.removeItem("sti-sw-upd-ver-sess");
               } catch (e) {}
               location.reload();
             }
           );
           document.addEventListener("visibilitychange", function () {
-            if (!document.hidden) verifierMajSwAvecCooldown();
+            if (!document.hidden) verifierMajSwAvecCooldown(false);
           });
           setInterval(function () {
-            verifierMajSwAvecCooldown();
+            verifierMajSwAvecCooldown(false);
           }, 900000); /* 15 min */
         }
         var btn = document.getElementById("installBtn");
@@ -5430,7 +5437,7 @@
   <p>Les dernières mises en ligne — un badge <b>NOUVEAU</b> signale ce qui est paru depuis votre dernière visite. <a href="nouveautes.html"><b>Tout l'historique ➜</b></a></p>
   <div id="sti-nouveautes" data-racine="./" data-limite="4"><p>⏳ Chargement du journal…</p></div>
 </section>
-<script src="assets/js/nouveautes.js?v=451" defer></script>
+<script src="assets/js/nouveautes.js?v=477" defer></script>
 <script src="assets/js/reprendre.js?v=472" defer></script>
 </body>
 </html>

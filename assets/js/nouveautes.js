@@ -79,7 +79,9 @@
   var derniere = "";
   try { derniere = localStorage.getItem("sti-derniere-visite") || ""; } catch (e0) {}
 
-  fetch(racine + "assets/data/nouveautes.json?v=451")
+  var stiAuthGlobal = (typeof window !== "undefined" && window.STI_AUTH) ? window.STI_AUTH : null;
+  var verNouvQuery = String((stiAuthGlobal && (stiAuthGlobal.VERSION_AFFICHEE || stiAuthGlobal.VERSION)) || "477");
+  fetch(racine + "assets/data/nouveautes.json?v=" + encodeURIComponent(verNouvQuery), { cache: "no-cache" })
     .then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();
