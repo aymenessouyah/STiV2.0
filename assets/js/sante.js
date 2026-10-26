@@ -68,33 +68,39 @@
     Promise.all(tous.map(testerUn)).then(function (res) {
       var nbOk = res.filter(function (x) { return x.ok; }).length;
       var nbKo = res.length - nbOk;
-      var resume = '<p style="padding:12px 16px;border-radius:12px;border:2.5px solid #1a1a2e;background:' + (nbKo ? '#ffebee' : '#e8f5e9') + ';font-weight:800;">'
+      var resume = '<p style="padding:12px 16px;border-radius:12px;border:2.5px solid var(--adm-border-strong,#1a1a2e);background:' + (nbKo ? '#ffebee' : '#e8f5e9') + ';color:' + (nbKo ? '#7f1d1d' : '#14532d') + ';font-weight:800;">'
         + (nbKo === 0 ? '✅ Tout est opérationnel : ' + nbOk + ' / ' + res.length + ' contrôles réussis — prêt pour la séance !'
                       : '⚠️ ' + nbKo + ' anomalie(s) détectée(s) sur ' + res.length + ' contrôles (' + nbOk + ' OK)') + '</p>';
       var lignes = res.map(function (r) {
-        var badge = r.ok ? '<span style="color:#2e7d32;font-weight:900">✅ OK (' + r.code + ')</span>'
-                         : '<span style="color:#c62828;font-weight:900">❌ ÉCHEC (' + r.code + ')</span>';
-        return '<tr style="background:' + (r.ok ? 'transparent' : '#ffebee') + '"><td style="padding:6px;border-bottom:1px solid #ddd;font-weight:700">' + r.it.cat + '</td>'
-          + '<td style="padding:6px;border-bottom:1px solid #ddd">' + r.it.nom + '</td>'
-          + '<td style="padding:6px;border-bottom:1px solid #ddd">' + badge + '</td>'
-          + '<td style="padding:6px;border-bottom:1px solid #ddd">' + r.ms + ' ms</td></tr>';
+        var badge = r.ok ? '<span style="color:#16a34a;font-weight:900">✅ OK (' + r.code + ')</span>'
+                         : '<span style="color:#dc2626;font-weight:900">❌ ÉCHEC (' + r.code + ')</span>';
+        return '<tr style="background:' + (r.ok ? 'transparent' : 'rgba(220,38,38,.12)') + '"><td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd);font-weight:700">' + r.it.cat + '</td>'
+          + '<td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd)">' + r.it.nom + '</td>'
+          + '<td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd)">' + badge + '</td>'
+          + '<td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd)">' + r.ms + ' ms</td></tr>';
       }).join("");
-      zone.innerHTML = resume + '<table style="width:100%;border-collapse:collapse;font-size:.92rem"><thead><tr style="background:#f3e9d7"><th style="padding:7px;text-align:left">Catégorie</th><th style="padding:7px;text-align:left">Ressource</th><th style="padding:7px;text-align:left">État</th><th style="padding:7px;text-align:left">Délai</th></tr></thead><tbody>' + lignes + '</tbody></table>';
+      zone.innerHTML = resume + '<table style="width:100%;border-collapse:collapse;font-size:.92rem"><thead><tr style="background:var(--adm-surface-2,#f3e9d7);color:var(--adm-text,#1a1a2e)"><th style="padding:7px;text-align:left">Catégorie</th><th style="padding:7px;text-align:left">Ressource</th><th style="padding:7px;text-align:left">État</th><th style="padding:7px;text-align:left">Délai</th></tr></thead><tbody>' + lignes + '</tbody></table>';
     });
   }
   function ouvrir() {
-    if (document.getElementById("sti-sante")) return;
+    var exist = document.getElementById("sti-sante");
+    if (exist) { exist.remove(); return; }
     var ov = document.createElement("div"); ov.id = "sti-sante";
-    ov.setAttribute("style", "position:fixed;inset:3% 4%;z-index:100000;background:#fffdf7;border:3px solid #1a1a2e;border-radius:18px;box-shadow:8px 8px 0 #1a1a2e;padding:22px 26px;overflow:auto;font-family:system-ui,sans-serif;color:#1a1a2e;");
+    ov.setAttribute("role", "dialog");
+    ov.setAttribute("aria-modal", "true");
+    ov.setAttribute("style", 'position:fixed;inset:3% 4%;z-index:100000;background:var(--adm-surface,#fffdf7);border:3px solid var(--adm-border-strong,#1a1a2e);border-radius:18px;box-shadow:8px 8px 0 rgba(15,23,42,.35);padding:22px 26px;overflow:auto;font-family:"Comic Sans MS","Comic Sans","Comic Neue","Chalkboard SE",cursive,sans-serif;color:var(--adm-text,#1a1a2e);');
     ov.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">'
       + '<h2 style="margin:0">🩺 Vérificateur de santé du site</h2>'
-      + '<div><button type="button" id="sti-sante-relancer" style="padding:8px 14px;border-radius:10px;border:2px solid #1a1a2e;background:#1565c0;color:#fff;font-weight:800;cursor:pointer">🔄 Relancer les tests</button> '
-      + '<button type="button" id="sti-sante-fermer" style="padding:8px 14px;border-radius:10px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer">✕ Fermer</button></div></div>'
+      + '<div><button type="button" id="sti-sante-relancer" style="padding:8px 14px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:#1565c0;color:#fff;font-weight:800;cursor:pointer">🔄 Relancer les tests</button> '
+      + '<button type="button" id="sti-sante-fermer" style="padding:8px 14px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface-2,#fff);color:var(--adm-text,#1a1a2e);font-weight:800;cursor:pointer">✕ Fermer</button></div></div>'
       + '<p>Teste en direct les pages de cours, les 12 vidéos, les bases <code>.sql</code>, les archives <code>.zip</code>, les fiches A4 et les 3 tables Supabase — idéal la veille d\'une séance.</p>'
       + '<div id="sti-sante-zone"></div>';
     document.body.appendChild(ov);
     var zone = document.getElementById("sti-sante-zone");
-    document.getElementById("sti-sante-fermer").addEventListener("click", function () { ov.remove(); });
+    function fermer() { if (ov.parentNode) ov.remove(); document.removeEventListener("keydown", onEsc); }
+    function onEsc(ev) { if (ev.key === "Escape") fermer(); }
+    document.addEventListener("keydown", onEsc);
+    document.getElementById("sti-sante-fermer").addEventListener("click", fermer);
     document.getElementById("sti-sante-relancer").addEventListener("click", function () { lancer(zone); });
     lancer(zone);
   }
@@ -102,7 +108,7 @@
     if (document.getElementById("sti-btn-sante")) return;
     var b = document.createElement("button");
     b.id = "sti-btn-sante"; b.type = "button"; b.textContent = "🩺 Santé du site";
-    b.setAttribute("style", "position:fixed;left:14px;bottom:164px;z-index:99999;padding:11px 16px;border-radius:999px;border:3px solid #1a1a2e;background:#6a1b9a;color:#fff;font-weight:800;font-size:14px;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;");
+    b.setAttribute("style", 'position:fixed;left:14px;bottom:164px;z-index:99999;padding:11px 16px;border-radius:999px;border:3px solid #1a1a2e;background:#6a1b9a;color:#fff;font-family:"Comic Sans MS","Comic Sans","Comic Neue","Chalkboard SE",cursive,sans-serif;font-weight:800;font-size:14px;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;');
     b.addEventListener("click", ouvrir);
     document.body.appendChild(b);
   }

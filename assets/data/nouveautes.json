@@ -1,5 +1,55 @@
 [
   {
+    "version": "v468",
+    "date": "2026-10-26",
+    "categorie": "Plateforme & Sécurité",
+    "icone": "🛡️",
+    "titre": "Audit intégral de fiabilité : liens Défis JS corrigés, pagination Analytique et contraste multi-univers",
+    "resume": "Révision complète des 135 pages et 50 modules JavaScript : réparation des raccourcis « Défis JS » en fin de Quiz JavaScript et Quiz des Tableaux, pagination déterministe au-delà de 1 000 lignes dans le panneau Analytique des progressions, et adaptation native aux modes Clair / Sombre et aux univers Cyber / Spotify des panneaux Sauvegarde, Santé du site, Analytique et Suivi des Quiz.",
+    "lien": "exercices/javascript/js-37-defis-tt.html",
+    "libelleLien": "Ouvrir les Défis JavaScript"
+  },
+  {
+    "version": "v467",
+    "date": "2026-10-26",
+    "categorie": "Plateforme & Sécurité",
+    "icone": "💾",
+    "titre": "Sauvegarde quotidienne intégrale des 15 tables vers Google Drive et navigation retour étendue",
+    "resume": "Export automatisé et paginé de l’intégralité des 15 tables Supabase au format compressé .json.gz vers Google Drive (à 02 h du matin et depuis le tableau de bord enseignant), retour instantané bfcache sur le hub Séries d’exercices, et mise à jour complète de la documentation officielle.",
+    "lien": "exercices/series-exercices.html",
+    "libelleLien": "Explorer les Séries d’exercices"
+  },
+  {
+    "version": "v466",
+    "date": "2026-10-26",
+    "categorie": "Tableau de bord & Suivi",
+    "icone": "🗄️",
+    "titre": "Module DBSupbase temps réel et bulle d’installation PWA affichée uniquement à la 1re visite",
+    "resume": "Nouveau pôle DBSupbase affichant en direct le niveau exact des 15 tables par rapport au seuil PostgREST de 1 000 lignes avec jauges, alertes et export CSV. Sur l’accueil, l’invitation à installer l’application PWA ne s’affiche plus qu’une seule fois lors de la toute première visite.",
+    "lien": "index.html",
+    "libelleLien": "Ouvrir l’accueil STI V2.0"
+  },
+  {
+    "version": "v465",
+    "date": "2026-10-26",
+    "categorie": "Interface & Roue",
+    "icone": "⚡",
+    "titre": "Navigation retour instantanée (0 ms bfcache) sans rechargement de l’accueil",
+    "resume": "Les liens « Retour à l’accueil » depuis les cours, exercices, quiz et Smart Books restaurent instantanément la page d’accueil en mémoire via l’historique du navigateur, à l’exacte position de lecture et sans aucun flash ni requête réseau superflue.",
+    "lien": "index.html#modules",
+    "libelleLien": "Parcourir les modules"
+  },
+  {
+    "version": "v460",
+    "date": "2026-10-25",
+    "categorie": "Cours & Outils d'étude",
+    "icone": "🏆",
+    "titre": "Quiz consolidés : tirage équitable, Carte d’Évaluation Officielle et reprise exacte entre appareils",
+    "resume": "Mélange équilibré des propositions sur tous les quiz, génération d’une Carte d’Évaluation Officielle téléchargeable et imprimable en fin de session, synchronisation immédiate des erreurs à retravailler, et reprise exacte d’une partie en cours (score et ordre des questions) d’un appareil à l’autre.",
+    "lien": "quiz/tableaux.html",
+    "libelleLien": "Lancer le Quiz des tableaux"
+  },
+  {
     "version": "v453",
     "date": "2026-10-25",
     "categorie": "Interface & Roue",

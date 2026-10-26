@@ -419,24 +419,24 @@
     ov.id = "sti-sauvegarde";
     ov.setAttribute("role", "dialog");
     ov.setAttribute("aria-modal", "true");
-    ov.setAttribute("style", 'position:fixed;inset:auto 4% 4% 4%;max-height:86vh;overflow-y:auto;z-index:100000;background:#fffdf7;border:3px solid #1a1a2e;border-radius:18px;box-shadow:8px 8px 0 #1a1a2e;padding:20px 24px;font-family:"Comic Sans MS","Comic Sans","Comic Neue","Chalkboard SE",cursive,sans-serif;color:#1a1a2e;');
+    ov.setAttribute("style", 'position:fixed;inset:auto 4% 4% 4%;max-height:86vh;overflow-y:auto;z-index:100000;background:var(--adm-surface,#fffdf7);border:3px solid var(--adm-border-strong,#1a1a2e);border-radius:18px;box-shadow:8px 8px 0 rgba(15,23,42,.35);padding:20px 24px;font-family:"Comic Sans MS","Comic Sans","Comic Neue","Chalkboard SE",cursive,sans-serif;color:var(--adm-text,#1a1a2e);');
     var urlActuelle = lireUrlWebAppDrive();
-    ov.innerHTML = '<button type="button" id="sti-sauv-fermer" style="float:right;padding:7px 13px;border-radius:10px;border:2px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;cursor:pointer">✕ Fermer</button>'
+    ov.innerHTML = '<button type="button" id="sti-sauv-fermer" style="float:right;padding:7px 13px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface-2,#fff);color:var(--adm-text,#1a1a2e);font-weight:800;cursor:pointer">✕ Fermer</button>'
       + '<h2 style="margin:0 0 8px;font-size:19px">💾 Sauvegarde complète (15 tables Supabase + Google Drive)</h2>'
       + '<p style="margin:0 0 10px;font-size:13.2px;line-height:1.45">Exporte l\'intégralité des <b>15 tables <code>public</code></b> (profils, connexions, progressions, parties/réponses/sessions/vus quiz, diagnostics, observations, postes/sessions/messages Labo 3, badges labo, configuration publique, notifications) avec pagination par tranches de 1 000 lignes + préférences locales.</p>'
       + '<div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:12px">'
-      + '  <button type="button" id="sti-sauv-export-gz" style="padding:10px 16px;border-radius:10px;border:2.5px solid #1a1a2e;background:linear-gradient(120deg,#15803d,#0f766e);color:#fff;font-weight:800;cursor:pointer">⬇️ Exporter .json.gz (format Drive)</button>'
-      + '  <button type="button" id="sti-sauv-export" style="padding:10px 16px;border-radius:10px;border:2.5px solid #1a1a2e;background:#0f766e;color:#fff;font-weight:800;cursor:pointer">⬇️ Exporter .json complet</button>'
-      + '  <button type="button" id="sti-sauv-copier-gs" style="padding:10px 14px;border-radius:10px;border:2px solid #1a1a2e;background:#fef3c7;color:#1a1a2e;font-weight:800;cursor:pointer">📋 Copier le script Apps Script v467</button>'
+      + '  <button type="button" id="sti-sauv-export-gz" style="padding:10px 16px;border-radius:10px;border:2.5px solid var(--adm-border-strong,#1a1a2e);background:linear-gradient(120deg,#15803d,#0f766e);color:#fff;font-weight:800;cursor:pointer">⬇️ Exporter .json.gz (format Drive)</button>'
+      + '  <button type="button" id="sti-sauv-export" style="padding:10px 16px;border-radius:10px;border:2.5px solid var(--adm-border-strong,#1a1a2e);background:#0f766e;color:#fff;font-weight:800;cursor:pointer">⬇️ Exporter .json complet</button>'
+      + '  <button type="button" id="sti-sauv-copier-gs" style="padding:10px 14px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:#fef3c7;color:#1a1a2e;font-weight:800;cursor:pointer">📋 Copier le script Apps Script v467</button>'
       + '</div>'
-      + '<div style="background:#f5efe2;border:2px solid #1a1a2e;border-radius:13px;padding:11px 13px;margin-bottom:11px;font-size:12.6px">'
+      + '<div style="background:var(--adm-surface-2,#f5efe2);border:2px solid var(--adm-border-strong,#1a1a2e);border-radius:13px;padding:11px 13px;margin-bottom:11px;font-size:12.6px;color:var(--adm-text,#1a1a2e)">'
       + '  <div style="font-weight:900;margin-bottom:5px">☁️ Synchronisation automatique Google Drive (<code>STISauvegardeSupbase</code> — 1× / 24 h + 02 h du matin)</div>'
-      + '  <div id="sti-sauv-drive-resume" style="margin-bottom:7px;color:#334155">' + rendreResumeDrive() + '</div>'
+      + '  <div id="sti-sauv-drive-resume" style="margin-bottom:7px;color:var(--adm-muted,#334155)">' + rendreResumeDrive() + '</div>'
       + '  <div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center">'
-      + '    <input type="url" id="sti-sauv-drive-url" placeholder="https://script.google.com/macros/s/.../exec (optionnel : URL Web App)" value="' + ech(urlActuelle) + '" style="flex:1 1 280px;padding:7px 10px;border-radius:9px;border:1.8px solid #1a1a2e;background:#fff;color:#1a1a2e;font-size:12.2px" />'
-      + '    <button type="button" id="sti-sauv-drive-save" style="padding:7px 12px;border-radius:9px;border:2px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;cursor:pointer">💾 Enregistrer URL</button>'
-      + '    <button type="button" id="sti-sauv-drive-now" style="padding:7px 12px;border-radius:9px;border:2px solid #1a1a2e;background:#15803d;color:#fff;font-weight:800;cursor:pointer">☁️ Sauvegarder vers Drive</button>'
-      + '    <button type="button" id="sti-sauv-drive-statut" style="padding:7px 12px;border-radius:9px;border:2px solid #1a1a2e;background:#fff;color:#1a1a2e;font-weight:800;cursor:pointer">🔄 État Drive</button>'
+      + '    <input type="url" id="sti-sauv-drive-url" placeholder="https://script.google.com/macros/s/.../exec (optionnel : URL Web App)" value="' + ech(urlActuelle) + '" style="flex:1 1 280px;padding:7px 10px;border-radius:9px;border:1.8px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface,#fff);color:var(--adm-text,#1a1a2e);font-size:12.2px" />'
+      + '    <button type="button" id="sti-sauv-drive-save" style="padding:7px 12px;border-radius:9px;border:2px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface,#fff);color:var(--adm-text,#1a1a2e);font-weight:800;cursor:pointer">💾 Enregistrer URL</button>'
+      + '    <button type="button" id="sti-sauv-drive-now" style="padding:7px 12px;border-radius:9px;border:2px solid var(--adm-border-strong,#1a1a2e);background:#15803d;color:#fff;font-weight:800;cursor:pointer">☁️ Sauvegarder vers Drive</button>'
+      + '    <button type="button" id="sti-sauv-drive-statut" style="padding:7px 12px;border-radius:9px;border:2px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface,#fff);color:var(--adm-text,#1a1a2e);font-weight:800;cursor:pointer">🔄 État Drive</button>'
       + '  </div>'
       + '</div>'
       + '<p style="margin:0 0 8px;font-size:12.8px">Restaurer les préférences locales depuis une archive (<code>.json</code> ou <code>.json.gz</code>) : <input type="file" id="sti-sauv-fichier" accept=".json,.gz,application/json,application/gzip"></p>'
