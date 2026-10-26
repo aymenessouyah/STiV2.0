@@ -3037,7 +3037,7 @@ test('v464 : correctifs issus du test fonctionnel E2E (purges quota sans Referen
   // 5) sauvegarde.js : fallback RPC admin_labo_devices_list + mobile-diagnostics.js window.confirm
   assert.match(sauvJs, /admin_labo_devices_list/);
   assert.match(mobDiagJs, /window\.confirm/);
-  assert.match(swJs, /sti-atelier-v324/);
+  assert.match(swJs, /sti-atelier-v3\d{2}/);
   assert.match(swJs, /v464-verif-e2e/);
 
   // 6) Test comportemental VM sur admin-couverture.js : une élève avec sti-reading-bookmarks / sti-chapitres-vus n'est plus à 0 page vue
@@ -3068,6 +3068,210 @@ test('v464 : correctifs issus du test fonctionnel E2E (purges quota sans Referen
   assert.equal(lignes.length, 1);
   assert.equal(lignes[0].vues, 3);
   assert.equal(lignes[0].pct, 75);
+});
+
+test('v465 : retour instantané vers index.html sans rechargement (bfcache 0 ms, suppression Cache-Control no-store, beforeunload et prerender lourd)', async () => {
+  const indexHtml = read('index.html');
+  const configJs = read('assets/js/config.js');
+  const mobileNavJs = read('assets/js/mobile-nav.js');
+  const accesJs = read('assets/js/acces.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const phpMysqliHtml = read('cours/php-mysqli.html');
+  const reprendreJs = read('assets/js/reprendre.js');
+  const coteTickerJs = read('assets/js/cote-ticker.js');
+  const swJs = read('sw.js');
+
+  // 1) index.html débloque le bfcache navigateur et ne charge config.js qu'une seule fois
+  assert.doesNotMatch(indexHtml, /http-equiv=["']Cache-Control["']/i);
+  assert.doesNotMatch(indexHtml, /http-equiv=["']Pragma["']/i);
+  const cfgTags = [...indexHtml.matchAll(/<script[^>]+src=["'][^"']*assets\/js\/config\.js[^"']*["']/gi)];
+  assert.equal(cfgTags.length, 1, 'config.js ne doit être inclus qu’une seule fois dans index.html');
+  assert.match(indexHtml, /sti-splash-vu/);
+  assert.match(indexHtml, /rafraichirAccueilAuRetour/);
+  assert.match(indexHtml, /sti-accueil-restored/);
+
+  // 2) Élimination de tous les écouteurs beforeunload bloquants pour bfcache (Firefox/Safari/iOS)
+  assert.doesNotMatch(accesJs, /addEventListener\(\s*["']beforeunload["']/);
+  assert.doesNotMatch(syncProgJs, /addEventListener\(\s*["']beforeunload["']/);
+  assert.doesNotMatch(phpMysqliHtml, /addEventListener\(\s*["']beforeunload["']/);
+
+  // 3) Suppression du prerender SpeculationRules gourmand en RAM + cache léger cote-ticker & reprendre
+  assert.doesNotMatch(mobileNavJs, /type\s*=\s*["']speculationrules["']/i);
+  assert.doesNotMatch(mobileNavJs, /speculationRules\.addRules/);
+  assert.match(reprendreJs, /__stiRafraichirReprendre/);
+  assert.match(coteTickerJs, /sti-cote-news-v1/);
+  assert.match(swJs, /sti-atelier-v325/);
+  assert.match(swJs, /v465-nav-fluide/);
+  assert.match(swJs, /fetch\(req,\s*\{\s*cache:\s*"no-cache"\s*\}\)/);
+
+  // 4) Test comportemental VM du moteur bfcache dans config.js :
+  //    Accueil -> Cours (+ 2 ancres #hash internes) -> Clic « Retour » -> history.go(-3) + scroll sur #cours au pageshow
+  const sharedSession = new Map();
+  const makeStorage = (map) => ({
+    getItem: (k) => (map.has(k) ? map.get(k) : null),
+    setItem: (k, v) => map.set(k, String(v)),
+    removeItem: (k) => map.delete(k),
+  });
+
+  function createPageVm({ url, referrer = '', historyLength = 2 }) {
+    const u = new URL(url);
+    const winListeners = {};
+    const goCalls = [];
+    let currentState = null;
+    let scrolledSection = null;
+    let scrolledTop = null;
+    let restoredEvents = 0;
+
+    const locationObj = {
+      href: u.href,
+      origin: u.origin,
+      protocol: u.protocol,
+      hostname: u.hostname,
+      pathname: u.pathname,
+      search: u.search,
+      hash: u.hash,
+      replace: () => {},
+    };
+    const historyObj = {
+      get length() { return historyLength; },
+      get state() { return currentState; },
+      replaceState(st, _title, newUrl) {
+        currentState = st;
+        if (newUrl) {
+          const nu = new URL(newUrl, locationObj.href);
+          locationObj.pathname = nu.pathname;
+          locationObj.search = nu.search;
+          locationObj.hash = nu.hash;
+          locationObj.href = nu.href;
+        }
+      },
+      go(delta) { goCalls.push(delta); },
+    };
+    const docObj = {
+      referrer,
+      head: { appendChild: () => {} },
+      body: { appendChild: () => {} },
+      documentElement: { appendChild: () => {} },
+      createElement: () => ({ setAttribute: () => {}, style: {} }),
+      getElementById: (id) => (id === 'modules' || id === 'cours' ? {
+        id,
+        scrollIntoView: () => { scrolledSection = id; },
+      } : null),
+    };
+    const winObj = {
+      location: locationObj,
+      history: historyObj,
+      document: docObj,
+      sessionStorage: makeStorage(sharedSession),
+      localStorage: makeStorage(new Map()),
+      URL,
+      URLSearchParams,
+      CustomEvent: class CustomEvent {
+        constructor(type, init) { this.type = type; this.detail = init && init.detail; }
+      },
+      Promise,
+      matchMedia: () => ({ matches: false }),
+      setTimeout: () => 1,
+      scrollTo: (x, y) => { scrolledTop = [x, y]; },
+      addEventListener(type, fn) { (winListeners[type] ||= []).push(fn); },
+      dispatchEvent(ev) {
+        if (ev && ev.type === 'sti-accueil-restored') restoredEvents++;
+        (winListeners[ev.type] || []).forEach((fn) => fn(ev));
+      },
+    };
+    winObj.window = winObj;
+    const ctx = vm.createContext(winObj);
+    vm.runInContext(configJs, ctx);
+    return {
+      winObj,
+      locationObj,
+      historyObj,
+      goCalls,
+      getScrolledSection: () => scrolledSection,
+      getScrolledTop: () => scrolledTop,
+      getRestoredEvents: () => restoredEvents,
+      pushHash(newHash) {
+        historyLength += 1;
+        currentState = null; // comportement navigateur natif lors d'un clic sur <a href="#ancre">
+        locationObj.hash = newHash;
+        locationObj.href = locationObj.origin + locationObj.pathname + newHash;
+        (winListeners.hashchange || []).forEach((fn) => fn({}));
+      },
+      clickLink(href, opts = {}) {
+        let prevented = false;
+        let inlineSyncRan = false;
+        const fakeAnchor = {
+          getAttribute: (n) => (n === 'href' ? href : (opts[n] || null)),
+          hasAttribute: (n) => Boolean(opts[n]),
+          closest: (sel) => (sel === 'a[href]' ? fakeAnchor : null),
+        };
+        const ev = {
+          type: 'click',
+          button: 0,
+          target: fakeAnchor,
+          defaultPrevented: false,
+          preventDefault() { prevented = true; this.defaultPrevented = true; },
+        };
+        (winListeners.click || []).forEach((fn) => fn(ev));
+        if (opts.onInlineClick) { inlineSyncRan = true; opts.onInlineClick(); }
+        return { prevented, inlineSyncRan };
+      },
+      firePageshow(persisted) {
+        (winListeners.pageshow || []).forEach((fn) => fn({ persisted }));
+      },
+    };
+  }
+
+  // Étape A : Ouverture initiale de index.html
+  const homePage = createPageVm({ url: 'https://sti.example.tn/STiV2.0/index.html', historyLength: 1 });
+  assert.equal(sharedSession.get('sti-home-active'), '1');
+  assert.equal(sharedSession.get('sti-home-hop'), '0');
+
+  // Étape B : Visite d'un cours + 2 clics sur le sommaire interne (#chap1, #chap2) + clic « ← Cours »
+  const coursePage = createPageVm({
+    url: 'https://sti.example.tn/STiV2.0/cours/html5.html',
+    referrer: 'https://sti.example.tn/STiV2.0/index.html',
+    historyLength: 2,
+  });
+  coursePage.pushHash('#formulaires');
+  coursePage.pushHash('#validation');
+
+  // Un lien vers un sous-projet (projets/fleurs/index.html) ne doit PAS être intercepté comme l'accueil
+  const subProjClick = coursePage.clickLink('../projets/fleurs/index.html');
+  assert.equal(subProjClick.prevented, false);
+
+  // Le clic sur « ← Cours » (../index.html#cours) doit être intercepté et remonter de -3 crans vers bfcache
+  const backCoursClick = coursePage.clickLink('../index.html#cours');
+  assert.equal(backCoursClick.prevented, true);
+  assert.equal(sharedSession.get('sti-retour-accueil-hash'), '#cours');
+  await Promise.resolve();
+  assert.deepEqual(Array.from(coursePage.goCalls), [-3]);
+
+  // Étape C : Réveil bfcache de index.html -> positionnement immédiat sur #cours sans rechargement
+  homePage.firePageshow(true);
+  assert.equal(homePage.getScrolledSection(), 'cours');
+  assert.equal(homePage.locationObj.hash, '#cours');
+  assert.equal(homePage.getRestoredEvents(), 1);
+  assert.equal(sharedSession.has('sti-retour-accueil-hash'), false);
+
+  // Étape D : Visite d'un Quiz (quiz/javascript.html) -> write-ahead synchrone + retour bfcache vers #modules
+  let quizWriteAheadDone = false;
+  const quizPage = createPageVm({
+    url: 'https://sti.example.tn/STiV2.0/quiz/javascript.html',
+    referrer: 'https://sti.example.tn/STiV2.0/index.html#cours',
+    historyLength: 2,
+  });
+  const backQuizClick = quizPage.clickLink('../index.html#modules', {
+    onInlineClick: () => { quizWriteAheadDone = true; },
+  });
+  assert.equal(backQuizClick.prevented, true);
+  assert.equal(quizWriteAheadDone, true);
+  await Promise.resolve();
+  assert.deepEqual(Array.from(quizPage.goCalls), [-1]);
+
+  homePage.firePageshow(true);
+  assert.equal(homePage.getScrolledSection(), 'modules');
+  assert.equal(homePage.locationObj.hash, '#modules');
 });
 
 

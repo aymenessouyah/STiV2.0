@@ -337,17 +337,6 @@
     } catch (e) {}
 
     /* Préchauffage : les deux destinations hors-document des onglets sont demandées à l'inactivité,
-       si bien qu'un clic « Accueil/Exercices » depuis un long cours repart d'un cache chaud. */
-    try {
-      var prechauffe = function () {
-        [R + "index.html", R + "exercices/series-exercices.html"].forEach(function (href) {
-          try { fetch(href, { priority: "low" }).then(function (r) { return r.blob ? r.blob() : null; }).catch(function () {}); } catch (e) {}
-        });
-      };
-      if (window.requestIdleCallback) requestIdleCallback(prechauffe, { timeout: 4000 });
-      else setTimeout(prechauffe, 2500);
-    } catch (e) {}
-
     /* v428 (consigne auteur) : sur les pages cours et la page exercices, les deux barres se
        roulent au défilement — cachées en descendant, revenues en remontant, façon application.
        Portée stricte : /cours/ (toutes les fiches) et exercices/series-exercices.html. */
@@ -355,38 +344,10 @@
       var pnV428 = location.pathname;
       if (/\/cours\//.test(pnV428) || /\/exercices\/series-exercices\.html/.test(pnV428)) installerBarresQuiSeRoulent();
     } catch (eRoule) {}
-
-    /* v427 (consigne auteur) : « mettre tout dans une seule page pour ne plus voir la barre
-       disparaître entre deux pages ». On ne fusionne rien — on donne au navigateur le moyen
-       d'arriver au même résultat : le PRÉRENDU (Speculation Rules). Dès que la barre est en
-       place, Chrome/Edge préparent en arrière-plan une vraie instance des pages visées par
-       ses onglets (barre déjà installée, thème déjà posé, scripts déjà réchauffés). Au geste
-       — survol, ou simple appui — la bascule est instantanée : aucune frame « sans barre »,
-       la navigation donne le rendu d'une page unique sans en être une. Les navigateurs qui
-       ne connaissent pas la fonctionnalité ignorent la règle EN SILENCE : on reste exactement
-       au comportement v425 (gabarit peint dès le premier rendu). Aucun fichier de contenu
-       n'est touché, le tableau de bord ne reçoit rien (module exclu comme avant). */
-    try {
-      /* grammaire réellement livrée par le moteur (Chrome 121+) : « where », pas « sources » —
-         vérifié en direct : ce build 156 avertit « unknown key: sources ». Un seul sélecteur
-         CSS combiné couvre les onglets de la barre et les liens du tiroir « Autres ». */
-      var spec = {
-        prerender: [{
-          where: { selector_matches: "#sti-bnav a, #sti-bnav-sheet a" },
-          eagerness: "moderate"
-        }]
-      };
-      if (window.speculationRules && typeof window.speculationRules.addRules === "function") {
-        window.speculationRules.addRules(spec);
-      } else {
-        /* Chrome/Edge 121-124 : la balise <script type="speculationrules"> est comprise,
-           pas encore l'API JS. Même grammaire, voie d'expression différente. */
-        var stSpec = doc.createElement("script");
-        stSpec.type = "speculationrules";
-        stSpec.textContent = JSON.stringify(spec);
-        (doc.head || root).appendChild(stSpec);
-      }
-    } catch (eSpec) {}
+    /* v465 : suppression du prerender SpeculationRules et du double fetch(index.html) qui
+       lançaient des instances complètes d'index.html (~1,8 Mo de JS + Supabase) en arrière-plan
+       sur chaque cours/quiz et alourdissaient la RAM ; le retour passe désormais en 0 ms par bfcache
+       (config.js) et par le cache Service Worker déjà chaud. */
   }
 
   /* ---------- activation selon la largeur ---------- */
@@ -402,6 +363,13 @@
     else if (mq.addListener) mq.addListener(appliquer);
   }
   window.addEventListener("hashchange", majActif);
+  window.addEventListener("pageshow", function () {
+    root.classList.remove("sti-bnav-sheet-open");
+    var bAut = doc.getElementById("sti-bnav-autres");
+    if (bAut) bAut.setAttribute("aria-expanded", "false");
+    majActif();
+  });
+  window.addEventListener("sti-accueil-restored", majActif);
   /* v418 (consigne auteur) : la pastille « Progression synchronisée (cloud) » et le bouton
      « 📶 Normal » (diagnostic réseau) quittent les bords de la page pour la roue ⚙️. Leur
      logique vit dans roue-nuage.js, chargé ici — donc uniquement sur les pages où le module

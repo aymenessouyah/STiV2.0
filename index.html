@@ -63,9 +63,6 @@
     <meta name="robots" content="noai, noimageai" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; form-action 'self'" />
     <meta charset="UTF-8" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>STI Quiz — Plateforme de tests de compétences</title>
     <meta
@@ -2421,15 +2418,24 @@
       }
     </style>
     <script>
-      /* 📱 Splash STI : uniquement mobile / application installée */
+      /* 📱 Splash STI : uniquement au premier lancement de la session (jamais lors d'un retour depuis un cours/quiz) */
       (function () {
         var s = document.getElementById("splash-sti");
         if (!s) return;
-        /* Pas de splash lors d'un retour ciblé : index.html#quelque-chose */
-        if (location.hash && location.hash.length > 1) {
+        var dejaVu = false;
+        try {
+          dejaVu = sessionStorage.getItem("sti-splash-vu") === "1";
+          if (!dejaVu && document.referrer && new URL(document.referrer, location.href).origin === location.origin) {
+            dejaVu = true;
+          }
+        } catch (e) {}
+        /* Pas de splash lors d'un retour interne ou d'une ancre : index.html#quelque-chose */
+        if (dejaVu || (location.hash && location.hash.length > 1)) {
           s.parentNode.removeChild(s);
+          try { sessionStorage.setItem("sti-splash-vu", "1"); } catch (e2) {}
           return;
         }
+        try { sessionStorage.setItem("sti-splash-vu", "1"); } catch (e3) {}
         var fermer = function () {
           s.classList.add("cache");
           setTimeout(function () {
@@ -2616,7 +2622,7 @@
     </header>
 
     <!-- ======================= La Cote STI : tableau de bourse des technologies ======================= -->
-    <script src="./assets/js/config.js?v=425"></script>
+    <script src="./assets/js/config.js?v=465"></script>
     <script>
       /* v407 : pré-connexion Supabase dès le haut de page — le bandeau récupère les news de la régie
          sans attendre le coût froid DNS+TLS de la première requête (gagnat typique : 300–900 ms). */
@@ -2656,7 +2662,7 @@
       <div class="cote-ecran"><div class="cote-piste" id="cote-piste" aria-hidden="true"><span class="cote-news">🔔 Cote en cours de chargement…</span></div></div>
       <noscript><span style="padding:0 12px;font-size:12.5px;color:#fbbf24">Cotation du 23/10/2026 : HTML5 &middot; CSS3 &middot; JavaScript ES2026 &middot; SQL:2023 &middot; PHP 8.5.12</span></noscript>
     </aside>
-    <script src="./assets/js/cote-ticker.js?v=423" defer></script>
+    <script src="./assets/js/cote-ticker.js?v=465" defer></script>
 
     <main class="wrap">
       <!-- ======================= Hero ======================= -->
@@ -3369,23 +3375,47 @@
       <script id="complet-check">
         (function () {
           /* Auto-orientation du lien : page HTML convertie si elle existe,
-             sinon le PDF lui-même, sinon la carte passe en « à venir ». */
+             sinon le PDF lui-même, sinon la carte passe en « à venir ».
+             v465 : aucune requête HEAD inutile pour les liens déjà en .html + mémo sessionStorage. */
+          var cacheComplet = {};
+          try { cacheComplet = JSON.parse(sessionStorage.getItem("sti-complet-map-v1") || "{}") || {}; } catch (e) {}
+          function sauverCacheComplet() {
+            try { sessionStorage.setItem("sti-complet-map-v1", JSON.stringify(cacheComplet)); } catch (e) {}
+          }
           document.querySelectorAll('#complet [data-complet]').forEach(function (a) {
-            var pdf = a.getAttribute('href');
-            var html = pdf.replace(/\.pdf$/, '.pdf.html');
+            var pdf = a.getAttribute('href') || '';
+            if (!/\.pdf(?:$|[?#])/i.test(pdf)) {
+              var g0 = a.querySelector('.go');
+              if (g0 && g0.textContent.indexOf('Lire en ligne') === -1) g0.innerHTML = '📖 Lire en ligne ' + g0.innerHTML;
+              return;
+            }
+            var html = pdf.replace(/\.pdf($|[?#])/i, '.pdf.html$1');
+            if (cacheComplet[pdf] === 'html') {
+              a.href = html;
+              var gh = a.querySelector('.go');
+              if (gh && gh.textContent.indexOf('Lire en ligne') === -1) gh.innerHTML = '📖 Lire en ligne ' + gh.innerHTML;
+              return;
+            }
+            if (cacheComplet[pdf] === 'pdf') {
+              var gp = a.querySelector('.go');
+              if (gp && gp.textContent.indexOf('Ouvrir le PDF') === -1) gp.innerHTML = '⤓ Ouvrir le PDF ' + gp.innerHTML;
+              return;
+            }
             function probe(url, ok) {
               return fetch(url, { method: 'HEAD' }).then(function (r) {
                 if (r.ok) { ok(url); return true; }
                 return false;
-              });
+              }).catch(function () { return false; });
             }
             probe(html, function (u) {
+              cacheComplet[pdf] = 'html'; sauverCacheComplet();
               a.href = u;
               var g = a.querySelector('.go');
               if (g) g.innerHTML = '📖 Lire en ligne ' + g.innerHTML;
             }).then(function (trouve) {
               if (trouve) return;
-              probe(pdf, function (u) {
+              probe(pdf, function () {
+                cacheComplet[pdf] = 'pdf'; sauverCacheComplet();
                 var g = a.querySelector('.go');
                 if (g) g.innerHTML = '⤓ Ouvrir le PDF ' + g.innerHTML;
               }).then(function (trouve2) {
@@ -4943,6 +4973,44 @@
 
         window.addEventListener("scroll", updateScrollUI, { passive: true });
         updateScrollUI();
+
+        /* v465 : Au retour instantané bfcache (pageshow / sti-accueil-restored) depuis un cours ou un quiz,
+           rafraîchir tous les indicateurs locaux en <2 ms sans recharger le document. */
+        function rafraichirAccueilAuRetour() {
+          try {
+            var th = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "";
+            if (th !== "dark" && th !== "light") {
+              th = localStorage.getItem("sti-roue-theme") === "sombre" ? "dark" : "";
+            }
+            if (th === "dark") {
+              root.setAttribute("data-theme", "dark");
+              root.classList.add("dark", "dark-mode");
+            } else if (th === "light") {
+              root.setAttribute("data-theme", "light");
+              root.classList.remove("dark", "dark-mode");
+            }
+          } catch (eT) {}
+          try {
+            revisedMap = JSON.parse(localStorage.getItem(REVISED_KEY) || "{}") || {};
+          } catch (eR) { revisedMap = {}; }
+          updateRevisionUI();
+          updateResumeAndBookmarksUI();
+          if (typeof window.__stiMajBadgeFlashcards === "function") window.__stiMajBadgeFlashcards();
+          if (typeof window.__stiMajBadgeDebug === "function") window.__stiMajBadgeDebug();
+          if (typeof window.__stiRafraichirReprendre === "function") window.__stiRafraichirReprendre();
+          if (typeof window.rafraichirBadgesProgressionSTI === "function") window.rafraichirBadgesProgressionSTI();
+          try {
+            var mobMenu = document.getElementById("mobileLogoMenu");
+            var brandTrig = document.getElementById("brandLogoTrigger");
+            if (mobMenu) mobMenu.classList.remove("open");
+            if (brandTrig) brandTrig.setAttribute("aria-expanded", "false");
+          } catch (eM) {}
+          updateScrollUI();
+        }
+        window.addEventListener("pageshow", function (ev) {
+          if (ev && ev.persisted) rafraichirAccueilAuRetour();
+        });
+        window.addEventListener("sti-accueil-restored", rafraichirAccueilAuRetour);
       })();
     </script>
     <!-- ================= Tagline : effet machine à écrire (dactylo) ================= -->
@@ -5005,12 +5073,21 @@
     <script>
       (function () {
         var regSW = null;
+        function verifierMajSwAvecCooldown() {
+          if (!regSW) return;
+          try {
+            var lastUpd = parseInt(sessionStorage.getItem("sti-idx-sw-upd") || "0", 10) || 0;
+            if (Date.now() - lastUpd < 900000) return;
+            sessionStorage.setItem("sti-idx-sw-upd", String(Date.now()));
+          } catch (e) {}
+          regSW.update().catch(function () {});
+        }
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker
             .register("./sw.js", { updateViaCache: "none" })
             .then(function (reg) {
               regSW = reg;
-              reg.update().catch(function () {});
+              verifierMajSwAvecCooldown();
             })
             .catch(function () {});
           navigator.serviceWorker.addEventListener(
@@ -5025,11 +5102,10 @@
             }
           );
           document.addEventListener("visibilitychange", function () {
-            if (!document.hidden && regSW)
-              regSW.update().catch(function () {});
+            if (!document.hidden) verifierMajSwAvecCooldown();
           });
           setInterval(function () {
-            if (regSW) regSW.update().catch(function () {});
+            verifierMajSwAvecCooldown();
           }, 900000); /* 15 min */
         }
         var btn = document.getElementById("installBtn");
@@ -5189,18 +5265,17 @@
     </script>
 <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="assets/css/protection.css?v=227" />
-<script src="assets/js/protection.js?v=302" defer></script>
+<script src="assets/js/protection.js?v=461" defer></script>
 <!-- /Protection -->
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=425"></script>
 <script src="assets/js/acces.js?v=453"></script>
-<script src="assets/js/sync-progressions.js"></script>
+<script src="assets/js/sync-progressions.js?v=465"></script>
 <section id="nouveautes" style="max-width:1100px;margin:26px auto;padding:0 16px;">
   <h2 style="font-size:1.7rem;">🆕 Nouveautés de la plateforme</h2>
   <p>Les dernières mises en ligne — un badge <b>NOUVEAU</b> signale ce qui est paru depuis votre dernière visite. <a href="nouveautes.html"><b>Tout l'historique ➜</b></a></p>
   <div id="sti-nouveautes" data-racine="./" data-limite="4"><p>⏳ Chargement du journal…</p></div>
 </section>
 <script src="assets/js/nouveautes.js?v=451"></script>
-<script src="assets/js/reprendre.js"></script>
+<script src="assets/js/reprendre.js?v=465"></script>
 </body>
 </html>

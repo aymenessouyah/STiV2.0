@@ -827,7 +827,7 @@ window.addEventListener('message', function (ev) {
     el('fs').textContent = ev.data.full ? 'Quitter le plein écran' : 'Plein écran';
   }
 });
-window.addEventListener('beforeunload', function () { stop(); });
+window.addEventListener('pagehide', function () { stop(); });
 document.addEventListener('keydown', function (e) {
   var tg = e.target.tagName, k = e.key;
   if (e.ctrlKey || e.metaKey || e.altKey || tg == 'SELECT' || tg == 'INPUT') return;

@@ -508,9 +508,9 @@
           tsDerniereVerifVer = parseInt(sessionStorage.getItem("sti-ver-check-ts") || localStorage.getItem("sti-ver-check-ts") || "0", 10) || 0;
           verDejaVerifieeSess = sessionStorage.getItem("sti-conn-ver-checked") || localStorage.getItem("sti-conn-ver-checked") || "";
         } catch (e) {}
-        /* Sur les PC du labo3 (elevelabo3), vérifier toutes les 45 s ou à chaque navigation ; sinon toutes les 15 min */
-        var delaiVerif = estOrigineLocaleDossier ? 0 : (estPosteLabo3Init ? 45000 : 900000);
-        var besoinVerifVersion = Boolean(forcerImmediate) || estOrigineLocaleDossier || !verDejaVerifieeSess || (Date.now() - tsDerniereVerifVer > delaiVerif);
+        /* Sur les PC du labo3 (elevelabo3), vérifier toutes les 45 s ; en local toutes les 30 s ; sinon toutes les 15 min */
+        var delaiVerif = estOrigineLocaleDossier ? 30000 : (estPosteLabo3Init ? 45000 : 900000);
+        var besoinVerifVersion = Boolean(forcerImmediate) || !verDejaVerifieeSess || (Date.now() - tsDerniereVerifVer > delaiVerif);
         if (!besoinVerifVersion) return;
 
         try {
@@ -1372,6 +1372,11 @@
       }
       return;
     }
+    try {
+      var tsDureeSrv = parseInt(sessionStorage.getItem("sti-duree-srv-ts") || "0", 10) || 0;
+      if (seulementCacheLocal !== "force" && tsDureeSrv > 0 && Date.now() - tsDureeSrv < 180000) return;
+      sessionStorage.setItem("sti-duree-srv-ts", String(Date.now()));
+    } catch (eTs) {}
 
     var dNow = new Date();
     var jour = dNow.getDay();
@@ -9752,7 +9757,6 @@
         } catch (e) {}
       };
       window.addEventListener("pagehide", majTsNav);
-      window.addEventListener("beforeunload", majTsNav);
       window.addEventListener("focus", majTsNav);
       document.addEventListener("visibilitychange", majTsNav);
       document.addEventListener("click", majTsNav, true);
@@ -10016,7 +10020,7 @@
       }
       majFileOff();
       setInterval(majFileOff, 30000);
-      window.addEventListener("beforeunload", majFileOff);
+      window.addEventListener("pagehide", majFileOff);
       document.addEventListener("visibilitychange", function () {
         if (document.visibilityState === "hidden") majFileOff();
       });
@@ -10043,7 +10047,16 @@
         }
         envoyerPresence();
         setInterval(ferme, 30000); /* mise à jour présence + durée toutes les 30 s */
-        window.addEventListener("beforeunload", ferme);
+        window.addEventListener("pagehide", ferme);
+        window.addEventListener("pageshow", function (ev) {
+          if (ev && ev.persisted) {
+            debut = Date.now();
+            try { rafraichirDureeEtScoresServeur(uid, true); } catch (eP) {}
+            if (typeof window.rafraichirBadgesProgressionSTI === "function") {
+              try { window.rafraichirBadgesProgressionSTI(); } catch (eB) {}
+            }
+          }
+        });
         document.addEventListener("visibilitychange", function () {
           if (document.visibilityState === "hidden") ferme();
         });
