@@ -54,6 +54,14 @@
       : (c.indexOf("html") !== -1 ? "cours/html5.html" : "cours/sql.html")));
     return { typeLabel: typeLabel, nom: propre, lien: lienDefaut };
   }
+  function est3SIStrict() {
+    try {
+      var cs = JSON.parse(localStorage.getItem("sti-session-cache") || "{}") || {};
+      if (cs.isAdmin || cs.isGold || /\bGOLD\b/i.test(String(cs.lycee || "")) || /\bGOLD\b/i.test(String(cs.classe || ""))) return false;
+      var cl = String(cs.classe || "").trim().toUpperCase().replace(/[\s._\-]+/g, "");
+      return /^3(E|ÈME|EME)?SI([1-5])?$/i.test(cl);
+    } catch (e) { return false; }
+  }
   function trouverCible() {
     return document.getElementById("cours") || document.querySelector("main") || document.body;
   }
@@ -62,8 +70,10 @@
     if (exist && exist.parentNode) exist.parentNode.removeChild(exist);
     var prog = {};
     try { prog = JSON.parse(localStorage.getItem("sti-media-prog-v1") || "{}") || {}; } catch (e) {}
+    var mode3si = est3SIStrict();
     var meilleure = null;
     Object.keys(prog).forEach(function (k) {
+      if (mode3si && String(k).toLowerCase().indexOf("php") !== -1) return;
       var v = prog[k];
       var sec = typeof v === "number" ? v : (v && Number(v.t || v.time || v.sec || 0));
       var ts = (v && Number(v.maj || v.ts || 0)) || 0;

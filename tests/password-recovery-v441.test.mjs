@@ -937,7 +937,7 @@ test('v451 : nouveautés sans undefined + mode sombre, barre PC recalée à gauc
     innerHTML: '',
     getAttribute(k) {
       if (k === 'data-racine') return './';
-      if (k === 'data-limite') return '10';
+      if (k === 'data-limite') return '25';
       return null;
     },
     querySelectorAll() { return []; }
@@ -4288,7 +4288,8 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(cinq.some((o) => /^v468 — Audit intégral/.test(o.t)), 'v468 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v469 — Pagination PostgREST intégrale/.test(o.t)), 'v469 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v470 — Validation fonctionnelle E2E/.test(o.t)), 'v470 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v471 — Vérification intégrale de bout en bout/);
+  assert.ok(cinq.some((o) => /^v471 — Vérification intégrale de bout en bout/.test(o.t)), 'v471 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v472 — Audit forensique de toute la plateforme/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -5119,20 +5120,20 @@ test('v471 (structure) : 124/124 chemins Git exacts dans roue-revision.js (zéro
     assert.ok(gitTracked.has(resolved), `Chemin de révision introuvable avec casse exacte Git : ${p} -> ${resolved}`);
   }
 
-  // 2) Cache-busters v471, 43 contrôles dans sante.js et synchronisation PWA sti-atelier-v331
-  assert.match(mobileNavJs, /roue-revision\.js\?v=471/);
-  assert.match(mobileNavJs, /roue-plan\.js\?v=471/);
-  assert.match(ficheHtml, /roue-revision\.js\?v=471/);
-  assert.match(indexHtml, /reprendre\.js\?v=471/);
-  assert.match(adminHtml, /sante\.js\?v=471/);
+  // 2) Cache-busters v471+, 43 contrôles dans sante.js et synchronisation PWA sti-atelier-v331+
+  assert.match(mobileNavJs, /roue-revision\.js\?v=47\d/);
+  assert.match(mobileNavJs, /roue-plan\.js\?v=47\d/);
+  assert.match(ficheHtml, /roue-revision\.js\?v=47\d/);
+  assert.match(indexHtml, /reprendre\.js\?v=47\d/);
+  assert.match(adminHtml, /sante\.js\?v=47\d/);
   assert.equal((santeJs.match(/\{\s*cat:\s*"/g) || []).length, 43, 'sante.js doit exécuter 43 contrôles temps réel');
-  assert.match(swJs, /var CACHE = "sti-atelier-v331";/);
-  assert.match(swJs, /var UPDATE_ID = "v471-tester-tout-e2e";/);
-  assert.equal(nouv[0].version, 'v471');
-  assert.match(readmeMd, /sti-atelier-v331/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v33\d";/);
+  assert.match(swJs, /v471-tester-tout-e2e/);
+  assert.ok(nouv.some((n) => n.version === 'v471'), 'nouveautes.json doit conserver v471');
+  assert.match(readmeMd, /sti-atelier-v33\d/);
   assert.match(readmeMd, /\|\s*v471\s*\|/);
   assert.match(adminHtml, /v471 · sti-atelier-v331/);
-  assert.equal(offlineManifest.version, 'v471-sti-atelier-v331');
+  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
   assert.equal(offlineManifest.totalFiles, offlineManifest.files.length);
 });
 
@@ -5302,6 +5303,157 @@ test('v471 (comportemental VM) : roue-revision.js résout les 48 pages mixtes + 
   db.close();
   assert.deepEqual(resSql[0].values, [['4SI1', 2, 16.5]]);
 });
+
+test('v472 (structure) : 0 balise HTML avalée sur les 1 244 questions des 5 quiz, formatage SQL resReview, masquage zéro-flash php-recap.html et sw.js sti-atelier-v332', async () => {
+  const vm = await import('node:vm');
+  const phpHtml = read('quiz/php.html');
+  const sqlHtml = read('quiz/sql.html');
+  const accesJs = read('assets/js/acces.js');
+  const rouePlanJs = read('assets/js/roue-plan.js');
+  const reprendreJs = read('assets/js/reprendre.js');
+  const mobileNavJs = read('assets/js/mobile-nav.js');
+  const indexHtml = read('index.html');
+  const ficheHtml = read('ma-fiche-revision.html');
+  const adminHtml = read('admin.html');
+  const readmeMd = read('README.md');
+  const swJs = read('sw.js');
+  const nouv = JSON.parse(read('assets/data/nouveautes.json'));
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  for (const rel of [
+    'assets/js/acces.js',
+    'assets/js/roue-plan.js',
+    'assets/js/reprendre.js',
+    'assets/js/mobile-nav.js',
+    'sw.js',
+  ]) {
+    execFileSync(process.execPath, ['--check', join(root, rel)], { stdio: 'pipe' });
+  }
+
+  // 1) Aucune explication de quiz/php.html ni de quiz/sql.html ne contient de chevron < non échappé (hors b/strong/i/em/code/br/sup/sub)
+  const ALLOWED = /^<\/?(?:b|strong|i|em|code|br|sup|sub)(?:\s*\/)?>/i;
+  const phpQs = vm.runInNewContext(phpHtml.match(/^ {6}const QUESTIONS\s*=\s*(\[[\s\S]*?\n {6}\]);/m)[1]);
+  const sqlQs = vm.runInNewContext(sqlHtml.match(/^ {6}const QUESTIONS\s*=\s*(\[[\s\S]*?\n {6}\]);/m)[1]);
+  assert.equal(phpQs.length, 176);
+  assert.equal(sqlQs.length, 140);
+
+  for (const [label, arr] of [['php', phpQs], ['sql', sqlQs]]) {
+    arr.forEach((q, idx) => {
+      for (const field of ['explain', 'hint']) {
+        const s = String(q[field] || '');
+        const tags = s.match(/<[^>]*>?|<$/g) || [];
+        for (const tg of tags) {
+          assert.ok(ALLOWED.test(tg), `${label}#${idx}.${field} contient une balise brute non échappée : ${tg}`);
+        }
+      }
+    });
+  }
+
+  assert.match(phpHtml, /function formatExplainPhp\(txt\)/);
+  assert.match(sqlHtml, /function fmtExplainSql\(txt\)/);
+  assert.doesNotMatch(sqlHtml, /Explication : \$\{esc\(q\.explain\)\}/, 'resReview dans quiz/sql.html doit rendre <strong> via fmtExplainSql');
+
+  // 2) Cohérence 3ème SI hors PHP (acces.js, roue-plan.js, ma-fiche-revision.html, reprendre.js) + sw.js sti-atelier-v332
+  assert.match(accesJs, /a\[href\*='cours\/php-recap\.html'\]/);
+  assert.match(accesJs, /a\[href\*="cours\/php-recap\.html"\]/);
+  assert.match(rouePlanJs, /function est3SIStrict\(\)/);
+  assert.match(ficheHtml, /function est3SIStrict\(\)/);
+  assert.match(reprendreJs, /function est3SIStrict\(\)/);
+  assert.match(mobileNavJs, /roue-plan\.js\?v=472/);
+  assert.match(indexHtml, /reprendre\.js\?v=472/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v332";/);
+  assert.match(swJs, /var UPDATE_ID = "v472-test-plateforme-complet";/);
+  assert.equal(nouv[0].version, 'v472');
+  assert.match(readmeMd, /sti-atelier-v332/);
+  assert.match(readmeMd, /\|\s*v472\s*\|/);
+  assert.match(adminHtml, /v472 · sti-atelier-v332/);
+  assert.equal(offlineManifest.version, 'v472-sti-atelier-v332');
+});
+
+test('v472 (comportemental VM) : filtrage PHP pour un élève 3ème SI (roue-plan, reprendre, ma-fiche-revision) vs maintien 4ème SI / Gold, et sécurisation formatExplainPhp / fmtExplainSql', async () => {
+  const vm = await import('node:vm');
+
+  // A) roue-plan.js : un élève 3SI2 ne voit que 4 chapitres (sans PHP & MySQLi), tandis qu'un 4SI1 ou Gold voit les 5 chapitres
+  const rouePlanJs = read('assets/js/roue-plan.js');
+  const makePlanVm = (sessionObj) => {
+    const store = {
+      'sti-session-cache': JSON.stringify(sessionObj),
+      'sti-bac-date-v439': '2027-05-20',
+    };
+    const ctx = {
+      localStorage: { getItem: (k) => store[k] || null, setItem: (k, v) => { store[k] = String(v); }, removeItem: (k) => { delete store[k]; } },
+      location: { protocol: 'https:' },
+      document: {
+        readyState: 'complete',
+        querySelector: () => null,
+        createElement: () => ({ id: '', innerHTML: '', setAttribute() {}, querySelector: () => null }),
+        addEventListener() {},
+      },
+      setInterval: () => 1,
+      Math, Date, JSON, Object, Array, String, Number, Boolean, RegExp, isNaN,
+    };
+    ctx.window = ctx;
+    vm.runInNewContext(rouePlanJs, ctx, { filename: 'assets/js/roue-plan.js' });
+    return ctx.STI_PLAN.etat();
+  };
+
+  const etat3si = makePlanVm({ classe: '3eme SI2', email: 'ines@eleve.tn' });
+  assert.equal(etat3si.totalChapitres, 4, 'Un élève de 3ème SI ne doit avoir que 4 chapitres au plan');
+  assert.ok(!Array.from(etat3si.chapitres, (c) => c.cle).includes('PHP & MySQLi'));
+
+  const etat3siGold = makePlanVm({ classe: '3eme SI2', isGold: true, email: 'vip@eleve.tn' });
+  assert.equal(etat3siGold.totalChapitres, 5, 'Un abonné Gold garde accès aux 5 chapitres');
+
+  const etat4si = makePlanVm({ classe: '4eme SI1', email: 'rami@eleve.tn' });
+  assert.equal(etat4si.totalChapitres, 5, 'Un élève de 4ème SI voit les 5 chapitres dont PHP & MySQLi');
+
+  // B) reprendre.js : un élève 3ème SI sur un PC partagé ignore les médias PHP et reprend son cours HTML/CSS/JS/SQL
+  const reprendreJs = read('assets/js/reprendre.js');
+  let boxRep = null;
+  const cible = { parentNode: { insertBefore(b) { boxRep = b; } } };
+  const storeRep = {
+    'sti-session-cache': JSON.stringify({ classe: '3SI1', email: 'sami@eleve.tn' }),
+    'sti-media-prog-v1': JSON.stringify({
+      'video:php-cours': { t: 300, maj: 9000 },
+      'video:html5-cours': { t: 125, maj: 4000 },
+    }),
+  };
+  const winRep = {
+    localStorage: { getItem: (k) => storeRep[k] || null, setItem: (k, v) => { storeRep[k] = String(v); } },
+    document: {
+      readyState: 'complete',
+      getElementById: (id) => (id === 'cours' ? cible : (id === 'sti-reprendre-x' ? { addEventListener() {} } : null)),
+      querySelector: () => cible,
+      createElement: () => ({ id: '', innerHTML: '', setAttribute() {}, remove() {} }),
+      addEventListener() {},
+    },
+    Math, Date, JSON, Object, String, Number, RegExp,
+  };
+  winRep.window = winRep;
+  vm.runInNewContext(reprendreJs, winRep, { filename: 'assets/js/reprendre.js' });
+  assert.ok(boxRep, 'La carte Reprendre doit s’afficher sur le média 3SI valide');
+  assert.match(boxRep.innerHTML, /HTML5 — Le cours complet/);
+  assert.doesNotMatch(boxRep.innerHTML, /cours\/php\.html/);
+
+  // C) Vérification comportementale de formatExplainPhp & fmtExplainSql
+  const phpHtml = read('quiz/php.html');
+  const sqlHtml = read('quiz/sql.html');
+  const fnPhpM = phpHtml.match(/function formatExplainPhp\(txt\) \{[\s\S]*?\n {6}\}/);
+  const fnSqlM = sqlHtml.match(/function esc\(txt\) \{[\s\S]*?function fmtExplainSql\(txt\) \{[\s\S]*?\n {6}\}/);
+  assert.ok(fnPhpM && fnSqlM);
+  const fmtPhp = vm.runInNewContext(`(${fnPhpM[0]})`);
+  const fmtSql = vm.runInNewContext(`${fnSqlM[0]}; fmtExplainSql;`);
+
+  assert.equal(
+    fmtPhp('Balise <b><?php</b> et <code><select></code>'),
+    'Balise <b>&lt;?php</b> et <code>&lt;select></code>'
+  );
+  assert.equal(
+    fmtSql('<strong>[Bonus]</strong> Opérateur <> et <script>alert(1)</script>'),
+    '<strong>[Bonus]</strong> Opérateur &lt;&gt; et &lt;script&gt;alert(1)&lt;/script&gt;'
+  );
+});
+
 
 
 

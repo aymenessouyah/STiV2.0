@@ -39980,7 +39980,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             "<php> … </php>"
           ],
           "answer": 0,
-          "explain": "Un script PHP s'ouvre par <b><?php</b> et se ferme par <b>?></b> ; c'est la syntaxe générale présentée dans le cours.",
+          "explain": "Un script PHP s'ouvre par <b>&lt;?php</b> et se ferme par <b>?&gt;</b> ; c'est la syntaxe générale présentée dans le cours.",
           "hint": "Un chevron, un point d'interrogation, le mot php."
         },
         {
@@ -40190,7 +40190,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             "Une erreur : ECOLE n'est pas une variable"
           ],
           "answer": 1,
-          "explain": "L'opérateur de concaténation <b>.</b> colle la balise HTML <code><HR></code> et la valeur de la constante ECOLE.",
+          "explain": "L'opérateur de concaténation <b>.</b> colle la balise HTML <code>&lt;HR&gt;</code> et la valeur de la constante ECOLE.",
           "hint": "Qui est interprété par le navigateur ?"
         },
         {
@@ -40340,7 +40340,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             "Plus petit que"
           ],
           "answer": 0,
-          "explain": "Dans le cours, <b><></b> est l'opérateur de comparaison « différent de » (l'équivalent de !=).",
+          "explain": "Dans le cours, <b>&lt;&gt;</b> est l'opérateur de comparaison « différent de » (l'équivalent de !=).",
           "hint": "Le contraire de =="
         },
         {
@@ -41420,7 +41420,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             "$_GET['nom']"
           ],
           "answer": 0,
-          "explain": "Le champ <code><input name=\"nom\"></code> arrive dans <b>$_POST['nom']</b> quand le formulaire est envoyé en méthode POST.",
+          "explain": "Le champ <code>&lt;input name=\"nom\"&gt;</code> arrive dans <b>$_POST['nom']</b> quand le formulaire est envoyé en méthode POST.",
           "hint": "Le underscore est au début, pas à la fin."
         },
         {
@@ -42275,7 +42275,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             "Un tableau HTML complet comportant une bordure autour de chaque colonne"
           ],
           "answer": 1,
-          "explain": "Dans l'animation, le coursier rapporte une page contenant une liste <b><select></b> avec 4 <b><option></b> (Ali, Sara, Omar, Lina) — un élève par ligne.",
+          "explain": "Dans l'animation, le coursier rapporte une page contenant une liste <b>&lt;select&gt;</b> avec 4 <b>&lt;option&gt;</b> (Ali, Sara, Omar, Lina) — un élève par ligne.",
           "hint": "Une liste déroulante."
         },
         {
@@ -43281,6 +43281,9 @@ Check your Browserslist config to be sure that your targets are set up correctly
           : 'Question suivante <i class="fa-solid fa-arrow-right"></i>';
         $("nextBtn").classList.remove("hidden");
       }
+      function formatExplainPhp(txt) {
+        return String(txt == null ? "" : txt).replace(/<(?![\/]?(?:b|strong|i|em|code|br|sup|sub)\b[^>]*>)/gi, "&lt;");
+      }
       function explain(ok, head, q) {
         const box = $("explainBox");
         box.classList.remove("hidden");
@@ -43289,7 +43292,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           (ok
             ? "bg-emerald-500/10 border-emerald-400/30"
             : "bg-red-500/10 border-red-400/30");
-        box.innerHTML = `<div class="font-bold mb-1">${head}</div><div class="text-slate-200"><span class="font-bold text-cyan-300">💡 Pourquoi :</span> ${q.explain}</div>`;
+        box.innerHTML = `<div class="font-bold mb-1">${head}</div><div class="text-slate-200"><span class="font-bold text-cyan-300">💡 Pourquoi :</span> ${formatExplainPhp(q.explain)}</div>`;
       }
       function nextQuestion() {
         if (quiz.idx >= quiz.list.length - 1) {
@@ -43364,7 +43367,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
         $("hintBox").classList.remove("hidden");
         $(
           "hintBox"
-        ).innerHTML = `<b>💡 Indice :</b> ${q.hint} <span class="text-xs opacity-70">(−50 pts sur cette question)</span>`;
+        ).innerHTML = `<b>💡 Indice :</b> ${formatExplainPhp(q.hint)} <span class="text-xs opacity-70">(−50 pts sur cette question)</span>`;
         if (!quiz.hintUsed) {
           quiz.hintUsed = true;
           quiz.malus = (quiz.malus || 0) + 50;
@@ -43788,7 +43791,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
             )}</span> ${
               a.pts ? `· <span class="text-lime-300">+${a.pts} pts</span>` : ""
             }</div>
-   <div class="text-xs text-slate-300 mt-1">💡 ${a.q.explain}</div>${
+   <div class="text-xs text-slate-300 mt-1">💡 ${formatExplainPhp(a.q.explain)}</div>${
               !a.correct
                 ? `<div class="mt-1.5 p-2 rounded-xl bg-amber-500/10 border border-amber-400/30 text-xs text-amber-200">🧭 <b>Conseil :</b> ${escapeHtml(
                     conseilParFautePhp(a)

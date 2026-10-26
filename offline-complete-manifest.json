@@ -1,9 +1,9 @@
 {
-  "version": "v471-sti-atelier-v331",
-  "generatedAt": "2026-10-26T09:11:52.394Z",
+  "version": "v472-sti-atelier-v332",
+  "generatedAt": "2026-10-26T09:58:00.000Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 643,
-  "totalBytes": 685647169,
+  "totalBytes": 685651904,
   "files": [
     {
       "path": "404.html",
@@ -12,8 +12,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 338985,
-      "gitSha": "b18fea0fda65d14f4b20fda58b00625e9bc7eeeb"
+      "bytes": 339024,
+      "gitSha": "83d3e18dd6a16c175f67cc995631c863e8712dba"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -182,8 +182,8 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 31803,
-      "gitSha": "8af769aa578940a042ca5c977dc6ed67ca940715"
+      "bytes": 32584,
+      "gitSha": "13ac8b4b9725126e8bca96987fc4900bc092a898"
     },
     {
       "path": "assets/data/quiz-banque.json",
@@ -457,8 +457,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 915189,
-      "gitSha": "465c3041dcc3a4ef3c0d12795c2d499f44523731"
+      "bytes": 915303,
+      "gitSha": "64d92c059b94d2a52da563384096802ff1a5cf0a"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -513,7 +513,7 @@
     {
       "path": "assets/js/mobile-nav.js",
       "bytes": 28927,
-      "gitSha": "db0a4b3a08bfea480b1bfde5ce8b3b1a6f333a40"
+      "gitSha": "5f3a6359240df2214075af0f823058cdc41f558e"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -592,8 +592,8 @@
     },
     {
       "path": "assets/js/reprendre.js",
-      "bytes": 7016,
-      "gitSha": "c78e73e4b44cf5ff9fc30e8859db96732415e323"
+      "bytes": 7564,
+      "gitSha": "8c8e88a14a0f7a4bddb059cf2b162a439e93c640"
     },
     {
       "path": "assets/js/retour-livre-smart.js",
@@ -622,18 +622,18 @@
     },
     {
       "path": "assets/js/roue-plan.js",
-      "bytes": 8900,
-      "gitSha": "fed6f5ee93765e7c4dd90c62619c811b4c873936"
+      "bytes": 9524,
+      "gitSha": "846b0903201ffb34eb7fb26ab6fcee943a0bb008"
     },
     {
       "path": "assets/js/roue-revision.js",
       "bytes": 19012,
-      "gitSha": "1c224927c2f840a7d8ccac689e4dd82b10ba3b7d"
+      "gitSha": "9c13919efa9ee448198ea8aacf8f531f8f337e4d"
     },
     {
       "path": "assets/js/sante.js",
       "bytes": 10952,
-      "gitSha": "e6d403fee4753e515bd98633357b5defc4287984"
+      "gitSha": "ee46b6b168b2fdc2cdde3cad05a3105233e1e048"
     },
     {
       "path": "assets/js/sauvegarde.js",
@@ -2603,7 +2603,7 @@
     {
       "path": "index.html",
       "bytes": 197052,
-      "gitSha": "1c723dba2e8a41ea5b248b1b666b9b9f4719a333"
+      "gitSha": "df71c212ad95db00477b051e6ea18f28f1b38d35"
     },
     {
       "path": "Lancer-Labo3-Hors-Ligne.bat",
@@ -2622,8 +2622,8 @@
     },
     {
       "path": "ma-fiche-revision.html",
-      "bytes": 14158,
-      "gitSha": "d25f9a917fb5303ee231044c39f8dbc339db8ba7"
+      "bytes": 15163,
+      "gitSha": "f654eb4855325a3fcb0ae5f7beeb25eed9625794"
     },
     {
       "path": "manifest.webmanifest",
@@ -3172,8 +3172,8 @@
     },
     {
       "path": "quiz/php.html",
-      "bytes": 1773058,
-      "gitSha": "62256466b2871e4e94f172ffb7dffb140f815760"
+      "bytes": 1773315,
+      "gitSha": "63ddf2563b2273c7fce8eb967fec80d6bfb95684"
     },
     {
       "path": "quiz/pp.html",
@@ -3182,8 +3182,8 @@
     },
     {
       "path": "quiz/sql.html",
-      "bytes": 1892221,
-      "gitSha": "1e2f419d7e16dfddd9c102a3b84e9ddc0d67774b"
+      "bytes": 1892372,
+      "gitSha": "08e6b1050788d0014a058e2319b7921fe7d25bd4"
     },
     {
       "path": "quiz/tableaux.html",
@@ -3192,8 +3192,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 23990,
-      "gitSha": "6058861fcc55d39601055923f0bac956576b94c5"
+      "bytes": 24327,
+      "gitSha": "a61ba3dba8a9899f47ed26a974400fd70a3ac201"
     },
     {
       "path": "revision-erreurs.html",
@@ -3217,8 +3217,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 81718,
-      "gitSha": "2029a1fd11cef68a1b9a858a0893593c9fdabd51"
+      "bytes": 82597,
+      "gitSha": "5fe640149f794bed2cc3dd6524af793b1c8234a3"
     }
   ]
 }

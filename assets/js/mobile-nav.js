@@ -419,7 +419,7 @@
       sc6.src = R + "assets/js/rappels-locaux.js?v=436";
       sc6.async = true; (doc.head || doc.documentElement).appendChild(sc6);
       var sc7 = doc.createElement("script");
-      sc7.src = R + "assets/js/roue-plan.js?v=471";
+      sc7.src = R + "assets/js/roue-plan.js?v=472";
       sc7.async = true; (doc.head || doc.documentElement).appendChild(sc7);
       var sc8 = doc.createElement("script");
       sc8.src = R + "assets/js/rayonsx-surligneur.js?v=449";
