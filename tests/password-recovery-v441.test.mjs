@@ -4129,18 +4129,18 @@ test('v468 (structure) : liens Défis JS corrigés (zéro 404 defis-javascript.h
     }
   }
 
-  // 4) Cache-busters v468 + README + sw.js sti-atelier-v328 + offline-complete-manifest.json
-  assert.match(adminHtml, /assets\/js\/config\.js\?v=468/);
-  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=468/);
-  assert.match(adminHtml, /assets\/js\/analytique\.js\?v=468/);
-  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=468/);
-  assert.match(adminHtml, /assets\/js\/sante\.js\?v=468/);
+  // 4) Cache-busters v468+ + README + sw.js sti-atelier-v328+ + offline-complete-manifest.json
+  assert.match(adminHtml, /assets\/js\/config\.js\?v=46[89]/);
+  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=46[89]/);
+  assert.match(adminHtml, /assets\/js\/analytique\.js\?v=46[89]/);
+  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=46[89]/);
+  assert.match(adminHtml, /assets\/js\/sante\.js\?v=46[89]/);
   assert.match(readmeMd, /sti-atelier-v328/);
   const tickerLines = readmeMd.split('\n').filter((l) => /^\|\s*v\d{3}/.test(l));
-  assert.match(tickerLines[tickerLines.length - 1], /^\|\s*v468\s*\|/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v328";/);
-  assert.match(swJs, /var UPDATE_ID = "v468-audit-integral";/);
-  assert.equal(offlineManifest.version, 'v468-audit-integral');
+  assert.ok(tickerLines.some((l) => /^\|\s*v468\s*\|/.test(l)), 'README.md doit conserver la ligne v468');
+  assert.match(swJs, /sti-atelier-v328/);
+  assert.match(swJs, /v468-audit-integral/);
+  assert.match(offlineManifest.version, /^v4\d{2}-/);
   assert.equal(offlineManifest.totalFiles, offlineManifest.files.length);
   for (const mf of offlineManifest.files) {
     assert.ok(!mf.path.startsWith('"'), `Chemin manifeste mal échappé : ${mf.path}`);
@@ -4285,7 +4285,274 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
     return { t: `${ver} — ${desc}`, c: '#fbbf24' };
   }).filter((o) => o.t.length > 8);
   assert.equal(cinq.length, 5);
-  assert.match(cinq[0].t, /^v468 — Audit intégral/);
+  assert.ok(cinq.some((o) => /^v468 — Audit intégral/.test(o.t)), 'v468 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v469 — Pagination PostgREST intégrale/);
+});
+
+test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
+  const adminJs = read('assets/js/admin.js');
+  const admCouvJs = read('assets/js/admin-couverture.js');
+  const admRevJs = read('assets/js/admin-revision.js');
+  const graphJs = read('assets/js/graphiques-activite.js');
+  const anaJs = read('assets/js/analytique.js');
+  const roueCouvJs = read('assets/js/roue-couverture.js');
+  const couvJson = JSON.parse(read('assets/pages-couverture.json'));
+  const annexeHtml5 = read('documents/annexes/annexe-html5.pdf.html');
+  const adminHtml = read('admin.html');
+  const readmeMd = read('README.md');
+  const swJs = read('sw.js');
+  const nouveautesJson = JSON.parse(read('assets/data/nouveautes.json'));
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  for (const rel of [
+    'assets/js/admin.js',
+    'assets/js/admin-couverture.js',
+    'assets/js/admin-revision.js',
+    'assets/js/graphiques-activite.js',
+    'assets/js/analytique.js',
+    'assets/js/roue-couverture.js',
+    'sw.js',
+  ]) {
+    execFileSync(process.execPath, ['--check', join(root, rel)], { stdio: 'pipe' });
+  }
+
+  // 1) Zéro appel .limit(N) avec N > 1000 dans les modules JS applicatifs (PostgREST db-max-rows = 1000)
+  for (const rel of [
+    'assets/js/admin.js',
+    'assets/js/admin-couverture.js',
+    'assets/js/admin-revision.js',
+    'assets/js/graphiques-activite.js',
+    'assets/js/analytique.js',
+    'assets/js/quiz-admin.js',
+    'assets/js/admin-erreurs.js',
+    'assets/js/quiz-sync.js',
+    'assets/js/sauvegarde.js',
+    'assets/js/acces.js',
+  ]) {
+    const src = read(rel);
+    const over1000 = [...src.matchAll(/\.limit\(\s*(\d+)\s*\)/g)].filter((m) => Number(m[1]) > 1000);
+    assert.equal(over1000.length, 0, `${rel} ne doit contenir aucun .limit(>1000) tronqué par PostgREST`);
+  }
+  assert.match(adminJs, /function lireToutPagineSbAdmin\(fabriquerRequete, plafond\)/);
+  assert.match(admCouvJs, /function lireToutPagine\(fabriquerRequete, plafond\)/);
+  assert.match(admRevJs, /function lireToutPagine\(fabriquerRequete, plafond\)/);
+  assert.match(graphJs, /s\.from\("sti_quiz_parties"\)[\s\S]*?\.range\(deQ,\s*deQ\s*\+\s*999\)/);
+
+  // 2) Parité exacte 124/124 entre assets/pages-couverture.json et le repli hors-ligne de roue-couverture.js
+  const secM = roueCouvJs.match(/var PAGES = \[([\s\S]*?)\];/);
+  assert.ok(secM, 'PAGES présent dans roue-couverture.js');
+  const secoursPages = Array.from(vm.runInNewContext('[' + secM[1] + ']')).map((p) => String(p).toLowerCase()).sort();
+  const manifestPages = [...couvJson.pages].map((p) => String(p).toLowerCase()).sort();
+  assert.equal(secoursPages.length, 124);
+  assert.deepEqual(secoursPages, manifestPages, 'Le repli hors-ligne de roue-couverture.js doit correspondre exactement aux 124 pages de pages-couverture.json');
+
+  // 3) Annexe HTML5 : cible #annexe-html5 présente + correction de la coquille "aricle" -> "article" + piste barre analytique.js
+  assert.match(annexeHtml5, /<main id="annexe-html5">/);
+  assert.doesNotMatch(annexeHtml5, /\baricle\b/i);
+  assert.match(annexeHtml5, /<span style="font-weight:700">article <\/span>/);
+  assert.match(anaJs, /background:var\(--adm-border,#e2e8f0\)/);
+
+  // 4) Synchronisation des versions v469 / sti-atelier-v329
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=469-pagination/);
+  assert.match(adminHtml, /assets\/js\/admin-couverture\.js\?v=469/);
+  assert.match(adminHtml, /assets\/js\/admin-revision\.js\?v=469/);
+  assert.match(adminHtml, /assets\/js\/graphiques-activite\.js\?v=469/);
+  assert.match(adminHtml, /assets\/js\/analytique\.js\?v=469/);
+  assert.match(readmeMd, /sti-atelier-v329/);
+  assert.ok(nouveautesJson.some((n) => n.version === 'v469'));
+  assert.match(swJs, /var CACHE = "sti-atelier-v329";/);
+  assert.match(swJs, /var UPDATE_ID = "v469-pagination-integrale";/);
+  assert.equal(offlineManifest.version, 'v469-pagination-integrale');
+  for (const sqlRef of [
+    'MIGRATION-v358-QUIZ-SYNC.sql',
+    'MIGRATION-v365-REPONSES.sql',
+    'documents/sql/sti_diagnostics.sql',
+    'documents/sql/sti_observations.sql',
+  ]) {
+    assert.ok(offlineManifest.files.some((f) => f.path === sqlRef), `${sqlRef} doit être inclus dans offline-complete-manifest.json`);
+  }
+});
+
+test('v469 (comportemental VM) : pagination .range() multi-pages (> 1 000 lignes) dans admin-couverture.js, admin-revision.js et graphiques-activite.js', async () => {
+  const admCouvJs = read('assets/js/admin-couverture.js');
+  const admRevJs = read('assets/js/admin-revision.js');
+  const graphJs = read('assets/js/graphiques-activite.js');
+
+  const makePagedQuery = (rows, logArr, tbl) => {
+    const q = {
+      select() { return q; },
+      neq() { return q; },
+      eq() { return q; },
+      gte() { return q; },
+      order() { return q; },
+      range(de, a) {
+        logArr.push({ tbl, de, a });
+        return Promise.resolve({ data: rows.slice(de, a + 1), error: null });
+      },
+    };
+    return q;
+  };
+
+  // 1) admin-couverture.js : 2 450 parties de quiz + 2 150 sessions d'accès paginées en 3 tranches de 1 000
+  const couvRanges = [];
+  const couvParties = Array.from({ length: 2450 }, (_, i) => ({
+    id: i + 1,
+    user_id: 'u-couv-1',
+    score: i < 1000 ? 4 : 20,
+    total: 20,
+    cree_le: '2026-10-25T10:00:00Z',
+  }));
+  const couvAcces = Array.from({ length: 2150 }, (_, i) => ({
+    id: i + 1,
+    user_id: 'u-couv-1',
+    debut: '2026-10-26T08:00:00Z',
+  }));
+  const couvEls = {};
+  const getCouvEl = (id) => (couvEls[id] ||= {
+    id,
+    value: id === 'couv-classe' ? '*' : (id === 'couv-seuil' ? '25' : '14'),
+    disabled: false,
+    innerHTML: '',
+    textContent: '',
+    style: {},
+    addEventListener() {},
+    querySelectorAll() { return []; },
+  });
+  const couvCtx = vm.createContext({
+    console, Date, Math, JSON, Number, String, Object, Array, Promise, Error, RegExp, parseInt, parseFloat, isNaN,
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'pub' },
+    supabase: {
+      createClient: () => ({
+        from: (tbl) => {
+          if (tbl === 'profiles') return makePagedQuery([{ id: 'u-couv-1', email: 'ines@eleve.tn', nom: 'Mansour', prenom: 'Ines', classe: '4SI1', statut: 'actif' }], couvRanges, tbl);
+          if (tbl === 'sti_progressions') return makePagedQuery([{ user_id: 'u-couv-1', maj: '2026-10-26T08:00:00Z', donnees: { 'sti-pages-vues-v432': { 'cours/html5.html': 1, 'cours/sql.html': 1 } } }], couvRanges, tbl);
+          if (tbl === 'sti_quiz_parties') return makePagedQuery(couvParties, couvRanges, tbl);
+          if (tbl === 'acces') return makePagedQuery(couvAcces, couvRanges, tbl);
+          return makePagedQuery([], couvRanges, tbl);
+        },
+      }),
+    },
+    fetch: async () => ({ ok: true, json: async () => ({ pages: ['cours/html5.html', 'cours/sql.html', 'cours/php.html', 'cours/javascript.html'] }) }),
+    document: { getElementById: getCouvEl, readyState: 'complete', addEventListener() {} },
+  });
+  couvCtx.window = couvCtx;
+  vm.runInContext(admCouvJs, couvCtx, { filename: 'assets/js/admin-couverture.js' });
+  await couvCtx.STI_COUV_ADMIN.calculer();
+  assert.equal(couvRanges.filter((c) => c.tbl === 'sti_quiz_parties').length, 3, '3 pages .range() attendues pour 2 450 quiz');
+  assert.equal(couvRanges.filter((c) => c.tbl === 'acces').length, 3, '3 pages .range() attendues pour 2 150 accès');
+  const couvLignes = Array.from(couvCtx.STI_COUV_ADMIN.lignes());
+  assert.equal(couvLignes.length, 1);
+  assert.equal(couvLignes[0].note, 13.5, 'Moyenne /20 calculée sur les 2 450 parties (13,5/20) au lieu de tronquer à 1 000 (4/20)');
+
+  // 2) admin-revision.js : 1 320 élèves et 1 320 progressions paginés en 2 tranches (0..999 et 1000..1999)
+  const revRanges = [];
+  const revProfiles = Array.from({ length: 1320 }, (_, i) => ({
+    id: `u-rev-${i + 1}`,
+    email: `eleve${i + 1}@sti.tn`,
+    nom: `Nom${i + 1}`,
+    prenom: 'Test',
+    classe: '4SI2',
+    statut: 'actif',
+  }));
+  const revProgs = Array.from({ length: 1320 }, (_, i) => ({
+    user_id: `u-rev-${i + 1}`,
+    maj: '2026-10-26T07:00:00Z',
+    donnees: { 'sti-pages-vues-v432': { 'cours/sql.html': 1 } },
+  }));
+  const revEls = {};
+  const getRevEl = (id) => (revEls[id] ||= {
+    id,
+    value: id === 'rev-classe' ? '*' : (id === 'rev-adhesion' ? '50' : '3'),
+    disabled: false,
+    innerHTML: '',
+    textContent: '',
+    style: {},
+    addEventListener() {},
+    querySelectorAll() { return []; },
+  });
+  const revCtx = vm.createContext({
+    console, Date, Math, JSON, Number, String, Object, Array, Promise, Error, RegExp, parseInt, parseFloat, isNaN,
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'pub' },
+    supabase: {
+      createClient: () => ({
+        from: (tbl) => {
+          if (tbl === 'profiles') return makePagedQuery(revProfiles, revRanges, tbl);
+          if (tbl === 'sti_progressions') return makePagedQuery(revProgs, revRanges, tbl);
+          return makePagedQuery([], revRanges, tbl);
+        },
+      }),
+    },
+    fetch: async () => ({ ok: true, json: async () => ({ pages: ['cours/sql.html', 'cours/php.html'] }) }),
+    document: { getElementById: getRevEl, readyState: 'complete', addEventListener() {} },
+  });
+  revCtx.window = revCtx;
+  vm.runInContext(admRevJs, revCtx, { filename: 'assets/js/admin-revision.js' });
+  await revCtx.STI_SUIVI_REVISION.calculer();
+  assert.equal(revRanges.filter((c) => c.tbl === 'profiles').length, 2, '2 pages .range() attendues pour 1 320 profils');
+  assert.equal(revRanges.filter((c) => c.tbl === 'sti_progressions').length, 2, '2 pages .range() attendues pour 1 320 progressions');
+  assert.equal(Array.from(revCtx.STI_SUIVI_REVISION.lignes()).length, 1320);
+
+  // 3) graphiques-activite.js : 1 650 parties de quiz paginées en 2 tranches (0..999 et 1000..1999)
+  const graphRanges = [];
+  const nowIso = new Date().toISOString();
+  const graphQuizRows = Array.from({ length: 1650 }, (_, i) => ({
+    id: i + 1,
+    cree_le: nowIso,
+    quiz: 'sql',
+    user_id: i < 900 ? 'u-g1' : 'u-g2',
+  }));
+  const graphAccesRows = [
+    { id: 1, debut: nowIso, page: 'cours/sql.html', user_id: 'u-g1' },
+  ];
+  const makeCanvas = () => ({
+    parentElement: { clientWidth: 640 },
+    width: 640,
+    height: 240,
+    style: {},
+    getContext: () => ({
+      setTransform() {}, clearRect() {}, beginPath() {}, moveTo() {}, lineTo() {}, stroke() {},
+      fillRect() {}, strokeRect() {}, fillText() {}, arc() {}, arcTo() {}, rect() {}, roundRect() {},
+      fill() {}, closePath() {}, save() {}, restore() {}, clip() {}, setLineDash() {},
+      measureText: () => ({ width: 24 }),
+      createLinearGradient: () => ({ addColorStop() {} }),
+    }),
+  });
+  const graphEls = {
+    'bloc-sec-graphiques': { addEventListener() {} },
+    'graph-periode': { value: '14', addEventListener() {} },
+    'btn-graph-charger': { addEventListener() {} },
+    'graph-resume': { textContent: '' },
+    'graph-jours': makeCanvas(),
+    'graph-pages': makeCanvas(),
+  };
+  const graphCtx = vm.createContext({
+    console, Date, Math, JSON, Number, String, Object, Array, Promise, Error, RegExp, parseInt, parseFloat, isNaN,
+    devicePixelRatio: 1,
+    setTimeout() {},
+    addEventListener() {},
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'pub' },
+    supabase: {
+      createClient: () => ({
+        auth: { getSession: async () => ({ data: { session: { access_token: 'adm-tok' } } }) },
+        from: (tbl) => {
+          if (tbl === 'acces') return makePagedQuery(graphAccesRows, graphRanges, tbl);
+          if (tbl === 'sti_quiz_parties') return makePagedQuery(graphQuizRows, graphRanges, tbl);
+          return makePagedQuery([], graphRanges, tbl);
+        },
+      }),
+    },
+    document: {
+      readyState: 'complete',
+      getElementById: (id) => graphEls[id] || null,
+      addEventListener() {},
+    },
+  });
+  graphCtx.window = graphCtx;
+  vm.runInContext(graphJs, graphCtx, { filename: 'assets/js/graphiques-activite.js' });
+  await new Promise((r) => setImmediate(r));
+  await new Promise((r) => setImmediate(r));
+  assert.equal(graphRanges.filter((c) => c.tbl === 'sti_quiz_parties').length, 2, '2 pages .range() lues pour 1 650 parties de quiz dans graphiques-activite.js');
+  assert.match(graphEls['graph-resume'].textContent, /1650 partie\(s\) de quiz/);
 });
 
 

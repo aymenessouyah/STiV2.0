@@ -170,6 +170,7 @@
         var r = await s.from("acces").select("debut,page,user_id")
           .gte("debut", depuis.toISOString())
           .order("debut", { ascending: true })
+          .order("id", { ascending: true })
           .range(de, de + 999);
         if (r.error) throw r.error;
         lignes = lignes.concat(r.data || []);
@@ -179,11 +180,18 @@
       var visites = lignes.filter(function (a) { return a && estVisiteNavigationGraphique(a.page); });
       var partiesQuiz = [];
       try {
-        var rq = await s.from("sti_quiz_parties").select("cree_le,quiz,user_id")
-          .gte("cree_le", depuis.toISOString())
-          .order("cree_le", { ascending: true })
-          .limit(5000);
-        if (rq && !rq.error && Array.isArray(rq.data)) partiesQuiz = rq.data;
+        var deQ = 0;
+        for (;;) {
+          var rq = await s.from("sti_quiz_parties").select("cree_le,quiz,user_id")
+            .gte("cree_le", depuis.toISOString())
+            .order("cree_le", { ascending: true })
+            .order("id", { ascending: true })
+            .range(deQ, deQ + 999);
+          if (!rq || rq.error) break;
+          partiesQuiz = partiesQuiz.concat(rq.data || []);
+          if (!rq.data || rq.data.length < 1000 || partiesQuiz.length >= 20000) break;
+          deQ += 1000;
+        }
       } catch (eQ) {}
 
       var jours = [], parJour = {}, actifsJour = {};
@@ -250,4 +258,5 @@
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
+  try { window.STI_GRAPHIQUES_ACTIVITE = { charger: charger, estVisiteNavigationGraphique: estVisiteNavigationGraphique }; } catch (e) {}
 })();
