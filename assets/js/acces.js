@@ -1592,9 +1592,7 @@
       for (var si = 0; si < sortedKeys.length; si++) orderedM[sortedKeys[si]] = compactM[sortedKeys[si]];
       var hashStr = currentUid + ":" + JSON.stringify(orderedM);
       var prevHash = localStorage.getItem("sti-prog-sync-hash") || "";
-      if (hashStr === prevHash && !forceNow) return;
-      /* Même en mode forceNow (pause / fermeture), éviter les doublons strictement identiques déjà poussés dans les 120 dernières secondes */
-      if (hashStr === prevHash && (maintenant - dernierSyncMediaTs) < 120000) return;
+      if (hashStr === prevHash) return;
       dernierSyncMediaTs = maintenant;
       localStorage.setItem("sti-prog-sync-hash", hashStr);
       var tsIso = new Date().toISOString();
@@ -1667,6 +1665,8 @@
       localStorage.removeItem("sti-fs-examen-ok");
       localStorage.removeItem("sti-demo-vu");
       localStorage.removeItem("sti-profil-sync-ts");
+      localStorage.removeItem("sti-quiz-sessions-actives-v1");
+      localStorage.removeItem("sti-revision-erreurs-v1");
       Object.keys(localStorage).forEach(function (k) {
         if (k.indexOf("sb-") === 0 || k.indexOf("supabase") !== -1) {
           localStorage.removeItem(k);
@@ -10095,13 +10095,45 @@
           return;
         }
         var id = r.data.id, debut = Date.now();
-        function ferme() {
+        function lireJetonAuthKeepalive() {
+          try {
+            for (var i = 0; i < localStorage.length; i++) {
+              var k = localStorage.key(i) || "";
+              if (/^sb-.*-auth-token$/.test(k)) {
+                var parsed = JSON.parse(localStorage.getItem(k) || "null");
+                var tk = (parsed && parsed.access_token) || (parsed && parsed.currentSession && parsed.currentSession.access_token) || "";
+                if (tk) return tk;
+              }
+            }
+          } catch (eTk) {}
+          return "";
+        }
+        function ferme(ev) {
           if (!navigator.onLine) return;
-          sb.from("acces").update({
+          var payloadFin = {
             fin: new Date().toISOString(),
             duree_sec: Math.round((Date.now() - debut) / 1000)
-          }).eq("id", id).then(function () {});
-          envoyerPresence();
+          };
+          var estPageHide = Boolean(ev && ev.type === "pagehide");
+          var tkKa = estPageHide ? lireJetonAuthKeepalive() : "";
+          if (estPageHide && tkKa && typeof fetch === "function") {
+            fetch(cfg.URL + "/rest/v1/acces?id=eq." + encodeURIComponent(id), {
+              method: "PATCH",
+              keepalive: true,
+              headers: {
+                apikey: cfg.CLE,
+                Authorization: "Bearer " + tkKa,
+                "Content-Type": "application/json",
+                Prefer: "return=minimal"
+              },
+              body: JSON.stringify(payloadFin)
+            }).catch(function () {});
+          } else {
+            sb.from("acces").update(payloadFin).eq("id", id).then(function () {});
+          }
+          if (!estPageHide || !ev.persisted) {
+            envoyerPresence();
+          }
         }
         envoyerPresence();
         setInterval(ferme, 30000); /* mise à jour présence + durée toutes les 30 s */
@@ -10109,6 +10141,7 @@
         window.addEventListener("pageshow", function (ev) {
           if (ev && ev.persisted) {
             debut = Date.now();
+            envoyerPresence();
             try { rafraichirDureeEtScoresServeur(uid, true); } catch (eP) {}
             if (typeof window.rafraichirBadgesProgressionSTI === "function") {
               try { window.rafraichirBadgesProgressionSTI(); } catch (eB) {}
@@ -10624,9 +10657,17 @@
       else if (e.key === "ArrowUp") { e.preventDefault(); majSelection(selIdx - 1); }
       else if (e.key === "Enter" && currentLinks[selIdx]) {
         e.preventDefault();
-        var href = currentLinks[selIdx].getAttribute("href");
+        var lienSel = currentLinks[selIdx];
+        var href = lienSel.getAttribute("href");
         fond.remove();
-        if (href) location.href = href;
+        if (lienSel && typeof lienSel.click === "function") {
+          document.body.appendChild(lienSel);
+          lienSel.style.display = "none";
+          lienSel.click();
+          lienSel.remove();
+        } else if (href) {
+          location.href = href;
+        }
       } else if (e.key === "Escape") {
         e.preventDefault();
         fond.remove();

@@ -114,6 +114,8 @@
     try { localStorage.setItem(CLE_FILE, JSON.stringify(f.slice(-80))); } catch (e) {}
   }
   function mettreEnFile(ligne) {
+    var uLoc = utilisateurDepuisStockageLocal();
+    if (ligne && !ligne.user_id && uLoc && uLoc.id) ligne.user_id = uLoc.id;
     var f = lireFile();
     f.push(ligne);
     sauverFile(f);
@@ -132,9 +134,11 @@
     try { localStorage.setItem(CLE_FILE_VUS, JSON.stringify(f.slice(-2000))); } catch (e) {}
   }
   function mettreVusEnFile(module, ids, cid) {
+    var uLoc = utilisateurDepuisStockageLocal();
+    var uidLoc = uLoc && uLoc.id ? String(uLoc.id) : null;
     var f = lireFileVus();
     ids.forEach(function (id) {
-      f.push({ _cid: cid || null, module: String(module), question_id: String(id) });
+      f.push({ _cid: cid || null, user_id: uidLoc, module: String(module), question_id: String(id) });
     });
     sauverFileVus(f);
   }
@@ -201,10 +205,13 @@
     try { localStorage.setItem(CLE_FILE_REP, JSON.stringify(f.slice(-600))); } catch (e) {}
   }
   function mettreRepEnFile(lignes, cid) {
+    var uLoc = utilisateurDepuisStockageLocal();
+    var uidLoc = uLoc && uLoc.id ? String(uLoc.id) : null;
     var f = lireFileRep();
     lignes.forEach(function (l) {
       f.push({
         _cid: cid || l._cid || null,
+        user_id: l.user_id || uidLoc,
         quiz: l.quiz,
         module: l.module,
         question_id: l.question_id,
@@ -273,7 +280,10 @@
   }
 
   async function viderFileRep(s, u) {
-    var tout = lireFileRep();
+    var tout = lireFileRep().filter(function (l) {
+      return l && (!l.user_id || l.user_id === u.id);
+    });
+    if (tout.length !== lireFileRep().length) sauverFileRep(tout);
     var prets = tout.filter(function (l) { return l && (!l._cid || !cidsEnVol[l._cid]); });
     if (!prets.length) return;
     var lignes = prets.map(function (l) {
@@ -294,7 +304,7 @@
       }
       var envoyes = new Set(prets);
       var restant = lireFileRep().filter(function (l) {
-        if (!l) return false;
+        if (!l || (l.user_id && l.user_id !== u.id)) return false;
         if (l._cid && cidsEnVol[l._cid]) return true;
         for (var k = 0; k < prets.length; k++) {
           if (prets[k]._cid && l._cid === prets[k]._cid) return false;
@@ -317,7 +327,9 @@
       sauverPurgeVus([]);
       return;
     }
-    var f = lireFile();
+    var fBrut = lireFile();
+    var f = fBrut.filter(function (x) { return x && (!x.user_id || x.user_id === u.id); });
+    if (f.length !== fBrut.length) sauverFile(f);
     var prets = f.filter(function (x) { return x && (!x._cid || !cidsEnVol[x._cid]); });
     if (prets.length) {
       var cidsEchec = {};
@@ -390,7 +402,10 @@
       }
       sauverPurgeVus(purgesRestantes);
     }
-    var fv = lireFileVus().filter(function (v) { return v && (!v._cid || !cidsEnVol[v._cid]); });
+    var fvBrut = lireFileVus();
+    var fvMemeUser = fvBrut.filter(function (v) { return v && (!v.user_id || v.user_id === u.id); });
+    if (fvMemeUser.length !== fvBrut.length) sauverFileVus(fvMemeUser);
+    var fv = fvMemeUser.filter(function (v) { return v && (!v._cid || !cidsEnVol[v._cid]); });
     if (fv.length) {
       var lignes = fv.map(function (v) {
         return { user_id: u.id, module: String(v.module), question_id: String(v.question_id) };
@@ -448,7 +463,8 @@
         try {
           var tbD = s.from("sti_quiz_sessions");
           if (tbD && typeof tbD.delete === "function") {
-            var rD = await tbD.delete().eq("user_id", u.id).eq("quiz", qz);
+            var reqDel = tbD.delete().eq("user_id", u.id);
+            var rD = qz === "*" ? await reqDel : await reqDel.eq("quiz", qz);
             if (rD && rD.error) restantP.push(qz);
           }
         } catch (eD) { restantP.push(qz); }
@@ -560,12 +576,33 @@
     }
   }
 
+  function estSessionDemarree(st) {
+    if (!st || !Array.isArray(st.ordre_questions) || !st.ordre_questions.length) return false;
+    if ((parseInt(st.index_courant, 10) || 0) > 0) return true;
+    if ((parseInt(st.score, 10) || 0) > 0) return true;
+    if ((parseInt(st.points, 10) || 0) > 0) return true;
+    var meta = st.etat_meta && typeof st.etat_meta === "object" ? st.etat_meta : {};
+    if ((parseInt(meta.answeredCount, 10) || 0) > 0) return true;
+    if (Array.isArray(meta.rep) && meta.rep.length > 0) return true;
+    if (Array.isArray(meta.reponses) && meta.reponses.length > 0) return true;
+    for (var i = 0; i < st.ordre_questions.length; i++) {
+      var it = st.ordre_questions[i];
+      if (!it || typeof it !== "object") continue;
+      if (typeof it.choixEleve === "number" && it.choixEleve >= 0) return true;
+      if (it.answered === true || (it.answer !== undefined && it.answer !== null && it._synced === true)) return true;
+      if (typeof it.chosen === "number" && it.chosen >= 0) return true;
+    }
+    return false;
+  }
+
   async function chargerSession(quiz) {
     if (!quiz) return null;
     var qz = String(quiz);
-    var enPurge = lirePurgeSessions().indexOf(qz) !== -1;
+    var purgesListe = lirePurgeSessions();
+    var enPurge = purgesListe.indexOf("*") !== -1 || purgesListe.indexOf(qz) !== -1;
     var mapLoc = lireSessionsLocales();
     var loc = !enPurge ? (mapLoc[qz] || null) : null;
+    if (loc && !estSessionDemarree(loc)) loc = null;
     try {
       var s = sb();
       var u = await utilisateur();
@@ -585,7 +622,7 @@
       var r = await q;
       if (r && !r.error && Array.isArray(r.data) && r.data.length) {
         var dist = r.data[0];
-        if (dist && dist.statut === "en_cours" && Array.isArray(dist.ordre_questions) && dist.ordre_questions.length) {
+        if (dist && dist.statut === "en_cours" && estSessionDemarree(dist)) {
           var tDist = new Date(dist.maj || 0).getTime() || 0;
           var tLoc = loc ? (new Date(loc.maj || 0).getTime() || 0) : 0;
           if (!loc || tDist >= tLoc) {
@@ -596,6 +633,9 @@
             sauverSessionsLocales(m2);
             return dist;
           }
+        } else if (dist && typeof tb.delete === "function") {
+          /* Purge silencieuse d'une ancienne session vierge (0 réponse donnée) */
+          tb.delete().eq("user_id", u.id).eq("quiz", qz).then(function () {}, function () {});
         }
       }
       if (loc && loc._dirty) {
@@ -638,10 +678,22 @@
 
   /* ---------- Gestion locale + Supabase des questions déjà vues sur tous les quiz ---------- */
   function lireVusQuizLocal() {
-    try { return JSON.parse(localStorage.getItem(CLE_VUS_LOCAL_QUIZ) || "{}") || {}; } catch (e) { return {}; }
+    var uLoc = utilisateurDepuisStockageLocal();
+    var uidLoc = uLoc && uLoc.id ? String(uLoc.id) : null;
+    try {
+      var obj = JSON.parse(localStorage.getItem(CLE_VUS_LOCAL_QUIZ) || "{}") || {};
+      if (uidLoc && obj._uid && obj._uid !== uidLoc) {
+        return { _uid: uidLoc };
+      }
+      if (uidLoc && !obj._uid) obj._uid = uidLoc;
+      return obj;
+    } catch (e) { return uidLoc ? { _uid: uidLoc } : {}; }
   }
   function sauverVusQuizLocal(obj) {
-    try { localStorage.setItem(CLE_VUS_LOCAL_QUIZ, JSON.stringify(obj || {})); } catch (e) {}
+    var uLoc = utilisateurDepuisStockageLocal();
+    var copie = obj && typeof obj === "object" ? obj : {};
+    if (uLoc && uLoc.id) copie._uid = String(uLoc.id);
+    try { localStorage.setItem(CLE_VUS_LOCAL_QUIZ, JSON.stringify(copie)); } catch (e) {}
   }
   function noterQuestionsVuesQuiz(cleModuleVus, ids) {
     if (!cleModuleVus || !Array.isArray(ids) || !ids.length) return;
@@ -893,6 +945,7 @@
       });
       lireFileVus().forEach(function (v) {
         if (!v || !v.module || enPurge[v.module]) return;
+        if (v.user_id && v.user_id !== u.id) return;
         if (!sortie[v.module]) sortie[v.module] = [];
         if (sortie[v.module].indexOf(v.question_id) === -1) sortie[v.module].push(v.question_id);
       });
@@ -977,7 +1030,9 @@
       }, maxLignes || 6000, 1000);
       if (!r.error && r.data) distantes = r.data;
     } catch (eR) {}
-    var locales = lireFileRep().slice().reverse().map(function (l) {
+    var locales = lireFileRep().filter(function (l) {
+      return l && (!l.user_id || l.user_id === u.id);
+    }).slice().reverse().map(function (l) {
       return {
         quiz: l.quiz,
         module: l.module || null,
@@ -994,8 +1049,14 @@
   /* ---------- Mode « Retravailler mes erreurs » (v367) ---------- */
   var CLE_REVISION = "sti-revision-erreurs-v1";
   function preparerRevision(quiz, ids) {
+    var uLoc = utilisateurDepuisStockageLocal();
     try {
-      localStorage.setItem(CLE_REVISION, JSON.stringify({ quiz: String(quiz), ids: ids || [], ts: Date.now() }));
+      localStorage.setItem(CLE_REVISION, JSON.stringify({
+        user_id: uLoc && uLoc.id ? String(uLoc.id) : null,
+        quiz: String(quiz),
+        ids: ids || [],
+        ts: Date.now()
+      }));
     } catch (e) {}
   }
   function revisionIds(quiz) {
@@ -1003,12 +1064,20 @@
       if (!/[?&]revision=erreurs/.test(window.location.search || "")) return null;
       var h = JSON.parse(localStorage.getItem(CLE_REVISION) || "null");
       if (!h || h.quiz !== quiz || !h.ids || !h.ids.length) return null;
+      var uLoc = utilisateurDepuisStockageLocal();
+      if (h.user_id && uLoc && uLoc.id && h.user_id !== String(uLoc.id)) return null;
       if (Date.now() - (h.ts || 0) > 2 * 3600 * 1000) return null;
       return h.ids;
     } catch (e) { return null; }
   }
   function quitterRevision() {
     try { localStorage.removeItem(CLE_REVISION); } catch (e) {}
+  }
+
+  function reinitialiserSessionsConnexion() {
+    sauverSessionsLocales({});
+    sauverPurgeSessions(["html-css", "javascript", "sql", "php", "tableaux"]);
+    quitterRevision();
   }
 
   window.STIQuizSync = {
@@ -1021,6 +1090,7 @@
     preparerRevision: preparerRevision,
     revisionIds: revisionIds,
     quitterRevision: quitterRevision,
+    reinitialiserSessionsConnexion: reinitialiserSessionsConnexion,
     resume: resume,
     chargerVus: chargerVus,
     marquerVus: marquerVus,

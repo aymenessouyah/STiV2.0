@@ -391,7 +391,18 @@ window.STI_AUTH = {
       } else {
         return;
       }
-      if (delta >= 0) return;
+      if (delta >= 0) {
+        if (window.opener && !window.opener.closed && history.length <= 2) {
+          ev.preventDefault();
+          try { sessionStorage.setItem(cleHash, uCible.hash && uCible.hash.length > 1 ? uCible.hash : "#top"); } catch (eOpS) {}
+          try { window.opener.focus(); } catch (eOpF) {}
+          try { window.close(); } catch (eOpC) {}
+          setTimeout(function () {
+            try { if (!window.closed) location.href = uCible.href; } catch (eOpNav) {}
+          }, 120);
+        }
+        return;
+      }
 
       /* Laisser tout onclick synchrone de la balise <a> (ex. write-ahead des quiz) s'exécuter,
          tout en bloquant le rechargement complet du document et en remontant via bfcache. */

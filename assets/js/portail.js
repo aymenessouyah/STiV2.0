@@ -72,9 +72,23 @@
 
   /* Si la classe "elevelabo3" a déjà été connectée une fois sur ce PC du labo,
      ne plus jamais demander login ni mot de passe (sauf si déconnexion volontaire #deconnecte ou accès #admin) */
+  function preparerNouvelleConnexionQuiz() {
+    /* v470 : chaque nouvelle connexion repart sur un tirage frais de questions et de réponses */
+    try {
+      localStorage.removeItem("sti-quiz-sessions-actives-v1");
+      localStorage.removeItem("sti-revision-erreurs-v1");
+      localStorage.setItem(
+        "sti-quiz-sessions-purge-v1",
+        JSON.stringify(["html-css", "javascript", "sql", "php", "tableaux"])
+      );
+      localStorage.setItem("sti-quiz-login-ts", String(Date.now()));
+    } catch (e) {}
+  }
+
   try {
     var hInit = location.hash.replace("#", "");
     if (hInit === "deconnecte" || hInit === "exclu" || hInit === "refuse" || hInit === "securite" || hInit === "partage" || hInit === "inactivite") {
+      preparerNouvelleConnexionQuiz();
       localStorage.removeItem("sti-labo3-permanent");
       localStorage.removeItem("sti-labo-badge-sess");
       localStorage.removeItem("sti-session-cache");
@@ -565,6 +579,7 @@
           ts: Date.now()
         };
         var jsonSessPortail = JSON.stringify(objSessPortail);
+        preparerNouvelleConnexionQuiz();
         localStorage.setItem("sti-offline", String(Date.now()));
         localStorage.setItem("sti-session-cache", jsonSessPortail);
         try {
@@ -791,6 +806,7 @@
               ts: Date.now()
             };
             var jsonOff = JSON.stringify(objOff);
+            preparerNouvelleConnexionQuiz();
             localStorage.setItem("sti-offline", String(Date.now()));
             localStorage.setItem("sti-session-cache", jsonOff);
             try {
@@ -866,6 +882,7 @@
       });
       if (isAdm) {
         try {
+          preparerNouvelleConnexionQuiz();
           localStorage.removeItem("sti-labo3-permanent");
           localStorage.setItem("sti-gold", "1");
           localStorage.setItem("sti-admin-gold", "1");
@@ -1186,6 +1203,7 @@
         if (sessObj.gold) localStorage.setItem("sti-gold", "1");
         else localStorage.removeItem("sti-gold");
         var jsonBadge = JSON.stringify(sessObj);
+        preparerNouvelleConnexionQuiz();
         localStorage.setItem("sti-offline", String(Date.now()));
         localStorage.setItem("sti-session-cache", jsonBadge);
         localStorage.setItem("sti-labo-badge-sess", jsonBadge);

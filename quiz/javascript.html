@@ -29650,7 +29650,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
               tirage[i].options.length > 1
             ) {
               const curAns = tirage[i].answer;
-              const altIdx = (curAns + 1 + Math.floor(Math.random() * (tirage[i].options.length - 1))) % tirage[i].options.length;
+              const altIdx = (curAns + 1 + entierAleatoireJs(tirage[i].options.length - 1)) % tirage[i].options.length;
               const opts = [...tirage[i].options];
               [opts[curAns], opts[altIdx]] = [opts[altIdx], opts[curAns]];
               tirage[i].options = opts;

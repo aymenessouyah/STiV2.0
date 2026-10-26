@@ -335,7 +335,7 @@
       })
       .catch(function () { pastille("💾 Progression : cet appareil seulement", "#fff3e0"); });
   }
-  function pousser(force) {
+  function pousser(force, enFermeture) {
     session = session || lireSession();
     if (!session) return;
     isolerComptePartageSiBesoin(session.id);
@@ -349,7 +349,7 @@
       headers: (function () { var e = entetes(); e["Prefer"] = "resolution=merge-duplicates"; return e; })(),
       body: bodyStr
     };
-    if (force && bodyStr.length < 60000) optsFetch.keepalive = true;
+    if ((force || enFermeture) && bodyStr.length < 60000) optsFetch.keepalive = true;
     fetch(cfg.URL + "/rest/v1/sti_progressions", optsFetch).then(function (r) {
       if (r.ok) { localStorage.setItem(CLE_SYNC_MAJ, String(new Date(maj).getTime())); pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9"); }
       else pastille("💾 Progression : cet appareil seulement", "#fff3e0");
@@ -368,14 +368,19 @@
         return;
       }
       session = nvSess || session;
-      pousser(false);
+      pousser(false, false);
     }, 5000);
     window.addEventListener("sti-media-prog-updated", function () {
       if (timerPushMedia) clearTimeout(timerPushMedia);
-      timerPushMedia = setTimeout(function () { timerPushMedia = null; pousser(false); }, 1800);
+      timerPushMedia = setTimeout(function () { timerPushMedia = null; pousser(false, false); }, 1800);
     });
-    window.addEventListener("pagehide", function () { pousser(true); });
-    document.addEventListener("visibilitychange", function () { if (document.hidden) pousser(true); });
+    window.addEventListener("pagehide", function () {
+      if (timerPushMedia) { clearTimeout(timerPushMedia); timerPushMedia = null; }
+      pousser(false, true);
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) pousser(false, true);
+    });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer); else demarrer();
 })();

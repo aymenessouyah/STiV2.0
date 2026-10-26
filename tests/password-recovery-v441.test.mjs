@@ -4130,11 +4130,11 @@ test('v468 (structure) : liens Défis JS corrigés (zéro 404 defis-javascript.h
   }
 
   // 4) Cache-busters v468+ + README + sw.js sti-atelier-v328+ + offline-complete-manifest.json
-  assert.match(adminHtml, /assets\/js\/config\.js\?v=46[89]/);
-  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=46[89]/);
-  assert.match(adminHtml, /assets\/js\/analytique\.js\?v=46[89]/);
-  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=46[89]/);
-  assert.match(adminHtml, /assets\/js\/sante\.js\?v=46[89]/);
+  assert.match(adminHtml, /assets\/js\/config\.js\?v=4\d{2}/);
+  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=4\d{2}/);
+  assert.match(adminHtml, /assets\/js\/analytique\.js\?v=4\d{2}/);
+  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=4\d{2}/);
+  assert.match(adminHtml, /assets\/js\/sante\.js\?v=4\d{2}/);
   assert.match(readmeMd, /sti-atelier-v328/);
   const tickerLines = readmeMd.split('\n').filter((l) => /^\|\s*v\d{3}/.test(l));
   assert.ok(tickerLines.some((l) => /^\|\s*v468\s*\|/.test(l)), 'README.md doit conserver la ligne v468');
@@ -4286,7 +4286,8 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   }).filter((o) => o.t.length > 8);
   assert.equal(cinq.length, 5);
   assert.ok(cinq.some((o) => /^v468 — Audit intégral/.test(o.t)), 'v468 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v469 — Pagination PostgREST intégrale/);
+  assert.ok(cinq.some((o) => /^v469 — Pagination PostgREST intégrale/.test(o.t)), 'v469 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v470 — Validation fonctionnelle E2E/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -4360,9 +4361,9 @@ test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, pari
   assert.match(adminHtml, /assets\/js\/analytique\.js\?v=469/);
   assert.match(readmeMd, /sti-atelier-v329/);
   assert.ok(nouveautesJson.some((n) => n.version === 'v469'));
-  assert.match(swJs, /var CACHE = "sti-atelier-v329";/);
-  assert.match(swJs, /var UPDATE_ID = "v469-pagination-integrale";/);
-  assert.equal(offlineManifest.version, 'v469-pagination-integrale');
+  assert.match(swJs, /sti-atelier-v329/);
+  assert.match(swJs, /v469-pagination-integrale/);
+  assert.match(offlineManifest.version, /^v4\d{2}-/);
   for (const sqlRef of [
     'MIGRATION-v358-QUIZ-SYNC.sql',
     'MIGRATION-v365-REPONSES.sql',
@@ -4554,6 +4555,527 @@ test('v469 (comportemental VM) : pagination .range() multi-pages (> 1 000 lignes
   assert.equal(graphRanges.filter((c) => c.tbl === 'sti_quiz_parties').length, 2, '2 pages .range() lues pour 1 650 parties de quiz dans graphiques-activite.js');
   assert.match(graphEls['graph-resume'].textContent, /1650 partie\(s\) de quiz/);
 });
+
+test('v470 : audit fonctionnel intégral en 9 points (quiz CSPRNG, Mes erreurs, retours bfcache, admin, sécurité, Drive, README)', () => {
+  const quizSyncJs = read('assets/js/quiz-sync.js');
+  const quizTabJs = read('assets/js/quiz-tableaux.js');
+  const portailJs = read('assets/js/portail.js');
+  const configJs = read('assets/js/config.js');
+  const accesJs = read('assets/js/acces.js');
+  const mobileNavJs = read('assets/js/mobile-nav.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const sauvJs = read('assets/js/sauvegarde.js');
+  const gsCode = read('documents/sql/sauvegarde-auto-drive.gs');
+  const santeJs = read('assets/js/sante.js');
+  const adminHtml = read('admin.html');
+  const readmeMd = read('README.md');
+  const swJs = read('sw.js');
+  const nouv = JSON.parse(read('assets/data/nouveautes.json'));
+
+  // 1-3. Quiz aléatoires CSPRNG, calcul du score, isolation par user_id et reprise Tableaux
+  for (const qf of ['quiz/html-css.html', 'quiz/javascript.html', 'quiz/sql.html', 'quiz/php.html']) {
+    const qHtml = read(qf);
+    assert.match(qHtml, /getRandomValues/, `${qf} doit utiliser window.crypto.getRandomValues`);
+  }
+  assert.match(quizTabJs, /getRandomValues/);
+  assert.doesNotMatch(quizTabJs, /ref\.options\[idxOpt\]/, 'reprendreSessionTableaux doit reconstruire [ref.bonne].concat(...)');
+  assert.match(quizTabJs, /\[ref\.bonne\]\.concat\(/);
+  assert.match(quizSyncJs, /function estSessionDemarree\(/);
+  assert.match(quizSyncJs, /function reinitialiserSessionsConnexion\(/);
+  assert.match(quizSyncJs, /function utilisateurDepuisStockageLocal\(/);
+  assert.match(portailJs, /function preparerNouvelleConnexionQuiz\(/);
+  assert.ok((portailJs.match(/preparerNouvelleConnexionQuiz\(\)/g) || []).length >= 5, 'Tous les flux de connexion/déconnexion doivent réinitialiser le tirage quiz');
+
+  // 4-5. Retour 0 ms bfcache préservant history.state sur Quiz, Cours et Exercices
+  assert.match(mobileNavJs, /history\.replaceState\(history\.state,\s*""/);
+  assert.match(configJs, /window\.opener && !window\.opener\.closed && history\.length <= 2/);
+  assert.match(syncProgJs, /optsFetch\.keepalive = true/);
+  assert.match(syncProgJs, /pousser\(false, true\)/);
+  assert.match(accesJs, /if \(hashStr === prevHash\) return;/);
+  assert.match(accesJs, /keepalive:\s*true/);
+  for (const f of ['bac-pratique.html', 'pieges-bac.html', 'memo-veille-bac.html', 'outils-js-bac.html']) {
+    assert.match(read(f), /href="index\.html#exercices"/, `${f} doit revenir vers #exercices sans recharger`);
+  }
+  for (const f of [
+    'cours/courscss3.html',
+    'cours/css3.html',
+    'cours/coursphp.html',
+    'cours/php.html',
+    'cours/javascript.html',
+    'cours/sql.html',
+    'cours/fiche-revision-html5.html',
+    'exercices/series-exercices.html',
+    'quiz/sql.html',
+  ]) {
+    assert.doesNotMatch(read(f), /replaceState\(null,\s*['"]['"],\s*location\.pathname\s*\+\s*location\.search\)/, `${f} doit préserver history.state`);
+  }
+
+  // 6-7. Boutons admin, échappement XSS sante.js & CSP
+  assert.match(santeJs, /ech\(r\.code\)/);
+  assert.match(santeJs, /ech\(r\.it\.cat\)/);
+  assert.match(santeJs, /ech\(r\.it\.nom\)/);
+  for (const f of ['index.html', 'portail.html', 'admin.html', 'revision-erreurs.html']) {
+    assert.match(read(f), /http-equiv="Content-Security-Policy"/i, `${f} doit embarquer une CSP`);
+  }
+
+  // 8-9. Sauvegarde Drive auto + secours televerser + README plateforme & admin + SW v330 / v470
+  assert.match(sauvJs, /function synchroniserConfigDriveAdmin\(/);
+  assert.match(sauvJs, /function televerserArchiveVersDrive\(/);
+  assert.match(gsCode, /function obtenirDossierSauvegarde_\(/);
+  assert.match(gsCode, /function enregistrerArchiveDirecteDrive_\(/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v330";/);
+  assert.match(swJs, /var UPDATE_ID = "v470-audit-fonctionnel-readme";/);
+  assert.equal(nouv[0].version, 'v470');
+  assert.match(readmeMd, /sti-atelier-v330/);
+  assert.match(readmeMd, /\|\s*v470\s*\|/);
+  assert.match(readmeMd, /1 244 questions/);
+  assert.match(adminHtml, /v470 · sti-atelier-v330/);
+  assert.match(adminHtml, /1 244 questions/);
+});
+
+test('v470 (comportemental VM) : isolation multi-élèves quiz, tirage neuf connexion, reprise Tableaux, bfcache opener & secours Drive', async () => {
+  const vm = await import('node:vm');
+
+  // A) Isolation multi-élèves + rejet des brouillons à 0 réponse + purge connexion dans assets/js/quiz-sync.js
+  const quizSyncJs = read('assets/js/quiz-sync.js');
+  const qStore = new Map();
+  let currentUser = { id: 'eleve-a', email: 'a@sti.tn', access_token: 'tok-a' };
+  let sbOnline = true;
+  const sbOps = [];
+
+  const setAuthUser = (u) => {
+    currentUser = u;
+    if (u) {
+      qStore.set('sb-vywujxmepvcbgedgmger-auth-token', JSON.stringify({
+        access_token: u.access_token,
+        user: { id: u.id, email: u.email },
+      }));
+    } else {
+      qStore.delete('sb-vywujxmepvcbgedgmger-auth-token');
+    }
+  };
+  setAuthUser(currentUser);
+
+  const qLocalStorage = {
+    get length() { return qStore.size; },
+    key: (i) => Array.from(qStore.keys())[i] || null,
+    getItem: (k) => (qStore.has(k) ? qStore.get(k) : null),
+    setItem: (k, v) => qStore.set(String(k), String(v)),
+    removeItem: (k) => qStore.delete(String(k)),
+  };
+
+  let remoteSessionRow = {
+    quiz: 'sql',
+    mode: 'officiel',
+    statut: 'en_cours',
+    module: null,
+    ordre_questions: [4, 2, 0],
+    index_courant: 0,
+    score: 0,
+    points: 0,
+    etat_meta: {},
+    maj: '2026-10-26T08:00:00Z',
+  };
+
+  const makeSbTable = (tbl) => {
+    let op = 'select';
+    let filters = [];
+    let payload = null;
+    const chain = {
+      select() { op = 'select'; return chain; },
+      insert(rows) {
+        op = 'insert';
+        payload = rows;
+        sbOps.push({ tbl, op, user: currentUser && currentUser.id, payload });
+        if (!sbOnline) return Promise.resolve({ error: { message: 'offline' } });
+        return Promise.resolve({ data: rows, error: null });
+      },
+      upsert(rows) {
+        op = 'upsert';
+        payload = rows;
+        sbOps.push({ tbl, op, user: currentUser && currentUser.id, payload });
+        if (!sbOnline) return Promise.resolve({ error: { message: 'offline' } });
+        return Promise.resolve({ data: rows, error: null });
+      },
+      delete() { op = 'delete'; return chain; },
+      eq(col, val) { filters.push([col, val]); return chain; },
+      order() { return chain; },
+      limit() { return chain; },
+      range() { return chain; },
+      maybeSingle() {
+        sbOps.push({ tbl, op, user: currentUser && currentUser.id, filters: [...filters] });
+        if (tbl === 'sti_quiz_sessions' && op === 'select') {
+          return Promise.resolve({ data: remoteSessionRow, error: null });
+        }
+        return Promise.resolve({ data: null, error: null });
+      },
+      then(resolve, reject) {
+        sbOps.push({ tbl, op, user: currentUser && currentUser.id, filters: [...filters], payload });
+        if (!sbOnline) return Promise.resolve({ data: null, error: { message: 'offline' } }).then(resolve, reject);
+        if (tbl === 'sti_quiz_sessions' && op === 'select') {
+          return Promise.resolve({ data: remoteSessionRow ? [remoteSessionRow] : [], error: null }).then(resolve, reject);
+        }
+        return Promise.resolve({ data: [], error: null }).then(resolve, reject);
+      },
+    };
+    return chain;
+  };
+
+  let authChangeCb = null;
+  const qCtx = vm.createContext({
+    console, Date, Math, JSON, Number, String, Object, Array, Promise, Error, RegExp, encodeURIComponent, parseInt,
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'anon-key' },
+    localStorage: qLocalStorage,
+    sessionStorage: { length: 0, key: () => null, getItem: () => null },
+    location: { search: '' },
+    navigator: { onLine: true },
+    setTimeout: () => 1,
+    document: { readyState: 'complete', addEventListener() {}, visibilityState: 'visible' },
+    supabase: {
+      createClient: () => ({
+        auth: {
+          onAuthStateChange: (cb) => { authChangeCb = cb; },
+          getSession: async () => ({
+            data: {
+              session: currentUser
+                ? { access_token: currentUser.access_token, user: { id: currentUser.id, email: currentUser.email } }
+                : null,
+            },
+          }),
+          getUser: async () => ({ data: { user: currentUser ? { id: currentUser.id, email: currentUser.email } : null } }),
+        },
+        from: (tbl) => makeSbTable(tbl),
+      }),
+    },
+  });
+  qCtx.window = qCtx;
+  qCtx.window.addEventListener = () => {};
+  vm.runInContext(quizSyncJs, qCtx, { filename: 'assets/js/quiz-sync.js' });
+  await new Promise((r) => setImmediate(r));
+
+  // 1) Brouillon cloud non démarré (0 réponse, index 0) -> ignoré et supprimé pour garantir un nouveau tirage aléatoire
+  const emptyLoaded = await qCtx.STIQuizSync.chargerSession('sql');
+  assert.equal(emptyLoaded, null, 'Une session à 0 réponse ne doit jamais figer l’ordre aléatoire des questions');
+  assert.equal(sbOps.some((o) => o.tbl === 'sti_quiz_sessions' && o.op === 'delete'), true);
+
+  // 2) Partie réellement entamée (index_courant = 2, score = 1) -> reprise autorisée
+  remoteSessionRow = {
+    quiz: 'sql',
+    mode: 'officiel',
+    statut: 'en_cours',
+    module: null,
+    ordre_questions: [5, 1, 3],
+    index_courant: 2,
+    score: 1,
+    points: 10,
+    etat_meta: { nbRepondues: 2 },
+    maj: '2026-10-26T08:05:00Z',
+  };
+  const startedLoaded = await qCtx.STIQuizSync.chargerSession('sql');
+  assert.ok(startedLoaded && startedLoaded.index_courant === 2, 'Une partie entamée doit rester reprenable en cours de session');
+
+  // 3) Isolation de la file write-ahead hors-ligne entre Élève A et Élève B sur le même PC
+  sbOnline = false;
+  await qCtx.STIQuizSync.enregistrer('sql', 16, 20, null, { points: 160, ordre_questions: [3, 1, 2] });
+  const fileBrute = JSON.parse(qStore.get('sti-quiz-sync-file-v1') || '[]');
+  assert.equal(fileBrute.length, 1);
+  assert.equal(fileBrute[0].user_id, 'eleve-a', 'La ligne en attente de l’élève A porte son user_id');
+
+  setAuthUser({ id: 'eleve-b', email: 'b@sti.tn', access_token: 'tok-b' });
+  if (authChangeCb) authChangeCb();
+  sbOnline = true;
+  const beforeB = sbOps.length;
+  await qCtx.STIQuizSync.viderFile();
+  assert.equal(
+    sbOps.slice(beforeB).some((o) => o.tbl === 'sti_quiz_parties' && o.op === 'insert' && o.user === 'eleve-b'),
+    false,
+    'Le score hors-ligne de l’élève A ne doit jamais être inséré sous le compte de l’élève B'
+  );
+
+  // 4) Nouvelle connexion -> reinitialiserSessionsConnexion() purge local + cloud
+  qCtx.STIQuizSync.reinitialiserSessionsConnexion();
+  const beforeReset = sbOps.length;
+  await qCtx.STIQuizSync.viderFile();
+  assert.equal(
+    sbOps.slice(beforeReset).some((o) => o.tbl === 'sti_quiz_sessions' && o.op === 'delete' && o.user === 'eleve-b'),
+    true,
+    'Une nouvelle connexion doit purger toutes les sessions inachevées de l’utilisateur'
+  );
+
+  // B) Reprise sans TypeError dans assets/js/quiz-tableaux.js ([ref.bonne].concat(ref.choix_faux))
+  const quizTabJs = read('assets/js/quiz-tableaux.js');
+  const tabDom = new Map();
+  const getOrMakeTabEl = (id) => {
+    if (!tabDom.has(id)) {
+      const listeners = {};
+      tabDom.set(id, {
+        id,
+        innerHTML: '',
+        textContent: '',
+        value: '',
+        hidden: false,
+        disabled: false,
+        style: {},
+        dataset: {},
+        classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+        addEventListener(ev, fn) { (listeners[ev] ||= []).push(fn); },
+        click() { (listeners.click || []).forEach((fn) => fn({ preventDefault() {} })); },
+        setAttribute() {},
+        querySelectorAll: () => [],
+        querySelector: () => null,
+        appendChild() {},
+        scrollIntoView() {},
+      });
+    }
+    return tabDom.get(id);
+  };
+
+  const tabLs = new Map([
+    ['sti-session-cache', JSON.stringify({ id: 'eleve-tab', email: 'tab@sti.tn', classe: '4SI 1' })],
+  ]);
+  const tabBank = {
+    questions: [
+      { id: 't1', niveaux: ['3si', '4si'], module: 'html5', page: 12, tableau: 'Structure', q: 'Balise racine ?', bonne: '<html>', choix_faux: ['<body>', '<head>', '<meta>'] },
+      { id: 't2', niveaux: ['3si', '4si'], module: 'css3', page: 28, tableau: 'Sélecteurs', q: 'Sélecteur ID ?', bonne: '#id', choix_faux: ['.id', '*id', '@id'] },
+    ],
+  };
+
+  const tabCtx = vm.createContext({
+    console, Date, Math, JSON, Number, String, Object, Array, Promise, Error, RegExp, Uint32Array, URLSearchParams, parseInt,
+    setTimeout: () => 1, clearTimeout() {},
+    crypto: { getRandomValues: (arr) => { for (let i = 0; i < arr.length; i++) arr[i] = i + 1; return arr; } },
+    localStorage: {
+      length: 1,
+      key: (i) => Array.from(tabLs.keys())[i] || null,
+      getItem: (k) => (tabLs.has(k) ? tabLs.get(k) : null),
+      setItem: (k, v) => tabLs.set(String(k), String(v)),
+      removeItem: (k) => tabLs.delete(String(k)),
+    },
+    sessionStorage: { length: 0, key: () => null, getItem: () => null, setItem() {}, removeItem() {} },
+    location: { search: '', href: 'https://sti.example/quiz/tableaux.html' },
+    STIQuizSync: {
+      chargerVus: async () => ({}),
+      resume: async () => null,
+      chargerSession: async () => ({
+        quiz: 'tableaux',
+        module: 'mix',
+        mode: 'officiel',
+        index_courant: 1,
+        score: 1,
+        ordre_questions: [
+          { qid: 't2', choix: ['.id', '#id', '*id', '@id'], choixEleve: 1 },
+          { qid: 't1', choix: ['<html>', '<body>', '<head>', '<meta>'], choixEleve: -1 },
+        ],
+        etat_meta: { niveau: '4SI' },
+      }),
+      sauverSession: () => Promise.resolve(true),
+      effacerSession: () => Promise.resolve(true),
+      marquerVus: () => Promise.resolve(),
+      enregistrer: () => Promise.resolve(),
+      enregistrerReponses: () => Promise.resolve(),
+    },
+    fetch: async () => ({ ok: true, json: async () => tabBank }),
+    document: {
+      getElementById: (id) => getOrMakeTabEl(id),
+      querySelector: () => getOrMakeTabEl('_qs'),
+      querySelectorAll: () => [],
+      createElement: () => getOrMakeTabEl('_ce'),
+      addEventListener() {},
+    },
+  });
+  tabCtx.window = tabCtx;
+  tabCtx.window.addEventListener = () => {};
+  tabCtx.window.scrollTo = () => {};
+  vm.runInContext(quizTabJs, tabCtx, { filename: 'assets/js/quiz-tableaux.js' });
+  await new Promise((r) => setImmediate(r));
+  await new Promise((r) => setImmediate(r));
+  assert.match(getOrMakeTabEl('qt-reprise-cloud').innerHTML, /Reprendre la partie/);
+  getOrMakeTabEl('qt-reprendre-cloud').click();
+  assert.match(getOrMakeTabEl('qt-app').innerHTML, /Balise racine \?/, 'reprendreSessionTableaux doit restaurer la question courante sans TypeError');
+
+  // C) Retour bfcache sur onglet enfant (window.opener) dans assets/js/config.js
+  const configJs = read('assets/js/config.js');
+  let openerFocused = false;
+  let tabClosed = false;
+  const winClicks = [];
+  const openerStore = new Map();
+  const cfgCtx = vm.createContext({
+    console, URL, Promise, Math, Date, JSON, String, Object, Array, RegExp,
+    location: {
+      href: 'https://sti.example/documents/annexes/annexe-html5.pdf.html',
+      origin: 'https://sti.example',
+      protocol: 'https:',
+      pathname: '/documents/annexes/annexe-html5.pdf.html',
+      search: '',
+      hash: '',
+    },
+    history: {
+      length: 1,
+      state: null,
+      replaceState(st) { this.state = st; },
+      go() {},
+    },
+    opener: {
+      closed: false,
+      focus() { openerFocused = true; },
+      scrollTo() {},
+      document: { getElementById: () => ({ scrollIntoView() {} }) },
+    },
+    close() { tabClosed = true; },
+    localStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    sessionStorage: {
+      getItem: (k) => (openerStore.has(k) ? openerStore.get(k) : null),
+      setItem: (k, v) => openerStore.set(k, String(v)),
+      removeItem: (k) => openerStore.delete(k),
+    },
+    navigator: {},
+    setTimeout: () => 1,
+    clearTimeout() {},
+    document: {
+      referrer: 'https://sti.example/index.html',
+      currentScript: { src: 'https://sti.example/assets/js/config.js' },
+      documentElement: { setAttribute() {}, classList: { add() {}, remove() {} } },
+      createElement: () => ({ setAttribute() {}, style: {} }),
+      querySelector: () => null,
+      querySelectorAll: () => [],
+      getElementById: () => null,
+      addEventListener() {},
+    },
+  });
+  cfgCtx.window = cfgCtx;
+  cfgCtx.window.addEventListener = (t, fn) => { if (t === 'click') winClicks.push(fn); };
+  cfgCtx.window.dispatchEvent = () => {};
+  cfgCtx.window.scrollTo = () => {};
+  vm.runInContext(configJs, cfgCtx, { filename: 'assets/js/config.js' });
+
+  let clickPrevented = false;
+  const anchorBack = {
+    href: 'https://sti.example/index.html#cours',
+    target: '',
+    hasAttribute: () => false,
+    getAttribute: (n) => (n === 'href' ? '../../index.html#cours' : null),
+  };
+  winClicks.forEach((fn) => fn({
+    defaultPrevented: false,
+    button: 0,
+    metaKey: false,
+    ctrlKey: false,
+    shiftKey: false,
+    altKey: false,
+    target: { closest: (s) => (s === 'a[href]' ? anchorBack : null) },
+    preventDefault() { clickPrevented = true; this.defaultPrevented = true; },
+  }));
+  await Promise.resolve();
+  assert.equal(clickPrevented, true);
+  assert.equal(openerFocused, true, 'L’onglet parent index.html déjà ouvert retrouve le focus sans rechargement');
+  assert.equal(tabClosed, true, 'L’onglet enfant .pdf.html se referme proprement');
+
+  // D) Secours automatique Drive (action "televerser" vers sauvegarde-auto-drive.gs sans SUPABASE_SERVICE_KEY ni DRIVE_FOLDER_ID)
+  const gsCode = read('documents/sql/sauvegarde-auto-drive.gs');
+  const sauvJs = read('assets/js/sauvegarde.js');
+  const uploadedFiles = [];
+  const gsCtx = vm.createContext({
+    Date, Math, JSON, Number, String, Object, Array, RegExp, Error, parseInt, encodeURIComponent,
+    Logger: { log() {} },
+    LockService: { getScriptLock: () => ({ tryLock: () => true, releaseLock() {} }) },
+    PropertiesService: { getScriptProperties: () => ({ getProperty: () => '', setProperty() {} }) },
+    Utilities: {
+      formatDate: () => '2026-10-26',
+      newBlob: (txt, mime, name) => ({ txt, mime, name }),
+      gzip: (blob, name) => ({
+        name: name || (blob.name + '.gz'),
+        txt: blob.txt,
+        setName(n) { this.name = n; return this; },
+      }),
+    },
+    UrlFetchApp: {
+      fetch: (url, opts) => {
+        if (String(url).endsWith('/auth/v1/user') && opts.headers.Authorization === 'Bearer valid-admin-jwt-token-v470-xyz') {
+          return { getResponseCode: () => 200, getContentText: () => JSON.stringify({ email: 'aymenessouyah@gmail.com' }) };
+        }
+        return { getResponseCode: () => 401, getContentText: () => '{}' };
+      },
+    },
+    DriveApp: {
+      getFolders: () => {
+        let done = false;
+        return {
+          hasNext: () => !done,
+          next: () => {
+            done = true;
+            return {
+              isTrashed: () => false,
+              getName: () => ' STI — Sauvegardes base',
+              createFile: (gz) => {
+                const rec = { name: gz.name, size: Buffer.byteLength(gz.txt, 'utf8'), id: 'drv-v470', json: JSON.parse(gz.txt) };
+                uploadedFiles.push(rec);
+                return { getId: () => rec.id, getName: () => rec.name, getSize: () => rec.size };
+              },
+              getFiles: () => ({ hasNext: () => false }),
+            };
+          },
+        };
+      },
+    },
+    ScriptApp: { getProjectTriggers: () => [] },
+    MailApp: { sendEmail() {} },
+    ContentService: {
+      MimeType: { JSON: 'application/json' },
+      createTextOutput: (t) => ({ _t: t, setMimeType() { return this; }, getContent() { return this._t; } }),
+    },
+  });
+  vm.runInContext(gsCode, gsCtx, { filename: 'documents/sql/sauvegarde-auto-drive.gs' });
+
+  const sMap = new Map([
+    ['sb-vywujxmepvcbgedgmger-auth-token', JSON.stringify({
+      access_token: 'valid-admin-jwt-token-v470-xyz',
+      user: { id: 'admin-uid', email: 'aymenessouyah@gmail.com' },
+    })],
+    ['sti-drive-webapp-url', 'https://script.google.com/macros/s/AKfycbFallbackV470/exec'],
+  ]);
+  const sCtx = vm.createContext({
+    Date, Math, JSON, Number, String, Object, Array, Promise, Error, RegExp, encodeURIComponent,
+    Blob, Response, CompressionStream, DecompressionStream, TextEncoder,
+    STI_CFG: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'anon-key' },
+    localStorage: {
+      get length() { return sMap.size; },
+      key: (i) => Array.from(sMap.keys())[i] || null,
+      getItem: (k) => (sMap.has(k) ? sMap.get(k) : null),
+      setItem: (k, v) => sMap.set(String(k), String(v)),
+      removeItem: (k) => sMap.delete(String(k)),
+    },
+    fetch: async (url, opts = {}) => {
+      if (String(url).startsWith('https://script.google.com/macros/s/')) {
+        const out = gsCtx.doPost({ postData: { contents: opts.body } }).getContent();
+        return { ok: true, status: 200, json: async () => JSON.parse(out) };
+      }
+      if (String(url).endsWith('/rest/v1/rpc/admin_sauvegarde_tables_annexes')) {
+        return { ok: true, status: 200, json: async () => ({ labo_devices: [], labo_device_sessions: [], badges_labo: [], push_subscriptions: [] }) };
+      }
+      return { ok: true, status: 200, json: async () => [{ id: 1 }] };
+    },
+    setTimeout: () => 1,
+    setInterval: () => 1,
+    document: {
+      readyState: 'complete',
+      getElementById: () => null,
+      createElement: () => ({ style: {}, setAttribute() {}, addEventListener() {}, click() {}, remove() {} }),
+      body: { appendChild() {} },
+      addEventListener() {},
+    },
+  });
+  sCtx.window = sCtx;
+  sCtx.window.addEventListener = () => {};
+  vm.runInContext(sauvJs, sCtx, { filename: 'assets/js/sauvegarde.js' });
+
+  const autoRes = await sCtx.STI_SAUVEGARDE.verifierSyncAutoDrive();
+  assert.equal(autoRes.ok, true, 'Sans SUPABASE_SERVICE_KEY côté Apps Script, sauvegarde.js doit basculer automatiquement sur televerser');
+  assert.equal(autoRes.mode, 'televerser');
+  assert.equal(uploadedFiles.length, 1);
+  assert.equal(uploadedFiles[0].name, 'sti-sauvegarde-2026-10-26.json.gz');
+  assert.equal(Object.keys(uploadedFiles[0].json.tables).length, 15);
+});
+
 
 
 

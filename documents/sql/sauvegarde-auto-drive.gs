@@ -14,6 +14,9 @@
    ============================================================================ */
 
 var ADMIN_EMAIL_AUTORISE = "aymenessouyah@gmail.com";
+var SUPABASE_URL_DEFAUT = "https://vywujxmepvcbgedgmger.supabase.co";
+var SUPABASE_ANON_KEY_DEFAUT = "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn";
+var NOM_DOSSIER_DRIVE_DEFAUT = "STI — Sauvegardes base";
 
 /* Les 15 tables public de la base STI V2.0 avec tri déterministe multi-colonnes */
 var TABLES_SAUVEGARDE = [
@@ -120,9 +123,9 @@ function executerSauvegardeDrive_(options) {
   try {
     try { assurerDeclencheurQuotidien_(); } catch (eTrig) { Logger.log("Info trigger : " + eTrig); }
 
-    var base = prop_("SUPABASE_URL").replace(/\/$/, "");
+    var base = (propOpt_("SUPABASE_URL") || SUPABASE_URL_DEFAUT).replace(/\/$/, "");
     var cle = prop_("SUPABASE_SERVICE_KEY");
-    var dossier = DriveApp.getFolderById(prop_("DRIVE_FOLDER_ID"));
+    var dossier = obtenirDossierSauvegarde_();
 
     var sortie = {
       exporte_le: new Date().toISOString(),
@@ -268,11 +271,34 @@ function installerMensuel() {
   Logger.log("✅ Déclencheur mensuel installé : le 1er de chaque mois vers 02 h.");
 }
 
+function propOpt_(cle) {
+  var v = PropertiesService.getScriptProperties().getProperty(cle);
+  return v ? String(v).trim() : "";
+}
+
+function obtenirDossierSauvegarde_() {
+  var idDossier = propOpt_("DRIVE_FOLDER_ID");
+  if (idDossier) return DriveApp.getFolderById(idDossier);
+  if (typeof DriveApp.getFolders === "function") {
+    var it = DriveApp.getFolders();
+    while (it.hasNext()) {
+      var d = it.next();
+      if (!d.isTrashed() && String(d.getName() || "").trim() === NOM_DOSSIER_DRIVE_DEFAUT) {
+        return d;
+      }
+    }
+  }
+  if (typeof DriveApp.createFolder === "function") {
+    return DriveApp.createFolder(NOM_DOSSIER_DRIVE_DEFAUT);
+  }
+  return DriveApp.getFolderById(prop_("DRIVE_FOLDER_ID"));
+}
+
 /* Vérification cryptographique du jeton JWT administrateur auprès de Supabase Auth */
 function verifierJetonAdmin_(jeton) {
   if (!jeton || typeof jeton !== "string" || jeton.length < 20) return false;
-  var base = prop_("SUPABASE_URL").replace(/\/$/, "");
-  var cle = prop_("SUPABASE_SERVICE_KEY");
+  var base = (propOpt_("SUPABASE_URL") || SUPABASE_URL_DEFAUT).replace(/\/$/, "");
+  var cle = propOpt_("SUPABASE_SERVICE_KEY") || SUPABASE_ANON_KEY_DEFAUT;
   var rep = UrlFetchApp.fetch(base + "/auth/v1/user", {
     method: "get",
     headers: {
@@ -293,6 +319,66 @@ function reponseJson_(obj) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+/* Téléversement direct d'une archive 15 tables déjà collectée côté admin.html (secours sans service_role) */
+function enregistrerArchiveDirecteDrive_(corps) {
+  var verrou = LockService.getScriptLock();
+  if (!verrou.tryLock(25000)) {
+    return { ok: false, erreur: "Une sauvegarde Drive est déjà en cours." };
+  }
+  try {
+    var jsonTxt = String(corps.archive_json || "");
+    if (!jsonTxt || jsonTxt.length < 20) {
+      return { ok: false, erreur: "Archive JSON absente ou vide." };
+    }
+    var parsed = JSON.parse(jsonTxt);
+    var dossier = obtenirDossierSauvegarde_();
+    var maintenant = new Date();
+    var dateFichier = Utilities.formatDate(maintenant, "Africa/Tunis", "yyyy-MM-dd");
+    var nomJson = "sti-sauvegarde-" + dateFichier + ".json";
+    var nomGz = nomJson + ".gz";
+    var blob = Utilities.newBlob(jsonTxt, "application/json", nomJson);
+    var gz = Utilities.gzip(blob, nomGz);
+    if (gz && typeof gz.setName === "function") gz.setName(nomGz);
+    var fichier = dossier.createFile(gz);
+    var idNouveau = fichier.getId();
+
+    var props = PropertiesService.getScriptProperties();
+    var retentionJours = parseInt(props.getProperty("RETENTION_JOURS") || "0", 10);
+    var retentionMois = parseInt(props.getProperty("RETENTION_MOIS") || "6", 10);
+    var limite = null;
+    if (retentionJours > 0) {
+      limite = new Date(Date.now() - retentionJours * 24 * 3600 * 1000);
+    } else if (retentionMois > 0) {
+      limite = new Date();
+      limite.setMonth(limite.getMonth() - retentionMois);
+    }
+    var it = dossier.getFiles();
+    while (it.hasNext()) {
+      var f = it.next();
+      if (f.getId() === idNouveau || f.isTrashed()) continue;
+      var n = f.getName();
+      if (n.indexOf("sti-sauvegarde-") !== 0) continue;
+      if (n === nomGz || (limite && f.getDateCreated() < limite)) {
+        f.setTrashed(true);
+      }
+    }
+    var nbTbl = parsed && parsed.tables ? Object.keys(parsed.tables).length : TABLES_SAUVEGARDE.length;
+    var totLig = Number(parsed && parsed.total_lignes) || 0;
+    return {
+      ok: true,
+      mode: "televerser",
+      fichier: fichier.getName(),
+      file_id: idNouveau,
+      taille_octets: fichier.getSize(),
+      cree_le: (parsed && parsed.exporte_le) || maintenant.toISOString(),
+      nb_tables: nbTbl,
+      total_lignes: totLig
+    };
+  } finally {
+    verrou.releaseLock();
+  }
+}
+
 /* Point d'entrée Web App (optionnel) pour synchronisation directe depuis admin.html */
 function doPost(e) {
   try {
@@ -303,7 +389,7 @@ function doPost(e) {
     }
     var action = String(corps.action || "sauvegarder");
     if (action === "statut") {
-      var dossier = DriveApp.getFolderById(prop_("DRIVE_FOLDER_ID"));
+      var dossier = obtenirDossierSauvegarde_();
       var fichiers = listerSauvegardesDrive_(dossier, 10);
       return reponseJson_({
         ok: true,
@@ -311,6 +397,9 @@ function doPost(e) {
         derniere: fichiers[0] || null,
         fichiers: fichiers
       });
+    }
+    if (action === "televerser") {
+      return reponseJson_(enregistrerArchiveDirecteDrive_(corps));
     }
     var res = executerSauvegardeDrive_({
       source: "admin-dashboard",

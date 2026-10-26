@@ -5579,7 +5579,7 @@ background-repeat: repeat;</pre>
           var i1 = sessionCalc[i - 1].options.findIndex(function (o) { return o.ok; });
           var i2 = sessionCalc[i].options.findIndex(function (o) { return o.ok; });
           if (i2 !== -1 && i2 === i1 && i2 === i0 && sessionCalc[i].options.length > 1) {
-            var alt = (i2 + 1) % sessionCalc[i].options.length;
+            var alt = (i2 + 1 + entierAleatoireHc(sessionCalc[i].options.length - 1)) % sessionCalc[i].options.length;
             var tmp = sessionCalc[i].options[i2];
             sessionCalc[i].options[i2] = sessionCalc[i].options[alt];
             sessionCalc[i].options[alt] = tmp;
