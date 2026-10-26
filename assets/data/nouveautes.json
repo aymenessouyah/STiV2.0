@@ -1,5 +1,15 @@
 [
   {
+    "version": "v476",
+    "date": "2026-10-26",
+    "categorie": "Navigation, Quiz & Exercices",
+    "icone": "⚡",
+    "titre": "Retour instantané exact depuis les Exercices (#exercices) et tous les Quiz dont Quiz PHP (#modules)",
+    "resume": "Suppression de l'auto-chargement caché de series-exercices.html dans #pdfFrame (src=\"about:blank\" + location.replace sans polluer window.history), traversée navigation.traverseTo(key) avec repli garanti, verrouillage scrollRestoration=\"manual\" + ré-alignement post-rendu sur la section cible (#modules pour Quiz PHP/SQL/JS/HTML-CSS, #exercices pour Séries) et déduplication pagehide dans sync-progressions.js.",
+    "lien": "quiz/php.html",
+    "libelleLien": "Tester le retour Quiz PHP → Accueil (section Quiz)"
+  },
+  {
     "version": "v475",
     "date": "2026-10-26",
     "categorie": "Navigation & Base Supabase",

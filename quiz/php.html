@@ -2205,8 +2205,8 @@
       class="fixed bottom-5 right-5 z-[100] space-y-2 max-w-xs w-[calc(100%-40px)]"
     ></div>
 
+    <script src="../assets/js/config.js?v=476"></script>
     <script src="../assets/js/supabase-umd.js"></script>
-    <script src="../assets/js/config.js?v=425"></script>
     <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <script>
@@ -6014,6 +6014,10 @@
       window.addEventListener("pagehide", () => {
         synchroniserPartiePhp(true);
       });
+      document.addEventListener("click", (ev) => {
+        const a = ev.target && ev.target.closest ? ev.target.closest('a[href*="../index.html"]') : null;
+        if (a) synchroniserPartiePhp(true);
+      });
       function quitQuiz() {
         if (quiz && quiz.answers && quiz.answers.length > 0) {
           if (
@@ -8298,6 +8302,6 @@
 <script src="../assets/js/protection.js?v=227" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/acces.js?v=453" defer></script>
-  <script src="../assets/js/sync-progressions.js" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=476" defer></script>
 </body>
 </html>

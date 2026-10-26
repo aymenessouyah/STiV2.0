@@ -390,7 +390,26 @@
     }).catch(function () { pastille("💾 Progression : cet appareil seulement", "#fff3e0"); });
   }
   var timerPushMedia = null;
+  var dernierPushFermetureTs = 0;
+  function pousserFermetureDeduplique() {
+    var maintenant = Date.now();
+    if (dernierPushFermetureTs && (maintenant - dernierPushFermetureTs) < 1500) return;
+    dernierPushFermetureTs = maintenant;
+    pousser(false, true);
+  }
+  function estSousIframeInterneSTI() {
+    try {
+      if (window.frameElement) return true;
+      if (window.self && window.top && window.self !== window.top) {
+        return Boolean(window.top.location && window.top.location.origin === window.location.origin);
+      }
+    } catch (eTop) {
+      return false;
+    }
+    return false;
+  }
   function demarrer() {
+    if (estSousIframeInterneSTI()) return;
     if (!document.body) { setTimeout(demarrer, 300); return; }
     session = lireSession();
     tirer();
@@ -410,10 +429,10 @@
     });
     window.addEventListener("pagehide", function () {
       if (timerPushMedia) { clearTimeout(timerPushMedia); timerPushMedia = null; }
-      pousser(false, true);
+      pousserFermetureDeduplique();
     });
     document.addEventListener("visibilitychange", function () {
-      if (document.hidden) pousser(false, true);
+      if (document.hidden) pousserFermetureDeduplique();
     });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer); else demarrer();
