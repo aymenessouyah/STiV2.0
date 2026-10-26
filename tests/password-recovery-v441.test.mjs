@@ -3610,6 +3610,471 @@ test('v466 : la bulle « Installer l’application » ne s’affiche que la 1re 
   assert.equal(v3.installBtn.hidden, true);
 });
 
+test('v467 (structure) : quiz/pp.html charge config.js, sauvegarde complète 15 tables + Google Drive .gs + migration RPC + README.md & #modal-readme à jour (sti-atelier-v327)', () => {
+  const ppHtml = read('quiz/pp.html');
+  const configJs = read('assets/js/config.js');
+  const sauvJs = read('assets/js/sauvegarde.js');
+  const gsCode = read('documents/sql/sauvegarde-auto-drive.gs');
+  const migSql = read('supabase/migrations/20261026_sauvegarde_complete_v467.sql');
+  const adminHtml = read('admin.html');
+  const readmeMd = read('README.md');
+  const swJs = read('sw.js');
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  for (const rel of ['assets/js/config.js', 'assets/js/sauvegarde.js', 'sw.js']) {
+    execFileSync(process.execPath, ['--check', join(root, rel)], { stdio: 'pipe' });
+  }
+
+  // Point 4 : quiz/pp.html charge config.js et conserve le lien retour #modules + config.js gère series-exercices.html
+  assert.match(ppHtml, /<a class="sec" href="\.\.\/index\.html#modules">/);
+  assert.match(ppHtml, /<script src="\.\.\/assets\/js\/config\.js\?v=467"><\/script>/);
+  assert.match(configJs, /estUrlSeriesExercices/);
+  assert.match(configJs, /sti-retour-series-hash/);
+  assert.match(configJs, /sti-series-restored/);
+
+  // Point 8 : migration RPC admin_sauvegarde_tables_annexes + sauvegarde.js + sauvegarde-auto-drive.gs + CSP Google Apps Script
+  assert.match(migSql, /CREATE OR REPLACE FUNCTION public\.admin_sauvegarde_tables_annexes\(\)/);
+  assert.match(migSql, /IF NOT public\.est_admin\(\) THEN/);
+  assert.doesNotMatch(migSql, /SELECT[^\n]*secret_hash/i);
+  assert.match(adminHtml, /connect-src[^;]*https:\/\/script\.google\.com\s+https:\/\/script\.googleusercontent\.com/);
+  assert.match(adminHtml, /assets\/js\/config\.js\?v=467/);
+  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=467/);
+  assert.match(sauvJs, /admin_sauvegarde_tables_annexes/);
+  assert.match(sauvJs, /text\/plain;charset=utf-8/);
+  assert.match(gsCode, /sauvegardeQuotidienne/);
+  assert.match(gsCode, /everyDays\(1\)/);
+
+  // Point 9 : README.md (compatible cote-ticker.js) + #modal-readme dans admin.html + sw.js sti-atelier-v327
+  assert.match(readmeMd, /sti-atelier-v327/);
+  assert.match(readmeMd, /v467/);
+  const tickerLines = readmeMd.split('\n').filter((l) => /^\|\s*v\d{3}/.test(l));
+  assert.ok(tickerLines.length >= 5, 'README.md doit exposer au moins 5 lignes | vNNN | pour cote-ticker.js');
+  assert.match(tickerLines[tickerLines.length - 1], /^\|\s*v467\s*\|/);
+
+  const mModal = adminHtml.match(/id="modal-readme"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/);
+  assert.ok(mModal, '#modal-readme présent dans admin.html');
+  assert.match(adminHtml, /id="contenu-readme-admin"[\s\S]*?sti-atelier-v327/);
+  assert.match(adminHtml, /id="contenu-readme-admin"[\s\S]*?admin_dbsupbase_niveaux/);
+  assert.match(adminHtml, /id="contenu-readme-admin"[\s\S]*?admin_sauvegarde_tables_annexes/);
+  assert.match(adminHtml, /background:#f9f1e3/);
+  assert.match(adminHtml, /color:#d84315/);
+  assert.match(adminHtml, /background:#f3ead9/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v327";/);
+  assert.match(swJs, /var UPDATE_ID = "v467-sauvegarde-readme";/);
+  assert.equal(offlineManifest.version, 'v467-sauvegarde-readme');
+  assert.ok(offlineManifest.files.some((f) => f.path === 'documents/sql/sauvegarde-auto-drive.gs'));
+  assert.ok(offlineManifest.files.some((f) => f.path === 'README.md'));
+});
+
+test('v467 (comportemental VM) : retour bfcache 0 ms vers series-exercices.html + sauvegarde 15 tables (.json.gz + Apps Script Drive + doPost JWT)', async () => {
+  const configJs = read('assets/js/config.js');
+  const sauvJs = read('assets/js/sauvegarde.js');
+  const gsCode = read('documents/sql/sauvegarde-auto-drive.gs');
+
+  // A) Test comportemental du hub bfcache series-exercices.html dans config.js
+  const sessMap = new Map();
+  const makeSessionStorage = () => ({
+    getItem: (k) => (sessMap.has(k) ? sessMap.get(k) : null),
+    setItem: (k, v) => sessMap.set(String(k), String(v)),
+    removeItem: (k) => sessMap.delete(String(k)),
+  });
+
+  const runConfigPage = ({ href, scriptSrc = 'https://sti.example/assets/js/config.js', referrer = '', initialState = null, targetSectionId = '' }) => {
+    let histState = initialState;
+    let goDelta = null;
+    let scrolledId = null;
+    const winListeners = {};
+    const docListeners = {};
+    const dispatched = [];
+    const locObj = new URL(href);
+    const locationProxy = {
+      href: locObj.href,
+      protocol: locObj.protocol,
+      origin: locObj.origin,
+      pathname: locObj.pathname,
+      search: locObj.search,
+      hash: locObj.hash,
+      replace: (u) => { locationProxy.href = u; },
+    };
+    const ctx = {
+      URL,
+      CustomEvent: class CustomEvent {
+        constructor(type, init) {
+          this.type = type;
+          this.detail = init && init.detail;
+        }
+      },
+      sessionStorage: makeSessionStorage(),
+      localStorage: { getItem: () => null, setItem: () => {}, removeItem: () => {} },
+      history: {
+        get state() { return histState; },
+        length: 4,
+        replaceState(st, _title, url) {
+          histState = st;
+          if (url) {
+            const nu = new URL(url, locationProxy.href);
+            locationProxy.href = nu.href;
+            locationProxy.hash = nu.hash;
+          }
+        },
+        go(d) { goDelta = d; },
+      },
+      location: locationProxy,
+      navigator: { onLine: true },
+      document: {
+        currentScript: { src: scriptSrc },
+        referrer,
+        readyState: 'complete',
+        head: { appendChild: () => {} },
+        body: { appendChild: () => {} },
+        documentElement: { setAttribute: () => {}, classList: { add: () => {}, remove: () => {} } },
+        createElement: () => ({ setAttribute: () => {}, style: {} }),
+        querySelector: () => null,
+        querySelectorAll: () => [],
+        getElementById: (id) => (targetSectionId && id === targetSectionId
+          ? { scrollIntoView: () => { scrolledId = id; } }
+          : null),
+        addEventListener(type, fn) { (docListeners[type] ||= []).push(fn); },
+      },
+      window: null,
+      setTimeout: (fn) => { fn(); return 1; },
+      clearTimeout: () => {},
+    };
+    ctx.window = ctx;
+    ctx.window.addEventListener = (type, fn) => { (winListeners[type] ||= []).push(fn); };
+    ctx.window.dispatchEvent = (ev) => { dispatched.push(ev); };
+    ctx.window.scrollTo = () => {};
+    vm.runInNewContext(configJs, ctx);
+    return {
+      getState: () => histState,
+      getGoDelta: () => goDelta,
+      getScrolledId: () => scrolledId,
+      dispatched,
+      async clickLink(linkHref) {
+        let prevented = false;
+        const resolvedHref = new URL(linkHref, locationProxy.href).href;
+        const anchor = {
+          href: resolvedHref,
+          target: '',
+          hasAttribute: () => false,
+          getAttribute: (n) => (n === 'href' ? linkHref : null),
+        };
+        const ev = {
+          defaultPrevented: false,
+          button: 0,
+          metaKey: false,
+          ctrlKey: false,
+          shiftKey: false,
+          altKey: false,
+          target: { closest: (sel) => (sel === 'a[href]' ? anchor : null) },
+          preventDefault() { prevented = true; this.defaultPrevented = true; },
+        };
+        (winListeners.click || []).forEach((fn) => fn(ev));
+        await Promise.resolve();
+        return prevented;
+      },
+      firePageshow(persisted) {
+        (winListeners.pageshow || []).forEach((fn) => fn({ persisted }));
+      },
+    };
+  };
+
+  // 1. Ouverture de index.html -> series-exercices.html -> js-37-defis-tt.html
+  const pHome = runConfigPage({ href: 'https://sti.example/index.html' });
+  assert.equal(pHome.getState().__stiHome, 1);
+
+  const pSeries = runConfigPage({
+    href: 'https://sti.example/exercices/series-exercices.html',
+    referrer: 'https://sti.example/index.html',
+    targetSectionId: 'javascript',
+  });
+  assert.equal(pSeries.getState().__stiSeries, 1);
+  assert.equal(pSeries.getState().__stiSeriesHop, 0);
+  assert.equal(pSeries.getState().__stiHop, 1);
+
+  const pExo = runConfigPage({
+    href: 'https://sti.example/exercices/javascript/js-37-defis-tt.html',
+    referrer: 'https://sti.example/exercices/series-exercices.html',
+  });
+  assert.equal(pExo.getState().__stiSeriesHop, 1);
+  assert.equal(pExo.getState().__stiHop, 2);
+
+  // Clic sur « Retour aux séries JS » -> history.go(-1) sans rechargement + ancre #javascript mémorisée
+  const prevented = await pExo.clickLink('../series-exercices.html#javascript');
+  assert.equal(prevented, true);
+  assert.equal(pExo.getGoDelta(), -1);
+  assert.equal(sessMap.get('sti-retour-series-hash'), '#javascript');
+
+  // Restauration bfcache de series-exercices.html -> scroll sur #javascript + événement sti-series-restored
+  pSeries.firePageshow(true);
+  assert.equal(pSeries.getScrolledId(), 'javascript');
+  assert.equal(sessMap.has('sti-retour-series-hash'), false);
+  assert.equal(pSeries.dispatched.some((e) => e.type === 'sti-series-restored' && e.detail && e.detail.persisted === true), true);
+
+  // B) Test comportemental de sauvegarde-auto-drive.gs (15 tables, pagination >1000, remplacement du jour, doPost JWT)
+  const driveFiles = [
+    {
+      name: 'sti-sauvegarde-2026-10-26.json.gz',
+      trashed: false,
+      created: new Date('2026-10-26T01:00:00Z'),
+      size: 1200,
+      id: 'old-same-day',
+    },
+  ];
+  const createdBlobs = [];
+  const gsCtx = {
+    Logger: { log: () => {} },
+    Utilities: {
+      formatDate: (_d, _tz, fmt) => (fmt === 'yyyy-MM-dd' ? '2026-10-26' : '2026-10-26 02:00:00'),
+      newBlob: (str, mime, name) => ({ content: str, mime, name, getBytes: () => Buffer.from(str, 'utf8') }),
+      gzip: (blob) => ({
+        name: blob.name + '.gz',
+        content: blob.content,
+        setName(n) { this.name = n; return this; },
+      }),
+    },
+    PropertiesService: {
+      getScriptProperties: () => ({
+        getProperty: (k) => ({
+          SUPABASE_URL: 'https://vywujxmepvcbgedgmger.supabase.co',
+          SUPABASE_SERVICE_KEY: 'srv-key-test',
+          DRIVE_FOLDER_ID: 'folder-123',
+          RETENTION_JOURS: '90',
+        }[k] || ''),
+        setProperty: () => {},
+      }),
+    },
+    UrlFetchApp: {
+      fetch: (url, opts) => {
+        if (url.endsWith('/auth/v1/user')) {
+          const auth = (opts && opts.headers && opts.headers.Authorization) || '';
+          if (auth === 'Bearer valid-admin-jwt-token-1234567890') {
+            return { getResponseCode: () => 200, getContentText: () => JSON.stringify({ email: 'aymenessouyah@gmail.com' }) };
+          }
+          return { getResponseCode: () => 401, getContentText: () => '{}' };
+        }
+        const m = url.match(/\/rest\/v1\/([a-z_]+)\?select=\*&order=([^&]+)&limit=1000&offset=(\d+)/);
+        assert.ok(m, 'URL PostgREST attendue : ' + url);
+        const tbl = m[1];
+        const ord = decodeURIComponent(m[2]);
+        const offset = Number(m[3]);
+        if (tbl === 'sti_quiz_sessions') assert.equal(ord, 'user_id.asc,quiz.asc,mode.asc');
+        if (tbl === 'sti_quiz_vus') assert.equal(ord, 'user_id.asc,module.asc,question_id.asc');
+        if (tbl === 'sti_quiz_reponses' && offset === 0) {
+          return {
+            getResponseCode: () => 200,
+            getContentText: () => JSON.stringify(Array.from({ length: 1000 }, (_, i) => ({ id: i + 1 }))),
+          };
+        }
+        if (tbl === 'sti_quiz_reponses' && offset === 1000) {
+          return {
+            getResponseCode: () => 200,
+            getContentText: () => JSON.stringify([{ id: 1001 }, { id: 1002 }]),
+          };
+        }
+        return { getResponseCode: () => 200, getContentText: () => JSON.stringify([{ ok: tbl }]) };
+      },
+    },
+    LockService: {
+      getScriptLock: () => ({
+        tryLock: () => true,
+        releaseLock: () => {},
+      }),
+    },
+    DriveApp: {
+      getFolderById: () => ({
+        getFilesByName: (name) => {
+          const matches = driveFiles.filter((f) => !f.trashed && f.name === name);
+          let idx = 0;
+          return {
+            hasNext: () => idx < matches.length,
+            next: () => {
+              const f = matches[idx++];
+              return { isTrashed: () => f.trashed, setTrashed: (v) => { f.trashed = v; } };
+            },
+          };
+        },
+        createFile: (gz) => {
+          const rec = {
+            name: gz.name,
+            trashed: false,
+            created: new Date('2026-10-26T02:00:00Z'),
+            size: Buffer.byteLength(gz.content, 'utf8'),
+            id: 'new-file-v467',
+          };
+          driveFiles.unshift(rec);
+          createdBlobs.push({ name: gz.name, json: JSON.parse(gz.content) });
+          return {
+            getName: () => rec.name,
+            getId: () => rec.id,
+            getSize: () => rec.size,
+            getDateCreated: () => rec.created,
+          };
+        },
+        getFiles: () => {
+          const active = driveFiles.filter((f) => !f.trashed);
+          let i = 0;
+          return {
+            hasNext: () => i < active.length,
+            next: () => {
+              const f = active[i++];
+              return {
+                getName: () => f.name,
+                getId: () => f.id,
+                getSize: () => f.size,
+                getDateCreated: () => f.created,
+                isTrashed: () => f.trashed,
+                setTrashed: (v) => { f.trashed = v; },
+              };
+            },
+          };
+        },
+      }),
+    },
+    ScriptApp: {
+      getProjectTriggers: () => [],
+      deleteTrigger: () => {},
+      newTrigger: () => ({ timeBased: () => ({ everyDays: () => ({ atHour: () => ({ create: () => {} }) }) }) }),
+    },
+    MailApp: { sendEmail: () => {} },
+    ContentService: {
+      MimeType: { JSON: 'application/json' },
+      createTextOutput: (txt) => ({
+        _txt: txt,
+        setMimeType() { return this; },
+        getContent() { return this._txt; },
+      }),
+    },
+  };
+  vm.runInNewContext(gsCode, gsCtx);
+  assert.equal(Array.from(gsCtx.TABLES_SAUVEGARDE).length, 15);
+
+  const denied = JSON.parse(gsCtx.doPost({ postData: { contents: JSON.stringify({ action: 'sauvegarder', access_token: 'bad' }) } }).getContent());
+  assert.equal(denied.ok, false);
+
+  const synced = JSON.parse(gsCtx.doPost({ postData: { contents: JSON.stringify({ action: 'sauvegarder', access_token: 'valid-admin-jwt-token-1234567890' }) } }).getContent());
+  assert.equal(synced.ok, true);
+  assert.equal(synced.nb_tables, 15);
+  assert.equal(synced.total_lignes, 1002 + 14); // 1002 sur sti_quiz_reponses + 1 ligne sur chacune des 14 autres tables
+  assert.equal(driveFiles.find((f) => f.id === 'old-same-day').trashed, true, 'L’archive du même jour doit être remplacée sans doublon');
+  assert.equal(createdBlobs[0].json.tables.sti_quiz_reponses.length, 1002);
+
+  // C) Test comportemental de assets/js/sauvegarde.js (collecte 15 tables + RPC annexe + .json.gz round-trip + sync Drive CORS-safe)
+  const lsStore = new Map([
+    ['sb-vywujxmepvcbgedgmger-auth-token', JSON.stringify({ access_token: 'admin-jwt-browser-token' })],
+    ['sti-theme-admin', 'foret'],
+    ['sti-drive-webapp-url', 'https://script.google.com/macros/s/AKfycbTestV467/exec'],
+  ]);
+  const localStorageMock = {
+    get length() { return lsStore.size; },
+    key: (i) => Array.from(lsStore.keys())[i] || null,
+    getItem: (k) => (lsStore.has(k) ? lsStore.get(k) : null),
+    setItem: (k, v) => lsStore.set(String(k), String(v)),
+    removeItem: (k) => lsStore.delete(String(k)),
+  };
+  const postedDriveCalls = [];
+  const fetchMock = async (url, opts = {}) => {
+    if (String(url).startsWith('https://script.google.com/macros/s/')) {
+      postedDriveCalls.push({ url, opts });
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          ok: true,
+          fichier: 'sti-sauvegarde-2026-10-26.json.gz',
+          taille_octets: 28672,
+          nb_tables: 15,
+          total_lignes: 318,
+          cree_le: '2026-10-26T12:00:00.000Z',
+        }),
+      };
+    }
+    if (String(url).endsWith('/rest/v1/rpc/admin_sauvegarde_tables_annexes')) {
+      assert.equal(opts.method, 'POST');
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          labo_devices: [{ id: 'dev-1', device_label: 'PC01' }],
+          labo_device_sessions: [{ session_id: 'sess-1' }],
+          badges_labo: [],
+          push_subscriptions: [],
+        }),
+      };
+    }
+    const m = String(url).match(/\/rest\/v1\/([a-z_]+)\?/);
+    assert.ok(m, 'Requête table directe attendue : ' + url);
+    const tbl = m[1];
+    return {
+      ok: true,
+      status: 200,
+      json: async () => [{ table: tbl, id: 1 }],
+    };
+  };
+
+  const sauvCtx = {
+    STI_CFG: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'anon-key' },
+    localStorage: localStorageMock,
+    fetch: fetchMock,
+    Blob,
+    Response,
+    CompressionStream,
+    DecompressionStream,
+    TextEncoder,
+    URL: { createObjectURL: () => 'blob:test', revokeObjectURL: () => {} },
+    setTimeout: () => 1,
+    location: { reload: () => {} },
+    navigator: { clipboard: { writeText: async () => {} } },
+    document: {
+      readyState: 'complete',
+      getElementById: () => null,
+      createElement: () => ({
+        style: {},
+        setAttribute: () => {},
+        addEventListener: () => {},
+        click: () => {},
+        remove: () => {},
+      }),
+      body: { appendChild: () => {} },
+      addEventListener: () => {},
+    },
+    window: null,
+  };
+  sauvCtx.window = sauvCtx;
+  vm.runInNewContext(sauvJs, sauvCtx);
+
+  const api = sauvCtx.STI_SAUVEGARDE;
+  assert.equal(Array.from(api.TABLES_CLOUD).length, 15);
+  const archive = await api.collecterToutCloud('admin-jwt-browser-token');
+  assert.equal(archive.nb_tables, 15);
+  assert.equal(Object.keys(archive.erreurs).length, 0);
+  assert.equal(archive.tables.labo_devices.length, 1);
+  assert.equal(archive.tables.labo_device_sessions.length, 1);
+  assert.equal(Array.isArray(archive.tables.badges_labo), true);
+  assert.equal(Array.isArray(archive.tables.push_subscriptions), true);
+  assert.equal(archive.total_lignes, 11 + 2);
+
+  // Round-trip compression / décompression GZIP (.json.gz)
+  const gzBlob = await api.compresserGzip(JSON.stringify(archive));
+  assert.ok(gzBlob && gzBlob.size > 20);
+  gzBlob.name = 'sti-sauvegarde-2026-10-26.json.gz';
+  const decompressedTxt = await api.lireTexteFichierSauvegarde(gzBlob);
+  const parsedBack = JSON.parse(decompressedTxt);
+  assert.equal(parsedBack.version, 'v467');
+  assert.equal(parsedBack.nb_tables, 15);
+
+  // Synchronisation Google Drive via Web App sans préflight CORS (text/plain;charset=utf-8)
+  const syncRes = await api.appelerWebAppDrive('sauvegarder');
+  assert.equal(syncRes.ok, true);
+  assert.equal(postedDriveCalls.length, 1);
+  assert.equal(postedDriveCalls[0].opts.headers['Content-Type'], 'text/plain;charset=utf-8');
+  const sentBody = JSON.parse(postedDriveCalls[0].opts.body);
+  assert.equal(sentBody.action, 'sauvegarder');
+  assert.equal(sentBody.access_token, 'admin-jwt-browser-token');
+  assert.ok(lsStore.get('sti-drive-last-sync-v467'));
+});
+
+
 
 
 
