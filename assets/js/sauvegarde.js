@@ -66,19 +66,24 @@
     }
   }
 
-  function tokenAdmin() {
+  function sessionAdminComplete() {
     try {
       for (var i = 0; i < localStorage.length; i++) {
         var k = localStorage.key(i) || "";
         if (k.indexOf("sb-") === 0 && k.indexOf("-auth-token") !== -1) {
           var v = JSON.parse(localStorage.getItem(k) || "null");
-          if (v && v.access_token) return v.access_token;
-          if (v && v.currentSession && v.currentSession.access_token) return v.currentSession.access_token;
-          if (v && v.session && v.session.access_token) return v.session.access_token;
+          var tok = (v && v.access_token) || (v && v.currentSession && v.currentSession.access_token) || (v && v.session && v.session.access_token) || null;
+          var usr = (v && v.user) || (v && v.currentSession && v.currentSession.user) || (v && v.session && v.session.user) || null;
+          if (tok) return { token: tok, uid: usr && usr.id ? String(usr.id) : null, email: usr && usr.email ? String(usr.email) : null };
         }
       }
     } catch (e) {}
     return null;
+  }
+
+  function tokenAdmin() {
+    var s = sessionAdminComplete();
+    return s ? s.token : null;
   }
 
   function locales() {
@@ -327,6 +332,93 @@
     });
   }
 
+  function memoriserResultatDrive(res) {
+    if (!res || !res.ok) return;
+    var resume = {
+      ts: Date.now(),
+      fichier: res.fichier || "",
+      taille_octets: res.taille_octets || 0,
+      nb_tables: res.nb_tables || 15,
+      total_lignes: res.total_lignes || 0,
+      cree_le: res.cree_le || new Date().toISOString()
+    };
+    try {
+      localStorage.setItem(CLE_DERNIERE_SYNC_DRIVE, JSON.stringify(resume));
+    } catch (eS) {}
+  }
+
+  function synchroniserConfigDriveAdmin() {
+    if (lireUrlWebAppDrive()) return Promise.resolve(lireUrlWebAppDrive());
+    var sess = sessionAdminComplete();
+    if (!sess || !sess.token || !sess.uid || String(sess.email || "").toLowerCase() !== "aymenessouyah@gmail.com") {
+      return Promise.resolve("");
+    }
+    return fetch(cfg.URL + "/rest/v1/sti_progressions?select=donnees&user_id=eq." + encodeURIComponent(sess.uid) + "&limit=1", {
+      method: "GET",
+      headers: { "apikey": cfg.CLE, "Authorization": "Bearer " + sess.token, "Accept": "application/json" }
+    }).then(function (r) { return r && r.ok ? r.json() : []; }).then(function (rows) {
+      var d = rows && rows[0] && rows[0].donnees;
+      var urlCloud = d && d[CLE_WEBAPP_DRIVE] ? String(d[CLE_WEBAPP_DRIVE]).trim() : "";
+      if (estUrlWebAppDriveValide(urlCloud)) {
+        try { localStorage.setItem(CLE_WEBAPP_DRIVE, urlCloud); } catch (eL) {}
+        if (d[CLE_DERNIERE_SYNC_DRIVE] && !localStorage.getItem(CLE_DERNIERE_SYNC_DRIVE)) {
+          try { localStorage.setItem(CLE_DERNIERE_SYNC_DRIVE, String(d[CLE_DERNIERE_SYNC_DRIVE])); } catch (eM) {}
+        }
+        return urlCloud;
+      }
+      return "";
+    }).catch(function () { return ""; });
+  }
+
+  function pousserConfigDriveAdmin(urlDrive) {
+    var sess = sessionAdminComplete();
+    if (!sess || !sess.token || !sess.uid || String(sess.email || "").toLowerCase() !== "aymenessouyah@gmail.com") return;
+    fetch(cfg.URL + "/rest/v1/sti_progressions?select=donnees&user_id=eq." + encodeURIComponent(sess.uid) + "&limit=1", {
+      method: "GET",
+      headers: { "apikey": cfg.CLE, "Authorization": "Bearer " + sess.token, "Accept": "application/json" }
+    }).then(function (r) { return r && r.ok ? r.json() : []; }).then(function (rows) {
+      var donnees = (rows && rows[0] && rows[0].donnees && typeof rows[0].donnees === "object") ? rows[0].donnees : {};
+      if (urlDrive && estUrlWebAppDriveValide(urlDrive)) donnees[CLE_WEBAPP_DRIVE] = String(urlDrive).trim();
+      else delete donnees[CLE_WEBAPP_DRIVE];
+      var memSync = localStorage.getItem(CLE_DERNIERE_SYNC_DRIVE);
+      if (memSync) donnees[CLE_DERNIERE_SYNC_DRIVE] = memSync;
+      return fetch(cfg.URL + "/rest/v1/sti_progressions", {
+        method: "POST",
+        headers: {
+          "apikey": cfg.CLE,
+          "Authorization": "Bearer " + sess.token,
+          "Content-Type": "application/json",
+          "Prefer": "resolution=merge-duplicates,return=minimal"
+        },
+        body: JSON.stringify({ user_id: sess.uid, email: sess.email, donnees: donnees, maj: new Date().toISOString() })
+      });
+    }).catch(function () {});
+  }
+
+  function televerserArchiveVersDrive(urlOverride) {
+    var url = estUrlWebAppDriveValide(urlOverride) ? String(urlOverride).trim() : lireUrlWebAppDrive();
+    if (!url) return Promise.reject(new Error("URL Web App Apps Script non configurée."));
+    var token = tokenAdmin();
+    if (!token) return Promise.reject(new Error("Session administrateur requise."));
+    return collecterToutCloud(token).then(function (sortie) {
+      return fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "televerser",
+          access_token: token,
+          archive_json: JSON.stringify(sortie)
+        })
+      });
+    }).then(function (r) {
+      if (!r || !r.ok) return Promise.reject(new Error("HTTP " + (r ? r.status : 0)));
+      return r.json();
+    }).then(function (res) {
+      memoriserResultatDrive(res);
+      return res;
+    });
+  }
+
   function appelerWebAppDrive(action, urlOverride) {
     var url = estUrlWebAppDriveValide(urlOverride) ? String(urlOverride).trim() : lireUrlWebAppDrive();
     if (!url) return Promise.reject(new Error("URL Web App Apps Script non configurée."));
@@ -340,18 +432,10 @@
       if (!r || !r.ok) return Promise.reject(new Error("HTTP " + (r ? r.status : 0)));
       return r.json();
     }).then(function (res) {
-      if (res && res.ok && action !== "statut") {
-        try {
-          localStorage.setItem(CLE_DERNIERE_SYNC_DRIVE, JSON.stringify({
-            ts: Date.now(),
-            fichier: res.fichier || "",
-            taille_octets: res.taille_octets || 0,
-            nb_tables: res.nb_tables || 15,
-            total_lignes: res.total_lignes || 0,
-            cree_le: res.cree_le || new Date().toISOString()
-          }));
-        } catch (eS) {}
+      if ((!res || !res.ok) && (action || "sauvegarder") === "sauvegarder" && res && /SUPABASE_SERVICE_KEY|HTTP 401/i.test(String(res.erreur || ""))) {
+        return televerserArchiveVersDrive(url);
       }
+      if (action !== "statut") memoriserResultatDrive(res);
       return res;
     });
   }
@@ -396,19 +480,33 @@
       });
   }
 
+  var enSyncAutoDrive = false;
   function verifierSyncAutoDrive() {
-    var url = lireUrlWebAppDrive();
-    if (!url) return Promise.resolve({ ignore: true, raison: "pas_d_url" });
-    var token = tokenAdmin();
-    if (!token) return Promise.resolve({ ignore: true, raison: "pas_de_token" });
-    try {
-      var mem = JSON.parse(localStorage.getItem(CLE_DERNIERE_SYNC_DRIVE) || "null");
-      if (mem && mem.ts && (Date.now() - mem.ts) < DELAI_AUTO_DRIVE_MS) {
-        return Promise.resolve({ ignore: true, raison: "deja_a_jour", derniere: mem });
-      }
-    } catch (e) {}
-    return appelerWebAppDrive("sauvegarder", url).catch(function (err) {
-      return { ok: false, erreur: String((err && err.message) || err) };
+    if (enSyncAutoDrive) return Promise.resolve({ ignore: true, raison: "en_cours" });
+    return synchroniserConfigDriveAdmin().then(function () {
+      var url = lireUrlWebAppDrive();
+      if (!url) return { ignore: true, raison: "pas_d_url" };
+      var token = tokenAdmin();
+      if (!token) return { ignore: true, raison: "pas_de_token" };
+      try {
+        var mem = JSON.parse(localStorage.getItem(CLE_DERNIERE_SYNC_DRIVE) || "null");
+        if (mem && mem.ts && (Date.now() - mem.ts) < DELAI_AUTO_DRIVE_MS) {
+          return { ignore: true, raison: "deja_a_jour", derniere: mem };
+        }
+      } catch (e) {}
+      enSyncAutoDrive = true;
+      return appelerWebAppDrive("sauvegarder", url)
+        .then(function (res) {
+          if (res && res.ok) pousserConfigDriveAdmin(url);
+          return res;
+        })
+        .catch(function (err) {
+          return { ok: false, erreur: String((err && err.message) || err) };
+        })
+        .then(function (finalRes) {
+          enSyncAutoDrive = false;
+          return finalRes;
+        });
     });
   }
 
@@ -467,6 +565,7 @@
       var val = String((inpUrl && inpUrl.value) || "").trim();
       if (!val) {
         localStorage.removeItem(CLE_WEBAPP_DRIVE);
+        pousserConfigDriveAdmin("");
         zone.innerHTML = "<p>ℹ️ URL Web App Drive effacée (le déclencheur horaire Apps Script reste actif côté Google).</p>";
         return;
       }
@@ -475,18 +574,23 @@
         return;
       }
       localStorage.setItem(CLE_WEBAPP_DRIVE, val);
-      zone.innerHTML = "<p>✅ URL Web App Google Drive enregistrée. La synchronisation automatique (1× / 24 h) est active.</p>";
+      pousserConfigDriveAdmin(val);
+      zone.innerHTML = "<p>✅ URL Web App Google Drive enregistrée et synchronisée sur votre compte admin. La sauvegarde automatique (1× / 24 h) est active.</p>";
     });
 
     document.getElementById("sti-sauv-drive-now").addEventListener("click", function () {
       var val = String((inpUrl && inpUrl.value) || "").trim();
-      if (val && estUrlWebAppDriveValide(val)) localStorage.setItem(CLE_WEBAPP_DRIVE, val);
+      if (val && estUrlWebAppDriveValide(val)) {
+        localStorage.setItem(CLE_WEBAPP_DRIVE, val);
+        pousserConfigDriveAdmin(val);
+      }
       zone.innerHTML = "<p>⏳ Sauvegarde des 15 tables vers Google Drive en cours…</p>";
       appelerWebAppDrive("sauvegarder", val).then(function (res) {
         if (!res || !res.ok) {
           zone.innerHTML = "<p>⚠️ Réponse Drive : " + ech((res && (res.erreur || res.message)) || "échec") + "</p>";
           return;
         }
+        pousserConfigDriveAdmin(val || lireUrlWebAppDrive());
         if (resumeEl) resumeEl.innerHTML = rendreResumeDrive();
         zone.innerHTML = "<p>✅ <b>" + ech(res.fichier) + "</b> enregistré dans Google Drive (" + Math.max(1, Math.round((res.taille_octets || 0) / 1024)) + " Ko · " + res.nb_tables + " tables · " + res.total_lignes + " lignes).</p>";
       }).catch(function (err) {
@@ -526,6 +630,23 @@
     setTimeout(function () {
       try { verifierSyncAutoDrive(); } catch (e) {}
     }, 4500);
+    if (typeof setInterval === "function") {
+      setInterval(function () {
+        try { verifierSyncAutoDrive(); } catch (eI) {}
+      }, 30 * 60 * 1000);
+    }
+    if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+      window.addEventListener("online", function () {
+        try { verifierSyncAutoDrive(); } catch (eO) {}
+      });
+    }
+    if (typeof document !== "undefined" && typeof document.addEventListener === "function") {
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") {
+          try { verifierSyncAutoDrive(); } catch (eV) {}
+        }
+      });
+    }
   }
 
   window.STI_SAUVEGARDE = {
@@ -537,6 +658,7 @@
     lireTexteFichierSauvegarde: lireTexteFichierSauvegarde,
     exporter: exporter,
     appelerWebAppDrive: appelerWebAppDrive,
+    televerserArchiveVersDrive: televerserArchiveVersDrive,
     verifierSyncAutoDrive: verifierSyncAutoDrive,
     ouvrirPanneau: panneau
   };

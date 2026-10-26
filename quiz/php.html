@@ -42859,13 +42859,13 @@ Check your Browserslist config to be sure that your targets are set up correctly
       function surpriseMe() {
         const cats = [...CATS];
         selCats = new Set([
-          cats[Math.floor(Math.random() * cats.length)].id,
-          cats[Math.floor(Math.random() * cats.length)].id,
+          cats[entierAleatoirePhp(cats.length)].id,
+          cats[entierAleatoirePhp(cats.length)].id,
         ]);
         selDiff = ["Mixed", "Facile", "Moyen", "Difficile"][
-          Math.floor(Math.random() * 4)
+          entierAleatoirePhp(4)
         ];
-        selMode = ["practice", "exam", "death"][Math.floor(Math.random() * 3)];
+        selMode = ["practice", "exam", "death"][entierAleatoirePhp(3)];
         document
           .querySelectorAll("#diffRow .diff-pill")
           .forEach((x) =>
@@ -42876,7 +42876,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           .forEach((x) =>
             x.classList.toggle("active", x.dataset.mode === selMode)
           );
-        $("qCount").value = 8 + Math.floor(Math.random() * 8);
+        $("qCount").value = 8 + entierAleatoirePhp(8);
         $("qCount").dispatchEvent(new Event("input"));
         renderCats();
         updateSetup();
@@ -42948,7 +42948,7 @@ Check your Browserslist config to be sure that your targets are set up correctly
           return Object.assign({}, orig);
         });
         copies.forEach((q, idxQ) => {
-          const order = shuffle([0, 1, 2, 3]);
+          const order = shuffle(q.options.map((_, idxOpt) => idxOpt));
           q._opts = order.map((i) => q.options[i]);
           q._ans = order.indexOf(q.answer);
           if (

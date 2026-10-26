@@ -13,6 +13,13 @@
     { cat: "Pages", nom: "Cours JavaScript", url: "cours/javascript.html" },
     { cat: "Pages", nom: "Cours PHP (synthèses 1 & 2)", url: "cours/php.html" },
     { cat: "Pages", nom: "Cours SQL (Partie 4 Bac)", url: "cours/sql.html" },
+    { cat: "Pages", nom: "Séries d'exercices & TP", url: "exercices/series-exercices.html" },
+    { cat: "Pages", nom: "Mes erreurs à retravailler", url: "revision-erreurs.html" },
+    { cat: "Quiz", nom: "Quiz HTML5 & CSS3", url: "quiz/html-css.html" },
+    { cat: "Quiz", nom: "Quiz JavaScript", url: "quiz/javascript.html" },
+    { cat: "Quiz", nom: "Quiz SQL (BD)", url: "quiz/sql.html" },
+    { cat: "Quiz", nom: "Quiz PHP", url: "quiz/php.html" },
+    { cat: "Quiz", nom: "Quiz des tableaux (Smart Books)", url: "quiz/tableaux.html" },
     { cat: "Fiches A4", nom: "Énoncé Série 4 (ETUDIANT_BD)", url: "documents/enonces/enonce-serie4-a4.html" },
     { cat: "Fiches A4", nom: "Énoncé Série 5 (Gesthotel)", url: "documents/enonces/enonce-serie5-a4.html" },
     { cat: "Bases & ZIP", nom: "BD ecole.sql (synthèse 1)", url: "documents/bd/ecole.sql" },
@@ -56,6 +63,11 @@
       return { it: it, ok: false, code: String(e.message || e), ms: Date.now() - t0 };
     });
   }
+  function ech(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
   function lancer(zone) {
     zone.innerHTML = "<p>⏳ Vérification en cours…</p>";
     var tk = token();
@@ -63,7 +75,9 @@
     var tous = ITEMS.concat([
       { cat: "Supabase", nom: "Table profiles", url: cfg.URL + "/rest/v1/profiles?select=id&limit=1", headers: hdr },
       { cat: "Supabase", nom: "Table acces", url: cfg.URL + "/rest/v1/acces?select=id&limit=1", headers: hdr },
-      { cat: "Supabase", nom: "Table sti_progressions", url: cfg.URL + "/rest/v1/sti_progressions?select=user_id&limit=1", headers: hdr }
+      { cat: "Supabase", nom: "Table sti_progressions", url: cfg.URL + "/rest/v1/sti_progressions?select=user_id&limit=1", headers: hdr },
+      { cat: "Supabase", nom: "Table sti_quiz_parties", url: cfg.URL + "/rest/v1/sti_quiz_parties?select=id&limit=1", headers: hdr },
+      { cat: "Supabase", nom: "Table sti_quiz_reponses", url: cfg.URL + "/rest/v1/sti_quiz_reponses?select=id&limit=1", headers: hdr }
     ]);
     Promise.all(tous.map(testerUn)).then(function (res) {
       var nbOk = res.filter(function (x) { return x.ok; }).length;
@@ -72,12 +86,13 @@
         + (nbKo === 0 ? '✅ Tout est opérationnel : ' + nbOk + ' / ' + res.length + ' contrôles réussis — prêt pour la séance !'
                       : '⚠️ ' + nbKo + ' anomalie(s) détectée(s) sur ' + res.length + ' contrôles (' + nbOk + ' OK)') + '</p>';
       var lignes = res.map(function (r) {
-        var badge = r.ok ? '<span style="color:#16a34a;font-weight:900">✅ OK (' + r.code + ')</span>'
-                         : '<span style="color:#dc2626;font-weight:900">❌ ÉCHEC (' + r.code + ')</span>';
-        return '<tr style="background:' + (r.ok ? 'transparent' : 'rgba(220,38,38,.12)') + '"><td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd);font-weight:700">' + r.it.cat + '</td>'
-          + '<td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd)">' + r.it.nom + '</td>'
+        var codeSafe = ech(r.code);
+        var badge = r.ok ? '<span style="color:#16a34a;font-weight:900">✅ OK (' + codeSafe + ')</span>'
+                         : '<span style="color:#dc2626;font-weight:900">❌ ÉCHEC (' + codeSafe + ')</span>';
+        return '<tr style="background:' + (r.ok ? 'transparent' : 'rgba(220,38,38,.12)') + '"><td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd);font-weight:700">' + ech(r.it.cat) + '</td>'
+          + '<td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd)">' + ech(r.it.nom) + '</td>'
           + '<td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd)">' + badge + '</td>'
-          + '<td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd)">' + r.ms + ' ms</td></tr>';
+          + '<td style="padding:6px;border-bottom:1px solid var(--adm-border,#ddd)">' + Math.max(0, Math.round(Number(r.ms) || 0)) + ' ms</td></tr>';
       }).join("");
       zone.innerHTML = resume + '<table style="width:100%;border-collapse:collapse;font-size:.92rem"><thead><tr style="background:var(--adm-surface-2,#f3e9d7);color:var(--adm-text,#1a1a2e)"><th style="padding:7px;text-align:left">Catégorie</th><th style="padding:7px;text-align:left">Ressource</th><th style="padding:7px;text-align:left">État</th><th style="padding:7px;text-align:left">Délai</th></tr></thead><tbody>' + lignes + '</tbody></table>';
     });

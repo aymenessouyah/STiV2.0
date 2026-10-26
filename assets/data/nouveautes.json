@@ -1,5 +1,15 @@
 [
   {
+    "version": "v470",
+    "date": "2026-10-26",
+    "categorie": "Plateforme & Sécurité",
+    "icone": "✅",
+    "titre": "Validation E2E complète : quiz aléatoires à chaque connexion, retours bfcache 0 ms, sauvegarde Drive auto et nouveaux README",
+    "resume": "Tirage CSPRNG neuf des questions et propositions à chaque nouvelle connexion avec isolation stricte des files locales par élève, reprise sans faille du Quiz des Tableaux, préservation intégrale de l’historique bfcache pour un retour instantané vers Quiz, Cours et Exercices sans recharger l’accueil, synchronisation automatique multi-appareils vers Google Drive et réécriture complète de la documentation plateforme et administrateur.",
+    "lien": "revision-erreurs.html",
+    "libelleLien": "Ouvrir « Mes erreurs »"
+  },
+  {
     "version": "v469",
     "date": "2026-10-26",
     "categorie": "Tableau de bord & Suivi",

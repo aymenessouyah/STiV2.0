@@ -3,14 +3,45 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v329";
+var CACHE = "sti-atelier-v330";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v469-pagination-integrale";
-/* Historique caches : sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v470-audit-fonctionnel-readme";
+/* Historique caches : sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "audit-fonctionnel-v470" },
+  { url: "./README.md", revision: "audit-fonctionnel-v470" },
+  { url: "./revision-erreurs.html", revision: "audit-fonctionnel-v470" },
+  { url: "./bac-pratique.html", revision: "audit-fonctionnel-v470" },
+  { url: "./pieges-bac.html", revision: "audit-fonctionnel-v470" },
+  { url: "./memo-veille-bac.html", revision: "audit-fonctionnel-v470" },
+  { url: "./outils-js-bac.html", revision: "audit-fonctionnel-v470" },
+  { url: "./exercices/series-exercices.html", revision: "audit-fonctionnel-v470" },
+  { url: "./cours/courscss3.html", revision: "audit-fonctionnel-v470" },
+  { url: "./cours/css3.html", revision: "audit-fonctionnel-v470" },
+  { url: "./cours/coursphp.html", revision: "audit-fonctionnel-v470" },
+  { url: "./cours/php.html", revision: "audit-fonctionnel-v470" },
+  { url: "./cours/javascript.html", revision: "audit-fonctionnel-v470" },
+  { url: "./cours/sql.html", revision: "audit-fonctionnel-v470" },
+  { url: "./cours/fiche-revision-html5.html", revision: "audit-fonctionnel-v470" },
+  { url: "./quiz/html-css.html", revision: "audit-fonctionnel-v470" },
+  { url: "./quiz/javascript.html", revision: "audit-fonctionnel-v470" },
+  { url: "./quiz/sql.html", revision: "audit-fonctionnel-v470" },
+  { url: "./quiz/php.html", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/data/nouveautes.json", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/config.js", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/acces.js", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/mobile-nav.js", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/portail.js", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/quiz-sync.js", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/sync-progressions.js", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/sauvegarde.js", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/sante.js", revision: "audit-fonctionnel-v470" },
+  { url: "./documents/sql/sauvegarde-auto-drive.gs", revision: "audit-fonctionnel-v470" },
+  { url: "./offline-complete-manifest.json", revision: "audit-fonctionnel-v470" },
   { url: "./admin.html", revision: "pagination-integrale-v469" },
   { url: "./README.md", revision: "pagination-integrale-v469" },
   { url: "./documents/annexes/annexe-html5.pdf.html", revision: "pagination-integrale-v469" },

@@ -3278,7 +3278,7 @@ mysqli_close($connexion);
           if (pr) de.style.scrollBehavior = pr;
           else de.style.removeProperty("scroll-behavior");
           if (location.hash === "#top" && history.replaceState)
-            history.replaceState(null, "", location.pathname + location.search);
+            history.replaceState(history.state, "", location.pathname + location.search);
         });
       })();
     </script>

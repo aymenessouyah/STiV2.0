@@ -316,10 +316,10 @@
         var el = doc.getElementById(hash) || doc.querySelector('[name="' + hash + '"]');
         if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "start" });
         else window.scrollTo({ top: 0, behavior: "smooth" });
-        try { history.pushState(null, "", u.pathname + (u.search || "") + "#" + hash); } catch (er) { try { location.hash = hash; } catch (e2) {} }
+        try { history.replaceState(history.state, "", u.pathname + (u.search || "") + "#" + hash); } catch (er) { try { location.hash = hash; } catch (e2) {} }
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
-        try { if (location.hash) history.pushState(null, "", u.pathname + (u.search || "")); } catch (er) {}
+        try { if (location.hash) history.replaceState(history.state, "", u.pathname + (u.search || "")); } catch (er) {}
       }
       majActif();
     }

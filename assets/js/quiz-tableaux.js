@@ -287,7 +287,8 @@
     sauv.ordre_questions.forEach(function (it) {
       var ref = parId[String(it.qid)];
       if (!ref) return;
-      var choix = Array.isArray(it.choix) && it.choix.length === ref.choix.length ? it.choix.slice() : melanger(ref.choix);
+      var tousChoixRef = [ref.bonne].concat(Array.isArray(ref.choix_faux) ? ref.choix_faux : []);
+      var choix = Array.isArray(it.choix) && it.choix.length === tousChoixRef.length ? it.choix.slice() : melanger(tousChoixRef);
       var ce = typeof it.choixEleve === "number" ? it.choixEleve : -1;
       restaurees.push({ ref: ref, choix: choix, choixEleve: ce });
     });
@@ -308,6 +309,8 @@
   function sauvegarderProgressionTableauxCloud() {
     var s = sessionQuiz;
     if (!s || s.synchronise || !window.STIQuizSync || typeof STIQuizSync.sauverSession !== "function") return;
+    var nbRepondues = s.questions.filter(function (it) { return it.choixEleve !== -1; }).length;
+    if (nbRepondues === 0 && s.index === 0) return;
     var bonnesCourantes = s.questions.filter(function (it) {
       return it.choixEleve !== -1 && it.choix[it.choixEleve] === it.ref.bonne;
     }).length;
