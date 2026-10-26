@@ -104,10 +104,12 @@
   }
 
   function panneau() {
-    return doc.querySelector(".sti-pan.ouvert") || (function () {
-      var p = doc.querySelector(".sti-pan");
-      return p && p.offsetParent !== null ? p : null;
-    })();
+    var po = doc.querySelector(".sti-pan.ouvert");
+    if (po) return po;
+    var p = doc.querySelector(".sti-pan");
+    if (!p) return null;
+    if (p.style && p.style.display === "none") return null;
+    return p.offsetParent !== null ? p : null;
   }
   function bloc(p) {
     var b = p.querySelector("#sti-pan-plan");
@@ -160,7 +162,15 @@
     if (!p) return;
     var sig = p.querySelector("#sti-pan-plan") ? JSON.stringify(etat()) : "absent";
     if (sig !== dernier) { rendre(); dernier = sig; }
-  }, 900);
+  }, 2500);
+  try {
+    doc.addEventListener("click", function (ev) {
+      var t = ev && ev.target;
+      if (t && (t.id === "sti-roue-btn" || (t.closest && t.closest("#sti-roue-btn")))) {
+        setTimeout(rendre, 20);
+      }
+    });
+  } catch (eClkP) {}
 
   window.STI_PLAN = { etat: etat, definirDate: definirDate, plan: plan, CHAPITRES: CHAPITRES };
   try { if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", rendre); else rendre(); } catch (e) {}

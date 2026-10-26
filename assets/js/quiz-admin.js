@@ -800,7 +800,38 @@
     if (sel) sel.addEventListener("change", function () { if (donnees) afficher(); });
     var rech = $("rech-quiz-sync");
     if (rech) rech.addEventListener("input", function () { if (donnees) afficher(); });
-    charger();
+
+    /* v473 : ne pas lancer 4 requêtes paginées complètes à l'ouverture d'admin.html tant que #bloc-sec-quiz est replié */
+    var secQuiz = $("bloc-sec-quiz");
+    var dejaChargeAuto = false;
+    function chargerUneFoisSiOuvert() {
+      if (dejaChargeAuto) return;
+      if (secQuiz && secQuiz.classList && secQuiz.classList.contains("sec-repliee")) return;
+      dejaChargeAuto = true;
+      charger();
+    }
+    if (secQuiz && secQuiz.classList && secQuiz.classList.contains("sec-repliee")) {
+      var resEl = $("quiz-sync-resume");
+      if (resEl) resEl.textContent = "Ouvrez cette section (ou cliquez sur ↻ Actualiser) pour charger les résultats détaillés des quiz.";
+      if (typeof MutationObserver === "function") {
+        var obsSec = new MutationObserver(function () {
+          if (!secQuiz.classList.contains("sec-repliee")) {
+            obsSec.disconnect();
+            chargerUneFoisSiOuvert();
+          }
+        });
+        obsSec.observe(secQuiz, { attributes: true, attributeFilter: ["class"] });
+      }
+      document.addEventListener("click", function (ev) {
+        var t = ev && ev.target;
+        if (!t || !t.closest) return;
+        if (t.closest('[data-sec-cible="bloc-sec-quiz"]') || t.closest('[data-replier="bloc-sec-quiz"]') || t.closest('[data-nav-groupe="grp-scolarite"]')) {
+          setTimeout(function () { dejaChargeAuto = true; charger(); }, 30);
+        }
+      });
+    } else {
+      chargerUneFoisSiOuvert();
+    }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

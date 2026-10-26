@@ -349,6 +349,11 @@
 
   function synchroniserConfigDriveAdmin() {
     if (lireUrlWebAppDrive()) return Promise.resolve(lireUrlWebAppDrive());
+    try {
+      if (typeof sessionStorage !== "undefined" && sessionStorage.getItem("sti-drive-cfg-checked-v1") === "1") {
+        return Promise.resolve("");
+      }
+    } catch (eSC) {}
     var sess = sessionAdminComplete();
     if (!sess || !sess.token || !sess.uid || String(sess.email || "").toLowerCase() !== "aymenessouyah@gmail.com") {
       return Promise.resolve("");
@@ -357,6 +362,7 @@
       method: "GET",
       headers: { "apikey": cfg.CLE, "Authorization": "Bearer " + sess.token, "Accept": "application/json" }
     }).then(function (r) { return r && r.ok ? r.json() : []; }).then(function (rows) {
+      try { if (typeof sessionStorage !== "undefined") sessionStorage.setItem("sti-drive-cfg-checked-v1", "1"); } catch (eSC2) {}
       var d = rows && rows[0] && rows[0].donnees;
       var urlCloud = d && d[CLE_WEBAPP_DRIVE] ? String(d[CLE_WEBAPP_DRIVE]).trim() : "";
       if (estUrlWebAppDriveValide(urlCloud)) {
@@ -629,7 +635,7 @@
     document.body.appendChild(b);
     setTimeout(function () {
       try { verifierSyncAutoDrive(); } catch (e) {}
-    }, 4500);
+    }, 15000);
     if (typeof setInterval === "function") {
       setInterval(function () {
         try { verifierSyncAutoDrive(); } catch (eI) {}

@@ -275,13 +275,19 @@
     /* v350 : le numero AFFICHE suit UPDATE_ID de sw.js (v349, v350...) ; le nom de cache
        "sti-atelier-v316" est fige par conception et ne sert qu'en repli hors-ligne. */
     var versionAfficheePrioritaire = false;
-    if (typeof fetch === "function") {
+    var verSessAdm = "";
+    try { verSessAdm = sessionStorage.getItem("sti-sw-upd-ver-sess") || ""; } catch (eSA) {}
+    if (verSessAdm) {
+      versionAfficheePrioritaire = true;
+      majTexteVersion("v" + verSessAdm);
+    } else if (typeof fetch === "function") {
       fetch("sw.js?t=" + Date.now(), { cache: "no-store" })
         .then(function (r) { return r && r.ok ? r.text() : ""; })
         .then(function (txt) {
           var mUpd = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
           if (mUpd && mUpd[1]) {
             versionAfficheePrioritaire = true;
+            try { sessionStorage.setItem("sti-sw-upd-ver-sess", String(mUpd[1])); } catch (eSA2) {}
             majTexteVersion("v" + mUpd[1]);
           }
         })
@@ -478,13 +484,17 @@
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").then(function (reg) {
+      var dejaSyncAdm = "";
+      try { dejaSyncAdm = sessionStorage.getItem("sti-admin-sw-synced") || ""; } catch (eSwA) {}
+      if (dejaSyncAdm === "v473") return;
+      try { sessionStorage.setItem("sti-admin-sw-synced", "v473"); } catch (eSwA2) {}
       if (reg) reg.update().catch(function () {});
       setTimeout(function () {
         try {
           var swT = (reg && reg.active) || navigator.serviceWorker.controller;
           if (swT && navigator.onLine) swT.postMessage({ type: "PRECACHE_ALL" });
         } catch (e) {}
-      }, 2000);
+      }, 6000);
     }).catch(function () {});
   }
 

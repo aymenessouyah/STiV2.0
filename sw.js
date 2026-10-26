@@ -3,39 +3,34 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v332";
-/* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
+var CACHE = "sti-atelier-v333";
+/* À chaque publication, ne placer ici QUE les chemins réellement modifiés (1 seule entrée par URL).
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v472-test-plateforme-complet";
-/* Historique caches : sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
-   Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
-   Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
+var UPDATE_ID = "v473-perf-fluide";
+/* Historique caches : sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
+   Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
+   et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
 var UPDATE_FILES = [
-  { url: "./index.html", revision: "test-plateforme-v472" },
-  { url: "./admin.html", revision: "test-plateforme-v472" },
-  { url: "./ma-fiche-revision.html", revision: "test-plateforme-v472" },
-  { url: "./README.md", revision: "test-plateforme-v472" },
+  { url: "./index.html", revision: "perf-fluide-v473" },
+  { url: "./admin.html", revision: "perf-fluide-v473" },
+  { url: "./ma-fiche-revision.html", revision: "perf-fluide-v473" },
+  { url: "./README.md", revision: "perf-fluide-v473" },
+  { url: "./assets/data/nouveautes.json", revision: "perf-fluide-v473" },
+  { url: "./assets/js/config.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/acces.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/mobile-nav.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/roue-couverture.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/roue-revision.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/roue-plan.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/sync-progressions.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/admin.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/quiz-admin.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/sauvegarde.js", revision: "perf-fluide-v473" },
+  { url: "./offline-complete-manifest.json", revision: "perf-fluide-v473" },
   { url: "./quiz/php.html", revision: "test-plateforme-v472" },
   { url: "./quiz/sql.html", revision: "test-plateforme-v472" },
-  { url: "./assets/data/nouveautes.json", revision: "test-plateforme-v472" },
-  { url: "./assets/js/acces.js", revision: "test-plateforme-v472" },
-  { url: "./assets/js/roue-plan.js", revision: "test-plateforme-v472" },
   { url: "./assets/js/reprendre.js", revision: "test-plateforme-v472" },
-  { url: "./assets/js/mobile-nav.js", revision: "test-plateforme-v472" },
-  { url: "./offline-complete-manifest.json", revision: "test-plateforme-v472" },
-  { url: "./index.html", revision: "tester-tout-v471" },
-  { url: "./admin.html", revision: "tester-tout-v471" },
-  { url: "./ma-fiche-revision.html", revision: "tester-tout-v471" },
-  { url: "./README.md", revision: "tester-tout-v471" },
-  { url: "./assets/data/nouveautes.json", revision: "tester-tout-v471" },
-  { url: "./assets/js/roue-revision.js", revision: "tester-tout-v471" },
-  { url: "./assets/js/roue-plan.js", revision: "tester-tout-v471" },
-  { url: "./assets/js/reprendre.js", revision: "tester-tout-v471" },
-  { url: "./assets/js/mobile-nav.js", revision: "tester-tout-v471" },
   { url: "./assets/js/sante.js", revision: "tester-tout-v471" },
-  { url: "./offline-complete-manifest.json", revision: "tester-tout-v471" },
-  { url: "./admin.html", revision: "audit-fonctionnel-v470" },
-  { url: "./README.md", revision: "audit-fonctionnel-v470" },
   { url: "./revision-erreurs.html", revision: "audit-fonctionnel-v470" },
   { url: "./bac-pratique.html", revision: "audit-fonctionnel-v470" },
   { url: "./pieges-bac.html", revision: "audit-fonctionnel-v470" },
@@ -51,369 +46,76 @@ var UPDATE_FILES = [
   { url: "./cours/fiche-revision-html5.html", revision: "audit-fonctionnel-v470" },
   { url: "./quiz/html-css.html", revision: "audit-fonctionnel-v470" },
   { url: "./quiz/javascript.html", revision: "audit-fonctionnel-v470" },
-  { url: "./quiz/sql.html", revision: "audit-fonctionnel-v470" },
-  { url: "./quiz/php.html", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/data/nouveautes.json", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/config.js", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/acces.js", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/mobile-nav.js", revision: "audit-fonctionnel-v470" },
   { url: "./assets/js/portail.js", revision: "audit-fonctionnel-v470" },
   { url: "./assets/js/quiz-sync.js", revision: "audit-fonctionnel-v470" },
   { url: "./assets/js/quiz-tableaux.js", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/sync-progressions.js", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/sauvegarde.js", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/sante.js", revision: "audit-fonctionnel-v470" },
   { url: "./documents/sql/sauvegarde-auto-drive.gs", revision: "audit-fonctionnel-v470" },
-  { url: "./offline-complete-manifest.json", revision: "audit-fonctionnel-v470" },
-  { url: "./admin.html", revision: "pagination-integrale-v469" },
-  { url: "./README.md", revision: "pagination-integrale-v469" },
   { url: "./documents/annexes/annexe-html5.pdf.html", revision: "pagination-integrale-v469" },
-  { url: "./assets/data/nouveautes.json", revision: "pagination-integrale-v469" },
-  { url: "./assets/js/admin.js", revision: "pagination-integrale-v469" },
   { url: "./assets/js/admin-couverture.js", revision: "pagination-integrale-v469" },
   { url: "./assets/js/admin-revision.js", revision: "pagination-integrale-v469" },
   { url: "./assets/js/graphiques-activite.js", revision: "pagination-integrale-v469" },
   { url: "./assets/js/analytique.js", revision: "pagination-integrale-v469" },
-  { url: "./assets/js/roue-couverture.js", revision: "pagination-integrale-v469" },
-  { url: "./offline-complete-manifest.json", revision: "pagination-integrale-v469" },
-  { url: "./index.html", revision: "audit-integral-v468" },
-  { url: "./admin.html", revision: "audit-integral-v468" },
-  { url: "./README.md", revision: "audit-integral-v468" },
-  { url: "./exercices/series-exercices.html", revision: "audit-integral-v468" },
-  { url: "./quiz/javascript.html", revision: "audit-integral-v468" },
   { url: "./quiz/pp.html", revision: "audit-integral-v468" },
   { url: "./quiz/tableaux.html", revision: "audit-integral-v468" },
-  { url: "./assets/data/nouveautes.json", revision: "audit-integral-v468" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "audit-integral-v468" },
-  { url: "./assets/js/analytique.js", revision: "audit-integral-v468" },
-  { url: "./assets/js/sauvegarde.js", revision: "audit-integral-v468" },
-  { url: "./assets/js/sante.js", revision: "audit-integral-v468" },
-  { url: "./assets/js/quiz-admin.js", revision: "audit-integral-v468" },
-  { url: "./offline-complete-manifest.json", revision: "audit-integral-v468" },
-  { url: "./admin.html", revision: "sauvegarde-readme-v467" },
-  { url: "./README.md", revision: "sauvegarde-readme-v467" },
-  { url: "./quiz/pp.html", revision: "sauvegarde-readme-v467" },
-  { url: "./assets/js/config.js", revision: "sauvegarde-readme-v467" },
-  { url: "./assets/js/sauvegarde.js", revision: "sauvegarde-readme-v467" },
-  { url: "./documents/sql/sauvegarde-auto-drive.gs", revision: "sauvegarde-readme-v467" },
-  { url: "./offline-complete-manifest.json", revision: "sauvegarde-readme-v467" },
-  { url: "./index.html", revision: "dbsupbase-v466" },
-  { url: "./admin.html", revision: "dbsupbase-v466" },
   { url: "./manifest.webmanifest", revision: "dbsupbase-v466" },
-  { url: "./assets/js/config.js", revision: "dbsupbase-v466" },
-  { url: "./assets/js/acces.js", revision: "dbsupbase-v466" },
-  { url: "./assets/js/admin.js", revision: "dbsupbase-v466" },
   { url: "./assets/js/admin-dbsupbase.js", revision: "dbsupbase-v466" },
-  { url: "./index.html", revision: "nav-fluide-v465" },
-  { url: "./assets/js/config.js", revision: "nav-fluide-v465" },
-  { url: "./assets/js/mobile-nav.js", revision: "nav-fluide-v465" },
-  { url: "./assets/js/acces.js", revision: "nav-fluide-v465" },
-  { url: "./assets/js/sync-progressions.js", revision: "nav-fluide-v465" },
-  { url: "./assets/js/reprendre.js", revision: "nav-fluide-v465" },
   { url: "./assets/js/cote-ticker.js", revision: "nav-fluide-v465" },
   { url: "./cours/php-mysqli.html", revision: "nav-fluide-v465" },
-  { url: "./admin.html", revision: "verif-e2e-v464" },
-  { url: "./assets/js/admin.js", revision: "verif-e2e-v464" },
-  { url: "./assets/js/admin-couverture.js", revision: "verif-e2e-v464" },
-  { url: "./assets/js/config.js", revision: "verif-e2e-v464" },
-  { url: "./assets/js/sauvegarde.js", revision: "verif-e2e-v464" },
   { url: "./assets/js/modules/mobile-diagnostics.js", revision: "verif-e2e-v464" },
-  { url: "./admin.html", revision: "audit-complet-v463" },
-  { url: "./assets/js/admin.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/acces.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/sync-progressions.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/roue-revision.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/mobile-nav.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/admin-couverture.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/admin-revision.js", revision: "audit-complet-v463" },
   { url: "./assets/js/admin-erreurs.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/quiz-admin.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/graphiques-activite.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/analytique.js", revision: "audit-complet-v463" },
-  { url: "./assets/js/sauvegarde.js", revision: "audit-complet-v463" },
   { url: "./cours/sql-playground.html", revision: "audit-complet-v463" },
   { url: "./documents/complet/fiche-memento-synthese.html", revision: "audit-complet-v463" },
   { url: "./documents/enonces/enonce-serie4-a4.html", revision: "audit-complet-v463" },
   { url: "./documents/enonces/enonce-serie5-a4.html", revision: "audit-complet-v463" },
   { url: "./exercices/javascript/js-37-defis-tt.html", revision: "audit-complet-v463" },
   { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "audit-complet-v463" },
-  { url: "./admin.html", revision: "carte-boutons-v462" },
   { url: "./assets/css/admin-saas.css", revision: "carte-boutons-v462" },
-  { url: "./assets/js/admin.js", revision: "carte-boutons-v462" },
-  { url: "./assets/js/acces.js", revision: "carte-boutons-v462" },
-  { url: "./assets/js/admin.js", revision: "compteurs-media-v461" },
   { url: "./assets/js/protection.js", revision: "compteurs-media-v461" },
-  { url: "./assets/js/acces.js", revision: "compteurs-media-v461" },
-  { url: "./assets/js/sync-progressions.js", revision: "compteurs-media-v461" },
-  { url: "./admin.html", revision: "compteurs-media-v461" },
-  { url: "./assets/js/quiz-sync.js", revision: "quiz-supabase-ordre-v460" },
-  { url: "./assets/js/sync-progressions.js", revision: "quiz-supabase-ordre-v460" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-supabase-ordre-v460" },
-  { url: "./assets/js/quiz-admin.js", revision: "quiz-supabase-ordre-v460" },
-  { url: "./admin.html", revision: "quiz-supabase-ordre-v460" },
-  { url: "./revision-erreurs.html", revision: "quiz-supabase-ordre-v460" },
-  { url: "./quiz/html-css.html", revision: "quiz-supabase-ordre-v460" },
-  { url: "./quiz/javascript.html", revision: "quiz-supabase-ordre-v460" },
-  { url: "./quiz/sql.html", revision: "quiz-supabase-ordre-v460" },
-  { url: "./quiz/php.html", revision: "quiz-supabase-ordre-v460" },
-  { url: "./quiz/tableaux.html", revision: "quiz-supabase-ordre-v460" },
-  { url: "./admin.html", revision: "carte-quiz-eval-v459" },
-  { url: "./assets/css/admin-saas.css", revision: "carte-quiz-eval-v459" },
-  { url: "./assets/js/admin.js", revision: "carte-quiz-eval-v459" },
-  { url: "./assets/js/acces.js", revision: "carte-quiz-eval-v459" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "carte-quiz-eval-v459" },
-  { url: "./quiz/html-css.html", revision: "carte-quiz-eval-v459" },
-  { url: "./quiz/javascript.html", revision: "carte-quiz-eval-v459" },
-  { url: "./quiz/sql.html", revision: "carte-quiz-eval-v459" },
-  { url: "./quiz/php.html", revision: "carte-quiz-eval-v459" },
-  { url: "./quiz/tableaux.html", revision: "carte-quiz-eval-v459" },
   { url: "./assets/data/quiz-banque.json", revision: "quiz-revision-2-v458" },
-  { url: "./assets/js/quiz-sync.js", revision: "quiz-revision-2-v458" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-revision-2-v458" },
-  { url: "./assets/js/acces.js", revision: "quiz-revision-2-v458" },
-  { url: "./revision-erreurs.html", revision: "quiz-revision-2-v458" },
-  { url: "./quiz/html-css.html", revision: "quiz-revision-2-v458" },
-  { url: "./quiz/javascript.html", revision: "quiz-revision-2-v458" },
-  { url: "./quiz/sql.html", revision: "quiz-revision-2-v458" },
-  { url: "./quiz/php.html", revision: "quiz-revision-2-v458" },
-  { url: "./quiz/tableaux.html", revision: "quiz-revision-2-v458" },
-  { url: "./index.html", revision: "quiz-lot-d-v457" },
-  { url: "./admin.html", revision: "quiz-lot-d-v457" },
-  { url: "./revision-erreurs.html", revision: "quiz-lot-d-v457" },
-  { url: "./quiz/html-css.html", revision: "quiz-lot-d-v457" },
-  { url: "./quiz/javascript.html", revision: "quiz-lot-d-v457" },
-  { url: "./quiz/sql.html", revision: "quiz-lot-d-v457" },
-  { url: "./quiz/php.html", revision: "quiz-lot-d-v457" },
-  { url: "./quiz/tableaux.html", revision: "quiz-lot-d-v457" },
   { url: "./assets/pages-couverture.json", revision: "quiz-lot-d-v457" },
-  { url: "./assets/js/roue-couverture.js", revision: "quiz-lot-d-v457" },
-  { url: "./assets/js/roue-revision.js", revision: "quiz-lot-d-v457" },
-  { url: "./assets/js/admin-erreurs.js", revision: "quiz-lot-d-v457" },
-  { url: "./assets/js/acces.js", revision: "quiz-lot-d-v457" },
-  { url: "./assets/js/quiz-sync.js", revision: "quiz-lots-abc-v456" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-lots-abc-v456" },
   { url: "./assets/js/quiz-tableaux-boot.js", revision: "quiz-lots-abc-v456" },
-  { url: "./assets/js/quiz-admin.js", revision: "quiz-lots-abc-v456" },
-  { url: "./assets/js/acces.js", revision: "quiz-lots-abc-v456" },
-  { url: "./admin.html", revision: "quiz-lots-abc-v456" },
-  { url: "./revision-erreurs.html", revision: "quiz-lots-abc-v456" },
-  { url: "./quiz/tableaux.html", revision: "quiz-lots-abc-v456" },
-  { url: "./quiz/sql.html", revision: "quiz-lots-abc-v456" },
-  { url: "./quiz/php.html", revision: "quiz-lots-abc-v456" },
-  { url: "./quiz/pp.html", revision: "quiz-lots-abc-v456" },
-  { url: "./assets/js/quiz-sync.js", revision: "revision-quiz-v455" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "revision-quiz-v455" },
-  { url: "./revision-erreurs.html", revision: "revision-quiz-v455" },
-  { url: "./quiz/javascript.html", revision: "revision-quiz-v455" },
-  { url: "./quiz/html-css.html", revision: "revision-quiz-v455" },
-  { url: "./quiz/sql.html", revision: "revision-quiz-v455" },
-  { url: "./quiz/php.html", revision: "revision-quiz-v455" },
-  { url: "./quiz/pp.html", revision: "revision-quiz-v455" },
-  { url: "./quiz/tableaux.html", revision: "revision-quiz-v455" },
-  { url: "./index.html", revision: "retrait-nav-conseils-v454" },
-  { url: "./ma-fiche-revision.html", revision: "unif-acces-themes-v453" },
   { url: "./glossaire.html", revision: "unif-acces-themes-v453" },
-  { url: "./revision-erreurs.html", revision: "unif-acces-themes-v453" },
   { url: "./404.html", revision: "unif-acces-themes-v453" },
-  { url: "./assets/data/nouveautes.json", revision: "unif-acces-themes-v453" },
-  { url: "./index.html", revision: "unif-acces-themes-v453" },
   { url: "./nouveautes.html", revision: "unif-acces-themes-v453" },
-  { url: "./nouveautes.html", revision: "conseil-classe-nouveautes-marque-v451" },
   { url: "./assets/js/nouveautes.js", revision: "conseil-classe-nouveautes-marque-v451" },
-  { url: "./assets/data/nouveautes.json", revision: "conseil-classe-nouveautes-marque-v451" },
-  { url: "./assets/js/acces.js", revision: "conseil-classe-nouveautes-marque-v451" },
-  { url: "./index.html", revision: "conseil-classe-nouveautes-marque-v451" },
   { url: "./carte-visite.html", revision: "conseil-classe-nouveautes-marque-v451" },
-  { url: "./admin.html", revision: "conseil-classe-nouveautes-marque-v451" },
-  { url: "./assets/js/admin.js", revision: "conseil-classe-nouveautes-marque-v451" },
-  { url: "./assets/css/admin-saas.css", revision: "conseil-classe-nouveautes-marque-v451" },
-  { url: "./assets/js/acces.js", revision: "messenger-roue-admin-only-v450" },
-  { url: "./index.html", revision: "messenger-roue-admin-only-v450" },
-  { url: "./carte-visite.html", revision: "messenger-roue-admin-only-v450" },
   { url: "./assets/js/rayonsx-surligneur.js", revision: "rayonsx-surligneur-v449" },
-  { url: "./assets/js/mobile-nav.js", revision: "rayonsx-surligneur-v449" },
-  { url: "./assets/js/acces.js", revision: "rayonsx-surligneur-v449" },
-  { url: "./ma-fiche-revision.html", revision: "rayonsx-surligneur-v449" },
-  { url: "./admin.html", revision: "trombi-carte-recadrage-v448" },
-  { url: "./assets/css/admin-saas.css", revision: "trombi-carte-recadrage-v448" },
-  { url: "./assets/js/admin.js", revision: "trombi-carte-recadrage-v448" },
-  { url: "./assets/js/acces.js", revision: "trombi-carte-recadrage-v448" },
-  { url: "./admin.html", revision: "zoom-photo-v447" },
-  { url: "./assets/css/admin-saas.css", revision: "zoom-photo-v447" },
-  { url: "./assets/js/admin.js", revision: "zoom-photo-v447" },
-  { url: "./assets/js/acces.js", revision: "zoom-photo-v447" },
   { url: "./assets/js/roue-initiales.js", revision: "zoom-photo-v447" },
-  { url: "./assets/js/mobile-nav.js", revision: "zoom-photo-v447" },
-  { url: "./admin.html", revision: "ruban-modes-v446" },
-  { url: "./assets/css/admin-saas.css", revision: "ruban-modes-v446" },
-  { url: "./admin.html", revision: "student-photos-v445" },
-  { url: "./assets/css/admin-saas.css", revision: "student-photos-v445" },
-  { url: "./assets/js/admin.js", revision: "student-photos-v445" },
-  { url: "./assets/js/acces.js", revision: "student-photos-v445" },
-  { url: "./assets/js/roue-initiales.js", revision: "student-photos-v445" },
-  { url: "./assets/js/mobile-nav.js", revision: "student-photos-v445" },
-  { url: "./admin.html", revision: "admin-badge-v444" },
-  { url: "./assets/css/admin-saas.css", revision: "admin-badge-v444" },
   { url: "./assets/images/admin-aymen.jpg", revision: "admin-badge-v444" },
-  { url: "./admin.html", revision: "admin-saas-v443-atelier" },
-  { url: "./assets/css/admin-saas.css", revision: "admin-saas-v443-atelier" },
   { url: "./assets/js/admin-mdp.js", revision: "admin-saas-v443-atelier" },
   { url: "./assets/fonts/fonts.css", revision: "admin-saas-v443-atelier" },
   { url: "./assets/fonts/comic-neue-latin-400.woff2", revision: "admin-saas-v443-atelier" },
   { url: "./assets/fonts/comic-neue-latin-700.woff2", revision: "admin-saas-v443-atelier" },
-  { url: "./admin.html", revision: "admin-mdp-v442" },
-  { url: "./assets/js/admin-mdp.js", revision: "admin-mdp-v442" },
   { url: "./portail.html", revision: "recovery-v441" },
-  { url: "./assets/js/portail.js", revision: "recovery-v441" },
   { url: "./assets/js/modules/password-recovery.js", revision: "recovery-v441" },
-  { url: "./assets/js/admin-mdp.js", revision: "recovery-v441" },
-  { url: "./assets/js/config.js", revision: "recovery-v441" },
-  { url: "./assets/js/acces.js", revision: "recovery-v441" },
-  { url: "./assets/js/roue-revision.js", revision: "libelle-jn-v437" },
-  { url: "./assets/js/mobile-nav.js", revision: "libelle-jn-v437" },
-  { url: "./assets/js/roue-revision.js", revision: "revision-v436" },
   { url: "./assets/js/rappels-locaux.js", revision: "rappels-v436" },
-  { url: "./assets/js/mobile-nav.js", revision: "revision-v436" },
-  { url: "./ma-fiche-revision.html", revision: "revision-v436" },
-  { url: "./admin.html", revision: "risque-v435" },
-  { url: "./assets/js/roue-couverture.js", revision: "manifeste-v434" },
-  { url: "./assets/js/mobile-nav.js", revision: "manifeste-v434" },
-  { url: "./assets/js/config.js", revision: "manifeste-v434" },
-  { url: "./assets/pages-couverture.json", revision: "manifeste-v434" },
-  { url: "./assets/js/roue-couverture.js", revision: "couverture-v432" },
-  { url: "./assets/js/roue-initiales.js", revision: "initiales-v431" },
   { url: "./assets/js/roue-nuage.js", revision: "annonce-2s-v430" },
   { url: "./assets/js/roue-habillage.js", revision: "roue-habillee-v429" },
-  { url: "./assets/js/mobile-nav.js", revision: "couverture-v432" },
-  
-  { url: "./assets/js/config.js", revision: "couverture-v432" },
-  { url: "./assets/js/mobile-nav.js", revision: "prerendu-v427" },
-  { url: "./assets/js/config.js", revision: "prerendu-v427" },
-  { url: "./cours/javascript.html", revision: "logo-menu-v426" },
-  { url: "./index.html", revision: "early-boot-v425" },
-  { url: "./exercices/series-exercices.html", revision: "early-boot-v425" },
-  { url: "./assets/js/config.js", revision: "early-boot-v425" },
-  { url: "./assets/js/mobile-nav.js", revision: "early-boot-v425" },
   { url: "./cours/html5.html", revision: "early-boot-v425" },
-  { url: "./cours/sql.html", revision: "early-boot-v425" },
-  { url: "./cours/php.html", revision: "early-boot-v425" },
-  { url: "./cours/css3.html", revision: "logo-menu-v424" },
-  { url: "./cours/courscss3.html", revision: "logo-menu-v424" },
-  { url: "./cours/sql.html", revision: "logo-menu-v424" },
-  { url: "./cours/php.html", revision: "logo-menu-v424" },
-  { url: "./cours/coursphp.html", revision: "logo-menu-v424" },
-  { url: "./assets/js/roue-nuage.js", revision: "roue-seule-v423" },
-  { url: "./assets/js/config.js", revision: "roue-seule-v423" },
-  { url: "./assets/js/mobile-nav.js", revision: "roue-seule-v423" },
-  { url: "./index.html", revision: "roue-seule-v423" },
-  { url: "./assets/js/sync-progressions.js", revision: "annonce22" },
-  { url: "./assets/js/config.js", revision: "clic21" },
-  { url: "./assets/js/mobile-nav.js", revision: "clic21" },
-  { url: "./assets/js/roue-nuage.js", revision: "clic21" },
-  { url: "./cours/html5.html", revision: "clic21" },
   { url: "./cours/courshtml5.html", revision: "clic21" },
-  { url: "./exercices/series-exercices.html", revision: "clic21" },
-  { url: "./index.html", revision: "clic21" },
-  { url: "./assets/js/mobile-nav.js", revision: "bnav-vue-v420" },
-  { url: "./assets/js/roue-nuage.js", revision: "bnav-vue-v420" },
-  { url: "./assets/js/config.js", revision: "bnav-vue-v420" },
-  { url: "./index.html", revision: "bnav-vue-v420" },
-  { url: "./assets/js/acces.js", revision: "resume-milieu-v419" },
-  { url: "./index.html", revision: "resume-milieu-v419" },
-  { url: "./assets/js/mobile-nav.js", revision: "bnav-roue-v418" },
-  { url: "./assets/js/roue-nuage.js", revision: "bnav-roue-v418" },
-  { url: "./assets/js/config.js", revision: "bnav-roue-v418" },
-  { url: "./index.html", revision: "bnav-roue-v418" },
-  { url: "./assets/js/config.js", revision: "racine-v417" },
-  { url: "./assets/js/mobile-nav.js", revision: "racine-v417" },
-  { url: "./index.html", revision: "racine-v417" },
-  { url: "./assets/js/acces.js", revision: "bnet-haut-v416" },
-  { url: "./assets/js/mobile-nav.js", revision: "bnet-haut-v416" },
-  { url: "./assets/js/config.js", revision: "bnet-haut-v416" },
-  { url: "./index.html", revision: "bnet-haut-v416" },
-  { url: "./memo-veille-bac.html", revision: "bnet-haut-v416" },
-  { url: "./assets/js/mobile-nav.js", revision: "bnav-admin-out-v414" },
-  { url: "./assets/js/config.js", revision: "bnav-admin-out-v414" },
-  { url: "./index.html", revision: "bnav-admin-out-v414" },
-  { url: "./assets/js/config.js", revision: "bnav-mobile-v413" },
-  { url: "./assets/js/mobile-nav.js", revision: "bnav-mobile-v413" },
-  { url: "./index.html", revision: "bnav-mobile-v413" },
-  { url: "./exercices/javascript/js-37-defis-tt.html", revision: "bnav-mobile-v413" },
-  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "bnav-admin-out-v415" },
-  { url: "./assets/js/admin.js", revision: "news-switch-v406" },
-  { url: "./admin.html", revision: "news-switch-v406" },
-  { url: "./admin.html", revision: "outil-unique-v399" },
-  { url: "./cours/sql-playground.html", revision: "sql-de-poche-v396" },
   { url: "./assets/js/sql-playground.js", revision: "moteur-sql-local-v396" },
-  { url: "./memo-veille-bac.html", revision: "supabase-local-v395" },
-  { url: "./pieges-bac.html", revision: "supabase-local-v395" },
-  { url: "./assets/js/sync-progressions.js", revision: "journal-erreurs-v394" },
-  { url: "./assets/js/acces.js", revision: "annexes-recherchees-v393" },
-  { url: "./cours/css3.html", revision: "demo-display-3g-v393" },
-  { url: "./assets/js/sync-progressions.js", revision: "sync-general-v391" },
-  { url: "./glossaire.html", revision: "sync-general-v391" },
-  { url: "./nouveautes.html", revision: "sync-general-v391" },
-  { url: "./revision-erreurs.html", revision: "sync-general-v391" },
   { url: "./livre-smart.html", revision: "sync-general-v391" },
-  { url: "./index.html", revision: "cote-instant-v412" },
-  { url: "./assets/js/cote-ticker.js", revision: "cote-instant-v412" },
   { url: "./assets/js/retour-livre-smart.js", revision: "retour-intelligent-v380" },
-  { url: "./assets/js/acces.js", revision: "signets-veilleuse-v390" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },
-  { url: "./manifest.webmanifest", revision: "pwa-install-v371" },
-  { url: "./glossaire.html", revision: "glossaire-arabe-patch-v373" },
-  { url: "./assets/js/graphiques-activite.js", revision: "glossaire-graphiques-v347" },
-  { url: "./assets/js/reprendre.js", revision: "reprendre-sombre-v343" },
   { url: "./assets/css/smart-book-fan-v341.css", revision: "smart-books-v341" },
   { url: "./assets/css/smart-book-fan-v340.css", revision: "smart-books-v341" },
   { url: "./assets/images/smart-books/couverture-3si.jpg", revision: "smart-books-v339" },
   { url: "./assets/images/smart-books/couverture-4si.jpg", revision: "smart-books-v339" },
   { url: "./assets/data/smart-book-3si-2026.json", revision: "smart-books-v339" },
-  { url: "./cours/php-mysqli.html", revision: "smart-book-v330" },
-  { url: "./cours/php.html", revision: "cours-livre-v351" },
   { url: "./cours/sql-bases-ldd-lmd-lcd.html", revision: "cours-livre-v351" },
-  { url: "./cours/javascript.html", revision: "cours-livre-v351" },
-  { url: "./cours/html5.html", revision: "cours-livre-v351" },
-  { url: "./livre-smart.html", revision: "smart-books-v341" },
   { url: "./assets/css/smart-book.css", revision: "smart-books-v341" },
   { url: "./assets/js/smart-book.js", revision: "smart-book-retour-v351" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-books-v339" },
   { url: "./assets/vendor/jsqr/jsQR.js", revision: "smart-book-v330" },
-  { url: "./index.html", revision: "index-v357" },
-  { url: "./quiz/tableaux.html", revision: "quiz-tableaux-v358" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "quiz-tableaux-v358" },
-  { url: "./assets/js/quiz-sync.js", revision: "quiz-sync-v358" },
-  { url: "./assets/js/quiz-admin.js", revision: "quiz-admin-v358" },
-  { url: "./quiz/html-css.html", revision: "quiz-sync-v358" },
-  { url: "./quiz/javascript.html", revision: "quiz-sync-v358" },
-  { url: "./quiz/sql.html", revision: "quiz-sync-v358" },
-  { url: "./quiz/php.html", revision: "quiz-sync-v358" },
-  { url: "./assets/data/quiz-banque.json", revision: "quiz-banque-v357" },
-  { url: "./assets/js/config.js", revision: "preconnect-v412" },
-  { url: "./portail.html", revision: "portail-turnstile-v321" },
-  { url: "./admin.html", revision: "admin-v358" },
-  { url: "./assets/js/acces.js", revision: "version-affichee-v350" },
-  { url: "./assets/js/admin.js", revision: "admin-version-affichee-v350" },
   { url: "./assets/css/admin-v19.css", revision: "admin-airbus-cockpit-v316-24" },
   { url: "./assets/icons/sti-logo-complet.png", revision: "official-full-logo-v316-20" },
-  { url: "./assets/js/portail.js", revision: "portail-turnstile-v321" },
-  { url: "./assets/js/modules/password-recovery.js", revision: "password-recovery-module-v307" },
-  { url: "./assets/js/protection.js", revision: "video-sql-guide-texte-v329" },
   { url: "./assets/icons/STI_by_AE.ico", revision: "official-square-logo-v316-3" },
-  { url: "./assets/js/sante.js", revision: "sante-video-paths-v309-hotfix-1" },
-  { url: "./cours/css3.html", revision: "cours-livre-v351" },
-  { url: "./cours/sql.html", revision: "cours-livre-v351" },
   { url: "./assets/subtitles/css3-cours-v9-sync-fr.vtt", revision: "css3-vtt-sync-v309" },
   { url: "./assets/images/css3-cours-v9-sync-poster.jpg", revision: "css3-poster-v309" },
   { url: "./assets/js/modules/admin-mfa.js", revision: "mfa-module-v302" },
-  { url: "./assets/js/modules/mobile-diagnostics.js", revision: "diagnostics-module-v302" },
   { url: "./assets/js/modules/labo-device-client.js", revision: "labo-portable-local-v315" },
   { url: "./assets/js/modules/admin-labo-devices.js", revision: "labo-confirm-ui-v312" },
   { url: "./assets/js/modules/labo-offline-diagnostics.js", revision: "offline-diagnostics-v315" },
-  { url: "./exercices/series-exercices.html", revision: "video-sql-guide-texte-v329" },
-  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "guide-sql-v328" },
-  { url: "./exercices/javascript/js-37-defis-tt.html", revision: "js-37-defis-bimode-v318" },
-  { url: "./offline-complete-manifest.json", revision: "smart-books-v341" },
   { url: "./Lancer-Labo3-Hors-Ligne.bat", revision: "portable-launcher-v315" },
   { url: "./Lancer-Labo3-Hors-Ligne.ps1", revision: "portable-powershell-server-v315" }
 ];
@@ -421,6 +123,10 @@ var CACHE_REVISIONS = "sti-update-revisions-v1";
 var CACHE_VIDEOS_LABO = "sti-videos-labo-v1";
 var CACHE_LRU_META = "sti-runtime-lru-v302";
 var MAX_RUNTIME_BYTES = 180 * 1024 * 1024;
+var _lruTouchRecents = {};
+var _dernierEvictAutoTs = 0;
+var _octetsHitEnAttente = 0;
+var _timerHitDebounce = null;
 
 function tailleReponseSTI(rep) {
   if (!rep || !rep.headers) return 0;
@@ -432,13 +138,16 @@ function cleMetaLRUSTI(url) {
 }
 async function toucherLRUSTI(req, rep, cacheName, type) {
   try {
+    var urlObj = typeof req === "string" ? new URL(req, self.location.href).toString() : req.url;
+    var maintenant = Date.now();
+    _lruTouchRecents[urlObj] = maintenant;
     var meta = await caches.open(CACHE_LRU_META);
     var objet = {
-      url: typeof req === "string" ? new URL(req, self.location.href).toString() : req.url,
+      url: urlObj,
       cache: cacheName,
       type: type || "runtime",
       bytes: tailleReponseSTI(rep),
-      at: Date.now()
+      at: maintenant
     };
     await meta.put(cleMetaLRUSTI(objet.url), new Response(JSON.stringify(objet), { headers: { "Content-Type": "application/json" } }));
   } catch (e) {}
@@ -446,6 +155,10 @@ async function toucherLRUSTI(req, rep, cacheName, type) {
 async function rafraichirLRUExistantSTI(req, rep, cacheName, type) {
   try {
     var url = typeof req === "string" ? new URL(req, self.location.href).toString() : req.url;
+    /* v473 : ne pas réécrire CacheStorage à chaque ressource servie (< 5 min d'intervalle par URL) */
+    var dernierTs = _lruTouchRecents[url] || 0;
+    if (dernierTs && (Date.now() - dernierTs) < 300000) return;
+    _lruTouchRecents[url] = Date.now();
     var meta = await caches.open(CACHE_LRU_META);
     if (await meta.match(cleMetaLRUSTI(url))) await toucherLRUSTI(req, rep, cacheName, type);
   } catch (e) {}
@@ -453,23 +166,25 @@ async function rafraichirLRUExistantSTI(req, rep, cacheName, type) {
 async function lireEntreesLRUSTI() {
   var meta = await caches.open(CACHE_LRU_META);
   var cles = await meta.keys();
-  var lignes = [];
-  for (var i = 0; i < cles.length; i++) {
+  var lots = await Promise.all(cles.map(async function (c) {
     try {
-      var r = await meta.match(cles[i]);
+      var r = await meta.match(c);
       var j = r ? await r.json() : null;
-      if (j && j.url) { j._metaKey = cles[i]; lignes.push(j); }
+      if (j && j.url) { j._metaKey = c; return j; }
     } catch (e) {}
-  }
-  return lignes;
+    return null;
+  }));
+  return lots.filter(Boolean);
 }
-async function notifierStockageSTI(extra) {
+async function notifierStockageSTI(extra, lignesPrechargees) {
   var estimation = {};
   try {
     if (self.navigator && self.navigator.storage && self.navigator.storage.estimate) estimation = await self.navigator.storage.estimate();
   } catch (e) {}
-  var lignes = [];
-  try { lignes = await lireEntreesLRUSTI(); } catch (e) {}
+  var lignes = Array.isArray(lignesPrechargees) ? lignesPrechargees : [];
+  if (!Array.isArray(lignesPrechargees)) {
+    try { lignes = await lireEntreesLRUSTI(); } catch (e) {}
+  }
   var runtime = lignes.reduce(function (n, x) { return n + (Number(x.bytes) || 0); }, 0);
   var payload = Object.assign({
     type: "STI_STORAGE_STATUS",
@@ -482,6 +197,12 @@ async function notifierStockageSTI(extra) {
   for (var c of clients) c.postMessage(payload);
 }
 async function evincerRuntimeLRUSTI(force) {
+  /* v473 : en mode automatique (non forcé), espacer les scans complets du cache à 30 s max */
+  if (!force) {
+    var nowEv = Date.now();
+    if (_dernierEvictAutoTs && (nowEv - _dernierEvictAutoTs) < 30000) return;
+    _dernierEvictAutoTs = nowEv;
+  }
   var lignes = await lireEntreesLRUSTI();
   var estimation = {};
   try {
@@ -491,23 +212,32 @@ async function evincerRuntimeLRUSTI(force) {
   var usage = Number(estimation.usage) || 0;
   var runtime = lignes.reduce(function (n, x) { return n + (Number(x.bytes) || 0); }, 0);
   var pression = quota > 0 && usage / quota >= 0.82;
-  if (!force && !pression && runtime <= MAX_RUNTIME_BYTES) { notifierStockageSTI(); return; }
+  if (!force && !pression && runtime <= MAX_RUNTIME_BYTES) {
+    if (force) await notifierStockageSTI(null, lignes);
+    return;
+  }
   lignes.sort(function (a, b) { return (Number(a.at) || 0) - (Number(b.at) || 0); });
   var cible = force ? 0 : Math.min(MAX_RUNTIME_BYTES * 0.72, pression ? Math.max(0, runtime - (usage - quota * 0.70)) : MAX_RUNTIME_BYTES * 0.72);
   var liberes = 0;
   var nb = 0;
   var meta = await caches.open(CACHE_LRU_META);
-  for (var i = 0; i < lignes.length && runtime - liberes > cible; i++) {
+  var restantes = [];
+  for (var i = 0; i < lignes.length; i++) {
     var l = lignes[i];
-    try {
-      var c = await caches.open(l.cache === CACHE_VIDEOS_LABO ? CACHE_VIDEOS_LABO : CACHE);
-      await c.delete(l.url, { ignoreSearch: true });
-      await meta.delete(l._metaKey);
-      liberes += Number(l.bytes) || 0;
-      nb++;
-    } catch (e) {}
+    if (runtime - liberes > cible) {
+      try {
+        var c = await caches.open(l.cache === CACHE_VIDEOS_LABO ? CACHE_VIDEOS_LABO : CACHE);
+        await c.delete(l.url, { ignoreSearch: true });
+        await meta.delete(l._metaKey);
+        delete _lruTouchRecents[l.url];
+        liberes += Number(l.bytes) || 0;
+        nb++;
+        continue;
+      } catch (e) {}
+    }
+    restantes.push(l);
   }
-  await notifierStockageSTI({ evictedEntries: nb, evictedBytes: liberes });
+  await notifierStockageSTI({ evictedEntries: nb, evictedBytes: liberes }, restantes);
 }
 async function mettreCacheRuntimeSTI(cache, req, rep, type) {
   try {
@@ -517,10 +247,21 @@ async function mettreCacheRuntimeSTI(cache, req, rep, type) {
     await evincerRuntimeLRUSTI(false);
   } catch (e) {}
 }
-async function signalerCacheEviteSTI(rep) {
+function signalerCacheEviteSTI(rep) {
   var octets = tailleReponseSTI(rep);
-  var clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-  for (var c of clients) c.postMessage({ type: "STI_CACHE_HIT", bytes: octets });
+  if (octets <= 0) return;
+  _octetsHitEnAttente += octets;
+  if (_timerHitDebounce) return;
+  if (typeof setTimeout !== "function") return;
+  _timerHitDebounce = setTimeout(function () {
+    var totalOctets = _octetsHitEnAttente;
+    _octetsHitEnAttente = 0;
+    _timerHitDebounce = null;
+    if (totalOctets <= 0 || !self.clients || typeof self.clients.matchAll !== "function") return;
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (clients) {
+      for (var c of clients) c.postMessage({ type: "STI_CACHE_HIT", bytes: totalOctets });
+    }).catch(function () {});
+  }, 1800);
 }
 var SHELL = [
   "./",
@@ -1205,43 +946,114 @@ async function prechargerSequentiel(forcerMajCode) {
   precacheEnCours = false;
 }
 
+var _actualisationDeltaEnCours = false;
+var NOYAU_RAPIDE_RECHARGEMENT = {
+  "./index.html": 1,
+  "./portail.html": 1,
+  "./assets/js/config.js": 1,
+  "./assets/js/mobile-nav.js": 1,
+  "./assets/js/cote-ticker.js": 1,
+  "./assets/js/reprendre.js": 1,
+  "./assets/css/atelier.css": 1,
+  "./assets/css/protection.css": 1,
+  "./assets/data/nouveautes.json": 1
+};
+
 async function actualiserFichiersConcernes() {
-  var cache = await caches.open(CACHE);
-  var revisions = await caches.open(CACHE_REVISIONS);
-  var nomsCaches = [];
-  try { nomsCaches = await caches.keys(); } catch (eKeys) {}
-  await Promise.allSettled(UPDATE_FILES.map(async function (item) {
-    var u = typeof item === "string" ? item : item.url;
-    var revision = typeof item === "string" ? UPDATE_ID : item.revision;
-    var marker = new Request(new URL("./__sti_revision__/" + encodeURIComponent(u) + "?rev=" + encodeURIComponent(revision), self.location.href));
-    try {
-      if (await revisions.match(marker)) return;
-      /* Amorçage sans réseau pour le petit fichier déjà installé par le delta précédent. */
-      if (item.bootstrapBySize && item.bytes) {
-        var existant = await cache.match(u, { ignoreSearch: true });
-        var taille = existant ? parseInt(existant.headers.get("content-length") || "0", 10) : 0;
-        if (taille === item.bytes) {
-          await revisions.put(marker, new Response(UPDATE_ID));
-          return;
-        }
+  if (_actualisationDeltaEnCours) return;
+  _actualisationDeltaEnCours = true;
+  try {
+    var cache = await caches.open(CACHE);
+    var revisions = await caches.open(CACHE_REVISIONS);
+    var nomsCaches = [];
+    try { nomsCaches = await caches.keys(); } catch (eKeys) {}
+    var anciensCaches = [];
+    for (var ic = 0; ic < nomsCaches.length; ic++) {
+      var nomC = nomsCaches[ic];
+      if (nomC && nomC !== CACHE && nomC !== CACHE_VIDEOS_LABO && nomC.indexOf("sti-atelier-") === 0) {
+        try { anciensCaches.push(await caches.open(nomC)); } catch (eOpenAnc) {}
       }
-      var rep = await fetch(u, { cache: "reload" });
-      if (rep && rep.ok) {
-        try { await cache.delete(u, { ignoreSearch: true }); } catch (eDel) {}
-        for (var idxC = 0; idxC < nomsCaches.length; idxC++) {
-          var nomC = nomsCaches[idxC];
-          if (nomC && nomC !== CACHE && nomC !== CACHE_VIDEOS_LABO && nomC.indexOf("sti-atelier-") === 0) {
+    }
+    var clesActives = [];
+    try { clesActives = await cache.keys(); } catch (eKAct) {}
+    var appareilSansCachePrealable = (clesActives.length === 0 && anciensCaches.length === 0);
+
+    /* Déduplication stricte par URL pour ne jamais retélécharger un même chemin plusieurs fois */
+    var vusUrl = {};
+    var uniques = [];
+    for (var iu = 0; iu < UPDATE_FILES.length; iu++) {
+      var rawIt = UPDATE_FILES[iu];
+      var uCle = typeof rawIt === "string" ? rawIt : rawIt.url;
+      if (!uCle || vusUrl[uCle]) continue;
+      vusUrl[uCle] = 1;
+      uniques.push(rawIt);
+    }
+
+    /* Sur un nouvel appareil sans cache existant : 0 requête réseau à l'installation, chaque page se mettra en cache à la visite */
+    if (appareilSansCachePrealable) {
+      await Promise.allSettled(uniques.map(function (item) {
+        var u0 = typeof item === "string" ? item : item.url;
+        var rev0 = typeof item === "string" ? UPDATE_ID : item.revision;
+        var marker0 = new Request(new URL("./__sti_revision__/" + encodeURIComponent(u0) + "?rev=" + encodeURIComponent(rev0), self.location.href));
+        return revisions.put(marker0, new Response(UPDATE_ID));
+      }));
+      return;
+    }
+
+    /* Appareil déjà équipé d'un cache : invalider immédiatement les copies obsolètes et ne recharger en tâche de fond (par petits lots de 4) QUE le noyau léger déjà présent */
+    var lotTaille = 4;
+    for (var debut = 0; debut < uniques.length; debut += lotTaille) {
+      var tranche = uniques.slice(debut, debut + lotTaille);
+      await Promise.allSettled(tranche.map(async function (item) {
+        var u = typeof item === "string" ? item : item.url;
+        var revision = typeof item === "string" ? UPDATE_ID : item.revision;
+        var marker = new Request(new URL("./__sti_revision__/" + encodeURIComponent(u) + "?rev=" + encodeURIComponent(revision), self.location.href));
+        try {
+          if (await revisions.match(marker)) return;
+          if (item.bootstrapBySize && item.bytes) {
+            var existant = await cache.match(u, { ignoreSearch: true });
+            var taille = existant ? parseInt(existant.headers.get("content-length") || "0", 10) : 0;
+            if (taille === item.bytes) {
+              await revisions.put(marker, new Response(UPDATE_ID));
+              return;
+            }
+          }
+          var etaitEnCache = Boolean(await cache.match(u, { ignoreSearch: true }));
+          if (!etaitEnCache) {
+            for (var idxA = 0; idxA < anciensCaches.length; idxA++) {
+              if (await anciensCaches[idxA].match(u, { ignoreSearch: true })) {
+                etaitEnCache = true;
+                break;
+              }
+            }
+          }
+          /* Si l'utilisateur n'avait jamais visité cette page : 0 téléchargement, juste enregistrer le marqueur */
+          if (!etaitEnCache) {
+            await revisions.put(marker, new Response(UPDATE_ID));
+            return;
+          }
+          /* Purger immédiatement toute copie obsolète dans CACHE et dans tous les anciens caches sti-atelier-* */
+          try { await cache.delete(u, { ignoreSearch: true }); } catch (eDel) {}
+          for (var idxC = 0; idxC < anciensCaches.length; idxC++) {
+            var ancC = anciensCaches[idxC];
             try {
-              var ancC = await caches.open(nomC);
               await ancC.delete(u, { ignoreSearch: true });
             } catch (eAncDel) {}
           }
-        }
-        await cache.put(u, rep.clone());
-        await revisions.put(marker, new Response(UPDATE_ID));
-      }
-    } catch (e) {}
-  }));
+          /* Recharger proactivement uniquement les petits fichiers du noyau ; les pages lourdes (> 200 Ko : quiz, cours, admin) se rechargeront à la demande sans saturer la bande passante */
+          if (NOYAU_RAPIDE_RECHARGEMENT[u]) {
+            var rep = await fetch(u, { cache: "reload" });
+            if (rep && rep.ok) {
+              await cache.put(u, rep.clone());
+            }
+          }
+          await revisions.put(marker, new Response(UPDATE_ID));
+        } catch (e) {}
+      }));
+    }
+  } finally {
+    _actualisationDeltaEnCours = false;
+  }
 }
 
 self.addEventListener("install", function (evt) {
@@ -1253,6 +1065,8 @@ self.addEventListener("install", function (evt) {
 self.addEventListener("activate", function (evt) {
   evt.waitUntil(
     (async function () {
+      /* Prendre immédiatement le contrôle sans bloquer les requêtes de navigation pendant la migration locale des caches */
+      try { await self.clients.claim(); } catch (eClaim) {}
       try {
         var nvCache = await caches.open(CACHE);
         var cVid = await caches.open(CACHE_VIDEOS_LABO);
@@ -1262,15 +1076,18 @@ self.addEventListener("activate", function (evt) {
           try {
             var ancCache = await caches.open(k);
             var reqs = await ancCache.keys();
-            for (var r of reqs) {
-              var rPath = "";
-              try { rPath = new URL(r.url).pathname; } catch (e) {}
-              var cible = (rPath.indexOf("/assets/videos/") !== -1 && /\.mp4$/i.test(rPath)) ? cVid : nvCache;
-              var deja = await cible.match(r, { ignoreSearch: true });
-              if (!deja) {
-                var rep = await ancCache.match(r);
-                if (rep) await cible.put(r, rep);
-              }
+            for (var bi = 0; bi < reqs.length; bi += 16) {
+              var blocReqs = reqs.slice(bi, bi + 16);
+              await Promise.all(blocReqs.map(async function (r) {
+                var rPath = "";
+                try { rPath = new URL(r.url).pathname; } catch (e) {}
+                var cible = (rPath.indexOf("/assets/videos/") !== -1 && /\.mp4$/i.test(rPath)) ? cVid : nvCache;
+                var deja = await cible.match(r, { ignoreSearch: true });
+                if (!deja) {
+                  var rep = await ancCache.match(r);
+                  if (rep) await cible.put(r, rep);
+                }
+              }));
             }
           } catch (eMigration) {}
           /* Suppression seulement après copie locale : zéro re-téléchargement. */
@@ -1289,7 +1106,6 @@ self.addEventListener("activate", function (evt) {
           }
         }
       } catch (e) {}
-      await self.clients.claim();
       /* Aucun préchargement global automatique après activation. */
     })()
   );

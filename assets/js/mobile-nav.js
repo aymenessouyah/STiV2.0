@@ -374,59 +374,41 @@
      « 📶 Normal » (diagnostic réseau) quittent les bords de la page pour la roue ⚙️. Leur
      logique vit dans roue-nuage.js, chargé ici — donc uniquement sur les pages où le module
      de barre tourne (jamais sur le tableau de bord, jamais en fichier://). */
-  (function chargerRoueNuage() {
-    try {
-      var sc = doc.createElement("script");
-      sc.src = R + "assets/js/roue-nuage.js?v=430";
-      sc.async = true;
-      (doc.head || doc.documentElement).appendChild(sc);
-    } catch (e) {}
-  })();
-  /* v429 (consigne auteur : « on veut améliorer la roue » → look & ergonomie) : habillage du
-     panneau ⚙️ (cartes, pastilles rondes, cibles 40 px, animation d'ouverture, scrollbar visible)
-     + micro-correction runtime du thème sombre (la classe « sti-theme-sombre » est écrasée par
-     acces.js à chaque construction du wrap, et le chemin « thème global » de 🌙 ne la posait
-     jamais). Purement visuel : zéro contenu touché, zéro logique modifiée ; décharger ce fichier
-     ramène la roue à son look v428. */
-  (function chargerRoueHabillage() {
-    try {
-      var sc2 = doc.createElement("script");
-      sc2.src = R + "assets/js/roue-habillage.js?v=429";
-      sc2.async = true;
-      (doc.head || doc.documentElement).appendChild(sc2);
-    } catch (e) {}
-  })();
-  /* v431 / v445 : le centre du ⚙️ porte la photo validée de l'élève (ou ses initiales P.N à défaut) —
-     module additif, voir roue-initiales.js. */
-  (function chargerRoueInitiales() {
-    try {
-      var sc3 = doc.createElement("script");
-      sc3.src = R + "assets/js/roue-initiales.js?v=447";
-      sc3.async = true;
-      (doc.head || doc.documentElement).appendChild(sc3);
-    } catch (e) {}
-  })();
-  /* v432 (consigne auteur) : l'anneau autour du ⚙️ montre le niveau de couverture du site
-     (pages vues / 126 pages de contenu), journal synchronisé par la voie « sti- » existante. */
-  (function chargerRoueCouverture() {
-    try {
-      var sc4 = doc.createElement("script");
-      sc4.src = R + "assets/js/roue-couverture.js?v=434";
-      var sc5 = doc.createElement("script");
-      sc5.src = R + "assets/js/roue-revision.js?v=471";
-      sc5.async = true; (doc.head || doc.documentElement).appendChild(sc5);
-      var sc6 = doc.createElement("script");
-      sc6.src = R + "assets/js/rappels-locaux.js?v=436";
-      sc6.async = true; (doc.head || doc.documentElement).appendChild(sc6);
-      var sc7 = doc.createElement("script");
-      sc7.src = R + "assets/js/roue-plan.js?v=472";
-      sc7.async = true; (doc.head || doc.documentElement).appendChild(sc7);
-      var sc8 = doc.createElement("script");
-      sc8.src = R + "assets/js/rayonsx-surligneur.js?v=449";
-      sc8.async = true; (doc.head || doc.documentElement).appendChild(sc8);
-      sc4.async = true;
-      (doc.head || doc.documentElement).appendChild(sc4);
-    } catch (e) {}
+  /* v473 : chargement différé hors chemin critique (après peinture initiale / temps mort navigateur)
+     des 8 modules complémentaires de la roue pour rendre l'ouverture des pages instantanée. */
+  (function planifierModulesRoue() {
+    var charges = false;
+    function injecterModulesRoue() {
+      if (charges) return;
+      charges = true;
+      var liste = [
+        "assets/js/roue-nuage.js?v=430",
+        "assets/js/roue-habillage.js?v=429",
+        "assets/js/roue-initiales.js?v=447",
+        "assets/js/roue-couverture.js?v=473",
+        "assets/js/roue-revision.js?v=473",
+        "assets/js/rappels-locaux.js?v=436",
+        "assets/js/roue-plan.js?v=473",
+        "assets/js/rayonsx-surligneur.js?v=449"
+      ];
+      for (var i = 0; i < liste.length; i++) {
+        try {
+          var sc = doc.createElement("script");
+          sc.src = R + liste[i];
+          sc.async = true;
+          (doc.head || doc.documentElement).appendChild(sc);
+        } catch (eS) {}
+      }
+    }
+    function apresChargement() {
+      if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(injecterModulesRoue, { timeout: 900 });
+      } else {
+        setTimeout(injecterModulesRoue, 180);
+      }
+    }
+    if (doc.readyState === "complete") apresChargement();
+    else window.addEventListener("load", apresChargement, { once: true });
   })();
 
   /* v420 (consigne n°1) : « quand on monte en haut complètement, la barre en bas se cache ».
@@ -461,10 +443,26 @@
   if (!window.__STI_BNAV_WATCH) {
     window.__STI_BNAV_WATCH = true;
     try {
+      var moActif = false;
       var mo = new MutationObserver(function () {
         if (mq && mq.matches && !doc.getElementById("sti-bnav")) construire();
       });
-      mo.observe(doc.documentElement, { childList: true, subtree: true });
+      var syncObsMobile = function () {
+        var doitObs = Boolean(mq && mq.matches && doc.body);
+        if (doitObs && !moActif) {
+          mo.observe(doc.body, { childList: true });
+          moActif = true;
+        } else if (!doitObs && moActif) {
+          mo.disconnect();
+          moActif = false;
+        }
+      };
+      if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", syncObsMobile);
+      else syncObsMobile();
+      if (mq) {
+        if (mq.addEventListener) mq.addEventListener("change", syncObsMobile);
+        else if (mq.addListener) mq.addListener(syncObsMobile);
+      }
     } catch (e) {}
     setTimeout(function () { if (mq && mq.matches) construire(); }, 2500);
   }
