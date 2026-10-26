@@ -14,6 +14,9 @@
     { cat: "Pages", nom: "Cours PHP (synthèses 1 & 2)", url: "cours/php.html" },
     { cat: "Pages", nom: "Cours SQL (Partie 4 Bac)", url: "cours/sql.html" },
     { cat: "Pages", nom: "Séries d'exercices & TP", url: "exercices/series-exercices.html" },
+    { cat: "Pages", nom: "Laboratoire SQL (SQLite WASM)", url: "cours/sql-playground.html" },
+    { cat: "Pages", nom: "Scanner mon livre (Smart Books)", url: "livre-smart.html" },
+    { cat: "Pages", nom: "Ma fiche de révision", url: "ma-fiche-revision.html" },
     { cat: "Pages", nom: "Mes erreurs à retravailler", url: "revision-erreurs.html" },
     { cat: "Quiz", nom: "Quiz HTML5 & CSS3", url: "quiz/html-css.html" },
     { cat: "Quiz", nom: "Quiz JavaScript", url: "quiz/javascript.html" },
@@ -28,6 +31,7 @@
     { cat: "Bases & ZIP", nom: "Archive recharge-ve.zip", url: "documents/complet/recharge-ve.zip", range: true },
     { cat: "Bases & ZIP", nom: "Mémento synthèse PDF", url: "documents/complet/fiche-memento-synthese.pdf", range: true },
     { cat: "Vidéos", nom: "PHP — Synthèse n°1", url: "assets/videos/php-synthese.mp4", range: true },
+    { cat: "Vidéos", nom: "PHP — Synthèse Guichet", url: "assets/videos/php-guichet-v10.mp4", range: true },
     { cat: "Vidéos", nom: "PHP — Cours", url: "assets/videos/php-cours.mp4", range: true },
     { cat: "Vidéos", nom: "SQL — Cours", url: "assets/videos/sql-cours-v7.mp4?v=280", range: true },
     { cat: "Vidéos", nom: "SQL — Série 1", url: "assets/videos/sql-serie1.mp4", range: true },
@@ -108,7 +112,7 @@
       + '<h2 style="margin:0">🩺 Vérificateur de santé du site</h2>'
       + '<div><button type="button" id="sti-sante-relancer" style="padding:8px 14px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:#1565c0;color:#fff;font-weight:800;cursor:pointer">🔄 Relancer les tests</button> '
       + '<button type="button" id="sti-sante-fermer" style="padding:8px 14px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface-2,#fff);color:var(--adm-text,#1a1a2e);font-weight:800;cursor:pointer">✕ Fermer</button></div></div>'
-      + '<p>Teste en direct les pages de cours, les 12 vidéos, les bases <code>.sql</code>, les archives <code>.zip</code>, les fiches A4 et les 3 tables Supabase — idéal la veille d\'une séance.</p>'
+      + '<p>Teste en direct les pages de cours, les 5 quiz, le labo SQL WASM, les Smart Books, les 13 vidéos principales, les bases <code>.sql</code>, les archives <code>.zip</code>, les fiches A4 et les 5 tables Supabase clés — idéal la veille d\'une séance.</p>'
       + '<div id="sti-sante-zone"></div>';
     document.body.appendChild(ov);
     var zone = document.getElementById("sti-sante-zone");

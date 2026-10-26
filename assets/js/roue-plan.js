@@ -34,10 +34,19 @@
   ];
 
   function lire(cle) { try { return localStorage.getItem(cle) || ""; } catch (e) { return ""; } }
+  function lireDateIso() {
+    var d = String(lire(CLE_DATE) || "").trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : "";
+  }
+  function ech(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
   function objet(cle) { try { return JSON.parse(localStorage.getItem(cle) || "{}") || {}; } catch (e) { return {}; } }
   function aujourdhui0() { var d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
   function joursRestants(iso) {
-    if (!iso) return null;
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(String(iso))) return null;
     var t = new Date(iso + "T00:00:00").getTime();
     if (!t || isNaN(t)) return null;
     return Math.round((t - aujourdhui0()) / JOUR);
@@ -72,10 +81,11 @@
       retard: (jr !== null && jr < 0 && totalRestant > 0),
     };
   }
-  function etat() { return plan(lire(CLE_DATE), pagesVues()); }
+  function etat() { return plan(lireDateIso(), pagesVues()); }
   function definirDate(iso) {
     try {
-      if (iso) localStorage.setItem(CLE_DATE, String(iso).slice(0, 10));
+      var propre = iso ? String(iso).trim().slice(0, 10) : "";
+      if (/^\d{4}-\d{2}-\d{2}$/.test(propre)) localStorage.setItem(CLE_DATE, propre);
       else localStorage.removeItem(CLE_DATE);
     } catch (e) {}
     rendre();
@@ -122,7 +132,7 @@
           e.programme.map(function (c) { return c.cle + " (" + c.pages.length + " page" + (c.pages.length > 1 ? "s" : "") + ")"; }).join(" puis ") + "</div>" : "") +
         (e.retard ? "<div style='font-size:10.5px;font-weight:900;color:#b45309;padding:0 2px'>⚠️ La date est passée mais il reste " + e.pagesRestantes + " page(s).</div>" : "") +
         "<div style='display:flex;gap:6px;align-items:center;margin-top:2px'>" +
-        "<input type='date' id='sti-plan-date' value='" + e.date + "' style='flex:1 1 auto;font:800 11px system-ui,sans-serif;border:1.5px solid rgba(35,32,26,.3);border-radius:8px;padding:4px 6px;background:#fffdf7;color:inherit'>" +
+        "<input type='date' id='sti-plan-date' value='" + ech(e.date) + "' style='flex:1 1 auto;font:800 11px system-ui,sans-serif;border:1.5px solid rgba(35,32,26,.3);border-radius:8px;padding:4px 6px;background:#fffdf7;color:inherit'>" +
         "<button type='button' id='sti-plan-ok' title='Changer la date' style='border:1.5px solid #23201a;background:#fffdf7;color:#23201a;border-radius:999px;padding:4px 10px;font:900 10.5px system-ui,sans-serif;cursor:pointer'>↻</button></div>";
     }
     b.innerHTML = html;
