@@ -1,9 +1,9 @@
 {
-  "version": "v476-sti-atelier-v337",
-  "generatedAt": "2026-10-26T18:28:00Z",
+  "version": "v477-sti-atelier-v338",
+  "generatedAt": "2026-10-26T19:16:41Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 654,
-  "totalBytes": 681854280,
+  "totalBytes": 681865311,
   "files": [
     {
       "path": "404.html",
@@ -62,13 +62,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 26093,
-      "gitSha": "f2524e1de67d2abb5620f80ec0cacb512c732c57"
+      "bytes": 26577,
+      "gitSha": "962f08498147c0648c9e4bbc7f5ec28a9c749252"
     },
     {
       "path": "admin.html",
-      "bytes": 339288,
-      "gitSha": "cb62f45a2ba2c615696d48ef164a2d3453d4f381"
+      "bytes": 339315,
+      "gitSha": "036eb6db0e56544ab4b33b05430b07d9bf0b602e"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -252,8 +252,8 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 35690,
-      "gitSha": "d4814ce8dca7dff3af26f32c2ab971caefd19771"
+      "bytes": 36403,
+      "gitSha": "6a34da860bdf941cbae5188c335e9ba9abf65132"
     },
     {
       "path": "assets/data/quiz-banque.json",
@@ -567,8 +567,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 923099,
-      "gitSha": "27f3279694a01b3aaaae5490835835224f380c90"
+      "bytes": 927607,
+      "gitSha": "63bfce930439206df9b27f6943fee074318cf669"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -597,8 +597,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 695045,
-      "gitSha": "52a0f2e5df65b5cca794ecbfd1b5f1392929f3ce"
+      "bytes": 698200,
+      "gitSha": "7534f7308aac4194727e99bd4f3137a672c0653d"
     },
     {
       "path": "assets/js/analytique.js",
@@ -607,8 +607,8 @@
     },
     {
       "path": "assets/js/config.js",
-      "bytes": 31534,
-      "gitSha": "07fcaef29c6a4f701f98c3d5c3c52079875d4d3b"
+      "bytes": 31559,
+      "gitSha": "a268386fc890d0f410d2ff7c3f4a9691260270ec"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -657,8 +657,8 @@
     },
     {
       "path": "assets/js/nouveautes.js",
-      "bytes": 9182,
-      "gitSha": "8ec8b440ccc3a5d42e35c83e6868727f057fd3a1"
+      "bytes": 9452,
+      "gitSha": "c747c3d8e921674696039ea9f8f824756bdc8a03"
     },
     {
       "path": "assets/js/portail.js",
@@ -2722,8 +2722,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 203307,
-      "gitSha": "bac195a569eb34a24d289b1b781deb1e34a25391"
+      "bytes": 203925,
+      "gitSha": "8b9442f659e3f4e9b84d5a8abde46e455bebdf99"
     },
     {
       "path": "livre-smart.html",
@@ -2747,8 +2747,8 @@
     },
     {
       "path": "nouveautes.html",
-      "bytes": 6925,
-      "gitSha": "468753f40f3496696da9c05574e6786f92d8e478"
+      "bytes": 6931,
+      "gitSha": "5b41c500d0ea8ea2b56d5ddba1f13f6d6769b06e"
     },
     {
       "path": "outils-js-bac.html",
@@ -3272,8 +3272,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 69691,
-      "gitSha": "a29a697309a2ac5cb1d6e37aae92e3f5fd26bcdb"
+      "bytes": 70916,
+      "gitSha": "2d3161d473ac88054dbba973452a4c6cec42b2e8"
     }
   ]
 }

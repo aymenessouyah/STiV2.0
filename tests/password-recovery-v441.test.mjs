@@ -4289,11 +4289,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v469\s*\|/.test(l)), 'v469 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v470\s*\|/.test(l)), 'v470 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v471\s*\|/.test(l)), 'v471 doit rester présent dans README.md');
-  assert.ok(cinq.some((o) => /^v472 — Audit forensique de toute la plateforme/.test(o.t)), 'v472 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v472\s*\|/.test(l)), 'v472 doit rester présent dans README.md');
   assert.ok(cinq.some((o) => /^v473 — Accélération drastique de la plateforme/.test(o.t)), 'v473 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v474 — Allègement massif des Quiz PHP/.test(o.t)), 'v474 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v475 — Cure complète de navigation/.test(o.t)), 'v475 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v476 — Retour instantané depuis exercices\/series-exercices\.html/);
+  assert.ok(cinq.some((o) => /^v476 — Retour instantané depuis exercices\/series-exercices\.html/.test(o.t)), 'v476 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v477 — Synchronisation intégrale de la version active v477/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -6516,3 +6517,165 @@ test('v476 (comportemental VM) : ouverture/fermeture modale #pdfFrame sans pollu
   assert.equal(bannerInjectedBeforeLastScroll, true, '#modules doit être ré-alignée APRÈS sti-accueil-restored (bannières reprise / 4SI)');
   assert.equal(phpSess.has('sti-retour-accueil-hash'), false, 'sti-retour-accueil-hash consommé proprement après pageshow');
 });
+
+test('v477 (structure) : élimination complète de la rétention v475 (VERSION_AFFICHEE: 477, alias racine ./ dans sw.js, admin.html, roue, nouveautes.js et README.md)', () => {
+  const configJs = read('assets/js/config.js');
+  const accesJs = read('assets/js/acces.js');
+  const adminJs = read('assets/js/admin.js');
+  const nouvJs = read('assets/js/nouveautes.js');
+  const swJs = read('sw.js');
+  const indexHtml = read('index.html');
+  const adminHtml = read('admin.html');
+  const nouvHtml = read('nouveautes.html');
+  const readmeMd = read('README.md');
+  const nouvJson = JSON.parse(read('assets/data/nouveautes.json'));
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  assert.match(configJs, /VERSION:\s*338\b/);
+  assert.match(configJs, /VERSION_AFFICHEE:\s*477\b/);
+  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v338"/);
+  assert.match(swJs, /var UPDATE_ID\s*=\s*"v477-maj-version-cache-direct"/);
+  assert.match(swJs, /uRacine/);
+  assert.match(swJs, /\/nouveautes\\\.json\$\/i/);
+
+  assert.match(indexHtml, /config\.js\?v=477/);
+  assert.match(indexHtml, /nouveautes\.js\?v=477/);
+  assert.match(nouvHtml, /nouveautes\.js\?v=477/);
+  assert.match(nouvJs, /VERSION_AFFICHEE/);
+  assert.doesNotMatch(nouvJs, /nouveautes\.json\?v=451/);
+
+  assert.match(adminHtml, /config\.js\?v=477/);
+  assert.match(adminHtml, /admin\.js\?v=477-perf/);
+  assert.match(adminHtml, /quiz-admin\.js\?v=477/);
+  assert.match(adminHtml, /v477 · sti-atelier-v338/);
+  assert.match(adminJs, /VERSION_AFFICHEE/);
+  assert.match(accesJs, /VERSION_AFFICHEE/);
+
+  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v477\*\*\s*\(`sti-atelier-v338`/);
+  assert.match(readmeMd, /\|\s*v477\s*\|/);
+  assert.equal(nouvJson[0].version, 'v477', 'La nouveauté en tête de nouveautes.json doit être v477');
+  assert.equal(offlineManifest.version, 'v477-sti-atelier-v338');
+});
+
+test('v477 (comportemental VM) : migration SW de la racine ./ depuis sti-atelier-v335 (v475) sans résurrection du vieux HTML + roue STiV2.0.477 immédiate', async () => {
+  const vm = await import('node:vm');
+
+  // 1) Simulation d'un navigateur contrôlé par sti-atelier-v335 (v475) n'ayant visité QUE l'URL racine "https://sti.example/" (sans "/index.html")
+  const swJs = read('sw.js');
+  const stores = new Map([
+    ['sti-atelier-v335', new Map([
+      ['https://sti.example/', { body: 'old-v475-root-html', headers: new Map([['content-length', '18']]) }]
+    ])]
+  ]);
+  const normUrl = (r) => {
+    const raw = typeof r === 'string' ? r : (r && typeof r.url === 'string' ? r.url : String(r));
+    return new URL(raw, 'https://sti.example/').toString();
+  };
+  const stripSearch = (u) => u.split('?')[0];
+  const cacheApi = {
+    async keys() { return Array.from(stores.keys()); },
+    async delete(name) { return stores.delete(name); },
+    async match(req, opts) {
+      for (const n of stores.keys()) {
+        const c = await cacheApi.open(n);
+        const m = await c.match(req, opts);
+        if (m) return m;
+      }
+      return undefined;
+    },
+    async open(name) {
+      if (!stores.has(name)) stores.set(name, new Map());
+      const m = stores.get(name);
+      return {
+        async keys() { return Array.from(m.keys()).map((u) => ({ url: u })); },
+        async match(req, opts) {
+          const target = normUrl(req);
+          if (m.has(target)) {
+            const v = m.get(target);
+            return { ok: true, _body: v.body, headers: { get: (h) => v.headers.get(h.toLowerCase()) || null }, clone() { return this; } };
+          }
+          if (opts && opts.ignoreSearch) {
+            const base = stripSearch(target);
+            for (const [k, v] of m.entries()) {
+              if (stripSearch(k) === base) {
+                return { ok: true, _body: v.body, headers: { get: (h) => v.headers.get(h.toLowerCase()) || null }, clone() { return this; } };
+              }
+            }
+          }
+          return undefined;
+        },
+        async put(req, rep) {
+          const b = rep._body || 'ok';
+          m.set(normUrl(req), { body: b, headers: new Map([['content-length', String(b.length)]]) });
+        },
+        async delete(req, opts) {
+          const target = normUrl(req);
+          let deleted = m.delete(target);
+          if (opts && opts.ignoreSearch) {
+            const base = stripSearch(target);
+            for (const k of Array.from(m.keys())) {
+              if (stripSearch(k) === base) { m.delete(k); deleted = true; }
+            }
+          }
+          return deleted;
+        }
+      };
+    }
+  };
+  const swEvents = {};
+  const swCtx = {
+    URL, Promise, Date, Math, Number, String, Boolean, Object, Array, RegExp,
+    encodeURIComponent, decodeURIComponent, encodeURI, parseInt, isFinite,
+    caches: cacheApi,
+    Request: function (u) { this.url = normUrl(u); },
+    Response: function (b) { this.ok = true; this._body = String(b || ''); this.headers = { get: () => String(this._body.length) }; this.clone = () => this; },
+    fetch: async (u) => ({ ok: true, _body: 'fresh-v477:' + u, headers: { get: () => '15' }, clone() { return this; } }),
+    self: {
+      location: { href: 'https://sti.example/sw.js', origin: 'https://sti.example' },
+      skipWaiting() {},
+      addEventListener(ev, fn) { swEvents[ev] = fn; },
+      clients: { async claim() {}, async matchAll() { return []; } }
+    }
+  };
+  vm.runInNewContext(swJs, swCtx);
+
+  // Exécuter install puis activate dans l'ordre réel du navigateur
+  let installPromise, activatePromise;
+  swEvents.install({ waitUntil(p) { installPromise = p; } });
+  await installPromise;
+  swEvents.activate({ waitUntil(p) { activatePromise = p; } });
+  await activatePromise;
+
+  assert.equal(stores.has('sti-atelier-v335'), false, 'L’ancien cache sti-atelier-v335 (v475) doit être supprimé après activate');
+  const nvStore = stores.get('sti-atelier-v338');
+  assert.ok(nvStore, 'Le nouveau cache sti-atelier-v338 doit exister');
+  assert.equal(nvStore.get('https://sti.example/index.html').body, 'fresh-v477:./index.html', 'index.html doit être rafraîchi en v477');
+  assert.equal(nvStore.get('https://sti.example/').body, 'fresh-v477:./index.html', 'L’URL racine "/" doit servir le HTML v477 frais et jamais l’ancien v475 migré');
+
+  // 2) Simulation d'un navigateur ayant encore sti-version-affichee="475" en localStorage : __stiVerAffichee() renvoie immédiatement "477"
+  const configSrc = read('assets/js/config.js');
+  const accesSrc = read('assets/js/acces.js');
+  const verFnMatch = accesSrc.match(/window\.__stiVerAffichee\s*=\s*function\s*\(\)\s*\{[\s\S]*?\n\s*\};/);
+  assert.ok(verFnMatch, 'Fonction window.__stiVerAffichee présente dans acces.js');
+  const locMap = new Map([['sti-version-affichee', '475'], ['sti-version-installee', '335']]);
+  const clientCtx = {
+    location: new URL('https://sti.example/'),
+    history: { state: {}, replaceState() {} },
+    navigator: { connection: { saveData: false, effectiveType: '4g' } },
+    localStorage: { getItem: (k) => locMap.get(k) || null, setItem: (k, v) => locMap.set(k, String(v)), removeItem: (k) => locMap.delete(k) },
+    sessionStorage: { getItem: () => '475', setItem() {}, removeItem() {} },
+    matchMedia: () => ({ matches: false }),
+    addEventListener() {}, dispatchEvent() {},
+    URL, URLSearchParams, Date, Math, Object, String, Boolean, Number, RegExp, JSON, parseInt, setTimeout, clearTimeout,
+    document: {
+      head: { appendChild() {} }, documentElement: { appendChild() {}, style: {}, setAttribute() {}, classList: { add() {}, remove() {} } },
+      getElementById: () => null, createElement: () => ({ style: {}, setAttribute() {} }), addEventListener() {}
+    }
+  };
+  clientCtx.window = clientCtx;
+  vm.runInNewContext(configSrc, clientCtx);
+  clientCtx.cfg = clientCtx.STI_AUTH;
+  vm.runInNewContext(verFnMatch[0], clientCtx);
+  assert.equal(clientCtx.__stiVerAffichee(), '477', 'Même avec sti-version-affichee="475" en cache local, la roue doit afficher immédiatement 477');
+});
+
