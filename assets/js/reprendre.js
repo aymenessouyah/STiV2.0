@@ -11,7 +11,8 @@
 
   function construire() {
     var hero = document.querySelector("main .hero") || document.querySelector(".hero");
-    if (!hero || document.getElementById("sti-reprendre")) return;
+    if (!hero) return;
+    var exist = document.getElementById("sti-reprendre");
     var titre = "", texte = "", lien = "", bouton = "";
     /* 1) Vidéo en cours la plus récente */
     var prog = lireJSON("sti-media-prog-v1") || {};
@@ -42,7 +43,10 @@
         lien = "cours/sql.html#bac"; bouton = "🎬 Revoir les vidéos";
       }
     }
-    if (!titre) return; /* aucun historique : on n'affiche rien */
+    if (!titre) {
+      if (exist && exist.parentNode) exist.parentNode.removeChild(exist);
+      return; /* aucun historique : on n'affiche rien */
+    }
     /* Styles en classes (et non en ligne) pour suivre le thème clair/sombre,
        y compris lorsque l'utilisateur bascule le thème sans recharger. */
     if (!document.getElementById("sti-reprendre-css")) {
@@ -58,14 +62,23 @@
         "[data-theme=\"dark\"] .sti-reprendre-btn{border-color:#0b1118;box-shadow:4px 4px 0 rgba(0,0,0,.55);color:#fff;}";
       document.head.appendChild(style);
     }
-    var section = document.createElement("section");
-    section.id = "sti-reprendre";
-    section.innerHTML = '<div class="sti-reprendre-carte">'
+    var inner = '<div class="sti-reprendre-carte">'
       + '<h2>' + titre + '</h2>'
       + '<p>' + texte + '</p>'
       + '<a class="sti-reprendre-btn" href="' + lien + '">' + bouton + '</a></div>';
+    if (exist) {
+      exist.innerHTML = inner;
+      return;
+    }
+    var section = document.createElement("section");
+    section.id = "sti-reprendre";
+    section.innerHTML = inner;
     hero.insertAdjacentElement("afterend", section);
   }
+  window.__stiRafraichirReprendre = construire;
+  window.addEventListener("pageshow", function (ev) {
+    if (ev && ev.persisted) construire();
+  });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { setTimeout(construire, 400); });
   else setTimeout(construire, 400);
 })();

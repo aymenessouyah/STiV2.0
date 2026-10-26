@@ -1,9 +1,9 @@
 {
   "version": "v460-quiz-supabase-ordre",
-  "generatedAt": "2026-10-25T22:15:27.509Z",
+  "generatedAt": "2026-10-26T05:29:59.878Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 605,
-  "totalBytes": 631271175,
+  "totalBytes": 631284759,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
@@ -512,8 +512,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 910925,
-      "gitSha": "2cc30bf71f7ca5a2f67991b24f037b56d4c90ec7"
+      "bytes": 911538,
+      "gitSha": "4ad78bc6c6d900b1b07c7be6ad04e988e5963b20"
     },
     {
       "path": "assets/js/admin.js",
@@ -527,8 +527,8 @@
     },
     {
       "path": "assets/js/config.js",
-      "bytes": 6596,
-      "gitSha": "968b2111560f4695486ac9251ca7e5c56b911268"
+      "bytes": 14616,
+      "gitSha": "6deca700aa94cb8b55790f6a122a2992ac9348fb"
     },
     {
       "path": "assets/js/graphiques-activite.js",
@@ -582,8 +582,8 @@
     },
     {
       "path": "assets/js/reprendre.js",
-      "bytes": 5072,
-      "gitSha": "133a8229b186dffa613d25b8acef908b838a08e1"
+      "bytes": 5415,
+      "gitSha": "c78e73e4b44cf5ff9fc30e8859db96732415e323"
     },
     {
       "path": "assets/js/sante.js",
@@ -607,8 +607,8 @@
     },
     {
       "path": "assets/js/sync-progressions.js",
-      "bytes": 23003,
-      "gitSha": "a69a12d5ce64608bd8d9b7933d85fdb88d5b0ee6"
+      "bytes": 22926,
+      "gitSha": "47953609c899247023a81470d3855f24f7914286"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -827,8 +827,8 @@
     },
     {
       "path": "cours/php-mysqli.html",
-      "bytes": 72925,
-      "gitSha": "472e9e0f55abc22489fa6b86dab39515e294121c"
+      "bytes": 72921,
+      "gitSha": "7a05165f9b9aff422028719bcbc5b1330a774e4d"
     },
     {
       "path": "cours/php-recap.html",
@@ -2487,8 +2487,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 191114,
-      "gitSha": "9ea23025522d1726349bd8c3641fb4fdc32684a0"
+      "bytes": 195205,
+      "gitSha": "fb79f30f139928f7b636359241985b72799b5342"
     },
     {
       "path": "livre-smart.html",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 75038,
-      "gitSha": "7ad2bfc76b36bc2ed477aa89320154283ad76ef9"
+      "bytes": 75636,
+      "gitSha": "329e291a8f9f78f1a61afdd864c8b6450be34474"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",

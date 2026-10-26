@@ -109,9 +109,18 @@
     }
     return out.length ? out : null;
   }
-  function lireAdmin(cb) {
+  function lireAdmin(cb, ignorerCache) {
     var a = window.STI_AUTH || {};
     if (!a.URL || !a.CLE || !window.fetch) { cb(null); return; }
+    if (!ignorerCache) {
+      try {
+        var mem = JSON.parse(sessionStorage.getItem("sti-cote-news-v1") || "null");
+        if (mem && mem.ts && Date.now() - mem.ts < 300000 && mem.etat) {
+          cb(mem.etat);
+          return;
+        }
+      } catch (eC) {}
+    }
     var fait = false;
     var once = function (x) { if (!fait) { fait = true; cb(x); } };
     var opts = {
@@ -129,7 +138,9 @@
       .then(function (r) { return r && r.ok ? r.json() : []; })
       .then(function (rows) {
         var v = rows && rows[0] && rows[0].value;
-        once({ liste: normaliser(v && v.liste), actif: !(v && v.actif === false) });
+        var etat = { liste: normaliser(v && v.liste), actif: !(v && v.actif === false) };
+        try { sessionStorage.setItem("sti-cote-news-v1", JSON.stringify({ ts: Date.now(), etat: etat })); } catch (eS) {}
+        once(etat);
       })
       .catch(function () { once(null); });
   }

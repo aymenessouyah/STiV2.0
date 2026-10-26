@@ -375,7 +375,6 @@
       timerPushMedia = setTimeout(function () { timerPushMedia = null; pousser(false); }, 1800);
     });
     window.addEventListener("pagehide", function () { pousser(true); });
-    window.addEventListener("beforeunload", function () { pousser(true); });
     document.addEventListener("visibilitychange", function () { if (document.hidden) pousser(true); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer); else demarrer();

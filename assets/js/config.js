@@ -108,3 +108,186 @@ window.STI_AUTH = {
     }, 5000);
   } catch (e) {}
 })();
+
+/* v465 — Navigation retour instantanée vers l'accueil (bfcache 0 ms, zéro rechargement complet) :
+   Quand l'élève ouvre un cours, un exercice ou un quiz depuis index.html puis clique sur « Retour »,
+   « Accueil », « Cours » ou « Quiz », remonter directement à l'entrée index.html déjà présente dans
+   l'historique de l'onglet (history.go(-delta)) au lieu d'empiler et recharger un nouveau document
+   complet (~1,8 Mo de HTML/JS/CSS). Au réveil bfcache (pageshow), index.html se positionne sur la
+   section demandée (#modules, #cours, haut de page) et rafraîchit instantanément les badges locaux. */
+(function () {
+  try {
+    if (typeof window === "undefined" || typeof location === "undefined" || !/^https?:$/.test(location.protocol)) return;
+    if (window.__STI_FAST_HOME_V465) return;
+    window.__STI_FAST_HOME_V465 = true;
+
+    var pnInit = String(location.pathname || "");
+    if (pnInit.indexOf("/tests/") !== -1) return;
+    if (/(^|\/)(admin|portail)(\.html)?$/i.test(pnInit.replace(/\/+$/, ""))) return;
+
+    var racUrl = new URL((window.STI_AUTH && window.STI_AUTH.RACINE) || "./", location.href);
+    var racPath = racUrl.pathname.replace(/\/+$/, "") + "/";
+
+    function estUrlAccueilRacine(u) {
+      if (!u || u.origin !== racUrl.origin) return false;
+      var p = String(u.pathname || "").replace(/(\.html?)\/+$/i, "$1");
+      return p === racPath || p === racPath.slice(0, -1) || p === racPath + "index.html";
+    }
+    function estUrlExclueHop(u) {
+      if (!u || u.origin !== racUrl.origin) return true;
+      var p = String(u.pathname || "").replace(/\/+$/, "");
+      return /(^|\/)(admin|portail)(\.html)?$/i.test(p) || p.indexOf("/tests/") !== -1;
+    }
+
+    var surAccueil = estUrlAccueilRacine(location);
+
+    function appliquerAncreRetourAccueil() {
+      var hCible = "";
+      try {
+        hCible = sessionStorage.getItem("sti-retour-accueil-hash") || "";
+        if (hCible) sessionStorage.removeItem("sti-retour-accueil-hash");
+      } catch (e) {}
+      if (!hCible) return false;
+      try {
+        var st = Object.assign({}, (history && history.state) || {}, { __stiHome: 1, __stiHop: 0 });
+        if (hCible === "#top") {
+          if (location.hash) history.replaceState(st, "", location.pathname + (location.search || ""));
+          window.scrollTo(0, 0);
+        } else {
+          var idSec = hCible.replace(/^#/, "");
+          var secEl = idSec ? document.getElementById(idSec) : null;
+          if (location.hash !== hCible) {
+            history.replaceState(st, "", location.pathname + (location.search || "") + hCible);
+          }
+          if (secEl && typeof secEl.scrollIntoView === "function") {
+            secEl.scrollIntoView({ block: "start", behavior: "auto" });
+          }
+        }
+      } catch (e2) {}
+      return true;
+    }
+
+    if (surAccueil) {
+      var marquerAccueilActif = function () {
+        try {
+          var stAct = Object.assign({}, (history && history.state) || {}, { __stiHome: 1, __stiHop: 0 });
+          history.replaceState(stAct, "");
+          sessionStorage.setItem("sti-home-active", "1");
+          sessionStorage.setItem("sti-home-hop", "0");
+        } catch (e) {}
+      };
+      marquerAccueilActif();
+      window.addEventListener("hashchange", marquerAccueilActif);
+      window.addEventListener("popstate", marquerAccueilActif);
+      window.addEventListener("pageshow", function (ev) {
+        marquerAccueilActif();
+        var aBouge = appliquerAncreRetourAccueil();
+        if ((ev && ev.persisted) || aBouge) {
+          try { window.dispatchEvent(new CustomEvent("sti-accueil-restored", { detail: { persisted: Boolean(ev && ev.persisted) } })); } catch (eEv) {}
+        }
+      });
+      return;
+    }
+
+    /* Sur une page secondaire (cours, quiz, exercices, annexes…) : calculer la distance exacte vers index.html */
+    var curHop = 0;
+    try {
+      if (history.state && typeof history.state.__stiHop === "number" && history.state.__stiHop > 0) {
+        curHop = history.state.__stiHop;
+      } else if (sessionStorage.getItem("sti-home-active") === "1" && document.referrer) {
+        var refU = new URL(document.referrer, location.href);
+        if (!estUrlExclueHop(refU)) {
+          if (estUrlAccueilRacine(refU)) {
+            curHop = 1;
+          } else {
+            var prevH = parseInt(sessionStorage.getItem("sti-home-hop") || "0", 10) || 0;
+            curHop = prevH > 0 ? prevH + 1 : 0;
+          }
+        }
+      }
+      if (curHop > 0) {
+        history.replaceState(Object.assign({}, history.state || {}, { __stiHop: curHop }), "");
+        sessionStorage.setItem("sti-home-hop", String(curHop));
+      } else {
+        sessionStorage.removeItem("sti-home-hop");
+      }
+    } catch (eHop) {}
+
+    window.addEventListener("popstate", function () {
+      try {
+        if (history.state && typeof history.state.__stiHop === "number") {
+          curHop = history.state.__stiHop;
+          sessionStorage.setItem("sti-home-hop", String(curHop));
+        }
+      } catch (e) {}
+    });
+    window.addEventListener("hashchange", function () {
+      try {
+        if (!history.state || typeof history.state.__stiHop !== "number") {
+          if (curHop > 0) {
+            curHop += 1;
+            history.replaceState(Object.assign({}, history.state || {}, { __stiHop: curHop }), "");
+            sessionStorage.setItem("sti-home-hop", String(curHop));
+          }
+        } else {
+          curHop = history.state.__stiHop;
+          sessionStorage.setItem("sti-home-hop", String(curHop));
+        }
+      } catch (e) {}
+    });
+    window.addEventListener("pageshow", function () {
+      try {
+        if (history.state && typeof history.state.__stiHop === "number" && history.state.__stiHop > 0) {
+          curHop = history.state.__stiHop;
+          sessionStorage.setItem("sti-home-hop", String(curHop));
+        }
+      } catch (e) {}
+    });
+
+    function calculerDeltaVersAccueil() {
+      try {
+        if (window.navigation && typeof window.navigation.entries === "function" && window.navigation.currentEntry) {
+          var entries = window.navigation.entries();
+          var idxCur = window.navigation.currentEntry.index;
+          for (var i = idxCur - 1; i >= 0; i--) {
+            if (entries[i] && entries[i].url && estUrlAccueilRacine(new URL(entries[i].url, location.href))) {
+              return i - idxCur;
+            }
+          }
+          return 0;
+        }
+      } catch (eNav) {}
+      var h = (history.state && typeof history.state.__stiHop === "number") ? history.state.__stiHop : curHop;
+      if (h >= 1 && history.length > h) return -h;
+      return 0;
+    }
+
+    window.addEventListener("click", function (ev) {
+      if (ev.defaultPrevented || ev.button !== 0) return;
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+      var el = ev.target;
+      var a = el && el.closest ? el.closest("a[href]") : null;
+      if (!a || a.hasAttribute("download")) return;
+      var tgt = String(a.getAttribute("target") || "").trim().toLowerCase();
+      if (tgt && tgt !== "_self" && !(tgt === "_top" && window === window.top)) return;
+      var rawHref = a.getAttribute("href") || "";
+      if (!rawHref || rawHref.charAt(0) === "#" || /^javascript:/i.test(rawHref)) return;
+      var uCible = null;
+      try { uCible = new URL(rawHref, location.href); } catch (eU) { return; }
+      if (uCible.search || !estUrlAccueilRacine(uCible)) return;
+
+      var delta = calculerDeltaVersAccueil();
+      if (delta >= 0) return;
+
+      /* Laisser tout onclick synchrone de la balise <a> (ex. write-ahead des quiz) s'exécuter,
+         tout en bloquant le rechargement complet du document et en remontant via bfcache. */
+      ev.preventDefault();
+      try {
+        sessionStorage.setItem("sti-retour-accueil-hash", uCible.hash && uCible.hash.length > 1 ? uCible.hash : "#top");
+      } catch (eSt) {}
+      Promise.resolve().then(function () {
+        history.go(delta);
+      });
+    }, true);
+  } catch (e) {}
+})();

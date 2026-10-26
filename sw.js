@@ -3,14 +3,22 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v324";
+var CACHE = "sti-atelier-v325";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v464-verif-e2e";
-/* Historique lots : v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v465-nav-fluide";
+/* Historique lots : v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./index.html", revision: "nav-fluide-v465" },
+  { url: "./assets/js/config.js", revision: "nav-fluide-v465" },
+  { url: "./assets/js/mobile-nav.js", revision: "nav-fluide-v465" },
+  { url: "./assets/js/acces.js", revision: "nav-fluide-v465" },
+  { url: "./assets/js/sync-progressions.js", revision: "nav-fluide-v465" },
+  { url: "./assets/js/reprendre.js", revision: "nav-fluide-v465" },
+  { url: "./assets/js/cote-ticker.js", revision: "nav-fluide-v465" },
+  { url: "./cours/php-mysqli.html", revision: "nav-fluide-v465" },
   { url: "./admin.html", revision: "verif-e2e-v464" },
   { url: "./assets/js/admin.js", revision: "verif-e2e-v464" },
   { url: "./assets/js/admin-couverture.js", revision: "verif-e2e-v464" },
@@ -1298,10 +1306,10 @@ self.addEventListener("fetch", function (evt) {
   if (req.mode === "navigate" || /\.(html|css|js|webmanifest)$/i.test(url.pathname) || url.pathname.slice(-1) === "/") {
     evt.respondWith(
       (async function () {
-        /* Sur un dossier local servi en localhost/LAN (PC Labo 3 sans Internet), lire directement les fichiers remplacés du dossier */
+        /* Sur un dossier local servi en localhost/LAN (PC Labo 3 sans Internet), revalider légèrement (304 Not Modified) sans re-télécharger 1,8 Mo en no-store à chaque clic */
         if (estHoteLocalDossier) {
           try {
-            var repLoc = await fetch(req, { cache: "no-store" });
+            var repLoc = await fetch(req, { cache: "no-cache" });
             if (repLoc && repLoc.ok) {
               var copLoc = repLoc.clone();
               caches.open(CACHE).then(function (c) { c.put(req, copLoc); });
