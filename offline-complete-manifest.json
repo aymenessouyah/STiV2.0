@@ -1,9 +1,9 @@
 {
   "version": "v460-quiz-supabase-ordre",
-  "generatedAt": "2026-10-26T05:29:59.878Z",
+  "generatedAt": "2026-10-26T06:14:06.831Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 605,
-  "totalBytes": 631284759,
+  "totalFiles": 606,
+  "totalBytes": 631332831,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
@@ -97,8 +97,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 326954,
-      "gitSha": "fb2da2cf660091ffdfc5afe81e83797c9f6613ce"
+      "bytes": 342495,
+      "gitSha": "8fdde503a3565b5e464ada9af78f1f03e99b571c"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -512,13 +512,13 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 911538,
-      "gitSha": "4ad78bc6c6d900b1b07c7be6ad04e988e5963b20"
+      "bytes": 913683,
+      "gitSha": "930bbe38d4772d9ba9783100b090ad1ca885761e"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 691875,
-      "gitSha": "8920f259591d3411ad832adc4d1e378f0aaab38f"
+      "bytes": 691905,
+      "gitSha": "71dce86c04ac0a9e337f06084cb31cfa1bf5e736"
     },
     {
       "path": "assets/js/analytique.js",
@@ -527,8 +527,8 @@
     },
     {
       "path": "assets/js/config.js",
-      "bytes": 14616,
-      "gitSha": "6deca700aa94cb8b55790f6a122a2992ac9348fb"
+      "bytes": 17422,
+      "gitSha": "90438bd125fc217f381b0d0c7119cf658337dd68"
     },
     {
       "path": "assets/js/graphiques-activite.js",
@@ -2487,8 +2487,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 195205,
-      "gitSha": "fb79f30f139928f7b636359241985b72799b5342"
+      "bytes": 197052,
+      "gitSha": "aaf2ce42f8cfec4e1651e7cf42a7acaa34b487dd"
     },
     {
       "path": "livre-smart.html",
@@ -2497,8 +2497,8 @@
     },
     {
       "path": "manifest.webmanifest",
-      "bytes": 1315,
-      "gitSha": "76b72e0d293bf631dccae1a02a16967e5d03533e"
+      "bytes": 1424,
+      "gitSha": "cbcfb2644328ce7501af58e90e3cdc9649018e9e"
     },
     {
       "path": "memo-veille-bac.html",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 75636,
-      "gitSha": "329e291a8f9f78f1a61afdd864c8b6450be34474"
+      "bytes": 76090,
+      "gitSha": "1c160b18edd579e00e1011f05af9618869c1949a"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
@@ -3029,6 +3029,11 @@
       "path": "assets/js/admin-erreurs.js",
       "bytes": 16095,
       "gitSha": "2aab0506e1cebff37864fac2ee9af05b42cf8c70"
+    },
+    {
+      "path": "assets/js/admin-dbsupbase.js",
+      "bytes": 25140,
+      "gitSha": "ff51cd43ca00d6b85b5122a799129a1cd36e663f"
     }
   ],
   "windowsCompatible": true,

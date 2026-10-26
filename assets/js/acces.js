@@ -122,41 +122,89 @@
   window.__stiCompresserPhotoCarree = compresserPhotoCarreeSTI;
   window.__stiPhotoUrlSure = photoUrlSureSTI;
 
-  /* ---------- v371 : installation de l'application (PWA) ---------- */
-  var stiBipV371 = null;
+  /* ---------- v371 / v466 : installation de l'application (PWA — 1re fois uniquement, masquée dès qu'installée) ---------- */
+  var stiBipV371 = window.__stiDeferredInstallPrompt || null;
+  var stiPanPremiereSession = false;
   window.__stiPwaEstInstallee = function () {
     try {
-      if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return true;
-      if (window.matchMedia && window.matchMedia("(display-mode: fullscreen)").matches) return true;
-      if (window.navigator.standalone === true) return true;
+      if (window.matchMedia && window.matchMedia("(display-mode: standalone), (display-mode: fullscreen), (display-mode: window-controls-overlay), (display-mode: minimal-ui)").matches) {
+        try {
+          localStorage.setItem("sti-pwa-installee", "1");
+          localStorage.setItem("sti-pwa-installed", "1");
+          localStorage.setItem("sti-install-fab", "off");
+          localStorage.setItem("sti-pwa-bulle-vue", "1");
+          localStorage.setItem("sti-pwa-pan-vu", "1");
+        } catch (eS) {}
+        return true;
+      }
+      if (window.navigator.standalone === true || String(document.referrer || "").indexOf("android-app://") === 0) {
+        try {
+          localStorage.setItem("sti-pwa-installee", "1");
+          localStorage.setItem("sti-pwa-installed", "1");
+          localStorage.setItem("sti-install-fab", "off");
+          localStorage.setItem("sti-pwa-bulle-vue", "1");
+          localStorage.setItem("sti-pwa-pan-vu", "1");
+        } catch (eS2) {}
+        return true;
+      }
     } catch (e) {}
-    try { return localStorage.getItem("sti-pwa-installee") === "1"; } catch (e2) {}
+    try {
+      return localStorage.getItem("sti-pwa-installee") === "1" ||
+        localStorage.getItem("sti-pwa-installed") === "1";
+    } catch (e2) {}
     return false;
   };
   window.addEventListener("beforeinstallprompt", function (ev) {
     ev.preventDefault();
+    if (window.__stiPwaEstInstallee()) {
+      stiBipV371 = null;
+      try { window.__stiMajBoutonInstaller(); } catch (e0) {}
+      return;
+    }
     stiBipV371 = ev;
-    try { localStorage.removeItem("sti-pwa-refus"); } catch (e) {}
+    window.__stiDeferredInstallPrompt = ev;
     try { window.__stiMajBoutonInstaller(); } catch (e2) {}
   });
-  window.addEventListener("appinstalled", function () {
+  function marquerPwaInstalleeAcces() {
     stiBipV371 = null;
-    try { localStorage.setItem("sti-pwa-installee", "1"); } catch (e) {}
+    stiPanPremiereSession = false;
+    window.__stiDeferredInstallPrompt = null;
+    try {
+      localStorage.setItem("sti-pwa-installee", "1");
+      localStorage.setItem("sti-pwa-installed", "1");
+      localStorage.setItem("sti-install-fab", "off");
+      localStorage.setItem("sti-pwa-bulle-vue", "1");
+      localStorage.setItem("sti-pwa-pan-vu", "1");
+    } catch (e) {}
     try { window.__stiMajBoutonInstaller(); } catch (e2) {}
-  });
+  }
+  window.addEventListener("appinstalled", marquerPwaInstalleeAcces);
+  window.addEventListener("sti:pwa-installee", marquerPwaInstalleeAcces);
   window.__stiMajBoutonInstaller = function () {
     var wrap = document.getElementById("sti-pan-install-wrap");
     if (!wrap) return;
-    var styleBtn = "display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin:0;border:1px solid rgba(14,116,144,.45);border-radius:12px;padding:8px 8px;font-weight:900;font-size:11.3px;line-height:1.25;cursor:pointer;text-align:center;box-sizing:border-box;background:linear-gradient(120deg,#e0fbff,#a5f3fc);color:#0e3a46;box-shadow:0 1px 3px rgba(13,21,38,.07),inset 0 1px 0 rgba(255,255,255,.6)";
     if (window.__stiPwaEstInstallee()) {
-      wrap.style.display = "block";
-      wrap.innerHTML = "<div style='margin-top:4px;font-size:9.8px;font-weight:800;color:#177245;text-align:center'>✅ Application installée — ouvrez-la depuis l'écran d'accueil.</div>";
+      wrap.style.display = "none";
+      wrap.innerHTML = "";
       return;
     }
+    var dejaVuOuRefuse = false;
+    try {
+      dejaVuOuRefuse =
+        localStorage.getItem("sti-pwa-refus") === "1" ||
+        (localStorage.getItem("sti-pwa-pan-vu") === "1" && !stiPanPremiereSession);
+    } catch (e) {}
+    if (dejaVuOuRefuse) {
+      wrap.style.display = "none";
+      wrap.innerHTML = "";
+      return;
+    }
+    var styleBtn = "display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin:0;border:1px solid rgba(14,116,144,.45);border-radius:12px;padding:8px 8px;font-weight:900;font-size:11.3px;line-height:1.25;cursor:pointer;text-align:center;box-sizing:border-box;background:linear-gradient(120deg,#e0fbff,#a5f3fc);color:#0e3a46;box-shadow:0 1px 3px rgba(13,21,38,.07),inset 0 1px 0 rgba(255,255,255,.6)";
+    var evDispo = stiBipV371 || window.__stiDeferredInstallPrompt || null;
     var iosV371 = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    var refus = false;
-    try { refus = localStorage.getItem("sti-pwa-refus") === "1"; } catch (e) {}
-    if (stiBipV371 && !refus) {
+    if (evDispo) {
+      stiPanPremiereSession = true;
+      try { localStorage.setItem("sti-pwa-pan-vu", "1"); } catch (eV) {}
       wrap.style.display = "block";
       wrap.innerHTML = "<button type='button' id='sti-pan-install-btn' style='" + styleBtn + "'>📲 Installer l'application STI V2.0</button>" +
         "<div style='margin-top:3px;font-size:9.5px;color:#475569;text-align:center'>Icône sur l'écran d'accueil, plein écran, cours et quiz hors-ligne.</div>";
@@ -165,12 +213,18 @@
         e.preventDefault();
         e.stopPropagation();
         try {
-          stiBipV371.prompt();
-          if (stiBipV371.userChoice) {
-            stiBipV371.userChoice.then(function (ch) {
-              if (ch && ch.outcome !== "accepted") { try { localStorage.setItem("sti-pwa-refus", "1"); } catch (er) {} }
+          evDispo.prompt();
+          if (evDispo.userChoice) {
+            evDispo.userChoice.then(function (ch) {
               stiBipV371 = null;
-              try { window.__stiMajBoutonInstaller(); } catch (er2) {}
+              window.__stiDeferredInstallPrompt = null;
+              stiPanPremiereSession = false;
+              if (ch && ch.outcome === "accepted") {
+                marquerPwaInstalleeAcces();
+              } else {
+                try { localStorage.setItem("sti-pwa-refus", "1"); } catch (er) {}
+                try { window.__stiMajBoutonInstaller(); } catch (er2) {}
+              }
             });
           }
         } catch (er3) {}
@@ -178,6 +232,8 @@
       return;
     }
     if (iosV371) {
+      stiPanPremiereSession = true;
+      try { localStorage.setItem("sti-pwa-pan-vu", "1"); } catch (eVi) {}
       wrap.style.display = "block";
       wrap.innerHTML = "<button type='button' id='sti-pan-install-btn' style='" + styleBtn + "'>📲 Installer sur iPhone / iPad</button>" +
         "<div id='sti-pan-install-aide' style='display:none;margin-top:4px;padding:6px 8px;border:1px dashed rgba(14,116,144,.5);border-radius:10px;font-size:9.8px;font-weight:800;color:#0e3a46;text-align:center;box-sizing:border-box'>Sur Safari : appuyez sur le bouton Partager ⬆️, puis « Sur l'écran d'accueil ».</div>";
@@ -191,7 +247,9 @@
       return;
     }
     var androidV371 = /Android/i.test(navigator.userAgent);
-    if (androidV371 && !refus) {
+    if (androidV371) {
+      stiPanPremiereSession = true;
+      try { localStorage.setItem("sti-pwa-pan-vu", "1"); } catch (eVa) {}
       wrap.style.display = "block";
       wrap.innerHTML = "<div style='margin-top:4px;font-size:9.8px;font-weight:800;color:#475569;text-align:center'>💡 Menu ⋮ de Chrome → « Installer l'application » pour un accès hors-ligne complet.</div>";
       return;

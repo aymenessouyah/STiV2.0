@@ -13,6 +13,12 @@
   "lang": "fr",
   "dir": "ltr",
   "categories": ["education", "productivity"],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "manifest.webmanifest"
+    }
+  ],
   "icons": [
     {
       "src": "assets/icons/sti-icon-192.png",

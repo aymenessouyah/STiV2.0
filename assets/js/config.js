@@ -291,3 +291,81 @@ window.STI_AUTH = {
     }, true);
   } catch (e) {}
 })();
+
+/* v466 : État PWA unifié sur tout le site — interception immédiate de la bulle native
+   « Installer cette application » et mémorisation définitive dès que l'application est installée. */
+(function () {
+  try {
+    if (typeof window === "undefined") return;
+
+    function modeAutonomeActif() {
+      try {
+        if (window.matchMedia && window.matchMedia("(display-mode: standalone), (display-mode: fullscreen), (display-mode: window-controls-overlay), (display-mode: minimal-ui)").matches) {
+          return true;
+        }
+      } catch (eM) {}
+      try {
+        if (typeof navigator !== "undefined" && navigator.standalone === true) return true;
+      } catch (eN) {}
+      try {
+        if (typeof document !== "undefined" && String(document.referrer || "").indexOf("android-app://") === 0) return true;
+      } catch (eR) {}
+      return false;
+    }
+
+    function marquerInstalleeGlobale() {
+      window.__stiDeferredInstallPrompt = null;
+      try {
+        localStorage.setItem("sti-pwa-installed", "1");
+        localStorage.setItem("sti-pwa-installee", "1");
+        localStorage.setItem("sti-install-fab", "off");
+        localStorage.setItem("sti-pwa-bulle-vue", "1");
+        localStorage.setItem("sti-pwa-pan-vu", "1");
+      } catch (eS) {}
+      try {
+        if (typeof CustomEvent === "function" && typeof window.dispatchEvent === "function") {
+          window.dispatchEvent(new CustomEvent("sti:pwa-installee"));
+        }
+      } catch (eE) {}
+    }
+
+    function pwaEstInstalleeGlobale() {
+      if (modeAutonomeActif()) {
+        marquerInstalleeGlobale();
+        return true;
+      }
+      try {
+        return localStorage.getItem("sti-pwa-installed") === "1" ||
+          localStorage.getItem("sti-pwa-installee") === "1";
+      } catch (eL) {
+        return false;
+      }
+    }
+
+    window.__stiMarquerPwaInstallee = marquerInstalleeGlobale;
+    window.__stiPwaEstInstallee = pwaEstInstalleeGlobale;
+
+    if (modeAutonomeActif()) {
+      marquerInstalleeGlobale();
+    } else if (typeof navigator !== "undefined" && typeof navigator.getInstalledRelatedApps === "function") {
+      navigator.getInstalledRelatedApps().then(function (apps) {
+        if (apps && apps.length) marquerInstalleeGlobale();
+      }).catch(function () {});
+    }
+
+    if (typeof window.addEventListener === "function") {
+      window.addEventListener("beforeinstallprompt", function (ev) {
+        if (ev && typeof ev.preventDefault === "function") ev.preventDefault();
+        if (pwaEstInstalleeGlobale()) {
+          window.__stiDeferredInstallPrompt = null;
+          return;
+        }
+        window.__stiDeferredInstallPrompt = ev;
+      });
+      window.addEventListener("appinstalled", function () {
+        marquerInstalleeGlobale();
+      });
+    }
+  } catch (e) {}
+})();
+
