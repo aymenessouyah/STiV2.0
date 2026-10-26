@@ -125,9 +125,22 @@
   }
   function pagesManifeste() {
     if (manifeste) return Promise.resolve(manifeste);
-    return fetch(versRacine("assets/pages-couverture.json"), { cache: "no-cache" })
+    try {
+      var cSess = JSON.parse((typeof sessionStorage !== "undefined" && sessionStorage.getItem("sti-pages-couv-json-v1")) || "null");
+      if (cSess && Array.isArray(cSess.pages) && cSess.pages.length) {
+        manifeste = cSess.pages.map(function (x) { return String(x).toLowerCase(); });
+        return Promise.resolve(manifeste);
+      }
+    } catch (eS) {}
+    return fetch(versRacine("assets/pages-couverture.json"), { cache: "default" })
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (j) { manifeste = (j && j.pages ? j.pages : []).map(function (x) { return String(x).toLowerCase(); }); return manifeste; })
+      .then(function (j) {
+        if (j && Array.isArray(j.pages) && j.pages.length) {
+          try { if (typeof sessionStorage !== "undefined") sessionStorage.setItem("sti-pages-couv-json-v1", JSON.stringify(j)); } catch (eS2) {}
+        }
+        manifeste = (j && j.pages ? j.pages : []).map(function (x) { return String(x).toLowerCase(); });
+        return manifeste;
+      })
       .catch(function () { manifeste = []; return manifeste; });
   }
   /* 1°) dater la visite de la page courante (si c'est une page de contenu) */
@@ -209,12 +222,14 @@
   }
   function oublier(p) { var o = lire(); delete o[p]; ecrire(o); }
 
-  /* 3°) bloc dans le panneau de la roue */
+  /* 3°) bloc dans le panneau de la roue (zéro reflow forcé quand le panneau est fermé) */
   function panneau() {
-    return doc.querySelector(".sti-pan.ouvert") || (function () {
-      var p = doc.querySelector(".sti-pan");
-      return p && p.offsetParent !== null ? p : null;
-    })();
+    var po = doc.querySelector(".sti-pan.ouvert");
+    if (po) return po;
+    var p = doc.querySelector(".sti-pan");
+    if (!p) return null;
+    if (p.style && p.style.display === "none") return null;
+    return p.offsetParent !== null ? p : null;
   }
   function bloc(p) {
     var b = p.querySelector("#sti-pan-revision");
@@ -303,7 +318,15 @@
     if (!p.querySelector("#sti-pan-revision")) rendre();
     else if (sig2 !== dernierEtat) rendre();
     dernierEtat = sig2;
-  }, 700);
+  }, 2500);
+  try {
+    doc.addEventListener("click", function (ev) {
+      var t = ev && ev.target;
+      if (t && (t.id === "sti-roue-btn" || (t.closest && t.closest("#sti-roue-btn")))) {
+        setTimeout(rendre, 20);
+      }
+    });
+  } catch (eClk) {}
 
   window.STI_REVISION = { dus: dus, marquerFait: marquerFait, oublier: oublier, lire: lire, libelle: libelle, resoudreCheminReel: resoudreCheminReel, CHEMINS_REELS: CHEMINS_REELS, ETAPES: ETAPES };
   dater();

@@ -541,11 +541,12 @@
         }
       } catch (e) {}
 
-      /* Détection immédiate par fichier local config.js (fonctionne en file:// et 100 % sans Internet quand on copie-remplace le dossier) */
+      /* Détection immédiate par fichier local config.js (fonctionne en file:// et 100 % sans Internet quand on copie-remplace le dossier).
+         v473 : comparer avec `>` (et jamais `!==`) pour ne jamais écraser un numéro de cache SW plus récent à chaque navigation ! */
       try {
         var verCfgLocal = (cfg && Number(cfg.VERSION)) || 0;
         var verInstLocal = parseInt(localStorage.getItem("sti-version-installee") || "0", 10) || 0;
-        if (verCfgLocal > 0 && verCfgLocal !== verInstLocal) {
+        if (verCfgLocal > 0 && verCfgLocal > verInstLocal) {
           localStorage.setItem("sti-version-installee", String(verCfgLocal));
           localStorage.removeItem("sti-precache-ver");
           sessionStorage.removeItem("sti-conn-ver-checked");
@@ -585,7 +586,10 @@
             /* v350 : le numero AFFICHE suit UPDATE_ID (v349, v350...) ; verSrv (cache v316) ne sert qu'a la logique interne. */
             var mAff = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
             var verAff = mAff && mAff[1] ? parseInt(mAff[1], 10) : verSrv;
-            try { localStorage.setItem("sti-version-affichee", String(verAff)); } catch (e) {}
+            try {
+              localStorage.setItem("sti-version-affichee", String(verAff));
+              sessionStorage.setItem("sti-sw-upd-ver-sess", String(verAff));
+            } catch (e) {}
             var hEl = document.getElementById("sti-pan-version-head");
             var fEl = document.getElementById("sti-pan-version-foot");
             if (hEl) hEl.textContent = "STiV2.0." + verAff;
@@ -3577,12 +3581,21 @@
           }
         }).catch(function () {});
       }
-      if (typeof fetch === "function") {
+      var verSessMem = 0;
+      try { verSessMem = parseInt(sessionStorage.getItem("sti-sw-upd-ver-sess") || "0", 10) || 0; } catch (eS) {}
+      if (verSessMem > 0) {
+        appliquerNumVer(verSessMem, true);
+      } else if (typeof fetch === "function") {
         fetch(cfg.RACINE + "sw.js", { cache: "no-store" })
           .then(function (r) { return r && r.ok ? r.text() : ""; })
           .then(function (txt) {
             var mUpd = String(txt || "").match(/UPDATE_ID\s*=\s*"v(\d+)/i);
-            if (mUpd && mUpd[1]) { appliquerNumVer(parseInt(mUpd[1], 10), true); return; }
+            if (mUpd && mUpd[1]) {
+              var nUpd = parseInt(mUpd[1], 10);
+              try { sessionStorage.setItem("sti-sw-upd-ver-sess", String(nUpd)); } catch (eS2) {}
+              appliquerNumVer(nUpd, true);
+              return;
+            }
             var m = String(txt || "").match(/sti-atelier-v(\d+)/i);
             if (m && m[1]) appliquerNumVer(parseInt(m[1], 10), false);
           })
@@ -4254,7 +4267,7 @@
       document.addEventListener("keydown", function () {
         setTimeout(synchroniserVisibiliteBoutonsFlottants, 40);
       }, true);
-      setInterval(synchroniserVisibiliteBoutonsFlottants, 350);
+      setInterval(synchroniserVisibiliteBoutonsFlottants, 2500);
     }
     if (window.visualViewport && !window.__stiMsnVvBound) {
       window.__stiMsnVvBound = true;

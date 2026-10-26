@@ -4285,11 +4285,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
     return { t: `${ver} — ${desc}`, c: '#fbbf24' };
   }).filter((o) => o.t.length > 8);
   assert.equal(cinq.length, 5);
-  assert.ok(cinq.some((o) => /^v468 — Audit intégral/.test(o.t)), 'v468 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v468\s*\|/.test(l)), 'v468 doit rester présent dans README.md');
   assert.ok(cinq.some((o) => /^v469 — Pagination PostgREST intégrale/.test(o.t)), 'v469 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v470 — Validation fonctionnelle E2E/.test(o.t)), 'v470 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v471 — Vérification intégrale de bout en bout/.test(o.t)), 'v471 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v472 — Audit forensique de toute la plateforme/);
+  assert.ok(cinq.some((o) => /^v472 — Audit forensique de toute la plateforme/.test(o.t)), 'v472 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v473 — Accélération drastique de la plateforme/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -4356,7 +4357,7 @@ test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, pari
   assert.match(anaJs, /background:var\(--adm-border,#e2e8f0\)/);
 
   // 4) Synchronisation des versions v469 / sti-atelier-v329
-  assert.match(adminHtml, /assets\/js\/admin\.js\?v=469-pagination/);
+  assert.match(adminHtml, /assets\/js\/admin\.js\?v=4\d{2}-[a-z0-9-]+/);
   assert.match(adminHtml, /assets\/js\/admin-couverture\.js\?v=469/);
   assert.match(adminHtml, /assets\/js\/admin-revision\.js\?v=469/);
   assert.match(adminHtml, /assets\/js\/graphiques-activite\.js\?v=469/);
@@ -5359,15 +5360,14 @@ test('v472 (structure) : 0 balise HTML avalée sur les 1 244 questions des 5 qui
   assert.match(rouePlanJs, /function est3SIStrict\(\)/);
   assert.match(ficheHtml, /function est3SIStrict\(\)/);
   assert.match(reprendreJs, /function est3SIStrict\(\)/);
-  assert.match(mobileNavJs, /roue-plan\.js\?v=472/);
-  assert.match(indexHtml, /reprendre\.js\?v=472/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v332";/);
-  assert.match(swJs, /var UPDATE_ID = "v472-test-plateforme-complet";/);
-  assert.equal(nouv[0].version, 'v472');
-  assert.match(readmeMd, /sti-atelier-v332/);
+  assert.match(mobileNavJs, /roue-plan\.js\?v=47\d/);
+  assert.match(indexHtml, /reprendre\.js\?v=47\d/);
+  assert.match(swJs, /sti-atelier-v332/);
+  assert.match(swJs, /v472-test-plateforme-complet/);
+  assert.ok(nouv.some((n) => n.version === 'v472'), 'nouveautes.json doit conserver v472');
   assert.match(readmeMd, /\|\s*v472\s*\|/);
   assert.match(adminHtml, /v472 · sti-atelier-v332/);
-  assert.equal(offlineManifest.version, 'v472-sti-atelier-v332');
+  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
 });
 
 test('v472 (comportemental VM) : filtrage PHP pour un élève 3ème SI (roue-plan, reprendre, ma-fiche-revision) vs maintien 4ème SI / Gold, et sécurisation formatExplainPhp / fmtExplainSql', async () => {
@@ -5453,6 +5453,339 @@ test('v472 (comportemental VM) : filtrage PHP pour un élève 3ème SI (roue-pla
     '<strong>[Bonus]</strong> Opérateur &lt;&gt; et &lt;script&gt;alert(1)&lt;/script&gt;'
   );
 });
+
+test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,7 Mo), alignement VERSION 333 / sti-atelier-v333, cache session SW/couverture, zéro reflow Roue fermée et lazy-load quiz-admin', async () => {
+  const vm = await import('node:vm');
+  const fs = await import('node:fs');
+
+  const swJs = read('sw.js');
+  const configJs = read('assets/js/config.js');
+  const accesJs = read('assets/js/acces.js');
+  const adminJs = read('assets/js/admin.js');
+  const mobileNavJs = read('assets/js/mobile-nav.js');
+  const roueCouvJs = read('assets/js/roue-couverture.js');
+  const roueRevJs = read('assets/js/roue-revision.js');
+  const rouePlanJs = read('assets/js/roue-plan.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const quizAdminJs = read('assets/js/quiz-admin.js');
+  const sauvJs = read('assets/js/sauvegarde.js');
+  const adminHtml = read('admin.html');
+  const indexHtml = read('index.html');
+  const readmeMd = read('README.md');
+  const nouv = JSON.parse(read('assets/data/nouveautes.json'));
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  // 1) sw.js : sti-atelier-v333, v473-perf-fluide, 0 doublon dans UPDATE_FILES et noyau léger < 500 Ko
+  assert.match(swJs, /var CACHE = "sti-atelier-v333";/);
+  assert.match(swJs, /var UPDATE_ID = "v473-perf-fluide";/);
+  const mUpd = swJs.match(/var UPDATE_FILES = (\[[\s\S]*?\n\]);/);
+  assert.ok(mUpd, 'UPDATE_FILES doit être présent dans sw.js');
+  const updArr = Array.from(vm.runInNewContext(mUpd[1]));
+  const urls = updArr.map((x) => (typeof x === 'string' ? x : x.url));
+  const uniqueUrls = new Set(urls);
+  assert.equal(uniqueUrls.size, urls.length, `UPDATE_FILES ne doit contenir aucun doublon (${urls.length} entrées vs ${uniqueUrls.size} uniques)`);
+  assert.ok(urls.length <= 120, `UPDATE_FILES doit rester compact (<= 120 entrées uniques, observé: ${urls.length})`);
+
+  const mCore = swJs.match(/var NOYAU_RAPIDE_RECHARGEMENT = (\{[\s\S]*?\n\});/);
+  assert.ok(mCore, 'NOYAU_RAPIDE_RECHARGEMENT doit encadrer les rechargements proactifs du SW');
+  const coreObj = vm.runInNewContext('(' + mCore[1] + ')');
+  let coreBytes = 0;
+  for (const rel of Object.keys(coreObj)) {
+    const p = rel.replace(/^\.\//, '');
+    if (fs.existsSync(p) && fs.statSync(p).isFile()) coreBytes += fs.statSync(p).size;
+  }
+  assert.ok(coreBytes > 0 && coreBytes < 500 * 1024, `Le noyau de rechargement SW doit peser < 500 Ko (observé: ${coreBytes} octets)`);
+  assert.match(swJs, /appareilSansCachePrealable/);
+  assert.match(swJs, /_lruTouchRecents/);
+  assert.match(swJs, /_timerHitDebounce/);
+
+  // 2) Alignement VERSION: 333 === sti-atelier-v333 + fin de la boucle !== dans acces.js
+  assert.match(configJs, /VERSION:\s*333\b/);
+  assert.doesNotMatch(accesJs, /verCfgLocal !== verInstLocal/, 'acces.js ne doit plus réinitialiser la version lorsque le cache SW est plus récent ou égal');
+  assert.match(accesJs, /verCfgLocal > verInstLocal/);
+  assert.match(accesJs, /sti-sw-upd-ver-sess/);
+  assert.match(adminJs, /sti-sw-upd-ver-sess/);
+  assert.match(adminJs, /sti-admin-sw-synced/);
+
+  // 3) Chargement différé de la Roue, cache session pages-couverture.json et zéro reflow panneau fermé
+  assert.match(mobileNavJs, /requestIdleCallback/);
+  assert.match(mobileNavJs, /syncObsMobile/);
+  assert.match(roueCouvJs, /sti-pages-couv-json-v1/);
+  assert.match(roueRevJs, /sti-pages-couv-json-v1/);
+  assert.match(roueRevJs, /if \(p\.style && p\.style\.display === "none"\) return null;/);
+  assert.match(rouePlanJs, /if \(p\.style && p\.style\.display === "none"\) return null;/);
+
+  // 4) Lissage sync-progressions.js + lazy-load quiz-admin.js + mémo sauvegarde.js + cohérence documentaire
+  assert.match(syncProgJs, /sti-sync-pull-ts/);
+  assert.doesNotMatch(syncProgJs, /pousser\(true\);\s*\}\s*catch/);
+  assert.match(quizAdminJs, /chargerUneFoisSiOuvert/);
+  assert.match(sauvJs, /sti-drive-cfg-checked-v1/);
+  assert.match(indexHtml, /config\.js\?v=473/);
+  assert.match(indexHtml, /sync-progressions\.js\?v=473/);
+  assert.match(adminHtml, /admin\.js\?v=473-perf/);
+  assert.match(adminHtml, /quiz-admin\.js\?v=473/);
+  assert.match(adminHtml, /v473 · sti-atelier-v333/);
+  assert.equal(nouv[0].version, 'v473');
+  assert.match(readmeMd, /sti-atelier-v333/);
+  assert.match(readmeMd, /\|\s*v473\s*\|/);
+  assert.equal(offlineManifest.version, 'v473-sti-atelier-v333');
+});
+
+test('v473 (comportemental VM) : 0 requête SW à l’installation à froid, éviction sans re-téléchargement lourd, 0 POST redondant sync-progressions et lazy-load quiz-admin', async () => {
+  const vm = await import('node:vm');
+
+  // A) sw.js : actualiserFichiersConcernes() sur appareil neuf (0 fetch) vs appareil ayant un cache v332 (éviction quiz/sql.html sans re-téléchargement lourd)
+  const swJs = read('sw.js');
+  const runSwDelta = async (initialCaches) => {
+    const stores = new Map();
+    for (const [cName, entries] of Object.entries(initialCaches)) {
+      const m = new Map();
+      for (const [u, body] of Object.entries(entries)) {
+        const full = new URL(u, 'https://sti.example/').toString();
+        m.set(full, { body, headers: new Map([['content-length', String(body.length)]]) });
+      }
+      stores.set(cName, m);
+    }
+    const normUrl = (r) => {
+      const raw = typeof r === 'string' ? r : (r && typeof r.url === 'string' ? r.url : String(r));
+      return new URL(raw, 'https://sti.example/').toString();
+    };
+    const stripSearch = (u) => u.split('?')[0];
+    const cacheApi = {
+      async keys() { return Array.from(stores.keys()); },
+      async open(name) {
+        if (!stores.has(name)) stores.set(name, new Map());
+        const m = stores.get(name);
+        return {
+          async keys() { return Array.from(m.keys()).map((u) => ({ url: u })); },
+          async match(req, opts) {
+            const target = normUrl(req);
+            if (m.has(target)) {
+              const v = m.get(target);
+              return { ok: true, headers: { get: (h) => v.headers.get(h.toLowerCase()) || null }, clone() { return this; } };
+            }
+            if (opts && opts.ignoreSearch) {
+              const base = stripSearch(target);
+              for (const [k, v] of m.entries()) {
+                if (stripSearch(k) === base) {
+                  return { ok: true, headers: { get: (h) => v.headers.get(h.toLowerCase()) || null }, clone() { return this; } };
+                }
+              }
+            }
+            return undefined;
+          },
+          async put(req, rep) {
+            m.set(normUrl(req), { body: rep._body || 'ok', headers: new Map([['content-length', String((rep._body || 'ok').length)]]) });
+          },
+          async delete(req, opts) {
+            const target = normUrl(req);
+            let deleted = m.delete(target);
+            if (opts && opts.ignoreSearch) {
+              const base = stripSearch(target);
+              for (const k of Array.from(m.keys())) {
+                if (stripSearch(k) === base) { m.delete(k); deleted = true; }
+              }
+            }
+            return deleted;
+          }
+        };
+      }
+    };
+    const fetched = [];
+    const ctx = {
+      URL,
+      Promise,
+      Date,
+      Math,
+      Number,
+      String,
+      Boolean,
+      Object,
+      Array,
+      RegExp,
+      encodeURIComponent,
+      parseInt,
+      isFinite,
+      caches: cacheApi,
+      Request: function (u) { this.url = normUrl(u); },
+      Response: function (b) { this.ok = true; this._body = String(b || ''); this.headers = { get: () => String(this._body.length) }; this.clone = () => this; },
+      fetch: async (u) => {
+        fetched.push(typeof u === 'string' ? u : u.url);
+        return { ok: true, _body: 'fresh', headers: { get: () => '5' }, clone() { return this; } };
+      },
+      self: {
+        location: { href: 'https://sti.example/sw.js', origin: 'https://sti.example' },
+        skipWaiting() {},
+        addEventListener() {},
+        clients: { async claim() {}, async matchAll() { return []; } }
+      }
+    };
+    vm.runInNewContext(swJs, ctx);
+    await ctx.actualiserFichiersConcernes();
+    return { fetched, stores };
+  };
+
+  const cold = await runSwDelta({});
+  assert.equal(cold.fetched.length, 0, 'Un nouvel appareil sans cache préalable doit effectuer 0 requête réseau pendant install');
+  assert.ok(cold.stores.get('sti-update-revisions-v1').size >= 100, 'Les marqueurs de révision doivent être initialisés sans réseau');
+
+  const warm = await runSwDelta({
+    'sti-atelier-v332': {
+      './index.html': 'old-index',
+      './quiz/sql.html': 'old-heavy-sql-quiz'
+    }
+  });
+  assert.ok(warm.fetched.includes('./index.html'), 'index.html déjà en cache doit être rafraîchi proactivement');
+  assert.ok(!warm.fetched.includes('./quiz/sql.html'), 'quiz/sql.html lourd ne doit pas être re-téléchargé en tâche de fond');
+  assert.equal(warm.stores.get('sti-atelier-v332').has('https://sti.example/quiz/sql.html'), false, 'L’ancienne copie de quiz/sql.html doit être purgée de sti-atelier-v332');
+
+  // B) sync-progressions.js : 1er chargement avec données locales identiques au serveur => 1 GET + 0 POST ; 2e chargement < 20s => 0 GET + 0 POST
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const sharedLocal = {
+    'sb-vywujxmepvcbgedgmger-auth-token': JSON.stringify({
+      access_token: 'tok-eleve',
+      user: { id: 'uid-eleve-1', email: 'eleve@sti.tn' }
+    }),
+    'sti-sync-uid': 'uid-eleve-1',
+    'sti-sync-maj': String(new Date('2026-10-26T11:00:00Z').getTime()),
+    'sti-progres-v1': JSON.stringify({ 'cours/algo.html': { pct: 60 } })
+  };
+  const sharedSession = {};
+  const calls = [];
+  const runSyncPage = async () => {
+    const ctx = {
+      URL,
+      Promise,
+      Date,
+      Math,
+      Number,
+      String,
+      Boolean,
+      JSON,
+      Object,
+      Array,
+      Set,
+      encodeURIComponent,
+      setTimeout: () => 1,
+      clearTimeout: () => {},
+      setInterval: () => 1,
+      location: { pathname: '/index.html', search: '', origin: 'https://sti.example' },
+      screen: { width: 1280, height: 800 },
+      localStorage: {
+        get length() { return Object.keys(sharedLocal).length; },
+        key: (i) => Object.keys(sharedLocal)[i] || null,
+        getItem: (k) => (k in sharedLocal ? sharedLocal[k] : null),
+        setItem: (k, v) => { sharedLocal[k] = String(v); },
+        removeItem: (k) => { delete sharedLocal[k]; }
+      },
+      sessionStorage: {
+        getItem: (k) => (k in sharedSession ? sharedSession[k] : null),
+        setItem: (k, v) => { sharedSession[k] = String(v); },
+        removeItem: (k) => { delete sharedSession[k]; }
+      },
+      navigator: { onLine: true, userAgent: 'Mozilla/5.0' },
+      document: {
+        readyState: 'complete',
+        body: { appendChild() {} },
+        hidden: false,
+        visibilityState: 'visible',
+        createElement: () => ({ style: {}, setAttribute() {}, appendChild() {} }),
+        getElementById: () => null,
+        getElementsByClassName: () => [],
+        addEventListener() {}
+      },
+      fetch: async (url, opts = {}) => {
+        const method = opts.method || 'GET';
+        calls.push(method);
+        if (method === 'GET') {
+          return {
+            ok: true,
+            async json() {
+              return [{
+                donnees: { 'sti-progres-v1': JSON.stringify({ 'cours/algo.html': { pct: 60 } }) },
+                maj: '2026-10-26T10:00:00Z'
+              }];
+            }
+          };
+        }
+        return { ok: true, async json() { return []; } };
+      },
+      window: {
+        addEventListener() {},
+        dispatchEvent() {}
+      },
+      CustomEvent: function (t) { this.type = t; }
+    };
+    ctx.window.localStorage = ctx.localStorage;
+    ctx.window.sessionStorage = ctx.sessionStorage;
+    vm.runInNewContext(syncProgJs, ctx);
+    await new Promise((r) => setTimeout(r, 20));
+  };
+
+  await runSyncPage();
+  const afterPage1 = calls.slice();
+  assert.deepEqual(afterPage1, ['GET'], '1re page sans changement local inédit : 1 GET et 0 POST (plus de pousser(true) forcé)');
+  await runSyncPage();
+  assert.deepEqual(calls, ['GET'], '2e navigation dans le même onglet (< 20 s) : 0 GET et 0 POST supplémentaires');
+
+  // C) quiz-admin.js : section #bloc-sec-quiz repliée au démarrage => 0 requête Supabase jusqu’au dépliage
+  const quizAdminJs = read('assets/js/quiz-admin.js');
+  let quizQueries = 0;
+  let repliee = true;
+  let clickHandler = null;
+  const blocSecQuiz = {
+    id: 'bloc-sec-quiz',
+    classList: { contains: (c) => c === 'sec-repliee' && repliee },
+    addEventListener: (ev, fn) => { if (ev === 'click') clickHandler = fn; }
+  };
+  const els = {
+    'bloc-sec-quiz': blocSecQuiz,
+    'tb-quiz-sync': { innerHTML: '' },
+    'quiz-sync-resume': { textContent: '', style: {} }
+  };
+  const makeQuery = () => {
+    const q = {
+      select() { quizQueries++; return q; },
+      order() { return q; },
+      range: async () => ({ data: [], error: null })
+    };
+    return q;
+  };
+  let mutationCb = null;
+  const qCtx = {
+    Promise,
+    Date,
+    Math,
+    Number,
+    String,
+    Boolean,
+    Object,
+    Array,
+    Map,
+    Set,
+    JSON,
+    setTimeout: (fn) => { fn(); return 1; },
+    MutationObserver: function (cb) { mutationCb = cb; this.observe = () => {}; this.disconnect = () => {}; },
+    document: {
+      readyState: 'complete',
+      getElementById: (id) => els[id] || null,
+      querySelectorAll: () => [],
+      addEventListener() {}
+    },
+    window: {
+      STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'anon' },
+      supabase: { createClient: () => ({ from: () => makeQuery() }) }
+    }
+  };
+  vm.runInNewContext(quizAdminJs, qCtx);
+  await new Promise((r) => setTimeout(r, 15));
+  assert.equal(quizQueries, 0, 'Section #bloc-sec-quiz repliée : 0 requête Supabase au démarrage de admin.html');
+  repliee = false;
+  if (mutationCb) mutationCb();
+  await new Promise((r) => setTimeout(r, 15));
+  assert.ok(quizQueries >= 3, `Au dépliage de #bloc-sec-quiz, les tables quiz doivent se charger immédiatement (observé: ${quizQueries})`);
+});
+
 
 
 

@@ -273,12 +273,32 @@
     el.textContent = texte; el.style.background = couleur || "#fff";
   }
   function entetes() { return { "apikey": cfg.CLE, "Authorization": "Bearer " + session.token, "Content-Type": "application/json" }; }
-  function tirer() {
+  function tirer(forcerPull) {
     if (!session) { pastille("💾 Progression : cet appareil seulement", "#fff3e0"); return; }
     isolerComptePartageSiBesoin(session.id);
+    /* v473 : éviter un aller-retour GET + POST Supabase à chaque clic de page dans le même onglet (< 20 s) */
+    if (!forcerPull && typeof sessionStorage !== "undefined") {
+      try {
+        var lastUid = sessionStorage.getItem("sti-sync-pull-uid") || "";
+        var lastTs = parseInt(sessionStorage.getItem("sti-sync-pull-ts") || "0", 10) || 0;
+        var lastHash = sessionStorage.getItem("sti-sync-last-hash") || "";
+        if (lastUid === session.id && lastTs > 0 && (Date.now() - lastTs) < 20000) {
+          if (lastHash) dernierHash = lastHash;
+          pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9");
+          pousser(false, false);
+          return;
+        }
+      } catch (eTh) {}
+    }
     fetch(cfg.URL + "/rest/v1/sti_progressions?user_id=eq." + encodeURIComponent(session.id) + "&select=donnees,maj", { headers: entetes() })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function (lignes) {
+        try {
+          if (typeof sessionStorage !== "undefined") {
+            sessionStorage.setItem("sti-sync-pull-uid", session.id);
+            sessionStorage.setItem("sti-sync-pull-ts", String(Date.now()));
+          }
+        } catch (eSt) {}
         if (lignes && lignes.length) {
           var distant = new Date(lignes[0].maj).getTime() || 0;
           var local = parseInt(localStorage.getItem(CLE_SYNC_MAJ) || "0", 10) || 0;
@@ -288,6 +308,7 @@
             localStorage.setItem(CLE_SYNC_MAJ, String(distant));
             var apresHash = hash(collecter());
             dernierHash = apresHash;
+            try { if (typeof sessionStorage !== "undefined") sessionStorage.setItem("sti-sync-last-hash", apresHash); } catch (eH1) {}
             pastille("☁️ Progression restaurée depuis le cloud", "#e8f5e9");
             if (avantHash && avantHash !== apresHash) {
               /* Si la fusion monotone a conservé des avancées locales plus récentes, les pousser aussi au cloud */
@@ -321,15 +342,27 @@
               }
             } catch (e) {}
             return;
-          } else if (lignes[0].donnees && lignes[0].donnees["sti-media-prog-v1"]) {
+          } else if (lignes[0].donnees) {
             /* Même si local >= distant, fusionner de façon monotone toute progression média distante manquante */
-            try {
-              var fusionM = fusionnerMediaProgMonotone(localStorage.getItem("sti-media-prog-v1"), lignes[0].donnees["sti-media-prog-v1"]);
-              if (fusionM !== localStorage.getItem("sti-media-prog-v1")) {
-                localStorage.setItem("sti-media-prog-v1", fusionM);
-              }
-            } catch (eFm) {}
+            if (lignes[0].donnees["sti-media-prog-v1"]) {
+              try {
+                var fusionM = fusionnerMediaProgMonotone(localStorage.getItem("sti-media-prog-v1"), lignes[0].donnees["sti-media-prog-v1"]);
+                if (fusionM !== localStorage.getItem("sti-media-prog-v1")) {
+                  localStorage.setItem("sti-media-prog-v1", fusionM);
+                }
+              } catch (eFm) {}
+            }
+            /* v473 : l'empreinte de référence cloud est toujours celle de lignes[0].donnees ;
+               si le contenu local est identique, pousser(false, false) n'envoie aucun POST inutile ;
+               si l'élève a progressé hors-ligne (contenu différent), pousser(false, false) synchronise immédiatement. */
+            if (!dernierHash) {
+              dernierHash = hash(lignes[0].donnees);
+              try { if (typeof sessionStorage !== "undefined") sessionStorage.setItem("sti-sync-last-hash", dernierHash); } catch (eH2) {}
+            }
           }
+          pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9");
+          pousser(false, false);
+          return;
         }
         pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9"); pousser(true);
       })
@@ -342,6 +375,7 @@
     var d = collecter(), h = hash(d);
     if (!force && h === dernierHash) return;
     dernierHash = h;
+    try { if (typeof sessionStorage !== "undefined") sessionStorage.setItem("sti-sync-last-hash", h); } catch (eHs) {}
     var maj = new Date().toISOString();
     var bodyStr = JSON.stringify({ user_id: session.id, email: session.email, donnees: d, maj: maj });
     var optsFetch = {
@@ -369,7 +403,7 @@
       }
       session = nvSess || session;
       pousser(false, false);
-    }, 5000);
+    }, 12000);
     window.addEventListener("sti-media-prog-updated", function () {
       if (timerPushMedia) clearTimeout(timerPushMedia);
       timerPushMedia = setTimeout(function () { timerPushMedia = null; pousser(false, false); }, 1800);

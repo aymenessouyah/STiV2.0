@@ -1,5 +1,15 @@
 [
   {
+    "version": "v473",
+    "date": "2026-10-26",
+    "categorie": "Plateforme & Performance",
+    "icone": "🚀",
+    "titre": "Accélération majeure de toute la plateforme : zéro tempête réseau SW (-85,7 Mo), navigation instantanée et tableau de bord allégé",
+    "resume": "Élimination des 297 téléchargements dupliqués (97,6 Mo → 0 Mo à l’installation) dans le Service Worker, suppression de la boucle de revérification no-store à chaque clic entre config.js et sw.js, mise en cache session du manifeste de couverture, fin des reflows périodiques de la Roue, suppression des POST redondants de progression et chargement à la demande des sections repliées de l’administration.",
+    "lien": "index.html",
+    "libelleLien": "Tester la fluidité de l’accueil"
+  },
+  {
     "version": "v472",
     "date": "2026-10-26",
     "categorie": "Quiz & Suivi Élève",

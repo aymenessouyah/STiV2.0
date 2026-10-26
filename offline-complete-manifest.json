@@ -1,9 +1,9 @@
 {
-  "version": "v472-sti-atelier-v332",
-  "generatedAt": "2026-10-26T09:58:00.000Z",
+  "version": "v473-sti-atelier-v333",
+  "generatedAt": "2026-10-26T14:20:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 643,
-  "totalBytes": 685651904,
+  "totalBytes": 685644554,
   "files": [
     {
       "path": "404.html",
@@ -12,8 +12,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 339024,
-      "gitSha": "83d3e18dd6a16c175f67cc995631c863e8712dba"
+      "bytes": 339061,
+      "gitSha": "6bd7dfeaa44b7f51dd75b27789252d6a8f3bc889"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -182,8 +182,8 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 32584,
-      "gitSha": "13ac8b4b9725126e8bca96987fc4900bc092a898"
+      "bytes": 33380,
+      "gitSha": "4fe6f901acfb235595c772a5bf6bba3d21c86fc9"
     },
     {
       "path": "assets/data/quiz-banque.json",
@@ -457,8 +457,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 915303,
-      "gitSha": "64d92c059b94d2a52da563384096802ff1a5cf0a"
+      "bytes": 915928,
+      "gitSha": "0c4014fa4385990370f02e656e5a21358239cbaa"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -487,8 +487,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 693870,
-      "gitSha": "01cddf58b8f18cd1dfa26f0ef5359b03da4dd69d"
+      "bytes": 694452,
+      "gitSha": "c0c6bf22d9cb08f1786070658f12aa65032502fd"
     },
     {
       "path": "assets/js/analytique.js",
@@ -498,7 +498,7 @@
     {
       "path": "assets/js/config.js",
       "bytes": 23064,
-      "gitSha": "58b4526f0eb2634e7720f8d1aabc2f570dc845a8"
+      "gitSha": "f42a034a9052edbed975af6e32480d05ee3cdefb"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -512,8 +512,8 @@
     },
     {
       "path": "assets/js/mobile-nav.js",
-      "bytes": 28927,
-      "gitSha": "5f3a6359240df2214075af0f823058cdc41f558e"
+      "bytes": 28252,
+      "gitSha": "a3af250c906b7a0a227c8d7d36008394e937f6b2"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -562,8 +562,8 @@
     },
     {
       "path": "assets/js/quiz-admin.js",
-      "bytes": 46407,
-      "gitSha": "479d5f4b2980781e30305e723556d7af18644074"
+      "bytes": 47867,
+      "gitSha": "3b5b2f37fa8fd61bbde514493bf9127eb4493098"
     },
     {
       "path": "assets/js/quiz-sync.js",
@@ -602,8 +602,8 @@
     },
     {
       "path": "assets/js/roue-couverture.js",
-      "bytes": 11141,
-      "gitSha": "90e5af87f6aa5b7e46292b93faf679a2c0dd931d"
+      "bytes": 12067,
+      "gitSha": "86c055e3f419e7e3a04d9b18efa073de5c28a790"
     },
     {
       "path": "assets/js/roue-habillage.js",
@@ -622,13 +622,13 @@
     },
     {
       "path": "assets/js/roue-plan.js",
-      "bytes": 9524,
-      "gitSha": "846b0903201ffb34eb7fb26ab6fcee943a0bb008"
+      "bytes": 9846,
+      "gitSha": "e9c1fc648fcc808a8aaeab6ec57a765101958d22"
     },
     {
       "path": "assets/js/roue-revision.js",
-      "bytes": 19012,
-      "gitSha": "9c13919efa9ee448198ea8aacf8f531f8f337e4d"
+      "bytes": 19992,
+      "gitSha": "6e7f5e5c4190ac3a7191f56d8b32f263942403d3"
     },
     {
       "path": "assets/js/sante.js",
@@ -637,8 +637,8 @@
     },
     {
       "path": "assets/js/sauvegarde.js",
-      "bytes": 32032,
-      "gitSha": "2e9369f62794d07af548ee59fc2d02a472052d89"
+      "bytes": 32351,
+      "gitSha": "eccdafa5172f84fc716bc9cac391d116b01ec9d5"
     },
     {
       "path": "assets/js/smart-book.js",
@@ -667,8 +667,8 @@
     },
     {
       "path": "assets/js/sync-progressions.js",
-      "bytes": 23087,
-      "gitSha": "a64271575a654debd450a905d182a15cb776f828"
+      "bytes": 25062,
+      "gitSha": "6a167366959aadf6b61e010921e61c68927d7d0e"
     },
     {
       "path": "assets/pages-couverture.json",
@@ -2603,7 +2603,7 @@
     {
       "path": "index.html",
       "bytes": 197052,
-      "gitSha": "df71c212ad95db00477b051e6ea18f28f1b38d35"
+      "gitSha": "14e2cab175a6539b4a61fa6938ad2b8dd4dfc0f9"
     },
     {
       "path": "Lancer-Labo3-Hors-Ligne.bat",
@@ -2623,7 +2623,7 @@
     {
       "path": "ma-fiche-revision.html",
       "bytes": 15163,
-      "gitSha": "f654eb4855325a3fcb0ae5f7beeb25eed9625794"
+      "gitSha": "3c527d2cc2280140b3e0b9ec17d70ecf5c3d9cad"
     },
     {
       "path": "manifest.webmanifest",
@@ -3192,8 +3192,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 24327,
-      "gitSha": "a61ba3dba8a9899f47ed26a974400fd70a3ac201"
+      "bytes": 24708,
+      "gitSha": "e660a0ca6334906f0ae3df237c27713b19519a66"
     },
     {
       "path": "revision-erreurs.html",
@@ -3217,8 +3217,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 82597,
-      "gitSha": "5fe640149f794bed2cc3dd6524af793b1c8234a3"
+      "bytes": 67519,
+      "gitSha": "ede99186d0d1615d81307d5fc85a975c2d6fcb5f"
     }
   ]
 }

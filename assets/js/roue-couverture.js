@@ -82,6 +82,7 @@
     return p;
   }
   function lire() { try { return JSON.parse(localStorage.getItem(CLE) || "{}") || {}; } catch (e) { return {}; } }
+  var dernierRawCouv = null, dernierCalcCouv = { n: 0, pct: 0 };
   var marque = false;
   function marquer() {
     if (marque) return;
@@ -91,12 +92,19 @@
     var l = lire();
     if (l[s]) return;
     l[s] = 1;
+    dernierRawCouv = null;
     try { localStorage.setItem(CLE, JSON.stringify(l)); } catch (e) {}
   }
   function couv() {
-    var l = lire(), n = 0;
+    var raw = "";
+    try { raw = localStorage.getItem(CLE) || ""; } catch (e) {}
+    if (raw === dernierRawCouv) return dernierCalcCouv;
+    var l = raw ? (function () { try { return JSON.parse(raw) || {}; } catch (e2) { return {}; } })() : {};
+    var n = 0;
     for (var i = 0; i < TOTAL; i++) if (l[PAGES[i]]) n++;
-    return { n: n, pct: Math.min(100, Math.round((n * 100) / TOTAL)) };
+    dernierRawCouv = raw;
+    dernierCalcCouv = { n: n, pct: Math.min(100, Math.round((n * 100) / TOTAL)) };
+    return dernierCalcCouv;
   }
   var elMemo = null, bgMemo = "";
   function majAnneau() {
@@ -121,29 +129,40 @@
      puis re-peinture immédiate à chaque fois qu'on y touche (acces.js repeint « Progression »
      à chaque ouverture du panneau — notre valeur reprend la main à la milliseconde). */
   /* v434 : chargement du manifeste du build (chemin racine calculé comme dans config.js). */
-  if (window.fetch) {
+  function appliquerManifestePages(j) {
+    if (!j || !j.pages || j.pages.length < 50) return false;
+    var set = {}, out = [];
+    for (var i = 0; i < j.pages.length; i++) {
+      var s2 = String(j.pages[i]).toLowerCase();
+      if (!set[s2]) { set[s2] = 1; out.push(s2); }
+    }
+    PAGES = out; MAP = set; TOTAL = out.length;
+    dernierRawCouv = null;
+    window.__STI_COUV_MANIFEST = true;
+    window.__STI_COUV_SOURCE = "manifeste du build";
+    marquer(); majAnneau();
+    return true;
+  }
+  var cacheSessCouv = null;
+  try { cacheSessCouv = JSON.parse(sessionStorage.getItem("sti-pages-couv-json-v1") || "null"); } catch (eSC) {}
+  if (cacheSessCouv && appliquerManifestePages(cacheSessCouv)) {
+    /* Manifeste déjà en mémoire de session : 0 requête réseau */
+  } else if (window.fetch) {
     try {
       var pn = location.pathname || "";
       var mm = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
       var BASE = mm ? location.origin + mm[1] + "/" : location.origin + pn.slice(0, pn.lastIndexOf("/") + 1);
       window.__STI_COUV_MANIFEST = false;
-      fetch(BASE + "assets/pages-couverture.json", { cache: "no-cache" }).then(function (r) {
+      fetch(BASE + "assets/pages-couverture.json", { cache: "default" }).then(function (r) {
         return r.ok ? r.json() : null;
       }).then(function (j) {
-        if (!j || !j.pages || j.pages.length < 50) return;
-        var set = {}, out = [];
-        for (var i = 0; i < j.pages.length; i++) {
-          var s2 = String(j.pages[i]).toLowerCase();
-          if (!set[s2]) { set[s2] = 1; out.push(s2); }
+        if (appliquerManifestePages(j)) {
+          try { sessionStorage.setItem("sti-pages-couv-json-v1", JSON.stringify(j)); } catch (eSC2) {}
         }
-        PAGES = out; MAP = set; TOTAL = out.length;
-        window.__STI_COUV_MANIFEST = true;
-        window.__STI_COUV_SOURCE = "manifeste du build";
-        marquer(); majAnneau();
       }).catch(function () {});
     } catch (eM) {}
   }
   majAnneau(); marquer();
-  setInterval(function () { marquer(); majAnneau(); }, 800);
-  try { window.addEventListener("storage", majAnneau); } catch (e3) {}
+  setInterval(function () { marquer(); majAnneau(); }, 2500);
+  try { window.addEventListener("storage", function () { dernierRawCouv = null; majAnneau(); }); } catch (e3) {}
 })();
