@@ -39,15 +39,29 @@
     }
   } catch (e) {}
 
-  /* ---------- v449 : Chargement universel du module Rayons X HTML/CSS & Surligneur Fluo ---------- */
+  /* ---------- v449 / v475 : Chargement différé non-bloquant du module Rayons X HTML/CSS & Surligneur Fluo ---------- */
   (function chargerRayonsXEtSurligneurSTI() {
-    try {
-      if (window.__STI_RAYONSX_SURLIGNEUR_ACTIF || document.querySelector("script[src*='rayonsx-surligneur.js']")) return;
-      var scRx = document.createElement("script");
-      scRx.src = (cfg.RACINE || "") + "assets/js/rayonsx-surligneur.js?v=449";
-      scRx.async = true;
-      (document.head || document.documentElement).appendChild(scRx);
-    } catch (e) {}
+    function injecterRayonsX() {
+      try {
+        if (window.__STI_RAYONSX_SURLIGNEUR_ACTIF || document.querySelector("script[src*='rayonsx-surligneur.js']")) return;
+        var scRx = document.createElement("script");
+        scRx.src = (cfg.RACINE || "") + "assets/js/rayonsx-surligneur.js?v=449";
+        scRx.async = true;
+        (document.head || document.documentElement).appendChild(scRx);
+      } catch (e) {}
+    }
+    var planifierRx = function () {
+      if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(injecterRayonsX, { timeout: 2200 });
+      } else {
+        setTimeout(injecterRayonsX, 900);
+      }
+    };
+    if (document.readyState === "complete") {
+      planifierRx();
+    } else {
+      window.addEventListener("load", planifierRx, { once: true });
+    }
   })();
 
   /* ---------- v445 : Validation et compression carrée légère (144x144 <= 48 Ko) de la photo élève ---------- */
@@ -278,13 +292,40 @@
     return String((cfg && cfg.VERSION) || 316);
   };
 
-  var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
+  var sb = window.__STI_SB_CLIENT || window.supabase.createClient(cfg.URL, cfg.CLE, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: false,
       lock: function (name, acquireTimeout, fn) { return fn(); }
     }
+  });
+  window.__STI_SB_CLIENT = sb;
+
+  /* v475 : cycle de vie BFCache universel — fermer proprement les WebSockets Realtime lors de pagehide
+     (évite l'éviction Chrome/Safari/Firefox « NotRestoredReasons: WebSocket ») et les réouvrir à pageshow. */
+  var _realtimeSuspenduBfcacheGlobal = false;
+  function suspendreRealtimePourBfcacheGlobalSTI() {
+    if (_realtimeSuspenduBfcacheGlobal) return;
+    _realtimeSuspenduBfcacheGlobal = true;
+    try { if (sb && typeof sb.removeAllChannels === "function") sb.removeAllChannels(); } catch (eRm) {}
+    try { if (sb && sb.realtime && typeof sb.realtime.disconnect === "function") sb.realtime.disconnect(); } catch (eDc) {}
+  }
+  function reprendreRealtimeApresBfcacheGlobalSTI() {
+    if (!_realtimeSuspenduBfcacheGlobal) return;
+    _realtimeSuspenduBfcacheGlobal = false;
+    setTimeout(function () {
+      try { if (typeof window.__stiResouscrireCanalUser === "function") window.__stiResouscrireCanalUser(); } catch (eU) {}
+      try { if (typeof window.__stiResouscrireCanalDiffusion === "function") window.__stiResouscrireCanalDiffusion(); } catch (eD) {}
+    }, 180);
+  }
+  window.__stiSuspendreRealtimeBfcache = suspendreRealtimePourBfcacheGlobalSTI;
+  window.__stiReprendreRealtimeBfcache = reprendreRealtimeApresBfcacheGlobalSTI;
+  window.addEventListener("pagehide", function () {
+    setTimeout(suspendreRealtimePourBfcacheGlobalSTI, 0);
+  });
+  window.addEventListener("pageshow", function (ev) {
+    if (ev && ev.persisted) reprendreRealtimeApresBfcacheGlobalSTI();
   });
   function estCompteLaboRestreintV303(email) {
     return String(email || "").trim().toLowerCase() === "elevelabo3@exemple.tn";
@@ -906,9 +947,23 @@
         try { window.__stiMaj4SI(); } catch (e) {}
       }
     }
-    majDomElements();
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", majDomElements);
+    /* v475 : la feuille #sti-style-4si-global masque déjà instantanément via CSS (sti-4si-autorise) ;
+       on fusionne le balayage DOM impératif en une passe unique après parsing pour éviter 3 querySelectorAll géants. */
+    if (!window.__stiTimerMaj4siDom) {
+      window.__stiTimerMaj4siDom = setTimeout(function () {
+        window.__stiTimerMaj4siDom = 0;
+        majDomElements();
+      }, 0);
+    }
+    if (document.readyState === "loading" && !window.__stiDomLoaded4siBound) {
+      window.__stiDomLoaded4siBound = true;
+      document.addEventListener("DOMContentLoaded", function () {
+        if (window.__stiTimerMaj4siDom) {
+          clearTimeout(window.__stiTimerMaj4siDom);
+          window.__stiTimerMaj4siDom = 0;
+        }
+        majDomElements();
+      }, { once: true });
     }
 
     /* 3. Intercepter l'ouverture de modales PDF et de vidéos des Séries 3, 4, 5, 6 SQL & PHP si non autorisé */
@@ -2189,22 +2244,26 @@
     document.addEventListener("visibilitychange", function () {
       if (!document.hidden) verifDirecte();
     });
-    try {
-      sb.channel("sti-user-" + uid)
-        .on("postgres_changes", { event: "*", schema: "public", table: "profiles", filter: "id=eq." + uid }, function (payload) {
-          if (payload.eventType === "DELETE") {
-            sortirImmediatement("#refuse");
-            return;
-          }
-          var nv = payload.new;
-          if (nv && nv.statut) {
-            appliquerStatut({ data: nv, error: null });
-          } else {
-            verifDirecte();
-          }
-        })
-        .subscribe();
-    } catch (e) {}
+    function souscrireCanalUserActif() {
+      try {
+        sb.channel("sti-user-" + uid)
+          .on("postgres_changes", { event: "*", schema: "public", table: "profiles", filter: "id=eq." + uid }, function (payload) {
+            if (payload.eventType === "DELETE") {
+              sortirImmediatement("#refuse");
+              return;
+            }
+            var nv = payload.new;
+            if (nv && nv.statut) {
+              appliquerStatut({ data: nv, error: null });
+            } else {
+              verifDirecte();
+            }
+          })
+          .subscribe();
+      } catch (e) {}
+    }
+    window.__stiResouscrireCanalUser = souscrireCanalUserActif;
+    souscrireCanalUserActif();
   }
 
   /* ---------- Point 5 : Détection automatique des scores sur les pages Quiz + bouton d'envoi ---------- */
@@ -5761,69 +5820,74 @@
       (document.body || document.documentElement).appendChild(boite);
     }
 
-    try {
-      sb.channel("sti-diffusion")
-        .on("broadcast", { event: "annonce" }, function (p) {
-          if (p && p.payload) afficherAnnonce(p.payload);
-        })
-        .on("broadcast", { event: "statut" }, function (p) {
-          if (p && p.payload) traiterSignalStatut(p.payload);
-        })
-        .on("broadcast", { event: "controle" }, function (p) {
-          if (p && p.payload) afficherControleChrono(p.payload);
-        })
-        .on("broadcast", { event: "flash_q" }, function (p) {
-          if (p && p.payload) afficherQuestionFlashLive(p.payload, uid);
-        })
-        .on("broadcast", { event: "tableau_blanc" }, function (p) {
-          if (p && p.payload) afficherTableauBlancLiveEleve(p.payload);
-        })
-        .on("broadcast", { event: "coffre_tp" }, function (p) {
-          if (p && p.payload && typeof window.__stiTraiterSignalCoffreTp === "function") {
-            window.__stiTraiterSignalCoffreTp(p.payload, false);
-          }
-        })
-        .on("broadcast", { event: "kahoot_q" }, function (p) {
-          if (p && p.payload && typeof window.__stiAfficherKahootEleve === "function") {
-            window.__stiAfficherKahootEleve(p.payload, uid);
-          }
-        })
-        .on("broadcast", { event: "copie_note" }, function (p) {
-          if (p && p.payload && p.payload.uid === uid && typeof window.__stiAfficherNoteCopieEleve === "function") {
-            window.__stiAfficherNoteCopieEleve(p.payload);
-          }
-        })
-        .on("broadcast", { event: "presence" }, function (p) {
-          if (p && p.payload && p.payload.uid) {
-            presenceMapSite[p.payload.uid] = Date.now();
-            if (typeof window.__stiRafraichirMessengerSite === "function") {
-              window.__stiRafraichirMessengerSite();
+    function souscrireCanalDiffusionActif() {
+      try {
+        sb.channel("sti-diffusion")
+          .on("broadcast", { event: "annonce" }, function (p) {
+            if (p && p.payload) afficherAnnonce(p.payload);
+          })
+          .on("broadcast", { event: "statut" }, function (p) {
+            if (p && p.payload) traiterSignalStatut(p.payload);
+          })
+          .on("broadcast", { event: "controle" }, function (p) {
+            if (p && p.payload) afficherControleChrono(p.payload);
+          })
+          .on("broadcast", { event: "flash_q" }, function (p) {
+            if (p && p.payload) afficherQuestionFlashLive(p.payload, uid);
+          })
+          .on("broadcast", { event: "tableau_blanc" }, function (p) {
+            if (p && p.payload) afficherTableauBlancLiveEleve(p.payload);
+          })
+          .on("broadcast", { event: "coffre_tp" }, function (p) {
+            try { sessionStorage.removeItem("sti-coffre-tp-sync-ts"); } catch (eC) {}
+            if (p && p.payload && typeof window.__stiTraiterSignalCoffreTp === "function") {
+              window.__stiTraiterSignalCoffreTp(p.payload, false);
             }
-          }
-        })
-        .on("broadcast", { event: "who_is_online" }, function () {
-          if (typeof window.__stiEnvoyerPresenceMaintenant === "function") {
-            window.__stiEnvoyerPresenceMaintenant();
-          }
-        })
-        .on("broadcast", { event: "force_update" }, function (p) {
-          if (p && p.payload && typeof window.__stiExecuterForceUpdate === "function") {
-            window.__stiExecuterForceUpdate(p.payload);
-          }
-        })
-        .on("broadcast", { event: "sec_config" }, function (p) {
-          if (p && p.payload) appliquerConfigSecurite(p.payload);
-        })
-        .on("broadcast", { event: "teleporter" }, function (p) {
-          if (p && p.payload && typeof appliquerTeleportation === "function") appliquerTeleportation(p.payload);
-        })
-        .on("broadcast", { event: "main_levee" }, function (p) {
-          if (p && p.payload && p.payload.uid === uid && p.payload.action === "down") {
-            if (typeof window.__stiTraiterAcquittementMain === "function") window.__stiTraiterAcquittementMain(p.payload);
-          }
-        })
-        .subscribe();
-    } catch (e) {}
+          })
+          .on("broadcast", { event: "kahoot_q" }, function (p) {
+            if (p && p.payload && typeof window.__stiAfficherKahootEleve === "function") {
+              window.__stiAfficherKahootEleve(p.payload, uid);
+            }
+          })
+          .on("broadcast", { event: "copie_note" }, function (p) {
+            if (p && p.payload && p.payload.uid === uid && typeof window.__stiAfficherNoteCopieEleve === "function") {
+              window.__stiAfficherNoteCopieEleve(p.payload);
+            }
+          })
+          .on("broadcast", { event: "presence" }, function (p) {
+            if (p && p.payload && p.payload.uid) {
+              presenceMapSite[p.payload.uid] = Date.now();
+              if (typeof window.__stiRafraichirMessengerSite === "function") {
+                window.__stiRafraichirMessengerSite();
+              }
+            }
+          })
+          .on("broadcast", { event: "who_is_online" }, function () {
+            if (typeof window.__stiEnvoyerPresenceMaintenant === "function") {
+              window.__stiEnvoyerPresenceMaintenant();
+            }
+          })
+          .on("broadcast", { event: "force_update" }, function (p) {
+            if (p && p.payload && typeof window.__stiExecuterForceUpdate === "function") {
+              window.__stiExecuterForceUpdate(p.payload);
+            }
+          })
+          .on("broadcast", { event: "sec_config" }, function (p) {
+            if (p && p.payload) appliquerConfigSecurite(p.payload);
+          })
+          .on("broadcast", { event: "teleporter" }, function (p) {
+            if (p && p.payload && typeof appliquerTeleportation === "function") appliquerTeleportation(p.payload);
+          })
+          .on("broadcast", { event: "main_levee" }, function (p) {
+            if (p && p.payload && p.payload.uid === uid && p.payload.action === "down") {
+              if (typeof window.__stiTraiterAcquittementMain === "function") window.__stiTraiterAcquittementMain(p.payload);
+            }
+          })
+          .subscribe();
+      } catch (e) {}
+    }
+    window.__stiResouscrireCanalDiffusion = souscrireCanalDiffusionActif;
+    souscrireCanalDiffusionActif();
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -6529,35 +6593,54 @@
       '[id*="harpa-ai"]'
     ].join(",");
 
-    function scannerExtensionsIA() {
+    function neutraliserNoeudExtensionIA(nd) {
+      if (!nd || !nd.parentNode) return;
+      var idExt = (nd.id || (typeof nd.className === "string" ? nd.className : "") || (nd.getAttribute && nd.getAttribute("src")) || "Extension IA").slice(0, 45);
+      nd.remove();
+      if (!alerteExtDejaEnvoyee[idExt]) {
+        alerteExtDejaEnvoyee[idExt] = true;
+        envoyerAlerteSecurite(
+          "Extension IA bloquée (Anti-Gemini / Claude / ChatGPT)",
+          "Panneau latéral IA neutralisé : " + idExt
+        );
+        afficherToastSynchro("🚫 Anti-IA STI : panneau latéral IA (Gemini / Claude / ChatGPT) détecté, bloqué et signalé au professeur.");
+      }
+    }
+
+    function scannerExtensionsIA(racineCible) {
       if (estSessionAdminVerifiee() || cfgSecurite.antiCollageActif === false) return;
       try {
-        var noeudsIA = document.querySelectorAll(SELECTEURS_EXT_IA);
-        noeudsIA.forEach(function (nd) {
-          var idExt = (nd.id || nd.className || nd.getAttribute("src") || "Extension IA").slice(0, 45);
-          nd.remove();
-          if (!alerteExtDejaEnvoyee[idExt]) {
-            alerteExtDejaEnvoyee[idExt] = true;
-            envoyerAlerteSecurite(
-              "Extension IA bloquée (Anti-Gemini / Claude / ChatGPT)",
-              "Panneau latéral IA neutralisé : " + idExt
-            );
-            afficherToastSynchro("🚫 Anti-IA STI : panneau latéral IA (Gemini / Claude / ChatGPT) détecté, bloqué et signalé au professeur.");
+        if (racineCible && racineCible.nodeType === 1) {
+          if (typeof racineCible.matches === "function" && racineCible.matches(SELECTEURS_EXT_IA)) {
+            neutraliserNoeudExtensionIA(racineCible);
+            return;
           }
-        });
+          if (typeof racineCible.querySelectorAll === "function") {
+            racineCible.querySelectorAll(SELECTEURS_EXT_IA).forEach(neutraliserNoeudExtensionIA);
+          }
+          return;
+        }
+        document.querySelectorAll(SELECTEURS_EXT_IA).forEach(neutraliserNoeudExtensionIA);
       } catch (e) {}
     }
 
     if (typeof MutationObserver !== "undefined") {
+      /* v475 : inspecter uniquement les sous-arbres nouvellement insérés (O(ajout)) au lieu de
+         re-scanner tout le document (2 000+ nœuds) à chaque innerHTML de quiz ou de tableau. */
       var obsIA = new MutationObserver(function (mutations) {
+        if (estSessionAdminVerifiee() || cfgSecurite.antiCollageActif === false) return;
         for (var i = 0; i < mutations.length; i++) {
-          if (mutations[i].addedNodes && mutations[i].addedNodes.length) {
-            scannerExtensionsIA();
-            break;
+          var ajouts = mutations[i].addedNodes;
+          if (!ajouts || !ajouts.length) continue;
+          for (var j = 0; j < ajouts.length; j++) {
+            if (ajouts[j] && ajouts[j].nodeType === 1) {
+              scannerExtensionsIA(ajouts[j]);
+            }
           }
         }
       });
       var demarrerObsIA = function () {
+        if (estSessionAdminVerifiee()) return;
         if (document.documentElement) {
           obsIA.observe(document.documentElement, { childList: true, subtree: true });
           scannerExtensionsIA();
@@ -10142,48 +10225,63 @@
           } catch (eTk) {}
           return "";
         }
+        var dernierFermeTs = 0;
         function ferme(ev) {
-          if (!navigator.onLine) return;
-          var payloadFin = {
-            fin: new Date().toISOString(),
-            duree_sec: Math.round((Date.now() - debut) / 1000)
-          };
           var estPageHide = Boolean(ev && ev.type === "pagehide");
-          var tkKa = estPageHide ? lireJetonAuthKeepalive() : "";
-          if (estPageHide && tkKa && typeof fetch === "function") {
-            fetch(cfg.URL + "/rest/v1/acces?id=eq." + encodeURIComponent(id), {
-              method: "PATCH",
-              keepalive: true,
-              headers: {
-                apikey: cfg.CLE,
-                Authorization: "Bearer " + tkKa,
-                "Content-Type": "application/json",
-                Prefer: "return=minimal"
-              },
-              body: JSON.stringify(payloadFin)
-            }).catch(function () {});
-          } else {
-            sb.from("acces").update(payloadFin).eq("id", id).then(function () {});
+          var estVisHidden = Boolean(ev && ev.type === "visibilitychange");
+          var maintenantFerme = Date.now();
+          /* v475 : dédupliquer visibilitychange(hidden) + pagehide rapprochés (< 1,5 s) et
+             ne jamais envoyer de trame WebSocket pendant pagehide (préserve 100 % le BFCache). */
+          if ((estPageHide || estVisHidden) && (maintenantFerme - dernierFermeTs < 1500)) {
+            if (estPageHide) suspendreRealtimePourBfcacheGlobalSTI();
+            return;
           }
-          if (!estPageHide || !ev.persisted) {
-            envoyerPresence();
+          dernierFermeTs = maintenantFerme;
+          if (navigator.onLine) {
+            var payloadFin = {
+              fin: new Date().toISOString(),
+              duree_sec: Math.round((maintenantFerme - debut) / 1000)
+            };
+            var tkKa = (estPageHide || estVisHidden) ? lireJetonAuthKeepalive() : "";
+            if ((estPageHide || estVisHidden) && tkKa && typeof fetch === "function") {
+              fetch(cfg.URL + "/rest/v1/acces?id=eq." + encodeURIComponent(id), {
+                method: "PATCH",
+                keepalive: true,
+                headers: {
+                  apikey: cfg.CLE,
+                  Authorization: "Bearer " + tkKa,
+                  "Content-Type": "application/json",
+                  Prefer: "return=minimal"
+                },
+                body: JSON.stringify(payloadFin)
+              }).catch(function () {});
+            } else if (!estPageHide) {
+              sb.from("acces").update(payloadFin).eq("id", id).then(function () {});
+            }
+            if (!estPageHide && !estVisHidden) {
+              envoyerPresence();
+            }
+          }
+          if (estPageHide) {
+            suspendreRealtimePourBfcacheGlobalSTI();
           }
         }
         envoyerPresence();
         setInterval(ferme, 30000); /* mise à jour présence + durée toutes les 30 s */
         window.addEventListener("pagehide", ferme);
         window.addEventListener("pageshow", function (ev) {
+          reprendreRealtimeApresBfcacheGlobalSTI();
           if (ev && ev.persisted) {
             debut = Date.now();
-            envoyerPresence();
+            setTimeout(envoyerPresence, 260);
             try { rafraichirDureeEtScoresServeur(uid, true); } catch (eP) {}
             if (typeof window.rafraichirBadgesProgressionSTI === "function") {
               try { window.rafraichirBadgesProgressionSTI(); } catch (eB) {}
             }
           }
         });
-        document.addEventListener("visibilitychange", function () {
-          if (document.visibilityState === "hidden") ferme();
+        document.addEventListener("visibilitychange", function (evVis) {
+          if (document.visibilityState === "hidden") ferme(evVis || { type: "visibilitychange" });
         });
       }).catch(function () {
         suiviHorsLigne();
@@ -10201,10 +10299,23 @@
       return;
     }
     insere();
-    fetch("https://ipapi.co/json/").then(function (r) { return r.json(); }).then(function (j) {
-      var geo = ((j.city || "") + (j.country_name ? ", " + j.country_name : "")).trim();
-      try { localStorage.setItem("sti-geo-cache", JSON.stringify({ txt: geo, ts: Date.now() })); } catch (e) {}
-    }).catch(function () {});
+    var geoFailTs = 0;
+    try { geoFailTs = Number(sessionStorage.getItem("sti-geo-ip-fail-ts") || 0); } catch (eGf) {}
+    if (!geoFailTs || (Date.now() - geoFailTs > 30 * 60000)) {
+      var lancerGeoIdle = function () {
+        fetch("https://ipapi.co/json/").then(function (r) { return r.json(); }).then(function (j) {
+          var geo = ((j.city || "") + (j.country_name ? ", " + j.country_name : "")).trim();
+          try { localStorage.setItem("sti-geo-cache", JSON.stringify({ txt: geo, ts: Date.now() })); } catch (e) {}
+        }).catch(function () {
+          try { sessionStorage.setItem("sti-geo-ip-fail-ts", String(Date.now())); } catch (eGf2) {}
+        });
+      };
+      if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(lancerGeoIdle, { timeout: 4000 });
+      } else {
+        setTimeout(lancerGeoIdle, 2500);
+      }
+    }
   }
 
   /* =====================================================================
@@ -13664,17 +13775,26 @@
     });
   };
 
-  function synchroniserCoffreTpDepuisServeur() {
+  function synchroniserCoffreTpDepuisServeur(forcer) {
     lireCacheCoffreLocal();
     majBoutonCoffreMenuEleve();
     if (!navigator.onLine) return;
+    /* v475 : mémo de session 5 min (invalidé instantanément par broadcast coffre_tp) pour éviter
+       une requête LIKE 'COFFRE_TP%' à chaque ouverture de cours, d'exercice ou de quiz. */
+    if (!forcer) {
+      try {
+        var tsCoffre = Number(sessionStorage.getItem("sti-coffre-tp-sync-ts") || 0);
+        if (tsCoffre && (Date.now() - tsCoffre < 300000)) return;
+      } catch (eCf) {}
+    }
     sb.from("acces")
       .select("page,lieu,debut")
       .like("page", "COFFRE_TP%")
       .order("debut", { ascending: false })
       .limit(50)
       .then(function (r) {
-        if (!r || !r.data) return;
+        if (!r || r.error || !r.data) return;
+        try { sessionStorage.setItem("sti-coffre-tp-sync-ts", String(Date.now())); } catch (eCf2) {}
         for (var i = r.data.length - 1; i >= 0; i--) {
           var row = r.data[i];
           try {
@@ -13688,10 +13808,17 @@
       .catch(function () {});
   }
 
+  var planifierSyncCoffreIdle = function () {
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(function () { synchroniserCoffreTpDepuisServeur(false); }, { timeout: 2500 });
+    } else {
+      setTimeout(function () { synchroniserCoffreTpDepuisServeur(false); }, 1200);
+    }
+  };
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () { setTimeout(synchroniserCoffreTpDepuisServeur, 400); });
+    document.addEventListener("DOMContentLoaded", planifierSyncCoffreIdle, { once: true });
   } else {
-    setTimeout(synchroniserCoffreTpDepuisServeur, 400);
+    planifierSyncCoffreIdle();
   }
 
   /* ══════════════════════════════════════════════════════════════════════════

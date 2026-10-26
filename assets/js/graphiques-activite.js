@@ -7,9 +7,15 @@
   var client = null;
   var enCours = false;
   var dejaInit = false;
+  var dernierRendu = null;
+  var timerResizeGraph = 0;
 
   function sb() {
-    if (!client) client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE);
+    if (!client) {
+      client = window.__STI_ADMIN_SB || window.__STI_SB_CLIENT || window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE, {
+        auth: { persistSession: true, autoRefreshToken: false, detectSessionInUrl: false, lock: function (n, t, fn) { return fn(); } }
+      });
+    }
     return client;
   }
   function $(id) { return document.getElementById(id); }
@@ -224,8 +230,12 @@
       });
 
       var top = Object.keys(pages).sort(function (a, b) { return pages[b] - pages[a]; }).slice(0, 8);
-      dessinerBarresJours($("graph-jours"), jours, jours.map(function (j) { return parJour[j]; }), jours.map(function (j) { return Object.keys(actifsJour[j]).length; }));
-      dessinerBarresPages($("graph-pages"), top, top.map(function (n) { return pages[n]; }));
+      var valsJours = jours.map(function (j) { return parJour[j]; });
+      var actifsParJour = jours.map(function (j) { return Object.keys(actifsJour[j]).length; });
+      var valsPages = top.map(function (n) { return pages[n]; });
+      dernierRendu = { jours: jours, valsJours: valsJours, actifsParJour: actifsParJour, top: top, valsPages: valsPages };
+      dessinerBarresJours($("graph-jours"), jours, valsJours, actifsParJour);
+      dessinerBarresPages($("graph-pages"), top, valsPages);
       if (resume) {
         resume.textContent = "📈 " + visites.length + " visite(s) de page" + (partiesQuiz.length ? (" + " + partiesQuiz.length + " partie(s) de quiz") : "") +
           " sur " + periode + " jour(s) · " + Object.keys(utilisateurs).length + " abonné(s) actif(s) distinct(s) (👤 = distincts/jour).";
@@ -235,6 +245,12 @@
       if (resume) resume.textContent = "⚠️ Impossible de charger les graphiques : " + (e.message || e);
     }
     enCours = false;
+  }
+
+  function redessinerMemoire() {
+    if (!dernierRendu) return;
+    dessinerBarresJours($("graph-jours"), dernierRendu.jours, dernierRendu.valsJours, dernierRendu.actifsParJour);
+    dessinerBarresPages($("graph-pages"), dernierRendu.top, dernierRendu.valsPages);
   }
 
   function init() {
@@ -253,7 +269,14 @@
     } else {
       charger();
     }
-    window.addEventListener("resize", function () { if (dejaInit) charger(); });
+    window.addEventListener("resize", function () {
+      if (!dejaInit || !dernierRendu) return;
+      if (timerResizeGraph) clearTimeout(timerResizeGraph);
+      timerResizeGraph = setTimeout(function () {
+        timerResizeGraph = 0;
+        redessinerMemoire();
+      }, 120);
+    }, { passive: true });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

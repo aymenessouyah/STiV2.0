@@ -1,9 +1,9 @@
 {
-  "version": "v474-sti-atelier-v334",
-  "generatedAt": "2026-10-26T15:05:00Z",
+  "version": "v475-sti-atelier-v335",
+  "generatedAt": "2026-10-26T15:46:06.327Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 649,
-  "totalBytes": 682202764,
+  "totalFiles": 654,
+  "totalBytes": 681839883,
   "files": [
     {
       "path": "404.html",
@@ -11,9 +11,64 @@
       "gitSha": "d34b5843f159d2555ad53173c32a79f31be7e024"
     },
     {
+      "path": "Lancer-Labo3-Hors-Ligne.bat",
+      "bytes": 1285,
+      "gitSha": "e36b6ce8d107c0645e54d42fdd5c5534c600b2df"
+    },
+    {
+      "path": "Lancer-Labo3-Hors-Ligne.ps1",
+      "bytes": 3339,
+      "gitSha": "5d3e624ab75b5105d2ef7d4899488d62c23a38f8"
+    },
+    {
+      "path": "MIGRATION-v358-QUIZ-SYNC.sql",
+      "bytes": 3488,
+      "gitSha": "36dd77ea6553aa6f3675cf1181d0b8b8882f703f"
+    },
+    {
+      "path": "MIGRATION-v365-REPONSES.sql",
+      "bytes": 1959,
+      "gitSha": "67a6f1f5e9e436055283de111c2f3df70dcf25b8"
+    },
+    {
+      "path": "Positionnement-animee/bonus-flex.css",
+      "bytes": 4072,
+      "gitSha": "51216eeda8ee3f0dfba0f04b7e9bda6c280f823c"
+    },
+    {
+      "path": "Positionnement-animee/cours.js",
+      "bytes": 18708,
+      "gitSha": "159a02d39fbe60d3627c7bc1564d331002aae924"
+    },
+    {
+      "path": "Positionnement-animee/index.html",
+      "bytes": 94496,
+      "gitSha": "5b48d5c7d6d3d4d73b3d7978bdb5edfa342f68b3"
+    },
+    {
+      "path": "Positionnement-animee/style.css",
+      "bytes": 39795,
+      "gitSha": "34efcba19691d90f254c4585ad648cab955ff824"
+    },
+    {
+      "path": "Positionnement-animee/uploads/Annexe CSS3 By A.E.pdf",
+      "bytes": 1407045,
+      "gitSha": "45caadfe58232628df15a74b359ca5670df53e42"
+    },
+    {
+      "path": "Positionnement-animee/uploads/Annexe HTML5 By A.E.pdf",
+      "bytes": 905892,
+      "gitSha": "bc3a5e1a926e95a3baa293ff060516596c68c363"
+    },
+    {
+      "path": "README.md",
+      "bytes": 25599,
+      "gitSha": "5bbb1c4200d77f38f771ad64678e967c4a2a0a1b"
+    },
+    {
       "path": "admin.html",
-      "bytes": 339100,
-      "gitSha": "a9f17ac4553c969acaacfcb41f9d841120166022"
+      "bytes": 339217,
+      "gitSha": "f4a17d909bd6b1e527c1b73e0f7c533637cd900f"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -102,8 +157,8 @@
     },
     {
       "path": "assets/css/admin-saas.css",
-      "bytes": 129174,
-      "gitSha": "6fc2bc9b0e12e393967e869a61aced0dc332c34e"
+      "bytes": 129007,
+      "gitSha": "681b99cd16559651675c4056447d50e2e754f74b"
     },
     {
       "path": "assets/css/admin-v19.css",
@@ -197,8 +252,8 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 34095,
-      "gitSha": "294c311e98deb9ab72e55741844b0dfb9a204d15"
+      "bytes": 34907,
+      "gitSha": "e278e0a02c0ab4f01b1fffb8b259a2bee3522822"
     },
     {
       "path": "assets/data/quiz-banque.json",
@@ -216,14 +271,14 @@
       "gitSha": "00a1633b4fc7e8c6651f531b840926ef520e80f3"
     },
     {
-      "path": "assets/fontawesome/css/all.min.css",
-      "bytes": 101480,
-      "gitSha": "a18b779538a5ba934f7dfbc8637e73d9ca4e5ff5"
-    },
-    {
       "path": "assets/fontawesome/LICENSE.txt",
       "bytes": 7427,
       "gitSha": "39e18e3d30767f5a321f87d338f911906aa88da9"
+    },
+    {
+      "path": "assets/fontawesome/css/all.min.css",
+      "bytes": 101480,
+      "gitSha": "a18b779538a5ba934f7dfbc8637e73d9ca4e5ff5"
     },
     {
       "path": "assets/fontawesome/webfonts/fa-brands-400.woff2",
@@ -261,9 +316,39 @@
       "gitSha": "e25f252f4faf6e204babb6bba05e6be99ff10621"
     },
     {
+      "path": "assets/fonts/fa6-brands-subset.woff2",
+      "bytes": 684,
+      "gitSha": "bf15ce17432870762e34a9b818cd59f48f0543b1"
+    },
+    {
+      "path": "assets/fonts/fa6-regular-subset.woff2",
+      "bytes": 2856,
+      "gitSha": "94fbc41ed9e4f6c4fadc6f5e850ef85544c88222"
+    },
+    {
+      "path": "assets/fonts/fa6-solid-subset.woff2",
+      "bytes": 10972,
+      "gitSha": "a6d89066333594788332fa8a616e117db0e40380"
+    },
+    {
       "path": "assets/fonts/fonts.css",
       "bytes": 9513,
       "gitSha": "3c3df09df797dda053e0703c46982e109d205812"
+    },
+    {
+      "path": "assets/fonts/fredoka-var.woff2",
+      "bytes": 29732,
+      "gitSha": "d4afd5318ffea88df1e5d5733258c8d633c97d1d"
+    },
+    {
+      "path": "assets/fonts/inter-var.woff2",
+      "bytes": 48256,
+      "gitSha": "d15208de03cd1ad7c5199f0a0ce915fe841e4722"
+    },
+    {
+      "path": "assets/fonts/jetbrains-mono-400.woff2",
+      "bytes": 21168,
+      "gitSha": "e1c01840d08046c79c59a4178000f76f56f172c5"
     },
     {
       "path": "assets/fonts/jetbrains-mono-latin-ext.woff2",
@@ -276,6 +361,11 @@
       "gitSha": "4d09cda4a4c3f4c08ae253dd8a9c5133a89b31b7"
     },
     {
+      "path": "assets/fonts/jetbrains-mono-var.woff2",
+      "bytes": 31432,
+      "gitSha": "4d09cda4a4c3f4c08ae253dd8a9c5133a89b31b7"
+    },
+    {
       "path": "assets/fonts/manrope-latin-ext.woff2",
       "bytes": 15120,
       "gitSha": "bd24140af06f1b5897d3bbd6538a74b03748a21e"
@@ -284,6 +374,11 @@
       "path": "assets/fonts/manrope-latin.woff2",
       "bytes": 24836,
       "gitSha": "71eb731d558046199aa7f985adbf812890a093a1"
+    },
+    {
+      "path": "assets/fonts/nunito-var.woff2",
+      "bytes": 39128,
+      "gitSha": "5188ab8bb0bc7b79bece55ff8eb235271697e754"
     },
     {
       "path": "assets/icons/STI_by_AE.ico",
@@ -304,6 +399,11 @@
       "path": "assets/icons/sti-logo-complet.png",
       "bytes": 40947,
       "gitSha": "fdf36e642d19d43059d01c8c2b77d7b12e1d4c06"
+    },
+    {
+      "path": "assets/images/JavaScript_logo.svg",
+      "bytes": 6370,
+      "gitSha": "3f3416dba837f46e422b4086bbcb929730d2645c"
     },
     {
       "path": "assets/images/admin-aymen.jpg",
@@ -364,11 +464,6 @@
       "path": "assets/images/guichet-animation-capture-v288.jpg",
       "bytes": 201879,
       "gitSha": "fad732391a58a385a966d884a0caea87542c70f1"
-    },
-    {
-      "path": "assets/images/JavaScript_logo.svg",
-      "bytes": 6370,
-      "gitSha": "3f3416dba837f46e422b4086bbcb929730d2645c"
     },
     {
       "path": "assets/images/lycee_logo.png",
@@ -472,13 +567,13 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 916580,
-      "gitSha": "424b514e67affd49819e7362368085a2ced87fb9"
+      "bytes": 923099,
+      "gitSha": "27f3279694a01b3aaaae5490835835224f380c90"
     },
     {
       "path": "assets/js/admin-couverture.js",
-      "bytes": 14769,
-      "gitSha": "e310e8ab7990eb3df228ad806823417ae79ee351"
+      "bytes": 14974,
+      "gitSha": "c0eec24ad00376af382dac5e4148d1b16aed0927"
     },
     {
       "path": "assets/js/admin-dbsupbase.js",
@@ -487,23 +582,23 @@
     },
     {
       "path": "assets/js/admin-erreurs.js",
-      "bytes": 16095,
-      "gitSha": "2aab0506e1cebff37864fac2ee9af05b42cf8c70"
+      "bytes": 16300,
+      "gitSha": "6771d3db59c3b3bea14270c7a62b7e41c953fc11"
     },
     {
       "path": "assets/js/admin-mdp.js",
-      "bytes": 25238,
-      "gitSha": "c149d9a79276183c12d8ef1fa328e8dab642a834"
+      "bytes": 25372,
+      "gitSha": "84a7c377dbecb1ab91132b1d0394d02fbf5c6e21"
     },
     {
       "path": "assets/js/admin-revision.js",
-      "bytes": 16560,
-      "gitSha": "4aac4f4af96512be831c0dd84e2465d797a41ce9"
+      "bytes": 16765,
+      "gitSha": "dd497f5420179dcd403b3c1f5e1ebe2154089dd3"
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 694452,
-      "gitSha": "c0c6bf22d9cb08f1786070658f12aa65032502fd"
+      "bytes": 695045,
+      "gitSha": "52a0f2e5df65b5cca794ecbfd1b5f1392929f3ce"
     },
     {
       "path": "assets/js/analytique.js",
@@ -512,8 +607,8 @@
     },
     {
       "path": "assets/js/config.js",
-      "bytes": 23064,
-      "gitSha": "1dc618b381795063410f180d981b2a921c7e46f0"
+      "bytes": 26814,
+      "gitSha": "612ac161ebc21c1f9329cf4b9b81c77abace51dd"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -522,8 +617,8 @@
     },
     {
       "path": "assets/js/graphiques-activite.js",
-      "bytes": 10405,
-      "gitSha": "97cb44611aa333232b82c59d9c0784146f69fae5"
+      "bytes": 11398,
+      "gitSha": "b2b1d1b0a19846cb3495ff924bb3b3a170e9ac87"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -577,13 +672,13 @@
     },
     {
       "path": "assets/js/quiz-admin.js",
-      "bytes": 47867,
-      "gitSha": "3b5b2f37fa8fd61bbde514493bf9127eb4493098"
+      "bytes": 48078,
+      "gitSha": "450a7c8422bc14e5ffa29a1063928a993c79c5e1"
     },
     {
       "path": "assets/js/quiz-sync.js",
-      "bytes": 42101,
-      "gitSha": "28dbb62e86a8ee675385185279d4a62d48a4df41"
+      "bytes": 42166,
+      "gitSha": "4175b83a340c8f882087757e5e6cd0a90df4418c"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
@@ -876,94 +971,89 @@
       "gitSha": "ba96a6a1ed0fb61dcb7c05b8b04fb6947fbe4fd3"
     },
     {
-      "path": "cours/annexe-fleuriste-html5.html",
-      "bytes": 36468,
-      "gitSha": "0b2e7f5700bd15f1c86eaf81635cd75239de0976"
-    },
-    {
-      "path": "cours/courscss3.html",
-      "bytes": 173259,
-      "gitSha": "ea223e7bd7306579f16fb97e44acb17e40a31800"
-    },
-    {
-      "path": "cours/courshtml5.html",
-      "bytes": 201260,
-      "gitSha": "bbf63390c2f8ffaf46769da1e33a2e2bd2886cd3"
-    },
-    {
-      "path": "cours/coursphp.html",
-      "bytes": 73792,
-      "gitSha": "4a3ed1100da463492f4ca55ce6a648067fb3d4c1"
-    },
-    {
-      "path": "cours/css3.html",
-      "bytes": 201505,
-      "gitSha": "a15c5a40f7fa115f84ac96177990b338d109e8cf"
-    },
-    {
-      "path": "cours/datalist.html",
-      "bytes": 29308,
-      "gitSha": "e67916b126e72cbc743ad1e30cae1786f9bae05d"
-    },
-    {
-      "path": "cours/fiche-revision-html5.html",
-      "bytes": 45897,
-      "gitSha": "b57551fd02ff68e657741e6ac6fe79cc55b85088"
-    },
-    {
-      "path": "cours/html5.html",
-      "bytes": 203716,
-      "gitSha": "0a2ce68e5d1da54db951d8a9fc4790552a36a96b"
-    },
-    {
-      "path": "cours/javascript.html",
-      "bytes": 183003,
-      "gitSha": "6be3a28fb72d38bd4ef099ea01d59296558c2a26"
-    },
-    {
-      "path": "cours/php-mysqli.html",
-      "bytes": 72921,
-      "gitSha": "7a05165f9b9aff422028719bcbc5b1330a774e4d"
-    },
-    {
-      "path": "cours/php-recap.html",
-      "bytes": 69236,
-      "gitSha": "e49733a4bfbc73c1f32d14948d7e5821e00d932d"
-    },
-    {
       "path": "cours/PHP-recap.html",
-      "bytes": 69236,
-      "gitSha": "e49733a4bfbc73c1f32d14948d7e5821e00d932d"
-    },
-    {
-      "path": "cours/php.html",
-      "bytes": 220657,
-      "gitSha": "3d37ef25bf0f4d2e80747a0f3bf027b7ef4f67af"
+      "bytes": 69254,
+      "gitSha": "bfd80f87fddad14b3ae0c52e4997006b0877188d"
     },
     {
       "path": "cours/Recap-JavaScript-STI.html",
-      "bytes": 135297,
-      "gitSha": "02f2d60619d8d9108dd63db4b3fa39e742128e8e"
+      "bytes": 135315,
+      "gitSha": "79435bcc1574b8bc64d6b521c77ada1f6d4aa3ba"
+    },
+    {
+      "path": "cours/annexe-fleuriste-html5.html",
+      "bytes": 36486,
+      "gitSha": "3f006c34158a39dd843259d60b4a5952228e4bf5"
+    },
+    {
+      "path": "cours/courscss3.html",
+      "bytes": 173277,
+      "gitSha": "9ab34b4f3de4a7ca7939229ec0e185b78e194356"
+    },
+    {
+      "path": "cours/courshtml5.html",
+      "bytes": 201278,
+      "gitSha": "0d024c7986b5bdad067cbcff54e6a2a3f50bd548"
+    },
+    {
+      "path": "cours/coursphp.html",
+      "bytes": 73810,
+      "gitSha": "554fb4a21488be13078f2292943ef52285351502"
+    },
+    {
+      "path": "cours/css3.html",
+      "bytes": 201523,
+      "gitSha": "c03e9e93bbb965eb888993a36bb9836ee254bcfd"
+    },
+    {
+      "path": "cours/datalist.html",
+      "bytes": 29326,
+      "gitSha": "3a5dc20761edc05b55205775932b74ce408e6155"
+    },
+    {
+      "path": "cours/fiche-revision-html5.html",
+      "bytes": 45915,
+      "gitSha": "eab26768d34b16e83eb9ce21eab5b63fe61e2214"
+    },
+    {
+      "path": "cours/html5.html",
+      "bytes": 203734,
+      "gitSha": "f11454b29a625dc9bf5b221a912177fc4a363b9c"
+    },
+    {
+      "path": "cours/javascript.html",
+      "bytes": 183021,
+      "gitSha": "b18dc8c857c45390b56ba43f625244b86d0acb93"
+    },
+    {
+      "path": "cours/php-mysqli.html",
+      "bytes": 72939,
+      "gitSha": "e8ec0a4dfbeb49e383415997d6264ab3a1809722"
+    },
+    {
+      "path": "cours/php.html",
+      "bytes": 220675,
+      "gitSha": "f6bc81bf809725cafde958a41c17f11aa2cc64f7"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
-      "bytes": 32278,
-      "gitSha": "ef936874901e1285d529ba30498b0533161d5ac7"
+      "bytes": 32296,
+      "gitSha": "5e600e48caddff74d8f42d6a542bc1a3c2a3e59a"
     },
     {
       "path": "cours/sql-contraintes.html",
-      "bytes": 156902,
-      "gitSha": "ece7e6028da455a4522b37dab488f3a73eea28a5"
+      "bytes": 36892,
+      "gitSha": "7ddc90781b22431df321d031636455c6aa7ea3ab"
     },
     {
       "path": "cours/sql-playground.html",
-      "bytes": 13690,
-      "gitSha": "d361cf409883b042fe8047dbd20e7c4a1bf06bc3"
+      "bytes": 13714,
+      "gitSha": "6e5105b6924ae46fea83afeefc0620f267b1061b"
     },
     {
       "path": "cours/sql.html",
-      "bytes": 376583,
-      "gitSha": "a7eeca10fc65c7569038d63859ca9a72fa2e3451"
+      "bytes": 256567,
+      "gitSha": "e3876263d6cd5477097800cf56362d68f9a48b51"
     },
     {
       "path": "cssanimee/cours.js",
@@ -972,8 +1062,8 @@
     },
     {
       "path": "cssanimee/index.html",
-      "bytes": 73030,
-      "gitSha": "61eeb5f4303161f1bc1c35d83ca1ab1e7a2bd2a6"
+      "bytes": 73048,
+      "gitSha": "fe700af82e7780fb8afafc1b3b9f8378494c6a2f"
     },
     {
       "path": "cssanimee/style.css",
@@ -1032,8 +1122,8 @@
     },
     {
       "path": "documents/annexes/annexe-css3.pdf.html",
-      "bytes": 375355,
-      "gitSha": "fc4f507a637cfe3331e2c6832609e9c63be98c9a"
+      "bytes": 375373,
+      "gitSha": "e311d6053dc183952cd8e856d8cbf3c9f51cc659"
     },
     {
       "path": "documents/annexes/annexe-html5.pdf",
@@ -1072,8 +1162,8 @@
     },
     {
       "path": "documents/annexes/annexe-html5.pdf.html",
-      "bytes": 66211,
-      "gitSha": "394b768fa8be436370cd22fd5c25daab1e70eb62"
+      "bytes": 66229,
+      "gitSha": "7e1a60a6a07c9b1730911a29fbf4556be9ed2f30"
     },
     {
       "path": "documents/annexes/annexe-javascript.pdf",
@@ -1102,8 +1192,8 @@
     },
     {
       "path": "documents/annexes/annexe-javascript.pdf.html",
-      "bytes": 111965,
-      "gitSha": "e608bd54880c704f778c8e984cd313371e887cb5"
+      "bytes": 111983,
+      "gitSha": "62535526a1ab499c0280965e5471de9085db9c29"
     },
     {
       "path": "documents/annexes/annexe-php.pdf",
@@ -1162,8 +1252,8 @@
     },
     {
       "path": "documents/annexes/annexe-php.pdf.html",
-      "bytes": 212511,
-      "gitSha": "73df65ed02ba63e5916834f678c1340f6733f9b7"
+      "bytes": 212529,
+      "gitSha": "d9a05c091b96a08533a567b65cc18eeb53bf7a57"
     },
     {
       "path": "documents/annexes/annexe-sql.pdf",
@@ -1207,8 +1297,8 @@
     },
     {
       "path": "documents/annexes/annexe-sql.pdf.html",
-      "bytes": 40392,
-      "gitSha": "97cec9a98e740c2acc06cdace95add7cb297c4d1"
+      "bytes": 40410,
+      "gitSha": "d9b3fa0425b2b8b3b9ffbc8ffcda9599dbaa58b9"
     },
     {
       "path": "documents/bd/ecole.sql",
@@ -1224,6 +1314,11 @@
       "path": "documents/complet/.gitkeep",
       "bytes": 0,
       "gitSha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "documents/complet/README.md",
+      "bytes": 1362,
+      "gitSha": "ed20d77f43b386e69dd80d93dc5fbf91a72726b4"
     },
     {
       "path": "documents/complet/complet-3eme-si-bd.pdf",
@@ -1297,8 +1392,8 @@
     },
     {
       "path": "documents/complet/complet-3eme-si-bd.pdf.html",
-      "bytes": 8869,
-      "gitSha": "bdfd3ea266334dfcd554d16ee9006111cf352f46"
+      "bytes": 8887,
+      "gitSha": "586267fcd14e598f8a54e0e635309607efdd091d"
     },
     {
       "path": "documents/complet/complet-3eme-si.pdf",
@@ -1532,8 +1627,8 @@
     },
     {
       "path": "documents/complet/complet-3eme-si.pdf.html",
-      "bytes": 13661,
-      "gitSha": "6e35eaf268d921bd70cbed25630b27b197f6e510"
+      "bytes": 13679,
+      "gitSha": "4d1eca8b8251b139625e47ff5b6d163b97883614"
     },
     {
       "path": "documents/complet/complet-4eme-si-cours.pdf",
@@ -1867,8 +1962,8 @@
     },
     {
       "path": "documents/complet/complet-4eme-si-cours.pdf.html",
-      "bytes": 18189,
-      "gitSha": "83d5830430e3329a5bda22ac5f510fa66b5986a3"
+      "bytes": 18207,
+      "gitSha": "13b830c2cbc7dc6360824cf628c0222fb51ea560"
     },
     {
       "path": "documents/complet/complet-4eme-si-resume.pdf",
@@ -1947,13 +2042,13 @@
     },
     {
       "path": "documents/complet/complet-4eme-si-resume.pdf.html",
-      "bytes": 9312,
-      "gitSha": "f506c4840bbc0a7e0f2e74555a97705d93718d9d"
+      "bytes": 9330,
+      "gitSha": "d8e00d22ed003a96bc073c03677e8210a9008d75"
     },
     {
       "path": "documents/complet/fiche-memento-synthese.html",
-      "bytes": 6801,
-      "gitSha": "83b83989967b04413f29e87c009c66a6c9beeb42"
+      "bytes": 6819,
+      "gitSha": "2edf7791c84f6fedf53142126793b4962e12d28c"
     },
     {
       "path": "documents/complet/fiche-memento-synthese.pdf",
@@ -1966,24 +2061,19 @@
       "gitSha": "63c4d6cfe838bb73bdde4a46f3f3314fc32afefb"
     },
     {
-      "path": "documents/complet/README.md",
-      "bytes": 1362,
-      "gitSha": "ed20d77f43b386e69dd80d93dc5fbf91a72726b4"
-    },
-    {
       "path": "documents/complet/recharge-ve.zip",
       "bytes": 10194,
       "gitSha": "367169d9d4251ab01ae90318f2fe99e680d3308e"
     },
     {
       "path": "documents/enonces/enonce-serie4-a4.html",
-      "bytes": 6814,
-      "gitSha": "c50e3b9d3f79606e7c0e144059bc35d7746e472c"
+      "bytes": 6832,
+      "gitSha": "9f64f244d0c84e348538d080c94659d71790b5bf"
     },
     {
       "path": "documents/enonces/enonce-serie5-a4.html",
-      "bytes": 6004,
-      "gitSha": "5e13cec79c7ade4f4d512ee51b9accbefddc6f16"
+      "bytes": 6022,
+      "gitSha": "307eef67112bf2f28b97859cffadf10c812fb04f"
     },
     {
       "path": "documents/livre/sti-smart-book-2026.pdf",
@@ -2039,61 +2129,6 @@
       "path": "documents/sql/transcription-construire-requete-sql-guide-texte.md",
       "bytes": 13616,
       "gitSha": "bf401ead88244b684d79aa90ece8a05268182ad9"
-    },
-    {
-      "path": "exercices/html-css/activite-html-css/Act1/page1.html",
-      "bytes": 15655,
-      "gitSha": "f2596c598a27de30a0b6980d8a70793df9e23524"
-    },
-    {
-      "path": "exercices/html-css/activite-html-css/Act1/style.css",
-      "bytes": 1865,
-      "gitSha": "d6ce1a0461e75eac1bece1cb31fa1264fb243591"
-    },
-    {
-      "path": "exercices/html-css/activite-html-css/Act2/page2.html",
-      "bytes": 7368,
-      "gitSha": "158393b5bec9c32e40d9cb4afa77a42a1966ccec"
-    },
-    {
-      "path": "exercices/html-css/activite-html-css/Act2/style2.css",
-      "bytes": 1541,
-      "gitSha": "865e64dcf35b89af465f1d102cf1f84daddb96ff"
-    },
-    {
-      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf",
-      "bytes": 414731,
-      "gitSha": "1a27f3dc136c9ca6761042973ba82d67bdf7594c"
-    },
-    {
-      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf.assets/page-01.jpg",
-      "bytes": 244729,
-      "gitSha": "83e9def3726dce2f1c2207375426404bb1c88c1f"
-    },
-    {
-      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf.assets/page-02.jpg",
-      "bytes": 247555,
-      "gitSha": "2804c7f0b619b9702ed0fc004b9b8582c37c3801"
-    },
-    {
-      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf.assets/page-03.jpg",
-      "bytes": 23460,
-      "gitSha": "70f063877f13a1e49e863b3815ad91ab992a561e"
-    },
-    {
-      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf.html",
-      "bytes": 7453,
-      "gitSha": "d85fd475cc6880ccfa1a738406f0b61b31c3b7e0"
-    },
-    {
-      "path": "exercices/html-css/box-shadow-text-shadow-css3.html",
-      "bytes": 19176,
-      "gitSha": "8054f9627681a38c8c4a62c69ab70748ab73a53c"
-    },
-    {
-      "path": "exercices/html-css/emploi-temps/emploidutemps.html",
-      "bytes": 12934,
-      "gitSha": "3108e8b4daaae590a7cdb3c2ebad2e759b407bae"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.docx",
@@ -2167,8 +2202,8 @@
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.html",
-      "bytes": 7799,
-      "gitSha": "507a41863269ff6f6776120c8870651edd9affff"
+      "bytes": 7817,
+      "gitSha": "b0b429433ba61fb80786d2fdf5f4bd2978d1fa79"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Images/ExploreTunisie/images.rar",
@@ -2217,18 +2252,18 @@
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html",
-      "bytes": 27636,
-      "gitSha": "3ffb40953b9b8f57de1ad8789046c13f24d83461"
+      "bytes": 27654,
+      "gitSha": "bfa1c40f4c654be3362e87c6d061b33b3dc83985"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html",
-      "bytes": 27642,
-      "gitSha": "469e764385e1caf3ab74ebb530ed51f964ecf43b"
+      "bytes": 27660,
+      "gitSha": "809ee92e41749cf93a3692252a5e8310b83da5aa"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html",
-      "bytes": 27624,
-      "gitSha": "12f803fc1eb0b6c8a812346effe30c49b2c97631"
+      "bytes": 27642,
+      "gitSha": "159c4937a86df53b769b01e9264f34f381d2074c"
     },
     {
       "path": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/style-flex.css",
@@ -2256,26 +2291,6 @@
       "gitSha": "dcf6b6224b6b1b91a3075e252169c955156fb56c"
     },
     {
-      "path": "exercices/html-css/formulaire-inscription.pdf",
-      "bytes": 429055,
-      "gitSha": "89987eadc5266381454bf503d3f073706e6dd6c0"
-    },
-    {
-      "path": "exercices/html-css/formulaire-inscription.pdf.assets/page-01.jpg",
-      "bytes": 339217,
-      "gitSha": "efaffcdc6595fdfe9b69307c02e19e6dc104b593"
-    },
-    {
-      "path": "exercices/html-css/formulaire-inscription.pdf.assets/page-02.jpg",
-      "bytes": 158428,
-      "gitSha": "0f7de1da9d3f489183c1cf66e39c84957a8372c6"
-    },
-    {
-      "path": "exercices/html-css/formulaire-inscription.pdf.html",
-      "bytes": 7186,
-      "gitSha": "9a2481cfe7967a52b93aa38f7ff3491613d5bbc9"
-    },
-    {
       "path": "exercices/html-css/TP1-css.pdf",
       "bytes": 148756,
       "gitSha": "80ef39cfeb02c7870cfc1725e971dafbb66c5711"
@@ -2287,8 +2302,8 @@
     },
     {
       "path": "exercices/html-css/TP1-css.pdf.html",
-      "bytes": 7004,
-      "gitSha": "292d3393957a38400a1a1f426f19f313d33c8369"
+      "bytes": 7022,
+      "gitSha": "aef1f94ddac7fe9c4f4f313523991d2e5db47069"
     },
     {
       "path": "exercices/html-css/TP2-css.pdf",
@@ -2312,8 +2327,8 @@
     },
     {
       "path": "exercices/html-css/TP2-css.pdf.html",
-      "bytes": 7236,
-      "gitSha": "e9e6b0f4894398ab3704c31874a7d41f74b80bef"
+      "bytes": 7254,
+      "gitSha": "ff500a31b4edd5326f7cb1bf84002cac1a116a6a"
     },
     {
       "path": "exercices/html-css/TP2/style2.css",
@@ -2322,8 +2337,8 @@
     },
     {
       "path": "exercices/html-css/TP2/tp2corrposition.html",
-      "bytes": 577196,
-      "gitSha": "9d6980d9dd172753b8fec5f6497c4c5075c3e827"
+      "bytes": 577214,
+      "gitSha": "0a199112d6d3169ce1973e2084aaa09f597a3650"
     },
     {
       "path": "exercices/html-css/TP3-css.pdf",
@@ -2342,63 +2357,138 @@
     },
     {
       "path": "exercices/html-css/TP3-css.pdf.html",
-      "bytes": 7141,
-      "gitSha": "c2922ceaf45718ca60d1f85dc9e51b1953305d67"
+      "bytes": 7159,
+      "gitSha": "fa32a815c3e6982bbb255861d09e4460cb919114"
     },
     {
-      "path": "exercices/javascript/js-37-defis-tt.html",
-      "bytes": 95570,
-      "gitSha": "57fdf7767b310a141a189fb02ab0d1f1ce62284d"
+      "path": "exercices/html-css/activite-html-css/Act1/page1.html",
+      "bytes": 15673,
+      "gitSha": "ab83ced3ec93637c900811aa87e0a9106ead2094"
+    },
+    {
+      "path": "exercices/html-css/activite-html-css/Act1/style.css",
+      "bytes": 1865,
+      "gitSha": "d6ce1a0461e75eac1bece1cb31fa1264fb243591"
+    },
+    {
+      "path": "exercices/html-css/activite-html-css/Act2/page2.html",
+      "bytes": 7386,
+      "gitSha": "a90e5f83261767ed435e442b63b9fe81e8299073"
+    },
+    {
+      "path": "exercices/html-css/activite-html-css/Act2/style2.css",
+      "bytes": 1541,
+      "gitSha": "865e64dcf35b89af465f1d102cf1f84daddb96ff"
+    },
+    {
+      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf",
+      "bytes": 414731,
+      "gitSha": "1a27f3dc136c9ca6761042973ba82d67bdf7594c"
+    },
+    {
+      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf.assets/page-01.jpg",
+      "bytes": 244729,
+      "gitSha": "83e9def3726dce2f1c2207375426404bb1c88c1f"
+    },
+    {
+      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf.assets/page-02.jpg",
+      "bytes": 247555,
+      "gitSha": "2804c7f0b619b9702ed0fc004b9b8582c37c3801"
+    },
+    {
+      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf.assets/page-03.jpg",
+      "bytes": 23460,
+      "gitSha": "70f063877f13a1e49e863b3815ad91ab992a561e"
+    },
+    {
+      "path": "exercices/html-css/activite1-2-position-animation-css3.pdf.html",
+      "bytes": 7471,
+      "gitSha": "677d69c05b7a357c72dc7fff46135ce2b08753cc"
+    },
+    {
+      "path": "exercices/html-css/box-shadow-text-shadow-css3.html",
+      "bytes": 19194,
+      "gitSha": "68e424af4c42ad1ec3ce62fc50f7ee9be7f7679f"
+    },
+    {
+      "path": "exercices/html-css/emploi-temps/emploidutemps.html",
+      "bytes": 12952,
+      "gitSha": "3d3d482de2a3bb60dc429473250feb6f8e987e79"
+    },
+    {
+      "path": "exercices/html-css/formulaire-inscription.pdf",
+      "bytes": 429055,
+      "gitSha": "89987eadc5266381454bf503d3f073706e6dd6c0"
+    },
+    {
+      "path": "exercices/html-css/formulaire-inscription.pdf.assets/page-01.jpg",
+      "bytes": 339217,
+      "gitSha": "efaffcdc6595fdfe9b69307c02e19e6dc104b593"
+    },
+    {
+      "path": "exercices/html-css/formulaire-inscription.pdf.assets/page-02.jpg",
+      "bytes": 158428,
+      "gitSha": "0f7de1da9d3f489183c1cf66e39c84957a8372c6"
+    },
+    {
+      "path": "exercices/html-css/formulaire-inscription.pdf.html",
+      "bytes": 7204,
+      "gitSha": "69f333b5fba7ab411f87a2ea40b8c2b5f62e1e8c"
     },
     {
       "path": "exercices/javascript/Tp1-Correction-js.html",
-      "bytes": 16400,
-      "gitSha": "3006f5bf5b9311d923b738153657a899799c7006"
+      "bytes": 16418,
+      "gitSha": "d3e00ca72e1380a41124f1133f24622ec5bfde21"
     },
     {
       "path": "exercices/javascript/Tp1-js.html",
-      "bytes": 17316,
-      "gitSha": "8c02b87867d676f69ac64b92f6bc73c0cfb16e9e"
+      "bytes": 17334,
+      "gitSha": "e700439385e2c3e85ba546e6d64ca1256da0a645"
     },
     {
       "path": "exercices/javascript/Tp2-Correction-js.html",
-      "bytes": 14306,
-      "gitSha": "2fa30377ca1d472df47fdd4906d3f60a6f57f92a"
+      "bytes": 14324,
+      "gitSha": "02495f11eac25cd446c155464e8d676e22670677"
     },
     {
       "path": "exercices/javascript/Tp2-js.html",
-      "bytes": 15427,
-      "gitSha": "3eadb369b735c7fdeb84609a974cb6de6a866a00"
+      "bytes": 15445,
+      "gitSha": "1a86173ad3d144dc984d491b7ba8f48711f199e2"
     },
     {
       "path": "exercices/javascript/Tp3-Correction-js.html",
-      "bytes": 16704,
-      "gitSha": "72dd6f6258d1565ae41bf8a2ff9efe161bcd078e"
+      "bytes": 16722,
+      "gitSha": "35ff37c402506e4c166d2509d224ae3546af75ec"
     },
     {
       "path": "exercices/javascript/Tp3-js.html",
-      "bytes": 16734,
-      "gitSha": "bc88de207fa31f61b2ed8cd175e31cb3f5fccec9"
+      "bytes": 16752,
+      "gitSha": "0459e867ed34e6f7a065d7d24ceaf4a340c8244c"
     },
     {
       "path": "exercices/javascript/Tp4-Correction-js.html",
-      "bytes": 16595,
-      "gitSha": "61a43d69422362a4fd10dea162324234002a20ba"
+      "bytes": 16613,
+      "gitSha": "58f4f33bc57b12aa9b6ee4554d42e120fbb9a6fb"
     },
     {
       "path": "exercices/javascript/Tp4-js.html",
-      "bytes": 17345,
-      "gitSha": "890ec30eabddb4114aae470c435d9b0dccb2b37a"
+      "bytes": 17363,
+      "gitSha": "22354faa67bce9b2d25bc8f068602ee413a9a98a"
     },
     {
       "path": "exercices/javascript/Tp5-Correction-js.html",
-      "bytes": 12607,
-      "gitSha": "05f28fe20e8ac2b053a125c6e259df0f601930cb"
+      "bytes": 12625,
+      "gitSha": "3e8a509a107a3d0fc0b80b25054ae0a4e7ddd743"
     },
     {
       "path": "exercices/javascript/Tp5-js.html",
-      "bytes": 12291,
-      "gitSha": "af591bb569e1f89c4ea4b41d08d7de4fa5594dcb"
+      "bytes": 12309,
+      "gitSha": "d27f2a6b4cf47ed55733d3e0aff3358f46b55444"
+    },
+    {
+      "path": "exercices/javascript/js-37-defis-tt.html",
+      "bytes": 95802,
+      "gitSha": "4b2b7213ae1f99ebe9ff9ef35de764fe2f197792"
     },
     {
       "path": "exercices/javascript/validation-nom-prenom-js.mp4",
@@ -2437,8 +2527,8 @@
     },
     {
       "path": "exercices/php/4STi-dc-6-2025-2026.pdf.html",
-      "bytes": 7649,
-      "gitSha": "d833377a454d2ead3b9723e4a220314ca393102a"
+      "bytes": 7667,
+      "gitSha": "82580c5afd824ec9d73940db84a24815ccd6d42f"
     },
     {
       "path": "exercices/php/DC6Sti2025-2026.rar",
@@ -2446,109 +2536,99 @@
       "gitSha": "69a4ff979ddbd943024652676548b6d8b4e371c9"
     },
     {
-      "path": "exercices/php/debogage-php-bac.html",
-      "bytes": 30509,
-      "gitSha": "d6a4f5237d3df26ddbaf848ce68a92a88e5de672"
-    },
-    {
-      "path": "exercices/php/ordre-php-bac.html",
-      "bytes": 30890,
-      "gitSha": "c38300a2bd246316ba1a4c9751e8e28f64f76c6b"
-    },
-    {
-      "path": "exercices/php/sondage-parcours-pas-a-pas.html",
-      "bytes": 39391,
-      "gitSha": "1017624541f970849cf6a636317edd74212ea222"
-    },
-    {
-      "path": "exercices/php/statphpanimee.html",
-      "bytes": 46906,
-      "gitSha": "70139f0aca683f23d3a01e44886f30be8df26edd"
-    },
-    {
       "path": "exercices/php/Tp1-Correction-php.html",
-      "bytes": 11374,
-      "gitSha": "9958a9678cfb181281ca69735e8d064a3624fd08"
+      "bytes": 11392,
+      "gitSha": "d7d2d4232774b19cd47db3634d3bf97a302b76f6"
     },
     {
       "path": "exercices/php/Tp1-php.html",
-      "bytes": 11189,
-      "gitSha": "8311cd6b7edb0781594b768a3b0d85fb7d79f9b7"
+      "bytes": 11207,
+      "gitSha": "318343c180ff12e6566c7347e050b0968299d052"
     },
     {
       "path": "exercices/php/Tp2-Correction-php.html",
-      "bytes": 12436,
-      "gitSha": "8ebb13f01efee25ea7c405a0c44b85d936fb1ced"
+      "bytes": 12454,
+      "gitSha": "102afddaa05ddffb736782a04c3ef463b0ac56b6"
     },
     {
       "path": "exercices/php/Tp2-php.html",
-      "bytes": 11921,
-      "gitSha": "69f6b8d8608e3e048430c38fa4bf8046d0595d9d"
+      "bytes": 11939,
+      "gitSha": "84e4e19f41b700560478e8887adf1bdb448c1df6"
     },
     {
       "path": "exercices/php/Tp3-correction-php.html",
-      "bytes": 13008,
-      "gitSha": "654ec4af2f5d204ee219bd6419a2b291a27b7b28"
+      "bytes": 13026,
+      "gitSha": "8d2124e7777030f929e159b0d16cf70bbe280c49"
     },
     {
       "path": "exercices/php/Tp3-php.html",
-      "bytes": 12902,
-      "gitSha": "47f37fe6c74f23e6f1dbfd79c67911afdc153126"
+      "bytes": 12920,
+      "gitSha": "2d71e35f2be92de99439da2729bbfede2fee0f0b"
     },
     {
       "path": "exercices/php/Tp4-Correction-php.html",
-      "bytes": 14310,
-      "gitSha": "c2d0ba4df1c598e260e82defb8d855cf938824e1"
+      "bytes": 14328,
+      "gitSha": "76e304d001107165f6c82c7dfb8dfab2b16bb167"
     },
     {
       "path": "exercices/php/Tp4-php.html",
-      "bytes": 12467,
-      "gitSha": "409db3cbe2cd00bc767daac5b6b5a108cc7965cb"
+      "bytes": 12485,
+      "gitSha": "c641f3194f7ac9da901bcb9e47a104f564021130"
     },
     {
       "path": "exercices/php/Tp5-Correction-php.html",
-      "bytes": 19529,
-      "gitSha": "4b3273cb403042904c217f1755ecd8ecb4afc805"
+      "bytes": 19547,
+      "gitSha": "f6ab1fd14a2a2ba98191aba78db48bc3bb92fa76"
     },
     {
       "path": "exercices/php/Tp5-php.html",
-      "bytes": 17054,
-      "gitSha": "0a2bfc000ed7cdf19ff7c6a45233fb7784113325"
+      "bytes": 17072,
+      "gitSha": "93388aa5f09cbebcc325736bdef7fdf8fc79a87b"
+    },
+    {
+      "path": "exercices/php/debogage-php-bac.html",
+      "bytes": 30527,
+      "gitSha": "581875b029cc98139a500647fba99393da9d02cc"
+    },
+    {
+      "path": "exercices/php/ordre-php-bac.html",
+      "bytes": 30908,
+      "gitSha": "d698adb7b146366a70d89f64ff67f35d0530a4a3"
+    },
+    {
+      "path": "exercices/php/sondage-parcours-pas-a-pas.html",
+      "bytes": 39409,
+      "gitSha": "697b547a5d2e9305540b00e2b6a57329a3f1a201"
+    },
+    {
+      "path": "exercices/php/statphpanimee.html",
+      "bytes": 46924,
+      "gitSha": "13f6c16cff484796a6f33b0f1342c347eca0c9ad"
     },
     {
       "path": "exercices/php/trace-fetch-php.html",
-      "bytes": 22538,
-      "gitSha": "c95830ae3348bd15d6aa6a29624c9c28403e112a"
+      "bytes": 22556,
+      "gitSha": "a1bfae78af7d9d3fcad9765aaf406e6b73e2161c"
     },
     {
       "path": "exercices/resume-fonctions-standards.html",
-      "bytes": 106539,
-      "gitSha": "197bd6d7c36ff0e9bbcc175143d1d3f86ce0c957"
+      "bytes": 106557,
+      "gitSha": "82b7e72de6db3a5c6a13310fcae385eda048b0bf"
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 92626,
-      "gitSha": "a2f4606bc9d0bf19216367bab33ff5b046a2fbd7"
-    },
-    {
-      "path": "exercices/sql/atelier_sql_3_fenetres.html",
-      "bytes": 31138,
-      "gitSha": "67b21bf1ec44449364bb672b95d1c8e8f6e73697"
+      "bytes": 92644,
+      "gitSha": "e99bf37965846cdb0482e14cc0a98d9c8f710bb7"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
-      "bytes": 31367,
-      "gitSha": "d8d4ad96474f5996f932df7c3139064cf8bf2c4a"
+      "bytes": 31596,
+      "gitSha": "efd647674b0ff9a85ea6232a959cafd9de399567"
     },
     {
       "path": "exercices/sql/Série 4.2 - GestLocation - Corrigé.pdf",
       "bytes": 76307,
       "gitSha": "0791a67647773266eb3a19fe822b763cf79e047f"
-    },
-    {
-      "path": "exercices/sql/Série 4.2 - GestLocation - énoncé.pdf",
-      "bytes": 55415,
-      "gitSha": "4a3dc6090d045b7a52dd72aa834d96ffac51696c"
     },
     {
       "path": "exercices/sql/Série 4.2 - GestLocation - MySQL.sql",
@@ -2561,99 +2641,99 @@
       "gitSha": "9807f22ac68ef1b56a06cd69224a9e3e88d1a7b7"
     },
     {
+      "path": "exercices/sql/Série 4.2 - GestLocation - énoncé.pdf",
+      "bytes": 55415,
+      "gitSha": "4a3dc6090d045b7a52dd72aa834d96ffac51696c"
+    },
+    {
+      "path": "exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
+      "bytes": 13013,
+      "gitSha": "9d76655fcb4386d42b212aa860de6db8db83213e"
+    },
+    {
+      "path": "exercices/sql/Tp-GroupBy-bd.html",
+      "bytes": 17621,
+      "gitSha": "b92fc80da27c38076e9f9f90f9d9cc00bb270e47"
+    },
+    {
+      "path": "exercices/sql/Tp-date-ssr-j-gp-bd.html",
+      "bytes": 16066,
+      "gitSha": "dfa9ae7e55a25d7e356aa492bcbdadc903d61367"
+    },
+    {
+      "path": "exercices/sql/Tp-date-ssr-j-gp-correction-bd.html",
+      "bytes": 38101,
+      "gitSha": "479a3ca960c17e74f98c2b1bcb1a892a585aa097"
+    },
+    {
+      "path": "exercices/sql/Tp1-Correction-bd.html",
+      "bytes": 28858,
+      "gitSha": "fd0264fe3f2a3d886f4a69bd97278806560ee93e"
+    },
+    {
+      "path": "exercices/sql/Tp1-bd.html",
+      "bytes": 18700,
+      "gitSha": "862cf0b18bcce1b92b0493318dcad1d4d3482b59"
+    },
+    {
+      "path": "exercices/sql/Tp2-Correction-bd.html",
+      "bytes": 37304,
+      "gitSha": "32b677a507bbbdda6cbc24329ff4b7f6f3e8ae8c"
+    },
+    {
+      "path": "exercices/sql/Tp2-bd.html",
+      "bytes": 20842,
+      "gitSha": "5aaf1905e2ab0635541f24b378dc09bf63f19fd1"
+    },
+    {
+      "path": "exercices/sql/Tp3-Correction-bd.html",
+      "bytes": 32262,
+      "gitSha": "d58c82033304ac48abb9a40b0ca34900e169bc88"
+    },
+    {
+      "path": "exercices/sql/Tp4-correction-bd.html",
+      "bytes": 36951,
+      "gitSha": "81c7e939bf19b9f175d3f4cd2efb1cc9a51f313e"
+    },
+    {
+      "path": "exercices/sql/atelier_sql_3_fenetres.html",
+      "bytes": 31156,
+      "gitSha": "3480a296e3de743258e833dd6c4830461fb9e95a"
+    },
+    {
       "path": "exercices/sql/sql-construire-requete-guide-texte.mp4",
       "bytes": 34718314,
       "gitSha": "feba6744f35cfe2c9cf5262327b3608825acc77e"
     },
     {
       "path": "exercices/sql/sql-correction.html",
-      "bytes": 35740,
-      "gitSha": "4596e9a9011369ff73d7a63a32589742f5dd039d"
+      "bytes": 35758,
+      "gitSha": "69bf1ccdc58fb4a367f2b0d6108a63ff570582ff"
     },
     {
       "path": "exercices/sql/sql.html",
-      "bytes": 20767,
-      "gitSha": "d80cae9e44175cff4a1f79b82cdda9b1347f0e04"
-    },
-    {
-      "path": "exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
-      "bytes": 12995,
-      "gitSha": "1619b8e49778bf9458e338bde0478c70c8694400"
-    },
-    {
-      "path": "exercices/sql/Tp-date-ssr-j-gp-bd.html",
-      "bytes": 16048,
-      "gitSha": "c6ee97a69224a379329affd1c0ed89b96864de8a"
-    },
-    {
-      "path": "exercices/sql/Tp-date-ssr-j-gp-correction-bd.html",
-      "bytes": 38083,
-      "gitSha": "a325b4aee56fa8401cfebe329916c7a170e4493c"
-    },
-    {
-      "path": "exercices/sql/Tp-GroupBy-bd.html",
-      "bytes": 17603,
-      "gitSha": "4e9ac1dd6c1482249ff401b152e77e47df1300b1"
-    },
-    {
-      "path": "exercices/sql/Tp1-bd.html",
-      "bytes": 18682,
-      "gitSha": "e42c436d61c6b9f9a4a59b20191fdcaa64e7e21a"
-    },
-    {
-      "path": "exercices/sql/Tp1-Correction-bd.html",
-      "bytes": 28840,
-      "gitSha": "60ab71c87fc29875c3098c840f36f82bc2f887d2"
-    },
-    {
-      "path": "exercices/sql/Tp2-bd.html",
-      "bytes": 20824,
-      "gitSha": "3e3868cd15f13e2521ef2f7d72b3d982117ef6bc"
-    },
-    {
-      "path": "exercices/sql/Tp2-Correction-bd.html",
-      "bytes": 37286,
-      "gitSha": "34e12f92f458cb6c8ed3e43c44e12e3cdb0186fe"
-    },
-    {
-      "path": "exercices/sql/Tp3-Correction-bd.html",
-      "bytes": 32244,
-      "gitSha": "c7edc880015d4af8e3645a37ca6f8f73221fdb01"
-    },
-    {
-      "path": "exercices/sql/Tp4-correction-bd.html",
-      "bytes": 36933,
-      "gitSha": "8da28a163ff0739908194b2df1ce29e53c61c503"
+      "bytes": 20785,
+      "gitSha": "4629014739d74c0bfca2065d7479271b9858434a"
     },
     {
       "path": "glossaire.html",
-      "bytes": 26190,
-      "gitSha": "73a67a65af5bc1efe548d8a8dc8c51ade7ccb74f"
+      "bytes": 26208,
+      "gitSha": "f66b8fc66a7bf8ffd4a31db9e22b846f0de061c3"
     },
     {
       "path": "index.html",
-      "bytes": 197052,
-      "gitSha": "2e9a4ef3c342686678478bc8802eccfd309fdc8e"
-    },
-    {
-      "path": "Lancer-Labo3-Hors-Ligne.bat",
-      "bytes": 1285,
-      "gitSha": "e36b6ce8d107c0645e54d42fdd5c5534c600b2df"
-    },
-    {
-      "path": "Lancer-Labo3-Hors-Ligne.ps1",
-      "bytes": 3339,
-      "gitSha": "5d3e624ab75b5105d2ef7d4899488d62c23a38f8"
+      "bytes": 198041,
+      "gitSha": "98c84c83a0804129782577a13b28c1a2c6663de3"
     },
     {
       "path": "livre-smart.html",
-      "bytes": 7468,
-      "gitSha": "723726a005aa7c02f5a373c6365ff7493f43b2c0"
+      "bytes": 7486,
+      "gitSha": "1d94d61484f9eb5e79e6d86d8a45507541e79154"
     },
     {
       "path": "ma-fiche-revision.html",
-      "bytes": 15163,
-      "gitSha": "3c527d2cc2280140b3e0b9ec17d70ecf5c3d9cad"
+      "bytes": 15181,
+      "gitSha": "d9777c1278475be152a853f6fbc763e59f6e3d37"
     },
     {
       "path": "manifest.webmanifest",
@@ -2662,28 +2742,18 @@
     },
     {
       "path": "memo-veille-bac.html",
-      "bytes": 15913,
-      "gitSha": "c68699003ec48e38d5c570a72e36ead8416b6088"
-    },
-    {
-      "path": "MIGRATION-v358-QUIZ-SYNC.sql",
-      "bytes": 3488,
-      "gitSha": "36dd77ea6553aa6f3675cf1181d0b8b8882f703f"
-    },
-    {
-      "path": "MIGRATION-v365-REPONSES.sql",
-      "bytes": 1959,
-      "gitSha": "67a6f1f5e9e436055283de111c2f3df70dcf25b8"
+      "bytes": 15931,
+      "gitSha": "961eda2926edbd330e09111cd43e1db3f1ec175e"
     },
     {
       "path": "nouveautes.html",
-      "bytes": 6907,
-      "gitSha": "859e0fe502d3b69d4ebe6d94787473aabde0b6e9"
+      "bytes": 6925,
+      "gitSha": "468753f40f3496696da9c05574e6786f92d8e478"
     },
     {
       "path": "outils-js-bac.html",
-      "bytes": 37961,
-      "gitSha": "eee0089b52b1330b11dafc7c062e54e69f416b0d"
+      "bytes": 37979,
+      "gitSha": "0823404b65cfc2fc61e96bac079319c896ad2662"
     },
     {
       "path": "package-lock.json",
@@ -2697,8 +2767,8 @@
     },
     {
       "path": "pieges-bac.html",
-      "bytes": 34456,
-      "gitSha": "8151586a74034dc52ebca428a7aca0c5288b29f5"
+      "bytes": 34474,
+      "gitSha": "503f9221bbf256e261233b37f719577429c0777e"
     },
     {
       "path": "portail.html",
@@ -2706,39 +2776,9 @@
       "gitSha": "ae7fc32aad8e27e1d60dc3782e7d6ed0505e5e0b"
     },
     {
-      "path": "Positionnement-animee/bonus-flex.css",
-      "bytes": 4072,
-      "gitSha": "51216eeda8ee3f0dfba0f04b7e9bda6c280f823c"
-    },
-    {
-      "path": "Positionnement-animee/cours.js",
-      "bytes": 18708,
-      "gitSha": "159a02d39fbe60d3627c7bc1564d331002aae924"
-    },
-    {
-      "path": "Positionnement-animee/index.html",
-      "bytes": 94478,
-      "gitSha": "7c48400530c0a3cac859ebbf57762dad99957dd9"
-    },
-    {
-      "path": "Positionnement-animee/style.css",
-      "bytes": 39795,
-      "gitSha": "34efcba19691d90f254c4585ad648cab955ff824"
-    },
-    {
-      "path": "Positionnement-animee/uploads/Annexe CSS3 By A.E.pdf",
-      "bytes": 1407045,
-      "gitSha": "45caadfe58232628df15a74b359ca5670df53e42"
-    },
-    {
-      "path": "Positionnement-animee/uploads/Annexe HTML5 By A.E.pdf",
-      "bytes": 905892,
-      "gitSha": "bc3a5e1a926e95a3baa293ff060516596c68c363"
-    },
-    {
       "path": "projets/carte-bancaire/cb.html",
-      "bytes": 7963,
-      "gitSha": "47104720414018c526564fb4c3e9833dba388abd"
+      "bytes": 7981,
+      "gitSha": "3a7eb042d9435a11143dc018db8a9038f99a7a83"
     },
     {
       "path": "projets/carte-bancaire/controle.js",
@@ -2747,8 +2787,13 @@
     },
     {
       "path": "projets/carte-bancaire/enonce-tp-carte-bancaire.html",
-      "bytes": 32868,
-      "gitSha": "b013aeb0f08a201ab579a55460bc63d0776c1642"
+      "bytes": 32886,
+      "gitSha": "e4e17ebc0903baeb9695b62898baf898b3d83b8d"
+    },
+    {
+      "path": "projets/carte-bancaire/media/STI_by_AE.ico",
+      "bytes": 31596,
+      "gitSha": "9bbbb0c72673491bb274ea8771b95445244857be"
     },
     {
       "path": "projets/carte-bancaire/media/cap1.png",
@@ -2761,11 +2806,6 @@
       "gitSha": "ae226776f66c33c3c7eeb01dd465ce7f03fe3a63"
     },
     {
-      "path": "projets/carte-bancaire/media/STI_by_AE.ico",
-      "bytes": 31596,
-      "gitSha": "9bbbb0c72673491bb274ea8771b95445244857be"
-    },
-    {
       "path": "projets/carte-bancaire/style.css",
       "bytes": 4424,
       "gitSha": "87df585ebea60f7ecb9333db90fd8fe48c59cfd1"
@@ -2774,6 +2814,11 @@
       "path": "projets/fleurs.zip",
       "bytes": 4841999,
       "gitSha": "d128649ec035a96475559d2f009e676b998d0f0d"
+    },
+    {
+      "path": "projets/fleurs/Corrections.html",
+      "bytes": 32390,
+      "gitSha": "2f3f612a33dc448e04d958c81e9f1107c165459d"
     },
     {
       "path": "projets/fleurs/affichage-condidat.php",
@@ -2796,19 +2841,19 @@
       "gitSha": "2108e31a267ad45bb89bdea973ebe88eeb886fe6"
     },
     {
-      "path": "projets/fleurs/Corrections.html",
-      "bytes": 32372,
-      "gitSha": "fe8aea19d5a4e5b79292b2b255df19bab7edae76"
-    },
-    {
       "path": "projets/fleurs/index.html",
-      "bytes": 8286,
-      "gitSha": "533595bb039373f5144a189db8c25163a9bede81"
+      "bytes": 8304,
+      "gitSha": "4d4838698f04b83008a915d9545523e776d82f3a"
     },
     {
       "path": "projets/fleurs/inscription.html",
-      "bytes": 9903,
-      "gitSha": "68ce4a2b8dc9cdfd7c6f30e578e8ed2b64ea5335"
+      "bytes": 9921,
+      "gitSha": "bd725864719e835d1194b6149651bd2438647abf"
+    },
+    {
+      "path": "projets/fleurs/media/Lyc",
+      "bytes": 920875,
+      "gitSha": "6a49d7c2b4266a00a349d38d4cca67f16ef39d5d"
     },
     {
       "path": "projets/fleurs/media/femme.jpg",
@@ -2854,11 +2899,6 @@
       "path": "projets/fleurs/media/logo.png",
       "bytes": 10683,
       "gitSha": "58b6ec2dea780de6acbb4b53a16a01cd0daa1e6b"
-    },
-    {
-      "path": "projets/fleurs/media/Lyc",
-      "bytes": 920875,
-      "gitSha": "6a49d7c2b4266a00a349d38d4cca67f16ef39d5d"
     },
     {
       "path": "projets/fleurs/media/orchidee.jpg",
@@ -2922,8 +2962,8 @@
     },
     {
       "path": "projets/fleurs/media/projet-fleurs-4sti-eleve.pdf.html",
-      "bytes": 7612,
-      "gitSha": "aac1e22c5614a0bd2d8a110bef59e5bc874cc2c4"
+      "bytes": 7630,
+      "gitSha": "f892940076fa8df6eb48c4ff6e2a5873c9a467b9"
     },
     {
       "path": "projets/fleurs/media/projet-fleurs.docx",
@@ -2952,8 +2992,8 @@
     },
     {
       "path": "projets/formulaire-inscription/cvFleurs.html",
-      "bytes": 55713,
-      "gitSha": "c2df25d3e15d1b2a9659e6247159e39cb2b5770e"
+      "bytes": 55731,
+      "gitSha": "00f3ebabad3880a40401cdfd26d1eecf69b11ae7"
     },
     {
       "path": "projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf",
@@ -2972,13 +3012,18 @@
     },
     {
       "path": "projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf.html",
-      "bytes": 8088,
-      "gitSha": "20937bf69d3a86a981b3ae59662ee630996d05ce"
+      "bytes": 8106,
+      "gitSha": "72ef5f9495453468dfe9964c20bd90e21fe2e0a6"
     },
     {
       "path": "projets/formulaire-inscription/enonce/lycee-rafha-niveau.docx",
       "bytes": 20014,
       "gitSha": "37ee58bc379506e95a1b92218883ad5feb2a351d"
+    },
+    {
+      "path": "projets/formulaire-inscription/media/SON.mp3",
+      "bytes": 1307883,
+      "gitSha": "5aeb6608f52836ec8275331fa9995da1880221d1"
     },
     {
       "path": "projets/formulaire-inscription/media/femme.jpg",
@@ -3041,24 +3086,19 @@
       "gitSha": "574ab91df180574da08de05c5066fd98eb4437a9"
     },
     {
-      "path": "projets/formulaire-inscription/media/SON.mp3",
-      "bytes": 1307883,
-      "gitSha": "5aeb6608f52836ec8275331fa9995da1880221d1"
-    },
-    {
       "path": "projets/formulaire-inscription/media/tulipes.jpg",
       "bytes": 8103,
       "gitSha": "b3a8afa04504cff0ac35e62f2188b2dc4fec606d"
     },
     {
       "path": "projets/site-tunisie/correction-details/carte-timbre-droite-haut.html",
-      "bytes": 48556,
-      "gitSha": "01a1f9deb66164f177c5f9efe2b3c12bbdd6d005"
+      "bytes": 48574,
+      "gitSha": "6d933775c3eed90e6f2e93a1f872f6f22c17fd31"
     },
     {
       "path": "projets/site-tunisie/enonce.html",
-      "bytes": 24759,
-      "gitSha": "e9c510c160db9dc3cf0e63728c08d4873431d7e3"
+      "bytes": 24777,
+      "gitSha": "150439932adbd454c3dc4d8147610c5fa56855ba"
     },
     {
       "path": "projets/site-tunisie/images/carte-tunisie.png",
@@ -3097,28 +3137,28 @@
     },
     {
       "path": "projets/site-tunisie/index.html",
-      "bytes": 45465,
-      "gitSha": "d1e36937600bd58fdc5cf6564955172166b3d18b"
+      "bytes": 45483,
+      "gitSha": "6e6cb2ecdef17aceda51a81653743b58f0266c50"
     },
     {
       "path": "projets/site-tunisie/pages/accueil.html",
-      "bytes": 6892,
-      "gitSha": "e3c8f1a43866ca197cbc9d42cda49399a568dce6"
+      "bytes": 6910,
+      "gitSha": "4e9c70024750ab870de0f777329dba4e3907f834"
     },
     {
       "path": "projets/site-tunisie/pages/centre.html",
-      "bytes": 7698,
-      "gitSha": "11014a7f03a433ad5b17c0e4675335e178467f7f"
+      "bytes": 7716,
+      "gitSha": "b77289164cc73e5fcc0cdb24bfe7eb962288910e"
     },
     {
       "path": "projets/site-tunisie/pages/nord.html",
-      "bytes": 7750,
-      "gitSha": "2afde2bf5c6e0b1e586d479619964a015429694d"
+      "bytes": 7768,
+      "gitSha": "ac6b8d96064751af6959f81e651a9471df5839b1"
     },
     {
       "path": "projets/site-tunisie/pages/sud.html",
-      "bytes": 7722,
-      "gitSha": "478f23b755b87f9f58666f06e7191458f341fac9"
+      "bytes": 7740,
+      "gitSha": "c244f2e2f33c99edade1b2d24b497c3c16e4ee7b"
     },
     {
       "path": "projets/site-tunisie/ressources-site-tunisie.rar",
@@ -3127,13 +3167,23 @@
     },
     {
       "path": "projets/site-tunisie/site-tunisie-Correction-animation-html-css.html",
-      "bytes": 20949,
-      "gitSha": "58aee1028b9d0e3693767441b81e8d6dbc99bfd4"
+      "bytes": 20967,
+      "gitSha": "e101b50c0022866f3d72ab1438eb72e8cf348e93"
+    },
+    {
+      "path": "projets/sti0/Sondage.html",
+      "bytes": 6643,
+      "gitSha": "0c067e5e125d0c928b797838c21530e1a8365406"
+    },
+    {
+      "path": "projets/sti0/Statistiques.html",
+      "bytes": 4722,
+      "gitSha": "d5e192a543c77470535fc018fd562d4193db7999"
     },
     {
       "path": "projets/sti0/index.html",
-      "bytes": 6967,
-      "gitSha": "2063efa84904473f14a5b50b496ee47969ea103c"
+      "bytes": 6985,
+      "gitSha": "3679f53ef2959adbd0ad2d498c07340661f61dd8"
     },
     {
       "path": "projets/sti0/projetsti0.pdf",
@@ -3162,8 +3212,8 @@
     },
     {
       "path": "projets/sti0/projetsti0.pdf.html",
-      "bytes": 12173,
-      "gitSha": "0b4471c324b4817aa975b9317f79d66be7f9f693"
+      "bytes": 12197,
+      "gitSha": "7d1d42a9085daeb7c1cf2eb359ec8a66c2402674"
     },
     {
       "path": "projets/sti0/ressources-projet-sti0.zip",
@@ -3171,39 +3221,19 @@
       "gitSha": "c673b74db187d221173e5c049b02127547164a9a"
     },
     {
-      "path": "projets/sti0/sondage.html",
-      "bytes": 6625,
-      "gitSha": "1aa96b7a2eaa4a726e540e75828e069a87dedbc4"
-    },
-    {
-      "path": "projets/sti0/Sondage.html",
-      "bytes": 6625,
-      "gitSha": "6796b6cf8b223fdfbc0d6abfa7275b2709824722"
-    },
-    {
-      "path": "projets/sti0/statistiques.html",
-      "bytes": 4704,
-      "gitSha": "ab655cda6ddd2516dbd6d011e5fd85983ed8ff99"
-    },
-    {
-      "path": "projets/sti0/Statistiques.html",
-      "bytes": 4704,
-      "gitSha": "6843e5a068cfce7512f8fbba680eef93cea25aa6"
-    },
-    {
       "path": "quiz/html-css.html",
-      "bytes": 233758,
-      "gitSha": "4b03ac6f1c28fa7a9db4510b822a5e7e45011d77"
+      "bytes": 233764,
+      "gitSha": "85552a0d408258c5556c2b07a396e56555a3f0de"
     },
     {
       "path": "quiz/javascript.html",
-      "bytes": 162023,
-      "gitSha": "640a74ab53b68ecf4d1e8d4f7398793730d4c134"
+      "bytes": 162265,
+      "gitSha": "fafdb71a46c6f3a5589b2e558b5a5f3fa42211db"
     },
     {
       "path": "quiz/php.html",
-      "bytes": 451815,
-      "gitSha": "470ea2cf7e9393381c70b2abec1ae4a15ecf411c"
+      "bytes": 326246,
+      "gitSha": "7984bcad756c046c4569fe33ae91265e1b68e24c"
     },
     {
       "path": "quiz/pp.html",
@@ -3212,18 +3242,13 @@
     },
     {
       "path": "quiz/sql.html",
-      "bytes": 426425,
-      "gitSha": "63e1c67538f0c9bb92a09c247ba04c3f1010f0a7"
+      "bytes": 306403,
+      "gitSha": "2725b0e40dd29c8ac4c5ae86c9d6c40d1bc6c973"
     },
     {
       "path": "quiz/tableaux.html",
-      "bytes": 9684,
-      "gitSha": "4c782361e535277779d6748f6ac9e7419facca97"
-    },
-    {
-      "path": "README.md",
-      "bytes": 25071,
-      "gitSha": "237bac3ee7a0749328c67a670c9cd1def3018a9e"
+      "bytes": 9708,
+      "gitSha": "2a9199d876c91222e912b6d840dcb0bdc206b4db"
     },
     {
       "path": "revision-erreurs.html",
@@ -3247,8 +3272,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 68370,
-      "gitSha": "281a46c4c67182d5cf10d410052fa5cc8ca80ddf"
+      "bytes": 69541,
+      "gitSha": "6836c0f58b52618d8a7f9c8425abe5d35981cd7e"
     }
   ]
 }

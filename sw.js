@@ -3,20 +3,20 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v334";
+var CACHE = "sti-atelier-v335";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés (1 seule entrée par URL).
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v474-perf-quiz-php";
-/* Historique caches : sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
+var UPDATE_ID = "v475-nav-fluide-instant";
+/* Historique caches : sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
 var UPDATE_FILES = [
-  { url: "./index.html", revision: "perf-quiz-php-v474" },
-  { url: "./admin.html", revision: "perf-quiz-php-v474" },
-  { url: "./README.md", revision: "perf-quiz-php-v474" },
-  { url: "./assets/data/nouveautes.json", revision: "perf-quiz-php-v474" },
-  { url: "./assets/js/config.js", revision: "perf-quiz-php-v474" },
-  { url: "./assets/js/acces.js", revision: "perf-quiz-php-v474" },
+  { url: "./index.html", revision: "nav-fluide-v475" },
+  { url: "./admin.html", revision: "nav-fluide-v475" },
+  { url: "./README.md", revision: "nav-fluide-v475" },
+  { url: "./assets/data/nouveautes.json", revision: "nav-fluide-v475" },
+  { url: "./assets/js/config.js", revision: "nav-fluide-v475" },
+  { url: "./assets/js/acces.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/protection.js", revision: "perf-quiz-php-v474" },
   { url: "./assets/js/mobile-nav.js", revision: "perf-quiz-php-v474" },
   { url: "./assets/js/roue-nuage.js", revision: "perf-quiz-php-v474" },
@@ -28,81 +28,86 @@ var UPDATE_FILES = [
   { url: "./assets/js/vendor/chart.umd.min.js", revision: "perf-quiz-php-v474" },
   { url: "./assets/js/vendor/confetti.browser.min.js", revision: "perf-quiz-php-v474" },
   { url: "./assets/js/vendor/prism-js.min.js", revision: "perf-quiz-php-v474" },
-  { url: "./quiz/php.html", revision: "perf-quiz-php-v474" },
-  { url: "./quiz/sql.html", revision: "perf-quiz-php-v474" },
-  { url: "./quiz/javascript.html", revision: "perf-quiz-php-v474" },
-  { url: "./cours/sql.html", revision: "perf-quiz-php-v474" },
-  { url: "./cours/sql-contraintes.html", revision: "perf-quiz-php-v474" },
-  { url: "./exercices/php/debogage-php-bac.html", revision: "perf-quiz-php-v474" },
-  { url: "./exercices/php/ordre-php-bac.html", revision: "perf-quiz-php-v474" },
-  { url: "./exercices/php/trace-fetch-php.html", revision: "perf-quiz-php-v474" },
-  { url: "./memo-veille-bac.html", revision: "perf-quiz-php-v474" },
-  { url: "./outils-js-bac.html", revision: "perf-quiz-php-v474" },
-  { url: "./pieges-bac.html", revision: "perf-quiz-php-v474" },
-  { url: "./offline-complete-manifest.json", revision: "perf-quiz-php-v474" },
-  { url: "./ma-fiche-revision.html", revision: "perf-fluide-v473" },
+  { url: "./assets/fonts/fredoka-var.woff2", revision: "nav-fluide-v475" },
+  { url: "./assets/fonts/jetbrains-mono-400.woff2", revision: "nav-fluide-v475" },
+  { url: "./assets/fonts/nunito-var.woff2", revision: "nav-fluide-v475" },
+  { url: "./assets/fonts/inter-var.woff2", revision: "nav-fluide-v475" },
+  { url: "./assets/fonts/jetbrains-mono-var.woff2", revision: "nav-fluide-v475" },
+  { url: "./quiz/php.html", revision: "nav-fluide-v475" },
+  { url: "./quiz/sql.html", revision: "nav-fluide-v475" },
+  { url: "./quiz/javascript.html", revision: "nav-fluide-v475" },
+  { url: "./cours/sql.html", revision: "nav-fluide-v475" },
+  { url: "./cours/sql-contraintes.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/php/debogage-php-bac.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/php/ordre-php-bac.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/php/trace-fetch-php.html", revision: "nav-fluide-v475" },
+  { url: "./memo-veille-bac.html", revision: "nav-fluide-v475" },
+  { url: "./outils-js-bac.html", revision: "nav-fluide-v475" },
+  { url: "./pieges-bac.html", revision: "nav-fluide-v475" },
+  { url: "./offline-complete-manifest.json", revision: "nav-fluide-v475" },
+  { url: "./ma-fiche-revision.html", revision: "nav-fluide-v475" },
   { url: "./assets/js/roue-couverture.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/roue-revision.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/roue-plan.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/sync-progressions.js", revision: "perf-fluide-v473" },
-  { url: "./assets/js/admin.js", revision: "perf-fluide-v473" },
-  { url: "./assets/js/quiz-admin.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/admin.js", revision: "nav-fluide-v475" },
+  { url: "./assets/js/quiz-admin.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/sauvegarde.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/reprendre.js", revision: "test-plateforme-v472" },
   { url: "./assets/js/sante.js", revision: "tester-tout-v471" },
   { url: "./revision-erreurs.html", revision: "audit-fonctionnel-v470" },
-  { url: "./bac-pratique.html", revision: "audit-fonctionnel-v470" },
-  { url: "./exercices/series-exercices.html", revision: "audit-fonctionnel-v470" },
-  { url: "./cours/courscss3.html", revision: "audit-fonctionnel-v470" },
-  { url: "./cours/css3.html", revision: "audit-fonctionnel-v470" },
-  { url: "./cours/coursphp.html", revision: "audit-fonctionnel-v470" },
-  { url: "./cours/php.html", revision: "audit-fonctionnel-v470" },
-  { url: "./cours/javascript.html", revision: "audit-fonctionnel-v470" },
-  { url: "./cours/fiche-revision-html5.html", revision: "audit-fonctionnel-v470" },
-  { url: "./quiz/html-css.html", revision: "audit-fonctionnel-v470" },
+  { url: "./bac-pratique.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/series-exercices.html", revision: "nav-fluide-v475" },
+  { url: "./cours/courscss3.html", revision: "nav-fluide-v475" },
+  { url: "./cours/css3.html", revision: "nav-fluide-v475" },
+  { url: "./cours/coursphp.html", revision: "nav-fluide-v475" },
+  { url: "./cours/php.html", revision: "nav-fluide-v475" },
+  { url: "./cours/javascript.html", revision: "nav-fluide-v475" },
+  { url: "./cours/fiche-revision-html5.html", revision: "nav-fluide-v475" },
+  { url: "./quiz/html-css.html", revision: "nav-fluide-v475" },
   { url: "./assets/js/portail.js", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/quiz-sync.js", revision: "audit-fonctionnel-v470" },
+  { url: "./assets/js/quiz-sync.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/quiz-tableaux.js", revision: "audit-fonctionnel-v470" },
   { url: "./documents/sql/sauvegarde-auto-drive.gs", revision: "audit-fonctionnel-v470" },
-  { url: "./documents/annexes/annexe-html5.pdf.html", revision: "pagination-integrale-v469" },
-  { url: "./assets/js/admin-couverture.js", revision: "pagination-integrale-v469" },
-  { url: "./assets/js/admin-revision.js", revision: "pagination-integrale-v469" },
-  { url: "./assets/js/graphiques-activite.js", revision: "pagination-integrale-v469" },
+  { url: "./documents/annexes/annexe-html5.pdf.html", revision: "nav-fluide-v475" },
+  { url: "./assets/js/admin-couverture.js", revision: "nav-fluide-v475" },
+  { url: "./assets/js/admin-revision.js", revision: "nav-fluide-v475" },
+  { url: "./assets/js/graphiques-activite.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/analytique.js", revision: "pagination-integrale-v469" },
-  { url: "./quiz/pp.html", revision: "audit-integral-v468" },
-  { url: "./quiz/tableaux.html", revision: "audit-integral-v468" },
+  { url: "./quiz/pp.html", revision: "nav-fluide-v475" },
+  { url: "./quiz/tableaux.html", revision: "nav-fluide-v475" },
   { url: "./manifest.webmanifest", revision: "dbsupbase-v466" },
   { url: "./assets/js/admin-dbsupbase.js", revision: "dbsupbase-v466" },
   { url: "./assets/js/cote-ticker.js", revision: "nav-fluide-v465" },
-  { url: "./cours/php-mysqli.html", revision: "nav-fluide-v465" },
+  { url: "./cours/php-mysqli.html", revision: "nav-fluide-v475" },
   { url: "./assets/js/modules/mobile-diagnostics.js", revision: "verif-e2e-v464" },
-  { url: "./assets/js/admin-erreurs.js", revision: "audit-complet-v463" },
-  { url: "./cours/sql-playground.html", revision: "audit-complet-v463" },
-  { url: "./documents/complet/fiche-memento-synthese.html", revision: "audit-complet-v463" },
-  { url: "./documents/enonces/enonce-serie4-a4.html", revision: "audit-complet-v463" },
-  { url: "./documents/enonces/enonce-serie5-a4.html", revision: "audit-complet-v463" },
-  { url: "./exercices/javascript/js-37-defis-tt.html", revision: "audit-complet-v463" },
-  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "audit-complet-v463" },
-  { url: "./assets/css/admin-saas.css", revision: "carte-boutons-v462" },
+  { url: "./assets/js/admin-erreurs.js", revision: "nav-fluide-v475" },
+  { url: "./cours/sql-playground.html", revision: "nav-fluide-v475" },
+  { url: "./documents/complet/fiche-memento-synthese.html", revision: "nav-fluide-v475" },
+  { url: "./documents/enonces/enonce-serie4-a4.html", revision: "nav-fluide-v475" },
+  { url: "./documents/enonces/enonce-serie5-a4.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/javascript/js-37-defis-tt.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "nav-fluide-v475" },
+  { url: "./assets/css/admin-saas.css", revision: "nav-fluide-v475" },
   { url: "./assets/data/quiz-banque.json", revision: "quiz-revision-2-v458" },
   { url: "./assets/pages-couverture.json", revision: "quiz-lot-d-v457" },
   { url: "./assets/js/quiz-tableaux-boot.js", revision: "quiz-lots-abc-v456" },
-  { url: "./glossaire.html", revision: "unif-acces-themes-v453" },
-  { url: "./404.html", revision: "unif-acces-themes-v453" },
-  { url: "./nouveautes.html", revision: "unif-acces-themes-v453" },
+  { url: "./glossaire.html", revision: "nav-fluide-v475" },
+  { url: "./404.html", revision: "nav-fluide-v475" },
+  { url: "./nouveautes.html", revision: "nav-fluide-v475" },
   { url: "./assets/js/nouveautes.js", revision: "conseil-classe-nouveautes-marque-v451" },
   { url: "./carte-visite.html", revision: "conseil-classe-nouveautes-marque-v451" },
   { url: "./assets/js/rayonsx-surligneur.js", revision: "rayonsx-surligneur-v449" },
   { url: "./assets/images/admin-aymen.jpg", revision: "admin-badge-v444" },
-  { url: "./assets/js/admin-mdp.js", revision: "admin-saas-v443-atelier" },
+  { url: "./assets/js/admin-mdp.js", revision: "nav-fluide-v475" },
   { url: "./assets/fonts/fonts.css", revision: "admin-saas-v443-atelier" },
   { url: "./assets/fonts/comic-neue-latin-400.woff2", revision: "admin-saas-v443-atelier" },
   { url: "./assets/fonts/comic-neue-latin-700.woff2", revision: "admin-saas-v443-atelier" },
   { url: "./portail.html", revision: "recovery-v441" },
   { url: "./assets/js/modules/password-recovery.js", revision: "recovery-v441" },
   { url: "./assets/js/rappels-locaux.js", revision: "rappels-v436" },
-  { url: "./cours/html5.html", revision: "early-boot-v425" },
-  { url: "./cours/courshtml5.html", revision: "clic21" },
+  { url: "./cours/html5.html", revision: "nav-fluide-v475" },
+  { url: "./cours/courshtml5.html", revision: "nav-fluide-v475" },
   { url: "./assets/js/sql-playground.js", revision: "moteur-sql-local-v396" },
   { url: "./livre-smart.html", revision: "sync-general-v391" },
   { url: "./assets/js/retour-livre-smart.js", revision: "retour-intelligent-v380" },
@@ -422,11 +427,19 @@ var OFFLINE_LIST = [
   "./assets/fontawesome/webfonts/fa-solid-900.woff2",
   "./assets/fonts/baloo-2-latin-ext.woff2",
   "./assets/fonts/baloo-2-latin.woff2",
+  "./assets/fonts/fa6-brands-subset.woff2",
+  "./assets/fonts/fa6-regular-subset.woff2",
+  "./assets/fonts/fa6-solid-subset.woff2",
   "./assets/fonts/fonts.css",
+  "./assets/fonts/fredoka-var.woff2",
+  "./assets/fonts/inter-var.woff2",
+  "./assets/fonts/jetbrains-mono-400.woff2",
   "./assets/fonts/jetbrains-mono-latin-ext.woff2",
   "./assets/fonts/jetbrains-mono-latin.woff2",
+  "./assets/fonts/jetbrains-mono-var.woff2",
   "./assets/fonts/manrope-latin-ext.woff2",
   "./assets/fonts/manrope-latin.woff2",
+  "./assets/fonts/nunito-var.woff2",
   "./assets/icons/STI_by_AE.ico",
   "./assets/icons/sti-icon-192.png",
   "./assets/icons/sti-icon-512.png",
@@ -1147,13 +1160,25 @@ self.addEventListener("message", function (evt) {
   }
 });
 
+var _cacheActifMem = null;
+var _cacheActifNom = "";
+
 async function chercherDansCache(req, url) {
   try {
-    var cActif = await caches.open(CACHE);
-    var mActifExact = await cActif.match(req);
-    if (mActifExact) { signalerCacheEviteSTI(mActifExact); rafraichirLRUExistantSTI(req, mActifExact, CACHE, "runtime"); return mActifExact; }
-    var mActif = await cActif.match(req, { ignoreSearch: true });
-    if (mActif) { signalerCacheEviteSTI(mActif); rafraichirLRUExistantSTI(req, mActif, CACHE, "runtime"); return mActif; }
+    if (_cacheActifMem && _cacheActifNom === CACHE) {
+      var mMemExact = await _cacheActifMem.match(req);
+      if (mMemExact) { signalerCacheEviteSTI(mMemExact); rafraichirLRUExistantSTI(req, mMemExact, CACHE, "runtime"); return mMemExact; }
+      var mMem = await _cacheActifMem.match(req, { ignoreSearch: true });
+      if (mMem) { signalerCacheEviteSTI(mMem); rafraichirLRUExistantSTI(req, mMem, CACHE, "runtime"); return mMem; }
+    } else {
+      var cActif = await caches.open(CACHE);
+      _cacheActifMem = cActif;
+      _cacheActifNom = CACHE;
+      var mActifExact = await cActif.match(req);
+      if (mActifExact) { signalerCacheEviteSTI(mActifExact); rafraichirLRUExistantSTI(req, mActifExact, CACHE, "runtime"); return mActifExact; }
+      var mActif = await cActif.match(req, { ignoreSearch: true });
+      if (mActif) { signalerCacheEviteSTI(mActif); rafraichirLRUExistantSTI(req, mActif, CACHE, "runtime"); return mActif; }
+    }
   } catch (eActif) {}
   var mExact = await caches.match(req);
   if (mExact) { signalerCacheEviteSTI(mExact); rafraichirLRUExistantSTI(req, mExact, CACHE, "runtime"); return mExact; }
@@ -1241,7 +1266,7 @@ self.addEventListener("fetch", function (evt) {
           return enCache;
         }
         try {
-          var rep = await fetch(req);
+          var rep = await fetch(req, { cache: "no-cache" });
           if (rep && rep.ok) {
             var copie = rep.clone();
             var copieNue = rep.clone();

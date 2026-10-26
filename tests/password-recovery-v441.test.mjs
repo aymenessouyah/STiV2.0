@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, statSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import vm from 'node:vm';
@@ -4287,11 +4287,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.equal(cinq.length, 5);
   assert.ok(lignes.some((l) => /^\|\s*v468\s*\|/.test(l)), 'v468 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v469\s*\|/.test(l)), 'v469 doit rester présent dans README.md');
-  assert.ok(cinq.some((o) => /^v470 — Validation fonctionnelle E2E/.test(o.t)), 'v470 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v470\s*\|/.test(l)), 'v470 doit rester présent dans README.md');
   assert.ok(cinq.some((o) => /^v471 — Vérification intégrale de bout en bout/.test(o.t)), 'v471 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v472 — Audit forensique de toute la plateforme/.test(o.t)), 'v472 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v473 — Accélération drastique de la plateforme/.test(o.t)), 'v473 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v474 — Allègement massif des Quiz PHP/);
+  assert.ok(cinq.some((o) => /^v474 — Allègement massif des Quiz PHP/.test(o.t)), 'v474 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v475 — Cure complète de navigation/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -5856,15 +5857,15 @@ test('v474 (structure & budgets Quiz PHP / SQL / JS) : 0 compilateur Tailwind JI
   assert.match(protJs, /demarrerSuiviGuideRapide/);
   assert.match(accesJs, /function lireProfilCourantMemoSTI\(uid\)/);
 
-  // 5) Alignement version v474 / sti-atelier-v334
-  assert.match(configJs, /VERSION:\s*334\b/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v334";/);
-  assert.match(swJs, /var UPDATE_ID = "v474-perf-quiz-php";/);
-  assert.equal(nouv[0].version, 'v474');
+  // 5) Alignement historique v474 / sti-atelier-v334+
+  assert.match(configJs, /VERSION:\s*33\d\b/);
+  assert.match(swJs, /sti-atelier-v334/);
+  assert.match(swJs, /v474-perf-quiz-php/);
+  assert.ok(nouv.some((n) => n.version === 'v474'));
   assert.match(adminHtml, /v474 · sti-atelier-v334/);
   assert.match(readmeMd, /sti-atelier-v334/);
   assert.match(readmeMd, /\|\s*v474\s*\|/);
-  assert.equal(offlineManifest.version, 'v474-sti-atelier-v334');
+  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
 });
 
 test('v474 (comportemental VM) : vendors hors-ligne (Chart, confetti, Prism) opérationnels et déduplication lireProfilCourantMemoSTI dans acces.js', async () => {
@@ -5923,6 +5924,233 @@ test('v474 (comportemental VM) : vendors hors-ligne (Chart, confetti, Prism) op�
   assert.equal(dbHits, 1, 'Deux lectures profil simultanées au chargement doivent être fusionnées en 1 seule requête réseau');
   assert.equal(rA.data.classe, '4SI1');
   assert.equal(rB.data.classe, '4SI1');
+});
+
+test('v475 (structure & budgets navigation) : polices WOFF2 externes (-475 Ko dans <head>), defer généralisé sur acces.js, BFCache Realtime, GPU allégé et migration index Supabase', () => {
+  const swJs = read('sw.js');
+  const configJs = read('assets/js/config.js');
+  const accesJs = read('assets/js/acces.js');
+  const adminJs = read('assets/js/admin.js');
+  const adminCss = read('assets/css/admin-saas.css');
+  const indexHtml = read('index.html');
+  const adminHtml = read('admin.html');
+  const readmeMd = read('README.md');
+  const nouv = JSON.parse(read('assets/data/nouveautes.json'));
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+  const migSql = read('supabase/migrations/20261026_nav_perf_indexes_v475.sql');
+
+  // 1) Polices WOFF2 SQL & PHP externalisées en binaire dans assets/fonts/ + <head> allégé (< 48 Ko sur SQL/PHP)
+  for (const fn of [
+    'assets/fonts/fredoka-var.woff2',
+    'assets/fonts/jetbrains-mono-400.woff2',
+    'assets/fonts/nunito-var.woff2',
+    'assets/fonts/inter-var.woff2',
+    'assets/fonts/jetbrains-mono-var.woff2',
+  ]) {
+    assert.ok(existsSync(join(root, fn)) && statSync(join(root, fn)).size > 15 * 1024, `${fn} doit exister en binaire WOFF2`);
+  }
+  for (const p of ['cours/sql.html', 'cours/sql-contraintes.html', 'quiz/sql.html', 'quiz/php.html']) {
+    const html = read(p);
+    assert.doesNotMatch(html, /data:font\/woff2;base64,/, `${p} ne doit plus embarquer de base64 WOFF2 bloquant dans <head>`);
+    const hm = html.match(/<head[\s\S]*?<\/head>/i);
+    assert.ok(hm && Buffer.byteLength(hm[0]) < 48 * 1024, `<head> de ${p} doit peser < 48 Ko`);
+  }
+  assert.doesNotMatch(read('cours/sql.html'), /<style>\s*<style>/, 'cours/sql.html ne doit plus contenir de balise <style> dupliquée');
+
+  // 2) defer sur acces.js sur index.html, tous les cours et tous les quiz (0 blocage du parseur HTML par 884 Ko)
+  for (const p of [
+    'index.html',
+    'cours/html5.html',
+    'cours/css3.html',
+    'cours/javascript.html',
+    'cours/sql.html',
+    'cours/php.html',
+    'quiz/html-css.html',
+    'quiz/javascript.html',
+    'quiz/sql.html',
+    'quiz/php.html',
+    'quiz/tableaux.html',
+    'exercices/series-exercices.html',
+    'ma-fiche-revision.html',
+  ]) {
+    assert.match(read(p), /<script[^>]*acces\.js[^>]*\bdefer\b/i, `${p} doit charger acces.js en defer`);
+  }
+
+  // 3) GPU & compositeur : plus de blur(95px) sur .blob dans index.html ni de background-attachment:fixed dans admin-saas.css
+  assert.doesNotMatch(indexHtml, /filter:\s*blur\(95px\)/, 'index.html ne doit plus appliquer filter:blur(95px) plein écran');
+  assert.doesNotMatch(adminCss, /background-attachment:\s*fixed\s*!important/, 'admin-saas.css ne doit plus forcer background-attachment:fixed');
+
+  // 4) Index B-tree Supabase (acces page/text_pattern_ops/user_id + labo_device_sessions.device_id)
+  assert.match(migSql, /idx_acces_page_debut/);
+  assert.match(migSql, /idx_acces_page_pattern_debut[\s\S]*text_pattern_ops/);
+  assert.match(migSql, /idx_labo_device_sessions_device_id/);
+
+  // 5) Alignement version v475 / sti-atelier-v335 + cache mémoire SW + client Supabase partagé
+  assert.match(configJs, /VERSION:\s*335\b/);
+  assert.match(configJs, /__STI_PREFETCH_NAV_V475/);
+  assert.match(accesJs, /__stiSuspendreRealtimeBfcache/);
+  assert.match(accesJs, /sti-coffre-tp-sync-ts/);
+  assert.match(adminJs, /window\.__STI_SB_CLIENT\s*=\s*sb/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v335";/);
+  assert.match(swJs, /var UPDATE_ID = "v475-nav-fluide-instant";/);
+  assert.match(swJs, /_cacheActifMem/);
+  assert.equal(nouv[0].version, 'v475');
+  assert.match(adminHtml, /v475 · sti-atelier-v335/);
+  assert.match(readmeMd, /sti-atelier-v335/);
+  assert.match(readmeMd, /\|\s*v475\s*\|/);
+  assert.equal(offlineManifest.version, 'v475-sti-atelier-v335');
+});
+
+test('v475 (comportemental VM) : préchargement anticipé config.js, cycle BFCache WebSocket dans acces.js et redessin resize 0 requête dans graphiques-activite.js', async () => {
+  const vm = await import('node:vm');
+
+  // 1) config.js : __STI_PREFETCH_NAV_V475 précharge les pages .html internes et ignore #ancre / admin / médias / externes
+  const configSrc = read('assets/js/config.js');
+  const prefetched = [];
+  const docListeners = {};
+  const fakeHead = { appendChild(el) { if (el.rel === 'prefetch') prefetched.push(el.href); } };
+  const cfgWin = {
+    location: new URL('https://sti.example/index.html'),
+    history: { state: {}, replaceState() {} },
+    navigator: { connection: { saveData: false, effectiveType: '4g' } },
+    localStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    sessionStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    matchMedia: () => ({ matches: false }),
+    addEventListener() {},
+    dispatchEvent() {},
+    URL,
+    URLSearchParams,
+    Date,
+    Math,
+    Object,
+    String,
+    Boolean,
+    Number,
+    RegExp,
+    JSON,
+    setTimeout,
+    clearTimeout,
+    document: {
+      head: fakeHead,
+      documentElement: fakeHead,
+      getElementById: () => null,
+      createElement: (tag) => ({ tagName: tag.toUpperCase(), style: {}, setAttribute() {} }),
+      addEventListener(ev, fn) { docListeners[ev] = fn; }
+    }
+  };
+  cfgWin.window = cfgWin;
+  vm.runInNewContext(configSrc, cfgWin, { filename: 'assets/js/config.js' });
+  assert.ok(cfgWin.__STI_PREFETCH_NAV_V475, 'config.js doit exposer __STI_PREFETCH_NAV_V475');
+
+  const mkLinkTarget = (href, extra = {}) => ({
+    closest: (sel) => sel === 'a[href]' ? {
+      hasAttribute: (a) => Boolean(extra[a]),
+      getAttribute: (a) => (a === 'href' ? href : (extra[a] || ''))
+    } : null
+  });
+  docListeners.pointerdown({ target: mkLinkTarget('cours/html5.html#formulaires') });
+  docListeners.pointerdown({ target: mkLinkTarget('cours/html5.html#tableaux') }); // même page -> dédupliquée
+  docListeners.pointerdown({ target: mkLinkTarget('#modules') }); // ancre pure -> ignorée
+  docListeners.pointerdown({ target: mkLinkTarget('admin.html') }); // admin -> ignoré
+  docListeners.pointerdown({ target: mkLinkTarget('assets/videos/css-animee.mp4') }); // média -> ignoré
+  docListeners.pointerdown({ target: mkLinkTarget('https://external.example/page.html') }); // externe -> ignoré
+  docListeners.pointerdown({ target: mkLinkTarget('quiz/php.html') });
+  assert.deepEqual(prefetched, [
+    'https://sti.example/cours/html5.html',
+    'https://sti.example/quiz/php.html'
+  ], 'Seules les pages HTML internes uniques hors admin/portail/médias doivent être préchargées');
+
+  // 2) acces.js : suspension propre des WebSockets Realtime à pagehide et réouverture à pageshow (persisted=true)
+  const accesSrc = read('assets/js/acces.js');
+  const bfMatch = accesSrc.match(/var _realtimeSuspenduBfcacheGlobal = false;[\s\S]*?window\.addEventListener\("pageshow"[\s\S]*?\}\);/);
+  assert.ok(bfMatch, 'Bloc BFCache Realtime présent dans acces.js');
+  let removedAll = 0, disconnected = 0, resubUser = 0, resubDiff = 0;
+  const bfListeners = {};
+  const bfCtx = {
+    sb: {
+      removeAllChannels() { removedAll++; },
+      realtime: { disconnect() { disconnected++; } }
+    },
+    window: {
+      __stiResouscrireCanalUser() { resubUser++; },
+      __stiResouscrireCanalDiffusion() { resubDiff++; },
+      addEventListener(ev, fn) { bfListeners[ev] = fn; }
+    },
+    setTimeout: (fn) => { fn(); return 1; }
+  };
+  vm.runInNewContext(bfMatch[0], bfCtx);
+  bfListeners.pagehide({});
+  assert.equal(removedAll, 1, 'pagehide doit fermer les canaux Realtime');
+  assert.equal(disconnected, 1, 'pagehide doit couper le socket Realtime pour autoriser le BFCache');
+  bfListeners.pageshow({ persisted: true });
+  assert.equal(resubUser, 1, 'pageshow (persisted=true) doit réabonner le canal profil');
+  assert.equal(resubDiff, 1, 'pageshow (persisted=true) doit réabonner le canal sti-diffusion');
+
+  // 3) graphiques-activite.js : réutilise window.__STI_ADMIN_SB et redessine sur resize avec 0 nouvelle requête Supabase
+  const graphSrc = read('assets/js/graphiques-activite.js');
+  let accesQueries = 0, createClientCalls = 0;
+  let resizeFn = null;
+  const fakeCanvas = () => ({
+    clientWidth: 600,
+    style: {},
+    getContext: () => ({
+      setTransform() {}, clearRect() {}, beginPath() {}, roundRect() {}, rect() {},
+      fill() {}, fillText() {}, moveTo() {}, lineTo() {}, stroke() {}, measureText: () => ({ width: 20 })
+    })
+  });
+  const sharedSb = {
+    auth: {
+      getSession: async () => ({ data: { session: { user: { id: 'admin-1' } } }, error: null })
+    },
+    from(tbl) {
+      if (tbl === 'acces') accesQueries++;
+      const q = {
+        select() { return q; },
+        gte() { return q; },
+        order() { return q; },
+        range: async () => ({
+          data: tbl === 'acces' ? [{ debut: new Date().toISOString(), page: 'cours/sql.html', user_id: 'u1' }] : [],
+          error: null
+        })
+      };
+      return q;
+    }
+  };
+  const gEls = {
+    'bloc-sec-graphiques': {},
+    'btn-graph-charger': { addEventListener() {} },
+    'graph-periode': { value: '7', addEventListener() {} },
+    'graph-jours': fakeCanvas(),
+    'graph-pages': fakeCanvas(),
+    'graph-resume': { textContent: '' }
+  };
+  const gWin = {
+    STI_AUTH: { URL: 'https://x.supabase.co', CLE: 'k' },
+    __STI_ADMIN_SB: sharedSb,
+    supabase: { createClient() { createClientCalls++; return sharedSb; } },
+    IntersectionObserver: class { observe() {} disconnect() {} },
+    devicePixelRatio: 1,
+    document: {
+      readyState: 'complete',
+      documentElement: { classList: { contains: () => false } },
+      getElementById: (id) => gEls[id] || null,
+      addEventListener() {}
+    },
+    getComputedStyle: () => ({ getPropertyValue: () => '#15803d' }),
+    addEventListener(ev, fn) { if (ev === 'resize') resizeFn = fn; },
+    setTimeout: (fn) => { fn(); return 1; },
+    clearTimeout() {},
+    Date, Math, Number, String, Boolean, Object, Array, Promise, RegExp
+  };
+  gWin.window = gWin;
+  vm.runInNewContext(graphSrc, gWin, { filename: 'assets/js/graphiques-activite.js' });
+  await gWin.STI_GRAPHIQUES_ACTIVITE.charger();
+  assert.equal(createClientCalls, 0, 'graphiques-activite.js doit réutiliser __STI_ADMIN_SB sans recréer de client');
+  assert.equal(accesQueries, 1, '1 seul chargement initial acces');
+  assert.ok(typeof resizeFn === 'function', 'écouteur resize enregistré');
+  resizeFn();
+  resizeFn();
+  assert.equal(accesQueries, 1, 'Le redimensionnement fenêtre doit redessiner en mémoire avec 0 requête Supabase supplémentaire');
 });
 
 

@@ -42,7 +42,8 @@
 
   function sb() {
     if (client) return client;
-    try { client = window.supabase.createClient(cfg.URL, cfg.CLE, { auth: { persistSession: true, autoRefreshToken: false } }); }
+    if (window.__STI_ADMIN_SB || window.__STI_SB_CLIENT) { client = window.__STI_ADMIN_SB || window.__STI_SB_CLIENT; return client; }
+    try { client = window.supabase.createClient(cfg.URL, cfg.CLE, { auth: { persistSession: true, autoRefreshToken: false, detectSessionInUrl: false, lock: function (n, t, fn) { return fn(); } } }); }
     catch (e) { client = null; }
     return client;
   }

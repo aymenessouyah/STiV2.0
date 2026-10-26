@@ -47,7 +47,11 @@
   function $(id) { return document.getElementById(id); }
   function sb() {
     if (!window.supabase || !window.STI_AUTH) return null;
-    if (!client) client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE);
+    if (!client) {
+      client = window.__STI_ADMIN_SB || window.__STI_SB_CLIENT || window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE, {
+        auth: { persistSession: true, autoRefreshToken: false, detectSessionInUrl: false, lock: function (n, t, fn) { return fn(); } }
+      });
+    }
     return client;
   }
   function esc(s) {

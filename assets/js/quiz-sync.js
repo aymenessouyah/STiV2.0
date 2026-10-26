@@ -40,7 +40,7 @@
   function sb() {
     if (!window.supabase || !window.STI_AUTH) return null;
     if (!client) {
-      client = window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE, {
+      client = window.__STI_SB_CLIENT || window.supabase.createClient(window.STI_AUTH.URL, window.STI_AUTH.CLE, {
         auth: {
           persistSession: true,
           autoRefreshToken: true,
@@ -48,6 +48,7 @@
           lock: function (name, acquireTimeout, fn) { return fn(); }
         }
       });
+      window.__STI_SB_CLIENT = client;
       try {
         if (client && client.auth && typeof client.auth.onAuthStateChange === "function") {
           client.auth.onAuthStateChange(function () { promesseUser = null; });

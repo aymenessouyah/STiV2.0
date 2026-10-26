@@ -3,7 +3,7 @@ window.STI_AUTH = {
   URL: "https://vywujxmepvcbgedgmger.supabase.co",
   CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn",
   CLE_TURNSTILE: "0x4AAAAAAFeMDzetHdIs1MmC",
-  VERSION: 334,
+  VERSION: 335,
   RACINE: (typeof location !== "undefined" && location.origin && location.origin !== "null")
     ? (function () {
         /* v417 : l'ancien regex ne connaissait qu'une liste de pages ; toute page utilitaire
@@ -493,4 +493,92 @@ window.STI_AUTH = {
     }
   } catch (e) {}
 })();
+
+/* v475 — Préchargement anticipé intelligent au survol / toucher (instant-page local STI) :
+   Dès que l'élève survole une carte de cours/quiz/exercice pendant >= 75 ms ou pose le doigt
+   (pointerdown / touchstart, 120–250 ms avant le clic effectif), injecte un <link rel="prefetch">
+   vers la page HTML interne cible (plafonné à 8 URL uniques, désactivé en économie de données / 2G,
+   jamais vers admin/portail/médias lourds). Le document cible est déjà chaud en mémoire au clic. */
+(function () {
+  try {
+    if (typeof window === "undefined" || typeof document === "undefined" || typeof location === "undefined") return;
+    if (!/^https?:$/.test(location.protocol)) return;
+    if (window.__STI_PREFETCH_NAV_V475) return;
+    if (String(location.pathname || "").indexOf("/tests/") !== -1) return;
+    var conn = navigator && (navigator.connection || navigator.mozConnection || navigator.webkitConnection);
+    if (conn && (conn.saveData || /(^|-)2g$/i.test(String(conn.effectiveType || "")))) return;
+
+    var deja = Object.create(null);
+    var nbPrefetch = 0;
+    var MAX_PREFETCH = 8;
+    var hoverTimer = null;
+    var hoverHref = "";
+
+    function urlPrefetchableSTI(el) {
+      if (!el || typeof el.closest !== "function") return "";
+      var a = el.closest("a[href]");
+      if (!a || a.hasAttribute("download")) return "";
+      var tgt = String(a.getAttribute("target") || "").toLowerCase();
+      if (tgt && tgt !== "_self") return "";
+      var raw = String(a.getAttribute("href") || "").trim();
+      if (!raw || raw.charAt(0) === "#" || /^(javascript|mailto|tel|data|blob):/i.test(raw)) return "";
+      var u;
+      try { u = new URL(raw, location.href); } catch (eU) { return ""; }
+      if (u.origin !== location.origin) return "";
+      if (u.pathname === location.pathname && u.search === location.search) return "";
+      if (/(^|\/)(admin|portail)(\.html)?$/i.test(u.pathname.replace(/\/+$/, "")) || u.pathname.indexOf("/tests/") !== -1) return "";
+      if (/\.(mp4|webm|mp3|ogg|wav|pdf|zip|rar|7z|png|jpe?g|gif|webp|svg|ico|woff2?)$/i.test(u.pathname)) return "";
+      if (!/(\.html?|\/)$/i.test(u.pathname)) return "";
+      u.hash = "";
+      return u.href;
+    }
+
+    function declencherPrefetchSTI(href) {
+      if (!href || deja[href] || nbPrefetch >= MAX_PREFETCH) return;
+      deja[href] = 1;
+      nbPrefetch++;
+      try {
+        var lnk = document.createElement("link");
+        lnk.rel = "prefetch";
+        lnk.as = "document";
+        lnk.href = href;
+        (document.head || document.documentElement).appendChild(lnk);
+      } catch (eL) {}
+    }
+
+    window.__STI_PREFETCH_NAV_V475 = {
+      urlPrefetchableSTI: urlPrefetchableSTI,
+      declencherPrefetchSTI: declencherPrefetchSTI,
+      _deja: deja
+    };
+
+    document.addEventListener("pointerdown", function (ev) {
+      var h = urlPrefetchableSTI(ev && ev.target);
+      if (h) declencherPrefetchSTI(h);
+    }, { passive: true });
+
+    document.addEventListener("pointerover", function (ev) {
+      if (ev && ev.pointerType && ev.pointerType !== "mouse") return;
+      var h = urlPrefetchableSTI(ev && ev.target);
+      if (!h || deja[h]) return;
+      if (hoverHref === h) return;
+      if (hoverTimer) clearTimeout(hoverTimer);
+      hoverHref = h;
+      hoverTimer = setTimeout(function () {
+        hoverTimer = null;
+        declencherPrefetchSTI(h);
+      }, 75);
+    }, { passive: true });
+
+    document.addEventListener("pointerout", function (ev) {
+      if (!hoverTimer) return;
+      var rel = ev && ev.relatedTarget;
+      if (rel && urlPrefetchableSTI(rel) === hoverHref) return;
+      clearTimeout(hoverTimer);
+      hoverTimer = null;
+      hoverHref = "";
+    }, { passive: true });
+  } catch (e) {}
+})();
+
 
