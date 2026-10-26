@@ -9,7 +9,7 @@
 (function () {
   "use strict";
   var cfg = window.STI_AUTH;
-  var sb = window.supabase.createClient(cfg.URL, cfg.CLE, {
+  var sb = window.__STI_SB_CLIENT || window.supabase.createClient(cfg.URL, cfg.CLE, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
@@ -18,6 +18,7 @@
     }
   });
   window.__STI_ADMIN_SB = sb;
+  window.__STI_SB_CLIENT = sb;
   var elMsg = document.getElementById("msg");
   function msg(t, c) { elMsg.textContent = t; elMsg.className = "msg" + (c ? " " + c : ""); }
   function echHtml(s) {
@@ -2829,11 +2830,22 @@
     }
 
     verrouBioAdmin(function () {});
+    var _timerAccesUpdateRt = 0;
+    var _timerPresenceDomRt = 0;
     try {
       sb.channel("admin-demandes")
         .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, function () { charge(true, "profils"); })
         .on("postgres_changes", { event: "*", schema: "public", table: "acces" }, function (evtAcces) {
-          charge(true, evtAcces && evtAcces.eventType && evtAcces.eventType !== "INSERT" ? "acces" : false);
+          var estUpd = Boolean(evtAcces && evtAcces.eventType && evtAcces.eventType !== "INSERT");
+          if (estUpd) {
+            if (_timerAccesUpdateRt) return;
+            _timerAccesUpdateRt = setTimeout(function () {
+              _timerAccesUpdateRt = 0;
+              charge(true, "acces");
+            }, 3500);
+            return;
+          }
+          charge(true, false);
         })
         .subscribe();
       sb.channel("sti-diffusion")
@@ -2894,9 +2906,14 @@
                 ts: pl.closed ? 0 : Date.now()
               };
             }
-            majCompteurEnLigne();
-            rendAbonnes();
-            if (typeof rafraichirMessengerAdmin === "function") rafraichirMessengerAdmin();
+            if (!_timerPresenceDomRt) {
+              _timerPresenceDomRt = setTimeout(function () {
+                _timerPresenceDomRt = 0;
+                majCompteurEnLigne();
+                rendAbonnes();
+                if (typeof rafraichirMessengerAdmin === "function") rafraichirMessengerAdmin();
+              }, 350);
+            }
           }
         })
         .on("broadcast", { event: "quiz" }, function () {

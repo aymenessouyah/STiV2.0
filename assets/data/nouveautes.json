@@ -1,5 +1,15 @@
 [
   {
+    "version": "v475",
+    "date": "2026-10-26",
+    "categorie": "Navigation & Base Supabase",
+    "icone": "⚡",
+    "titre": "Navigation instantanée entre les pages : BFCache 0 ms réparé, 382 scripts en defer, polices WOFF2 externes (-475 Ko) & index Supabase",
+    "resume": "Fermeture propre des WebSockets Realtime à pagehide et reprise à pageshow (restauration BFCache 0 ms opérationnelle), chargement différé non-bloquant (defer) sur 126 pages HTML, externalisation binaire des polices WOFF2 SQL/PHP (-475 Ko dans <head>), préchargement anticipé au survol/toucher, zéro blur GPU 95 px / background-attachment:fixed et index B-tree Supabase sur acces et labo_device_sessions (205–1879 ms → 1 ms).",
+    "lien": "index.html",
+    "libelleLien": "Tester la navigation instantanée"
+  },
+  {
     "version": "v474",
     "date": "2026-10-26",
     "categorie": "Quiz PHP / SQL / JS & Fluidité",

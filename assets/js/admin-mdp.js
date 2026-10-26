@@ -32,6 +32,7 @@
   function sb() {
     if (window.__STI_ADMIN_MDP_CLIENT) return window.__STI_ADMIN_MDP_CLIENT;
     if (client) return client;
+    if (window.__STI_ADMIN_SB || window.__STI_SB_CLIENT) { client = window.__STI_ADMIN_SB || window.__STI_SB_CLIENT; return client; }
     try {
       client = window.supabase.createClient(cfg.URL, cfg.CLE, {
         auth: {

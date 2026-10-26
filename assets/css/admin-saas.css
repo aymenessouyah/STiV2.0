@@ -410,7 +410,6 @@ html body.cockpit-airbus {
     radial-gradient(680px 420px at 16% 72%, var(--adm-mesh-4), transparent 70%),
     radial-gradient(var(--adm-dot) 1px, transparent 1px) !important;
   background-size: auto, auto, auto, auto, 24px 24px !important;
-  background-attachment: fixed !important;
   color: var(--adm-text) !important;
   font-family: var(--adm-font) !important;
   font-size: 14px !important;
@@ -457,7 +456,7 @@ h1, h2, h3, h4 {
   color: var(--adm-text) !important;
 }
 
-/* ── Surfaces Bento en Verre Dépoli Réfractif ── */
+/* ── Surfaces Bento (v475 : zéro backdrop-filter lourd sur grands conteneurs défilants) ── */
 .hero-admin,
 .tableau-apercu,
 .centre-actions-dashboard,
@@ -465,8 +464,6 @@ h1, h2, h3, h4 {
 .aide-windows-v316,
 #zone-detail {
   background: var(--adm-glass) !important;
-  backdrop-filter: blur(22px) saturate(170%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(170%) !important;
   color: var(--adm-text) !important;
   border: 1px solid var(--adm-border) !important;
   border-radius: var(--adm-radius-xl) !important;
@@ -504,7 +501,7 @@ h1, h2, h3, h4 {
   display: none !important;
 }
 
-/* Ruban prismatique animé en sommet de carte */
+/* Ruban prismatique en sommet de carte (v475 : statique sans repaint infini) */
 .hero-admin::after {
   content: "";
   position: absolute;
@@ -513,8 +510,6 @@ h1, h2, h3, h4 {
   right: 0;
   height: 4px;
   background: var(--adm-grad-ribbon);
-  background-size: 220% 220%;
-  animation: admRibbonFlow 9s ease infinite;
 }
 
 .entete {

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Construire une requête SQL</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><!-- v434 CLS : la police arrive avant le premier reflow -->
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
 <script>
 /* Thème STI synchronisé : parent (modale) > choix mémorisé plateforme (sti-theme / theme). */
 (function () {
@@ -325,9 +325,9 @@ $('#preset').innerHTML=Object.keys(PRESETS).map(k=>`<option>${k}</option>`).join
 $('#schema').value=PRESETS[Object.keys(PRESETS)[0]];
 schema=parse($('#schema').value);fresh();render();
 </script>
-<script src="../../assets/js/supabase-umd.js"></script>
-<script src="../../assets/js/config.js?v=425"></script>
-<script src="../../assets/js/acces.js?v=453"></script>
+<script src="../../assets/js/supabase-umd.js" defer></script>
+<script src="../../assets/js/config.js?v=425" defer></script>
+<script src="../../assets/js/acces.js?v=453" defer></script>
 <script src="../../assets/js/sync-progressions.js?v=463" defer></script>
 <script src="../../assets/js/mobile-nav.js?v=434" defer></script>
 </body>
