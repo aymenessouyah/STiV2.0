@@ -1,55 +1,10 @@
 {
-  "version": "v467-sauvegarde-readme",
-  "generatedAt": "2026-10-26T12:00:00.000Z",
+  "version": "v468-audit-integral",
+  "generatedAt": "2026-10-26T07:27:27.361Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 608,
-  "totalBytes": 631395693,
+  "totalFiles": 639,
+  "totalBytes": 685603812,
   "files": [
-    {
-      "path": "assets/js/quiz-sync.js",
-      "bytes": 38595,
-      "gitSha": "cab33c6a76d07696d369540cfa6501d1197f237b"
-    },
-    {
-      "path": "assets/js/quiz-admin.js",
-      "bytes": 45608,
-      "gitSha": "1c995bd96fa932ffd0c694c8e3c451cbba4b32ec"
-    },
-    {
-      "path": "quiz/tableaux.html",
-      "bytes": 9684,
-      "gitSha": "fabda0fc3a8da65054fbd8240bc71d7be91cd751"
-    },
-    {
-      "path": "assets/js/quiz-tableaux.js",
-      "bytes": 29835,
-      "gitSha": "a658f6b95441b124df55914ceb476e5f8a33976b"
-    },
-    {
-      "path": "assets/data/quiz-banque.json",
-      "bytes": 319995,
-      "gitSha": "63f5ec696fd37511642fc4dfb5e7e0d38954ad2e"
-    },
-    {
-      "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf\"",
-      "bytes": 429055,
-      "gitSha": "89987eadc5266381454bf503d3f073706e6dd6c0"
-    },
-    {
-      "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf.assets/page-01.jpg\"",
-      "bytes": 339217,
-      "gitSha": "efaffcdc6595fdfe9b69307c02e19e6dc104b593"
-    },
-    {
-      "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf.assets/page-02.jpg\"",
-      "bytes": 158428,
-      "gitSha": "0f7de1da9d3f489183c1cf66e39c84957a8372c6"
-    },
-    {
-      "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf.html\"",
-      "bytes": 8088,
-      "gitSha": "20937bf69d3a86a981b3ae59662ee630996d05ce"
-    },
     {
       "path": "404.html",
       "bytes": 4263,
@@ -96,9 +51,14 @@
       "gitSha": "bc3a5e1a926e95a3baa293ff060516596c68c363"
     },
     {
+      "path": "README.md",
+      "bytes": 24982,
+      "gitSha": "8d479c1847e3c2ffb6fb2f96a2cca2d861d9da59"
+    },
+    {
       "path": "admin.html",
-      "bytes": 340552,
-      "gitSha": "6a44492af23f1ccf03ff80f5ebd8df9f805aa0af"
+      "bytes": 340838,
+      "gitSha": "298464bbdf959d0044cf44c157b08b8fb4fa39ca"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -186,6 +146,11 @@
       "gitSha": "aa8bc524d60b419c862ddb6fe3f22a8e2eacf060"
     },
     {
+      "path": "assets/css/admin-saas.css",
+      "bytes": 129174,
+      "gitSha": "6fc2bc9b0e12e393967e869a61aced0dc332c34e"
+    },
+    {
       "path": "assets/css/admin-v19.css",
       "bytes": 62320,
       "gitSha": "296f74b6ef30ee10c6485326ab52decf4d3376f1"
@@ -246,6 +211,11 @@
       "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
     },
     {
+      "path": "assets/css/sombre-universel-v372.css",
+      "bytes": 6039,
+      "gitSha": "12b8e81cac71d307072152cc42cf9a4bc4a76fbf"
+    },
+    {
       "path": "assets/css/sql.css",
       "bytes": 13498,
       "gitSha": "8b66f593497b193ee0d399ac3023ef3400202333"
@@ -257,8 +227,13 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 26062,
-      "gitSha": "f2d7acee0c6b796805ce0acfaa4bb877b669da82"
+      "bytes": 29347,
+      "gitSha": "cd297ffc4eb554a78855716494064d23318c02c2"
+    },
+    {
+      "path": "assets/data/quiz-banque.json",
+      "bytes": 319995,
+      "gitSha": "63f5ec696fd37511642fc4dfb5e7e0d38954ad2e"
     },
     {
       "path": "assets/data/smart-book-2026.json",
@@ -304,6 +279,16 @@
       "path": "assets/fonts/baloo-2-latin.woff2",
       "bytes": 33188,
       "gitSha": "352ede09df9a29c0391b7c0e4cef09f0ca15c8b7"
+    },
+    {
+      "path": "assets/fonts/comic-neue-latin-400.woff2",
+      "bytes": 19572,
+      "gitSha": "4f73b721aab49f73fbafca75f43ea91746aaa0fd"
+    },
+    {
+      "path": "assets/fonts/comic-neue-latin-700.woff2",
+      "bytes": 19244,
+      "gitSha": "e25f252f4faf6e204babb6bba05e6be99ff10621"
     },
     {
       "path": "assets/fonts/fonts.css",
@@ -354,6 +339,11 @@
       "path": "assets/images/JavaScript_logo.svg",
       "bytes": 6370,
       "gitSha": "3f3416dba837f46e422b4086bbcb929730d2645c"
+    },
+    {
+      "path": "assets/images/admin-aymen.jpg",
+      "bytes": 69042,
+      "gitSha": "8463ccaed991603109a57156a3c7d502a372e6e7"
     },
     {
       "path": "assets/images/carte-visite-sti-v2.png",
@@ -516,14 +506,39 @@
       "gitSha": "930bbe38d4772d9ba9783100b090ad1ca885761e"
     },
     {
+      "path": "assets/js/admin-couverture.js",
+      "bytes": 13663,
+      "gitSha": "2335b5a55dd08489aaabe6d9fa1fe7f6abbe81bc"
+    },
+    {
+      "path": "assets/js/admin-dbsupbase.js",
+      "bytes": 25140,
+      "gitSha": "ff51cd43ca00d6b85b5122a799129a1cd36e663f"
+    },
+    {
+      "path": "assets/js/admin-erreurs.js",
+      "bytes": 16095,
+      "gitSha": "2aab0506e1cebff37864fac2ee9af05b42cf8c70"
+    },
+    {
+      "path": "assets/js/admin-mdp.js",
+      "bytes": 25238,
+      "gitSha": "c149d9a79276183c12d8ef1fa328e8dab642a834"
+    },
+    {
+      "path": "assets/js/admin-revision.js",
+      "bytes": 15631,
+      "gitSha": "1e553cc74f2ee6635d8ebc06fea0e61370be050d"
+    },
+    {
       "path": "assets/js/admin.js",
       "bytes": 691905,
       "gitSha": "71dce86c04ac0a9e337f06084cb31cfa1bf5e736"
     },
     {
       "path": "assets/js/analytique.js",
-      "bytes": 12447,
-      "gitSha": "1ff4a5b850feb65d22dbf8c028b04e6af91a3f52"
+      "bytes": 14058,
+      "gitSha": "e35342487a3736939b7b2b25e7c35c50f323ec5d"
     },
     {
       "path": "assets/js/config.js",
@@ -531,9 +546,19 @@
       "gitSha": "ce1d854d144ad49365465b0c3c69246fcc36ca41"
     },
     {
+      "path": "assets/js/cote-ticker.js",
+      "bytes": 8976,
+      "gitSha": "e47f213fe3a7431b356f624dcf70fc4ec610640a"
+    },
+    {
       "path": "assets/js/graphiques-activite.js",
       "bytes": 9980,
       "gitSha": "00bffd79fe0072e990d0109f8d0c2a5f824b6dd5"
+    },
+    {
+      "path": "assets/js/mobile-nav.js",
+      "bytes": 28903,
+      "gitSha": "856785aaf42220b911e1dc6e28fa2689f1594517"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -581,24 +606,104 @@
       "gitSha": "0cc69e62f149c347c397165d450d78c2fcd87a6b"
     },
     {
+      "path": "assets/js/quiz-admin.js",
+      "bytes": 46407,
+      "gitSha": "479d5f4b2980781e30305e723556d7af18644074"
+    },
+    {
+      "path": "assets/js/quiz-sync.js",
+      "bytes": 38595,
+      "gitSha": "cab33c6a76d07696d369540cfa6501d1197f237b"
+    },
+    {
+      "path": "assets/js/quiz-tableaux-boot.js",
+      "bytes": 2496,
+      "gitSha": "a0533bcf3e77dff86f9a4f54ba0712277f42a356"
+    },
+    {
+      "path": "assets/js/quiz-tableaux.js",
+      "bytes": 29854,
+      "gitSha": "f32f8082a34638f4553c84161b5123bf9f84d8fe"
+    },
+    {
+      "path": "assets/js/rappels-locaux.js",
+      "bytes": 3347,
+      "gitSha": "f45bbdbe1d9a3cd326a72fbf06a4fc6f2eb066f2"
+    },
+    {
+      "path": "assets/js/rayonsx-surligneur.js",
+      "bytes": 52317,
+      "gitSha": "28f030295a8878da01984458c95304bb53eb5a9e"
+    },
+    {
       "path": "assets/js/reprendre.js",
       "bytes": 5415,
       "gitSha": "c78e73e4b44cf5ff9fc30e8859db96732415e323"
     },
     {
+      "path": "assets/js/retour-livre-smart.js",
+      "bytes": 1303,
+      "gitSha": "c8e8045737c7ecdceddc26cd7c4310dba73e2efa"
+    },
+    {
+      "path": "assets/js/roue-couverture.js",
+      "bytes": 11099,
+      "gitSha": "1afd51fefce6400a6fdeef7fc8be652e7afda2c8"
+    },
+    {
+      "path": "assets/js/roue-habillage.js",
+      "bytes": 8034,
+      "gitSha": "32956d16c67551b76c641e25856b22d0059d43b0"
+    },
+    {
+      "path": "assets/js/roue-initiales.js",
+      "bytes": 8439,
+      "gitSha": "b9676c76ba4c80266494ccd29b951e9533a212bb"
+    },
+    {
+      "path": "assets/js/roue-nuage.js",
+      "bytes": 7248,
+      "gitSha": "a94cf6e9d278b8733c84a1422d779f6e3b6f5d67"
+    },
+    {
+      "path": "assets/js/roue-plan.js",
+      "bytes": 8451,
+      "gitSha": "fed6f5ee93765e7c4dd90c62619c811b4c873936"
+    },
+    {
+      "path": "assets/js/roue-revision.js",
+      "bytes": 12983,
+      "gitSha": "1c224927c2f840a7d8ccac689e4dd82b10ba3b7d"
+    },
+    {
       "path": "assets/js/sante.js",
-      "bytes": 8572,
-      "gitSha": "0223a7725a5ee42ab86e174400ca1e4ae6ad5fe6"
+      "bytes": 9414,
+      "gitSha": "0ceab6d51a41c742bc39cfabe6be5d386180b630"
     },
     {
       "path": "assets/js/sauvegarde.js",
-      "bytes": 25986,
-      "gitSha": "6ef1cea98b053338b7ae2a28871cdfd6016e6a84"
+      "bytes": 26492,
+      "gitSha": "1134119b36e00ecaa8b048863c93b89f2638df6b"
     },
     {
       "path": "assets/js/smart-book.js",
       "bytes": 17670,
       "gitSha": "3ccc9621f3967bde4663805850e7beab92bb2a14"
+    },
+    {
+      "path": "assets/js/sql-playground.js",
+      "bytes": 23281,
+      "gitSha": "d3e5736d3d713c42eb3bd82f82242c721dae5fee"
+    },
+    {
+      "path": "assets/js/sqljs/sql-wasm.js",
+      "bytes": 48788,
+      "gitSha": "6ef6c1f54a368431b22dea4da123f1341b4a1780"
+    },
+    {
+      "path": "assets/js/sqljs/sql-wasm.wasm",
+      "bytes": 659806,
+      "gitSha": "f2497a7bff9462c3282784d798eb38f4405d0d6e"
     },
     {
       "path": "assets/js/supabase-umd.js",
@@ -609,6 +714,11 @@
       "path": "assets/js/sync-progressions.js",
       "bytes": 22926,
       "gitSha": "47953609c899247023a81470d3855f24f7914286"
+    },
+    {
+      "path": "assets/pages-couverture.json",
+      "bytes": 4888,
+      "gitSha": "51132725df3e111f7b8e00912fe88c52e52161fd"
     },
     {
       "path": "assets/streams/css3-v302/css3-1080p.m3u8",
@@ -696,6 +806,11 @@
       "gitSha": "e37c891547718ee19c6c8596e25cc74919868e41"
     },
     {
+      "path": "assets/videos/displayanim.mp4",
+      "bytes": 3678655,
+      "gitSha": "3a6e4ea1f215f2aacd1b025b5bf0f1541ca2033f"
+    },
+    {
       "path": "assets/videos/explore-tunisie-flex.mp4",
       "bytes": 13106630,
       "gitSha": "ad304921d3252572a2bc2eb5dfaaf07db4b8397d"
@@ -776,6 +891,11 @@
       "gitSha": "ba96a6a1ed0fb61dcb7c05b8b04fb6947fbe4fd3"
     },
     {
+      "path": "cours/PHP-recap.html",
+      "bytes": 69236,
+      "gitSha": "e49733a4bfbc73c1f32d14948d7e5821e00d932d"
+    },
+    {
       "path": "cours/Recap-JavaScript-STI.html",
       "bytes": 135297,
       "gitSha": "02f2d60619d8d9108dd63db4b3fa39e742128e8e"
@@ -849,6 +969,11 @@
       "path": "cours/sql-contraintes.html",
       "bytes": 301489,
       "gitSha": "06fc51e5a061c0a9c719fc1d55fa7cf830471ef5"
+    },
+    {
+      "path": "cours/sql-playground.html",
+      "bytes": 13690,
+      "gitSha": "d361cf409883b042fe8047dbd20e7c4a1bf06bc3"
     },
     {
       "path": "cours/sql.html",
@@ -1901,6 +2026,11 @@
       "gitSha": "5057f6b6a3ca7cad259c961022c0656c06f06def"
     },
     {
+      "path": "documents/sql/sauvegarde-auto-drive.gs",
+      "bytes": 13492,
+      "gitSha": "a5367bf7bc1184ec3f79c16fe5844fe8b31f618c"
+    },
+    {
       "path": "documents/sql/sti_progressions-admin.sql",
       "bytes": 897,
       "gitSha": "2be96d4e52b6337dba561e93386a588bb976b4cb"
@@ -2271,6 +2401,21 @@
       "gitSha": "af591bb569e1f89c4ea4b41d08d7de4fa5594dcb"
     },
     {
+      "path": "exercices/javascript/js-37-defis-tt.html",
+      "bytes": 95570,
+      "gitSha": "57fdf7767b310a141a189fb02ab0d1f1ce62284d"
+    },
+    {
+      "path": "exercices/javascript/validation-nom-prenom-js.mp4",
+      "bytes": 49095652,
+      "gitSha": "4c53fdda9a9d3d53aae821bb9ef3b99ea6189ab8"
+    },
+    {
+      "path": "exercices/javascript/validation-nom-prenom-js.srt",
+      "bytes": 14883,
+      "gitSha": "6b516d54a5f0cb4dc9226a01c0d42d5f6d2c3909"
+    },
+    {
       "path": "exercices/php/4STi-dc-6-2025-2026.pdf",
       "bytes": 846432,
       "gitSha": "2ce03b158dadcbec35c46332d8e3bd171c31577e"
@@ -2387,8 +2532,13 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 92611,
-      "gitSha": "7fde77b457ea3e82f476027140ba3b4d8410c258"
+      "bytes": 92617,
+      "gitSha": "e8e686c98a3ac22a345cae37564b43a1441e609d"
+    },
+    {
+      "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
+      "bytes": 31367,
+      "gitSha": "d8d4ad96474f5996f932df7c3139064cf8bf2c4a"
     },
     {
       "path": "exercices/sql/Série 4.2 - GestLocation - Corrigé.pdf",
@@ -2488,12 +2638,17 @@
     {
       "path": "index.html",
       "bytes": 197052,
-      "gitSha": "aaf2ce42f8cfec4e1651e7cf42a7acaa34b487dd"
+      "gitSha": "1c723dba2e8a41ea5b248b1b666b9b9f4719a333"
     },
     {
       "path": "livre-smart.html",
       "bytes": 7468,
       "gitSha": "723726a005aa7c02f5a373c6365ff7493f43b2c0"
+    },
+    {
+      "path": "ma-fiche-revision.html",
+      "bytes": 14158,
+      "gitSha": "d25f9a917fb5303ee231044c39f8dbc339db8ba7"
     },
     {
       "path": "manifest.webmanifest",
@@ -2756,6 +2911,26 @@
       "gitSha": "c2df25d3e15d1b2a9659e6247159e39cb2b5770e"
     },
     {
+      "path": "projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf",
+      "bytes": 429055,
+      "gitSha": "89987eadc5266381454bf503d3f073706e6dd6c0"
+    },
+    {
+      "path": "projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf.assets/page-01.jpg",
+      "bytes": 339217,
+      "gitSha": "efaffcdc6595fdfe9b69307c02e19e6dc104b593"
+    },
+    {
+      "path": "projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf.assets/page-02.jpg",
+      "bytes": 158428,
+      "gitSha": "0f7de1da9d3f489183c1cf66e39c84957a8372c6"
+    },
+    {
+      "path": "projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf.html",
+      "bytes": 8088,
+      "gitSha": "20937bf69d3a86a981b3ae59662ee630996d05ce"
+    },
+    {
       "path": "projets/formulaire-inscription/enonce/lycee-rafha-niveau.docx",
       "bytes": 20014,
       "gitSha": "37ee58bc379506e95a1b92218883ad5feb2a351d"
@@ -2911,6 +3086,16 @@
       "gitSha": "58aee1028b9d0e3693767441b81e8d6dbc99bfd4"
     },
     {
+      "path": "projets/sti0/Sondage.html",
+      "bytes": 6625,
+      "gitSha": "6796b6cf8b223fdfbc0d6abfa7275b2709824722"
+    },
+    {
+      "path": "projets/sti0/Statistiques.html",
+      "bytes": 4704,
+      "gitSha": "6843e5a068cfce7512f8fbba680eef93cea25aa6"
+    },
+    {
       "path": "projets/sti0/index.html",
       "bytes": 6967,
       "gitSha": "2063efa84904473f14a5b50b496ee47969ea103c"
@@ -2967,8 +3152,8 @@
     },
     {
       "path": "quiz/javascript.html",
-      "bytes": 1105215,
-      "gitSha": "779b78bafcbf2c1332bd2703d349c30d6f9d7e0c"
+      "bytes": 1105234,
+      "gitSha": "b519c49f97618ca12c79b2e81c40bde0dc5585f5"
     },
     {
       "path": "quiz/php.html",
@@ -2978,12 +3163,22 @@
     {
       "path": "quiz/pp.html",
       "bytes": 2134,
-      "gitSha": "56c0189c7a44c3cb91b4d0258f9711d4b9d6a844"
+      "gitSha": "f885f66411ebee46330315ab0b0be1ff0b6afa71"
     },
     {
       "path": "quiz/sql.html",
       "bytes": 1892212,
       "gitSha": "0f0d82e5604621235a8d0d5c9746bfc0bbd8dc0f"
+    },
+    {
+      "path": "quiz/tableaux.html",
+      "bytes": 9684,
+      "gitSha": "4c782361e535277779d6748f6ac9e7419facca97"
+    },
+    {
+      "path": "revision-erreurs.html",
+      "bytes": 18391,
+      "gitSha": "13ab5b7b6cce9cb34febae2bec0206b839fa9ea4"
     },
     {
       "path": "robots.txt",
@@ -3002,48 +3197,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 76665,
-      "gitSha": "569090eda3785f4908acb6c761f5711980e6144e"
-    },
-    {
-      "path": "assets/js/quiz-tableaux-boot.js",
-      "bytes": 2496,
-      "gitSha": "a0533bcf3e77dff86f9a4f54ba0712277f42a356"
-    },
-    {
-      "path": "assets/pages-couverture.json",
-      "bytes": 4888,
-      "gitSha": "51132725df3e111f7b8e00912fe88c52e52161fd"
-    },
-    {
-      "path": "assets/js/roue-couverture.js",
-      "bytes": 11099,
-      "gitSha": "1afd51fefce6400a6fdeef7fc8be652e7afda2c8"
-    },
-    {
-      "path": "assets/js/roue-revision.js",
-      "bytes": 12983,
-      "gitSha": "1c224927c2f840a7d8ccac689e4dd82b10ba3b7d"
-    },
-    {
-      "path": "assets/js/admin-erreurs.js",
-      "bytes": 16095,
-      "gitSha": "2aab0506e1cebff37864fac2ee9af05b42cf8c70"
-    },
-    {
-      "path": "assets/js/admin-dbsupbase.js",
-      "bytes": 25140,
-      "gitSha": "ff51cd43ca00d6b85b5122a799129a1cd36e663f"
-    },
-    {
-      "path": "README.md",
-      "bytes": 24682,
-      "gitSha": "0c1e124f609322b720b929ca659fbabb5346e6f9"
-    },
-    {
-      "path": "documents/sql/sauvegarde-auto-drive.gs",
-      "bytes": 13492,
-      "gitSha": "a5367bf7bc1184ec3f79c16fe5844fe8b31f618c"
+      "bytes": 77684,
+      "gitSha": "483e0d77460b39e5484dd260589748867f8ff6d9"
     }
   ]
 }

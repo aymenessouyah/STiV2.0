@@ -18,7 +18,7 @@
     javascript: "../cours/javascript.html",
     sql: "../cours/sql.html",
     php: "../cours/php.html",
-    defis: "../defis-javascript.html",
+    defis: "../exercices/javascript/js-37-defis-tt.html",
     "recap-php": "../cours/php.html"
   };
   var app = document.getElementById("qt-app");

@@ -3,14 +3,28 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v327";
+var CACHE = "sti-atelier-v328";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v467-sauvegarde-readme";
-/* Historique caches : sti-atelier-v326 | Historique lots : v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v468-audit-integral";
+/* Historique caches : sti-atelier-v327, sti-atelier-v326 | Historique lots : v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./index.html", revision: "audit-integral-v468" },
+  { url: "./admin.html", revision: "audit-integral-v468" },
+  { url: "./README.md", revision: "audit-integral-v468" },
+  { url: "./exercices/series-exercices.html", revision: "audit-integral-v468" },
+  { url: "./quiz/javascript.html", revision: "audit-integral-v468" },
+  { url: "./quiz/pp.html", revision: "audit-integral-v468" },
+  { url: "./quiz/tableaux.html", revision: "audit-integral-v468" },
+  { url: "./assets/data/nouveautes.json", revision: "audit-integral-v468" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "audit-integral-v468" },
+  { url: "./assets/js/analytique.js", revision: "audit-integral-v468" },
+  { url: "./assets/js/sauvegarde.js", revision: "audit-integral-v468" },
+  { url: "./assets/js/sante.js", revision: "audit-integral-v468" },
+  { url: "./assets/js/quiz-admin.js", revision: "audit-integral-v468" },
+  { url: "./offline-complete-manifest.json", revision: "audit-integral-v468" },
   { url: "./admin.html", revision: "sauvegarde-readme-v467" },
   { url: "./README.md", revision: "sauvegarde-readme-v467" },
   { url: "./quiz/pp.html", revision: "sauvegarde-readme-v467" },

@@ -204,10 +204,10 @@
         "<td><strong style=\"color:#177245\">" + m.score + "/" + m.total + "</strong> (" + pct(m) + " %)</td>" +
         "<td style=\"text-align:center\">" + g.pctMoyen + " %</td>" +
         "<td style=\"text-align:center\">▸</td></tr>" +
-        '<tr class="quiz-sync-detail" id="quiz-sync-detail-' + idx + '" style="display:none"><td colspan="8" style="background:#f9f1e3;font-size:12.5px;line-height:1.7">' +
+        '<tr class="quiz-sync-detail" id="quiz-sync-detail-' + idx + '" style="display:none"><td colspan="8" style="background:var(--adm-surface-2,#f9f1e3);color:var(--adm-text,#23201a);font-size:12.5px;line-height:1.7">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">' +
           "<strong>📋 Toutes les parties (" + g.nb + ") :</strong>" +
-          '<button type="button" class="btn-purger-quiz-eleve" data-uid="' + esc(g.rep.user_id) + '" data-quiz="' + esc(g.rep.quiz) + '" data-module="' + esc(modAttr) + '" data-label="' + esc(nomEleve(g.rep) + " — " + nomQuiz(g.rep)) + '" style="border:1.5px solid #c0392b;border-radius:999px;padding:3px 10px;background:#fffdf7;color:#c0392b;font-weight:800;font-size:11.5px;cursor:pointer">🗑️ Purger ce quiz</button>' +
+          '<button type="button" class="btn-purger-quiz-eleve" data-uid="' + esc(g.rep.user_id) + '" data-quiz="' + esc(g.rep.quiz) + '" data-module="' + esc(modAttr) + '" data-label="' + esc(nomEleve(g.rep) + " — " + nomQuiz(g.rep)) + '" style="border:1.5px solid #c0392b;border-radius:999px;padding:3px 10px;background:var(--adm-surface,#fffdf7);color:#c0392b;font-weight:800;font-size:11.5px;cursor:pointer">🗑️ Purger ce quiz</button>' +
           "</div>" + detail + questionsRateesEleve(g.rep.user_id, g.rep.quiz, g.rep.module) + "</td></tr>";
     }).join("");
     tb.querySelectorAll("tr[data-idx]").forEach(function (tr) {
@@ -273,8 +273,8 @@
     if (!zone || !donnees) return;
     document.querySelectorAll(".btn-vue-quiz").forEach(function (b) {
       var actif = b.getAttribute("data-vue") === vueActuelle;
-      b.style.background = actif ? "#23201a" : "#fffdf7";
-      b.style.color = actif ? "#fffdf7" : "#23201a";
+      b.style.background = actif ? "var(--adm-accent,#23201a)" : "var(--adm-surface,#fffdf7)";
+      b.style.color = actif ? "#ffffff" : "var(--adm-text,#23201a)";
     });
     if (vueActuelle === "jours") zone.innerHTML = vueJours();
     else if (vueActuelle === "alertes") { zone.innerHTML = vueAlertes(); brancherClasses(zone); brancherNoms(zone); }
@@ -344,9 +344,9 @@
       var top = g.eleves.slice().sort(function (a, b) {
         return (b.pctMoyen - a.pctMoyen) || (b.nb - a.nb);
       }).slice(0, 3);
-      h += '<div style="border:2px solid #23201a;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:0 0 10px">' +
+      h += '<div style="border:2px solid var(--adm-border-strong,#23201a);border-radius:14px;background:var(--adm-surface,#fffdf7);color:var(--adm-text,#23201a);padding:10px 14px;margin:0 0 10px">' +
         '<div data-classe="' + i + '" style="cursor:pointer;font-weight:900;font-size:14px" title="Ouvrir le détail de cette classe">🏫 ' + esc(g.classe) +
-        ' <span style="font-size:11px;color:#7a6f5d;font-weight:700">(' + g.eleves.length + " élève(s), " + g.parties + " partie(s)) — ouvrir ▸</span></div>";
+        ' <span style="font-size:11px;color:var(--adm-muted,#7a6f5d);font-weight:700">(' + g.eleves.length + " élève(s), " + g.parties + " partie(s)) — ouvrir ▸</span></div>";
       h += top.map(function (e, r) {
         return '<div style="display:flex;gap:8px;align-items:center;padding:4px 0;font-size:13px">' +
           '<span style="font-size:17px">' + medailles[r] + "</span>" +
@@ -389,7 +389,7 @@
     }
     var h = "";
     /* — en difficulte — */
-    h += '<div style="border:2px solid #c0392b;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:0 0 10px">' +
+    h += '<div style="border:2px solid #c0392b;border-radius:14px;background:var(--adm-surface,#fffdf7);color:var(--adm-text,#23201a);padding:10px 14px;margin:0 0 10px">' +
       '<strong style="color:#c0392b">🔴 En difficulté (% moyen &lt; 50 %, au moins 2 parties) : ' + difficulte.length + "</strong>";
     if (difficulte.length) {
       h += '<div class="table-wrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Parties</th><th>% moyen</th><th>Dernier score</th></tr></thead><tbody>';
@@ -400,13 +400,13 @@
           "<td>" + esc(e.classe) + "</td>" +
           '<td style="text-align:center;font-weight:800">' + e.nb + "</td>" +
           '<td style="text-align:center;font-weight:900;color:#c0392b">' + e.pctMoyen + " %</td>" +
-          "<td>" + e.dernier.score + "/" + e.dernier.total + " (" + pct(e.dernier) + ' %)<div style="font-size:11px;color:#7a6f5d">' + esc(fmtDate(e.dernier.cree_le)) + "</div></td></tr>";
+          "<td>" + e.dernier.score + "/" + e.dernier.total + " (" + pct(e.dernier) + ' %)<div style="font-size:11px;color:var(--adm-muted,#7a6f5d)">' + esc(fmtDate(e.dernier.cree_le)) + "</div></td></tr>";
       });
       h += "</tbody></table></div>";
     } else h += '<p style="font-size:12.5px;color:#177245;margin:6px 0 2px">✅ Aucun élève en difficulté. Bravo !</p>';
     h += "</div>";
     /* — inactifs — */
-    h += '<div style="border:2px solid #e67e22;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:0 0 10px">' +
+    h += '<div style="border:2px solid #e67e22;border-radius:14px;background:var(--adm-surface,#fffdf7);color:var(--adm-text,#23201a);padding:10px 14px;margin:0 0 10px">' +
       '<strong style="color:#b95f06">😴 Inactifs depuis 7 jours ou plus : ' + inactifs.length + "</strong>";
     if (inactifs.length) {
       h += '<div class="table-wrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Dernière partie</th><th>Inactivité</th><th>% moyen</th></tr></thead><tbody>';
@@ -423,7 +423,7 @@
     } else h += '<p style="font-size:12.5px;color:#177245;margin:6px 0 2px">✅ Tous les élèves actifs ont joué cette semaine.</p>';
     h += "</div>";
     /* — jamais joue — */
-    h += '<div style="border:2px solid #23201a;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:0 0 12px">' +
+    h += '<div style="border:2px solid var(--adm-border-strong,#23201a);border-radius:14px;background:var(--adm-surface,#fffdf7);color:var(--adm-text,#23201a);padding:10px 14px;margin:0 0 12px">' +
       '<strong>🌱 Inscrits n\'ayant jamais joué : ' + jamais.length + "</strong>";
     if (jamais.length) {
       h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">' +
@@ -542,7 +542,7 @@
 
   function vueQuestions() {
     if (reponses === null) {
-      return '<div style="border:2px dashed #c0392b;border-radius:14px;background:#fffdf7;padding:12px 14px;margin:0 0 12px">' +
+      return '<div style="border:2px dashed #c0392b;border-radius:14px;background:var(--adm-surface,#fffdf7);color:var(--adm-text,#23201a);padding:12px 14px;margin:0 0 12px">' +
         "<strong>⚠️ Analyse par question pas encore active.</strong>" +
         '<p style="font-size:12.5px;margin:6px 0 0">Exécutez <strong>MIGRATION-v365-REPONSES.sql</strong> dans Supabase (SQL Editor), puis cliquez sur « ↻ Actualiser ». Les nouvelles parties des élèves enverront alors le détail question par question.</p></div>';
     }
@@ -570,7 +570,7 @@
     questionsAffichees = toutes.filter(function (g) { return g.tentatives >= 2 && g.echecs > 0; })
       .sort(function (a, b) { return (b.nonMaitrises - a.nonMaitrises) || (b.pctEchec - a.pctEchec) || (b.tentatives - a.tentatives); }).slice(0, 40);
     var h = '<div style="margin:0 0 8px">' + synthese + "</div>" +
-      '<label style="font-size:12.5px;font-weight:800">Quiz : <select id="filtre-questions-quiz" style="border:2px solid #23201a;border-radius:999px;padding:5px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px">' + options + "</select></label>";
+      '<label style="font-size:12.5px;font-weight:800">Quiz : <select id="filtre-questions-quiz" style="border:2px solid var(--adm-border-strong,#23201a);border-radius:999px;padding:5px 12px;background:var(--adm-surface,#fffdf7);color:var(--adm-text,#23201a);font-weight:800;font-size:12px">' + options + "</select></label>";
     if (!questionsAffichees.length) {
       return h + '<p style="color:#7a6f5d;font-size:12.5px;margin-top:8px">Pas encore de question assez répondue (au moins 2 tentatives) avec des échecs.</p>';
     }
@@ -633,7 +633,7 @@
         return (b.nb - a.nb) || (new Date(b.derniere) - new Date(a.derniere));
       });
     if (!eleves.length) { dest.innerHTML = ""; return; }
-    dest.innerHTML = '<div style="border:2px solid #c0392b;border-radius:14px;background:#fffdf7;padding:10px 14px;margin:8px 0 12px">' +
+    dest.innerHTML = '<div style="border:2px solid #c0392b;border-radius:14px;background:var(--adm-surface,#fffdf7);color:var(--adm-text,#23201a);padding:10px 14px;margin:8px 0 12px">' +
       '<strong style="color:#c0392b">❌ Élèves ayant échoué sur cette question (' + eleves.length + ")</strong>" +
       '<p style="font-size:12.5px;margin:4px 0 8px">« ' + esc((g.enonce || "").slice(0, 160)) + " »</p>" +
       '<div class="table-wrap"><table><thead><tr><th>Élève</th><th>Classe</th><th>Échecs</th><th>Statut actuel</th><th>Dernier échec</th></tr></thead><tbody>' +
@@ -750,11 +750,11 @@
     if (!g) { zone.style.display = "none"; classeOuverte = null; return; }
     zone.style.display = "";
     var eleves = g.eleves.slice().sort(function (a, b) { return (b.pctMoyen - a.pctMoyen) || (b.nb - a.nb); });
-    var h = '<div style="border:2.5px solid #1f4257;border-radius:14px;background:#fffdf7;padding:12px 14px;margin:14px 0">' +
+    var h = '<div style="border:2.5px solid var(--adm-border-strong,#1f4257);border-radius:14px;background:var(--adm-surface,#fffdf7);color:var(--adm-text,#23201a);padding:12px 14px;margin:14px 0">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">' +
       '<strong style="font-size:15px">🏫 Détail quiz — classe ' + esc(g.classe) + "</strong>" +
-      '<button type="button" id="btn-fermer-vue-quiz-classe" style="border:2px solid #23201a;border-radius:999px;padding:4px 12px;background:#fffdf7;color:#23201a;font-weight:800;font-size:12px;cursor:pointer">✕ Fermer</button></div>' +
-      '<p style="font-size:12px;color:#7a6f5d;margin:6px 0 10px">' + g.eleves.length + " élève(s) actifs · " + g.parties + " partie(s) · % moyen " + g.pctMoyen + " %. Cliquez sur un candidat pour le détail de ses parties.</p>" +
+      '<button type="button" id="btn-fermer-vue-quiz-classe" style="border:2px solid var(--adm-border-strong,#23201a);border-radius:999px;padding:4px 12px;background:var(--adm-surface-2,#fffdf7);color:var(--adm-text,#23201a);font-weight:800;font-size:12px;cursor:pointer">✕ Fermer</button></div>' +
+      '<p style="font-size:12px;color:var(--adm-muted,#7a6f5d);margin:6px 0 10px">' + g.eleves.length + " élève(s) actifs · " + g.parties + " partie(s) · % moyen " + g.pctMoyen + " %. Cliquez sur un candidat pour le détail de ses parties.</p>" +
       '<div class="table-wrap"><table><thead><tr><th>Candidat</th><th>Parties</th><th>Dernier score</th><th>Meilleur score</th><th>% moyen</th><th></th></tr></thead><tbody>';
     eleves.forEach(function (e, i) {
       var det = e.parties.map(function (l) {
@@ -762,14 +762,14 @@
       }).join("");
       h += '<tr data-eleve="' + i + '" style="cursor:pointer">' +
         '<td style="font-weight:800">' + esc(nomEleve(e.rep)) +
-          '<div style="font-weight:600;font-size:11px;color:#7a6f5d">' + esc(e.rep.email || "") + "</div></td>" +
+          '<div style="font-weight:600;font-size:11px;color:var(--adm-muted,#7a6f5d)">' + esc(e.rep.email || "") + "</div></td>" +
         '<td style="text-align:center;font-weight:800">' + e.nb + "</td>" +
-        "<td><strong>" + e.dernier.score + "/" + e.dernier.total + "</strong> (" + pct(e.dernier) + ' %)<div style="font-size:11px;color:#7a6f5d">' + esc(fmtDate(e.dernier.cree_le)) + "</div></td>" +
+        "<td><strong>" + e.dernier.score + "/" + e.dernier.total + "</strong> (" + pct(e.dernier) + ' %)<div style="font-size:11px;color:var(--adm-muted,#7a6f5d)">' + esc(fmtDate(e.dernier.cree_le)) + "</div></td>" +
         '<td><strong style="color:#177245">' + e.meilleur.score + "/" + e.meilleur.total + "</strong> (" + pct(e.meilleur) + " %)</td>" +
         '<td style="text-align:center">' + e.pctMoyen + " %" +
           (e.nb > 1 ? '<div style="font-size:11px;font-weight:800;color:' + (e.delta > 0 ? "#177245" : (e.delta < 0 ? "#c0392b" : "#7a6f5d")) + '">Δ ' + (e.delta > 0 ? "+" : "") + e.delta + " pt</div>" : "") + "</td>" +
         '<td style="text-align:center">▸</td></tr>' +
-        '<tr class="detail-eleve-classe" id="detail-eleve-' + i + '" style="display:none"><td colspan="6" style="background:#f9f1e3;font-size:12.5px;line-height:1.7"><strong>📋 Parties (' + e.nb + ") :</strong>" + det + "</td></tr>";
+        '<tr class="detail-eleve-classe" id="detail-eleve-' + i + '" style="display:none"><td colspan="6" style="background:var(--adm-surface-2,#f9f1e3);color:var(--adm-text,#23201a);font-size:12.5px;line-height:1.7"><strong>📋 Parties (' + e.nb + ") :</strong>" + det + "</td></tr>";
     });
     h += "</tbody></table></div></div>";
     zone.innerHTML = h;

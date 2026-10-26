@@ -4,8 +4,8 @@ Plateforme éducative interactive dédiée aux **Sciences et Technologies de l'I
 
 > 🌐 **Site en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : GitHub Pages (HTML/CSS/JS statique) + Supabase (Auth, PostgreSQL + RLS sur 15 tables) + PWA 100 % hors-ligne (`sw.js` `sti-atelier-v327`)
-> 📌 **Version active** : **v467** (`sti-atelier-v327` — 26 octobre 2026)
+> 🏗️ **Architecture** : GitHub Pages (HTML/CSS/JS statique) + Supabase (Auth, PostgreSQL + RLS sur 15 tables) + PWA 100 % hors-ligne (`sw.js` `sti-atelier-v328`)
+> 📌 **Version active** : **v468** (`sti-atelier-v328` — 26 octobre 2026)
 
 ---
 
@@ -227,7 +227,8 @@ Harmonisées sur **100 % des supports** (cours, Smart Books, séries d'exercices
 | v464 | Correctifs E2E : purges quota sécurisées, WhatsApp sans numéro, couverture signets/chapitres et sauvegarde `labo_devices` |
 | v465 | Navigation retour ultra-fluide 0 ms via `bfcache` vers `index.html` sans rechargement et suppression du prérendu lourd |
 | v466 | Module `DBSupbase` (niveau exact des 15 tables / 1 000 lignes via RPC) et bulle d'installation PWA limitée à la 1re visite |
-| v467 | Sauvegarde automatique quotidienne des 15 tables vers Google Drive (`.json.gz`), retours `bfcache` sur `series-exercices` + `pp.html` et refonte des README |
+| v467 | Sauvegarde automatique quotidienne des 15 tables vers Google Drive (`.json.gz`), retours `bfcache` sur `series-exercices` + `pp.html` et refonte des README (`sti-atelier-v327`) |
+| v468 | Audit intégral : liens Défis JS réparés (`javascript.html` & `quiz-tableaux.js`), pagination > 1 000 lignes dans `analytique.js`, contraste multi-univers (`sauvegarde`, `sante`, `analytique`, `quiz-admin`) et journal `nouveautes.json` à jour (`sti-atelier-v328`) |
 
 ---
 

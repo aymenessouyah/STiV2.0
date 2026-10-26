@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import vm from 'node:vm';
@@ -1830,7 +1830,7 @@ test('v458 : révision approfondie Quiz Phase 2 — assainissement intégral qui
   ]) {
     assert.match(content, /quiz-sync\.js\?v=4(58|59|60)/, `${name} doit charger quiz-sync.js?v=458+`);
   }
-  assert.match(tabHtml, /quiz-tableaux\.js\?v=4(58|59|60)/);
+  assert.match(tabHtml, /quiz-tableaux\.js\?v=4\d{2}/);
   assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}"/);
   assert.match(swJs, /v458-quiz-revision-2/);
 });
@@ -3627,7 +3627,7 @@ test('v467 (structure) : quiz/pp.html charge config.js, sauvegarde complète 15 
 
   // Point 4 : quiz/pp.html charge config.js et conserve le lien retour #modules + config.js gère series-exercices.html
   assert.match(ppHtml, /<a class="sec" href="\.\.\/index\.html#modules">/);
-  assert.match(ppHtml, /<script src="\.\.\/assets\/js\/config\.js\?v=467"><\/script>/);
+  assert.match(ppHtml, /<script src="\.\.\/assets\/js\/config\.js\?v=4\d{2}"><\/script>/);
   assert.match(configJs, /estUrlSeriesExercices/);
   assert.match(configJs, /sti-retour-series-hash/);
   assert.match(configJs, /sti-series-restored/);
@@ -3637,19 +3637,19 @@ test('v467 (structure) : quiz/pp.html charge config.js, sauvegarde complète 15 
   assert.match(migSql, /IF NOT public\.est_admin\(\) THEN/);
   assert.doesNotMatch(migSql, /SELECT[^\n]*secret_hash/i);
   assert.match(adminHtml, /connect-src[^;]*https:\/\/script\.google\.com\s+https:\/\/script\.googleusercontent\.com/);
-  assert.match(adminHtml, /assets\/js\/config\.js\?v=467/);
-  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=467/);
+  assert.match(adminHtml, /assets\/js\/config\.js\?v=4\d{2}/);
+  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=4\d{2}/);
   assert.match(sauvJs, /admin_sauvegarde_tables_annexes/);
   assert.match(sauvJs, /text\/plain;charset=utf-8/);
   assert.match(gsCode, /sauvegardeQuotidienne/);
   assert.match(gsCode, /everyDays\(1\)/);
 
-  // Point 9 : README.md (compatible cote-ticker.js) + #modal-readme dans admin.html + sw.js sti-atelier-v327
+  // Point 9 : README.md (compatible cote-ticker.js) + #modal-readme dans admin.html + sw.js sti-atelier-v327+
   assert.match(readmeMd, /sti-atelier-v327/);
   assert.match(readmeMd, /v467/);
   const tickerLines = readmeMd.split('\n').filter((l) => /^\|\s*v\d{3}/.test(l));
   assert.ok(tickerLines.length >= 5, 'README.md doit exposer au moins 5 lignes | vNNN | pour cote-ticker.js');
-  assert.match(tickerLines[tickerLines.length - 1], /^\|\s*v467\s*\|/);
+  assert.ok(tickerLines.some((l) => /^\|\s*v467\s*\|/.test(l)));
 
   const mModal = adminHtml.match(/id="modal-readme"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/);
   assert.ok(mModal, '#modal-readme présent dans admin.html');
@@ -3659,9 +3659,9 @@ test('v467 (structure) : quiz/pp.html charge config.js, sauvegarde complète 15 
   assert.match(adminHtml, /background:#f9f1e3/);
   assert.match(adminHtml, /color:#d84315/);
   assert.match(adminHtml, /background:#f3ead9/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v327";/);
-  assert.match(swJs, /var UPDATE_ID = "v467-sauvegarde-readme";/);
-  assert.equal(offlineManifest.version, 'v467-sauvegarde-readme');
+  assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}";/);
+  assert.match(swJs, /v467-sauvegarde-readme/);
+  assert.match(offlineManifest.version, /^v4\d{2}-/);
   assert.ok(offlineManifest.files.some((f) => f.path === 'documents/sql/sauvegarde-auto-drive.gs'));
   assert.ok(offlineManifest.files.some((f) => f.path === 'README.md'));
 });
@@ -4073,6 +4073,221 @@ test('v467 (comportemental VM) : retour bfcache 0 ms vers series-exercices.html 
   assert.equal(sentBody.access_token, 'admin-jwt-browser-token');
   assert.ok(lsStore.get('sti-drive-last-sync-v467'));
 });
+
+test('v468 (structure) : liens Défis JS corrigés (zéro 404 defis-javascript.html), contraste multi-univers (sauvegarde, sante, analytique, quiz-admin), nouveautes.json à jour et sw.js sti-atelier-v328', () => {
+  const jsQuizHtml = read('quiz/javascript.html');
+  const tabJs = read('assets/js/quiz-tableaux.js');
+  const tabHtml = read('quiz/tableaux.html');
+  const anaJs = read('assets/js/analytique.js');
+  const sauvJs = read('assets/js/sauvegarde.js');
+  const santeJs = read('assets/js/sante.js');
+  const quizAdminJs = read('assets/js/quiz-admin.js');
+  const nouveautesJson = JSON.parse(read('assets/data/nouveautes.json'));
+  const adminHtml = read('admin.html');
+  const readmeMd = read('README.md');
+  const swJs = read('sw.js');
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  for (const rel of [
+    'assets/js/quiz-tableaux.js',
+    'assets/js/analytique.js',
+    'assets/js/sauvegarde.js',
+    'assets/js/sante.js',
+    'assets/js/quiz-admin.js',
+    'sw.js',
+  ]) {
+    execFileSync(process.execPath, ['--check', join(root, rel)], { stdio: 'pipe' });
+  }
+
+  // 1) Zéro lien 404 defis-javascript.html dans quiz/javascript.html et quiz-tableaux.js
+  assert.doesNotMatch(jsQuizHtml, /defis-javascript\.html/);
+  assert.doesNotMatch(tabJs, /defis-javascript\.html/);
+  assert.match(jsQuizHtml, /\.\.\/exercices\/javascript\/js-37-defis-tt\.html/);
+  assert.match(tabJs, /defis:\s*"\.\.\/exercices\/javascript\/js-37-defis-tt\.html"/);
+  assert.ok(existsSync(join(root, 'exercices/javascript/js-37-defis-tt.html')));
+  assert.match(tabHtml, /quiz-tableaux\.js\?v=468/);
+
+  // 2) Contraste multi-univers (Clair / Sombre / Cyber / Spotify) via variables CSS --adm-*
+  assert.match(sauvJs, /background:var\(--adm-surface,#fffdf7\)/);
+  assert.match(sauvJs, /color:var\(--adm-text,#1a1a2e\)/);
+  assert.match(santeJs, /background:var\(--adm-surface,#fffdf7\)/);
+  assert.match(santeJs, /Comic Sans MS/);
+  assert.match(anaJs, /background:var\(--adm-surface,#fffdf7\)/);
+  assert.match(anaJs, /chargerTablePaginee/);
+  assert.doesNotMatch(anaJs, /limit=5000|limit=10000/);
+  assert.match(quizAdminJs, /var\(--adm-surface,#fffdf7\)/);
+  assert.match(quizAdminJs, /var\(--adm-surface-2,#f9f1e3\)/);
+
+  // 3) nouveautes.json à jour jusqu'à v468 et 100 % des liens valides sur disque
+  for (const ver of ['v468', 'v467', 'v466', 'v465', 'v460']) {
+    assert.ok(nouveautesJson.some((n) => n.version === ver), `nouveautes.json doit inclure ${ver}`);
+  }
+  for (const item of nouveautesJson) {
+    if (item.lien && !item.lien.startsWith('http')) {
+      const cleanRel = item.lien.split('#')[0].split('?')[0];
+      assert.ok(existsSync(join(root, cleanRel)), `Lien nouveautes.json introuvable : ${item.lien}`);
+    }
+  }
+
+  // 4) Cache-busters v468 + README + sw.js sti-atelier-v328 + offline-complete-manifest.json
+  assert.match(adminHtml, /assets\/js\/config\.js\?v=468/);
+  assert.match(adminHtml, /assets\/js\/quiz-admin\.js\?v=468/);
+  assert.match(adminHtml, /assets\/js\/analytique\.js\?v=468/);
+  assert.match(adminHtml, /assets\/js\/sauvegarde\.js\?v=468/);
+  assert.match(adminHtml, /assets\/js\/sante\.js\?v=468/);
+  assert.match(readmeMd, /sti-atelier-v328/);
+  const tickerLines = readmeMd.split('\n').filter((l) => /^\|\s*v\d{3}/.test(l));
+  assert.match(tickerLines[tickerLines.length - 1], /^\|\s*v468\s*\|/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v328";/);
+  assert.match(swJs, /var UPDATE_ID = "v468-audit-integral";/);
+  assert.equal(offlineManifest.version, 'v468-audit-integral');
+  assert.equal(offlineManifest.totalFiles, offlineManifest.files.length);
+  for (const mf of offlineManifest.files) {
+    assert.ok(!mf.path.startsWith('"'), `Chemin manifeste mal échappé : ${mf.path}`);
+    assert.ok(existsSync(join(root, mf.path)), `Fichier offline-complete-manifest.json introuvable : ${mf.path}`);
+  }
+  for (const mustHave of [
+    'cours/sql-playground.html',
+    'assets/js/sqljs/sql-wasm.wasm',
+    'exercices/javascript/js-37-defis-tt.html',
+    'exercices/sql/CommentConstruireunerequêteSQL.html',
+    'ma-fiche-revision.html',
+    'revision-erreurs.html',
+    'projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf.html',
+  ]) {
+    assert.ok(offlineManifest.files.some((f) => f.path === mustHave), `${mustHave} doit figurer dans offline-complete-manifest.json`);
+  }
+});
+
+test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgREST de 1 000 lignes et cote-ticker.js extrait v468 depuis README.md', async () => {
+  const anaJs = read('assets/js/analytique.js');
+  const readmeMd = read('README.md');
+
+  // 1) Simulation de 2 350 lignes dans sti_quiz_parties (3 tranches : 1000 + 1000 + 350)
+  const totalParties = 2350;
+  const allParties = Array.from({ length: totalParties }, (_, i) => ({
+    id: i + 1,
+    user_id: i < 1500 ? 'eleve-1' : 'eleve-2',
+    quiz: 'javascript',
+    score: 16,
+    total: 20,
+  }));
+  const fetchUrls = [];
+  const domNodes = new Map();
+  const bodyChildren = [];
+  const makeEl = (tag) => ({
+    tagName: String(tag || 'div').toUpperCase(),
+    id: '',
+    type: '',
+    textContent: '',
+    innerHTML: '',
+    style: {},
+    parentNode: null,
+    attributes: {},
+    listeners: {},
+    setAttribute(k, v) { this.attributes[k] = String(v); },
+    addEventListener(ev, fn) { (this.listeners[ev] ||= []).push(fn); },
+    remove() {
+      if (this.id) domNodes.delete(this.id);
+      this.parentNode = null;
+    },
+  });
+
+  const anaCtx = vm.createContext({
+    console,
+    Date,
+    Math,
+    JSON,
+    Number,
+    String,
+    Object,
+    Array,
+    Promise,
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'pub-key' },
+    localStorage: {
+      length: 1,
+      key: (i) => (i === 0 ? 'sb-vywujxmepvcbgedgmger-auth-token' : null),
+      getItem: () => JSON.stringify({ access_token: 'admin-jwt' }),
+    },
+    fetch: async (url) => {
+      const u = String(url);
+      fetchUrls.push(u);
+      const parsed = new URL(u);
+      const limit = Number(parsed.searchParams.get('limit') || '1000');
+      const offset = Number(parsed.searchParams.get('offset') || '0');
+      const slice = allParties.slice(offset, offset + limit);
+      return { ok: true, status: 200, json: async () => slice };
+    },
+    document: {
+      readyState: 'complete',
+      body: {
+        appendChild(el) {
+          el.parentNode = this;
+          bodyChildren.push(el);
+          if (el.id) domNodes.set(el.id, el);
+          return el;
+        },
+      },
+      createElement: makeEl,
+      getElementById: (id) => domNodes.get(id) || null,
+      addEventListener() {},
+      removeEventListener() {},
+    },
+  });
+  anaCtx.window = anaCtx;
+
+  vm.runInContext(anaJs, anaCtx, { filename: 'assets/js/analytique.js' });
+  assert.ok(anaCtx.STI_ANALYTIQUE && typeof anaCtx.STI_ANALYTIQUE.chargerTablePaginee === 'function');
+
+  const rows = await anaCtx.STI_ANALYTIQUE.chargerTablePaginee(
+    'https://vywujxmepvcbgedgmger.supabase.co/rest/v1/sti_quiz_parties?select=user_id,quiz,score,total&order=id.asc',
+    { apikey: 'pub-key', Authorization: 'Bearer admin-jwt' },
+    false
+  );
+  assert.equal(rows.length, 2350, 'Les 3 pages (1000 + 1000 + 350) doivent être concaténées sans troncature à 1 000');
+  assert.equal(fetchUrls.length, 3);
+  assert.match(fetchUrls[0], /limit=1000&offset=0$/);
+  assert.match(fetchUrls[1], /limit=1000&offset=1000$/);
+  assert.match(fetchUrls[2], /limit=1000&offset=2000$/);
+
+  const htmlRendu = anaCtx.STI_ANALYTIQUE.analyser(
+    [
+      {
+        user_id: 'eleve-1',
+        email: 'sara@eleve.tn',
+        maj: '2026-10-26T08:00:00Z',
+        donnees: { 'sti-pages-vues-v432': { 'cours/javascript.html': 1, 'exercices/javascript/js-37-defis-tt.html': 1 } },
+      },
+      {
+        user_id: 'eleve-2',
+        email: 'rami@eleve.tn',
+        maj: '2026-10-26T08:05:00Z',
+        donnees: { 'sti-pages-vues-v432': { 'cours/sql.html': 1 } },
+      },
+    ],
+    [
+      { id: 'eleve-1', email: 'sara@eleve.tn', nom: 'Ben Ali', prenom: 'Sara', classe: '4SI1', statut: 'actif' },
+      { id: 'eleve-2', email: 'rami@eleve.tn', nom: 'Trabelsi', prenom: 'Rami', classe: '3SI2', statut: 'actif' },
+    ],
+    rows
+  );
+  assert.match(htmlRendu, /1500/);
+  assert.match(htmlRendu, /850/);
+  assert.match(htmlRendu, /var\(--adm-border-strong,#1a1a2e\)/);
+
+  // 2) Vérification exacte de l'algorithme de parsing de cote-ticker.js sur README.md
+  const lignes = readmeMd.split('\n').filter((l) => /^\|\s*v\d{3}/.test(l));
+  const cinq = lignes.slice(-5).reverse().map((l) => {
+    const cel = l.split('|');
+    const ver = (cel[1] || '').trim();
+    let desc = (cel[2] || '').replace(/[*`]/g, '').replace(/\s+/g, ' ').trim();
+    if (desc.length > 92) desc = desc.slice(0, 89) + '…';
+    return { t: `${ver} — ${desc}`, c: '#fbbf24' };
+  }).filter((o) => o.t.length > 8);
+  assert.equal(cinq.length, 5);
+  assert.match(cinq[0].t, /^v468 — Audit intégral/);
+});
+
 
 
 

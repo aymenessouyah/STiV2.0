@@ -122,31 +122,59 @@
     var html = "<p><b>" + eleves.length + " élève(s)</b> disposent d'une progression synchronisée dans le cloud.</p>";
 
     if (clesMed.length) {
-      html += "<h3>🎬🔊 Vidéos (.mp4) &amp; Audios (.mp3) — avancement moyen</h3><table style='border-collapse:collapse;width:100%;margin-bottom:14px'><tr><th style='text-align:left;border-bottom:2px solid #1a1a2e;padding:6px'>Média</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>Avancement</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>Détail</th></tr>";
+      html += "<h3>🎬🔊 Vidéos (.mp4) &amp; Audios (.mp3) — avancement moyen</h3><table style='border-collapse:collapse;width:100%;margin-bottom:14px'><tr><th style='text-align:left;border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>Média</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>Avancement</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>Détail</th></tr>";
       clesMed.forEach(function (k) {
         var moy = Math.round(medias[k][0] / Math.max(1, medias[k][1]));
         var ico = k.indexOf("audio:") === 0 ? "🔊 " : "🎬 ";
-        html += "<tr><td style='padding:6px;border-bottom:1px solid #ddd'><b>" + ico + ech(k.replace(/^(video|audio):/, "")) + "</b></td><td style='padding:6px;border-bottom:1px solid #ddd'>" + barre(moy) + "</td><td style='padding:6px;border-bottom:1px solid #ddd'><b>" + moy + " %</b> (" + medias[k][1] + " élève(s))</td></tr>";
+        html += "<tr><td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd)'><b>" + ico + ech(k.replace(/^(video|audio):/, "")) + "</b></td><td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd)'>" + barre(moy) + "</td><td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd)'><b>" + moy + " %</b> (" + medias[k][1] + " élève(s))</td></tr>";
       });
       html += "</table>";
     }
 
-    html += "<h3>👥 Détail complet par élève (Pages · Cours · Exercices · Vidéos · Audios · Quiz)</h3><div style='overflow-x:auto'><table style='border-collapse:collapse;width:100%;font-size:13px'><tr><th style='text-align:left;border-bottom:2px solid #1a1a2e;padding:6px'>Élève</th><th style='text-align:left;border-bottom:2px solid #1a1a2e;padding:6px'>Classe</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>📄 Pages</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>📚 Cours</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>✏️ Exos</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>🎬 Vidéos</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>🔊 Audios</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>🎯 Quiz</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>Indice global</th><th style='border-bottom:2px solid #1a1a2e;padding:6px'>Dernière synchro</th></tr>";
+    html += "<h3>👥 Détail complet par élève (Pages · Cours · Exercices · Vidéos · Audios · Quiz)</h3><div style='overflow-x:auto'><table style='border-collapse:collapse;width:100%;font-size:13px'><tr><th style='text-align:left;border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>Élève</th><th style='text-align:left;border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>Classe</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>📄 Pages</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>📚 Cours</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>✏️ Exos</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>🎬 Vidéos</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>🔊 Audios</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>🎯 Quiz</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>Indice global</th><th style='border-bottom:2px solid var(--adm-border-strong,#1a1a2e);padding:6px'>Dernière synchro</th></tr>";
     eleves.sort(function (a, b) { return b.pct - a.pct || b.nbPages - a.nbPages; }).forEach(function (e) {
       html += "<tr>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd'><b>" + ech(e.nom) + "</b></td>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd'>" + ech(e.classe) + "</td>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd;text-align:center'><b>" + e.nbPages + "</b>/" + TOTAL_PAGES_SITE + "</td>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd;text-align:center'><b>" + e.nbCours + "</b></td>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd;text-align:center'><b>" + e.nbExos + "</b></td>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd;text-align:center'><b>" + e.nbVid + "</b>/" + TOTAL_VIDEOS_SITE + "</td>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd;text-align:center'><b>" + e.nbAud + "</b>/" + TOTAL_AUDIOS_SITE + "</td>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd;text-align:center'><b>" + e.nbQuiz + "</b></td>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd'>" + barre(e.pct) + "<small style='font-weight:800'>" + e.pct + " %</small></td>" +
-        "<td style='padding:6px;border-bottom:1px solid #ddd;font-size:11.5px'>" + (e.maj ? ech(new Date(e.maj).toLocaleString("fr-FR")) : "—") + "</td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd)'><b>" + ech(e.nom) + "</b></td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd)'>" + ech(e.classe) + "</td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd);text-align:center'><b>" + e.nbPages + "</b>/" + TOTAL_PAGES_SITE + "</td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd);text-align:center'><b>" + e.nbCours + "</b></td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd);text-align:center'><b>" + e.nbExos + "</b></td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd);text-align:center'><b>" + e.nbVid + "</b>/" + TOTAL_VIDEOS_SITE + "</td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd);text-align:center'><b>" + e.nbAud + "</b>/" + TOTAL_AUDIOS_SITE + "</td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd);text-align:center'><b>" + e.nbQuiz + "</b></td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd)'>" + barre(e.pct) + "<small style='font-weight:800'>" + e.pct + " %</small></td>" +
+        "<td style='padding:6px;border-bottom:1px solid var(--adm-border,#ddd);font-size:11.5px'>" + (e.maj ? ech(new Date(e.maj).toLocaleString("fr-FR")) : "—") + "</td>" +
       "</tr>";
     });
     return html + "</table></div>";
+  }
+
+  function chargerTablePaginee(urlBase, hd, tolerant) {
+    var acc = [];
+    var pas = 1000;
+    function page(offset) {
+      if (offset >= 50000) return Promise.resolve(acc);
+      var sep = urlBase.indexOf("?") === -1 ? "?" : "&";
+      return fetch(urlBase + sep + "limit=" + pas + "&offset=" + offset, { headers: hd })
+        .then(function (r) {
+          if (!r || !r.ok) {
+            if (tolerant) return [];
+            return Promise.reject(r ? r.status : 0);
+          }
+          return r.json();
+        })
+        .then(function (lot) {
+          if (!Array.isArray(lot) || !lot.length) return acc;
+          acc = acc.concat(lot);
+          if (lot.length < pas) return acc;
+          return page(offset + pas);
+        })
+        .catch(function (err) {
+          if (tolerant) return acc;
+          return Promise.reject(err);
+        });
+    }
+    return page(0);
   }
 
   function panneau() {
@@ -155,8 +183,8 @@
     var ov = document.createElement("div"); ov.id = "sti-analytique";
     ov.setAttribute("role", "dialog");
     ov.setAttribute("aria-modal", "true");
-    ov.setAttribute("style", 'position:fixed;inset:4% 4%;z-index:100000;background:#fffdf7;border:3px solid #1a1a2e;border-radius:18px;box-shadow:8px 8px 0 #1a1a2e;padding:22px 26px;overflow:auto;font-family:"Comic Sans MS","Comic Sans","Comic Neue",cursive,sans-serif;color:#1a1a2e;');
-    ov.innerHTML = '<button type="button" id="sti-ana-fermer" style="float:right;padding:8px 14px;border-radius:10px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer">✕ Fermer</button>'
+    ov.setAttribute("style", 'position:fixed;inset:4% 4%;z-index:100000;background:var(--adm-surface,#fffdf7);border:3px solid var(--adm-border-strong,#1a1a2e);border-radius:18px;box-shadow:8px 8px 0 rgba(15,23,42,.35);padding:22px 26px;overflow:auto;font-family:"Comic Sans MS","Comic Sans","Comic Neue","Chalkboard SE",cursive,sans-serif;color:var(--adm-text,#1a1a2e);');
+    ov.innerHTML = '<button type="button" id="sti-ana-fermer" style="float:right;padding:8px 14px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface-2,#fff);color:var(--adm-text,#1a1a2e);font-weight:800;cursor:pointer">✕ Fermer</button>'
       + '<h2 style="margin-top:0">📊 Analytique complète des progressions (cloud)</h2><div id="sti-ana-corps"><p>⏳ Chargement des progressions des élèves…</p></div>';
     document.body.appendChild(ov);
     function fermer() { if (ov.parentNode) ov.remove(); document.removeEventListener("keydown", onEsc); }
@@ -167,9 +195,9 @@
     if (!token) { corps.innerHTML = "<p>⚠️ Aucune session Supabase détectée : connectez-vous en administrateur puis rouvrez ce panneau.</p>"; return; }
     var hd = { "apikey": cfg.CLE, "Authorization": "Bearer " + token };
     Promise.all([
-      fetch(cfg.URL + "/rest/v1/sti_progressions?select=user_id,email,donnees,maj&order=maj.desc&limit=5000", { headers: hd }).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }),
-      fetch(cfg.URL + "/rest/v1/profiles?select=id,email,nom,prenom,classe,statut&limit=5000", { headers: hd }).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; }),
-      fetch(cfg.URL + "/rest/v1/sti_quiz_parties?select=user_id,quiz,score,total&limit=10000", { headers: hd }).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
+      chargerTablePaginee(cfg.URL + "/rest/v1/sti_progressions?select=user_id,email,donnees,maj&order=maj.desc,user_id.asc", hd, false),
+      chargerTablePaginee(cfg.URL + "/rest/v1/profiles?select=id,email,nom,prenom,classe,statut&order=id.asc", hd, true),
+      chargerTablePaginee(cfg.URL + "/rest/v1/sti_quiz_parties?select=user_id,quiz,score,total&order=id.asc", hd, true)
     ])
       .then(function (res) {
         var lignes = res[0] || [];
@@ -182,9 +210,14 @@
     if (document.getElementById("sti-btn-analytique")) return;
     var b = document.createElement("button");
     b.id = "sti-btn-analytique"; b.type = "button"; b.textContent = "📊 Analytique progressions";
-    b.setAttribute("style", "position:fixed;left:14px;bottom:64px;z-index:99999;padding:11px 16px;border-radius:999px;border:3px solid #1a1a2e;background:#0f766e;color:#fff;font-weight:800;font-size:14px;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;");
+    b.setAttribute("style", 'position:fixed;left:14px;bottom:64px;z-index:99999;padding:11px 16px;border-radius:999px;border:3px solid #1a1a2e;background:#0f766e;color:#fff;font-family:"Comic Sans MS","Comic Sans","Comic Neue","Chalkboard SE",cursive,sans-serif;font-weight:800;font-size:14px;cursor:pointer;box-shadow:4px 4px 0 #1a1a2e;');
     b.addEventListener("click", panneau);
     document.body.appendChild(b);
   }
+  window.STI_ANALYTIQUE = {
+    chargerTablePaginee: chargerTablePaginee,
+    analyser: analyser,
+    ouvrirPanneau: panneau
+  };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bouton); else bouton();
 })();

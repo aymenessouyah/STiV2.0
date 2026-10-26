@@ -4444,7 +4444,7 @@
       </div>
       <div id="contenu-readme-admin" style="overflow-y:auto;flex:1;padding-right:6px;font-size:13.2px;line-height:1.55;color:#23201a">
         <div style="background:#f9f1e3;border:2px solid #23201a;border-radius:14px;padding:12px 15px;margin-bottom:12px">
-          <div style="font-size:15px;font-weight:900;color:#d84315">📚 STI By A'e — Plateforme STI V2.0 (v467 · Cache Service Worker <code>sti-atelier-v327</code>)</div>
+          <div style="font-size:15px;font-weight:900;color:#d84315">📚 STI By A'e — Plateforme STI V2.0 (v468 · Cache Service Worker <code>sti-atelier-v328</code>)</div>
           <div style="font-size:12.5px;color:#5a5244;margin-top:4px">Plateforme éducative interactive dédiée aux <b>Sciences et Technologies de l'Informatique (STI — 3ème &amp; 4ème SI, programme officiel du Bac Tunisien)</b> : cours complets en <b>HTML5, CSS3, JavaScript, SQL et PHP / MySQLi</b> avec <b>14 vidéos explicatives (<code>.mp4</code>)</b>, chapitrage cliquable, écoute vocale synchronisée + Guide-Ligne et badges <code>✅ Vu</code> / <code>⏳ En cours</code> (<code>PROG_MEDIA</code>), <b>2 Smart Books connectés par QR codes</b> (3SI 72 p. &amp; 4SI 100 p.), <b>SQL de poche SQLite WASM</b>, 41 fiches d'exercices et séries SQL 1 à 6 corrigées en vidéo, <b>5 modules de quiz consolidés (635 questions) à reprise multi-appareils</b>, révision espacée <b>J+1 / J+3 / J+7</b>, couverture temps réel sur <b>124 pages</b>, <b>navigation retour 0 ms par <code>bfcache</code></b>, sauvegarde automatique quotidienne des <b>15 tables Supabase vers Google Drive</b> et pilotage enseignant complet.</div>
         </div>
 
@@ -4483,7 +4483,7 @@
           <li><b>15 tables <code>public</code> protégées à 100 % par RLS</b> : <code>profiles</code>, <code>acces</code>, <code>sti_progressions</code>, <code>sti_quiz_parties</code>, <code>sti_quiz_reponses</code>, <code>sti_quiz_sessions</code>, <code>sti_quiz_vus</code>, <code>sti_diagnostics</code>, <code>sti_observations</code>, <code>labo_devices</code>, <code>labo_device_sessions</code>, <code>labo_device_messages</code>, <code>badges_labo</code>, <code>app_config_public</code> et <code>push_subscriptions</code>.</li>
           <li><b>Sauvegarde automatique quotidienne vers Google Drive (<code>STISauvegardeSupbase</code> — <code>documents/sql/sauvegarde-auto-drive.gs</code>)</b> : export paginé déterministe (tranches de 1 000 lignes, tri multi-colonnes <code>.asc</code>) des <b>15 tables</b> chaque nuit vers <b>02 h (heure de Tunis)</b> en archive compressée <code>sti-sauvegarde-YYYY-MM-DD.json.gz</code> dans le dossier Drive <i>« STI — Sauvegardes base »</i>, avec déduplication du jour et rotation automatique.</li>
           <li><b>Bouton <code>💾 Sauvegarde complète</code> (<code>assets/js/sauvegarde.js</code> + RPC <code>admin_sauvegarde_tables_annexes()</code>)</b> : téléchargement immédiat des 15 tables en <code>.json.gz</code> (format Drive) ou <code>.json</code> (sans exposer les hachages secrets), copie en un clic du script Apps Script <code>v467</code>, synchronisation automatique 1× / 24 h vers Google Drive via Web App authentifiée par JWT admin et restauration locale <code>.json</code> / <code>.json.gz</code>.</li>
-          <li><b>Isolation &amp; Sécurité Totale</b> : nettoyage automatique des clés locales lors d'un changement d'élève sur PC partagé (<code>v463</code>), Centre de Sécurité (Mode Examen, Plein Écran, Anti-DevTools, Filigrane, Anti-Split-Screen) et fonctionnement 100 % hors-ligne via <code>sw.js</code> (<code>sti-atelier-v327</code>).</li>
+          <li><b>Isolation, Contraste Multi-Univers &amp; Sécurité Totale (<code>v463</code>–<code>v468</code>)</b> : nettoyage automatique des clés locales lors d'un changement d'élève sur PC partagé (<code>v463</code>), pagination déterministe au-delà de 1 000 lignes dans <code>analytique.js</code> et contraste natif Clair/Sombre/Cyber/Spotify sur tous les panneaux flottants (<code>v468</code>), Centre de Sécurité (Mode Examen, Plein Écran, Anti-DevTools, Filigrane, Anti-Split-Screen) et fonctionnement 100 % hors-ligne via <code>sw.js</code> (<code>sti-atelier-v328</code>, suite à <code>sti-atelier-v327</code>).</li>
         </ul>
       </div>
       <div class="modal-actions" style="flex-wrap:wrap;gap:8px;margin-top:12px;border-top:1.5px solid #e7dcc8;padding-top:10px">
@@ -4934,7 +4934,7 @@
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=467"></script>
+<script src="assets/js/config.js?v=468"></script>
 <script src="assets/js/protection.js?v=461" defer></script>
   <script src="assets/js/admin.js?v=466-dbsupbase"></script>
   <script src="assets/js/admin-couverture.js?v=464"></script>
@@ -4943,10 +4943,10 @@
   <script src="assets/js/admin-erreurs.js?v=463"></script>
   <script src="assets/js/admin-mdp.js?v=443"></script>
   <script src="assets/js/graphiques-activite.js?v=463"></script>
-  <script src="assets/js/quiz-admin.js?v=463"></script>
-<script src="assets/js/analytique.js?v=463"></script>
-<script src="assets/js/sauvegarde.js?v=467"></script>
-<script src="assets/js/sante.js?v=260"></script>
+  <script src="assets/js/quiz-admin.js?v=468"></script>
+<script src="assets/js/analytique.js?v=468"></script>
+<script src="assets/js/sauvegarde.js?v=468"></script>
+<script src="assets/js/sante.js?v=468"></script>
 <script>
   /* v446 : Ruban compact horizontal des services & outils flottants — Messenger (#btn-messenger-dock) reste autonome et toujours au 1er plan. */
   (function () {
