@@ -4288,11 +4288,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v468\s*\|/.test(l)), 'v468 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v469\s*\|/.test(l)), 'v469 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v470\s*\|/.test(l)), 'v470 doit rester présent dans README.md');
-  assert.ok(cinq.some((o) => /^v471 — Vérification intégrale de bout en bout/.test(o.t)), 'v471 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v471\s*\|/.test(l)), 'v471 doit rester présent dans README.md');
   assert.ok(cinq.some((o) => /^v472 — Audit forensique de toute la plateforme/.test(o.t)), 'v472 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v473 — Accélération drastique de la plateforme/.test(o.t)), 'v473 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v474 — Allègement massif des Quiz PHP/.test(o.t)), 'v474 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v475 — Cure complète de navigation/);
+  assert.ok(cinq.some((o) => /^v475 — Cure complète de navigation/.test(o.t)), 'v475 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v476 — Retour instantané depuis exercices\/series-exercices\.html/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -5985,20 +5986,20 @@ test('v475 (structure & budgets navigation) : polices WOFF2 externes (-475 Ko da
   assert.match(migSql, /idx_acces_page_pattern_debut[\s\S]*text_pattern_ops/);
   assert.match(migSql, /idx_labo_device_sessions_device_id/);
 
-  // 5) Alignement version v475 / sti-atelier-v335 + cache mémoire SW + client Supabase partagé
-  assert.match(configJs, /VERSION:\s*335\b/);
+  // 5) Alignement version v475+ / sti-atelier-v335+ + cache mémoire SW + client Supabase partagé
+  assert.match(configJs, /VERSION:\s*33\d\b/);
   assert.match(configJs, /__STI_PREFETCH_NAV_V475/);
   assert.match(accesJs, /__stiSuspendreRealtimeBfcache/);
   assert.match(accesJs, /sti-coffre-tp-sync-ts/);
   assert.match(adminJs, /window\.__STI_SB_CLIENT\s*=\s*sb/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v335";/);
-  assert.match(swJs, /var UPDATE_ID = "v475-nav-fluide-instant";/);
+  assert.match(swJs, /sti-atelier-v335/);
+  assert.match(swJs, /v475-nav-fluide-instant/);
   assert.match(swJs, /_cacheActifMem/);
-  assert.equal(nouv[0].version, 'v475');
+  assert.ok(nouv.some((n) => n.version === 'v475'), 'nouveautes.json doit conserver v475');
   assert.match(adminHtml, /v475 · sti-atelier-v335/);
   assert.match(readmeMd, /sti-atelier-v335/);
   assert.match(readmeMd, /\|\s*v475\s*\|/);
-  assert.equal(offlineManifest.version, 'v475-sti-atelier-v335');
+  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
 });
 
 test('v475 (comportemental VM) : préchargement anticipé config.js, cycle BFCache WebSocket dans acces.js et redessin resize 0 requête dans graphiques-activite.js', async () => {
@@ -6153,23 +6154,365 @@ test('v475 (comportemental VM) : préchargement anticipé config.js, cycle BFCac
   assert.equal(accesQueries, 1, 'Le redimensionnement fenêtre doit redessiner en mémoire avec 0 requête Supabase supplémentaire');
 });
 
+test('v476 (structure) : retour instantané Exercices → Accueil (zéro auto-rechargement #pdfFrame, traverseTo top-level, saut ancre 0 ms et déduplication pagehide)', () => {
+  const seriesHtml = read('exercices/series-exercices.html');
+  const indexHtml = read('index.html');
+  const configJs = read('assets/js/config.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const swJs = read('sw.js');
+  const adminHtml = read('admin.html');
+  const readmeMd = read('README.md');
+  const nouv = JSON.parse(read('assets/data/nouveautes.json'));
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
 
+  // 1) exercices/series-exercices.html : plus aucun src="" sur #pdfFrame ni .src = "" qui rechargeait la page en double
+  assert.match(seriesHtml, /<iframe[\s\S]*?id="pdfFrame"[\s\S]*?src="about:blank"/);
+  assert.doesNotMatch(seriesHtml, /document\.getElementById\("pdfFrame"\)\.src\s*=\s*""/);
+  assert.match(seriesHtml, /function chargerDansPdfFrame\(/);
+  assert.match(seriesHtml, /contentWindow\.location\.replace\(/);
+  assert.match(seriesHtml, /\.retour\{[^}]*background:#b4552d/i);
 
+  // config.js?v=476+ s'exécute avant supabase-umd.js pour activer immédiatement le retour 0 ms bfcache
+  const posCfg = seriesHtml.indexOf('assets/js/config.js?v=47');
+  const posSb = seriesHtml.indexOf('assets/js/supabase-umd.js');
+  assert.ok(posCfg > 0 && posSb > posCfg, 'series-exercices.html doit charger config.js avant supabase-umd.js');
+  assert.equal((seriesHtml.match(/assets\/fonts\/fonts\.css/g) || []).length, 1, 'Une seule inclusion fonts.css dans series-exercices.html');
 
+  // 2) config.js : navigation.traverseTo(cibleKey) + scrollBehavior="auto" temporaire sur ancre de retour
+  assert.match(configJs, /function trouverCibleRetourTopLevel\(/);
+  assert.match(configJs, /window\.navigation\.traverseTo\(cibleKey\)/);
+  assert.match(configJs, /de\.style\.scrollBehavior\s*=\s*"auto"/);
 
+  // 3) index.html : preload config.js, coupure smooth-scroll sur arrivée ancre initiale et révélation immédiate de la section cible
+  assert.match(indexHtml, /<link rel="preload" href="assets\/js\/config\.js\?v=47\d" as="script"\s*\/>/);
+  assert.match(indexHtml, /function revelerSectionAncreCourante\(/);
+  assert.match(indexHtml, /r\.style\.scrollBehavior\s*=\s*"auto"/);
 
+  // 4) sync-progressions.js : inactif dans les sous-iframes internes d'aperçu + déduplication visibilitychange/pagehide
+  assert.match(syncProgJs, /function estSousIframeInterneSTI\(/);
+  assert.match(syncProgJs, /window\.self\s*!==\s*window\.top/);
+  assert.match(syncProgJs, /function pousserFermetureDeduplique\(/);
 
+  // 5) Alignement version v476 / sti-atelier-v337 + Quiz PHP config.js?v=476 avant supabase-umd.js
+  const phpHtml = read('quiz/php.html');
+  assert.ok(
+    phpHtml.indexOf('assets/js/config.js?v=476') > 0 &&
+      phpHtml.indexOf('assets/js/supabase-umd.js') > phpHtml.indexOf('assets/js/config.js?v=476'),
+    'quiz/php.html doit charger config.js?v=476 avant supabase-umd.js'
+  );
+  assert.match(configJs, /function positionnerCibleHub\(/);
+  assert.match(configJs, /history\.scrollRestoration\s*=\s*"manual"/);
+  assert.match(configJs, /VERSION:\s*33\d\b/);
+  assert.ok(Number((configJs.match(/VERSION:\s*(\d+)/) || [])[1]) >= 337, 'VERSION >= 337');
+  assert.match(swJs, /sti-atelier-v337/);
+  assert.match(swJs, /sti-atelier-v336/);
+  assert.match(swJs, /v476-retour-accueil-quiz-exo/);
+  assert.ok(nouv.some((n) => n.version === 'v476'), 'nouveautes.json doit référencer v476');
+  assert.match(adminHtml, /v476 · sti-atelier-v337/);
+  assert.match(readmeMd, /sti-atelier-v337/);
+  assert.match(readmeMd, /\|\s*v476\s*\|/);
+  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
+});
 
+test('v476 (comportemental VM) : ouverture/fermeture modale #pdfFrame sans polluer history + traverseTo direct vers Accueil + 0 sync en iframe', async () => {
+  const vm = await import('node:vm');
 
+  // 1) chargerDansPdfFrame + openPdfModal + closePdfModal : 0 rechargement "" et 0 entrée ajoutée à window.history
+  const seriesHtml = read('exercices/series-exercices.html');
+  const modalScriptMatch = seriesHtml.match(/<script>\s*var modalUrl = "";[\s\S]*?<\/script>/);
+  assert.ok(modalScriptMatch, 'Bloc script modal trouvé dans series-exercices.html');
+  const modalJs = modalScriptMatch[0].replace(/^<script>|<\/script>$/g, '');
 
+  const replacedUrls = [];
+  let srcMutations = 0;
+  const fakeFrame = {
+    onload: null,
+    parentNode: null,
+    contentWindow: {
+      __APP_OK: true,
+      location: {
+        replace(u) { replacedUrls.push(u); }
+      }
+    },
+    contentDocument: { body: { innerText: '' }, scripts: [{}], addEventListener() {} },
+    set src(_v) { srcMutations++; }
+  };
+  const makeBox = () => ({
+    hidden: true,
+    innerHTML: '',
+    textContent: '',
+    style: {},
+    classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+    setAttribute() {},
+    addEventListener() {}
+  });
+  const modalEls = {
+    pdfFrame: fakeFrame,
+    modalTitle: makeBox(),
+    pdfModal: makeBox(),
+    modalAlerte: makeBox(),
+    modalAlerteTxt: makeBox(),
+    modalExpandBtn: makeBox()
+  };
+  const modalCtx = {
+    location: new URL('https://sti.example/exercices/series-exercices.html'),
+    navigator: { pdfViewerEnabled: true, userAgent: 'Mozilla/5.0 Chrome/130.0' },
+    URL,
+    setTimeout: () => 1,
+    clearTimeout() {},
+    document: {
+      body: { style: {} },
+      fullscreenElement: null,
+      getElementById: (id) => modalEls[id] || makeBox(),
+      querySelector: () => makeBox(),
+      addEventListener() {}
+    },
+    window: null
+  };
+  modalCtx.window = modalCtx;
+  vm.runInNewContext(modalJs, modalCtx, { filename: 'series-exercices-modal.js' });
 
+  modalCtx.openPdfModal('html-css/TP1-css.pdf.html', 'TP 1');
+  modalCtx.closePdfModal();
+  assert.equal(srcMutations, 0, 'openPdfModal / closePdfModal ne doivent jamais muter frame.src (zéro entrée history jointe)');
+  assert.deepEqual(replacedUrls, [
+    'https://sti.example/exercices/html-css/TP1-css.pdf.html',
+    'about:blank'
+  ], 'closePdfModal doit remplacer par about:blank (jamais par "" qui rechargeait series-exercices.html)');
 
+  // 2) config.js : même après plusieurs navigations d'iframe, navigation.traverseTo(homeKey) saute directement à index.html en 1 coup + scrollBehavior="auto"
+  const configSrc = read('assets/js/config.js');
+  const sess = new Map();
+  let traversedKey = null;
+  let historyGoCalls = 0;
+  let winClick = null;
+  const cfgCtx = {
+    location: new URL('https://sti.example/exercices/series-exercices.html'),
+    history: {
+      state: { __stiSeries: 1, __stiHop: 1 },
+      length: 7, // simule un historique joint gonflé par d'anciennes sous-trames
+      replaceState() {},
+      go() { historyGoCalls++; }
+    },
+    navigation: {
+      currentEntry: { index: 1, key: 'key-series' },
+      entries: () => [
+        { index: 0, key: 'key-home-0', url: 'https://sti.example/index.html' },
+        { index: 1, key: 'key-series', url: 'https://sti.example/exercices/series-exercices.html' }
+      ],
+      traverseTo(k) { traversedKey = k; return { finished: Promise.resolve() }; }
+    },
+    navigator: { onLine: true, connection: { saveData: false, effectiveType: '4g' } },
+    sessionStorage: {
+      getItem: (k) => (sess.has(k) ? sess.get(k) : null),
+      setItem: (k, v) => sess.set(String(k), String(v)),
+      removeItem: (k) => sess.delete(String(k))
+    },
+    localStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    matchMedia: () => ({ matches: false }),
+    URL, URLSearchParams, CustomEvent: class { constructor(t, o) { this.type = t; this.detail = o && o.detail; } },
+    Promise, Date, Math, Object, String, Number, Boolean, RegExp, JSON,
+    requestAnimationFrame: (fn) => { fn(); return 1; },
+    setTimeout: (fn) => { fn(); return 1; },
+    clearTimeout() {},
+    document: {
+      currentScript: { src: 'https://sti.example/assets/js/config.js?v=476' },
+      referrer: 'https://sti.example/index.html',
+      readyState: 'complete',
+      head: { appendChild() {} },
+      body: { appendChild() {} },
+      documentElement: { style: {}, setAttribute() {}, classList: { add() {}, remove() {} } },
+      createElement: () => ({ style: {}, setAttribute() {} }),
+      getElementById: () => null,
+      querySelector: () => null,
+      querySelectorAll: () => [],
+      addEventListener() {}
+    },
+    addEventListener(ev, fn) { if (ev === 'click') winClick = fn; },
+    dispatchEvent() {},
+    scrollTo() {}
+  };
+  cfgCtx.window = cfgCtx;
+  vm.runInNewContext(configSrc, cfgCtx, { filename: 'assets/js/config.js' });
 
+  let prevented = false;
+  winClick({
+    defaultPrevented: false,
+    button: 0,
+    metaKey: false, ctrlKey: false, shiftKey: false, altKey: false,
+    target: {
+      closest: (s) => s === 'a[href]' ? {
+        hasAttribute: () => false,
+        getAttribute: (n) => (n === 'href' ? '../index.html#exercices' : '')
+      } : null
+    },
+    preventDefault() { prevented = true; this.defaultPrevented = true; }
+  });
+  await Promise.resolve();
+  assert.equal(prevented, true, 'Le clic ← Accueil doit être intercepté sans rechargement');
+  assert.equal(traversedKey, 'key-home-0', 'navigation.traverseTo doit sauter directement à l’entrée top-level index.html');
+  assert.equal(historyGoCalls, 0, 'history.go ne doit pas être appelé quand navigation.traverseTo réussit');
+  assert.equal(sess.get('sti-retour-accueil-hash'), '#exercices');
 
+  // 3) sync-progressions.js : 0 activité réseau dans une sous-iframe interne (#pdfFrame) + déduplication visibilitychange/pagehide
+  const syncSrc = read('assets/js/sync-progressions.js');
+  let iframeFetches = 0, iframeIntervals = 0;
+  const iframeCtx = {
+    self: {},
+    top: { location: { origin: 'https://sti.example' } },
+    frameElement: { id: 'pdfFrame' },
+    location: new URL('https://sti.example/exercices/html-css/TP1-css.pdf.html'),
+    STI_AUTH: { URL: 'https://x.supabase.co', CLE: 'k' },
+    localStorage: { length: 1, key: () => 'sti-session-cache', getItem: () => JSON.stringify({ id: 'u1', email: 'a@b.tn' }), setItem() {} },
+    sessionStorage: { getItem: () => null, setItem() {} },
+    document: { readyState: 'complete', body: {}, hidden: false, addEventListener() {}, createElement: () => ({ style: {} }), getElementById: () => null },
+    fetch: async () => { iframeFetches++; return { ok: true, json: async () => [] }; },
+    setInterval: () => { iframeIntervals++; return 1; },
+    setTimeout: () => 1, clearTimeout() {},
+    addEventListener() {},
+    Date, Math, Object, Array, String, Number, Boolean, RegExp, JSON, Promise
+  };
+  iframeCtx.window = iframeCtx;
+  vm.runInNewContext(syncSrc, iframeCtx, { filename: 'assets/js/sync-progressions.js' });
+  assert.equal(iframeFetches, 0, 'sync-progressions.js ne doit lancer aucun fetch depuis une iframe #pdfFrame');
+  assert.equal(iframeIntervals, 0, 'sync-progressions.js ne doit créer aucun setInterval depuis une iframe #pdfFrame');
 
+  // 4) Quiz PHP « Accueil Principal » -> index.html#modules :
+  //    a) repli automatique sur history.go(delta) si navigation.traverseTo rejette committed
+  let fallbackGoDelta = null;
+  let phpClick = null;
+  const phpSess = new Map([['sti-home-active', '1'], ['sti-home-hop', '0']]);
+  const phpQuizCtx = {
+    location: new URL('https://sti.example/quiz/php.html'),
+    history: {
+      state: { __stiHop: 2 },
+      length: 4,
+      replaceState() {},
+      go(d) { fallbackGoDelta = d; }
+    },
+    navigation: {
+      currentEntry: { index: 2, key: 'key-quiz-php' },
+      entries: () => [
+        { index: 0, key: 'key-home-exo', url: 'https://sti.example/index.html#exercices' },
+        { index: 1, key: 'key-series', url: 'https://sti.example/exercices/series-exercices.html#php' },
+        { index: 2, key: 'key-quiz-php', url: 'https://sti.example/quiz/php.html' }
+      ],
+      traverseTo() {
+        const rej = Promise.reject(Object.assign(new Error('disallowed'), { name: 'InvalidStateError' }));
+        return { committed: rej, finished: rej };
+      }
+    },
+    navigator: { onLine: true },
+    sessionStorage: {
+      getItem: (k) => (phpSess.has(k) ? phpSess.get(k) : null),
+      setItem: (k, v) => phpSess.set(String(k), String(v)),
+      removeItem: (k) => phpSess.delete(String(k))
+    },
+    localStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    matchMedia: () => ({ matches: false }),
+    URL, URLSearchParams, CustomEvent: class { constructor(t, o) { this.type = t; this.detail = o && o.detail; } },
+    Promise, Date, Math, Object, String, Number, Boolean, RegExp, JSON,
+    setTimeout: () => 1, clearTimeout() {},
+    document: {
+      currentScript: { src: 'https://sti.example/assets/js/config.js?v=476' },
+      referrer: 'https://sti.example/exercices/series-exercices.html#php',
+      readyState: 'complete',
+      head: { appendChild() {} }, body: { appendChild() {} },
+      documentElement: { style: {}, setAttribute() {}, classList: { add() {}, remove() {} } },
+      createElement: () => ({ style: {}, setAttribute() {} }),
+      getElementById: () => null, querySelector: () => null, querySelectorAll: () => [],
+      addEventListener() {}
+    },
+    addEventListener(ev, fn) { if (ev === 'click') phpClick = fn; },
+    dispatchEvent() {}, scrollTo() {}
+  };
+  phpQuizCtx.window = phpQuizCtx;
+  vm.runInNewContext(configSrc, phpQuizCtx, { filename: 'assets/js/config.js' });
 
+  phpClick({
+    defaultPrevented: false, button: 0,
+    metaKey: false, ctrlKey: false, shiftKey: false, altKey: false,
+    target: {
+      closest: (s) => (s === 'a[href]' ? {
+        hasAttribute: () => false,
+        getAttribute: (n) => (n === 'href' ? '../index.html#modules' : '')
+      } : null)
+    },
+    preventDefault() { this.defaultPrevented = true; }
+  });
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(phpSess.get('sti-retour-accueil-hash'), '#modules');
+  assert.equal(fallbackGoDelta, -2, 'Si traverseTo rejette committed, config.js doit replier immédiatement sur history.go(-2)');
 
+  //    b) Arrivée hors-bfcache sur index.html#exercices avec sti-retour-accueil-hash="#modules" :
+  //       scrollRestoration passe à "manual", location.hash bascule dès le parsing sur "#modules"
+  //       et #modules est ré-aligné après sti-accueil-restored
+  const homeReloadListeners = {};
+  const modulesScrollCalls = [];
+  let bannerInjectedBeforeLastScroll = false;
+  let bannerInjected = false;
+  const homeLoc = new URL('https://sti.example/index.html#exercices');
+  const homeHist = {
+    scrollRestoration: 'auto',
+    state: null,
+    length: 3,
+    replaceState(st, _t, u) {
+      this.state = st;
+      if (u) {
+        const nu = new URL(u, homeLoc.href);
+        homeLoc.href = nu.href;
+        homeLoc.hash = nu.hash;
+      }
+    },
+    go() {}
+  };
+  const homeReloadCtx = {
+    location: homeLoc,
+    history: homeHist,
+    navigator: { onLine: true },
+    sessionStorage: {
+      getItem: (k) => (phpSess.has(k) ? phpSess.get(k) : null),
+      setItem: (k, v) => phpSess.set(String(k), String(v)),
+      removeItem: (k) => phpSess.delete(String(k))
+    },
+    localStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+    matchMedia: () => ({ matches: false }),
+    URL, URLSearchParams, CustomEvent: class { constructor(t, o) { this.type = t; this.detail = o && o.detail; } },
+    Promise, Date, Math, Object, String, Number, Boolean, RegExp, JSON,
+    requestAnimationFrame: (fn) => { fn(); return 1; },
+    setTimeout: (fn) => { fn(); return 1; }, clearTimeout() {},
+    document: {
+      currentScript: { src: 'https://sti.example/assets/js/config.js?v=476' },
+      referrer: '',
+      readyState: 'loading',
+      head: { appendChild() {} }, body: { appendChild() {} },
+      documentElement: { style: {}, setAttribute() {}, classList: { add() {}, remove() {} } },
+      createElement: () => ({ style: {}, setAttribute() {} }),
+      getElementById: (id) => (id === 'modules' ? {
+        id: 'modules',
+        scrollIntoView() {
+          modulesScrollCalls.push({ bannerInjected });
+          if (bannerInjected) bannerInjectedBeforeLastScroll = true;
+        }
+      } : null),
+      querySelector: () => null, querySelectorAll: () => [],
+      addEventListener() {}
+    },
+    addEventListener(ev, fn) { (homeReloadListeners[ev] ||= []).push(fn); },
+    dispatchEvent(ev) {
+      if (ev && ev.type === 'sti-accueil-restored') bannerInjected = true;
+    },
+    scrollTo() {}
+  };
+  homeReloadCtx.window = homeReloadCtx;
+  vm.runInNewContext(configSrc, homeReloadCtx, { filename: 'assets/js/config.js' });
 
-
-
-
+  assert.equal(homeHist.scrollRestoration, 'manual', 'scrollRestoration doit passer en manual pour empêcher le navigateur de restaurer #exercices');
+  assert.equal(homeLoc.hash, '#modules', 'location.hash doit basculer sur #modules dès le chargement de config.js');
+  (homeReloadListeners.DOMContentLoaded || []).forEach((fn) => fn({}));
+  (homeReloadListeners.pageshow || []).forEach((fn) => fn({ persisted: false }));
+  assert.ok(modulesScrollCalls.length >= 2, 'La section #modules doit être positionnée dès DOMContentLoaded puis ré-alignée à pageshow');
+  assert.equal(bannerInjectedBeforeLastScroll, true, '#modules doit être ré-alignée APRÈS sti-accueil-restored (bannières reprise / 4SI)');
+  assert.equal(phpSess.has('sti-retour-accueil-hash'), false, 'sti-retour-accueil-hash consommé proprement après pageshow');
+});

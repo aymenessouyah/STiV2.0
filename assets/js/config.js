@@ -3,7 +3,7 @@ window.STI_AUTH = {
   URL: "https://vywujxmepvcbgedgmger.supabase.co",
   CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn",
   CLE_TURNSTILE: "0x4AAAAAAFeMDzetHdIs1MmC",
-  VERSION: 335,
+  VERSION: 337,
   RACINE: (typeof location !== "undefined" && location.origin && location.origin !== "null")
     ? (function () {
         /* v417 : l'ancien regex ne connaissait qu'une liste de pages ; toute page utilitaire
@@ -147,14 +147,15 @@ window.STI_AUTH = {
     var surAccueil = estUrlAccueilRacine(location);
     var surSeries = !surAccueil && estUrlSeriesExercices(location);
 
-    function appliquerAncreRetourHub(cleSession, etatPatch) {
-      var hCible = "";
-      try {
-        hCible = sessionStorage.getItem(cleSession) || "";
-        if (hCible) sessionStorage.removeItem(cleSession);
-      } catch (e) {}
+    function positionnerCibleHub(hCible, etatPatch) {
       if (!hCible) return false;
       try {
+        var de = document.documentElement;
+        var prevSb = de && de.style ? de.style.scrollBehavior : "";
+        if (de && de.style) de.style.scrollBehavior = "auto";
+        try {
+          if (history && "scrollRestoration" in history) history.scrollRestoration = "manual";
+        } catch (eSr) {}
         var st = Object.assign({}, (history && history.state) || {}, etatPatch || {});
         if (hCible === "#top") {
           if (location.hash) history.replaceState(st, "", location.pathname + (location.search || ""));
@@ -169,8 +170,29 @@ window.STI_AUTH = {
             secEl.scrollIntoView({ block: "start", behavior: "auto" });
           }
         }
+        if (de && de.style) {
+          var restaurerSb = function () {
+            try {
+              if (prevSb) de.style.scrollBehavior = prevSb;
+              else if (typeof de.style.removeProperty === "function") de.style.removeProperty("scroll-behavior");
+              else de.style.scrollBehavior = "";
+            } catch (eSb) {}
+          };
+          if (typeof requestAnimationFrame === "function") requestAnimationFrame(restaurerSb);
+          else setTimeout(restaurerSb, 0);
+        }
       } catch (e2) {}
-      return true;
+      return hCible;
+    }
+
+    function appliquerAncreRetourHub(cleSession, etatPatch) {
+      var hCible = "";
+      try {
+        hCible = sessionStorage.getItem(cleSession) || "";
+        if (hCible) sessionStorage.removeItem(cleSession);
+      } catch (e) {}
+      if (!hCible) return false;
+      return positionnerCibleHub(hCible, etatPatch);
     }
 
     function appliquerAncreRetourAccueil() {
@@ -188,14 +210,50 @@ window.STI_AUTH = {
           sessionStorage.removeItem("sti-series-hop");
         } catch (e) {}
       };
+      /* Si l'accueil se recharge hors bfcache (ex. iframe cross-origin ou cache évincé) avec une
+         section cible en attente (#modules depuis Quiz PHP, #exercices, #cours), verrouiller dès le
+         parsing scrollRestoration="manual" + location.hash pour empêcher le navigateur de restaurer
+         l'ancienne position de défilement de l'entrée d'historique. */
+      try {
+        if (document && document.readyState === "loading") {
+          var hAttAcc = sessionStorage.getItem("sti-retour-accueil-hash") || "";
+          if (hAttAcc) {
+            if (history && "scrollRestoration" in history) history.scrollRestoration = "manual";
+            if (document.documentElement && document.documentElement.style) {
+              document.documentElement.style.scrollBehavior = "auto";
+            }
+            var stInitAcc = Object.assign({}, (history && history.state) || {}, { __stiHome: 1, __stiHop: 0 });
+            if (hAttAcc === "#top") {
+              if (location.hash) history.replaceState(stInitAcc, "", location.pathname + (location.search || ""));
+            } else if (location.hash !== hAttAcc) {
+              history.replaceState(stInitAcc, "", location.pathname + (location.search || "") + hAttAcc);
+            }
+            if (typeof window.addEventListener === "function") {
+              window.addEventListener("DOMContentLoaded", function () {
+                positionnerCibleHub(hAttAcc, { __stiHome: 1, __stiHop: 0 });
+              }, { once: true });
+            }
+          }
+        }
+      } catch (ePreAcc) {}
       marquerAccueilActif();
       window.addEventListener("hashchange", marquerAccueilActif);
       window.addEventListener("popstate", marquerAccueilActif);
       window.addEventListener("pageshow", function (ev) {
         marquerAccueilActif();
-        var aBouge = appliquerAncreRetourAccueil();
-        if ((ev && ev.persisted) || aBouge) {
-          try { window.dispatchEvent(new CustomEvent("sti-accueil-restored", { detail: { persisted: Boolean(ev && ev.persisted) } })); } catch (eEv) {}
+        var cBouge = appliquerAncreRetourAccueil();
+        if ((ev && ev.persisted) || cBouge) {
+          try { window.dispatchEvent(new CustomEvent("sti-accueil-restored", { detail: { persisted: Boolean(ev && ev.persisted), targetHash: cBouge || "" } })); } catch (eEv) {}
+          if (cBouge) {
+            /* Ré-aligner immédiatement après sti-accueil-restored (qui peut afficher #resumeBanner /
+               #sti-reprendre ou démasquer les cartes 4SI au-dessus de #modules) puis au prochain rAF. */
+            positionnerCibleHub(cBouge, { __stiHome: 1, __stiHop: 0 });
+            if (typeof requestAnimationFrame === "function") {
+              requestAnimationFrame(function () {
+                positionnerCibleHub(cBouge, { __stiHome: 1, __stiHop: 0 });
+              });
+            }
+          }
         }
       });
       return;
@@ -321,7 +379,13 @@ window.STI_AUTH = {
           if (curHop > 0) patchSer.__stiHop = curHop;
           var aBougeS = appliquerAncreRetourHub("sti-retour-series-hash", patchSer);
           if ((ev && ev.persisted) || aBougeS) {
-            try { window.dispatchEvent(new CustomEvent("sti-series-restored", { detail: { persisted: Boolean(ev && ev.persisted) } })); } catch (eEvS) {}
+            try { window.dispatchEvent(new CustomEvent("sti-series-restored", { detail: { persisted: Boolean(ev && ev.persisted), targetHash: aBougeS || "" } })); } catch (eEvS) {}
+            if (aBougeS) {
+              positionnerCibleHub(aBougeS, patchSer);
+              if (typeof requestAnimationFrame === "function") {
+                requestAnimationFrame(function () { positionnerCibleHub(aBougeS, patchSer); });
+              }
+            }
           }
         } else if (history.state && typeof history.state.__stiSeriesHop === "number" && history.state.__stiSeriesHop > 0) {
           curSeriesHop = history.state.__stiSeriesHop;
@@ -330,40 +394,31 @@ window.STI_AUTH = {
       } catch (e) {}
     });
 
-    function calculerDeltaVersAccueil() {
+    function trouverCibleRetourTopLevel(testUrlFn, hopFallback) {
       try {
         if (window.navigation && typeof window.navigation.entries === "function" && window.navigation.currentEntry) {
           var entries = window.navigation.entries();
           var idxCur = window.navigation.currentEntry.index;
           for (var i = idxCur - 1; i >= 0; i--) {
-            if (entries[i] && entries[i].url && estUrlAccueilRacine(new URL(entries[i].url, location.href))) {
-              return i - idxCur;
+            if (entries[i] && entries[i].url && testUrlFn(new URL(entries[i].url, location.href))) {
+              return { delta: i - idxCur, key: entries[i].key || "" };
             }
           }
-          return 0;
+          return { delta: 0, key: "" };
         }
       } catch (eNav) {}
+      if (hopFallback >= 1 && history.length > hopFallback) return { delta: -hopFallback, key: "" };
+      return { delta: 0, key: "" };
+    }
+
+    function calculerDeltaVersAccueil() {
       var h = (history.state && typeof history.state.__stiHop === "number") ? history.state.__stiHop : curHop;
-      if (h >= 1 && history.length > h) return -h;
-      return 0;
+      return trouverCibleRetourTopLevel(estUrlAccueilRacine, h).delta;
     }
 
     function calculerDeltaVersSeries() {
-      try {
-        if (window.navigation && typeof window.navigation.entries === "function" && window.navigation.currentEntry) {
-          var entries = window.navigation.entries();
-          var idxCur = window.navigation.currentEntry.index;
-          for (var i = idxCur - 1; i >= 0; i--) {
-            if (entries[i] && entries[i].url && estUrlSeriesExercices(new URL(entries[i].url, location.href))) {
-              return i - idxCur;
-            }
-          }
-          return 0;
-        }
-      } catch (eNavS) {}
       var hs = (history.state && typeof history.state.__stiSeriesHop === "number") ? history.state.__stiSeriesHop : curSeriesHop;
-      if (hs >= 1 && history.length > hs) return -hs;
-      return 0;
+      return trouverCibleRetourTopLevel(estUrlSeriesExercices, hs).delta;
     }
 
     window.addEventListener("click", function (ev) {
@@ -381,16 +436,20 @@ window.STI_AUTH = {
       if (uCible.search) return;
 
       var cleHash = "";
-      var delta = 0;
+      var cibleInfo = { delta: 0, key: "" };
       if (estUrlAccueilRacine(uCible)) {
-        delta = calculerDeltaVersAccueil();
+        var hAcc = (history.state && typeof history.state.__stiHop === "number") ? history.state.__stiHop : curHop;
+        cibleInfo = trouverCibleRetourTopLevel(estUrlAccueilRacine, hAcc);
         cleHash = "sti-retour-accueil-hash";
       } else if (!surSeries && estUrlSeriesExercices(uCible)) {
-        delta = calculerDeltaVersSeries();
+        var hSer = (history.state && typeof history.state.__stiSeriesHop === "number") ? history.state.__stiSeriesHop : curSeriesHop;
+        cibleInfo = trouverCibleRetourTopLevel(estUrlSeriesExercices, hSer);
         cleHash = "sti-retour-series-hash";
       } else {
         return;
       }
+      var delta = cibleInfo.delta;
+      var cibleKey = cibleInfo.key;
       if (delta >= 0) {
         if (window.opener && !window.opener.closed && history.length <= 2) {
           ev.preventDefault();
@@ -405,13 +464,41 @@ window.STI_AUTH = {
       }
 
       /* Laisser tout onclick synchrone de la balise <a> (ex. write-ahead des quiz) s'exécuter,
-         tout en bloquant le rechargement complet du document et en remontant via bfcache. */
+         tout en bloquant le rechargement complet du document et en remontant directement à
+         l'entrée top-level (navigation.traverseTo ignore toute sous-navigation d'iframe). */
       ev.preventDefault();
       try {
         sessionStorage.setItem(cleHash, uCible.hash && uCible.hash.length > 1 ? uCible.hash : "#top");
       } catch (eSt) {}
       Promise.resolve().then(function () {
-        history.go(delta);
+        var replierGo = function () {
+          try {
+            history.go(delta);
+          } catch (eGo) {
+            try { location.href = uCible.href; } catch (eHref) {}
+          }
+        };
+        if (cibleKey && window.navigation && typeof window.navigation.traverseTo === "function") {
+          try {
+            var resTrav = window.navigation.traverseTo(cibleKey);
+            var dejaReplie = false;
+            var surEchecTrav = function () {
+              if (dejaReplie) return;
+              dejaReplie = true;
+              replierGo();
+            };
+            if (resTrav && resTrav.committed && typeof resTrav.committed.catch === "function") {
+              resTrav.committed.catch(surEchecTrav);
+            }
+            if (resTrav && resTrav.finished && typeof resTrav.finished.catch === "function") {
+              resTrav.finished.catch(function (err) {
+                if (err && (err.name === "InvalidStateError" || err.name === "SecurityError")) surEchecTrav();
+              });
+            }
+            return;
+          } catch (eTr) {}
+        }
+        replierGo();
       });
     }, true);
   } catch (e) {}

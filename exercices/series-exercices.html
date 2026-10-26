@@ -863,7 +863,6 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="../assets/fonts/fonts.css" />
     <link rel="stylesheet" href="../assets/css/atelier-pages.css" />
   <style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
 </head>
@@ -1904,14 +1903,15 @@
           </div>
 
           <!-- allow="fullscreen" est indispensable pour le bouton « Projeter »
-               des corrigés animés (plein écran depuis la fenêtre modale). -->
+               des corrigés animés (plein écran depuis la fenêtre modale).
+               v476 : src="about:blank" (jamais src="" qui rechargeait series-exercices.html
+               en double à l'intérieur de l'iframe cachée et polluait window.history). -->
           <iframe
             id="pdfFrame"
-            src=""
+            src="about:blank"
             title="Document"
             allow="fullscreen; autoplay; clipboard-write"
             allowfullscreen
-            loading="lazy"
           ></iframe>
         </div>
       </div>
@@ -1956,6 +1956,38 @@
         return "mode-site"; // sites, corrigés animés, jeux, aperçus
       }
 
+      /* v476 : navigation sans entrée d'historique jointe (location.replace) afin que
+         l'ouverture/fermeture des 72 aperçus d'exercices ne pollue jamais window.history
+         ni n'empêche le retour instantané 0 ms (bfcache) vers index.html. */
+      function chargerDansPdfFrame(cibleUrl) {
+        var frame = document.getElementById("pdfFrame");
+        if (!frame) return;
+        var urlRes =
+          !cibleUrl || cibleUrl === "about:blank"
+            ? "about:blank"
+            : new URL(cibleUrl, window.location.href).href;
+        try {
+          if (frame.contentWindow && frame.contentWindow.location) {
+            frame.contentWindow.location.replace(urlRes);
+            return;
+          }
+        } catch (eCw) {}
+        var parent = frame.parentNode;
+        if (parent) {
+          var clone = frame.cloneNode(false);
+          clone.onload = frame.onload || null;
+          clone.setAttribute("src", "about:blank");
+          parent.replaceChild(clone, frame);
+          try {
+            if (clone.contentWindow && clone.contentWindow.location) {
+              clone.contentWindow.location.replace(urlRes);
+              return;
+            }
+          } catch (eCl) {}
+          clone.src = urlRes;
+        }
+      }
+
       function openPdfModal(fileUrl, title) {
         // les espaces des noms de fichiers ("formulaire inscription.pdf") doivent
         // être encodés, sinon le navigateur cherche un fichier inexistant
@@ -1982,7 +2014,7 @@
           masquerAlerte();
           setModalExpanded(false);
           setModalMode("mode-doc");
-          document.getElementById("pdfFrame").src = "about:blank";
+          chargerDansPdfFrame("about:blank");
           document.getElementById("pdfModal").classList.add("open");
           document.body.style.overflow = "hidden";
           afficherAlerte(
@@ -2005,16 +2037,18 @@
         setModalExpanded(false);
         setModalMode(modePourUrl(fileUrl));
 
-        document.getElementById("pdfFrame").src = fileUrl;
         document.getElementById("pdfModal").classList.add("open");
         document.body.style.overflow = "hidden"; // Bloquer le défilement
 
         controlerDocument(fileUrl);
+        chargerDansPdfFrame(fileUrl);
       }
 
       function closePdfModal(event) {
         document.getElementById("pdfModal").classList.remove("open");
-        document.getElementById("pdfFrame").src = "";
+        var frameClose = document.getElementById("pdfFrame");
+        if (frameClose) frameClose.onload = null;
+        chargerDansPdfFrame("about:blank");
         document.body.style.overflow = ""; // Réactiver le défilement
         setModalExpanded(false); // on réinitialise pour la prochaine ouverture
         setModalMode(null); // … ainsi que la taille liée au contenu
@@ -2062,19 +2096,19 @@
           "html,body{width:100%;height:100%;margin:0}" +
           "body{display:grid;grid-template-rows:auto minmax(0,1fr);background:#e9ebf2;color:#14161f;font-family:Arial,sans-serif}" +
           ".barre{display:flex;align-items:center;gap:16px;min-height:64px;padding:10px 18px;background:#fff;border-bottom:1px solid #e1e4ec}" +
-          ".retour{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;padding:10px 14px;border-radius:9px;background:#4338ca;color:#fff;text-decoration:none;font-weight:700}" +
-          ".retour:hover{background:#3529b6}" +
+          ".retour{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;padding:10px 14px;border-radius:9px;background:#b4552d;color:#fff;text-decoration:none;font-weight:700}" +
+          ".retour:hover{background:#964321}" +
           ".titre{min-width:0;flex:1}" +
           ".titre strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:1rem}" +
           ".titre span{display:block;margin-top:3px;color:#5b6172;font-size:.82rem}" +
           "main{min-height:0}" +
           "iframe{display:block;width:100%;height:100%;border:0;background:#fff}" +
-          "a:focus-visible{outline:3px solid #7c83f0;outline-offset:2px}" +
+          "a:focus-visible{outline:3px solid #f4511e;outline-offset:2px}" +
           "@media(max-width:640px){.barre{flex-wrap:wrap;gap:8px;padding:9px 12px}.titre{order:2;flex-basis:100%}.titre strong{white-space:normal}}" +
           "</style></head><body>" +
           '<header class="barre"><a class="retour" href="' +
           echapperHtml(urlRetour) +
-          '"><span aria-hidden="true">←</span> Retour aux exercices</a>' +
+          '" onclick="if(history.length<=2){try{window.close();return false;}catch(e){}}"><span aria-hidden="true">←</span> Retour aux exercices</a>' +
           '<div class="titre"><strong>' +
           echapperHtml(titre) +
           "</strong><span>STI Quiz — exercice ouvert dans un nouvel onglet</span></div></header>" +
@@ -2103,11 +2137,10 @@
 
       function reloadModalFrame() {
         if (!modalUrl) return;
-        var frame = document.getElementById("pdfFrame");
-        frame.src = "about:blank";
+        chargerDansPdfFrame("about:blank");
         setTimeout(function () {
-          frame.src = modalUrl;
           controlerDocument(modalUrl);
+          chargerDansPdfFrame(modalUrl);
         }, 60);
       }
 
@@ -2305,14 +2338,14 @@
         update();
       })();
     </script>
-  <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(history.state,"",location.pathname+location.search);});})();</script>
+  <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(history.state,"",location.pathname+location.search);});var prech=function(){try{var c=navigator&&(navigator.connection||navigator.mozConnection||navigator.webkitConnection);if(c&&(c.saveData||/(^|-)2g$/i.test(String(c.effectiveType||""))))return;[["../index.html","document"],["../assets/css/atelier.css","style"]].forEach(function(it){var l=document.createElement("link");l.rel="prefetch";l.as=it[1];l.href=it[0];(document.head||document.documentElement).appendChild(l);});}catch(eP){}};if(typeof requestIdleCallback==="function")requestIdleCallback(prech,{timeout:1500});else setTimeout(prech,900);})();</script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../assets/css/protection.css?v=227" />
-<script src="../assets/js/protection.js?v=288" defer></script>
+<script src="../assets/js/config.js?v=476" defer></script>
+<script src="../assets/js/protection.js?v=474" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js" defer></script>
-<script src="../assets/js/config.js?v=468" defer></script>
 <script src="../assets/js/acces.js?v=453" defer></script>
-  <script src="../assets/js/sync-progressions.js?v=465" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=476" defer></script>
 </body>
 </html>

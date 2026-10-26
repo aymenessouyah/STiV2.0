@@ -22,6 +22,32 @@
     var dark = t === "dark";
     if (t === "dark") { r.setAttribute("data-theme", "dark"); r.classList.add("dark", "dark-mode"); }
     else if (t === "light") { r.removeAttribute("data-theme"); r.classList.remove("dark", "dark-mode"); }
+    /* v476 : lors d'une arrivée sur ancre (ex. index.html#modules depuis Quiz PHP ou #exercices
+       depuis les séries) ou d'un retour via sti-retour-accueil-hash hors bfcache, verrouiller
+       dès <head> scrollRestoration="manual" + location.hash + scrollBehavior="auto" pour
+       positionner la section en 0 ms sans que le navigateur ne restaure un ancien scroll. */
+    var hRetBoot = "";
+    try { hRetBoot = sessionStorage.getItem("sti-retour-accueil-hash") || ""; } catch (eHb) {}
+    if (hRetBoot) {
+      try { if (history && "scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (eSrB) {}
+      try {
+        if (hRetBoot === "#top") {
+          if (location.hash) history.replaceState(history.state, "", location.pathname + (location.search || ""));
+        } else if (location.hash !== hRetBoot) {
+          history.replaceState(history.state, "", location.pathname + (location.search || "") + hRetBoot);
+        }
+      } catch (eHsB) {}
+    }
+    if (((location.hash && location.hash.length > 1) || hRetBoot) && r.style) {
+      r.style.scrollBehavior = "auto";
+      var libSb = function () {
+        var fin = function () { try { r.style.removeProperty("scroll-behavior"); } catch (eR) {} };
+        if (typeof requestAnimationFrame === "function") requestAnimationFrame(function () { requestAnimationFrame(fin); });
+        else setTimeout(fin, 50);
+      };
+      if (document.readyState === "loading") window.addEventListener("DOMContentLoaded", libSb, { once: true });
+      else libSb();
+    }
     if (!/^https?:$/.test(location.protocol)) return;
     if (!window.matchMedia || !window.matchMedia("(max-width: 700px)").matches) return;
     if (window.__STI_BNAV || document.getElementById("sti-bnav")) return;
@@ -116,6 +142,7 @@
       content="STI by AE"
     />
     <link rel="stylesheet" href="assets/fonts/fonts.css" />
+    <link rel="preload" href="assets/js/config.js?v=476" as="script" />
     <style id="sti-4si-zero-flash">
       html:not(.sti-4si-autorise) .sti-4si-only,
       html:not(.sti-4si-autorise) a[href*="bac-pratique.html"],
@@ -2619,7 +2646,7 @@
     </header>
 
     <!-- ======================= La Cote STI : tableau de bourse des technologies ======================= -->
-    <script src="./assets/js/config.js?v=475"></script>
+    <script src="./assets/js/config.js?v=476"></script>
     <script>
       /* v407 : pré-connexion Supabase dès le haut de page — le bandeau récupère les news de la régie
          sans attendre le coût froid DNS+TLS de la première requête (gagnat typique : 300–900 ms). */
@@ -4194,6 +4221,17 @@
 
         /* ---------- Apparition au scroll ---------- */
         var revealEls = document.querySelectorAll(".reveal");
+        function revelerSectionAncreCourante() {
+          try {
+            var idAnc = (location.hash || "").replace(/^#/, "");
+            if (!idAnc) return;
+            var secAnc = document.getElementById(idAnc);
+            if (!secAnc) return;
+            if (secAnc.classList && secAnc.classList.contains("reveal")) secAnc.classList.add("in");
+            secAnc.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+          } catch (eAnc) {}
+        }
+        revelerSectionAncreCourante();
 
         if ("IntersectionObserver" in window && !reduceMotion) {
           var io = new IntersectionObserver(
@@ -4919,6 +4957,47 @@
               Math.round((done / total) * 100) + "%";
           }
         }
+        var _ancreInitialeId = (location.hash || "").replace(/^#/, "");
+        var _tsArriveeAncre = _ancreInitialeId ? Date.now() : 0;
+        var _gesteUtilisateurDetecte = false;
+        if (_ancreInitialeId) {
+          var stopperAncreAuto = function () { _gesteUtilisateurDetecte = true; };
+          window.addEventListener("wheel", stopperAncreAuto, { passive: true, once: true });
+          window.addEventListener("touchmove", stopperAncreAuto, { passive: true, once: true });
+          window.addEventListener("pointerdown", stopperAncreAuto, { passive: true, once: true });
+          window.addEventListener("keydown", stopperAncreAuto, { passive: true, once: true });
+        }
+        function alignerAncreInitialeSiActive() {
+          try {
+            if (_gesteUtilisateurDetecte || !_ancreInitialeId) return;
+            if ((Date.now() - _tsArriveeAncre) > 1800) return;
+            var idCour = (location.hash || "").replace(/^#/, "") || _ancreInitialeId;
+            var sec = document.getElementById(idCour);
+            if (!sec || typeof sec.scrollIntoView !== "function") return;
+            var de = document.documentElement;
+            var prev = de && de.style ? de.style.scrollBehavior : "";
+            if (de && de.style) de.style.scrollBehavior = "auto";
+            sec.scrollIntoView({ block: "start", behavior: "auto" });
+            if (de && de.style) {
+              var rest = function () {
+                try {
+                  if (prev) de.style.scrollBehavior = prev;
+                  else de.style.removeProperty("scroll-behavior");
+                } catch (eRs) {}
+              };
+              if (typeof requestAnimationFrame === "function") requestAnimationFrame(rest);
+              else setTimeout(rest, 0);
+            }
+          } catch (eAl) {}
+        }
+        if (_ancreInitialeId) {
+          window.addEventListener("DOMContentLoaded", function () {
+            if (typeof requestAnimationFrame === "function") requestAnimationFrame(alignerAncreInitialeSiActive);
+            else alignerAncreInitialeSiActive();
+          }, { once: true });
+          window.addEventListener("load", alignerAncreInitialeSiActive, { once: true });
+        }
+
         window.__stiMaj4SI = function () {
           rotatorItems = rotatorItemsAll.filter(function (it) {
             return !it.only4si || document.documentElement.classList.contains("sti-4si-autorise");
@@ -4926,6 +5005,7 @@
           updateRevisionUI();
           updateResumeAndBookmarksUI();
           applyFilters();
+          alignerAncreInitialeSiActive();
         };
 
         reviseButtons.forEach(function (btn) {
@@ -4987,9 +5067,13 @@
         window.addEventListener("scroll", updateScrollUI, { passive: true });
         updateScrollUI();
 
-        /* v465 : Au retour instantané bfcache (pageshow / sti-accueil-restored) depuis un cours ou un quiz,
-           rafraîchir tous les indicateurs locaux en <2 ms sans recharger le document. */
+        /* v465/v476 : Au retour instantané bfcache (pageshow / sti-accueil-restored) depuis un cours,
+           les exercices ou un quiz, rafraîchir une seule fois tous les indicateurs locaux en <2 ms. */
+        var _dernierRafAccueilTs = 0;
         function rafraichirAccueilAuRetour() {
+          var nowRaf = Date.now();
+          if (_dernierRafAccueilTs && (nowRaf - _dernierRafAccueilTs) < 80) return;
+          _dernierRafAccueilTs = nowRaf;
           try {
             var th = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || "";
             if (th !== "dark" && th !== "light") {
@@ -5006,12 +5090,26 @@
           try {
             revisedMap = JSON.parse(localStorage.getItem(REVISED_KEY) || "{}") || {};
           } catch (eR) { revisedMap = {}; }
+          try {
+            var hCourAcc = location.hash || "";
+            if ((hCourAcc === "#modules" || hCourAcc === "#cours") && (activeFilter !== "all" || (searchInput && searchInput.value))) {
+              activeFilter = "all";
+              if (searchInput) searchInput.value = "";
+              filterChips.forEach(function (ch) {
+                var on = ch.getAttribute("data-filter") === "all";
+                ch.classList.toggle("active", on);
+                ch.setAttribute("aria-pressed", on ? "true" : "false");
+              });
+              applyFilters();
+            }
+          } catch (eFl) {}
           updateRevisionUI();
           updateResumeAndBookmarksUI();
           if (typeof window.__stiMajBadgeFlashcards === "function") window.__stiMajBadgeFlashcards();
           if (typeof window.__stiMajBadgeDebug === "function") window.__stiMajBadgeDebug();
           if (typeof window.__stiRafraichirReprendre === "function") window.__stiRafraichirReprendre();
           if (typeof window.rafraichirBadgesProgressionSTI === "function") window.rafraichirBadgesProgressionSTI();
+          revelerSectionAncreCourante();
           try {
             var mobMenu = document.getElementById("mobileLogoMenu");
             var brandTrig = document.getElementById("brandLogoTrigger");
@@ -5326,7 +5424,7 @@
 <!-- /Protection -->
 <script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/acces.js?v=453" defer></script>
-<script src="assets/js/sync-progressions.js?v=475" defer></script>
+<script src="assets/js/sync-progressions.js?v=476" defer></script>
 <section id="nouveautes" style="max-width:1100px;margin:26px auto;padding:0 16px;">
   <h2 style="font-size:1.7rem;">🆕 Nouveautés de la plateforme</h2>
   <p>Les dernières mises en ligne — un badge <b>NOUVEAU</b> signale ce qui est paru depuis votre dernière visite. <a href="nouveautes.html"><b>Tout l'historique ➜</b></a></p>

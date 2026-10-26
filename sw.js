@@ -3,19 +3,19 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v335";
+var CACHE = "sti-atelier-v337";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés (1 seule entrée par URL).
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v475-nav-fluide-instant";
-/* Historique caches : sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
+var UPDATE_ID = "v476-retour-accueil-quiz-exo";
+/* Historique caches : sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
 var UPDATE_FILES = [
-  { url: "./index.html", revision: "nav-fluide-v475" },
-  { url: "./admin.html", revision: "nav-fluide-v475" },
-  { url: "./README.md", revision: "nav-fluide-v475" },
-  { url: "./assets/data/nouveautes.json", revision: "nav-fluide-v475" },
-  { url: "./assets/js/config.js", revision: "nav-fluide-v475" },
+  { url: "./index.html", revision: "retour-quiz-v476" },
+  { url: "./admin.html", revision: "retour-quiz-v476" },
+  { url: "./README.md", revision: "retour-quiz-v476" },
+  { url: "./assets/data/nouveautes.json", revision: "retour-quiz-v476" },
+  { url: "./assets/js/config.js", revision: "retour-quiz-v476" },
   { url: "./assets/js/acces.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/protection.js", revision: "perf-quiz-php-v474" },
   { url: "./assets/js/mobile-nav.js", revision: "perf-quiz-php-v474" },
@@ -33,9 +33,9 @@ var UPDATE_FILES = [
   { url: "./assets/fonts/nunito-var.woff2", revision: "nav-fluide-v475" },
   { url: "./assets/fonts/inter-var.woff2", revision: "nav-fluide-v475" },
   { url: "./assets/fonts/jetbrains-mono-var.woff2", revision: "nav-fluide-v475" },
-  { url: "./quiz/php.html", revision: "nav-fluide-v475" },
-  { url: "./quiz/sql.html", revision: "nav-fluide-v475" },
-  { url: "./quiz/javascript.html", revision: "nav-fluide-v475" },
+  { url: "./quiz/php.html", revision: "retour-quiz-v476" },
+  { url: "./quiz/sql.html", revision: "retour-quiz-v476" },
+  { url: "./quiz/javascript.html", revision: "retour-quiz-v476" },
   { url: "./cours/sql.html", revision: "nav-fluide-v475" },
   { url: "./cours/sql-contraintes.html", revision: "nav-fluide-v475" },
   { url: "./exercices/php/debogage-php-bac.html", revision: "nav-fluide-v475" },
@@ -44,27 +44,27 @@ var UPDATE_FILES = [
   { url: "./memo-veille-bac.html", revision: "nav-fluide-v475" },
   { url: "./outils-js-bac.html", revision: "nav-fluide-v475" },
   { url: "./pieges-bac.html", revision: "nav-fluide-v475" },
-  { url: "./offline-complete-manifest.json", revision: "nav-fluide-v475" },
+  { url: "./offline-complete-manifest.json", revision: "retour-quiz-v476" },
   { url: "./ma-fiche-revision.html", revision: "nav-fluide-v475" },
   { url: "./assets/js/roue-couverture.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/roue-revision.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/roue-plan.js", revision: "perf-fluide-v473" },
-  { url: "./assets/js/sync-progressions.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/sync-progressions.js", revision: "retour-quiz-v476" },
   { url: "./assets/js/admin.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/quiz-admin.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/sauvegarde.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/reprendre.js", revision: "test-plateforme-v472" },
   { url: "./assets/js/sante.js", revision: "tester-tout-v471" },
-  { url: "./revision-erreurs.html", revision: "audit-fonctionnel-v470" },
+  { url: "./revision-erreurs.html", revision: "retour-quiz-v476" },
   { url: "./bac-pratique.html", revision: "nav-fluide-v475" },
-  { url: "./exercices/series-exercices.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/series-exercices.html", revision: "retour-quiz-v476" },
   { url: "./cours/courscss3.html", revision: "nav-fluide-v475" },
   { url: "./cours/css3.html", revision: "nav-fluide-v475" },
   { url: "./cours/coursphp.html", revision: "nav-fluide-v475" },
   { url: "./cours/php.html", revision: "nav-fluide-v475" },
   { url: "./cours/javascript.html", revision: "nav-fluide-v475" },
   { url: "./cours/fiche-revision-html5.html", revision: "nav-fluide-v475" },
-  { url: "./quiz/html-css.html", revision: "nav-fluide-v475" },
+  { url: "./quiz/html-css.html", revision: "retour-quiz-v476" },
   { url: "./assets/js/portail.js", revision: "audit-fonctionnel-v470" },
   { url: "./assets/js/quiz-sync.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/quiz-tableaux.js", revision: "audit-fonctionnel-v470" },
@@ -74,8 +74,8 @@ var UPDATE_FILES = [
   { url: "./assets/js/admin-revision.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/graphiques-activite.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/analytique.js", revision: "pagination-integrale-v469" },
-  { url: "./quiz/pp.html", revision: "nav-fluide-v475" },
-  { url: "./quiz/tableaux.html", revision: "nav-fluide-v475" },
+  { url: "./quiz/pp.html", revision: "retour-quiz-v476" },
+  { url: "./quiz/tableaux.html", revision: "retour-quiz-v476" },
   { url: "./manifest.webmanifest", revision: "dbsupbase-v466" },
   { url: "./assets/js/admin-dbsupbase.js", revision: "dbsupbase-v466" },
   { url: "./assets/js/cote-ticker.js", revision: "nav-fluide-v465" },
@@ -1246,7 +1246,7 @@ self.addEventListener("fetch", function (evt) {
   /* 1. Pages (navigation, documents HTML, iframes) & Scripts / Styles :
         - Si déjà en cache pour la version courante (CACHE) -> 0 ms depuis le cache (navigation ultra-légère : la plateforme ne se met à jour que s'il y a une nouvelle version de CACHE)
         - Si pas encore en cache -> réseau + mise en cache */
-  var estHoteLocalDossier = /^(localhost|127\.0\.0\.1|::1|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/i.test(url.hostname || "");
+  var estHoteLocalDossier = /^(localhost|127\.0\.0\.1|::1|192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)|\.e2b\.app$/i.test(url.hostname || "");
   if (req.mode === "navigate" || /\.(html|css|js|webmanifest)$/i.test(url.pathname) || url.pathname.slice(-1) === "/") {
     evt.respondWith(
       (async function () {
