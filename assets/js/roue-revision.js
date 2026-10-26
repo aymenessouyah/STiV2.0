@@ -22,19 +22,88 @@
   var ETAPES = [1, 3, 7]; /* intervalles en jours */
   var MAX_PROPOSITIONS = 3;
   var manifeste = null;
+  /* Table canonique des 48 pages suivies dont le chemin Git réel comporte des majuscules
+     (évite les erreurs HTTP 404 sur GitHub Pages / Linux sensible à la casse, y compris
+     pour les entrées historiques déjà enregistrées en minuscules dans sti-revision-v436). */
+  var CHEMINS_REELS = {
+    "cours/recap-javascript-sti.html": "cours/Recap-JavaScript-STI.html",
+    "exercices/html-css/activite-html-css/act1/page1.html": "exercices/html-css/activite-html-css/Act1/page1.html",
+    "exercices/html-css/activite-html-css/act2/page2.html": "exercices/html-css/activite-html-css/Act2/page2.html",
+    "exercices/html-css/explore_tunisie/explore_tunisie_enonce.pdf.html": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.html",
+    "exercices/html-css/explore_tunisie/explore_tunisie_solution/exploretunisie/index-float.html": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html",
+    "exercices/html-css/explore_tunisie/explore_tunisie_solution/exploretunisie/index-position.html": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html",
+    "exercices/html-css/explore_tunisie/explore_tunisie_solution/exploretunisie/index.html": "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html",
+    "exercices/html-css/tp1-css.pdf.html": "exercices/html-css/TP1-css.pdf.html",
+    "exercices/html-css/tp2-css.pdf.html": "exercices/html-css/TP2-css.pdf.html",
+    "exercices/html-css/tp2/tp2corrposition.html": "exercices/html-css/TP2/tp2corrposition.html",
+    "exercices/html-css/tp3-css.pdf.html": "exercices/html-css/TP3-css.pdf.html",
+    "exercices/javascript/tp1-correction-js.html": "exercices/javascript/Tp1-Correction-js.html",
+    "exercices/javascript/tp1-js.html": "exercices/javascript/Tp1-js.html",
+    "exercices/javascript/tp2-correction-js.html": "exercices/javascript/Tp2-Correction-js.html",
+    "exercices/javascript/tp2-js.html": "exercices/javascript/Tp2-js.html",
+    "exercices/javascript/tp3-correction-js.html": "exercices/javascript/Tp3-Correction-js.html",
+    "exercices/javascript/tp3-js.html": "exercices/javascript/Tp3-js.html",
+    "exercices/javascript/tp4-correction-js.html": "exercices/javascript/Tp4-Correction-js.html",
+    "exercices/javascript/tp4-js.html": "exercices/javascript/Tp4-js.html",
+    "exercices/javascript/tp5-correction-js.html": "exercices/javascript/Tp5-Correction-js.html",
+    "exercices/javascript/tp5-js.html": "exercices/javascript/Tp5-js.html",
+    "exercices/php/4sti-dc-6-2025-2026.pdf.html": "exercices/php/4STi-dc-6-2025-2026.pdf.html",
+    "exercices/php/tp1-correction-php.html": "exercices/php/Tp1-Correction-php.html",
+    "exercices/php/tp1-php.html": "exercices/php/Tp1-php.html",
+    "exercices/php/tp2-correction-php.html": "exercices/php/Tp2-Correction-php.html",
+    "exercices/php/tp2-php.html": "exercices/php/Tp2-php.html",
+    "exercices/php/tp3-correction-php.html": "exercices/php/Tp3-correction-php.html",
+    "exercices/php/tp3-php.html": "exercices/php/Tp3-php.html",
+    "exercices/php/tp4-correction-php.html": "exercices/php/Tp4-Correction-php.html",
+    "exercices/php/tp4-php.html": "exercices/php/Tp4-php.html",
+    "exercices/php/tp5-correction-php.html": "exercices/php/Tp5-Correction-php.html",
+    "exercices/php/tp5-php.html": "exercices/php/Tp5-php.html",
+    "exercices/sql/commentconstruireunerequêtesql.html": "exercices/sql/CommentConstruireunerequêteSQL.html",
+    "exercices/sql/tp-bd-jointure-sous-requetes-group-by.html": "exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html",
+    "exercices/sql/tp-date-ssr-j-gp-bd.html": "exercices/sql/Tp-date-ssr-j-gp-bd.html",
+    "exercices/sql/tp-date-ssr-j-gp-correction-bd.html": "exercices/sql/Tp-date-ssr-j-gp-correction-bd.html",
+    "exercices/sql/tp-groupby-bd.html": "exercices/sql/Tp-GroupBy-bd.html",
+    "exercices/sql/tp1-bd.html": "exercices/sql/Tp1-bd.html",
+    "exercices/sql/tp1-correction-bd.html": "exercices/sql/Tp1-Correction-bd.html",
+    "exercices/sql/tp2-bd.html": "exercices/sql/Tp2-bd.html",
+    "exercices/sql/tp2-correction-bd.html": "exercices/sql/Tp2-Correction-bd.html",
+    "exercices/sql/tp3-correction-bd.html": "exercices/sql/Tp3-Correction-bd.html",
+    "exercices/sql/tp4-correction-bd.html": "exercices/sql/Tp4-correction-bd.html",
+    "positionnement-animee/index.html": "Positionnement-animee/index.html",
+    "projets/fleurs/corrections.html": "projets/fleurs/Corrections.html",
+    "projets/formulaire-inscription/cvfleurs.html": "projets/formulaire-inscription/cvFleurs.html",
+    "projets/formulaire-inscription/enonce/cvfleurs-énoncé/formulaire inscription.pdf.html": "projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf.html",
+    "projets/site-tunisie/site-tunisie-correction-animation-html-css.html": "projets/site-tunisie/site-tunisie-Correction-animation-html-css.html"
+  };
 
+  function ech(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
   function lire() {
     try { return JSON.parse(localStorage.getItem(CLE) || "{}") || {}; } catch (e) { return {}; }
   }
   function ecrire(o) { try { localStorage.setItem(CLE, JSON.stringify(o)); } catch (e) {} }
   function jour(ts) { var d = new Date(ts || Date.now()); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
-  function slug() {
+  function cheminReelCourant() {
     var p = location.pathname || "";
     try { p = decodeURIComponent(p); } catch (e) {}
-    p = p.replace(/^\/+/, "").toLowerCase();
-    if (p.indexOf("stiv2.0/") === 0) p = p.slice(8);
+    p = p.replace(/^\/+/, "");
+    if (/^stiv2\.0\//i.test(p)) p = p.slice(8);
     if (/\/$/.test(p)) p += "index.html";
-    return p;
+    return CHEMINS_REELS[p.toLowerCase()] || p;
+  }
+  function slug() {
+    return cheminReelCourant().toLowerCase();
+  }
+  function resoudreCheminReel(cleSlug, entree) {
+    var k = String(cleSlug || "").replace(/^\/+/, "").toLowerCase();
+    if (CHEMINS_REELS[k]) return CHEMINS_REELS[k];
+    if (entree && typeof entree.chemin === "string" && entree.chemin.replace(/^\/+/, "").toLowerCase() === k) {
+      return entree.chemin.replace(/^\/+/, "");
+    }
+    return String(cleSlug || "").replace(/^\/+/, "");
   }
   function racineSite() {
     try {
@@ -51,7 +120,8 @@
   function versRacine(rel) {
     var r = String(rel || "").replace(/^\/+/, "");
     if (/^https?:\/\//i.test(r)) return r;
-    return racineSite() + r;
+    var complet = racineSite() + r;
+    try { return encodeURI(decodeURI(complet)); } catch (eU) { return complet.replace(/ /g, "%20"); }
   }
   function pagesManifeste() {
     if (manifeste) return Promise.resolve(manifeste);
@@ -63,11 +133,17 @@
   /* 1°) dater la visite de la page courante (si c'est une page de contenu) */
   function dater() {
     var s = slug();
+    var reel = cheminReelCourant();
     pagesManifeste().then(function (pages) {
       if (pages && pages.length && pages.indexOf(s) === -1) return;
       var o = lire();
-      if (!o[s]) o[s] = { vu: new Date().toISOString(), etape: 0, dernier: null };
-      ecrire(o);
+      if (!o[s]) {
+        o[s] = { vu: new Date().toISOString(), etape: 0, dernier: null, chemin: reel };
+        ecrire(o);
+      } else if (!o[s].chemin && reel && reel !== s) {
+        o[s].chemin = reel;
+        ecrire(o);
+      }
     });
   }
   function noteChiffree(txt) {
@@ -102,7 +178,8 @@
       var etape = Math.min(ETAPES.length - 1, Math.max(0, Number(e.etape) || 0));
       var echeance = base + ETAPES[etape] * JOUR;
       if (maintenant >= echeance) {
-        out.push({ type: "page", slug: p, etape: ETAPES[etape], rang: etape + 1, retard: Math.floor((maintenant - echeance) / JOUR), href: versRacine(p) });
+        var reelP = resoudreCheminReel(p, e);
+        out.push({ type: "page", slug: p, chemin: reelP, etape: ETAPES[etape], rang: etape + 1, retard: Math.floor((maintenant - echeance) / JOUR), href: versRacine(reelP) });
       }
     });
     out.sort(function (a, b) { return b.retard - a.retard; });
@@ -171,11 +248,11 @@
     if (!items.length) {
       html += "<div style='font-size:11px;font-weight:700;opacity:.75;padding:2px 2px 0'>Rien d'urgent : continue tes cours, la roue te rappellera les pages au bon moment.</div>";
     } else {
-      items.forEach(function (it, i) {
-        html += "<div class='sti-rev-ligne' data-cle='" + it.cle.replace(/'/g, "\\'") + "' style='display:flex;align-items:center;gap:6px;border:1.5px solid rgba(35,32,26,.18);border-radius:10px;padding:4px 6px;background:rgba(255,255,255,.55)'>" +
-          "<a href='" + it.href + "' style='flex:1 1 auto;min-width:0;text-decoration:none;color:inherit'><div style='font-size:11.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + it.titre + "</div>" +
-          "<div style='font-size:9.5px;font-weight:800;opacity:.7'>" + it.meta + "</div></a>" +
-          "<button type='button' class='sti-rev-fait' data-cle='" + it.cle.replace(/'/g, "\\'") + "' title='Marquer comme révisé'" +
+      items.forEach(function (it) {
+        html += "<div class='sti-rev-ligne' data-cle='" + ech(it.cle) + "' style='display:flex;align-items:center;gap:6px;border:1.5px solid rgba(35,32,26,.18);border-radius:10px;padding:4px 6px;background:rgba(255,255,255,.55)'>" +
+          "<a href='" + ech(it.href) + "' style='flex:1 1 auto;min-width:0;text-decoration:none;color:inherit'><div style='font-size:11.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + ech(it.titre) + "</div>" +
+          "<div style='font-size:9.5px;font-weight:800;opacity:.7'>" + ech(it.meta) + "</div></a>" +
+          "<button type='button' class='sti-rev-fait' data-cle='" + ech(it.cle) + "' title='Marquer comme révisé'" +
           " style='flex:0 0 auto;border:1.5px solid #177245;background:#dcfce7;color:#14532d;border-radius:999px;padding:3px 9px;font:900 10.5px system-ui,sans-serif;cursor:pointer'>✔</button>" +
           "</div>";
       });
@@ -228,7 +305,7 @@
     dernierEtat = sig2;
   }, 700);
 
-  window.STI_REVISION = { dus: dus, marquerFait: marquerFait, oublier: oublier, lire: lire, libelle: libelle, ETAPES: ETAPES };
+  window.STI_REVISION = { dus: dus, marquerFait: marquerFait, oublier: oublier, lire: lire, libelle: libelle, resoudreCheminReel: resoudreCheminReel, CHEMINS_REELS: CHEMINS_REELS, ETAPES: ETAPES };
   dater();
   try { if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", rendre); else rendre(); } catch (e) {}
   /* amorçage : les pages déjà vues avant la v436 entrent dans le cycle une fois */

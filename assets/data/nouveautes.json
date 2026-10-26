@@ -1,5 +1,15 @@
 [
   {
+    "version": "v471",
+    "date": "2026-10-26",
+    "categorie": "Plateforme & Fiabilité",
+    "icone": "🧪",
+    "titre": "Vérification intégrale E2E : 48 liens de révision espacée réparés (casse GitHub Pages), reprise vidéo/podcast multi-matières et 43 contrôles Santé",
+    "resume": "Campagne complète de tests sur les 135 pages, 1 244 questions de quiz, 2 Smart Books, SQLite WASM, les 15 tables Supabase et Google Drive : résolution de la casse réelle des 48 pages mixtes dans « À revoir aujourd’hui » (plus aucun 404 sous Linux / GitHub Pages), routage exact de la carte « Continuer où je m’étais arrêté » vers chaque cours ou TP (HTML5, CSS3, JavaScript, SQL, PHP, animations et podcasts) et extension du vérificateur Santé du site à 43 contrôles en direct.",
+    "lien": "ma-fiche-revision.html",
+    "libelleLien": "Ouvrir ma fiche de révision"
+  },
+  {
     "version": "v470",
     "date": "2026-10-26",
     "categorie": "Plateforme & Sécurité",

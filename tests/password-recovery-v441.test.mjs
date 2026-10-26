@@ -4287,7 +4287,8 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.equal(cinq.length, 5);
   assert.ok(cinq.some((o) => /^v468 — Audit intégral/.test(o.t)), 'v468 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v469 — Pagination PostgREST intégrale/.test(o.t)), 'v469 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v470 — Validation fonctionnelle E2E/);
+  assert.ok(cinq.some((o) => /^v470 — Validation fonctionnelle E2E/.test(o.t)), 'v470 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v471 — Vérification intégrale de bout en bout/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -4623,10 +4624,10 @@ test('v470 : audit fonctionnel intégral en 9 points (quiz CSPRNG, Mes erreurs, 
   assert.match(sauvJs, /function televerserArchiveVersDrive\(/);
   assert.match(gsCode, /function obtenirDossierSauvegarde_\(/);
   assert.match(gsCode, /function enregistrerArchiveDirecteDrive_\(/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v330";/);
-  assert.match(swJs, /var UPDATE_ID = "v470-audit-fonctionnel-readme";/);
-  assert.equal(nouv[0].version, 'v470');
-  assert.match(readmeMd, /sti-atelier-v330/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v33\d";/);
+  assert.match(swJs, /v470-audit-fonctionnel-readme/);
+  assert.ok(nouv.some((n) => n.version === 'v470'), 'nouveautes.json doit conserver v470');
+  assert.match(readmeMd, /sti-atelier-v33\d/);
   assert.match(readmeMd, /\|\s*v470\s*\|/);
   assert.match(readmeMd, /1 244 questions/);
   assert.match(adminHtml, /v470 · sti-atelier-v330/);
@@ -5075,6 +5076,233 @@ test('v470 (comportemental VM) : isolation multi-élèves quiz, tirage neuf conn
   assert.equal(uploadedFiles[0].name, 'sti-sauvegarde-2026-10-26.json.gz');
   assert.equal(Object.keys(uploadedFiles[0].json.tables).length, 15);
 });
+
+test('v471 (structure) : 124/124 chemins Git exacts dans roue-revision.js (zéro 404 casse Linux), reprendre.js multi-matières, 43 contrôles sante.js & sw.js sti-atelier-v331', () => {
+  const roueRevJs = read('assets/js/roue-revision.js');
+  const reprendreJs = read('assets/js/reprendre.js');
+  const rouePlanJs = read('assets/js/roue-plan.js');
+  const mobileNavJs = read('assets/js/mobile-nav.js');
+  const santeJs = read('assets/js/sante.js');
+  const indexHtml = read('index.html');
+  const adminHtml = read('admin.html');
+  const ficheHtml = read('ma-fiche-revision.html');
+  const readmeMd = read('README.md');
+  const swJs = read('sw.js');
+  const nouv = JSON.parse(read('assets/data/nouveautes.json'));
+  const couvPages = JSON.parse(read('assets/pages-couverture.json')).pages;
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  for (const rel of [
+    'assets/js/roue-revision.js',
+    'assets/js/reprendre.js',
+    'assets/js/roue-plan.js',
+    'assets/js/mobile-nav.js',
+    'assets/js/sante.js',
+    'sw.js',
+  ]) {
+    execFileSync(process.execPath, ['--check', join(root, rel)], { stdio: 'pipe' });
+  }
+
+  // 1) Vérification exacte de casse sur disque / Git pour les 124 pages de pages-couverture.json
+  const gitTracked = new Set(
+    execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
+      .split('\0')
+      .filter(Boolean)
+  );
+  assert.equal(couvPages.length, 124);
+  const mMap = roueRevJs.match(/var CHEMINS_REELS = (\{[\s\S]*?\});/);
+  assert.ok(mMap, 'CHEMINS_REELS doit être défini dans roue-revision.js');
+  const cheminsReels = JSON.parse(mMap[1]);
+  assert.equal(Object.keys(cheminsReels).length, 48, 'Les 48 pages à casse mixte doivent être référencées');
+  for (const p of couvPages) {
+    const resolved = cheminsReels[p] || p;
+    assert.ok(gitTracked.has(resolved), `Chemin de révision introuvable avec casse exacte Git : ${p} -> ${resolved}`);
+  }
+
+  // 2) Cache-busters v471, 43 contrôles dans sante.js et synchronisation PWA sti-atelier-v331
+  assert.match(mobileNavJs, /roue-revision\.js\?v=471/);
+  assert.match(mobileNavJs, /roue-plan\.js\?v=471/);
+  assert.match(ficheHtml, /roue-revision\.js\?v=471/);
+  assert.match(indexHtml, /reprendre\.js\?v=471/);
+  assert.match(adminHtml, /sante\.js\?v=471/);
+  assert.equal((santeJs.match(/\{\s*cat:\s*"/g) || []).length, 43, 'sante.js doit exécuter 43 contrôles temps réel');
+  assert.match(swJs, /var CACHE = "sti-atelier-v331";/);
+  assert.match(swJs, /var UPDATE_ID = "v471-tester-tout-e2e";/);
+  assert.equal(nouv[0].version, 'v471');
+  assert.match(readmeMd, /sti-atelier-v331/);
+  assert.match(readmeMd, /\|\s*v471\s*\|/);
+  assert.match(adminHtml, /v471 · sti-atelier-v331/);
+  assert.equal(offlineManifest.version, 'v471-sti-atelier-v331');
+  assert.equal(offlineManifest.totalFiles, offlineManifest.files.length);
+});
+
+test('v471 (comportemental VM) : roue-revision.js résout les 48 pages mixtes + échappe XSS, reprendre.js route chaque cours/podcast, roue-plan.js valide les dates et SQLite WASM exécute le SQL STI', async () => {
+  const vm = await import('node:vm');
+  const { createRequire } = await import('node:module');
+  const reqCjs = createRequire(import.meta.url);
+
+  // A) roue-revision.js : entrées historiques en minuscules + apostrophes/XSS dans sti-mes-scores
+  const roueRevJs = read('assets/js/roue-revision.js');
+  const oldIso = new Date(Date.now() - 86400000 * 3).toISOString();
+  const storageRev = {
+    _d: {
+      'sti-revision-v436': JSON.stringify({
+        'cours/recap-javascript-sti.html': { vu: oldIso, etape: 0, dernier: null },
+        'exercices/javascript/tp1-js.html': { vu: oldIso, etape: 0, dernier: null },
+        'projets/formulaire-inscription/enonce/cvfleurs-énoncé/formulaire inscription.pdf.html': { vu: oldIso, etape: 0, dernier: null },
+      }),
+      'sti-mes-scores': JSON.stringify({
+        "Quiz d'entraînement <img src=x onerror=alert(1)> SQL": '05/20',
+      }),
+    },
+    getItem(k) { return Object.prototype.hasOwnProperty.call(this._d, k) ? this._d[k] : null; },
+    setItem(k, v) { this._d[k] = String(v); },
+  };
+  let blocRev = null;
+  const panEl = {
+    offsetParent: {},
+    querySelector(sel) { return sel === '#sti-pan-revision' ? blocRev : null; },
+    appendChild(el) { blocRev = el; return el; },
+  };
+  const winRev = {
+    STI_ROOT: '',
+    localStorage: storageRev,
+    location: { protocol: 'https:', origin: 'https://aymenessouyah.github.io', pathname: '/STiV2.0/index.html', href: 'https://aymenessouyah.github.io/STiV2.0/index.html' },
+    document: {
+      readyState: 'complete',
+      title: 'STI V2.0',
+      head: { appendChild() {} },
+      body: { appendChild() {} },
+      getElementById() { return null; },
+      querySelector(sel) { return sel === '.sti-pan.ouvert' ? panEl : null; },
+      createElement() {
+        return { id: '', innerHTML: '', textContent: '', setAttribute() {}, addEventListener() {}, querySelector() { return null; }, querySelectorAll() { return []; }, remove() {} };
+      },
+      addEventListener() {},
+    },
+    fetch: () => Promise.resolve({ ok: true, json: () => Promise.resolve({ pages: [] }) }),
+    setTimeout() {},
+    setInterval() { return 1; },
+    Promise, Math, Date, JSON, Object, Array, String, Number, Boolean, RegExp, parseInt, parseFloat, isNaN, encodeURI, decodeURI, decodeURIComponent,
+  };
+  winRev.window = winRev;
+  vm.runInNewContext(roueRevJs, winRev, { filename: 'assets/js/roue-revision.js' });
+
+  const dus = winRev.STI_REVISION.dus();
+  const hrefs = Array.from(dus.pages, (x) => x.href);
+  assert.ok(hrefs.includes('https://aymenessouyah.github.io/STiV2.0/cours/Recap-JavaScript-STI.html'));
+  assert.ok(hrefs.includes('https://aymenessouyah.github.io/STiV2.0/exercices/javascript/Tp1-js.html'));
+  assert.ok(hrefs.includes('https://aymenessouyah.github.io/STiV2.0/projets/formulaire-inscription/enonce/cvFleurs-%C3%A9nonc%C3%A9/formulaire%20inscription.pdf.html'));
+
+  // Forcer l'affichage du quiz avec apostrophe + balise <img dans la roue (max 3 items)
+  storageRev.setItem('sti-revision-v436', '{}');
+  blocRev = null;
+  vm.runInNewContext('window.__STI_ROUE_REVISION = false;\n' + roueRevJs, winRev, { filename: 'assets/js/roue-revision.js' });
+  assert.ok(blocRev && !blocRev.innerHTML.includes('<img'), 'Les titres de quiz dans la roue doivent être échappés contre XSS');
+  assert.match(blocRev.innerHTML, /&#39;entraînement &lt;img/);
+
+  // B) reprendre.js : routage exact de toutes les matières (vidéos & podcasts) + anti-XSS
+  const reprendreJs = read('assets/js/reprendre.js');
+  let insertedBox = null;
+  const cibleMain = {
+    parentNode: { insertBefore(box) { insertedBox = box; } },
+  };
+  const storageRep = {
+    _d: {
+      'sti-media-prog-v1': JSON.stringify({
+        'audio:javascript-cours': { t: 185, maj: 2000 },
+        'video:sql-serie1': { t: 90, maj: 1000 },
+      }),
+    },
+    getItem(k) { return this._d[k] || null; },
+    setItem(k, v) { this._d[k] = String(v); },
+  };
+  const winRep = {
+    localStorage: storageRep,
+    document: {
+      readyState: 'complete',
+      getElementById(id) {
+        if (id === 'cours') return cibleMain;
+        if (id === 'sti-reprendre-x') return { addEventListener() {} };
+        return null;
+      },
+      querySelector() { return cibleMain; },
+      createElement() { return { id: '', innerHTML: '', setAttribute() {}, remove() {} }; },
+      addEventListener() {},
+    },
+    Math, Date, JSON, Object, String, Number, RegExp,
+  };
+  winRep.window = winRep;
+  vm.runInNewContext(reprendreJs, winRep, { filename: 'assets/js/reprendre.js' });
+
+  assert.ok(insertedBox, 'La carte Reprendre doit être injectée');
+  assert.match(insertedBox.innerHTML, /🎧 Podcast : JavaScript — Le cours complet/);
+  assert.match(insertedBox.innerHTML, /repris à 03:05/);
+  assert.match(insertedBox.innerHTML, /href="cours\/javascript\.html"/);
+
+  const resoudre = winRep.__stiResoudreMediaReprendre;
+  assert.equal(resoudre('video:html5-cours').lien, 'cours/html5.html');
+  assert.equal(resoudre('video:css3-cours-v7').lien, 'cours/css3.html');
+  assert.equal(resoudre('audio:sql-guide-requete').lien, 'exercices/sql/CommentConstruireunerequêteSQL.html');
+  assert.equal(resoudre('video:php-guichet-v10').lien, 'cours/php.html#syntheses');
+  assert.equal(resoudre('video:explore-tunisie-flex').lien, 'exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html');
+
+  storageRep.setItem('sti-media-prog-v1', JSON.stringify({ 'video:<svg onload=alert(1)>': { t: 42, maj: 9999 } }));
+  winRep.__stiRafraichirReprendre();
+  assert.ok(!insertedBox.innerHTML.includes('<svg'), 'Les clés médias inconnues doivent être échappées');
+
+  // C) roue-plan.js : rejet d'une date corrompue / injection d'attribut et validation ISO
+  const rouePlanJs = read('assets/js/roue-plan.js');
+  const storagePlan = {
+    _d: { 'sti-bac-date-v439': "2026'onfocus='alert(1)" },
+    getItem(k) { return this._d[k] || null; },
+    setItem(k, v) { this._d[k] = String(v); },
+    removeItem(k) { delete this._d[k]; },
+  };
+  let blocPlan = null;
+  const panPlan = {
+    offsetParent: {},
+    querySelector(sel) { return sel === '#sti-pan-plan' ? blocPlan : null; },
+    appendChild(el) { blocPlan = el; return el; },
+  };
+  const winPlan = {
+    localStorage: storagePlan,
+    location: { protocol: 'https:' },
+    document: {
+      readyState: 'complete',
+      querySelector(sel) { return sel === '.sti-pan.ouvert' ? panPlan : null; },
+      createElement() { return { id: '', innerHTML: '', setAttribute() {}, querySelector() { return null; } }; },
+      addEventListener() {},
+    },
+    setInterval() { return 1; },
+    Math, Date, JSON, Object, Array, String, Number, Boolean, RegExp, isNaN,
+  };
+  winPlan.window = winPlan;
+  vm.runInNewContext(rouePlanJs, winPlan, { filename: 'assets/js/roue-plan.js' });
+  assert.equal(winPlan.STI_PLAN.etat().date, null, 'Une date non ISO ne doit pas être injectée dans le DOM');
+  assert.ok(blocPlan && !blocPlan.innerHTML.includes('onfocus='), 'Aucune injection possible via sti-bac-date-v439');
+  winPlan.STI_PLAN.definirDate('2027-05-20');
+  assert.equal(winPlan.STI_PLAN.etat().date, '2027-05-20');
+
+  // D) Laboratoire SQL hors-ligne (SQLite WASM réel : CREATE TABLE + JOIN + GROUP BY)
+  const initSqlJs = reqCjs(join(root, 'assets/js/sqljs/sql-wasm.js'));
+  const SQL = await initSqlJs({ locateFile: (f) => join(root, 'assets/js/sqljs', f) });
+  const db = new SQL.Database();
+  db.run(`
+    CREATE TABLE classe (code VARCHAR(6) PRIMARY KEY, libelle VARCHAR(30));
+    CREATE TABLE eleve (id INT PRIMARY KEY, nom VARCHAR(40), code_cl VARCHAR(6), note DECIMAL(4,2));
+    INSERT INTO classe VALUES ('4SI1', '4ème Sciences Info 1'), ('3SI1', '3ème Sciences Info 1');
+    INSERT INTO eleve VALUES (1, 'Ines', '4SI1', 17.5), (2, 'Rami', '4SI1', 15.5), (3, 'Sami', '3SI1', 14.0);
+  `);
+  const resSql = db.exec(`
+    SELECT c.code, COUNT(*) AS effectif, ROUND(AVG(e.note), 2) AS moyenne
+    FROM eleve e JOIN classe c ON e.code_cl = c.code
+    GROUP BY c.code HAVING AVG(e.note) >= 15;
+  `);
+  db.close();
+  assert.deepEqual(resSql[0].values, [['4SI1', 2, 16.5]]);
+});
+
 
 
 

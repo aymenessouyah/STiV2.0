@@ -413,13 +413,13 @@
       var sc4 = doc.createElement("script");
       sc4.src = R + "assets/js/roue-couverture.js?v=434";
       var sc5 = doc.createElement("script");
-      sc5.src = R + "assets/js/roue-revision.js?v=463";
+      sc5.src = R + "assets/js/roue-revision.js?v=471";
       sc5.async = true; (doc.head || doc.documentElement).appendChild(sc5);
       var sc6 = doc.createElement("script");
       sc6.src = R + "assets/js/rappels-locaux.js?v=436";
       sc6.async = true; (doc.head || doc.documentElement).appendChild(sc6);
       var sc7 = doc.createElement("script");
-      sc7.src = R + "assets/js/roue-plan.js?v=439";
+      sc7.src = R + "assets/js/roue-plan.js?v=471";
       sc7.async = true; (doc.head || doc.documentElement).appendChild(sc7);
       var sc8 = doc.createElement("script");
       sc8.src = R + "assets/js/rayonsx-surligneur.js?v=449";
