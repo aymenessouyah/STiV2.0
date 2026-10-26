@@ -17,6 +17,7 @@
       lock: function (name, acquireTimeout, fn) { return fn(); }
     }
   });
+  window.__STI_ADMIN_SB = sb;
   var elMsg = document.getElementById("msg");
   function msg(t, c) { elMsg.textContent = t; elMsg.className = "msg" + (c ? " " + c : ""); }
   function echHtml(s) {

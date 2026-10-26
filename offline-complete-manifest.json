@@ -1,9 +1,9 @@
 {
   "version": "v460-quiz-supabase-ordre",
-  "generatedAt": "2026-10-26T05:29:59.878Z",
+  "generatedAt": "2026-10-26T05:56:21.557Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 605,
-  "totalBytes": 631284759,
+  "totalFiles": 606,
+  "totalBytes": 631325184,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
@@ -97,8 +97,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 326954,
-      "gitSha": "fb2da2cf660091ffdfc5afe81e83797c9f6613ce"
+      "bytes": 342002,
+      "gitSha": "19bc91b33ac864b2e47a172fab28b6dbea654e56"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -517,8 +517,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 691875,
-      "gitSha": "8920f259591d3411ad832adc4d1e378f0aaab38f"
+      "bytes": 691905,
+      "gitSha": "71dce86c04ac0a9e337f06084cb31cfa1bf5e736"
     },
     {
       "path": "assets/js/analytique.js",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 75636,
-      "gitSha": "329e291a8f9f78f1a61afdd864c8b6450be34474"
+      "bytes": 75843,
+      "gitSha": "be6d51aab1a3411e6f60bce9dbe84df184ca379f"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
@@ -3029,6 +3029,11 @@
       "path": "assets/js/admin-erreurs.js",
       "bytes": 16095,
       "gitSha": "2aab0506e1cebff37864fac2ee9af05b42cf8c70"
+    },
+    {
+      "path": "assets/js/admin-dbsupbase.js",
+      "bytes": 25140,
+      "gitSha": "ff51cd43ca00d6b85b5122a799129a1cd36e663f"
     }
   ],
   "windowsCompatible": true,

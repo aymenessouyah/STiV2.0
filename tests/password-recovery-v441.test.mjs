@@ -3100,7 +3100,7 @@ test('v465 : retour instantané vers index.html sans rechargement (bfcache 0 ms,
   assert.doesNotMatch(mobileNavJs, /speculationRules\.addRules/);
   assert.match(reprendreJs, /__stiRafraichirReprendre/);
   assert.match(coteTickerJs, /sti-cote-news-v1/);
-  assert.match(swJs, /sti-atelier-v325/);
+  assert.match(swJs, /sti-atelier-v3\d{2}/);
   assert.match(swJs, /v465-nav-fluide/);
   assert.match(swJs, /fetch\(req,\s*\{\s*cache:\s*"no-cache"\s*\}\)/);
 
@@ -3273,6 +3273,200 @@ test('v465 : retour instantané vers index.html sans rechargement (bfcache 0 ms,
   assert.equal(homePage.getScrolledSection(), 'modules');
   assert.equal(homePage.locationObj.hash, '#modules');
 });
+
+test('v466 : DBSupbase affiche le niveau exact de chaque table par rapport à 1 000 lignes', async () => {
+  const adminHtml = read('admin.html');
+  const adminJs = read('assets/js/admin.js');
+  const dbsbJs = read('assets/js/admin-dbsupbase.js');
+  const migSql = read('supabase/migrations/20261026_dbsupbase_niveaux_v466.sql');
+  const swJs = read('sw.js');
+
+  execFileSync(process.execPath, ['--check', join(root, 'assets/js/admin-dbsupbase.js')], { stdio: 'pipe' });
+
+  // 1) Câblage HTML, navigation et migration SQL sécurisée
+  assert.match(adminHtml, /id="btn-tab-dbsupbase"[^>]*data-sec-cible="bloc-sec-dbsupbase"/);
+  assert.match(adminHtml, /DBSupbase/);
+  assert.match(adminHtml, /id="bloc-sec-dbsupbase"/);
+  assert.match(adminHtml, /id="btn-dbsupbase-card"/);
+  assert.match(adminHtml, /id="btn-ouvrir-dbsupbase-depuis-quota"/);
+  assert.match(adminHtml, /assets\/js\/admin-dbsupbase\.js\?v=466/);
+  assert.match(adminJs, /window\.__STI_ADMIN_SB\s*=\s*sb/);
+  assert.match(migSql, /CREATE OR REPLACE FUNCTION public\.admin_dbsupbase_niveaux\(\)/);
+  assert.match(migSql, /IF NOT public\.est_admin\(\) THEN/);
+  assert.match(migSql, /'seuil_lignes',\s*1000/);
+  assert.match(swJs, /sti-atelier-v326/);
+  assert.match(swJs, /v466-dbsupbase/);
+  assert.match(swJs, /admin-dbsupbase\.js/);
+  assert.doesNotMatch(dbsbJs, /#4f46e5|#4338ca/i);
+
+  // 2) Test comportemental complet de admin-dbsupbase.js dans une sandbox VM isolée
+  const makeEl = (id, tag = 'div', initialValue = '') => {
+    const listeners = {};
+    const classes = new Set(id === 'bloc-sec-dbsupbase' ? ['carte-section-admin', 'sec-repliee'] : []);
+    return {
+      id,
+      tagName: tag.toUpperCase(),
+      value: initialValue,
+      textContent: '',
+      innerHTML: '',
+      title: '',
+      className: '',
+      disabled: false,
+      style: { display: '' },
+      classList: {
+        add: (...cs) => cs.forEach((c) => classes.add(c)),
+        remove: (...cs) => cs.forEach((c) => classes.delete(c)),
+        contains: (c) => classes.has(c),
+        toggle: (c, force) => {
+          const next = force !== undefined ? Boolean(force) : !classes.has(c);
+          if (next) classes.add(c); else classes.delete(c);
+          return next;
+        },
+      },
+      addEventListener(type, fn) {
+        (listeners[type] ||= []).push(fn);
+      },
+      trigger(type, ev = {}) {
+        (listeners[type] || []).forEach((fn) => fn(ev));
+      },
+      querySelector() { return null; },
+      scrollIntoView() {},
+    };
+  };
+
+  const els = {
+    'bloc-sec-dbsupbase': makeEl('bloc-sec-dbsupbase', 'section'),
+    'dbsb-kpi-tables': makeEl('dbsb-kpi-tables'),
+    'dbsb-kpi-tables-sub': makeEl('dbsb-kpi-tables-sub'),
+    'dbsb-kpi-max': makeEl('dbsb-kpi-max'),
+    'dbsb-kpi-max-sub': makeEl('dbsb-kpi-max-sub'),
+    'dbsb-kpi-alertes': makeEl('dbsb-kpi-alertes'),
+    'dbsb-kpi-alertes-sub': makeEl('dbsb-kpi-alertes-sub'),
+    'dbsb-kpi-total': makeEl('dbsb-kpi-total'),
+    'dbsb-kpi-total-sub': makeEl('dbsb-kpi-total-sub'),
+    'dbsb-etat': makeEl('dbsb-etat'),
+    'dbsb-grille-tables': makeEl('dbsb-grille-tables'),
+    'dbsb-tri': makeEl('dbsb-tri', 'select', 'niveau'),
+    'dbsb-filtre': makeEl('dbsb-filtre', 'select', 'all'),
+    'btn-dbsb-actualiser': makeEl('btn-dbsb-actualiser', 'button'),
+    'btn-dbsb-csv': makeEl('btn-dbsb-csv', 'button'),
+    'btn-dbsb-nettoyeur': makeEl('btn-dbsb-nettoyeur', 'button'),
+    'badge-dbsupbase-tab': makeEl('badge-dbsupbase-tab', 'span'),
+    'btn-ouvrir-dbsupbase-depuis-quota': makeEl('btn-ouvrir-dbsupbase-depuis-quota', 'button'),
+  };
+
+  const storageMap = new Map();
+  let modeRpc = 'ok';
+  const mockSb = {
+    rpc(fnName) {
+      if (fnName === 'admin_dbsupbase_niveaux') {
+        if (modeRpc === 'fail') return Promise.resolve({ data: null, error: { message: 'indisponible' } });
+        return Promise.resolve({
+          error: null,
+          data: {
+            seuil_lignes: 1000,
+            mesure_at: '2026-10-26T05:50:00.000Z',
+            public_bytes: 2826240,
+            db_bytes: 16135859,
+            tables: [
+              { nom: 'profiles', lignes: 72, octets: 188416 },
+              { nom: 'acces', lignes: 850, octets: 1507328 },
+              { nom: 'sti_quiz_reponses', lignes: 1015, octets: 114688 },
+              { nom: 'sti_progressions', lignes: 35, octets: 458752 },
+              { nom: 'labo_devices', lignes: 26, octets: 114688 },
+            ],
+          },
+        });
+      }
+      if (fnName === 'admin_labo_devices_list') {
+        return Promise.resolve({ error: null, data: new Array(26).fill({}) });
+      }
+      return Promise.resolve({ data: null, error: null });
+    },
+    from(nom) {
+      return {
+        select() {
+          const counts = { profiles: 72, sti_quiz_reponses: 58, sti_progressions: 35, acces: 15 };
+          return Promise.resolve({ error: null, count: counts[nom] || 0 });
+        },
+      };
+    },
+  };
+
+  const winListeners = {};
+  const ctx = vm.createContext({
+    console,
+    Math,
+    Date,
+    Number,
+    String,
+    Boolean,
+    Array,
+    Object,
+    JSON,
+    Promise,
+    isFinite,
+    isNaN,
+    setTimeout: () => 0,
+    clearTimeout: () => {},
+    navigator: { onLine: true },
+    localStorage: {
+      get length() { return storageMap.size; },
+      key: (i) => Array.from(storageMap.keys())[i] || null,
+      getItem: (k) => (storageMap.has(k) ? storageMap.get(k) : null),
+      setItem: (k, v) => storageMap.set(k, String(v)),
+      removeItem: (k) => storageMap.delete(k),
+    },
+    document: {
+      getElementById: (id) => els[id] || null,
+      createElement: (t) => makeEl('', t),
+      body: { appendChild() {}, removeChild() {} },
+    },
+  });
+  ctx.window = ctx;
+  ctx.window.__STI_ADMIN_SB = mockSb;
+  ctx.window.STI_AUTH = { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'test' };
+  ctx.window.addEventListener = (type, fn) => { (winListeners[type] ||= []).push(fn); };
+
+  vm.runInContext(dbsbJs, ctx);
+  const api = ctx.window.STI_DBSUPBASE;
+  assert.ok(api, 'window.STI_DBSUPBASE doit être exposé');
+  assert.equal(api.SEUIL_LIGNES, 1000);
+
+  // Vérification des 4 paliers visuels par rapport à 1 000 lignes
+  assert.equal(api.calculerStatut(72, 1000).code, 'confort');
+  assert.equal(api.calculerStatut(520, 1000).code, 'modere');
+  assert.equal(api.calculerStatut(850, 1000).code, 'vigilance');
+  const stDep = api.calculerStatut(1015, 1000);
+  assert.equal(stDep.code, 'depasse');
+  assert.equal(stDep.pctBarre, 100);
+  assert.match(stDep.resumeRestant, /\+15 au-dessus de 1 000/);
+
+  // Chargement via RPC SQL exacte (complète automatiquement les 15 tables public)
+  const etat1 = await api.charger();
+  assert.equal(etat1.source, 'rpc');
+  assert.equal(etat1.tables.length, 15);
+  assert.equal(els['dbsb-kpi-tables'].textContent, '15 tables');
+  assert.equal(els['dbsb-kpi-max'].textContent, 'sti_quiz_reponses (1 015 / 1 000)');
+  assert.equal(els['dbsb-kpi-alertes'].textContent, '🔴 1 ≥ 1 000');
+  assert.equal(els['badge-dbsupbase-tab'].style.display, 'inline-flex');
+  assert.equal(els['badge-dbsupbase-tab'].textContent, '1');
+  assert.match(els['dbsb-grille-tables'].innerHTML, /data-table-nom="sti_quiz_reponses"/);
+  assert.match(els['dbsb-grille-tables'].innerHTML, /data-table-nom="profiles"/);
+
+  // Export CSV complet
+  const csv = api.genererCsv(etat1);
+  assert.match(csv, /Table;Description;Lignes actuelles;Seuil PostgREST/);
+  assert.match(csv, /sti_quiz_reponses;.*;1015;1000;/);
+
+  // Repli automatique PostgREST HEAD + admin_labo_devices_list si la RPC est indisponible
+  modeRpc = 'fail';
+  const etatRest = await api.charger();
+  assert.equal(etatRest.source, 'rest');
+  const tblLabo = Array.from(etatRest.tables).find((t) => t.nom === 'labo_devices');
+  assert.equal(tblLabo.lignes, 26);
+});
+
 
 
 

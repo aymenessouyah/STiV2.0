@@ -2243,7 +2243,7 @@
 
   </section>
 
-<div class="sti-groupe-nav" aria-label="Groupes du tableau de bord"><a class="sti-groupe-puce" href="#grp-outils">🧰 Outils</a><a class="sti-groupe-puce" href="#grp-scolarite">🎓 Scolarité — candidats</a><a class="sti-groupe-puce" href="#grp-classe">🏫 Gestion de classe</a><a class="sti-groupe-puce" href="#grp-connexion">🔐 Connexions</a></div>
+<div class="sti-groupe-nav" aria-label="Groupes du tableau de bord"><a class="sti-groupe-puce" href="#grp-outils">🧰 Outils</a><a class="sti-groupe-puce" href="#grp-scolarite">🎓 Scolarité — candidats</a><a class="sti-groupe-puce" href="#grp-classe">🏫 Gestion de classe</a><a class="sti-groupe-puce" href="#grp-connexion">🔐 Connexions</a><a class="sti-groupe-puce" href="#grp-dbsupbase">🗄️ DBSupbase</a></div>
   <div class="msg" id="msg"></div>
   <div class="titre-gestion-detaillee">
     <h2>▤ Gestion détaillée</h2>
@@ -2258,6 +2258,7 @@
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-quiz">🏆 Quiz &amp; Bac Pratique</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-messages">📨 Messages &amp; Réponses</button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-connexions">🕒 Dernières Connexions</button>
+    <button type="button" class="btn-sec-tab" id="btn-tab-dbsupbase" data-sec-cible="bloc-sec-dbsupbase">🗄️ DBSupbase <span id="badge-dbsupbase-tab" class="dbsb-tab-pill" style="display:none">0</span></button>
     <button type="button" class="btn-sec-tab" data-sec-cible="bloc-sec-aide">❓ Aide &amp; rappels</button>
   </nav>
 <div class="sti-groupe-tete" id="grp-outils"><span class="sti-groupe-ico" aria-hidden="true">🧰</span><span class="sti-groupe-txt"><b>Outils du professeur</b><i>Actions rapides par pôles, application Windows, guides et mesure d’activité</i></span><a class="sti-groupe-haut" href="#vue-ensemble-admin" title="Revenir a la vue d’ensemble">↑</a></div>
@@ -2389,6 +2390,14 @@
       <span class="ca-corps">
         <span class="ca-titre">Trier par durée / accès</span>
         <span class="ca-desc">Classer les élèves les plus actifs en tête</span>
+      </span>
+    </button>
+
+    <button class="carte-action" id="btn-dbsupbase-card" data-pole-item="classe" type="button">
+      <span class="ca-ico" style="background:linear-gradient(135deg,#10b981,#047857);color:#fff">🗄️</span>
+      <span class="ca-corps">
+        <span class="ca-titre">DBSupbase</span>
+        <span class="ca-desc">Niveau de chaque table par rapport à 1 000 lignes</span>
       </span>
     </button>
   </section>
@@ -2707,6 +2716,369 @@
       <div id="wrap-voir-plus-acces" style="display:none;text-align:center;margin:10px 0 4px">
         <button type="button" class="btn-outil" id="btn-voir-plus-acces">➕ Voir plus</button>
       </div>
+    </div>
+  </section>
+
+  <!-- v466 : DBSupbase — Niveau réel de chaque table Supabase par rapport au plafond de 1 000 lignes -->
+  <style id="style-dbsupbase-v466">
+    .dbsb-tab-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      margin-left: 4px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 900;
+      line-height: 1;
+      color: #fff;
+      background: #ea580c;
+    }
+    .dbsb-tab-pill.dbsb-tab-danger { background: #dc2626; }
+    .dbsb-tab-pill.dbsb-tab-warn { background: #ea580c; }
+    .dbsb-bandeau-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 14px;
+      margin: 0 0 14px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(16, 185, 129, 0.38);
+      background: rgba(16, 185, 129, 0.09);
+      color: var(--adm-text, #23201a);
+      font-family: var(--adm-font, "Comic Sans MS", "Comic Sans", "Comic Neue", "Chalkboard SE", cursive, sans-serif);
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+    .dbsb-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 14px;
+    }
+    @media (max-width: 960px) { .dbsb-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 520px) { .dbsb-kpis { grid-template-columns: 1fr; } }
+    .dbsb-kpi {
+      background: var(--adm-surface-2, #fffdf7);
+      border: 1.5px solid var(--adm-border-strong, #23201a);
+      border-radius: 14px;
+      padding: 11px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .dbsb-kpi-lbl {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--adm-muted, #7a6f5d);
+    }
+    .dbsb-kpi-val {
+      font-size: 16.5px;
+      font-weight: 900;
+      color: var(--adm-text, #23201a);
+      word-break: break-word;
+    }
+    .dbsb-kpi-sub {
+      font-size: 11.5px;
+      color: var(--adm-muted, #7a6f5d);
+    }
+    .dbsb-barre-outils {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 0 0 14px;
+    }
+    .dbsb-filtres {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .dbsb-select {
+      border: 1.5px solid var(--adm-border-strong, #23201a);
+      border-radius: 999px;
+      padding: 6px 12px;
+      background: var(--adm-surface-2, #fffdf7);
+      color: var(--adm-text, #23201a);
+      font-family: var(--adm-font, "Comic Sans MS", "Comic Sans", "Comic Neue", "Chalkboard SE", cursive, sans-serif);
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .dbsb-etat-txt {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--adm-muted, #7a6f5d);
+    }
+    .dbsb-grille {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 860px) { .dbsb-grille { grid-template-columns: 1fr; } }
+    .dbsb-carte-table {
+      background: var(--adm-surface-2, #fffdf7);
+      border: 1.5px solid var(--adm-border-strong, #23201a);
+      border-radius: 15px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.14s ease, border-color 0.14s ease;
+    }
+    .dbsb-carte-table:hover { transform: translateY(-1px); }
+    .dbsb-carte-table.dbsb-niv-vigilance { border-color: #ea580c; }
+    .dbsb-carte-table.dbsb-niv-depasse { border-color: #dc2626; box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.28); }
+    .dbsb-carte-haut {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .dbsb-table-id {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      min-width: 0;
+      flex: 1 1 210px;
+    }
+    .dbsb-table-ico {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      background: rgba(16, 185, 129, 0.13);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      flex-shrink: 0;
+    }
+    .dbsb-table-titres {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .dbsb-table-nom-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .dbsb-table-code {
+      font-size: 13px;
+      font-weight: 900;
+      padding: 1px 7px;
+      border-radius: 7px;
+      background: rgba(15, 23, 42, 0.08);
+      color: var(--adm-text, #23201a);
+    }
+    html.admin-ardoise .dbsb-table-code,
+    html[data-adm-mode="dark"] .dbsb-table-code {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .dbsb-table-octets {
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      color: var(--adm-muted, #64748b);
+    }
+    .dbsb-table-desc {
+      font-size: 11.5px;
+      color: var(--adm-muted, #7a6f5d);
+      line-height: 1.35;
+    }
+    .dbsb-table-compteur {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .dbsb-ratio {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--adm-text, #23201a);
+      font-variant-numeric: tabular-nums;
+    }
+    .dbsb-ratio small {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--adm-muted, #7a6f5d);
+    }
+    .dbsb-badge-statut {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 900;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .dbsb-badge-statut.dbsb-niv-confort { background: rgba(16, 185, 129, 0.15); color: #059669; border-color: rgba(16, 185, 129, 0.35); }
+    .dbsb-badge-statut.dbsb-niv-modere { background: rgba(245, 158, 11, 0.16); color: #b45309; border-color: rgba(245, 158, 11, 0.4); }
+    .dbsb-badge-statut.dbsb-niv-vigilance { background: rgba(234, 88, 12, 0.16); color: #c2410c; border-color: rgba(234, 88, 12, 0.45); }
+    .dbsb-badge-statut.dbsb-niv-depasse { background: rgba(220, 38, 38, 0.18); color: #dc2626; border-color: rgba(220, 38, 38, 0.5); }
+    html.admin-ardoise .dbsb-badge-statut.dbsb-niv-confort,
+    html[data-adm-mode="dark"] .dbsb-badge-statut.dbsb-niv-confort { color: #34d399; }
+    html.admin-ardoise .dbsb-badge-statut.dbsb-niv-modere,
+    html[data-adm-mode="dark"] .dbsb-badge-statut.dbsb-niv-modere { color: #fbbf24; }
+    html.admin-ardoise .dbsb-badge-statut.dbsb-niv-vigilance,
+    html[data-adm-mode="dark"] .dbsb-badge-statut.dbsb-niv-vigilance { color: #fb923c; }
+    html.admin-ardoise .dbsb-badge-statut.dbsb-niv-depasse,
+    html[data-adm-mode="dark"] .dbsb-badge-statut.dbsb-niv-depasse { color: #f87171; }
+    .dbsb-jauge-piste {
+      position: relative;
+      height: 11px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.22);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      overflow: hidden;
+    }
+    .dbsb-jauge-remplissage {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #10b981, #059669);
+      transition: width 0.35s ease;
+    }
+    .dbsb-carte-table.dbsb-niv-modere .dbsb-jauge-remplissage {
+      background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+    .dbsb-carte-table.dbsb-niv-vigilance .dbsb-jauge-remplissage {
+      background: linear-gradient(90deg, #f97316, #ea580c);
+    }
+    .dbsb-carte-table.dbsb-niv-depasse .dbsb-jauge-remplissage {
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+    .dbsb-jauge-repere {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1.5px;
+      background: rgba(15, 23, 42, 0.28);
+      pointer-events: none;
+    }
+    html.admin-ardoise .dbsb-jauge-repere,
+    html[data-adm-mode="dark"] .dbsb-jauge-repere {
+      background: rgba(255, 255, 255, 0.28);
+    }
+    .dbsb-rep-50 { left: 50%; }
+    .dbsb-rep-80 { left: 80%; }
+    .dbsb-carte-bas {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 11.5px;
+    }
+    .dbsb-restant {
+      font-weight: 800;
+      color: var(--adm-text, #23201a);
+    }
+    .dbsb-bas-droite {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dbsb-echelle-repere {
+      font-size: 10.5px;
+      color: var(--adm-muted, #7a6f5d);
+    }
+    .dbsb-btn-purge-rapide {
+      border: 1.5px solid #ea580c;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(234, 88, 12, 0.12);
+      color: #c2410c;
+      cursor: pointer;
+    }
+    .dbsb-vide {
+      grid-column: 1 / -1;
+      padding: 16px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: #059669;
+      border: 1.5px dashed rgba(16, 185, 129, 0.4);
+      border-radius: 14px;
+    }
+  </style>
+
+  <div class="sti-groupe-tete" id="grp-dbsupbase"><span class="sti-groupe-ico" aria-hidden="true">🗄️</span><span class="sti-groupe-txt"><b>DBSupbase</b><i>Niveau réel de chaque table Supabase par rapport au plafond de 1 000 lignes</i></span><a class="sti-groupe-haut" href="#vue-ensemble-admin" title="Revenir à la vue d’ensemble">↑</a></div>
+  <section class="carte-section-admin sec-repliee" id="bloc-sec-dbsupbase" aria-labelledby="titre-sec-dbsupbase">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 12px;scroll-margin-top:16px">
+      <h2 id="titre-sec-dbsupbase" style="margin:0">🗄️ DBSupbase — Niveau des tables (/ 1 000 lignes)</h2>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn-outil" id="btn-dbsb-actualiser" title="Mesurer immédiatement le nombre exact de lignes de chaque table Supabase">🔄 Actualiser en direct</button>
+        <button type="button" class="btn-outil vert" id="btn-dbsb-csv" title="Exporter l'état DBSupbase (/ 1 000 lignes) au format CSV">📥 Exporter CSV</button>
+        <button type="button" class="btn-outil" id="btn-dbsb-nettoyeur" title="Ouvrir l'Analyseur &amp; Nettoyeur Intelligent Supabase">🧹 Nettoyeur</button>
+        <button type="button" class="btn-replier-sec" data-replier="bloc-sec-dbsupbase">▸ Agrandir</button>
+      </div>
+    </div>
+
+    <div class="corps-section-admin">
+      <div class="dbsb-bandeau-info">
+        <span aria-hidden="true" style="font-size:18px;line-height:1">ℹ️</span>
+        <div>
+          <strong>Seuil surveillé : 1 000 lignes par table</strong> — Par défaut, l’API Supabase (PostgREST) renvoie au maximum <strong>1 000 lignes</strong> par requête non paginée (tandis que PostgreSQL stocke jusqu’à <strong>500 Mo</strong> au total). Cette vue <strong>DBSupbase</strong> contrôle en temps réel le niveau exact de chacune des <strong>15 tables</strong> de la plateforme par rapport à <strong>1 000 lignes</strong>.
+        </div>
+      </div>
+
+      <div class="dbsb-kpis">
+        <div class="dbsb-kpi">
+          <span class="dbsb-kpi-lbl">🗄️ Tables suivies</span>
+          <strong class="dbsb-kpi-val" id="dbsb-kpi-tables">15 tables</strong>
+          <span class="dbsb-kpi-sub" id="dbsb-kpi-tables-sub">Schéma public Supabase</span>
+        </div>
+        <div class="dbsb-kpi">
+          <span class="dbsb-kpi-lbl">📈 Table la plus remplie</span>
+          <strong class="dbsb-kpi-val" id="dbsb-kpi-max">— / 1 000</strong>
+          <span class="dbsb-kpi-sub" id="dbsb-kpi-max-sub">En attente de mesure…</span>
+        </div>
+        <div class="dbsb-kpi">
+          <span class="dbsb-kpi-lbl">🚦 Alertes seuil 1 000</span>
+          <strong class="dbsb-kpi-val" id="dbsb-kpi-alertes">🟢 0 alerte</strong>
+          <span class="dbsb-kpi-sub" id="dbsb-kpi-alertes-sub">Vigilance dès 800 lignes (80 %)</span>
+        </div>
+        <div class="dbsb-kpi">
+          <span class="dbsb-kpi-lbl">∑ Cumul &amp; Taille BD</span>
+          <strong class="dbsb-kpi-val" id="dbsb-kpi-total">— lignes</strong>
+          <span class="dbsb-kpi-sub" id="dbsb-kpi-total-sub">Toutes tables confondues</span>
+        </div>
+      </div>
+
+      <div class="dbsb-barre-outils">
+        <div class="dbsb-filtres">
+          <select id="dbsb-tri" class="dbsb-select" aria-label="Trier les tables DBSupbase">
+            <option value="niveau">📊 Tri : Niveau décroissant (/ 1 000)</option>
+            <option value="alpha">🔤 Tri : Ordre alphabétique (A → Z)</option>
+            <option value="taille">💾 Tri : Taille disque décroissante</option>
+          </select>
+          <select id="dbsb-filtre" class="dbsb-select" aria-label="Filtrer les tables DBSupbase">
+            <option value="all">🗂️ Toutes les tables (15)</option>
+            <option value="actives">✨ Tables actives (&gt; 0 ligne)</option>
+            <option value="alerte">🟠 Modérées ou en alerte (≥ 500 lignes)</option>
+          </select>
+        </div>
+        <span class="dbsb-etat-txt" id="dbsb-etat">⏳ Cliquez sur « DBSupbase » ou « Actualiser en direct » pour mesurer les tables…</span>
+      </div>
+
+      <div class="dbsb-grille" id="dbsb-grille-tables"></div>
     </div>
   </section>
 
@@ -3759,7 +4131,8 @@
         <button type="button" id="btn-purge-journaux-tech" style="border:2px solid #23201a;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:900;background:#e0f2fe;color:#0369a1;cursor:pointer;box-shadow:2px 2px 0 #23201a">🛡️ 3. Purger journaux techniques &amp; alertes</button>
       </div>
 
-      <div style="display:flex;justify-content:flex-end;border-top:2px solid #e7dcc8;padding-top:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:2px solid #e7dcc8;padding-top:10px">
+        <button type="button" id="btn-ouvrir-dbsupbase-depuis-quota" style="border:2px solid #047857;border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:800;background:#ecfdf5;color:#065f46;cursor:pointer">🗄️ Ouvrir DBSupbase (/ 1 000 lignes)</button>
         <button type="button" id="btn-fermer-quota" style="border:2px solid #23201a;border-radius:999px;padding:7px 16px;font-size:12.5px;font-weight:800;background:#fff;cursor:pointer">Fermer</button>
       </div>
     </div>
@@ -4463,7 +4836,7 @@
     });
 
     function afficherSectionCible(secId, defiler) {
-      var toutes = ["bloc-sec-graphiques", "bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-messages", "bloc-sec-connexions", "bloc-sec-aide"];
+      var toutes = ["bloc-sec-graphiques", "bloc-sec-abonnes", "bloc-sec-quiz", "bloc-sec-messages", "bloc-sec-connexions", "bloc-sec-dbsupbase", "bloc-sec-aide"];
       document.querySelectorAll(".btn-sec-tab[data-sec-cible]").forEach(function (b) {
         b.classList.toggle("actif", b.getAttribute("data-sec-cible") === secId);
       });
@@ -4488,6 +4861,7 @@
         "grp-scolarite": ["bloc-sec-quiz", "bloc-sec-messages"],
         "grp-classe": ["bloc-sec-abonnes"],
         "grp-connexion": ["bloc-sec-connexions"],
+        "grp-dbsupbase": ["bloc-sec-dbsupbase"],
         "grp-guide": ["bloc-sec-aide"]
       };
       Object.keys(grpMap).forEach(function (gid) {
@@ -4496,6 +4870,9 @@
         var vis = (secId === "open-all" || secId === "all") || grpMap[gid].indexOf(secId) !== -1;
         gEl.style.display = vis ? "" : "none";
       });
+      try {
+        window.dispatchEvent(new CustomEvent("sti:section-admin-ouverte", { detail: { secId: secId } }));
+      } catch (e) {}
       if (defiler && secId !== "all" && secId !== "open-all") {
         var cible = document.getElementById(secId);
         if (cible) cible.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -4522,6 +4899,13 @@
     if (statConnex) {
       statConnex.addEventListener("click", function () {
         afficherSectionCible("bloc-sec-connexions", true);
+      });
+    }
+
+    var btnDbsbCard = document.getElementById("btn-dbsupbase-card");
+    if (btnDbsbCard) {
+      btnDbsbCard.addEventListener("click", function () {
+        afficherSectionCible("bloc-sec-dbsupbase", true);
       });
     }
 
@@ -4552,8 +4936,9 @@
 <script src="assets/js/supabase-umd.js"></script>
 <script src="assets/js/config.js?v=464"></script>
 <script src="assets/js/protection.js?v=461" defer></script>
-  <script src="assets/js/admin.js?v=464-verif-e2e"></script>
+  <script src="assets/js/admin.js?v=466-dbsupbase"></script>
   <script src="assets/js/admin-couverture.js?v=464"></script>
+  <script src="assets/js/admin-dbsupbase.js?v=466"></script>
   <script src="assets/js/admin-revision.js?v=463"></script>
   <script src="assets/js/admin-erreurs.js?v=463"></script>
   <script src="assets/js/admin-mdp.js?v=443"></script>
