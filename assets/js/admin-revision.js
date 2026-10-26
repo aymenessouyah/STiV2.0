@@ -213,6 +213,22 @@
     elClasse.innerHTML = "<option value='*'>Toutes les classes</option>" + opts;
     if (garde) { try { elClasse.value = garde; } catch (e) {} }
   }
+  function lireToutPagine(fabriquerRequete, plafond) {
+    var acc = [], pas = 1000, max = plafond || 10000;
+    function page(de) {
+      if (de >= max) return Promise.resolve({ data: acc, error: null });
+      var q = fabriquerRequete();
+      var p = typeof q.range === "function" ? q.range(de, de + pas - 1) : (typeof q.limit === "function" ? q.limit(pas) : q);
+      return Promise.resolve(p).then(function (r) {
+        if (r && r.error) return acc.length ? { data: acc, error: null } : r;
+        var lot = (r && Array.isArray(r.data)) ? r.data : [];
+        acc = acc.concat(lot);
+        if (typeof q.range !== "function" || lot.length < pas) return { data: acc, error: null };
+        return page(de + pas);
+      });
+    }
+    return page(0);
+  }
   function calculer() {
     var c = sb();
     if (!c) { etat("⚠️ Supabase indisponible dans cette page.", "#b91c1c"); return Promise.reject(new Error("no client")); }
@@ -221,8 +237,8 @@
     btnCalc.disabled = true;
     etat("⏳ Lecture des journaux de révision synchronisés…");
     return Promise.all([
-      c.from("profiles").select("id,email,nom,prenom,classe,statut").limit(3000),
-      c.from("sti_progressions").select("user_id,donnees,maj").limit(5000),
+      lireToutPagine(function () { return c.from("profiles").select("id,email,nom,prenom,classe,statut").order("id", { ascending: true }); }, 5000),
+      lireToutPagine(function () { return c.from("sti_progressions").select("user_id,donnees,maj").order("user_id", { ascending: true }); }, 5000),
       chargementManifeste(),
     ]).then(function (res) {
       btnCalc.disabled = false;
@@ -252,5 +268,5 @@
   }
   btnCalc.addEventListener("click", function () { calculer(); });
   if (btnCsv) btnCsv.addEventListener("click", telecharger);
-  try { window.STI_SUIVI_REVISION = { calculer: calculer, analyser: analyser, csv: csv, lignes: function () { return dernier; } }; } catch (e) {}
+  try { window.STI_SUIVI_REVISION = { calculer: calculer, analyser: analyser, csv: csv, lireToutPagine: lireToutPagine, lignes: function () { return dernier; } }; } catch (e) {}
 })();

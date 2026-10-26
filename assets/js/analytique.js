@@ -35,7 +35,7 @@
   function barre(pct) {
     var p = Math.max(0, Math.min(100, Math.round(Number(pct) || 0)));
     var col = p >= 70 ? "#15803d" : p >= 35 ? "#d97706" : "#c0392b";
-    return '<div style="background:#e2e8f0;border-radius:999px;height:13px;min-width:120px;overflow:hidden"><div style="height:100%;width:' + p + '%;background:' + col + '"></div></div>';
+    return '<div style="background:var(--adm-border,#e2e8f0);border-radius:999px;height:13px;min-width:120px;overflow:hidden"><div style="height:100%;width:' + p + '%;background:' + col + '"></div></div>';
   }
   function analyser(lignes, profils, partiesQuiz) {
     var profParId = {}, profParMail = {};

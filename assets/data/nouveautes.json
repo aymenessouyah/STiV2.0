@@ -1,5 +1,15 @@
 [
   {
+    "version": "v469",
+    "date": "2026-10-26",
+    "categorie": "Tableau de bord & Suivi",
+    "icone": "📊",
+    "titre": "Pagination intégrale au-delà de 1 000 lignes sur tous les modules admin et parité hors-ligne 124/124",
+    "resume": "Élimination des dernières requêtes non paginées soumises au plafond PostgREST de 1 000 lignes dans le tableau de bord principal, la carte des difficultés par chapitre, le suivi de couverture, la révision espacée et les graphiques d’activité, alignement exact des 124 pages dans le repli hors-ligne de la roue et correction de l’ancre de l’annexe HTML5.",
+    "lien": "documents/annexes/annexe-html5.pdf.html#annexe-html5",
+    "libelleLien": "Consulter l’annexe HTML5"
+  },
+  {
     "version": "v468",
     "date": "2026-10-26",
     "categorie": "Plateforme & Sécurité",

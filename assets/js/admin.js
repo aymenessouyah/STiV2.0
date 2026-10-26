@@ -4449,11 +4449,46 @@
     });
   }
 
+  function lireToutPagineSbAdmin(fabriquerRequete, plafond) {
+    var acc = [], pas = 1000, max = plafond || 10000, countExact = null;
+    function page(de) {
+      if (de >= max) {
+        var finMax = { data: acc, error: null };
+        if (typeof countExact === "number") finMax.count = countExact;
+        return Promise.resolve(finMax);
+      }
+      var q = fabriquerRequete(de);
+      var prom = typeof q.range === "function" ? q.range(de, de + pas - 1) : (typeof q.limit === "function" ? q.limit(pas) : q);
+      return Promise.resolve(prom).then(function (r) {
+        if (de === 0 && r && typeof r.count === "number") countExact = r.count;
+        if (r && r.error) {
+          if (acc.length) {
+            var partiel = { data: acc, error: null };
+            if (typeof countExact === "number") partiel.count = countExact;
+            return partiel;
+          }
+          return r;
+        }
+        var lot = (r && Array.isArray(r.data)) ? r.data : [];
+        acc = acc.concat(lot);
+        if (typeof q.range !== "function" || lot.length < pas) {
+          var complet = { data: acc, error: null };
+          if (typeof countExact === "number") complet.count = countExact;
+          return complet;
+        }
+        return page(de + pas);
+      });
+    }
+    return page(0);
+  }
+
   function selectionnerQuizPartiesAdmin() {
-    return sb.from("sti_quiz_parties")
-      .select("id,user_id,email,quiz,module,score,total,cree_le")
-      .order("cree_le", { ascending: false })
-      .limit(5000)
+    return lireToutPagineSbAdmin(function () {
+      return sb.from("sti_quiz_parties")
+        .select("id,user_id,email,quiz,module,score,total,cree_le")
+        .order("cree_le", { ascending: false })
+        .order("id", { ascending: false });
+    }, 15000)
       .then(function (r) {
         if (r && r.error) return { data: [], error: null };
         return { data: (r && r.data) || [], error: null };
@@ -4512,10 +4547,12 @@
   }
 
   function selectionnerProgressionsAdmin() {
-    return sb.from("sti_progressions")
-      .select("user_id,email,donnees,maj")
-      .order("maj", { ascending: false })
-      .limit(1000)
+    return lireToutPagineSbAdmin(function () {
+      return sb.from("sti_progressions")
+        .select("user_id,email,donnees,maj")
+        .order("maj", { ascending: false })
+        .order("user_id", { ascending: false });
+    }, 5000)
       .then(function (r) {
         if (r && r.error) return { data: [], error: null };
         return { data: (r && r.data) || [], error: null };
@@ -4559,10 +4596,14 @@
   function selectionnerProfilsAdmin(avecCount) {
     var options = avecCount ? { count: "exact" } : undefined;
     var cols = COLONNES_PROFILS_ADMIN + (supportDeltaProfilsAdmin === false ? "" : ",updated_at");
-    return sb.from("profiles").select(cols, options).order("cree_le", { ascending: false }).then(function (r) {
+    return lireToutPagineSbAdmin(function (de) {
+      return sb.from("profiles").select(cols, de === 0 ? options : undefined).order("cree_le", { ascending: false }).order("id", { ascending: false });
+    }, 5000).then(function (r) {
       if (r && r.error && /updated_at|photo_|column/i.test(r.error.message || "")) {
         supportDeltaProfilsAdmin = false;
-        return sb.from("profiles").select(COLONNES_PROFILS_ADMIN_BASE, options).order("cree_le", { ascending: false });
+        return lireToutPagineSbAdmin(function (de) {
+          return sb.from("profiles").select(COLONNES_PROFILS_ADMIN_BASE, de === 0 ? options : undefined).order("cree_le", { ascending: false }).order("id", { ascending: false });
+        }, 5000);
       }
       if (r && !r.error && cols.indexOf("updated_at") !== -1) supportDeltaProfilsAdmin = true;
       return r;
@@ -14135,9 +14176,9 @@
       btnGen.disabled = true; btnGen.textContent = "\u23f3 Calcul\u2026";
       elEtat.textContent = "Collecte des progressions synchronis\u00e9es et des sessions\u2026";
       Promise.all([
-        sb.from("acces").select("user_id,lieu,debut").eq("page", "PROG_MEDIA").order("debut", { ascending: false }).limit(4000),
-        sb.from("acces").select("user_id,page,duree_sec,debut").neq("page", "PROG_MEDIA").order("debut", { ascending: false }).limit(8000),
-        sb.from("sti_quiz_parties").select("user_id,quiz,module,score,total").order("cree_le", { ascending: false }).limit(6000),
+        lireToutPagineSbAdmin(function () { return sb.from("acces").select("user_id,lieu,debut").eq("page", "PROG_MEDIA").order("debut", { ascending: false }).order("id", { ascending: false }); }, 8000),
+        lireToutPagineSbAdmin(function () { return sb.from("acces").select("user_id,page,duree_sec,debut").neq("page", "PROG_MEDIA").order("debut", { ascending: false }).order("id", { ascending: false }); }, 15000),
+        lireToutPagineSbAdmin(function () { return sb.from("sti_quiz_parties").select("user_id,quiz,module,score,total").order("cree_le", { ascending: false }).order("id", { ascending: false }); }, 15000),
         selectionnerProgressionsAdmin()
       ]).then(function (res) {
         btnGen.disabled = false; btnGen.textContent = "\ud83d\udcca G\u00e9n\u00e9rer la carte";
