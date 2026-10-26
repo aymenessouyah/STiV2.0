@@ -1,9 +1,9 @@
 {
-  "version": "v460-quiz-supabase-ordre",
-  "generatedAt": "2026-10-26T06:14:06.831Z",
+  "version": "v467-sauvegarde-readme",
+  "generatedAt": "2026-10-26T12:00:00.000Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 606,
-  "totalBytes": 631332831,
+  "totalFiles": 608,
+  "totalBytes": 631395693,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
@@ -47,8 +47,8 @@
     },
     {
       "path": "\"projets/formulaire-inscription/enonce/cvFleurs-\\303\\251nonc\\303\\251/formulaire inscription.pdf.html\"",
-      "bytes": 4526,
-      "gitSha": "a45cc6c56fe55e417acdd7b4681d25ff2ce03910"
+      "bytes": 8088,
+      "gitSha": "20937bf69d3a86a981b3ae59662ee630996d05ce"
     },
     {
       "path": "404.html",
@@ -97,8 +97,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 342495,
-      "gitSha": "8fdde503a3565b5e464ada9af78f1f03e99b571c"
+      "bytes": 340552,
+      "gitSha": "6a44492af23f1ccf03ff80f5ebd8df9f805aa0af"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -527,8 +527,8 @@
     },
     {
       "path": "assets/js/config.js",
-      "bytes": 17422,
-      "gitSha": "90438bd125fc217f381b0d0c7119cf658337dd68"
+      "bytes": 22551,
+      "gitSha": "ce1d854d144ad49365465b0c3c69246fcc36ca41"
     },
     {
       "path": "assets/js/graphiques-activite.js",
@@ -592,8 +592,8 @@
     },
     {
       "path": "assets/js/sauvegarde.js",
-      "bytes": 8676,
-      "gitSha": "83a67a46abac260ac9b799e164c7bbfc027e61b6"
+      "bytes": 25986,
+      "gitSha": "6ef1cea98b053338b7ae2a28871cdfd6016e6a84"
     },
     {
       "path": "assets/js/smart-book.js",
@@ -2977,8 +2977,8 @@
     },
     {
       "path": "quiz/pp.html",
-      "bytes": 2079,
-      "gitSha": "3b5d4252de90ec23c691ac12ad03197082bc10f3"
+      "bytes": 2134,
+      "gitSha": "56c0189c7a44c3cb91b4d0258f9711d4b9d6a844"
     },
     {
       "path": "quiz/sql.html",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 76090,
-      "gitSha": "1c160b18edd579e00e1011f05af9618869c1949a"
+      "bytes": 76665,
+      "gitSha": "569090eda3785f4908acb6c761f5711980e6144e"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
@@ -3034,17 +3034,16 @@
       "path": "assets/js/admin-dbsupbase.js",
       "bytes": 25140,
       "gitSha": "ff51cd43ca00d6b85b5122a799129a1cd36e663f"
+    },
+    {
+      "path": "README.md",
+      "bytes": 24682,
+      "gitSha": "0c1e124f609322b720b929ca659fbabb5346e6f9"
+    },
+    {
+      "path": "documents/sql/sauvegarde-auto-drive.gs",
+      "bytes": 13492,
+      "gitSha": "a5367bf7bc1184ec3f79c16fe5844fe8b31f618c"
     }
-  ],
-  "windowsCompatible": true,
-  "excludedCaseDuplicates": [
-    "cours/PHP-recap.html",
-    "projets/sti0/Sondage.html",
-    "projets/sti0/Statistiques.html"
-  ],
-  "smartBookEdition": "2026",
-  "smartBookEditions": [
-    "4si-2026",
-    "3si-2026"
   ]
 }

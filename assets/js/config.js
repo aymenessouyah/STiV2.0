@@ -133,6 +133,11 @@ window.STI_AUTH = {
       var p = String(u.pathname || "").replace(/(\.html?)\/+$/i, "$1");
       return p === racPath || p === racPath.slice(0, -1) || p === racPath + "index.html";
     }
+    function estUrlSeriesExercices(u) {
+      if (!u || u.origin !== racUrl.origin) return false;
+      var p = String(u.pathname || "").replace(/(\.html?)\/+$/i, "$1");
+      return p === racPath + "exercices/series-exercices.html";
+    }
     function estUrlExclueHop(u) {
       if (!u || u.origin !== racUrl.origin) return true;
       var p = String(u.pathname || "").replace(/\/+$/, "");
@@ -140,16 +145,17 @@ window.STI_AUTH = {
     }
 
     var surAccueil = estUrlAccueilRacine(location);
+    var surSeries = !surAccueil && estUrlSeriesExercices(location);
 
-    function appliquerAncreRetourAccueil() {
+    function appliquerAncreRetourHub(cleSession, etatPatch) {
       var hCible = "";
       try {
-        hCible = sessionStorage.getItem("sti-retour-accueil-hash") || "";
-        if (hCible) sessionStorage.removeItem("sti-retour-accueil-hash");
+        hCible = sessionStorage.getItem(cleSession) || "";
+        if (hCible) sessionStorage.removeItem(cleSession);
       } catch (e) {}
       if (!hCible) return false;
       try {
-        var st = Object.assign({}, (history && history.state) || {}, { __stiHome: 1, __stiHop: 0 });
+        var st = Object.assign({}, (history && history.state) || {}, etatPatch || {});
         if (hCible === "#top") {
           if (location.hash) history.replaceState(st, "", location.pathname + (location.search || ""));
           window.scrollTo(0, 0);
@@ -167,6 +173,10 @@ window.STI_AUTH = {
       return true;
     }
 
+    function appliquerAncreRetourAccueil() {
+      return appliquerAncreRetourHub("sti-retour-accueil-hash", { __stiHome: 1, __stiHop: 0 });
+    }
+
     if (surAccueil) {
       var marquerAccueilActif = function () {
         try {
@@ -174,6 +184,8 @@ window.STI_AUTH = {
           history.replaceState(stAct, "");
           sessionStorage.setItem("sti-home-active", "1");
           sessionStorage.setItem("sti-home-hop", "0");
+          sessionStorage.removeItem("sti-series-active");
+          sessionStorage.removeItem("sti-series-hop");
         } catch (e) {}
       };
       marquerAccueilActif();
@@ -189,8 +201,9 @@ window.STI_AUTH = {
       return;
     }
 
-    /* Sur une page secondaire (cours, quiz, exercices, annexes…) : calculer la distance exacte vers index.html */
+    /* Sur une page secondaire (cours, quiz, exercices, annexes…) : calculer la distance exacte vers index.html et vers series-exercices.html */
     var curHop = 0;
+    var curSeriesHop = 0;
     try {
       if (history.state && typeof history.state.__stiHop === "number" && history.state.__stiHop > 0) {
         curHop = history.state.__stiHop;
@@ -205,8 +218,37 @@ window.STI_AUTH = {
           }
         }
       }
+      if (surSeries) {
+        curSeriesHop = 0;
+        var stSer = Object.assign({}, history.state || {}, { __stiSeries: 1, __stiSeriesHop: 0 });
+        if (curHop > 0) stSer.__stiHop = curHop;
+        history.replaceState(stSer, "");
+        sessionStorage.setItem("sti-series-active", "1");
+        sessionStorage.setItem("sti-series-hop", "0");
+      } else {
+        if (history.state && typeof history.state.__stiSeriesHop === "number" && history.state.__stiSeriesHop > 0) {
+          curSeriesHop = history.state.__stiSeriesHop;
+        } else if (sessionStorage.getItem("sti-series-active") === "1" && document.referrer) {
+          var refS = new URL(document.referrer, location.href);
+          if (!estUrlExclueHop(refS)) {
+            if (estUrlSeriesExercices(refS)) {
+              curSeriesHop = 1;
+            } else {
+              var prevSH = parseInt(sessionStorage.getItem("sti-series-hop") || "0", 10) || 0;
+              curSeriesHop = prevSH > 0 ? prevSH + 1 : 0;
+            }
+          }
+        }
+        var stSub = Object.assign({}, history.state || {});
+        if (curHop > 0) stSub.__stiHop = curHop;
+        if (curSeriesHop > 0) stSub.__stiSeriesHop = curSeriesHop;
+        if (curHop > 0 || curSeriesHop > 0) {
+          history.replaceState(stSub, "");
+        }
+        if (curSeriesHop > 0) sessionStorage.setItem("sti-series-hop", String(curSeriesHop));
+        else sessionStorage.removeItem("sti-series-hop");
+      }
       if (curHop > 0) {
-        history.replaceState(Object.assign({}, history.state || {}, { __stiHop: curHop }), "");
         sessionStorage.setItem("sti-home-hop", String(curHop));
       } else {
         sessionStorage.removeItem("sti-home-hop");
@@ -219,27 +261,71 @@ window.STI_AUTH = {
           curHop = history.state.__stiHop;
           sessionStorage.setItem("sti-home-hop", String(curHop));
         }
+        if (surSeries) {
+          curSeriesHop = 0;
+          sessionStorage.setItem("sti-series-active", "1");
+          sessionStorage.setItem("sti-series-hop", "0");
+        } else if (history.state && typeof history.state.__stiSeriesHop === "number") {
+          curSeriesHop = history.state.__stiSeriesHop;
+          sessionStorage.setItem("sti-series-hop", String(curSeriesHop));
+        }
       } catch (e) {}
     });
     window.addEventListener("hashchange", function () {
       try {
+        var patch = Object.assign({}, history.state || {});
+        var doitRemplacer = false;
         if (!history.state || typeof history.state.__stiHop !== "number") {
           if (curHop > 0) {
             curHop += 1;
-            history.replaceState(Object.assign({}, history.state || {}, { __stiHop: curHop }), "");
+            patch.__stiHop = curHop;
+            doitRemplacer = true;
             sessionStorage.setItem("sti-home-hop", String(curHop));
           }
         } else {
           curHop = history.state.__stiHop;
           sessionStorage.setItem("sti-home-hop", String(curHop));
         }
+        if (surSeries) {
+          curSeriesHop = 0;
+          patch.__stiSeries = 1;
+          patch.__stiSeriesHop = 0;
+          doitRemplacer = true;
+          sessionStorage.setItem("sti-series-active", "1");
+          sessionStorage.setItem("sti-series-hop", "0");
+        } else if (!history.state || typeof history.state.__stiSeriesHop !== "number") {
+          if (curSeriesHop > 0) {
+            curSeriesHop += 1;
+            patch.__stiSeriesHop = curSeriesHop;
+            doitRemplacer = true;
+            sessionStorage.setItem("sti-series-hop", String(curSeriesHop));
+          }
+        } else {
+          curSeriesHop = history.state.__stiSeriesHop;
+          sessionStorage.setItem("sti-series-hop", String(curSeriesHop));
+        }
+        if (doitRemplacer) history.replaceState(patch, "");
       } catch (e) {}
     });
-    window.addEventListener("pageshow", function () {
+    window.addEventListener("pageshow", function (ev) {
       try {
         if (history.state && typeof history.state.__stiHop === "number" && history.state.__stiHop > 0) {
           curHop = history.state.__stiHop;
           sessionStorage.setItem("sti-home-hop", String(curHop));
+        }
+        if (surSeries) {
+          curSeriesHop = 0;
+          sessionStorage.setItem("sti-series-active", "1");
+          sessionStorage.setItem("sti-series-hop", "0");
+          var patchSer = { __stiSeries: 1, __stiSeriesHop: 0 };
+          if (curHop > 0) patchSer.__stiHop = curHop;
+          var aBougeS = appliquerAncreRetourHub("sti-retour-series-hash", patchSer);
+          if ((ev && ev.persisted) || aBougeS) {
+            try { window.dispatchEvent(new CustomEvent("sti-series-restored", { detail: { persisted: Boolean(ev && ev.persisted) } })); } catch (eEvS) {}
+          }
+        } else if (history.state && typeof history.state.__stiSeriesHop === "number" && history.state.__stiSeriesHop > 0) {
+          curSeriesHop = history.state.__stiSeriesHop;
+          sessionStorage.setItem("sti-series-hop", String(curSeriesHop));
         }
       } catch (e) {}
     });
@@ -262,6 +348,24 @@ window.STI_AUTH = {
       return 0;
     }
 
+    function calculerDeltaVersSeries() {
+      try {
+        if (window.navigation && typeof window.navigation.entries === "function" && window.navigation.currentEntry) {
+          var entries = window.navigation.entries();
+          var idxCur = window.navigation.currentEntry.index;
+          for (var i = idxCur - 1; i >= 0; i--) {
+            if (entries[i] && entries[i].url && estUrlSeriesExercices(new URL(entries[i].url, location.href))) {
+              return i - idxCur;
+            }
+          }
+          return 0;
+        }
+      } catch (eNavS) {}
+      var hs = (history.state && typeof history.state.__stiSeriesHop === "number") ? history.state.__stiSeriesHop : curSeriesHop;
+      if (hs >= 1 && history.length > hs) return -hs;
+      return 0;
+    }
+
     window.addEventListener("click", function (ev) {
       if (ev.defaultPrevented || ev.button !== 0) return;
       if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
@@ -274,16 +378,26 @@ window.STI_AUTH = {
       if (!rawHref || rawHref.charAt(0) === "#" || /^javascript:/i.test(rawHref)) return;
       var uCible = null;
       try { uCible = new URL(rawHref, location.href); } catch (eU) { return; }
-      if (uCible.search || !estUrlAccueilRacine(uCible)) return;
+      if (uCible.search) return;
 
-      var delta = calculerDeltaVersAccueil();
+      var cleHash = "";
+      var delta = 0;
+      if (estUrlAccueilRacine(uCible)) {
+        delta = calculerDeltaVersAccueil();
+        cleHash = "sti-retour-accueil-hash";
+      } else if (!surSeries && estUrlSeriesExercices(uCible)) {
+        delta = calculerDeltaVersSeries();
+        cleHash = "sti-retour-series-hash";
+      } else {
+        return;
+      }
       if (delta >= 0) return;
 
       /* Laisser tout onclick synchrone de la balise <a> (ex. write-ahead des quiz) s'exécuter,
          tout en bloquant le rechargement complet du document et en remontant via bfcache. */
       ev.preventDefault();
       try {
-        sessionStorage.setItem("sti-retour-accueil-hash", uCible.hash && uCible.hash.length > 1 ? uCible.hash : "#top");
+        sessionStorage.setItem(cleHash, uCible.hash && uCible.hash.length > 1 ? uCible.hash : "#top");
       } catch (eSt) {}
       Promise.resolve().then(function () {
         history.go(delta);

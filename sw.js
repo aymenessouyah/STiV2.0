@@ -3,14 +3,21 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v326";
+var CACHE = "sti-atelier-v327";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés.
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v466-dbsupbase";
-/* Historique lots : v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
+var UPDATE_ID = "v467-sauvegarde-readme";
+/* Historique caches : sti-atelier-v326 | Historique lots : v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, v358-quiz-sync
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./admin.html", revision: "sauvegarde-readme-v467" },
+  { url: "./README.md", revision: "sauvegarde-readme-v467" },
+  { url: "./quiz/pp.html", revision: "sauvegarde-readme-v467" },
+  { url: "./assets/js/config.js", revision: "sauvegarde-readme-v467" },
+  { url: "./assets/js/sauvegarde.js", revision: "sauvegarde-readme-v467" },
+  { url: "./documents/sql/sauvegarde-auto-drive.gs", revision: "sauvegarde-readme-v467" },
+  { url: "./offline-complete-manifest.json", revision: "sauvegarde-readme-v467" },
   { url: "./index.html", revision: "dbsupbase-v466" },
   { url: "./admin.html", revision: "dbsupbase-v466" },
   { url: "./manifest.webmanifest", revision: "dbsupbase-v466" },
