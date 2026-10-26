@@ -124,7 +124,7 @@
         setTimeout(verser, 400);
       });
     }
-    setInterval(verser, 500);
+    setInterval(verser, 2500);
     verser();
   }
 

@@ -1,5 +1,15 @@
 [
   {
+    "version": "v474",
+    "date": "2026-10-26",
+    "categorie": "Quiz PHP / SQL / JS & Fluidité",
+    "icone": "⚡",
+    "titre": "Ouverture ultra-rapide des Quiz PHP (-74,5 %), SQL (-77,5 %) et JS (-85,3 %) + zéro compilateur JIT en direct",
+    "resume": "Pré-compilation statique hors-ligne de Tailwind CSS sur les 3 grands quiz (-2,57 Mo de compilateur JS supprimés), mutualisation différée de Chart.js, Confetti et PrismJS dans assets/js/vendor/, déduplication des polices WOFF2 SQL (-423 Ko), chargement différé de protection.js sur les exercices Bac PHP et arrêt de la scrutation audio 120 ms au repos.",
+    "lien": "quiz/php.html",
+    "libelleLien": "Ouvrir le Quiz PHP accéléré"
+  },
+  {
     "version": "v473",
     "date": "2026-10-26",
     "categorie": "Plateforme & Performance",

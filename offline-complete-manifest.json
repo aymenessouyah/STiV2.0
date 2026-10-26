@@ -1,9 +1,9 @@
 {
-  "version": "v473-sti-atelier-v333",
-  "generatedAt": "2026-10-26T14:20:00Z",
+  "version": "v474-sti-atelier-v334",
+  "generatedAt": "2026-10-26T15:05:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 643,
-  "totalBytes": 685644554,
+  "totalFiles": 649,
+  "totalBytes": 682202764,
   "files": [
     {
       "path": "404.html",
@@ -12,8 +12,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 339061,
-      "gitSha": "6bd7dfeaa44b7f51dd75b27789252d6a8f3bc889"
+      "bytes": 339100,
+      "gitSha": "a9f17ac4553c969acaacfcb41f9d841120166022"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -151,6 +151,21 @@
       "gitSha": "86a8c68764125f93f578dfa9213591ebd8f9529d"
     },
     {
+      "path": "assets/css/quiz-js-tw.css",
+      "bytes": 27462,
+      "gitSha": "9de5083de2a4b8a0af1c4e3d77adb2a8ae70ef60"
+    },
+    {
+      "path": "assets/css/quiz-php-tw.css",
+      "bytes": 31927,
+      "gitSha": "43d4f49809cd71d4ff87f4fbad64f9e627c338ea"
+    },
+    {
+      "path": "assets/css/quiz-sql-tw.css",
+      "bytes": 27333,
+      "gitSha": "5ae7d76681784652a8617b67be32951939e39aad"
+    },
+    {
       "path": "assets/css/smart-book-fan-v340.css",
       "bytes": 10315,
       "gitSha": "e86b347d84c10cc4e7be4f6c374f4751ca328efa"
@@ -182,8 +197,8 @@
     },
     {
       "path": "assets/data/nouveautes.json",
-      "bytes": 33380,
-      "gitSha": "4fe6f901acfb235595c772a5bf6bba3d21c86fc9"
+      "bytes": 34095,
+      "gitSha": "294c311e98deb9ab72e55741844b0dfb9a204d15"
     },
     {
       "path": "assets/data/quiz-banque.json",
@@ -457,8 +472,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 915928,
-      "gitSha": "0c4014fa4385990370f02e656e5a21358239cbaa"
+      "bytes": 916580,
+      "gitSha": "424b514e67affd49819e7362368085a2ced87fb9"
     },
     {
       "path": "assets/js/admin-couverture.js",
@@ -498,7 +513,7 @@
     {
       "path": "assets/js/config.js",
       "bytes": 23064,
-      "gitSha": "f42a034a9052edbed975af6e32480d05ee3cdefb"
+      "gitSha": "1dc618b381795063410f180d981b2a921c7e46f0"
     },
     {
       "path": "assets/js/cote-ticker.js",
@@ -512,8 +527,8 @@
     },
     {
       "path": "assets/js/mobile-nav.js",
-      "bytes": 28252,
-      "gitSha": "a3af250c906b7a0a227c8d7d36008394e937f6b2"
+      "bytes": 28292,
+      "gitSha": "86f2f8d11c9590604f8bc95ff6be4a03f11bad35"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -557,8 +572,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 201880,
-      "gitSha": "0cc69e62f149c347c397165d450d78c2fcd87a6b"
+      "bytes": 202935,
+      "gitSha": "3a8db983f9b1289b52e16f15602becee8dc0db13"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -607,18 +622,18 @@
     },
     {
       "path": "assets/js/roue-habillage.js",
-      "bytes": 8034,
-      "gitSha": "32956d16c67551b76c641e25856b22d0059d43b0"
+      "bytes": 8050,
+      "gitSha": "182b2008ad3a4db03363ca6f1e763a9cd339a31d"
     },
     {
       "path": "assets/js/roue-initiales.js",
-      "bytes": 8439,
-      "gitSha": "b9676c76ba4c80266494ccd29b951e9533a212bb"
+      "bytes": 8440,
+      "gitSha": "b83947fbbbdc6e2963ded9c43634221ae70bf95b"
     },
     {
       "path": "assets/js/roue-nuage.js",
-      "bytes": 7248,
-      "gitSha": "a94cf6e9d278b8733c84a1422d779f6e3b6f5d67"
+      "bytes": 7249,
+      "gitSha": "07c19f1ec54683ee8e694a18dbe5a90dce919c9a"
     },
     {
       "path": "assets/js/roue-plan.js",
@@ -669,6 +684,21 @@
       "path": "assets/js/sync-progressions.js",
       "bytes": 25062,
       "gitSha": "6a167366959aadf6b61e010921e61c68927d7d0e"
+    },
+    {
+      "path": "assets/js/vendor/chart.umd.min.js",
+      "bytes": 423243,
+      "gitSha": "42c6cf6c040c987eb24cb591e6243f717d32b5f9"
+    },
+    {
+      "path": "assets/js/vendor/confetti.browser.min.js",
+      "bytes": 18706,
+      "gitSha": "05c4ac59bb0485dc208238179eef7d2297bd9160"
+    },
+    {
+      "path": "assets/js/vendor/prism-js.min.js",
+      "bytes": 45591,
+      "gitSha": "3b70d2cf14c08a9666495fd77ea919cf54966102"
     },
     {
       "path": "assets/pages-couverture.json",
@@ -922,8 +952,8 @@
     },
     {
       "path": "cours/sql-contraintes.html",
-      "bytes": 301489,
-      "gitSha": "06fc51e5a061c0a9c719fc1d55fa7cf830471ef5"
+      "bytes": 156902,
+      "gitSha": "ece7e6028da455a4522b37dab488f3a73eea28a5"
     },
     {
       "path": "cours/sql-playground.html",
@@ -932,8 +962,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 521170,
-      "gitSha": "46d999996005c0cf4a268d81f854bf859a61d2f6"
+      "bytes": 376583,
+      "gitSha": "a7eeca10fc65c7569038d63859ca9a72fa2e3451"
     },
     {
       "path": "cssanimee/cours.js",
@@ -2417,13 +2447,13 @@
     },
     {
       "path": "exercices/php/debogage-php-bac.html",
-      "bytes": 30503,
-      "gitSha": "5569a14dedc294977863f85d880a6c45bb5dec30"
+      "bytes": 30509,
+      "gitSha": "d6a4f5237d3df26ddbaf848ce68a92a88e5de672"
     },
     {
       "path": "exercices/php/ordre-php-bac.html",
-      "bytes": 30884,
-      "gitSha": "fc8235c8c46f2a9cbc4aaf5d64d19fcac5226831"
+      "bytes": 30890,
+      "gitSha": "c38300a2bd246316ba1a4c9751e8e28f64f76c6b"
     },
     {
       "path": "exercices/php/sondage-parcours-pas-a-pas.html",
@@ -2487,8 +2517,8 @@
     },
     {
       "path": "exercices/php/trace-fetch-php.html",
-      "bytes": 22532,
-      "gitSha": "b4e7829ab0f0796f40a17cfa8a2579d939129e44"
+      "bytes": 22538,
+      "gitSha": "c95830ae3348bd15d6aa6a29624c9c28403e112a"
     },
     {
       "path": "exercices/resume-fonctions-standards.html",
@@ -2603,7 +2633,7 @@
     {
       "path": "index.html",
       "bytes": 197052,
-      "gitSha": "14e2cab175a6539b4a61fa6938ad2b8dd4dfc0f9"
+      "gitSha": "2e9a4ef3c342686678478bc8802eccfd309fdc8e"
     },
     {
       "path": "Lancer-Labo3-Hors-Ligne.bat",
@@ -2632,8 +2662,8 @@
     },
     {
       "path": "memo-veille-bac.html",
-      "bytes": 15907,
-      "gitSha": "d72cf2b9dae61180825ef032cc6121fe9454754e"
+      "bytes": 15913,
+      "gitSha": "c68699003ec48e38d5c570a72e36ead8416b6088"
     },
     {
       "path": "MIGRATION-v358-QUIZ-SYNC.sql",
@@ -2652,8 +2682,8 @@
     },
     {
       "path": "outils-js-bac.html",
-      "bytes": 37955,
-      "gitSha": "cbc78e251bc436857494ece017d256b7abc1e239"
+      "bytes": 37961,
+      "gitSha": "eee0089b52b1330b11dafc7c062e54e69f416b0d"
     },
     {
       "path": "package-lock.json",
@@ -2667,8 +2697,8 @@
     },
     {
       "path": "pieges-bac.html",
-      "bytes": 34450,
-      "gitSha": "c22c9a18b2e4b5d3522f402592bd36c3633dedd1"
+      "bytes": 34456,
+      "gitSha": "8151586a74034dc52ebca428a7aca0c5288b29f5"
     },
     {
       "path": "portail.html",
@@ -3167,13 +3197,13 @@
     },
     {
       "path": "quiz/javascript.html",
-      "bytes": 1105223,
-      "gitSha": "bbe3a3b18b5ff94e34cacae27ec0498a3156983f"
+      "bytes": 162023,
+      "gitSha": "640a74ab53b68ecf4d1e8d4f7398793730d4c134"
     },
     {
       "path": "quiz/php.html",
-      "bytes": 1773315,
-      "gitSha": "63ddf2563b2273c7fce8eb967fec80d6bfb95684"
+      "bytes": 451815,
+      "gitSha": "470ea2cf7e9393381c70b2abec1ae4a15ecf411c"
     },
     {
       "path": "quiz/pp.html",
@@ -3182,8 +3212,8 @@
     },
     {
       "path": "quiz/sql.html",
-      "bytes": 1892372,
-      "gitSha": "08e6b1050788d0014a058e2319b7921fe7d25bd4"
+      "bytes": 426425,
+      "gitSha": "63e1c67538f0c9bb92a09c247ba04c3f1010f0a7"
     },
     {
       "path": "quiz/tableaux.html",
@@ -3192,8 +3222,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 24708,
-      "gitSha": "e660a0ca6334906f0ae3df237c27713b19519a66"
+      "bytes": 25071,
+      "gitSha": "237bac3ee7a0749328c67a670c9cd1def3018a9e"
     },
     {
       "path": "revision-erreurs.html",
@@ -3217,8 +3247,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 67519,
-      "gitSha": "ede99186d0d1615d81307d5fc85a975c2d6fcb5f"
+      "bytes": 68370,
+      "gitSha": "281a46c4c67182d5cf10d410052fa5cc8ca80ddf"
     }
   ]
 }

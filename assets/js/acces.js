@@ -1320,6 +1320,25 @@
     }).catch(function () {});
   }
 
+  /* v474 : déduplication des lectures initiales de profiles (0 double requête simultanée sur la même page) */
+  var _memoProfilCourant = { uid: "", ts: 0, prom: null };
+  function lireProfilCourantMemoSTI(uid) {
+    var nowP = Date.now();
+    if (_memoProfilCourant.prom && _memoProfilCourant.uid === uid && (nowP - _memoProfilCourant.ts) < 5000) {
+      return _memoProfilCourant.prom;
+    }
+    _memoProfilCourant.uid = uid;
+    _memoProfilCourant.ts = nowP;
+    _memoProfilCourant.prom = sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone,photo_url,photo_attente").eq("id", uid).maybeSingle().then(function (rp) {
+      if (!rp || rp.error) _memoProfilCourant.ts = 0;
+      return rp;
+    }).catch(function (err) {
+      _memoProfilCourant.ts = 0;
+      throw err;
+    });
+    return _memoProfilCourant.prom;
+  }
+
   /* Envoie les données enregistrées hors-ligne + met à jour uniquement les données personnelles du candidat (sans recharger toute la plateforme s'il n'y a pas de nouvelle version) */
   var syncProfilEnCours = false;
   function synchroniserFileHorsLigne(estRetourInternet) {
@@ -1346,7 +1365,7 @@
 
       /* 2. RECEVOIR et mettre à jour les données personnelles du candidat depuis Supabase (statut, Gold, classe, lycée, nom, prénom, téléphone, photo, durée semaine, scores Quiz) */
       if ((user.email || "").toLowerCase() !== (cfg.ADMIN || "").toLowerCase()) {
-        sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone,photo_url,photo_attente").eq("id", user.id).maybeSingle().then(function (rp) {
+        lireProfilCourantMemoSTI(user.id).then(function (rp) {
           syncProfilEnCours = false;
           if (!rp || rp.error || !rp.data) return;
           try { sessionStorage.setItem("sti-profil-sync-ts", String(Date.now())); } catch (e) {}
@@ -2115,7 +2134,7 @@
       }
     }, 2000);
 
-    sb.from("profiles").select("statut,lycee,classe,nom,prenom,email,phone,photo_url,photo_attente").eq("id", user.id).maybeSingle().then(function (rp) {
+    lireProfilCourantMemoSTI(user.id).then(function (rp) {
       clearTimeout(timerProfilOff);
       if (!rp || rp.error) {
         var cacheProfilErreur = lireCacheSessionLocal();

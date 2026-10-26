@@ -381,16 +381,16 @@
     function injecterModulesRoue() {
       if (charges) return;
       charges = true;
-      var liste = [
-        "assets/js/roue-nuage.js?v=430",
-        "assets/js/roue-habillage.js?v=429",
-        "assets/js/roue-initiales.js?v=447",
-        "assets/js/roue-couverture.js?v=473",
-        "assets/js/roue-revision.js?v=473",
-        "assets/js/rappels-locaux.js?v=436",
-        "assets/js/roue-plan.js?v=473",
-        "assets/js/rayonsx-surligneur.js?v=449"
-      ];
+          var liste = [
+            "assets/js/roue-nuage.js?v=474",
+            "assets/js/roue-habillage.js?v=474",
+            "assets/js/roue-initiales.js?v=474",
+            "assets/js/roue-couverture.js?v=473",
+            "assets/js/roue-revision.js?v=473",
+            "assets/js/rappels-locaux.js?v=436",
+            "assets/js/roue-plan.js?v=473",
+            "assets/js/rayonsx-surligneur.js?v=449"
+          ];
       for (var i = 0; i < liste.length; i++) {
         try {
           var sc = doc.createElement("script");

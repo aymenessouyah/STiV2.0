@@ -83,7 +83,7 @@
   }
 
   window.__stiRafraichirRoueAvatar = appliquer;
-  setInterval(appliquer, 700);
+  setInterval(appliquer, 2500);
   try { window.addEventListener("storage", appliquer); } catch (e) {}
   appliquer();
   setTimeout(appliquer, 300);

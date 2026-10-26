@@ -92,7 +92,8 @@
   /* veille légère : le wrap peut être reconstruit à tout moment (actualisation de session) —
      un getElementById + deux comparaisons toutes les 800 ms est négligeable, et c'est le même
      mécanisme « re-verse quand ça manque » que roue-nuage.js (v418). */
-  setInterval(syncTheme, 800);
+  setInterval(syncTheme, 2500);
+  syncTheme();
   doc.addEventListener("click", function (e) {
     try {
       var pan = doc.querySelector("#sti-roue-wrap .sti-pan");
