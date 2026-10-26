@@ -1,9 +1,9 @@
 {
   "version": "v460-quiz-supabase-ordre",
-  "generatedAt": "2026-10-26T05:56:21.557Z",
+  "generatedAt": "2026-10-26T06:14:06.831Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 606,
-  "totalBytes": 631325184,
+  "totalBytes": 631332831,
   "files": [
     {
       "path": "assets/js/quiz-sync.js",
@@ -97,8 +97,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 342002,
-      "gitSha": "19bc91b33ac864b2e47a172fab28b6dbea654e56"
+      "bytes": 342495,
+      "gitSha": "8fdde503a3565b5e464ada9af78f1f03e99b571c"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -512,8 +512,8 @@
     },
     {
       "path": "assets/js/acces.js",
-      "bytes": 911538,
-      "gitSha": "4ad78bc6c6d900b1b07c7be6ad04e988e5963b20"
+      "bytes": 913683,
+      "gitSha": "930bbe38d4772d9ba9783100b090ad1ca885761e"
     },
     {
       "path": "assets/js/admin.js",
@@ -527,8 +527,8 @@
     },
     {
       "path": "assets/js/config.js",
-      "bytes": 14616,
-      "gitSha": "6deca700aa94cb8b55790f6a122a2992ac9348fb"
+      "bytes": 17422,
+      "gitSha": "90438bd125fc217f381b0d0c7119cf658337dd68"
     },
     {
       "path": "assets/js/graphiques-activite.js",
@@ -2487,8 +2487,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 195205,
-      "gitSha": "fb79f30f139928f7b636359241985b72799b5342"
+      "bytes": 197052,
+      "gitSha": "aaf2ce42f8cfec4e1651e7cf42a7acaa34b487dd"
     },
     {
       "path": "livre-smart.html",
@@ -2497,8 +2497,8 @@
     },
     {
       "path": "manifest.webmanifest",
-      "bytes": 1315,
-      "gitSha": "76b72e0d293bf631dccae1a02a16967e5d03533e"
+      "bytes": 1424,
+      "gitSha": "cbcfb2644328ce7501af58e90e3cdc9649018e9e"
     },
     {
       "path": "memo-veille-bac.html",
@@ -3002,8 +3002,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 75843,
-      "gitSha": "be6d51aab1a3411e6f60bce9dbe84df184ca379f"
+      "bytes": 76090,
+      "gitSha": "1c160b18edd579e00e1011f05af9618869c1949a"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",

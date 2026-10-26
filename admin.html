@@ -16,6 +16,17 @@
      rediriger immédiatement vers le formulaire de connexion avant même d'afficher le DOM. */
   (function () {
     try {
+      window.addEventListener("beforeinstallprompt", function (ev) { if (ev && ev.preventDefault) ev.preventDefault(); });
+      window.addEventListener("appinstalled", function () {
+        try {
+          localStorage.setItem("sti-pwa-installed", "1");
+          localStorage.setItem("sti-pwa-installee", "1");
+          localStorage.setItem("sti-install-fab", "off");
+          localStorage.setItem("sti-pwa-bulle-vue", "1");
+        } catch (eA) {}
+      });
+    } catch (eP) {}
+    try {
       if (window.origin === "null" || (location.protocol !== "https:" && location.protocol !== "http:")) {
         document.documentElement.classList.remove("admin-verrouille");
         return;
@@ -4934,7 +4945,7 @@
 </script>
 
 <script src="assets/js/supabase-umd.js"></script>
-<script src="assets/js/config.js?v=464"></script>
+<script src="assets/js/config.js?v=466"></script>
 <script src="assets/js/protection.js?v=461" defer></script>
   <script src="assets/js/admin.js?v=466-dbsupbase"></script>
   <script src="assets/js/admin-couverture.js?v=464"></script>

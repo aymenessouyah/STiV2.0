@@ -3467,6 +3467,150 @@ test('v466 : DBSupbase affiche le niveau exact de chaque table par rapport à 1 
   assert.equal(tblLabo.lignes, 26);
 });
 
+test('v466 : la bulle « Installer l’application » ne s’affiche que la 1re fois et disparaît définitivement une fois installée', () => {
+  const indexHtml = read('index.html');
+  const accesJs = read('assets/js/acces.js');
+  const configJs = read('assets/js/config.js');
+  const manifestJson = JSON.parse(read('manifest.webmanifest'));
+
+  // 1) Vérifications statiques anti-régression
+  assert.doesNotMatch(indexHtml, /localStorage\.removeItem\(\s*["']sti-pwa-installed["']\s*\)/);
+  assert.doesNotMatch(accesJs, /localStorage\.removeItem\(\s*["']sti-pwa-refus["']\s*\)/);
+  assert.doesNotMatch(accesJs, /Application installée — ouvrez-la depuis l'écran d'accueil/);
+  assert.match(configJs, /__stiPwaEstInstallee/);
+  assert.match(configJs, /beforeinstallprompt/);
+  assert.ok(Array.isArray(manifestJson.related_applications) && manifestJson.related_applications.length >= 1);
+
+  // Extrait le bloc script PWA de index.html pour l'exécuter dans des visites successives simulées
+  const pwaMatch = indexHtml.match(/<!-- =+\s*PWA : installation \+ hors-ligne\s*=+ -->\s*<script>([\s\S]*?)<\/script>/);
+  assert.ok(pwaMatch, 'Le script PWA de index.html doit exister');
+  const pwaScript = pwaMatch[1];
+
+  const sharedStorage = new Map();
+  function simulerVisiteIndex({ standalone = false } = {}) {
+    const winListeners = {};
+    const bodyChildren = [];
+    const installBtn = { hidden: true, style: { display: 'none' }, textContent: '', addEventListener() {} };
+    const pillMob = { hidden: false, style: { display: '' } };
+
+    const makeFabNode = () => {
+      const subListeners = {};
+      const node = {
+        id: '',
+        innerHTML: '',
+        removed: false,
+        remove() {
+          node.removed = true;
+          const idx = bodyChildren.indexOf(node);
+          if (idx !== -1) bodyChildren.splice(idx, 1);
+        },
+        querySelector(sel) {
+          return {
+            addEventListener(type, fn) {
+              (subListeners[`${sel}:${type}`] ||= []).push(fn);
+            },
+          };
+        },
+        clickChild(sel) {
+          (subListeners[`${sel}:click`] || []).forEach((fn) => fn());
+        },
+      };
+      return node;
+    };
+
+    const ctx = vm.createContext({
+      console,
+      Boolean,
+      String,
+      Date,
+      setInterval: () => 0,
+      setTimeout: () => 0,
+      location: { reload() {} },
+      navigator: {
+        userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36',
+        platform: 'Linux armv8l',
+        maxTouchPoints: 5,
+        standalone: false,
+      },
+      matchMedia: (q) => ({
+        matches: q.includes('standalone') ? standalone : true,
+        addEventListener() {},
+      }),
+      localStorage: {
+        getItem: (k) => (sharedStorage.has(k) ? sharedStorage.get(k) : null),
+        setItem: (k, v) => sharedStorage.set(k, String(v)),
+        removeItem: (k) => sharedStorage.delete(k),
+      },
+      sessionStorage: {
+        getItem: () => null,
+        setItem: () => {},
+      },
+      document: {
+        hidden: false,
+        referrer: '',
+        head: { appendChild() {} },
+        body: { appendChild(el) { bodyChildren.push(el); } },
+        getElementById: (id) => (id === 'installBtn' ? installBtn : null),
+        querySelector: (sel) => (sel.includes('__stiInstall') ? pillMob : null),
+        createElement: (tag) => (tag === 'div' ? makeFabNode() : { textContent: '' }),
+        addEventListener() {},
+      },
+    });
+    ctx.window = ctx;
+    ctx.window.matchMedia = ctx.matchMedia;
+    ctx.window.alert = () => {};
+    ctx.window.addEventListener = (type, fn) => { (winListeners[type] ||= []).push(fn); };
+
+    vm.runInContext(configJs, ctx);
+    vm.runInContext(pwaScript, ctx);
+
+    return {
+      installBtn,
+      pillMob,
+      hasFab: () => bodyChildren.some((el) => el.id === 'sti-fab' && !el.removed),
+      fireBip: () => {
+        const ev = {
+          preventDefault() {},
+          prompt() {},
+          userChoice: Promise.resolve({ outcome: 'dismissed' }),
+        };
+        (winListeners.beforeinstallprompt || []).forEach((fn) => fn(ev));
+      },
+      fireAppInstalled: () => {
+        (winListeners.appinstalled || []).forEach((fn) => fn());
+      },
+    };
+  }
+
+  // Visite 1 (toute première fois, non installée) : la bulle #sti-fab apparaît une seule fois
+  const v1 = simulerVisiteIndex({ standalone: false });
+  assert.equal(v1.hasFab(), true, '1re visite : la bulle #sti-fab doit apparaître');
+  v1.fireBip();
+  assert.equal(v1.installBtn.hidden, false, '1re visite : installBtn peut être affiché');
+  assert.equal(sharedStorage.get('sti-pwa-bulle-vue'), '1');
+  assert.equal(sharedStorage.get('sti-install-fab'), 'off');
+
+  // Visite 2 (rechargement / visite suivante, toujours non installée) : aucune bulle ni bouton intempestif
+  const v2 = simulerVisiteIndex({ standalone: false });
+  assert.equal(v2.hasFab(), false, '2e visite : la bulle #sti-fab ne doit plus apparaître');
+  v2.fireBip();
+  assert.equal(v2.installBtn.hidden, true, '2e visite : installBtn reste masqué même si beforeinstallprompt se déclenche');
+  assert.equal(v2.pillMob.hidden, true);
+
+  // Une fois installée (appinstalled ou ouverture standalone), le marqueur persiste même si beforeinstallprompt survient dans un onglet navigateur
+  v1.fireAppInstalled();
+  assert.equal(sharedStorage.get('sti-pwa-installed'), '1');
+  assert.equal(sharedStorage.get('sti-pwa-installee'), '1');
+  assert.equal(v1.hasFab(), false, 'Après installation : la bulle #sti-fab est immédiatement retirée');
+
+  const v3 = simulerVisiteIndex({ standalone: false });
+  v3.fireBip();
+  assert.equal(sharedStorage.get('sti-pwa-installed'), '1', 'beforeinstallprompt ne doit jamais effacer sti-pwa-installed');
+  assert.equal(v3.hasFab(), false);
+  assert.equal(v3.installBtn.hidden, true);
+});
+
+
 
 
 

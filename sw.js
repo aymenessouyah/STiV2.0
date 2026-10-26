@@ -11,7 +11,11 @@ var UPDATE_ID = "v466-dbsupbase";
    Manifeste cumulatif : une révision déjà appliquée est ignorée localement.
    Une nouvelle révision ou un nouveau chemin est téléchargé automatiquement. */
 var UPDATE_FILES = [
+  { url: "./index.html", revision: "dbsupbase-v466" },
   { url: "./admin.html", revision: "dbsupbase-v466" },
+  { url: "./manifest.webmanifest", revision: "dbsupbase-v466" },
+  { url: "./assets/js/config.js", revision: "dbsupbase-v466" },
+  { url: "./assets/js/acces.js", revision: "dbsupbase-v466" },
   { url: "./assets/js/admin.js", revision: "dbsupbase-v466" },
   { url: "./assets/js/admin-dbsupbase.js", revision: "dbsupbase-v466" },
   { url: "./index.html", revision: "nav-fluide-v465" },
