@@ -105,6 +105,20 @@
   <script src="./assets/js/cote-ticker.js?v=465" defer></script>
 
   <main id="contenu-principal">
+    <!-- Accueil personnel : le compteur correspond aux cours réellement ouverts. -->
+    <section class="welcome-return" id="welcomeReturn" aria-labelledby="welcomeTitle" hidden>
+      <div class="container">
+        <h2 class="welcome-return__title" id="welcomeTitle">Bonjour, <span id="welcomePrenom">Abonné</span></h2>
+        <p class="welcome-return__subtitle">Continuez à apprendre, ou découvrez quelque chose de nouveau.</p>
+        <div class="welcome-return__bar">
+          <p class="welcome-return__count" id="welcomeCount" aria-live="polite">0 en cours</p>
+          <a class="welcome-return__dashboard" href="dashboard.html">Votre apprentissage <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="welcome-return__courses" id="welcomeCourses"></div>
+        <p class="welcome-return__empty" id="welcomeEmpty" hidden>Vous n’avez pas encore ouvert de cours. <a href="#cours">Découvrir les cours</a></p>
+      </div>
+    </section>
+
     <!-- ═════════════════════════════════════════════════════════════════════
          HERO « LE WEB DE A À Z » + TERMINAL ANIMÉ + VIDÉO À LA UNE
          ═════════════════════════════════════════════════════════════════════ -->

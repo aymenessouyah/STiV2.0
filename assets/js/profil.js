@@ -19,6 +19,7 @@
  *   langue: "fr",                                    // "fr" | "en" | "ar"
  *   tailleTexte: "normale",                          // "petite" | "normale" | "grande"
  *   vitesseAudio: 1,                                 // 0.85 | 1 | 1.15 (Guide-Ligne vocal)
+ *   coursVisites: [],                                // Matières ouvertes, sans doublons
  *   derniereLecture: {                               // Reprise de lecture
  *     matiere: "",                                   // "html5" | "css3" | "javascript" | "sql" | "php"
  *     chapitre: "",                                  // Titre du chapitre ou de la section
@@ -69,10 +70,21 @@
   var ETATS_CHAPITRE_VALIDES = { a_reviser: true, en_cours: true, revise: true };
   var MATIERES_CLES = ["html5", "css3", "javascript", "sql", "php"];
 
+  /* Les anciennes pages restent une source de visites, sans modifier leur journal. */
+  var PAGES_COURS_HISTORIQUES = {
+    html5: ["cours/html5.html", "cours/courshtml5.html"],
+    css3: ["cours/css3.html", "cours/courscss3.html"],
+    javascript: ["cours/javascript.html"],
+    sql: ["cours/sql.html", "cours/sql-bases-ldd-lmd-lcd.html"],
+    php: ["cours/php.html", "cours/coursphp.html", "cours/php-mysqli.html"]
+  };
+
   /* Cache mémoire courant pour éviter tout accès superflu */
   var memoireProfil = null;
+  var profilPresentDansStockage = false;
   var etatSessionCourant = {
     connecte: false,
+    id: "",
     estGold: false,
     email: "",
     prenomSession: "",
@@ -102,6 +114,7 @@
       langue: "fr",
       tailleTexte: "normale",
       vitesseAudio: 1,
+      coursVisites: [],
       derniereLecture: {
         matiere: "",
         chapitre: "",
@@ -223,6 +236,9 @@
       langue: LANGUES_VALIDES[src.langue] ? src.langue : def.langue,
       tailleTexte: TAILLES_VALIDES[src.tailleTexte] ? src.tailleTexte : def.tailleTexte,
       vitesseAudio: vitesseValide,
+      coursVisites: Array.isArray(src.coursVisites)
+        ? Array.from(new Set(src.coursVisites.filter(function (m) { return MATIERES_CLES.indexOf(m) !== -1; })))
+        : [],
       derniereLecture: {
         matiere: typeof dl.matiere === "string" ? dl.matiere : "",
         chapitre: typeof dl.chapitre === "string" ? dl.chapitre : "",
@@ -370,8 +386,16 @@
     try {
       var texte = global.localStorage ? global.localStorage.getItem(CLE_PROFIL) : null;
       if (texte) {
-        memoireProfil = normaliserProfil(JSON.parse(texte));
+        try { memoireProfil = normaliserProfil(JSON.parse(texte)); }
+        catch (eJson) { memoireProfil = creerProfilParDefaut(); }
+        profilPresentDansStockage = true;
         return JSON.parse(JSON.stringify(memoireProfil));
+      }
+      /* La synchronisation purge cette clé lorsqu'un autre compte se connecte.
+         Ne jamais réutiliser en mémoire le profil du compte précédent. */
+      if (global.localStorage && profilPresentDansStockage) {
+        memoireProfil = null;
+        profilPresentDansStockage = false;
       }
     } catch (e) {}
 
@@ -406,8 +430,12 @@
     try {
       if (global.localStorage) {
         global.localStorage.setItem(CLE_PROFIL, JSON.stringify(propre));
+        profilPresentDansStockage = true;
       }
-    } catch (e) {}
+    } catch (e) {
+      /* Le repli mémoire continue de fonctionner si le stockage est refusé. */
+      profilPresentDansStockage = false;
+    }
     appliquerPreferencesDOM(propre, Boolean(avecTransition));
     notifierChangement("sti:profil-maj", JSON.parse(JSON.stringify(propre)));
     return JSON.parse(JSON.stringify(propre));
@@ -435,6 +463,62 @@
 
     var animTheme = cleChaine === "theme";
     return sauvegarderProfil(courant, animTheme);
+  }
+
+  /**
+   * Mémorise une visite effective dans le profil synchronisé, sans multiplier
+   * les écritures lorsque la même page est déjà la plus récente.
+   */
+  function enregistrerVisiteCours(matiere) {
+    var p = chargerProfil();
+    if (MATIERES_CLES.indexOf(matiere) === -1 || p.coursVisites[0] === matiere) return p;
+    p.coursVisites = [matiere].concat(p.coursVisites.filter(function (m) { return m !== matiere; }));
+    return sauvegarderProfil(p, false);
+  }
+
+  /**
+   * Réunit en une écriture les visites locales conservées pendant un pull
+   * avec celles du profil restauré, sans toucher aux autres données du profil.
+   */
+  function fusionnerCoursVisites(visitesLocales) {
+    var p = chargerProfil();
+    if (!Array.isArray(visitesLocales)) return p;
+    var manquantes = Array.from(new Set(visitesLocales.filter(function (m) {
+      return MATIERES_CLES.indexOf(m) !== -1 && p.coursVisites.indexOf(m) === -1;
+    })));
+    if (!manquantes.length) return p;
+    p.coursVisites = p.coursVisites.concat(manquantes);
+    return sauvegarderProfil(p, false);
+  }
+
+  /**
+   * Récupère les visites anciennes en lecture seule. Le journal de couverture
+   * reste celui de la roue ; les révisions globales et les exercices seuls ne
+   * constituent pas une visite de cours.
+   */
+  function listerCoursVisites() {
+    var p = chargerProfil();
+    var visites = p.coursVisites.slice();
+    function ajouter(matiere) {
+      if (MATIERES_CLES.indexOf(matiere) !== -1 && visites.indexOf(matiere) === -1) visites.push(matiere);
+    }
+    if (p.derniereLecture && p.derniereLecture.chapitreId) ajouter(p.derniereLecture.matiere);
+    MATIERES_CLES.forEach(function (m) {
+      var etats = p.chapitres[m] || {};
+      if (Object.keys(etats).some(function (id) { return etats[id] === "en_cours" || etats[id] === "revise"; })) ajouter(m);
+    });
+    try {
+      var pages = JSON.parse(global.localStorage.getItem("sti-pages-vues-v432") || "{}");
+      if (pages && typeof pages === "object" && !Array.isArray(pages)) {
+        MATIERES_CLES.forEach(function (m) {
+          if (PAGES_COURS_HISTORIQUES[m].some(function (slug) {
+            var valeur = pages[slug];
+            return valeur === true || ((typeof valeur === "number" || typeof valeur === "string") && Number(valeur) > 0);
+          })) ajouter(m);
+        });
+      }
+    } catch (e) {}
+    return visites;
   }
 
   /**
@@ -563,7 +647,9 @@
       }
     } catch (e) {}
     memoireProfil = creerProfilParDefaut();
+    profilPresentDansStockage = false;
     appliquerPreferencesDOM(memoireProfil, true);
+    notifierChangement("sti:profil-reset", null);
     notifierChangement("sti:profil-maj", JSON.parse(JSON.stringify(memoireProfil)));
     return JSON.parse(JSON.stringify(memoireProfil));
   }
@@ -606,6 +692,24 @@
       }
     } catch (e) {}
 
+    /* Un cache d'accès d'un ancien compte ne doit pas fournir le nom du nouveau. */
+    if (etatSessionCourant.connecte && cacheAcces) {
+      var identitesConnues = etatSessionCourant.id && cacheAcces.id;
+      var autreCompte = identitesConnues
+        ? etatSessionCourant.id !== cacheAcces.id
+        : Boolean(etatSessionCourant.email && cacheAcces.email && String(etatSessionCourant.email).toLowerCase() !== String(cacheAcces.email).toLowerCase());
+      if (autreCompte) cacheAcces = null;
+    }
+
+    /* sync-progressions isole les comptes au premier pull. En attendant cette
+       isolation, ne pas exposer les données locales du compte précédent. */
+    var uidActuel = etatSessionCourant.id || (cacheAcces && cacheAcces.id) || "";
+    var compteEnAttente = false;
+    try {
+      var uidStocke = global.localStorage && global.localStorage.getItem("sti-sync-uid");
+      compteEnAttente = Boolean(uidActuel && uidStocke && uidActuel !== uidStocke);
+    } catch (eUid) {}
+
     var docEl = document.documentElement;
     var bodyEl = document.body;
     var estGoldActif = Boolean(
@@ -616,10 +720,10 @@
     );
 
     var connecteCache = Boolean(cacheAcces && cacheAcces.statut === "actif");
-    var prenom = profil.prenom ||
-      (cacheAcces && cacheAcces.prenom) ||
+    var prenomCompte = (cacheAcces && cacheAcces.prenom) ||
       etatSessionCourant.prenomSession ||
-      "";
+      (!compteEnAttente && profil.prenom) || "";
+    var prenom = (!compteEnAttente && profil.prenom) || prenomCompte;
     var nom = (cacheAcces && cacheAcces.nom) || etatSessionCourant.nomSession || "";
     var email = (cacheAcces && cacheAcces.email) || etatSessionCourant.email || "";
 
@@ -632,8 +736,11 @@
 
     return {
       connecte: connecte,
+      compteEnAttente: compteEnAttente,
+      id: uidActuel,
       estGold: estGoldActif,
       prenom: prenom || "Abonné",
+      prenomCompte: String(prenomCompte || "Abonné").trim().slice(0, 48) || "Abonné",
       nom: nom,
       email: email,
       classe: (cacheAcces && cacheAcces.classe) || etatSessionCourant.classe || "",
@@ -641,6 +748,21 @@
       initiales: calculerInitiales(prenom, nom, email),
       urlPortail: ((global.STI_AUTH && global.STI_AUTH.RACINE) || "./") + "portail.html"
     };
+  }
+
+  /**
+   * Suit uniquement l'identité communiquée par le client d'accès existant.
+   */
+  function memoriserSession(sess) {
+    var utilisateur = sess && sess.user;
+    var meta = (utilisateur && utilisateur.user_metadata) || {};
+    etatSessionCourant.connecte = Boolean(utilisateur);
+    etatSessionCourant.id = (utilisateur && utilisateur.id) || "";
+    etatSessionCourant.email = (utilisateur && utilisateur.email) || "";
+    etatSessionCourant.prenomSession = meta.prenom || meta.first_name || "";
+    etatSessionCourant.nomSession = meta.nom || meta.last_name || "";
+    etatSessionCourant.classe = meta.classe || "";
+    etatSessionCourant.lycee = meta.lycee || "";
   }
 
   /**
@@ -654,21 +776,12 @@
       }
       client.auth.getSession().then(function (rep) {
         var sess = rep && rep.data ? rep.data.session : null;
+        memoriserSession(sess);
         if (sess && sess.user) {
-          var meta = sess.user.user_metadata || {};
-          etatSessionCourant.connecte = true;
-          etatSessionCourant.email = sess.user.email || "";
-          etatSessionCourant.prenomSession = meta.prenom || meta.first_name || "";
-          etatSessionCourant.nomSession = meta.nom || meta.last_name || "";
-          etatSessionCourant.classe = meta.classe || "";
-          etatSessionCourant.lycee = meta.lycee || "";
-
           var p = chargerProfil();
-          if (!p.prenom && etatSessionCourant.prenomSession) {
+          if (!lireEtatSession().compteEnAttente && !p.prenom && etatSessionCourant.prenomSession) {
             mettreAJour("prenom", etatSessionCourant.prenomSession);
           }
-        } else {
-          etatSessionCourant.connecte = false;
         }
         notifierChangement("sti:session-maj", lireEtatSession());
       }).catch(function () {});
@@ -676,8 +789,7 @@
       if (!synchroniserLectureSessionSupabase._ecouteurActif && typeof client.auth.onAuthStateChange === "function") {
         synchroniserLectureSessionSupabase._ecouteurActif = true;
         client.auth.onAuthStateChange(function (_ev, sess) {
-          etatSessionCourant.connecte = Boolean(sess && sess.user);
-          etatSessionCourant.email = (sess && sess.user && sess.user.email) || "";
+          memoriserSession(sess);
           notifierChangement("sti:session-maj", lireEtatSession());
         });
       }
@@ -753,6 +865,15 @@
               return n.nodeType === 1 && (n.id === "sti-plan-date" || (n.querySelector && n.querySelector("#sti-plan-date")));
             });
           })) nommerDateRoue();
+          /* acces.js met son cache à jour dans le même onglet : observer le
+             nom de son panneau permet de relire ce cache sans modifier la roue. */
+          if (mutations.some(function (mutation) {
+            var cible = mutation.target && (mutation.target.nodeType === 1 ? mutation.target : mutation.target.parentElement);
+            return (cible && cible.closest && cible.closest("#sti-pan-login")) ||
+              Array.prototype.some.call(mutation.addedNodes, function (n) {
+                return n.nodeType === 1 && (n.id === "sti-pan-login" || (n.querySelector && n.querySelector("#sti-pan-login")));
+              });
+          })) notifierChangement("sti:session-maj", lireEtatSession());
         });
         obsRoue.observe(document.body, { childList: true, subtree: true });
       }
@@ -772,6 +893,9 @@
     invitationInstallationDejaVue: invitationInstallationDejaVue,
     sauvegarderProfil: sauvegarderProfil,
     mettreAJour: mettreAJour,
+    enregistrerVisiteCours: enregistrerVisiteCours,
+    fusionnerCoursVisites: fusionnerCoursVisites,
+    listerCoursVisites: listerCoursVisites,
     definirEtatChapitre: definirEtatChapitre,
     enregistrerLecture: enregistrerLecture,
     basculerExerciceFait: basculerExerciceFait,

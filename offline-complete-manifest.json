@@ -1,9 +1,9 @@
 {
-  "version": "v481-sti-atelier-v342",
-  "generatedAt": "2026-10-27T15:58:47Z",
+  "version": "v482-sti-atelier-v343",
+  "generatedAt": "2026-10-27T16:34:59Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 684,
-  "totalBytes": 682408799,
+  "totalBytes": 682429310,
   "files": [
     {
       "path": "404.html",
@@ -72,8 +72,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 30202,
-      "gitSha": "8e28e8f123ca046ac59dda0ae7678567e731cc2c"
+      "bytes": 30977,
+      "gitSha": "c76395524b784e47d6e7e6e989036ce2e4ba7f11"
     },
     {
       "path": "admin.html",
@@ -277,8 +277,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 58364,
-      "gitSha": "a407ba0d96bf0a0840a7070d04f8c45ab98c6719"
+      "bytes": 61859,
+      "gitSha": "5113859e9d5fb2de8038f10b37b62842bf9cf483"
     },
     {
       "path": "assets/data/nouveautes.json",
@@ -642,8 +642,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 91556,
-      "gitSha": "e1e379eed802ef148e4111fc1df8bc2701b36ff7"
+      "bytes": 100061,
+      "gitSha": "183d67cfe5db8e951f78e08fa53508a24278b5f6"
     },
     {
       "path": "assets/js/config.js",
@@ -722,8 +722,8 @@
     },
     {
       "path": "assets/js/profil.js",
-      "bytes": 31041,
-      "gitSha": "3b50f1c2202f8746200c98225c80266ea9e9f0d0"
+      "bytes": 37113,
+      "gitSha": "7b05e4e007a12728d1f7318dd6367eb666e0fe07"
     },
     {
       "path": "assets/js/protection.js",
@@ -2787,8 +2787,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 53904,
-      "gitSha": "99dcab6d2eba4af048f3710aaee31b78e14d5c0f"
+      "bytes": 54877,
+      "gitSha": "3ee4f061f954c5c4779eb828a9948de5642ea38c"
     },
     {
       "path": "livre-smart.html",
@@ -2822,13 +2822,13 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 1647,
-      "gitSha": "03036b6d9074bd91bafa5e3c9418ec61b1143381"
+      "bytes": 2036,
+      "gitSha": "f03dc68474db9dc05c8c2df064500d857413a363"
     },
     {
       "path": "package.json",
-      "bytes": 425,
-      "gitSha": "33bf1df910c555b724771671254ece08002dfeba"
+      "bytes": 452,
+      "gitSha": "de210c4ac8f42f669342d6ce65c909c13d2032f4"
     },
     {
       "path": "pieges-bac.html",
@@ -3337,8 +3337,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 85702,
-      "gitSha": "ab21229ef8278b8717c343a4817773cf9bcb6feb"
+      "bytes": 85977,
+      "gitSha": "5be91afcaea8a37474632507383c007874f9665c"
     },
     {
       "path": "assets/css/cours-matieres.css",

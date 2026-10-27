@@ -4200,11 +4200,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v474\s*\|/.test(l)), 'v474 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v475\s*\|/.test(l)), 'v475 doit rester dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v476\s*\|/.test(l)), 'v476 doit rester dans l’historique');
-  assert.ok(cinq.some((o) => /^v477 — Synchronisation intégrale de la version active v477/.test(o.t)), 'v477 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.ok(cinq.some((o) => /^v478 — Protection monotone multicouche des XP et records de Quiz élèves/.test(o.t)), 'v478 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.ok(cinq.some((o) => /^v479 — Fiabilisation intégrale du compteur des vidéos/.test(o.t)), 'v479 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v477\s*\|/.test(l)), 'v477 reste dans l’historique');
+  assert.ok(cinq.some((o) => /^v478 — Protection monotone multicouche des XP et records de Quiz élèves/.test(o.t)), 'v478 reste parmi les 5 dernières entrées du bandeau');
+  assert.ok(cinq.some((o) => /^v479 — Fiabilisation intégrale du compteur des vidéos/.test(o.t)), 'v479 reste parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v480 — Intégration de la refonte/.test(o.t)), 'v480 reste parmi les nouvelles');
-  assert.match(cinq[0].t, /^v481 — Fidélité à l’origine/);
+  assert.ok(cinq.some((o) => /^v481 — Fidélité à l’origine/.test(o.t)), 'v481 reste parmi les nouvelles');
+  assert.match(cinq[0].t, /^v482 — Accueil de connexion personnalisé/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {

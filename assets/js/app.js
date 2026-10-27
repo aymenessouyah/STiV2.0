@@ -1863,11 +1863,145 @@
     cible.textContent = Math.max(1, Math.ceil(mots.length / 180)) + " min";
   }
 
+  /* Les identifiants correspondent aux vrais chapitres des cinq cours. */
+  var CHAPITRES_ACCUEIL = {
+    html5: ["entete", "structuration", "conteneurs", "listes", "tableaux", "texte-media", "attributs-evenements", "target-explication", "formulaires", "iframe"],
+    css3: ["selecteurs", "typographie", "arriere-plan", "boite-display", "marges-debordement", "positionnement", "tableaux-listes", "filtres", "animations", "pas-a-pas"],
+    javascript: ["sec1", "sec2", "sec3", "sec4", "sec5", "sec6", "sec7", "sec8", "sec9", "sec10", "sec11", "sec12", "sec13", "sec14", "sec15"],
+    sql: ["intro", "ldd", "lmd", "bac"],
+    php: ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10"]
+  };
+  var minuteurCompteAccueil = 0;
+  var delaiCompteAccueil = 1200;
+  var compteVisitesEnMemoire = "";
+  var visitesEnMemoire = [];
+
+  /* Le pull cloud peut remplacer le profil entier. Garder les visites locales
+     déjà connues, uniquement pour le même compte, jusqu'à sa restauration. */
+  function memoriserVisitesDuCompte(etat) {
+    if (!etat.connecte || etat.compteEnAttente) {
+      compteVisitesEnMemoire = "";
+      visitesEnMemoire = [];
+      return;
+    }
+    var compte = etat.id || (etat.email ? "email:" + etat.email.toLowerCase() : "session-locale");
+    if (compteVisitesEnMemoire !== compte) {
+      compteVisitesEnMemoire = compte;
+      visitesEnMemoire = [];
+    }
+    global.STIProfil.chargerProfil().coursVisites.forEach(function (m) {
+      if (visitesEnMemoire.indexOf(m) === -1) visitesEnMemoire.push(m);
+    });
+  }
+
+  /* Une prévisualisation interne ne doit pas créer une visite de cours. */
+  function estDansIframeInterne() {
+    try {
+      if (global.frameElement) return true;
+      if (global.self && global.top && global.self !== global.top) {
+        return Boolean(global.top.location && global.top.location.origin === global.location.origin);
+      }
+    } catch (e) { return false; } /* Aperçu externe, par exemple dans un navigateur intégré. */
+    return false;
+  }
+
+  function marquerCoursEffectivementOuvert(etat) {
+    var matiere = detecterMatierePageCourante();
+    if (!matiere || !etat.connecte || etat.compteEnAttente || document.prerendering || estDansIframeInterne()) return;
+    /* Le verrou existant reste l'unique source d'autorisation pour le PHP. */
+    if (matiere === "php" && !estAutorise4SI()) return;
+    global.STIProfil.enregistrerVisiteCours(matiere);
+  }
+
+  function rendreAccueilPersonnalise(etat) {
+    var section = document.getElementById("welcomeReturn");
+    if (!section || !global.STIProfil) return;
+    var zone = document.getElementById("welcomeCourses");
+    var vide = document.getElementById("welcomeEmpty");
+    var compteur = document.getElementById("welcomeCount");
+    var nom = document.getElementById("welcomePrenom");
+    if (!etat.connecte) {
+      section.hidden = true;
+      zone.replaceChildren();
+      zone._signatureAccueil = "";
+      nom.textContent = "";
+      return;
+    }
+    section.hidden = false;
+    nom.textContent = etat.prenomCompte || etat.prenom || "Abonné";
+    if (etat.compteEnAttente) {
+      compteur.textContent = "Synchronisation des cours…";
+      compteur.removeAttribute("aria-label");
+      zone.replaceChildren();
+      zone._signatureAccueil = "";
+      vide.hidden = true;
+      return;
+    }
+
+    var profil = global.STIProfil.chargerProfil();
+    var ok4 = estAutorise4SI();
+    var visites = global.STIProfil.listerCoursVisites().filter(function (id) { return id !== "php" || ok4; });
+    compteur.textContent = visites.length + " en cours";
+    compteur.setAttribute("aria-label", visites.length + " cours déjà visités");
+    vide.hidden = visites.length !== 0;
+
+    var pref = obtenirPrefixeRacine();
+    var cartes = visites.map(function (id) {
+      var matiere = MATIERES[id];
+      var chapitres = CHAPITRES_ACCUEIL[id].filter(function (chapitre) { return id !== "sql" || chapitre !== "bac" || ok4; });
+      var etats = profil.chapitres[id] || {};
+      var revises = chapitres.filter(function (chapitre) { return etats[chapitre] === "revise"; }).length;
+      var derniere = profil.derniereLecture || {};
+      var ancre = derniere.matiere === id && chapitres.indexOf(derniere.chapitreId) !== -1 ? "#" + derniere.chapitreId : "";
+      return { id: id, titre: matiere.nom, href: pref + matiere.urlCours + ancre, revises: revises, total: chapitres.length };
+    });
+    var signature = JSON.stringify(cartes);
+    if (zone._signatureAccueil === signature) return;
+    var lienActif = document.activeElement && document.activeElement.closest && document.activeElement.closest("[data-welcome-course]");
+    var focusId = lienActif && zone.contains(lienActif) ? lienActif.getAttribute("data-welcome-course") : "";
+    zone.innerHTML = cartes.map(function (c) {
+      return '<a class="welcome-course welcome-course--' + c.id + '" data-welcome-course="' + c.id + '" href="' + c.href + '">' +
+        '<span class="welcome-course__cover"><span class="welcome-course__state">' + (c.revises ? c.revises + " / " + c.total + " révisés" : "Consulté") + '</span>' +
+        '<span class="welcome-course__icon" aria-hidden="true"><svg><use href="' + pref + 'assets/icons/matieres.svg#' + c.id + '"></use></svg></span></span>' +
+        '<span class="welcome-course__body"><strong class="welcome-course__title">' + echapperHtml(c.titre) + '</strong>' +
+        '<span class="welcome-course__details">Cours · ' + c.total + ' chapitres · Continuer →</span></span></a>';
+    }).join("");
+    zone._signatureAccueil = signature;
+    if (focusId) {
+      var nouveauLien = zone.querySelector('[data-welcome-course="' + focusId + '"]') || section.querySelector(".welcome-return__dashboard");
+      if (nouveauLien) nouveauLien.focus({ preventScroll: true });
+    }
+  }
+
+  function actualiserAccueilEtVisite() {
+    if (!global.STIProfil) return;
+    var etat = global.STIProfil.lireEtatSession();
+    marquerCoursEffectivementOuvert(etat);
+    memoriserVisitesDuCompte(etat);
+    rendreAccueilPersonnalise(etat);
+    /* En cas de changement de compte dans le même onglet, attendre la purge
+       de l'ancien profil effectuée par le synchroniseur existant. */
+    if (etat.connecte && etat.compteEnAttente) {
+      if (!minuteurCompteAccueil) {
+        minuteurCompteAccueil = global.setTimeout(function () {
+          minuteurCompteAccueil = 0;
+          actualiserAccueilEtVisite();
+        }, delaiCompteAccueil);
+        delaiCompteAccueil = Math.min(delaiCompteAccueil * 2, 12000);
+      }
+    } else {
+      if (minuteurCompteAccueil) global.clearTimeout(minuteurCompteAccueil);
+      minuteurCompteAccueil = 0;
+      delaiCompteAccueil = 1200;
+    }
+  }
+
   /* ── 12. Initialisation générale au chargement du DOM ── */
   function demarrerApplication() {
     if (redirigerAnciennePageExercices()) return;
     estimerLectureCours();
     initialiserPageMatiereUnifiee();
+    actualiserAccueilEtVisite();
     appliquerTraductionsPage();
     initialiserSelecteursTheme();
     rendreBadgeAbonne();
@@ -1894,6 +2028,9 @@
     }
 
     global.addEventListener("sti:profil-maj", function () {
+      var etat = global.STIProfil.lireEtatSession();
+      memoriserVisitesDuCompte(etat);
+      rendreAccueilPersonnalise(etat);
       appliquerTraductionsPage();
       rafraichirBoutonsTheme();
       rendreBadgeAbonne();
@@ -1905,14 +2042,47 @@
     });
 
     global.addEventListener("sti:session-maj", function () {
+      actualiserAccueilEtVisite();
       rendreBadgeAbonne();
       rafraichirTiroirAbonne();
       rendreGrilleVideosAccueil();
       rendreTableauDeBord();
     });
 
+    /* Les restaurations cloud et les autres onglets modifient le journal sans
+       notification localStorage dans l'onglet courant. */
+    global.addEventListener("sti-cloud-restored", function () {
+      var etat = global.STIProfil.lireEtatSession();
+      var compte = etat.id || (etat.email ? "email:" + etat.email.toLowerCase() : "session-locale");
+      if (etat.connecte && !etat.compteEnAttente && compteVisitesEnMemoire === compte && visitesEnMemoire.length) {
+        global.STIProfil.fusionnerCoursVisites(visitesEnMemoire);
+      }
+      actualiserAccueilEtVisite();
+    });
+    global.addEventListener("sti:profil-reset", function () {
+      compteVisitesEnMemoire = "";
+      visitesEnMemoire = [];
+    });
+    global.addEventListener("storage", function (ev) {
+      if (!ev) return;
+      if (!ev.key || (ev.key === "sti-profil-abonne" && ev.newValue === null)) {
+        compteVisitesEnMemoire = "";
+        visitesEnMemoire = [];
+      } else if (ev.key === "sti-profil-abonne") {
+        var etat = global.STIProfil.lireEtatSession();
+        var compte = etat.id || (etat.email ? "email:" + etat.email.toLowerCase() : "session-locale");
+        if (etat.connecte && !etat.compteEnAttente && compteVisitesEnMemoire === compte) {
+          global.STIProfil.fusionnerCoursVisites(visitesEnMemoire);
+        }
+      }
+      if (!ev.key || ev.key === "sti-pages-vues-v432") actualiserAccueilEtVisite();
+    });
+    document.addEventListener("prerenderingchange", actualiserAccueilEtVisite);
+    global.addEventListener("online", actualiserAccueilEtVisite);
+
     global.addEventListener("pageshow", function (ev) {
       if (ev && ev.persisted) {
+        actualiserAccueilEtVisite();
         rendreBadgeAbonne();
         rafraichirUIRevisionAccueil();
         rafraichirBandeauRepriseAccueil();

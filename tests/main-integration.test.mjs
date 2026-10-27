@@ -15,10 +15,13 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
-  assert.match(sw, /var CACHE = "sti-atelier-v342"/);
-  assert.match(sw, /var UPDATE_ID = "v481-fidelite-origine-20261027"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v343"/);
+  assert.match(sw, /var UPDATE_ID = "v482-accueil-personnalise-20261027"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
-  for (const chemin of ['index.html', 'dashboard.html', 'exercices/series-exercices.html', 'cours/html5.html', 'cours/css3.html', 'cours/javascript.html', 'cours/sql.html', 'cours/php.html', 'assets/js/app.js', 'assets/js/profil.js', 'assets/css/theme.css', 'README.md', 'offline-complete-manifest.json']) {
+  for (const chemin of ['index.html', 'assets/js/app.js', 'assets/js/profil.js', 'assets/css/theme.css', 'README.md', 'offline-complete-manifest.json', 'package.json', 'package-lock.json']) {
+    assert.equal(revisions.get('./' + chemin), 'accueil-personnalise-v482', chemin);
+  }
+  for (const chemin of ['dashboard.html', 'exercices/series-exercices.html', 'cours/html5.html', 'cours/css3.html', 'cours/javascript.html', 'cours/sql.html', 'cours/php.html']) {
     assert.equal(revisions.get('./' + chemin), 'fidelite-origine-v481', chemin);
   }
   for (const chemin of ['assets/js/config.js', 'assets/js/acces.js', 'assets/js/sync-progressions.js', 'assets/js/reprendre.js']) {
@@ -52,7 +55,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v481-sti-atelier-v342');
+  assert.equal(manifeste.version, 'v482-sti-atelier-v343');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));
   assert.equal(new Set(manifeste.files.map(f => f.path.toLowerCase())).size, manifeste.files.length, 'pas de doublons de casse');
@@ -114,6 +117,7 @@ async function simulerMigration(nomAncien, marqueurs) {
     ['/', 'ancien accueil'], ['/index.html', 'ancien accueil'],
     ['/cours/sql.html', 'ancien cours SQL'], ['/exercices/series-exercices.html', 'anciennes séries'],
     ['/assets/js/sync-progressions.js?v=479', 'sync existante'], ['/quiz/sql.html', 'quiz existant'],
+    ['/assets/js/app.js', 'ancienne application'], ['/assets/js/profil.js', 'ancien profil'], ['/assets/css/theme.css', 'ancien thème'],
     ['/assets/js/sqljs/sql-wasm.wasm', 'sqlite existant'], ['/assets/videos/exemple.mp4', 'vidéo locale']
   ]) await ancien.put(origine + chemin.replace(/^\//, ''), new Response(texte));
   const cacheRevisions = await api.open('sti-update-revisions-v1');
@@ -148,7 +152,7 @@ test('migration du cache main v340 : pas de retour à l’ancien accueil ni de p
     ['./assets/js/sync-progressions.js', 'compteur-media-v479'], ['./quiz/sql.html', 'xp-quiz-monotone-v478']
   ]);
   assert.equal(result.magasins.has('sti-atelier-v340'), false);
-  const cache = await result.api.open('sti-atelier-v342');
+  const cache = await result.api.open('sti-atelier-v343');
   assert.match(await (await cache.match('https://sti.example/')).text(), /^nouveau :/);
   assert.match(await (await cache.match('https://sti.example/index.html')).text(), /^nouveau :/);
   assert.equal(await cache.match('https://sti.example/cours/sql.html'), undefined, 'ancien cours invalidé');
@@ -169,7 +173,7 @@ test('migration du cache v341 : les ressources modifiées sont invalidées et le
     ['./assets/js/sync-progressions.js', 'compteur-media-v479'], ['./quiz/sql.html', 'xp-quiz-monotone-v478']
   ]);
   assert.equal(result.magasins.has('sti-atelier-v341'), false);
-  const cache = await result.api.open('sti-atelier-v342');
+  const cache = await result.api.open('sti-atelier-v343');
   assert.match(await (await cache.match('https://sti.example/index.html')).text(), /^nouveau :/);
   assert.equal(await cache.match('https://sti.example/cours/sql.html'), undefined);
   assert.equal(await cache.match('https://sti.example/exercices/series-exercices.html'), undefined);
@@ -178,11 +182,29 @@ test('migration du cache v341 : les ressources modifiées sont invalidées et le
   assert.ok(result.requetes.every(url => !/\.(mp4|mp3|pdf|wasm)(?:$|\?)/i.test(url)));
 });
 
+test('migration du cache v342 : l’accueil et ses scripts changent, les cours et médias restent', async () => {
+  const result = await simulerMigration('sti-atelier-v342', [
+    ['./index.html', 'fidelite-origine-v481'], ['./assets/js/app.js', 'fidelite-origine-v481'],
+    ['./assets/js/profil.js', 'fidelite-origine-v481'], ['./assets/css/theme.css', 'fidelite-origine-v481'],
+    ['./cours/sql.html', 'fidelite-origine-v481'], ['./exercices/series-exercices.html', 'fidelite-origine-v481'],
+    ['./assets/js/sync-progressions.js', 'compteur-media-v479']
+  ]);
+  assert.equal(result.magasins.has('sti-atelier-v342'), false);
+  const cache = await result.api.open('sti-atelier-v343');
+  for (const chemin of ['index.html', 'assets/js/app.js', 'assets/js/profil.js', 'assets/css/theme.css']) {
+    assert.match(await (await cache.match('https://sti.example/' + chemin)).text(), /^nouveau :/, chemin);
+  }
+  assert.equal(await (await cache.match('https://sti.example/cours/sql.html')).text(), 'ancien cours SQL');
+  assert.equal(await (await cache.match('https://sti.example/exercices/series-exercices.html')).text(), 'anciennes séries');
+  assert.equal(await (await cache.match('https://sti.example/assets/js/sqljs/sql-wasm.wasm')).text(), 'sqlite existant');
+  assert.ok(result.requetes.every(url => !/\.(mp4|mp3|pdf|wasm)(?:$|\?)/i.test(url)));
+});
+
 test('migration du cache de la branche v339 : anciennes versions XP et médias invalidées', async () => {
   const result = await simulerMigration('sti-atelier-v339', [
     ['./assets/js/sync-progressions.js', 'retour-quiz-v476'], ['./quiz/sql.html', 'retour-quiz-v476']
   ]);
-  const cache = await result.api.open('sti-atelier-v342');
+  const cache = await result.api.open('sti-atelier-v343');
   assert.equal(await cache.match('https://sti.example/assets/js/sync-progressions.js', { ignoreSearch: true }), undefined);
   assert.equal(await cache.match('https://sti.example/quiz/sql.html'), undefined);
   assert.equal(await (await cache.match('https://sti.example/assets/js/sqljs/sql-wasm.wasm')).text(), 'sqlite existant');

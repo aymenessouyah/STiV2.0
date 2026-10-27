@@ -826,6 +826,89 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   box-shadow: var(--shadow-sm);
 }
 
+/* ── Accueil personnel : salut, cours visités et reprise ── */
+.welcome-return {
+  padding-block: var(--space-8);
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+}
+.welcome-return[hidden], .welcome-return__empty[hidden] { display: none; }
+body.sti-v2 .welcome-return__title {
+  font-size: clamp(1.8rem, 3.5vw, 2.7rem);
+  overflow-wrap: anywhere;
+}
+body.sti-v2 .welcome-return__subtitle { margin-top: var(--space-2); font-size: 1rem; }
+.welcome-return__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-block: var(--space-5) var(--space-4);
+}
+body.sti-v2 .welcome-return__count { color: var(--text); font-size: .86rem; font-weight: 700; }
+body.sti-v2 .welcome-return__dashboard {
+  color: var(--text);
+  font-size: .88rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: .25em;
+}
+.welcome-return__dashboard:hover { text-decoration-color: var(--brand); }
+.welcome-return__courses { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: var(--space-4); }
+.welcome-course {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid);
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--duration-fast) ease, transform var(--duration-fast) var(--ease-out);
+}
+.welcome-course:hover { transform: translateY(-2px); border-color: var(--welcome-border); }
+.welcome-course--html5 { --welcome-accent: var(--accent-html); --welcome-soft: var(--accent-html-soft); --welcome-border: var(--accent-html-border); }
+.welcome-course--css3 { --welcome-accent: var(--accent-css); --welcome-soft: var(--accent-css-soft); --welcome-border: var(--accent-css-border); }
+.welcome-course--javascript { --welcome-accent: var(--accent-js); --welcome-soft: var(--accent-js-soft); --welcome-border: var(--accent-js-border); }
+.welcome-course--sql { --welcome-accent: var(--accent-sql); --welcome-soft: var(--accent-sql-soft); --welcome-border: var(--accent-sql-border); }
+.welcome-course--php { --welcome-accent: var(--accent-php); --welcome-soft: var(--accent-php-soft); --welcome-border: var(--accent-php-border); }
+.welcome-course__cover {
+  position: relative;
+  display: grid;
+  min-height: 100px;
+  place-items: center;
+  background: var(--welcome-soft);
+  color: var(--welcome-accent);
+}
+.welcome-course__icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--surface-solid);
+  border: 1px solid var(--welcome-border);
+}
+.welcome-course__icon svg { width: 38px; height: 38px; }
+.welcome-course__state {
+  position: absolute;
+  top: var(--space-3);
+  inset-inline-start: var(--space-3);
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  background: var(--surface-solid);
+  color: var(--text);
+  font-size: .72rem;
+  font-weight: 700;
+}
+.welcome-course__body { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-4); }
+.welcome-course__title { color: var(--text); font-size: 1.05rem; }
+.welcome-course__details { color: var(--text-secondary); font-size: .8rem; }
+body.sti-v2 .welcome-return__empty { font-size: .9rem; }
+.welcome-return__empty a { text-decoration: underline !important; text-underline-offset: .2em; }
+
 /* ── 11. Hero « Le web de A à Z », Terminal animé & Vidéo à la une ── */
 .hero { padding-block: var(--space-8) var(--space-6); }
 .hero__grid { display: grid; grid-template-columns: 1fr; gap: var(--space-8); align-items: center; }
