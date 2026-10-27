@@ -43,7 +43,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/cours-html5.js", revision: "refonte-ui-html5-20261027" },
   { url: "./index.html", revision: "integration-main-v480" },
   { url: "./admin.html", revision: "compteur-media-v479" },
-  { url: "./README.md", revision: "compteur-media-v479" },
+  { url: "./README.md", revision: "integration-main-v480" },
   { url: "./assets/data/nouveautes.json", revision: "compteur-media-v479" },
   { url: "./assets/js/config.js", revision: "compteur-media-v479" },
   { url: "./assets/js/acces.js", revision: "compteur-media-v479" },

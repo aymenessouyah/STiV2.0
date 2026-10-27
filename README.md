@@ -4,8 +4,8 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `23` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v340`, historique `sti-atelier-v339` / `sti-atelier-v338` / `sti-atelier-v337`)
-> 📌 **Version active** : **v479** (`sti-atelier-v340` — 27 octobre 2026)
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `23` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v341`, historique `sti-atelier-v340` / `sti-atelier-v339` / `sti-atelier-v338`)
+> 📌 **Version active** : **v480** (`sti-atelier-v341` — 27 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
 
 ---
 
@@ -216,6 +216,7 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 | v477 | Synchronisation intégrale de la version active `v477` (`sti-atelier-v338`) : purge et mise à jour de l'alias racine `./` avec `./index.html` dans `sw.js`, alignement immédiat de `VERSION_AFFICHEE` sur la roue (`STiV2.0.477`), `admin.html` (`badge-version-admin` & `pied-version-admin`), `nouveautes.js` et `README.md`, et détection instantanée au rechargement `F5` sans délai inter-onglets de 15 minutes (`sti-atelier-v338`) |
 | v478 | Protection monotone multicouche des XP et records de Quiz élèves (`v478` · `sti-atelier-v339`) : verrouillage `pull-before-push` dans `sync-progressions.js` (aucun `POST` avant la fin du premier `tirer()` sur navigateur neuf ou PC partagé), fusion monotone bidirectionnelle des XP/niveaux/records (`sqlQuestV3`, `quizphp_v1_user`, `quizzora_xp_v1`, `sti-quiz-xp-js-v1`, `js_quiz_high_score`, `js_quiz_total_answered`) même lorsque `local >= distant`, plancher d'XP reconstruit automatiquement depuis l'historique immuable `sti_quiz_parties` (`STIQuizSync.resume().xpPlancher`), crédit XP garanti avant rendu ou `pagehide` sur les 4 moteurs de quiz, et trigger PostgreSQL `trg_sti_progressions_monotone_xp` (`public.sti_progressions_preserver_xp()`) actif sur `public.sti_progressions` (`sti-atelier-v339`) |
 | v479 | Fiabilisation intégrale du compteur des vidéos (`.mp4`) et audios (`.mp3`) (`v479` · `sti-atelier-v340`) : conservation de `maxPct`/`done` au clic sur `✕` du bandeau `reprendre.js` (`sec: 0` + `repriseMasquee` sans suppression de clé), suivi automatique des vidéos `.mp4` ouvertes dans `<iframe id="pdfFrame">` sur `exercices/series-exercices.html` (dont Série 4.2 GestLocation), harmonisation des compteurs roue élève (`acces.js`) / `admin.js` / `analytique.js`, résolution canonique des slugs versionnés/encodés dans `protection.js` et fusion monotone sous-clé par sous-clé de `sti-media-prog-v1` dans PostgreSQL (`sti-atelier-v340`) |
+| v480 | Intégration de la refonte de l'accueil, du profil et des cinq cours avec les correctifs XP/médias de v478–v479 : ancres historiques conservées, installation PWA accessible, tests de migration et cache différentiel `sti-atelier-v341` ; les fichiers d'accès protégés restent inchangés. |
 
 ---
 

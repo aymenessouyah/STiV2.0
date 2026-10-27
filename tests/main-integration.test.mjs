@@ -18,7 +18,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.match(sw, /var CACHE = "sti-atelier-v341"/);
   assert.match(sw, /var UPDATE_ID = "v480-integration-refonte-20261027"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
-  for (const chemin of ['index.html', 'dashboard.html', 'exercices/series-exercices.html', 'cours/html5.html', 'cours/css3.html', 'cours/javascript.html', 'cours/sql.html', 'cours/php.html', 'assets/js/app.js', 'assets/js/profil.js', 'assets/css/theme.css', 'offline-complete-manifest.json']) {
+  for (const chemin of ['index.html', 'dashboard.html', 'exercices/series-exercices.html', 'cours/html5.html', 'cours/css3.html', 'cours/javascript.html', 'cours/sql.html', 'cours/php.html', 'assets/js/app.js', 'assets/js/profil.js', 'assets/css/theme.css', 'README.md', 'offline-complete-manifest.json']) {
     assert.equal(revisions.get('./' + chemin), 'integration-main-v480', chemin);
   }
   for (const chemin of ['assets/js/config.js', 'assets/js/acces.js', 'assets/js/protection.js', 'assets/js/sync-progressions.js', 'assets/js/reprendre.js']) {

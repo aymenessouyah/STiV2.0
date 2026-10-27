@@ -1,9 +1,9 @@
 {
   "version": "v480-sti-atelier-v341",
-  "generatedAt": "2026-10-27T13:18:35Z",
+  "generatedAt": "2026-10-27T13:23:24Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 676,
-  "totalBytes": 682203049,
+  "totalBytes": 682203496,
   "files": [
     {
       "path": "404.html",
@@ -72,8 +72,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 28062,
-      "gitSha": "5766bc1f0e9a79fb211d80df5b5c8bb6615fffed"
+      "bytes": 28507,
+      "gitSha": "cc36b0ffe9c4c844ebaa17af4fdc1050ef09625e"
     },
     {
       "path": "admin.html",
@@ -3332,8 +3332,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 75542,
-      "gitSha": "04945713d51020b75033b08e58112e4346540b5b"
+      "bytes": 75544,
+      "gitSha": "06270a13d8a06e096f0f6ff55321f44f4b7c6ea4"
     },
     {
       "path": "assets/css/cours-matieres.css",
