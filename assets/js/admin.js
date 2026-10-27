@@ -5509,9 +5509,11 @@
     "video:sql-serie2": "SQL Série 2",
     "video:sql-serie3": "SQL Série 3",
     "video:sql-serie4": "SQL Série 4",
+    "video:sql-serie4-2": "SQL Série 4.2 (GestLocation)",
     "video:sql-serie5": "SQL Série 5",
     "video:sql-serie6": "SQL Série 6",
     "video:sql-guide-requete": "Guide Requête SQL",
+    "video:validation-nom-prenom-js": "JS Validation Nom/Prénom",
     "video:css-displayanim": "Display CSS Animé"
   };
 

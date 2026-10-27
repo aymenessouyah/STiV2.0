@@ -2540,11 +2540,33 @@
     var ok4SI = estAutorise4SI(profil.classe, false);
     var mods = ok4SI ? ["HTML5", "CSS3", "JS", "PHP", "SQL"] : ["HTML5", "CSS3", "JS", "SQL"];
 
+    function extrairePctMediaPan(ent) {
+      if (ent == null) return 0;
+      if (typeof ent === "number") return Math.max(0, Math.min(100, Math.round(ent)));
+      if (typeof ent === "object") {
+        var mx = Math.max(Number(ent.maxPct) || 0, Number(ent.pct) || 0);
+        var secE = Number(ent.sec != null ? ent.sec : (ent.t || ent.time || 0)) || 0;
+        if (!mx && secE >= 2) {
+          var durE = Number(ent.dur) || 0;
+          mx = durE > 2 ? Math.max(1, Math.round((secE / durE) * 100)) : 1;
+        }
+        if (ent.done || mx >= 88) return 100;
+        return Math.max(0, Math.min(99, Math.round(mx)));
+      }
+      return 0;
+    }
+
     function calculerHtmlProgressionPan() {
       var vus = {};
       var mProg = {};
       try { vus = JSON.parse(localStorage.getItem("sti-chapitres-vus") || "{}") || {}; } catch (e) {}
       try { mProg = JSON.parse(localStorage.getItem("sti-media-prog-v1") || "{}") || {}; } catch (e2) {}
+      if (mProg["audio:guichet-etapes"]) {
+        var pctGe = extrairePctMediaPan(mProg["audio:guichet-etapes"]);
+        var pctPg = extrairePctMediaPan(mProg["audio:php-guichet"]);
+        if (pctGe > pctPg) mProg["audio:php-guichet"] = mProg["audio:guichet-etapes"];
+        delete mProg["audio:guichet-etapes"];
+      }
       var mapSlugMod = {
         HTML5: "html5-cours",
         CSS3: "css3-cours",
@@ -2557,10 +2579,10 @@
         var slugM = mapSlugMod[m];
         var vInfo = mProg["video:" + slugM];
         var aInfo = mProg["audio:" + slugM];
-        var vDone = Boolean(vInfo && vInfo.done);
-        var aDone = Boolean(aInfo && aInfo.done);
-        var vPct = vInfo ? (vInfo.maxPct || 0) : 0;
-        var aPct = aInfo ? (aInfo.maxPct || 0) : 0;
+        var vPct = extrairePctMediaPan(vInfo);
+        var aPct = extrairePctMediaPan(aInfo);
+        var vDone = Boolean((vInfo && vInfo.done) || vPct >= 88);
+        var aDone = Boolean((aInfo && aInfo.done) || aPct >= 88);
         var bestPct = Math.max(vPct, aPct);
         var ok = Boolean(vus[m] || vDone || aDone);
         if (ok) nbVus++;
@@ -2579,9 +2601,9 @@
         ? ["html5-cours", "css3-cours", "javascript-cours", "sql-cours", "php-cours"]
         : ["html5-cours", "css3-cours", "javascript-cours", "sql-cours"];
       Object.keys(mProg).forEach(function (mk) {
-        var me = mProg[mk];
-        var mp = me && (me.done ? 100 : Math.max(Number(me.maxPct) || 0, Number(me.pct) || 0));
+        var mp = extrairePctMediaPan(mProg[mk]);
         if (!mp || mp < 1) return;
+        if (!ok4SI && mk.toLowerCase().indexOf("php") !== -1) return;
         if (mk.indexOf("video:") === 0) {
           var vSl = mk.slice(6);
           if (vidKeys.indexOf(vSl) === -1) vidKeys.push(vSl);
@@ -2593,14 +2615,14 @@
       var nbVidDone = 0, nbVidEnCours = 0;
       for (var vi = 0; vi < vidKeys.length; vi++) {
         var ve = mProg["video:" + vidKeys[vi]];
-        var vMax = ve ? Math.max(Number(ve.maxPct) || 0, Number(ve.pct) || 0) : 0;
+        var vMax = extrairePctMediaPan(ve);
         if (ve && (ve.done || vMax >= 88)) nbVidDone++;
         else if (vMax >= 1) nbVidEnCours++;
       }
       var nbAudDone = 0, nbAudEnCours = 0;
       for (var ai = 0; ai < audKeys.length; ai++) {
         var ae = mProg["audio:" + audKeys[ai]];
-        var aMax = ae ? Math.max(Number(ae.maxPct) || 0, Number(ae.pct) || 0) : 0;
+        var aMax = extrairePctMediaPan(ae);
         if (ae && (ae.done || aMax >= 88)) nbAudDone++;
         else if (aMax >= 1) nbAudEnCours++;
       }
