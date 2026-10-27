@@ -1416,21 +1416,40 @@
 
       function resoudreCleMediaDepuisUrlSTI(urlBrute, tagHint) {
         if (!urlBrute || typeof urlBrute !== "string") return "";
-        var u = urlBrute.split("#")[0].split("?")[0].toLowerCase();
+        var u = urlBrute.split("#")[0].split("?")[0];
+        try { u = decodeURIComponent(u); } catch (eDec) {}
+        u = u.toLowerCase();
         if (!u || u.indexOf("data:") === 0 || u.indexOf("blob:") === 0) return "";
-        if (u.indexOf("foret.mp3") !== -1 || u.indexOf("ambient") !== -1) return "";
-        var mNom = u.match(/\/([^\/]+)\.(mp4|webm|m3u8|mp3|ogg|wav|m4a)$/i) || u.match(/^([^\/]+)\.(mp4|webm|m3u8|mp3|ogg|wav|m4a)$/i);
+        if (
+          u.indexOf("foret.mp3") !== -1 ||
+          u.indexOf("ambient") !== -1 ||
+          u.indexOf("flower.webm") !== -1 ||
+          u.indexOf("sidibou.mp4") !== -1 ||
+          u.indexOf("oud-c-arabian.mp3") !== -1 ||
+          /(^|\/)media\/son\.mp3$/.test(u) ||
+          u.indexOf("soundhelix") !== -1
+        ) return "";
+        var mNom = u.match(/\/([^\/]+)\.(mp4|webm|m3u8|mpd|mp3|ogg|wav|m4a)$/i) || u.match(/^([^\/]+)\.(mp4|webm|m3u8|mpd|mp3|ogg|wav|m4a)$/i);
         if (!mNom) return "";
-        var base = mNom[1];
+        var base = mNom[1].trim();
         var ext = mNom[2].toLowerCase();
         var estAudio = (tagHint === "AUDIO") || ext === "mp3" || ext === "ogg" || ext === "wav" || ext === "m4a";
         var prefix = estAudio ? "audio:" : "video:";
         var alias = {
           "guichet-etapes": "php-guichet",
+          "php-guichet-v10": "php-guichet",
+          "sql-cours-v7": "sql-cours",
+          "css3-cours-v9-sync": "css3-cours",
+          "css3-cours-v9-sync-mobile-720p": "css3-cours",
           "sql-construire-requete-guide-texte": "sql-guide-requete",
-          "displayanim": "css-displayanim"
+          "validation du champ nom et prenom en js": "validation-nom-prenom-js",
+          "displayanim": "css-displayanim",
+          "série 4.2 - gestlocation - vidéo": "sql-serie4-2",
+          "serie 4.2 - gestlocation - video": "sql-serie4-2"
         };
         var slug = alias[base] || base;
+        if (!estAudio && slug.indexOf("gestlocation") !== -1) slug = "sql-serie4-2";
+        if (!estAudio && u.indexOf("/streams/css3-v302/") !== -1) slug = "css3-cours";
         if (!estAudio && u.indexOf("/hls/") !== -1) {
           var mHls = u.match(/\/hls\/([^\/]+)\//i);
           if (mHls && mHls[1]) slug = alias[mHls[1].toLowerCase()] || mHls[1].toLowerCase();

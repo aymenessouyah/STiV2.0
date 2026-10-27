@@ -4290,11 +4290,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v470\s*\|/.test(l)), 'v470 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v471\s*\|/.test(l)), 'v471 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v472\s*\|/.test(l)), 'v472 doit rester présent dans README.md');
-  assert.ok(cinq.some((o) => /^v474 — Allègement massif des Quiz PHP/.test(o.t)), 'v474 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v474\s*\|/.test(l)), 'v474 doit rester présent dans README.md');
   assert.ok(cinq.some((o) => /^v475 — Cure complète de navigation/.test(o.t)), 'v475 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v476 — Retour instantané depuis exercices\/series-exercices\.html/.test(o.t)), 'v476 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v477 — Synchronisation intégrale de la version active v477/.test(o.t)), 'v477 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v478 — Protection monotone multicouche des XP et records de Quiz élèves/);
+  assert.ok(cinq.some((o) => /^v478 — Protection monotone multicouche des XP et records de Quiz élèves/.test(o.t)), 'v478 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v479 — Fiabilisation intégrale du compteur des vidéos/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -4630,10 +4631,10 @@ test('v470 : audit fonctionnel intégral en 9 points (quiz CSPRNG, Mes erreurs, 
   assert.match(sauvJs, /function televerserArchiveVersDrive\(/);
   assert.match(gsCode, /function obtenirDossierSauvegarde_\(/);
   assert.match(gsCode, /function enregistrerArchiveDirecteDrive_\(/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v33\d";/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3[34]\d";/);
   assert.match(swJs, /v470-audit-fonctionnel-readme/);
   assert.ok(nouv.some((n) => n.version === 'v470'), 'nouveautes.json doit conserver v470');
-  assert.match(readmeMd, /sti-atelier-v33\d/);
+  assert.match(readmeMd, /sti-atelier-v3[34]\d/);
   assert.match(readmeMd, /\|\s*v470\s*\|/);
   assert.match(readmeMd, /1 244 questions/);
   assert.match(adminHtml, /v470 · sti-atelier-v330/);
@@ -5132,13 +5133,13 @@ test('v471 (structure) : 124/124 chemins Git exacts dans roue-revision.js (zéro
   assert.match(indexHtml, /reprendre\.js\?v=47\d/);
   assert.match(adminHtml, /sante\.js\?v=47\d/);
   assert.equal((santeJs.match(/\{\s*cat:\s*"/g) || []).length, 43, 'sante.js doit exécuter 43 contrôles temps réel');
-  assert.match(swJs, /var CACHE = "sti-atelier-v33\d";/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3[34]\d";/);
   assert.match(swJs, /v471-tester-tout-e2e/);
   assert.ok(nouv.some((n) => n.version === 'v471'), 'nouveautes.json doit conserver v471');
-  assert.match(readmeMd, /sti-atelier-v33\d/);
+  assert.match(readmeMd, /sti-atelier-v3[34]\d/);
   assert.match(readmeMd, /\|\s*v471\s*\|/);
   assert.match(adminHtml, /v471 · sti-atelier-v331/);
-  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
+  assert.match(offlineManifest.version, /^v4[78]\d-sti-atelier-v3[34]\d$/);
   assert.equal(offlineManifest.totalFiles, offlineManifest.files.length);
 });
 
@@ -5371,7 +5372,7 @@ test('v472 (structure) : 0 balise HTML avalée sur les 1 244 questions des 5 qui
   assert.ok(nouv.some((n) => n.version === 'v472'), 'nouveautes.json doit conserver v472');
   assert.match(readmeMd, /\|\s*v472\s*\|/);
   assert.match(adminHtml, /v472 · sti-atelier-v332/);
-  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
+  assert.match(offlineManifest.version, /^v4[78]\d-sti-atelier-v3[34]\d$/);
 });
 
 test('v472 (comportemental VM) : filtrage PHP pour un élève 3ème SI (roue-plan, reprendre, ma-fiche-revision) vs maintien 4ème SI / Gold, et sécurisation formatExplainPhp / fmtExplainSql', async () => {
@@ -5504,7 +5505,7 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   assert.match(swJs, /_timerHitDebounce/);
 
   // 2) Alignement VERSION >= 333 + fin de la boucle !== dans acces.js
-  assert.match(configJs, /VERSION:\s*33\d\b/);
+  assert.match(configJs, /VERSION:\s*3[34]\d\b/);
   assert.doesNotMatch(accesJs, /verCfgLocal !== verInstLocal/, 'acces.js ne doit plus réinitialiser la version lorsque le cache SW est plus récent ou égal');
   assert.match(accesJs, /verCfgLocal > verInstLocal/);
   assert.match(accesJs, /sti-sw-upd-ver-sess/);
@@ -5531,7 +5532,7 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   assert.match(adminHtml, /v473 · sti-atelier-v333/);
   assert.ok(nouv.some((n) => n.version === 'v473'));
   assert.match(readmeMd, /\|\s*v473\s*\|/);
-  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
+  assert.match(offlineManifest.version, /^v4[78]\d-sti-atelier-v3[34]\d$/);
 });
 
 test('v473 (comportemental VM) : 0 requête SW à l’installation à froid, éviction sans re-téléchargement lourd, 0 POST redondant sync-progressions et lazy-load quiz-admin', async () => {
@@ -5860,14 +5861,14 @@ test('v474 (structure & budgets Quiz PHP / SQL / JS) : 0 compilateur Tailwind JI
   assert.match(accesJs, /function lireProfilCourantMemoSTI\(uid\)/);
 
   // 5) Alignement historique v474 / sti-atelier-v334+
-  assert.match(configJs, /VERSION:\s*33\d\b/);
+  assert.match(configJs, /VERSION:\s*3[34]\d\b/);
   assert.match(swJs, /sti-atelier-v334/);
   assert.match(swJs, /v474-perf-quiz-php/);
   assert.ok(nouv.some((n) => n.version === 'v474'));
   assert.match(adminHtml, /v474 · sti-atelier-v334/);
   assert.match(readmeMd, /sti-atelier-v334/);
   assert.match(readmeMd, /\|\s*v474\s*\|/);
-  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
+  assert.match(offlineManifest.version, /^v4[78]\d-sti-atelier-v3[34]\d$/);
 });
 
 test('v474 (comportemental VM) : vendors hors-ligne (Chart, confetti, Prism) opérationnels et déduplication lireProfilCourantMemoSTI dans acces.js', async () => {
@@ -5988,7 +5989,7 @@ test('v475 (structure & budgets navigation) : polices WOFF2 externes (-475 Ko da
   assert.match(migSql, /idx_labo_device_sessions_device_id/);
 
   // 5) Alignement version v475+ / sti-atelier-v335+ + cache mémoire SW + client Supabase partagé
-  assert.match(configJs, /VERSION:\s*33\d\b/);
+  assert.match(configJs, /VERSION:\s*3[34]\d\b/);
   assert.match(configJs, /__STI_PREFETCH_NAV_V475/);
   assert.match(accesJs, /__stiSuspendreRealtimeBfcache/);
   assert.match(accesJs, /sti-coffre-tp-sync-ts/);
@@ -6000,7 +6001,7 @@ test('v475 (structure & budgets navigation) : polices WOFF2 externes (-475 Ko da
   assert.match(adminHtml, /v475 · sti-atelier-v335/);
   assert.match(readmeMd, /sti-atelier-v335/);
   assert.match(readmeMd, /\|\s*v475\s*\|/);
-  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
+  assert.match(offlineManifest.version, /^v4[78]\d-sti-atelier-v3[34]\d$/);
 });
 
 test('v475 (comportemental VM) : préchargement anticipé config.js, cycle BFCache WebSocket dans acces.js et redessin resize 0 requête dans graphiques-activite.js', async () => {
@@ -6203,7 +6204,7 @@ test('v476 (structure) : retour instantané Exercices → Accueil (zéro auto-re
   );
   assert.match(configJs, /function positionnerCibleHub\(/);
   assert.match(configJs, /history\.scrollRestoration\s*=\s*"manual"/);
-  assert.match(configJs, /VERSION:\s*33\d\b/);
+  assert.match(configJs, /VERSION:\s*3[34]\d\b/);
   assert.ok(Number((configJs.match(/VERSION:\s*(\d+)/) || [])[1]) >= 337, 'VERSION >= 337');
   assert.match(swJs, /sti-atelier-v337/);
   assert.match(swJs, /sti-atelier-v336/);
@@ -6212,7 +6213,7 @@ test('v476 (structure) : retour instantané Exercices → Accueil (zéro auto-re
   assert.match(adminHtml, /v476 · sti-atelier-v337/);
   assert.match(readmeMd, /sti-atelier-v337/);
   assert.match(readmeMd, /\|\s*v476\s*\|/);
-  assert.match(offlineManifest.version, /^v47\d-sti-atelier-v33\d$/);
+  assert.match(offlineManifest.version, /^v4[78]\d-sti-atelier-v3[34]\d$/);
 });
 
 test('v476 (comportemental VM) : ouverture/fermeture modale #pdfFrame sans polluer history + traverseTo direct vers Accueil + 0 sync en iframe', async () => {
@@ -6531,30 +6532,30 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
   const nouvJson = JSON.parse(read('assets/data/nouveautes.json'));
   const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
 
-  assert.match(configJs, /VERSION:\s*33[89]\b/);
-  assert.match(configJs, /VERSION_AFFICHEE:\s*47[78]\b/);
-  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v33[89]"/);
-  assert.match(swJs, /var UPDATE_ID\s*=\s*"v47[78]-[a-z0-9-]+"/);
+  assert.match(configJs, /VERSION:\s*3(?:3[89]|4\d)\b/);
+  assert.match(configJs, /VERSION_AFFICHEE:\s*4(?:7[789]|8\d)\b/);
+  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v3(?:3[89]|4\d)"/);
+  assert.match(swJs, /var UPDATE_ID\s*=\s*"v4(?:7[789]|8\d)-[a-z0-9-]+"/);
   assert.match(swJs, /uRacine/);
   assert.match(swJs, /\/nouveautes\\\.json\$\/i/);
 
-  assert.match(indexHtml, /config\.js\?v=47[78]/);
-  assert.match(indexHtml, /nouveautes\.js\?v=47[78]/);
-  assert.match(nouvHtml, /nouveautes\.js\?v=47[78]/);
+  assert.match(indexHtml, /config\.js\?v=4(?:7[789]|8\d)/);
+  assert.match(indexHtml, /nouveautes\.js\?v=4(?:7[789]|8\d)/);
+  assert.match(nouvHtml, /nouveautes\.js\?v=4(?:7[789]|8\d)/);
   assert.match(nouvJs, /VERSION_AFFICHEE/);
   assert.doesNotMatch(nouvJs, /nouveautes\.json\?v=451/);
 
-  assert.match(adminHtml, /config\.js\?v=47[78]/);
-  assert.match(adminHtml, /admin\.js\?v=47[78]-perf/);
-  assert.match(adminHtml, /quiz-admin\.js\?v=47[78]/);
-  assert.match(adminHtml, /v47[78] · sti-atelier-v33[89]/);
+  assert.match(adminHtml, /config\.js\?v=4(?:7[789]|8\d)/);
+  assert.match(adminHtml, /admin\.js\?v=4(?:7[789]|8\d)-perf/);
+  assert.match(adminHtml, /quiz-admin\.js\?v=4(?:7[789]|8\d)/);
+  assert.match(adminHtml, /v4(?:7[789]|8\d) · sti-atelier-v3(?:3[89]|4\d)/);
   assert.match(adminJs, /VERSION_AFFICHEE/);
   assert.match(accesJs, /VERSION_AFFICHEE/);
 
-  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v47[78]\*\*\s*\(`sti-atelier-v33[89]`/);
+  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v4(?:7[789]|8\d)\*\*\s*\(`sti-atelier-v3(?:3[89]|4\d)`/);
   assert.match(readmeMd, /\|\s*v477\s*\|/);
   assert.ok(nouvJson.some((e) => e.version === 'v477'), 'v477 doit figurer dans nouveautes.json');
-  assert.match(offlineManifest.version, /^v47[78]-sti-atelier-v33[89]$/);
+  assert.match(offlineManifest.version, /^v4(?:7[789]|8\d)-sti-atelier-v3(?:3[89]|4\d)$/);
 });
 
 test('v477 (comportemental VM) : migration SW de la racine ./ depuis sti-atelier-v335 (v475) sans résurrection du vieux HTML + roue STiV2.0.477 immédiate', async () => {
@@ -6728,11 +6729,11 @@ test('v478 (structure & migration SQL) : protection monotone multicouche des XP 
   assert.match(jsHtml, /"sti-quiz-xp-js-v1"/);
   assert.match(jsHtml, /res\.xpPlancher/);
 
-  // 5) Version active v478 / sti-atelier-v339 cohérente partout
-  assert.match(configJs, /VERSION:\s*339\b/);
-  assert.match(configJs, /VERSION_AFFICHEE:\s*478\b/);
-  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v339"/);
-  assert.match(swJs, /var UPDATE_ID\s*=\s*"v478-xp-quiz-monotone"/);
+  // 5) Version >= v478 / sti-atelier-v339 cohérente partout
+  assert.ok(Number((configJs.match(/VERSION:\s*(\d+)/) || [])[1]) >= 339);
+  assert.ok(Number((configJs.match(/VERSION_AFFICHEE:\s*(\d+)/) || [])[1]) >= 478);
+  assert.match(swJs, /sti-atelier-v339/);
+  assert.match(swJs, /v478-xp-quiz-monotone/);
   for (const [nom, html] of [
     ['index.html', indexHtml],
     ['quiz/sql.html', sqlHtml],
@@ -6741,11 +6742,11 @@ test('v478 (structure & migration SQL) : protection monotone multicouche des XP 
     ['quiz/javascript.html', jsHtml],
     ['quiz/tableaux.html', tabHtml],
   ]) {
-    assert.match(html, /sync-progressions\.js\?v=478/, `${nom} doit charger sync-progressions.js?v=478`);
+    assert.match(html, /sync-progressions\.js\?v=4(?:7[89]|8\d)/, `${nom} doit charger sync-progressions.js?v=478+`);
   }
-  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v478\*\*\s*\(`sti-atelier-v339`/);
-  assert.equal(nouvJson[0].version, 'v478');
-  assert.equal(offlineManifest.version, 'v478-sti-atelier-v339');
+  assert.match(readmeMd, /\|\s*v478\s*\|/);
+  assert.ok(nouvJson.some((e) => e.version === 'v478'), 'v478 doit figurer dans nouveautes.json');
+  assert.match(offlineManifest.version, /^v4(?:7[89]|8\d)-sti-atelier-v3(?:39|4\d)$/);
 });
 
 test('v478 (comportemental VM) : zéro remise à zéro des XP sur navigateur neuf/partagé (verrou pull-before-push + fusion local >= distant + plancher sti_quiz_parties)', async () => {
@@ -6948,5 +6949,272 @@ test('v478 (comportemental VM) : zéro remise à zéro des XP sur navigateur neu
   // Partie PHP : 1600 + 200 (80 %) = 1800 XP
   assert.equal(resPhp.xpPlancher, 1800, 'STIQuizSync.resume("php") doit fournir le plancher d’XP cumulés garanti depuis sti_quiz_parties');
 });
+
+test('v479 (structure & migration SQL) : fiabilisation intégrale du compteur vidéos/audios (reprendre.js ✕ non destructif, suivi #pdfFrame, fusion monotone PostgreSQL & sync-progressions)', () => {
+  const migSql = read('supabase/migrations/20261027_media_prog_monotone_v479.sql');
+  const docSql = read('documents/sql/sti_progressions.sql');
+  const reprendreJs = read('assets/js/reprendre.js');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const protJs = read('assets/js/protection.js');
+  const accesJs = read('assets/js/acces.js');
+  const adminJs = read('assets/js/admin.js');
+  const anaJs = read('assets/js/analytique.js');
+  const exosHtml = read('exercices/series-exercices.html');
+  const indexHtml = read('index.html');
+  const configJs = read('assets/js/config.js');
+  const swJs = read('sw.js');
+  const readmeMd = read('README.md');
+  const nouvJson = JSON.parse(read('assets/data/nouveautes.json'));
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  // 1) Migration PostgreSQL v479 : fusion monotone sous-clé par sous-clé de sti-media-prog-v1
+  assert.match(migSql, /create or replace function public\.sti_progressions_preserver_xp\(\)/i);
+  assert.match(migSql, /sti-media-prog-v1/);
+  assert.match(migSql, /for m_key in select jsonb_object_keys\(j_old\) loop/i);
+  assert.match(migSql, /repriseMasquee/);
+  assert.match(docSql, /20261027_media_prog_monotone_v479\.sql/);
+
+  // 2) reprendre.js : le bouton ✕ masque la reprise (sec: 0 + repriseMasquee: true) sans jamais supprimer la clé
+  assert.doesNotMatch(reprendreJs, /delete prog\[meilleure?\.cle\]/, 'reprendre.js ne doit plus supprimer la clé média au clic sur ✕');
+  assert.match(reprendreJs, /repriseMasquee:\s*true/);
+  assert.match(reprendreJs, /sti-media-prog-updated/);
+  assert.match(reprendreJs, /"validation-nom-prenom-js"/);
+  assert.match(reprendreJs, /"sql-serie4-2"/);
+
+  // 3) sync-progressions.js : fusion monotone avec repriseMasquee et promotion sec >= 2 -> maxPct >= 1
+  assert.match(syncProgJs, /function fusionnerMediaProgMonotone\(rawLoc,\s*rawDist\)/);
+  assert.match(syncProgJs, /repriseMasquee/);
+  assert.match(syncProgJs, /secA >= 2 \|\| secB >= 2/);
+
+  // 4) protection.js : normalisation slugs versionnés/encodés + exclusion des médias démo
+  assert.match(protJs, /decodeURIComponent/);
+  assert.match(protJs, /flower\.webm/);
+  assert.match(protJs, /sidibou\.mp4/);
+  assert.match(protJs, /php-guichet-v10/);
+  assert.match(protJs, /sql-cours-v7/);
+  assert.match(protJs, /gestlocation/);
+
+  // 5) exercices/series-exercices.html : suivi direct des .mp4/.mp3 ouverts dans #pdfFrame sans muter frame.src
+  assert.match(exosHtml, /function suivreMediaDansPdfFrame\(fileUrl\)/);
+  assert.match(exosHtml, /function purgerSuiviMediaPdfFrame\(\)/);
+  assert.match(exosHtml, /window\.enregistrerProgressionMediaSTI\(cle,\s*el\.currentTime,\s*el\.duration/);
+  assert.match(exosHtml, /protection\.js\?v=479/);
+  assert.match(exosHtml, /sync-progressions\.js\?v=479/);
+
+  // 6) Parité des compteurs Roue élève (acces.js) / Admin (admin.js) / Analytique (analytique.js)
+  assert.match(accesJs, /function extrairePctMediaPan\(ent\)/);
+  assert.match(accesJs, /mProg\["audio:guichet-etapes"\]/);
+  assert.match(anaJs, /e\.sec != null[\s\S]*?>=\s*2/);
+  assert.match(adminJs, /"video:sql-serie4-2"/);
+  assert.match(adminJs, /"video:validation-nom-prenom-js"/);
+
+  // 7) Version active v479 / sti-atelier-v340 cohérente
+  assert.match(configJs, /VERSION:\s*340\b/);
+  assert.match(configJs, /VERSION_AFFICHEE:\s*479\b/);
+  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v340"/);
+  assert.match(swJs, /var UPDATE_ID\s*=\s*"v479-compteur-media-monotone"/);
+  assert.match(indexHtml, /protection\.js\?v=479/);
+  assert.match(indexHtml, /reprendre\.js\?v=479/);
+  assert.match(indexHtml, /sync-progressions\.js\?v=479/);
+  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v479\*\*\s*\(`sti-atelier-v340`/);
+  assert.equal(nouvJson[0].version, 'v479');
+  assert.equal(offlineManifest.version, 'v479-sti-atelier-v340');
+});
+
+test('v479 (comportemental VM) : clic ✕ non destructif dans reprendre.js, fusion monotone sti-media-prog-v1, slugs canoniques protection.js et suivi vidéo #pdfFrame', async () => {
+  const vm = await import('node:vm');
+
+  // 1) reprendre.js : le clic sur #sti-reprendre-x masque la carte sans écraser maxPct/done et déclenche sti-media-prog-updated
+  const reprendreSrc = read('assets/js/reprendre.js');
+  const makeReprendreEnv = (initialProg) => {
+    const store = new Map([
+      ['sti-session-cache', JSON.stringify({ email: 'aymenessouyah@gmail.com', role: 'gold', classe: '4SI1' })],
+      ['sti-media-prog-v1', JSON.stringify(initialProg)],
+    ]);
+    const dispatched = [];
+    let closeBtnHandler = null;
+    const bannerHolder = { innerHTML: '', removed: false };
+    const ctx = {
+      Date, Math, Number, String, Boolean, Object, Array, RegExp, JSON, parseInt, setTimeout, clearTimeout,
+      CustomEvent: function (name, opts) { this.type = name; this.detail = opts && opts.detail; },
+      dispatchEvent(ev) { dispatched.push(ev.type || String(ev)); },
+      addEventListener() {},
+      localStorage: {
+        getItem: (k) => (store.has(k) ? store.get(k) : null),
+        setItem: (k, v) => store.set(k, String(v)),
+        removeItem: (k) => store.delete(k),
+      },
+      document: {
+        readyState: 'complete',
+        getElementById(id) {
+          if (id === 'sti-reprendre') return bannerHolder._created ? bannerHolder : null;
+          if (id === 'sti-reprendre-x') return { addEventListener(ev, fn) { if (ev === 'click') closeBtnHandler = fn; } };
+          if (id === 'nouveautes') return { parentNode: { insertBefore(el) { bannerHolder._created = el; } } };
+          return null;
+        },
+        querySelector: () => ({ parentNode: { insertBefore(el) { bannerHolder._created = el; } } }),
+        createElement() {
+          return {
+            id: '',
+            setAttribute() {},
+            set innerHTML(v) { bannerHolder.innerHTML = v; },
+            get innerHTML() { return bannerHolder.innerHTML; },
+            remove() { bannerHolder.removed = true; bannerHolder._created = null; },
+          };
+        },
+        head: { appendChild() {} },
+        body: { insertBefore(el) { bannerHolder._created = el; }, firstChild: null },
+        addEventListener() {},
+      },
+    };
+    ctx.window = ctx;
+    vm.runInNewContext(reprendreSrc, ctx, { filename: 'assets/js/reprendre.js' });
+    return { store, dispatched, bannerHolder, clickClose: () => closeBtnHandler && closeBtnHandler() };
+  };
+
+  const env1 = makeReprendreEnv({
+    'video:html5-cours': { pct: 74, maxPct: 74, sec: 1210, dur: 1635, done: false, ts: 1790000000000 },
+  });
+  assert.match(env1.bannerHolder.innerHTML, /Continuer où je m'étais arrêté/, 'Le bandeau doit s’afficher tant que sec > 15 et non masqué');
+  env1.clickClose();
+  const apresClose = JSON.parse(env1.store.get('sti-media-prog-v1'));
+  assert.ok(apresClose['video:html5-cours'], 'La sous-clé video:html5-cours ne doit jamais être supprimée au clic sur ✕');
+  assert.equal(apresClose['video:html5-cours'].maxPct, 74, 'maxPct=74 doit être intégralement conservé');
+  assert.equal(apresClose['video:html5-cours'].pct, 74, 'pct=74 doit rester conservé');
+  assert.equal(apresClose['video:html5-cours'].sec, 0, 'sec est remis à 0 pour masquer la reprise');
+  assert.equal(apresClose['video:html5-cours'].repriseMasquee, true, 'repriseMasquee=true doit être posé');
+  assert.ok(env1.dispatched.includes('sti-media-prog-updated'), 'sti-media-prog-updated doit notifier sync-progressions.js');
+
+  // Une ré-exécution sur ce même état ne ré-affiche pas le bandeau
+  const env2 = makeReprendreEnv(apresClose);
+  assert.equal(env2.bannerHolder.innerHTML, '', 'Un média dont la reprise a été masquée ne doit plus ré-afficher le bandeau');
+
+  // 2) sync-progressions.js : fusionnerMediaProgMonotone protège chaque sous-clé, promeut sec>=2 à maxPct=1 et respecte repriseMasquee récent
+  const syncProgSrc = read('assets/js/sync-progressions.js');
+  const fnMediaMatch = syncProgSrc.match(/function fusionnerMediaProgMonotone\(rawLoc,\s*rawDist\)\s*\{[\s\S]*?\n  \}/);
+  assert.ok(fnMediaMatch, 'fusionnerMediaProgMonotone présente dans sync-progressions.js');
+  const fnMedia = vm.runInNewContext(`(${fnMediaMatch[0]})`, { JSON, Object, Math, Number, String, Boolean, isFinite });
+
+  const mergedRaw = fnMedia(
+    JSON.stringify({
+      'video:html5-cours': { pct: 74, maxPct: 74, sec: 0, dur: 1635, done: false, repriseMasquee: true, ts: 2000 },
+      'video:javascript-cours': { pct: 0, maxPct: 0, sec: 4, dur: 883, done: false, ts: 2100 },
+    }),
+    JSON.stringify({
+      'video:html5-cours': { pct: 74, maxPct: 74, sec: 1210, dur: 1635, done: false, ts: 1000 },
+      'audio:sql': { pct: 95, maxPct: 95, sec: 420, dur: 440, done: true, ts: 900 },
+    })
+  );
+  const merged = JSON.parse(mergedRaw);
+  assert.equal(merged['video:html5-cours'].maxPct, 74, 'maxPct=74 préservé après fusion');
+  assert.equal(merged['video:html5-cours'].sec, 0, 'repriseMasquee plus récent conserve sec=0 sans ressusciter le bandeau');
+  assert.equal(merged['video:html5-cours'].repriseMasquee, true);
+  assert.equal(merged['video:javascript-cours'].maxPct, 1, 'Une lecture courte >= 2 s (sec=4/dur=883) est promue à maxPct=1');
+  assert.equal(merged['audio:sql'].done, true, 'Les sous-clés distantes absentes localement sont préservées');
+
+  // Et si l'élève relance plus tard la vidéo (ts=3000, sec=1300), repriseMasquee s'efface proprement
+  const relance = JSON.parse(fnMedia(
+    JSON.stringify({ 'video:html5-cours': { pct: 80, maxPct: 80, sec: 1300, dur: 1635, done: false, ts: 3000 } }),
+    mergedRaw
+  ));
+  assert.equal(relance['video:html5-cours'].maxPct, 80);
+  assert.equal(relance['video:html5-cours'].sec, 1300);
+  assert.equal(Boolean(relance['video:html5-cours'].repriseMasquee), false, 'repriseMasquee disparaît dès que la lecture reprend');
+
+  // 3) protection.js : resoudreCleMediaDepuisUrlSTI normalise les URLs versionnées/encodées et ignore les médias démo TP
+  const protSrc = read('assets/js/protection.js');
+  const resoudreMatch = protSrc.match(/function resoudreCleMediaDepuisUrlSTI\(urlBrute,\s*tagHint\)\s*\{[\s\S]*?\n      \}/);
+  assert.ok(resoudreMatch, 'resoudreCleMediaDepuisUrlSTI présente dans protection.js');
+  const resoudre = vm.runInNewContext(`(${resoudreMatch[0]})`, { String, RegExp, decodeURIComponent });
+
+  assert.equal(resoudre('../videos/php/php-guichet-v10.mp4', 'VIDEO'), 'video:php-guichet');
+  assert.equal(resoudre('../videos/sql/sql-cours-v7.mp4', 'VIDEO'), 'video:sql-cours');
+  assert.equal(resoudre('../videos/css3/css3-cours-v9-sync-mobile-720p.mp4', 'VIDEO'), 'video:css3-cours');
+  assert.equal(resoudre('https://cdn.example/streams/css3-v302/manifest.mpd', 'VIDEO'), 'video:css3-cours');
+  assert.equal(resoudre('../exercices/javascript/validation-nom-prenom-js.mp4', 'VIDEO'), 'video:validation-nom-prenom-js');
+  assert.equal(resoudre('../videos/javascript/validation%20du%20champ%20nom%20et%20prenom%20en%20js.mp4', 'VIDEO'), 'video:validation-nom-prenom-js');
+  assert.equal(resoudre('../exercices/sql/Série%204.2%20-%20GestLocation%20-%20Vidéo.mp4?v=31642', 'VIDEO'), 'video:sql-serie4-2');
+  assert.equal(resoudre('../assets/audio/guichet-etapes.mp3', 'AUDIO'), 'audio:php-guichet');
+  assert.equal(resoudre('https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm', 'VIDEO'), '');
+  assert.equal(resoudre('./sidibou.mp4', 'VIDEO'), '');
+  assert.equal(resoudre('../media/oud-c-arabian.mp3', 'AUDIO'), '');
+  assert.equal(resoudre('media/SON.mp3', 'AUDIO'), '');
+  assert.equal(resoudre('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 'AUDIO'), '');
+
+  // 4) exercices/series-exercices.html : suivreMediaDansPdfFrame enregistre video:sql-serie4-2 lors de l'ouverture modale et purge à la fermeture
+  const exosHtml = read('exercices/series-exercices.html');
+  const blocModalMatch = exosHtml.match(/function openPdfModal\(fileUrl,\s*title\)\s*\{[\s\S]*?function closePdfModal\(event\)\s*\{[\s\S]*?\n      \}/);
+  assert.ok(blocModalMatch, 'Bloc openPdfModal + suivreMediaDansPdfFrame + closePdfModal présent dans series-exercices.html');
+
+  const appelsEnreg = [];
+  let syncServeurForce = 0;
+  const videoListeners = {};
+  const fakeVideoEl = {
+    tagName: 'VIDEO',
+    paused: false,
+    currentTime: 48,
+    duration: 200,
+    ended: false,
+    addEventListener(ev, fn) { videoListeners[ev] = fn; },
+  };
+  const fakeFrame = {
+    src: 'about:blank',
+    onload: null,
+    contentDocument: {
+      fullscreenElement: null,
+      querySelector(sel) { return sel.includes('video') ? fakeVideoEl : null; },
+      addEventListener() {},
+    },
+    contentWindow: { location: { replace(u) { fakeFrame.src = u; if (fakeFrame.onload) fakeFrame.onload(); } } },
+  };
+  const modalCtx = {
+    URL, Math, Number, String, Boolean, Object, RegExp, isFinite,
+    location: { href: 'https://sti.example/exercices/series-exercices.html' },
+    navigator: { pdfViewerEnabled: true, userAgent: 'Chrome/130' },
+    modalUrl: '',
+    modalChargee: false,
+    masquerAlerte() {},
+    afficherAlerte() {},
+    setModalExpanded() {},
+    setModalMode() {},
+    modePourUrl: () => 'mode-site',
+    controlerDocument() {},
+    chargerDansPdfFrame(url) {
+      fakeFrame.contentWindow.location.replace(url === 'about:blank' ? 'about:blank' : new URL(url, 'https://sti.example/exercices/series-exercices.html').href);
+    },
+    resoudreCleMediaDepuisUrlSTI: resoudre,
+    enregistrerProgressionMediaSTI(cle, sec, dur, forceDone) { appelsEnreg.push({ cle, sec, dur, forceDone }); },
+    synchroniserProgressionMediaServeurSTI(force) { if (force) syncServeurForce++; },
+    document: {
+      fullscreenElement: null,
+      body: { style: {} },
+      getElementById(id) {
+        if (id === 'pdfFrame') return fakeFrame;
+        if (id === 'pdfModal') return { classList: { add() {}, remove() {} } };
+        return { textContent: '', href: '', style: {} };
+      },
+    },
+  };
+  modalCtx.window = modalCtx;
+  vm.runInNewContext(blocModalMatch[0], modalCtx, { filename: 'exercices/series-exercices.html' });
+
+  modalCtx.openPdfModal(
+    '../videos/sql/Correction Série 4.2 — GestLocation (Base de données & SQL).mp4',
+    'Correction Série 4.2 — GestLocation'
+  );
+  assert.ok(videoListeners.timeupdate && videoListeners.pause && videoListeners.ended, 'Les écouteurs media doivent être attachés au <video> de #pdfFrame');
+  videoListeners.timeupdate();
+  assert.equal(appelsEnreg.length, 1);
+  assert.equal(appelsEnreg[0].cle, 'video:sql-serie4-2');
+  assert.equal(appelsEnreg[0].sec, 48);
+
+  fakeVideoEl.currentTime = 120;
+  modalCtx.closePdfModal();
+  assert.equal(fakeFrame.src, 'about:blank', 'closePdfModal ramène proprement #pdfFrame sur about:blank via location.replace (jamais src="")');
+  assert.equal(appelsEnreg.length, 2, 'closePdfModal doit sauvegarder la position courante avant de fermer la modale');
+  assert.equal(appelsEnreg[1].sec, 120);
+  assert.equal(syncServeurForce, 1, 'closePdfModal déclenche une synchronisation serveur immédiate si curT >= 2');
+});
+
 
 
