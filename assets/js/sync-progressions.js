@@ -36,10 +36,13 @@
     "sqlQuestV3",
     "quizphp_v1_user",
     "quizphp_v1_hist",
-    "quizphp_v1_board"
+    "quizphp_v1_board",
+    "quizzora_xp_v1",
+    "sti-quiz-xp-js-v1"
   ];
   var cfg = window.STI_AUTH || { URL: "https://vywujxmepvcbgedgmger.supabase.co", CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn" };
   var session = null, dernierHash = "", minuteur = null;
+  var enVolTirer = false, pullInitialTermine = false, pushDiffere = false;
 
   function lireSessionDepuisStore(st) {
     if (!st) return null;
@@ -130,9 +133,165 @@
         aPurger.forEach(function (kRem) { try { localStorage.removeItem(kRem); } catch (eRem) {} });
         localStorage.removeItem(CLE_SYNC_MAJ);
         dernierHash = "";
+        pullInitialTermine = false;
+        try {
+          if (typeof sessionStorage !== "undefined") {
+            sessionStorage.removeItem("sti-sync-pull-uid");
+            sessionStorage.removeItem("sti-sync-pull-ts");
+            sessionStorage.removeItem("sti-sync-last-hash");
+          }
+        } catch (eSs) {}
       }
       localStorage.setItem(CLE_SYNC_UID, uid);
     } catch (e) {}
+  }
+  function parserJsonSoupleSync(raw, repli) {
+    if (raw == null || raw === "") return repli;
+    if (typeof raw === "object") return raw;
+    try {
+      var v = JSON.parse(String(raw));
+      return v == null ? repli : v;
+    } catch (e) { return repli; }
+  }
+  function scoreValideSync(v) {
+    var s = String(v == null ? "" : v).trim();
+    if (!s) return false;
+    if (/\/\s*\d+/.test(s) || /%/.test(s)) return true;
+    if (/\bpts?\b/i.test(s)) return false;
+    var nb = parseFloat(s.replace(",", "."));
+    return isFinite(nb) && nb >= 0 && nb <= 20;
+  }
+  /* v478 : fusion strictement monotone des XP, niveaux, records et scores de quiz
+     (ne permet jamais à un état local vierge ou à xp=0 d'écraser les XP acquis dans le cloud) */
+  function fusionnerCleQuizMonotone(k, rawLoc, rawDist) {
+    if (rawDist == null) return null;
+    if (k === "js_quiz_high_score" || k === "js_quiz_total_answered") {
+      var vLoc = parseInt(rawLoc || "0", 10) || 0;
+      var vDist = parseInt(rawDist || "0", 10) || 0;
+      return String(Math.max(vLoc, vDist));
+    }
+    if (k === "quizphp_v1_user") {
+      var uLoc = parserJsonSoupleSync(rawLoc, null);
+      var uDist = parserJsonSoupleSync(rawDist, null);
+      if (!uDist || typeof uDist !== "object") return null;
+      if (!uLoc || typeof uLoc !== "object") return JSON.stringify(uDist);
+      var uOut = Object.assign({}, uDist, uLoc);
+      uOut.xp = Math.max(Number(uLoc.xp) || 0, Number(uDist.xp) || 0);
+      uOut.best = Math.max(Number(uLoc.best) || 0, Number(uDist.best) || 0);
+      uOut.streak = Math.max(Number(uLoc.streak) || 0, Number(uDist.streak) || 0);
+      if (!uOut.name && uDist.name) {
+        uOut.name = uDist.name;
+        if (uDist.avatar) uOut.avatar = uDist.avatar;
+      }
+      return JSON.stringify(uOut);
+    }
+    if (k === "sqlQuestV3") {
+      var sLoc = parserJsonSoupleSync(rawLoc, null);
+      var sDist = parserJsonSoupleSync(rawDist, null);
+      if (!sDist || typeof sDist !== "object") return null;
+      if (!sLoc || typeof sLoc !== "object") return JSON.stringify(sDist);
+      var sOut = Object.assign({}, sDist, sLoc);
+      sOut.xp = Math.max(Number(sLoc.xp) || 0, Number(sDist.xp) || 0);
+      sOut.level = Math.max(Number(sLoc.level) || 1, Number(sDist.level) || 1);
+      sOut.streak = Math.max(Number(sLoc.streak) || 0, Number(sDist.streak) || 0);
+      sOut.totalAnswered = Math.max(Number(sLoc.totalAnswered) || 0, Number(sDist.totalAnswered) || 0);
+      sOut.totalCorrect = Math.max(Number(sLoc.totalCorrect) || 0, Number(sDist.totalCorrect) || 0);
+      sOut.bestCombo = Math.max(Number(sLoc.bestCombo) || 0, Number(sDist.bestCombo) || 0);
+      sOut.playgroundCount = Math.max(Number(sLoc.playgroundCount) || 0, Number(sDist.playgroundCount) || 0);
+      if ((!sLoc.pseudo || sLoc.pseudo === "Apprenti SQL") && sDist.pseudo && sDist.pseudo !== "Apprenti SQL") {
+        sOut.pseudo = sDist.pseudo;
+        if (sDist.avatar) sOut.avatar = sDist.avatar;
+        sOut.profileSet = true;
+      } else {
+        sOut.profileSet = Boolean(sLoc.profileSet || sDist.profileSet);
+      }
+      var bMerged = Object.assign({}, sDist.best || {}, sLoc.best || {});
+      Object.keys(bMerged).forEach(function (m) {
+        bMerged[m] = Math.max(Number(sLoc.best && sLoc.best[m]) || 0, Number(sDist.best && sDist.best[m]) || 0);
+      });
+      sOut.best = bMerged;
+      var mMerged = Object.assign({}, sDist.mastery || {}, sLoc.mastery || {});
+      Object.keys(mMerged).forEach(function (cat) {
+        var ml = (sLoc.mastery && sLoc.mastery[cat]) || {};
+        var md = (sDist.mastery && sDist.mastery[cat]) || {};
+        mMerged[cat] = {
+          c: Math.max(Number(ml.c) || 0, Number(md.c) || 0),
+          t: Math.max(Number(ml.t) || 0, Number(md.t) || 0)
+        };
+      });
+      sOut.mastery = mMerged;
+      if (Array.isArray(sLoc.badges) || Array.isArray(sDist.badges)) {
+        var bgMap = {};
+        (Array.isArray(sDist.badges) ? sDist.badges : []).concat(Array.isArray(sLoc.badges) ? sLoc.badges : []).forEach(function (b) {
+          if (b) bgMap[String(b)] = true;
+        });
+        sOut.badges = Object.keys(bgMap);
+      }
+      return JSON.stringify(sOut);
+    }
+    if (k === "quizzora_xp_v1" || k === "sti-quiz-xp-js-v1") {
+      var qLoc = parserJsonSoupleSync(rawLoc, null);
+      var qDist = parserJsonSoupleSync(rawDist, null);
+      if (!qDist || typeof qDist !== "object") return null;
+      if (!qLoc || typeof qLoc !== "object") return JSON.stringify(qDist);
+      return JSON.stringify({
+        xp: Math.max(Number(qLoc.xp) || 0, Number(qDist.xp) || 0),
+        best: Math.max(Number(qLoc.best) || 0, Number(qDist.best) || 0),
+        parties: Math.max(Number(qLoc.parties) || 0, Number(qDist.parties) || 0),
+        bonnes: Math.max(Number(qLoc.bonnes) || 0, Number(qDist.bonnes) || 0),
+        total: Math.max(Number(qLoc.total) || 0, Number(qDist.total) || 0)
+      });
+    }
+    if (k === "sti-mes-scores") {
+      var scLoc = parserJsonSoupleSync(rawLoc, {}) || {};
+      var scDist = parserJsonSoupleSync(rawDist, {}) || {};
+      var scOut = {};
+      Object.keys(scDist).forEach(function (qz) { if (scoreValideSync(scDist[qz])) scOut[qz] = scDist[qz]; });
+      Object.keys(scLoc).forEach(function (qz) { if (scoreValideSync(scLoc[qz])) scOut[qz] = scLoc[qz]; });
+      return JSON.stringify(scOut);
+    }
+    return null;
+  }
+  function fusionnerAcquisMonotonesDistants(donneesDist) {
+    if (!donneesDist || typeof donneesDist !== "object") return false;
+    var change = false;
+    if (donneesDist["sti-media-prog-v1"]) {
+      try {
+        var curM = localStorage.getItem("sti-media-prog-v1");
+        var fusM = fusionnerMediaProgMonotone(curM, donneesDist["sti-media-prog-v1"]);
+        if (fusM !== curM) { localStorage.setItem("sti-media-prog-v1", fusM); change = true; }
+      } catch (eFm) {}
+    }
+    var clesMonotones = [
+      "sqlQuestV3",
+      "quizphp_v1_user",
+      "js_quiz_high_score",
+      "js_quiz_total_answered",
+      "quizzora_xp_v1",
+      "sti-quiz-xp-js-v1",
+      "sti-mes-scores"
+    ];
+    clesMonotones.forEach(function (k) {
+      if (donneesDist[k] == null) return;
+      try {
+        var cur = localStorage.getItem(k);
+        var fus = fusionnerCleQuizMonotone(k, cur, donneesDist[k]);
+        if (fus !== null && fus !== cur) {
+          localStorage.setItem(k, fus);
+          change = true;
+        }
+      } catch (eKm) {}
+    });
+    ["quizphp_v1_hist", "quizphp_v1_board", "sti-quiz-tableaux-v1"].forEach(function (k) {
+      if (donneesDist[k] == null) return;
+      try {
+        if (!localStorage.getItem(k)) {
+          localStorage.setItem(k, typeof donneesDist[k] === "string" ? donneesDist[k] : JSON.stringify(donneesDist[k]));
+          change = true;
+        }
+      } catch (eOpt) {}
+    });
+    return change;
   }
   function appliquer(d) {
     try {
@@ -176,24 +335,22 @@
             return;
           } catch (eRv) {}
         }
-        if (k === "sti-mes-scores") {
+        if (
+          k === "sti-mes-scores" ||
+          k === "js_quiz_high_score" ||
+          k === "js_quiz_total_answered" ||
+          k === "quizphp_v1_user" ||
+          k === "sqlQuestV3" ||
+          k === "quizzora_xp_v1" ||
+          k === "sti-quiz-xp-js-v1"
+        ) {
           try {
-            var scLoc = JSON.parse(localStorage.getItem(k) || "{}") || {};
-            var scDist = (typeof d[k] === "string" ? JSON.parse(d[k] || "{}") : d[k]) || {};
-            var scOut = {};
-            function scoreValideSync(v) {
-              var s = String(v == null ? "" : v).trim();
-              if (!s) return false;
-              if (/\/\s*\d+/.test(s) || /%/.test(s)) return true;
-              if (/\bpts?\b/i.test(s)) return false;
-              var nb = parseFloat(s.replace(",", "."));
-              return isFinite(nb) && nb >= 0 && nb <= 20;
+            var fusQuiz = fusionnerCleQuizMonotone(k, localStorage.getItem(k), d[k]);
+            if (fusQuiz !== null) {
+              localStorage.setItem(k, fusQuiz);
+              return;
             }
-            Object.keys(scDist).forEach(function (qz) { if (scoreValideSync(scDist[qz])) scOut[qz] = scDist[qz]; });
-            Object.keys(scLoc).forEach(function (qz) { if (scoreValideSync(scLoc[qz])) scOut[qz] = scLoc[qz]; });
-            localStorage.setItem(k, JSON.stringify(scOut));
-            return;
-          } catch (eSc) {}
+          } catch (eQz) {}
         }
         if (k === "sti-chapitres-vus" || k === "sti-revised-courses" || k === "sti-pieges-bac-ok" || k === "sti-flashcards-mastered" || k === "sti-exos-faits") {
           try {
@@ -219,44 +376,7 @@
             return;
           } catch (eDv) {}
         }
-        if (k === "js_quiz_high_score" || k === "js_quiz_total_answered") {
-          var vLoc = parseInt(localStorage.getItem(k) || "0", 10) || 0;
-          var vDist = parseInt(d[k], 10) || 0;
-          localStorage.setItem(k, String(Math.max(vLoc, vDist)));
-          return;
-        }
-        if (k === "quizphp_v1_user") {
-          try {
-            var uLoc = JSON.parse(localStorage.getItem(k) || "null") || {};
-            var uDist = JSON.parse(d[k]) || {};
-            uDist.xp = Math.max(Number(uLoc.xp) || 0, Number(uDist.xp) || 0);
-            uDist.best = Math.max(Number(uLoc.best) || 0, Number(uDist.best) || 0);
-            uDist.streak = Math.max(Number(uLoc.streak) || 0, Number(uDist.streak) || 0);
-            localStorage.setItem(k, JSON.stringify(uDist));
-            return;
-          } catch (ePhp) {}
-        }
-        if (k === "sqlQuestV3") {
-          try {
-            var sLoc = JSON.parse(localStorage.getItem(k) || "null");
-            var sDist = JSON.parse(d[k]);
-            if (sLoc && sDist) {
-              sDist.xp = Math.max(Number(sLoc.xp) || 0, Number(sDist.xp) || 0);
-              sDist.level = Math.max(Number(sLoc.level) || 1, Number(sDist.level) || 1);
-              sDist.totalAnswered = Math.max(Number(sLoc.totalAnswered) || 0, Number(sDist.totalAnswered) || 0);
-              sDist.totalCorrect = Math.max(Number(sLoc.totalCorrect) || 0, Number(sDist.totalCorrect) || 0);
-              sDist.bestCombo = Math.max(Number(sLoc.bestCombo) || 0, Number(sDist.bestCombo) || 0);
-              if (sLoc.best && sDist.best) {
-                Object.keys(sLoc.best).forEach(function (m) {
-                  sDist.best[m] = Math.max(Number(sLoc.best[m]) || 0, Number(sDist.best[m]) || 0);
-                });
-              }
-              localStorage.setItem(k, JSON.stringify(sDist));
-              return;
-            }
-          } catch (eSql) {}
-        }
-        localStorage.setItem(k, d[k]);
+        localStorage.setItem(k, typeof d[k] === "string" ? d[k] : JSON.stringify(d[k]));
       });
       if (typeof window !== "undefined" && typeof window.dispatchEvent === "function" && typeof CustomEvent === "function") {
         window.dispatchEvent(new CustomEvent("sti-cloud-restored"));
@@ -283,6 +403,7 @@
         var lastTs = parseInt(sessionStorage.getItem("sti-sync-pull-ts") || "0", 10) || 0;
         var lastHash = sessionStorage.getItem("sti-sync-last-hash") || "";
         if (lastUid === session.id && lastTs > 0 && (Date.now() - lastTs) < 20000) {
+          pullInitialTermine = true;
           if (lastHash) dernierHash = lastHash;
           pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9");
           pousser(false, false);
@@ -290,9 +411,14 @@
         }
       } catch (eTh) {}
     }
+    enVolTirer = true;
     fetch(cfg.URL + "/rest/v1/sti_progressions?user_id=eq." + encodeURIComponent(session.id) + "&select=donnees,maj", { headers: entetes() })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function (lignes) {
+        enVolTirer = false;
+        pullInitialTermine = true;
+        var avaitPushDiffere = pushDiffere;
+        pushDiffere = false;
         try {
           if (typeof sessionStorage !== "undefined") {
             sessionStorage.setItem("sti-sync-pull-uid", session.id);
@@ -310,7 +436,7 @@
             dernierHash = apresHash;
             try { if (typeof sessionStorage !== "undefined") sessionStorage.setItem("sti-sync-last-hash", apresHash); } catch (eH1) {}
             pastille("☁️ Progression restaurée depuis le cloud", "#e8f5e9");
-            if (avantHash && avantHash !== apresHash) {
+            if ((avantHash && avantHash !== apresHash) || avaitPushDiffere) {
               /* Si la fusion monotone a conservé des avancées locales plus récentes, les pousser aussi au cloud */
               setTimeout(function () { pousser(true); }, 600);
             }
@@ -343,14 +469,12 @@
             } catch (e) {}
             return;
           } else if (lignes[0].donnees) {
-            /* Même si local >= distant, fusionner de façon monotone toute progression média distante manquante */
-            if (lignes[0].donnees["sti-media-prog-v1"]) {
-              try {
-                var fusionM = fusionnerMediaProgMonotone(localStorage.getItem("sti-media-prog-v1"), lignes[0].donnees["sti-media-prog-v1"]);
-                if (fusionM !== localStorage.getItem("sti-media-prog-v1")) {
-                  localStorage.setItem("sti-media-prog-v1", fusionM);
-                }
-              } catch (eFm) {}
+            /* v478 : même si local >= distant (décalage d'horloge ou push préalable depuis l'accueil),
+               fusionner de façon strictement monotone les XP/scores de quiz et la progression média
+               afin de ne jamais réécrire xp=0 par-dessus un XP cloud existant. */
+            var aEnrichiQuizOuMedia = fusionnerAcquisMonotonesDistants(lignes[0].donnees);
+            if (aEnrichiQuizOuMedia && typeof window !== "undefined" && typeof window.dispatchEvent === "function" && typeof CustomEvent === "function") {
+              try { window.dispatchEvent(new CustomEvent("sti-cloud-restored")); } catch (eEv) {}
             }
             /* v473 : l'empreinte de référence cloud est toujours celle de lignes[0].donnees ;
                si le contenu local est identique, pousser(false, false) n'envoie aucun POST inutile ;
@@ -366,12 +490,23 @@
         }
         pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9"); pousser(true);
       })
-      .catch(function () { pastille("💾 Progression : cet appareil seulement", "#fff3e0"); });
+      .catch(function () {
+        enVolTirer = false;
+        pastille("💾 Progression : cet appareil seulement", "#fff3e0");
+      });
   }
   function pousser(force, enFermeture) {
     session = session || lireSession();
     if (!session) return;
     isolerComptePartageSiBesoin(session.id);
+    /* v478 : interdire tout POST vers sti_progressions tant que le premier GET (tirer)
+       est en vol ou qu'un compte fraîchement connecté / isolé n'a pas encore lu le cloud. */
+    var aMajLocaleConnue = false;
+    try { aMajLocaleConnue = (parseInt(localStorage.getItem(CLE_SYNC_MAJ) || "0", 10) || 0) > 0; } catch (eMj) {}
+    if (enVolTirer || (!pullInitialTermine && !aMajLocaleConnue)) {
+      pushDiffere = true;
+      return;
+    }
     var d = collecter(), h = hash(d);
     if (!force && h === dernierHash) return;
     dernierHash = h;

@@ -2850,21 +2850,34 @@
           this.journal = [];
           this.syncedJournalLen = 0;
           this.partySynced = false;
+          this.xpCredited = false;
           this.bossHp = 100;
           this.bossMaxHp = 100;
+          const xpObjJs = (() => {
+            try { return JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {}; } catch (e) { return {}; }
+          })();
           this.stats = {
             totalAnswered:
               parseInt(stockageLire("js_quiz_total_answered", "0"), 10) || 0,
             highScore:
               parseInt(stockageLire("js_quiz_high_score", "0"), 10) || 0,
+            xp: Math.max(0, Number(xpObjJs.xp) || 0),
           };
           this.initDom();
           this.updateHomeStats();
           window.addEventListener("sti-cloud-restored", () => {
-            this.stats.totalAnswered =
-              parseInt(stockageLire("js_quiz_total_answered", "0"), 10) || 0;
-            this.stats.highScore =
-              parseInt(stockageLire("js_quiz_high_score", "0"), 10) || 0;
+            this.stats.totalAnswered = Math.max(
+              this.stats.totalAnswered || 0,
+              parseInt(stockageLire("js_quiz_total_answered", "0"), 10) || 0
+            );
+            this.stats.highScore = Math.max(
+              this.stats.highScore || 0,
+              parseInt(stockageLire("js_quiz_high_score", "0"), 10) || 0
+            );
+            try {
+              const luXpJs = JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {};
+              this.stats.xp = Math.max(this.stats.xp || 0, Number(luXpJs.xp) || 0);
+            } catch (eXp) {}
             this.updateHomeStats();
           });
           const revInit =
@@ -2931,6 +2944,20 @@
             STIQuizSync.enregistrer
           ) {
             this.partySynced = true;
+            if (!this.xpCredited) {
+              this.xpCredited = true;
+              const gainXpJs = Math.max(this.score || 0, (this.correctCount || 0) * 150);
+              let exXpJs = {};
+              try { exXpJs = JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {}; } catch (eX) {}
+              this.stats.xp = Math.max(Number(this.stats.xp) || 0, Number(exXpJs.xp) || 0) + gainXpJs;
+              stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify({
+                xp: this.stats.xp,
+                best: Math.max(Number(exXpJs.best) || 0, this.stats.highScore || 0, this.score || 0),
+                parties: (Number(exXpJs.parties) || 0) + 1,
+                bonnes: (Number(exXpJs.bonnes) || 0) + (this.correctCount || 0),
+                total: (Number(exXpJs.total) || 0) + (this.answeredCount || 0),
+              }));
+            }
             if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function") {
               STIQuizSync.noterQuestionsVuesQuiz(
                 "q_js",
@@ -3003,6 +3030,18 @@
             STIQuizSync.resume("javascript")
               .then((res) => {
                 if (!res) return;
+                if (res.xpPlancher && res.xpPlancher > (this.stats.xp || 0)) {
+                  let exXpJs = {};
+                  try { exXpJs = JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {}; } catch (eX) {}
+                  this.stats.xp = Math.max(res.xpPlancher, Number(exXpJs.xp) || 0);
+                  stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify({
+                    xp: this.stats.xp,
+                    best: Math.max(Number(exXpJs.best) || 0, res.meilleurPoints || 0, this.stats.highScore || 0),
+                    parties: Math.max(Number(exXpJs.parties) || 0, res.parties || 0),
+                    bonnes: Math.max(Number(exXpJs.bonnes) || 0, res.totalBonnes || 0),
+                    total: Math.max(Number(exXpJs.total) || 0, res.totalQuestions || 0),
+                  }));
+                }
                 if (res.meilleurPoints && res.meilleurPoints > this.stats.highScore) {
                   this.stats.highScore = res.meilleurPoints;
                   stockageEcrire("js_quiz_high_score", this.stats.highScore);
@@ -3020,6 +3059,9 @@
                   res.parties +
                   " partie" +
                   (res.parties > 1 ? "s" : "") +
+                  " · ⚡ <strong class=\"text-cyan-300\">" +
+                  (this.stats.xp || 0).toLocaleString("fr-FR") +
+                  " XP</strong>" +
                   (res.meilleur
                     ? " · 🏆 Meilleur : <strong class=\"text-yellow-300\">" +
                       res.meilleur.score +
@@ -3111,6 +3153,7 @@
           this.journal = Array.isArray(meta.journal) ? meta.journal : [];
           this.syncedJournalLen = this.journal.length;
           this.partySynced = false;
+          this.xpCredited = false;
           this.questions = sauv.ordre_questions;
           this.currentQuestionIdx = Math.min(
             Math.max(0, parseInt(sauv.index_courant, 10) || 0),
@@ -3254,6 +3297,7 @@
           this.journal = [];
           this.syncedJournalLen = 0;
           this.partySynced = false;
+          this.xpCredited = false;
           this.bossHp = this.bossMaxHp = 100;
 
           if (Array.isArray(customQuestions) && customQuestions.length) {
@@ -4037,6 +4081,6 @@
 <script src="../assets/js/protection.js?v=227" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/acces.js?v=453" defer></script>
-  <script src="../assets/js/sync-progressions.js?v=476" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=478" defer></script>
 </body>
 </html>

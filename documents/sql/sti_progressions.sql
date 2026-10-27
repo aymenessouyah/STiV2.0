@@ -25,3 +25,8 @@ create policy "creer sa progression" on public.sti_progressions
 drop policy if exists "maj sa progression" on public.sti_progressions;
 create policy "maj sa progression" on public.sti_progressions
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Protection serveur monotone des XP & records de quiz (v478 : voir
+-- supabase/migrations/20261027_xp_quiz_monotone_v478.sql — trigger BEFORE UPDATE
+-- trg_sti_progressions_monotone_xp -> public.sti_progressions_preserver_xp()).
+
