@@ -43,10 +43,10 @@ test('chaque entrée du catalogue ouvre la vidéo et toutes les commandes du lec
   const erreurs=[]; page.on('pageerror',e=>erreurs.push(e.message));
   await aller(page, '/index.html'); await expect(page.locator('html')).toHaveClass(/sti-4si-autorise/);
   const videos=[['html5-cours','html5-cours.mp4'],['css3-cours','css3-cours-v9-sync'],['css3-display','displayanim.mp4'],
-    ['css-positionnement','css-positionnement.mp4'],['css-animee','css-animee.mp4'],['javascript-cours','javascript-cours.mp4'],
+    ['css-positionnement','css-positionnement.mp4'],['css-animee','css-animee.mp4'],['javascript-cours','javascript-cours.mp4'],['validation-nom-prenom-js','validation-nom-prenom-js.mp4'],
     ['sql-cours','sql-cours-v7.mp4'],['sql-initiation','sql-construire-requete-guide-texte.mp4'],['sql-serie4','sql-serie4.mp4'],['sql-serie5','sql-serie5.mp4'],
     ['php-cours','php-cours.mp4'],['php-synthese','php-synthese.mp4'],['php-guichet','php-guichet-v10.mp4']];
-  await expect(page.locator('#videosGrid .video-card')).toHaveCount(13);
+  await expect(page.locator('#videosGrid .video-card')).toHaveCount(14);
   for (const [slug,fichier] of videos) {
     const btn=page.locator(`#videosGrid [data-play-video="${slug}"]`).last(); await btn.click();
     const m=page.locator('#sti-video-modal-overlay'); await expect(m).toBeVisible(); await expect(m).toHaveAttribute('data-slug',slug);

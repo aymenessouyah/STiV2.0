@@ -100,5 +100,5 @@ test('le lien Vidéos conserve le préfixe de déploiement depuis un cours', asy
   await expect(page).toHaveURL(/\/STiV2\.0\/index\.html#videos$/);
   await expect(page.locator('#videos')).toBeInViewport({ ratio: 0.01 });
   await expect(page.locator('#sti-bnav [data-cle="videos"]')).toHaveClass(/\bon\b/);
-  await expect(page.locator('#videosGrid .video-card')).toHaveCount(13);
+  await expect(page.locator('#videosGrid .video-card')).toHaveCount(14);
 });

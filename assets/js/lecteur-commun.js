@@ -11,6 +11,7 @@
     'css-positionnement': ['css3','CSS pas à pas — Positionnement'],
     'css-animee': ['css3','CSS pas à pas — Décoration'],
     'javascript-cours': ['javascript','Récapitulatif JavaScript'],
+    'validation-nom-prenom-js': ['javascript','Validation du champ Nom & Prénom'],
     'sql-cours': ['sql','Cours SQL'],
     'sql-initiation': ['sql','Construire une requête SQL'],
     'sql-serie4': ['sql','Série 4 SQL'],
