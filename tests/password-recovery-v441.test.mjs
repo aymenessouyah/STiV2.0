@@ -4202,11 +4202,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v476\s*\|/.test(l)), 'v476 doit rester dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v477\s*\|/.test(l)), 'v477 reste dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v478\s*\|/.test(l)), 'v478 reste dans l’historique');
-  assert.ok(cinq.some((o) => /^v479 — Fiabilisation intégrale du compteur des vidéos/.test(o.t)), 'v479 reste parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v479\s*\|/.test(l)), 'v479 reste dans l’historique');
   assert.ok(cinq.some((o) => /^v480 — Intégration de la refonte/.test(o.t)), 'v480 reste parmi les nouvelles');
   assert.ok(cinq.some((o) => /^v481 — Fidélité à l’origine/.test(o.t)), 'v481 reste parmi les nouvelles');
   assert.ok(cinq.some((o) => /^v482 — Accueil de connexion personnalisé/.test(o.t)), 'v482 reste parmi les nouvelles');
-  assert.match(cinq[0].t, /^v483 — Reprise de lecture\/vidéo intégrée/);
+  assert.ok(cinq.some((o) => /^v483 — Reprise de lecture\/vidéo intégrée/.test(o.t)), 'v483 reste parmi les nouvelles');
+  assert.match(cinq[0].t, /^v484 — Navigation mobile/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
