@@ -1,14 +1,24 @@
 {
-  "version": "v477-sti-atelier-v338",
-  "generatedAt": "2026-10-26T19:16:41Z",
+  "version": "v478-sti-atelier-v339",
+  "generatedAt": "2026-10-27T12:49:17Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 654,
-  "totalBytes": 681865311,
+  "totalFiles": 674,
+  "totalBytes": 682143704,
   "files": [
     {
       "path": "404.html",
       "bytes": 4263,
       "gitSha": "d34b5843f159d2555ad53173c32a79f31be7e024"
+    },
+    {
+      "path": "assets/css/dialogues-compat.css",
+      "bytes": 863,
+      "gitSha": "f9cc78b11ec464b118e380d277703a7686b41aef"
+    },
+    {
+      "path": "assets/js/dialogues-compat.js",
+      "bytes": 3034,
+      "gitSha": "b6b118af9caa703f317f00bc90005fdedc8f0453"
     },
     {
       "path": "Lancer-Labo3-Hors-Ligne.bat",
@@ -181,6 +191,21 @@
       "gitSha": "4acafe270d071c374d80a83ccc838e70c7f11053"
     },
     {
+      "path": "assets/css/cours-css3.css",
+      "bytes": 31855,
+      "gitSha": "38a63ead45278cd3a25d766b3541b7cef8958a4c"
+    },
+    {
+      "path": "assets/css/cours-javascript.css",
+      "bytes": 13222,
+      "gitSha": "800aedd5beb29041219993d9900ba283d6985e81"
+    },
+    {
+      "path": "assets/css/cours.css",
+      "bytes": 53733,
+      "gitSha": "81a0dc9ce2184e3906c2c6b73a0a20bc38eece1d"
+    },
+    {
       "path": "assets/css/css.css",
       "bytes": 34003,
       "gitSha": "f0cfac6f55c11084cdee2514961291bb738c4f7b"
@@ -249,6 +274,11 @@
       "path": "assets/css/tailwind.css",
       "bytes": 21493,
       "gitSha": "3070ea33dfd0bc68521b930b60dee322defad338"
+    },
+    {
+      "path": "assets/css/theme.css",
+      "bytes": 47415,
+      "gitSha": "aa29ae06f1d85cd120e36c5b3d9d1e7e4661a7ec"
     },
     {
       "path": "assets/data/nouveautes.json",
@@ -606,6 +636,11 @@
       "gitSha": "26ee45626c67ba7878ed05d41fdd4ddd0013a3c6"
     },
     {
+      "path": "assets/js/app.js",
+      "bytes": 87466,
+      "gitSha": "cd8c7d83f3b3964356011f60d9e995b04f03df47"
+    },
+    {
       "path": "assets/js/config.js",
       "bytes": 31559,
       "gitSha": "a268386fc890d0f410d2ff7c3f4a9691260270ec"
@@ -614,6 +649,21 @@
       "path": "assets/js/cote-ticker.js",
       "bytes": 8976,
       "gitSha": "e47f213fe3a7431b356f624dcf70fc4ec610640a"
+    },
+    {
+      "path": "assets/js/cours-css3.js",
+      "bytes": 41909,
+      "gitSha": "4c32abb7cd2d3c3f5099a7177cc8cef54dc72348"
+    },
+    {
+      "path": "assets/js/cours-html5.js",
+      "bytes": 53179,
+      "gitSha": "aa2099e93c2075493c8d21fcef5a24c1a94fd41b"
+    },
+    {
+      "path": "assets/js/cours-javascript.js",
+      "bytes": 41726,
+      "gitSha": "4eb9d5e8636237aedbcc3987c94943d68d5f663e"
     },
     {
       "path": "assets/js/graphiques-activite.js",
@@ -664,6 +714,11 @@
       "path": "assets/js/portail.js",
       "bytes": 60697,
       "gitSha": "1be7f3a0e03387ff39682c2fe25f71f351c79262"
+    },
+    {
+      "path": "assets/js/profil.js",
+      "bytes": 25226,
+      "gitSha": "b0365efc83d2d44b09de209ec91985dacfe5e613"
     },
     {
       "path": "assets/js/protection.js",
@@ -1002,8 +1057,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 201523,
-      "gitSha": "c03e9e93bbb965eb888993a36bb9836ee254bcfd"
+      "bytes": 204267,
+      "gitSha": "ff666bdd3faaa8136439f5c52ca9b3dfff8c3b1a"
     },
     {
       "path": "cours/datalist.html",
@@ -1017,13 +1072,13 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 203734,
-      "gitSha": "f11454b29a625dc9bf5b221a912177fc4a363b9c"
+      "bytes": 196565,
+      "gitSha": "a2d44bba039aa3d6e3d8b52b2a4c2cfc61f572d5"
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 183021,
-      "gitSha": "b18dc8c857c45390b56ba43f625244b86d0acb93"
+      "bytes": 122502,
+      "gitSha": "dfe6658c4d704bde8cc27d319c1cd62e6468ca58"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1032,8 +1087,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 220675,
-      "gitSha": "f6bc81bf809725cafde958a41c17f11aa2cc64f7"
+      "bytes": 194863,
+      "gitSha": "a244f328a1dce07274f06ea0cc3f31c73372201d"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1052,8 +1107,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 256567,
-      "gitSha": "e3876263d6cd5477097800cf56362d68f9a48b51"
+      "bytes": 132279,
+      "gitSha": "612589c63a43d7fae4b431426117bc523a401342"
     },
     {
       "path": "cssanimee/cours.js",
@@ -1069,6 +1124,11 @@
       "path": "cssanimee/style.css",
       "bytes": 24492,
       "gitSha": "f8803e65540efdd1d2d4801563230fa6d9e941e9"
+    },
+    {
+      "path": "dashboard.html",
+      "bytes": 15345,
+      "gitSha": "00ed36f830ced2a6c767cc387f89f0494dc8bdcb"
     },
     {
       "path": "documents/annexes/annexe-css3.pdf",
@@ -2487,8 +2547,8 @@
     },
     {
       "path": "exercices/javascript/js-37-defis-tt.html",
-      "bytes": 95802,
-      "gitSha": "4b2b7213ae1f99ebe9ff9ef35de764fe2f197792"
+      "bytes": 96184,
+      "gitSha": "1360eca685a6e64bba41ab3d72d0385e86ca62c7"
     },
     {
       "path": "exercices/javascript/validation-nom-prenom-js.mp4",
@@ -2617,8 +2677,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 94649,
-      "gitSha": "69399ca21b033df2835dfaf2c5def704b8956bb5"
+      "bytes": 94756,
+      "gitSha": "db353209c8b7b3f976046aa039429d36d2f868f9"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -2722,8 +2782,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 203925,
-      "gitSha": "8b9442f659e3f4e9b84d5a8abde46e455bebdf99"
+      "bytes": 53674,
+      "gitSha": "2a8dd1e12856fcf83f076187a4f6f2930bf44d2c"
     },
     {
       "path": "livre-smart.html",
@@ -2777,13 +2837,13 @@
     },
     {
       "path": "projets/carte-bancaire/cb.html",
-      "bytes": 7981,
-      "gitSha": "3a7eb042d9435a11143dc018db8a9038f99a7a83"
+      "bytes": 8195,
+      "gitSha": "60267042acfba9612b3a7fc395fc2ab9c711a9bd"
     },
     {
       "path": "projets/carte-bancaire/controle.js",
-      "bytes": 8809,
-      "gitSha": "75ce29a7ebcfb767be7f4fcab83c191ba56214c5"
+      "bytes": 9679,
+      "gitSha": "55cb2276f518c27e4d4a618479a54d01c59d3971"
     },
     {
       "path": "projets/carte-bancaire/enonce-tp-carte-bancaire.html",
@@ -2807,8 +2867,8 @@
     },
     {
       "path": "projets/carte-bancaire/style.css",
-      "bytes": 4424,
-      "gitSha": "87df585ebea60f7ecb9333db90fd8fe48c59cfd1"
+      "bytes": 5135,
+      "gitSha": "8815aa23cec1aa40bcea4539195fe2939d4dcddc"
     },
     {
       "path": "projets/fleurs.zip",
@@ -2832,8 +2892,8 @@
     },
     {
       "path": "projets/fleurs/controle.js",
-      "bytes": 18303,
-      "gitSha": "aa42f482b1db9229ddb6cc974e3b00fd4161237f"
+      "bytes": 18317,
+      "gitSha": "418b46bfb10b8347906bc68842833cedb983cba2"
     },
     {
       "path": "projets/fleurs/controlecorrection.js",
@@ -2842,13 +2902,13 @@
     },
     {
       "path": "projets/fleurs/index.html",
-      "bytes": 8304,
-      "gitSha": "4d4838698f04b83008a915d9545523e776d82f3a"
+      "bytes": 8334,
+      "gitSha": "4d0e1dfe90f6abc43f90b9cf1709aa3d5ac6401f"
     },
     {
       "path": "projets/fleurs/inscription.html",
-      "bytes": 9921,
-      "gitSha": "bd725864719e835d1194b6149651bd2438647abf"
+      "bytes": 10060,
+      "gitSha": "50f69341d09d7b4c8f996f64c2c6b2ceb12744d0"
     },
     {
       "path": "projets/fleurs/media/Lyc",
@@ -2987,13 +3047,13 @@
     },
     {
       "path": "projets/fleurs/styles.css",
-      "bytes": 9384,
-      "gitSha": "a41e6c665006a0073c488d0a9a5790e7696c5788"
+      "bytes": 10040,
+      "gitSha": "9d0786e34dd38c69a544fce6a1aa12f08e6f0cd0"
     },
     {
       "path": "projets/formulaire-inscription/cvFleurs.html",
-      "bytes": 55731,
-      "gitSha": "00f3ebabad3880a40401cdfd26d1eecf69b11ae7"
+      "bytes": 55886,
+      "gitSha": "a756fbb7345abecc69c79fc67521263585c24c05"
     },
     {
       "path": "projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf",
@@ -3272,8 +3332,48 @@
     },
     {
       "path": "sw.js",
-      "bytes": 70916,
-      "gitSha": "2d3161d473ac88054dbba973452a4c6cec42b2e8"
+      "bytes": 75364,
+      "gitSha": "7ea42981a1a70fdb621365e62c9e4b4f494d9923"
+    },
+    {
+      "path": "assets/css/cours-matieres.css",
+      "bytes": 19681,
+      "gitSha": "8cc00b5c613fa31b72c025b110cae0075af95f00"
+    },
+    {
+      "path": "assets/css/cours-sql-heritage.css",
+      "bytes": 57089,
+      "gitSha": "7a9b12eb4751bf99c14e8e525d9f264ffe74153a"
+    },
+    {
+      "path": "assets/css/cours-php-heritage.css",
+      "bytes": 30021,
+      "gitSha": "cab567b14d61cc8eeb6b455e6e1404ad9ef40605"
+    },
+    {
+      "path": "assets/js/cours-matieres.js",
+      "bytes": 45747,
+      "gitSha": "f2aa7c13411f30a1f7188398e47ec317f203966b"
+    },
+    {
+      "path": "assets/js/cours-media-reperes.js",
+      "bytes": 17989,
+      "gitSha": "efedae68dc66698a4a5938f0bede8bea94cad9d4"
+    },
+    {
+      "path": "assets/js/cours-sql-animations.js",
+      "bytes": 41041,
+      "gitSha": "bc1c9e8f26f6945692f621d1218540f6e0e6ba13"
+    },
+    {
+      "path": "assets/js/cours-sql-voix.js",
+      "bytes": 8142,
+      "gitSha": "0156c1e2b2baff7f5275bd39164ffd2bfc74b5f3"
+    },
+    {
+      "path": "assets/js/cours-sql-worker.js",
+      "bytes": 1279,
+      "gitSha": "33b9a831d590525ded7fe954b52d4838a3766a8b"
     }
   ]
 }

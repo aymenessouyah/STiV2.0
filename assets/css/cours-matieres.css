@@ -1,0 +1,171 @@
+/* STI V2.0 — SQL et PHP : interface commune, sans couleurs codées en dur.
+   Les schémas et exemples pédagogiques conservent les couleurs de leur source. */
+html { --matiere-root-bg: var(--bg); --matiere-root-text: var(--text); --matiere-root-muted: var(--text-secondary); --matiere-root-code: var(--code-bg); }
+html .course-page .legacy-sql {
+  --bg: var(--matiere-root-bg); --card: var(--surface-solid); --ink: var(--matiere-root-text);
+  --muted: var(--matiere-root-muted); --shadow: var(--border-strong); --line: var(--border);
+  --nav: var(--header-bg); --grid: var(--border); --codebg: var(--matiere-root-code); --soft: var(--bg-alt);
+  --sun: var(--warning); --candy: var(--danger); --mint: var(--accent-sql); --sky: var(--accent-css);
+  --grape: var(--accent-php); --limey: var(--success); --peach: var(--brand);
+  --p-sun: var(--warning-soft); --p-candy: var(--danger-soft); --p-mint: var(--accent-sql-soft);
+  --p-sky: var(--accent-css-soft); --p-grape: var(--accent-php-soft); --p-peach: var(--brand-soft);
+  --p-limey: var(--success-soft); --bar-h: var(--header-height);
+}
+html .course-page .legacy-php {
+  --bg: var(--matiere-root-bg); --text: var(--matiere-root-text); --muted: var(--matiere-root-muted);
+  --card: var(--surface-solid); --navy: var(--course-accent); --blue: var(--course-accent);
+  --analogy-bg: var(--course-accent-soft); --header-h: var(--header-height);
+}
+.course-page--sql .course-hero__grid, .course-page--php .course-hero__grid { min-width: 0; }
+.course-page--sql .course-main, .course-page--php .course-main, .course-page .legacy-sql, .course-page .legacy-php { min-width: 0; }
+.course-page .matiere-eyebrow { color: var(--course-accent); font: 800 .75rem/1.4 var(--font-sans); letter-spacing: .08em; }
+.course-page .matiere-pill { display: inline-flex; align-items: center; gap: .25rem; border-radius: var(--radius-full); padding: .28rem .6rem; background: var(--course-accent-soft); border: 1px solid var(--course-accent-border); color: var(--text); font-size: .72rem; font-weight: 750; }
+.course-page .matiere-pill.is-viewed { background: var(--success-soft); }
+.course-page .matiere-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin-block: var(--space-3); }
+.course-page .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.course-page .legacy-sql .course-chapter, .course-page .legacy-php .course-chapter {
+  display: block; min-width: 0; margin: 0 0 var(--space-5); padding: var(--space-5);
+  border: 1px solid var(--border); border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-xs);
+  color: var(--text); scroll-margin-top: calc(var(--header-height) + 74px);
+}
+.course-page .legacy-sql .course-chapter > h2, .course-page .legacy-php .course-chapter h2.course-chapter__title {
+  display: flex; align-items: center; gap: var(--space-3); font: 800 clamp(1.15rem,2vw,1.5rem)/1.3 var(--font-sans);
+  color: var(--text); margin: 0 0 var(--space-4); background: none; border: 0; padding: 0;
+}
+.course-page .legacy-php .course-chapter > div:has(>h2.course-chapter__title) { flex-wrap: wrap !important; }
+.course-page .legacy-php .course-chapter > div:has(>h2.course-chapter__title) h2,
+.course-page .legacy-php .course-chapter > div:has(>h2.course-chapter__title) button { margin-top: 0 !important; }
+.course-page .legacy-sql .card { min-width: 0; margin-block: var(--space-4); padding: var(--space-4); background: var(--surface-solid); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
+.course-page .legacy-sql .card > h3, .course-page .legacy-php h3 { color: var(--text); line-height: 1.35; }
+.course-page .legacy-sql .card > h3 { background: transparent; }
+.course-page .legacy-php .course-chapter > p, .course-page .legacy-php .course-chapter > ul { line-height: 1.65; }
+.course-page .legacy-php .course-chapter > * + * { margin-block-start: var(--space-3); }
+.course-page .legacy-php .analogy, .course-page .legacy-php .step { max-width: 100%; overflow: hidden; }
+.course-page .legacy-php .analogy svg { max-width: 100%; height: auto; }
+.course-page .legacy-sql img, .course-page .legacy-php img { max-width: 100%; height: auto; }
+.course-page .chapter-footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-3); margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--border); }
+.course-page .chapter-footer nav { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.course-page .table-scroll { max-width: 100%; overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border); margin-block: var(--space-3); }
+.course-page .table-scroll:focus-visible { outline: 2px solid var(--course-accent); outline-offset: 2px; }
+.course-page .legacy-sql .table-scroll table, .course-page .legacy-php .table-scroll table { margin: 0; min-width: 460px; width: 100%; }
+.course-page .code-box { min-width: 0; max-width: 100%; margin-block: var(--space-4); color: var(--code-text); }
+.course-page .code-box__bar { color: var(--text); }
+.course-page .matiere-code-scroll { display: flex; overflow: auto; background: var(--code-bg); }
+.course-page .matiere-code-gutter { flex: 0 0 auto; padding: 14px .7rem 14px 1rem; text-align: end; color: var(--syntax-comment); font: 500 .82rem/1.65 var(--font-mono); white-space: pre; user-select: none; }
+.course-page .legacy-sql .code-box pre, .course-page .legacy-php .code-box pre { flex: 1 0 max-content; min-width: 0; max-width: none; overflow: visible; white-space: pre; margin: 0; padding: 14px 16px 14px 0; border: 0; border-radius: 0; box-shadow: none; background: var(--code-bg); color: var(--code-text); font: 500 .82rem/1.65 var(--font-mono); }
+.course-page .legacy-sql .code-box pre::before, .course-page .legacy-sql .code-box pre::after { display: none; content: none; }
+.course-page .code-box .tok-kw { color: var(--syntax-keyword); }
+.course-page .code-box .tok-val { color: var(--syntax-value); }
+.course-page .code-box .tok-comment { color: var(--syntax-comment); }
+.course-page .code-box .tok-attr, .course-page .code-box .tok-number { color: var(--syntax-attribute); }
+.course-page .code-box .tok-tag { color: var(--syntax-tag); }
+.course-page .matiere-panel { min-width: 0; display: grid; gap: var(--space-3); padding: var(--space-5); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface-solid); box-shadow: var(--shadow-xs); }
+.course-page .matiere-panel > * { min-width: 0; }
+.course-page .matiere-panel summary { cursor: pointer; font-weight: 750; }
+.course-page .matiere-panel p { color: var(--text-secondary); }
+.course-page .matiere-panel h2, .course-page .matiere-panel h3 { color: var(--text); line-height: 1.3; }
+.course-page .tab-section-wrap { display: grid; gap: var(--space-5); }
+.course-page .exercise-progress { display: grid; gap: var(--space-2); }
+.course-page .exercise-progress .progress-bar > span { display: block; height: 100%; width: 0; background: var(--course-accent); }
+.course-page .matiere-series-grid, .course-page .matiere-video-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,280px),1fr)); gap: var(--space-4); }
+.course-page .matiere-exercises { display: grid; gap: var(--space-4); }
+.course-page .matiere-check { display: flex; align-items: center; gap: var(--space-2); font-weight: 700; cursor: pointer; }
+.course-page .matiere-check input { width: 1.1rem; height: 1.1rem; }
+.course-page #sqlEditor { width: 100%; min-height: 150px; resize: vertical; padding: var(--space-4); border: 1px solid var(--code-border); border-radius: var(--radius-md); background: var(--code-bg); color: var(--code-text); font: .88rem/1.6 var(--font-mono); }
+.course-page #sqlResult { overflow-x: auto; color: var(--text); }
+.course-page #sqlResult table { border-collapse: collapse; min-width: 300px; width: 100%; }
+.course-page #sqlResult th, .course-page #sqlResult td { padding: var(--space-2); border: 1px solid var(--border); text-align: start; }
+.course-page #sqlResult th { background: var(--course-accent-soft); }
+.course-page .sql-guide audio { display: block; width: 100%; max-width: 540px; }
+.course-page .matiere-guide-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.course-page [data-guide-key].is-active { border-color: var(--course-accent); background: var(--course-accent-soft); }
+.course-page .guide-current { outline: 3px solid var(--course-accent); outline-offset: 4px; }
+.course-page .matiere-video-card { display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface-solid); }
+.course-page .matiere-video-card img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; background: var(--video-stage-bg); }
+.course-page .matiere-video-card > div { display: grid; gap: var(--space-2); padding: var(--space-4); }
+.course-page .matiere-video-card p { color: var(--text-secondary); }
+.course-page .line-details { margin-block: var(--space-3); padding: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-alt); }
+.course-page .line-details summary { cursor: pointer; color: var(--text); font-weight: 800; }
+.course-page .legacy-php #s9c-video { background: var(--surface-solid) !important; color: var(--text) !important; border-color: var(--course-accent-border) !important; }
+.course-page .legacy-php #quizSynthese fieldset { background: var(--surface-solid); color: var(--text); }
+/* L'overlay doit couvrir aussi les widgets fixes ajoutés par la protection. */
+.course-page .legacy-modals .anim-modal, .course-page .legacy-modals .sql-anim-modal, .course-page .matiere-video-modal { position: fixed; inset: 0; z-index: 2147483010; display: flex; align-items: center; justify-content: center; padding: var(--space-3); background: var(--overlay-bg); backdrop-filter: var(--backdrop-blur); -webkit-backdrop-filter: var(--backdrop-blur); }
+.course-page .legacy-modals .anim-modal[hidden], .course-page .legacy-modals .sql-anim-modal[hidden], .course-page .matiere-video-modal[hidden] { display: none !important; }
+.course-page .legacy-modals .anim-box, .course-page .legacy-modals .sql-anim-box, .course-page .matiere-video-window { position: relative; display: flex; flex-direction: column; width: min(1120px,96vw); height: min(800px,88dvh); min-width: min(320px,95vw); min-height: min(300px,80dvh); max-width: 96vw; max-height: 92dvh; overflow: hidden; border: 1px solid var(--border-strong); border-radius: var(--radius-lg); background: var(--surface-solid); color: var(--text); box-shadow: var(--shadow-lg); }
+.course-page .legacy-modals .anim-modal.full, .course-page .legacy-modals .sql-anim-modal.full { padding: 0; }
+.course-page .legacy-modals .anim-modal.full .anim-box, .course-page .legacy-modals .sql-anim-modal.full .sql-anim-box { width: 100vw !important; height: 100dvh !important; max-width: 100vw; max-height: 100dvh; border-radius: 0; }
+.course-page .legacy-modals .anim-head, .course-page .legacy-modals .sql-anim-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2); flex: 0 0 auto; padding: var(--space-3); border-bottom: 1px solid var(--border); background: var(--bg-alt); color: var(--text); font-weight: 800; }
+.course-page .legacy-modals .anim-tools, .course-page .legacy-modals .sql-anim-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.course-page .legacy-modals .anim-tools button, .course-page .legacy-modals .sql-anim-tools button { padding: .45rem .7rem; border: 1px solid var(--border-strong) !important; border-radius: var(--radius-sm); background: var(--surface-solid) !important; color: var(--text) !important; font: 700 .8rem/1.2 var(--font-sans); cursor: pointer; }
+.course-page .legacy-modals .anim-body, .course-page .legacy-modals .sql-anim-body { flex: 1 1 auto; min-height: 0; overflow: auto; padding: var(--space-4); background: var(--surface-solid); color: var(--text); }
+.course-page .legacy-modals .anim-body:has(iframe), .course-page .legacy-modals .sql-anim-body:has(iframe) { padding: 0; overflow: hidden; }
+.course-page .legacy-modals .anim-body:has(iframe) > div { height: 100%; }
+.course-page .legacy-modals iframe { display: block; width: 100% !important; height: 100% !important; min-height: 0 !important; border: 0; background: var(--surface-solid); }
+.course-page .matiere-resize { position: absolute; inset-inline-end: 0; bottom: 0; width: 28px; height: 28px; z-index: 2; cursor: nwse-resize; touch-action: none; background: linear-gradient(135deg, transparent 48%, var(--course-accent) 49%, var(--course-accent) 54%, transparent 55%, transparent 65%, var(--course-accent) 66%, var(--course-accent) 71%, transparent 72%); }
+[dir="rtl"] .course-page .matiere-resize { transform: scaleX(-1); cursor: nesw-resize; }
+.course-page .matiere-video-window { height: auto; max-height: 92dvh; overflow: auto; }
+.course-page .matiere-video-body { display: grid; gap: var(--space-3); padding: var(--space-4); }
+.course-page .matiere-video-body video { display: block; width: 100%; max-height: 68dvh; background: var(--video-stage-bg); }
+html.sti-modal-open .course-page #sti-sync-pastille { visibility: hidden !important; }
+@media (max-width: 979px) { .course-page--sql .course-hero__grid, .course-page--php .course-hero__grid { grid-template-columns: minmax(0,1fr); } }
+@media (max-width: 700px) {
+  .course-page .legacy-sql .course-chapter, .course-page .legacy-php .course-chapter, .course-page .matiere-panel { padding: var(--space-3); }
+  .course-page .legacy-modals .anim-modal:not(.full) .anim-box, .course-page .legacy-modals .sql-anim-modal:not(.full) .sql-anim-box { width: 96vw !important; height: 88dvh !important; }
+  .course-page .legacy-modals .anim-head, .course-page .legacy-modals .sql-anim-head { max-height: 32dvh; overflow: auto; }
+  .course-page .chapter-footer nav { width: 100%; justify-content: space-between; }
+}
+@media (prefers-reduced-motion: reduce) { .course-page *, .course-page *::before, .course-page *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+.course-page .matiere-search-hidden { display: none !important; }
+.course-page .legacy-sql .card h3 { display: block; overflow-wrap: anywhere; }
+.course-page button.matiere-resize { border: 0; padding: 0; border-radius: 0; }
+.course-page button.matiere-resize:focus-visible { outline: 3px solid var(--course-accent); outline-offset: -4px; }
+.course-page .legacy-sql .key-grid, .course-page .legacy-sql .cmp-grid { grid-template-columns: repeat(auto-fit,minmax(min(100%,290px),1fr)); }
+.course-page .legacy-sql .key-box, .course-page .legacy-sql .cmp-box { min-width: 0; }
+.course-page .legacy-sql .bac-bord-box { min-width: min(100%,280px); }
+.course-page .legacy-sql .rel-diagram { max-width: 100%; overflow-x: auto; }
+.course-page [data-course-panel] [id] { scroll-margin-top: calc(var(--header-height) + 78px); }
+.course-page .matiere-video-controls { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.course-page .matiere-video-controls select { padding: .45rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-solid); color: var(--text); }
+.course-page #modalVideoChapterStatus { color: var(--text-secondary); font-size: .82rem; }
+/* Contraste des repères pédagogiques : leurs familles restent différenciées. */
+.course-page .legacy-sql section[id] > h2.course-chapter__title { background: transparent !important; color: var(--text) !important; transform: none !important; }
+.course-page .legacy-sql .course-chapter__num { background: var(--course-accent-soft) !important; color: var(--text) !important; }
+.course-page .legacy-sql .pk > .key-badge, .course-page .legacy-sql th.is-pk,
+.course-page .legacy-sql .tag-parent { background: var(--warning-soft) !important; color: var(--text) !important; }
+.course-page .legacy-sql .tag-child, .course-page .legacy-sql .fk > .key-badge { background: var(--accent-css-soft) !important; color: var(--text) !important; }
+.course-page .legacy-sql .col > .key-badge, .course-page .legacy-sql .one > .rel-type { background: var(--accent-php-soft) !important; color: var(--text) !important; }
+.course-page .legacy-sql .tab > .key-badge, .course-page .legacy-sql .many > .rel-type { background: var(--success-soft) !important; color: var(--text) !important; }
+.course-page .legacy-sql .nn > .rel-type { background: var(--danger-soft) !important; color: var(--text) !important; }
+.course-page .legacy-sql .cmp-table th, .course-page .legacy-php .course-chapter th { background: var(--course-accent) !important; color: var(--text-inverse) !important; }
+.course-page .legacy-sql .ldd-command code { background: var(--code-bg) !important; color: var(--code-text) !important; }
+.course-page .legacy-sql .sql-janim-btn, .course-page .legacy-sql .bac-bord-btn,
+.course-page .legacy-sql .sql-janim-tab.active, .course-page .legacy-sql .sql-janim-step-badge,
+.course-page .legacy-sql .sql-gb-agg-pill, .course-page .legacy-sql .sql-janim-header .key-badge,
+.course-page .legacy-sql #bac > h2 > span:not(.course-chapter__num) {
+  background: var(--course-accent-soft) !important; color: var(--text) !important; border-color: var(--course-accent-border) !important;
+}
+.course-page .legacy-sql .vquiz-q legend { background: var(--course-accent) !important; color: var(--text-inverse) !important; }
+.course-page .matiere-code-scroll:focus-visible { outline: 2px solid var(--course-accent); outline-offset: -2px; }
+.course-page .legacy-sql .rel-becomes, .course-page .legacy-sql td .no { color: var(--text) !important; }
+.course-page .legacy-php #animOpen { color: var(--text-inverse) !important; }
+.course-page .legacy-sql .rel-becomes { opacity: 1; }
+.course-page .brand-logo__sub { color: var(--text-secondary); }
+.course-page .video-chapter-chip.is-active { color: var(--text); }
+.course-page .legacy-php .table-scroll table { display: table; overflow: visible; }
+.course-page .legacy-php .chapitre-btn, .course-page .legacy-php .sol-tab,
+.course-page .legacy-php .sol2-tab, .course-page .legacy-php .anim-modal a.anim-open { color: var(--text-inverse) !important; }
+.course-page .legacy-php #s10c-video { background: var(--success-soft) !important; color: var(--text) !important; }
+.course-page #sti-bnav .sti-bnav-i:not(.on) { color: var(--text-secondary) !important; }
+.course-page .anim-modal a[href$=".sql"] { color: var(--text-inverse) !important; }
+/* Ne pas recouvrir le bouton de retour par la pastille de synchronisation. */
+.course-page .back-to-top-fab { bottom: calc(var(--space-5) + 52px); }
+@media (max-width: 700px) {
+  .course-page #sti-sync-pastille { bottom: 75px !important; }
+  .course-page .back-to-top-fab { bottom: 128px; }
+}
+.course-page .sql-guide-follow { display: inline-flex; align-items: center; gap: var(--space-2); margin-top: var(--space-3); color: var(--text); }
+.course-page .php-audio-guide { display: grid; gap: var(--space-3); }
+.course-page .php-audio-guide h2, .course-page .php-audio-guide p { margin: 0; }
+.course-page .php-audio-guide audio { width: 100%; }
+.course-page .php-audio-guide select { max-width: 100%; padding: .55rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface-solid); color: var(--text); }
+.course-page .course-hero__heritage { margin: var(--space-2) 0 var(--space-4); color: var(--text-secondary); font-size: .875rem; }
