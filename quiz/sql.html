@@ -2244,6 +2244,7 @@ LIMIT 5;</textarea
           }
         } catch (eEx) {}
         memoEcrire("sqlQuestV3", JSON.stringify(S));
+        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP("sqlQuestV3");
       }
       /* Réparation douce : une sauvegarde ancienne peut ne pas connaître les
          8 mondes ni le mode examen. */
@@ -7527,6 +7528,7 @@ LIMIT 5;</textarea
 <!-- /Protection -->
 <script src="../assets/js/acces.js?v=453" defer></script>
   <script src="../assets/js/sync-progressions.js?v=478" defer></script>
+  <script src="../assets/js/profil.js" defer data-sti-quiz-seul></script>
 <script src="../assets/js/retour-quiz.js" defer></script>
 </body>
 </html>

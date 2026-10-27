@@ -99,9 +99,9 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
   const paths = ['cours/javascript.html', 'assets/css/cours-javascript.css', 'assets/js/cours-javascript.js', 'assets/js/app.js', 'assets/js/profil.js'];
   const ressources = ['exercices/javascript/js-37-defis-tt.html', 'assets/css/dialogues-compat.css', 'assets/js/dialogues-compat.js', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/fleurs/styles.css', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js', 'projets/carte-bancaire/style.css'];
   for (const path of [...paths, ...ressources]) {
-    const actualises = ['assets/js/profil.js', 'assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js'];
-    const revision = ['cours/javascript.html', 'assets/js/app.js'].includes(path) ? 'video-js-validation-v485' :
-      path === 'assets/js/profil.js' ? 'accueil-personnalise-v482' :
+    const actualises = ['assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js'];
+    const revision = path === 'assets/js/app.js' ? 'video-js-validation-v485' :
+      ['assets/js/profil.js', 'cours/javascript.html'].includes(path) ? 'cours-retour-xp-v486' :
       actualises.includes(path) ? 'fidelite-origine-v481' : 'correctif-ressources-js-20261027';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
@@ -171,4 +171,3 @@ test('vidéo Validation Nom & Prénom : déplacée dans assets/videos et intégr
   assert.match(protJs, /videos\/validation-nom-prenom-js\.mp4/);
   assert.match(protJs, /subtitles\/validation-nom-prenom-js-fr\.vtt/);
 });
-

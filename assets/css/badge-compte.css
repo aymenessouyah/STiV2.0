@@ -160,6 +160,8 @@ body.sti-v2:has(#sti-roue-btn.sti-badge-identite) #installBtn::before { content:
   .sti-badge-identite__qr { width: 29px; height: 29px; }
 }
 @media (max-width: 700px) {
+  /* Le QR reste disponible dans le badge sur ordinateur et ailleurs sur le site. */
+  .sti-badge-identite__qr { display: none; }
   /* Le panneau V2 reste entièrement dans le viewport malgré le nouvel en-tête. */
   body.sti-v2 [data-subscriber-slot] #sti-roue-wrap.sti-badge-identite__wrap .sti-pan {
     max-height: calc(100dvh - var(--header-height) - 18px) !important;

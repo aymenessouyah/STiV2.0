@@ -184,7 +184,7 @@
     try {
       if (root.classList.contains("sti-modal-open") || root.classList.contains("sti-bnav-sheet-open")) return true;
       if (doc.body && doc.body.classList.contains("nav-open")) return true;
-      if (doc.querySelector("nav.toc-nav.is-open, #side.open, #sidebar.menu-open, .sidebar.menu-open")) return true;
+      if (doc.querySelector("nav.toc-nav.is-open, #side.open, #sidebar.menu-open, .sidebar.menu-open, .course-sidebar.is-open")) return true;
       /* html5/courshtml5 : leur menu de logo (antérieur à v424) ouvre un « .menu-open » posé
          sur le panneau latéral — même respect : rien ne se cache pendant la lecture du sommaire. */
       if (doc.querySelector(".menu-open")) return true;

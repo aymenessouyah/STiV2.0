@@ -98,7 +98,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = ['assets/js/app.js','cours/javascript.html'].includes(chemin) ? 'video-js-validation-v485' : 'fidelite-origine-v481';
+    const revision = chemin === 'assets/js/app.js' ? 'video-js-validation-v485' : chemin === 'assets/js/cours-matieres.js' ? 'fidelite-origine-v481' : 'cours-retour-xp-v486';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
   assert.doesNotMatch(lire('assets/js/visionneuse-exercices.js'), /\blocalStorage\b|\bsessionStorage\b/);
@@ -147,9 +147,30 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     'quiz/sql.html': '624d98bf69cd262d830891f56286cd9e739b3cc6a09ec69d4aec066f4aa0d69b',
     'quiz/tableaux.html': 'd225e600a925199d472b5386c6fed3d9399d19107bf6ba3343c1c526ad583f8c'
   };
+  // Retirer uniquement les passerelles XP explicitement ajoutées : le hash
+  // continue de protéger tous les contenus et moteurs historiques des quiz.
+  const additionsXp = {
+    'quiz/html-css.html': ['        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(CLE_XP_HTMLCSS);\n'],
+    'quiz/javascript.html': [
+      '              if (STIQuizSync.notifierXP) STIQuizSync.notifierXP("sti-quiz-xp-js-v1");\n',
+      '                  if (STIQuizSync.notifierXP) STIQuizSync.notifierXP("sti-quiz-xp-js-v1");\n'
+    ],
+    'quiz/sql.html': ['        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP("sqlQuestV3");\n'],
+    'quiz/php.html': ['        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP("quizphp_v1_user");\n']
+  };
   for (const [chemin, empreinte] of Object.entries(quiz)) {
-    const courant = lire(chemin), ajout = /<script src="\.\.\/assets\/js\/retour-quiz\.js"(?: defer)?><\/script>\n/g;
+    let courant = lire(chemin);
+    const ajout = /<script src="\.\.\/assets\/js\/retour-quiz\.js"(?: defer)?><\/script>\n/g;
     assert.equal((courant.match(ajout) || []).length, 1, chemin);
-    assert.equal(createHash('sha256').update(courant.replace(ajout, '')).digest('hex'), empreinte, chemin);
+    courant = courant.replace(ajout, '');
+    if (additionsXp[chemin]) {
+      const profil = '  <script src="../assets/js/profil.js" defer data-sti-quiz-seul></script>\n';
+      for (const pont of [profil, ...additionsXp[chemin]]) {
+        const ligneComplete = '\n' + pont;
+        assert.equal(courant.split(ligneComplete).length - 1, 1, chemin + ' : passerelle attendue');
+        courant = courant.replace(ligneComplete, '\n');
+      }
+    }
+    assert.equal(createHash('sha256').update(courant).digest('hex'), empreinte, chemin);
   }
 });

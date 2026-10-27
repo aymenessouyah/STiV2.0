@@ -66,7 +66,8 @@ test('depuis un cours et les exercices, Vidéos ouvre le catalogue ; les séries
   await nav.getByRole('link', { name: 'Vidéos', exact: true }).click();
   await expect(page).toHaveURL(/\/index\.html#videos$/);
   await expect(page.locator('#videos')).toBeInViewport({ ratio: 0.01 });
-  await expect(page.locator('#videosGrid .video-card')).toHaveCount(8);
+  await expect(page.locator('#videosGrid .video-card')).toHaveCount(9);
+  await expect(page.locator('#videosGrid [data-play-video="validation-nom-prenom-js"]').first()).toBeVisible();
   nav = page.locator('#sti-bnav');
   await expect(nav.locator('[data-cle="videos"]')).toHaveClass(/\bon\b/);
   const autres = nav.getByRole('button', { name: 'Autres', exact: true });

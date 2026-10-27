@@ -108,7 +108,29 @@
             <div class="hero-actions"><a class="btn btn-course-primary" href="#entete">📖 Commencer le cours</a><button type="button" class="btn btn-secondary" id="heroListenBtn">🔊 Écouter le cours</button><a class="hero-annexe-link" id="lienAnnexePdf" href="../documents/annexes/annexe-html5.pdf.html#annexe-html5" target="_blank" rel="noopener" data-external-doc>📄 Annexe HTML5 ↗</a></div>
             <div class="course-hero__facts"><span>▦ 10 chapitres</span><span>▶ Vidéo &amp; audio</span><span>✦ Quiz interactif</span></div>
           </div>
-          <div class="featured-video-card"><div class="featured-video-card__head"><div><span class="video-label">VIDÉO À LA UNE</span><h2>Vidéo du cours HTML5 <span>(.mp4)</span></h2></div><span class="badge badge-html" data-video-seen-badge>🎥 HTML5</span></div><div class="featured-video-card__stage"><video id="heroCourseVideo" controls preload="metadata" playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3C/svg%3E" src="../assets/videos/html5-cours.mp4">Votre navigateur ne prend pas en charge la vidéo HTML5.</video></div><div class="featured-video-card__foot"><p>Le cours en images, des premières balises aux formulaires et aux cadres.</p><div class="source-actions"><button type="button" class="source-btn" data-resume-video hidden>⏯ Reprendre la vidéo</button><button type="button" class="source-btn" data-open-modal="tpl-video-cours" aria-haspopup="dialog">🔍 Agrandir</button><button type="button" class="source-btn" data-fullscreen-video="heroCourseVideo">⛶ Plein écran</button></div><div class="video-chapters-strip" data-video-chapters-bar aria-label="Chapitres de la vidéo"></div></div></div>
+          <!-- Objectifs et itinéraire : les liens conservent les ancres originales du cours. -->
+<section class="course-overview" data-sti-feuille-de-route aria-label="Présentation du cours">
+  <div class="course-lesson" aria-labelledby="sti-lecon-titre">
+    <h2 id="sti-lecon-titre">Dans cette leçon</h2>
+    <p>À la fin, vous serez en mesure de :</p>
+    <ul class="course-lesson__objectifs">
+<li>Structurer une page avec les balises sémantiques HTML5.</li>
+<li>Présenter du texte, des listes, des tableaux et des médias.</li>
+<li>Construire des formulaires et intégrer une page dans une iframe.</li>
+    </ul>
+  </div>
+  <nav class="course-roadmap" aria-labelledby="sti-feuille-titre">
+    <h2 id="sti-feuille-titre">Feuille de route du cours</h2>
+    <ol>
+<li><a href="#entete" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">1</span><span class="course-roadmap__copy"><strong>Comprendre la structure HTML5</strong><span>Qu’est-ce qu’une page HTML et à quoi servent l’en-tête et les métadonnées ?</span></span></a></li>
+<li><a href="#structuration" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">2</span><span class="course-roadmap__copy"><strong>Organiser le contenu</strong><span>Pourquoi utiliser des éléments sémantiques, des conteneurs, des listes et des tableaux ?</span></span></a></li>
+<li><a href="#texte-media" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">3</span><span class="course-roadmap__copy"><strong>Ajouter du texte et des médias</strong><span>Comment insérer des liens, des images, de l’audio et de la vidéo ?</span></span></a></li>
+<li><a href="#formulaires" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">4</span><span class="course-roadmap__copy"><strong>Créer des formulaires</strong><span>À quoi servent les champs, les types de saisie et l’attribut target ?</span></span></a></li>
+<li><a href="#iframe" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">5</span><span class="course-roadmap__copy"><strong>Intégrer une autre page</strong><span>Comment utiliser une iframe pour afficher un document dans une page ?</span></span></a></li>
+    </ol>
+  </nav>
+</section>
+<div class="featured-video-card"><div class="featured-video-card__head"><div><span class="video-label">VIDÉO À LA UNE</span><h2>Vidéo du cours HTML5 <span>(.mp4)</span></h2></div><span class="badge badge-html" data-video-seen-badge>🎥 HTML5</span></div><div class="featured-video-card__stage"><video id="heroCourseVideo" controls preload="metadata" playsinline poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3C/svg%3E" src="../assets/videos/html5-cours.mp4">Votre navigateur ne prend pas en charge la vidéo HTML5.</video></div><div class="featured-video-card__foot"><p>Le cours en images, des premières balises aux formulaires et aux cadres.</p><div class="source-actions"><button type="button" class="source-btn" data-resume-video hidden>⏯ Reprendre la vidéo</button><button type="button" class="source-btn" data-open-modal="tpl-video-cours" aria-haspopup="dialog">🔍 Agrandir</button><button type="button" class="source-btn" data-fullscreen-video="heroCourseVideo">⛶ Plein écran</button></div><div class="video-chapters-strip" data-video-chapters-bar aria-label="Chapitres de la vidéo"></div></div></div>
         </div>
       </div>
     </section>
@@ -138,30 +160,7 @@
           <div class="sidebar-help"><span>💡</span><p>Un chapitre à la fois. Marquez-le comme révisé pour suivre votre progression.</p></div>
         </aside>
         <div class="course-main">
-<!-- Objectifs et itinéraire : les liens conservent les ancres originales du cours. -->
-<section class="course-overview" data-sti-feuille-de-route aria-label="Présentation du cours">
-  <div class="course-lesson" aria-labelledby="sti-lecon-titre">
-    <h2 id="sti-lecon-titre">Dans cette leçon</h2>
-    <p>À la fin, vous serez en mesure de :</p>
-    <ul class="course-lesson__objectifs">
-<li>Structurer une page avec les balises sémantiques HTML5.</li>
-<li>Présenter du texte, des listes, des tableaux et des médias.</li>
-<li>Construire des formulaires et intégrer une page dans une iframe.</li>
-    </ul>
-  </div>
-  <nav class="course-roadmap" aria-labelledby="sti-feuille-titre">
-    <h2 id="sti-feuille-titre">Feuille de route du cours</h2>
-    <ol>
-<li><a href="#entete" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">1</span><span class="course-roadmap__copy"><strong>Comprendre la structure HTML5</strong><span>Qu’est-ce qu’une page HTML et à quoi servent l’en-tête et les métadonnées ?</span></span></a></li>
-<li><a href="#structuration" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">2</span><span class="course-roadmap__copy"><strong>Organiser le contenu</strong><span>Pourquoi utiliser des éléments sémantiques, des conteneurs, des listes et des tableaux ?</span></span></a></li>
-<li><a href="#texte-media" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">3</span><span class="course-roadmap__copy"><strong>Ajouter du texte et des médias</strong><span>Comment insérer des liens, des images, de l’audio et de la vidéo ?</span></span></a></li>
-<li><a href="#formulaires" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">4</span><span class="course-roadmap__copy"><strong>Créer des formulaires</strong><span>À quoi servent les champs, les types de saisie et l’attribut target ?</span></span></a></li>
-<li><a href="#iframe" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">5</span><span class="course-roadmap__copy"><strong>Intégrer une autre page</strong><span>Comment utiliser une iframe pour afficher un document dans une page ?</span></span></a></li>
-    </ol>
-  </nav>
-</section>
-
-          <div class="voice-guide-card" id="voiceGuideCard"><div class="voice-guide-card__top"><div><span class="voice-guide-kicker">ÉCOUTER ET SUIVRE</span><h2>🔊 Guide-Ligne vocal</h2><p>La piste audio suit les repères du cours. Le surlignage à l’intérieur de chaque chapitre est indicatif.</p></div><span class="badge badge-html">MP3 · 07:25</span></div><audio id="voiceGuideAudio" controls preload="metadata" src="../assets/audio/html5-cours.mp3">Votre navigateur ne peut pas lire l’audio.</audio><div class="voice-guide-card__controls"><span>Vitesse</span><button type="button" class="voice-rate-btn" data-voice-rate="0.85" aria-pressed="false">0,85×</button><button type="button" class="voice-rate-btn" data-voice-rate="1" aria-pressed="true">1×</button><button type="button" class="voice-rate-btn" data-voice-rate="1.15" aria-pressed="false">1,15×</button><label class="voice-follow"><input type="checkbox" id="voiceAutoFollow"> Suivre le texte</label></div><p class="voice-active-label" id="voiceActiveLabel" aria-live="polite">Choisissez la lecture pour suivre le cours.</p></div>
+<div class="voice-guide-card" id="voiceGuideCard"><div class="voice-guide-card__top"><div><span class="voice-guide-kicker">ÉCOUTER ET SUIVRE</span><h2>🔊 Guide-Ligne vocal</h2><p>La piste audio suit les repères du cours. Le surlignage à l’intérieur de chaque chapitre est indicatif.</p></div><span class="badge badge-html">MP3 · 07:25</span></div><audio id="voiceGuideAudio" controls preload="metadata" src="../assets/audio/html5-cours.mp3">Votre navigateur ne peut pas lire l’audio.</audio><div class="voice-guide-card__controls"><span>Vitesse</span><button type="button" class="voice-rate-btn" data-voice-rate="0.85" aria-pressed="false">0,85×</button><button type="button" class="voice-rate-btn" data-voice-rate="1" aria-pressed="true">1×</button><button type="button" class="voice-rate-btn" data-voice-rate="1.15" aria-pressed="false">1,15×</button><label class="voice-follow"><input type="checkbox" id="voiceAutoFollow"> Suivre le texte</label></div><p class="voice-active-label" id="voiceActiveLabel" aria-live="polite">Choisissez la lecture pour suivre le cours.</p></div>
           <section class="course-intro-banner">
           <span class="source-accent">Support complet avec l'Annexe HTML5</span>
           <h2 class="course-chapter__title">
