@@ -3,8 +3,8 @@ window.STI_AUTH = {
   URL: "https://vywujxmepvcbgedgmger.supabase.co",
   CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn",
   CLE_TURNSTILE: "0x4AAAAAAFeMDzetHdIs1MmC",
-  VERSION: 338,
-  VERSION_AFFICHEE: 477,
+  VERSION: 340,
+  VERSION_AFFICHEE: 479,
   RACINE: (typeof location !== "undefined" && location.origin && location.origin !== "null")
     ? (function () {
         /* v417 : l'ancien regex ne connaissait qu'une liste de pages ; toute page utilitaire

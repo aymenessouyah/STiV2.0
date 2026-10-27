@@ -1174,7 +1174,7 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
 .deep-result-item:hover { border-color: var(--brand); }
 
 /* ── 16. Cartes des Matières (.subject-card avec accent métier) ── */
-.subjects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: var(--space-5); }
+.subjects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 310px), 1fr)); gap: var(--space-5); }
 
 .subject-card {
   --matiere-accent: var(--brand);
@@ -1583,4 +1583,76 @@ html[dir="rtl"] body.sti-v2 { text-align: right; }
   body.sti-v2 {
     padding-bottom: 72px; /* Espace propre pour la barre mobile de config.js */
   }
+}
+
+/* Invitation PWA historique, adaptée aux jetons du thème et aux petits écrans. */
+body.sti-v2 .pwa-invitation {
+  position: fixed;
+  z-index: 9998;
+  inset-inline-start: var(--space-3);
+  bottom: 84px;
+  max-width: calc(100vw - 2 * var(--space-3));
+  padding: var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-solid);
+  color: var(--text);
+  box-shadow: var(--shadow-md);
+  font-size: .84rem;
+  font-weight: 700;
+}
+body.sti-v2 .pwa-invitation[hidden] { display: none; }
+body.sti-v2 .pwa-invitation__ligne { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+body.sti-v2 .pwa-invitation p { margin: var(--space-2) 0 0; max-width: 32ch; }
+body.sti-v2 #pwaInvitationInstaller {
+  background: var(--brand-hover);
+  border-color: var(--brand-hover);
+  color: var(--text-inverse) !important;
+}
+
+/* Garde l'action d'installation accessible sans élargir l'en-tête. */
+@media (max-width: 400px), (min-width: 1060px) and (max-width: 1200px) {
+  body.sti-v2 #installBtn { font-size: 0; padding-inline: var(--space-2); }
+  body.sti-v2 #installBtn::before { content: "📲"; font-size: .8rem; }
+}
+@media (min-width: 1060px) and (max-width: 1200px) {
+  body.sti-v2 .site-nav__link { padding-inline: 6px; }
+}
+body.sti-v2 .news-card .btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: start; }
+body.sti-v2 .site-footer .brand-logo { max-width: 100%; }
+body.sti-v2 .site-footer .brand-logo__title { white-space: normal; }
+
+/* Ancrages historiques : les liens de retour rejoignent la section sans passer sous l'en-tête. */
+body.sti-v2 .ancre-historique {
+  display: block;
+  scroll-margin-top: calc(var(--header-height) + 1rem);
+}
+
+/* ── Reprise historique v479 : harmonisation sans modifier son script d'origine ── */
+body.sti-v2 #sti-reprendre {
+  width: calc(100% - 32px);
+  max-width: var(--container-max) !important;
+  padding: var(--space-4) var(--space-5) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--radius-md) !important;
+  background: var(--surface-solid) !important;
+  box-shadow: var(--shadow-sm) !important;
+  color: var(--text) !important;
+  font-family: var(--font-sans) !important;
+}
+body.sti-v2 #sti-reprendre > div:first-child > div:first-child { color: var(--text-secondary) !important; }
+body.sti-v2 #sti-reprendre > div:first-child span {
+  background: var(--brand-soft) !important;
+  color: var(--text) !important;
+}
+body.sti-v2 #sti-reprendre a {
+  border: 1px solid var(--brand-hover) !important;
+  background: var(--brand-hover) !important;
+  box-shadow: none !important;
+  color: var(--text-inverse) !important;
+}
+body.sti-v2 #sti-reprendre-x {
+  border: 1px solid var(--border-strong) !important;
+  background: var(--surface-elevated) !important;
+  color: var(--text) !important;
 }

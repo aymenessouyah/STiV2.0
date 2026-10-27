@@ -98,7 +98,7 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
   const paths = ['cours/javascript.html', 'assets/css/cours-javascript.css', 'assets/js/cours-javascript.js', 'assets/js/app.js', 'assets/js/profil.js'];
   const ressources = ['exercices/javascript/js-37-defis-tt.html', 'assets/css/dialogues-compat.css', 'assets/js/dialogues-compat.js', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/fleurs/styles.css', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js', 'projets/carte-bancaire/style.css'];
   for (const path of [...paths, ...ressources]) {
-    const revision = ['assets/js/app.js', 'assets/js/profil.js'].includes(path) ? 'refonte-ui-javascript-20261027' : 'correctif-ressources-js-20261027';
+    const revision = ['cours/javascript.html', 'assets/js/app.js', 'assets/js/profil.js'].includes(path) ? 'integration-main-v480' : (['assets/js/app.js', 'assets/js/profil.js'].includes(path) ? 'refonte-ui-javascript-20261027' : 'correctif-ressources-js-20261027');
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }

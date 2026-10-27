@@ -71,7 +71,7 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     'cours/html5.html', 'dashboard.html', 'assets/css/theme.css', 'assets/css/cours.css',
     'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-html5.js'
   ]) {
-    const revision = ["assets/js/profil.js", "assets/js/app.js"].includes(path) ? "refonte-ui-javascript-20261027" : "refonte-ui-html5-20261027";
+    const revision = ["cours/html5.html", "dashboard.html", "assets/js/app.js", "assets/js/profil.js", "assets/css/theme.css"].includes(path) ? "integration-main-v480" : (["assets/js/profil.js", "assets/js/app.js"].includes(path) ? "refonte-ui-javascript-20261027" : "refonte-ui-html5-20261027");
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }

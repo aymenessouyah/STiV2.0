@@ -1280,23 +1280,68 @@
       });
     }
 
-    /* Bouton PWA Installer (s'appuie sur l'état unifié exposé par config.js / acces.js) */
+    /* Installation PWA : invitation historique limitée à la première visite et état d'installation partagé. */
     var btnInstall = document.getElementById("installBtn");
+    var invitation = document.getElementById("pwaInvitation");
+    var aideInstallation = document.getElementById("pwaInvitationAide");
+    var premiereInvitation = false;
+    var estIos = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    function applicationInstallee() {
+      try { return typeof global.__stiPwaEstInstallee === "function" && global.__stiPwaEstInstallee(); }
+      catch (e) { return false; }
+    }
     function majBoutonPwa() {
       if (!btnInstall) return;
-      var deja = typeof global.__stiPwaEstInstallee === "function" && global.__stiPwaEstInstallee();
-      var dispo = Boolean(global.__stiDeferredInstallPrompt) && !deja;
-      btnInstall.hidden = !dispo;
+      var disponible = Boolean(global.__stiDeferredInstallPrompt) || estIos;
+      btnInstall.hidden = !premiereInvitation || !disponible || applicationInstallee();
+      if (applicationInstallee() && invitation) invitation.hidden = true;
     }
-    if (btnInstall) {
-      btnInstall.addEventListener("click", function () {
-        var evPwa = global.__stiDeferredInstallPrompt;
-        if (evPwa && typeof evPwa.prompt === "function") {
-          evPwa.prompt();
+    function fermerInvitationPwa() {
+      premiereInvitation = false;
+      if (invitation) invitation.hidden = true;
+      majBoutonPwa();
+    }
+    function afficherAideInstallation() {
+      if (!invitation || !aideInstallation) return;
+      invitation.hidden = false;
+      aideInstallation.textContent = estIos
+        ? "Sur Safari, touchez Partager puis « Sur l’écran d’accueil »."
+        : "Dans le menu du navigateur, choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil ».";
+      aideInstallation.hidden = false;
+    }
+    function installerPwa() {
+      if (!premiereInvitation || applicationInstallee()) { fermerInvitationPwa(); return; }
+      var evenement = global.__stiDeferredInstallPrompt;
+      if (!evenement || typeof evenement.prompt !== "function") { afficherAideInstallation(); return; }
+      try {
+        var resultat = evenement.prompt();
+        Promise.resolve(evenement.userChoice || resultat).then(function (choix) {
+          global.__stiDeferredInstallPrompt = null;
+          if (choix && choix.outcome === "accepted" && typeof global.__stiMarquerPwaInstallee === "function") {
+            global.__stiMarquerPwaInstallee();
+          }
+          fermerInvitationPwa();
+        }, afficherAideInstallation);
+      } catch (e) { afficherAideInstallation(); }
+    }
+    if (btnInstall && global.STIProfil) {
+      premiereInvitation = !applicationInstallee() && !global.STIProfil.invitationInstallationDejaVue();
+      if (premiereInvitation) {
+        global.STIProfil.mettreAJour("invitationInstallationVue", true);
+        if (invitation && global.matchMedia && global.matchMedia("(max-width: 860px), (pointer: coarse)").matches) {
+          invitation.hidden = false;
         }
-      });
+      }
+      btnInstall.addEventListener("click", installerPwa);
+      var btnInvitation = document.getElementById("pwaInvitationInstaller");
+      var btnFermerInvitation = document.getElementById("pwaInvitationFermer");
+      if (btnInvitation) btnInvitation.addEventListener("click", installerPwa);
+      if (btnFermerInvitation) btnFermerInvitation.addEventListener("click", fermerInvitationPwa);
       global.addEventListener("beforeinstallprompt", majBoutonPwa);
-      global.addEventListener("sti:pwa-installee", majBoutonPwa);
+      global.addEventListener("appinstalled", fermerInvitationPwa);
+      global.addEventListener("sti:pwa-installee", fermerInvitationPwa);
       majBoutonPwa();
     }
 
@@ -1383,7 +1428,10 @@
       bd: "sql",
       php: "php"
     };
-    var matiereCible = correspondances[cle] || "html5";
+    /* Les liens de matière reconnus gardent leur redirection ; sans matière explicite,
+       conserver la page de séries historique et sa visionneuse média. */
+    var matiereCible = correspondances[cle];
+    if (!matiereCible) return false;
     global.location.replace("../cours/" + matiereCible + ".html#exercices");
     return true;
   }

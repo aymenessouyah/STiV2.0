@@ -13,14 +13,18 @@
 
   <!-- Feuille de style unique du Design System STI V2.0 -->
   <link rel="stylesheet" href="assets/css/theme.css" />
+  <link rel="stylesheet" href="assets/css/protection.css?v=227" />
 
   <!-- Ordre strict des scripts : config -> supabase-umd -> acces -> sync-progressions -> profil -> app -->
-  <script src="assets/js/config.js"></script>
+  <script src="assets/js/config.js?v=479"></script>
   <script defer src="assets/js/supabase-umd.js"></script>
-  <script defer src="assets/js/acces.js"></script>
-  <script defer src="assets/js/sync-progressions.js"></script>
-  <script src="assets/js/profil.js"></script>
+  <script defer src="assets/js/acces.js?v=479"></script>
+  <script defer src="assets/js/sync-progressions.js?v=479"></script>
+  <script defer src="assets/js/profil.js"></script>
   <script defer src="assets/js/app.js"></script>
+  <!-- Suivi média et reprise historiques de la plateforme. -->
+  <script defer src="assets/js/protection.js?v=227&amp;rev=479"></script>
+  <script defer src="assets/js/reprendre.js?v=479"></script>
 </head>
 <body class="sti-v2">
   <!-- Lien d'évitement clavier (accessibilité RGAA / WCAG) -->
@@ -491,6 +495,8 @@
          ATELIERS & OUTILS SPÉCIAUX BAC STI
          ═════════════════════════════════════════════════════════════════════ -->
     <section class="section" id="outils-bac" aria-labelledby="titre-outils">
+      <!-- Ancre historique utilisée par les retours depuis les exercices et ateliers. -->
+      <span id="exercices" class="ancre-historique" aria-hidden="true"></span>
       <div class="container">
         <div class="section-header">
           <div>
@@ -570,12 +576,14 @@
          QUIZ INTERACTIFS, RÉVISION « MES ERREURS » & QUIZ DES TABLEAUX
          ═════════════════════════════════════════════════════════════════════ -->
     <section class="section" id="quiz" aria-labelledby="titre-quiz">
+      <!-- Les quiz existants reviennent vers index.html#modules. -->
+      <span id="modules" class="ancre-historique" aria-hidden="true"></span>
       <div class="container">
         <div class="section-header">
           <div>
             <span class="section-kicker">🎯 Auto-évaluation immédiate</span>
             <h2 id="titre-quiz">Quiz d'entraînement &amp; Révision intelligente</h2>
-            <p>1 244 questions corrigées et expliquées, avec suivi automatique de vos erreurs à retravailler.</p>
+            <p><span class="sti-4si-only">Cinq quiz &amp; révision ciblée (1 244 questions)</span><span class="sti-non-4si-only">Quatre quiz &amp; révision ciblée (886 questions)</span>, corrigés et expliqués, avec suivi automatique de vos erreurs à retravailler.</p>
           </div>
         </div>
 
@@ -636,7 +644,7 @@
               <span style="font-size:.78rem;color:var(--text-muted)">Spécial Tableaux</span>
             </div>
             <h3>Quiz intensif des Tableaux</h3>
-            <p style="font-size:.86rem">Maîtrisez les tableaux HTML (<code>rowspan</code>/<code>colspan</code>), tableaux JS et tableaux associatifs PHP.</p>
+            <p style="font-size:.86rem">Maîtrisez les tableaux HTML (<code>rowspan</code>/<code>colspan</code>), tableaux JS et tableaux associatifs PHP, avec des questions tirées de votre Smart Book, des 66 Défis JS &amp; HTML et du Récap PHP.</p>
             <a class="btn btn-secondary btn-sm" style="margin-top:auto" href="quiz/tableaux.html">Ouvrir le Quiz Tableaux ➜</a>
           </article>
         </div>
@@ -761,6 +769,16 @@
       </div>
     </div>
   </footer>
+
+  <!-- Invitation d'installation historique, affichée une seule fois sur mobile. -->
+  <aside class="pwa-invitation" id="pwaInvitation" aria-label="Installer l’application" hidden>
+    <div class="pwa-invitation__ligne">
+      <span>📲 Installer l’application du cours</span>
+      <button type="button" class="btn btn-primary btn-sm" id="pwaInvitationInstaller">Installer</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="pwaInvitationFermer" aria-label="Fermer l’invitation">✕</button>
+    </div>
+    <p id="pwaInvitationAide" role="status" hidden></p>
+  </aside>
 
   <!-- ═══════════════════════════════════════════════════════════════════════
        FENÊTRE MODALE CONTACT & QR CODE VECTORIEL SVG (ZÉRO IMAGE EXTERNE)

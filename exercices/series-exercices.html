@@ -2040,11 +2040,85 @@
         document.getElementById("pdfModal").classList.add("open");
         document.body.style.overflow = "hidden"; // Bloquer le défilement
 
-        controlerDocument(fileUrl);
+        if (!suivreMediaDansPdfFrame(fileUrl)) {
+          controlerDocument(fileUrl);
+        }
         chargerDansPdfFrame(fileUrl);
       }
 
+      var mediaSuiviModal = null;
+
+      function purgerSuiviMediaPdfFrame() {
+        if (!mediaSuiviModal) return;
+        try {
+          var el = mediaSuiviModal.el;
+          var cle = mediaSuiviModal.cle;
+          if (el && cle && typeof window.enregistrerProgressionMediaSTI === "function") {
+            var curT = Number(el.currentTime) || 0;
+            var durT = Number(el.duration) || 0;
+            if (curT >= 2) {
+              window.enregistrerProgressionMediaSTI(cle, curT, durT, Boolean(el.ended));
+              if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+                window.synchroniserProgressionMediaServeurSTI(true);
+              }
+            }
+          }
+        } catch (eFlush) {}
+        mediaSuiviModal = null;
+      }
+
+      function suivreMediaDansPdfFrame(fileUrl) {
+        mediaSuiviModal = null;
+        if (!/\.(mp4|webm|mp3|ogg|wav|m4a)($|[?#])/i.test(String(fileUrl || ""))) return false;
+        var frame = document.getElementById("pdfFrame");
+        if (!frame) return false;
+        frame.onload = function () {
+          modalChargee = true;
+          try {
+            var doc = frame.contentDocument;
+            if (!doc) return;
+            var el = doc.querySelector && doc.querySelector("video, audio");
+            if (!el || el.__stiModalMediaTracked) return;
+            el.__stiModalMediaTracked = true;
+            var cle = (typeof window.resoudreCleMediaDepuisUrlSTI === "function")
+              ? window.resoudreCleMediaDepuisUrlSTI(fileUrl, el.tagName)
+              : "";
+            if (!cle) return;
+            mediaSuiviModal = { el: el, cle: cle };
+            el.addEventListener("timeupdate", function () {
+              if (el.paused || typeof window.enregistrerProgressionMediaSTI !== "function") return;
+              window.enregistrerProgressionMediaSTI(cle, el.currentTime, el.duration, false);
+            });
+            el.addEventListener("pause", function () {
+              if (el.currentTime >= 2 && typeof window.enregistrerProgressionMediaSTI === "function") {
+                window.enregistrerProgressionMediaSTI(cle, el.currentTime, el.duration, false);
+                if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+                  window.synchroniserProgressionMediaServeurSTI(true);
+                }
+              }
+            });
+            el.addEventListener("ended", function () {
+              if (typeof window.enregistrerProgressionMediaSTI === "function") {
+                var dFin = (el.duration && isFinite(el.duration) && el.duration > 0) ? el.duration : Math.max(el.currentTime || 0, 60);
+                window.enregistrerProgressionMediaSTI(cle, dFin, dFin, true);
+                if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
+                  window.synchroniserProgressionMediaServeurSTI(true);
+                }
+              }
+            });
+            doc.addEventListener("keydown", function (e) {
+              if (e.key !== "Escape") return;
+              if (doc.fullscreenElement || document.fullscreenElement) return;
+              e.preventDefault();
+              closePdfModal();
+            }, true);
+          } catch (eMed) {}
+        };
+        return true;
+      }
+
       function closePdfModal(event) {
+        purgerSuiviMediaPdfFrame();
         document.getElementById("pdfModal").classList.remove("open");
         var frameClose = document.getElementById("pdfFrame");
         if (frameClose) frameClose.onload = null;
@@ -2137,9 +2211,12 @@
 
       function reloadModalFrame() {
         if (!modalUrl) return;
+        purgerSuiviMediaPdfFrame();
         chargerDansPdfFrame("about:blank");
         setTimeout(function () {
-          controlerDocument(modalUrl);
+          if (!suivreMediaDansPdfFrame(modalUrl)) {
+            controlerDocument(modalUrl);
+          }
           chargerDansPdfFrame(modalUrl);
         }, 60);
       }
@@ -2341,12 +2418,12 @@
   <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(history.state,"",location.pathname+location.search);});var prech=function(){try{var c=navigator&&(navigator.connection||navigator.mozConnection||navigator.webkitConnection);if(c&&(c.saveData||/(^|-)2g$/i.test(String(c.effectiveType||""))))return;[["../index.html","document"],["../assets/css/atelier.css","style"]].forEach(function(it){var l=document.createElement("link");l.rel="prefetch";l.as=it[1];l.href=it[0];(document.head||document.documentElement).appendChild(l);});}catch(eP){}};if(typeof requestIdleCallback==="function")requestIdleCallback(prech,{timeout:1500});else setTimeout(prech,900);})();</script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../assets/css/protection.css?v=227" />
-<script src="../assets/js/config.js?v=476" defer></script>
-<script src="../assets/js/protection.js?v=474" defer></script>
+<script src="../assets/js/config.js?v=479" defer></script>
+<script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js" defer></script>
-<script src="../assets/js/acces.js?v=453" defer></script>
-  <script src="../assets/js/sync-progressions.js?v=476" defer></script>
+<script src="../assets/js/acces.js?v=479" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=479" defer></script>
   <script src="../assets/js/profil.js" defer></script>
   <script src="../assets/js/app.js" defer></script>
 </body>

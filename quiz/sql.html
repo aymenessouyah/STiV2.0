@@ -2227,6 +2227,22 @@ LIMIT 5;</textarea
         S = JSON.parse(JSON.stringify(DEFAULT_STATE));
       }
       function save() {
+        try {
+          const ex = JSON.parse(memoLire("sqlQuestV3") || "null");
+          if (ex && typeof ex === "object") {
+            S.xp = Math.max(Number(S.xp) || 0, Number(ex.xp) || 0);
+            S.level = Math.max(Number(S.level) || 1, Number(ex.level) || 1);
+            S.streak = Math.max(Number(S.streak) || 0, Number(ex.streak) || 0);
+            S.totalAnswered = Math.max(Number(S.totalAnswered) || 0, Number(ex.totalAnswered) || 0);
+            S.totalCorrect = Math.max(Number(S.totalCorrect) || 0, Number(ex.totalCorrect) || 0);
+            S.bestCombo = Math.max(Number(S.bestCombo) || 0, Number(ex.bestCombo) || 0);
+            if (ex.best && S.best) {
+              Object.keys(ex.best).forEach((m) => {
+                S.best[m] = Math.max(Number(S.best[m]) || 0, Number(ex.best[m]) || 0);
+              });
+            }
+          }
+        } catch (eEx) {}
         memoEcrire("sqlQuestV3", JSON.stringify(S));
       }
       /* Réparation douce : une sauvegarde ancienne peut ne pas connaître les
@@ -5551,6 +5567,18 @@ LIMIT 5;</textarea
           STIQuizSync.enregistrer
         ) {
           Q._partySynced = true;
+          if (!Q._xpCredited && repondues.length > 0) {
+            Q._xpCredited = true;
+            const accExit = Math.round((Q.correct / repondues.length) * 100);
+            let xpExit =
+              Math.round((Q.score || 0) / 15) +
+              (accExit === 100 ? 100 : accExit >= 80 ? 50 : accExit >= 50 ? 20 : 5) +
+              (Q.bestCombo || 0) * 5;
+            if (Q.mode === "daily") xpExit = Math.round(xpExit * 1.5);
+            S.xp = (Number(S.xp) || 0) + xpExit;
+            S.level = Math.max(Number(S.level) || 1, levelForXP(S.xp));
+            save();
+          }
           if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function" && repondues.length) {
             STIQuizSync.noterQuestionsVuesQuiz(
               "q_sql",
@@ -5617,10 +5645,21 @@ LIMIT 5;</textarea
           STIQuizSync.resume("sql")
             .then((res) => {
               if (!res) return;
+              let majSql = false;
+              if (res.xpPlancher && res.xpPlancher > (S.xp || 0)) {
+                S.xp = res.xpPlancher;
+                S.level = Math.max(S.level || 1, levelForXP(S.xp));
+                majSql = true;
+              }
               if (res.totalQuestions && res.totalQuestions > (S.totalAnswered || 0)) {
                 S.totalAnswered = res.totalQuestions;
                 S.totalCorrect = Math.max(S.totalCorrect || 0, res.totalBonnes || 0);
+                majSql = true;
+              }
+              if (majSql) {
                 save();
+                updateNavbar();
+                try { renderLeaderboard(); } catch (eLb) {}
               }
               const z = $("sqlCloudBilan");
               if (!z || !res.parties) return;
@@ -5790,6 +5829,12 @@ LIMIT 5;</textarea
           total,
         });
         if (S.history.length > 30) S.history = S.history.slice(-30);
+        const oldLvlEnd = Number(S.level) || 1;
+        if (!Q._xpCredited) {
+          Q._xpCredited = true;
+          S.xp = (Number(S.xp) || 0) + xpGain;
+          S.level = Math.max(oldLvlEnd, levelForXP(S.xp));
+        }
         checkStreak();
         save();
         checkBadges();
@@ -5915,7 +5960,9 @@ LIMIT 5;</textarea
           try { boom(true); } catch (eB) {}
           playWin();
         } else playCorrect();
-        addXP(xpGain);
+        if (S.level > oldLvlEnd) {
+          setTimeout(() => showLevelup(S.level), 900);
+        }
         Q._last = { score: Q.score, xp: xpGain, acc };
       }
       const REPERES_COURS_SQL = {
@@ -7347,8 +7394,27 @@ LIMIT 5;</textarea
       window.addEventListener("sti-cloud-restored", () => {
         try {
           const lu = JSON.parse(localStorage.getItem("sqlQuestV3") || "null");
-          if (lu && typeof S === "object") {
-            Object.assign(S, lu);
+          if (lu && typeof lu === "object" && typeof S === "object") {
+            const bestMerged = Object.assign({}, lu.best || {}, S.best || {});
+            Object.keys(bestMerged).forEach((m) => {
+              bestMerged[m] = Math.max(Number(S.best && S.best[m]) || 0, Number(lu.best && lu.best[m]) || 0);
+            });
+            const xpMax = Math.max(Number(S.xp) || 0, Number(lu.xp) || 0);
+            const lvlMax = Math.max(Number(S.level) || 1, Number(lu.level) || 1, levelForXP(xpMax));
+            const stMax = Math.max(Number(S.streak) || 0, Number(lu.streak) || 0);
+            const taMax = Math.max(Number(S.totalAnswered) || 0, Number(lu.totalAnswered) || 0);
+            const tcMax = Math.max(Number(S.totalCorrect) || 0, Number(lu.totalCorrect) || 0);
+            const bcMax = Math.max(Number(S.bestCombo) || 0, Number(lu.bestCombo) || 0);
+            Object.assign(S, lu, {
+              xp: xpMax,
+              level: lvlMax,
+              streak: stMax,
+              totalAnswered: taMax,
+              totalCorrect: tcMax,
+              bestCombo: bcMax,
+              best: bestMerged,
+            });
+            updateNavbar();
             if (typeof renderAll === "function") renderAll();
           }
         } catch (e) {}
@@ -7460,6 +7526,6 @@ LIMIT 5;</textarea
 <script src="../assets/js/protection.js?v=227" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/acces.js?v=453" defer></script>
-  <script src="../assets/js/sync-progressions.js?v=476" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=478" defer></script>
 </body>
 </html>

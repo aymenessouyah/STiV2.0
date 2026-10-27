@@ -5520,6 +5520,37 @@ background-repeat: repeat;</pre>
         });
       }
 
+      var CLE_XP_HTMLCSS = "quizzora_xp_v1";
+      function lireXpHtmlCss() {
+        try {
+          var o = JSON.parse(localStorage.getItem(CLE_XP_HTMLCSS) || "null");
+          if (o && typeof o === "object") {
+            return {
+              xp: Math.max(0, Number(o.xp) || 0),
+              best: Math.max(0, Number(o.best) || 0),
+              parties: Math.max(0, Number(o.parties) || 0),
+              bonnes: Math.max(0, Number(o.bonnes) || 0),
+              total: Math.max(0, Number(o.total) || 0),
+            };
+          }
+        } catch (e) {}
+        return { xp: 0, best: 0, parties: 0, bonnes: 0, total: 0 };
+      }
+      function ecrireXpHtmlCss(patch) {
+        var cur = lireXpHtmlCss();
+        var out = {
+          xp: Math.max(cur.xp, Number(patch && patch.xp != null ? patch.xp : cur.xp) || 0),
+          best: Math.max(cur.best, Number(patch && patch.best != null ? patch.best : cur.best) || 0),
+          parties: Math.max(cur.parties, Number(patch && patch.parties != null ? patch.parties : cur.parties) || 0),
+          bonnes: Math.max(cur.bonnes, Number(patch && patch.bonnes != null ? patch.bonnes : cur.bonnes) || 0),
+          total: Math.max(cur.total, Number(patch && patch.total != null ? patch.total : cur.total) || 0),
+        };
+        try { localStorage.setItem(CLE_XP_HTMLCSS, JSON.stringify(out)); } catch (e) {}
+        var elHs = $("#heroScore");
+        if (elHs) elHs.textContent = "XP cumulés : " + out.xp.toLocaleString("fr-FR") + " XP";
+        return out;
+      }
+
       function repondreApercu(idx, idxCorrect, bouton, zone) {
         if (apercu.verrou) return;
         apercu.verrou = true;
@@ -5531,11 +5562,14 @@ background-repeat: repeat;</pre>
         });
         if (idx === idxCorrect) {
           apercu.score += 250;
+          var curAp = lireXpHtmlCss();
+          ecrireXpHtmlCss({ xp: curAp.xp + 250 });
           toast("Bonne réponse ! +250 XP", "⚡");
         } else {
           toast("Raté — c'est un aperçu, pas la partie", "🙃");
         }
-        $("#heroScore").textContent = "Score : " + apercu.score;
+        var totXpAp = lireXpHtmlCss().xp;
+        $("#heroScore").textContent = "XP cumulés : " + totXpAp.toLocaleString("fr-FR") + " XP";
         setTimeout(function () {
           afficherApercu(apercu.i + 1);
         }, 1500);
@@ -5612,6 +5646,7 @@ background-repeat: repeat;</pre>
         state.session = preparerSessionDepuisListeHc(tirees);
         state.index = 0;
         state.partySynced = false;
+        state.xpCredited = false;
       }
 
       function sauvegarderSessionHtmlCssCloud() {
@@ -5652,14 +5687,34 @@ background-repeat: repeat;</pre>
         }
         if (typeof STIQuizSync.resume === "function") {
           STIQuizSync.resume("html-css").then(function (res) {
+            if (res) {
+              var curHc = lireXpHtmlCss();
+              if (
+                (res.xpPlancher && res.xpPlancher > curHc.xp) ||
+                (res.meilleurPoints && res.meilleurPoints > curHc.best) ||
+                (res.parties && res.parties > curHc.parties)
+              ) {
+                ecrireXpHtmlCss({
+                  xp: Math.max(curHc.xp, res.xpPlancher || 0),
+                  best: Math.max(curHc.best, res.meilleurPoints || 0),
+                  parties: Math.max(curHc.parties, res.parties || 0),
+                  bonnes: Math.max(curHc.bonnes, res.totalBonnes || 0),
+                  total: Math.max(curHc.total, res.totalQuestions || 0),
+                });
+              }
+            }
             var z = $("#hcCloudBilan");
             if (!z || !res || !res.parties) return;
+            var xpActuelHc = lireXpHtmlCss().xp;
             z.innerHTML =
               '<div class="glass panel" style="padding:12px 16px;font-size:.9rem;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">' +
               "<span>☁️ <strong>Scores Supabase :</strong> " +
               res.parties +
               " partie" +
               (res.parties > 1 ? "s" : "") +
+              " · ⚡ <strong>" +
+              xpActuelHc.toLocaleString("fr-FR") +
+              " XP</strong>" +
               (res.meilleur
                 ? " · 🏆 Meilleur : <strong>" +
                   res.meilleur.score +
@@ -5718,6 +5773,7 @@ background-repeat: repeat;</pre>
                 });
                 state.index = idx;
                 state.partySynced = false;
+                state.xpCredited = false;
                 zr.innerHTML = "";
                 rendreQuestion();
                 ouvrirOverlay("quizOverlay");
@@ -5969,6 +6025,17 @@ background-repeat: repeat;</pre>
           state.partySynced = true;
           var nbBonnes = repondues.filter(function (q) { return q.options[q.answer] && q.options[q.answer].ok; }).length;
           var listeFinale = finaliserPartie === "complet" ? state.session : repondues;
+          if (!state.xpCredited && nbBonnes > 0) {
+            state.xpCredited = true;
+            var curFinHc = lireXpHtmlCss();
+            ecrireXpHtmlCss({
+              xp: curFinHc.xp + nbBonnes * 250,
+              best: Math.max(curFinHc.best, nbBonnes * 100),
+              parties: curFinHc.parties + 1,
+              bonnes: curFinHc.bonnes + nbBonnes,
+              total: curFinHc.total + listeFinale.length,
+            });
+          }
           var ordreFinal = listeFinale.map(function (q, idx) {
             var estOk = q.answer !== null && q.answer !== undefined && q.options[q.answer] && q.options[q.answer].ok;
             return { rang: idx + 1, id: STIQuizSync.hash(q.text), enonce: q.text, ok: !!estOk };
@@ -6582,6 +6649,7 @@ background-repeat: repeat;</pre>
         state.session = preparerSessionDepuisListeHc(fautes);
         state.index = 0;
         state.partySynced = false;
+        state.xpCredited = false;
         fermerOverlay("resultsOverlay");
         sauvegarderSessionHtmlCssCloud();
         rendreQuestion();
@@ -6598,6 +6666,7 @@ background-repeat: repeat;</pre>
         state.session = preparerSessionDepuisListeHc(state.session);
         state.index = 0;
         state.partySynced = false;
+        state.xpCredited = false;
         fermerOverlay("resultsOverlay");
         sauvegarderSessionHtmlCssCloud();
         rendreQuestion();
@@ -6889,6 +6958,16 @@ background-repeat: repeat;</pre>
         construireMarquee();
         construireApercu();
         demarrerApercu();
+        var xpInitHc = lireXpHtmlCss().xp;
+        if (xpInitHc > 0 && $("#heroScore")) {
+          $("#heroScore").textContent = "XP cumulés : " + xpInitHc.toLocaleString("fr-FR") + " XP";
+        }
+        window.addEventListener("sti-cloud-restored", function () {
+          var xpR = lireXpHtmlCss().xp;
+          if ($("#heroScore") && xpR > 0) {
+            $("#heroScore").textContent = "XP cumulés : " + xpR.toLocaleString("fr-FR") + " XP";
+          }
+        });
         majResume();
         majChrono();
         demarrerParticules();
@@ -6919,6 +6998,6 @@ background-repeat: repeat;</pre>
 <script src="../assets/js/protection.js?v=227" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/acces.js?v=453" defer></script>
-  <script src="../assets/js/sync-progressions.js?v=476" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=478" defer></script>
 </body>
 </html>

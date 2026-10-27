@@ -451,24 +451,26 @@ test.describe('ressources JavaScript hors connexion', () => {
       } catch (e) {}
     });
     // Préparer un cache réduit pour le test, sans télécharger l'installation complète.
-    const config = await (await import('node:fs/promises')).readFile(new URL('../assets/js/config.js', import.meta.url), 'utf8');
-    await page.evaluate(async (configSource) => {
+    const fs = await import('node:fs/promises');
+    const config = await fs.readFile(new URL('../assets/js/config.js', import.meta.url), 'utf8');
+    const nomCache = (await fs.readFile(new URL('../sw.js', import.meta.url), 'utf8')).match(/var CACHE\s*=\s*"([^"]+)"/)[1];
+    await page.evaluate(async (nomCache) => {
       await navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' });
       await navigator.serviceWorker.ready;
-      const c = await caches.open('sti-atelier-v339');
+      const c = await caches.open(nomCache);
       await c.addAll([
         '/cours/javascript.html', '/assets/css/theme.css', '/assets/css/cours.css', '/assets/css/cours-javascript.css', '/assets/css/protection.css',
         '/assets/js/supabase-umd.js', '/assets/js/acces.js', '/assets/js/sync-progressions.js', '/assets/js/profil.js', '/assets/js/app.js', '/assets/js/protection.js', '/assets/js/cours-javascript.js',
         '/exercices/javascript/Tp1-js.html', '/exercices/javascript/js-37-defis-tt.html', '/assets/css/dialogues-compat.css', '/assets/js/dialogues-compat.js', '/assets/audio/foret.mp3'
       ]);
-    }, config);
+    }, nomCache);
     await page.reload(); await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
     // La réponse fictive reste limitée à ce contexte de test ; aucun accès de production n'est modifié.
-    await page.evaluate(async (configSource) => {
+    await page.evaluate(async ({ configSource, nomCache }) => {
       const mock = "\nwindow.STI_AUTH = { URL: '', ANON_KEY: '', estPagePublique: () => false, getProfile: async () => ({ id:'test-gold',email:'test@example.invalid',role:'eleve',statut_acces:'GOLD',enabled:true }), signOut: async () => {} };";
-      const c = await caches.open('sti-atelier-v339');
+      const c = await caches.open(nomCache);
       await c.put('/assets/js/config.js', new Response(configSource + mock, { headers: { 'content-type': 'text/javascript' } }));
-    }, config);
+    }, { configSource: config, nomCache });
     await context.setOffline(true);
     try {
       await page.goto('http://127.0.0.1:4173/cours/javascript.html#exercices', { waitUntil: 'domcontentloaded' });

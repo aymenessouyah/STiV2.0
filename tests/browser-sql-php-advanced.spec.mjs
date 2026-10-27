@@ -157,22 +157,24 @@ test.describe('cours SQL et PHP déjà préparés hors connexion',()=>{
       try {window.__STI_NATIVE_AUTHENTICATED_V316=true;sessionStorage.setItem('sti-native-session-v316','1');sessionStorage.setItem('sti-session-cache',JSON.stringify(cache));localStorage.setItem('sti-session-cache',JSON.stringify(cache));}catch(e){}
     });
     await ouvrir(page,'sql');
-    await page.evaluate(async()=>{
+    const fs=await import('node:fs/promises');
+    const nomCache=(await fs.readFile(new URL('../sw.js',import.meta.url),'utf8')).match(/var CACHE\s*=\s*"([^"]+)"/)[1];
+    await page.evaluate(async nomCache=>{
       await navigator.serviceWorker.register('/sw.js',{updateViaCache:'none'});await navigator.serviceWorker.ready;
-      const cache=await caches.open('sti-atelier-v339');await cache.addAll([
+      const cache=await caches.open(nomCache);await cache.addAll([
         '/cours/sql.html','/cours/php.html','/cours/PHP-recap.html','/assets/css/theme.css','/assets/css/cours.css',
         '/assets/css/cours-matieres.css','/assets/css/cours-sql-heritage.css','/assets/css/cours-php-heritage.css','/assets/css/protection.css',
         '/assets/js/supabase-umd.js','/assets/js/acces.js','/assets/js/sync-progressions.js','/assets/js/profil.js','/assets/js/app.js',
         '/assets/js/protection.js','/assets/js/cours-matieres.js','/assets/js/cours-media-reperes.js','/assets/js/cours-sql-animations.js',
         '/assets/js/cours-sql-voix.js','/assets/js/cours-sql-worker.js','/assets/js/sqljs/sql-wasm.js','/assets/js/sqljs/sql-wasm.wasm'
       ]);
-    });
+    },nomCache);
     await page.reload();await expect.poll(()=>page.evaluate(()=>!!navigator.serviceWorker.controller)).toBe(true);
-    const config=await (await import('node:fs/promises')).readFile(new URL('../assets/js/config.js',import.meta.url),'utf8');
-    await page.evaluate(async source=>{
+    const config=await fs.readFile(new URL('../assets/js/config.js',import.meta.url),'utf8');
+    await page.evaluate(async ({source,nomCache})=>{
       const simulation="\nwindow.STI_AUTH = { URL: '', ANON_KEY: '', estPagePublique: () => false, getProfile: async () => ({id:'test-gold',email:'test@example.invalid',role:'eleve',classe:'4SI 1',statut_acces:'GOLD',enabled:true}), signOut: async () => {} };";
-      const cache=await caches.open('sti-atelier-v339');await cache.put('/assets/js/config.js',new Response(source+simulation,{headers:{'content-type':'text/javascript'}}));
-    },config);
+      const cache=await caches.open(nomCache);await cache.put('/assets/js/config.js',new Response(source+simulation,{headers:{'content-type':'text/javascript'}}));
+    },{source:config,nomCache});
     await context.setOffline(true);
     try {
       await page.goto('/cours/sql.html#exercices',{waitUntil:'domcontentloaded'});await expect(page.locator('#sqlEditor')).toBeVisible();

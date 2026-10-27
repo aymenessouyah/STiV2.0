@@ -854,14 +854,57 @@
     }
   }
 
+  /* v478 : plancher d'XP cumulés garanti à partir de l'historique immuable sti_quiz_parties
+     (même après purge du cache local ou changement d'appareil, un élève ne repart jamais à 0 XP
+     dès lors qu'au moins une partie figure dans sti_quiz_parties ou dans la file write-ahead). */
+  function xpMinimumPartie(quizNom, l) {
+    if (!l) return 0;
+    var qz = String(quizNom || l.quiz || "").toLowerCase();
+    var sc = Math.max(0, Number(l.score) || 0);
+    var tot = Math.max(1, Number(l.total) || 1);
+    var pts = Math.max(0, Number(l.points) || 0);
+    var acc = Math.round((sc * 100) / tot);
+    if (qz === "sql") {
+      var ptsSql = pts > 0 ? pts : sc * 100;
+      var bonusSql = acc === 100 ? 100 : acc >= 80 ? 50 : acc >= 50 ? 20 : 5;
+      return Math.max(sc > 0 ? 10 : 5, Math.round(ptsSql / 15) + bonusSql);
+    }
+    if (qz === "php") {
+      var ptsPhp = pts > 0 ? pts : sc * 100;
+      var bonusPhp = acc === 100 ? 500 : acc >= 80 ? 200 : 0;
+      return ptsPhp + bonusPhp;
+    }
+    if (qz === "html-css") {
+      return sc * 250;
+    }
+    if (qz === "javascript") {
+      return pts > 0 ? pts : sc * 150;
+    }
+    if (qz === "tableaux") {
+      return sc * 100;
+    }
+    return pts > 0 ? pts : sc * 100;
+  }
+  function calculerXpPlancherQuiz(quiz, lignes) {
+    if (!Array.isArray(lignes) || !lignes.length) return 0;
+    return lignes.reduce(function (acc, l) {
+      return acc + xpMinimumPartie(quiz, l);
+    }, 0);
+  }
+
   async function resume(quiz) {
+    var uLoc = utilisateurDepuisStockageLocal();
+    var enAttente = lireFile().filter(function (f) {
+      if (!f || (quiz && f.quiz !== quiz)) return false;
+      if (f.user_id && uLoc && uLoc.id && String(f.user_id) !== String(uLoc.id)) return false;
+      return true;
+    });
     var s = sb();
     var u = await utilisateur();
-    var enAttente = lireFile().filter(function (f) { return f && (!quiz || f.quiz === quiz); });
     if (!s || !u) {
       if (!enAttente.length) return null;
       var locLignes = enAttente.slice().reverse().map(function (f) {
-        return { score: f.score, total: f.total, points: f.points || null, module: f.module || null, cree_le: new Date().toISOString() };
+        return { quiz: f.quiz || quiz || null, score: f.score, total: f.total, points: f.points || null, module: f.module || null, cree_le: new Date().toISOString() };
       });
       var mLoc = locLignes[0];
       locLignes.forEach(function (l) { if (pctDe(l.score, l.total) > pctDe(mLoc.score, mLoc.total)) mLoc = l; });
@@ -870,38 +913,48 @@
         dernier: { score: locLignes[0].score, total: locLignes[0].total, points: locLignes[0].points, pct: pctDe(locLignes[0].score, locLignes[0].total), date: locLignes[0].cree_le, module: locLignes[0].module },
         meilleur: { score: mLoc.score, total: mLoc.total, points: mLoc.points, pct: pctDe(mLoc.score, mLoc.total), date: mLoc.cree_le, module: mLoc.module },
         meilleurPoints: locLignes.reduce(function (mx, l) { return Math.max(mx, Number(l.points) || 0); }, 0),
+        sommePoints: locLignes.reduce(function (sm, l) { return sm + Math.max(0, Number(l.points) || 0); }, 0),
+        xpPlancher: calculerXpPlancherQuiz(quiz, locLignes),
         totalQuestions: locLignes.reduce(function (sm, l) { return sm + (Number(l.total) || 0); }, 0),
         totalBonnes: locLignes.reduce(function (sm, l) { return sm + (Number(l.score) || 0); }, 0)
       };
     }
-    if (sansScore(u)) return { parties: 0, dernier: null, meilleur: null, meilleurPoints: 0, totalQuestions: 0, totalBonnes: 0 };
+    if (sansScore(u)) return { parties: 0, dernier: null, meilleur: null, meilleurPoints: 0, sommePoints: 0, xpPlancher: 0, totalQuestions: 0, totalBonnes: 0 };
     try {
       await viderFile();
-      var q = s.from("sti_quiz_parties").select("score,total,points,module,ordre_questions,cree_le")
-        .eq("user_id", u.id)
-        .order("cree_le", { ascending: false }).limit(300);
-      if (quiz) q = q.eq("quiz", quiz);
-      var r = await q;
-      if (r && r.error) {
-        var qFb = s.from("sti_quiz_parties").select("score,total,module,cree_le")
+      var r = await lireToutPagine(function () {
+        var q = s.from("sti_quiz_parties").select("quiz,score,total,points,module,ordre_questions,cree_le")
           .eq("user_id", u.id)
-          .order("cree_le", { ascending: false }).limit(300);
-        if (quiz) qFb = qFb.eq("quiz", quiz);
-        r = await qFb;
+          .order("cree_le", { ascending: false });
+        if (quiz) q = q.eq("quiz", quiz);
+        return q;
+      }, 5000, 1000);
+      if (r && r.error) {
+        r = await lireToutPagine(function () {
+          var qFb = s.from("sti_quiz_parties").select("score,total,module,cree_le")
+            .eq("user_id", u.id)
+            .order("cree_le", { ascending: false });
+          if (quiz) qFb = qFb.eq("quiz", quiz);
+          return qFb;
+        }, 5000, 1000);
       }
       if (!r || r.error || !r.data) return null;
       var lignes = r.data;
-      if (!lignes.length) return { parties: 0, dernier: null, meilleur: null, meilleurPoints: 0, totalQuestions: 0, totalBonnes: 0 };
+      if (!lignes.length) return { parties: 0, dernier: null, meilleur: null, meilleurPoints: 0, sommePoints: 0, xpPlancher: 0, totalQuestions: 0, totalBonnes: 0 };
       var meilleur = lignes[0];
       var meilleurPoints = 0;
+      var sommePoints = 0;
       var totalQuestions = 0;
       var totalBonnes = 0;
       lignes.forEach(function (l) {
         if (pctDe(l.score, l.total) > pctDe(meilleur.score, meilleur.total)) meilleur = l;
-        if ((Number(l.points) || 0) > meilleurPoints) meilleurPoints = Number(l.points) || 0;
+        var ptsL = Math.max(0, Number(l.points) || 0);
+        if (ptsL > meilleurPoints) meilleurPoints = ptsL;
+        sommePoints += ptsL;
         totalQuestions += Number(l.total) || 0;
         totalBonnes += Number(l.score) || 0;
       });
+      var xpPlancher = calculerXpPlancherQuiz(quiz, lignes);
       function forme(l) {
         return {
           score: l.score,
@@ -919,6 +972,8 @@
         dernier: forme(lignes[0]),
         meilleur: forme(meilleur),
         meilleurPoints: meilleurPoints,
+        sommePoints: sommePoints,
+        xpPlancher: xpPlancher,
         totalQuestions: totalQuestions,
         totalBonnes: totalBonnes
       };
@@ -1093,6 +1148,7 @@
     quitterRevision: quitterRevision,
     reinitialiserSessionsConnexion: reinitialiserSessionsConnexion,
     resume: resume,
+    calculerXpPlancherQuiz: calculerXpPlancherQuiz,
     chargerVus: chargerVus,
     marquerVus: marquerVus,
     reinitialiserVus: reinitialiserVus,

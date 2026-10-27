@@ -1,5 +1,25 @@
 [
   {
+    "version": "v479",
+    "date": "2026-10-27",
+    "categorie": "Vidéos (.mp4), Podcasts (.mp3) & Synchronisation",
+    "icone": "🎬",
+    "titre": "Fiabilisation intégrale du compteur des vidéos (.mp4) et audios (.mp3) côté élève et enseignant",
+    "resume": "Conservation de maxPct/done lors de la fermeture (✕) du bandeau « Continuer où je m'étais arrêté » dans reprendre.js (sec=0 + repriseMasquee sans suppression de clé), suivi automatique des vidéos .mp4 ouvertes dans #pdfFrame sur exercices/series-exercices.html (Série 4.2 GestLocation), harmonisation des compteurs roue élève / admin / analytique (dès 2 s de lecture, dédoublonnage guichet-etapes, exclusion des médias démo) et fusion monotone sous-clé par sous-clé de sti-media-prog-v1 dans PostgreSQL.",
+    "lien": "exercices/series-exercices.html",
+    "libelleLien": "Vérifier le suivi vidéo & audio"
+  },
+  {
+    "version": "v478",
+    "date": "2026-10-27",
+    "categorie": "Quiz & Synchronisation Cloud",
+    "icone": "🛡️",
+    "titre": "Protection monotone multicouche des XP et records de Quiz (SQL, PHP, HTML-CSS, JavaScript) en local et sur Supabase",
+    "resume": "Verrouillage pull-before-push dans sync-progressions.js empêchant un navigateur vierge ou un changement d'élève d'écraser sti_progressions, fusion monotone bidirectionnelle (GREATEST sur XP, niveaux, séries, records et badges), reconstruction automatique d'un plancher d'XP cumulés depuis l'historique immuable sti_quiz_parties (STIQuizSync.resume), crédit XP garanti avant rendu/navigation et trigger PostgreSQL BEFORE UPDATE trg_sti_progressions_monotone_xp sur public.sti_progressions.",
+    "lien": "quiz/sql.html",
+    "libelleLien": "Vérifier ses XP et records Quiz"
+  },
+  {
     "version": "v477",
     "date": "2026-10-26",
     "categorie": "Mise à jour PWA & Version active",

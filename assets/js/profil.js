@@ -55,7 +55,8 @@
  *     derniere: null                                 // { id, matiere, titre, temps, duree, url }
  *   },
  *   notes: [],                                       // Notes /20 envoyées au professeur (Ateliers Bac)
- *   nouveautesLues: []                               // Versions marquées comme lues (ex. ["v477"])
+ *   nouveautesLues: [],                              // Versions marquées comme lues (ex. ["v477"])
+ *   invitationInstallationVue: false                 // Invitation PWA déjà présentée
  * }
  */
 (function (global) {
@@ -143,7 +144,8 @@
         derniere: null
       },
       notes: [],
-      nouveautesLues: []
+      nouveautesLues: [],
+      invitationInstallationVue: false
     };
   }
 
@@ -276,7 +278,8 @@
         : [],
       nouveautesLues: Array.isArray(src.nouveautesLues)
         ? Array.from(new Set(src.nouveautesLues.map(String).filter(Boolean)))
-        : []
+        : [],
+      invitationInstallationVue: src.invitationInstallationVue === true
     };
   }
 
@@ -337,6 +340,22 @@
       memoireProfil = creerProfilParDefaut();
     }
     return JSON.parse(JSON.stringify(memoireProfil));
+  }
+
+  /**
+   * Préserve les invitations déjà vues avant la refonte, sans écrire de nouvelle clé historique.
+   */
+  function invitationInstallationDejaVue() {
+    if (chargerProfil().invitationInstallationVue) return true;
+    try {
+      var stockage = global.localStorage;
+      return Boolean(stockage && (
+        stockage.getItem("sti-pwa-bulle-vue") === "1" ||
+        stockage.getItem("sti-install-fab") === "off"
+      ));
+    } catch (e) {
+      return false;
+    }
   }
 
   /**
@@ -659,6 +678,7 @@
   global.STIProfil = {
     CLE_STOCKAGE: CLE_PROFIL,
     chargerProfil: chargerProfil,
+    invitationInstallationDejaVue: invitationInstallationDejaVue,
     sauvegarderProfil: sauvegarderProfil,
     mettreAJour: mettreAJour,
     definirEtatChapitre: definirEtatChapitre,
