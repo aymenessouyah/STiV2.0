@@ -108,7 +108,7 @@
       icone: "🎨",
       badgeClasse: "badge-css",
       couleur: "#38bdf8",
-      nbVideos: 3,
+      nbVideos: 4,
       urlCours: "cours/css3.html",
       urlQuiz: "quiz/html-css.html",
       urlAudio: "assets/audio/css3-cours.mp3",
@@ -149,7 +149,7 @@
       icone: "🗄️",
       badgeClasse: "badge-sql",
       couleur: "#34d399",
-      nbVideos: 1,
+      nbVideos: 4,
       urlCours: "cours/sql.html",
       urlQuiz: "quiz/sql.html",
       urlAudio: "assets/audio/sql-cours.mp3",
@@ -169,7 +169,7 @@
       icone: "🐘",
       badgeClasse: "badge-php",
       couleur: "#a78bfa",
-      nbVideos: 2,
+      nbVideos: 3,
       reserve4si: true,
       urlCours: "cours/php.html",
       urlQuiz: "quiz/php.html",
@@ -187,10 +187,10 @@
   };
 
   /**
-   * Les 8 vidéos explicatives (.mp4) :
-   * HTML5 (1) · CSS3 (3) · JavaScript (1) · SQL (1) · PHP (2)
-   * Chemins normalisés faciles à remplacer `assets/videos/[matiere]-cours.mp4`
-   * + source secondaire vers les fichiers déjà présents dans le dépôt.
+   * Les 13 vidéos présentées ici (.mp4), et non tous les médias du site :
+   * HTML5 (1) · CSS3 (4) · JavaScript (1) · SQL (4, dont 2 Bac) · PHP (3 Bac).
+   * Les variantes mobiles, autres séries et leçons interactives ne sont pas comptées.
+   * Noms et durées correspondent aux fichiers présents dans le dépôt.
    */
   var CATALOGUE_VIDEOS = [
     {
@@ -200,7 +200,7 @@
       badgeClasse: "badge-html",
       couleur: "#ff783c",
       titre: "HTML5 — Structure, formulaires & tableaux",
-      dureeTexte: "14:20",
+      dureeTexte: "07:36",
       srcPrincipal: "assets/videos/html5-cours.mp4",
       srcSecours: "assets/videos/html5-cours.mp4",
       urlCours: "cours/html5.html#videos",
@@ -213,12 +213,19 @@
       badgeClasse: "badge-css",
       couleur: "#38bdf8",
       titre: "CSS3 — Sélecteurs, Flexbox & transitions",
-      dureeTexte: "18:45",
-      srcPrincipal: "assets/videos/css3-cours.mp4",
+      dureeTexte: "11:24",
+      srcPrincipal: "assets/videos/css3-cours-v9-sync.mp4",
       srcSecours: "assets/videos/css3-cours-v9-sync.mp4",
       sousTitres: "assets/subtitles/css3-cours-v9-sync-fr.vtt",
       urlCours: "cours/css3.html#videos",
       codeApercu: ".grille { display: flex; gap: 16px; }"
+    },
+    {
+      id: "css3-display",
+      matiere: "css3", nomMatiere: "CSS3", badgeClasse: "badge-css", couleur: "#38bdf8",
+      titre: "CSS3 — Display : la démo animée", dureeTexte: "00:05",
+      srcPrincipal: "assets/videos/displayanim.mp4", urlCours: "cours/css3.html#videos",
+      codeApercu: "display: inline-block;"
     },
     {
       id: "css-positionnement",
@@ -253,7 +260,7 @@
       badgeClasse: "badge-js",
       couleur: "#facc15",
       titre: "JavaScript — Contrôles de saisie & DOM Bac",
-      dureeTexte: "16:40",
+      dureeTexte: "14:43",
       srcPrincipal: "assets/videos/javascript-cours.mp4",
       srcSecours: "assets/videos/javascript-cours.mp4",
       urlCours: "cours/javascript.html#videos",
@@ -266,11 +273,32 @@
       badgeClasse: "badge-sql",
       couleur: "#34d399",
       titre: "SQL — Requêtes SELECT, jointures & agrégats",
-      dureeTexte: "15:15",
-      srcPrincipal: "assets/videos/sql-cours.mp4",
+      dureeTexte: "09:32",
+      srcPrincipal: "assets/videos/sql-cours-v7.mp4",
       srcSecours: "assets/videos/sql-cours-v7.mp4",
       urlCours: "cours/sql.html#videos",
       codeApercu: "SELECT nom, AVG(note) FROM eleve GROUP BY cl;"
+    },
+    {
+      id: "sql-initiation",
+      matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399",
+      titre: "SQL — Construire une requête pas à pas", dureeTexte: "08:45",
+      srcPrincipal: "exercices/sql/sql-construire-requete-guide-texte.mp4", urlCours: "cours/sql.html#videos",
+      codeApercu: "SELECT colonnes FROM table;"
+    },
+    {
+      id: "sql-serie4",
+      matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
+      titre: "SQL Série 4 — Jointures et GROUP BY", dureeTexte: "14:34",
+      srcPrincipal: "assets/videos/sql-serie4.mp4", urlCours: "cours/sql.html#videos",
+      codeApercu: "SELECT ... GROUP BY ...;"
+    },
+    {
+      id: "sql-serie5",
+      matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
+      titre: "SQL Série 5 — Dates et GROUP BY", dureeTexte: "18:09",
+      srcPrincipal: "assets/videos/sql-serie5.mp4", urlCours: "cours/sql.html#videos",
+      codeApercu: "SELECT ... WHERE ...;"
     },
     {
       id: "php-cours",
@@ -279,12 +307,19 @@
       badgeClasse: "badge-php",
       couleur: "#a78bfa",
       titre: "PHP & MySQLi — Traitement serveur de A à Z",
-      dureeTexte: "17:50",
+      dureeTexte: "10:59",
       reserve4si: true,
       srcPrincipal: "assets/videos/php-cours.mp4",
       srcSecours: "assets/videos/php-cours.mp4",
       urlCours: "cours/php.html#videos",
       codeApercu: "$res = mysqli_query($con, $sql);"
+    },
+    {
+      id: "php-synthese",
+      matiere: "php", nomMatiere: "PHP", badgeClasse: "badge-php", couleur: "#a78bfa", reserve4si: true,
+      titre: "PHP — Synthèse : gestion des élèves", dureeTexte: "14:08",
+      srcPrincipal: "assets/videos/php-synthese.mp4", urlCours: "cours/php.html#videos",
+      codeApercu: "$resultat = mysqli_query($con, $sql);"
     },
     {
       id: "php-guichet",
@@ -293,7 +328,7 @@
       badgeClasse: "badge-php",
       couleur: "#a78bfa",
       titre: "PHP Synthèse — Application Guichet & formulaires",
-      dureeTexte: "12:25",
+      dureeTexte: "05:22",
       reserve4si: true,
       srcPrincipal: "assets/videos/php-guichet-v10.mp4",
       srcSecours: "assets/videos/php-guichet-v10.mp4",
@@ -549,62 +584,46 @@
     rafraichirBoutonsTheme();
   }
 
-  /**
-   * Rend le Badge Abonné dans tous les conteneurs `[data-subscriber-slot]` de l'en-tête.
-   */
+  /** Utiliser les éléments vivants créés par acces.js, sans recréer le compte.
+   * Les mêmes bouton, avatar, état GOLD, écouteurs et panneau restent en place. */
   function rendreBadgeAbonne() {
-    if (!global.STIProfil) return;
-    var emplacements = document.querySelectorAll("[data-subscriber-slot]");
-    if (!emplacements.length) return;
-
+    var slot = document.querySelector("[data-subscriber-slot]");
+    if (!slot || !global.STIProfil) return;
+    var roue = document.getElementById("sti-roue-wrap");
+    if (roue) {
+      // acces.js peut reconstruire la roue après une mise à jour de session.
+      if (!slot.contains(roue)) slot.replaceChildren(roue);
+      roue.classList.add("sti-roue-wrap");
+      roue.classList.toggle("sti-theme-sombre", global.STIProfil.chargerProfil().theme !== "clair");
+      var datePlan = roue.querySelector("#sti-plan-date");
+      if (datePlan && !datePlan.hasAttribute("aria-label")) datePlan.setAttribute("aria-label", "Date de l’épreuve du bac");
+      return;
+    }
     var etat = global.STIProfil.lireEtatSession();
-    var profil = global.STIProfil.chargerProfil();
-    var pref = obtenirPrefixeRacine();
-    var aProfilActif = Boolean(etat.connecte || etat.estGold || profil.prenom);
-
-    emplacements.forEach(function (slot) {
-      if (!aProfilActif) {
-        slot.innerHTML =
-          '<a class="sub-login-btn" href="' + echapperHtml(pref + "portail.html") + '">' +
-            '<span>🔐</span>' +
-            '<span class="sub-login-btn__long">' + echapperHtml(traduire("sub.connecter")) + "</span>" +
-            '<span class="sub-login-btn__short">Connexion</span>' +
-          "</a>";
-        return;
-      }
-
-      var prenomAffiche = profil.prenom || etat.prenom || "Abonné";
-      var initiales = etat.initiales || prenomAffiche.slice(0, 2).toUpperCase();
-
-      slot.innerHTML =
-        '<button type="button" class="sub-badge' + (etat.estGold ? " is-gold" : "") + '" data-trigger-sub-badge title="Mon espace abonné">' +
-          '<span class="sub-avatar">' + echapperHtml(initiales) + "</span>" +
-          '<span class="sub-badge__info">' +
-            '<span class="sub-badge__name">' + echapperHtml(prenomAffiche) + "</span>" +
-            (etat.estGold
-              ? '<span class="sub-badge__gold-pill">' + echapperHtml(traduire("sub.abonne")) + "</span>"
-              : '<span class="sub-badge__gold-pill" style="color:var(--text-muted)">Tableau de bord</span>') +
-          "</span>" +
-        "</button>";
-    });
+    var texte = etat.connecte ? "Mon compte" : traduire("sub.connecter");
+    var href = obtenirPrefixeRacine() + "portail.html";
+    if (slot.dataset.etatRoue === texte && slot.firstElementChild) return;
+    slot.dataset.etatRoue = texte;
+    slot.innerHTML = '<a class="sub-login-btn" href="' + echapperHtml(href) + '">' +
+      '<span aria-hidden="true">🔐</span><span class="sub-login-btn__long">' + echapperHtml(texte) + '</span>' +
+      '<span class="sub-login-btn__short">Compte</span></a>';
   }
 
   function initialiserClicBadgeAbonne() {
-    document.addEventListener("click", function (ev) {
-      var declencheur = ev.target && ev.target.closest ? ev.target.closest("[data-trigger-sub-badge]") : null;
-      if (!declencheur) return;
-      ev.preventDefault();
-      if (estPageAccueil()) {
-        ouvrirTiroirAbonne();
-      } else {
-        var surDashboard = /\/dashboard\.html$/i.test(String(global.location.pathname || ""));
-        if (surDashboard) {
-          ouvrirTiroirAbonne();
-        } else {
-          global.location.href = obtenirPrefixeRacine() + "dashboard.html";
-        }
-      }
+    // La roue est insérée asynchroniquement par acces.js ; surveiller ses remplacements.
+    if (typeof MutationObserver !== "function") return;
+    var obs = new MutationObserver(function (mutations) {
+      var change = mutations.some(function (mutation) {
+        return Array.prototype.some.call(mutation.addedNodes, function (n) {
+          return n.nodeType === 1 && (n.id === "sti-roue-wrap" || n.id === "sti-plan-date" ||
+            (n.querySelector && n.querySelector("#sti-roue-wrap, #sti-plan-date")));
+        }) || Array.prototype.some.call(mutation.removedNodes, function (n) {
+          return n.nodeType === 1 && n.id === "sti-roue-wrap";
+        });
+      });
+      if (change) rendreBadgeAbonne();
     });
+    obs.observe(document.body, { childList: true, subtree: true });
   }
 
   /* ── 7. Suivi et Lecteur des Vidéos explicatives (.mp4) ── */
@@ -652,86 +671,10 @@
 
   function ouvrirModaleVideo(idVideo, tempsDepart) {
     var meta = CATALOGUE_VIDEOS.find(function (v) { return v.id === idVideo; });
-    if (!meta) return;
-
-    var pref = obtenirPrefixeRacine();
-    var modale = document.getElementById("modalVideoPlayer");
-    if (!modale) {
-      modale = document.createElement("div");
-      modale.className = "modal-backdrop";
-      modale.id = "modalVideoPlayer";
-      modale.setAttribute("role", "dialog");
-      modale.setAttribute("aria-modal", "true");
-      modale.setAttribute("aria-labelledby", "modalVideoTitle");
-      modale.innerHTML =
-        '<div class="modal modal--wide">' +
-          '<div class="modal__head">' +
-            "<div>" +
-              '<span class="badge" id="modalVideoBadge">Matière</span>' +
-              '<h3 id="modalVideoTitle" style="margin-top:6px">Vidéo explicative</h3>' +
-            "</div>" +
-            '<button type="button" class="modal__close" id="btnCloseVideoModal" aria-label="Fermer la vidéo">✕</button>' +
-          "</div>" +
-          '<div class="video-player-shell" style="border-radius:var(--radius-lg);overflow:hidden;aspect-ratio:16/9;background:#050a14" id="modalVideoContainer"></div>' +
-          '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:14px">' +
-            '<span style="font-size:.82rem;color:var(--text-muted)" id="modalVideoPathInfo"></span>' +
-            '<a class="btn btn-secondary btn-sm" id="modalVideoCourseLink" href="#">📚 Ouvrir la page complète du cours ➜</a>' +
-          "</div>" +
-        "</div>";
-      document.body.appendChild(modale);
-
-      var fermer = function () {
-        modale.classList.remove("is-open");
-        var cont = document.getElementById("modalVideoContainer");
-        if (cont) cont.innerHTML = "";
-      };
-      modale.querySelector("#btnCloseVideoModal").addEventListener("click", fermer);
-      modale.addEventListener("click", function (e) {
-        if (e.target === modale) fermer();
-      });
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && modale.classList.contains("is-open")) fermer();
-      });
-    }
-
-    var badgeEl = document.getElementById("modalVideoBadge");
-    var titreEl = document.getElementById("modalVideoTitle");
-    var infoEl = document.getElementById("modalVideoPathInfo");
-    var lienEl = document.getElementById("modalVideoCourseLink");
-    var contEl = document.getElementById("modalVideoContainer");
-
-    badgeEl.className = "badge " + meta.badgeClasse;
-    badgeEl.textContent = "🎥 " + meta.nomMatiere + " · " + meta.dureeTexte;
-    titreEl.textContent = meta.titre;
-    infoEl.textContent = "Source : " + meta.srcPrincipal;
-    lienEl.href = pref + meta.urlCours;
-
-    var posterUri = creerPosterSvgDataUri(meta.titre, meta.nomMatiere, meta.couleur, meta.codeApercu);
-    var sourcesHtml = '<source src="' + echapperHtml(pref + meta.srcPrincipal) + '" type="video/mp4">';
-    if (meta.srcSecours && meta.srcSecours !== meta.srcPrincipal) {
-      sourcesHtml += '<source src="' + echapperHtml(pref + meta.srcSecours) + '" type="video/mp4">';
-    }
-    if (meta.sousTitres) {
-      sourcesHtml += '<track kind="subtitles" srclang="fr" label="Français" src="' + echapperHtml(pref + meta.sousTitres) + '">';
-    }
-
-    contEl.innerHTML =
-      '<video id="activeModalVideoEl" controls preload="metadata" playsinline poster="' + echapperHtml(posterUri) + '">' +
-        sourcesHtml +
-        "Votre navigateur ne prend pas en charge la lecture vidéo HTML5." +
-      "</video>";
-
-    modale.classList.add("is-open");
-    var vid = document.getElementById("activeModalVideoEl");
-    if (vid) {
-      attacherSuiviElementVideo(vid, meta);
-      if (tempsDepart && tempsDepart > 2) {
-        vid.addEventListener("loadedmetadata", function () {
-          try { vid.currentTime = tempsDepart; } catch (e) {}
-        }, { once: true });
-      }
-      var prom = vid.play();
-      if (prom && typeof prom.catch === "function") prom.catch(function () {});
+    if (!meta || (meta.reserve4si && !estAutorise4SI())) return;
+    // Une seule interface : le lecteur historique, avec tous ses chapitres et commandes.
+    if (typeof global.ouvrirVideoPasAPasSTI === "function") {
+      global.ouvrirVideoPasAPasSTI(meta.id, meta.titre, Number(tempsDepart) || 0);
     }
   }
 
@@ -749,9 +692,7 @@
 
     if (btnOverlay) {
       btnOverlay.addEventListener("click", function () {
-        btnOverlay.classList.add("is-playing");
-        var p = vidHero.play();
-        if (p && typeof p.catch === "function") p.catch(function () {});
+        ouvrirModaleVideo("css3-cours", 0);
       });
       vidHero.addEventListener("play", function () {
         btnOverlay.classList.add("is-playing");
@@ -775,16 +716,21 @@
       return true;
     });
 
+    // Ne pas remplacer les boutons à chaque notification de session ou de
+    // progression : ils restent les appelants du lecteur et gardent le focus.
+    var signature = liste.map(function (v) { return v.id + ":" + (vues.indexOf(v.id) !== -1 ? "1" : "0"); }).join("|");
+    if (grille.dataset.signatureVideos === signature && grille.children.length) return;
+    grille.dataset.signatureVideos = signature;
     grille.innerHTML = liste.map(function (v) {
       var dejaVue = vues.indexOf(v.id) !== -1;
       var poster = creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
       return (
         '<article class="video-card' + (v.reserve4si ? " sti-4si-only" : "") + '" data-matiere="' + echapperHtml(v.matiere) + '">' +
-          '<button type="button" class="video-card__thumb" data-play-video="' + echapperHtml(v.id) + '" aria-label="Lire la vidéo ' + echapperHtml(v.titre) + '">' +
+          '<button type="button" class="video-card__thumb" data-play-video="' + echapperHtml(v.id) + '" aria-label="▶ ' + (dejaVue ? '✓ Vue ' : '') + echapperHtml(v.dureeTexte) + ' — Lire la vidéo ' + echapperHtml(v.titre) + '">' +
             '<img src="' + echapperHtml(poster) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" />' +
             '<span class="video-card__play"><span class="video-play-btn" aria-hidden="true">▶</span></span>' +
-            (dejaVue ? '<span class="video-card__seen">✓ Vue</span>' : "") +
-            '<span class="video-card__duration">' + echapperHtml(v.dureeTexte) + "</span>" +
+            (dejaVue ? '<span class="video-card__seen" aria-hidden="true">✓ Vue</span>' : "") +
+            '<span class="video-card__duration" aria-hidden="true">' + echapperHtml(v.dureeTexte) + "</span>" +
           "</button>" +
           '<div class="video-card__body">' +
             '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">' +
@@ -849,7 +795,7 @@
     var itemsBase = [
       { icone: "🏫", texte: "Lycée Raféha · 3ème & 4ème SI — Par Aymen Essouyah" },
       { icone: "🌐", texte: "HTML5 : structure sémantique, formulaires & tableaux" },
-      { icone: "🎨", texte: "CSS3 : Flexbox, responsive & 3 vidéos pas à pas (.mp4)" },
+      { icone: "🎨", texte: "CSS3 : Flexbox, responsive et vidéos du cours (.mp4)" },
       { icone: "⚡", texte: "JavaScript : fonctions de contrôle Bac & DOM" },
       { icone: "🗄️", texte: "SQL : requêtes SELECT, jointures & agrégations" },
       { icone: "🐘", texte: "PHP & MySQLi : traitement serveur 4e SI", reserve4si: true },
@@ -1255,28 +1201,39 @@
       }
     });
 
-    /* Modale Contact & QR Code */
+    /* Modale Contact & QR Code : focus contenu et retour à l'appelant. */
     var modContact = document.getElementById("modalContactQr");
     if (modContact) {
+      var btnFermer = document.getElementById("btnCloseContactModal"), retourContact = null, fondsContact = [], classeModalAvant = false;
+      function fermerContact() {
+        if (!modContact.classList.contains("is-open")) return;
+        modContact.classList.remove("is-open");
+        fondsContact.forEach(function (e) { e[0].inert = e[1]; }); fondsContact = [];
+        if (!classeModalAvant) document.documentElement.classList.remove("sti-modal-open");
+        if (retourContact && retourContact.isConnected) retourContact.focus({preventScroll:true});
+        retourContact = null;
+      }
       document.querySelectorAll("[data-open-contact]").forEach(function (b) {
         b.addEventListener("click", function (e) {
-          e.preventDefault();
-          modContact.classList.add("is-open");
+          e.preventDefault(); retourContact = b;
+          classeModalAvant = document.documentElement.classList.contains("sti-modal-open");
+          Array.prototype.forEach.call(document.body.children, function (enfant) {
+            if (enfant === modContact) return; fondsContact.push([enfant, enfant.inert]); enfant.inert = true;
+          });
+          document.documentElement.classList.add("sti-modal-open");
+          modContact.classList.add("is-open"); if (btnFermer) btnFermer.focus({preventScroll:true});
         });
       });
-      var btnFermer = document.getElementById("btnCloseContactModal");
-      if (btnFermer) {
-        btnFermer.addEventListener("click", function () {
-          modContact.classList.remove("is-open");
-        });
-      }
-      modContact.addEventListener("click", function (e) {
-        if (e.target === modContact) modContact.classList.remove("is-open");
-      });
+      if (btnFermer) btnFermer.addEventListener("click", fermerContact);
+      modContact.addEventListener("click", function (e) { if (e.target === modContact) fermerContact(); });
       document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && modContact.classList.contains("is-open")) {
-          modContact.classList.remove("is-open");
-        }
+        if (!modContact.classList.contains("is-open")) return;
+        if (e.key === "Escape") { e.preventDefault(); fermerContact(); return; }
+        if (e.key !== "Tab") return;
+        var liste = Array.prototype.filter.call(modContact.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])'), function (el) { return el.getClientRects().length; });
+        if (!liste.length) { e.preventDefault(); return; }
+        if (e.shiftKey && document.activeElement === liste[0]) { e.preventDefault(); liste[liste.length-1].focus(); }
+        else if (!e.shiftKey && document.activeElement === liste[liste.length-1]) { e.preventDefault(); liste[0].focus(); }
       });
     }
 
@@ -1679,7 +1636,7 @@
                   '<a href="' + pref + m.urlCours + '#cours">Cours</a>·' +
                   '<a href="' + pref + m.urlCours + '#exercices">Exercices</a>·' +
                   '<a href="' + pref + m.urlCours + '#annexes">Annexes</a>·' +
-                  '<a href="' + pref + m.urlCours + '#videos">Vidéos (' + m.nbVideos + ")</a>" +
+                  '<a href="' + pref + m.urlCours + '#videos">Vidéos (' + CATALOGUE_VIDEOS.filter(function (v) { return v.matiere === m.id && (!v.reserve4si || ok4); }).length + ")</a>" +
                 "</div>" +
               "</div>" +
             "</div>" +
@@ -1839,6 +1796,12 @@
       });
     }
 
+    var btnCompte = document.getElementById("dashOuvrirCompte");
+    if (btnCompte) btnCompte.addEventListener("click", function () {
+      var roue = document.getElementById("sti-roue-btn");
+      if (roue) roue.click(); else global.location.href = obtenirPrefixeRacine() + "portail.html";
+    });
+
     var btnLogout = document.getElementById("btnDashboardLogout");
     if (btnLogout) {
       btnLogout.addEventListener("click", declencherDeconnexion);
@@ -1884,9 +1847,26 @@
     }
   }
 
+  /* Le temps de lecture est indicatif : texte des chapitres à 180 mots/minute,
+     sans les commandes ni les vidéos. La valeur HTML reste lisible sans script. */
+  function estimerLectureCours() {
+    var cible = document.querySelector("[data-estimation-lecture]");
+    if (!cible) return;
+    var chapitres = document.querySelectorAll('[data-course-panel="cours"] [data-chapter-id]');
+    if (!chapitres.length) return;
+    var texte = Array.prototype.map.call(chapitres, function (chapitre) {
+      var copie = chapitre.cloneNode(true);
+      Array.prototype.forEach.call(copie.querySelectorAll('script,style,button,nav,svg,audio,video,iframe,[aria-hidden="true"]'), function (element) { element.remove(); });
+      return copie.textContent || "";
+    }).join(" ");
+    var mots = texte.match(/[A-Za-zÀ-ÖØ-öø-ÿ0-9]+(?:['’_-][A-Za-zÀ-ÖØ-öø-ÿ0-9]+)*/g) || [];
+    cible.textContent = Math.max(1, Math.ceil(mots.length / 180)) + " min";
+  }
+
   /* ── 12. Initialisation générale au chargement du DOM ── */
   function demarrerApplication() {
     if (redirigerAnciennePageExercices()) return;
+    estimerLectureCours();
     initialiserPageMatiereUnifiee();
     appliquerTraductionsPage();
     initialiserSelecteursTheme();
@@ -1927,6 +1907,7 @@
     global.addEventListener("sti:session-maj", function () {
       rendreBadgeAbonne();
       rafraichirTiroirAbonne();
+      rendreGrilleVideosAccueil();
       rendreTableauDeBord();
     });
 

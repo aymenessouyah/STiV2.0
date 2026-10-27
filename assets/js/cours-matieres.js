@@ -118,7 +118,7 @@
     var pct = accessibles.length ? Math.round(rev/accessibles.length*100) : 0;
     id('courseProgressPct').textContent = pct+'%'; id('courseProgressText').textContent = rev+' / '+accessibles.length+' chapitres révisés';
     id('courseRing').style.strokeDashoffset = String(100.53*(1-pct/100));
-    var cases = $$('[data-exercise]').filter(autoriseElement), count = 0;
+    var cases = $$('[data-course-panel="exercices"] [data-exercise]').filter(autoriseElement), count = 0;
     cases.forEach(function (c) { var fait = faits.indexOf(c.dataset.exercise)!==-1; if (synchroniserCases === true) c.checked = fait; if(fait) count++; });
     id('exoProgressText').textContent = count+' / '+cases.length+' exercices faits'; id('tabExoCount').textContent = count+'/'+cases.length;
     id('exoProgressFill').style.width = (cases.length ? count/cases.length*100 : 0)+'%';
@@ -278,7 +278,7 @@
   /* ── Vidéos locales : position, reprise et états dans STIProfil ── */
   function enregistrerVideo(v, terminee) {
     if(!v || !v.dataset.videoId || !global.STIProfil || (!terminee && (!isFinite(v.currentTime) || v.currentTime<2))) return;
-    global.STIProfil.enregistrerPositionVideo({id:v.dataset.videoId,matiere:matiere,titre:v.dataset.videoTitle||v.dataset.videoId,temps:v.currentTime,duree:isFinite(v.duration)?v.duration:0,terminee:!!terminee,secondaire:v.dataset.videoId!==(matiere==='sql'?'sql-cours':'php-synthese'),url:'cours/'+matiere+'.html#videos'});
+    global.STIProfil.enregistrerPositionVideo({id:v.dataset.videoId,matiere:matiere,titre:v.dataset.videoTitle||v.dataset.videoId,temps:v.currentTime,duree:isFinite(v.duration)?v.duration:0,terminee:!!terminee,secondaire:v.dataset.videoId!==(matiere==='sql'?'sql-cours':'php-cours'),url:'cours/'+matiere+'.html#videos'});
     v.__dernierSave=Math.floor(v.currentTime); actualiserProfil();
   }
   function preparerVideo(v) {
@@ -310,6 +310,8 @@
     synchroniserChapitresVideo(v);
   }
   function ouvrirVideo(slug,titre,position) {
+    // Les URL historiques et les identifiants courts sont soumis au même verrou Bac.
+    if (matiere==='sql' && /sql-serie[45]/i.test(String(slug || '')) && !autoriseBac()) return false;
     if(slug==='guichet')slug='php-guichet';
     var vinfo=videos[slug];
     if(!vinfo || (matiere==='sql' && slug.indexOf('sql-')!==0) || (matiere==='php' && slug.indexOf('php-')!==0)) {
@@ -446,7 +448,7 @@
     id('modalVideoFull').addEventListener('click',function(){var v=id('modalVideo');if(v.requestFullscreen){var p=v.requestFullscreen();if(p&&p.catch)p.catch(function(){});}else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen();});
     var synth=id('videoSynthese');if(synth){synth.dataset.videoId='php-synthese';synth.dataset.videoTitle='Synthèse PHP';preparerVideo(synth);}
     if(matiere==='sql'){preparerOngletsAnimations();preparerGuideSql();tableauClasse();preparerPackSql();explorerSql();}else preparerAudioPhp();
-    videoHistorique=global.ouvrirVideoPasAPasSTI;global.ouvrirVideoPasAPasSTI=ouvrirVideo;
+    // Le lecteur commun applique les mêmes restrictions Bac à chaque entrée.
     $$('[data-course-tab]').forEach(function(b){b.addEventListener('click',function(){ouvrirOnglet(b.dataset.courseTab,true);id(b.dataset.courseTab).scrollIntoView({block:'start',behavior:'smooth'});});
       b.addEventListener('keydown',function(e){if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();var arr=$$('[data-course-tab]'),i=arr.indexOf(b),rtl=getComputedStyle(b).direction==='rtl';if(e.key==='Home')i=0;else if(e.key==='End')i=arr.length-1;else i=(i+(e.key==='ArrowRight'?(rtl?-1:1):(rtl?1:-1))+arr.length)%arr.length;arr[i].click();arr[i].focus();});});
     id('tocMobileOpenBtn').addEventListener('click',ouvrirSommaire);id('tocMobileCloseBtn').addEventListener('click',function(){fermerSommaire(true);});id('courseSidebarBackdrop').addEventListener('click',function(){fermerSommaire(true);});

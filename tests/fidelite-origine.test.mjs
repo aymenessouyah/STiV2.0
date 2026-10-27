@@ -1,0 +1,152 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { readFileSync, openSync, readSync, closeSync, statSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import vm from 'node:vm';
+
+const root = resolve(new URL('..', import.meta.url).pathname);
+const lire = p => readFileSync(resolve(root, p), 'utf8');
+const sha = p => createHash('sha256').update(readFileSync(resolve(root, p))).digest('hex');
+
+/* Empreintes du socle de référence 478c912 : aucune dépendance à FETCH_HEAD en CI. */
+test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservés', () => {
+  const originaux = {
+    'assets/js/config.js': '6bf2d74443558135d0566307c8e7cbe90cbabfc62af399b543749d174307b5fd',
+    'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
+    'assets/js/acces.js': '60e52add1f7dd60a12ee1102f2f181719076e209e0d05211f5e6f58935d985a4',
+    'assets/js/sync-progressions.js': 'd566e412f0d9d7fb2d09c0a5988d3f9bbc3d895400e2afe55078e3bdb0018b81',
+    'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
+    'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
+    'admin.html': '348603149122d2dd2f9d453e200572aacb9015c19279c9d518506a70e7e3725d',
+    'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
+    'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
+  };
+  for (const [path, attendu] of Object.entries(originaux)) assert.equal(sha(path), attendu, path);
+  const html = lire('index.html');
+  assert.match(html, /id="cote-sti"/); assert.match(html, /id="cote-piste"/); assert.match(html, /assets\/js\/cote-ticker\.js/);
+  const cote = html.match(/<aside id="cote-sti"[\s\S]*?<\/aside>/)[0];
+  assert.equal(createHash('sha256').update(cote).digest('hex'), '9eaaf419beaf4d256181bd49c150ccd261960da39df19d1b3cca394fd44a1083');
+  assert.doesNotMatch(lire('assets/css/theme.css'), /#sti-roue-wrap\s*\{\s*display\s*:\s*none/);
+  const defis = lire('exercices/javascript/js-37-defis-tt.html');
+  assert.match(defis, /function ex15_go\(\)\{ const r = document\.getElementById\("ex15_res"\); const s = prompt\(/);
+  assert.match(defis, /function ex25_connexion\(\).*alert\("Connexion : "\+e\)/);
+});
+
+function dureeMp4(path) {
+  const fd = openSync(resolve(root, path), 'r'), taille = statSync(resolve(root, path)).size;
+  const lireOctets = (offset, n) => { const b = Buffer.alloc(n); readSync(fd, b, 0, n, offset); return b; };
+  function* boites(debut, fin) {
+    for (let pos = debut; pos + 8 <= fin;) {
+      const h = lireOctets(pos, 16), type = h.toString('ascii', 4, 8);
+      let taille = h.readUInt32BE(0), entete = 8;
+      if (taille === 1) { taille = Number(h.readBigUInt64BE(8)); entete = 16; }
+      if (taille === 0) taille = fin - pos;
+      if (taille < entete || pos + taille > fin) break;
+      yield { type, debut: pos + entete, fin: pos + taille }; pos += taille;
+    }
+  }
+  try {
+    for (const boite of boites(0, taille)) if (boite.type === 'moov') {
+      for (const enfant of boites(boite.debut, boite.fin)) if (enfant.type === 'mvhd') {
+        const h = lireOctets(enfant.debut, 36), v = h[0];
+        const echelle = h.readUInt32BE(v === 1 ? 20 : 12);
+        const duree = v === 1 ? Number(h.readBigUInt64BE(24)) : h.readUInt32BE(16);
+        return duree / echelle;
+      }
+    }
+    throw new Error('mvhd absent : ' + path);
+  } finally { closeSync(fd); }
+}
+
+test('catalogue : fichiers réels, 13 entrées distinctes, durées MP4 et restrictions', () => {
+  const js = lire('assets/js/app.js');
+  const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
+  const catalogue = vm.runInNewContext('(' + texte + ')');
+  assert.equal(catalogue.length, 13);
+  assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
+  const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
+  assert.deepEqual(comptes, { html5:1, css3:4, javascript:1, sql:4, php:3 });
+  for (const v of catalogue) {
+    assert.ok(existsSync(resolve(root, v.srcPrincipal)), v.srcPrincipal);
+    if (v.srcSecours) assert.ok(existsSync(resolve(root, v.srcSecours)), v.srcSecours);
+    if (v.sousTitres) assert.ok(existsSync(resolve(root, v.sousTitres)), v.sousTitres);
+    const [min, sec] = v.dureeTexte.split(':').map(Number);
+    assert.equal(min * 60 + sec, Math.round(dureeMp4(v.srcPrincipal)), v.id + ' : durée réelle');
+    if (v.matiere === 'php' || /^sql-serie[45]$/.test(v.id)) assert.equal(v.reserve4si, true, v.id);
+  }
+  assert.ok(catalogue.some(v => v.srcPrincipal === 'assets/videos/displayanim.mp4'));
+  assert.ok(catalogue.some(v => v.id === 'sql-initiation' && v.srcPrincipal === 'exercices/sql/sql-construire-requete-guide-texte.mp4'));
+  assert.doesNotMatch(lire('index.html'), /assets\/videos\/css3-cours\.mp4/);
+  assert.doesNotMatch(js, /assets\/videos\/(?:css3-cours|sql-cours)\.mp4/);
+});
+
+test('logos, visionneuse et Cote disponibles dans le cache complet sans médias lourds dans le delta', () => {
+  const sprite = lire('assets/icons/matieres.svg'), index = lire('index.html');
+  for (const id of ['html5','css3','javascript','sql','php']) {
+    assert.match(sprite, new RegExp(`<symbol id="${id}"`));
+    assert.ok(index.includes('assets/icons/matieres.svg#' + id));
+    assert.ok(lire(`cours/${id}.html`).includes('../assets/icons/matieres.svg#' + id));
+  }
+  const sw = lire('sw.js'), manifest = JSON.parse(lire('offline-complete-manifest.json'));
+  const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
+  const complet = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
+  for (const path of ['assets/icons/matieres.svg','assets/css/visionneuse-exercices.css','assets/js/visionneuse-exercices.js','assets/js/cote-ticker.js','projets/carte-bancaire/demo.js','assets/css/theme-patrimoine.css','assets/js/lecteur-commun.js','assets/js/retour-quiz.js']) {
+    assert.ok(complet.includes(`"./${path}"`), path); assert.ok(manifest.files.some(f => f.path === path), path);
+  }
+  assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
+  for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
+    assert.ok(delta.includes(`url: "./${chemin}", revision: "fidelite-origine-v481"`), `révision de ${chemin}`);
+  }
+  assert.doesNotMatch(lire('assets/js/visionneuse-exercices.js'), /\blocalStorage\b|\bsessionStorage\b/);
+});
+
+test('atelier Bac : les scripts historiques ne sont pas coupés par les ajouts', () => {
+  const html = lire('bac-pratique.html');
+  const blocs = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+  const internes = blocs.filter(b => !/\bsrc\s*=/.test(b[1]));
+  assert.equal(internes.length, 2);
+  for (const bloc of internes) assert.doesNotThrow(() => new vm.Script(bloc[2]));
+  assert.match(internes[1][2], /chargerSujet\("p0"\)/);
+  assert.match(internes[1][2], /initSimulateurSujet\("p0"\)/);
+  const ordre = ['config.js', 'supabase-umd.js', 'acces.js', 'sync-progressions.js', 'profil.js'].map(s => html.indexOf('assets/js/' + s));
+  assert.ok(ordre.every((pos, i) => pos >= 0 && (!i || pos > ordre[i-1])), String(ordre));
+});
+
+test('commandes d’administration : scripts et fonctions de la barre PC inchangés', () => {
+  assert.equal(sha('assets/js/admin.js'), '91b61dd7e8d48f287705b56afcf6fe555f642e85afc3166303c08c77f1223df4');
+  assert.equal(sha('assets/js/rayonsx-surligneur.js'), 'b338691b29dcb99cb62b8d4e266c8a3d29af56a2a8d88fb3124f1f96334bde73');
+  const protection = lire('assets/js/protection.js');
+  const debut = protection.indexOf('  function estAppareilPC()');
+  const fin = protection.indexOf('  function obtenirPauseQRVideoSTI()', debut);
+  assert.ok(debut >= 0 && fin > debut);
+  assert.equal(createHash('sha256').update(protection.slice(debut, fin)).digest('hex'), 'b66612e34a530a18848d05f0d8b370e3e8dd04846b9bc1f9ad765cdef555d2a3');
+});
+
+test('banques et données JSON d’origine conservées ; retour de quiz ajouté sans changer les contenus', () => {
+  const json = {
+    'assets/data/nouveautes.json': '519ab2b9a8866737bb14a5db189a9dc01ef07c3ccf51482fc85d8b32baf0a520',
+    'assets/data/quiz-banque.json': '2696942ae18a009e315239561a576ad6f2ff33db0609990082db418a45796c67',
+    'assets/data/smart-book-2026.json': '1b90da1bc986c0c4a2c97f357a40fe6894f5cd1418d0b1e67aeb45ff675ebca3',
+    'assets/data/smart-book-3si-2026.json': '2a332e4e17cc17c093fac1080a6a226ff8eac13fb76dceb5a521194fe5794f58',
+    'assets/pages-couverture.json': '46d0a69f3b623adbae31f1dfba54399d1ce922169fe4df989301266ffcb2fe29',
+    'manifest.webmanifest': '9803f124c0bb3736f3749ffcf9f0ffd63930a6a2a23e6cafeccfde0d61892e1f'
+  };
+  for (const [chemin, empreinte] of Object.entries(json)) {
+    assert.equal(sha(chemin), empreinte, chemin);
+    assert.doesNotThrow(() => JSON.parse(lire(chemin)), chemin);
+  }
+  const quiz = {
+    'quiz/html-css.html': '7c27d3fac3ce4e70ca95f8a90a9b97e946b55e3485a02af728e09b3545150acd',
+    'quiz/javascript.html': 'f4219a0a33bd62490ca012036df94434cd1aa18bb3bfed90948132af3bc3f255',
+    'quiz/php.html': '741e190c6f7f9270a5bcf9b6c2ecf72cee5585521b49c3f71edef1617f71cad0',
+    'quiz/pp.html': '24afc3a220239461b50b3d4def47180fd8051de5de649a825beb518b0adc89ef',
+    'quiz/sql.html': '624d98bf69cd262d830891f56286cd9e739b3cc6a09ec69d4aec066f4aa0d69b',
+    'quiz/tableaux.html': 'd225e600a925199d472b5386c6fed3d9399d19107bf6ba3343c1c526ad583f8c'
+  };
+  for (const [chemin, empreinte] of Object.entries(quiz)) {
+    const courant = lire(chemin), ajout = /<script src="\.\.\/assets\/js\/retour-quiz\.js"(?: defer)?><\/script>\n/g;
+    assert.equal((courant.match(ajout) || []).length, 1, chemin);
+    assert.equal(createHash('sha256').update(courant.replace(ajout, '')).digest('hex'), empreinte, chemin);
+  }
+});

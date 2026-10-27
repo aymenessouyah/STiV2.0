@@ -50,6 +50,7 @@ html[data-theme="sombre"] {
 
   /* Couleur de marque STI V2.0 */
   --brand: #6366f1;
+  --brand-contrast: #000000;
   --brand-hover: #818cf8;
   --brand-soft: rgba(99, 102, 241, 0.16);
   --brand-gradient: linear-gradient(135deg, #6366f1 0%, #38bdf8 55%, #34d399 100%);
@@ -72,6 +73,7 @@ html[data-theme="sombre"] {
   --accent-sql-border: rgba(52, 211, 153, 0.38);
 
   --accent-php: #a78bfa;
+  --badge-php-ink: #c2b4ff;
   --accent-php-soft: rgba(167, 139, 250, 0.16);
   --accent-php-border: rgba(167, 139, 250, 0.4);
 
@@ -162,6 +164,7 @@ html[data-theme="clair"] {
   --glass-highlight: rgba(255, 255, 255, 0.8);
 
   --brand: #4f46e5;
+  --brand-contrast: #ffffff;
   --brand-hover: #4338ca;
   --brand-soft: rgba(79, 70, 229, 0.1);
   --brand-gradient: linear-gradient(135deg, #4f46e5 0%, #0284c7 55%, #059669 100%);
@@ -171,6 +174,7 @@ html[data-theme="clair"] {
   --accent-html-border: rgba(217, 72, 15, 0.3);
 
   --accent-css: #0284c7;
+  --badge-css-ink: #0369a1;
   --accent-css-soft: rgba(2, 132, 199, 0.1);
   --accent-css-border: rgba(2, 132, 199, 0.3);
 
@@ -183,10 +187,12 @@ html[data-theme="clair"] {
   --accent-sql-border: rgba(4, 120, 87, 0.3);
 
   --accent-php: #6d28d9;
+  --badge-php-ink: #6d28d9;
   --accent-php-soft: rgba(109, 40, 217, 0.1);
   --accent-php-border: rgba(109, 40, 217, 0.3);
 
   --accent-gold: #b45309;
+  --badge-gold-ink: #92400e;
   --accent-gold-soft: rgba(245, 158, 11, 0.15);
   --accent-gold-border: rgba(180, 83, 9, 0.34);
 
@@ -232,6 +238,7 @@ html[data-theme="intermediaire"] {
   --glass-highlight: rgba(255, 255, 255, 0.08);
 
   --brand: #818cf8;
+  --brand-contrast: #162030;
   --brand-hover: #a5b4fc;
   --brand-soft: rgba(129, 140, 248, 0.2);
   --brand-gradient: linear-gradient(135deg, #818cf8 0%, #38bdf8 55%, #34d399 100%);
@@ -241,6 +248,7 @@ html[data-theme="intermediaire"] {
   --accent-html-border: rgba(255, 138, 80, 0.42);
 
   --accent-css: #5cc8ff;
+  --badge-css-ink: #c4eaff;
   --accent-css-soft: rgba(92, 200, 255, 0.18);
   --accent-css-border: rgba(92, 200, 255, 0.42);
 
@@ -253,6 +261,7 @@ html[data-theme="intermediaire"] {
   --accent-sql-border: rgba(74, 222, 128, 0.42);
 
   --accent-php: #c4b5fd;
+  --badge-php-ink: #f0e8ff;
   --accent-php-soft: rgba(196, 181, 253, 0.18);
   --accent-php-border: rgba(196, 181, 253, 0.42);
 
@@ -303,8 +312,34 @@ html:not(.sti-4si-autorise) button[data-filter="php"],
 html:not(.sti-4si-autorise) [data-matiere="php"],
 html:not(.sti-4si-autorise) [data-subject="php"] { display: none !important; }
 
-/* Masquage visuel de l'ancienne roue remplacée par le Badge Abonné en-tête */
-#sti-roue-wrap { display: none !important; }
+/* La vraie roue d'acces.js est placée dans l'en-tête, sans remplacer son panneau. */
+.sti-v2 [data-subscriber-slot] { position: relative; display: flex; align-items: center; }
+.sti-v2 [data-subscriber-slot] #sti-roue-wrap {
+  position: relative !important; inset: auto !important; transform: none !important;
+  display: flex !important; z-index: 2 !important;
+}
+.sti-v2 [data-subscriber-slot] #sti-roue-wrap > .sti-wrap { transform: none !important; }
+.sti-v2 [data-subscriber-slot] #sti-roue-wrap .sti-pan {
+  top: calc(100% + var(--space-3)); right: 0;
+  max-width: min(380px, calc(100vw - 20px)); max-height: min(78vh, 700px);
+}
+@media (max-width: 600px) {
+  .sti-v2 [data-subscriber-slot] #sti-roue-wrap .sti-pan {
+    position: fixed !important; top: calc(var(--header-height, 66px) + var(--space-2)); right: 10px !important;
+    width: min(380px, calc(100vw - 20px)); max-height: calc(100dvh - 90px);
+    transition: opacity .25s ease;
+  }
+  /* L'ouverture ne décale jamais la vraie roue hors de l'écran mobile. */
+  .sti-v2 [data-subscriber-slot] #sti-roue-wrap .sti-pan.ouvert {
+    transform: none !important; animation: none !important;
+  }
+  /* Le panneau fermé ne doit pas déborder horizontalement pendant son animation. */
+  .sti-v2 [data-subscriber-slot] #sti-roue-wrap .sti-pan:not(.ouvert) {
+    transform: translateY(-12px) scale(.965);
+  }
+  /* Au-dessus des pastilles et de l'invitation, mais sous les vraies modales. */
+  html:not(.sti-modal-open) body.sti-v2 .site-header:has(.sti-pan.ouvert) { z-index: 2147483001; }
+}
 
 /* ── 6. Socle de mise en page & Typographie (scopé sur body.sti-v2) ── */
 body.sti-v2,
@@ -440,6 +475,8 @@ html[dir="rtl"] .reading-progress { transform-origin: right center; }
   color: var(--text);
   letter-spacing: -0.02em;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand-logo__sub {
@@ -619,7 +656,7 @@ html[dir="rtl"] .reading-progress { transform-origin: right center; }
   padding: 8px 13px;
   border-radius: var(--radius-full);
   background: var(--brand);
-  color: #ffffff !important;
+  color: var(--brand-contrast) !important;
   font-size: 0.8rem;
   font-weight: 700;
   white-space: nowrap;
@@ -711,7 +748,7 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
 .btn:active { transform: translateY(0); }
 .btn[hidden] { display: none !important; }
 
-.btn-primary { background: var(--brand); color: #ffffff !important; box-shadow: 0 8px 20px -6px rgba(99, 102, 241, 0.55); }
+.btn-primary { background: var(--brand); color: var(--brand-contrast) !important; box-shadow: 0 8px 20px -6px rgba(99, 102, 241, 0.55); }
 .btn-primary:hover { background: var(--brand-hover); }
 
 .btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border-strong); }
@@ -741,11 +778,11 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   white-space: nowrap;
 }
 .badge-html { background: var(--accent-html-soft); color: var(--accent-html); border-color: var(--accent-html-border); }
-.badge-css  { background: var(--accent-css-soft);  color: var(--accent-css);  border-color: var(--accent-css-border); }
+.badge-css  { background: var(--accent-css-soft);  color: var(--badge-css-ink, var(--accent-css));  border-color: var(--accent-css-border); }
 .badge-js   { background: var(--accent-js-soft);   color: var(--accent-js);   border-color: var(--accent-js-border); }
 .badge-sql  { background: var(--accent-sql-soft);  color: var(--accent-sql);  border-color: var(--accent-sql-border); }
-.badge-php  { background: var(--accent-php-soft);  color: var(--accent-php);  border-color: var(--accent-php-border); }
-.badge-gold { background: var(--accent-gold-soft); color: var(--accent-gold); border-color: var(--accent-gold-border); }
+.badge-php  { background: var(--accent-php-soft);  color: var(--badge-php-ink, var(--accent-php));  border-color: var(--accent-php-border); }
+.badge-gold { background: var(--accent-gold-soft); color: var(--badge-gold-ink, var(--accent-gold)); border-color: var(--accent-gold-border); }
 .badge-4si  { background: var(--accent-php-soft);  color: var(--accent-php);  border-color: var(--accent-php-border); }
 .badge-new {
   background: linear-gradient(135deg, #ec4899, #f97316);
@@ -1150,7 +1187,7 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   transition: all var(--duration-fast) ease;
 }
 .filter-chip:hover { border-color: var(--border-strong); color: var(--text); }
-.filter-chip.is-active { background: var(--brand); border-color: var(--brand); color: #ffffff; }
+.filter-chip.is-active { background: var(--brand); border-color: var(--brand); color: var(--brand-contrast); }
 
 .deep-search-results {
   padding: var(--space-4);
@@ -1611,9 +1648,20 @@ body.sti-v2 #pwaInvitationInstaller {
 }
 
 /* Garde l'action d'installation accessible sans élargir l'en-tête. */
-@media (max-width: 400px), (min-width: 1060px) and (max-width: 1200px) {
+@media (max-width: 540px), (min-width: 1060px) and (max-width: 1200px) {
   body.sti-v2 #installBtn { font-size: 0; padding-inline: var(--space-2); }
   body.sti-v2 #installBtn::before { content: "📲"; font-size: .8rem; }
+}
+@media (max-width: 540px) {
+  /* Conserver toutes les actions sans recouvrir le logo ni élargir la page. */
+  body.sti-v2 .site-header__inner, body.sti-v2 .header-actions { gap: var(--space-1); }
+  body.sti-v2 .site-header .brand-logo { flex: 0 0 auto; gap: 0; }
+  body.sti-v2 .site-header .brand-logo__text { display: none; }
+  body.sti-v2 .search-trigger { padding-inline: 7px; }
+  body.sti-v2 #installBtn { padding-inline: 5px; }
+  body.sti-v2 .theme-switcher__btn { width: 26px; }
+  .sti-v2 [data-subscriber-slot] #sti-roue-anneau { width: 50px !important; height: 50px !important; padding: 3px !important; }
+  .sti-v2 [data-subscriber-slot] #sti-roue-btn { width: 44px !important; height: 44px !important; font-size: 20px !important; }
 }
 @media (min-width: 1060px) and (max-width: 1200px) {
   body.sti-v2 .site-nav__link { padding-inline: 6px; }
@@ -1656,3 +1704,77 @@ body.sti-v2 #sti-reprendre-x {
   background: var(--surface-elevated) !important;
   color: var(--text) !important;
 }
+
+
+/* La Cote conserve exactement sa palette, sa typographie et son mouvement d'origine. */
+:root {
+  --cote-fond-haut: #0b101d; --cote-fond-bas: #141b2e;
+  --cote-bord-haut: rgba(255,255,255,.06); --cote-bord-bas: rgba(110,231,183,.28);
+  --cote-texte: #c7cbe2; --cote-vert: #6ee7b7; --cote-vert-fond: rgba(110,231,183,.07);
+  --cote-bord-etiquette: rgba(255,255,255,.08); --cote-masque: #000;
+  --cote-detail: #8b93b8; --cote-nouvelle: #fbbf24; --cote-section: #5eead4;
+}
+#cote-sti { position: relative; display: flex; align-items: stretch; overflow: hidden; background: linear-gradient(180deg,var(--cote-fond-haut),var(--cote-fond-bas)); border-top: 1px solid var(--cote-bord-haut); border-bottom: 1px solid var(--cote-bord-bas); color: var(--cote-texte); font-family: "SF Mono",SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace; }
+#cote-sti .cote-etiq { display: flex; align-items: center; padding: 0 12px; font-size: 13px; font-weight: 800; letter-spacing: .14em; color: var(--cote-vert); background: var(--cote-vert-fond); border-right: 1px solid var(--cote-bord-etiquette); white-space: nowrap; z-index: 2; }
+#cote-sti .cote-clignot { width: 8px; height: 8px; border-radius: 50%; background: var(--cote-vert); box-shadow: 0 0 9px var(--cote-vert); animation: cote-bip 1.6s steps(2, start) infinite; }
+@keyframes cote-bip { 50% { opacity: .22; } }
+#cote-sti .cote-ecran { flex: 1; min-width: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg,transparent,var(--cote-masque) 26px,var(--cote-masque) calc(100% - 26px),transparent); mask-image: linear-gradient(90deg,transparent,var(--cote-masque) 26px,var(--cote-masque) calc(100% - 26px),transparent); }
+#cote-sti .cote-piste { display: inline-flex; align-items: center; gap: 30px; padding: 9px 30px; white-space: nowrap; will-change: transform; animation: cote-defile linear infinite; }
+@keyframes cote-defile { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+#cote-sti:hover .cote-piste, #cote-sti:focus-within .cote-piste { animation-play-state: paused; }
+#cote-sti .cote-item { display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; }
+#cote-sti .cote-sym { font-weight: 900; letter-spacing: .06em; }
+#cote-sti .cote-up { color: var(--cote-vert); font-weight: 800; }
+#cote-sti .cote-det { color: var(--cote-detail); font-size: 12.5px; }
+#cote-sti .cote-news { color: var(--cote-nouvelle); font-weight: 700; }
+#cote-sti .cote-sec { color: var(--cote-section); letter-spacing: .12em; font-weight: 800; font-size: 12.5px; }
+@media (max-width: 700px) {
+  #cote-sti { border-radius: 14px; border: 1px solid var(--cote-bord-bas); margin: 8px 10px 10px; }
+  #cote-sti .cote-etiq, #cote-sti .cote-det { display: none; }
+  #cote-sti .cote-piste { padding: 6px 16px; gap: 22px; }
+  #cote-sti .cote-item { font-size: 12.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #cote-sti .cote-piste { animation: none; white-space: normal; flex-wrap: wrap; }
+  #cote-sti .cote-clignot { animation: none; }
+}
+
+/* Identités vectorielles locales des cinq matières. */
+.matiere-logo { display: block; width: 32px; height: 32px; color: var(--matiere-accent, var(--brand)); }
+.matiere-logo--hero { float: right; width: 32px; height: 32px; margin: 0 0 var(--space-2) var(--space-3); color: var(--course-accent, var(--brand)); }
+.course-page--sql .matiere-logo--hero { color: var(--accent-sql); }
+.course-page--php .matiere-logo--hero { color: var(--accent-php); }
+
+/* Identité et QR authentiques, utilisés sans les redessiner. */
+.brand-logo__mark { overflow: hidden; }
+.brand-logo__mark img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.site-qr-shortcut { display: inline-flex; align-items: center; gap: var(--space-3); padding: var(--space-2); border: 1px solid var(--border-strong); border-radius: var(--radius-md); background: var(--surface-solid); color: var(--text); text-align: left; cursor: pointer; }
+.site-qr-shortcut img, .qr-box img { display: block; max-width: 100%; height: auto; }
+.site-qr-shortcut img { width: 80px; border-radius: var(--radius-sm); }
+.site-qr-shortcut span { font-weight: 700; }
+.site-qr-shortcut small { color: var(--text-secondary); font-weight: 400; }
+.section--ateliers { padding-bottom: 0; }
+.section--ateliers .lab-chips-row { margin-top: 0; }
+
+/* L'aperçu ouvre toujours le lecteur historique complet. */
+.sti-lecteur-complet { margin: var(--space-2) var(--space-3); }
+@media (max-width: 700px) {
+  #sti-video-modal-card { overflow-y: auto !important; }
+  #sti-video-modal-card video { max-height: 52vh !important; }
+}
+
+/* La fenêtre Contact reste au-dessus des commandes flottantes d'origine. */
+#modalContactQr {
+  z-index: 2147483647;
+  /* La visibilité change immédiatement : le bouton de fermeture reçoit le focus dès l'ouverture. */
+  transition: opacity var(--duration-normal) ease;
+}
+
+/* Contraste du panneau de compte original, sans remplacer ses états ni ses fonds. */
+:root { --sti-compte-inactif-ink: #61533e; --sti-compte-prof-ink: #a8340d; --sti-compte-orange-ink: #101728; }
+#sti-pan-prog-badges > span[style*="color:#7a6f5d"] { color: var(--sti-compte-inactif-ink) !important; }
+#sti-roue-btn-ecrire-prof { color: var(--sti-compte-prof-ink) !important; }
+#sti-pan-signets-tuile > div:first-child > button { color: var(--sti-compte-orange-ink) !important; }
+
+/* La pastille historique conserve ses fonds pastel en mode sombre. */
+#sti-sync-pastille { color: var(--sti-compte-orange-ink) !important; }

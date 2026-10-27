@@ -1,11 +1,11 @@
 # 📚 STI By A'e — Plateforme Pédagogique STI V2.0 (3ᵉ & 4ᵉ SI)
 
-Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sciences et Technologies de l'Informatique** (**3SI** et **4SI**, programme officiel du Baccalauréat Tunisien) : cours multimédias avec **14 vidéos explicatives (`.mp4`)** et écoute vocale synchronisée, **2 livres connectés (Smart Books) par QR codes**, laboratoire **SQLite WASM**, **41 fiches d'exercices et séries corrigées**, **5 modules de quiz CSPRNG (1 244 questions au total)** avec tirage neuf à chaque connexion et reprise multi-appareils, hub **« Mes erreurs »**, révision espacée **J+1 / J+3 / J+7**, couverture sur **124 pages**, **retour instantané 0 ms sans rechargement (`bfcache`)**, sauvegarde automatique quotidienne des **15 tables Supabase** vers **Google Drive** et tableau de bord enseignant complet.
+Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sciences et Technologies de l'Informatique** (**3SI** et **4SI**, programme officiel du Baccalauréat Tunisien) : cours multimédias avec **13 vidéos `.mp4` sélectionnées dans le catalogue d’accueil** (dont les ressources réservées 4SI), d’autres séries vidéo et une écoute vocale synchronisée, **2 livres connectés (Smart Books) par QR codes**, laboratoire **SQLite WASM**, **41 fiches d'exercices et séries corrigées**, **5 modules de quiz CSPRNG (1 244 questions au total)** avec tirage neuf à chaque connexion et reprise multi-appareils, hub **« Mes erreurs »**, révision espacée **J+1 / J+3 / J+7**, couverture sur **124 pages**, **retour instantané 0 ms sans rechargement (`bfcache`)**, sauvegarde automatique quotidienne des **15 tables Supabase** vers **Google Drive** et tableau de bord enseignant complet.
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `23` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v341`, historique `sti-atelier-v340` / `sti-atelier-v339` / `sti-atelier-v338`)
-> 📌 **Version active** : **v480** (`sti-atelier-v341` — 27 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `23` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v342`, historique `sti-atelier-v341` / `sti-atelier-v340` / `sti-atelier-v339`)
+> 📌 **Version active** : **v481** (`sti-atelier-v342` — 27 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
 
 ---
 
@@ -28,7 +28,7 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 
 | Pilier | Détail vérifié dans le dépôt et la base active |
 |---|---|
-| **Cours & multimédia** | HTML5, CSS3, JavaScript, Bases de données / SQL et PHP / MySQLi (`4SI`), **14 vidéos `.mp4`** chapitrées + écoute vocale `.mp3` synchronisée avec Guide-Ligne (`0.85×` / `1×` / `1.15×`) |
+| **Cours & multimédia** | HTML5, CSS3, JavaScript, Bases de données / SQL et PHP / MySQLi (`4SI`), **13 vidéos `.mp4` dans le catalogue d’accueil**, plus les autres séries et médias historiques + écoute vocale `.mp3` synchronisée avec Guide-Ligne (`0.85×` / `1×` / `1.15×`) |
 | **Smart Books QR** | **2 manuels PDF connectés** : *3ᵉ SI* (**72 pages**) et *4ᵉ SI* (**100 pages**) reliés page par page via `livre-smart.html` |
 | **Exercices & Bac** | Hub `exercices/series-exercices.html`, **41 fiches TP / corrigés**, séries SQL 1 à 6 en vidéo, 37 Défis JS, `bac-pratique.html`, `pieges-bac.html`, `outils-js-bac.html`, `memo-veille-bac.html` |
 | **Banques de quiz** | **5 modules actifs** totalisant **1 244 questions** : HTML5/CSS3 (**187**), JavaScript (**106**), SQL (**140**), PHP (**176**) et Tableaux Smart Books (**635** dans `quiz-banque.json`) |
@@ -40,7 +40,9 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 ## 🎓 Cours interactifs, vidéos, Smart Books & exercices
 
 - **Cours complets conformes au programme tunisien** (`cours/html5.html`, `cours/css3.html`, `cours/javascript.html`, `cours/sql.html`, `cours/php.html`, `cours/php-mysqli.html`, `cours/sql-bases-ldd-lmd-lcd.html`) :
-  - **14 vidéos explicatives (`.mp4`)** : 5 cours complets, 2 animations CSS3, l'histoire animée du Guichet PHP/MySQLi et les 6 corrigés vidéo des séries SQL, avec reprise automatique à la seconde près et remontée cloud `PROG_MEDIA` (`✅ Vu` / `⏳ En cours`).
+  - Les cinq cours unifiés présentent trois objectifs, une feuille de route cliquable et un temps de lecture indicatif calculé à **180 mots par minute**, hors vidéos. Les étapes réservées à la 4ᵉ SI restent protégées.
+  - La vidéo principale PHP est le cours complet d’origine `php-cours.mp4` ; son lecteur historique et ses chapitres sont conservés, ainsi que la vidéo de synthèse distincte.
+  - **Catalogue d’accueil : 13 vidéos `.mp4`** — HTML5 (1), CSS3 (4), JavaScript (1), SQL (4 dont deux réservées 4SI) et PHP (3 réservées 4SI). Les six vidéos des séries SQL, les variantes mobiles et les leçons interactives restent également disponibles dans leurs ressources historiques ; elles ne sont pas toutes comptées dans ce catalogue. La reprise et la remontée cloud `PROG_MEDIA` restent actives (`✅ Vu` / `⏳ En cours`).
   - **Laboratoire SQL de poche (`cours/sql-playground.html`)** : moteur SQLite WASM 100 % local avec 3 bases d'entraînement et exécution hors-ligne.
 - **Smart Books & Annexes officielles** :
   - Chaque page des manuels *3ᵉ SI* et *4ᵉ SI* possède un QR code ouvrant la ressource exacte et mémorisant la dernière page consultée ;
@@ -166,11 +168,16 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 
 ## 🚀 Maintenance, tests automatisés & conventions Bac STI
 
-- **Suite de vérification statique et comportementale (`node:test` + `node:vm`)** :
+- **Tests automatisés** : après `npm ci` et `npx playwright install chromium`, lancer les tests statiques et les suites navigateur depuis la racine :
   ```bash
-  node --test tests/v302-static.test.mjs tests/password-recovery-v441.test.mjs
+  node --test tests/*.test.mjs
+  for suite in fidelite css3 javascript sql-php demandes parcours main-integration sw-fidelite v303; do
+    npx playwright test --config "tests/playwright-$suite.config.mjs"
+  done
+  npx playwright test --config tests/playwright.config.mjs
   ```
-- **Protocole de mise à jour PWA (`sw.js`)** : incrémenter `CACHE` (`sti-atelier-v330`, après `sti-atelier-v329` / `sti-atelier-v328` / `sti-atelier-v327`) et `UPDATE_ID`, lister uniquement les fichiers modifiés en tête de `UPDATE_FILES`, et régénérer `offline-complete-manifest.json` avec les empreintes Git blob exactes.
+  Les tests d’accès utilisent des identités fictives : ils ne valident pas une authentification Supabase réelle.
+- **Protocole de mise à jour PWA (`sw.js`)** : lors d’une nouvelle publication, incrémenter `CACHE` après `sti-atelier-v342` et `UPDATE_ID`, actualiser les révisions des seuls fichiers modifiés dans `UPDATE_FILES`, puis régénérer `offline-complete-manifest.json` avec les empreintes Git blob exactes. Les vidéos, audios et PDF lourds ne sont pas ajoutés au téléchargement différentiel automatique.
 - **Conventions pédagogiques strictes Bac STI** :
   - **JavaScript** : uniquement les méthodes de l'annexe officielle (`ch[i]`, `substring`, `indexOf`, `lastIndexOf`, `trim`, `toUpperCase`, `toLowerCase`, `replace`, `charCodeAt`, `String.fromCharCode`, `getElementById`, `getElementsByName`, `Date`, `innerHTML`/`textContent`/`document.write`) ;
   - **SQL** : jointures exclusivement dans `WHERE t1.col = t2.col` (aucun `JOIN … ON`) et opérateur `!=` ;
@@ -217,6 +224,7 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 | v478 | Protection monotone multicouche des XP et records de Quiz élèves (`v478` · `sti-atelier-v339`) : verrouillage `pull-before-push` dans `sync-progressions.js` (aucun `POST` avant la fin du premier `tirer()` sur navigateur neuf ou PC partagé), fusion monotone bidirectionnelle des XP/niveaux/records (`sqlQuestV3`, `quizphp_v1_user`, `quizzora_xp_v1`, `sti-quiz-xp-js-v1`, `js_quiz_high_score`, `js_quiz_total_answered`) même lorsque `local >= distant`, plancher d'XP reconstruit automatiquement depuis l'historique immuable `sti_quiz_parties` (`STIQuizSync.resume().xpPlancher`), crédit XP garanti avant rendu ou `pagehide` sur les 4 moteurs de quiz, et trigger PostgreSQL `trg_sti_progressions_monotone_xp` (`public.sti_progressions_preserver_xp()`) actif sur `public.sti_progressions` (`sti-atelier-v339`) |
 | v479 | Fiabilisation intégrale du compteur des vidéos (`.mp4`) et audios (`.mp3`) (`v479` · `sti-atelier-v340`) : conservation de `maxPct`/`done` au clic sur `✕` du bandeau `reprendre.js` (`sec: 0` + `repriseMasquee` sans suppression de clé), suivi automatique des vidéos `.mp4` ouvertes dans `<iframe id="pdfFrame">` sur `exercices/series-exercices.html` (dont Série 4.2 GestLocation), harmonisation des compteurs roue élève (`acces.js`) / `admin.js` / `analytique.js`, résolution canonique des slugs versionnés/encodés dans `protection.js` et fusion monotone sous-clé par sous-clé de `sti-media-prog-v1` dans PostgreSQL (`sti-atelier-v340`) |
 | v480 | Intégration de la refonte de l'accueil, du profil et des cinq cours avec les correctifs XP/médias de v478–v479 : ancres historiques conservées, installation PWA accessible, tests de migration et cache différentiel `sti-atelier-v341` ; les fichiers d'accès protégés restent inchangés. |
+| v481 | Fidélité à l’origine : roue, logo, QR et Cote restaurés ; 13 vidéos avec le lecteur historique complet ; cours PHP animé d’origine ; cinq séries PHP et corrigés ; synthèses dans le cours ; retour contextuel des quiz ; exercices en bulles ; trois thèmes et dix outils regroupés. Les cinq cours affichent leurs objectifs, leur feuille de route et une durée de lecture ; les nouveaux modules essentiels restent disponibles hors ligne (`sti-atelier-v342`). |
 
 ---
 

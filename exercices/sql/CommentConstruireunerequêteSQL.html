@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html data-sti-heritage="interface" lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -92,6 +92,8 @@ button.x{border-color:var(--line);color:var(--muted);padding:2px 8px}
 @media (max-width:880px){.wrap{grid-template-columns:minmax(0,1fr)}header{order:-2}.steps{grid-column:1;grid-row:auto}.pieges{grid-column:1;grid-row:auto}.panel{grid-column:1;grid-row:auto;order:-1;position:sticky;top:8px;max-height:48vh;margin-bottom:14px;z-index:5}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
+
+<link rel="stylesheet" href="../../assets/css/theme-patrimoine.css">
 </head>
 <body>
 <div class="wrap">
@@ -325,10 +327,12 @@ $('#preset').innerHTML=Object.keys(PRESETS).map(k=>`<option>${k}</option>`).join
 $('#schema').value=PRESETS[Object.keys(PRESETS)[0]];
 schema=parse($('#schema').value);fresh();render();
 </script>
-<script src="../../assets/js/supabase-umd.js" defer></script>
 <script src="../../assets/js/config.js?v=425" defer></script>
+<script src="../../assets/js/supabase-umd.js" defer></script>
 <script src="../../assets/js/acces.js?v=453" defer></script>
 <script src="../../assets/js/sync-progressions.js?v=463" defer></script>
 <script src="../../assets/js/mobile-nav.js?v=434" defer></script>
+
+<script src="../../assets/js/profil.js" defer></script>
 </body>
 </html>

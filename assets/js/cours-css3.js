@@ -332,6 +332,7 @@
     global.STIProfil.enregistrerPositionVideo({id:identifiantVideo(video),matiere:MATIERE,titre:video.dataset.videoTitle||'Display : la démo animée',temps:video.currentTime||0,duree:Number.isFinite(video.duration)?video.duration:0,url:'cours/css3.html#videos',terminee:!!terminee});
   }
   var lecons={
+    cours:{titre:'Cours CSS3',description:'Sélecteurs, Flexbox et transitions — vidéo du cours',videoId:'css3-cours',video:'../assets/videos/css3-cours-v9-sync.mp4',videoTitle:'Cours CSS3'},
     positionnement:{titre:'Positionnement animé',description:'display · position · float — pas à pas',url:'../Positionnement-animee/index.html',videoId:'css-positionnement',video:'../assets/videos/css-positionnement.mp4',videoTitle:'CSS pas à pas — Positionnement animé'},
     cssanimee:{titre:'CSS animée',description:'arrière-plans · liens · ombres · bordures · tableaux · listes',url:'../cssanimee/index.html',videoId:'css-animee',video:'../assets/videos/css-animee.mp4',videoTitle:'CSS pas à pas — Décoration animée'},
     background:{titre:'Détails background — TP Site Tunisie',description:'image de fond · voile · carte badge — mémo interactif corrigé',url:'../projets/site-tunisie/correction-details/carte-timbre-droite-haut.html'}
@@ -350,7 +351,7 @@
     id('playlistDisplay').hidden=!display;id('playlistLesson').hidden=display;
     if(display){if(!lecteur.paused)lecteur.pause();return;}
     if(!videoDisplay.paused)videoDisplay.pause();
-    id('playlistLessonTitle').textContent=lecon.titre;id('playlistLessonDescription').textContent=lecon.description;id('playlistLessonLink').href=lecon.url;
+    id('playlistLessonTitle').textContent=lecon.titre;id('playlistLessonDescription').textContent=lecon.description;id('playlistLessonLink').hidden=!lecon.url;if(lecon.url)id('playlistLessonLink').href=lecon.url;
     id('playlistLessonVideoCard').hidden=!lecon.video;
     if(lecon.video && lecteur.dataset.videoId!==lecon.videoId){
       preparerChangementVideo(lecteur);

@@ -107,15 +107,16 @@ test('récapitulatif accessible et lecteur vidéo imbriqué avec reprise', async
   await page.locator('#jsRecapResize').focus(); await page.keyboard.press('ArrowLeft');
   expect(await page.locator('#jsRecapBox').evaluate(el => el.getBoundingClientRect().width)).toBeLessThan(width);
   await page.locator('#jsRecapVideo').click();
-  await expect(page.locator('#jsVideoModal')).toBeVisible();
+  await expect(page.locator('#sti-video-modal-overlay')).toBeVisible();
   expect(await page.locator('#jsRecapModal').evaluate(el => el.inert)).toBe(true);
-  await expect(page.locator('#jsVideoModal [data-resume-video]')).toContainText('0:25');
-  await page.locator('#jsVideoModal [data-resume-video]').click();
-  await expect.poll(() => page.locator('#modalJsVideo').evaluate(video => video.currentTime)).toBeGreaterThanOrEqual(24);
-  await page.locator('#modalJsVideo').evaluate(video => video.dispatchEvent(new Event('ended')));
+  await expect(page.locator('#sti-video-modal-overlay [data-reprise-profil]')).toContainText('0:25');
+  await page.locator('#sti-video-modal-overlay [data-reprise-profil]').click();
+  await expect.poll(() => page.locator('#sti-video-modal-player').evaluate(video => video.currentTime)).toBeGreaterThanOrEqual(24);
+  await page.locator('#sti-video-modal-player').evaluate(video => video.dispatchEvent(new Event('ended')));
   await expect(page.locator('[data-video-badge]').first()).toHaveText('✓ Vidéo vue');
-  await page.keyboard.press('Escape'); await expect(page.locator('#jsVideoModal')).toBeHidden();
+  await page.keyboard.press('Escape'); await expect(page.locator('#sti-video-modal-overlay')).toBeHidden();
   expect(await page.locator('#jsRecapModal').evaluate(el => el.inert)).toBe(false);
+  await expect(page.locator('#jsRecapModal')).toBeVisible(); await expect(page.locator('#jsRecapVideo')).toBeFocused();
   await page.locator('#jsRecapResize').focus(); await page.keyboard.press('Tab');
   await expect(page.locator('#jsRecapVideo')).toBeFocused();
   await page.keyboard.press('Escape'); await expect(page.locator('#jsRecapModal')).toBeHidden();
@@ -201,7 +202,8 @@ test('les activités et les projets répondent dans la fenêtre intégrée', asy
   await expect(page.locator('#jsResourceModal')).toBeVisible();
   await frame.locator('[data-fam="K"]').click();
   await frame.locator('.card').first().click();
-  await expect(frame.locator('#ex36_audio')).toHaveAttribute('src', '../../assets/audio/foret.mp3');
+  await expect(frame.locator('#ex36_audio')).toHaveAttribute('src', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+  await page.route('https://www.soundhelix.com/**', route => route.abort());
   await frame.locator('button[onclick="ex36_play()"]').click();
   await expect(frame.locator('#ex36_res')).toContainText('Lecture', { timeout: 10_000 });
   await frame.locator('button[onclick="ex36_pause()"]').click();
@@ -210,7 +212,7 @@ test('les activités et les projets répondent dans la fenêtre intégrée', asy
   await frame.getByTitle('Retour aux exercices').click();
   await expect(page.locator('#jsResourceModal')).toBeHidden();
   await expect(page.locator('#exercices')).toBeVisible();
-  await expect(page).toHaveURL(/#series-js-title$/);
+  await expect(page).toHaveURL(/#exercices$/);
 
   await page.locator('[data-open-js-resource][href="../projets/fleurs/index.html"]').click();
   await frame.locator('a[href="Corrections.html"]').click();
@@ -385,14 +387,14 @@ test('retours historiques et écran partagé restent fonctionnels', async ({ pag
   await serie.click();
   await page.frameLocator('#jsResourceFrame').getByRole('link', { name: /Cours JavaScript/ }).click();
   await expect(page.locator('#jsResourceModal')).toBeHidden();
-  await expect(page.locator('#cours')).toBeVisible();
-  await expect(page).toHaveURL(/#cours$/);
-  await page.locator('[data-course-tab="exercices"]').click();
+  await expect(page.locator('#exercices')).toBeVisible();
+  await expect(page).toHaveURL(/#exercices$/);
+  await expect(serie).toBeFocused();
   await serie.click();
   await page.frameLocator('#jsResourceFrame').getByRole('link', { name: /Séries/ }).click();
   await expect(page.locator('#jsResourceModal')).toBeHidden();
   await expect(page.locator('#exercices')).toBeVisible();
-  await expect(page).toHaveURL(/#series-js-title$/);
+  await expect(page).toHaveURL(/#exercices$/);
   await page.evaluate(() => { window.ouvrirEcranPartageEnonceCodeSTI = url => { window.__partageTest = url; }; });
   await serie.click();
   await expect(page.locator('#jsResourceSplit')).toBeVisible();
@@ -401,21 +403,16 @@ test('retours historiques et écran partagé restent fonctionnels', async ({ pag
   expect(await page.evaluate(() => window.__partageTest)).toMatch(/\/exercices\/javascript\/Tp1-js\.html$/);
 });
 
-test('Ctrl-clic conserve la navigation native', async ({ page, context }) => {
-  // La simulation d'identité s'applique aussi au nouvel onglet, pas seulement à la page initiale.
-  await context.route('**/assets/js/config.js*', async route => {
-    const response = await route.fetch();
-    const body = (await response.text()) + "\nwindow.STI_AUTH = { URL: '', ANON_KEY: '', estPagePublique: () => false, getProfile: async () => ({ id:'test-gold',email:'test@example.invalid',role:'eleve',statut_acces:'GOLD',enabled:true }), signOut: async () => {} };";
-    await route.fulfill({ response, body });
-  });
+test('Ctrl-clic ouvre aussi la bulle sans créer de nouvel onglet', async ({ page, context }) => {
   await page.locator('[data-course-tab="exercices"]').click();
-  const nouvelOnglet = context.waitForEvent('page');
-  await page.locator('[data-open-js-resource]').first().click({ modifiers: ['Control'] });
-  const destination = await nouvelOnglet;
-  await destination.waitForLoadState('domcontentloaded');
-  await expect(destination).toHaveURL(/\/exercices\/javascript\/Tp1-js\.html$/);
-  await expect(page.locator('#jsResourceModal')).toBeHidden();
-  await destination.close();
+  let nouvellesPages = 0; context.on('page', () => { nouvellesPages++; });
+  const lien = page.locator('[data-open-js-resource]').first();
+  await lien.click({ modifiers: ['Control'] });
+  await expect(page.locator('#jsResourceModal')).toBeVisible();
+  await expect(page.frameLocator('#jsResourceFrame').locator('body')).toContainText(/Travaux\s+Pratiques\s+N°1/i);
+  await page.locator('#jsResourceClose').click();
+  await expect(lien).toBeFocused();
+  expect(nouvellesPages).toBe(0);
 });
 
 test('les 17 destinations se chargent aussi dans une iframe sans permission de pop-up', async ({ page, context }) => {
@@ -461,7 +458,8 @@ test.describe('ressources JavaScript hors connexion', () => {
       await c.addAll([
         '/cours/javascript.html', '/assets/css/theme.css', '/assets/css/cours.css', '/assets/css/cours-javascript.css', '/assets/css/protection.css',
         '/assets/js/supabase-umd.js', '/assets/js/acces.js', '/assets/js/sync-progressions.js', '/assets/js/profil.js', '/assets/js/app.js', '/assets/js/protection.js', '/assets/js/cours-javascript.js',
-        '/exercices/javascript/Tp1-js.html', '/exercices/javascript/js-37-defis-tt.html', '/assets/css/dialogues-compat.css', '/assets/js/dialogues-compat.js', '/assets/audio/foret.mp3'
+        '/exercices/javascript/Tp1-js.html', '/exercices/javascript/js-37-defis-tt.html', '/assets/css/dialogues-compat.css', '/assets/js/dialogues-compat.js', '/assets/audio/foret.mp3',
+        '/assets/css/visionneuse-exercices.css', '/assets/js/visionneuse-exercices.js', '/assets/icons/matieres.svg'
       ]);
     }, nomCache);
     await page.reload(); await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);

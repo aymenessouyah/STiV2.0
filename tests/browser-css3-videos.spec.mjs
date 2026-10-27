@@ -46,20 +46,16 @@ test('les deux MP4 du pas-à-pas ont des positions indépendantes et une reprise
   await expect(page.locator('#playlistLessonVideoCard')).toBeVisible();
   await expect(page.locator('#playlistLessonLink')).toHaveAttribute('href', '../Positionnement-animee/index.html');
   await expect(page.locator('#playlistLessonVideoCard [data-resume-video]')).toContainText('0:11');
-  await page.locator('#playlistLessonVideo').evaluate(video => { video.muted = true; });
   await page.locator('#playlistLessonVideoCard [data-resume-video]').click();
-  await expect.poll(() => page.locator('#playlistLessonVideo').evaluate(video => video.currentTime)).toBeGreaterThanOrEqual(11);
-  expect(await page.locator('#playlistLessonVideo').evaluate(video => video.paused)).toBe(false);
-
-  /* Même tâche JavaScript : l'événement pause ne peut pas masquer une perte
-     des dernières secondes lors du changement de source. */
-  const sauvegarde = await page.evaluate(() => {
-    document.querySelector('#playlistLessonVideo').currentTime = 23;
-    document.querySelector('[data-playlist="cssanimee"]').click();
-    return window.STIProfil.chargerProfil().videos.positions;
-  });
+  const lecteur = page.locator('#sti-video-modal-player');
+  await expect(page.locator('#sti-video-modal-overlay')).toBeVisible();
+  await expect.poll(() => lecteur.evaluate(video => video.currentTime)).toBeGreaterThanOrEqual(11);
+  await lecteur.evaluate(video => { video.currentTime = 23; });
+  await page.locator('#sti-video-modal-close').click();
+  const sauvegarde = await page.evaluate(() => window.STIProfil.chargerProfil().videos.positions);
   expect(sauvegarde['css-positionnement']).toBe(23);
   expect(sauvegarde['css-animee']).toBe(9);
+  await page.locator('[data-playlist="cssanimee"]').click();
   await expect(page.locator('#playlistLessonVideo')).toHaveAttribute('src', '../assets/videos/css-animee.mp4');
   await expect(page.locator('#playlistLessonVideoCard [data-resume-video]')).toContainText('0:09');
   await expect(page.locator('#playlistLessonLink')).toHaveAttribute('href', '../cssanimee/index.html');
@@ -69,19 +65,22 @@ test('les deux MP4 du pas-à-pas ont des positions indépendantes et une reprise
   expect(erreurs).toEqual([]);
 });
 
-test('une seule lecture à la fois et pause lorsque le volet ou l’onglet disparaît', async ({ page }) => {
-  await page.locator('#stepPositionVideo').evaluate(async video => { video.muted = true; await video.play(); });
-  await page.locator('#stepDecoVideo').evaluate(async video => { video.muted = true; await video.play(); });
-  await expect.poll(() => page.locator('#stepPositionVideo').evaluate(video => video.paused)).toBe(true);
-  await expect.poll(() => page.locator('#stepDecoVideo').evaluate(video => video.paused)).toBe(false);
+test('une seule lecture à la fois et pause à la fermeture du lecteur', async ({ page }) => {
+  for (const [id, slug] of [['stepPositionVideo','css-positionnement'],['stepDecoVideo','css-animee']]) {
+    const bouton = page.locator('#'+id).locator('..').locator('..').locator('.sti-lecteur-complet').first();
+    await bouton.click();
+    await expect(page.locator('#sti-video-modal-overlay')).toHaveAttribute('data-slug',slug);
+    await expect(page.locator('#sti-video-modal-player')).toHaveAttribute('src',new RegExp(slug+'.mp4'));
+    expect(await page.locator('#stepPositionVideo').evaluate(video=>video.paused)).toBe(true);
+    expect(await page.locator('#stepDecoVideo').evaluate(video=>video.paused)).toBe(true);
+    await page.keyboard.press('Escape');
+    await expect.poll(() => page.locator('#sti-video-modal-player').evaluate(video=>video.paused)).toBe(true);
+    await expect(bouton).toBeFocused();
+  }
   await page.locator('[data-course-tab="videos"]').click();
-  expect(await page.locator('#stepDecoVideo').evaluate(video => video.paused)).toBe(true);
   await page.locator('[data-course-tab="cours"]').click();
-  await page.locator('#stepPositionVideo').evaluate(async video => { await video.play(); });
-  await page.locator('#pas-a-pas-toggle').focus();
-  await page.keyboard.press('Enter');
-  await expect(page.locator('#pas-a-pas-toggle')).toHaveAttribute('aria-expanded', 'false');
-  expect(await page.locator('#stepPositionVideo').evaluate(video => video.paused)).toBe(true);
+  await page.locator('#pas-a-pas-toggle').focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('#pas-a-pas-toggle')).toHaveAttribute('aria-expanded','false');
 });
 
 test('les lecteurs et la playlist restent utilisables au clavier sur mobile', async ({ page }) => {
@@ -91,8 +90,9 @@ test('les lecteurs et la playlist restent utilisables au clavier sur mobile', as
   await expect(page.locator('#pas-a-pas-toggle')).toHaveAttribute('aria-expanded', 'false');
   await page.keyboard.press('Enter');
   await expect(page.locator('#stepPositionVideo')).toBeVisible();
-  await page.locator('#stepPositionVideo').focus();
-  await expect(page.locator('#stepPositionVideo')).toBeFocused();
+  const bouton = page.locator('#stepPositionVideo').locator('..').locator('..').locator('.sti-lecteur-complet').first();
+  await bouton.focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('#sti-video-modal-overlay')).toBeVisible(); await page.keyboard.press('Escape'); await expect(bouton).toBeFocused();
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
   await page.locator('[data-course-tab="videos"]').click();
   await page.locator('[data-playlist="cssanimee"]').focus();

@@ -14,6 +14,7 @@ async function ouvrir(page,nom,hash='') {
 }
 
 test('SQL : Guide-Ligne audio, repères synchronisés, arrêt et retour en haut',async({page})=>{
+  const erreurs=[];page.on('pageerror',e=>erreurs.push(e.message));
   await ouvrir(page,'sql');
   await page.waitForFunction(()=>document.getElementById('sqlGuideAudio').readyState>=1);
   await page.locator('#sqlGuideFollow').check();await page.locator('[data-guide-key="ldd"]').click();
@@ -24,6 +25,7 @@ test('SQL : Guide-Ligne audio, repères synchronisés, arrêt et retour en haut'
   await expect.poll(()=>page.locator('#sqlGuideAudio').evaluate(a=>a.paused)).toBe(true);
   await page.locator('#lmd-groupby').scrollIntoViewIfNeeded();await expect(page.locator('#back-to-top')).toHaveClass(/is-visible/);
   await page.locator('#back-to-top').click();await expect.poll(()=>page.evaluate(()=>window.scrollY),{timeout:8000}).toBeLessThan(5);
+  expect(erreurs).toEqual([]);
 });
 
 
@@ -64,16 +66,17 @@ test('SQL et PHP : vidéos réelles, chapitres, vitesse et reprise enregistrée'
     await ouvrir(page,matiere,'#videos');
     for(const [slug,nombre] of items) {
       await page.locator(`[data-video-open="${slug}"]`).last().click();
-      const video=page.locator('#modalVideo');await page.waitForFunction(()=>document.getElementById('modalVideo').readyState>=1,{timeout:15000});
-      await expect(page.locator('#modalVideoChapters button')).toHaveCount(nombre);
-      await page.locator('#modalVideoRate').selectOption('1.25');expect(await video.evaluate(v=>v.playbackRate)).toBe(1.25);
-      await page.locator('#modalVideoChapters button').nth(1).click();
-      await expect(page.locator('#modalVideoChapters button').nth(1)).toHaveAttribute('aria-current','true');
+      const video=page.locator('#sti-video-modal-player');await page.waitForFunction(()=>document.getElementById('sti-video-modal-player').readyState>=1,null,{timeout:15000});
+      await expect(page.locator('#sti-video-modal-chap-pills button')).toHaveCount(nombre);
+      await page.locator('[data-mrate="1.25"]').click();expect(await video.evaluate(v=>v.playbackRate)).toBe(1.25);
+      await page.locator('#sti-video-modal-chap-pills button').nth(1).click();
+      await expect(page.locator('#sti-video-modal-chap-pills button').nth(1)).toHaveAttribute('aria-current','true');
       const position=await video.evaluate(v=>v.currentTime);expect(position).toBeGreaterThan(0);
       await video.evaluate(v=>v.pause());await page.keyboard.press('Escape');
       expect(await page.evaluate(s=>STIProfil.chargerProfil().videos.positions[s],slug)).toBeGreaterThan(0);
       await page.locator(`[data-video-open="${slug}"]`).last().click();
-      await page.waitForFunction(()=>document.getElementById('modalVideo').readyState>=1,{timeout:15000});
+      await page.locator('#sti-video-modal-overlay [data-reprise-profil]').click();
+      await page.waitForFunction(()=>document.getElementById('sti-video-modal-player').readyState>=1,null,{timeout:15000});
       await expect.poll(()=>video.evaluate(v=>v.currentTime)).toBeGreaterThanOrEqual(position-1);
       await page.keyboard.press('Escape');
     }
@@ -81,17 +84,31 @@ test('SQL et PHP : vidéos réelles, chapitres, vitesse et reprise enregistrée'
 });
 
 
-test('PHP : audio original, chapitrage et arrêt à l’ouverture d’une vidéo',async({page})=>{
+test('PHP : audio original, chapitrage, arrêt à la vidéo et reprise',async({page})=>{
+  const erreurs=[];page.on('pageerror',e=>erreurs.push(e.message));
   await ouvrir(page,'php');const audio=page.locator('#phpCourseAudio');
   await expect(audio).toHaveAttribute('src','../assets/audio/php-cours.mp3');
   await expect(page.locator('#phpAudioChapitres option')).toHaveCount(14);
   await page.waitForFunction(()=>document.getElementById('phpCourseAudio').readyState>=1);
   await page.locator('#phpAudioChapitres').selectOption('3');
   await expect.poll(()=>audio.evaluate(a=>a.currentTime)).toBeGreaterThanOrEqual(111.4);
+  await expect.poll(()=>audio.evaluate(a=>a.paused)).toBe(false);
   await expect(page.locator('#phpAudioStatus')).toContainText('Opérateurs');
-  await page.locator('[data-course-tab=videos]').click();await page.locator('[data-video-open=php-cours]').click();
-  await expect.poll(()=>audio.evaluate(a=>a.paused)).toBe(true);await expect(page.locator('#matiereVideoModal')).toBeVisible();
+  await expect(page.locator('#sti-voice-top-ctrl')).toBeVisible();
+  await expect(page.locator('#sti-voice-top-chap option')).toHaveCount(13);
+  await page.locator('#sti-voice-top-next').click();
+  await expect.poll(()=>audio.evaluate(a=>a.currentTime)).toBeGreaterThanOrEqual(227.01);
+  await expect.poll(()=>audio.evaluate(a=>a.paused)).toBe(false);
+  const avant=await audio.evaluate(a=>a.currentTime);
+  await page.locator('#featuredVideo').locator('..').locator('..').locator('.sti-lecteur-complet').click();
+  await expect.poll(()=>audio.evaluate(a=>a.paused)).toBe(true);
+  await expect(page.locator('#sti-video-modal-overlay')).toBeVisible();
   await page.keyboard.press('Escape');
+  await audio.evaluate(a=>a.play());
+  await expect.poll(()=>audio.evaluate(a=>a.paused)).toBe(false);
+  await expect.poll(()=>audio.evaluate(a=>a.currentTime)).toBeGreaterThanOrEqual(avant);
+  await audio.evaluate(a=>a.pause());
+  expect(erreurs).toEqual([]);
 });
 
 test('PHP : protocole du Guichet, arrêt et retours internes des iframes',async({page})=>{
@@ -116,8 +133,8 @@ test('PHP : les six fenêtres ont focus piégé, plein écran, redimensionnement
   await ouvrir(page,'php');
   for(const [tab,bouton,id] of [
     ['cours','[data-modal-open=animModal]','anim'],['cours','[data-modal-open=recapModal]','recap'],
-    ['exercices','#btnExoS10','exo'],['exercices','#s9 .sol-open[data-sol=html]','sol'],
-    ['exercices','#btnExoS11','exo2'],['exercices','#s10 .sol2-open[data-sol2=html]','sol2']]) {
+    ['cours','#btnExoS10','exo'],['cours','#s9 .sol-open[data-sol=html]','sol'],
+    ['cours','#btnExoS11','exo2'],['cours','#s10 .sol2-open[data-sol2=html]','sol2']]) {
     await page.locator(`[data-course-tab=${tab}]`).click();const origine=page.locator(bouton).first();await origine.click();
     const modal=page.locator(`#${id}Modal`),box=page.locator(`#${id}Box`);await expect(modal).toBeVisible();
     await expect(modal).toHaveAttribute('role','dialog');await expect(modal).toHaveAttribute('aria-modal','true');await expect(modal).toHaveAttribute('aria-labelledby',/.+/);

@@ -169,3 +169,7 @@ html.sti-modal-open .course-page #sti-sync-pastille { visibility: hidden !import
 .course-page .php-audio-guide audio { width: 100%; }
 .course-page .php-audio-guide select { max-width: 100%; padding: .55rem; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface-solid); color: var(--text); }
 .course-page .course-hero__heritage { margin: var(--space-2) 0 var(--space-4); color: var(--text-secondary); font-size: .875rem; }
+
+/* Le quiz pédagogique déplacé dans le cours reste lisible sur petit écran. */
+.course-page--php .legacy-php .synth-question { min-width: 0; max-width: 100%; box-sizing: border-box; }
+.course-page--php .legacy-php .synth-question legend { max-width: 100%; overflow-wrap: anywhere; }

@@ -24,9 +24,11 @@
   <script src="../assets/js/acces.js?v=479" defer></script>
   <script src="../assets/js/sync-progressions.js?v=479" defer></script>
   <script src="../assets/js/profil.js" defer></script>
-  <script src="../assets/js/app.js" defer></script>
+  <script src="../assets/js/app.js" defer></script><script src="../assets/js/retour-quiz.js" defer></script>
   <script src="../assets/js/cours-html5.js" defer></script>
-  <script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script>
+  <script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script><script src="../assets/js/lecteur-commun.js" defer></script>
+<link rel="stylesheet" href="../assets/css/visionneuse-exercices.css">
+<script defer src="../assets/js/visionneuse-exercices.js"></script>
 </head>
 <body class="sti-v2 course-page course-page--html5" data-course-unified="html5">
   <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
@@ -35,12 +37,7 @@
     <div class="container site-header__inner">
       <!-- Identité visuelle STI V2.0 -->
       <a class="brand-logo" href="../index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l’accueil">
-        <span class="brand-logo__mark" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-        </span>
+        <span class="brand-logo__mark" aria-hidden="true"><img src="../assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
         <span class="brand-logo__text">
           <span class="brand-logo__title">STI V2.0</span>
           <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
@@ -101,10 +98,12 @@
       <div class="container">
         <nav class="course-breadcrumb" aria-label="Fil d’Ariane"><a href="../index.html">Accueil</a><span aria-hidden="true">›</span><a href="../index.html#cours">Cours</a><span aria-hidden="true">›</span><span class="course-breadcrumb__current" aria-current="page">HTML5</span></nav>
         <div class="course-hero__grid">
-          <div class="course-hero__copy">
+          <div class="course-hero__copy"><svg class="matiere-logo matiere-logo--hero" aria-hidden="true" viewBox="0 0 48 48"><use href="../assets/icons/matieres.svg#html5"></use></svg>
             <div class="course-eyebrow"><span class="badge badge-html">🌐 HTML5</span><span class="course-eyebrow__meta">COURS COMPLET · 3ÈME &amp; 4ÈME SI</span></div>
             <h1 class="course-hero__title" id="titre-cours-html5">Construisez les bases <span>du web.</span></h1>
             <p class="course-hero__lead">Cours HTML5 complet, conforme à l’Annexe HTML5 d’A. Essouyah : balises, tableaux, médias, formulaires et exemples interactifs.</p>
+<p class="course-reading-time" title="Estimation fondée sur le texte des chapitres, à 180 mots par minute ; les vidéos ne sont pas comptées."><span aria-hidden="true">⏱</span> Lecture estimée : <strong data-estimation-lecture>17 min</strong> <span>· hors vidéos</span></p>
+
             <div class="course-progress-card"><div class="course-ring" aria-hidden="true"><svg viewBox="0 0 60 60"><circle class="course-ring__track" cx="30" cy="30" r="26"></circle><circle class="course-ring__fill" id="courseRingFill" cx="30" cy="30" r="26"></circle></svg><span class="course-ring__pct" id="courseRingPct">0%</span></div><div><strong id="courseRingCount">0 / 10 chapitres révisés</strong><p class="course-progress-card__hint">Votre progression est enregistrée sur cet appareil.</p></div></div>
             <div class="hero-actions"><a class="btn btn-course-primary" href="#entete">📖 Commencer le cours</a><button type="button" class="btn btn-secondary" id="heroListenBtn">🔊 Écouter le cours</button><a class="hero-annexe-link" id="lienAnnexePdf" href="../documents/annexes/annexe-html5.pdf.html#annexe-html5" target="_blank" rel="noopener" data-external-doc>📄 Annexe HTML5 ↗</a></div>
             <div class="course-hero__facts"><span>▦ 10 chapitres</span><span>▶ Vidéo &amp; audio</span><span>✦ Quiz interactif</span></div>
@@ -139,6 +138,29 @@
           <div class="sidebar-help"><span>💡</span><p>Un chapitre à la fois. Marquez-le comme révisé pour suivre votre progression.</p></div>
         </aside>
         <div class="course-main">
+<!-- Objectifs et itinéraire : les liens conservent les ancres originales du cours. -->
+<section class="course-overview" data-sti-feuille-de-route aria-label="Présentation du cours">
+  <div class="course-lesson" aria-labelledby="sti-lecon-titre">
+    <h2 id="sti-lecon-titre">Dans cette leçon</h2>
+    <p>À la fin, vous serez en mesure de :</p>
+    <ul class="course-lesson__objectifs">
+<li>Structurer une page avec les balises sémantiques HTML5.</li>
+<li>Présenter du texte, des listes, des tableaux et des médias.</li>
+<li>Construire des formulaires et intégrer une page dans une iframe.</li>
+    </ul>
+  </div>
+  <nav class="course-roadmap" aria-labelledby="sti-feuille-titre">
+    <h2 id="sti-feuille-titre">Feuille de route du cours</h2>
+    <ol>
+<li><a href="#entete" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">1</span><span class="course-roadmap__copy"><strong>Comprendre la structure HTML5</strong><span>Qu’est-ce qu’une page HTML et à quoi servent l’en-tête et les métadonnées ?</span></span></a></li>
+<li><a href="#structuration" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">2</span><span class="course-roadmap__copy"><strong>Organiser le contenu</strong><span>Pourquoi utiliser des éléments sémantiques, des conteneurs, des listes et des tableaux ?</span></span></a></li>
+<li><a href="#texte-media" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">3</span><span class="course-roadmap__copy"><strong>Ajouter du texte et des médias</strong><span>Comment insérer des liens, des images, de l’audio et de la vidéo ?</span></span></a></li>
+<li><a href="#formulaires" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">4</span><span class="course-roadmap__copy"><strong>Créer des formulaires</strong><span>À quoi servent les champs, les types de saisie et l’attribut target ?</span></span></a></li>
+<li><a href="#iframe" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">5</span><span class="course-roadmap__copy"><strong>Intégrer une autre page</strong><span>Comment utiliser une iframe pour afficher un document dans une page ?</span></span></a></li>
+    </ol>
+  </nav>
+</section>
+
           <div class="voice-guide-card" id="voiceGuideCard"><div class="voice-guide-card__top"><div><span class="voice-guide-kicker">ÉCOUTER ET SUIVRE</span><h2>🔊 Guide-Ligne vocal</h2><p>La piste audio suit les repères du cours. Le surlignage à l’intérieur de chaque chapitre est indicatif.</p></div><span class="badge badge-html">MP3 · 07:25</span></div><audio id="voiceGuideAudio" controls preload="metadata" src="../assets/audio/html5-cours.mp3">Votre navigateur ne peut pas lire l’audio.</audio><div class="voice-guide-card__controls"><span>Vitesse</span><button type="button" class="voice-rate-btn" data-voice-rate="0.85" aria-pressed="false">0,85×</button><button type="button" class="voice-rate-btn" data-voice-rate="1" aria-pressed="true">1×</button><button type="button" class="voice-rate-btn" data-voice-rate="1.15" aria-pressed="false">1,15×</button><label class="voice-follow"><input type="checkbox" id="voiceAutoFollow"> Suivre le texte</label></div><p class="voice-active-label" id="voiceActiveLabel" aria-live="polite">Choisissez la lecture pour suivre le cours.</p></div>
           <section class="course-intro-banner">
           <span class="source-accent">Support complet avec l'Annexe HTML5</span>
@@ -1973,7 +1995,9 @@ Content-Security-Policy: frame-ancestors 'self'</code></pre><div class="code-box
     </div>
     <!-- Exercices et corrigés provenant des séries HTML/CSS existantes. -->
     <section id="exercices" class="course-panel" data-course-panel="exercices" role="tabpanel" aria-labelledby="tab-exercices" hidden><div class="container tab-section-wrap"><div class="panel-intro"><span class="panel-eyebrow">PRATIQUER · HTML5 &amp; CSS3</span><h2>Des exemples aux exercices</h2><p>Retrouvez les séries existantes, leurs corrigés lorsqu’ils sont disponibles et les exemples du cours à modifier. Les énoncés et les corrigés s’ouvrent ici, avec la possibilité de les ouvrir à part.</p><div class="exercise-progress"><strong id="exoGlobalCounter">0 / 13 exercices faits</strong><div class="progress-bar" aria-hidden="true"><div class="progress-bar__fill" id="exoProgressBar"></div></div></div></div>
-      <section class="exercise-group"><h3>01 · Structure, listes et tableaux</h3><article class="exo-card-full" id="exo-tp1" data-exo-id="exo-tp1" data-exo-level="debutant"><div class="exo-card-full__head"><span class="badge badge-html">Débutant</span><label class="exo-done-label"><input type="checkbox" data-exo-check="exo-tp1"> Exercice fait</label></div><h3>TP 1 — Structure &amp; Balises sémantiques</h3><div class="exercise-description"><p>
+      <section class="exercise-group"><h3>01 · Structure, listes et tableaux</h3>
+<!-- Ressource d’origine conservée sous son chemin exact. -->
+<article class="exo-card-full"><h3>Exemple : emploi du temps</h3><p>Consulter le tableau original avec ses cellules fusionnées.</p><div class="source-actions"><a class="source-btn" href="../exercices/html-css/emploi-temps/emploidutemps.html" target="_blank" rel="noopener" data-external-doc>Ouvrir l’exemple ↗</a></div></article><article class="exo-card-full" id="exo-tp1" data-exo-id="exo-tp1" data-exo-level="debutant"><div class="exo-card-full__head"><span class="badge badge-html">Débutant</span><label class="exo-done-label"><input type="checkbox" data-exo-check="exo-tp1"> Exercice fait</label></div><h3>TP 1 — Structure &amp; Balises sémantiques</h3><div class="exercise-description"><p>
               Création d'une page HTML/CSS à l'aide des balises structurantes
               (header, nav, section, article, aside, footer.
             </p></div><div class="source-actions"><a class="source-btn" href="../exercices/html-css/TP1-css.pdf.html" target="_blank" rel="noopener" data-external-doc>Énoncé ↗</a></div><p class="exo-no-solution">Le document d’origine ne propose pas de corrigé pour cette série.</p><details class="source-playground-details"><summary>🧪 Ouvrir l’éditeur HTML</summary><div class="live-playground" data-playground-source="#list-demo-code pre">
@@ -1998,7 +2022,8 @@ Content-Security-Policy: frame-ancestors 'self'</code></pre><div class="code-box
   <div class="live-playground__bar"><strong>🧪 Exemple du cours : tableaux</strong><button type="button" class="source-btn" data-reset-playground>↺ Réinitialiser l’exemple</button></div>
   <div class="live-playground__split"><label class="sr-only" for="editor-table-demo-10">Code HTML à modifier : Exemple du cours : tableaux</label><textarea id="editor-table-demo-10" class="live-playground__editor" spellcheck="false"></textarea><div class="live-playground__frame-wrap"><div class="playground-label">Aperçu en direct · cadre isolé</div><iframe class="live-playground__frame" title="Aperçu en direct : Exemple du cours : tableaux" sandbox="allow-scripts allow-forms" loading="lazy"></iframe></div></div>
  </div><details class="exo-solution"><summary>👁 Voir le code de référence</summary><p>Le code initial est l’exemple présent dans le cours. Le bouton « Réinitialiser l’exemple » le restaure.</p></details></article></section>
-      <section class="exercise-group"><h3>02 · Médias, formulaires et cadres</h3><article class="exo-card-full" id="exo-explore" data-exo-id="exo-explore" data-exo-level="intermediaire"><div class="exo-card-full__head"><span class="badge badge-html">Intermédiaire</span><label class="exo-done-label"><input type="checkbox" data-exo-check="exo-explore"> Exercice fait</label></div><h3>TP Explore Tunisie</h3><div class="exercise-description"><div class="exo-desc">
+      <section class="exercise-group"><h3>02 · Médias, formulaires et cadres</h3>
+<article class="exo-card-full"><h3>TP : formulaire d’inscription</h3><p>Ouvrir l’énoncé original et son corrigé.</p><div class="source-actions"><a class="source-btn" href="../exercices/html-css/formulaire-inscription.pdf.html" target="_blank" rel="noopener" data-external-doc>Énoncé original ↗</a><a class="source-btn" href="../projets/formulaire-inscription/cvFleurs.html" target="_blank" rel="noopener" data-external-doc>Corrigé ↗</a></div></article><article class="exo-card-full" id="exo-explore" data-exo-id="exo-explore" data-exo-level="intermediaire"><div class="exo-card-full__head"><span class="badge badge-html">Intermédiaire</span><label class="exo-done-label"><input type="checkbox" data-exo-check="exo-explore"> Exercice fait</label></div><h3>TP Explore Tunisie</h3><div class="exercise-description"><div class="exo-desc">
               <p><strong>HTML5</strong></p>
               <ul>
                 <li>Structure d’un document (<code>doctype</code>, <code>head</code>, <code>title</code>, lien vers la feuille de style)</li>

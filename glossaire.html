@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html data-sti-heritage="interface" data-sti-glossaire lang="fr">
 <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -111,6 +111,8 @@
   @media print { .barre,.recherche,.filtres,.pied,#sti-roue-wrap,#sti-bnav,#sti-pc-win-tools { display:none!important } body { background:#fff!important; color:#000!important } .carte { background:#fff!important; color:#000!important; box-shadow:none; break-inside:avoid } }
 </style>
   <link rel="manifest" href="manifest.webmanifest" />
+
+<link rel="stylesheet" href="assets/css/theme-patrimoine.css">
 </head>
 <body>
 <header class="barre">
@@ -263,9 +265,11 @@ document.querySelectorAll(".filtre").forEach(function (b) {
 });
 afficher();
 </script>
-<script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/config.js?v=425" defer></script>
+<script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/acces.js?v=453" defer></script>
   <script src="assets/js/sync-progressions.js" defer></script>
+
+<script src="assets/js/profil.js" defer></script>
 </body>
 </html>

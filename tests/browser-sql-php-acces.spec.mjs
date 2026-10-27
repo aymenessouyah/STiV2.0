@@ -19,7 +19,7 @@ test('verrou existant : 3SI ne voit ni Bac SQL ni PHP réservé',async({page})=>
   await page.locator('[data-course-tab="exercices"]').click();await expect(page.locator('[data-exercise="serie4"]')).toBeHidden();await expect(page.locator('[data-exercise="serie5"]')).toBeHidden();
   await page.locator('[data-course-tab="videos"]').click();await expect(page.locator('.matiere-video-card.sti-4si-only')).toHaveCount(2);
   await expect(page.locator('.matiere-video-card.sti-4si-only').first()).toBeHidden();
-  expect(await page.evaluate(()=>window.ouvrirVideoPasAPasSTI('sql-serie4'))).toBe(false);await expect(page.locator('#matiereVideoModal')).toBeHidden();
+  expect(await page.evaluate(()=>window.ouvrirVideoPasAPasSTI('sql-serie4'))).toBe(false);await expect(page.locator('#sti-video-modal-overlay')).toBeHidden();
   await page.goto('/cours/php.html',{waitUntil:'domcontentloaded'});await expect(page.locator('#sti-lock-4si')).toBeVisible();
   await page.goto('/index.html',{waitUntil:'domcontentloaded'});
   await expect(page.getByText('Quatre quiz & révision ciblée (886 questions)')).toBeVisible();

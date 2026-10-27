@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html data-sti-heritage="interface" lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -55,6 +55,8 @@
 <script id="sti-early-boot">
 (function(){try{var r=document.documentElement;var t=localStorage.getItem("sti-theme")||localStorage.getItem("theme")||"";if(t!=="dark"&&t!=="light"){try{t=localStorage.getItem("sti-roue-theme")==="sombre"?"dark":"";}catch(e){}}if(t==="dark"){r.setAttribute("data-theme","dark");r.classList.add("dark","dark-mode");}else if(t==="light"){r.removeAttribute("data-theme");r.classList.remove("dark","dark-mode");}}catch(e){}})();
 </script>
+
+<link rel="stylesheet" href="assets/css/theme-patrimoine.css">
 </head>
 <body>
 <main class="feuille">
@@ -223,9 +225,11 @@
   rendrePassagesFluoFiche();
 })();
 </script>
-<script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/config.js?v=425" defer></script>
+<script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/acces.js?v=453" defer></script>
 <script src="assets/js/sync-progressions.js" defer></script>
+
+<script src="assets/js/profil.js" defer></script>
 </body>
 </html>

@@ -67,7 +67,8 @@ test('les 17 liens intégrés gardent un repli natif et leurs documents', () => 
   assert.match(html, /id="jsResourceFrame"[^>]*src="about:blank"/);
   assert.ok(!/<iframe[^>]*id="jsResourceFrame"[^>]*sandbox=/.test(html), 'documents historiques de confiance ; les éditeurs restent isolés');
   assert.ok(js.includes('fermerRessource') && js.includes('gererNavigationRessource'));
-  assert.ok(read('exercices/javascript/js-37-defis-tt.html').includes('../../assets/audio/foret.mp3'));
+  assert.ok(read('exercices/javascript/js-37-defis-tt.html').includes('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'));
+  assert.ok(read('assets/js/dialogues-compat.js').includes('../../assets/audio/foret.mp3'), 'repli local en cas de réseau indisponible');
   for (const path of ['assets/js/dialogues-compat.js', 'assets/css/dialogues-compat.css']) assert.ok(existsSync(join(root, path)), path);
 });
 
@@ -98,7 +99,8 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
   const paths = ['cours/javascript.html', 'assets/css/cours-javascript.css', 'assets/js/cours-javascript.js', 'assets/js/app.js', 'assets/js/profil.js'];
   const ressources = ['exercices/javascript/js-37-defis-tt.html', 'assets/css/dialogues-compat.css', 'assets/js/dialogues-compat.js', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/fleurs/styles.css', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js', 'projets/carte-bancaire/style.css'];
   for (const path of [...paths, ...ressources]) {
-    const revision = ['cours/javascript.html', 'assets/js/app.js', 'assets/js/profil.js'].includes(path) ? 'integration-main-v480' : (['assets/js/app.js', 'assets/js/profil.js'].includes(path) ? 'refonte-ui-javascript-20261027' : 'correctif-ressources-js-20261027');
+    const actualises = ['cours/javascript.html', 'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js'];
+    const revision = actualises.includes(path) ? 'fidelite-origine-v481' : 'correctif-ressources-js-20261027';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }

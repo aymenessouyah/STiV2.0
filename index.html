@@ -23,7 +23,7 @@
   <script defer src="assets/js/profil.js"></script>
   <script defer src="assets/js/app.js"></script>
   <!-- Suivi média et reprise historiques de la plateforme. -->
-  <script defer src="assets/js/protection.js?v=227&amp;rev=479"></script>
+  <script defer src="assets/js/protection.js?v=227&amp;rev=479"></script><script src="assets/js/lecteur-commun.js" defer></script>
   <script defer src="assets/js/reprendre.js?v=479"></script>
 </head>
 <body class="sti-v2">
@@ -39,13 +39,8 @@
   <header class="site-header" role="banner">
     <div class="container site-header__inner">
       <!-- Identité visuelle STI V2.0 -->
-      <a class="brand-logo" href="index.html" aria-label="STI V2.0 — Retour à l'accueil">
-        <span class="brand-logo__mark" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-        </span>
+      <a class="brand-logo" href="index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l'accueil">
+        <span class="brand-logo__mark" aria-hidden="true"><img src="assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
         <span class="brand-logo__text">
           <span class="brand-logo__title">STI V2.0</span>
           <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
@@ -64,7 +59,7 @@
 
       <!-- Actions rapides : Recherche Ctrl+K · PWA · 3 Modes · Badge Abonné -->
       <div class="header-actions">
-        <button type="button" class="search-trigger" data-open-search aria-label="Ouvrir la recherche rapide (Ctrl+K)">
+        <button type="button" class="search-trigger" data-open-search aria-label="Rechercher… Ctrl K : ouvrir la recherche rapide">
           <span aria-hidden="true">🔎</span>
           <span class="search-trigger__label">Rechercher…</span>
           <kbd>Ctrl K</kbd>
@@ -80,7 +75,7 @@
           <button type="button" class="theme-switcher__btn" data-set-theme="sombre" aria-pressed="true" title="Mode sombre">🌙</button>
         </div>
 
-        <!-- Emplacement dynamique du Badge Abonné (remplace l'ancienne roue) -->
+        <!-- Emplacement de la roue et du panneau de compte d’origine -->
         <div data-subscriber-slot></div>
 
         <button type="button" class="burger-btn" id="stiBurgerBtn" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="stiMobileNav">
@@ -100,6 +95,14 @@
       <a class="site-nav__link" href="dashboard.html">📊 Mon tableau de bord</a>
     </nav>
   </header>
+
+  <!-- La Cote d'origine : moteur, actualités de la régie et secours README conservés. -->
+  <aside id="cote-sti" aria-label="La Cote STI : versions officielles des technologies et dernières nouvelles">
+      <div class="cote-etiq"><span class="cote-clignot" aria-hidden="true"></span></div>
+      <div class="cote-ecran"><div class="cote-piste" id="cote-piste" aria-hidden="true"><span class="cote-news">🔔 Cote en cours de chargement…</span></div></div>
+      <noscript><span style="padding:0 12px;font-size:12.5px;color:#fbbf24">Cotation du 23/10/2026 : HTML5 &middot; CSS3 &middot; JavaScript ES2026 &middot; SQL:2023 &middot; PHP 8.5.12</span></noscript>
+    </aside>
+  <script src="./assets/js/cote-ticker.js?v=465" defer></script>
 
   <main id="contenu-principal">
     <!-- ═════════════════════════════════════════════════════════════════════
@@ -164,19 +167,18 @@
             <div class="featured-video-card__head">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                 <span class="badge badge-new">🎬 VIDÉO À LA UNE</span>
-                <span class="badge badge-css">CSS3 · 18:45</span>
+                <span class="badge badge-css">CSS3 · 11:24</span>
               </div>
               <span style="font-size:.76rem;color:var(--text-muted);font-weight:700">.MP4 HD + Sous-titres FR</span>
             </div>
 
             <div class="video-player-shell">
               <video id="heroFeaturedVideo" controls preload="metadata" playsinline poster="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20640%20360%22%3E%3Crect%20width%3D%22640%22%20height%3D%22360%22%20fill%3D%22%230d1526%22%2F%3E%3C%2Fsvg%3E">
-                <source src="assets/videos/css3-cours.mp4" type="video/mp4" />
                 <source src="assets/videos/css3-cours-v9-sync.mp4" type="video/mp4" />
                 <track kind="subtitles" srclang="fr" label="Français" src="assets/subtitles/css3-cours-v9-sync-fr.vtt" />
                 Votre navigateur ne prend pas en charge la lecture vidéo HTML5.
               </video>
-              <button type="button" class="video-hero-overlay" id="heroVideoOverlay" aria-label="Lancer la vidéo à la une CSS3">
+              <button type="button" class="video-hero-overlay" id="heroVideoOverlay" aria-label="CAPSULE VIDÉO EXPLICATIVE CSS3 — Sélecteurs, Flexbox &amp; animations pas à pas : lancer la vidéo">
                 <span class="video-play-btn" aria-hidden="true">▶</span>
                 <span class="video-hero-overlay__meta">
                   <span style="font-size:.78rem;font-weight:700;color:#7dd3fc">CAPSULE VIDÉO EXPLICATIVE</span>
@@ -187,7 +189,7 @@
 
             <div class="featured-video-card__foot">
               <span style="font-size:.82rem;color:var(--text-secondary)">🎧 Écoute claire &amp; démonstrations visuelles du code</span>
-              <a class="btn btn-ghost btn-sm" href="#videos">Toutes les vidéos (8) ➜</a>
+              <a class="btn btn-ghost btn-sm" href="#videos">Explorer le catalogue vidéo ➜</a>
             </div>
           </div>
         </div>
@@ -201,8 +203,8 @@
             <span class="stat-card__label">📖 Cours complets</span>
           </div>
           <div class="stat-card stat-card--video">
-            <span class="stat-card__value" data-count="8">8</span>
-            <span class="stat-card__label">🎥 Vidéos explicatives (.mp4)</span>
+            <span class="stat-card__value" data-count="13">13</span>
+            <span class="stat-card__label">🎥 Vidéos du catalogue · accès selon la classe</span>
           </div>
           <div class="stat-card">
             <span class="stat-card__value" data-count="4">4</span>
@@ -216,6 +218,30 @@
             <span class="stat-card__value" data-count="1244">1 244</span>
             <span class="stat-card__label">⚡ Questions corrigées</span>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Les dix ateliers sont regroupés avant le catalogue vidéo. -->
+    <section class="section section--ateliers" id="ateliers-rapides" aria-labelledby="titre-ateliers-rapides">
+      <div class="container">
+        <div class="section-header">
+          <div><span class="section-kicker">⚡ Pratiquer dès maintenant</span>
+            <h2 id="titre-ateliers-rapides">Les dix outils interactifs</h2>
+            <p>Révisez, expérimentez et retrouvez les fichiers TP du professeur.</p>
+          </div>
+        </div>
+        <div class="lab-chips-row" aria-label="Simulateurs rapides intégrés">
+          <button type="button" class="lab-chip" id="btnHomeFlashcards">🗂️ Flashcards Bac</button>
+          <button type="button" class="lab-chip" id="btnHomeSandbox">💻 Bac à sable HTML/CSS/JS</button>
+          <button type="button" class="lab-chip" id="btnHomeConsoleJs">🧪 Console JS live</button>
+          <button type="button" class="lab-chip" id="btnHomeDebug">🐞 Chasse aux erreurs</button>
+          <button type="button" class="lab-chip" id="btnHomeExamenBlanc">⏱️ Examen Blanc (/20)</button>
+          <button type="button" class="lab-chip" id="btnHomeConstructeur">🧱 Constructeur Table / Form / Flex</button>
+          <button type="button" class="lab-chip" id="btnHomeLaboSql">🗄️ Simulateur SQL live</button>
+          <button type="button" class="lab-chip" id="btnHomeLaboAscii">🔤 Labo Chaînes &amp; ASCII JS</button>
+          <button type="button" class="lab-chip sti-4si-only" id="btnHomeSimPhpSql">🔄 Flux Form ➔ PHP ➔ SQL</button>
+          <button type="button" class="lab-chip" id="btnHomeCoffreTp">📂 Fichiers TP du Prof</button>
         </div>
       </div>
     </section>
@@ -267,6 +293,10 @@
             <div style="display:flex;gap:12px;flex-wrap:wrap">
               <a class="btn btn-primary" href="livre-smart.html">📷 Ouvrir le scanner Smart Book</a>
               <button type="button" class="btn btn-secondary" data-open-contact>📱 QR Code d'accès rapide</button>
+              <button type="button" class="site-qr-shortcut" data-open-contact aria-label="QR code officiel Cliquer pour agrandir : ouvrir le QR code du site">
+                <img src="assets/images/qr-code-site.png" width="96" height="96" alt="">
+                <span>QR code officiel<br><small>Cliquer pour agrandir</small></span>
+              </button>
             </div>
           </div>
 
@@ -275,14 +305,14 @@
               <span class="badge badge-css" style="align-self:flex-start">📘 3ème SI</span>
               <strong>Manuel Smart Book 3ème SI</strong>
               <span style="font-size:.83rem;color:var(--text-secondary)"><strong>72 pages</strong> reliées aux vidéos, TP HTML5/CSS3/JS &amp; quiz</span>
-              <span style="font-size:.8rem;color:var(--brand);font-weight:700;margin-top:4px">Parcourir les 72 pages ➜</span>
+              <span style="font-size:.8rem;color:var(--text);font-weight:700;margin-top:4px">Parcourir les 72 pages ➜</span>
             </a>
 
             <a class="book-pill sti-4si-only" href="livre-smart.html?niveau=4si">
               <span class="badge badge-php" style="align-self:flex-start">📕 4ème SI (Bac)</span>
               <strong>Manuel Smart Book 4ème SI</strong>
               <span style="font-size:.83rem;color:var(--text-secondary)"><strong>100 pages</strong> complètes : Web dynamique, SQL, PHP &amp; sujets Bac</span>
-              <span style="font-size:.8rem;color:var(--brand);font-weight:700;margin-top:4px">Parcourir les 100 pages ➜</span>
+              <span style="font-size:.8rem;color:var(--text);font-weight:700;margin-top:4px">Parcourir les 100 pages ➜</span>
             </a>
           </div>
         </div>
@@ -345,7 +375,7 @@
           <!-- 1. HTML5 -->
           <article class="subject-card" data-subject="html5" data-filter-item="html5">
             <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true">🌐</div>
+              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#html5"></use></svg></div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
                 <span class="badge badge-html">🎥 1 vidéo &amp; 🔊 audio</span>
                 <button type="button" class="revise-btn" data-toggle-course="html5" aria-pressed="false">○ À réviser</button>
@@ -370,9 +400,9 @@
           <!-- 2. CSS3 -->
           <article class="subject-card" data-subject="css3" data-filter-item="css3">
             <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true">🎨</div>
+              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#css3"></use></svg></div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-                <span class="badge badge-css">🎥 3 vidéos &amp; 🔊 audio</span>
+                <span class="badge badge-css">🎥 4 vidéos &amp; 🔊 audio</span>
                 <button type="button" class="revise-btn" data-toggle-course="css3" aria-pressed="false">○ À réviser</button>
               </div>
             </div>
@@ -384,7 +414,7 @@
               <a class="subject-pill-link" href="cours/css3.html">📖 Cours</a>
               <a class="subject-pill-link" href="cours/css3.html#exercices">📝 Exercices</a>
               <a class="subject-pill-link" href="cours/css3.html#annexes">📎 Annexe</a>
-              <a class="subject-pill-link" href="cours/css3.html#videos">🎥 3 Vidéos</a>
+              <a class="subject-pill-link" href="cours/css3.html#videos">🎥 4 Vidéos</a>
             </div>
             <div class="subject-card__footer">
               <a class="btn btn-primary btn-sm" href="cours/css3.html">Ouvrir CSS3 ➜</a>
@@ -395,7 +425,7 @@
           <!-- 3. JavaScript -->
           <article class="subject-card" data-subject="javascript" data-filter-item="javascript">
             <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true">⚡</div>
+              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#javascript"></use></svg></div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
                 <span class="badge badge-js">🎥 1 vidéo &amp; 🔊 audio</span>
                 <button type="button" class="revise-btn" data-toggle-course="javascript" aria-pressed="false">○ À réviser</button>
@@ -420,9 +450,9 @@
           <!-- 4. SQL -->
           <article class="subject-card" data-subject="sql" data-filter-item="sql">
             <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true">🗄️</div>
+              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#sql"></use></svg></div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-                <span class="badge badge-sql">🎥 1 vidéo &amp; 🔊 audio</span>
+                <span class="badge badge-sql">🎥 2 vidéos + 2 Bac &amp; 🔊 audio</span>
                 <button type="button" class="revise-btn" data-toggle-course="sql" aria-pressed="false">○ À réviser</button>
               </div>
             </div>
@@ -445,10 +475,10 @@
           <!-- 5. PHP (Réservé 4e SI) -->
           <article class="subject-card sti-4si-only" data-subject="php" data-filter-item="php">
             <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true">🐘</div>
+              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#php"></use></svg></div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
                 <span class="badge badge-4si">🎓 Réservé 4e SI</span>
-                <span class="badge badge-php">🎥 2 vidéos &amp; 🔊 audio</span>
+                <span class="badge badge-php">🎥 3 vidéos &amp; 🔊 audio</span>
                 <button type="button" class="revise-btn" data-toggle-course="php" aria-pressed="false">○ À réviser</button>
               </div>
             </div>
@@ -460,7 +490,7 @@
               <a class="subject-pill-link" href="cours/php.html">📖 Cours</a>
               <a class="subject-pill-link" href="cours/php.html#exercices">📝 Exercices</a>
               <a class="subject-pill-link" href="cours/php.html#annexes">📎 Annexe</a>
-              <a class="subject-pill-link" href="cours/php.html#videos">🎥 2 Vidéos</a>
+              <a class="subject-pill-link" href="cours/php.html#videos">🎥 3 Vidéos</a>
             </div>
             <div class="subject-card__footer">
               <a class="btn btn-primary btn-sm" href="cours/php.html">Ouvrir PHP ➜</a>
@@ -556,19 +586,7 @@
           </article>
         </div>
 
-        <!-- Barre d'accès rapide aux simulateurs & mini-outils intégrés (acces.js) -->
-        <div class="lab-chips-row" aria-label="Simulateurs rapides intégrés">
-          <button type="button" class="lab-chip" id="btnHomeFlashcards">🗂️ Flashcards Bac</button>
-          <button type="button" class="lab-chip" id="btnHomeSandbox">💻 Bac à sable HTML/CSS/JS</button>
-          <button type="button" class="lab-chip" id="btnHomeConsoleJs">🧪 Console JS live</button>
-          <button type="button" class="lab-chip" id="btnHomeDebug">🐞 Chasse aux erreurs</button>
-          <button type="button" class="lab-chip" id="btnHomeExamenBlanc">⏱️ Examen Blanc (/20)</button>
-          <button type="button" class="lab-chip" id="btnHomeConstructeur">🧱 Constructeur Table / Form / Flex</button>
-          <button type="button" class="lab-chip" id="btnHomeLaboSql">🗄️ Simulateur SQL live</button>
-          <button type="button" class="lab-chip" id="btnHomeLaboAscii">🔤 Labo Chaînes &amp; ASCII JS</button>
-          <button type="button" class="lab-chip sti-4si-only" id="btnHomeSimPhpSql">🔄 Flux Form ➔ PHP ➔ SQL</button>
-          <button type="button" class="lab-chip" id="btnHomeCoffreTp">📂 Fichiers TP du Prof</button>
-        </div>
+
       </div>
     </section>
 
@@ -576,7 +594,7 @@
          QUIZ INTERACTIFS, RÉVISION « MES ERREURS » & QUIZ DES TABLEAUX
          ═════════════════════════════════════════════════════════════════════ -->
     <section class="section" id="quiz" aria-labelledby="titre-quiz">
-      <!-- Les quiz existants reviennent vers index.html#modules. -->
+      <!-- Ancre conservée pour les anciens liens et les retours de quiz. -->
       <span id="modules" class="ancre-historique" aria-hidden="true"></span>
       <div class="container">
         <div class="section-header">
@@ -719,7 +737,7 @@
       <div class="site-footer__grid">
         <div>
           <div class="brand-logo" style="margin-bottom:10px">
-            <span class="brand-logo__mark" aria-hidden="true">⚡</span>
+            <span class="brand-logo__mark" aria-hidden="true"><img src="assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
             <span class="brand-logo__text">
               <span class="brand-logo__title">STI V2.0 — Le web de A à Z</span>
               <span class="brand-logo__sub">Lycée Raféha · 3ème &amp; 4ème Sciences de l'Informatique</span>
@@ -734,7 +752,7 @@
           <div class="site-footer__col-title">Matières</div>
           <ul class="site-footer__list">
             <li><a href="cours/html5.html">🌐 HTML5</a></li>
-            <li><a href="cours/css3.html">🎨 CSS3 (3 vidéos)</a></li>
+            <li><a href="cours/css3.html">🎨 CSS3 (4 vidéos)</a></li>
             <li><a href="cours/javascript.html">⚡ JavaScript</a></li>
             <li><a href="cours/sql.html">🗄️ SQL</a></li>
             <li class="sti-4si-only"><a href="cours/php.html">🐘 PHP (4e SI)</a></li>
@@ -781,7 +799,7 @@
   </aside>
 
   <!-- ═══════════════════════════════════════════════════════════════════════
-       FENÊTRE MODALE CONTACT & QR CODE VECTORIEL SVG (ZÉRO IMAGE EXTERNE)
+       FENÊTRE MODALE CONTACT & QR CODE OFFICIEL
        ═══════════════════════════════════════════════════════════════════════ -->
   <div class="modal-backdrop" id="modalContactQr" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
     <div class="modal">
@@ -797,13 +815,10 @@
         Scannez ce QR code avec l'appareil photo de votre téléphone pour ouvrir instantanément <strong>STI V2.0</strong> et réviser partout :
       </p>
 
-      <!-- QR Code vectoriel SVG vérifié pour https://aymenessouyah.github.io/STiV2.0/ -->
-      <div style="display:flex;justify-content:center;margin:14px 0">
-        <svg width="198" height="198" viewBox="0 0 33 33" shape-rendering="crispEdges" role="img" aria-label="QR Code vers https://aymenessouyah.github.io/STiV2.0/" style="border-radius:14px;box-shadow:var(--shadow-md)">
-          <rect width="33" height="33" rx="2" fill="#ffffff" />
-          <path fill="#0d1526" d="M2 2h7v1h-7zM11 2h1v1h-1zM14 2h1v1h-1zM17 2h2v1h-2zM20 2h2v1h-2zM24 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM12 3h3v1h-3zM17 3h1v1h-1zM20 3h2v1h-2zM24 3h1v1h-1zM30 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM10 4h3v1h-3zM14 4h1v1h-1zM16 4h2v1h-2zM21 4h1v1h-1zM24 4h1v1h-1zM26 4h3v1h-3zM30 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM11 5h3v1h-3zM17 5h2v1h-2zM20 5h1v1h-1zM24 5h1v1h-1zM26 5h3v1h-3zM30 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM12 6h1v1h-1zM15 6h2v1h-2zM19 6h4v1h-4zM24 6h1v1h-1zM26 6h3v1h-3zM30 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM11 7h1v1h-1zM16 7h4v1h-4zM21 7h1v1h-1zM24 7h1v1h-1zM30 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h7v1h-7zM10 9h3v1h-3zM14 9h2v1h-2zM17 9h1v1h-1zM19 9h3v1h-3zM2 10h3v1h-3zM6 10h5v1h-5zM12 10h2v1h-2zM15 10h5v1h-5zM21 10h4v1h-4zM28 10h1v1h-1zM2 11h3v1h-3zM7 11h1v1h-1zM12 11h2v1h-2zM15 11h2v1h-2zM18 11h3v1h-3zM22 11h3v1h-3zM27 11h1v1h-1zM30 11h1v1h-1zM2 12h1v1h-1zM5 12h1v1h-1zM8 12h1v1h-1zM11 12h1v1h-1zM16 12h1v1h-1zM18 12h1v1h-1zM23 12h1v1h-1zM25 12h2v1h-2zM28 12h3v1h-3zM3 13h3v1h-3zM10 13h1v1h-1zM13 13h1v1h-1zM15 13h1v1h-1zM17 13h3v1h-3zM21 13h1v1h-1zM23 13h2v1h-2zM29 13h1v1h-1zM4 14h3v1h-3zM8 14h1v1h-1zM14 14h3v1h-3zM19 14h1v1h-1zM22 14h3v1h-3zM27 14h1v1h-1zM29 14h2v1h-2zM3 15h1v1h-1zM5 15h2v1h-2zM11 15h1v1h-1zM13 15h2v1h-2zM17 15h2v1h-2zM22 15h3v1h-3zM27 15h1v1h-1zM30 15h1v1h-1zM2 16h10v1h-10zM13 16h3v1h-3zM20 16h1v1h-1zM23 16h5v1h-5zM29 16h2v1h-2zM2 17h3v1h-3zM9 17h1v1h-1zM12 17h1v1h-1zM14 17h3v1h-3zM19 17h1v1h-1zM21 17h1v1h-1zM26 17h2v1h-2zM29 17h1v1h-1zM4 18h1v1h-1zM7 18h7v1h-7zM16 18h1v1h-1zM19 18h1v1h-1zM21 18h1v1h-1zM23 18h2v1h-2zM27 18h1v1h-1zM29 18h2v1h-2zM4 19h2v1h-2zM7 19h1v1h-1zM12 19h2v1h-2zM17 19h4v1h-4zM22 19h1v1h-1zM24 19h1v1h-1zM27 19h2v1h-2zM30 19h1v1h-1zM2 20h1v1h-1zM7 20h2v1h-2zM10 20h3v1h-3zM15 20h1v1h-1zM24 20h3v1h-3zM29 20h2v1h-2zM3 21h2v1h-2zM6 21h2v1h-2zM10 21h1v1h-1zM13 21h1v1h-1zM18 21h5v1h-5zM24 21h4v1h-4zM29 21h1v1h-1zM2 22h1v1h-1zM4 22h1v1h-1zM8 22h1v1h-1zM10 22h1v1h-1zM12 22h1v1h-1zM14 22h1v1h-1zM17 22h3v1h-3zM22 22h5v1h-5zM10 23h1v1h-1zM12 23h4v1h-4zM19 23h1v1h-1zM22 23h1v1h-1zM26 23h1v1h-1zM28 23h3v1h-3zM2 24h7v1h-7zM10 24h5v1h-5zM16 24h1v1h-1zM19 24h4v1h-4zM24 24h1v1h-1zM26 24h2v1h-2zM29 24h2v1h-2zM2 25h1v1h-1zM8 25h1v1h-1zM10 25h3v1h-3zM14 25h3v1h-3zM18 25h2v1h-2zM22 25h1v1h-1zM26 25h2v1h-2zM29 25h1v1h-1zM2 26h1v1h-1zM4 26h3v1h-3zM8 26h1v1h-1zM10 26h4v1h-4zM16 26h5v1h-5zM22 26h5v1h-5zM2 27h1v1h-1zM4 27h3v1h-3zM8 27h1v1h-1zM12 27h2v1h-2zM16 27h1v1h-1zM18 27h1v1h-1zM22 27h1v1h-1zM26 27h1v1h-1zM28 27h3v1h-3zM2 28h1v1h-1zM4 28h3v1h-3zM8 28h1v1h-1zM10 28h1v1h-1zM15 28h1v1h-1zM19 28h1v1h-1zM21 28h1v1h-1zM23 28h1v1h-1zM25 28h3v1h-3zM30 28h1v1h-1zM2 29h1v1h-1zM8 29h1v1h-1zM10 29h2v1h-2zM13 29h1v1h-1zM17 29h1v1h-1zM19 29h1v1h-1zM21 29h3v1h-3zM29 29h1v1h-1zM2 30h7v1h-7zM10 30h2v1h-2zM14 30h1v1h-1zM17 30h3v1h-3zM21 30h3v1h-3zM26 30h1v1h-1zM29 30h2v1h-2z" />
-        </svg>
-      </div>
+        <!-- QR code fourni avec le site original. -->
+        <div class="qr-box">
+          <img src="assets/images/qr-code-site.png" alt="QR code officiel d'accès à STI 2.0" width="190" height="190">
+        </div>
 
       <div class="alert alert-info" style="margin-top:14px">
         <div>

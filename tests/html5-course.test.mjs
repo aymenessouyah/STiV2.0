@@ -38,8 +38,11 @@ test('exemples, détails target et datalist, médias et exercices restent prése
     'assets/videos/html5-cours.mp4', 'TP 1 — Structure', 'TP Explore Tunisie',
     'Projet 1: Récap', 'Site Tunisie', 'Corrigé 1 : Flexbox'
   ]) assert.ok(html.toLowerCase().includes(fragment.toLowerCase()), fragment);
-  assert.equal((html.match(/class="exo-card-full"/g) || []).length, 13);
+  // Les 13 exercices suivis restent intacts ; deux cartes donnent accès aux ressources d’origine.
+  assert.equal((html.match(/class="exo-card-full"/g) || []).length, 15);
   assert.equal((html.match(/data-exo-check="[^"]+"/g) || []).length, 13);
+  assert.match(html, /exercices\/html-css\/emploi-temps\/emploidutemps\.html/);
+  assert.match(html, /exercices\/html-css\/formulaire-inscription\.pdf\.html/);
   assert.match(html, /role="dialog" aria-modal="true" aria-labelledby="modal-title"/);
   assert.match(html, /sandbox="allow-scripts allow-forms"/);
   assert.doesNotMatch(html, /sandbox="[^"]*allow-same-origin/);
@@ -71,7 +74,7 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     'cours/html5.html', 'dashboard.html', 'assets/css/theme.css', 'assets/css/cours.css',
     'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-html5.js'
   ]) {
-    const revision = ["cours/html5.html", "dashboard.html", "assets/js/app.js", "assets/js/profil.js", "assets/css/theme.css"].includes(path) ? "integration-main-v480" : (["assets/js/profil.js", "assets/js/app.js"].includes(path) ? "refonte-ui-javascript-20261027" : "refonte-ui-html5-20261027");
+    const revision = path === 'assets/js/cours-html5.js' ? 'refonte-ui-html5-20261027' : 'fidelite-origine-v481';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }

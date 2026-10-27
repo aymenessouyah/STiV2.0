@@ -21,7 +21,7 @@
   <script defer src="assets/js/sync-progressions.js?v=479"></script>
   <script defer src="assets/js/profil.js"></script>
   <script defer src="assets/js/app.js"></script>
-  <script defer src="assets/js/protection.js?v=227&amp;rev=479"></script>
+  <script defer src="assets/js/protection.js?v=227&amp;rev=479"></script><script src="assets/js/lecteur-commun.js" defer></script>
 </head>
 <body class="sti-v2">
   <a class="skip-link" href="#stiDashboardRoot">Aller au tableau de bord</a>
@@ -33,12 +33,7 @@
   <header class="site-header" role="banner">
     <div class="container site-header__inner">
       <a class="brand-logo" href="index.html" aria-label="Retour à l'accueil STI V2.0">
-        <span class="brand-logo__mark" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-        </span>
+        <span class="brand-logo__mark" aria-hidden="true"><img src="assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
         <span class="brand-logo__text">
           <span class="brand-logo__title">STI V2.0</span>
           <span class="brand-logo__sub">Espace Abonné · Lycée Raféha</span>
@@ -106,6 +101,7 @@
           </div>
 
           <div style="display:flex;flex-direction:column;gap:8px">
+            <button type="button" class="btn btn-primary btn-sm" id="dashOuvrirCompte">⚙️ Ouvrir mon compte d’origine</button>
             <a class="btn btn-secondary btn-sm" href="index.html">← Retour à l'accueil</a>
             <button type="button" class="btn btn-danger btn-sm" id="btnDashboardLogout" data-i18n="dash.deconnexion">🚪 Se déconnecter</button>
           </div>

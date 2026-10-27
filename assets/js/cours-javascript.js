@@ -252,14 +252,14 @@
   }
 
   /* ── Boîtes de dialogue empilables : focus, arrière-plan inerte et Échap ── */
-  function ouvrirDialogue(overlay, focus) {
+  function ouvrirDialogue(overlay, focus, origine) {
     if (dialogues.some(function (d) { return d.overlay === overlay; })) return;
     if (!dialogues.length) {
       modalExterneDejaOuverte = document.documentElement.classList.contains('sti-modal-open');
       document.documentElement.classList.add('sti-modal-open');
     }
     var etats = Array.prototype.map.call(document.body.children, function (el) { return { el: el, inert: el.inert }; });
-    var entree = { overlay: overlay, retour: document.activeElement, inert: etats, overflow: document.body.style.overflow };
+    var entree = { overlay: overlay, retour: origine || document.activeElement, inert: etats, overflow: document.body.style.overflow };
     etats.forEach(function (e) { e.el.inert = e.el !== overlay; });
     overlay.hidden = false; document.body.style.overflow = 'hidden'; dialogues.push(entree);
     global.requestAnimationFrame(function () { if (focus) focus.focus(); });
@@ -328,10 +328,8 @@
         if (!retourSeries && !retourCours && !quiz) return;
         ev.preventDefault(); fermerRessource();
         if (quiz) { global.location.assign(url.href); return; }
-        if (retourSeries) {
-          ouvrirOnglet('exercices', false); changerUrl('series-js-title');
-          global.requestAnimationFrame(function () { id('series-js-title').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-        } else { ouvrirOnglet('cours', true, false); id('cours').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        // Fermer sans changer d'onglet, de fragment ni de défilement :
+        // le focus revient à l'élément qui a ouvert exactement cette ressource.
       }, true);
       doc.addEventListener('keydown', function (ev) {
         if (ev.key !== 'Escape' || ev.defaultPrevented || doc.querySelector('dialog[open], .panneau.ouvert, [role="dialog"][aria-modal="true"]:not([hidden])')) return;
@@ -355,13 +353,13 @@
     frame.src = url;
     minuterieRessource = global.setTimeout(function () {
       if (seq === sequenceRessource && !id('jsResourceModal').hidden) {
-        status.hidden = false; status.textContent = 'Le chargement prend du temps. Réessayez ou utilisez le lien « Nouvel onglet ».';
+        status.hidden = false; status.textContent = 'Le chargement prend du temps. Réessayez ou revenez à la ressource.';
       }
     }, 12000);
     /* HEAD ne télécharge pas le contenu et permet de signaler un document absent. */
     if (global.fetch && /^https?:/i.test(url)) global.fetch(url, { method: 'HEAD', credentials: 'same-origin' }).then(function (reponse) {
       if (seq === sequenceRessource && !id('jsResourceModal').hidden && (reponse.status === 404 || reponse.status === 410)) {
-        documentAbsent = true; global.clearTimeout(minuterieRessource); status.hidden = false; status.textContent = 'Document introuvable. Utilisez « Nouvel onglet » ou réessayez.';
+        documentAbsent = true; global.clearTimeout(minuterieRessource); status.hidden = false; status.textContent = 'Document introuvable. Revenez à la liste ou réessayez.';
       }
     }).catch(function () { /* Le document reste accessible par son lien direct. */ });
   }
@@ -381,7 +379,7 @@
       projetFormulaire ? 'Ce formulaire est une démonstration interactive : aucun envoi réel n’est effectué.' :
       projetCarte ? 'Démonstration : utilisez des données fictives. Aucun paiement ni envoi réel n’est effectué.' : '';
     overlay.classList.toggle('modal-maximized', mobile); id('jsResourceFull').setAttribute('aria-pressed', String(mobile)); id('jsResourceFull').textContent = mobile ? '⤡ Réduire' : '⛶ Plein écran';
-    ouvrirDialogue(overlay, id('jsResourceClose')); chargerRessource(url.href); return true;
+    ouvrirDialogue(overlay, id('jsResourceClose'), lien); chargerRessource(url.href); return true;
   }
   function fermerRessource() {
     var overlay = id('jsResourceModal'), haut = dialogues[dialogues.length - 1];
@@ -445,15 +443,8 @@
     var p = video.play(); if (p && p.catch) p.catch(function () {});
   }
   function ouvrirVideo(identifiant, titre, debut) {
-    if (identifiant && String(identifiant).indexOf(VIDEO_ID) === -1) {
-      if (typeof historiqueVideo === 'function') return historiqueVideo.apply(global, arguments);
-      return;
-    }
-    var video = id('modalJsVideo');
-    id('jsVideoModalTitle').textContent = titre ? String(titre) : '🎥 Vidéo du Récapitulatif JavaScript';
-    ouvrirDialogue(id('jsVideoModal'), id('jsVideoClose'));
-    if (typeof global.arreterVoixCoursSTI === 'function') global.arreterVoixCoursSTI();
-    if (Number(debut) > 0) reprendre(video, debut); else { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
+    // Préserver la signature historique sans remplacer le lecteur d'origine.
+    if (typeof global.ouvrirVideoPasAPasSTI === 'function') return global.ouvrirVideoPasAPasSTI(identifiant || VIDEO_ID, titre, debut);
   }
   function fermerVideo() { var v = id('modalJsVideo'); if (!v.paused) v.pause(); fermerDialogue(id('jsVideoModal')); }
   function initialiserVideos() {
@@ -467,7 +458,7 @@
       v.addEventListener('pause', function () { if (v.currentTime > 2 && !v.ended) enregistrerVideo(v, false); });
       v.addEventListener('ended', function () { enregistrerVideo(v, true); });
     });
-    historiqueVideo = global.ouvrirVideoPasAPasSTI; global.ouvrirVideoPasAPasSTI = ouvrirVideo;
+    // Le lecteur historique commun conserve sa signature et toutes ses commandes.
     actualiserVideos();
   }
 
@@ -489,7 +480,7 @@
       var run = t.closest('[data-run]'); if (run) { executer(run.closest('[data-playground]')); return; }
       var reset = t.closest('[data-reset-run]'); if (reset) { reinitialiser(reset.closest('[data-playground]')); return; }
       var ressource = t.closest('[data-open-js-resource]');
-      if (ressource && !ev.defaultPrevented && ev.button === 0 && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey && !ev.altKey && ouvrirRessource(ressource)) { ev.preventDefault(); return; }
+      if (ressource && !ev.defaultPrevented && ev.button === 0 && ouvrirRessource(ressource)) { ev.preventDefault(); return; }
       var recap = t.closest('[data-open-recap]'); if (recap) { ouvrirRecap(); return; }
       var resume = t.closest('[data-resume-video]'); if (resume) { var carte = resume.closest('.featured-video-card, .js-video-modal__body'); reprendre(carte && $('video[data-js-video]', carte), positionVideo()); return; }
       var full = t.closest('[data-fullscreen-video]'); if (full) { pleinEcran(id(full.dataset.fullscreenVideo)); return; }
@@ -502,12 +493,20 @@
       if (parent) { ev.preventDefault(); ouvrirFonction(section); allerChapitre(parent.dataset.chapterId, true, section); }
       else if (fragment === 'exercices') { ev.preventDefault(); ouvrirOnglet('exercices', true); }
     });
+    // Même un clic milieu reste dans la bulle pour les exercices locaux.
+    document.addEventListener('auxclick', function (ev) {
+      if (ev.button !== 1) return;
+      var retour = ev.target && ev.target.closest && ev.target.closest('#jsResourceExternal');
+      if (retour) { ev.preventDefault(); fermerRessource(); return; }
+      var lien = ev.target && ev.target.closest && ev.target.closest('[data-open-js-resource]');
+      if (lien && ouvrirRessource(lien)) ev.preventDefault();
+    });
     document.addEventListener('change', function (ev) { var c = ev.target.closest('[data-exo-check]'); if (c && global.STIProfil) global.STIProfil.basculerExerciceFait(MATIERE, c.dataset.exoCheck, c.checked); });
     document.addEventListener('toggle', function (ev) { var det = ev.target; if (det.matches && det.matches('.js-exercise__details')) { var label = $('.js-exercise__reveal', det); if (label) label.textContent = det.open ? 'Masquer le corrigé ▴' : 'Voir le corrigé ▾'; } }, true);
     id('tocMobileOpenBtn').addEventListener('click', ouvrirSommaire); id('tocMobileCloseBtn').addEventListener('click', function () { fermerSommaire(true); }); id('courseSidebarBackdrop').addEventListener('click', function () { fermerSommaire(true); });
     id('courseSearchInput').addEventListener('input', filtrerCours); id('back-to-top').addEventListener('click', function () { global.scrollTo({ top: 0, behavior: 'smooth' }); });
     id('jsRecapClose').addEventListener('click', fermerRecap); id('jsRecapRetourCours').addEventListener('click', fermerRecap); id('jsRecapFull').addEventListener('click', basculerTaille);
-    id('jsResourceClose').addEventListener('click', fermerRessource); id('jsResourceFull').addEventListener('click', basculerTailleRessource); id('jsResourceReload').addEventListener('click', rechargerRessource);
+    id('jsResourceClose').addEventListener('click', fermerRessource); id('jsResourceExternal').addEventListener('click', function (ev) { ev.preventDefault(); fermerRessource(); }); id('jsResourceFull').addEventListener('click', basculerTailleRessource); id('jsResourceReload').addEventListener('click', rechargerRessource);
     id('jsResourceSplit').addEventListener('click', function () { var url = id('jsResourceExternal').href; fermerRessource(); if (typeof global.ouvrirEcranPartageEnonceCodeSTI === 'function') global.ouvrirEcranPartageEnonceCodeSTI(url); });
     id('jsVideoClose').addEventListener('click', fermerVideo); id('jsVideoFullscreen').addEventListener('click', function () { pleinEcran(id('modalJsVideo')); });
     id('jsRecapModal').addEventListener('click', function (ev) { if (ev.target === this) fermerRecap(); }); id('jsResourceModal').addEventListener('click', function (ev) { if (ev.target === this) fermerRessource(); }); id('jsVideoModal').addEventListener('click', function (ev) { if (ev.target === this) fermerVideo(); });

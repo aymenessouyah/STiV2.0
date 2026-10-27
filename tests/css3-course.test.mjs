@@ -112,7 +112,7 @@ test('CSS3 : fichiers révisés disponibles pour le hors-ligne', () => {
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const path of ['cours/css3.html', 'assets/css/cours-css3.css', 'assets/js/cours-css3.js', 'assets/js/profil.js', 'assets/js/app.js']) {
-    const revision = ["cours/css3.html", "assets/js/app.js", "assets/js/profil.js"].includes(path) ? "integration-main-v480" : (["assets/js/profil.js", "assets/js/app.js"].includes(path) ? "refonte-ui-javascript-20261027" : "videos-pas-a-pas-css3-20261027");
+    const revision = path === "assets/css/cours-css3.css" ? "videos-pas-a-pas-css3-20261027" : "fidelite-origine-v481";
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }

@@ -60,9 +60,9 @@ test('SQL : animations, modale des contraintes et quatre vidéos réelles',async
   await page.keyboard.press('Escape');await expect(page.locator('#sqlContraintesModal')).toBeHidden();await expect(page.locator('#btnSqlContraintes')).toBeFocused();
   await page.locator('[data-course-tab="videos"]').click();
   for(const id of ['sql-cours','sql-initiation','sql-serie4','sql-serie5']){
-    await page.locator(`[data-video-open="${id}"]`).last().click();await expect(page.locator('#matiereVideoModal')).toBeVisible();
-    const src=await page.locator('#modalVideo').getAttribute('src');expect(src).toContain(id==='sql-initiation'?'exercices/sql/sql-construire-requete-guide-texte.mp4':id==='sql-cours'?'sql-cours-v7.mp4':id+'.mp4');
-    await page.keyboard.press('Escape');await expect(page.locator('#matiereVideoModal')).toBeHidden();
+    await page.locator(`[data-video-open="${id}"]`).last().click();await expect(page.locator('#sti-video-modal-overlay')).toBeVisible();
+    const src=await page.locator('#sti-video-modal-player').getAttribute('src');expect(src).toContain(id==='sql-initiation'?'exercices/sql/sql-construire-requete-guide-texte.mp4':id==='sql-cours'?'sql-cours-v7.mp4':id+'.mp4');
+    await page.keyboard.press('Escape');await expect(page.locator('#sti-video-modal-overlay')).toBeHidden();
   }
 });
 
@@ -76,7 +76,8 @@ test('PHP : dix chapitres, énoncés et solutions originaux en fenêtres accessi
   await expect(page.locator('#recapFrame')).toHaveAttribute('src','PHP-recap.html?embed=1');
   await expect.poll(()=>page.evaluate(()=>window.STIProfil.chargerProfil().laboratoires.php)).toContain('recap-php');
   await page.keyboard.press('Escape');
-  await page.locator('[data-course-tab="exercices"]').click();
+  // Les deux synthèses sont des exercices du cours, pas des séries.
+  await page.locator('[data-course-tab="cours"]').click();
   for(const [btn,modal] of [['#btnExoS10','#exoModal'],['#btnExoS11','#exo2Modal']]){
     await page.locator(btn).click();await expect(page.locator(modal)).toBeVisible();await page.keyboard.press('Escape');await expect(page.locator(modal)).toBeHidden();
   }
@@ -89,19 +90,19 @@ test('PHP : dix chapitres, énoncés et solutions originaux en fenêtres accessi
 });
 
 test('PHP : quiz original, vidéo, chapitres synchronisés et reprise du profil',async({page})=>{
-  await ouvrir(page,'php','#s9c');await expect(page.locator('#exercices')).toBeVisible();await expect(page.locator('.synth-question')).toHaveCount(10);
+  await ouvrir(page,'php','#s9c');await expect(page.locator('#cours')).toBeVisible();await expect(page.locator('.synth-question')).toHaveCount(10);
   const bonnes=[0,2,1,0,1,2,1,2,1,2];for(let i=0;i<bonnes.length;i++)await page.locator(`input[name="synthq${i+1}"][value="${bonnes[i]}"]`).check();
   await page.locator('#btnCorrigerQuiz').click();await expect(page.locator('#scoreQuiz')).toContainText('10 / 10');
   expect((await page.evaluate(()=>window.STIProfil.chargerProfil().quiz)).at(-1)).toMatchObject({score:10,total:10,matiere:'PHP — Quiz de synthèse'});
-  await page.locator('[data-exercise="s9"]').check();await expect(page.locator('#exoProgressText')).toHaveText('1 / 2 exercices faits');
+  await page.locator('[data-course-tab="exercices"]').click();await page.locator('[data-exercise="serie1"]').check();await expect(page.locator('#exoProgressText')).toHaveText('1 / 5 exercices faits');
   await page.locator('[data-course-tab="cours"]').click();
   await page.locator('#featuredVideo').evaluate(v=>v.load());await page.waitForFunction(()=>document.querySelector('#featuredVideo').readyState>=1);
   await page.locator('#featuredVideo').evaluate(v=>{v.currentTime=25;v.dispatchEvent(new Event('pause'));});
-  expect(await page.evaluate(()=>window.STIProfil.chargerProfil().videos.positions['php-synthese'])).toBe(25);
-  await page.locator('[data-featured-time="79.37"]').click();await expect.poll(()=>page.locator('#featuredVideo').evaluate(v=>v.currentTime)).toBeGreaterThanOrEqual(79);
-  await page.locator('[data-course-tab="videos"]').click();await expect(page.locator('.matiere-video-card')).toHaveCount(3);
-  await page.locator('[data-video-open="php-synthese"]').last().click();await expect(page.locator('#matiereVideoModal')).toBeVisible();
-  await page.locator('#modalVideo').evaluate(v=>v.dispatchEvent(new Event('ended')));expect(await page.evaluate(()=>window.STIProfil.chargerProfil().videos.vues)).toContain('php-synthese');
+  expect(await page.evaluate(()=>window.STIProfil.chargerProfil().videos.positions['php-cours'])).toBe(25);
+  await page.locator('[data-featured-time="64.02"]').click();await expect.poll(()=>page.locator('#sti-video-modal-player').evaluate(v=>v.currentTime)).toBeGreaterThanOrEqual(64);
+  await page.keyboard.press('Escape');await page.locator('[data-course-tab="videos"]').click();await expect(page.locator('.matiere-video-card')).toHaveCount(3);
+  await page.locator('[data-video-open="php-synthese"]').last().click();await expect(page.locator('#sti-video-modal-overlay')).toBeVisible();
+  await page.locator('#sti-video-modal-player').evaluate(v=>v.dispatchEvent(new Event('ended')));expect(await page.evaluate(()=>window.STIProfil.chargerProfil().videos.vues)).toContain('php-synthese');
   await page.keyboard.press('Escape');
 });
 

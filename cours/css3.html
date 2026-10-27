@@ -13,7 +13,9 @@
   <link rel="icon" href="../assets/icons/STI_by_AE.ico"><link rel="manifest" href="../manifest.webmanifest">
   <link rel="stylesheet" href="../assets/css/theme.css"><link rel="stylesheet" href="../assets/css/cours.css"><link rel="stylesheet" href="../assets/css/cours-css3.css"><link rel="stylesheet" href="../assets/css/protection.css?v=227">
   <!-- Accès et synchronisation d'origine, sans modification, dans l'ordre requis. -->
-  <script src="../assets/js/config.js?v=479" defer></script><script src="../assets/js/supabase-umd.js" defer></script><script src="../assets/js/acces.js?v=479" defer></script><script src="../assets/js/sync-progressions.js?v=479" defer></script><script src="../assets/js/profil.js" defer></script><script src="../assets/js/app.js" defer></script><script src="../assets/js/cours-css3.js" defer></script><script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script>
+  <script src="../assets/js/config.js?v=479" defer></script><script src="../assets/js/supabase-umd.js" defer></script><script src="../assets/js/acces.js?v=479" defer></script><script src="../assets/js/sync-progressions.js?v=479" defer></script><script src="../assets/js/profil.js" defer></script><script src="../assets/js/app.js" defer></script><script src="../assets/js/retour-quiz.js" defer></script><script src="../assets/js/cours-css3.js" defer></script><script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script><script src="../assets/js/lecteur-commun.js" defer></script>
+<link rel="stylesheet" href="../assets/css/visionneuse-exercices.css">
+<script defer src="../assets/js/visionneuse-exercices.js"></script>
 </head>
 <body class="sti-v2 course-page course-page--css3" data-course-unified="css3">
   <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
@@ -22,12 +24,7 @@
     <div class="container site-header__inner">
       <!-- Identité visuelle STI V2.0 -->
       <a class="brand-logo" href="../index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l’accueil">
-        <span class="brand-logo__mark" aria-hidden="true">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-        </span>
+        <span class="brand-logo__mark" aria-hidden="true"><img src="../assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
         <span class="brand-logo__text">
           <span class="brand-logo__title">STI V2.0</span>
           <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
@@ -86,9 +83,11 @@
 <main id="contenu-principal">
 <section class="course-hero" aria-labelledby="titre-cours-css3"><div class="container">
 <nav class="course-breadcrumb" aria-label="Fil d’Ariane"><a href="../index.html">Accueil</a><span aria-hidden="true">›</span><a href="../index.html#cours">Cours</a><span aria-hidden="true">›</span><span class="course-breadcrumb__current" aria-current="page">CSS3</span></nav>
-<div class="course-hero__grid"><div class="course-hero__copy"><div class="course-eyebrow"><span class="badge badge-css">🎨 CSS3</span><span class="course-eyebrow__meta">COURS COMPLET · 3ÈME &amp; 4ÈME SI</span></div>
+<div class="course-hero__grid"><div class="course-hero__copy"><svg class="matiere-logo matiere-logo--hero" aria-hidden="true" viewBox="0 0 48 48"><use href="../assets/icons/matieres.svg#css3"></use></svg><div class="course-eyebrow"><span class="badge badge-css">🎨 CSS3</span><span class="course-eyebrow__meta">COURS COMPLET · 3ÈME &amp; 4ÈME SI</span></div>
 <h1 class="course-hero__title" id="titre-cours-css3">Donnez du style <span>au web.</span></h1>
 <p class="course-hero__lead">Sélecteurs, mise en page, modèle de boîte et animations : la fiche synthétique et visuelle CSS3 d’A. Essouyah, enrichie de ses démonstrations.</p>
+<p class="course-reading-time" title="Estimation fondée sur le texte des chapitres, à 180 mots par minute ; les vidéos ne sont pas comptées."><span aria-hidden="true">⏱</span> Lecture estimée : <strong data-estimation-lecture>16 min</strong> <span>· hors vidéos</span></p>
+
 <div class="course-progress-card"><div class="course-ring" aria-hidden="true"><svg viewBox="0 0 60 60"><circle class="course-ring__track" cx="30" cy="30" r="26"></circle><circle class="course-ring__fill" id="courseRingFill" cx="30" cy="30" r="26"></circle></svg><span class="course-ring__pct" id="courseRingPct">0%</span></div><div><strong id="courseRingCount">0 / 10 chapitres révisés</strong><p class="course-progress-card__hint">Votre progression est enregistrée sur cet appareil.</p></div></div>
 <div class="hero-actions"><a class="btn btn-course-primary" href="#selecteurs">📖 Commencer le cours</a><a class="hero-annexe-link" href="../documents/annexes/annexe-css3.pdf.html" target="_blank" rel="noopener" data-external-doc>📄 Annexe CSS3 ↗</a></div><div class="course-hero__facts"><span>▦ 10 chapitres</span><span>✦ 23 détails</span><span>▶ Leçons animées</span></div></div>
 <div class="featured-video-card"><div class="featured-video-card__head"><div><span class="video-label">VIDÉO À LA UNE</span><h2>Display : la démo animée <span>(.mp4)</span></h2></div><span class="badge badge-css" data-video-seen-badge>🎥 CSS3</span></div>
@@ -106,7 +105,31 @@
 <a class="toc-link" href="#filtres" data-state="a_reviser"><span><span class="toc-number">08</span> Filtres</span><span class="toc-link__status">À réviser</span></a>
 <a class="toc-link" href="#animations" data-state="a_reviser"><span><span class="toc-number">09</span> Transformations, transitions et animations</span><span class="toc-link__status">À réviser</span></a>
 <a class="toc-link" href="#pas-a-pas" data-state="a_reviser"><span><span class="toc-number">10</span> CSS pas à pas</span><span class="toc-link__status">À réviser</span></a></nav><div class="sidebar-help"><span>💡</span><p>Un chapitre à la fois. Marquez-le comme révisé pour suivre votre progression.</p></div></aside>
-<div class="course-main"><section class="course-intro-banner"><span class="source-accent">Fiche récapitulative · Lycée Raféha</span><h2 class="course-chapter__title">Fiche Synthèse Globale CSS3</h2><p>Des sélecteurs aux animations, retrouvez la fiche de cours et ses exemples interactifs.</p></section>
+<div class="course-main">
+<!-- Objectifs et itinéraire : les liens conservent les ancres originales du cours. -->
+<section class="course-overview" data-sti-feuille-de-route aria-label="Présentation du cours">
+  <div class="course-lesson" aria-labelledby="sti-lecon-titre">
+    <h2 id="sti-lecon-titre">Dans cette leçon</h2>
+    <p>À la fin, vous serez en mesure de :</p>
+    <ul class="course-lesson__objectifs">
+<li>Sélectionner des éléments HTML et leur appliquer des styles CSS3.</li>
+<li>Maîtriser le modèle de boîte, les dimensions et le positionnement.</li>
+<li>Créer des mises en page et des animations adaptées aux écrans.</li>
+    </ul>
+  </div>
+  <nav class="course-roadmap" aria-labelledby="sti-feuille-titre">
+    <h2 id="sti-feuille-titre">Feuille de route du cours</h2>
+    <ol>
+<li><a href="#selecteurs" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">1</span><span class="course-roadmap__copy"><strong>Découvrir les sélecteurs</strong><span>Qu’est-ce qu’une règle CSS et comment cibler les éléments d’une page ?</span></span></a></li>
+<li><a href="#typographie" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">2</span><span class="course-roadmap__copy"><strong>Habiller le contenu</strong><span>Comment régler les polices, les couleurs, les ombres et les arrière-plans ?</span></span></a></li>
+<li><a href="#boite-display" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">3</span><span class="course-roadmap__copy"><strong>Comprendre le modèle de boîte</strong><span>À quoi servent display, les dimensions, les marges et les espacements ?</span></span></a></li>
+<li><a href="#positionnement" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">4</span><span class="course-roadmap__copy"><strong>Organiser la page</strong><span>Pourquoi utiliser les positions, float ou flex pour disposer les éléments ?</span></span></a></li>
+<li><a href="#animations" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">5</span><span class="course-roadmap__copy"><strong>Animer les éléments</strong><span>Comment utiliser les transformations, les transitions et les animations ?</span></span></a></li>
+<li><a href="#pas-a-pas" data-feuille-etape><span class="course-roadmap__number" aria-hidden="true">6</span><span class="course-roadmap__copy"><strong>Mettre en pratique</strong><span>Comment appliquer ces notions dans les animations et les exercices pas à pas ?</span></span></a></li>
+    </ol>
+  </nav>
+</section>
+<section class="course-intro-banner"><span class="source-accent">Fiche récapitulative · Lycée Raféha</span><h2 class="course-chapter__title">Fiche Synthèse Globale CSS3</h2><p>Des sélecteurs aux animations, retrouvez la fiche de cours et ses exemples interactifs.</p></section>
 <section id="selecteurs" class="course-chapter" data-chapter-id="selecteurs">
 <h2 class="course-chapter__title" tabindex="-1"><span class="course-chapter__num" aria-hidden="true">01</span>Sélecteurs et priorités</h2>
 <div class="css-source"><aside class="css-definition callout callout--definition" aria-labelledby="css-definition-title">
@@ -2342,6 +2365,7 @@ article {
 <article class="annexe-card"><div class="doc-icon">HTML</div><span class="badge badge-css">MÉMO INTERACTIF</span><h3>Ombres CSS3 en détail</h3><p>Les laboratoires box-shadow et text-shadow du site.</p><div class="source-actions"><button type="button" class="source-btn" data-preview-doc="../exercices/html-css/box-shadow-text-shadow-css3.html" data-preview-title="Ombres CSS3">👁 Aperçu</button><a class="source-btn" href="../exercices/html-css/box-shadow-text-shadow-css3.html" target="_blank" rel="noopener" data-external-doc>Ouvrir ↗</a><a class="source-link" href="../exercices/html-css/box-shadow-text-shadow-css3.html" download>↓ Télécharger</a></div></article>
 </div><div class="annexe-preview" id="annexePreview" hidden><div class="source-actions"><h3 id="annexePreviewTitle">Aperçu du document</h3><button type="button" class="source-btn" id="closeAnnexePreview">Fermer l’aperçu</button></div><iframe id="annexePreviewFrame" class="annexe-viewer-frame" title="Aperçu du document choisi" loading="lazy"></iframe></div></div></section>
 <section id="videos" class="course-panel" data-course-panel="videos" role="tabpanel" aria-labelledby="tab-videos" hidden><div class="container tab-section-wrap"><div class="panel-intro"><span class="panel-eyebrow">REGARDER · CSS3</span><h2>🎥 Vidéos &amp; leçons animées</h2><p>Choisissez une ressource dans la liste de lecture.</p></div><div class="css-video-layout"><div class="css-playlist" aria-label="Liste de lecture CSS3">
+<button type="button" class="css-playlist__item" data-playlist="cours" aria-pressed="false"><span class="css-playlist__thumb">▶</span><span><strong>Cours CSS3</strong><small>Vidéo MP4 · 11 min 24</small></span></button>
 <button type="button" class="css-playlist__item is-active" data-playlist="display" aria-pressed="true"><span class="css-playlist__thumb">▶</span><span><strong>Display : la démo animée</strong><small>Vidéo MP4 · 3,7 Mo</small></span></button>
 <button type="button" class="css-playlist__item" data-playlist="positionnement" aria-pressed="false"><span class="css-playlist__thumb">📐</span><span><strong>Positionnement animé</strong><small>Vidéo MP4 · leçon interactive</small></span></button>
 <button type="button" class="css-playlist__item" data-playlist="cssanimee" aria-pressed="false"><span class="css-playlist__thumb">✨</span><span><strong>CSS animée</strong><small>Vidéo MP4 · leçon interactive</small></span></button>

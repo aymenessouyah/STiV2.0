@@ -4199,11 +4199,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v472\s*\|/.test(l)), 'v472 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v474\s*\|/.test(l)), 'v474 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v475\s*\|/.test(l)), 'v475 doit rester dans l’historique');
-  assert.ok(cinq.some((o) => /^v476 — Retour instantané depuis exercices\/series-exercices\.html/.test(o.t)), 'v476 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v476\s*\|/.test(l)), 'v476 doit rester dans l’historique');
   assert.ok(cinq.some((o) => /^v477 — Synchronisation intégrale de la version active v477/.test(o.t)), 'v477 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v478 — Protection monotone multicouche des XP et records de Quiz élèves/.test(o.t)), 'v478 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v479 — Fiabilisation intégrale du compteur des vidéos/.test(o.t)), 'v479 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v480 — Intégration de la refonte/);
+  assert.ok(cinq.some((o) => /^v480 — Intégration de la refonte/.test(o.t)), 'v480 reste parmi les nouvelles');
+  assert.match(cinq[0].t, /^v481 — Fidélité à l’origine/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -5397,8 +5398,8 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   const urls = updArr.map((x) => (typeof x === 'string' ? x : x.url));
   const uniqueUrls = new Set(urls);
   assert.equal(uniqueUrls.size, urls.length, `UPDATE_FILES ne doit contenir aucun doublon (${urls.length} entrées vs ${uniqueUrls.size} uniques)`);
-  // La refonte ajoute ses pages et contrôleurs, sans toucher au budget du noyau préchargé ci-dessous.
-  assert.ok(urls.length <= 160, `UPDATE_FILES doit rester compact (<= 160 entrées uniques, observé: ${urls.length})`);
+  // Les pages historiques harmonisées doivent aussi invalider leur ancienne copie ; le noyau préchargé reste limité ci-dessous.
+  assert.ok(urls.length <= 260, `UPDATE_FILES doit rester compact (<= 260 entrées uniques, observé: ${urls.length})`);
 
   const mCore = swJs.match(/var NOYAU_RAPIDE_RECHARGEMENT = (\{[\s\S]*?\n\});/);
   assert.ok(mCore, 'NOYAU_RAPIDE_RECHARGEMENT doit encadrer les rechargements proactifs du SW');

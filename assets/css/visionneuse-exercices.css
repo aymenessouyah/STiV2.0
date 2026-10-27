@@ -1,0 +1,20 @@
+/* Visionneuse d'exercices : les couleurs proviennent du thème de la page. */
+.sti-exo-fond[hidden] { display: none !important; }
+.sti-exo-fond { position: fixed; inset: 0; z-index: 2147483640; display: grid; place-items: center; padding: 12px;
+  background: var(--overlay-bg, color-mix(in srgb, var(--ink) 75%, transparent)); color: var(--text, var(--ink)); }
+.sti-exo-fenetre { width: min(1000px, 96vw); height: min(760px, 92dvh); min-width: 0; min-height: 0; display: flex; flex-direction: column;
+  overflow: hidden; background: var(--surface-solid, var(--surface)); color: var(--text, var(--ink)); border: 1px solid var(--border-strong, var(--border));
+  border-radius: var(--radius-lg, var(--radius)); box-shadow: var(--shadow-lg); }
+.sti-exo-entete { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.sti-exo-entete h2 { margin: 0; font-size: 1.05rem; }
+.sti-exo-entete p { margin: 2px 0 0; color: var(--text-muted, var(--muted)); font-size: .8rem; }
+.sti-exo-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.sti-exo-actions button, .sti-exo-poignee { padding: 8px 10px; color: inherit; background: var(--bg-alt, var(--surface-2, var(--surface))); border: 1px solid var(--border-strong, var(--border)); border-radius: var(--radius-sm, var(--radius)); cursor: pointer; font: inherit; font-size: .8rem; }
+.sti-exo-actions button:focus-visible, .sti-exo-poignee:focus-visible { outline: 2px solid var(--brand, var(--accent)); outline-offset: 2px; }
+.sti-exo-cadre { display: block; width: 100%; min-height: 0; flex: 1; border: 0; background: var(--surface-solid, var(--surface)); }
+.sti-exo-avertissement { margin: 0; padding: 8px 16px; color: var(--text, var(--ink)); background: var(--warning-soft, var(--accent-soft)); }
+.sti-exo-poignee { align-self: flex-end; touch-action: none; cursor: nwse-resize; }
+.sti-exo-fond.est-plein { padding: 0; }
+.sti-exo-fond.est-plein .sti-exo-fenetre { width: 100vw !important; height: 100dvh !important; border-radius: 0; }
+.sti-exo-fond.est-plein .sti-exo-poignee { visibility: hidden; }
+@media (max-width: 600px) { .sti-exo-fenetre { width: 100%; height: 92dvh; } .sti-exo-entete { padding: 8px; } }

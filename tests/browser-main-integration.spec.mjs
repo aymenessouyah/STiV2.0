@@ -111,11 +111,11 @@ test('séries : la modale suit le média et conserve sa position à la fermeture
   expect(await page.evaluate(() => window.lireProgressionMediaSTI()['video:sql-serie4'].sec)).toBe(48);
 });
 
-test('retours historiques des quiz et des exercices vers les bonnes sections de l’accueil', async ({ page }) => {
+test('retours contextuels des quiz et des exercices vers les bonnes sections de l’accueil', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/quiz/html-css.html', { waitUntil: 'domcontentloaded' });
-  await page.locator('a[href="../index.html#modules"]').first().click();
-  await expect(page).toHaveURL(/\/index\.html#modules$/);
+  await page.getByRole('link', { name:'Retour aux quiz' }).first().click();
+  await expect(page).toHaveURL(/\/index\.html#quiz$/);
   await expect(page.locator('#titre-quiz')).toBeInViewport();
 
   await page.goto('/exercices/series-exercices.html', { waitUntil: 'domcontentloaded' });

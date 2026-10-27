@@ -14,10 +14,10 @@ for (var i = 0; i < radios.length; i++)
 			{
         			// get value, set checked flag or do whatever you need to
         			ok = true;
-				STIDialogues.afficher(radios[i].value);
+				alert(radios[i].value)
 			}
 	}
-	STIDialogues.afficher(ok);
+	alert(ok)
 	}
 document.querySelector('.cv1').addEventListener("click",testr);
 
@@ -408,28 +408,38 @@ function verifcodepostal(ch)
 	return indice;
 }
 
-async function ajoutville()
+function ajoutville()
 {
-	// Le dialogue natif reste utilisé hors aperçu ; son repli fonctionne aussi en sandbox.
-	let saisie = await STIDialogues.demander("Donner la nouvelle ville à ajouter");
-	if (saisie === null) return;
-	let villenew = saisie.trim();
-	if (!villenew) { await STIDialogues.afficher("Veuillez saisir le nom de la ville."); return; }
-	if (verifville(villenew) > -1) { await STIDialogues.afficher("ville déjà exitante"); return; }
-	let message = "Donner le code postal de la ville", codep;
-	// Redemander tant que le code postal n'a pas quatre chiffres ou existe déjà.
-	while (true) {
-		saisie = await STIDialogues.demander(message);
-		if (saisie === null) return;
-		codep = saisie.trim();
-		if (!/^\d{4}$/.test(codep)) { message = "Code postal érroné, Veuillez entrer un code de 4 chiffres"; continue; }
-		if (verifcodepostal(codep) > -1) { message = "Code postal déjà existant, Merci de réintègrer le code postal"; continue; }
-		break;
-	}
-	let l = document.getElementById("ville").options.length;
-	// Remarque : getElementById renvoie le champ ; on utilise sa liste options.
-	document.getElementById("ville").options[l] = new Option(villenew,codep);
-	document.getElementById("ville").style.borderColor="blue";
+	let villenew = prompt("Donner la nouvelle ville à ajouter").trim()
+	if (verifville(villenew) > -1)
+		{
+			alert("ville déjà exitante")
+		}
+	else
+		{
+			let codep = prompt("Donner le code postal de la ville").trim()
+	//vérifier format du code postal sinon redemander une autre fois
+			if (!((codep.length==4)&& (numerique(codep))))
+				{ 
+						codep = prompt("Code postal érroné, Veuillez entrer un code de 4 chiffres ").trim();
+				}
+	/* ---------------------------------------------------------------------------------
+		chercher si le code postal existe déjà on doit redemander:
+	si la demande ne cesse que lors d'un code non utilisé on utilise la boucle While dans ce cas-------------------------------------------------------------------------------	*/
+			
+			else if ( verifcodepostal(codep) > -1)
+				{
+					codep = prompt("Code postal déjà existant, Merci de réintègrer le code postal");
+				}
+			else 
+				{
+						let l = document.getElementById("ville").options.length;
+	//remarque trés importante:::si on utilise getelementbyid on ne met pas la méthode .value
+						document.getElementById("ville").options[l] = new Option(villenew,codep);
+						document.getElementById("ville").style.borderColor="blue"
+				}
+		}
+	
 }
 
 document.getElementById("aville").addEventListener("click",ajoutville);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html data-sti-heritage="interface" lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -207,6 +207,8 @@ window.addEventListener("storage",function(e){if(e.key==="sti-theme"||e.key==="t
   html[data-theme="dark"] .badge-difficile,html[data-theme="dark"] .badge-hard{color:#f87171}
 </style>
 <link rel="stylesheet" href="../../assets/css/dialogues-compat.css">
+
+<link rel="stylesheet" href="../../assets/css/theme-patrimoine.css">
 </head>
 <body>
 
@@ -608,8 +610,7 @@ function genererContenu(id){
           <button class="btn" onclick="ex36_play()">▶️ play()</button>
           <button class="btn btn-secondary" onclick="ex36_pause()">⏸️ pause()</button>
         </div>
-        <!-- Ressource locale : le défi play/pause reste utilisable hors connexion. -->
-        <audio id="ex36_audio" src="../../assets/audio/foret.mp3" preload="none"></audio>
+        <audio id="ex36_audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="none"></audio>
       </div>
       <div class="resultat" id="ex36_res">État : en pause</div>
       <button class="btn-correction" onclick="toggleCorrection(36)">Voir la correction</button>
@@ -827,7 +828,7 @@ function ex11_go(){ const n = Number(document.getElementById("ex11_n").value); d
 function ex12_go(){ let h = "<ul>"; for(let i=0;i<10;i++){ const r=Math.random(); h += `<li>${(Math.round(r*10000)/10000)} → <strong>${Math.round(r*100)}</strong></li>`; } document.getElementById("ex12_res").innerHTML = h + "</ul>"; }
 function ex13_go(){ const n = Number(document.getElementById("ex13_n").value); const s = String(n); document.getElementById("ex13_res").innerHTML = `<ul><li><strong>String(n) :</strong> ${s} (${typeof s})</li><li><strong>String(n)+1 :</strong> ${s+1} (concat)</li><li><strong>n+1 :</strong> ${n+1} (addition)</li></ul>`; }
 function ex14_go(){ const v = document.getElementById("ex14_val").value; document.getElementById("ex14_res").innerHTML = `<ul><li><strong>isNaN :</strong> ${isNaN(v)}</li><li><strong>Number :</strong> ${Number(v)}</li></ul>`; }
-async function ex15_go(){ const r = document.getElementById("ex15_res"); const s = await STIDialogues.demander("Entrez un nombre :"); if(!r.isConnected) return; if(s===null){ r.textContent="❌ Annulé"; return; } if(s.trim()===""||isNaN(s)){ r.textContent="❌ Invalide : "+s; return; } const n = Number(s); r.innerHTML = `<ul><li><strong>Double :</strong> ${n*2}</li><li><strong>Carré :</strong> ${n*n}</li></ul>`; }
+function ex15_go(){ const r = document.getElementById("ex15_res"); const s = prompt("Entrez un nombre :"); if(s===null){ r.innerHTML="❌ Annulé"; return; } if(s.trim()===""||isNaN(s)){ r.innerHTML="❌ Invalide : "+s; return; } const n = Number(s); r.innerHTML = `<ul><li><strong>Double :</strong> ${n*2}</li><li><strong>Carré :</strong> ${n*n}</li></ul>`; }
 function ex16_go(){ const v = document.getElementById("ex16_val").value; document.getElementById("ex16_res").innerHTML = `<ul><li><strong>parseInt :</strong> ${parseInt(v,10)}</li><li><strong>parseFloat :</strong> ${parseFloat(v)}</li><li><strong>Number :</strong> ${Number(v)}</li><li><strong>isNaN(Number) :</strong> ${isNaN(Number(v))}</li></ul>`; }
 function ex17_go(){ const n = Number(document.getElementById("ex17_n").value); document.getElementById("ex17_res").innerHTML = `<ul><li><strong>Base 2 :</strong> ${n.toString(2)}</li><li><strong>Base 8 :</strong> ${n.toString(8)}</li><li><strong>Base 16 :</strong> ${n.toString(16).toUpperCase()}</li></ul>`; }
 
@@ -913,9 +914,9 @@ function ex25_afficher(t){
   document.getElementById("ex25_bIns").className = t==="ins"?"actif":"";
   document.getElementById("ex25_bMdp").className = t==="mdp"?"actif":"";
 }
-function ex25_connexion(){ const e = document.getElementById("ex25_con_email").value; const p = document.getElementById("ex25_con_pwd").value; if(!e||!p){ STIDialogues.afficher("Veuillez remplir."); return; } STIDialogues.afficher("Connexion : "+e); }
-function ex25_inscrire(){ const p1 = document.getElementById("ex25_ins_pwd").value; const p2 = document.getElementById("ex25_ins_pwd2").value; if(p1===""||p1!==p2){ STIDialogues.afficher("Mots de passe différents !"); return; } STIDialogues.afficher("Inscription réussie !"); }
-function ex25_recuperer(){ const e = document.getElementById("ex25_mdp_email").value; if(e.indexOf("@")===-1){ STIDialogues.afficher("Email invalide"); return; } STIDialogues.afficher("Lien envoyé à "+e); }
+function ex25_connexion(){ const e = document.getElementById("ex25_con_email").value; const p = document.getElementById("ex25_con_pwd").value; if(!e||!p){ alert("Veuillez remplir."); return; } alert("Connexion : "+e); }
+function ex25_inscrire(){ const p1 = document.getElementById("ex25_ins_pwd").value; const p2 = document.getElementById("ex25_ins_pwd2").value; if(p1===""||p1!==p2){ alert("Mots de passe différents !"); return; } alert("Inscription réussie !"); }
+function ex25_recuperer(){ const e = document.getElementById("ex25_mdp_email").value; if(e.indexOf("@")===-1){ alert("Email invalide"); return; } alert("Lien envoyé à "+e); }
 
 /* ============================================================
    EX 26-28
@@ -1225,13 +1226,15 @@ function init(){
   rendreContenu();
   majProgression();
 }
-document.addEventListener("keydown", e => { if(e.key === "Escape" && !document.querySelector("dialog[open]")) fermerPanneau(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") fermerPanneau(); });
 init();
 </script>
-<script src="../../assets/js/supabase-umd.js" defer></script>
 <script src="../../assets/js/config.js?v=425" defer></script>
+<script src="../../assets/js/supabase-umd.js" defer></script>
 <script src="../../assets/js/acces.js?v=453" defer></script>
 <script src="../../assets/js/sync-progressions.js?v=463" defer></script>
 <script src="../../assets/js/mobile-nav.js?v=434" defer></script>
+
+<script src="../../assets/js/profil.js" defer></script>
 </body>
 </html>

@@ -283,6 +283,33 @@
     };
   }
 
+  /* Les pages historiques n'ont que dark/light. Le mode intermédiaire utilise
+     leur rendu sombre, tandis que le profil reste la source des trois modes. */
+  function synchroniserThemesHistoriques(theme) {
+    try {
+      var stockage = global.localStorage;
+      if (!stockage || !THEMES_VALIDES[theme]) return;
+      var ancien = theme === "clair" ? "light" : "dark";
+      [["sti-theme", ancien], ["theme", ancien], ["sti-roue-theme", theme]].forEach(function (paire) {
+        if (stockage.getItem(paire[0]) !== paire[1]) stockage.setItem(paire[0], paire[1]);
+      });
+    } catch (e) { /* Le mode reste disponible même si le stockage est bloqué. */ }
+  }
+
+  function reprendreThemeHistorique(profil) {
+    try {
+      var stockage = global.localStorage;
+      if (!stockage) return profil;
+      var aProfil = !!stockage.getItem(CLE_PROFIL);
+      var historique = stockage.getItem("sti-theme") || stockage.getItem("theme");
+      var roue = stockage.getItem("sti-roue-theme");
+      if (!aProfil && THEMES_VALIDES[roue]) profil.theme = roue;
+      else if (historique === "light" && profil.theme !== "clair") profil.theme = "clair";
+      else if (historique === "dark" && profil.theme === "clair") profil.theme = "sombre";
+    } catch (e) {}
+    return profil;
+  }
+
   /**
    * Applique immédiatement les préférences d'affichage sur la balise <html>.
    * Appelé dès le <head> pour éviter tout clignotement (zéro flash).
@@ -299,7 +326,14 @@
         }, 320);
       }
 
-      docEl.setAttribute("data-theme", profil.theme);
+      // Les anciennes pages attendent encore dark/light dans data-theme ;
+      // un attribut séparé transmet les trois modes à leur habillage commun.
+      if (typeof docEl.hasAttribute === "function" && docEl.hasAttribute("data-sti-heritage")) {
+        docEl.setAttribute("data-sti-theme", profil.theme);
+        docEl.setAttribute("data-theme", profil.theme === "clair" ? "light" : "dark");
+      } else {
+        docEl.setAttribute("data-theme", profil.theme);
+      }
       docEl.setAttribute("data-taille-texte", profil.tailleTexte);
       docEl.setAttribute("lang", profil.langue);
       docEl.setAttribute("dir", profil.langue === "ar" ? "rtl" : "ltr");
@@ -310,6 +344,11 @@
       var estSombre = profil.theme !== "clair";
       docEl.classList.toggle("dark", estSombre);
       docEl.classList.toggle("dark-mode", estSombre);
+      var roue = document.getElementById("sti-roue-wrap");
+      if (roue) roue.classList.toggle("sti-theme-sombre", estSombre);
+      var boutonTheme = document.getElementById("sti-pan-theme");
+      if (boutonTheme) boutonTheme.textContent = estSombre ? "☀️" : "🌙";
+      synchroniserThemesHistoriques(profil.theme);
     } catch (e) {}
   }
 
@@ -647,7 +686,10 @@
 
   /* ── Amorçage immédiat dès le chargement du script (zéro flash de thème) ── */
   var profilInitial = chargerProfil();
-  appliquerPreferencesDOM(profilInitial, false);
+  var themeAvantReprise = profilInitial.theme;
+  profilInitial = reprendreThemeHistorique(profilInitial);
+  if (profilInitial.theme !== themeAvantReprise) sauvegarderProfil(profilInitial, false);
+  else appliquerPreferencesDOM(profilInitial, false);
 
   /* Ré-écoute des mises à jour cloud effectuées par sync-progressions.js ou un autre onglet */
   if (typeof global.addEventListener === "function") {
@@ -658,13 +700,62 @@
         appliquerPreferencesDOM(pMaj, false);
         notifierChangement("sti:profil-maj", pMaj);
         notifierChangement("sti:session-maj", lireEtatSession());
+        return;
+      }
+      var cle = ev.key, valeur = ev.newValue;
+      if ((cle === "sti-theme" || cle === "theme" || cle === "sti-sql-theme") && (valeur === "dark" || valeur === "light")) {
+        // acces.js applique aussi cette notification en dark/light. Rétablir
+        // ensuite les trois modes V2 et reprendre un choix venu d'une ancienne page.
+        setTimeout(function () {
+          var profil = chargerProfil();
+          var choisi = valeur === "light" ? "clair" : (profil.theme === "intermediaire" ? "intermediaire" : "sombre");
+          if (profil.theme !== choisi) mettreAJour("theme", choisi);
+          else appliquerPreferencesDOM(profil, false);
+        }, 0);
+      } else if (cle === "sti-roue-theme" && THEMES_VALIDES[valeur]) {
+        setTimeout(function () {
+          try { if (global.localStorage.getItem(cle) !== valeur) return; } catch (e) { return; }
+          var profil = chargerProfil();
+          // Une page à deux thèmes réécrit « intermédiaire » en « sombre »
+          // à son démarrage : ce n'est pas un choix explicite de l'utilisateur.
+          if (profil.theme === "intermediaire" && valeur === "sombre") {
+            synchroniserThemesHistoriques(profil.theme);
+          } else if (profil.theme !== valeur) {
+            mettreAJour("theme", valeur);
+          }
+        }, 0);
       }
     });
 
     global.addEventListener("DOMContentLoaded", function () {
+      // Le bouton historique de la roue continue de piloter le profil V2.
+      document.addEventListener("click", function (ev) {
+        if (!ev.target || !ev.target.closest || !ev.target.closest("#sti-pan-theme")) return;
+        setTimeout(function () {
+          var nouveau = document.documentElement.classList.contains("dark-mode") ? "sombre" : "clair";
+          if (chargerProfil().theme !== nouveau) mettreAJour("theme", nouveau);
+        }, 0);
+      }, true); // acces.js arrête la propagation : observer le clic en phase de capture.
       synchroniserLectureSessionSupabase();
       setTimeout(synchroniserLectureSessionSupabase, 600);
 
+      // Le vrai panneau de compte est construit après le chargement et peut
+      // être reconstruit : nommer son champ sans modifier acces.js.
+      function nommerDateRoue() {
+        var champ = document.getElementById("sti-plan-date");
+        if (champ && !champ.hasAttribute("aria-label")) champ.setAttribute("aria-label", "Date de l’épreuve du bac");
+      }
+      nommerDateRoue();
+      if (typeof MutationObserver === "function" && document.body) {
+        var obsRoue = new MutationObserver(function (mutations) {
+          if (mutations.some(function (mutation) {
+            return Array.prototype.some.call(mutation.addedNodes, function (n) {
+              return n.nodeType === 1 && (n.id === "sti-plan-date" || (n.querySelector && n.querySelector("#sti-plan-date")));
+            });
+          })) nommerDateRoue();
+        });
+        obsRoue.observe(document.body, { childList: true, subtree: true });
+      }
       if (typeof MutationObserver === "function" && document.documentElement) {
         var obs = new MutationObserver(function () {
           notifierChangement("sti:session-maj", lireEtatSession());
