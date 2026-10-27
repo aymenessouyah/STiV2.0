@@ -1,0 +1,184 @@
+/* Palette du badge : jetons communs aux pages V2 et aux pages historiques. */
+:root {
+  --sti-badge-fond: #192441;
+  --sti-badge-fond-fin: #263759;
+  --sti-badge-texte: #ffffff;
+  --sti-badge-texte-secondaire: #dce8f6;
+  --sti-badge-contour: #59728c;
+  --sti-badge-avatar-fond: #eef3f6;
+  --sti-badge-avatar-texte: #142039;
+  --sti-badge-ombre: rgba(12, 22, 42, .24);
+  --sti-badge-focus: #67e8f9;
+  --sti-badge-bleu: #2563eb;
+  --sti-badge-vert: #16a34a;
+  --sti-badge-gold: #d3a62c;
+  --sti-badge-orange: #f97316;
+  --sti-badge-noir: #111111;
+  --sti-badge-ruban: var(--sti-badge-noir);
+  --sti-badge-liseré: #f5f5f1;
+}
+
+/* L'anneau d'origine garde son fond conique de couverture ; sa forme épouse
+   simplement la carte au lieu de former une roue. La notification reste dessus. */
+#sti-roue-anneau.sti-badge-identite__anneau,
+body.sti-v2 [data-subscriber-slot] #sti-roue-anneau.sti-badge-identite__anneau {
+  position: relative;
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 210px !important;
+  height: 64px !important;
+  padding: 3px !important;
+  border-radius: 14px !important;
+  overflow: visible !important;
+  transform: rotate(-1.5deg);
+}
+#sti-roue-anneau[data-sti-ruban="bleu"] { --sti-badge-ruban: var(--sti-badge-bleu); }
+#sti-roue-anneau[data-sti-ruban="vert"] { --sti-badge-ruban: var(--sti-badge-vert); }
+#sti-roue-anneau[data-sti-ruban="gold"] { --sti-badge-ruban: var(--sti-badge-gold); }
+#sti-roue-anneau[data-sti-ruban="orange"] { --sti-badge-ruban: var(--sti-badge-orange); }
+#sti-roue-anneau[data-sti-ruban="noir"] { --sti-badge-ruban: var(--sti-badge-noir); }
+
+/* Il s'agit bien du bouton historique : le clic et Échap ouvrent ou ferment
+   toujours le panneau réel ; seule sa présentation est changée. */
+#sti-roue-btn.sti-badge-identite,
+body.sti-v2 [data-subscriber-slot] #sti-roue-btn.sti-badge-identite {
+  position: relative;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  padding: 5px 6px !important;
+  gap: 6px !important;
+  overflow: visible !important;
+  border: 1px solid var(--sti-badge-contour) !important;
+  border-radius: 11px !important;
+  background: linear-gradient(145deg, var(--sti-badge-fond), var(--sti-badge-fond-fin)) !important;
+  color: var(--sti-badge-texte) !important;
+  box-shadow: 0 7px 18px var(--sti-badge-ombre) !important;
+  font: 700 11px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  text-align: left !important;
+  text-shadow: none !important;
+  cursor: pointer;
+  transform: none !important;
+  animation: none !important;
+}
+#sti-roue-btn.sti-badge-identite:focus-visible {
+  outline: 3px solid var(--sti-badge-focus) !important;
+  outline-offset: 3px;
+}
+#sti-roue-btn.sti-badge-identite::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 36%;
+  width: 25%;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--sti-badge-ruban);
+  pointer-events: none;
+}
+/* Petit ruban attaché à la carte, sans créer une commande supplémentaire. */
+#sti-roue-btn.sti-badge-identite::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 1px);
+  right: 16px;
+  width: 17px;
+  height: 15px;
+  background: var(--sti-badge-ruban);
+  border: 1px solid var(--sti-badge-liseré);
+  border-top: 0;
+  box-sizing: border-box;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%);
+  filter: drop-shadow(0 2px 2px var(--sti-badge-ombre));
+  pointer-events: none;
+}
+.sti-badge-identite__avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 2px solid var(--sti-badge-ruban);
+  border-radius: 50%;
+  background: var(--sti-badge-avatar-fond);
+  color: var(--sti-badge-avatar-texte);
+  font: 900 13px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: .02em;
+}
+.sti-badge-identite__avatar .sti-roue-photo-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.sti-badge-identite__copie { display: grid; flex: 1 1 auto; min-width: 0; gap: 3px; }
+.sti-badge-identite__marque, .sti-badge-identite__classe {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sti-badge-identite__marque { color: var(--sti-badge-texte); font-size: 11px; font-weight: 850; }
+.sti-badge-identite__classe { color: var(--sti-badge-texte-secondaire); font-size: 10px; font-weight: 650; }
+.sti-badge-identite__logo, .sti-badge-identite__qr {
+  display: block;
+  flex: none;
+  object-fit: contain;
+  background: var(--sti-badge-avatar-fond);
+}
+.sti-badge-identite__logo { width: 24px; height: 24px; border-radius: 5px; }
+.sti-badge-identite__qr { width: 32px; height: 32px; padding: 1px; border-radius: 3px; }
+
+/* L'en-tête réserve sa hauteur dès le chargement de theme.css pour éviter
+   les sauts de défilement quand le badge asynchrone apparaît. */
+/* La recherche conserve son nom accessible et son raccourci clavier ; sa
+   version compacte laisse la marque et toutes les destinations lisibles. */
+body.sti-v2:has(#sti-roue-btn.sti-badge-identite) .search-trigger__label,
+body.sti-v2:has(#sti-roue-btn.sti-badge-identite) .search-trigger kbd { display: none; }
+body.sti-v2:has(#sti-roue-btn.sti-badge-identite) #installBtn { font-size: 0; padding-inline: var(--space-2); }
+body.sti-v2:has(#sti-roue-btn.sti-badge-identite) #installBtn::before { content: "📲"; font-size: .8rem; }
+
+@media (min-width: 1060px) and (max-width: 1180px) {
+  /* Le tiroir contient les mêmes destinations si la carte ne laisse plus assez
+     de place à la navigation complète. */
+  body.sti-v2:has(#sti-roue-btn.sti-badge-identite) .site-nav { display: none; }
+  body.sti-v2:has(#sti-roue-btn.sti-badge-identite) .burger-btn { display: inline-grid; }
+}
+@media (max-width: 900px) {
+  #sti-roue-anneau.sti-badge-identite__anneau,
+  body.sti-v2 [data-subscriber-slot] #sti-roue-anneau.sti-badge-identite__anneau { width: 190px !important; height: 58px !important; }
+  .sti-badge-identite__avatar { flex-basis: 38px; width: 38px; height: 38px; }
+  .sti-badge-identite__logo { width: 21px; height: 21px; }
+  .sti-badge-identite__qr { width: 29px; height: 29px; }
+}
+@media (max-width: 700px) {
+  /* Le panneau V2 reste entièrement dans le viewport malgré le nouvel en-tête. */
+  body.sti-v2 [data-subscriber-slot] #sti-roue-wrap.sti-badge-identite__wrap .sti-pan {
+    max-height: calc(100dvh - var(--header-height) - 18px) !important;
+  }
+  /* Sur les anciennes pages, éviter que la translation historique envoie la
+     carte hors de l'écran et placer le panneau sous elle. */
+  body:not(.sti-v2) #sti-roue-wrap.sti-badge-identite__wrap {
+    top: 10px !important;
+    right: 10px !important;
+    transform: none !important;
+  }
+  body:not(.sti-v2) #sti-roue-wrap.sti-badge-identite__wrap .sti-wrap { transform: none !important; }
+  body:not(.sti-v2) #sti-roue-wrap.sti-badge-identite__wrap .sti-pan {
+    top: calc(100% + 16px) !important;
+    right: 0 !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100dvh - 96px) !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #sti-roue-anneau.sti-badge-identite__anneau { transform: none; }
+}

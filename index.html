@@ -114,6 +114,17 @@
           <p class="welcome-return__count" id="welcomeCount" aria-live="polite">0 en cours</p>
           <a class="welcome-return__dashboard" href="dashboard.html">Votre apprentissage <span aria-hidden="true">→</span></a>
         </div>
+        <!-- La reprise de lecture ou de vidéo fait partie de l'apprentissage en cours. -->
+        <div class="resume-banner" id="resumeBanner" hidden>
+          <div>
+            <span class="resume-banner__kicker" id="resumeKicker">📍 Reprendre ma dernière lecture</span>
+            <div class="resume-banner__title" id="resumeTitle">Chapitre en cours</div>
+          </div>
+          <div class="resume-banner__actions">
+            <a class="btn btn-primary btn-sm" id="resumeGoBtn" href="#cours">Reprendre ➜</a>
+            <button type="button" class="btn btn-ghost btn-sm" id="resumeCloseBtn" aria-label="Masquer le bandeau">✕</button>
+          </div>
+        </div>
         <div class="welcome-return__courses" id="welcomeCourses"></div>
         <p class="welcome-return__empty" id="welcomeEmpty" hidden>Vous n’avez pas encore ouvert de cours. <a href="#cours">Découvrir les cours</a></p>
       </div>
@@ -124,18 +135,6 @@
          ═════════════════════════════════════════════════════════════════════ -->
     <section class="hero">
       <div class="container">
-        <!-- Bandeau dynamique de reprise de lecture ou de vidéo -->
-        <div class="resume-banner" id="resumeBanner" hidden>
-          <div>
-            <span class="resume-banner__kicker" id="resumeKicker">📍 Reprendre ma dernière lecture</span>
-            <div style="font-weight:800;font-size:1rem;margin-top:2px" id="resumeTitle">Chapitre en cours</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <a class="btn btn-primary btn-sm" id="resumeGoBtn" href="#cours">Reprendre ➜</a>
-            <button type="button" class="btn btn-ghost btn-sm" id="resumeCloseBtn" aria-label="Masquer le bandeau">✕</button>
-          </div>
-        </div>
-
         <div class="hero__grid">
           <!-- Colonne éditoriale & Terminal -->
           <div>

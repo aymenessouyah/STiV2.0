@@ -3,11 +3,11 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v343";
+var CACHE = "sti-atelier-v344";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés (1 seule entrée par URL).
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v482-accueil-personnalise-20261027";
-/* Historique caches : sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
+var UPDATE_ID = "v483-badge-reprise-20261027";
+/* Historique caches : sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
 var UPDATE_FILES = [
@@ -129,24 +129,27 @@ var UPDATE_FILES = [
   { url: "./assets/css/cours-css3.css", revision: "videos-pas-a-pas-css3-20261027" },
   { url: "./assets/js/cours-css3.js", revision: "fidelite-origine-v481" },
   { url: "./dashboard.html", revision: "fidelite-origine-v481" },
-  { url: "./assets/css/theme.css", revision: "accueil-personnalise-v482" },
+  { url: "./assets/css/theme.css", revision: "badge-reprise-v483" },
+  { url: "./assets/css/badge-compte.css", revision: "badge-reprise-v483" },
+  { url: "./assets/icons/sti-icon-192.png", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 46307 },
+  { url: "./assets/images/qr-code-site.png", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 9391 },
   { url: "./assets/css/cours.css", revision: "fidelite-origine-v481" },
-  { url: "./assets/js/app.js", revision: "accueil-personnalise-v482" },
+  { url: "./assets/js/app.js", revision: "badge-reprise-v483" },
   { url: "./assets/js/profil.js", revision: "accueil-personnalise-v482" },
   { url: "./assets/js/cours-html5.js", revision: "refonte-ui-html5-20261027" },
-  { url: "./index.html", revision: "accueil-personnalise-v482" },
+  { url: "./index.html", revision: "badge-reprise-v483" },
   { url: "./admin.html", revision: "compteur-media-v479" },
-  { url: "./README.md", revision: "accueil-personnalise-v482" },
+  { url: "./README.md", revision: "badge-reprise-v483" },
   { url: "./package.json", revision: "accueil-personnalise-v482" },
   { url: "./package-lock.json", revision: "accueil-personnalise-v482" },
   { url: "./assets/data/nouveautes.json", revision: "compteur-media-v479" },
   { url: "./assets/js/config.js", revision: "compteur-media-v479" },
   { url: "./assets/js/acces.js", revision: "compteur-media-v479" },
   { url: "./assets/js/protection.js", revision: "fidelite-origine-v481" },
-  { url: "./assets/js/mobile-nav.js", revision: "perf-quiz-php-v474" },
+  { url: "./assets/js/mobile-nav.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 28292 },
   { url: "./assets/js/roue-nuage.js", revision: "perf-quiz-php-v474" },
-  { url: "./assets/js/roue-habillage.js", revision: "perf-quiz-php-v474" },
-  { url: "./assets/js/roue-initiales.js", revision: "perf-quiz-php-v474" },
+  { url: "./assets/js/roue-habillage.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 8050 },
+  { url: "./assets/js/roue-initiales.js", revision: "badge-reprise-v483" },
   { url: "./assets/css/quiz-php-tw.css", revision: "perf-quiz-php-v474" },
   { url: "./assets/css/quiz-sql-tw.css", revision: "perf-quiz-php-v474" },
   { url: "./assets/css/quiz-js-tw.css", revision: "perf-quiz-php-v474" },
@@ -169,9 +172,9 @@ var UPDATE_FILES = [
   { url: "./memo-veille-bac.html", revision: "fidelite-origine-v481" },
   { url: "./outils-js-bac.html", revision: "fidelite-origine-v481" },
   { url: "./pieges-bac.html", revision: "fidelite-origine-v481" },
-  { url: "./offline-complete-manifest.json", revision: "accueil-personnalise-v482" },
+  { url: "./offline-complete-manifest.json", revision: "badge-reprise-v483" },
   { url: "./ma-fiche-revision.html", revision: "fidelite-origine-v481" },
-  { url: "./assets/js/roue-couverture.js", revision: "perf-fluide-v473" },
+  { url: "./assets/js/roue-couverture.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 12067 },
   { url: "./assets/js/roue-revision.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/roue-plan.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/sync-progressions.js", revision: "compteur-media-v479" },
@@ -404,6 +407,12 @@ function signalerCacheEviteSTI(rep) {
   }, 1800);
 }
 var SHELL = [
+  "./assets/css/badge-compte.css",
+  "./assets/js/mobile-nav.js",
+  "./assets/js/roue-initiales.js",
+  "./assets/js/roue-habillage.js",
+  "./assets/js/roue-couverture.js",
+  "./assets/images/qr-code-site.png",
   "./assets/css/theme-patrimoine.css",
   "./assets/js/lecteur-commun.js",
   "./assets/js/retour-quiz.js",
@@ -551,6 +560,11 @@ var SHELL = [
 ];
 
 var OFFLINE_LIST = [
+  "./assets/css/badge-compte.css",
+  "./assets/js/mobile-nav.js",
+  "./assets/js/roue-initiales.js",
+  "./assets/js/roue-habillage.js",
+  "./assets/js/roue-couverture.js",
   "./assets/css/theme-patrimoine.css",
   "./assets/js/lecteur-commun.js",
   "./assets/js/retour-quiz.js",
@@ -1162,7 +1176,10 @@ async function prechargerSequentiel(forcerMajCode) {
 }
 
 var _actualisationDeltaEnCours = false;
+var _migrationCachesEnCours = null;
 var NOYAU_RAPIDE_RECHARGEMENT = {
+  "./assets/css/badge-compte.css": 1,
+  "./assets/js/roue-initiales.js": 1,
   "./assets/css/theme-patrimoine.css": 1,
   "./assets/js/lecteur-commun.js": 1,
   "./assets/js/retour-quiz.js": 1,
@@ -1178,14 +1195,20 @@ var NOYAU_RAPIDE_RECHARGEMENT = {
   "./assets/js/mobile-nav.js": 1,
   "./assets/js/cote-ticker.js": 1,
   "./assets/js/reprendre.js": 1,
-  "./assets/js/nouveautes.js": 1,
   "./assets/css/atelier.css": 1,
   "./assets/css/protection.css": 1,
   "./assets/data/nouveautes.json": 1
 };
 
-/* Nouveaux modules indispensables aux pages déjà installées : moins de 50 Ko au total. */
+/* Dépendances légères indispensables aux pages déjà installées, sans médias lourds. */
 var NOUVEAUTES_NOYAU = {
+  "./assets/css/badge-compte.css": 1,
+  "./assets/js/mobile-nav.js": 1,
+  "./assets/js/roue-initiales.js": 1,
+  "./assets/js/roue-habillage.js": 1,
+  "./assets/js/roue-couverture.js": 1,
+  "./assets/icons/sti-icon-192.png": 1,
+  "./assets/images/qr-code-site.png": 1,
   "./assets/css/theme-patrimoine.css": 1,
   "./assets/js/lecteur-commun.js": 1,
   "./assets/js/retour-quiz.js": 1,
@@ -1199,6 +1222,9 @@ async function actualiserFichiersConcernes() {
   if (_actualisationDeltaEnCours) return;
   _actualisationDeltaEnCours = true;
   try {
+    /* Un message reçu après clients.claim() ne doit pas rouvrir un ancien
+       cache pendant que l'activation le copie puis le supprime. */
+    if (_migrationCachesEnCours) await _migrationCachesEnCours;
     var cache = await caches.open(CACHE);
     var revisions = await caches.open(CACHE_REVISIONS);
     var nomsCaches = [];
@@ -1248,6 +1274,13 @@ async function actualiserFichiersConcernes() {
           if (await revisions.match(marker)) return;
           if (item.bootstrapBySize && item.bytes) {
             var existant = await cache.match(u, { ignoreSearch: true });
+            /* Au moment de l'installation, les fichiers inchangés peuvent encore
+               se trouver dans l'ancien cache avant sa copie à l'activation. */
+            if (!existant) {
+              for (var ib = 0; ib < anciensCaches.length && !existant; ib++) {
+                existant = await anciensCaches[ib].match(u, { ignoreSearch: true });
+              }
+            }
             var taille = existant ? parseInt(existant.headers.get("content-length") || "0", 10) : 0;
             if (taille === item.bytes) {
               await revisions.put(marker, new Response(UPDATE_ID));
@@ -1297,8 +1330,9 @@ async function actualiserFichiersConcernes() {
               } catch (eAncDelR) {}
             }
           }
-          /* Recharger proactivement uniquement les petits fichiers du noyau ; les pages lourdes (> 200 Ko : quiz, cours, admin) se rechargeront à la demande sans saturer la bande passante */
-          if (NOYAU_RAPIDE_RECHARGEMENT[u]) {
+          /* Recharger le noyau léger et les dépendances indispensables dont la
+             taille ne correspond pas ; les médias lourds restent à la demande. */
+          if (NOYAU_RAPIDE_RECHARGEMENT[u] || (item.bootstrapBySize && NOUVEAUTES_NOYAU[u])) {
             var rep = await fetch(u, { cache: "reload" });
             if (rep && rep.ok) {
               await cache.put(u, rep.clone());
@@ -1323,8 +1357,7 @@ self.addEventListener("install", function (evt) {
 });
 
 self.addEventListener("activate", function (evt) {
-  evt.waitUntil(
-    (async function () {
+  _migrationCachesEnCours = (async function () {
       /* Prendre immédiatement le contrôle sans bloquer les requêtes de navigation pendant la migration locale des caches */
       try { await self.clients.claim(); } catch (eClaim) {}
       try {
@@ -1374,8 +1407,8 @@ self.addEventListener("activate", function (evt) {
         }
       } catch (e) {}
       /* Aucun préchargement global automatique après activation. */
-    })()
-  );
+    })();
+  evt.waitUntil(_migrationCachesEnCours);
 });
 
 self.addEventListener("message", function (evt) {

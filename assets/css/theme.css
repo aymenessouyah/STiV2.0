@@ -138,7 +138,8 @@ html[data-theme="sombre"] {
   --duration-fast: 160ms;
   --duration-normal: 260ms;
   --container-max: 1220px;
-  --header-height: 68px;
+  /* Réserver dès le premier rendu la place du badge et de son ruban. */
+  --header-height: 80px;
 }
 
 /* ── 3. Mode Clair (☀️ fond blanc cassé, texte foncé, contrastes nets) ── */
@@ -451,6 +452,8 @@ html[dir="rtl"] .reading-progress { transform-origin: right center; }
   justify-content: space-between;
   gap: var(--space-3);
   min-height: var(--header-height);
+  /* La marge basse accueille le ruban sans recouvrir la Cote historique. */
+  padding-bottom: 12px;
 }
 
 .brand-logo { display: inline-flex; align-items: center; gap: var(--space-3); min-width: 0; }
@@ -1540,6 +1543,9 @@ body.sti-v2 .welcome-return__empty { font-size: .9rem; }
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+.resume-banner__title { margin-top: 2px; font-size: 1rem; font-weight: 800; }
+.resume-banner__actions { display: flex; align-items: center; gap: var(--space-2); }
+.welcome-return .resume-banner { margin: 0 0 var(--space-4); }
 .resume-banner[hidden],
 .filter-hidden { display: none !important; }
 
@@ -1748,6 +1754,15 @@ body.sti-v2 #pwaInvitationInstaller {
 }
 @media (min-width: 1060px) and (max-width: 1200px) {
   body.sti-v2 .site-nav__link { padding-inline: 6px; }
+}
+@media (max-width: 460px) {
+  /* Réserver les deux lignes avant la création asynchrone du bouton de compte :
+     aucun saut de page lors du retour d'une bulle d'exercice. */
+  :root { --header-height: 132px; }
+  body.sti-v2 .site-header__inner { align-items: flex-start; padding-top: 7px; }
+  body.sti-v2 .site-header__inner .brand-logo { margin-top: 3px; }
+  body.sti-v2 .header-actions { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; justify-content: flex-end; }
+  body.sti-v2 [data-subscriber-slot] { display: flex; flex: 0 0 100%; min-height: 58px; order: 5; justify-content: flex-end; }
 }
 body.sti-v2 .news-card .btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: start; }
 body.sti-v2 .site-footer .brand-logo { max-width: 100%; }

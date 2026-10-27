@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-for (const ancienne of ['340','341','342']) {
-  test(`migration réelle du service worker v${ancienne} vers v343 sans boucle de rechargement`, async ({ page }) => {
+for (const ancienne of ['340','341','342','343']) {
+  test(`migration réelle du service worker v${ancienne} vers v344 sans boucle de rechargement`, async ({ page }) => {
     // Une identité fictive contourne seulement l'authentification pour ce scénario.
     await page.addInitScript(() => {
       try {
@@ -21,18 +21,26 @@ for (const ancienne of ['340','341','342']) {
       await cache.put('/assets/css/cours.css',new Response('/* ancienne feuille de cours */',{headers:{'content-type':'text/css'}}));
       await cache.put('/assets/css/theme.css',new Response('/* ancien thème */',{headers:{'content-type':'text/css'}}));
       await cache.put('/assets/js/app.js',new Response('/* ancienne application */',{headers:{'content-type':'text/javascript'}}));
-      await cache.put('/assets/js/profil.js',new Response('/* ancien profil */',{headers:{'content-type':'text/javascript'}}));
+      if (v === '343') {
+        /* Le profil n'a pas changé depuis v482 : ce cache contient la vraie version. */
+        await cache.put('/assets/js/profil.js', await fetch('/assets/js/profil.js'));
+      } else {
+        await cache.put('/assets/js/profil.js',new Response('/* ancien profil */',{headers:{'content-type':'text/javascript'}}));
+      }
+      await cache.put('/assets/js/roue-initiales.js',new Response('/* ancienne roue */',{headers:{'content-type':'text/javascript'}}));
       const revisions=await caches.open('sti-update-revisions-v1');
       await revisions.put('/__sti_revision__/'+encodeURIComponent('./assets/css/cours.css')+'?rev=refonte-ui-html5-20261027',new Response('ancienne révision'));
       for (const chemin of ['./index.html','./assets/css/theme.css','./assets/js/app.js','./assets/js/profil.js']) {
-        await revisions.put('/__sti_revision__/'+encodeURIComponent(chemin)+'?rev=fidelite-origine-v481',new Response('ancienne révision'));
+        const revision = v === '343' ? 'accueil-personnalise-v482' : 'fidelite-origine-v481';
+        await revisions.put('/__sti_revision__/'+encodeURIComponent(chemin)+'?rev='+revision,new Response('ancienne révision'));
       }
+      await revisions.put('/__sti_revision__/'+encodeURIComponent('./assets/js/roue-initiales.js')+'?rev=perf-quiz-php-v474',new Response('ancienne révision'));
       await cache.put('/assets/js/sqljs/sql-wasm.wasm',new Response('fixture à conserver'));
     }, ancienne);
     let chargements = 0;
     page.on('domcontentloaded', () => { chargements++; });
     await page.goto('/index.html#videos', { waitUntil:'domcontentloaded' }).catch(() => {});
-    await expect.poll(async () => { try { return await page.evaluate(() => localStorage.getItem('sti-version-installee')); } catch (e) { return ''; } }, {timeout:20_000}).toBe('343');
+    await expect.poll(async () => { try { return await page.evaluate(() => localStorage.getItem('sti-version-installee')); } catch (e) { return ''; } }, {timeout:20_000}).toBe('344');
     await expect.poll(async () => { try { return await page.evaluate(() => Boolean(navigator.serviceWorker.controller)); } catch (e) { return false; } }, {timeout:20_000}).toBe(true);
     await expect(page.locator('#videosGrid')).toBeVisible();
     // La première activation peut recharger la page, mais ne doit pas tourner en boucle.
@@ -43,16 +51,18 @@ for (const ancienne of ['340','341','342']) {
     expect(chargements).toBeLessThanOrEqual(4);
     await expect(page).toHaveURL(/\/index\.html#videos$/);
     await expect(page.locator('#videosGrid .video-card')).toHaveCount(13);
+    /* clients.claim() précède volontairement la copie locale des anciens caches. */
+    await expect.poll(() => page.evaluate(async () => (await caches.keys()).filter(n => /^sti-atelier-v34[0123]$/.test(n))), { timeout: 20_000 }).toEqual([]);
     expect(await page.evaluate(async () => {
       const noms = await caches.keys();
-      const cache = await caches.open('sti-atelier-v343');
-      return { ancien: noms.some(n => /^sti-atelier-v34[012]$/.test(n)),
+      const cache = await caches.open('sti-atelier-v344');
+      return { ancien: noms.some(n => /^sti-atelier-v34[0123]$/.test(n)),
         donnee: await (await cache.match('/assets/js/sqljs/sql-wasm.wasm'))?.text(),
         titre: document.title, version: localStorage.getItem('sti-version-affichee') };
-    })).toMatchObject({ ancien:false, donnee:'fixture à conserver', version:'482' });
+    })).toMatchObject({ ancien:false, donnee:'fixture à conserver', version:'483' });
     // Les nouveaux modules indispensables sont présents même avant la première visite.
-    for (const chemin of ['/assets/js/lecteur-commun.js','/assets/js/retour-quiz.js','/assets/css/theme-patrimoine.css','/assets/js/visionneuse-exercices.js']) {
-      await expect.poll(() => page.evaluate(async u => Boolean(await (await caches.open('sti-atelier-v343')).match(u, {ignoreSearch:true})),chemin)).toBe(true);
+    for (const chemin of ['/assets/js/lecteur-commun.js','/assets/js/retour-quiz.js','/assets/css/theme-patrimoine.css','/assets/js/visionneuse-exercices.js','/assets/js/roue-initiales.js','/assets/css/badge-compte.css','/assets/icons/sti-icon-192.png','/assets/images/qr-code-site.png']) {
+      await expect.poll(() => page.evaluate(async u => Boolean(await (await caches.open('sti-atelier-v344')).match(u, {ignoreSearch:true})),chemin)).toBe(true);
     }
     await page.goto('/cours/css3.html#exercices', {waitUntil:'domcontentloaded'});
     await expect(page.locator('[data-course-tab="exercices"]')).toHaveAttribute('aria-selected','true');
@@ -70,7 +80,7 @@ test('accueil personnalisé et reprise déjà visités restent disponibles hors 
   await page.route('https://*.supabase.co/**', route => route.abort());
   await page.addInitScript(() => {
     try {
-      const session = { nativeAuthenticated: true, statut: 'actif', id: 'test', email: 'test@example.invalid', prenom: 'Nour', role: 'eleve', classe: '4SI 1' };
+      const session = { nativeAuthenticated: true, statut: 'actif', id: 'test', email: 'test@example.invalid', prenom: 'Nour', nom: 'Ben Ali', role: 'eleve', classe: '4SI 1' };
       window.__STI_NATIVE_AUTHENTICATED_V316 = true;
       sessionStorage.setItem('sti-native-session-v316', '1');
       sessionStorage.setItem('sti-session-cache', JSON.stringify(session));
@@ -82,14 +92,22 @@ test('accueil personnalisé et reprise déjà visités restent disponibles hors 
   await expect.poll(async () => { try { return await page.evaluate(() => Boolean(navigator.serviceWorker.controller)); } catch (e) { return false; } }, { timeout: 20_000 }).toBe(true);
   await page.goto('/cours/html5.html', { waitUntil: 'domcontentloaded' });
   await expect.poll(() => page.evaluate(() => STIProfil.chargerProfil().coursVisites)).toContain('html5');
+  await page.evaluate(() => STIProfil.enregistrerLecture('html5', 'formulaires', 'Formulaires', 42, 'cours/html5.html#formulaires'));
   await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('#welcomeCount')).toHaveText('1 en cours');
+  await expect(page.locator('#sti-roue-btn.sti-badge-identite')).toBeVisible();
+  await expect(page.locator('#welcomeReturn #resumeBanner')).toBeVisible();
   await context.setOffline(true);
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('#welcomeTitle')).toHaveText('Bonjour, Nour');
   await expect(page.locator('#welcomeCount')).toHaveText('1 en cours');
-  await page.locator('[data-welcome-course="html5"]').click();
-  await expect(page).toHaveURL(/\/cours\/html5\.html/);
+  await expect(page.locator('#welcomeReturn #resumeTitle')).toContainText('Formulaires');
+  await expect(page.locator('#sti-roue-btn .sti-badge-identite__avatar')).toHaveText('B.N');
+  await expect(page.locator('#sti-roue-anneau')).toHaveAttribute('data-sti-ruban', 'vert');
+  await expect.poll(() => page.locator('.sti-badge-identite__logo').evaluate(el => el.naturalWidth)).toBe(192);
+  await expect.poll(() => page.locator('.sti-badge-identite__qr').evaluate(el => el.naturalWidth)).toBe(656);
+  await page.locator('#resumeGoBtn').click();
+  await expect(page).toHaveURL(/\/cours\/html5\.html#formulaires/);
   await expect(page.locator('body')).toBeVisible();
   await context.setOffline(false);
 });

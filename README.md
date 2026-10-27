@@ -4,8 +4,8 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `23` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v343`, historique `sti-atelier-v342` / `sti-atelier-v341` / `sti-atelier-v340`)
-> 📌 **Version active** : **v482** (`sti-atelier-v343` — 27 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `23` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v344`, historique `sti-atelier-v343` / `sti-atelier-v342` / `sti-atelier-v341` / `sti-atelier-v340`)
+> 📌 **Version du code** : **v483** (`sti-atelier-v344` — 27 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
 
 ---
 
@@ -171,14 +171,16 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 - **Tests automatisés** : après `npm ci` et `npx playwright install chromium`, lancer les tests statiques et les suites navigateur depuis la racine :
   ```bash
   node --test tests/*.test.mjs
-  for suite in accueil-personnalise fidelite css3 javascript sql-php demandes parcours main-integration sw-fidelite v303; do
+  python3 -m unittest discover -s tests -p 'test_*.py' -v
+  for suite in accueil-personnalise badge-reprise fidelite css3 javascript sql-php demandes parcours main-integration sw-fidelite v303; do
     npx playwright test --config "tests/playwright-$suite.config.mjs"
   done
   npx playwright test --config tests/playwright.config.mjs
   ```
   Les tests d’accès utilisent des identités fictives : ils ne valident pas une authentification Supabase réelle.
-- **Accueil personnalisé** : le prénom provient de la session existante ; le compteur dénombre les cours distincts effectivement ouverts, y compris les anciennes pages de cours du journal de couverture. Les visites sont conservées dans `sti-profil-abonne` et réunies lors des restaurations cloud sur l’accueil ou les cours unifiés ; les ressources PHP restent soumises au verrou existant. L’état zéro propose de découvrir les cours et les cartes permettent de les reprendre.
-- **Protocole de mise à jour PWA (`sw.js`)** : lors d’une nouvelle publication, incrémenter `CACHE` après `sti-atelier-v343` et `UPDATE_ID`, actualiser les révisions des seuls fichiers modifiés dans `UPDATE_FILES`, puis régénérer `offline-complete-manifest.json` avec les empreintes Git blob exactes. Les vidéos, audios et PDF lourds ne sont pas ajoutés au téléchargement différentiel automatique.
+- **Accueil personnalisé** : le prénom provient de la session existante ; le compteur dénombre les cours distincts effectivement ouverts, y compris les anciennes pages de cours du journal de couverture. La dernière lecture ou vidéo reprend dans « Continuer à apprendre », sans exposer le profil en attente d’isolation. Les visites sont conservées dans `sti-profil-abonne` et réunies lors des restaurations cloud ; les restrictions PHP et Bac restent actives.
+- **Badge de compte** : le bouton, l’anneau de couverture, la notification, la loupe et le panneau de compte d’origine sont conservés. La photo validée ou les initiales NOM.Prénom côtoient le logo et le QR locaux ; le ruban est bleu en 3e, vert en 4e, doré pour les professeurs et comptes GOLD, orange pour `elevelabo3` (et l’alias `elevelao3`), noir sinon. Le compte laboratoire prime sur GOLD.
+- **Protocole de mise à jour PWA (`sw.js`)** : lors d’une nouvelle publication, incrémenter `CACHE` après `sti-atelier-v344` et `UPDATE_ID`, actualiser les révisions des fichiers modifiés et nouvelles dépendances dans `UPDATE_FILES`, puis régénérer `offline-complete-manifest.json` avec les empreintes Git blob exactes. Les vidéos, audios et PDF lourds ne sont pas ajoutés au téléchargement différentiel automatique.
 - **Conventions pédagogiques strictes Bac STI** :
   - **JavaScript** : uniquement les méthodes de l'annexe officielle (`ch[i]`, `substring`, `indexOf`, `lastIndexOf`, `trim`, `toUpperCase`, `toLowerCase`, `replace`, `charCodeAt`, `String.fromCharCode`, `getElementById`, `getElementsByName`, `Date`, `innerHTML`/`textContent`/`document.write`) ;
   - **SQL** : jointures exclusivement dans `WHERE t1.col = t2.col` (aucun `JOIN … ON`) et opérateur `!=` ;
@@ -227,6 +229,7 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 | v480 | Intégration de la refonte de l'accueil, du profil et des cinq cours avec les correctifs XP/médias de v478–v479 : ancres historiques conservées, installation PWA accessible, tests de migration et cache différentiel `sti-atelier-v341` ; les fichiers d'accès protégés restent inchangés. |
 | v481 | Fidélité à l’origine : roue, logo, QR et Cote restaurés ; 13 vidéos avec le lecteur historique complet ; cours PHP animé d’origine ; cinq séries PHP et corrigés ; synthèses dans le cours ; retour contextuel des quiz ; exercices en bulles ; trois thèmes et dix outils regroupés. Les cinq cours affichent leurs objectifs, leur feuille de route et une durée de lecture ; les nouveaux modules essentiels restent disponibles hors ligne (`sti-atelier-v342`). |
 | v482 | Accueil de connexion personnalisé avec prénom, compteur de cours distincts déjà visités, cartes de reprise, état zéro et conservation des visites historiques ; isolation des comptes partagés et mise à jour PWA incrémentale (`sti-atelier-v343`). |
+| v483 | Reprise de lecture/vidéo intégrée à l’accueil personnel et badge de compte à ruban par classe, sans remplacer le panneau ni la progression d’origine ; ressources disponibles hors ligne (`sti-atelier-v344`). |
 
 ---
 

@@ -4201,11 +4201,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v475\s*\|/.test(l)), 'v475 doit rester dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v476\s*\|/.test(l)), 'v476 doit rester dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v477\s*\|/.test(l)), 'v477 reste dans l’historique');
-  assert.ok(cinq.some((o) => /^v478 — Protection monotone multicouche des XP et records de Quiz élèves/.test(o.t)), 'v478 reste parmi les 5 dernières entrées du bandeau');
+  assert.ok(lignes.some((l) => /^\|\s*v478\s*\|/.test(l)), 'v478 reste dans l’historique');
   assert.ok(cinq.some((o) => /^v479 — Fiabilisation intégrale du compteur des vidéos/.test(o.t)), 'v479 reste parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v480 — Intégration de la refonte/.test(o.t)), 'v480 reste parmi les nouvelles');
   assert.ok(cinq.some((o) => /^v481 — Fidélité à l’origine/.test(o.t)), 'v481 reste parmi les nouvelles');
-  assert.match(cinq[0].t, /^v482 — Accueil de connexion personnalisé/);
+  assert.ok(cinq.some((o) => /^v482 — Accueil de connexion personnalisé/.test(o.t)), 'v482 reste parmi les nouvelles');
+  assert.match(cinq[0].t, /^v483 — Reprise de lecture\/vidéo intégrée/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -6470,7 +6471,7 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
   assert.match(adminJs, /VERSION_AFFICHEE/);
   assert.match(accesJs, /VERSION_AFFICHEE/);
 
-  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v4(?:7[789]|8\d)\*\*\s*\(`sti-atelier-v3(?:3[89]|4\d)`/);
+  assert.match(readmeMd, /\*\*Version (?:active|du code)\*\*\s*:\s*\*\*v4(?:7[789]|8\d)\*\*\s*\(`sti-atelier-v3(?:3[89]|4\d)`/);
   assert.match(readmeMd, /\|\s*v477\s*\|/);
   assert.ok(nouvJson.some((e) => e.version === 'v477'), 'v477 doit figurer dans nouveautes.json');
   assert.match(offlineManifest.version, /^v4(?:7[789]|8\d)-sti-atelier-v3(?:3[89]|4\d)$/);
