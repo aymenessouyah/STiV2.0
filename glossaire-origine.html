@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<script id="sti-early-boot">
+/* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
+   bas disparaît quelques millisecondes ; idem exercices qui s'affiche en clair avant de se
+   rattraper ». Cause : la barre et le thème étaient peints par les scripts de FIN de page.
+   Ces quelques lignes, placées tout en tête (avant la moindre CSS), peignent dès le premier
+   instant 1°) le thème mémorisé (html.dark + [data-theme], les deux écritures du site) et
+   2°) le gabarit de la barre mémorisé à la visite précédente (mêmes ids que le gabarit v421 :
+   si config.js le trouve déjà, il passe). Non cliquable, effacé par mobile-nav.js à
+   l'installation de la vraie barre. Zéro régression si rien n'est mémorisé ou si une CSP stricte
+   bloque l'inline : on reste exactement au comportement v424. */
+(function () {
+  try {
+    var r = document.documentElement;
+    var t = "";
+    try { t = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || ""; } catch (eT) {}
+    if (t !== "dark" && t !== "light") {
+      try { t = localStorage.getItem("sti-roue-theme") === "sombre" ? "dark" : ""; } catch (eT2) {}
+    }
+    var dark = t === "dark";
+    if (t === "dark") { r.setAttribute("data-theme", "dark"); r.classList.add("dark", "dark-mode"); }
+    else if (t === "light") { r.removeAttribute("data-theme"); r.classList.remove("dark", "dark-mode"); }
+    if (!/^https?:$/.test(location.protocol)) return;
+    if (!window.matchMedia || !window.matchMedia("(max-width: 700px)").matches) return;
+    if (window.__STI_BNAV || document.getElementById("sti-bnav")) return;
+    var pn = location.pathname;
+    if (pn.indexOf("/tests/") !== -1) return;
+    if (/(^|\/)admin(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;
+    var d = JSON.parse(localStorage.getItem("sti-bnav-skel") || "null");
+    if (!d || !d.h || typeof d.f !== "string" || !/^#[0-9a-f]{3,8}$|^rgba?\([\d.,\s]+\)$/i.test(d.f)) return;
+    if (Date.now() - (d.t || 0) > 45 * 24 * 3600 * 1000) return;
+    var b = /^#[0-9a-f]{3,8}$|^rgba?\([\d.,\s]+\)$/i.test(d.b || "") ? d.b : "#e7d9bd";
+    var brd = /^[\d.]+px$/.test(d.brd || "") ? d.brd : "1.5px";
+    /* le gabarit a été mesiné dans un thème, la page s'ouvre dans l'autre : couleurs de repli
+       littérales du module (jamais le fond du thème inverse). */
+    if ((d.th === "dark") !== dark) {
+      b = dark ? "#26314c" : "#e7d9bd";
+      d.f = dark ? "#121a2b" : "#fffcf3";
+    }
+    var st = document.createElement("style");
+    st.id = "sti-bnav-skel-css";
+    st.textContent = "@media (max-width:700px){html:not(.sti-bnav-on) #sti-bnav-skel{display:block;position:fixed;left:0;right:0;bottom:0;height:" + d.h + "px;background:" + d.f + ";border-top:" + brd + " solid " + b + ";z-index:2147483000;pointer-events:none}}";
+    var sk = document.createElement("div");
+    sk.id = "sti-bnav-skel";
+    sk.setAttribute("aria-hidden", "true");
+    r.appendChild(st);
+    r.appendChild(sk);
+    /* filet de sécurité : si la vraie barre ne vient jamais (module absent, réseau en panne),
+       le gabarit ne doit pas traîner une éternité. */
+    setTimeout(function () {
+      try {
+        if (!document.getElementById("sti-bnav")) {
+          var a = document.getElementById("sti-bnav-skel"); if (a) a.remove();
+          var c = document.getElementById("sti-bnav-skel-css"); if (c) c.remove();
+        }
+      } catch (eS) {}
+    }, 5000);
+  } catch (e) {}
+})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" />
+<title>Glossaire FR · EN · AR — STI by AE V2.0</title>
+<link rel="icon" href="assets/icons/sti-icon-192.png">
+<style>
+  :root { --bg:#f6eedc; --ink:#101728; --line:#e2d3b4; --edge:#101728; --accent:#f4511e; --surface:#fffdf5; --card:#ffffff; --muted:#6b6250; --teal:#0f766e; --def:#3c4454; --code-bg:#fef3c7; --code-brd:#fde68a; --code-ink:#92400e; --en:#b4552d; }
+  html.dark, html.dark-mode, html[data-theme="dark"] {
+    --bg:#0b1120; --ink:#f1f5f9; --line:#1e293b; --edge:#334155; --accent:#fb923c; --surface:#131c2e; --card:#162033; --muted:#94a3b8; --teal:#2dd4bf; --def:#cbd5e1; --code-bg:rgba(249,115,22,.14); --code-brd:rgba(251,146,60,.32); --code-ink:#fdba74; --en:#fdba74;
+  }
+  * { box-sizing:border-box; margin:0 }
+  body { font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif; color:var(--ink); background-color:var(--bg);
+    background-image:radial-gradient(circle, rgba(16,23,40,.11) 1.15px, transparent 1.15px),linear-gradient(180deg, rgba(248,168,107,.22) 0%, rgba(248,168,107,0) 340px);
+    background-repeat:repeat,no-repeat; background-size:23px 23px,100% 100%; }
+  html.dark body, html.dark-mode body, html[data-theme="dark"] body {
+    background-image:radial-gradient(circle, rgba(148,163,184,.1) 1.15px, transparent 1.15px),linear-gradient(180deg, rgba(249,115,22,.12) 0%, rgba(249,115,22,0) 340px);
+  }
+  .barre { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    padding:12px 18px; background:var(--surface); border-bottom:2.5px solid var(--edge); }
+  .barre-id { display:flex; align-items:center; gap:11px }
+  .barre-logo { width:40px; height:40px; border-radius:10px; border:2px solid var(--edge); object-fit:cover; flex-shrink:0 }
+  .barre h1 { font-size:clamp(14px,2.8vw,18px); font-weight:800 }
+  .barre .nb { font-size:11px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.08em }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:999px; border:2px solid var(--edge);
+    font:800 12px/1 inherit; text-decoration:none; cursor:pointer; background:var(--surface); color:var(--ink); box-shadow:2.5px 2.5px 0 var(--edge); }
+  .btn:hover { transform:translate(-1px,-1px); box-shadow:3.5px 3.5px 0 var(--edge) }
+  main { max-width:1060px; margin:0 auto; padding:24px 16px 76px }
+  .recherche { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px }
+  .recherche input { flex:1; min-width:220px; padding:13px 16px; font-size:16px; border:2.5px solid var(--edge); border-radius:14px; background:var(--card); color:var(--ink); box-shadow:3px 3px 0 rgba(16,23,40,.22) }
+  .recherche input:focus { outline:3px solid rgba(15,118,110,.35); outline-offset:1px }
+  .compteur { font-size:12.5px; font-weight:700; color:var(--muted) }
+  .filtres { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px }
+  .filtre { padding:8px 15px; border-radius:999px; border:2px solid var(--edge); background:var(--surface); color:var(--ink);
+    font:800 12.5px/1 inherit; cursor:pointer; box-shadow:2px 2px 0 var(--edge) }
+  .filtre.actif { background:var(--accent); color:#fff; border-color:var(--edge); box-shadow:2px 2px 0 var(--edge) }
+  html.dark .filtre.actif, html.dark-mode .filtre.actif, html[data-theme="dark"] .filtre.actif { color:#0f172a }
+  .grille { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px }
+  .carte { background:var(--card); border:2px solid var(--edge); border-radius:14px; padding:14px 15px; box-shadow:5px 5px 0 rgba(16,23,40,.16) }
+  .carte .fr { font-size:16.5px; font-weight:800; display:flex; align-items:center; justify-content:space-between; gap:8px }
+  .module { flex:none; font-size:10px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; padding:3px 8px; border-radius:999px; color:#fff; background:#d84315 }
+  .module.css3 { background:#0284c7 } .module.javascript { background:#b47d09 } .module.sql { background:#177245 } .module.php { background:#0f766e }
+  .en { font-size:13.5px; font-weight:700; color:var(--en); margin-top:5px }
+  .en-badge { display:inline-block; background:#0369a1; color:#fff; font-size:9.5px; font-weight:800; letter-spacing:.06em; padding:2px 6px; border-radius:5px; vertical-align:2px; margin-right:3px }
+  .ar { direction:rtl; text-align:right; font-size:20px; font-weight:700; color:var(--teal); margin:7px 0 6px; line-height:1.5 }
+  .def { font-size:13px; line-height:1.55; color:var(--def) }
+  .def code { background:var(--code-bg); border:1px solid var(--code-brd); border-radius:5px; padding:0 5px; font-size:12px; color:var(--code-ink) }
+  .vide { display:none; text-align:center; padding:34px 12px; font-weight:700; color:var(--muted) }
+  .pied { text-align:center; margin-top:30px }
+  @media print { .barre,.recherche,.filtres,.pied,#sti-roue-wrap,#sti-bnav,#sti-pc-win-tools { display:none!important } body { background:#fff!important; color:#000!important } .carte { background:#fff!important; color:#000!important; box-shadow:none; break-inside:avoid } }
+</style>
+  <link rel="manifest" href="manifest.webmanifest" />
+</head>
+<body>
+<header class="barre">
+  <div class="barre-id">
+    <img class="barre-logo" src="assets/icons/sti-icon-512.png" alt="Logo officiel STI V2.0" width="40" height="40">
+    <div>
+      <h1>📖 Glossaire FR · EN · AR — Termes techniques STI</h1>
+      <div class="nb">HTML5 · CSS3 · JavaScript · SQL · PHP — Cherchez en français, en anglais ou en arabe</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button type="button" id="btn-recherche-globale" class="btn">🔍 Recherche globale (Ctrl+K)</button>
+  <a class="btn" href="index.html">← Retour à l'accueil</a>
+  </div>
+</header>
+<main>
+  <div class="recherche">
+    <input id="q" type="search" placeholder="🔍 Chercher : jointure, join, boucle, loop, وسم, متغيّر…" aria-label="Rechercher un terme">
+    <span class="compteur" id="compteur"></span>
+  </div>
+  <div class="filtres" role="group" aria-label="Filtrer par module">
+    <button type="button" class="filtre actif" data-m="tous">Tous</button>
+    <button type="button" class="filtre" data-m="html5">🌐 HTML5</button>
+    <button type="button" class="filtre" data-m="css3">🎨 CSS3</button>
+    <button type="button" class="filtre" data-m="javascript">📜 JavaScript</button>
+    <button type="button" class="filtre" data-m="sql">🗄️ SQL</button>
+    <button type="button" class="filtre" data-m="php">🐘 PHP</button>
+  </div>
+  <div class="grille" id="grille"></div>
+  <div class="vide" id="vide">Aucun terme ne correspond à votre recherche. Essayez un autre mot (en français ou en arabe).</div>
+  <div class="pied"><a class="btn" href="index.html#cours">← Retour aux cours</a></div>
+</main>
+<script>
+var TERMES = [
+  /* ═══ HTML5 ═══ */
+  { m:"html5", fr:"Balise", ar:"وسم", en:"Tag", d:"Mot-clé entre <code>&lt; &gt;</code> qui décrit un élément de la page : <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code>…" },
+  { m:"html5", fr:"Élément", ar:"عنصر", en:"Element", d:"Ensemble formé par la balise ouvrante, le contenu et la balise fermante." },
+  { m:"html5", fr:"Attribut", ar:"خاصية", en:"Attribute", d:"Information ajoutée dans la balise ouvrante : <code>href</code>, <code>src</code>, <code>alt</code>, <code>id</code>…" },
+  { m:"html5", fr:"En-tête", ar:"ترويسة", en:"Header", d:"Partie haute de la page, souvent dans <code>&lt;header&gt;</code> : logo, titre, navigation." },
+  { m:"html5", fr:"Pied de page", ar:"تذييل الصفحة", en:"Footer", d:"Partie basse de la page (<code>&lt;footer&gt;</code>) : copyright, contacts, liens utiles." },
+  { m:"html5", fr:"Lien hypertexte", ar:"رابط تشعّبي", en:"Hyperlink", d:"Texte ou image cliquable (<code>&lt;a href=…&gt;</code>) qui mène vers une autre page ou section." },
+  { m:"html5", fr:"Formulaire", ar:"استمارة / نموذج", en:"Form", d:"Zone de saisie (<code>&lt;form&gt;</code>) permettant à l'utilisateur d'envoyer des données." },
+  { m:"html5", fr:"Champ de saisie", ar:"حقل إدخال", en:"Input field", d:"Case d'un formulaire où l'on tape ou choisit une valeur : <code>&lt;input&gt;</code>, <code>&lt;select&gt;</code>, <code>&lt;textarea&gt;</code>." },
+  { m:"html5", fr:"Bouton", ar:"زر", en:"Button", d:"Élément cliquable qui déclenche une action : <code>&lt;button&gt;</code> ou <code>&lt;input type=\"submit\"&gt;</code>." },
+  { m:"html5", fr:"Liste", ar:"قائمة", en:"List", d:"Suite d'éléments <code>&lt;li&gt;</code> dans <code>&lt;ul&gt;</code> (à puces) ou <code>&lt;ol&gt;</code> (numérotée)." },
+  { m:"html5", fr:"Tableau (HTML)", ar:"جدول", en:"Table", d:"Présentation en lignes et colonnes avec <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;td&gt;</code>." },
+  { m:"html5", fr:"Image", ar:"صورة", en:"Image", d:"S'affiche avec <code>&lt;img src=\"…\" alt=\"…\"&gt;</code> ; <code>alt</code> décrit l'image si elle ne charge pas." },
+  { m:"html5", fr:"Ancre", ar:"مرساة", en:"Anchor", d:"Lien interne vers une partie de la même page : <code>href=\"#section\"</code>." },
+  { m:"html5", fr:"Paragraphe", ar:"فقرة", en:"Paragraph", d:"Bloc de texte créé par la balise <code>&lt;p&gt;</code>." },
+  { m:"html5", fr:"Titre (h1…h6)", ar:"عنوان", en:"Heading", d:"Titres de niveaux décroissants : <code>&lt;h1&gt;</code> le plus important, jusqu'à <code>&lt;h6&gt;</code>." },
+  /* ═══ CSS3 ═══ */
+  { m:"css3", fr:"Sélecteur", ar:"مُحدِّد", en:"Selector", d:"Désigne à quel(s) élément(s) la règle s'applique : <code>p</code>, <code>.classe</code>, <code>#id</code>…" },
+  { m:"css3", fr:"Propriété", ar:"خاصية", en:"Property", d:"Caractéristique modifiée : <code>color</code>, <code>margin</code>, <code>font-size</code>…" },
+  { m:"css3", fr:"Valeur", ar:"قيمة", en:"Value", d:"Réglage donné à une propriété : <code>color: red;</code> → la valeur est <code>red</code>." },
+  { m:"css3", fr:"Classe", ar:"صنف / فئة", en:"Class", d:"Nom réutilisable appliqué avec <code>class=\"…\"</code>, ciblé en CSS par un point : <code>.bouton</code>." },
+  { m:"css3", fr:"Identifiant (id)", ar:"مُعرِّف", en:"Identifier (id)", d:"Nom unique d'un élément (<code>id=\"…\"</code>), ciblé en CSS par <code>#</code>." },
+  { m:"css3", fr:"Marge externe (margin)", ar:"هامش خارجي", en:"Margin", d:"Espace entre la bordure de l'élément et ce qui l'entoure." },
+  { m:"css3", fr:"Marge interne (padding)", ar:"حشو داخلي", en:"Padding", d:"Espace entre le contenu et la bordure de l'élément." },
+  { m:"css3", fr:"Bordure (border)", ar:"حدود / إطار", en:"Border", d:"Ligne autour de l'élément : épaisseur, style et couleur (<code>2px solid black</code>)." },
+  { m:"css3", fr:"Arrière-plan", ar:"خلفية", en:"Background", d:"Couleur ou image derrière l'élément : <code>background</code>." },
+  { m:"css3", fr:"Police de caractères", ar:"خط", en:"Font", d:"Forme des lettres : <code>font-family</code>, taille <code>font-size</code>, graisse <code>font-weight</code>." },
+  { m:"css3", fr:"Affichage (display)", ar:"نمط العرض", en:"Display", d:"Manière d'afficher l'élément : <code>block</code>, <code>inline</code>, <code>flex</code>, <code>grid</code>, <code>none</code>." },
+  { m:"css3", fr:"Flexbox", ar:"العلب المرنة", en:"Flexbox", d:"Système d'alignement d'éléments en ligne ou en colonne (<code>display: flex</code>)." },
+  { m:"css3", fr:"Grille (Grid)", ar:"شبكة", en:"Grid", d:"Mise en page en lignes et colonnes simultanées (<code>display: grid</code>)." },
+  { m:"css3", fr:"Survol (:hover)", ar:"التمرير فوق العنصر", en:"Hover", d:"État quand la souris passe au-dessus de l'élément ; permet de changer son style." },
+  { m:"css3", fr:"Media Query", ar:"استعلام الوسائط", en:"Media Query", d:"Règle qui adapte le style à la taille d'écran : <code>@media (max-width: 600px)</code> — base du responsive." },
+  /* ═══ JavaScript ═══ */
+  { m:"javascript", fr:"Variable", ar:"متغيّر", en:"Variable", d:"Boîte nommée qui conserve une valeur réutilisable : <code>let age = 17;</code>" },
+  { m:"javascript", fr:"Constante", ar:"ثابت", en:"Constant", d:"Valeur qui ne change plus après création : <code>const PI = 3.14;</code>" },
+  { m:"javascript", fr:"Fonction", ar:"دالّة", en:"Function", d:"Bloc de code réutilisable qui s'exécute quand on l'appelle : <code>function nom() { … }</code>" },
+  { m:"javascript", fr:"Paramètre", ar:"وسيط", en:"Parameter", d:"Valeur reçue par une fonction pour travailler : <code>function somme(a, b)</code>." },
+  { m:"javascript", fr:"Valeur de retour", ar:"قيمة الإرجاع", en:"Return value", d:"Résultat renvoyé par une fonction grâce au mot-clé <code>return</code>." },
+  { m:"javascript", fr:"Tableau (JS)", ar:"مصفوفة", en:"Array", d:"Liste ordonnée de valeurs dans une seule variable : <code>let t = [10, 20, 30];</code>" },
+  { m:"javascript", fr:"Objet", ar:"كائن", en:"Object", d:"Ensemble de propriétés nom/valeur : <code>{ nom: \"Ali\", age: 17 }</code>." },
+  { m:"javascript", fr:"Chaîne de caractères", ar:"سلسلة حروف", en:"String", d:"Texte entre guillemets : <code>\"Bonjour\"</code> ou <code>'Bonjour'</code>." },
+  { m:"javascript", fr:"Boucle", ar:"حلقة تكرار", en:"Loop", d:"Répète des instructions : <code>for</code>, <code>while</code>, <code>do…while</code>." },
+  { m:"javascript", fr:"Condition", ar:"شرط", en:"Condition", d:"Test qui choisit les instructions à exécuter : <code>if / else</code>, <code>switch</code>." },
+  { m:"javascript", fr:"Événement", ar:"حدث", en:"Event", d:"Action détectée par le programme : clic, touche, envoi de formulaire (<code>addEventListener</code>)." },
+  { m:"javascript", fr:"Opérateur", ar:"عامل", en:"Operator", d:"Symbole qui calcule ou compare : <code>+  −  *  /  ==  ===  &gt;  &lt;  &&  ||</code>" },
+  { m:"javascript", fr:"Indice", ar:"فهرس / دليل", en:"Index", d:"Position d'un élément dans un tableau, en commençant par 0 : <code>t[0]</code> est le premier." },
+  { m:"javascript", fr:"Fonction fléchée", ar:"دالّة سهمية", en:"Arrow function", d:"Écriture courte d'une fonction : <code>const f = (x) =&gt; x * 2;</code>" },
+  { m:"javascript", fr:"DOM", ar:"نموذج كائن المستند", en:"DOM (Document Object Model)", d:"Représentation de la page que JavaScript peut lire et modifier (<code>document.getElementById</code>…)." },
+  /* ═══ SQL ═══ */
+  { m:"sql", fr:"Base de données", ar:"قاعدة بيانات", en:"Database", d:"Ensemble organisé de tableaux liés, géré par un SGBD comme MySQL." },
+  { m:"sql", fr:"Table", ar:"جدول", en:"Table", d:"Ensemble de données en lignes et colonnes sur un même sujet (élèves, produits…)." },
+  { m:"sql", fr:"Colonne / Champ", ar:"عمود / حقل", en:"Column / Field", d:"Caractéristique décrite pour chaque ligne : nom, prénom, note…" },
+  { m:"sql", fr:"Ligne / Enregistrement", ar:"سطر / تسجيلة", en:"Row / Record", d:"Un cas complet dans une table : un élève, un produit, une commande." },
+  { m:"sql", fr:"Clé primaire", ar:"مفتاح رئيسي", en:"Primary key", d:"Colonne qui identifie chaque ligne sans doublon (<code>PRIMARY KEY</code>)." },
+  { m:"sql", fr:"Clé étrangère", ar:"مفتاح خارجي", en:"Foreign key", d:"Colonne qui fait le lien vers la clé primaire d'une autre table (<code>FOREIGN KEY</code>)." },
+  { m:"sql", fr:"Requête", ar:"استعلام", en:"Query", d:"Ordre SQL envoyé à la base : <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>…" },
+  { m:"sql", fr:"Sélection (SELECT)", ar:"اختيار / انتقاء", en:"Selection (SELECT)", d:"Lit et affiche des données : <code>SELECT colonnes FROM table WHERE condition;</code>" },
+  { m:"sql", fr:"Condition (WHERE)", ar:"شرط", en:"Condition (WHERE)", d:"Filtre qui ne garde que les lignes concernées : <code>WHERE note &gt;= 10</code>." },
+  { m:"sql", fr:"Jointure (JOIN)", ar:"وصل / ربط الجداول", en:"Join (JOIN)", d:"Réunit des colonnes de plusieurs tables grâce aux clés : <code>… JOIN … ON …</code>" },
+  { m:"sql", fr:"Tri (ORDER BY)", ar:"ترتيب / فرز", en:"Sorting (ORDER BY)", d:"Classe le résultat : <code>ORDER BY nom ASC</code> (croissant) ou <code>DESC</code> (décroissant)." },
+  { m:"sql", fr:"Regroupement (GROUP BY)", ar:"تجميع", en:"Grouping (GROUP BY)", d:"Regroupe les lignes ayant la même valeur pour calculer par groupe." },
+  { m:"sql", fr:"Fonction d'agrégation", ar:"دالّة تجميع", en:"Aggregate function", d:"Calcule un résumé : <code>COUNT</code>, <code>SUM</code>, <code>AVG</code> (moyenne), <code>MAX</code>, <code>MIN</code>." },
+  { m:"sql", fr:"Insertion (INSERT)", ar:"إدراج", en:"Insert (INSERT)", d:"Ajoute une nouvelle ligne : <code>INSERT INTO table VALUES (…);</code>" },
+  { m:"sql", fr:"Mise à jour / Suppression", ar:"تحديث / حذف", en:"Update / Delete", d:"<code>UPDATE … SET …</code> modifie, <code>DELETE FROM …</code> supprime — toujours avec <code>WHERE</code> ciblé !" },
+  /* ═══ PHP ═══ */
+  { m:"php", fr:"Variable (PHP)", ar:"متغيّر", en:"Variable", d:"Commence toujours par <code>$</code> : <code>$nom = \"Ali\";</code>" },
+  { m:"php", fr:"Fonction (PHP)", ar:"دالّة", en:"Function", d:"Bloc réutilisable déclaré par <code>function</code>, ou fonction intégrée comme <code>strlen()</code>." },
+  { m:"php", fr:"Tableau associatif", ar:"مصفوفة ترابطية", en:"Associative array", d:"Tableau dont les indices sont des chaînes : <code>[\"nom\" =&gt; \"Ali\", \"age\" =&gt; 17]</code>." },
+  { m:"php", fr:"Affichage (echo)", ar:"عرض / طباعة", en:"Output (echo)", d:"Envoie du texte vers la page : <code>echo \"Bonjour\";</code>" },
+  { m:"php", fr:"Session", ar:"جلسة", en:"Session", d:"Mémoire côté serveur qui suit un visiteur de page en page (<code>$_SESSION</code>), ex. après connexion." },
+  { m:"php", fr:"Cookie", ar:"ملف تعريف الارتباط", en:"Cookie", d:"Petit fichier déposé dans le navigateur pour reconnaître le visiteur plus tard." },
+  { m:"php", fr:"Serveur", ar:"خادم", en:"Server", d:"Ordinateur (ou logiciel comme Apache) qui exécute le PHP et envoie les pages demandées." },
+  { m:"php", fr:"Requête préparée", ar:"استعلام مُجهّز", en:"Prepared statement", d:"Requête SQL à trous (<code>?</code>) remplie séparément : protège contre l'injection SQL avec MySQLi." },
+  { m:"php", fr:"Superglobale", ar:"متغيّر شامل", en:"Superglobal", d:"Variable disponible partout : <code>$_GET</code>, <code>$_POST</code>, <code>$_SESSION</code>, <code>$_FILES</code>…" },
+  { m:"php", fr:"Formulaire (PHP)", ar:"استمارة", en:"Form", d:"Ses données arrivent dans <code>$_GET</code> (URL) ou <code>$_POST</code> (envoi discret)." },
+  { m:"php", fr:"Inclusion (include)", ar:"تضمين", en:"Include (include)", d:"Insère un autre fichier PHP : <code>include \"entete.php\";</code> pour réutiliser en-têtes et fonctions." },
+  { m:"php", fr:"Chaîne de caractères (PHP)", ar:"سلسلة حروف", en:"String", d:"Texte entre <code>'…'</code> ou <code>\"…\"</code> ; se colle avec le point : <code>\"a\" . \"b\"</code>." },
+  { m:"php", fr:"Boucle (PHP)", ar:"حلقة تكرار", en:"Loop", d:"<code>for</code>, <code>while</code>, et <code>foreach</code> très pratique pour parcourir les tableaux." },
+  { m:"php", fr:"Condition (PHP)", ar:"شرط", en:"Condition", d:"<code>if / elseif / else</code> choisissent le code à exécuter selon un test vrai ou faux." },
+  { m:"php", fr:"MySQLi", ar:"امتداد الاتصال بقاعدة MySQL", en:"MySQLi extension", d:"Extension PHP qui dialogue avec MySQL : connexion, requêtes, résultats (procédural ou objet)." }
+];
+
+var NOMS_MODULES = { html5:"HTML5", css3:"CSS3", javascript:"JavaScript", sql:"SQL", php:"PHP" };
+var grille = document.getElementById("grille");
+var compteur = document.getElementById("compteur");
+var vide = document.getElementById("vide");
+var moduleActif = "tous";
+
+function normaliser(t) {
+  return String(t).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+function afficher() {
+  var q = normaliser(document.getElementById("q").value.trim());
+  var html = "", n = 0;
+  TERMES.forEach(function (t) {
+    if (moduleActif !== "tous" && t.m !== moduleActif) return;
+    var cible = normaliser(t.fr + " " + (t.en || "") + " " + t.d) + " " + t.ar;
+    if (q && cible.indexOf(q) === -1 && normaliser(t.ar).indexOf(q) === -1 && t.ar.indexOf(document.getElementById("q").value.trim()) === -1) return;
+    n++;
+    html += '<article class="carte"><div class="fr"><span>' + t.fr + '</span><span class="module ' + t.m + '">' + NOMS_MODULES[t.m] + '</span></div>' +
+      '<div class="en"><span class="en-badge">EN</span> ' + t.en + '</div><div class="ar" lang="ar">' + t.ar + '</div><p class="def">' + t.d + '</p></article>';
+  });
+  grille.innerHTML = html;
+  compteur.textContent = n + " terme" + (n > 1 ? "s" : "") + " affiché" + (n > 1 ? "s" : "");
+  vide.style.display = n ? "none" : "block";
+}
+document.getElementById("q").addEventListener("input", afficher);
+(function(){try{var mm=decodeURIComponent(location.hash||"").match(/^#mot=(.+)$/);if(mm){var qel=document.getElementById("q");qel.value=mm[1];afficher();setTimeout(function(){try{qel.focus();}catch(e){}},80);}var gb=document.getElementById("btn-recherche-globale");if(gb)gb.addEventListener("click",function(){try{window.ouvrirRechercheGlobaleSTI("");}catch(e){}});}catch(e){}})();
+document.querySelectorAll(".filtre").forEach(function (b) {
+  b.addEventListener("click", function () {
+    document.querySelectorAll(".filtre").forEach(function (x) { x.classList.remove("actif"); });
+    b.classList.add("actif");
+    moduleActif = b.getAttribute("data-m");
+    afficher();
+  });
+});
+afficher();
+</script>
+<script src="assets/js/supabase-umd.js" defer></script>
+<script src="assets/js/config.js?v=425" defer></script>
+<script src="assets/js/acces.js?v=453" defer></script>
+  <script src="assets/js/sync-progressions.js" defer></script>
+</body>
+</html>

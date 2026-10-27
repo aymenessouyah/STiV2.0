@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-sti-matiere="php">
   <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -80,8 +80,11 @@
     <link rel="stylesheet" href="../assets/css/atelier-php.css" />
     <title>Cours PHP complet</title>
   <style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
+<!-- ===== STI V2.0 — design system (pont) ===== -->
+<link rel="stylesheet" href="../assets/css/theme.css">
+<script src="../assets/js/profil.js"></script>
 </head>
-  <body id="top">
+  <body id="top" class="sti-legacy">
     <!-- STI navigation croisée + Bouton Magique permanent sous le header vers PHP-recap -->
     <style>
       #stix-nav a:hover {
@@ -4211,5 +4214,6 @@ mysqli_close($connexion);
   sync();
 })();
 </script>
+<script src="../assets/js/app.js" defer></script>
 </body>
 </html>

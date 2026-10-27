@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-sti-titre="📘 Php Mysqli">
 <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -193,8 +193,11 @@ select#spd option:checked{background:#177245;color:#fff}
 html:fullscreen body{font-size:18px;overflow:auto}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<!-- ===== STI V2.0 — design system (pont) ===== -->
+<link rel="stylesheet" href="../assets/css/theme.css">
+<script src="../assets/js/profil.js"></script>
 </head>
-<body>
+<body class="sti-legacy">
 <main>
 <div class="topbar-guichet" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px;margin-bottom:14px;background:var(--card);border:2px solid var(--ink);border-radius:14px;box-shadow:3.5px 3.5px 0 var(--ink);">
   <div style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:.98rem">
@@ -1022,5 +1025,6 @@ init();build();render();
 <script src="../assets/js/acces.js?v=453" defer></script>
   <script src="../assets/js/sync-progressions.js" defer></script>
 <aside aria-label="Manuel connecté" style="text-align:center;padding:16px;font:600 13px system-ui;"><a href="../livre-smart.html">📖 Scanner mon livre STI — page, photo ou QR code</a></aside>
+<script src="../assets/js/app.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="sombre" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon tableau de bord — STI V2.0 · Le web de A à Z</title>
+<meta name="description" content="Tableau de bord de l'abonné STI V2.0 : reprise de lecture, progression par matière, scores de quiz, vidéos vues, notes /20, préférences d'affichage et nouveautés.">
+<meta name="theme-color" content="#0d1526">
+<link rel="icon" href="assets/icons/STI_by_AE.ico">
+<link rel="stylesheet" href="assets/css/theme.css">
+<!-- Ordre imposé : config → supabase → acces → sync → profil → app -->
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/supabase-umd.js" defer></script>
+<script src="assets/js/acces.js" defer></script>
+<script src="assets/js/sync-progressions.js" defer></script>
+<script src="assets/js/profil.js"></script>
+<script src="assets/js/app.js" defer></script>
+</head>
+<body data-page="dashboard">
+<a class="sr-only" href="#contenu">Aller au contenu principal</a>
+<main id="contenu">
+  <section class="section" style="padding-top:2.5rem">
+    <div class="container">
+      <div class="section-head" style="margin-bottom:1.5rem">
+        <span class="eyebrow"><span class="dot"></span> Espace abonné · ⭐ Compte GOLD</span>
+        <h1 class="section-title">Mon tableau de bord</h1>
+        <p class="section-sub">Toutes vos données sont stockées localement dans l'objet <code>profilAbonne</code> (clé <code>sti-profil-abonne</code>) et synchronisées sur le cloud uniquement si une session Supabase est active.</p>
+      </div>
+
+      <!-- Sélecteur à 3 modes, également présent sur le tableau de bord -->
+      <div class="card card--flat reveal" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;padding:1rem 1.5rem">
+        <strong style="font-size:var(--fs-sm)">🎨 Mode d'affichage</strong>
+        <div class="modes modes--large" role="group" aria-label="Choisir le mode d'affichage">
+          <button type="button" data-theme-segment="sombre" aria-pressed="true"><span class="em">🌙</span> Sombre</button>
+          <button type="button" data-theme-segment="clair" aria-pressed="false"><span class="em">☀️</span> Clair</button>
+          <button type="button" data-theme-segment="intermediaire" aria-pressed="false"><span class="em">◐</span> Intermédiaire</button>
+        </div>
+        <span style="color:var(--text-dim);font-size:var(--fs-xs)">Le choix est mémorisé et appliqué avant l'affichage sur toutes les pages.</span>
+      </div>
+
+      <!-- Le contenu dynamique est rendu par app.js à partir de STIProfil -->
+      <div id="dashboardRoot"></div>
+
+      <noscript>
+        <div class="alert alert--warn">Activez JavaScript pour afficher votre tableau de bord (progression, quiz, vidéos et préférences).</div>
+      </noscript>
+
+      <div class="alert alert--gold reveal" style="margin-top:2rem">
+        <strong>🔒 Confidentialité :</strong> aucune donnée n'est envoyée sans votre connexion. La synchronisation est assurée par les scripts historiques (table <code>sti_progressions</code>), réutilisés tels quels.
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

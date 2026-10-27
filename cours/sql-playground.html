@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-sti-titre="📘 Sql Playground">
 <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -118,8 +118,11 @@ details.ref summary{cursor:pointer;font-weight:800;padding:10px 0;color:var(--in
 .pied{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
 @media print{.nav-haut,.bases,.ligne-btns,ul.sqlp-liste{display:none}}
 </style>
+<!-- ===== STI V2.0 — design system (pont) ===== -->
+<link rel="stylesheet" href="../assets/css/theme.css">
+<script src="../assets/js/profil.js"></script>
 </head>
-<body>
+<body class="sti-legacy">
 <div class="sqlp-boite">
   <p class="nav-haut"><a href="sql.html">← Retour au cours SQL</a><a href="sql-contraintes.html">Chapitre contraintes</a><a class="plein" href="../quiz/sql.html">🎯 Quiz SQL</a></p>
   <h1><span class="poulpe">🐬</span> SQL de poche</h1>
@@ -175,5 +178,6 @@ details.ref summary{cursor:pointer;font-weight:800;padding:10px 0;color:var(--in
 <script src="../assets/js/acces.js?v=453" defer></script>
 <script src="../assets/js/sync-progressions.js" defer></script>
 <script src="../assets/js/sql-playground.js?v=396" defer></script>
+<script src="../assets/js/app.js" defer></script>
 </body>
 </html>
