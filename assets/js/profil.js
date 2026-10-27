@@ -3,23 +3,14 @@
    La passerelle XP conserve les quatre clés historiques déjà utilisées par les quiz.
    La session et le statut GOLD restent ceux des scripts d'accès existants. */
 
-/**
- * Profil « sti-profil-abonne » : prénom, thème (sombre/clair/intermediaire),
- * langue (fr/en/ar), taille du texte et vitesse audio ; cours visités ;
- * dernière lecture (matière, chapitre, ancre, pourcentage, URL) ;
- * progression et chapitres par matière (a_reviser/en_cours/revise) ;
- * exercices faits, laboratoires et récapitulatifs ; historique des quiz ;
- * vidéos vues, positions et dernière vidéo ; notes /20, nouveautés lues et
- * état de l'invitation d'installation. Les valeurs par défaut figurent dans
- * creerProfilParDefaut() ; les identifiants vidéo et les liens restent locaux.
- */
+/** Profil : préférences, cours, lecture, exercices, quiz, vidéos, notes et nouveautés. */
 (function (global) {
   "use strict";
 
   var CLE_PROFIL = "sti-profil-abonne";
-  /* Les quiz historiques ne chargent que la passerelle de stockage : leurs
-     thèmes et leurs commandes continuent d'être gérés par leur code d'origine. */
+  /* La passerelle ne modifie pas les thèmes des quiz historiques. */
   var profilPourQuiz = Boolean(typeof document !== "undefined" && document.currentScript && document.currentScript.hasAttribute("data-sti-quiz-seul"));
+  var sourceProfil = typeof document !== "undefined" && document.currentScript ? document.currentScript.src : "";
   var THEMES_VALIDES = { sombre: true, clair: true, intermediaire: true };
   var LANGUES_VALIDES = { fr: true, en: true, ar: true };
   var TAILLES_VALIDES = { petite: true, normale: true, grande: true };
@@ -50,9 +41,6 @@
     initiales: ""
   };
 
-  /**
-   * Construit un objet `profilAbonne` neuf avec toutes les valeurs par défaut.
-   */
   function creerProfilParDefaut() {
     var themeDefaut = "sombre";
     try {
@@ -118,9 +106,6 @@
     };
   }
 
-  /**
-   * Normalise la carte des chapitres d'une matière.
-   */
   function normaliserCarteChapitres(brutMat) {
     var out = {};
     if (!brutMat || typeof brutMat !== "object" || Array.isArray(brutMat)) return out;
@@ -136,9 +121,6 @@
     return out;
   }
 
-  /**
-   * Garantit l'intégrité de chaque champ d'un profil chargé depuis le stockage.
-   */
   function normaliserProfil(brut) {
     var def = creerProfilParDefaut();
     var src = brut && typeof brut === "object" ? brut : {};
@@ -282,10 +264,7 @@
     return profil;
   }
 
-  /**
-   * Applique immédiatement les préférences d'affichage sur la balise <html>.
-   * Appelé dès le <head> pour éviter tout clignotement (zéro flash).
-   */
+  /* Préférences appliquées avant affichage pour éviter le flash. */
   function appliquerPreferencesDOM(profil, avecTransition) {
     try {
       var docEl = document.documentElement;
@@ -324,9 +303,6 @@
     } catch (e) {}
   }
 
-  /**
-   * Notifie l'application d'une mise à jour du profil ou de l'état de session.
-   */
   function notifierChangement(nomEvenement, donnees) {
     try {
       if (typeof CustomEvent === "function" && global.dispatchEvent) {
@@ -335,9 +311,6 @@
     } catch (e) {}
   }
 
-  /**
-   * Charge le profil abonné depuis localStorage["sti-profil-abonne"].
-   */
   function chargerProfil() {
     try {
       var texte = global.localStorage ? global.localStorage.getItem(CLE_PROFIL) : null;
@@ -361,9 +334,6 @@
     return JSON.parse(JSON.stringify(memoireProfil));
   }
 
-  /**
-   * Préserve les invitations déjà vues avant la refonte, sans écrire de nouvelle clé historique.
-   */
   function invitationInstallationDejaVue() {
     if (chargerProfil().invitationInstallationVue) return true;
     try {
@@ -377,9 +347,6 @@
     }
   }
 
-  /**
-   * Sauvegarde l'objet complet `profilAbonne` dans localStorage["sti-profil-abonne"].
-   */
   function sauvegarderProfil(profil, avecTransition) {
     var propre = normaliserProfil(profil);
     memoireProfil = propre;
@@ -397,9 +364,6 @@
     return JSON.parse(JSON.stringify(propre));
   }
 
-  /**
-   * Met à jour une propriété ciblée par chemin pointé (ex. "progression.html5" ou "theme").
-   */
   function mettreAJour(chemin, valeur) {
     var courant = chargerProfil();
     var cleChaine = String(chemin || "").trim();
@@ -421,10 +385,7 @@
     return sauvegarderProfil(courant, animTheme);
   }
 
-  /**
-   * Mémorise une visite effective dans le profil synchronisé, sans multiplier
-   * les écritures lorsque la même page est déjà la plus récente.
-   */
+  /* Les visites identiques ne provoquent pas de réécriture. */
   function enregistrerVisiteCours(matiere) {
     var p = chargerProfil();
     if (MATIERES_CLES.indexOf(matiere) === -1 || p.coursVisites[0] === matiere) return p;
@@ -432,10 +393,7 @@
     return sauvegarderProfil(p, false);
   }
 
-  /**
-   * Réunit en une écriture les visites locales conservées pendant un pull
-   * avec celles du profil restauré, sans toucher aux autres données du profil.
-   */
+  /* Fusionner les visites sans modifier les autres données du profil. */
   function fusionnerCoursVisites(visitesLocales) {
     var p = chargerProfil();
     if (!Array.isArray(visitesLocales)) return p;
@@ -447,11 +405,7 @@
     return sauvegarderProfil(p, false);
   }
 
-  /**
-   * Récupère les visites anciennes en lecture seule. Le journal de couverture
-   * reste celui de la roue ; les révisions globales et les exercices seuls ne
-   * constituent pas une visite de cours.
-   */
+  /* Lire les visites historiques sans compter les exercices seuls. */
   function listerCoursVisites() {
     var p = chargerProfil();
     var visites = p.coursVisites.slice();
@@ -477,10 +431,7 @@
     return visites;
   }
 
-  /**
-   * Met à jour l'état d'un chapitre ("a_reviser" | "en_cours" | "revise")
-   * et synchronise automatiquement la progression globale de la matière.
-   */
+  /* Une révision de chapitre met à jour la progression globale. */
   function definirEtatChapitre(matiere, idChapitre, etat, totalChapitres) {
     var p = chargerProfil();
     if (!MATIERES_CLES.includes(matiere) || !/^[a-z0-9-]+$/i.test(idChapitre || "")) return p;
@@ -505,10 +456,7 @@
     return sauvegarderProfil(p, false);
   }
 
-  /**
-   * Enregistre en une seule écriture le chapitre consulté et la reprise de lecture.
-   * Un chapitre déjà révisé conserve son état et la progression globale existante.
-   */
+  /* Une lecture ne retire pas le marquage déjà révisé. */
   function enregistrerLecture(matiere, idChapitre, titre, pourcent, url) {
     var p = chargerProfil();
     if (!MATIERES_CLES.includes(matiere) || !/^[a-z0-9-]+$/i.test(idChapitre || "")) return p;
@@ -525,9 +473,6 @@
     return sauvegarderProfil(p, false);
   }
 
-  /**
-   * Coche ou décoche un exercice dans exercicesFaits[matiere].
-   */
   function basculerExerciceFait(matiere, idExercice, fait) {
     var p = chargerProfil();
     if (!MATIERES_CLES.includes(matiere) || !idExercice) return p;
@@ -544,10 +489,7 @@
     return sauvegarderProfil(p, false);
   }
 
-  /**
-   * Mémorise l'utilisation d'un laboratoire sans créer une autre clé locale.
-   * Les manipulations suivantes restent interactives sans écritures répétées.
-   */
+  /* Ne pas multiplier les écritures pendant les manipulations du laboratoire. */
   function enregistrerLaboratoire(matiere, idLaboratoire) {
     var p = chargerProfil();
     if (!MATIERES_CLES.includes(matiere) || !/^[a-z0-9-]+$/i.test(idLaboratoire || "")) return p;
@@ -557,9 +499,6 @@
     return sauvegarderProfil(p, false);
   }
 
-  /**
-   * Enregistre la position de lecture d'une vidéo et son état « vue ».
-   */
   function enregistrerPositionVideo(info) {
     if (!info || !info.id) return chargerProfil();
     var p = chargerProfil();
@@ -593,9 +532,6 @@
     return sauvegarderProfil(p, false);
   }
 
-  /**
-   * Réinitialise le profil abonné aux valeurs par défaut et purge la clé locale.
-   */
   function reinitialiser() {
     try {
       if (global.localStorage) {
@@ -610,9 +546,6 @@
     return JSON.parse(JSON.stringify(memoireProfil));
   }
 
-  /**
-   * Calcule 1 ou 2 initiales propres à partir d'un prénom / nom / e-mail.
-   */
   function calculerInitiales(prenom, nom, email) {
     var p = String(prenom || "").trim();
     var n = String(nom || "").trim();
@@ -633,10 +566,7 @@
     return "AB";
   }
 
-  /**
-   * Lecture seule de l'état de session Supabase et du statut Compte GOLD
-   * déjà établis par acces.js et supabase-umd.js (aucun recalcul d'autorisation).
-   */
+  /* Session et GOLD : lecture seule des scripts d’accès existants. */
   function lireEtatSession() {
     var profil = chargerProfil();
     var cacheAcces = null;
@@ -706,9 +636,6 @@
     };
   }
 
-  /**
-   * Suit uniquement l'identité communiquée par le client d'accès existant.
-   */
   function memoriserSession(sess) {
     var utilisateur = sess && sess.user;
     var meta = (utilisateur && utilisateur.user_metadata) || {};
@@ -721,9 +648,6 @@
     etatSessionCourant.lycee = meta.lycee || "";
   }
 
-  /**
-   * Interroge la session active auprès du client Supabase déjà instancié par acces.js.
-   */
   function synchroniserLectureSessionSupabase() {
     try {
       var client = global.__STI_SB_CLIENT;
@@ -808,8 +732,7 @@
       synchroniserLectureSessionSupabase();
       setTimeout(synchroniserLectureSessionSupabase, 600);
 
-      // Le vrai panneau de compte est construit après le chargement et peut
-      // être reconstruit : nommer son champ sans modifier acces.js.
+      // Le panneau reconstruit conserve un champ de date nommé.
       function nommerDateRoue() {
         var champ = document.getElementById("sti-plan-date");
         if (champ && !champ.hasAttribute("aria-label")) champ.setAttribute("aria-label", "Date de l’épreuve du bac");
@@ -822,8 +745,7 @@
               return n.nodeType === 1 && (n.id === "sti-plan-date" || (n.querySelector && n.querySelector("#sti-plan-date")));
             });
           })) nommerDateRoue();
-          /* acces.js met son cache à jour dans le même onglet : observer le
-             nom de son panneau permet de relire ce cache sans modifier la roue. */
+          /* Relire le cache d'accès après modification du panneau. */
           if (mutations.some(function (mutation) {
             var cible = mutation.target && (mutation.target.nodeType === 1 ? mutation.target : mutation.target.parentElement);
             return (cible && cible.closest && cible.closest("#sti-pan-login")) ||
@@ -860,15 +782,74 @@
       return valeur && typeof valeur === "object" && !Array.isArray(valeur) ? valeur : null;
     } catch (e) { return null; }
   }
-  function ecrireAcquisQuiz(cle, uid, valeur) {
+  function ecrireAcquisQuiz(cle, uid, valeur, notifier) {
     if (!lireAcquisQuiz(cle, uid) || !valeur || typeof valeur !== "object" || Array.isArray(valeur)) return false;
     try {
       var texte = JSON.stringify(valeur);
-      if (texte === global.localStorage.getItem(cle)) return false;
+      if (texte === global.localStorage.getItem(cle)) return true;
       global.localStorage.setItem(cle, texte);
-      notifierChangement("sti-cloud-restored", { quiz: cle });
+      if (notifier !== false) notifierChangement("sti-cloud-restored", { quiz: cle });
       return true;
     } catch (e) { return false; }
+  }
+
+  /* File par compte : une clé par opération pour éviter les collisions entre onglets.
+     Le préfixe n'est ni synchronisé ni purgé par le synchroniseur historique. */
+  var PREFIXE_XP = "quiz-xp-operation-v1:";
+  function prefixeOperations(uid) { return PREFIXE_XP + encodeURIComponent(String(uid)) + ":"; }
+  function operationValide(o) {
+    return o && CLES_XP_QUIZ.indexOf(o.cle) >= 0 &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(o.id) &&
+      Number.isSafeInteger(o.gain) && o.gain > 0 && o.gain <= 1000000000 &&
+      Number.isSafeInteger(o.base) && o.base >= 0;
+  }
+  function listerOperationsQuiz(uid, cle) {
+    if (!compteQuizIsole(uid)) return [];
+    var liste = [], prefixe = prefixeOperations(uid);
+    try {
+      for (var i = 0; i < global.localStorage.length; i++) {
+        var k = global.localStorage.key(i) || "";
+        if (k.indexOf(prefixe) !== 0) continue;
+        var o = JSON.parse(global.localStorage.getItem(k));
+        if (!operationValide(o) || k !== prefixe + o.id) return null;
+        if (!cle || o.cle === cle) liste.push(o);
+      }
+    } catch (e) { return null; }
+    return liste;
+  }
+  function ajouterOperationQuiz(uid, operation) {
+    if (!compteQuizIsole(uid) || !operationValide(operation)) return false;
+    try { global.localStorage.setItem(prefixeOperations(uid) + operation.id, JSON.stringify(operation)); return true; }
+    catch (e) { return false; }
+  }
+  function confirmerOperationsQuiz(uid, ids) {
+    if (!compteQuizIsole(uid)) return;
+    try { (ids || []).forEach(function (id) { global.localStorage.removeItem(prefixeOperations(uid) + id); }); } catch (e) {}
+  }
+  function ecrireProtocoleQuiz(uid, attentes) {
+    if (!compteQuizIsole(uid)) return false;
+    try { global.localStorage.setItem("sti-xp-protocole-v487", JSON.stringify({ uid: String(uid), version: 2, attentes: attentes })); return true; }
+    catch (e) { return false; }
+  }
+  var chargementQuiz = false;
+  function relancerOperationsQuiz() {
+    var uid;
+    try { uid = global.localStorage.getItem("sti-sync-uid"); } catch (e) { return; }
+    if (!uid || global.STIQuizSync || chargementQuiz || !sourceProfil) return;
+    var operations = listerOperationsQuiz(uid);
+    if (!operations || !operations.length) return;
+    chargementQuiz = true;
+    var script = document.createElement("script");
+    script.src = new URL("quiz-sync.js", sourceProfil).href;
+    script.onload = script.onerror = function () { chargementQuiz = false; if (!global.STIQuizSync) script.remove(); };
+    document.head.appendChild(script);
+  }
+  if (!profilPourQuiz && typeof document !== "undefined") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", relancerOperationsQuiz);
+    else relancerOperationsQuiz();
+    global.addEventListener("online", relancerOperationsQuiz);
+    global.addEventListener("sti-cloud-restored", relancerOperationsQuiz);
+    if (typeof global.setInterval === "function") global.setInterval(relancerOperationsQuiz, 10000);
   }
 
   /* Exposition de l'API publique unique */
@@ -891,6 +872,10 @@
     lireEtatSession: lireEtatSession,
     compteQuizIsole: compteQuizIsole,
     lireAcquisQuiz: lireAcquisQuiz,
-    ecrireAcquisQuiz: ecrireAcquisQuiz
+    ecrireAcquisQuiz: ecrireAcquisQuiz,
+    listerOperationsQuiz: listerOperationsQuiz,
+    ajouterOperationQuiz: ajouterOperationQuiz,
+    confirmerOperationsQuiz: confirmerOperationsQuiz,
+    ecrireProtocoleQuiz: ecrireProtocoleQuiz
   };
 })(window);

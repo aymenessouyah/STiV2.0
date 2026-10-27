@@ -8,8 +8,8 @@ const quiz = {
 const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,PATCH,DELETE,OPTIONS' };
 
 function creerCloud() {
-  const donnees = new Map();
-  const etat = { rpcEnPanne: false, postsEnPanne: false, bloquerReponse: null, rpc: [], posts: 0 };
+  const donnees = new Map(), registres = new Map(), operations = new Map();
+  const etat = { rpcEnPanne: false, postsEnPanne: false, bloquerReponse: null, perdreReponse: false, rpc: [], posts: 0 };
   const mergeXp = (avant, apres) => {
     const resultat = { ...avant, ...apres };
     for (const k of ['xp','best','parties','bonnes','total','level','streak','totalAnswered','totalCorrect','bestCombo','playgroundCount']) {
@@ -26,18 +26,28 @@ function creerCloud() {
     if (methode === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
     const utilisateur = (req.headers().authorization || '').replace(/^Bearer jeton-/, '');
     const repondre = (data, status = 200) => route.fulfill({ status, headers: cors, contentType: 'application/json', body: JSON.stringify(data) });
-    if (u.pathname.endsWith('/rpc/sti_synchroniser_xp_quiz')) {
-      const { p_cle, p_valeur } = req.postDataJSON();
-      etat.rpc.push({ utilisateur, cle: p_cle, xp: p_valeur.xp });
+    if (u.pathname.endsWith('/rpc/sti_appliquer_gains_xp_quiz')) {
+      const { p_cle, p_valeur, p_operations } = req.postDataJSON();
+      etat.rpc.push({ utilisateur, cle: p_cle, xp: p_valeur.xp, operations: p_operations });
       if (etat.rpcEnPanne) return repondre({ error: 'panne simulée' }, 503);
       const utilisateurCloud = donnees.get(utilisateur) || {};
       let avant = {};
       try { avant = JSON.parse(utilisateurCloud[p_cle] || '{}'); } catch {}
-      const resultat = mergeXp(avant, p_valeur);
+      const cleRegistre = utilisateur + ':' + p_cle;
+      const registre = registres.get(cleRegistre) || { base: Math.max(Number(avant.xp) || 0, Number(p_valeur.xp) || 0), cumul: 0 };
+      for (const o of p_operations) {
+        const id = utilisateur + ':' + o.id, precedent = operations.get(id);
+        if (precedent && (precedent.cle !== p_cle || precedent.gain !== o.gain)) return repondre({ error: 'identifiant déjà utilisé' }, 400);
+        if (!precedent) { operations.set(id, { cle: p_cle, gain: o.gain }); registre.cumul += o.gain; }
+      }
+      registres.set(cleRegistre, registre);
+      const resultat = mergeXp(avant, { ...p_valeur, xp: registre.base + registre.cumul });
+      delete resultat._sti_xp_attente;
       utilisateurCloud[p_cle] = JSON.stringify(resultat);
       donnees.set(utilisateur, utilisateurCloud);
       if (etat.bloquerReponse) await etat.bloquerReponse;
-      return repondre(resultat);
+      if (etat.perdreReponse && p_operations.length) { etat.perdreReponse = false; return route.abort(); }
+      return repondre({ valeur: resultat, confirmes: p_operations.map(o => o.id) });
     }
     if (u.pathname.endsWith('/sti_progressions') && methode === 'GET') {
       const id = (u.searchParams.get('user_id') || '').replace(/^eq\./, '');
@@ -48,10 +58,25 @@ function creerCloud() {
       etat.posts++;
       if (etat.postsEnPanne) return repondre({ error: 'panne simulée' }, 503);
       const ligne = req.postDataJSON(), avant = donnees.get(ligne.user_id) || {}, nouveau = { ...avant, ...ligne.donnees };
+      let protocole = {};
+      try { protocole = JSON.parse(ligne.donnees['sti-xp-protocole-v487'] || '{}'); } catch {}
+      const moderne = protocole.uid === ligne.user_id && protocole.version === 2;
+      delete nouveau['sti-xp-protocole-v487'];
       for (const cle of Object.values(quiz)) {
         try {
           const old = JSON.parse(avant[cle] || '{}'), next = JSON.parse(nouveau[cle] || '{}');
-          if (avant[cle] || nouveau[cle]) nouveau[cle] = JSON.stringify(mergeXp(old, next));
+          if (avant[cle] || nouveau[cle]) {
+            const fusion = mergeXp(old, next), registre = registres.get(ligne.user_id + ':' + cle);
+            const attente = Math.max(Number(next._sti_xp_attente) || 0, moderne ? Number(protocole.attentes?.[cle]) || 0 : 0);
+            if (registre) {
+              if (!moderne && !attente && (Number(fusion.xp) || 0) > Math.max(Number(old.xp) || 0, registre.base + registre.cumul)) {
+                registre.base += fusion.xp - Math.max(Number(old.xp) || 0, registre.base + registre.cumul);
+              }
+              fusion.xp = Math.max(Number(old.xp) || 0, registre.base + registre.cumul);
+            } else if (attente) fusion.xp = Math.max(Number(old.xp) || 0, (Number(fusion.xp) || 0) - attente);
+            delete fusion._sti_xp_attente;
+            nouveau[cle] = JSON.stringify(fusion);
+          }
         } catch {}
       }
       donnees.set(ligne.user_id, nouveau);
@@ -124,7 +149,7 @@ async function repondreCorrectement(page) {
     const a = window.__apercuTest, q = a.liste[a.i];
     return q.options[q.correct];
   });
-  await page.locator('#heroOpts .opt-btn').filter({ has: page.locator('.opt-text', { hasText: reponse }) }).first().click();
+  await page.locator('#heroOpts .opt-btn').filter({ has: page.getByText(reponse, { exact: true }) }).first().click();
 }
 
 test('aperçu HTML-CSS : panne des deux POST, reconnexion puis restauration sur un autre appareil', async ({ browser }) => {
@@ -137,7 +162,7 @@ test('aperçu HTML-CSS : panne des deux POST, reconnexion puis restauration sur 
     await expect(a.locator('#heroOpts button').first()).toBeVisible();
     await repondreCorrectement(a);
     await expect(a.locator('#heroScore')).toContainText('250 XP');
-    await expect.poll(() => cloud.etat.rpc.some(r => r.xp === 250)).toBe(true);
+    await expect.poll(() => cloud.etat.rpc.some(r => r.operations.some(o => o.gain === 250))).toBe(true);
     expect(cloud.donnees.get('alice')?.quizzora_xp_v1).toBeUndefined();
     // Départ avant le retour du réseau : la valeur reste locale, puis sera retentée.
     await a.goto('/index.html', { waitUntil: 'domcontentloaded' });
@@ -149,6 +174,26 @@ test('aperçu HTML-CSS : panne des deux POST, reconnexion puis restauration sur 
     expect(JSON.parse(await b.evaluate(() => localStorage.getItem('quizzora_xp_v1'))).xp).toBe(250);
     expect(cloud.etat.posts).toBeGreaterThan(0);
   } finally { await appareilA.close(); await appareilB.close(); }
+});
+
+test('deux appareils cumulent leurs gains HTML-CSS réalisés hors ligne', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+  cloud.donnees.set('alice', { quizzora_xp_v1: JSON.stringify({ xp: 1000 }) });
+  const ctxA = await browser.newContext(), ctxB = await browser.newContext();
+  try {
+    await preparer(ctxA, cloud); await preparer(ctxB, cloud);
+    const a = await ctxA.newPage(), b = await ctxB.newPage();
+    await Promise.all([a.goto('/quiz/html-css.html'), b.goto('/quiz/html-css.html')]);
+    await expect(a.locator('#heroScore')).toContainText('1 000 XP');
+    await expect(b.locator('#heroScore')).toContainText('1 000 XP');
+    cloud.etat.rpcEnPanne = true;
+    await Promise.all([repondreCorrectement(a), repondreCorrectement(b)]);
+    await expect(a.locator('#heroScore')).toContainText('1 250 XP');
+    await expect(b.locator('#heroScore')).toContainText('1 250 XP');
+    cloud.etat.rpcEnPanne = false;
+    await Promise.all([a.evaluate(() => dispatchEvent(new Event('online'))), b.evaluate(() => dispatchEvent(new Event('online')))]);
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp, { timeout: 10_000 }).toBe(1500);
+  } finally { await ctxA.close(); await ctxB.close(); }
 });
 
 test('un départ immédiat après une bonne réponse conserve les XP quand le réseau répond', async ({ browser }) => {
@@ -282,4 +327,218 @@ test('la passerelle de profil ne modifie pas le style historique des quiz', asyn
     }
     expect(valeurs[1], nom).toEqual(valeurs[0]);
   }
+});
+
+test('une réponse réseau perdue est retentée sans créditer deux fois le même gain', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+  cloud.donnees.set('alice', { quizzora_xp_v1: JSON.stringify({ xp: 1000 }) });
+  const ctx = await browser.newContext();
+  try {
+    await preparer(ctx, cloud);
+    const page = await ctx.newPage(); await page.goto('/quiz/html-css.html');
+    await expect(page.locator('#heroScore')).toContainText('1 000 XP');
+    await expect.poll(() => cloud.etat.rpc.length).toBeGreaterThan(0);
+    cloud.etat.perdreReponse = true;
+    await repondreCorrectement(page);
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp).toBe(1250);
+    await expect.poll(() => cloud.etat.rpc.filter(r => r.operations.length).length, { timeout: 15_000 }).toBeGreaterThanOrEqual(2);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+    expect(JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp).toBe(1250);
+  } finally { await ctx.close(); }
+});
+
+test('un gain survit au départ du quiz et se synchronise à la reconnexion sur l’accueil', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.rpcEnPanne = true; cloud.etat.postsEnPanne = true;
+  const ctx = await browser.newContext();
+  try {
+    await preparer(ctx, cloud);
+    const page = await ctx.newPage(); await page.goto('/quiz/html-css.html');
+    await repondreCorrectement(page);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(1);
+    await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => page.evaluate(() => !!window.STIQuizSync)).toBe(true);
+    cloud.etat.rpcEnPanne = false;
+    await page.evaluate(() => dispatchEvent(new Event('online')));
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice')?.quizzora_xp_v1 || '{}').xp, { timeout: 15_000 }).toBe(250);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+  } finally { await ctx.close(); }
+});
+
+test('les POST généraux envoyés avant la première RPC ne doublent pas les gains provisoires', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.rpcEnPanne = true; cloud.etat.postsEnPanne = true;
+  cloud.donnees.set('alice', { quizzora_xp_v1: JSON.stringify({ xp: 1000 }) });
+  const ctxA = await browser.newContext(), ctxB = await browser.newContext();
+  try {
+    for (const ctx of [ctxA, ctxB]) await preparer(ctx, cloud, { acquis: { quizzora_xp_v1: { xp: 1000 } } });
+    const a = await ctxA.newPage(), b = await ctxB.newPage();
+    await Promise.all([a.goto('/quiz/html-css.html'), b.goto('/quiz/html-css.html')]);
+    await Promise.all([repondreCorrectement(a), repondreCorrectement(b)]);
+    for (const page of [a, b]) {
+      const local = JSON.parse(await page.evaluate(() => localStorage.getItem('quizzora_xp_v1')));
+      expect(local.xp).toBe(1250); expect(local._sti_xp_attente).toBe(250);
+    }
+    cloud.etat.postsEnPanne = false;
+    await Promise.all([a.evaluate(() => dispatchEvent(new Event('pagehide'))), b.evaluate(() => dispatchEvent(new Event('pagehide')))]);
+    await expect.poll(() => cloud.etat.posts).toBeGreaterThanOrEqual(2);
+    expect(JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp).toBe(1000);
+    cloud.etat.rpcEnPanne = false;
+    await Promise.all([a.evaluate(() => dispatchEvent(new Event('online'))), b.evaluate(() => dispatchEvent(new Event('online')))]);
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp, { timeout: 15_000 }).toBe(1500);
+  } finally { await ctxA.close(); await ctxB.close(); }
+});
+
+test('deux onglets du même navigateur conservent deux opérations distinctes', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+  cloud.donnees.set('alice', { quizzora_xp_v1: JSON.stringify({ xp: 1000 }) });
+  const ctx = await browser.newContext();
+  try {
+    await preparer(ctx, cloud);
+    const a = await ctx.newPage(), b = await ctx.newPage();
+    await Promise.all([a.goto('/quiz/html-css.html'), b.goto('/quiz/html-css.html')]);
+    await expect(a.locator('#heroScore')).toContainText('1 000 XP');
+    await expect(b.locator('#heroScore')).toContainText('1 000 XP');
+    cloud.etat.rpcEnPanne = true;
+    await Promise.all([repondreCorrectement(a), repondreCorrectement(b)]);
+    await expect.poll(() => a.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(2);
+    cloud.etat.rpcEnPanne = false;
+    await Promise.all([a.evaluate(() => dispatchEvent(new Event('online'))), b.evaluate(() => dispatchEvent(new Event('online')))]);
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp, { timeout: 15_000 }).toBe(1500);
+    await expect.poll(() => a.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+  } finally { await ctx.close(); }
+});
+
+test('JavaScript, SQL et PHP additionnent aussi les gains de deux appareils hors ligne', async ({ browser }) => {
+  test.setTimeout(180_000);
+  for (const nom of ['javascript', 'sql', 'php']) {
+    const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+    const cle = quiz[nom];
+    const ancien = nom === 'sql' ? { xp: 1000, level: 2, pseudo: 'Apprenti SQL', profileSet: false, best: {} } : { xp: 1000 };
+    cloud.donnees.set('alice', { [cle]: JSON.stringify(ancien) });
+    const ctxA = await browser.newContext(), ctxB = await browser.newContext();
+    try {
+      await preparer(ctxA, cloud); await preparer(ctxB, cloud);
+      const a = await ctxA.newPage(), b = await ctxB.newPage();
+      await Promise.all([a.goto(`/quiz/${nom}.html`), b.goto(`/quiz/${nom}.html`)]);
+      for (const page of [a, b]) await expect.poll(async () => JSON.parse(await page.evaluate(k => localStorage.getItem(k), cle) || '{}').xp, { message: nom }).toBe(1000);
+      await expect.poll(() => cloud.etat.rpc.filter(r => r.cle === cle).length).toBeGreaterThanOrEqual(2);
+      cloud.etat.rpcEnPanne = true;
+      async function gagner(page) {
+        if (nom === 'sql') {
+          await page.locator('#pseudoInput').fill('Test SQL');
+          await page.locator('#onboardingModal button[onclick="saveProfile()"]').click();
+        } else if (nom === 'javascript') {
+          await page.locator('[onclick="game.start(\'arcade\')"]').click();
+          const bonne = await page.evaluate(() => game.questions[game.currentQuestionIdx].answer);
+          await page.locator('.option-btn').nth(bonne).click();
+          await page.locator('button[onclick="game.endEarly()"]').click();
+        } else {
+          await page.locator('button[onclick="startQuiz()"]').first().click();
+          const bonne = await page.evaluate(() => quiz.list[quiz.idx]._ans);
+          await page.locator('#qOptions .opt-btn').nth(bonne).click();
+          page.once('dialog', d => d.accept());
+          await page.locator('#quizOverlay button[onclick="quitQuiz()"]').click();
+        }
+      }
+      await Promise.all([gagner(a), gagner(b)]);
+      let somme = 0;
+      for (const page of [a, b]) {
+        await expect.poll(() => page.evaluate(k => STIProfil.listerOperationsQuiz('alice', k).length, cle), { message: nom }).toBeGreaterThan(0);
+        const gains = await page.evaluate(k => STIProfil.listerOperationsQuiz('alice', k).map(o => o.gain), cle);
+        somme += gains.reduce((x, y) => x + y, 0);
+      }
+      expect(somme, nom).toBeGreaterThan(0);
+      cloud.etat.rpcEnPanne = false;
+      await Promise.all([a.evaluate(() => dispatchEvent(new Event('online'))), b.evaluate(() => dispatchEvent(new Event('online')))]);
+      await expect.poll(() => JSON.parse(cloud.donnees.get('alice')[cle]).xp, { timeout: 20_000, message: nom }).toBe(1000 + somme);
+      for (const page of [a, b]) await expect.poll(() => page.evaluate(k => STIProfil.listerOperationsQuiz('alice', k).length, cle), { message: nom }).toBe(0);
+    } finally { await ctxA.close(); await ctxB.close(); }
+  }
+});
+
+test('un gain hors ligne reste associé au bon compte après une connexion partagée', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.rpcEnPanne = true; cloud.etat.postsEnPanne = true;
+  const ctx = await browser.newContext();
+  try {
+    await preparer(ctx, cloud);
+    const page = await ctx.newPage(); await page.goto('/quiz/html-css.html');
+    await repondreCorrectement(page);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(1);
+    await page.evaluate(() => localStorage.setItem('sb-test-auth-token', JSON.stringify({ access_token: 'jeton-bob', user: { id: 'bob', email: 'bob@example.invalid' } })));
+    await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('sti-sync-uid'))).toBe('bob');
+    cloud.etat.rpcEnPanne = false;
+    await page.goto('/quiz/html-css.html');
+    await expect.poll(() => cloud.etat.rpc.some(r => r.utilisateur === 'bob')).toBe(true);
+    expect(cloud.etat.rpc.filter(r => r.utilisateur === 'bob').every(r => r.operations.length === 0)).toBe(true);
+    await page.evaluate(() => localStorage.setItem('sb-test-auth-token', JSON.stringify({ access_token: 'jeton-alice', user: { id: 'alice', email: 'alice@example.invalid' } })));
+    await page.goto('/quiz/html-css.html');
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice')?.quizzora_xp_v1 || '{}').xp, { timeout: 15_000 }).toBe(250);
+    expect(JSON.parse(cloud.donnees.get('bob').quizzora_xp_v1).xp).toBe(0);
+  } finally { await ctx.close(); }
+});
+
+test('une connexion tardive retrouve automatiquement la file du bon compte sur l’accueil', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.rpcEnPanne = true; cloud.etat.postsEnPanne = true;
+  const ctx = await browser.newContext();
+  try {
+    await preparer(ctx, cloud);
+    const page = await ctx.newPage(); await page.goto('/quiz/html-css.html');
+    await repondreCorrectement(page);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(1);
+    await page.evaluate(() => localStorage.setItem('sb-test-auth-token', JSON.stringify({ access_token: 'jeton-bob', user: { id: 'bob', email: 'bob@example.invalid' } })));
+    await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('sti-sync-uid'))).toBe('bob');
+    expect(await page.evaluate(() => Boolean(window.STIQuizSync))).toBe(false);
+    cloud.etat.rpcEnPanne = false;
+    await page.evaluate(() => localStorage.setItem('sb-test-auth-token', JSON.stringify({ access_token: 'jeton-alice', user: { id: 'alice', email: 'alice@example.invalid' } })));
+    // Le synchroniseur historique détecte le compte après le chargement ; aucun
+    // événement online ni nouvelle navigation ne doit être nécessaire.
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice')?.quizzora_xp_v1 || '{}').xp, { timeout: 30_000 }).toBe(250);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+    expect(cloud.etat.rpc.some(r => r.utilisateur === 'bob' && r.operations.length)).toBe(false);
+  } finally { await ctx.close(); }
+});
+
+test('un nouveau gain ajouté pendant une réponse retardée est conservé', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+  const ctx = await browser.newContext(); let liberer;
+  try {
+    await preparer(ctx, cloud);
+    const page = await ctx.newPage(); await page.goto('/quiz/html-css.html');
+    await expect.poll(() => cloud.etat.rpc.length).toBeGreaterThan(0);
+    cloud.etat.bloquerReponse = new Promise(resolve => { liberer = resolve; });
+    await repondreCorrectement(page);
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice')?.quizzora_xp_v1 || '{}').xp).toBe(250);
+    await page.waitForTimeout(1700);
+    await repondreCorrectement(page);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(2);
+    cloud.etat.bloquerReponse = null; liberer();
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp, { timeout: 15_000 }).toBe(500);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+  } finally { if (liberer) liberer(); await ctx.close(); }
+});
+
+test('une file de plus de cent gains est vidée par lots sans pertes ni doublons', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+  const ctx = await browser.newContext();
+  try {
+    await preparer(ctx, cloud);
+    const page = await ctx.newPage(); await page.goto('/quiz/html-css.html');
+    await expect.poll(() => cloud.etat.rpc.length).toBeGreaterThan(0);
+    cloud.etat.rpcEnPanne = true;
+    const resultat = await page.evaluate(() => {
+      for (let i = 0; i < 205; i++) {
+        const x = STIProfil.lireAcquisQuiz('quizzora_xp_v1', 'alice');
+        if (!STIQuizSync.sauverXP('quizzora_xp_v1', { ...x, xp: (x.xp || 0) + 1 }, 1)) return false;
+      }
+      STIQuizSync.notifierXP('quizzora_xp_v1');
+      return STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length;
+    });
+    expect(resultat).toBe(205);
+    cloud.etat.rpcEnPanne = false;
+    await page.evaluate(() => dispatchEvent(new Event('online')));
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice')?.quizzora_xp_v1 || '{}').xp, { timeout: 20_000 }).toBe(205);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+    expect(cloud.etat.rpc.filter(r => r.operations.length > 0).every(r => r.operations.length <= 100)).toBe(true);
+  } finally { await ctx.close(); }
 });

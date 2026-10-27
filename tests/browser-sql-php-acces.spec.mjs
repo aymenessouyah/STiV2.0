@@ -1,11 +1,23 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 
 /* Session native fictive dans le navigateur de test ; acces.js est le vrai fichier. */
 async function sessionNative(page, classe) {
-  await page.addInitScript(classe=>{
+  const worker = readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
+  const cacheVersion = worker.match(/var CACHE = "sti-atelier-v(\d+)"/)[1];
+  const versionAffichee = worker.match(/var UPDATE_ID = "v(\d+)-/)[1];
+  await page.addInitScript(({ classe, cacheVersion, versionAffichee })=>{
     const cache={nativeAuthenticated:true,statut:'actif',email:'eleve-test@example.invalid',role:'eleve',classe,lycee:'Lycée Raféha'};
-    try { window.__STI_NATIVE_AUTHENTICATED_V316=true;sessionStorage.setItem('sti-native-session-v316','1');sessionStorage.setItem('sti-session-cache',JSON.stringify(cache));localStorage.setItem('sti-session-cache',JSON.stringify(cache)); } catch(e){}
-  },classe);
+    try {
+      window.__STI_NATIVE_AUTHENTICATED_V316=true;
+      sessionStorage.setItem('sti-native-session-v316','1');
+      sessionStorage.setItem('sti-session-cache',JSON.stringify(cache));
+      localStorage.setItem('sti-session-cache',JSON.stringify(cache));
+      // La migration SW est testée séparément ; éviter ici un rechargement concurrent.
+      localStorage.setItem('sti-version-installee',cacheVersion);
+      localStorage.setItem('sti-version-affichee',versionAffichee);
+    } catch(e){}
+  },{ classe, cacheVersion, versionAffichee });
 }
 test('verrou existant : 3SI ne voit ni Bac SQL ni PHP réservé',async({page})=>{
   await sessionNative(page,'3SI 1');await page.goto('/cours/sql.html',{waitUntil:'domcontentloaded'});

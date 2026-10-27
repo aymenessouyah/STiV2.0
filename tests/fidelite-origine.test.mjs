@@ -158,8 +158,43 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     'quiz/sql.html': ['        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP("sqlQuestV3");\n'],
     'quiz/php.html': ['        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP("quizphp_v1_user");\n']
   };
+  // Inverser uniquement les adaptations v487 de crédit XP avant de comparer
+  // l'intégralité des moteurs et banques avec leurs empreintes historiques.
+  const adaptationsV487 = {
+    'quiz/html-css.html': [
+      ['function ecrireXpHtmlCss(patch, gain)', 'function ecrireXpHtmlCss(patch)'],
+      ['if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(CLE_XP_HTMLCSS, out, gain || 0))) {\n          try { localStorage.setItem(CLE_XP_HTMLCSS, JSON.stringify(out)); } catch (e) {}\n        }', 'try { localStorage.setItem(CLE_XP_HTMLCSS, JSON.stringify(out)); } catch (e) {}'],
+      ['ecrireXpHtmlCss({ xp: curAp.xp + 250 }, 250);', 'ecrireXpHtmlCss({ xp: curAp.xp + 250 });'],
+      ['            }, nbBonnes * 250);\n          }\n          var ordreFinal', '            });\n          }\n          var ordreFinal']
+    ],
+    'quiz/javascript.html': [
+      ['const acquisJs = {', 'stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify({', 2],
+      ['              };\n              if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP("sti-quiz-xp-js-v1", acquisJs, gainXpJs))) {\n                stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify(acquisJs));\n              }', '              }));'],
+      ['                  };\n                  if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP("sti-quiz-xp-js-v1", acquisJs, 0))) {\n                    stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify(acquisJs));\n                  }', '                  }));']
+    ],
+    'quiz/sql.html': [
+      ['function save(gain)', 'function save()'],
+      ['if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP("sqlQuestV3", S, gain || 0))) {\n          memoEcrire("sqlQuestV3", JSON.stringify(S));\n        }', 'memoEcrire("sqlQuestV3", JSON.stringify(S));'],
+      ['          save(n);', '          save();', 1],
+      ['        save(n);', '        save();', 1],
+      ['            save(xpExit);', '            save();'],
+      ['        let gainASauver = 0;\n', ''],
+      ['          gainASauver = xpGain;\n', ''],
+      ['        save(gainASauver);', '        save();']
+    ],
+    'quiz/php.html': [
+      ['function saveUser(gain)', 'function saveUser()'],
+      ['if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP("quizphp_v1_user", user, gain || 0))) {\n          memoEcrire(CLE_LOCALE + "user", JSON.stringify(user));\n        }', 'memoEcrire(CLE_LOCALE + "user", JSON.stringify(user));'],
+      ['try { saveUser(xpExitPhp); } catch (eSuEx) {}', 'try { saveUser(); } catch (eSuEx) {}'],
+      ['            saveUser(xpGain);', '            saveUser();']
+    ]
+  };
   for (const [chemin, empreinte] of Object.entries(quiz)) {
     let courant = lire(chemin);
+    for (const [actuel, ancien, nombre = 1] of adaptationsV487[chemin] || []) {
+      assert.equal(courant.split(actuel).length - 1, nombre, chemin + ' : adaptation XP attendue');
+      courant = courant.replaceAll(actuel, ancien);
+    }
     const ajout = /<script src="\.\.\/assets\/js\/retour-quiz\.js"(?: defer)?><\/script>\n/g;
     assert.equal((courant.match(ajout) || []).length, 1, chemin);
     courant = courant.replace(ajout, '');

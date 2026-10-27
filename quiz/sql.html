@@ -2226,7 +2226,7 @@ LIMIT 5;</textarea
       } catch (e) {
         S = JSON.parse(JSON.stringify(DEFAULT_STATE));
       }
-      function save() {
+      function save(gain) {
         try {
           const ex = JSON.parse(memoLire("sqlQuestV3") || "null");
           if (ex && typeof ex === "object") {
@@ -2243,7 +2243,9 @@ LIMIT 5;</textarea
             }
           }
         } catch (eEx) {}
-        memoEcrire("sqlQuestV3", JSON.stringify(S));
+        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP("sqlQuestV3", S, gain || 0))) {
+          memoEcrire("sqlQuestV3", JSON.stringify(S));
+        }
         if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP("sqlQuestV3");
       }
       /* Réparation douce : une sauvegarde ancienne peut ne pas connaître les
@@ -2267,12 +2269,12 @@ LIMIT 5;</textarea
         const nl = levelForXP(S.xp);
         if (nl > S.level) {
           S.level = nl;
-          save();
+          save(n);
           updateNavbar();
           setTimeout(() => showLevelup(nl), 900);
           return true;
         }
-        save();
+        save(n);
         updateNavbar();
         return false;
       }
@@ -5578,7 +5580,7 @@ LIMIT 5;</textarea
             if (Q.mode === "daily") xpExit = Math.round(xpExit * 1.5);
             S.xp = (Number(S.xp) || 0) + xpExit;
             S.level = Math.max(Number(S.level) || 1, levelForXP(S.xp));
-            save();
+            save(xpExit);
           }
           if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function" && repondues.length) {
             STIQuizSync.noterQuestionsVuesQuiz(
@@ -5831,13 +5833,15 @@ LIMIT 5;</textarea
         });
         if (S.history.length > 30) S.history = S.history.slice(-30);
         const oldLvlEnd = Number(S.level) || 1;
+        let gainASauver = 0;
         if (!Q._xpCredited) {
           Q._xpCredited = true;
+          gainASauver = xpGain;
           S.xp = (Number(S.xp) || 0) + xpGain;
           S.level = Math.max(oldLvlEnd, levelForXP(S.xp));
         }
         checkStreak();
-        save();
+        save(gainASauver);
         checkBadges();
         updateNavbar();
         // Affichage garanti de la page d'évaluation même si un graphique échoue
