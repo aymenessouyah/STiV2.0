@@ -4,8 +4,8 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `23` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v345`, historique `sti-atelier-v344` / `sti-atelier-v343` / `sti-atelier-v342` / `sti-atelier-v341` / `sti-atelier-v340`)
-> 📌 **Version du code** : **v484** (`sti-atelier-v345` — 27 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS) + Service Worker incrémental (`sw.js` — `sti-atelier-v346`, historique `sti-atelier-v345` / `sti-atelier-v344` / `sti-atelier-v343` / `sti-atelier-v342` / `sti-atelier-v341` / `sti-atelier-v340`)
+> 📌 **Version du code** : **v485** (`sti-atelier-v346` — 27 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
 
 ---
 
@@ -66,6 +66,7 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 - Calcul instantané du **score exact**, du **pourcentage**, de la **note ramenée sur `/20`** et des **points** (avec pont synchrone vers `acces.js` / `sti-mes-scores`).
 - **File locale write-ahead isolée par `user_id`** : chaque fin de partie (`STIQuizSync.enregistrer`) et chaque lot de réponses (`STIQuizSync.enregistrerReponses`) est inscrit en `localStorage` **avant** l'appel réseau, puis vidé automatiquement vers `sti_quiz_parties` et `sti_quiz_reponses` dès que la connexion est disponible — sans jamais mélanger deux élèves successifs sur un poste du Labo 3.
 - **Carte d'Évaluation Officielle STI V2.0 (`v459`)** en fin de quiz : bilan détaillé, points à réviser, un conseil ciblé par faute, export PNG HD et impression.
+- **Compteurs XP historiques (`v485`)** : les quatre quiz HTML-CSS, JavaScript, SQL et PHP notifient leur compteur après un gain. La RPC `sti_synchroniser_xp_quiz` met à jour uniquement la clé du compte authentifié, conserve le maximum et relance les envois en cas de panne pendant que le quiz reste ouvert ou à sa prochaine ouverture. Déployer d'abord `supabase/migrations/20261027_xp_quiz_sync_v485.sql` ; les politiques RLS existantes restent en vigueur. Un gain encore uniquement local n'est pas disponible sur un autre appareil avant reconnexion du premier. La fusion par maximum ne cumule pas deux gains effectués simultanément hors ligne sur des appareils différents.
 - **Exception compte partagé laboratoire (`elevelabo3@exemple.tn`)** : fonctionnement 100 % local au poste, zéro envoi cloud et exclusion automatique de toutes les moyennes et alertes enseignant.
 
 ### 3. Table & séance ciblée « Mes erreurs » (`revision-erreurs.html`)
@@ -122,7 +123,7 @@ Interface Bento/Spotlight en police **Comic**, ornée du logo officiel (`assets/
 
 - **PostgreSQL & Row Level Security (`15 / 15` tables protégées)** :
   - Chaque table élève (`sti_progressions`, `sti_quiz_parties`, `sti_quiz_reponses`, `sti_quiz_sessions`, `sti_quiz_vus`, `acces`, `profiles`) applique `auth.uid() = user_id` pour les écritures/lectures individuelles et réserve l'administration à `public.est_admin()` / `public.est_admin_mfa()`.
-  - **22 / 22 fonctions SQL du schéma `public`** s'exécutent avec `search_path=public` figé (zéro vulnérabilité de détournement de schéma) ; la RPC `public.admin_sauvegarde_tables_annexes()` exclut explicitement les colonnes sensibles (`secret_hash`).
+  - Les fonctions SQL du schéma `public` fixent `search_path=public` ; la RPC `public.admin_sauvegarde_tables_annexes()` exclut explicitement les colonnes sensibles (`secret_hash`).
 - **Authentification renforcée & anti-abus** :
   - **Cloudflare Turnstile** actif sur `portail.html` et `admin.html`, **MFA TOTP (`AAL2`)** sur les opérations sensibles administrateur (`admin-mdp.js`, purges, mots de passe), verrouillage anti-brute-force sur la connexion et les badges Labo, et redirection Auth strictement limitée à `https://aymenessouyah.github.io/STiV2.0/**`.
 - **Content-Security-Policy (CSP) & hygiène XSS** :
@@ -181,7 +182,7 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 - **Accueil personnalisé** : le prénom provient de la session existante ; le compteur dénombre les cours distincts effectivement ouverts, y compris les anciennes pages de cours du journal de couverture. La dernière lecture ou vidéo reprend dans « Continuer à apprendre », sans exposer le profil en attente d’isolation. Les visites sont conservées dans `sti-profil-abonne` et réunies lors des restaurations cloud ; les restrictions PHP et Bac restent actives.
 - **Badge de compte** : le bouton, l’anneau de couverture, la notification, la loupe et le panneau de compte d’origine sont conservés. La photo validée ou les initiales NOM.Prénom côtoient le logo et le QR locaux ; le ruban est bleu en 3e, vert en 4e, doré pour les professeurs et comptes GOLD, orange pour `elevelabo3` (et l’alias `elevelao3`), noir sinon. Le compte laboratoire prime sur GOLD.
 - **Navigation mobile** : la barre propose Accueil, Cours, Vidéos, Quiz et Autres ; les séries d’exercices restent accessibles dans « Autres ».
-- **Protocole de mise à jour PWA (`sw.js`)** : lors d’une nouvelle publication, incrémenter `CACHE` après `sti-atelier-v345` et `UPDATE_ID`, actualiser les révisions des fichiers modifiés et nouvelles dépendances dans `UPDATE_FILES`, puis régénérer `offline-complete-manifest.json` avec les empreintes Git blob exactes. Les vidéos, audios et PDF lourds ne sont pas ajoutés au téléchargement différentiel automatique.
+- **Protocole de mise à jour PWA (`sw.js`)** : lors d’une nouvelle publication, incrémenter `CACHE` après `sti-atelier-v346` et `UPDATE_ID`, actualiser les révisions des fichiers modifiés et nouvelles dépendances dans `UPDATE_FILES`, puis régénérer `offline-complete-manifest.json` avec les empreintes Git blob exactes. Les vidéos, audios et PDF lourds ne sont pas ajoutés au téléchargement différentiel automatique.
 - **Conventions pédagogiques strictes Bac STI** :
   - **JavaScript** : uniquement les méthodes de l'annexe officielle (`ch[i]`, `substring`, `indexOf`, `lastIndexOf`, `trim`, `toUpperCase`, `toLowerCase`, `replace`, `charCodeAt`, `String.fromCharCode`, `getElementById`, `getElementsByName`, `Date`, `innerHTML`/`textContent`/`document.write`) ;
   - **SQL** : jointures exclusivement dans `WHERE t1.col = t2.col` (aucun `JOIN … ON`) et opérateur `!=` ;
@@ -232,6 +233,7 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 | v482 | Accueil de connexion personnalisé avec prénom, compteur de cours distincts déjà visités, cartes de reprise, état zéro et conservation des visites historiques ; isolation des comptes partagés et mise à jour PWA incrémentale (`sti-atelier-v343`). |
 | v483 | Reprise de lecture/vidéo intégrée à l’accueil personnel et badge de compte à ruban par classe, sans remplacer le panneau ni la progression d’origine ; ressources disponibles hors ligne (`sti-atelier-v344`). |
 | v484 | Navigation mobile : accès direct aux vidéos dans la barre inférieure ; séries d’exercices conservées dans « Autres » (`sti-atelier-v345`). |
+| v485 | Présentation des cours, barre mobile et retour contextuel du quiz ; QR du badge limité à l’ordinateur ; relance ciblée des compteurs XP (`sti-atelier-v346`). |
 
 ---
 

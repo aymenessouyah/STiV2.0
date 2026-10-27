@@ -2957,6 +2957,7 @@
                 bonnes: (Number(exXpJs.bonnes) || 0) + (this.correctCount || 0),
                 total: (Number(exXpJs.total) || 0) + (this.answeredCount || 0),
               }));
+              if (STIQuizSync.notifierXP) STIQuizSync.notifierXP("sti-quiz-xp-js-v1");
             }
             if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function") {
               STIQuizSync.noterQuestionsVuesQuiz(
@@ -3041,6 +3042,7 @@
                     bonnes: Math.max(Number(exXpJs.bonnes) || 0, res.totalBonnes || 0),
                     total: Math.max(Number(exXpJs.total) || 0, res.totalQuestions || 0),
                   }));
+                  if (STIQuizSync.notifierXP) STIQuizSync.notifierXP("sti-quiz-xp-js-v1");
                 }
                 if (res.meilleurPoints && res.meilleurPoints > this.stats.highScore) {
                   this.stats.highScore = res.meilleurPoints;
@@ -4082,6 +4084,7 @@
 <!-- /Protection -->
 <script src="../assets/js/acces.js?v=453" defer></script>
   <script src="../assets/js/sync-progressions.js?v=478" defer></script>
+  <script src="../assets/js/profil.js" defer data-sti-quiz-seul></script>
 <script src="../assets/js/retour-quiz.js" defer></script>
 </body>
 </html>

@@ -1,69 +1,64 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   STI V2.0 — Couche unique de gestion du profil abonné (assets/js/profil.js)
-   Règle d'architecture :
-   - UN SEUL objet `profilAbonne` sérialisé en JSON dans localStorage sous la
-     clé « sti-profil-abonne » (préfixe « sti- » obligatoire pour que
-     assets/js/sync-progressions.js le synchronise automatiquement vers la
-     table cloud « sti_progressions »).
-   - Ce module est la SEULE couche du front autorisée à appeler localStorage.
-   - Il lit uniquement en lecture seule l'état de session et le statut GOLD
-     déjà gérés par config.js, supabase-umd.js et acces.js (via window.STI_AUTH,
-     window.__STI_SB_CLIENT et window.__STI_GOLD), sans jamais les recalculer.
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* STI V2.0 — couche unique de stockage du profil abonné.
+   Un seul objet JSON sous « sti-profil-abonne », synchronisé vers le cloud.
+   La passerelle XP conserve les quatre clés historiques déjà utilisées par les quiz.
+   La session et le statut GOLD restent ceux des scripts d'accès existants. */
 
 /**
  * Structure complète de l'objet `profilAbonne` stocké sous « sti-profil-abonne » :
  * {
- *   prenom: "",                                      // Prénom de l'élève abonné
- *   theme: "sombre",                                 // "sombre" | "clair" | "intermediaire"
- *   langue: "fr",                                    // "fr" | "en" | "ar"
- *   tailleTexte: "normale",                          // "petite" | "normale" | "grande"
- *   vitesseAudio: 1,                                 // 0.85 | 1 | 1.15 (Guide-Ligne vocal)
- *   coursVisites: [],                                // Matières ouvertes, sans doublons
- *   derniereLecture: {                               // Reprise de lecture
- *     matiere: "",                                   // "html5" | "css3" | "javascript" | "sql" | "php"
- *     chapitre: "",                                  // Titre du chapitre ou de la section
- *     chapitreId: "",                                // Ancre du chapitre actif (ex. "formulaires")
- *     pourcent: 0,                                   // Avancement de lecture (0 à 100)
- *     url: ""                                        // Chemin relatif (ex. "cours/html5.html#formulaires")
+ *   prenom: "", // Prénom de l'élève abonné
+ *   theme: "sombre", // "sombre" | "clair" | "intermediaire"
+ *   langue: "fr", // "fr" | "en" | "ar"
+ *   tailleTexte: "normale", // "petite" | "normale" | "grande"
+ *   vitesseAudio: 1, // 0.85 | 1 | 1.15 (Guide-Ligne vocal)
+ *   coursVisites: [], // Matières ouvertes, sans doublons
+ *   derniereLecture: { // Reprise de lecture
+ *     matiere: "", // "html5" | "css3" | "javascript" | "sql" | "php"
+ *     chapitre: "", // Titre du chapitre ou de la section
+ *     chapitreId: "", // Ancre du chapitre actif (ex. "formulaires")
+ *     pourcent: 0, // Avancement de lecture (0 à 100)
+ *     url: "" // Chemin relatif (ex. "cours/html5.html#formulaires")
  *   },
- *   progression: {                                   // Cours marqués comme révisés (« X / 5 révisés »)
+ *   progression: { // Cours marqués comme révisés (« X / 5 révisés »)
  *     html5: false,
  *     css3: false,
  *     javascript: false,
  *     sql: false,
  *     php: false
  *   },
- *   chapitres: {                                     // État par chapitre : "a_reviser" | "en_cours" | "revise"
+ *   chapitres: { // État par chapitre : "a_reviser" | "en_cours" | "revise"
  *     html5: {},
  *     css3: {},
  *     javascript: {},
  *     sql: {},
  *     php: {}
  *   },
- *   exercicesFaits: {                                // Liste des exercices cochés « Exercice fait » par matière
+ *   exercicesFaits: { // Liste des exercices cochés « Exercice fait » par matière
  *     html5: [],
  *     css3: [],
  *     javascript: [],
  *     sql: [],
  *     php: []
  *   },
- *   laboratoires: { css3: [], javascript: [] },      // Récapitulatifs et laboratoires déjà utilisés
- *   quiz: [],                                        // Historique des scores aux quiz
- *   videos: {                                        // Suivi des vidéos explicatives (.mp4)
- *     vues: [],                                      // Liste des identifiants de vidéos terminées
- *     positions: {},                                 // Position de reprise en secondes par id vidéo
- *     derniere: null                                 // { id, matiere, titre, temps, duree, url }
+ *   laboratoires: { css3: [], javascript: [] }, // Récapitulatifs et laboratoires déjà utilisés
+ *   quiz: [], // Historique des scores aux quiz
+ *   videos: { // Suivi des vidéos explicatives (.mp4)
+ *     vues: [], // Liste des identifiants de vidéos terminées
+ *     positions: {}, // Position de reprise en secondes par id vidéo
+ *     derniere: null // { id, matiere, titre, temps, duree, url }
  *   },
- *   notes: [],                                       // Notes /20 envoyées au professeur (Ateliers Bac)
- *   nouveautesLues: [],                              // Versions marquées comme lues (ex. ["v477"])
- *   invitationInstallationVue: false                 // Invitation PWA déjà présentée
+ *   notes: [], // Notes /20 envoyées au professeur (Ateliers Bac)
+ *   nouveautesLues: [], // Versions marquées comme lues (ex. ["v477"])
+ *   invitationInstallationVue: false // Invitation PWA déjà présentée
  * }
  */
 (function (global) {
   "use strict";
 
   var CLE_PROFIL = "sti-profil-abonne";
+  /* Les quiz historiques ne chargent que la passerelle de stockage : leurs
+     thèmes et leurs commandes continuent d'être gérés par leur code d'origine. */
+  var profilPourQuiz = Boolean(typeof document !== "undefined" && document.currentScript && document.currentScript.hasAttribute("data-sti-quiz-seul"));
   var THEMES_VALIDES = { sombre: true, clair: true, intermediaire: true };
   var LANGUES_VALIDES = { fr: true, en: true, ar: true };
   var TAILLES_VALIDES = { petite: true, normale: true, grande: true };
@@ -796,6 +791,7 @@
     } catch (e) {}
   }
 
+  if (!profilPourQuiz) {
   /* ── Amorçage immédiat dès le chargement du script (zéro flash de thème) ── */
   var profilInitial = chargerProfil();
   var themeAvantReprise = profilInitial.theme;
@@ -886,6 +882,34 @@
     });
   }
 
+  }
+
+  /* Passerelle réservée aux compteurs historiques du compte isolé. */
+  var CLES_XP_QUIZ = ["quizzora_xp_v1", "sti-quiz-xp-js-v1", "sqlQuestV3", "quizphp_v1_user"];
+  function compteQuizIsole(uid) {
+    try { return Boolean(uid && global.localStorage.getItem("sti-sync-uid") === String(uid)); }
+    catch (e) { return false; }
+  }
+  function lireAcquisQuiz(cle, uid) {
+    if (CLES_XP_QUIZ.indexOf(cle) < 0 || !compteQuizIsole(uid)) return null;
+    try {
+      var brut = global.localStorage.getItem(cle);
+      if (brut === null) return {};
+      var valeur = JSON.parse(brut);
+      return valeur && typeof valeur === "object" && !Array.isArray(valeur) ? valeur : null;
+    } catch (e) { return null; }
+  }
+  function ecrireAcquisQuiz(cle, uid, valeur) {
+    if (!lireAcquisQuiz(cle, uid) || !valeur || typeof valeur !== "object" || Array.isArray(valeur)) return false;
+    try {
+      var texte = JSON.stringify(valeur);
+      if (texte === global.localStorage.getItem(cle)) return false;
+      global.localStorage.setItem(cle, texte);
+      notifierChangement("sti-cloud-restored", { quiz: cle });
+      return true;
+    } catch (e) { return false; }
+  }
+
   /* Exposition de l'API publique unique */
   global.STIProfil = {
     CLE_STOCKAGE: CLE_PROFIL,
@@ -903,6 +927,9 @@
     enregistrerPositionVideo: enregistrerPositionVideo,
     reinitialiser: reinitialiser,
     appliquerPreferencesDOM: appliquerPreferencesDOM,
-    lireEtatSession: lireEtatSession
+    lireEtatSession: lireEtatSession,
+    compteQuizIsole: compteQuizIsole,
+    lireAcquisQuiz: lireAcquisQuiz,
+    ecrireAcquisQuiz: ecrireAcquisQuiz
   };
 })(window);

@@ -5546,6 +5546,7 @@ background-repeat: repeat;</pre>
           total: Math.max(cur.total, Number(patch && patch.total != null ? patch.total : cur.total) || 0),
         };
         try { localStorage.setItem(CLE_XP_HTMLCSS, JSON.stringify(out)); } catch (e) {}
+        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(CLE_XP_HTMLCSS);
         var elHs = $("#heroScore");
         if (elHs) elHs.textContent = "XP cumulés : " + out.xp.toLocaleString("fr-FR") + " XP";
         return out;
@@ -6999,6 +7000,7 @@ background-repeat: repeat;</pre>
 <!-- /Protection -->
 <script src="../assets/js/acces.js?v=453" defer></script>
   <script src="../assets/js/sync-progressions.js?v=478" defer></script>
+  <script src="../assets/js/profil.js" defer data-sti-quiz-seul></script>
 <script src="../assets/js/retour-quiz.js" defer></script>
 </body>
 </html>

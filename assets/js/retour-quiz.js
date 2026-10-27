@@ -46,9 +46,10 @@
     Array.prototype.forEach.call(document.querySelectorAll('a[href]'), function (a) {
       var brut = a.getAttribute('href') || '';
       if (!/^\.\.\/index\.html#(?:modules|quiz)$/.test(brut)) return;
-      a.href = retour;
       var texte = a.textContent || '';
+      // Un lien explicitement nommé « Page d'accueil » reste un lien d'accueil.
       if (!/retour|revenir/i.test(texte)) return;
+      a.href = retour;
       a.title = libelle; a.setAttribute('aria-label', libelle);
       var marcheur = document.createTreeWalker(a, NodeFilter.SHOW_TEXT), noeud;
       while ((noeud = marcheur.nextNode())) {
@@ -64,8 +65,27 @@
     var a = event.target && event.target.closest && event.target.closest('a[href]');
     if (a && /^\.\.\/index\.html#(?:modules|quiz)$/.test(a.getAttribute('href') || '')) mettreAJour();
   }, true);
+  function ajouterRetourMobile() {
+    // Sur le quiz HTML-CSS, le retour de la barre historique est masqué sur
+    // téléphone. Réutiliser son style dans l'accueil du quiz, sans toucher aux
+    // boutons qui mènent explicitement aux deux cours.
+    if (!/\/quiz\/html-css\.html$/i.test(ici.pathname) || document.getElementById('sti-quiz-retour-mobile')) return;
+    var contenu = document.querySelector('main .hero .reveal');
+    if (!contenu) return;
+    var style = document.createElement('style');
+    style.textContent = '.sti-quiz-retour-mobile{display:flex;width:max-content;max-width:100%;margin-bottom:1rem}@media(min-width:700px){.sti-quiz-retour-mobile{display:none}}';
+    document.head.appendChild(style);
+    var lien = document.createElement('a');
+    lien.id = 'sti-quiz-retour-mobile';
+    lien.className = 'btn-glass sti-quiz-retour-mobile';
+    lien.href = retour;
+    lien.textContent = '← ' + libelle;
+    lien.setAttribute('aria-label', libelle);
+    contenu.insertBefore(lien, contenu.firstChild);
+  }
   function demarrer() {
     mettreAJour();
+    ajouterRetourMobile();
     // Préparer aussi les liens créés après le chargement (bilan, menus),
     // y compris pour une ouverture par clic droit ou dans un nouvel onglet.
     if (!document.body || !global.MutationObserver) return;
