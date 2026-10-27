@@ -76,17 +76,19 @@ test('le Service Worker relaie Range sans mettre en cache le média complet', as
     await fetch(asset);
     const cacheNames = (await caches.keys()).filter(n => /^sti-atelier-v\d+$/.test(n)).sort().reverse();
     const cache = await caches.open(cacheNames[0] || 'sti-atelier-v303');
-    for (let i = 0; i < 30 && !(await cache.match(asset, { ignoreSearch: true })); i++) await new Promise(r => setTimeout(r, 50));
+    // Une installation fraîche ne précharge pas tout le code différentiel.
+    // Charger explicitement cette ressource avant de vérifier sa conservation.
+    const code = new URL('assets/js/protection.js', location.origin + '/').href;
+    await fetch(code);
+    for (let i = 0; i < 40 && (!(await cache.match(asset, { ignoreSearch: true })) || !(await cache.match(code, { ignoreSearch: true }))); i++) await new Promise(r => setTimeout(r, 50));
     const avant = Boolean(await cache.match(asset, { ignoreSearch: true }));
+    const codeAvant = Boolean(await cache.match(code, { ignoreSearch: true }));
     navigator.serviceWorker.controller.postMessage({ type: 'STI_EVICT_RUNTIME' });
     for (let i = 0; i < 40 && (await cache.match(asset, { ignoreSearch: true })); i++) await new Promise(r => setTimeout(r, 50));
-    return {
-      avant,
-      apres: Boolean(await cache.match(asset, { ignoreSearch: true })),
-      codeDiff: Boolean(await cache.match(new URL('assets/js/protection.js', location.origin + '/').href, { ignoreSearch: true }))
-    };
+    return { avant, codeAvant, apres: Boolean(await cache.match(asset, { ignoreSearch: true })), codeDiff: Boolean(await cache.match(code, { ignoreSearch: true })) };
   });
   expect(eviction.avant).toBe(true);
+  expect(eviction.codeAvant).toBe(true);
   expect(eviction.apres).toBe(false);
   expect(eviction.codeDiff).toBe(true);
 });

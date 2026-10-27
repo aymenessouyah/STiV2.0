@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html data-sti-heritage="interface" lang="fr">
 <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -118,6 +118,8 @@ details.ref summary{cursor:pointer;font-weight:800;padding:10px 0;color:var(--in
 .pied{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
 @media print{.nav-haut,.bases,.ligne-btns,ul.sqlp-liste{display:none}}
 </style>
+
+<link rel="stylesheet" href="../assets/css/theme-patrimoine.css">
 </head>
 <body>
 <div class="sqlp-boite">
@@ -170,10 +172,12 @@ details.ref summary{cursor:pointer;font-weight:800;padding:10px 0;color:var(--in
 
   <p class="pied">SQL de poche — v396 de la plateforme STI By A'e · moteur <a href="https://sql.js.org" rel="noopener">sql.js</a> (MIT) hébergé localement dans <code>assets/js/sqljs/</code> · aucune donnée ne quitte l'appareil, sauf vos progressions déjà synchronisées.</p>
 </div>
-<script src="../assets/js/supabase-umd.js" defer></script>
 <script src="../assets/js/config.js?v=425" defer></script>
+<script src="../assets/js/supabase-umd.js" defer></script>
 <script src="../assets/js/acces.js?v=453" defer></script>
 <script src="../assets/js/sync-progressions.js" defer></script>
 <script src="../assets/js/sql-playground.js?v=396" defer></script>
+
+<script src="../assets/js/profil.js" defer></script>
 </body>
 </html>

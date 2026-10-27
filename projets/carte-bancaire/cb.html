@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html data-sti-heritage="exemple" lang="fr">
   <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -67,6 +67,7 @@
     <meta charset="UTF-8" />
     <title>Carte bancaire animée</title>
     <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="../../assets/css/theme-patrimoine.css">
   </head>
   <body>
     <div class="container">
@@ -100,8 +101,9 @@
         </div>
       </div>
 
-      <form class="form" onsubmit="event.preventDefault();">
+      <form class="form" onsubmit="event.preventDefault(); simulerPaiement();">
         <h2>Détails de paiement</h2>
+        <p class="simulation-note">Démonstration : utilisez uniquement des données fictives.</p>
 
         <div class="field">
           <label>Numéro de carte</label>
@@ -157,10 +159,12 @@
         </div>
 
         <button class="submit-btn">Payer maintenant</button>
+        <p class="simulation-note" id="paymentDemoStatus" role="status" aria-live="polite"></p>
       </form>
     </div>
 
     <script src="controle.js"></script>
+    <script src="demo.js"></script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../../assets/css/protection.css?v=193" />
 <script src="../../assets/js/protection.js?v=193" defer></script>

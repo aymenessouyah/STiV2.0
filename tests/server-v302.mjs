@@ -7,7 +7,7 @@ const port = Number(process.env.PORT || 4173);
 const mime = {
   '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.mjs':'text/javascript; charset=utf-8',
   '.css':'text/css; charset=utf-8', '.json':'application/json; charset=utf-8', '.m3u8':'application/vnd.apple.mpegurl',
-  '.m4s':'video/iso.segment', '.mp4':'video/mp4', '.avif':'image/avif', '.webp':'image/webp', '.jpg':'image/jpeg',
+  '.m4s':'video/iso.segment', '.mp4':'video/mp4', '.mp3':'audio/mpeg', '.avif':'image/avif', '.webp':'image/webp', '.jpg':'image/jpeg',
   '.png':'image/png', '.svg':'image/svg+xml', '.vtt':'text/vtt'
 };
 

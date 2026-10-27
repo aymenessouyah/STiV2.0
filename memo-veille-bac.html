@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html data-sti-heritage="interface" lang="fr">
 <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -200,6 +200,8 @@
       .bloc-memo { break-inside: avoid; box-shadow: none; padding: 10px 12px; }
     }
   </style>
+
+<link rel="stylesheet" href="assets/css/theme-patrimoine.css">
 </head>
 <body>
   <div class="wrap-memo">
@@ -377,9 +379,11 @@ mysqli_close($con);
       };
     })();
   </script>
-  <script src="assets/js/supabase-umd.js" defer></script>
   <script src="assets/js/config.js?v=425" defer></script>
+  <script src="assets/js/supabase-umd.js" defer></script>
   <script src="assets/js/acces.js?v=453" defer></script>
   <script src="assets/js/sync-progressions.js" defer></script>
+
+<script src="assets/js/profil.js" defer></script>
 </body>
 </html>

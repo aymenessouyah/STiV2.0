@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html data-sti-heritage="interface" lang="fr">
   <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -865,6 +865,10 @@
     </style>
     <link rel="stylesheet" href="../assets/css/atelier-pages.css" />
   <style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
+<link rel="stylesheet" href="../assets/css/visionneuse-exercices.css">
+<script defer src="../assets/js/visionneuse-exercices.js"></script>
+
+<link rel="stylesheet" href="../assets/css/theme-patrimoine.css">
 </head>
   <body>
 <!-- STI navigation croisée -->
@@ -1844,7 +1848,7 @@
 
     <!-- Modal Box : taille adaptée au contenu (PDF portrait / énoncé / aperçu interactif) -->
     <div class="modal-backdrop" id="pdfModal" onclick="closePdfModal(event)">
-      <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="event.stopPropagation()">
         <div class="modal-header">
           <h3 class="modal-title" id="modalTitle">Consultation de l'énoncé</h3>
           <div class="modal-header-actions">
@@ -2289,7 +2293,7 @@
                 "(copier-coller dans un éditeur, outil de nettoyage HTML…) " +
                 "ou le chemin est erroné.<br>Recopiez le fichier <strong>tel quel</strong> " +
                 "depuis l'archive, puis cliquez sur <strong>↺</strong> (recharger) " +
-                "ou <strong>⧉</strong> (ouvrir dans un onglet)."
+                "ou sur <strong>←</strong> pour revenir à l'appelant."
             );
           }
         }
@@ -2419,10 +2423,12 @@
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../assets/css/protection.css?v=227" />
 <script src="../assets/js/config.js?v=479" defer></script>
-<script src="../assets/js/protection.js?v=479" defer></script>
+<script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js" defer></script>
-<script src="../assets/js/acces.js?v=453" defer></script>
+<script src="../assets/js/acces.js?v=479" defer></script>
   <script src="../assets/js/sync-progressions.js?v=479" defer></script>
+  <script src="../assets/js/profil.js" defer></script>
+  <script src="../assets/js/app.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,57 @@
+/* Habillage commun des pages historiques. Les exemples et leurs couleurs
+   restent intacts : seule la navigation STI est harmonisée sur ces pages. */
+:root {
+  --sti-page-bg: #f7f7f2; --sti-page-alt: #eef1f7; --sti-page-surface: #ffffff;
+  --sti-page-text: #0f172a; --sti-page-muted: #334155; --sti-page-border: rgba(15,23,42,.16);
+  --sti-page-brand: #4f46e5; --sti-page-brand-ink: #ffffff; --sti-page-shadow: 0 18px 38px -14px rgba(15,23,42,.16);
+  --sti-page-focus: #0284c7; --sti-page-contrast-ink: #000000;
+}
+html:is(.dark,.dark-mode,[data-theme="dark"],[data-theme="sombre"]) {
+  --sti-page-bg: #0d1526; --sti-page-alt: #111c33; --sti-page-surface: #15223d;
+  --sti-page-text: #f1f5f9; --sti-page-muted: #cbd5e1; --sti-page-border: rgba(148,163,184,.3);
+  --sti-page-brand: #6366f1; --sti-page-brand-ink: #ffffff; --sti-page-shadow: 0 16px 36px -10px rgba(2,6,23,.58);
+  --sti-page-focus: #38bdf8;
+}
+html:is([data-theme="intermediaire"],[data-sti-theme="intermediaire"]) {
+  --sti-page-bg: #233044; --sti-page-alt: #2a3950; --sti-page-surface: #2e3e58;
+  --sti-page-text: #eaf0f8; --sti-page-muted: #cfdbec; --sti-page-border: rgba(226,232,240,.32);
+  --sti-page-brand: #818cf8; --sti-page-brand-ink: #162030; --sti-page-shadow: 0 16px 36px -10px rgba(2,6,23,.42);
+  --sti-page-focus: #5cc8ff;
+}
+@media screen {
+  /* Les pages d'interface suivent la palette et la typographie du design system. */
+  html[data-sti-heritage="interface"] body {
+    background: var(--sti-page-bg) !important;
+    color: var(--sti-page-text) !important;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  }
+  html[data-sti-heritage="interface"] :is(.card,.carte,.panel,.exo-card,.subject,.result-card,.tool-card) {
+    background: var(--sti-page-surface);
+    color: var(--sti-page-text);
+    border-color: var(--sti-page-border);
+    border-radius: 20px;
+    box-shadow: var(--sti-page-shadow);
+  }
+  html[data-sti-heritage] #stix-nav a {
+    display: inline-flex; align-items: center; gap: .35rem;
+    border-radius: 9999px !important; border: 1px solid var(--sti-page-border) !important;
+    background: var(--sti-page-surface) !important; color: var(--sti-page-text) !important;
+    box-shadow: var(--sti-page-shadow) !important;
+    font-family: "Inter", system-ui, sans-serif !important; text-decoration: none;
+  }
+  html[data-sti-heritage] #stix-nav a:hover,
+  html[data-sti-heritage] #stix-nav a:focus-visible {
+    background: var(--sti-page-brand) !important; color: var(--sti-page-brand-ink) !important;
+    border-color: var(--sti-page-brand) !important;
+  }
+  /* Conserver les couleurs d'identification du glossaire et assurer le contraste des libellés. */
+  html[data-sti-glossaire] .filtre.actif,
+  html[data-sti-glossaire] .module:is(.html5,.css3,.javascript) { color: var(--sti-page-contrast-ink); }
+  html[data-sti-heritage] :focus-visible { outline: 3px solid var(--sti-page-focus); outline-offset: 3px; }
+}
+
+/* Contraste du panneau de compte original, sans remplacer ses états ni ses fonds. */
+:root { --sti-compte-inactif-ink: #61533e; --sti-compte-prof-ink: #a8340d; --sti-compte-orange-ink: #101728; }
+#sti-pan-prog-badges > span[style*="color:#7a6f5d"] { color: var(--sti-compte-inactif-ink) !important; }
+#sti-roue-btn-ecrire-prof { color: var(--sti-compte-prof-ink) !important; }
+#sti-pan-signets-tuile > div:first-child > button { color: var(--sti-compte-orange-ink) !important; }

@@ -1029,7 +1029,7 @@ test('v454 : retrait du bouton « Conseils » dans la barre de navigation du hau
 
   assert.doesNotMatch(indexHtml, /<a\s+class="nav-link"\s+href="#conseils">/);
   assert.doesNotMatch(indexHtml, /<a\s+class="mobile-menu-link"\s+href="#conseils">/);
-  assert.match(indexHtml, /<section\s+class="tips reveal"\s+id="conseils">/);
+  assert.match(indexHtml, /<section\b[^>]*\bid="conseils"/);
   assert.match(swJs, /retrait-nav-conseils-v454/);
 });
 
@@ -3086,9 +3086,9 @@ test('v465 : retour instantané vers index.html sans rechargement (bfcache 0 ms,
   assert.doesNotMatch(indexHtml, /http-equiv=["']Pragma["']/i);
   const cfgTags = [...indexHtml.matchAll(/<script[^>]+src=["'][^"']*assets\/js\/config\.js[^"']*["']/gi)];
   assert.equal(cfgTags.length, 1, 'config.js ne doit être inclus qu’une seule fois dans index.html');
-  assert.match(indexHtml, /sti-splash-vu/);
-  assert.match(indexHtml, /rafraichirAccueilAuRetour/);
-  assert.match(indexHtml, /sti-accueil-restored/);
+  // La refonte n'affiche plus de splash ; le rafraîchissement vit dans app.js et le retour dans config.js.
+  assert.match(read('assets/js/app.js'), /addEventListener\("pageshow"/);
+  assert.match(configJs, /sti-accueil-restored/);
 
   // 2) Élimination de tous les écouteurs beforeunload bloquants pour bfcache (Firefox/Safari/iOS)
   assert.doesNotMatch(accesJs, /addEventListener\(\s*["']beforeunload["']/);
@@ -3467,147 +3467,54 @@ test('v466 : DBSupbase affiche le niveau exact de chaque table par rapport à 1 
   assert.equal(tblLabo.lignes, 26);
 });
 
-test('v466 : la bulle « Installer l’application » ne s’affiche que la 1re fois et disparaît définitivement une fois installée', () => {
+test('v466 : invitation PWA unique, compatible avec les anciennes visites et l’installation', () => {
   const indexHtml = read('index.html');
+  const appJs = read('assets/js/app.js');
+  const profilJs = read('assets/js/profil.js');
   const accesJs = read('assets/js/acces.js');
   const configJs = read('assets/js/config.js');
   const manifestJson = JSON.parse(read('manifest.webmanifest'));
 
-  // 1) Vérifications statiques anti-régression
-  assert.doesNotMatch(indexHtml, /localStorage\.removeItem\(\s*["']sti-pwa-installed["']\s*\)/);
+  assert.doesNotMatch(indexHtml + appJs, /localStorage\.(?:getItem|setItem|removeItem)/);
   assert.doesNotMatch(accesJs, /localStorage\.removeItem\(\s*["']sti-pwa-refus["']\s*\)/);
-  assert.doesNotMatch(accesJs, /Application installée — ouvrez-la depuis l'écran d'accueil/);
   assert.match(configJs, /__stiPwaEstInstallee/);
   assert.match(configJs, /beforeinstallprompt/);
   assert.ok(Array.isArray(manifestJson.related_applications) && manifestJson.related_applications.length >= 1);
+  assert.match(indexHtml, /id="pwaInvitation"[^>]*hidden/);
+  assert.match(appJs, /invitationInstallationDejaVue\(\)/);
+  assert.match(appJs, /beforeinstallprompt/);
+  assert.match(appJs, /sti:pwa-installee/);
+  assert.match(appJs, /Partager puis/);
 
-  // Extrait le bloc script PWA de index.html pour l'exécuter dans des visites successives simulées
-  const pwaMatch = indexHtml.match(/<!-- =+\s*PWA : installation \+ hors-ligne\s*=+ -->\s*<script>([\s\S]*?)<\/script>/);
-  assert.ok(pwaMatch, 'Le script PWA de index.html doit exister');
-  const pwaScript = pwaMatch[1];
-
-  const sharedStorage = new Map();
-  function simulerVisiteIndex({ standalone = false } = {}) {
-    const winListeners = {};
-    const bodyChildren = [];
-    const installBtn = { hidden: true, style: { display: 'none' }, textContent: '', addEventListener() {} };
-    const pillMob = { hidden: false, style: { display: '' } };
-
-    const makeFabNode = () => {
-      const subListeners = {};
-      const node = {
-        id: '',
-        innerHTML: '',
-        removed: false,
-        remove() {
-          node.removed = true;
-          const idx = bodyChildren.indexOf(node);
-          if (idx !== -1) bodyChildren.splice(idx, 1);
-        },
-        querySelector(sel) {
-          return {
-            addEventListener(type, fn) {
-              (subListeners[`${sel}:${type}`] ||= []).push(fn);
-            },
-          };
-        },
-        clickChild(sel) {
-          (subListeners[`${sel}:click`] || []).forEach((fn) => fn());
-        },
-      };
-      return node;
+  function creerProfil(stockageInitial) {
+    const data = new Map(Object.entries(stockageInitial || {}));
+    const ecritures = [];
+    const stockage = {
+      getItem: cle => data.get(cle) ?? null,
+      setItem: (cle, valeur) => { ecritures.push(cle); data.set(cle, String(valeur)); },
+      removeItem: cle => { ecritures.push(cle); data.delete(cle); },
     };
-
-    const ctx = vm.createContext({
-      console,
-      Boolean,
-      String,
-      Date,
-      setInterval: () => 0,
-      setTimeout: () => 0,
-      location: { reload() {} },
-      navigator: {
-        userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/130.0 Mobile Safari/537.36',
-        platform: 'Linux armv8l',
-        maxTouchPoints: 5,
-        standalone: false,
-      },
-      matchMedia: (q) => ({
-        matches: q.includes('standalone') ? standalone : true,
-        addEventListener() {},
-      }),
-      localStorage: {
-        getItem: (k) => (sharedStorage.has(k) ? sharedStorage.get(k) : null),
-        setItem: (k, v) => sharedStorage.set(k, String(v)),
-        removeItem: (k) => sharedStorage.delete(k),
-      },
-      sessionStorage: {
-        getItem: () => null,
-        setItem: () => {},
-      },
-      document: {
-        hidden: false,
-        referrer: '',
-        head: { appendChild() {} },
-        body: { appendChild(el) { bodyChildren.push(el); } },
-        getElementById: (id) => (id === 'installBtn' ? installBtn : null),
-        querySelector: (sel) => (sel.includes('__stiInstall') ? pillMob : null),
-        createElement: (tag) => (tag === 'div' ? makeFabNode() : { textContent: '' }),
-        addEventListener() {},
-      },
-    });
-    ctx.window = ctx;
-    ctx.window.matchMedia = ctx.matchMedia;
-    ctx.window.alert = () => {};
-    ctx.window.addEventListener = (type, fn) => { (winListeners[type] ||= []).push(fn); };
-
-    vm.runInContext(configJs, ctx);
-    vm.runInContext(pwaScript, ctx);
-
-    return {
-      installBtn,
-      pillMob,
-      hasFab: () => bodyChildren.some((el) => el.id === 'sti-fab' && !el.removed),
-      fireBip: () => {
-        const ev = {
-          preventDefault() {},
-          prompt() {},
-          userChoice: Promise.resolve({ outcome: 'dismissed' }),
-        };
-        (winListeners.beforeinstallprompt || []).forEach((fn) => fn(ev));
-      },
-      fireAppInstalled: () => {
-        (winListeners.appinstalled || []).forEach((fn) => fn());
-      },
+    const classes = { add() {}, remove() {}, toggle() {}, contains() { return false; } };
+    const contexte = {
+      localStorage: stockage,
+      document: { documentElement: { classList: classes, setAttribute() {} }, body: { classList: classes } },
+      matchMedia: () => ({ matches: false }),
+      addEventListener() {}, dispatchEvent() {}, setTimeout() {},
     };
+    contexte.window = contexte;
+    vm.runInNewContext(profilJs, contexte);
+    return { api: contexte.STIProfil, data, ecritures };
   }
 
-  // Visite 1 (toute première fois, non installée) : la bulle #sti-fab apparaît une seule fois
-  const v1 = simulerVisiteIndex({ standalone: false });
-  assert.equal(v1.hasFab(), true, '1re visite : la bulle #sti-fab doit apparaître');
-  v1.fireBip();
-  assert.equal(v1.installBtn.hidden, false, '1re visite : installBtn peut être affiché');
-  assert.equal(sharedStorage.get('sti-pwa-bulle-vue'), '1');
-  assert.equal(sharedStorage.get('sti-install-fab'), 'off');
-
-  // Visite 2 (rechargement / visite suivante, toujours non installée) : aucune bulle ni bouton intempestif
-  const v2 = simulerVisiteIndex({ standalone: false });
-  assert.equal(v2.hasFab(), false, '2e visite : la bulle #sti-fab ne doit plus apparaître');
-  v2.fireBip();
-  assert.equal(v2.installBtn.hidden, true, '2e visite : installBtn reste masqué même si beforeinstallprompt se déclenche');
-  assert.equal(v2.pillMob.hidden, true);
-
-  // Une fois installée (appinstalled ou ouverture standalone), le marqueur persiste même si beforeinstallprompt survient dans un onglet navigateur
-  v1.fireAppInstalled();
-  assert.equal(sharedStorage.get('sti-pwa-installed'), '1');
-  assert.equal(sharedStorage.get('sti-pwa-installee'), '1');
-  assert.equal(v1.hasFab(), false, 'Après installation : la bulle #sti-fab est immédiatement retirée');
-
-  const v3 = simulerVisiteIndex({ standalone: false });
-  v3.fireBip();
-  assert.equal(sharedStorage.get('sti-pwa-installed'), '1', 'beforeinstallprompt ne doit jamais effacer sti-pwa-installed');
-  assert.equal(v3.hasFab(), false);
-  assert.equal(v3.installBtn.hidden, true);
+  const visite = creerProfil();
+  assert.equal(visite.api.invitationInstallationDejaVue(), false);
+  visite.api.mettreAJour('invitationInstallationVue', true);
+  assert.equal(visite.api.invitationInstallationDejaVue(), true);
+  assert.deepEqual(visite.ecritures, ['sti-profil-abonne']);
+  assert.equal(JSON.parse(visite.data.get('sti-profil-abonne')).invitationInstallationVue, true);
+  assert.equal(creerProfil({ 'sti-pwa-bulle-vue': '1' }).api.invitationInstallationDejaVue(), true);
+  assert.equal(creerProfil({ 'sti-install-fab': 'off' }).api.invitationInstallationDejaVue(), true);
+  // Les scénarios iPhone, acceptation et rechargement sont aussi exercés dans browser-main-integration.spec.mjs.
 });
 
 test('v467 (structure) : quiz/pp.html charge config.js, sauvegarde complète 15 tables + Google Drive .gs + migration RPC + README.md & #modal-readme à jour (sti-atelier-v327)', () => {
@@ -4291,11 +4198,14 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v471\s*\|/.test(l)), 'v471 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v472\s*\|/.test(l)), 'v472 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v474\s*\|/.test(l)), 'v474 doit rester présent dans README.md');
-  assert.ok(cinq.some((o) => /^v475 — Cure complète de navigation/.test(o.t)), 'v475 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.ok(cinq.some((o) => /^v476 — Retour instantané depuis exercices\/series-exercices\.html/.test(o.t)), 'v476 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.ok(cinq.some((o) => /^v477 — Synchronisation intégrale de la version active v477/.test(o.t)), 'v477 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.ok(cinq.some((o) => /^v478 — Protection monotone multicouche des XP et records de Quiz élèves/.test(o.t)), 'v478 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v479 — Fiabilisation intégrale du compteur des vidéos/);
+  assert.ok(lignes.some((l) => /^\|\s*v475\s*\|/.test(l)), 'v475 doit rester dans l’historique');
+  assert.ok(lignes.some((l) => /^\|\s*v476\s*\|/.test(l)), 'v476 doit rester dans l’historique');
+  assert.ok(lignes.some((l) => /^\|\s*v477\s*\|/.test(l)), 'v477 reste dans l’historique');
+  assert.ok(cinq.some((o) => /^v478 — Protection monotone multicouche des XP et records de Quiz élèves/.test(o.t)), 'v478 reste parmi les 5 dernières entrées du bandeau');
+  assert.ok(cinq.some((o) => /^v479 — Fiabilisation intégrale du compteur des vidéos/.test(o.t)), 'v479 reste parmi les 5 dernières entrées du bandeau');
+  assert.ok(cinq.some((o) => /^v480 — Intégration de la refonte/.test(o.t)), 'v480 reste parmi les nouvelles');
+  assert.ok(cinq.some((o) => /^v481 — Fidélité à l’origine/.test(o.t)), 'v481 reste parmi les nouvelles');
+  assert.match(cinq[0].t, /^v482 — Accueil de connexion personnalisé/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -5489,7 +5399,8 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   const urls = updArr.map((x) => (typeof x === 'string' ? x : x.url));
   const uniqueUrls = new Set(urls);
   assert.equal(uniqueUrls.size, urls.length, `UPDATE_FILES ne doit contenir aucun doublon (${urls.length} entrées vs ${uniqueUrls.size} uniques)`);
-  assert.ok(urls.length <= 130, `UPDATE_FILES doit rester compact (<= 130 entrées uniques, observé: ${urls.length})`);
+  // Les pages historiques harmonisées doivent aussi invalider leur ancienne copie ; le noyau préchargé reste limité ci-dessous.
+  assert.ok(urls.length <= 260, `UPDATE_FILES doit rester compact (<= 260 entrées uniques, observé: ${urls.length})`);
 
   const mCore = swJs.match(/var NOYAU_RAPIDE_RECHARGEMENT = (\{[\s\S]*?\n\});/);
   assert.ok(mCore, 'NOYAU_RAPIDE_RECHARGEMENT doit encadrer les rechargements proactifs du SW');
@@ -5839,11 +5750,14 @@ test('v474 (structure & budgets Quiz PHP / SQL / JS) : 0 compilateur Tailwind JI
   assert.match(jsHtml, /vendor\/prism-js\.min\.js\?v=474"\s+defer/);
   assert.doesNotMatch(jsHtml, /@import\s+url\(["']https:\/\/fonts\.googleapis\.com/);
 
-  // 3) Déduplication des @font-face variables (3 règles uniques au lieu de 6 dans sql.html / sql-contraintes.html / quiz/sql.html)
-  for (const [label, content] of [['quiz/sql.html', sqlHtml], ['cours/sql.html', coursSql], ['cours/sql-contraintes.html', coursSqlCtr]]) {
+  // 3) Les pages historiques gardent trois familles uniques ; le cours SQL refondu utilise le thème externe.
+  for (const [label, content] of [['quiz/sql.html', sqlHtml], ['cours/sql-contraintes.html', coursSqlCtr]]) {
     const faces = content.match(/@font-face\s*\{[\s\S]*?\}/g) || [];
-    assert.equal(faces.length, 3, `${label} doit contenir exactement 3 @font-face uniques (Fredoka 600..700, JetBrains Mono 400, Nunito 400..800)`);
+    assert.equal(faces.length, 3, `${label} doit contenir exactement 3 @font-face uniques`);
   }
+  assert.doesNotMatch(coursSql, /@font-face\s*\{/);
+  assert.match(coursSql, /assets\/css\/theme\.css/);
+  assert.match(read('assets/css/theme.css'), /@font-face\s*\{/);
 
   // 4) defer sur protection.js dans les 3 exercices Bac PHP + 3 fiches Bac racine + arrêt du 120ms au repos + mémo profil acces.js
   for (const p of [
@@ -5976,7 +5890,8 @@ test('v475 (structure & budgets navigation) : polices WOFF2 externes (-475 Ko da
     'exercices/series-exercices.html',
     'ma-fiche-revision.html',
   ]) {
-    assert.match(read(p), /<script[^>]*acces\.js[^>]*\bdefer\b/i, `${p} doit charger acces.js en defer`);
+    const baliseAcces = read(p).match(/<script\b[^>]*\bacces\.js[^>]*>/i);
+    assert.ok(baliseAcces && /\bdefer\b/i.test(baliseAcces[0]), `${p} doit charger acces.js en defer, quel que soit l'ordre des attributs`);
   }
 
   // 3) GPU & compositeur : plus de blur(95px) sur .blob dans index.html ni de background-attachment:fixed dans admin-saas.css
@@ -6185,10 +6100,11 @@ test('v476 (structure) : retour instantané Exercices → Accueil (zéro auto-re
   assert.match(configJs, /window\.navigation\.traverseTo\(cibleKey\)/);
   assert.match(configJs, /de\.style\.scrollBehavior\s*=\s*"auto"/);
 
-  // 3) index.html : preload config.js, coupure smooth-scroll sur arrivée ancre initiale et révélation immédiate de la section cible
-  assert.match(indexHtml, /<link rel="preload" href="assets\/js\/config\.js\?v=47\d" as="script"\s*\/>/);
-  assert.match(indexHtml, /function revelerSectionAncreCourante\(/);
-  assert.match(indexHtml, /r\.style\.scrollBehavior\s*=\s*"auto"/);
+  // 3) L'accueil charge config.js en tête ; les anciennes ancres pointent vers les nouvelles sections visibles.
+  assert.match(indexHtml, /<head>[\s\S]*?<script src="assets\/js\/config\.js\?v=47\d"/);
+  assert.match(indexHtml, /id="exercices"/);
+  assert.match(indexHtml, /id="modules"/);
+  assert.match(configJs, /de\.style\.scrollBehavior\s*=\s*"auto"/);
 
   // 4) sync-progressions.js : inactif dans les sous-iframes internes d'aperçu + déduplication visibilitychange/pagehide
   assert.match(syncProgJs, /function estSousIframeInterneSTI\(/);
@@ -6540,7 +6456,9 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
   assert.match(swJs, /\/nouveautes\\\.json\$\/i/);
 
   assert.match(indexHtml, /config\.js\?v=4(?:7[789]|8\d)/);
-  assert.match(indexHtml, /nouveautes\.js\?v=4(?:7[789]|8\d)/);
+  // L'accueil refondu présente le même journal via app.js et le profil partagé.
+  assert.match(indexHtml, /assets\/js\/app\.js/);
+  assert.match(read('assets/js/app.js'), /assets\/data\/nouveautes\.json\?v=/);
   assert.match(nouvHtml, /nouveautes\.js\?v=4(?:7[789]|8\d)/);
   assert.match(nouvJs, /VERSION_AFFICHEE/);
   assert.doesNotMatch(nouvJs, /nouveautes\.json\?v=451/);
@@ -6998,7 +6916,8 @@ test('v479 (structure & migration SQL) : fiabilisation intégrale du compteur vi
   assert.match(exosHtml, /function suivreMediaDansPdfFrame\(fileUrl\)/);
   assert.match(exosHtml, /function purgerSuiviMediaPdfFrame\(\)/);
   assert.match(exosHtml, /window\.enregistrerProgressionMediaSTI\(cle,\s*el\.currentTime,\s*el\.duration/);
-  assert.match(exosHtml, /protection\.js\?v=479/);
+  // acces.js reconnaît le préfixe v227 ; rev=479 évite un deuxième chargement obsolète.
+  assert.match(exosHtml, /protection\.js\?v=(?:479|227&amp;rev=479)/);
   assert.match(exosHtml, /sync-progressions\.js\?v=479/);
 
   // 6) Parité des compteurs Roue élève (acces.js) / Admin (admin.js) / Analytique (analytique.js)
@@ -7008,17 +6927,20 @@ test('v479 (structure & migration SQL) : fiabilisation intégrale du compteur vi
   assert.match(adminJs, /"video:sql-serie4-2"/);
   assert.match(adminJs, /"video:validation-nom-prenom-js"/);
 
-  // 7) Version active v479 / sti-atelier-v340 cohérente
-  assert.match(configJs, /VERSION:\s*340\b/);
-  assert.match(configJs, /VERSION_AFFICHEE:\s*479\b/);
-  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v340"/);
-  assert.match(swJs, /var UPDATE_ID\s*=\s*"v479-compteur-media-monotone"/);
-  assert.match(indexHtml, /protection\.js\?v=479/);
+  // 7) La version v479 reste une référence ; les publications suivantes avancent le cache et le manifeste ensemble.
+  const versionConfigCache = Number((configJs.match(/VERSION:\s*(\d+)/) || [])[1]);
+  const versionConfigAffichee = Number((configJs.match(/VERSION_AFFICHEE:\s*(\d+)/) || [])[1]);
+  const versionCacheSw = Number((swJs.match(/var CACHE\s*=\s*"sti-atelier-v(\d+)"/) || [])[1]);
+  const versionMiseAJour = Number((swJs.match(/var UPDATE_ID\s*=\s*"v(\d+)-/) || [])[1]);
+  assert.ok(versionConfigCache >= 340 && versionConfigAffichee >= 479);
+  assert.ok(versionCacheSw >= versionConfigCache && versionMiseAJour >= versionConfigAffichee);
+  assert.match(swJs, /v479-compteur-media-monotone/);
+  assert.match(indexHtml, /protection\.js\?v=(?:479|227&amp;rev=479)/);
   assert.match(indexHtml, /reprendre\.js\?v=479/);
   assert.match(indexHtml, /sync-progressions\.js\?v=479/);
-  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v479\*\*\s*\(`sti-atelier-v340`/);
-  assert.equal(nouvJson[0].version, 'v479');
-  assert.equal(offlineManifest.version, 'v479-sti-atelier-v340');
+  assert.match(readmeMd, /\|\s*v479\s*\|/);
+  assert.ok(nouvJson.some(e => e.version === 'v479'));
+  assert.equal(offlineManifest.version, `v${versionMiseAJour}-sti-atelier-v${versionCacheSw}`);
 });
 
 test('v479 (comportemental VM) : clic ✕ non destructif dans reprendre.js, fusion monotone sti-media-prog-v1, slugs canoniques protection.js et suivi vidéo #pdfFrame', async () => {

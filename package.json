@@ -8,6 +8,7 @@
     "test:browser:v303": "playwright test --config tests/playwright-v303.config.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.0"
+    "@playwright/test": "^1.55.0",
+    "axe-core": "^4.14.0"
   }
 }
