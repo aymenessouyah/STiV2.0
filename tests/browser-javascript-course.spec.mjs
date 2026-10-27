@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 /* Simulation limitée au navigateur de test : aucun fichier d'accès n'est modifié. */
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page }, testInfo) => {
+  /* Le scénario hors ligne prépare lui-même son origine neutre et son cache. */
+  if (testInfo.titlePath.includes('ressources JavaScript hors connexion')) return;
   await page.route('**/assets/js/config.js*', async route => {
     const response = await route.fetch(), original = await response.text();
     const fin = original.indexOf('};') + 2;
@@ -451,6 +453,8 @@ test.describe('ressources JavaScript hors connexion', () => {
     const fs = await import('node:fs/promises');
     const config = await fs.readFile(new URL('../assets/js/config.js', import.meta.url), 'utf8');
     const nomCache = (await fs.readFile(new URL('../sw.js', import.meta.url), 'utf8')).match(/var CACHE\s*=\s*"([^"]+)"/)[1];
+    // Une page sans scripts évite un rechargement d'acces.js pendant la préparation.
+    await page.goto('/assets/icons/matieres.svg');
     await page.evaluate(async (nomCache) => {
       await navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' });
       await navigator.serviceWorker.ready;
@@ -462,12 +466,17 @@ test.describe('ressources JavaScript hors connexion', () => {
         '/assets/css/visionneuse-exercices.css', '/assets/js/visionneuse-exercices.js', '/assets/icons/matieres.svg'
       ]);
     }, nomCache);
-    await page.reload(); await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
+    await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
     // La réponse fictive reste limitée à ce contexte de test ; aucun accès de production n'est modifié.
     await page.evaluate(async ({ configSource, nomCache }) => {
       const mock = "\nwindow.STI_AUTH = { URL: '', ANON_KEY: '', estPagePublique: () => false, getProfile: async () => ({ id:'test-gold',email:'test@example.invalid',role:'eleve',statut_acces:'GOLD',enabled:true }), signOut: async () => {} };";
       const c = await caches.open(nomCache);
       await c.put('/assets/js/config.js', new Response(configSource + mock, { headers: { 'content-type': 'text/javascript' } }));
+      // Ce scénario part d'une installation déjà à jour ; les migrations ont leur propre suite.
+      const version = nomCache.match(/v(\d+)$/)[1];
+      localStorage.setItem('sti-version-installee', version);
+      localStorage.setItem('sti-sw-reload-ver', version);
+      sessionStorage.setItem('sti-sw-reload-ver', version);
     }, { configSource: config, nomCache });
     await context.setOffline(true);
     try {

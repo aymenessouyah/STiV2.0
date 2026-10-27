@@ -882,32 +882,67 @@
     });
   }
 
+  /* La fermeture reste valable pour cette lecture dans l'onglet courant, sans
+     masquer une nouvelle lecture ni enregistrer de clé locale supplémentaire. */
+  var signatureRepriseCourante = "";
+  var signatureRepriseMasquee = "";
+
+  function masquerBandeauRepriseAccueil() {
+    var bandeau = document.getElementById("resumeBanner");
+    if (bandeau) bandeau.hidden = true;
+    signatureRepriseMasquee = signatureRepriseCourante;
+  }
+
   function rafraichirBandeauRepriseAccueil() {
     var bandeau = document.getElementById("resumeBanner");
     if (!bandeau || !global.STIProfil) return;
+
+    var etat = global.STIProfil.lireEtatSession();
+    /* Le synchroniseur n'a pas encore isolé le profil du compte précédent. */
+    if (!etat.connecte || etat.compteEnAttente) {
+      signatureRepriseCourante = "";
+      bandeau.hidden = true;
+      var titreEnAttente = document.getElementById("resumeTitle");
+      var kickerEnAttente = document.getElementById("resumeKicker");
+      var lienEnAttente = document.getElementById("resumeGoBtn");
+      if (titreEnAttente) titreEnAttente.textContent = "Chapitre en cours";
+      if (kickerEnAttente) kickerEnAttente.textContent = "📍 Reprendre ma dernière lecture";
+      if (lienEnAttente) {
+        lienEnAttente.setAttribute("href", "#cours");
+        lienEnAttente.removeAttribute("data-play-video");
+        lienEnAttente.removeAttribute("data-start-time");
+      }
+      return;
+    }
 
     var profil = global.STIProfil.chargerProfil();
     var dl = profil.derniereLecture;
     var vid = profil.videos && profil.videos.derniere;
     var ok4 = estAutorise4SI();
-
+    var compte = etat.id || etat.email || "session-locale";
     var titreEl = document.getElementById("resumeTitle");
     var kickerEl = document.getElementById("resumeKicker");
     var btnGo = document.getElementById("resumeGoBtn");
+    var lectureAutorisee = dl && dl.url && (dl.matiere !== "php" || ok4) &&
+      (dl.matiere !== "sql" || dl.chapitreId !== "bac" || ok4);
 
-    if (dl && dl.url && (dl.matiere !== "php" || ok4)) {
-      bandeau.hidden = false;
+    if (lectureAutorisee) {
+      signatureRepriseCourante = JSON.stringify([compte, "lecture", dl.url]);
+      bandeau.hidden = signatureRepriseCourante === signatureRepriseMasquee;
       if (kickerEl) kickerEl.textContent = "📍 Reprendre ma dernière lecture · " + (dl.pourcent || 0) + " %";
       if (titreEl) titreEl.textContent = (dl.matiere ? dl.matiere.toUpperCase() + " — " : "") + (dl.chapitre || "Cours en cours");
       if (btnGo) {
         btnGo.href = dl.url;
         btnGo.removeAttribute("data-play-video");
+        btnGo.removeAttribute("data-start-time");
       }
       return;
     }
 
-    if (vid && vid.id && vid.temps > 5 && (vid.matiere !== "php" || ok4)) {
-      bandeau.hidden = false;
+    var metaVideo = vid && CATALOGUE_VIDEOS.find(function (v) { return v.id === vid.id; });
+    if (vid && vid.id && vid.temps > 5 && (vid.matiere !== "php" || ok4) && (!metaVideo || !metaVideo.reserve4si || ok4)) {
+      signatureRepriseCourante = JSON.stringify([compte, "video", vid.id]);
+      bandeau.hidden = signatureRepriseCourante === signatureRepriseMasquee;
       if (kickerEl) kickerEl.textContent = "🎬 Reprendre ma vidéo à " + formaterDureeSecondes(vid.temps);
       if (titreEl) titreEl.textContent = vid.titre;
       if (btnGo) {
@@ -918,6 +953,7 @@
       return;
     }
 
+    signatureRepriseCourante = "";
     bandeau.hidden = true;
   }
 
@@ -1807,13 +1843,6 @@
       btnLogout.addEventListener("click", declencherDeconnexion);
     }
 
-    var btnCloseResume = document.getElementById("resumeCloseBtn");
-    if (btnCloseResume) {
-      btnCloseResume.addEventListener("click", function () {
-        var b = document.getElementById("resumeBanner");
-        if (b) b.hidden = true;
-      });
-    }
   }
 
   /* ── 11. Interception passive des scores de quiz envoyés à acces.js ── */
@@ -1979,6 +2008,7 @@
     marquerCoursEffectivementOuvert(etat);
     memoriserVisitesDuCompte(etat);
     rendreAccueilPersonnalise(etat);
+    rafraichirBandeauRepriseAccueil();
     /* En cas de changement de compte dans le même onglet, attendre la purge
        de l'ancien profil effectuée par le synchroniseur existant. */
     if (etat.connecte && etat.compteEnAttente) {
@@ -2020,12 +2050,7 @@
     connecterPontQuizEtAteliers();
 
     var btnFermerReprise = document.getElementById("resumeCloseBtn");
-    if (btnFermerReprise) {
-      btnFermerReprise.addEventListener("click", function () {
-        var b = document.getElementById("resumeBanner");
-        if (b) b.hidden = true;
-      });
-    }
+    if (btnFermerReprise) btnFermerReprise.addEventListener("click", masquerBandeauRepriseAccueil);
 
     global.addEventListener("sti:profil-maj", function () {
       var etat = global.STIProfil.lireEtatSession();
