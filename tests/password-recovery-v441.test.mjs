@@ -4204,11 +4204,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v478\s*\|/.test(l)), 'v478 reste dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v479\s*\|/.test(l)), 'v479 reste dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v480\s*\|/.test(l)), 'v480 reste dans l’historique');
-  assert.ok(cinq.some((o) => /^v481 — Fidélité à l’origine/.test(o.t)), 'v481 reste parmi les nouvelles');
+  assert.ok(lignes.some((l) => /^\|\s*v481\s*\|/.test(l)), 'v481 reste dans l’historique');
   assert.ok(cinq.some((o) => /^v482 — Accueil de connexion personnalisé/.test(o.t)), 'v482 reste parmi les nouvelles');
   assert.ok(cinq.some((o) => /^v483 — Reprise de lecture\/vidéo intégrée/.test(o.t)), 'v483 reste parmi les nouvelles');
   assert.ok(cinq.some((o) => /^v484 — Navigation mobile/.test(o.t)), 'v484 reste parmi les nouvelles');
-  assert.match(cinq[0].t, /^v485 — Présentation des cours/);
+  assert.ok(cinq.some((o) => /^v485 — Vidéo JavaScript/.test(o.t)), 'la vidéo JavaScript reste parmi les nouvelles');
+  assert.match(cinq[0].t, /^v486 — Présentation des cours/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {

@@ -99,16 +99,17 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
   const paths = ['cours/javascript.html', 'assets/css/cours-javascript.css', 'assets/js/cours-javascript.js', 'assets/js/app.js', 'assets/js/profil.js'];
   const ressources = ['exercices/javascript/js-37-defis-tt.html', 'assets/css/dialogues-compat.css', 'assets/js/dialogues-compat.js', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/fleurs/styles.css', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js', 'projets/carte-bancaire/style.css'];
   for (const path of [...paths, ...ressources]) {
-    const actualises = ['cours/javascript.html', 'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js'];
-    const revision = path === 'assets/js/app.js' ? 'badge-reprise-v483' :
-      ['assets/js/profil.js', 'cours/javascript.html'].includes(path) ? 'cours-retour-xp-v485' :
+    const actualises = ['assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js'];
+    const revision = path === 'assets/js/app.js' ? 'video-js-validation-v485' :
+      ['assets/js/profil.js', 'cours/javascript.html'].includes(path) ? 'cours-retour-xp-v486' :
       actualises.includes(path) ? 'fidelite-origine-v481' : 'correctif-ressources-js-20261027';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }
   for (const path of ['assets/css/cours-javascript.css', 'assets/js/cours-javascript.js', 'assets/css/dialogues-compat.css', 'assets/js/dialogues-compat.js', 'exercices/javascript/js-37-defis-tt.html']) assert.ok(shell.includes(`"./${path}"`), path);
-  for (const path of ['cours/Recap-JavaScript-STI.html', 'assets/videos/javascript-cours.mp4', 'assets/audio/javascript-cours.mp3', 'assets/audio/foret.mp3']) assert.ok(offline.includes(`"./${path}"`), path);
+  for (const path of ['cours/Recap-JavaScript-STI.html', 'assets/videos/javascript-cours.mp4', 'assets/videos/validation-nom-prenom-js.mp4', 'assets/subtitles/validation-nom-prenom-js-fr.vtt', 'assets/audio/javascript-cours.mp3', 'assets/audio/foret.mp3']) assert.ok(offline.includes(`"./${path}"`), path);
   assert.ok(!delta.includes('"./assets/videos/javascript-cours.mp4"'), 'pas de téléchargement automatique du média lourd');
+  assert.ok(!delta.includes('"./assets/videos/validation-nom-prenom-js.mp4"'), 'pas de téléchargement automatique de la vidéo Nom & Prénom');
   const manifest = JSON.parse(read('offline-complete-manifest.json'));
   assert.equal(manifest.totalFiles, manifest.files.length);
   assert.equal(manifest.totalBytes, manifest.files.reduce((n, f) => n + f.bytes, 0));
@@ -135,4 +136,38 @@ test('profil partagé : chapitres, exercices, vidéo et récapitulatif restent r
   api.enregistrerPositionVideo({ id: 'javascript-cours', terminee: true });
   assert.ok(api.chargerProfil().videos.vues.includes('javascript-cours'));
   assert.deepEqual([...new Set(writes)], ['sti-profil-abonne']);
+});
+
+test('vidéo Validation Nom & Prénom : déplacée dans assets/videos et intégrée dans Série JavaScript et Vidéos explicatives', () => {
+  assert.equal(existsSync(join(root, 'assets/videos/validation-nom-prenom-js.mp4')), true);
+  assert.equal(existsSync(join(root, 'exercices/javascript/validation-nom-prenom-js.mp4')), false);
+  assert.equal(existsSync(join(root, 'assets/subtitles/validation-nom-prenom-js-fr.vtt')), true);
+
+  const seriesHtml = read('exercices/series-exercices.html');
+  const blocSeriesJs = seriesHtml.split('<section class="subject" id="javascript">')[1].split('</section>')[0];
+  assert.match(blocSeriesJs, /id="js"/);
+  assert.equal((blocSeriesJs.match(/ouvrirVideoPasAPasSTI\('validation-nom-prenom-js'/g) || []).length, 2);
+  assert.match(blocSeriesJs, /Série 5 — Objet String[\s\S]*?ouvrirVideoPasAPasSTI\('validation-nom-prenom-js'/);
+
+  const coursJsHtml = read('cours/javascript.html');
+  assert.match(coursJsHtml, /Série 5 — Objet String[\s\S]*?ouvrirVideoPasAPasSTI\('validation-nom-prenom-js'/);
+  assert.match(coursJsHtml, /id="tabJsValidationVideo"[^>]*data-video-id="validation-nom-prenom-js"/);
+  assert.match(coursJsHtml, /\.\.\/assets\/videos\/validation-nom-prenom-js\.mp4/);
+
+  const indexHtml = read('index.html');
+  assert.match(indexHtml, /data-video-filter="javascript">JS \(2\)</);
+  assert.match(indexHtml, /🎥 2 vidéos &amp; 🔊 audio/);
+  assert.match(indexHtml, /href="cours\/javascript\.html#videos">🎥 2 Vidéos</);
+
+  const appJs = read('assets/js/app.js');
+  assert.match(appJs, /id:\s*"validation-nom-prenom-js"[\s\S]*?dureeTexte:\s*"12:11"[\s\S]*?srcPrincipal:\s*"assets\/videos\/validation-nom-prenom-js\.mp4"/);
+  assert.match(appJs, /javascript:\s*\{[\s\S]*?nbVideos:\s*2,/);
+
+  const lecteurJs = read('assets/js/lecteur-commun.js');
+  assert.match(lecteurJs, /'validation-nom-prenom-js':\s*\['javascript',\s*'Validation du champ Nom & Prénom'\]/);
+
+  const protJs = read('assets/js/protection.js');
+  assert.match(protJs, /STI_CHAPITRES_MEDIA\["validation-nom-prenom-js"\]\s*=\s*\[/);
+  assert.match(protJs, /videos\/validation-nom-prenom-js\.mp4/);
+  assert.match(protJs, /subtitles\/validation-nom-prenom-js-fr\.vtt/);
 });

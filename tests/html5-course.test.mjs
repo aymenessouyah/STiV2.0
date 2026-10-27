@@ -75,8 +75,9 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-html5.js'
   ]) {
     const revision = path === 'assets/js/cours-html5.js' ? 'refonte-ui-html5-20261027' :
-      ['assets/css/theme.css', 'assets/js/app.js'].includes(path) ? 'badge-reprise-v483' :
-      ['assets/js/profil.js', 'assets/css/cours.css', 'cours/html5.html'].includes(path) ? 'cours-retour-xp-v485' : 'fidelite-origine-v481';
+      path === 'assets/js/app.js' ? 'video-js-validation-v485' :
+      path === 'assets/css/theme.css' ? 'badge-reprise-v483' :
+      ['assets/js/profil.js', 'assets/css/cours.css', 'cours/html5.html'].includes(path) ? 'cours-retour-xp-v486' : 'fidelite-origine-v481';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }

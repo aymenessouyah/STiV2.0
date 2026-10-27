@@ -1196,12 +1196,13 @@
 
       <!-- JavaScript -->
       <section class="subject" id="javascript">
+        <span id="js" style="position:relative;top:-84px;display:block;height:0" aria-hidden="true"></span>
         <div class="subject-head">
           <div class="icon">⚡</div>
           <div>
             <h2>JavaScript</h2>
             <p>Logique, fonctions et manipulation du DOM</p>
-            <div style="display:flex;gap:8px;margin-top:10px;"><a href="../cours/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">📚 Cours</a> <a href="../quiz/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"><a href="../cours/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">📚 Cours</a> <a href="../quiz/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a> <button type="button" onclick="if(window.ouvrirVideoPasAPasSTI){window.ouvrirVideoPasAPasSTI('validation-nom-prenom-js','🎥 JavaScript — Validation du champ Nom &amp; Prénom (pas à pas)');}" style="font:700 12px/1 system-ui,sans-serif;color:#fff;padding:7px 13px;border-radius:999px;background:linear-gradient(120deg,#ea580c,#b45309);border:2px solid #101728;box-shadow:2px 2px 0 #101728;cursor:pointer;">🎬 Vidéo : Validation Nom &amp; Prénom (12 min 11)</button></div>
           </div>
         </div>
         <div class="exo-grid">
@@ -1300,7 +1301,7 @@
             <div class="exo-level">Avancé</div>
             <h3>Série 5 — Objet String</h3>
             <p>les fonctions prédifinies sur String</p>
-            <div class="exo-actions">
+            <div class="exo-actions" style="flex-wrap:wrap;">
               <button
                 class="enonce"
                 onclick="openPdfModal('javascript/Tp5-js.html', 'JavaScript — Série 5')"
@@ -1312,6 +1313,14 @@
                 onclick="openPdfModal('javascript/Tp5-Correction-js.html', 'JavaScript — Corrigé Série 5')"
               >
                 Corrigé
+              </button>
+              <button
+                type="button"
+                class="corrige"
+                style="background:linear-gradient(135deg,#ea580c,#c2410c);color:#fff;border-color:#facc15;"
+                onclick="if(window.ouvrirVideoPasAPasSTI){window.ouvrirVideoPasAPasSTI('validation-nom-prenom-js','🎥 Série 5 JavaScript — Validation du champ Nom &amp; Prénom');}"
+              >
+                🎥 Vidéo Nom &amp; Prénom
               </button>
             </div>
           </div>

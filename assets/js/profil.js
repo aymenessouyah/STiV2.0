@@ -4,53 +4,14 @@
    La session et le statut GOLD restent ceux des scripts d'accès existants. */
 
 /**
- * Structure complète de l'objet `profilAbonne` stocké sous « sti-profil-abonne » :
- * {
- *   prenom: "", // Prénom de l'élève abonné
- *   theme: "sombre", // "sombre" | "clair" | "intermediaire"
- *   langue: "fr", // "fr" | "en" | "ar"
- *   tailleTexte: "normale", // "petite" | "normale" | "grande"
- *   vitesseAudio: 1, // 0.85 | 1 | 1.15 (Guide-Ligne vocal)
- *   coursVisites: [], // Matières ouvertes, sans doublons
- *   derniereLecture: { // Reprise de lecture
- *     matiere: "", // "html5" | "css3" | "javascript" | "sql" | "php"
- *     chapitre: "", // Titre du chapitre ou de la section
- *     chapitreId: "", // Ancre du chapitre actif (ex. "formulaires")
- *     pourcent: 0, // Avancement de lecture (0 à 100)
- *     url: "" // Chemin relatif (ex. "cours/html5.html#formulaires")
- *   },
- *   progression: { // Cours marqués comme révisés (« X / 5 révisés »)
- *     html5: false,
- *     css3: false,
- *     javascript: false,
- *     sql: false,
- *     php: false
- *   },
- *   chapitres: { // État par chapitre : "a_reviser" | "en_cours" | "revise"
- *     html5: {},
- *     css3: {},
- *     javascript: {},
- *     sql: {},
- *     php: {}
- *   },
- *   exercicesFaits: { // Liste des exercices cochés « Exercice fait » par matière
- *     html5: [],
- *     css3: [],
- *     javascript: [],
- *     sql: [],
- *     php: []
- *   },
- *   laboratoires: { css3: [], javascript: [] }, // Récapitulatifs et laboratoires déjà utilisés
- *   quiz: [], // Historique des scores aux quiz
- *   videos: { // Suivi des vidéos explicatives (.mp4)
- *     vues: [], // Liste des identifiants de vidéos terminées
- *     positions: {}, // Position de reprise en secondes par id vidéo
- *     derniere: null // { id, matiere, titre, temps, duree, url }
- *   },
- *   notes: [], // Notes /20 envoyées au professeur (Ateliers Bac)
- *   nouveautesLues: [], // Versions marquées comme lues (ex. ["v477"])
- *   invitationInstallationVue: false // Invitation PWA déjà présentée
- * }
+ * Profil « sti-profil-abonne » : prénom, thème (sombre/clair/intermediaire),
+ * langue (fr/en/ar), taille du texte et vitesse audio ; cours visités ;
+ * dernière lecture (matière, chapitre, ancre, pourcentage, URL) ;
+ * progression et chapitres par matière (a_reviser/en_cours/revise) ;
+ * exercices faits, laboratoires et récapitulatifs ; historique des quiz ;
+ * vidéos vues, positions et dernière vidéo ; notes /20, nouveautés lues et
+ * état de l'invitation d'installation. Les valeurs par défaut figurent dans
+ * creerProfilParDefaut() ; les identifiants vidéo et les liens restent locaux.
  */
 (function (global) {
   "use strict";
