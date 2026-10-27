@@ -4,8 +4,8 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `22` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v338`, historique `sti-atelier-v337` / `sti-atelier-v335` / `sti-atelier-v334`)
-> 📌 **Version active** : **v477** (`sti-atelier-v338` — 26 octobre 2026)
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `23` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v339`, historique `sti-atelier-v338` / `sti-atelier-v337` / `sti-atelier-v335`)
+> 📌 **Version active** : **v478** (`sti-atelier-v339` — 27 octobre 2026)
 
 ---
 
@@ -214,6 +214,7 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 | v475 | Cure complète de navigation et d'ouverture des pages : éligibilité `bfcache` `0 ms` réparée (suspension/reprise propre des WebSockets Realtime), `defer` non-bloquant sur `126` pages (`382` balises `<script>`), polices WOFF2 SQL/PHP externalisées en binaire (`-475 Ko` dans `<head>`), préchargement anticipé au survol/toucher, zéro `blur(95px)`/`background-attachment: fixed`, client Supabase mutualisé et index B-tree sur `acces` & `labo_device_sessions` (`sti-atelier-v335`) |
 | v476 | Retour instantané depuis `exercices/series-exercices.html` (`#exercices`) et tous les Quiz dont `quiz/php.html` (`#modules`) : suppression de l'auto-rechargement caché en double dans `<iframe id="pdfFrame">` (`src="about:blank"` + `location.replace`), traversée `navigation.traverseTo(key)` avec repli garanti, verrouillage `scrollRestoration="manual"` + ré-alignement post-rendu sur la section cible et déduplication `pagehide` dans `sync-progressions.js` (`sti-atelier-v337`) |
 | v477 | Synchronisation intégrale de la version active `v477` (`sti-atelier-v338`) : purge et mise à jour de l'alias racine `./` avec `./index.html` dans `sw.js`, alignement immédiat de `VERSION_AFFICHEE` sur la roue (`STiV2.0.477`), `admin.html` (`badge-version-admin` & `pied-version-admin`), `nouveautes.js` et `README.md`, et détection instantanée au rechargement `F5` sans délai inter-onglets de 15 minutes (`sti-atelier-v338`) |
+| v478 | Protection monotone multicouche des XP et records de Quiz élèves (`v478` · `sti-atelier-v339`) : verrouillage `pull-before-push` dans `sync-progressions.js` (aucun `POST` avant la fin du premier `tirer()` sur navigateur neuf ou PC partagé), fusion monotone bidirectionnelle des XP/niveaux/records (`sqlQuestV3`, `quizphp_v1_user`, `quizzora_xp_v1`, `sti-quiz-xp-js-v1`, `js_quiz_high_score`, `js_quiz_total_answered`) même lorsque `local >= distant`, plancher d'XP reconstruit automatiquement depuis l'historique immuable `sti_quiz_parties` (`STIQuizSync.resume().xpPlancher`), crédit XP garanti avant rendu ou `pagehide` sur les 4 moteurs de quiz, et trigger PostgreSQL `trg_sti_progressions_monotone_xp` (`public.sti_progressions_preserver_xp()`) actif sur `public.sti_progressions` (`sti-atelier-v339`) |
 
 ---
 

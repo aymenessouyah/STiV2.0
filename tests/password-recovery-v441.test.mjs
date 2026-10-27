@@ -4290,11 +4290,11 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v470\s*\|/.test(l)), 'v470 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v471\s*\|/.test(l)), 'v471 doit rester présent dans README.md');
   assert.ok(lignes.some((l) => /^\|\s*v472\s*\|/.test(l)), 'v472 doit rester présent dans README.md');
-  assert.ok(cinq.some((o) => /^v473 — Accélération drastique de la plateforme/.test(o.t)), 'v473 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v474 — Allègement massif des Quiz PHP/.test(o.t)), 'v474 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v475 — Cure complète de navigation/.test(o.t)), 'v475 doit rester parmi les 5 dernières entrées du bandeau');
   assert.ok(cinq.some((o) => /^v476 — Retour instantané depuis exercices\/series-exercices\.html/.test(o.t)), 'v476 doit rester parmi les 5 dernières entrées du bandeau');
-  assert.match(cinq[0].t, /^v477 — Synchronisation intégrale de la version active v477/);
+  assert.ok(cinq.some((o) => /^v477 — Synchronisation intégrale de la version active v477/.test(o.t)), 'v477 doit rester parmi les 5 dernières entrées du bandeau');
+  assert.match(cinq[0].t, /^v478 — Protection monotone multicouche des XP et records de Quiz élèves/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -6531,30 +6531,30 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
   const nouvJson = JSON.parse(read('assets/data/nouveautes.json'));
   const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
 
-  assert.match(configJs, /VERSION:\s*338\b/);
-  assert.match(configJs, /VERSION_AFFICHEE:\s*477\b/);
-  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v338"/);
-  assert.match(swJs, /var UPDATE_ID\s*=\s*"v477-maj-version-cache-direct"/);
+  assert.match(configJs, /VERSION:\s*33[89]\b/);
+  assert.match(configJs, /VERSION_AFFICHEE:\s*47[78]\b/);
+  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v33[89]"/);
+  assert.match(swJs, /var UPDATE_ID\s*=\s*"v47[78]-[a-z0-9-]+"/);
   assert.match(swJs, /uRacine/);
   assert.match(swJs, /\/nouveautes\\\.json\$\/i/);
 
-  assert.match(indexHtml, /config\.js\?v=477/);
-  assert.match(indexHtml, /nouveautes\.js\?v=477/);
-  assert.match(nouvHtml, /nouveautes\.js\?v=477/);
+  assert.match(indexHtml, /config\.js\?v=47[78]/);
+  assert.match(indexHtml, /nouveautes\.js\?v=47[78]/);
+  assert.match(nouvHtml, /nouveautes\.js\?v=47[78]/);
   assert.match(nouvJs, /VERSION_AFFICHEE/);
   assert.doesNotMatch(nouvJs, /nouveautes\.json\?v=451/);
 
-  assert.match(adminHtml, /config\.js\?v=477/);
-  assert.match(adminHtml, /admin\.js\?v=477-perf/);
-  assert.match(adminHtml, /quiz-admin\.js\?v=477/);
-  assert.match(adminHtml, /v477 · sti-atelier-v338/);
+  assert.match(adminHtml, /config\.js\?v=47[78]/);
+  assert.match(adminHtml, /admin\.js\?v=47[78]-perf/);
+  assert.match(adminHtml, /quiz-admin\.js\?v=47[78]/);
+  assert.match(adminHtml, /v47[78] · sti-atelier-v33[89]/);
   assert.match(adminJs, /VERSION_AFFICHEE/);
   assert.match(accesJs, /VERSION_AFFICHEE/);
 
-  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v477\*\*\s*\(`sti-atelier-v338`/);
+  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v47[78]\*\*\s*\(`sti-atelier-v33[89]`/);
   assert.match(readmeMd, /\|\s*v477\s*\|/);
-  assert.equal(nouvJson[0].version, 'v477', 'La nouveauté en tête de nouveautes.json doit être v477');
-  assert.equal(offlineManifest.version, 'v477-sti-atelier-v338');
+  assert.ok(nouvJson.some((e) => e.version === 'v477'), 'v477 doit figurer dans nouveautes.json');
+  assert.match(offlineManifest.version, /^v47[78]-sti-atelier-v33[89]$/);
 });
 
 test('v477 (comportemental VM) : migration SW de la racine ./ depuis sti-atelier-v335 (v475) sans résurrection du vieux HTML + roue STiV2.0.477 immédiate', async () => {
@@ -6647,12 +6647,12 @@ test('v477 (comportemental VM) : migration SW de la racine ./ depuis sti-atelier
   await activatePromise;
 
   assert.equal(stores.has('sti-atelier-v335'), false, 'L’ancien cache sti-atelier-v335 (v475) doit être supprimé après activate');
-  const nvStore = stores.get('sti-atelier-v338');
-  assert.ok(nvStore, 'Le nouveau cache sti-atelier-v338 doit exister');
-  assert.equal(nvStore.get('https://sti.example/index.html').body, 'fresh-v477:./index.html', 'index.html doit être rafraîchi en v477');
-  assert.equal(nvStore.get('https://sti.example/').body, 'fresh-v477:./index.html', 'L’URL racine "/" doit servir le HTML v477 frais et jamais l’ancien v475 migré');
+  const nvStore = stores.get(swCtx.CACHE);
+  assert.ok(nvStore, 'Le nouveau cache actif doit exister');
+  assert.equal(nvStore.get('https://sti.example/index.html').body, 'fresh-v477:./index.html', 'index.html doit être rafraîchi');
+  assert.equal(nvStore.get('https://sti.example/').body, 'fresh-v477:./index.html', 'L’URL racine "/" doit servir le HTML frais et jamais l’ancien v475 migré');
 
-  // 2) Simulation d'un navigateur ayant encore sti-version-affichee="475" en localStorage : __stiVerAffichee() renvoie immédiatement "477"
+  // 2) Simulation d'un navigateur ayant encore sti-version-affichee="475" en localStorage : __stiVerAffichee() renvoie immédiatement VERSION_AFFICHEE active
   const configSrc = read('assets/js/config.js');
   const accesSrc = read('assets/js/acces.js');
   const verFnMatch = accesSrc.match(/window\.__stiVerAffichee\s*=\s*function\s*\(\)\s*\{[\s\S]*?\n\s*\};/);
@@ -6676,6 +6676,277 @@ test('v477 (comportemental VM) : migration SW de la racine ./ depuis sti-atelier
   vm.runInNewContext(configSrc, clientCtx);
   clientCtx.cfg = clientCtx.STI_AUTH;
   vm.runInNewContext(verFnMatch[0], clientCtx);
-  assert.equal(clientCtx.__stiVerAffichee(), '477', 'Même avec sti-version-affichee="475" en cache local, la roue doit afficher immédiatement 477');
+  assert.equal(clientCtx.__stiVerAffichee(), String(clientCtx.STI_AUTH.VERSION_AFFICHEE), 'Même avec sti-version-affichee="475" en cache local, la roue doit afficher immédiatement la version active');
 });
+
+test('v478 (structure & migration SQL) : protection monotone multicouche des XP et records de Quiz élèves (trigger PostgreSQL + sync-progressions + quiz-sync + 4 quiz)', () => {
+  const migSql = read('supabase/migrations/20261027_xp_quiz_monotone_v478.sql');
+  const docSql = read('documents/sql/sti_progressions.sql');
+  const syncProgJs = read('assets/js/sync-progressions.js');
+  const quizSyncJs = read('assets/js/quiz-sync.js');
+  const sqlHtml = read('quiz/sql.html');
+  const phpHtml = read('quiz/php.html');
+  const hcHtml = read('quiz/html-css.html');
+  const jsHtml = read('quiz/javascript.html');
+  const tabHtml = read('quiz/tableaux.html');
+  const indexHtml = read('index.html');
+  const configJs = read('assets/js/config.js');
+  const swJs = read('sw.js');
+  const readmeMd = read('README.md');
+  const nouvJson = JSON.parse(read('assets/data/nouveautes.json'));
+  const offlineManifest = JSON.parse(read('offline-complete-manifest.json'));
+
+  // 1) Migration PostgreSQL v478 : trigger BEFORE UPDATE protégeant les XP & records de quiz
+  assert.match(migSql, /create or replace function public\.sti_progressions_preserver_xp\(\)/i);
+  assert.match(migSql, /create trigger trg_sti_progressions_monotone_xp[\s\S]*before update on public\.sti_progressions/i);
+  for (const cleXp of ['sqlQuestV3', 'quizphp_v1_user', 'quizzora_xp_v1', 'sti-quiz-xp-js-v1', 'js_quiz_high_score', 'js_quiz_total_answered', 'sti-mes-scores']) {
+    assert.ok(migSql.includes(cleXp), `La migration PostgreSQL v478 doit protéger ${cleXp}`);
+  }
+  assert.match(docSql, /trg_sti_progressions_monotone_xp/);
+
+  // 2) sync-progressions.js : verrou pull-before-push + clés XP HTML-CSS & JS + fusion monotone bidirectionnelle
+  assert.match(syncProgJs, /enVolTirer\s*=\s*false/);
+  assert.match(syncProgJs, /pullInitialTermine\s*=\s*false/);
+  assert.match(syncProgJs, /function fusionnerCleQuizMonotone\(/);
+  assert.match(syncProgJs, /function fusionnerAcquisMonotonesDistants\(/);
+  assert.match(syncProgJs, /"quizzora_xp_v1"/);
+  assert.match(syncProgJs, /"sti-quiz-xp-js-v1"/);
+
+  // 3) quiz-sync.js : calcul d'un plancher d'XP garanti depuis sti_quiz_parties
+  assert.match(quizSyncJs, /function calculerXpPlancherQuiz\(quiz,\s*lignes\)/);
+  assert.match(quizSyncJs, /xpPlancher:\s*xpPlancher/);
+  assert.match(quizSyncJs, /calculerXpPlancherQuiz:\s*calculerXpPlancherQuiz/);
+
+  // 4) Les 4 moteurs de quiz protègent leurs XP localement et appliquent res.xpPlancher
+  assert.match(sqlHtml, /res\.xpPlancher\s*&&\s*res\.xpPlancher\s*>\s*\(S\.xp\s*\|\|\s*0\)/);
+  assert.match(sqlHtml, /!Q\._xpCredited/);
+  assert.match(phpHtml, /res\.xpPlancher\s*&&\s*res\.xpPlancher\s*>\s*\(user\.xp\s*\|\|\s*0\)/);
+  assert.match(phpHtml, /!quiz\._xpCredited/);
+  assert.doesNotMatch(phpHtml, /memoLire\(CLE_LOCALE\s*\+\s*"user",\s*"null"\)/, 'Correction de l’appel memoLire à 1 argument sur php.html');
+  assert.match(hcHtml, /CLE_XP_HTMLCSS\s*=\s*"quizzora_xp_v1"/);
+  assert.match(hcHtml, /res\.xpPlancher/);
+  assert.match(jsHtml, /"sti-quiz-xp-js-v1"/);
+  assert.match(jsHtml, /res\.xpPlancher/);
+
+  // 5) Version active v478 / sti-atelier-v339 cohérente partout
+  assert.match(configJs, /VERSION:\s*339\b/);
+  assert.match(configJs, /VERSION_AFFICHEE:\s*478\b/);
+  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v339"/);
+  assert.match(swJs, /var UPDATE_ID\s*=\s*"v478-xp-quiz-monotone"/);
+  for (const [nom, html] of [
+    ['index.html', indexHtml],
+    ['quiz/sql.html', sqlHtml],
+    ['quiz/php.html', phpHtml],
+    ['quiz/html-css.html', hcHtml],
+    ['quiz/javascript.html', jsHtml],
+    ['quiz/tableaux.html', tabHtml],
+  ]) {
+    assert.match(html, /sync-progressions\.js\?v=478/, `${nom} doit charger sync-progressions.js?v=478`);
+  }
+  assert.match(readmeMd, /\*\*Version active\*\*\s*:\s*\*\*v478\*\*\s*\(`sti-atelier-v339`/);
+  assert.equal(nouvJson[0].version, 'v478');
+  assert.equal(offlineManifest.version, 'v478-sti-atelier-v339');
+});
+
+test('v478 (comportemental VM) : zéro remise à zéro des XP sur navigateur neuf/partagé (verrou pull-before-push + fusion local >= distant + plancher sti_quiz_parties)', async () => {
+  const vm = await import('node:vm');
+  const syncProgSrc = read('assets/js/sync-progressions.js');
+  const quizSyncSrc = read('assets/js/quiz-sync.js');
+
+  // ── Scénario 1 : Élève se connecte sur un nouvel appareil où quiz/sql.html a déjà écrit xp:0 en localStorage ──
+  // Avant la fin de tirer(), un pagehide / visibilitychange tente pousser() : il NE DOIT PAS écraser les 3 450 XP cloud !
+  let cloudRow = {
+    donnees: {
+      sqlQuestV3: JSON.stringify({ xp: 3450, level: 5, streak: 7, totalAnswered: 90, totalCorrect: 76, bestCombo: 11, best: { classique: 2400 } }),
+      quizphp_v1_user: JSON.stringify({ name: 'Sami', avatar: '🚀', xp: 2800, best: 1950, streak: 9 }),
+      js_quiz_high_score: '1850',
+      js_quiz_total_answered: '60',
+    },
+    maj: '2026-10-27T08:00:00.000Z',
+  };
+  const postedPayloads = [];
+  let resolveSlowGet = null;
+
+  const makeStore = (init = {}) => {
+    const m = new Map(Object.entries(init));
+    return {
+      get length() { return m.size; },
+      key: (i) => Array.from(m.keys())[i] || null,
+      getItem: (k) => (m.has(k) ? m.get(k) : null),
+      setItem: (k, v) => m.set(k, String(v)),
+      removeItem: (k) => m.delete(k),
+      _map: m,
+    };
+  };
+
+  const lsFresh = makeStore({
+    'sb-vywujxmepvcbgedgmger-auth-token': JSON.stringify({
+      access_token: 'jwt-eleve-xp',
+      user: { id: 'eleve-xp-1', email: 'sami@sti.tn' },
+    }),
+    // État vierge écrit au démarrage du quiz avant l'arrivée du réseau :
+    sqlQuestV3: JSON.stringify({ xp: 0, level: 1, streak: 0, totalAnswered: 0, totalCorrect: 0, bestCombo: 0, best: { classique: 0 } }),
+    quizphp_v1_user: JSON.stringify({ name: '', avatar: '🐘', xp: 0, best: 0, streak: 0 }),
+  });
+  const ssFresh = makeStore();
+  const winListeners = {};
+  const docListeners = {};
+
+  const ctx1 = {
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'sb_pub_test' },
+    localStorage: lsFresh,
+    sessionStorage: ssFresh,
+    navigator: { onLine: true },
+    CustomEvent: function (name) { this.type = name; },
+    dispatchEvent() {},
+    addEventListener(ev, fn) { (winListeners[ev] = winListeners[ev] || []).push(fn); },
+    setInterval() { return 1; },
+    setTimeout(fn) { fn(); return 1; },
+    clearTimeout() {},
+    Date, Math, JSON, Object, Array, String, Number, Boolean, RegExp, Promise, parseInt, parseFloat, isNaN, encodeURIComponent,
+    document: {
+      readyState: 'complete',
+      visibilityState: 'hidden',
+      getElementById: () => null,
+      createElement: () => ({ style: {}, setAttribute() {}, appendChild() {}, addEventListener() {} }),
+      body: { appendChild() {} },
+      addEventListener(ev, fn) { (docListeners[ev] = docListeners[ev] || []).push(fn); },
+    },
+    fetch: (url, opts = {}) => {
+      const method = (opts.method || 'GET').toUpperCase();
+      if (method === 'POST') {
+        const body = JSON.parse(opts.body);
+        postedPayloads.push(body);
+        cloudRow = { donnees: body.donnees, maj: body.maj };
+        return Promise.resolve({ ok: true, text: async () => '' });
+      }
+      // GET lent pour simuler la course au chargement / fermeture rapide
+      return new Promise((res) => {
+        resolveSlowGet = () => res({ ok: true, json: async () => [cloudRow] });
+      });
+    },
+  };
+  ctx1.window = ctx1;
+  ctx1.self = ctx1;
+  ctx1.top = ctx1;
+
+  vm.runInNewContext(syncProgSrc, ctx1, { filename: 'assets/js/sync-progressions.js' });
+
+  // Pendant que tirer() est en vol, l'élève quitte ou masque l'onglet : pousser() DOIT être bloqué !
+  (docListeners.visibilitychange || []).forEach((fn) => fn());
+  (winListeners.pagehide || []).forEach((fn) => fn());
+  assert.equal(postedPayloads.length, 0, 'Aucun POST ne doit partir tant que le premier tirer() du compte n’a pas abouti');
+
+  // Le GET Supabase finit enfin : les 3 450 XP SQL et 2 800 XP PHP sont restaurés sans perte !
+  assert.equal(typeof resolveSlowGet, 'function');
+  resolveSlowGet();
+  await new Promise((r) => setImmediate(r));
+  await new Promise((r) => setImmediate(r));
+
+  const sqlRestored = JSON.parse(lsFresh.getItem('sqlQuestV3'));
+  const phpRestored = JSON.parse(lsFresh.getItem('quizphp_v1_user'));
+  assert.equal(sqlRestored.xp, 3450, 'Les 3 450 XP SQL du cloud doivent remplacer le 0 local');
+  assert.equal(sqlRestored.level, 5);
+  assert.equal(sqlRestored.best.classique, 2400);
+  assert.equal(phpRestored.xp, 2800, 'Les 2 800 XP PHP du cloud doivent remplacer le 0 local');
+  assert.equal(phpRestored.best, 1950);
+  for (const p of postedPayloads) {
+    const sq = JSON.parse(p.donnees.sqlQuestV3 || '{}');
+    assert.ok((sq.xp || 0) >= 3450, 'Aucun POST différé ne doit jamais envoyer un XP SQL inférieur à 3 450');
+  }
+
+  // ── Scénario 2 : Conflit multi-appareils où local.maj > cloud.maj mais cloud possède 4 200 XP PHP acquis sur téléphone ──
+  const lsConflict = makeStore({
+    'sb-vywujxmepvcbgedgmger-auth-token': JSON.stringify({
+      access_token: 'jwt-eleve-xp',
+      user: { id: 'eleve-xp-1', email: 'sami@sti.tn' },
+    }),
+    'sti-sync-uid': 'eleve-xp-1',
+    'sti-sync-maj': '2026-10-27T12:00:00.000Z', // Plus récent que le cloud (10:00Z) !
+    'sti-progres-v1': JSON.stringify({ html5: true }),
+    quizphp_v1_user: JSON.stringify({ name: 'Sami', avatar: '🐘', xp: 0, best: 0, streak: 0 }),
+  });
+  const ctx2 = {
+    ...ctx1,
+    localStorage: lsConflict,
+    sessionStorage: makeStore(),
+    fetch: async (url, opts = {}) => {
+      if ((opts.method || 'GET').toUpperCase() === 'POST') return { ok: true, text: async () => '' };
+      return {
+        ok: true,
+        json: async () => [{
+          maj: '2026-10-27T10:00:00.000Z',
+          donnees: {
+            quizphp_v1_user: JSON.stringify({ name: 'Sami', avatar: '🚀', xp: 4200, best: 2600, streak: 12 }),
+          },
+        }],
+      };
+    },
+  };
+  ctx2.window = ctx2;
+  ctx2.self = ctx2;
+  ctx2.top = ctx2;
+  vm.runInNewContext(syncProgSrc, ctx2, { filename: 'assets/js/sync-progressions.js' });
+  await new Promise((r) => setImmediate(r));
+  await new Promise((r) => setImmediate(r));
+
+  const phpMerged = JSON.parse(lsConflict.getItem('quizphp_v1_user'));
+  assert.equal(phpMerged.xp, 4200, 'Même quand local.maj > cloud.maj, les 4 200 XP PHP distants doivent être préservés par fusion monotone');
+  assert.equal(phpMerged.best, 2600);
+
+  // ── Scénario 3 : Plancher d'XP reconstruit depuis l'historique immuable sti_quiz_parties (STIQuizSync.resume) ──
+  const lsQuiz = makeStore({
+    'sb-vywujxmepvcbgedgmger-auth-token': JSON.stringify({
+      access_token: 'jwt-eleve-xp',
+      user: { id: 'eleve-xp-1', email: 'sami@sti.tn' },
+    }),
+  });
+  const partiesHistoriques = [
+    { user_id: 'eleve-xp-1', quiz: 'sql', score: 18, total: 20, points: 1800, module: 'select', cree_le: '2026-10-26T09:00:00Z' },
+    { user_id: 'eleve-xp-1', quiz: 'sql', score: 20, total: 20, points: 2400, module: 'jointure', cree_le: '2026-10-27T09:00:00Z' },
+    { user_id: 'eleve-xp-1', quiz: 'php', score: 16, total: 20, points: 1600, module: 'classic', cree_le: '2026-10-27T09:30:00Z' },
+  ];
+  const quizCtx = {
+    STI_AUTH: { URL: 'https://vywujxmepvcbgedgmger.supabase.co', CLE: 'sb_pub_test' },
+    localStorage: lsQuiz,
+    location: new URL('https://sti.example/quiz/sql.html'),
+    addEventListener() {},
+    crypto: { getRandomValues: (arr) => { for (let i = 0; i < arr.length; i++) arr[i] = i + 1; return arr; } },
+    Date, Math, JSON, Object, Array, String, Number, Boolean, RegExp, Promise, Set, parseInt, parseFloat, isNaN,
+    document: { readyState: 'complete', addEventListener() {} },
+    supabase: {
+      createClient: () => ({
+        auth: { getUser: async () => ({ data: { user: { id: 'eleve-xp-1', email: 'sami@sti.tn' } } }) },
+        from: (tbl) => ({
+          select: () => {
+            const flt = {};
+            const b = {
+              eq(c, v) { flt[c] = v; return b; },
+              order() { return b; },
+              async range(from, to) {
+                const rows = tbl === 'sti_quiz_parties'
+                  ? partiesHistoriques.filter((r) => Object.keys(flt).every((k) => r[k] === flt[k])).slice(from, to + 1)
+                  : [];
+                return { data: rows, error: null };
+              },
+            };
+            return b;
+          },
+        }),
+      }),
+    },
+  };
+  quizCtx.window = quizCtx;
+  vm.runInNewContext(quizSyncSrc, quizCtx, { filename: 'assets/js/quiz-sync.js' });
+
+  const resSql = await quizCtx.STIQuizSync.resume('sql');
+  const resPhp = await quizCtx.STIQuizSync.resume('php');
+  assert.equal(resSql.parties, 2);
+  assert.equal(resSql.sommePoints, 4200);
+  // Partie 1 SQL : round(1800/15)+50 = 170 ; Partie 2 SQL : round(2400/15)+100 = 260 => xpPlancher = 430 XP
+  assert.equal(resSql.xpPlancher, 430, 'STIQuizSync.resume("sql") doit fournir le plancher d’XP cumulés garanti depuis sti_quiz_parties');
+  // Partie PHP : 1600 + 200 (80 %) = 1800 XP
+  assert.equal(resPhp.xpPlancher, 1800, 'STIQuizSync.resume("php") doit fournir le plancher d’XP cumulés garanti depuis sti_quiz_parties');
+});
+
 

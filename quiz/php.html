@@ -5148,9 +5148,18 @@
         }
         window.addEventListener("sti-cloud-restored", () => {
           try {
-            const uLu = JSON.parse(memoLire(CLE_LOCALE + "user", "null"));
+            const uLu = JSON.parse(memoLire(CLE_LOCALE + "user") || "null");
             if (uLu && typeof uLu === "object") {
-              user = Object.assign(user, uLu);
+              const xpMax = Math.max(Number(user.xp) || 0, Number(uLu.xp) || 0);
+              const bestMax = Math.max(Number(user.best) || 0, Number(uLu.best) || 0);
+              const streakMax = Math.max(Number(user.streak) || 0, Number(uLu.streak) || 0);
+              user = Object.assign({}, uLu, user, {
+                name: user.name || uLu.name || "",
+                avatar: user.name ? user.avatar : (uLu.avatar || user.avatar || "🐘"),
+                xp: xpMax,
+                best: bestMax,
+                streak: streakMax,
+              });
               updateNav();
             }
           } catch (e) {}
@@ -5177,6 +5186,18 @@
         }
       }
       function saveUser() {
+        try {
+          const ex = JSON.parse(memoLire(CLE_LOCALE + "user") || "null");
+          if (ex && typeof ex === "object") {
+            user.xp = Math.max(Number(user.xp) || 0, Number(ex.xp) || 0);
+            user.best = Math.max(Number(user.best) || 0, Number(ex.best) || 0);
+            user.streak = Math.max(Number(user.streak) || 0, Number(ex.streak) || 0);
+            if (!user.name && ex.name) {
+              user.name = ex.name;
+              if (ex.avatar) user.avatar = ex.avatar;
+            }
+          }
+        } catch (eEx) {}
         memoEcrire(CLE_LOCALE + "user", JSON.stringify(user));
         updateNav();
       }
@@ -5838,6 +5859,18 @@
           STIQuizSync.enregistrer
         ) {
           quiz._partySynced = true;
+          if (!quiz._xpCredited && quiz.answers.length > 0) {
+            quiz._xpCredited = true;
+            const accExitPhp = Math.round((quiz.correct / quiz.answers.length) * 100);
+            const xpExitPhp =
+              (quiz.score || 0) +
+              (quiz.maxStreak || 0) * 50 +
+              (accExitPhp === 100 ? 500 : accExitPhp >= 80 ? 200 : 0);
+            user.xp = (Number(user.xp) || 0) + xpExitPhp;
+            user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);
+            if ((quiz.score || 0) > (user.best || 0)) user.best = quiz.score;
+            try { saveUser(); } catch (eSuEx) {}
+          }
           if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function") {
             STIQuizSync.noterQuestionsVuesQuiz(
               "q_php",
@@ -5899,10 +5932,16 @@
           STIQuizSync.resume("php")
             .then((res) => {
               if (!res) return;
+              let majPhp = false;
+              if (res.xpPlancher && res.xpPlancher > (user.xp || 0)) {
+                user.xp = res.xpPlancher;
+                majPhp = true;
+              }
               if (res.meilleurPoints && res.meilleurPoints > (user.best || 0)) {
                 user.best = res.meilleurPoints;
-                saveUser();
+                majPhp = true;
               }
+              if (majPhp) saveUser();
               const z = $("phpCloudBilan");
               if (!z || !res.parties) return;
               z.innerHTML =
@@ -6086,23 +6125,26 @@
               ? quiz.answers.length
               : quiz.list.length,
           acc = total ? Math.round((quiz.correct / total) * 100) : 0;
-        synchroniserPartiePhp(true);
-        if (window.STIQuizSync && STIQuizSync.quitterRevision) {
-          STIQuizSync.quitterRevision();
-        }
-        // xp
+        // xp (crédité de façon monotone avant la synchro cloud afin de ne jamais être perdu ni doublé)
         const xpGain =
           quiz.score +
           quiz.maxStreak * 50 +
           (acc === 100 ? 500 : acc >= 80 ? 200 : 0);
-        const oldLevel = Math.floor(user.xp / 1000) + 1;
-        user.xp += xpGain;
-        user.streak = Math.max(user.streak, quiz.maxStreak);
-        if (quiz.score > user.best) user.best = quiz.score;
-        try {
-          saveUser();
-        } catch (eSu) {}
-        const newLevel = Math.floor(user.xp / 1000) + 1;
+        const oldLevel = Math.floor((Number(user.xp) || 0) / 1000) + 1;
+        if (!quiz._xpCredited) {
+          quiz._xpCredited = true;
+          user.xp = (Number(user.xp) || 0) + xpGain;
+          user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);
+          if (quiz.score > (user.best || 0)) user.best = quiz.score;
+          try {
+            saveUser();
+          } catch (eSu) {}
+        }
+        synchroniserPartiePhp(true);
+        if (window.STIQuizSync && STIQuizSync.quitterRevision) {
+          STIQuizSync.quitterRevision();
+        }
+        const newLevel = Math.floor((Number(user.xp) || 0) / 1000) + 1;
         try {
           history.unshift({
             date: new Date().toLocaleDateString("fr-FR"),
@@ -8302,6 +8344,6 @@
 <script src="../assets/js/protection.js?v=227" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/acces.js?v=453" defer></script>
-  <script src="../assets/js/sync-progressions.js?v=476" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=478" defer></script>
 </body>
 </html>
