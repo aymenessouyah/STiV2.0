@@ -20,9 +20,11 @@
      },
      progression: { html5:0, css3:0, javascript:0, sql:0, php:0 }, // 0 → 5 chapitres révisés
      quiz: [ { matiere:"sql", score:14, total:20, date:"2026-10-27", erreurs:[] } ],
-     videos: { vues:["html5-cours"], derniere:{ id:"css3-cours", temps:0 } },
+     videos: { vues:["html5-cours"], derniere:{ id:"css3-cours", temps:0 }, positions:{} },
      notes: [ { atelier:"TP1 HTML", note:16, date:"2026-10-20" } ],
-     nouveautesLues: ["v478"]
+     nouveautesLues: ["v478"],
+     cours: { chapitres:{}, exercices:{}, laboratoires:{}, fenetres:{},
+              miniQuiz:{}, audio:{} }   // pages matière (cours.js)
    }
 
    API PUBLIQUE (window.STIProfil) :
@@ -35,6 +37,11 @@
    ========================================================================== */
 (function () {
   'use strict';
+
+  /* Chargé deux fois sur les pages matière (une fois en tête pour peindre le
+     thème sans flash, une fois dans la chaîne imposée config → … → profil →
+     app) : la seconde exécution est neutralisée ici, sans double observateur. */
+  if (window.STIProfil && window.STIProfil.__stiCharge) return;
 
   var CLE = 'sti-profil-abonne';            // préfixe « sti- » → synchronisé
   var THEMES = ['sombre', 'clair', 'intermediaire'];
@@ -53,9 +60,20 @@
       derniereLecture: { matiere: '', chapitre: '', pourcent: 0, url: '' },
       progression: { html5: 0, css3: 0, javascript: 0, sql: 0, php: 0 },
       quiz: [],
-      videos: { vues: [], derniere: null },
+      videos: { vues: [], derniere: null, positions: {} },
       notes: [],
-      nouveautesLues: []
+      nouveautesLues: [],
+      /* ---- Pages de cours (ajout de la refonte v2) ----
+         Toutes les actions pédagogiques sont regroupées ici : aucun autre
+         script du nouveau design n'a le droit d'écrire dans localStorage. */
+      cours: {
+        chapitres: {},     // { "html5:ch3": true }        — chapitre révisé
+        exercices: {},     // { "sql:ex4": true }          — exercice fait
+        laboratoires: {},  // { "css3:box-shadow": {...} } — valeurs des curseurs
+        fenetres: {},      // { "html5:tpl-target": true } — fenêtre déjà ouverte
+        miniQuiz: {},      // { "php:synthese": {score,total,date} }
+        audio: {}          // { "sql-cours": { temps: 42 } } — Guide-Ligne
+      }
     };
   }
 
@@ -86,10 +104,40 @@
     if (p.videos && typeof p.videos === 'object') {
       v.videos.vues = Array.isArray(p.videos.vues) ? p.videos.vues.slice(-200) : [];
       v.videos.derniere = (p.videos.derniere && typeof p.videos.derniere === 'object') ? p.videos.derniere : null;
+      if (p.videos.positions && typeof p.videos.positions === 'object') {
+        Object.keys(p.videos.positions).slice(0, 200).forEach(function (k) {
+          var q = p.videos.positions[k];
+          if (q && typeof q === 'object') v.videos.positions[k] = { temps: Number(q.temps) || 0, duree: Number(q.duree) || 0 };
+        });
+      }
     }
     if (Array.isArray(p.notes)) v.notes = p.notes.slice(-40);
     if (Array.isArray(p.nouveautesLues)) v.nouveautesLues = p.nouveautesLues.slice(-100);
+    if (p.cours && typeof p.cours === 'object') {
+      v.cours.chapitres = objetBooleen(p.cours.chapitres, 400);
+      v.cours.exercices = objetBooleen(p.cours.exercices, 400);
+      v.cours.fenetres = objetBooleen(p.cours.fenetres, 200);
+      ['laboratoires', 'miniQuiz', 'audio'].forEach(function (k) {
+        if (!p.cours[k] || typeof p.cours[k] !== 'object') return;
+        Object.keys(p.cours[k]).slice(0, 200).forEach(function (cle) {
+          var val = p.cours[k][cle];
+          if (val && typeof val === 'object') v.cours[k][cle] = val;
+        });
+      });
+    }
     return v;
+  }
+
+  /* Copie défensive d'un dictionnaire { clé : valeur } venu du JSON. */
+  function objetBooleen(source, limite, transformer) {
+    var out = {};
+    if (!source || typeof source !== 'object' || Array.isArray(source)) return out;
+    Object.keys(source).slice(0, limite).forEach(function (cle) {
+      var val = source[cle];
+      if (transformer) out[cle] = transformer(val);
+      else if (val === true || val === 1 || val === '1') out[cle] = true;
+    });
+    return out;
   }
 
   /* ---------- 1. LECTURE / ÉCRITURE (seul endroit autorisé) ---------- */
@@ -266,8 +314,84 @@
     fin();
   }
 
+  /* ---------- 5. PAGES DE COURS (raccourcis métier) ----------
+     Toutes ces fonctions sont les SEULES portes d'entrée pour les actions
+     de l'élève sur une page matière : cours.js ne fait que les appeler. */
+  function cle(matiere, id) { return String(matiere || '') + ':' + String(id || ''); }
+
+  function marquerChapitre(matiere, id, fait, total) {
+    var p = chargerProfil(), k = cle(matiere, id);
+    if (fait) p.cours.chapitres[k] = true; else delete p.cours.chapitres[k];
+    /* Agrégat 0 → 5 pour le tableau de bord (compatibilité v1). */
+    var tous = Object.keys(p.cours.chapitres).filter(function (x) { return x.indexOf(matiere + ':') === 0; }).length;
+    p.progression[matiere] = Math.min(5, Math.round(tous / Math.max(1, Number(total) || 5) * 5));
+    return sauvegarderProfil(p);
+  }
+  function estChapitreFait(matiere, id) { return chargerProfil().cours.chapitres[cle(matiere, id)] === true; }
+  function nbChapitresFaits(matiere) {
+    return Object.keys(chargerProfil().cours.chapitres).filter(function (k) {
+      return k.indexOf(matiere + ':') === 0;
+    }).length;
+  }
+  function marquerExercice(matiere, id, fait) {
+    var p = chargerProfil(), k = cle(matiere, id);
+    if (fait) p.cours.exercices[k] = true; else delete p.cours.exercices[k];
+    return sauvegarderProfil(p);
+  }
+  function estExerciceFait(matiere, id) { return chargerProfil().cours.exercices[cle(matiere, id)] === true; }
+  function nbExercicesFaits(matiere) {
+    return Object.keys(chargerProfil().cours.exercices).filter(function (k) {
+      return k.indexOf(matiere + ':') === 0;
+    }).length;
+  }
+  function enregistrerLaboratoire(matiere, id, valeurs) {
+    var p = chargerProfil();
+    p.cours.laboratoires[cle(matiere, id)] = valeurs || {};
+    return sauvegarderProfil(p);
+  }
+  function laboratoire(matiere, id) { return chargerProfil().cours.laboratoires[cle(matiere, id)] || null; }
+  function enregistrerFenetre(matiere, id) {
+    var p = chargerProfil();
+    p.cours.fenetres[cle(matiere, id)] = true;
+    return sauvegarderProfil(p);
+  }
+  function enregistrerMiniQuiz(matiere, id, score, total) {
+    var p = chargerProfil();
+    p.cours.miniQuiz[cle(matiere, id)] = {
+      score: Number(score) || 0, total: Number(total) || 10,
+      date: new Date().toISOString().slice(0, 10)
+    };
+    return sauvegarderProfil(p);
+  }
+  function miniQuiz(matiere, id) { return chargerProfil().cours.miniQuiz[cle(matiere, id)] || null; }
+
+  /* Position de lecture : vidéo (.mp4) et piste audio du Guide-Ligne. */
+  function enregistrerPositionVideo(id, temps, duree) {
+    var p = chargerProfil();
+    p.videos.positions[id] = { temps: Math.round(Number(temps) || 0), duree: Math.round(Number(duree) || 0) };
+    p.videos.derniere = { id: id, temps: Math.round(Number(temps) || 0), date: new Date().toISOString().slice(0, 10) };
+    return sauvegarderProfil(p);
+  }
+  function positionVideo(id) { return chargerProfil().videos.positions[id] || null; }
+  function enregistrerPositionAudio(id, temps) {
+    var p = chargerProfil();
+    p.cours.audio[id] = { temps: Math.round((Number(temps) || 0) * 10) / 10 };
+    return sauvegarderProfil(p);
+  }
+  function positionAudio(id) { return (chargerProfil().cours.audio[id] || {}).temps || 0; }
+
+  /* Reprise de lecture : une seule écriture, utilisée par toutes les matières. */
+  function enregistrerLecture(matiere, chapitre, pourcent, url) {
+    return mettreAJour('derniereLecture', {
+      matiere: String(matiere || ''), chapitre: String(chapitre || ''),
+      pourcent: Math.max(0, Math.min(100, Math.round(Number(pourcent) || 0))),
+      url: String(url || '')
+    });
+  }
+
   /* Export public */
   window.STIProfil = {
+    __stiCharge: true,
     CLE: CLE,
     THEMES: THEMES,
     LANGUES: LANGUES,
@@ -285,7 +409,24 @@
     marquerVideoVue: marquerVideoVue,
     enregistrerQuiz: enregistrerQuiz,
     totalErreurs: totalErreurs,
-    deconnecter: deconnecter
+    deconnecter: deconnecter,
+    /* Pages de cours */
+    marquerChapitre: marquerChapitre,
+    estChapitreFait: estChapitreFait,
+    nbChapitresFaits: nbChapitresFaits,
+    marquerExercice: marquerExercice,
+    estExerciceFait: estExerciceFait,
+    nbExercicesFaits: nbExercicesFaits,
+    enregistrerLaboratoire: enregistrerLaboratoire,
+    laboratoire: laboratoire,
+    enregistrerFenetre: enregistrerFenetre,
+    enregistrerMiniQuiz: enregistrerMiniQuiz,
+    miniQuiz: miniQuiz,
+    enregistrerPositionVideo: enregistrerPositionVideo,
+    positionVideo: positionVideo,
+    enregistrerPositionAudio: enregistrerPositionAudio,
+    positionAudio: positionAudio,
+    enregistrerLecture: enregistrerLecture
   };
 
   /* Application immédiate des préférences, dès l'exécution du script. */

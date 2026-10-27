@@ -823,6 +823,9 @@
       '<div class="alert alert--tip" style="margin-top:1.25rem"><strong>Chemin des vidéos :</strong> remplacez simplement <code>assets/videos/' + m + '-cours.mp4</code> pour mettre à jour le cours filmé (poster et audio facultatifs).</div>';
   }
   function initCourseShell() {
+    /* Les 5 pages matière v2 construisent leur propre coquille enrichie
+       (assets/js/cours.js) : on ne doit pas empiler deux structures d'onglets. */
+    if (document.documentElement.hasAttribute('data-sti-cours-v2')) return;
     var m = document.documentElement.getAttribute('data-sti-matiere');
     if (!m || !MATIERES[m] || $('#stiCourseShell')) return;
     var M = MATIERES[m], body = document.body;
