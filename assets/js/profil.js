@@ -73,6 +73,11 @@
         fenetres: {},      // { "html5:tpl-target": true } — fenêtre déjà ouverte
         miniQuiz: {},      // { "php:synthese": {score,total,date} }
         audio: {}          // { "sql-cours": { temps: 42 } } — Guide-Ligne
+      },
+      /* ---- Quiz (arènes) : une entrée par quiz, dans le même objet ---- */
+      quizStats: {
+        parQuiz: {}        // { "sql": { meilleur, reponses, xp, niveau, serie,
+                           //   badges:[], classement:[], meilleurChrono, parties } }
       }
     };
   }
@@ -113,6 +118,22 @@
     }
     if (Array.isArray(p.notes)) v.notes = p.notes.slice(-40);
     if (Array.isArray(p.nouveautesLues)) v.nouveautesLues = p.nouveautesLues.slice(-100);
+    if (p.quizStats && p.quizStats.parQuiz && typeof p.quizStats.parQuiz === 'object') {
+      Object.keys(p.quizStats.parQuiz).slice(0, 20).forEach(function (cle) {
+        var q = p.quizStats.parQuiz[cle];
+        if (q && typeof q === 'object') v.quizStats.parQuiz[cle] = {
+          meilleur: Number(q.meilleur) || 0,
+          reponses: Number(q.reponses) || 0,
+          xp: Number(q.xp) || 0,
+          niveau: Math.max(1, Number(q.niveau) || 1),
+          serie: Number(q.serie) || 0,
+          badges: Array.isArray(q.badges) ? q.badges.slice(-60) : [],
+          classement: Array.isArray(q.classement) ? q.classement.slice(-10) : [],
+          meilleurChrono: Number(q.meilleurChrono) || 0,
+          parties: Number(q.parties) || 0
+        };
+      });
+    }
     if (p.cours && typeof p.cours === 'object') {
       v.cours.chapitres = objetBooleen(p.cours.chapitres, 400);
       v.cours.exercices = objetBooleen(p.cours.exercices, 400);
@@ -163,9 +184,23 @@
     return cache;
   }
 
+  /* Miroir des clés de thème historiques : les pages d'origine et les quiz
+     lisent « sti-roue-theme » / « sti-theme ». C'est bien profil.js, et lui
+     seul, qui écrit dans localStorage. */
+  function mirroirTheme(profil) {
+    var p = profil || chargerProfil();
+    try {
+      localStorage.setItem('sti-roue-theme', p.theme);
+      var legacy = p.theme === 'sombre' ? 'dark' : p.theme === 'clair' ? 'light' : '';
+      if (legacy) { localStorage.setItem('sti-theme', legacy); localStorage.setItem('theme', legacy); }
+      else { localStorage.removeItem('sti-theme'); localStorage.removeItem('theme'); }
+    } catch (e) { /* stockage bloqué */ }
+  }
+
   function sauvegarderProfil(profil) {
     cache = normaliser(profil || cache || {});
     try { localStorage.setItem(CLE, JSON.stringify(cache)); } catch (e) { /* quota / privé */ }
+    mirroirTheme(cache);
     /* Événement interne : permet à app.js de rafraîchir badge & tableau de bord. */
     try { window.dispatchEvent(new CustomEvent('sti:profil', { detail: cache })); } catch (e) {}
     return cache;
@@ -195,6 +230,7 @@
   /* ---------- 2. PRÉFÉRENCES ---------- */
   function appliquerPreferences() {
     var p = chargerProfil();
+    mirroirTheme(p);
     var r = document.documentElement;
     r.setAttribute('data-theme', p.theme);          // sombre | clair | intermediaire
     r.style.setProperty('--echelle-texte', TAILLES[p.tailleTexte] || 1);
@@ -291,6 +327,87 @@
   }
   function totalErreurs() {
     return chargerProfil().quiz.reduce(function (n, q) { return n + (Array.isArray(q.erreurs) ? q.erreurs.length : 0); }, 0);
+  }
+
+  /* ---------- 6. ARÈNES DE QUIZ (statistiques par quiz) ----------
+     Toutes les parties passent par ici : quiz.js ne lit/écrit aucun stockage.
+     Les erreurs sont stockées dans p.quiz[].erreurs sous forme d'identifiants
+     de questions, ce qui alimente « Rejouer mes erreurs » et la page
+     revision-erreurs.html (via STIQuizSync.enregistrerReponses). */
+  function statsQuiz(id) {
+    var p = chargerProfil();
+    return p.quizStats.parQuiz[id] || {
+      meilleur: 0, reponses: 0, xp: 0, niveau: 1, serie: 0,
+      badges: [], classement: [], meilleurChrono: 0, parties: 0
+    };
+  }
+
+  function enregistrerPartieQuiz(id, partie) {
+    var p = chargerProfil();
+    var d = partie || {};
+    var score = Number(d.score) || 0, total = Math.max(1, Number(d.total) || 1);
+    var reponses = Number(d.reponses) || 0;
+    /* 1. Historique des parties (structure d'origine, lue par le tableau de bord). */
+    p.quiz.push({
+      matiere: id, score: score, total: total,
+      date: new Date().toISOString().slice(0, 10),
+      erreurs: Array.isArray(d.erreurs) ? d.erreurs.slice(0, 200) : [],
+      mode: String(d.mode || ''), precision: Math.round(score / total * 100),
+      combo: Number(d.combo) || 0, duree: Number(d.duree) || 0
+    });
+    p.quiz = p.quiz.slice(-40);
+    /* 2. Statistiques gamifiées de l'arène. */
+    var s = statsQuiz(id);
+    s.parties += 1;
+    s.meilleur = Math.max(s.meilleur, score);
+    s.reponses += reponses;
+    s.xp += Number(d.xp) || 0;
+    s.niveau = Math.max(s.niveau, 1 + Math.floor(s.xp / 500));
+    s.serie = Number(d.serie) || 0;
+    s.meilleurChrono = d.chrono ? (s.meilleurChrono ? Math.min(s.meilleurChrono, Number(d.chrono)) : Number(d.chrono)) : s.meilleurChrono;
+    if (Array.isArray(d.badges)) d.badges.forEach(function (b) { if (s.badges.indexOf(b) === -1) s.badges.push(b); });
+    if (score > 0) {
+      s.classement.push({ score: score, total: total, date: new Date().toISOString().slice(0, 10), mode: String(d.mode || '') });
+      s.classement = s.classement.sort(function (a, b) { return (b.score / (b.total || 1)) - (a.score / (a.total || 1)); }).slice(0, 10);
+    }
+    p.quizStats.parQuiz[id] = s;
+    return sauvegarderProfil(p);
+  }
+
+  /* Identifiants uniques des questions ratées d'un quiz (les plus récentes). */
+  function erreursQuiz(id) {
+    var p = chargerProfil(), vues = {}, out = [];
+    p.quiz.slice().reverse().forEach(function (q) {
+      if (q.matiere !== id || !Array.isArray(q.erreurs)) return;
+      q.erreurs.forEach(function (e) {
+        var cle = String(e);
+        if (!vues[cle]) { vues[cle] = 1; out.push(cle); }
+      });
+    });
+    return out;
+  }
+
+  /* Migration douce d'une ancienne clé localStorage d'un quiz historique.
+     Lecture effectuée ici aussi : profil.js reste le SEUL point d'accès. */
+  function migrerAncienQuiz(id, ancienneCle) {
+    var p = chargerProfil();
+    if (p.quizStats.parQuiz[id] && p.quizStats.parQuiz[id].parties > 0) return p;
+    var brut = null;
+    try { brut = localStorage.getItem(ancienneCle); } catch (e) { return p; }
+    if (!brut) return p;
+    var ancien = null;
+    try { ancien = JSON.parse(brut); } catch (e2) { return p; }
+    if (!ancien || typeof ancien !== 'object') return p;
+    var s = statsQuiz(id);
+    s.meilleur = Math.max(s.meilleur, Number(ancien.bestScore || ancien.meilleur || ancien.highScore) || 0);
+    s.reponses += Number(ancien.totalAnswered || ancien.answered || ancien.reponses) || 0;
+    s.xp += Number(ancien.xp) || 0;
+    s.niveau = Math.max(s.niveau, Number(ancien.level || ancien.niveau) || 1);
+    s.serie = Math.max(s.serie, Number(ancien.streak || ancien.serie) || 0);
+    if (Array.isArray(ancien.badges)) s.badges = ancien.badges.slice(-60);
+    if (Array.isArray(ancien.leaderboard)) s.classement = ancien.leaderboard.slice(-10);
+    p.quizStats.parQuiz[id] = s;
+    return sauvegarderProfil(p);
   }
 
   /* Déconnexion : on délègue au client Supabase déjà créé par acces.js
@@ -426,7 +543,12 @@
     positionVideo: positionVideo,
     enregistrerPositionAudio: enregistrerPositionAudio,
     positionAudio: positionAudio,
-    enregistrerLecture: enregistrerLecture
+    enregistrerLecture: enregistrerLecture,
+    /* Arènes de quiz */
+    statsQuiz: statsQuiz,
+    enregistrerPartieQuiz: enregistrerPartieQuiz,
+    erreursQuiz: erreursQuiz,
+    migrerAncienQuiz: migrerAncienQuiz
   };
 
   /* Application immédiate des préférences, dès l'exécution du script. */

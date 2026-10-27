@@ -11,8 +11,10 @@ outils de démonstration.
 | Le site réel, navigable | Aperçu en direct d'Arena, **port 8000** (racine du dépôt) |
 | La galerie de captures | `<hôte de l'aperçu>/apercu/` |
 | **Les 5 cours en direct** | `<hôte de l'aperçu>/apercu/cours/` (portail d'accès) |
+| **Les 5 quiz en direct** | `<hôte de l'aperçu>/apercu/quiz/` (portail d'accès) |
 | La planche récapulative | [`00-apercu-general.png`](00-apercu-general.png) |
 | La planche des cours | [`cours/00-planche-cours.png`](cours/00-planche-cours.png) |
+| La planche des quiz | [`quiz/00-planche-quiz.png`](quiz/00-planche-quiz.png) |
 
 ### Accès direct aux cours (sans passer par l'accueil)
 
@@ -67,6 +69,34 @@ Résolution : 1440 × 900 pour les vues bureau, 390 × 844 pour le mobile.
 Navigateur : Chromium 153 headless. **Aucune erreur JavaScript** sur les sept
 pages (`pageerror` et `console.error` vides).
 
+### Accès direct aux quiz (sans passer par l'accueil)
+
+| Quiz | Lien | Questions |
+| --- | --- | --- |
+| 🧱 Quizzora | [`../quiz/html-css.html`](../quiz/html-css.html) | 187 |
+| ⚡ Arène JavaScript | [`../quiz/javascript.html`](../quiz/javascript.html) | 106 |
+| 🗄️ SQL Quest | [`../quiz/sql.html`](../quiz/sql.html) | 140 |
+| 🐘 QuizPHP | [`../quiz/php.html`](../quiz/php.html) | 176 |
+| 📊 Quiz des tableaux | [`../quiz/tableaux.html`](../quiz/tableaux.html) | abonnés |
+
+Le portail `apercu/quiz/` présente les 5 arènes avec leurs modes et leurs captures.
+Le verrou 4<sup>ème</sup> SI / abonnés reste actif dans les scripts d'origine.
+
+### Captures des quiz (`apercu/quiz/`)
+
+| Fichier | Vue |
+| --- | --- |
+| `quiz/index.html` | **Portail d'accès** aux 5 quiz |
+| `quiz/00-planche-quiz.png` | Planche 1600 × 1010 : 6 vues |
+| `quiz/html-css-depart.png` · `html-css-jeu.png` · `html-css-bilan.png` | Quizzora : configuration, question, bilan |
+| `quiz/javascript-jeu.png` | Arène JavaScript : vies, combo, minuteur |
+| `quiz/sql-depart.png` · `sql-jeu.png` | SQL Quest : badges/classement, duel et jokers |
+| `quiz/php-jeu.png` · `php-bilan.png` | QuizPHP : question, certificat |
+| `quiz/tableaux-verrou.png` | Quiz des tableaux : écran abonnés (mode clair) |
+| `quiz/quiz-mobile.png` | SQL Quest en 390 × 844 |
+
+Génération : `node tools/captures-quiz.mjs` puis `python3 tools/composer-quiz.py`.
+
 ### Captures des pages matière (`apercu/cours/`)
 
 | Fichier | Vue |
@@ -114,6 +144,10 @@ python3 tools/composer-apercu.py     # nécessite Pillow
 # 4. captures des 5 pages matière + leur planche
 LD_LIBRARY_PATH=/tmp/al2023/lib FONTCONFIG_PATH=/tmp/fonts node tools/captures-cours.mjs
 python3 tools/composer-cours.py
+
+# 5. captures des 5 quiz + leur planche
+node tools/captures-quiz.mjs
+python3 tools/composer-quiz.py
 ```
 
 Sur une machine disposant déjà de Chrome/Chromium, il suffit de remplacer
