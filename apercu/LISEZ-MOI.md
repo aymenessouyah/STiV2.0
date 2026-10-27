@@ -10,7 +10,26 @@ outils de démonstration.
 | --- | --- |
 | Le site réel, navigable | Aperçu en direct d'Arena, **port 8000** (racine du dépôt) |
 | La galerie de captures | `<hôte de l'aperçu>/apercu/` |
+| **Les 5 cours en direct** | `<hôte de l'aperçu>/apercu/cours/` (portail d'accès) |
 | La planche récapulative | [`00-apercu-general.png`](00-apercu-general.png) |
+| La planche des cours | [`cours/00-planche-cours.png`](cours/00-planche-cours.png) |
+
+### Accès direct aux cours (sans passer par l'accueil)
+
+Toutes les pages matière sont servies par le même serveur d'aperçu : **aucune
+connexion Supabase n'est demandée** puisque `acces.js` est neutralisé en mémoire.
+
+| Matière | Cours | Exercices | Annexes | Vidéos |
+| --- | --- | --- | --- | --- |
+| 🧱 HTML5 | [`../cours/html5.html#cours`](../cours/html5.html#cours) | [`#exercices`](../cours/html5.html#exercices) | [`#annexes`](../cours/html5.html#annexes) | [`#videos`](../cours/html5.html#videos) |
+| 🎨 CSS3 | [`../cours/css3.html#cours`](../cours/css3.html#cours) | [`#exercices`](../cours/css3.html#exercices) | [`#annexes`](../cours/css3.html#annexes) | [`#videos`](../cours/css3.html#videos) |
+| ⚡ JavaScript | [`../cours/javascript.html#cours`](../cours/javascript.html#cours) | [`#exercices`](../cours/javascript.html#exercices) | [`#annexes`](../cours/javascript.html#annexes) | [`#videos`](../cours/javascript.html#videos) |
+| 🗄️ SQL | [`../cours/sql.html#cours`](../cours/sql.html#cours) | [`#exercices`](../cours/sql.html#exercices) | [`#annexes`](../cours/sql.html#annexes) | [`#videos`](../cours/sql.html#videos) |
+| 🐘 PHP | [`../cours/php.html#cours`](../cours/php.html#cours) | [`#exercices`](../cours/php.html#exercices) | [`#annexes`](../cours/php.html#annexes) | [`#videos`](../cours/php.html#videos) |
+
+Ces liens sont **relatifs** : ils fonctionnent depuis l'hôte de prévisualisation
+Arena comme depuis `http://127.0.0.1:8000`. Les anciennes pages
+`exercices/html5.html` … `exercices/php.html` redirigent vers `#exercices`.
 
 L'aperçu en direct est servi par `tools/serveur-apercu.py`. Ce serveur **ne modifie
 aucun fichier du dépôt** : il remplace uniquement *en mémoire*, au moment de la
@@ -40,13 +59,28 @@ d'accès, la protection et le service worker restent donc actifs.
 | `02-videos.png` | Section vidéos : 8 cartes .mp4 et filtres par matière |
 | `03-accueil-clair.png` | Même accueil après un clic réel sur le sélecteur de thème clair |
 | `04-tableau-de-bord.png` | Tableau de bord avec profil de démonstration (Aymen, 1 note, 1 quiz) |
-| `05-cours-html5.png` | Coquille 4 onglets autour du cours HTML5 historique |
+| `05-cours-html5.png` | Coquille 5 onglets autour du cours HTML5 historique (capture de la première version) ; voir `cours/` pour la version enrichie |
 | `06-glossaire.png` | Glossaire FR · EN · AR, 75 termes — thème intermédiaire |
 | `07-mobile.png` | Accueil en 390 × 844, navigation basse |
 
 Résolution : 1440 × 900 pour les vues bureau, 390 × 844 pour le mobile.
 Navigateur : Chromium 153 headless. **Aucune erreur JavaScript** sur les sept
 pages (`pageerror` et `console.error` vides).
+
+### Captures des pages matière (`apercu/cours/`)
+
+| Fichier | Vue |
+| --- | --- |
+| `cours/index.html` | **Portail d'accès** aux 5 cours : liens directs vers chaque onglet |
+| `cours/00-planche-cours.png` | Planche 1600 × 1010 : 6 vues des 5 matières |
+| `cours/html5-cours.png` · `html5-exercices.png` · `html5-fenetre.png` | HTML5 : cours, exercices, fenêtre « Agrandir » redimensionnable |
+| `cours/css3-cours.png` · `css3-videos.png` | CSS3 : laboratoires, playlist |
+| `cours/javascript-cours.png` | JavaScript : cours et récapitulatif |
+| `cours/sql-cours.png` | SQL : cours et Guide-Ligne audio |
+| `cours/php-videos.png` | PHP : onglet Vidéos et chapitres cliquables |
+| `cours/html5-intermediaire-rtl.png` · `html5-mobile.png` | Thème intermédiaire + RTL arabe, mobile 390 × 844 |
+
+Génération : `node tools/captures-cours.mjs` puis `python3 tools/composer-cours.py`.
 
 ### Limites connues des captures
 
@@ -76,6 +110,10 @@ LD_LIBRARY_PATH=/tmp/al2023/lib FONTCONFIG_PATH=/tmp/fonts node tools/captures-a
 
 # 3. planche récapitulative
 python3 tools/composer-apercu.py     # nécessite Pillow
+
+# 4. captures des 5 pages matière + leur planche
+LD_LIBRARY_PATH=/tmp/al2023/lib FONTCONFIG_PATH=/tmp/fonts node tools/captures-cours.mjs
+python3 tools/composer-cours.py
 ```
 
 Sur une machine disposant déjà de Chrome/Chromium, il suffit de remplacer

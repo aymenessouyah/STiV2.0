@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accès aux cours — Aperçu STI V2.0</title>
+<style>
+  /* Portail d'accès aux 5 pages matière : autonome, sans ressource externe. */
+  :root{
+    --fond:#0d1526;--surface:#14203a;--surface-2:#1b2a48;--bord:#2b3d5e;
+    --texte:#f1f6ff;--muet:#9fb0cc;--accent:#5aa9ff;
+    --html:#ff7a2f;--css:#38bdf8;--js:#f2c94c;--sql:#2fd48a;--php:#a97bff;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:linear-gradient(180deg,#0b1220,#16233b);color:var(--texte);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  a{color:var(--accent)}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  header{padding:44px 0 24px;border-bottom:1px solid var(--bord)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--bord);
+    border-radius:999px;background:rgba(90,169,255,.10);color:#a9cdff;font-size:.78rem;
+    font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+  h1{font-size:clamp(1.9rem,4.6vw,3rem);line-height:1.1;margin:16px 0 10px;letter-spacing:-.03em}
+  .sous{color:var(--muet);max-width:800px;margin:0 0 20px}
+  .actions{display:flex;flex-wrap:wrap;gap:10px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 17px;border-radius:999px;
+    border:1px solid var(--bord);text-decoration:none;font-weight:700;font-size:.9rem}
+  .btn--plein{background:linear-gradient(135deg,#4f8dff,#39c0ff);border-color:transparent;color:#05122b}
+  .btn--vide{background:var(--surface);color:var(--texte)}
+  section{padding:28px 0}
+  h2{font-size:1.3rem;margin:0 0 6px;letter-spacing:-.02em}
+  .note{color:var(--muet);font-size:.9rem;margin:0 0 18px}
+  .raccourcis{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
+  .raccourcis a{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:999px;
+    background:var(--surface);border:1px solid var(--bord);text-decoration:none;font-weight:700;font-size:.88rem}
+  .raccourcis a:hover{border-color:var(--accent)}
+  .grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
+  article{--mat:var(--accent);background:var(--surface);border:1px solid var(--bord);
+    border-radius:18px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35);
+    display:flex;flex-direction:column}
+  article[data-m="html5"]{--mat:var(--html)}
+  article[data-m="css3"]{--mat:var(--css)}
+  article[data-m="javascript"]{--mat:var(--js)}
+  article[data-m="sql"]{--mat:var(--sql)}
+  article[data-m="php"]{--mat:var(--php)}
+  article .vignette{display:block;background:#0b1424;border-bottom:1px solid var(--bord)}
+  article .vignette img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;display:block}
+  article .corps{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+  article h3{margin:0;font-size:1.22rem;display:flex;align-items:center;gap:9px}
+  article h3 .pastille{width:10px;height:10px;border-radius:50%;background:var(--mat);flex:none}
+  article p{margin:0;color:var(--muet);font-size:.88rem}
+  .meta{display:flex;flex-wrap:wrap;gap:6px}
+  .meta span{font-size:.72rem;font-weight:700;color:var(--mat);background:color-mix(in srgb,var(--mat) 12%,transparent);
+    border:1px solid color-mix(in srgb,var(--mat) 35%,transparent);padding:3px 9px;border-radius:999px}
+  .onglets{display:flex;flex-wrap:wrap;gap:6px;font-size:.78rem}
+  .onglets a{padding:5px 10px;border-radius:999px;background:var(--surface-2);
+    border:1px solid var(--bord);text-decoration:none;color:var(--texte)}
+  .onglets a:hover{border-color:var(--mat)}
+  .ouvrir{margin-top:auto;display:inline-flex;justify-content:center;gap:8px;padding:11px 16px;
+    border-radius:999px;background:var(--mat);color:#08111f;text-decoration:none;font-weight:800;font-size:.9rem}
+  .ouvrir:hover{filter:brightness(1.08)}
+  .planche{width:100%;height:auto;border-radius:18px;border:1px solid var(--bord);display:block}
+  .info{background:var(--surface);border:1px solid var(--bord);border-inline-start:4px solid var(--accent);
+    border-radius:12px;padding:14px 18px;font-size:.9rem;color:var(--muet)}
+  .info strong{color:var(--texte)}
+  code{background:var(--surface-2);padding:2px 6px;border-radius:5px;font-size:.86em}
+  footer{border-top:1px solid var(--bord);padding:22px 0 40px;color:var(--muet);font-size:.85rem}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="eyebrow">● Aperçu de la refonte · cours</span>
+    <h1>Accès direct aux 5 cours</h1>
+    <p class="sous">Les cinq pages matière sont servies par le même aperçu en direct (port 8000).
+      Cliquez sur une carte pour ouvrir le cours complet : sommaire à états, anneau de progression,
+      onglets Cours · Exercices · Annexes · Vidéos, fenêtres « Agrandir » et lecteurs .mp4.</p>
+    <div class="actions">
+      <a class="btn btn--plein" href="../../index.html">▶ Ouvrir l'accueil du site</a>
+      <a class="btn btn--vide" href="../">← Galerie principale</a>
+      <a class="btn btn--vide" href="#cours">Aller aux 5 cours</a>
+      <a class="btn btn--vide" href="00-planche-cours.png">Voir la planche</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <div class="info">
+      <strong>🔓 Verrou neutralisé uniquement dans cet aperçu.</strong>
+      Le serveur de démonstration (<code>tools/serveur-apercu.py</code>) répond par un fichier vide
+      à la place de <code>acces.js</code>, <code>protection.js</code> et <code>protection.css</code> :
+      aucune session Supabase n'est nécessaire pour consulter les cours. Les fichiers du dépôt
+      restent <strong>inchangés</strong> et le verrou fonctionne normalement sur GitHub Pages.
+    </div>
+  </section>
+
+  <section id="cours">
+    <h2>Les cinq matières</h2>
+    <p class="note">Liens relatifs : ils fonctionnent aussi bien depuis l'aperçu local que depuis l'hôte de prévisualisation Arena.</p>
+    <div class="raccourcis">
+      <a href="../../cours/html5.html#cours">📖 Cours</a>
+      <a href="../../cours/html5.html#exercices">📝 Exercices</a>
+      <a href="../../cours/html5.html#annexes">📎 Annexes</a>
+      <a href="../../cours/html5.html#videos">🎥 Vidéos</a>
+      <a href="../../quiz/html-css.html">🎯 Quiz</a>
+    </div>
+
+    <div class="grille" id="grille-cours"></div>
+  </section>
+
+  <section>
+    <h2>Planche récapitulative</h2>
+    <p class="note">Six vues réelles capturées dans Chromium headless (1440 × 900).</p>
+    <a href="00-planche-cours.png"><img class="planche" src="00-planche-cours.png"
+      alt="Planche des cinq pages matière : HTML5, CSS3, JavaScript, SQL, PHP et une fenêtre Agrandir"></a>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">STI V2.0 — « Le web de A à Z » · Lycée Raféha · 3<sup>ème</sup> &amp; 4<sup>ème</sup> SI ·
+    M. Aymen Essouyah. Voir <a href="../LISEZ-MOI.md">LISEZ-MOI.md</a> pour les détails techniques.</div>
+</footer>
+
+<script>
+  /* Données des 5 matières : mêmes libellés et mêmes chemins que le site. */
+  var COURS = [
+    { m:'html5', emoji:'🧱', nom:'HTML5', chapitres:10, exercices:5, videos:3,
+      shot:'html5-cours.png',
+      desc:'Balises sémantiques, tableaux, formulaires, multimédia et iframes, avec les fenêtres « Agrandir » du cours d’origine.',
+      quiz:'html-css.html' },
+    { m:'css3', emoji:'🎨', nom:'CSS3', chapitres:10, exercices:5, videos:4,
+      shot:'css3-cours.png',
+      desc:'Sélecteurs, modèle de boîte interactif, positionnement, filtres, laboratoires à curseurs et leçons animées.',
+      quiz:'html-css.html' },
+    { m:'javascript', emoji:'⚡', nom:'JavaScript', chapitres:14, exercices:6, videos:1,
+      shot:'javascript-cours.png',
+      desc:'Variables, opérateurs, fonctions, tableaux, boucles, DOM, récapitulatif interactif exécutable et bac à sable JS.',
+      quiz:'javascript.html' },
+    { m:'sql', emoji:'🗄️', nom:'SQL', chapitres:4, exercices:5, videos:4,
+      shot:'sql-cours.png',
+      desc:'LDD, LMD, jointures, GROUP BY, animation des contraintes, Guide-Ligne audio et deux vidéos de révision Bac.',
+      quiz:'sql.html' },
+    { m:'php', emoji:'🐘', nom:'PHP', chapitres:10, exercices:6, videos:4,
+      shot:'php-videos.png',
+      desc:'Syntaxe, chaînes, tableaux, dates, MySQLi procédural, exercices de synthèse, chapitres vidéo et mini-quiz.',
+      quiz:'php.html' }
+  ];
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+  document.getElementById('grille-cours').innerHTML = COURS.map(function(c){
+    var base = '../../cours/' + c.m + '.html';
+    return '<article data-m="'+c.m+'">' +
+      '<a class="vignette" href="'+base+'#cours" aria-label="Ouvrir le cours '+c.nom+'">' +
+        '<img src="'+c.shot+'" alt="Capture du cours '+c.nom+'" loading="lazy"></a>' +
+      '<div class="corps">' +
+        '<h3><span class="pastille" aria-hidden="true"></span>'+c.emoji+' '+c.nom+'</h3>' +
+        '<div class="meta"><span>'+c.chapitres+' chapitres</span><span>'+c.exercices+' exercices</span><span>'+c.videos+' vidéos</span></div>' +
+        '<p>'+esc(c.desc)+'</p>' +
+        '<div class="onglets">' +
+          '<a href="'+base+'#cours">📖 Cours</a>' +
+          '<a href="'+base+'#exercices">📝 Exercices</a>' +
+          '<a href="'+base+'#annexes">📎 Annexes</a>' +
+          '<a href="'+base+'#videos">🎥 Vidéos</a>' +
+          '<a href="../../quiz/'+c.quiz+'">🎯 Quiz</a>' +
+        '</div>' +
+        '<a class="ouvrir" href="'+base+'#cours">▶ Ouvrir le cours '+c.nom+'</a>' +
+      '</div></article>';
+  }).join('');
+</script>
+</body>
+</html>
