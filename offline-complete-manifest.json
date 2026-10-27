@@ -1,9 +1,9 @@
 {
-  "version": "v483-sti-atelier-v344",
-  "generatedAt": "2026-10-27T17:58:40Z",
+  "version": "v484-sti-atelier-v345",
+  "generatedAt": "2026-10-27T19:28:27Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 685,
-  "totalBytes": 682449339,
+  "totalBytes": 682449824,
   "files": [
     {
       "path": "404.html",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 31708,
-      "gitSha": "aa19aa91e2ad9e6e3cc1559910c4cee74c058804"
+      "bytes": 32049,
+      "gitSha": "906395a977032b0cc6b769ae2c2d672dc958bab1"
     },
     {
       "path": "admin.html",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/mobile-nav.js",
-      "bytes": 28292,
-      "gitSha": "86f2f8d11c9590604f8bc95ff6be4a03f11bad35"
+      "bytes": 28415,
+      "gitSha": "a60cbc291a870675edc04c9917f5c7af5db0438a"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -3342,8 +3342,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 87784,
-      "gitSha": "2d5b968f97600afbcddce4d713c2b50e09c1ef84"
+      "bytes": 87805,
+      "gitSha": "6bbec9e9d107d4b5c74175e95c83b030aba4bec5"
     },
     {
       "path": "assets/css/cours-matieres.css",

@@ -283,13 +283,16 @@ test('trois thèmes et petits écrans : focus, dimensions et règles WCAG du nou
   await aller(page, '/index.html');
   await expect(page.locator('#welcomeTitle')).toHaveText('Bonjour, Aïcha <élève>');
   await expect(page.locator('#welcomePrenom').locator('*')).toHaveCount(0);
+  // Attendre la création asynchrone du badge et l'application de sa feuille mobile.
+  await expect(page.locator('#sti-roue-btn.sti-badge-identite')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => Boolean(document.getElementById('sti-badge-compte-css')?.sheet))).toBe(true);
   await page.addScriptTag({ path: axePath });
   for (const theme of ['clair', 'sombre', 'intermediaire']) {
     await page.evaluate(t => STIProfil.mettreAJour('theme', t), theme);
     for (const largeur of [320, 390, 1365]) {
       await page.setViewportSize({ width: largeur, height: 900 });
       await expect(page.locator('#welcomeReturn')).toBeVisible();
-      expect(await page.evaluate(() => ({ largeur: document.documentElement.clientWidth, contenu: document.documentElement.scrollWidth }))).toEqual({ largeur, contenu: largeur });
+      await expect.poll(() => page.evaluate(() => ({ largeur: document.documentElement.clientWidth, contenu: document.documentElement.scrollWidth }))).toEqual({ largeur, contenu: largeur });
       for (const lien of await page.locator('#welcomeCourses a').all()) {
         const dimensions = await lien.boundingBox();
         expect(dimensions.width).toBeGreaterThan(200);

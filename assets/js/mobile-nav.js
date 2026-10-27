@@ -1,6 +1,6 @@
-/* STI by AE — barre de navigation mobile en bas de l'écran (v413).
-   But de l'auteur : « en bas, en mode mobile, toujours afficher dans toutes les pages une barre
-   contenant : Accueil, Exercices, Quiz, Autres ».
+/* STI by AE — barre de navigation mobile en bas de l'écran.
+   Elle contient : Accueil, Cours, Vidéos, Quiz, Autres. Les séries d'exercices
+   restent accessibles depuis le tiroir « Autres ».
    - Visible uniquement en mode mobile (≤ 700 px, le seuil déjà utilisé partout dans le site).
    - Injectée par config.js (seul script commun à toutes les pages) → aucun fichier HTML à éditer
      en masse ; les deux pages orphelines l'incluent directement.
@@ -107,7 +107,7 @@
   function ico(nom) {
     var s = '<svg viewBox="0 0 24 24" aria-hidden="true">';
     if (nom === "accueil") s += '<path d="M3 10.6 12 3.2l9 7.4"/><path d="M5.6 9.4V20.4h12.8V9.4"/><path d="M10 20.4v-5.2h4v5.2"/>';
-    if (nom === "exercices") s += '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7.5h7M9 11h5"/>';
+    if (nom === "videos") s += '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/>';
     if (nom === "cours") s += '<path d="M12 6.4C10.4 4.9 7.4 4.4 4.4 5.1v12.8c3-.7 6-.2 7.6 1.3 1.6-1.5 4.6-2 7.6-1.3V5.1c-3-.7-6-.2-7.6 1.3z"/><path d="M12 6.4v12.8"/>';
     if (nom === "quiz") s += '<circle cx="12" cy="12" r="9"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4"/><path d="M12 17.3h.01"/>';
     if (nom === "autres") s += '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>';
@@ -121,12 +121,16 @@
   function sectionActive() {
     var p = location.pathname.replace(/^\/STiV2\.0/i, "");
     var h = location.hash || "";
+    var accueil = /\/(index\.html)?$/i.test(p) && !UTILES.test(p);
     if (h === "#modules") return "quiz";
-    if (h === "#exercices") return "exercices";
-    if (/\/(quiz|exercices)\//i.test(p) || /series-exercices/i.test(p)) return h === "#modules" ? "quiz" : (/\/(quiz)\//.test(p) ? "quiz" : "exercices");
-    if (h === "#cours") return "cours";
+    /* L'onglet Vidéos mène au catalogue de l'accueil ; une vidéo de cours
+       continue d'appartenir à la rubrique Cours. */
+    if (h === "#videos" && accueil) return "videos";
+    if (/\/quiz\//i.test(p)) return "quiz";
+    if (/\/exercices\//i.test(p) || /series-exercices/i.test(p)) return "autres";
+    if (h === "#cours" || h === "#exercices") return "cours";
     if (/\/(cours)\//i.test(p)) return "cours";
-    if (/\/(index\.html)?$/i.test(p) && !UTILES.test(p)) return "accueil";
+    if (accueil) return "accueil";
     if (/\/portail\.html/i.test(p)) return "accueil";
     if (UTILES.test(p) || /\/(documents)\//i.test(p)) return "autres";
     return "";
@@ -231,7 +235,7 @@
     var items = [
       { cle: "accueil", lib: "Accueil", href: R + "index.html", ico: "accueil" },
       { cle: "cours", lib: "Cours", href: R + "index.html#cours", ico: "cours" },
-      { cle: "exercices", lib: "Exercices", href: R + "exercices/series-exercices.html", ico: "exercices" },
+      { cle: "videos", lib: "Vidéos", href: R + "index.html#videos", ico: "videos" },
       { cle: "quiz", lib: "Quiz", href: R + "index.html#modules", ico: "quiz" }
     ];
     items.forEach(function (it) {
@@ -268,6 +272,7 @@
     sheet.setAttribute("role", "dialog");
     sheet.setAttribute("aria-label", "Autres sections du site");
     var liens = [
+      ["Exercices", "exercices/series-exercices.html", "séries et corrigés"],
       ["Les 25 pièges du Bac", "pieges-bac.html", "à lire avant l'épreuve"],
       ["Atelier épreuve pratique", "bac-pratique.html", "🧪 BAC STI · TP noté"],
       ["Les 10 fonctions JavaScript", "outils-js-bac.html", "atelier & générateur"],
