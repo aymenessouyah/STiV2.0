@@ -184,7 +184,7 @@ test('3SI : les liens et URL vidéo Bac restent verrouillés sans toucher à acc
   await expect(page.locator('#sti-video-modal-overlay')).toBeHidden();
   await page.goto('/cours/php.html', { waitUntil:'domcontentloaded' }); await expect(page.locator('#sti-lock-4si')).toBeVisible();
   await page.goto('/index.html', { waitUntil:'domcontentloaded' });
-  await expect(page.locator('#videosGrid .video-card')).toHaveCount(8);
+  await expect(page.locator('#videosGrid .video-card')).toHaveCount(9);
   await expect(page.locator('#videosGrid [data-matiere="php"]')).toHaveCount(0);
   await expect(page.locator('[data-play-video="sql-serie4"]')).toHaveCount(0);
 });

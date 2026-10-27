@@ -1,0 +1,337 @@
+WEBVTT
+Kind: captions
+Language: fr
+
+NOTE Synchronisation issue de validation-nom-prenom-js.srt
+
+1
+00:00:00.000 --> 00:00:06.000
+[GÉNÉRIQUE]
+
+2
+00:00:06.000 --> 00:00:08.600
+[Chapitre 1]
+
+3
+00:00:08.600 --> 00:00:24.326
+SECRÉTAIRE : Bonjour, je suis la secrétaire du lycée. Chaque rentrée, j'inscris des centaines d'élèves, et je perds beaucoup de temps avec les noms mal saisis : des chiffres, des champs vides, un seul mot. J'ai besoin d'un formulaire fiable, qui accepte les vrais noms, et qui refuse les erreurs.
+
+4
+00:00:24.776 --> 00:00:37.654
+PROFESSEUR : Voilà notre projet, les élèves : concevoir la validation du champ Nom et prénom pour le secrétariat du lycée. Et comme dans un vrai projet, avant d'écrire le moindre code, nous allons d'abord analyser le besoin.
+
+5
+00:00:38.104 --> 00:00:41.683
+ÉLÈVE : Madame, quels noms le formulaire doit-il accepter, exactement ?
+
+6
+00:00:42.133 --> 00:00:53.261
+SECRÉTAIRE : Les vrais noms de nos élèves : de deux à cinq mots, uniquement des lettres, y compris les lettres accentuées, et des espaces. Tout le reste doit être refusé, avec un message clair.
+
+7
+00:00:53.711 --> 00:00:56.311
+[Chapitre 2]
+
+8
+00:00:56.311 --> 00:01:12.664
+PROFESSEUR : Bonjour à tous. Aujourd'hui, nous allons apprendre à valider un champ Nom et prénom dans un formulaire. La saisie sera acceptée si elle contient uniquement des lettres et des espaces, avec au moins deux mots, et au maximum cinq mots. Mais attention : nous n'allons pas commencer par écrire du code.
+
+9
+00:01:13.114 --> 00:01:15.151
+ÉLÈVE : Alors, par quoi allons-nous commencer, monsieur ?
+
+10
+00:01:15.601 --> 00:01:30.387
+PROFESSEUR : Par l'observation. Avant de chercher une instruction JavaScript, nous allons comprendre comment, nous, les humains, nous jugeons qu'une saisie est correcte. Ensuite seulement, nous transformerons ce jugement en méthode pour l'ordinateur.
+
+11
+00:01:30.837 --> 00:01:42.226
+PROFESSEUR : Étape un : partir d'un exemple concret. J'écris au tableau : Ahmed Ben Ali. D'après vous, cette saisie est-elle acceptable ? Et surtout, comment le savez-vous ?
+
+12
+00:01:42.676 --> 00:01:48.162
+ÉLÈVE : Oui, elle est acceptable. Elle contient des lettres et des espaces, et elle contient trois mots.
+
+13
+00:01:48.612 --> 00:01:59.609
+PROFESSEUR : Très bien. Mais l'ordinateur, lui, comment peut-il le savoir ? Il ne peut pas se contenter de notre impression. Nous devons lui donner des instructions précises, en transformant notre jugement en opérations simples et explicites.
+
+14
+00:02:00.059 --> 00:02:09.777
+PROFESSEUR : Étape deux : identifier les règles. Comparons maintenant plusieurs exemples affichés au tableau : lesquels sont acceptés, lesquels sont refusés ? Regardez bien les différences.
+
+15
+00:02:10.227 --> 00:02:17.097
+ÉLÈVE : Ahmed Ben Ali et Ali Mohamed sont acceptées. Ahmed tout seul est refusée, car il n'y a qu'un seul mot.
+
+16
+00:02:17.547 --> 00:02:28.806
+ÉLÈVE : Le nom avec cinq mots est accepté, mais avec six mots, il est refusé. Et celui avec un chiffre deux dans un mot est aussi refusé.
+
+17
+00:02:29.256 --> 00:02:41.533
+PROFESSEUR : Exactement. Vous venez de dégager trois règles : les caractères autorisés sont les lettres ou les espaces ; le nombre de mots doit être au moins égal à deux ; et au maximum égal à cinq. En comparant les cas, nous avons trouvé les règles générales.
+
+18
+00:02:41.983 --> 00:02:44.583
+[Chapitre 3]
+
+19
+00:02:44.583 --> 00:02:52.969
+PROFESSEUR : Étape trois : analysons trois caractères, un par un. Voici le premier caractère : A. Que dois-je vérifier ?
+
+20
+00:02:53.419 --> 00:02:57.468
+ÉLÈVE : S'il est une lettre ou un espace. A est une lettre, donc on peut continuer.
+
+21
+00:02:57.918 --> 00:03:02.384
+PROFESSEUR : Bien. Deuxième caractère : h. Que fait-on, cette fois ?
+
+22
+00:03:02.834 --> 00:03:10.985
+ÉLÈVE : La même chose, monsieur : on vérifie si c'est une lettre ou un espace. h est une lettre, donc on continue.
+
+23
+00:03:11.435 --> 00:03:15.301
+PROFESSEUR : Troisième caractère : m. Et maintenant, que fait-on ?
+
+24
+00:03:15.751 --> 00:03:20.505
+ÉLÈVE : Encore la même vérification, monsieur ! m est une lettre, donc on continue.
+
+25
+00:03:20.955 --> 00:03:23.724
+PROFESSEUR : Vous remarquez quelque chose, dans ces trois analyses ?
+
+26
+00:03:24.174 --> 00:03:30.313
+ÉLÈVE : Oui, monsieur ! C'est presque le même bloc à chaque fois. Seul le caractère change.
+
+27
+00:03:30.763 --> 00:03:35.831
+PROFESSEUR : Exactement. Alors, quel est le point commun de ces trois exemples ? Qu'est-ce qui se répète, à chaque fois ?
+
+28
+00:03:36.281 --> 00:03:42.341
+ÉLÈVE : À chaque fois : prendre un caractère, vérifier s'il est autorisé, puis passer au caractère suivant.
+
+29
+00:03:42.791 --> 00:03:57.446
+PROFESSEUR : C'est cela. Ce point commun, c'est le cœur de notre méthode. Au lieu d'écrire le même bloc dix, vingt ou trente fois, nous allons l'écrire une seule fois, et le répéter. C'est le principe d'une boucle. Il reste maintenant à choisir laquelle.
+
+30
+00:03:57.896 --> 00:04:03.852
+PROFESSEUR : Avant de choisir notre boucle, imaginez une photocopieuse qui doit copier cinq feuilles. Que fait-elle, à votre avis ?
+
+31
+00:04:04.302 --> 00:04:08.560
+ÉLÈVE : Elle prend une feuille, elle la copie, puis elle recommence avec la feuille suivante.
+
+32
+00:04:09.010 --> 00:04:18.884
+ÉLÈVE : Et elle compte les copies : une, deux, trois, quatre, cinq. Quand le compteur arrive à cinq, elle s'arrête.
+
+33
+00:04:19.334 --> 00:04:31.350
+PROFESSEUR : Exactement. Une boucle, c'est cela : les mêmes actions se répètent tant qu'une condition est vraie, puis la machine s'arrête. Pour notre texte, c'est pareil : prendre un caractère, le tester, avancer, et recommencer jusqu'à la fin.
+
+34
+00:04:31.800 --> 00:04:40.891
+PROFESSEUR : Nous connaissons la longueur du texte grâce à length, et chaque caractère possède un indice. Entre for, while et do while, laquelle correspond le mieux à notre bloc commun ?
+
+35
+00:04:41.341 --> 00:04:48.368
+ÉLÈVE : La boucle for, monsieur, car on parcourt les caractères avec un indice, du premier jusqu'au dernier.
+
+36
+00:04:48.818 --> 00:04:55.531
+PROFESSEUR : Oui. La boucle for va donc répéter notre bloc commun pour chaque indice, de zéro jusqu'à la longueur moins un.
+
+37
+00:04:55.981 --> 00:05:02.799
+PROFESSEUR : Mais notre méthode est-elle complète ? Que manque-t-il encore, après la vérification des caractères ?
+
+38
+00:05:03.249 --> 00:05:07.429
+ÉLÈVE : Il faut aussi compter les mots, monsieur, pour vérifier qu'il y en a entre deux et cinq.
+
+39
+00:05:07.879 --> 00:05:12.816
+PROFESSEUR : Bien vu. Et pendant le parcours, pour compter au fur et à mesure, de quoi avons-nous besoin ?
+
+40
+00:05:13.266 --> 00:05:18.804
+ÉLÈVE : De quelque chose qui retient le nombre, et qui augmente de un à chaque nouveau mot.
+
+41
+00:05:19.254 --> 00:05:32.393
+PROFESSEUR : Exactement : c'est un compteur. Nous le préparons avant la boucle : il commence à zéro. Chaque fois que nous rencontrons le début d'un nouveau mot, nous lui ajoutons un. Et à la fin du parcours, nous comparons ce compteur avec deux et cinq.
+
+42
+00:05:32.843 --> 00:05:37.389
+ÉLÈVE : Donc, le compteur garde le compte pendant que la boucle avance.
+
+43
+00:05:37.839 --> 00:05:40.439
+[Chapitre 4]
+
+44
+00:05:40.439 --> 00:05:49.425
+PROFESSEUR : Passons maintenant à la simulation. La boucle for parcourt Ahmed Ben Ali, caractère par caractère. L'indice i commence à zéro, et avance jusqu'à la fin du texte.
+
+45
+00:05:49.875 --> 00:05:57.320
+ÉLÈVE : Chaque caractère est testé : si c'est une lettre ou un espace, il devient vert, et la boucle continue son parcours.
+
+46
+00:05:57.770 --> 00:06:06.260
+ÉLÈVE : Et le compteur augmente dès qu'un nouveau mot commence : un pour Ahmed, deux pour Ben, et trois pour Ali.
+
+47
+00:06:06.710 --> 00:06:16.558
+PROFESSEUR : Résultat : tous les caractères sont valides, et le compteur vaut trois, entre deux et cinq. La saisie est donc acceptée. Mais regardez maintenant ce qui se passe avec un caractère interdit.
+
+48
+00:06:17.008 --> 00:06:24.636
+ÉLÈVE : Ici, la boucle s'arrête sur le chiffre deux : le caractère devient rouge. La saisie est refusée immédiatement.
+
+49
+00:06:25.086 --> 00:06:35.143
+PROFESSEUR : Oui, car sans compteur, la boucle vérifie, mais elle ne peut rien retenir. Passons maintenant à la méthode complète : qui peut me la résumer, étape par étape ?
+
+50
+00:06:35.593 --> 00:06:43.769
+ÉLÈVE : D'abord, examiner la saisie, puis vérifier que les caractères sont autorisés, et ensuite compter les mots.
+
+51
+00:06:44.219 --> 00:06:54.276
+ÉLÈVE : Et pour finir, vérifier que le nombre de mots est compris entre deux et cinq, et accepter la saisie uniquement si toutes les conditions sont respectées.
+
+52
+00:06:54.726 --> 00:07:08.231
+PROFESSEUR : Parfait. Chaque étape correspond à un sous-problème. La résolution du problème complexe devient ainsi plus facile, car il a été décomposé en problèmes simples. C'est exactement ainsi que l'on prépare un algorithme fiable, avant de le traduire en JavaScript.
+
+53
+00:07:08.681 --> 00:07:11.281
+[Chapitre 5]
+
+54
+00:07:11.281 --> 00:07:25.988
+PROFESSEUR : À vous de jouer, maintenant ! Trois exemples vont s'afficher, un par un. Pour chacun, dites si la saisie est acceptée ou refusée, et surtout, pourquoi. Vous aurez cinq secondes pour réfléchir, à chaque fois. Prêts ?
+
+55
+00:07:26.438 --> 00:07:31.438
+[À vous de réfléchir…]
+
+56
+00:07:31.438 --> 00:07:39.092
+ÉLÈVE : Acceptée ! Nour El Houda : uniquement des lettres et des espaces, et trois mots. Le compteur est entre deux et cinq.
+
+57
+00:07:39.542 --> 00:07:44.542
+[À vous de réfléchir…]
+
+58
+00:07:44.542 --> 00:07:52.196
+ÉLÈVE : Refusée ! Il y a un chiffre deux dans le dernier mot. Tous les caractères ne sont donc pas autorisés.
+
+59
+00:07:52.646 --> 00:07:57.646
+[À vous de réfléchir…]
+
+60
+00:07:57.646 --> 00:08:03.994
+ÉLÈVE : Refusée ! Amine Ben Ali Salah Hmida Nour, cela fait six mots. Le compteur dépasse donc cinq.
+
+61
+00:08:04.444 --> 00:08:12.463
+PROFESSEUR : Bravo à tous les deux ! Vous savez maintenant valider une saisie : vérifier chaque caractère avec la boucle, et compter les mots avec le compteur.
+
+62
+00:08:12.913 --> 00:08:35.509
+PROFESSEUR : Pour terminer, retenons le bilan. Comment l'être humain construit-il une méthode ? Il observe des exemples concrets, compare les cas acceptés et refusés, identifie les règles générales, décompose le problème en sous-problèmes, recherche les opérations nécessaires, identifie celles qui doivent être répétées, choisit les structures adaptées, teste sa méthode, puis la corrige et l'améliore si nécessaire.
+
+63
+00:08:35.959 --> 00:08:41.915
+ÉLÈVE : Donc, monsieur, on ne commence pas par chercher quelle instruction informatique utiliser ?
+
+64
+00:08:42.365 --> 00:08:59.580
+PROFESSEUR : Non. On commence par comprendre le problème, observer, comparer, dégager des règles, et construire une démarche. L'algorithme traduit ensuite cette démarche en instructions que l'ordinateur peut exécuter. Bon travail à tous, et à vous maintenant de tester cette méthode sur de nouveaux exemples.
+
+65
+00:09:00.030 --> 00:09:07.161
+PROFESSEUR : Il est maintenant temps de traduire notre méthode en JavaScript. Voici le code complet, construit uniquement avec ce que nous avons découvert ensemble.
+
+66
+00:09:07.611 --> 00:09:16.780
+ÉLÈVE : La boucle for parcourt la chaîne : i commence à zéro, elle continue tant que i est inférieur à la longueur du texte, puis i augmente de un à chaque tour.
+
+67
+00:09:17.230 --> 00:09:27.209
+ÉLÈVE : Le compteur nb commence à zéro. À chaque début de nouveau mot, on lui ajoute un, grâce au repère qui nous indique si nous sommes déjà dans un mot.
+
+68
+00:09:27.659 --> 00:09:40.485
+PROFESSEUR : À la fin, le code accepte la saisie uniquement si aucun caractère interdit n'a été trouvé, et si le compteur est compris entre deux et cinq. Notre démarche humaine est ainsi devenue un programme. Bon travail à tous !
+
+69
+00:09:40.935 --> 00:09:43.535
+[Chapitre 6]
+
+70
+00:09:43.535 --> 00:09:53.514
+PROFESSEUR : Attendez, avant de terminer. Notre méthode fonctionne au tableau, mais que se passe-t-il dans le monde réel, au secrétariat du lycée, ou sur un vrai site web ?
+
+71
+00:09:53.964 --> 00:10:02.323
+ÉLÈVE : Au secrétariat, on inscrit Aïcha Ben Salah. Mais notre premier code refuse la lettre ï, alors que c'est un vrai prénom !
+
+72
+00:10:02.773 --> 00:10:10.349
+ÉLÈVE : Et sur un site, quelqu'un peut taper deux espaces, laisser le champ complètement vide, ou écrire un seul mot.
+
+73
+00:10:10.799 --> 00:10:22.188
+PROFESSEUR : Voilà le monde réel : il nous oblige à éprouver notre règle. Nous allons donc constituer un jeu d'essais, avec de vrais cas : des cas normaux, des cas limites, et des cas d'erreur.
+
+74
+00:10:22.638 --> 00:10:28.307
+PROFESSEUR : Que décidons-nous alors, face à ces vrais noms ? Faut-il accepter les lettres accentuées ?
+
+75
+00:10:28.757 --> 00:10:34.504
+ÉLÈVE : Oui, monsieur, sinon de vrais élèves seront refusés à tort. Les lettres accentuées font partie des vrais noms.
+
+76
+00:10:34.954 --> 00:10:45.533
+ÉLÈVE : Et les espaces multiples ne doivent pas créer de faux mots. Notre compteur, avec son repère, compte déjà les vrais mots, même avec deux espaces.
+
+77
+00:10:45.983 --> 00:10:59.593
+ÉLÈVE : Regardez le tableau de test : le champ vide donne un compteur à zéro, un seul mot donne un, six mots donnent six, et le chiffre reste refusé. Tout est vérifié.
+
+78
+00:11:00.043 --> 00:11:12.190
+ÉLÈVE : Voici donc la version deux du code. Une seule partie change vraiment : le test accepte aussi les lettres accentuées, de À à ÿ. La boucle, le compteur et le test final restent identiques.
+
+79
+00:11:12.640 --> 00:11:15.240
+[Chapitre 7]
+
+80
+00:11:15.240 --> 00:11:28.798
+ÉLÈVE : Madame, voici notre solution : la boucle parcourt chaque caractère, le compteur compte les vrais mots, même avec des espaces multiples, et les lettres accentuées sont acceptées.
+
+81
+00:11:29.248 --> 00:11:42.883
+SECRÉTAIRE : Je teste avec Aïcha Ben Salah... acceptée. Et avec un chiffre dans le nom... refusé. C'est exactement ce qu'il me fallait. Merci, votre formulaire va me faire gagner beaucoup de temps.
+
+82
+00:11:43.333 --> 00:11:54.122
+PROFESSEUR : Projet livré ! Vous voyez : nous sommes partis d'un besoin réel, exprimé par une vraie utilisatrice, et nous avons trouvé la solution en analysant, en testant, puis en améliorant.
+
+83
+00:11:54.572 --> 00:12:10.768
+PROFESSEUR : Retenez cette manière d'analyser un problème : partir du besoin réel, observer de vrais exemples, lister les cas limites, décider des règles, décomposer, programmer, tester avec de vrais cas, puis corriger. C'est ainsi que l'on trouve une solution qui fonctionne vraiment dans le monde réel. Bravo à tous !

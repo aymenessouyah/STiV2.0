@@ -1,9 +1,9 @@
 {
-  "version": "v484-sti-atelier-v345",
-  "generatedAt": "2026-10-27T19:28:27Z",
+  "version": "v485-sti-atelier-v346",
+  "generatedAt": "2026-10-27T20:42:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 685,
-  "totalBytes": 682449824,
+  "totalFiles": 686,
+  "totalBytes": 682471274,
   "files": [
     {
       "path": "404.html",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 32049,
-      "gitSha": "906395a977032b0cc6b769ae2c2d672dc958bab1"
+      "bytes": 32371,
+      "gitSha": "be6e9080e0391ee2ba14fb05a9daf5e5946943cc"
     },
     {
       "path": "admin.html",
@@ -647,8 +647,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 101677,
-      "gitSha": "a1b3891211919a687dc721933e6ab1d2c6f673f2"
+      "bytes": 102745,
+      "gitSha": "4bd8f53db9d5d5f6844188e91bdde3c86d4cdefa"
     },
     {
       "path": "assets/js/config.js",
@@ -732,8 +732,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 208873,
-      "gitSha": "42e04a24047a3e5d69225b05ac690b48b931374b"
+      "bytes": 210894,
+      "gitSha": "df2feeaa1830e15d6c4c1073971facc2b75973a6"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1087,8 +1087,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 125147,
-      "gitSha": "a90db24c3f0dac6c99102317d4bb76af1454676f"
+      "bytes": 126699,
+      "gitSha": "8e10cf0db0672a6d662648f5b4b24ff70f0ced47"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -2561,11 +2561,6 @@
       "gitSha": "2b987c0a0b84521c25057c76bf4f2bb2c5181657"
     },
     {
-      "path": "exercices/javascript/validation-nom-prenom-js.mp4",
-      "bytes": 49095652,
-      "gitSha": "4c53fdda9a9d3d53aae821bb9ef3b99ea6189ab8"
-    },
-    {
       "path": "exercices/javascript/validation-nom-prenom-js.srt",
       "bytes": 14883,
       "gitSha": "6b516d54a5f0cb4dc9226a01c0d42d5f6d2c3909"
@@ -2687,8 +2682,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 98565,
-      "gitSha": "74732a2978bc6db88cd93a1968979e78325e2e1e"
+      "bytes": 99652,
+      "gitSha": "24f66976e35ca50a5a3b94b0c6a651b8dd06f423"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -2792,8 +2787,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 54857,
-      "gitSha": "06d4cc6989f8adc6f8f00c35c69491dcff28c023"
+      "bytes": 54861,
+      "gitSha": "d986d3f4ab36ed09dcae0612b2c83cc34a777ff6"
     },
     {
       "path": "livre-smart.html",
@@ -3342,8 +3337,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 87805,
-      "gitSha": "6bbec9e9d107d4b5c74175e95c83b030aba4bec5"
+      "bytes": 88138,
+      "gitSha": "ce9661faa2312d6dcc4f184575910c6e0cfc6699"
     },
     {
       "path": "assets/css/cours-matieres.css",
@@ -3422,13 +3417,23 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 13536,
-      "gitSha": "e74f61cea16548d5dad5ffaf22050a7de0e2ecc5"
+      "bytes": 13620,
+      "gitSha": "01ab05a05b7a2668a1a7bb38582b86c1dd74c84d"
     },
     {
       "path": "assets/js/retour-quiz.js",
       "bytes": 4129,
       "gitSha": "0b5bc8d8f9dbd223508eff5971fdbcdb7107f1c4"
+    },
+    {
+      "path": "assets/videos/validation-nom-prenom-js.mp4",
+      "bytes": 49095652,
+      "gitSha": "4c53fdda9a9d3d53aae821bb9ef3b99ea6189ab8"
+    },
+    {
+      "path": "assets/subtitles/validation-nom-prenom-js-fr.vtt",
+      "bytes": 14979,
+      "gitSha": "99eeff0b31b70cf15b568bd8a6c93ef3ad8b5cd1"
     }
   ]
 }

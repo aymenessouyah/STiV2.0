@@ -59,14 +59,14 @@ function dureeMp4(path) {
   } finally { closeSync(fd); }
 }
 
-test('catalogue : fichiers réels, 13 entrées distinctes, durées MP4 et restrictions', () => {
+test('catalogue : fichiers réels, 14 entrées distinctes, durées MP4 et restrictions', () => {
   const js = lire('assets/js/app.js');
   const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
   const catalogue = vm.runInNewContext('(' + texte + ')');
-  assert.equal(catalogue.length, 13);
+  assert.equal(catalogue.length, 14);
   assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
   const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
-  assert.deepEqual(comptes, { html5:1, css3:4, javascript:1, sql:4, php:3 });
+  assert.deepEqual(comptes, { html5:1, css3:4, javascript:2, sql:4, php:3 });
   for (const v of catalogue) {
     assert.ok(existsSync(resolve(root, v.srcPrincipal)), v.srcPrincipal);
     if (v.srcSecours) assert.ok(existsSync(resolve(root, v.srcSecours)), v.srcSecours);
@@ -76,6 +76,8 @@ test('catalogue : fichiers réels, 13 entrées distinctes, durées MP4 et restri
     if (v.matiere === 'php' || /^sql-serie[45]$/.test(v.id)) assert.equal(v.reserve4si, true, v.id);
   }
   assert.ok(catalogue.some(v => v.srcPrincipal === 'assets/videos/displayanim.mp4'));
+  assert.ok(catalogue.some(v => v.id === 'validation-nom-prenom-js' && v.srcPrincipal === 'assets/videos/validation-nom-prenom-js.mp4'));
+  assert.equal(existsSync(resolve(root, 'exercices/javascript/validation-nom-prenom-js.mp4')), false);
   assert.ok(catalogue.some(v => v.id === 'sql-initiation' && v.srcPrincipal === 'exercices/sql/sql-construire-requete-guide-texte.mp4'));
   assert.doesNotMatch(lire('index.html'), /assets\/videos\/css3-cours\.mp4/);
   assert.doesNotMatch(js, /assets\/videos\/(?:css3-cours|sql-cours)\.mp4/);
@@ -96,7 +98,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'badge-reprise-v483' : 'fidelite-origine-v481';
+    const revision = ['assets/js/app.js','cours/javascript.html'].includes(chemin) ? 'video-js-validation-v485' : 'fidelite-origine-v481';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
   assert.doesNotMatch(lire('assets/js/visionneuse-exercices.js'), /\blocalStorage\b|\bsessionStorage\b/);

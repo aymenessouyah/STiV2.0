@@ -127,7 +127,7 @@
       icone: "⚡",
       badgeClasse: "badge-js",
       couleur: "#facc15",
-      nbVideos: 1,
+      nbVideos: 2,
       urlCours: "cours/javascript.html",
       urlQuiz: "quiz/javascript.html",
       urlAudio: "assets/audio/javascript-cours.mp3",
@@ -265,6 +265,20 @@
       srcSecours: "assets/videos/javascript-cours.mp4",
       urlCours: "cours/javascript.html#videos",
       codeApercu: "const v = document.getElementById('cin').value;"
+    },
+    {
+      id: "validation-nom-prenom-js",
+      matiere: "javascript",
+      nomMatiere: "JavaScript",
+      badgeClasse: "badge-js",
+      couleur: "#facc15",
+      titre: "JavaScript — Validation du champ Nom & Prénom",
+      dureeTexte: "12:11",
+      srcPrincipal: "assets/videos/validation-nom-prenom-js.mp4",
+      srcSecours: "assets/videos/validation-nom-prenom-js.mp4",
+      sousTitres: "assets/subtitles/validation-nom-prenom-js-fr.vtt",
+      urlCours: "cours/javascript.html#videos",
+      codeApercu: "for (let i = 0; i < ch.length; i++) { ... }"
     },
     {
       id: "sql-cours",
@@ -709,6 +723,16 @@
     var profil = global.STIProfil ? global.STIProfil.chargerProfil() : { videos: { vues: [] } };
     var vues = (profil.videos && profil.videos.vues) || [];
     var ok4 = estAutorise4SI();
+
+    var libellesFiltres = { html5: "HTML5", css3: "CSS3", javascript: "JS", sql: "SQL", php: "PHP" };
+    document.querySelectorAll("[data-video-filter]").forEach(function (btnF) {
+      var cleF = btnF.getAttribute("data-video-filter") || "";
+      if (!libellesFiltres[cleF]) return;
+      var nbF = CATALOGUE_VIDEOS.filter(function (v) {
+        return v.matiere === cleF && (!v.reserve4si || ok4);
+      }).length;
+      btnF.textContent = libellesFiltres[cleF] + " (" + nbF + ")";
+    });
 
     var liste = CATALOGUE_VIDEOS.filter(function (v) {
       if (v.reserve4si && !ok4) return false;
