@@ -3,11 +3,11 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v347";
+var CACHE = "sti-atelier-v348";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés (1 seule entrée par URL).
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v486-cours-retour-xp-20261027";
-/* Historique caches : sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
+var UPDATE_ID = "v487-xp-operations-20261027";
+/* Historique caches : sti-atelier-v347, sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v486-cours-retour-xp-20261027, v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
 var UPDATE_FILES = [
@@ -136,13 +136,13 @@ var UPDATE_FILES = [
   { url: "./assets/images/qr-code-site.png", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 9391 },
   { url: "./assets/css/cours.css", revision: "cours-retour-xp-v486" },
   { url: "./assets/js/app.js", revision: "video-js-validation-v485" },
-  { url: "./assets/js/profil.js", revision: "cours-retour-xp-v486" },
+  { url: "./assets/js/profil.js", revision: "xp-operations-v487" },
   { url: "./assets/js/cours-html5.js", revision: "refonte-ui-html5-20261027" },
   { url: "./index.html", revision: "video-js-validation-v485" },
   { url: "./admin.html", revision: "compteur-media-v479" },
-  { url: "./README.md", revision: "cours-retour-xp-v486" },
-  { url: "./package.json", revision: "cours-retour-xp-v486" },
-  { url: "./package-lock.json", revision: "cours-retour-xp-v486" },
+  { url: "./README.md", revision: "xp-operations-v487" },
+  { url: "./package.json", revision: "xp-operations-v487" },
+  { url: "./package-lock.json", revision: "xp-operations-v487" },
   { url: "./assets/data/nouveautes.json", revision: "compteur-media-v479" },
   { url: "./assets/js/config.js", revision: "compteur-media-v479" },
   { url: "./assets/js/acces.js", revision: "compteur-media-v479" },
@@ -162,9 +162,9 @@ var UPDATE_FILES = [
   { url: "./assets/fonts/nunito-var.woff2", revision: "nav-fluide-v475" },
   { url: "./assets/fonts/inter-var.woff2", revision: "nav-fluide-v475" },
   { url: "./assets/fonts/jetbrains-mono-var.woff2", revision: "nav-fluide-v475" },
-  { url: "./quiz/php.html", revision: "cours-retour-xp-v486" },
-  { url: "./quiz/sql.html", revision: "cours-retour-xp-v486" },
-  { url: "./quiz/javascript.html", revision: "cours-retour-xp-v486" },
+  { url: "./quiz/php.html", revision: "xp-operations-v487" },
+  { url: "./quiz/sql.html", revision: "xp-operations-v487" },
+  { url: "./quiz/javascript.html", revision: "xp-operations-v487" },
   { url: "./cours/sql.html", revision: "cours-retour-xp-v486" },
   { url: "./cours/sql-contraintes.html", revision: "fidelite-origine-v481" },
   { url: "./exercices/php/debogage-php-bac.html", revision: "fidelite-origine-v481" },
@@ -173,7 +173,7 @@ var UPDATE_FILES = [
   { url: "./memo-veille-bac.html", revision: "fidelite-origine-v481" },
   { url: "./outils-js-bac.html", revision: "fidelite-origine-v481" },
   { url: "./pieges-bac.html", revision: "fidelite-origine-v481" },
-  { url: "./offline-complete-manifest.json", revision: "cours-retour-xp-v486" },
+  { url: "./offline-complete-manifest.json", revision: "xp-operations-v487" },
   { url: "./ma-fiche-revision.html", revision: "fidelite-origine-v481" },
   { url: "./assets/js/roue-couverture.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 12067 },
   { url: "./assets/js/roue-revision.js", revision: "perf-fluide-v473" },
@@ -193,9 +193,9 @@ var UPDATE_FILES = [
   { url: "./cours/php.html", revision: "cours-retour-xp-v486" },
   { url: "./cours/javascript.html", revision: "cours-retour-xp-v486" },
   { url: "./cours/fiche-revision-html5.html", revision: "fidelite-origine-v481" },
-  { url: "./quiz/html-css.html", revision: "cours-retour-xp-v486" },
+  { url: "./quiz/html-css.html", revision: "xp-operations-v487" },
   { url: "./assets/js/portail.js", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/quiz-sync.js", revision: "cours-retour-xp-v486" },
+  { url: "./assets/js/quiz-sync.js", revision: "xp-operations-v487" },
   { url: "./assets/js/quiz-tableaux.js", revision: "audit-fonctionnel-v470" },
   { url: "./documents/sql/sauvegarde-auto-drive.gs", revision: "audit-fonctionnel-v470" },
   { url: "./documents/annexes/annexe-html5.pdf.html", revision: "fidelite-origine-v481" },

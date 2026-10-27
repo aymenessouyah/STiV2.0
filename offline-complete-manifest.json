@@ -1,9 +1,9 @@
 {
-  "version": "v486-sti-atelier-v347",
-  "generatedAt": "2026-10-27T20:59:14Z",
+  "version": "v487-sti-atelier-v348",
+  "generatedAt": "2026-10-27T22:20:11Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 687,
-  "totalBytes": 682486403,
+  "totalFiles": 688,
+  "totalBytes": 682510776,
   "files": [
     {
       "path": "404.html",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 33166,
-      "gitSha": "c7df083789d2e7998b45768dc63381ededa0451c"
+      "bytes": 34230,
+      "gitSha": "d519aecda02eb8e9a045614e57dd4338084d44cd"
     },
     {
       "path": "admin.html",
@@ -727,8 +727,8 @@
     },
     {
       "path": "assets/js/profil.js",
-      "bytes": 35739,
-      "gitSha": "7a680e28aa365bb90b28b0726a0b5e4008260816"
+      "bytes": 36189,
+      "gitSha": "3d0d2ac9fb67e535ed10651446be3a27d9db7751"
     },
     {
       "path": "assets/js/protection.js",
@@ -742,8 +742,8 @@
     },
     {
       "path": "assets/js/quiz-sync.js",
-      "bytes": 50673,
-      "gitSha": "667a1aedb23aea4bd49bc4615c255b3a27e27783"
+      "bytes": 56463,
+      "gitSha": "7aa31b43fda42e5066127a4a5e081647fe221203"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
@@ -2822,13 +2822,13 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 2412,
-      "gitSha": "2196eb644c2a528281ba14a44482193ebb8d42a3"
+      "bytes": 8094,
+      "gitSha": "53a9288a00e8a9f6933fedab3668183756cc81a6"
     },
     {
       "path": "package.json",
-      "bytes": 491,
-      "gitSha": "555d88ae11a9f21ab0394c80151631c85592da5b"
+      "bytes": 512,
+      "gitSha": "aaae3d7613a5abdb1133b07bd9e70ab8e4e0f677"
     },
     {
       "path": "pieges-bac.html",
@@ -3287,18 +3287,18 @@
     },
     {
       "path": "quiz/html-css.html",
-      "bytes": 237663,
-      "gitSha": "e3fc547cb40a572956c74dcee6045dff4dc16c7f"
+      "bytes": 237819,
+      "gitSha": "01579c114e41c3a036aa3cb41bf12e21c688f08b"
     },
     {
       "path": "quiz/javascript.html",
-      "bytes": 165120,
-      "gitSha": "c1fac98f2decb0474ee311308102ba7659d7fdb3"
+      "bytes": 165463,
+      "gitSha": "62d3badef87a980a6cb36f2d8ac026d0b6d79f80"
     },
     {
       "path": "quiz/php.html",
-      "bytes": 328928,
-      "gitSha": "4dc59d8e3fe35613af7d4539416f270a8b02a516"
+      "bytes": 329080,
+      "gitSha": "f6bc74f8c235e07c2b6331ea3317a0b6a3f2915e"
     },
     {
       "path": "quiz/pp.html",
@@ -3307,8 +3307,8 @@
     },
     {
       "path": "quiz/sql.html",
-      "bytes": 309924,
-      "gitSha": "1d25ba8fe68a5d6f18aad7287f234481a83345ca"
+      "bytes": 310133,
+      "gitSha": "41e9abe845d14ba3fb4332d1b3daf62c3370bf31"
     },
     {
       "path": "quiz/tableaux.html",
@@ -3337,8 +3337,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 88142,
-      "gitSha": "4919652231e27a49f3f8d40fe48f809b12cc768b"
+      "bytes": 88169,
+      "gitSha": "bc5a4389d5a68f0ddaefe33cdae36a69e8057b73"
     },
     {
       "path": "assets/css/cours-matieres.css",
@@ -3439,6 +3439,11 @@
       "path": "assets/subtitles/validation-nom-prenom-js-fr.vtt",
       "bytes": 14979,
       "gitSha": "99eeff0b31b70cf15b568bd8a6c93ef3ad8b5cd1"
+    },
+    {
+      "path": "supabase/migrations/20261027_xp_quiz_operations_v487.sql",
+      "bytes": 10479,
+      "gitSha": "7407ffa3d34ff09011e85718f6ceade399fa2afd"
     }
   ]
 }

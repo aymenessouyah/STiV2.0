@@ -2950,13 +2950,16 @@
               let exXpJs = {};
               try { exXpJs = JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {}; } catch (eX) {}
               this.stats.xp = Math.max(Number(this.stats.xp) || 0, Number(exXpJs.xp) || 0) + gainXpJs;
-              stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify({
+              const acquisJs = {
                 xp: this.stats.xp,
                 best: Math.max(Number(exXpJs.best) || 0, this.stats.highScore || 0, this.score || 0),
                 parties: (Number(exXpJs.parties) || 0) + 1,
                 bonnes: (Number(exXpJs.bonnes) || 0) + (this.correctCount || 0),
                 total: (Number(exXpJs.total) || 0) + (this.answeredCount || 0),
-              }));
+              };
+              if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP("sti-quiz-xp-js-v1", acquisJs, gainXpJs))) {
+                stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify(acquisJs));
+              }
               if (STIQuizSync.notifierXP) STIQuizSync.notifierXP("sti-quiz-xp-js-v1");
             }
             if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function") {
@@ -3035,13 +3038,16 @@
                   let exXpJs = {};
                   try { exXpJs = JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {}; } catch (eX) {}
                   this.stats.xp = Math.max(res.xpPlancher, Number(exXpJs.xp) || 0);
-                  stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify({
+                  const acquisJs = {
                     xp: this.stats.xp,
                     best: Math.max(Number(exXpJs.best) || 0, res.meilleurPoints || 0, this.stats.highScore || 0),
                     parties: Math.max(Number(exXpJs.parties) || 0, res.parties || 0),
                     bonnes: Math.max(Number(exXpJs.bonnes) || 0, res.totalBonnes || 0),
                     total: Math.max(Number(exXpJs.total) || 0, res.totalQuestions || 0),
-                  }));
+                  };
+                  if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP("sti-quiz-xp-js-v1", acquisJs, 0))) {
+                    stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify(acquisJs));
+                  }
                   if (STIQuizSync.notifierXP) STIQuizSync.notifierXP("sti-quiz-xp-js-v1");
                 }
                 if (res.meilleurPoints && res.meilleurPoints > this.stats.highScore) {

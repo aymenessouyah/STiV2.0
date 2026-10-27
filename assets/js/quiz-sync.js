@@ -1138,6 +1138,63 @@
     "sqlQuestV3": true, "quizphp_v1_user": true
   };
   var xpEnAttente = {}, xpEnCours = false, xpMinuteur = 0, xpDelai = 1000;
+  function identifiantOperationXP() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
+    var octets = new Uint8Array(16);
+    if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(octets);
+    else for (var i = 0; i < octets.length; i++) octets[i] = Math.floor(Math.random() * 256);
+    octets[6] = (octets[6] & 15) | 64; octets[8] = (octets[8] & 63) | 128;
+    var h = Array.prototype.map.call(octets, function (v) { return v.toString(16).padStart(2, "0"); }).join("");
+    return h.slice(0, 8) + "-" + h.slice(8, 12) + "-" + h.slice(12, 16) + "-" + h.slice(16, 20) + "-" + h.slice(20);
+  }
+  function activerProtocoleXP(profil, uid) {
+    var operations = profil.listerOperationsQuiz(uid);
+    if (!operations) return false;
+    var attentes = {};
+    operations.forEach(function (o) { attentes[o.cle] = (attentes[o.cle] || 0) + o.gain; });
+    return profil.ecrireProtocoleQuiz(uid, attentes);
+  }
+  function marquerOperationsXP(profil, cle, uid, valeur) {
+    var operations = profil.listerOperationsQuiz(uid, cle);
+    if (!operations) return null;
+    var somme = operations.reduce(function (n, o) { return n + o.gain; }, 0);
+    var copie = Object.assign({}, valeur);
+    if (somme) copie._sti_xp_attente = somme; else delete copie._sti_xp_attente;
+    return copie;
+  }
+  function rafraichirMarqueursXP() {
+    var u = utilisateurDepuisStockageLocal(), profil = window.STIProfil;
+    if (!u || !u.id || sansScore(u) || !profil || !profil.compteQuizIsole(u.id)) return;
+    activerProtocoleXP(profil, u.id);
+    Object.keys(clesXpAutorisees).forEach(function (cle) {
+      var courant = profil.lireAcquisQuiz(cle, u.id);
+      if (!courant) return;
+      var marque = marquerOperationsXP(profil, cle, u.id, courant);
+      if (marque) profil.ecrireAcquisQuiz(cle, u.id, marque, false);
+    });
+  }
+  /* Enregistrer le gain avant d'écrire le compteur : même une fermeture
+     immédiate laisse une opération durable et identifiable sur l'appareil. */
+  function sauverXP(cle, valeur, gain) {
+    var u = utilisateurDepuisStockageLocal(), profil = window.STIProfil;
+    if (!Object.prototype.hasOwnProperty.call(clesXpAutorisees, cle) || !u || !u.id || sansScore(u) ||
+        !profil || typeof profil.ajouterOperationQuiz !== "function") return false;
+    var avant = profil.lireAcquisQuiz(cle, u.id), nombre = Number(gain || 0);
+    if (!avant || !valeur || typeof valeur !== "object" || Array.isArray(valeur) ||
+        !Number.isSafeInteger(nombre) || nombre < 0 || nombre > 1000000000) return false;
+    var operations = profil.listerOperationsQuiz(u.id, cle);
+    if (!operations) return false;
+    var attente = Math.max(Number(avant._sti_xp_attente) || 0, operations.reduce(function (n, o) { return n + o.gain; }, 0));
+    if (nombre && !profil.ajouterOperationQuiz(u.id, {
+      id: identifiantOperationXP(), cle: cle, gain: nombre, base: Math.max(0, (Number(avant.xp) || 0) - attente)
+    })) return false;
+    if (!profil.compteQuizIsole(u.id)) return true;
+    if (!activerProtocoleXP(profil, u.id)) return false;
+    var marque = marquerOperationsXP(profil, cle, u.id, valeur);
+    if (!marque) return false;
+    if (nombre) marque._sti_xp_attente = Math.max(Number(marque._sti_xp_attente) || 0, attente + nombre);
+    return profil.ecrireAcquisQuiz(cle, u.id, marque, false);
+  }
   function programmerXp(delai) {
     if (xpMinuteur || !Object.keys(xpEnAttente).length || typeof setTimeout !== "function") return;
     xpMinuteur = setTimeout(function () { xpMinuteur = 0; viderXp(); }, delai);
@@ -1188,34 +1245,49 @@
       var s = sb(), u = await utilisateur(), profil = window.STIProfil;
       if (!s || !u || !u.id || !profil || typeof profil.compteQuizIsole !== "function" || !profil.compteQuizIsole(u.id)) throw new Error("session ou isolation en attente");
       if (sansScore(u)) { xpEnAttente = {}; return; }
+      if (!activerProtocoleXP(profil, u.id)) throw new Error("stockage XP indisponible");
       var reponseSession = await s.auth.getSession();
       var session = reponseSession && reponseSession.data && reponseSession.data.session;
       if (!session || !session.access_token || !session.user || String(session.user.id) !== String(u.id)) throw new Error("session en attente");
       var cle = Object.keys(xpEnAttente)[0];
       var acquis = profil.lireAcquisQuiz(cle, u.id);
       if (!acquis) throw new Error("compteur local illisible");
+      var operations = profil.listerOperationsQuiz(u.id, cle);
+      if (!operations) throw new Error("file XP indisponible");
       var extrait = champsXp(cle, acquis);
-      if (extrait.xp === undefined) extrait.xp = 0;
       var avant = JSON.stringify(extrait);
+      var attente = operations.reduce(function (n, o) { return n + o.gain; }, 0);
+      var base = Math.max(0, (Number(extrait.xp) || 0) - attente);
+      operations.forEach(function (o) { base = Math.max(base, Number(o.base) || 0); });
+      extrait.xp = base;
+      var lot = operations.slice(0, 100).map(function (o) { return { id: o.id, gain: o.gain }; });
       var config = window.STI_AUTH;
       if (!config || !config.URL || !config.CLE) throw new Error("configuration absente");
-      var rep = await fetch(config.URL + "/rest/v1/rpc/sti_synchroniser_xp_quiz", {
+      var rep = await fetch(config.URL + "/rest/v1/rpc/sti_appliquer_gains_xp_quiz", {
         method: "POST",
         headers: { "apikey": config.CLE, "Authorization": "Bearer " + session.access_token, "Content-Type": "application/json" },
-        body: JSON.stringify({ p_cle: cle, p_valeur: extrait }),
+        body: JSON.stringify({ p_cle: cle, p_valeur: extrait, p_operations: lot }),
         keepalive: true
       });
       if (!rep.ok) throw new Error("sauvegarde XP indisponible");
-      var distant = await rep.json();
+      var reponse = await rep.json();
       var courant = utilisateurDepuisStockageLocal();
       if (!courant || String(courant.id) !== String(u.id) || !profil.compteQuizIsole(u.id)) return;
+      if (!reponse || !Array.isArray(reponse.confirmes) || !reponse.valeur ||
+          typeof reponse.valeur !== "object" || Array.isArray(reponse.valeur) ||
+          !Number.isSafeInteger(Number(reponse.valeur.xp)) || Number(reponse.valeur.xp) < 0 ||
+          lot.some(function (o) { return reponse.confirmes.indexOf(o.id) === -1; })) {
+        throw new Error("confirmation XP illisible");
+      }
       var etatLocal = profil.lireAcquisQuiz(cle, u.id);
-      var fusion = etatLocal && fusionnerAcquisQuiz(cle, etatLocal, distant);
+      var fusion = etatLocal && fusionnerAcquisQuiz(cle, etatLocal, reponse.valeur);
       if (!fusion) throw new Error("réponse XP illisible");
-      profil.ecrireAcquisQuiz(cle, u.id, fusion);
+      profil.confirmerOperationsQuiz(u.id, lot.map(function (o) { return o.id; }));
+      if (!activerProtocoleXP(profil, u.id)) throw new Error("stockage XP indisponible");
+      profil.ecrireAcquisQuiz(cle, u.id, marquerOperationsXP(profil, cle, u.id, fusion));
       var apres = profil.lireAcquisQuiz(cle, u.id);
       if (!apres) throw new Error("compte ou compteur indisponible");
-      if (JSON.stringify(champsXp(cle, apres)) === avant) delete xpEnAttente[cle];
+      if (!profil.listerOperationsQuiz(u.id, cle).length && JSON.stringify(champsXp(cle, apres)) === avant) delete xpEnAttente[cle];
       xpDelai = 1000;
     } catch (e) {
       /* Les acquis restent sur l'appareil ; réessayer sans bloquer le jeu. */
@@ -1243,6 +1315,7 @@
     revisionIds: revisionIds,
     quitterRevision: quitterRevision,
     reinitialiserSessionsConnexion: reinitialiserSessionsConnexion,
+    sauverXP: sauverXP,
     notifierXP: notifierXP,
     resume: resume,
     calculerXpPlancherQuiz: calculerXpPlancherQuiz,
@@ -1266,10 +1339,19 @@
     if (/\/quiz\/php\.html$/i.test(chemin)) return "quizphp_v1_user";
     return "";
   }
+  function relancerOperationsEnAttente() {
+    var u = utilisateurDepuisStockageLocal(), profil = window.STIProfil;
+    if (!u || !u.id || sansScore(u) || !profil || typeof profil.listerOperationsQuiz !== "function") return;
+    var operations = profil.listerOperationsQuiz(u.id) || [];
+    operations.forEach(function (o) { xpEnAttente[o.cle] = true; });
+    if (operations.length && !xpEnCours) viderXp();
+  }
   function demarrerSyncQuiz() {
     viderFile();
+    rafraichirMarqueursXP();
     var cle = cleXpDeLaPage();
     if (cle) notifierXP(cle);
+    relancerOperationsEnAttente();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrerSyncQuiz);
   else demarrerSyncQuiz();
@@ -1278,11 +1360,26 @@
     xpDelai = 1000;
     if (xpMinuteur) { clearTimeout(xpMinuteur); xpMinuteur = 0; }
     var cle = cleXpDeLaPage(); if (cle) notifierXP(cle);
-    else programmerXp(0);
+    relancerOperationsEnAttente();
+    if (!cle) programmerXp(0);
   });
   window.addEventListener("sti-cloud-restored", function () {
+    rafraichirMarqueursXP();
     var cle = cleXpDeLaPage(); if (cle) notifierXP(cle);
+    relancerOperationsEnAttente();
   });
+  window.addEventListener("focus", function () {
+    var cle = cleXpDeLaPage(); if (cle) notifierXP(cle);
+    relancerOperationsEnAttente();
+  });
+  window.addEventListener("storage", function (e) {
+    if (e.key && e.key.indexOf("quiz-xp-operation-v1:") === 0) relancerOperationsEnAttente();
+  });
+  if (typeof setInterval === "function") setInterval(function () {
+    if (document.hidden || (typeof navigator !== "undefined" && navigator.onLine === false)) return;
+    var cle = cleXpDeLaPage(); if (cle) notifierXP(cle);
+    relancerOperationsEnAttente();
+  }, 30000);
   window.addEventListener("pagehide", function () {
     if (xpMinuteur) { clearTimeout(xpMinuteur); xpMinuteur = 0; }
     if (!xpEnCours) viderXp();

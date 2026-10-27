@@ -5536,7 +5536,7 @@ background-repeat: repeat;</pre>
         } catch (e) {}
         return { xp: 0, best: 0, parties: 0, bonnes: 0, total: 0 };
       }
-      function ecrireXpHtmlCss(patch) {
+      function ecrireXpHtmlCss(patch, gain) {
         var cur = lireXpHtmlCss();
         var out = {
           xp: Math.max(cur.xp, Number(patch && patch.xp != null ? patch.xp : cur.xp) || 0),
@@ -5545,7 +5545,9 @@ background-repeat: repeat;</pre>
           bonnes: Math.max(cur.bonnes, Number(patch && patch.bonnes != null ? patch.bonnes : cur.bonnes) || 0),
           total: Math.max(cur.total, Number(patch && patch.total != null ? patch.total : cur.total) || 0),
         };
-        try { localStorage.setItem(CLE_XP_HTMLCSS, JSON.stringify(out)); } catch (e) {}
+        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(CLE_XP_HTMLCSS, out, gain || 0))) {
+          try { localStorage.setItem(CLE_XP_HTMLCSS, JSON.stringify(out)); } catch (e) {}
+        }
         if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(CLE_XP_HTMLCSS);
         var elHs = $("#heroScore");
         if (elHs) elHs.textContent = "XP cumulés : " + out.xp.toLocaleString("fr-FR") + " XP";
@@ -5564,7 +5566,7 @@ background-repeat: repeat;</pre>
         if (idx === idxCorrect) {
           apercu.score += 250;
           var curAp = lireXpHtmlCss();
-          ecrireXpHtmlCss({ xp: curAp.xp + 250 });
+          ecrireXpHtmlCss({ xp: curAp.xp + 250 }, 250);
           toast("Bonne réponse ! +250 XP", "⚡");
         } else {
           toast("Raté — c'est un aperçu, pas la partie", "🙃");
@@ -6035,7 +6037,7 @@ background-repeat: repeat;</pre>
               parties: curFinHc.parties + 1,
               bonnes: curFinHc.bonnes + nbBonnes,
               total: curFinHc.total + listeFinale.length,
-            });
+            }, nbBonnes * 250);
           }
           var ordreFinal = listeFinale.map(function (q, idx) {
             var estOk = q.answer !== null && q.answer !== undefined && q.options[q.answer] && q.options[q.answer].ok;

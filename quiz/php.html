@@ -5185,7 +5185,7 @@
             : "—";
         }
       }
-      function saveUser() {
+      function saveUser(gain) {
         try {
           const ex = JSON.parse(memoLire(CLE_LOCALE + "user") || "null");
           if (ex && typeof ex === "object") {
@@ -5198,7 +5198,9 @@
             }
           }
         } catch (eEx) {}
-        memoEcrire(CLE_LOCALE + "user", JSON.stringify(user));
+        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP("quizphp_v1_user", user, gain || 0))) {
+          memoEcrire(CLE_LOCALE + "user", JSON.stringify(user));
+        }
         if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP("quizphp_v1_user");
         updateNav();
       }
@@ -5870,7 +5872,7 @@
             user.xp = (Number(user.xp) || 0) + xpExitPhp;
             user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);
             if ((quiz.score || 0) > (user.best || 0)) user.best = quiz.score;
-            try { saveUser(); } catch (eSuEx) {}
+            try { saveUser(xpExitPhp); } catch (eSuEx) {}
           }
           if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function") {
             STIQuizSync.noterQuestionsVuesQuiz(
@@ -6138,7 +6140,7 @@
           user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);
           if (quiz.score > (user.best || 0)) user.best = quiz.score;
           try {
-            saveUser();
+            saveUser(xpGain);
           } catch (eSu) {}
         }
         synchroniserPartiePhp(true);
