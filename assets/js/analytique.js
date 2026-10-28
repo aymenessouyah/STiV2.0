@@ -80,6 +80,7 @@
       Object.keys(mp).forEach(function (k) {
         var e = mp[k];
         var pctM = typeof e === "number" ? e : Number((e && (e.maxPct != null ? e.maxPct : e.pct)) || ((e && e.done) ? 100 : 0));
+        if (!pctM && e && typeof e === "object" && (Number(e.sec != null ? e.sec : (e.t || e.time || 0)) || 0) >= 2) pctM = 1;
         if (pctM > 0) {
           if (k.indexOf("video:") === 0) nbVid++;
           else if (k.indexOf("audio:") === 0) nbAud++;

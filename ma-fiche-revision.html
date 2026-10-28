@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-sti-titre="🧾 Ma fiche de révision">
+<html data-sti-heritage="interface" lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -55,11 +55,10 @@
 <script id="sti-early-boot">
 (function(){try{var r=document.documentElement;var t=localStorage.getItem("sti-theme")||localStorage.getItem("theme")||"";if(t!=="dark"&&t!=="light"){try{t=localStorage.getItem("sti-roue-theme")==="sombre"?"dark":"";}catch(e){}}if(t==="dark"){r.setAttribute("data-theme","dark");r.classList.add("dark","dark-mode");}else if(t==="light"){r.removeAttribute("data-theme");r.classList.remove("dark","dark-mode");}}catch(e){}})();
 </script>
-<!-- ===== STI V2.0 — design system (pont) ===== -->
-<link rel="stylesheet" href="assets/css/theme.css">
-<script src="assets/js/profil.js"></script>
+
+<link rel="stylesheet" href="assets/css/theme-patrimoine.css">
 </head>
-<body class="sti-legacy">
+<body>
 <main class="feuille">
   <h1>🖨 Ma fiche de révision</h1>
   <div class="sous" id="fiche-entete">Préparation en cours…</div>
@@ -226,10 +225,11 @@
   rendrePassagesFluoFiche();
 })();
 </script>
-<script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/config.js?v=425" defer></script>
+<script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/acces.js?v=453" defer></script>
 <script src="assets/js/sync-progressions.js" defer></script>
-<script src="assets/js/app.js" defer></script>
+
+<script src="assets/js/profil.js" defer></script>
 </body>
 </html>

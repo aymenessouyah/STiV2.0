@@ -1,55 +1,4104 @@
-<!DOCTYPE html>
-<html lang="fr" data-sti-quiz="javascript">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, noai, noimageai">
-<meta name="theme-color" content="#0d1526">
-<title>Arène JavaScript — STI V2.0 — STI V2.0</title>
-<link rel="icon" href="../assets/icons/sti-icon-192.png">
-<meta name="description" content="Quiz de l’annexe JavaScript · 3ème & 4ème SI : variables, fonctions, tableaux et DOM.">
+<html lang="fr">
+  <head>
+<script id="sti-early-boot">
+/* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
+   bas disparaît quelques millisecondes ; idem exercices qui s'affiche en clair avant de se
+   rattraper ». Cause : la barre et le thème étaient peints par les scripts de FIN de page.
+   Ces quelques lignes, placées tout en tête (avant la moindre CSS), peignent dès le premier
+   instant 1°) le thème mémorisé (html.dark + [data-theme], les deux écritures du site) et
+   2°) le gabarit de la barre mémorisé à la visite précédente (mêmes ids que le gabarit v421 :
+   si config.js le trouve déjà, il passe). Non cliquable, effacé par mobile-nav.js à
+   l'installation de la vraie barre. Zéro régression si rien n'est mémorisé ou si une CSP stricte
+   bloque l'inline : on reste exactement au comportement v424. */
+(function () {
+  try {
+    var r = document.documentElement;
+    var t = "";
+    try { t = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || ""; } catch (eT) {}
+    if (t !== "dark" && t !== "light") {
+      try { t = localStorage.getItem("sti-roue-theme") === "sombre" ? "dark" : ""; } catch (eT2) {}
+    }
+    var dark = t === "dark";
+    if (t === "dark") { r.setAttribute("data-theme", "dark"); r.classList.add("dark", "dark-mode"); }
+    else if (t === "light") { r.removeAttribute("data-theme"); r.classList.remove("dark", "dark-mode"); }
+    if (!/^https?:$/.test(location.protocol)) return;
+    if (!window.matchMedia || !window.matchMedia("(max-width: 700px)").matches) return;
+    if (window.__STI_BNAV || document.getElementById("sti-bnav")) return;
+    var pn = location.pathname;
+    if (pn.indexOf("/tests/") !== -1) return;
+    if (/(^|\/)admin(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;
+    var d = JSON.parse(localStorage.getItem("sti-bnav-skel") || "null");
+    if (!d || !d.h || typeof d.f !== "string" || !/^#[0-9a-f]{3,8}$|^rgba?\([\d.,\s]+\)$/i.test(d.f)) return;
+    if (Date.now() - (d.t || 0) > 45 * 24 * 3600 * 1000) return;
+    var b = /^#[0-9a-f]{3,8}$|^rgba?\([\d.,\s]+\)$/i.test(d.b || "") ? d.b : "#e7d9bd";
+    var brd = /^[\d.]+px$/.test(d.brd || "") ? d.brd : "1.5px";
+    /* le gabarit a été mesiné dans un thème, la page s'ouvre dans l'autre : couleurs de repli
+       littérales du module (jamais le fond du thème inverse). */
+    if ((d.th === "dark") !== dark) {
+      b = dark ? "#26314c" : "#e7d9bd";
+      d.f = dark ? "#121a2b" : "#fffcf3";
+    }
+    var st = document.createElement("style");
+    st.id = "sti-bnav-skel-css";
+    st.textContent = "@media (max-width:700px){html:not(.sti-bnav-on) #sti-bnav-skel{display:block;position:fixed;left:0;right:0;bottom:0;height:" + d.h + "px;background:" + d.f + ";border-top:" + brd + " solid " + b + ";z-index:2147483000;pointer-events:none}}";
+    var sk = document.createElement("div");
+    sk.id = "sti-bnav-skel";
+    sk.setAttribute("aria-hidden", "true");
+    r.appendChild(st);
+    r.appendChild(sk);
+    /* filet de sécurité : si la vraie barre ne vient jamais (module absent, réseau en panne),
+       le gabarit ne doit pas traîner une éternité. */
+    setTimeout(function () {
+      try {
+        if (!document.getElementById("sti-bnav")) {
+          var a = document.getElementById("sti-bnav-skel"); if (a) a.remove();
+          var c = document.getElementById("sti-bnav-skel-css"); if (c) c.remove();
+        }
+      } catch (eS) {}
+    }, 5000);
+  } catch (e) {}
+})();
+</script>
+  <link rel="icon" href="../assets/icons/STI_by_AE.ico" />
+    <meta name="robots" content="noai, noimageai" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.tailwindcss.com; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: https://www.w3schools.com https://interactive-examples.mdn.mozilla.net; frame-src 'self' https://www.youtube.com https://example.com https://exemple.tn; connect-src 'self' https://vywujxmepvcbgedgmger.supabase.co wss://vywujxmepvcbgedgmger.supabase.co https://ipapi.co https://ntfy.sh https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arène JavaScript — Quiz de l'annexe JS · 3ème & 4ème SI</title>
 
-<!-- ==========================================================================
-     STI V2.0 — ARÈNE « JavaScript »
-     --------------------------------------------------------------------------
-     Le design system (theme.css), l'en-tête commun, le badge abonné, les 3
-     modes d'affichage et le pied de page sont fournis par app.js / profil.js.
-     quiz.css habille l'arène ; quiz.js construit les 3 écrans et pilote le jeu.
-     Les questions NE SONT PAS régénérées : elles viennent de assets/data/.
+    <!-- Tailwind CSS (mise en forme) -->
+    <link rel="stylesheet" href="../assets/css/quiz-js-tw.css?v=474" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap"></noscript>
+    <!-- Confettis (fin de partie) -->
+    <script src="../assets/js/vendor/confetti.browser.min.js?v=474" defer></script>
+    <!-- PrismJS : coloration des extraits de code -->
 
-     Aucune balise CSP n'est ajoutée ici : le verrou et Supabase (config.js,
-     acces.js) doivent pouvoir joindre leur hôte sans URL écrite dans ce code.
-     Aucune image externe, aucun framework, aucun script inline métier.
-     ========================================================================== -->
+    <script src="../assets/js/vendor/prism-js.min.js?v=474" defer></script>
+    
 
-<!-- Antiflash du thème : profil.js (seule couche de stockage) peint data-theme
-     dès le premier instant. Les 5 scripts suivants sont DEFER : ils
-     s'exécuteront après lui, dans l'ordre imposé par le verrou d'accès. -->
-<script src="../assets/js/config.js" defer></script>
-<script src="../assets/js/supabase-umd.js" defer></script>
-<script src="../assets/js/acces.js" defer></script>
-<script src="../assets/js/sync-progressions.js" defer></script>
-<script src="../assets/js/profil.js"></script>
-<script src="../assets/js/app.js" defer></script>
+    <style>
+      
 
-<link rel="stylesheet" href="../assets/css/theme.css">
-<link rel="stylesheet" href="../assets/css/quiz.css">
-<link rel="manifest" href="../manifest.webmanifest">
+      /* ==== Thème Prism « tomorrow » (intégré) ==== */
+      code[class*="language-"],
+      pre[class*="language-"] {
+        color: #ccc;
+        background: 0 0;
+        font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+        font-size: 1em;
+        text-align: left;
+        white-space: pre;
+        word-spacing: normal;
+        word-break: normal;
+        word-wrap: normal;
+        line-height: 1.5;
+        -moz-tab-size: 4;
+        -o-tab-size: 4;
+        tab-size: 4;
+        -webkit-hyphens: none;
+        -moz-hyphens: none;
+        -ms-hyphens: none;
+        hyphens: none;
+      }
+      pre[class*="language-"] {
+        padding: 1em;
+        margin: 0.5em 0;
+        overflow: auto;
+      }
+      :not(pre) > code[class*="language-"],
+      pre[class*="language-"] {
+        background: #2d2d2d;
+      }
+      :not(pre) > code[class*="language-"] {
+        padding: 0.1em;
+        border-radius: 0.3em;
+        white-space: normal;
+      }
+      .token.block-comment,
+      .token.cdata,
+      .token.comment,
+      .token.doctype,
+      .token.prolog {
+        color: #999;
+      }
+      .token.punctuation {
+        color: #ccc;
+      }
+      .token.attr-name,
+      .token.deleted,
+      .token.namespace,
+      .token.tag {
+        color: #e2777a;
+      }
+      .token.function-name {
+        color: #6196cc;
+      }
+      .token.boolean,
+      .token.function,
+      .token.number {
+        color: #f08d49;
+      }
+      .token.class-name,
+      .token.constant,
+      .token.property,
+      .token.symbol {
+        color: #f8c555;
+      }
+      .token.atrule,
+      .token.builtin,
+      .token.important,
+      .token.keyword,
+      .token.selector {
+        color: #cc99cd;
+      }
+      .token.attr-value,
+      .token.char,
+      .token.regex,
+      .token.string,
+      .token.variable {
+        color: #7ec699;
+      }
+      .token.entity,
+      .token.operator,
+      .token.url {
+        color: #67cdcc;
+      }
+      .token.bold,
+      .token.important {
+        font-weight: 700;
+      }
+      .token.italic {
+        font-style: italic;
+      }
+      .token.entity {
+        cursor: help;
+      }
+      .token.inserted {
+        color: green;
+      }
+
+      :root {
+        --js-yellow: #f7df1e;
+        --neon-blue: #00f3ff;
+        --neon-pink: #ff2d78;
+        --neon-green: #22ff88;
+        --cyber-dark: #0a0c14;
+      }
+
+      body {
+        background-color: var(--cyber-dark);
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial,
+          sans-serif;
+        color: #e2e8f0;
+        overflow-x: hidden;
+      }
+
+      /* ==== Fond animé ==== */
+      .bg-mesh {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: radial-gradient(
+            ellipse 60% 50% at 15% 20%,
+            rgba(247, 223, 30, 0.08),
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse 50% 50% at 85% 80%,
+            rgba(0, 243, 255, 0.08),
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse 40% 40% at 60% 10%,
+            rgba(255, 45, 120, 0.05),
+            transparent 50%
+          );
+        animation: meshDrift 16s ease-in-out infinite alternate;
+      }
+      @keyframes meshDrift {
+        0% {
+          filter: hue-rotate(0deg) saturate(1);
+          transform: scale(1);
+        }
+        100% {
+          filter: hue-rotate(40deg) saturate(1.3);
+          transform: scale(1.08);
+        }
+      }
+
+      /* ==== Particules flottantes ==== */
+      #particle-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      /* ==== Sol quadrillé ==== */
+      .grid-floor {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 45vh;
+        z-index: 0;
+        background-image: linear-gradient(
+            rgba(0, 243, 255, 0.07) 1px,
+            transparent 1px
+          ),
+          linear-gradient(90deg, rgba(0, 243, 255, 0.07) 1px, transparent 1px);
+        background-size: 44px 44px;
+        transform: perspective(420px) rotateX(62deg) scale(1.6);
+        transform-origin: bottom;
+        opacity: 0.5;
+        animation: gridScroll 3.5s linear infinite;
+        mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+        -webkit-mask-image: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.9),
+          transparent
+        );
+      }
+      @keyframes gridScroll {
+        to {
+          background-position: 0 44px, 0 44px;
+        }
+      }
+
+      .font-mono-code {
+        font-family: "Fira Code", Consolas, "Courier New", monospace;
+      }
+      .font-heading {
+        font-family: "Orbitron", "Trebuchet MS", "Arial Black", sans-serif;
+        letter-spacing: 1px;
+      }
+
+      /* ==== Lignes de balayage ==== */
+      .scanlines {
+        position: relative;
+      }
+      .scanlines::before {
+        content: " ";
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(
+            rgba(18, 16, 16, 0) 50%,
+            rgba(0, 0, 0, 0.22) 50%
+          ),
+          linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 0.02),
+            rgba(0, 255, 0, 0.01),
+            rgba(0, 0, 255, 0.02)
+          );
+        z-index: 60;
+        background-size: 100% 3px, 3px 100%;
+        pointer-events: none;
+        opacity: 0.55;
+      }
+
+      /* ==== Effet verre ==== */
+      .glass-panel {
+        background: rgba(16, 20, 34, 0.72);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.8),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+
+      /* ==== Surcharge de Prism ==== */
+      pre[class*="language-"] {
+        margin: 0 !important;
+        border-radius: 0.75rem;
+        background: #0d1120 !important;
+        border: 1px solid #1e293b;
+        box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.7);
+      }
+
+      /* ==== Animations ==== */
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0) rotate(0);
+        }
+        20%,
+        60% {
+          transform: translateX(-9px) rotate(-0.4deg);
+        }
+        40%,
+        80% {
+          transform: translateX(9px) rotate(0.4deg);
+        }
+      }
+      .animate-shake {
+        animation: shake 0.4s ease-in-out;
+      }
+
+      @keyframes popIn {
+        0% {
+          transform: scale(0.85);
+          opacity: 0;
+        }
+        70% {
+          transform: scale(1.03);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .animate-popIn {
+        animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-90px) scale(1.4);
+          opacity: 0;
+        }
+      }
+      .float-points {
+        position: absolute;
+        animation: floatUp 1.1s ease-out forwards;
+        pointer-events: none;
+        z-index: 30;
+        font-weight: 800;
+      }
+
+      @keyframes firePulse {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 6px rgba(255, 120, 0, 0.7));
+          transform: scale(1);
+        }
+        50% {
+          filter: drop-shadow(0 0 16px rgba(255, 60, 0, 0.95));
+          transform: scale(1.15);
+        }
+      }
+      .combo-fire {
+        animation: firePulse 0.8s infinite;
+      }
+
+      @keyframes titleGlow {
+        0%,
+        100% {
+          text-shadow: 0 0 18px rgba(247, 223, 30, 0.35);
+        }
+        50% {
+          text-shadow: 0 0 34px rgba(247, 223, 30, 0.65);
+        }
+      }
+      .title-glow {
+        animation: titleGlow 3s ease-in-out infinite;
+      }
+
+      @keyframes blobWobble {
+        0%,
+        100% {
+          border-radius: 42% 58% 55% 45% / 45% 42% 58% 55%;
+        }
+        50% {
+          border-radius: 58% 42% 45% 55% / 55% 58% 42% 45%;
+        }
+      }
+
+      /* ==== Cartes de mode : bordure dégradée au survol ==== */
+      .mode-card {
+        position: relative;
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+          box-shadow 0.25s;
+      }
+      .mode-card:hover {
+        transform: translateY(-6px) scale(1.02);
+      }
+      .mode-card::after {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: 0.9rem;
+        padding: 1px;
+        background: linear-gradient(
+          130deg,
+          var(--card-accent, #f7df1e),
+          transparent 45%,
+          transparent 60%,
+          var(--card-accent, #f7df1e)
+        );
+        -webkit-mask: linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.25s;
+        pointer-events: none;
+      }
+      .mode-card:hover::after {
+        opacity: 1;
+      }
+
+      /* ==== Boutons de proposition ==== */
+      .option-btn {
+        transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s,
+          background 0.2s;
+      }
+      .option-btn:not(:disabled):hover {
+        transform: translateX(5px);
+      }
+      .option-btn.correct-flash {
+        animation: correctFlash 0.5s ease;
+        box-shadow: 0 0 24px rgba(34, 255, 136, 0.4);
+      }
+      @keyframes correctFlash {
+        0% {
+          background: rgba(34, 255, 136, 0.25);
+        }
+        100% {
+          background: rgba(6, 46, 30, 0.5);
+        }
+      }
+
+      /* ==== Aide clavier ==== */
+      .kbd {
+        font-family: "Fira Code", Consolas, monospace;
+        font-size: 10px;
+        padding: 1px 6px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom-width: 3px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      /* ==== Messages éphémères ==== */
+      #toast-layer {
+        position: fixed;
+        top: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 70;
+        pointer-events: none;
+      }
+      .toast {
+        animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+          toastOut 0.4s ease 1.9s both;
+        white-space: nowrap;
+      }
+      @keyframes toastIn {
+        from {
+          transform: translateY(-24px) scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+      @keyframes toastOut {
+        to {
+          transform: translateY(-14px) scale(0.95);
+          opacity: 0;
+        }
+      }
+
+      /* ==== Alerte temps faible ==== */
+      .timer-danger {
+        animation: timerBlink 0.5s infinite;
+      }
+      @keyframes timerBlink {
+        50% {
+          opacity: 0.45;
+        }
+      }
+
+      /* ==== Barre de défilement ==== */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0d1117;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #2a3448;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #f7df1e;
+      }
+
+      /* ==== Bandeau défilant de l'accueil ==== */
+      .ticker-wrap {
+        overflow: hidden;
+      }
+      .ticker {
+        display: inline-block;
+        white-space: nowrap;
+        animation: ticker 22s linear infinite;
+      }
+      @keyframes ticker {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ==== Ajustements responsives ==== */
+      @media (max-width: 480px) {
+        .mode-card h3 {
+          font-size: 0.95rem;
+        }
+      }
+    </style>
+    <link rel="manifest" href="../manifest.webmanifest" />
 </head>
-<body class="sti-legacy">
-<!-- Le contenu historique est conservé intégralement dans
-     quiz/javascript-origine.html. Ici, quiz.js injecte la coquille de l'arène. -->
-<div id="stiQuizMount" aria-live="polite"></div>
+  <body class="min-h-screen flex flex-col scanlines">
+<!-- STI navigation croisée -->
+<style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../cours/javascript.html" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours JavaScript</a><a href="../exercices/series-exercices.html#javascript" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">🏋️ Exercices</a></nav>
 
-<!-- Scripts conservés tels quels (ordre imposé). Aucune logique Supabase
-     réécrite : tout passe par window.STI_AUTH. -->
-<script src="../assets/js/protection.js" defer></script>
-<script src="../assets/js/quiz-sync.js" defer></script>
+    <!-- Calques de fond -->
+    <div class="bg-mesh"></div>
+    <canvas id="particle-canvas"></canvas>
+    <div class="grid-floor"></div>
 
-<!-- Banque de questions d'origine (aucune question modifiée). -->
-<script src="../assets/data/questions-javascript.js" defer></script>
-<!-- Configuration de l'arène, puis moteur de jeu. -->
-<script src="../assets/js/quiz-config.js" defer></script>
-<script src="../assets/js/quiz.js" defer></script>
+    <!-- En-tête : titre et statistiques -->
+    <header
+      class="border-b border-gray-800/80 bg-[#0d101a]/85 backdrop-blur-md sticky top-0 z-50 px-3 md:px-4 py-3"
+    >
+      <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
+        <div
+          class="flex items-center space-x-2.5 cursor-pointer select-none"
+          onclick="game.showHome()"
+        >
+          <a
+            href="../index.html#modules"
+            onclick="event.stopPropagation(); if (window.game && game.syncProgress) game.syncProgress(true);"
+            title="Retour aux quiz"
+            class="px-2.5 py-2 rounded-lg border border-gray-700 bg-gray-800/80 text-gray-300 hover:text-yellow-400 hover:border-yellow-400/50 hover:-translate-y-0.5 transition-all text-xs font-mono-code flex items-center gap-1"
+          >
+            ◀ <span class="hidden sm:inline">Retour aux quiz</span>
+          </a>
+          <div
+            class="w-9 h-9 bg-yellow-400 text-black font-bold flex items-center justify-center rounded-lg font-mono-code text-lg shadow-[0_0_16px_rgba(247,223,30,0.55)] hover:rotate-6 transition-transform"
+          >
+            JS
+          </div>
+          <div>
+            <h1
+              class="font-heading font-extrabold text-xs md:text-base tracking-wider text-white flex items-center gap-1.5"
+            >
+              ARÈNE <span class="text-yellow-400">JAVASCRIPT</span>
+              <span
+                class="text-[10px] uppercase font-mono-code px-1.5 py-0.5 bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 rounded"
+                >v3.0</span
+              >
+            </h1>
+          </div>
+        </div>
+
+        <!-- Barre de statistiques -->
+        <div
+          id="nav-stats"
+          class="hidden items-center gap-2 md:gap-4 text-xs md:text-sm font-mono-code"
+        >
+          <div
+            class="flex items-center gap-1.5 bg-gray-900/80 px-2.5 py-1 rounded-lg border border-gray-700"
+          >
+            <span class="text-gray-400 hidden sm:inline">SCORE :</span>
+            <span id="stat-score" class="font-bold text-yellow-400">0</span>
+          </div>
+          <div
+            id="stat-combo-container"
+            class="hidden items-center gap-1 bg-pink-500/10 text-pink-400 px-2.5 py-1 rounded-lg border border-pink-500/30"
+          >
+            <span id="combo-flame" class="combo-fire">🔥</span>
+            <span id="stat-combo" class="font-bold">x1</span>
+          </div>
+          <div id="stat-lives-container" class="hidden items-center gap-1">
+            <span id="stat-lives" class="text-sm tracking-widest">❤️❤️❤️</span>
+          </div>
+          <div
+            id="stat-boss-container"
+            class="hidden items-center gap-1 bg-cyan-500/10 text-cyan-300 px-2.5 py-1 rounded-lg border border-cyan-500/30"
+          >
+            👾 <span id="stat-boss-hp" class="font-bold">100</span>
+          </div>
+        </div>
+
+        <!-- Commande du son -->
+        <button
+          id="sound-btn"
+          onclick="soundManager.toggleMute()"
+          class="px-2.5 py-1.5 rounded-lg border border-gray-700 bg-gray-800/80 text-gray-300 hover:text-yellow-400 hover:border-yellow-400/50 hover:-translate-y-0.5 transition-all text-xs font-mono-code flex items-center gap-1.5"
+        >
+          <span id="sound-icon">🔊</span>
+          <span class="hidden sm:inline" id="sound-text">SON</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Couche des messages éphémères -->
+    <div id="toast-layer"></div>
+
+    <!-- Conteneur principal -->
+    <main
+      class="flex-grow flex items-center justify-center p-3 md:p-6 max-w-4xl mx-auto w-full relative z-10"
+    >
+      <!-- ÉCRAN 1 : ACCUEIL -->
+      <section
+        id="screen-start"
+        class="w-full text-center space-y-7 py-6 animate-popIn"
+      >
+        <div class="space-y-4">
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-xs font-mono-code"
+          >
+            <span
+              class="w-2 h-2 rounded-full bg-yellow-400 animate-ping"
+            ></span>
+            MOTEUR JAVASCRIPT PRÊT
+          </div>
+          <h1
+            class="font-heading text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-500 title-glow leading-tight"
+          >
+            DÉBOGUE<br class="sm:hidden" />
+            TON CODE
+          </h1>
+          <p class="text-gray-400 max-w-xl mx-auto text-sm sm:text-base">
+            Variables, opérateurs, chaînes, tableaux, boucles, DOM :<br
+              class="hidden sm:block"
+            />
+            tout le programme de l'annexe JavaScript en questions.<br
+              class="hidden sm:block"
+            />
+            <span class="text-gray-500 text-xs"
+              >Réponds à la souris ou avec les touches <span class="kbd">1</span
+              ><span class="kbd">2</span><span class="kbd">3</span
+              ><span class="kbd">4</span></span
+            >
+          </p>
+        </div>
+
+        <!-- Bandeau défilant -->
+        <div
+          class="ticker-wrap max-w-xl mx-auto border-y border-gray-800/70 py-1.5 text-[11px] font-mono-code text-gray-500"
+        >
+          <div class="ticker">
+            <span class="mx-4"
+              >⚡ prompt() renvoie toujours du TEXTE : penser à Number() ou
+              parseInt()</span
+            >
+            <span class="mx-4"
+              >🔥 parseInt("42px") → 42 : la conversion s'arrête au premier
+              caractère non numérique</span
+            >
+            <span class="mx-4"
+              >🚀 Math.random() donne un réel de 0 à moins de 1 : multiplier,
+              tronquer, ajouter</span
+            >
+            <span class="mx-4"
+              >🧠 getMonth() va de 0 (janvier) à 11 (décembre)</span
+            >
+            <span class="mx-4"
+              >✂️ replace() ne remplace que la PREMIÈRE occurrence</span
+            >
+            <span class="mx-4"
+              >💀 NaN n'est pas égal à lui-même : utiliser isNaN() ou
+              Number.isNaN()</span
+            >
+            <span class="mx-4"
+              >⚡ prompt() renvoie toujours du TEXTE : penser à Number() ou
+              parseInt()</span
+            >
+            <span class="mx-4"
+              >🔥 parseInt("42px") → 42 : la conversion s'arrête au premier
+              caractère non numérique</span
+            >
+            <span class="mx-4"
+              >🚀 Math.random() donne un réel de 0 à moins de 1 : multiplier,
+              tronquer, ajouter</span
+            >
+            <span class="mx-4"
+              >🧠 getMonth() va de 0 (janvier) à 11 (décembre)</span
+            >
+            <span class="mx-4"
+              >✂️ replace() ne remplace que la PREMIÈRE occurrence</span
+            >
+            <span class="mx-4"
+              >💀 NaN n'est pas égal à lui-même : utiliser isNaN() ou
+              Number.isNaN()</span
+            >
+          </div>
+        </div>
+
+        <!-- Bilan & Reprise Cloud Supabase -->
+        <div id="js-cloud-bilan" class="max-w-3xl mx-auto mb-3 text-left"></div>
+        <div id="js-cloud-reprise" class="max-w-3xl mx-auto mb-4 text-left"></div>
+
+        <!-- Cartes de mode -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-3xl mx-auto"
+        >
+          <div
+            onclick="game.start('arcade')"
+            class="mode-card glass-panel p-5 rounded-xl border border-gray-700 cursor-pointer group"
+            style="--card-accent: #f7df1e"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-3xl group-hover:scale-125 transition-transform duration-300 inline-block"
+                >⚡</span
+              >
+              <span
+                class="text-xs font-mono-code bg-yellow-400/15 text-yellow-400 px-2 py-0.5 rounded-full"
+                >10 QUESTIONS</span
+              >
+            </div>
+            <h3
+              class="font-heading font-bold text-lg text-white group-hover:text-yellow-400 transition-colors"
+            >
+              SPRINT ARCADE
+            </h3>
+            <p class="text-xs text-gray-400 mt-1.5 leading-relaxed">
+              Dix questions contre le chrono. Enchaîne les bonnes réponses pour
+              multiplier ton score.
+            </p>
+          </div>
+
+          <div
+            onclick="game.start('survival')"
+            class="mode-card glass-panel p-5 rounded-xl border border-gray-700 cursor-pointer group"
+            style="--card-accent: #ff2d78"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-3xl group-hover:scale-125 transition-transform duration-300 inline-block"
+                >❤️</span
+              >
+              <span
+                class="text-xs font-mono-code bg-pink-400/15 text-pink-400 px-2 py-0.5 rounded-full"
+                >3 VIES</span
+              >
+            </div>
+            <h3
+              class="font-heading font-bold text-lg text-white group-hover:text-pink-400 transition-colors"
+            >
+              MODE SURVIE
+            </h3>
+            <p class="text-xs text-gray-400 mt-1.5 leading-relaxed">
+              Questions illimitées et mélangées dans le désordre. Trois erreurs
+              et la partie s'arrête.
+            </p>
+          </div>
+
+          <div
+            onclick="game.start('boss')"
+            class="mode-card glass-panel p-5 rounded-xl border border-gray-700 cursor-pointer group"
+            style="--card-accent: #00f3ff"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-3xl group-hover:scale-125 transition-transform duration-300 inline-block"
+                >👾</span
+              >
+              <span
+                class="text-xs font-mono-code bg-cyan-400/15 text-cyan-400 px-2 py-0.5 rounded-full"
+                >COMBAT DE BOSS</span
+              >
+            </div>
+            <h3
+              class="font-heading font-bold text-lg text-white group-hover:text-cyan-400 transition-colors"
+            >
+              LE RAMASSE-MIETTES
+            </h3>
+            <p class="text-xs text-gray-400 mt-1.5 leading-relaxed">
+              Affronte le ramasse-miettes corrompu : chaque bonne réponse lui
+              enlève des points de vie, chaque erreur t'en coûte.
+            </p>
+          </div>
+        </div>
+
+        <!-- Meilleurs scores -->
+        <div
+          class="glass-panel rounded-xl p-4 max-w-lg mx-auto flex items-center justify-around text-xs font-mono-code text-gray-400"
+        >
+          <div>
+            🏆 Meilleur score :
+            <span id="home-high-score" class="text-yellow-400 font-bold"
+              >0</span
+            >
+          </div>
+          <div class="h-4 w-px bg-gray-700"></div>
+          <div>
+            🧠 Questions répondues :
+            <span id="home-total-answered" class="text-cyan-400 font-bold"
+              >0</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ÉCRAN 2 : PARTIE -->
+      <section id="screen-gameplay" class="hidden w-full max-w-2xl space-y-3">
+        <!-- Jauge du boss -->
+        <div
+          id="boss-hud"
+          class="hidden glass-panel p-3 rounded-xl border-cyan-500/30 relative overflow-hidden"
+        >
+          <div
+            class="flex justify-between items-center text-xs font-mono-code mb-1.5"
+          >
+            <span class="text-cyan-400 flex items-center gap-1.5 font-bold"
+              >👾 <span id="boss-mood">RAMASSE-MIETTES CORROMPU</span></span
+            >
+            <span id="boss-hp-text" class="text-gray-300">100 / 100 PV</span>
+          </div>
+          <div
+            class="w-full bg-gray-800 h-3 rounded-full overflow-hidden border border-gray-700"
+          >
+            <div
+              id="boss-hp-bar"
+              class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-500 rounded-full"
+              style="width: 100%"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Points de progression -->
+        <div
+          class="flex items-center justify-between gap-2 text-xs font-mono-code text-gray-400 px-1"
+        >
+          <span id="question-counter">QUESTION 01 / 10</span>
+          <div class="flex items-center gap-2">
+            <span
+              id="question-difficulty"
+              class="px-2 py-0.5 bg-yellow-400/10 text-yellow-400 border border-yellow-400/20 rounded-full"
+              >MOYEN</span
+            >
+            <button
+              type="button"
+              onclick="game.endEarly()"
+              title="Terminer la partie et voir le bilan"
+              class="px-2.5 py-0.5 rounded-full border border-rose-500/40 bg-rose-500/10 text-rose-300 hover:bg-rose-500/25 hover:text-white transition-all"
+            >
+              ⏹ Terminer
+            </button>
+          </div>
+        </div>
+        <div id="progress-dots" class="flex gap-1.5 justify-center"></div>
+
+        <!-- Barre de temps -->
+        <div
+          class="w-full bg-gray-800 h-2 rounded-full overflow-hidden border border-gray-700/60"
+        >
+          <div
+            id="timer-bar"
+            class="h-full bg-gradient-to-r from-cyan-400 to-yellow-400 rounded-full transition-all duration-100 ease-linear"
+            style="width: 100%"
+          ></div>
+        </div>
+
+        <!-- Carte de la question -->
+        <div
+          id="question-card"
+          class="glass-panel p-5 sm:p-6 rounded-2xl border border-gray-700 space-y-4 shadow-2xl relative overflow-visible"
+        >
+          <div class="flex items-center justify-between">
+            <span
+              id="question-category"
+              class="text-[11px] font-mono-code uppercase px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20"
+              >VARIABLES &amp; PORTÉE</span
+            >
+            <span
+              class="text-xs font-mono-code text-gray-400 flex items-center gap-1"
+            >
+              ⏱️
+              <span id="seconds-left" class="text-yellow-400 font-bold text-sm"
+                >15</span
+              >s
+            </span>
+          </div>
+
+          <h2
+            id="question-title"
+            class="text-base sm:text-lg font-semibold text-white leading-snug"
+          >
+            Que va afficher la console ?
+          </h2>
+
+          <div id="code-container" class="relative group">
+            <div
+              class="flex justify-between items-center text-[10px] text-gray-500 font-mono-code pb-1"
+            >
+              <span class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500/70"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/70"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500/70"></span>
+                <span class="ml-1.5">exercice.js</span>
+              </span>
+              <span>JavaScript</span>
+            </div>
+            <pre><code id="code-snippet" class="language-javascript text-xs sm:text-sm"></code></pre>
+          </div>
+
+          <div
+            id="options-grid"
+            class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1"
+          ></div>
+
+          <!-- Explication -->
+          <div
+            id="explanation-box"
+            class="hidden mt-4 p-4 rounded-xl bg-gray-900/90 border border-gray-700 text-xs sm:text-sm text-gray-300 font-mono-code space-y-2 animate-popIn"
+          >
+            <div class="flex items-center justify-between gap-2">
+              <span
+                id="explanation-status"
+                class="font-bold flex items-center gap-1"
+              ></span>
+              <span class="text-gray-500 text-[10px] sm:text-[11px]"
+                >appuie sur <span class="kbd">ESPACE</span> ou clique sur
+                SUIVANT</span
+              >
+            </div>
+            <p id="explanation-text" class="text-gray-300 leading-relaxed"></p>
+            <button
+              onclick="game.nextQuestion()"
+              class="w-full mt-2 py-2.5 bg-yellow-400 text-black font-bold font-heading rounded-lg hover:bg-yellow-300 hover:shadow-[0_0_20px_rgba(247,223,30,0.4)] transition-all active:scale-[0.98]"
+            >
+              CONTINUER ➔
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ÉCRAN 3 : BILAN -->
+      <section
+        id="screen-result"
+        class="hidden w-full max-w-xl text-center space-y-5 animate-popIn"
+      >
+        <div
+          class="glass-panel p-6 sm:p-8 rounded-2xl border border-gray-700 space-y-6 relative overflow-hidden"
+        >
+          <div
+            class="absolute -top-16 -right-16 w-48 h-48 bg-yellow-400/10 blur-3xl"
+          ></div>
+          <div id="result-badge-icon" class="text-6xl animate-bounce">🏆</div>
+          <div class="space-y-1">
+            <div
+              id="result-status-tag"
+              class="text-xs font-mono-code uppercase px-3 py-1 bg-yellow-400/15 text-yellow-400 inline-block rounded-full mb-2"
+            >
+              DÉFI TERMINÉ
+            </div>
+            <h2
+              id="result-title"
+              class="font-heading text-2xl sm:text-3xl font-extrabold text-white"
+            >
+              EXPERT JAVASCRIPT
+            </h2>
+            <p id="result-desc" class="text-xs sm:text-sm text-gray-400">
+              Tu te joues des pièges de JavaScript comme un développeur
+              chevronné !
+            </p>
+          </div>
+
+          <div
+            class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-left font-mono-code"
+          >
+            <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">SCORE FINAL</span>
+              <span id="res-score" class="text-xl font-bold text-yellow-400"
+                >0</span
+              >
+            </div>
+            <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">PRÉCISION</span>
+              <span id="res-accuracy" class="text-xl font-bold text-green-400"
+                >0%</span
+              >
+            </div>
+            <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">COMBO MAX</span>
+              <span id="res-combo" class="text-xl font-bold text-pink-400"
+                >x1</span
+              >
+            </div>
+            <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800">
+              <span class="text-[10px] text-gray-500 block">BONUS TEMPS</span>
+              <span id="res-time-bonus" class="text-xl font-bold text-cyan-400"
+                >+0</span
+              >
+            </div>
+          </div>
+
+          <!-- Points faibles : ce bloc est rempli à la fin de la partie -->
+          <div id="points-faibles" class="hidden text-left space-y-3"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <button
+              id="js-retry-errors-btn"
+              onclick="game.retryErrors()"
+              class="hidden py-3 px-4 rounded-xl bg-rose-500 text-white font-bold font-heading hover:bg-rose-400 transition-all active:scale-95"
+            >
+              🎯 RÉVISER MES ERREURS
+            </button>
+            <button
+              id="js-revise-again-btn"
+              onclick="game.reviseSameSeries()"
+              class="py-3 px-4 rounded-xl border border-yellow-400/50 bg-yellow-400/15 text-yellow-300 font-bold font-heading hover:bg-yellow-400/25 transition-all active:scale-95"
+            >
+              🔁 RÉVISER ENCORE UNE AUTRE FOIS
+            </button>
+            <button
+              onclick="game.retry()"
+              class="py-3 px-4 rounded-xl bg-yellow-400 text-black font-bold font-heading hover:bg-yellow-300 hover:shadow-[0_0_28px_rgba(247,223,30,0.45)] transition-all active:scale-95"
+            >
+              🎲 NOUVEAU TIRAGE
+            </button>
+            <button
+              onclick="game.showHome()"
+              class="py-3 px-4 rounded-xl border border-gray-700 bg-gray-800 text-gray-300 font-mono-code text-sm hover:text-white hover:bg-gray-700 transition-all active:scale-95"
+            >
+              MENU 🏠
+            </button>
+            <a
+              href="../index.html#modules"
+              onclick="if (window.game && game.syncProgress) game.syncProgress(true);"
+              class="sm:col-span-2 py-3 px-4 rounded-xl border border-gray-700 bg-gray-800 text-gray-300 font-mono-code text-sm hover:text-white hover:bg-gray-700 transition-all active:scale-95 text-center"
+            >
+              ◀ RETOUR AUX QUIZ
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bouton « revenir en haut » : visible sur l'écran de bilan -->
+    <button
+      id="btn-haut"
+      onclick="window.scrollTo(0, 0)"
+      title="Revenir en haut de la page"
+      class="hidden fixed bottom-4 right-4 z-40 w-11 h-11 rounded-full bg-yellow-400 text-black text-lg font-bold shadow-[0_0_20px_rgba(247,223,30,0.55)] hover:bg-yellow-300 hover:-translate-y-0.5 transition-all"
+    >
+      ↑
+    </button>
+
+    <footer
+      class="border-t border-gray-800/60 py-3 text-center text-xs font-mono-code text-gray-500 relative z-10"
+    >
+      Quiz JavaScript &bull; contenu tiré de l'annexe « JavaScript » &bull; 3ème
+      & 4ème SI
+    </footer>
+
+    <!-- ==== PARTICULES FLOTTANTES (symboles JS) ==== -->
+    <script>
+      (function () {
+        const canvas = document.getElementById("particle-canvas");
+        const ctx = canvas.getContext("2d");
+        const SYMBOLS = [
+          "let",
+          "const",
+          "var",
+          "prompt()",
+          "parseInt()",
+          "alert()",
+          "for…of",
+          "if…else",
+          "&&",
+          "===",
+          "getElementById",
+          "Math.random()",
+        ];
+        let particles = [];
+        let W, H;
+
+        function resize() {
+          W = canvas.width = window.innerWidth;
+          H = canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resize);
+        resize();
+
+        function makeParticle() {
+          return {
+            x: Math.random() * W,
+            y: H + 20,
+            size: 10 + Math.random() * 12,
+            speed: 0.25 + Math.random() * 0.6,
+            drift: (Math.random() - 0.5) * 0.3,
+            rot: Math.random() * Math.PI,
+            rotSpeed: (Math.random() - 0.5) * 0.005,
+            text: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+            hue: Math.random() < 0.35 ? 52 : 190,
+            alpha: 0.06 + Math.random() * 0.14,
+          };
+        }
+
+        for (let i = 0; i < 26; i++) {
+          const p = makeParticle();
+          p.y = Math.random() * H;
+          particles.push(p);
+        }
+
+        function tick() {
+          ctx.clearRect(0, 0, W, H);
+          particles.forEach((p) => {
+            p.y -= p.speed;
+            p.x += p.drift;
+            p.rot += p.rotSpeed;
+            if (p.y < -30) Object.assign(p, makeParticle());
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.font = `${p.size}px 'Fira Code', monospace`;
+            ctx.fillStyle = `hsla(${p.hue}, 90%, 65%, ${p.alpha})`;
+            ctx.textAlign = "center";
+            ctx.fillText(p.text, 0, 0);
+            ctx.restore();
+          });
+          requestAnimationFrame(tick);
+        }
+        tick();
+      })();
+    </script>
+
+    <!-- ==== SYNTHÉTISEUR AUDIO ==== -->
+    <script>
+      class SoundManager {
+        constructor() {
+          this.ctx = null;
+          this.muted = false;
+          this.lastTick = 0;
+        }
+        init() {
+          try {
+            if (!this.ctx) {
+              const AC = window.AudioContext || window.webkitAudioContext;
+              if (!AC) return;
+              this.ctx = new AC();
+            }
+            if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
+          } catch (e) {
+            /* audio indisponible : le jeu continue en silence */
+          }
+        }
+        toggleMute() {
+          this.muted = !this.muted;
+          document.getElementById("sound-icon").innerText = this.muted
+            ? "🔇"
+            : "🔊";
+          document.getElementById("sound-text").innerText = this.muted
+            ? "MUET"
+            : "SON";
+          if (!this.muted) this.playBeep(520, 0.06);
+        }
+        playTone(
+          freq,
+          type = "sine",
+          duration = 0.1,
+          gainVal = 0.12,
+          when = 0
+        ) {
+          if (this.muted || !this.ctx) return;
+          try {
+            const t = this.ctx.currentTime + when;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, t);
+            gain.gain.setValueAtTime(gainVal, t);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(t);
+            osc.stop(t + duration);
+          } catch (e) {}
+        }
+        playHover() {
+          this.playTone(880, "sine", 0.03, 0.025);
+        }
+        playClick() {
+          this.playTone(320, "square", 0.05, 0.06);
+        }
+        playCorrect() {
+          this.init();
+          if (!this.ctx || this.muted) return;
+          [523.25, 659.25, 783.99, 1046.5].forEach((f, i) =>
+            this.playTone(f, "triangle", 0.16, 0.11, i * 0.06)
+          );
+        }
+        playWrong() {
+          this.init();
+          if (!this.ctx || this.muted) return;
+          const t = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator(),
+            gain = this.ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(150, t);
+          osc.frequency.exponentialRampToValueAtTime(55, t + 0.3);
+          gain.gain.setValueAtTime(0.18, t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.32);
+        }
+        playTick() {
+          const now = performance.now();
+          if (now - this.lastTick > 300) {
+            this.lastTick = now;
+            this.playTone(1200, "square", 0.03, 0.045);
+          }
+        }
+        playBeep(freq = 400, dur = 0.05) {
+          this.init();
+          this.playTone(freq, "sine", dur, 0.08);
+        }
+        playCombo(level = 2) {
+          this.init();
+          for (let i = 0; i < Math.min(level, 6); i++)
+            this.playTone(700 + i * 90, "triangle", 0.07, 0.06, i * 0.04);
+        }
+        playVictory() {
+          this.init();
+          [440, 554, 659, 880, 1108].forEach((f, i) =>
+            this.playTone(f, "triangle", 0.28, 0.16, i * 0.12)
+          );
+        }
+      }
+      const soundManager = new SoundManager();
+    </script>
+
+    <!-- ==== BANQUE DE QUESTIONS ==== -->
+    <script>
+      const QUESTIONS_DB = [
+        {
+          "category": "Bases & intégration",
+          "difficulty": "FACILE",
+          "title": "Où place-t-on un script interne dans la page ?",
+          "code": "<body>\n  ...\n  <script>\n    alert(\"Bonjour !\");\n  <\/script>\n</body>",
+          "options": [
+            "Dans le <head>, jamais ailleurs",
+            "Juste avant la balise de fermeture </body>",
+            "Après la balise </html>",
+            "À l'intérieur de la balise <title>"
+          ],
+          "answer": 1,
+          "explanation": "La balise <script> se place en général juste avant </body> : la page est alors chargée et tous les éléments HTML existent déjà."
+        },
+        {
+          "category": "Bases & intégration",
+          "difficulty": "FACILE",
+          "title": "Quelle balise charge un fichier JavaScript externe ?",
+          "code": "<!-- fichier : script.js -->",
+          "options": [
+            "<link rel=\"script\" href=\"script.js\">",
+            "<script file=\"script.js\"><\/script>",
+            "<script href=\"script.js\"><\/script>",
+            "<script src=\"script.js\"><\/script>"
+          ],
+          "answer": 3,
+          "explanation": "Le script externe s'écrit avec l'attribut src. L'avantage : le code est séparé de la page et réutilisable dans plusieurs fichiers HTML."
+        },
+        {
+          "category": "Bases & intégration",
+          "difficulty": "MOYEN",
+          "title": "Que se passe-t-il quand l'utilisateur clique sur le bouton ?",
+          "code": "<script>\n  function saluer(nom) {\n    alert(\"Bonjour \" + nom);\n  }\n<\/script>\n\n<button onclick=\"saluer('Amine')\">Saluer</button>",
+          "options": [
+            "Une boîte d'alerte affiche : Bonjour Amine",
+            "Une erreur : la fonction est appelée avant sa déclaration",
+            "L'alerte s'affiche au chargement de la page",
+            "Rien : onclick ne fonctionne pas avec une fonction"
+          ],
+          "answer": 0,
+          "explanation": "C'est un script en ligne : l'attribut d'événement onclick déclenche l'appel de la fonction au clic, avec le paramètre 'Amine'."
+        },
+        {
+          "category": "Variables & portée",
+          "difficulty": "FACILE",
+          "title": "Laquelle de ces déclarations est invalide ?",
+          "code": "let age = 15;        // ✔\nlet _total = 0;      // ✔\nlet 2nombre = 4;     // ?\nlet $prix = 9.9;     // ✔",
+          "options": [
+            "let age = 15;",
+            "let _total = 0;",
+            "let 2nombre = 4;",
+            "let $prix = 9.9;"
+          ],
+          "answer": 2,
+          "explanation": "Un nom de variable doit commencer par une lettre, $ ou _ — jamais par un chiffre. Il ne peut pas non plus contenir d'espace, d'accent, ni être un mot réservé."
+        },
+        {
+          "category": "Variables & portée",
+          "difficulty": "FACILE",
+          "title": "Ces deux variables sont-elles la même ?",
+          "code": "let age = 15;\nlet Age = 20;\nconsole.log(age);",
+          "options": [
+            "Oui, mais cela provoque une erreur de redéclaration",
+            "Non : la seconde écrase toujours la première",
+            "Oui : la sortie est 20",
+            "Non : JavaScript distingue les majuscules, la sortie est 15"
+          ],
+          "answer": 3,
+          "explanation": "Les noms sont sensibles à la casse : age et Age sont deux variables différentes. La console affiche donc 15."
+        },
+        {
+          "category": "Variables & portée",
+          "difficulty": "MOYEN",
+          "title": "Que devient la variable a après la sortie du bloc ?",
+          "code": "if (true) {\n  let a = 10;\n  var b = 20;\n}\nconsole.log(b);\nconsole.log(a);",
+          "options": [
+            "10, puis 20",
+            "20, puis une erreur : a n'existe pas hors du bloc",
+            "20, puis 10",
+            "Une erreur dès la première ligne"
+          ],
+          "answer": 1,
+          "explanation": "let a une portée de bloc { } : a disparaît à la sortie du if. var, lui, a une portée de fonction : b reste accessible et vaut 20."
+        },
+        {
+          "category": "Variables & portée",
+          "difficulty": "MOYEN",
+          "title": "Que vaut x à la fin de ce script ?",
+          "code": "let x = 10;\nif (true) {\n  x = 20;   // pas de \"let\"\n}\nconsole.log(x);",
+          "options": [
+            "10 : la modification est perdue à la sortie du bloc",
+            "undefined : le bloc a créé une variable temporaire",
+            "20 : c'est la même variable, sa valeur a changé",
+            "Une erreur : on ne peut pas modifier x dans un bloc"
+          ],
+          "answer": 2,
+          "explanation": "Sans nouveau let, l'affectation x = 20 modifie la variable existante : le changement reste après le bloc."
+        },
+        {
+          "category": "Variables & portée",
+          "difficulty": "DIFFICILE",
+          "title": "Qu'affiche exactement ce code ?",
+          "code": "let y = 10;\nif (true) {\n  let y = 20;      // nouveau \"let\"\n  console.log(y);\n}\nconsole.log(y);",
+          "options": [
+            "20 puis 10 : le let interne crée une variable propre au bloc",
+            "10 puis 10 : le let interne est ignoré",
+            "Une erreur de redéclaration",
+            "20 puis 20 : la seconde valeur remplace la première"
+          ],
+          "answer": 0,
+          "explanation": "Avec un nouveau let à l'intérieur du bloc, une variable locale distincte est créée : elle vaut 20 dans le bloc, tandis que la variable extérieure reste à 10."
+        },
+        {
+          "category": "Variables & portée",
+          "difficulty": "FACILE",
+          "title": "Que provoque la seconde ligne ?",
+          "code": "const PI = 3.14;\nPI = 3;",
+          "options": [
+            "Une erreur de syntaxe dès la première ligne",
+            "Une erreur : const interdit la réaffectation",
+            "PI vaut 3, sans aucune erreur",
+            "PI reste à 3.14, la ligne est simplement ignorée"
+          ],
+          "answer": 1,
+          "explanation": "Une constante déclarée avec const ne peut plus être réaffectée. On l'utilise quand la valeur ne doit pas changer ; si la valeur doit évoluer, on utilise let."
+        },
+        {
+          "category": "Opérateurs",
+          "difficulty": "FACILE",
+          "title": "Que vaut ce calcul ?",
+          "code": "console.log(17 % 5);",
+          "options": [
+            "3",
+            "3.4",
+            "0",
+            "2"
+          ],
+          "answer": 3,
+          "explanation": "L'opérateur % donne le reste de la division euclidienne : 17 = 3 × 5 + 2, donc le reste vaut 2."
+        },
+        {
+          "category": "Opérateurs",
+          "difficulty": "FACILE",
+          "title": "Qu'affiche ce test logique ?",
+          "code": "let age = 16;\nconsole.log(age >= 12 && age < 18);",
+          "options": [
+            "true : les deux conditions sont vraies",
+            "\"16\"",
+            "Une erreur : && n'accepte pas deux comparaisons",
+            "false : il faudrait au moins trois conditions"
+          ],
+          "answer": 0,
+          "explanation": "&& est l'opérateur ET : le résultat est true seulement si les deux conditions sont vraies. Ici 16 est bien ≥ 12 et < 18."
+        },
+        {
+          "category": "Opérateurs",
+          "difficulty": "MOYEN",
+          "title": "Que renvoient ces deux comparaisons ?",
+          "code": "console.log(10 == \"10\");\nconsole.log(\"10\" != 10);",
+          "options": [
+            "false puis false",
+            "true puis true",
+            "true puis false",
+            "false puis true"
+          ],
+          "answer": 2,
+          "explanation": "== compare après conversion : la chaîne « 10 » devient le nombre 10, donc l'égalité est vraie. != inverse ce résultat, il renvoie donc false."
+        },
+        {
+          "category": "Opérateurs",
+          "difficulty": "DIFFICILE",
+          "title": "Quel est le résultat de cette expression ?",
+          "code": "console.log(2 + 3 * 4);",
+          "options": [
+            "20 : les opérations se font de gauche à droite",
+            "24 : les deux opérations sont multiplicatives",
+            "9 : les parenthèses sont sous-entendues",
+            "14 : la multiplication est évaluée avant l'addition"
+          ],
+          "answer": 3,
+          "explanation": "La multiplication a priorité sur l'addition : 3 × 4 = 12, puis 2 + 12 = 14. Pour forcer un autre ordre, on écrit (2 + 3) * 4."
+        },
+        {
+          "category": "Entrées / sorties",
+          "difficulty": "FACILE",
+          "title": "Quelle fonction affiche une boîte de dialogue avec un champ de saisie ?",
+          "code": "let nom = ______(\"Votre nom :\");",
+          "options": [
+            "confirm()",
+            "prompt()",
+            "document.write()",
+            "alert()"
+          ],
+          "answer": 1,
+          "explanation": "prompt() demande une valeur à l'utilisateur et la renvoie sous forme de texte (ou null s'il annule). alert() affiche un message, confirm() pose une question Oui/Non."
+        },
+        {
+          "category": "Entrées / sorties",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie prompt() si l'utilisateur clique sur « Annuler » ?",
+          "code": "let reponse = prompt(\"Votre âge :\");",
+          "options": [
+            "false",
+            "une chaîne vide \"\"",
+            "null",
+            "undefined"
+          ],
+          "answer": 2,
+          "explanation": "prompt() renvoie le texte saisi, ou null si l'utilisateur annule. Le résultat est bloquant : le script attend la réponse avant de continuer."
+        },
+        {
+          "category": "Entrées / sorties",
+          "difficulty": "FACILE",
+          "title": "Que renvoie la fonction confirm() ?",
+          "code": "let ok = confirm(\"Supprimer cet élève ?\");",
+          "options": [
+            "true ou false selon le choix de l'utilisateur",
+            "le texte saisi par l'utilisateur",
+            "undefined dans tous les cas",
+            "toujours true"
+          ],
+          "answer": 0,
+          "explanation": "confirm() pose une question Oui/Non et renvoie un booléen : true pour OK, false pour Annuler. C'est le test typique d'une validation avant suppression."
+        },
+        {
+          "category": "Entrées / sorties",
+          "difficulty": "MOYEN",
+          "title": "Quelle instruction insère du texte brut, sans interpréter le HTML ?",
+          "code": "document.getElementById(\"titre\").______ = \"<b>Salut</b>\";",
+          "options": [
+            "document.write()",
+            "textContent",
+            "Aucune : c'est impossible",
+            "innerHTML"
+          ],
+          "answer": 1,
+          "explanation": "textContent insère du texte brut : les balises s'affichent littéralement. innerHTML interprète le HTML, et document.write() écrit dans le document au chargement : il est obsolète."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie cette conversion ?",
+          "code": "console.log(Number(\"12,5\"));",
+          "options": [
+            "12",
+            "12.5",
+            "\"12,5\"",
+            "NaN"
+          ],
+          "answer": 3,
+          "explanation": "Number() n'accepte que le point décimal : « 12,5 » donne NaN. Pour convertir un réel on utilise parseFloat(« 12,5 ») après avoir remplacé la virgule, ou Number(« 12.5 »)."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie ce parseInt() ?",
+          "code": "console.log(parseInt(\"42px\"));",
+          "options": [
+            "42",
+            "NaN",
+            "43",
+            "\"42px\""
+          ],
+          "answer": 0,
+          "explanation": "parseInt() lit les chiffres du début de la chaîne puis s'arrête dès qu'elle rencontre autre chose : « 42px » donne 42."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "MOYEN",
+          "title": "Que vaut cette conversion binaire ?",
+          "code": "console.log(parseInt(\"101\", 2));",
+          "options": [
+            "3",
+            "NaN",
+            "5",
+            "101"
+          ],
+          "answer": 2,
+          "explanation": "Le second paramètre est la base : « 101 » en base 2 vaut 1 × 4 + 0 × 2 + 1 = 5. Penser à toujours préciser la base."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "DIFFICILE",
+          "title": "Que vaut cette conversion hexadécimale ?",
+          "code": "console.log(parseInt(\"FF\", 16));",
+          "options": [
+            "NaN",
+            "0",
+            "15",
+            "255"
+          ],
+          "answer": 3,
+          "explanation": "En base 16, les lettres A–F valent 10 à 15 : « FF » = 15 × 16 + 15 = 255. C'est la conversion hexadécimal → décimal."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie ce parseFloat() ?",
+          "code": "console.log(parseFloat(\"3.99abc\"));",
+          "options": [
+            "NaN",
+            "3.99",
+            "3",
+            "\"3.99\""
+          ],
+          "answer": 1,
+          "explanation": "parseFloat() accepte la partie décimale (contrairement à parseInt) et ignore la suite non numérique : la conversion donne 3.99."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "DIFFICILE",
+          "title": "Que renvoient ces deux tests sur la même chaîne ?",
+          "code": "console.log(isNaN(\"blabla\"));\nconsole.log(Number.isNaN(\"blabla\"));",
+          "options": [
+            "true puis true",
+            "false puis false",
+            "true puis false",
+            "false puis true"
+          ],
+          "answer": 2,
+          "explanation": "isNaN() convertit d'abord en nombre : « blabla » devient NaN, donc true. Number.isNaN() teste strictement, sans conversion : la chaîne n'est pas NaN, donc false. Number.isNaN() est plus robuste."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "FACILE",
+          "title": "Que vaut Number(true) ?",
+          "code": "console.log(Number(true));",
+          "options": [
+            "1",
+            "0",
+            "true",
+            "NaN"
+          ],
+          "answer": 0,
+          "explanation": "Number() convertit true en 1 et false en 0. Dans le cours : Number(null) donne 0, alors que Number(undefined) donne NaN."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "MOYEN",
+          "title": "Quels types obtient-on ?",
+          "code": "console.log(typeof (12 + \"\"));\nconsole.log(typeof (\"12\" - 0));",
+          "options": [
+            "\"number\" puis \"number\"",
+            "\"string\" puis \"number\"",
+            "\"string\" puis \"string\"",
+            "\"number\" puis \"string\""
+          ],
+          "answer": 1,
+          "explanation": "L'astuce 12 + \"\" transforme un nombre en chaîne ; \"12\" - 0 transforme une chaîne en nombre. Retenir : + concatène dès qu'une chaîne est présente, alors que -, * et / convertissent toujours en nombre."
+        },
+        {
+          "category": "Math",
+          "difficulty": "FACILE",
+          "title": "Que renvoie Math.abs(-5) ?",
+          "code": "console.log(Math.abs(-5));",
+          "options": [
+            "0",
+            "NaN",
+            "-5",
+            "5"
+          ],
+          "answer": 3,
+          "explanation": "Math.abs(x) donne la valeur absolue, c'est-à-dire x sans son signe : la distance à zéro."
+        },
+        {
+          "category": "Math",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie cette racine carrée ?",
+          "code": "console.log(Math.sqrt(-4));",
+          "options": [
+            "NaN",
+            "Une erreur s'affiche",
+            "-2",
+            "2"
+          ],
+          "answer": 0,
+          "explanation": "Math.sqrt(x) renvoie la racine carrée et donne NaN si x est négatif : il n'existe pas de racine carrée réelle d'un nombre négatif."
+        },
+        {
+          "category": "Math",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie cet arrondi ?",
+          "code": "console.log(Math.round(2.5));",
+          "options": [
+            "2",
+            "2.5",
+            "3",
+            "3.5"
+          ],
+          "answer": 2,
+          "explanation": "Math.round() donne l'entier le plus proche. Pour une partie décimale de .5 exactement, il arrondit vers le haut (+∞) : 2.5 → 3, et -2.5 → -2."
+        },
+        {
+          "category": "Math",
+          "difficulty": "MOYEN",
+          "title": "Quelle est la différence avec Math.round() ?",
+          "code": "console.log(Math.trunc(4.9));",
+          "options": [
+            "4.9",
+            "NaN",
+            "5",
+            "4"
+          ],
+          "answer": 3,
+          "explanation": "Math.trunc() retire la partie décimale sans arrondir : 4.9 → 4 (alors que Math.round(4.9) donnerait 5)."
+        },
+        {
+          "category": "Math",
+          "difficulty": "DIFFICILE",
+          "title": "Quelle instruction donne un entier aléatoire de 1 à 6 ?",
+          "code": "// lancer de dé",
+          "options": [
+            "Math.random(6)",
+            "Math.trunc(Math.random() * 6) + 1",
+            "Math.random() * 6",
+            "Math.trunc(Math.random() * 6)"
+          ],
+          "answer": 1,
+          "explanation": "Math.random() renvoie un réel dans [0, 1[. On le multiplie par 6 (réels de 0 à moins de 6), on tronque pour obtenir 0 à 5, puis on ajoute 1 pour aller de 1 à 6."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "FACILE",
+          "title": "Que vaut cette longueur ?",
+          "code": "let s = \"Mozilla\";\nconsole.log(s.length);",
+          "options": [
+            "6",
+            "8",
+            "7",
+            "0"
+          ],
+          "answer": 2,
+          "explanation": "length est une propriété (sans parenthèses) : elle donne le nombre de caractères, espaces compris. Les indices vont de 0 à length - 1."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie cet indexOf() ?",
+          "code": "let s = \"Bonjour tout le monde\";\nconsole.log(s.indexOf(\"tout\"));",
+          "options": [
+            "8",
+            "9",
+            "7",
+            "-1"
+          ],
+          "answer": 0,
+          "explanation": "indexOf() donne la position de la première occurrence, en comptant à partir de 0. Attention : la recherche est sensible à la casse, et indexOf renvoie -1 si la sous-chaîne est absente."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "MOYEN",
+          "title": "Qu'affiche cette extraction ?",
+          "code": "let s = \"Mozilla\";\nconsole.log(s.substring(0, 3));",
+          "options": [
+            "\"lla\"",
+            "\"Moz\"",
+            "\"Mozill\"",
+            "\"oz\""
+          ],
+          "answer": 1,
+          "explanation": "substring(d, f) extrait de l'indice d (inclus) à l'indice f (exclu) : les caractères 0, 1 et 2 donnent « Moz »."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "DIFFICILE",
+          "title": "Que valent la chaîne et la variable après ce replace() ?",
+          "code": "let s = \"a-b-c\";\nconsole.log(s.replace(\"-\", \"+\"));\nconsole.log(s);",
+          "options": [
+            "\"a+b+c\" puis \"a+b+c\" : toutes les occurrences changent",
+            "\"a+b-c\" puis \"a+b-c\" : la variable est modifiée",
+            "\"a-b-c\" puis \"a-b-c\" : replace ne fait rien",
+            "\"a+b-c\" puis \"a-b-c\" : seule la première occurrence change, et s reste intacte"
+          ],
+          "answer": 3,
+          "explanation": "replace() ne remplace que la première occurrence et renvoie une nouvelle chaîne : la variable d'origine n'est jamais modifiée. Pour conserver le résultat, on écrit s = s.replace(\"-\", \"+\");"
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie ce lastIndexOf() ?",
+          "code": "let s = \"Bonjour tout le monde\";\nconsole.log(s.lastIndexOf(\"o\"));",
+          "options": [
+            "17",
+            "9",
+            "-1",
+            "1"
+          ],
+          "answer": 0,
+          "explanation": "lastIndexOf() cherche la dernière occurrence en partant de la fin : le dernier « o » de la phrase se trouve à l'indice 17."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "FACILE",
+          "title": "Que vaut la longueur après trim() ?",
+          "code": "console.log(\"   Tunis   \".trim().length);",
+          "options": [
+            "0",
+            "11",
+            "5",
+            "7"
+          ],
+          "answer": 2,
+          "explanation": "trim() supprime les espaces du début et de la fin, mais conserve ceux du milieu : il reste « Tunis », soit 5 caractères."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "DIFFICILE",
+          "title": "Que valent ces deux expressions ?",
+          "code": "console.log(5 + 5 + \"5\");\nconsole.log(\"5\" + 5 + 5);",
+          "options": [
+            "\"555\" puis \"105\"",
+            "\"10\" puis \"15\"",
+            "55 puis 555",
+            "\"105\" puis \"555\""
+          ],
+          "answer": 3,
+          "explanation": "L'évaluation se fait de gauche à droite : 5 + 5 = 10 (addition), puis 10 + \"5\" = \"105\" (concaténation). En revanche, dès que la chaîne est à gauche, tout est concaténé : \"555\"."
+        },
+        {
+          "category": "Tableaux",
+          "difficulty": "FACILE",
+          "title": "Que vaut la longueur de ce tableau ?",
+          "code": "let fruits = [\"pomme\", \"poire\", \"kiwi\"];\nconsole.log(fruits.length);",
+          "options": [
+            "4",
+            "3",
+            "0",
+            "2"
+          ],
+          "answer": 1,
+          "explanation": "Pour créer un tableau on utilise les littéraux [ ]. La propriété length donne le nombre d'éléments : ici 3, d'indices 0, 1 et 2."
+        },
+        {
+          "category": "Tableaux",
+          "difficulty": "FACILE",
+          "title": "Quel fruit est affiché ?",
+          "code": "let fruits = [\"pomme\", \"poire\", \"kiwi\"];\nconsole.log(fruits[1]);",
+          "options": [
+            "1",
+            "\"pomme\"",
+            "\"poire\"",
+            "\"kiwi\""
+          ],
+          "answer": 2,
+          "explanation": "L'indice commence à 0 : fruits[0] = \"pomme\", fruits[1] = \"poire\", fruits[2] = \"kiwi\"."
+        },
+        {
+          "category": "Tableaux",
+          "difficulty": "MOYEN",
+          "title": "Que produit ce parcours de tableau ?",
+          "code": "let fruits = [\"pomme\", \"poire\", \"kiwi\"];\nfor (let f of fruits) {\n  console.log(f);\n}",
+          "options": [
+            "pomme, poire, kiwi (un par ligne)",
+            "Les indices 0, 1 et 2 (un par ligne)",
+            "undefined affiché trois fois",
+            "La longueur 3 affichée une fois"
+          ],
+          "answer": 0,
+          "explanation": "for…of parcourt directement les valeurs d'un tableau : la variable f prend successivement chaque élément du tableau."
+        },
+        {
+          "category": "Objet Date",
+          "difficulty": "MOYEN",
+          "title": "Quelle est la valeur du mois dans ce code ?",
+          "code": "let d = new Date(2025, 0, 15);\nconsole.log(d.getMonth());",
+          "options": [
+            "\"janvier\"",
+            "0",
+            "2025",
+            "1"
+          ],
+          "answer": 1,
+          "explanation": "Les mois de l'objet Date vont de 0 (janvier) à 11 (décembre) : le troisième paramètre, lui, est bien le jour du mois (1 à 31)."
+        },
+        {
+          "category": "Objet Date",
+          "difficulty": "MOYEN",
+          "title": "Quel mois et quel jour sont affichés ?",
+          "code": "let d = new Date(2025, 5, 3);\nconsole.log(d.getMonth(), d.getDate());",
+          "options": [
+            "3 puis 6",
+            "6 puis 3",
+            "5 puis 5",
+            "5 puis 3"
+          ],
+          "answer": 3,
+          "explanation": "getMonth() renvoie le mois de 0 à 11 : 5 correspond à juin. getDate(), lui, renvoie le jour du mois, ici 3."
+        },
+        {
+          "category": "Objet Date",
+          "difficulty": "FACILE",
+          "title": "Quel format de chaîne est accepté par new Date() ?",
+          "code": "new Date(\"2025-11-21\");",
+          "options": [
+            "Le format ISO : \"AAAA-MM-JJ\"",
+            "Le format \"21-11-2025\"",
+            "Le format \"21 novembre 2025\" en toutes lettres",
+            "Aucun : on ne peut passer qu'un nombre de millisecondes"
+          ],
+          "answer": 0,
+          "explanation": "Le cours retient surtout le format ISO (\"2025-11-21\"). Le format court américain (\"11/21/2025\") et le format long (\"Nov 21 2025\") sont également acceptés, mais à éviter."
+        },
+        {
+          "category": "Conditions",
+          "difficulty": "MOYEN",
+          "title": "Que vaut résultat pour une note de 8 ?",
+          "code": "let note = 8;\nlet resultat;\nif (note >= 10) {\n  resultat = \"Admis\";\n} else if (note >= 8) {\n  resultat = \"Rattrapage\";\n} else {\n  resultat = \"Ajourné\";\n}\nconsole.log(resultat);",
+          "options": [
+            "\"Ajourné\"",
+            "undefined",
+            "\"Rattrapage\"",
+            "\"Admis\""
+          ],
+          "answer": 2,
+          "explanation": "Les conditions sont testées dans l'ordre : 8 ≥ 10 est faux, mais 8 ≥ 8 est vrai : c'est la deuxième branche qui s'exécute."
+        },
+        {
+          "category": "Conditions",
+          "difficulty": "FACILE",
+          "title": "Quelle structure permet de tester une valeur parmi plusieurs cas fixes ?",
+          "code": "switch (jour) {\n  case 0:\n    nom = \"Dimanche\";\n    break;\n  default:\n    nom = \"Jour ouvré\";\n}",
+          "options": [
+            "if … else if … else",
+            "do … while (condition)",
+            "try … catch … finally",
+            "switch … case … break … default"
+          ],
+          "answer": 3,
+          "explanation": "switch compare une même valeur à plusieurs cas (case). break empêche l'exécution des cas suivants, et default traite tous les autres cas."
+        },
+        {
+          "category": "Conditions",
+          "difficulty": "DIFFICILE",
+          "title": "Que va afficher ce switch ?",
+          "code": "switch (2) {\n  case 1:\n    console.log(\"un\");\n  case 2:\n    console.log(\"deux\");\n  case 3:\n    console.log(\"trois\");\n}",
+          "options": [
+            "deux uniquement",
+            "deux, puis trois",
+            "un, deux, puis trois",
+            "Rien n'est affiché"
+          ],
+          "answer": 1,
+          "explanation": "Sans break à la fin d'un case, l'exécution continue dans les cas suivants : on affiche « deux » puis « trois ». C'est l'erreur classique du switch."
+        },
+        {
+          "category": "Boucles",
+          "difficulty": "FACILE",
+          "title": "Qu'affiche cette boucle ?",
+          "code": "for (let i = 0; i < 3; i++) {\n  console.log(i);\n}",
+          "options": [
+            "0, 1, 2, 3",
+            "3",
+            "0, 1, 2",
+            "1, 2, 3"
+          ],
+          "answer": 2,
+          "explanation": "La boucle part de 0 et s'arrête quand la condition i < 3 devient fausse : les valeurs affichées sont 0, 1 puis 2."
+        },
+        {
+          "category": "Boucles",
+          "difficulty": "MOYEN",
+          "title": "Que vaut i à la fin de cette boucle while ?",
+          "code": "let i = 0;\nwhile (i < 3) {\n  i++;\n}\nconsole.log(i);",
+          "options": [
+            "3",
+            "4",
+            "2",
+            "0"
+          ],
+          "answer": 0,
+          "explanation": "La boucle s'exécute tant que i < 3 ; quand i vaut 3, la condition est fausse et la boucle s'arrête : i vaut donc 3."
+        },
+        {
+          "category": "Boucles",
+          "difficulty": "DIFFICILE",
+          "title": "Que fait ce do…while avec une condition fausse ?",
+          "code": "let i = 5;\ndo {\n  console.log(i);\n  i++;\n} while (i < 3);",
+          "options": [
+            "Il n'affiche rien du tout",
+            "Il affiche 5 une seule fois",
+            "Il affiche 5 puis 6 à l'écran",
+            "Il provoque une boucle infinie"
+          ],
+          "answer": 1,
+          "explanation": "Avec do…while, le bloc s'exécute au moins une fois, même si la condition est fausse : le test vient après. Ici 5 est affiché, puis la condition 6 < 3 est fausse et la boucle s'arrête."
+        },
+        {
+          "category": "Boucles",
+          "difficulty": "MOYEN",
+          "title": "Que fait l'instruction continue ici ?",
+          "code": "for (let i = 1; i <= 5; i++) {\n  if (i === 3) continue;\n  console.log(i);\n}",
+          "options": [
+            "1, 2",
+            "4, 5",
+            "1, 2, 3, 4, 5",
+            "1, 2, 4, 5"
+          ],
+          "answer": 3,
+          "explanation": "continue passe immédiatement à l'itération suivante, sans exécuter le reste du bloc : seul le 3 n'est pas affiché."
+        },
+        {
+          "category": "Boucles",
+          "difficulty": "MOYEN",
+          "title": "Et que fait break dans la même boucle ?",
+          "code": "for (let i = 1; i <= 5; i++) {\n  if (i === 3) break;\n  console.log(i);\n}",
+          "options": [
+            "1, 2",
+            "Rien n'est affiché",
+            "1, 2, 4, 5",
+            "1, 2, 3"
+          ],
+          "answer": 0,
+          "explanation": "break sort immédiatement de la boucle : dès que i vaut 3, la boucle s'arrête et rien d'autre n'est affiché."
+        },
+        {
+          "category": "Fonctions",
+          "difficulty": "FACILE",
+          "title": "Que vaut resultat ?",
+          "code": "function carre(n) {\n  return n * n;\n}\nconsole.log(carre(4));",
+          "options": [
+            "8",
+            "4",
+            "16",
+            "undefined"
+          ],
+          "answer": 2,
+          "explanation": "La fonction renvoie n * n grâce à return : l'appel carre(4) renvoie 16. Une fonction avec return fournit une valeur exploitable dans une expression."
+        },
+        {
+          "category": "Fonctions",
+          "difficulty": "MOYEN",
+          "title": "Que vaut x dans ce code ?",
+          "code": "function afficherMessage() {\n  console.log(\"Bonjour !\");\n}\nlet x = afficherMessage();\nconsole.log(x);",
+          "options": [
+            "x vaut undefined sans rien afficher",
+            "Une erreur : une fonction sans return ne peut pas être affectée",
+            "Bonjour ! s'affiche, puis x vaut Bonjour !",
+            "Bonjour ! s'affiche, puis x vaut undefined"
+          ],
+          "answer": 3,
+          "explanation": "Sans return, une fonction renvoie undefined : l'affichage se fait par la console, mais aucune valeur n'est renvoyée. Sans return, la fonction s'utilise seule, comme instruction."
+        },
+        {
+          "category": "Fonctions",
+          "difficulty": "MOYEN",
+          "title": "Par quel mécanisme la fonction est-elle déclenchée ?",
+          "code": "function saluer(nom) {\n  alert(\"Bonjour \" + nom);\n}\n\n<button onclick=\"saluer('Amine')\">Saluer</button>",
+          "options": [
+            "Une erreur : la fonction n'est pas trouvée",
+            "Une alerte affiche : Bonjour Amine",
+            "Rien : une fonction ne peut pas être appelée depuis le HTML",
+            "Le bouton disparaît de la page"
+          ],
+          "answer": 1,
+          "explanation": "Une fonction du script peut être appelée depuis un attribut d'événement HTML comme onclick : c'est le déclenchement par événement, l'usage le plus courant dans une page."
+        },
+        {
+          "category": "Fonctions",
+          "difficulty": "FACILE",
+          "title": "Laquelle de ces deux fonctions est mal nommée ?",
+          "code": "function calculerMoyenne() { ... }\nfunction 2emeFonction() { ... }",
+          "options": [
+            "calculerMoyenne : les majuscules sont interdites",
+            "Les deux sont valides",
+            "2emeFonction : un nom ne peut pas commencer par un chiffre",
+            "calculerMoyenne : les parenthèses sont obligatoires après le nom"
+          ],
+          "answer": 2,
+          "explanation": "Les noms de fonctions suivent les mêmes règles que les variables : ils doivent commencer par une lettre, $ ou _, sans espace ni mot réservé."
+        },
+        {
+          "category": "DOM",
+          "difficulty": "FACILE",
+          "title": "Quelle méthode sélectionne l'élément dont l'identifiant est « titre » ?",
+          "code": "______(\"titre\").textContent = \"Bienvenue\";",
+          "options": [
+            "document.getElementById(\"titre\")",
+            "document.getElement(\"titre\")",
+            "document.getElementById(\"#titre\")",
+            "document.getElementsByName(\"titre\")"
+          ],
+          "answer": 0,
+          "explanation": "getElementById() sélectionne un élément unique par son identifiant (sans le #). getElementsByName(), lui, renvoie tous les éléments qui partagent le même attribut name."
+        },
+        {
+          "category": "DOM",
+          "difficulty": "FACILE",
+          "title": "Que fait cette instruction ?",
+          "code": "document.getElementById(\"titre\").textContent = \"Bienvenue\";",
+          "options": [
+            "Elle lit le texte saisi par l'utilisateur",
+            "Elle remplace le texte de l'élément #titre",
+            "Elle change la couleur du titre",
+            "Elle crée un nouvel élément"
+          ],
+          "answer": 1,
+          "explanation": "textContent modifie le contenu textuel d'un élément sélectionné. Pour insérer du HTML, on utiliserait innerHTML."
+        },
+        {
+          "category": "DOM",
+          "difficulty": "MOYEN",
+          "title": "Que fait cette ligne de code ?",
+          "code": "document.getElementById(\"prix\").style.color = \"red\";",
+          "options": [
+            "Elle change la couleur de fond de la page",
+            "Elle ajoute une classe CSS nommée red",
+            "Elle supprime l'élément #prix",
+            "Elle met le texte de #prix en rouge"
+          ],
+          "answer": 3,
+          "explanation": "On accède aux styles en ligne d'un élément par la propriété style : element.style.propriété = valeur (color, background, border, font, width, height…)."
+        },
+        {
+          "category": "DOM",
+          "difficulty": "MOYEN",
+          "title": "Que fait cette séquence sur la vidéo ?",
+          "code": "let video = document.getElementById(\"video\");\nvideo.volume = 0.5;\nvideo.play();",
+          "options": [
+            "Elle règle le volume à 50 % puis lance la lecture",
+            "Elle règle la vitesse de lecture puis avance de 5 secondes",
+            "Elle affiche une erreur : volume n'existe pas",
+            "Elle met la vidéo en pause puis coupe le son"
+          ],
+          "answer": 0,
+          "explanation": "volume attend une valeur de 0 à 1 (0.5 = 50 %), et play() lance la lecture — pause() l'arrête. On peut aussi régler currentTime (position en secondes) et playbackRate (vitesse)."
+        },
+        {
+          "category": "DOM",
+          "difficulty": "MOYEN",
+          "title": "Comment récupérer l'option choisie dans une liste déroulante ?",
+          "code": "<select id=\"classe\">\n  <option>1ère SI</option>\n  <option>2ème SI</option>\n</select>",
+          "options": [
+            "En lisant le texte de la page avec textContent",
+            "Avec la méthode indexOf() du select",
+            "Avec la propriété selectedIndex de l'élément select",
+            "Avec la méthode play() du select"
+          ],
+          "answer": 2,
+          "explanation": "Pour une liste déroulante <select>, le cours retient la propriété selectedIndex : elle donne le numéro de l'option sélectionnée."
+        },
+        {
+          "category": "Bases & intégration",
+          "difficulty": "FACILE",
+          "title": "Quel est l'intérêt d'un fichier JavaScript externe ?",
+          "code": "<!-- page.html -->\n<script src=\"quiz.js\"><\/script>",
+          "options": [
+            "Le script s'exécute plus vite qu'un script interne",
+            "Il n'a plus besoin d'être déclaré avant </body>",
+            "Il remplace tous les attributs d'événement",
+            "Le même code peut servir dans plusieurs pages HTML"
+          ],
+          "answer": 3,
+          "explanation": "Le cours présente deux façons de placer le code : en interne (dans une balise <script>) et en externe (fichier .js). L'avantage du fichier externe est qu'il est réutilisable et sépare le comportement de la structure."
+        },
+        {
+          "category": "Bases & intégration",
+          "difficulty": "MOYEN",
+          "title": "Comment le calcul est-il déclenché ?",
+          "code": "<p id=\"res\">0</p>\n<button onclick=\"calculer()\">Calculer</button>\n<script>\n  function calculer() {\n    document.getElementById(\"res\").textContent = 10 + 5;\n  }\n<\/script>",
+          "options": [
+            "Au survol du paragraphe #res",
+            "Au clic sur le bouton « Calculer »",
+            "À chaque fois que la souris bouge",
+            "Au chargement de la page"
+          ],
+          "answer": 1,
+          "explanation": "C'est un script en ligne avec appel par événement : onclick déclenche la fonction uniquement au clic. Avant le clic, le paragraphe affiche toujours 0."
+        },
+        {
+          "category": "Variables & portée",
+          "difficulty": "FACILE",
+          "title": "Quel mot-clé pour une valeur qui ne change jamais ?",
+          "code": "______ TVA = 0.19;",
+          "options": [
+            "function",
+            "let",
+            "const",
+            "var"
+          ],
+          "answer": 2,
+          "explanation": "const déclare une constante : toute nouvelle affectation provoque une erreur. let sert aux valeurs qui évoluent pendant l'exécution."
+        },
+        {
+          "category": "Variables & portée",
+          "difficulty": "MOYEN",
+          "title": "Que vaut total après ces lignes ?",
+          "code": "let total = 0;\ntotal = total + 5;\nconsole.log(total);",
+          "options": [
+            "5",
+            "0",
+            "10",
+            "NaN"
+          ],
+          "answer": 0,
+          "explanation": "Une variable déclarée avec let peut être réaffectée : total prend la valeur 0 + 5, soit 5."
+        },
+        {
+          "category": "Variables & portée",
+          "difficulty": "DIFFICILE",
+          "title": "Que provoque la redéclaration de b avec let ?",
+          "code": "var a = 1;\nvar a = 2;\nlet b = 1;\nlet b = 2;\nconsole.log(a);",
+          "options": [
+            "1 : le second let est ignoré",
+            "Une erreur de syntaxe : let refuse de redéclarer b dans le même bloc",
+            "Une erreur : var interdit de redéclarer a",
+            "2 : le second let remplace le premier"
+          ],
+          "answer": 1,
+          "explanation": "C'est une des différences du tableau let / var / const : var autorise la redéclaration, let la refuse dans le même bloc et arrête le script."
+        },
+        {
+          "category": "Opérateurs",
+          "difficulty": "FACILE",
+          "title": "Que vaut x après un incrément ?",
+          "code": "let x = 5;\nx++;\nconsole.log(x);",
+          "options": [
+            "56",
+            "5",
+            "4",
+            "6"
+          ],
+          "answer": 3,
+          "explanation": "x++ augmente la variable de 1 : c'est la forme courte de x = x + 1. x passe donc de 5 à 6."
+        },
+        {
+          "category": "Opérateurs",
+          "difficulty": "MOYEN",
+          "title": "Que vaut total après une affectation abrégée ?",
+          "code": "let total = 10;\ntotal += 5;\nconsole.log(total);",
+          "options": [
+            "15",
+            "105",
+            "5",
+            "10"
+          ],
+          "answer": 0,
+          "explanation": "total += 5 est la forme abrégée de total = total + 5 : la variable vaut 15."
+        },
+        {
+          "category": "Opérateurs",
+          "difficulty": "MOYEN",
+          "title": "Qu'affiche l'opérateur NON sur un booléen ?",
+          "code": "let majeur = false;\nconsole.log(!majeur);",
+          "options": [
+            "undefined",
+            "0",
+            "true",
+            "false"
+          ],
+          "answer": 2,
+          "explanation": "! est l'opérateur logique NON : il inverse un booléen. !false donne true, et !true donnerait false."
+        },
+        {
+          "category": "Opérateurs",
+          "difficulty": "FACILE",
+          "title": "Comment tester si un nombre est pair ?",
+          "code": "let n = 8;\nconsole.log(n % 2 === 0);",
+          "options": [
+            "8",
+            "false",
+            "0",
+            "true"
+          ],
+          "answer": 3,
+          "explanation": "% donne le reste de la division par 2 : s'il vaut 0, le nombre est pair. Ici 8 % 2 = 0, donc le test est vrai."
+        },
+        {
+          "category": "Entrées / sorties",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie typeof sur une saisie clavier ?",
+          "code": "let age = prompt(\"Votre âge ?\");\nconsole.log(typeof age);",
+          "options": [
+            "\"number\"",
+            "\"string\"",
+            "\"undefined\"",
+            "\"boolean\""
+          ],
+          "answer": 1,
+          "explanation": "prompt() renvoie toujours une chaîne de caractères, même si l'utilisateur tape un nombre : il faut convertir avec Number() ou parseInt() avant de calculer."
+        },
+        {
+          "category": "Entrées / sorties",
+          "difficulty": "MOYEN",
+          "title": "Que fait document.write() au chargement ?",
+          "code": "document.write(\"Bienvenue en 4ème SI\");",
+          "options": [
+            "Il crée une variable nommée Bienvenue",
+            "Il demande une saisie à l'utilisateur",
+            "Il écrit le texte dans la page",
+            "Il ouvre une boîte d'alerte"
+          ],
+          "answer": 2,
+          "explanation": "document.write() écrit du contenu directement dans la page au moment du chargement. alert() affiche un message et prompt() demande une valeur."
+        },
+        {
+          "category": "Entrées / sorties",
+          "difficulty": "MOYEN",
+          "title": "Comment corriger ce calcul de somme ?",
+          "code": "let a = prompt(\"Premier nombre :\");\nlet b = prompt(\"Second nombre :\");\nlet somme = ______;\nalert(somme);",
+          "options": [
+            "Number(a) + Number(b)",
+            "a % b",
+            "a + b",
+            "prompt(a + b)"
+          ],
+          "answer": 0,
+          "explanation": "Les deux saisies sont des chaînes de caractères : sans conversion, a + b colle les deux textes (« 3 » + « 4 » donne « 34 »). Number() convertit les valeurs avant l'addition."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "FACILE",
+          "title": "Que vaut Number(\"\") ?",
+          "code": "console.log(Number(\"\"));",
+          "options": [
+            "NaN",
+            "0",
+            "undefined",
+            "\"\""
+          ],
+          "answer": 1,
+          "explanation": "Une chaîne vide vaut 0 après conversion. En revanche Number(\"blabla\") donne NaN, car la chaîne ne contient aucun nombre."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie parseInt() avec un nombre à virgule ?",
+          "code": "console.log(parseInt(\"7.9\"));",
+          "options": [
+            "7.9",
+            "NaN",
+            "8 : la valeur est arrondie",
+            "7 : la conversion s'arrête au point décimal"
+          ],
+          "answer": 3,
+          "explanation": "parseInt() ne garde que la partie entière : il s'arrête au point. Pour conserver la partie décimale, on utilise parseFloat(\"7.9\"), qui donne 7.9."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "MOYEN",
+          "title": "Quel type obtient-on après conversion en chaîne ?",
+          "code": "console.log(typeof String(42));\nconsole.log(typeof (42 + \"\"));",
+          "options": [
+            "\"string\" puis \"string\"",
+            "\"number\" puis \"string\"",
+            "\"number\" puis \"number\"",
+            "\"string\" puis \"number\""
+          ],
+          "answer": 0,
+          "explanation": "String(42) comme l'astuce 42 + \"\" renvoient la chaîne « 42 » : dans les deux cas le type obtenu est string."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "DIFFICILE",
+          "title": "Que valent ces deux opérations sur une chaîne ?",
+          "code": "console.log(\"12\" * 1);\nconsole.log(\"12\" + 1);",
+          "options": [
+            "121 puis 12",
+            "12 puis 12",
+            "12 puis 121",
+            "24 puis 13"
+          ],
+          "answer": 2,
+          "explanation": "L'opérateur * ne sait multiplier que des nombres : « 12 » est converti, 12 × 1 = 12. Avec +, la concaténation l'emporte : « 12 » + 1 donne « 121 »."
+        },
+        {
+          "category": "Conversions & fonctions globales",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie String.fromCharCode(65) ?",
+          "code": "console.log(String.fromCharCode(65));",
+          "options": [
+            "\"a\"",
+            "\"Z\"",
+            "65",
+            "\"A\""
+          ],
+          "answer": 3,
+          "explanation": "String.fromCharCode() transforme un code ASCII en caractère : 65 correspond à la lettre A majuscule (97 donnerait a)."
+        },
+        {
+          "category": "Math",
+          "difficulty": "FACILE",
+          "title": "Quelle est la racine carrée de 16 ?",
+          "code": "console.log(Math.sqrt(16));",
+          "options": [
+            "256",
+            "4",
+            "8",
+            "2"
+          ],
+          "answer": 1,
+          "explanation": "Math.sqrt(x) renvoie la racine carrée : celle de 16 est 4. Elle vaut NaN uniquement si x est négatif."
+        },
+        {
+          "category": "Math",
+          "difficulty": "DIFFICILE",
+          "title": "Que renvoie cet arrondi d'un nombre négatif ?",
+          "code": "console.log(Math.round(-2.5));",
+          "options": [
+            "-3",
+            "-2.5",
+            "-2",
+            "2"
+          ],
+          "answer": 2,
+          "explanation": "Avec une partie décimale de .5, Math.round() arrondit vers le haut, c'est-à-dire vers +∞ : 2.5 donne 3 et -2.5 donne -2."
+        },
+        {
+          "category": "Math",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie cette troncature d'un nombre négatif ?",
+          "code": "console.log(Math.trunc(-4.9));",
+          "options": [
+            "-4",
+            "-4.9",
+            "4",
+            "-5"
+          ],
+          "answer": 0,
+          "explanation": "Math.trunc() supprime la partie décimale sans arrondir : -4.9 devient -4 (et non -5, on ne cherche pas l'entier le plus proche)."
+        },
+        {
+          "category": "Math",
+          "difficulty": "DIFFICILE",
+          "title": "Quelle formule donne un entier entre deux bornes ?",
+          "code": "let min = 1, max = 6;\nlet de = ______;\nconsole.log(de);",
+          "options": [
+            "Math.round(Math.random() * max)",
+            "Math.trunc(Math.random() * (max - min + 1)) + min",
+            "Math.random() * max + min",
+            "Math.trunc(Math.random() * max) + min"
+          ],
+          "answer": 1,
+          "explanation": "On calcule d'abord l'écart (max - min + 1) pour inclure la borne haute, on tronque, puis on décale de min : un dé de 1 à 6."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie indexOf() si le texte n'est pas trouvé ?",
+          "code": "console.log(\"Bonjour\".indexOf(\"soir\"));",
+          "options": [
+            "0",
+            "undefined",
+            "6",
+            "-1"
+          ],
+          "answer": 3,
+          "explanation": "indexOf() renvoie la position de la première occurrence, ou -1 quand la sous-chaîne est absente : il faut tester ce résultat avant de l'utiliser."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "FACILE",
+          "title": "Que renvoie cette mise en majuscules ?",
+          "code": "console.log(\"tunis\".toUpperCase());",
+          "options": [
+            "\"TUNIS\"",
+            "\"Tunis\"",
+            "\"T\"",
+            "\"tunis\""
+          ],
+          "answer": 0,
+          "explanation": "toUpperCase() renvoie toute la chaîne en majuscules, toLowerCase() en minuscules. La chaîne d'origine n'est jamais modifiée."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "MOYEN",
+          "title": "Combien de caractères compte cette chaîne ?",
+          "code": "console.log(\"Bonjour le monde\".length);",
+          "options": [
+            "3",
+            "15",
+            "16",
+            "14"
+          ],
+          "answer": 2,
+          "explanation": "length compte tous les caractères, espaces compris : les 8 lettres de Bonjour, l'espace, les 2 lettres de le, l'espace et les 5 lettres de monde."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "DIFFICILE",
+          "title": "Que fait substring() quand les indices sont inversés ?",
+          "code": "let s = \"Mozilla\";\nconsole.log(s.substring(4, 1));",
+          "options": [
+            "Il renvoie la chaîne vide \"\"",
+            "Il renvoie \"zilla\"",
+            "Il renvoie \"zil\"",
+            "Il renvoie \"ozi\""
+          ],
+          "answer": 3,
+          "explanation": "Si le second indice est plus petit que le premier, JavaScript les inverse automatiquement : substring(4, 1) équivaut à substring(1, 4), soit « ozi »."
+        },
+        {
+          "category": "Chaînes de caractères",
+          "difficulty": "FACILE",
+          "title": "Que devient cette chaîne après trim() ?",
+          "code": "let prenom = \"  Amine  \";\nconsole.log(prenom.trim());",
+          "options": [
+            "\"Amine \"",
+            "\"Amine\"",
+            "\"A\"",
+            "\"  Amine  \""
+          ],
+          "answer": 1,
+          "explanation": "trim() supprime les espaces du début et de la fin, mais pas ceux du milieu : la chaîne devient « Amine ». Très utile pour nettoyer une saisie."
+        },
+        {
+          "category": "Tableaux",
+          "difficulty": "FACILE",
+          "title": "Quel est le dernier élément de ce tableau ?",
+          "code": "let notes = [12, 15, 8, 17];\nconsole.log(notes[3]);",
+          "options": [
+            "undefined",
+            "8",
+            "17",
+            "12"
+          ],
+          "answer": 2,
+          "explanation": "Les indices partent de 0 : notes[0] = 12, notes[1] = 15, notes[2] = 8, notes[3] = 17. Le dernier indice vaut toujours length - 1."
+        },
+        {
+          "category": "Tableaux",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie un indice qui dépasse la taille du tableau ?",
+          "code": "let notes = [12, 15];\nconsole.log(notes[5]);",
+          "options": [
+            "undefined",
+            "0",
+            "null",
+            "Une erreur s'affiche"
+          ],
+          "answer": 0,
+          "explanation": "Un indice hors des bornes du tableau ne provoque pas d'erreur : JavaScript renvoie simplement undefined."
+        },
+        {
+          "category": "Tableaux",
+          "difficulty": "FACILE",
+          "title": "Que vaut la taille du tableau après cet ajout ?",
+          "code": "let jours = [\"lun\", \"mar\", \"mer\"];\njours[3] = \"jeu\";\nconsole.log(jours.length);",
+          "options": [
+            "5",
+            "4",
+            "undefined",
+            "3"
+          ],
+          "answer": 1,
+          "explanation": "Écrire dans l'indice 3 d'un tableau qui en compte 3 allonge le tableau : le nouvel élément est placé en dernière position et length passe à 4."
+        },
+        {
+          "category": "Tableaux",
+          "difficulty": "MOYEN",
+          "title": "Que produit ce parcours avec for…of ?",
+          "code": "let mot = [\"J\", \"S\"];\nfor (let lettre of mot) {\n  console.log(lettre);\n}",
+          "options": [
+            "Il affiche 2",
+            "Il affiche 0 puis 1",
+            "Il affiche [\"J\", \"S\"]",
+            "Il affiche J puis S"
+          ],
+          "answer": 3,
+          "explanation": "for…of parcourt les valeurs du tableau, alors qu'une boucle for classique avec i donnerait les indices 0 et 1."
+        },
+        {
+          "category": "Objet Date",
+          "difficulty": "FACILE",
+          "title": "Quelle méthode donne l'année complète ?",
+          "code": "let d = new Date(2025, 0, 15);\nconsole.log(______);",
+          "options": [
+            "d.getFullYear()",
+            "d.getYear()",
+            "d.getDate()",
+            "d.year"
+          ],
+          "answer": 0,
+          "explanation": "getFullYear() renvoie l'année complète (2025). getDate() donne le jour du mois et getMonth() le mois, de 0 à 11."
+        },
+        {
+          "category": "Objet Date",
+          "difficulty": "MOYEN",
+          "title": "Quel mois et quelle année sont affichés ?",
+          "code": "let d = new Date(2025, 11, 31);\nconsole.log(d.getMonth(), d.getFullYear());",
+          "options": [
+            "31 puis 2025",
+            "11 puis 2024",
+            "11 puis 2025",
+            "12 puis 2025"
+          ],
+          "answer": 2,
+          "explanation": "Les mois vont de 0 (janvier) à 11 (décembre) : 11 correspond à décembre. getFullYear() renvoie bien 2025."
+        },
+        {
+          "category": "Conditions",
+          "difficulty": "MOYEN",
+          "title": "Quelle mention obtient une note de 15 ?",
+          "code": "let note = 15;\nlet mention;\nif (note >= 16) mention = \"Très bien\";\nelse if (note >= 14) mention = \"Bien\";\nelse mention = \"Passable\";\nconsole.log(mention);",
+          "options": [
+            "undefined",
+            "\"Très bien\"",
+            "\"Passable\"",
+            "\"Bien\""
+          ],
+          "answer": 3,
+          "explanation": "Les conditions sont testées dans l'ordre : 15 ≥ 16 est faux, mais 15 ≥ 14 est vrai : la deuxième branche s'exécute."
+        },
+        {
+          "category": "Conditions",
+          "difficulty": "MOYEN",
+          "title": "Quelle condition ce test exige-t-il ?",
+          "code": "let a = 12, b = 18;\nif (a > 10 && b < 20) {\n  console.log(\"ok\");\n}",
+          "options": [
+            "Une seule des deux conditions suffit",
+            "Les deux conditions doivent être vraies",
+            "Aucune des deux conditions ne doit être vraie",
+            "La condition est toujours fausse"
+          ],
+          "answer": 1,
+          "explanation": "&& exige que les deux conditions soient vraies : 12 > 10 et 18 < 20, donc « ok » s'affiche. Avec ||, une seule condition aurait suffi."
+        },
+        {
+          "category": "Conditions",
+          "difficulty": "DIFFICILE",
+          "title": "Que vaut txt à la fin de ce switch ?",
+          "code": "let code = 1;\nlet txt;\nswitch (code) {\n  case 0: txt = \"Arrêt\"; break;\n  case 1: txt = \"Marche\"; break;\n  default: txt = \"Inconnu\";\n}\nconsole.log(txt);",
+          "options": [
+            "\"Inconnu\"",
+            "undefined",
+            "\"Marche\"",
+            "\"Arrêt\""
+          ],
+          "answer": 2,
+          "explanation": "switch compare code à chaque case : la valeur 1 correspond à « Marche », et le break empêche d'exécuter les cas suivants."
+        },
+        {
+          "category": "Boucles",
+          "difficulty": "MOYEN",
+          "title": "Combien de tours effectue cette boucle while ?",
+          "code": "let i = 0;\nlet tours = 0;\nwhile (i < 4) {\n  tours++;\n  i += 2;\n}\nconsole.log(tours);",
+          "options": [
+            "2",
+            "1",
+            "4",
+            "3"
+          ],
+          "answer": 0,
+          "explanation": "i prend les valeurs 0 puis 2 : le bloc s'exécute deux fois, car 4 n'est pas strictement inférieur à 4."
+        },
+        {
+          "category": "Boucles",
+          "difficulty": "FACILE",
+          "title": "Quelles valeurs affiche cette boucle à pas de 2 ?",
+          "code": "for (let i = 2; i <= 8; i += 2) {\n  console.log(i);\n}",
+          "options": [
+            "2, 4 puis 6",
+            "2, 4, 6 puis 8",
+            "1, 2, 3 puis 4",
+            "8, 6, 4 puis 2"
+          ],
+          "answer": 1,
+          "explanation": "Le pas de la boucle est +2 : i vaut 2, 4, 6 puis 8 ; à 10 la condition i <= 8 devient fausse et la boucle s'arrête."
+        },
+        {
+          "category": "Boucles",
+          "difficulty": "MOYEN",
+          "title": "Que vaut la somme calculée par cette boucle ?",
+          "code": "let somme = 0;\nfor (let i = 1; i <= 5; i++) {\n  somme += i;\n}\nconsole.log(somme);",
+          "options": [
+            "5",
+            "120",
+            "10",
+            "15"
+          ],
+          "answer": 3,
+          "explanation": "On additionne les valeurs successives de i : 1 + 2 + 3 + 4 + 5 = 15."
+        },
+        {
+          "category": "Boucles",
+          "difficulty": "DIFFICILE",
+          "title": "Que parcourt for…of sur une chaîne de caractères ?",
+          "code": "let mot = \"JS\";\nfor (let c of mot) {\n  console.log(c);\n}",
+          "options": [
+            "Chaque caractère, l'un après l'autre",
+            "La longueur de la chaîne",
+            "Deux fois le mot entier",
+            "Les indices 0 et 1"
+          ],
+          "answer": 0,
+          "explanation": "for…of parcourt les valeurs d'un élément « itérable » : sur une chaîne, chaque caractère est visité successivement."
+        },
+        {
+          "category": "Fonctions",
+          "difficulty": "MOYEN",
+          "title": "Que renvoie un appel avec deux paramètres ?",
+          "code": "function aire(l, h) {\n  return l * h;\n}\nconsole.log(aire(3, 4));",
+          "options": [
+            "7",
+            "34",
+            "12",
+            "0"
+          ],
+          "answer": 2,
+          "explanation": "Les paramètres l et h reçoivent 3 et 4 dans l'ordre : la fonction renvoie l × h, soit 12."
+        },
+        {
+          "category": "Fonctions",
+          "difficulty": "MOYEN",
+          "title": "Qu'affiche une fonction qui renvoie une chaîne ?",
+          "code": "function direBonjour(nom) {\n  return \"Bonjour \" + nom;\n}\nconsole.log(direBonjour(\"Sami\"));",
+          "options": [
+            "Sami",
+            "undefined",
+            "Bonjour",
+            "Bonjour Sami"
+          ],
+          "answer": 3,
+          "explanation": "La fonction renvoie une chaîne construite avec le paramètre : c'est cette valeur qui est affichée. Avec return, la fonction fournit un résultat réutilisable."
+        },
+        {
+          "category": "Fonctions",
+          "difficulty": "DIFFICILE",
+          "title": "Que vaut cette addition de deux appels ?",
+          "code": "function f() {\n  return 1 + 1;\n}\nconsole.log(f() + f());",
+          "options": [
+            "22",
+            "4",
+            "2",
+            "11"
+          ],
+          "answer": 1,
+          "explanation": "Chaque appel renvoie 2 : on additionne les deux résultats, 2 + 2 = 4. Une fonction avec return s'utilise donc directement dans un calcul."
+        },
+        {
+          "category": "DOM",
+          "difficulty": "MOYEN",
+          "title": "Que fait cette affectation sur l'image ?",
+          "code": "document.getElementById(\"photo\").src = \"chien.jpg\";",
+          "options": [
+            "Elle change le texte de #photo",
+            "Elle crée un fichier nommé chien.jpg",
+            "Elle remplace l'image affichée par #photo",
+            "Elle affiche la photo en plein écran"
+          ],
+          "answer": 2,
+          "explanation": "On modifie un attribut de l'élément avec la syntaxe élément.attribut = valeur (src, href, value, title…), après l'avoir sélectionné."
+        },
+        {
+          "category": "DOM",
+          "difficulty": "MOYEN",
+          "title": "Que fait cette affectation sur un champ de saisie ?",
+          "code": "document.getElementById(\"saisie\").value = \"Ali\";",
+          "options": [
+            "Elle écrit Ali dans le champ",
+            "Elle crée un nouveau champ de formulaire",
+            "Elle vide le champ",
+            "Elle lit la valeur saisie par l'utilisateur"
+          ],
+          "answer": 0,
+          "explanation": "value donne accès au contenu d'un champ de formulaire : on peut le lire ou y écrire. Ici le champ #saisie affiche Ali."
+        },
+        {
+          "category": "DOM",
+          "difficulty": "MOYEN",
+          "title": "Comment cette série d'instructions agit-elle sur la vidéo ?",
+          "code": "let v = document.getElementById(\"film\");\nconsole.log(v.currentTime);\nv.currentTime = 30;\nv.playbackRate = 2;",
+          "options": [
+            "Elle affiche la durée totale de la vidéo",
+            "Elle lit la position, la place à 30 s puis double la vitesse",
+            "Elle met la vidéo en pause puis la relance",
+            "Elle règle le volume à 30 puis l'arrête"
+          ],
+          "answer": 1,
+          "explanation": "currentTime est la position de lecture en secondes et playbackRate la vitesse de lecture. Le cours les cite avec volume, play() et pause()."
+        },
+        {
+          "category": "DOM",
+          "difficulty": "FACILE",
+          "title": "Que fait cette affectation de style ?",
+          "code": "document.getElementById(\"case\").style.backgroundColor = \"red\";",
+          "options": [
+            "Elle met le texte de l'élément en rouge",
+            "Elle ajoute une classe CSS nommée red",
+            "Elle supprime tous les styles de l'élément",
+            "Elle met le fond de l'élément en rouge"
+          ],
+          "answer": 3,
+          "explanation": "En JavaScript, les propriétés CSS composées s'écrivent en camelCase : background-color devient backgroundColor. Pour la couleur du texte on écrirait style.color."
+        }
+      ];
+    </script>
+
+    <script src="../assets/js/config.js?v=476"></script>
+    <script src="../assets/js/supabase-umd.js"></script>
+    <script src="../assets/js/quiz-sync.js?v=460"></script>
+
+    <!-- ==== MOTEUR DU JEU ==== -->
+    <script>
+      /* Lecture/écriture du stockage local tolérantes aux pannes : un aperçu
+   en iframe restreinte peut interdire localStorage, la page doit continuer. */
+      function stockageLire(cle, defaut) {
+        try {
+          const valeur = localStorage.getItem(cle);
+          return valeur === null ? defaut : valeur;
+        } catch (e) {
+          return defaut;
+        }
+      }
+      function stockageEcrire(cle, valeur) {
+        try {
+          localStorage.setItem(cle, String(valeur));
+        } catch (e) {
+          /* stockage indisponible */
+        }
+      }
+      function entierAleatoireJs(maxExcl) {
+        if (maxExcl <= 1) return 0;
+        if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+          const buf = new Uint32Array(1);
+          window.crypto.getRandomValues(buf);
+          return buf[0] % maxExcl;
+        }
+        return Math.floor(Math.random() * maxExcl);
+      }
+      function melangerTableau(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = entierAleatoireJs(i + 1);
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+      function lancerConfettisSursJs(opts) {
+        if (typeof confetti === "function") {
+          try {
+            confetti(opts);
+          } catch (e) {}
+        }
+      }
+
+      const PRAISE = [
+        "BRAVO !",
+        "JOLI CODE !",
+        "NIVEAU EXPERT !",
+        "EXPÉDIÉ ! 🚀",
+        "MÉMOIRE NETTOYÉE !",
+        "BEAU RAISONNEMENT !",
+        "LÉGENDAIRE !",
+        "10/10 SANS COMMENTAIRE !",
+      ];
+      const TAUNTS = [
+        "OUPS...",
+        "REVOIS CETTE PARTIE 😅",
+        "ÇA MARCHE CHEZ MOI...",
+        "REVIENS EN ARRIÈRE !",
+        "ERREUR DE SEGMENTATION",
+        "QUI A ÉCRIT ÇA ?!",
+      ];
+
+      class QuizGame {
+        constructor() {
+          this.mode = "arcade";
+          this.score = 0;
+          this.combo = 1;
+          this.maxCombo = 1;
+          this.lives = 3;
+          this.currentQuestionIdx = 0;
+          this.questions = [];
+          this.timer = null;
+          this.timeLeft = 15;
+          this.maxTime = 15;
+          this.canAnswer = false;
+          this.correctCount = 0;
+          this.answeredCount = 0;
+          this.timeBonusTotal = 0;
+          this.journal = [];
+          this.syncedJournalLen = 0;
+          this.partySynced = false;
+          this.xpCredited = false;
+          this.bossHp = 100;
+          this.bossMaxHp = 100;
+          const xpObjJs = (() => {
+            try { return JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {}; } catch (e) { return {}; }
+          })();
+          this.stats = {
+            totalAnswered:
+              parseInt(stockageLire("js_quiz_total_answered", "0"), 10) || 0,
+            highScore:
+              parseInt(stockageLire("js_quiz_high_score", "0"), 10) || 0,
+            xp: Math.max(0, Number(xpObjJs.xp) || 0),
+          };
+          this.initDom();
+          this.updateHomeStats();
+          window.addEventListener("sti-cloud-restored", (evt) => {
+            this.stats.totalAnswered = Math.max(
+              this.stats.totalAnswered || 0,
+              parseInt(stockageLire("js_quiz_total_answered", "0"), 10) || 0
+            );
+            this.stats.highScore = Math.max(
+              this.stats.highScore || 0,
+              parseInt(stockageLire("js_quiz_high_score", "0"), 10) || 0
+            );
+            try {
+              const luXpJs = JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {};
+              this.stats.xp = evt.detail && evt.detail.quiz === "sti-quiz-xp-js-v1"
+                ? (Number(luXpJs.xp) || 0) : Math.max(this.stats.xp || 0, Number(luXpJs.xp) || 0);
+            } catch (eXp) {}
+            this.updateHomeStats();
+          });
+          const revInit =
+            window.STIQuizSync && STIQuizSync.revisionIds
+              ? STIQuizSync.revisionIds("javascript")
+              : null;
+          if (revInit && revInit.length) {
+            setTimeout(() => this.start("revision"), 0);
+          } else {
+            this.hydrateCloudJs();
+          }
+        }
+
+        initDom() {
+          window.addEventListener("pagehide", () => {
+            this.syncProgress(true);
+          });
+          window.addEventListener("keydown", (e) => {
+            // Répondre avec les touches 1 à 4
+            if (this.canAnswer && ["1", "2", "3", "4"].includes(e.key)) {
+              e.preventDefault();
+              this.handleAnswer(parseInt(e.key, 10) - 1);
+              return;
+            }
+            // Continuer avec espace / entrée / flèche droite
+            const expBox = document.getElementById("explanation-box");
+            if (
+              !expBox.classList.contains("hidden") &&
+              (e.key === "Enter" || e.key === " " || e.key === "ArrowRight")
+            ) {
+              e.preventDefault();
+              this.nextQuestion();
+            }
+          });
+        }
+
+        syncProgress(finaliserPartie = false) {
+          if (!window.STIQuizSync) return;
+          if (
+            STIQuizSync.enregistrerReponses &&
+            this.journal.length > this.syncedJournalLen
+          ) {
+            const nouvelles = this.journal.slice(this.syncedJournalLen);
+            this.syncedJournalLen = this.journal.length;
+            STIQuizSync.enregistrerReponses(
+              "javascript",
+              null,
+              nouvelles.map(function (j) {
+                const extraitCode = j.code
+                  ? " — " + String(j.code).replace(/\s+/g, " ").trim().slice(0, 110)
+                  : "";
+                return {
+                  id: STIQuizSync.hash(j.title),
+                  enonce: j.title + extraitCode,
+                  ok: j.correct,
+                };
+              })
+            );
+          }
+          if (
+            finaliserPartie &&
+            !this.partySynced &&
+            this.answeredCount > 0 &&
+            STIQuizSync.enregistrer
+          ) {
+            this.partySynced = true;
+            if (!this.xpCredited) {
+              this.xpCredited = true;
+              const gainXpJs = Math.max(this.score || 0, (this.correctCount || 0) * 150);
+              let exXpJs = {};
+              try { exXpJs = JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {}; } catch (eX) {}
+              this.stats.xp = Math.max(Number(this.stats.xp) || 0, Number(exXpJs.xp) || 0) + gainXpJs;
+              const acquisJs = {
+                xp: this.stats.xp,
+                best: Math.max(Number(exXpJs.best) || 0, this.stats.highScore || 0, this.score || 0),
+                parties: (Number(exXpJs.parties) || 0) + 1,
+                bonnes: (Number(exXpJs.bonnes) || 0) + (this.correctCount || 0),
+                total: (Number(exXpJs.total) || 0) + (this.answeredCount || 0),
+              };
+              if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP("sti-quiz-xp-js-v1", acquisJs, gainXpJs, {
+                id: this.partieId, bonnes: this.correctCount || 0, total: this.answeredCount || 0
+              }))) {
+                stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify(acquisJs));
+              } else {
+                try { this.stats.xp = Number(JSON.parse(stockageLire("sti-quiz-xp-js-v1", "{}")).xp) || 0; } catch (eX) {}
+              }
+              if (STIQuizSync.notifierXP) STIQuizSync.notifierXP("sti-quiz-xp-js-v1");
+            }
+            if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function") {
+              STIQuizSync.noterQuestionsVuesQuiz(
+                "q_js",
+                this.journal.map((j) => STIQuizSync.hash(j.title))
+              );
+            }
+            const ordreFinalJs = this.journal.map((j, idx) => ({
+              rang: idx + 1,
+              id: STIQuizSync.hash(j.title),
+              enonce: j.title,
+              ok: !!j.correct,
+            }));
+            STIQuizSync.enregistrer(
+              "javascript",
+              this.correctCount,
+              this.answeredCount,
+              this.mode || "arcade",
+              { points: this.score, ordre_questions: ordreFinalJs, partie_id: this.partieId }
+            );
+            setTimeout(() => this.hydrateCloudJs(), 350);
+          }
+        }
+
+        saveActiveSessionCloud(nextIdxOverride = null) {
+          if (
+            !window.STIQuizSync ||
+            typeof STIQuizSync.sauverSession !== "function" ||
+            this.partySynced ||
+            !this.questions ||
+            !this.questions.length
+          ) {
+            return;
+          }
+          const idxToSave =
+            typeof nextIdxOverride === "number"
+              ? nextIdxOverride
+              : this.currentQuestionIdx;
+          if (
+            (this.mode === "arcade" || this.mode === "revision") &&
+            idxToSave >= this.questions.length
+          ) {
+            return;
+          }
+          STIQuizSync.sauverSession("javascript", {
+            module: this.mode || "arcade",
+            mode: this.mode || "arcade",
+            score: this.correctCount,
+            points: this.score,
+            total: this.questions.length,
+            index_courant: idxToSave,
+            ordre_questions: this.questions.slice(0, 120),
+            etat_meta: {
+              partie_id: this.partieId,
+              combo: this.combo,
+              maxCombo: this.maxCombo,
+              lives: this.lives,
+              bossHp: this.bossHp,
+              answeredCount: this.answeredCount,
+              timeBonusTotal: this.timeBonusTotal,
+              journal: this.journal,
+            },
+          });
+        }
+
+        hydrateCloudJs() {
+          if (!window.STIQuizSync) return;
+          if (typeof STIQuizSync.synchroniserVusQuizDepuisCloud === "function") {
+            STIQuizSync.synchroniserVusQuizDepuisCloud("q_js");
+          }
+          if (typeof STIQuizSync.resume === "function") {
+            STIQuizSync.resume("javascript")
+              .then((res) => {
+                if (!res) return;
+                if (res.xpPlancher && res.xpPlancher > (this.stats.xp || 0)) {
+                  let exXpJs = {};
+                  try { exXpJs = JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {}; } catch (eX) {}
+                  this.stats.xp = Math.max(res.xpPlancher, Number(exXpJs.xp) || 0);
+                  const acquisJs = {
+                    xp: this.stats.xp,
+                    best: Math.max(Number(exXpJs.best) || 0, res.meilleurPoints || 0, this.stats.highScore || 0),
+                    parties: Math.max(Number(exXpJs.parties) || 0, res.parties || 0),
+                    bonnes: Math.max(Number(exXpJs.bonnes) || 0, res.totalBonnes || 0),
+                    total: Math.max(Number(exXpJs.total) || 0, res.totalQuestions || 0),
+                  };
+                  if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP("sti-quiz-xp-js-v1", acquisJs, 0))) {
+                    stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify(acquisJs));
+                  }
+                  if (STIQuizSync.notifierXP) STIQuizSync.notifierXP("sti-quiz-xp-js-v1");
+                }
+                if (res.meilleurPoints && res.meilleurPoints > this.stats.highScore) {
+                  this.stats.highScore = res.meilleurPoints;
+                  stockageEcrire("js_quiz_high_score", this.stats.highScore);
+                }
+                if (res.totalQuestions && res.totalQuestions > this.stats.totalAnswered) {
+                  this.stats.totalAnswered = res.totalQuestions;
+                  stockageEcrire("js_quiz_total_answered", this.stats.totalAnswered);
+                }
+                this.updateHomeStats();
+                const z = document.getElementById("js-cloud-bilan");
+                if (!z || !res.parties) return;
+                z.innerHTML =
+                  '<div class="glass-panel rounded-xl px-4 py-2.5 border border-emerald-500/35 text-xs font-mono-code text-gray-200 flex flex-wrap items-center justify-between gap-2">' +
+                  "<span>☁️ <strong class=\"text-emerald-300\">Scores Supabase :</strong> " +
+                  res.parties +
+                  " partie" +
+                  (res.parties > 1 ? "s" : "") +
+                  " · ⚡ <strong class=\"text-cyan-300\">" +
+                  (this.stats.xp || 0).toLocaleString("fr-FR") +
+                  " XP</strong>" +
+                  (res.meilleur
+                    ? " · 🏆 Meilleur : <strong class=\"text-yellow-300\">" +
+                      res.meilleur.score +
+                      "/" +
+                      res.meilleur.total +
+                      "</strong> (" +
+                      res.meilleur.pct +
+                      " %)"
+                    : "") +
+                  (res.dernier
+                    ? " · 🕒 Dernier : <strong>" +
+                      res.dernier.score +
+                      "/" +
+                      res.dernier.total +
+                      "</strong> (" +
+                      res.dernier.pct +
+                      " %)"
+                    : "") +
+                  "</span></div>";
+              })
+              .catch(() => {});
+          }
+          if (typeof STIQuizSync.chargerSession === "function") {
+            STIQuizSync.chargerSession("javascript")
+              .then((sauv) => {
+                const zr = document.getElementById("js-cloud-reprise");
+                if (
+                  !zr ||
+                  !sauv ||
+                  !Array.isArray(sauv.ordre_questions) ||
+                  !sauv.ordre_questions.length
+                ) {
+                  return;
+                }
+                const idx = Math.min(
+                  Math.max(0, parseInt(sauv.index_courant, 10) || 0),
+                  sauv.ordre_questions.length - 1
+                );
+                zr.innerHTML =
+                  '<div class="glass-panel rounded-xl p-4 border border-yellow-400/50 flex flex-wrap items-center justify-between gap-3">' +
+                  '<div class="text-xs font-mono-code text-gray-200"><strong class="text-yellow-300">☁️ Partie en cours sauvegardée sur Supabase</strong><div class="text-gray-400 mt-1">Question <strong class="text-white">' +
+                  (idx + 1) +
+                  "/" +
+                  sauv.ordre_questions.length +
+                  "</strong> · Score conservé : <strong class=\"text-emerald-300\">" +
+                  (sauv.points || 0) +
+                  " pts (" +
+                  (sauv.score || 0) +
+                  " juste" +
+                  ((sauv.score || 0) > 1 ? "s" : "") +
+                  ")</strong> · Ordre des questions conservé.</div></div>" +
+                  '<div class="flex gap-2 flex-wrap">' +
+                  '<button type="button" id="js-resume-cloud-btn" class="px-3.5 py-2 rounded-lg bg-yellow-400 text-black font-bold font-heading text-xs hover:bg-yellow-300">▶️ REPRENDRE</button>' +
+                  '<button type="button" id="js-discard-cloud-btn" class="px-3 py-2 rounded-lg border border-gray-600 bg-gray-800 text-gray-300 font-mono-code text-xs hover:text-white">✕ NOUVELLE</button>' +
+                  "</div></div>";
+                const bR = document.getElementById("js-resume-cloud-btn");
+                if (bR) {
+                  bR.onclick = () => {
+                    zr.innerHTML = "";
+                    this.resumeSavedSessionJs(sauv);
+                  };
+                }
+                const bD = document.getElementById("js-discard-cloud-btn");
+                if (bD) {
+                  bD.onclick = () => {
+                    if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("javascript", sauv.etat_meta && sauv.etat_meta.partie_id);
+                    zr.innerHTML = "";
+                  };
+                }
+              })
+              .catch(() => {});
+          }
+        }
+
+        resumeSavedSessionJs(sauv) {
+          soundManager.init();
+          soundManager.playClick();
+          const meta = sauv.etat_meta || {};
+          this.partieId = STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise("javascript", sauv) : null;
+          this.mode = sauv.mode || "arcade";
+          this.score = Number(sauv.points) || 0;
+          this.correctCount = Number(sauv.score) || 0;
+          this.combo = Number(meta.combo) || 1;
+          this.maxCombo = Number(meta.maxCombo) || 1;
+          this.lives = meta.lives !== undefined ? Number(meta.lives) : 3;
+          this.bossHp = meta.bossHp !== undefined ? Number(meta.bossHp) : 100;
+          this.bossMaxHp = 100;
+          this.answeredCount = Number(meta.answeredCount) || 0;
+          this.timeBonusTotal = Number(meta.timeBonusTotal) || 0;
+          this.journal = Array.isArray(meta.journal) ? meta.journal : [];
+          this.syncedJournalLen = this.journal.length;
+          this.partySynced = false;
+          this.xpCredited = false;
+          this.questions = sauv.ordre_questions;
+          this.currentQuestionIdx = Math.min(
+            Math.max(0, parseInt(sauv.index_courant, 10) || 0),
+            this.questions.length - 1
+          );
+          this._openGameplayUiJs("☁️ PARTIE REPRISE DEPUIS SUPABASE ⚡");
+        }
+
+        endEarly() {
+          clearInterval(this.timer);
+          if (this.answeredCount > 0) {
+            this.finishGame(false);
+          } else {
+            this.showHome();
+          }
+        }
+
+        toast(text, accent = "#f7df1e") {
+          const layer = document.getElementById("toast-layer");
+          const el = document.createElement("div");
+          el.className =
+            "toast glass-panel px-4 py-2 rounded-full text-sm font-mono-code font-bold mt-2 border";
+          el.style.borderColor = accent + "66";
+          el.style.color = accent;
+          el.style.boxShadow = `0 0 22px ${accent}33`;
+          el.innerText = text;
+          layer.appendChild(el);
+          setTimeout(() => el.remove(), 2400);
+        }
+
+        floatPoints(amount, color = "#22ff88") {
+          const card = document.getElementById("question-card");
+          const el = document.createElement("div");
+          el.className = "float-points font-mono-code";
+          el.style.color = color;
+          el.style.right = "20px";
+          el.style.top = "60px";
+          el.style.fontSize = "1.3rem";
+          el.style.textShadow = `0 0 12px ${color}`;
+          el.innerText = (amount >= 0 ? "+" : "") + amount;
+          card.appendChild(el);
+          setTimeout(() => el.remove(), 1200);
+        }
+
+        updateHomeStats() {
+          document.getElementById("home-high-score").innerText =
+            this.stats.highScore;
+          document.getElementById("home-total-answered").innerText =
+            this.stats.totalAnswered;
+        }
+
+        showHome() {
+          const gp = document.getElementById("screen-gameplay");
+          if (gp && !gp.classList.contains("hidden") && this.answeredCount > 0) {
+            this.finishGame(false);
+            return;
+          }
+          clearInterval(this.timer);
+          if (this.answeredCount === 0 && window.STIQuizSync && STIQuizSync.effacerSession) {
+            STIQuizSync.effacerSession("javascript", this.partieId);
+          }
+          this.syncProgress(true);
+          soundManager.playClick();
+          document.getElementById("screen-start").classList.remove("hidden");
+          document.getElementById("screen-gameplay").classList.add("hidden");
+          document.getElementById("screen-result").classList.add("hidden");
+          document.getElementById("nav-stats").classList.add("hidden");
+          document.getElementById("nav-stats").classList.remove("flex");
+          document.getElementById("btn-haut").classList.add("hidden");
+          this.updateHomeStats();
+          this.hydrateCloudJs();
+        }
+
+        prepareQuestionsFromBaseJs(baseList) {
+          const tirage = baseList.map((q) => {
+            const src =
+              QUESTIONS_DB.find((orig) => orig.title === q.title) || q;
+            const ordre = melangerTableau(src.options.map((_, idx) => idx));
+            return {
+              ...src,
+              options: ordre.map((idx) => src.options[idx]),
+              answer: ordre.indexOf(src.answer),
+            };
+          });
+          for (let i = 2; i < tirage.length; i++) {
+            if (
+              tirage[i].answer === tirage[i - 1].answer &&
+              tirage[i].answer === tirage[i - 2].answer &&
+              tirage[i].options.length > 1
+            ) {
+              const curAns = tirage[i].answer;
+              const altIdx = (curAns + 1 + entierAleatoireJs(tirage[i].options.length - 1)) % tirage[i].options.length;
+              const opts = [...tirage[i].options];
+              [opts[curAns], opts[altIdx]] = [opts[altIdx], opts[curAns]];
+              tirage[i].options = opts;
+              tirage[i].answer = altIdx;
+            }
+          }
+          return tirage;
+        }
+
+        shuffleQuestions() {
+          var revJs =
+            window.STIQuizSync && STIQuizSync.revisionIds
+              ? STIQuizSync.revisionIds("javascript")
+              : null;
+          var baseJs = QUESTIONS_DB;
+          if (revJs) {
+            var fJs = QUESTIONS_DB.filter(
+              (q) => revJs.indexOf(STIQuizSync.hash(q.title)) !== -1
+            );
+            if (fJs.length) baseJs = fJs;
+          }
+          let melangees = melangerTableau(baseJs);
+          if (
+            !revJs &&
+            window.STIQuizSync &&
+            typeof STIQuizSync.ordonnerAvecQuestionsNonVues === "function"
+          ) {
+            melangees = STIQuizSync.ordonnerAvecQuestionsNonVues(
+              "q_js",
+              melangees,
+              (q) => STIQuizSync.hash(q.title)
+            );
+          }
+          return this.prepareQuestionsFromBaseJs(melangees);
+        }
+
+        start(mode = "arcade", customQuestions = null) {
+          this.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;
+          soundManager.init();
+          soundManager.playClick();
+          this.mode = mode;
+          this.score = 0;
+          this.combo = 1;
+          this.maxCombo = 1;
+          this.lives = 3;
+          this.currentQuestionIdx = 0;
+          this.correctCount = 0;
+          this.answeredCount = 0;
+          this.timeBonusTotal = 0;
+          this.journal = [];
+          this.syncedJournalLen = 0;
+          this.partySynced = false;
+          this.xpCredited = false;
+          this.bossHp = this.bossMaxHp = 100;
+
+          if (Array.isArray(customQuestions) && customQuestions.length) {
+            this.questions = this.prepareQuestionsFromBaseJs(customQuestions);
+          } else {
+            this.questions = this.shuffleQuestions();
+            if (this.mode === "arcade")
+              this.questions = this.questions.slice(0, 10);
+          }
+          this.saveActiveSessionCloud(0);
+          this._openGameplayUiJs(
+            mode === "boss"
+              ? "COMBAT DE BOSS : ÉCRASE LE RAMASSE-MIETTES 👾"
+              : mode === "revision"
+              ? `🔁 MODE RÉVISION : ${this.questions.length} QUESTION(S) À RETRAVAILLER`
+              : "GO ! DÉBOGUE VITE ⚡"
+          );
+        }
+
+        _openGameplayUiJs(toastText) {
+          document.getElementById("screen-start").classList.add("hidden");
+          document.getElementById("screen-result").classList.add("hidden");
+          document.getElementById("screen-gameplay").classList.remove("hidden");
+          document
+            .getElementById("screen-gameplay")
+            .classList.add("animate-popIn");
+
+          const nav = document.getElementById("nav-stats");
+          nav.classList.remove("hidden");
+          nav.classList.add("flex");
+
+          const comboCont = document.getElementById("stat-combo-container");
+          const livesCont = document.getElementById("stat-lives-container");
+          const bossHud = document.getElementById("boss-hud");
+          const bossStat = document.getElementById("stat-boss-container");
+          [comboCont, livesCont, bossHud, bossStat].forEach((el) => {
+            el.classList.add("hidden");
+            el.classList.remove("flex");
+          });
+
+          if (this.mode === "arcade" || this.mode === "revision") {
+            comboCont.classList.remove("hidden");
+            comboCont.classList.add("flex");
+          } else if (this.mode === "survival") {
+            livesCont.classList.remove("hidden");
+            livesCont.classList.add("flex");
+            this.updateLivesDisplay();
+          } else if (this.mode === "boss") {
+            bossHud.classList.remove("hidden");
+            bossStat.classList.remove("hidden");
+            bossStat.classList.add("flex");
+            this.updateBossDisplay();
+          }
+          document.getElementById("btn-haut").classList.add("hidden");
+          this.buildProgressDots();
+          this.updateStatsDisplay();
+          this.renderQuestion();
+          this.toast(toastText, this.mode === "boss" ? "#00f3ff" : "#f7df1e");
+        }
+
+        buildProgressDots() {
+          const wrap = document.getElementById("progress-dots");
+          wrap.innerHTML = "";
+          if (this.mode !== "arcade" && this.mode !== "revision") {
+            wrap.classList.add("hidden");
+            return;
+          }
+          const nbDots = Math.min(this.questions.length || 10, 20);
+          wrap.classList.remove("hidden");
+          for (let i = 0; i < nbDots; i++) {
+            const dot = document.createElement("div");
+            dot.className =
+              "w-2.5 h-2.5 rounded-full bg-gray-700 transition-all duration-300";
+            wrap.appendChild(dot);
+          }
+        }
+
+        updateProgressDots(state) {
+          const dots = document.querySelectorAll("#progress-dots div");
+          dots.forEach((d, i) => {
+            if (i < this.currentQuestionIdx) {
+              d.className =
+                "w-2.5 h-2.5 rounded-full bg-yellow-400 shadow-[0_0_8px_rgba(247,223,30,0.7)] transition-all duration-300";
+            } else if (i === this.currentQuestionIdx) {
+              d.className =
+                "w-3.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(0,243,255,0.8)] transition-all duration-300";
+            } else {
+              d.className =
+                "w-2.5 h-2.5 rounded-full bg-gray-700 transition-all duration-300";
+            }
+          });
+        }
+
+        updateStatsDisplay() {
+          document.getElementById("stat-score").innerText = this.score;
+          document.getElementById("stat-combo").innerText = `x${this.combo}`;
+          const flame = document.getElementById("combo-flame");
+          flame.style.display = this.combo >= 2 ? "inline-block" : "none";
+        }
+
+        updateLivesDisplay() {
+          let hearts = "";
+          for (let i = 0; i < this.lives; i++) hearts += "❤️";
+          for (let i = this.lives; i < 3; i++) hearts += "🖤";
+          document.getElementById("stat-lives").innerText = hearts;
+        }
+
+        updateBossDisplay() {
+          const pct = Math.max(0, (this.bossHp / this.bossMaxHp) * 100);
+          document.getElementById("boss-hp-bar").style.width = pct + "%";
+          document.getElementById("boss-hp-text").innerText = `${Math.max(
+            0,
+            this.bossHp
+          )} / ${this.bossMaxHp} PV`;
+          document.getElementById("stat-boss-hp").innerText = Math.max(
+            0,
+            this.bossHp
+          );
+          const mood = document.getElementById("boss-mood");
+          if (pct > 60) mood.innerText = "RAMASSE-MIETTES CORROMPU 😤";
+          else if (pct > 25) mood.innerText = "RAMASSE-MIETTES — SURCHAUFFE 🥵";
+          else mood.innerText = "RAMASSE-MIETTES — EN PANIQUE 😱";
+        }
+
+        renderQuestion() {
+          clearInterval(this.timer);
+          this.canAnswer = true;
+
+          document.getElementById("explanation-box").classList.add("hidden");
+          const qCard = document.getElementById("question-card");
+          qCard.classList.remove("animate-shake");
+
+          const q = this.questions[this.currentQuestionIdx];
+          if (!q) {
+            this.finishGame();
+            return;
+          }
+
+          const totalDisplay =
+            this.mode === "arcade" || this.mode === "revision"
+              ? String(this.questions.length).padStart(2, "0")
+              : this.mode === "boss"
+              ? "BOSS"
+              : "∞";
+          document.getElementById(
+            "question-counter"
+          ).innerText = `QUESTION ${String(
+            this.currentQuestionIdx + 1
+          ).padStart(2, "0")} / ${totalDisplay}`;
+
+          const diffElem = document.getElementById("question-difficulty");
+          diffElem.innerText = q.difficulty;
+          if (q.difficulty === "FACILE") {
+            diffElem.className =
+              "px-2 py-0.5 bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 rounded-full";
+          } else if (q.difficulty === "DIFFICILE") {
+            diffElem.className =
+              "px-2 py-0.5 bg-red-400/10 text-red-400 border border-red-400/20 rounded-full";
+          } else {
+            diffElem.className =
+              "px-2 py-0.5 bg-yellow-400/10 text-yellow-400 border border-yellow-400/20 rounded-full";
+          }
+
+          document.getElementById("question-category").innerText = q.category;
+          document.getElementById("question-title").innerText = q.title;
+
+          const codeSnippet = document.getElementById("code-snippet");
+          codeSnippet.textContent = q.code;
+          if (window.Prism) Prism.highlightElement(codeSnippet);
+
+          // Propositions
+          const grid = document.getElementById("options-grid");
+          grid.innerHTML = "";
+          q.options.forEach((optText, index) => {
+            const btn = document.createElement("button");
+            btn.className =
+              "option-btn animate-popIn w-full text-left p-3.5 rounded-xl border border-gray-700 bg-gray-800/80 hover:bg-gray-700/70 hover:border-yellow-400/60 text-sm font-mono-code flex items-center justify-between group active:scale-[0.98]";
+            btn.style.animationDelay = index * 0.06 + "s";
+            btn.innerHTML = `
+        <span class="flex items-center space-x-2.5 min-w-0">
+          <span class="w-7 h-7 shrink-0 rounded-lg bg-gray-700 text-gray-300 group-hover:bg-yellow-400 group-hover:text-black flex items-center justify-center text-xs font-bold transition-colors">${
+            index + 1
+          }</span>
+          <span class="text-gray-200 group-hover:text-white font-medium break-words leading-snug">${this.escapeHtml(
+            optText
+          )}</span>
+        </span>
+        <span class="feedback-icon opacity-0 text-base shrink-0 ml-2"></span>`;
+            btn.onclick = () => this.handleAnswer(index);
+            btn.onmouseenter = () => soundManager.playHover();
+            grid.appendChild(btn);
+          });
+
+          this.updateProgressDots();
+
+          // Chronomètre
+          this.timeLeft = q.difficulty === "DIFFICILE" ? 18 : 14;
+          this.maxTime = this.timeLeft;
+          this.updateTimerDisplay(false);
+
+          this.timer = setInterval(() => {
+            this.timeLeft -= 0.1;
+            if (this.timeLeft <= 0) {
+              this.timeLeft = 0;
+              clearInterval(this.timer);
+              this.handleTimeOut();
+              return;
+            }
+            if (this.timeLeft < 4) soundManager.playTick();
+            this.updateTimerDisplay(true);
+          }, 100);
+        }
+
+        escapeHtml(str) {
+          return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        }
+
+        updateTimerDisplay(allowDanger) {
+          const pct = Math.max(0, (this.timeLeft / this.maxTime) * 100);
+          const bar = document.getElementById("timer-bar");
+          bar.style.width = pct + "%";
+          const secEl = document.getElementById("seconds-left");
+          secEl.innerText = Math.ceil(this.timeLeft);
+
+          if (pct < 30) {
+            bar.className =
+              "h-full bg-gradient-to-r from-red-500 to-rose-400 rounded-full transition-all duration-100 ease-linear";
+            secEl.className = "text-red-400 font-bold text-sm timer-danger";
+          } else if (pct < 60) {
+            bar.className =
+              "h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full transition-all duration-100 ease-linear";
+            secEl.className = "text-yellow-400 font-bold text-sm";
+          } else {
+            bar.className =
+              "h-full bg-gradient-to-r from-cyan-400 to-yellow-400 rounded-full transition-all duration-100 ease-linear";
+            secEl.className = "text-yellow-400 font-bold text-sm";
+          }
+        }
+
+        handleAnswer(selectedIndex) {
+          if (!this.canAnswer) return;
+          this.canAnswer = false;
+          clearInterval(this.timer);
+
+          const q = this.questions[this.currentQuestionIdx];
+          const isCorrect = selectedIndex === q.answer;
+          const buttons = document.querySelectorAll(".option-btn");
+
+          buttons.forEach((btn, idx) => {
+            btn.disabled = true;
+            btn.classList.remove(
+              "hover:bg-gray-700/70",
+              "hover:border-yellow-400/60"
+            );
+            if (idx === q.answer) {
+              btn.classList.add(
+                "border-emerald-500",
+                "bg-emerald-950/50",
+                "text-emerald-300",
+                "correct-flash"
+              );
+              btn.querySelector(".feedback-icon").innerHTML = "✅";
+              btn.querySelector(".feedback-icon").classList.remove("opacity-0");
+            } else if (idx === selectedIndex && !isCorrect) {
+              btn.classList.add(
+                "border-rose-500",
+                "bg-rose-950/50",
+                "text-rose-300"
+              );
+              btn.querySelector(".feedback-icon").innerHTML = "❌";
+              btn.querySelector(".feedback-icon").classList.remove("opacity-0");
+            } else {
+              btn.classList.add("opacity-30");
+            }
+          });
+
+          this.journal.push({
+            category: q.category,
+            title: q.title,
+            code: q.code,
+            correct: isCorrect,
+            choix: q.options[selectedIndex],
+            bonneReponse: q.options[q.answer],
+            explication: q.explanation,
+          });
+
+          this.answeredCount++;
+          if (isCorrect) this.onCorrect();
+          else this.onWrong();
+          this.showExplanation(isCorrect, q.explanation);
+        }
+
+        handleTimeOut() {
+          if (!this.canAnswer) return;
+          this.canAnswer = false;
+          const q = this.questions[this.currentQuestionIdx];
+          const buttons = document.querySelectorAll(".option-btn");
+          buttons.forEach((btn, idx) => {
+            btn.disabled = true;
+            if (idx === q.answer) {
+              btn.classList.add(
+                "border-emerald-500",
+                "bg-emerald-950/50",
+                "text-emerald-300"
+              );
+              btn.querySelector(".feedback-icon").innerHTML = "✅";
+              btn.querySelector(".feedback-icon").classList.remove("opacity-0");
+            } else {
+              btn.classList.add("opacity-30");
+            }
+          });
+          this.journal.push({
+            category: q.category,
+            title: q.title,
+            code: q.code,
+            correct: false,
+            choix: null,
+            bonneReponse: q.options[q.answer],
+            explication: q.explanation,
+          });
+
+          this.answeredCount++;
+          this.onWrong(true);
+          this.showExplanation(false, `⏰ Temps écoulé ! ${q.explanation}`);
+        }
+
+        onCorrect() {
+          soundManager.playCorrect();
+          this.correctCount++;
+          this.stats.totalAnswered++;
+
+          const speedBonus = Math.round(this.timeLeft * 30);
+          const earned = (200 + speedBonus) * this.combo;
+          this.score += earned;
+          this.timeBonusTotal += speedBonus;
+          this.floatPoints(earned, "#22ff88");
+          this.toast(
+            PRAISE[Math.min(this.correctCount - 1, PRAISE.length - 1)],
+            "#22ff88"
+          );
+
+          if (this.combo >= 2) {
+            soundManager.playCombo(this.combo);
+            lancerConfettisSursJs({
+              particleCount: 20 + this.combo * 8,
+              spread: 55,
+              origin: { y: 0.7 },
+              colors: ["#f7df1e", "#ff2d78", "#00f3ff", "#22ff88"],
+            });
+          } else {
+            lancerConfettisSursJs({
+              particleCount: 12,
+              spread: 40,
+              origin: { y: 0.7 },
+              colors: ["#f7df1e"],
+            });
+          }
+
+          this.combo++;
+          if (this.combo > this.maxCombo) this.maxCombo = this.combo;
+
+          if (this.mode === "boss") {
+            const dmg = 25 + Math.round(this.timeLeft * 2.5);
+            this.bossHp -= dmg;
+            this.updateBossDisplay();
+            this.floatPoints(-dmg, "#00f3ff");
+            this.toast(`COUP CRITIQUE ! -${dmg} PV 💥`, "#00f3ff");
+          }
+          this.updateStatsDisplay();
+        }
+
+        onWrong(isTimeout = false) {
+          soundManager.playWrong();
+          this.stats.totalAnswered++;
+          this.combo = 1;
+          document
+            .getElementById("question-card")
+            .classList.add("animate-shake");
+          this.toast(
+            TAUNTS[Math.floor(Math.random() * TAUNTS.length)],
+            "#ff2d78"
+          );
+
+          if (this.mode === "survival") {
+            this.lives--;
+            this.updateLivesDisplay();
+            this.floatPoints(-1, "#ff2d78");
+          } else if (this.mode === "boss") {
+            this.score = Math.max(0, this.score - 150);
+            this.floatPoints(-150, "#ff2d78");
+          }
+          this.updateStatsDisplay();
+        }
+
+        showExplanation(isCorrect, text) {
+          const box = document.getElementById("explanation-box");
+          const status = document.getElementById("explanation-status");
+          if (isCorrect) {
+            status.innerHTML =
+              '<span class="text-emerald-400">✅ BONNE RÉPONSE</span>';
+            box.className =
+              "mt-4 p-4 rounded-xl bg-emerald-950/25 border border-emerald-500/40 text-xs sm:text-sm text-gray-300 font-mono-code space-y-2 animate-popIn";
+          } else {
+            status.innerHTML =
+              '<span class="text-rose-400">💥 MAUVAISE RÉPONSE</span>';
+            box.className =
+              "mt-4 p-4 rounded-xl bg-rose-950/25 border border-rose-500/40 text-xs sm:text-sm text-gray-300 font-mono-code space-y-2 animate-popIn";
+          }
+          document.getElementById("explanation-text").innerText = text;
+          const btnNext = box.querySelector("button");
+          if (btnNext) {
+            const estFin =
+              (this.mode === "survival" && this.lives <= 0) ||
+              (this.mode === "boss" && this.bossHp <= 0) ||
+              ((this.mode === "arcade" || this.mode === "revision") &&
+                this.currentQuestionIdx >= this.questions.length - 1);
+            btnNext.textContent = estFin
+              ? "VOIR L'ÉVALUATION 🏁"
+              : "CONTINUER ➔";
+          }
+          box.classList.remove("hidden");
+          this.syncProgress(false);
+          this.saveActiveSessionCloud(this.currentQuestionIdx + 1);
+        }
+
+        nextQuestion() {
+          if (this.mode === "survival" && this.lives <= 0) {
+            this.finishGame();
+            return;
+          }
+          if (this.mode === "boss" && this.bossHp <= 0) {
+            this.finishGame(true);
+            return;
+          }
+
+          this.currentQuestionIdx++;
+          if (
+            (this.mode === "arcade" || this.mode === "revision") &&
+            this.currentQuestionIdx >= this.questions.length
+          ) {
+            this.finishGame();
+            return;
+          }
+
+          if (this.currentQuestionIdx >= this.questions.length) {
+            if (this.mode === "survival") {
+              this.questions = this.shuffleQuestions();
+              this.currentQuestionIdx = 0;
+            } else {
+              this.finishGame();
+              return;
+            }
+          }
+          this.renderQuestion();
+        }
+
+        finishGame(bossDefeated = false) {
+          clearInterval(this.timer);
+          soundManager.playVictory();
+
+          if (this.score > this.stats.highScore) {
+            this.stats.highScore = this.score;
+            stockageEcrire("js_quiz_high_score", this.score);
+          }
+          stockageEcrire("js_quiz_total_answered", this.stats.totalAnswered);
+          this.syncProgress(true);
+          if (
+            this.mode === "revision" &&
+            window.STIQuizSync &&
+            STIQuizSync.quitterRevision
+          ) {
+            STIQuizSync.quitterRevision();
+          }
+
+          document.getElementById("screen-gameplay").classList.add("hidden");
+          document.getElementById("screen-result").classList.remove("hidden");
+          document.getElementById("nav-stats").classList.add("hidden");
+          document.getElementById("nav-stats").classList.remove("flex");
+
+          lancerConfettisSursJs({
+            particleCount: 120,
+            spread: 80,
+            origin: { y: 0.6 },
+            colors: ["#f7df1e", "#ff2d78", "#00f3ff", "#22ff88"],
+          });
+          setTimeout(
+            () =>
+              lancerConfettisSursJs({
+                particleCount: 60,
+                angle: 60,
+                spread: 60,
+                origin: { x: 0 },
+              }),
+            250
+          );
+          setTimeout(
+            () =>
+              lancerConfettisSursJs({
+                particleCount: 60,
+                angle: 120,
+                spread: 60,
+                origin: { x: 1 },
+              }),
+            400
+          );
+
+          const acc = this.answeredCount
+            ? Math.round((this.correctCount / this.answeredCount) * 100)
+            : 0;
+
+          // Compteurs animés du bilan
+          this.animateNumber("res-score", this.score, 900, (v) =>
+            Math.round(v).toLocaleString()
+          );
+          this.animateNumber(
+            "res-accuracy",
+            acc,
+            900,
+            (v) => Math.round(v) + "%"
+          );
+          this.animateNumber(
+            "res-combo",
+            this.maxCombo,
+            600,
+            (v) => "x" + Math.round(v)
+          );
+          this.animateNumber(
+            "res-time-bonus",
+            this.timeBonusTotal,
+            900,
+            (v) => "+" + Math.round(v)
+          );
+
+          const icon = document.getElementById("result-badge-icon");
+          const title = document.getElementById("result-title");
+          const desc = document.getElementById("result-desc");
+          const tag = document.getElementById("result-status-tag");
+
+          if (this.mode === "boss") {
+            if (bossDefeated) {
+              icon.innerText = "👑🤖";
+              tag.innerText = "BOSS VAINCU";
+              title.innerText = "MÉMOIRE LIBÉRÉE";
+              desc.innerText =
+                "Tu as éliminé le ramasse-miettes corrompu sans le moindre débordement de mémoire. Bravo !";
+            } else {
+              icon.innerText = "💥";
+              tag.innerText = "FUITE DE MÉMOIRE";
+              title.innerText = "PARTIE INTERROMPUE";
+              desc.innerText =
+                "Le ramasse-miettes a mangé toute la mémoire disponible. Relis les explications et retente ta chance !";
+            }
+          } else if (acc >= 90) {
+            icon.innerText = "🏆";
+            tag.innerText = "NIVEAU EXPERT";
+            title.innerText = "ARCHITECTE DU MOTEUR JS";
+            desc.innerText =
+              "Portée, conversions, chaînes, boucles, DOM : tout le cours est maîtrisé. Impressionnant !";
+          } else if (acc >= 65) {
+            icon.innerText = "⚡";
+            tag.innerText = "BON NIVEAU";
+            title.innerText = "MAÎTRE DU CODE";
+            desc.innerText =
+              "Les bases du langage sont solides. Quelques pièges subsistent : les explications sont là pour ça.";
+          } else {
+            icon.innerText = "🌱";
+            tag.innerText = "EN PROGRÈS";
+            title.innerText = "APPRENTI DÉBOGUEUR";
+            desc.innerText =
+              "JavaScript cache quelques recoins surprenants. Lis bien les explications, puis recommence !";
+          }
+
+          this.afficherPointsFaibles();
+          document.getElementById("btn-haut").classList.remove("hidden");
+        }
+
+        conseilParFauteJs(e) {
+          const cat = String(e.category || "").toLowerCase();
+          const code = String(e.code || "").toLowerCase();
+          let astuce = "";
+          if (cat.includes("chaîne") || code.includes("substring") || code.includes("charat") || code.includes("indexof") || code.includes(".length")) {
+            astuce = "Trace les indices caractère par caractère dès 0 : length est une propriété (sans parenthèses) et substring(debut, fin) exclut l'indice fin.";
+          } else if (cat.includes("conversion") || cat.includes("type") || code.includes("parseint") || code.includes("number(") || code.includes("isnan") || code.includes("typeof")) {
+            astuce = "Vérifie toujours le type avant d'additionner : '+' avec une chaîne concatène, alors que Number(ch) / parseInt(ch, 10) convertit en nombre et isNaN(x) teste la validité.";
+          } else if (cat.includes("dom") || cat.includes("formulaire") || code.includes("getelementbyid") || code.includes(".value") || code.includes(".checked")) {
+            astuce = "Sur un formulaire HTML, lis .value pour un champ texte/select, .checked pour radio/checkbox, et retourne false pour bloquer l'envoi invalide.";
+          } else if (cat.includes("boucle") || code.includes("for") || code.includes("while")) {
+            astuce = "Déroule les 2 premières itérations au brouillon en suivant la condition d'arrêt et le pas d'incrémentation.";
+          } else if (cat.includes("tableau") || code.includes("push") || code.includes("splice") || code.includes("[")) {
+            astuce = "Un tableau JS commence à l'indice 0 et son dernier élément est à tab[tab.length - 1].";
+          } else if (cat.includes("math") || cat.includes("date")) {
+            astuce = "En JS, Math.floor tronque vers le bas, Math.round arrondit, et getMonth() renvoie un mois compris entre 0 (janvier) et 11 (décembre).";
+          } else {
+            astuce = "Exécute mentalement chaque ligne dans l'ordre en notant le type et la valeur exacte de chaque variable avant de conclure.";
+          }
+          if (e.choix === null) {
+            return "Temps écoulé — repère d'abord l'opération clé qui mène à « " + e.bonneReponse + " ». " + astuce;
+          }
+          return "Ne confonds plus « " + e.choix + " » avec « " + e.bonneReponse + " ». " + astuce;
+        }
+
+        /* Points à réviser : thèmes à revoir en priorité + 1 conseil personnalisé par faute */
+        afficherPointsFaibles() {
+          const bloc = document.getElementById("points-faibles");
+          if (!this.journal.length) {
+            bloc.classList.add("hidden");
+            return;
+          }
+
+          const themes = {};
+          this.journal.forEach((e) => {
+            const t =
+              themes[e.category] ||
+              (themes[e.category] = { total: 0, erreurs: 0 });
+            t.total++;
+            if (!e.correct) t.erreurs++;
+          });
+          // les thèmes les plus ratés d'abord, puis ceux où le taux d'erreur est le plus fort
+          const faibles = Object.keys(themes)
+            .filter((c) => themes[c].erreurs > 0)
+            .sort(
+              (a, b) =>
+                themes[b].erreurs - themes[a].erreurs ||
+                themes[b].erreurs / themes[b].total -
+                  themes[a].erreurs / themes[a].total
+            );
+          const erreurs = this.journal.filter((e) => !e.correct);
+
+          let html =
+            '<h3 class="font-heading text-base font-bold text-white flex items-center gap-2">📌 Points à réviser &amp; Conseils par faute</h3>';
+
+          if (!erreurs.length) {
+            html +=
+              '<p class="text-xs text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 font-mono-code">' +
+              "🎉 Aucun point à réviser sur cette session : sans-faute intégral, continue comme ça !</p>";
+          } else {
+            html +=
+              '<div class="rounded-xl border border-rose-500/30 bg-rose-950/20 p-3 space-y-2.5">' +
+              '<div class="flex items-center justify-between gap-2 flex-wrap">' +
+              '<p class="text-[11px] font-mono-code font-bold text-rose-300">📌 Points à réviser en priorité (' +
+              faibles.length +
+              " thème" +
+              (faibles.length > 1 ? "s" : "") +
+              ") :</p>" +
+              '<div class="flex gap-1.5 flex-wrap">' +
+              '<a href="../cours/javascript.html" class="px-2.5 py-1 rounded-full bg-yellow-400/15 border border-yellow-400/40 text-yellow-300 text-[10px] font-mono-code font-bold hover:bg-yellow-400/25">📖 Cours JS →</a>' +
+              '<a href="../exercices/javascript/js-37-defis-tt.html" class="px-2.5 py-1 rounded-full bg-cyan-400/15 border border-cyan-400/40 text-cyan-300 text-[10px] font-mono-code font-bold hover:bg-cyan-400/25">⚡ Défis JS →</a>' +
+              "</div></div>" +
+              '<div class="flex flex-wrap gap-1.5">' +
+              faibles
+                .map((c) => {
+                  const pctOk = Math.round(
+                    ((themes[c].total - themes[c].erreurs) / themes[c].total) *
+                      100
+                  );
+                  return (
+                    '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[11px] font-mono-code">' +
+                    this.escapeHtml(c) +
+                    ' <b class="text-rose-200">×' +
+                    themes[c].erreurs +
+                    " faute" +
+                    (themes[c].erreurs > 1 ? "s" : "") +
+                    " (" +
+                    pctOk +
+                    "%)</b></span>"
+                  );
+                })
+                .join("") +
+              "</div></div>";
+
+            html +=
+              '<div class="max-h-80 overflow-y-auto rounded-xl border border-gray-700 bg-gray-900/80">' +
+              '<div class="sticky top-0 z-10 px-3 py-2 bg-gray-900/95 border-b border-gray-700 flex items-center justify-between">' +
+              '<span class="text-[11px] font-mono-code text-gray-200">💡 Détail de tes fautes &amp; conseil par faute (' +
+              erreurs.length +
+              ")</span>" +
+              '<span class="text-[10px] font-mono-code text-gray-500">1 conseil / faute</span></div>' +
+              '<ul class="divide-y divide-gray-800">' +
+              erreurs
+                .map(
+                  (e, i) =>
+                    '<li class="p-3 space-y-1.5">' +
+                    '<div class="flex items-center justify-between gap-2">' +
+                    '<span class="text-[10px] font-mono-code uppercase px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">' +
+                    this.escapeHtml(e.category) +
+                    "</span>" +
+                    '<span class="text-[10px] font-mono-code text-gray-500">faute ' +
+                    (i + 1) +
+                    " / " +
+                    erreurs.length +
+                    "</span></div>" +
+                    '<p class="text-xs text-gray-100 font-semibold">' +
+                    this.escapeHtml(e.title) +
+                    "</p>" +
+                    '<pre class="text-[11px] text-gray-300 bg-black/40 rounded-lg p-2 overflow-x-auto"><code>' +
+                    this.escapeHtml(e.code) +
+                    "</code></pre>" +
+                    '<p class="text-[11px] font-mono-code text-emerald-300">✔ Bonne réponse : ' +
+                    this.escapeHtml(e.bonneReponse) +
+                    "</p>" +
+                    (e.choix === null
+                      ? '<p class="text-[11px] font-mono-code text-rose-300">⏰ Temps écoulé : aucune réponse</p>'
+                      : '<p class="text-[11px] font-mono-code text-rose-300">✘ Ta réponse : ' +
+                        this.escapeHtml(e.choix) +
+                        "</p>") +
+                    '<p class="text-[11px] text-gray-300 leading-relaxed">📖 <b>Explication :</b> ' +
+                    this.escapeHtml(e.explication) +
+                    "</p>" +
+                    '<div class="mt-1 p-2 rounded-lg bg-amber-500/10 border border-amber-400/30 text-[11px] text-amber-200 leading-relaxed">💡 <b>Conseil :</b> ' +
+                    this.escapeHtml(this.conseilParFauteJs(e)) +
+                    "</div>" +
+                    "</li>"
+                )
+                .join("") +
+              "</ul></div>";
+          }
+
+          bloc.innerHTML = html;
+          bloc.classList.remove("hidden");
+          const btnErrJs = document.getElementById("js-retry-errors-btn");
+          if (btnErrJs) {
+            if (erreurs.length > 0) {
+              btnErrJs.textContent = `🎯 RÉVISER MES ERREURS (${erreurs.length})`;
+              btnErrJs.classList.remove("hidden");
+            } else {
+              btnErrJs.classList.add("hidden");
+            }
+          }
+        }
+
+        animateNumber(id, target, duration, format) {
+          const el = document.getElementById(id);
+          const start = performance.now();
+          function frame(now) {
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.innerText = format(target * eased);
+            if (t < 1) requestAnimationFrame(frame);
+          }
+          requestAnimationFrame(frame);
+        }
+
+        retryErrors() {
+          const titresErr = this.journal
+            .filter((e) => !e.correct)
+            .map((e) => e.title);
+          const liste = titresErr
+            .map((t) => QUESTIONS_DB.find((q) => q.title === t))
+            .filter(Boolean);
+          if (!liste.length) return;
+          this.start("revision", liste);
+        }
+
+        reviseSameSeries() {
+          const titresSerie = this.journal.length
+            ? this.journal.map((e) => e.title)
+            : this.questions.map((q) => q.title);
+          const liste = titresSerie
+            .map((t) => QUESTIONS_DB.find((q) => q.title === t))
+            .filter(Boolean);
+          if (!liste.length) {
+            this.retry();
+            return;
+          }
+          this.start(this.mode === "boss" || this.mode === "survival" ? "revision" : this.mode, liste);
+        }
+
+        retry() {
+          this.start(this.mode === "revision" ? "arcade" : this.mode);
+        }
+      }
+
+      const game = new QuizGame();
+    </script>
+    
+  <!-- 🔒 Protection du contenu STI -->
+<link rel="stylesheet" href="../assets/css/protection.css?v=227" />
+<script src="../assets/js/protection.js?v=227" defer></script>
+<!-- /Protection -->
+<script src="../assets/js/acces.js?v=453" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=478" defer></script>
+  <script src="../assets/js/profil.js" defer data-sti-quiz-seul></script>
+<script src="../assets/js/retour-quiz.js" defer></script>
 </body>
 </html>

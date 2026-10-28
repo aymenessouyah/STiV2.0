@@ -24,13 +24,27 @@ test('un poste bloqué reste fermé', async ({ page }) => {
   await expect(page.locator('#sti-labo-device-gate')).toContainText('Poste bloqué');
 });
 
-test('le compte partagé est verrouillé hors ligne', async ({ page, context }) => {
+test('le compte partagé demande une première autorisation en ligne', async ({ page, context }) => {
   await page.goto('/tests/device-gate-harness.html');
   await context.setOffline(true);
   const result = await page.evaluate(() => window.runAuthorize());
   expect(result.ok).toBeFalsy();
-  expect(result.code).toBe('offline');
-  await expect(page.locator('#sti-labo-device-gate')).toContainText('hors ligne');
+  expect(result.code).toBe('offline_first_authorization');
+  await expect(page.locator('#sti-labo-device-gate')).toContainText('Première autorisation requise');
+  await expect(page.locator('#sti-labo-device-gate')).toContainText('Connectez cette machine une première fois à Internet');
+  await context.setOffline(false);
+});
+
+test('une machine déjà autorisée reste utilisable hors ligne', async ({ page, context }) => {
+  await page.goto('/tests/device-gate-harness.html');
+  const initial = await page.evaluate(() => window.runAuthorize());
+  expect(initial.ok).toBe(true);
+  expect(initial.deviceId).toBeTruthy();
+  await context.setOffline(true);
+  const reprise = await page.evaluate(() => window.runAuthorize());
+  expect(reprise.ok).toBe(true);
+  expect(reprise.offline).toBe(true);
+  expect(reprise.deviceId).toBe(initial.deviceId);
   await context.setOffline(false);
 });
 
@@ -76,7 +90,7 @@ test('historique Lu/Non lu, renvoi et suppression AAL2', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.__actions.some(a => a.name === 'admin_labo_device_message_delete'))).toBeTruthy();
 });
 
-test('notification d’un nouveau poste auto-accepté', async ({ page }) => {
+test('notification d’un nouveau poste en attente de confirmation administrative', async ({ page }) => {
   await page.goto('/tests/admin-device-harness.html');
   await page.evaluate(async () => {
     window.__rows.push({
@@ -86,7 +100,7 @@ test('notification d’un nouveau poste auto-accepté', async ({ page }) => {
     });
     await window.__api.refresh(true);
   });
-  await expect.poll(() => page.evaluate(() => window.__notifications.some(text => text.includes('Nouveau poste accepté automatiquement')))).toBeTruthy();
+  await expect.poll(() => page.evaluate(() => window.__notifications.some(text => text.includes('Nouveau poste Labo 3 détecté') && text.includes('confirmation administrative en attente')))).toBeTruthy();
   await expect(page.locator('#admin-labo-devices-inline')).toContainText('PC Nouveau');
 });
 

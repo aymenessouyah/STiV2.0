@@ -1,17 +1,4 @@
-/* STI by AE — barre de navigation mobile en bas de l'écran (v413).
-   But de l'auteur : « en bas, en mode mobile, toujours afficher dans toutes les pages une barre
-   contenant : Accueil, Exercices, Quiz, Autres ».
-   - Visible uniquement en mode mobile (≤ 700 px, le seuil déjà utilisé partout dans le site).
-   - Injectée par config.js (seul script commun à toutes les pages) → aucun fichier HTML à éditer
-     en masse ; les deux pages orphelines l'incluent directement.
-   - « Autres » n'est pas une page morte : c'est un tiroir qui ouvre les autres sections réelles
-     du site (cours, livres, progression, glossaire, outils du bac, portail…).
-   - Se masque quand une boîte modale est ouverte (html.sti-modal-open) et quand le messenger
-     occupe l'écran (html.sti-msn-mob-open) — hooks déjà posés par acces.js, on ne réinvente pas.
-   - Soulève les flotteurs fixes du bas (messenger, thème universel, pastille de synchro…) d'une
-     hauteur de barre pile pour qu'ils restent cliquables au-dessus du bandeau.
-   - S'adapte au thème clair/sombre via les tokens atelier (--surface/--ink/--accent) avec
-     valeurs de repli littérales pour les pages qui ne chargent pas ces tokens (portail…). EXCLUSION : le tableau de bord (admin) ne reçoit rien (consigne auteur v414). */
+/* Navigation mobile : Accueil, Cours, Vidéos, Quiz et Autres. */
 (function () {
   "use strict";
   if (window.__STI_BNAV) return;
@@ -21,19 +8,11 @@
   var root = doc.documentElement;
   if (!/^https?:$/.test(location.protocol)) return;
   if (location.pathname.indexOf("/tests/") !== -1) return; /* harnais internes : rien ne doit bouger */
-  /* Consigne de l'auteur (v414) : « ne pas toucher la page tableau de bord ».
-     Sur /admin.html, on sort AVANT même d'injecter le style : layout, flotteurs et padding
-     du tableau de bord restent exactement ceux de la version précédente. */
+  /* Le tableau de bord reste inchangé. */
   var pnNet = location.pathname.replace(/\/$/, "");
   if (/(^|\/)admin(\.html)?$/i.test(pnNet)) return;
 
-  /* Racine réelle du site, recalculée ici (depuis v417 le STI_AUTH.RACINE de config.js est
-     devenu correct partout, mais le module reste autonome — un vieux cache de config.js ne
-     doit pas casser la barre). Sans confiance : son ancien regex ignorait
-     les pages utilitaires à la racine (glossaire, nouveautes, livre-smart…) et produit alors
-     « /glossaire.html/ » — des liens morts. Algorithme sûr : on coupe au premier segment de
-     section connu (/cours/, /quiz/, /exercices/…), sinon on retire le nom de fichier ; le
-     préfixe de montagem (/STiV2.0/) est conservé tel quel dans les deux cas. */
+  /* Conserver le préfixe du site dans les liens. */
   function racine() {
     try {
       var pn = location.pathname;
@@ -44,6 +23,83 @@
   }
 
   var R = racine();
+
+  /* Préparer le verrou historique avant changement de contrôleur. */
+  var chargementProfilMaj;
+  function profilPourActivation() {
+    if (window.STIProfil && window.STIProfil.preparerActivationServiceWorker) return Promise.resolve(window.STIProfil);
+    if (chargementProfilMaj) return chargementProfilMaj;
+    chargementProfilMaj = new Promise(function (resolve) {
+      var script = doc.createElement("script"), termine = false;
+      function finir() {
+        if (termine) return;
+        termine = true;
+        resolve(window.STIProfil || null);
+      }
+      script.src = R + "assets/js/profil.js";
+      script.setAttribute("data-sti-quiz-seul", "");
+      script.onload = script.onerror = finir;
+      (doc.head || doc.documentElement).appendChild(script);
+      setTimeout(finir, 1200);
+    }).then(function (profil) { chargementProfilMaj = null; return profil; });
+    return chargementProfilMaj;
+  }
+  /* Préparer la version avant la décision de rechargement historique. */
+  if (navigator.serviceWorker && typeof window.fetch === "function") {
+    var fetchAvantVersion = window.fetch;
+    window.fetch = function (input) {
+      var resultat = fetchAvantVersion.apply(this, arguments), cible;
+      try { cible = new URL(typeof input === "string" ? input : input.url, location.href); } catch (e) { return resultat; }
+      if (cible.origin !== location.origin || cible.pathname !== new URL(R + "sw.js").pathname || !cible.searchParams.has("t")) return resultat;
+      return resultat.then(function (rep) {
+        if (!rep || !rep.ok) return rep;
+        return rep.clone().text().then(function (texte) {
+          var version = (texte.match(/sti-atelier-v(\d+)/i) || [])[1];
+          if (!version) return rep;
+          return profilPourActivation().then(function (profil) {
+            if (profil && profil.preparerVerificationServiceWorker && profil.preparerVerificationServiceWorker(version)) verifierApresReconnexion();
+            return rep;
+          });
+        }).catch(function () { return rep; });
+      });
+    };
+  }
+  if (navigator.serviceWorker && typeof navigator.serviceWorker.addEventListener === "function") navigator.serviceWorker.addEventListener("message", function (evt) {
+    if (!evt.data || evt.data.type !== "STI_PREPARER_ACTIVATION") return;
+    profilPourActivation().then(function (profil) {
+      var ok = !!(profil && profil.preparerActivationServiceWorker && profil.preparerActivationServiceWorker(evt.data.version));
+      if (evt.ports && evt.ports[0]) evt.ports[0].postMessage({ prepare: ok });
+    });
+  });
+
+  /* Rechercher uniquement le delta au retour du réseau. */
+  var verificationReseauEnCours = false;
+  var verificationReseauDemandee = false;
+  function verifierApresReconnexion() {
+    if (!navigator.serviceWorker || !navigator.serviceWorker.getRegistration) return;
+    if (verificationReseauEnCours) { verificationReseauDemandee = true; return; }
+    verificationReseauEnCours = true;
+    navigator.serviceWorker.getRegistration(R).then(function (reg) {
+      if (!reg) return navigator.serviceWorker.register(R + "sw.js", { updateViaCache: "none" });
+      return reg.update().catch(function () {}).then(function () {
+        /* Réessayer l'activation différée si un ancien onglet a été fermé. */
+        if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
+        else if (!reg.installing && reg.active) reg.active.postMessage({ type: "SYNC_UPDATE" });
+      });
+    }).catch(function () {}).then(function () {
+      verificationReseauEnCours = false;
+      if (verificationReseauDemandee && navigator.onLine) {
+        verificationReseauDemandee = false;
+        verifierApresReconnexion();
+      }
+    });
+  }
+  window.addEventListener("online", verifierApresReconnexion);
+  window.addEventListener("focus", function () {
+    if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) navigator.serviceWorker.getRegistration(R).then(function (reg) {
+      if (reg && reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
+    }).catch(function () {});
+  });
 
   /* ---------- styles ---------- */
   var css = [
@@ -60,21 +116,13 @@
     "#sti-bnav .sti-bnav-i span{display:block}",
     "@media (max-width:400px){#sti-bnav .sti-bnav-i{font-size:9px;gap:2px}}",
     "html.sti-modal-open #sti-bnav,html.sti-msn-mob-open #sti-bnav{display:none!important}",
-    /* flotteurs existants du bas de page : on les pose au-dessus de la barre, sans les toucher ailleurs */
+    /* Garder les flotteurs au-dessus de la barre. */
     "html.sti-bnav-on #sti-btn-messenger-global{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 10px)!important}",
     "html.sti-bnav-on #sti-msn-bulle-attention{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 64px)!important}",
     "html.sti-bnav-on #sti-auto-to-top{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 118px)!important}",
-    /* v420 (consigne n°2) : idem pour les boutons « haut de page » natifs des pages cours
-       (#to-top des pages CSS/SQL/PHP, #backToTop des pages HTML5). Attention à l'étage :
-       la pastille de diagnostic du labo occupe déjà la bande 14→51 px au-dessus de la barre
-       (règle plus bas), ces boutons-là sont donc posés AU-DESSUS d'elle (+118), sinon leurs
-       clics sont volés par la pastille — z-index 150 contre ~2147483xxx. Le bouton universel
-       monte à l'étage +118 pour la même raison (il cohabite avec la pastille sur l'accueil). */
+    /* Les boutons de retour en haut restent au-dessus du diagnostic. */
     "html.sti-bnav-on #to-top,html.sti-bnav-on #backToTop,html.sti-bnav-on #backToTopBtn,html.sti-bnav-on .to-top,html.sti-bnav-on .back-to-top-btn{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 118px)!important}",
-    /* Consigne auteur v414→v416 : le bouton de thème flottant en bas à gauche est éliminé de
-       toutes les pages (la création est coupée dans acces.js ; ce plug neutralise les anciennes
-       copies d'acces.js qui traîneraient encore dans un cache). Le thème reste accessible :
-       barre du haut (bouton Jour/Nuit) + roue ⚙️. */
+    /* Le thème reste accessible dans la roue et la barre du haut. */
     "#sti-universal-theme-btn{display:none!important}",
     "html.sti-bnav-on #sti-sync-pastille{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 14px)!important}",
     "html.sti-bnav-on #sti-diagnostic-donnees,html.sti-bnav-on #sti-labo-offline-diagnostic-button{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 14px)!important}",
@@ -107,7 +155,7 @@
   function ico(nom) {
     var s = '<svg viewBox="0 0 24 24" aria-hidden="true">';
     if (nom === "accueil") s += '<path d="M3 10.6 12 3.2l9 7.4"/><path d="M5.6 9.4V20.4h12.8V9.4"/><path d="M10 20.4v-5.2h4v5.2"/>';
-    if (nom === "exercices") s += '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7.5h7M9 11h5"/>';
+    if (nom === "videos") s += '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/>';
     if (nom === "cours") s += '<path d="M12 6.4C10.4 4.9 7.4 4.4 4.4 5.1v12.8c3-.7 6-.2 7.6 1.3 1.6-1.5 4.6-2 7.6-1.3V5.1c-3-.7-6-.2-7.6 1.3z"/><path d="M12 6.4v12.8"/>';
     if (nom === "quiz") s += '<circle cx="12" cy="12" r="9"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.2-2.7 4"/><path d="M12 17.3h.01"/>';
     if (nom === "autres") s += '<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>';
@@ -115,18 +163,20 @@
   }
 
   /* ---------- état actif ---------- */
-  /* L'état actif se déduit du chemin seul — jamais du titre : plusieurs pages partagent
-     « STI Quiz » dans leur <title> et l'historique avait surligné le mauvais onglet. */
+  /* Déterminer l’onglet actif d’après le chemin, pas le titre. */
   var UTILES = /(^|\/)(glossaire|nouveautes|bac-pratique|memo-veille-bac|outils-js-bac|pieges-bac|revision-erreurs|livre-smart|carte-visite)\.html/i;
   function sectionActive() {
     var p = location.pathname.replace(/^\/STiV2\.0/i, "");
     var h = location.hash || "";
+    var accueil = /\/(index\.html)?$/i.test(p) && !UTILES.test(p);
     if (h === "#modules") return "quiz";
-    if (h === "#exercices") return "exercices";
-    if (/\/(quiz|exercices)\//i.test(p) || /series-exercices/i.test(p)) return h === "#modules" ? "quiz" : (/\/(quiz)\//.test(p) ? "quiz" : "exercices");
-    if (h === "#cours") return "cours";
+    /* Les vidéos des cours restent dans la rubrique Cours. */
+    if (h === "#videos" && accueil) return "videos";
+    if (/\/quiz\//i.test(p)) return "quiz";
+    if (/\/exercices\//i.test(p) || /series-exercices/i.test(p)) return "autres";
+    if (h === "#cours" || h === "#exercices") return "cours";
     if (/\/(cours)\//i.test(p)) return "cours";
-    if (/\/(index\.html)?$/i.test(p) && !UTILES.test(p)) return "accueil";
+    if (accueil) return "accueil";
     if (/\/portail\.html/i.test(p)) return "accueil";
     if (UTILES.test(p) || /\/(documents)\//i.test(p)) return "autres";
     return "";
@@ -140,16 +190,7 @@
   }
 
   /* ---------- construction ---------- */
-  /* ---------- v428 : les deux barres se roulent au défilement (pages cours + exercices) ----------
-     Consigne auteur : « en mode mobile, pour toutes les pages cours ainsi que la page exercices,
-     afficher les 2 barres ; quand l'utilisateur défile vers le bas les 2 barres se cachent,
-     dès qu'il commence à remonter elles se réaffichent ». Le haut de l'écran étant occupé par
-     un en-tête différent sur chaque fiche (header.topbar, nav.topbar, header.top…), la barre du
-     haut est RECONNAÎTRE par sa nature plutôt que par une liste de sélecteurs : premier header/
-     nav collant (fixed ou sticky) posé à bord supérieur, qui fait la largeur et moins de 45 %
-     de la hauteur d'écran. Rien de trouvé → seule la barre du bas se roule (aucune page ne casse).
-     Le roulement est suspendu tant qu'un menu de sommaire, le tiroir « Autres » ou une boîte
-     modale est ouvert — on ne cache jamais ce que le lecteur est en train de consulter. */
+  /* Masquer les deux barres au défilement, sauf pendant la lecture des menus. */
   function trouverBarreHaut() {
     try {
       var cands = doc.querySelectorAll("header, nav, [class*='topbar'], [class*='barre-haut'], [id*='barre-haut']");
@@ -180,9 +221,8 @@
     try {
       if (root.classList.contains("sti-modal-open") || root.classList.contains("sti-bnav-sheet-open")) return true;
       if (doc.body && doc.body.classList.contains("nav-open")) return true;
-      if (doc.querySelector("nav.toc-nav.is-open, #side.open, #sidebar.menu-open, .sidebar.menu-open")) return true;
-      /* html5/courshtml5 : leur menu de logo (antérieur à v424) ouvre un « .menu-open » posé
-         sur le panneau latéral — même respect : rien ne se cache pendant la lecture du sommaire. */
+      if (doc.querySelector("nav.toc-nav.is-open, #side.open, #sidebar.menu-open, .sidebar.menu-open, .course-sidebar.is-open")) return true;
+      /* Garder la barre ouverte pendant la lecture du sommaire HTML5. */
       if (doc.querySelector(".menu-open")) return true;
     } catch (e) {}
     return false;
@@ -231,7 +271,7 @@
     var items = [
       { cle: "accueil", lib: "Accueil", href: R + "index.html", ico: "accueil" },
       { cle: "cours", lib: "Cours", href: R + "index.html#cours", ico: "cours" },
-      { cle: "exercices", lib: "Exercices", href: R + "exercices/series-exercices.html", ico: "exercices" },
+      { cle: "videos", lib: "Vidéos", href: R + "index.html#videos", ico: "videos" },
       { cle: "quiz", lib: "Quiz", href: R + "index.html#modules", ico: "quiz" }
     ];
     items.forEach(function (it) {
@@ -257,9 +297,7 @@
     voile.id = "sti-bnav-voile";
     doc.body.appendChild(voile);
 
-    /* v421 (consigne n°5) : la barre « disparaissait un instant » entre le rendu d'une page
-       et l'injection de la barre. config.js a pu peindre un gabarit (même couleur, même
-       hauteur, non cliquable) dès le parsing : on l'efface à l'instant où la vraie barre est là. */
+    /* Remplacer le gabarit temporaire par la vraie barre. */
     var skel0 = doc.getElementById("sti-bnav-skel"); if (skel0) skel0.remove();
     var skel1 = doc.getElementById("sti-bnav-skel-css"); if (skel1) skel1.remove();
 
@@ -268,6 +306,7 @@
     sheet.setAttribute("role", "dialog");
     sheet.setAttribute("aria-label", "Autres sections du site");
     var liens = [
+      ["Exercices", "exercices/series-exercices.html", "séries et corrigés"],
       ["Les 25 pièges du Bac", "pieges-bac.html", "à lire avant l'épreuve"],
       ["Atelier épreuve pratique", "bac-pratique.html", "🧪 BAC STI · TP noté"],
       ["Les 10 fonctions JavaScript", "outils-js-bac.html", "atelier & générateur"],
@@ -299,10 +338,7 @@
     sheet.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("a")) ouvrirSheet(false); });
     window.addEventListener("resize", function () { if (!mq.matches) ouvrirSheet(false); });
 
-    /* v421 (consignes n°2 et n°3) : un onglet — ou un lien du tiroir — qui pointe vers la page
-       où l'on est déjà ne doit PAS « recharger toute la plateforme ». On reste dans le document
-       et on fait ce que l'utilisateur attend : remonter en haut (Accueil, ou un onglet déjà
-       actif) ou glisser jusqu'à la section demandée (#cours, #modules…). Le titre actif suit. */
+    /* Un lien vers la page courante ne provoque pas de rechargement. */
     function clicSansRecharge(e) {
       if (e.defaultPrevented || e.button > 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       var a = e.target && e.target.closest ? e.target.closest("a[href]") : null;
@@ -336,18 +372,12 @@
       }
     } catch (e) {}
 
-    /* Préchauffage : les deux destinations hors-document des onglets sont demandées à l'inactivité,
-    /* v428 (consigne auteur) : sur les pages cours et la page exercices, les deux barres se
-       roulent au défilement — cachées en descendant, revenues en remontant, façon application.
-       Portée stricte : /cours/ (toutes les fiches) et exercices/series-exercices.html. */
+    /* Les barres des cours et exercices se roulent au défilement. */
     try {
       var pnV428 = location.pathname;
       if (/\/cours\//.test(pnV428) || /\/exercices\/series-exercices\.html/.test(pnV428)) installerBarresQuiSeRoulent();
     } catch (eRoule) {}
-    /* v465 : suppression du prerender SpeculationRules et du double fetch(index.html) qui
-       lançaient des instances complètes d'index.html (~1,8 Mo de JS + Supabase) en arrière-plan
-       sur chaque cours/quiz et alourdissaient la RAM ; le retour passe désormais en 0 ms par bfcache
-       (config.js) et par le cache Service Worker déjà chaud. */
+    /* Pas de préchargement des pages complètes en arrière-plan. */
   }
 
   /* ---------- activation selon la largeur ---------- */
@@ -370,12 +400,8 @@
     majActif();
   });
   window.addEventListener("sti-accueil-restored", majActif);
-  /* v418 (consigne auteur) : la pastille « Progression synchronisée (cloud) » et le bouton
-     « 📶 Normal » (diagnostic réseau) quittent les bords de la page pour la roue ⚙️. Leur
-     logique vit dans roue-nuage.js, chargé ici — donc uniquement sur les pages où le module
-     de barre tourne (jamais sur le tableau de bord, jamais en fichier://). */
-  /* v473 : chargement différé hors chemin critique (après peinture initiale / temps mort navigateur)
-     des 8 modules complémentaires de la roue pour rendre l'ouverture des pages instantanée. */
+  /* Charger la synchronisation et le diagnostic dans la roue, hors administration. */
+  /* Différer les modules complémentaires après la première peinture. */
   (function planifierModulesRoue() {
     var charges = false;
     function injecterModulesRoue() {
@@ -411,13 +437,7 @@
     else window.addEventListener("load", apresChargement, { once: true });
   })();
 
-  /* v420 (consigne n°1) : « quand on monte en haut complètement, la barre en bas se cache ».
-     Sur téléphone, revenir en haut du page fait réapparaître la barre d'URL (Chrome Android)
-     ou la barre d'onglets (Safari iOS) : elle se peint PAR-DESSUS le bas de l'écran, et un
-     élément `position:fixed;bottom:0` n'en sait rien → la barre semblait disparaître (surtout
-     visible sur les longs cours html5/css3/sql, qu'on parcourt de haut en bas). La visualViewport
-     connaît la zone réellement visible : on en déduit la hauteur d'UI et on pose tout le matériel
-     fixé en bas juste au-dessus. Sur ordinateur la différence est nulle → strictement inchangé. */
+  /* Adapter le bas de la barre à la zone visible sur mobile. */
   (function suivreVue() {
     var vv = window.visualViewport;
     if (!vv || !vv.addEventListener) return;
@@ -436,10 +456,7 @@
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", appliquer);
   else appliquer();
 
-  /* Visite (v414) : certaines pages reconstruisent le <body> APRÈS nous — portail.js qui
-     relit la session, vues de quiz… — et le bandeau se retrouve effacé avec. On observe
-     simplement les retraits : la barre revient dès qu'elle disparaît alors qu'elle devrait être là.
-     (construire() garde son garde-fou « si #sti-bnav existe déjà, ne rien faire ».) */
+  /* Restaurer la barre si une page reconstruit son corps. */
   if (!window.__STI_BNAV_WATCH) {
     window.__STI_BNAV_WATCH = true;
     try {
