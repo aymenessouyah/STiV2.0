@@ -113,7 +113,8 @@
       exercices: [
         { titre: "TP 1 — Sélecteurs, typographie et boîtes CSS3", niveau: "Débutant", enonce: "exercices/html-css/TP1-css.pdf.html", corrige: "exercices/html-css/box-shadow-text-shadow-css3.html" },
         { titre: "TP 2 — Positionnement CSS3", niveau: "Intermédiaire", enonce: "exercices/html-css/TP2-css.pdf.html", corrige: "exercices/html-css/TP2/tp2corrposition.html" },
-        { titre: "TP 3 & Activités — Transitions et animations", niveau: "Avancé", enonce: "exercices/html-css/TP3-css.pdf.html", corrige: "exercices/html-css/activite1-2-position-animation-css3.pdf.html" }
+        { titre: "TP 3 & Activités — Transitions et animations", niveau: "Avancé", enonce: "exercices/html-css/TP3-css.pdf.html", corrige: "exercices/html-css/activite1-2-position-animation-css3.pdf.html" },
+        { titre: "TP interactif — Transitions & animations CSS3", niveau: "Avancé", enonce: "exercices/html-css/tp-transitions-animations-css3.html", corrige: "exercices/html-css/activite-html-css/Act2/page2.html" }
       ]
     },
     javascript: {

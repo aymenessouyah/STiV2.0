@@ -1,9 +1,9 @@
 {
   "version": "v511-sti-atelier-v372",
-  "generatedAt": "2026-10-28T22:06:20Z",
+  "generatedAt": "2026-10-28T22:40:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 709,
-  "totalBytes": 734700153,
+  "totalFiles": 710,
+  "totalBytes": 734764776,
   "files": [
     {
       "path": "404.html",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 108812,
-      "gitSha": "7ae47306e8799bb1ff605ddd8861f0ef3a633e90"
+      "bytes": 109032,
+      "gitSha": "7579a8914543821c4e04e84f21eaff84ae034909"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1217,8 +1217,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 212923,
-      "gitSha": "0053f0458158061c5d285163f027c9042c990afa"
+      "bytes": 213569,
+      "gitSha": "816e686fd45ebc75d70131fb171a8e7f9605af29"
     },
     {
       "path": "cours/datalist.html",
@@ -2622,8 +2622,8 @@
     },
     {
       "path": "exercices/html-css/activite1-2-position-animation-css3.pdf.html",
-      "bytes": 7569,
-      "gitSha": "16093c0cf9a56324f1c898eb25157f842be4b1e7"
+      "bytes": 7667,
+      "gitSha": "bf416edd2886b5376a81e1de84433677a31aac20"
     },
     {
       "path": "exercices/html-css/box-shadow-text-shadow-css3.html",
@@ -2679,6 +2679,11 @@
       "path": "exercices/html-css/tp-formulaire-tableau-autre/index.html",
       "bytes": 27491,
       "gitSha": "938849f8c2c4b9769e0541dbe6a3243e7eda1163"
+    },
+    {
+      "path": "exercices/html-css/tp-transitions-animations-css3.html",
+      "bytes": 62740,
+      "gitSha": "990604c7e67170b5c07d19fca24c506db10ec6e7"
     },
     {
       "path": "exercices/javascript/Tp1-Correction-js.html",
@@ -2857,8 +2862,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 99709,
-      "gitSha": "d283c098093b0174b25fa06588d3fcb59ed9f908"
+      "bytes": 100368,
+      "gitSha": "7c4eaeff1e96caafaf22205ea9b3dce63fb61b88"
     },
     {
       "path": "exercices/sql/CommentConstruireunerequêteSQL.html",
@@ -3547,8 +3552,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 96711,
-      "gitSha": "de01b3d7c87e90a7f5ef1b53a300851e9e246800"
+      "bytes": 96971,
+      "gitSha": "8417c4b2ef3cba961e1eb079725179fde5dc6590"
     }
   ]
 }
