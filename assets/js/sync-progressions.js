@@ -98,36 +98,24 @@
     Object.keys(mDist).forEach(function (c) { cles[c] = 1; });
     Object.keys(mLoc).forEach(function (c) { cles[c] = 1; });
     Object.keys(cles).forEach(function (c) {
-      var rawA = mLoc[c];
-      var rawB = mDist[c];
-      var a = (rawA && typeof rawA === "object") ? rawA : (typeof rawA === "number" && rawA > 0 ? { sec: rawA, pct: rawA >= 2 ? 1 : 0, maxPct: rawA >= 2 ? 1 : 0 } : null);
-      var b = (rawB && typeof rawB === "object") ? rawB : (typeof rawB === "number" && rawB > 0 ? { sec: rawB, pct: rawB >= 2 ? 1 : 0, maxPct: rawB >= 2 ? 1 : 0 } : null);
-      if (!a && !b) return;
-      a = a || {};
-      b = b || {};
-      var secA = Number(a.sec != null ? a.sec : (a.t || a.time || 0)) || 0;
-      var secB = Number(b.sec != null ? b.sec : (b.t || b.time || 0)) || 0;
+      var a = mLoc[c];
+      var b = mDist[c];
+      if (!a || typeof a !== "object") { out[c] = b; return; }
+      if (!b || typeof b !== "object") { out[c] = a; return; }
       var maxPct = Math.max(Number(a.maxPct) || 0, Number(b.maxPct) || 0, Number(a.pct) || 0, Number(b.pct) || 0);
-      if (!maxPct && (secA >= 2 || secB >= 2)) maxPct = 1;
       var done = Boolean(a.done || b.done || maxPct >= 88);
       if (done) maxPct = 100;
-      var tsA = Number(a.ts || a.maj) || 0;
-      var tsB = Number(b.ts || b.maj) || 0;
-      var aExiste = Boolean(rawA && (typeof rawA === "object" || typeof rawA === "number"));
-      var bExiste = Boolean(rawB && (typeof rawB === "object" || typeof rawB === "number"));
-      var recent = !bExiste ? a : (!aExiste ? b : (tsA >= tsB ? a : b));
-      var masque = Boolean(!done && recent && recent.repriseMasquee && Number(recent.sec || 0) === 0);
-      var secOut = (done || masque) ? 0 : (Number(recent.sec != null ? recent.sec : (recent.t || recent.time || 0)) || secA || secB || 0);
-      var entree = {
+      var tsA = Number(a.ts) || 0;
+      var tsB = Number(b.ts) || 0;
+      var recent = tsA >= tsB ? a : b;
+      out[c] = {
         pct: done ? 100 : Math.max(Number(recent.pct) || 0, maxPct > 0 ? 1 : 0),
         maxPct: maxPct,
-        sec: secOut,
+        sec: done ? 0 : (Number(recent.sec) || Number(a.sec) || Number(b.sec) || 0),
         dur: Math.max(Number(a.dur) || 0, Number(b.dur) || 0),
         done: done,
         ts: Math.max(tsA, tsB)
       };
-      if (masque) entree.repriseMasquee = true;
-      out[c] = entree;
     });
     return JSON.stringify(out);
   }

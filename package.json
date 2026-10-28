@@ -8,9 +8,6 @@
     "test:browser:v303": "playwright test --config tests/playwright-v303.config.mjs"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.3.16",
-    "@playwright/test": "^1.55.0",
-    "axe-core": "^4.14.0",
-    "pg": "^8.23.1"
+    "@playwright/test": "^1.55.0"
   }
 }

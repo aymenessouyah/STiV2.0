@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-sti-heritage="interface" lang="fr">
+<html lang="fr" data-sti-titre="✍️ Séries & exercices">
   <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -865,13 +865,11 @@
     </style>
     <link rel="stylesheet" href="../assets/css/atelier-pages.css" />
   <style>.hp{color:#c0392b;text-decoration:line-through;text-decoration-thickness:2px}</style>
-<link rel="stylesheet" href="../assets/css/visionneuse-exercices.css">
-<script defer src="../assets/js/visionneuse-exercices.js"></script>
-
-<link rel="stylesheet" href="../assets/css/theme-patrimoine.css">
-<script src="../assets/js/appel-quiz.js" defer></script>
+<!-- ===== STI V2.0 — design system (pont) ===== -->
+<link rel="stylesheet" href="../assets/css/theme.css">
+<script src="../assets/js/profil.js"></script>
 </head>
-  <body>
+  <body class="sti-legacy">
 <!-- STI navigation croisée -->
 <style>#stix-nav a:hover{background:#b4552d!important;border-color:#b4552d!important;color:#fff!important}@media print{#stix-nav{display:none!important}}</style><nav id="stix-nav" style="position:fixed;right:14px;bottom:76px;z-index:9999;display:flex;flex-wrap:wrap;gap:6px;font:600 12px/1 system-ui,'Segoe UI',sans-serif;"><a href="../index.html#cours" style="display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:999px;background:rgba(15,23,38,.93);color:#f9f1e3;text-decoration:none;border:1px solid rgba(249,241,227,.22);box-shadow:0 6px 18px rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;">📚 Cours du site</a></nav>
 
@@ -1197,13 +1195,12 @@
 
       <!-- JavaScript -->
       <section class="subject" id="javascript">
-        <span id="js" style="position:relative;top:-84px;display:block;height:0" aria-hidden="true"></span>
         <div class="subject-head">
           <div class="icon">⚡</div>
           <div>
             <h2>JavaScript</h2>
             <p>Logique, fonctions et manipulation du DOM</p>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"><a href="../cours/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">📚 Cours</a> <a href="../quiz/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a> <button type="button" onclick="if(window.ouvrirVideoPasAPasSTI){window.ouvrirVideoPasAPasSTI('validation-nom-prenom-js','🎥 JavaScript — Validation du champ Nom &amp; Prénom (pas à pas)');}" style="font:700 12px/1 system-ui,sans-serif;color:#fff;padding:7px 13px;border-radius:999px;background:linear-gradient(120deg,#ea580c,#b45309);border:2px solid #101728;box-shadow:2px 2px 0 #101728;cursor:pointer;">🎬 Vidéo : Validation Nom &amp; Prénom (12 min 11)</button></div>
+            <div style="display:flex;gap:8px;margin-top:10px;"><a href="../cours/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#fff;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f4511e;border:2px solid #101728;box-shadow:2px 2px 0 #101728;">📚 Cours</a> <a href="../quiz/javascript.html" style="font:600 12px/1 system-ui,sans-serif;color:#0f1726;text-decoration:none;padding:7px 12px;border-radius:999px;background:#f9f1e3;border:1px solid rgba(15,23,38,.25);">🎯 Quiz</a></div>
           </div>
         </div>
         <div class="exo-grid">
@@ -1302,7 +1299,7 @@
             <div class="exo-level">Avancé</div>
             <h3>Série 5 — Objet String</h3>
             <p>les fonctions prédifinies sur String</p>
-            <div class="exo-actions" style="flex-wrap:wrap;">
+            <div class="exo-actions">
               <button
                 class="enonce"
                 onclick="openPdfModal('javascript/Tp5-js.html', 'JavaScript — Série 5')"
@@ -1314,14 +1311,6 @@
                 onclick="openPdfModal('javascript/Tp5-Correction-js.html', 'JavaScript — Corrigé Série 5')"
               >
                 Corrigé
-              </button>
-              <button
-                type="button"
-                class="corrige"
-                style="background:linear-gradient(135deg,#ea580c,#c2410c);color:#fff;border-color:#facc15;"
-                onclick="if(window.ouvrirVideoPasAPasSTI){window.ouvrirVideoPasAPasSTI('validation-nom-prenom-js','🎥 Série 5 JavaScript — Validation du champ Nom &amp; Prénom');}"
-              >
-                🎥 Vidéo Nom &amp; Prénom
               </button>
             </div>
           </div>
@@ -1858,7 +1847,7 @@
 
     <!-- Modal Box : taille adaptée au contenu (PDF portrait / énoncé / aperçu interactif) -->
     <div class="modal-backdrop" id="pdfModal" onclick="closePdfModal(event)">
-      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="event.stopPropagation()">
+      <div class="modal-box" onclick="event.stopPropagation()">
         <div class="modal-header">
           <h3 class="modal-title" id="modalTitle">Consultation de l'énoncé</h3>
           <div class="modal-header-actions">
@@ -2054,85 +2043,11 @@
         document.getElementById("pdfModal").classList.add("open");
         document.body.style.overflow = "hidden"; // Bloquer le défilement
 
-        if (!suivreMediaDansPdfFrame(fileUrl)) {
-          controlerDocument(fileUrl);
-        }
+        controlerDocument(fileUrl);
         chargerDansPdfFrame(fileUrl);
       }
 
-      var mediaSuiviModal = null;
-
-      function purgerSuiviMediaPdfFrame() {
-        if (!mediaSuiviModal) return;
-        try {
-          var el = mediaSuiviModal.el;
-          var cle = mediaSuiviModal.cle;
-          if (el && cle && typeof window.enregistrerProgressionMediaSTI === "function") {
-            var curT = Number(el.currentTime) || 0;
-            var durT = Number(el.duration) || 0;
-            if (curT >= 2) {
-              window.enregistrerProgressionMediaSTI(cle, curT, durT, Boolean(el.ended));
-              if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
-                window.synchroniserProgressionMediaServeurSTI(true);
-              }
-            }
-          }
-        } catch (eFlush) {}
-        mediaSuiviModal = null;
-      }
-
-      function suivreMediaDansPdfFrame(fileUrl) {
-        mediaSuiviModal = null;
-        if (!/\.(mp4|webm|mp3|ogg|wav|m4a)($|[?#])/i.test(String(fileUrl || ""))) return false;
-        var frame = document.getElementById("pdfFrame");
-        if (!frame) return false;
-        frame.onload = function () {
-          modalChargee = true;
-          try {
-            var doc = frame.contentDocument;
-            if (!doc) return;
-            var el = doc.querySelector && doc.querySelector("video, audio");
-            if (!el || el.__stiModalMediaTracked) return;
-            el.__stiModalMediaTracked = true;
-            var cle = (typeof window.resoudreCleMediaDepuisUrlSTI === "function")
-              ? window.resoudreCleMediaDepuisUrlSTI(fileUrl, el.tagName)
-              : "";
-            if (!cle) return;
-            mediaSuiviModal = { el: el, cle: cle };
-            el.addEventListener("timeupdate", function () {
-              if (el.paused || typeof window.enregistrerProgressionMediaSTI !== "function") return;
-              window.enregistrerProgressionMediaSTI(cle, el.currentTime, el.duration, false);
-            });
-            el.addEventListener("pause", function () {
-              if (el.currentTime >= 2 && typeof window.enregistrerProgressionMediaSTI === "function") {
-                window.enregistrerProgressionMediaSTI(cle, el.currentTime, el.duration, false);
-                if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
-                  window.synchroniserProgressionMediaServeurSTI(true);
-                }
-              }
-            });
-            el.addEventListener("ended", function () {
-              if (typeof window.enregistrerProgressionMediaSTI === "function") {
-                var dFin = (el.duration && isFinite(el.duration) && el.duration > 0) ? el.duration : Math.max(el.currentTime || 0, 60);
-                window.enregistrerProgressionMediaSTI(cle, dFin, dFin, true);
-                if (typeof window.synchroniserProgressionMediaServeurSTI === "function") {
-                  window.synchroniserProgressionMediaServeurSTI(true);
-                }
-              }
-            });
-            doc.addEventListener("keydown", function (e) {
-              if (e.key !== "Escape") return;
-              if (doc.fullscreenElement || document.fullscreenElement) return;
-              e.preventDefault();
-              closePdfModal();
-            }, true);
-          } catch (eMed) {}
-        };
-        return true;
-      }
-
       function closePdfModal(event) {
-        purgerSuiviMediaPdfFrame();
         document.getElementById("pdfModal").classList.remove("open");
         var frameClose = document.getElementById("pdfFrame");
         if (frameClose) frameClose.onload = null;
@@ -2205,7 +2120,8 @@
           '" title="' +
           echapperHtml(titre) +
           '" allow="fullscreen; autoplay; clipboard-write" allowfullscreen></iframe></main>' +
-          "</body></html>";
+          "<script src="../assets/js/app.js" defer></script>
+</body></html>";
 
         try {
           // Évite qu'un document ouvert puisse naviguer l'onglet d'origine.
@@ -2225,12 +2141,9 @@
 
       function reloadModalFrame() {
         if (!modalUrl) return;
-        purgerSuiviMediaPdfFrame();
         chargerDansPdfFrame("about:blank");
         setTimeout(function () {
-          if (!suivreMediaDansPdfFrame(modalUrl)) {
-            controlerDocument(modalUrl);
-          }
+          controlerDocument(modalUrl);
           chargerDansPdfFrame(modalUrl);
         }, 60);
       }
@@ -2303,7 +2216,7 @@
                 "(copier-coller dans un éditeur, outil de nettoyage HTML…) " +
                 "ou le chemin est erroné.<br>Recopiez le fichier <strong>tel quel</strong> " +
                 "depuis l'archive, puis cliquez sur <strong>↺</strong> (recharger) " +
-                "ou sur <strong>←</strong> pour revenir à l'appelant."
+                "ou <strong>⧉</strong> (ouvrir dans un onglet)."
             );
           }
         }
@@ -2432,13 +2345,11 @@
   <script id="stix-top">(function(){document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest('a[href="#top"]'):null;if(!a)return;e.preventDefault();var de=document.documentElement,pr=de.style.scrollBehavior;de.style.scrollBehavior="auto";window.scrollTo(0,0);if(pr)de.style.scrollBehavior=pr;else de.style.removeProperty("scroll-behavior");if(location.hash==="#top"&&history.replaceState)history.replaceState(history.state,"",location.pathname+location.search);});var prech=function(){try{var c=navigator&&(navigator.connection||navigator.mozConnection||navigator.webkitConnection);if(c&&(c.saveData||/(^|-)2g$/i.test(String(c.effectiveType||""))))return;[["../index.html","document"],["../assets/css/atelier.css","style"]].forEach(function(it){var l=document.createElement("link");l.rel="prefetch";l.as=it[1];l.href=it[0];(document.head||document.documentElement).appendChild(l);});}catch(eP){}};if(typeof requestIdleCallback==="function")requestIdleCallback(prech,{timeout:1500});else setTimeout(prech,900);})();</script>
   <!-- 🔒 Protection du contenu STI -->
 <link rel="stylesheet" href="../assets/css/protection.css?v=227" />
-<script src="../assets/js/config.js?v=479" defer></script>
-<script src="../assets/js/protection.js?v=227&amp;rev=479" defer></script>
+<script src="../assets/js/config.js?v=476" defer></script>
+<script src="../assets/js/protection.js?v=474" defer></script>
 <!-- /Protection -->
 <script src="../assets/js/supabase-umd.js" defer></script>
-<script src="../assets/js/acces.js?v=479" defer></script>
-  <script src="../assets/js/sync-progressions.js?v=479" defer></script>
-  <script src="../assets/js/profil.js" defer></script>
-  <script src="../assets/js/app.js" defer></script>
+<script src="../assets/js/acces.js?v=453" defer></script>
+  <script src="../assets/js/sync-progressions.js?v=476" defer></script>
 </body>
 </html>

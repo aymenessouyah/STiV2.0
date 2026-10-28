@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-sti-heritage="interface" lang="fr">
+<html lang="fr" data-sti-titre="⚠️ Les 25 Pièges du Bac STI">
 <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -346,10 +346,11 @@
       .carte-piege { break-inside: avoid; box-shadow: none; margin-bottom: 10px; }
     }
   </style>
-
-<link rel="stylesheet" href="assets/css/theme-patrimoine.css">
+<!-- ===== STI V2.0 — design system (pont) ===== -->
+<link rel="stylesheet" href="assets/css/theme.css">
+<script src="assets/js/profil.js"></script>
 </head>
-<body>
+<body class="sti-legacy">
   <div class="wrap-pieges">
     <div class="topbar-pieges">
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -737,11 +738,10 @@
       afficherPieges();
     })();
   </script>
-  <script src="assets/js/config.js?v=425" defer></script>
   <script src="assets/js/supabase-umd.js" defer></script>
+  <script src="assets/js/config.js?v=425" defer></script>
   <script src="assets/js/acces.js?v=453" defer></script>
   <script src="assets/js/sync-progressions.js" defer></script>
-
-<script src="assets/js/profil.js" defer></script>
+<script src="assets/js/app.js" defer></script>
 </body>
 </html>

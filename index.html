@@ -1,853 +1,253 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="sombre" data-taille-texte="normale">
+<html lang="fr" dir="ltr" data-theme="sombre" class="no-js">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com; worker-src 'self'; object-src 'none'; base-uri 'self';" />
-  <title>STI V2.0 – Le web de A à Z | Lycée Raféha · 3ème &amp; 4ème SI</title>
-  <meta name="description" content="Plateforme pédagogique STI V2.0 — Cours, vidéos explicatives (.mp4), exercices corrigés, annexes officielles, Smart Book et quiz interactifs pour 3ème et 4ème Sciences de l'Informatique (Lycée Raféha, par Aymen Essouyah)." />
-  <meta name="author" content="Aymen Essouyah" />
-  <meta name="theme-color" content="#0d1526" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="assets/icons/STI_by_AE.ico" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STI V2.0 — Le web de A à Z | Lycée Raféha · 3ème &amp; 4ème SI</title>
+<meta name="description" content="STI V2.0 — Le web de A à Z : cours HTML5, CSS3, JavaScript, SQL et PHP, vidéos explicatives, exercices, quiz et outils du Lycée Raféha par Aymen Essouyah.">
+<meta name="author" content="Aymen Essouyah">
+<meta name="theme-color" content="#0d1526">
+<link rel="icon" href="assets/icons/STI_by_AE.ico">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/css/theme.css">
 
-  <!-- Feuille de style unique du Design System STI V2.0 -->
-  <link rel="stylesheet" href="assets/css/theme.css" />
-  <link rel="stylesheet" href="assets/css/protection.css?v=227" />
-
-  <!-- Ordre strict des scripts : config -> supabase-umd -> acces -> sync-progressions -> profil -> app -->
-  <script src="assets/js/config.js?v=479"></script>
-  <script defer src="assets/js/supabase-umd.js"></script>
-  <script defer src="assets/js/acces.js?v=479"></script>
-  <script defer src="assets/js/sync-progressions.js?v=479"></script>
-  <script defer src="assets/js/profil.js"></script>
-  <script defer src="assets/js/app.js"></script>
-  <!-- Suivi média et reprise historiques de la plateforme. -->
-  <script defer src="assets/js/protection.js?v=227&amp;rev=479"></script><script src="assets/js/lecteur-commun.js" defer></script>
-  <script defer src="assets/js/reprendre.js?v=479"></script>
-<script src="assets/js/suivi-profil.js" defer></script><script src="assets/js/reconnexion-profil.js" defer></script><script src="assets/js/appel-quiz.js" defer></script>
+<!-- Chaîne de scripts imposée : config → supabase → acces → sync → profil → app.
+     profil.js est le seul script bloquant : il applique le thème mémorisé AVANT
+     la première peinture (aucun flash), et reste la seule couche de stockage local. -->
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/supabase-umd.js" defer></script>
+<script src="assets/js/acces.js" defer></script>
+<script src="assets/js/sync-progressions.js" defer></script>
+<script src="assets/js/profil.js"></script>
+<script src="assets/js/app.js" defer></script>
 </head>
-<body class="sti-v2">
-  <!-- Lien d'évitement clavier (accessibilité RGAA / WCAG) -->
-  <a class="skip-link" href="#contenu-principal">Aller au contenu principal</a>
+<body data-page="accueil">
+<a class="sr-only" href="#contenu">Aller au contenu principal</a>
+<main id="contenu">
 
-  <!-- Barre fine de progression de lecture en haut de l'écran -->
-  <div class="reading-progress" id="readingProgressBar" aria-hidden="true"></div>
-
-  <!-- ═══════════════════════════════════════════════════════════════════════
-       EN-TÊTE COLLANT (STICKY HEADER)
-       ═══════════════════════════════════════════════════════════════════════ -->
-  <header class="site-header" role="banner">
-    <div class="container site-header__inner">
-      <!-- Identité visuelle STI V2.0 -->
-      <a class="brand-logo" href="index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l'accueil">
-        <span class="brand-logo__mark" aria-hidden="true"><img src="assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
-        <span class="brand-logo__text">
-          <span class="brand-logo__title">STI V2.0</span>
-          <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
-        </span>
-      </a>
-
-      <!-- Navigation principale -->
-      <nav class="site-nav" aria-label="Navigation principale">
-        <a class="site-nav__link" href="#videos" data-i18n="nav.videos">Vidéos</a>
-        <a class="site-nav__link" href="#cours" data-i18n="nav.cours">Cours</a>
-        <a class="site-nav__link" href="#smart-book" data-i18n="nav.livres">Scanner mon livre</a>
-        <a class="site-nav__link" href="#outils-bac" data-i18n="nav.outils">Outils Bac</a>
-        <a class="site-nav__link" href="#quiz" data-i18n="nav.quiz">Quiz</a>
-        <a class="site-nav__link" href="glossaire.html" data-i18n="nav.glossaire">Glossaire</a>
-      </nav>
-
-      <!-- Actions rapides : Recherche Ctrl+K · PWA · 3 Modes · Badge Abonné -->
-      <div class="header-actions">
-        <button type="button" class="search-trigger" data-open-search aria-label="Rechercher… Ctrl K : ouvrir la recherche rapide">
-          <span aria-hidden="true">🔎</span>
-          <span class="search-trigger__label">Rechercher…</span>
-          <kbd>Ctrl K</kbd>
-        </button>
-
-        <button type="button" class="btn btn-secondary btn-sm" id="installBtn" hidden title="Installer l'application STI V2.0 hors-ligne">
-          📲 Installer
-        </button>
-
-        <div class="theme-switcher" role="group" aria-label="Choisir le mode d'affichage">
-          <button type="button" class="theme-switcher__btn" data-set-theme="clair" aria-pressed="false" title="Mode clair">☀️</button>
-          <button type="button" class="theme-switcher__btn" data-set-theme="intermediaire" aria-pressed="false" title="Mode intermédiaire">🌗</button>
-          <button type="button" class="theme-switcher__btn" data-set-theme="sombre" aria-pressed="true" title="Mode sombre">🌙</button>
+  <!-- ===================== HERO ===================== -->
+  <section class="hero" id="accueil">
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="hero__glow hero__glow--2" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <div class="hero__content">
+        <span class="eyebrow"><span class="dot"></span> Lycée Raféha · 3<sup>ème</sup> &amp; 4<sup>ème</sup> SI</span>
+        <h1><span class="line"><span>Le web de</span></span><span class="line"><span class="grad-text">A à Z</span></span></h1>
+        <p class="hero__lead">La plateforme éducative complète de <strong style="color:var(--text)">M. Aymen Essouyah</strong> : cours structurés, vidéos explicatives commentées, exercices corrigés, quiz auto-corrigés et outils en ligne. Du premier tag HTML jusqu'aux bases de données.</p>
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="#matieres" data-i18n="commencer">Commencer <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn--ghost" href="#videos">▶ Voir les vidéos</a>
+          <a class="btn btn--ghost" href="dashboard.html">📊 Mon tableau de bord</a>
         </div>
+        <div class="hero__meta">
+          <div><strong data-count="13">0</strong><span>Pages de cours</span></div>
+          <div><strong data-count="4">0</strong><span>Quiz auto-corrigés</span></div>
+          <div><strong data-count="12">0</strong><span>Supports PDF</span></div>
+          <div><strong data-count="1244">0</strong><span>Questions</span></div>
+        </div>
+      </div>
 
-        <!-- Emplacement de la roue et du panneau de compte d’origine -->
-        <div data-subscriber-slot></div>
-
-        <button type="button" class="burger-btn" id="stiBurgerBtn" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="stiMobileNav">
-          ☰
-        </button>
+      <!-- Terminal / éditeur animé -->
+      <div class="hero__visual" aria-label="Aperçu de code HTML5">
+        <div class="editor">
+          <div class="codeblock">
+            <div class="codeblock__bar"><i></i><i></i><i></i><span>index.html — STI V2.0</span></div>
+            <pre><code><span class="code-line" style="animation-delay:.55s"><span class="t-com">&lt;!-- Ton premier site web --&gt;</span></span><span class="code-line" style="animation-delay:.7s"><span class="t-tag">&lt;!DOCTYPE html&gt;</span></span><span class="code-line" style="animation-delay:.85s"><span class="t-tag">&lt;html</span> <span class="t-attr">lang</span>=<span class="t-str">"fr"</span><span class="t-tag">&gt;</span></span><span class="code-line" style="animation-delay:1s">  <span class="t-tag">&lt;head&gt;</span></span><span class="code-line" style="animation-delay:1.15s">    <span class="t-tag">&lt;title&gt;</span>Le web de A à Z<span class="t-tag">&lt;/title&gt;</span></span><span class="code-line" style="animation-delay:1.3s">  <span class="t-tag">&lt;/head&gt;</span></span><span class="code-line" style="animation-delay:1.45s">  <span class="t-tag">&lt;body&gt;</span></span><span class="code-line" style="animation-delay:1.6s">    <span class="t-tag">&lt;h1</span> <span class="t-attr">class</span>=<span class="t-str">"titre"</span><span class="t-tag">&gt;</span>Bonjour le web !<span class="t-tag">&lt;/h1&gt;</span></span><span class="code-line" style="animation-delay:1.75s">    <span class="t-tag">&lt;script</span> <span class="t-attr">src</span>=<span class="t-str">"app.js"</span><span class="t-tag">&gt;&lt;/script&gt;</span><span class="cursor-blink"></span></span><span class="code-line" style="animation-delay:1.9s">  <span class="t-tag">&lt;/body&gt;</span></span><span class="code-line" style="animation-delay:2.05s"><span class="t-tag">&lt;/html&gt;</span></span></code></pre>
+          </div>
+        </div>
+        <div class="chip chip--1"><i style="background:var(--html)"></i> HTML5 · structure</div>
+        <div class="chip chip--2"><i style="background:var(--js)"></i> JavaScript · interaction</div>
+        <div class="chip chip--3"><i style="background:var(--sql)"></i> SQL · données</div>
       </div>
     </div>
+  </section>
 
-    <!-- Menu déroulant mobile -->
-    <nav class="mobile-nav-drawer container" id="stiMobileNav" aria-label="Navigation mobile">
-      <a class="site-nav__link" href="#videos">🎥 Vidéos explicatives</a>
-      <a class="site-nav__link" href="#cours">📚 Cours &amp; Matières</a>
-      <a class="site-nav__link" href="#smart-book">📱 Scanner mon livre (Smart Book)</a>
-      <a class="site-nav__link" href="#outils-bac">🛠️ Ateliers &amp; Outils Bac</a>
-      <a class="site-nav__link" href="#quiz">🎯 Quiz &amp; Mes erreurs</a>
-      <a class="site-nav__link" href="glossaire.html">🌍 Glossaire FR · EN · AR</a>
-      <a class="site-nav__link" href="dashboard.html">📊 Mon tableau de bord</a>
-    </nav>
-  </header>
-
-  <!-- La Cote d'origine : moteur, actualités de la régie et secours README conservés. -->
-  <aside id="cote-sti" aria-label="La Cote STI : versions officielles des technologies et dernières nouvelles">
-      <div class="cote-etiq"><span class="cote-clignot" aria-hidden="true"></span></div>
-      <div class="cote-ecran"><div class="cote-piste" id="cote-piste" aria-hidden="true"><span class="cote-news">🔔 Cote en cours de chargement…</span></div></div>
-      <noscript><span style="padding:0 12px;font-size:12.5px;color:#fbbf24">Cotation du 23/10/2026 : HTML5 &middot; CSS3 &middot; JavaScript ES2026 &middot; SQL:2023 &middot; PHP 8.5.12</span></noscript>
-    </aside>
-  <script src="./assets/js/cote-ticker.js?v=465" defer></script>
-
-  <main id="contenu-principal">
-    <!-- Accueil personnel : le compteur correspond aux cours réellement ouverts. -->
-    <section class="welcome-return" id="welcomeReturn" aria-labelledby="welcomeTitle" hidden>
-      <div class="container">
-        <h2 class="welcome-return__title" id="welcomeTitle">Bonjour, <span id="welcomePrenom">Abonné</span></h2>
-        <p class="welcome-return__subtitle">Continuez à apprendre, ou découvrez quelque chose de nouveau.</p>
-        <div class="welcome-return__bar">
-          <p class="welcome-return__count" id="welcomeCount" aria-live="polite">0 en cours</p>
-          <a class="welcome-return__dashboard" href="dashboard.html">Votre apprentissage <span aria-hidden="true">→</span></a>
-        </div>
-        <!-- La reprise de lecture ou de vidéo fait partie de l'apprentissage en cours. -->
-        <div class="resume-banner" id="resumeBanner" hidden>
-          <div>
-            <span class="resume-banner__kicker" id="resumeKicker">📍 Reprendre ma dernière lecture</span>
-            <div class="resume-banner__title" id="resumeTitle">Chapitre en cours</div>
-          </div>
-          <div class="resume-banner__actions">
-            <a class="btn btn-primary btn-sm" id="resumeGoBtn" href="#cours">Reprendre ➜</a>
-            <button type="button" class="btn btn-ghost btn-sm" id="resumeCloseBtn" aria-label="Masquer le bandeau">✕</button>
-          </div>
-        </div>
-        <div class="welcome-return__courses" id="welcomeCourses"></div>
-        <p class="welcome-return__empty" id="welcomeEmpty" hidden>Vous n’avez pas encore ouvert de cours. <a href="#cours">Découvrir les cours</a></p>
-      </div>
-    </section>
-
-    <!-- ═════════════════════════════════════════════════════════════════════
-         HERO « LE WEB DE A À Z » + TERMINAL ANIMÉ + VIDÉO À LA UNE
-         ═════════════════════════════════════════════════════════════════════ -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero__grid">
-          <!-- Colonne éditoriale & Terminal -->
-          <div>
-            <div class="hero__eyebrow">
-              <span>🎓 Lycée Raféha · 3ème &amp; 4ème SI</span>
-              <span aria-hidden="true">•</span>
-              <span>Par Aymen Essouyah</span>
-            </div>
-
-            <h1 class="hero__title">
-              Le web de <span class="hero__title-accent">A à Z</span>, clair, interactif et visuel.
-            </h1>
-
-            <p class="hero__subtitle">
-              Tous vos cours officiels STI, vidéos explicatives pas à pas, séries d'exercices corrigées, annexes du Bac et quiz d'entraînement réunis dans un espace moderne sans distraction.
-            </p>
-
-            <!-- Terminal animé -->
-            <div class="terminal-box" aria-live="polite">
-              <div class="terminal-box__bar" aria-hidden="true">
-                <span class="terminal-dot terminal-dot--r"></span>
-                <span class="terminal-dot terminal-dot--y"></span>
-                <span class="terminal-dot terminal-dot--g"></span>
-                <span class="terminal-box__path">sti-v2@lycee-rafeha:~/programme-officiel$</span>
-              </div>
-              <div class="terminal-box__body">
-                <span class="terminal-prompt">&gt;</span>
-                <span id="rotatorIcon" aria-hidden="true">🏫</span>
-                <span id="rotatorText">Lycée Raféha · 3ème &amp; 4ème SI — Par Aymen Essouyah</span>
-                <span class="terminal-cursor" aria-hidden="true"></span>
-              </div>
-            </div>
-
-            <div class="hero__cta-row">
-              <a class="btn btn-primary btn-lg" href="#videos">▶ Voir les vidéos explicatives</a>
-              <a class="btn btn-secondary btn-lg" href="#cours">📚 Explorer les matières</a>
-              <a class="btn btn-ghost btn-lg" href="livre-smart.html">📱 Scanner mon livre</a>
-            </div>
-          </div>
-
-          <!-- Colonne droite : Bloc « Vidéo à la une » mis en avant -->
-          <div class="featured-video-card">
-            <div class="featured-video-card__head">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                <span class="badge badge-new">🎬 VIDÉO À LA UNE</span>
-                <span class="badge badge-css">CSS3 · 11:24</span>
-              </div>
-              <span style="font-size:.76rem;color:var(--text-muted);font-weight:700">.MP4 HD + Sous-titres FR</span>
-            </div>
-
-            <div class="video-player-shell">
-              <video id="heroFeaturedVideo" controls preload="metadata" playsinline poster="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20640%20360%22%3E%3Crect%20width%3D%22640%22%20height%3D%22360%22%20fill%3D%22%230d1526%22%2F%3E%3C%2Fsvg%3E">
-                <source src="assets/videos/css3-cours-v9-sync.mp4" type="video/mp4" />
-                <track kind="subtitles" srclang="fr" label="Français" src="assets/subtitles/css3-cours-v9-sync-fr.vtt" />
-                Votre navigateur ne prend pas en charge la lecture vidéo HTML5.
-              </video>
-              <button type="button" class="video-hero-overlay" id="heroVideoOverlay" aria-label="CAPSULE VIDÉO EXPLICATIVE CSS3 — Sélecteurs, Flexbox &amp; animations pas à pas : lancer la vidéo">
-                <span class="video-play-btn" aria-hidden="true">▶</span>
-                <span class="video-hero-overlay__meta">
-                  <span style="font-size:.78rem;font-weight:700;color:#7dd3fc">CAPSULE VIDÉO EXPLICATIVE</span>
-                  <strong style="font-size:1.05rem;color:#f8fafc">CSS3 — Sélecteurs, Flexbox &amp; animations pas à pas</strong>
-                </span>
-              </button>
-            </div>
-
-            <div class="featured-video-card__foot">
-              <span style="font-size:.82rem;color:var(--text-secondary)">🎧 Écoute claire &amp; démonstrations visuelles du code</span>
-              <a class="btn btn-ghost btn-sm" href="#videos">Explorer le catalogue vidéo ➜</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- ═════════════════════════════════════════════════════════════════
-             STATISTIQUES CLÉS (AVEC MISE EN AVANT DES VIDÉOS .MP4)
-             ═════════════════════════════════════════════════════════════════ -->
-        <div class="stats-strip" aria-label="Chiffres clés de la plateforme">
-          <div class="stat-card">
-            <span class="stat-card__value" data-count="13">13</span>
-            <span class="stat-card__label">📖 Cours complets</span>
-          </div>
-          <div class="stat-card stat-card--video">
-            <span class="stat-card__value" data-count="14">14</span>
-            <span class="stat-card__label">🎥 Vidéos du catalogue · accès selon la classe</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-card__value" data-count="4">4</span>
-            <span class="stat-card__label">🎯 Quiz thématiques</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-card__value" data-count="12">12</span>
-            <span class="stat-card__label">📎 Annexes &amp; PDF officiels</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-card__value" data-count="1244">1 244</span>
-            <span class="stat-card__label">⚡ Questions corrigées</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Les dix ateliers sont regroupés avant le catalogue vidéo. -->
-    <section class="section section--ateliers" id="ateliers-rapides" aria-labelledby="titre-ateliers-rapides">
-      <div class="container">
-        <div class="section-header">
-          <div><span class="section-kicker">⚡ Pratiquer dès maintenant</span>
-            <h2 id="titre-ateliers-rapides">Les dix outils interactifs</h2>
-            <p>Révisez, expérimentez et retrouvez les fichiers TP du professeur.</p>
-          </div>
-        </div>
-        <div class="lab-chips-row" aria-label="Simulateurs rapides intégrés">
-          <button type="button" class="lab-chip" id="btnHomeFlashcards">🗂️ Flashcards Bac</button>
-          <button type="button" class="lab-chip" id="btnHomeSandbox">💻 Bac à sable HTML/CSS/JS</button>
-          <button type="button" class="lab-chip" id="btnHomeConsoleJs">🧪 Console JS live</button>
-          <button type="button" class="lab-chip" id="btnHomeDebug">🐞 Chasse aux erreurs</button>
-          <button type="button" class="lab-chip" id="btnHomeExamenBlanc">⏱️ Examen Blanc (/20)</button>
-          <button type="button" class="lab-chip" id="btnHomeConstructeur">🧱 Constructeur Table / Form / Flex</button>
-          <button type="button" class="lab-chip" id="btnHomeLaboSql">🗄️ Simulateur SQL live</button>
-          <button type="button" class="lab-chip" id="btnHomeLaboAscii">🔤 Labo Chaînes &amp; ASCII JS</button>
-          <button type="button" class="lab-chip sti-4si-only" id="btnHomeSimPhpSql">🔄 Flux Form ➔ PHP ➔ SQL</button>
-          <button type="button" class="lab-chip" id="btnHomeCoffreTp">📂 Fichiers TP du Prof</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═════════════════════════════════════════════════════════════════════
-         SECTION PRIORITAIRE : 🎥 VIDÉOS EXPLICATIVES (.MP4)
-         ═════════════════════════════════════════════════════════════════════ -->
-    <section class="section" id="videos" aria-labelledby="titre-videos">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">🎬 Apprentissage visuel &amp; auditif</span>
-            <h2 id="titre-videos">🎥 Vidéos explicatives</h2>
-            <p>Comprendre chaque notion clé en quelques minutes grâce aux capsules vidéo (.mp4) classées par matière.</p>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <div class="filter-chips" role="group" aria-label="Filtrer les vidéos par matière">
-              <button type="button" class="filter-chip is-active" data-video-filter="all">Toutes</button>
-              <button type="button" class="filter-chip" data-video-filter="html5">HTML5 (1)</button>
-              <button type="button" class="filter-chip" data-video-filter="css3">CSS3 (4)</button>
-              <button type="button" class="filter-chip" data-video-filter="javascript">JS (2)</button>
-              <button type="button" class="filter-chip" data-video-filter="sql">SQL (4)</button>
-              <button type="button" class="filter-chip sti-4si-only" data-video-filter="php">PHP (3)</button>
-            </div>
-            <div style="display:flex;gap:6px">
-              <button type="button" class="btn btn-secondary btn-icon btn-sm" id="videosScrollPrev" aria-label="Faire défiler vers la gauche">◀</button>
-              <button type="button" class="btn btn-secondary btn-icon btn-sm" id="videosScrollNext" aria-label="Faire défiler vers la droite">▶</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Grille / Carrousel rendu dynamiquement par assets/js/app.js -->
-        <div class="videos-carousel" id="videosGrid" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <!-- ═════════════════════════════════════════════════════════════════════
-         SCANNER MON LIVRE (SMART BOOK 3ÈME SI 72 P. & 4ÈME SI 100 P.)
-         ═════════════════════════════════════════════════════════════════════ -->
-    <section class="section" id="smart-book" aria-labelledby="titre-smartbook">
-      <div class="container">
-        <div class="smartbook-banner">
-          <div>
-            <span class="section-kicker">📱 Pont Papier ↔ Numérique</span>
-            <h2 id="titre-smartbook" style="margin-bottom:10px">Scanner mon livre — Smart Book interactif</h2>
-            <p style="margin-bottom:18px;max-width:60ch">
-              Scannez le QR code d'une page de votre manuel papier ou saisissez son numéro pour ouvrir instantanément la vidéo explicative, le corrigé interactif ou le simulateur associé.
-            </p>
-            <div style="display:flex;gap:12px;flex-wrap:wrap">
-              <a class="btn btn-primary" href="livre-smart.html">📷 Ouvrir le scanner Smart Book</a>
-              <button type="button" class="btn btn-secondary" data-open-contact>📱 QR Code d'accès rapide</button>
-              <button type="button" class="site-qr-shortcut" data-open-contact aria-label="QR code officiel Cliquer pour agrandir : ouvrir le QR code du site">
-                <img src="assets/images/qr-code-site.png" width="96" height="96" alt="">
-                <span>QR code officiel<br><small>Cliquer pour agrandir</small></span>
-              </button>
-            </div>
-          </div>
-
-          <div class="smartbook-books">
-            <a class="book-pill" href="livre-smart.html?niveau=3si">
-              <span class="badge badge-css" style="align-self:flex-start">📘 3ème SI</span>
-              <strong>Manuel Smart Book 3ème SI</strong>
-              <span style="font-size:.83rem;color:var(--text-secondary)"><strong>72 pages</strong> reliées aux vidéos, TP HTML5/CSS3/JS &amp; quiz</span>
-              <span style="font-size:.8rem;color:var(--text);font-weight:700;margin-top:4px">Parcourir les 72 pages ➜</span>
-            </a>
-
-            <a class="book-pill sti-4si-only" href="livre-smart.html?niveau=4si">
-              <span class="badge badge-php" style="align-self:flex-start">📕 4ème SI (Bac)</span>
-              <strong>Manuel Smart Book 4ème SI</strong>
-              <span style="font-size:.83rem;color:var(--text-secondary)"><strong>100 pages</strong> complètes : Web dynamique, SQL, PHP &amp; sujets Bac</span>
-              <span style="font-size:.8rem;color:var(--text);font-weight:700;margin-top:4px">Parcourir les 100 pages ➜</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═════════════════════════════════════════════════════════════════════
-         BARRE DE RECHERCHE INSTANTANÉE, FILTRES PAR CATÉGORIE & PROGRESSION
-         ═════════════════════════════════════════════════════════════════════ -->
-    <section class="section" id="cours" aria-labelledby="titre-cours">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">📚 Programme officiel 3ème &amp; 4ème SI</span>
-            <h2 id="titre-cours">Matières &amp; parcours unifiés</h2>
-            <p>Chaque matière regroupe désormais sur une seule page : <strong>Cours · Exercices · Annexes · Vidéos</strong>.</p>
-          </div>
-
-          <!-- Jauge globale de révision -->
-          <div class="card" style="padding:12px 16px;min-width:240px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px">
-              <span style="font-size:.8rem;font-weight:700;color:var(--text-secondary)">Ma progression</span>
-              <span class="badge badge-sql" id="revisionCountText">0 / 5 révisés</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-bar__fill" id="revisionBarFill" style="width:0%"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Barre de recherche & filtres par catégorie -->
-        <div class="filter-toolbar">
-          <div class="filter-search">
-            <span aria-hidden="true">🔍</span>
-            <input type="search" id="moduleSearch" placeholder="Filtrer un cours, un chapitre, une balise HTML, SELECT, Flexbox…" aria-label="Filtrer les modules et chapitres" />
-          </div>
-          <div class="filter-chips" role="group" aria-label="Filtrer par catégorie">
-            <button type="button" class="filter-chip is-active" data-filter="all">Tout voir</button>
-            <button type="button" class="filter-chip" data-filter="html5">HTML5</button>
-            <button type="button" class="filter-chip" data-filter="css3">CSS3</button>
-            <button type="button" class="filter-chip" data-filter="javascript">JavaScript</button>
-            <button type="button" class="filter-chip" data-filter="sql">SQL</button>
-            <button type="button" class="filter-chip sti-4si-only" data-filter="php">PHP (4e SI)</button>
-            <button type="button" class="filter-chip" data-filter="outils">Outils Bac</button>
-            <button type="button" class="filter-chip" data-filter="quiz">Quiz</button>
-          </div>
-        </div>
-
-        <!-- Résultats profonds dans les chapitres (alimentés par rechercherChapitresSTI) -->
-        <div class="deep-search-results" id="deepSearchResults" hidden>
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-            <strong style="font-size:.88rem" id="deepSearchCount">🔎 Chapitres trouvés</strong>
-            <button type="button" class="btn btn-ghost btn-sm" id="deepSearchClear">Effacer la recherche</button>
-          </div>
-          <div class="deep-search-results__grid" id="deepSearchGrid"></div>
-        </div>
-
-        <!-- Grille des 5 Matières + Glossaire FR · EN · AR -->
-        <div class="subjects-grid">
-          <!-- 1. HTML5 -->
-          <article class="subject-card" data-subject="html5" data-filter-item="html5">
-            <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#html5"></use></svg></div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-                <span class="badge badge-html">🎥 1 vidéo &amp; 🔊 audio</span>
-                <button type="button" class="revise-btn" data-toggle-course="html5" aria-pressed="false">○ À réviser</button>
-              </div>
-            </div>
-            <div>
-              <h3>HTML5 — Structure &amp; Formulaires</h3>
-              <p style="font-size:.9rem;margin-top:6px">Balises sémantiques, tableaux fusionnés, formulaires enrichis, attributs de validation HTML5 et intégration multimédia.</p>
-            </div>
-            <div class="subject-card__links">
-              <a class="subject-pill-link" href="cours/html5.html">📖 Cours</a>
-              <a class="subject-pill-link" href="cours/html5.html#exercices">📝 Exercices</a>
-              <a class="subject-pill-link" href="cours/html5.html#annexes">📎 Annexe</a>
-              <a class="subject-pill-link" href="cours/html5.html#videos">🎥 Vidéo</a>
-            </div>
-            <div class="subject-card__footer">
-              <a class="btn btn-primary btn-sm" href="cours/html5.html">Ouvrir HTML5 ➜</a>
-              <a class="btn btn-ghost btn-sm" href="quiz/html-css.html">Quiz HTML/CSS</a>
-            </div>
-          </article>
-
-          <!-- 2. CSS3 -->
-          <article class="subject-card" data-subject="css3" data-filter-item="css3">
-            <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#css3"></use></svg></div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-                <span class="badge badge-css">🎥 4 vidéos &amp; 🔊 audio</span>
-                <button type="button" class="revise-btn" data-toggle-course="css3" aria-pressed="false">○ À réviser</button>
-              </div>
-            </div>
-            <div>
-              <h3>CSS3 — Mise en page &amp; Animations</h3>
-              <p style="font-size:.9rem;margin-top:6px">Sélecteurs avancés, modèle de boîte, Flexbox, positionnement, ombres, transitions fluides et animations <code>@keyframes</code>.</p>
-            </div>
-            <div class="subject-card__links">
-              <a class="subject-pill-link" href="cours/css3.html">📖 Cours</a>
-              <a class="subject-pill-link" href="cours/css3.html#exercices">📝 Exercices</a>
-              <a class="subject-pill-link" href="cours/css3.html#annexes">📎 Annexe</a>
-              <a class="subject-pill-link" href="cours/css3.html#videos">🎥 4 Vidéos</a>
-            </div>
-            <div class="subject-card__footer">
-              <a class="btn btn-primary btn-sm" href="cours/css3.html">Ouvrir CSS3 ➜</a>
-              <a class="btn btn-ghost btn-sm" href="quiz/html-css.html">Quiz HTML/CSS</a>
-            </div>
-          </article>
-
-          <!-- 3. JavaScript -->
-          <article class="subject-card" data-subject="javascript" data-filter-item="javascript">
-            <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#javascript"></use></svg></div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-                <span class="badge badge-js">🎥 2 vidéos &amp; 🔊 audio</span>
-                <button type="button" class="revise-btn" data-toggle-course="javascript" aria-pressed="false">○ À réviser</button>
-              </div>
-            </div>
-            <div>
-              <h3>JavaScript — DOM &amp; Contrôles Bac</h3>
-              <p style="font-size:.9rem;margin-top:6px">Fonctions de validation de formulaires, événements, chaînes de caractères, objets <code>Math</code> / <code>Date</code> et manipulation du DOM.</p>
-            </div>
-            <div class="subject-card__links">
-              <a class="subject-pill-link" href="cours/javascript.html">📖 Cours</a>
-              <a class="subject-pill-link" href="cours/javascript.html#exercices">📝 Exercices</a>
-              <a class="subject-pill-link" href="cours/javascript.html#annexes">📎 Annexe</a>
-              <a class="subject-pill-link" href="cours/javascript.html#videos">🎥 2 Vidéos</a>
-            </div>
-            <div class="subject-card__footer">
-              <a class="btn btn-primary btn-sm" href="cours/javascript.html">Ouvrir JavaScript ➜</a>
-              <a class="btn btn-ghost btn-sm" href="quiz/javascript.html">Quiz JS</a>
-            </div>
-          </article>
-
-          <!-- 4. SQL -->
-          <article class="subject-card" data-subject="sql" data-filter-item="sql">
-            <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#sql"></use></svg></div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-                <span class="badge badge-sql">🎥 2 vidéos + 2 Bac &amp; 🔊 audio</span>
-                <button type="button" class="revise-btn" data-toggle-course="sql" aria-pressed="false">○ À réviser</button>
-              </div>
-            </div>
-            <div>
-              <h3>SQL — Bases de données relationnelles</h3>
-              <p style="font-size:.9rem;margin-top:6px">Création de tables (LDD), mise à jour des données (LMD), requêtes <code>SELECT</code>, jointures, fonctions d'agrégation et sous-requêtes.</p>
-            </div>
-            <div class="subject-card__links">
-              <a class="subject-pill-link" href="cours/sql.html">📖 Cours</a>
-              <a class="subject-pill-link" href="cours/sql.html#exercices">📝 Exercices</a>
-              <a class="subject-pill-link" href="cours/sql.html#annexes">📎 Annexe</a>
-              <a class="subject-pill-link" href="cours/sql.html#videos">🎥 Vidéo</a>
-            </div>
-            <div class="subject-card__footer">
-              <a class="btn btn-primary btn-sm" href="cours/sql.html">Ouvrir SQL ➜</a>
-              <a class="btn btn-ghost btn-sm" href="quiz/sql.html">Quiz SQL</a>
-            </div>
-          </article>
-
-          <!-- 5. PHP (Réservé 4e SI) -->
-          <article class="subject-card sti-4si-only" data-subject="php" data-filter-item="php">
-            <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true"><svg class="matiere-logo" viewBox="0 0 48 48"><use href="assets/icons/matieres.svg#php"></use></svg></div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-                <span class="badge badge-4si">🎓 Réservé 4e SI</span>
-                <span class="badge badge-php">🎥 3 vidéos &amp; 🔊 audio</span>
-                <button type="button" class="revise-btn" data-toggle-course="php" aria-pressed="false">○ À réviser</button>
-              </div>
-            </div>
-            <div>
-              <h3>PHP &amp; MySQLi — Web dynamique</h3>
-              <p style="font-size:.9rem;margin-top:6px">Récupération <code>$_POST</code> / <code>$_GET</code>, connexion MySQLi procédurale, insertion, sélection et affichage dynamique en tableaux HTML.</p>
-            </div>
-            <div class="subject-card__links">
-              <a class="subject-pill-link" href="cours/php.html">📖 Cours</a>
-              <a class="subject-pill-link" href="cours/php.html#exercices">📝 Exercices</a>
-              <a class="subject-pill-link" href="cours/php.html#annexes">📎 Annexe</a>
-              <a class="subject-pill-link" href="cours/php.html#videos">🎥 3 Vidéos</a>
-            </div>
-            <div class="subject-card__footer">
-              <a class="btn btn-primary btn-sm" href="cours/php.html">Ouvrir PHP ➜</a>
-              <a class="btn btn-ghost btn-sm" href="quiz/php.html">Quiz PHP</a>
-            </div>
-          </article>
-
-          <!-- 6. Glossaire Trilingue FR · EN · AR -->
-          <article class="subject-card" data-filter-item="html5 css3 javascript sql Glossaire">
-            <div class="subject-card__top">
-              <div class="subject-card__icon" aria-hidden="true">🌍</div>
-              <span class="badge">FR · EN · AR</span>
-            </div>
-            <div>
-              <h3>Glossaire Web Trilingue</h3>
-              <p style="font-size:.9rem;margin-top:6px">Tous les termes techniques incontournables du programme STI expliqués simplement en Français, Anglais et Arabe (avec support RTL).</p>
-            </div>
-            <div class="subject-card__links">
-              <a class="subject-pill-link" href="glossaire.html">🇫🇷 Français</a>
-              <a class="subject-pill-link" href="glossaire.html">🇬🇧 English</a>
-              <a class="subject-pill-link" href="glossaire.html">🇹🇳 العربية</a>
-            </div>
-            <div class="subject-card__footer">
-              <a class="btn btn-secondary btn-sm" href="glossaire.html">Consulter le glossaire ➜</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═════════════════════════════════════════════════════════════════════
-         ATELIERS & OUTILS SPÉCIAUX BAC STI
-         ═════════════════════════════════════════════════════════════════════ -->
-    <section class="section" id="outils-bac" aria-labelledby="titre-outils">
-      <!-- Ancre historique utilisée par les retours depuis les exercices et ateliers. -->
-      <span id="exercices" class="ancre-historique" aria-hidden="true"></span>
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">🛠️ Préparation intensive à l'épreuve</span>
-            <h2 id="titre-outils">Ateliers pratiques, Mémos &amp; Labos interactifs</h2>
-            <p>Entraînez-vous dans les conditions réelles du Bac pratique et théorique STI.</p>
-          </div>
-        </div>
-
-        <div class="tools-grid">
-          <article class="tool-card" data-filter-item="outils html5 css3 javascript sql php">
-            <div class="tool-card__icon">📝</div>
-            <h3>Séries d'exercices &amp; TP corrigés</h3>
-            <p style="font-size:.88rem">Énoncés progressifs et corrigés détaillés directement intégrés à l'onglet « Exercices » de chaque matière.</p>
-            <div style="margin-top:auto;padding-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-              <a class="btn btn-secondary btn-sm" href="cours/html5.html#exercices">HTML/CSS</a>
-              <a class="btn btn-secondary btn-sm" href="cours/javascript.html#exercices">JS</a>
-              <a class="btn btn-secondary btn-sm" href="cours/sql.html#exercices">SQL</a>
-              <a class="btn btn-secondary btn-sm sti-4si-only" href="cours/php.html#exercices">PHP</a>
-            </div>
-          </article>
-
-          <article class="tool-card" data-filter-item="outils html5 css3 javascript sql php">
-            <div class="tool-card__icon">🏆</div>
-            <h3>Atelier Bac Pratique</h3>
-            <p style="font-size:.88rem">Sujets complets type Bac guidés étape par étape (Base de données + Formulaire HTML/CSS + Contrôle JS + PHP).</p>
-            <div style="margin-top:auto;padding-top:10px">
-              <a class="btn btn-primary btn-sm" href="bac-pratique.html">Ouvrir l'Atelier Bac ➜</a>
-            </div>
-          </article>
-
-          <article class="tool-card" data-filter-item="outils html5 css3 javascript sql php">
-            <div class="tool-card__icon">⚠️</div>
-            <h3>Les 25 Pièges classiques du Bac</h3>
-            <p style="font-size:.88rem">Oubli de <code>return false</code>, quotes SQL, noms d'attributs <code>name</code> vs <code>id</code> : repérez et évitez les erreurs fréquentes.</p>
-            <div style="margin-top:auto;padding-top:10px">
-              <a class="btn btn-secondary btn-sm" href="pieges-bac.html">Découvrir les 25 pièges ➜</a>
-            </div>
-          </article>
-
-          <article class="tool-card" data-filter-item="outils html5 css3 javascript sql php">
-            <div class="tool-card__icon">📄</div>
-            <h3>Mémo A4 — Veille du Bac</h3>
-            <p style="font-size:.88rem">Fiche synthétique prête à réviser la veille de l'examen : syntaxes exactes et réflexes essentiels sur format A4.</p>
-            <div style="margin-top:auto;padding-top:10px">
-              <a class="btn btn-secondary btn-sm" href="memo-veille-bac.html">Lire le Mémo A4 ➜</a>
-            </div>
-          </article>
-
-          <article class="tool-card" data-filter-item="outils javascript">
-            <div class="tool-card__icon">🧩</div>
-            <h3>Atelier Fonctions JavaScript Bac</h3>
-            <p style="font-size:.88rem">Testez en direct <code>verifAlpha</code>, <code>chiffres</code>, <code>email</code>, dates et chaînes avec jeu d'essai interactif.</p>
-            <div style="margin-top:auto;padding-top:10px">
-              <a class="btn btn-secondary btn-sm" href="outils-js-bac.html">Lancer l'Atelier JS ➜</a>
-            </div>
-          </article>
-        </div>
-
-
-      </div>
-    </section>
-
-    <!-- ═════════════════════════════════════════════════════════════════════
-         QUIZ INTERACTIFS, RÉVISION « MES ERREURS » & QUIZ DES TABLEAUX
-         ═════════════════════════════════════════════════════════════════════ -->
-    <section class="section" id="quiz" aria-labelledby="titre-quiz">
-      <!-- Ancre conservée pour les anciens liens et les retours de quiz. -->
-      <span id="modules" class="ancre-historique" aria-hidden="true"></span>
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">🎯 Auto-évaluation immédiate</span>
-            <h2 id="titre-quiz">Quiz d'entraînement &amp; Révision intelligente</h2>
-            <p><span class="sti-4si-only">Cinq quiz &amp; révision ciblée (1 244 questions)</span><span class="sti-non-4si-only">Quatre quiz &amp; révision ciblée (886 questions)</span>, corrigés et expliqués, avec suivi automatique de vos erreurs à retravailler.</p>
-          </div>
-        </div>
-
-        <div class="quiz-grid">
-          <article class="quiz-card" data-filter-item="quiz html5 css3">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <span class="badge badge-css">🌐🎨 HTML5 &amp; CSS3</span>
-              <span style="font-size:.78rem;color:var(--text-muted)">QCM + Code</span>
-            </div>
-            <h3>Quiz HTML5 &amp; CSS3</h3>
-            <p style="font-size:.86rem">Balises sémantiques, attributs de formulaires, sélecteurs CSS3, modèle de boîte et Flexbox.</p>
-            <a class="btn btn-primary btn-sm" style="margin-top:auto" href="quiz/html-css.html">Démarrer le quiz ➜</a>
-          </article>
-
-          <article class="quiz-card" data-filter-item="quiz javascript">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <span class="badge badge-js">⚡ JavaScript</span>
-              <span style="font-size:.78rem;color:var(--text-muted)">DOM &amp; Saisie</span>
-            </div>
-            <h3>Quiz JavaScript</h3>
-            <p style="font-size:.86rem">Types, boucles, méthodes de chaînes, événements HTML et validation des champs au Bac.</p>
-            <a class="btn btn-primary btn-sm" style="margin-top:auto" href="quiz/javascript.html">Démarrer le quiz ➜</a>
-          </article>
-
-          <article class="quiz-card" data-filter-item="quiz sql">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <span class="badge badge-sql">🗄️ SQL</span>
-              <span style="font-size:.78rem;color:var(--text-muted)">LDD · LMD · LRD</span>
-            </div>
-            <h3>Quiz Bases de données SQL</h3>
-            <p style="font-size:.86rem">Clés primaires/étrangères, jointures, <code>GROUP BY / HAVING</code>, dates et fonctions SQL.</p>
-            <a class="btn btn-primary btn-sm" style="margin-top:auto" href="quiz/sql.html">Démarrer le quiz ➜</a>
-          </article>
-
-          <article class="quiz-card sti-4si-only" data-filter-item="quiz php">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <span class="badge badge-php">🐘 PHP &amp; MySQLi</span>
-              <span class="badge badge-4si">4e SI</span>
-            </div>
-            <h3>Quiz PHP Dynamique</h3>
-            <p style="font-size:.86rem">Superglobales, fonctions MySQLi procédurales, boucles d'affichage et sécurité de base.</p>
-            <a class="btn btn-primary btn-sm" style="margin-top:auto" href="quiz/php.html">Démarrer le quiz ➜</a>
-          </article>
-
-          <article class="quiz-card" data-filter-item="quiz outils">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <span class="badge badge-html">🔁 Révision ciblée</span>
-              <span style="font-size:.78rem;color:var(--text-muted)">Carnet personnel</span>
-            </div>
-            <h3>Révision « Mes erreurs »</h3>
-            <p style="font-size:.86rem">Rejouez uniquement les questions ratées lors de vos précédents quiz jusqu'à la maîtrise complète.</p>
-            <a class="btn btn-secondary btn-sm" style="margin-top:auto" href="revision-erreurs.html">Rejouer mes erreurs ➜</a>
-          </article>
-
-          <article class="quiz-card" data-filter-item="quiz javascript php">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <span class="badge badge-gold">⭐ Réservé Abonnés</span>
-              <span style="font-size:.78rem;color:var(--text-muted)">Spécial Tableaux</span>
-            </div>
-            <h3>Quiz intensif des Tableaux</h3>
-            <p style="font-size:.86rem">Maîtrisez les tableaux HTML (<code>rowspan</code>/<code>colspan</code>), tableaux JS et tableaux associatifs PHP, avec des questions tirées de votre Smart Book, des 66 Défis JS &amp; HTML et du Récap PHP.</p>
-            <a class="btn btn-secondary btn-sm" style="margin-top:auto" href="quiz/tableaux.html">Ouvrir le Quiz Tableaux ➜</a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═════════════════════════════════════════════════════════════════════
-         CONSEILS MÉTHODOLOGIQUES POUR RÉUSSIR
-         ═════════════════════════════════════════════════════════════════════ -->
-    <section class="section" id="conseils" aria-labelledby="titre-conseils">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">💡 Méthode de travail</span>
-            <h2 id="titre-conseils">Conseils pour exceller en STI</h2>
-          </div>
-        </div>
-
-        <div class="tips-grid">
-          <article class="tip-card">
-            <span class="tip-card__num">01</span>
-            <h3>Commencez par la vidéo, puis testez le code</h3>
-            <p style="font-size:.86rem">Regardez la capsule <code>.mp4</code> pour visualiser l'exécution, puis reproduisez l'exemple vous-même dans le Bac à sable avant de lire le corrigé.</p>
-          </article>
-
-          <article class="tip-card">
-            <span class="tip-card__num">02</span>
-            <h3>Soignez la cohérence HTML ↔ JS ↔ PHP ↔ SQL</h3>
-            <p style="font-size:.86rem">Au Bac pratique, vérifiez toujours que les attributs <code>id</code> (pour JS), <code>name</code> (pour PHP) et les noms de colonnes SQL correspondent au caractère près.</p>
-          </article>
-
-          <article class="tip-card">
-            <span class="tip-card__num">03</span>
-            <h3>Exploitez les annexes officielles</h3>
-            <p style="font-size:.86rem">Inutile d'apprendre par cœur ce qui figure déjà sur l'annexe du jour de l'examen : entraînez-vous avec l'onglet « Annexes » de chaque cours.</p>
-          </article>
-
-          <article class="tip-card">
-            <span class="tip-card__num">04</span>
-            <h3>Transformez chaque erreur de quiz en point gagné</h3>
-            <p style="font-size:.86rem">Relancez chaque semaine le module « Mes erreurs » depuis votre tableau de bord pour ancrer durablement les points subtils.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═════════════════════════════════════════════════════════════════════
-         NOUVEAUTÉS DE LA PLATEFORME (BADGE « NOUVEAU »)
-         ═════════════════════════════════════════════════════════════════════ -->
-    <section class="section" id="nouveautes" aria-labelledby="titre-nouveautes">
-      <div class="container">
-        <div class="section-header">
-          <div>
-            <span class="section-kicker">🆕 Journal des mises à jour</span>
-            <h2 id="titre-nouveautes">Dernières nouveautés</h2>
-          </div>
-          <a class="btn btn-secondary btn-sm" href="nouveautes.html">Tout l'historique ➜</a>
-        </div>
-
-        <div class="news-grid" id="stiNouveautesGrid" aria-live="polite">
-          <div class="card"><p>Chargement des dernières mises à jour…</p></div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ═══════════════════════════════════════════════════════════════════════
-       PIED DE PAGE (FOOTER)
-       ═══════════════════════════════════════════════════════════════════════ -->
-  <footer class="site-footer" role="contentinfo">
+  <!-- ===================== VIDÉO À LA UNE ===================== -->
+  <section class="section" style="padding-top:0" aria-labelledby="titre-une">
     <div class="container">
-      <div class="site-footer__grid">
-        <div>
-          <div class="brand-logo" style="margin-bottom:10px">
-            <span class="brand-logo__mark" aria-hidden="true"><img src="assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
-            <span class="brand-logo__text">
-              <span class="brand-logo__title">STI V2.0 — Le web de A à Z</span>
-              <span class="brand-logo__sub">Lycée Raféha · 3ème &amp; 4ème Sciences de l'Informatique</span>
-            </span>
+      <h2 id="titre-une" class="sr-only">Vidéo à la une</h2>
+      <div id="featureVideoSlot"></div>
+    </div>
+  </section>
+
+  <!-- ===================== STATISTIQUES ===================== -->
+  <section class="section" style="padding-top:0" id="cours">
+    <div class="container">
+      <div class="stats reveal">
+        <div class="stat"><div class="stat__num" data-count="13">0</div><div class="stat__label">Pages de cours</div><div class="stat__bar"></div></div>
+        <div class="stat stat--video"><div class="stat__num" data-count="8">0</div><div class="stat__label">🎥 Vidéos explicatives (.mp4)</div><div class="stat__bar"></div></div>
+        <div class="stat"><div class="stat__num" data-count="4">0</div><div class="stat__label">Quiz auto-corrigés</div><div class="stat__bar"></div></div>
+        <div class="stat"><div class="stat__num" data-count="12">0</div><div class="stat__label">Supports PDF lus partout</div><div class="stat__bar"></div></div>
+      </div>
+      <div class="alert alert--tip reveal" style="margin-top:1.5rem;--d:.12s">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg>
+        <div><strong>Bonne pratique :</strong> chaque cours possède une <strong>vidéo .mp4 commentée</strong> et une piste audio synchronisée. Regardez, mettez en pause, codez, puis validez avec le quiz. Les vidéos vues sont mémorisées dans votre tableau de bord.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCANNER MON LIVRE ===================== -->
+  <section class="section section--soft" id="livres">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><span class="dot"></span> Manuels officiels</span>
+        <h2 class="section-title">📖 Scanner mon livre</h2>
+        <p class="section-sub">Scannez les codes QR du livre papier ou ouvrez chaque leçon en ligne : <strong>3<sup>ème</sup> SI — 72 pages</strong> · <strong>4<sup>ème</sup> SI — 100 pages</strong>.</p>
+      </div>
+      <div class="manuals">
+        <article class="card book-card reveal">
+          <div class="book-card__cover"><img src="assets/images/smart-books/couverture-3si.jpg" alt="Couverture du manuel STI Smart Book 3ème SI" loading="lazy"></div>
+          <div class="book-card__body">
+            <span class="badge badge--html">3<sup>ème</sup> SI</span>
+            <h3>Smart Book — Volume 1</h3>
+            <p>72 pages, 68 fiches : HTML5, CSS3, JavaScript et découverte des bases de données.</p>
+            <div class="book-card__meta"><span class="badge">72 pages</span><span class="badge">68 fiches</span><span class="badge">QR codes</span></div>
+            <a class="btn btn--primary btn--sm" href="livre-smart.html?livre=3si-2026">📷 Scanner le manuel</a>
           </div>
-          <p style="font-size:.88rem;max-width:46ch">
-            Plateforme éducative conçue et maintenue par <strong>Aymen Essouyah</strong> pour accompagner les élèves de 3ème et 4ème SI vers la réussite.
-          </p>
-        </div>
-
-        <div>
-          <div class="site-footer__col-title">Matières</div>
-          <ul class="site-footer__list">
-            <li><a href="cours/html5.html">🌐 HTML5</a></li>
-            <li><a href="cours/css3.html">🎨 CSS3 (4 vidéos)</a></li>
-            <li><a href="cours/javascript.html">⚡ JavaScript</a></li>
-            <li><a href="cours/sql.html">🗄️ SQL</a></li>
-            <li class="sti-4si-only"><a href="cours/php.html">🐘 PHP (4e SI)</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <div class="site-footer__col-title">Outils &amp; Révision</div>
-          <ul class="site-footer__list">
-            <li><a href="livre-smart.html">📱 Scanner mon livre</a></li>
-            <li><a href="bac-pratique.html">🏆 Atelier Bac Pratique</a></li>
-            <li><a href="pieges-bac.html">⚠️ 25 Pièges du Bac</a></li>
-            <li><a href="memo-veille-bac.html">📄 Mémo A4</a></li>
-            <li><a href="glossaire.html">🌍 Glossaire FR · EN · AR</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <div class="site-footer__col-title">Espace Abonné</div>
-          <ul class="site-footer__list">
-            <li><a href="dashboard.html">📊 Mon tableau de bord</a></li>
-            <li><a href="revision-erreurs.html">🔁 Révision Mes erreurs</a></li>
-            <li><a href="portail.html">🔐 Portail de connexion</a></li>
-            <li><button type="button" class="btn btn-ghost btn-sm" style="padding:0" data-open-contact>📱 Contact &amp; QR Code</button></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="site-footer__bottom">
-        <span>© STI V2.0 · Lycée Raféha — Enseignant : Aymen Essouyah</span>
-        <span>Fonctionne en ligne &amp; hors-ligne (PWA) · Modes ☀️ Clair · 🌗 Intermédiaire · 🌙 Sombre</span>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Invitation d'installation historique, affichée une seule fois sur mobile. -->
-  <aside class="pwa-invitation" id="pwaInvitation" aria-label="Installer l’application" hidden>
-    <div class="pwa-invitation__ligne">
-      <span>📲 Installer l’application du cours</span>
-      <button type="button" class="btn btn-primary btn-sm" id="pwaInvitationInstaller">Installer</button>
-      <button type="button" class="btn btn-ghost btn-sm" id="pwaInvitationFermer" aria-label="Fermer l’invitation">✕</button>
-    </div>
-    <p id="pwaInvitationAide" role="status" hidden></p>
-  </aside>
-
-  <!-- ═══════════════════════════════════════════════════════════════════════
-       FENÊTRE MODALE CONTACT & QR CODE OFFICIEL
-       ═══════════════════════════════════════════════════════════════════════ -->
-  <div class="modal-backdrop" id="modalContactQr" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
-    <div class="modal">
-      <div class="modal__head">
-        <div>
-          <span class="badge badge-gold">📱 Accès Mobile &amp; Contact</span>
-          <h3 id="contactModalTitle" style="margin-top:6px">STI V2.0 — Lycée Raféha</h3>
-        </div>
-        <button type="button" class="modal__close" id="btnCloseContactModal" aria-label="Fermer la fenêtre Contact">✕</button>
-      </div>
-
-      <p style="font-size:.9rem;margin-bottom:16px">
-        Scannez ce QR code avec l'appareil photo de votre téléphone pour ouvrir instantanément <strong>STI V2.0</strong> et réviser partout :
-      </p>
-
-        <!-- QR code fourni avec le site original. -->
-        <div class="qr-box">
-          <img src="assets/images/qr-code-site.png" alt="QR code officiel d'accès à STI 2.0" width="190" height="190">
-        </div>
-
-      <div class="alert alert-info" style="margin-top:14px">
-        <div>
-          <strong>👨‍🏫 Enseignant : Aymen Essouyah</strong>
-          <div style="font-size:.82rem;color:var(--text-secondary);margin-top:2px">
-            Lycée Raféha · Sections 3ème &amp; 4ème Sciences de l'Informatique.<br />
-            Les élèves connectés peuvent envoyer directement une question ou leurs notes d'ateliers depuis leur espace abonné.
+        </article>
+        <article class="card book-card reveal" style="--d:.1s">
+          <div class="book-card__cover"><img src="assets/images/smart-books/couverture-4si.jpg" alt="Couverture du manuel STI Smart Book 4ème SI" loading="lazy"></div>
+          <div class="book-card__body">
+            <span class="badge badge--php">4<sup>ème</sup> SI</span>
+            <h3>Smart Book — Volume 2</h3>
+            <p>100 pages, 95 fiches : CSS avancé, JavaScript, SQL/MySQL et PHP côté serveur.</p>
+            <div class="book-card__meta"><span class="badge">100 pages</span><span class="badge">95 fiches</span><span class="badge">QR codes</span></div>
+            <a class="btn btn--primary btn--sm" href="livre-smart.html?livre=4si-2026">📷 Scanner le manuel</a>
           </div>
+        </article>
+      </div>
+      <div style="text-align:center;margin-top:1.5rem"><a class="btn btn--ghost btn--sm" href="livre-smart.html">Ouvrir le lecteur Smart Book →</a></div>
+    </div>
+  </section>
+
+  <!-- ===================== VIDÉOS EXPLICATIVES ===================== -->
+  <section class="section" id="videos">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><span class="dot"></span> Priorité vidéo</span>
+        <h2 class="section-title">Vidéos <span class="grad-text">explicatives</span></h2>
+        <p class="section-sub">8 cours filmés en .mp4 avec écoute vocale synchronisée : grandes miniatures, lecture plein écran, durée, matière et badge coloré. Vos vidéos vues sont enregistrées dans le profil abonné.</p>
+      </div>
+      <div class="filters" role="group" aria-label="Filtrer les vidéos par catégorie">
+        <button class="filter-chip is-active" type="button" data-filter="all">Tout</button>
+        <button class="filter-chip" type="button" data-filter="htmlcss">🧱 HTML5 &amp; 🎨 CSS3</button>
+        <button class="filter-chip" type="button" data-filter="js">⚡ JavaScript</button>
+        <button class="filter-chip" type="button" data-filter="sql">🗄️ SQL</button>
+        <button class="filter-chip" type="button" data-filter="php">🐘 PHP</button>
+      </div>
+      <div class="videos-grid" id="videosSlot"></div>
+      <div class="empty" id="filterEmpty" hidden>Aucun contenu pour cette catégorie.</div>
+    </div>
+  </section>
+
+  <!-- ===================== MATIÈRES ===================== -->
+  <section class="section section--soft" id="matieres">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><span class="dot"></span> Le programme</span>
+        <h2 class="section-title">Cinq matières, un parcours <span class="grad-text">complet</span></h2>
+        <p class="section-sub">Chaque matière réunit désormais <strong>Cours + Exercices + Annexes + Vidéos</strong> sur une seule page. PHP est réservé aux élèves de 4<sup>ème</sup> SI (Compte GOLD).</p>
+      </div>
+      <div class="subjects" id="matieresSlot"></div>
+    </div>
+  </section>
+
+  <!-- ===================== OUTILS ===================== -->
+  <section class="section" id="outils">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><span class="dot"></span> Boîte à outils</span>
+        <h2 class="section-title">Ateliers &amp; outils en ligne</h2>
+        <p class="section-sub">Atelier Épreuve Pratique Bac, 25 Pièges du Bac, Mémo A4 de veille, Atelier JavaScript et tous les laboratoires interactifs du site historique.</p>
+      </div>
+      <div class="tools-grid" id="outilsSlot"></div>
+    </div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="section section--soft" id="quiz">
+    <div class="container">
+      <div class="section-head reveal" style="max-width:820px">
+        <span class="eyebrow"><span class="dot"></span> S'entraîner</span>
+        <h2 class="section-title">Quiz interactifs &amp; <span class="grad-text">1 244 questions</span></h2>
+        <p class="section-sub">Quatre quiz auto-corrigés, une révision ciblée « Mes erreurs » et le Quiz des tableaux réservé aux abonnés. Vos scores remontent dans le tableau de bord.</p>
+      </div>
+      <div class="quiz-grid" id="quizSlot"></div>
+    </div>
+  </section>
+
+  <!-- ===================== CONSEILS ===================== -->
+  <section class="section" id="conseils">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><span class="dot"></span> Méthode de travail</span>
+        <h2 class="section-title">Conseils pour réussir</h2>
+        <p class="section-sub">Quelques habitudes simples, testées avec les élèves du Lycée Raféha.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:start" class="conseils-layout">
+        <div class="accordion" id="accordion">
+          <div class="acc-item is-open reveal"><button class="acc-btn" type="button" aria-expanded="true"><span class="num">01</span> Coder chaque jour, même 20 minutes<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="acc-panel"><p>La régularité crée l'automatisme. Une courte session quotidienne vaut mieux qu'une longue séance la veille du contrôle. Utilisez la console JS et le labo SQL pour pratiquer sans configuration.</p></div></div>
+          <div class="acc-item reveal" style="--d:.08s"><button class="acc-btn" type="button" aria-expanded="false"><span class="num">02</span> Comprendre avant de copier<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="acc-panel"><p>Recopier un code ne suffit pas. Modifiez-le : changez une couleur, une valeur, une condition, puis observez le résultat. C'est en cassant le code qu'on comprend comment il fonctionne.</p></div></div>
+          <div class="acc-item reveal" style="--d:.16s"><button class="acc-btn" type="button" aria-expanded="false"><span class="num">03</span> Relire ses erreurs<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="acc-panel"><p>Gardez un carnet des erreurs rencontrées (balise oubliée, point-virgule manquant, requête SQL incorrecte). La révision « Mes erreurs » rejoue automatiquement les questions ratées.</p></div></div>
+          <div class="acc-item reveal" style="--d:.24s"><button class="acc-btn" type="button" aria-expanded="false"><span class="num">04</span> Regarder la vidéo, puis faire le quiz<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><div class="acc-panel"><p>Terminez chaque chapitre par la vidéo .mp4 correspondante, puis par un quiz. Visez 80 % avant de passer au suivant. Les flashcards trilingues FR · EN · AR aident à mémoriser le vocabulaire.</p></div></div>
+        </div>
+        <div class="card reveal-scale" style="display:grid;gap:1rem">
+          <h3 style="font-size:var(--fs-lg)">🃏 Flashcards trilingues</h3>
+          <p style="color:var(--text-muted);font-size:var(--fs-sm)">Cliquez sur une carte pour révéler la traduction anglaise et arabe.</p>
+          <div class="card flashcard" tabindex="0" role="button" aria-label="Retourner la carte : Balise">
+            <div class="flashcard__inner">
+              <div class="flashcard__face"><span class="badge badge--html">HTML</span><h3>Balise</h3><p style="color:var(--text-muted)">Quel est l'équivalent anglais ?</p><span class="flashcard__hint">Cliquez pour retourner</span></div>
+              <div class="flashcard__face flashcard__face--back"><span class="badge">Tag · وسم</span><h3>« Tag »</h3><p style="color:var(--text-muted);font-size:var(--fs-sm)">Élément délimité par <code>&lt;ouvrant&gt;</code> et <code>&lt;/fermant&gt;</code>.</p></div>
+            </div>
+          </div>
+          <div class="card flashcard" tabindex="0" role="button" aria-label="Retourner la carte : Requête">
+            <div class="flashcard__inner">
+              <div class="flashcard__face"><span class="badge badge--sql">SQL</span><h3>Requête</h3><p style="color:var(--text-muted)">Quel est l'équivalent anglais ?</p><span class="flashcard__hint">Cliquez pour retourner</span></div>
+              <div class="flashcard__face flashcard__face--back"><span class="badge">Query · استعلام</span><h3>« Query »</h3><p style="color:var(--text-muted);font-size:var(--fs-sm)">Ordre envoyé à la base : <code>SELECT * FROM eleves;</code></p></div>
+            </div>
+          </div>
+          <a class="btn btn--ghost btn--sm" href="glossaire.html">Voir tout le glossaire FR · EN · AR →</a>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
-        <a class="btn btn-primary btn-sm" href="portail.html">🔐 Ouvrir le portail élève</a>
+  <!-- ===================== NOUVEAUTÉS ===================== -->
+  <section class="section section--soft" id="nouveautes">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><span class="dot"></span> Journal de bord</span>
+        <h2 class="section-title">🆕 Nouveautés de la plateforme</h2>
+        <p class="section-sub">Les dernières mises en ligne — un badge <strong>NOUVEAU</strong> signale ce qui est paru depuis votre dernière visite. <a href="nouveautes.html" style="color:var(--accent);font-weight:700">Tout l'historique →</a></p>
+      </div>
+      <div id="newsSlot"></div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="cta-band reveal-scale">
+        <span class="eyebrow"><span class="dot"></span> Prêt à commencer ?</span>
+        <h2>Votre parcours vers le développement web commence <span class="grad-text">maintenant</span>.</h2>
+        <p>Rejoignez les élèves du Lycée Raféha : cours, exercices, vidéos, quiz et outils. Tout est pensé pour votre réussite, en classe comme à la maison, même hors connexion.</p>
+        <div style="display:flex;gap:.85rem;flex-wrap:wrap;margin-top:2rem">
+          <a class="btn btn--primary" href="#matieres">Accéder aux cours →</a>
+          <a class="btn btn--ghost" href="#quiz">Faire un quiz</a>
+          <button class="btn btn--ghost" type="button" data-modal-open="modalContact">📬 Nous contacter</button>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
+</main>
+<!-- PWA : même service worker que l'original (aucune clé ni URL écrite ici) -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).catch(function () {});
+  });
+}
+</script>
 </body>
 </html>

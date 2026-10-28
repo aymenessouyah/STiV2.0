@@ -272,7 +272,7 @@
         if (btnRep) btnRep.addEventListener("click", function () { reprendreSessionTableaux(sauv); });
         var btnIgn = document.getElementById("qt-ignorer-cloud");
         if (btnIgn) btnIgn.addEventListener("click", function () {
-          if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("tableaux", sauv.etat_meta && sauv.etat_meta.partie_id);
+          if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("tableaux");
           zone.innerHTML = "";
         });
       }).catch(function () {});
@@ -297,7 +297,6 @@
       niveauChoisi = sauv.etat_meta.niveau;
     }
     sessionQuiz = {
-      partieId: STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise("tableaux", sauv) : null,
       module: sauv.module || "mix",
       questions: restaurees,
       index: Math.min(Math.max(0, parseInt(sauv.index_courant, 10) || 0), restaurees.length - 1),
@@ -325,7 +324,7 @@
       ordre_questions: s.questions.map(function (it) {
         return { qid: it.ref.id, choix: it.choix, choixEleve: it.choixEleve };
       }),
-      etat_meta: { niveau: niveauChoisi, partie_id: s.partieId }
+      etat_meta: { niveau: niveauChoisi }
     });
   }
 
@@ -388,8 +387,7 @@
     var tirees = preparerQuestionsMelangees(
       melanger(pool).slice(0, revTab ? pool.length : NB_PAR_SESSION)
     );
-    sessionQuiz = { partieId: window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null,
-      module: module, questions: tirees, index: 0, mode: "officiel", synchronise: false };
+    sessionQuiz = { module: module, questions: tirees, index: 0, mode: "officiel", synchronise: false };
     sauvegarderProgressionTableauxCloud();
     afficherQuestion();
   }
@@ -449,25 +447,20 @@
     if (s.mode === "officiel" || s.mode === "reviser_encore") {
       marquerVus(repondues.map(function (it) { return it.ref; }));
       var etat = etatEleve();
-      var precedent = s.partieId && etat.resultats.find(function (r) { return r.partie_id === s.partieId; });
-      if (!precedent || repondues.length > precedent.total) {
-        if (precedent) etat.resultats = etat.resultats.filter(function (r) { return r !== precedent; });
-        etat.resultats.push({
-          partie_id: s.partieId, ts: Date.now(), module: s.module, niveau: niveauChoisi,
-          score: bonnes.length, total: repondues.length
-        });
-      }
+      etat.resultats.push({
+        ts: Date.now(), module: s.module, niveau: niveauChoisi,
+        score: bonnes.length, total: repondues.length
+      });
       etat.resultats = etat.resultats.slice(-200);
       sauverEtat(etat);
       if (window.STIQuizSync) {
         STIQuizSync.enregistrer("tableaux", bonnes.length, repondues.length, s.module, {
           points: bonnes.length * 10,
-          ordre_questions: ordreFinal,
-          partie_id: s.partieId
+          ordre_questions: ordreFinal
         });
       }
     } else if (window.STIQuizSync && STIQuizSync.effacerSession) {
-      STIQuizSync.effacerSession("tableaux", s.partieId);
+      STIQuizSync.effacerSession("tableaux");
     }
     if (window.STIQuizSync && STIQuizSync.enregistrerReponses) {
       STIQuizSync.enregistrerReponses("tableaux", s.module, repondues.map(function (it) {
@@ -562,7 +555,6 @@
     var bErr = document.getElementById("qt-erreurs");
     if (bErr) bErr.addEventListener("click", function () {
       sessionQuiz = {
-        partieId: window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null,
         module: s.module, mode: "erreurs", synchronise: false,
         questions: preparerQuestionsMelangees(erreurs.map(function (it) { return it.ref; })),
         index: 0
@@ -574,7 +566,6 @@
     if (bRevEncore) bRevEncore.addEventListener("click", function () {
       /* Garde exactement le même ordre de questions pour vérifier sa progression, avec choix A/B/C/D remélangés */
       sessionQuiz = {
-        partieId: window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null,
         module: s.module, mode: "reviser_encore", synchronise: false,
         questions: preparerQuestionsMelangees(s.questions.map(function (it) { return it.ref; })),
         index: 0

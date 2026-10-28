@@ -272,19 +272,3 @@ body {
     flex-direction: column-reverse;
   }
 }
-
-/* En dessous de la largeur originale de 380 px, garder le formulaire
-   et l'aperçu de la carte entièrement utilisables sans défilement latéral. */
-@media (max-width: 460px) {
-  body { padding: 12px; align-items: flex-start; }
-  .container { width: 100%; gap: 20px; }
-  .card-wrapper, .form { width: min(380px, 100%); }
-  .card-wrapper { height: auto; aspect-ratio: 19 / 12; }
-  .card-number { font-size: clamp(14px, 5vw, 22px); letter-spacing: 1px; }
-  .form { padding: 20px; }
-  .row { flex-wrap: wrap; }
-}
-
-/* Indications du formulaire de démonstration, sans modifier ses couleurs. */
-.simulation-note { margin-top: 12px; font-size: 14px; line-height: 1.4; }
-.simulation-note:empty { display: none; }

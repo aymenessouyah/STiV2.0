@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-sti-heritage="interface" lang="fr">
+<html lang="fr" data-sti-titre="🛠️ Atelier JavaScript Bac">
 <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -264,10 +264,11 @@
     .res-ok { background: var(--ok-bg); color: var(--ok-ink); border-color: #16a34a; }
     .res-ko { background: var(--ko-bg); color: var(--ko-ink); border-color: #dc2626; }
   </style>
-
-<link rel="stylesheet" href="assets/css/theme-patrimoine.css">
+<!-- ===== STI V2.0 — design system (pont) ===== -->
+<link rel="stylesheet" href="assets/css/theme.css">
+<script src="assets/js/profil.js"></script>
 </head>
-<body>
+<body class="sti-legacy">
   <div class="wrap-js">
     <div class="topbar-js">
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -890,11 +891,10 @@
       };
     })();
   </script>
-  <script src="assets/js/config.js?v=425" defer></script>
   <script src="assets/js/supabase-umd.js" defer></script>
+  <script src="assets/js/config.js?v=425" defer></script>
   <script src="assets/js/acces.js?v=453" defer></script>
   <script src="assets/js/sync-progressions.js" defer></script>
-
-<script src="assets/js/profil.js" defer></script>
+<script src="assets/js/app.js" defer></script>
 </body>
 </html>

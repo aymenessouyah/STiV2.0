@@ -1,268 +1,55 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="sombre" data-taille-texte="normale">
+<html lang="fr" dir="ltr" data-theme="sombre" class="no-js">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com; worker-src 'self'; object-src 'none'; base-uri 'self';" />
-  <title>Mon Tableau de Bord Abonné | STI V2.0 – Le web de A à Z</title>
-  <meta name="description" content="Tableau de bord abonné STI V2.0 — Reprise de lecture, progression par matière, scores aux quiz, vidéos vues, notes /20 et préférences synchronisées." />
-  <meta name="theme-color" content="#0d1526" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" href="assets/icons/STI_by_AE.ico" />
-
-  <!-- Feuille de style unique du Design System STI V2.0 -->
-  <link rel="stylesheet" href="assets/css/theme.css" />
-  <link rel="stylesheet" href="assets/css/protection.css?v=227" />
-
-  <!-- Ordre strict des scripts : config -> supabase-umd -> acces -> sync-progressions -> profil -> app -->
-  <script src="assets/js/config.js?v=479"></script>
-  <script defer src="assets/js/supabase-umd.js"></script>
-  <script defer src="assets/js/acces.js?v=479"></script>
-  <script defer src="assets/js/sync-progressions.js?v=479"></script>
-  <script defer src="assets/js/profil.js"></script>
-  <script defer src="assets/js/app.js"></script>
-  <script defer src="assets/js/protection.js?v=227&amp;rev=479"></script><script src="assets/js/lecteur-commun.js" defer></script>
-<script src="assets/js/suivi-profil.js" defer></script><script src="assets/js/reconnexion-profil.js" defer></script><script src="assets/js/appel-quiz.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon tableau de bord — STI V2.0 · Le web de A à Z</title>
+<meta name="description" content="Tableau de bord de l'abonné STI V2.0 : reprise de lecture, progression par matière, scores de quiz, vidéos vues, notes /20, préférences d'affichage et nouveautés.">
+<meta name="theme-color" content="#0d1526">
+<link rel="icon" href="assets/icons/STI_by_AE.ico">
+<link rel="stylesheet" href="assets/css/theme.css">
+<!-- Ordre imposé : config → supabase → acces → sync → profil → app -->
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/supabase-umd.js" defer></script>
+<script src="assets/js/acces.js" defer></script>
+<script src="assets/js/sync-progressions.js" defer></script>
+<script src="assets/js/profil.js"></script>
+<script src="assets/js/app.js" defer></script>
 </head>
-<body class="sti-v2">
-  <a class="skip-link" href="#stiDashboardRoot">Aller au tableau de bord</a>
-  <div class="reading-progress" id="readingProgressBar" aria-hidden="true"></div>
-
-  <!-- ═══════════════════════════════════════════════════════════════════════
-       EN-TÊTE COLLANT (STICKY HEADER)
-       ═══════════════════════════════════════════════════════════════════════ -->
-  <header class="site-header" role="banner">
-    <div class="container site-header__inner">
-      <a class="brand-logo" href="index.html" aria-label="Retour à l'accueil STI V2.0">
-        <span class="brand-logo__mark" aria-hidden="true"><img src="assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
-        <span class="brand-logo__text">
-          <span class="brand-logo__title">STI V2.0</span>
-          <span class="brand-logo__sub">Espace Abonné · Lycée Raféha</span>
-        </span>
-      </a>
-
-      <nav class="site-nav" aria-label="Navigation principale">
-        <a class="site-nav__link" href="index.html#videos" data-i18n="nav.videos">Vidéos</a>
-        <a class="site-nav__link" href="index.html#cours" data-i18n="nav.cours">Cours</a>
-        <a class="site-nav__link" href="livre-smart.html" data-i18n="nav.livres">Scanner mon livre</a>
-        <a class="site-nav__link" href="index.html#quiz" data-i18n="nav.quiz">Quiz</a>
-        <a class="site-nav__link" href="glossaire.html" data-i18n="nav.glossaire">Glossaire</a>
-      </nav>
-
-      <div class="header-actions">
-        <div class="theme-switcher" role="group" aria-label="Choisir le mode d'affichage">
-          <button type="button" class="theme-switcher__btn" data-set-theme="clair" aria-pressed="false" title="Mode clair">☀️</button>
-          <button type="button" class="theme-switcher__btn" data-set-theme="intermediaire" aria-pressed="false" title="Mode intermédiaire">🌗</button>
-          <button type="button" class="theme-switcher__btn" data-set-theme="sombre" aria-pressed="true" title="Mode sombre">🌙</button>
-        </div>
-
-        <div data-subscriber-slot></div>
-
-        <button type="button" class="burger-btn" id="stiBurgerBtn" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="stiMobileNav">
-          ☰
-        </button>
-      </div>
-    </div>
-
-    <nav class="mobile-nav-drawer container" id="stiMobileNav" aria-label="Navigation mobile">
-      <a class="site-nav__link" href="index.html">🏠 Accueil STI V2.0</a>
-      <a class="site-nav__link" href="index.html#videos">🎥 Vidéos explicatives</a>
-      <a class="site-nav__link" href="index.html#cours">📚 Cours &amp; Matières</a>
-      <a class="site-nav__link" href="revision-erreurs.html">🔁 Révision Mes erreurs</a>
-      <a class="site-nav__link" href="glossaire.html">🌍 Glossaire FR · EN · AR</a>
-    </nav>
-  </header>
-
-  <!-- ═══════════════════════════════════════════════════════════════════════
-       TABLEAU DE BORD ABONNÉ COMPLET
-       ═══════════════════════════════════════════════════════════════════════ -->
-  <main id="stiDashboardRoot" class="section" style="padding-top:32px">
+<body data-page="dashboard">
+<a class="sr-only" href="#contenu">Aller au contenu principal</a>
+<main id="contenu">
+  <section class="section" style="padding-top:2.5rem">
     <div class="container">
-      <!-- Bandeau profil + Anneau SVG de progression globale -->
-      <section class="dash-hero" aria-label="Synthèse de mon profil abonné">
-        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-          <div class="sub-avatar" id="dashAvatar" style="width:62px;height:62px;font-size:1.35rem">AB</div>
-          <div>
-            <span class="section-kicker" data-i18n="dash.titre">Mon tableau de bord</span>
-            <h1 style="font-size:clamp(1.45rem,2.8vw,2rem);margin-bottom:6px">
-              Bonjour, <span id="dashWelcomeName">Abonné</span> 👋
-            </h1>
-            <div id="dashSessionStatus"></div>
-          </div>
+      <div class="section-head" style="margin-bottom:1.5rem">
+        <span class="eyebrow"><span class="dot"></span> Espace abonné · ⭐ Compte GOLD</span>
+        <h1 class="section-title">Mon tableau de bord</h1>
+        <p class="section-sub">Toutes vos données sont stockées localement dans l'objet <code>profilAbonne</code> (clé <code>sti-profil-abonne</code>) et synchronisées sur le cloud uniquement si une session Supabase est active.</p>
+      </div>
+
+      <!-- Sélecteur à 3 modes, également présent sur le tableau de bord -->
+      <div class="card card--flat reveal" style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;padding:1rem 1.5rem">
+        <strong style="font-size:var(--fs-sm)">🎨 Mode d'affichage</strong>
+        <div class="modes modes--large" role="group" aria-label="Choisir le mode d'affichage">
+          <button type="button" data-theme-segment="sombre" aria-pressed="true"><span class="em">🌙</span> Sombre</button>
+          <button type="button" data-theme-segment="clair" aria-pressed="false"><span class="em">☀️</span> Clair</button>
+          <button type="button" data-theme-segment="intermediaire" aria-pressed="false"><span class="em">◐</span> Intermédiaire</button>
         </div>
+        <span style="color:var(--text-dim);font-size:var(--fs-xs)">Le choix est mémorisé et appliqué avant l'affichage sur toutes les pages.</span>
+      </div>
 
-        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-          <!-- Anneau circulaire de progression -->
-          <div class="progress-ring" title="Progression globale des matières révisées">
-            <svg width="84" height="84" viewBox="0 0 84 84" aria-hidden="true">
-              <circle class="progress-ring__track" cx="42" cy="42" r="34" stroke-width="7"></circle>
-              <circle class="progress-ring__value" id="dashProgressCircle" cx="42" cy="42" r="34" stroke-width="7" stroke-dasharray="213.6" stroke-dashoffset="213.6"></circle>
-            </svg>
-            <span class="progress-ring__label" id="dashProgressLabel">0%</span>
-          </div>
+      <!-- Le contenu dynamique est rendu par app.js à partir de STIProfil -->
+      <div id="dashboardRoot"></div>
 
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button type="button" class="btn btn-primary btn-sm" id="dashOuvrirCompte">⚙️ Ouvrir mon compte d’origine</button>
-            <a class="btn btn-secondary btn-sm" href="index.html">← Retour à l'accueil</a>
-            <button type="button" class="btn btn-danger btn-sm" id="btnDashboardLogout" data-i18n="dash.deconnexion">🚪 Se déconnecter</button>
-          </div>
-        </div>
-      </section>
+      <noscript>
+        <div class="alert alert--warn">Activez JavaScript pour afficher votre tableau de bord (progression, quiz, vidéos et préférences).</div>
+      </noscript>
 
-      <!-- Grille principale des modules abonnés -->
-      <div class="dash-grid">
-        <!-- 1. Reprise de lecture -->
-        <article class="dash-card">
-          <div class="dash-card__head">
-            <h2>📍 Reprise de lecture</h2>
-            <span class="badge">Auto-sauvegardé</span>
-          </div>
-          <div id="dashResumeContent"></div>
-        </article>
-
-        <!-- 2. Progression par matière (« X / 5 révisés ») -->
-        <article class="dash-card">
-          <div class="dash-card__head">
-            <h2>📚 Progression par matière</h2>
-            <span class="badge badge-sql" id="dashRevisedBadge">0 / 5 révisés</span>
-          </div>
-          <div class="dash-list" id="dashSubjectsList"></div>
-        </article>
-
-        <!-- 3. Mes quiz & Rejouer mes erreurs -->
-        <article class="dash-card">
-          <div class="dash-card__head">
-            <h2>🎯 Mes quiz &amp; erreurs</h2>
-            <a class="btn btn-primary btn-sm" href="revision-erreurs.html">🔁 Rejouer mes erreurs</a>
-          </div>
-          <div class="dash-list" id="dashQuizList"></div>
-        </article>
-
-        <!-- 4. Mes vidéos (vues + à reprendre) -->
-        <article class="dash-card">
-          <div class="dash-card__head">
-            <h2>🎥 Mes vidéos explicatives</h2>
-            <span class="badge badge-css" id="dashVideosBadge">0 / 8 vues</span>
-          </div>
-          <div class="dash-list" id="dashVideosList"></div>
-        </article>
-
-        <!-- 5. Ma cote / notes /20 envoyées au professeur -->
-        <article class="dash-card">
-          <div class="dash-card__head">
-            <h2>🏅 Ma cote &amp; notes (/20)</h2>
-            <span class="badge badge-gold" id="dashNotesAvgBadge">— / 20</span>
-          </div>
-          <p style="font-size:.83rem">Historique des notes obtenues sur les ateliers notés et transmises à l'enseignant.</p>
-          <div class="dash-list" id="dashNotesList"></div>
-        </article>
-
-        <!-- 6. Contenus réservés aux abonnés -->
-        <article class="dash-card">
-          <div class="dash-card__head">
-            <h2>⭐ Contenus privilégiés abonnés</h2>
-            <span class="badge badge-gold">Compte GOLD</span>
-          </div>
-          <div class="dash-list">
-            <div class="dash-row">
-              <div>
-                <strong>📊 Quiz intensif des Tableaux</strong>
-                <div style="font-size:.76rem;color:var(--text-muted)">Tableaux HTML, JS et tableaux associatifs PHP</div>
-              </div>
-              <a class="btn btn-primary btn-sm" href="quiz/tableaux.html">Ouvrir ➜</a>
-            </div>
-            <div class="dash-row">
-              <div>
-                <strong>🏆 Sujets complets Atelier Bac Pratique</strong>
-                <div style="font-size:.76rem;color:var(--text-muted)">Entraînement noté sur 20 avec corrigés</div>
-              </div>
-              <a class="btn btn-secondary btn-sm" href="bac-pratique.html">Ouvrir ➜</a>
-            </div>
-            <div class="dash-row">
-              <div>
-                <strong>📱 Smart Book 3e SI (72 p.) &amp; 4e SI (100 p.)</strong>
-                <div style="font-size:.76rem;color:var(--text-muted)">Scanner QR + impression haute qualité (GOLD)</div>
-              </div>
-              <a class="btn btn-secondary btn-sm" href="livre-smart.html">Ouvrir ➜</a>
-            </div>
-            <div class="dash-row">
-              <div>
-                <strong>📄 Mémo A4 Veille du Bac</strong>
-                <div style="font-size:.76rem;color:var(--text-muted)">Synthèse condensée prête à imprimer</div>
-              </div>
-              <a class="btn btn-secondary btn-sm" href="memo-veille-bac.html">Ouvrir ➜</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- 7. Nouveautés non lues -->
-        <article class="dash-card">
-          <div class="dash-card__head">
-            <h2>🆕 Nouveautés non lues</h2>
-            <div style="display:flex;gap:8px;align-items:center">
-              <span class="badge badge-new" id="dashNewsCountBadge">Chargement…</span>
-              <button type="button" class="btn btn-ghost btn-sm" id="btnMarkAllNewsRead">Tout lu</button>
-            </div>
-          </div>
-          <div class="dash-list" id="dashUnreadNews"></div>
-        </article>
-
-        <!-- 8. Préférences personnelles (Mode, Langue FR·EN·AR, Taille du texte, Prénom) -->
-        <article class="dash-card">
-          <div class="dash-card__head">
-            <h2>⚙️ Mes préférences d'affichage</h2>
-            <span class="badge">Clé cloud : sti-profil-abonne</span>
-          </div>
-
-          <form id="dashPrenomForm" style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
-            <label style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:5px;font-size:.82rem;font-weight:700;color:var(--text-secondary)">
-              Mon prénom affiché dans l'en-tête
-              <input type="text" id="dashPrenomInput" maxlength="48" placeholder="Ex. Yasmine, Ahmed…" style="padding:9px 12px;border-radius:var(--radius-md);border:1px solid var(--border-strong);background:var(--bg-elevated);color:var(--text)" />
-            </label>
-            <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
-          </form>
-
-          <div>
-            <span style="display:block;font-size:.82rem;font-weight:700;color:var(--text-secondary);margin-bottom:6px">Mode d'affichage (sans flash au rechargement)</span>
-            <div class="segmented" role="group" aria-label="Mode d'affichage">
-              <button type="button" class="segmented__btn" data-set-theme="clair">☀️ Clair</button>
-              <button type="button" class="segmented__btn" data-set-theme="intermediaire">🌗 Intermédiaire</button>
-              <button type="button" class="segmented__btn" data-set-theme="sombre">🌙 Sombre</button>
-            </div>
-          </div>
-
-          <div>
-            <span style="display:block;font-size:.82rem;font-weight:700;color:var(--text-secondary);margin-bottom:6px">Langue de l'interface (bascule RTL automatique en arabe)</span>
-            <div class="segmented" role="group" aria-label="Langue de l'interface">
-              <button type="button" class="segmented__btn" data-set-lang="fr">🇫🇷 Français</button>
-              <button type="button" class="segmented__btn" data-set-lang="en">🇬🇧 English</button>
-              <button type="button" class="segmented__btn" data-set-lang="ar">🇹🇳 العربية</button>
-            </div>
-          </div>
-
-          <div>
-            <span style="display:block;font-size:.82rem;font-weight:700;color:var(--text-secondary);margin-bottom:6px">Confort de lecture (taille du texte)</span>
-            <div class="segmented" role="group" aria-label="Taille du texte">
-              <button type="button" class="segmented__btn" data-set-fontsize="petite">A- Compacte</button>
-              <button type="button" class="segmented__btn" data-set-fontsize="normale">A Normale</button>
-              <button type="button" class="segmented__btn" data-set-fontsize="grande">A+ Grande</button>
-            </div>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:6px;border-top:1px solid var(--border)">
-            <span style="font-size:.76rem;color:var(--text-muted)">Synchronisé automatiquement vers le cloud à la connexion.</span>
-            <button type="button" class="btn btn-ghost btn-sm" id="btnResetProfil">↺ Réinitialiser</button>
-          </div>
-        </article>
+      <div class="alert alert--gold reveal" style="margin-top:2rem">
+        <strong>🔒 Confidentialité :</strong> aucune donnée n'est envoyée sans votre connexion. La synchronisation est assurée par les scripts historiques (table <code>sti_progressions</code>), réutilisés tels quels.
       </div>
     </div>
-  </main>
-
-  <footer class="site-footer" role="contentinfo">
-    <div class="container site-footer__bottom" style="border-top:0;padding-top:0">
-      <span>© STI V2.0 · Lycée Raféha — Enseignant : Aymen Essouyah</span>
-      <a href="index.html">← Retourner à l'accueil STI V2.0</a>
-    </div>
-  </footer>
+  </section>
+</main>
 </body>
 </html>

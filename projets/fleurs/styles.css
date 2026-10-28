@@ -341,19 +341,3 @@ partie Vidéo : Votre navigateur ne prend pas en charge les vidéos HTML5. Voici
   ==> longueur maximale = 30 et si on l'atteint on bloque la zone du texte
 - Le bouton submit ne serait débloqué que lorsque la case est cochée
 */
-
-/* La colonne fixe de 400 px masquait le formulaire sur les écrans courants
-   et dans la visionneuse : conserver le contenu sans superposer les commandes. */
-@media (max-width: 2100px) {
-  .projet-fleurs-accueil > article {
-    position: static;
-    box-sizing: border-box;
-    width: 100%;
-    margin-block: 1rem;
-  }
-  .projet-fleurs-accueil > article:hover { transform: none; }
-  .projet-fleurs-accueil > main { flex-wrap: wrap; }
-  .projet-fleurs-accueil > main > nav,
-  .projet-fleurs-accueil > main > section { box-sizing: border-box; width: 100%; }
-  .projet-fleurs-accueil > main > nav ul { display: flex; flex-wrap: wrap; gap: .75rem 2rem; }
-}

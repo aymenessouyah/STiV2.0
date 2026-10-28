@@ -13,9 +13,7 @@
     { motif: "explore-tunisie-float", nom: "TP Explore Tunisie — Mise en page Float", lien: "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html" },
     { motif: "explore-tunisie-flex", nom: "TP Explore Tunisie — Mise en page Flexbox", lien: "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html" },
     { motif: "javascript-cours", nom: "JavaScript — Le cours complet", lien: "cours/javascript.html" },
-    { motif: "validation-nom-prenom-js", nom: "JavaScript — Validation Nom & Prénom", lien: "exercices/series-exercices.html#js" },
     { motif: "sql-guide-requete", nom: "SQL — Comment construire une requête", lien: "exercices/sql/CommentConstruireunerequêteSQL.html" },
-    { motif: "sql-serie4-2", nom: "SQL — Série 4.2 (GestLocation)", lien: "exercices/series-exercices.html#sql" },
     { motif: "sql-serie1", nom: "SQL — Série n°1 (Partie 4 Bac)", lien: "cours/sql.html#bac" },
     { motif: "sql-serie2", nom: "SQL — Série n°2 (Partie 4 Bac)", lien: "cours/sql.html#bac" },
     { motif: "sql-serie3", nom: "SQL — Série n°3 (Partie 4 Bac)", lien: "cours/sql.html#bac" },
@@ -77,7 +75,6 @@
     Object.keys(prog).forEach(function (k) {
       if (mode3si && String(k).toLowerCase().indexOf("php") !== -1) return;
       var v = prog[k];
-      if (v && typeof v === "object" && v.repriseMasquee) return;
       var sec = typeof v === "number" ? v : (v && Number(v.t || v.time || v.sec || 0));
       var ts = (v && Number(v.maj || v.ts || 0)) || 0;
       if (sec > 15) {
@@ -101,28 +98,7 @@
       + '<button type="button" id="sti-reprendre-x" title="Masquer" style="padding:7px 11px;border-radius:999px;border:2px solid #1a1a2e;background:#fff;font-weight:800;cursor:pointer">✕</button></div>';
     cible.parentNode.insertBefore(box, cible);
     document.getElementById("sti-reprendre-x").addEventListener("click", function () {
-      try {
-        var cur = prog[meilleure.cle];
-        if (cur && typeof cur === "object") {
-          var prevMax = Math.max(Number(cur.maxPct) || 0, Number(cur.pct) || 0, meilleure.sec >= 2 ? 1 : 0);
-          var done = Boolean(cur.done || prevMax >= 88);
-          prog[meilleure.cle] = {
-            pct: done ? 100 : Math.max(1, Number(cur.pct) || prevMax),
-            maxPct: done ? 100 : prevMax,
-            sec: 0,
-            dur: Math.max(0, Number(cur.dur) || 0),
-            done: done,
-            repriseMasquee: true,
-            ts: Date.now()
-          };
-        } else {
-          prog[meilleure.cle] = { pct: 1, maxPct: 1, sec: 0, dur: 0, done: false, repriseMasquee: true, ts: Date.now() };
-        }
-        localStorage.setItem("sti-media-prog-v1", JSON.stringify(prog));
-        if (typeof window.dispatchEvent === "function" && typeof CustomEvent === "function") {
-          window.dispatchEvent(new CustomEvent("sti-media-prog-updated", { detail: { cle: meilleure.cle, entry: prog[meilleure.cle] } }));
-        }
-      } catch (e) {}
+      try { delete prog[meilleure.cle]; localStorage.setItem("sti-media-prog-v1", JSON.stringify(prog)); } catch (e) {}
       box.remove();
     });
   }

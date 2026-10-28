@@ -3,159 +3,25 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v354";
+var CACHE = "sti-atelier-v339";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés (1 seule entrée par URL).
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v493-onglets-mobile-20261028";
-/* Historique caches : sti-atelier-v353, sti-atelier-v352, sti-atelier-v351, sti-atelier-v350, sti-atelier-v349, sti-atelier-v348, sti-atelier-v347, sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v492-progression-chapitres-20261028, v491-suivi-contextes-20261028, v490-xp-parties-pwa-20261028, v489-reconnexion-delta-20261028, v488-badge-image-20261028, v486-cours-retour-xp-20261027, v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
+var UPDATE_ID = "v478-xp-quiz-monotone";
+/* Historique caches : sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
 var UPDATE_FILES = [
-  { url: "./assets/js/cours-onglets-mobile.js", revision: "onglets-mobile-v493", refreshIfCached: true },
-  { url: "./assets/js/appel-quiz.js", revision: "suivi-contextes-v491" },
-  { url: "./assets/js/suivi-profil.js", revision: "suivi-contextes-v491" },
-  { url: "./assets/js/reconnexion-profil.js", revision: "suivi-contextes-v491" },
-  /* Pages et modules légers modifiés par la fidélité visuelle ; seuls les fichiers déjà visités sont invalidés. */
-  { url: "./Positionnement-animee/index.html", revision: "fidelite-origine-v481" },
-  { url: "./assets/css/theme-patrimoine.css", revision: "fidelite-origine-v481" },
-  { url: "./assets/js/lecteur-commun.js", revision: "video-js-validation-v485" },
-  { url: "./assets/subtitles/validation-nom-prenom-js-fr.vtt", revision: "video-js-validation-v485" },
-  { url: "./assets/js/retour-quiz.js", revision: "suivi-contextes-v491" },
-  { url: "./cours/PHP-recap.html", revision: "fidelite-origine-v481" },
-  { url: "./cours/Recap-JavaScript-STI.html", revision: "fidelite-origine-v481" },
-  { url: "./cours/annexe-fleuriste-html5.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./cours/datalist.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./cours/php-recap.html", revision: "fidelite-origine-v481" },
-  { url: "./cssanimee/index.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/annexes/annexe-css3.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/annexes/annexe-javascript.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/annexes/annexe-php.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/annexes/annexe-sql.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/complet/complet-3eme-si-bd.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/complet/complet-3eme-si.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/complet/complet-4eme-si-cours.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/complet/complet-4eme-si-resume.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-float.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index-position.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/html-css/TP1-css.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/html-css/TP2-css.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/html-css/TP2/tp2corrposition.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/html-css/TP3-css.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/html-css/activite-html-css/Act1/page1.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/html-css/activite-html-css/Act2/page2.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/html-css/activite1-2-position-animation-css3.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/html-css/box-shadow-text-shadow-css3.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/html-css/emploi-temps/emploidutemps.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/html-css/formulaire-inscription.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/javascript/Tp1-Correction-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/javascript/Tp1-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/javascript/Tp2-Correction-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/javascript/Tp2-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/javascript/Tp3-Correction-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/javascript/Tp3-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/javascript/Tp4-Correction-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/javascript/Tp4-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/javascript/Tp5-Correction-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/javascript/Tp5-js.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/php/4STi-dc-6-2025-2026.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/Tp1-Correction-php.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/Tp1-php.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/Tp2-Correction-php.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/php/Tp2-php.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/php/Tp3-correction-php.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/php/Tp3-php.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/php/Tp4-Correction-php.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/Tp4-php.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/Tp5-Correction-php.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/Tp5-php.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/sondage-parcours-pas-a-pas.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/statphpanimee.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/resume-fonctions-standards.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp-GroupBy-bd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp-date-ssr-j-gp-bd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp-date-ssr-j-gp-correction-bd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp1-Correction-bd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp1-bd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp2-Correction-bd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp2-bd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp3-Correction-bd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/Tp4-correction-bd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/atelier_sql_3_fenetres.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/sql-correction.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./exercices/sql/sql.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./projets/carte-bancaire/enonce-tp-carte-bancaire.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/fleurs/Corrections.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/fleurs/media/projet-fleurs-4sti-eleve.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/formulaire-inscription/enonce/cvFleurs-énoncé/formulaire inscription.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/site-tunisie/correction-details/carte-timbre-droite-haut.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/site-tunisie/enonce.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/site-tunisie/index.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/site-tunisie/pages/accueil.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/site-tunisie/pages/centre.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/site-tunisie/pages/nord.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/site-tunisie/pages/sud.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/site-tunisie/site-tunisie-Correction-animation-html-css.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/sti0/Sondage.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/sti0/Statistiques.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/sti0/index.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/sti0/projetsti0.pdf.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/sti0/sondage.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/sti0/statistiques.html", revision: "fidelite-origine-v481" },
-  /* La visionneuse, les logos et le complément de démonstration restent locaux. */
-  { url: "./assets/css/visionneuse-exercices.css", revision: "fidelite-origine-v481" },
-  { url: "./assets/js/visionneuse-exercices.js", revision: "fidelite-origine-v481" },
-  { url: "./assets/icons/matieres.svg", revision: "suivi-contextes-v491" },
-  { url: "./projets/carte-bancaire/demo.js", revision: "fidelite-origine-v481" },
-  /* Pages SQL/PHP et ressources légères de leur refonte. */
-  { url: "./assets/css/cours-matieres.css", revision: "fidelite-origine-v481" },
-  { url: "./assets/css/cours-sql-heritage.css", revision: "refonte-sql-php-20261027" },
-  { url: "./assets/css/cours-php-heritage.css", revision: "refonte-sql-php-20261027" },
-  { url: "./assets/js/cours-matieres.js", revision: "progression-chapitres-v492", refreshIfCached: true },
-  { url: "./assets/js/cours-media-reperes.js", revision: "refonte-sql-php-20261027" },
-  { url: "./assets/js/cours-sql-animations.js", revision: "refonte-sql-php-20261027" },
-  { url: "./assets/js/cours-sql-voix.js", revision: "refonte-sql-php-20261027" },
-  { url: "./assets/js/cours-sql-worker.js", revision: "refonte-sql-php-20261027" },
-  /* Refonte HTML5, CSS3 et JavaScript : invalider les versions précédentes sans toucher aux accès. */
-  { url: "./assets/css/dialogues-compat.css", revision: "correctif-ressources-js-20261027" },
-  { url: "./assets/js/dialogues-compat.js", revision: "fidelite-origine-v481" },
-  { url: "./projets/fleurs/index.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/fleurs/inscription.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/fleurs/controle.js", revision: "fidelite-origine-v481" },
-  { url: "./projets/fleurs/styles.css", revision: "correctif-ressources-js-20261027" },
-  { url: "./projets/formulaire-inscription/cvFleurs.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/carte-bancaire/cb.html", revision: "fidelite-origine-v481" },
-  { url: "./projets/carte-bancaire/controle.js", revision: "fidelite-origine-v481" },
-  { url: "./projets/carte-bancaire/style.css", revision: "correctif-ressources-js-20261027" },
-  { url: "./assets/css/cours-javascript.css", revision: "correctif-ressources-js-20261027" },
-  { url: "./assets/js/cours-javascript.js", revision: "progression-chapitres-v492", refreshIfCached: true },
-  { url: "./assets/css/cours-css3.css", revision: "videos-pas-a-pas-css3-20261027" },
-  { url: "./assets/js/cours-css3.js", revision: "progression-chapitres-v492", refreshIfCached: true },
-  { url: "./dashboard.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./assets/css/theme.css", revision: "badge-reprise-v483" },
-  { url: "./assets/css/badge-compte.css", revision: "badge-image-v488" },
-  { url: "./assets/images/badge-compte-vierge.png", revision: "badge-image-v488", bootstrapBySize: true, bytes: 61624, sha256: "5db4dd880a51ad29b9bf2a931ac678c1c07eccc7b6cc0c5c10e3dc233c65c576" },
-  { url: "./assets/icons/sti-icon-192.png", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 46307, sha256: "3cb051093c543b33427d00126f859678f8d696b3be3e22265ad3a0a548727714" },
-  { url: "./assets/images/qr-code-site.png", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 9391, sha256: "b21601d270b3f2d6971100d77e1a11232a9d34bf475caa7be6c3542c96328cd0" },
-  { url: "./assets/css/cours.css", revision: "onglets-mobile-v493", refreshIfCached: true },
-  { url: "./assets/js/app.js", revision: "progression-chapitres-v492" },
-  { url: "./assets/js/profil.js", revision: "suivi-contextes-v491" },
-  { url: "./assets/js/cours-html5.js", revision: "progression-chapitres-v492", refreshIfCached: true },
-  { url: "./index.html", revision: "suivi-contextes-v491" },
-  { url: "./admin.html", revision: "compteur-media-v479" },
-  { url: "./README.md", revision: "onglets-mobile-v493" },
-  { url: "./package.json", revision: "xp-operations-v487" },
-  { url: "./package-lock.json", revision: "xp-operations-v487" },
-  { url: "./assets/data/nouveautes.json", revision: "compteur-media-v479" },
-  { url: "./assets/js/config.js", revision: "compteur-media-v479" },
-  { url: "./assets/js/acces.js", revision: "compteur-media-v479" },
-  { url: "./assets/js/protection.js", revision: "video-js-validation-v485" },
-  { url: "./assets/js/mobile-nav.js", revision: "xp-pwa-v490" },
+  { url: "./index.html", revision: "xp-quiz-monotone-v478" },
+  { url: "./admin.html", revision: "xp-quiz-monotone-v478" },
+  { url: "./README.md", revision: "xp-quiz-monotone-v478" },
+  { url: "./assets/data/nouveautes.json", revision: "xp-quiz-monotone-v478" },
+  { url: "./assets/js/config.js", revision: "xp-quiz-monotone-v478" },
+  { url: "./assets/js/acces.js", revision: "maj-version-v477" },
+  { url: "./assets/js/protection.js", revision: "perf-quiz-php-v474" },
+  { url: "./assets/js/mobile-nav.js", revision: "perf-quiz-php-v474" },
   { url: "./assets/js/roue-nuage.js", revision: "perf-quiz-php-v474" },
-  { url: "./assets/js/roue-habillage.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 8050, sha256: "0cbd800edc65bb32fa9f370071ce4405c30b2088a72ef89119d14232685557fc" },
-  { url: "./assets/js/roue-initiales.js", revision: "badge-image-v488" },
+  { url: "./assets/js/roue-habillage.js", revision: "perf-quiz-php-v474" },
+  { url: "./assets/js/roue-initiales.js", revision: "perf-quiz-php-v474" },
   { url: "./assets/css/quiz-php-tw.css", revision: "perf-quiz-php-v474" },
   { url: "./assets/css/quiz-sql-tw.css", revision: "perf-quiz-php-v474" },
   { url: "./assets/css/quiz-js-tw.css", revision: "perf-quiz-php-v474" },
@@ -167,70 +33,70 @@ var UPDATE_FILES = [
   { url: "./assets/fonts/nunito-var.woff2", revision: "nav-fluide-v475" },
   { url: "./assets/fonts/inter-var.woff2", revision: "nav-fluide-v475" },
   { url: "./assets/fonts/jetbrains-mono-var.woff2", revision: "nav-fluide-v475" },
-  { url: "./quiz/php.html", revision: "xp-pwa-v490" },
-  { url: "./quiz/sql.html", revision: "xp-pwa-v490" },
-  { url: "./quiz/javascript.html", revision: "xp-pwa-v490" },
-  { url: "./cours/sql.html", revision: "onglets-mobile-v493", refreshIfCached: true },
-  { url: "./cours/sql-contraintes.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/debogage-php-bac.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/ordre-php-bac.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/php/trace-fetch-php.html", revision: "fidelite-origine-v481" },
-  { url: "./memo-veille-bac.html", revision: "fidelite-origine-v481" },
-  { url: "./outils-js-bac.html", revision: "fidelite-origine-v481" },
-  { url: "./pieges-bac.html", revision: "fidelite-origine-v481" },
-  { url: "./offline-complete-manifest.json", revision: "onglets-mobile-v493" },
-  { url: "./ma-fiche-revision.html", revision: "fidelite-origine-v481" },
-  { url: "./assets/js/roue-couverture.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 12067, sha256: "cd2945426f4dee9bd8bf6c6c51afa100c79a9fbf6d1de2fbd61fff5420ee29b0" },
+  { url: "./quiz/php.html", revision: "xp-quiz-monotone-v478" },
+  { url: "./quiz/sql.html", revision: "xp-quiz-monotone-v478" },
+  { url: "./quiz/javascript.html", revision: "xp-quiz-monotone-v478" },
+  { url: "./cours/sql.html", revision: "nav-fluide-v475" },
+  { url: "./cours/sql-contraintes.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/php/debogage-php-bac.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/php/ordre-php-bac.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/php/trace-fetch-php.html", revision: "nav-fluide-v475" },
+  { url: "./memo-veille-bac.html", revision: "nav-fluide-v475" },
+  { url: "./outils-js-bac.html", revision: "nav-fluide-v475" },
+  { url: "./pieges-bac.html", revision: "nav-fluide-v475" },
+  { url: "./offline-complete-manifest.json", revision: "xp-quiz-monotone-v478" },
+  { url: "./ma-fiche-revision.html", revision: "nav-fluide-v475" },
+  { url: "./assets/js/roue-couverture.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/roue-revision.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/roue-plan.js", revision: "perf-fluide-v473" },
-  { url: "./assets/js/sync-progressions.js", revision: "compteur-media-v479" },
-  { url: "./assets/js/admin.js", revision: "compteur-media-v479" },
+  { url: "./assets/js/sync-progressions.js", revision: "xp-quiz-monotone-v478" },
+  { url: "./assets/js/admin.js", revision: "maj-version-v477" },
   { url: "./assets/js/quiz-admin.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/sauvegarde.js", revision: "perf-fluide-v473" },
-  { url: "./assets/js/reprendre.js", revision: "compteur-media-v479" },
+  { url: "./assets/js/reprendre.js", revision: "test-plateforme-v472" },
   { url: "./assets/js/sante.js", revision: "tester-tout-v471" },
-  { url: "./revision-erreurs.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./bac-pratique.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/series-exercices.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./cours/courscss3.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./cours/css3.html", revision: "onglets-mobile-v493", refreshIfCached: true },
-  { url: "./cours/coursphp.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./cours/php.html", revision: "onglets-mobile-v493", refreshIfCached: true },
-  { url: "./cours/javascript.html", revision: "onglets-mobile-v493", refreshIfCached: true },
-  { url: "./cours/fiche-revision-html5.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./quiz/html-css.html", revision: "xp-pwa-v490" },
+  { url: "./revision-erreurs.html", revision: "retour-quiz-v476" },
+  { url: "./bac-pratique.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/series-exercices.html", revision: "retour-quiz-v476" },
+  { url: "./cours/courscss3.html", revision: "nav-fluide-v475" },
+  { url: "./cours/css3.html", revision: "nav-fluide-v475" },
+  { url: "./cours/coursphp.html", revision: "nav-fluide-v475" },
+  { url: "./cours/php.html", revision: "nav-fluide-v475" },
+  { url: "./cours/javascript.html", revision: "nav-fluide-v475" },
+  { url: "./cours/fiche-revision-html5.html", revision: "nav-fluide-v475" },
+  { url: "./quiz/html-css.html", revision: "xp-quiz-monotone-v478" },
   { url: "./assets/js/portail.js", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/quiz-sync.js", revision: "xp-pwa-v490" },
-  { url: "./assets/js/quiz-tableaux.js", revision: "xp-pwa-v490" },
+  { url: "./assets/js/quiz-sync.js", revision: "xp-quiz-monotone-v478" },
+  { url: "./assets/js/quiz-tableaux.js", revision: "audit-fonctionnel-v470" },
   { url: "./documents/sql/sauvegarde-auto-drive.gs", revision: "audit-fonctionnel-v470" },
-  { url: "./documents/annexes/annexe-html5.pdf.html", revision: "fidelite-origine-v481" },
+  { url: "./documents/annexes/annexe-html5.pdf.html", revision: "nav-fluide-v475" },
   { url: "./assets/js/admin-couverture.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/admin-revision.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/graphiques-activite.js", revision: "nav-fluide-v475" },
-  { url: "./assets/js/analytique.js", revision: "compteur-media-v479" },
-  { url: "./quiz/pp.html", revision: "fidelite-origine-v481" },
-  { url: "./quiz/tableaux.html", revision: "suivi-contextes-v491", refreshIfCached: true },
+  { url: "./assets/js/analytique.js", revision: "pagination-integrale-v469" },
+  { url: "./quiz/pp.html", revision: "retour-quiz-v476" },
+  { url: "./quiz/tableaux.html", revision: "xp-quiz-monotone-v478" },
   { url: "./manifest.webmanifest", revision: "dbsupbase-v466" },
   { url: "./assets/js/admin-dbsupbase.js", revision: "dbsupbase-v466" },
   { url: "./assets/js/cote-ticker.js", revision: "nav-fluide-v465" },
-  { url: "./cours/php-mysqli.html", revision: "fidelite-origine-v481" },
+  { url: "./cours/php-mysqli.html", revision: "nav-fluide-v475" },
   { url: "./assets/js/modules/mobile-diagnostics.js", revision: "verif-e2e-v464" },
   { url: "./assets/js/admin-erreurs.js", revision: "nav-fluide-v475" },
-  { url: "./cours/sql-playground.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./documents/complet/fiche-memento-synthese.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/enonces/enonce-serie4-a4.html", revision: "fidelite-origine-v481" },
-  { url: "./documents/enonces/enonce-serie5-a4.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/javascript/js-37-defis-tt.html", revision: "fidelite-origine-v481" },
-  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "fidelite-origine-v481" },
+  { url: "./cours/sql-playground.html", revision: "nav-fluide-v475" },
+  { url: "./documents/complet/fiche-memento-synthese.html", revision: "nav-fluide-v475" },
+  { url: "./documents/enonces/enonce-serie4-a4.html", revision: "nav-fluide-v475" },
+  { url: "./documents/enonces/enonce-serie5-a4.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/javascript/js-37-defis-tt.html", revision: "nav-fluide-v475" },
+  { url: "./exercices/sql/CommentConstruireunerequêteSQL.html", revision: "nav-fluide-v475" },
   { url: "./assets/css/admin-saas.css", revision: "nav-fluide-v475" },
   { url: "./assets/data/quiz-banque.json", revision: "quiz-revision-2-v458" },
   { url: "./assets/pages-couverture.json", revision: "quiz-lot-d-v457" },
   { url: "./assets/js/quiz-tableaux-boot.js", revision: "quiz-lots-abc-v456" },
-  { url: "./glossaire.html", revision: "fidelite-origine-v481" },
-  { url: "./404.html", revision: "fidelite-origine-v481" },
-  { url: "./nouveautes.html", revision: "fidelite-origine-v481" },
+  { url: "./glossaire.html", revision: "nav-fluide-v475" },
+  { url: "./404.html", revision: "nav-fluide-v475" },
+  { url: "./nouveautes.html", revision: "xp-quiz-monotone-v478" },
   { url: "./assets/js/nouveautes.js", revision: "maj-version-v477" },
-  { url: "./carte-visite.html", revision: "fidelite-origine-v481" },
+  { url: "./carte-visite.html", revision: "conseil-classe-nouveautes-marque-v451" },
   { url: "./assets/js/rayonsx-surligneur.js", revision: "rayonsx-surligneur-v449" },
   { url: "./assets/images/admin-aymen.jpg", revision: "admin-badge-v444" },
   { url: "./assets/js/admin-mdp.js", revision: "nav-fluide-v475" },
@@ -240,10 +106,10 @@ var UPDATE_FILES = [
   { url: "./portail.html", revision: "recovery-v441" },
   { url: "./assets/js/modules/password-recovery.js", revision: "recovery-v441" },
   { url: "./assets/js/rappels-locaux.js", revision: "rappels-v436" },
-  { url: "./cours/html5.html", revision: "onglets-mobile-v493", refreshIfCached: true },
-  { url: "./cours/courshtml5.html", revision: "suivi-contextes-v491", refreshIfCached: true },
+  { url: "./cours/html5.html", revision: "nav-fluide-v475" },
+  { url: "./cours/courshtml5.html", revision: "nav-fluide-v475" },
   { url: "./assets/js/sql-playground.js", revision: "moteur-sql-local-v396" },
-  { url: "./livre-smart.html", revision: "fidelite-origine-v481" },
+  { url: "./livre-smart.html", revision: "sync-general-v391" },
   { url: "./assets/js/retour-livre-smart.js", revision: "retour-intelligent-v380" },
   { url: "./assets/css/sombre-universel-v372.css", revision: "sombre-site-v372" },
   { url: "./assets/css/smart-book-fan-v341.css", revision: "smart-books-v341" },
@@ -251,7 +117,7 @@ var UPDATE_FILES = [
   { url: "./assets/images/smart-books/couverture-3si.jpg", revision: "smart-books-v339" },
   { url: "./assets/images/smart-books/couverture-4si.jpg", revision: "smart-books-v339" },
   { url: "./assets/data/smart-book-3si-2026.json", revision: "smart-books-v339" },
-  { url: "./cours/sql-bases-ldd-lmd-lcd.html", revision: "suivi-contextes-v491", refreshIfCached: true },
+  { url: "./cours/sql-bases-ldd-lmd-lcd.html", revision: "cours-livre-v351" },
   { url: "./assets/css/smart-book.css", revision: "smart-books-v341" },
   { url: "./assets/js/smart-book.js", revision: "smart-book-retour-v351" },
   { url: "./assets/data/smart-book-2026.json", revision: "smart-books-v339" },
@@ -413,24 +279,6 @@ function signalerCacheEviteSTI(rep) {
   }, 1800);
 }
 var SHELL = [
-  "./assets/js/appel-quiz.js",
-  "./assets/js/suivi-profil.js",
-  "./assets/js/reconnexion-profil.js",
-  "./assets/images/badge-compte-vierge.png",
-  "./assets/css/badge-compte.css",
-  "./assets/js/mobile-nav.js",
-  "./assets/js/roue-initiales.js",
-  "./assets/js/roue-habillage.js",
-  "./assets/js/roue-couverture.js",
-  "./assets/images/qr-code-site.png",
-  "./assets/css/theme-patrimoine.css",
-  "./assets/js/lecteur-commun.js",
-  "./assets/js/retour-quiz.js",
-  "./assets/css/visionneuse-exercices.css",
-  "./assets/js/visionneuse-exercices.js",
-  "./assets/icons/matieres.svg",
-  "./projets/carte-bancaire/demo.js",
-  "./assets/js/cote-ticker.js",
   "./",
   "./index.html",
   "./portail.html",
@@ -468,7 +316,6 @@ var SHELL = [
   "./assets/icons/sti-icon-192.png",
   "./assets/icons/sti-icon-512.png",
   "./assets/images/sti-course-pause-qr.png",
-  "./assets/images/php-cours-poster.jpg",
   "./assets/images/php-guichet-v10-poster.jpg",
   "./assets/images/css3-cours-v9-sync-poster.jpg",
   "./assets/images/css-restaurant-capture-v298.jpg",
@@ -519,7 +366,6 @@ var SHELL = [
   "./exercices/javascript/Tp4-Correction-js.html",
   "./exercices/javascript/Tp5-js.html",
   "./exercices/javascript/Tp5-Correction-js.html",
-  "./exercices/javascript/js-37-defis-tt.html",
   "./exercices/php/Tp1-php.html",
   "./exercices/php/Tp2-php.html",
   "./exercices/php/Tp2-Correction-php.html",
@@ -543,51 +389,10 @@ var SHELL = [
   "./projets/sti0/Statistiques.html",
   "./projets/sti0/projetsti0.pdf",
   "./projets/sti0/projetsti0.pdf.html",
-  "./projets/sti0/ressources-projet-sti0.zip",
-  "./dashboard.html",
-  "./assets/css/theme.css",
-  "./assets/css/cours.css",
-  "./assets/js/app.js",
-  "./assets/js/profil.js",
-  "./assets/js/cours-html5.js",
-  "./assets/js/cours-onglets-mobile.js",
-  "./assets/css/cours-css3.css",
-  "./assets/js/cours-css3.js",
-  "./assets/css/cours-javascript.css",
-  "./assets/js/cours-javascript.js",
-  "./assets/css/cours-matieres.css",
-  "./assets/css/cours-sql-heritage.css",
-  "./assets/css/cours-php-heritage.css",
-  "./assets/js/cours-matieres.js",
-  "./assets/js/cours-media-reperes.js",
-  "./assets/js/cours-sql-animations.js",
-  "./assets/js/cours-sql-voix.js",
-  "./assets/js/cours-sql-worker.js",
-  "./assets/js/sqljs/sql-wasm.js",
-  "./assets/js/sqljs/sql-wasm.wasm",
-  "./assets/css/dialogues-compat.css",
-  "./assets/js/dialogues-compat.js",
-  "./assets/js/sync-progressions.js",
+  "./projets/sti0/ressources-projet-sti0.zip"
 ];
 
 var OFFLINE_LIST = [
-  "./assets/js/appel-quiz.js",
-  "./assets/js/suivi-profil.js",
-  "./assets/js/reconnexion-profil.js",
-  "./assets/images/badge-compte-vierge.png",
-  "./assets/css/badge-compte.css",
-  "./assets/js/mobile-nav.js",
-  "./assets/js/roue-initiales.js",
-  "./assets/js/roue-habillage.js",
-  "./assets/js/roue-couverture.js",
-  "./assets/css/theme-patrimoine.css",
-  "./assets/js/lecteur-commun.js",
-  "./assets/js/retour-quiz.js",
-  "./assets/css/visionneuse-exercices.css",
-  "./assets/js/visionneuse-exercices.js",
-  "./assets/icons/matieres.svg",
-  "./projets/carte-bancaire/demo.js",
-  "./assets/js/cote-ticker.js",
   "./404.html",
   "./Positionnement-animee/bonus-flex.css",
   "./Positionnement-animee/cours.js",
@@ -645,7 +450,6 @@ var OFFLINE_LIST = [
   "./assets/images/qr-stiv2.png",
   "./assets/images/admin-aymen.jpg",
   "./assets/images/sti-course-pause-qr.png",
-  "./assets/images/php-cours-poster.jpg",
   "./assets/images/php-guichet-v10-poster.jpg",
   "./assets/js/acces.js",
   "./assets/js/admin.js",
@@ -939,7 +743,6 @@ var OFFLINE_LIST = [
   "./exercices/javascript/Tp4-js.html",
   "./exercices/javascript/Tp5-Correction-js.html",
   "./exercices/javascript/Tp5-js.html",
-  "./exercices/javascript/js-37-defis-tt.html",
   "./exercices/php/Tp1-php.html",
   "./exercices/php/Tp2-Correction-php.html",
   "./exercices/php/Tp2-php.html",
@@ -1100,14 +903,10 @@ var OFFLINE_LIST = [
   "./assets/videos/explore-tunisie-flex.mp4",
   "./assets/videos/explore-tunisie-float.mp4",
   "./assets/videos/html5-cours.mp4",
-  "./assets/videos/displayanim.mp4",
   "./assets/videos/css3-cours-v9-sync.mp4",
   "./assets/videos/css3-cours-v9-sync-mobile-720p.mp4",
   "./assets/subtitles/css3-cours-v9-sync-fr.vtt",
   "./assets/videos/javascript-cours.mp4",
-  "./assets/videos/validation-nom-prenom-js.mp4",
-  "./assets/subtitles/validation-nom-prenom-js-fr.vtt",
-  "./exercices/javascript/validation-nom-prenom-js.srt",
   "./assets/videos/php-cours.mp4",
   "./exercices/sql/sql-construire-requete-guide-texte.mp4",
   "./assets/images/sql-construire-requete-guide-texte-poster.jpg",
@@ -1116,31 +915,7 @@ var OFFLINE_LIST = [
   "./documents/sql/Documentation-Construire-Requete-SQL-Guide-Texte.pdf",
   "./documents/sql/transcription-construire-requete-sql-guide-texte.md",
   "./robots.txt",
-  "./sitemap.xml",
-  "./dashboard.html",
-  "./assets/css/theme.css",
-  "./assets/css/cours.css",
-  "./assets/js/app.js",
-  "./assets/js/profil.js",
-  "./assets/js/cours-html5.js",
-  "./assets/js/cours-onglets-mobile.js",
-  "./assets/css/cours-css3.css",
-  "./assets/js/cours-css3.js",
-  "./assets/css/cours-javascript.css",
-  "./assets/js/cours-javascript.js",
-  "./assets/css/cours-matieres.css",
-  "./assets/css/cours-sql-heritage.css",
-  "./assets/css/cours-php-heritage.css",
-  "./assets/js/cours-matieres.js",
-  "./assets/js/cours-media-reperes.js",
-  "./assets/js/cours-sql-animations.js",
-  "./assets/js/cours-sql-voix.js",
-  "./assets/js/cours-sql-worker.js",
-  "./assets/js/sqljs/sql-wasm.js",
-  "./assets/js/sqljs/sql-wasm.wasm",
-  "./assets/css/dialogues-compat.css",
-  "./assets/js/dialogues-compat.js",
-  "./assets/js/sync-progressions.js",
+  "./sitemap.xml"
 ];
 
 var precacheEnCours = false;
@@ -1195,93 +970,23 @@ async function prechargerSequentiel(forcerMajCode) {
 }
 
 var _actualisationDeltaEnCours = false;
-var _migrationCachesEnCours = null;
 var NOYAU_RAPIDE_RECHARGEMENT = {
-  "./assets/css/badge-compte.css": 1,
-  "./assets/js/roue-initiales.js": 1,
-  "./assets/css/theme-patrimoine.css": 1,
-  "./assets/js/lecteur-commun.js": 1,
-  "./assets/js/retour-quiz.js": 1,
-  "./assets/css/visionneuse-exercices.css": 1,
-  "./assets/js/visionneuse-exercices.js": 1,
-  "./assets/icons/matieres.svg": 1,
   "./index.html": 1,
-  "./assets/css/theme.css": 1,
-  "./assets/js/app.js": 1,
-  "./assets/js/profil.js": 1,
   "./portail.html": 1,
   "./assets/js/config.js": 1,
   "./assets/js/mobile-nav.js": 1,
   "./assets/js/cote-ticker.js": 1,
   "./assets/js/reprendre.js": 1,
+  "./assets/js/nouveautes.js": 1,
   "./assets/css/atelier.css": 1,
   "./assets/css/protection.css": 1,
   "./assets/data/nouveautes.json": 1
 };
 
-/* Dépendances légères indispensables aux pages déjà installées, sans médias lourds. */
-var NOUVEAUTES_NOYAU = {
-  "./assets/js/cours-onglets-mobile.js": 1,
-  "./assets/js/appel-quiz.js": 1,
-  "./assets/js/suivi-profil.js": 1,
-  "./assets/js/reconnexion-profil.js": 1,
-  "./assets/images/badge-compte-vierge.png": 1,
-  "./assets/css/badge-compte.css": 1,
-  "./assets/js/mobile-nav.js": 1,
-  "./assets/js/roue-initiales.js": 1,
-  "./assets/js/roue-habillage.js": 1,
-  "./assets/js/roue-couverture.js": 1,
-  "./assets/icons/sti-icon-192.png": 1,
-  "./assets/images/qr-code-site.png": 1,
-  "./assets/css/theme-patrimoine.css": 1,
-  "./assets/js/lecteur-commun.js": 1,
-  "./assets/js/retour-quiz.js": 1,
-  "./assets/css/visionneuse-exercices.css": 1,
-  "./assets/js/visionneuse-exercices.js": 1,
-  "./assets/icons/matieres.svg": 1,
-  "./projets/carte-bancaire/demo.js": 1,
-};
-
-/* Une taille identique ne prouve pas qu'un fichier est inchangé. */
-async function empreinteFichierIdentique(reponse, item) {
-  if (!reponse || !item.sha256 || typeof crypto === "undefined" || !crypto.subtle) return false;
-  try {
-    var contenu = await reponse.clone().arrayBuffer();
-    if (contenu.byteLength !== item.bytes) return false;
-    var empreinte = await crypto.subtle.digest("SHA-256", contenu);
-    var octets = new Uint8Array(empreinte);
-    var hex = "";
-    for (var i = 0; i < octets.length; i++) hex += ("0" + octets[i].toString(16)).slice(-2);
-    return hex === item.sha256;
-  } catch (e) { return false; }
-}
-
-/* Remplacer la copie canonique AVANT de supprimer ses variantes : en cas
-   de panne réseau ou de stockage, l'ancienne version reste disponible. */
-async function remplacerFichierNoyau(cache, chemin, alias, reponse) {
-  var principal = new URL(chemin, self.location.href);
-  var racine = alias ? new URL(alias, self.location.href) : null;
-  await cache.put(principal.href, reponse.clone());
-  if (racine) await cache.put(racine.href, reponse.clone());
-  var requetes = await cache.keys();
-  for (var i = 0; i < requetes.length; i++) {
-    var ancienne = requetes[i];
-    var urlAncienne = new URL(ancienne.url);
-    var memeFichier = urlAncienne.origin === principal.origin && urlAncienne.pathname === principal.pathname;
-    var memeRacine = racine && urlAncienne.origin === racine.origin && urlAncienne.pathname === racine.pathname;
-    if ((memeFichier && ancienne.url !== principal.href) || (memeRacine && ancienne.url !== racine.href)) {
-      await cache.delete(ancienne);
-    }
-  }
-}
-
 async function actualiserFichiersConcernes() {
   if (_actualisationDeltaEnCours) return;
   _actualisationDeltaEnCours = true;
   try {
-    /* Un message reçu après clients.claim() ne doit pas rouvrir un ancien
-       cache pendant que l'activation le copie puis le supprime. */
-    if (_migrationCachesEnCours) await _migrationCachesEnCours;
     var cache = await caches.open(CACHE);
     var revisions = await caches.open(CACHE_REVISIONS);
     var nomsCaches = [];
@@ -1331,14 +1036,8 @@ async function actualiserFichiersConcernes() {
           if (await revisions.match(marker)) return;
           if (item.bootstrapBySize && item.bytes) {
             var existant = await cache.match(u, { ignoreSearch: true });
-            /* Au moment de l'installation, les fichiers inchangés peuvent encore
-               se trouver dans l'ancien cache avant sa copie à l'activation. */
-            if (!existant) {
-              for (var ib = 0; ib < anciensCaches.length && !existant; ib++) {
-                existant = await anciensCaches[ib].match(u, { ignoreSearch: true });
-              }
-            }
-            if (await empreinteFichierIdentique(existant, item)) {
+            var taille = existant ? parseInt(existant.headers.get("content-length") || "0", 10) : 0;
+            if (taille === item.bytes) {
               await revisions.put(marker, new Response(UPDATE_ID));
               return;
             }
@@ -1359,30 +1058,15 @@ async function actualiserFichiersConcernes() {
               }
             }
           }
-          /* Pas de téléchargement pour une page jamais visitée. Exception :
-             les nouveaux modules légers indispensables au noyau déjà installé. */
+          /* Si l'utilisateur n'avait jamais visité cette page : 0 téléchargement, juste enregistrer le marqueur */
           if (!etaitEnCache) {
-            if (NOUVEAUTES_NOYAU[u]) {
-              var repNouveau = await fetch(u, { cache: "reload" });
-              if (!repNouveau || !repNouveau.ok) return;
-              await cache.put(u, repNouveau.clone());
-            }
             await revisions.put(marker, new Response(UPDATE_ID));
             return;
           }
-          /* Pour le noyau et les pages appelantes déjà en cache, ne jamais effacer l'ancienne copie avant
-             d'avoir reçu ET stocké la nouvelle. Un 503 ou une coupure laisse
-             la révision en attente pour le prochain retour du réseau. */
-          if (NOYAU_RAPIDE_RECHARGEMENT[u] || item.refreshIfCached || (item.bootstrapBySize && NOUVEAUTES_NOYAU[u])) {
-            var rep = await fetch(u, { cache: "reload" });
-            if (!rep || !rep.ok) return;
-            await remplacerFichierNoyau(cache, u, uRacine, rep);
-          } else {
-            /* Les autres pages modifiées restent téléchargées à la demande. */
-            try { await cache.delete(u, { ignoreSearch: true }); } catch (eDel) {}
-            if (uRacine) {
-              try { await cache.delete(uRacine, { ignoreSearch: true }); } catch (eDelR) {}
-            }
+          /* Purger immédiatement toute copie obsolète dans CACHE et dans tous les anciens caches sti-atelier-* (y compris l'alias racine ./ pour ./index.html) */
+          try { await cache.delete(u, { ignoreSearch: true }); } catch (eDel) {}
+          if (uRacine) {
+            try { await cache.delete(uRacine, { ignoreSearch: true }); } catch (eDelR) {}
           }
           for (var idxC = 0; idxC < anciensCaches.length; idxC++) {
             var ancC = anciensCaches[idxC];
@@ -1395,6 +1079,16 @@ async function actualiserFichiersConcernes() {
               } catch (eAncDelR) {}
             }
           }
+          /* Recharger proactivement uniquement les petits fichiers du noyau ; les pages lourdes (> 200 Ko : quiz, cours, admin) se rechargeront à la demande sans saturer la bande passante */
+          if (NOYAU_RAPIDE_RECHARGEMENT[u]) {
+            var rep = await fetch(u, { cache: "reload" });
+            if (rep && rep.ok) {
+              await cache.put(u, rep.clone());
+              if (uRacine) {
+                await cache.put(uRacine, rep.clone());
+              }
+            }
+          }
           await revisions.put(marker, new Response(UPDATE_ID));
         } catch (e) {}
       }));
@@ -1404,48 +1098,15 @@ async function actualiserFichiersConcernes() {
   }
 }
 
-/* Si un ancien onglet ne connaît pas la poignée de main, laisser le nouveau
-   worker en attente : son activation naturelle suivra la fermeture des onglets. */
-async function preparerClientsActivation() {
-  if (!self.clients || typeof self.clients.matchAll !== "function" || typeof MessageChannel === "undefined") return false;
-  var version = (CACHE.match(/sti-atelier-v(\d+)/) || [])[1];
-  if (!version) return false;
-  try {
-    var pages = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-    if (self.registration && self.registration.scope) pages = pages.filter(function (page) { return page.url.indexOf(self.registration.scope) === 0; });
-    var reponses = await Promise.all(pages.map(function (page) {
-      return new Promise(function (resolve) {
-        var canal = new MessageChannel(), fini = false;
-        var timer = setTimeout(function () { terminer(false); }, 1800);
-        function terminer(ok) {
-          if (fini) return;
-          fini = true;
-          clearTimeout(timer);
-          canal.port1.close();
-          resolve(ok);
-        }
-        canal.port1.onmessage = function (evt) { terminer(Boolean(evt.data && evt.data.prepare)); };
-        try { page.postMessage({ type: "STI_PREPARER_ACTIVATION", version: version }, [canal.port2]); }
-        catch (e) { terminer(false); }
-      });
-    }));
-    return reponses.every(Boolean);
-  } catch (e) { return false; }
-}
-async function activerSiClientsPrets() {
-  if (await preparerClientsActivation()) await self.skipWaiting();
-}
-
 self.addEventListener("install", function (evt) {
-  /* Le delta reste léger ; les pages en cours ne sont pas rechargées. */
-  evt.waitUntil((async function () {
-    await actualiserFichiersConcernes();
-    await activerSiClientsPrets();
-  })());
+  self.skipWaiting();
+  /* Mise à jour différentielle : aucun parcours de SHELL ou OFFLINE_LIST ici. */
+  evt.waitUntil(actualiserFichiersConcernes());
 });
 
 self.addEventListener("activate", function (evt) {
-  _migrationCachesEnCours = (async function () {
+  evt.waitUntil(
+    (async function () {
       /* Prendre immédiatement le contrôle sans bloquer les requêtes de navigation pendant la migration locale des caches */
       try { await self.clients.claim(); } catch (eClaim) {}
       try {
@@ -1495,14 +1156,14 @@ self.addEventListener("activate", function (evt) {
         }
       } catch (e) {}
       /* Aucun préchargement global automatique après activation. */
-    })();
-  evt.waitUntil(_migrationCachesEnCours);
+    })()
+  );
 });
 
 self.addEventListener("message", function (evt) {
   if (!evt.data) return;
   if (evt.data.type === "SKIP_WAITING") {
-    evt.waitUntil(activerSiClientsPrets());
+    self.skipWaiting();
     return;
   }
   if (evt.data.type === "STI_STORAGE_STATUS") {
@@ -1519,12 +1180,9 @@ self.addEventListener("message", function (evt) {
     return;
   }
   if (evt.data.type === "PRECACHE_ALL" || evt.data.type === "SYNC_UPDATE" || evt.data.type === "FORCE_REFRESH_VERSION") {
-    /* La commande explicite du tableau d'administration garde son effet. */
-    var forceAdmin = evt.data.type === "FORCE_REFRESH_VERSION" && evt.source && /\/admin(?:\.html)?(?:[?#]|$)/i.test(evt.source.url || "");
-    evt.waitUntil((async function () {
-      await actualiserFichiersConcernes();
-      if (forceAdmin) await self.skipWaiting();
-    })());
+    /* Les anciens appels automatiques sont volontairement limités au delta de publication. */
+    self.skipWaiting();
+    evt.waitUntil(actualiserFichiersConcernes());
   }
 });
 
