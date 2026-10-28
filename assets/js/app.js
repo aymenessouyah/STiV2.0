@@ -687,26 +687,96 @@
     }
   }
 
+  /* Tirage de la vidéo à la une : chaque ouverture de l'accueil met une vidéo
+     différente en avant. Seules les vidéos accessibles à tous sont candidates
+     (les séries réservées aux 4e SI restent dans leur rubrique) et les capsules
+     de quelques secondes sont écartées pour ne pas occuper la vitrine. */
+  var CLE_DERNIERE_VIDEO_ALEATOIRE = "sti-video-a-la-une-derniere";
+  function dureeEnSecondesHms(texte) {
+    var morceaux = String(texte || "").split(":");
+    var total = 0;
+    for (var i = 0; i < morceaux.length; i++) total = total * 60 + (parseInt(morceaux[i], 10) || 0);
+    return total;
+  }
+  function choisirVideoALaUne() {
+    var eligibles = CATALOGUE_VIDEOS.filter(function (v) {
+      if (v.reserve4si) return false;
+      return dureeEnSecondesHms(v.dureeTexte) >= 60;
+    });
+    if (!eligibles.length) eligibles = CATALOGUE_VIDEOS.filter(function (v) { return !v.reserve4si; });
+    if (!eligibles.length) eligibles = CATALOGUE_VIDEOS.slice();
+    if (eligibles.length === 1) return eligibles[0];
+    /* Éviter de reproposer exactement la même capsule deux ouvertures de suite. */
+    var precedente = "";
+    try { precedente = global.sessionStorage.getItem(CLE_DERNIERE_VIDEO_ALEATOIRE) || ""; } catch (e) {}
+    var candidates = eligibles.filter(function (v) { return v.id !== precedente; });
+    if (!candidates.length) candidates = eligibles;
+    var choix = candidates[Math.floor(Math.random() * candidates.length)];
+    try { global.sessionStorage.setItem(CLE_DERNIERE_VIDEO_ALEATOIRE, choix.id); } catch (e) {}
+    return choix;
+  }
+
   function initialiserVideoHero() {
     var vidHero = document.getElementById("heroFeaturedVideo");
     var btnOverlay = document.getElementById("heroVideoOverlay");
     if (!vidHero) return;
 
-    var metaCss = CATALOGUE_VIDEOS[1]; /* CSS3 à la une */
+    var meta = choisirVideoALaUne();
+    var carte = vidHero.closest(".featured-video-card");
+    vidHero.dataset.stiVideoId = meta.id;
+    /* Le lecteur commun résout ainsi la capsule réellement affichée. */
+    vidHero.dataset.videoId = meta.id;
+    vidHero.setAttribute("aria-label", meta.titre);
     vidHero.setAttribute(
       "poster",
-      creerPosterSvgDataUri(metaCss.titre, "À LA UNE · CSS3", metaCss.couleur, metaCss.codeApercu)
+      creerPosterSvgDataUri(meta.titre, "À LA UNE · " + meta.nomMatiere, meta.couleur, meta.codeApercu)
     );
-    attacherSuiviElementVideo(vidHero, metaCss);
+
+    /* Source et sous-titres suivent le tirage, sans recharger la page. */
+    var source = vidHero.querySelector("source");
+    if (source) {
+      source.setAttribute("src", meta.srcPrincipal);
+      source.setAttribute("type", "video/mp4");
+    }
+    var piste = vidHero.querySelector("track");
+    if (piste) {
+      if (meta.sousTitres) {
+        piste.setAttribute("src", meta.sousTitres);
+        piste.hidden = false;
+      } else {
+        piste.remove();
+      }
+    } else if (meta.sousTitres) {
+      var pisteNeuve = document.createElement("track");
+      pisteNeuve.kind = "subtitles";
+      pisteNeuve.srclang = "fr";
+      pisteNeuve.label = "Français";
+      pisteNeuve.src = meta.sousTitres;
+      vidHero.appendChild(pisteNeuve);
+    }
+    try { vidHero.load(); } catch (e) {}
+
+    /* Libellés visibles : matière, durée, titre de la capsule. */
+    var badge = document.getElementById("heroVideoBadge");
+    if (badge) {
+      badge.className = "badge " + (meta.badgeClasse || "badge-css");
+      badge.textContent = meta.nomMatiere + " · " + meta.dureeTexte;
+    }
+    var titre = document.getElementById("heroVideoTitre");
+    if (titre) titre.textContent = meta.titre;
+
+    attacherSuiviElementVideo(vidHero, meta);
 
     if (btnOverlay) {
+      btnOverlay.setAttribute("aria-label", "CAPSULE VIDÉO EXPLICATIVE " + meta.titre + " : lancer la vidéo");
       btnOverlay.addEventListener("click", function () {
-        ouvrirModaleVideo("css3-cours", 0);
+        ouvrirModaleVideo(meta.id, 0);
       });
       vidHero.addEventListener("play", function () {
         btnOverlay.classList.add("is-playing");
       });
     }
+    if (carte) carte.classList.add("is-pret");
   }
 
   var filtreVideoActif = "all";

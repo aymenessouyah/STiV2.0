@@ -61,6 +61,9 @@ test('accueil : suivi média v479 et profil fonctionnent ensemble sans double pr
   await expect(page.locator('h1')).toContainText('Le web de');
   await expect.poll(() => page.evaluate(() => typeof window.enregistrerProgressionMediaSTI)).toBe('function');
   await expect(page.locator('script[src*="protection.js"]')).toHaveCount(1);
+  // La vidéo à la une est tirée au hasard : le suivi suit la capsule affichée.
+  const idVideo = await page.evaluate(() => document.getElementById('heroFeaturedVideo').dataset.stiVideoId);
+  expect(idVideo).toBeTruthy();
   await page.evaluate(() => {
     const video = document.getElementById('heroFeaturedVideo');
     Object.defineProperty(video, 'currentTime', { configurable: true, get: () => 42 });
@@ -69,8 +72,8 @@ test('accueil : suivi média v479 et profil fonctionnent ensemble sans double pr
     video.dispatchEvent(new Event('play'));
     video.dispatchEvent(new Event('timeupdate'));
   });
-  await expect.poll(() => page.evaluate(() => window.lireProgressionMediaSTI()['video:css3-cours']?.maxPct)).toBe(42);
-  expect(await page.evaluate(() => window.STIProfil.chargerProfil().videos.derniere.id)).toBe('css3-cours');
+  await expect.poll(() => page.evaluate(id => window.lireProgressionMediaSTI()['video:' + id]?.maxPct, idVideo)).toBe(42);
+  expect(await page.evaluate(() => window.STIProfil.chargerProfil().videos.derniere.id)).toBe(idVideo);
 });
 
 test('accueil : masquer la reprise historique ne détruit pas la progression média', async ({ page }) => {
@@ -136,4 +139,91 @@ test('pages de cours et tableau de bord : pas de second chargement de protection
     await expect.poll(() => page.evaluate(() => typeof window.enregistrerProgressionMediaSTI), { message: chemin }).toBe('function');
     await expect(page.locator('script[src*="protection.js"]'), chemin).toHaveCount(1);
   }
+});
+
+test('accueil : la vidéo à la une change à chaque ouverture et respecte les accès', async ({ page }) => {
+  test.setTimeout(120_000);
+  const tirages = [];
+  for (let i = 0; i < 8; i++) {
+    await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+    const carte = page.locator('.featured-video-card[data-video-a-la-une]');
+    await expect(carte).toHaveClass(/is-pret/);
+    const etat = await page.evaluate(() => {
+      const video = document.getElementById('heroFeaturedVideo');
+      return {
+        id: video.dataset.stiVideoId,
+        source: video.querySelector('source') && video.querySelector('source').getAttribute('src'),
+        badge: document.getElementById('heroVideoBadge').textContent.trim(),
+        titre: document.getElementById('heroVideoTitre').textContent.trim(),
+        overlay: document.getElementById('heroVideoOverlay').getAttribute('aria-label')
+      };
+    });
+    expect(etat.id).toBeTruthy();
+    expect(etat.source).toContain('assets/videos/');
+    expect(etat.badge).toMatch(/^\S+ · \d\d:\d\d$/);
+    expect(etat.titre.length).toBeGreaterThan(5);
+    expect(etat.overlay).toContain(etat.titre);
+    // Les séries réservées aux 4e SI ne occupent jamais la vitrine.
+    expect(['sql-serie4', 'sql-serie5', 'php-cours', 'php-synthese', 'php-guichet']).not.toContain(etat.id);
+    tirages.push(etat.id);
+  }
+  // Huit ouvertures ne doivent pas donner la même capsule : le tirage est aléatoire.
+  expect(new Set(tirages).size).toBeGreaterThan(1);
+  // Le clic sur l'affiche ouvre bien la capsule annoncée par la carte.
+  const dernier = tirages[tirages.length - 1];
+  await page.evaluate(() => {
+    window.__videoOuverte = null;
+    const historique = window.ouvrirVideoPasAPasSTI;
+    window.ouvrirVideoPasAPasSTI = function (slug, titre, temps) {
+      window.__videoOuverte = slug;
+      return historique.apply(this, arguments);
+    };
+  });
+  await page.locator('#heroVideoOverlay').click();
+  await expect.poll(() => page.evaluate(() => window.__videoOuverte)).toBe(dernier);
+});
+
+test('accueil : la file des gains XP est vidée dès la reconnexion, sans repasser par un quiz', async ({ page }) => {
+  const rpc = [];
+  page.on('request', r => { if (r.url().includes('/rest/v1/rpc/')) rpc.push(r.url()); });
+  await page.route(/vywujxmepvcbgedgmger\.supabase\.co/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ confirmes: ['0f8fad5b-d9cb-469f-a165-70867728950e'], valeur: { xp: 250, parties: 1 }, applique: 250, gain_confirme: 250 })
+  }));
+  const uid = 'eleve-xp';
+  const idOperation = '0f8fad5b-d9cb-469f-a165-70867728950e';
+  await page.addInitScript(({ uid, idOperation }) => {
+    const session = { nativeAuthenticated: true, statut: 'actif', id: uid, email: 'xp@example.invalid', role: 'eleve', classe: '4SI 1' };
+    window.__STI_NATIVE_AUTHENTICATED_V316 = true;
+    sessionStorage.setItem('sti-native-session-v316', '1');
+    sessionStorage.setItem('sti-session-cache', JSON.stringify(session));
+    localStorage.setItem('sti-session-cache', JSON.stringify(session));
+    // Isolation du compte : la file XP n'est lue que pour cet élève.
+    localStorage.setItem('sti-sync-uid', uid);
+    localStorage.setItem('quizzora_xp_v1', JSON.stringify({ xp: 250, parties: 1 }));
+    // Gain mis en file hors ligne : il doit partir dès le premier accès à l'accueil.
+    localStorage.setItem('quiz-xp-operation-v1:' + uid + ':' + idOperation, JSON.stringify({
+      id: idOperation, cle: 'quizzora_xp_v1', gain: 250, base: 0, attente: 250, cumulatif: true
+    }));
+    // Client Supabase fictif minimal : aucune requête réelle, session déjà ouverte.
+    const chaine = { select: () => chaine, eq: () => chaine, order: () => chaine, limit: () => chaine,
+      single: async () => ({ data: null, error: null }), then: r => Promise.resolve({ data: [], error: null }).then(r) };
+    window.__STI_SB_CLIENT = {
+      auth: {
+        getSession: async () => ({ data: { session: { access_token: 'jeton-fictif', user: { id: uid, email: 'xp@example.invalid' } } } }),
+        getUser: async () => ({ data: { user: { id: uid, email: 'xp@example.invalid' } }, error: null }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } })
+      },
+      from: () => chaine,
+      rpc: async () => ({ data: null, error: null }),
+      channel: () => ({ on() { return this; }, subscribe() { return this; } }),
+      removeChannel() {}
+    };
+  }, { uid, idOperation });
+  await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => rpc.length, { timeout: 20_000 }).toBeGreaterThan(0);
+  expect(rpc[0]).toMatch(/sti_appliquer_gain_partie_quiz/);
+  // La confirmation serveur vide la file locale : aucun renvoi au rechargement.
+  await expect.poll(() => page.evaluate(id => localStorage.getItem('quiz-xp-operation-v1:eleve-xp:' + id), idOperation)).toBeNull();
 });

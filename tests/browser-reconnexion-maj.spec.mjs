@@ -324,10 +324,13 @@ test('première installation sur un appareil vierge : accueil utilisable sans pr
     expect(chargements).toBeLessThanOrEqual(3);
     const chemins = serveur.journal.map(r => r.chemin);
     expect(chemins).not.toContain('/offline-complete-manifest.json');
-    // La page d'accueil historique demande déjà l'aperçu vidéo CSS3 ;
+    // L'accueil ne demande que l'aperçu de la vidéo à la une (tirée au hasard) :
     // il ne s'agit pas d'un préchargement intégral du catalogue par le worker.
-    expect(chemins.filter(c => /\.(mp4|mp3|pdf|zip)$/i.test(c)))
-      .toEqual(['/assets/videos/css3-cours-v9-sync.mp4']);
+    const mediasDemandes = chemins.filter(c => /\.(mp4|mp3|pdf|zip)$/i.test(c));
+    expect(mediasDemandes).toHaveLength(1);
+    expect(mediasDemandes[0]).toMatch(/^\/assets\/videos\/[a-z0-9-]+\.mp4$/);
+    expect(['sql-serie4.mp4', 'sql-serie5.mp4', 'php-cours.mp4', 'php-synthese.mp4', 'php-guichet-v10.mp4'])
+      .not.toContain(mediasDemandes[0].split('/').pop());
     expect(chemins.length).toBeLessThan(150);
     console.log('Installation vierge : chargements, requêtes, octets =', chargements, chemins.length,
       serveur.journal.reduce((n, r) => n + r.octets, 0));

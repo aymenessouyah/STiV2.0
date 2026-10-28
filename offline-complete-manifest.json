@@ -1,9 +1,9 @@
 {
-  "version": "v494-sti-atelier-v355",
-  "generatedAt": "2026-10-28T15:16:43Z",
+  "version": "v495-sti-atelier-v356",
+  "generatedAt": "2026-10-28T15:53:19Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 694,
-  "totalBytes": 682653393,
+  "totalBytes": 682658715,
   "files": [
     {
       "path": "404.html",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 42945,
-      "gitSha": "13f605b1a8a20b805c86f80fcbca945f5749b05b"
+      "bytes": 44153,
+      "gitSha": "b64e3458463f84ca5acd9bb20e39f7afefe2a154"
     },
     {
       "path": "admin.html",
@@ -647,8 +647,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 101580,
-      "gitSha": "2eb42e868948bc9dc00274f4c98e24f6e41b5da0"
+      "bytes": 104764,
+      "gitSha": "7af048820dc20958c3d73267db6888b3849a2c87"
     },
     {
       "path": "assets/js/config.js",
@@ -732,8 +732,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 210894,
-      "gitSha": "df2feeaa1830e15d6c4c1073971facc2b75973a6"
+      "bytes": 211093,
+      "gitSha": "4d04bde398994ba05c25e0f947f6f734d4f562e5"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1137,8 +1137,8 @@
     },
     {
       "path": "dashboard.html",
-      "bytes": 15639,
-      "gitSha": "790e34629df53bf2ec49411cbb1a73ab675f6738"
+      "bytes": 15789,
+      "gitSha": "b3159a3e4da8003a96afaaad410b3fee98fd6914"
     },
     {
       "path": "documents/annexes/annexe-css3.pdf",
@@ -2787,8 +2787,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 55031,
-      "gitSha": "cf49f21bc28fe7b511e5243e1b9fdd72974388e5"
+      "bytes": 55601,
+      "gitSha": "2c07a96e9235cc09efa7f5bdf9862b7d7b89bc1d"
     },
     {
       "path": "livre-smart.html",
@@ -3337,8 +3337,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 94464,
-      "gitSha": "108d00915c2c89bb1cdd48ae43a6062bcd194ff5"
+      "bytes": 94475,
+      "gitSha": "e5ddf2c9dbac31fcfcc987b652740b4dcaa14ab7"
     },
     {
       "path": "assets/css/cours-matieres.css",
