@@ -2036,6 +2036,31 @@
     var video = document.getElementById("welcomeFondVideo");
     if (!video || typeof video.play !== "function") return;
     try {
+      /* v499 : la boucle du fond est garantie — un lecteur mis en pause par erreur
+         (économie d'énergie, retour d'onglet) repart tout seul. */
+      if (!video.__stiBoucleFond) {
+        video.__stiBoucleFond = true;
+        video.addEventListener("ended", function () {
+          if (!video.loop) return;
+          try {
+            var relance = video.play();
+            if (relance && typeof relance.catch === "function") relance.catch(function () {});
+          } catch (e) {}
+        });
+        video.addEventListener("pause", function () {
+          var section = document.getElementById("welcomeReturn");
+          if (!section || section.hidden || document.hidden) return;
+          setTimeout(function () {
+            if (!video.paused) return;
+            var s2 = document.getElementById("welcomeReturn");
+            if (!s2 || s2.hidden || document.hidden) return;
+            try {
+              var relance = video.play();
+              if (relance && typeof relance.catch === "function") relance.catch(function () {});
+            } catch (e) {}
+          }, 600);
+        });
+      }
       if (actif) {
         var p = video.play();
         if (p && typeof p.catch === "function") p.catch(function () {});

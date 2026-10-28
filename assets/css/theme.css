@@ -864,71 +864,89 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Cadrage haut : sur une boîte large et basse, on garde le drapeau et l'entrée
-     du lycée plutôt que le milieu de la vidéo. */
-  object-position: center 32%;
-  opacity: .9;
+  /* v499 : cadrage bas — la boîte est large et basse, il faut que l'affiche du
+     lycée (partie basse de la vidéo) reste entièrement visible. */
+  object-position: center 100%;
+  opacity: .92;
 }
-/* Voile de lisibilité : la vidéo s'étend sur toute la boîte sans gêner le texte. */
+/* Voile de lisibilité : dense derrière le texte, plus léger en bas pour laisser
+   apparaître l'affiche du lycée. */
 .welcome-return__fond::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--bg-alt);
-  opacity: .84;
+  background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg-alt) 58%, rgba(6, 11, 21, .42) 100%);
+  opacity: .9;
 }
 .welcome-return > .container { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) {
   .welcome-return__fond-video { display: none; }
 }
 
-/* ── v498 : ruban d'identité sur l'initiale de « Bonjour » et du prénom ── */
+/* ── v499 : ruban d'identité à plat sur l'initiale de « Bonjour » et du prénom ──
+   Bleu 3e SI · vert 4e SI · or pour l'admin, les comptes GOLD et les profs ·
+   orangé pour tous les autres comptes. Plus d'inclinaison ni de découpe en biseau :
+   le ruban est une bande droite et régulière, le logo STI occupe sa partie gauche
+   et l'initiale colorée se détache dessus. */
 .welcome-return__title {
   --ruban-clair: #7dd3fc;
-  --ruban-base: #38bdf8;
-  --ruban-fonce: #0369a1;
+  --ruban-base: #0284c7;
+  --ruban-fonce: #0b3f66;
+  --ruban-lettre: #7dd3fc;
 }
 .welcome-return__title[data-ruban="4si"] {
-  --ruban-clair: #a7f3d0;
-  --ruban-base: #34d399;
-  --ruban-fonce: #047857;
+  --ruban-clair: #6ee7b7;
+  --ruban-base: #059669;
+  --ruban-fonce: #064e3b;
+  --ruban-lettre: #6ee7b7;
 }
-/* Admin, professeurs, labo et comptes GOLD : ruban argent. */
+/* Admin, professeurs, labo et comptes GOLD : or. */
 .welcome-return__title[data-ruban="admin"] {
-  --ruban-clair: #f8fafc;
-  --ruban-base: #cbd5e1;
-  --ruban-fonce: #94a3b8;
+  --ruban-clair: #fde68a;
+  --ruban-base: #d4a017;
+  --ruban-fonce: #7c4a03;
+  --ruban-lettre: #fbbf24;
 }
-.ruban-mot { position: relative; display: inline-block; }
+/* Le reste (compte non rattaché à une classe, visiteur connecté) : orangé. */
+.welcome-return__title[data-ruban="autre"] {
+  --ruban-clair: #fdba74;
+  --ruban-base: #ea580c;
+  --ruban-fonce: #7c2d12;
+  --ruban-lettre: #fb923c;
+}
+.ruban-mot { position: relative; display: inline-block; isolation: isolate; }
 .ruban-mot[hidden] { display: none; }
+/* Le ruban passe derrière l'initiale : bande droite, coins légèrement arrondis. */
 .ruban-initiale {
   position: absolute;
-  z-index: 2;
-  left: -0.3em;
+  z-index: -1;
+  left: -0.46em;
   top: 50%;
-  width: 1.16em;
-  height: 0.54em;
+  width: 1.12em;
+  height: 0.64em;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 0.08em;
-  transform: translateY(-50%) rotate(-7deg);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 52%),
-    linear-gradient(90deg, var(--ruban-fonce), var(--ruban-base) 28%, var(--ruban-clair) 60%, var(--ruban-base) 86%, var(--ruban-fonce));
-  box-shadow: 0 0.06em 0.18em rgba(3, 8, 20, .45), inset 0 0.02em 0.05em rgba(255, 255, 255, .55);
-  clip-path: polygon(3% 0, 100% 7%, 97% 100%, 0 93%);
+  justify-content: flex-start;
+  padding-inline-start: 0.05em;
+  transform: translateY(-50%);
+  border-radius: 0.08em;
+  background: linear-gradient(90deg, var(--ruban-fonce), var(--ruban-base) 58%, var(--ruban-fonce));
+  box-shadow: 0 0.05em 0.14em rgba(3, 8, 20, .38), inset 0 0.03em 0.06em rgba(255, 255, 255, .32);
   pointer-events: none;
 }
 .ruban-initiale__logo {
   display: block;
-  width: 0.42em;
-  height: 0.42em;
+  width: 0.4em;
+  height: 0.4em;
   border-radius: 50%;
   background: #0b1224;
   object-fit: contain;
   box-shadow: 0 0 0 0.035em rgba(255, 255, 255, .8);
 }
+/* Couleur de l'initiale elle-même : le « B » de Bonjour, la première lettre du prénom. */
+.ruban-lettre { color: var(--ruban-lettre); }
+.ruban-mot #welcomePrenom { display: inline-block; }
+.ruban-mot #welcomePrenom::first-letter { color: var(--ruban-lettre); }
 body.sti-v2 .welcome-return__title {
   font-size: clamp(1.8rem, 3.5vw, 2.7rem);
   overflow-wrap: anywhere;

@@ -50,6 +50,7 @@
         if (prioritaire) { img.loading = "eager"; try { img.fetchPriority = "high"; } catch (e) {} }
       });
       if (eco) Array.prototype.forEach.call(document.querySelectorAll("video"), function (v) {
+        if (v.getAttribute && (v.hasAttribute("data-video-decor") || v.hasAttribute("data-sti-hors-pause"))) return;
         if (!v.autoplay && !v.hasAttribute("data-sti-offline-explicite")) v.preload = "none";
       });
     } catch (e) {}
@@ -915,8 +916,23 @@
     }
   }
 
+  /* v499 : les vidéos purement décoratives (fond animé de l'accueil) ne doivent
+     jamais déclencher l'interlude « Pause pédagogique » : il recouvrait toute la
+     page et figeait la boucle du fond. */
+  function estVideoDecorativeSTI(video) {
+    if (!video || !video.getAttribute) return false;
+    if (video.hasAttribute("data-video-decor") || video.hasAttribute("data-sti-hors-pause")) return true;
+    if (video.getAttribute("data-sti-offline-explicite") === "decor") return true;
+    try {
+      if (video.autoplay && video.loop && video.muted) return true;
+      if (video.closest && video.closest(".welcome-return__fond")) return true;
+    } catch (e) {}
+    return false;
+  }
+
   function installerPauseQRVideoSTI(video) {
     if (!video || video.__stiPauseQRBound) return;
+    if (estVideoDecorativeSTI(video)) return;
     video.__stiPauseQRBound = true;
     /* Mode Réseau Labo Fluide : éviter le téléchargement simultané de toutes les vidéos MP4 avant le clic sur Lecture */
     try {

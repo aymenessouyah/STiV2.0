@@ -67,10 +67,21 @@ test('v498 : la vidéo drapeaurafeha.mp4 couvre tout le bloc « Bonjour » sans 
   const bloc = css.slice(css.indexOf('.welcome-return__fond {'), css.indexOf('.welcome-return__title {'));
   assert.match(bloc, /position: absolute;\s*inset: 0;/, 'le fond recouvre toute la boîte');
   assert.match(bloc, /object-fit: cover/, 'la vidéo s’étend sur toute la boîte sans déformation');
-  assert.match(bloc, /object-position: center 32%/, 'cadrage sur le drapeau et l’entrée du lycée');
-  assert.match(bloc, /\.welcome-return__fond::after \{[^}]*background: var\(--bg-alt\);[^}]*opacity: \.84;/, 'voile de lisibilité');
+  assert.match(bloc, /object-position: center 100%/, 'cadrage bas : l’affiche du lycée reste visible');
+  assert.match(bloc, /\.welcome-return__fond::after \{[^}]*linear-gradient\(180deg, var\(--bg-alt\) 0%, var\(--bg-alt\) 58%/, 'voile dense derrière le texte, plus léger en bas');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.welcome-return__fond-video \{ display: none; \}/,
     'aucune vidéo animée si l’utilisateur réduit les animations');
+
+  /* v499 : la vidéo est marquée décorative et n'est jamais prise pour un cours. */
+  assert.match(index, /id="welcomeFondVideo"[^>]*data-video-decor="1"/);
+  const protection = lire('assets/js/protection.js');
+  assert.match(protection, /function estVideoDecorativeSTI\(video\)/);
+  assert.match(protection, /if \(estVideoDecorativeSTI\(video\)\) return;/, 'la pause pédagogique ignore la vidéo de fond');
+  assert.match(protection, /closest\("\.welcome-return__fond"\)/, 'le fond de l’accueil est reconnu même sans attribut');
+
+  /* v499 : la boucle est garantie même si le navigateur met la vidéo en pause. */
+  assert.match(app, /video\.__stiBoucleFond = true;/);
+  assert.match(app, /addEventListener\("pause", function \(\) \{/);
 
   /* Le fond ne tourne que lorsque la section est visible. */
   assert.match(app, /function piloterVideoAccueil\(actif\)/);
@@ -78,12 +89,12 @@ test('v498 : la vidéo drapeaurafeha.mp4 couvre tout le bloc « Bonjour » sans 
   assert.match(app, /section\.hidden = true;\s*piloterVideoAccueil\(false\);/);
 });
 
-test('v498 : le ruban des initiales est bleu en 3e SI, vert en 4e SI, argent pour l’admin et les profs', () => {
+test('v498/v499 : ruban à plat, bleu 3e SI, vert 4e SI, or pour l’admin et les profs, orangé pour les autres', () => {
   /* Le « B » de Bonjour et le prénom sont chacun dans un bloc ruban. */
   assert.equal((index.match(/class="ruban-mot"/g) || []).length, 2, 'un ruban pour Bonjour, un pour le prénom');
   assert.equal((index.match(/class="ruban-initiale__logo"/g) || []).length, 2, 'le ruban contient le logo STI');
-  assert.match(index, /<span class="ruban-initiale" aria-hidden="true"><img class="ruban-initiale__logo" src="assets\/icons\/sti-icon-192\.png"[^>]*><\/span>Bonjour</,
-    'le ruban précède directement le B de « Bonjour »');
+  assert.match(index, /<span class="ruban-initiale" aria-hidden="true"><img class="ruban-initiale__logo" src="assets\/icons\/sti-icon-192\.png"[^>]*><\/span><span class="ruban-lettre">B<\/span>onjour</,
+    'le ruban précède le B de « Bonjour », qui porte sa propre couleur');
   assert.match(index, /<\/span><span id="welcomePrenom">/, 'le second ruban précède la première lettre du prénom');
   assert.match(index, /<h2 class="welcome-return__title" id="welcomeTitle" data-ruban="3si">/);
 
@@ -91,12 +102,22 @@ test('v498 : le ruban des initiales est bleu en 3e SI, vert en 4e SI, argent pou
   const avantPrenom = index.slice(index.indexOf('id="welcomePrenom"') - 120, index.indexOf('id="welcomePrenom"'));
   assert.doesNotMatch(avantPrenom, /<span id="welcomePrenom"[^>]*>/);
 
-  const couleurs = css.slice(css.indexOf('.welcome-return__title[data-ruban="4si"]'), css.indexOf('.ruban-mot { position: relative'));
-  assert.match(couleurs, /data-ruban="4si"[\s\S]*?--ruban-base: #34d399;/, 'vert 4e SI');
-  assert.match(couleurs, /data-ruban="admin"[\s\S]*?--ruban-base: #cbd5e1;/, 'argent admin/prof');
+  const couleurs = css.slice(css.indexOf('.welcome-return__title[data-ruban="4si"]'), css.indexOf('.ruban-initiale {'));
+  assert.match(couleurs, /data-ruban="4si"[\s\S]*?--ruban-lettre: #6ee7b7;/, 'vert 4e SI');
+  assert.match(couleurs, /data-ruban="admin"[\s\S]*?--ruban-lettre: #fbbf24;/, 'or pour admin / GOLD / profs');
+  assert.match(couleurs, /data-ruban="autre"[\s\S]*?--ruban-lettre: #fb923c;/, 'orangé pour les autres comptes');
   const defaut = css.slice(css.indexOf('.welcome-return__title {'), css.indexOf('.welcome-return__title[data-ruban="4si"]'));
-  assert.match(defaut, /--ruban-base: #38bdf8;/, 'bleu 3e SI par défaut');
-  assert.match(css, /\.ruban-initiale \{[\s\S]*?position: absolute;[\s\S]*?height: 0\.54em;/);
+  assert.match(defaut, /--ruban-lettre: #7dd3fc;/, 'bleu 3e SI par défaut');
+  /* L'initiale elle-même prend la couleur du ruban. */
+  assert.match(css, /\.ruban-lettre \{ color: var\(--ruban-lettre\); \}/);
+  assert.match(css, /\.ruban-mot #welcomePrenom::first-letter \{ color: var\(--ruban-lettre\); \}/);
+
+  /* v499 : plus de « pas » — bande droite, ni rotation ni découpe en biseau. */
+  const bande = css.slice(css.indexOf('.ruban-initiale {'), css.indexOf('.ruban-initiale__logo {'));
+  assert.doesNotMatch(bande, /rotate\(/, 'le ruban n’est plus incliné');
+  assert.doesNotMatch(bande, /clip-path/, 'le ruban n’a plus de découpe en biseau');
+  assert.match(bande, /border-radius: 0\.08em;/, 'coins réguliers');
+  assert.match(bande, /transform: translateY\(-50%\);/, 'alignement vertical exact, sans décalage');
 
   /* Le niveau est posé par le moteur de news, sur la classe réelle de la session. */
   assert.match(news, /function appliquerRuban\(\)/);
@@ -107,6 +128,8 @@ test('v498 : le ruban des initiales est bleu en 3e SI, vert en 4e SI, argent pou
   assert.match(news, /function demarrer\(fort\) \{\s*appliquerRuban\(\);/);
   assert.match(app, /STINewsPerso\.appliquerRuban\(\)/, 'le ruban suit l’arrivée du prénom');
   assert.match(news, /if \(n === "admin"\) return "Enseignant";/);
+  /* v499 : orangé pour tout compte qui n'est ni 3e/4e SI ni enseignant. */
+  assert.match(news, /var n = niveauDepuisClasse\(classeCourante\(\)\);\s*return n \|\| "autre";/);
 });
 
 test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', () => {
@@ -131,13 +154,13 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 });
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
-  assert.match(sw, /var CACHE = "sti-atelier-v359"/);
-  assert.match(sw, /var UPDATE_ID = "v498-accueil-drapeau-ruban-20261028"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "accueil-drapeau-v498"/);
-  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-drapeau-v498"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "accueil-drapeau-v498"/);
-  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-drapeau-v498"/);
-  assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-drapeau-v498"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v360"/);
+  assert.match(sw, /var UPDATE_ID = "v499-ruban-orange-20261028"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "accueil-ruban-v499"/);
+  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-ruban-v499"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "accueil-ruban-v499"/);
+  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-ruban-v499"/);
+  assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-ruban-v499"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   assert.ok(shell.includes('"./assets/images/drapeau-tunisie.svg"'), 'le drapeau est pré-caché');
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
@@ -153,5 +176,5 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v498-sti-atelier-v359');
+  assert.equal(manifeste.version, 'v499-sti-atelier-v360');
 });
