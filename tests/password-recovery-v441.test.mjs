@@ -4220,11 +4220,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v487\s*\|/.test(l)), 'v487 reste dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v488\s*\|/.test(l)), 'v488 reste dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v492\s*\|/.test(l)), 'v492 reste dans l’historique');
-  assert.ok(cinq.some((o) => /^v493 — Retour de la barre Cours\/Exercices\/Plan/.test(o.t)));
+  assert.ok(lignes.some((l) => /^\|\s*v493\s*\|/.test(l)), 'v493 reste dans l’historique');
   assert.ok(cinq.some((o) => /^v494 — Retour intelligent des cinq quiz/.test(o.t)));
   assert.ok(cinq.some((o) => /^v495 — Vidéo à la une tirée au hasard/.test(o.t)));
   assert.ok(cinq.some((o) => /^v496 — « News de ma classe »/.test(o.t)));
-  assert.match(cinq[0].t, /^v497 — News par classe strictement cloisonnées/);
+  assert.ok(cinq.some((o) => /^v497 — News par classe strictement cloisonnées/.test(o.t)));
+  assert.match(cinq[0].t, /^v498 — Accueil :/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {

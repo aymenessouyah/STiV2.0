@@ -75,9 +75,9 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-html5.js'
   ]) {
     const revision = ['cours/html5.html', 'assets/css/cours.css'].includes(path) ? 'onglets-mobile-v493' :
-      path === 'assets/js/app.js' || path === 'dashboard.html' ? 'video-alea-xp-v495' :
+      path === 'assets/js/app.js' || path === 'dashboard.html' ? 'accueil-drapeau-v498' :
       path === 'assets/js/cours-html5.js' ? 'progression-chapitres-v492' :
-      path === 'assets/css/theme.css' ? 'news-perso-v496' :
+      path === 'assets/css/theme.css' ? 'accueil-drapeau-v498' :
       'suivi-contextes-v491';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);

@@ -5,7 +5,7 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
 > 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (15 tables historiques et deux tables techniques XP protégées par RLS) + Service Worker incrémental (`sw.js` — `sti-atelier-v357`, historique `sti-atelier-v356` / `sti-atelier-v355` / `sti-atelier-v354` / `sti-atelier-v353` / `sti-atelier-v352` / `sti-atelier-v351` / `sti-atelier-v350` / `sti-atelier-v349` / `sti-atelier-v348` / `sti-atelier-v347` / `sti-atelier-v346` / `sti-atelier-v345` / `sti-atelier-v344` / `sti-atelier-v343` / `sti-atelier-v342` / `sti-atelier-v341` / `sti-atelier-v340`)
-> 📌 **Version du code** : **v497** (`sti-atelier-v358` — 28 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
+> 📌 **Version du code** : **v498** (`sti-atelier-v359` — 28 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
 
 ---
 
@@ -39,6 +39,7 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 
 ## 🎓 Cours interactifs, vidéos, Smart Books & exercices
 
+- **Accueil `v498`** : drapeau tunisien à gauche du logo (même hauteur que lui, pastille sur mobile), fond vidéo `assets/video/drapeaurafeha.mp4` (le drapeau et l'entrée du lycée Raféha) étiré sur tout le bloc « Bonjour » derrière un voile qui garde le texte lisible dans les trois thèmes, ruban d'identité sur le **B** de « Bonjour » et sur la **première lettre du prénom** (bleu 3ᵉ SI, vert 4ᵉ SI, argent pour l'admin et les profs, avec le logo STI sur le ruban), et boîtes « en cours » compactes alignées sur **une seule ligne** défilante.
 - **News de ma classe (`v496`, niveaux corrigés en `v497`)** : la barre de news « La Cote » est retirée de l’accueil ; à sa place, une ligne défilante personnalisée s’affiche juste après « Bonjour, prénom ». L’admin choisit la classe (**3ᵉ SI** ou **4ᵉ SI**) puis saisit **texte 1, texte 2, …** dans son tableau de bord (bouton « News de la classe »). Le texte est **bleu en 3ᵉ SI** et **vert en 4ᵉ SI** ; le fond sombre, la typographie et le défilement sont ceux de l’ancien bandeau. Rien n’est affiché tant qu’aucun texte n’est saisi pour la classe de l’élève. Depuis la `v497`, chaque compte ne reçoit **que les textes de sa propre classe** : le privilège « 4ᵉ SI » accordé aux profs, à l’admin, au labo et aux comptes GOLD ne fait plus basculer le bandeau sur les 4ᵉ SI, et un compte enseignant sans classe (admin, prof, labo) ne voit **aucune** news de classe — l’aperçu de la modale admin montre exactement ce que recevra la classe choisie.
 - **Quiz sans vidéo de cours (`v495`)** : les six pages de quiz (`html-css`, `javascript`, `sql`, `php`, `tableaux`, `pp`) ne portent aucune surface vidéo — ni balise `<video>`, ni piste `.mp4/.webm/.vtt`, ni lecteur — et `protection.js` refuse désormais d'y installer le lecteur pas à pas (garde `/quiz/`), même si un média était réintroduit dans le balisage.
 - **Vitrine aléatoire (`v495`)** : la carte « Vidéo à la une » de l’accueil tire une capsule différente à chaque visite parmi les vidéos accessibles à tous, hors démonstrations de moins d’une minute et hors séries réservées aux 4e SI ; la même capsule n’est jamais reproposée deux fois de suite. Source, sous-titres, affiche, badge et libellés d’accessibilité suivent le tirage.
@@ -265,6 +266,7 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 | v495 | Vidéo à la une tirée au hasard à chaque ouverture de l’accueil (capsules de moins d’une minute et séries réservées exclues, sans répétition immédiate) ; pages de quiz définitivement sans vidéo de cours (`protection.js` coupe sur `/quiz/`) ; file write-ahead des quiz et des gains XP vidée dès la première reconnexion depuis l’accueil ou le tableau de bord (`sti-atelier-v356`). |
 | v496 | « News de ma classe » : la barre de news « La Cote » disparaît de l’accueil, remplacée par une ligne défilante juste après « Bonjour, prénom » — l’admin choisit la classe (3ᵉ SI / 4ᵉ SI) et saisit texte 1, texte 2… (bleu en 3ᵉ, vert en 4ᵉ, fond et défilement identiques à l’ancien bandeau) (`sti-atelier-v357`). |
 | v497 | News par classe strictement cloisonnées : l’admin, les profs, le labo et les comptes GOLD ne voient plus les news de toutes les classes (plus de repli sur les 4ᵉ SI via le privilège, plus de cumul avec l’ancien format) ; aperçu élève dans la modale admin (`sti-atelier-v358`). |
+| v498 | Accueil : drapeau tunisien à gauche du logo, fond vidéo du bloc « Bonjour », ruban bleu/vert/argent avec le logo STI sur l’initiale de « Bonjour » et du prénom, boîtes « en cours » compactes sur une seule ligne (`sti-atelier-v359`). |
 
 ---
 

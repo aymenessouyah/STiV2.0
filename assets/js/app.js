@@ -2031,6 +2031,20 @@
     global.STIProfil.enregistrerVisiteCours(matiere);
   }
 
+  /* v498 : la vidéo de fond ne tourne que quand le bloc « Bonjour » est visible. */
+  function piloterVideoAccueil(actif) {
+    var video = document.getElementById("welcomeFondVideo");
+    if (!video || typeof video.play !== "function") return;
+    try {
+      if (actif) {
+        var p = video.play();
+        if (p && typeof p.catch === "function") p.catch(function () {});
+      } else {
+        video.pause();
+      }
+    } catch (e) {}
+  }
+
   function rendreAccueilPersonnalise(etat) {
     var section = document.getElementById("welcomeReturn");
     if (!section || !global.STIProfil) return;
@@ -2040,16 +2054,22 @@
     var nom = document.getElementById("welcomePrenom");
     if (!etat.connecte) {
       section.hidden = true;
+      piloterVideoAccueil(false);
       zone.replaceChildren();
       zone._signatureAccueil = "";
       nom.textContent = "";
       return;
     }
     section.hidden = false;
+    piloterVideoAccueil(true);
     /* GOLD seul ne fait pas d'un abonné l'administrateur. */
     var emailAdmin = global.STI_AUTH && global.STI_AUTH.ADMIN;
     nom.textContent = emailAdmin && String(etat.email || "").trim().toLowerCase() === String(emailAdmin).trim().toLowerCase()
       ? "Aymen" : (etat.prenomCompte || etat.prenom || "Abonné");
+    /* v498 : le ruban du prénom suit la présence réelle du texte. */
+    try {
+      if (global.STINewsPerso && global.STINewsPerso.appliquerRuban) global.STINewsPerso.appliquerRuban();
+    } catch (eRuban) {}
     if (etat.compteEnAttente) {
       compteur.textContent = "Synchronisation des cours…";
       compteur.removeAttribute("aria-label");
@@ -2083,10 +2103,10 @@
     var focusId = lienActif && zone.contains(lienActif) ? lienActif.getAttribute("data-welcome-course") : "";
     zone.innerHTML = cartes.map(function (c) {
       return '<a class="welcome-course welcome-course--' + c.id + '" data-welcome-course="' + c.id + '" href="' + c.href + '">' +
-        '<span class="welcome-course__cover"><span class="welcome-course__state">' + (c.revises ? c.revises + " / " + c.total + " révisés" : "Consulté") + '</span>' +
-        '<span class="welcome-course__icon" aria-hidden="true"><svg><use href="' + pref + 'assets/icons/matieres.svg#' + c.id + '"></use></svg></span></span>' +
+        '<span class="welcome-course__cover"><span class="welcome-course__icon" aria-hidden="true"><svg><use href="' + pref + 'assets/icons/matieres.svg#' + c.id + '"></use></svg></span></span>' +
         '<span class="welcome-course__body"><strong class="welcome-course__title">' + echapperHtml(c.titre) + '</strong>' +
-        '<span class="welcome-course__details">Cours · ' + c.consultes + ' / ' + c.total + ' chapitres consultés · Continuer →</span></span></a>';
+        '<span class="welcome-course__details">Cours · ' + c.consultes + ' / ' + c.total + ' chapitres consultés · Continuer →</span></span>' +
+        '<span class="welcome-course__state">' + (c.revises ? c.revises + " / " + c.total + " révisés" : "Consulté") + '</span></a>';
     }).join("");
     zone._signatureAccueil = signature;
     if (focusId) {

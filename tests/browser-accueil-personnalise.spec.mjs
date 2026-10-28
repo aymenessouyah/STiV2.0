@@ -293,11 +293,16 @@ test('trois thèmes et petits écrans : focus, dimensions et règles WCAG du nou
       await page.setViewportSize({ width: largeur, height: 900 });
       await expect(page.locator('#welcomeReturn')).toBeVisible();
       await expect.poll(() => page.evaluate(() => ({ largeur: document.documentElement.clientWidth, contenu: document.documentElement.scrollWidth }))).toEqual({ largeur, contenu: largeur });
-      for (const lien of await page.locator('#welcomeCourses a').all()) {
+      /* v498 : les boîtes « en cours » tiennent sur une seule ligne défilante.
+         Elles peuvent donc dépasser la fenêtre, jamais la piste de défilement. */
+      const piste = page.locator('#welcomeCourses');
+      const bornes = await piste.evaluate(el => ({ gauche: el.getBoundingClientRect().left, contenu: el.scrollWidth, visible: el.clientWidth }));
+      expect(bornes.contenu).toBeGreaterThanOrEqual(bornes.visible);
+      for (const lien of await piste.locator('a').all()) {
         const dimensions = await lien.boundingBox();
         expect(dimensions.width).toBeGreaterThan(200);
-        expect(dimensions.x).toBeGreaterThanOrEqual(0);
-        expect(dimensions.x + dimensions.width).toBeLessThanOrEqual(largeur + 1);
+        expect(dimensions.x).toBeGreaterThanOrEqual(-1);
+        expect(dimensions.x + dimensions.width).toBeLessThanOrEqual(bornes.gauche + bornes.contenu + 1);
       }
       const violations = await page.evaluate(async () => (await axe.run('#welcomeReturn', { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, impact: v.impact, nodes: v.nodes.map(n => n.target) })));
       expect(violations, `${theme}, ${largeur}px`).toEqual([]);

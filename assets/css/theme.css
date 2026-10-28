@@ -470,6 +470,16 @@ html[dir="rtl"] .reading-progress { transform-origin: right center; }
   box-shadow: var(--shadow-xs);
 }
 
+/* v498 : drapeau tunisien à gauche du logo, même hauteur que lui. */
+.brand-logo__drapeau {
+  width: 60px;
+  height: 40px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: var(--shadow-xs);
+}
+
 .brand-logo__text { display: flex; flex-direction: column; min-width: 0; }
 
 .brand-logo__title {
@@ -836,6 +846,86 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   border-bottom: 1px solid var(--border);
 }
 .welcome-return[hidden], .welcome-return__empty[hidden] { display: none; }
+
+/* ── v498 : fond vidéo du bloc « Bonjour » (drapeau de Raféha) ── */
+.welcome-return { position: relative; overflow: hidden; isolation: isolate; }
+.welcome-return__fond {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 130% at 18% 0%, rgba(231, 0, 19, .16), transparent 62%),
+    var(--bg-alt);
+}
+.welcome-return__fond-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .9;
+}
+/* Voile de lisibilité : la vidéo s'étend sur toute la boîte sans gêner le texte. */
+.welcome-return__fond::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bg-alt);
+  opacity: .84;
+}
+.welcome-return > .container { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .welcome-return__fond-video { display: none; }
+}
+
+/* ── v498 : ruban d'identité sur l'initiale de « Bonjour » et du prénom ── */
+.welcome-return__title {
+  --ruban-clair: #7dd3fc;
+  --ruban-base: #38bdf8;
+  --ruban-fonce: #0369a1;
+}
+.welcome-return__title[data-ruban="4si"] {
+  --ruban-clair: #a7f3d0;
+  --ruban-base: #34d399;
+  --ruban-fonce: #047857;
+}
+/* Admin, professeurs, labo et comptes GOLD : ruban argent. */
+.welcome-return__title[data-ruban="admin"] {
+  --ruban-clair: #f8fafc;
+  --ruban-base: #cbd5e1;
+  --ruban-fonce: #94a3b8;
+}
+.ruban-mot { position: relative; display: inline-block; }
+.ruban-mot[hidden] { display: none; }
+.ruban-initiale {
+  position: absolute;
+  z-index: 2;
+  left: -0.3em;
+  top: 50%;
+  width: 1.16em;
+  height: 0.54em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.08em;
+  transform: translateY(-50%) rotate(-7deg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 52%),
+    linear-gradient(90deg, var(--ruban-fonce), var(--ruban-base) 28%, var(--ruban-clair) 60%, var(--ruban-base) 86%, var(--ruban-fonce));
+  box-shadow: 0 0.06em 0.18em rgba(3, 8, 20, .45), inset 0 0.02em 0.05em rgba(255, 255, 255, .55);
+  clip-path: polygon(3% 0, 100% 7%, 97% 100%, 0 93%);
+  pointer-events: none;
+}
+.ruban-initiale__logo {
+  display: block;
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 50%;
+  background: #0b1224;
+  object-fit: contain;
+  box-shadow: 0 0 0 0.035em rgba(255, 255, 255, .8);
+}
 body.sti-v2 .welcome-return__title {
   font-size: clamp(1.8rem, 3.5vw, 2.7rem);
   overflow-wrap: anywhere;
@@ -859,14 +949,29 @@ body.sti-v2 .welcome-return__dashboard {
   text-underline-offset: .25em;
 }
 .welcome-return__dashboard:hover { text-decoration-color: var(--brand); }
-.welcome-return__courses { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: var(--space-4); }
+/* v498 : une seule ligne de boîtes compactes (défilement horizontal si besoin). */
+.welcome-return__courses {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--space-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-bottom: 6px;
+}
 .welcome-course {
   display: flex;
-  min-width: 0;
-  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 210px;
+  max-width: 340px;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+  padding-right: var(--space-3);
   overflow: hidden;
+  scroll-snap-align: start;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   background: var(--surface-solid);
   box-shadow: var(--shadow-xs);
   transition: border-color var(--duration-fast) ease, transform var(--duration-fast) var(--ease-out);
@@ -880,35 +985,39 @@ body.sti-v2 .welcome-return__dashboard {
 .welcome-course__cover {
   position: relative;
   display: grid;
-  min-height: 100px;
+  flex: none;
+  width: 56px;
+  min-height: 58px;
   place-items: center;
+  align-self: stretch;
   background: var(--welcome-soft);
   color: var(--welcome-accent);
 }
 .welcome-course__icon {
   display: grid;
-  width: 64px;
-  height: 64px;
+  width: 34px;
+  height: 34px;
   place-items: center;
   border-radius: var(--radius-full);
   background: var(--surface-solid);
   border: 1px solid var(--welcome-border);
 }
-.welcome-course__icon svg { width: 38px; height: 38px; }
+.welcome-course__icon svg { width: 20px; height: 20px; }
 .welcome-course__state {
-  position: absolute;
-  top: var(--space-3);
-  inset-inline-start: var(--space-3);
-  padding: 3px 9px;
+  flex: none;
+  margin-inline-start: auto;
+  padding: 2px 8px;
+  border: 1px solid var(--welcome-border);
   border-radius: var(--radius-full);
-  background: var(--surface-solid);
-  color: var(--text);
-  font-size: .72rem;
+  background: var(--welcome-soft);
+  color: var(--welcome-accent);
+  font-size: .66rem;
   font-weight: 700;
+  white-space: nowrap;
 }
-.welcome-course__body { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-4); }
-.welcome-course__title { color: var(--text); font-size: 1.05rem; }
-.welcome-course__details { color: var(--text-secondary); font-size: .8rem; }
+.welcome-course__body { display: flex; min-width: 0; flex-direction: column; gap: 1px; padding: var(--space-2) 0; }
+.welcome-course__title { color: var(--text); font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.welcome-course__details { color: var(--text-secondary); font-size: .74rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 body.sti-v2 .welcome-return__empty { font-size: .9rem; }
 .welcome-return__empty a { text-decoration: underline !important; text-underline-offset: .2em; }
 
@@ -1744,8 +1853,20 @@ body.sti-v2 #pwaInvitationInstaller {
 @media (max-width: 540px) {
   /* Conserver toutes les actions sans recouvrir le logo ni élargir la page. */
   body.sti-v2 .site-header__inner, body.sti-v2 .header-actions { gap: var(--space-1); }
-  body.sti-v2 .site-header .brand-logo { flex: 0 0 auto; gap: 0; }
+  body.sti-v2 .site-header .brand-logo { position: relative; flex: 0 0 auto; gap: 0; }
   body.sti-v2 .site-header .brand-logo__text { display: none; }
+  /* v498 : sur mobile le drapeau devient une pastille posée sur le logo,
+     pour ne pas élargir l'en-tête ni pousser les actions hors de l'écran. */
+  body.sti-v2 .site-header .brand-logo__drapeau {
+    position: absolute;
+    left: -6px;
+    bottom: -6px;
+    width: 28px;
+    height: 19px;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .55), var(--shadow-xs);
+    z-index: 1;
+  }
   body.sti-v2 .search-trigger { padding-inline: 7px; }
   body.sti-v2 #installBtn { padding-inline: 5px; }
   body.sti-v2 .theme-switcher__btn { width: 26px; }

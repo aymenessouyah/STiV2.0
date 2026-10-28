@@ -109,7 +109,7 @@ test('v496 : l’accueil n’a plus de barre « La Cote » et porte les news de 
   assert.match(html, /id="bandeauNewsPerso"/);
   assert.match(html, /id="newsPersoPiste"/);
   assert.match(html, /id="newsPersoEtiquette"/);
-  assert.match(html, /assets\/js\/news-perso\.js\?v=496/);
+  assert.match(html, /assets\/js\/news-perso\.js\?v=498/);
 
   /* Emplacement : la ligne juste après « Bonjour, prénom ». */
   const salut = html.indexOf('id="welcomeTitle"');
@@ -226,10 +226,10 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
 
   /* Le bandeau du site est bien invalidé par le service worker. */
   const sw = lire('sw.js');
-  assert.match(sw, /var CACHE = "sti-atelier-v358"/);
-  assert.match(sw, /var UPDATE_ID = "v497-news-niveaux-20261028"/);
-  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "news-niveaux-v497"/);
-  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "news-perso-v496"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v359"/);
+  assert.match(sw, /var UPDATE_ID = "v498-accueil-drapeau-ruban-20261028"/);
+  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-drapeau-v498"/);
+  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-drapeau-v498"/);
   assert.match(sw, /url: "\.\/admin\.html", revision: "news-niveaux-v497"/);
   assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "news-niveaux-v497"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];

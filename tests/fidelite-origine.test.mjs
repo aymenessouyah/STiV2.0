@@ -29,7 +29,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
   assert.doesNotMatch(html, /assets\/js\/cote-ticker\.js/);
   assert.match(html, /id="bandeauNewsPerso"/);
   assert.match(html, /id="newsPersoPiste"/);
-  assert.match(html, /assets\/js\/news-perso\.js\?v=496/);
+  assert.match(html, /assets\/js\/news-perso\.js\?v=498/);
   const bandeau = html.match(/<div id="bandeauNewsPerso"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/)[0];
   assert.match(bandeau, /class="bandeau-news-perso"/);
   assert.ok(html.indexOf('id="bandeauNewsPerso"') > html.indexOf('id="welcomeTitle"'), 'le bandeau suit « Bonjour, prénom »');
@@ -105,7 +105,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'video-alea-xp-v495' :
+    const revision = chemin === 'assets/js/app.js' ? 'accueil-drapeau-v498' :
       chemin.startsWith('cours/') || chemin === 'assets/css/cours.css' ? 'onglets-mobile-v493' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }

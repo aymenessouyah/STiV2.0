@@ -34,7 +34,7 @@
   <!-- File write-ahead des quiz et des gains XP : vidée dès la première reconnexion, sans attendre un retour sur un quiz. -->
   <script src="assets/js/quiz-sync.js?v=460" defer></script>
   <!-- News personnalisées de la classe (remplace l'ancienne « Cote » de l'accueil). -->
-  <script src="assets/js/news-perso.js?v=496" defer></script>
+  <script src="assets/js/news-perso.js?v=498" defer></script>
 </head>
 <body class="sti-v2">
   <!-- Lien d'évitement clavier (accessibilité RGAA / WCAG) -->
@@ -50,6 +50,7 @@
     <div class="container site-header__inner">
       <!-- Identité visuelle STI V2.0 -->
       <a class="brand-logo" href="index.html" aria-label="STI V2.0 Lycée Raféha · 3e &amp; 4e SI — Retour à l'accueil">
+        <img class="brand-logo__drapeau" src="assets/images/drapeau-tunisie.svg" alt="Drapeau tunisien" width="60" height="40" loading="lazy">
         <span class="brand-logo__mark" aria-hidden="true"><img src="assets/icons/sti-icon-192.png" alt="" width="40" height="40"></span>
         <span class="brand-logo__text">
           <span class="brand-logo__title">STI V2.0</span>
@@ -112,8 +113,17 @@
   <main id="contenu-principal">
     <!-- Accueil personnel : le compteur correspond aux cours réellement ouverts. -->
     <section class="welcome-return" id="welcomeReturn" aria-labelledby="welcomeTitle" hidden>
+      <!-- v498 : fond vidéo (drapeau de Raféha), étiré sur toute la boîte, très assombri
+           par le voile CSS pour que le texte reste lisible dans les trois thèmes. -->
+      <div class="welcome-return__fond" aria-hidden="true">
+        <video class="welcome-return__fond-video" id="welcomeFondVideo" autoplay muted loop playsinline preload="metadata" disablepictureinpicture tabindex="-1">
+          <source src="assets/video/drapeaurafeha.mp4" type="video/mp4" />
+        </video>
+      </div>
       <div class="container">
-        <h2 class="welcome-return__title" id="welcomeTitle">Bonjour, <span id="welcomePrenom">Abonné</span></h2>
+        <!-- v498 : ruban d'identité sur l'initiale de « Bonjour » et sur celle du prénom.
+             Bleu en 3e SI, vert en 4e SI, argent pour l'admin et les profs (data-ruban). -->
+        <h2 class="welcome-return__title" id="welcomeTitle" data-ruban="3si"><span class="ruban-mot"><span class="ruban-initiale" aria-hidden="true"><img class="ruban-initiale__logo" src="assets/icons/sti-icon-192.png" alt="" width="40" height="40" /></span>Bonjour</span>, <span class="ruban-mot"><span class="ruban-initiale" aria-hidden="true"><img class="ruban-initiale__logo" src="assets/icons/sti-icon-192.png" alt="" width="40" height="40" /></span><span id="welcomePrenom">Abonné</span></span></h2>
         <!-- News personnalisées de la classe, saisies par l'admin : bleu en 3e SI, vert en 4e SI.
              Même fond, même typographie et même défilement que l'ancienne barre de news. -->
         <div id="bandeauNewsPerso" class="bandeau-news-perso" data-classe="3si" hidden aria-label="News de la classe">
