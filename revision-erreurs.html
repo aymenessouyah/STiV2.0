@@ -308,7 +308,7 @@
         if (!g || !g.aRetravailler.length) return;
         var ids = g.aRetravailler.map(function (r) { return r.question_id; });
         if (window.STIQuizSync && STIQuizSync.preparerRevision) STIQuizSync.preparerRevision(g.quiz, ids);
-        var url = PAGES[g.quiz] + "?revision=erreurs";
+        var url = PAGES[g.quiz] + "?revision=erreurs&retour=" + encodeURIComponent(location.pathname + location.search + location.hash);
         if (g.quiz === "tableaux" && g.module) url += "&module=" + encodeURIComponent(g.module);
         window.location.href = url;
       });
@@ -321,7 +321,7 @@
         if (!toutes.length) return;
         var ids = toutes.map(function (r) { return r.question_id; });
         if (window.STIQuizSync && STIQuizSync.preparerRevision) STIQuizSync.preparerRevision(g.quiz, ids);
-        var url = PAGES[g.quiz] + "?revision=erreurs";
+        var url = PAGES[g.quiz] + "?revision=erreurs&retour=" + encodeURIComponent(location.pathname + location.search + location.hash);
         if (g.quiz === "tableaux" && g.module) url += "&module=" + encodeURIComponent(g.module);
         window.location.href = url;
       });

@@ -98,7 +98,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'video-js-validation-v485' : chemin === 'assets/js/cours-matieres.js' ? 'fidelite-origine-v481' : 'cours-retour-xp-v486';
+    const revision = chemin === 'assets/js/cours-matieres.js' ? 'fidelite-origine-v481' : chemin === 'assets/css/cours.css' ? 'cours-retour-xp-v486' : 'suivi-contextes-v491';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
   assert.doesNotMatch(lire('assets/js/visionneuse-exercices.js'), /\blocalStorage\b|\bsessionStorage\b/);
@@ -205,6 +205,15 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     const ajout = /<script src="\.\.\/assets\/js\/retour-quiz\.js"(?: defer)?><\/script>\n/g;
     assert.equal((courant.match(ajout) || []).length, 1, chemin);
     courant = courant.replace(ajout, '');
+    if (chemin === 'quiz/tableaux.html') {
+      const profil = '  <script src="../assets/js/profil.js" defer data-sti-quiz-seul></script>\n';
+      assert.equal(courant.split(profil).length - 1, 1, chemin + ' : profil attendu');
+      courant = courant.replace(profil, '');
+      const ordre = '  <script src="../assets/js/config.js?v=476" defer></script>\n  <script src="../assets/js/supabase-umd.js" defer></script>';
+      const original = '  <script src="../assets/js/supabase-umd.js" defer></script>\n  <script src="../assets/js/config.js?v=476" defer></script>';
+      assert.equal(courant.split(ordre).length - 1, 1, chemin + ' : ordre attendu');
+      courant = courant.replace(ordre, original);
+    }
     if (additionsXp[chemin]) {
       const profil = '  <script src="../assets/js/profil.js" defer data-sti-quiz-seul></script>\n';
       for (const pont of [profil, ...additionsXp[chemin]]) {

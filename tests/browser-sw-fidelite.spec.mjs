@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-for (const ancienne of ['340','341','342','343','344','345','346','347','348','349','350']) {
-  test(`migration réelle du service worker v${ancienne} vers v351 sans boucle de rechargement`, async ({ page }) => {
+for (const ancienne of ['340','341','342','343','344','345','346','347','348','349','350','351']) {
+  test(`migration réelle du service worker v${ancienne} vers v352 sans boucle de rechargement`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     // Une identité fictive contourne seulement l'authentification pour ce scénario.
     await page.addInitScript(() => {
@@ -87,7 +87,7 @@ for (const ancienne of ['340','341','342','343','344','345','346','347','348','3
     let chargements = 0;
     page.on('domcontentloaded', () => { chargements++; });
     await page.goto('/index.html#videos', { waitUntil:'domcontentloaded' }).catch(() => {});
-    await expect.poll(async () => { try { return await page.evaluate(() => localStorage.getItem('sti-version-installee')); } catch (e) { return ''; } }, {timeout:20_000}).toBe('351');
+    await expect.poll(async () => { try { return await page.evaluate(() => localStorage.getItem('sti-version-installee')); } catch (e) { return ''; } }, {timeout:20_000}).toBe('352');
     await expect.poll(async () => { try { return await page.evaluate(() => Boolean(navigator.serviceWorker.controller)); } catch (e) { return false; } }, {timeout:20_000}).toBe(true);
     await expect(page.locator('#videosGrid')).toBeVisible();
     // La première activation peut recharger la page, mais ne doit pas tourner en boucle.
@@ -101,18 +101,18 @@ for (const ancienne of ['340','341','342','343','344','345','346','347','348','3
     await expect(page.locator('#sti-bnav [data-cle="videos"]')).toHaveText('Vidéos');
     await expect(page.locator('#sti-bnav [data-cle="exercices"]')).toHaveCount(0);
     /* clients.claim() précède volontairement la copie locale des anciens caches. */
-    await expect.poll(() => page.evaluate(async () => (await caches.keys()).filter(n => /^sti-atelier-v(?:34[0123456789]|350)$/.test(n))), { timeout: 20_000 }).toEqual([]);
+    await expect.poll(() => page.evaluate(async () => (await caches.keys()).filter(n => /^sti-atelier-v(?:34[0123456789]|350|351)$/.test(n))), { timeout: 20_000 }).toEqual([]);
     expect(await page.evaluate(async () => {
       const noms = await caches.keys();
-      const cache = await caches.open('sti-atelier-v351');
-      return { ancien: noms.some(n => /^sti-atelier-v(?:34[0123456789]|350)$/.test(n)),
+      const cache = await caches.open('sti-atelier-v352');
+      return { ancien: noms.some(n => /^sti-atelier-v(?:34[0123456789]|350|351)$/.test(n)),
         donnee: await (await cache.match('/assets/js/sqljs/sql-wasm.wasm'))?.text(),
         titre: document.title, version: localStorage.getItem('sti-version-affichee') };
-    })).toMatchObject({ ancien:false, donnee:'fixture à conserver', version:'490' });
-    expect(await page.evaluate(async () => (await (await (await caches.open('sti-atelier-v351')).match('/assets/js/mobile-nav.js', {ignoreSearch:true})).text()))).toContain('lib: "Vidéos"');
+    })).toMatchObject({ ancien:false, donnee:'fixture à conserver', version:'491' });
+    expect(await page.evaluate(async () => (await (await (await caches.open('sti-atelier-v352')).match('/assets/js/mobile-nav.js', {ignoreSearch:true})).text()))).toContain('lib: "Vidéos"');
     // Les nouveaux modules indispensables sont présents même avant la première visite.
-    for (const chemin of ['/assets/js/lecteur-commun.js','/assets/js/retour-quiz.js','/assets/css/theme-patrimoine.css','/assets/js/visionneuse-exercices.js','/assets/js/roue-initiales.js','/assets/css/badge-compte.css','/assets/images/badge-compte-vierge.png','/assets/icons/sti-icon-192.png','/assets/images/qr-code-site.png']) {
-      await expect.poll(() => page.evaluate(async u => Boolean(await (await caches.open('sti-atelier-v351')).match(u, {ignoreSearch:true})),chemin)).toBe(true);
+    for (const chemin of ['/assets/js/lecteur-commun.js','/assets/js/retour-quiz.js','/assets/js/appel-quiz.js','/assets/js/suivi-profil.js','/assets/js/reconnexion-profil.js','/assets/css/theme-patrimoine.css','/assets/js/visionneuse-exercices.js','/assets/js/roue-initiales.js','/assets/css/badge-compte.css','/assets/images/badge-compte-vierge.png','/assets/icons/sti-icon-192.png','/assets/images/qr-code-site.png']) {
+      await expect.poll(() => page.evaluate(async u => Boolean(await (await caches.open('sti-atelier-v352')).match(u, {ignoreSearch:true})),chemin)).toBe(true);
     }
     await page.goto('/cours/css3.html#exercices', {waitUntil:'domcontentloaded'});
     await expect(page.locator('[data-course-tab="exercices"]')).toHaveAttribute('aria-selected','true');

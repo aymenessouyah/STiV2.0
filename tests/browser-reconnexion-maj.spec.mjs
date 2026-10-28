@@ -390,7 +390,10 @@ test('commande de version du tableau admin : le vrai bouton force une activation
     await expect.poll(() => page.evaluate(async () => Boolean((await navigator.serviceWorker.getRegistration()).waiting)), { timeout: 15000 }).toBe(true);
     await badge.click();
     await expect.poll(() => messages.includes('FORCE_REFRESH_VERSION'), { timeout: 15000 }).toBe(true);
-    await expect.poll(() => page.evaluate(async v => (await caches.keys()).includes('sti-atelier-v' + (v + 1)), serveur.version), { timeout: 15000 }).toBe(true);
+    await expect.poll(async () => {
+      try { return await page.evaluate(async v => (await caches.keys()).includes('sti-atelier-v' + (v + 1)), serveur.version); }
+      catch (e) { return false; } // La commande volontaire peut recharger le tableau admin.
+    }, { timeout: 15000 }).toBe(true);
     await expect.poll(async () => {
       try { return await page.evaluate(async () => !(await navigator.serviceWorker.getRegistration()).waiting); }
       catch (e) { return false; } // Le tableau admin peut se recharger sur commande explicite.

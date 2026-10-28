@@ -1,14 +1,9 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   STI V2.0 — Le web de A à Z · Script principal unifié (assets/js/app.js)
-   Lycée Raféha · 3ème & 4ème SI · Enseignant : Aymen Essouyah
-   - Aucune dépendance externe, aucun framework, aucune image externe (SVG/emojis)
-   - Aucune lecture/écriture directe de localStorage : tout passe par STIProfil
-   - Aucune clé ou URL Supabase en dur : tout provient de window.STI_AUTH
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* STI V2.0 — script principal unifié · Lycée Raféha
+   Sans framework ni ressources externes ; stockage via STIProfil. */
 (function (global, document) {
   "use strict";
 
-  /* ── 1. Utilitaires de chemins et d'échappement HTML ── */
+  /* 1. Utilitaires */
   function echapperHtml(valeur) {
     return String(valeur == null ? "" : valeur)
       .replace(/&/g, "&amp;")
@@ -81,7 +76,7 @@
     return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
   }
 
-  /* ── 2. Catalogue officiel des Matières, Vidéos (.mp4), Exercices & Annexes ── */
+  /* 2. Catalogue des matières */
   var MATIERES = {
     html5: {
       id: "html5",
@@ -351,7 +346,7 @@
     }
   ];
 
-  /* ── 3. Traductions d'interface FR · EN · AR (support RTL automatique) ── */
+  /* 3. Traductions */
   var TRADUCTIONS = {
     fr: {
       "nav.cours": "Cours",
@@ -405,7 +400,7 @@
     });
   }
 
-  /* ── 4. Sélecteur des 3 modes d'affichage (☀️ Clair · 🌗 Intermédiaire · 🌙 Sombre) ── */
+  /* 4. Modes d’affichage */
   function rafraichirBoutonsTheme() {
     if (!global.STIProfil) return;
     var themeActif = global.STIProfil.chargerProfil().theme;
@@ -426,7 +421,7 @@
     rafraichirBoutonsTheme();
   }
 
-  /* ── 5. Déconnexion unifiée réutilisant acces.js / Supabase sans réimplémentation ── */
+  /* 5. Déconnexion */
   function declencherDeconnexion() {
     var btnAcces = document.getElementById("sti-out");
     if (btnAcces) {
@@ -444,7 +439,7 @@
     }
   }
 
-  /* ── 6. Badge Abonné en-tête & Panneau latéral Abonné (Tiroir) ── */
+  /* 6. Badge et panneau abonné */
   function estPageAccueil() {
     var pn = String((global.location && global.location.pathname) || "").replace(/\/+$/, "");
     return pn === "" || /\/STiV2\.0$/i.test(pn) || /\/index\.html$/i.test(pn);
@@ -640,7 +635,7 @@
     obs.observe(document.body, { childList: true, subtree: true });
   }
 
-  /* ── 7. Suivi et Lecteur des Vidéos explicatives (.mp4) ── */
+  /* 7. Lecteur vidéo */
   function attacherSuiviElementVideo(videoEl, metaVideo) {
     if (!videoEl || videoEl._suiviStiActif || !global.STIProfil) return;
     videoEl._suiviStiActif = true;
@@ -810,7 +805,7 @@
     }
   }
 
-  /* ── 8. Page d'accueil : Terminal, Compteurs, Recherche, Filtres, Révision, Nouveautés, Modales ── */
+  /* 8. Accueil */
   function initialiserTerminalHero() {
     var iconeEl = document.getElementById("rotatorIcon");
     var texteEl = document.getElementById("rotatorText");
@@ -1368,7 +1363,7 @@
     }
   }
 
-  /* ── 9. Architecture Matière Unifiée (Cours + Exercices + Annexes + Vidéos sur 1 page) ── */
+  /* 9. Cours unifiés */
   function ouvrirVisionneuseDocument(urlRelative, titreDoc) {
     var pref = obtenirPrefixeRacine();
     var mod = document.getElementById("stiDocViewerModal");
@@ -1617,7 +1612,7 @@
     rafraichirBoutonsTheme();
   }
 
-  /* ── 10. Rendu et interactions du Tableau de bord de l'abonné (dashboard.html) ── */
+  /* 10. Tableau de bord abonné */
   function rendreTableauDeBord() {
     var racineDash = document.getElementById("stiDashboardRoot");
     if (!racineDash || !global.STIProfil) return;
@@ -1628,7 +1623,7 @@
     var ok4 = estAutorise4SI();
     var pref = obtenirPrefixeRacine();
 
-    /* 1. En-tête héroïque & Anneau SVG de progression */
+    /* 1. En-tête et anneau de progression */
     var elAvatar = document.getElementById("dashAvatar");
     var elWelcome = document.getElementById("dashWelcomeName");
     var elSub = document.getElementById("dashSessionStatus");
@@ -1677,7 +1672,7 @@
       }
     }
 
-    /* 3. Progression par matière (« X / 5 révisés ») */
+    /* 3. Progression par matière */
     var badgeProg = document.getElementById("dashRevisedBadge");
     var listeProg = document.getElementById("dashSubjectsList");
     if (badgeProg) badgeProg.textContent = rev.faits + " / " + rev.total + " révisés";
@@ -1708,7 +1703,7 @@
       }).join("");
     }
 
-    /* 4. Mes quiz & Rejouer mes erreurs */
+    /* 4. Quiz et erreurs */
     var contQuiz = document.getElementById("dashQuizList");
     if (contQuiz) {
       if (!profil.quiz.length) {
@@ -1738,7 +1733,7 @@
       }
     }
 
-    /* 5. Mes vidéos (vues & à reprendre) */
+    /* 5. Vidéos vues ou à reprendre */
     var contVideos = document.getElementById("dashVideosList");
     var badgeVid = document.getElementById("dashVideosBadge");
     var vidsDispo = CATALOGUE_VIDEOS.filter(function (v) { return !v.reserve4si || ok4; });
@@ -1770,7 +1765,7 @@
       }).join("");
     }
 
-    /* 6. Ma cote / Notes /20 envoyées au professeur */
+    /* 6. Notes envoyées au professeur */
     var contNotes = document.getElementById("dashNotesList");
     var badgeMoy = document.getElementById("dashNotesAvgBadge");
     if (contNotes) {
@@ -1801,7 +1796,7 @@
       }
     }
 
-    /* 7. État actif des contrôles de préférences */
+    /* 7. Préférences actives */
     document.querySelectorAll("[data-set-lang]").forEach(function (b) {
       b.setAttribute("aria-pressed", b.getAttribute("data-set-lang") === profil.langue ? "true" : "false");
     });
@@ -1869,7 +1864,7 @@
 
   }
 
-  /* ── 11. Interception passive des scores de quiz envoyés à acces.js ── */
+  /* 11. Scores de quiz */
   function connecterPontQuizEtAteliers() {
     var origEnregistrer = global.enregistrerScoreQuizSTI;
     if (typeof origEnregistrer === "function" && !origEnregistrer._pontProfilSti) {
@@ -1981,7 +1976,10 @@
       return;
     }
     section.hidden = false;
-    nom.textContent = etat.prenomCompte || etat.prenom || "Abonné";
+    /* GOLD seul ne fait pas d'un abonné l'administrateur. */
+    var emailAdmin = global.STI_AUTH && global.STI_AUTH.ADMIN;
+    nom.textContent = emailAdmin && String(etat.email || "").trim().toLowerCase() === String(emailAdmin).trim().toLowerCase()
+      ? "Aymen" : (etat.prenomCompte || etat.prenom || "Abonné");
     if (etat.compteEnAttente) {
       compteur.textContent = "Synchronisation des cours…";
       compteur.removeAttribute("aria-label");
@@ -2050,7 +2048,7 @@
     }
   }
 
-  /* ── 12. Initialisation générale au chargement du DOM ── */
+  /* 12. Initialisation */
   function demarrerApplication() {
     if (redirigerAnciennePageExercices()) return;
     estimerLectureCours();
