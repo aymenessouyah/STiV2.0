@@ -1,9 +1,9 @@
 {
-  "version": "v491-sti-atelier-v352",
-  "generatedAt": "2026-10-28T09:04:11Z",
+  "version": "v492-sti-atelier-v353",
+  "generatedAt": "2026-10-28T09:47:59Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 693,
-  "totalBytes": 682631804,
+  "totalBytes": 682640988,
   "files": [
     {
       "path": "404.html",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 40257,
-      "gitSha": "fc83221b9cc6b932134b5ae696006435c9f9ac0d"
+      "bytes": 41367,
+      "gitSha": "b0c56d6699fa6d082596b9a731f063612cad4ec0"
     },
     {
       "path": "admin.html",
@@ -647,8 +647,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 101403,
-      "gitSha": "555bf127457cc5ae8f36643115d7d668f29a860c"
+      "bytes": 101580,
+      "gitSha": "2eb42e868948bc9dc00274f4c98e24f6e41b5da0"
     },
     {
       "path": "assets/js/config.js",
@@ -662,18 +662,18 @@
     },
     {
       "path": "assets/js/cours-css3.js",
-      "bytes": 42160,
-      "gitSha": "c6a2a8c7e595723e026c0a94bada5f093d1d0b6a"
+      "bytes": 43445,
+      "gitSha": "d2a0582233fcbd5b56aa02aea52a926d30ce6d14"
     },
     {
       "path": "assets/js/cours-html5.js",
-      "bytes": 53179,
-      "gitSha": "aa2099e93c2075493c8d21fcef5a24c1a94fd41b"
+      "bytes": 55028,
+      "gitSha": "07e2aad8eb01f8bad408709d6d95d7e9dd2e22ff"
     },
     {
       "path": "assets/js/cours-javascript.js",
-      "bytes": 41670,
-      "gitSha": "81b5d2f4d90c398f65a7e576fa435985beee472e"
+      "bytes": 42959,
+      "gitSha": "b495b85ff8f0d25f194d4340e6c10b229f3cbb55"
     },
     {
       "path": "assets/js/graphiques-activite.js",
@@ -1067,8 +1067,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 207648,
-      "gitSha": "c38e2bc02605850017abb57891f1036d374b1237"
+      "bytes": 207744,
+      "gitSha": "10d6142d9869ee4ce619c4976a52c43d73e3c380"
     },
     {
       "path": "cours/datalist.html",
@@ -1082,13 +1082,13 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 200282,
-      "gitSha": "155a4a2776bc6d35cd07fd59f7c828a8e6b75610"
+      "bytes": 200378,
+      "gitSha": "9a0abe0eca481ce89f5f893b973c9b88eba7cf80"
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 126820,
-      "gitSha": "db247b562ab7ce6edfef5c21fcd7b7687517d8dc"
+      "bytes": 126916,
+      "gitSha": "0e9141a5ecf590cb5485c827528e0818bc0b4b91"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1097,8 +1097,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 202356,
-      "gitSha": "fb2b14ee8f4d300869d2ac1b98e2003e1318a450"
+      "bytes": 202497,
+      "gitSha": "f32869f07fbcc12f3ce6b8833404333f21eb0ef2"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1117,8 +1117,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 135897,
-      "gitSha": "2b0d0cd7a76c3fc274b5ac5caedcf3066ea508a8"
+      "bytes": 136035,
+      "gitSha": "41a219a7ac715771e03f89918e68188a96abfedc"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3337,8 +3337,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 93884,
-      "gitSha": "2964640525f3c1b5d4b8df1dca6c7c42aab28c92"
+      "bytes": 94095,
+      "gitSha": "4c62941bc410f86d176d67521a2d0f61f10cf8ed"
     },
     {
       "path": "assets/css/cours-matieres.css",
@@ -3357,8 +3357,8 @@
     },
     {
       "path": "assets/js/cours-matieres.js",
-      "bytes": 45955,
-      "gitSha": "710cccb3e32e95b3ea78739d02f34a6c7886dac4"
+      "bytes": 48651,
+      "gitSha": "d399b0f6aee8c27fa85df738c20674fc95ccdd54"
     },
     {
       "path": "assets/js/cours-media-reperes.js",

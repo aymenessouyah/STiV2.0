@@ -173,3 +173,17 @@ for (const panne of ['503', 'coupure']) {
     assert.equal(await (await e.videos.match('./assets/videos/exemple.mp4')).text(), 'vidéo conservée');
   });
 }
+
+for (const matiere of ['html5', 'css3', 'javascript', 'matieres']) {
+  test(`panne temporaire : le script ${matiere} reste utilisable hors ligne jusqu'à sa mise à jour`, async () => {
+    const cible = './assets/js/cours-' + matiere + '.js', e = await environnement({ cible, panne: '503' });
+    await e.synchroniser();
+    assert.equal(await (await e.cache.match(cible, { ignoreSearch: true }))?.text(), 'ancienne version');
+    assert.equal(await e.revisions.match(e.marqueur), undefined);
+    e.setPanne('');
+    await e.synchroniser();
+    assert.match(await (await e.cache.match(cible, { ignoreSearch: true })).text(), /^nouveau :/);
+    assert.ok(await e.revisions.match(e.marqueur));
+    assert.deepEqual(e.requetes, [cible, cible]);
+  });
+}

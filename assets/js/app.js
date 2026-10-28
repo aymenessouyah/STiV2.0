@@ -2002,9 +2002,10 @@
       var chapitres = CHAPITRES_ACCUEIL[id].filter(function (chapitre) { return id !== "sql" || chapitre !== "bac" || ok4; });
       var etats = profil.chapitres[id] || {};
       var revises = chapitres.filter(function (chapitre) { return etats[chapitre] === "revise"; }).length;
+      var consultes = chapitres.filter(function (c) { return etats[c] === "revise" || etats[c] === "en_cours"; }).length;
       var derniere = profil.derniereLecture || {};
       var ancre = derniere.matiere === id && chapitres.indexOf(derniere.chapitreId) !== -1 ? "#" + derniere.chapitreId : "";
-      return { id: id, titre: matiere.nom, href: pref + matiere.urlCours + ancre, revises: revises, total: chapitres.length };
+      return { id: id, titre: matiere.nom, href: pref + matiere.urlCours + ancre, revises: revises, consultes: consultes, total: chapitres.length };
     });
     var signature = JSON.stringify(cartes);
     if (zone._signatureAccueil === signature) return;
@@ -2015,7 +2016,7 @@
         '<span class="welcome-course__cover"><span class="welcome-course__state">' + (c.revises ? c.revises + " / " + c.total + " révisés" : "Consulté") + '</span>' +
         '<span class="welcome-course__icon" aria-hidden="true"><svg><use href="' + pref + 'assets/icons/matieres.svg#' + c.id + '"></use></svg></span></span>' +
         '<span class="welcome-course__body"><strong class="welcome-course__title">' + echapperHtml(c.titre) + '</strong>' +
-        '<span class="welcome-course__details">Cours · ' + c.total + ' chapitres · Continuer →</span></span></a>';
+        '<span class="welcome-course__details">Cours · ' + c.consultes + ' / ' + c.total + ' chapitres consultés · Continuer →</span></span></a>';
     }).join("");
     zone._signatureAccueil = signature;
     if (focusId) {

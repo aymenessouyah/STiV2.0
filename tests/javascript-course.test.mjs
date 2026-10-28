@@ -100,7 +100,8 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
   const ressources = ['exercices/javascript/js-37-defis-tt.html', 'assets/css/dialogues-compat.css', 'assets/js/dialogues-compat.js', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/fleurs/styles.css', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js', 'projets/carte-bancaire/style.css'];
   for (const path of [...paths, ...ressources]) {
     const actualises = ['assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js'];
-    const revision = ['assets/js/app.js', 'assets/js/profil.js', 'cours/javascript.html'].includes(path) ? 'suivi-contextes-v491' :
+    const revision = ['assets/js/app.js', 'assets/js/cours-javascript.js', 'cours/javascript.html'].includes(path) ? 'progression-chapitres-v492' :
+      path === 'assets/js/profil.js' ? 'suivi-contextes-v491' :
       actualises.includes(path) ? 'fidelite-origine-v481' : 'correctif-ressources-js-20261027';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);

@@ -16,7 +16,7 @@
     ['sec14', 'Fonctions'], ['sec15', 'Manipulation du DOM']
   ];
   var ONGLETS = ['cours', 'exercices', 'annexes', 'videos'];
-  var chapitreActif = 'sec1', ongletActif = 'cours', dernierChapitre = '';
+  var chapitreActif = 'sec1', ongletActif = 'cours', dernierChapitre = '', candidatLecture = '';
   var scrollCours = 0, scrollConnu = false, restauration = false, minuterieLecture = 0;
   var dialogues = [], historiqueVideo = null, compteurExecution = 0, modalExterneDejaOuverte = false;
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -36,6 +36,7 @@
     if (precedent === 'cours' && cible !== 'cours') {
       scrollCours = global.scrollY; scrollConnu = true;
       if (minuterieLecture) { global.clearTimeout(minuterieLecture); minuterieLecture = 0; enregistrerLecture(); }
+      candidatLecture = '';
     }
     ongletActif = cible;
     $$('[data-course-tab]').forEach(function (b) {
@@ -57,12 +58,14 @@
   }
   function allerChapitre(nom, historique, cible) {
     var c = chapitre(nom), section = id(nom); if (!c || !section) return;
+    if (minuterieLecture) { global.clearTimeout(minuterieLecture); minuterieLecture = 0; }
+    candidatLecture = '';
     if (section.hidden) { id('courseSearchInput').value = ''; filtrerCours(); }
     chapitreActif = nom; ouvrirOnglet('cours', false, false); fermerSommaire(false);
     if (historique) changerUrl(cible && cible.id ? cible.id : nom);
+    enregistrerLecture();
     actualiserProgression();
     global.requestAnimationFrame(function () { (cible || section).scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-    enregistrerLecture();
   }
   function ouvrirFonction(cible) {
     var panel = cible && cible.closest('.fn-panel');
@@ -104,9 +107,10 @@
     id('courseSidebarBackdrop').classList.add('is-open'); id('tocMobileOpenBtn').setAttribute('aria-expanded', 'true'); id('tocMobileCloseBtn').focus();
   }
   function actualiserProgression() {
-    var p = profil(), etats = p && p.chapitres ? p.chapitres.javascript || {} : {}, nombre = 0;
+    var p = profil(), etats = p && p.chapitres ? p.chapitres.javascript || {} : {}, consultes = 0, revises = 0;
     CHAPITRES.forEach(function (c) {
-      var revise = etats[c[0]] === 'revise'; if (revise) nombre++;
+      var revise = etats[c[0]] === 'revise'; if (revise) revises++;
+      if (revise || etats[c[0]] === 'en_cours') consultes++;
       var etat = revise ? 'revise' : (etats[c[0]] === 'en_cours' || chapitreActif === c[0] ? 'en_cours' : 'a_reviser');
       var lien = $('.toc-link[href="#' + c[0] + '"]'), bouton = $('[data-toggle-revise="' + c[0] + '"]');
       if (lien) {
@@ -117,9 +121,14 @@
       id(c[0]).classList.toggle('is-revised', revise);
       if (bouton) { bouton.setAttribute('aria-pressed', String(revise)); bouton.textContent = revise ? '✓ Chapitre révisé' : '☐ Marquer comme révisé'; }
     });
-    var pct = Math.round(nombre / CHAPITRES.length * 100), longueur = 2 * Math.PI * 26;
+    var pct = Math.round(consultes / CHAPITRES.length * 100), longueur = 2 * Math.PI * 26;
     id('courseRingFill').style.strokeDasharray = String(longueur); id('courseRingFill').style.strokeDashoffset = String(longueur * (1 - pct / 100));
-    id('courseRingPct').textContent = pct + '%'; id('courseRingCount').textContent = nombre + ' / ' + CHAPITRES.length + ' chapitres révisés'; id('tocMobileCount').textContent = nombre + '/' + CHAPITRES.length;
+    id('courseRingPct').textContent = pct + '%';
+    id('courseRingCount').textContent = consultes + ' / ' + CHAPITRES.length + ' chapitres consultés';
+    var compteurRevisions = id('courseRevisedCount');
+    if (compteurRevisions) compteurRevisions.textContent = revises + ' / ' + CHAPITRES.length + ' chapitres révisés';
+    id('tocMobileCount').textContent = consultes + '/' + CHAPITRES.length;
+    id('tocMobileCount').setAttribute('aria-label', consultes + ' sur ' + CHAPITRES.length + ' chapitres consultés');
     var index = CHAPITRES.findIndex(function (c) { return c[0] === chapitreActif; });
     [['prevChapterBtn', index - 1], ['nextChapterBtn', index + 1]].forEach(function (pair) {
       var b = id(pair[0]), voisin = CHAPITRES[pair[1]]; b.hidden = !voisin;
@@ -139,10 +148,18 @@
     id('readingProgressBar').style.transform = 'scaleX(' + (max > 0 ? Math.min(1, haut / max) : 0) + ')';
     id('back-to-top').classList.toggle('is-visible', haut > 300);
     if (ongletActif !== 'cours' || restauration) return;
-    var courant = CHAPITRES[0][0];
-    CHAPITRES.forEach(function (c) { var el = id(c[0]); if (!el.hidden && el.getBoundingClientRect().top <= 190) courant = c[0]; });
+    var repere = Math.min(global.innerHeight - 1, Math.max(220, global.innerHeight * 0.42)), courant = null;
+    CHAPITRES.forEach(function (c) {
+      var el = id(c[0]); if (el.hidden) return;
+      var rect = el.getBoundingClientRect(); if (rect.top <= repere && rect.bottom > repere) courant = c[0];
+    });
+    if (courant !== candidatLecture) {
+      if (minuterieLecture) global.clearTimeout(minuterieLecture);
+      minuterieLecture = 0; candidatLecture = courant;
+    }
+    if (!courant) return;
     if (courant !== chapitreActif) { chapitreActif = courant; actualiserProgression(); }
-    if (courant !== dernierChapitre && !minuterieLecture) minuterieLecture = global.setTimeout(function () { minuterieLecture = 0; enregistrerLecture(); }, 500);
+    if (courant !== dernierChapitre && !minuterieLecture) minuterieLecture = global.setTimeout(function () { minuterieLecture = 0; if (candidatLecture === courant) enregistrerLecture(); }, 500);
   }
   function actualiserExercices() {
     var p = profil(), faits = p && p.exercicesFaits ? p.exercicesFaits.javascript || [] : [];
@@ -474,7 +491,13 @@
       var t = ev.target, tab = t.closest('[data-course-tab]');
       if (tab) { ouvrirOnglet(tab.dataset.courseTab, true); return; }
       var revise = t.closest('[data-toggle-revise]');
-      if (revise && global.STIProfil) { var nom = revise.dataset.toggleRevise, p = profil(), etat = p.chapitres.javascript[nom] === 'revise' ? 'en_cours' : 'revise'; global.STIProfil.definirEtatChapitre(MATIERE, nom, etat, CHAPITRES.length); return; }
+      if (revise && global.STIProfil) {
+        var nom = revise.dataset.toggleRevise, p = profil(), etat = p.chapitres.javascript[nom] === 'revise' ? 'en_cours' : 'revise';
+        p = global.STIProfil.definirEtatChapitre(MATIERE, nom, etat, 0);
+        var termine = CHAPITRES.every(function (c) { return p.chapitres[MATIERE][c[0]] === 'revise'; });
+        if (p.progression[MATIERE] !== termine) global.STIProfil.mettreAJour('progression.' + MATIERE, termine);
+        return;
+      }
       var fn = t.closest('.fnbtn'); if (fn) { basculerFonction(fn); return; }
       var copy = t.closest('[data-copy-code]'); if (copy) { copierCode(copy); return; }
       var run = t.closest('[data-run]'); if (run) { executer(run.closest('[data-playground]')); return; }
@@ -512,7 +535,9 @@
     id('jsRecapModal').addEventListener('click', function (ev) { if (ev.target === this) fermerRecap(); }); id('jsResourceModal').addEventListener('click', function (ev) { if (ev.target === this) fermerRessource(); }); id('jsVideoModal').addEventListener('click', function (ev) { if (ev.target === this) fermerVideo(); });
     document.addEventListener('keydown', gererClavier); global.addEventListener('message', recevoirConsole);
     global.addEventListener('message', function (ev) { if (ev.origin === global.location.origin && ev.source === id('jsRecapFrame').contentWindow && ev.data && ev.data.type === 'STI_FERMER_MODALE_JS_RECAP') fermerRecap(); });
-    global.addEventListener('sti:profil-maj', function () { actualiserProgression(); actualiserExercices(); actualiserVideos(); });
+    function actualiserDonneesProfil() { actualiserProgression(); actualiserExercices(); actualiserVideos(); }
+    global.addEventListener('sti:profil-maj', actualiserDonneesProfil);
+    global.addEventListener('sti-cloud-restored', actualiserDonneesProfil);
     global.addEventListener('hashchange', appliquerFragment); global.addEventListener('resize', function () { if (!global.matchMedia('(max-width: 979px)').matches) fermerSommaire(false); mettreAJourLecture(); });
     var attente = false; global.addEventListener('scroll', function () { if (!attente) { attente = true; global.requestAnimationFrame(function () { mettreAJourLecture(); attente = false; }); } }, { passive: true });
     mettreAJourLecture();

@@ -14,7 +14,7 @@
   var ONGLETS = ["cours", "exercices", "annexes", "videos"];
   var chapitreActif = CHAPITRES[0][0], ongletActif = "cours";
   var scrollCours = 0, scrollConnu = false, restauration = false, retourModal = null, inertes = [];
-  var dernierChapitre = "", minuterieLecture = 0;
+  var dernierChapitre = "", candidatLecture = "", minuterieLecture = 0;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var id = function (s) { return document.getElementById(s); };
@@ -30,6 +30,7 @@
       scrollCours = global.scrollY; scrollConnu = true;
       /* Ne pas perdre la lecture en attente si l'élève change aussitôt d'onglet. */
       if (minuterieLecture) { global.clearTimeout(minuterieLecture); minuterieLecture = 0; enregistrerLecture(); }
+      candidatLecture = '';
     }
     ongletActif = cible;
     $$('[data-course-tab]').forEach(function (b) { var actif = b.dataset.courseTab === cible; b.setAttribute('aria-selected', String(actif)); b.tabIndex = actif ? 0 : -1; });
@@ -53,13 +54,15 @@
   function allerChapitre(identifiant, historique, element) {
     var c = chercherChapitre(identifiant), section = id(identifiant);
     if (!c || !section) return;
+    if (minuterieLecture) { global.clearTimeout(minuterieLecture); minuterieLecture = 0; }
+    candidatLecture = '';
     if (section.hidden) { id('courseSearchInput').value = ''; filtrerCours(); }
     chapitreActif = identifiant;
     ouvrirOnglet('cours', false, false); fermerSommaire();
     if (historique) changerUrl(element && element.id ? element.id : identifiant);
+    enregistrerLecture();
     actualiserProgression();
     global.requestAnimationFrame(function () { (element || section).scrollIntoView({behavior:'smooth', block:'start'}); });
-    enregistrerLecture();
   }
   function appliquerFragment() {
     var fragment;
@@ -92,9 +95,10 @@
     id('courseSidebarBackdrop').classList.add('is-open'); id('tocMobileOpenBtn').setAttribute('aria-expanded','true'); id('tocMobileCloseBtn').focus();
   }
   function actualiserProgression() {
-    var p = profil(), etats = p && p.chapitres ? p.chapitres.css3 || {} : {}, nombre = 0;
+    var p = profil(), etats = p && p.chapitres ? p.chapitres.css3 || {} : {}, consultes = 0, revises = 0;
     CHAPITRES.forEach(function (c) {
-      var revise = etats[c[0]] === 'revise'; if (revise) nombre++;
+      var revise = etats[c[0]] === 'revise'; if (revise) revises++;
+      if (revise || etats[c[0]] === 'en_cours') consultes++;
       var etat = revise ? 'revise' : (etats[c[0]] === 'en_cours' || chapitreActif === c[0] ? 'en_cours' : 'a_reviser');
       var lien = $('.toc-link[href="#' + c[0] + '"]'), bouton = $('[data-toggle-revise="' + c[0] + '"]');
       if (lien) { lien.dataset.state = etat; lien.classList.toggle('is-active', chapitreActif === c[0]);
@@ -103,9 +107,14 @@
       id(c[0]).classList.toggle('is-revised', revise);
       if (bouton) { bouton.setAttribute('aria-pressed',String(revise)); bouton.textContent = revise ? '✓ Chapitre révisé' : '☐ Marquer comme révisé'; }
     });
-    var pct = Math.round(nombre / CHAPITRES.length * 100), cercle = id('courseRingFill'), longueur = 2 * Math.PI * 26;
+    var pct = Math.round(consultes / CHAPITRES.length * 100), cercle = id('courseRingFill'), longueur = 2 * Math.PI * 26;
     cercle.style.strokeDasharray = String(longueur); cercle.style.strokeDashoffset = String(longueur * (1 - pct/100));
-    id('courseRingPct').textContent = pct + '%'; id('courseRingCount').textContent = nombre + ' / ' + CHAPITRES.length + ' chapitres révisés'; id('tocMobileCount').textContent = nombre + '/' + CHAPITRES.length;
+    id('courseRingPct').textContent = pct + '%';
+    id('courseRingCount').textContent = consultes + ' / ' + CHAPITRES.length + ' chapitres consultés';
+    var compteurRevisions = id('courseRevisedCount');
+    if (compteurRevisions) compteurRevisions.textContent = revises + ' / ' + CHAPITRES.length + ' chapitres révisés';
+    id('tocMobileCount').textContent = consultes + '/' + CHAPITRES.length;
+    id('tocMobileCount').setAttribute('aria-label', consultes + ' sur ' + CHAPITRES.length + ' chapitres consultés');
     var index = CHAPITRES.findIndex(function (c) { return c[0] === chapitreActif; });
     [['prevChapterBtn',index-1],['nextChapterBtn',index+1]].forEach(function (pair) {
       var b = id(pair[0]), voisin = CHAPITRES[pair[1]]; b.hidden = !voisin;
@@ -135,7 +144,12 @@
       var exo = ev.target.closest('[data-goto-exo]'); if (exo) { ev.preventDefault(); ouvrirOnglet('exercices',true); var carte=id(exo.dataset.gotoExo); if(carte) global.requestAnimationFrame(function(){carte.scrollIntoView({behavior:'smooth',block:'start'});}); return; }
       var ed = ev.target.closest('[data-goto-editor]'); if (ed) { ev.preventDefault(); id('editeur-css').scrollIntoView({behavior:'smooth',block:'start'}); return; }
       var lien = ev.target.closest('a[href^="#"]'); if (lien) { var nom = lien.getAttribute('href').slice(1), cible=id(nom), sec=cible&&cible.closest('[data-chapter-id]'); if(sec){ev.preventDefault(); allerChapitre(sec.dataset.chapterId,true,cible);} }
-      var b = ev.target.closest('[data-toggle-revise]'); if(b && global.STIProfil){ var p=profil(), etat=p.chapitres.css3[b.dataset.toggleRevise]; global.STIProfil.definirEtatChapitre(MATIERE,b.dataset.toggleRevise,etat==='revise'?'en_cours':'revise',CHAPITRES.length); }
+      var b = ev.target.closest('[data-toggle-revise]'); if(b && global.STIProfil){
+        var p=profil(), etat=p.chapitres.css3[b.dataset.toggleRevise];
+        p=global.STIProfil.definirEtatChapitre(MATIERE,b.dataset.toggleRevise,etat==='revise'?'en_cours':'revise',0);
+        var termine=CHAPITRES.every(function(c){return p.chapitres[MATIERE][c[0]]==='revise';});
+        if(p.progression[MATIERE]!==termine)global.STIProfil.mettreAJour('progression.'+MATIERE,termine);
+      }
     });
     $('[role="tablist"][aria-label="Sections CSS3"]').addEventListener('keydown',function(ev){
       var b=$$('[role="tab"]',this), n=b.indexOf(document.activeElement); if(n<0)return; var sens=document.documentElement.dir==='rtl'?-1:1;
@@ -145,10 +159,16 @@
     document.addEventListener('keydown',function(ev){var aside=id('courseSidebar'); if(!aside.classList.contains('is-open'))return; if(ev.key==='Escape'){fermerSommaire(true);return;} if(ev.key==='Tab'){var f=focusables(aside);if(!f.length)return;var first=f[0],last=f[f.length-1];if(ev.shiftKey&&(document.activeElement===first||!aside.contains(document.activeElement))){ev.preventDefault();last.focus();}else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first.focus();}}});
     global.addEventListener('hashchange',appliquerFragment); global.addEventListener('popstate',appliquerFragment); appliquerFragment(); actualiserProgression();
     id('backToTop').addEventListener('click',function(){global.scrollTo({top:0,behavior:'smooth'});});
-    var raf=0; global.addEventListener('scroll',function(){if(raf)return;raf=global.requestAnimationFrame(function(){raf=0; id('backToTop').classList.toggle('is-visible',global.scrollY>420); if(ongletActif!=='cours'||restauration)return;
-      var candidat=null; CHAPITRES.forEach(function(c){var s=id(c[0]);if(s.hidden)return;var r=s.getBoundingClientRect();if(r.top<=155&&r.bottom>155)candidat=c[0];});
-      if(!candidat)return; if(candidat!==chapitreActif){chapitreActif=candidat;actualiserProgression();} if(candidat!==dernierChapitre){global.clearTimeout(minuterieLecture);minuterieLecture=global.setTimeout(function(){minuterieLecture=0;enregistrerLecture();},500);}
-    });},{passive:true});
+    var raf=0;
+    function suivreDefilement(){if(raf)return;raf=global.requestAnimationFrame(function(){raf=0; id('backToTop').classList.toggle('is-visible',global.scrollY>420); if(ongletActif!=='cours'||restauration)return;
+      /* Le repère reste visible sous la barre fixe, même sur mobile. */
+      var repere=Math.min(global.innerHeight-1,Math.max(220,global.innerHeight*0.42)), candidat=null;
+      CHAPITRES.forEach(function(c){var s=id(c[0]);if(s.hidden)return;var r=s.getBoundingClientRect();if(r.top<=repere&&r.bottom>repere)candidat=c[0];});
+      if(candidat!==candidatLecture){if(minuterieLecture)global.clearTimeout(minuterieLecture);minuterieLecture=0;candidatLecture=candidat;}
+      if(!candidat)return; if(candidat!==chapitreActif){chapitreActif=candidat;actualiserProgression();}
+      if(candidat!==dernierChapitre&&!minuterieLecture)minuterieLecture=global.setTimeout(function(){minuterieLecture=0;if(candidatLecture===candidat)enregistrerLecture();},500);
+    });}
+    global.addEventListener('scroll',suivreDefilement,{passive:true}); suivreDefilement();
     var chercher=$('[data-course-search-trigger]'); if(chercher) chercher.addEventListener('click',function(){if(typeof global.ouvrirRechercheGlobaleSTI==='function')return;ouvrirOnglet('cours',true);ouvrirSommaire();id('courseSearchInput').focus();});
   }
 
@@ -383,6 +403,10 @@
   function demarrer(){if(!document.body.classList.contains('course-page--css3'))return;
     /* Le cadre de démonstration sticky doit aussi défiler au clavier. */
     $$('.css-source .demo[style*="overflow"]').forEach(function(zone){zone.tabIndex=0;zone.setAttribute('aria-label','Démonstration défilable du positionnement');});
-    demarrerNavigation();animerDefinition();initialiserCode();initialiserModale();initialiserDemos();initialiserExercices();initialiserVideos();global.addEventListener('sti:profil-maj',function(){actualiserProgression();actualiserExercices();actualiserVideos();});}
+    demarrerNavigation();animerDefinition();initialiserCode();initialiserModale();initialiserDemos();initialiserExercices();initialiserVideos();
+    function actualiserDonneesProfil(){actualiserProgression();actualiserExercices();actualiserVideos();}
+    global.addEventListener('sti:profil-maj',actualiserDonneesProfil);
+    global.addEventListener('sti-cloud-restored',actualiserDonneesProfil);
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',demarrer);else demarrer();
 })(window,document);

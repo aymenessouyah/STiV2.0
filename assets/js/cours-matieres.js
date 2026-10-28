@@ -25,7 +25,7 @@
     'php-guichet': ['Animation du guichet PHP', '../assets/videos/php-guichet-v10.mp4', '../assets/images/php-synthese-poster.jpg']
   };
   var tabs = ['cours', 'exercices', 'annexes', 'videos'], onglet = 'cours', chapitreActif = chapitres[0][0];
-  var dernierChapitre = '', scrollTimer = 0, videoHistorique, modal = null, modalOrigine = null, elementsInertes = [];
+  var dernierChapitre = '', candidatLecture = '', chapitreEnAttente = '', scrollTimer = 0, videoHistorique, modal = null, modalOrigine = null, elementsInertes = [];
   var worker = null, attenteWorker = 0, synchroniserTableauClasse = null;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
@@ -43,6 +43,10 @@
   function changerUrl(fragment) { if (global.location.hash !== '#' + fragment) global.history.pushState(null, '', '#' + fragment); }
   function ouvrirOnglet(nom, historique) {
     if (tabs.indexOf(nom) < 0) nom = 'cours';
+    if (onglet === 'cours' && nom !== 'cours' && scrollTimer) {
+      global.clearTimeout(scrollTimer); scrollTimer = 0; enregistrerLecture();
+    }
+    if (nom !== 'cours') { chapitreEnAttente = ''; candidatLecture = ''; }
     onglet = nom;
     $$('[data-course-tab]').forEach(function (b) { var active = b.dataset.courseTab === nom; b.setAttribute('aria-selected', String(active)); b.tabIndex = active ? 0 : -1; });
     $$('[data-course-panel]').forEach(function (p) { p.hidden = p.dataset.coursePanel !== nom; });
@@ -50,6 +54,7 @@
     if (nom !== 'cours') fermerSommaire(false);
   }
   function naviguer(fragment, historique, defiler) {
+    chapitreEnAttente = '';
     if (!fragment) { ouvrirOnglet('cours', false); return; }
     if (tabs.indexOf(fragment) !== -1) {
       ouvrirOnglet(fragment, historique);
@@ -62,7 +67,14 @@
     var panneau = cible.closest('[data-course-panel]');
     if (panneau) ouvrirOnglet(panneau.dataset.coursePanel, false);
     var section = cible.closest('[data-chapter-id]');
-    if (section) { chapitreActif = section.dataset.chapterId; enregistrerLecture(); actualiserProfil(); }
+    if (section) {
+      if (scrollTimer) { global.clearTimeout(scrollTimer); scrollTimer = 0; }
+      candidatLecture = '';
+      chapitreActif = section.dataset.chapterId;
+      /* L'autorisation PHP peut arriver après l'ouverture d'une ancre. */
+      if (matiere === 'php' && !autoriseBac()) chapitreEnAttente = chapitreActif;
+      enregistrerLecture(); actualiserProfil();
+    }
     // Les anciennes ancres peuvent pointer à l'intérieur d'un détail fermé.
     var d = cible.closest('details'); if (d) d.open = true;
     fermerSommaire(false);
@@ -98,25 +110,37 @@
     });
   }
   function enregistrerLecture() {
-    var p = chapitres.findIndex(function (c) { return c[0] === chapitreActif; });
-    if (p < 0 || !global.STIProfil || !autoriseElement(id(chapitreActif))) return;
+    var p = chapitres.findIndex(function (c) { return c[0] === chapitreActif; }), section = id(chapitreActif);
+    if (p < 0 || !global.STIProfil || onglet !== 'cours' || !autoriseElement(section) ||
+        (matiere === 'php' && !autoriseBac()) || section.closest('[hidden]') || section.classList.contains('matiere-search-hidden')) return;
     global.STIProfil.enregistrerLecture(matiere, chapitreActif, matiere.toUpperCase() + ' — ' + chapitres[p][1], Math.round((p+1)/chapitres.length*100), 'cours/'+matiere+'.html#'+chapitreActif);
     dernierChapitre = chapitreActif;
   }
   function actualiserProfil(synchroniserCases) {
     var p = profil(), etats = p && p.chapitres && p.chapitres[matiere] || {}, faits = p && p.exercicesFaits && p.exercicesFaits[matiere] || [];
-    var accessibles = chapitres.filter(function (c) { return autoriseElement(id(c[0])); }), rev = 0;
+    var accessibles = chapitres.filter(function (c) { return autoriseElement(id(c[0])); }), consultes = 0, rev = 0;
     chapitres.forEach(function (c) {
       var section = id(c[0]), lien = $('.toc-link[href="#'+c[0]+'"]'), b = $('[data-toggle-revise="'+c[0]+'"]');
-      var revise = etats[c[0]] === 'revise'; if (revise && autoriseElement(section)) rev++;
+      var revise = etats[c[0]] === 'revise';
+      if (autoriseElement(section)) {
+        if (revise) rev++;
+        if (revise || etats[c[0]] === 'en_cours') consultes++;
+      }
       var etat = revise ? 'revise' : (etats[c[0]] === 'en_cours' ? 'en_cours' : 'a_reviser');
       if (b) { b.setAttribute('aria-pressed',String(revise)); b.textContent = revise ? '✓ Chapitre révisé' : '☐ Marquer comme révisé'; }
       if (lien) { lien.dataset.state = etat; lien.classList.toggle('is-active', chapitreActif===c[0]);
         if (chapitreActif===c[0]) lien.setAttribute('aria-current','location'); else lien.removeAttribute('aria-current');
         var statut = $('.toc-link__status',lien); if (statut) statut.textContent = revise ? '✓ Révisé' : etat === 'en_cours' ? 'En cours' : 'À réviser'; }
     });
-    var pct = accessibles.length ? Math.round(rev/accessibles.length*100) : 0;
-    id('courseProgressPct').textContent = pct+'%'; id('courseProgressText').textContent = rev+' / '+accessibles.length+' chapitres révisés';
+    var pct = accessibles.length ? Math.round(consultes/accessibles.length*100) : 0;
+    id('courseProgressPct').textContent = pct+'%';
+    id('courseProgressText').textContent = consultes+' / '+accessibles.length+' chapitres consultés';
+    var compteurRevisions=id('courseRevisedCount'), compteurMobile=id('tocMobileCount');
+    if (compteurRevisions) compteurRevisions.textContent = rev+' / '+accessibles.length+' chapitres révisés';
+    if (compteurMobile) {
+      compteurMobile.textContent = consultes+'/'+accessibles.length;
+      compteurMobile.setAttribute('aria-label', consultes+' sur '+accessibles.length+' chapitres consultés');
+    }
     id('courseRing').style.strokeDashoffset = String(100.53*(1-pct/100));
     var cases = $$('[data-course-panel="exercices"] [data-exercise]').filter(autoriseElement), count = 0;
     cases.forEach(function (c) { var fait = faits.indexOf(c.dataset.exercise)!==-1; if (synchroniserCases === true) c.checked = fait; if(fait) count++; });
@@ -129,9 +153,22 @@
     var max = document.documentElement.scrollHeight-global.innerHeight;
     id('readingProgressBar').style.transform = 'scaleX('+(max>0?Math.min(1,global.scrollY/max):0)+')';
     id('back-to-top').classList.toggle('is-visible',global.scrollY>300);
-    var candidates = chapitres.filter(function (c) { var s=id(c[0]); return autoriseElement(s) && !s.closest('[hidden]') && !s.classList.contains('matiere-search-hidden') && s.getBoundingClientRect().top<=190; });
-    if (candidates.length) chapitreActif = candidates[candidates.length-1][0];
-    if (chapitreActif!==dernierChapitre && !scrollTimer) scrollTimer=global.setTimeout(function () { scrollTimer=0; enregistrerLecture(); actualiserProfil(); },500);
+    if (onglet !== 'cours' || (matiere === 'php' && !autoriseBac())) return;
+    var repere=Math.min(global.innerHeight-1,Math.max(220,global.innerHeight*0.42));
+    var candidates = chapitres.filter(function (c) {
+      var s=id(c[0]); if (!autoriseElement(s) || s.closest('[hidden]') || s.classList.contains('matiere-search-hidden')) return false;
+      var r=s.getBoundingClientRect(); return r.top<=repere && r.bottom>repere;
+    });
+    var courant=candidates.length ? candidates[candidates.length-1][0] : '';
+    if (courant!==candidatLecture) {
+      if (scrollTimer) global.clearTimeout(scrollTimer);
+      scrollTimer=0; candidatLecture=courant;
+    }
+    if (!courant) return;
+    if (chapitreActif!==courant) { chapitreActif=courant; actualiserProfil(); }
+    if (courant!==dernierChapitre && !scrollTimer) scrollTimer=global.setTimeout(function () {
+      scrollTimer=0; if (candidatLecture===courant) { enregistrerLecture(); actualiserProfil(); }
+    },500);
   }
 
   /* ── Fenêtres : fond, Échap, focus, plein écran et poignée de redimensionnement ── */
@@ -453,7 +490,19 @@
       b.addEventListener('keydown',function(e){if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();var arr=$$('[data-course-tab]'),i=arr.indexOf(b),rtl=getComputedStyle(b).direction==='rtl';if(e.key==='Home')i=0;else if(e.key==='End')i=arr.length-1;else i=(i+(e.key==='ArrowRight'?(rtl?-1:1):(rtl?1:-1))+arr.length)%arr.length;arr[i].click();arr[i].focus();});});
     id('tocMobileOpenBtn').addEventListener('click',ouvrirSommaire);id('tocMobileCloseBtn').addEventListener('click',function(){fermerSommaire(true);});id('courseSidebarBackdrop').addEventListener('click',function(){fermerSommaire(true);});
     id('courseSearchInput').addEventListener('input',filtrer);id('back-to-top').addEventListener('click',function(){global.scrollTo({top:0,behavior:'smooth'});});global.addEventListener('resize',function(){fermerSommaire(false);});
-    $$('[data-toggle-revise]').forEach(function(b){b.addEventListener('click',function(){var etat=b.getAttribute('aria-pressed')==='true'?'a_reviser':'revise';if(global.STIProfil)global.STIProfil.definirEtatChapitre(matiere,b.dataset.toggleRevise,etat,chapitres.filter(function(c){return autoriseElement(id(c[0]));}).length);actualiserProfil();});});
+    $$('[data-toggle-revise]').forEach(function(b){b.addEventListener('click',function(){
+      if (!autoriseElement(b) || (matiere==='php' && !autoriseBac())) return;
+      /* Décocher une révision ne doit pas effacer la visite déjà effectuée. */
+      var etat=b.getAttribute('aria-pressed')==='true'?'en_cours':'revise';
+      if(global.STIProfil){
+        var accessibles=chapitres.filter(function(c){return autoriseElement(id(c[0]));});
+        var p=global.STIProfil.definirEtatChapitre(matiere,b.dataset.toggleRevise,etat,0);
+        /* Une ancienne révision masquée ou un identifiant obsolète ne valide pas le cours. */
+        var termine=accessibles.length>0 && accessibles.every(function(c){return p.chapitres[matiere][c[0]]==='revise';});
+        if(p.progression[matiere]!==termine)global.STIProfil.mettreAJour('progression.'+matiere,termine);
+      }
+      actualiserProfil();
+    });});
     $$('[data-exercise]').forEach(function(c){c.addEventListener('change',function(){if(global.STIProfil)global.STIProfil.basculerExerciceFait(matiere,c.dataset.exercise,c.checked);actualiserProfil();});});
     $$('[data-featured-time]').forEach(function(b){b.addEventListener('click',function(){var v=id('featuredVideo');v.currentTime=Number(b.dataset.featuredTime);var p=v.play();if(p&&p.catch)p.catch(function(){});});});
     var quiz=id('btnCorrigerQuiz');if(quiz)quiz.addEventListener('click',scorePHP);
@@ -489,7 +538,13 @@
     });
     global.addEventListener('hashchange',route);global.addEventListener('popstate',route);global.addEventListener('scroll',suiviDefilement,{passive:true});
     global.addEventListener('sti:profil-maj',actualiserProfil);global.addEventListener('sti:session-maj',actualiserProfil);
-    new MutationObserver(actualiserProfil).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    global.addEventListener('sti-cloud-restored',function(){actualiserProfil(true);if(synchroniserTableauClasse)synchroniserTableauClasse();});
+    new MutationObserver(function(){
+      actualiserProfil();
+      if (chapitreEnAttente && chapitreEnAttente===chapitreActif && onglet==='cours' && autoriseBac()) {
+        chapitreEnAttente=''; enregistrerLecture();
+      }
+    }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
     global.addEventListener('storage', function (event) { if (event.key === global.STIProfil.CLE_STOCKAGE) { actualiserProfil(true);if(synchroniserTableauClasse)synchroniserTableauClasse(); } });
     fermerSommaire(false);route();actualiserProfil(true);suiviDefilement();
   }
