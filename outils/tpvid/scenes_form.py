@@ -248,25 +248,24 @@ def _mini_formulaire(im, d, box, style, titre):
 
 
 def decor_avant_apres(im, d, box, p, e):
+    """Deux mini-formulaires : brut, puis stylé (apparaît à mi-parcours)."""
     x0, y0, x1, y1 = box
-    d.rounded_rectangle([x0 + 46, y0 + 70, x1 - 26, y1 - 20], radius=12, fill=(232, 238, 247))
-    d.text((x0 + 66, y0 + 84), "Le même formulaire, avant et après le CSS",
-           font=R.police(R.POLICE_B, 14), fill=R.BLEU_TP)
-    h = int((y1 - y0 - 170) / 2)
-    _mini_formulaire(im, d, (x0 + 66, y0 + 116, x1 - 46, y0 + 116 + h), "brut", "sans CSS")
+    d.rounded_rectangle([x0 + 18, y0 + 96, x1 - 18, y1 - 80], radius=12, fill=(232, 238, 247))
+    h = int((y1 - 80 - (y0 + 96) - 60) / 2)
+    _mini_formulaire(im, d, (x0 + 40, y0 + 116, x1 - 40, y0 + 116 + h), "brut", "sans CSS")
     if p > 0.45:
-        _mini_formulaire(im, d, (x0 + 66, y0 + 140 + h, x1 - 46, y0 + 140 + h + h), "style", "avec CSS")
-        d.text((x0 + 66, y0 + 128 + h), "on ajoute quatre règles CSS →",
-               font=R.police(R.POLICE, 11), fill=(120, 130, 145))
+        d.text((x0 + 40, y0 + 130 + h), "quatre règles CSS plus bas  →",
+               font=R.police(R.POLICE_B, 11), fill=(120, 130, 145))
+        _mini_formulaire(im, d, (x0 + 40, y0 + 156 + h, x1 - 40, y0 + 156 + h + h), "style", "avec CSS")
     return {}
 
 
-def decor_tableau(im, d, box, p, e):
-    """Tableau dessiné à la main : fusion, puis murs (separate / collapse)."""
+def decor_fusion(im, d, box, p, e):
+    """Tableau du bulletin : colspan sur la première ligne, rowspan sur la première colonne."""
     x0, y0, x1, y1 = box
     bx = x0 + 60
     y = y0 + 110
-    if p < 0.5:
+    if True:
         d.text((bx, y0 + 78), "colspan + rowspan", font=R.police(R.POLICE_B, 13), fill=R.BLEU_TP)
         lw = int(((x1 - 30) - (x0 + 60)) / 3)
         lh = 32
@@ -284,8 +283,16 @@ def decor_tableau(im, d, box, p, e):
             d.rectangle([bx + lw * 2, yy, bx + lw * 3, yy + lh], outline=(180, 194, 212), fill=(255, 255, 255))
             d.text((bx + lw + 10, yy + 8), mat, font=R.police(R.POLICE, 12), fill=(30, 40, 55))
             d.text((bx + lw * 2 + 10, yy + 8), note, font=R.police(R.POLICE, 12), fill=(30, 40, 55))
+        d.text((bx, y + lh * 2 + 16), "une seule cellule Web pour deux lignes : rowspan=\"2\"",
+               font=R.police(R.MONO, 9), fill=(110, 120, 135))
         return {}
-    # murs
+
+
+def decor_murs(im, d, box, p, e):
+    """Les deux valeurs de border-collapse comparées, avec table-layout fixed."""
+    x0, y0, x1, y1 = box
+    bx = x0 + 60
+    y = y0 + 110
     lignes = [["Matière", "Contenu", "Note"],
               ["Web", "HTML", "15"],
               ["Web", "CSS et un texte beaucoup trop long", "12"]]
@@ -501,7 +508,7 @@ SCENES = [
     dict(cle="fusion", ep=3, voix="b12.mp3", type="decor", code=CODE_FUSION,
          pages=[dict(debut=0.0, url="formulaire.html", widgets=[
              dict(t="titre", texte="Fusion de cellules : colspan et rowspan"),
-         ], decor=decor_tableau)],
+         ], decor=decor_fusion)],
          texte="Il faut parfois fusionner des cellules, surtout pour un bulletin ou un emploi du temps. Deux attributs suffisent, et ce sont eux qui rapportent des points au bac. colspan indique sur combien de colonnes une cellule s'étend : ici, la cellule Élève Ali porte colspan égal trois et occupe donc toute la largeur du tableau, sur une seule ligne, ce qui donne un titre de groupe. rowspan indique sur combien de lignes une cellule s'étend : la cellule Web descend sur deux lignes, en face de HTML et de CSS, ce qui évite de répéter le mot Web. Conséquence importante, et c'est l'erreur la plus fréquente : quand une cellule est fusionnée, il ne faut pas écrire les cellules qu'elle recouvre, sinon le tableau se décale et le navigateur ajoute des colonnes fantômes à droite. Sur l'écran, le tableau montre d'abord la fusion horizontale sur la première ligne, puis la fusion verticale sur la première colonne. Un conseil de méthode pour l'examen : dessinez toujours le tableau sur papier, avec ses cases et ses fusions, avant d'écrire la première balise ; vous éviterez ainsi de compter les colonnes à chaque ligne. Et vérifiez à la fin que toutes les lignes ont bien le même nombre de colonnes, en tenant compte des fusions.",
          etapes=[dict(f=0.1, x=760, y=300), dict(f=0.35, x=800, y=250, s="t"),
                  dict(f=0.6, x=820, y=290, s="t"), dict(f=0.85, x=880, y=340, s="t")]),
@@ -509,7 +516,7 @@ SCENES = [
     dict(cle="murs", ep=3, voix="b13.mp3", type="decor", code=CODE_MURS,
          pages=[dict(debut=0.0, url="formulaire.html", widgets=[
              dict(t="titre", texte="Les murs d'un tableau en CSS"),
-         ], decor=decor_tableau)],
+         ], decor=decor_murs)],
          texte="Attaquons le CSS du tableau, avec un mot du programme : les murs. Le programme oppose deux valeurs de border-collapse. Avec separate, chaque cellule garde sa propre bordure, et border-spacing, ici six pixels horizontalement et dix verticalement, crée un espace entre les cellules. Or cet espace n'est pas vide : on voit au travers le fond du tableau. Il suffit donc de colorer le tableau en orange pour obtenir des murs orange entre toutes les cellules, et de donner aux cellules un fond bleu clair et une bordure bleue. C'est exactement l'effet demandé dans les exercices, et c'est pour cela que la couleur de fond se met sur table et non sur les cellules. empty-cells décide si une cellule vide affiche sa bordure et son fond, ou disparaît. Avec collapse, c'est l'inverse : les bordures des cellules voisines fusionnent en une seule, border-spacing est ignoré, et le mur devient la bordure elle-même, donc on met une bordure orange de quatre pixels. On ajoute souvent table-layout fixed pour des colonnes de largeur égale, avec overflow hidden, text-overflow ellipsis et white-space nowrap pour couper proprement un texte trop long, et trois points de suspension apparaissent. Sur l'écran, les deux tableaux sont comparés, plus la version à colonnes fixes.",
          etapes=[dict(f=0.1, x=760, y=520), dict(f=0.32, x=800, y=520, s="t"),
                  dict(f=0.6, x=820, y=560, s="t"), dict(f=0.85, x=860, y=600, s="t")]),

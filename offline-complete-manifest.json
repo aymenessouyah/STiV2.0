@@ -1,9 +1,9 @@
 {
-  "version": "v504-sti-atelier-v365",
-  "generatedAt": "2026-10-28T20:04:41Z",
+  "version": "v505-sti-atelier-v366",
+  "generatedAt": "2026-10-28T20:16:11Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 704,
-  "totalBytes": 710336193,
+  "totalBytes": 719754097,
   "files": [
     {
       "path": "404.html",
@@ -683,7 +683,7 @@
     {
       "path": "assets/js/app.js",
       "bytes": 108170,
-      "gitSha": "a559811c1389345136776bd862dbb7796a4edf2b"
+      "gitSha": "5e34b7c299554f2c5c22aeae55eda336d88db397"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1152,8 +1152,8 @@
     },
     {
       "path": "assets/videos/tp-formulaire-tableau-autre.mp4",
-      "bytes": 8262411,
-      "gitSha": "71937c40ea43fbc4f342b4aaca0564e971cbf9e2"
+      "bytes": 17680232,
+      "gitSha": "153f5c6602a972b5211ecfc1c3a5acf8a23901d8"
     },
     {
       "path": "assets/videos/validation-nom-prenom-js.mp4",
@@ -1202,8 +1202,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 211301,
-      "gitSha": "5d7ed19cb379e473f790d43affd5ba6b6960d452"
+      "bytes": 211303,
+      "gitSha": "c6b1e85fcc0460c68f2d5e87406f19597fa4ea87"
     },
     {
       "path": "cours/datalist.html",
@@ -1217,8 +1217,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 205247,
-      "gitSha": "565006cba2f67730e420917e94d05b2d4abf5d6b"
+      "bytes": 205249,
+      "gitSha": "b12892abf6f1f650ccac65b9f2d1bcc9fa5f6404"
     },
     {
       "path": "cours/javascript.html",
@@ -3522,8 +3522,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 96157,
-      "gitSha": "81a4375e32a4ff1ac6cb9a71d40cc41d4099e69a"
+      "bytes": 96236,
+      "gitSha": "41d15f994aaae21c302c26ff1653e820a5552b4e"
     }
   ]
 }

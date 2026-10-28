@@ -272,7 +272,7 @@
       badgeClasse: "badge-html",
       couleur: "#ff783c",
       titre: "TP — Formulaire, tableau et autres balises",
-      dureeTexte: "06:21",
+      dureeTexte: "15:11",
       srcPrincipal: "assets/videos/tp-formulaire-tableau-autre.mp4",
       urlTP: "exercices/html-css/tp-formulaire-tableau-autre/index.html",
       urlCours: "exercices/html-css/tp-formulaire-tableau-autre/index.html",

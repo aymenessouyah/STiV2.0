@@ -74,7 +74,7 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     'cours/html5.html', 'dashboard.html', 'assets/css/theme.css', 'assets/css/cours.css',
     'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-html5.js'
   ]) {
-    const revision = ['cours/html5.html', 'assets/js/app.js'].includes(path) ? 'tp-capsules-v504' :
+    const revision = ['cours/html5.html', 'assets/js/app.js'].includes(path) ? 'tp-formulaire-long-v505' :
       path === 'assets/css/cours.css' ? 'tp-evenements-v500' :
       path === 'dashboard.html' ? 'accueil-lycee-v503' :
       path === 'assets/js/cours-html5.js' ? 'tp-formulaire-v502' :

@@ -27,7 +27,7 @@ CAPSULES = {
     "events": dict(source="sortie_events.mp4", cible="tp-evenements-liens-v2.mp4",
                    anciens=["3 min 12", "3 min 48"]),
     "form": dict(source="sortie_form.mp4", cible="tp-formulaire-tableau-autre.mp4",
-                 anciens=["6 min 21"]),
+                 anciens=["6 min 21", "6 min 30"]),
 }
 
 
