@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-for (const ancienne of ['340','341','342','343','344','345','346','347']) {
-  test(`migration réelle du service worker v${ancienne} vers v348 sans boucle de rechargement`, async ({ page }) => {
+for (const ancienne of ['340','341','342','343','344','345','346','347','348']) {
+  test(`migration réelle du service worker v${ancienne} vers v349 sans boucle de rechargement`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     // Une identité fictive contourne seulement l'authentification pour ce scénario.
     await page.addInitScript(() => {
@@ -22,13 +22,13 @@ for (const ancienne of ['340','341','342','343','344','345','346','347']) {
       await cache.put('/assets/css/cours.css',new Response('/* ancienne feuille de cours */',{headers:{'content-type':'text/css'}}));
       await cache.put('/assets/css/theme.css',new Response('/* ancien thème */',{headers:{'content-type':'text/css'}}));
       await cache.put('/assets/js/app.js',new Response('/* ancienne application */',{headers:{'content-type':'text/javascript'}}));
-      if (v === '343' || v === '344' || v === '345' || v === '346' || v === '347') {
+      if (v === '343' || v === '344' || v === '345' || v === '346' || v === '347' || v === '348') {
         /* Le profil de la version précédente porte le marqueur v482. */
         await cache.put('/assets/js/profil.js', await fetch('/assets/js/profil.js'));
       } else {
         await cache.put('/assets/js/profil.js',new Response('/* ancien profil */',{headers:{'content-type':'text/javascript'}}));
       }
-      if (v === '344' || v === '345' || v === '346' || v === '347') {
+      if (v === '344' || v === '345' || v === '346' || v === '347' || v === '348') {
         /* Le thème et la roue n'ont pas changé depuis v483. */
         for (const chemin of ['/assets/css/theme.css','/assets/js/roue-initiales.js']) {
           await cache.put(chemin, await fetch(chemin));
@@ -36,11 +36,11 @@ for (const ancienne of ['340','341','342','343','344','345','346','347']) {
       } else {
         await cache.put('/assets/js/roue-initiales.js',new Response('/* ancienne roue */',{headers:{'content-type':'text/javascript'}}));
       }
-      if (v === '346' || v === '347') {
+      if (v === '346' || v === '347' || v === '348') {
         /* L'accueil et son application ont reçu la vidéo en v485. */
         for (const chemin of ['/index.html','/assets/js/app.js']) await cache.put(chemin, await fetch(chemin));
       }
-      if (v === '345' || v === '346' || v === '347') {
+      if (v === '345' || v === '346' || v === '347' || v === '348') {
         await cache.put('/assets/js/mobile-nav.js', await fetch('/assets/js/mobile-nav.js'));
       } else {
         await cache.put('/assets/js/mobile-nav.js',new Response('/* ancienne barre Exercices */',{headers:{'content-type':'text/javascript','content-length':'28292'}}));
@@ -48,27 +48,36 @@ for (const ancienne of ['340','341','342','343','344','345','346','347']) {
       const revisions=await caches.open('sti-update-revisions-v1');
       await revisions.put('/__sti_revision__/'+encodeURIComponent('./assets/css/cours.css')+'?rev=refonte-ui-html5-20261027',new Response('ancienne révision'));
       for (const chemin of ['./index.html','./assets/css/theme.css','./assets/js/app.js','./assets/js/profil.js']) {
-        const revision = v === '347' && chemin === './assets/js/profil.js' ? 'cours-retour-xp-v486' :
-          (v === '346' || v === '347') && (chemin === './index.html' || chemin === './assets/js/app.js') ? 'video-js-validation-v485' :
-          (v === '344' || v === '345' || v === '346' || v === '347') && chemin !== './assets/js/profil.js' ? 'badge-reprise-v483' :
+        const revision = v === '348' && chemin === './assets/js/profil.js' ? 'xp-operations-v487' :
+          v === '347' && chemin === './assets/js/profil.js' ? 'cours-retour-xp-v486' :
+          (v === '346' || v === '347' || v === '348') && (chemin === './index.html' || chemin === './assets/js/app.js') ? 'video-js-validation-v485' :
+          (v === '344' || v === '345' || v === '346' || v === '347' || v === '348') && chemin !== './assets/js/profil.js' ? 'badge-reprise-v483' :
           (v === '343' || v === '344' || v === '345' || v === '346' || v === '347' ? 'accueil-personnalise-v482' : 'fidelite-origine-v481');
         await revisions.put('/__sti_revision__/'+encodeURIComponent(chemin)+'?rev='+revision,new Response('ancienne révision'));
       }
-      const revisionRoue = (v === '344' || v === '345' || v === '346' || v === '347') ? 'badge-reprise-v483' : 'perf-quiz-php-v474';
+      const revisionRoue = (v === '344' || v === '345' || v === '346' || v === '347' || v === '348') ? 'badge-reprise-v483' : 'perf-quiz-php-v474';
       await revisions.put('/__sti_revision__/'+encodeURIComponent('./assets/js/roue-initiales.js')+'?rev='+revisionRoue,new Response('ancienne révision'));
-      await revisions.put('/__sti_revision__/'+encodeURIComponent('./assets/js/mobile-nav.js')+'?rev='+(v === '347' ? 'cours-retour-xp-v486' : (v === '345' || v === '346') ? 'navigation-videos-mobile-v484' : 'badge-dependances-v483'),new Response('ancienne révision'));
+      await revisions.put('/__sti_revision__/'+encodeURIComponent('./assets/js/mobile-nav.js')+'?rev='+((v === '347' || v === '348') ? 'cours-retour-xp-v486' : (v === '345' || v === '346') ? 'navigation-videos-mobile-v484' : 'badge-dependances-v483'),new Response('ancienne révision'));
       if (v === '347') {
         // Les anciens scripts sont remplacés, même si leur révision précédente a déjà été appliquée.
         await cache.put('/assets/js/profil.js',new Response('/* profil antérieur */',{headers:{'content-type':'text/javascript'}}));
         await cache.put('/assets/js/quiz-sync.js',new Response('/* synchronisation antérieure */',{headers:{'content-type':'text/javascript'}}));
         await revisions.put('/__sti_revision__/'+encodeURIComponent('./assets/js/quiz-sync.js')+'?rev=cours-retour-xp-v486',new Response('ancienne révision'));
       }
+      if (v === '348') {
+        // La précédente publication possède l'ancien badge, mais déjà le nouveau protocole XP.
+        await cache.put('/assets/js/roue-initiales.js', new Response('/* ancienne roue v348 */'));
+        await cache.put('/assets/css/badge-compte.css', new Response('/* ancien badge v348 */'));
+        await cache.put('/assets/js/quiz-sync.js', await fetch('/assets/js/quiz-sync.js'));
+        await revisions.put('/__sti_revision__/'+encodeURIComponent('./assets/css/badge-compte.css')+'?rev=cours-retour-xp-v486',new Response('ancienne révision'));
+        await revisions.put('/__sti_revision__/'+encodeURIComponent('./assets/js/quiz-sync.js')+'?rev=xp-operations-v487',new Response('révision conservée'));
+      }
       await cache.put('/assets/js/sqljs/sql-wasm.wasm',new Response('fixture à conserver'));
     }, ancienne);
     let chargements = 0;
     page.on('domcontentloaded', () => { chargements++; });
     await page.goto('/index.html#videos', { waitUntil:'domcontentloaded' }).catch(() => {});
-    await expect.poll(async () => { try { return await page.evaluate(() => localStorage.getItem('sti-version-installee')); } catch (e) { return ''; } }, {timeout:20_000}).toBe('348');
+    await expect.poll(async () => { try { return await page.evaluate(() => localStorage.getItem('sti-version-installee')); } catch (e) { return ''; } }, {timeout:20_000}).toBe('349');
     await expect.poll(async () => { try { return await page.evaluate(() => Boolean(navigator.serviceWorker.controller)); } catch (e) { return false; } }, {timeout:20_000}).toBe(true);
     await expect(page.locator('#videosGrid')).toBeVisible();
     // La première activation peut recharger la page, mais ne doit pas tourner en boucle.
@@ -82,22 +91,25 @@ for (const ancienne of ['340','341','342','343','344','345','346','347']) {
     await expect(page.locator('#sti-bnav [data-cle="videos"]')).toHaveText('Vidéos');
     await expect(page.locator('#sti-bnav [data-cle="exercices"]')).toHaveCount(0);
     /* clients.claim() précède volontairement la copie locale des anciens caches. */
-    await expect.poll(() => page.evaluate(async () => (await caches.keys()).filter(n => /^sti-atelier-v34[01234567]$/.test(n))), { timeout: 20_000 }).toEqual([]);
+    await expect.poll(() => page.evaluate(async () => (await caches.keys()).filter(n => /^sti-atelier-v34[012345678]$/.test(n))), { timeout: 20_000 }).toEqual([]);
     expect(await page.evaluate(async () => {
       const noms = await caches.keys();
-      const cache = await caches.open('sti-atelier-v348');
-      return { ancien: noms.some(n => /^sti-atelier-v34[01234567]$/.test(n)),
+      const cache = await caches.open('sti-atelier-v349');
+      return { ancien: noms.some(n => /^sti-atelier-v34[012345678]$/.test(n)),
         donnee: await (await cache.match('/assets/js/sqljs/sql-wasm.wasm'))?.text(),
         titre: document.title, version: localStorage.getItem('sti-version-affichee') };
-    })).toMatchObject({ ancien:false, donnee:'fixture à conserver', version:'487' });
-    expect(await page.evaluate(async () => (await (await (await caches.open('sti-atelier-v348')).match('/assets/js/mobile-nav.js', {ignoreSearch:true})).text()))).toContain('lib: "Vidéos"');
+    })).toMatchObject({ ancien:false, donnee:'fixture à conserver', version:'488' });
+    expect(await page.evaluate(async () => (await (await (await caches.open('sti-atelier-v349')).match('/assets/js/mobile-nav.js', {ignoreSearch:true})).text()))).toContain('lib: "Vidéos"');
     // Les nouveaux modules indispensables sont présents même avant la première visite.
-    for (const chemin of ['/assets/js/lecteur-commun.js','/assets/js/retour-quiz.js','/assets/css/theme-patrimoine.css','/assets/js/visionneuse-exercices.js','/assets/js/roue-initiales.js','/assets/css/badge-compte.css','/assets/icons/sti-icon-192.png','/assets/images/qr-code-site.png']) {
-      await expect.poll(() => page.evaluate(async u => Boolean(await (await caches.open('sti-atelier-v348')).match(u, {ignoreSearch:true})),chemin)).toBe(true);
+    for (const chemin of ['/assets/js/lecteur-commun.js','/assets/js/retour-quiz.js','/assets/css/theme-patrimoine.css','/assets/js/visionneuse-exercices.js','/assets/js/roue-initiales.js','/assets/css/badge-compte.css','/assets/images/badge-compte-vierge.png','/assets/icons/sti-icon-192.png','/assets/images/qr-code-site.png']) {
+      await expect.poll(() => page.evaluate(async u => Boolean(await (await caches.open('sti-atelier-v349')).match(u, {ignoreSearch:true})),chemin)).toBe(true);
     }
     await page.goto('/cours/css3.html#exercices', {waitUntil:'domcontentloaded'});
     await expect(page.locator('[data-course-tab="exercices"]')).toHaveAttribute('aria-selected','true');
     await expect(page.locator('[data-course-panel="exercices"] a[href="../exercices/html-css/TP1-css.pdf.html"]').first()).toBeVisible();
+    // Les anciennes ressources du badge sont remplacées, sans attente d'une première visite.
+    await expect.poll(() => page.evaluate(async () => (await (await fetch('/assets/js/roue-initiales.js')).text()).includes('sti-badge-identite__fond'))).toBe(true);
+    await expect.poll(() => page.evaluate(async () => (await (await fetch('/assets/css/badge-compte.css')).text()).includes('badge-compte-vierge.png'))).toBe(true);
     // Une ancienne révision marquée ne doit pas figer la feuille de route ni les animations.
     await expect.poll(() => page.evaluate(async () => (await (await fetch('/assets/css/cours.css')).text()).includes('sti-recap-attention'))).toBe(true);
     // Les trois ressources légères de l’accueil sont actualisées même en partant de v342.
@@ -165,8 +177,12 @@ test('accueil personnalisé et reprise déjà visités restent disponibles hors 
   await expect(page.locator('#welcomeReturn #resumeTitle')).toContainText('Formulaires');
   await expect(page.locator('#sti-roue-btn .sti-badge-identite__avatar')).toHaveText('B.N');
   await expect(page.locator('#sti-roue-anneau')).toHaveAttribute('data-sti-ruban', 'vert');
-  await expect.poll(() => page.locator('.sti-badge-identite__logo').evaluate(el => el.naturalWidth)).toBe(192);
-  await expect.poll(() => page.locator('.sti-badge-identite__qr').evaluate(el => el.naturalWidth)).toBe(656);
+  await expect(page.locator('.sti-badge-identite__nom')).toHaveText('Nour Ben Ali');
+  await expect(page.locator('.sti-badge-identite__fond')).toHaveCSS('background-image', /badge-compte-vierge\.png/);
+  expect(await page.evaluate(async () => {
+    const image = new Image(); image.src = '/assets/images/badge-compte-vierge.png';
+    await image.decode(); return image.naturalWidth;
+  })).toBe(2520);
   await page.locator('#resumeGoBtn').click();
   await expect(page).toHaveURL(/\/cours\/html5\.html#formulaires/);
   await expect(page.locator('body')).toBeVisible();
