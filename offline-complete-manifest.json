@@ -1,9 +1,9 @@
 {
   "version": "v498-sti-atelier-v359",
-  "generatedAt": "2026-10-28T17:03:51Z",
+  "generatedAt": "2026-10-28T17:04:33Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 697,
-  "totalBytes": 684487587,
+  "totalBytes": 684487756,
   "files": [
     {
       "path": "404.html",
@@ -297,8 +297,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 69404,
-      "gitSha": "0f51f42ceafbbb64bb53e40c31c536604ea8e283"
+      "bytes": 69573,
+      "gitSha": "6800884f97df911a6c79146ad7b85cca6590a9ef"
     },
     {
       "path": "assets/css/visionneuse-exercices.css",

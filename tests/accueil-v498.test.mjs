@@ -67,6 +67,7 @@ test('v498 : la vidéo drapeaurafeha.mp4 couvre tout le bloc « Bonjour » sans 
   const bloc = css.slice(css.indexOf('.welcome-return__fond {'), css.indexOf('.welcome-return__title {'));
   assert.match(bloc, /position: absolute;\s*inset: 0;/, 'le fond recouvre toute la boîte');
   assert.match(bloc, /object-fit: cover/, 'la vidéo s’étend sur toute la boîte sans déformation');
+  assert.match(bloc, /object-position: center 32%/, 'cadrage sur le drapeau et l’entrée du lycée');
   assert.match(bloc, /\.welcome-return__fond::after \{[^}]*background: var\(--bg-alt\);[^}]*opacity: \.84;/, 'voile de lisibilité');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.welcome-return__fond-video \{ display: none; \}/,
     'aucune vidéo animée si l’utilisateur réduit les animations');

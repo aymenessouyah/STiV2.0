@@ -864,6 +864,9 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Cadrage haut : sur une boîte large et basse, on garde le drapeau et l'entrée
+     du lycée plutôt que le milieu de la vidéo. */
+  object-position: center 32%;
   opacity: .9;
 }
 /* Voile de lisibilité : la vidéo s'étend sur toute la boîte sans gêner le texte. */
