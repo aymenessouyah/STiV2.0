@@ -74,8 +74,8 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     'cours/html5.html', 'dashboard.html', 'assets/css/theme.css', 'assets/css/cours.css',
     'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-html5.js'
   ]) {
-    const revision = ['cours/html5.html', 'assets/css/cours.css'].includes(path) ? 'onglets-mobile-v493' :
-      path === 'assets/js/app.js' || path === 'dashboard.html' ? 'accueil-ruban-v499' :
+    const revision = ['cours/html5.html', 'assets/css/cours.css', 'assets/js/app.js'].includes(path) ? 'tp-evenements-v500' :
+      path === 'dashboard.html' ? 'accueil-ruban-v499' :
       path === 'assets/js/cours-html5.js' ? 'progression-chapitres-v492' :
       path === 'assets/css/theme.css' ? 'accueil-ruban-v499' :
       'suivi-contextes-v491';

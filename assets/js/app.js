@@ -249,6 +249,21 @@
       codeApercu: "background: url(image.jpg) center / cover;"
     },
     {
+      /* v500 : TP pas à pas — la même capsule est proposée en HTML5 et en CSS3. */
+      id: "tp-evenements-liens",
+      matiere: "html5",
+      matieres: ["html5", "css3"],
+      nomMatiere: "HTML5 + CSS3",
+      badgeClasse: "badge-html",
+      couleur: "#ff783c",
+      titre: "TP — Événements, liens et arrière-plans",
+      dureeTexte: "03:48",
+      srcPrincipal: "assets/videos/tp-evenements-liens.mp4",
+      urlTP: "exercices/html-css/tp-evenements-liens/index.html",
+      urlCours: "exercices/html-css/tp-evenements-liens/index.html",
+      codeApercu: "onclick=\"journal('clic')\""
+    },
+    {
       id: "javascript-cours",
       matiere: "javascript",
       nomMatiere: "JavaScript",
@@ -781,6 +796,14 @@
 
   var filtreVideoActif = "all";
 
+  /* Une vidéo peut être partagée par deux matières (TP HTML + CSS). */
+  function matieresVideo(v) {
+    return (v && v.matieres) || [v.matiere];
+  }
+  function videoDeMatiere(v, idMat) {
+    return matieresVideo(v).indexOf(idMat) !== -1;
+  }
+
   function rendreGrilleVideosAccueil() {
     var grille = document.getElementById("videosGrid");
     if (!grille) return;
@@ -794,14 +817,14 @@
       var cleF = btnF.getAttribute("data-video-filter") || "";
       if (!libellesFiltres[cleF]) return;
       var nbF = CATALOGUE_VIDEOS.filter(function (v) {
-        return v.matiere === cleF && (!v.reserve4si || ok4);
+        return videoDeMatiere(v, cleF) && (!v.reserve4si || ok4);
       }).length;
       btnF.textContent = libellesFiltres[cleF] + " (" + nbF + ")";
     });
 
     var liste = CATALOGUE_VIDEOS.filter(function (v) {
       if (v.reserve4si && !ok4) return false;
-      if (filtreVideoActif !== "all" && v.matiere !== filtreVideoActif) return false;
+      if (filtreVideoActif !== "all" && !videoDeMatiere(v, filtreVideoActif)) return false;
       return true;
     });
 
@@ -1527,7 +1550,7 @@
 
     var mat = MATIERES[idMat];
     var pref = obtenirPrefixeRacine();
-    var videosMatiere = CATALOGUE_VIDEOS.filter(function (v) { return v.matiere === idMat; });
+    var videosMatiere = CATALOGUE_VIDEOS.filter(function (v) { return videoDeMatiere(v, idMat); });
 
     /* Barre supérieure unifiée STI V2.0 (3 modes + Badge Abonné + Onglets Cours / Exercices / Annexes / Vidéos) */
     var barre = document.createElement("div");
@@ -1761,7 +1784,7 @@
                   '<a href="' + pref + m.urlCours + '#cours">Cours</a>·' +
                   '<a href="' + pref + m.urlCours + '#exercices">Exercices</a>·' +
                   '<a href="' + pref + m.urlCours + '#annexes">Annexes</a>·' +
-                  '<a href="' + pref + m.urlCours + '#videos">Vidéos (' + CATALOGUE_VIDEOS.filter(function (v) { return v.matiere === m.id && (!v.reserve4si || ok4); }).length + ")</a>" +
+                  '<a href="' + pref + m.urlCours + '#videos">Vidéos (' + CATALOGUE_VIDEOS.filter(function (v) { return videoDeMatiere(v, m.id) && (!v.reserve4si || ok4); }).length + ")</a>" +
                 "</div>" +
               "</div>" +
             "</div>" +

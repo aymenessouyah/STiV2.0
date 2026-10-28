@@ -1,9 +1,9 @@
 {
-  "version": "v499-sti-atelier-v360",
-  "generatedAt": "2026-10-28T17:37:13Z",
+  "version": "v500-sti-atelier-v361",
+  "generatedAt": "2026-10-28T18:00:31Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 697,
-  "totalBytes": 684491230,
+  "totalFiles": 700,
+  "totalBytes": 688137408,
   "files": [
     {
       "path": "404.html",
@@ -212,8 +212,8 @@
     },
     {
       "path": "assets/css/cours.css",
-      "bytes": 58764,
-      "gitSha": "31a0ac9a8bb99adf86bb4d6958ff16039f421b6f"
+      "bytes": 59235,
+      "gitSha": "91d7602bdaefca4117d5a882705b40778c3254b4"
     },
     {
       "path": "assets/css/css.css",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 106611,
-      "gitSha": "3431dae3be2171a8c191eae6da48a5ec6d7ba807"
+      "bytes": 107500,
+      "gitSha": "27fa85e6c5cd46f40dd60c9405cf690f6c948284"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1141,6 +1141,11 @@
       "gitSha": "6b1142870ded1e6a69f56d1686de747b92b9ee7d"
     },
     {
+      "path": "assets/videos/tp-evenements-liens.mp4",
+      "bytes": 2650097,
+      "gitSha": "fd2f4f70a56e64f94a7c0591175d36d41e7a5c1d"
+    },
+    {
       "path": "assets/videos/validation-nom-prenom-js.mp4",
       "bytes": 49095652,
       "gitSha": "4c53fdda9a9d3d53aae821bb9ef3b99ea6189ab8"
@@ -1187,8 +1192,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 207956,
-      "gitSha": "b6ffa2bea03b62095a9c8b4ee537dda6436ccacb"
+      "bytes": 209148,
+      "gitSha": "96dfd85988584de0e1d52059d7c029f39b972a6b"
     },
     {
       "path": "cours/datalist.html",
@@ -1202,8 +1207,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 200590,
-      "gitSha": "b9361f4e65dd488ac72f1e6836b1f2a29fb50145"
+      "bytes": 201782,
+      "gitSha": "00a1d321cccf2bbc15b7d9afad8567af66f0458a"
     },
     {
       "path": "cours/javascript.html",
@@ -2626,6 +2631,16 @@
       "gitSha": "6f2a6cb3c0a8912560c67d4efc619af78f5aa3d8"
     },
     {
+      "path": "exercices/html-css/tp-evenements-liens/drapeau.png",
+      "bytes": 944840,
+      "gitSha": "1d0f90b206d234f2540118785c1141a2efc4d4c2"
+    },
+    {
+      "path": "exercices/html-css/tp-evenements-liens/index.html",
+      "bytes": 47090,
+      "gitSha": "e757612a3dc5db86c8ba1654750c4daeddc03a0c"
+    },
+    {
       "path": "exercices/javascript/Tp1-Correction-js.html",
       "bytes": 16577,
       "gitSha": "7ce84a6581d2e3721c0a86d8749c76b30200bff4"
@@ -3487,8 +3502,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 94935,
-      "gitSha": "44bcd8073f81ac56275328e8c3c67c3561c32ba8"
+      "bytes": 95342,
+      "gitSha": "66e5e2b95c1d7bd40f21d58267b629159b699e9f"
     }
   ]
 }

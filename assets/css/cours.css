@@ -1398,6 +1398,16 @@ details.callout:not([open]) > summary::after { transform: rotate(-90deg); }
   flex-direction: column;
   gap: var(--space-6);
 }
+/* v500 : la carte du TP « événements, liens et arrière-plans » ouvre la série d'exercices. */
+.exo-grid--tp { margin-bottom: var(--space-5); }
+.exo-card-tp {
+  border-left: 4px solid var(--course-accent);
+  background:
+    linear-gradient(180deg, rgba(127, 127, 127, .10), rgba(127, 127, 127, .04)),
+    var(--surface-solid);
+}
+.exo-card-tp .exo-badge { background: var(--course-accent); color: var(--surface-solid); }
+.exo-card-tp p { margin: var(--space-3) 0; }
 .exo-card-full {
   padding: var(--space-5);
   border-radius: var(--radius-xl);
