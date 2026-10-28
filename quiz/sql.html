@@ -2226,9 +2226,11 @@ LIMIT 5;</textarea
       } catch (e) {
         S = JSON.parse(JSON.stringify(DEFAULT_STATE));
       }
-      function save(gain) {
+      function save(gain, partieId) {
+        let niveauAvant = 1;
         try {
           const ex = JSON.parse(memoLire("sqlQuestV3") || "null");
+          niveauAvant = Number(ex && ex.level) || 1;
           if (ex && typeof ex === "object") {
             S.xp = Math.max(Number(S.xp) || 0, Number(ex.xp) || 0);
             S.level = Math.max(Number(S.level) || 1, Number(ex.level) || 1);
@@ -2243,8 +2245,15 @@ LIMIT 5;</textarea
             }
           }
         } catch (eEx) {}
-        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP("sqlQuestV3", S, gain || 0))) {
+        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP("sqlQuestV3", S, gain || 0,
+            partieId && Q ? { id: partieId, bonnes: Q.correct, total: Q.answered } : null))) {
           memoEcrire("sqlQuestV3", JSON.stringify(S));
+        } else if (partieId) {
+          try {
+            S.xp = Number(JSON.parse(memoLire("sqlQuestV3") || "{}").xp) || 0;
+            S.level = Math.max(niveauAvant, levelForXP(S.xp));
+            STIQuizSync.sauverXP("sqlQuestV3", S, 0);
+          } catch (e3) {}
         }
         if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP("sqlQuestV3");
       }
@@ -5150,6 +5159,7 @@ LIMIT 5;</textarea
               )
             : pickQuestions(mode, cat);
         Q = {
+          partieId: window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null,
           mode,
           cat,
           questions: qs,
@@ -5580,7 +5590,7 @@ LIMIT 5;</textarea
             if (Q.mode === "daily") xpExit = Math.round(xpExit * 1.5);
             S.xp = (Number(S.xp) || 0) + xpExit;
             S.level = Math.max(Number(S.level) || 1, levelForXP(S.xp));
-            save(xpExit);
+            save(xpExit, Q.partieId);
           }
           if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function" && repondues.length) {
             STIQuizSync.noterQuestionsVuesQuiz(
@@ -5599,7 +5609,7 @@ LIMIT 5;</textarea
             Q.correct,
             repondues.length || toutesLog.length,
             Q.cat && Q.cat !== "all" ? Q.cat : Q.mode || null,
-            { points: Q.score, ordre_questions: ordreFinalSql }
+            { points: Q.score, ordre_questions: ordreFinalSql, partie_id: Q.partieId }
           );
           setTimeout(hydraterCloudSql, 350);
         }
@@ -5628,6 +5638,7 @@ LIMIT 5;</textarea
           index_courant: idxNext,
           ordre_questions: Q.questions.slice(0, 140),
           etat_meta: {
+            partie_id: Q.partieId,
             combo: Q.combo || 0,
             bestCombo: Q.bestCombo || 0,
             answered: Q.answered || 0,
@@ -5734,6 +5745,7 @@ LIMIT 5;</textarea
                   const meta = sauv.etat_meta || {};
                   const mode = MODE_CFG[sauv.mode] ? sauv.mode : "classique";
                   Q = {
+                    partieId: STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise("sql", sauv) : null,
                     mode,
                     cat: sauv.module || "all",
                     questions: sauv.ordre_questions,
@@ -5764,7 +5776,7 @@ LIMIT 5;</textarea
               const bD = $("sqlDiscardCloudBtn");
               if (bD) {
                 bD.onclick = () => {
-                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("sql");
+                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("sql", sauv.etat_meta && sauv.etat_meta.partie_id);
                   zr.innerHTML = "";
                 };
               }
@@ -5791,7 +5803,7 @@ LIMIT 5;</textarea
         clearInterval(timerInt);
         clearTimeout(botTimeout);
         if (window.STIQuizSync && STIQuizSync.effacerSession) {
-          STIQuizSync.effacerSession("sql");
+          STIQuizSync.effacerSession("sql", Q && Q.partieId);
         }
         $("quizOverlay").classList.add("hidden");
         document.body.style.overflow = "";
@@ -5840,8 +5852,8 @@ LIMIT 5;</textarea
           S.xp = (Number(S.xp) || 0) + xpGain;
           S.level = Math.max(oldLvlEnd, levelForXP(S.xp));
         }
+        save(gainASauver, gainASauver ? Q.partieId : null);
         checkStreak();
-        save(gainASauver);
         checkBadges();
         updateNavbar();
         // Affichage garanti de la page d'évaluation même si un graphique échoue
@@ -7396,7 +7408,7 @@ LIMIT 5;</textarea
           hydraterCloudSql();
         }
       });
-      window.addEventListener("sti-cloud-restored", () => {
+      window.addEventListener("sti-cloud-restored", (evt) => {
         try {
           const lu = JSON.parse(localStorage.getItem("sqlQuestV3") || "null");
           if (lu && typeof lu === "object" && typeof S === "object") {
@@ -7404,8 +7416,15 @@ LIMIT 5;</textarea
             Object.keys(bestMerged).forEach((m) => {
               bestMerged[m] = Math.max(Number(S.best && S.best[m]) || 0, Number(lu.best && lu.best[m]) || 0);
             });
-            const xpMax = Math.max(Number(S.xp) || 0, Number(lu.xp) || 0);
-            const lvlMax = Math.max(Number(S.level) || 1, Number(lu.level) || 1, levelForXP(xpMax));
+            const masteryMerged = Object.assign({}, lu.mastery || {}, S.mastery || {});
+            Object.keys(masteryMerged).forEach((m) => {
+              const local = S.mastery && S.mastery[m] || {}, distant = lu.mastery && lu.mastery[m] || {};
+              masteryMerged[m] = { c: Math.max(Number(local.c) || 0, Number(distant.c) || 0),
+                t: Math.max(Number(local.t) || 0, Number(distant.t) || 0) };
+            });
+            const correctionXp = evt.detail && evt.detail.quiz === "sqlQuestV3";
+            const xpMax = correctionXp ? (Number(lu.xp) || 0) : Math.max(Number(S.xp) || 0, Number(lu.xp) || 0);
+            const lvlMax = correctionXp ? levelForXP(xpMax) : Math.max(Number(S.level) || 1, Number(lu.level) || 1, levelForXP(xpMax));
             const stMax = Math.max(Number(S.streak) || 0, Number(lu.streak) || 0);
             const taMax = Math.max(Number(S.totalAnswered) || 0, Number(lu.totalAnswered) || 0);
             const tcMax = Math.max(Number(S.totalCorrect) || 0, Number(lu.totalCorrect) || 0);
@@ -7418,7 +7437,9 @@ LIMIT 5;</textarea
               totalCorrect: tcMax,
               bestCombo: bcMax,
               best: bestMerged,
+              mastery: masteryMerged,
             });
+            if (correctionXp && window.STIQuizSync && STIQuizSync.sauverXP) STIQuizSync.sauverXP("sqlQuestV3", S, 0);
             updateNavbar();
             if (typeof renderAll === "function") renderAll();
           }

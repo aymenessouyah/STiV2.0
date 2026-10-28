@@ -1,7 +1,4 @@
-/* STI V2.0 — couche unique de stockage du profil abonné.
-   Un seul objet JSON sous « sti-profil-abonne », synchronisé vers le cloud.
-   La passerelle XP conserve les quatre clés historiques déjà utilisées par les quiz.
-   La session et le statut GOLD restent ceux des scripts d'accès existants. */
+/* STI V2.0 — Profil abonné unique, session et statut GOLD existants. */
 
 /** Profil : préférences, cours, lecture, exercices, quiz, vidéos, notes et nouveautés. */
 (function (global) {
@@ -237,8 +234,7 @@
     };
   }
 
-  /* Les pages historiques n'ont que dark/light. Le mode intermédiaire utilise
-     leur rendu sombre, tandis que le profil reste la source des trois modes. */
+  /* Le thème intermédiaire utilise le rendu sombre historique. */
   function synchroniserThemesHistoriques(theme) {
     try {
       var stockage = global.localStorage;
@@ -320,8 +316,7 @@
         profilPresentDansStockage = true;
         return JSON.parse(JSON.stringify(memoireProfil));
       }
-      /* La synchronisation purge cette clé lorsqu'un autre compte se connecte.
-         Ne jamais réutiliser en mémoire le profil du compte précédent. */
+      /* Changer de compte invalide le profil en mémoire. */
       if (global.localStorage && profilPresentDansStockage) {
         memoireProfil = null;
         profilPresentDansStockage = false;
@@ -445,8 +440,7 @@
       p.chapitres[matiere][idChapitre] = etatValide;
     }
 
-    /* Ne pas effacer un ancien marquage global simplement parce qu'un chapitre
-       a été ouvert : recalculer uniquement lors d'un changement de révision. */
+    /* Recalculer les révisions seulement si elles changent. */
     if (totalChapitres > 0 && (etatValide === "revise" || etatAvant === "revise")) {
       var nbRevises = Object.keys(p.chapitres[matiere]).filter(function (k) {
         return p.chapitres[matiere][k] === "revise";
@@ -517,8 +511,7 @@
       p.videos.vues.push(idV);
     }
 
-    /* Une courte vidéo illustrative peut être suivie sans remplacer la reprise
-       de la vidéo principale affichée dans le tableau de bord. */
+    /* L’illustration ne remplace pas la reprise principale. */
     if (!info.secondaire) {
       p.videos.derniere = {
         id: idV,
@@ -587,8 +580,7 @@
       if (autreCompte) cacheAcces = null;
     }
 
-    /* sync-progressions isole les comptes au premier pull. En attendant cette
-       isolation, ne pas exposer les données locales du compte précédent. */
+    /* Attendre l’isolation avant d’exposer les données du compte. */
     var uidActuel = etatSessionCourant.id || (cacheAcces && cacheAcces.id) || "";
     var compteEnAttente = false;
     try {
@@ -767,6 +759,26 @@
 
   }
 
+  /* Préparer le verrou historique avant activation du SW. */
+  function preparerActivationServiceWorker(version) {
+    var numero = String(version || "");
+    if (!/^\d{1,6}$/.test(numero)) return false;
+    try {
+      global.sessionStorage.setItem("sti-sw-reload-ver", numero);
+      global.localStorage.setItem("sti-sw-reload-ver", numero);
+      global.localStorage.setItem("sti-version-installee", numero);
+      return true;
+    } catch (e) { return false; }
+  }
+  function preparerVerificationServiceWorker(version) {
+    var numero = String(version || "");
+    if (!/^\d{1,6}$/.test(numero)) return false;
+    try {
+      if (Number(numero) <= Number(global.localStorage.getItem("sti-version-installee") || 0)) return false;
+      return preparerActivationServiceWorker(numero);
+    } catch (e) { return false; }
+  }
+
   /* Passerelle réservée aux compteurs historiques du compte isolé. */
   var CLES_XP_QUIZ = ["quizzora_xp_v1", "sti-quiz-xp-js-v1", "sqlQuestV3", "quizphp_v1_user"];
   function compteQuizIsole(uid) {
@@ -793,15 +805,15 @@
     } catch (e) { return false; }
   }
 
-  /* File par compte : une clé par opération pour éviter les collisions entre onglets.
-     Le préfixe n'est ni synchronisé ni purgé par le synchroniseur historique. */
+  /* Une clé par opération et par compte évite les collisions d’onglets. */
   var PREFIXE_XP = "quiz-xp-operation-v1:";
   function prefixeOperations(uid) { return PREFIXE_XP + encodeURIComponent(String(uid)) + ":"; }
   function operationValide(o) {
     return o && CLES_XP_QUIZ.indexOf(o.cle) >= 0 &&
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(o.id) &&
       Number.isSafeInteger(o.gain) && o.gain > 0 && o.gain <= 1000000000 &&
-      Number.isSafeInteger(o.base) && o.base >= 0;
+      Number.isSafeInteger(o.base) && o.base >= 0 &&
+      (!o.cumulatif || (Number.isSafeInteger(o.attente) && o.attente >= 0 && o.attente <= o.gain));
   }
   function listerOperationsQuiz(uid, cle) {
     if (!compteQuizIsole(uid)) return [];
@@ -819,12 +831,54 @@
   }
   function ajouterOperationQuiz(uid, operation) {
     if (!compteQuizIsole(uid) || !operationValide(operation)) return false;
-    try { global.localStorage.setItem(prefixeOperations(uid) + operation.id, JSON.stringify(operation)); return true; }
-    catch (e) { return false; }
+    try {
+      var cle = prefixeOperations(uid) + operation.id;
+      var precedent = JSON.parse(global.localStorage.getItem(cle) || "null");
+      if (precedent) {
+        if (!operationValide(precedent) || precedent.cle !== operation.cle || !precedent.cumulatif || !operation.cumulatif) return false;
+        operation = Object.assign({}, operation, {
+          gain: Math.max(precedent.gain, operation.gain),
+          attente: Math.min(Math.max(precedent.gain, operation.gain), precedent.attente + operation.attente),
+          base: Math.max(precedent.base, operation.base)
+        });
+      }
+      global.localStorage.setItem(cle, JSON.stringify(operation));
+      return true;
+    } catch (e) { return false; }
   }
-  function confirmerOperationsQuiz(uid, ids) {
+  function confirmerOperationsQuiz(uid, ids, envoyees) {
     if (!compteQuizIsole(uid)) return;
-    try { (ids || []).forEach(function (id) { global.localStorage.removeItem(prefixeOperations(uid) + id); }); } catch (e) {}
+    try {
+      (ids || []).forEach(function (id) {
+        var cle = prefixeOperations(uid) + id;
+        var courant = JSON.parse(global.localStorage.getItem(cle) || "null");
+        var envoye = (envoyees || []).find(function (o) { return o.id === id; });
+        /* Une progression plus récente a pu arriver pendant le POST. */
+        if (courant && courant.cumulatif && envoye && courant.gain > envoye.gain) {
+          courant.attente = Math.max(0, courant.attente - (Number(envoye.attente) || 0));
+          global.localStorage.setItem(cle, JSON.stringify(courant));
+        } else {
+          global.localStorage.removeItem(cle);
+        }
+      });
+    } catch (e) {}
+  }
+  /* Le marqueur de partie survit à l'acquittement et reste isolé par compte. */
+  var PREFIXE_PARTIE_XP = "quiz-xp-partie-v1:";
+  function clePartieQuiz(uid, id) { return PREFIXE_PARTIE_XP + encodeURIComponent(String(uid)) + ":" + id; }
+  function lireGainPartieQuiz(uid, cle, id) {
+    if (!compteQuizIsole(uid) || !/^[0-9a-f-]{36}$/i.test(String(id || ""))) return null;
+    try {
+      var o = JSON.parse(global.localStorage.getItem(clePartieQuiz(uid, id)) || "null");
+      if (!o) return { cle: cle, gain: 0, bonnes: 0, total: 0, connue: false };
+      if (o.cle !== cle || !Number.isSafeInteger(o.gain) || o.gain < 0) return null;
+      return o;
+    } catch (e) { return null; }
+  }
+  function memoriserGainPartieQuiz(uid, id, valeur) {
+    if (!compteQuizIsole(uid) || !valeur || !/^[0-9a-f-]{36}$/i.test(String(id || ""))) return false;
+    try { global.localStorage.setItem(clePartieQuiz(uid, id), JSON.stringify(valeur)); return true; }
+    catch (e) { return false; }
   }
   function ecrireProtocoleQuiz(uid, attentes) {
     if (!compteQuizIsole(uid)) return false;
@@ -870,9 +924,13 @@
     reinitialiser: reinitialiser,
     appliquerPreferencesDOM: appliquerPreferencesDOM,
     lireEtatSession: lireEtatSession,
+    preparerActivationServiceWorker: preparerActivationServiceWorker,
+    preparerVerificationServiceWorker: preparerVerificationServiceWorker,
     compteQuizIsole: compteQuizIsole,
     lireAcquisQuiz: lireAcquisQuiz,
     ecrireAcquisQuiz: ecrireAcquisQuiz,
+    lireGainPartieQuiz: lireGainPartieQuiz,
+    memoriserGainPartieQuiz: memoriserGainPartieQuiz,
     listerOperationsQuiz: listerOperationsQuiz,
     ajouterOperationQuiz: ajouterOperationQuiz,
     confirmerOperationsQuiz: confirmerOperationsQuiz,

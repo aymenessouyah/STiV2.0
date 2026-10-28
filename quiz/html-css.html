@@ -5536,7 +5536,7 @@ background-repeat: repeat;</pre>
         } catch (e) {}
         return { xp: 0, best: 0, parties: 0, bonnes: 0, total: 0 };
       }
-      function ecrireXpHtmlCss(patch, gain) {
+      function ecrireXpHtmlCss(patch, gain, partie) {
         var cur = lireXpHtmlCss();
         var out = {
           xp: Math.max(cur.xp, Number(patch && patch.xp != null ? patch.xp : cur.xp) || 0),
@@ -5545,8 +5545,10 @@ background-repeat: repeat;</pre>
           bonnes: Math.max(cur.bonnes, Number(patch && patch.bonnes != null ? patch.bonnes : cur.bonnes) || 0),
           total: Math.max(cur.total, Number(patch && patch.total != null ? patch.total : cur.total) || 0),
         };
-        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(CLE_XP_HTMLCSS, out, gain || 0))) {
+        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(CLE_XP_HTMLCSS, out, gain || 0, partie))) {
           try { localStorage.setItem(CLE_XP_HTMLCSS, JSON.stringify(out)); } catch (e) {}
+        } else {
+          out = lireXpHtmlCss();
         }
         if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(CLE_XP_HTMLCSS);
         var elHs = $("#heroScore");
@@ -5647,6 +5649,7 @@ background-repeat: repeat;</pre>
               )
             : melangees.slice(0, limite);
         state.session = preparerSessionDepuisListeHc(tirees);
+        state.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;
         state.index = 0;
         state.partySynced = false;
         state.xpCredited = false;
@@ -5679,7 +5682,7 @@ background-repeat: repeat;</pre>
               answer: q.answer,
             };
           }),
-          etat_meta: { elapsed: state.elapsed || 0, cat: state.cat || "all", mode: state.mode || "classic" },
+          etat_meta: { elapsed: state.elapsed || 0, cat: state.cat || "all", mode: state.mode || "classic", partie_id: state.partieId },
         });
       }
 
@@ -5775,6 +5778,7 @@ background-repeat: repeat;</pre>
                   };
                 });
                 state.index = idx;
+                state.partieId = STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise("html-css", sauv) : null;
                 state.partySynced = false;
                 state.xpCredited = false;
                 zr.innerHTML = "";
@@ -5786,7 +5790,7 @@ background-repeat: repeat;</pre>
             var bD = $("#hcDiscardBtn");
             if (bD) {
               bD.addEventListener("click", function () {
-                if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("html-css");
+                if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("html-css", sauv.etat_meta && sauv.etat_meta.partie_id);
                 zr.innerHTML = "";
               });
             }
@@ -6037,7 +6041,7 @@ background-repeat: repeat;</pre>
               parties: curFinHc.parties + 1,
               bonnes: curFinHc.bonnes + nbBonnes,
               total: curFinHc.total + listeFinale.length,
-            }, nbBonnes * 250);
+            }, nbBonnes * 250, { id: state.partieId, bonnes: nbBonnes, total: listeFinale.length });
           }
           var ordreFinal = listeFinale.map(function (q, idx) {
             var estOk = q.answer !== null && q.answer !== undefined && q.options[q.answer] && q.options[q.answer].ok;
@@ -6054,7 +6058,7 @@ background-repeat: repeat;</pre>
             nbBonnes,
             listeFinale.length,
             state.cat && state.cat !== "all" ? state.cat : null,
-            { points: nbBonnes * 100, ordre_questions: ordreFinal }
+            { points: nbBonnes * 100, ordre_questions: ordreFinal, partie_id: state.partieId }
           );
           setTimeout(hydraterCloudHtmlCss, 350);
         }
@@ -6650,6 +6654,7 @@ background-repeat: repeat;</pre>
         });
         if (!fautes.length) return;
         state.session = preparerSessionDepuisListeHc(fautes);
+        state.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;
         state.index = 0;
         state.partySynced = false;
         state.xpCredited = false;
@@ -6667,6 +6672,7 @@ background-repeat: repeat;</pre>
         }
         /* Conserve exactement l'ordre des questions de la série avec choix remélangés */
         state.session = preparerSessionDepuisListeHc(state.session);
+        state.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;
         state.index = 0;
         state.partySynced = false;
         state.xpCredited = false;
@@ -6782,7 +6788,7 @@ background-repeat: repeat;</pre>
           "Quitter",
           function () {
             if (window.STIQuizSync && STIQuizSync.effacerSession) {
-              STIQuizSync.effacerSession("html-css");
+              STIQuizSync.effacerSession("html-css", state.partieId);
             }
             fermerOverlay("quizOverlay");
             window.scrollTo({

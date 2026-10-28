@@ -5146,11 +5146,12 @@
         } else {
           hydraterCloudPhp();
         }
-        window.addEventListener("sti-cloud-restored", () => {
+        window.addEventListener("sti-cloud-restored", (evt) => {
           try {
             const uLu = JSON.parse(memoLire(CLE_LOCALE + "user") || "null");
             if (uLu && typeof uLu === "object") {
-              const xpMax = Math.max(Number(user.xp) || 0, Number(uLu.xp) || 0);
+              const xpMax = evt.detail && evt.detail.quiz === "quizphp_v1_user"
+                ? (Number(uLu.xp) || 0) : Math.max(Number(user.xp) || 0, Number(uLu.xp) || 0);
               const bestMax = Math.max(Number(user.best) || 0, Number(uLu.best) || 0);
               const streakMax = Math.max(Number(user.streak) || 0, Number(uLu.streak) || 0);
               user = Object.assign({}, uLu, user, {
@@ -5185,7 +5186,7 @@
             : "—";
         }
       }
-      function saveUser(gain) {
+      function saveUser(gain, partieId) {
         try {
           const ex = JSON.parse(memoLire(CLE_LOCALE + "user") || "null");
           if (ex && typeof ex === "object") {
@@ -5198,8 +5199,11 @@
             }
           }
         } catch (eEx) {}
-        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP("quizphp_v1_user", user, gain || 0))) {
+        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP("quizphp_v1_user", user, gain || 0,
+            partieId && quiz ? { id: partieId, bonnes: quiz.correct, total: quiz.answers.length } : null))) {
           memoEcrire(CLE_LOCALE + "user", JSON.stringify(user));
+        } else if (partieId) {
+          try { user.xp = Number(JSON.parse(memoLire(CLE_LOCALE + "user") || "{}").xp) || 0; } catch (e3) {}
         }
         if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP("quizphp_v1_user");
         updateNav();
@@ -5455,6 +5459,7 @@
           pool = preparerListePhp(melangeesPhp);
         }
         quiz = {
+          partieId: window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null,
           list: pool,
           idx: 0,
           score: 0,
@@ -5872,7 +5877,7 @@
             user.xp = (Number(user.xp) || 0) + xpExitPhp;
             user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);
             if ((quiz.score || 0) > (user.best || 0)) user.best = quiz.score;
-            try { saveUser(xpExitPhp); } catch (eSuEx) {}
+            try { saveUser(xpExitPhp, quiz.partieId); } catch (eSuEx) {}
           }
           if (typeof STIQuizSync.noterQuestionsVuesQuiz === "function") {
             STIQuizSync.noterQuestionsVuesQuiz(
@@ -5891,7 +5896,7 @@
             quiz.correct,
             quiz.answers.length,
             quiz.mode || null,
-            { points: quiz.score, ordre_questions: ordreFinalPhp }
+            { points: quiz.score, ordre_questions: ordreFinalPhp, partie_id: quiz.partieId }
           );
           setTimeout(hydraterCloudPhp, 350);
         }
@@ -5919,6 +5924,7 @@
           index_courant: idxNext,
           ordre_questions: quiz.list.slice(0, 180),
           etat_meta: {
+            partie_id: quiz.partieId,
             streak: quiz.streak || 0,
             maxStreak: quiz.maxStreak || 0,
             fifty: quiz.fifty !== false,
@@ -6014,6 +6020,7 @@
                   zr.innerHTML = "";
                   const meta = sauv.etat_meta || {};
                   quiz = {
+                    partieId: STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise("php", sauv) : null,
                     list: sauv.ordre_questions,
                     idx,
                     score: Number(sauv.points) || 0,
@@ -6045,7 +6052,7 @@
               const bD = $("phpDiscardCloudBtn");
               if (bD) {
                 bD.onclick = () => {
-                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("php");
+                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("php", sauv.etat_meta && sauv.etat_meta.partie_id);
                   zr.innerHTML = "";
                 };
               }
@@ -6075,7 +6082,7 @@
         clearInterval(perQInt);
         clearInterval(timerInt);
         if (window.STIQuizSync && STIQuizSync.effacerSession) {
-          STIQuizSync.effacerSession("php");
+          STIQuizSync.effacerSession("php", quiz && quiz.partieId);
         }
         document.body.classList.remove("examen");
         $("quizOverlay").style.opacity = 0;
@@ -6140,7 +6147,7 @@
           user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);
           if (quiz.score > (user.best || 0)) user.best = quiz.score;
           try {
-            saveUser(xpGain);
+            saveUser(xpGain, quiz.partieId);
           } catch (eSu) {}
         }
         synchroniserPartiePhp(true);

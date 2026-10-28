@@ -26,19 +26,26 @@ function creerCloud() {
     if (methode === 'OPTIONS') return route.fulfill({ status: 204, headers: cors });
     const utilisateur = (req.headers().authorization || '').replace(/^Bearer jeton-/, '');
     const repondre = (data, status = 200) => route.fulfill({ status, headers: cors, contentType: 'application/json', body: JSON.stringify(data) });
-    if (u.pathname.endsWith('/rpc/sti_appliquer_gains_xp_quiz')) {
-      const { p_cle, p_valeur, p_operations } = req.postDataJSON();
-      etat.rpc.push({ utilisateur, cle: p_cle, xp: p_valeur.xp, operations: p_operations });
+    if (u.pathname.endsWith('/rpc/sti_appliquer_gains_xp_quiz') || u.pathname.endsWith('/rpc/sti_appliquer_gain_partie_quiz')) {
+      const { p_cle, p_valeur, p_partie_id, p_gain, p_operations } = req.postDataJSON();
+      const cumulatif = Boolean(p_partie_id), lot = cumulatif ? [{ id: p_partie_id, gain: p_gain }] : p_operations;
+      etat.rpc.push({ utilisateur, cle: p_cle, xp: p_valeur.xp, operations: lot, cumulatif });
       if (etat.rpcEnPanne) return repondre({ error: 'panne simulée' }, 503);
       const utilisateurCloud = donnees.get(utilisateur) || {};
       let avant = {};
       try { avant = JSON.parse(utilisateurCloud[p_cle] || '{}'); } catch {}
       const cleRegistre = utilisateur + ':' + p_cle;
       const registre = registres.get(cleRegistre) || { base: Math.max(Number(avant.xp) || 0, Number(p_valeur.xp) || 0), cumul: 0 };
-      for (const o of p_operations) {
+      let applique = 0, gainConfirme = 0;
+      for (const o of lot) {
         const id = utilisateur + ':' + o.id, precedent = operations.get(id);
-        if (precedent && (precedent.cle !== p_cle || precedent.gain !== o.gain)) return repondre({ error: 'identifiant déjà utilisé' }, 400);
-        if (!precedent) { operations.set(id, { cle: p_cle, gain: o.gain }); registre.cumul += o.gain; }
+        if (precedent && (precedent.cle !== p_cle || Boolean(precedent.cumulatif) !== cumulatif || (!cumulatif && precedent.gain !== o.gain))) {
+          return repondre({ error: 'identifiant déjà utilisé' }, 400);
+        }
+        const ancien = precedent?.gain || 0, gain = cumulatif ? Math.max(ancien, o.gain) : o.gain;
+        applique += gain - ancien; gainConfirme = gain;
+        operations.set(id, { cle: p_cle, gain, cumulatif });
+        registre.cumul += gain - ancien;
       }
       registres.set(cleRegistre, registre);
       const resultat = mergeXp(avant, { ...p_valeur, xp: registre.base + registre.cumul });
@@ -46,8 +53,8 @@ function creerCloud() {
       utilisateurCloud[p_cle] = JSON.stringify(resultat);
       donnees.set(utilisateur, utilisateurCloud);
       if (etat.bloquerReponse) await etat.bloquerReponse;
-      if (etat.perdreReponse && p_operations.length) { etat.perdreReponse = false; return route.abort(); }
-      return repondre({ valeur: resultat, confirmes: p_operations.map(o => o.id) });
+      if (etat.perdreReponse && lot.length) { etat.perdreReponse = false; return route.abort(); }
+      return repondre({ valeur: resultat, confirmes: lot.map(o => o.id), ...(cumulatif ? { applique, gain_confirme: gainConfirme } : {}) });
     }
     if (u.pathname.endsWith('/sti_progressions') && methode === 'GET') {
       const id = (u.searchParams.get('user_id') || '').replace(/^eq\./, '');
@@ -119,7 +126,8 @@ async function preparer(context, cloud, { id = 'alice', email = '', acquis = nul
   // Exposer uniquement l'aperçu dans le harnais pour cliquer la bonne réponse.
   const source = await readFile(new URL('../quiz/html-css.html', import.meta.url), 'utf8');
   expect(source).toContain('var apercu = {');
-  const instrumente = source.replace('var apercu = {', 'var apercu = window.__apercuTest = {');
+  const instrumente = source.replace('var apercu = {', 'var apercu = window.__apercuTest = {')
+    .replace('function nouvellePartie() {', 'window.__testHc = { lancer: lancerPartie, etat: state }; function nouvellePartie() {');
   await context.route('**/quiz/html-css.html*', route => route.fulfill({ contentType: 'text/html; charset=utf-8', body: instrumente }));
   await context.addInitScript(({ id, email, acquis, ancien, limiterPull }) => {
     try {
@@ -618,3 +626,153 @@ test('une file de plus de cent gains est vidée par lots sans pertes ni doublons
     expect(cloud.etat.rpc.filter(r => r.operations.length > 0).every(r => r.operations.length <= 100)).toBe(true);
   } finally { await ctx.close(); }
 });
+
+/* Une même identité traverse les appareils : ce sont des RPC et comptes
+   fictifs, mais les mécanismes de stockage et de synchronisation sont réels. */
+const idPartieTest = 'f415964f-9909-4326-8ea3-4331a8e3fd31';
+async function gainDePartie(page, gain, bonnes, total, id = idPartieTest) {
+  return page.evaluate(({ gain, bonnes, total, id }) => {
+    const cle = 'quizzora_xp_v1', acquis = STIProfil.lireAcquisQuiz(cle, 'alice');
+    const ok = STIQuizSync.sauverXP(cle, { ...acquis, xp: (Number(acquis.xp) || 0) + gain }, gain, { id, bonnes, total });
+    STIQuizSync.notifierXP(cle);
+    return ok;
+  }, { gain, bonnes, total, id });
+}
+async function xpLocal(page) {
+  return page.evaluate(() => Number(JSON.parse(localStorage.getItem('quizzora_xp_v1') || '{}').xp) || 0);
+}
+
+test('même partie sur deux appareils : une seule opération cumulée et correction du gain déjà synchronisé', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+  cloud.donnees.set('alice', { quizzora_xp_v1: JSON.stringify({ xp: 1000 }) });
+  const ctxA = await browser.newContext(), ctxB = await browser.newContext();
+  try {
+    await preparer(ctxA, cloud); await preparer(ctxB, cloud);
+    const a = await ctxA.newPage(), b = await ctxB.newPage();
+    await Promise.all([a.goto('/quiz/html-css.html'), b.goto('/quiz/html-css.html')]);
+    for (const page of [a, b]) await expect.poll(() => xpLocal(page)).toBe(1000);
+    expect(await gainDePartie(a, 250, 1, 1)).toBe(true);
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp).toBe(1250);
+    await expect.poll(() => a.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+    // L'autre appareil a déjà récupéré 1250 XP, mais ne connaît pas le marqueur local de la partie.
+    await b.evaluate(() => STIProfil.ecrireAcquisQuiz('quizzora_xp_v1', 'alice', { xp: 1250 }));
+    cloud.etat.rpcEnPanne = true;
+    expect(await gainDePartie(b, 250, 1, 1)).toBe(true);
+    expect(await xpLocal(b)).toBe(1500);
+    cloud.etat.rpcEnPanne = false;
+    await b.evaluate(() => dispatchEvent(new Event('online')));
+    await expect.poll(() => b.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+    expect(await xpLocal(b)).toBe(1250);
+    expect(JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp).toBe(1250);
+    expect(cloud.operations.get('alice:' + idPartieTest).gain).toBe(250);
+  } finally { await ctxA.close(); await ctxB.close(); }
+});
+
+test('partie partielle, réponse perdue puis reprise plus avancée : le supplément est crédité une fois', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+  cloud.donnees.set('alice', { quizzora_xp_v1: JSON.stringify({ xp: 1000 }) });
+  const ctx = await browser.newContext();
+  try {
+    await preparer(ctx, cloud);
+    const page = await ctx.newPage(); await page.goto('/quiz/html-css.html');
+    await expect.poll(() => xpLocal(page)).toBe(1000);
+    await expect.poll(() => cloud.etat.rpc.length).toBeGreaterThan(0);
+    cloud.etat.perdreReponse = true;
+    expect(await gainDePartie(page, 250, 1, 1)).toBe(true);
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp).toBe(1250);
+    cloud.etat.rpcEnPanne = true;
+    expect(await gainDePartie(page, 500, 2, 2)).toBe(true);
+    expect(await xpLocal(page)).toBe(1500);
+    const file = await page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1'));
+    expect(file).toHaveLength(1); expect(file[0].gain).toBe(500); expect(file[0].attente).toBe(500);
+    cloud.etat.rpcEnPanne = false;
+    await page.evaluate(() => dispatchEvent(new Event('online')));
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp, { timeout: 15000 }).toBe(1500);
+    await expect.poll(() => page.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+    expect(await xpLocal(page)).toBe(1500);
+    const acquis = await page.evaluate(() => STIProfil.lireAcquisQuiz('quizzora_xp_v1', 'alice'));
+    expect({ parties: acquis.parties, bonnes: acquis.bonnes, total: acquis.total }).toEqual({ parties: 1, bonnes: 2, total: 2 });
+  } finally { await ctx.close(); }
+});
+
+test('supplément ajouté en vol après un doublon : le gain en attente reste visible hors ligne', async ({ browser }) => {
+  const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+  cloud.donnees.set('alice', { quizzora_xp_v1: JSON.stringify({ xp: 1000 }) });
+  const ctxA = await browser.newContext(), ctxB = await browser.newContext(); let liberer;
+  try {
+    await preparer(ctxA, cloud); await preparer(ctxB, cloud);
+    const a = await ctxA.newPage(), b = await ctxB.newPage();
+    await Promise.all([a.goto('/quiz/html-css.html'), b.goto('/quiz/html-css.html')]);
+    for (const page of [a, b]) await expect.poll(() => xpLocal(page)).toBe(1000);
+    expect(await gainDePartie(a, 250, 1, 1)).toBe(true);
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp).toBe(1250);
+    await expect.poll(() => a.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+    await b.evaluate(() => STIProfil.ecrireAcquisQuiz('quizzora_xp_v1', 'alice', { xp: 1250 }));
+    cloud.etat.bloquerReponse = new Promise(resolve => { liberer = resolve; });
+    expect(await gainDePartie(b, 250, 1, 1)).toBe(true);
+    await expect.poll(() => cloud.etat.rpc.some(r => r.cumulatif && r.operations[0].id === idPartieTest && r.utilisateur === 'alice' && r.xp >= 1250)).toBe(true);
+    expect(await gainDePartie(b, 500, 2, 2)).toBe(true);
+    cloud.etat.rpcEnPanne = true;
+    cloud.etat.bloquerReponse = null; liberer(); liberer = null;
+    await expect.poll(() => b.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1')[0]?.attente)).toBe(250);
+    expect(await xpLocal(b)).toBe(1500);
+    cloud.etat.rpcEnPanne = false;
+    await b.evaluate(() => dispatchEvent(new Event('online')));
+    await expect.poll(() => JSON.parse(cloud.donnees.get('alice').quizzora_xp_v1).xp, { timeout: 15000 }).toBe(1500);
+    await expect.poll(() => b.evaluate(() => STIProfil.listerOperationsQuiz('alice', 'quizzora_xp_v1').length)).toBe(0);
+    expect(await xpLocal(b)).toBe(1500);
+  } finally { if (liberer) liberer(); await ctxA.close(); await ctxB.close(); }
+});
+
+for (const nom of Object.keys(quiz)) {
+  test(`${nom} : reprise sur deux appareils, correction XP et affichage du compteur`, async ({ browser }) => {
+    const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+    const cle = quiz[nom], initial = nom === 'sql' ? { xp: 1000, level: 2, profileSet: true, pseudo: 'Alice', best: {} } : { xp: 1000 };
+    cloud.donnees.set('alice', { [cle]: JSON.stringify(initial) });
+    const ctxA = await browser.newContext(), ctxB = await browser.newContext();
+    try {
+      await preparer(ctxA, cloud, { acquis: { [cle]: initial } });
+      await preparer(ctxB, cloud, { acquis: { [cle]: initial } });
+      const a = await ctxA.newPage();
+      await a.goto(`/quiz/${nom}.html`);
+      await expect.poll(() => a.evaluate(c => JSON.parse(localStorage.getItem(c) || '{}').xp, cle)).toBe(1000);
+      await a.evaluate(n => {
+        if (n === 'html-css') window.__testHc.lancer();
+        else if (n === 'javascript') game.start('arcade');
+        else if (n === 'sql') startQuiz('classique');
+        else startQuiz();
+      }, nom);
+      const bonne = await a.evaluate(n => n === 'html-css' ? window.__testHc.etat.session[0].options.findIndex(o => o.ok) :
+        n === 'javascript' ? game.questions[0].answer : n === 'sql' ? Q.questions[0].correct : quiz.list[0]._ans, nom);
+      const choix = { 'html-css': '#qOptions button', javascript: '#options-grid .option-btn', sql: '#answersGrid button', php: '#qOptions button' };
+      await a.locator(choix[nom]).nth(bonne).click();
+      await expect.poll(() => a.evaluate(n => JSON.parse(localStorage.getItem('sti-quiz-sessions-actives-v1') || '{}')[n]?.index_courant, nom)).toBe(1);
+      const session = await a.evaluate(n => JSON.parse(localStorage.getItem('sti-quiz-sessions-actives-v1'))[n], nom);
+      await ctxB.addInitScript(({ n, s }) => {
+        localStorage.setItem('sti-quiz-sessions-actives-v1', JSON.stringify({ [n]: s }));
+        localStorage.removeItem('sti-quiz-sessions-purge-v1');
+      }, { n: nom, s: session });
+      const b = await ctxB.newPage(); await b.goto(`/quiz/${nom}.html`);
+      const boutons = { 'html-css': '#hcResumeBtn', javascript: '#js-resume-cloud-btn', sql: '#sqlResumeCloudBtn', php: '#phpResumeCloudBtn' };
+      await expect(b.locator(boutons[nom])).toBeVisible();
+      await b.locator(boutons[nom]).focus(); await b.locator(boutons[nom]).press('Enter');
+      await a.evaluate(() => dispatchEvent(new Event('pagehide')));
+      await expect.poll(() => cloud.operations.get('alice:' + session.etat_meta.partie_id)?.gain).toBeGreaterThan(0);
+      const gain = cloud.operations.get('alice:' + session.etat_meta.partie_id).gain;
+      await expect.poll(() => JSON.parse(cloud.donnees.get('alice')[cle]).xp).toBe(1000 + gain);
+      // Le second appareil a déjà récupéré le total cloud, sans son marqueur de partie local.
+      await b.evaluate(({ cle, gain }) => {
+        const acquis = STIProfil.lireAcquisQuiz(cle, 'alice');
+        STIProfil.ecrireAcquisQuiz(cle, 'alice', { ...acquis, xp: 1000 + gain });
+      }, { cle, gain });
+      await b.evaluate(() => dispatchEvent(new Event('pagehide')));
+      await expect.poll(() => b.evaluate(c => STIProfil.listerOperationsQuiz('alice', c).length, cle), { timeout: 15000 }).toBe(0);
+      expect(JSON.parse(cloud.donnees.get('alice')[cle]).xp).toBe(1000 + gain);
+      expect(await b.evaluate(c => JSON.parse(localStorage.getItem(c) || '{}').xp, cle)).toBe(1000 + gain);
+      const affiche = await b.evaluate(n => n === 'html-css' ? document.querySelector('#heroScore').textContent :
+        n === 'javascript' ? game.stats.xp : n === 'sql' ? S.xp : user.xp, nom);
+      if (nom === 'html-css') expect(affiche).toContain((1000 + gain).toLocaleString('fr-FR'));
+      else expect(affiche).toBe(1000 + gain);
+    } finally { await ctxA.close(); await ctxB.close(); }
+  });
+}
