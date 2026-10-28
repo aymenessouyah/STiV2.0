@@ -101,7 +101,7 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
   for (const path of [...paths, ...ressources]) {
     const actualises = ['assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js'];
     const revision = path === 'assets/js/app.js' ? 'video-js-validation-v485' :
-      path === 'assets/js/profil.js' ? 'xp-operations-v487' :
+      path === 'assets/js/profil.js' ? 'xp-pwa-v490' :
       ['assets/js/profil.js', 'cours/javascript.html'].includes(path) ? 'cours-retour-xp-v486' :
       actualises.includes(path) ? 'fidelite-origine-v481' : 'correctif-ressources-js-20261027';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);

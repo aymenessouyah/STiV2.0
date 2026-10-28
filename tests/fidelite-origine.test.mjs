@@ -189,8 +189,15 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
       ['            saveUser(xpGain);', '            saveUser();']
     ]
   };
+  // Inverser les adaptations v490 vérifiées, puis v487, afin de contrôler
+  // les moteurs et banques d'origine en entier sans dépendre de Git en CI.
+  const adaptationsV490 = JSON.parse(lire('tests/fixtures/quiz-transformations-v490.json'));
   for (const [chemin, empreinte] of Object.entries(quiz)) {
     let courant = lire(chemin);
+    for (const [actuel, ancien] of adaptationsV490[chemin] || []) {
+      assert.equal(courant.split(actuel).length - 1, 1, chemin + ' : adaptation v490 attendue');
+      courant = courant.replace(actuel, ancien);
+    }
     for (const [actuel, ancien, nombre = 1] of adaptationsV487[chemin] || []) {
       assert.equal(courant.split(actuel).length - 1, nombre, chemin + ' : adaptation XP attendue');
       courant = courant.replaceAll(actuel, ancien);

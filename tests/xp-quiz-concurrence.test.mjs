@@ -10,6 +10,7 @@ const fichiers = [
   '../supabase/migrations/20261027_xp_quiz_sync_v485.sql',
   '../supabase/migrations/20261027_xp_quiz_operations_v487.sql'
 ];
+const migrationParties = '../supabase/migrations/20261028_xp_parties_idempotentes_v490.sql';
 
 /* Ce scénario exige une base jetable locale : jamais une base de production. */
 test('PostgreSQL : gains concurrents, nouveaux essais et upserts historiques', { skip: !url, timeout: 90_000 }, async () => {
@@ -40,8 +41,14 @@ test('PostgreSQL : gains concurrents, nouveaux essais et upserts historiques', {
       create policy lire on public.sti_progressions for select using (auth.uid() = user_id);
       create policy modifier on public.sti_progressions for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
       grant select, insert, update on public.sti_progressions to authenticated;
+      create table public.sti_quiz_parties (
+        id bigint generated always as identity primary key, user_id uuid not null references auth.users(id),
+        email text, quiz text not null, module text, score integer not null, total integer not null,
+        points integer, ordre_questions jsonb, cree_le timestamptz not null default now()
+      );
+      alter table public.sti_quiz_parties enable row level security;
     `);
-    for (const fichier of fichiers) await admin.query(await readFile(new URL(fichier, import.meta.url), 'utf8'));
+    for (const fichier of [...fichiers, migrationParties]) await admin.query(await readFile(new URL(fichier, import.meta.url), 'utf8'));
     await admin.query('insert into auth.users values ($1), ($2)', [uid, autre]);
     const initial = { [cle]: JSON.stringify({ xp: 1000 }), 'sti-profil-abonne': '{"notes":["préserver"]}' };
     await admin.query('insert into public.sti_progressions values ($1, $2, $3::jsonb, now())', [uid, 'test@example.invalid', JSON.stringify(initial)]);
@@ -104,6 +111,36 @@ test('PostgreSQL : gains concurrents, nouveaux essais et upserts historiques', {
     const invisible = await transaction(autre, client => client.query('select user_id from public.sti_progressions where user_id = $1', [uid]));
     assert.equal(invisible.rowCount, 0);
     await assert.rejects(transaction(uid, client => client.query('select * from public.sti_quiz_xp_operations')), /permission denied/i);
+
+    // Plusieurs finalisations de chaque partie, avec des gains partiels et
+    // complets dans le désordre, cohabitent avec les anciens POST et gains.
+    const parties = Array.from({ length: 10 }, () => randomUUID());
+    const cumul = (id, gain) => transaction(uid, client => client.query(
+      'select public.sti_appliquer_gain_partie_quiz($1, $2::jsonb, $3::uuid, $4) as valeur',
+      [cle, valeur, id, gain]
+    ));
+    const historique = (id, total) => transaction(uid, client => client.query(
+      'select public.sti_enregistrer_partie_quiz($1::uuid, $2, $3, $4, $5, $6, $7::jsonb)',
+      [id, 'html-css', 'all', total, total, total * 100, JSON.stringify([{ id: 'q' + total }])]
+    ));
+    const concurrents = parties.flatMap(id => [
+      cumul(id, 300), cumul(id, 100), cumul(id, 200), cumul(id, 300),
+      historique(id, 1), historique(id, 2), historique(id, 1), historique(id, 2),
+      appeler({ id: randomUUID(), gain: 7 }), ancienPost({ gain: 1 })
+    ]);
+    await Promise.all(concurrents);
+    const bilan = await admin.query('select donnees from public.sti_progressions where user_id = $1', [uid]);
+    assert.equal(JSON.parse(bilan.rows[0].donnees[cle]).xp, 5010 + 10 * 300 + 10 * 7);
+    const lignes = await admin.query('select partie_id, score, total, points from public.sti_quiz_parties where user_id = $1', [uid]);
+    assert.equal(lignes.rowCount, 10);
+    for (const l of lignes.rows) assert.deepEqual({ score: l.score, total: l.total, points: l.points }, { score: 2, total: 2, points: 200 });
+    const cumulAutre = await transaction(autre, client => client.query(
+      'select public.sti_appliquer_gain_partie_quiz($1, $2::jsonb, $3::uuid, $4) as valeur',
+      [cle, JSON.stringify({ xp: 0 }), parties[0], 13]
+    ));
+    assert.equal(cumulAutre.rows[0].valeur.valeur.xp, 22);
+    await assert.rejects(cumul(ops[0].id, 20), /identifiant XP déjà utilisé/i);
+    await assert.rejects(transaction(uid, client => client.query('select * from public.sti_quiz_parties')), /permission denied/i);
   } finally {
     admin.release();
     await pool.end();

@@ -228,3 +228,52 @@ test('XP : le marqueur général protège les gains si la fusion historique enl�
     assert.equal((await appliquer(db, 'quizzora_xp_v1', { xp: 1000 }, [operation(40, 250)])).valeur.xp, 1250);
   } finally { await db.close(); }
 });
+
+test('partie reprise : gains cumulés et historique restent uniques, même après reprise partielle', async () => {
+  const db = await base();
+  const migrationPartie = await readFile(new URL('../supabase/migrations/20261028_xp_parties_idempotentes_v490.sql', import.meta.url), 'utf8');
+  const id = 'c314964f-9909-4326-8ea3-4331a8e3fd31', cle = 'quizzora_xp_v1';
+  try {
+    await db.exec(operations);
+    await db.exec(`create table public.sti_quiz_parties (
+      id bigint generated always as identity primary key, user_id uuid not null references auth.users(id),
+      email text, quiz text not null, module text, score integer not null, total integer not null,
+      points integer, ordre_questions jsonb, cree_le timestamptz not null default now()
+    ); alter table public.sti_quiz_parties enable row level security;`);
+    await db.exec(migrationPartie);
+    await connexion(db, a);
+    await db.query('insert into public.sti_progressions values (auth.uid(), $1, $2::jsonb, now())', [
+      'test@example.invalid', JSON.stringify({ quizzora_xp_v1: '{"xp":1000}', 'sti-profil-abonne': '{"notes":["garder"]}' })
+    ]);
+    async function gain(identite, nombre, nom = cle) {
+      const r = await db.query('select public.sti_appliquer_gain_partie_quiz($1,$2::jsonb,$3::uuid,$4::bigint) as valeur',
+        [nom, JSON.stringify({ xp: 1000 }), identite, nombre]);
+      return r.rows[0].valeur;
+    }
+    assert.equal((await gain(id, 250)).valeur.xp, 1250);
+    let retour = await gain(id, 250);
+    assert.equal(retour.valeur.xp, 1250); assert.equal(retour.applique, 0);
+    retour = await gain(id, 750);
+    assert.equal(retour.valeur.xp, 1750); assert.equal(retour.applique, 500);
+    retour = await gain(id, 500);
+    assert.equal(retour.valeur.xp, 1750); assert.equal(retour.applique, 0); assert.equal(retour.gain_confirme, 750);
+    await assert.rejects(gain(id, 1, 'sqlQuestV3'), /autre opération/);
+    const stocke = await donnees(db);
+    assert.equal(stocke['sti-profil-abonne'], '{"notes":["garder"]}');
+    async function partie(score, total, points) {
+      return db.query('select public.sti_enregistrer_partie_quiz($1::uuid,$2,$3,$4,$5,$6,$7::jsonb)',
+        [id, 'html-css', 'all', score, total, points, JSON.stringify([{ rang: 1, ok: true }])]);
+    }
+    await partie(1, 1, 100); await partie(2, 3, 200); await partie(1, 1, 100);
+    await db.exec('reset role');
+    const lignes = (await db.query('select user_id, score, total, points from public.sti_quiz_parties')).rows;
+    assert.deepEqual(lignes, [{ user_id: a, score: 2, total: 3, points: 200 }]);
+    await connexion(db, b);
+    assert.equal((await gain(id, 50)).valeur.xp, 1050); // compte séparé, base fournie par le client fictif
+    await partie(1, 1, 100);
+    await db.exec('reset role');
+    assert.equal(Number((await db.query('select count(*) as n from public.sti_quiz_parties')).rows[0].n), 2);
+    await db.exec('set role anon');
+    await assert.rejects(gain(id, 250), /permission denied/i);
+  } finally { await db.close(); }
+});

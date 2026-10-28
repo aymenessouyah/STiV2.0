@@ -2865,7 +2865,7 @@
           };
           this.initDom();
           this.updateHomeStats();
-          window.addEventListener("sti-cloud-restored", () => {
+          window.addEventListener("sti-cloud-restored", (evt) => {
             this.stats.totalAnswered = Math.max(
               this.stats.totalAnswered || 0,
               parseInt(stockageLire("js_quiz_total_answered", "0"), 10) || 0
@@ -2876,7 +2876,8 @@
             );
             try {
               const luXpJs = JSON.parse(stockageLire("sti-quiz-xp-js-v1", "null")) || {};
-              this.stats.xp = Math.max(this.stats.xp || 0, Number(luXpJs.xp) || 0);
+              this.stats.xp = evt.detail && evt.detail.quiz === "sti-quiz-xp-js-v1"
+                ? (Number(luXpJs.xp) || 0) : Math.max(this.stats.xp || 0, Number(luXpJs.xp) || 0);
             } catch (eXp) {}
             this.updateHomeStats();
           });
@@ -2957,8 +2958,12 @@
                 bonnes: (Number(exXpJs.bonnes) || 0) + (this.correctCount || 0),
                 total: (Number(exXpJs.total) || 0) + (this.answeredCount || 0),
               };
-              if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP("sti-quiz-xp-js-v1", acquisJs, gainXpJs))) {
+              if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP("sti-quiz-xp-js-v1", acquisJs, gainXpJs, {
+                id: this.partieId, bonnes: this.correctCount || 0, total: this.answeredCount || 0
+              }))) {
                 stockageEcrire("sti-quiz-xp-js-v1", JSON.stringify(acquisJs));
+              } else {
+                try { this.stats.xp = Number(JSON.parse(stockageLire("sti-quiz-xp-js-v1", "{}")).xp) || 0; } catch (eX) {}
               }
               if (STIQuizSync.notifierXP) STIQuizSync.notifierXP("sti-quiz-xp-js-v1");
             }
@@ -2979,7 +2984,7 @@
               this.correctCount,
               this.answeredCount,
               this.mode || "arcade",
-              { points: this.score, ordre_questions: ordreFinalJs }
+              { points: this.score, ordre_questions: ordreFinalJs, partie_id: this.partieId }
             );
             setTimeout(() => this.hydrateCloudJs(), 350);
           }
@@ -3014,6 +3019,7 @@
             index_courant: idxToSave,
             ordre_questions: this.questions.slice(0, 120),
             etat_meta: {
+              partie_id: this.partieId,
               combo: this.combo,
               maxCombo: this.maxCombo,
               lives: this.lives,
@@ -3135,7 +3141,7 @@
                 const bD = document.getElementById("js-discard-cloud-btn");
                 if (bD) {
                   bD.onclick = () => {
-                    if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("javascript");
+                    if (STIQuizSync.effacerSession) STIQuizSync.effacerSession("javascript", sauv.etat_meta && sauv.etat_meta.partie_id);
                     zr.innerHTML = "";
                   };
                 }
@@ -3148,6 +3154,7 @@
           soundManager.init();
           soundManager.playClick();
           const meta = sauv.etat_meta || {};
+          this.partieId = STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise("javascript", sauv) : null;
           this.mode = sauv.mode || "arcade";
           this.score = Number(sauv.points) || 0;
           this.correctCount = Number(sauv.score) || 0;
@@ -3221,7 +3228,7 @@
           }
           clearInterval(this.timer);
           if (this.answeredCount === 0 && window.STIQuizSync && STIQuizSync.effacerSession) {
-            STIQuizSync.effacerSession("javascript");
+            STIQuizSync.effacerSession("javascript", this.partieId);
           }
           this.syncProgress(true);
           soundManager.playClick();
@@ -3291,6 +3298,7 @@
         }
 
         start(mode = "arcade", customQuestions = null) {
+          this.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;
           soundManager.init();
           soundManager.playClick();
           this.mode = mode;

@@ -1,9 +1,9 @@
 {
-  "version": "v488-sti-atelier-v349",
-  "generatedAt": "2026-10-28T04:33:48Z",
+  "version": "v490-sti-atelier-v351",
+  "generatedAt": "2026-10-28T07:30:04Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 689,
-  "totalBytes": 682573040,
+  "totalFiles": 690,
+  "totalBytes": 682602395,
   "files": [
     {
       "path": "404.html",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 34678,
-      "gitSha": "62901f9f093334bb6c93b41b6d88f303a44511e4"
+      "bytes": 37786,
+      "gitSha": "c3dbddb960ba3b87d98b7b384b4b03aff6f05560"
     },
     {
       "path": "admin.html",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/mobile-nav.js",
-      "bytes": 28440,
-      "gitSha": "4350593f21381aa6403d7ba72500db722f44efc9"
+      "bytes": 25913,
+      "gitSha": "91315d012aface0ca3284c3603fc89f1bca9cfc9"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -727,8 +727,8 @@
     },
     {
       "path": "assets/js/profil.js",
-      "bytes": 36189,
-      "gitSha": "3d0d2ac9fb67e535ed10651446be3a27d9db7751"
+      "bytes": 38692,
+      "gitSha": "0951b72ccaaea4ab7e8e4abeb343912c6e7d88ff"
     },
     {
       "path": "assets/js/protection.js",
@@ -742,8 +742,8 @@
     },
     {
       "path": "assets/js/quiz-sync.js",
-      "bytes": 56463,
-      "gitSha": "7aa31b43fda42e5066127a4a5e081647fe221203"
+      "bytes": 67484,
+      "gitSha": "8241ec2dc5c6f158ee00b1b58ba85c6c52758651"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
@@ -752,8 +752,8 @@
     },
     {
       "path": "assets/js/quiz-tableaux.js",
-      "bytes": 30107,
-      "gitSha": "8932ee5deaa705824f53a0f74997292ce4166d9d"
+      "bytes": 31015,
+      "gitSha": "601ac48567533ddcc08d1de34744b3af4573d750"
     },
     {
       "path": "assets/js/rappels-locaux.js",
@@ -3287,18 +3287,18 @@
     },
     {
       "path": "quiz/html-css.html",
-      "bytes": 237819,
-      "gitSha": "01579c114e41c3a036aa3cb41bf12e21c688f08b"
+      "bytes": 238588,
+      "gitSha": "acd5f8a9741a99a5bb0f11f8b5cc08ddb597d0e1"
     },
     {
       "path": "quiz/javascript.html",
-      "bytes": 165463,
-      "gitSha": "62d3badef87a980a6cb36f2d8ac026d0b6d79f80"
+      "bytes": 166211,
+      "gitSha": "fb3a6fddc962db7690cc7afeeac63426ccca6265"
     },
     {
       "path": "quiz/php.html",
-      "bytes": 329080,
-      "gitSha": "f6bc74f8c235e07c2b6331ea3317a0b6a3f2915e"
+      "bytes": 329843,
+      "gitSha": "44fa2f89db5f9cb556b523982b23c5d31752cfcb"
     },
     {
       "path": "quiz/pp.html",
@@ -3307,8 +3307,8 @@
     },
     {
       "path": "quiz/sql.html",
-      "bytes": 310133,
-      "gitSha": "41e9abe845d14ba3fb4332d1b3daf62c3370bf31"
+      "bytes": 311748,
+      "gitSha": "386ef94b06d2c87116f69f0c2b0787465bb14863"
     },
     {
       "path": "quiz/tableaux.html",
@@ -3337,8 +3337,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 88434,
-      "gitSha": "b9b05e6db9c01d5a44f14b75ce227196834294b7"
+      "bytes": 92108,
+      "gitSha": "8ee09143049deb1e2f1239e025960e520ffba44a"
     },
     {
       "path": "assets/css/cours-matieres.css",
@@ -3449,6 +3449,11 @@
       "path": "assets/images/badge-compte-vierge.png",
       "bytes": 61624,
       "gitSha": "b110d92ba363516d767ee16e7ee03a935e519e37"
+    },
+    {
+      "path": "supabase/migrations/20261028_xp_parties_idempotentes_v490.sql",
+      "bytes": 6773,
+      "gitSha": "0925bdc09e0566f73e9111ef3d538abdf72879ca"
     }
   ]
 }
