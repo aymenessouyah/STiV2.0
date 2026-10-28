@@ -1,9 +1,9 @@
 {
-  "version": "v507-sti-atelier-v368",
-  "generatedAt": "2026-10-28T20:56:17Z",
+  "version": "v508-sti-atelier-v369",
+  "generatedAt": "2026-10-28T21:03:39Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 711,
-  "totalBytes": 723584347,
+  "totalFiles": 705,
+  "totalBytes": 723101654,
   "files": [
     {
       "path": "404.html",
@@ -212,8 +212,8 @@
     },
     {
       "path": "assets/css/cours.css",
-      "bytes": 61643,
-      "gitSha": "fc6bd38ee343ab562ae803a3d034eead20439f79"
+      "bytes": 59235,
+      "gitSha": "91d7602bdaefca4117d5a882705b40778c3254b4"
     },
     {
       "path": "assets/css/css.css",
@@ -529,36 +529,6 @@
       "path": "assets/images/drapeau-tunisie.svg",
       "bytes": 687,
       "gitSha": "764d627e88118a71d2b41df0e644740c9ab60a7f"
-    },
-    {
-      "path": "assets/images/fond-cours-sti-mobile.avif",
-      "bytes": 31242,
-      "gitSha": "31a7f4cfd2814a15a471d9d64c6c76a2dc39b244"
-    },
-    {
-      "path": "assets/images/fond-cours-sti-mobile.jpg",
-      "bytes": 98334,
-      "gitSha": "d7a59c1fe1658438bf02ede11e1856e788da69ba"
-    },
-    {
-      "path": "assets/images/fond-cours-sti-mobile.webp",
-      "bytes": 46238,
-      "gitSha": "09f3d8460719edf84fed5f3469b72740b6b7089f"
-    },
-    {
-      "path": "assets/images/fond-cours-sti.avif",
-      "bytes": 54464,
-      "gitSha": "6a416ff7ba828d4b21951d2d9700463754657bbe"
-    },
-    {
-      "path": "assets/images/fond-cours-sti.jpg",
-      "bytes": 170779,
-      "gitSha": "694de3444635f6a959354b4bfe5d2f91b1413a55"
-    },
-    {
-      "path": "assets/images/fond-cours-sti.webp",
-      "bytes": 77658,
-      "gitSha": "b7ac9fb45b976be0aa73be4932a14c3340b9241e"
     },
     {
       "path": "assets/images/guichet-animation-capture-v288.jpg",
@@ -1237,8 +1207,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 211578,
-      "gitSha": "2e64e6e8e833e87c3c507bf2f84cacb912694b15"
+      "bytes": 211303,
+      "gitSha": "c6b1e85fcc0460c68f2d5e87406f19597fa4ea87"
     },
     {
       "path": "cours/datalist.html",
@@ -1252,13 +1222,13 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 205527,
-      "gitSha": "4981b6a6b19fd64e9266f03506a00fd69847dffb"
+      "bytes": 205249,
+      "gitSha": "b12892abf6f1f650ccac65b9f2d1bcc9fa5f6404"
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 127392,
-      "gitSha": "96f278fbaaa2b035e257803eb3e174ec67251aa2"
+      "bytes": 127128,
+      "gitSha": "a17111925d79540d0467f87f9823babc00ef83a3"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1267,8 +1237,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 202974,
-      "gitSha": "bc588a73ae39568b23621948572b33631d1b3f9c"
+      "bytes": 202716,
+      "gitSha": "8f58878ef5c921fd7fd3f2412af78f1e35d4ff1c"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1287,8 +1257,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 136496,
-      "gitSha": "24d5d881265933bdcb94e857913d4e4a078ad0c9"
+      "bytes": 136247,
+      "gitSha": "2d60ab96f1c08856eabe9658ea4790cc8700cb12"
     },
     {
       "path": "cssanimee/cours.js",
@@ -3557,8 +3527,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 96665,
-      "gitSha": "f4d2f07d37a57866aa089cbd7847f4343b10b75b"
+      "bytes": 96419,
+      "gitSha": "25ef7419c7430bc3091126ff3bf31fd5c4c9302e"
     }
   ]
 }
