@@ -3,14 +3,16 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v354";
+var CACHE = "sti-atelier-v355";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés (1 seule entrée par URL).
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v493-onglets-mobile-20261028";
-/* Historique caches : sti-atelier-v353, sti-atelier-v352, sti-atelier-v351, sti-atelier-v350, sti-atelier-v349, sti-atelier-v348, sti-atelier-v347, sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v492-progression-chapitres-20261028, v491-suivi-contextes-20261028, v490-xp-parties-pwa-20261028, v489-reconnexion-delta-20261028, v488-badge-image-20261028, v486-cours-retour-xp-20261027, v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
+var UPDATE_ID = "v494-stories-css3-20261028";
+/* Historique caches : sti-atelier-v354, sti-atelier-v353, sti-atelier-v352, sti-atelier-v351, sti-atelier-v350, sti-atelier-v349, sti-atelier-v348, sti-atelier-v347, sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v493-onglets-mobile-20261028, v492-progression-chapitres-20261028, v491-suivi-contextes-20261028, v490-xp-parties-pwa-20261028, v489-reconnexion-delta-20261028, v488-badge-image-20261028, v486-cours-retour-xp-20261027, v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
 var UPDATE_FILES = [
+  { url: "./assets/css/stories.css", revision: "stories-css3-v494", refreshIfCached: true },
+  { url: "./assets/js/stories.js", revision: "stories-css3-v494", refreshIfCached: true },
   { url: "./assets/js/cours-onglets-mobile.js", revision: "onglets-mobile-v493", refreshIfCached: true },
   { url: "./assets/js/appel-quiz.js", revision: "suivi-contextes-v491" },
   { url: "./assets/js/suivi-profil.js", revision: "suivi-contextes-v491" },
@@ -143,9 +145,9 @@ var UPDATE_FILES = [
   { url: "./assets/js/app.js", revision: "progression-chapitres-v492" },
   { url: "./assets/js/profil.js", revision: "suivi-contextes-v491" },
   { url: "./assets/js/cours-html5.js", revision: "progression-chapitres-v492", refreshIfCached: true },
-  { url: "./index.html", revision: "suivi-contextes-v491" },
+  { url: "./index.html", revision: "stories-css3-v494" },
   { url: "./admin.html", revision: "compteur-media-v479" },
-  { url: "./README.md", revision: "onglets-mobile-v493" },
+  { url: "./README.md", revision: "stories-css3-v494" },
   { url: "./package.json", revision: "xp-operations-v487" },
   { url: "./package-lock.json", revision: "xp-operations-v487" },
   { url: "./assets/data/nouveautes.json", revision: "compteur-media-v479" },
@@ -178,7 +180,7 @@ var UPDATE_FILES = [
   { url: "./memo-veille-bac.html", revision: "fidelite-origine-v481" },
   { url: "./outils-js-bac.html", revision: "fidelite-origine-v481" },
   { url: "./pieges-bac.html", revision: "fidelite-origine-v481" },
-  { url: "./offline-complete-manifest.json", revision: "onglets-mobile-v493" },
+  { url: "./offline-complete-manifest.json", revision: "stories-css3-v494" },
   { url: "./ma-fiche-revision.html", revision: "fidelite-origine-v481" },
   { url: "./assets/js/roue-couverture.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 12067, sha256: "cd2945426f4dee9bd8bf6c6c51afa100c79a9fbf6d1de2fbd61fff5420ee29b0" },
   { url: "./assets/js/roue-revision.js", revision: "perf-fluide-v473" },
@@ -413,6 +415,8 @@ function signalerCacheEviteSTI(rep) {
   }, 1800);
 }
 var SHELL = [
+  "./assets/css/stories.css",
+  "./assets/js/stories.js",
   "./assets/js/appel-quiz.js",
   "./assets/js/suivi-profil.js",
   "./assets/js/reconnexion-profil.js",
@@ -571,6 +575,8 @@ var SHELL = [
 ];
 
 var OFFLINE_LIST = [
+  "./assets/css/stories.css",
+  "./assets/js/stories.js",
   "./assets/js/appel-quiz.js",
   "./assets/js/suivi-profil.js",
   "./assets/js/reconnexion-profil.js",
@@ -1103,6 +1109,22 @@ var OFFLINE_LIST = [
   "./assets/videos/displayanim.mp4",
   "./assets/videos/css3-cours-v9-sync.mp4",
   "./assets/videos/css3-cours-v9-sync-mobile-720p.mp4",
+  /* Extraits demandés uniquement par le téléchargement hors ligne explicite. */
+  "./assets/images/stories/intro.jpg",
+  "./assets/images/stories/selecteurs.jpg",
+  "./assets/images/stories/display.jpg",
+  "./assets/images/stories/flexbox.jpg",
+  "./assets/images/stories/transitions.jpg",
+  "./assets/videos/stories/intro.mp4",
+  "./assets/videos/stories/selecteurs.mp4",
+  "./assets/videos/stories/display.mp4",
+  "./assets/videos/stories/flexbox.mp4",
+  "./assets/videos/stories/transitions.mp4",
+  "./assets/subtitles/stories/intro.vtt",
+  "./assets/subtitles/stories/selecteurs.vtt",
+  "./assets/subtitles/stories/display.vtt",
+  "./assets/subtitles/stories/flexbox.vtt",
+  "./assets/subtitles/stories/transitions.vtt",
   "./assets/subtitles/css3-cours-v9-sync-fr.vtt",
   "./assets/videos/javascript-cours.mp4",
   "./assets/videos/validation-nom-prenom-js.mp4",
@@ -1221,6 +1243,8 @@ var NOYAU_RAPIDE_RECHARGEMENT = {
 
 /* Dépendances légères indispensables aux pages déjà installées, sans médias lourds. */
 var NOUVEAUTES_NOYAU = {
+  "./assets/css/stories.css": 1,
+  "./assets/js/stories.js": 1,
   "./assets/js/cours-onglets-mobile.js": 1,
   "./assets/js/appel-quiz.js": 1,
   "./assets/js/suivi-profil.js": 1,

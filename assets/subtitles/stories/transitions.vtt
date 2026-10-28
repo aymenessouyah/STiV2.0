@@ -1,0 +1,11 @@
+WEBVTT
+
+
+00:00:00.185 --> 00:00:05.129
+Transition rend progressif le passage entre deux états, par exemple l’état normal et le survol.
+
+00:00:06.192 --> 00:00:10.081
+Sa forme courte indique la propriété, la durée, le rythme et le délai.
+
+00:00:11.144 --> 00:00:15.295
+Ease, linear, ease-in, ease-out et cubic-bezier règlent l’accélération.

@@ -1,0 +1,11 @@
+WEBVTT
+
+
+00:00:00.217 --> 00:00:03.568
+Pour organiser une mise en page, utilisez plutôt Flexbox.
+
+00:00:04.611 --> 00:00:08.438
+Display flex place les enfants sur un axe principal et un axe transversal.
+
+00:00:09.494 --> 00:00:16.521
+Justify-content répartit les éléments sur l’axe principal, align-items les aligne sur l’axe transversal et gap crée un espacement régulier.

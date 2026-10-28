@@ -1,9 +1,9 @@
 {
-  "version": "v493-sti-atelier-v354",
-  "generatedAt": "2026-10-28T11:03:02Z",
+  "version": "v494-sti-atelier-v355",
+  "generatedAt": "2026-10-28T12:15:53Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 694,
-  "totalBytes": 682645981,
+  "totalFiles": 711,
+  "totalBytes": 683804296,
   "files": [
     {
       "path": "404.html",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 41913,
-      "gitSha": "77117f5250cd8aa22b38d8d855e87b4d3eddd0df"
+      "bytes": 42571,
+      "gitSha": "aecf8ab32788d50073f8b87f2cf10c2d2fbb737a"
     },
     {
       "path": "admin.html",
@@ -2787,8 +2787,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 55031,
-      "gitSha": "cf49f21bc28fe7b511e5243e1b9fdd72974388e5"
+      "bytes": 54712,
+      "gitSha": "bfe429dbdb6ca6dd9b99269bb836db44db8dbb4d"
     },
     {
       "path": "livre-smart.html",
@@ -3337,8 +3337,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 94348,
-      "gitSha": "8cf97cb96da18ebece1c29ad2773aa463726765b"
+      "bytes": 95480,
+      "gitSha": "31ec21be766934da4a1fb0a531ebb99bf8a078ac"
     },
     {
       "path": "assets/css/cours-matieres.css",
@@ -3474,6 +3474,91 @@
       "path": "assets/js/reconnexion-profil.js",
       "bytes": 17756,
       "gitSha": "21eca42ba8dd2c496b5f5861ed57ec6627c349b2"
+    },
+    {
+      "path": "assets/css/stories.css",
+      "bytes": 11043,
+      "gitSha": "fbe88f810c3959b9a51e3abde0ab34f22686a876"
+    },
+    {
+      "path": "assets/js/stories.js",
+      "bytes": 25218,
+      "gitSha": "1fa538749479cb68348c94fc8b58d54ede2ee319"
+    },
+    {
+      "path": "assets/images/stories/intro.jpg",
+      "bytes": 14674,
+      "gitSha": "bbdfd765d8b426f8b274ae648271dc361d49be55"
+    },
+    {
+      "path": "assets/images/stories/selecteurs.jpg",
+      "bytes": 13560,
+      "gitSha": "f4d66b70849ad321fc0fb74bbae835c8c5246d52"
+    },
+    {
+      "path": "assets/images/stories/display.jpg",
+      "bytes": 13473,
+      "gitSha": "2fff8efd347d8c141e9350ebb8f3e032ee575ba9"
+    },
+    {
+      "path": "assets/images/stories/flexbox.jpg",
+      "bytes": 12286,
+      "gitSha": "05174c7a4fe325469d609c0e42aacef14ed36861"
+    },
+    {
+      "path": "assets/images/stories/transitions.jpg",
+      "bytes": 12339,
+      "gitSha": "61bd2fafe71d3134f02c4a1049fe3eaca87bddbb"
+    },
+    {
+      "path": "assets/videos/stories/intro.mp4",
+      "bytes": 250280,
+      "gitSha": "3bf9f7ea38456b0682c6405f96e2ade97d5505a0"
+    },
+    {
+      "path": "assets/videos/stories/selecteurs.mp4",
+      "bytes": 107956,
+      "gitSha": "0980ffa256edb37a75305d2c3e5f901398284856"
+    },
+    {
+      "path": "assets/videos/stories/display.mp4",
+      "bytes": 171346,
+      "gitSha": "ab409a990d8a91a5e02ec132616d33f09665139d"
+    },
+    {
+      "path": "assets/videos/stories/flexbox.mp4",
+      "bytes": 293227,
+      "gitSha": "e78e63ca3123f24cfc8f293c7d0c500610678780"
+    },
+    {
+      "path": "assets/videos/stories/transitions.mp4",
+      "bytes": 229855,
+      "gitSha": "60cb3fa7433b524bf29cf09b091fcd2fcefc5185"
+    },
+    {
+      "path": "assets/subtitles/stories/intro.vtt",
+      "bytes": 342,
+      "gitSha": "f30274dd2ccc62c3709e271bc94356ee5c7b5d26"
+    },
+    {
+      "path": "assets/subtitles/stories/selecteurs.vtt",
+      "bytes": 200,
+      "gitSha": "603af5277774360d69d3197ef7999da66f14f907"
+    },
+    {
+      "path": "assets/subtitles/stories/display.vtt",
+      "bytes": 308,
+      "gitSha": "0bc271613fd7f3f07c1658c6b034349953a1ac77"
+    },
+    {
+      "path": "assets/subtitles/stories/flexbox.vtt",
+      "bytes": 384,
+      "gitSha": "680accb8135b2d31a110d34ce5cba86d5a7ab7a7"
+    },
+    {
+      "path": "assets/subtitles/stories/transitions.vtt",
+      "bytes": 353,
+      "gitSha": "687e09316a988bba1ca6b040bea672166ac5c196"
     }
   ]
 }
