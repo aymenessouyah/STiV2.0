@@ -1,9 +1,9 @@
 {
-  "version": "v510-sti-atelier-v371",
-  "generatedAt": "2026-10-28T21:56:52Z",
+  "version": "v511-sti-atelier-v372",
+  "generatedAt": "2026-10-28T22:06:20Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 709,
-  "totalBytes": 734699626,
+  "totalBytes": 734700153,
   "files": [
     {
       "path": "404.html",
@@ -817,8 +817,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 212892,
-      "gitSha": "0d2e09c5fe27dd4d733e64e10e6d9b855520c93b"
+      "bytes": 213362,
+      "gitSha": "a738dc2451a82f452ef1090467782db946dcbeb5"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -2963,7 +2963,7 @@
     {
       "path": "index.html",
       "bytes": 57036,
-      "gitSha": "51b25e9a8671685aec116ee12b3d3a8881076be4"
+      "gitSha": "45cd0f4f77f550bd5016204675b786b7bbff1e26"
     },
     {
       "path": "livre-smart.html",
@@ -3547,8 +3547,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 96654,
-      "gitSha": "a62fe4334624073b86eb42d38f65c0ccffcde5a9"
+      "bytes": 96711,
+      "gitSha": "de01b3d7c87e90a7f5ef1b53a300851e9e246800"
     }
   ]
 }

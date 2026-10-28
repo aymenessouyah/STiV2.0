@@ -194,3 +194,17 @@ test('profil : usage des laboratoires dédupliqué, sans perdre les données exi
   assert.equal(p.notes[0].note, 15);
   assert.ok(writes.length > 0 && writes.every(k => k === 'sti-profil-abonne'));
 });
+
+test('v511 : le lecteur pas à pas ouvre la capsule du TP display, float et position', () => {
+  const protection = read('assets/js/protection.js');
+  assert.match(protection, /var estTpDisplay = \(!estTpEvenements && !estTpFormulaire && \(sSlug === "tp-display-float-position"/);
+  /* Sans cette entrée dans la garde, le lecteur sortait avant d'ouvrir la vidéo :
+     la carte du TP ne faisait rien au clic. */
+  assert.match(protection, /if \(!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estSqlSerieAny/);
+  assert.ok(protection.includes('estTpDisplay ? "tp-display-float-position"'), 'slug cible');
+  assert.ok(protection.includes('estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4"'), 'url du MP4');
+  assert.ok(protection.includes('estTpDisplay ? "🎥 TP — display, float et position (HTML5 & CSS3)"'), 'titre du lecteur');
+  const catalogue = read('assets/js/app.js');
+  assert.ok(catalogue.includes('id: "tp-display-float-position"'));
+  assert.ok(existsSync(join(root, 'assets/videos/tp-display-float-position.mp4')));
+});
