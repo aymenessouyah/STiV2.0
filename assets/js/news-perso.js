@@ -23,27 +23,57 @@
   var etiquette = document.getElementById("newsPersoEtiquette");
   var reduce = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  /* ---------- Classe de l'élève : 4e SI (vert) ou 3e SI (bleu) ---------- */
-  function classeCourante() {
+  /* ---------- Classe de l'élève : 4e SI (vert) ou 3e SI (bleu) ----------
+     Le niveau se lit sur la CLASSE réelle de la session, jamais sur le privilège
+     `sti-4si-autorise` : acces.js l'accorde aussi aux profs, à l'admin et au labo,
+     qui ne doivent pas hériter des news des 4e SI (et encore moins du cumul). */
+  function sessionLocale() {
+    /* 1) la session vivante posée par acces.js, 2) le cache partagé du site. */
     try {
       var cache = window.STI_AUTH && window.STI_AUTH.CACHE_SESSION;
-      if (cache) return String(cache.classe || "");
+      if (cache && typeof cache === "object") return cache;
     } catch (e) {}
     try {
       var brut = sessionStorage.getItem("sti-session-cache") || localStorage.getItem("sti-session-cache");
       var o = brut ? JSON.parse(brut) : null;
-      if (o && o.classe) return String(o.classe);
+      if (o && typeof o === "object") return o;
     } catch (e) {}
+    return {};
+  }
+  function classeCourante() {
+    var o = sessionLocale();
+    return String(o.classe || o.classeLabel || "");
+  }
+  function niveauDepuisClasse(classe) {
+    var c = String(classe || "").toUpperCase().replace(/[\s._-]+/g, "");
+    if (/^4(E|ÈME)?SI/.test(c) || c.indexOf("4SI") === 0) return "4si";
+    if (/^3(E|ÈME)?SI/.test(c) || c.indexOf("3SI") === 0) return "3si";
     return "";
   }
+  /* Prof, admin, labo ou compte GOLD : aucun niveau élève à afficher. */
+  function estCompteEnseignant() {
+    var o = sessionLocale(), c = String(classeCourante() || o.classe || "").toUpperCase().replace(/[\s._-]+/g, "");
+    try {
+      if (localStorage.getItem("sti-admin-gold") === "1") return true;
+    } catch (e) {}
+    if (o.isAdmin || o.isGold || o.estAdmin) return true;
+    var role = String(o.role || o.type || o.statut || "").toLowerCase();
+    if (/^(admin|prof|professeur|enseignant|labo|gold|superadmin)/.test(role)) return true;
+    if (/^(ADMIN|ADMINISTRATEUR|PROF|PROFESSEUR|ENSEIGNANT|GOLD)/.test(c)) return true;
+    if (/PROF|LABO|ENSEIGNANT|GOLD|ADMIN/.test(c)) return true;
+    return false;
+  }
   function niveau() {
-    /* acces.js pose cette classe dès la lecture de la session, avant le rendu. */
+    var n = niveauDepuisClasse(classeCourante());
+    if (n) return n;
+    /* Classe illisible et compte enseignant : pas de bandeau élève. */
+    if (estCompteEnseignant()) return "admin";
+    /* Dernier repli pour un élève dont la session n'expose pas la classe. */
     if (document.documentElement && document.documentElement.classList.contains("sti-4si-autorise")) return "4si";
-    var c = classeCourante().toUpperCase().replace(/[\s._-]+/g, "");
-    if (/^4(E|ÈME)?SI/.test(c) || c.indexOf("4SI") === 0) return "4si";
     return "3si";
   }
   function libelleNiveau(n) {
+    if (n === "admin") return "Enseignant";
     return n === "4si" ? "4e SI" : "3e SI";
   }
 
@@ -75,8 +105,11 @@
     return { actif: v.actif !== false, parClasse: parClasse, communs: communs };
   }
   function textesPour(etat, n) {
-    if (!etat) return [];
-    var liste = (etat.parClasse[n] || []).concat(etat.communs || []);
+    if (!etat || n === "admin") return [];
+    /* Les textes de l'ancien format ne servent que de relais tant que l'admin
+       n'a pas enregistré de liste par classe : jamais en plus de celles-ci. */
+    var propres = etat.parClasse[n] || [];
+    var liste = propres.length ? propres.slice() : (etat.communs || []).slice();
     var vus = {};
     return liste.filter(function (t) {
       if (vus[t]) return false;
@@ -103,7 +136,7 @@
     if (etiquette) etiquette.textContent = libelleNiveau(n);
     if (!piste) return;
     while (piste.firstChild) piste.removeChild(piste.firstChild);
-    if (!textes || !textes.length) {
+    if (n === "admin" || !textes || !textes.length) {
       barre.hidden = true;
       barre.setAttribute("aria-hidden", "true");
       return;

@@ -14640,6 +14640,20 @@
       });
       if (inT) inT.placeholder = "Texte " + (etat.classes[classe].length + 1) + " (140 caractères max)…";
     }
+    /* L'admin et les profs ne voient pas le bandeau sur l'accueil (il est réservé
+       aux élèves) : cet aperçu montre exactement ce que recevra la classe choisie. */
+    function rendreApercu() {
+      var zone = $("news-apercu");
+      if (!zone) return;
+      var textes = etat.classes[classe] || [];
+      var libelle = classe === "4si" ? "4e SI" : "3e SI";
+      zone.className = "news-apercu news-apercu--" + classe;
+      if (!textes.length) {
+        zone.textContent = "Aperçu élève " + libelle + " : le bandeau restera masqué (aucun texte pour cette classe).";
+        return;
+      }
+      zone.textContent = "Aperçu élève " + libelle + " : " + textes.map(function (t, i) { return "Texte " + (i + 1) + " — " + t; }).join("  ·  ");
+    }
     function rendre() {
       rendreOnglets();
       if (!zoneListe) return;
@@ -14659,7 +14673,7 @@
         var up = document.createElement("button"); up.type = "button"; up.textContent = "\u2191"; up.title = "Monter";
         var dn = document.createElement("button"); dn.type = "button"; dn.textContent = "\u2193"; dn.title = "Descendre";
         var rm = document.createElement("button"); rm.type = "button"; rm.textContent = "\u2715"; rm.title = "Supprimer"; rm.className = "news-remise";
-        t.oninput = function () { textes[i] = t.value; modif = true; };
+        t.oninput = function () { textes[i] = t.value; modif = true; rendreApercu(); };
         up.onclick = function () { if (i > 0) { var o = textes.splice(i, 1)[0]; textes.splice(i - 1, 0, o); modif = true; rendre(); } };
         dn.onclick = function () { if (i < textes.length - 1) { var o2 = textes.splice(i, 1)[0]; textes.splice(i + 1, 0, o2); modif = true; rendre(); } };
         rm.onclick = function () { textes.splice(i, 1); modif = true; rendre(); };
@@ -14667,6 +14681,7 @@
         zoneListe.appendChild(row);
       });
       if (compteur) compteur.textContent = etat.classes["3si"].length + " en 3e SI · " + etat.classes["4si"].length + " en 4e SI";
+      rendreApercu();
     }
     function charger() {
       var h = { apikey: cfg.CLE, Accept: "application/json" };
