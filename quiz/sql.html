@@ -22,14 +22,13 @@
      Aucune image externe, aucun framework, aucun script inline métier.
      ========================================================================== -->
 
-<!-- Antiflash du thème : profil.js (seule couche de stockage) peint data-theme
-     dès le premier instant. Les 5 scripts suivants sont DEFER : ils
-     s'exécuteront après lui, dans l'ordre imposé par le verrou d'accès. -->
+<!-- Le profil reste la couche de stockage et suit les scripts d’accès,
+     dans l’ordre imposé par le verrou. -->
 <script src="../assets/js/config.js" defer></script>
 <script src="../assets/js/supabase-umd.js" defer></script>
 <script src="../assets/js/acces.js" defer></script>
 <script src="../assets/js/sync-progressions.js" defer></script>
-<script src="../assets/js/profil.js"></script>
+<script src="../assets/js/profil.js" defer></script>
 <script src="../assets/js/app.js" defer></script>
 
 <link rel="stylesheet" href="../assets/css/theme.css">

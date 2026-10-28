@@ -164,7 +164,7 @@
         { label: '📖 Cours CSS3', url: 'cours/css3.html#cours' }
       ],
       video: 'html5-cours',
-      ancienneCle: 'quizzora_theme',
+      ancienneCle: 'quizzora_xp_v1',
       questions: questionsHtmlCss,
       modes: [
         { id: 'classic', emoji: '🎯', nom: 'Classique', desc: 'Le chronomètre reste visible en haut de l’écran.', temps: 30 },
@@ -194,7 +194,7 @@
       clavier: '1234',
       cours: [{ label: '📖 Cours JavaScript', url: 'cours/javascript.html#cours' }],
       video: 'javascript-cours',
-      ancienneCle: 'js_quiz_high_score',
+      ancienneCle: 'sti-quiz-xp-js-v1',
       questions: questionsJavascript,
       modes: [
         { id: 'arcade', emoji: '🎮', nom: 'Arcade', desc: '3 vies, combo et minuteur : la partie s’arrête quand tu n’as plus de vie.', temps: 20, vies: 3 },
@@ -251,7 +251,7 @@
       clavier: '1234',
       cours: [{ label: '📖 Cours PHP', url: 'cours/php.html#cours' }],
       video: 'php-cours',
-      ancienneCle: 'quizphp_v1_',
+      ancienneCle: 'quizphp_v1_user',
       questions: questionsPhp,
       modes: [
         { id: 'practice', emoji: '🌱', nom: 'Entraînement', desc: 'Questions mélangées, sans pression.', temps: 35 },

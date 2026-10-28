@@ -125,7 +125,8 @@ test('une panne du fichier modifié conserve la copie hors ligne puis la retente
     await expect.poll(() => page.evaluate(() => navigator.onLine)).toBe(false);
     await ctx.setOffline(false);
     await expect.poll(() => serveur.journal.slice(avant).filter(r => r.chemin === '/assets/js/app.js' && r.statut === 200).length, { timeout: 15000 }).toBe(1);
-    await expect.poll(() => page.evaluate(async v => (await (await (await caches.open('sti-atelier-v' + (v + 1))).match('/assets/js/app.js', { ignoreSearch: true }))?.text()), serveur.version)).toContain('rendreAccueilPersonnalise');
+    const nouvelleApplication = await readFile(resolve(racine, 'assets/js/app.js'), 'utf8');
+    await expect.poll(() => page.evaluate(async v => (await (await (await caches.open('sti-atelier-v' + (v + 1))).match('/assets/js/app.js', { ignoreSearch: true }))?.text()), serveur.version)).toBe(nouvelleApplication);
     expect(await page.evaluate(async () => (await (await (await caches.open('sti-videos-labo-v1')).match('/assets/videos/exemple.mp4')).text()))).toBe('vidéo locale');
     expect(serveur.journal.slice(avant).every(r => ['/sw.js', '/assets/js/app.js'].includes(r.chemin))).toBe(true);
     console.log('Après panne, reprise du seul fichier modifié :', JSON.stringify(serveur.journal.slice(avant)));
@@ -324,10 +325,8 @@ test('première installation sur un appareil vierge : accueil utilisable sans pr
     expect(chargements).toBeLessThanOrEqual(3);
     const chemins = serveur.journal.map(r => r.chemin);
     expect(chemins).not.toContain('/offline-complete-manifest.json');
-    // La page d'accueil historique demande déjà l'aperçu vidéo CSS3 ;
-    // il ne s'agit pas d'un préchargement intégral du catalogue par le worker.
-    expect(chemins.filter(c => /\.(mp4|mp3|pdf|zip)$/i.test(c)))
-      .toEqual(['/assets/videos/css3-cours-v9-sync.mp4']);
+    // L'accueil v495 et le worker ne demandent aucun média lourd avant un clic.
+    expect(chemins.filter(c => /\.(mp4|mp3|pdf|zip)$/i.test(c))).toEqual([]);
     expect(chemins.length).toBeLessThan(150);
     console.log('Installation vierge : chargements, requêtes, octets =', chargements, chemins.length,
       serveur.journal.reduce((n, r) => n + r.octets, 0));

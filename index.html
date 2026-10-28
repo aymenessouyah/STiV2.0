@@ -10,6 +10,8 @@
 <link rel="icon" href="assets/icons/STI_by_AE.ico">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/protection.css?v=227">
+<link rel="stylesheet" href="assets/css/stories.css?v=494">
 
 <!-- Chaîne de scripts imposée : config → supabase → acces → sync → profil → app.
      profil.js est le seul script bloquant : il applique le thème mémorisé AVANT
@@ -18,8 +20,12 @@
 <script src="assets/js/supabase-umd.js" defer></script>
 <script src="assets/js/acces.js" defer></script>
 <script src="assets/js/sync-progressions.js" defer></script>
-<script src="assets/js/profil.js"></script>
+<script src="assets/js/profil.js" defer></script>
 <script src="assets/js/app.js" defer></script>
+<!-- Lecteur et suivi média historiques, puis stories indépendantes. -->
+<script src="assets/js/protection.js?v=227&amp;rev=479" defer></script>
+<script src="assets/js/lecteur-commun.js" defer></script>
+<script src="assets/js/stories.js?v=494" defer></script>
 </head>
 <body data-page="accueil">
 <a class="sr-only" href="#contenu">Aller au contenu principal</a>
@@ -63,6 +69,20 @@
     </div>
   </section>
 
+  <!-- ===================== REPRISE PERSONNALISÉE ===================== -->
+  <section class="section welcome-return" id="welcomeReturn" aria-labelledby="welcomeTitle" hidden>
+    <div class="container">
+      <div class="welcome-return__head">
+        <div><h2 class="section-title" id="welcomeTitle">Bonjour <span id="welcomePrenom"></span></h2>
+          <p class="section-sub">Continuez à apprendre, ou découvrez quelque chose de nouveau.</p></div>
+        <span class="badge" id="welcomeCount"></span>
+      </div>
+      <h3>Continuer à apprendre</h3>
+      <div class="welcome-return__courses" id="welcomeCourses"></div>
+      <p class="section-sub" id="welcomeEmpty" hidden>Découvrez une matière pour commencer votre parcours.</p>
+    </div>
+  </section>
+
   <!-- ===================== VIDÉO À LA UNE ===================== -->
   <section class="section" style="padding-top:0" aria-labelledby="titre-une">
     <div class="container">
@@ -76,7 +96,7 @@
     <div class="container">
       <div class="stats reveal">
         <div class="stat"><div class="stat__num" data-count="13">0</div><div class="stat__label">Pages de cours</div><div class="stat__bar"></div></div>
-        <div class="stat stat--video"><div class="stat__num" data-count="8">0</div><div class="stat__label">🎥 Vidéos explicatives (.mp4)</div><div class="stat__bar"></div></div>
+        <div class="stat stat--video"><div class="stat__num" data-count="14">0</div><div class="stat__label">🎥 Vidéos explicatives (.mp4)</div><div class="stat__bar"></div></div>
         <div class="stat"><div class="stat__num" data-count="4">0</div><div class="stat__label">Quiz auto-corrigés</div><div class="stat__bar"></div></div>
         <div class="stat"><div class="stat__num" data-count="12">0</div><div class="stat__label">Supports PDF lus partout</div><div class="stat__bar"></div></div>
       </div>
@@ -127,7 +147,7 @@
       <div class="section-head reveal">
         <span class="eyebrow"><span class="dot"></span> Priorité vidéo</span>
         <h2 class="section-title">Vidéos <span class="grad-text">explicatives</span></h2>
-        <p class="section-sub">8 cours filmés en .mp4 avec écoute vocale synchronisée : grandes miniatures, lecture plein écran, durée, matière et badge coloré. Vos vidéos vues sont enregistrées dans le profil abonné.</p>
+        <p class="section-sub">14 vidéos en .mp4, avec guides vocaux pour les cours : grandes miniatures, lecture plein écran, durée, matière et badge coloré. Vos vidéos vues sont enregistrées dans le profil abonné.</p>
       </div>
       <div class="filters" role="group" aria-label="Filtrer les vidéos par catégorie">
         <button class="filter-chip is-active" type="button" data-filter="all">Tout</button>
@@ -136,7 +156,7 @@
         <button class="filter-chip" type="button" data-filter="sql">🗄️ SQL</button>
         <button class="filter-chip" type="button" data-filter="php">🐘 PHP</button>
       </div>
-      <div class="videos-grid" id="videosSlot"></div>
+      <div class="videos-grid" id="videosGrid"></div>
       <div class="empty" id="filterEmpty" hidden>Aucun contenu pour cette catégorie.</div>
     </div>
   </section>

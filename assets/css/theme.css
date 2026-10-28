@@ -625,8 +625,10 @@ body.sti-legacy :focus-visible{outline:3px solid var(--css);outline-offset:2px}
   .hero__cta{flex-direction:column}
   .stats{grid-template-columns:1fr 1fr}
   .header-actions .hide-xs{display:none}
-  .sub-badge--guest{font-size:.69rem;padding:.5rem .65rem;max-width:160px;white-space:normal;line-height:1.2}
+  .sub-badge--guest{font-size:.69rem;padding:.35rem .5rem;max-width:120px;white-space:normal;line-height:1.2}
   .sub-badge__name{max-width:80px}
+  .header-actions{gap:.25rem;max-width:100%}
+  #stiBadgeSlot{min-width:0}
   .header-inner{gap:.45rem}
 }
 
@@ -643,3 +645,15 @@ body.sti-legacy :focus-visible{outline:3px solid var(--css);outline-offset:2px}
   .hero h1 .line>span,.hero__lead,.hero__cta,.hero__meta{opacity:1!important;transform:none!important}
 }
 @media print{.site-header,.to-top,.side-panel,.modal,.scroll-progress,#sti-roue-wrap{display:none!important}body.sti-v2{background:#fff;color:#000}}
+
+/* Accueil du compte : reprise intégrée à la refonte, sans ressources externes. */
+.welcome-return[hidden]{display:none!important}
+.welcome-return__head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.welcome-return__head .section-sub{margin:0}
+.welcome-return__courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:1rem;margin-top:1rem}
+.welcome-course{display:flex;align-items:center;gap:1rem;min-width:0;padding:1rem;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
+.welcome-course:hover{border-color:var(--vc);transform:translateY(-2px)}
+.welcome-course__icon{display:grid;place-items:center;flex:none;width:3rem;height:3rem;border-radius:var(--r-md);background:var(--surface-2);font-size:1.5rem}
+.welcome-course strong,.welcome-course small,.welcome-course span span{display:block}
+.welcome-course small{color:var(--text-muted);font-size:var(--fs-xs);margin:.2rem 0}
+.welcome-course span span{color:var(--vc);font-weight:700;font-size:var(--fs-sm)}

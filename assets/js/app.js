@@ -43,10 +43,10 @@
      ---------------------------------------------------------------------- */
   var MATIERES = {
     html5:      { nom: 'HTML5',      emoji: '🧱', varc: '--html', badge: '🎥 1 vidéo & audio', nb: 1, cours: 'cours/html5.html',      quiz: 'quiz/html-css.html',  desc: 'Balises sémantiques, formulaires, tableaux, images et multimédia : la structure de vos pages.' },
-    css3:       { nom: 'CSS3',       emoji: '🎨', varc: '--css',  badge: '🎥 3 vidéos & audio', nb: 3, cours: 'cours/css3.html',       quiz: 'quiz/html-css.html',  desc: 'Sélecteurs, box model, Flexbox, Grid, animations et responsive design.' },
-    javascript: { nom: 'JavaScript', emoji: '⚡', varc: '--js',   badge: '🎥 1 vidéo & audio', nb: 1, cours: 'cours/javascript.html', quiz: 'quiz/javascript.html',desc: 'Variables, conditions, boucles, fonctions, tableaux, dates et manipulation du DOM.' },
-    sql:        { nom: 'SQL',        emoji: '🗄️', varc: '--sql',  badge: '🎥 1 vidéo & audio', nb: 1, cours: 'cours/sql.html',        quiz: 'quiz/sql.html',       desc: 'Modèle relationnel, SELECT, WHERE, jointures, GROUP BY et agrégations.' },
-    php:        { nom: 'PHP',        emoji: '🐘', varc: '--php',  badge: '🎥 2 vidéos & audio', nb: 2, cours: 'cours/php.html',        quiz: 'quiz/php.html',       desc: 'Syntaxe PHP, formulaires, sessions, MySQL et CRUD — réservé à la 4ème SI.' }
+    css3:       { nom: 'CSS3',       emoji: '🎨', varc: '--css',  badge: '🎥 4 vidéos & audio', nb: 4, cours: 'cours/css3.html',       quiz: 'quiz/html-css.html',  desc: 'Sélecteurs, box model, Flexbox, Grid, animations et responsive design.' },
+    javascript: { nom: 'JavaScript', emoji: '⚡', varc: '--js',   badge: '🎥 2 vidéos & audio', nb: 2, cours: 'cours/javascript.html', quiz: 'quiz/javascript.html',desc: 'Variables, conditions, boucles, fonctions, tableaux, dates et manipulation du DOM.' },
+    sql:        { nom: 'SQL',        emoji: '🗄️', varc: '--sql',  badge: '🎥 4 vidéos · 2 Bac', nb: 4, cours: 'cours/sql.html',        quiz: 'quiz/sql.html',       desc: 'Modèle relationnel, SELECT, WHERE, jointures, GROUP BY et agrégations.' },
+    php:        { nom: 'PHP',        emoji: '🐘', varc: '--php',  badge: '🎥 3 vidéos & audio', nb: 3, cours: 'cours/php.html',        quiz: 'quiz/php.html',       desc: 'Syntaxe PHP, formulaires, sessions, MySQL et CRUD — réservé à la 4ème SI.' }
   };
   var ORDRE = ['html5', 'css3', 'javascript', 'sql', 'php'];
   /* Catégories du filtre d'accueil : HTML5 + CSS3 partagent « htmlcss ». */
@@ -58,15 +58,23 @@
         remplacez simplement la propriété src ci-dessous. Les posters sont
         locaux (assets/images/…). « audio » est la piste vocale synchronisée.
      ---------------------------------------------------------------------- */
+  /* Catalogue historique complet : durées vérifiées sur les fichiers locaux.
+     Les cinq vidéos Bac restent filtrées par le verrou d'accès existant. */
   var VIDEOS = [
-    { id:'html5-cours', matiere:'html5', titre:'HTML5 — Les balises essentielles', duree:'12:40', src:'assets/videos/html5-cours.mp4', poster:'', audio:'assets/audio/html5-cours.mp3', desc:'Structure d’une page, titres, liens, images et formulaires expliqués pas à pas.' },
-    { id:'css3-cours', matiere:'css3', titre:'CSS3 — Cours complet synchronisé', duree:'24:15', src:'assets/videos/css3-cours-v9-sync.mp4', poster:'assets/images/css3-cours-v9-sync-poster.jpg', audio:'assets/audio/css3-cours.mp3', desc:'Le cours de référence, avec guide-ligne et écoute vocale synchronisée.' },
-    { id:'css-animee', matiere:'css3', titre:'CSS3 — Les animations', duree:'08:30', src:'assets/videos/css-animee.mp4', poster:'', audio:'assets/audio/css-animee.mp3', desc:'Transitions, keyframes et transformations : donnez vie à vos pages.' },
-    { id:'css-positionnement', matiere:'css3', titre:'CSS3 — Le positionnement', duree:'09:12', src:'assets/videos/css-positionnement.mp4', poster:'', audio:'assets/audio/css-positionnement.mp3', desc:'Static, relative, absolute, fixed, float, flex et grid en pratique.' },
-    { id:'javascript-cours', matiere:'javascript', titre:'JavaScript — Cours complet', duree:'18:05', src:'assets/videos/javascript-cours.mp4', poster:'', audio:'assets/audio/javascript-cours.mp3', desc:'Variables, fonctions, événements et DOM, du premier script au projet.' },
-    { id:'sql-cours', matiere:'sql', titre:'SQL — Initiation aux requêtes', duree:'16:20', src:'assets/videos/sql-cours-v7.mp4', poster:'assets/images/sql-initiation-poster.jpg', audio:'assets/audio/sql-cours.mp3', desc:'Créer une base, interroger avec SELECT, filtrer et trier les résultats.' },
-    { id:'php-cours', matiere:'php', titre:'PHP — Cours complet', duree:'20:10', src:'assets/videos/php-cours.mp4', poster:'', audio:'assets/audio/php-cours.mp3', desc:'Variables, formulaires, sessions et connexion à une base MySQL.' },
-    { id:'php-guichet', matiere:'php', titre:'PHP — Projet guichet pas à pas', duree:'14:35', src:'assets/videos/php-guichet-v10.mp4', poster:'assets/images/php-guichet-v10-poster.jpg', audio:'', desc:'Étude de cas complète : un guichet dynamique HTML → PHP → SQL.' }
+    { id:'html5-cours', matiere:'html5', titre:'HTML5 — Structure, formulaires & tableaux', duree:'07:36', src:'assets/videos/html5-cours.mp4', poster:'', audio:'assets/audio/html5-cours.mp3', desc:'Structure d’une page, tableaux et formulaires.' },
+    { id:'css3-cours', matiere:'css3', titre:'CSS3 — Sélecteurs, Flexbox & transitions', duree:'11:24', src:'assets/videos/css3-cours-v9-sync.mp4', poster:'assets/images/css3-cours-v9-sync-poster.jpg', audio:'assets/audio/css3-cours.mp3', desc:'Le cours de référence, avec guide-ligne synchronisé.' },
+    { id:'css3-display', matiere:'css3', titre:'CSS3 — Display : la démo animée', duree:'00:05', src:'assets/videos/displayanim.mp4', poster:'', audio:'', desc:'Une courte démonstration de display.' },
+    { id:'css-positionnement', matiere:'css3', titre:'CSS3 Pas à pas — Positionnement & mise en page', duree:'05:58', src:'assets/videos/css-positionnement.mp4', poster:'', audio:'', desc:'Les propriétés de positionnement expliquées pas à pas.' },
+    { id:'css-animee', matiere:'css3', titre:'CSS3 Pas à pas — Décoration, ombres & bordures', duree:'05:01', src:'assets/videos/css-animee.mp4', poster:'', audio:'', desc:'Les effets décoratifs expliqués pas à pas.' },
+    { id:'javascript-cours', matiere:'javascript', titre:'JavaScript — Contrôles de saisie & DOM Bac', duree:'14:43', src:'assets/videos/javascript-cours.mp4', poster:'', audio:'assets/audio/javascript-cours.mp3', desc:'Fonctions de contrôle, événements et DOM.' },
+    { id:'validation-nom-prenom-js', matiere:'javascript', titre:'JavaScript — Validation du champ Nom & Prénom', duree:'12:11', src:'assets/videos/validation-nom-prenom-js.mp4', poster:'', audio:'', desc:'Analyser et valider une chaîne de caractères.' },
+    { id:'sql-cours', matiere:'sql', titre:'SQL — Requêtes SELECT, jointures & agrégats', duree:'09:32', src:'assets/videos/sql-cours-v7.mp4', poster:'assets/images/sql-initiation-poster.jpg', audio:'assets/audio/sql-cours.mp3', desc:'Découvrir les bases de données et les requêtes SQL.' },
+    { id:'sql-initiation', matiere:'sql', titre:'SQL — Construire une requête pas à pas', duree:'08:45', src:'exercices/sql/sql-construire-requete-guide-texte.mp4', poster:'', audio:'', desc:'Construire une requête étape par étape.' },
+    { id:'sql-serie4', matiere:'sql', titre:'SQL Série 4 — Jointures et GROUP BY', duree:'14:34', src:'assets/videos/sql-serie4.mp4', poster:'', audio:'', reserve4si:true, desc:'Série Bac sur les jointures et agrégations.' },
+    { id:'sql-serie5', matiere:'sql', titre:'SQL Série 5 — Dates et GROUP BY', duree:'18:09', src:'assets/videos/sql-serie5.mp4', poster:'', audio:'', reserve4si:true, desc:'Série Bac sur les dates et agrégations.' },
+    { id:'php-cours', matiere:'php', titre:'PHP & MySQLi — Traitement serveur de A à Z', duree:'10:59', src:'assets/videos/php-cours.mp4', poster:'', audio:'assets/audio/php-cours.mp3', reserve4si:true, desc:'Variables, formulaires et connexion MySQLi.' },
+    { id:'php-synthese', matiere:'php', titre:'PHP — Synthèse : gestion des élèves', duree:'14:08', src:'assets/videos/php-synthese.mp4', poster:'', audio:'', reserve4si:true, desc:'Synthèse du projet de gestion des élèves.' },
+    { id:'php-guichet', matiere:'php', titre:'PHP Synthèse — Application Guichet & formulaires', duree:'05:22', src:'assets/videos/php-guichet-v10.mp4', poster:'assets/images/php-guichet-v10-poster.jpg', audio:'', reserve4si:true, desc:'Étude de cas complète : un guichet dynamique HTML → PHP → SQL.' }
   ];
   var VIDEO_UNE = VIDEOS[1]; /* « Vidéo à la une » du hero */
   function videoParId(id) { for (var i = 0; i < VIDEOS.length; i++) if (VIDEOS[i].id === id) return VIDEOS[i]; return null; }
@@ -561,7 +569,7 @@
       ? '<img src="' + u(v.poster) + '" alt="Aperçu de la vidéo ' + esc(v.titre) + '" loading="lazy">'
       : '<div class="video-thumb-fallback">' + m.emoji + '</div>';
     var vue = P.chargerProfil().videos.vues.indexOf(v.id) !== -1;
-    return '<article class="video-card filterable' + (vue ? ' is-vue' : '') + '" data-tech="' + tech(v.matiere) + '" data-video-id="' + v.id + '" style="--vc:var(' + m.varc + ')" tabindex="0" role="button" aria-label="Lire la vidéo ' + esc(v.titre) + '">' +
+    return '<article class="video-card filterable' + (vue ? ' is-vue' : '') + '" data-tech="' + tech(v.matiere) + '" data-video-id="' + v.id + '" data-play-video="' + v.id + '" style="--vc:var(' + m.varc + ')" tabindex="0" role="button" aria-label="Lire la vidéo ' + esc(v.titre) + '">' +
       '<div class="video-card__thumb">' + visuelles +
         badgeMatiere(v.matiere).replace('class="badge', 'class="badge video-card__badge') +
         '<button class="play-btn play-btn--sm" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>' +
@@ -584,8 +592,29 @@
     });
   }
   function initVideos() {
-    var grille = $('#videosSlot');
-    if (grille) grille.innerHTML = VIDEOS.map(vignette).join('');
+    var grille = $('#videosGrid');
+    function rendreGrille() {
+      if (!grille) return;
+      var autorise = document.documentElement.classList.contains('sti-4si-autorise');
+      var vues = P.chargerProfil().videos.vues;
+      var liste = VIDEOS.filter(function (v) { return !v.reserve4si || autorise; });
+      var signature = liste.map(function (v) { return v.id + ':' + (vues.indexOf(v.id) >= 0); }).join('|');
+      if (grille.dataset.signatureVideos === signature && grille.children.length) return;
+      grille.dataset.signatureVideos = signature;
+      grille.innerHTML = liste.map(vignette).join('');
+      brancherVideos(grille);
+      var actif = document.querySelector('#videos [data-filter].is-active');
+      var filtre = actif && actif.getAttribute('data-filter') || 'all';
+      grille.querySelectorAll('.filterable').forEach(function (item) {
+        var categorie = item.getAttribute('data-tech');
+        item.classList.toggle('is-filtered-out', filtre !== 'all' && categorie !== filtre && categorie !== 'all');
+      });
+    }
+    rendreGrille();
+    window.addEventListener('sti:profil', rendreGrille);
+    if (grille && window.MutationObserver) {
+      new MutationObserver(rendreGrille).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    }
     var une = $('#featureVideoSlot');
     if (une) {
       var v = VIDEO_UNE, m = MATIERES[v.matiere];
@@ -600,32 +629,17 @@
           '<div><button class="btn btn--primary" type="button" data-video-id="' + v.id + '">▶ Regarder la vidéo</button> ' +
           '<a class="btn btn--ghost" href="' + u(m.cours) + '">Voir le cours</a></div></div></article>';
     }
-    brancherVideos(document);
+    if (une) brancherVideos(une);
   }
 
   function lireVideo(id) {
     var v = videoParId(id); if (!v) return;
-    var wrap = $('#stiVideoWrap'); if (!wrap) return;
-    /* <video> avec controls, preload="metadata" et poster : chemin remplaçable. */
-    wrap.innerHTML = '<video class="modal__video" controls preload="metadata" playsinline ' +
-      (v.poster ? 'poster="' + u(v.poster) + '" ' : '') + 'src="' + u(v.src) + '">Votre navigateur ne lit pas la vidéo.</video>' +
-      (v.audio ? '<p style="margin-top:.6rem"><a class="badge badge--gold" href="' + u(v.audio) + '">🔊 Écouter la version audio</a></p>' : '');
-    $('#stiVideoTitle').textContent = v.titre;
-    $('#stiVideoDesc').textContent = v.desc + ' — ' + MATIERES[v.matiere].nom + ' · ' + v.duree;
-    ouvrirModal('modalVideo');
-    var video = $('video', wrap);
-    if (video) {
-      video.addEventListener('ended', function () {
-        P.marquerVideoVue(v.id, video.currentTime);
-        P.mettreAJour('derniereLecture', {
-          matiere: v.matiere, chapitre: v.titre, pourcent: 100, url: MATIERES[v.matiere].cours
-        });
-        toast('✅ Vidéo marquée comme vue');
-      }, { once: true });
-      /* play() renvoie une Promesse (ou rien sur certains navigateurs) : on garde. */
-      var lecture = null;
-      try { lecture = video.play(); } catch (e) {}
-      if (lecture && typeof lecture.catch === 'function') lecture.catch(function () {});
+    /* Ne jamais contourner le verrou 4SI ou remplacer les commandes d'origine. */
+    if (v.reserve4si && !document.documentElement.classList.contains('sti-4si-autorise')) return;
+    if (typeof window.ouvrirVideoPasAPasSTI === 'function') {
+      window.ouvrirVideoPasAPasSTI(v.id, v.titre);
+    } else {
+      toast('Le lecteur est indisponible. Rechargez la page pour réessayer.');
     }
   }
 
@@ -638,7 +652,7 @@
       var p = P.chargerProfil();
       slot.innerHTML = ORDRE.map(function (m, i) {
         var M = MATIERES[m];
-        var pr = Math.round((p.progression[m] || 0) / 5 * 100);
+        var pr = Math.round((p.progression[m] === true ? 5 : (Number(p.progression[m]) || 0)) / 5 * 100);
         var lock = m === 'php' ? ' subject--locked' : '';
         return '<article class="card subject filterable reveal' + lock + '" data-tech="' + tech(m) + '" style="--vc:var(' + M.varc + ');--d:' + (i * .06) + 's">' +
           '<div class="subject__media"><span class="em">' + M.emoji + '</span><span class="badge subject__badge" style="border-color:var(' + M.varc + ');color:var(' + M.varc + ')">' + M.nom + '</span></div>' +
@@ -730,7 +744,7 @@
 
         '<section class="dash-card dash-col-8 reveal"><h2>📈 Progression par matière</h2><div class="dash-progress-list">' +
           ORDRE.map(function (m) {
-            var n = p.progression[m] || 0, M = MATIERES[m];
+            var n = p.progression[m] === true ? 5 : (Number(p.progression[m]) || 0), M = MATIERES[m];
             return '<div><div class="row"><span>' + M.emoji + ' <a href="' + u(M.cours) + '" style="font-weight:700">' + M.nom + '</a></span><span>' + n + ' / 5 révisés</span></div>' +
               '<div class="progress"><div class="progress__fill" data-progress="' + (n / 5 * 100) + '" style="--bar:linear-gradient(90deg,var(' + M.varc + '),var(--accent))"></div></div></div>';
           }).join('') + '</div></section>' +
@@ -1079,21 +1093,73 @@
     });
   }
 
-  /* -------------------------------------------------------------------------
-     19. PROGRESSION « X / 5 RÉVISÉS » (mémorisée à chaque entrée dans un cours)
-     ---------------------------------------------------------------------- */
+  /* Reprise et visites : une simple entrée dans un cours ne révise aucun
+     chapitre. Les données restent isolées lors d'un changement de compte. */
+  var CHAPITRES_ACCUEIL = {
+    html5: ['entete','structuration','conteneurs','listes','tableaux','texte-media','attributs-evenements','target-explication','formulaires','iframe'],
+    css3: ['selecteurs','typographie','arriere-plan','boite-display','marges-debordement','positionnement','tableaux-listes','filtres','animations','pas-a-pas'],
+    javascript: ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','sec8','sec9','sec10','sec11','sec12','sec13','sec14','sec15'],
+    sql: ['intro','ldd','lmd','bac'],
+    php: ['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10']
+  };
   function initProgression() {
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest && e.target.closest('a[href*="cours/"]');
-      if (!a) return;
-      var m = (a.getAttribute('href').match(/(html5|css3|javascript|sql|php)/) || [])[1];
-      if (!m) return;
+    var section = $('#welcomeReturn');
+    var matiere = document.documentElement.getAttribute('data-sti-matiere');
+    var dernierAcces = null;
+    function actualiser() {
+      var etat = P.lireEtatSession();
+      var ok4 = document.documentElement.classList.contains('sti-4si-autorise');
+      var cadre = false;
+      try { cadre = window.self !== window.top; } catch (e) { cadre = true; }
+      if (matiere && etat.connecte && !etat.compteEnAttente && !document.prerendering && !cadre && (matiere !== 'php' || ok4)) {
+        P.enregistrerVisiteCours(matiere);
+      }
+      if (!section) return;
+      section.hidden = !etat.connecte;
+      var zone = $('#welcomeCourses'), compteur = $('#welcomeCount'), vide = $('#welcomeEmpty');
+      if (!etat.connecte) {
+        zone.replaceChildren(); delete zone.dataset.signatureAccueil;
+        $('#welcomePrenom').textContent = ''; return;
+      }
+      $('#welcomePrenom').textContent = etat.prenomCompte || etat.prenom || 'Abonné';
+      if (etat.compteEnAttente) {
+        compteur.textContent = 'Synchronisation des cours…';
+        zone.replaceChildren(); delete zone.dataset.signatureAccueil; vide.hidden = true; return;
+      }
       var p = P.chargerProfil();
-      P.mettreAJour('derniereLecture', {
-        matiere: m, chapitre: 'Cours ' + MATIERES[m].nom,
-        pourcent: Math.max(p.derniereLecture.pourcent || 0, 10), url: a.getAttribute('href')
+      var visites = P.listerCoursVisites().filter(function (id) { return MATIERES[id] && (id !== 'php' || ok4); });
+      compteur.textContent = visites.length + ' en cours';
+      compteur.setAttribute('aria-label', visites.length + ' cours déjà visités');
+      vide.hidden = visites.length !== 0;
+      var cartes = visites.map(function (id) {
+        var chapitres = CHAPITRES_ACCUEIL[id].filter(function (ch) { return id !== 'sql' || ch !== 'bac' || ok4; });
+        var consultes = chapitres.filter(function (ch) { return P.etatChapitre(id, ch) !== 'a_reviser'; }).length;
+        var revises = chapitres.filter(function (ch) { return P.etatChapitre(id, ch) === 'revise'; }).length;
+        var lecture = p.derniereLecture || {};
+        var chapitre = lecture.matiere === id ? P.identifiantChapitre(id, lecture.chapitreId) : '';
+        var ancre = /^[a-z0-9-]+$/i.test(chapitre) ? '#cours&ch=' + encodeURIComponent(chapitre) : '';
+        return { id:id, href:u(MATIERES[id].cours) + ancre, consultes:consultes, revises:revises, total:chapitres.length };
       });
-    });
+      var signature = JSON.stringify(cartes);
+      if (zone.dataset.signatureAccueil === signature) return;
+      var actif = document.activeElement && document.activeElement.closest && document.activeElement.closest('[data-welcome-course]');
+      var focus = actif && zone.contains(actif) ? actif.getAttribute('data-welcome-course') : '';
+      zone.innerHTML = cartes.map(function (c) {
+        var m = MATIERES[c.id];
+        return '<a class="welcome-course" data-welcome-course="' + c.id + '" href="' + esc(c.href) + '" style="--vc:var(' + m.varc + ')">' +
+          '<span class="welcome-course__icon" aria-hidden="true">' + m.emoji + '</span><span><strong>' + esc(m.nom) + '</strong>' +
+          '<small>' + c.consultes + ' / ' + c.total + ' chapitres consultés · ' + c.revises + ' / ' + c.total + ' révisés</small>' +
+          '<span>Continuer →</span></span></a>';
+      }).join('');
+      zone.dataset.signatureAccueil = signature;
+      if (focus) { var nouveau = zone.querySelector('[data-welcome-course="' + focus + '"]'); if (nouveau) nouveau.focus({ preventScroll:true }); }
+    }
+    actualiser();
+    ['sti:profil-maj','sti:session-maj','sti-cloud-restored'].forEach(function (ev) { window.addEventListener(ev, actualiser); });
+    if (window.MutationObserver) new MutationObserver(function () {
+      var actuel = document.documentElement.classList.contains('sti-4si-autorise');
+      if (actuel !== dernierAcces) { dernierAcces = actuel; actualiser(); }
+    }).observe(document.documentElement, { attributes:true, attributeFilter:['class'] });
   }
 
   /* -------------------------------------------------------------------------

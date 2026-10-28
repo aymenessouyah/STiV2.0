@@ -6,7 +6,7 @@ import vm from 'node:vm';
 
 /* Exécuter le véritable SW avec un CacheStorage et un réseau contrôlés : aucun
    fichier ou compte de production n'est touché par ces pannes synthétiques. */
-async function environnement({ cible = './assets/js/app.js', panne = '' } = {}) {
+async function environnement({ cible = './assets/js/app.js', panne = '', panneChemin = cible } = {}) {
   const origine = 'https://sti.example/';
   const magasins = new Map(), requetes = [], evenements = {};
   let erreur = panne, stockageBloque = false;
@@ -51,7 +51,7 @@ async function environnement({ cible = './assets/js/app.js', panne = '' } = {}) 
     fetch: async req => {
       const chemin = typeof req === 'string' ? req : req.url;
       requetes.push(chemin);
-      if (sansRecherche(normaliser(req)) === sansRecherche(normaliser(cible))) {
+      if (sansRecherche(normaliser(req)) === sansRecherche(normaliser(panneChemin))) {
         if (erreur === 'coupure') throw new Error('réseau indisponible');
         if (erreur === '503') return new Response('serveur indisponible', { status: 503 });
       }
@@ -169,10 +169,31 @@ for (const panne of ['503', 'coupure']) {
     await e.synchroniser();
     assert.match(await (await e.cache.match(cible, { ignoreSearch: true })).text(), /^nouveau :/);
     assert.ok(await e.revisions.match(e.marqueur));
-    assert.deepEqual(e.requetes, [cible, cible]);
+    assert.deepEqual(e.requetes.filter(r => r === cible), [cible, cible]);
+    const dependances = e.requetes.filter(r => r !== cible);
+    assert.deepEqual(new Set(dependances), new Set([
+      './assets/css/theme.css', './assets/js/app.js', './assets/js/profil.js', './assets/css/cours.css',
+      './assets/js/cours-config.js', './assets/js/cours.js', './assets/js/cours-onglets-mobile.js', './assets/js/lecteur-commun.js'
+    ]));
+    assert.equal(dependances.length, 8, 'chaque dépendance est téléchargée une seule fois');
     assert.equal(await (await e.videos.match('./assets/videos/exemple.mp4')).text(), 'vidéo conservée');
   });
 }
+
+test('une dépendance manquante en échec empêche de remplacer la page encore utilisable hors ligne', async () => {
+  const cible = './cours/html5.html', dependance = './assets/js/cours.js';
+  const e = await environnement({ cible, panne: '503', panneChemin: dependance });
+  await e.synchroniser();
+  assert.equal(await (await e.cache.match(cible, { ignoreSearch: true })).text(), 'ancienne version');
+  assert.equal(await e.revisions.match(e.marqueur), undefined);
+  assert.equal(e.requetes.filter(r => r === cible).length, 0);
+  e.setPanne('');
+  await e.synchroniser();
+  assert.match(await (await e.cache.match(cible, { ignoreSearch: true })).text(), /^nouveau :/);
+  assert.equal(e.requetes.filter(r => r === dependance).length, 2);
+  assert.equal(e.requetes.filter(r => r === cible).length, 1);
+  assert.ok(e.requetes.every(r => !/\.(?:mp4|mp3|pdf|zip|wasm)$/i.test(r)));
+});
 
 for (const cible of ['./assets/css/cours.css', './assets/js/cours-onglets-mobile.js']) {
   test(`panne temporaire : ${cible} reste disponible jusqu’à la reprise du réseau`, async () => {
