@@ -1,0 +1,674 @@
+{
+  "titre": "id · class · name : le graphe",
+  "plateforme": "STI V2.0 — Le web de A à Z · Lycée Raféha · 3ème & 4ème SI",
+  "duree_generique": 6.0,
+  "pause_entre_clips": 0.45,
+  "generique": {
+    "titre": "id · class · name : le graphe",
+    "plateforme": "STI V2.0 — Le web de A à Z · Lycée Raféha · 3ème & 4ème SI",
+    "sous_titre": "Bienvenue dans la plateforme S T I Version 2.0",
+    "orateur": "SECRÉTAIRE",
+    "voix": "secretaire",
+    "etat": "accueil"
+  },
+  "etats_vers_noeuds": {
+    "accueil": null,
+    "id": "id",
+    "class": "class",
+    "name": "name",
+    "css": "css",
+    "id-js": "l0",
+    "id-css": "l1",
+    "id-html": "l2",
+    "id-trap": "l3",
+    "class-js": "l4",
+    "class-css": "l5",
+    "class-multi": "l6",
+    "class-trap": "l7",
+    "name-js": "l8",
+    "name-css": "l9",
+    "name-php": "l10",
+    "name-trap": "l11",
+    "css-prio": "l12",
+    "css-pc": "l13",
+    "css-pe": "l14",
+    "css-tree": "l16",
+    "css-pb": "l18",
+    "tour": "tour",
+    "panel": "panel"
+  },
+  "clips": [
+    {
+      "id": "c1",
+      "chapitre": "Chapitre 1 — Le besoin",
+      "orateur": "SECRÉTAIRE",
+      "voix": "secretaire",
+      "titre": "Trois mots, trois métiers",
+      "points": [
+        "id : une cible unique",
+        "class : un groupe d'éléments",
+        "name : la clé envoyée au serveur"
+      ],
+      "code": "<input id=\"nom\" class=\"champ\" name=\"nom\">",
+      "etats": [
+        "accueil",
+        "accueil",
+        "accueil",
+        "accueil",
+        "accueil",
+        "accueil",
+        "accueil"
+      ],
+      "phrases": [
+        "Bienvenue dans la plateforme S T I Version 2.0.",
+        "Bonjour, je suis la secrétaire du lycée.",
+        "Sur nos formulaires d'inscription, trois petits mots reviennent partout : id, class et name.",
+        "Et franchement, je les confonds encore.",
+        "Je mets un identifiant quand il faudrait un nom de champ, je donne la même classe à tout le monde, et je ne comprends pas pourquoi certaines valeurs n'arrivent jamais au serveur.",
+        "Il me faudrait une carte claire, un graphe qui me dise quel attribut sert à quoi, et qui me montre aussi les erreurs à ne plus commettre.",
+        "C'est exactement ce que fait la page animée que nous allons découvrir."
+      ],
+      "couleur": "#d98200",
+      "duree_audio": 32.34,
+      "timeline": [
+        [
+          0.0,
+          2.52,
+          2.52
+        ],
+        [
+          2.52,
+          4.67,
+          2.15
+        ],
+        [
+          4.67,
+          9.6,
+          4.93
+        ],
+        [
+          9.6,
+          11.69,
+          2.09
+        ],
+        [
+          11.69,
+          21.24,
+          9.55
+        ],
+        [
+          21.24,
+          28.59,
+          7.35
+        ],
+        [
+          28.59,
+          32.34,
+          3.75
+        ]
+      ]
+    },
+    {
+      "id": "c2",
+      "chapitre": "Chapitre 2 — La page animée",
+      "orateur": "PROFESSEUR",
+      "voix": "professeur",
+      "titre": "Lire le graphe",
+      "points": [
+        "4 pôles : id · class · name · css",
+        "5 pastilles de légende",
+        "Un panneau d'explication en bas"
+      ],
+      "code": "<svg id=\"g\" viewBox=\"0 0 400 785\">…</svg>",
+      "etats": [
+        "accueil",
+        "accueil",
+        "id",
+        "class",
+        "accueil",
+        "accueil"
+      ],
+      "phrases": [
+        "Bonjour à tous. Voici la page intitulée id, class, name : le graphe.",
+        "En haut, cinq pastilles de légende donnent le code couleur : violet pour id, vert pour class, orange pour name, bleu pour css, et rouge pour les pièges.",
+        "Au centre, quatre gros nœuds colorés descendent le long d'un axe en pointillés : les quatre familles de notions.",
+        "Autour de chaque nœud, des feuilles plus petites montrent le même concept vu depuis JavaScript, depuis CSS, depuis HTML ou depuis PHP.",
+        "Touchez un nœud : ses liens s'illuminent, les autres s'estompent, et l'explication apparaît dans le panneau collé en bas de l'écran.",
+        "Des anneaux qui pulsent et des particules qui circulent sur les arêtes rappellent que cette page est vivante, pas un simple schéma imprimé."
+      ],
+      "couleur": "#2f7de1",
+      "duree_audio": 44.51,
+      "timeline": [
+        [
+          0.0,
+          4.11,
+          4.11
+        ],
+        [
+          4.11,
+          13.29,
+          9.18
+        ],
+        [
+          13.29,
+          20.05,
+          6.76
+        ],
+        [
+          20.05,
+          28.14,
+          8.09
+        ],
+        [
+          28.14,
+          36.12,
+          7.97
+        ],
+        [
+          36.12,
+          44.51,
+          8.39
+        ]
+      ]
+    },
+    {
+      "id": "c3",
+      "chapitre": "Chapitre 3 — id",
+      "orateur": "PROFESSEUR",
+      "voix": "professeur",
+      "titre": "id : la CIN de l’élément",
+      "points": [
+        "Unique dans toute la page",
+        "CSS : #titre · JS : getElementById",
+        "HTML : label for · ancre #titre"
+      ],
+      "code": "<h1 id=\"titre\">Bonjour</h1>",
+      "etats": [
+        "id",
+        "id-js",
+        "id-css",
+        "id-html",
+        "id-trap",
+        "id"
+      ],
+      "phrases": [
+        "Commençons par le premier pôle : id, la carte d'identité de l'élément.",
+        "Un id est unique dans toute la page. Il sert à cibler un seul élément, jamais plusieurs.",
+        "En JavaScript, getElementById renvoie cet élément, ou null s'il n'existe pas. Attention : on n'écrit pas de dièse dans l'argument.",
+        "En CSS, le sélecteur dièse cible ce même élément, et sa priorité est plus forte que celle d'une classe.",
+        "En HTML, l'attribut for d'un label référence un id, et un lien avec un dièse fait défiler la page jusqu'à lui.",
+        "Le piège, signalé en rouge : deux id identiques. getElementById ne renvoie alors que le premier, et le CSS devient imprévisible. Pour plusieurs éléments, il faut une class."
+      ],
+      "couleur": "#2f7de1",
+      "duree_audio": 44.51,
+      "timeline": [
+        [
+          0.0,
+          4.63,
+          4.63
+        ],
+        [
+          4.63,
+          10.45,
+          5.82
+        ],
+        [
+          10.45,
+          19.05,
+          8.6
+        ],
+        [
+          19.05,
+          25.86,
+          6.81
+        ],
+        [
+          25.86,
+          33.13,
+          7.28
+        ],
+        [
+          33.13,
+          44.51,
+          11.38
+        ]
+      ]
+    },
+    {
+      "id": "c4",
+      "chapitre": "Chapitre 4 — class",
+      "orateur": "ÉLÈVE",
+      "voix": "eleve",
+      "titre": "class : l’uniforme du groupe",
+      "points": [
+        "Partagée par plusieurs éléments",
+        "Un élément peut cumuler des classes",
+        "JS : classList · CSS : .carte.vedette"
+      ],
+      "code": "<p class=\"carte vedette\">Texte</p>",
+      "etats": [
+        "class",
+        "class-js",
+        "class-css",
+        "class-multi",
+        "class-trap",
+        "class"
+      ],
+      "phrases": [
+        "Madame, j'ai une question sur le deuxième pôle : pourquoi dit-on que class est l'uniforme du groupe ?",
+        "Ah, je vois : une classe peut être portée par plusieurs éléments, et un même élément peut porter plusieurs classes séparées par des espaces.",
+        "En JavaScript, querySelectorAll renvoie une collection : il faut un indice ou une boucle. classList permet d'ajouter, retirer ou tester une classe.",
+        "En CSS, le point désigne la classe. La démo animée montre bien la différence entre exiger les deux classes, l'une ou l'autre, ou l'une sans l'autre.",
+        "Et le piège : class égale a espace b, ce sont deux classes, pas une seule classe nommée a b.",
+        "Le sélecteur point a point b cible justement les éléments qui possèdent les deux."
+      ],
+      "couleur": "#0e9f8e",
+      "duree_audio": 53.11,
+      "timeline": [
+        [
+          0.0,
+          7.57,
+          7.57
+        ],
+        [
+          7.57,
+          18.05,
+          10.49
+        ],
+        [
+          18.05,
+          29.06,
+          11.01
+        ],
+        [
+          29.06,
+          40.15,
+          11.09
+        ],
+        [
+          40.15,
+          47.04,
+          6.89
+        ],
+        [
+          47.04,
+          53.11,
+          6.07
+        ]
+      ]
+    },
+    {
+      "id": "c5",
+      "chapitre": "Chapitre 5 — name",
+      "orateur": "SECRÉTAIRE",
+      "voix": "secretaire",
+      "titre": "name : l’étiquette de l’enveloppe",
+      "points": [
+        "Nom sous lequel la valeur voyage",
+        "PHP lit $_POST['nom']",
+        "Les radios partagent le même name"
+      ],
+      "code": "<input type=\"text\" name=\"nom\">",
+      "etats": [
+        "name",
+        "name-js",
+        "name-css",
+        "name-php",
+        "name-trap",
+        "name"
+      ],
+      "phrases": [
+        "Le troisième pôle me parle beaucoup : name, l'étiquette de l'enveloppe.",
+        "C'est le nom sous lequel la valeur du champ voyage vers le serveur.",
+        "En PHP, on la récupère avec POST et la clé entre crochets, qui doit être exactement la valeur de l'attribut name.",
+        "Le id, lui, ne voyage jamais : il reste dans le navigateur.",
+        "Les boutons radio d'un même groupe partagent le même name, ce qui garantit qu'un seul peut être coché.",
+        "Et le piège : un champ sans name s'affiche, l'élève le remplit, mais le serveur ne reçoit rien. C'est exactement mon problème de rentrée."
+      ],
+      "couleur": "#d98200",
+      "duree_audio": 32.34,
+      "timeline": [
+        [
+          0.0,
+          4.18,
+          4.18
+        ],
+        [
+          4.18,
+          8.13,
+          3.95
+        ],
+        [
+          8.13,
+          14.79,
+          6.66
+        ],
+        [
+          14.79,
+          18.26,
+          3.48
+        ],
+        [
+          18.26,
+          24.27,
+          6.01
+        ],
+        [
+          24.27,
+          32.34,
+          8.07
+        ]
+      ]
+    },
+    {
+      "id": "c6",
+      "chapitre": "Chapitre 6 — CSS",
+      "orateur": "PROFESSEUR",
+      "voix": "professeur",
+      "titre": "css : priorité et sélecteurs",
+      "points": [
+        "Poids : inline > #id > .classe > balise",
+        ": un état · :: une partie",
+        "Espace = descendant · > = enfant direct"
+      ],
+      "code": "#menu > li.actif:hover::after { … }",
+      "etats": [
+        "css",
+        "css-prio",
+        "css-pc",
+        "css-pe",
+        "css-tree",
+        "css-pb"
+      ],
+      "phrases": [
+        "Le quatrième pôle, en bleu, est un petit cours de CSS à lui seul.",
+        "Quand plusieurs règles visent le même élément, la plus spécifique gagne : le style en ligne, puis l'id, puis la classe, puis la balise. À égalité, la dernière écrite l'emporte, et important passe devant tout, mais il faut l'éviter.",
+        "Retenez la différence entre un deux-points et deux deux-points.",
+        "La pseudo-classe, avec un seul deux-points, décrit un état ou une position : hover, focus, checked, first-child.",
+        "Le pseudo-élément, avec deux deux-points, décrit une partie : first-letter, before, after.",
+        "Enfin, un espace entre deux sélecteurs cible un descendant à n'importe quelle profondeur, tandis que le signe supérieur cible seulement l'enfant direct."
+      ],
+      "couleur": "#2f7de1",
+      "duree_audio": 44.2,
+      "timeline": [
+        [
+          0.0,
+          4.03,
+          4.03
+        ],
+        [
+          4.03,
+          18.35,
+          14.32
+        ],
+        [
+          18.35,
+          22.25,
+          3.91
+        ],
+        [
+          22.25,
+          29.2,
+          6.94
+        ],
+        [
+          29.2,
+          34.78,
+          5.58
+        ],
+        [
+          34.78,
+          44.2,
+          9.42
+        ]
+      ]
+    },
+    {
+      "id": "c7",
+      "chapitre": "Chapitre 7 — Les pièges",
+      "orateur": "ÉLÈVE",
+      "voix": "eleve",
+      "titre": "Quatre pièges en rouge",
+      "points": [
+        "id en double",
+        "class=\"a b\" = deux classes",
+        "name oublié",
+        "Radios avec des name différents"
+      ],
+      "code": "<p id=\"x\">A</p><p id=\"x\">B</p> <!-- erreur -->",
+      "etats": [
+        "id-trap",
+        "class-trap",
+        "name-trap",
+        "accueil",
+        "id-trap",
+        "class-trap"
+      ],
+      "phrases": [
+        "Les nœuds rouges, avec leur petit triangle, sont les pièges.",
+        "Premier piège : deux id identiques dans la même page.",
+        "Deuxième piège : croire que class a espace b est une seule classe, alors que ce sont deux classes distinctes.",
+        "Troisième piège : oublier le name sur un champ de formulaire, donc ne rien envoyer au serveur.",
+        "Quatrième piège : donner des name différents à des boutons radio, ce qui permet de tous les cocher en même temps.",
+        "La page les garde toujours visibles, en pointillés rouges, pour qu'on apprenne à les reconnaître avant l'examen."
+      ],
+      "couleur": "#0e9f8e",
+      "duree_audio": 34.93,
+      "timeline": [
+        [
+          0.0,
+          3.87,
+          3.87
+        ],
+        [
+          3.87,
+          7.3,
+          3.42
+        ],
+        [
+          7.3,
+          14.33,
+          7.04
+        ],
+        [
+          14.33,
+          20.4,
+          6.07
+        ],
+        [
+          20.4,
+          27.7,
+          7.3
+        ],
+        [
+          27.7,
+          34.93,
+          7.23
+        ]
+      ]
+    },
+    {
+      "id": "c8",
+      "chapitre": "Chapitre 8 — La visite guidée",
+      "orateur": "PROFESSEUR",
+      "voix": "professeur",
+      "titre": "Piloter l’animation",
+      "points": [
+        "▶ Visite guidée : 22 étapes",
+        "⏮ ⏸ ⏭ · vitesse 0,5× / 1× / 2×",
+        "⤢ Agrandir le panneau"
+      ],
+      "code": "ORDER = [\"id\",\"l0\",\"l1\",…,\"css\",\"l18\",…]",
+      "etats": [
+        "tour",
+        "panel",
+        "class-multi",
+        "css-prio",
+        "css-pc",
+        "tour"
+      ],
+      "phrases": [
+        "Passons aux commandes, en haut du panneau.",
+        "Le bouton Visite guidée lance un parcours de vingt-deux étapes : il sélectionne chaque nœud, allume ses liens et affiche l'explication correspondante.",
+        "Les flèches précédent et suivant permettent d'avancer à son rythme, pause bloque l'animation, et les boutons zéro virgule cinq, un et deux règlent la vitesse.",
+        "Le bouton Agrandir déplie le panneau pour lire les exemples de code et les démonstrations animées.",
+        "Certaines fiches sont interactives : on peut comparer les sélecteurs de classes, faire monter la barre de priorité CSS, ou simuler un survol sur une pseudo-classe.",
+        "C'est une page qu'on explore, pas un document qu'on lit passivement."
+      ],
+      "couleur": "#2f7de1",
+      "duree_audio": 36.18,
+      "timeline": [
+        [
+          0.0,
+          2.24,
+          2.24
+        ],
+        [
+          2.24,
+          10.23,
+          7.99
+        ],
+        [
+          10.23,
+          18.65,
+          8.42
+        ],
+        [
+          18.65,
+          23.87,
+          5.22
+        ],
+        [
+          23.87,
+          32.56,
+          8.69
+        ],
+        [
+          32.56,
+          36.18,
+          3.62
+        ]
+      ]
+    },
+    {
+      "id": "c9",
+      "chapitre": "Chapitre 9 — À retenir",
+      "orateur": "ÉLÈVE",
+      "voix": "eleve",
+      "titre": "La règle en trois phrases",
+      "points": [
+        "Cibler UN élément → id",
+        "Styliser un GROUPE → class",
+        "ENVOYER au serveur → name"
+      ],
+      "code": "id → #id / getElementById\nclass → .classe / classList\nname → $_POST",
+      "etats": [
+        "accueil",
+        "id",
+        "class",
+        "name",
+        "accueil",
+        "id"
+      ],
+      "phrases": [
+        "Si je devais résumer cette page en trois phrases, ce serait simple.",
+        "Pour cibler un élément unique, j'utilise id.",
+        "Pour styliser ou manipuler tout un groupe, j'utilise class.",
+        "Et pour envoyer une valeur au serveur, j'utilise name.",
+        "Le panneau du bas affiche d'ailleurs exactement cette phrase quand aucun nœud n'est sélectionné.",
+        "Tout le graphe n'est que le développement de ces trois idées."
+      ],
+      "couleur": "#0e9f8e",
+      "duree_audio": 25.5,
+      "timeline": [
+        [
+          0.0,
+          4.48,
+          4.48
+        ],
+        [
+          4.48,
+          7.43,
+          2.94
+        ],
+        [
+          7.43,
+          11.38,
+          3.95
+        ],
+        [
+          11.38,
+          14.99,
+          3.61
+        ],
+        [
+          14.99,
+          21.42,
+          6.43
+        ],
+        [
+          21.42,
+          25.5,
+          4.08
+        ]
+      ]
+    },
+    {
+      "id": "c10",
+      "chapitre": "Conclusion",
+      "orateur": "PROFESSEUR",
+      "voix": "professeur",
+      "titre": "À vous de jouer",
+      "points": [
+        "Observer → comprendre → tester",
+        "Touchez les 23 nœuds",
+        "Puis lancez la visite guidée"
+      ],
+      "code": "Ouvrir la page → cours/id-class-name-graphe.html",
+      "etats": [
+        "accueil",
+        "tour",
+        "accueil",
+        "accueil",
+        "tour"
+      ],
+      "phrases": [
+        "Bravo à tous. Nous avons décrit la page animée sans rien inventer : chaque nœud, chaque piège et chaque démo viennent du cours.",
+        "Retenez la méthode : on part d'un besoin réel, on observe le graphe, on touche un nœud, on lit l'explication, puis on teste l'exemple de code.",
+        "Je vous invite maintenant à ouvrir la page sur la plateforme, à parcourir les vingt-trois nœuds un par un, puis à lancer la visite guidée.",
+        "Et si vous hésitez encore entre les trois attributs, regardez les pastilles de couleur : violet, vert, orange. La réponse est déjà dans la légende.",
+        "Bonne révision, et à bientôt sur STI V2.0, le web de A à Z."
+      ],
+      "couleur": "#2f7de1",
+      "duree_audio": 37.46,
+      "timeline": [
+        [
+          0.0,
+          7.76,
+          7.76
+        ],
+        [
+          7.76,
+          16.44,
+          8.68
+        ],
+        [
+          16.44,
+          24.87,
+          8.43
+        ],
+        [
+          24.87,
+          33.85,
+          8.98
+        ],
+        [
+          33.85,
+          37.46,
+          3.61
+        ]
+      ]
+    }
+  ],
+  "phrase_total": 60
+}
