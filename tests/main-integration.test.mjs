@@ -25,7 +25,10 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   ]) {
     assert.equal(revisions.get('./' + chemin), 'suivi-contextes-v491', chemin);
   }
-  for (const chemin of ['assets/js/cours-html5.js', 'assets/js/cours-css3.js', 'assets/js/cours-javascript.js', 'assets/js/cours-matieres.js']) {
+  for (const chemin of ['assets/js/cours-html5.js', 'assets/js/cours-css3.js']) {
+    assert.equal(revisions.get('./' + chemin), 'tp-evenements-v500', chemin);
+  }
+  for (const chemin of ['assets/js/cours-javascript.js', 'assets/js/cours-matieres.js']) {
     assert.equal(revisions.get('./' + chemin), 'progression-chapitres-v492', chemin);
   }
   for (const chemin of ['assets/js/retour-quiz.js', 'assets/js/appel-quiz.js', 'revision-erreurs.html', 'quiz/html-css.html']) {
@@ -455,10 +458,12 @@ test('navigation mobile : le module commun est chargé une fois par cours et res
 
 test('migration v353 : onglets et feuille de cours disponibles sans retélécharger le contrôleur inchangé', async () => {
   const pages = ['html5', 'css3', 'javascript', 'sql', 'php'].map(c => '/cours/' + c + '.html');
-  const css = '/assets/css/cours.css', controleur = '/assets/js/cours-html5.js', module = '/assets/js/cours-onglets-mobile.js';
+  const css = '/assets/css/cours.css', controleur = '/assets/js/cours-javascript.js', module = '/assets/js/cours-onglets-mobile.js';
   const anciens = [...pages, css, controleur].map(chemin => [chemin, 20, 'ancienne version']);
   const marqueurs = pages.map(chemin => ['.' + chemin, 'progression-chapitres-v492']);
   marqueurs.push(['.' + css, 'cours-retour-xp-v486'], ['.' + controleur, 'progression-chapitres-v492']);
+  /* v500 : le contrôleur HTML5 a changé ; on vérifie l'absence de retéléchargement sur un
+     contrôleur réellement inchangé (JavaScript). */
   const result = await simulerMigration('sti-atelier-v353', marqueurs, anciens);
   assert.equal(result.magasins.has('sti-atelier-v353'), false);
   const cache = await result.api.open('sti-atelier-v361');

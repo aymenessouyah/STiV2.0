@@ -6495,7 +6495,7 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
   assert.match(adminJs, /VERSION_AFFICHEE/);
   assert.match(accesJs, /VERSION_AFFICHEE/);
 
-  assert.match(readmeMd, /\*\*Version (?:active|du code)\*\*\s*:\s*\*\*v4(?:7[789]|8\d|9\d)\*\*\s*\(`sti-atelier-v3(?:3[89]|[4-7]\d)`/);
+  assert.match(readmeMd, /\*\*Version (?:active|du code)\*\*\s*:\s*\*\*v[45]\d\d\*\*\s*\(`sti-atelier-v3\d\d`/);
   assert.match(readmeMd, /\|\s*v477\s*\|/);
   assert.ok(nouvJson.some((e) => e.version === 'v477'), 'v477 doit figurer dans nouveautes.json');
   assert.match(offlineManifest.version, /^v[45]\d\d-sti-atelier-v3\d\d$/);

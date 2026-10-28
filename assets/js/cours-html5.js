@@ -14,6 +14,8 @@
   var MATIERE = "html5";
   var VIDEO_COURS = "html5-cours";
   var VIDEO_DEMO = "html5-demo";
+  /* v500 : le TP « événements, liens et arrière-plans » est commun à HTML5 et CSS3. */
+  var VIDEO_TP = "tp-evenements-liens";
   var CHAPITRES = [
     { id: "entete", titre: "Éléments d'en-tête / 1er niveau", temps: 0.00 },
     { id: "structuration", titre: "Structuration d'une page web", temps: 45.09 },
@@ -898,7 +900,7 @@
       global.STIProfil.enregistrerPositionVideo({
         id: identifiant,
         matiere: MATIERE,
-        titre: identifiant === VIDEO_COURS ? "Cours HTML5 complet (.mp4)" : "Démonstration vidéo de la boutique",
+        titre: video.dataset.videoTitle || (identifiant === VIDEO_COURS ? "Cours HTML5 complet (.mp4)" : "Démonstration vidéo de la boutique"),
         temps: video.currentTime,
         duree: Number.isFinite(video.duration) ? video.duration : 0,
         url: "cours/html5.html#videos",
@@ -933,6 +935,7 @@
     actualiserPosters();
     suivreVideo(document.getElementById("heroCourseVideo"), VIDEO_COURS);
     suivreVideo(document.getElementById("tabCourseVideo"), VIDEO_COURS);
+    suivreVideo(document.getElementById("tpEvenementsVideo"), VIDEO_TP);
     var demo = document.getElementById("demoMultimediaVideo");
     suivreVideo(demo, VIDEO_DEMO);
     if (demo) demo.addEventListener("loadedmetadata", function () {

@@ -1,9 +1,9 @@
 {
   "version": "v500-sti-atelier-v361",
-  "generatedAt": "2026-10-28T18:00:31Z",
+  "generatedAt": "2026-10-28T18:12:56Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 700,
-  "totalBytes": 688137408,
+  "totalBytes": 687393953,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 47081,
-      "gitSha": "9fe66a92bd4cd92174b6b8e4f3279eecdcce0c72"
+      "bytes": 48057,
+      "gitSha": "15dca35eebe222de29c8673c19bf7d563ce9b59c"
     },
     {
       "path": "admin.html",
@@ -702,13 +702,13 @@
     },
     {
       "path": "assets/js/cours-css3.js",
-      "bytes": 43445,
-      "gitSha": "d2a0582233fcbd5b56aa02aea52a926d30ce6d14"
+      "bytes": 43819,
+      "gitSha": "80dec727dd9b7ca3b110a805c6a6a59fcb475385"
     },
     {
       "path": "assets/js/cours-html5.js",
-      "bytes": 55028,
-      "gitSha": "07e2aad8eb01f8bad408709d6d95d7e9dd2e22ff"
+      "bytes": 55265,
+      "gitSha": "ee55aadb966c28d9b813f55a5239dd0005870f2f"
     },
     {
       "path": "assets/js/cours-javascript.js",
@@ -1192,8 +1192,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 209148,
-      "gitSha": "96dfd85988584de0e1d52059d7c029f39b972a6b"
+      "bytes": 209625,
+      "gitSha": "df30d92dd196afb78ca7901415c48133a90cd06f"
     },
     {
       "path": "cours/datalist.html",
@@ -1207,8 +1207,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 201782,
-      "gitSha": "00a1d321cccf2bbc15b7d9afad8567af66f0458a"
+      "bytes": 202894,
+      "gitSha": "3ea8a99008101dc79868abd52159a38a8132225f"
     },
     {
       "path": "cours/javascript.html",
@@ -2632,8 +2632,8 @@
     },
     {
       "path": "exercices/html-css/tp-evenements-liens/drapeau.png",
-      "bytes": 944840,
-      "gitSha": "1d0f90b206d234f2540118785c1141a2efc4d4c2"
+      "bytes": 198225,
+      "gitSha": "9e6382f620ce1c8362acdba3335514e122fc3c7e"
     },
     {
       "path": "exercices/html-css/tp-evenements-liens/index.html",
@@ -3502,8 +3502,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 95342,
-      "gitSha": "66e5e2b95c1d7bd40f21d58267b629159b699e9f"
+      "bytes": 95326,
+      "gitSha": "05fe0c43ee2feed424d35bf60ecc202ae7b5b8f0"
     }
   ]
 }
