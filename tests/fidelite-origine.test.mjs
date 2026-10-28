@@ -18,7 +18,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/sync-progressions.js': 'd566e412f0d9d7fb2d09c0a5988d3f9bbc3d895400e2afe55078e3bdb0018b81',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
-    'admin.html': '417fd5a84ab087327e9ff240c9a7c20e6648356b70cd0d79871f3ee2b9ba406e',
+    'admin.html': '329b962713ebd1fd72794f42f6fb8b392e19783f174c591379e9548273cdbf56',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -70,10 +70,10 @@ test('catalogue : fichiers réels, 16 entrées distinctes, durées MP4 et restri
   const js = lire('assets/js/app.js');
   const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
   const catalogue = vm.runInNewContext('(' + texte + ')');
-  assert.equal(catalogue.length, 17);
+  assert.equal(catalogue.length, 18);
   assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
   const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
-  assert.deepEqual(comptes, { html5:4, css3:4, javascript:2, sql:4, php:3 });
+  assert.deepEqual(comptes, { html5:4, css3:5, javascript:2, sql:4, php:3 });
   assert.ok(catalogue.some(v => v.id === 'tp-evenements-liens'
     && v.matieres.join() === 'html5,css3'
     && v.srcPrincipal === 'assets/videos/tp-evenements-liens-v2.mp4'
@@ -113,9 +113,10 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'tp-display-v510'
+    const revision = chemin === 'assets/js/app.js' ? 'tp-transitions-v512'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
-      : (chemin === 'cours/css3.html' || chemin === 'cours/html5.html') ? 'tp-display-v510'
+      : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
+      : chemin === 'cours/html5.html' ? 'tp-display-v510'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }

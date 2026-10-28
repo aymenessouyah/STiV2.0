@@ -1,9 +1,9 @@
 {
-  "version": "v511-sti-atelier-v372",
-  "generatedAt": "2026-10-28T22:06:20Z",
+  "version": "v512-sti-atelier-v373",
+  "generatedAt": "2026-10-28T23:46:11Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 709,
-  "totalBytes": 734700153,
+  "totalFiles": 715,
+  "totalBytes": 748099401,
   "files": [
     {
       "path": "404.html",
@@ -68,7 +68,7 @@
     {
       "path": "admin.html",
       "bytes": 341326,
-      "gitSha": "0092726b1653391875467913c6119ead62604444"
+      "gitSha": "caf4f8ea6ef526b10fe938a60c4361792234302e"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 108812,
-      "gitSha": "7ae47306e8799bb1ff605ddd8861f0ef3a633e90"
+      "bytes": 109402,
+      "gitSha": "f4cd66dd25ac0acf2d2aa95ea16792670fa2fb25"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -702,8 +702,8 @@
     },
     {
       "path": "assets/js/cours-css3.js",
-      "bytes": 44679,
-      "gitSha": "17c13cd741cd3122742033b032d38ba35fe8b56a"
+      "bytes": 45173,
+      "gitSha": "9b72a4479386e9db53fd891f89c1776e4c25650a"
     },
     {
       "path": "assets/js/cours-html5.js",
@@ -817,8 +817,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 213362,
-      "gitSha": "a738dc2451a82f452ef1090467782db946dcbeb5"
+      "bytes": 213840,
+      "gitSha": "9d3b424c21f16e6dc6edca8ef520e5aece50ee80"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -903,7 +903,7 @@
     {
       "path": "assets/js/sante.js",
       "bytes": 10952,
-      "gitSha": "e36f5f6d1b93972b373f64fab1b2bf5878e6f42d"
+      "gitSha": "1a06d4de855974ac27335bc98e5f2cbecc168fef"
     },
     {
       "path": "assets/js/sauvegarde.js",
@@ -1171,6 +1171,11 @@
       "gitSha": "153f5c6602a972b5211ecfc1c3a5acf8a23901d8"
     },
     {
+      "path": "assets/videos/tp-transitions-animations.mp4",
+      "bytes": 13361828,
+      "gitSha": "1548d2d6313f71365b1370e4949849fabb167071"
+    },
+    {
       "path": "assets/videos/validation-nom-prenom-js.mp4",
       "bytes": 49095652,
       "gitSha": "4c53fdda9a9d3d53aae821bb9ef3b99ea6189ab8"
@@ -1217,8 +1222,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 212923,
-      "gitSha": "0053f0458158061c5d285163f027c9042c990afa"
+      "bytes": 215510,
+      "gitSha": "45b66573e39f59da0774516a069a87845edbf182"
     },
     {
       "path": "cours/datalist.html",
@@ -2681,6 +2686,31 @@
       "gitSha": "938849f8c2c4b9769e0541dbe6a3243e7eda1163"
     },
     {
+      "path": "exercices/html-css/tp-transitions-animations/exercice1.html",
+      "bytes": 1779,
+      "gitSha": "2ae51f359d18e83791dd897550938707de1d1f1d"
+    },
+    {
+      "path": "exercices/html-css/tp-transitions-animations/exercice2.html",
+      "bytes": 2550,
+      "gitSha": "2fd3081f294f3509ccc08a82b79a77fe4e16f1aa"
+    },
+    {
+      "path": "exercices/html-css/tp-transitions-animations/index.html",
+      "bytes": 23324,
+      "gitSha": "1810c1477ff6ad17f0af7ada7b080582c62f61a4"
+    },
+    {
+      "path": "exercices/html-css/tp-transitions-animations/style1.css",
+      "bytes": 2253,
+      "gitSha": "9cf5ab7e4dadf001d50ee242afac440dbbc54bf0"
+    },
+    {
+      "path": "exercices/html-css/tp-transitions-animations/style2.css",
+      "bytes": 2726,
+      "gitSha": "19dd6395b5b0e5c2016bb7c830d370743e5dfcfa"
+    },
+    {
       "path": "exercices/javascript/Tp1-Correction-js.html",
       "bytes": 16577,
       "gitSha": "7ce84a6581d2e3721c0a86d8749c76b30200bff4"
@@ -2963,7 +2993,7 @@
     {
       "path": "index.html",
       "bytes": 57036,
-      "gitSha": "45cd0f4f77f550bd5016204675b786b7bbff1e26"
+      "gitSha": "668d4e08e3dfe552884079d1a8bb35cbfdca0ff7"
     },
     {
       "path": "livre-smart.html",
@@ -3547,8 +3577,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 96711,
-      "gitSha": "de01b3d7c87e90a7f5ef1b53a300851e9e246800"
+      "bytes": 97350,
+      "gitSha": "f2faf43534617faa6a8cde0b45cee5e9f1d92bdd"
     }
   ]
 }
