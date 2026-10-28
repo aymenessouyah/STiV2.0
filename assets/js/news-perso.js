@@ -72,11 +72,12 @@
     if (document.documentElement && document.documentElement.classList.contains("sti-4si-autorise")) return "4si";
     return "3si";
   }
-  /* Le ruban d'identité est argent dès qu'il s'agit d'un compte enseignant,
-     même si ce compte porte une classe (les news, elles, suivent la classe). */
+  /* Couleur du ruban : or pour l'admin, les comptes GOLD et les profs, bleu 3e SI,
+     vert 4e SI, orangé pour tout le reste (compte sans classe reconnue). */
   function niveauRuban() {
     if (estCompteEnseignant()) return "admin";
-    return niveau();
+    var n = niveauDepuisClasse(classeCourante());
+    return n || "autre";
   }
   function libelleNiveau(n) {
     if (n === "admin") return "Enseignant";

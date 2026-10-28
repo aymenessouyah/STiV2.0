@@ -4221,11 +4221,12 @@ test('v468 (comportemental VM) : analytique.js pagine au-delà du plafond PostgR
   assert.ok(lignes.some((l) => /^\|\s*v488\s*\|/.test(l)), 'v488 reste dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v492\s*\|/.test(l)), 'v492 reste dans l’historique');
   assert.ok(lignes.some((l) => /^\|\s*v493\s*\|/.test(l)), 'v493 reste dans l’historique');
-  assert.ok(cinq.some((o) => /^v494 — Retour intelligent des cinq quiz/.test(o.t)));
+  assert.ok(lignes.some((l) => /^\|\s*v494\s*\|/.test(l)), 'v494 reste dans l’historique');
   assert.ok(cinq.some((o) => /^v495 — Vidéo à la une tirée au hasard/.test(o.t)));
   assert.ok(cinq.some((o) => /^v496 — « News de ma classe »/.test(o.t)));
   assert.ok(cinq.some((o) => /^v497 — News par classe strictement cloisonnées/.test(o.t)));
-  assert.match(cinq[0].t, /^v498 — Accueil :/);
+  assert.ok(cinq.some((o) => /^v498 — Accueil :/.test(o.t)));
+  assert.match(cinq[0].t, /^v499 — Accueil :/);
 });
 
 test('v469 (structure) : zéro .limit(>1000) résiduel sur tout le dépôt, parité 124/124 roue-couverture.js, ancre #annexe-html5 et sw.js sti-atelier-v329', () => {
@@ -4561,10 +4562,10 @@ test('v470 : audit fonctionnel intégral en 9 points (quiz CSPRNG, Mes erreurs, 
   assert.match(sauvJs, /function televerserArchiveVersDrive\(/);
   assert.match(gsCode, /function obtenirDossierSauvegarde_\(/);
   assert.match(gsCode, /function enregistrerArchiveDirecteDrive_\(/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v3(?:[34]\d|5\d)";/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3(?:[3-6]\d)";/);
   assert.match(swJs, /v470-audit-fonctionnel-readme/);
   assert.ok(nouv.some((n) => n.version === 'v470'), 'nouveautes.json doit conserver v470');
-  assert.match(readmeMd, /sti-atelier-v3(?:[34]\d|5\d)/);
+  assert.match(readmeMd, /sti-atelier-v3(?:[3-6]\d)/);
   assert.match(readmeMd, /\|\s*v470\s*\|/);
   assert.match(readmeMd, /1 244 questions/);
   assert.match(adminHtml, /v470 · sti-atelier-v330/);
@@ -5063,13 +5064,13 @@ test('v471 (structure) : 124/124 chemins Git exacts dans roue-revision.js (zéro
   assert.match(indexHtml, /reprendre\.js\?v=47\d/);
   assert.match(adminHtml, /sante\.js\?v=47\d/);
   assert.equal((santeJs.match(/\{\s*cat:\s*"/g) || []).length, 43, 'sante.js doit exécuter 43 contrôles temps réel');
-  assert.match(swJs, /var CACHE = "sti-atelier-v3(?:[34]\d|5\d)";/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3(?:[3-6]\d)";/);
   assert.match(swJs, /v471-tester-tout-e2e/);
   assert.ok(nouv.some((n) => n.version === 'v471'), 'nouveautes.json doit conserver v471');
-  assert.match(readmeMd, /sti-atelier-v3(?:[34]\d|5\d)/);
+  assert.match(readmeMd, /sti-atelier-v3(?:[3-6]\d)/);
   assert.match(readmeMd, /\|\s*v471\s*\|/);
   assert.match(adminHtml, /v471 · sti-atelier-v331/);
-  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[34]\d|5\d)$/);
+  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[3-6]\d)$/);
   assert.equal(offlineManifest.totalFiles, offlineManifest.files.length);
 });
 
@@ -5302,7 +5303,7 @@ test('v472 (structure) : 0 balise HTML avalée sur les 1 244 questions des 5 qui
   assert.ok(nouv.some((n) => n.version === 'v472'), 'nouveautes.json doit conserver v472');
   assert.match(readmeMd, /\|\s*v472\s*\|/);
   assert.match(adminHtml, /v472 · sti-atelier-v332/);
-  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[34]\d|5\d)$/);
+  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[3-6]\d)$/);
 });
 
 test('v472 (comportemental VM) : filtrage PHP pour un élève 3ème SI (roue-plan, reprendre, ma-fiche-revision) vs maintien 4ème SI / Gold, et sécurisation formatExplainPhp / fmtExplainSql', async () => {
@@ -5431,9 +5432,10 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
     if (fs.existsSync(p) && fs.statSync(p).isFile()) coreBytes += fs.statSync(p).size;
   }
   /* v494 : le retour contextuel des quiz ajoute ~3,5 Ko au noyau (libellés,
-     reprise de position et bouton mobile). La borne reste un garde-fou de poids,
-     relevée à 520 Ko pour laisser la place à ce correctif fonctionnel. */
-  assert.ok(coreBytes > 0 && coreBytes < 520 * 1024, `Le noyau de rechargement SW doit peser < 520 Ko (observé: ${coreBytes} octets)`);
+     reprise de position et bouton mobile). v499 ajoute le ruban d'identité et la
+     boucle garantie de la vidéo de fond (~11 Ko). La borne reste un garde-fou de
+     poids, relevée à 545 Ko pour laisser la place à ces correctifs fonctionnels. */
+  assert.ok(coreBytes > 0 && coreBytes < 545 * 1024, `Le noyau de rechargement SW doit peser < 545 Ko (observé: ${coreBytes} octets)`);
   assert.match(swJs, /appareilSansCachePrealable/);
   assert.match(swJs, /_lruTouchRecents/);
   assert.match(swJs, /_timerHitDebounce/);
@@ -5466,7 +5468,7 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   assert.match(adminHtml, /v473 · sti-atelier-v333/);
   assert.ok(nouv.some((n) => n.version === 'v473'));
   assert.match(readmeMd, /\|\s*v473\s*\|/);
-  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[34]\d|5\d)$/);
+  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[3-6]\d)$/);
 });
 
 test('v473 (comportemental VM) : 0 requête SW à l’installation à froid, éviction sans re-téléchargement lourd, 0 POST redondant sync-progressions et lazy-load quiz-admin', async () => {
@@ -5805,7 +5807,7 @@ test('v474 (structure & budgets Quiz PHP / SQL / JS) : 0 compilateur Tailwind JI
   assert.match(adminHtml, /v474 · sti-atelier-v334/);
   assert.match(readmeMd, /sti-atelier-v334/);
   assert.match(readmeMd, /\|\s*v474\s*\|/);
-  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[34]\d|5\d)$/);
+  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[3-6]\d)$/);
 });
 
 test('v474 (comportemental VM) : vendors hors-ligne (Chart, confetti, Prism) opérationnels et déduplication lireProfilCourantMemoSTI dans acces.js', async () => {
@@ -5939,7 +5941,7 @@ test('v475 (structure & budgets navigation) : polices WOFF2 externes (-475 Ko da
   assert.match(adminHtml, /v475 · sti-atelier-v335/);
   assert.match(readmeMd, /sti-atelier-v335/);
   assert.match(readmeMd, /\|\s*v475\s*\|/);
-  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[34]\d|5\d)$/);
+  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[3-6]\d)$/);
 });
 
 test('v475 (comportemental VM) : préchargement anticipé config.js, cycle BFCache WebSocket dans acces.js et redessin resize 0 requête dans graphiques-activite.js', async () => {
@@ -6152,7 +6154,7 @@ test('v476 (structure) : retour instantané Exercices → Accueil (zéro auto-re
   assert.match(adminHtml, /v476 · sti-atelier-v337/);
   assert.match(readmeMd, /sti-atelier-v337/);
   assert.match(readmeMd, /\|\s*v476\s*\|/);
-  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[34]\d|5\d)$/);
+  assert.match(offlineManifest.version, /^v4[789]\d-sti-atelier-v3(?:[3-6]\d)$/);
 });
 
 test('v476 (comportemental VM) : ouverture/fermeture modale #pdfFrame sans polluer history + traverseTo direct vers Accueil + 0 sync en iframe', async () => {
@@ -6473,7 +6475,7 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
 
   assert.match(configJs, /VERSION:\s*3(?:3[89]|4\d)\b/);
   assert.match(configJs, /VERSION_AFFICHEE:\s*4(?:7[789]|8\d)\b/);
-  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v3(?:3[89]|4\d|5\d)"/);
+  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v3(?:3[89]|[4-7]\d)"/);
   assert.match(swJs, /var UPDATE_ID\s*=\s*"v4(?:7[789]|8\d|9\d)-[a-z0-9-]+"/);
   assert.match(swJs, /uRacine/);
   assert.match(swJs, /\/nouveautes\\\.json\$\/i/);
@@ -6493,10 +6495,10 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
   assert.match(adminJs, /VERSION_AFFICHEE/);
   assert.match(accesJs, /VERSION_AFFICHEE/);
 
-  assert.match(readmeMd, /\*\*Version (?:active|du code)\*\*\s*:\s*\*\*v4(?:7[789]|8\d|9\d)\*\*\s*\(`sti-atelier-v3(?:3[89]|4\d|5\d)`/);
+  assert.match(readmeMd, /\*\*Version (?:active|du code)\*\*\s*:\s*\*\*v4(?:7[789]|8\d|9\d)\*\*\s*\(`sti-atelier-v3(?:3[89]|[4-7]\d)`/);
   assert.match(readmeMd, /\|\s*v477\s*\|/);
   assert.ok(nouvJson.some((e) => e.version === 'v477'), 'v477 doit figurer dans nouveautes.json');
-  assert.match(offlineManifest.version, /^v4(?:7[789]|8\d|9\d)-sti-atelier-v3(?:3[89]|4\d|5\d)$/);
+  assert.match(offlineManifest.version, /^v4(?:7[789]|8\d|9\d)-sti-atelier-v3(?:3[89]|[4-7]\d)$/);
 });
 
 test('v477 (comportemental VM) : migration SW de la racine ./ depuis sti-atelier-v335 (v475) sans résurrection du vieux HTML + roue STiV2.0.477 immédiate', async () => {
@@ -6687,7 +6689,7 @@ test('v478 (structure & migration SQL) : protection monotone multicouche des XP 
   }
   assert.match(readmeMd, /\|\s*v478\s*\|/);
   assert.ok(nouvJson.some((e) => e.version === 'v478'), 'v478 doit figurer dans nouveautes.json');
-  assert.match(offlineManifest.version, /^v4(?:7[89]|\d\d)-sti-atelier-v3(?:39|4\d|5\d)$/);
+  assert.match(offlineManifest.version, /^v[4-5]\d\d-sti-atelier-v3(?:3\d|[4-7]\d)$/);
 });
 
 test('v478 (comportemental VM) : zéro remise à zéro des XP sur navigateur neuf/partagé (verrou pull-before-push + fusion local >= distant + plancher sti_quiz_parties)', async () => {

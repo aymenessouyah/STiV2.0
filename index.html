@@ -116,14 +116,14 @@
       <!-- v498 : fond vidéo (drapeau de Raféha), étiré sur toute la boîte, très assombri
            par le voile CSS pour que le texte reste lisible dans les trois thèmes. -->
       <div class="welcome-return__fond" aria-hidden="true">
-        <video class="welcome-return__fond-video" id="welcomeFondVideo" autoplay muted loop playsinline preload="metadata" disablepictureinpicture tabindex="-1">
+        <video class="welcome-return__fond-video" id="welcomeFondVideo" autoplay muted loop playsinline preload="metadata" disablepictureinpicture tabindex="-1" data-video-decor="1" aria-hidden="true">
           <source src="assets/video/drapeaurafeha.mp4" type="video/mp4" />
         </video>
       </div>
       <div class="container">
         <!-- v498 : ruban d'identité sur l'initiale de « Bonjour » et sur celle du prénom.
              Bleu en 3e SI, vert en 4e SI, argent pour l'admin et les profs (data-ruban). -->
-        <h2 class="welcome-return__title" id="welcomeTitle" data-ruban="3si"><span class="ruban-mot"><span class="ruban-initiale" aria-hidden="true"><img class="ruban-initiale__logo" src="assets/icons/sti-icon-192.png" alt="" width="40" height="40" /></span>Bonjour</span>, <span class="ruban-mot"><span class="ruban-initiale" aria-hidden="true"><img class="ruban-initiale__logo" src="assets/icons/sti-icon-192.png" alt="" width="40" height="40" /></span><span id="welcomePrenom">Abonné</span></span></h2>
+        <h2 class="welcome-return__title" id="welcomeTitle" data-ruban="3si"><span class="ruban-mot"><span class="ruban-initiale" aria-hidden="true"><img class="ruban-initiale__logo" src="assets/icons/sti-icon-192.png" alt="" width="40" height="40" /></span><span class="ruban-lettre">B</span>onjour</span>, <span class="ruban-mot"><span class="ruban-initiale" aria-hidden="true"><img class="ruban-initiale__logo" src="assets/icons/sti-icon-192.png" alt="" width="40" height="40" /></span><span id="welcomePrenom">Abonné</span></span></h2>
         <!-- News personnalisées de la classe, saisies par l'admin : bleu en 3e SI, vert en 4e SI.
              Même fond, même typographie et même défilement que l'ancienne barre de news. -->
         <div id="bandeauNewsPerso" class="bandeau-news-perso" data-classe="3si" hidden aria-label="News de la classe">
