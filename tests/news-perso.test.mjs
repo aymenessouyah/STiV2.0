@@ -89,6 +89,10 @@ async function executer(options) {
   if (options && options.classe) {
     memoire.local["sti-session-cache"] = JSON.stringify({ classe: options.classe });
   }
+  if (options && options.session) {
+    memoire.local["sti-session-cache"] = JSON.stringify(options.session);
+    memoire.session["sti-session-cache"] = JSON.stringify(options.session);
+  }
   vm.createContext(ctx);
   new vm.Script(lire('assets/js/news-perso.js'), { filename: 'news-perso.js' }).runInContext(ctx);
   /* Laisse la promesse de lecture publique se résoudre (fetch factice). */
@@ -144,6 +148,7 @@ test('v496 : le bandeau défile avec les textes de la classe de l’élève', as
   assert.ok(troisieme.piste.children.some(c => c.attrs["aria-hidden"] === "true"));
   assert.ok(/^\d+s$/.test(troisieme.piste.style.animationDuration || ""), 'durée de défilement calculée');
 
+  /* Élève 4e SI dont la session n'expose pas la classe : repli sur le privilège. */
   const quatrieme = await executer({ valeur, classesHtml: ["sti-4si-autorise"] });
   assert.equal(quatrieme.barre.dataset.classe, "4si");
   assert.equal(quatrieme.etiq.textContent, "4e SI");
@@ -156,6 +161,25 @@ test('v496 : le bandeau défile avec les textes de la classe de l’élève', as
   assert.equal(parSession.barre.dataset.classe, "4si");
   const parSession3 = await executer({ valeur, classe: "3SI1" });
   assert.equal(parSession3.barre.dataset.classe, "3si");
+
+  /* v497 — le privilège `sti-4si-autorise` (profs, admin, labo, GOLD) ne doit plus
+     imposer les news des 4e SI, ni mélanger les deux classes. */
+  const prof3 = await executer({ valeur, classe: "3SI1", classesHtml: ["sti-4si-autorise"] });
+  assert.equal(prof3.barre.dataset.classe, "3si", "un prof de 3e SI voit les news des 3e SI");
+  const itemsProf3 = textes(prof3.piste);
+  assert.ok(itemsProf3.some(t => t.includes("Contrôle HTML5 mardi")));
+  assert.ok(!itemsProf3.some(t => t.includes("TP PHP jeudi")), "aucune news des 4e SI pour un prof de 3e");
+
+  const prof4 = await executer({ valeur, classe: "4SI 2", classesHtml: ["sti-4si-autorise"] });
+  assert.equal(prof4.barre.dataset.classe, "4si");
+  assert.deepEqual([...new Set(textes(prof4.piste))], ["📣 TP PHP jeudi"]);
+
+  for (const sessionProf of [{ classe: "PROF" }, { classe: "", isAdmin: true }, { classe: "GOLD", isGold: true }, { classe: "elevelabo3" }]) {
+    const enseignant = await executer({ valeur, classesHtml: ["sti-4si-autorise"], session: sessionProf });
+    assert.equal(enseignant.barre.hidden, true, "compte enseignant sans classe : bandeau masqué " + JSON.stringify(sessionProf));
+    assert.equal(enseignant.barre.dataset.classe, "admin");
+    assert.equal(enseignant.piste.children.length, 0, "aucun texte de classe rendu pour un compte enseignant");
+  }
 });
 
 test('v496 : bandeau masqué sans texte pour la classe, désactivé ou hors ligne', async () => {
@@ -186,6 +210,7 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
   assert.match(html, /id="news-ajouter"/);
   assert.match(html, /id="news-actif"/);
   assert.match(html, /id="news-enregistrer"/);
+  assert.match(html, /id="news-apercu"/, "un aperçu montre ce que reçoit la classe choisie");
   assert.match(html, /texte 1<\/strong>, <strong>texte 2/);
   assert.doesNotMatch(html, /id="news-couleur"/, 'la couleur vient de la classe, plus d’un sélecteur par message');
   assert.match(html, /News de la classe/);
@@ -201,12 +226,12 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
 
   /* Le bandeau du site est bien invalidé par le service worker. */
   const sw = lire('sw.js');
-  assert.match(sw, /var CACHE = "sti-atelier-v357"/);
-  assert.match(sw, /var UPDATE_ID = "v496-news-perso-20261028"/);
-  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "news-perso-v496"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v358"/);
+  assert.match(sw, /var UPDATE_ID = "v497-news-niveaux-20261028"/);
+  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "news-niveaux-v497"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "news-perso-v496"/);
-  assert.match(sw, /url: "\.\/admin\.html", revision: "news-perso-v496"/);
-  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "news-perso-v496"/);
+  assert.match(sw, /url: "\.\/admin\.html", revision: "news-niveaux-v497"/);
+  assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "news-niveaux-v497"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   assert.ok(shell.includes('"./assets/js/news-perso.js"'), 'le moteur du bandeau est dans le shell hors-ligne');
   assert.ok(!shell.includes('"./assets/js/cote-ticker.js"'), 'l’ancien moteur ne fait plus partie du shell');

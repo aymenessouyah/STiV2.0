@@ -5143,6 +5143,10 @@
       #modal-news-bandeau .news-classe-btn[aria-selected="true"]{border-color:#23201a;box-shadow:0 2px 0 #23201a;background:#fff}
       #modal-news-bandeau .news-classe-btn[data-classe="3si"][aria-selected="true"]{background:#e0f2fe;color:#075985;border-color:#0284c7}
       #modal-news-bandeau .news-classe-btn[data-classe="4si"][aria-selected="true"]{background:#dcfce7;color:#166534;border-color:#16a34a}
+      #modal-news-bandeau .news-apercu{margin:0 0 8px;padding:8px 10px;border-radius:10px;background:linear-gradient(180deg,#0b101d,#141b2e);border:1px solid rgba(110,231,183,.28);color:#c7cbe2;font-family:"SF Mono",SFMono-Regular,Consolas,monospace;font-size:.78rem;line-height:1.45}
+      #modal-news-bandeau .news-apercu b{font-weight:900}
+      #modal-news-bandeau .news-apercu--3si{color:#7dd3fc}
+      #modal-news-bandeau .news-apercu--4si{color:#6ee7b7}
       #modal-news-bandeau .news-num{flex:0 0 auto;min-width:66px;font-size:.78rem;font-weight:900;color:var(--muted,#5c6275)}
       #modal-news-bandeau .news-vide{font-size:.82rem;color:var(--muted,#5c6275);padding:8px 2px}
       #modal-news-bandeau #news-compteur{font-size:.78rem;color:var(--muted,#5c6275)}
@@ -5156,6 +5160,7 @@
           <button type="button" class="news-classe-btn" id="news-classe-4si" data-classe="4si" role="tab" aria-selected="false" aria-controls="news-liste">🟢 4<sup>e</sup> SI</button>
           <span id="news-compteur"></span>
         </div>
+        <p id="news-apercu" class="news-apercu" aria-live="polite"></p>
         <div id="news-liste" aria-live="polite"></div>
         <div class="news-form">
           <input type="text" id="news-texte" maxlength="140" placeholder="Texte 1 (140 caractères max)…">

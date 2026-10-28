@@ -1,9 +1,9 @@
 {
-  "version": "v496-sti-atelier-v357",
-  "generatedAt": "2026-10-28T16:21:40Z",
+  "version": "v497-sti-atelier-v358",
+  "generatedAt": "2026-10-28T16:36:50Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 695,
-  "totalBytes": 682675383,
+  "totalBytes": 682679298,
   "files": [
     {
       "path": "404.html",
@@ -62,13 +62,13 @@
     },
     {
       "path": "README.md",
-      "bytes": 45135,
-      "gitSha": "320909108ecff094a0fad97e461768ba467e3005"
+      "bytes": 45864,
+      "gitSha": "4230b5880edeacc558a392d7d991c8ead09b2928"
     },
     {
       "path": "admin.html",
-      "bytes": 340793,
-      "gitSha": "07114d9f4e4f35bb7cfcc5129fa9f0e8cd8553f4"
+      "bytes": 341326,
+      "gitSha": "c41bbd24334a4e29e879bdfeff2ee947b6c436c2"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -667,8 +667,8 @@
     },
     {
       "path": "assets/js/admin.js",
-      "bytes": 700789,
-      "gitSha": "06d3dc3d8fd61a470045f7f16ba0bc9a25ba9b31"
+      "bytes": 701593,
+      "gitSha": "11dbc8d04446d489289210d2ebd6f36f7be20e5b"
     },
     {
       "path": "assets/js/analytique.js",
@@ -792,8 +792,8 @@
     },
     {
       "path": "assets/js/news-perso.js",
-      "bytes": 8443,
-      "gitSha": "72c448e4957392f7eb2e92e84d54b335cdd0920c"
+      "bytes": 10236,
+      "gitSha": "c47e1ba6ae31e09c3db7247eb63a37365c8504c1"
     },
     {
       "path": "assets/js/nouveautes.js",
@@ -3477,8 +3477,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 94566,
-      "gitSha": "c4e03dea4bde1cd4d4998980074933708ac5a280"
+      "bytes": 94622,
+      "gitSha": "315b0312de04fbf23e310b6590e2f0f23cae4a6e"
     }
   ]
 }
