@@ -5,3 +5,9 @@ playwright-report/
 # harnais de test local (copies de secours, jamais publiées depuis git)
 /_headers/
 /cours/sql/index.html
+
+# outils de fabrication des vidéos TP : audio intermédiaire
+/outils/tpvid/audio/
+
+# rendus vidéo intermédiaires des capsules TP (livrés dans assets/videos/)
+/outils/tpvid/sortie_*.mp4

@@ -456,9 +456,18 @@ html[dir="rtl"] .reading-progress { transform-origin: right center; }
   padding-bottom: 12px;
 }
 
-.brand-logo { display: inline-flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.brand-logo {
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  column-gap: var(--space-3);
+  row-gap: 1px;
+  min-width: 0;
+}
 
 .brand-logo__mark {
+  grid-row: 1;
+  grid-column: 2;
   width: 40px;
   height: 40px;
   border-radius: var(--radius-sm);
@@ -470,9 +479,11 @@ html[dir="rtl"] .reading-progress { transform-origin: right center; }
   box-shadow: var(--shadow-xs);
 }
 
-/* v498 : drapeau tunisien à gauche du logo, même hauteur que lui. */
+/* v503 : le drapeau a exactement la taille du logo STI, sur la même ligne que lui. */
 .brand-logo__drapeau {
-  width: 60px;
+  grid-row: 1;
+  grid-column: 1;
+  width: 40px;
   height: 40px;
   flex-shrink: 0;
   object-fit: cover;
@@ -480,9 +491,13 @@ html[dir="rtl"] .reading-progress { transform-origin: right center; }
   box-shadow: var(--shadow-xs);
 }
 
-.brand-logo__text { display: flex; flex-direction: column; min-width: 0; }
+/* Le conteneur de texte devient transparent à la grille : le titre reste sur la
+   première ligne, le nom du lycée passe SOUS le drapeau et sous le logo. */
+.brand-logo__text { display: contents; }
 
 .brand-logo__title {
+  grid-row: 1;
+  grid-column: 3;
   font-size: 1.02rem;
   font-weight: 800;
   color: var(--text);
@@ -493,6 +508,9 @@ html[dir="rtl"] .reading-progress { transform-origin: right center; }
 }
 
 .brand-logo__sub {
+  /* v503 : « Lycée Raféha » est écrit sous le drapeau et sous le logo STI. */
+  grid-row: 2;
+  grid-column: 1 / -1;
   font-size: 0.72rem;
   color: var(--text-muted);
   white-space: nowrap;
@@ -864,19 +882,22 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* v499 : cadrage bas — la boîte est large et basse, il faut que l'affiche du
-     lycée (partie basse de la vidéo) reste entièrement visible. */
-  object-position: center 100%;
+  /* v503 : le bandeau est déjà composé en deux panneaux côte à côte (le drapeau
+     à gauche, l'affiche du lycée à droite) : le cadrage centré garde les deux
+     visibles dans la boîte large et basse du bloc « Bonjour ». */
+  object-position: center center;
   opacity: .92;
 }
-/* Voile de lisibilité : dense derrière le texte, plus léger en bas pour laisser
-   apparaître l'affiche du lycée. */
+/* Voile de lisibilité : dense en haut à gauche, derrière le texte, et dégradé
+   vers la droite et le bas pour laisser voir le drapeau et l'affiche du lycée. */
 .welcome-return__fond::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg-alt) 58%, rgba(6, 11, 21, .42) 100%);
-  opacity: .9;
+  background:
+    linear-gradient(90deg, var(--bg-alt) 0%, color-mix(in srgb, var(--bg-alt) 55%, transparent) 46%, rgba(6, 11, 21, .12) 100%),
+    linear-gradient(180deg, var(--bg-alt) 0%, color-mix(in srgb, var(--bg-alt) 30%, transparent) 48%, rgba(6, 11, 21, .18) 100%);
+  opacity: .88;
 }
 .welcome-return > .container { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) {
@@ -1874,19 +1895,21 @@ body.sti-v2 #pwaInvitationInstaller {
 @media (max-width: 540px) {
   /* Conserver toutes les actions sans recouvrir le logo ni élargir la page. */
   body.sti-v2 .site-header__inner, body.sti-v2 .header-actions { gap: var(--space-1); }
-  body.sti-v2 .site-header .brand-logo { position: relative; flex: 0 0 auto; gap: 0; }
-  body.sti-v2 .site-header .brand-logo__text { display: none; }
-  /* v498 : sur mobile le drapeau devient une pastille posée sur le logo,
-     pour ne pas élargir l'en-tête ni pousser les actions hors de l'écran. */
-  body.sti-v2 .site-header .brand-logo__drapeau {
-    position: absolute;
-    left: -6px;
-    bottom: -6px;
-    width: 28px;
-    height: 19px;
-    border-radius: 3px;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, .55), var(--shadow-xs);
-    z-index: 1;
+  /* v503 : sur mobile, le drapeau et le logo STI font exactement la même taille
+     et restent sur une seule ligne ; seul le titre est masqué. */
+  body.sti-v2 .site-header .brand-logo { flex: 0 0 auto; column-gap: 6px; }
+  body.sti-v2 .site-header .brand-logo__title { display: none; }
+  body.sti-v2 .site-header .brand-logo__drapeau,
+  body.sti-v2 .site-header .brand-logo__mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+  }
+  body.sti-v2 .site-header .brand-logo__mark img { width: 30px; height: 30px; }
+  body.sti-v2 .site-header .brand-logo__sub {
+    font-size: 0.6rem;
+    max-width: 96px;
+    line-height: 1.1;
   }
   body.sti-v2 .search-trigger { padding-inline: 7px; }
   body.sti-v2 #installBtn { padding-inline: 5px; }
@@ -1909,6 +1932,11 @@ body.sti-v2 #pwaInvitationInstaller {
 body.sti-v2 .news-card .btn { max-width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: start; }
 body.sti-v2 .site-footer .brand-logo { max-width: 100%; }
 body.sti-v2 .site-footer .brand-logo__title { white-space: normal; }
+/* v503 : dans les pieds de page, il n'y a pas de drapeau : le logo occupe la
+   première colonne et le texte la seconde. */
+.site-footer .brand-logo { grid-template-columns: auto auto; }
+.site-footer .brand-logo__mark { grid-column: 1; }
+.site-footer .brand-logo__title { grid-column: 2; }
 
 /* Ancrages historiques : les liens de retour rejoignent la section sans passer sous l'en-tête. */
 body.sti-v2 .ancre-historique {

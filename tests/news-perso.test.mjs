@@ -226,10 +226,10 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
 
   /* Le bandeau du site est bien invalidé par le service worker. */
   const sw = lire('sw.js');
-  assert.match(sw, /var CACHE = "sti-atelier-v363"/);
-  assert.match(sw, /var UPDATE_ID = "v502-tp-formulaire-20261028"/);
-  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-ruban-v499"/);
-  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-ruban-v499"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v366"/);
+  assert.match(sw, /var UPDATE_ID = "v505-tp-formulaire-long-20261028"/);
+  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-lycee-v503"/);
+  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-lycee-v503"/);
   assert.match(sw, /url: "\.\/admin\.html", revision: "news-niveaux-v497"/);
   assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "news-niveaux-v497"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
