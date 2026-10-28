@@ -1,0 +1,21 @@
+import { JSDOM } from 'jsdom';
+import fs from 'node:fs';
+const dom = new JSDOM('<!doctype html><html><body><div id="wrap"></div></body></html>', {
+  url: 'https://aymenessouyah.github.io/STiV2.0/index.html', runScripts: 'outside-only', pretendToBeVisual: true });
+const { window } = dom;
+window.matchMedia = q => ({ matches: false, media: q, addEventListener() {}, removeEventListener() {} });
+window.HTMLMediaElement.prototype.load = function () {};
+window.HTMLMediaElement.prototype.play = function () { return Promise.resolve(); };
+window.HTMLMediaElement.prototype.pause = function () {};
+window.eval(fs.readFileSync('assets/js/protection.js', 'utf8'));
+window.document.dispatchEvent(new window.Event('DOMContentLoaded'));
+const ouvrir = window.ouvrirVideoPasAPasSTI;
+console.log('lecteur pas a pas defini :', typeof ouvrir);
+ouvrir('tp-evenements-liens', 'TP — Événements, liens et arrière-plans', 0);
+const o = window.document.getElementById('sti-video-modal-overlay');
+const v = window.document.getElementById('sti-video-modal-player');
+const t = window.document.getElementById('sti-video-modal-title');
+console.log('modale affichee :', !!o && !o.hidden && o.style.display !== 'none');
+console.log('titre           :', t && t.textContent);
+console.log('source          :', v && (v.getAttribute('src') || v.src));
+console.log('data-slug       :', o && o.getAttribute('data-slug'));

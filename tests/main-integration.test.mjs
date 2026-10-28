@@ -53,7 +53,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   for (const chemin of ['assets/js/lecteur-commun.js', 'assets/subtitles/validation-nom-prenom-js-fr.vtt']) {
     assert.equal(revisions.get('./' + chemin), 'video-js-validation-v485', chemin);
   }
-  assert.equal(revisions.get('./assets/js/protection.js'), 'accueil-ruban-v499');
+  assert.equal(revisions.get('./assets/js/protection.js'), 'tp-evenements-v500');
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }

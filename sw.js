@@ -153,7 +153,7 @@ var UPDATE_FILES = [
   { url: "./assets/data/nouveautes.json", revision: "compteur-media-v479" },
   { url: "./assets/js/config.js", revision: "compteur-media-v479" },
   { url: "./assets/js/acces.js", revision: "compteur-media-v479" },
-  { url: "./assets/js/protection.js", revision: "accueil-ruban-v499" },
+  { url: "./assets/js/protection.js", revision: "tp-evenements-v500" },
   { url: "./assets/js/mobile-nav.js", revision: "xp-pwa-v490" },
   { url: "./assets/js/roue-nuage.js", revision: "perf-quiz-php-v474" },
   { url: "./assets/js/roue-habillage.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 8050, sha256: "0cbd800edc65bb32fa9f370071ce4405c30b2088a72ef89119d14232685557fc" },
