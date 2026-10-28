@@ -13,20 +13,6 @@ test.beforeEach(async ({ page }, testInfo) => {
   await page.waitForFunction(() => Boolean(window.STIProfil && window.ouvrirVideoPasAPasSTI));
 });
 
-/* Les onglets mobiles sont masqués à la descente et reviennent à la remontée. */
-async function montrerNavigationMobile(page) {
-  await expect(page.locator('#sti-bnav')).toBeVisible();
-  await page.evaluate(() => {
-    document.documentElement.style.scrollBehavior = 'auto';
-    const barre = document.querySelector('.course-tabs-bar');
-    window.scrollTo(0, barre.getBoundingClientRect().top + window.scrollY + 300);
-  });
-  await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
-  await page.evaluate(() => window.scrollBy(0, -120));
-  await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
-  await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
-}
-
 test('la fiche, les détails Math/String et les 27 corrigés restent disponibles', async ({ page }) => {
   const erreurs = []; page.on('pageerror', e => erreurs.push(e.message));
   await expect(page.locator('[data-chapter-id]')).toHaveCount(15);
@@ -145,7 +131,6 @@ test('récapitulatif accessible et lecteur vidéo imbriqué avec reprise', async
 
 test('mobile, thèmes, RTL et aperçu des annexes', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await montrerNavigationMobile(page);
   await page.locator('#tocMobileOpenBtn').click(); await expect(page.locator('#tocMobileOpenBtn')).toHaveAttribute('aria-expanded', 'true');
   await page.keyboard.press('Escape'); await expect(page.locator('#tocMobileOpenBtn')).toHaveAttribute('aria-expanded', 'false');
   for (const theme of ['sombre', 'clair', 'intermediaire']) {
@@ -368,7 +353,6 @@ test('les boîtes natives des défis restent disponibles hors sandbox', async ({
 
 test('les projets et les commandes restent accessibles sur mobile', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 700 });
-  await montrerNavigationMobile(page);
   await page.locator('[data-course-tab="exercices"]').click();
   const lien = page.locator('[data-open-js-resource][href="../projets/carte-bancaire/cb.html"]');
   await lien.click();

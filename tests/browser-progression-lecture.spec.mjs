@@ -27,16 +27,6 @@ async function preparer(page, { classe = '4SI 1', profil = null } = {}) {
   }, { classe, profil, cacheVersion, versionAffichee });
 }
 
-/* Sur téléphone, les onglets masqués se rouvrent par une remontée avant le clic. */
-async function montrerNavigation(page) {
-  await expect(page.locator('#sti-bnav')).toBeVisible();
-  await page.evaluate(() => {
-    document.documentElement.style.scrollBehavior = 'auto';
-    window.scrollBy(0, -120);
-  });
-  await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
-}
-
 const cours = [
   { nom: 'html5', premier: 'entete', suivant: 'structuration', total: 10, texte: '#courseRingCount', pct: '#courseRingPct' },
   { nom: 'css3', premier: 'selecteurs', suivant: 'typographie', total: 10, texte: '#courseRingCount', pct: '#courseRingPct' },
@@ -68,7 +58,6 @@ for (const c of cours) {
     await expect(page.locator('#courseRevisedCount')).toHaveText(`0 / ${c.total} chapitres révisés`);
     await expect(page.locator(c.texte)).toHaveText(`1 / ${c.total} chapitres consultés`);
 
-    await montrerNavigation(page);
     await page.locator('#tocMobileOpenBtn').click();
     await page.locator(`#courseSidebar a[href="#${c.suivant}"]`).click();
     await expect.poll(() => page.evaluate(([nom, chapitre]) => STIProfil.chargerProfil().chapitres[nom][chapitre], [c.nom, c.suivant])).toBe('en_cours');
@@ -92,7 +81,6 @@ for (const c of cours) {
     await expect(page.locator('#exercices')).toBeVisible();
     await page.waitForTimeout(900);
     expect(await page.evaluate(nom => STIProfil.chargerProfil().chapitres[nom], c.nom)).toEqual({});
-    await montrerNavigation(page);
     await page.locator('[data-course-tab="cours"]').click();
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
     await page.waitForTimeout(700);
@@ -170,7 +158,6 @@ for (const c of cours) {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`/cours/${c.nom}.html#exercices`, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#exercices')).toBeVisible();
-    await montrerNavigation(page);
     await page.locator('[data-course-tab="cours"]').click();
     const placer = async id => page.locator(`#${id}`).evaluate(section => window.scrollTo({ top: window.scrollY + section.getBoundingClientRect().top - 205, behavior: 'instant' }));
     await placer(c.premier);
@@ -199,7 +186,6 @@ for (const c of cours) {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(`/cours/${c.nom}.html#exercices`, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#exercices')).toBeVisible();
-    await montrerNavigation(page);
     await page.locator('[data-course-tab="cours"]').click();
     await page.locator(`#${c.premier}`).evaluate(section => window.scrollTo({ top: scrollY + section.getBoundingClientRect().top - 205, behavior: 'instant' }));
     await page.evaluate(() => {

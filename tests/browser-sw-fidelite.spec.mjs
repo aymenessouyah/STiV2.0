@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-for (const ancienne of ['340','341','342','343','344','345','346','347','348','349','350','351','352','353']) {
-  test(`migration réelle du service worker v${ancienne} vers v354 sans boucle de rechargement`, async ({ page, context }) => {
+for (const ancienne of ['340','341','342','343','344','345','346','347','348','349','350','351','352']) {
+  test(`migration réelle du service worker v${ancienne} vers v353 sans boucle de rechargement`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     // Une identité fictive contourne seulement l'authentification pour ce scénario.
     await page.addInitScript(() => {
@@ -90,25 +90,12 @@ for (const ancienne of ['340','341','342','343','344','345','346','347','348','3
           await revisions.put('/__sti_revision__/'+encodeURIComponent(chemin)+'?rev='+revision, new Response('ancienne révision'));
         }
       }
-      if (v === '353') {
-        // Installation v353 déjà visitée : ses dépendances sont présentes, pas le nouveau module.
-        for (const chemin of ['/assets/js/config.js?v=479','/assets/js/supabase-umd.js','/assets/js/acces.js?v=479',
-          '/assets/js/sync-progressions.js?v=479','/assets/js/cours-html5.js','/assets/js/protection.js?v=227&rev=479',
-          '/assets/js/lecteur-commun.js','/assets/js/visionneuse-exercices.js','/assets/css/visionneuse-exercices.css',
-          '/assets/css/protection.css?v=227','/assets/js/mobile-nav.js?v=464']) {
-          await cache.put(chemin, await fetch(chemin));
-        }
-        await cache.put('/cours/html5.html',new Response('<!doctype html><p>Ancien cours v353</p>',{headers:{'content-type':'text/html'}}));
-        for (const [chemin, revision] of [['./cours/html5.html','progression-chapitres-v492'], ['./assets/css/cours.css','cours-retour-xp-v486'], ['./assets/js/cours-html5.js','progression-chapitres-v492']]) {
-          await revisions.put('/__sti_revision__/'+encodeURIComponent(chemin)+'?rev='+revision, new Response('ancienne révision'));
-        }
-      }
       await cache.put('/assets/js/sqljs/sql-wasm.wasm',new Response('fixture à conserver'));
     }, ancienne);
     let chargements = 0;
     page.on('domcontentloaded', () => { chargements++; });
     await page.goto('/index.html#videos', { waitUntil:'domcontentloaded' }).catch(() => {});
-    await expect.poll(async () => { try { return await page.evaluate(() => localStorage.getItem('sti-version-installee')); } catch (e) { return ''; } }, {timeout:20_000}).toBe('354');
+    await expect.poll(async () => { try { return await page.evaluate(() => localStorage.getItem('sti-version-installee')); } catch (e) { return ''; } }, {timeout:20_000}).toBe('353');
     await expect.poll(async () => { try { return await page.evaluate(() => Boolean(navigator.serviceWorker.controller)); } catch (e) { return false; } }, {timeout:20_000}).toBe(true);
     await expect(page.locator('#videosGrid')).toBeVisible();
     // La première activation peut recharger la page, mais ne doit pas tourner en boucle.
@@ -122,47 +109,26 @@ for (const ancienne of ['340','341','342','343','344','345','346','347','348','3
     await expect(page.locator('#sti-bnav [data-cle="videos"]')).toHaveText('Vidéos');
     await expect(page.locator('#sti-bnav [data-cle="exercices"]')).toHaveCount(0);
     /* clients.claim() précède volontairement la copie locale des anciens caches. */
-    await expect.poll(() => page.evaluate(async () => (await caches.keys()).filter(n => /^sti-atelier-v(?:34[0123456789]|350|351|352|353)$/.test(n))), { timeout: 20_000 }).toEqual([]);
+    await expect.poll(() => page.evaluate(async () => (await caches.keys()).filter(n => /^sti-atelier-v(?:34[0123456789]|350|351|352)$/.test(n))), { timeout: 20_000 }).toEqual([]);
     expect(await page.evaluate(async () => {
       const noms = await caches.keys();
-      const cache = await caches.open('sti-atelier-v354');
-      return { ancien: noms.some(n => /^sti-atelier-v(?:34[0123456789]|350|351|352|353)$/.test(n)),
+      const cache = await caches.open('sti-atelier-v353');
+      return { ancien: noms.some(n => /^sti-atelier-v(?:34[0123456789]|350|351|352)$/.test(n)),
         donnee: await (await cache.match('/assets/js/sqljs/sql-wasm.wasm'))?.text(),
         titre: document.title, version: localStorage.getItem('sti-version-affichee') };
-    })).toMatchObject({ ancien:false, donnee:'fixture à conserver', version:'493' });
-    expect(await page.evaluate(async () => (await (await (await caches.open('sti-atelier-v354')).match('/assets/js/mobile-nav.js', {ignoreSearch:true})).text()))).toContain('lib: "Vidéos"');
+    })).toMatchObject({ ancien:false, donnee:'fixture à conserver', version:'492' });
+    expect(await page.evaluate(async () => (await (await (await caches.open('sti-atelier-v353')).match('/assets/js/mobile-nav.js', {ignoreSearch:true})).text()))).toContain('lib: "Vidéos"');
     // Les nouveaux modules indispensables sont présents même avant la première visite.
-    for (const chemin of ['/assets/js/cours-onglets-mobile.js','/assets/js/lecteur-commun.js','/assets/js/retour-quiz.js','/assets/js/appel-quiz.js','/assets/js/suivi-profil.js','/assets/js/reconnexion-profil.js','/assets/css/theme-patrimoine.css','/assets/js/visionneuse-exercices.js','/assets/js/roue-initiales.js','/assets/css/badge-compte.css','/assets/images/badge-compte-vierge.png','/assets/icons/sti-icon-192.png','/assets/images/qr-code-site.png']) {
-      await expect.poll(() => page.evaluate(async u => Boolean(await (await caches.open('sti-atelier-v354')).match(u, {ignoreSearch:true})),chemin)).toBe(true);
+    for (const chemin of ['/assets/js/lecteur-commun.js','/assets/js/retour-quiz.js','/assets/js/appel-quiz.js','/assets/js/suivi-profil.js','/assets/js/reconnexion-profil.js','/assets/css/theme-patrimoine.css','/assets/js/visionneuse-exercices.js','/assets/js/roue-initiales.js','/assets/css/badge-compte.css','/assets/images/badge-compte-vierge.png','/assets/icons/sti-icon-192.png','/assets/images/qr-code-site.png']) {
+      await expect.poll(() => page.evaluate(async u => Boolean(await (await caches.open('sti-atelier-v353')).match(u, {ignoreSearch:true})),chemin)).toBe(true);
     }
     if (ancienne === '352') {
       const contenu = await page.evaluate(async () => {
-        const cache = await caches.open('sti-atelier-v354');
+        const cache = await caches.open('sti-atelier-v353');
         return [await (await cache.match('/cours/html5.html')).text(), await (await cache.match('/assets/js/cours-html5.js')).text()];
       });
       expect(contenu[0]).toContain('chapitres consultés');
       expect(contenu[1]).toContain('candidatLecture');
-    }
-    if (ancienne === '353') {
-      const contenu = await page.evaluate(async () => {
-        const cache = await caches.open('sti-atelier-v354');
-        return [await (await cache.match('/cours/html5.html')).text(), await (await cache.match('/assets/css/cours.css')).text()];
-      });
-      expect(contenu[0]).toContain('cours-onglets-mobile.js');
-      expect(contenu[1]).toContain('sti-onglets-cours-fixes');
-      // La correction est utilisable sans réseau immédiatement après la migration.
-      await context.setOffline(true);
-      await page.goto('/cours/html5.html', {waitUntil:'domcontentloaded'});
-      await expect(page.locator('#sti-bnav')).toBeVisible();
-      await page.evaluate(() => {
-        document.documentElement.style.scrollBehavior = 'auto';
-        const top = document.querySelector('.course-tabs-bar').getBoundingClientRect().top + window.scrollY;
-        window.scrollTo(0, Math.max(200, top - window.innerHeight - 200));
-      });
-      await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
-      await page.evaluate(() => window.scrollBy(0, -120));
-      await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ratio:1});
-      await context.setOffline(false);
     }
     await page.goto('/cours/css3.html#exercices', {waitUntil:'domcontentloaded'});
     await expect(page.locator('[data-course-tab="exercices"]')).toHaveAttribute('aria-selected','true');
