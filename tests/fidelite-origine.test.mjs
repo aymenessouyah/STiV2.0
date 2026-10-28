@@ -66,14 +66,18 @@ function dureeMp4(path) {
   } finally { closeSync(fd); }
 }
 
-test('catalogue : fichiers réels, 14 entrées distinctes, durées MP4 et restrictions', () => {
+test('catalogue : fichiers réels, 15 entrées distinctes, durées MP4 et restrictions', () => {
   const js = lire('assets/js/app.js');
   const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
   const catalogue = vm.runInNewContext('(' + texte + ')');
-  assert.equal(catalogue.length, 14);
+  assert.equal(catalogue.length, 15);
   assert.equal(new Set(catalogue.map(v => v.id)).size, catalogue.length);
   const comptes = {}; for (const v of catalogue) comptes[v.matiere] = (comptes[v.matiere] || 0) + 1;
-  assert.deepEqual(comptes, { html5:1, css3:4, javascript:2, sql:4, php:3 });
+  assert.deepEqual(comptes, { html5:2, css3:4, javascript:2, sql:4, php:3 });
+  assert.ok(catalogue.some(v => v.id === 'tp-evenements-liens'
+    && v.matieres.join() === 'html5,css3'
+    && v.srcPrincipal === 'assets/videos/tp-evenements-liens.mp4'
+    && existsSync(resolve(root, v.urlTP))));
   for (const v of catalogue) {
     assert.ok(existsSync(resolve(root, v.srcPrincipal)), v.srcPrincipal);
     if (v.srcSecours) assert.ok(existsSync(resolve(root, v.srcSecours)), v.srcSecours);
@@ -105,8 +109,9 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'accueil-ruban-v499' :
-      chemin.startsWith('cours/') || chemin === 'assets/css/cours.css' ? 'onglets-mobile-v493' : 'progression-chapitres-v492';
+    const revision = chemin === 'assets/js/app.js' || chemin === 'assets/css/cours.css'
+      || chemin === 'cours/html5.html' || chemin === 'cours/css3.html' ? 'tp-evenements-v500'
+      : chemin.startsWith('cours/') ? 'onglets-mobile-v493' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
   assert.doesNotMatch(lire('assets/js/visionneuse-exercices.js'), /\blocalStorage\b|\bsessionStorage\b/);
