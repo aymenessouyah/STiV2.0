@@ -1,9 +1,9 @@
 {
   "version": "v500-sti-atelier-v361",
-  "generatedAt": "2026-10-28T18:12:56Z",
+  "generatedAt": "2026-10-28T18:31:55Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 700,
-  "totalBytes": 687393953,
+  "totalBytes": 687394394,
   "files": [
     {
       "path": "404.html",
@@ -817,8 +817,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 211953,
-      "gitSha": "aecf04e56503ba542e3f85c8a286fd26ef4a0484"
+      "bytes": 212394,
+      "gitSha": "9de55f4fa23d7eccd25071d240196528fef9afc9"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -3503,7 +3503,7 @@
     {
       "path": "sw.js",
       "bytes": 95326,
-      "gitSha": "05fe0c43ee2feed424d35bf60ecc202ae7b5b8f0"
+      "gitSha": "eba1f55f75407b370453648db19d93c88db6b981"
     }
   ]
 }
