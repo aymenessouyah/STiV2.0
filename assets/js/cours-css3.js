@@ -355,7 +355,7 @@
     cours:{titre:'Cours CSS3',description:'Sélecteurs, Flexbox et transitions — vidéo du cours',videoId:'css3-cours',video:'../assets/videos/css3-cours-v9-sync.mp4',videoTitle:'Cours CSS3'},
     positionnement:{titre:'Positionnement animé',description:'display · position · float — pas à pas',url:'../Positionnement-animee/index.html',videoId:'css-positionnement',video:'../assets/videos/css-positionnement.mp4',videoTitle:'CSS pas à pas — Positionnement animé'},
     cssanimee:{titre:'CSS animée',description:'arrière-plans · liens · ombres · bordures · tableaux · listes',url:'../cssanimee/index.html',videoId:'css-animee',video:'../assets/videos/css-animee.mp4',videoTitle:'CSS pas à pas — Décoration animée'},
-    tpEvenements:{titre:'TP — Événements, liens et arrière-plans',description:'événements JavaScript · pseudo-classes des liens · background',url:'../exercices/html-css/tp-evenements-liens/index.html',videoId:'tp-evenements-liens',video:'../assets/videos/tp-evenements-liens.mp4',videoTitle:'TP — Événements, liens et arrière-plans'},
+    tpEvenements:{titre:'TP — Événements, liens et arrière-plans',description:'événements JavaScript · pseudo-classes des liens · background',url:'../exercices/html-css/tp-evenements-liens/index.html',videoId:'tp-evenements-liens',video:'../assets/videos/tp-evenements-liens-v2.mp4',videoTitle:'TP — Événements, liens et arrière-plans'},
     background:{titre:'Détails background — TP Site Tunisie',description:'image de fond · voile · carte badge — mémo interactif corrigé',url:'../projets/site-tunisie/correction-details/carte-timbre-droite-haut.html'}
   };
   function preparerChangementVideo(lecteur){

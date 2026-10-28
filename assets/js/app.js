@@ -257,8 +257,8 @@
       badgeClasse: "badge-html",
       couleur: "#ff783c",
       titre: "TP — Événements, liens et arrière-plans",
-      dureeTexte: "03:48",
-      srcPrincipal: "assets/videos/tp-evenements-liens.mp4",
+      dureeTexte: "03:12",
+      srcPrincipal: "assets/videos/tp-evenements-liens-v2.mp4",
       urlTP: "exercices/html-css/tp-evenements-liens/index.html",
       urlCours: "exercices/html-css/tp-evenements-liens/index.html",
       codeApercu: "onclick=\"journal('clic')\""

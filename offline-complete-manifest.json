@@ -1,9 +1,9 @@
 {
-  "version": "v500-sti-atelier-v361",
-  "generatedAt": "2026-10-28T18:31:55Z",
+  "version": "v501-sti-atelier-v362",
+  "generatedAt": "2026-10-28T18:55:17Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 700,
-  "totalBytes": 687394394,
+  "totalBytes": 690226637,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 48057,
-      "gitSha": "15dca35eebe222de29c8673c19bf7d563ce9b59c"
+      "bytes": 48074,
+      "gitSha": "aca8bad638d5b3ed56d0a4f8d7915d98996fad7f"
     },
     {
       "path": "admin.html",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 107500,
-      "gitSha": "27fa85e6c5cd46f40dd60c9405cf690f6c948284"
+      "bytes": 107503,
+      "gitSha": "2ddbda1fa56c2210472c310a66d29c71fb640279"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -702,8 +702,8 @@
     },
     {
       "path": "assets/js/cours-css3.js",
-      "bytes": 43819,
-      "gitSha": "80dec727dd9b7ca3b110a805c6a6a59fcb475385"
+      "bytes": 43822,
+      "gitSha": "7e96ea480a5cf933a08db7e42afe698def744ef1"
     },
     {
       "path": "assets/js/cours-html5.js",
@@ -817,8 +817,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 212394,
-      "gitSha": "9de55f4fa23d7eccd25071d240196528fef9afc9"
+      "bytes": 212397,
+      "gitSha": "ebfbe45c721b65a012fc08db8450835947948bf0"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1141,9 +1141,9 @@
       "gitSha": "6b1142870ded1e6a69f56d1686de747b92b9ee7d"
     },
     {
-      "path": "assets/videos/tp-evenements-liens.mp4",
-      "bytes": 2650097,
-      "gitSha": "fd2f4f70a56e64f94a7c0591175d36d41e7a5c1d"
+      "path": "assets/videos/tp-evenements-liens-v2.mp4",
+      "bytes": 5482300,
+      "gitSha": "d0c422a86b0189059d83c54b5978434289525e06"
     },
     {
       "path": "assets/videos/validation-nom-prenom-js.mp4",
@@ -1192,8 +1192,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 209625,
-      "gitSha": "df30d92dd196afb78ca7901415c48133a90cd06f"
+      "bytes": 209631,
+      "gitSha": "795a1a94fefccdbeb779c495c6d623f04a4022b9"
     },
     {
       "path": "cours/datalist.html",
@@ -1207,8 +1207,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 202894,
-      "gitSha": "3ea8a99008101dc79868abd52159a38a8132225f"
+      "bytes": 202900,
+      "gitSha": "c29e28d91f924618bf208e9580a42aa036bd5ad5"
     },
     {
       "path": "cours/javascript.html",
@@ -3502,8 +3502,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 95326,
-      "gitSha": "eba1f55f75407b370453648db19d93c88db6b981"
+      "bytes": 95328,
+      "gitSha": "84775ca5ca489c32b40c5b0cb3ed9478cd8865c1"
     }
   ]
 }
