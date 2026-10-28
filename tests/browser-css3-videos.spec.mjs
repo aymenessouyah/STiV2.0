@@ -1,0 +1,106 @@
+import { test, expect } from '@playwright/test';
+
+/* Session fictive limitée à l'interception du navigateur de test :
+   les scripts d'accès et les fichiers servis en production restent intacts. */
+test.beforeEach(async ({ page }) => {
+  await page.route('**/assets/js/config.js*', async route => {
+    const response = await route.fetch();
+    const original = await response.text();
+    const fin = original.indexOf('};') + 2;
+    const simulacre = "\nwindow.STI_AUTH.URL = ''; window.__STI_GOLD = true;\n";
+    await route.fulfill({ response, body: original.slice(0, fin) + simulacre + original.slice(fin) });
+  });
+  await page.goto('/cours/css3.html', { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => Boolean(window.STIProfil));
+});
+
+async function positionner(page, selecteur, secondes) {
+  await page.locator(selecteur).evaluate(async (video, temps) => {
+    video.load();
+    if (video.readyState < 1) await new Promise((resolve, reject) => {
+      video.addEventListener('loadedmetadata', resolve, { once: true });
+      video.addEventListener('error', reject, { once: true });
+    });
+    video.currentTime = temps;
+    video.dispatchEvent(new Event('pause'));
+  }, secondes);
+}
+
+test('les deux MP4 du pas-à-pas ont des positions indépendantes et une reprise dans la playlist', async ({ page }) => {
+  const erreurs = [];
+  page.on('pageerror', erreur => erreurs.push(erreur.message));
+  await expect(page.locator('#pas-a-pas .pas-a-pas-card')).toHaveCount(3);
+  for (const [lecteur, fichier] of [['#stepPositionVideo', 'css-positionnement.mp4'], ['#stepDecoVideo', 'css-animee.mp4']]) {
+    await expect(page.locator(`${lecteur} source`)).toHaveAttribute('src', `../assets/videos/${fichier}`);
+    await expect(page.locator(lecteur)).toHaveAttribute('controls', '');
+    await expect(page.locator(lecteur)).toHaveAttribute('preload', 'none');
+  }
+  await positionner(page, '#stepPositionVideo', 11);
+  await positionner(page, '#stepDecoVideo', 9);
+  expect(await page.evaluate(() => window.STIProfil.chargerProfil().videos.positions)).toMatchObject({
+    'css-positionnement': 11, 'css-animee': 9
+  });
+
+  await page.locator('[data-course-tab="videos"]').click();
+  await page.locator('[data-playlist="positionnement"]').click();
+  await expect(page.locator('#playlistLessonVideoCard')).toBeVisible();
+  await expect(page.locator('#playlistLessonLink')).toHaveAttribute('href', '../Positionnement-animee/index.html');
+  await expect(page.locator('#playlistLessonVideoCard [data-resume-video]')).toContainText('0:11');
+  await page.locator('#playlistLessonVideoCard [data-resume-video]').click();
+  const lecteur = page.locator('#sti-video-modal-player');
+  await expect(page.locator('#sti-video-modal-overlay')).toBeVisible();
+  await expect.poll(() => lecteur.evaluate(video => video.currentTime)).toBeGreaterThanOrEqual(11);
+  await lecteur.evaluate(video => { video.currentTime = 23; });
+  await page.locator('#sti-video-modal-close').click();
+  const sauvegarde = await page.evaluate(() => window.STIProfil.chargerProfil().videos.positions);
+  expect(sauvegarde['css-positionnement']).toBe(23);
+  expect(sauvegarde['css-animee']).toBe(9);
+  await page.locator('[data-playlist="cssanimee"]').click();
+  await expect(page.locator('#playlistLessonVideo')).toHaveAttribute('src', '../assets/videos/css-animee.mp4');
+  await expect(page.locator('#playlistLessonVideoCard [data-resume-video]')).toContainText('0:09');
+  await expect(page.locator('#playlistLessonLink')).toHaveAttribute('href', '../cssanimee/index.html');
+  await page.locator('[data-playlist="background"]').click();
+  await expect(page.locator('#playlistLessonVideoCard')).toBeHidden();
+  await expect(page.locator('#playlistLessonLink')).toHaveAttribute('href', '../projets/site-tunisie/correction-details/carte-timbre-droite-haut.html');
+  expect(erreurs).toEqual([]);
+});
+
+test('une seule lecture à la fois et pause à la fermeture du lecteur', async ({ page }) => {
+  for (const [id, slug] of [['stepPositionVideo','css-positionnement'],['stepDecoVideo','css-animee']]) {
+    const bouton = page.locator('#'+id).locator('..').locator('..').locator('.sti-lecteur-complet').first();
+    await bouton.click();
+    await expect(page.locator('#sti-video-modal-overlay')).toHaveAttribute('data-slug',slug);
+    await expect(page.locator('#sti-video-modal-player')).toHaveAttribute('src',new RegExp(slug+'.mp4'));
+    expect(await page.locator('#stepPositionVideo').evaluate(video=>video.paused)).toBe(true);
+    expect(await page.locator('#stepDecoVideo').evaluate(video=>video.paused)).toBe(true);
+    await page.keyboard.press('Escape');
+    await expect.poll(() => page.locator('#sti-video-modal-player').evaluate(video=>video.paused)).toBe(true);
+    await expect(bouton).toBeFocused();
+  }
+  await page.locator('[data-course-tab="videos"]').click();
+  await page.locator('[data-course-tab="cours"]').click();
+  await page.locator('#pas-a-pas-toggle').focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('#pas-a-pas-toggle')).toHaveAttribute('aria-expanded','false');
+});
+
+test('les lecteurs et la playlist restent utilisables au clavier sur mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator('#pas-a-pas-toggle').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#pas-a-pas-toggle')).toHaveAttribute('aria-expanded', 'false');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#stepPositionVideo')).toBeVisible();
+  const bouton = page.locator('#stepPositionVideo').locator('..').locator('..').locator('.sti-lecteur-complet').first();
+  await bouton.focus(); await page.keyboard.press('Enter');
+  await expect(page.locator('#sti-video-modal-overlay')).toBeVisible(); await page.keyboard.press('Escape'); await expect(bouton).toBeFocused();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
+  // Sur mobile, remonter d’abord pour réafficher la barre masquée pendant la lecture.
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; window.scrollBy(0, -120); });
+  await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
+  await expect(page.locator('.course-tabs-bar')).toBeInViewport({ ratio: 1 });
+  await page.locator('[data-course-tab="videos"]').click();
+  await page.locator('[data-playlist="cssanimee"]').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#playlistLessonVideoCard')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
+});

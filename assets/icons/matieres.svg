@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- Pictogrammes locaux : couleurs héritées du thème, dessin lisible à 32 px. -->
+  <symbol id="html5" viewBox="0 0 48 48">
+    <path fill="currentColor" d="M5 3h38l-3.5 36L24 45 8.5 39z"/>
+    <path fill="var(--surface-solid)" opacity=".15" d="M24 6h15.7l-3 30L24 41z"/>
+    <path fill="var(--surface-solid)" d="M14 11h20l-.5 4H18.4l.4 4h14.3l-1.4 12L24 34l-7.7-3-.5-5h4l.2 2.1 4 1.4 4-1.4.5-5H15.1z"/>
+  </symbol>
+  <symbol id="css3" viewBox="0 0 48 48">
+    <path fill="currentColor" d="M5 3h38l-3.5 36L24 45 8.5 39z"/>
+    <path fill="var(--surface-solid)" opacity=".15" d="M24 6h15.7l-3 30L24 41z"/>
+    <path fill="var(--surface-solid)" d="M14 11h20l-.5 4-10.2 4h9.8l-1.4 12L24 34l-7.7-3-.5-5h4l.2 2.1 4 1.4 4-1.4.5-5H15l-.4-4 10.1-4H14.4z"/>
+  </symbol>
+  <symbol id="javascript" viewBox="0 0 48 48">
+    <rect x="3" y="3" width="42" height="42" rx="10" fill="currentColor"/>
+    <path fill="var(--surface-solid)" opacity=".14" d="M3 30 30 3h6a9 9 0 0 1 9 9v24a9 9 0 0 1-9 9H12a9 9 0 0 1-9-9z"/>
+    <path fill="none" stroke="var(--surface-solid)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" d="M22 14v16c0 4-2 6-5.2 6-2 0-3.8-.9-4.8-3m25-15c-1.7-2.8-4.8-3.7-7.5-1.9-2.8 1.9-2.2 4.8 1 6.8l3 2c5 3.2 4 9.2-1 10.4-3 .6-6-.4-8-3"/>
+  </symbol>
+  <symbol id="sql" viewBox="0 0 48 48">
+    <path fill="currentColor" d="M5 10c0-4.4 8.5-8 19-8s19 3.6 19 8v27c0 5-8.5 9-19 9S5 42 5 37z"/>
+    <path fill="none" stroke="var(--surface-solid)" stroke-width="2" opacity=".8" d="M5 10c0 4.4 8.5 8 19 8s19-3.6 19-8M5 30c0 4.4 8.5 8 19 8s19-3.6 19-8"/>
+    <text x="24" y="29" text-anchor="middle" fill="var(--surface-solid)" font-family="system-ui,sans-serif" font-size="11" font-weight="800">SQL</text>
+  </symbol>
+  <symbol id="php" viewBox="0 0 48 48">
+    <rect x="2" y="10" width="44" height="28" rx="14" fill="currentColor"/>
+    <rect x="5" y="13" width="38" height="22" rx="11" fill="none" stroke="var(--surface-solid)" opacity=".4"/>
+    <path fill="none" stroke="var(--surface-solid)" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" d="m9 31 2.7-14h4c4.5 0 4 6.6-1 6.6h-4M20 17l-2.5 14m1.4-7.5h6m1.2-6.5L23.5 31m5.5 0 2.7-14h4c4.5 0 4 6.6-1 6.6h-4"/>
+  </symbol>
+</svg>

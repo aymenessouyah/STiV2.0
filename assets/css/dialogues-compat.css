@@ -1,0 +1,19 @@
+/* Repli accessible pour les dialogues natifs interdits par un aperçu sandbox. */
+.sti-dialogue-compat {
+  box-sizing: border-box;
+  width: min(27rem, calc(100% - 2rem));
+  max-height: calc(100% - 2rem);
+  margin: auto;
+  padding: 1.25rem;
+  overflow: auto;
+  border: 1px solid var(--border, GrayText);
+  border-radius: var(--radius-lg, .75rem);
+  background: var(--surface-solid, var(--surface, Canvas));
+  color: var(--text, CanvasText);
+  font: inherit;
+}
+.sti-dialogue-compat form { display: grid; gap: 1rem; }
+.sti-dialogue-compat p { margin: 0; line-height: 1.5; }
+.sti-dialogue-compat input { box-sizing: border-box; width: 100%; padding: .6rem; font: inherit; }
+.sti-dialogue-compat__actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: .5rem; }
+.sti-dialogue-compat button { padding: .55rem .9rem; font: inherit; cursor: pointer; }

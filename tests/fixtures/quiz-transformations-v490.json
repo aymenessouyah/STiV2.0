@@ -1,0 +1,186 @@
+{
+  "quiz/html-css.html": [
+    [
+      "        } catch (e) {}\n        return { xp: 0, best: 0, parties: 0, bonnes: 0, total: 0 };\n      }\n      function ecrireXpHtmlCss(patch, gain, partie) {\n        var cur = lireXpHtmlCss();\n        var out = {\n          xp: Math.max(cur.xp, Number(patch && patch.xp != null ? patch.xp : cur.xp) || 0),\n",
+      "        } catch (e) {}\n        return { xp: 0, best: 0, parties: 0, bonnes: 0, total: 0 };\n      }\n      function ecrireXpHtmlCss(patch, gain) {\n        var cur = lireXpHtmlCss();\n        var out = {\n          xp: Math.max(cur.xp, Number(patch && patch.xp != null ? patch.xp : cur.xp) || 0),\n"
+    ],
+    [
+      "          bonnes: Math.max(cur.bonnes, Number(patch && patch.bonnes != null ? patch.bonnes : cur.bonnes) || 0),\n          total: Math.max(cur.total, Number(patch && patch.total != null ? patch.total : cur.total) || 0),\n        };\n        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(CLE_XP_HTMLCSS, out, gain || 0, partie))) {\n          try { localStorage.setItem(CLE_XP_HTMLCSS, JSON.stringify(out)); } catch (e) {}\n        } else {\n          out = lireXpHtmlCss();\n        }\n        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(CLE_XP_HTMLCSS);\n        var elHs = $(\"#heroScore\");\n",
+      "          bonnes: Math.max(cur.bonnes, Number(patch && patch.bonnes != null ? patch.bonnes : cur.bonnes) || 0),\n          total: Math.max(cur.total, Number(patch && patch.total != null ? patch.total : cur.total) || 0),\n        };\n        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(CLE_XP_HTMLCSS, out, gain || 0))) {\n          try { localStorage.setItem(CLE_XP_HTMLCSS, JSON.stringify(out)); } catch (e) {}\n        }\n        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(CLE_XP_HTMLCSS);\n        var elHs = $(\"#heroScore\");\n"
+    ],
+    [
+      "              )\n            : melangees.slice(0, limite);\n        state.session = preparerSessionDepuisListeHc(tirees);\n        state.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;\n        state.index = 0;\n        state.partySynced = false;\n        state.xpCredited = false;\n",
+      "              )\n            : melangees.slice(0, limite);\n        state.session = preparerSessionDepuisListeHc(tirees);\n        state.index = 0;\n        state.partySynced = false;\n        state.xpCredited = false;\n"
+    ],
+    [
+      "              answer: q.answer,\n            };\n          }),\n          etat_meta: { elapsed: state.elapsed || 0, cat: state.cat || \"all\", mode: state.mode || \"classic\", partie_id: state.partieId },\n        });\n      }\n\n",
+      "              answer: q.answer,\n            };\n          }),\n          etat_meta: { elapsed: state.elapsed || 0, cat: state.cat || \"all\", mode: state.mode || \"classic\" },\n        });\n      }\n\n"
+    ],
+    [
+      "                  };\n                });\n                state.index = idx;\n                state.partieId = STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise(\"html-css\", sauv) : null;\n                state.partySynced = false;\n                state.xpCredited = false;\n                zr.innerHTML = \"\";\n",
+      "                  };\n                });\n                state.index = idx;\n                state.partySynced = false;\n                state.xpCredited = false;\n                zr.innerHTML = \"\";\n"
+    ],
+    [
+      "            var bD = $(\"#hcDiscardBtn\");\n            if (bD) {\n              bD.addEventListener(\"click\", function () {\n                if (STIQuizSync.effacerSession) STIQuizSync.effacerSession(\"html-css\", sauv.etat_meta && sauv.etat_meta.partie_id);\n                zr.innerHTML = \"\";\n              });\n            }\n",
+      "            var bD = $(\"#hcDiscardBtn\");\n            if (bD) {\n              bD.addEventListener(\"click\", function () {\n                if (STIQuizSync.effacerSession) STIQuizSync.effacerSession(\"html-css\");\n                zr.innerHTML = \"\";\n              });\n            }\n"
+    ],
+    [
+      "              parties: curFinHc.parties + 1,\n              bonnes: curFinHc.bonnes + nbBonnes,\n              total: curFinHc.total + listeFinale.length,\n            }, nbBonnes * 250, { id: state.partieId, bonnes: nbBonnes, total: listeFinale.length });\n          }\n          var ordreFinal = listeFinale.map(function (q, idx) {\n            var estOk = q.answer !== null && q.answer !== undefined && q.options[q.answer] && q.options[q.answer].ok;\n",
+      "              parties: curFinHc.parties + 1,\n              bonnes: curFinHc.bonnes + nbBonnes,\n              total: curFinHc.total + listeFinale.length,\n            }, nbBonnes * 250);\n          }\n          var ordreFinal = listeFinale.map(function (q, idx) {\n            var estOk = q.answer !== null && q.answer !== undefined && q.options[q.answer] && q.options[q.answer].ok;\n"
+    ],
+    [
+      "            nbBonnes,\n            listeFinale.length,\n            state.cat && state.cat !== \"all\" ? state.cat : null,\n            { points: nbBonnes * 100, ordre_questions: ordreFinal, partie_id: state.partieId }\n          );\n          setTimeout(hydraterCloudHtmlCss, 350);\n        }\n",
+      "            nbBonnes,\n            listeFinale.length,\n            state.cat && state.cat !== \"all\" ? state.cat : null,\n            { points: nbBonnes * 100, ordre_questions: ordreFinal }\n          );\n          setTimeout(hydraterCloudHtmlCss, 350);\n        }\n"
+    ],
+    [
+      "        });\n        if (!fautes.length) return;\n        state.session = preparerSessionDepuisListeHc(fautes);\n        state.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;\n        state.index = 0;\n        state.partySynced = false;\n        state.xpCredited = false;\n",
+      "        });\n        if (!fautes.length) return;\n        state.session = preparerSessionDepuisListeHc(fautes);\n        state.index = 0;\n        state.partySynced = false;\n        state.xpCredited = false;\n"
+    ],
+    [
+      "        }\n        /* Conserve exactement l'ordre des questions de la série avec choix remélangés */\n        state.session = preparerSessionDepuisListeHc(state.session);\n        state.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;\n        state.index = 0;\n        state.partySynced = false;\n        state.xpCredited = false;\n",
+      "        }\n        /* Conserve exactement l'ordre des questions de la série avec choix remélangés */\n        state.session = preparerSessionDepuisListeHc(state.session);\n        state.index = 0;\n        state.partySynced = false;\n        state.xpCredited = false;\n"
+    ],
+    [
+      "          \"Quitter\",\n          function () {\n            if (window.STIQuizSync && STIQuizSync.effacerSession) {\n              STIQuizSync.effacerSession(\"html-css\", state.partieId);\n            }\n            fermerOverlay(\"quizOverlay\");\n            window.scrollTo({\n",
+      "          \"Quitter\",\n          function () {\n            if (window.STIQuizSync && STIQuizSync.effacerSession) {\n              STIQuizSync.effacerSession(\"html-css\");\n            }\n            fermerOverlay(\"quizOverlay\");\n            window.scrollTo({\n"
+    ]
+  ],
+  "quiz/javascript.html": [
+    [
+      "          };\n          this.initDom();\n          this.updateHomeStats();\n          window.addEventListener(\"sti-cloud-restored\", (evt) => {\n            this.stats.totalAnswered = Math.max(\n              this.stats.totalAnswered || 0,\n              parseInt(stockageLire(\"js_quiz_total_answered\", \"0\"), 10) || 0\n",
+      "          };\n          this.initDom();\n          this.updateHomeStats();\n          window.addEventListener(\"sti-cloud-restored\", () => {\n            this.stats.totalAnswered = Math.max(\n              this.stats.totalAnswered || 0,\n              parseInt(stockageLire(\"js_quiz_total_answered\", \"0\"), 10) || 0\n"
+    ],
+    [
+      "            );\n            try {\n              const luXpJs = JSON.parse(stockageLire(\"sti-quiz-xp-js-v1\", \"null\")) || {};\n              this.stats.xp = evt.detail && evt.detail.quiz === \"sti-quiz-xp-js-v1\"\n                ? (Number(luXpJs.xp) || 0) : Math.max(this.stats.xp || 0, Number(luXpJs.xp) || 0);\n            } catch (eXp) {}\n            this.updateHomeStats();\n          });\n",
+      "            );\n            try {\n              const luXpJs = JSON.parse(stockageLire(\"sti-quiz-xp-js-v1\", \"null\")) || {};\n              this.stats.xp = Math.max(this.stats.xp || 0, Number(luXpJs.xp) || 0);\n            } catch (eXp) {}\n            this.updateHomeStats();\n          });\n"
+    ],
+    [
+      "                bonnes: (Number(exXpJs.bonnes) || 0) + (this.correctCount || 0),\n                total: (Number(exXpJs.total) || 0) + (this.answeredCount || 0),\n              };\n              if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP(\"sti-quiz-xp-js-v1\", acquisJs, gainXpJs, {\n                id: this.partieId, bonnes: this.correctCount || 0, total: this.answeredCount || 0\n              }))) {\n                stockageEcrire(\"sti-quiz-xp-js-v1\", JSON.stringify(acquisJs));\n              } else {\n                try { this.stats.xp = Number(JSON.parse(stockageLire(\"sti-quiz-xp-js-v1\", \"{}\")).xp) || 0; } catch (eX) {}\n              }\n              if (STIQuizSync.notifierXP) STIQuizSync.notifierXP(\"sti-quiz-xp-js-v1\");\n            }\n",
+      "                bonnes: (Number(exXpJs.bonnes) || 0) + (this.correctCount || 0),\n                total: (Number(exXpJs.total) || 0) + (this.answeredCount || 0),\n              };\n              if (!(STIQuizSync.sauverXP && STIQuizSync.sauverXP(\"sti-quiz-xp-js-v1\", acquisJs, gainXpJs))) {\n                stockageEcrire(\"sti-quiz-xp-js-v1\", JSON.stringify(acquisJs));\n              }\n              if (STIQuizSync.notifierXP) STIQuizSync.notifierXP(\"sti-quiz-xp-js-v1\");\n            }\n"
+    ],
+    [
+      "              this.correctCount,\n              this.answeredCount,\n              this.mode || \"arcade\",\n              { points: this.score, ordre_questions: ordreFinalJs, partie_id: this.partieId }\n            );\n            setTimeout(() => this.hydrateCloudJs(), 350);\n          }\n",
+      "              this.correctCount,\n              this.answeredCount,\n              this.mode || \"arcade\",\n              { points: this.score, ordre_questions: ordreFinalJs }\n            );\n            setTimeout(() => this.hydrateCloudJs(), 350);\n          }\n"
+    ],
+    [
+      "            index_courant: idxToSave,\n            ordre_questions: this.questions.slice(0, 120),\n            etat_meta: {\n              partie_id: this.partieId,\n              combo: this.combo,\n              maxCombo: this.maxCombo,\n              lives: this.lives,\n",
+      "            index_courant: idxToSave,\n            ordre_questions: this.questions.slice(0, 120),\n            etat_meta: {\n              combo: this.combo,\n              maxCombo: this.maxCombo,\n              lives: this.lives,\n"
+    ],
+    [
+      "                const bD = document.getElementById(\"js-discard-cloud-btn\");\n                if (bD) {\n                  bD.onclick = () => {\n                    if (STIQuizSync.effacerSession) STIQuizSync.effacerSession(\"javascript\", sauv.etat_meta && sauv.etat_meta.partie_id);\n                    zr.innerHTML = \"\";\n                  };\n                }\n",
+      "                const bD = document.getElementById(\"js-discard-cloud-btn\");\n                if (bD) {\n                  bD.onclick = () => {\n                    if (STIQuizSync.effacerSession) STIQuizSync.effacerSession(\"javascript\");\n                    zr.innerHTML = \"\";\n                  };\n                }\n"
+    ],
+    [
+      "          soundManager.init();\n          soundManager.playClick();\n          const meta = sauv.etat_meta || {};\n          this.partieId = STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise(\"javascript\", sauv) : null;\n          this.mode = sauv.mode || \"arcade\";\n          this.score = Number(sauv.points) || 0;\n          this.correctCount = Number(sauv.score) || 0;\n",
+      "          soundManager.init();\n          soundManager.playClick();\n          const meta = sauv.etat_meta || {};\n          this.mode = sauv.mode || \"arcade\";\n          this.score = Number(sauv.points) || 0;\n          this.correctCount = Number(sauv.score) || 0;\n"
+    ],
+    [
+      "          }\n          clearInterval(this.timer);\n          if (this.answeredCount === 0 && window.STIQuizSync && STIQuizSync.effacerSession) {\n            STIQuizSync.effacerSession(\"javascript\", this.partieId);\n          }\n          this.syncProgress(true);\n          soundManager.playClick();\n",
+      "          }\n          clearInterval(this.timer);\n          if (this.answeredCount === 0 && window.STIQuizSync && STIQuizSync.effacerSession) {\n            STIQuizSync.effacerSession(\"javascript\");\n          }\n          this.syncProgress(true);\n          soundManager.playClick();\n"
+    ],
+    [
+      "        }\n\n        start(mode = \"arcade\", customQuestions = null) {\n          this.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;\n          soundManager.init();\n          soundManager.playClick();\n          this.mode = mode;\n",
+      "        }\n\n        start(mode = \"arcade\", customQuestions = null) {\n          soundManager.init();\n          soundManager.playClick();\n          this.mode = mode;\n"
+    ]
+  ],
+  "quiz/sql.html": [
+    [
+      "      } catch (e) {\n        S = JSON.parse(JSON.stringify(DEFAULT_STATE));\n      }\n      function save(gain, partieId) {\n        let niveauAvant = 1;\n        try {\n          const ex = JSON.parse(memoLire(\"sqlQuestV3\") || \"null\");\n          niveauAvant = Number(ex && ex.level) || 1;\n          if (ex && typeof ex === \"object\") {\n            S.xp = Math.max(Number(S.xp) || 0, Number(ex.xp) || 0);\n            S.level = Math.max(Number(S.level) || 1, Number(ex.level) || 1);\n",
+      "      } catch (e) {\n        S = JSON.parse(JSON.stringify(DEFAULT_STATE));\n      }\n      function save(gain) {\n        try {\n          const ex = JSON.parse(memoLire(\"sqlQuestV3\") || \"null\");\n          if (ex && typeof ex === \"object\") {\n            S.xp = Math.max(Number(S.xp) || 0, Number(ex.xp) || 0);\n            S.level = Math.max(Number(S.level) || 1, Number(ex.level) || 1);\n"
+    ],
+    [
+      "            }\n          }\n        } catch (eEx) {}\n        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(\"sqlQuestV3\", S, gain || 0,\n            partieId && Q ? { id: partieId, bonnes: Q.correct, total: Q.answered } : null))) {\n          memoEcrire(\"sqlQuestV3\", JSON.stringify(S));\n        } else if (partieId) {\n          try {\n            S.xp = Number(JSON.parse(memoLire(\"sqlQuestV3\") || \"{}\").xp) || 0;\n            S.level = Math.max(niveauAvant, levelForXP(S.xp));\n            STIQuizSync.sauverXP(\"sqlQuestV3\", S, 0);\n          } catch (e3) {}\n        }\n        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(\"sqlQuestV3\");\n      }\n",
+      "            }\n          }\n        } catch (eEx) {}\n        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(\"sqlQuestV3\", S, gain || 0))) {\n          memoEcrire(\"sqlQuestV3\", JSON.stringify(S));\n        }\n        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(\"sqlQuestV3\");\n      }\n"
+    ],
+    [
+      "              )\n            : pickQuestions(mode, cat);\n        Q = {\n          partieId: window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null,\n          mode,\n          cat,\n          questions: qs,\n",
+      "              )\n            : pickQuestions(mode, cat);\n        Q = {\n          mode,\n          cat,\n          questions: qs,\n"
+    ],
+    [
+      "            if (Q.mode === \"daily\") xpExit = Math.round(xpExit * 1.5);\n            S.xp = (Number(S.xp) || 0) + xpExit;\n            S.level = Math.max(Number(S.level) || 1, levelForXP(S.xp));\n            save(xpExit, Q.partieId);\n          }\n          if (typeof STIQuizSync.noterQuestionsVuesQuiz === \"function\" && repondues.length) {\n            STIQuizSync.noterQuestionsVuesQuiz(\n",
+      "            if (Q.mode === \"daily\") xpExit = Math.round(xpExit * 1.5);\n            S.xp = (Number(S.xp) || 0) + xpExit;\n            S.level = Math.max(Number(S.level) || 1, levelForXP(S.xp));\n            save(xpExit);\n          }\n          if (typeof STIQuizSync.noterQuestionsVuesQuiz === \"function\" && repondues.length) {\n            STIQuizSync.noterQuestionsVuesQuiz(\n"
+    ],
+    [
+      "            Q.correct,\n            repondues.length || toutesLog.length,\n            Q.cat && Q.cat !== \"all\" ? Q.cat : Q.mode || null,\n            { points: Q.score, ordre_questions: ordreFinalSql, partie_id: Q.partieId }\n          );\n          setTimeout(hydraterCloudSql, 350);\n        }\n",
+      "            Q.correct,\n            repondues.length || toutesLog.length,\n            Q.cat && Q.cat !== \"all\" ? Q.cat : Q.mode || null,\n            { points: Q.score, ordre_questions: ordreFinalSql }\n          );\n          setTimeout(hydraterCloudSql, 350);\n        }\n"
+    ],
+    [
+      "          index_courant: idxNext,\n          ordre_questions: Q.questions.slice(0, 140),\n          etat_meta: {\n            partie_id: Q.partieId,\n            combo: Q.combo || 0,\n            bestCombo: Q.bestCombo || 0,\n            answered: Q.answered || 0,\n",
+      "          index_courant: idxNext,\n          ordre_questions: Q.questions.slice(0, 140),\n          etat_meta: {\n            combo: Q.combo || 0,\n            bestCombo: Q.bestCombo || 0,\n            answered: Q.answered || 0,\n"
+    ],
+    [
+      "                  const meta = sauv.etat_meta || {};\n                  const mode = MODE_CFG[sauv.mode] ? sauv.mode : \"classique\";\n                  Q = {\n                    partieId: STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise(\"sql\", sauv) : null,\n                    mode,\n                    cat: sauv.module || \"all\",\n                    questions: sauv.ordre_questions,\n",
+      "                  const meta = sauv.etat_meta || {};\n                  const mode = MODE_CFG[sauv.mode] ? sauv.mode : \"classique\";\n                  Q = {\n                    mode,\n                    cat: sauv.module || \"all\",\n                    questions: sauv.ordre_questions,\n"
+    ],
+    [
+      "              const bD = $(\"sqlDiscardCloudBtn\");\n              if (bD) {\n                bD.onclick = () => {\n                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession(\"sql\", sauv.etat_meta && sauv.etat_meta.partie_id);\n                  zr.innerHTML = \"\";\n                };\n              }\n",
+      "              const bD = $(\"sqlDiscardCloudBtn\");\n              if (bD) {\n                bD.onclick = () => {\n                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession(\"sql\");\n                  zr.innerHTML = \"\";\n                };\n              }\n"
+    ],
+    [
+      "        clearInterval(timerInt);\n        clearTimeout(botTimeout);\n        if (window.STIQuizSync && STIQuizSync.effacerSession) {\n          STIQuizSync.effacerSession(\"sql\", Q && Q.partieId);\n        }\n        $(\"quizOverlay\").classList.add(\"hidden\");\n        document.body.style.overflow = \"\";\n",
+      "        clearInterval(timerInt);\n        clearTimeout(botTimeout);\n        if (window.STIQuizSync && STIQuizSync.effacerSession) {\n          STIQuizSync.effacerSession(\"sql\");\n        }\n        $(\"quizOverlay\").classList.add(\"hidden\");\n        document.body.style.overflow = \"\";\n"
+    ],
+    [
+      "          S.xp = (Number(S.xp) || 0) + xpGain;\n          S.level = Math.max(oldLvlEnd, levelForXP(S.xp));\n        }\n        save(gainASauver, gainASauver ? Q.partieId : null);\n        checkStreak();\n        checkBadges();\n        updateNavbar();\n        // Affichage garanti de la page d'évaluation même si un graphique échoue\n",
+      "          S.xp = (Number(S.xp) || 0) + xpGain;\n          S.level = Math.max(oldLvlEnd, levelForXP(S.xp));\n        }\n        checkStreak();\n        save(gainASauver);\n        checkBadges();\n        updateNavbar();\n        // Affichage garanti de la page d'évaluation même si un graphique échoue\n"
+    ],
+    [
+      "          hydraterCloudSql();\n        }\n      });\n      window.addEventListener(\"sti-cloud-restored\", (evt) => {\n        try {\n          const lu = JSON.parse(localStorage.getItem(\"sqlQuestV3\") || \"null\");\n          if (lu && typeof lu === \"object\" && typeof S === \"object\") {\n",
+      "          hydraterCloudSql();\n        }\n      });\n      window.addEventListener(\"sti-cloud-restored\", () => {\n        try {\n          const lu = JSON.parse(localStorage.getItem(\"sqlQuestV3\") || \"null\");\n          if (lu && typeof lu === \"object\" && typeof S === \"object\") {\n"
+    ],
+    [
+      "            Object.keys(bestMerged).forEach((m) => {\n              bestMerged[m] = Math.max(Number(S.best && S.best[m]) || 0, Number(lu.best && lu.best[m]) || 0);\n            });\n            const masteryMerged = Object.assign({}, lu.mastery || {}, S.mastery || {});\n            Object.keys(masteryMerged).forEach((m) => {\n              const local = S.mastery && S.mastery[m] || {}, distant = lu.mastery && lu.mastery[m] || {};\n              masteryMerged[m] = { c: Math.max(Number(local.c) || 0, Number(distant.c) || 0),\n                t: Math.max(Number(local.t) || 0, Number(distant.t) || 0) };\n            });\n            const correctionXp = evt.detail && evt.detail.quiz === \"sqlQuestV3\";\n            const xpMax = correctionXp ? (Number(lu.xp) || 0) : Math.max(Number(S.xp) || 0, Number(lu.xp) || 0);\n            const lvlMax = correctionXp ? levelForXP(xpMax) : Math.max(Number(S.level) || 1, Number(lu.level) || 1, levelForXP(xpMax));\n            const stMax = Math.max(Number(S.streak) || 0, Number(lu.streak) || 0);\n            const taMax = Math.max(Number(S.totalAnswered) || 0, Number(lu.totalAnswered) || 0);\n            const tcMax = Math.max(Number(S.totalCorrect) || 0, Number(lu.totalCorrect) || 0);\n",
+      "            Object.keys(bestMerged).forEach((m) => {\n              bestMerged[m] = Math.max(Number(S.best && S.best[m]) || 0, Number(lu.best && lu.best[m]) || 0);\n            });\n            const xpMax = Math.max(Number(S.xp) || 0, Number(lu.xp) || 0);\n            const lvlMax = Math.max(Number(S.level) || 1, Number(lu.level) || 1, levelForXP(xpMax));\n            const stMax = Math.max(Number(S.streak) || 0, Number(lu.streak) || 0);\n            const taMax = Math.max(Number(S.totalAnswered) || 0, Number(lu.totalAnswered) || 0);\n            const tcMax = Math.max(Number(S.totalCorrect) || 0, Number(lu.totalCorrect) || 0);\n"
+    ],
+    [
+      "              totalCorrect: tcMax,\n              bestCombo: bcMax,\n              best: bestMerged,\n              mastery: masteryMerged,\n            });\n            if (correctionXp && window.STIQuizSync && STIQuizSync.sauverXP) STIQuizSync.sauverXP(\"sqlQuestV3\", S, 0);\n            updateNavbar();\n            if (typeof renderAll === \"function\") renderAll();\n          }\n",
+      "              totalCorrect: tcMax,\n              bestCombo: bcMax,\n              best: bestMerged,\n            });\n            updateNavbar();\n            if (typeof renderAll === \"function\") renderAll();\n          }\n"
+    ]
+  ],
+  "quiz/php.html": [
+    [
+      "        } else {\n          hydraterCloudPhp();\n        }\n        window.addEventListener(\"sti-cloud-restored\", (evt) => {\n          try {\n            const uLu = JSON.parse(memoLire(CLE_LOCALE + \"user\") || \"null\");\n            if (uLu && typeof uLu === \"object\") {\n              const xpMax = evt.detail && evt.detail.quiz === \"quizphp_v1_user\"\n                ? (Number(uLu.xp) || 0) : Math.max(Number(user.xp) || 0, Number(uLu.xp) || 0);\n              const bestMax = Math.max(Number(user.best) || 0, Number(uLu.best) || 0);\n              const streakMax = Math.max(Number(user.streak) || 0, Number(uLu.streak) || 0);\n              user = Object.assign({}, uLu, user, {\n",
+      "        } else {\n          hydraterCloudPhp();\n        }\n        window.addEventListener(\"sti-cloud-restored\", () => {\n          try {\n            const uLu = JSON.parse(memoLire(CLE_LOCALE + \"user\") || \"null\");\n            if (uLu && typeof uLu === \"object\") {\n              const xpMax = Math.max(Number(user.xp) || 0, Number(uLu.xp) || 0);\n              const bestMax = Math.max(Number(user.best) || 0, Number(uLu.best) || 0);\n              const streakMax = Math.max(Number(user.streak) || 0, Number(uLu.streak) || 0);\n              user = Object.assign({}, uLu, user, {\n"
+    ],
+    [
+      "            : \"—\";\n        }\n      }\n      function saveUser(gain, partieId) {\n        try {\n          const ex = JSON.parse(memoLire(CLE_LOCALE + \"user\") || \"null\");\n          if (ex && typeof ex === \"object\") {\n",
+      "            : \"—\";\n        }\n      }\n      function saveUser(gain) {\n        try {\n          const ex = JSON.parse(memoLire(CLE_LOCALE + \"user\") || \"null\");\n          if (ex && typeof ex === \"object\") {\n"
+    ],
+    [
+      "            }\n          }\n        } catch (eEx) {}\n        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(\"quizphp_v1_user\", user, gain || 0,\n            partieId && quiz ? { id: partieId, bonnes: quiz.correct, total: quiz.answers.length } : null))) {\n          memoEcrire(CLE_LOCALE + \"user\", JSON.stringify(user));\n        } else if (partieId) {\n          try { user.xp = Number(JSON.parse(memoLire(CLE_LOCALE + \"user\") || \"{}\").xp) || 0; } catch (e3) {}\n        }\n        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(\"quizphp_v1_user\");\n        updateNav();\n",
+      "            }\n          }\n        } catch (eEx) {}\n        if (!(window.STIQuizSync && STIQuizSync.sauverXP && STIQuizSync.sauverXP(\"quizphp_v1_user\", user, gain || 0))) {\n          memoEcrire(CLE_LOCALE + \"user\", JSON.stringify(user));\n        }\n        if (window.STIQuizSync && STIQuizSync.notifierXP) STIQuizSync.notifierXP(\"quizphp_v1_user\");\n        updateNav();\n"
+    ],
+    [
+      "          pool = preparerListePhp(melangeesPhp);\n        }\n        quiz = {\n          partieId: window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null,\n          list: pool,\n          idx: 0,\n          score: 0,\n",
+      "          pool = preparerListePhp(melangeesPhp);\n        }\n        quiz = {\n          list: pool,\n          idx: 0,\n          score: 0,\n"
+    ],
+    [
+      "            user.xp = (Number(user.xp) || 0) + xpExitPhp;\n            user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);\n            if ((quiz.score || 0) > (user.best || 0)) user.best = quiz.score;\n            try { saveUser(xpExitPhp, quiz.partieId); } catch (eSuEx) {}\n          }\n          if (typeof STIQuizSync.noterQuestionsVuesQuiz === \"function\") {\n            STIQuizSync.noterQuestionsVuesQuiz(\n",
+      "            user.xp = (Number(user.xp) || 0) + xpExitPhp;\n            user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);\n            if ((quiz.score || 0) > (user.best || 0)) user.best = quiz.score;\n            try { saveUser(xpExitPhp); } catch (eSuEx) {}\n          }\n          if (typeof STIQuizSync.noterQuestionsVuesQuiz === \"function\") {\n            STIQuizSync.noterQuestionsVuesQuiz(\n"
+    ],
+    [
+      "            quiz.correct,\n            quiz.answers.length,\n            quiz.mode || null,\n            { points: quiz.score, ordre_questions: ordreFinalPhp, partie_id: quiz.partieId }\n          );\n          setTimeout(hydraterCloudPhp, 350);\n        }\n",
+      "            quiz.correct,\n            quiz.answers.length,\n            quiz.mode || null,\n            { points: quiz.score, ordre_questions: ordreFinalPhp }\n          );\n          setTimeout(hydraterCloudPhp, 350);\n        }\n"
+    ],
+    [
+      "          index_courant: idxNext,\n          ordre_questions: quiz.list.slice(0, 180),\n          etat_meta: {\n            partie_id: quiz.partieId,\n            streak: quiz.streak || 0,\n            maxStreak: quiz.maxStreak || 0,\n            fifty: quiz.fifty !== false,\n",
+      "          index_courant: idxNext,\n          ordre_questions: quiz.list.slice(0, 180),\n          etat_meta: {\n            streak: quiz.streak || 0,\n            maxStreak: quiz.maxStreak || 0,\n            fifty: quiz.fifty !== false,\n"
+    ],
+    [
+      "                  zr.innerHTML = \"\";\n                  const meta = sauv.etat_meta || {};\n                  quiz = {\n                    partieId: STIQuizSync.identifierPartieReprise ? STIQuizSync.identifierPartieReprise(\"php\", sauv) : null,\n                    list: sauv.ordre_questions,\n                    idx,\n                    score: Number(sauv.points) || 0,\n",
+      "                  zr.innerHTML = \"\";\n                  const meta = sauv.etat_meta || {};\n                  quiz = {\n                    list: sauv.ordre_questions,\n                    idx,\n                    score: Number(sauv.points) || 0,\n"
+    ],
+    [
+      "              const bD = $(\"phpDiscardCloudBtn\");\n              if (bD) {\n                bD.onclick = () => {\n                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession(\"php\", sauv.etat_meta && sauv.etat_meta.partie_id);\n                  zr.innerHTML = \"\";\n                };\n              }\n",
+      "              const bD = $(\"phpDiscardCloudBtn\");\n              if (bD) {\n                bD.onclick = () => {\n                  if (STIQuizSync.effacerSession) STIQuizSync.effacerSession(\"php\");\n                  zr.innerHTML = \"\";\n                };\n              }\n"
+    ],
+    [
+      "        clearInterval(perQInt);\n        clearInterval(timerInt);\n        if (window.STIQuizSync && STIQuizSync.effacerSession) {\n          STIQuizSync.effacerSession(\"php\", quiz && quiz.partieId);\n        }\n        document.body.classList.remove(\"examen\");\n        $(\"quizOverlay\").style.opacity = 0;\n",
+      "        clearInterval(perQInt);\n        clearInterval(timerInt);\n        if (window.STIQuizSync && STIQuizSync.effacerSession) {\n          STIQuizSync.effacerSession(\"php\");\n        }\n        document.body.classList.remove(\"examen\");\n        $(\"quizOverlay\").style.opacity = 0;\n"
+    ],
+    [
+      "          user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);\n          if (quiz.score > (user.best || 0)) user.best = quiz.score;\n          try {\n            saveUser(xpGain, quiz.partieId);\n          } catch (eSu) {}\n        }\n        synchroniserPartiePhp(true);\n",
+      "          user.streak = Math.max(Number(user.streak) || 0, Number(quiz.maxStreak) || 0);\n          if (quiz.score > (user.best || 0)) user.best = quiz.score;\n          try {\n            saveUser(xpGain);\n          } catch (eSu) {}\n        }\n        synchroniserPartiePhp(true);\n"
+    ]
+  ]
+}
