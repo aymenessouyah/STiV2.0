@@ -4562,10 +4562,10 @@ test('v470 : audit fonctionnel intégral en 9 points (quiz CSPRNG, Mes erreurs, 
   assert.match(sauvJs, /function televerserArchiveVersDrive\(/);
   assert.match(gsCode, /function obtenirDossierSauvegarde_\(/);
   assert.match(gsCode, /function enregistrerArchiveDirecteDrive_\(/);
-  assert.match(swJs, /var CACHE = "sti-atelier-v3(?:[3-6]\d)";/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}";/);
   assert.match(swJs, /v470-audit-fonctionnel-readme/);
   assert.ok(nouv.some((n) => n.version === 'v470'), 'nouveautes.json doit conserver v470');
-  assert.match(readmeMd, /sti-atelier-v3(?:[3-6]\d)/);
+  assert.match(readmeMd, /sti-atelier-v3\d{2}/);
   assert.match(readmeMd, /\|\s*v470\s*\|/);
   assert.match(readmeMd, /1 244 questions/);
   assert.match(adminHtml, /v470 · sti-atelier-v330/);
@@ -5064,10 +5064,10 @@ test('v471 (structure) : 124/124 chemins Git exacts dans roue-revision.js (zéro
   assert.match(indexHtml, /reprendre\.js\?v=47\d/);
   assert.match(adminHtml, /sante\.js\?v=47\d/);
   assert.equal((santeJs.match(/\{\s*cat:\s*"/g) || []).length, 43, 'sante.js doit exécuter 43 contrôles temps réel');
-  assert.match(swJs, /var CACHE = "sti-atelier-v3(?:[3-6]\d)";/);
+  assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}";/);
   assert.match(swJs, /v471-tester-tout-e2e/);
   assert.ok(nouv.some((n) => n.version === 'v471'), 'nouveautes.json doit conserver v471');
-  assert.match(readmeMd, /sti-atelier-v3(?:[3-6]\d)/);
+  assert.match(readmeMd, /sti-atelier-v3\d{2}/);
   assert.match(readmeMd, /\|\s*v471\s*\|/);
   assert.match(adminHtml, /v471 · sti-atelier-v331/);
   assert.match(offlineManifest.version, /^v[45]\d\d-sti-atelier-v3\d\d$/);

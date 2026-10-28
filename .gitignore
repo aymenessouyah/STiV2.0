@@ -11,3 +11,6 @@ playwright-report/
 
 # rendus vidéo intermédiaires des capsules TP (livrés dans assets/videos/)
 /outils/tpvid/sortie_*.mp4
+
+# Rendus intermédiaires des vidéos générées (outils/drapeau-vent)
+build/
