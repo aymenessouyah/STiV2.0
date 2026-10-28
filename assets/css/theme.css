@@ -1837,6 +1837,66 @@ body.sti-v2 #sti-reprendre-x {
   #cote-sti .cote-clignot { animation: none; }
 }
 
+/* ── v496 : « News de ma classe » — remplace « La Cote » sur l'accueil ──
+   Même fond, même bordure, même typographie et même défilement que l'ancien
+   bandeau (variables --cote-* et animation cote-defile ci-dessus) ; seule la
+   couleur du texte change selon le niveau : bleu en 3e SI, vert en 4e SI. */
+#bandeauNewsPerso {
+  --news-perso-texte: #7dd3fc;
+  --news-perso-accent: #38bdf8;
+  --news-perso-accent-fond: rgba(56, 189, 248, .10);
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  margin: var(--space-3) 0 0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--cote-fond-haut), var(--cote-fond-bas));
+  border: 1px solid var(--cote-bord-bas);
+  color: var(--cote-texte);
+  font-family: "SF Mono", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+}
+#bandeauNewsPerso[hidden] { display: none; }
+/* 4e SI : vert, dans la palette d'origine du bandeau. */
+#bandeauNewsPerso[data-classe="4si"] {
+  --news-perso-texte: #6ee7b7;
+  --news-perso-accent: #34d399;
+  --news-perso-accent-fond: rgba(110, 231, 183, .10);
+}
+#bandeauNewsPerso .news-perso-etiq {
+  display: flex; align-items: center; gap: 7px; padding: 0 12px;
+  font-size: 12.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--news-perso-accent); background: var(--news-perso-accent-fond);
+  border-right: 1px solid var(--cote-bord-etiquette); white-space: nowrap; z-index: 2;
+}
+#bandeauNewsPerso .news-perso-clignot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--news-perso-accent); box-shadow: 0 0 9px var(--news-perso-accent);
+  animation: cote-bip 1.6s steps(2, start) infinite;
+}
+#bandeauNewsPerso .news-perso-ecran {
+  flex: 1; min-width: 0; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, var(--cote-masque) 26px, var(--cote-masque) calc(100% - 26px), transparent);
+  mask-image: linear-gradient(90deg, transparent, var(--cote-masque) 26px, var(--cote-masque) calc(100% - 26px), transparent);
+}
+#bandeauNewsPerso .news-perso-piste {
+  display: inline-flex; align-items: center; gap: 30px; padding: 9px 30px;
+  white-space: nowrap; will-change: transform; animation: cote-defile linear infinite;
+}
+#bandeauNewsPerso:hover .news-perso-piste,
+#bandeauNewsPerso:focus-within .news-perso-piste { animation-play-state: paused; }
+#bandeauNewsPerso .news-perso-item { display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 700; color: var(--news-perso-texte); }
+@media (max-width: 700px) {
+  #bandeauNewsPerso { margin: 10px 0 0; }
+  #bandeauNewsPerso .news-perso-etiq { font-size: 11px; padding: 0 9px; letter-spacing: .08em; }
+  #bandeauNewsPerso .news-perso-piste { padding: 6px 16px; gap: 22px; }
+  #bandeauNewsPerso .news-perso-item { font-size: 12.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #bandeauNewsPerso .news-perso-piste { animation: none; white-space: normal; flex-wrap: wrap; }
+  #bandeauNewsPerso .news-perso-clignot { animation: none; }
+}
+
 /* Identités vectorielles locales des cinq matières. */
 .matiere-logo { display: block; width: 32px; height: 32px; color: var(--matiere-accent, var(--brand)); }
 .matiere-logo--hero { float: right; width: 32px; height: 32px; margin: 0 0 var(--space-2) var(--space-3); color: var(--course-accent, var(--brand)); }

@@ -304,11 +304,12 @@ test('trois thèmes et largeurs : panneau accessible, en-tête sans chevauchemen
       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth), { message: `${theme} ${largeur}` }).toBeLessThanOrEqual(largeur);
       const elements = await page.evaluate(() => {
         const rect = sel => { const r = document.querySelector(sel).getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom }; };
-        return { badge: rect('#sti-roue-btn'), marque: rect('.site-header .brand-logo'), cote: rect('#cote-sti') };
+        // v496 : la Cote a quitté l'accueil, le repère devient le contenu principal.
+        return { badge: rect('#sti-roue-btn'), marque: rect('.site-header .brand-logo'), contenu: rect('#contenu-principal') };
       });
       expect(elements.badge.left, `${theme} ${largeur}`).toBeGreaterThanOrEqual(0);
       expect(elements.badge.right, `${theme} ${largeur}`).toBeLessThanOrEqual(largeur);
-      expect(elements.badge.bottom, `${theme} ${largeur}`).toBeLessThan(elements.cote.top);
+      expect(elements.badge.bottom, `${theme} ${largeur}`).toBeLessThan(elements.contenu.top);
       expect(elements.badge.left, `${theme} ${largeur}`).toBeGreaterThanOrEqual(elements.marque.right - 1);
       if ([320, 390, 1365].includes(largeur)) {
         const violations = await page.evaluate(async () => (await axe.run('#sti-roue-btn', { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, nodes: v.nodes.map(n => n.target) })));

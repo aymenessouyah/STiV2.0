@@ -50,21 +50,36 @@ test('la vraie roue reste unique, interactive et suit les changements GOLD et de
   expect(await page.locator('#stiSubDrawer').count()).toBe(0);
 });
 
-test('la Cote historique affiche les news de régie, les cotations et se rafraîchit', async ({ page }) => {
+test('les news personnalisées de la classe remplacent la Cote et se rafraîchissent', async ({ page }) => {
   await session(page);
   await page.addInitScript(() => {
-    try { sessionStorage.setItem('sti-cote-news-v1', JSON.stringify({ts:Date.now(),etat:{actif:true,liste:[{t:'Message régie test',c:'#ff8800'}]}})); } catch(e) {}
+    try {
+      sessionStorage.setItem('sti-news-perso-v1', JSON.stringify({
+        ts: Date.now(),
+        etat: { actif: true, classes: { '3si': ['Message 3e SI'], '4si': ['Message 4e SI'] }, communs: [] }
+      }));
+    } catch (e) {}
   });
   await page.goto('/index.html', { waitUntil:'domcontentloaded' });
-  const piste = page.locator('#cote-piste');
-  await expect(piste).toContainText('Message régie test');
-  for (const mot of ['HTML5','CSS3','JavaScript','SQL','PHP']) await expect(piste).toContainText(mot);
+  await expect(page.locator('#cote-sti')).toHaveCount(0);
+  const bandeau = page.locator('#bandeauNewsPerso');
+  const piste = page.locator('#newsPersoPiste');
+  await expect(bandeau).toBeVisible();
+  await expect(bandeau).toHaveAttribute('data-classe', '4si');
+  await expect(page.locator('#newsPersoEtiquette')).toHaveText('4e SI');
+  await expect(piste).toContainText('Message 4e SI');
+  await expect(piste).not.toContainText('Message 3e SI');
+  // Vert pour les 4e SI, bleu pour les 3e SI.
+  const vert = await piste.locator('.news-perso-item').first().evaluate(e => getComputedStyle(e).color);
+  expect(vert).toBe('rgb(110, 231, 183)');
   await page.evaluate(() => {
-    sessionStorage.setItem('sti-cote-news-v1', JSON.stringify({ts:Date.now(),etat:{actif:true,liste:[{t:'Nouveau message régie',c:'#abcdef'}]}}));
+    sessionStorage.setItem('sti-news-perso-v1', JSON.stringify({
+      ts: Date.now(),
+      etat: { actif: true, classes: { '3si': [], '4si': ['Nouveau message de la classe'] }, communs: [] }
+    }));
     document.dispatchEvent(new Event('visibilitychange'));
   });
-  await expect(piste).toContainText('Nouveau message régie');
-  await expect(page.locator('#cote-sti')).toBeVisible();
+  await expect(piste).toContainText('Nouveau message de la classe');
 });
 
 test('les trois thèmes survivent aux anciennes pages, et leur bouton met à jour le profil', async ({ page }) => {

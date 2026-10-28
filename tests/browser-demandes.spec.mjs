@@ -17,7 +17,7 @@ test.beforeEach(async ({page}) => {
 
 async function aller(page, url) { await page.goto(url, { waitUntil:'domcontentloaded' }); await page.waitForFunction(() => !!window.STIProfil); }
 
-test('accueil : identité et QR originaux, Cote et dix outils avant les vidéos', async ({page}) => {
+test('accueil : identité et QR originaux, news de la classe et dix outils avant les vidéos', async ({page}) => {
   await aller(page, '/index.html');
   await expect(page.locator('.site-header .brand-logo__mark img')).toHaveAttribute('src','assets/icons/sti-icon-192.png');
   await expect(page.locator('#modalContactQr .qr-box img')).toHaveAttribute('src','assets/images/qr-code-site.png');
@@ -31,10 +31,17 @@ test('accueil : identité et QR originaux, Cote et dix outils avant les vidéos'
     return ids.map(id => {const n=document.getElementById(id);return !!n && !!(n.compareDocumentPosition(videos)&Node.DOCUMENT_POSITION_FOLLOWING)});
   });
   expect(ordre).toEqual(Array(10).fill(true));
-  await expect(page.locator('#cote-piste')).toContainText('HTML5');
-  expect(await page.locator('#cote-sti').evaluate(e => getComputedStyle(e).backgroundImage)).toContain('rgb(11, 16, 29)');
-  expect(await page.locator('#cote-piste').evaluate(e => getComputedStyle(e).animationName)).toBe('cote-defile');
-  const position = await page.locator('#cote-piste').evaluate(e => { e.getAnimations()[0].currentTime = 0; const x0=new DOMMatrix(getComputedStyle(e).transform).m41;e.getAnimations()[0].currentTime = 1000; return [x0,new DOMMatrix(getComputedStyle(e).transform).m41]; });
+  // v496 : plus de « Cote » ; le bandeau de news de la classe reprend son fond et son défilement.
+  await expect(page.locator('#cote-sti')).toHaveCount(0);
+  await page.evaluate(() => {
+    sessionStorage.setItem('sti-news-perso-v1', JSON.stringify({ ts: Date.now(), etat: { actif: true, classes: { '3si': ['Texte 3e SI'], '4si': ['Texte 4e SI'] }, communs: [] } }));
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  const piste = page.locator('#newsPersoPiste');
+  await expect(piste).toContainText('Texte 4e SI');
+  expect(await page.locator('#bandeauNewsPerso').evaluate(e => getComputedStyle(e).backgroundImage)).toContain('rgb(11, 16, 29)');
+  expect(await piste.evaluate(e => getComputedStyle(e).animationName)).toBe('cote-defile');
+  const position = await piste.evaluate(e => { e.getAnimations()[0].currentTime = 0; const x0=new DOMMatrix(getComputedStyle(e).transform).m41;e.getAnimations()[0].currentTime = 1000; return [x0,new DOMMatrix(getComputedStyle(e).transform).m41]; });
   expect(position[1]).toBeLessThan(position[0]);
 });
 
