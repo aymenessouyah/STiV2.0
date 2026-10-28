@@ -1,9 +1,9 @@
 {
   "version": "v498-sti-atelier-v359",
-  "generatedAt": "2026-10-28T17:02:10Z",
+  "generatedAt": "2026-10-28T17:03:51Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 697,
-  "totalBytes": 682738415,
+  "totalBytes": 684487587,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 46645,
-      "gitSha": "760c4f06a261b10a5ae6372953f66bcf561c10ca"
+      "bytes": 46689,
+      "gitSha": "5a03b61eca0bc6ed69779b0adc79c13597e51ce0"
     },
     {
       "path": "admin.html",
@@ -1037,8 +1037,8 @@
     },
     {
       "path": "assets/video/drapeaurafeha.mp4",
-      "bytes": 49986,
-      "gitSha": "64b04fb15fedc2e623afc50478b3c0f0ec8f40e0"
+      "bytes": 1799114,
+      "gitSha": "3a652cc6c32e34859ef98c9aa58b578df704e8bb"
     },
     {
       "path": "assets/video/flower.webm",

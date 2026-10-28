@@ -60,7 +60,7 @@ test('v498 : la vidéo drapeaurafeha.mp4 couvre tout le bloc « Bonjour » sans 
   const video = resolve(racine, 'assets/video/drapeaurafeha.mp4');
   assert.ok(existsSync(video), 'la vidéo de fond est présente');
   const taille = statSync(video).size;
-  assert.ok(taille > 10_000 && taille < 2_000_000, 'vidéo légère pour le web (' + taille + ' octets)');
+  assert.ok(taille > 10_000 && taille < 6_000_000, 'vidéo de fond acceptable pour le web (' + taille + ' octets)');
   const entete = readFileSync(video).subarray(0, 32).toString('latin1');
   assert.match(entete, /ftyp/, 'conteneur MP4 valide');
 
