@@ -8,3 +8,6 @@ playwright-report/
 
 # outils de fabrication des vidéos TP : audio intermédiaire
 /outils/tpvid/audio/
+
+# rendus vidéo intermédiaires des capsules TP (livrés dans assets/videos/)
+/outils/tpvid/sortie_*.mp4

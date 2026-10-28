@@ -1,9 +1,9 @@
 {
-  "version": "v503-sti-atelier-v364",
-  "generatedAt": "2026-10-28T19:28:24Z",
+  "version": "v504-sti-atelier-v365",
+  "generatedAt": "2026-10-28T20:04:41Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 704,
-  "totalBytes": 699288603,
+  "totalBytes": 710336193,
   "files": [
     {
       "path": "404.html",
@@ -683,7 +683,7 @@
     {
       "path": "assets/js/app.js",
       "bytes": 108170,
-      "gitSha": "21172e5367c10bb2768bf630d507fe7adcbcb461"
+      "gitSha": "a559811c1389345136776bd862dbb7796a4edf2b"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1147,8 +1147,8 @@
     },
     {
       "path": "assets/videos/tp-evenements-liens-v2.mp4",
-      "bytes": 5482300,
-      "gitSha": "d0c422a86b0189059d83c54b5978434289525e06"
+      "bytes": 16529745,
+      "gitSha": "0066c46dd9edc430b1c539e2796f0079d1bf9c93"
     },
     {
       "path": "assets/videos/tp-formulaire-tableau-autre.mp4",
@@ -1202,8 +1202,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 211299,
-      "gitSha": "ad9ac84d82f5da1ec7163fa7e006eab9735ab3d0"
+      "bytes": 211301,
+      "gitSha": "5d7ed19cb379e473f790d43affd5ba6b6960d452"
     },
     {
       "path": "cours/datalist.html",
@@ -1217,8 +1217,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 205245,
-      "gitSha": "f867c0c07f2c75b7f0f30d263218c1596547ff2a"
+      "bytes": 205247,
+      "gitSha": "565006cba2f67730e420917e94d05b2d4abf5d6b"
     },
     {
       "path": "cours/javascript.html",
@@ -3522,8 +3522,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 96016,
-      "gitSha": "1f0dda4d60b68ad9e46feee2f37cc3fecc557bc2"
+      "bytes": 96157,
+      "gitSha": "81a4375e32a4ff1ac6cb9a71d40cc41d4099e69a"
     }
   ]
 }
