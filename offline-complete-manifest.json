@@ -1,9 +1,9 @@
 {
-  "version": "v493-sti-atelier-v354",
-  "generatedAt": "2026-10-28T11:03:02Z",
+  "version": "v494-sti-atelier-v355",
+  "generatedAt": "2026-10-28T15:16:43Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 694,
-  "totalBytes": 682645981,
+  "totalBytes": 682653393,
   "files": [
     {
       "path": "404.html",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 41913,
-      "gitSha": "77117f5250cd8aa22b38d8d855e87b4d3eddd0df"
+      "bytes": 42945,
+      "gitSha": "13f605b1a8a20b805c86f80fcbca945f5749b05b"
     },
     {
       "path": "admin.html",
@@ -3317,8 +3317,8 @@
     },
     {
       "path": "revision-erreurs.html",
-      "bytes": 19139,
-      "gitSha": "84741f536f2ce055546ced7f07c6f51219abf058"
+      "bytes": 19193,
+      "gitSha": "edff7e96505813a7d11202deb00b2f21a2c7b924"
     },
     {
       "path": "robots.txt",
@@ -3337,8 +3337,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 94348,
-      "gitSha": "8cf97cb96da18ebece1c29ad2773aa463726765b"
+      "bytes": 94464,
+      "gitSha": "108d00915c2c89bb1cdd48ae43a6062bcd194ff5"
     },
     {
       "path": "assets/css/cours-matieres.css",
@@ -3432,8 +3432,8 @@
     },
     {
       "path": "assets/js/retour-quiz.js",
-      "bytes": 4706,
-      "gitSha": "b2bb121a72c0080e61769f76a756a9237c191927"
+      "bytes": 8501,
+      "gitSha": "84d4fda49b534ec21ae2f0031d89ecc426add7a8"
     },
     {
       "path": "assets/videos/validation-nom-prenom-js.mp4",
@@ -3462,8 +3462,8 @@
     },
     {
       "path": "assets/js/appel-quiz.js",
-      "bytes": 1412,
-      "gitSha": "6ce0a8a224df47a2ddd6551058a3221685ea5d68"
+      "bytes": 3827,
+      "gitSha": "c504bfeb0dce7b64016f68d30deff331d252c80e"
     },
     {
       "path": "assets/js/suivi-profil.js",

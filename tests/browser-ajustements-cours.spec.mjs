@@ -352,3 +352,73 @@ test('le QR disparaît seulement du badge mobile et le panneau de compte reste u
   await page.setViewportSize({ width: 701, height: 844 });
   await expect(badge.locator('.sti-badge-identite__fond')).toHaveCSS('background-size', '100% 100%');
 });
+
+test('chaque quiz revient à sa partie appelante, avec son libellé et sa position', async ({ page }) => {
+  test.setTimeout(180_000);
+  const points = [
+    { appelant: '/cours/javascript.html#exercices', quiz: 'javascript', libelle: 'Retour au cours' },
+    { appelant: '/dashboard.html', quiz: 'sql', libelle: 'Retour au tableau de bord' },
+    { appelant: '/exercices/series-exercices.html#php', quiz: 'php', libelle: 'Retour aux exercices' },
+    { appelant: '/revision-erreurs.html', quiz: 'tableaux', libelle: 'Retour à mes erreurs' }
+  ];
+  for (const largeur of [390, 1365]) {
+    await page.setViewportSize({ width: largeur, height: 844 });
+    for (const point of points) {
+      await page.goto(point.appelant, { waitUntil: 'domcontentloaded' });
+      // Un lien de quiz créé par la page appelante, comme les cartes réelles.
+      await page.evaluate(({ quiz, libelle }) => {
+        const a = document.createElement('a');
+        a.id = 'lien-quiz-test';
+        a.href = new URL(`../quiz/${quiz}.html`, location.href).pathname;
+        a.textContent = libelle;
+        document.body.appendChild(a);
+      }, point);
+      await page.locator('#lien-quiz-test').click();
+      await expect(page).toHaveURL(new RegExp('/quiz/' + point.quiz + '\\.html\\?retour='));
+      const retour = largeur < 700
+        ? page.locator('#sti-quiz-retour-mobile')
+        : page.locator(`a[aria-label="${point.libelle}"]`).first();
+      await expect(retour).toBeVisible();
+      await expect(retour).toHaveAttribute('aria-label', point.libelle);
+      // Un rechargement du quiz conserve la provenance.
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      const apres = largeur < 700 ? page.locator('#sti-quiz-retour-mobile') : page.locator(`a[aria-label="${point.libelle}"]`).first();
+      await expect(apres).toHaveAttribute('href', new RegExp(point.appelant.replace(/[.?]/g, '\\$&') + '$'));
+      await apres.click();
+      await expect(page).toHaveURL(new RegExp(point.appelant.replace(/[.?]/g, '\\$&') + '$'));
+    }
+  }
+});
+
+test('le retour d’un quiz restitue la position de lecture de la page appelante', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/cours/html5.html#cours', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => window.scrollTo(0, 1400));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1200);
+  const position = await page.evaluate(() => window.scrollY);
+  await page.locator('.course-tab--quiz').click();
+  await expect(page).toHaveURL(/\/quiz\/html-css\.html\?retour=/);
+  // L'adresse de retour transporte la position, sans stockage local.
+  const href = await page.locator('#sti-quiz-retour-mobile').getAttribute('href');
+  expect(href).toContain('sti_reprise=');
+  await page.locator('#sti-quiz-retour-mobile').click();
+  await expect(page).toHaveURL(/\/cours\/html5\.html\?sti_reprise=\d+#cours$/);
+  await expect.poll(() => page.evaluate(() => window.scrollY), { timeout: 5_000 }).toBeGreaterThan(position - 40);
+  // Le repère technique disparaît de l'adresse une fois la position rendue.
+  await expect(page).toHaveURL(/\/cours\/html5\.html#cours$/);
+});
+
+test('les boutons de retour de quiz refusent une provenance étrangère', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const quiz of ['html-css', 'javascript', 'sql', 'php', 'tableaux']) {
+    await page.goto(`/quiz/${quiz}.html?retour=` + encodeURIComponent('https://exemple.invalid/vol.html'), { waitUntil: 'domcontentloaded' });
+    const retour = page.locator('#sti-quiz-retour-mobile');
+    await expect(retour).toBeVisible();
+    await expect(retour).toHaveAttribute('href', /\/index\.html#quiz$/);
+  }
+  // La navigation globale de la page de quiz n'est jamais détournée.
+  await page.goto('/quiz/html-css.html?retour=' + encodeURIComponent('/cours/html5.html#cours'), { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('link', { name: "Page d'accueil du site" })).toHaveAttribute('href', '../index.html#modules');
+});
