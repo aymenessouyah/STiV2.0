@@ -73,7 +73,8 @@ test('les onglets du cours se masquent en descendant et reviennent en remontant 
     await page.evaluate(() => document.activeElement.blur());
     await page.evaluate(() => window.scrollBy(0, -120));
     await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
-    await expect(barre).toBeVisible();
+    await expect(barre).toBeInViewport({ ratio: 1 });
+    await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
     await page.locator('#tocMobileOpenBtn').click();
     await expect(page.locator('#courseSidebar')).toHaveClass(/is-open/);
     await page.evaluate(() => window.scrollBy(0, 180));
@@ -85,6 +86,213 @@ test('les onglets du cours se masquent en descendant et reviennent en remontant 
   await page.goto('/cours/html5.html', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => window.scrollTo(0, document.querySelector('.course-tabs-bar').offsetTop + 500));
   await expect(page.locator('.course-tabs-bar')).toBeVisible();
+});
+
+test('une ancienne feuille hors ligne ne crée pas de faux espace et la mise à jour rétablit la barre', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.route('**/assets/css/cours.css', async route => {
+    const reponse = await route.fetch();
+    const css = await reponse.text();
+    const drapeau = '--sti-onglets-fixation-disponible: 1;';
+    expect(css).toContain(drapeau);
+    await route.fulfill({ response: reponse, body: css.replace(drapeau, '') });
+  });
+  await page.goto('/cours/html5.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#sti-bnav')).toBeVisible();
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, 400); });
+  await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+  await expect(page.locator('html')).not.toHaveClass(/sti-onglets-cours-fixes/);
+  await expect(page.locator('.course-tabs-bar')).toHaveCSS('position', 'sticky');
+  await expect(page.locator('.course-tabs-reserve')).toBeHidden();
+  await page.evaluate(() => window.scrollBy(0, -120));
+  await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
+  await expect(page.locator('.course-tabs-reserve')).toBeHidden();
+  await page.unroute('**/assets/css/cours.css');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#sti-bnav')).toBeVisible();
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, 400); });
+  await expect(page.locator('html')).toHaveClass(/sti-onglets-cours-fixes/);
+  await page.evaluate(() => window.scrollBy(0, -120));
+  await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
+});
+
+test('dès la première descente, la barre reste masquée avant sa position naturelle', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const matiere of cours) {
+    await page.goto(`/cours/${matiere}.html`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#sti-bnav')).toBeVisible();
+    const cible = await page.evaluate(() => {
+      document.documentElement.style.scrollBehavior = 'auto';
+      const position = document.querySelector('.course-tabs-bar').getBoundingClientRect().top + window.scrollY;
+      return Math.max(100, position - window.innerHeight / 2);
+    });
+    await page.evaluate(y => window.scrollTo(0, y), cible);
+    await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+    const barre = page.locator('.course-tabs-bar');
+    await expect(barre).toHaveCSS('position', 'fixed');
+    await expect.poll(async () => { const r = await barre.boundingBox(); return r.y + r.height; }, { message: `${matiere} : barre entièrement hors de l’écran` }).toBeLessThanOrEqual(1);
+    await page.evaluate(() => window.scrollBy(0, -120));
+    await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
+  }
+});
+
+test('en remontant avant les chapitres, la navigation du cours revient sous l’en-tête et reste utilisable', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const matiere of cours) {
+    await page.goto(`/cours/${matiere}.html`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#sti-bnav')).toBeVisible();
+    const barre = page.locator('.course-tabs-bar');
+    await page.evaluate(() => {
+      document.documentElement.style.scrollBehavior = 'auto';
+      const top = document.querySelector('.course-tabs-bar').getBoundingClientRect().top + window.scrollY;
+      window.scrollTo(0, Math.max(200, top - window.innerHeight - 200));
+    });
+    await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+    await page.evaluate(() => window.scrollBy(0, -120));
+    await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
+    await expect(page.locator('#tocMobileOpenBtn'), `${matiere} : bouton Plan dans l’écran`).toBeInViewport({ ratio: 1 });
+    const mesures = await page.evaluate(() => {
+      const barre = document.querySelector('.course-tabs-bar').getBoundingClientRect();
+      const entete = document.querySelector('.site-header').getBoundingClientRect();
+      return { haut: barre.top, basEntete: entete.bottom };
+    });
+    expect(mesures.haut, matiere).toBeGreaterThanOrEqual(mesures.basEntete - 1);
+    expect(mesures.haut, matiere).toBeLessThanOrEqual(mesures.basEntete + 2);
+    await page.locator('#tocMobileOpenBtn').click();
+    await expect(page.locator('#courseSidebar')).toHaveClass(/is-open/);
+    await page.locator('#tocMobileCloseBtn').click();
+    await page.locator('[data-course-tab="exercices"]').click();
+    await expect(page.locator('[data-course-tab="exercices"]')).toHaveAttribute('aria-selected', 'true');
+  }
+});
+
+test('navigation mobile : aucune variation de hauteur, adaptation de l’en-tête et retour au bureau', async ({ page }) => {
+  test.setTimeout(120_000);
+  for (const largeur of [320, 390, 700]) {
+    await page.setViewportSize({ width: largeur, height: 844 });
+    await page.goto('/cours/html5.html', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#sti-bnav')).toBeVisible();
+    const barre = page.locator('.course-tabs-bar');
+    await page.evaluate(() => {
+      document.documentElement.style.scrollBehavior = 'auto';
+      window.scrollTo(0, document.querySelector('.course-tabs-bar').offsetTop + 1000);
+    });
+    await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+    await expect.poll(async () => { const r = await barre.boundingBox(); return r.y + r.height; }).toBeLessThanOrEqual(1);
+    const hauteurAvant = await page.evaluate(() => document.documentElement.scrollHeight);
+    await page.evaluate(() => window.scrollBy(0, -180));
+    await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
+    await expect(barre).toBeInViewport({ ratio: 1 });
+    expect(Math.abs(await page.evaluate(() => document.documentElement.scrollHeight) - hauteurAvant)).toBeLessThanOrEqual(1);
+    // Simuler une hauteur d’en-tête différente sans déplacer artificiellement la page.
+    await page.evaluate(() => { document.documentElement.style.overflowAnchor = 'none'; });
+    await page.locator('.site-header__inner').evaluate(el => { el.style.minHeight = '180px'; });
+    await expect.poll(() => page.evaluate(() => {
+      return document.querySelector('.course-tabs-bar').getBoundingClientRect().top - document.querySelector('.site-header').getBoundingClientRect().bottom;
+    })).toBeGreaterThanOrEqual(-1);
+    await expect.poll(() => page.evaluate(() => {
+      return document.querySelector('.course-tabs-bar').getBoundingClientRect().top - document.querySelector('.site-header').getBoundingClientRect().bottom;
+    })).toBeLessThanOrEqual(1);
+    await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
+    // Une impression ne doit pas répéter la barre fixe sur toutes les pages.
+    await page.emulateMedia({ media: 'print', reducedMotion: 'reduce' });
+    await expect(barre).toHaveCSS('position', 'static');
+    await expect(page.locator('.course-tabs-reserve')).toBeHidden();
+    await page.emulateMedia({ media: 'screen', reducedMotion: 'reduce' });
+    await page.evaluate(() => window.scrollBy(0, 300));
+    await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+    await expect.poll(async () => { const r = await barre.boundingBox(); return r.y + r.height; }).toBeLessThanOrEqual(1);
+    await page.emulateMedia({ media: 'print', reducedMotion: 'reduce' });
+    await expect(barre).toHaveCSS('position', 'static');
+    await expect(barre).toHaveCSS('transform', 'none');
+    await expect(barre).toHaveCSS('pointer-events', 'auto');
+    await page.emulateMedia({ media: 'screen', reducedMotion: 'reduce' });
+    await page.evaluate(() => window.scrollBy(0, -120));
+    await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page.locator('html')).toHaveClass(/sti-onglets-cours-fixes/);
+    await expect(barre).toHaveCSS('position', 'fixed');
+    await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
+  }
+  await page.setViewportSize({ width: 701, height: 844 });
+  await expect(page.locator('html')).not.toHaveClass(/sti-onglets-cours-fixes/);
+  await expect(page.locator('.course-tabs-bar')).toHaveCSS('position', 'sticky');
+  await page.goto('/cours/html5.html', { waitUntil: 'domcontentloaded' });
+  await page.evaluate(() => {
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, document.querySelector('.course-tabs-bar').offsetTop + 500);
+  });
+  await page.evaluate(() => window.scrollBy(0, -100));
+  await expect(page.locator('html')).not.toHaveClass(/sti-onglets-cours-fixes/);
+  await expect(page.locator('.course-tabs-bar')).toHaveCSS('position', 'sticky');
+});
+
+test('les onglets restent utilisables jusqu’au sommet, même lors d’une remontée directe', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/cours/html5.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#sti-bnav')).toBeVisible();
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, 300); });
+  await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+  await page.evaluate(() => window.scrollTo(0, 30));
+  await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
+  await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(page.locator('html')).toHaveClass(/sti-onglets-cours-fixes/);
+  await expect(page.locator('.course-tabs-bar')).toHaveCSS('position', 'fixed');
+  await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
+  await page.locator('#tocMobileOpenBtn').click();
+  await expect(page.locator('#courseSidebar')).toHaveClass(/is-open/);
+  await page.locator('#tocMobileCloseBtn').click();
+  // Si l'utilisateur atteint directement zéro, la barre doit revenir aussi.
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#sti-bnav')).toBeVisible();
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, 300); });
+  await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
+  await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
+  await page.evaluate(() => window.scrollTo(0, 300));
+  await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+  await expect.poll(async () => { const r = await page.locator('.course-tabs-bar').boundingBox(); return r.y + r.height; }).toBeLessThanOrEqual(1);
+});
+
+test('les onglets restent utilisables sur les petits écrans en hauteur', async ({ page }) => {
+  for (const dimensions of [{ width: 320, height: 568 }, { width: 390, height: 667 }]) {
+    await page.setViewportSize(dimensions);
+    await page.goto('/cours/html5.html', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('#sti-bnav')).toBeVisible();
+    await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, 300); });
+    await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+    await page.evaluate(() => window.scrollTo(0, 30));
+    const barre = page.locator('.course-tabs-bar'), bas = page.locator('#sti-bnav');
+    await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ ratio: 1 });
+    const boites = await Promise.all([barre.boundingBox(), bas.boundingBox()]);
+    expect(boites[0].y + boites[0].height).toBeLessThan(boites[1].y);
+    await page.locator('#tocMobileOpenBtn').click();
+    await expect(page.locator('#courseSidebar')).toHaveClass(/is-open/);
+    await page.locator('#tocMobileCloseBtn').click();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
+  }
+});
+
+test('au clavier, les onglets réapparaissent même avant leur position normale', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/cours/html5.html', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#sti-bnav')).toBeVisible();
+  await page.evaluate(() => {
+    document.documentElement.style.scrollBehavior = 'auto';
+    const top = document.querySelector('.course-tabs-bar').getBoundingClientRect().top + window.scrollY;
+    window.scrollTo(0, Math.max(200, top - window.innerHeight - 200));
+  });
+  await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+  await page.keyboard.press('Tab');
+  await page.evaluate(() => document.querySelector('[data-course-tab="cours"]').focus({ preventScroll: true }));
+  await expect(page.locator('[data-course-tab="cours"]')).toBeFocused();
+  await expect(page.locator('[data-course-tab="cours"]')).toBeInViewport({ ratio: 1 });
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('[data-course-tab="exercices"]')).toHaveAttribute('aria-selected', 'true');
 });
 
 test('le quiz HTML-CSS revient à la bonne origine sur téléphone et ordinateur', async ({ page }) => {
