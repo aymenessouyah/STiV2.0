@@ -1,0 +1,135 @@
+/* ============================================================
+   TP CSS3 — Exercice 2 : menu et sous-menus animés
+   Correction officielle — à lier depuis exercice2.html
+   Contraintes respectées : aucune boîte flexible,
+   aucun contenu généré par pseudo-élément.
+   Mise en page : float + position.
+   ============================================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  background: #ecf0f1;
+}
+/* Partie B : menu principal (float, hauteur fixe) */
+nav {
+  height: 50px;
+  background: #2c3e50;
+}
+.menu {
+  list-style: none;
+}
+.menu > li {
+  float: left;
+  position: relative;
+}
+nav a {
+  display: block;
+  padding: 15px 22px;
+  color: #ecf0f1;
+  text-decoration: none;
+  transition:
+    background 0.3s ease,
+    padding-left 0.3s ease,
+    border-color 0.3s ease;
+}
+nav a:hover {
+  background: #e67e22;
+}
+/* Partie D.4 : soulignement animé (bordure basse) */
+.menu > li > a {
+  border-bottom: 3px solid transparent;
+}
+.menu > li > a:hover {
+  border-bottom-color: #f1c40f;
+}
+/* Partie C : sous-menus (niveau 2) */
+.sous-menu {
+  list-style: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 190px;
+  background: #34495e;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    visibility 0.3s;
+}
+.sous-menu li {
+  position: relative;
+}
+.sous-menu a {
+  border-bottom: 1px solid #2c3e50;
+}
+/* Partie D.2 : décalage du lien au survol */
+.sous-menu a:hover {
+  padding-left: 32px;
+}
+li:hover > .sous-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+/* Partie C.4 + D.3 : niveau 3 à droite, animé avec @keyframes */
+.sous-menu .sous-menu {
+  display: none;
+  top: 0;
+  left: 100%;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: none;
+}
+.sous-menu li:hover > .sous-menu {
+  display: block;
+  animation: glisse 0.4s ease;
+}
+@keyframes glisse {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+/* Partie D.1 : flèche (balise <span>, sans pseudo-élément) */
+.fleche {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+li:hover > a .fleche {
+  transform: rotate(180deg);
+}
+/* Partie E (bonus) : adaptatif */
+@media (max-width: 768px) {
+  nav {
+    height: auto;
+  }
+  .menu > li {
+    float: none;
+  }
+  .sous-menu,
+  .sous-menu .sous-menu {
+    position: static;
+    width: 100%;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    display: none;
+  }
+  li:hover > .sous-menu,
+  .sous-menu li:hover > .sous-menu {
+    display: block;
+  }
+}

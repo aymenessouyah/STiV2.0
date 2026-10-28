@@ -359,6 +359,8 @@
     tpFormulaire:{titre:'TP — Formulaire, tableau et autres balises',description:'formulaire HTML5 · border-collapse · table-layout · figure et vidéo',url:'../exercices/html-css/tp-formulaire-tableau-autre/index.html',videoId:'tp-formulaire-tableau-autre',video:'../assets/videos/tp-formulaire-tableau-autre.mp4',videoTitle:'TP — Formulaire, tableau et autres balises'},
     /* v510 : capsule display, float et position ; les boîtes parlent avant le CSS. */
     tpDisplay:{titre:'TP — display, float et position',description:'inline · block · inline-block · flex · float · clear · position — chaque boîte se présente, puis le CSS',url:'../exercices/html-css/tp-display-float-position/index.html',videoId:'tp-display-float-position',video:'../assets/videos/tp-display-float-position.mp4',videoTitle:'TP — display, float et position'},
+    /* v512 : capsule transitions et animations (deux exercices, corrigés style1 / style2). */
+    tpTransitions:{titre:'TP — transitions et animations',description:'transition : durée · delay · temporisation — @keyframes : infinite, alternate — menu animé en float et position',url:'../exercices/html-css/tp-transitions-animations/index.html',videoId:'tp-transitions-animations',video:'../assets/videos/tp-transitions-animations.mp4',videoTitle:'TP — transitions et animations'},
     background:{titre:'Détails background — TP Site Tunisie',description:'image de fond · voile · carte badge — mémo interactif corrigé',url:'../projets/site-tunisie/correction-details/carte-timbre-droite-haut.html'}
   };
   function preparerChangementVideo(lecteur){

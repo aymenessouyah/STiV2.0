@@ -180,7 +180,8 @@ def dessiner(t, index, scene, total, cartons):
         if avancement > 0.05:
             surligne = min(len(ligne_code) - 1,
                            int(((avancement - 0.05) / 0.95) * cycle * (scene.get("cycles", 1.0))) % cycle)
-        R.editeur(im, d, ligne_code, BOX_CODE, avancement, surligne, cartons.get("fichier", "tp.html"))
+        R.editeur(im, d, ligne_code, BOX_CODE, avancement, surligne,
+                   scene.get("fichier") or cartons.get("fichier", "tp.html"))
         box = BOX_PAGE
         d = ImageDraw.Draw(im)
 

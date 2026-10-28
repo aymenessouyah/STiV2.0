@@ -182,8 +182,8 @@
   };
 
   /**
-   * Les 17 vidéos présentées ici (.mp4), et non tous les médias du site :
-   * HTML5 (4) · CSS3 (7) · JavaScript (2) · SQL (4, dont 2 Bac) · PHP (3 Bac).
+   * Les 18 vidéos présentées ici (.mp4), et non tous les médias du site :
+   * HTML5 (4) · CSS3 (8) · JavaScript (2) · SQL (4, dont 2 Bac) · PHP (3 Bac).
    * Les variantes mobiles, autres séries et leçons interactives ne sont pas comptées.
    * Noms et durées correspondent aux fichiers présents dans le dépôt.
    */
@@ -292,6 +292,20 @@
       urlTP: "exercices/html-css/tp-display-float-position/index.html",
       urlCours: "exercices/html-css/tp-display-float-position/index.html",
       codeApercu: "display: inline-block"
+    },
+    {
+      /* v512 : TP « transitions et animations » — deux exercices, corrigés dans la même page. */
+      id: "tp-transitions-animations",
+      matiere: "css3",
+      nomMatiere: "CSS3",
+      badgeClasse: "badge-css",
+      couleur: "#38bdf8",
+      titre: "TP — transitions et animations",
+      dureeTexte: "10:38",
+      srcPrincipal: "assets/videos/tp-transitions-animations.mp4",
+      urlTP: "exercices/html-css/tp-transitions-animations/index.html",
+      urlCours: "exercices/html-css/tp-transitions-animations/index.html",
+      codeApercu: "@keyframes pulse"
     },
     {
       id: "javascript-cours",

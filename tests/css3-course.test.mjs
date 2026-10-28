@@ -113,10 +113,10 @@ test('CSS3 : fichiers révisés disponibles pour le hors-ligne', () => {
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const path of ['cours/css3.html', 'assets/css/cours-css3.css', 'assets/js/cours-css3.js', 'assets/js/profil.js', 'assets/js/app.js']) {
     const revision = path === 'assets/css/cours-css3.css' ? 'videos-pas-a-pas-css3-20261027' :
-      path === 'cours/css3.html' ? 'tp-display-v510' :
-      path === 'assets/js/app.js' ? 'tp-display-v510' :
+      path === 'cours/css3.html' ? 'tp-transitions-v512' :
+      path === 'assets/js/app.js' ? 'tp-transitions-v512' :
       path === 'assets/css/cours.css' ? 'tp-evenements-v500' :
-      path === 'assets/js/cours-css3.js' ? 'tp-display-v510' : 'suivi-contextes-v491';
+      path === 'assets/js/cours-css3.js' ? 'tp-transitions-v512' : 'suivi-contextes-v491';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }
@@ -200,11 +200,44 @@ test('v511 : le lecteur pas à pas ouvre la capsule du TP display, float et posi
   assert.match(protection, /var estTpDisplay = \(!estTpEvenements && !estTpFormulaire && \(sSlug === "tp-display-float-position"/);
   /* Sans cette entrée dans la garde, le lecteur sortait avant d'ouvrir la vidéo :
      la carte du TP ne faisait rien au clic. */
-  assert.match(protection, /if \(!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estSqlSerieAny/);
+  assert.match(protection, /if \(!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny/);
   assert.ok(protection.includes('estTpDisplay ? "tp-display-float-position"'), 'slug cible');
   assert.ok(protection.includes('estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4"'), 'url du MP4');
   assert.ok(protection.includes('estTpDisplay ? "🎥 TP — display, float et position (HTML5 & CSS3)"'), 'titre du lecteur');
   const catalogue = read('assets/js/app.js');
   assert.ok(catalogue.includes('id: "tp-display-float-position"'));
   assert.ok(existsSync(join(root, 'assets/videos/tp-display-float-position.mp4')));
+});
+
+test('v512 : le TP transitions et animations est complet et sa capsule est branchée', () => {
+  const dossier = join(root, 'exercices/html-css/tp-transitions-animations');
+  for (const fichier of ['index.html', 'exercice1.html', 'exercice2.html', 'style1.css', 'style2.css']) {
+    assert.ok(existsSync(join(dossier, fichier)), fichier);
+  }
+  /* Les deux corrigés ont besoin de leurs feuilles : le lien est relatif au dossier. */
+  assert.match(read('exercices/html-css/tp-transitions-animations/exercice1.html'), /href="style1\.css"/);
+  assert.match(read('exercices/html-css/tp-transitions-animations/exercice2.html'), /href="style2\.css"/);
+  const style1 = read('exercices/html-css/tp-transitions-animations/style1.css');
+  const style2 = read('exercices/html-css/tp-transitions-animations/style2.css');
+  for (const attendu of ['@keyframes pulse', '@keyframes tourne', '@keyframes fondu', '@keyframes rebond', 'transition-delay'])
+    assert.ok(style1.includes(attendu), 'style1 : ' + attendu);
+  for (const attendu of ['@keyframes glisse', 'visibility: hidden', 'float: left', 'display: inline-block'])
+    assert.ok(style2.includes(attendu), 'style2 : ' + attendu);
+  /* Contraintes du sujet : ni flex, ni pseudo-éléments pour la mise en page. */
+  for (const feuille of [style1, style2]) {
+    assert.ok(!/display\s*:\s*flex/i.test(feuille), 'aucun display: flex');
+    assert.ok(!/::(?:before|after)/.test(feuille), 'aucun pseudo-élément');
+  }
+  /* La page du TP renvoie vers les deux corrections et la vidéo est branchée. */
+  const page = read('exercices/html-css/tp-transitions-animations/index.html');
+  assert.match(page, /href="exercice1\.html"/);
+  assert.match(page, /href="exercice2\.html"/);
+  assert.ok(existsSync(join(root, 'assets/videos/tp-transitions-animations.mp4')));
+  const protection = read('assets/js/protection.js');
+  assert.ok(protection.includes('var estTpTransitions ='), 'lecteur : détection du slug');
+  assert.ok(protection.includes('estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4"'), 'lecteur : url du MP4');
+  const cours = read('cours/css3.html');
+  assert.ok(cours.includes('id="exo-tp-transitions-animations"'), 'carte du TP dans les exercices CSS3');
+  assert.ok(cours.includes('data-playlist="tpTransitions"'), 'entrée de playlist CSS3');
+  assert.ok(read('assets/js/cours-css3.js').includes('tpTransitions:{titre:'), 'leçon de playlist');
 });

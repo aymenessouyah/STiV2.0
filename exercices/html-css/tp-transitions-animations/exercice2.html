@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Corrigé 2 — menu et sous-menus animés</title>
+    <link rel="stylesheet" href="style2.css" />
+    <style>
+    .retour-tp { font-size: 13px; background: #1f4e79; color: #fff; padding: 8px 12px; text-align: center; }
+    .retour-tp a { color: #fde68a; }
+    .conseils { max-width: 640px; margin: 40px auto 0; background: #eaf2fb; border: 2px solid #1f4e79;
+      border-radius: 6px; padding: 10px 16px; font-size: 14px; }
+    .conseils h2 { color: #1f4e79; margin: 4px 0 8px; font-size: 16px; border-bottom: 2px solid #e67e22; }
+  </style>
+</head>
+
+  <body>
+  <p class="retour-tp">Corrigé de l'exercice 2 — <a href="index.html">← Retour au TP</a> · feuille de style : <a href="style2.css">style2.css</a></p>
+    <nav>
+      <ul class="menu">
+        <li><a href="#">Accueil</a></li>
+        <li>
+          <a href="#">Cours <span class="fleche">▾</span></a>
+          <ul class="sous-menu">
+            <li><a href="#">HTML5</a></li>
+            <li>
+              <a href="#">CSS3 <span class="fleche">▸</span></a>
+              <ul class="sous-menu">
+                <li><a href="#">Sélecteurs</a></li>
+                <li><a href="#">Float et position</a></li>
+                <li><a href="#">Transitions</a></li>
+              </ul>
+            </li>
+            <li><a href="#">JavaScript</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#">Exercices <span class="fleche">▾</span></a>
+          <ul class="sous-menu">
+            <li><a href="#">TP 1</a></li>
+            <li><a href="#">TP 2</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="conseils">
+    <h2>Ce qu'il faut vérifier</h2>
+    <ul>
+      <li><code>float: left</code> sur les <code>li</code> du menu principal, avec un <code>nav</code> à hauteur fixe.</li>
+      <li><code>position: relative</code> sur les parents, <code>position: absolute</code> sur les <code>.sous-menu</code>.</li>
+      <li><code>opacity</code> + <code>visibility</code> au niveau 2 : jamais <code>display: none</code>, sinon la transition ne se voit pas.</li>
+      <li>Niveau 3 : <code>top: 0; left: 100%</code> pour l'ouvrir à droite, avec l'animation <code>glisse</code>.</li>
+      <li>La flèche est un <code>&lt;span&gt;</code> en <code>display: inline-block</code>, sans <code>::after</code>.</li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Corrigé 1 — transitions et animations CSS3</title>
+    <link rel="stylesheet" href="style1.css" />
+    <style>
+    /* Bandeau de navigation du corrigé, sans effet sur l'exercice. */
+    .retour-tp { font-size: 13px; background: #1f4e79; color: #fff; padding: 8px 12px; text-align: center; }
+    .retour-tp a { color: #fde68a; }
+    .conseils { max-width: 640px; margin: 26px auto 0; background: #eaf2fb; border: 2px solid #1f4e79;
+      border-radius: 6px; padding: 10px 16px; text-align: left; font-size: 14px; }
+    .conseils h2 { color: #1f4e79; margin: 4px 0 8px; font-size: 16px; border-bottom: 2px solid #e67e22; }
+  </style>
+</head>
+  <body>
+  <p class="retour-tp">Corrigé de l'exercice 1 — <a href="index.html">← Retour au TP</a> · feuille de style : <a href="style1.css">style1.css</a></p>
+    <h1>Transitions et animations CSS</h1>
+    <button class="btn">Cliquez-moi</button>
+    <div class="carte">Je me soulève au survol</div>
+    <div class="cercle"></div>
+    <div class="loader"></div>
+    <div class="balle"></div>
+    <div class="conseils">
+    <h2>Ce qu'il faut vérifier</h2>
+    <ul>
+      <li><code>transition</code> est écrite sur l'état de base (<code>.btn</code>, <code>.carte</code>), pas dans <code>:hover</code>.</li>
+      <li>Chaque <code>@keyframes</code> porte un nom, et ce nom est repris par <code>animation</code>.</li>
+      <li><code>infinite</code> pour le cercle et le loader ; <code>alternate</code> pour la balle.</li>
+      <li>Le fichier <code>index.html</code> lie bien <code>style1.css</code> dans le <code>&lt;head&gt;</code>.</li>
+    </ul>
+  </div>
+</body>
+</html>

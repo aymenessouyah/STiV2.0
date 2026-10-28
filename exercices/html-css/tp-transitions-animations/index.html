@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TP : transitions et animations CSS3</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 960px; margin: 0 auto 90px; padding: 0 12px; color: #222; line-height: 1.45; }
+  h1 { color: #1f4e79; text-align: center; }
+  h2 { color: #1f4e79; border-bottom: 3px solid #e67e22; padding-bottom: 4px; margin-top: 38px; }
+  h3 { color: #e67e22; }
+  code { background: #eaf2fb; padding: 1px 4px; border-radius: 3px; font-size: 13px; }
+  pre { background: #1f2937; color: #e5e7eb; padding: 10px 12px; border-radius: 6px; overflow-x: auto; font-size: 13px; line-height: 1.4; }
+  pre code { background: none; color: inherit; padding: 0; }
+  fieldset { margin-bottom: 18px; border: 2px solid #1f4e79; border-radius: 6px; padding: 10px 14px 14px; }
+  legend { font-weight: bold; color: #1f4e79; padding: 0 8px; }
+  button, select { padding: 5px 10px; margin: 3px 4px 3px 0; font-size: 14px; }
+  select { border: 2px solid #1f4e79; border-radius: 4px; background: #fff; }
+  .recap { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  .recap caption { font-weight: bold; color: #1f4e79; padding: 6px; }
+  .recap th, .recap td { border: 1px solid #1f4e79; padding: 6px; font-size: 14px; text-align: left; vertical-align: top; }
+  .recap th { background: #1f4e79; color: #fff; text-align: center; }
+  .zone { background: #eaf2fb; border: 1px dashed #1f4e79; border-radius: 6px; padding: 14px; margin: 10px 0; text-align: center; }
+  .centre { text-align: center; }
+  footer { text-align: center; margin-top: 34px; font-size: 13px; color: #555; }
+
+  /* =====================================================
+     EXERCICE 1 — TRANSITIONS (:hover)
+     ===================================================== */
+
+  /* Le bouton : fond, taille et ombre, tout en transition */
+  .btn {
+    background: #2980b9; color: #fff;
+    padding: 12px 24px; border: none; border-radius: 8px;
+    font-size: 16px; cursor: pointer;
+    /* la transition se déclare sur l'état de BASE, pas sur :hover */
+    transition: background 0.4s ease-in-out, transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .btn:hover {
+    background: #e67e22;
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* La carte qui se soulève, avec un retard de 0,1 s */
+  .carte {
+    width: 220px; margin: 0 auto; padding: 20px;
+    background: #fff; border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s linear, box-shadow 0.3s linear;
+    transition-delay: 0.1s;
+  }
+  .carte:hover { transform: translateY(-10px); box-shadow: 0 12px 20px rgba(0, 0, 0, 0.35); }
+
+  /* Les trois fonctions de temporisation, côte à côte (inline-block, pas de flex) */
+  .tempo-rangee { text-align: center; }
+  .tempo {
+    display: inline-block; width: 120px; height: 60px; margin: 6px;
+    background: #1f4e79; color: #fff; border-radius: 6px;
+    font-size: 12px; line-height: 60px;
+    transition-property: transform, background;
+    transition-duration: 1s;
+  }
+  .tempo--ease:hover { transform: translateX(90px); background: #e67e22; transition-timing-function: ease; }
+  .tempo--linear:hover { transform: translateX(90px); background: #e67e22; transition-timing-function: linear; }
+  .tempo--inout:hover { transform: translateX(90px); background: #e67e22; transition-timing-function: ease-in-out; }
+
+  /* =====================================================
+     EXERCICE 1 — ANIMATIONS (@keyframes)
+     ===================================================== */
+
+  /* B.3 : le titre de la démo apparaît en fondu au chargement */
+  .fondu { animation: fondu 2s ease; }
+  @keyframes fondu { from { opacity: 0; } to { opacity: 1; } }
+
+  /* B.1 : le cercle qui pulse */
+  .cercle {
+    width: 100px; height: 100px; margin: 10px auto;
+    border-radius: 50%; background: #27ae60;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  /* B.2 : le loader qui tourne à l'infini */
+  .loader {
+    width: 60px; height: 60px; margin: 10px auto;
+    background: #8e44ad;
+    animation: tourne 1.2s linear infinite;
+  }
+  @keyframes tourne {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* C : la balle qui rebondit, avec animation-direction: alternate */
+  .balle {
+    width: 40px; height: 40px; margin: 0 auto;
+    border-radius: 50%; background: #c0392b;
+    animation: rebond 0.6s ease-in infinite alternate;
+  }
+  @keyframes rebond {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-70px); }
+  }
+
+  /* La démo de vitesse : le sélecteur plus bas agit sur ces deux propriétés */
+  .demo-lente { animation-duration: 3s !important; }
+  .demo-pause { animation-play-state: paused !important; }
+
+  /* =====================================================
+     EXERCICE 2 — MENU ET SOUS-MENUS ANIMÉS
+     Mise en page en float + position (pas de flex,
+     pas de pseudo-éléments ::before / ::after).
+     ===================================================== */
+  .menu-demo { text-align: left; }
+  .menu-demo nav { height: 50px; background: #2c3e50; border-radius: 6px; }
+  .menu-demo ul { list-style: none; margin: 0; padding: 0; }
+  .menu-demo .menu > li { float: left; position: relative; }
+  .menu-demo nav a { display: block; padding: 15px 22px; color: #ecf0f1; text-decoration: none;
+    transition: background 0.3s ease, padding-left 0.3s ease, border-color 0.3s ease; }
+  .menu-demo nav a:hover { background: #e67e22; }
+  .menu-demo .menu > li > a { border-bottom: 3px solid transparent; }
+  .menu-demo .menu > li > a:hover { border-bottom-color: #f1c40f; }
+  .menu-demo .sous-menu {
+    position: absolute; top: 100%; left: 0; width: 190px; background: #34495e;
+    opacity: 0; visibility: hidden; transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+  }
+  .menu-demo .sous-menu li { position: relative; }
+  .menu-demo .sous-menu a { border-bottom: 1px solid #2c3e50; }
+  .menu-demo .sous-menu a:hover { padding-left: 32px; }
+  .menu-demo li:hover > .sous-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+  .menu-demo .sous-menu .sous-menu {
+    display: none; top: 0; left: 100%;
+    opacity: 1; visibility: visible; transform: none; transition: none;
+  }
+  .menu-demo .sous-menu li:hover > .sous-menu { display: block; animation: glisse 0.4s ease; }
+  @keyframes glisse {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .menu-demo .fleche { display: inline-block; margin-left: 6px; font-size: 12px; transition: transform 0.3s ease; }
+  .menu-demo li:hover > a .fleche { transform: rotate(180deg); }
+  .menu-demo .apres-menu { clear: both; padding-top: 6px; font-size: 12px; color: #555; }
+</style>
+</head>
+<body>
+
+<h1 class="fondu">TP : transitions et animations CSS3</h1>
+<p class="centre">Deux exercices, deux corrections. Dans cette page, tout se déclenche au survol ou au chargement : observez, puis lisez le code.</p>
+
+<!-- ============================ 1. RAPPELS ============================ -->
+<h2>1. Transition ou animation ?</h2>
+
+<table class="recap">
+  <caption>Récapitulatif : les deux familles du mouvement</caption>
+  <thead><tr><th>Propriété</th><th>Qui déclenche ?</th><th>États</th><th>Répétition</th><th>Exemple du TP</th></tr></thead>
+  <tbody>
+    <tr><td><code>transition</code></td><td>Un changement d'état : <code>:hover</code>, <code>:focus</code>…</td><td>Un point de départ, un point d'arrivée</td><td>Jamais : elle revient en arrière au relâchement</td><td>Le bouton qui grossit, la carte qui se soulève</td></tr>
+    <tr><td><code>animation</code></td><td>Le chargement de la page, sans intervention</td><td>Autant d'étapes que voulu (<code>0%</code>, <code>50%</code>, <code>100%</code>)</td><td><code>infinite</code>, <code>alternate</code>…</td><td>Le cercle qui pulse, le loader qui tourne, la balle</td></tr>
+  </tbody>
+</table>
+
+<table class="recap">
+  <caption>Les propriétés et leur rôle</caption>
+  <thead><tr><th>Propriété</th><th>Rôle</th></tr></thead>
+  <tbody>
+    <tr><td><code>transition</code></td><td>Anime le passage d'un état à un autre</td></tr>
+    <tr><td><code>transition-duration</code> · <code>transition-delay</code></td><td>Durée du passage · temps d'attente avant de commencer</td></tr>
+    <tr><td><code>transition-timing-function</code></td><td>La vitesse : <code>ease</code>, <code>linear</code>, <code>ease-in-out</code></td></tr>
+    <tr><td><code>transform</code></td><td><code>scale</code>, <code>rotate</code>, <code>translate</code>, <code>skew</code></td></tr>
+    <tr><td><code>@keyframes</code></td><td>Définit les étapes d'une animation</td></tr>
+    <tr><td><code>animation</code></td><td>Applique les keyframes : nom, durée, répétition, direction</td></tr>
+    <tr><td><code>visibility</code> + <code>opacity</code></td><td>Masquer un élément en gardant la possibilité de l'animer</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================ 2. EXERCICE 1 ============================ -->
+<h2>2. Exercice 1 — transitions et animations (niveau simple)</h2>
+
+<p><strong>Travail demandé :</strong> créer un dossier <code>tp1</code> contenant <code>index.html</code> et <code>style1.css</code>.
+<strong>Contrainte :</strong> pas de <code>display: flex</code>.</p>
+
+<h3>Partie A — les transitions (<code>:hover</code>)</h3>
+
+<fieldset>
+  <legend>A.1-2 · le bouton qui réagit au survol</legend>
+  <div class="zone"><button type="button" class="btn">Cliquez-moi</button></div>
+  <p>Au survol : le fond change, le bouton grossit (<code>scale(1.1)</code>) et une ombre apparaît, en 0,4 s.</p>
+<pre><code>.btn {
+  background: #2980b9; color: #fff;
+  padding: 12px 24px; border: none; border-radius: 8px;
+  transition: background 0.4s ease-in-out, transform 0.4s ease, box-shadow 0.4s ease;
+}
+.btn:hover {
+  background: #e67e22;
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}</code></pre>
+  <p><code>transition</code> s'écrit <strong>sur l'état de base</strong> <code>.btn</code>, jamais dans <code>:hover</code> : sinon le retour est instantané.</p>
+</fieldset>
+
+<fieldset>
+  <legend>A.3-4 · la carte qui se soulève (et le <code>transition-delay</code>)</legend>
+  <div class="zone"><div class="carte">Je me soulève au survol</div></div>
+<pre><code>.carte {
+  width: 220px; padding: 20px; background: #fff; border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s linear, box-shadow 0.3s linear;
+  transition-delay: 0.1s;
+}
+.carte:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.35);
+}</code></pre>
+  <p><code>translateY(-10px)</code> remonte la carte de dix pixels ; une ombre plus large donne l'impression qu'elle décolle.</p>
+</fieldset>
+
+<fieldset>
+  <legend>A.4 · les fonctions de temporisation, côte à côte</legend>
+  <p>Survolez chaque carré : la durée est la même (1 s), seule la <em>vitesse</em> change.</p>
+  <div class="tempo-rangee">
+    <div class="tempo tempo--ease">ease</div>
+    <div class="tempo tempo--linear">linear</div>
+    <div class="tempo tempo--inout">ease-in-out</div>
+  </div>
+  <p>
+    <label for="selTempo">Durée de la démo :</label>
+    <select id="selTempo" onchange="document.querySelectorAll('.tempo').forEach(function (e) { e.style.transitionDuration = this.value; }, this)">
+      <option value="1s">1 s</option>
+      <option value="0.4s">0,4 s</option>
+      <option value="2s">2 s</option>
+    </select>
+  </p>
+  <ul>
+    <li><code>ease</code> : départ doux, milieu rapide, arrivée douce (le défaut).</li>
+    <li><code>linear</code> : vitesse constante, du début à la fin.</li>
+    <li><code>ease-in-out</code> : lent au départ, rapide au milieu, lent à l'arrivée.</li>
+  </ul>
+</fieldset>
+
+<h3>Partie B — les animations (<code>@keyframes</code>)</h3>
+
+<fieldset>
+  <legend>B.1 · le cercle qui pulse</legend>
+  <div class="zone"><div class="cercle"></div></div>
+<pre><code>@keyframes pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.cercle {
+  width: 100px; height: 100px; border-radius: 50%; background: #27ae60;
+  animation: pulse 1.5s ease-in-out infinite;
+}</code></pre>
+  <p><code>infinite</code> relance l'animation sans fin ; le cercle revient exactement à son état de départ, donc la boucle est invisible.</p>
+</fieldset>
+
+<fieldset>
+  <legend>B.2 · le loader qui tourne</legend>
+  <div class="zone"><div class="loader"></div></div>
+<pre><code>@keyframes tourne {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.loader {
+  width: 60px; height: 60px; background: #8e44ad;
+  animation: tourne 1.2s linear infinite;
+}</code></pre>
+  <p><code>from / to</code> est le raccourci de <code>0% / 100%</code>. Pour une rotation continue, <code>linear</code> est obligatoire, sinon on voit des à-coups.</p>
+</fieldset>
+
+<fieldset>
+  <legend>B.3 · le titre qui apparaît en fondu</legend>
+  <p class="centre"><button type="button" onclick="relancerFondu()">↻ Rejouer le fondu</button></p>
+  <p class="centre"><span id="titreFondu" style="font-size:22px;font-weight:bold;color:#1f4e79">Transitions et animations CSS</span></p>
+<pre><code>h1 { animation: fondu 2s ease; }
+@keyframes fondu {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}</code></pre>
+<pre><code>/* Rejouer une animation en JavaScript : on la retire puis on la remet */
+function relancerFondu() {
+  var t = document.getElementById('titreFondu');
+  t.style.animation = 'none';
+  void t.offsetWidth;          /* force le navigateur à recalculer */
+  t.style.animation = 'fondu 2s ease';
+}</code></pre>
+</fieldset>
+
+<h3>Partie C — bonus : la balle qui rebondit</h3>
+
+<fieldset>
+  <legend>C · <code>animation-direction: alternate</code></legend>
+  <div class="zone" style="height:130px;padding-top:40px"><div class="balle"></div></div>
+<pre><code>@keyframes rebond {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-70px); }
+}
+.balle {
+  width: 40px; height: 40px; border-radius: 50%; background: #c0392b;
+  animation: rebond 0.6s ease-in infinite alternate;
+}</code></pre>
+  <p><code>alternate</code> joue l'animation à l'aller puis à l'envers : la balle remonte et redescend, sans saut visible.</p>
+</fieldset>
+
+<!-- ============================ 3. EXERCICE 2 ============================ -->
+<h2>3. Exercice 2 — menu déroulant avec sous-menus animés</h2>
+
+<p><strong>Travail demandé :</strong> créer un dossier <code>tp2</code> contenant <code>index.html</code> et <code>style2.css</code>.<br>
+<strong>Contraintes :</strong> pas de <code>display: flex</code>, pas de pseudo-éléments <code>::before</code> / <code>::after</code>. Mise en page avec <code>float</code> et <code>position</code> uniquement.</p>
+
+<fieldset>
+  <legend>Partie A · la structure HTML (trois niveaux)</legend>
+<pre><code>&lt;nav&gt;
+  &lt;ul class="menu"&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Accueil&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Cours &lt;span class="fleche"&gt;▾&lt;/span&gt;&lt;/a&gt;
+      &lt;ul class="sous-menu"&gt;
+        &lt;li&gt;&lt;a href="#"&gt;HTML5&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;CSS3 &lt;span class="fleche"&gt;▸&lt;/span&gt;&lt;/a&gt;
+          &lt;ul class="sous-menu"&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Sélecteurs&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Float et position&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#"&gt;Transitions&lt;/a&gt;&lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;JavaScript&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Exercices &lt;span class="fleche"&gt;▾&lt;/span&gt;&lt;/a&gt;
+      &lt;ul class="sous-menu"&gt;
+        &lt;li&gt;&lt;a href="#"&gt;TP 1&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href="#"&gt;TP 2&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+    &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+  <p>La flèche est écrite <strong>dans le HTML</strong> avec un <code>&lt;span&gt;</code> : pas de contenu généré par <code>::after</code>.</p>
+</fieldset>
+
+<fieldset>
+  <legend>Partie B à E · le menu animé, en vrai</legend>
+  <p>Survolez « Cours », puis « CSS3 » : le niveau 2 apparaît en fondu, le niveau 3 glisse depuis la gauche.</p>
+  <div class="menu-demo">
+    <nav>
+      <ul class="menu">
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Cours <span class="fleche">▾</span></a>
+          <ul class="sous-menu">
+            <li><a href="#">HTML5</a></li>
+            <li><a href="#">CSS3 <span class="fleche">▸</span></a>
+              <ul class="sous-menu">
+                <li><a href="#">Sélecteurs</a></li>
+                <li><a href="#">Float et position</a></li>
+                <li><a href="#">Transitions</a></li>
+              </ul>
+            </li>
+            <li><a href="#">JavaScript</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Exercices <span class="fleche">▾</span></a>
+          <ul class="sous-menu">
+            <li><a href="#">TP 1</a></li>
+            <li><a href="#">TP 2</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+    <p class="apres-menu">Le soulignement jaune des liens du menu est une <code>border-bottom</code> animée, pas un <code>::after</code>.</p>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>Partie B · le menu principal, en <code>float</code></legend>
+<pre><code>nav { height: 50px; background: #2c3e50; }
+.menu { list-style: none; }
+.menu > li { float: left; position: relative; }
+nav a {
+  display: block; padding: 15px 22px; color: #ecf0f1; text-decoration: none;
+  transition: background 0.3s ease, padding-left 0.3s ease, border-color 0.3s ease;
+}
+nav a:hover { background: #e67e22; }</code></pre>
+  <p><code>float: left</code> place les entrées côte à côte ; comme les flottants sortent du flux, le <code>nav</code> doit garder une hauteur fixe (50 px).</p>
+</fieldset>
+
+<fieldset>
+  <legend>Partie C · les sous-menus : <code>opacity</code> + <code>visibility</code></legend>
+<pre><code>.sous-menu {
+  position: absolute; top: 100%; left: 0; width: 190px; background: #34495e;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+li:hover > .sous-menu {
+  opacity: 1; visibility: visible; transform: translateY(0);
+}</code></pre>
+  <p><strong>L'astuce du TP :</strong> on ne met pas <code>display: none</code>, car un élément caché ainsi ne peut pas être animé. <code>opacity</code> + <code>visibility</code> le rendent invisible <em>et</em> cliquable-non, tout en gardant la transition.</p>
+</fieldset>
+
+<fieldset>
+  <legend>Partie C.4 et D.3 · le niveau 3, à droite, animé par <code>@keyframes</code></legend>
+<pre><code>.sous-menu .sous-menu {
+  display: none; top: 0; left: 100%;
+  opacity: 1; visibility: visible; transform: none; transition: none;
+}
+.sous-menu li:hover > .sous-menu { display: block; animation: glisse 0.4s ease; }
+@keyframes glisse {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}</code></pre>
+  <p>Le niveau 3 part de <code>left: 100%</code>, donc à droite de son parent. Ici <code>display: none</code> est accepté, parce que l'apparition est jouée par une animation, pas par une transition.</p>
+</fieldset>
+
+<fieldset>
+  <legend>Partie D.1-2-4 · la flèche, le décalage et le soulignement</legend>
+<pre><code>.fleche { display: inline-block; margin-left: 6px; font-size: 12px; transition: transform 0.3s ease; }
+li:hover > a .fleche { transform: rotate(180deg); }
+
+.sous-menu a:hover { padding-left: 32px; }        /* D.2 : le lien glisse */
+
+.menu > li > a { border-bottom: 3px solid transparent; }
+.menu > li > a:hover { border-bottom-color: #f1c40f; }   /* D.4 */</code></pre>
+  <p><strong>Piège du bac :</strong> sans <code>display: inline-block</code> (ou <code>block</code>), un <code>&lt;span&gt;</code> ignore <code>transform</code> : la flèche ne tourne pas.</p>
+</fieldset>
+
+<fieldset>
+  <legend>Partie E · bonus : le menu adaptatif</legend>
+<pre><code>@media (max-width: 768px) {
+  nav { height: auto; }
+  .menu > li { float: none; }
+  .sous-menu, .sous-menu .sous-menu {
+    position: static; width: 100%;
+    opacity: 1; visibility: visible; transform: none; display: none;
+  }
+  li:hover > .sous-menu, .sous-menu li:hover > .sous-menu { display: block; }
+}</code></pre>
+  <p>Sur un petit écran, le menu passe en colonne et les sous-menus s'ouvrent dans le flux, sans se superposer.</p>
+</fieldset>
+
+<!-- ============================ 4. CORRIGÉS ============================ -->
+<h2>4. Les corrigés (à ouvrir après avoir cherché)</h2>
+
+<p>Les deux corrections sont des pages complètes, comme les fichiers demandés. Chacune a besoin de sa feuille de style, dans le même dossier.</p>
+
+<table class="recap">
+  <caption>Les quatre fichiers du TP</caption>
+  <thead><tr><th>Exercice</th><th>Page</th><th>Feuille de style</th><th>Ouvrir</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Exercice 1 — transitions et animations</td>
+      <td><code>exercice1.html</code></td>
+      <td><code>style1.css</code></td>
+      <td><a href="exercice1.html" target="_blank" rel="noopener">Ouvrir la correction ↗</a><br>
+          <a href="style1.css" target="_blank" rel="noopener">Voir style1.css ↗</a> · <a href="style1.css" download>↓ Télécharger</a></td>
+    </tr>
+    <tr>
+      <td>Exercice 2 — menu et sous-menus animés</td>
+      <td><code>exercice2.html</code></td>
+      <td><code>style2.css</code></td>
+      <td><a href="exercice2.html" target="_blank" rel="noopener">Ouvrir la correction ↗</a><br>
+          <a href="style2.css" target="_blank" rel="noopener">Voir style2.css ↗</a> · <a href="style2.css" download>↓ Télécharger</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Points à vérifier dans le corrigé 1 :</strong> <code>transition</code> placée sur l'état de base, <code>@keyframes</code> bien nommé et relié par <code>animation</code>, <code>infinite</code> pour les animations continues.<br>
+<strong>Points à vérifier dans le corrigé 2 :</strong> <code>float: left</code> sur les <code>li</code> avec un <code>nav</code> à hauteur fixe, <code>position: relative</code> sur les parents et <code>absolute</code> sur les sous-menus, <code>opacity</code> + <code>visibility</code> au niveau 2, <code>left: 100%</code> au niveau 3, <code>display: inline-block</code> sur la flèche.</p>
+
+<footer>TP réalisé par : Enseignant : Aymen Essouyah — 3ème SI</footer>
+
+<script>
+  /* B.3 : rejouer l'animation de fondu sur le titre de la démonstration. */
+  function relancerFondu() {
+    var t = document.getElementById('titreFondu');
+    t.style.animation = 'none';
+    void t.offsetWidth;
+    t.style.animation = 'fondu 2s ease';
+  }
+</script>
+</body>
+</html>
