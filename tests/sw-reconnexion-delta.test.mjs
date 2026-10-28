@@ -174,6 +174,19 @@ for (const panne of ['503', 'coupure']) {
   });
 }
 
+for (const cible of ['./assets/css/cours.css', './assets/js/cours-onglets-mobile.js']) {
+  test(`panne temporaire : ${cible} reste disponible jusqu’à la reprise du réseau`, async () => {
+    const e = await environnement({ cible, panne: '503' });
+    await e.synchroniser();
+    assert.equal(await (await e.cache.match(cible, { ignoreSearch: true }))?.text(), 'ancienne version');
+    assert.equal(await e.revisions.match(e.marqueur), undefined);
+    e.setPanne('');
+    await e.synchroniser();
+    assert.match(await (await e.cache.match(cible, { ignoreSearch: true })).text(), /^nouveau :/);
+    assert.deepEqual(e.requetes, [cible, cible]);
+  });
+}
+
 for (const matiere of ['html5', 'css3', 'javascript', 'matieres']) {
   test(`panne temporaire : le script ${matiere} reste utilisable hors ligne jusqu'à sa mise à jour`, async () => {
     const cible = './assets/js/cours-' + matiere + '.js', e = await environnement({ cible, panne: '503' });

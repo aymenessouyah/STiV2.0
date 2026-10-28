@@ -237,15 +237,30 @@
 /* En petit écran, la barre suit les autres barres au défilement. Elle reste
    focalisable hors écran et réapparaît dès qu'une commande reçoit le clavier. */
 @media (max-width: 700px) {
-  .course-tabs-bar { transition: transform var(--duration-normal) ease; }
+  .course-tabs-bar {
+    --sti-onglets-fixation-disponible: 1;
+    transition: transform var(--duration-normal) ease;
+  }
+  /* Après une remontée, placer les onglets sous l'en-tête même avant leur position d'origine. */
+  html.sti-onglets-cours-fixes .course-tabs-bar {
+    position: fixed;
+    top: var(--sti-course-entete, var(--header-height));
+    inset-inline: 0;
+  }
   html.sti-barres-cachees .course-tabs-bar {
-    transform: translateY(calc(-100% - var(--header-height)));
+    transform: translateY(calc(-100% - var(--sti-course-entete, var(--header-height))));
     pointer-events: none;
   }
   html.sti-barres-cachees .course-tabs-bar:has(:focus-visible) {
     transform: none;
     pointer-events: auto;
   }
+}
+@media print {
+  html.sti-barres-cachees .course-tabs-bar, html.sti-onglets-cours-fixes .course-tabs-bar {
+    position: static; transform: none; pointer-events: auto;
+  }
+  .course-tabs-reserve { display: none !important; }
 }
 .course-tabs-bar__inner {
   display: flex;

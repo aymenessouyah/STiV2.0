@@ -12,6 +12,19 @@ async function ouvrir(page,type,hash=''){
   await page.goto(`/cours/${type}.html${hash}`,{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>Boolean(window.STIProfil && window.ouvrirVideoPasAPasSTI && document.querySelector('.code-box')));
 }
+/* Reproduire le geste réel qui réaffiche les onglets masqués sur mobile. */
+async function montrerNavigationMobile(page){
+  await expect(page.locator('#sti-bnav')).toBeVisible();
+  await page.evaluate(()=>{
+    document.documentElement.style.scrollBehavior='auto';
+    const barre=document.querySelector('.course-tabs-bar');
+    window.scrollTo(0,barre.getBoundingClientRect().top+window.scrollY+300);
+  });
+  await expect(page.locator('html')).toHaveClass(/sti-barres-cachees/);
+  await page.evaluate(()=>window.scrollBy(0,-120));
+  await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
+  await expect(page.locator('#tocMobileOpenBtn')).toBeInViewport({ratio:1});
+}
 
 test('SQL : chapitres, code, lecture, onglets, copie et persistance',async({page})=>{
   const erreurs=[];page.on('pageerror',e=>erreurs.push(e.message));await ouvrir(page,'sql');
@@ -109,6 +122,7 @@ test('PHP : quiz original, vidéo, chapitres synchronisés et reprise du profil'
 test('SQL et PHP : mobile, RTL, thèmes et absence de débordement',async({page})=>{
   for(const type of ['sql','php']){
     await page.setViewportSize({width:390,height:844});await ouvrir(page,type);
+    await montrerNavigationMobile(page);
     await page.locator('#tocMobileOpenBtn').click();await expect(page.locator('#tocMobileOpenBtn')).toHaveAttribute('aria-expanded','true');
     await page.keyboard.press('Escape');await expect(page.locator('#tocMobileOpenBtn')).toHaveAttribute('aria-expanded','false');
     for(const theme of ['clair','intermediaire','sombre']){await page.evaluate(t=>window.STIProfil.mettreAJour('theme',t),theme);await expect(page.locator('html')).toHaveAttribute('data-theme',theme);}
