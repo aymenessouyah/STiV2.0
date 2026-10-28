@@ -910,6 +910,7 @@
   global.STIProfil = {
     CLE_STOCKAGE: CLE_PROFIL,
     chargerProfil: chargerProfil,
+    normaliserProfil: normaliserProfil,
     invitationInstallationDejaVue: invitationInstallationDejaVue,
     sauvegarderProfil: sauvegarderProfil,
     mettreAJour: mettreAJour,
@@ -924,6 +925,33 @@
     reinitialiser: reinitialiser,
     appliquerPreferencesDOM: appliquerPreferencesDOM,
     lireEtatSession: lireEtatSession,
+    /* Les deux journaux historiques ne remplacent pas le profil unique. */
+    projectionSuivi: function (cle, valeur) {
+      if (["sti-exos-faits", "sti-pages-vues-v432", "sti-media-prog-v1"].indexOf(cle) < 0) return {};
+      try {
+        var stockage = global.localStorage;
+        if (arguments.length > 1) stockage.setItem(cle, JSON.stringify(valeur));
+        return JSON.parse(stockage.getItem(cle) || "{}");
+      } catch (e) { return {}; }
+    },
+    /* Accès brut aux journaux autorisés par le synchroniseur historique. */
+    projectionSynchronisation: function (filtre, cle, valeur) {
+      try {
+        var stockage = global.localStorage;
+        if (arguments.length === 1) {
+          var donnees = {};
+          for (var i = 0; i < stockage.length; i++) {
+            var k = stockage.key(i); if (filtre(k)) donnees[k] = stockage.getItem(k);
+          }
+          return donnees;
+        }
+        if (!filtre(cle)) return null;
+        if (arguments.length > 2) {
+          if (valeur == null) stockage.removeItem(cle); else stockage.setItem(cle, String(valeur));
+        }
+        return stockage.getItem(cle);
+      } catch (e) { return arguments.length === 1 ? {} : null; }
+    },
     preparerActivationServiceWorker: preparerActivationServiceWorker,
     preparerVerificationServiceWorker: preparerVerificationServiceWorker,
     compteQuizIsole: compteQuizIsole,
@@ -936,4 +964,14 @@
     confirmerOperationsQuiz: confirmerOperationsQuiz,
     ecrireProtocoleQuiz: ecrireProtocoleQuiz
   };
+  /* Les pages déjà équipées du profil reçoivent ces modules sans réécrire les quiz lourds. */
+  if (sourceProfil && document.head && document.querySelector && document.createElement) {
+    global.addEventListener("online", function () { global.__STI_RECONNEXION_ATTENDUE = true; });
+    ["suivi-profil.js", "reconnexion-profil.js", "appel-quiz.js"].forEach(function (nom) {
+      if (document.querySelector('script[src$="/' + nom + '"]')) return;
+      var script = document.createElement("script");
+      script.src = new URL(nom, sourceProfil).href; script.async = false;
+      document.head.appendChild(script);
+    });
+  }
 })(window);

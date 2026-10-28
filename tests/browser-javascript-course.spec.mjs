@@ -48,7 +48,7 @@ test('la fiche, les détails Math/String et les 27 corrigés restent disponibles
 
 test('révision, historique et ancres du cours sont persistants', async ({ page }) => {
   await page.locator('[data-toggle-revise="sec3"]').click();
-  await expect(page.locator('#courseRingCount')).toHaveText('1 / 15 chapitres révisés');
+  await expect(page.locator('#courseRevisedCount')).toHaveText('1 / 15 chapitres révisés');
   await page.locator('#sec13 [data-goto-exo]').click();
   await expect(page.locator('#exercices')).toBeVisible();
   await expect(page).toHaveURL(/#exo-boucles$/);

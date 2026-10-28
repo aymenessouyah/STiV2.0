@@ -36,6 +36,7 @@
   var restaurationEnCours = false;
   var audioLigne = null;
   var miseAJourLecture = 0;
+  var candidatLecture = "";
   var dernierChapitreEnregistre = "";
   var fonctionsApercu = [];
 
@@ -68,6 +69,12 @@
     if (precedent === "cours" && cible !== "cours") {
       defilementCours = global.scrollY;
       defilementCoursConnu = true;
+      if (miseAJourLecture) {
+        global.clearTimeout(miseAJourLecture);
+        miseAJourLecture = 0;
+        enregistrerLectureCourante();
+      }
+      candidatLecture = "";
     }
     ongletActif = cible;
     tous("[data-course-tab]").forEach(function (bouton) {
@@ -101,6 +108,8 @@
     var c = chapitre(id);
     var section = document.getElementById(id);
     if (!c || !section) return;
+    if (miseAJourLecture) { global.clearTimeout(miseAJourLecture); miseAJourLecture = 0; }
+    candidatLecture = "";
     chapitreActif = id;
     /* Une recherche ne doit pas empêcher un lien direct vers un chapitre filtré. */
     if (section.hidden) {
@@ -110,6 +119,8 @@
     activerOnglet("cours", false, false);
     fermerSommaire();
     if (mettreUrl) actualiserUrl(id, true);
+    /* Une ancre peut rester sous la barre mobile sans déclencher de défilement. */
+    enregistrerLectureCourante();
     actualiserProgression();
     if (deplacer !== false) {
       global.requestAnimationFrame(function () {
@@ -221,10 +232,11 @@
   function actualiserProgression() {
     var p = profil();
     var etats = p && p.chapitres ? p.chapitres[MATIERE] || {} : {};
-    var nb = 0;
+    var consultes = 0, revises = 0;
     CHAPITRES.forEach(function (c) {
       var revise = etats[c.id] === "revise";
-      if (revise) nb++;
+      if (revise) revises++;
+      if (revise || etats[c.id] === "en_cours") consultes++;
       var etat = revise ? "revise" : (etats[c.id] === "en_cours" || chapitreActif === c.id ? "en_cours" : "a_reviser");
       var lien = un('.toc-link[href="#' + c.id + '"]');
       if (lien) {
@@ -243,7 +255,7 @@
         bouton.textContent = revise ? "✓ Chapitre révisé" : "☐ Marquer comme révisé";
       }
     });
-    var pct = Math.round(nb / CHAPITRES.length * 100);
+    var pct = Math.round(consultes / CHAPITRES.length * 100);
     var cercle = document.getElementById("courseRingFill");
     if (cercle) {
       var longueur = 2 * Math.PI * 26;
@@ -253,9 +265,14 @@
     var pourcentage = document.getElementById("courseRingPct");
     if (pourcentage) pourcentage.textContent = pct + "%";
     var compteur = document.getElementById("courseRingCount");
-    if (compteur) compteur.textContent = nb + " / " + CHAPITRES.length + " chapitres révisés";
+    if (compteur) compteur.textContent = consultes + " / " + CHAPITRES.length + " chapitres consultés";
+    var compteurRevisions = document.getElementById("courseRevisedCount");
+    if (compteurRevisions) compteurRevisions.textContent = revises + " / " + CHAPITRES.length + " chapitres révisés";
     var compteurMobile = document.getElementById("tocMobileCount");
-    if (compteurMobile) compteurMobile.textContent = nb + "/" + CHAPITRES.length;
+    if (compteurMobile) {
+      compteurMobile.textContent = consultes + "/" + CHAPITRES.length;
+      compteurMobile.setAttribute("aria-label", consultes + " sur " + CHAPITRES.length + " chapitres consultés");
+    }
 
     var index = CHAPITRES.findIndex(function (c) { return c.id === chapitreActif; });
     if (index < 0) index = 0;
@@ -312,7 +329,10 @@
       var id = bouton.getAttribute("data-toggle-revise");
       var p = profil();
       var courant = p && p.chapitres && p.chapitres.html5[id];
-      global.STIProfil.definirEtatChapitre(MATIERE, id, courant === "revise" ? "en_cours" : "revise", CHAPITRES.length);
+      p = global.STIProfil.definirEtatChapitre(MATIERE, id, courant === "revise" ? "en_cours" : "revise", 0);
+      /* Ne compter que les identifiants encore présents dans ce cours. */
+      var termine = CHAPITRES.every(function (c) { return p.chapitres[MATIERE][c.id] === "revise"; });
+      if (p.progression[MATIERE] !== termine) global.STIProfil.mettreAJour("progression." + MATIERE, termine);
     });
 
     var champ = document.getElementById("courseSearchInput");
@@ -350,7 +370,9 @@
         raf = 0;
         if (boutonHaut) boutonHaut.classList.toggle("is-visible", global.scrollY > 420);
         if (ongletActif !== "cours" || restaurationEnCours) return;
-        var repere = 155;
+        /* Tenir compte de la barre fixe et du temps passé dans le chapitre :
+           un passage rapide ne doit pas être confondu avec une lecture. */
+        var repere = Math.min(global.innerHeight - 1, Math.max(220, global.innerHeight * 0.42));
         var candidate = null;
         CHAPITRES.forEach(function (c) {
           var sec = document.getElementById(c.id);
@@ -358,6 +380,11 @@
           var r = sec.getBoundingClientRect();
           if (r.top <= repere && r.bottom > repere) candidate = c.id;
         });
+        if (candidate !== candidatLecture) {
+          if (miseAJourLecture) global.clearTimeout(miseAJourLecture);
+          miseAJourLecture = 0;
+          candidatLecture = candidate;
+        }
         if (!candidate) return;
         if (candidate !== chapitreActif) {
           chapitreActif = candidate;
@@ -366,13 +393,14 @@
         if (candidate !== dernierChapitreEnregistre && !miseAJourLecture) {
           miseAJourLecture = global.setTimeout(function () {
             miseAJourLecture = 0;
-            enregistrerLectureCourante();
+            if (candidatLecture === candidate) enregistrerLectureCourante();
           }, 600);
         }
       });
     }
     global.addEventListener("scroll", suivreDefilement, { passive: true });
     actualiserProgression();
+    suivreDefilement();
   }
 
   /* ── Commutateurs Code / Aperçu des cinq démonstrations de référence ── */
@@ -1060,11 +1088,14 @@
     initialiserGuideVocal();
     initialiserVideos();
     initialiserExercices();
-    global.addEventListener("sti:profil-maj", function () {
+    function actualiserDonneesProfil() {
       actualiserProgression();
       actualiserVideos();
       actualiserExercices();
-    });
+    }
+    global.addEventListener("sti:profil-maj", actualiserDonneesProfil);
+    /* Le synchroniseur historique restaure parfois le profil dans cet onglet. */
+    global.addEventListener("sti-cloud-restored", actualiserDonneesProfil);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer);
   else demarrer();

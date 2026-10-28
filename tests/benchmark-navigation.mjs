@@ -72,7 +72,12 @@ async function mesurer(page, mesures) {
     await page.locator('.course-hero__grid').waitFor({ state: 'visible' });
     const pret = Math.round(performance.now() - debut);
     const dcl = await page.evaluate(() => Math.round(performance.getEntriesByType('navigation')[0].domContentLoadedEventEnd));
-    mesures[nom].push({ pret, dcl });
+    // Retour réel du navigateur : il peut bénéficier du bfcache lorsque le navigateur le permet.
+    const debutRetour = performance.now();
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+    await page.locator('#cours .subject-card').first().waitFor({ state: 'visible' });
+    const retour = Math.round(performance.now() - debutRetour);
+    mesures[nom].push({ pret, dcl, retour });
   }
 }
 
@@ -94,7 +99,8 @@ try {
       conditions: profil.reseau ? 'CPU x4, latence 40 ms, descendant 1,6 Mbit/s' : 'CPU x1, réseau local',
       cours: Object.fromEntries(cours.map(nom => [nom, {
         pret_median_ms: mediane(mesures[nom].map(m => m.pret)), pret_max_ms: Math.max(...mesures[nom].map(m => m.pret)),
-        dom_median_ms: mediane(mesures[nom].map(m => m.dcl))
+        dom_median_ms: mediane(mesures[nom].map(m => m.dcl)),
+        retour_median_ms: mediane(mesures[nom].map(m => m.retour)), retour_max_ms: Math.max(...mesures[nom].map(m => m.retour))
       }])) }));
   }
 } finally { await navigateur.close(); }
