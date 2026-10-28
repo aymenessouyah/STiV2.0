@@ -1,15 +1,22 @@
-/* STI v445 (évolution additive de v431) :
-   - Si le compte élève possède une photo validée par l'Administrateur (`photo_url` dans
-     `sti-session-cache`, synchronisé depuis `public.profiles`), le centre de la roue
-     (`#sti-roue-btn`) affiche la photo circulaire plein cadre à la place des initiales « P.N ».
-   - À défaut de photo validée (ou en attendant la validation d'une `photo_attente`), le centre
-     de la roue conserve les initiales « P.N » (ou l'engrenage ⚙️ si aucune identité n'est connue).
-   - Admin : le ⚙️ est masqué par acces.js — rien à faire ici. */
+/* Badge du bouton historique : photo ou initiales, anneau et loupe conservés.
+   L'administrateur strict n'a pas de roue créée par acces.js. */
 (function () {
   "use strict";
   if (window.__STI_ROUE_INITIALES) return;
   window.__STI_ROUE_INITIALES = true;
   var doc = document;
+  var source = doc.currentScript && doc.currentScript.src;
+  var racine = "./";
+  try { racine = source ? new URL("../../", source).href : ((window.STI_AUTH && window.STI_AUTH.RACINE) || "./"); } catch (e) {}
+
+  /* Une seule feuille locale, également disponible dans le cache hors ligne. */
+  if (!doc.getElementById("sti-badge-compte-css")) {
+    var feuille = doc.createElement("link");
+    feuille.id = "sti-badge-compte-css";
+    feuille.rel = "stylesheet";
+    feuille.href = racine + "assets/css/badge-compte.css?v=488";
+    (doc.head || doc.documentElement).appendChild(feuille);
+  }
 
   function cache() {
     try { return JSON.parse(localStorage.getItem("sti-session-cache") || "null") || {}; } catch (e) { return {}; }
@@ -36,55 +43,188 @@
     if (!toks.length) return "";
     var a = premiereLettre(toks[0]);
     var b = toks.length > 1 ? premiereLettre(toks[toks.length - 1]) : "";
-    return a + (b ? "." + b : "");
+    return b ? b + "." + a : a;
   }
   function initiales(c) {
     c = c || cache();
     var p = premiereLettre(c.prenom);
     var n = premiereLettre(c.nom);
-    if (p && n) return p + "." + n;
-    if (p || n) return p || n;
+    if (p && n) return n + "." + p;
+    if (p || n) return n || p;
     return depuisEmail(c.email || c.phone || "");
   }
-  function appliquer() {
-    var btn = doc.getElementById("sti-roue-btn");
-    if (!btn) return;
+
+  function normaliser(s) {
+    s = String(s || "").trim().toLowerCase();
+    try { s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
+    return s.replace(/[\s._\-]+/g, "");
+  }
+
+  /* Ne jamais afficher le cache d'un autre compte. */
+  function donneesDuCompte(etatFourni) {
     var c = cache();
-    var ph = photoValide(c.photo_url);
-    var wantIni = initiales(c);
-    var cle = ph ? ("ph:" + ph.length + ":" + ph.slice(-24)) : ("in:" + wantIni);
-    if (btn.getAttribute("data-sti-init") === cle) {
-      if (ph && btn.querySelector("img.sti-roue-photo-img")) return;
-      if (!ph && (wantIni === "" || btn.textContent === wantIni)) return;
+    var etat = etatFourni || null;
+    try { if (!etat && window.STIProfil) etat = window.STIProfil.lireEtatSession(); } catch (e) {}
+    if (!etat) return { cache: c, indicateursGlobaux: true };
+    if (!etat.connecte) return { cache: {}, indicateursGlobaux: false };
+    var autresIds = etat.id && c.id && String(etat.id) !== String(c.id);
+    var autresEmails = (!etat.id || !c.id) && etat.email && c.email && String(etat.email).toLowerCase() !== String(c.email).toLowerCase();
+    var identiteInverifiable = (etat.id || etat.email) && !c.id && !c.email;
+    if (autresIds || autresEmails || identiteInverifiable) {
+      return { cache: {
+        email: etat.email, prenom: etat.prenomCompte === "Abonné" ? "" : etat.prenomCompte,
+        nom: etat.nom, classe: etat.classe, lycee: etat.lycee
+      }, indicateursGlobaux: false };
     }
-    btn.setAttribute("data-sti-init", cle);
+    return { cache: c, indicateursGlobaux: true };
+  }
 
-    if (ph) {
-      btn.textContent = "";
-      btn.style.padding = "0";
-      btn.style.overflow = "hidden";
-      var img = doc.createElement("img");
-      img.className = "sti-roue-photo-img";
-      img.src = ph;
-      img.alt = wantIni || "Mon profil";
-      img.style.cssText = "width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;pointer-events:none;";
-      btn.appendChild(img);
-      return;
+  function couleurRuban(c, indicateursGlobaux) {
+    var classe = normaliser(c.classe);
+    var identifiants = [classe, normaliser(String(c.email || "").split("@")[0]),
+      normaliser(c.username), normaliser(c.identifiant), normaliser(c.login), normaliser(c.id)];
+    /* Le compte laboratoire reste orange, même GOLD/prof. */
+    if (identifiants.some(function (id) { return id === "elevelabo3" || id === "elevelao3"; })) return "orange";
+    var role = normaliser(c.role);
+    var prof = /^(prof|professeur|professeure|enseignant|enseignante|teacher)$/.test(classe) ||
+      /^(prof|professeur|professeure|enseignant|enseignante|teacher)$/.test(role);
+    var gold = /^(true|1|gold)$/i.test(String(c.isGold || "")) || /^(true|1|gold)$/i.test(String(c.gold || "")) ||
+      /\bgold\b/i.test(String(c.classe || "") + " " + String(c.lycee || ""));
+    if (indicateursGlobaux) {
+      gold = gold || window.__STI_GOLD === true || Boolean(doc.documentElement && doc.documentElement.classList.contains("sti-gold")) ||
+        Boolean(doc.body && doc.body.classList.contains("sti-gold"));
     }
+    if (gold || prof) return "gold";
+    if (/^3(?:e|eme)?(?:si)?\d*$/.test(classe)) return "bleu";
+    if (/^4(?:e|eme)?(?:si)?\d*$/.test(classe)) return "vert";
+    return "noir";
+  }
 
+  function creerStructure(btn) {
+    var avatar = btn.querySelector(".sti-badge-identite__avatar");
+    if (avatar) return avatar;
+    /* Les enfants changent, jamais le bouton : ses écouteurs, le panneau et
+       l'anneau créés par acces.js restent donc les éléments vivants d'origine. */
+    btn.textContent = "";
     btn.style.padding = "";
     btn.style.overflow = "";
-    if (!wantIni) return;
-    btn.textContent = wantIni;
-    btn.style.fontSize = "16px";
-    btn.style.fontWeight = "900";
-    btn.style.letterSpacing = ".3px";
-    btn.style.lineHeight = "1";
+    btn.classList.add("sti-badge-identite");
+    var anneau = doc.getElementById("sti-roue-anneau");
+    var wrap = doc.getElementById("sti-roue-wrap");
+    if (anneau) anneau.classList.add("sti-badge-identite__anneau");
+    if (wrap) wrap.classList.add("sti-badge-identite__wrap");
+
+    /* Un seul fond local contient déjà le logo et le QR d'origine. */
+    var fond = doc.createElement("span");
+    fond.className = "sti-badge-identite__fond";
+    fond.setAttribute("aria-hidden", "true");
+    avatar = doc.createElement("span");
+    avatar.className = "sti-badge-identite__avatar";
+    avatar.setAttribute("aria-hidden", "true");
+    var copie = doc.createElement("span");
+    copie.className = "sti-badge-identite__copie";
+    var nom = doc.createElement("strong");
+    nom.className = "sti-badge-identite__nom";
+    var classe = doc.createElement("span");
+    classe.className = "sti-badge-identite__classe";
+    copie.appendChild(nom);
+    copie.appendChild(doc.createTextNode(" "));
+    copie.appendChild(classe);
+    btn.appendChild(fond);
+    btn.appendChild(avatar);
+    btn.appendChild(doc.createTextNode(" "));
+    btn.appendChild(copie);
+    return avatar;
+  }
+
+  function appliquer(ev) {
+    var btn = doc.getElementById("sti-roue-btn");
+    if (!btn) return;
+    /* profil.js fournit déjà l'état de session dans cet événement. */
+    var etatEvenement = ev && ev.type === "sti:session-maj" && ev.detail && typeof ev.detail.connecte === "boolean" ? ev.detail : null;
+    var donnees = donneesDuCompte(etatEvenement);
+    var c = donnees.cache;
+    var avatar = creerStructure(btn);
+    var anneau = doc.getElementById("sti-roue-anneau");
+    var ruban = couleurRuban(c, donnees.indicateursGlobaux);
+    if (anneau && anneau.getAttribute("data-sti-ruban") !== ruban) anneau.setAttribute("data-sti-ruban", ruban);
+    var classe = String(c.classe || "").trim() || "Membre";
+    var nomComplet = [c.prenom, c.nom].filter(Boolean).join(" ").trim() || "Abonné";
+    var nomEl = btn.querySelector(".sti-badge-identite__nom");
+    var classeEl = btn.querySelector(".sti-badge-identite__classe");
+    if (nomEl && nomEl.textContent !== nomComplet) { nomEl.textContent = nomComplet; nomEl.title = nomComplet; }
+    if (classeEl && classeEl.textContent !== classe) classeEl.textContent = classe;
+    var ph = photoValide(c.photo_url);
+    var wantIni = initiales(c);
+    var identite = JSON.stringify([c.id || "", c.email || "", c.nom || "", c.prenom || "", classe]);
+    if (btn.__stiIdentiteBadge !== identite || btn.__stiPhotoBadge !== ph) {
+      /* Ne pas laisser la loupe de l'ancien compte ouverte après une bascule. */
+      var loupe = doc.getElementById("sti-site-zoom-photo-pop");
+      if (loupe) {
+        loupe.style.opacity = "0";
+        loupe.style.visibility = "hidden";
+        var photoLoupe = loupe.querySelector("img");
+        if (photoLoupe) photoLoupe.removeAttribute("src");
+        var etiquetteLoupe = loupe.querySelector("div");
+        if (etiquetteLoupe) etiquetteLoupe.textContent = "";
+      }
+      btn.__stiIdentiteBadge = identite;
+    }
+    var etiquette = (wantIni || (ph ? "" : "•")) + " " + nomComplet + " " + classe + " : ouvrir mon compte STI V2.0";
+    if (btn.getAttribute("aria-label") !== etiquette.trim()) btn.setAttribute("aria-label", etiquette.trim());
+
+    var cle = ph ? ("ph:" + ph.length + ":" + ph.slice(-24)) : ("in:" + wantIni);
+    var ancienneCle = btn.getAttribute("data-sti-init");
+    /* Deux photos différentes peuvent avoir la même taille et la même fin PNG. */
+    if (ph && btn.__stiPhotoBadge !== ph) ancienneCle = "";
+    btn.__stiPhotoBadge = ph;
+    if (ancienneCle === "erreur:" + cle) return;
+    if (ancienneCle === cle) {
+      if (ph && avatar.querySelector("img.sti-roue-photo-img")) return;
+      if (!ph && avatar.textContent === (wantIni || "•")) return;
+    }
+    btn.setAttribute("data-sti-init", cle);
+    avatar.textContent = "";
+    if (ph) {
+      var img = doc.createElement("img");
+      img.className = "sti-roue-photo-img";
+      img.alt = "";
+      img.addEventListener("error", function () {
+        if (img.parentNode === avatar) {
+          avatar.textContent = wantIni || "•";
+          btn.setAttribute("data-sti-init", "erreur:" + cle);
+        }
+      });
+      img.src = ph;
+      avatar.appendChild(img);
+    } else {
+      avatar.textContent = wantIni || "•";
+    }
   }
 
   window.__stiRafraichirRoueAvatar = appliquer;
   setInterval(appliquer, 2500);
-  try { window.addEventListener("storage", appliquer); } catch (e) {}
+  try {
+    window.addEventListener("storage", function (ev) {
+      if (!ev.key || ev.key === "sti-session-cache" || ev.key === "sti-gold") appliquer();
+    });
+    ["sti:session-maj", "sti-cloud-restored"].forEach(function (ev) {
+      window.addEventListener(ev, appliquer);
+    });
+    if (window.MutationObserver && doc.body) {
+      new MutationObserver(function (mutations) {
+        var reconstruit = mutations.some(function (mutation) {
+          return Array.prototype.some.call(mutation.addedNodes, function (noeud) {
+            return noeud.nodeType === 1 && (noeud.id === "sti-roue-btn" ||
+              (noeud.querySelector && noeud.querySelector("#sti-roue-btn")));
+          });
+        });
+        if (reconstruit) appliquer();
+      /* acces.js ajoute le nouveau panneau directement au body. Éviter de
+         surveiller les centaines de mises à jour de progression des cours. */
+      }).observe(doc.body, { childList: true });
+    }
+  } catch (e) {}
   appliquer();
   setTimeout(appliquer, 300);
   setTimeout(appliquer, 1200);
@@ -117,11 +257,13 @@
       if (!el || !el.closest) return null;
       var btnR = el.id === "sti-roue-btn" ? el : el.closest("#sti-roue-btn");
       if (btnR) {
-        var imR = btnR.querySelector("img.sti-roue-photo-img");
+        var zonePhoto = el.closest(".sti-badge-identite__avatar");
+        if (!zonePhoto) return null;
+        var imR = zonePhoto.querySelector("img.sti-roue-photo-img");
         if (imR && photoValide(imR.getAttribute("src"))) {
-          var cc = cache();
+          var cc = donneesDuCompte().cache;
           var nm = ((cc.prenom || "") + " " + (cc.nom || "")).trim() || cc.email || "";
-          return { el: btnR, src: photoValide(imR.getAttribute("src")), lbl: nm ? (nm + (cc.classe ? (" · " + cc.classe) : "")) : "" };
+          return { el: zonePhoto, src: photoValide(imR.getAttribute("src")), lbl: nm ? (nm + (cc.classe ? (" · " + cc.classe) : "")) : "" };
         }
         return null;
       }

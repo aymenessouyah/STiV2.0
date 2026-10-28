@@ -58,7 +58,7 @@ class SmartBooks(unittest.TestCase):
         self.assertIn('v358-quiz-sync', sw)
         # Les vrais PDF lourds restent exclus du delta ; les pages .pdf.html (HTML leger) sont autorisees.
         self.assertNotIn('.pdf"', updates)
-        self.assertIn('var CACHE = "sti-atelier-v316";', sw)
+        self.assertIn('var CACHE = "sti-atelier-v353";', sw)
 
     def test_manifeste_et_empreintes(self):
         manifest = json.loads((ROOT / 'offline-complete-manifest.json').read_text())
@@ -73,7 +73,8 @@ class SmartBooks(unittest.TestCase):
     def test_empreinte_livre_4si_corrige(self):
         pdf = ROOT / 'documents/livre/sti-smart-book-2026.pdf'
         content = pdf.read_bytes()
-        self.assertEqual(hashlib.sha1(b'blob ' + str(len(content)).encode() + b'\0' + content).hexdigest(), 'c93246822dc18f2bd727260ed0415573ffc9442e', 'PDF 4SI différent de la version corrigée : vérifier si cette modification est volontaire.')
+        # Révision v361 publiée : les versions v360 et v361 ont remplacé le PDF v358.
+        self.assertEqual(hashlib.sha1(b'blob ' + str(len(content)).encode() + b'\0' + content).hexdigest(), '7af01665b416cc5f7edf1fc5f234462d1a2be2e0', 'PDF 4SI différent de la révision v361 : vérifier si cette modification est volontaire.')
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

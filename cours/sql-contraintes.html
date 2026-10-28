@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" class="dark" data-sti-titre="📘 Sql Contraintes">
+<html data-sti-heritage="interface" lang="fr" class="dark">
 <head>
 <script id="sti-early-boot">
 /* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
@@ -783,11 +783,10 @@ html.dark .msg.wa { border-color: var(--sun); }
 .tag-role.pk { background: var(--sun); }
 .tag-role.fk { background: var(--sky); }
 </style>
-<!-- ===== STI V2.0 — design system (pont) ===== -->
-<link rel="stylesheet" href="../assets/css/theme.css">
-<script src="../assets/js/profil.js"></script>
+
+<link rel="stylesheet" href="../assets/css/theme-patrimoine.css">
 </head>
-<body class="sti-legacy">
+<body>
 <div class="decor" aria-hidden="true">
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
@@ -1072,10 +1071,11 @@ document.querySelectorAll('input[name=m4]').forEach(r=>r.onchange=()=>$('sq4').t
       <a href="sql-playground.html" style="color:#fff;background:#f4511e;padding:9px 16px;border-radius:999px;text-decoration:none;white-space:nowrap">Ouvrir SQL de poche →</a>
     </div>
 
-<script src="../assets/js/supabase-umd.js" defer></script>
 <script src="../assets/js/config.js?v=425" defer></script>
+<script src="../assets/js/supabase-umd.js" defer></script>
 <script src="../assets/js/acces.js?v=453" defer></script>
   <script src="../assets/js/sync-progressions.js" defer></script>
-<script src="../assets/js/app.js" defer></script>
+
+<script src="../assets/js/profil.js" defer></script>
 </body>
 </html>

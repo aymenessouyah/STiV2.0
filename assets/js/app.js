@@ -1,1114 +1,2147 @@
-/* ============================================================================
-   STI V2.0 — « Le web de A à Z » — APPLICATION (assets/js/app.js)
-   ----------------------------------------------------------------------------
-   JavaScript natif, sans framework. Chargé après config.js, supabase-umd.js,
-   acces.js, sync-progressions.js puis profil.js (ordre imposé par le verrou).
-   Ce fichier NE touche JAMAIS le stockage navigateur : toutes les données passent par
-   window.STIProfil. Il ne recalcule ni la session ni le statut GOLD : il lit
-   uniquement ce que acces.js et supabase-umd.js exposent déjà. Aucune URL ni
-   clé Supabase n'est écrite ici (tout vient de window.STI_AUTH.RACINE).
-   Aucune image externe : emojis, SVG intégrés et médias locaux uniquement.
-   ========================================================================== */
-(function () {
-  'use strict';
+/* STI V2.0 — script principal unifié · Lycée Raféha
+   Sans framework ni ressources externes ; stockage via STIProfil. */
+(function (global, document) {
+  "use strict";
 
-  /* -------------------------------------------------------------------------
-     0. UTILITAIRES
-     ---------------------------------------------------------------------- */
-  var $ = function (s, c) { return (c || document).querySelector(s); };
-  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
-  var P = window.STIProfil;
-  var REDUIT = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var ROOT = (window.STI_AUTH && window.STI_AUTH.RACINE) ? window.STI_AUTH.RACINE : './';
-  function u(chemin) { return ROOT + String(chemin || '').replace(/^\/+/, ''); }
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  /* 1. Utilitaires */
+  function echapperHtml(valeur) {
+    return String(valeur == null ? "" : valeur)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
-  function el(html) { var d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; }
-  function svg(path) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + '</svg>'; }
-  function toast(msg) {
-    var t = $('#stiToast');
-    if (!t) {
-      t = el('<div id="stiToast" role="status" aria-live="polite"></div>');
-      t.style.cssText = 'position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);z-index:200;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:.7rem 1.3rem;box-shadow:var(--shadow-lg);font-size:.85rem;opacity:0;transition:.3s;pointer-events:none';
-      document.body.appendChild(t);
+
+  /**
+   * Calcule le préfixe relatif vers la racine du site ("./" ou "../")
+   * afin que tous les liens fonctionnent aussi bien sur index.html que dans cours/ ou quiz/.
+   */
+  function obtenirPrefixeRacine() {
+    var chemin = String((global.location && global.location.pathname) || "").replace(/\\/g, "/");
+    if (/\/(?:cours|quiz|exercices)\/[^/]*$/i.test(chemin)) {
+      return "../";
     }
-    t.textContent = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%)';
-    clearTimeout(t._timer); t._timer = setTimeout(function () { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 2400);
+    return "./";
   }
 
-  /* -------------------------------------------------------------------------
-     1. CATALOGUE DES MATIÈRES (un accent par matière)
-     ---------------------------------------------------------------------- */
+  function estAutorise4SI() {
+    return Boolean(
+      document.documentElement &&
+      document.documentElement.classList.contains("sti-4si-autorise")
+    );
+  }
+
+  function formaterDureeSecondes(sec) {
+    var total = Math.max(0, Math.floor(Number(sec) || 0));
+    var m = Math.floor(total / 60);
+    var s = total % 60;
+    return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  /**
+   * Génère un poster SVG vectoriel encodé en data URI (zéro image externe)
+   * utilisé à la fois dans les cartes vidéos et dans l'attribut `poster` de <video>.
+   */
+  function creerPosterSvgDataUri(titre, sousTitre, couleurHex, codeExtrait) {
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">' +
+      '<defs>' +
+      '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">' +
+      '<stop offset="0%" stop-color="#0d1526"/>' +
+      '<stop offset="100%" stop-color="#172542"/>' +
+      "</linearGradient>" +
+      '<radialGradient id="gl" cx="82%" cy="18%" r="60%">' +
+      '<stop offset="0%" stop-color="' + couleurHex + '" stop-opacity="0.42"/>' +
+      '<stop offset="100%" stop-color="' + couleurHex + '" stop-opacity="0"/>' +
+      "</radialGradient>" +
+      "</defs>" +
+      '<rect width="640" height="360" fill="url(#bg)"/>' +
+      '<rect width="640" height="360" fill="url(#gl)"/>' +
+      '<rect x="28" y="26" width="584" height="308" rx="18" fill="none" stroke="' + couleurHex + '" stroke-opacity="0.35" stroke-width="2"/>' +
+      '<rect x="48" y="48" width="136" height="30" rx="15" fill="' + couleurHex + '" fill-opacity="0.22"/>' +
+      '<text x="116" y="68" text-anchor="middle" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="800">' +
+      echapperHtml(sousTitre) +
+      "</text>" +
+      '<text x="48" y="132" fill="#f8fafc" font-family="Inter,Arial,sans-serif" font-size="27" font-weight="800">' +
+      echapperHtml(titre) +
+      "</text>" +
+      '<rect x="48" y="166" width="544" height="126" rx="12" fill="#070d19" stroke="#334155" stroke-width="1.2"/>' +
+      '<text x="68" y="206" fill="' + couleurHex + '" font-family="monospace" font-size="15" font-weight="700">' +
+      echapperHtml(codeExtrait || "/* STI V2.0 — Lycée Raféha */") +
+      "</text>" +
+      '<text x="68" y="238" fill="#94a3b8" font-family="monospace" font-size="13">STI V2.0 · Le web de A à Z · Aymen Essouyah</text>' +
+      '<text x="68" y="268" fill="#cbd5e1" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="600">Vidéo explicative (.mp4) &amp; écoute synchronisée</text>' +
+      "</svg>";
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+  }
+
+  /* 2. Catalogue des matières */
   var MATIERES = {
-    html5:      { nom: 'HTML5',      emoji: '🧱', varc: '--html', badge: '🎥 1 vidéo & audio', nb: 1, cours: 'cours/html5.html',      quiz: 'quiz/html-css.html',  desc: 'Balises sémantiques, formulaires, tableaux, images et multimédia : la structure de vos pages.' },
-    css3:       { nom: 'CSS3',       emoji: '🎨', varc: '--css',  badge: '🎥 3 vidéos & audio', nb: 3, cours: 'cours/css3.html',       quiz: 'quiz/html-css.html',  desc: 'Sélecteurs, box model, Flexbox, Grid, animations et responsive design.' },
-    javascript: { nom: 'JavaScript', emoji: '⚡', varc: '--js',   badge: '🎥 1 vidéo & audio', nb: 1, cours: 'cours/javascript.html', quiz: 'quiz/javascript.html',desc: 'Variables, conditions, boucles, fonctions, tableaux, dates et manipulation du DOM.' },
-    sql:        { nom: 'SQL',        emoji: '🗄️', varc: '--sql',  badge: '🎥 1 vidéo & audio', nb: 1, cours: 'cours/sql.html',        quiz: 'quiz/sql.html',       desc: 'Modèle relationnel, SELECT, WHERE, jointures, GROUP BY et agrégations.' },
-    php:        { nom: 'PHP',        emoji: '🐘', varc: '--php',  badge: '🎥 2 vidéos & audio', nb: 2, cours: 'cours/php.html',        quiz: 'quiz/php.html',       desc: 'Syntaxe PHP, formulaires, sessions, MySQL et CRUD — réservé à la 4ème SI.' }
+    html5: {
+      id: "html5",
+      nom: "HTML5",
+      icone: "🌐",
+      badgeClasse: "badge-html",
+      couleur: "#ff783c",
+      nbVideos: 1,
+      urlCours: "cours/html5.html",
+      urlQuiz: "quiz/html-css.html",
+      urlAudio: "assets/audio/html5-cours.mp3",
+      urlAnnexe: "documents/annexes/annexe-html5.pdf.html#annexe-html5",
+      urlAnnexePdf: "documents/annexes/annexe-html5.pdf",
+      resume: "Structure sémantique, formulaires contrôlés, tableaux fusionnés, datalist et multimédia.",
+      exercices: [
+        { titre: "TP Formulaire d'inscription HTML5", niveau: "Débutant", enonce: "exercices/html-css/formulaire-inscription.pdf.html", corrige: "projets/formulaire-inscription/cvFleurs.html" },
+        { titre: "TP Emploi du temps (rowspan / colspan)", niveau: "Intermédiaire", enonce: "exercices/html-css/emploi-temps/emploidutemps.html", corrige: "exercices/html-css/emploi-temps/emploidutemps.html" },
+        { titre: "Projet Explore Tunisie (Structure & Médias)", niveau: "Avancé", enonce: "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Enonce.pdf.html", corrige: "exercices/html-css/Explore_Tunisie/Explore_Tunisie_Solution/ExploreTunisie/index.html" }
+      ]
+    },
+    css3: {
+      id: "css3",
+      nom: "CSS3",
+      icone: "🎨",
+      badgeClasse: "badge-css",
+      couleur: "#38bdf8",
+      nbVideos: 4,
+      urlCours: "cours/css3.html",
+      urlQuiz: "quiz/html-css.html",
+      urlAudio: "assets/audio/css3-cours.mp3",
+      urlAnnexe: "documents/annexes/annexe-css3.pdf.html",
+      urlAnnexePdf: "documents/annexes/annexe-css3.pdf",
+      resume: "Sélecteurs, modèle de boîte, Flexbox, positionnement, ombres, transitions et @keyframes.",
+      exercices: [
+        { titre: "TP 1 — Sélecteurs, typographie et boîtes CSS3", niveau: "Débutant", enonce: "exercices/html-css/TP1-css.pdf.html", corrige: "exercices/html-css/box-shadow-text-shadow-css3.html" },
+        { titre: "TP 2 — Positionnement CSS3", niveau: "Intermédiaire", enonce: "exercices/html-css/TP2-css.pdf.html", corrige: "exercices/html-css/TP2/tp2corrposition.html" },
+        { titre: "TP 3 & Activités — Transitions et animations", niveau: "Avancé", enonce: "exercices/html-css/TP3-css.pdf.html", corrige: "exercices/html-css/activite1-2-position-animation-css3.pdf.html" }
+      ]
+    },
+    javascript: {
+      id: "javascript",
+      nom: "JavaScript",
+      icone: "⚡",
+      badgeClasse: "badge-js",
+      couleur: "#facc15",
+      nbVideos: 2,
+      urlCours: "cours/javascript.html",
+      urlQuiz: "quiz/javascript.html",
+      urlAudio: "assets/audio/javascript-cours.mp3",
+      urlAnnexe: "documents/annexes/annexe-javascript.pdf.html",
+      urlAnnexePdf: "documents/annexes/annexe-javascript.pdf",
+      resume: "Variables let/const, fonctions de contrôle Bac, DOM, événements, chaînes, tableaux et Date.",
+      exercices: [
+        { titre: "Série 1 — Variables, types et opérateurs", niveau: "Débutant", enonce: "exercices/javascript/Tp1-js.html", corrige: "exercices/javascript/Tp1-Correction-js.html" },
+        { titre: "Série 2 — Événements et manipulation du DOM", niveau: "Intermédiaire", enonce: "exercices/javascript/Tp2-js.html", corrige: "exercices/javascript/Tp2-Correction-js.html" },
+        { titre: "Série 3 — Objets Date, String, Array et Math", niveau: "Avancé", enonce: "exercices/javascript/Tp3-js.html", corrige: "exercices/javascript/Tp3-Correction-js.html" },
+        { titre: "Série 4 — Objets, propriétés et fonctions prédéfinies", niveau: "Avancé", enonce: "exercices/javascript/Tp4-js.html", corrige: "exercices/javascript/Tp4-Correction-js.html" },
+        { titre: "Série 5 — Objet String", niveau: "Avancé", enonce: "exercices/javascript/Tp5-js.html", corrige: "exercices/javascript/Tp5-Correction-js.html" },
+        { titre: "Les 37 Défis JavaScript interactifs", niveau: "Défis Bac", enonce: "exercices/javascript/js-37-defis-tt.html", corrige: "exercices/javascript/js-37-defis-tt.html" }
+      ]
+    },
+    sql: {
+      id: "sql",
+      nom: "SQL",
+      icone: "🗄️",
+      badgeClasse: "badge-sql",
+      couleur: "#34d399",
+      nbVideos: 4,
+      urlCours: "cours/sql.html",
+      urlQuiz: "quiz/sql.html",
+      urlAudio: "assets/audio/sql-cours.mp3",
+      urlAnnexe: "documents/annexes/annexe-sql.pdf.html",
+      urlAnnexePdf: "documents/annexes/annexe-sql.pdf",
+      resume: "LDD, LMD, contraintes d'intégrité, SELECT, jointures, GROUP BY / HAVING et sous-requêtes.",
+      exercices: [
+        { titre: "Série 1 — Création de tables et LMD", niveau: "Débutant", enonce: "exercices/sql/Tp1-bd.html", corrige: "exercices/sql/Tp1-Correction-bd.html" },
+        { titre: "Série 2 — Requêtes SELECT et filtres", niveau: "Intermédiaire", enonce: "exercices/sql/Tp2-bd.html", corrige: "exercices/sql/Tp2-Correction-bd.html" },
+        { titre: "Jointures, GROUP BY et fonctions de dates", niveau: "Avancé", enonce: "exercices/sql/Tp-date-ssr-j-gp-bd.html", corrige: "exercices/sql/Tp-date-ssr-j-gp-correction-bd.html" },
+        { titre: "Atelier SQL 3 fenêtres & Guide de requête", niveau: "Interactif", enonce: "exercices/sql/atelier_sql_3_fenetres.html", corrige: "exercices/sql/CommentConstruireunerequêteSQL.html" }
+      ]
+    },
+    php: {
+      id: "php",
+      nom: "PHP",
+      icone: "🐘",
+      badgeClasse: "badge-php",
+      couleur: "#a78bfa",
+      nbVideos: 3,
+      reserve4si: true,
+      urlCours: "cours/php.html",
+      urlQuiz: "quiz/php.html",
+      urlAudio: "assets/audio/php-cours.mp3",
+      urlAnnexe: "documents/annexes/annexe-php.pdf.html",
+      urlAnnexePdf: "documents/annexes/annexe-php.pdf",
+      resume: "Traitement $_POST / $_GET, tableaux associatifs, fonctions et accès MySQLi procédural.",
+      exercices: [
+        { titre: "Série 1 — Syntaxe PHP et variables", niveau: "Débutant", enonce: "exercices/php/Tp1-php.html", corrige: "exercices/php/Tp1-Correction-php.html" },
+        { titre: "Série 2 & 3 — Formulaires et tableaux PHP", niveau: "Intermédiaire", enonce: "exercices/php/Tp2-php.html", corrige: "exercices/php/Tp2-Correction-php.html" },
+        { titre: "Série 4 & 5 — Connexion MySQLi et requêtes", niveau: "Avancé", enonce: "exercices/php/Tp4-php.html", corrige: "exercices/php/Tp4-Correction-php.html" },
+        { titre: "Débogage & Remise en ordre PHP Bac", niveau: "Spécial Bac", enonce: "exercices/php/debogage-php-bac.html", corrige: "exercices/php/ordre-php-bac.html" }
+      ]
+    }
   };
-  var ORDRE = ['html5', 'css3', 'javascript', 'sql', 'php'];
-  /* Catégories du filtre d'accueil : HTML5 + CSS3 partagent « htmlcss ». */
-  function tech(m) { return (m === 'html5' || m === 'css3') ? 'htmlcss' : (m === 'javascript' ? 'js' : m); }
 
-  /* -------------------------------------------------------------------------
-     2. VIDÉOS — chemins faciles à remplacer.
-        Convention : déposez « assets/videos/[matiere]-cours.mp4 » puis
-        remplacez simplement la propriété src ci-dessous. Les posters sont
-        locaux (assets/images/…). « audio » est la piste vocale synchronisée.
-     ---------------------------------------------------------------------- */
-  var VIDEOS = [
-    { id:'html5-cours', matiere:'html5', titre:'HTML5 — Les balises essentielles', duree:'12:40', src:'assets/videos/html5-cours.mp4', poster:'', audio:'assets/audio/html5-cours.mp3', desc:'Structure d’une page, titres, liens, images et formulaires expliqués pas à pas.' },
-    { id:'css3-cours', matiere:'css3', titre:'CSS3 — Cours complet synchronisé', duree:'24:15', src:'assets/videos/css3-cours-v9-sync.mp4', poster:'assets/images/css3-cours-v9-sync-poster.jpg', audio:'assets/audio/css3-cours.mp3', desc:'Le cours de référence, avec guide-ligne et écoute vocale synchronisée.' },
-    { id:'css-animee', matiere:'css3', titre:'CSS3 — Les animations', duree:'08:30', src:'assets/videos/css-animee.mp4', poster:'', audio:'assets/audio/css-animee.mp3', desc:'Transitions, keyframes et transformations : donnez vie à vos pages.' },
-    { id:'css-positionnement', matiere:'css3', titre:'CSS3 — Le positionnement', duree:'09:12', src:'assets/videos/css-positionnement.mp4', poster:'', audio:'assets/audio/css-positionnement.mp3', desc:'Static, relative, absolute, fixed, float, flex et grid en pratique.' },
-    { id:'javascript-cours', matiere:'javascript', titre:'JavaScript — Cours complet', duree:'18:05', src:'assets/videos/javascript-cours.mp4', poster:'', audio:'assets/audio/javascript-cours.mp3', desc:'Variables, fonctions, événements et DOM, du premier script au projet.' },
-    { id:'sql-cours', matiere:'sql', titre:'SQL — Initiation aux requêtes', duree:'16:20', src:'assets/videos/sql-cours-v7.mp4', poster:'assets/images/sql-initiation-poster.jpg', audio:'assets/audio/sql-cours.mp3', desc:'Créer une base, interroger avec SELECT, filtrer et trier les résultats.' },
-    { id:'php-cours', matiere:'php', titre:'PHP — Cours complet', duree:'20:10', src:'assets/videos/php-cours.mp4', poster:'', audio:'assets/audio/php-cours.mp3', desc:'Variables, formulaires, sessions et connexion à une base MySQL.' },
-    { id:'php-guichet', matiere:'php', titre:'PHP — Projet guichet pas à pas', duree:'14:35', src:'assets/videos/php-guichet-v10.mp4', poster:'assets/images/php-guichet-v10-poster.jpg', audio:'', desc:'Étude de cas complète : un guichet dynamique HTML → PHP → SQL.' }
+  /**
+   * Les 13 vidéos présentées ici (.mp4), et non tous les médias du site :
+   * HTML5 (1) · CSS3 (4) · JavaScript (1) · SQL (4, dont 2 Bac) · PHP (3 Bac).
+   * Les variantes mobiles, autres séries et leçons interactives ne sont pas comptées.
+   * Noms et durées correspondent aux fichiers présents dans le dépôt.
+   */
+  var CATALOGUE_VIDEOS = [
+    {
+      id: "html5-cours",
+      matiere: "html5",
+      nomMatiere: "HTML5",
+      badgeClasse: "badge-html",
+      couleur: "#ff783c",
+      titre: "HTML5 — Structure, formulaires & tableaux",
+      dureeTexte: "07:36",
+      srcPrincipal: "assets/videos/html5-cours.mp4",
+      srcSecours: "assets/videos/html5-cours.mp4",
+      urlCours: "cours/html5.html#videos",
+      codeApercu: '<form action="ajout.php" method="post">'
+    },
+    {
+      id: "css3-cours",
+      matiere: "css3",
+      nomMatiere: "CSS3",
+      badgeClasse: "badge-css",
+      couleur: "#38bdf8",
+      titre: "CSS3 — Sélecteurs, Flexbox & transitions",
+      dureeTexte: "11:24",
+      srcPrincipal: "assets/videos/css3-cours-v9-sync.mp4",
+      srcSecours: "assets/videos/css3-cours-v9-sync.mp4",
+      sousTitres: "assets/subtitles/css3-cours-v9-sync-fr.vtt",
+      urlCours: "cours/css3.html#videos",
+      codeApercu: ".grille { display: flex; gap: 16px; }"
+    },
+    {
+      id: "css3-display",
+      matiere: "css3", nomMatiere: "CSS3", badgeClasse: "badge-css", couleur: "#38bdf8",
+      titre: "CSS3 — Display : la démo animée", dureeTexte: "00:05",
+      srcPrincipal: "assets/videos/displayanim.mp4", urlCours: "cours/css3.html#videos",
+      codeApercu: "display: inline-block;"
+    },
+    {
+      id: "css-positionnement",
+      matiere: "css3",
+      nomMatiere: "CSS3",
+      badgeClasse: "badge-css",
+      couleur: "#38bdf8",
+      titre: "CSS3 Pas à pas — Positionnement & mise en page",
+      dureeTexte: "05:58",
+      srcPrincipal: "assets/videos/css-positionnement.mp4",
+      srcSecours: "assets/videos/css-positionnement.mp4",
+      urlCours: "cours/css3.html#videos",
+      codeApercu: "position: relative; top: 0; z-index: 10;"
+    },
+    {
+      id: "css-animee",
+      matiere: "css3",
+      nomMatiere: "CSS3",
+      badgeClasse: "badge-css",
+      couleur: "#38bdf8",
+      titre: "CSS3 Pas à pas — Décoration, ombres & bordures",
+      dureeTexte: "05:01",
+      srcPrincipal: "assets/videos/css-animee.mp4",
+      srcSecours: "assets/videos/css-animee.mp4",
+      urlCours: "cours/css3.html#videos",
+      codeApercu: "background: url(image.jpg) center / cover;"
+    },
+    {
+      id: "javascript-cours",
+      matiere: "javascript",
+      nomMatiere: "JavaScript",
+      badgeClasse: "badge-js",
+      couleur: "#facc15",
+      titre: "JavaScript — Contrôles de saisie & DOM Bac",
+      dureeTexte: "14:43",
+      srcPrincipal: "assets/videos/javascript-cours.mp4",
+      srcSecours: "assets/videos/javascript-cours.mp4",
+      urlCours: "cours/javascript.html#videos",
+      codeApercu: "const v = document.getElementById('cin').value;"
+    },
+    {
+      id: "validation-nom-prenom-js",
+      matiere: "javascript",
+      nomMatiere: "JavaScript",
+      badgeClasse: "badge-js",
+      couleur: "#facc15",
+      titre: "JavaScript — Validation du champ Nom & Prénom",
+      dureeTexte: "12:11",
+      srcPrincipal: "assets/videos/validation-nom-prenom-js.mp4",
+      srcSecours: "assets/videos/validation-nom-prenom-js.mp4",
+      sousTitres: "assets/subtitles/validation-nom-prenom-js-fr.vtt",
+      urlCours: "cours/javascript.html#videos",
+      codeApercu: "for (let i = 0; i < ch.length; i++) { ... }"
+    },
+    {
+      id: "sql-cours",
+      matiere: "sql",
+      nomMatiere: "SQL",
+      badgeClasse: "badge-sql",
+      couleur: "#34d399",
+      titre: "SQL — Requêtes SELECT, jointures & agrégats",
+      dureeTexte: "09:32",
+      srcPrincipal: "assets/videos/sql-cours-v7.mp4",
+      srcSecours: "assets/videos/sql-cours-v7.mp4",
+      urlCours: "cours/sql.html#videos",
+      codeApercu: "SELECT nom, AVG(note) FROM eleve GROUP BY cl;"
+    },
+    {
+      id: "sql-initiation",
+      matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399",
+      titre: "SQL — Construire une requête pas à pas", dureeTexte: "08:45",
+      srcPrincipal: "exercices/sql/sql-construire-requete-guide-texte.mp4", urlCours: "cours/sql.html#videos",
+      codeApercu: "SELECT colonnes FROM table;"
+    },
+    {
+      id: "sql-serie4",
+      matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
+      titre: "SQL Série 4 — Jointures et GROUP BY", dureeTexte: "14:34",
+      srcPrincipal: "assets/videos/sql-serie4.mp4", urlCours: "cours/sql.html#videos",
+      codeApercu: "SELECT ... GROUP BY ...;"
+    },
+    {
+      id: "sql-serie5",
+      matiere: "sql", nomMatiere: "SQL", badgeClasse: "badge-sql", couleur: "#34d399", reserve4si: true,
+      titre: "SQL Série 5 — Dates et GROUP BY", dureeTexte: "18:09",
+      srcPrincipal: "assets/videos/sql-serie5.mp4", urlCours: "cours/sql.html#videos",
+      codeApercu: "SELECT ... WHERE ...;"
+    },
+    {
+      id: "php-cours",
+      matiere: "php",
+      nomMatiere: "PHP",
+      badgeClasse: "badge-php",
+      couleur: "#a78bfa",
+      titre: "PHP & MySQLi — Traitement serveur de A à Z",
+      dureeTexte: "10:59",
+      reserve4si: true,
+      srcPrincipal: "assets/videos/php-cours.mp4",
+      srcSecours: "assets/videos/php-cours.mp4",
+      urlCours: "cours/php.html#videos",
+      codeApercu: "$res = mysqli_query($con, $sql);"
+    },
+    {
+      id: "php-synthese",
+      matiere: "php", nomMatiere: "PHP", badgeClasse: "badge-php", couleur: "#a78bfa", reserve4si: true,
+      titre: "PHP — Synthèse : gestion des élèves", dureeTexte: "14:08",
+      srcPrincipal: "assets/videos/php-synthese.mp4", urlCours: "cours/php.html#videos",
+      codeApercu: "$resultat = mysqli_query($con, $sql);"
+    },
+    {
+      id: "php-guichet",
+      matiere: "php",
+      nomMatiere: "PHP",
+      badgeClasse: "badge-php",
+      couleur: "#a78bfa",
+      titre: "PHP Synthèse — Application Guichet & formulaires",
+      dureeTexte: "05:22",
+      reserve4si: true,
+      srcPrincipal: "assets/videos/php-guichet-v10.mp4",
+      srcSecours: "assets/videos/php-guichet-v10.mp4",
+      urlCours: "cours/php.html#videos",
+      codeApercu: "while ($lig = mysqli_fetch_assoc($res)) { ... }"
+    }
   ];
-  var VIDEO_UNE = VIDEOS[1]; /* « Vidéo à la une » du hero */
-  function videoParId(id) { for (var i = 0; i < VIDEOS.length; i++) if (VIDEOS[i].id === id) return VIDEOS[i]; return null; }
 
-  /* -------------------------------------------------------------------------
-     3. EXERCICES & ANNEXES (tous les fichiers du site de référence restent)
-     ---------------------------------------------------------------------- */
-  var EXERCICES = {
-    html5: [
-      ['🎯', 'Séries & exercices (toutes matières)', 'exercices/series-exercices.html'],
-      ['📄', 'TP1 CSS — mise en page', 'exercices/html-css/TP1-css.pdf.html'],
-      ['📄', 'TP2 CSS — positionnement', 'exercices/html-css/TP2-css.pdf.html'],
-      ['📄', 'TP3 CSS — mise en forme', 'exercices/html-css/TP3-css.pdf.html'],
-      ['🧩', 'Activité 1 & 2 — position et animation', 'exercices/html-css/activite1-2-position-animation-css3.pdf.html'],
-      ['📝', 'Formulaire d’inscription', 'exercices/html-css/formulaire-inscription.pdf.html'],
-      ['🗓️', 'Emploi du temps en tableau', 'exercices/html-css/emploi-temps/emploidutemps.html'],
-      ['💡', 'Box-shadow & text-shadow', 'exercices/html-css/box-shadow-text-shadow-css3.html'],
-      ['🏫', 'Projet STI0 — sondage & statistiques', 'projets/sti0/index.html']
-    ],
-    css3: [
-      ['🎯', 'Séries & exercices (toutes matières)', 'exercices/series-exercices.html'],
-      ['📄', 'TP1 CSS — sélecteurs', 'exercices/html-css/TP1-css.pdf.html'],
-      ['📄', 'TP2 CSS — positionnement', 'exercices/html-css/TP2-css.pdf.html'],
-      ['📄', 'TP3 CSS — mise en page', 'exercices/html-css/TP3-css.pdf.html'],
-      ['🧩', 'Activité 1 & 2 — animation CSS3', 'exercices/html-css/activite1-2-position-animation-css3.pdf.html'],
-      ['🌊', 'Positionnement animé (module interactif)', 'Positionnement-animee/index.html'],
-      ['🌍', 'Projet Explore Tunisie — float & flex', 'projets/site-tunisie/index.html'],
-      ['💳', 'Projet carte bancaire', 'projets/carte-bancaire/enonce-tp-carte-bancaire.html']
-    ],
-    javascript: [
-      ['🎯', 'Séries & exercices (toutes matières)', 'exercices/series-exercices.html'],
-      ['1️⃣', 'TP1 JavaScript + corrigé', 'exercices/javascript/Tp1-js.html'],
-      ['2️⃣', 'TP2 JavaScript + corrigé', 'exercices/javascript/Tp2-js.html'],
-      ['3️⃣', 'TP3 JavaScript + corrigé', 'exercices/javascript/Tp3-js.html'],
-      ['4️⃣', 'TP4 JavaScript + corrigé', 'exercices/javascript/Tp4-js.html'],
-      ['5️⃣', 'TP5 JavaScript + corrigé', 'exercices/javascript/Tp5-js.html'],
-      ['🏆', 'Les 37 défis JavaScript', 'exercices/javascript/js-37-defis-tt.html'],
-      ['🔤', 'Résumé des fonctions standards', 'exercices/resume-fonctions-standards.html'],
-      ['🛠️', 'Atelier des 10 fonctions de contrôle du Bac', 'outils-js-bac.html']
-    ],
-    sql: [
-      ['🎯', 'Séries & exercices (toutes matières)', 'exercices/series-exercices.html'],
-      ['📘', 'Comment construire une requête SQL', 'exercices/sql/CommentConstruireunerequêteSQL.html'],
-      ['1️⃣', 'TP1 base de données', 'exercices/sql/Tp1-bd.html'],
-      ['2️⃣', 'TP2 base de données', 'exercices/sql/Tp2-bd.html'],
-      ['3️⃣', 'TP3 base de données (corrigé)', 'exercices/sql/Tp3-Correction-bd.html'],
-      ['🔗', 'TP jointures, sous-requêtes & GROUP BY', 'exercices/sql/Tp-BD-Jointure-sous-requetes-Group-By.html'],
-      ['📊', 'TP GROUP BY', 'exercices/sql/Tp-GroupBy-bd.html'],
-      ['🗓️', 'TP dates, SSR, jointures & groupes', 'exercices/sql/Tp-date-ssr-j-gp-bd.html'],
-      ['🧪', 'Atelier SQL 3 fenêtres', 'exercices/sql/atelier_sql_3_fenetres.html'],
-      ['▶️', 'Série 4.2 GestLocation (vidéo)', 'exercices/sql/Série 4.2 - GestLocation - Vidéo.mp4']
-    ],
-    php: [
-      ['🎯', 'Séries & exercices (toutes matières)', 'exercices/series-exercices.html'],
-      ['1️⃣', 'TP1 PHP + corrigé', 'exercices/php/Tp1-php.html'],
-      ['2️⃣', 'TP2 PHP + corrigé', 'exercices/php/Tp2-php.html'],
-      ['3️⃣', 'TP3 PHP + corrigé', 'exercices/php/Tp3-php.html'],
-      ['4️⃣', 'TP4 PHP + corrigé', 'exercices/php/Tp4-php.html'],
-      ['5️⃣', 'TP5 PHP + corrigé', 'exercices/php/Tp5-php.html'],
-      ['🐞', 'Débogage PHP Bac', 'exercices/php/debogage-php-bac.html'],
-      ['🔀', 'Ordre d’exécution PHP Bac', 'exercices/php/ordre-php-bac.html'],
-      ['🧭', 'Sondage — parcours pas à pas', 'exercices/php/sondage-parcours-pas-a-pas.html'],
-      ['📊', 'Statistiques PHP animées', 'exercices/php/statphpanimee.html']
-    ]
-  };
-  var ANNEXES = {
-    html5: [
-      ['📕', 'Annexe HTML5 (PDF)', 'documents/annexes/annexe-html5.pdf'],
-      ['📖', 'Annexe HTML5 — lecture en ligne', 'documents/annexes/annexe-html5.pdf.html'],
-      ['🧾', 'Fiche de révision HTML5', 'cours/fiche-revision-html5.html'],
-      ['🌸', 'Annexe fleuriste HTML5', 'cours/annexe-fleuriste-html5.html'],
-      ['📚', 'Document complet 3ème SI', 'documents/complet/complet-3eme-si.pdf']
-    ],
-    css3: [
-      ['📘', 'Annexe CSS3 (PDF)', 'documents/annexes/annexe-css3.pdf'],
-      ['📖', 'Annexe CSS3 — lecture en ligne', 'documents/annexes/annexe-css3.pdf.html'],
-      ['🧾', 'Fiche synthèse globale CSS3', 'cours/courscss3.html'],
-      ['📐', 'Annexe CSS3 (module positionnement)', 'Positionnement-animee/uploads/Annexe CSS3 By A.E.pdf'],
-      ['📚', 'Document complet 4ème SI — cours', 'documents/complet/complet-4eme-si-cours.pdf']
-    ],
-    javascript: [
-      ['📗', 'Annexe JavaScript (PDF)', 'documents/annexes/annexe-javascript.pdf'],
-      ['📖', 'Annexe JavaScript — lecture en ligne', 'documents/annexes/annexe-javascript.pdf.html'],
-      ['🧾', 'Récapitulatif JavaScript STI', 'cours/Recap-JavaScript-STI.html'],
-      ['🔤', 'Résumé des fonctions standards', 'exercices/resume-fonctions-standards.html'],
-      ['🧠', 'Mémo A4 — veille du Bac', 'memo-veille-bac.html']
-    ],
-    sql: [
-      ['📙', 'Annexe SQL (PDF)', 'documents/annexes/annexe-sql.pdf'],
-      ['📖', 'Annexe SQL — lecture en ligne', 'documents/annexes/annexe-sql.pdf.html'],
-      ['🧾', 'Bases LDD / LMD / LCD', 'cours/sql-bases-ldd-lmd-lcd.html'],
-      ['🔑', 'Contraintes SQL', 'cours/sql-contraintes.html'],
-      ['📝', 'Guide texte — construire une requête', 'documents/sql/Documentation-Construire-Requete-SQL-Guide-Texte.pdf'],
-      ['🗃️', 'Bases d’exercices (.sql)', 'documents/bd/ecole.sql']
-    ],
-    php: [
-      ['📓', 'Annexe PHP (PDF)', 'documents/annexes/annexe-php.pdf'],
-      ['📖', 'Annexe PHP — lecture en ligne', 'documents/annexes/annexe-php.pdf.html'],
-      ['🧾', 'Récapitulatif PHP', 'cours/PHP-recap.html'],
-      ['🔌', 'PHP & MySQLi', 'cours/php-mysqli.html'],
-      ['🧠', 'Fiche mémento synthèse', 'documents/complet/fiche-memento-synthese.html']
-    ]
+  /* 3. Traductions */
+  var TRADUCTIONS = {
+    fr: {
+      "nav.cours": "Cours",
+      "nav.videos": "Vidéos",
+      "nav.livres": "Scanner mon livre",
+      "nav.outils": "Outils Bac",
+      "nav.quiz": "Quiz",
+      "nav.glossaire": "Glossaire",
+      "sub.connecter": "Se connecter / Devenir abonné",
+      "sub.abonne": "⭐ Abonné",
+      "dash.titre": "Mon tableau de bord",
+      "dash.deconnexion": "🚪 Se déconnecter"
+    },
+    en: {
+      "nav.cours": "Courses",
+      "nav.videos": "Videos",
+      "nav.livres": "Smart Book",
+      "nav.outils": "Bac Tools",
+      "nav.quiz": "Quizzes",
+      "nav.glossaire": "Glossary",
+      "sub.connecter": "Sign in / Subscribe",
+      "sub.abonne": "⭐ Subscriber",
+      "dash.titre": "My Dashboard",
+      "dash.deconnexion": "🚪 Sign out"
+    },
+    ar: {
+      "nav.cours": "الدروس",
+      "nav.videos": "الفيديوهات",
+      "nav.livres": "مسح الكتاب",
+      "nav.outils": "أدوات البكالوريا",
+      "nav.quiz": "الاختبارات",
+      "nav.glossaire": "المعجم",
+      "sub.connecter": "تسجيل الدخول / اشتراك",
+      "sub.abonne": "⭐ مشترك",
+      "dash.titre": "لوحة المتابعة",
+      "dash.deconnexion": "🚪 تسجيل الخروج"
+    }
   };
 
-  /* -------------------------------------------------------------------------
-     4. OUTILS & QUIZ (les fonctions window.* sont fournies par acces.js)
-     ---------------------------------------------------------------------- */
-  var OUTILS = [
-    { em:'🎓', titre:'Atelier Bac', desc:'Sujets types, corrigés détaillés et chronomètre.', url:'bac-pratique.html', couleur:'--html', tech:'htmlcss' },
-    { em:'⚠️', titre:'Les 25 Pièges du Bac', desc:'Les erreurs à éviter absolument le jour J.', url:'pieges-bac.html', couleur:'--php', tech:'php' },
-    { em:'🧠', titre:'Mémo A4 (veille du Bac)', desc:'La fiche de révision express à imprimer.', url:'memo-veille-bac.html', couleur:'--sql', tech:'sql' },
-    { em:'🛠️', titre:'Atelier JavaScript Bac', desc:'Les 10 fonctions de contrôle + générateur.', url:'outils-js-bac.html', couleur:'--js', tech:'js' },
-    { em:'🃏', titre:'Flashcards Bac STI', desc:'Cartes recto/verso trilingues FR · EN · AR.', fn:'ouvrirFlashcardsSTI', couleur:'--css', tech:'htmlcss' },
-    { em:'💻', titre:'Bac à sable Code', desc:'Testez HTML, CSS et JS en direct, hors-ligne.', fn:'ouvrirSandboxSTI', couleur:'--js', tech:'js' },
-    { em:'🖥️', titre:'Console JavaScript', desc:'Écrivez et exécutez votre code JS.', fn:'ouvrirConsoleNavigateurSTI', couleur:'--js', tech:'js' },
-    { em:'🐞', titre:'Chasse aux erreurs', desc:'Débogage Bac : trouvez les 3 erreurs classiques.', fn:'ouvrirChasseErreursSTI', couleur:'--html', tech:'htmlcss' },
-    { em:'📝', titre:'Examen Blanc (/20)', desc:'Épreuve chronométrée avec radar de compétences.', fn:'ouvrirExamenBlancSTI', couleur:'--sql', tech:'sql' },
-    { em:'📋', titre:'Constructeur Table / Form / Flex', desc:'Générez tableaux, formulaires et Flexbox.', fn:'ouvrirConstructeurVisuelSTI', couleur:'--css', tech:'htmlcss' },
-    { em:'🗄️', titre:'Labo SQL (Mini-phpMyAdmin)', desc:'SELECT, jointures, GROUP BY, INSERT, UPDATE.', fn:'ouvrirSimulateurSqlSTI', couleur:'--sql', tech:'sql' },
-    { em:'🔤', titre:'Chaînes & ASCII JavaScript', desc:'charAt, substring, indexOf, charCodeAt.', fn:'ouvrirLaboChainesAsciiSTI', couleur:'--js', tech:'js' },
-    { em:'🔗', titre:'Form ➜ PHP ➜ SQL', desc:'Simulateur du parcours $_POST puis INSERT.', fn:'ouvrirSimulateurFormPhpSqlSTI', couleur:'--php', tech:'php' },
-    { em:'🗂️', titre:'Fichiers TP du professeur', desc:'Coffre des fichiers .sql, .zip, .html, .php.', fn:'ouvrirCoffreTpEleveSTI', couleur:'--php', tech:'php' },
-    { em:'📖', titre:'Scanner mon livre', desc:'Smart Book 3ème SI (72 p.) & 4ème SI (100 p.).', url:'livre-smart.html', couleur:'--accent', tech:'all' },
-    { em:'📇', titre:'Glossaire FR · EN · AR', desc:'Tout le vocabulaire technique traduit.', url:'glossaire.html', couleur:'--accent', tech:'all' }
-  ];
-  var QUIZ = [
-    { n:'01', titre:'HTML5 & CSS3', desc:'Balisage, formulaires, sélecteurs, box model, responsive.', url:'quiz/html-css.html', couleur:'--html', tech:'htmlcss', meta:['Auto-corrigé','30 questions','15 min'] },
-    { n:'02', titre:'JavaScript', desc:'Types, opérateurs, boucles, fonctions, tableaux, DOM.', url:'quiz/javascript.html', couleur:'--js', tech:'js', meta:['Auto-corrigé','35 questions','20 min'] },
-    { n:'03', titre:'SQL', desc:'SELECT, WHERE, jointures, GROUP BY et agrégations.', url:'quiz/sql.html', couleur:'--sql', tech:'sql', meta:['Auto-corrigé','25 questions','18 min'] },
-    { n:'04', titre:'PHP', desc:'Variables, superglobales, sessions, requêtes préparées.', url:'quiz/php.html', couleur:'--php', tech:'php', meta:['Auto-corrigé','28 questions','22 min'] },
-    { n:'🔁', titre:'Révision « Mes erreurs »', desc:'Rejouez uniquement les questions que vous avez ratées.', url:'revision-erreurs.html', couleur:'--accent', tech:'all', meta:['Ciblé','1 244 questions'] },
-    { n:'📊', titre:'Quiz des tableaux', desc:'Tableaux HTML, JS et SQL — réservé aux abonnés.', url:'quiz/tableaux.html', couleur:'--gold', tech:'all', meta:['⭐ Abonnés','Réservé'] }
-  ];
+  function traduire(cle) {
+    var profil = global.STIProfil ? global.STIProfil.chargerProfil() : { langue: "fr" };
+    var table = TRADUCTIONS[profil.langue] || TRADUCTIONS.fr;
+    return table[cle] || TRADUCTIONS.fr[cle] || cle;
+  }
 
-  /* Catalogue de la recherche globale (Ctrl+K) */
-  var RECHERCHE = (function () {
-    var r = [];
-    ORDRE.forEach(function (m) {
-      r.push({ em: MATIERES[m].emoji, t: 'Cours ' + MATIERES[m].nom, s: 'Cours · exercices · annexes · vidéos', u: u(MATIERES[m].cours) });
-    });
-    ['html-css', 'javascript', 'sql', 'php'].forEach(function (q) {
-      r.push({ em: '🧠', t: 'Quiz ' + q.replace('-', ' & ').toUpperCase(), s: 'Quiz auto-corrigé', u: u('quiz/' + q + '.html') });
-    });
-    OUTILS.forEach(function (o) { r.push({ em: o.em, t: o.titre, s: o.desc, u: o.url ? u(o.url) : '', fn: o.fn }); });
-    [['dashboard.html', '📊', 'Tableau de bord'], ['glossaire.html', '📇', 'Glossaire FR · EN · AR'],
-     ['nouveautes.html', '🆕', 'Nouveautés'], ['carte-visite.html', '🪪', 'Carte de visite'],
-     ['ma-fiche-revision.html', '🧾', 'Ma fiche de révision'], ['portail.html', '🔑', 'Connexion abonné']
-    ].forEach(function (x) { r.push({ em: x[1], t: x[2], s: 'Page STI V2.0', u: u(x[0]) }); });
-    return r;
-  })();
-
-  /* -------------------------------------------------------------------------
-     5. TRADUCTIONS LÉGÈRES DE L'INTERFACE (FR · EN · AR)
-     ---------------------------------------------------------------------- */
-  var I18N = {
-    fr: { accueil:'Accueil', matieres:'Matières', videos:'Vidéos', quiz:'Quiz', outils:'Outils', conseils:'Conseils', contact:'Contact', installer:'Installer', commencer:'Commencer', tableau:'Tableau de bord' },
-    en: { accueil:'Home', matieres:'Subjects', videos:'Videos', quiz:'Quizzes', outils:'Tools', conseils:'Tips', contact:'Contact', installer:'Install', commencer:'Start', tableau:'Dashboard' },
-    ar: { accueil:'الرئيسية', matieres:'المواد', videos:'الفيديوهات', quiz:'اختبارات', outils:'الأدوات', conseils:'نصائح', contact:'اتصال', installer:'تثبيت', commencer:'ابدأ', tableau:'لوحة التحكم' }
-  };
-  function traduire() {
-    var dico = I18N[P.chargerProfil().langue] || I18N.fr;
-    $$('[data-i18n]').forEach(function (n) {
-      var cle = n.getAttribute('data-i18n');
-      if (dico[cle] && n.getAttribute('data-i18n-keep') !== '1') n.textContent = dico[cle];
+  function appliquerTraductionsPage() {
+    var noeuds = document.querySelectorAll("[data-i18n]");
+    noeuds.forEach(function (el) {
+      var cle = el.getAttribute("data-i18n");
+      if (cle) el.textContent = traduire(cle);
     });
   }
 
-  /* -------------------------------------------------------------------------
-     6. EN-TÊTE, PIED DE PAGE, PANNEAUX ET MODALES (coquille commune)
-     ---------------------------------------------------------------------- */
-  function headerHTML() {
-    return '' +
-    '<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>' +
-    '<header class="site-header" id="siteHeader"><div class="header-inner">' +
-      '<a class="brand" href="' + u('index.html') + '" aria-label="STI V2.0 — accueil">' +
-        '<span class="brand__mark" aria-hidden="true">STI</span><span class="brand__text">' +
-        '<span class="brand__name">STI V2.0</span><span class="brand__tag">Le web de A à Z</span></span></a>' +
-      '<nav class="nav" aria-label="Navigation principale">' +
-        '<a href="' + u('index.html') + '" data-nav="index" data-i18n="accueil">Accueil</a>' +
-        '<a href="' + u('index.html#matieres') + '" data-nav="matieres" data-i18n="matieres">Matières</a>' +
-        '<a href="' + u('index.html#videos') + '" data-nav="videos" data-i18n="videos">Vidéos</a>' +
-        '<a href="' + u('index.html#quiz') + '" data-nav="quiz" data-i18n="quiz">Quiz</a>' +
-        '<a href="' + u('index.html#outils') + '" data-nav="outils" data-i18n="outils">Outils</a>' +
-        '<a href="' + u('index.html#conseils') + '" data-nav="conseils" data-i18n="conseils">Conseils</a>' +
-        '<a href="#contact" data-nav="contact" data-i18n="contact">Contact</a>' +
-      '</nav>' +
-      '<div class="header-actions">' +
-        '<button class="icon-btn hide-xs" id="stiSearchBtn" type="button" aria-label="Rechercher (Ctrl+K)" title="Rechercher (Ctrl+K)">' + svg('<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>') + '</button>' +
-        '<button class="btn btn--ghost btn--sm btn--hide-sm" id="stiInstallBtn" type="button" data-i18n="installer">⤓ Installer</button>' +
-        '<div class="modes" role="group" aria-label="Mode d’affichage">' +
-          '<button type="button" data-theme-choice="sombre" title="Mode sombre" aria-label="Mode sombre" aria-pressed="true">🌙</button>' +
-          '<button type="button" data-theme-choice="clair" title="Mode clair" aria-label="Mode clair" aria-pressed="false">☀️</button>' +
-          '<button type="button" data-theme-choice="intermediaire" title="Mode intermédiaire" aria-label="Mode intermédiaire" aria-pressed="false">◐</button>' +
-        '</div>' +
-        '<div id="stiBadgeSlot"></div>' +
-        '<button class="icon-btn burger" id="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false">' + svg('<path d="M4 7h16M4 12h16M4 17h16"/>') + '</button>' +
-      '</div></div></header>' +
-    '<div class="mobile-menu" id="mobileMenu">' +
-      '<a href="' + u('index.html') + '" data-i18n="accueil">Accueil</a>' +
-      '<a href="' + u('index.html#matieres') + '" data-i18n="matieres">Matières</a>' +
-      '<a href="' + u('index.html#videos') + '" data-i18n="videos">Vidéos</a>' +
-      '<a href="' + u('index.html#quiz') + '" data-i18n="quiz">Quiz</a>' +
-      '<a href="' + u('index.html#outils') + '" data-i18n="outils">Outils</a>' +
-      '<a href="' + u('dashboard.html') + '" data-i18n="tableau">Tableau de bord</a>' +
-      '<a href="' + u('glossaire.html') + '">Glossaire FR · EN · AR</a>' +
-      '<a href="#contact" data-i18n="contact">Contact</a>' +
-    '</div>';
+  /* 4. Modes d’affichage */
+  function rafraichirBoutonsTheme() {
+    if (!global.STIProfil) return;
+    var themeActif = global.STIProfil.chargerProfil().theme;
+    document.querySelectorAll("[data-set-theme]").forEach(function (btn) {
+      var cible = btn.getAttribute("data-set-theme");
+      btn.setAttribute("aria-pressed", cible === themeActif ? "true" : "false");
+    });
   }
 
-  function footerHTML() {
-    return '' +
-    '<footer class="site-footer"><div class="container"><div class="footer-grid">' +
-      '<div class="footer-col"><a class="brand" href="' + u('index.html') + '" style="margin-bottom:1rem">' +
-        '<span class="brand__mark">STI</span><span class="brand__text"><span class="brand__name">STI V2.0</span><span class="brand__tag">Le web de A à Z</span></span></a>' +
-        '<p style="color:var(--text-muted);font-size:var(--fs-sm);max-width:34ch">Plateforme éducative du Lycée Raféha pour les classes de 3<sup>ème</sup> et 4<sup>ème</sup> Sciences de l’Informatique. Réalisée par <strong>Aymen Essouyah</strong>.</p>' +
-        '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem">' +
-          '<a class="badge" href="' + u('dashboard.html') + '">📊 Tableau de bord</a>' +
-          '<a class="badge" href="' + u('portail.html') + '">🔑 Espace abonné</a></div></div>' +
-      '<div class="footer-col"><h4>Matières</h4><ul>' + ORDRE.map(function (m) {
-        return '<li><a href="' + u(MATIERES[m].cours) + '"><span class="bullet" style="background:var(' + MATIERES[m].varc + ')"></span> ' + esc(MATIERES[m].nom) + '</a></li>';
-      }).join('') + '<li><a href="' + u('glossaire.html') + '"><span class="bullet"></span> Glossaire FR · EN · AR</a></li></ul></div>' +
-      '<div class="footer-col"><h4>Ressources</h4><ul>' +
-        '<li><a href="' + u('quiz/html-css.html') + '"><span class="bullet"></span> Quiz interactifs</a></li>' +
-        '<li><a href="' + u('bac-pratique.html') + '"><span class="bullet"></span> Atelier Bac</a></li>' +
-        '<li><a href="' + u('pieges-bac.html') + '"><span class="bullet"></span> 25 Pièges du Bac</a></li>' +
-        '<li><a href="' + u('memo-veille-bac.html') + '"><span class="bullet"></span> Mémo A4</a></li>' +
-        '<li><a href="' + u('outils-js-bac.html') + '"><span class="bullet"></span> Atelier JavaScript</a></li>' +
-        '<li><a href="' + u('exercices/series-exercices.html') + '"><span class="bullet"></span> Séries d’exercices</a></li>' +
-        '<li><a href="' + u('nouveautes.html') + '"><span class="bullet"></span> Nouveautés</a></li></ul></div>' +
-      '<div class="footer-col"><h4>Contact</h4><ul class="footer-contact">' +
-        '<li>✉️ <a href="mailto:aymenessouyah@gmail.com">aymenessouyah@gmail.com</a></li>' +
-        '<li>🏫 Lycée Raféha — Département SI</li>' +
-        '<li>🪪 <a href="' + u('carte-visite.html') + '">Carte de visite du professeur</a></li>' +
-        '<li>📱 <button class="btn btn--ghost btn--sm" type="button" data-modal-open="modalContact">QR code & contact</button></li>' +
-      '</ul><div class="qr-card"><img src="' + u('assets/images/qr-code-site.png') + '" alt="QR code vers la plateforme STI V2.0" loading="lazy">' +
-        '<p><strong>📱 Scannez-moi !</strong>Accédez à STI V2.0 directement depuis votre téléphone.</p></div></div>' +
-    '</div><div class="footer-bottom"><span>© <span id="year">' + new Date().getFullYear() + '</span> STI V2.0 — Le web de A à Z · Lycée Raféha · Aymen Essouyah.</span>' +
-      '<span>Design system V2.0 · HTML5 · CSS3 · JavaScript natif · <a href="' + u('index-origine.html') + '" style="color:var(--accent)">Version classique</a></span></div></div></footer>';
+  function initialiserSelecteursTheme() {
+    document.addEventListener("click", function (ev) {
+      var btn = ev.target && ev.target.closest ? ev.target.closest("[data-set-theme]") : null;
+      if (!btn || !global.STIProfil) return;
+      var nouveauTheme = btn.getAttribute("data-set-theme");
+      global.STIProfil.mettreAJour("theme", nouveauTheme);
+      rafraichirBoutonsTheme();
+    });
+    rafraichirBoutonsTheme();
   }
 
-  function overlayHTML() {
-    return '' +
-    /* Panneau latéral de l'abonné */
-    '<div class="side-panel__backdrop" id="stiPanelBackdrop"></div>' +
-    '<aside class="side-panel" id="stiPanel" role="dialog" aria-modal="true" aria-label="Espace abonné"><div id="stiPanelContent"></div></aside>' +
-    /* Palette de recherche Ctrl+K */
-    '<div class="modal" id="modalSearch" role="dialog" aria-modal="true" aria-label="Recherche globale"><div class="modal__box palette">' +
-      '<input type="search" id="stiSearchInput" placeholder="Rechercher un cours, un quiz, un outil…" aria-label="Rechercher dans la plateforme">' +
-      '<div style="display:flex;gap:.5rem;align-items:center;margin-top:.75rem;color:var(--text-dim);font-size:.75rem"><span class="kbd">Entrée</span> ouvrir · <span class="kbd">Échap</span> fermer</div>' +
-      '<div class="palette__list" id="stiSearchResults"></div></div></div>' +
-    /* Lecteur vidéo */
-    '<div class="modal modal--video" id="modalVideo" role="dialog" aria-modal="true" aria-label="Lecteur vidéo"><div class="modal__box" style="position:relative">' +
-      '<button class="modal__close" type="button" data-modal-close aria-label="Fermer">✕</button>' +
-      '<div id="stiVideoWrap"></div><h3 id="stiVideoTitle" style="margin-top:1rem;font-size:var(--fs-lg)"></h3>' +
-      '<p id="stiVideoDesc" style="color:var(--text-muted);font-size:var(--fs-sm);margin:0"></p></div></div>' +
-    /* Modale Contact + QR code */
-    '<div class="modal" id="modalContact" role="dialog" aria-modal="true" aria-labelledby="stiContactTitle"><div class="modal__box" style="position:relative">' +
-      '<button class="modal__close" type="button" data-modal-close aria-label="Fermer">✕</button>' +
-      '<span class="badge badge--gold" style="margin-bottom:1rem">📬 Contact</span>' +
-      '<h3 id="stiContactTitle" style="font-size:var(--fs-xl)">STI by AE V2.0</h3>' +
-      '<p style="color:var(--text-muted);font-size:var(--fs-sm)">👨‍🏫 M. Aymen Essouyah · Lycée Raféha<br>✉️ <a href="mailto:aymenessouyah@gmail.com" style="color:var(--accent);font-weight:700">aymenessouyah@gmail.com</a></p>' +
-      '<div class="qr-card"><img src="' + u('assets/images/qr-code-site.png') + '" alt="QR code du site STI V2.0">' +
-      '<p><strong>📱 Scanner-moi !</strong>Flashez ce code pour ouvrir la plateforme sur votre téléphone. <a href="' + u('carte-visite.html') + '" style="color:var(--accent)">Carte de visite complète →</a></p></div>' +
-      '<button class="btn btn--primary btn--sm" type="button" data-modal-close style="margin-top:1.25rem">Compris</button></div></div>' +
-    /* Modale d'installation (PWA) */
-    '<div class="modal" id="modalInstall" role="dialog" aria-modal="true" aria-labelledby="stiInstallTitle"><div class="modal__box" style="position:relative">' +
-      '<button class="modal__close" type="button" data-modal-close aria-label="Fermer">✕</button>' +
-      '<h3 id="stiInstallTitle" style="font-size:var(--fs-xl)">⤓ Installer l’application</h3>' +
-      '<p style="color:var(--text-muted);font-size:var(--fs-sm)">Sur ordinateur : menu du navigateur → « Installer STI V2.0 ». Sur mobile : « Partager » → « Sur l’écran d’accueil ». L’application fonctionne ensuite hors connexion.</p>' +
-      '<button class="btn btn--primary btn--sm" type="button" id="stiInstallGo">Installer maintenant</button></div></div>' +
-    '<button class="to-top" id="toTop" type="button" aria-label="Retour en haut">' + svg('<path d="M12 19V5M6 11l6-6 6 6"/>') + '</button>';
-  }
-
-  function injecterCoquille() {
-    var body = document.body;
-    if (!body) return;
-    body.classList.add('sti-v2');
-    if (!$('#siteHeader')) {
-      var h = el('<div>' + headerHTML() + '</div>');
-      while (h.firstChild) body.insertBefore(h.firstChild, body.firstChild);
+  /* 5. Déconnexion */
+  function declencherDeconnexion() {
+    var btnAcces = document.getElementById("sti-out");
+    if (btnAcces) {
+      btnAcces.click();
+      return;
     }
-    if (!$('.site-footer')) body.insertAdjacentHTML('beforeend', footerHTML());
-    if (!$('#stiPanel')) body.insertAdjacentHTML('beforeend', overlayHTML());
-    if (!$('#contact')) {
-      var c = document.createElement('span'); c.id = 'contact'; c.setAttribute('aria-hidden', 'true');
-      var f = $('.site-footer'); if (f && f.parentNode) f.parentNode.insertBefore(c, f);
-    }
-  }
-
-  /* -------------------------------------------------------------------------
-     7. TROIS MODES D'AFFICHAGE (sombre · clair · intermédiaire)
-     ---------------------------------------------------------------------- */
-  function initThemes() {
-    function peindre() {
-      var t = P.chargerProfil().theme;
-      $$('[data-theme-choice],[data-theme-segment]').forEach(function (b) {
-        var v = b.getAttribute('data-theme-choice') || b.getAttribute('data-theme-segment');
-        b.setAttribute('aria-pressed', String(v === t));
-      });
-    }
-    $$('[data-theme-choice],[data-theme-segment]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var t = b.getAttribute('data-theme-choice') || b.getAttribute('data-theme-segment');
-        P.mettreAJour('theme', t);
-        P.appliquerPreferences(); P.garderTheme(); peindre();
-        toast(({ sombre:'🌙 Mode sombre', clair:'☀️ Mode clair', intermediaire:'◐ Mode intermédiaire' })[t] || t);
-      });
-    });
-    peindre();
-    window.addEventListener('sti:profil', peindre);
-  }
-
-  /* -------------------------------------------------------------------------
-     8. BADGE ABONNÉ + PANNEAU LATÉRAL
-     ---------------------------------------------------------------------- */
-  var etat = null;
-  function rendreBadge(e) {
-    etat = e || etat || P.etatAbonne(null);
-    var slot = $('#stiBadgeSlot'); if (!slot) return;
-    if (etat.connecte) {
-      var photo = etat.photo ? '<img src="' + esc(etat.photo) + '" alt="">' : esc(etat.initiales);
-      slot.innerHTML = '<button class="sub-badge" id="stiBadgeBtn" type="button" aria-label="Ouvrir mon espace abonné">' +
-        '<span class="avatar' + (etat.gold ? ' avatar--gold' : '') + '">' + photo + '</span>' +
-        '<span class="sub-badge__txt"><span class="sub-badge__name">' + esc(etat.affiche || 'Abonné') + '</span>' +
-        '<span class="sub-badge__star">⭐ Abonné' + (etat.gold ? ' GOLD' : '') + '</span></span></button>';
-    } else {
-      slot.innerHTML = '<a class="sub-badge sub-badge--guest" href="' + u('portail.html') + '">🔑 Se connecter / Devenir abonné</a>';
-    }
-    var btn = $('#stiBadgeBtn');
-    if (btn) btn.addEventListener('click', function () {
-      if (document.body.getAttribute('data-page') === 'accueil') ouvrirPanel();
-      else window.location.href = u('dashboard.html');
-    });
-  }
-  function initBadge() {
-    rendreBadge(P.etatAbonne(null));
-    try {
-      var s = P.session();
-      if (s && typeof s.then === 'function') s.then(function (sess) { if (sess) rendreBadge(P.etatAbonne(sess)); });
-    } catch (e) {}
-    setTimeout(function () { rendreBadge(P.etatAbonne(null)); }, 1600); /* GOLD activé après coup par acces.js */
-    window.addEventListener('sti:profil', function () { rendreBadge(etat); });
-  }
-
-  function panelHTML() {
-    var p = P.chargerProfil();
-    var e = etat || P.etatAbonne(null);
-    var lecture = p.derniereLecture || {};
-    var revises = ORDRE.reduce(function (n, m) { return n + (p.progression[m] || 0); }, 0);
-    var nbVues = (p.videos.vues || []).length;
-    return '<div class="side-panel__head"><span class="avatar avatar--gold" style="width:46px;height:46px">' + esc(e.initiales) + '</span>' +
-      '<div><strong style="display:block">' + esc(e.affiche || 'Mon espace') + '</strong><span class="sub-badge__star">⭐ Abonné</span></div>' +
-      '<button class="icon-btn side-panel__close" id="stiPanelClose" type="button" aria-label="Fermer le panneau">✕</button></div>' +
-      '<div class="side-panel__section"><h4>Mon activité</h4>' +
-        '<div class="link-row">📖 <span>Reprise de lecture</span><span class="end">' + esc(lecture.chapitre || 'À découvrir') + '</span></div>' +
-        '<div class="link-row">📈 <span>Chapitres révisés</span><span class="end">' + revises + ' / 25</span></div>' +
-        '<div class="link-row">🎥 <span>Vidéos vues</span><span class="end">' + nbVues + ' / ' + VIDEOS.length + '</span></div>' +
-        '<div class="link-row">🧠 <span>Mes quiz</span><span class="end">' + p.quiz.length + '</span></div></div>' +
-      '<div class="side-panel__section"><h4>Accès rapide</h4>' +
-        '<a class="link-row" href="' + u('dashboard.html') + '">📊 <span>Tableau de bord complet</span><span class="end">→</span></a>' +
-        '<a class="link-row" href="' + u('revision-erreurs.html') + '">🔁 <span>Rejouer mes erreurs</span><span class="end">→</span></a>' +
-        '<a class="link-row" href="' + u('quiz/tableaux.html') + '">📊 <span>Quiz des tableaux</span><span class="end">⭐</span></a>' +
-        '<a class="link-row" href="' + u('nouveautes.html') + '">🆕 <span>Nouveautés</span><span class="end">→</span></a></div>' +
-      '<div class="side-panel__section"><h4>Préférences rapides</h4>' +
-        '<div class="pref-row"><span class="pref-row__label">Mode d’affichage<small>Sombre · Clair · Intermédiaire</small></span>' +
-        '<div class="seg">' + P.THEMES.map(function (t, i) {
-          return '<button type="button" data-theme-segment="' + t + '" aria-pressed="' + (p.theme === t) + '">' + ['🌙', '☀️', '◐'][i] + '</button>';
-        }).join('') + '</div></div></div>' +
-      '<button class="btn btn--ghost btn--block btn--sm" type="button" id="stiLogoutBtn">🚪 Se déconnecter</button>';
-  }
-  function ouvrirPanel() {
-    var pan = $('#stiPanel'), fond = $('#stiPanelBackdrop');
-    if (!pan) return;
-    $('#stiPanelContent').innerHTML = panelHTML();
-    pan.classList.add('is-open'); fond.classList.add('is-open');
-    $('#stiPanelClose').addEventListener('click', fermerPanel);
-    $('#stiLogoutBtn').addEventListener('click', function () { P.deconnecter(); });
-    $$('#stiPanelContent [data-theme-segment]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        P.mettreAJour('theme', b.getAttribute('data-theme-segment'));
-        P.appliquerPreferences(); P.garderTheme(); ouvrirPanel();
-      });
-    });
-    setTimeout(function () { $('#stiPanelClose').focus(); }, 60);
-  }
-  function fermerPanel() {
-    var pan = $('#stiPanel'), fond = $('#stiPanelBackdrop');
-    if (pan) pan.classList.remove('is-open');
-    if (fond) fond.classList.remove('is-open');
-  }
-  function initPanel() {
-    var fond = $('#stiPanelBackdrop');
-    if (fond) fond.addEventListener('click', fermerPanel);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') fermerPanel(); });
-  }
-
-  /* -------------------------------------------------------------------------
-     9. RECHERCHE GLOBALE (Ctrl+K) + FILTRES PAR CATÉGORIE
-     ---------------------------------------------------------------------- */
-  function initRecherche() {
-    var input = $('#stiSearchInput'), liste = $('#stiSearchResults');
-    if (!input || !liste) return;
-    function rendre(q) {
-      q = (q || '').trim().toLowerCase();
-      var items = RECHERCHE.filter(function (x) {
-        return !q || (x.t + ' ' + x.s).toLowerCase().indexOf(q) !== -1;
-      }).slice(0, 12);
-      liste.innerHTML = items.length ? items.map(function (x, i) {
-        return '<button class="palette__item" type="button" data-idx="' + RECHERCHE.indexOf(x) + '" ' + (i === 0 ? 'data-first="1"' : '') + '>' +
-          '<span class="em">' + x.em + '</span><span><strong>' + esc(x.t) + '</strong><small>' + esc(x.s) + '</small></span></button>';
-      }).join('') : '<div class="palette__empty">Aucun résultat. Essayez « SQL », « quiz », « vidéo »…</div>';
-      $$('.palette__item', liste).forEach(function (b) {
-        b.addEventListener('click', function () { ouvrirResultat(RECHERCHE[Number(b.getAttribute('data-idx'))]); });
-      });
-    }
-    function ouvrirResultat(x) {
-      if (!x) return;
-      fermerModales();
-      if (x.fn && typeof window[x.fn] === 'function') { try { window[x.fn](); return; } catch (e) {} }
-      if (x.u) window.location.href = x.u;
-    }
-    input.addEventListener('input', function () { rendre(input.value); });
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowDown') { e.preventDefault(); var n = $$('.palette__item', liste)[1] || $('.palette__item', liste); if (n) n.focus(); }
-      if (e.key === 'Enter') { e.preventDefault(); var f = $('.palette__item', liste); if (f) f.click(); }
-    });
-    var bouton = $('#stiSearchBtn');
-    if (bouton) bouton.addEventListener('click', function () { rendre(''); ouvrirModal('modalSearch'); setTimeout(function () { input.focus(); }, 60); });
-    document.addEventListener('keydown', function (e) {
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
-        e.preventDefault(); rendre(''); ouvrirModal('modalSearch'); setTimeout(function () { input.focus(); input.select(); }, 60);
-      }
-    });
-    rendre('');
-  }
-
-  function initFiltres() {
-    var chips = $$('[data-filter]').filter(function (c) { return !c.closest('#glossaireFiltres'); });
-    if (!chips.length) return;
-    chips.forEach(function (chip) {
-      chip.addEventListener('click', function () {
-        var f = chip.getAttribute('data-filter');
-        chips.forEach(function (c) { c.classList.toggle('is-active', c === chip); });
-        $$('.filterable').forEach(function (item) {
-          var tech = item.getAttribute('data-tech') || 'all';
-          item.classList.toggle('is-filtered-out', f !== 'all' && tech !== f && tech !== 'all');
-        });
-        var visibles = $$('.filterable:not(.is-filtered-out)').length;
-        var empty = $('#filterEmpty'); if (empty) empty.hidden = visibles > 0;
-      });
-    });
-  }
-
-  /* -------------------------------------------------------------------------
-     10. MODALES
-     ---------------------------------------------------------------------- */
-  var dernierFocus = null;
-  function ouvrirModal(id) {
-    var m = document.getElementById(id); if (!m) return;
-    dernierFocus = document.activeElement;
-    m.classList.add('is-open'); document.body.style.overflow = 'hidden';
-    var f = m.querySelector('button,input,[href]'); if (f) setTimeout(function () { f.focus(); }, 50);
-  }
-  function fermerModales() {
-    $$('.modal.is-open').forEach(function (m) { m.classList.remove('is-open'); });
-    document.body.style.overflow = '';
-    /* On arrête aussi la vidéo pour ne pas laisser le son en fond. */
-    var v = $('#stiVideoWrap video'); if (v) { try { v.pause(); } catch (e) {} }
-    if (dernierFocus && dernierFocus.focus) dernierFocus.focus();
-  }
-  function initModales() {
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest) return;
-      var open = e.target.closest('[data-modal-open]');
-      if (open) { e.preventDefault(); ouvrirModal(open.getAttribute('data-modal-open')); return; }
-      if (e.target.closest('[data-modal-close]')) { e.preventDefault(); fermerModales(); return; }
-      if (e.target.classList.contains('modal')) fermerModales();
-    });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { fermerModales(); fermerMenu(); } });
-  }
-
-  /* -------------------------------------------------------------------------
-     11. VIDÉOS : vignettes, une à la une, lecteur
-     ---------------------------------------------------------------------- */
-  function badgeMatiere(m) {
-    var cls = { html5:'badge--html', css3:'badge--css', javascript:'badge--js', sql:'badge--sql', php:'badge--php' }[m];
-    return '<span class="badge ' + cls + '">' + esc(MATIERES[m].nom) + '</span>';
-  }
-  function vignette(v) {
-    var m = MATIERES[v.matiere];
-    var visuelles = v.poster
-      ? '<img src="' + u(v.poster) + '" alt="Aperçu de la vidéo ' + esc(v.titre) + '" loading="lazy">'
-      : '<div class="video-thumb-fallback">' + m.emoji + '</div>';
-    var vue = P.chargerProfil().videos.vues.indexOf(v.id) !== -1;
-    return '<article class="video-card filterable' + (vue ? ' is-vue' : '') + '" data-tech="' + tech(v.matiere) + '" data-video-id="' + v.id + '" style="--vc:var(' + m.varc + ')" tabindex="0" role="button" aria-label="Lire la vidéo ' + esc(v.titre) + '">' +
-      '<div class="video-card__thumb">' + visuelles +
-        badgeMatiere(v.matiere).replace('class="badge', 'class="badge video-card__badge') +
-        '<button class="play-btn play-btn--sm" type="button" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>' +
-        '<span class="video-card__duration">' + esc(v.duree) + '</span></div>' +
-      '<div class="video-card__body"><h3>' + esc(v.titre) + '</h3><p>' + esc(v.desc) + '</p>' +
-        '<div class="video-card__foot"><span>🎬 .mp4' + (v.audio ? ' · 🔊 audio' : '') + '</span><span>▶ Regarder</span></div></div></article>';
-  }
-  function brancherVideos(contexte) {
-    $$('[data-video-id]', contexte).forEach(function (b) {
-      b.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var card = b.closest('.video-card');
-        lireVideo(b.getAttribute('data-video-id') || (card && card.getAttribute('data-video-id')));
-      });
-    });
-    $$('.video-card', contexte).forEach(function (c) {
-      c.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); lireVideo(c.getAttribute('data-video-id')); }
-      });
-    });
-  }
-  function initVideos() {
-    var grille = $('#videosSlot');
-    if (grille) grille.innerHTML = VIDEOS.map(vignette).join('');
-    var une = $('#featureVideoSlot');
-    if (une) {
-      var v = VIDEO_UNE, m = MATIERES[v.matiere];
-      une.innerHTML = '<article class="card feature-video reveal" style="--vc:var(' + m.varc + ')">' +
-        '<div class="feature-video__poster">' + (v.poster ? '<img src="' + u(v.poster) + '" alt="Aperçu de la vidéo à la une">' : '') +
-          '<button class="play-btn" type="button" data-video-id="' + v.id + '" aria-label="Lire ' + esc(v.titre) + '"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button></div>' +
-        '<div class="feature-video__body"><span class="eyebrow"><span class="dot"></span> Vidéo à la une</span>' +
-          '<h2 style="font-size:var(--fs-xl)">' + esc(v.titre) + '</h2>' +
-          '<p style="color:var(--text-muted);font-size:var(--fs-sm)">' + esc(v.desc) + '</p>' +
-          '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem">' + badgeMatiere(v.matiere) +
-            '<span class="badge">⏱ ' + esc(v.duree) + '</span><span class="badge">🔊 Audio synchronisé</span></div>' +
-          '<div><button class="btn btn--primary" type="button" data-video-id="' + v.id + '">▶ Regarder la vidéo</button> ' +
-          '<a class="btn btn--ghost" href="' + u(m.cours) + '">Voir le cours</a></div></div></article>';
-    }
-    brancherVideos(document);
-  }
-
-  function lireVideo(id) {
-    var v = videoParId(id); if (!v) return;
-    var wrap = $('#stiVideoWrap'); if (!wrap) return;
-    /* <video> avec controls, preload="metadata" et poster : chemin remplaçable. */
-    wrap.innerHTML = '<video class="modal__video" controls preload="metadata" playsinline ' +
-      (v.poster ? 'poster="' + u(v.poster) + '" ' : '') + 'src="' + u(v.src) + '">Votre navigateur ne lit pas la vidéo.</video>' +
-      (v.audio ? '<p style="margin-top:.6rem"><a class="badge badge--gold" href="' + u(v.audio) + '">🔊 Écouter la version audio</a></p>' : '');
-    $('#stiVideoTitle').textContent = v.titre;
-    $('#stiVideoDesc').textContent = v.desc + ' — ' + MATIERES[v.matiere].nom + ' · ' + v.duree;
-    ouvrirModal('modalVideo');
-    var video = $('video', wrap);
-    if (video) {
-      video.addEventListener('ended', function () {
-        P.marquerVideoVue(v.id, video.currentTime);
-        P.mettreAJour('derniereLecture', {
-          matiere: v.matiere, chapitre: v.titre, pourcent: 100, url: MATIERES[v.matiere].cours
-        });
-        toast('✅ Vidéo marquée comme vue');
-      }, { once: true });
-      /* play() renvoie une Promesse (ou rien sur certains navigateurs) : on garde. */
-      var lecture = null;
-      try { lecture = video.play(); } catch (e) {}
-      if (lecture && typeof lecture.catch === 'function') lecture.catch(function () {});
-    }
-  }
-
-  /* -------------------------------------------------------------------------
-     12. CARTES MATIÈRES / OUTILS / QUIZ (contenu de l'accueil)
-     ---------------------------------------------------------------------- */
-  function initCartes() {
-    var slot = $('#matieresSlot');
-    if (slot) {
-      var p = P.chargerProfil();
-      slot.innerHTML = ORDRE.map(function (m, i) {
-        var M = MATIERES[m];
-        var pr = Math.round((p.progression[m] || 0) / 5 * 100);
-        var lock = m === 'php' ? ' subject--locked' : '';
-        return '<article class="card subject filterable reveal' + lock + '" data-tech="' + tech(m) + '" style="--vc:var(' + M.varc + ');--d:' + (i * .06) + 's">' +
-          '<div class="subject__media"><span class="em">' + M.emoji + '</span><span class="badge subject__badge" style="border-color:var(' + M.varc + ');color:var(' + M.varc + ')">' + M.nom + '</span></div>' +
-          '<div class="subject__body"><h3>' + M.emoji + ' ' + M.nom + '</h3><p class="subject__desc">' + esc(M.desc) + '</p>' +
-          '<div class="subject__progress"><div class="row"><span>Progression du cours</span><span>' + pr + '%</span></div>' +
-            '<div class="progress"><div class="progress__fill" data-progress="' + pr + '" style="--bar:linear-gradient(90deg,var(' + M.varc + '),var(--accent))"></div></div></div>' +
-          '<div class="subject__foot"><a class="subject__link" href="' + u(M.cours) + '">Ouvrir la matière ' + svg('<path d="M5 12h14M13 6l6 6-6 6"/>') + '</a>' +
-            '<span class="badge">' + M.badge + '</span></div>' +
-          (m === 'php' ? '<span class="badge badge--gold" style="margin-top:.6rem">🔒 Réservé à la 4<sup>ème</sup> SI</span>' : '') +
-          '</div></article>';
-      }).join('');
-    }
-    var outils = $('#outilsSlot');
-    if (outils) outils.innerHTML = OUTILS.map(function (o, i) {
-      var attrs = o.url ? 'href="' + u(o.url) + '"' : 'href="#" data-outil-fn="' + o.fn + '"';
-      return '<a class="card tool filterable reveal" ' + attrs + ' data-tech="' + o.tech + '" style="--tc:var(' + o.couleur + ');--d:' + (i % 4 * .05) + 's">' +
-        '<span class="tool__icon">' + o.em + '</span><h3>' + esc(o.titre) + '</h3><p>' + esc(o.desc) + '</p><span class="tool__tag">Outil en ligne</span></a>';
-    }).join('');
-    $$('[data-outil-fn]').forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        e.preventDefault();
-        var fn = a.getAttribute('data-outil-fn');
-        if (typeof window[fn] === 'function') window[fn]();
-        else toast('🔧 Ouvre cet outil depuis la version classique du site.');
-      });
-    });
-    var quiz = $('#quizSlot');
-    if (quiz) quiz.innerHTML = QUIZ.map(function (q, i) {
-      return '<a class="card quiz-card filterable reveal" href="' + u(q.url) + '" data-tech="' + q.tech + '" style="--qc:var(' + q.couleur + ');--d:' + (i * .05) + 's">' +
-        '<span class="quiz-card__idx">' + q.n + '</span><span><h3>' + esc(q.titre) + '</h3><p>' + esc(q.desc) + '</p>' +
-        '<span class="quiz-card__meta">' + q.meta.map(function (x) { return '<span class="badge">' + esc(x) + '</span>'; }).join('') + '</span></span></a>';
-    }).join('');
-  }
-
-  /* -------------------------------------------------------------------------
-     13. NOUVEAUTÉS (badge NOUVEAU, journal JSON existant)
-     ---------------------------------------------------------------------- */
-  function initNouveautes() {
-    var slot = $('#newsSlot'); if (!slot) return;
-    var p = P.chargerProfil();
-    function afficher(liste) {
-      var items = (liste || []).slice(0, 4);
-      slot.innerHTML = items.length ? items.map(function (n) {
-        var lu = p.nouveautesLues.indexOf(n.version) !== -1;
-        return '<article class="news-item"><span class="em">' + esc(n.icone || '🆕') + '</span><div style="flex:1">' +
-          '<h4>' + esc(n.titre) + ' ' + (lu ? '' : '<span class="badge badge--nouveau">NOUVEAU</span>') + '</h4>' +
-          '<p>' + esc(String(n.resume || '').slice(0, 150)) + (String(n.resume || '').length > 150 ? '…' : '') + '</p></div>' +
-          '<time>' + esc(n.date || '') + '</time></article>';
-      }).join('') : '<div class="empty">Journal des nouveautés indisponible hors ligne. <a href="' + u('nouveautes.html') + '" style="color:var(--accent)">Voir l’historique →</a></div>';
-      var lues = p.nouveautesLues.slice();
-      items.forEach(function (n) { if (lues.indexOf(n.version) === -1) lues.push(n.version); });
-      if (lues.length !== p.nouveautesLues.length) P.mettreAJour('nouveautesLues', lues.slice(-100));
-    }
-    fetch(u('assets/data/nouveautes.json')).then(function (r) { return r.json(); }).then(afficher).catch(function () { afficher([]); });
-  }
-
-  /* -------------------------------------------------------------------------
-     14. TABLEAU DE BORD
-     ---------------------------------------------------------------------- */
-  function initDashboard() {
-    var root = $('#dashboardRoot'); if (!root) return;
-    var p = P.chargerProfil();
-    var e = etat || P.etatAbonne(null);
-    var totalRevises = ORDRE.reduce(function (n, m) { return n + (p.progression[m] || 0); }, 0);
-    var lecture = p.derniereLecture || {};
-    var vues = p.videos.vues || [];
-    var derniereVideo = (p.videos.derniere && videoParId(p.videos.derniere.id)) || null;
-    var moyenneQuiz = p.quiz.length ? Math.round(p.quiz.reduce(function (n, q) { return n + (q.score / (q.total || 20)) * 20; }, 0) / p.quiz.length * 10) / 10 : null;
-    var moyenneNotes = p.notes.length ? Math.round(p.notes.reduce(function (n, x) { return n + Number(x.note || 0); }, 0) / p.notes.length * 10) / 10 : null;
-
-    root.innerHTML = '' +
-      '<div class="dash-hero reveal"><span class="avatar avatar--gold">' + esc(e.initiales) + '</span>' +
-        '<div><h1>Bonjour ' + esc(e.affiche || 'à toi') + ' 👋</h1><p>Voici ta progression sur « Le web de A à Z » — Lycée Raféha · 3<sup>ème</sup> &amp; 4<sup>ème</sup> SI.</p></div>' +
-        '<div class="dash-hero__end"><span class="badge badge--gold">⭐ Abonné' + (e.gold ? ' GOLD' : '') + '</span>' +
-        '<span class="badge">' + totalRevises + ' / 25 chapitres révisés</span></div></div>' +
-
-      '<div class="dash-grid">' +
-        '<section class="dash-card dash-col-8 reveal"><div class="dash-card__head"><h2>▶️ Reprise de lecture</h2><a class="btn btn--ghost btn--sm" href="' + u('index.html#videos') + '">Toutes les vidéos</a></div>' +
-          '<div class="dash-stat"><div class="ring" style="--pct:' + (lecture.pourcent || 0) + ';--ring-color:var(--accent)"><span class="ring__label">' + (lecture.pourcent || 0) + '%<small>lu</small></span></div>' +
-          '<div class="dash-stat__txt"><strong>' + esc(lecture.chapitre || 'Commence par un cours') + '</strong>' +
-          '<span>' + (lecture.matiere ? esc((MATIERES[lecture.matiere] || {}).nom || lecture.matiere) : 'Aucune lecture en cours') + '</span>' +
-          '<div style="margin-top:.8rem;display:flex;gap:.5rem;flex-wrap:wrap"><a class="btn btn--primary btn--sm" href="' + u(lecture.url || 'cours/html5.html') + '">Reprendre</a>' +
-          (derniereVideo ? '<button class="btn btn--ghost btn--sm" type="button" data-video-id="' + derniereVideo.id + '">▶ Reprendre la vidéo</button>' : '') + '</div></div></div></section>' +
-
-        '<section class="dash-card dash-col-4 reveal"><h2>🎓 Ma cote / notes /20</h2>' +
-          '<div class="dash-stat"><div class="ring" style="--pct:' + (moyenneNotes ? moyenneNotes * 5 : 0) + ';--ring-color:var(--gold)"><span class="ring__label">' + (moyenneNotes !== null ? moyenneNotes : '—') + '<small>/ 20</small></span></div>' +
-          '<div class="dash-stat__txt"><strong>' + p.notes.length + ' copie(s)</strong><span>Notes envoyées au professeur</span></div></div>' +
-          '<button class="btn btn--ghost btn--sm btn--block" type="button" data-outil-fn="ouvrirCarnetNotesSTI" style="margin-top:1rem">📒 Ouvrir mon carnet de notes</button></section>' +
-
-        '<section class="dash-card dash-col-8 reveal"><h2>📈 Progression par matière</h2><div class="dash-progress-list">' +
-          ORDRE.map(function (m) {
-            var n = p.progression[m] || 0, M = MATIERES[m];
-            return '<div><div class="row"><span>' + M.emoji + ' <a href="' + u(M.cours) + '" style="font-weight:700">' + M.nom + '</a></span><span>' + n + ' / 5 révisés</span></div>' +
-              '<div class="progress"><div class="progress__fill" data-progress="' + (n / 5 * 100) + '" style="--bar:linear-gradient(90deg,var(' + M.varc + '),var(--accent))"></div></div></div>';
-          }).join('') + '</div></section>' +
-
-        '<section class="dash-card dash-col-4 reveal"><div class="dash-card__head"><h2>🧠 Mes quiz</h2><span class="badge">' + p.quiz.length + '</span></div>' +
-          '<p style="color:var(--text-muted);font-size:var(--fs-sm)">Moyenne : <strong>' + (moyenneQuiz !== null ? moyenneQuiz + ' / 20' : 'pas encore de score') + '</strong></p>' +
-          (p.quiz.length ? '<div class="list-rows" style="max-height:190px;overflow:auto">' + p.quiz.slice().reverse().slice(0, 6).map(function (q) {
-            return '<div class="list-row"><span class="em">🧠</span><span class="list-row__txt"><strong>' + esc((MATIERES[q.matiere] || {}).nom || q.matiere) + '</strong><small>' + esc(q.date || '') + '</small></span><span class="list-row__end">' + q.score + '/' + q.total + '</span></div>';
-          }).join('') + '</div>' : '<div class="empty">Lance un quiz pour voir tes scores ici.</div>') +
-          '<a class="btn btn--primary btn--sm btn--block" href="' + u('revision-erreurs.html') + '" style="margin-top:1rem">🔁 Rejouer mes erreurs (' + P.totalErreurs() + ')</a></section>' +
-
-        '<section class="dash-card dash-col-6 reveal"><div class="dash-card__head"><h2>🎥 Mes vidéos</h2><span class="badge badge--css">' + vues.length + ' / ' + VIDEOS.length + ' vues</span></div>' +
-          '<div class="progress" style="margin-bottom:1rem"><div class="progress__fill" data-progress="' + Math.round(vues.length / VIDEOS.length * 100) + '"></div></div>' +
-          '<div class="list-rows">' + VIDEOS.slice(0, 5).map(function (v) {
-            var vue = vues.indexOf(v.id) !== -1;
-            return '<button class="list-row" type="button" data-video-id="' + v.id + '" style="width:100%;text-align:start;cursor:pointer">' +
-              '<span class="em">' + (vue ? '✅' : '▶️') + '</span><span class="list-row__txt"><strong>' + esc(v.titre) + '</strong><small>' + esc(v.duree) + ' · ' + esc(MATIERES[v.matiere].nom) + '</small></span>' +
-              '<span class="list-row__end">' + (vue ? 'Vu' : 'À voir') + '</span></button>';
-          }).join('') + '</div></section>' +
-
-        '<section class="dash-card dash-col-6 reveal"><h2>⭐ Contenus réservés aux abonnés</h2>' +
-          '<div class="list-rows">' +
-            '<a class="link-row" href="' + u('quiz/tableaux.html') + '">📊 <span>Quiz des tableaux</span><span class="end">Ouvrir →</span></a>' +
-            '<a class="link-row" href="' + u('cours/php.html') + '">🐘 <span>Cours PHP — 4<sup>ème</sup> SI</span><span class="end">Ouvrir →</span></a>' +
-            '<a class="link-row" href="' + u('bac-pratique.html') + '">🎓 <span>Atelier Épreuve Pratique Bac</span><span class="end">Ouvrir →</span></a>' +
-          '</div><h3 style="margin-top:1.5rem;font-size:var(--fs-base)">🆕 Nouveautés non lues</h3><div id="dashNews"></div></section>' +
-
-        '<section class="dash-card dash-col-6 reveal"><h2>📒 Mes notes envoyées au professeur</h2>' +
-          (p.notes.length ? '<table class="table"><thead><tr><th>Atelier</th><th>Note</th><th>Date</th></tr></thead><tbody>' +
-            p.notes.slice().reverse().map(function (x) { return '<tr><td>' + esc(x.atelier) + '</td><td><strong>' + esc(x.note) + ' / 20</strong></td><td>' + esc(x.date) + '</td></tr>'; }).join('') +
-            '</tbody></table>' : '<div class="empty">Aucune note pour le moment. Envoie une copie depuis l’Atelier Bac pour la retrouver ici.</div>') + '</section>' +
-
-        '<section class="dash-card dash-col-6 reveal"><h2>⚙️ Préférences</h2>' +
-          '<div class="pref-row"><span class="pref-row__label">Mode d’affichage<small>Sombre · Clair · Intermédiaire</small></span><div class="seg">' +
-            P.THEMES.map(function (t, i) { return '<button type="button" data-theme-segment="' + t + '" aria-pressed="' + (p.theme === t) + '">' + ['🌙 Sombre', '☀️ Clair', '◐ Intermédiaire'][i] + '</button>'; }).join('') + '</div></div>' +
-          '<div class="pref-row"><span class="pref-row__label">Langue<small>FR · EN · AR (RTL automatique)</small></span><div class="seg">' +
-            P.LANGUES.map(function (l) { return '<button type="button" data-langue="' + l + '" aria-pressed="' + (p.langue === l) + '">' + l.toUpperCase() + '</button>'; }).join('') + '</div></div>' +
-          '<div class="pref-row"><span class="pref-row__label">Taille du texte<small>Petit · Normal · Grand</small></span><div class="seg">' +
-            Object.keys(P.TAILLES).map(function (t) { return '<button type="button" data-taille="' + t + '" aria-pressed="' + (p.tailleTexte === t) + '">' + t + '</button>'; }).join('') + '</div></div>' +
-          '<div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.25rem"><button class="btn btn--ghost btn--sm" type="button" id="dashReset">♻️ Réinitialiser mon profil</button>' +
-          '<button class="btn btn--ghost btn--sm" type="button" id="dashLogout">🚪 Se déconnecter</button></div></section>' +
-      '</div>';
-
-    $$('#dashboardRoot [data-video-id]').forEach(function (b) {
-      b.addEventListener('click', function () { lireVideo(b.getAttribute('data-video-id')); });
-    });
-    $$('#dashboardRoot [data-outil-fn]').forEach(function (b) {
-      b.addEventListener('click', function () { var f = b.getAttribute('data-outil-fn'); if (typeof window[f] === 'function') window[f](); else toast('📒 Carnet de notes disponible sur la version classique.'); });
-    });
-    $$('#dashboardRoot [data-theme-segment]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        P.mettreAJour('theme', b.getAttribute('data-theme-segment')); P.appliquerPreferences(); P.garderTheme(); initDashboard(); initThemes();
-      });
-    });
-    $$('#dashboardRoot [data-langue]').forEach(function (b) {
-      b.addEventListener('click', function () { P.mettreAJour('langue', b.getAttribute('data-langue')); P.appliquerPreferences(); traduire(); initDashboard(); });
-    });
-    $$('#dashboardRoot [data-taille]').forEach(function (b) {
-      b.addEventListener('click', function () { P.mettreAJour('tailleTexte', b.getAttribute('data-taille')); P.appliquerPreferences(); initDashboard(); });
-    });
-    var reset = $('#dashReset'); if (reset) reset.addEventListener('click', function () {
-      if (window.confirm('Réinitialiser toutes tes données locales (progression, quiz, vidéos) ?')) { P.reinitialiser(); P.appliquerPreferences(); initDashboard(); toast('Profil réinitialisé'); }
-    });
-    var logout = $('#dashLogout'); if (logout) logout.addEventListener('click', function () { P.deconnecter(); });
-
-    var dn = $('#dashNews');
-    if (dn) fetch(u('assets/data/nouveautes.json')).then(function (r) { return r.json(); }).then(function (liste) {
-      var nonLues = (liste || []).filter(function (n) { return p.nouveautesLues.indexOf(n.version) === -1; }).slice(0, 3);
-      dn.innerHTML = nonLues.length ? nonLues.map(function (n) {
-        return '<a class="link-row" href="' + u(n.lien || 'nouveautes.html') + '">' + esc(n.icone || '🆕') + ' <span>' + esc(String(n.titre).slice(0, 48)) + '…</span><span class="badge badge--nouveau">NOUVEAU</span></a>';
-      }).join('') : '<div class="empty">Tout est à jour ✅ — <a href="' + u('nouveautes.html') + '" style="color:var(--accent)">voir l’historique</a></div>';
-    }).catch(function () { dn.innerHTML = '<div class="empty">Journal indisponible hors ligne.</div>'; });
-  }
-
-  /* -------------------------------------------------------------------------
-     15. COQUILLE « UNE PAGE PAR MATIÈRE » (par-dessus les cours historiques)
-     ---------------------------------------------------------------------- */
-  function listeLiens(items) {
-    if (!items || !items.length) return '<div class="empty">Aucun élément pour le moment.</div>';
-    return '<div class="list-rows">' + items.map(function (x) {
-      var href = u(x[2]).replace(/ /g, '%20'); /* fichiers avec espaces encodés */
-      return '<a class="list-row" href="' + href + '" target="_blank" rel="noopener"><span class="em">' + x[0] + '</span>' +
-        '<span class="list-row__txt"><strong>' + esc(x[1]) + '</strong><small>' + esc(String(x[2]).split('/').pop()) + '</small></span>' +
-        '<span class="list-row__end">Ouvrir →</span></a>';
-    }).join('') + '</div>';
-  }
-  function videosMatiere(m) {
-    var liste = VIDEOS.filter(function (v) { return v.matiere === m; });
-    return '<div class="videos-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">' + liste.map(vignette).join('') + '</div>' +
-      '<div class="alert alert--tip" style="margin-top:1.25rem"><strong>Chemin des vidéos :</strong> remplacez simplement <code>assets/videos/' + m + '-cours.mp4</code> pour mettre à jour le cours filmé (poster et audio facultatifs).</div>';
-  }
-  function initCourseShell() {
-    /* Les 5 pages matière v2 construisent leur propre coquille enrichie
-       (assets/js/cours.js) : on ne doit pas empiler deux structures d'onglets. */
-    if (document.documentElement.hasAttribute('data-sti-cours-v2')) return;
-    var m = document.documentElement.getAttribute('data-sti-matiere');
-    if (!m || !MATIERES[m] || $('#stiCourseShell')) return;
-    var M = MATIERES[m], body = document.body;
-    var mesVideos = VIDEOS.filter(function (v) { return v.matiere === m; });
-
-    /* On enveloppe le contenu d'origine SANS déplacer les <script> déjà exécutés. */
-    var panelCours = document.createElement('div');
-    panelCours.className = 'sti-course-panel sti-course-panel--cours tab-panel';
-    panelCours.id = 'panel-cours';
-    panelCours.setAttribute('role', 'tabpanel');
-    Array.prototype.slice.call(body.children).forEach(function (node) {
-      if (/^(SCRIPT|STYLE|LINK|NOSCRIPT)$/.test(node.tagName)) return;
-      /* Les éléments injectés par acces.js (roue, modales, barre mobile…) restent
-         au niveau du <body> : ils ne doivent pas être enfermés dans un onglet. */
-      if (node.id && node.id.indexOf('sti-') === 0) return;
-      if (node.classList && Array.prototype.some.call(node.classList, function (c) { return c.indexOf('sti-') === 0; })) return;
-      if (node.id === 'contact') return;
-      if (node.classList && (node.classList.contains('site-header') || node.classList.contains('site-footer') ||
-          node.classList.contains('modal') || node.classList.contains('side-panel') ||
-          node.classList.contains('side-panel__backdrop') || node.classList.contains('mobile-menu') ||
-          node.classList.contains('scroll-progress') || node.classList.contains('to-top') ||
-          node.id === 'stiToast' || node.id === 'stiLegacyHero')) return;
-      panelCours.appendChild(node);
-    });
-
-    var shell = el('<div class="container sti-course-shell" id="stiCourseShell"></div>');
-    shell.innerHTML =
-      '<div class="sti-course-head"><span class="badge" style="border-color:var(' + M.varc + ');color:var(' + M.varc + ')">' + M.emoji + ' ' + M.nom + '</span>' +
-        '<h1>' + M.nom + ' — cours, exercices, annexes & vidéos</h1>' +
-        '<a class="btn btn--ghost btn--sm" href="' + u('index.html#matieres') + '">← Toutes les matières</a></div>' +
-      '<div class="sti-course-tabs tabs" id="stiCourseTabs" role="tablist" aria-label="Sections de la matière"><div class="tabs__thumb" id="stiCourseThumb"></div>' +
-        '<button class="tab" type="button" role="tab" data-panel="panel-cours" aria-selected="true">📘 Cours</button>' +
-        '<button class="tab" type="button" role="tab" data-panel="panel-exercices" aria-selected="false" id="tabExercices">✍️ Exercices</button>' +
-        '<button class="tab" type="button" role="tab" data-panel="panel-annexes" aria-selected="false">📎 Annexes</button>' +
-        '<button class="tab" type="button" role="tab" data-panel="panel-videos" aria-selected="false">🎥 Vidéos (' + mesVideos.length + ')</button>' +
-      '</div>' +
-      '<div id="panel-exercices" class="sti-course-panel tab-panel" role="tabpanel" hidden>' +
-        '<h2>✍️ Exercices & corrigés — ' + M.nom + '</h2><p style="color:var(--text-muted);font-size:var(--fs-sm)">Tous les exercices historiques restent accessibles. Les anciennes pages d’index renvoient désormais vers cet onglet.</p>' +
-        listeLiens(EXERCICES[m]) + '</div>' +
-      '<div id="panel-annexes" class="sti-course-panel tab-panel" role="tabpanel" hidden>' +
-        '<h2>📎 Annexes & fiches — ' + M.nom + '</h2>' + listeLiens(ANNEXES[m]) + '</div>' +
-      '<div id="panel-videos" class="sti-course-panel tab-panel" role="tabpanel" hidden>' +
-        '<h2>🎥 Vidéos explicatives — ' + M.nom + '</h2>' + videosMatiere(m) + '</div>';
-
-    var footer = $('.site-footer');
-    if (footer) body.insertBefore(shell, footer); else body.appendChild(shell);
-    shell.appendChild(panelCours);
-
-    var tabs = $$('.tab', $('#stiCourseTabs')), thumb = $('#stiCourseThumb');
-    function deplacer(t) {
-      if (!thumb || !t) return;
-      thumb.style.width = t.offsetWidth + 'px';
-      thumb.style.transform = 'translateX(' + Math.max(t.offsetLeft - 6, 0) + 'px)';
-    }
-    function activer(t, changerHash) {
-      tabs.forEach(function (x) {
-        var ok = x === t;
-        x.setAttribute('aria-selected', String(ok));
-        var pan = document.getElementById(x.getAttribute('data-panel'));
-        if (pan) pan.hidden = !ok;
-      });
-      deplacer(t);
-      if (changerHash && t.id === 'tabExercices') history.replaceState(null, '', '#exercices');
-    }
-    tabs.forEach(function (t) { t.addEventListener('click', function () { activer(t, true); }); });
-    requestAnimationFrame(function () { deplacer(tabs[0]); });
-    window.addEventListener('resize', function () { deplacer($('.tab[aria-selected="true"]', $('#stiCourseTabs')) || tabs[0]); });
-    brancherVideos($('#panel-videos'));
-    if (location.hash === '#exercices') activer($('#tabExercices'), false);
-    window.addEventListener('hashchange', function () { if (location.hash === '#exercices') activer($('#tabExercices'), false); });
-  }
-
-  /* Petit bandeau de titre pour les autres pages historiques (quiz, outils…) */
-  function initLegacyHero() {
-    if (document.documentElement.getAttribute('data-sti-matiere')) return;
-    var titre = document.documentElement.getAttribute('data-sti-titre');
-    if (!titre || $('#stiLegacyHero')) return;
-    var hero = el('<div class="container" id="stiLegacyHero" style="padding-top:1.75rem;padding-bottom:.5rem">' +
-      '<div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap"><span class="badge badge--css">' + esc(titre) + '</span>' +
-      '<a class="btn btn--ghost btn--sm" href="' + u('index.html') + '">← Accueil</a>' +
-      '<a class="btn btn--ghost btn--sm" href="' + u('dashboard.html') + '">📊 Tableau de bord</a></div></div>');
-    var header = $('#siteHeader');
-    if (header && header.nextElementSibling) document.body.insertBefore(hero, header.nextElementSibling);
-    else document.body.insertBefore(hero, document.body.firstElementChild);
-  }
-
-  /* -------------------------------------------------------------------------
-     16. GLOSSAIRE TRILINGUE (données extraites de l'ancienne page)
-     ---------------------------------------------------------------------- */
-  function initGlossaire() {
-    var grille = $('#glossaireGrille'); if (!grille || !window.STI_TERMES) return;
-    var terme = '', matiere = 'all', champ = $('#glossaireSearch');
-    function rendre() {
-      var q = terme.trim().toLowerCase();
-      var items = window.STI_TERMES.filter(function (t) {
-        return (matiere === 'all' || t.m === matiere) && (!q || (t.fr + ' ' + t.en + ' ' + t.ar + ' ' + t.d).toLowerCase().indexOf(q) !== -1);
-      });
-      grille.innerHTML = items.length ? items.map(function (t) {
-        var M = MATIERES[t.m] || MATIERES.html5;
-        return '<article class="card reveal" style="--vc:var(' + M.varc + ')"><div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem">' +
-          badgeMatiere(t.m) + '<span class="badge">FR · EN · AR</span></div>' +
-          '<h3 style="font-size:1.15rem">' + esc(t.fr) + '</h3>' +
-          '<p style="font-size:var(--fs-sm);color:var(--text-muted);margin-bottom:.4rem"><strong>EN :</strong> ' + esc(t.en) + '</p>' +
-          '<p style="font-size:var(--fs-md);margin-bottom:.6rem" lang="ar" dir="rtl">' + esc(t.ar) + '</p>' +
-          '<p style="font-size:var(--fs-xs);color:var(--text-dim);margin:0">' + t.d + '</p></article>';
-      }).join('') : '<div class="empty">Aucun terme ne correspond. Essayez un autre mot (français, anglais ou arabe).</div>';
-      var c = $('#glossaireCount'); if (c) c.textContent = items.length + ' terme(s)';
-    }
-    if (champ) champ.addEventListener('input', function () { terme = champ.value; rendre(); });
-    $$('#glossaireFiltres [data-filter]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        $$('#glossaireFiltres [data-filter]').forEach(function (x) { x.classList.toggle('is-active', x === b); });
-        matiere = b.getAttribute('data-filter'); rendre();
-      });
-    });
-    rendre();
-  }
-
-  /* -------------------------------------------------------------------------
-     17. COMPORTEMENTS GÉNÉRIQUES (scroll, onglets, accordéon, compteurs…)
-     ---------------------------------------------------------------------- */
-  function fermerMenu() {
-    var m = $('#mobileMenu'), b = $('#burger');
-    if (m) m.classList.remove('is-open');
-    if (b) b.setAttribute('aria-expanded', 'false');
-  }
-  function initGenerique() {
-    document.documentElement.classList.add('js');
-    var barre = $('#scrollProgress'), header = $('#siteHeader'), toTop = $('#toTop'), tick = false;
-    function scroll() {
-      var y = window.pageYOffset || document.documentElement.scrollTop;
-      var h = document.documentElement.scrollHeight - window.innerHeight;
-      if (barre) barre.style.transform = 'scaleX(' + (h > 0 ? y / h : 0) + ')';
-      if (header) header.classList.toggle('is-stuck', y > 12);
-      if (toTop) toTop.classList.toggle('is-visible', y > 520);
-      tick = false;
-    }
-    window.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(scroll); } }, { passive: true });
-    scroll();
-    if (toTop) toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: REDUIT ? 'auto' : 'smooth' }); });
-    var burger = $('#burger'), menu = $('#mobileMenu');
-    if (burger && menu) {
-      burger.addEventListener('click', function () { var o = menu.classList.toggle('is-open'); burger.setAttribute('aria-expanded', String(o)); });
-      $$('a', menu).forEach(function (a) { a.addEventListener('click', fermerMenu); });
-    }
-    var ici = location.pathname.split('/').pop() || 'index.html';
-    $$('.nav a').forEach(function (a) {
-      if (a.getAttribute('href').indexOf(ici) !== -1 && ici !== 'index.html') a.classList.add('is-active');
-    });
-    /* Onglets génériques */
-    $$('.tabs:not(#stiCourseTabs)').forEach(function (root) {
-      var tabs = $$('.tab', root), thumb = $('.tabs__thumb', root);
-      function move(t) { if (!thumb) return; thumb.style.width = t.offsetWidth + 'px'; thumb.style.transform = 'translateX(' + Math.max(t.offsetLeft - 6, 0) + 'px)'; }
-      function go(t) {
-        tabs.forEach(function (x) {
-          var ok = x === t; x.setAttribute('aria-selected', String(ok));
-          var pan = document.getElementById(x.getAttribute('aria-controls'));
-          if (pan) pan.hidden = !ok;
-        });
-        move(t);
-      }
-      tabs.forEach(function (t) { t.addEventListener('click', function () { go(t); }); });
-      var premier = $('.tab[aria-selected="true"]', root) || tabs[0];
-      if (premier) requestAnimationFrame(function () { go(premier); });
-      window.addEventListener('resize', function () { var a = $('.tab[aria-selected="true"]', root); if (a) move(a); });
-    });
-    /* Accordéon */
-    $$('.acc-item').forEach(function (item) {
-      var btn = $('.acc-btn', item), pan = $('.acc-panel', item);
-      if (!btn || !pan) return;
-      if (item.classList.contains('is-open')) pan.style.maxHeight = pan.scrollHeight + 'px';
-      btn.addEventListener('click', function () {
-        var ouvert = item.classList.contains('is-open');
-        $$('.acc-item').forEach(function (o) {
-          o.classList.remove('is-open'); $('.acc-panel', o).style.maxHeight = '0px'; $('.acc-btn', o).setAttribute('aria-expanded', 'false');
-        });
-        item.classList.toggle('is-open', !ouvert);
-        btn.setAttribute('aria-expanded', String(!ouvert));
-        pan.style.maxHeight = ouvert ? '0px' : pan.scrollHeight + 'px';
-      });
-    });
-    /* Flashcards */
-    $$('.flashcard').forEach(function (c) {
-      function flip() { c.classList.toggle('is-flipped'); }
-      c.addEventListener('click', flip);
-      c.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
-    });
-    /* Compteurs animés */
-    function compte(n) {
-      var cible = parseFloat(n.getAttribute('data-count')) || 0, suffixe = n.getAttribute('data-suffix') || '';
-      var fmt = new Intl.NumberFormat('fr-FR');
-      if (REDUIT) { n.textContent = fmt.format(cible) + suffixe; return; }
-      var debut = performance.now(), duree = 1400;
-      function step(t) {
-        var p = Math.min((t - debut) / duree, 1), e = 1 - Math.pow(1 - p, 3);
-        n.textContent = fmt.format(Math.round(cible * e)) + suffixe;
-        if (p < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
-    var observe = function (elements, fn, ratio) {
-      if (!('IntersectionObserver' in window)) { elements.forEach(fn); return; }
-      var io = new IntersectionObserver(function (es) {
-        es.forEach(function (en) { if (en.isIntersecting) { fn(en.target); io.unobserve(en.target); } });
-      }, { threshold: ratio || .12 });
-      elements.forEach(function (x) { io.observe(x); });
+    var racine = (global.STI_AUTH && global.STI_AUTH.RACINE) || obtenirPrefixeRacine();
+    var rediriger = function () {
+      global.location.replace(racine + "portail.html#deconnecte");
     };
-    observe($$('.reveal,.reveal-scale,.stat'), function (x) { x.classList.add('is-visible'); }, .12);
-    observe($$('[data-count]'), compte, .5);
-    observe($$('.progress__fill[data-progress]'), function (x) { x.style.width = (Number(x.getAttribute('data-progress')) || 0) + '%'; }, .3);
-    /* Copie des blocs de code */
-    $$('.codeblock').forEach(function (b) {
-      var bar = $('.codeblock__bar', b), pre = $('pre', b); if (!bar || !pre) return;
-      var btn = el('<button class="codeblock__copy" type="button">Copier</button>');
-      bar.appendChild(btn);
-      btn.addEventListener('click', function () {
-        var txt = pre.innerText;
-        var ok = function () { btn.textContent = 'Copié !'; setTimeout(function () { btn.textContent = 'Copier'; }, 1800); };
-        if (navigator.clipboard) navigator.clipboard.writeText(txt).then(ok).catch(ok);
-        else ok();
+    if (global.__STI_SB_CLIENT && global.__STI_SB_CLIENT.auth) {
+      global.__STI_SB_CLIENT.auth.signOut().then(rediriger).catch(rediriger);
+    } else {
+      rediriger();
+    }
+  }
+
+  /* 6. Badge et panneau abonné */
+  function estPageAccueil() {
+    var pn = String((global.location && global.location.pathname) || "").replace(/\/+$/, "");
+    return pn === "" || /\/STiV2\.0$/i.test(pn) || /\/index\.html$/i.test(pn);
+  }
+
+  function calculerResumeRevision() {
+    var profil = global.STIProfil ? global.STIProfil.chargerProfil() : { progression: {} };
+    var ok4 = estAutorise4SI();
+    var cles = ok4 ? ["html5", "css3", "javascript", "sql", "php"] : ["html5", "css3", "javascript", "sql"];
+    var nb = 0;
+    cles.forEach(function (k) {
+      if (profil.progression && profil.progression[k]) nb++;
+    });
+    return { faits: nb, total: cles.length, pourcent: Math.round((nb / cles.length) * 100) };
+  }
+
+  function assurerTiroirAbonneDOM() {
+    if (document.getElementById("stiSubDrawer")) return;
+    var pref = obtenirPrefixeRacine();
+
+    var fond = document.createElement("div");
+    fond.className = "sub-drawer-backdrop";
+    fond.id = "stiSubDrawerBackdrop";
+
+    var tiroir = document.createElement("aside");
+    tiroir.className = "sub-drawer";
+    tiroir.id = "stiSubDrawer";
+    tiroir.setAttribute("role", "dialog");
+    tiroir.setAttribute("aria-modal", "true");
+    tiroir.setAttribute("aria-label", "Espace abonné rapide");
+
+    tiroir.innerHTML =
+      '<div class="sub-drawer__head">' +
+        '<div style="display:flex;align-items:center;gap:12px">' +
+          '<div class="sub-avatar" id="drawerAvatar" style="width:42px;height:42px;font-size:.95rem">AB</div>' +
+          "<div>" +
+            '<div style="font-weight:800;font-size:1rem" id="drawerName">Abonné</div>' +
+            '<div style="font-size:.76rem;color:var(--text-muted)" id="drawerMeta">Lycée Raféha</div>' +
+          "</div>" +
+        "</div>" +
+        '<button type="button" class="modal__close" id="btnCloseSubDrawer" aria-label="Fermer le panneau">✕</button>' +
+      "</div>" +
+      '<div class="sub-drawer__body">' +
+        '<div id="drawerGoldBox"></div>' +
+        '<div class="card" style="padding:14px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+            '<strong style="font-size:.86rem">📚 Progression des matières</strong>' +
+            '<span class="badge" id="drawerRevCount">0 / 5 révisés</span>' +
+          "</div>" +
+          '<div class="progress-bar"><div class="progress-bar__fill" id="drawerRevBar" style="width:0%"></div></div>' +
+        "</div>" +
+        '<div class="card" style="padding:14px" id="drawerResumeCard">' +
+          '<strong style="font-size:.86rem;display:block;margin-bottom:6px">📍 Dernière activité</strong>' +
+          '<p style="font-size:.82rem" id="drawerResumeText">Aucun chapitre en cours pour le moment.</p>' +
+        "</div>" +
+        '<div class="card" style="padding:14px">' +
+          '<strong style="font-size:.86rem;display:block;margin-bottom:8px">🎨 Mode d\'affichage</strong>' +
+          '<div class="segmented" role="group" aria-label="Mode d\'affichage">' +
+            '<button type="button" class="segmented__btn" data-set-theme="clair">☀️ Clair</button>' +
+            '<button type="button" class="segmented__btn" data-set-theme="intermediaire">🌗 Intermédiaire</button>' +
+            '<button type="button" class="segmented__btn" data-set-theme="sombre">🌙 Sombre</button>' +
+          "</div>" +
+        "</div>" +
+        '<div id="drawerProfAction"></div>' +
+      "</div>" +
+      '<div class="sub-drawer__foot">' +
+        '<a class="btn btn-primary" href="' + pref + 'dashboard.html">📊 Ouvrir mon tableau de bord complet</a>' +
+        '<button type="button" class="btn btn-danger btn-sm" id="drawerLogoutBtn" data-i18n="dash.deconnexion">🚪 Se déconnecter</button>' +
+      "</div>";
+
+    document.body.appendChild(fond);
+    document.body.appendChild(tiroir);
+
+    var fermer = function () {
+      fond.classList.remove("is-open");
+      tiroir.classList.remove("is-open");
+    };
+    fond.addEventListener("click", fermer);
+    tiroir.querySelector("#btnCloseSubDrawer").addEventListener("click", fermer);
+    tiroir.querySelector("#drawerLogoutBtn").addEventListener("click", declencherDeconnexion);
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && tiroir.classList.contains("is-open")) fermer();
+    });
+  }
+
+  function ouvrirTiroirAbonne() {
+    assurerTiroirAbonneDOM();
+    rafraichirTiroirAbonne();
+    document.getElementById("stiSubDrawerBackdrop").classList.add("is-open");
+    document.getElementById("stiSubDrawer").classList.add("is-open");
+  }
+
+  function rafraichirTiroirAbonne() {
+    var tiroir = document.getElementById("stiSubDrawer");
+    if (!tiroir || !global.STIProfil) return;
+    var etat = global.STIProfil.lireEtatSession();
+    var profil = global.STIProfil.chargerProfil();
+    var rev = calculerResumeRevision();
+    var pref = obtenirPrefixeRacine();
+
+    var elAv = document.getElementById("drawerAvatar");
+    var elNm = document.getElementById("drawerName");
+    var elMt = document.getElementById("drawerMeta");
+    var elGb = document.getElementById("drawerGoldBox");
+    var elRc = document.getElementById("drawerRevCount");
+    var elRb = document.getElementById("drawerRevBar");
+    var elRt = document.getElementById("drawerResumeText");
+    var elPr = document.getElementById("drawerProfAction");
+
+    if (elAv) elAv.textContent = etat.initiales;
+    if (elNm) elNm.textContent = profil.prenom || etat.prenom;
+    if (elMt) elMt.textContent = (etat.classe ? etat.classe + " · " : "") + etat.lycee;
+    if (elGb) {
+      elGb.innerHTML = etat.estGold
+        ? '<span class="badge badge-gold">⭐ Compte Abonné GOLD actif · Impression & contenus débloqués</span>'
+        : '<a class="badge" href="' + echapperHtml(pref + "portail.html") + '">🔐 Session locale · Connectez-vous pour la synchro cloud</a>';
+    }
+    if (elRc) elRc.textContent = rev.faits + " / " + rev.total + " révisés";
+    if (elRb) elRb.style.width = rev.pourcent + "%";
+
+    if (elRt) {
+      if (profil.derniereLecture && profil.derniereLecture.url) {
+        elRt.innerHTML =
+          echapperHtml(profil.derniereLecture.chapitre || profil.derniereLecture.matiere.toUpperCase()) +
+          " (" + profil.derniereLecture.pourcent + ' %) — <a href="' +
+          echapperHtml(pref + profil.derniereLecture.url) +
+          '" style="color:var(--brand);font-weight:700">Reprendre ➜</a>';
+      } else if (profil.videos && profil.videos.derniere && profil.videos.derniere.titre) {
+        elRt.innerHTML =
+          "🎬 " + echapperHtml(profil.videos.derniere.titre) +
+          " (" + formaterDureeSecondes(profil.videos.derniere.temps) + ")";
+      }
+    }
+
+    if (elPr) {
+      var btnRoueProf = document.getElementById("sti-roue-btn-ecrire-prof");
+      if (btnRoueProf) {
+        elPr.innerHTML = '<button type="button" class="btn btn-secondary btn-sm" style="width:100%" id="drawerWriteProfBtn">💬 Écrire au professeur</button>';
+        var bWp = document.getElementById("drawerWriteProfBtn");
+        if (bWp) {
+          bWp.addEventListener("click", function () {
+            document.getElementById("stiSubDrawerBackdrop").classList.remove("is-open");
+            tiroir.classList.remove("is-open");
+            btnRoueProf.click();
+          });
+        }
+      } else {
+        elPr.innerHTML = "";
+      }
+    }
+    rafraichirBoutonsTheme();
+  }
+
+  /** Utiliser les éléments vivants créés par acces.js, sans recréer le compte.
+   * Les mêmes bouton, avatar, état GOLD, écouteurs et panneau restent en place. */
+  function rendreBadgeAbonne() {
+    var slot = document.querySelector("[data-subscriber-slot]");
+    if (!slot || !global.STIProfil) return;
+    var roue = document.getElementById("sti-roue-wrap");
+    if (roue) {
+      // acces.js peut reconstruire la roue après une mise à jour de session.
+      if (!slot.contains(roue)) slot.replaceChildren(roue);
+      roue.classList.add("sti-roue-wrap");
+      roue.classList.toggle("sti-theme-sombre", global.STIProfil.chargerProfil().theme !== "clair");
+      var datePlan = roue.querySelector("#sti-plan-date");
+      if (datePlan && !datePlan.hasAttribute("aria-label")) datePlan.setAttribute("aria-label", "Date de l’épreuve du bac");
+      return;
+    }
+    var etat = global.STIProfil.lireEtatSession();
+    var texte = etat.connecte ? "Mon compte" : traduire("sub.connecter");
+    var href = obtenirPrefixeRacine() + "portail.html";
+    if (slot.dataset.etatRoue === texte && slot.firstElementChild) return;
+    slot.dataset.etatRoue = texte;
+    slot.innerHTML = '<a class="sub-login-btn" href="' + echapperHtml(href) + '">' +
+      '<span aria-hidden="true">🔐</span><span class="sub-login-btn__long">' + echapperHtml(texte) + '</span>' +
+      '<span class="sub-login-btn__short">Compte</span></a>';
+  }
+
+  function initialiserClicBadgeAbonne() {
+    // La roue est insérée asynchroniquement par acces.js ; surveiller ses remplacements.
+    if (typeof MutationObserver !== "function") return;
+    var obs = new MutationObserver(function (mutations) {
+      var change = mutations.some(function (mutation) {
+        return Array.prototype.some.call(mutation.addedNodes, function (n) {
+          return n.nodeType === 1 && (n.id === "sti-roue-wrap" || n.id === "sti-plan-date" ||
+            (n.querySelector && n.querySelector("#sti-roue-wrap, #sti-plan-date")));
+        }) || Array.prototype.some.call(mutation.removedNodes, function (n) {
+          return n.nodeType === 1 && n.id === "sti-roue-wrap";
+        });
+      });
+      if (change) rendreBadgeAbonne();
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+  }
+
+  /* 7. Lecteur vidéo */
+  function attacherSuiviElementVideo(videoEl, metaVideo) {
+    if (!videoEl || videoEl._suiviStiActif || !global.STIProfil) return;
+    videoEl._suiviStiActif = true;
+    var dernierEnregistrement = 0;
+
+    videoEl.addEventListener("timeupdate", function () {
+      var maintenant = Date.now();
+      if (maintenant - dernierEnregistrement < 3500) return;
+      dernierEnregistrement = maintenant;
+
+      var t = Math.floor(videoEl.currentTime || 0);
+      var d = Math.floor(videoEl.duration || 0);
+      if (t < 3) return;
+
+      var p = global.STIProfil.chargerProfil();
+      p.videos.derniere = {
+        id: metaVideo.id,
+        matiere: metaVideo.matiere,
+        titre: metaVideo.titre,
+        temps: t,
+        duree: d,
+        url: metaVideo.urlCours
+      };
+      if (d > 0 && t / d >= 0.85 && p.videos.vues.indexOf(metaVideo.id) === -1) {
+        p.videos.vues.push(metaVideo.id);
+      }
+      global.STIProfil.sauvegarderProfil(p, false);
+    });
+
+    videoEl.addEventListener("ended", function () {
+      var p = global.STIProfil.chargerProfil();
+      if (p.videos.vues.indexOf(metaVideo.id) === -1) {
+        p.videos.vues.push(metaVideo.id);
+      }
+      if (p.videos.derniere && p.videos.derniere.id === metaVideo.id) {
+        p.videos.derniere.temps = 0;
+      }
+      global.STIProfil.sauvegarderProfil(p, false);
+      rendreGrilleVideosAccueil();
+    });
+  }
+
+  function ouvrirModaleVideo(idVideo, tempsDepart) {
+    var meta = CATALOGUE_VIDEOS.find(function (v) { return v.id === idVideo; });
+    if (!meta || (meta.reserve4si && !estAutorise4SI())) return;
+    // Une seule interface : le lecteur historique, avec tous ses chapitres et commandes.
+    if (typeof global.ouvrirVideoPasAPasSTI === "function") {
+      global.ouvrirVideoPasAPasSTI(meta.id, meta.titre, Number(tempsDepart) || 0);
+    }
+  }
+
+  function initialiserVideoHero() {
+    var vidHero = document.getElementById("heroFeaturedVideo");
+    var btnOverlay = document.getElementById("heroVideoOverlay");
+    if (!vidHero) return;
+
+    var metaCss = CATALOGUE_VIDEOS[1]; /* CSS3 à la une */
+    vidHero.setAttribute(
+      "poster",
+      creerPosterSvgDataUri(metaCss.titre, "À LA UNE · CSS3", metaCss.couleur, metaCss.codeApercu)
+    );
+    attacherSuiviElementVideo(vidHero, metaCss);
+
+    if (btnOverlay) {
+      btnOverlay.addEventListener("click", function () {
+        ouvrirModaleVideo("css3-cours", 0);
+      });
+      vidHero.addEventListener("play", function () {
+        btnOverlay.classList.add("is-playing");
+      });
+    }
+  }
+
+  var filtreVideoActif = "all";
+
+  function rendreGrilleVideosAccueil() {
+    var grille = document.getElementById("videosGrid");
+    if (!grille) return;
+
+    var profil = global.STIProfil ? global.STIProfil.chargerProfil() : { videos: { vues: [] } };
+    var vues = (profil.videos && profil.videos.vues) || [];
+    var ok4 = estAutorise4SI();
+
+    var libellesFiltres = { html5: "HTML5", css3: "CSS3", javascript: "JS", sql: "SQL", php: "PHP" };
+    document.querySelectorAll("[data-video-filter]").forEach(function (btnF) {
+      var cleF = btnF.getAttribute("data-video-filter") || "";
+      if (!libellesFiltres[cleF]) return;
+      var nbF = CATALOGUE_VIDEOS.filter(function (v) {
+        return v.matiere === cleF && (!v.reserve4si || ok4);
+      }).length;
+      btnF.textContent = libellesFiltres[cleF] + " (" + nbF + ")";
+    });
+
+    var liste = CATALOGUE_VIDEOS.filter(function (v) {
+      if (v.reserve4si && !ok4) return false;
+      if (filtreVideoActif !== "all" && v.matiere !== filtreVideoActif) return false;
+      return true;
+    });
+
+    // Ne pas remplacer les boutons à chaque notification de session ou de
+    // progression : ils restent les appelants du lecteur et gardent le focus.
+    var signature = liste.map(function (v) { return v.id + ":" + (vues.indexOf(v.id) !== -1 ? "1" : "0"); }).join("|");
+    if (grille.dataset.signatureVideos === signature && grille.children.length) return;
+    grille.dataset.signatureVideos = signature;
+    grille.innerHTML = liste.map(function (v) {
+      var dejaVue = vues.indexOf(v.id) !== -1;
+      var poster = creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
+      return (
+        '<article class="video-card' + (v.reserve4si ? " sti-4si-only" : "") + '" data-matiere="' + echapperHtml(v.matiere) + '">' +
+          '<button type="button" class="video-card__thumb" data-play-video="' + echapperHtml(v.id) + '" aria-label="▶ ' + (dejaVue ? '✓ Vue ' : '') + echapperHtml(v.dureeTexte) + ' — Lire la vidéo ' + echapperHtml(v.titre) + '">' +
+            '<img src="' + echapperHtml(poster) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" />' +
+            '<span class="video-card__play"><span class="video-play-btn" aria-hidden="true">▶</span></span>' +
+            (dejaVue ? '<span class="video-card__seen" aria-hidden="true">✓ Vue</span>' : "") +
+            '<span class="video-card__duration" aria-hidden="true">' + echapperHtml(v.dureeTexte) + "</span>" +
+          "</button>" +
+          '<div class="video-card__body">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">' +
+              '<span class="badge ' + echapperHtml(v.badgeClasse) + '">🎥 ' + echapperHtml(v.nomMatiere) + "</span>" +
+              (v.reserve4si ? '<span class="badge badge-4si">4e SI</span>' : '<span style="font-size:.74rem;color:var(--text-muted)">.mp4 HD</span>') +
+            "</div>" +
+            '<h3 class="video-card__title">' + echapperHtml(v.titre) + "</h3>" +
+            '<div class="video-card__actions">' +
+              '<button type="button" class="btn btn-primary btn-sm" data-play-video="' + echapperHtml(v.id) + '">▶ Regarder</button>' +
+              '<a class="btn btn-ghost btn-sm" href="' + echapperHtml(v.urlCours) + '">Cours ➜</a>' +
+            "</div>" +
+          "</div>" +
+        "</article>"
+      );
+    }).join("");
+  }
+
+  function initialiserSectionVideos() {
+    rendreGrilleVideosAccueil();
+
+    document.addEventListener("click", function (ev) {
+      var btnPlay = ev.target && ev.target.closest ? ev.target.closest("[data-play-video]") : null;
+      if (btnPlay) {
+        ev.preventDefault();
+        var id = btnPlay.getAttribute("data-play-video");
+        var depart = Number(btnPlay.getAttribute("data-start-time") || 0);
+        ouvrirModaleVideo(id, depart);
+        return;
+      }
+
+      var btnFiltre = ev.target && ev.target.closest ? ev.target.closest("[data-video-filter]") : null;
+      if (btnFiltre) {
+        filtreVideoActif = btnFiltre.getAttribute("data-video-filter") || "all";
+        document.querySelectorAll("[data-video-filter]").forEach(function (b) {
+          b.classList.toggle("is-active", b === btnFiltre);
+        });
+        rendreGrilleVideosAccueil();
+      }
+    });
+
+    var btnPrev = document.getElementById("videosScrollPrev");
+    var btnNext = document.getElementById("videosScrollNext");
+    var grille = document.getElementById("videosGrid");
+    if (btnPrev && grille) {
+      btnPrev.addEventListener("click", function () {
+        grille.scrollBy({ left: -320, behavior: "smooth" });
+      });
+    }
+    if (btnNext && grille) {
+      btnNext.addEventListener("click", function () {
+        grille.scrollBy({ left: 320, behavior: "smooth" });
+      });
+    }
+  }
+
+  /* 8. Accueil */
+  function initialiserTerminalHero() {
+    var iconeEl = document.getElementById("rotatorIcon");
+    var texteEl = document.getElementById("rotatorText");
+    if (!iconeEl || !texteEl) return;
+
+    var itemsBase = [
+      { icone: "🏫", texte: "Lycée Raféha · 3ème & 4ème SI — Par Aymen Essouyah" },
+      { icone: "🌐", texte: "HTML5 : structure sémantique, formulaires & tableaux" },
+      { icone: "🎨", texte: "CSS3 : Flexbox, responsive et vidéos du cours (.mp4)" },
+      { icone: "⚡", texte: "JavaScript : fonctions de contrôle Bac & DOM" },
+      { icone: "🗄️", texte: "SQL : requêtes SELECT, jointures & agrégations" },
+      { icone: "🐘", texte: "PHP & MySQLi : traitement serveur 4e SI", reserve4si: true },
+      { icone: "🎯", texte: "1 244 questions auto-corrigées & révision de mes erreurs" }
+    ];
+
+    var index = 0;
+    var reduireMouvement = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduireMouvement) return;
+
+    setInterval(function () {
+      var actifs = itemsBase.filter(function (it) {
+        return !it.reserve4si || estAutorise4SI();
+      });
+      index = (index + 1) % actifs.length;
+      var suivant = actifs[index];
+      iconeEl.classList.add("rotator-fade");
+      texteEl.classList.add("rotator-fade");
+      setTimeout(function () {
+        iconeEl.textContent = suivant.icone;
+        texteEl.textContent = suivant.texte;
+        iconeEl.classList.remove("rotator-fade");
+        texteEl.classList.remove("rotator-fade");
+      }, 200);
+    }, 2800);
+  }
+
+  function initialiserCompteursStats() {
+    var compteurs = document.querySelectorAll("[data-count]");
+    if (!compteurs.length) return;
+
+    var reduire = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var animer = function (el) {
+      var cible = parseInt(el.getAttribute("data-count"), 10) || 0;
+      var formater = function (n) {
+        return n >= 1000 ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ") : String(n);
+      };
+      if (reduire) {
+        el.textContent = formater(cible);
+        return;
+      }
+      var debut = null;
+      var duree = 1100;
+      function etape(ts) {
+        if (!debut) debut = ts;
+        var p = Math.min(1, (ts - debut) / duree);
+        var courbe = 1 - Math.pow(1 - p, 3);
+        el.textContent = formater(Math.round(cible * courbe));
+        if (p < 1) requestAnimationFrame(etape);
+      }
+      requestAnimationFrame(etape);
+    };
+
+    if ("IntersectionObserver" in global && !reduire) {
+      var io = new IntersectionObserver(function (entrees) {
+        entrees.forEach(function (entree) {
+          if (entree.isIntersecting) {
+            animer(entree.target);
+            io.unobserve(entree.target);
+          }
+        });
+      }, { threshold: 0.25 });
+      compteurs.forEach(function (c) { io.observe(c); });
+    } else {
+      compteurs.forEach(animer);
+    }
+  }
+
+  function rafraichirUIRevisionAccueil() {
+    if (!global.STIProfil) return;
+    var profil = global.STIProfil.chargerProfil();
+    var resume = calculerResumeRevision();
+
+    var txtEl = document.getElementById("revisionCountText");
+    var barEl = document.getElementById("revisionBarFill");
+    if (txtEl) txtEl.textContent = resume.faits + " / " + resume.total + " révisés";
+    if (barEl) barEl.style.width = resume.pourcent + "%";
+
+    document.querySelectorAll("[data-toggle-course]").forEach(function (btn) {
+      var idMatiere = btn.getAttribute("data-toggle-course");
+      var estFait = Boolean(profil.progression && profil.progression[idMatiere]);
+      btn.setAttribute("aria-pressed", estFait ? "true" : "false");
+      btn.textContent = estFait ? "✓ Révisé" : "○ À réviser";
+    });
+  }
+
+  /* La fermeture reste valable pour cette lecture dans l'onglet courant, sans
+     masquer une nouvelle lecture ni enregistrer de clé locale supplémentaire. */
+  var signatureRepriseCourante = "";
+  var signatureRepriseMasquee = "";
+
+  function masquerBandeauRepriseAccueil() {
+    var bandeau = document.getElementById("resumeBanner");
+    if (bandeau) bandeau.hidden = true;
+    signatureRepriseMasquee = signatureRepriseCourante;
+  }
+
+  function rafraichirBandeauRepriseAccueil() {
+    var bandeau = document.getElementById("resumeBanner");
+    if (!bandeau || !global.STIProfil) return;
+
+    var etat = global.STIProfil.lireEtatSession();
+    /* Le synchroniseur n'a pas encore isolé le profil du compte précédent. */
+    if (!etat.connecte || etat.compteEnAttente) {
+      signatureRepriseCourante = "";
+      bandeau.hidden = true;
+      var titreEnAttente = document.getElementById("resumeTitle");
+      var kickerEnAttente = document.getElementById("resumeKicker");
+      var lienEnAttente = document.getElementById("resumeGoBtn");
+      if (titreEnAttente) titreEnAttente.textContent = "Chapitre en cours";
+      if (kickerEnAttente) kickerEnAttente.textContent = "📍 Reprendre ma dernière lecture";
+      if (lienEnAttente) {
+        lienEnAttente.setAttribute("href", "#cours");
+        lienEnAttente.removeAttribute("data-play-video");
+        lienEnAttente.removeAttribute("data-start-time");
+      }
+      return;
+    }
+
+    var profil = global.STIProfil.chargerProfil();
+    var dl = profil.derniereLecture;
+    var vid = profil.videos && profil.videos.derniere;
+    var ok4 = estAutorise4SI();
+    var compte = etat.id || etat.email || "session-locale";
+    var titreEl = document.getElementById("resumeTitle");
+    var kickerEl = document.getElementById("resumeKicker");
+    var btnGo = document.getElementById("resumeGoBtn");
+    var lectureAutorisee = dl && dl.url && (dl.matiere !== "php" || ok4) &&
+      (dl.matiere !== "sql" || dl.chapitreId !== "bac" || ok4);
+
+    if (lectureAutorisee) {
+      signatureRepriseCourante = JSON.stringify([compte, "lecture", dl.url]);
+      bandeau.hidden = signatureRepriseCourante === signatureRepriseMasquee;
+      if (kickerEl) kickerEl.textContent = "📍 Reprendre ma dernière lecture · " + (dl.pourcent || 0) + " %";
+      if (titreEl) titreEl.textContent = (dl.matiere ? dl.matiere.toUpperCase() + " — " : "") + (dl.chapitre || "Cours en cours");
+      if (btnGo) {
+        btnGo.href = dl.url;
+        btnGo.removeAttribute("data-play-video");
+        btnGo.removeAttribute("data-start-time");
+      }
+      return;
+    }
+
+    var metaVideo = vid && CATALOGUE_VIDEOS.find(function (v) { return v.id === vid.id; });
+    if (vid && vid.id && vid.temps > 5 && (vid.matiere !== "php" || ok4) && (!metaVideo || !metaVideo.reserve4si || ok4)) {
+      signatureRepriseCourante = JSON.stringify([compte, "video", vid.id]);
+      bandeau.hidden = signatureRepriseCourante === signatureRepriseMasquee;
+      if (kickerEl) kickerEl.textContent = "🎬 Reprendre ma vidéo à " + formaterDureeSecondes(vid.temps);
+      if (titreEl) titreEl.textContent = vid.titre;
+      if (btnGo) {
+        btnGo.href = "#videos";
+        btnGo.setAttribute("data-play-video", vid.id);
+        btnGo.setAttribute("data-start-time", String(vid.temps));
+      }
+      return;
+    }
+
+    signatureRepriseCourante = "";
+    bandeau.hidden = true;
+  }
+
+  function initialiserRechercheEtFiltres() {
+    var champ = document.getElementById("moduleSearch");
+    var pucesFiltre = document.querySelectorAll("[data-filter]");
+    var filtreCourant = "all";
+
+    function normaliserTexte(s) {
+      return String(s || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function appliquerFiltresAccueil() {
+      var q = champ ? normaliserTexte(champ.value) : "";
+      var ok4 = estAutorise4SI();
+
+      /* Filtrage des cartes cours, outils et quiz */
+      document.querySelectorAll("[data-filter-item]").forEach(function (carte) {
+        var cats = (carte.getAttribute("data-filter-item") || "").split(/\s+/);
+        if (cats.indexOf("php") !== -1 && !ok4) {
+          carte.classList.add("filter-hidden");
+          return;
+        }
+        var okCat = filtreCourant === "all" || cats.indexOf(filtreCourant) !== -1;
+        var okTxt = !q || normaliserTexte(carte.textContent).indexOf(q) !== -1;
+        carte.classList.toggle("filter-hidden", !(okCat && okTxt));
+      });
+
+      /* Recherche profonde dans les chapitres via le moteur existant d'acces.js */
+      var boiteProf = document.getElementById("deepSearchResults");
+      var grilleProf = document.getElementById("deepSearchGrid");
+      var cptProf = document.getElementById("deepSearchCount");
+      if (boiteProf && grilleProf) {
+        if (q.length >= 2 && typeof global.rechercherChapitresSTI === "function") {
+          var mapF = { html5: "htmlcss", css3: "htmlcss", javascript: "js", sql: "sql", php: "php", all: "all" };
+          var resultats = global.rechercherChapitresSTI(q, mapF[filtreCourant] || "all");
+          if (resultats && resultats.length) {
+            boiteProf.hidden = false;
+            if (cptProf) cptProf.textContent = "🔎 " + resultats.length + " chapitre(s) ou syntaxe(s) trouvé(s)";
+            grilleProf.innerHTML = resultats.slice(0, 8).map(function (it) {
+              return (
+                '<a class="deep-result-item" href="' + echapperHtml(it.url) + '">' +
+                  '<div style="display:flex;justify-content:space-between;gap:8px">' +
+                    '<span class="badge">' + echapperHtml(it.badge) + "</span>" +
+                    '<span style="font-size:.76rem;color:var(--brand);font-weight:700">Ouvrir ➜</span>' +
+                  "</div>" +
+                  '<strong style="font-size:.88rem;color:var(--text)">' + echapperHtml(it.title) + "</strong>" +
+                  '<span style="font-size:.76rem;color:var(--text-muted)">' + echapperHtml(it.sub || "") + "</span>" +
+                "</a>"
+              );
+            }).join("");
+            return;
+          }
+        }
+        boiteProf.hidden = true;
+        grilleProf.innerHTML = "";
+      }
+    }
+
+    if (champ) {
+      champ.addEventListener("input", appliquerFiltresAccueil);
+    }
+
+    var btnClear = document.getElementById("deepSearchClear");
+    if (btnClear && champ) {
+      btnClear.addEventListener("click", function () {
+        champ.value = "";
+        appliquerFiltresAccueil();
+        champ.focus();
+      });
+    }
+
+    pucesFiltre.forEach(function (puce) {
+      puce.addEventListener("click", function () {
+        pucesFiltre.forEach(function (p) { p.classList.remove("is-active"); });
+        puce.classList.add("is-active");
+        filtreCourant = puce.getAttribute("data-filter") || "all";
+        appliquerFiltresAccueil();
       });
     });
-    /* Halo des cartes au survol */
-    if (!REDUIT && window.matchMedia && window.matchMedia('(hover:hover)').matches) {
-      $$('.card').forEach(function (c) {
-        c.addEventListener('mousemove', function (e) {
-          var r = c.getBoundingClientRect();
-          c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-          c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+
+    /* Palette de recherche globale Ctrl+K / bouton en-tête */
+    function ouvrirPaletteRecherche() {
+      var val = champ ? champ.value : "";
+      if (typeof global.ouvrirRechercheGlobaleSTI === "function") {
+        global.ouvrirRechercheGlobaleSTI(val);
+      } else if (champ) {
+        champ.scrollIntoView({ behavior: "smooth", block: "center" });
+        champ.focus();
+      }
+    }
+
+    document.querySelectorAll("[data-open-search]").forEach(function (b) {
+      b.addEventListener("click", ouvrirPaletteRecherche);
+    });
+
+    document.addEventListener("keydown", function (ev) {
+      if ((ev.ctrlKey || ev.metaKey) && String(ev.key).toLowerCase() === "k") {
+        ev.preventDefault();
+        ouvrirPaletteRecherche();
+      }
+    });
+
+    /* Relais vers les mini-ateliers interactifs intégrés d'acces.js */
+    var liaisonsLabos = [
+      ["btnHomeFlashcards", "ouvrirFlashcardsSTI"],
+      ["btnHomeSandbox", "ouvrirSandboxSTI"],
+      ["btnHomeConsoleJs", "ouvrirConsoleNavigateurSTI"],
+      ["btnHomeDebug", "ouvrirChasseErreursSTI"],
+      ["btnHomeExamenBlanc", "ouvrirExamenBlancSTI"],
+      ["btnHomeConstructeur", "ouvrirConstructeurVisuelSTI", "table"],
+      ["btnHomeLaboSql", "ouvrirSimulateurSqlSTI"],
+      ["btnHomeLaboAscii", "ouvrirLaboChainesAsciiSTI"],
+      ["btnHomeSimPhpSql", "ouvrirSimulateurFormPhpSqlSTI"],
+      ["btnHomeCoffreTp", "ouvrirCoffreTpEleveSTI"]
+    ];
+    liaisonsLabos.forEach(function (cfg) {
+      var el = document.getElementById(cfg[0]);
+      if (!el) return;
+      el.addEventListener("click", function () {
+        var fn = global[cfg[1]];
+        if (typeof fn === "function") fn(cfg[2]);
+      });
+    });
+
+    global.__stiMaj4SI = function () {
+      rafraichirUIRevisionAccueil();
+      rafraichirBandeauRepriseAccueil();
+      rendreGrilleVideosAccueil();
+      appliquerFiltresAccueil();
+    };
+  }
+
+  function chargerNouveautesAccueilEtDashboard() {
+    var contAccueil = document.getElementById("stiNouveautesGrid");
+    var contDash = document.getElementById("dashUnreadNews");
+    if (!contAccueil && !contDash) return;
+
+    var pref = obtenirPrefixeRacine();
+    var ver = String((global.STI_AUTH && (global.STI_AUTH.VERSION_AFFICHEE || global.STI_AUTH.VERSION)) || "477");
+
+    fetch(pref + "assets/data/nouveautes.json?v=" + encodeURIComponent(ver))
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (liste) {
+        if (!Array.isArray(liste)) return;
+        var profil = global.STIProfil ? global.STIProfil.chargerProfil() : { nouveautesLues: [] };
+        var lues = profil.nouveautesLues || [];
+
+        if (contAccueil) {
+          contAccueil.innerHTML = liste.slice(0, 4).map(function (item) {
+            var estNouveau = lues.indexOf(item.version) === -1;
+            var lien = item.lien ? (pref + String(item.lien).replace(/^\.\//, "")) : (pref + "nouveautes.html");
+            return (
+              '<article class="news-card' + (estNouveau ? " is-unread" : "") + '">' +
+                '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+                  '<span class="badge">' + echapperHtml(item.icone || "🆕") + " " + echapperHtml(item.version || "") + "</span>" +
+                  (estNouveau ? '<span class="badge badge-new">NOUVEAU</span>' : "") +
+                  '<span style="margin-inline-start:auto;font-size:.75rem;color:var(--text-muted)">' + echapperHtml(item.date || "") + "</span>" +
+                "</div>" +
+                '<h3 style="font-size:1rem">' + echapperHtml(item.titre || "") + "</h3>" +
+                '<p style="font-size:.85rem">' + echapperHtml(item.resume || "") + "</p>" +
+                '<div style="margin-top:auto;padding-top:8px;display:flex;justify-content:space-between;align-items:center">' +
+                  '<a class="btn btn-ghost btn-sm" data-mark-news="' + echapperHtml(item.version || "") + '" href="' + echapperHtml(lien) + '">' +
+                    echapperHtml(item.libelleLien || "Découvrir") + " ➜" +
+                  "</a>" +
+                "</div>" +
+              "</article>"
+            );
+          }).join("");
+        }
+
+        if (contDash) {
+          var nonLues = liste.filter(function (it) { return lues.indexOf(it.version) === -1; });
+          var badgeNb = document.getElementById("dashNewsCountBadge");
+          if (badgeNb) badgeNb.textContent = nonLues.length + " non lue(s)";
+
+          if (!nonLues.length) {
+            contDash.innerHTML = '<div class="alert alert-success">✅ Vous êtes à jour : toutes les nouveautés ont été consultées.</div>';
+          } else {
+            contDash.innerHTML = nonLues.slice(0, 5).map(function (it) {
+              return (
+                '<div class="dash-row">' +
+                  '<div style="max-width:74%">' +
+                    '<div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">' +
+                      '<span class="badge">' + echapperHtml(it.version) + '</span>' +
+                      '<span class="badge badge-new">NOUVEAU</span>' +
+                    "</div>" +
+                    '<strong style="font-size:.9rem">' + echapperHtml(it.titre) + "</strong>" +
+                  "</div>" +
+                  '<button type="button" class="btn btn-secondary btn-sm" data-mark-news-btn="' + echapperHtml(it.version) + '">✓ Lu</button>' +
+                "</div>"
+              );
+            }).join("");
+          }
+
+          var btnToutLu = document.getElementById("btnMarkAllNewsRead");
+          if (btnToutLu && !btnToutLu._lie) {
+            btnToutLu._lie = true;
+            btnToutLu.addEventListener("click", function () {
+              var toutesVersions = liste.map(function (x) { return x.version; }).filter(Boolean);
+              global.STIProfil.mettreAJour("nouveautesLues", toutesVersions);
+              chargerNouveautesAccueilEtDashboard();
+            });
+          }
+        }
+      })
+      .catch(function () {});
+  }
+
+  function initialiserNavigationEtModalesCommunes() {
+    /* Menu mobile burger */
+    var burger = document.getElementById("stiBurgerBtn");
+    var menuMob = document.getElementById("stiMobileNav");
+    if (burger && menuMob) {
+      burger.addEventListener("click", function () {
+        var ouvert = menuMob.classList.toggle("is-open");
+        burger.setAttribute("aria-expanded", ouvert ? "true" : "false");
+      });
+      menuMob.querySelectorAll("a").forEach(function (a) {
+        a.addEventListener("click", function () {
+          menuMob.classList.remove("is-open");
+          burger.setAttribute("aria-expanded", "false");
         });
       });
     }
-    var y = $('#year'); if (y) y.textContent = new Date().getFullYear();
-  }
 
-  /* -------------------------------------------------------------------------
-     18. INSTALLATION PWA
-     ---------------------------------------------------------------------- */
-  var promptInstall = null;
-  function initInstall() {
-    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); promptInstall = e; });
-    var btn = $('#stiInstallBtn');
-    if (btn) btn.addEventListener('click', function () {
-      if (promptInstall) { promptInstall.prompt(); promptInstall.userChoice.then(function () { promptInstall = null; }); }
-      else ouvrirModal('modalInstall');
-    });
-    var go = $('#stiInstallGo');
-    if (go) go.addEventListener('click', function () {
-      if (promptInstall) promptInstall.prompt();
-      else toast('Menu du navigateur → « Installer l’application ».');
-    });
-  }
+    /* Barre de progression de défilement */
+    var barreLecture = document.getElementById("readingProgressBar");
+    if (barreLecture) {
+      var raf = 0;
+      global.addEventListener("scroll", function () {
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          raf = 0;
+          var h = document.documentElement;
+          var max = h.scrollHeight - h.clientHeight;
+          var ratio = max > 0 ? Math.min(1, Math.max(0, h.scrollTop / max)) : 0;
+          barreLecture.style.transform = "scaleX(" + ratio + ")";
+        });
+      }, { passive: true });
+    }
 
-  /* -------------------------------------------------------------------------
-     19. PROGRESSION « X / 5 RÉVISÉS » (mémorisée à chaque entrée dans un cours)
-     ---------------------------------------------------------------------- */
-  function initProgression() {
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest && e.target.closest('a[href*="cours/"]');
-      if (!a) return;
-      var m = (a.getAttribute('href').match(/(html5|css3|javascript|sql|php)/) || [])[1];
-      if (!m) return;
-      var p = P.chargerProfil();
-      P.mettreAJour('derniereLecture', {
-        matiere: m, chapitre: 'Cours ' + MATIERES[m].nom,
-        pourcent: Math.max(p.derniereLecture.pourcent || 0, 10), url: a.getAttribute('href')
+    /* Boutons « À réviser / Révisé » et marquage des nouveautés */
+    document.addEventListener("click", function (ev) {
+      var btnRev = ev.target && ev.target.closest ? ev.target.closest("[data-toggle-course]") : null;
+      if (btnRev && global.STIProfil) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var idMat = btnRev.getAttribute("data-toggle-course");
+        var p = global.STIProfil.chargerProfil();
+        var actuel = Boolean(p.progression && p.progression[idMat]);
+        global.STIProfil.mettreAJour("progression." + idMat, !actuel);
+        rafraichirUIRevisionAccueil();
+        rendreTableauDeBord();
+        return;
+      }
+
+      var lienNews = ev.target && ev.target.closest ? ev.target.closest("[data-mark-news]") : null;
+      if (lienNews && global.STIProfil) {
+        var ver = lienNews.getAttribute("data-mark-news");
+        var pr = global.STIProfil.chargerProfil();
+        if (ver && pr.nouveautesLues.indexOf(ver) === -1) {
+          pr.nouveautesLues.push(ver);
+          global.STIProfil.sauvegarderProfil(pr, false);
+        }
+      }
+
+      var btnNews = ev.target && ev.target.closest ? ev.target.closest("[data-mark-news-btn]") : null;
+      if (btnNews && global.STIProfil) {
+        var vId = btnNews.getAttribute("data-mark-news-btn");
+        var p2 = global.STIProfil.chargerProfil();
+        if (vId && p2.nouveautesLues.indexOf(vId) === -1) {
+          p2.nouveautesLues.push(vId);
+          global.STIProfil.sauvegarderProfil(p2, false);
+          chargerNouveautesAccueilEtDashboard();
+        }
+      }
+    });
+
+    /* Modale Contact & QR Code : focus contenu et retour à l'appelant. */
+    var modContact = document.getElementById("modalContactQr");
+    if (modContact) {
+      var btnFermer = document.getElementById("btnCloseContactModal"), retourContact = null, fondsContact = [], classeModalAvant = false;
+      function fermerContact() {
+        if (!modContact.classList.contains("is-open")) return;
+        modContact.classList.remove("is-open");
+        fondsContact.forEach(function (e) { e[0].inert = e[1]; }); fondsContact = [];
+        if (!classeModalAvant) document.documentElement.classList.remove("sti-modal-open");
+        if (retourContact && retourContact.isConnected) retourContact.focus({preventScroll:true});
+        retourContact = null;
+      }
+      document.querySelectorAll("[data-open-contact]").forEach(function (b) {
+        b.addEventListener("click", function (e) {
+          e.preventDefault(); retourContact = b;
+          classeModalAvant = document.documentElement.classList.contains("sti-modal-open");
+          Array.prototype.forEach.call(document.body.children, function (enfant) {
+            if (enfant === modContact) return; fondsContact.push([enfant, enfant.inert]); enfant.inert = true;
+          });
+          document.documentElement.classList.add("sti-modal-open");
+          modContact.classList.add("is-open"); if (btnFermer) btnFermer.focus({preventScroll:true});
+        });
       });
+      if (btnFermer) btnFermer.addEventListener("click", fermerContact);
+      modContact.addEventListener("click", function (e) { if (e.target === modContact) fermerContact(); });
+      document.addEventListener("keydown", function (e) {
+        if (!modContact.classList.contains("is-open")) return;
+        if (e.key === "Escape") { e.preventDefault(); fermerContact(); return; }
+        if (e.key !== "Tab") return;
+        var liste = Array.prototype.filter.call(modContact.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])'), function (el) { return el.getClientRects().length; });
+        if (!liste.length) { e.preventDefault(); return; }
+        if (e.shiftKey && document.activeElement === liste[0]) { e.preventDefault(); liste[liste.length-1].focus(); }
+        else if (!e.shiftKey && document.activeElement === liste[liste.length-1]) { e.preventDefault(); liste[0].focus(); }
+      });
+    }
+
+    /* Installation PWA : invitation historique limitée à la première visite et état d'installation partagé. */
+    var btnInstall = document.getElementById("installBtn");
+    var invitation = document.getElementById("pwaInvitation");
+    var aideInstallation = document.getElementById("pwaInvitationAide");
+    var premiereInvitation = false;
+    var estIos = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    function applicationInstallee() {
+      try { return typeof global.__stiPwaEstInstallee === "function" && global.__stiPwaEstInstallee(); }
+      catch (e) { return false; }
+    }
+    function majBoutonPwa() {
+      if (!btnInstall) return;
+      var disponible = Boolean(global.__stiDeferredInstallPrompt) || estIos;
+      btnInstall.hidden = !premiereInvitation || !disponible || applicationInstallee();
+      if (applicationInstallee() && invitation) invitation.hidden = true;
+    }
+    function fermerInvitationPwa() {
+      premiereInvitation = false;
+      if (invitation) invitation.hidden = true;
+      majBoutonPwa();
+    }
+    function afficherAideInstallation() {
+      if (!invitation || !aideInstallation) return;
+      invitation.hidden = false;
+      aideInstallation.textContent = estIos
+        ? "Sur Safari, touchez Partager puis « Sur l’écran d’accueil »."
+        : "Dans le menu du navigateur, choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil ».";
+      aideInstallation.hidden = false;
+    }
+    function installerPwa() {
+      if (!premiereInvitation || applicationInstallee()) { fermerInvitationPwa(); return; }
+      var evenement = global.__stiDeferredInstallPrompt;
+      if (!evenement || typeof evenement.prompt !== "function") { afficherAideInstallation(); return; }
+      try {
+        var resultat = evenement.prompt();
+        Promise.resolve(evenement.userChoice || resultat).then(function (choix) {
+          global.__stiDeferredInstallPrompt = null;
+          if (choix && choix.outcome === "accepted" && typeof global.__stiMarquerPwaInstallee === "function") {
+            global.__stiMarquerPwaInstallee();
+          }
+          fermerInvitationPwa();
+        }, afficherAideInstallation);
+      } catch (e) { afficherAideInstallation(); }
+    }
+    if (btnInstall && global.STIProfil) {
+      premiereInvitation = !applicationInstallee() && !global.STIProfil.invitationInstallationDejaVue();
+      if (premiereInvitation) {
+        global.STIProfil.mettreAJour("invitationInstallationVue", true);
+        if (invitation && global.matchMedia && global.matchMedia("(max-width: 860px), (pointer: coarse)").matches) {
+          invitation.hidden = false;
+        }
+      }
+      btnInstall.addEventListener("click", installerPwa);
+      var btnInvitation = document.getElementById("pwaInvitationInstaller");
+      var btnFermerInvitation = document.getElementById("pwaInvitationFermer");
+      if (btnInvitation) btnInvitation.addEventListener("click", installerPwa);
+      if (btnFermerInvitation) btnFermerInvitation.addEventListener("click", fermerInvitationPwa);
+      global.addEventListener("beforeinstallprompt", majBoutonPwa);
+      global.addEventListener("appinstalled", fermerInvitationPwa);
+      global.addEventListener("sti:pwa-installee", fermerInvitationPwa);
+      majBoutonPwa();
+    }
+
+    /* Enregistrement du Service Worker sur l'accueil */
+    if (estPageAccueil() && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" }).catch(function () {});
+    }
+  }
+
+  /* 9. Cours unifiés */
+  function ouvrirVisionneuseDocument(urlRelative, titreDoc) {
+    var pref = obtenirPrefixeRacine();
+    var mod = document.getElementById("stiDocViewerModal");
+    if (!mod) {
+      mod = document.createElement("div");
+      mod.className = "modal-backdrop";
+      mod.id = "stiDocViewerModal";
+      mod.setAttribute("role", "dialog");
+      mod.setAttribute("aria-modal", "true");
+      mod.innerHTML =
+        '<div class="modal modal--wide" style="height:88vh;display:flex;flex-direction:column">' +
+          '<div class="modal__head">' +
+            '<h3 id="stiDocViewerTitle" style="font-size:1.05rem">Document</h3>' +
+            '<div style="display:flex;gap:8px;align-items:center">' +
+              '<a class="btn btn-secondary btn-sm" id="stiDocViewerExternal" href="#" target="_blank" rel="noopener">↗ Nouvel onglet</a>' +
+              '<button type="button" class="modal__close" id="stiDocViewerClose" aria-label="Fermer">✕</button>' +
+            "</div>" +
+          "</div>" +
+          '<iframe id="pdfFrame" src="about:blank" title="Visionneuse STI" style="flex:1;width:100%;border:1px solid var(--border);border-radius:var(--radius-md);background:#fff"></iframe>' +
+        "</div>";
+      document.body.appendChild(mod);
+
+      var fermerDoc = function () {
+        mod.classList.remove("is-open");
+        var fr = document.getElementById("pdfFrame");
+        if (fr && fr.contentWindow) {
+          fr.contentWindow.location.replace("about:blank");
+        }
+      };
+      mod.querySelector("#stiDocViewerClose").addEventListener("click", fermerDoc);
+      mod.addEventListener("click", function (e) { if (e.target === mod) fermerDoc(); });
+    }
+
+    var cible = pref + String(urlRelative || "").replace(/^\.\.?\//, "");
+    document.getElementById("stiDocViewerTitle").textContent = titreDoc || "Support STI";
+    document.getElementById("stiDocViewerExternal").href = cible;
+    var frame = document.getElementById("pdfFrame");
+    if (frame && frame.contentWindow) {
+      frame.contentWindow.location.replace(cible);
+    } else if (frame) {
+      frame.src = cible;
+    }
+    mod.classList.add("is-open");
+  }
+  global.openPdfModal = global.openPdfModal || ouvrirVisionneuseDocument;
+
+  function detecterMatierePageCourante() {
+    var pn = String((global.location && global.location.pathname) || "").toLowerCase();
+    var m = pn.match(/\/cours\/(html5|css3|javascript|sql|php)\.html$/i);
+    return m ? m[1].toLowerCase() : "";
+  }
+
+  /**
+   * Redirige les anciennes pages d'exercices autonomes (ex. exercices/series-exercices.html)
+   * vers l'onglet « Exercices » de la page matière unifiée correspondante.
+   */
+  function redirigerAnciennePageExercices() {
+    var pn = String((global.location && global.location.pathname) || "").replace(/\\/g, "/");
+    if (!/\/exercices\/series-exercices\.html$/i.test(pn)) return false;
+
+    var hs = String(global.location.hash || "").replace(/^#/, "").toLowerCase();
+    var qs = new URLSearchParams(global.location.search || "");
+    var cle = hs || (qs.get("matiere") || "").toLowerCase();
+
+    var correspondances = {
+      html: "html5",
+      html5: "html5",
+      "html-css": "html5",
+      css: "css3",
+      css3: "css3",
+      js: "javascript",
+      javascript: "javascript",
+      sql: "sql",
+      bd: "sql",
+      php: "php"
+    };
+    /* Les liens de matière reconnus gardent leur redirection ; sans matière explicite,
+       conserver la page de séries historique et sa visionneuse média. */
+    var matiereCible = correspondances[cle];
+    if (!matiereCible) return false;
+    global.location.replace("../cours/" + matiereCible + ".html#exercices");
+    return true;
+  }
+
+  function initialiserPageMatiereUnifiee() {
+    var idMat = detecterMatierePageCourante();
+    /* Une page possédant déjà sa propre navigation unifiée ne doit pas recevoir
+       une deuxième barre d'onglets ni voir son contenu historique masqué. */
+    if (!idMat || !MATIERES[idMat] || document.getElementById("stiUnifiedCourseHub") ||
+        (document.body && document.body.hasAttribute("data-course-unified"))) return;
+
+    var mat = MATIERES[idMat];
+    var pref = obtenirPrefixeRacine();
+    var videosMatiere = CATALOGUE_VIDEOS.filter(function (v) { return v.matiere === idMat; });
+
+    /* Barre supérieure unifiée STI V2.0 (3 modes + Badge Abonné + Onglets Cours / Exercices / Annexes / Vidéos) */
+    var barre = document.createElement("div");
+    barre.id = "stiUnifiedCourseHub";
+    barre.className = "sti-course-hub-bar";
+    barre.innerHTML =
+      '<div class="sti-course-hub-bar__inner">' +
+        '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
+          '<a class="btn btn-ghost btn-sm" href="' + pref + 'index.html#cours">← Accueil</a>' +
+          '<span class="badge ' + mat.badgeClasse + '">' + mat.icone + " " + echapperHtml(mat.nom) + "</span>" +
+        "</div>" +
+        '<div class="sti-tabs" role="tablist" aria-label="Sections de la matière ' + echapperHtml(mat.nom) + '">' +
+          '<button type="button" class="sti-tab-btn" role="tab" data-course-tab="cours" aria-selected="true">📖 Cours</button>' +
+          '<button type="button" class="sti-tab-btn" role="tab" data-course-tab="exercices" aria-selected="false">📝 Exercices (' + mat.exercices.length + ")</button>" +
+          '<button type="button" class="sti-tab-btn" role="tab" data-course-tab="annexes" aria-selected="false">📎 Annexes</button>' +
+          '<button type="button" class="sti-tab-btn" role="tab" data-course-tab="videos" aria-selected="false">🎥 Vidéos (' + videosMatiere.length + ")</button>" +
+        "</div>" +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<div class="theme-switcher" role="group" aria-label="Mode d\'affichage">' +
+            '<button type="button" class="theme-switcher__btn" data-set-theme="clair" title="Mode clair">☀️</button>' +
+            '<button type="button" class="theme-switcher__btn" data-set-theme="intermediaire" title="Mode intermédiaire">🌗</button>' +
+            '<button type="button" class="theme-switcher__btn" data-set-theme="sombre" title="Mode sombre">🌙</button>' +
+          "</div>" +
+          '<div data-subscriber-slot></div>' +
+        "</div>" +
+      "</div>";
+
+    /* Panneaux dédiés Exercices, Annexes et Vidéos */
+    var zonePanneaux = document.createElement("div");
+    zonePanneaux.id = "stiUnifiedCoursePanels";
+
+    var exosHtml = mat.exercices.map(function (ex) {
+      return (
+        '<article class="tool-card">' +
+          '<span class="badge ' + mat.badgeClasse + '">' + echapperHtml(ex.niveau) + "</span>" +
+          "<h3>" + echapperHtml(ex.titre) + "</h3>" +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:10px">' +
+            '<button type="button" class="btn btn-primary btn-sm" data-open-doc="' + echapperHtml(ex.enonce) + '" data-doc-title="' + echapperHtml(ex.titre + " — Énoncé") + '">📄 Énoncé</button>' +
+            '<button type="button" class="btn btn-secondary btn-sm" data-open-doc="' + echapperHtml(ex.corrige) + '" data-doc-title="' + echapperHtml(ex.titre + " — Corrigé") + '">✅ Corrigé</button>' +
+          "</div>" +
+        "</article>"
+      );
+    }).join("");
+
+    var vidsHtml = videosMatiere.map(function (v) {
+      var poster = creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
+      return (
+        '<article class="card">' +
+          '<h3 style="margin-bottom:10px">🎬 ' + echapperHtml(v.titre) + " (" + echapperHtml(v.dureeTexte) + ")</h3>" +
+          '<div class="video-player-shell" style="border-radius:var(--radius-md);overflow:hidden;aspect-ratio:16/9">' +
+            '<video controls preload="metadata" playsinline poster="' + echapperHtml(poster) + '">' +
+              '<source src="' + echapperHtml(pref + v.srcPrincipal) + '" type="video/mp4">' +
+              (v.srcSecours !== v.srcPrincipal ? '<source src="' + echapperHtml(pref + v.srcSecours) + '" type="video/mp4">' : "") +
+            "</video>" +
+          "</div>" +
+        "</article>"
+      );
+    }).join("");
+
+    zonePanneaux.innerHTML =
+      '<section class="sti-course-hub-panel sti-tab-panel" data-course-panel="exercices" hidden>' +
+        '<div class="section-header"><div><span class="section-kicker">Application directe</span><h2>📝 Séries d\'exercices — ' + echapperHtml(mat.nom) + '</h2></div>' +
+        '<a class="btn btn-primary btn-sm" href="' + echapperHtml(pref + mat.urlQuiz) + '">🎯 Passer au Quiz ' + echapperHtml(mat.nom) + "</a></div>" +
+        '<div class="tools-grid">' + exosHtml + "</div>" +
+      "</section>" +
+      '<section class="sti-course-hub-panel sti-tab-panel" data-course-panel="annexes" hidden>' +
+        '<div class="section-header"><div><span class="section-kicker">Référence officielle Bac</span><h2>📎 Annexe officielle — ' + echapperHtml(mat.nom) + '</h2></div>' +
+        '<a class="btn btn-secondary btn-sm" href="' + echapperHtml(pref + mat.urlAnnexePdf) + '" download>⤓ Télécharger le PDF</a></div>' +
+        '<iframe src="' + echapperHtml(pref + mat.urlAnnexe) + '" title="Annexe ' + echapperHtml(mat.nom) + '" style="width:100%;height:75vh;border:1px solid var(--border);border-radius:var(--radius-lg);background:#fff"></iframe>' +
+      "</section>" +
+      '<section class="sti-course-hub-panel sti-tab-panel" data-course-panel="videos" hidden>' +
+        '<div class="section-header"><div><span class="section-kicker">Multimédia & Audio</span><h2>🎥 Vidéos explicatives & écoute vocale — ' + echapperHtml(mat.nom) + "</h2></div></div>" +
+        '<div class="card" style="margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">' +
+          '<strong>🔊 Podcast audio du cours (' + echapperHtml(mat.nom) + ')</strong>' +
+          '<audio controls preload="metadata" src="' + echapperHtml(pref + mat.urlAudio) + '"></audio>' +
+        "</div>" +
+        '<div style="display:grid;gap:20px">' + vidsHtml + "</div>" +
+      "</section>";
+
+    /* Masquer les anciens liens flottants vers series-exercices.html devenu obsolète */
+    var ancienNav = document.getElementById("stix-nav");
+    if (ancienNav) ancienNav.style.display = "none";
+
+    var enfantsOrigine = Array.prototype.slice.call(document.body.children);
+    document.body.insertBefore(zonePanneaux, document.body.firstChild);
+    document.body.insertBefore(barre, zonePanneaux);
+
+    function activerOngletMatiere(nomOnglet) {
+      var cible = ["cours", "exercices", "annexes", "videos"].indexOf(nomOnglet) !== -1 ? nomOnglet : "cours";
+      barre.querySelectorAll("[data-course-tab]").forEach(function (b) {
+        b.setAttribute("aria-selected", b.getAttribute("data-course-tab") === cible ? "true" : "false");
+      });
+      zonePanneaux.querySelectorAll("[data-course-panel]").forEach(function (p) {
+        p.hidden = p.getAttribute("data-course-panel") !== cible;
+      });
+      enfantsOrigine.forEach(function (el) {
+        if (el.tagName === "SCRIPT" || el.tagName === "STYLE" || el.tagName === "LINK") return;
+        if (el.id && /^sti-/i.test(el.id)) return;
+        el.style.display = cible === "cours" ? "" : "none";
+      });
+    }
+
+    barre.addEventListener("click", function (ev) {
+      var b = ev.target && ev.target.closest ? ev.target.closest("[data-course-tab]") : null;
+      if (!b) return;
+      var ong = b.getAttribute("data-course-tab");
+      activerOngletMatiere(ong);
+      try {
+        history.replaceState(history.state, "", "#" + ong);
+      } catch (e) {}
+    });
+
+    zonePanneaux.addEventListener("click", function (ev) {
+      var bDoc = ev.target && ev.target.closest ? ev.target.closest("[data-open-doc]") : null;
+      if (!bDoc) return;
+      ouvrirVisionneuseDocument(bDoc.getAttribute("data-open-doc"), bDoc.getAttribute("data-doc-title"));
+    });
+
+    function lireOngletDepuisUrl() {
+      var hs = String(global.location.hash || "").replace(/^#/, "").toLowerCase();
+      var qs = new URLSearchParams(global.location.search || "");
+      var param = (qs.get("onglet") || qs.get("tab") || "").toLowerCase();
+      if (["exercices", "annexes", "videos", "cours"].indexOf(hs) !== -1) {
+        activerOngletMatiere(hs);
+      } else if (["exercices", "annexes", "videos", "cours"].indexOf(param) !== -1) {
+        activerOngletMatiere(param);
+      }
+    }
+    lireOngletDepuisUrl();
+    global.addEventListener("hashchange", lireOngletDepuisUrl);
+
+    /* Mémorisation automatique de la progression de lecture via STIProfil */
+    var timerLecture = 0;
+    global.addEventListener("scroll", function () {
+      if (timerLecture || !global.STIProfil) return;
+      timerLecture = setTimeout(function () {
+        timerLecture = 0;
+        var h = document.documentElement;
+        var max = h.scrollHeight - h.clientHeight;
+        if (max <= 80) return;
+        var pct = Math.max(5, Math.min(100, Math.round((h.scrollTop / max) * 100)));
+        global.STIProfil.mettreAJour("derniereLecture", {
+          matiere: idMat,
+          chapitre: mat.nom + " — Cours complet",
+          pourcent: pct,
+          url: mat.urlCours
+        });
+      }, 900);
+    }, { passive: true });
+
+    rendreBadgeAbonne();
+    rafraichirBoutonsTheme();
+  }
+
+  /* 10. Tableau de bord abonné */
+  function rendreTableauDeBord() {
+    var racineDash = document.getElementById("stiDashboardRoot");
+    if (!racineDash || !global.STIProfil) return;
+
+    var profil = global.STIProfil.chargerProfil();
+    var etat = global.STIProfil.lireEtatSession();
+    var rev = calculerResumeRevision();
+    var ok4 = estAutorise4SI();
+    var pref = obtenirPrefixeRacine();
+
+    /* 1. En-tête et anneau de progression */
+    var elAvatar = document.getElementById("dashAvatar");
+    var elWelcome = document.getElementById("dashWelcomeName");
+    var elSub = document.getElementById("dashSessionStatus");
+    var champPrenom = document.getElementById("dashPrenomInput");
+    var anneauCercle = document.getElementById("dashProgressCircle");
+    var anneauTexte = document.getElementById("dashProgressLabel");
+
+    var nomAffiche = profil.prenom || etat.prenom || "Abonné";
+    if (elAvatar) elAvatar.textContent = etat.initiales || nomAffiche.slice(0, 2).toUpperCase();
+    if (elWelcome) elWelcome.textContent = nomAffiche;
+    if (champPrenom && document.activeElement !== champPrenom) {
+      champPrenom.value = profil.prenom || "";
+    }
+    if (elSub) {
+      elSub.innerHTML = etat.estGold
+        ? '<span class="badge badge-gold">⭐ Abonné GOLD · Synchronisation Cloud active</span>'
+        : (etat.connecte
+            ? '<span class="badge badge-sql">☁️ Connecté (' + echapperHtml(etat.email) + ")</span>"
+            : '<a class="badge" href="' + pref + 'portail.html">💾 Mode local · Se connecter sur portail.html pour synchroniser</a>');
+    }
+    if (anneauCercle) {
+      var circonf = 2 * Math.PI * 34; /* r=34 => ~213.6 */
+      anneauCercle.style.strokeDasharray = String(circonf);
+      anneauCercle.style.strokeDashoffset = String(circonf * (1 - rev.pourcent / 100));
+    }
+    if (anneauTexte) anneauTexte.textContent = rev.pourcent + "%";
+
+    /* 2. Reprise de lecture */
+    var contReprise = document.getElementById("dashResumeContent");
+    if (contReprise) {
+      if (profil.derniereLecture && profil.derniereLecture.url) {
+        var dl = profil.derniereLecture;
+        contReprise.innerHTML =
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">' +
+            "<div>" +
+              '<span class="badge">' + echapperHtml((dl.matiere || "cours").toUpperCase()) + "</span>" +
+              '<h3 style="margin-top:6px">' + echapperHtml(dl.chapitre || "Continuer mon cours") + "</h3>" +
+            "</div>" +
+            '<a class="btn btn-primary btn-sm" href="' + echapperHtml(pref + dl.url) + '">Reprendre (' + dl.pourcent + " %) ➜</a>" +
+          "</div>" +
+          '<div class="progress-bar"><div class="progress-bar__fill" style="width:' + dl.pourcent + '%"></div></div>';
+      } else {
+        contReprise.innerHTML =
+          '<p style="margin-bottom:12px">Vous n\'avez pas encore entamé de chapitre. Choisissez une matière pour démarrer votre parcours !</p>' +
+          '<a class="btn btn-secondary btn-sm" href="' + pref + 'index.html#cours">📚 Explorer les 5 matières</a>';
+      }
+    }
+
+    /* 3. Progression par matière */
+    var badgeProg = document.getElementById("dashRevisedBadge");
+    var listeProg = document.getElementById("dashSubjectsList");
+    if (badgeProg) badgeProg.textContent = rev.faits + " / " + rev.total + " révisés";
+    if (listeProg) {
+      var clesMat = ok4 ? ["html5", "css3", "javascript", "sql", "php"] : ["html5", "css3", "javascript", "sql"];
+      listeProg.innerHTML = clesMat.map(function (id) {
+        var m = MATIERES[id];
+        var fait = Boolean(profil.progression && profil.progression[id]);
+        return (
+          '<div class="dash-row">' +
+            '<div style="display:flex;align-items:center;gap:10px">' +
+              '<span style="font-size:1.3rem">' + m.icone + "</span>" +
+              "<div>" +
+                '<strong style="display:block">' + echapperHtml(m.nom) + "</strong>" +
+                '<div style="display:flex;gap:8px;font-size:.76rem;color:var(--text-muted);margin-top:2px">' +
+                  '<a href="' + pref + m.urlCours + '#cours">Cours</a>·' +
+                  '<a href="' + pref + m.urlCours + '#exercices">Exercices</a>·' +
+                  '<a href="' + pref + m.urlCours + '#annexes">Annexes</a>·' +
+                  '<a href="' + pref + m.urlCours + '#videos">Vidéos (' + CATALOGUE_VIDEOS.filter(function (v) { return v.matiere === m.id && (!v.reserve4si || ok4); }).length + ")</a>" +
+                "</div>" +
+              "</div>" +
+            "</div>" +
+            '<button type="button" class="revise-btn" data-toggle-course="' + m.id + '" aria-pressed="' + (fait ? "true" : "false") + '">' +
+              (fait ? "✓ Révisé" : "○ À réviser") +
+            "</button>" +
+          "</div>"
+        );
+      }).join("");
+    }
+
+    /* 4. Quiz et erreurs */
+    var contQuiz = document.getElementById("dashQuizList");
+    if (contQuiz) {
+      if (!profil.quiz.length) {
+        contQuiz.innerHTML =
+          '<p style="font-size:.88rem;margin-bottom:10px">Aucun score enregistré dans votre carnet pour l\'instant.</p>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+            '<a class="btn btn-secondary btn-sm" href="' + pref + 'quiz/html-css.html">🎨 Quiz HTML/CSS</a>' +
+            '<a class="btn btn-secondary btn-sm" href="' + pref + 'quiz/javascript.html">⚡ Quiz JS</a>' +
+            '<a class="btn btn-secondary btn-sm" href="' + pref + 'quiz/sql.html">🗄️ Quiz SQL</a>' +
+            (ok4 ? '<a class="btn btn-secondary btn-sm" href="' + pref + 'quiz/php.html">🐘 Quiz PHP</a>' : "") +
+          "</div>";
+      } else {
+        contQuiz.innerHTML = profil.quiz.slice(0, 6).map(function (q) {
+          var pct = Math.round((q.score / q.total) * 100);
+          return (
+            '<div class="dash-row">' +
+              "<div>" +
+                '<strong>' + echapperHtml(q.matiere) + "</strong>" +
+                '<div style="font-size:.76rem;color:var(--text-muted)">📅 ' + echapperHtml(q.date || "Récent") +
+                  (q.erreurs && q.erreurs.length ? " · " + q.erreurs.length + " erreur(s) à revoir" : " · Sans faute") +
+                "</div>" +
+              "</div>" +
+              '<span class="badge ' + (pct >= 70 ? "badge-sql" : "badge-html") + '">' + q.score + " / " + q.total + " (" + pct + "%)</span>" +
+            "</div>"
+          );
+        }).join("");
+      }
+    }
+
+    /* 5. Vidéos vues ou à reprendre */
+    var contVideos = document.getElementById("dashVideosList");
+    var badgeVid = document.getElementById("dashVideosBadge");
+    var vidsDispo = CATALOGUE_VIDEOS.filter(function (v) { return !v.reserve4si || ok4; });
+    var vuesSet = (profil.videos && profil.videos.vues) || [];
+    var nbVues = vidsDispo.filter(function (v) { return vuesSet.indexOf(v.id) !== -1; }).length;
+    if (badgeVid) badgeVid.textContent = nbVues + " / " + vidsDispo.length + " vues";
+
+    if (contVideos) {
+      var blocReprendre = "";
+      var derV = profil.videos && profil.videos.derniere;
+      if (derV && derV.id && derV.temps > 5) {
+        blocReprendre =
+          '<div class="alert alert-info" style="margin-bottom:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">' +
+            '<div><strong>⏯ À reprendre : ' + echapperHtml(derV.titre) + '</strong><div style="font-size:.78rem;color:var(--text-muted)">Arrêté à ' + formaterDureeSecondes(derV.temps) + "</div></div>" +
+            '<button type="button" class="btn btn-primary btn-sm" data-play-video="' + echapperHtml(derV.id) + '" data-start-time="' + derV.temps + '">▶ Reprendre</button>' +
+          "</div>";
+      }
+      contVideos.innerHTML = blocReprendre + vidsDispo.map(function (v) {
+        var vue = vuesSet.indexOf(v.id) !== -1;
+        return (
+          '<div class="dash-row">' +
+            '<div><span class="badge ' + v.badgeClasse + '" style="margin-inline-end:6px">' + v.nomMatiere + "</span><strong>" + echapperHtml(v.titre) + "</strong></div>" +
+            '<div style="display:flex;align-items:center;gap:8px">' +
+              (vue ? '<span class="badge badge-sql">✓ Vue</span>' : '<span class="badge">' + v.dureeTexte + "</span>") +
+              '<button type="button" class="btn btn-ghost btn-sm" data-play-video="' + echapperHtml(v.id) + '">▶</button>' +
+            "</div>" +
+          "</div>"
+        );
+      }).join("");
+    }
+
+    /* 6. Notes envoyées au professeur */
+    var contNotes = document.getElementById("dashNotesList");
+    var badgeMoy = document.getElementById("dashNotesAvgBadge");
+    if (contNotes) {
+      if (!profil.notes.length) {
+        if (badgeMoy) badgeMoy.textContent = "— / 20";
+        contNotes.innerHTML =
+          '<p style="font-size:.88rem;margin-bottom:10px">Aucune note d\'atelier (/20) transmise pour le moment.</p>' +
+          '<button type="button" class="btn btn-secondary btn-sm" id="dashLaunchExamBtn">📝 Passer un Examen Blanc (/20)</button>';
+        var bEx = document.getElementById("dashLaunchExamBtn");
+        if (bEx) {
+          bEx.addEventListener("click", function () {
+            if (typeof global.ouvrirExamenBlancSTI === "function") global.ouvrirExamenBlancSTI();
+            else global.location.href = pref + "bac-pratique.html";
+          });
+        }
+      } else {
+        var somme = profil.notes.reduce(function (acc, n) { return acc + Number(n.note || 0); }, 0);
+        var moy = (somme / profil.notes.length).toFixed(2);
+        if (badgeMoy) badgeMoy.textContent = "Moyenne : " + moy + " / 20";
+        contNotes.innerHTML = profil.notes.map(function (n) {
+          return (
+            '<div class="dash-row">' +
+              '<div><strong>' + echapperHtml(n.atelier) + '</strong><div style="font-size:.76rem;color:var(--text-muted)">📅 ' + echapperHtml(n.date || "") + "</div></div>" +
+              '<span class="badge badge-gold">' + Number(n.note).toFixed(2).replace(/\.00$/, "") + " / 20</span>" +
+            "</div>"
+          );
+        }).join("");
+      }
+    }
+
+    /* 7. Préférences actives */
+    document.querySelectorAll("[data-set-lang]").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-set-lang") === profil.langue ? "true" : "false");
+    });
+    document.querySelectorAll("[data-set-fontsize]").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-set-fontsize") === profil.tailleTexte ? "true" : "false");
+    });
+    rafraichirBoutonsTheme();
+  }
+
+  function initialiserEvenementsDashboard() {
+    var racineDash = document.getElementById("stiDashboardRoot");
+    if (!racineDash || !global.STIProfil) return;
+
+    var formPrenom = document.getElementById("dashPrenomForm");
+    var inpPrenom = document.getElementById("dashPrenomInput");
+    if (formPrenom && inpPrenom) {
+      formPrenom.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        global.STIProfil.mettreAJour("prenom", inpPrenom.value.trim());
+        rendreBadgeAbonne();
+        rendreTableauDeBord();
+      });
+    }
+
+    racineDash.addEventListener("click", function (ev) {
+      var bLang = ev.target && ev.target.closest ? ev.target.closest("[data-set-lang]") : null;
+      if (bLang) {
+        global.STIProfil.mettreAJour("langue", bLang.getAttribute("data-set-lang"));
+        appliquerTraductionsPage();
+        rendreBadgeAbonne();
+        rendreTableauDeBord();
+        return;
+      }
+
+      var bTaille = ev.target && ev.target.closest ? ev.target.closest("[data-set-fontsize]") : null;
+      if (bTaille) {
+        global.STIProfil.mettreAJour("tailleTexte", bTaille.getAttribute("data-set-fontsize"));
+        rendreTableauDeBord();
+      }
+    });
+
+    var btnReset = document.getElementById("btnResetProfil");
+    if (btnReset) {
+      btnReset.addEventListener("click", function () {
+        if (global.confirm("Réinitialiser vos préférences et progressions locales sur cet appareil ?")) {
+          global.STIProfil.reinitialiser();
+          appliquerTraductionsPage();
+          rendreBadgeAbonne();
+          rendreTableauDeBord();
+          chargerNouveautesAccueilEtDashboard();
+        }
+      });
+    }
+
+    var btnCompte = document.getElementById("dashOuvrirCompte");
+    if (btnCompte) btnCompte.addEventListener("click", function () {
+      var roue = document.getElementById("sti-roue-btn");
+      if (roue) roue.click(); else global.location.href = obtenirPrefixeRacine() + "portail.html";
+    });
+
+    var btnLogout = document.getElementById("btnDashboardLogout");
+    if (btnLogout) {
+      btnLogout.addEventListener("click", declencherDeconnexion);
+    }
+
+  }
+
+  /* 11. Scores de quiz */
+  function connecterPontQuizEtAteliers() {
+    var origEnregistrer = global.enregistrerScoreQuizSTI;
+    if (typeof origEnregistrer === "function" && !origEnregistrer._pontProfilSti) {
+      var enveloppe = function (nomQuiz, noteTexte, sur20) {
+        try {
+          if (global.STIProfil) {
+            var p = global.STIProfil.chargerProfil();
+            var dateIso = new Date().toISOString().slice(0, 10);
+            var scoreNum = Number(sur20);
+            if (!isFinite(scoreNum)) {
+              var m = String(noteTexte || "").match(/(\d+(?:[.,]\d+)?)/);
+              scoreNum = m ? parseFloat(m[1].replace(",", ".")) : 0;
+            }
+            if (/atelier|bac|examen/i.test(String(nomQuiz || ""))) {
+              p.notes.unshift({ atelier: String(nomQuiz), note: scoreNum, date: dateIso });
+              p.notes = p.notes.slice(0, 20);
+            } else {
+              p.quiz.unshift({ matiere: String(nomQuiz || "Quiz STI"), score: scoreNum, total: 20, date: dateIso, erreurs: [] });
+              p.quiz = p.quiz.slice(0, 25);
+            }
+            global.STIProfil.sauvegarderProfil(p, false);
+          }
+        } catch (e) {}
+        return origEnregistrer.apply(this, arguments);
+      };
+      enveloppe._pontProfilSti = true;
+      global.enregistrerScoreQuizSTI = enveloppe;
+    }
+  }
+
+  /* Le temps de lecture est indicatif : texte des chapitres à 180 mots/minute,
+     sans les commandes ni les vidéos. La valeur HTML reste lisible sans script. */
+  function estimerLectureCours() {
+    var cible = document.querySelector("[data-estimation-lecture]");
+    if (!cible) return;
+    var chapitres = document.querySelectorAll('[data-course-panel="cours"] [data-chapter-id]');
+    if (!chapitres.length) return;
+    var texte = Array.prototype.map.call(chapitres, function (chapitre) {
+      var copie = chapitre.cloneNode(true);
+      Array.prototype.forEach.call(copie.querySelectorAll('script,style,button,nav,svg,audio,video,iframe,[aria-hidden="true"]'), function (element) { element.remove(); });
+      return copie.textContent || "";
+    }).join(" ");
+    var mots = texte.match(/[A-Za-zÀ-ÖØ-öø-ÿ0-9]+(?:['’_-][A-Za-zÀ-ÖØ-öø-ÿ0-9]+)*/g) || [];
+    cible.textContent = Math.max(1, Math.ceil(mots.length / 180)) + " min";
+  }
+
+  /* Les identifiants correspondent aux vrais chapitres des cinq cours. */
+  var CHAPITRES_ACCUEIL = {
+    html5: ["entete", "structuration", "conteneurs", "listes", "tableaux", "texte-media", "attributs-evenements", "target-explication", "formulaires", "iframe"],
+    css3: ["selecteurs", "typographie", "arriere-plan", "boite-display", "marges-debordement", "positionnement", "tableaux-listes", "filtres", "animations", "pas-a-pas"],
+    javascript: ["sec1", "sec2", "sec3", "sec4", "sec5", "sec6", "sec7", "sec8", "sec9", "sec10", "sec11", "sec12", "sec13", "sec14", "sec15"],
+    sql: ["intro", "ldd", "lmd", "bac"],
+    php: ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10"]
+  };
+  var minuteurCompteAccueil = 0;
+  var delaiCompteAccueil = 1200;
+  var compteVisitesEnMemoire = "";
+  var visitesEnMemoire = [];
+
+  /* Le pull cloud peut remplacer le profil entier. Garder les visites locales
+     déjà connues, uniquement pour le même compte, jusqu'à sa restauration. */
+  function memoriserVisitesDuCompte(etat) {
+    if (!etat.connecte || etat.compteEnAttente) {
+      compteVisitesEnMemoire = "";
+      visitesEnMemoire = [];
+      return;
+    }
+    var compte = etat.id || (etat.email ? "email:" + etat.email.toLowerCase() : "session-locale");
+    if (compteVisitesEnMemoire !== compte) {
+      compteVisitesEnMemoire = compte;
+      visitesEnMemoire = [];
+    }
+    global.STIProfil.chargerProfil().coursVisites.forEach(function (m) {
+      if (visitesEnMemoire.indexOf(m) === -1) visitesEnMemoire.push(m);
     });
   }
 
-  /* -------------------------------------------------------------------------
-     20. INITIALISATION
-     ---------------------------------------------------------------------- */
-  function init() {
-    injecterCoquille();
-    P.appliquerPreferences(); P.garderTheme(); traduire();
-    initGenerique();
-    initThemes(); initModales(); initRecherche(); initFiltres();
-    initBadge(); initPanel(); initInstall();
-    initVideos(); initCartes(); initNouveautes(); initProgression();
-    initCourseShell(); initLegacyHero(); initGlossaire(); initDashboard();
-    window.addEventListener('sti:profil', traduire);
+  /* Une prévisualisation interne ne doit pas créer une visite de cours. */
+  function estDansIframeInterne() {
+    try {
+      if (global.frameElement) return true;
+      if (global.self && global.top && global.self !== global.top) {
+        return Boolean(global.top.location && global.top.location.origin === global.location.origin);
+      }
+    } catch (e) { return false; } /* Aperçu externe, par exemple dans un navigateur intégré. */
+    return false;
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
-})();
+
+  function marquerCoursEffectivementOuvert(etat) {
+    var matiere = detecterMatierePageCourante();
+    if (!matiere || !etat.connecte || etat.compteEnAttente || document.prerendering || estDansIframeInterne()) return;
+    /* Le verrou existant reste l'unique source d'autorisation pour le PHP. */
+    if (matiere === "php" && !estAutorise4SI()) return;
+    global.STIProfil.enregistrerVisiteCours(matiere);
+  }
+
+  function rendreAccueilPersonnalise(etat) {
+    var section = document.getElementById("welcomeReturn");
+    if (!section || !global.STIProfil) return;
+    var zone = document.getElementById("welcomeCourses");
+    var vide = document.getElementById("welcomeEmpty");
+    var compteur = document.getElementById("welcomeCount");
+    var nom = document.getElementById("welcomePrenom");
+    if (!etat.connecte) {
+      section.hidden = true;
+      zone.replaceChildren();
+      zone._signatureAccueil = "";
+      nom.textContent = "";
+      return;
+    }
+    section.hidden = false;
+    /* GOLD seul ne fait pas d'un abonné l'administrateur. */
+    var emailAdmin = global.STI_AUTH && global.STI_AUTH.ADMIN;
+    nom.textContent = emailAdmin && String(etat.email || "").trim().toLowerCase() === String(emailAdmin).trim().toLowerCase()
+      ? "Aymen" : (etat.prenomCompte || etat.prenom || "Abonné");
+    if (etat.compteEnAttente) {
+      compteur.textContent = "Synchronisation des cours…";
+      compteur.removeAttribute("aria-label");
+      zone.replaceChildren();
+      zone._signatureAccueil = "";
+      vide.hidden = true;
+      return;
+    }
+
+    var profil = global.STIProfil.chargerProfil();
+    var ok4 = estAutorise4SI();
+    var visites = global.STIProfil.listerCoursVisites().filter(function (id) { return id !== "php" || ok4; });
+    compteur.textContent = visites.length + " en cours";
+    compteur.setAttribute("aria-label", visites.length + " cours déjà visités");
+    vide.hidden = visites.length !== 0;
+
+    var pref = obtenirPrefixeRacine();
+    var cartes = visites.map(function (id) {
+      var matiere = MATIERES[id];
+      var chapitres = CHAPITRES_ACCUEIL[id].filter(function (chapitre) { return id !== "sql" || chapitre !== "bac" || ok4; });
+      var etats = profil.chapitres[id] || {};
+      var revises = chapitres.filter(function (chapitre) { return etats[chapitre] === "revise"; }).length;
+      var consultes = chapitres.filter(function (c) { return etats[c] === "revise" || etats[c] === "en_cours"; }).length;
+      var derniere = profil.derniereLecture || {};
+      var ancre = derniere.matiere === id && chapitres.indexOf(derniere.chapitreId) !== -1 ? "#" + derniere.chapitreId : "";
+      return { id: id, titre: matiere.nom, href: pref + matiere.urlCours + ancre, revises: revises, consultes: consultes, total: chapitres.length };
+    });
+    var signature = JSON.stringify(cartes);
+    if (zone._signatureAccueil === signature) return;
+    var lienActif = document.activeElement && document.activeElement.closest && document.activeElement.closest("[data-welcome-course]");
+    var focusId = lienActif && zone.contains(lienActif) ? lienActif.getAttribute("data-welcome-course") : "";
+    zone.innerHTML = cartes.map(function (c) {
+      return '<a class="welcome-course welcome-course--' + c.id + '" data-welcome-course="' + c.id + '" href="' + c.href + '">' +
+        '<span class="welcome-course__cover"><span class="welcome-course__state">' + (c.revises ? c.revises + " / " + c.total + " révisés" : "Consulté") + '</span>' +
+        '<span class="welcome-course__icon" aria-hidden="true"><svg><use href="' + pref + 'assets/icons/matieres.svg#' + c.id + '"></use></svg></span></span>' +
+        '<span class="welcome-course__body"><strong class="welcome-course__title">' + echapperHtml(c.titre) + '</strong>' +
+        '<span class="welcome-course__details">Cours · ' + c.consultes + ' / ' + c.total + ' chapitres consultés · Continuer →</span></span></a>';
+    }).join("");
+    zone._signatureAccueil = signature;
+    if (focusId) {
+      var nouveauLien = zone.querySelector('[data-welcome-course="' + focusId + '"]') || section.querySelector(".welcome-return__dashboard");
+      if (nouveauLien) nouveauLien.focus({ preventScroll: true });
+    }
+  }
+
+  function actualiserAccueilEtVisite() {
+    if (!global.STIProfil) return;
+    var etat = global.STIProfil.lireEtatSession();
+    marquerCoursEffectivementOuvert(etat);
+    memoriserVisitesDuCompte(etat);
+    rendreAccueilPersonnalise(etat);
+    rafraichirBandeauRepriseAccueil();
+    /* En cas de changement de compte dans le même onglet, attendre la purge
+       de l'ancien profil effectuée par le synchroniseur existant. */
+    if (etat.connecte && etat.compteEnAttente) {
+      if (!minuteurCompteAccueil) {
+        minuteurCompteAccueil = global.setTimeout(function () {
+          minuteurCompteAccueil = 0;
+          actualiserAccueilEtVisite();
+        }, delaiCompteAccueil);
+        delaiCompteAccueil = Math.min(delaiCompteAccueil * 2, 12000);
+      }
+    } else {
+      if (minuteurCompteAccueil) global.clearTimeout(minuteurCompteAccueil);
+      minuteurCompteAccueil = 0;
+      delaiCompteAccueil = 1200;
+    }
+  }
+
+  /* 12. Initialisation */
+  function demarrerApplication() {
+    if (redirigerAnciennePageExercices()) return;
+    estimerLectureCours();
+    initialiserPageMatiereUnifiee();
+    actualiserAccueilEtVisite();
+    appliquerTraductionsPage();
+    initialiserSelecteursTheme();
+    rendreBadgeAbonne();
+    initialiserClicBadgeAbonne();
+    initialiserVideoHero();
+    initialiserSectionVideos();
+    initialiserTerminalHero();
+    initialiserCompteursStats();
+    rafraichirUIRevisionAccueil();
+    rafraichirBandeauRepriseAccueil();
+    initialiserRechercheEtFiltres();
+    initialiserNavigationEtModalesCommunes();
+    chargerNouveautesAccueilEtDashboard();
+    rendreTableauDeBord();
+    initialiserEvenementsDashboard();
+    connecterPontQuizEtAteliers();
+
+    var btnFermerReprise = document.getElementById("resumeCloseBtn");
+    if (btnFermerReprise) btnFermerReprise.addEventListener("click", masquerBandeauRepriseAccueil);
+
+    global.addEventListener("sti:profil-maj", function () {
+      var etat = global.STIProfil.lireEtatSession();
+      memoriserVisitesDuCompte(etat);
+      rendreAccueilPersonnalise(etat);
+      appliquerTraductionsPage();
+      rafraichirBoutonsTheme();
+      rendreBadgeAbonne();
+      rafraichirTiroirAbonne();
+      rafraichirUIRevisionAccueil();
+      rafraichirBandeauRepriseAccueil();
+      rendreGrilleVideosAccueil();
+      rendreTableauDeBord();
+    });
+
+    global.addEventListener("sti:session-maj", function () {
+      actualiserAccueilEtVisite();
+      rendreBadgeAbonne();
+      rafraichirTiroirAbonne();
+      rendreGrilleVideosAccueil();
+      rendreTableauDeBord();
+    });
+
+    /* Les restaurations cloud et les autres onglets modifient le journal sans
+       notification localStorage dans l'onglet courant. */
+    global.addEventListener("sti-cloud-restored", function () {
+      var etat = global.STIProfil.lireEtatSession();
+      var compte = etat.id || (etat.email ? "email:" + etat.email.toLowerCase() : "session-locale");
+      if (etat.connecte && !etat.compteEnAttente && compteVisitesEnMemoire === compte && visitesEnMemoire.length) {
+        global.STIProfil.fusionnerCoursVisites(visitesEnMemoire);
+      }
+      actualiserAccueilEtVisite();
+    });
+    global.addEventListener("sti:profil-reset", function () {
+      compteVisitesEnMemoire = "";
+      visitesEnMemoire = [];
+    });
+    global.addEventListener("storage", function (ev) {
+      if (!ev) return;
+      if (!ev.key || (ev.key === "sti-profil-abonne" && ev.newValue === null)) {
+        compteVisitesEnMemoire = "";
+        visitesEnMemoire = [];
+      } else if (ev.key === "sti-profil-abonne") {
+        var etat = global.STIProfil.lireEtatSession();
+        var compte = etat.id || (etat.email ? "email:" + etat.email.toLowerCase() : "session-locale");
+        if (etat.connecte && !etat.compteEnAttente && compteVisitesEnMemoire === compte) {
+          global.STIProfil.fusionnerCoursVisites(visitesEnMemoire);
+        }
+      }
+      if (!ev.key || ev.key === "sti-pages-vues-v432") actualiserAccueilEtVisite();
+    });
+    document.addEventListener("prerenderingchange", actualiserAccueilEtVisite);
+    global.addEventListener("online", actualiserAccueilEtVisite);
+
+    global.addEventListener("pageshow", function (ev) {
+      if (ev && ev.persisted) {
+        actualiserAccueilEtVisite();
+        rendreBadgeAbonne();
+        rafraichirUIRevisionAccueil();
+        rafraichirBandeauRepriseAccueil();
+        rendreGrilleVideosAccueil();
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", demarrerApplication);
+  } else {
+    demarrerApplication();
+  }
+})(window, document);

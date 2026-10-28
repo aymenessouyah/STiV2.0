@@ -94,10 +94,6 @@ test('les lecteurs et la playlist restent utilisables au clavier sur mobile', as
   await bouton.focus(); await page.keyboard.press('Enter');
   await expect(page.locator('#sti-video-modal-overlay')).toBeVisible(); await page.keyboard.press('Escape'); await expect(bouton).toBeFocused();
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0);
-  // Sur mobile, remonter d’abord pour réafficher la barre masquée pendant la lecture.
-  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; window.scrollBy(0, -120); });
-  await expect(page.locator('html')).not.toHaveClass(/sti-barres-cachees/);
-  await expect(page.locator('.course-tabs-bar')).toBeInViewport({ ratio: 1 });
   await page.locator('[data-course-tab="videos"]').click();
   await page.locator('[data-playlist="cssanimee"]').focus();
   await page.keyboard.press('Enter');

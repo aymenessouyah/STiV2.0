@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html data-sti-heritage="interface" lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -206,6 +206,9 @@ window.addEventListener("storage",function(e){if(e.key==="sti-theme"||e.key==="t
   html[data-theme="dark"] .badge-moyen,html[data-theme="dark"] .badge-med{color:#fbbf24}
   html[data-theme="dark"] .badge-difficile,html[data-theme="dark"] .badge-hard{color:#f87171}
 </style>
+<link rel="stylesheet" href="../../assets/css/dialogues-compat.css">
+
+<link rel="stylesheet" href="../../assets/css/theme-patrimoine.css">
 </head>
 <body>
 
@@ -243,6 +246,7 @@ window.addEventListener("storage",function(e){if(e.key==="sti-theme"||e.key==="t
   <div class="panneau-body" id="panneau-body"></div>
 </aside>
 
+<script src="../../assets/js/dialogues-compat.js"></script>
 <script>
 /* ============================================================
    DONNÉES — 37 exercices, 11 familles
@@ -1225,10 +1229,12 @@ function init(){
 document.addEventListener("keydown", e => { if(e.key === "Escape") fermerPanneau(); });
 init();
 </script>
-<script src="../../assets/js/supabase-umd.js" defer></script>
 <script src="../../assets/js/config.js?v=425" defer></script>
+<script src="../../assets/js/supabase-umd.js" defer></script>
 <script src="../../assets/js/acces.js?v=453" defer></script>
 <script src="../../assets/js/sync-progressions.js?v=463" defer></script>
 <script src="../../assets/js/mobile-nav.js?v=434" defer></script>
+
+<script src="../../assets/js/profil.js" defer></script>
 </body>
 </html>

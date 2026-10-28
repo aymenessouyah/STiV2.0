@@ -1,11 +1,11 @@
 # 📚 STI By A'e — Plateforme Pédagogique STI V2.0 (3ᵉ & 4ᵉ SI)
 
-Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sciences et Technologies de l'Informatique** (**3SI** et **4SI**, programme officiel du Baccalauréat Tunisien) : cours multimédias avec **14 vidéos explicatives (`.mp4`)** et écoute vocale synchronisée, **2 livres connectés (Smart Books) par QR codes**, laboratoire **SQLite WASM**, **41 fiches d'exercices et séries corrigées**, **5 modules de quiz CSPRNG (1 244 questions au total)** avec tirage neuf à chaque connexion et reprise multi-appareils, hub **« Mes erreurs »**, révision espacée **J+1 / J+3 / J+7**, couverture sur **124 pages**, **retour instantané 0 ms sans rechargement (`bfcache`)**, sauvegarde automatique quotidienne des **15 tables Supabase** vers **Google Drive** et tableau de bord enseignant complet.
+Plateforme éducative interactive et **PWA utilisable hors ligne après mise en cache des ressources nécessaires** dédiée aux **Sciences et Technologies de l'Informatique** (**3SI** et **4SI**, programme officiel du Baccalauréat Tunisien) : cours multimédias avec **14 vidéos `.mp4` sélectionnées dans le catalogue d’accueil** (dont les ressources réservées 4SI), d’autres séries vidéo et une écoute vocale synchronisée, **2 livres connectés (Smart Books) par QR codes**, laboratoire **SQLite WASM**, **41 fiches d'exercices et séries corrigées**, **5 modules de quiz CSPRNG (1 244 questions au total)** avec tirage neuf à chaque connexion et possibilité de reprise d’une partie encore active, hub **« Mes erreurs »**, révision espacée **J+1 / J+3 / J+7**, couverture sur **124 pages**, **retour par `bfcache` lorsque le navigateur le permet**, sauvegarde automatique quotidienne des **15 tables Supabase** vers **Google Drive** et tableau de bord enseignant complet.
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (`15` tables RLS + `23` fonctions sécurisées) + Service Worker incrémental (`sw.js` — `sti-atelier-v339`, historique `sti-atelier-v338` / `sti-atelier-v337` / `sti-atelier-v335`)
-> 📌 **Version active** : **v478** (`sti-atelier-v339` — 27 octobre 2026)
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (15 tables historiques et deux tables techniques XP protégées par RLS) + Service Worker incrémental (`sw.js` — `sti-atelier-v353`, historique `sti-atelier-v352` / `sti-atelier-v351` / `sti-atelier-v350` / `sti-atelier-v349` / `sti-atelier-v348` / `sti-atelier-v347` / `sti-atelier-v346` / `sti-atelier-v345` / `sti-atelier-v344` / `sti-atelier-v343` / `sti-atelier-v342` / `sti-atelier-v341` / `sti-atelier-v340`)
+> 📌 **Version du code** : **v492** (`sti-atelier-v353` — 28 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
 
 ---
 
@@ -14,7 +14,7 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 1. [Vue d'ensemble & chiffres vérifiés](#-vue-densemble--chiffres-vérifiés)
 2. [Cours interactifs, vidéos, Smart Books & exercices](#-cours-interactifs-vidéos-smart-books--exercices)
 3. [Quiz CSPRNG, calcul du score & hub « Mes erreurs »](#-quiz-csprng-calcul-du-score--hub-mes-erreurs)
-4. [Navigation retour 0 ms sans rechargement (`bfcache`)](#-navigation-retour-0-ms-sans-rechargement-bfcache)
+4. [Navigation retour et `bfcache`](#-navigation-retour-et-bfcache)
 5. [Comptes, accès laboratoire, PWA & suivi multi-appareils](#-comptes-accès-laboratoire-pwa--suivi-multi-appareils)
 6. [Tableau de bord administrateur (`admin.html`)](#-tableau-de-bord-administrateur-adminhtml)
 7. [Sécurité de la plateforme & protection des données](#-sécurité-de-la-plateforme--protection-des-données)
@@ -28,7 +28,7 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 
 | Pilier | Détail vérifié dans le dépôt et la base active |
 |---|---|
-| **Cours & multimédia** | HTML5, CSS3, JavaScript, Bases de données / SQL et PHP / MySQLi (`4SI`), **14 vidéos `.mp4`** chapitrées + écoute vocale `.mp3` synchronisée avec Guide-Ligne (`0.85×` / `1×` / `1.15×`) |
+| **Cours & multimédia** | HTML5, CSS3, JavaScript, Bases de données / SQL et PHP / MySQLi (`4SI`), **14 vidéos `.mp4` dans le catalogue d’accueil**, plus les autres séries et médias historiques + écoute vocale `.mp3` synchronisée avec Guide-Ligne (`0.85×` / `1×` / `1.15×`) |
 | **Smart Books QR** | **2 manuels PDF connectés** : *3ᵉ SI* (**72 pages**) et *4ᵉ SI* (**100 pages**) reliés page par page via `livre-smart.html` |
 | **Exercices & Bac** | Hub `exercices/series-exercices.html`, **41 fiches TP / corrigés**, séries SQL 1 à 6 en vidéo, 37 Défis JS, `bac-pratique.html`, `pieges-bac.html`, `outils-js-bac.html`, `memo-veille-bac.html` |
 | **Banques de quiz** | **5 modules actifs** totalisant **1 244 questions** : HTML5/CSS3 (**187**), JavaScript (**106**), SQL (**140**), PHP (**176**) et Tableaux Smart Books (**635** dans `quiz-banque.json`) |
@@ -40,7 +40,9 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 ## 🎓 Cours interactifs, vidéos, Smart Books & exercices
 
 - **Cours complets conformes au programme tunisien** (`cours/html5.html`, `cours/css3.html`, `cours/javascript.html`, `cours/sql.html`, `cours/php.html`, `cours/php-mysqli.html`, `cours/sql-bases-ldd-lmd-lcd.html`) :
-  - **14 vidéos explicatives (`.mp4`)** : 5 cours complets, 2 animations CSS3, l'histoire animée du Guichet PHP/MySQLi et les 6 corrigés vidéo des séries SQL, avec reprise automatique à la seconde près et remontée cloud `PROG_MEDIA` (`✅ Vu` / `⏳ En cours`).
+  - Les cinq cours unifiés présentent trois objectifs, une feuille de route cliquable et un temps de lecture indicatif calculé à **180 mots par minute**, hors vidéos. Les étapes réservées à la 4ᵉ SI restent protégées.
+  - La vidéo principale PHP est le cours complet d’origine `php-cours.mp4` ; son lecteur historique et ses chapitres sont conservés, ainsi que la vidéo de synthèse distincte.
+  - **Catalogue d’accueil : 14 vidéos `.mp4`** — HTML5 (1), CSS3 (4), JavaScript (2), SQL (4 dont deux réservées 4SI) et PHP (3 réservées 4SI). Les six vidéos des séries SQL, les variantes mobiles et les leçons interactives restent également disponibles dans leurs ressources historiques ; elles ne sont pas toutes comptées dans ce catalogue. La reprise et la remontée cloud `PROG_MEDIA` restent actives (`✅ Vu` / `⏳ En cours`).
   - **Laboratoire SQL de poche (`cours/sql-playground.html`)** : moteur SQLite WASM 100 % local avec 3 bases d'entraînement et exécution hors-ligne.
 - **Smart Books & Annexes officielles** :
   - Chaque page des manuels *3ᵉ SI* et *4ᵉ SI* possède un QR code ouvrant la ressource exacte et mémorisant la dernière page consultée ;
@@ -56,14 +58,19 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 ### 1. Tirage aléatoire intégral à chaque nouvelle connexion (`v455`–`v470`)
 - **5 modules actifs** : `quiz/html-css.html` (**187 q.**), `quiz/javascript.html` (**106 q.**), `quiz/sql.html` (**140 q.**), `quiz/php.html` (**176 q.**, avec redirection propre depuis `quiz/pp.html`) et `quiz/tableaux.html` (**635 q.** issues de `assets/data/quiz-banque.json`).
 - **Mélange cryptographique (`window.crypto.getRandomValues`)** :
-  - À **chaque nouvelle connexion** (`portail.js` → `preparerNouvelleConnexionQuiz()` + `STIQuizSync.reinitialiserSessionsConnexion()`), toute ancienne session inachevée est purgée afin de garantir un **nouveau tirage aléatoire des questions ET un nouveau mélange aléatoire des propositions `A/B/C/D`** ;
+  - À **chaque nouvelle connexion** (`portail.js` → `preparerNouvelleConnexionQuiz()`), toute ancienne session inachevée est purgée afin d'effectuer un **nouveau tirage aléatoire des questions ET un nouveau mélange aléatoire des propositions `A/B/C/D`** ; deux tirages indépendants peuvent toutefois coïncider ;
   - Anti-série intégré (jamais 3 bonnes réponses consécutives à la même position) et rotation prioritaire des questions jamais vues (`sti_quiz_vus`, isolé par `user_id` sur poste partagé).
-  - En cours d'une même session de connexion, si au moins une réponse a été validée (`estSessionDemarree`), la partie peut être reprise exactement au même indice et avec le même ordre sur un autre appareil (`sti_quiz_sessions`).
+  - En cours d'une même session de connexion, une partie active avec au moins une réponse peut être reprise au même indice, avec les mêmes propositions et le même score (`sti_quiz_sessions`). Quitter ou recharger le quiz après une réponse déclenche sa finalisation et la purge de sa session ; une nouvelle connexion purge également les sessions inachevées.
+  - **Reprises simultanées (`v490`)** : une partie identifiée conserve le même identifiant sur les appareils qui la reprennent ; ses finalisations et ses gains cumulatifs sont dédupliqués. Les parties issues d'anciens clients sans identifiant ne peuvent pas toutes être réconciliées rétroactivement avec certitude.
 
 ### 2. Calcul du score & synchronisation write-ahead vers Supabase (`assets/js/quiz-sync.js`)
 - Calcul instantané du **score exact**, du **pourcentage**, de la **note ramenée sur `/20`** et des **points** (avec pont synchrone vers `acces.js` / `sti-mes-scores`).
 - **File locale write-ahead isolée par `user_id`** : chaque fin de partie (`STIQuizSync.enregistrer`) et chaque lot de réponses (`STIQuizSync.enregistrerReponses`) est inscrit en `localStorage` **avant** l'appel réseau, puis vidé automatiquement vers `sti_quiz_parties` et `sti_quiz_reponses` dès que la connexion est disponible — sans jamais mélanger deux élèves successifs sur un poste du Labo 3.
 - **Carte d'Évaluation Officielle STI V2.0 (`v459`)** en fin de quiz : bilan détaillé, points à réviser, un conseil ciblé par faute, export PNG HD et impression.
+- **Badge d'abonné (`v488`)** : un seul fond local précompose le logo et le QR STI ; la photo ou les initiales, le nom, le prénom et la classe restent propres au compte. Le QR est masqué sur mobile et agrandi au survol ou au focus sur ordinateur ; le QR original reste disponible dans la fenêtre Contact.
+- **Gains XP multi-appareils (`v490`)** : chaque nouvelle partie reçoit un identifiant conservé lors de sa reprise. Pour les quatre quiz à XP, `sti_appliquer_gain_partie_quiz` enregistre une seule fois le gain cumulatif maximal de cette partie, y compris après une réponse perdue ou une finalisation partielle suivie d'une reprise ; les gains de parties distinctes restent additifs. L'historique des cinq quiz utilise également cet identifiant. La file locale reste isolée par compte et retentée à la reconnexion ; ne pas effacer les données locales avant synchronisation. Pour une ancienne session sans identifiant, la compatibilité repose sur l'empreinte de son tirage ; des gains déjà enregistrés par un ancien client sans identité ne peuvent pas être dédupliqués rétroactivement avec certitude.
+- **Déploiement et sauvegarde XP** : appliquer, dans l'ordre, `supabase/migrations/20261027_xp_quiz_sync_v485.sql`, `supabase/migrations/20261027_xp_quiz_operations_v487.sql` puis `supabase/migrations/20261028_xp_parties_idempotentes_v490.sql`, **avant** de publier ce frontend. Les modifications v490 ne sont pas automatiquement appliquées à la base par la publication statique. Les deux tables techniques ont RLS et ne sont accessibles qu'aux RPC ; les archives Drive existantes couvrent les 15 tables historiques, pas ces deux tables. Prévoir une sauvegarde PostgreSQL/Supabase incluant le journal et les compteurs XP pour conserver l'idempotence lors d'une restauration.
+- **Test de concurrence PostgreSQL** : `tests/xp-quiz-concurrence.test.mjs` s'exécute lorsque `STI_TEST_POSTGRES_URL` désigne une base locale jetable nommée `sti_xp_tests`. Le test recrée ses schémas `public` et `auth` : ne jamais l'utiliser sur une base à conserver.
 - **Exception compte partagé laboratoire (`elevelabo3@exemple.tn`)** : fonctionnement 100 % local au poste, zéro envoi cloud et exclusion automatique de toutes les moyennes et alertes enseignant.
 
 ### 3. Table & séance ciblée « Mes erreurs » (`revision-erreurs.html`)
@@ -72,12 +79,14 @@ Plateforme éducative interactive et **PWA 100 % hors-ligne** dédiée aux **Sci
 
 ---
 
-## ⚡ Navigation retour 0 ms sans rechargement (`bfcache`)
+## ⚡ Navigation retour et `bfcache`
 
-Conçue dans `assets/js/config.js` (`v465`, `v467`, `v470`) pour offrir un retour instantané sur mobile 3G comme sur PC :
+La navigation utilise le `bfcache` lorsque le navigateur le permet ; aucun temps nul n’est garanti. Les liens équipés conservent le chemin, les paramètres et le fragment de la page appelante, sans accepter de destination externe ou de traversée de répertoires. En l’absence de ce lien équipé, le navigateur peut transmettre la page d’origine mais pas son fragment ; une ouverture directe revient au choix de quiz. L’interface des quiz n’est pas modifiée.
+
+Le mécanisme historique dans `assets/js/config.js` (`v465`, `v467`, `v470`) reste disponible :
 
 - **Retour vers Quiz (`#modules`), Cours (`#cours`) et Exercices (`#exercices`) sans recharger `index.html`** :
-  - Tout clic sur un lien de retour vers `index.html` (`#modules`, `#cours`, `#exercices`, `#top`) ou vers `exercices/series-exercices.html` (`#css3`, `#javascript`, `#bdd`, `#php`) intercepte la navigation, mémorise l'ancre cible en `sessionStorage` et exécute `history.go(-delta)` pour restaurer le document directement depuis le **`bfcache` en 0 ms**.
+  - Tout clic sur un lien de retour vers `index.html` (`#modules`, `#cours`, `#exercices`, `#top`) ou vers `exercices/series-exercices.html` (`#css3`, `#javascript`, `#bdd`, `#php`) intercepte la navigation, mémorise l'ancre cible en `sessionStorage` et exécute `history.go(-delta)` pour restaurer le document depuis le **`bfcache` lorsque disponible**.
   - Sur un onglet ouvert en plein écran (`window.opener` avec `history.length <= 2`), le bouton Retour referme proprement l'onglet enfant et redonne le focus au hub déjà ouvert sans rechargement.
 - **Préservation intégrale de l'état d'historique et du `bfcache` (`v470`)** :
   - Aucun écouteur `beforeunload` ni en-tête `Cache-Control: no-store` ;
@@ -98,6 +107,8 @@ Conçue dans `assets/js/config.js` (`v465`, `v467`, `v470`) pour offrir un retou
   - **Messenger élève** accessible exclusivement via **« Écrire au prof »** dans la roue `⚙️` (aucun bouton Messenger flottant sur les pages élèves ; le dock flottant est réservé à `admin.html`) ;
   - **Barre d'outils PC Windows (`🛠️ ▸`)** conservée et recalée à gauche (`left: 14px`), sans puces dupliquées sur l'accueil ni lien « Conseils » dans l'en-tête de `index.html`.
 - **Miroir cloud `sti_progressions` (`sync-progressions.js`)** : fusion monotone des vidéos/audios (`sti-media-prog-v1`), chapitres vus, signets, livres QR et révisions J+1/J+3/J+7, avec purge automatique lors d'un changement de compte sur poste partagé (`v463`).
+- **Progression des chapitres v492** : les cinq cours et l’accueil indiquent le nombre de chapitres consultés, tandis que les chapitres volontairement marqués « révisés » restent comptés séparément. Les anciennes visites `en_cours` et révisions `revise` déjà présentes dans le profil sont conservées ; une ancre de cours et une lecture visible, même lors d’un défilement lent, sont enregistrées sans compter les passages rapides. La fin d’un cours tient compte uniquement des chapitres réellement présents et accessibles : en 3SI, le chapitre Bac masqué est exclu du total SQL et le verrou PHP reste inchangé. Il est impossible de reconstituer les visites antérieures qui n’avaient pas été enregistrées.
+- **Suivi et reconnexion v491** : sur les pages équipées du profil (notamment l’accueil, le tableau de bord, les cinq cours, les quiz et plusieurs exercices), le profil unique projette les visites et exercices cochés vers les journaux historiques lus par l’administration. Une connexion explicite ou un retour en ligne y relit le cloud avant de transmettre la progression locale ; la fusion conserve les modifications indépendantes lorsque la base précédente est connue, préserve les records XP et les autres journaux synchronisés, et diffère les envois si la lecture échoue. Les aperçus intégrés laissent la page principale synchroniser. Les autres pages conservent leur synchronisation historique. Après un rechargement entièrement hors ligne, sans base commune connue, une suppression locale ne peut pas toujours être distinguée d’un ajout distant ; il ne faut donc pas promettre une résolution parfaite de tous les conflits. Les XP restent gérés par leur protocole idempotent dédié.
 
 ---
 
@@ -120,7 +131,7 @@ Interface Bento/Spotlight en police **Comic**, ornée du logo officiel (`assets/
 
 - **PostgreSQL & Row Level Security (`15 / 15` tables protégées)** :
   - Chaque table élève (`sti_progressions`, `sti_quiz_parties`, `sti_quiz_reponses`, `sti_quiz_sessions`, `sti_quiz_vus`, `acces`, `profiles`) applique `auth.uid() = user_id` pour les écritures/lectures individuelles et réserve l'administration à `public.est_admin()` / `public.est_admin_mfa()`.
-  - **22 / 22 fonctions SQL du schéma `public`** s'exécutent avec `search_path=public` figé (zéro vulnérabilité de détournement de schéma) ; la RPC `public.admin_sauvegarde_tables_annexes()` exclut explicitement les colonnes sensibles (`secret_hash`).
+  - Les fonctions SQL du schéma `public` fixent `search_path=public` ; la RPC `public.admin_sauvegarde_tables_annexes()` exclut explicitement les colonnes sensibles (`secret_hash`).
 - **Authentification renforcée & anti-abus** :
   - **Cloudflare Turnstile** actif sur `portail.html` et `admin.html`, **MFA TOTP (`AAL2`)** sur les opérations sensibles administrateur (`admin-mdp.js`, purges, mots de passe), verrouillage anti-brute-force sur la connexion et les badges Labo, et redirection Auth strictement limitée à `https://aymenessouyah.github.io/STiV2.0/**`.
 - **Content-Security-Policy (CSP) & hygiène XSS** :
@@ -166,11 +177,27 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 
 ## 🚀 Maintenance, tests automatisés & conventions Bac STI
 
-- **Suite de vérification statique et comportementale (`node:test` + `node:vm`)** :
+- **Tests automatisés** : après `npm ci` et `npx playwright install chromium`, lancer les tests statiques et les suites navigateur depuis la racine :
   ```bash
-  node --test tests/v302-static.test.mjs tests/password-recovery-v441.test.mjs
+  node --test tests/*.test.mjs
+  python3 -m unittest discover -s tests -p 'test_*.py' -v
+  for suite in accueil-personnalise ajustements-cours badge-reprise mobile-nav fidelite css3 javascript sql-php demandes parcours main-integration sw-fidelite v303; do
+    npx playwright test --config "tests/playwright-$suite.config.mjs"
+  done
+  npx playwright test --config tests/playwright.config.mjs
+  npx playwright test --config tests/playwright-xp-quiz.config.mjs
+  npx playwright test --config tests/playwright-quiz-tirages.config.mjs
+  npx playwright test --config tests/playwright-reconnexion-maj.config.mjs
+  npx playwright test --config tests/playwright-nouvelle-verification.config.mjs
+  npx playwright test --config tests/playwright-progression-lecture.config.mjs
   ```
-- **Protocole de mise à jour PWA (`sw.js`)** : incrémenter `CACHE` (`sti-atelier-v330`, après `sti-atelier-v329` / `sti-atelier-v328` / `sti-atelier-v327`) et `UPDATE_ID`, lister uniquement les fichiers modifiés en tête de `UPDATE_FILES`, et régénérer `offline-complete-manifest.json` avec les empreintes Git blob exactes.
+  Les tests navigateur utilisent des identités et un cloud fictifs : ils ne valident pas une authentification Supabase réelle. Les tests SQL utilisent PGlite ; le test de concurrence complémentaire exige explicitement une base PostgreSQL locale jetable. La validation locale v492 couvre 245 scénarios navigateur sur 19 configurations, 173 tests Node dont une base PostgreSQL 17 jetable, et 7 tests Python ; elle ne constitue pas une validation de la production réelle.
+- **Accueil personnalisé** : le prénom provient de la session existante ; le compteur dénombre les cours distincts effectivement ouverts, y compris les anciennes pages de cours du journal de couverture. La dernière lecture ou vidéo reprend dans « Continuer à apprendre », sans exposer le profil en attente d’isolation. Les visites sont conservées dans `sti-profil-abonne` et réunies lors des restaurations cloud ; les restrictions PHP et Bac restent actives.
+- **Badge de compte** : le bouton, l’anneau de couverture, la notification, la loupe et le panneau de compte d’origine sont conservés. La photo validée ou les initiales NOM.Prénom côtoient le logo et le QR locaux ; le ruban est bleu en 3e, vert en 4e, doré pour les professeurs et comptes GOLD, orange pour `elevelabo3` (et l’alias `elevelao3`), noir sinon. Le compte laboratoire prime sur GOLD.
+- **Navigation mobile** : la barre propose Accueil, Cours, Vidéos, Quiz et Autres ; les séries d’exercices restent accessibles dans « Autres ».
+- **Protocole de mise à jour PWA (`sw.js`)** : lors d’une nouvelle publication, incrémenter `CACHE` après `sti-atelier-v353` et `UPDATE_ID`, actualiser les révisions des fichiers modifiés et régénérer `offline-complete-manifest.json`. À la reconnexion, les révisions concernées sont recherchées ; une panne conserve l’ancienne copie et retente le fichier. Les pages appelantes déjà en cache sont remplacées atomiquement lorsqu’elles ont changé ; celles non visitées restent chargées à la demande. Le service worker ne précharge pas automatiquement les médias lourds lors des mises à jour. Les onglets équipés préparent le verrou historique avant activation ; si un onglet ancien ou son stockage ne répond pas, l’activation automatique attend au lieu de provoquer son rechargement. La vérification historique au focus est également préparée sur les pages équipées. **Limites :** un onglet encore ouvert avec l'ancien code peut lui-même lancer un contrôle de version et se recharger au premier déploiement ; une mise à jour forcée explicitement par l’administrateur conserve son comportement d’origine. Sur une installation vierge, le premier affichage précède le contrôle du worker : une visite contrôlée ultérieure met l’accueil en cache ; l’aperçu vidéo CSS3 historique peut, lui, déclencher une requête média indépendamment du worker.
+- **Mesures locales PWA** : avec un cache préchauffé et un serveur de test non compressé, une reconnexion sans changement a demandé `sw.js` une fois (94 095 octets de corps) ; avec un fichier modifié, elle a demandé `sw.js` (94 095 octets) et `app.js` (101 580 octets) une fois chacun, en conservant les autres fichiers et la vidéo en cache. L’accueil réel testé a également demandé `sw.js` une seconde fois, sans rechargement ; le déploiement fictif y avait aussi modifié `app.js`. Ces valeurs ne sont pas des mesures de trafic en production.
+- **Navigation, essai local indicatif** : trois passages par cours pendant le développement, serveur sans compression et ressources externes bloquées. Sur mobile simulé (CPU ×4, 40 ms, 1,6 Mbit/s), les médianes d’ouverture étaient de 18,4 à 21,9 s à froid et de 4,4 à 6,4 s avec PWA préchauffée ; le retour navigateur mesuré allait de 14,8 à 16,6 s à froid et de 2,2 à 2,4 s en cache. Des tests concurrents et les conditions locales influencent ces chiffres ; ils ne remplacent pas une mesure sur téléphone et réseau réels. Le fichier d’accès historique protégé reste notamment volumineux et n’a pas été modifié.
 - **Conventions pédagogiques strictes Bac STI** :
   - **JavaScript** : uniquement les méthodes de l'annexe officielle (`ch[i]`, `substring`, `indexOf`, `lastIndexOf`, `trim`, `toUpperCase`, `toLowerCase`, `replace`, `charCodeAt`, `String.fromCharCode`, `getElementById`, `getElementsByName`, `Date`, `innerHTML`/`textContent`/`document.write`) ;
   - **SQL** : jointures exclusivement dans `WHERE t1.col = t2.col` (aucun `JOIN … ON`) et opérateur `!=` ;
@@ -215,6 +242,20 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 | v476 | Retour instantané depuis `exercices/series-exercices.html` (`#exercices`) et tous les Quiz dont `quiz/php.html` (`#modules`) : suppression de l'auto-rechargement caché en double dans `<iframe id="pdfFrame">` (`src="about:blank"` + `location.replace`), traversée `navigation.traverseTo(key)` avec repli garanti, verrouillage `scrollRestoration="manual"` + ré-alignement post-rendu sur la section cible et déduplication `pagehide` dans `sync-progressions.js` (`sti-atelier-v337`) |
 | v477 | Synchronisation intégrale de la version active `v477` (`sti-atelier-v338`) : purge et mise à jour de l'alias racine `./` avec `./index.html` dans `sw.js`, alignement immédiat de `VERSION_AFFICHEE` sur la roue (`STiV2.0.477`), `admin.html` (`badge-version-admin` & `pied-version-admin`), `nouveautes.js` et `README.md`, et détection instantanée au rechargement `F5` sans délai inter-onglets de 15 minutes (`sti-atelier-v338`) |
 | v478 | Protection monotone multicouche des XP et records de Quiz élèves (`v478` · `sti-atelier-v339`) : verrouillage `pull-before-push` dans `sync-progressions.js` (aucun `POST` avant la fin du premier `tirer()` sur navigateur neuf ou PC partagé), fusion monotone bidirectionnelle des XP/niveaux/records (`sqlQuestV3`, `quizphp_v1_user`, `quizzora_xp_v1`, `sti-quiz-xp-js-v1`, `js_quiz_high_score`, `js_quiz_total_answered`) même lorsque `local >= distant`, plancher d'XP reconstruit automatiquement depuis l'historique immuable `sti_quiz_parties` (`STIQuizSync.resume().xpPlancher`), crédit XP garanti avant rendu ou `pagehide` sur les 4 moteurs de quiz, et trigger PostgreSQL `trg_sti_progressions_monotone_xp` (`public.sti_progressions_preserver_xp()`) actif sur `public.sti_progressions` (`sti-atelier-v339`) |
+| v479 | Fiabilisation intégrale du compteur des vidéos (`.mp4`) et audios (`.mp3`) (`v479` · `sti-atelier-v340`) : conservation de `maxPct`/`done` au clic sur `✕` du bandeau `reprendre.js` (`sec: 0` + `repriseMasquee` sans suppression de clé), suivi automatique des vidéos `.mp4` ouvertes dans `<iframe id="pdfFrame">` sur `exercices/series-exercices.html` (dont Série 4.2 GestLocation), harmonisation des compteurs roue élève (`acces.js`) / `admin.js` / `analytique.js`, résolution canonique des slugs versionnés/encodés dans `protection.js` et fusion monotone sous-clé par sous-clé de `sti-media-prog-v1` dans PostgreSQL (`sti-atelier-v340`) |
+| v480 | Intégration de la refonte de l'accueil, du profil et des cinq cours avec les correctifs XP/médias de v478–v479 : ancres historiques conservées, installation PWA accessible, tests de migration et cache différentiel `sti-atelier-v341` ; les fichiers d'accès protégés restent inchangés. |
+| v481 | Fidélité à l’origine : roue, logo, QR et Cote restaurés ; 13 vidéos avec le lecteur historique complet ; cours PHP animé d’origine ; cinq séries PHP et corrigés ; synthèses dans le cours ; retour contextuel des quiz ; exercices en bulles ; trois thèmes et dix outils regroupés. Les cinq cours affichent leurs objectifs, leur feuille de route et une durée de lecture ; les nouveaux modules essentiels restent disponibles hors ligne (`sti-atelier-v342`). |
+| v482 | Accueil de connexion personnalisé avec prénom, compteur de cours distincts déjà visités, cartes de reprise, état zéro et conservation des visites historiques ; isolation des comptes partagés et mise à jour PWA incrémentale (`sti-atelier-v343`). |
+| v483 | Reprise de lecture/vidéo intégrée à l’accueil personnel et badge de compte à ruban par classe, sans remplacer le panneau ni la progression d’origine ; ressources disponibles hors ligne (`sti-atelier-v344`). |
+| v484 | Navigation mobile : accès direct aux vidéos dans la barre inférieure ; séries d’exercices conservées dans « Autres » (`sti-atelier-v345`). |
+| v485 | Vidéo JavaScript « Validation du champ Nom & Prénom » déplacée dans `assets/videos/` et intégrée à la Série 5 JavaScript (`series-exercices.html` & `cours/javascript.html`) ainsi qu’au catalogue « Vidéos explicatives » avec chapitrage et sous-titres FR (`sti-atelier-v346`). |
+| v486 | Présentation des cours, barre mobile et retour contextuel du quiz ; QR du badge limité à l’ordinateur ; relance ciblée des compteurs XP (`sti-atelier-v347`). |
+| v487 | Cumul idempotent des gains XP effectués hors ligne sur plusieurs appareils, avec reprise par compte et protection des acquis (`sti-atelier-v348`). |
+| v488 | Badge d'abonné sur fond unique avec identité superposée et QR masqué sur mobile (`sti-atelier-v349`). |
+| v489 | Vérification à la reconnexion, reprise du delta après panne sans perdre le noyau hors ligne et comparaison des dépendances par empreinte (`sti-atelier-v350`). |
+| v490 | Identité commune des parties reprises, gains XP cumulatifs idempotents et activation PWA coordonnée entre onglets (`sti-atelier-v351`). Migration SQL préalable requise. |
+| v491 | Logos de matières, salut administrateur, retours quiz contextualisés, projection du suivi et relecture cloud à la reconnexion ; mise à jour incrémentale des pages déjà visitées (`sti-atelier-v352`). |
+| v492 | Compteurs de chapitres consultés distincts des révisions volontaires, navigation mobile et restauration cloud des cinq cours ; mise à jour hors ligne ciblée (`sti-atelier-v353`). |
 
 ---
 
