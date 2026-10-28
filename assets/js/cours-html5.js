@@ -18,6 +18,8 @@
   var VIDEO_TP = "tp-evenements-liens";
   /* v502 : second TP pas à pas, formulaire, tableau et autres balises. */
   var VIDEO_TP_FORMULAIRE = "tp-formulaire-tableau-autre";
+  /* v510 : capsule « display, float et position ». */
+  var VIDEO_TP_DISPLAY = "tp-display-float-position";
   var CHAPITRES = [
     { id: "entete", titre: "Éléments d'en-tête / 1er niveau", temps: 0.00 },
     { id: "structuration", titre: "Structuration d'une page web", temps: 45.09 },
@@ -939,6 +941,7 @@
     suivreVideo(document.getElementById("tabCourseVideo"), VIDEO_COURS);
     suivreVideo(document.getElementById("tpEvenementsVideo"), VIDEO_TP);
     suivreVideo(document.getElementById("tpFormulaireVideo"), VIDEO_TP_FORMULAIRE);
+    suivreVideo(document.getElementById("tpDisplayVideo"), VIDEO_TP_DISPLAY);
     var demo = document.getElementById("demoMultimediaVideo");
     suivreVideo(demo, VIDEO_DEMO);
     if (demo) demo.addEventListener("loadedmetadata", function () {

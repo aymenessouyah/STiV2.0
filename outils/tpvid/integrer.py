@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Intègre les capsules rendues dans le site et met à jour le cache hors-ligne.
 
-    python3 integrer.py                 # les deux capsules
+    python3 integrer.py                 # les trois capsules
     python3 integrer.py events          # seulement la capsule 1
 
 Actions :
@@ -28,6 +28,9 @@ CAPSULES = {
                    anciens=["3 min 12", "3 min 48"]),
     "form": dict(source="sortie_form.mp4", cible="tp-formulaire-tableau-autre.mp4",
                  anciens=["6 min 21", "6 min 30"]),
+    # v510 : troisième capsule — display, float et position (9 min 55).
+    "display": dict(source="sortie_display.mp4", cible="tp-display-float-position.mp4",
+                    anciens=["1 min 12", "1 min 20"]),
 }
 
 

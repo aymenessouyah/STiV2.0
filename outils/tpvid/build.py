@@ -172,12 +172,14 @@ def dessiner(t, index, scene, total, cartons):
 
     if scene.get("code") and typ in ("code", "decor"):
         ligne_code = scene["code"].rstrip("\n").split("\n")
-        avancement = min(1.0, p / 0.4)
+        # v510 : une scène peut retarder l'écriture du CSS (la boîte parle d'abord).
+        debut_code, fin_code = scene.get("code_fenetre", (0.0, 0.4))
+        avancement = min(1.0, max(0.0, (p - debut_code) / max(1e-6, fin_code - debut_code)))
         cycle = max(1, len(ligne_code) - 2)
         surligne = None
-        if p > 0.12:
+        if avancement > 0.05:
             surligne = min(len(ligne_code) - 1,
-                           int(((p - 0.12) / 0.8) * cycle * (scene.get("cycles", 1.0))) % cycle)
+                           int(((avancement - 0.05) / 0.95) * cycle * (scene.get("cycles", 1.0))) % cycle)
         R.editeur(im, d, ligne_code, BOX_CODE, avancement, surligne, cartons.get("fichier", "tp.html"))
         box = BOX_PAGE
         d = ImageDraw.Draw(im)
