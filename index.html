@@ -13,6 +13,11 @@
 
   <!-- Feuille de style unique du Design System STI V2.0 -->
   <link rel="stylesheet" href="assets/css/theme.css" />
+  <!-- La vidéo à la une est tirée au hasard : masquer ses libellés jusqu'à l'application. -->
+  <style>
+    .featured-video-card[data-video-a-la-une]:not(.is-pret) .featured-video-card__head,
+    .featured-video-card[data-video-a-la-une]:not(.is-pret) .video-hero-overlay__meta { visibility: hidden; }
+  </style>
   <link rel="stylesheet" href="assets/css/protection.css?v=227" />
 
   <!-- Ordre strict des scripts : config -> supabase-umd -> acces -> sync-progressions -> profil -> app -->
@@ -26,6 +31,8 @@
   <script defer src="assets/js/protection.js?v=227&amp;rev=479"></script><script src="assets/js/lecteur-commun.js" defer></script>
   <script defer src="assets/js/reprendre.js?v=479"></script>
 <script src="assets/js/suivi-profil.js" defer></script><script src="assets/js/reconnexion-profil.js" defer></script><script src="assets/js/appel-quiz.js" defer></script>
+  <!-- File write-ahead des quiz et des gains XP : vidée dès la première reconnexion, sans attendre un retour sur un quiz. -->
+  <script src="assets/js/quiz-sync.js?v=460" defer></script>
 </head>
 <body class="sti-v2">
   <!-- Lien d'évitement clavier (accessibilité RGAA / WCAG) -->
@@ -177,11 +184,11 @@
           </div>
 
           <!-- Colonne droite : Bloc « Vidéo à la une » mis en avant -->
-          <div class="featured-video-card">
+          <div class="featured-video-card" data-video-a-la-une>
             <div class="featured-video-card__head">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                 <span class="badge badge-new">🎬 VIDÉO À LA UNE</span>
-                <span class="badge badge-css">CSS3 · 11:24</span>
+                <span class="badge badge-css" id="heroVideoBadge">CSS3 · 11:24</span>
               </div>
               <span style="font-size:.76rem;color:var(--text-muted);font-weight:700">.MP4 HD + Sous-titres FR</span>
             </div>
@@ -196,7 +203,7 @@
                 <span class="video-play-btn" aria-hidden="true">▶</span>
                 <span class="video-hero-overlay__meta">
                   <span style="font-size:.78rem;font-weight:700;color:#7dd3fc">CAPSULE VIDÉO EXPLICATIVE</span>
-                  <strong style="font-size:1.05rem;color:#f8fafc">CSS3 — Sélecteurs, Flexbox &amp; animations pas à pas</strong>
+                  <strong style="font-size:1.05rem;color:#f8fafc" id="heroVideoTitre">CSS3 — Sélecteurs, Flexbox &amp; animations pas à pas</strong>
                 </span>
               </button>
             </div>

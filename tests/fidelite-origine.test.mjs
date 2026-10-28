@@ -98,7 +98,8 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin.startsWith('cours/') || chemin === 'assets/css/cours.css' ? 'onglets-mobile-v493' : 'progression-chapitres-v492';
+    const revision = chemin === 'assets/js/app.js' ? 'video-alea-xp-v495' :
+      chemin.startsWith('cours/') || chemin === 'assets/css/cours.css' ? 'onglets-mobile-v493' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
   assert.doesNotMatch(lire('assets/js/visionneuse-exercices.js'), /\blocalStorage\b|\bsessionStorage\b/);

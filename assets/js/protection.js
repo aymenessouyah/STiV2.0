@@ -1018,7 +1018,10 @@
       }
 
       var pathLower = (location.pathname || "").toLowerCase();
+      /* Aucune vidéo de cours dans les pages de quiz : le lecteur pas à pas,
+         ses boutons et ses pistes ne doivent jamais y être montés. */
       if (
+        pathLower.indexOf("/quiz/") !== -1 ||
         pathLower.indexOf("portail.html") !== -1 ||
         pathLower.indexOf("admin.html") !== -1 ||
         pathLower.indexOf("carte-visite.html") !== -1 ||
