@@ -6,6 +6,5 @@ playwright-report/
 /_headers/
 /cours/sql/index.html
 
-# outils de fabrication des vidéos TP : narrations générées + audio intermédiaire
-/outils/tpvid/voix/
+# outils de fabrication des vidéos TP : audio intermédiaire
 /outils/tpvid/audio/
