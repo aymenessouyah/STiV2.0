@@ -1,7 +1,5 @@
-/* Badge de compte : le véritable bouton et le panneau restent ceux d'acces.js.
-   La photo validée remplace les initiales NOM.Prénom ; l'anneau de couverture,
-   les notifications et la loupe d'origine conservent leurs éléments existants.
-   Aucun badge n'est créé pour l'administrateur strict, exclu par acces.js. */
+/* Badge du bouton historique : photo ou initiales, anneau et loupe conservés.
+   L'administrateur strict n'a pas de roue créée par acces.js. */
 (function () {
   "use strict";
   if (window.__STI_ROUE_INITIALES) return;
@@ -16,7 +14,7 @@
     var feuille = doc.createElement("link");
     feuille.id = "sti-badge-compte-css";
     feuille.rel = "stylesheet";
-    feuille.href = racine + "assets/css/badge-compte.css?v=483";
+    feuille.href = racine + "assets/css/badge-compte.css?v=488";
     (doc.head || doc.documentElement).appendChild(feuille);
   }
 
@@ -62,8 +60,7 @@
     return s.replace(/[\s._\-]+/g, "");
   }
 
-  /* Le cache historique peut encore appartenir à un autre compte pendant le
-     changement de session. Ne jamais afficher son identité ou sa photo. */
+  /* Ne jamais afficher le cache d'un autre compte. */
   function donneesDuCompte(etatFourni) {
     var c = cache();
     var etat = etatFourni || null;
@@ -86,8 +83,7 @@
     var classe = normaliser(c.classe);
     var identifiants = [classe, normaliser(String(c.email || "").split("@")[0]),
       normaliser(c.username), normaliser(c.identifiant), normaliser(c.login), normaliser(c.id)];
-    /* « elevelabo3 » est le nom utilisé par les accès ; accepter aussi
-       l'orthographe « elevelao3 » demandée, avant toute règle GOLD/prof. */
+    /* Le compte laboratoire reste orange, même GOLD/prof. */
     if (identifiants.some(function (id) { return id === "elevelabo3" || id === "elevelao3"; })) return "orange";
     var role = normaliser(c.role);
     var prof = /^(prof|professeur|professeure|enseignant|enseignante|teacher)$/.test(classe) ||
@@ -118,32 +114,26 @@
     if (anneau) anneau.classList.add("sti-badge-identite__anneau");
     if (wrap) wrap.classList.add("sti-badge-identite__wrap");
 
+    /* Un seul fond local contient déjà le logo et le QR d'origine. */
+    var fond = doc.createElement("span");
+    fond.className = "sti-badge-identite__fond";
+    fond.setAttribute("aria-hidden", "true");
     avatar = doc.createElement("span");
     avatar.className = "sti-badge-identite__avatar";
     avatar.setAttribute("aria-hidden", "true");
     var copie = doc.createElement("span");
     copie.className = "sti-badge-identite__copie";
-    var marque = doc.createElement("strong");
-    marque.className = "sti-badge-identite__marque";
-    marque.textContent = "STI V2.0";
+    var nom = doc.createElement("strong");
+    nom.className = "sti-badge-identite__nom";
     var classe = doc.createElement("span");
     classe.className = "sti-badge-identite__classe";
-    copie.appendChild(marque);
+    copie.appendChild(nom);
     copie.appendChild(doc.createTextNode(" "));
     copie.appendChild(classe);
-    var logo = doc.createElement("img");
-    logo.className = "sti-badge-identite__logo";
-    logo.src = racine + "assets/icons/sti-icon-192.png";
-    logo.alt = "";
-    var qr = doc.createElement("img");
-    qr.className = "sti-badge-identite__qr";
-    qr.src = racine + "assets/images/qr-code-site.png";
-    qr.alt = "";
+    btn.appendChild(fond);
     btn.appendChild(avatar);
     btn.appendChild(doc.createTextNode(" "));
     btn.appendChild(copie);
-    btn.appendChild(logo);
-    btn.appendChild(qr);
     return avatar;
   }
 
@@ -159,7 +149,10 @@
     var ruban = couleurRuban(c, donnees.indicateursGlobaux);
     if (anneau && anneau.getAttribute("data-sti-ruban") !== ruban) anneau.setAttribute("data-sti-ruban", ruban);
     var classe = String(c.classe || "").trim() || "Membre";
+    var nomComplet = [c.prenom, c.nom].filter(Boolean).join(" ").trim() || "Abonné";
+    var nomEl = btn.querySelector(".sti-badge-identite__nom");
     var classeEl = btn.querySelector(".sti-badge-identite__classe");
+    if (nomEl && nomEl.textContent !== nomComplet) { nomEl.textContent = nomComplet; nomEl.title = nomComplet; }
     if (classeEl && classeEl.textContent !== classe) classeEl.textContent = classe;
     var ph = photoValide(c.photo_url);
     var wantIni = initiales(c);
@@ -177,7 +170,7 @@
       }
       btn.__stiIdentiteBadge = identite;
     }
-    var etiquette = (wantIni || (ph ? "" : "•")) + " STI V2.0 " + classe + " : ouvrir mon compte";
+    var etiquette = (wantIni || (ph ? "" : "•")) + " " + nomComplet + " " + classe + " : ouvrir mon compte STI V2.0";
     if (btn.getAttribute("aria-label") !== etiquette.trim()) btn.setAttribute("aria-label", etiquette.trim());
 
     var cle = ph ? ("ph:" + ph.length + ":" + ph.slice(-24)) : ("in:" + wantIni);

@@ -133,8 +133,8 @@ test('le QR disparaît seulement du badge mobile et le panneau de compte reste u
   await page.goto('/index.html', { waitUntil: 'domcontentloaded' });
   const badge = page.locator('#sti-roue-btn.sti-badge-identite');
   await expect(badge).toBeVisible();
-  await expect(badge.locator('.sti-badge-identite__qr')).toBeHidden();
-  await expect(badge.locator('.sti-badge-identite__logo')).toBeVisible();
+  await expect(badge.locator('.sti-badge-identite__fond')).toBeVisible();
+  await expect(badge.locator('.sti-badge-identite__fond')).toHaveCSS('background-size', '119.75% 100%');
   await badge.click();
   await expect(page.locator('.sti-pan')).toHaveClass(/ouvert/);
   await page.keyboard.press('Escape');
@@ -142,5 +142,5 @@ test('le QR disparaît seulement du badge mobile et le panneau de compte reste u
   await expect(page.locator('#modalContactQr .qr-box img')).toBeVisible();
   await page.keyboard.press('Escape');
   await page.setViewportSize({ width: 701, height: 844 });
-  await expect(badge.locator('.sti-badge-identite__qr')).toBeVisible();
+  await expect(badge.locator('.sti-badge-identite__fond')).toHaveCSS('background-size', '100% 100%');
 });

@@ -84,7 +84,7 @@ function creerCloud() {
     }
     return repondre([]);
   }
-  return { donnees, etat, route };
+  return { donnees, etat, route, operations };
 }
 
 const sdkFictif = `
@@ -454,6 +454,82 @@ test('JavaScript, SQL et PHP additionnent aussi les gains de deux appareils hors
     } finally { await ctxA.close(); await ctxB.close(); }
   }
 });
+
+/* Coupure réseau Chromium réelle ; les réponses cloud restent simulées et isolées. */
+for (const nom of Object.keys(quiz)) {
+  test(`coupure puis reconnexion automatique : deux appareils et deux comptes (${nom})`, async ({ browser }) => {
+    test.setTimeout(120_000);
+    const cloud = creerCloud(); cloud.etat.postsEnPanne = true;
+    const cle = quiz[nom];
+    const valeur = xp => nom === 'sql' ? { xp, level: 2, pseudo: 'Apprenti SQL', profileSet: false, best: {} } : { xp };
+    cloud.donnees.set('alice', { [cle]: JSON.stringify(valeur(1000)) });
+    cloud.donnees.set('bob', { [cle]: JSON.stringify(valeur(400)) });
+    const contextes = [await browser.newContext(), await browser.newContext(), await browser.newContext()];
+    try {
+      await preparer(contextes[0], cloud); await preparer(contextes[1], cloud);
+      await preparer(contextes[2], cloud, { id: 'bob' });
+      const pages = await Promise.all(contextes.map(c => c.newPage()));
+      await Promise.all(pages.map(p => p.goto(`/quiz/${nom}.html`, { waitUntil: 'domcontentloaded' })));
+      for (const [i, page] of pages.entries()) {
+        await expect.poll(async () => JSON.parse(await page.evaluate(k => localStorage.getItem(k), cle) || '{}').xp).toBe(i === 2 ? 400 : 1000);
+      }
+      await expect.poll(() => cloud.etat.rpc.filter(r => r.cle === cle).length).toBeGreaterThanOrEqual(3);
+      cloud.etat.rpcEnPanne = true;
+      await Promise.all(contextes.map(c => c.setOffline(true)));
+      for (const page of pages) expect(await page.evaluate(() => navigator.onLine)).toBe(false);
+
+      async function gagner(page) {
+        if (nom === 'html-css') return repondreCorrectement(page);
+        if (nom === 'sql') {
+          await page.locator('#pseudoInput').fill('Test SQL');
+          await page.locator('#onboardingModal button[onclick="saveProfile()"]').click();
+        } else if (nom === 'javascript') {
+          await page.locator('[onclick="game.start(\'arcade\')"]').click();
+          const bonne = await page.evaluate(() => game.questions[game.currentQuestionIdx].answer);
+          await page.locator('.option-btn').nth(bonne).click();
+          await page.locator('button[onclick="game.endEarly()"]').click();
+        } else {
+          await page.locator('button[onclick="startQuiz()"]').first().click();
+          const bonne = await page.evaluate(() => quiz.list[quiz.idx]._ans);
+          await page.locator('#qOptions .opt-btn').nth(bonne).click();
+          page.once('dialog', d => d.accept());
+          await page.locator('#quizOverlay button[onclick="quitQuiz()"]').click();
+        }
+      }
+      await Promise.all(pages.map(gagner));
+      const files = [];
+      for (const [i, page] of pages.entries()) {
+        const uid = i === 2 ? 'bob' : 'alice';
+        await expect.poll(() => page.evaluate(({ uid, cle }) => STIProfil.listerOperationsQuiz(uid, cle).length, { uid, cle })).toBeGreaterThan(0);
+        files.push(await page.evaluate(({ uid, cle }) => STIProfil.listerOperationsQuiz(uid, cle), { uid, cle }));
+      }
+      const ids = files.flat().map(op => op.id);
+      expect(new Set(ids).size).toBe(ids.length);
+      expect(JSON.parse(cloud.donnees.get('alice')[cle]).xp).toBe(1000);
+      expect(JSON.parse(cloud.donnees.get('bob')[cle]).xp).toBe(400);
+      const somme = file => file.reduce((total, op) => total + op.gain, 0);
+      cloud.etat.rpcEnPanne = false;
+      cloud.etat.perdreReponse = true; // Le serveur applique un gain, mais l'accusé est perdu.
+      // Aucun événement online artificiel : Chromium le déclenche à la reconnexion.
+      await Promise.all([contextes[0].setOffline(false), contextes[1].setOffline(false)]);
+      await expect.poll(() => JSON.parse(cloud.donnees.get('alice')[cle]).xp, { timeout: 20_000 }).toBe(1000 + somme(files[0]) + somme(files[1]));
+      expect(JSON.parse(cloud.donnees.get('bob')[cle]).xp).toBe(400);
+      await contextes[2].setOffline(false);
+      await expect.poll(() => JSON.parse(cloud.donnees.get('bob')[cle]).xp, { timeout: 20_000 }).toBe(400 + somme(files[2]));
+      for (const [i, page] of pages.entries()) {
+        const uid = i === 2 ? 'bob' : 'alice';
+        await expect.poll(() => page.evaluate(({ uid, cle }) => STIProfil.listerOperationsQuiz(uid, cle).length, { uid, cle }), { timeout: 20_000 }).toBe(0);
+      }
+      expect(cloud.operations.size).toBe(ids.length);
+      await Promise.all(pages.map(p => p.evaluate(() => dispatchEvent(new Event('online')))));
+      await expect.poll(() => JSON.parse(cloud.donnees.get('alice')[cle]).xp).toBe(1000 + somme(files[0]) + somme(files[1]));
+      expect(JSON.parse(cloud.donnees.get('bob')[cle]).xp).toBe(400 + somme(files[2]));
+      expect(cloud.operations.size).toBe(ids.length);
+    } finally {
+      await Promise.all(contextes.map(c => c.close()));
+    }
+  });
+}
 
 test('un gain hors ligne reste associé au bon compte après une connexion partagée', async ({ browser }) => {
   const cloud = creerCloud(); cloud.etat.rpcEnPanne = true; cloud.etat.postsEnPanne = true;

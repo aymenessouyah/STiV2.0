@@ -45,11 +45,20 @@ test('le vrai bouton affiche identité, logo, QR, anneau et notification ; ruban
   const btn = page.locator('#sti-roue-btn');
   const anneau = page.locator('#sti-roue-anneau');
   await expect(btn.locator('.sti-badge-identite__avatar')).toHaveText('B.N');
-  await expect(btn.locator('.sti-badge-identite__marque')).toHaveText('STI V2.0');
+  await expect(btn.locator('.sti-badge-identite__nom')).toHaveText('Nour Ben Ali');
   await expect(btn.locator('.sti-badge-identite__classe')).toHaveText('3SI 1');
-  await expect(btn.locator('.sti-badge-identite__logo')).toHaveAttribute('src', /assets\/icons\/sti-icon-192\.png$/);
-  await expect(btn.locator('.sti-badge-identite__qr')).toHaveAttribute('src', /assets\/images\/qr-code-site\.png$/);
-  await expect.poll(() => btn.locator('.sti-badge-identite__qr').evaluate(el => el.complete && el.naturalWidth)).toBe(656);
+  await expect(btn).toHaveAttribute('aria-label', /Nour Ben Ali.*3SI 1/);
+  const fond = btn.locator('.sti-badge-identite__fond');
+  await expect(fond).toHaveCSS('background-image', /badge-compte-vierge\.png/);
+  await expect(fond).toHaveCSS('background-size', '100% 100%');
+  await expect(btn.locator('img')).toHaveCount(0); // Logo et QR sont intégrés au fond CSS.
+  await btn.hover();
+  const agrandissement = await btn.locator('.sti-badge-identite__copie').evaluate(el => {
+    const style = getComputedStyle(el, '::after');
+    return { image: style.backgroundImage, width: style.width, height: style.height };
+  });
+  expect(agrandissement.image).toContain('badge-compte-vierge.png');
+  expect(agrandissement).toMatchObject({ width: '336px', height: '336px' });
   await expect(anneau.locator('#sti-roue-badge')).toBeAttached();
   await expect.poll(() => anneau.evaluate(el => getComputedStyle(el).backgroundImage)).toContain('conic-gradient');
   await page.evaluate(() => { window.__boutonAvant = document.getElementById('sti-roue-btn'); window.__panneauAvant = document.querySelector('.sti-pan'); });
@@ -74,10 +83,43 @@ test('le vrai bouton affiche identité, logo, QR, anneau et notification ; ruban
   expect(await page.evaluate(() => window.__boutonAvant === document.getElementById('sti-roue-btn') && window.__panneauAvant === document.querySelector('.sti-pan'))).toBe(true);
   await btn.click();
   await expect(page.locator('.sti-pan')).toHaveClass(/ouvert/);
+  expect(await btn.locator('.sti-badge-identite__copie').evaluate(el => getComputedStyle(el, '::after').content)).toBe('none');
   await expect(page.locator('#sti-pan-login')).toBeAttached();
   await expect(page.locator('#sti-pan-theme')).toBeAttached();
   await page.keyboard.press('Escape');
   await expect(page.locator('.sti-pan')).not.toHaveClass(/ouvert/);
+});
+
+test('le fond unique masque le QR sans masquer le logo sur mobile, y compris au focus', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await preparer(page);
+  await ouvrirAccueil(page);
+  const btn = page.locator('#sti-roue-btn');
+  const fond = btn.locator('.sti-badge-identite__fond');
+  await expect(fond).toHaveCSS('background-image', /badge-compte-vierge\.png/);
+  await expect(fond).toHaveCSS('background-size', '119.75% 100%');
+  await expect(btn.locator('.sti-badge-identite__nom')).toHaveText('Nour Ben Ali');
+  await btn.focus();
+  expect(await btn.locator('.sti-badge-identite__copie').evaluate(el => getComputedStyle(el, '::after').content)).toBe('none');
+  // Le fond est cadré à gauche : le logo tient dans le cadre, le QR en sort.
+  const facteur = await fond.evaluate(el => parseFloat(getComputedStyle(el).backgroundSize) / 100);
+  expect(2046 / 2520 * facteur).toBeLessThan(1);
+  expect(2124 / 2520 * facteur).toBeGreaterThan(1);
+  await btn.click();
+  await expect(page.locator('.sti-pan')).toHaveClass(/ouvert/);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.sti-pan')).not.toHaveClass(/ouvert/);
+});
+
+test('un nom long reste lisible sans déborder et demeure accessible en entier', async ({ page }) => {
+  await preparer(page, { session: { prenom: 'Amel', nom: 'Ben Ali Ben Salah Très Long', classe: '4SI 1' } });
+  await ouvrirAccueil(page);
+  const nom = page.locator('.sti-badge-identite__nom');
+  await expect(nom).toHaveText('Amel Ben Ali Ben Salah Très Long');
+  await expect(nom).toHaveAttribute('title', 'Amel Ben Ali Ben Salah Très Long');
+  await expect(page.locator('#sti-roue-btn')).toHaveAttribute('aria-label', /Amel Ben Ali Ben Salah Très Long/);
+  await expect(nom).toHaveCSS('text-overflow', 'ellipsis');
+  expect(await nom.evaluate(el => el.scrollWidth)).toBeGreaterThan(await nom.evaluate(el => el.clientWidth));
 });
 
 test('photo validée, loupe, photo en attente, initiales et changement de compte', async ({ page }) => {
@@ -93,6 +135,7 @@ test('photo validée, loupe, photo en attente, initiales et changement de compte
   await expect(avatar.locator('img.sti-roue-photo-img')).toHaveAttribute('src', photo);
   await expect.poll(() => avatar.locator('img').evaluate(el => el.naturalWidth)).toBe(2);
   await avatar.hover();
+  expect(await page.locator('.sti-badge-identite__copie').evaluate(el => getComputedStyle(el, '::after').content)).toBe('none');
   await expect(page.locator('#sti-site-zoom-photo-pop')).toHaveCSS('visibility', 'visible');
   await expect(page.locator('#sti-site-zoom-photo-pop img')).toHaveAttribute('src', photo);
   await changerSession(page, { photo_url: '', photo_attente: photo, nom: 'Élève', prenom: 'Amel' });
@@ -108,6 +151,10 @@ test('photo validée, loupe, photo en attente, initiales et changement de compte
     window.__stiRafraichirRoueAvatar();
   });
   await expect(avatar).toHaveText('S.N');
+  await expect(page.locator('.sti-badge-identite__nom')).toHaveText('Nour Sassi');
+  await expect(page.locator('.sti-badge-identite__classe')).toHaveText('4SI 1');
+  await expect(avatar.locator('img')).toHaveCount(0);
+  await expect(page.locator('#sti-roue-btn')).toHaveAttribute('aria-label', /Nour Sassi/);
   await expect(page.locator('#sti-roue-anneau')).toHaveAttribute('data-sti-ruban', 'vert');
 });
 

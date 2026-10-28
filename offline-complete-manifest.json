@@ -1,9 +1,9 @@
 {
-  "version": "v487-sti-atelier-v348",
-  "generatedAt": "2026-10-27T22:20:11Z",
+  "version": "v488-sti-atelier-v349",
+  "generatedAt": "2026-10-28T04:33:48Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 688,
-  "totalBytes": 682510776,
+  "totalFiles": 689,
+  "totalBytes": 682573040,
   "files": [
     {
       "path": "404.html",
@@ -12,8 +12,8 @@
     },
     {
       "path": "assets/css/badge-compte.css",
-      "bytes": 7514,
-      "gitSha": "4acc4e0555136be9077b4f9ab308465fc69b3550"
+      "bytes": 7719,
+      "gitSha": "618f99e232430ae06b9607cdceb5cbe584b8338b"
     },
     {
       "path": "assets/css/dialogues-compat.css",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 34230,
-      "gitSha": "d519aecda02eb8e9a045614e57dd4338084d44cd"
+      "bytes": 34678,
+      "gitSha": "62901f9f093334bb6c93b41b6d88f303a44511e4"
     },
     {
       "path": "admin.html",
@@ -787,8 +787,8 @@
     },
     {
       "path": "assets/js/roue-initiales.js",
-      "bytes": 15951,
-      "gitSha": "f85805b46163b7d9a3e50798985fb4f313092b24"
+      "bytes": 15673,
+      "gitSha": "72a4f5423c71529a28b4813646d7b74ddfaf77ec"
     },
     {
       "path": "assets/js/roue-nuage.js",
@@ -3337,8 +3337,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 88169,
-      "gitSha": "bc5a4389d5a68f0ddaefe33cdae36a69e8057b73"
+      "bytes": 88434,
+      "gitSha": "b9b05e6db9c01d5a44f14b75ce227196834294b7"
     },
     {
       "path": "assets/css/cours-matieres.css",
@@ -3444,6 +3444,11 @@
       "path": "supabase/migrations/20261027_xp_quiz_operations_v487.sql",
       "bytes": 10479,
       "gitSha": "7407ffa3d34ff09011e85718f6ceade399fa2afd"
+    },
+    {
+      "path": "assets/images/badge-compte-vierge.png",
+      "bytes": 61624,
+      "gitSha": "b110d92ba363516d767ee16e7ee03a935e519e37"
     }
   ]
 }
