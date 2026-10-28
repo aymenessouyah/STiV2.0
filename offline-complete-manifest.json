@@ -1,9 +1,9 @@
 {
-  "version": "v501-sti-atelier-v362",
-  "generatedAt": "2026-10-28T18:55:17Z",
+  "version": "v502-sti-atelier-v363",
+  "generatedAt": "2026-10-28T19:10:41Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 700,
-  "totalBytes": 690226637,
+  "totalFiles": 703,
+  "totalBytes": 698756954,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 48074,
-      "gitSha": "aca8bad638d5b3ed56d0a4f8d7915d98996fad7f"
+      "bytes": 49633,
+      "gitSha": "923ebf4b20e9f03fc4e0b0bbeced1be33a2439f2"
     },
     {
       "path": "admin.html",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 107503,
-      "gitSha": "2ddbda1fa56c2210472c310a66d29c71fb640279"
+      "bytes": 108170,
+      "gitSha": "21172e5367c10bb2768bf630d507fe7adcbcb461"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -702,13 +702,13 @@
     },
     {
       "path": "assets/js/cours-css3.js",
-      "bytes": 43822,
-      "gitSha": "7e96ea480a5cf933a08db7e42afe698def744ef1"
+      "bytes": 44201,
+      "gitSha": "eea3f2ef95b633dd5a7b3d8f776221d77a405f11"
     },
     {
       "path": "assets/js/cours-html5.js",
-      "bytes": 55265,
-      "gitSha": "ee55aadb966c28d9b813f55a5239dd0005870f2f"
+      "bytes": 55484,
+      "gitSha": "186ca12fd21c3b2eb4e9bf93d2d5e82fcf6c2f9c"
     },
     {
       "path": "assets/js/cours-javascript.js",
@@ -817,8 +817,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 212397,
-      "gitSha": "ebfbe45c721b65a012fc08db8450835947948bf0"
+      "bytes": 212892,
+      "gitSha": "0d2e09c5fe27dd4d733e64e10e6d9b855520c93b"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1146,6 +1146,11 @@
       "gitSha": "d0c422a86b0189059d83c54b5978434289525e06"
     },
     {
+      "path": "assets/videos/tp-formulaire-tableau-autre.mp4",
+      "bytes": 8262411,
+      "gitSha": "71937c40ea43fbc4f342b4aaca0564e971cbf9e2"
+    },
+    {
       "path": "assets/videos/validation-nom-prenom-js.mp4",
       "bytes": 49095652,
       "gitSha": "4c53fdda9a9d3d53aae821bb9ef3b99ea6189ab8"
@@ -1192,8 +1197,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 209631,
-      "gitSha": "795a1a94fefccdbeb779c495c6d623f04a4022b9"
+      "bytes": 211299,
+      "gitSha": "ead30b05e6c8114f72411b43fa0081ea322c99d8"
     },
     {
       "path": "cours/datalist.html",
@@ -1207,8 +1212,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 202900,
-      "gitSha": "c29e28d91f924618bf208e9580a42aa036bd5ad5"
+      "bytes": 205245,
+      "gitSha": "7488a2fcae29ea183c9ea750195f5539e1e5e2db"
     },
     {
       "path": "cours/javascript.html",
@@ -2641,6 +2646,16 @@
       "gitSha": "e757612a3dc5db86c8ba1654750c4daeddc03a0c"
     },
     {
+      "path": "exercices/html-css/tp-formulaire-tableau-autre/drapeau.png",
+      "bytes": 232488,
+      "gitSha": "ecd386129e5c4f30bd78e5c01840edeebe42cb0c"
+    },
+    {
+      "path": "exercices/html-css/tp-formulaire-tableau-autre/index.html",
+      "bytes": 27491,
+      "gitSha": "938849f8c2c4b9769e0541dbe6a3243e7eda1163"
+    },
+    {
       "path": "exercices/javascript/Tp1-Correction-js.html",
       "bytes": 16577,
       "gitSha": "7ce84a6581d2e3721c0a86d8749c76b30200bff4"
@@ -3502,8 +3517,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 95328,
-      "gitSha": "84775ca5ca489c32b40c5b0cb3ed9478cd8865c1"
+      "bytes": 95923,
+      "gitSha": "6c216c2c392317cc5687673ed8e9e379a75adfc4"
     }
   ]
 }

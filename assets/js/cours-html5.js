@@ -16,6 +16,8 @@
   var VIDEO_DEMO = "html5-demo";
   /* v500 : le TP « événements, liens et arrière-plans » est commun à HTML5 et CSS3. */
   var VIDEO_TP = "tp-evenements-liens";
+  /* v502 : second TP pas à pas, formulaire, tableau et autres balises. */
+  var VIDEO_TP_FORMULAIRE = "tp-formulaire-tableau-autre";
   var CHAPITRES = [
     { id: "entete", titre: "Éléments d'en-tête / 1er niveau", temps: 0.00 },
     { id: "structuration", titre: "Structuration d'une page web", temps: 45.09 },
@@ -936,6 +938,7 @@
     suivreVideo(document.getElementById("heroCourseVideo"), VIDEO_COURS);
     suivreVideo(document.getElementById("tabCourseVideo"), VIDEO_COURS);
     suivreVideo(document.getElementById("tpEvenementsVideo"), VIDEO_TP);
+    suivreVideo(document.getElementById("tpFormulaireVideo"), VIDEO_TP_FORMULAIRE);
     var demo = document.getElementById("demoMultimediaVideo");
     suivreVideo(demo, VIDEO_DEMO);
     if (demo) demo.addEventListener("loadedmetadata", function () {

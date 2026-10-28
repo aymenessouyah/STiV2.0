@@ -264,6 +264,21 @@
       codeApercu: "onclick=\"journal('clic')\""
     },
     {
+      /* v502 : TP pas à pas « formulaire, tableau et autres balises », commun à HTML5 et CSS3. */
+      id: "tp-formulaire-tableau-autre",
+      matiere: "html5",
+      matieres: ["html5", "css3"],
+      nomMatiere: "HTML5 + CSS3",
+      badgeClasse: "badge-html",
+      couleur: "#ff783c",
+      titre: "TP — Formulaire, tableau et autres balises",
+      dureeTexte: "06:21",
+      srcPrincipal: "assets/videos/tp-formulaire-tableau-autre.mp4",
+      urlTP: "exercices/html-css/tp-formulaire-tableau-autre/index.html",
+      urlCours: "exercices/html-css/tp-formulaire-tableau-autre/index.html",
+      codeApercu: "<td colspan=\"2\">fusion</td>"
+    },
+    {
       id: "javascript-cours",
       matiere: "javascript",
       nomMatiere: "JavaScript",

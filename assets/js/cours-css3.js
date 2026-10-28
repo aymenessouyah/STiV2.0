@@ -356,6 +356,7 @@
     positionnement:{titre:'Positionnement animé',description:'display · position · float — pas à pas',url:'../Positionnement-animee/index.html',videoId:'css-positionnement',video:'../assets/videos/css-positionnement.mp4',videoTitle:'CSS pas à pas — Positionnement animé'},
     cssanimee:{titre:'CSS animée',description:'arrière-plans · liens · ombres · bordures · tableaux · listes',url:'../cssanimee/index.html',videoId:'css-animee',video:'../assets/videos/css-animee.mp4',videoTitle:'CSS pas à pas — Décoration animée'},
     tpEvenements:{titre:'TP — Événements, liens et arrière-plans',description:'événements JavaScript · pseudo-classes des liens · background',url:'../exercices/html-css/tp-evenements-liens/index.html',videoId:'tp-evenements-liens',video:'../assets/videos/tp-evenements-liens-v2.mp4',videoTitle:'TP — Événements, liens et arrière-plans'},
+    tpFormulaire:{titre:'TP — Formulaire, tableau et autres balises',description:'formulaire HTML5 · border-collapse · table-layout · figure et vidéo',url:'../exercices/html-css/tp-formulaire-tableau-autre/index.html',videoId:'tp-formulaire-tableau-autre',video:'../assets/videos/tp-formulaire-tableau-autre.mp4',videoTitle:'TP — Formulaire, tableau et autres balises'},
     background:{titre:'Détails background — TP Site Tunisie',description:'image de fond · voile · carte badge — mémo interactif corrigé',url:'../projets/site-tunisie/correction-details/carte-timbre-droite-haut.html'}
   };
   function preparerChangementVideo(lecteur){

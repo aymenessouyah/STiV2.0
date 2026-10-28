@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TP : Formulaire, Tableau, Autres .... HTML5 / CSS3</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 0 12px;
+        color: #222;
+      }
+      h1,
+      h2 {
+        color: #1f4e79;
+      }
+      fieldset {
+        margin-bottom: 16px;
+        border: 2px solid #1f4e79;
+        border-radius: 6px;
+      }
+      legend {
+        font-weight: bold;
+        color: #1f4e79;
+        padding: 0 8px;
+      }
+      label {
+        display: inline-block;
+        min-width: 150px;
+        margin: 6px 0;
+      }
+      input,
+      select,
+      textarea {
+        padding: 4px;
+      }
+      button,
+      .btn {
+        padding: 8px 16px;
+        margin: 4px;
+        border: 0;
+        border-radius: 4px;
+        background: #1f4e79;
+        color: #fff;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 14px;
+      }
+      button[type="reset"] {
+        background: #c0392b;
+      }
+
+      /* ========== PARTIE TABLEAU ========== */
+      table {
+        width: 100%;
+        margin-bottom: 30px;
+      }
+      caption {
+        caption-side: top;
+        font-weight: bold;
+        padding: 8px;
+        color: #1f4e79;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      th {
+        background: #1f4e79;
+        color: #fff;
+      }
+      tfoot td {
+        background: #ddd;
+        font-weight: bold;
+      }
+
+      /* 1) border-collapse: separate  -> chaque cellule garde sa propre bordure.
+        Les "murs" = l'espace créé par border-spacing ; on les colore
+        avec la background-color du <table> (elle apparaît dans l'espace). */
+      .separate {
+        border-collapse: separate;
+        border-spacing: 6px 10px; /* horizontal vertical */
+        background-color: #e67e22; /* couleur des murs entre cellules */
+        empty-cells: show; /* afficher les cellules vides (hide possible) */
+        table-layout: auto; /* largeur selon le contenu */
+      }
+      .separate td {
+        background: #eaf2fb;
+        border: 2px solid #1f4e79;
+      }
+
+      /* 2) border-collapse: collapse -> bordures fusionnées en une seule.
+        border-spacing est ignoré ; le mur = la bordure elle-même. */
+      .collapse {
+        border-collapse: collapse;
+        table-layout: fixed; /* largeur imposée par la 1ère ligne / les <col> */
+      }
+      .collapse th,
+      .collapse td {
+        border: 4px solid #e67e22;
+      }
+      .collapse tbody tr:nth-child(even) td {
+        background: #eaf2fb;
+      }
+      .collapse td.special {
+        border-color: #c0392b;
+      } /* mur d'une cellule en rouge */
+
+      /* 3) table-layout: fixed vs auto */
+      .fixed {
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      .fixed th,
+      .fixed td {
+        border: 1px solid #1f4e79;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .auto {
+        table-layout: auto;
+        border-collapse: collapse;
+      }
+      .auto th,
+      .auto td {
+        border: 1px solid #1f4e79;
+      }
+      .recap {
+        border-collapse: collapse;
+        margin-bottom: 10px;
+      }
+      .recap th,
+      .recap td {
+        border: 1px solid #1f4e79;
+        font-size: 14px;
+      }
+      .recap td:last-child {
+        text-align: left;
+      }
+      figure {
+        display: inline-block;
+        vertical-align: top;
+        margin: 10px 16px 10px 0;
+        padding: 8px;
+        border: 2px solid #1f4e79;
+        border-radius: 6px;
+        background: #eaf2fb;
+      }
+      figure img,
+      figure video {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+      figcaption {
+        margin-top: 6px;
+        font-size: 13px;
+        font-style: italic;
+        text-align: center;
+        max-width: 480px;
+      }
+      h3 {
+        color: #e67e22;
+      }
+      mark {
+        background: #fff176;
+        padding: 0 3px;
+      }
+      cite {
+        color: #1f4e79;
+        font-weight: bold;
+      }
+      address {
+        border-left: 4px solid #e67e22;
+        padding-left: 10px;
+        margin: 10px 0;
+      }
+      details {
+        border: 1px solid #1f4e79;
+        border-radius: 4px;
+        padding: 8px;
+        margin-bottom: 8px;
+        background: #eaf2fb;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: bold;
+        color: #1f4e79;
+      }
+      output {
+        font-weight: bold;
+        color: #e67e22;
+      }
+      fieldset[disabled] {
+        opacity: 0.6;
+      }
+      footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 13px;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+      TP : Formulaire HTML5(complet) - Tableau CSS3 - Structure complète : caption, colgroup, thead, tbody, tfoot,
+      colspan, rowspan - FIGURE ET VIDÉO - Autres Balises
+    </h1>
+
+    <!-- ========================= PARTIE 1 : FORMULAIRE ========================= -->
+    <h2>1. Formulaire complet</h2>
+
+    <!-- ===== Attributs method et target du <form> ===== -->
+    <fieldset>
+      <legend>Attributs <code>method</code> et <code>target</code> du formulaire</legend>
+
+      <table class="recap">
+        <caption>
+          Récapitulatif
+        </caption>
+        <thead>
+          <tr>
+            <th>Attribut</th>
+            <th>Valeur</th>
+            <th>Effet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2"><code>method</code></td>
+            <td><code>get</code></td>
+            <td>
+              Données envoyées dans l'URL (<code>?nom=Ali&amp;age=16</code>) : visibles, limitées en taille, pour les
+              recherches
+            </td>
+          </tr>
+          <tr>
+            <td><code>post</code></td>
+            <td>
+              Données envoyées dans le corps de la requête : invisibles, sans limite pratique, pour mots de passe et
+              fichiers
+            </td>
+          </tr>
+          <tr>
+            <td rowspan="5"><code>target</code></td>
+            <td><code>_self</code></td>
+            <td>Résultat dans la même fenêtre/onglet (valeur par défaut)</td>
+          </tr>
+          <tr>
+            <td><code>_blank</code></td>
+            <td>Résultat dans un nouvel onglet</td>
+          </tr>
+          <tr>
+            <td><code>_parent</code></td>
+            <td>Résultat dans le cadre parent (si la page est dans un iframe ; sinon comme <code>_self</code>)</td>
+          </tr>
+          <tr>
+            <td><code>_top</code></td>
+            <td>Résultat dans la fenêtre entière, en sortant de tous les cadres</td>
+          </tr>
+          <tr>
+            <td><code>nomIframe</code></td>
+            <td>Résultat dans l'iframe (ou la fenêtre) dont l'attribut <code>name</code> vaut cette valeur</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Essai :</strong> choisissez la méthode et la cible, puis envoyez.</p>
+      <form id="formTest" action="#" method="get" target="_self">
+        <label for="tnom" style="min-width: 120px">Nom :</label>
+        <input type="text" id="tnom" name="nom" value="Ali" /><br />
+
+        <label for="tmethod" style="min-width: 120px">method :</label>
+        <select id="tmethod" onchange="document.getElementById('formTest').method = this.value">
+          <option value="get">get</option>
+          <option value="post">post</option></select
+        ><br />
+
+        <label for="ttarget" style="min-width: 120px">target :</label>
+        <select id="ttarget" onchange="document.getElementById('formTest').target = this.value">
+          <option value="_self">_self</option>
+          <option value="_blank">_blank</option>
+          <option value="_parent">_parent</option>
+          <option value="_top">_top</option>
+          <option value="monIframe">monIframe (nom d'un iframe)</option></select
+        ><br />
+
+        <button type="submit">Tester l'envoi</button>
+      </form>
+
+      <p>Iframe cible (<code>name="monIframe"</code>) :</p>
+      <iframe
+        name="monIframe"
+        title="Cible du formulaire"
+        width="100%"
+        height="140"
+        style="border: 2px dashed #1f4e79"
+      ></iframe>
+    </fieldset>
+
+    <!-- Formulaire principal : method="post" et target="_self" explicites -->
+    <form id="monForm" action="#" method="post" target="_self">
+      <fieldset>
+        <legend>Les champs input classiques</legend>
+        <label for="nom">Nom (text) :</label>
+        <input type="text" id="nom" name="nom" placeholder="Votre nom" required /><br />
+
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" placeholder="exemple@mail.tn" /><br />
+
+        <label for="mdp">Mot de passe :</label>
+        <input type="password" id="mdp" name="mdp" minlength="6" /><br />
+
+        <label for="age">Âge (number) :</label>
+        <input type="number" id="age" name="age" min="10" max="99" step="1" value="16" /><br />
+
+        <label for="niveau">Niveau (range) :</label>
+        <input
+          type="range"
+          id="niveau"
+          name="niveau"
+          min="0"
+          max="20"
+          value="10"
+          oninput="sortie.value = this.value"
+        />
+        <output id="sortie">10</output>/20
+      </fieldset>
+
+      <fieldset>
+        <legend>Choix : radio et checkbox</legend>
+        <p>Sexe (radio — un seul choix, même attribut <code>name</code>) :</p>
+        <input type="radio" id="g" name="sexe" value="garcon" checked /><label for="g" style="min-width: 0"
+          >Garçon</label
+        >
+        <input type="radio" id="f" name="sexe" value="fille" /><label for="f" style="min-width: 0">Fille</label>
+
+        <p>Langages connus (checkbox — choix multiples) :</p>
+        <input type="checkbox" id="c1" name="lang" value="html" /><label for="c1" style="min-width: 0">HTML</label>
+        <input type="checkbox" id="c2" name="lang" value="css" /><label for="c2" style="min-width: 0">CSS</label>
+        <input type="checkbox" id="c3" name="lang" value="js" /><label for="c3" style="min-width: 0">JavaScript</label>
+        <input type="checkbox" id="c4" name="lang" value="php" /><label for="c4" style="min-width: 0">PHP</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Listes : select, option, optgroup</legend>
+        <label for="ville">Ville :</label>
+        <select id="ville" name="ville">
+          <option value="">-- Choisir --</option>
+          <optgroup label="Nord">
+            <option value="tunis">Tunis</option>
+            <option value="ariana">Ariana</option>
+            <option value="bizerte">Bizerte</option>
+          </optgroup>
+          <optgroup label="Centre">
+            <option value="sousse">Sousse</option>
+            <option value="sfax">Sfax</option>
+          </optgroup>
+          <optgroup label="Sud">
+            <option value="gafsa">Gafsa</option>
+            <option value="gabes">Gabès</option>
+          </optgroup></select
+        ><br />
+
+        <label for="matieres">Matières (multiple) :</label>
+        <select id="matieres" name="matieres[]" multiple size="3">
+          <option>Web</option>
+          <option>SQL</option>
+          <option>Algorithmique</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Datalist (suggestions) avec différents types d'input</legend>
+        <label for="dl-text">Navigateur (text) :</label>
+        <input type="text" id="dl-text" name="navigateur" list="liste-nav" />
+        <datalist id="liste-nav">
+          <option value="Chrome"></option>
+          <option value="Firefox"></option>
+          <option value="Edge"></option>
+          <option value="Safari"></option></datalist
+        ><br />
+
+        <label for="dl-time">Heure (time) :</label>
+        <input type="time" id="dl-time" name="heure" list="liste-heure" />
+        <datalist id="liste-heure">
+          <option value="08:00"></option>
+          <option value="10:00"></option>
+          <option value="14:00"></option></datalist
+        ><br />
+
+        <label for="dl-month">Mois (month) :</label>
+        <input type="month" id="dl-month" name="mois" list="liste-mois" />
+        <datalist id="liste-mois">
+          <option value="2026-09"></option>
+          <option value="2026-10"></option>
+          <option value="2026-11"></option></datalist
+        ><br />
+
+        <label for="dl-annee">Année (number) :</label>
+        <input type="number" id="dl-annee" name="annee" min="1990" max="2030" list="liste-annee" />
+        <datalist id="liste-annee">
+          <option value="2024"></option>
+          <option value="2025"></option>
+          <option value="2026"></option></datalist
+        ><br />
+
+        <label for="dl-color">Couleur (color) :</label>
+        <input type="color" id="dl-color" name="couleur" value="#1f4e79" list="liste-couleur" />
+        <datalist id="liste-couleur">
+          <option value="#ff0000"></option>
+          <option value="#00ff00"></option>
+          <option value="#0000ff"></option>
+        </datalist>
+      </fieldset>
+
+      <fieldset>
+        <legend>Zone de texte et fichier</legend>
+        <label for="msg" style="vertical-align: top">Message (textarea) :</label>
+        <textarea id="msg" name="message" rows="4" cols="40" maxlength="300" placeholder="Écrivez ici..."></textarea
+        ><br />
+
+        <label for="fichier">Fichier (file) :</label>
+        <input type="file" id="fichier" name="fichier" accept=".pdf,.jpg,.png,.html" multiple />
+      </fieldset>
+
+      <fieldset>
+        <legend>Attributs de textarea</legend>
+
+        <table class="recap">
+          <caption>
+            Récapitulatif
+          </caption>
+          <thead>
+            <tr>
+              <th>Attribut</th>
+              <th>Rôle</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>name</code></td>
+              <td>Nom du champ : clé utilisée à l'envoi (<code>$_POST['commentaire']</code> en PHP)</td>
+            </tr>
+            <tr>
+              <td><code>cols</code></td>
+              <td>Largeur visible en nombre de caractères</td>
+            </tr>
+            <tr>
+              <td><code>rows</code></td>
+              <td>Hauteur visible en nombre de lignes</td>
+            </tr>
+            <tr>
+              <td><code>readonly</code></td>
+              <td>Texte non modifiable, mais le champ est envoyé avec le formulaire</td>
+            </tr>
+            <tr>
+              <td><code>required</code></td>
+              <td>Champ obligatoire : l'envoi est bloqué s'il est vide</td>
+            </tr>
+            <tr>
+              <td><code>disabled</code></td>
+              <td>Champ grisé, non modifiable et non envoyé avec le formulaire</td>
+            </tr>
+            <tr>
+              <td><code>placeholder</code></td>
+              <td>Texte d'aide affiché tant que le champ est vide</td>
+            </tr>
+            <tr>
+              <td><code>maxlength</code></td>
+              <td>Nombre maximal de caractères autorisés</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <label for="t-name" style="vertical-align: top">name, cols, rows :</label>
+        <textarea id="t-name" name="commentaire" cols="40" rows="3"></textarea><br />
+
+        <label for="t-ro" style="vertical-align: top">readonly :</label>
+        <textarea id="t-ro" name="lecture_seule" cols="40" rows="2" readonly>
+Ce texte est en lecture seule : on ne peut pas le modifier.</textarea
+        ><br />
+
+        <label for="t-req" style="vertical-align: top">required :</label>
+        <textarea id="t-req" name="obligatoire" cols="40" rows="2" required placeholder="Champ obligatoire"></textarea
+        ><br />
+
+        <label for="t-dis" style="vertical-align: top">disabled :</label>
+        <textarea id="t-dis" name="desactive" cols="40" rows="2" disabled>
+Ce champ est désactivé et ne sera pas envoyé.</textarea
+        ><br />
+
+        <label for="t-ph" style="vertical-align: top">placeholder :</label>
+        <textarea id="t-ph" name="aide" cols="40" rows="2" placeholder="Écrivez votre avis ici..."></textarea><br />
+
+        <label for="t-max" style="vertical-align: top">maxlength (50) :</label>
+        <textarea
+          id="t-max"
+          name="limite"
+          cols="40"
+          rows="2"
+          maxlength="50"
+          placeholder="50 caractères maximum"
+        ></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Boutons</legend>
+        <button type="submit">Envoyer (submit)</button>
+        <button type="reset">Effacer (reset)</button>
+        <button type="button" onclick="alert('Bouton simple (button)')">Bouton simple</button>
+        <!-- Bouton de téléchargement : lien avec l'attribut download -->
+        <a class="btn" href="data:text/plain;charset=utf-8,Fichier%20genere%20par%20le%20TP" download="exemple.txt"
+          >⬇ Télécharger un fichier</a
+        >
+        <!-- Variante : télécharger les données saisies dans le formulaire -->
+        <button type="button" onclick="telecharger()">⬇ Télécharger les données saisies</button>
+      </fieldset>
+    </form>
+
+    <!-- ========================= PARTIE 2 : TABLEAUX ========================= -->
+    <h2>2. Le tableau et ses propriétés CSS</h2>
+
+    <!-- Structure complète : caption, colgroup, thead, tbody, tfoot, colspan, rowspan -->
+    <table class="separate">
+      <caption>
+        A) border-collapse: separate + border-spacing (murs colorés par le fond du tableau)
+      </caption>
+      <thead>
+        <tr>
+          <th>Élève</th>
+          <th>Web</th>
+          <th>SQL</th>
+          <th>Moyenne</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ali</td>
+          <td>14</td>
+          <td>16</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td>Sara</td>
+          <td>17</td>
+          <td>15</td>
+          <td>16</td>
+        </tr>
+        <tr>
+          <td rowspan="2">Groupe 2</td>
+          <td>12</td>
+          <td>10</td>
+          <td>11</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td></td>
+          <td>—</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Moyenne de la classe</td>
+          <td>14</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <table class="collapse">
+      <caption>
+        B) border-collapse: collapse + table-layout: fixed (le mur = la bordure colorée)
+      </caption>
+      <colgroup>
+        <col style="width: 40%" />
+        <col style="width: 20%" />
+        <col style="width: 20%" />
+        <col style="width: 20%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Élève</th>
+          <th>Web</th>
+          <th>SQL</th>
+          <th>Moyenne</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ali</td>
+          <td>14</td>
+          <td>16</td>
+          <td class="special">15</td>
+        </tr>
+        <tr>
+          <td>Sara</td>
+          <td>17</td>
+          <td>15</td>
+          <td>16</td>
+        </tr>
+        <tr>
+          <td>Omar</td>
+          <td>12</td>
+          <td>10</td>
+          <td>11</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="fixed">
+      <caption>
+        C) table-layout: fixed — colonnes de largeur égale, le texte long est coupé
+      </caption>
+      <tr>
+        <th>Colonne 1</th>
+        <th>Colonne 2</th>
+        <th>Colonne 3</th>
+      </tr>
+      <tr>
+        <td>Texte très très très long dans la cellule</td>
+        <td>Court</td>
+        <td>Moyen</td>
+      </tr>
+    </table>
+
+    <table class="auto">
+      <caption>
+        D) table-layout: auto — la largeur s'adapte au contenu
+      </caption>
+      <tr>
+        <th>Colonne 1</th>
+        <th>Colonne 2</th>
+        <th>Colonne 3</th>
+      </tr>
+      <tr>
+        <td>Texte très très très long dans la cellule</td>
+        <td>Court</td>
+        <td>Moyen</td>
+      </tr>
+    </table>
+
+    <!-- ========================= PARTIE 3 : FIGURE ET VIDÉO ========================= -->
+    <h2>3. figure, figcaption et video</h2>
+
+    <table class="recap">
+      <caption>
+        Récapitulatif
+      </caption>
+      <thead>
+        <tr>
+          <th>Balise / attribut</th>
+          <th>Rôle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>&lt;figure&gt;</code></td>
+          <td>Conteneur sémantique d'un contenu illustratif (image, vidéo, code, tableau) lié au texte</td>
+        </tr>
+        <tr>
+          <td><code>&lt;figcaption&gt;</code></td>
+          <td>Légende de la figure ; doit être le premier ou le dernier enfant de <code>&lt;figure&gt;</code></td>
+        </tr>
+        <tr>
+          <td><code>&lt;video&gt;</code></td>
+          <td>Intègre une vidéo dans la page</td>
+        </tr>
+        <tr>
+          <td><code>src</code></td>
+          <td>Chemin ou URL du fichier vidéo (.mp4, .webm, .ogg)</td>
+        </tr>
+        <tr>
+          <td><code>controls</code></td>
+          <td>
+            Affiche les commandes du lecteur (lecture, pause, volume, plein écran) ; sans lui, aucune commande
+            n'apparaît
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Figure 1 : image + légende -->
+    <figure>
+      <img src="drapeau.png" alt="Le drapeau tunisien au-dessus du mur du lycée Raféha" width="360" />
+      <figcaption>Figure 1 : le drapeau du lycée Raféha (balise <code>img</code>).</figcaption>
+    </figure>
+
+    <!-- Figure 2 : vidéo + légende (attributs : src et controls) -->
+    <figure>
+      <video src="drapeaurafeha.mp4" controls width="480" preload="metadata" playsinline poster="drapeau.png">Votre navigateur ne supporte pas la balise video.</video>
+      <figcaption>Figure 2 : vidéo avec les attributs <code>src</code> et <code>controls</code>.</figcaption>
+    </figure>
+    <p>
+      <em
+        >Le fichier <code>drapeaurafeha.mp4</code> est placé dans le même dossier que cette page : la vidéo se lit
+        donc directement, sans réglage supplémentaire.</em
+      >
+    </p>
+
+    <!-- ========================= PARTIE 4 : AUTRES BALISES ========================= -->
+    <h2>4. cite, address, output, mark, details, summary, hidden, fieldset, legend</h2>
+
+    <table class="recap">
+      <caption>
+        Récapitulatif
+      </caption>
+      <thead>
+        <tr>
+          <th>Balise / attribut</th>
+          <th>Rôle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>&lt;cite&gt;</code></td>
+          <td>Titre d'une œuvre citée (livre, film, article) ; affiché en italique</td>
+        </tr>
+        <tr>
+          <td><code>&lt;address&gt;</code></td>
+          <td>Coordonnées de l'auteur ou du responsable de la page ; affiché en italique</td>
+        </tr>
+        <tr>
+          <td><code>&lt;output&gt;</code></td>
+          <td>
+            Affiche le résultat d'un calcul ; attribut <code>for</code> = liste des <code>id</code> des champs sources
+          </td>
+        </tr>
+        <tr>
+          <td><code>&lt;mark&gt;</code></td>
+          <td>Surligne un texte pertinent (fond jaune par défaut)</td>
+        </tr>
+        <tr>
+          <td><code>&lt;details&gt;</code></td>
+          <td>Bloc que l'on déplie ou replie ; attribut <code>open</code> pour l'afficher déplié</td>
+        </tr>
+        <tr>
+          <td><code>&lt;summary&gt;</code></td>
+          <td>Titre cliquable de <code>&lt;details&gt;</code> (premier enfant)</td>
+        </tr>
+        <tr>
+          <td><code>hidden</code></td>
+          <td>
+            Attribut qui cache l'élément (comme <code>display:none</code>) ; <code>input type="hidden"</code> envoie
+            une valeur sans l'afficher
+          </td>
+        </tr>
+        <tr>
+          <td><code>&lt;fieldset&gt;</code></td>
+          <td>Regroupe des champs d'un formulaire ; attribut <code>disabled</code> désactive tout le groupe</td>
+        </tr>
+        <tr>
+          <td><code>&lt;legend&gt;</code></td>
+          <td>Titre du <code>&lt;fieldset&gt;</code> (premier enfant)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>cite, mark et address</h3>
+    <p>
+      Selon <cite>Le Petit Prince</cite> d'Antoine de Saint-Exupéry,
+      <mark>l'essentiel est invisible pour les yeux</mark>.
+    </p>
+    <address>
+      Contact : Aymen Essouyah<br />
+      Lycée Rafèha, El Mnihla, Ariana, Tunisie
+    </address>
+
+    <h3>output avec un calcul</h3>
+    <form oninput="resultat.value = Number(a.value) + Number(b.value)" onsubmit="return false;">
+      <input type="number" id="a" name="a" value="5" /> + <input type="number" id="b" name="b" value="7" /> =
+      <output name="resultat" for="a b">12</output>
+    </form>
+
+    <h3>details et summary</h3>
+    <details>
+      <summary>Qu'est-ce qu'un formulaire ? (cliquer pour déplier)</summary>
+      <p>Un formulaire permet à l'utilisateur de saisir des données et de les envoyer à un serveur.</p>
+    </details>
+    <details open>
+      <summary>Bloc déplié par défaut (attribut open)</summary>
+      <p>Cette réponse est visible dès le chargement de la page.</p>
+    </details>
+
+    <h3>L'attribut hidden</h3>
+    <p id="secret" hidden>Ce paragraphe est caché grâce à l'attribut <code>hidden</code>.</p>
+    <button
+      type="button"
+      onclick="
+        var p = document.getElementById('secret');
+        p.hidden = !p.hidden;
+      "
+    >
+      Afficher / cacher le paragraphe
+    </button>
+    <form action="#" method="post">
+      <input type="hidden" name="id_eleve" value="1234" />
+      <p>
+        <em>Ce formulaire contient un champ <code>type="hidden"</code> : invisible, mais envoyé avec les données.</em>
+      </p>
+    </form>
+
+    <h3>fieldset et legend</h3>
+    <form action="#" method="post">
+      <fieldset>
+        <legend>Coordonnées (fieldset actif)</legend>
+        <label for="f1">Nom :</label> <input type="text" id="f1" name="f1" /><br />
+        <label for="f2">Ville :</label> <input type="text" id="f2" name="f2" />
+      </fieldset>
+      <fieldset disabled>
+        <legend>Options (fieldset avec disabled)</legend>
+        <label for="f3">Code :</label> <input type="text" id="f3" name="f3" value="Désactivé" /><br />
+        <input type="checkbox" id="f4" name="f4" /><label for="f4" style="min-width: 0">Option désactivée</label>
+      </fieldset>
+    </form>
+
+    <footer>TP réalisé par : Enseignant : Aymen Essouyah — 4ème SI</footer>
+
+    <script>
+      // Télécharge les données du formulaire dans un fichier texte
+      function telecharger() {
+        const data = new FormData(document.getElementById("monForm"));
+        let texte = "";
+        for (const [cle, valeur] of data.entries()) {
+          texte += cle + " : " + (valeur instanceof File ? valeur.name : valeur) + "\n";
+        }
+        const blob = new Blob([texte], { type: "text/plain;charset=utf-8" });
+        const lien = document.createElement("a");
+        lien.href = URL.createObjectURL(blob);
+        lien.download = "donnees_formulaire.txt";
+        lien.click();
+        URL.revokeObjectURL(lien.href);
+      }
+    </script>
+  </body>
+</html>
