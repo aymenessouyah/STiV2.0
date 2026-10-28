@@ -14558,134 +14558,189 @@
 })();
 
 
-/* ============================ v402 : régie « News du bandeau » (La Cote de l’accueil) ============================
-   Saisie/couleurs/ordre/suppression des news affichées en continu sur l’accueil.
-   Stockage : table app_config_public, ligne id = "ticker_news" (lecture publique, écriture
-   réservée à l’admin par RLS — même mécanisme que la config des lycées). REST + bearer :
-   pas de second client Supabase, l’état de session reste unique. */
+/* ====================== v496 : news personnalisées par classe (accueil) ======================
+   L’admin choisit la classe (3e SI ou 4e SI) puis saisit texte 1, texte 2… Ces textes
+   défilent sur l’accueil de l’élève, juste après « Bonjour, prénom » : bleu en 3e SI,
+   vert en 4e SI (assets/js/news-perso.js).
+   Stockage : table app_config_public, ligne id = "ticker_news" — lecture publique,
+   écriture réservée à l’admin par RLS, même mécanisme que la config des lycées.
+   value = { actif: true, classes: { "3si": ["texte 1", "texte 2"], "4si": ["…"] }, maj }.
+   REST + bearer : pas de second client Supabase, l’état de session reste unique. */
 (function () {
   "use strict";
+  var CLASSES = ["3si", "4si"];
+  var MAX_TEXTES = 12;
+  var MAX_CARACTERES = 140;
+
   /* v403 : le script étant classique et la modale située en fin de <body>, l'initiale
      attend la fin du parse — sinon getElementById renvoie null et le bouton reste inerte. */
-  function initRegieNews() {
-  var cfg = window.STI_AUTH || {};
-  if (!cfg.URL || !cfg.CLE) return;
-  var btn = document.getElementById("btn-news-top");
-  var modal = document.getElementById("modal-news-bandeau");
-  if (!btn || !modal) return;
-  function $(id) { return document.getElementById(id); }
-  var zoneListe = $("news-liste"), statut = $("news-statut"), inT = $("news-texte"), inC = $("news-couleur");
-  var liste = [], modif = false, enVol = false;
-  function hexOk(v) { return /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(String(v || "")); }
-  function nettoyer(l) {
-    var out = [];
-    (l || []).forEach(function (x) {
-      var t = String((x && x.t) || "").replace(/\s+/g, " ").trim().slice(0, 140);
-      if (t && out.length < 12) out.push({ t: t, c: hexOk(x && x.c) ? x.c : "#fbbf24" });
-    });
-    return out;
-  }
-  function bearer() {
-    try {
-      var k = "";
-      for (var i = 0; i < localStorage.length; i++) {
-        var c = localStorage.key(i);
-        if (c && c.indexOf("sb-") === 0 && c.indexOf("-auth-token") > 0) { k = c; break; }
-      }
-      if (!k) return "";
-      var o = JSON.parse(localStorage.getItem(k) || "{}");
-      return (o.session && o.session.access_token) || (o.currentSession && o.currentSession.access_token) || o.access_token || "";
-    } catch (e) { return ""; }
-  }
-  function majStatut(txt, ton) {
-    statut.textContent = txt || "";
-    statut.style.color = ton === "err" ? "#c0392b" : (ton === "ok" ? "#177245" : "#5c6275");
-  }
-  function rendre() {
-    zoneListe.innerHTML = "";
-    if (!liste.length) {
-      var v = document.createElement("div");
-      v.className = "news-vide";
-      v.textContent = "Aucune news saisie \u2192 l\u2019accueil affiche les derni\u00e8res lignes du README.";
-      zoneListe.appendChild(v);
+  function initNewsPerso() {
+    var cfg = window.STI_AUTH || {};
+    if (!cfg.URL || !cfg.CLE) return;
+    var btn = document.getElementById("btn-news-top");
+    var modal = document.getElementById("modal-news-bandeau");
+    if (!btn || !modal) return;
+    function $(id) { return document.getElementById(id); }
+
+    var zoneListe = $("news-liste"), statut = $("news-statut"), inT = $("news-texte");
+    var compteur = $("news-compteur"), swActif = $("news-actif");
+    var onglets = { "3si": $("news-classe-3si"), "4si": $("news-classe-4si") };
+    var etat = { actif: true, classes: { "3si": [], "4si": [] } };
+    var classe = "3si", modif = false, enVol = false;
+
+    function propre(v) {
+      return String(v == null ? "" : v).replace(/\s+/g, " ").trim().slice(0, MAX_CARACTERES);
     }
-    liste.forEach(function (it, i) {
-      var row = document.createElement("div"); row.className = "news-row";
-      var c = document.createElement("input"); c.type = "color"; c.value = hexOk(it.c) ? it.c : "#fbbf24"; c.title = "Couleur";
-      var t = document.createElement("input"); t.type = "text"; t.value = it.t; t.maxLength = 140;
-      var up = document.createElement("button"); up.type = "button"; up.textContent = "\u2191"; up.title = "Monter";
-      var dn = document.createElement("button"); dn.type = "button"; dn.textContent = "\u2193"; dn.title = "Descendre";
-      var rm = document.createElement("button"); rm.type = "button"; rm.textContent = "\u2715"; rm.title = "Supprimer"; rm.className = "news-remise";
-      c.oninput = function () { it.c = c.value; modif = true; };
-      t.oninput = function () { it.t = t.value; modif = true; };
-      up.onclick = function () { if (i > 0) { var o = liste.splice(i, 1)[0]; liste.splice(i - 1, 0, o); modif = true; rendre(); } };
-      dn.onclick = function () { if (i < liste.length - 1) { var o2 = liste.splice(i, 1)[0]; liste.splice(i + 1, 0, o2); modif = true; rendre(); } };
-      rm.onclick = function () { liste.splice(i, 1); modif = true; rendre(); };
-      row.appendChild(c); row.appendChild(t); row.appendChild(up); row.appendChild(dn); row.appendChild(rm);
-      zoneListe.appendChild(row);
-    });
-    $("news-compteur").textContent = liste.length + "/12 news";
-  }
-  function charger() {
-    var h = { apikey: cfg.CLE, Accept: "application/json" };
-    var tk = bearer();
-    if (tk) h.Authorization = "Bearer " + tk;
-    fetch(cfg.URL + "/rest/v1/app_config_public?select=value,updated_at&id=eq.ticker_news", { headers: h })
-      .then(function (r) { return r.ok ? r.json() : []; })
-      .then(function (rows) {
-        var v = rows && rows[0] && rows[0].value;
-        liste = nettoyer(v && v.liste);
-        var swL = $("news-actif");
-        if (swL) swL.checked = !(v && v.actif === false);
-        modif = false;
-        rendre();
-        majStatut(rows && rows[0] && rows[0].updated_at ? "Derni\u00e8re version : " + new Date(rows[0].updated_at).toLocaleString("fr-FR") : "Liste vide pour l\u2019instant \u2014 le README sert de repli.", null);
-      })
-      .catch(function () { majStatut("Lecture impossible (r\u00e9seau ?) \u2014 le README sert de repli sur l\u2019accueil.", "err"); });
-  }
-  btn.onclick = function () { modal.style.display = "flex"; charger(); };
-  $("news-fermer").onclick = function () {
-    if (modif && !window.confirm("Des modifications ne sont pas enregistrees. Fermer quand meme ?")) return;
-    modal.style.display = "none";
-  };
-  modal.addEventListener("click", function (e) { if (e.target === modal) $("news-fermer").onclick(); });
-  $("news-ajouter").onclick = function () {
-    var v = String(inT.value || "").trim();
-    if (!v) { inT.focus(); return; }
-    if (liste.length >= 12) { majStatut("Maximum atteint : 12 news.", "err"); return; }
-    liste.push({ t: v.slice(0, 140), c: hexOk(inC.value) ? inC.value : "#fbbf24" });
-    inT.value = "";
-    modif = true;
-    rendre();
-    inT.focus();
-  };
-  inT.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); $("news-ajouter").onclick(); } });
-  $("news-enregistrer").onclick = function () {
-    if (enVol) return;
-    var tk = bearer();
-    if (!tk) { majStatut("Session expir\u00e9e : reconnectez-vous pour enregistrer.", "err"); return; }
-    var b = this;
-    enVol = true; b.disabled = true; b.textContent = "\u23f3 Envoi\u2026";
-    var sw = $("news-actif");
-    var payload = { liste: nettoyer(liste), actif: !(sw && sw.checked === false), maj: Date.now() };
-    fetch(cfg.URL + "/rest/v1/app_config_public", {
-      method: "POST",
-      headers: { apikey: cfg.CLE, "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates", Authorization: "Bearer " + tk },
-      body: JSON.stringify({ id: "ticker_news", value: payload, updated_at: new Date().toISOString() })
-    })
-      .then(function (r) { return r.json().catch(function () { return {}; }); })
-      .then(function (res) {
-        enVol = false; b.disabled = false; b.textContent = "\ud83d\udcbe Enregistrer sur le site";
-        if (res && res.message) {
-          majStatut("Refusé par la base : " + res.message.slice(0, 140), "err");
-          return;
+    function listePropre(l) {
+      var out = [];
+      (Array.isArray(l) ? l : []).forEach(function (x) {
+        var t = propre(x && typeof x === "object" ? (x.t || x.texte || "") : x);
+        if (t && out.length < MAX_TEXTES) out.push(t);
+      });
+      return out;
+    }
+    /* Reprise transparente de l’ancien format { liste: [{t, c}] } : les textes
+       déjà saisis restent visibles et se retrouvent dans la 3e SI. */
+    function normaliser(v) {
+      var o = v && typeof v === "object" ? v : {};
+      var classes = o.classes && typeof o.classes === "object" ? o.classes : null;
+      var res = { actif: o.actif !== false, classes: { "3si": [], "4si": [] } };
+      if (classes) {
+        res.classes["3si"] = listePropre(classes["3si"] || classes["3e"]);
+        res.classes["4si"] = listePropre(classes["4si"] || classes["4e"]);
+      } else if (Array.isArray(o.liste)) {
+        res.classes["3si"] = listePropre(o.liste);
+      }
+      return res;
+    }
+    function bearer() {
+      try {
+        var k = "";
+        for (var i = 0; i < localStorage.length; i++) {
+          var c = localStorage.key(i);
+          if (c && c.indexOf("sb-") === 0 && c.indexOf("-auth-token") > 0) { k = c; break; }
         }
-        liste = nettoyer(payload.liste); modif = false; rendre();
-        majStatut("Enregistré \u2014 l\u2019accueil affiche la nouvelle cote \u00e0 son prochain chargement.", "ok");
+        if (!k) return "";
+        var o = JSON.parse(localStorage.getItem(k) || "{}");
+        return (o.session && o.session.access_token) || (o.currentSession && o.currentSession.access_token) || o.access_token || "";
+      } catch (e) { return ""; }
+    }
+    function majStatut(txt, ton) {
+      if (!statut) return;
+      statut.textContent = txt || "";
+      statut.style.color = ton === "err" ? "#c0392b" : (ton === "ok" ? "#177245" : "#5c6275");
+    }
+    function rendreOnglets() {
+      CLASSES.forEach(function (c) {
+        var b = onglets[c];
+        if (!b) return;
+        var sel = c === classe;
+        b.setAttribute("aria-selected", sel ? "true" : "false");
+        b.tabIndex = sel ? 0 : -1;
+      });
+      if (inT) inT.placeholder = "Texte " + (etat.classes[classe].length + 1) + " (140 caractères max)…";
+    }
+    function rendre() {
+      rendreOnglets();
+      if (!zoneListe) return;
+      zoneListe.innerHTML = "";
+      var textes = etat.classes[classe];
+      if (!textes.length) {
+        var v = document.createElement("div");
+        v.className = "news-vide";
+        v.textContent = "Aucun texte pour la " + (classe === "4si" ? "4e" : "3e") + " SI : cette classe ne voit pas le bandeau tant qu’aucun texte n’est saisi.";
+        zoneListe.appendChild(v);
+      }
+      textes.forEach(function (texte, i) {
+        var row = document.createElement("div"); row.className = "news-row";
+        var num = document.createElement("span"); num.className = "news-num"; num.textContent = "Texte " + (i + 1);
+        var t = document.createElement("input"); t.type = "text"; t.value = texte; t.maxLength = MAX_CARACTERES;
+        t.setAttribute("aria-label", "Texte " + (i + 1) + " — " + (classe === "4si" ? "4e" : "3e") + " SI");
+        var up = document.createElement("button"); up.type = "button"; up.textContent = "\u2191"; up.title = "Monter";
+        var dn = document.createElement("button"); dn.type = "button"; dn.textContent = "\u2193"; dn.title = "Descendre";
+        var rm = document.createElement("button"); rm.type = "button"; rm.textContent = "\u2715"; rm.title = "Supprimer"; rm.className = "news-remise";
+        t.oninput = function () { textes[i] = t.value; modif = true; };
+        up.onclick = function () { if (i > 0) { var o = textes.splice(i, 1)[0]; textes.splice(i - 1, 0, o); modif = true; rendre(); } };
+        dn.onclick = function () { if (i < textes.length - 1) { var o2 = textes.splice(i, 1)[0]; textes.splice(i + 1, 0, o2); modif = true; rendre(); } };
+        rm.onclick = function () { textes.splice(i, 1); modif = true; rendre(); };
+        row.appendChild(num); row.appendChild(t); row.appendChild(up); row.appendChild(dn); row.appendChild(rm);
+        zoneListe.appendChild(row);
+      });
+      if (compteur) compteur.textContent = etat.classes["3si"].length + " en 3e SI · " + etat.classes["4si"].length + " en 4e SI";
+    }
+    function charger() {
+      var h = { apikey: cfg.CLE, Accept: "application/json" };
+      var tk = bearer();
+      if (tk) h.Authorization = "Bearer " + tk;
+      fetch(cfg.URL + "/rest/v1/app_config_public?select=value,updated_at&id=eq.ticker_news", { headers: h })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (rows) {
+          var ligne = rows && rows[0];
+          etat = normaliser(ligne && ligne.value);
+          if (swActif) swActif.checked = etat.actif;
+          modif = false;
+          rendre();
+          majStatut(ligne && ligne.updated_at
+            ? "Dernière version : " + new Date(ligne.updated_at).toLocaleString("fr-FR")
+            : "Aucun texte enregistré pour l’instant.", null);
+        })
+        .catch(function () { majStatut("Lecture impossible (réseau ?) — les textes déjà enregistrés restent affichés.", "err"); });
+    }
+
+    btn.onclick = function () { modal.style.display = "flex"; charger(); };
+    if ($("news-fermer")) $("news-fermer").onclick = function () {
+      if (modif && !window.confirm("Des modifications ne sont pas enregistrées. Fermer quand même ?")) return;
+      modal.style.display = "none";
+    };
+    modal.addEventListener("click", function (e) { if (e.target === modal && $("news-fermer")) $("news-fermer").onclick(); });
+    CLASSES.forEach(function (c) {
+      var b = onglets[c];
+      if (b) b.onclick = function () { classe = c; rendre(); };
+    });
+    if ($("news-ajouter")) $("news-ajouter").onclick = function () {
+      var v = propre(inT && inT.value);
+      if (!v) { if (inT) inT.focus(); return; }
+      var textes = etat.classes[classe];
+      if (textes.length >= MAX_TEXTES) { majStatut("Maximum atteint : " + MAX_TEXTES + " textes par classe.", "err"); return; }
+      textes.push(v);
+      if (inT) inT.value = "";
+      modif = true;
+      rendre();
+      if (inT) inT.focus();
+    };
+    if (inT) inT.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); if ($("news-ajouter")) $("news-ajouter").onclick(); } });
+    if ($("news-enregistrer")) $("news-enregistrer").onclick = function () {
+      if (enVol) return;
+      var tk = bearer();
+      if (!tk) { majStatut("Session expirée : reconnectez-vous pour enregistrer.", "err"); return; }
+      var b = this;
+      enVol = true; b.disabled = true; b.textContent = "\u23f3 Envoi\u2026";
+      var payload = {
+        actif: !(swActif && swActif.checked === false),
+        classes: { "3si": listePropre(etat.classes["3si"]), "4si": listePropre(etat.classes["4si"]) },
+        maj: Date.now()
+      };
+      fetch(cfg.URL + "/rest/v1/app_config_public", {
+        method: "POST",
+        headers: { apikey: cfg.CLE, "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates", Authorization: "Bearer " + tk },
+        body: JSON.stringify({ id: "ticker_news", value: payload, updated_at: new Date().toISOString() })
       })
-      .catch(function () { enVol = false; b.disabled = false; b.textContent = "\ud83d\udcbe Enregistrer sur le site"; majStatut("Envoi impossible (réseau ?).", "err"); });
-  };
+        .then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (res) {
+          enVol = false; b.disabled = false; b.textContent = "\ud83d\udcbe Enregistrer sur le site";
+          if (res && res.message) {
+            majStatut("Refusé par la base : " + res.message.slice(0, 140), "err");
+            return;
+          }
+          etat = normaliser(payload); modif = false; rendre();
+          majStatut("Enregistré \u2014 le bandeau des élèves de " + (classe === "4si" ? "4e" : "3e") + " SI est à jour dès leur prochaine visite.", "ok");
+        })
+        .catch(function () {
+          enVol = false; b.disabled = false; b.textContent = "\ud83d\udcbe Enregistrer sur le site";
+          majStatut("Envoi impossible (réseau ?).", "err");
+        });
+    };
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initRegieNews);
-  else initRegieNews();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initNewsPerso);
+  else initNewsPerso();
 })();

@@ -18,15 +18,22 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/sync-progressions.js': 'd566e412f0d9d7fb2d09c0a5988d3f9bbc3d895400e2afe55078e3bdb0018b81',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
-    'admin.html': '348603149122d2dd2f9d453e200572aacb9015c19279c9d518506a70e7e3725d',
+    'admin.html': '637f9eec29a53d732fc4190c2f1e7bdf3e74c31c4d7c53ea88762b6b44ccf23b',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
   for (const [path, attendu] of Object.entries(originaux)) assert.equal(sha(path), attendu, path);
+  /* v496 : « La Cote » quitte l'accueil au profit des news personnalisées de la classe. */
   const html = lire('index.html');
-  assert.match(html, /id="cote-sti"/); assert.match(html, /id="cote-piste"/); assert.match(html, /assets\/js\/cote-ticker\.js/);
-  const cote = html.match(/<aside id="cote-sti"[\s\S]*?<\/aside>/)[0];
-  assert.equal(createHash('sha256').update(cote).digest('hex'), '9eaaf419beaf4d256181bd49c150ccd261960da39df19d1b3cca394fd44a1083');
+  assert.doesNotMatch(html, /id="cote-sti"/);
+  assert.doesNotMatch(html, /assets\/js\/cote-ticker\.js/);
+  assert.match(html, /id="bandeauNewsPerso"/);
+  assert.match(html, /id="newsPersoPiste"/);
+  assert.match(html, /assets\/js\/news-perso\.js\?v=496/);
+  const bandeau = html.match(/<div id="bandeauNewsPerso"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/)[0];
+  assert.match(bandeau, /class="bandeau-news-perso"/);
+  assert.ok(html.indexOf('id="bandeauNewsPerso"') > html.indexOf('id="welcomeTitle"'), 'le bandeau suit « Bonjour, prénom »');
+  assert.ok(html.indexOf('id="bandeauNewsPerso"') < html.indexOf('class="welcome-return__bar"'), 'le bandeau précède la barre de cours');
   assert.doesNotMatch(lire('assets/css/theme.css'), /#sti-roue-wrap\s*\{\s*display\s*:\s*none/);
   const defis = lire('exercices/javascript/js-37-defis-tt.html');
   assert.match(defis, /function ex15_go\(\)\{ const r = document\.getElementById\("ex15_res"\); const s = prompt\(/);
@@ -118,7 +125,7 @@ test('atelier Bac : les scripts historiques ne sont pas coupés par les ajouts',
 });
 
 test('commandes d’administration : scripts et fonctions de la barre PC inchangés', () => {
-  assert.equal(sha('assets/js/admin.js'), '91b61dd7e8d48f287705b56afcf6fe555f642e85afc3166303c08c77f1223df4');
+  assert.equal(sha('assets/js/admin.js'), '405025d2bb2a6eb4880722569dcc8e116f5fc09851f44561fc440d2ecb4044ba');
   assert.equal(sha('assets/js/rayonsx-surligneur.js'), 'b338691b29dcb99cb62b8d4e266c8a3d29af56a2a8d88fb3124f1f96334bde73');
   const protection = lire('assets/js/protection.js');
   const debut = protection.indexOf('  function estAppareilPC()');

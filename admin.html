@@ -1984,7 +1984,7 @@
       <button class="btn-util mob-extra sys-extra-item" id="btn-mains-top" type="button" title="File d'attente des élèves ayant levé la main pour demander de l'aide en TP"><span class="btn-util-glyph" aria-hidden="true">🙋</span> <span class="lbl-pc">Mains levées</span><span class="lbl-mob">Aide</span> <span id="badge-mains-top" style="display:none;background:#7c3aed;color:#fff;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:3px">0</span></button>
       <button class="btn-util mob-extra sys-extra-item" id="btn-palmares-top" type="button" title="Palmarès &amp; Podium par classe (Quiz, Questions Flash et Assiduité)"><span class="btn-util-glyph" aria-hidden="true">🏆</span> <span class="lbl-pc">Palmarès</span><span class="lbl-mob">Top 3</span></button>
       <button class="btn-util mob-extra sys-extra-item" id="btn-refresh" type="button" title="Rafraîchir immédiatement toutes les données"><span class="btn-util-glyph" aria-hidden="true">🔄</span> <span class="lbl-pc">Actualiser</span><span class="lbl-mob">Maj</span></button>
-      <button class="btn-util mob-extra sys-extra-item" id="btn-news-top" type="button" title="Régie des news du bandeau « La Cote » de la page d’accueil : saisie, couleurs, ordre, suppression"><span class="btn-util-glyph" aria-hidden="true">📰</span> <span class="lbl-pc">News du bandeau</span><span class="lbl-mob">News</span></button>
+      <button class="btn-util mob-extra sys-extra-item" id="btn-news-top" type="button" title="News personnalisées de l’accueil : choisir la classe (3e SI / 4e SI) puis saisir texte 1, texte 2…"><span class="btn-util-glyph" aria-hidden="true">📰</span> <span class="lbl-pc">News de la classe</span><span class="lbl-mob">News</span></button>
       <a class="btn-util mob-extra sys-extra-item" href="carte-visite.html" title="Ouvrir et partager la carte de visite électronique avec QR code"><span class="btn-util-glyph" aria-hidden="true">🪪</span> <span class="lbl-pc">Carte visite</span><span class="lbl-mob">Carte</span></a>
       <button class="btn-util mob-extra sys-extra-item" id="btn-force-update-eleves" type="button" title="Docteur STI : Forcer tous les écrans d'élèves connectés à vider leur vieux cache et recharger immédiatement la dernière version"><span class="btn-util-glyph" aria-hidden="true">🚀</span> <span class="lbl-pc">Forcer Maj Élèves</span><span class="lbl-mob">Maj Élèves</span></button>
       <button class="btn-util mob-extra sys-extra-item" id="btn-verrou-ecran-admin" type="button" title="Verrouiller instantanément l'écran du tableau de bord par code PIN quand vous vous déplacez en salle de classe"><span class="btn-util-glyph" aria-hidden="true">🔒</span> <span class="lbl-pc">Verrouiller PIN</span><span class="lbl-mob">PIN</span></button>
@@ -5138,22 +5138,31 @@
       #modal-news-bandeau .news-btn.ok{background:#e7f6ec;color:#177245}
       #modal-news-bandeau .news-btn.fermer{background:#f1f2f8;color:inherit}
       #modal-news-bandeau #news-statut{font-size:.78rem;font-weight:700;flex:1;text-align:right}
+      #modal-news-bandeau .news-classes{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 10px}
+      #modal-news-bandeau .news-classe-btn{border:1.5px solid var(--border,#cccccc);background:var(--surface-2,#f8f9fd);color:inherit;border-radius:999px;padding:7px 14px;font-weight:800;font-size:.85rem;cursor:pointer}
+      #modal-news-bandeau .news-classe-btn[aria-selected="true"]{border-color:#23201a;box-shadow:0 2px 0 #23201a;background:#fff}
+      #modal-news-bandeau .news-classe-btn[data-classe="3si"][aria-selected="true"]{background:#e0f2fe;color:#075985;border-color:#0284c7}
+      #modal-news-bandeau .news-classe-btn[data-classe="4si"][aria-selected="true"]{background:#dcfce7;color:#166534;border-color:#16a34a}
+      #modal-news-bandeau .news-num{flex:0 0 auto;min-width:66px;font-size:.78rem;font-weight:900;color:var(--muted,#5c6275)}
       #modal-news-bandeau .news-vide{font-size:.82rem;color:var(--muted,#5c6275);padding:8px 2px}
       #modal-news-bandeau #news-compteur{font-size:.78rem;color:var(--muted,#5c6275)}
     </style>
-    <div id="modal-news-bandeau" role="dialog" aria-modal="true" aria-label="Régie des news du bandeau La Cote">
+    <div id="modal-news-bandeau" role="dialog" aria-modal="true" aria-label="News personnalisées de la classe">
       <div class="news-boite">
-        <h3 class="news-titre">📰 News du bandeau « La Cote » (page d’accueil)</h3>
-        <p class="news-sous">Jusqu’à 12 messages, lus dans l’ordre par le bandeau défilant ; chacun avec sa couleur. ↑ ↓ pour l’ordre, ✕ pour supprimer. Tant que la liste est vide, l’accueil affiche les dernières lignes du README.</p>
-        <div id="news-liste"></div>
+        <h3 class="news-titre">📰 News personnalisées de la classe (page d’accueil)</h3>
+        <p class="news-sous">Choisissez la classe puis saisissez <strong>texte 1</strong>, <strong>texte 2</strong>… Ces messages défilent sur l’accueil de l’élève, juste après « Bonjour, prénom » : <strong style="color:#0284c7">bleu en 3<sup>e</sup> SI</strong>, <strong style="color:#16a34a">vert en 4<sup>e</sup> SI</strong>. ↑ ↓ pour l’ordre, ✕ pour supprimer.</p>
+        <div class="news-classes" role="tablist" aria-label="Classe destinataire">
+          <button type="button" class="news-classe-btn" id="news-classe-3si" data-classe="3si" role="tab" aria-selected="true" aria-controls="news-liste">🔵 3<sup>e</sup> SI</button>
+          <button type="button" class="news-classe-btn" id="news-classe-4si" data-classe="4si" role="tab" aria-selected="false" aria-controls="news-liste">🟢 4<sup>e</sup> SI</button>
+          <span id="news-compteur"></span>
+        </div>
+        <div id="news-liste" aria-live="polite"></div>
         <div class="news-form">
-          <input type="color" id="news-couleur" value="#fbbf24" title="Couleur du nouveau message">
-          <input type="text" id="news-texte" maxlength="140" placeholder="Texte de la news (140 caractères max)…">
+          <input type="text" id="news-texte" maxlength="140" placeholder="Texte 1 (140 caractères max)…">
           <button type="button" class="news-btn ajout" id="news-ajouter">➕ Ajouter</button>
         </div>
         <div class="news-actions">
-          <label class="news-switch" title="Décochez pour retirer toute news du bandeau — la liste est conservée, rien n’est supprimé"><input type="checkbox" id="news-actif" checked> News visibles sur l’accueil</label>
-          <span id="news-compteur"></span>
+          <label class="news-switch" title="Décochez pour retirer tous les textes du bandeau — les listes sont conservées, rien n’est supprimé"><input type="checkbox" id="news-actif" checked> News visibles sur l’accueil</label>
           <button type="button" class="news-btn ok" id="news-enregistrer">💾 Enregistrer sur le site</button>
           <button type="button" class="news-btn fermer" id="news-fermer">Fermer</button>
           <span id="news-statut"></span>

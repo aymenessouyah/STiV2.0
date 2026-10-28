@@ -4,8 +4,8 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 
 > 🌐 **Plateforme en ligne** : https://aymenessouyah.github.io/STiV2.0/
 > 👨‍🏫 **Auteur** : M. Aymen Essouyah — Lycée Rafèha
-> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (15 tables historiques et deux tables techniques XP protégées par RLS) + Service Worker incrémental (`sw.js` — `sti-atelier-v356`, historique `sti-atelier-v355` / `sti-atelier-v354` / `sti-atelier-v353` / `sti-atelier-v352` / `sti-atelier-v351` / `sti-atelier-v350` / `sti-atelier-v349` / `sti-atelier-v348` / `sti-atelier-v347` / `sti-atelier-v346` / `sti-atelier-v345` / `sti-atelier-v344` / `sti-atelier-v343` / `sti-atelier-v342` / `sti-atelier-v341` / `sti-atelier-v340`)
-> 📌 **Version du code** : **v495** (`sti-atelier-v356` — 28 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
+> 🏗️ **Architecture** : Frontend statique GitHub Pages + Supabase PostgreSQL (15 tables historiques et deux tables techniques XP protégées par RLS) + Service Worker incrémental (`sw.js` — `sti-atelier-v357`, historique `sti-atelier-v356` / `sti-atelier-v355` / `sti-atelier-v354` / `sti-atelier-v353` / `sti-atelier-v352` / `sti-atelier-v351` / `sti-atelier-v350` / `sti-atelier-v349` / `sti-atelier-v348` / `sti-atelier-v347` / `sti-atelier-v346` / `sti-atelier-v345` / `sti-atelier-v344` / `sti-atelier-v343` / `sti-atelier-v342` / `sti-atelier-v341` / `sti-atelier-v340`)
+> 📌 **Version du code** : **v496** (`sti-atelier-v357` — 28 octobre 2026). La configuration d'accès protégée conserve son socle v479 (`sti-atelier-v340`) ; la version effective est lue depuis le Service Worker.
 
 ---
 
@@ -39,6 +39,7 @@ Plateforme éducative interactive et **PWA utilisable hors ligne après mise en 
 
 ## 🎓 Cours interactifs, vidéos, Smart Books & exercices
 
+- **News de ma classe (`v496`)** : la barre de news « La Cote » est retirée de l’accueil ; à sa place, une ligne défilante personnalisée s’affiche juste après « Bonjour, prénom ». L’admin choisit la classe (**3ᵉ SI** ou **4ᵉ SI**) puis saisit **texte 1, texte 2, …** dans son tableau de bord (bouton « News de la classe »). Le texte est **bleu en 3ᵉ SI** et **vert en 4ᵉ SI** ; le fond sombre, la typographie et le défilement sont ceux de l’ancien bandeau. Rien n’est affiché tant qu’aucun texte n’est saisi pour la classe de l’élève.
 - **Quiz sans vidéo de cours (`v495`)** : les six pages de quiz (`html-css`, `javascript`, `sql`, `php`, `tableaux`, `pp`) ne portent aucune surface vidéo — ni balise `<video>`, ni piste `.mp4/.webm/.vtt`, ni lecteur — et `protection.js` refuse désormais d'y installer le lecteur pas à pas (garde `/quiz/`), même si un média était réintroduit dans le balisage.
 - **Vitrine aléatoire (`v495`)** : la carte « Vidéo à la une » de l’accueil tire une capsule différente à chaque visite parmi les vidéos accessibles à tous, hors démonstrations de moins d’une minute et hors séries réservées aux 4e SI ; la même capsule n’est jamais reproposée deux fois de suite. Source, sous-titres, affiche, badge et libellés d’accessibilité suivent le tirage.
 - **Cours complets conformes au programme tunisien** (`cours/html5.html`, `cours/css3.html`, `cours/javascript.html`, `cours/sql.html`, `cours/php.html`, `cours/php-mysqli.html`, `cours/sql-bases-ldd-lmd-lcd.html`) :
@@ -125,7 +126,7 @@ Interface Bento/Spotlight en police **Comic**, ornée du logo officiel (`assets/
 | 🏆 **Quiz & Analyse d'erreurs** | Synthèse élève × quiz (`quiz-admin.js`), vues *Classes*, *Jours*, *Top 3*, *Alertes*, *Progression*, *Questions ratées*, ordre exact des questions tirées et diagnostic cognitif (`admin-erreurs.js` + export CSV) |
 | 🔁 **Révision & 🗺️ Couverture** | Suivi J+1/J+3/J+7 (`admin-revision.js`), taux réel d'exploration des **124 pages** (`admin-couverture.js`), repérage des élèves inactifs/à risque, graphiques d'activité (`graphiques-activite.js`) et panneau **📊 Progressions** (`analytique.js`) |
 | 🗄️ **DBSupbase (`/ 1 000 lignes`)** | Jauge exacte en direct des **15 tables `public`** via la RPC `public.admin_dbsupbase_niveaux()`, 4 seuils visuels (*Confort*, *Modéré*, *Vigilance ≥ 80 %*, *Seuil atteint ≥ 1 000*), tri/filtre, export CSV et passerelle directe depuis la modale Quota 500 Mo |
-| 💬 **Messenger & Séance Live** | Messenger STI flottant temps réel (texte, fichiers, dictée vocale, diffusion par classe, WhatsApp), Appel & Présence A4/CSV, Mains levées, Question Flash, Kahoot Live, Tableau blanc, Coffre TP, Copies TP `/20`, Grille Devoirs DC/DS et Régie « La Cote » |
+| 💬 **Messenger & Séance Live** | Messenger STI flottant temps réel (texte, fichiers, dictée vocale, diffusion par classe, WhatsApp), Appel & Présence A4/CSV, Mains levées, Question Flash, Kahoot Live, Tableau blanc, Coffre TP, Copies TP `/20`, Grille Devoirs DC/DS et Régie « News de la classe » (3ᵉ SI / 4ᵉ SI) |
 | 🛡️ **Sécurité, Santé & Sauvegarde** | Centre de Sécurité (Mode Examen, Plein écran, Anti-DevTools, Filigrane), gestion des postes Labo 3, changement du mot de passe admin (`admin-mdp.js` + MFA AAL2), **🩺 Santé du site** (`sante.js`, 36 contrôles en direct) et **💾 Sauvegarde complète** (`sauvegarde.js`) |
 
 ---
@@ -261,6 +262,7 @@ Deux mécanismes complémentaires garantissent la continuité des sauvegardes da
 | v492 | Compteurs de chapitres consultés distincts des révisions volontaires, navigation mobile et restauration cloud des cinq cours ; mise à jour hors ligne ciblée (`sti-atelier-v353`). |
 | v493 | Retour de la barre Cours/Exercices/Plan en remontant sur mobile, avec mise à jour incrémentale et compatibilité hors ligne (`sti-atelier-v354`). |
 | v494 | Retour intelligent des cinq quiz : chaque bouton de retour reprend la page appelante exacte (cours et onglet, accueil, tableau de bord, exercices, révision des erreurs), avec son libellé et sa position de lecture, y compris depuis le téléphone (`sti-atelier-v355`). |
+| v496 | « News de ma classe » : la barre de news « La Cote » disparaît de l’accueil, remplacée par une ligne défilante juste après « Bonjour, prénom » — l’admin choisit la classe (3ᵉ SI / 4ᵉ SI) et saisit texte 1, texte 2… (bleu en 3ᵉ, vert en 4ᵉ, fond et défilement identiques à l’ancien bandeau) (`sti-atelier-v357`). |
 | v495 | Vidéo à la une tirée au hasard à chaque ouverture de l’accueil (capsules de moins d’une minute et séries réservées exclues, sans répétition immédiate) ; pages de quiz définitivement sans vidéo de cours (`protection.js` coupe sur `/quiz/`) ; file write-ahead des quiz et des gains XP vidée dès la première reconnexion depuis l’accueil ou le tableau de bord (`sti-atelier-v356`). |
 
 ---
