@@ -72,6 +72,12 @@
     if (document.documentElement && document.documentElement.classList.contains("sti-4si-autorise")) return "4si";
     return "3si";
   }
+  /* Le ruban d'identité est argent dès qu'il s'agit d'un compte enseignant,
+     même si ce compte porte une classe (les news, elles, suivent la classe). */
+  function niveauRuban() {
+    if (estCompteEnseignant()) return "admin";
+    return niveau();
+  }
   function libelleNiveau(n) {
     if (n === "admin") return "Enseignant";
     return n === "4si" ? "4e SI" : "3e SI";
@@ -185,8 +191,22 @@
   function ecrireCache(etat) {
     try { sessionStorage.setItem(CLE_CACHE, JSON.stringify({ ts: Date.now(), etat: etat })); } catch (e) {}
   }
+  /* ---------- Ruban d'identité de « Bonjour, prénom » (v498) ----------
+     Même lecture de niveau que les news : bleu 3e SI, vert 4e SI, argent pour
+     l'admin et les profs. Le ruban est purement décoratif (aria-hidden). */
+  function appliquerRuban() {
+    try {
+      var titre = document.getElementById("welcomeTitle");
+      if (!titre) return;
+      titre.setAttribute("data-ruban", niveauRuban());
+      var prenom = document.getElementById("welcomePrenom");
+      var bloc = prenom && prenom.closest ? prenom.closest(".ruban-mot") : null;
+      if (bloc) bloc.hidden = !String(prenom.textContent || "").trim();
+    } catch (e) {}
+  }
   function appliquer(etat) {
     var n = niveau();
+    appliquerRuban();
     var textes = etat && etat.actif === false ? [] : textesPour(etat, n);
     rendre(textes);
   }
@@ -217,6 +237,7 @@
   }
 
   function demarrer(fort) {
+    appliquerRuban();
     if (!fort) {
       var mem = lireCache();
       if (mem) { appliquer(mem); return; }
@@ -238,6 +259,8 @@
   window.STINewsPerso = {
     recharger: function () { demarrer(true); },
     niveau: niveau,
+    niveauRuban: niveauRuban,
+    appliquerRuban: appliquerRuban,
     textes: function (etat) { return textesPour(normaliser(etat), niveau()); },
     normaliser: normaliser
   };

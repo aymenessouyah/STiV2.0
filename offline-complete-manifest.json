@@ -1,9 +1,9 @@
 {
-  "version": "v497-sti-atelier-v358",
-  "generatedAt": "2026-10-28T16:36:50Z",
+  "version": "v498-sti-atelier-v359",
+  "generatedAt": "2026-10-28T17:02:10Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 695,
-  "totalBytes": 682679298,
+  "totalFiles": 697,
+  "totalBytes": 682738415,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 45864,
-      "gitSha": "4230b5880edeacc558a392d7d991c8ead09b2928"
+      "bytes": 46645,
+      "gitSha": "760c4f06a261b10a5ae6372953f66bcf561c10ca"
     },
     {
       "path": "admin.html",
@@ -297,8 +297,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 65888,
-      "gitSha": "1d1f72de83ab17763fc2d65f872e6153077ac6c9"
+      "bytes": 69404,
+      "gitSha": "0f51f42ceafbbb64bb53e40c31c536604ea8e283"
     },
     {
       "path": "assets/css/visionneuse-exercices.css",
@@ -526,6 +526,11 @@
       "gitSha": "b4cb474b99e25d2bd3d9d5324ab7db46e3316ace"
     },
     {
+      "path": "assets/images/drapeau-tunisie.svg",
+      "bytes": 687,
+      "gitSha": "764d627e88118a71d2b41df0e644740c9ab60a7f"
+    },
+    {
       "path": "assets/images/guichet-animation-capture-v288.jpg",
       "bytes": 201879,
       "gitSha": "fad732391a58a385a966d884a0caea87542c70f1"
@@ -677,8 +682,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 104764,
-      "gitSha": "7af048820dc20958c3d73267db6888b3849a2c87"
+      "bytes": 105494,
+      "gitSha": "86cca0476bb8ef349d2d26b9b12c9d89182d1112"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -792,8 +797,8 @@
     },
     {
       "path": "assets/js/news-perso.js",
-      "bytes": 10236,
-      "gitSha": "c47e1ba6ae31e09c3db7247eb63a37365c8504c1"
+      "bytes": 11259,
+      "gitSha": "92c51ee4fc85066b26e9b681315bdeaa50b68805"
     },
     {
       "path": "assets/js/nouveautes.js",
@@ -1031,6 +1036,11 @@
       "gitSha": "429896a9d087eb3977cf67521f738d01af17c808"
     },
     {
+      "path": "assets/video/drapeaurafeha.mp4",
+      "bytes": 49986,
+      "gitSha": "64b04fb15fedc2e623afc50478b3c0f0ec8f40e0"
+    },
+    {
       "path": "assets/video/flower.webm",
       "bytes": 554058,
       "gitSha": "5b8edf7d8384c057dfb13627073288cebfb54d74"
@@ -1177,8 +1187,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 207810,
-      "gitSha": "17fe38d07e5b4aa82309ea6cd3ac3035613bebd6"
+      "bytes": 207956,
+      "gitSha": "b6ffa2bea03b62095a9c8b4ee537dda6436ccacb"
     },
     {
       "path": "cours/datalist.html",
@@ -1192,13 +1202,13 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 200444,
-      "gitSha": "b293ff78a7e1a922ab742248757ed52350dbc7c0"
+      "bytes": 200590,
+      "gitSha": "b9361f4e65dd488ac72f1e6836b1f2a29fb50145"
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 126982,
-      "gitSha": "8291f80b0d698b0662a096b1e9078e0803cd4021"
+      "bytes": 127128,
+      "gitSha": "c6d5a4c6e4ae4e08d93fd93a5a52b34843493dd5"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1207,8 +1217,8 @@
     },
     {
       "path": "cours/php.html",
-      "bytes": 202563,
-      "gitSha": "db22442e555dcd77bfd62eb58883702ff1e16332"
+      "bytes": 202709,
+      "gitSha": "c6262359f84463c491bb5b85425675b2feeab687"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1227,8 +1237,8 @@
     },
     {
       "path": "cours/sql.html",
-      "bytes": 136101,
-      "gitSha": "c0d4bbfd95d46547a39a48b39cfe4babd4e1337c"
+      "bytes": 136247,
+      "gitSha": "50238afac60182c9374993937d23324feb30c34a"
     },
     {
       "path": "cssanimee/cours.js",
@@ -1247,8 +1257,8 @@
     },
     {
       "path": "dashboard.html",
-      "bytes": 15789,
-      "gitSha": "b3159a3e4da8003a96afaaad410b3fee98fd6914"
+      "bytes": 15932,
+      "gitSha": "3f479fe39dd99c61ddfd51e0cec017956c0851a6"
     },
     {
       "path": "documents/annexes/annexe-css3.pdf",
@@ -2897,8 +2907,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 55861,
-      "gitSha": "433fc8177bdc12ae09b5208d33466fbb13ac94d3"
+      "bytes": 57097,
+      "gitSha": "f384f274a88cf65e6d43c4f6f7315cda69da4243"
     },
     {
       "path": "livre-smart.html",
@@ -3477,8 +3487,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 94622,
-      "gitSha": "315b0312de04fbf23e310b6590e2f0f23cae4a6e"
+      "bytes": 94907,
+      "gitSha": "4d3f91a30a3653584ec59819d14a1de645394f29"
     }
   ]
 }
