@@ -1,9 +1,9 @@
 {
-  "version": "v508-sti-atelier-v369",
-  "generatedAt": "2026-10-28T21:03:39Z",
+  "version": "v509-sti-atelier-v370",
+  "generatedAt": "2026-10-28T21:20:10Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 705,
-  "totalBytes": 723101654,
+  "totalFiles": 706,
+  "totalBytes": 723708985,
   "files": [
     {
       "path": "404.html",
@@ -1039,6 +1039,11 @@
       "path": "assets/video/drapeau-lycee-bandeau.mp4",
       "bytes": 530434,
       "gitSha": "38322db767f9458b9beec93edf011b8794f35193"
+    },
+    {
+      "path": "assets/video/drapeau-sti-vent.mp4",
+      "bytes": 607294,
+      "gitSha": "d314a22aa38c71d33a6c08eb5728664c2284b1fe"
     },
     {
       "path": "assets/video/drapeaurafeha.mp4",
@@ -2947,8 +2952,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 57033,
-      "gitSha": "149aad829d80e8d07f371e59e6d32105fa5e45d4"
+      "bytes": 57036,
+      "gitSha": "aa4b40e9bf0ef66fe9fad240448324f340368e92"
     },
     {
       "path": "livre-smart.html",
@@ -3527,8 +3532,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 96419,
-      "gitSha": "25ef7419c7430bc3091126ff3bf31fd5c4c9302e"
+      "bytes": 96453,
+      "gitSha": "2c8003f05ac57e96bdffe6e7a38051b175a2bfe5"
     }
   ]
 }

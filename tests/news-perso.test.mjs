@@ -226,8 +226,8 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
 
   /* Le bandeau du site est bien invalidé par le service worker. */
   const sw = lire('sw.js');
-  assert.match(sw, /var CACHE = "sti-atelier-v369"/);
-  assert.match(sw, /var UPDATE_ID = "v508-retrait-fond-cours-20261028"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v370"/);
+  assert.match(sw, /var UPDATE_ID = "v509-drapeau-vent-20261028"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-lycee-v503"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-video-fond-v507"/);
   assert.match(sw, /url: "\.\/admin\.html", revision: "accueil-video-fond-v507"/);

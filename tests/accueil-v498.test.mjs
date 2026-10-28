@@ -54,15 +54,15 @@ test('v498 : drapeau tunisien à gauche du logo, à la même hauteur que lui', (
   }
 });
 
-test('v498/v507 : la vidéo officielle STI couvre tout le bloc « Bonjour » sans le déformer', () => {
+test('v498/v509 : le drapeau STI animé couvre tout le bloc « Bonjour » sans le déformer', () => {
   const section = index.indexOf('id="welcomeReturn"');
   const fond = index.indexOf('id="welcomeFondVideo"');
   const titre = index.indexOf('id="welcomeTitle"');
   assert.ok(section > 0 && fond > section && titre > fond, 'la vidéo est le fond de la section, avant le texte');
-  assert.match(index, /<source src="assets\/video\/stivideoofficiel\.mp4" type="video\/mp4" \/>/);
+  assert.match(index, /<source src="assets\/video\/drapeau-sti-vent\.mp4" type="video\/mp4" \/>/);
   assert.match(index, /autoplay muted loop playsinline preload="metadata"/);
 
-  const video = resolve(racine, 'assets/video/stivideoofficiel.mp4');
+  const video = resolve(racine, 'assets/video/drapeau-sti-vent.mp4');
   assert.ok(existsSync(video), 'la vidéo de fond est présente');
   const taille = statSync(video).size;
   assert.ok(taille > 10_000 && taille < 6_000_000, 'vidéo de fond acceptable pour le web (' + taille + ' octets)');
@@ -160,9 +160,9 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 });
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
-  assert.match(sw, /var CACHE = "sti-atelier-v369"/);
-  assert.match(sw, /var UPDATE_ID = "v508-retrait-fond-cours-20261028"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "accueil-video-fond-v507"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v370"/);
+  assert.match(sw, /var UPDATE_ID = "v509-drapeau-vent-20261028"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "drapeau-vent-v509"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-video-fond-v507"/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "accueil-video-fond-v507"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-lycee-v503"/);
@@ -170,17 +170,17 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   assert.ok(shell.includes('"./assets/images/drapeau-tunisie.svg"'), 'le drapeau est pré-caché');
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
-  assert.ok(offline.includes('"./assets/video/stivideoofficiel.mp4"'), 'la vidéo officielle rejoint le paquet hors-ligne complet');
+  assert.ok(offline.includes('"./assets/video/drapeau-sti-vent.mp4"'), 'la vidéo officielle rejoint le paquet hors-ligne complet');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
-  assert.ok(!delta.includes('stivideoofficiel.mp4'), 'les vidéos restent hors du delta léger');
+  assert.ok(!delta.includes('drapeau-sti-vent.mp4'), 'les vidéos restent hors du delta léger');
 
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  for (const chemin of ['assets/images/drapeau-tunisie.svg', 'assets/video/stivideoofficiel.mp4']) {
+  for (const chemin of ['assets/images/drapeau-tunisie.svg', 'assets/video/drapeau-sti-vent.mp4']) {
     const entree = manifeste.files.find((f) => f.path === chemin);
     assert.ok(entree, chemin + ' est dans le manifeste');
     const data = readFileSync(resolve(racine, chemin));
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v508-sti-atelier-v369');
+  assert.equal(manifeste.version, 'v509-sti-atelier-v370');
 });
