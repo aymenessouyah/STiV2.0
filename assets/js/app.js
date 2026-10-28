@@ -857,6 +857,12 @@
     var ok4 = estAutorise4SI();
 
     var libellesFiltres = { html5: "HTML5", css3: "CSS3", javascript: "JS", sql: "SQL", php: "PHP" };
+    /* Le total est calculé, jamais recopié : il suit le catalogue à chaque ajout. */
+    var accessibles = CATALOGUE_VIDEOS.filter(function (v) { return !v.reserve4si || ok4; }).length;
+    var pastilleToutes = document.querySelector('[data-video-filter="all"]');
+    if (pastilleToutes) pastilleToutes.textContent = "Toutes (" + accessibles + ")";
+    var totalTexte = document.getElementById("videosTotalNombre");
+    if (totalTexte) totalTexte.textContent = String(accessibles);
     document.querySelectorAll("[data-video-filter]").forEach(function (btnF) {
       var cleF = btnF.getAttribute("data-video-filter") || "";
       if (!libellesFiltres[cleF]) return;

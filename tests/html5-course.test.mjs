@@ -74,7 +74,7 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
     'cours/html5.html', 'dashboard.html', 'assets/css/theme.css', 'assets/css/cours.css',
     'assets/js/app.js', 'assets/js/profil.js', 'assets/js/cours-html5.js'
   ]) {
-    const revision = path === 'assets/js/app.js' ? 'tp-transitions-v512' :
+    const revision = path === 'assets/js/app.js' ? 'compteurs-videos-v513' :
       path === 'cours/html5.html' ? 'tp-display-v510' :
       path === 'assets/css/cours.css' ? 'retrait-fond-cours-v508' :
       path === 'dashboard.html' ? 'accueil-lycee-v503' :
