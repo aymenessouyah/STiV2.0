@@ -882,14 +882,14 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* v503 : le bandeau est déjà composé en deux panneaux côte à côte (le drapeau
-     à gauche, l'affiche du lycée à droite) : le cadrage centré garde les deux
-     visibles dans la boîte large et basse du bloc « Bonjour ». */
+  /* v507 : la vidéo officielle STI V2.0 (moniteurs, logos des cinq matières)
+     est cadrée au centre pour rester lisible dans la boîte large et basse du
+     bloc « Bonjour ». */
   object-position: center center;
   opacity: .92;
 }
 /* Voile de lisibilité : dense en haut à gauche, derrière le texte, et dégradé
-   vers la droite et le bas pour laisser voir le drapeau et l'affiche du lycée. */
+   vers la droite et le bas pour laisser voir la vidéo officielle. */
 .welcome-return__fond::after {
   content: "";
   position: absolute;
@@ -907,8 +907,8 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
 /* ── v499 : ruban d'identité à plat sur l'initiale de « Bonjour » et du prénom ──
    Bleu 3e SI · vert 4e SI · or pour l'admin, les comptes GOLD et les profs ·
    orangé pour tous les autres comptes. Plus d'inclinaison ni de découpe en biseau :
-   le ruban est une bande droite et régulière, le logo STI occupe sa partie gauche
-   et l'initiale colorée se détache dessus. */
+   le ruban est une bande droite et régulière et l'initiale colorée se détache
+   dessus (v507 : plus aucun logo dans le ruban). */
 .welcome-return__title {
   --ruban-clair: #7dd3fc;
   --ruban-base: #0284c7;
@@ -955,15 +955,7 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   box-shadow: 0 0.05em 0.14em rgba(3, 8, 20, .38), inset 0 0.03em 0.06em rgba(255, 255, 255, .32);
   pointer-events: none;
 }
-.ruban-initiale__logo {
-  display: block;
-  width: 0.4em;
-  height: 0.4em;
-  border-radius: 50%;
-  background: #0b1224;
-  object-fit: contain;
-  box-shadow: 0 0 0 0.035em rgba(255, 255, 255, .8);
-}
+/* v507 : plus aucun logo dans le ruban — seule la lettre est colorée. */
 /* Couleur de l'initiale elle-même : le « B » de Bonjour, la première lettre du prénom. */
 .ruban-lettre { color: var(--ruban-lettre); }
 .ruban-mot #welcomePrenom { display: inline-block; }

@@ -18,7 +18,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/sync-progressions.js': 'd566e412f0d9d7fb2d09c0a5988d3f9bbc3d895400e2afe55078e3bdb0018b81',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
-    'admin.html': 'ea6770797498723f977108daaab650821f2887f4ce0fdebfd8c412fdd8ec9c24',
+    'admin.html': 'ba42504d726dedb7ebe9d19dd357a4117dabd0f9db75034ecfb16f5193c338e4',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
@@ -113,7 +113,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'tp-formulaire-long-v505'
+    const revision = chemin === 'assets/js/app.js' ? 'accueil-video-fond-v507'
       : chemin === 'assets/css/cours.css' ? 'fond-cours-v506'
       : chemin.startsWith('cours/') ? 'fond-cours-v506' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
