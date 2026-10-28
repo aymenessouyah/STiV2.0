@@ -113,7 +113,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'tp-transitions-v512'
+    const revision = chemin === 'assets/js/app.js' ? 'compteurs-videos-v513'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'tp-display-v510'
@@ -243,4 +243,36 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     }
     assert.equal(createHash('sha256').update(courant).digest('hex'), empreinte, chemin);
   }
+});
+
+test('v513 : les totaux de vidéos de l’accueil suivent le catalogue', () => {
+  const js = lire('assets/js/app.js');
+  const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
+  const catalogue = vm.runInNewContext('(' + texte + ')');
+  const index = lire('index.html');
+  const compter = (cle) => catalogue.filter((v) => ((v.matieres || [v.matiere]).indexOf(cle) !== -1)).length;
+  const total = catalogue.length;
+  /* Une seule source de vérité : 18 capsules aujourd'hui. */
+  assert.equal(total, 18);
+  assert.ok(index.includes(`data-video-filter="all">Toutes (${total})</button>`), 'pastille « Toutes »');
+  assert.match(index, new RegExp(`id="videosTotalNombre">${total}</span>`));
+  /* Les pastilles par matière, les cartes de cours et le pied de page disent la même chose. */
+  const matieres = {
+    html5: ['HTML5', `🎥 ${compter('html5')} vidéos &amp; 🔊 audio`],
+    css3: ['CSS3', `🎥 ${compter('css3')} vidéos &amp; 🔊 audio`],
+    javascript: ['JS', `🎥 ${compter('javascript')} vidéos &amp; 🔊 audio`],
+    php: ['PHP', `🎥 ${compter('php')} vidéos &amp; 🔊 audio`]
+  };
+  for (const [cle, [libelle, badge]] of Object.entries(matieres)) {
+    assert.ok(index.includes(`data-video-filter="${cle}">${libelle} (${compter(cle)})</button>`), 'pastille ' + cle);
+    assert.ok(index.includes(badge), 'badge de cours ' + cle);
+  }
+  assert.ok(index.includes(`🌐 HTML5 (${compter('html5')} vidéos)`));
+  assert.ok(index.includes(`🎨 CSS3 (${compter('css3')} vidéos)`));
+  assert.ok(index.includes(`⚡ JavaScript (${compter('javascript')} vidéos)`));
+  assert.ok(index.includes(`🗄️ SQL (${compter('sql')} vidéos)`));
+  assert.ok(index.includes(`🐘 PHP (4e SI) · ${compter('php')} vidéos`));
+  /* Le total est recalculé dans app.js : aucune pastille figée dans le temps. */
+  assert.ok(js.includes('pastilleToutes.textContent = "Toutes (" + accessibles + ")"'));
+  assert.ok(js.includes('totalTexte.textContent = String(accessibles)'));
 });
