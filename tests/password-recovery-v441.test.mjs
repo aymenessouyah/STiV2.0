@@ -2714,7 +2714,7 @@ test('v462 : restauration complète des 4 boutons de la Carte Officielle STI V2.
   assert.match(swJs, /var UPDATE_ID\s*=\s*"v[45]\d{2}-/);
   for (const cible of ['./admin.html', './assets/css/admin-saas.css', './assets/js/admin.js', './assets/js/acces.js']) {
     const esc = cible.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    assert.match(swJs, new RegExp(`url:\\s*"${esc}",\\s*revision:\\s*"[a-z0-9-]+-v4\\d{2}"`));
+    assert.match(swJs, new RegExp(`url:\\s*"${esc}",\\s*revision:\\s*"[a-z0-9-]+-v[45]\\d{2}"`));
   }
   assert.match(swJs, /var cActif\s*=\s*await caches\.open\(CACHE\);/);
   assert.match(swJs, /await ancC\.delete\(u,\s*\{\s*ignoreSearch:\s*true\s*\}\);/);

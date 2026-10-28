@@ -112,7 +112,7 @@
       + '<h2 style="margin:0">🩺 Vérificateur de santé du site</h2>'
       + '<div><button type="button" id="sti-sante-relancer" style="padding:8px 14px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:#1565c0;color:#fff;font-weight:800;cursor:pointer">🔄 Relancer les tests</button> '
       + '<button type="button" id="sti-sante-fermer" style="padding:8px 14px;border-radius:10px;border:2px solid var(--adm-border-strong,#1a1a2e);background:var(--adm-surface-2,#fff);color:var(--adm-text,#1a1a2e);font-weight:800;cursor:pointer">✕ Fermer</button></div></div>'
-      + '<p>Teste en direct les pages de cours, les 5 quiz, le labo SQL WASM, les Smart Books, les 13 vidéos principales, les bases <code>.sql</code>, les archives <code>.zip</code>, les fiches A4 et les 5 tables Supabase clés — idéal la veille d\'une séance.</p>'
+      + '<p>Teste en direct les pages de cours, les 5 quiz, le labo SQL WASM, les Smart Books, les 16 vidéos principales, les bases <code>.sql</code>, les archives <code>.zip</code>, les fiches A4 et les 5 tables Supabase clés — idéal la veille d\'une séance.</p>'
       + '<div id="sti-sante-zone"></div>';
     document.body.appendChild(ov);
     var zone = document.getElementById("sti-sante-zone");

@@ -54,15 +54,15 @@ test('v498 : drapeau tunisien à gauche du logo, à la même hauteur que lui', (
   }
 });
 
-test('v498 : la vidéo drapeaurafeha.mp4 couvre tout le bloc « Bonjour » sans le déformer', () => {
+test('v498/v507 : la vidéo officielle STI couvre tout le bloc « Bonjour » sans le déformer', () => {
   const section = index.indexOf('id="welcomeReturn"');
   const fond = index.indexOf('id="welcomeFondVideo"');
   const titre = index.indexOf('id="welcomeTitle"');
   assert.ok(section > 0 && fond > section && titre > fond, 'la vidéo est le fond de la section, avant le texte');
-  assert.match(index, /<source src="assets\/video\/drapeau-lycee-bandeau\.mp4" type="video\/mp4" \/>/);
+  assert.match(index, /<source src="assets\/video\/stivideoofficiel\.mp4" type="video\/mp4" \/>/);
   assert.match(index, /autoplay muted loop playsinline preload="metadata"/);
 
-  const video = resolve(racine, 'assets/video/drapeau-lycee-bandeau.mp4');
+  const video = resolve(racine, 'assets/video/stivideoofficiel.mp4');
   assert.ok(existsSync(video), 'la vidéo de fond est présente');
   const taille = statSync(video).size;
   assert.ok(taille > 10_000 && taille < 6_000_000, 'vidéo de fond acceptable pour le web (' + taille + ' octets)');
@@ -98,8 +98,8 @@ test('v498 : la vidéo drapeaurafeha.mp4 couvre tout le bloc « Bonjour » sans 
 test('v498/v499 : ruban à plat, bleu 3e SI, vert 4e SI, or pour l’admin et les profs, orangé pour les autres', () => {
   /* Le « B » de Bonjour et le prénom sont chacun dans un bloc ruban. */
   assert.equal((index.match(/class="ruban-mot"/g) || []).length, 2, 'un ruban pour Bonjour, un pour le prénom');
-  assert.equal((index.match(/class="ruban-initiale__logo"/g) || []).length, 2, 'le ruban contient le logo STI');
-  assert.match(index, /<span class="ruban-initiale" aria-hidden="true"><img class="ruban-initiale__logo" src="assets\/icons\/sti-icon-192\.png"[^>]*><\/span><span class="ruban-lettre">B<\/span>onjour</,
+  assert.equal((index.match(/class="ruban-initiale__logo"/g) || []).length, 0, 'v507 : plus de logo sur les lettres');
+  assert.match(index, /<span class="ruban-initiale" aria-hidden="true"><\/span><span class="ruban-lettre">B<\/span>onjour</,
     'le ruban précède le B de « Bonjour », qui porte sa propre couleur');
   assert.match(index, /<\/span><span id="welcomePrenom">/, 'le second ruban précède la première lettre du prénom');
   assert.match(index, /<h2 class="welcome-return__title" id="welcomeTitle" data-ruban="3si">/);
@@ -119,7 +119,7 @@ test('v498/v499 : ruban à plat, bleu 3e SI, vert 4e SI, or pour l’admin et le
   assert.match(css, /\.ruban-mot #welcomePrenom::first-letter \{ color: var\(--ruban-lettre\); \}/);
 
   /* v499 : plus de « pas » — bande droite, ni rotation ni découpe en biseau. */
-  const bande = css.slice(css.indexOf('.ruban-initiale {'), css.indexOf('.ruban-initiale__logo {'));
+  const bande = css.slice(css.indexOf('.ruban-initiale {'), css.indexOf('.ruban-lettre {'));
   assert.doesNotMatch(bande, /rotate\(/, 'le ruban n’est plus incliné');
   assert.doesNotMatch(bande, /clip-path/, 'le ruban n’a plus de découpe en biseau');
   assert.match(bande, /border-radius: 0\.08em;/, 'coins réguliers');
@@ -160,27 +160,27 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 });
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
-  assert.match(sw, /var CACHE = "sti-atelier-v367"/);
-  assert.match(sw, /var UPDATE_ID = "v506-fond-cours-20261028"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "accueil-lycee-v503"/);
-  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-lycee-v503"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "tp-formulaire-long-v505"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v368"/);
+  assert.match(sw, /var UPDATE_ID = "v507-accueil-video-fond-20261028"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "accueil-video-fond-v507"/);
+  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-video-fond-v507"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "accueil-video-fond-v507"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-lycee-v503"/);
   assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-lycee-v503"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   assert.ok(shell.includes('"./assets/images/drapeau-tunisie.svg"'), 'le drapeau est pré-caché');
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
-  assert.ok(offline.includes('"./assets/video/drapeau-lycee-bandeau.mp4"'), 'le bandeau rejoint le paquet hors-ligne complet');
+  assert.ok(offline.includes('"./assets/video/stivideoofficiel.mp4"'), 'la vidéo officielle rejoint le paquet hors-ligne complet');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
-  assert.ok(!delta.includes('drapeau-lycee-bandeau.mp4'), 'les vidéos restent hors du delta léger');
+  assert.ok(!delta.includes('stivideoofficiel.mp4'), 'les vidéos restent hors du delta léger');
 
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  for (const chemin of ['assets/images/drapeau-tunisie.svg', 'assets/video/drapeau-lycee-bandeau.mp4']) {
+  for (const chemin of ['assets/images/drapeau-tunisie.svg', 'assets/video/stivideoofficiel.mp4']) {
     const entree = manifeste.files.find((f) => f.path === chemin);
     assert.ok(entree, chemin + ' est dans le manifeste');
     const data = readFileSync(resolve(racine, chemin));
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v506-sti-atelier-v367');
+  assert.equal(manifeste.version, 'v507-sti-atelier-v368');
 });

@@ -84,7 +84,7 @@
       icone: "🌐",
       badgeClasse: "badge-html",
       couleur: "#ff783c",
-      nbVideos: 1,
+      nbVideos: 3,
       urlCours: "cours/html5.html",
       urlQuiz: "quiz/html-css.html",
       urlAudio: "assets/audio/html5-cours.mp3",
@@ -103,7 +103,7 @@
       icone: "🎨",
       badgeClasse: "badge-css",
       couleur: "#38bdf8",
-      nbVideos: 4,
+      nbVideos: 6,
       urlCours: "cours/css3.html",
       urlQuiz: "quiz/html-css.html",
       urlAudio: "assets/audio/css3-cours.mp3",
@@ -182,8 +182,8 @@
   };
 
   /**
-   * Les 13 vidéos présentées ici (.mp4), et non tous les médias du site :
-   * HTML5 (1) · CSS3 (4) · JavaScript (1) · SQL (4, dont 2 Bac) · PHP (3 Bac).
+   * Les 16 vidéos présentées ici (.mp4), et non tous les médias du site :
+   * HTML5 (3) · CSS3 (6) · JavaScript (2) · SQL (4, dont 2 Bac) · PHP (3 Bac).
    * Les variantes mobiles, autres séries et leçons interactives ne sont pas comptées.
    * Noms et durées correspondent aux fichiers présents dans le dépôt.
    */
