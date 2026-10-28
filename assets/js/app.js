@@ -103,7 +103,7 @@
       icone: "🎨",
       badgeClasse: "badge-css",
       couleur: "#38bdf8",
-      nbVideos: 6,
+      nbVideos: 7,
       urlCours: "cours/css3.html",
       urlQuiz: "quiz/html-css.html",
       urlAudio: "assets/audio/css3-cours.mp3",
@@ -182,8 +182,8 @@
   };
 
   /**
-   * Les 16 vidéos présentées ici (.mp4), et non tous les médias du site :
-   * HTML5 (3) · CSS3 (6) · JavaScript (2) · SQL (4, dont 2 Bac) · PHP (3 Bac).
+   * Les 17 vidéos présentées ici (.mp4), et non tous les médias du site :
+   * HTML5 (4) · CSS3 (7) · JavaScript (2) · SQL (4, dont 2 Bac) · PHP (3 Bac).
    * Les variantes mobiles, autres séries et leçons interactives ne sont pas comptées.
    * Noms et durées correspondent aux fichiers présents dans le dépôt.
    */
@@ -277,6 +277,21 @@
       urlTP: "exercices/html-css/tp-formulaire-tableau-autre/index.html",
       urlCours: "exercices/html-css/tp-formulaire-tableau-autre/index.html",
       codeApercu: "<td colspan=\"2\">fusion</td>"
+    },
+    {
+      /* v510 : capsule « display, float et position » — chaque boîte se présente, puis le CSS. */
+      id: "tp-display-float-position",
+      matiere: "html5",
+      matieres: ["html5", "css3"],
+      nomMatiere: "HTML5 + CSS3",
+      badgeClasse: "badge-html",
+      couleur: "#ff783c",
+      titre: "TP — display, float et position",
+      dureeTexte: "09:55",
+      srcPrincipal: "assets/videos/tp-display-float-position.mp4",
+      urlTP: "exercices/html-css/tp-display-float-position/index.html",
+      urlCours: "exercices/html-css/tp-display-float-position/index.html",
+      codeApercu: "display: inline-block"
     },
     {
       id: "javascript-cours",

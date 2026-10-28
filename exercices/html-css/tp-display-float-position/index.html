@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TP : display, float et position</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 960px; margin: 0 auto 90px; padding: 0 12px; color: #222; line-height: 1.4; }
+  h1 { color: #1f4e79; text-align: center; }
+  h2 { color: #1f4e79; border-bottom: 3px solid #e67e22; padding-bottom: 4px; margin-top: 36px; }
+  h3 { color: #e67e22; }
+  code { background: #eaf2fb; padding: 1px 4px; border-radius: 3px; }
+  fieldset { margin-bottom: 16px; border: 2px solid #1f4e79; border-radius: 6px; }
+  legend { font-weight: bold; color: #1f4e79; padding: 0 8px; }
+  button, select { padding: 5px 10px; margin: 3px 4px 3px 0; }
+  button { background: #1f4e79; color: #fff; border: 0; border-radius: 4px; cursor: pointer; }
+
+  /* ===== Tableaux récapitulatifs ===== */
+  .recap { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
+  .recap caption { font-weight: bold; color: #1f4e79; padding: 6px; }
+  .recap th, .recap td { border: 1px solid #1f4e79; padding: 6px; font-size: 14px; text-align: left; }
+  .recap th { background: #1f4e79; color: #fff; text-align: center; }
+
+  /* =====================================================
+     PARTIE 1 : DISPLAY
+     ===================================================== */
+
+  /* Je suis inline : width, height et marges verticales ignorées */
+  .m-inline {
+    display: inline;
+    width: 300px; height: 100px; margin-top: 30px;   /* ignorés ! */
+    padding: 6px 10px;
+    background: #fdebd0; border: 2px solid #e67e22;
+  }
+
+  /* Je suis block : nouvelle ligne, j'accepte width et height */
+  .m-block {
+    display: block;
+    width: 60%;
+    margin: 6px 0; padding: 10px;
+    background: #d6eaf8; border: 2px solid #1f4e79;
+  }
+
+  /* Je suis inline-block : sur la ligne ET j'accepte width et height */
+  .m-ib {
+    display: inline-block;
+    width: 200px; height: 90px;
+    margin: 4px 6px 4px 0; padding: 8px;
+    vertical-align: top;
+    background: #d5f5e3; border: 2px solid #27ae60;
+  }
+
+  /* Je suis flex : je suis le parent, mes enfants s'organisent en ligne */
+  .parent-flex {
+    display: flex;
+    height: 220px;
+    padding: 10px; gap: 10px;
+    background: #f5eef8; border: 3px dashed #8e44ad;
+  }
+  .enfant {
+    width: 170px;
+    padding: 8px;
+    background: #e8daef; border: 2px solid #8e44ad;
+  }
+
+  /* =====================================================
+     PARTIE 2 : FLOAT
+     ===================================================== */
+  .flotte-gauche { float: left; width: 150px; height: 100px; margin: 0 14px 6px 0; padding: 8px;
+                   background: #d6eaf8; border: 2px solid #1f4e79; }
+  .flotte-droite { float: right; width: 150px; height: 100px; margin: 0 0 6px 14px; padding: 8px;
+                   background: #fdebd0; border: 2px solid #e67e22; }
+  .parent-casse  { border: 3px solid #c0392b; background: #fdedec; }          /* le problème */
+  .parent-overflow { border: 3px solid #27ae60; background: #eafaf1; overflow: hidden; }   /* solution 1 */
+  .parent-clear { border: 3px solid #27ae60; background: #eafaf1; }                         /* solution 2 */
+  .vide-clear { clear: both; }
+  .apres-float { clear: both; background: #fcf3cf; border: 2px solid #f1c40f; padding: 6px; margin-top: 8px; }
+  .enveloppe { overflow: hidden; }   /* garde chaque démonstration indépendante */
+
+  /* =====================================================
+     PARTIE 3 : POSITION
+     ===================================================== */
+  .zone { height: 150px; border: 3px dashed #1f4e79; padding: 8px; background: #f4f8fc; }
+  .pos { display: inline-block; width: 190px; height: 90px; margin-right: 10px; padding: 8px; vertical-align: top;
+         background: #d6eaf8; border: 2px solid #1f4e79; }
+  .pos-relative { position: relative; top: 20px; left: 20px; background: #fdebd0; border-color: #e67e22; }
+
+  .zone-relative { position: relative; height: 170px; border: 3px dashed #1f4e79; background: #f4f8fc; }
+  .abs { position: absolute; top: 10px; right: 10px; width: 230px; padding: 8px;
+         background: #fdebd0; border: 2px solid #e67e22; }
+
+  .grand-parent { position: relative; height: 200px; border: 3px dashed #1f4e79; background: #f4f8fc; }
+  .parent-static { height: 110px; margin: 20px 30px; border: 2px solid #8e44ad; background: #f5eef8; padding: 6px; }
+  .abs-bas { position: absolute; bottom: 0; left: 0; width: 250px; padding: 8px;
+             background: #fdebd0; border: 2px solid #e67e22; }
+
+  .badge-fixed { position: fixed; bottom: 12px; right: 12px; width: 230px; padding: 10px; z-index: 100;
+                 background: #c0392b; color: #fff; border-radius: 6px; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+  .badge-fixed button { background: #fff; color: #c0392b; padding: 2px 8px; margin: 6px 0 0; }
+
+  .defilement { height: 220px; overflow: auto; border: 3px solid #1f4e79; background: #fff; }
+  .collant { position: sticky; top: 0; padding: 8px; background: #f1c40f; border-bottom: 2px solid #b7950b; font-weight: bold; }
+  .defilement p { margin: 0; padding: 12px 8px; border-bottom: 1px solid #ccc; }
+
+  footer { text-align: center; margin-top: 30px; font-size: 13px; color: #555; }
+</style>
+</head>
+<body>
+
+<h1>TP : display, float et position</h1>
+<p style="text-align:center">Dans cette page, chaque boîte se présente elle-même : « Je suis... ». Observez, puis lisez le code CSS.</p>
+
+<!-- ============================ PARTIE 1 : DISPLAY ============================ -->
+<h2>1. La propriété display</h2>
+
+<table class="recap">
+  <caption>Récapitulatif : « Je suis... »</caption>
+  <thead><tr><th>Valeur</th><th>Nouvelle ligne ?</th><th>width et height ?</th><th>Marges verticales ?</th><th>Comportement</th></tr></thead>
+  <tbody>
+    <tr><td><code>inline</code></td><td>Non</td><td>Ignorés</td><td>Ignorées</td><td>Je suis comme un mot dans le texte (<code>span</code>, <code>a</code>)</td></tr>
+    <tr><td><code>block</code></td><td>Oui</td><td>Acceptés</td><td>Acceptées</td><td>Je prends toute la largeur disponible (<code>div</code>, <code>p</code>, <code>h1</code>)</td></tr>
+    <tr><td><code>inline-block</code></td><td>Non</td><td>Acceptés</td><td>Acceptées</td><td>Je reste sur la ligne mais je me comporte comme un bloc</td></tr>
+    <tr><td><code>flex</code></td><td>Oui (je suis un bloc)</td><td>Acceptés</td><td>Acceptées</td><td>Je suis le parent : j'organise mes enfants en ligne ou en colonne</td></tr>
+  </tbody>
+</table>
+
+<fieldset>
+  <legend>display: inline</legend>
+  <p>Voici une phrase normale, puis
+    <span class="m-inline">Je suis inline : mon width, mon height et ma marge du haut sont ignorés,</span>
+    <span class="m-inline">je suis inline aussi : on me met côte à côte et je suis la ligne du texte,</span>
+    <span class="m-inline">je suis encore inline : seul mon padding horizontal pousse mes voisins.</span>
+    Puis la phrase continue sans retour à la ligne.</p>
+  <code>display: inline; width: 300px; height: 100px; margin-top: 30px;</code> (width, height et margin-top sont sans effet)
+</fieldset>
+
+<fieldset>
+  <legend>display: block</legend>
+  <div class="m-block">Je suis block : je commence sur une nouvelle ligne. J'ai width: 60%, mais personne ne peut se mettre à côté de moi.</div>
+  <div class="m-block">Je suis block aussi : je suis sous mon frère, même s'il reste de la place à droite.</div>
+  <code>display: block; width: 60%;</code>
+</fieldset>
+
+<fieldset>
+  <legend>display: inline-block</legend>
+  <div class="m-ib">Je suis inline-block : je reste sur la ligne comme un inline...</div><div class="m-ib">...mais j'accepte width: 200px et height: 90px comme un block.</div><div class="m-ib">Je suis inline-block aussi : si la ligne est pleine, je passe à la suivante.</div>
+  <br><code>display: inline-block; width: 200px; height: 90px;</code>
+</fieldset>
+
+<fieldset>
+  <legend>display: flex (le parent et ses enfants)</legend>
+  <div class="parent-flex" id="parentFlex">
+    <div class="enfant">Je suis l'enfant 1 : mon parent flex me place.</div>
+    <div class="enfant">Je suis l'enfant 2 : mon parent décide de ma position.</div>
+    <div class="enfant">Je suis l'enfant 3 : mon parent flex me place à côté de mes frères.</div>
+  </div>
+  <p><strong>Je suis le parent flex</strong> (<code>display: flex</code>), et voici mes enfants. Changez mes propriétés :</p>
+  <label for="selDir">flex-direction :</label>
+  <select id="selDir" onchange="document.getElementById('parentFlex').style.flexDirection = this.value">
+    <option value="row">row</option><option value="row-reverse">row-reverse</option>
+    <option value="column">column</option><option value="column-reverse">column-reverse</option>
+  </select>
+  <label for="selJust">justify-content :</label>
+  <select id="selJust" onchange="document.getElementById('parentFlex').style.justifyContent = this.value">
+    <option value="flex-start">flex-start</option><option value="center">center</option>
+    <option value="flex-end">flex-end</option><option value="space-between">space-between</option>
+    <option value="space-around">space-around</option><option value="space-evenly">space-evenly</option>
+  </select><br>
+  <label for="selAlign">align-items :</label>
+  <select id="selAlign" onchange="document.getElementById('parentFlex').style.alignItems = this.value">
+    <option value="stretch">stretch</option><option value="flex-start">flex-start</option>
+    <option value="center">center</option><option value="flex-end">flex-end</option>
+  </select>
+  <label for="selGap">gap :</label>
+  <select id="selGap" onchange="document.getElementById('parentFlex').style.gap = this.value">
+    <option value="10px">10px</option><option value="0">0</option><option value="30px">30px</option>
+  </select><br>
+  <button type="button" onclick="var p = document.getElementById('parentFlex'); p.style.display = (p.style.display === 'block' ? 'flex' : 'block')">Passer le parent en display: block</button>
+</fieldset>
+
+<!-- ============================ PARTIE 2 : FLOAT ============================ -->
+<h2>2. La propriété float</h2>
+
+<table class="recap">
+  <caption>Récapitulatif</caption>
+  <thead><tr><th>Propriété</th><th>Valeurs</th><th>Effet</th></tr></thead>
+  <tbody>
+    <tr><td><code>float</code></td><td>left, right, none</td><td>Je me colle à gauche ou à droite et le texte m'entoure ; je sors du flux normal</td></tr>
+    <tr><td><code>clear</code></td><td>left, right, both</td><td>Je refuse d'avoir un flottant à côté de moi : je passe en dessous</td></tr>
+    <tr><td>Problème</td><td>parent de hauteur 0</td><td>Mon parent ne contient plus ses enfants flottants : sa bordure s'écrase</td></tr>
+    <tr><td>Solutions</td><td><code>overflow: hidden</code> ou un élément <code>clear: both</code> dans le parent</td><td>Le parent « enveloppe » ses enfants flottants</td></tr>
+  </tbody>
+</table>
+
+<fieldset>
+  <legend>float: left et float: right</legend>
+  <div class="enveloppe">
+    <div class="flotte-gauche">Je suis float: left : je me colle à gauche.</div>
+    <div class="flotte-droite">Je suis float: right : je me colle à droite.</div>
+    <p>Moi, je suis un simple paragraphe : je coule autour de mes deux voisins flottants. Les éléments flottants sont sortis du flux normal, donc mon texte les contourne comme l'eau contourne une pierre. Si je suis assez long, je passe ensuite sous eux et je reprends toute la largeur disponible pour continuer ma lecture jusqu'à la fin de cette phrase.</p>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>Le problème du parent qui s'écrase</legend>
+  <div class="parent-casse">
+    <div class="flotte-gauche">Je suis un enfant float: left.</div>
+  </div>
+  <p style="clear: both"><em>Ci-dessus : je suis le parent (bordure rouge) et je suis vide, car mon seul enfant est flottant. Ma hauteur est 0.</em></p>
+</fieldset>
+
+<fieldset>
+  <legend>Solution 1 : overflow: hidden sur le parent</legend>
+  <div class="parent-overflow">
+    <div class="flotte-gauche">Je suis float: left.</div>
+  </div>
+  <p><em>Je suis le parent avec <code>overflow: hidden</code> : j'enveloppe mon enfant flottant.</em></p>
+</fieldset>
+
+<fieldset>
+  <legend>Solution 2 : un élément avec clear: both à l'intérieur du parent</legend>
+  <div class="parent-clear">
+    <div class="flotte-gauche">Je suis float: left.</div>
+    <div class="vide-clear">Je suis un élément <code>clear: both</code> placé en dernier dans le parent : je passe sous le flottant, donc mon parent m'enveloppe jusqu'en bas.</div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>clear: both sur l'élément suivant</legend>
+  <div class="enveloppe">
+    <div class="flotte-gauche">Je suis float: left.</div>
+    <div class="flotte-droite">Je suis float: right.</div>
+    <div class="apres-float">Je suis un bloc avec <code>clear: both</code> : je passe sous les deux flottants.</div>
+  </div>
+</fieldset>
+
+<!-- ============================ PARTIE 3 : POSITION ============================ -->
+<h2>3. La propriété position</h2>
+
+<table class="recap">
+  <caption>Récapitulatif : « Par rapport à quoi je me place ? »</caption>
+  <thead><tr><th>Valeur</th><th>Mon repère</th><th>Ma place d'origine</th><th>top, right, bottom, left</th></tr></thead>
+  <tbody>
+    <tr><td><code>static</code></td><td>Le flux normal (valeur par défaut)</td><td>Occupée</td><td>Ignorés</td></tr>
+    <tr><td><code>relative</code></td><td>Ma propre place d'origine</td><td>Réservée (mes voisins ne bougent pas)</td><td>Actifs</td></tr>
+    <tr><td><code>absolute</code></td><td>Mon ancêtre positionné le plus proche (sinon la page)</td><td>Libérée : je sors du flux</td><td>Actifs</td></tr>
+    <tr><td><code>fixed</code></td><td>La fenêtre du navigateur (viewport)</td><td>Libérée : je sors du flux</td><td>Actifs</td></tr>
+    <tr><td><code>sticky</code></td><td>Mon conteneur de défilement</td><td>Réservée ; je me fige au seuil</td><td><code>top</code> (ou autre) obligatoire</td></tr>
+  </tbody>
+</table>
+
+<fieldset>
+  <legend>position: static et position: relative</legend>
+  <div class="zone">
+    <div class="pos">Je suis static : je suis à ma place normale, top et left sont ignorés.</div><div class="pos pos-relative">Je suis relative avec top: 20px; left: 20px : je me décale depuis MA place.</div><div class="pos">Je suis static : tu vois, ma voisine relative a bougé mais je n'ai pas bougé.</div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>position: absolute (parent relative)</legend>
+  <div class="zone-relative">
+    Je suis le parent <code>position: relative</code> : je sers de repère.
+    <div class="abs">Je suis absolute avec top: 10px; right: 10px : je me place par rapport à mon parent positionné.</div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>position: absolute (parent static, grand-parent relative)</legend>
+  <div class="grand-parent">
+    Je suis le grand-parent <code>position: relative</code>.
+    <div class="parent-static">
+      Je suis le parent <code>static</code> : je ne suis pas un repère.
+      <div class="abs-bas">Je suis absolute avec bottom: 0; left: 0 : mon parent est static, je me colle donc à mon grand-parent.</div>
+    </div>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>position: fixed</legend>
+  <p>Regardez en bas à droite de l'écran : un badge rouge est fixé à la fenêtre. Faites défiler la page : il ne bouge pas.</p>
+  <button type="button" onclick="document.getElementById('badge').hidden = false">Réafficher le badge fixed</button>
+</fieldset>
+
+<fieldset>
+  <legend>position: sticky (faites défiler la zone)</legend>
+  <div class="defilement">
+    <div class="collant">Je suis sticky avec top: 0 : je défile, puis je me fige en haut.</div>
+    <p>Contenu 1 : je suis un paragraphe normal, je défile avec la zone.</p>
+    <p>Contenu 2 : je défile aussi.</p>
+    <p>Contenu 3 : regardez le bandeau jaune, il m'attend en haut.</p>
+    <p>Contenu 4 : je suis encore un paragraphe normal.</p>
+    <p>Contenu 5 : le bandeau sticky reste collé au bord de la zone.</p>
+    <p>Contenu 6 : sans top, sticky ne se fige jamais.</p>
+    <p>Contenu 7 : encore du texte.</p>
+    <p>Contenu 8 : encore du texte.</p>
+    <p>Contenu 9 : fin de la zone.</p>
+  </div>
+</fieldset>
+
+<!-- Je suis fixed -->
+<div class="badge-fixed" id="badge">
+  Je suis fixed : je reste ici même quand tu défiles la page.
+  <br><button type="button" onclick="document.getElementById('badge').hidden = true">Fermer</button>
+</div>
+
+<footer>TP réalisé par : Enseignant : Aymen Essouyah — 4ème SI</footer>
+
+</body>
+</html>

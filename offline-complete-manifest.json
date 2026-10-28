@@ -1,9 +1,9 @@
 {
-  "version": "v509-sti-atelier-v370",
-  "generatedAt": "2026-10-28T21:20:10Z",
+  "version": "v510-sti-atelier-v371",
+  "generatedAt": "2026-10-28T21:56:52Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 706,
-  "totalBytes": 723708985,
+  "totalFiles": 709,
+  "totalBytes": 734699626,
   "files": [
     {
       "path": "404.html",
@@ -68,7 +68,7 @@
     {
       "path": "admin.html",
       "bytes": 341326,
-      "gitSha": "97d24d4434ff97d14dbaf47770cd867e257f93ce"
+      "gitSha": "0092726b1653391875467913c6119ead62604444"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 108170,
-      "gitSha": "676a9a845940f71fa4374741673f994cbb79f302"
+      "bytes": 108812,
+      "gitSha": "7ae47306e8799bb1ff605ddd8861f0ef3a633e90"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -702,13 +702,13 @@
     },
     {
       "path": "assets/js/cours-css3.js",
-      "bytes": 44201,
-      "gitSha": "eea3f2ef95b633dd5a7b3d8f776221d77a405f11"
+      "bytes": 44679,
+      "gitSha": "17c13cd741cd3122742033b032d38ba35fe8b56a"
     },
     {
       "path": "assets/js/cours-html5.js",
-      "bytes": 55484,
-      "gitSha": "186ca12fd21c3b2eb4e9bf93d2d5e82fcf6c2f9c"
+      "bytes": 55673,
+      "gitSha": "28307c2dc7f682496be33e328799cec253464729"
     },
     {
       "path": "assets/js/cours-javascript.js",
@@ -903,7 +903,7 @@
     {
       "path": "assets/js/sante.js",
       "bytes": 10952,
-      "gitSha": "f3bfaf2ff4ff152a2417314be7e45a2957a268c0"
+      "gitSha": "e36f5f6d1b93972b373f64fab1b2bf5878e6f42d"
     },
     {
       "path": "assets/js/sauvegarde.js",
@@ -1156,6 +1156,11 @@
       "gitSha": "6b1142870ded1e6a69f56d1686de747b92b9ee7d"
     },
     {
+      "path": "assets/videos/tp-display-float-position.mp4",
+      "bytes": 10922910,
+      "gitSha": "95ce7d971df06420b6698f249fa7ce9b36933298"
+    },
+    {
       "path": "assets/videos/tp-evenements-liens-v2.mp4",
       "bytes": 16529745,
       "gitSha": "0066c46dd9edc430b1c539e2796f0079d1bf9c93"
@@ -1212,8 +1217,8 @@
     },
     {
       "path": "cours/css3.html",
-      "bytes": 211303,
-      "gitSha": "c6b1e85fcc0460c68f2d5e87406f19597fa4ea87"
+      "bytes": 212923,
+      "gitSha": "0053f0458158061c5d285163f027c9042c990afa"
     },
     {
       "path": "cours/datalist.html",
@@ -1227,8 +1232,8 @@
     },
     {
       "path": "cours/html5.html",
-      "bytes": 205249,
-      "gitSha": "b12892abf6f1f650ccac65b9f2d1bcc9fa5f6404"
+      "bytes": 207392,
+      "gitSha": "84d93ec26fbd1022aa463346dcbfd2bde1e467ec"
     },
     {
       "path": "cours/javascript.html",
@@ -2651,6 +2656,11 @@
       "gitSha": "6f2a6cb3c0a8912560c67d4efc619af78f5aa3d8"
     },
     {
+      "path": "exercices/html-css/tp-display-float-position/index.html",
+      "bytes": 16630,
+      "gitSha": "3350d910af62c1a9576e6c4bc5d8396c79efcaa4"
+    },
+    {
       "path": "exercices/html-css/tp-evenements-liens/drapeau.png",
       "bytes": 198225,
       "gitSha": "9e6382f620ce1c8362acdba3335514e122fc3c7e"
@@ -2953,7 +2963,7 @@
     {
       "path": "index.html",
       "bytes": 57036,
-      "gitSha": "aa4b40e9bf0ef66fe9fad240448324f340368e92"
+      "gitSha": "51b25e9a8671685aec116ee12b3d3a8881076be4"
     },
     {
       "path": "livre-smart.html",
@@ -2984,6 +2994,11 @@
       "path": "outils-js-bac.html",
       "bytes": 38124,
       "gitSha": "a7469998add0cdbb0e4ebd15e493d917f8a14c2b"
+    },
+    {
+      "path": "outils/tpvid/scenes_display.py",
+      "bytes": 45828,
+      "gitSha": "66524701924edad63ffd6dcadd7b4a60fb8aef2b"
     },
     {
       "path": "package-lock.json",
@@ -3532,8 +3547,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 96453,
-      "gitSha": "2c8003f05ac57e96bdffe6e7a38051b175a2bfe5"
+      "bytes": 96654,
+      "gitSha": "a62fe4334624073b86eb42d38f65c0ccffcde5a9"
     }
   ]
 }
