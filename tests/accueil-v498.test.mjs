@@ -34,12 +34,17 @@ test('v498 : drapeau tunisien à gauche du logo, à la même hauteur que lui', (
   assert.match(svg, /<mask id="drapeau-lune">/, 'croissant rouge découpé par un masque');
   assert.match(svg, /<path fill="#e70013" d="M505/, 'étoile rouge à cinq branches');
 
-  /* Même hauteur que le logo (40 px) ; le texte n'est pas élargi sur mobile. */
+  /* v503 : le drapeau et le logo font exactement la même taille (40 px). */
   const bloc = css.slice(css.indexOf('.brand-logo__drapeau {'), css.indexOf('.brand-logo__text {'));
+  assert.match(bloc, /width: 40px;/);
   assert.match(bloc, /height: 40px/);
   assert.match(bloc, /object-fit: cover/);
-  assert.match(css, /@media \(max-width: 540px\)[\s\S]*?\.brand-logo__drapeau \{\s*position: absolute;/,
-    'sur mobile le drapeau devient une pastille pour ne pas élargir l’en-tête');
+  /* v503 : sur mobile, les deux restent sur une même ligne et à taille égale. */
+  const mobile = css.slice(css.indexOf('@media (max-width: 540px)'), css.indexOf('@media (min-width: 1060px) and (max-width: 1200px)'));
+  assert.match(mobile, /\.brand-logo__drapeau,\s*body\.sti-v2 \.site-header \.brand-logo__mark \{\s*width: 30px;\s*height: 30px;/,
+    'sur mobile le drapeau et le logo gardent la même taille');
+  assert.doesNotMatch(mobile, /\.brand-logo__drapeau \{\s*position: absolute;/,
+    'le drapeau n’est plus une pastille : il reste sur la ligne du logo');
 
   /* Les autres pages qui portent le logo reçoivent aussi le drapeau. */
   for (const page of ['dashboard.html', 'cours/html5.html', 'cours/css3.html', 'cours/javascript.html', 'cours/sql.html', 'cours/php.html']) {
@@ -54,10 +59,10 @@ test('v498 : la vidéo drapeaurafeha.mp4 couvre tout le bloc « Bonjour » sans 
   const fond = index.indexOf('id="welcomeFondVideo"');
   const titre = index.indexOf('id="welcomeTitle"');
   assert.ok(section > 0 && fond > section && titre > fond, 'la vidéo est le fond de la section, avant le texte');
-  assert.match(index, /<source src="assets\/video\/drapeaurafeha\.mp4" type="video\/mp4" \/>/);
+  assert.match(index, /<source src="assets\/video\/drapeau-lycee-bandeau\.mp4" type="video\/mp4" \/>/);
   assert.match(index, /autoplay muted loop playsinline preload="metadata"/);
 
-  const video = resolve(racine, 'assets/video/drapeaurafeha.mp4');
+  const video = resolve(racine, 'assets/video/drapeau-lycee-bandeau.mp4');
   assert.ok(existsSync(video), 'la vidéo de fond est présente');
   const taille = statSync(video).size;
   assert.ok(taille > 10_000 && taille < 6_000_000, 'vidéo de fond acceptable pour le web (' + taille + ' octets)');
@@ -67,8 +72,9 @@ test('v498 : la vidéo drapeaurafeha.mp4 couvre tout le bloc « Bonjour » sans 
   const bloc = css.slice(css.indexOf('.welcome-return__fond {'), css.indexOf('.welcome-return__title {'));
   assert.match(bloc, /position: absolute;\s*inset: 0;/, 'le fond recouvre toute la boîte');
   assert.match(bloc, /object-fit: cover/, 'la vidéo s’étend sur toute la boîte sans déformation');
-  assert.match(bloc, /object-position: center 100%/, 'cadrage bas : l’affiche du lycée reste visible');
-  assert.match(bloc, /\.welcome-return__fond::after \{[^}]*linear-gradient\(180deg, var\(--bg-alt\) 0%, var\(--bg-alt\) 58%/, 'voile dense derrière le texte, plus léger en bas');
+  assert.match(bloc, /object-position: center center/, 'le bandeau garde le drapeau et l’affiche du lycée visibles');
+  assert.match(bloc, /\.welcome-return__fond::after \{[^}]*linear-gradient\(90deg, var\(--bg-alt\) 0%/, 'voile dense derrière le texte');
+  assert.match(bloc, /\.welcome-return__fond::after \{[^}]*linear-gradient\(180deg/, 'voile dégradé vers le bas pour laisser voir le lycée');
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.welcome-return__fond-video \{ display: none; \}/,
     'aucune vidéo animée si l’utilisateur réduit les animations');
 
@@ -154,27 +160,27 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 });
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
-  assert.match(sw, /var CACHE = "sti-atelier-v363"/);
-  assert.match(sw, /var UPDATE_ID = "v502-tp-formulaire-20261028"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "accueil-ruban-v499"/);
-  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-ruban-v499"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v364"/);
+  assert.match(sw, /var UPDATE_ID = "v503-accueil-lycee-20261028"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "accueil-lycee-v503"/);
+  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-lycee-v503"/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "tp-formulaire-v502"/);
-  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-ruban-v499"/);
-  assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-ruban-v499"/);
+  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-lycee-v503"/);
+  assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-lycee-v503"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   assert.ok(shell.includes('"./assets/images/drapeau-tunisie.svg"'), 'le drapeau est pré-caché');
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
-  assert.ok(offline.includes('"./assets/video/drapeaurafeha.mp4"'), 'la vidéo rejoint le paquet hors-ligne complet');
+  assert.ok(offline.includes('"./assets/video/drapeau-lycee-bandeau.mp4"'), 'le bandeau rejoint le paquet hors-ligne complet');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
-  assert.ok(!delta.includes('drapeaurafeha.mp4'), 'la vidéo reste hors du delta léger');
+  assert.ok(!delta.includes('drapeau-lycee-bandeau.mp4'), 'les vidéos restent hors du delta léger');
 
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  for (const chemin of ['assets/images/drapeau-tunisie.svg', 'assets/video/drapeaurafeha.mp4']) {
+  for (const chemin of ['assets/images/drapeau-tunisie.svg', 'assets/video/drapeau-lycee-bandeau.mp4']) {
     const entree = manifeste.files.find((f) => f.path === chemin);
     assert.ok(entree, chemin + ' est dans le manifeste');
     const data = readFileSync(resolve(racine, chemin));
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v502-sti-atelier-v363');
+  assert.equal(manifeste.version, 'v503-sti-atelier-v364');
 });

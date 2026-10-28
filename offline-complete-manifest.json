@@ -1,9 +1,9 @@
 {
-  "version": "v502-sti-atelier-v363",
-  "generatedAt": "2026-10-28T19:10:41Z",
+  "version": "v503-sti-atelier-v364",
+  "generatedAt": "2026-10-28T19:28:24Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 703,
-  "totalBytes": 698756954,
+  "totalFiles": 704,
+  "totalBytes": 699288603,
   "files": [
     {
       "path": "404.html",
@@ -297,8 +297,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 70521,
-      "gitSha": "e58ef6f66c97650c151d2c392b7ca0ee2845e2a8"
+      "bytes": 71635,
+      "gitSha": "c892513b109a216149b0bf91980a082d96169d01"
     },
     {
       "path": "assets/css/visionneuse-exercices.css",
@@ -1036,6 +1036,11 @@
       "gitSha": "429896a9d087eb3977cf67521f738d01af17c808"
     },
     {
+      "path": "assets/video/drapeau-lycee-bandeau.mp4",
+      "bytes": 530434,
+      "gitSha": "38322db767f9458b9beec93edf011b8794f35193"
+    },
+    {
       "path": "assets/video/drapeaurafeha.mp4",
       "bytes": 1799114,
       "gitSha": "3a652cc6c32e34859ef98c9aa58b578df704e8bb"
@@ -1198,7 +1203,7 @@
     {
       "path": "cours/css3.html",
       "bytes": 211299,
-      "gitSha": "ead30b05e6c8114f72411b43fa0081ea322c99d8"
+      "gitSha": "ad9ac84d82f5da1ec7163fa7e006eab9735ab3d0"
     },
     {
       "path": "cours/datalist.html",
@@ -1213,12 +1218,12 @@
     {
       "path": "cours/html5.html",
       "bytes": 205245,
-      "gitSha": "7488a2fcae29ea183c9ea750195f5539e1e5e2db"
+      "gitSha": "f867c0c07f2c75b7f0f30d263218c1596547ff2a"
     },
     {
       "path": "cours/javascript.html",
       "bytes": 127128,
-      "gitSha": "c6d5a4c6e4ae4e08d93fd93a5a52b34843493dd5"
+      "gitSha": "a17111925d79540d0467f87f9823babc00ef83a3"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -1228,7 +1233,7 @@
     {
       "path": "cours/php.html",
       "bytes": 202709,
-      "gitSha": "c6262359f84463c491bb5b85425675b2feeab687"
+      "gitSha": "09bf986e3d90bf14988cd0b8f81894c9a69d6779"
     },
     {
       "path": "cours/sql-bases-ldd-lmd-lcd.html",
@@ -1248,7 +1253,7 @@
     {
       "path": "cours/sql.html",
       "bytes": 136247,
-      "gitSha": "50238afac60182c9374993937d23324feb30c34a"
+      "gitSha": "2d60ab96f1c08856eabe9658ea4790cc8700cb12"
     },
     {
       "path": "cssanimee/cours.js",
@@ -1268,7 +1273,7 @@
     {
       "path": "dashboard.html",
       "bytes": 15932,
-      "gitSha": "3f479fe39dd99c61ddfd51e0cec017956c0851a6"
+      "gitSha": "632c5ca052c02a9fca110d7025e67e2a218234ee"
     },
     {
       "path": "documents/annexes/annexe-css3.pdf",
@@ -2937,8 +2942,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 57171,
-      "gitSha": "02673d4ca58be7b911a9ca69eacb6259d3a4d049"
+      "bytes": 57179,
+      "gitSha": "fa18c3fe40d153f8b3c6e75d68d9680db10c1df8"
     },
     {
       "path": "livre-smart.html",
@@ -3517,8 +3522,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 95923,
-      "gitSha": "6c216c2c392317cc5687673ed8e9e379a75adfc4"
+      "bytes": 96016,
+      "gitSha": "1f0dda4d60b68ad9e46feee2f37cc3fecc557bc2"
     }
   ]
 }

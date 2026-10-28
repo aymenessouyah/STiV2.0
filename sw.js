@@ -3,11 +3,11 @@
    Le cache existant est migré localement, sans réseau, et le téléchargement intégral reste
    disponible uniquement après une action volontaire sur le bouton « Hors-ligne ». */
 
-var CACHE = "sti-atelier-v363";
+var CACHE = "sti-atelier-v364";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés (1 seule entrée par URL).
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v502-tp-formulaire-20261028";
-/* Historique caches : sti-atelier-v362, sti-atelier-v361, sti-atelier-v360, sti-atelier-v359, sti-atelier-v358, sti-atelier-v357, sti-atelier-v356, sti-atelier-v355, sti-atelier-v354, sti-atelier-v353, sti-atelier-v352, sti-atelier-v351, sti-atelier-v350, sti-atelier-v349, sti-atelier-v348, sti-atelier-v347, sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v502-tp-formulaire-20261028, v501-tp-voix-20261028, v500-tp-evenements-liens-20261028, v499-ruban-orange-20261028, v498-accueil-drapeau-ruban-20261028, v497-news-niveaux-20261028, v496-news-perso-20261028, v495-video-alea-xp-20261028, v494-retour-quiz-intelligent-20261028, v493-onglets-mobile-20261028, v492-progression-chapitres-20261028, v491-suivi-contextes-20261028, v490-xp-parties-pwa-20261028, v489-reconnexion-delta-20261028, v488-badge-image-20261028, v486-cours-retour-xp-20261027, v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
+var UPDATE_ID = "v503-accueil-lycee-20261028";
+/* Historique caches : sti-atelier-v363, sti-atelier-v362, sti-atelier-v361, sti-atelier-v360, sti-atelier-v359, sti-atelier-v358, sti-atelier-v357, sti-atelier-v356, sti-atelier-v355, sti-atelier-v354, sti-atelier-v353, sti-atelier-v352, sti-atelier-v351, sti-atelier-v350, sti-atelier-v349, sti-atelier-v348, sti-atelier-v347, sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v503-accueil-lycee-20261028, v502-tp-formulaire-20261028, v501-tp-voix-20261028, v500-tp-evenements-liens-20261028, v499-ruban-orange-20261028, v498-accueil-drapeau-ruban-20261028, v497-news-niveaux-20261028, v496-news-perso-20261028, v495-video-alea-xp-20261028, v494-retour-quiz-intelligent-20261028, v493-onglets-mobile-20261028, v492-progression-chapitres-20261028, v491-suivi-contextes-20261028, v490-xp-parties-pwa-20261028, v489-reconnexion-delta-20261028, v488-badge-image-20261028, v486-cours-retour-xp-20261027, v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
 var UPDATE_FILES = [
@@ -133,19 +133,19 @@ var UPDATE_FILES = [
   { url: "./assets/js/cours-javascript.js", revision: "progression-chapitres-v492", refreshIfCached: true },
   { url: "./assets/css/cours-css3.css", revision: "videos-pas-a-pas-css3-20261027" },
   { url: "./assets/js/cours-css3.js", revision: "tp-formulaire-v502", refreshIfCached: true },
-  { url: "./assets/css/theme.css", revision: "accueil-ruban-v499" },
+  { url: "./assets/css/theme.css", revision: "accueil-lycee-v503" },
   { url: "./assets/css/badge-compte.css", revision: "badge-image-v488" },
   { url: "./assets/images/badge-compte-vierge.png", revision: "badge-image-v488", bootstrapBySize: true, bytes: 61624, sha256: "5db4dd880a51ad29b9bf2a931ac678c1c07eccc7b6cc0c5c10e3dc233c65c576" },
   { url: "./assets/icons/sti-icon-192.png", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 46307, sha256: "3cb051093c543b33427d00126f859678f8d696b3be3e22265ad3a0a548727714" },
   { url: "./assets/images/qr-code-site.png", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 9391, sha256: "b21601d270b3f2d6971100d77e1a11232a9d34bf475caa7be6c3542c96328cd0" },
   { url: "./assets/css/cours.css", revision: "tp-evenements-v500", refreshIfCached: true },
   { url: "./assets/js/app.js", revision: "tp-formulaire-v502" },
-  { url: "./assets/js/news-perso.js", revision: "accueil-ruban-v499" },
-  { url: "./assets/images/drapeau-tunisie.svg", revision: "accueil-ruban-v499" },
+  { url: "./assets/js/news-perso.js", revision: "accueil-lycee-v503" },
+  { url: "./assets/images/drapeau-tunisie.svg", revision: "accueil-lycee-v503" },
   { url: "./assets/js/profil.js", revision: "suivi-contextes-v491" },
   { url: "./assets/js/cours-html5.js", revision: "tp-formulaire-v502", refreshIfCached: true },
-  { url: "./index.html", revision: "accueil-ruban-v499" },
-  { url: "./dashboard.html", revision: "accueil-ruban-v499", refreshIfCached: true },
+  { url: "./index.html", revision: "accueil-lycee-v503" },
+  { url: "./dashboard.html", revision: "accueil-lycee-v503", refreshIfCached: true },
   { url: "./admin.html", revision: "news-niveaux-v497" },
   { url: "./README.md", revision: "tp-formulaire-v502" },
   { url: "./package.json", revision: "xp-operations-v487" },
@@ -1100,6 +1100,7 @@ var OFFLINE_LIST = [
   "./assets/audio/javascript-cours.mp3",
   "./assets/audio/php-cours.mp3",
   "./assets/video/drapeaurafeha.mp4",
+  "./assets/video/drapeau-lycee-bandeau.mp4",
   "./assets/videos/tp-evenements-liens-v2.mp4",
   "./assets/videos/tp-formulaire-tableau-autre.mp4",
   "./assets/videos/php-guichet-v10.mp4",
