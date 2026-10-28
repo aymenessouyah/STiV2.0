@@ -159,11 +159,14 @@
           '</div>' +
         '</div>' +
       '</section>' +
-      '<div class="sti-onglets" id="stiCourseTabs" role="tablist" aria-label="Sections de la matière">' +
-        '<button type="button" class="sti-onglet" id="stiTabCours" role="tab" aria-selected="true" aria-controls="stiPanelCours" data-sti-onglet="cours">📖 Cours</button>' +
-        '<button type="button" class="sti-onglet" id="stiTabExercices" role="tab" aria-selected="false" aria-controls="stiPanelExercices" data-sti-onglet="exercices">📝 Exercices</button>' +
-        '<button type="button" class="sti-onglet" id="stiTabAnnexes" role="tab" aria-selected="false" aria-controls="stiPanelAnnexes" data-sti-onglet="annexes">📎 Annexes</button>' +
-        '<button type="button" class="sti-onglet" id="stiTabVideos" role="tab" aria-selected="false" aria-controls="stiPanelVideos" data-sti-onglet="videos">🎥 Vidéos</button>' +
+      '<div class="sti-onglets" id="stiCourseTabs">' +
+        '<div class="sti-onglets__liste" role="tablist" aria-label="Sections de la matière">' +
+          '<button type="button" class="sti-onglet" id="stiTabCours" role="tab" aria-selected="true" aria-controls="stiPanelCours" data-sti-onglet="cours">📖 Cours</button>' +
+          '<button type="button" class="sti-onglet" id="stiTabExercices" role="tab" aria-selected="false" aria-controls="stiPanelExercices" data-sti-onglet="exercices">📝 Exercices</button>' +
+          '<button type="button" class="sti-onglet" id="stiTabAnnexes" role="tab" aria-selected="false" aria-controls="stiPanelAnnexes" data-sti-onglet="annexes">📎 Annexes</button>' +
+          '<button type="button" class="sti-onglet" id="stiTabVideos" role="tab" aria-selected="false" aria-controls="stiPanelVideos" data-sti-onglet="videos">🎥 Vidéos</button>' +
+        '</div>' +
+        '<button type="button" class="sti-onglet sti-onglet--plan" id="stiPlan" aria-expanded="false" aria-controls="stiSommaire">☰ Plan</button>' +
         '<a class="sti-onglet sti-onglet--quiz" href="' + esc(u(C.quiz.url)) + '">🎯 ' + esc(C.quiz.label) + '</a>' +
       '</div>' +
       '<div class="sti-layout" id="stiLayout">' +
@@ -222,16 +225,30 @@
 
     haut.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: REDUIT ? 'auto' : 'smooth' }); });
     window.addEventListener('scroll', function () { haut.classList.toggle('is-visible', (window.pageYOffset || 0) > 520); }, { passive: true });
-    function ouvrirSommaire(oui) {
+    var declencheurSommaire = null;
+    function ouvrirSommaire(oui, declencheur) {
       var s = $('#stiSommaire'), r = $('#stiSommaireRideau'), b = $('#stiSommaireToggle');
       if (!s) return;
+      if (oui) declencheurSommaire = declencheur || document.activeElement;
       s.classList.toggle('is-ouvert', oui);
       if (r) r.hidden = !oui;
       if (b) b.setAttribute('aria-expanded', String(oui));
+      var plan = $('#stiPlan'); if (plan) plan.setAttribute('aria-expanded', String(oui));
+      if (oui && window.innerWidth <= 820) $('#stiSommaireFermer').focus({ preventScroll: true });
+      else if (!oui && declencheurSommaire && declencheurSommaire.isConnected) {
+        declencheurSommaire.focus({ preventScroll: true });
+        declencheurSommaire = null;
+      }
     }
-    tiroir.addEventListener('click', function () { ouvrirSommaire(!$('#stiSommaire').classList.contains('is-ouvert')); });
+    tiroir.addEventListener('click', function () { ouvrirSommaire(!$('#stiSommaire').classList.contains('is-ouvert'), tiroir); });
+    $('#stiPlan').addEventListener('click', function () { ouvrirSommaire(!$('#stiSommaire').classList.contains('is-ouvert'), this); });
     rideau.addEventListener('click', function () { ouvrirSommaire(false); });
     $('#stiSommaireFermer').addEventListener('click', function () { ouvrirSommaire(false); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && $('#stiSommaire').classList.contains('is-ouvert')) {
+        e.preventDefault(); ouvrirSommaire(false);
+      }
+    });
   }
 
   /* -------------------------------------------------------------------------
@@ -243,7 +260,10 @@
     var i, h;
     if (ch.ancre) {
       h = document.getElementById(ch.ancre);
-      if (h && $('#stiPanelCours').contains(h)) return h;
+      if (h && $('#stiPanelCours').contains(h)) {
+        /* Les ancres historiques sont parfois des sections entières. */
+        return /^H[1-6]$/.test(h.tagName) ? h : (h.querySelector('h1,h2,h3,h4,h5,h6') || h);
+      }
     }
     var cible = normalize(ch.match || ch.titre);
     for (i = 0; i < candidats.length; i++) {
@@ -297,9 +317,22 @@
      ---------------------------------------------------------------------- */
   var CHAPITRE_ACTIF = 0;
 
+  function chapitreAccessible(ch) {
+    var autorise = document.documentElement.classList.contains('sti-4si-autorise');
+    if ((MATIERE === 'php' || (MATIERE === 'sql' && ch.id === 's4')) && !autorise) return false;
+    var titre = ANCRES[ch.id] && document.getElementById(ANCRES[ch.id]);
+    if (!titre) return false;
+    var masque = titre.closest('[hidden]');
+    if (masque && masque.id !== 'stiPanelCours') return false;
+    if (!autorise && titre.closest('.sti-4si-only')) return false;
+    return true;
+  }
+  function chapitresAccessibles() { return CHAPITRES.filter(chapitreAccessible); }
+
   function peindreProgression() {
-    var faits = CHAPITRES.filter(function (ch) { return P.estChapitreFait(MATIERE, ch.id); }).length;
-    var total = Math.max(1, CHAPITRES.length);
+    var accessibles = chapitresAccessibles();
+    var faits = accessibles.filter(function (ch) { return P.estChapitreFait(MATIERE, ch.id); }).length;
+    var total = Math.max(1, accessibles.length);
     var pct = Math.round(faits / total * 100);
     var anneau = $('#stiAnneau');
     if (anneau) {
@@ -307,7 +340,7 @@
       anneau.style.setProperty('--ring-color', 'var(' + C.accent + ')');
     }
     var txt = $('#stiAnneauTexte'); if (txt) txt.innerHTML = faits + '<small>révisés</small>';
-    var legende = $('#stiProgressionTxt'); if (legende) legende.textContent = faits + ' / ' + CHAPITRES.length + ' chapitres révisés';
+    var legende = $('#stiProgressionTxt'); if (legende) legende.textContent = faits + ' / ' + accessibles.length + ' chapitres révisés';
     var barre = $('#stiProgressionBarre'); if (barre) barre.style.width = pct + '%';
 
     $$('#stiSommaireListe .sti-sommaire__lien').forEach(function (a) {
@@ -334,7 +367,8 @@
       extra = '<a class="sti-sommaire__lien" href="' + esc(u(C.fenetres[0].source)) + '" data-sti-fenetre="' + esc(C.fenetres[0].id) + '">' +
         '<span class="sti-sommaire__num">★</span><span>🪄 Récapitulatif interactif</span></a>';
     }
-    liste.innerHTML = CHAPITRES.map(function (ch, i) {
+    liste.innerHTML = chapitresAccessibles().map(function (ch) {
+      var i = CHAPITRES.indexOf(ch);
       return '<a class="sti-sommaire__lien" href="#cours&ch=' + esc(ch.id) + '" data-sti-chapitre="' + esc(ch.id) + '" data-index="' + i + '">' +
         '<span class="sti-sommaire__num">' + (i + 1) + '</span><span>' + esc(ch.titre) + '</span>' +
         '<span class="sti-sommaire__etat" aria-hidden="true"></span></a>';
@@ -345,10 +379,10 @@
   function allerChapitre(id, defiler) {
     var i = -1;
     CHAPITRES.forEach(function (ch, k) { if (ch.id === id) i = k; });
-    if (i < 0) return;
+    if (i < 0 || !chapitreAccessible(CHAPITRES[i])) return;
     CHAPITRE_ACTIF = i;
     var ch = CHAPITRES[i];
-    P.enregistrerLecture(MATIERE, ch.titre, Math.round((i + 1) / CHAPITRES.length * 100),
+    P.enregistrerLecture(MATIERE, ch.id, ch.titre, Math.round((i + 1) / CHAPITRES.length * 100),
       'cours/' + MATIERE + '.html#cours&ch=' + ch.id);
     peindreProgression();
     if (defiler) {
@@ -369,6 +403,9 @@
     var onglet = parts[0];
     var ch = '';
     parts.slice(1).forEach(function (p) { if (p.indexOf('ch=') === 0) ch = p.slice(3); });
+    /* Reprise des anciennes URL #tableaux, #sec9, #intro, #s1… */
+    if (!ch && ONGLETS.indexOf(onglet) === -1 && onglet) ch = onglet;
+    if (ch && typeof P.identifiantChapitre === 'function') ch = P.identifiantChapitre(MATIERE, ch);
     return { onglet: ONGLETS.indexOf(onglet) !== -1 ? onglet : 'cours', ch: ch };
   }
   function ecrireHash(onglet, ch, remplacer) {
@@ -1076,17 +1113,9 @@
         setTimeout(surveillerModales, 60);
         return r;
       }
-      /* Repli (aperçu hors ligne / script protégé absent) : notre lecteur. */
-      var v = videoParId(identifiant) || C.videoUne;
-      agrandirVideo(v);
-      var titreEl = $('#stiFenetreTitre'); if (titreEl) titreEl.textContent = titre || v.titre;
-      if (depart) {
-        var vid = $('#stiFenetreCorps video');
-        if (vid) vid.addEventListener('loadedmetadata', function () {
-          try { vid.currentTime = Number(depart) || 0; } catch (e) {}
-        }, { once: true });
-      }
-      return true;
+      /* Le lecteur protégé est indispensable : aucun repli ne contourne l'accès. */
+      toast('Lecteur indisponible : rechargez la page pour réessayer.');
+      return false;
     };
     enveloppe.__stiCoursV2 = true;
     window.ouvrirVideoPasAPasSTI = enveloppe;
@@ -1433,8 +1462,10 @@
     $$('[data-sti-onglet]').forEach(function (b) {
       b.addEventListener('click', function () { activerOnglet(b.getAttribute('data-sti-onglet'), {}); });
       b.addEventListener('keydown', function (e) {
-        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-        var i = ONGLETS.indexOf(ONGLET_ACTIF) + (e.key === 'ArrowRight' ? 1 : -1);
+        if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].indexOf(e.key) === -1) return;
+        e.preventDefault();
+        var i = e.key === 'Home' ? 0 : e.key === 'End' ? ONGLETS.length - 1 :
+          ONGLETS.indexOf(ONGLET_ACTIF) + (e.key === 'ArrowRight' ? 1 : -1);
         i = (i + ONGLETS.length) % ONGLETS.length;
         activerOnglet(ONGLETS[i], {});
         var n = $('#stiTab' + ONGLETS[i].charAt(0).toUpperCase() + ONGLETS[i].slice(1)); if (n) n.focus();
@@ -1448,7 +1479,7 @@
       if ((b = proche('[data-sti-reviser]'))) {
         var id = b.getAttribute('data-sti-reviser');
         var fait = !P.estChapitreFait(MATIERE, id);
-        P.marquerChapitre(MATIERE, id, fait, CHAPITRES.length);
+        P.marquerChapitre(MATIERE, id, fait, chapitresAccessibles().map(function (ch) { return ch.id; }));
         peindreProgression();
         toast(fait ? '✅ Chapitre marqué comme révisé' : '↩️ Chapitre remis à réviser');
         return;
@@ -1460,6 +1491,9 @@
         if (window.innerWidth <= 820) {
           var s = $('#stiSommaire'); if (s) s.classList.remove('is-ouvert');
           var r = $('#stiSommaireRideau'); if (r) r.hidden = true;
+          var plan = $('#stiPlan'), tiroir = $('#stiSommaireToggle');
+          if (plan) plan.setAttribute('aria-expanded', 'false');
+          if (tiroir) tiroir.setAttribute('aria-expanded', 'false');
         }
         return;
       }
@@ -1555,6 +1589,37 @@
       activerOnglet(h.onglet, { hash: false, ch: h.ch, defiler: false, silencieux: true });
     });
     window.addEventListener('sti:profil', function () { peindreProgression(); peindreCompteurExos(); });
+
+    /* Une lecture n'est enregistrée que si le même chapitre reste visible
+       au moins 600 ms. Défiler rapidement ou visiter les exercices ne révise rien. */
+    var candidat = '', dernier = '', delaiLecture = 0, rafLecture = 0;
+    function suiviLecture() {
+      if (rafLecture) return;
+      rafLecture = window.requestAnimationFrame(function () {
+        rafLecture = 0;
+        if (ONGLET_ACTIF !== 'cours') { candidat = ''; clearTimeout(delaiLecture); delaiLecture = 0; return; }
+        var repere = Math.min(window.innerHeight - 1, Math.max(220, window.innerHeight * .42));
+        var courant = '';
+        chapitresAccessibles().forEach(function (ch) {
+          var h = document.getElementById(ANCRES[ch.id]);
+          if (h && h.getBoundingClientRect().top <= repere) courant = ch.id;
+        });
+        if (courant !== candidat) { clearTimeout(delaiLecture); delaiLecture = 0; candidat = courant; }
+        if (courant && courant !== dernier && !delaiLecture) {
+          delaiLecture = setTimeout(function () {
+            delaiLecture = 0;
+            if (candidat === courant && ONGLET_ACTIF === 'cours') { dernier = courant; allerChapitre(courant, false); }
+          }, 600);
+        }
+      });
+    }
+    window.addEventListener('scroll', suiviLecture, { passive: true });
+
+    var acces4si = document.documentElement.classList.contains('sti-4si-autorise');
+    if (window.MutationObserver) new MutationObserver(function () {
+      var maintenant = document.documentElement.classList.contains('sti-4si-autorise');
+      if (maintenant !== acces4si) { acces4si = maintenant; rendreSommaire(); }
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   }
 
   /* -------------------------------------------------------------------------
@@ -1583,7 +1648,9 @@
 
       var h = lireHash();
       activerOnglet(h.onglet, { hash: false, ch: h.ch, defiler: false, silencieux: true, remplacer: true });
-      if (h.ch) allerChapitre(h.ch, false);
+      /* Le déplacement de l'ancien contenu dans la coquille a pu invalider le
+         défilement natif d'une ancre : restaurer sa position après construction. */
+      if (h.ch) setTimeout(function () { allerChapitre(h.ch, true); }, 80);
       peindreProgression();
 
       /* Reprise de lecture : dernière vidéo regardée de cette matière. */

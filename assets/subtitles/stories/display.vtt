@@ -1,0 +1,11 @@
+WEBVTT
+
+
+00:00:00.249 --> 00:00:03.240
+Display inline conserve l’élément sur la ligne et suit son contenu.
+
+00:00:04.268 --> 00:00:07.190
+Block commence sur une nouvelle ligne et accepte largeur et hauteur.
+
+00:00:08.300 --> 00:00:11.290
+Inline-block reste sur la ligne tout en acceptant les dimensions.

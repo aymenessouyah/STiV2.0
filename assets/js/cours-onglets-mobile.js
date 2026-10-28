@@ -2,9 +2,11 @@
 (function () {
   "use strict";
 
+  function installerOnglets() {
+  /* La refonte construit la barre après le chargement du document. */
   var racine = document.documentElement;
-  var barre = document.querySelector(".course-page .course-tabs-bar");
-  var entete = document.querySelector(".course-page .site-header");
+  var barre = document.querySelector("#stiCourseTabs");
+  var entete = document.querySelector(".site-header");
   if (!barre || !entete || !window.matchMedia) return;
 
   var mobile = window.matchMedia("(max-width: 700px)");
@@ -76,4 +78,7 @@
     observateur.observe(entete);
     observateur.observe(barre);
   }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", installerOnglets, { once: true });
+  else installerOnglets();
 })();

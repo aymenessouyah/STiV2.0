@@ -11,6 +11,20 @@
 (function () {
   "use strict";
 
+  /* Les titres des chapitres restent du texte, dans le lecteur comme dans
+     la barre audio ; la fonction est partagée par ces deux modules. */
+  function echapperHtmlMediaSTI(valeur) {
+    return String(valeur == null ? "" : valeur).replace(/[&<>"']/g, function (caractere) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[caractere];
+    });
+  }
+
   var MSG_PROTECT =
     "\uD83D\uDD12 Contenu protégé \u00A9 A. Essouyah \u2014 copie et captures non autorisées";
   var MSG_SOURCE_BLOQUE =
@@ -1124,21 +1138,6 @@
         title: "🎥 Bienvenue dans STI V2.0 By AE — TP Explore Tunisie (Float) : Code tapé comme un dactylo à gauche ➔ rendu actualisé en direct à droite (.mp4)"
       };
 
-      /* Les titres de chapitres contiennent parfois de vraies notations HTML
-         (par exemple « X. <iframe> »). Ils doivent rester du texte dans les
-         boutons et listes : ne jamais les injecter comme des balises DOM. */
-      function echapperHtmlMediaSTI(valeur) {
-        return String(valeur == null ? "" : valeur).replace(/[&<>"']/g, function (caractere) {
-          return {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-          }[caractere];
-        });
-      }
-
       /* Chapitrage précis (en secondes) pour les 8 vidéos (.mp4) et les 5 audios (.mp3) de cours */
       var STI_CHAPITRES_MEDIA = {
         "sql-initiation": [
@@ -1364,6 +1363,21 @@
           { t: 270.61, short: "Conclusion", label: "04:30 · Conclusion — récapitulatif" },
         ]
       };
+      /* Repères repris mot pour mot de la vidéo de synthèse du cours PHP. */
+      STI_CHAPITRES_MEDIA["php-synthese"] = [{"t":0,"short":"🎬 Bienvenue — STI 2.0 By AE","label":"0:00 · 🎬 Bienvenue — STI 2.0 By AE"},{"t":31.2,"short":"0 · Le projet et le web local","label":"0:31 · 0 · Le projet et le web local"},{"t":79.37,"short":"1 · Base de données ecole","label":"1:19 · 1 · Base de données ecole"},{"t":121.17,"short":"2 · index.html","label":"2:01 · 2 · index.html"},{"t":164.05,"short":"3 · inscription.html","label":"2:44 · 3 · inscription.html"},{"t":203.52,"short":"4 · CSS float","label":"3:23 · 4 · CSS float"},{"t":258.85,"short":"5 · CSS transition en détail","label":"4:18 · 5 · CSS transition en détail"},{"t":321.65,"short":"6 · JavaScript : let, innerHTML, alert, return","label":"5:21 · 6 · JavaScript : let, innerHTML, alert, return"},{"t":374.85,"short":"7 · Nom_prenom et dates","label":"6:14 · 7 · Nom_prenom et dates"},{"t":431.09,"short":"8 · PHP : ajouter et liste","label":"7:11 · 8 · PHP : ajouter et liste"},{"t":470.09,"short":"9 · modifier, statistiques, tests","label":"7:50 · 9 · modifier, statistiques, tests"},{"t":518.02,"short":"🔍 ajouter.php ligne par ligne","label":"8:38 · 🔍 ajouter.php ligne par ligne"},{"t":593.06,"short":"🔍 liste.php ligne par ligne","label":"9:53 · 🔍 liste.php ligne par ligne"},{"t":656.86,"short":"🔍 modifier.php ligne par ligne","label":"10:56 · 🔍 modifier.php ligne par ligne"},{"t":716.59,"short":"🔍 statistiques.php ligne par ligne","label":"11:56 · 🔍 statistiques.php ligne par ligne"},{"t":778.26,"short":"⚖ fetch et num_rows / COUNT(*)","label":"12:58 · ⚖ fetch et num_rows / COUNT(*)"},{"t":841.03,"short":"★ Fin — plateforme et bon courage","label":"14:01 · ★ Fin — plateforme et bon courage"}];
+      /* La courte démonstration display ne possède qu'un seul départ. */
+      STI_CHAPITRES_MEDIA["css3-display"] = [{ t: 0, short: "Display", label: "00:00 · Démonstration display" }];
+      /* Repères synchronisés sur validation-nom-prenom-js.srt (Série 5 JavaScript — Objet String). */
+      STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
+        { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },
+        { t: 6.00, short: "1. Besoin réel", label: "00:06 · 1. Besoin réel — Valider Nom & Prénom (2 à 5 mots)" },
+        { t: 53.71, short: "2. Les 3 règles", label: "00:53 · 2. Observer & dégager les 3 règles de saisie" },
+        { t: 161.98, short: "3. Boucle & compteur", label: "02:41 · 3. Boucle for & compteur de mots" },
+        { t: 337.84, short: "4. Simulation", label: "05:37 · 4. Simulation caractère par caractère" },
+        { t: 428.68, short: "5. Défis & code JS", label: "07:08 · 5. Défis minutés & traduction en JavaScript" },
+        { t: 580.93, short: "6. Cas limites & accents", label: "09:40 · 6. Cas limites réels, accents (À–ÿ) & espaces" },
+        { t: 672.64, short: "7. Livraison & bilan", label: "11:12 · 7. Livraison finale & méthode d'analyse" }
+      ];
       window.STI_CHAPITRES_MEDIA = STI_CHAPITRES_MEDIA;
 
       function trouverIndexChapitreActif(chaps, sec) {
@@ -1416,21 +1430,40 @@
 
       function resoudreCleMediaDepuisUrlSTI(urlBrute, tagHint) {
         if (!urlBrute || typeof urlBrute !== "string") return "";
-        var u = urlBrute.split("#")[0].split("?")[0].toLowerCase();
+        var u = urlBrute.split("#")[0].split("?")[0];
+        try { u = decodeURIComponent(u); } catch (eDec) {}
+        u = u.toLowerCase();
         if (!u || u.indexOf("data:") === 0 || u.indexOf("blob:") === 0) return "";
-        if (u.indexOf("foret.mp3") !== -1 || u.indexOf("ambient") !== -1) return "";
-        var mNom = u.match(/\/([^\/]+)\.(mp4|webm|m3u8|mp3|ogg|wav|m4a)$/i) || u.match(/^([^\/]+)\.(mp4|webm|m3u8|mp3|ogg|wav|m4a)$/i);
+        if (
+          u.indexOf("foret.mp3") !== -1 ||
+          u.indexOf("ambient") !== -1 ||
+          u.indexOf("flower.webm") !== -1 ||
+          u.indexOf("sidibou.mp4") !== -1 ||
+          u.indexOf("oud-c-arabian.mp3") !== -1 ||
+          /(^|\/)media\/son\.mp3$/.test(u) ||
+          u.indexOf("soundhelix") !== -1
+        ) return "";
+        var mNom = u.match(/\/([^\/]+)\.(mp4|webm|m3u8|mpd|mp3|ogg|wav|m4a)$/i) || u.match(/^([^\/]+)\.(mp4|webm|m3u8|mpd|mp3|ogg|wav|m4a)$/i);
         if (!mNom) return "";
-        var base = mNom[1];
+        var base = mNom[1].trim();
         var ext = mNom[2].toLowerCase();
         var estAudio = (tagHint === "AUDIO") || ext === "mp3" || ext === "ogg" || ext === "wav" || ext === "m4a";
         var prefix = estAudio ? "audio:" : "video:";
         var alias = {
           "guichet-etapes": "php-guichet",
+          "php-guichet-v10": "php-guichet",
+          "sql-cours-v7": "sql-cours",
+          "css3-cours-v9-sync": "css3-cours",
+          "css3-cours-v9-sync-mobile-720p": "css3-cours",
           "sql-construire-requete-guide-texte": "sql-guide-requete",
-          "displayanim": "css-displayanim"
+          "validation du champ nom et prenom en js": "validation-nom-prenom-js",
+          "displayanim": "css-displayanim",
+          "série 4.2 - gestlocation - vidéo": "sql-serie4-2",
+          "serie 4.2 - gestlocation - video": "sql-serie4-2"
         };
         var slug = alias[base] || base;
+        if (!estAudio && slug.indexOf("gestlocation") !== -1) slug = "sql-serie4-2";
+        if (!estAudio && u.indexOf("/streams/css3-v302/") !== -1) slug = "css3-cours";
         if (!estAudio && u.indexOf("/hls/") !== -1) {
           var mHls = u.match(/\/hls\/([^\/]+)\//i);
           if (mHls && mHls[1]) slug = alias[mHls[1].toLowerCase()] || mHls[1].toLowerCase();
@@ -1662,6 +1695,7 @@
             else if (oc.indexOf("sql-serie6") !== -1) majPastilleSurBouton(allBtns[sb], "video:sql-serie6");
             else if (oc.indexOf("explore-tunisie-flex") !== -1) majPastilleSurBouton(allBtns[sb], "video:explore-tunisie-flex");
             else if (oc.indexOf("explore-tunisie-float") !== -1) majPastilleSurBouton(allBtns[sb], "video:explore-tunisie-float");
+            else if (oc.indexOf("validation-nom-prenom-js") !== -1) majPastilleSurBouton(allBtns[sb], "video:validation-nom-prenom-js");
             else if (clePageSerie && oc.indexOf("ouvrirVideoSerie") !== -1 || (clePageSerie && oc.indexOf("ouvrirVideoCorrigee") !== -1)) {
               majPastilleSurBouton(allBtns[sb], clePageSerie);
             }
@@ -1671,7 +1705,7 @@
           var mapCartes = {
             html5: { v: ["video:html5-cours"], a: "audio:html5-cours" },
             css3: { v: ["video:css3-cours", "video:css-positionnement", "video:css-animee"], a: "audio:css3-cours" },
-            js: { v: ["video:javascript-cours"], a: "audio:javascript-cours" },
+            js: { v: ["video:javascript-cours", "video:validation-nom-prenom-js"], a: "audio:javascript-cours" },
             sql: { v: ["video:sql-cours"], a: "audio:sql-cours" },
             php: { v: ["video:php-cours", "video:php-guichet"], a: "audio:php-cours" }
           };
@@ -1828,6 +1862,8 @@
         var contenu = '<source src="' + urlVideo + '" type="video/mp4" />';
         if (slugVideo === "css3-cours") {
           contenu += '<track kind="subtitles" src="' + resoudreUrlSousTitresCss3() + '" srclang="fr" label="Français" default />';
+        } else if (slugVideo === "validation-nom-prenom-js") {
+          contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/validation-nom-prenom-js-fr.vtt" srclang="fr" label="Français" default />';
         }
         return contenu;
       }
@@ -2046,7 +2082,7 @@
             if (chapsG[cIdx] && vid) {
               endInline.hidden = true;
               endInline.style.display = "none";
-              try { vid.currentTime = chapsG[cIdx].t; vid.play(); } catch (e) {}
+              try { vid.currentTime = chapsG[cIdx].t; var promesseLecture = vid.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); } catch (e) {}
             }
           });
         }
@@ -2057,7 +2093,7 @@
             if (!vid || !chapsG.length) return;
             var curI = trouverIndexChapitreActif(chapsG, vid.currentTime);
             var nvI = Math.max(0, curI - 1);
-            try { vid.currentTime = chapsG[nvI].t; vid.play(); } catch (e) {}
+            try { vid.currentTime = chapsG[nvI].t; var promesseLecture = vid.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); } catch (e) {}
           });
         }
         if (btnNextG) {
@@ -2065,7 +2101,7 @@
             if (!vid || !chapsG.length) return;
             var curI = trouverIndexChapitreActif(chapsG, vid.currentTime);
             var nvI = Math.min(chapsG.length - 1, curI + 1);
-            try { vid.currentTime = chapsG[nvI].t; vid.play(); } catch (e) {}
+            try { vid.currentTime = chapsG[nvI].t; var promesseLecture = vid.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); } catch (e) {}
           });
         }
         if (vid && selChapG) {
@@ -2079,7 +2115,7 @@
           function () {
             if (vid) {
               vid.__stiChoixPhpAffiche = false;
-              try { vid.currentTime = 0; vid.play(); } catch (e) {}
+              try { vid.currentTime = 0; var promesseLecture = vid.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); } catch (e) {}
             }
           },
           function () {
@@ -2163,7 +2199,7 @@
             vid.__stiChoixPhpAffiche = false;
             vid.muted = false;
             vid.volume = 1.0;
-            try { vid.play(); } catch (e) {}
+            try { var promesseLecture = vid.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); } catch (e) {}
           }
         } else {
           if (vid) {
@@ -2176,6 +2212,10 @@
 
       window.ouvrirVideoPasAPasSTI = function (slugOuUrl, titreOpt, startSecOpt) {
         var sSlug = String(slugOuUrl || "");
+        /* Fichiers vidéo rattachés au lecteur commun pas à pas. */
+        var estJsValidation = (sSlug === "validation-nom-prenom-js" || sSlug.indexOf("validation-nom-prenom-js") !== -1);
+        var estCssDisplay = (!estJsValidation && (sSlug === "css3-display" || sSlug.indexOf("displayanim.mp4") !== -1));
+        var estPhpSynthese = (!estJsValidation && (sSlug === "php-synthese" || sSlug.indexOf("php-synthese.mp4") !== -1));
         var estSqlInit = (sSlug === "sql-initiation" || sSlug.indexOf("sql-initiation") !== -1);
         var estExploreFloat = (!estSqlInit && (sSlug === "explore-tunisie-float" || sSlug.indexOf("explore-tunisie-float") !== -1));
         var estExploreFlex = (!estSqlInit && !estExploreFloat && (sSlug === "explore-tunisie-flex" || sSlug.indexOf("explore-tunisie-flex") !== -1));
@@ -2186,15 +2226,15 @@
         var estSqlSerie2 = (!estSqlInit && !estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && (sSlug === "sql-serie2" || sSlug.indexOf("sql-serie2") !== -1));
         var estSqlSerie1 = (!estSqlInit && !estExploreFloat && !estExploreFlex && !estSqlSerie6 && !estSqlSerie5 && !estSqlSerie4 && !estSqlSerie3 && !estSqlSerie2 && (sSlug === "sql-serie1" || sSlug.indexOf("sql-serie1") !== -1));
         var estSqlSerieAny = (estSqlInit || estExploreFloat || estExploreFlex || estSqlSerie1 || estSqlSerie2 || estSqlSerie3 || estSqlSerie4 || estSqlSerie5 || estSqlSerie6);
-        var estHtml5 = (!estSqlSerieAny && (sSlug === "html5-cours" || sSlug.indexOf("html5-cours") !== -1 || (!sSlug && estPageHtml5)));
-        var estCss3 = (!estSqlSerieAny && !estHtml5 && (sSlug === "css3-cours" || sSlug.indexOf("css3-cours") !== -1 || (!sSlug && estPageCss3)));
-        var estJs = (!estSqlSerieAny && !estHtml5 && !estCss3 && (sSlug === "javascript-cours" || sSlug.indexOf("javascript-cours") !== -1 || (!sSlug && estPageJs)));
-        var estPhpC = (!estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && (sSlug === "php-cours" || sSlug.indexOf("php-cours") !== -1 || (!sSlug && estPagePhpCours)));
-        var estSql = (!estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && (sSlug === "sql-cours" || sSlug.indexOf("sql-cours") !== -1 || (!sSlug && estPageSql)));
-        var estCssDeco = (!estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
-        var estCssPos = (!estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
-        var estGuichet = (!estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
-        if (!estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet) {
+        var estHtml5 = (!estJsValidation && !estSqlSerieAny && (sSlug === "html5-cours" || sSlug.indexOf("html5-cours") !== -1 || (!sSlug && estPageHtml5)));
+        var estCss3 = (!estJsValidation && !estSqlSerieAny && !estHtml5 && (sSlug === "css3-cours" || sSlug.indexOf("css3-cours") !== -1 || (!sSlug && estPageCss3)));
+        var estJs = (!estJsValidation && !estSqlSerieAny && !estHtml5 && !estCss3 && (sSlug === "javascript-cours" || sSlug.indexOf("javascript-cours") !== -1 || (!sSlug && estPageJs)));
+        var estPhpC = (!estJsValidation && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && (sSlug === "php-cours" || sSlug.indexOf("php-cours") !== -1 || (!sSlug && estPagePhpCours)));
+        var estSql = (!estJsValidation && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && (sSlug === "sql-cours" || sSlug.indexOf("sql-cours") !== -1 || (!sSlug && estPageSql)));
+        var estCssDeco = (!estJsValidation && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
+        var estCssPos = (!estJsValidation && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
+        var estGuichet = (!estJsValidation && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
+        if (!estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation) {
           return;
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
@@ -2226,7 +2266,7 @@
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
-        var slugCible = estSqlInit ? "sql-initiation" : (estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))))))))))));
+        var slugCible = estJsValidation ? "validation-nom-prenom-js" : estCssDisplay ? "css3-display" : estPhpSynthese ? "php-synthese" : estSqlInit ? "sql-initiation" : (estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))))))))))));
         try {
           if (
             window.top &&
@@ -2237,7 +2277,7 @@
             return;
           }
         } catch (e) {}
-        var url = estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
+        var url = estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
@@ -2247,7 +2287,7 @@
           else if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) css3Qualite = "720";
           url = (css3Qualite === "480" || css3Qualite === "720") ? resoudreUrlVideoCss3Mobile() : resoudreUrlVideoCss3();
         }
-        var titre = titreOpt || (estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
+        var titre = titreOpt || (estJsValidation ? "🎥 JavaScript — Validation du champ Nom & Prénom (pas à pas)" : estCssDisplay ? "🎥 CSS3 — Display : la démo animée" : estPhpSynthese ? "🎥 PHP — Synthèse : gestion des élèves" : estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {
@@ -2257,7 +2297,7 @@
           overlay.hidden = true;
           overlay.style.cssText = "display:none;position:fixed;inset:0;z-index:2147483647;background:rgba(10,15,28,0.88);align-items:center;justify-content:center;padding:10px;box-sizing:border-box;";
           overlay.innerHTML =
-            '<div class="sti-video-modal-card" id="sti-video-modal-card" role="dialog" aria-modal="true" style="position:relative;width:min(1180px,96vw);max-width:96vw;max-height:94vh;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;background:#0d1526;color:#f9f1e3;border:2px solid #f4511e;border-radius:16px;padding:10px 14px 12px;">' +
+            '<div class="sti-video-modal-card" id="sti-video-modal-card" role="dialog" aria-modal="true" aria-labelledby="sti-video-modal-title" style="position:relative;width:min(1180px,96vw);max-width:96vw;max-height:94vh;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;background:#0d1526;color:#f9f1e3;border:2px solid #f4511e;border-radius:16px;padding:10px 14px 12px;">' +
               '<div class="sti-video-pas-a-pas-head" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px;flex-shrink:0;">' +
                 '<div class="sti-video-pas-a-pas-title" id="sti-video-modal-title"></div>' +
                 '<div class="sti-video-pas-a-pas-actions" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">' +
@@ -2394,6 +2434,8 @@
                   pills[pi].style.background = onP ? "#177245" : "#1e293b";
                   pills[pi].style.borderColor = onP ? "#86efac" : "#334155";
                   pills[pi].style.color = onP ? "#ffffff" : "#cbd5e1";
+                  if (onP) pills[pi].setAttribute("aria-current", "true");
+                  else pills[pi].removeAttribute("aria-current");
                 }
               }
             });
@@ -2420,7 +2462,7 @@
             function () {
               if (mVid) {
                 if ((overlay.getAttribute("data-slug") || "") === "php-guichet") mVid.__stiChoixPhpAffiche = false;
-                try { mVid.currentTime = 0; mVid.play(); } catch (e) {}
+                try { mVid.currentTime = 0; var promesseLecture = mVid.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); } catch (e) {}
               }
             },
             function () {
@@ -2491,7 +2533,10 @@
                 var reprise = Number(vPlayer.currentTime) || 0;
                 var lecture = !vPlayer.paused;
                 initialiserVideoCss3HlsSTI(vPlayer, nouvelle).then(function () {
-                  try { vPlayer.currentTime = reprise; if (lecture) vPlayer.play(); } catch (e) {}
+                  try {
+                    vPlayer.currentTime = reprise;
+                    if (lecture) { var promesseLecture = vPlayer.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); }
+                  } catch (e) {}
                 });
               }
             });
@@ -2544,7 +2589,7 @@
         }
         if (pillsChapEl) {
           pillsChapEl.innerHTML = chapsCible.map(function (c, idx) {
-            return '<button type="button" data-chap-idx="' + idx + '" title="' + echapperHtmlMediaSTI(c.label) + '" style="flex-shrink:0;padding:4px 10px;border-radius:999px;border:1.5px solid ' + (idx === 0 ? '#86efac' : '#334155') + ';background:' + (idx === 0 ? '#177245' : '#1e293b') + ';color:' + (idx === 0 ? '#ffffff' : '#cbd5e1') + ';font:800 11px/1.1 system-ui,sans-serif;cursor:pointer;white-space:nowrap;">' + echapperHtmlMediaSTI(c.short || c.label) + '</button>';
+            return '<button type="button" data-chap-idx="' + idx + '"' + (idx === 0 ? ' aria-current="true"' : '') + ' title="' + echapperHtmlMediaSTI(c.label) + '" style="flex-shrink:0;padding:4px 10px;border-radius:999px;border:1.5px solid ' + (idx === 0 ? '#86efac' : '#334155') + ';background:' + (idx === 0 ? '#177245' : '#1e293b') + ';color:' + (idx === 0 ? '#ffffff' : '#cbd5e1') + ';font:800 11px/1.1 system-ui,sans-serif;cursor:pointer;white-space:nowrap;">' + echapperHtmlMediaSTI(c.short || c.label) + '</button>';
           }).join("");
           pillsChapEl.style.display = chapsCible.length ? "flex" : "none";
           var pillBtns = pillsChapEl.querySelectorAll("button[data-chap-idx]");
@@ -2557,7 +2602,7 @@
                 var endSc = document.getElementById("sti-video-modal-end-screen");
                 if (endSc) { endSc.hidden = true; endSc.style.display = "none"; }
                 if (vPlayer && chapsCible[idxP]) {
-                  try { vPlayer.currentTime = chapsCible[idxP].t; vPlayer.play(); } catch (e) {}
+                  try { vPlayer.currentTime = chapsCible[idxP].t; var promesseLecture = vPlayer.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); } catch (e) {}
                 }
               });
             })(pillBtns[pb]);
@@ -2584,6 +2629,7 @@
           vEl.__stiStartSec = (typeof startSecOpt === "number" && startSecOpt >= 0) ? startSecOpt : null;
           if (slugCible === "css3-cours") {
             initialiserVideoCss3HlsSTI(vEl, css3Qualite).then(function () {
+              if (overlay.hidden || overlay.getAttribute("data-slug") !== "css3-cours") return;
               try { var ph = vEl.play(); if (ph && ph.catch) ph.catch(function () {}); } catch (e) {}
             });
           } else if (vEl.getAttribute("src") !== url) {
@@ -2605,7 +2651,9 @@
               vEl.addEventListener("loadedmetadata", applyStart);
             }
           }
-          try { vEl.play(); } catch (e) {}
+          if (slugCible !== "css3-cours") {
+            try { var promesseLecture = vEl.play(); if (promesseLecture && promesseLecture.catch) promesseLecture.catch(function () {}); } catch (e) {}
+          }
         }
       };
 
@@ -3066,7 +3114,13 @@
           }
           window.__stiSauterChapitreAudioCours = function (idxOuDelta, estRelatif) {
             if (!chapsCours.length) return;
-            var curIdx = trouverIndexChapitreActif(chapsCours, cAudio.currentTime || 0);
+            // Les cours unifiés HTML5 et PHP ont leur propre lecteur visible.
+            // Ne pas lancer en parallèle le lecteur historique caché.
+            var actif = window.__stiActiveVoiceAudio;
+            var guideUnifie = actif && ((cKey === "html5" && actif.id === "voiceGuideAudio") ||
+                                        (cKey === "php" && actif.id === "phpCourseAudio"));
+            var audioCourant = guideUnifie ? actif : cAudio;
+            var curIdx = trouverIndexChapitreActif(chapsCours, audioCourant.currentTime || 0);
             var nvIdx = estRelatif ? Math.max(0, Math.min(chapsCours.length - 1, curIdx + idxOuDelta)) : Math.max(0, Math.min(chapsCours.length - 1, idxOuDelta));
             var chapObj = chapsCours[nvIdx];
             if (!chapObj) return;
@@ -3077,7 +3131,14 @@
                 try { targetDom.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
               }
             }
-            jouerSegmentCours(chapObj.t, 0);
+            if (guideUnifie) {
+              try {
+                if (!cAudio.paused) cAudio.pause();
+                audioCourant.currentTime = chapObj.t;
+                var lectureGuide = audioCourant.play();
+                if (lectureGuide && lectureGuide.catch) lectureGuide.catch(function () {});
+              } catch (e) {}
+            } else jouerSegmentCours(chapObj.t, 0);
           };
 
           document.addEventListener("click", function (ev) {
@@ -3355,7 +3416,9 @@
         var bV = document.getElementById("sti-btn-cours-voix-hero");
         if (bV && a) {
           var pillV = bV.querySelector(".sti-prog-pill");
-          var cL = estPageHtml5 ? "HTML5" : (estPageCss3 ? "CSS3" : (estPageJs ? "JavaScript" : "PHP"));
+          // Ce guide possède sa propre portée, distincte de celle du lecteur.
+          var cheminVoix = (window.location.pathname || "").toLowerCase();
+          var cL = cheminVoix.indexOf("html5") !== -1 ? "HTML5" : (cheminVoix.indexOf("css3") !== -1 ? "CSS3" : (cheminVoix.indexOf("javascript") !== -1 ? "JavaScript" : "PHP"));
           var aCommence = a.currentTime > 0.5 && !a.ended && window.__stiVoiceSessionActive;
           bV.textContent = !enPause
             ? ("⏸️ Pause Voix " + cL)

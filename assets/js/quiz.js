@@ -86,7 +86,9 @@
     jokers: { fifty: false, hint: false, pass: false },
     exclus: [],
     niveauAvant: 1,
-    modeRevision: false
+    modeRevision: false,
+    partieId: '',      // Identifiant stable entre les onglets et appareils.
+    partieUtilisateur: '' // Une partie ne peut pas suivre un autre compte.
   };
   var timerID = null;
 
@@ -191,6 +193,7 @@
 
       /* ---------- ÉCRAN 1 : DÉPART ---------- */
       '<section class="qz-ecran" id="screen-start" aria-label="Configuration de la partie">' +
+        '<div class="qz-config__bloc" id="qzSessionEnCours" hidden></div>' +
         '<div class="qz-section-head"><h2>🎮 Mode de jeu</h2><p>Choisis ton épreuve, le nombre de questions et les thèmes à réviser.</p></div>' +
         '<div class="qz-modes" id="qzModes" role="radiogroup" aria-label="Mode de jeu"></div>' +
         '<div class="qz-config">' +
@@ -453,6 +456,165 @@
   }
 
   /* -------------------------------------------------------------------------
+     SESSION ET XP : interface v490, sans toucher aux contrôles de la refonte.
+     Le crédit est cumulatif pour une même partie ; l'UUID rend sa reprise et
+     ses envois répétés idempotents, y compris entre plusieurs appareils.
+     ---------------------------------------------------------------------- */
+  var CLES_XP = { 'html-css': 'quizzora_xp_v1', javascript: 'sti-quiz-xp-js-v1',
+    sql: 'sqlQuestV3', php: 'quizphp_v1_user' };
+
+  function quizSync() { return window.STIQuizSync || null; }
+  function identiteQuiz() {
+    var qs = quizSync(), utilisateur = qs && qs.utilisateurLocal && qs.utilisateurLocal();
+    var etat = P.lireEtatSession();
+    return String((utilisateur && utilisateur.id) || etat.id || '');
+  }
+  function comptePret(avertir) {
+    var etat = P.lireEtatSession(), uid = identiteQuiz();
+    var inviteIsole = !uid && P.quizInviteIsole && P.quizInviteIsole();
+    var pret = !etat.compteEnAttente && (uid ? P.compteQuizIsole(uid) : inviteIsole);
+    if (!pret && avertir) toast(uid ? 'Synchronisation du compte en cours : réessaie dans un instant.' :
+      'Reconnecte le dernier compte pour protéger sa progression sur cet appareil.');
+    return pret;
+  }
+  function comptePartieValide(avertir) {
+    if (!comptePret(avertir)) return false;
+    if (S.partieUtilisateur === identiteQuiz()) return true;
+    if (avertir) toast('Cette partie appartient à un autre compte. Reconnecte ce compte pour la reprendre.');
+    return false;
+  }
+  function creerPartieId() {
+    var qs = quizSync();
+    if (qs && qs.creerIdentifiantPartie) return qs.creerIdentifiantPartie();
+    if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16);
+    });
+  }
+  function nbReponsesDonnees() {
+    return S.reponses.reduce(function (n, r) { return n + (typeof r === 'number' && r >= 0 ? 1 : 0); }, 0);
+  }
+  function gainXp(finale) {
+    var repondues = nbReponsesDonnees();
+    var pct = repondues ? Math.round(S.bonnes * 100 / repondues) : 0;
+    if (ID === 'html-css') return S.bonnes * 250;
+    if (ID === 'javascript') return Math.max(S.score, S.bonnes * 150);
+    if (ID === 'sql') {
+      var sql = Math.round(S.score / 15);
+      if (finale && repondues) {
+        sql += (pct === 100 ? 100 : pct >= 80 ? 50 : pct >= 50 ? 20 : 5) + S.meilleurCombo * 5;
+        if (S.mode === 'duel' && S.score >= S.botScore) sql += 50;
+      }
+      return sql;
+    }
+    if (ID === 'php') return S.score + (finale && repondues ? S.meilleurCombo * 50 + (pct === 100 ? 500 : pct >= 80 ? 200 : 0) : 0);
+    return 0;
+  }
+  function creditXp(finale) {
+    var qs = quizSync(), cle = CLES_XP[ID];
+    var utilisateur = qs && qs.utilisateurLocal && qs.utilisateurLocal();
+    if (!cle || !S.partieId || !utilisateur || !comptePartieValide(false) || !qs.sauverXP) return false;
+    var ancien = P.lireAcquisQuiz(cle, utilisateur.id) || {}, gain = gainXp(finale);
+    var valeur = Object.assign({}, ancien, { xp: (Number(ancien.xp) || 0) + gain,
+      streak: Math.max(Number(ancien.streak) || 0, S.meilleurCombo) });
+    if (ID === 'sql') {
+      /* SQL Quest stocke les records par mode, contrairement aux autres quiz. */
+      valeur.best = Object.assign({}, ancien.best && typeof ancien.best === 'object' ? ancien.best : {});
+      valeur.best[S.mode] = Math.max(Number(valeur.best[S.mode]) || 0, S.score);
+      var marque = P.lireGainPartieQuiz(utilisateur.id, cle, S.partieId) || {};
+      valeur.totalAnswered = (Number(ancien.totalAnswered) || 0) + Math.max(0, nbReponsesDonnees() - (Number(marque.total) || 0));
+      valeur.totalCorrect = (Number(ancien.totalCorrect) || 0) + Math.max(0, S.bonnes - (Number(marque.bonnes) || 0));
+      valeur.bestCombo = Math.max(Number(ancien.bestCombo) || 0, S.meilleurCombo);
+    } else valeur.best = Math.max(typeof ancien.best === 'number' ? ancien.best : 0, S.score);
+    var ok = qs.sauverXP(cle, valeur, gain, { id: S.partieId, bonnes: S.bonnes, total: nbReponsesDonnees() });
+    if (ok && qs.notifierXP) qs.notifierXP(cle);
+    return ok;
+  }
+  function sauverPartieActive() {
+    var qs = quizSync();
+    if (!qs || !qs.sauverSession || !S.partieId || S.termine || !comptePartieValide(false) ||
+        !S.liste.length || !S.reponses.some(function (r) { return r !== null && r !== undefined; })) return;
+    qs.sauverSession(ID, {
+      module: S.cats.length === 1 ? S.cats[0] : '*', mode: S.mode,
+      score: S.bonnes, points: S.score, total: S.liste.length, index_courant: S.index,
+      ordre_questions: S.liste,
+      etat_meta: {
+        moteur_sti: 495, partie_id: S.partieId, reponses: S.reponses.slice(),
+        score: S.score, vies: S.vies, combo: S.combo, meilleurCombo: S.meilleurCombo,
+        streak: S.streak, bossHp: S.bossHp, botScore: S.botScore,
+        duree: Math.max(0, Math.floor((Date.now() - S.debut) / 1000)),
+        tempsRestant: S.tempsRestant, jokers: Object.assign({}, S.jokers), exclus: S.exclus.slice(),
+        cats: S.cats.slice(), modeRevision: S.modeRevision
+      }
+    });
+  }
+  function reprendrePartie(session) {
+    if (!comptePret(true) || !session || !session.etat_meta || session.etat_meta.moteur_sti !== 495) return;
+    if (session.user_id && String(session.user_id) !== identiteQuiz()) {
+      toast('Cette partie appartient à un autre compte.'); return;
+    }
+    var meta = session.etat_meta, liste = session.ordre_questions;
+    if (!Array.isArray(liste) || !liste.length || !Array.isArray(meta.reponses)) return;
+    /* Les questions et leurs choix restent dans l'ordre exact de la partie. */
+    if (!liste.every(function (q) { return q && typeof q.q === 'string' && Array.isArray(q.options) && typeof q.answer === 'number'; })) {
+      toast('Cette partie ne peut pas être reprise avec cette version du quiz.'); return;
+    }
+    arreterChrono();
+    S.mode = CFG.modes.some(function (m) { return m.id === session.mode; }) ? session.mode : CFG.modes[0].id;
+    S.liste = liste; S.count = liste.length;
+    S.reponses = liste.map(function (q, i) {
+      var r = meta.reponses[i];
+      return typeof r === 'number' && Number.isInteger(r) && r >= -2 && r < q.options.length ? r : null;
+    });
+    S.index = Math.max(0, Math.min(liste.length - 1, Number(session.index_courant) || 0));
+    S.bonnes = S.reponses.reduce(function (n, r, i) { return n + (r === liste[i].answer ? 1 : 0); }, 0);
+    S.score = Math.max(0, Number(meta.score) || Number(session.points) || 0);
+    S.vies = Math.max(0, Number(meta.vies) || 0); S.combo = Math.max(0, Number(meta.combo) || 0);
+    S.meilleurCombo = Math.max(0, Number(meta.meilleurCombo) || 0); S.streak = Math.max(0, Number(meta.streak) || 0);
+    S.bossHp = Math.max(0, Number(meta.bossHp) || 0); S.botScore = Math.max(0, Number(meta.botScore) || 0);
+    S.duree = Math.max(0, Number(meta.duree) || 0); S.debut = Date.now() - S.duree * 1000;
+    S.tempsRestant = Math.max(0, Number(meta.tempsRestant) || 0);
+    S.jokers = Object.assign({ fifty: false, hint: false, pass: false }, meta.jokers || {});
+    S.exclus = Array.isArray(meta.exclus) ? meta.exclus.slice(0, 10) : [];
+    S.cats = Array.isArray(meta.cats) ? meta.cats.slice(0, 100) : [];
+    S.modeRevision = Boolean(meta.modeRevision); S.termine = false;
+    var qs = quizSync();
+    S.partieId = qs && qs.identifierPartieReprise ? qs.identifierPartieReprise(ID, session) : meta.partie_id;
+    S.partieUtilisateur = identiteQuiz();
+    if (!S.partieId) { toast('Identifiant de partie indisponible.'); return; }
+    S.niveauAvant = P.statsQuiz(ID).niveau || 1;
+    $('#qzSessionEnCours').hidden = true;
+    afficherEcran('jeu'); renderQuestion(); lancerChrono(true); creditXp(false);
+    toast('Partie reprise.');
+  }
+  function proposerReprise() {
+    var qs = quizSync();
+    if (!qs || !qs.chargerSession || !comptePret(false)) return;
+    Promise.resolve(qs.chargerSession(ID)).then(function (session) {
+      if (!session || S.ecran !== 'start' || S.liste.length || !comptePret(false) ||
+          (session.user_id && String(session.user_id) !== identiteQuiz())) return;
+      var zone = $('#qzSessionEnCours');
+      if (!zone) return;
+      zone.replaceChildren();
+      var titre = document.createElement('h3'); titre.textContent = '☁️ Une partie est en cours'; zone.appendChild(titre);
+      var texte = document.createElement('p');
+      texte.textContent = 'Retrouve tes questions et tes réponses enregistrées.'; zone.appendChild(texte);
+      if (session.etat_meta && session.etat_meta.moteur_sti === 495) {
+        var bouton = document.createElement('button'); bouton.type = 'button'; bouton.className = 'btn btn--primary';
+        bouton.textContent = 'Reprendre la partie'; bouton.addEventListener('click', function () { reprendrePartie(session); });
+        zone.appendChild(bouton);
+      } else {
+        /* Les sessions de l'ancienne interface conservent leur propre format. */
+        texte.textContent = 'Cette partie a été commencée dans la version précédente du quiz.';
+        var lien = document.createElement('a'); lien.className = 'qz-bouton qz-bouton--ghost';
+        lien.href = u('quiz/' + ID + '-origine.html'); lien.textContent = 'Reprendre dans la version précédente';
+        zone.appendChild(lien);
+      }
+      zone.hidden = false;
+    }).catch(function () { /* La prochaine connexion réessaiera. */ });
+  }
+
+  /* -------------------------------------------------------------------------
      3. MOTEUR DE JEU — sélection, minuteur, vies, combo, boss, jokers
      ---------------------------------------------------------------------- */
   function pointsQuestion(q) {
@@ -518,12 +680,12 @@
 
   function arreterChrono() { if (timerID) { clearInterval(timerID); timerID = null; } }
 
-  function lancerChrono() {
+  function lancerChrono(conserver) {
     arreterChrono();
     var mode = modeCourant();
     if (!mode.temps) { S.tempsRestant = 0; majHUD(); return; }
-    if (mode.global && S.tempsRestant <= 0) S.tempsRestant = mode.temps;
-    if (!mode.global) S.tempsRestant = mode.temps;
+    if (mode.global && S.tempsRestant <= 0 && !conserver) S.tempsRestant = mode.temps;
+    if (!mode.global && !conserver) S.tempsRestant = mode.temps;
     timerID = setInterval(function () {
       if (S.termine) { arreterChrono(); return; }
       S.tempsRestant = Math.max(0, S.tempsRestant - 1);
@@ -539,6 +701,7 @@
   }
 
   function demarrerPartie(listeForcee, modeForce) {
+    if (!comptePret(true)) return;
     var mode = modeForce || S.mode;
     if (modeForce) S.mode = modeForce;
     var m = modeCourant();
@@ -548,6 +711,9 @@
     if (m.count) n = Math.min(n, m.count);
     S.liste = melanger(pool).slice(0, Math.max(1, n));
     S.index = 0; S.reponses = new Array(S.liste.length).fill(null);
+    S.partieId = creerPartieId();
+    S.partieUtilisateur = identiteQuiz();
+    var reprise = $('#qzSessionEnCours'); if (reprise) reprise.hidden = true;
     S.score = 0; S.bonnes = 0; S.combo = 0; S.meilleurCombo = 0; S.streak = 0;
     S.vies = F.vies ? (m.vies || 3) : 99;
     S.bossHp = m.boss || 0; S.botScore = 0;
@@ -649,6 +815,8 @@
     }
     renderJokers();
     renderNav();
+    var suivantReprise = $('#qzSuivantAuto');
+    if (suivantReprise) suivantReprise.addEventListener('click', questionSuivante);
     majHUD();
   }
 
@@ -734,6 +902,7 @@
   function repondre(index, horsDelai) {
     var q = S.liste[S.index];
     if (!q || S.termine) return;
+    if (!comptePartieValide(!horsDelai)) { arreterChrono(); return; }
     if (S.reponses[S.index] !== null && S.reponses[S.index] !== undefined) return;
     S.reponses[S.index] = index;
     var juste = index === q.answer;
@@ -786,6 +955,8 @@
         if (flamme) { flamme.classList.add('is-flamme'); setTimeout(function () { flamme.classList.remove('is-flamme'); }, 700); }
       }
     }
+    sauverPartieActive();
+    creditXp(false);
     /* Fin de partie immédiate si plus de vies. */
     if (F.vies && S.vies <= 0) { setTimeout(terminerPartie, 600); return; }
     /* En correction différée (Quizzora), on avance automatiquement. */
@@ -794,11 +965,13 @@
 
   function questionSuivante() {
     if (S.termine) return;
+    if (!comptePartieValide(true)) { arreterChrono(); return; }
     S.exclus = [];
     if (S.index >= S.liste.length - 1) { terminerPartie(); return; }
     S.index++;
     renderQuestion();
     lancerChrono();   /* lancerChrono() nettoie l'intervalle précédent */
+    sauverPartieActive();
   }
 
   function copierTexte(txt) {
@@ -824,15 +997,16 @@
     var out = [];
     S.liste.forEach(function (q, i) {
       var r = S.reponses[i];
-      if (r !== q.answer) out.push(q.id);
+      if (typeof r === 'number' && r >= 0 && r !== q.answer) out.push(q.id);
     });
     return out;
   }
 
   function reponsesDetaillees() {
     return S.liste.map(function (q, i) {
-      return { id: q.id, module: q.cat, enonce: q.q, ok: S.reponses[i] === q.answer };
-    });
+      return typeof S.reponses[i] === 'number' && S.reponses[i] >= 0 ?
+        { id: q.id, module: q.cat, enonce: q.q, ok: S.reponses[i] === q.answer } : null;
+    }).filter(Boolean);
   }
 
   function confettis() {
@@ -852,41 +1026,51 @@
 
   function terminerPartie() {
     if (S.termine) return;
+    if (!comptePartieValide(true)) { arreterChrono(); return; }
     S.termine = true;
     arreterChrono();
     S.duree = Math.round((Date.now() - S.debut) / 1000);
-    var total = S.liste.length || 1;
-    var precision = Math.round(S.bonnes / total * 100);
-    var bonusTemps = ID !== 'html-css' ? Math.round(S.tempsRestant * 3) : 0;
+    var repondues = nbReponsesDonnees();
+    var total = Math.max(1, repondues);
+    var precision = repondues ? Math.round(S.bonnes / repondues * 100) : 0;
+    var bonusTemps = ID !== 'html-css' && repondues ? Math.round(S.tempsRestant * 3) : 0;
     S.score += bonusTemps;
     var erreurs = identifiantErreurs();
-    var xp = Math.round(S.score / 10) + S.bonnes * 5;
-    var nouveauxBadges = [];
+    var xp = gainXp(true), nouveauxBadges = [];
     if (F.badges) {
       var st = P.statsQuiz(ID);
       var simil = {
         parties: st.parties + 1, xp: st.xp + xp, niveau: st.niveau,
         serie: Math.max(st.serie, S.meilleurCombo), meilleur: Math.max(st.meilleur, S.score),
-        reponses: st.reponses + total, badges: st.badges
+        reponses: st.reponses + repondues, badges: st.badges
       };
       BADGES_SQL.forEach(function (b) { if (b.test(simil) && (st.badges || []).indexOf(b.id) === -1) nouveauxBadges.push(b.id); });
     }
-
-    /* 1. Une seule écriture dans le profil (profil.js = seule couche de stockage). */
-    P.enregistrerPartieQuiz(ID, {
-      score: S.score, total: total, mode: S.mode, reponses: S.reponses.filter(function (r) {
-        return r !== null && r !== undefined;
-      }).length,
-      erreurs: erreurs, combo: S.meilleurCombo, duree: S.duree,
-      xp: xp, serie: S.meilleurCombo, badges: nouveauxBadges,
-      chrono: S.mode === 'chrono' || S.mode === 'sixty' ? S.duree : 0
-    });
-    /* 2. Réponses détaillées pour « Mes erreurs » (script conservé). */
-    try {
-      if (window.STIQuizSync && typeof window.STIQuizSync.enregistrerReponses === 'function') {
-        window.STIQuizSync.enregistrerReponses(ID, null, reponsesDetaillees());
-      }
-    } catch (e) {}
+    /* Le compte de laboratoire est partagé : ses résultats ne doivent pas
+       entrer dans le profil synchronisé ni dans les files cloud. */
+    var qs = quizSync(), compteSansScore = Boolean(qs && qs.compteSansScore && qs.compteSansScore());
+    /* Crédit cumulatif write-ahead : un seul delta par UUID, même si la
+       partie est reprise ou terminée dans plusieurs onglets. */
+    if (repondues && !compteSansScore) {
+      creditXp(true);
+      P.enregistrerPartieQuiz(ID, {
+        partieId: S.partieId, score: S.bonnes, points: S.score, total: total,
+        mode: S.mode, reponses: repondues, erreurs: erreurs, combo: S.meilleurCombo, duree: S.duree,
+        xp: xp, serie: S.meilleurCombo, badges: nouveauxBadges,
+        chrono: S.mode === 'chrono' || S.mode === 'sixty' ? S.duree : 0
+      });
+    }
+    var details = reponsesDetaillees();
+    if (qs && !compteSansScore && repondues && typeof qs.enregistrer === 'function') {
+      try { qs.enregistrer(ID, S.bonnes, repondues, S.mode, {
+        partie_id: S.partieId, points: S.score, ordre_questions: S.liste
+      }); } catch (e) {}
+    } else if (qs && !compteSansScore && typeof qs.effacerSession === 'function') {
+      try { qs.effacerSession(ID, S.partieId); } catch (e) {}
+    }
+    if (qs && !compteSansScore && details.length && typeof qs.enregistrerReponses === 'function') {
+      try { qs.enregistrerReponses(ID, null, details); } catch (e) {}
+    }
 
     renderResultat(precision, bonusTemps, xp, nouveauxBadges);
     afficherEcran('result');
@@ -895,8 +1079,8 @@
   }
 
   function renderResultat(precision, bonusTemps, xp, nouveauxBadges) {
-    var total = S.liste.length || 1;
-    var gagne = S.score >= (ID === 'html-css' ? total * 0.7 * 100 : 0) || precision >= 70;
+    var total = nbReponsesDonnees();
+    var gagne = total > 0 && precision >= 70;
     var titre = precision >= 90 ? '🏆 Légende du code !' : precision >= 70 ? '🎉 Très belle partie !' :
       precision >= 50 ? '👍 Continue comme ça' : '📚 Encore un effort';
     var grade = precision >= 90 ? 'S' : precision >= 75 ? 'A' : precision >= 60 ? 'B' : precision >= 40 ? 'C' : 'D';
@@ -956,10 +1140,10 @@
     var html = S.liste.map(function (q, i) {
       var r = S.reponses[i];
       var juste = r === q.answer;
-      var mienne = r === null || r === undefined || r < 0 ? 'Aucune réponse' : q.options[r];
+      var mienne = r === -2 ? 'Question passée' : r === null || r === undefined || r < 0 ? 'Aucune réponse' : q.options[r];
       return '<article class="qz-revue__item ' + (juste ? 'is-ok' : 'is-ko') + '">' +
         '<div class="qz-revue__tete"><span class="qz-badge">' + (i + 1) + ' · ' + esc(q.catNom || q.cat) + '</span>' +
-        '<span class="qz-badge">' + (juste ? '✅ Juste' : '❌ À revoir') + '</span></div>' +
+        '<span class="qz-badge">' + (juste ? '✅ Juste' : r === null || r === undefined || r < 0 ? 'Non répondue' : '❌ À revoir') + '</span></div>' +
         '<h4>' + esc(String(q.q).replace(/<[^>]+>/g, '')) + '</h4>' +
         '<p><strong>Ta réponse :</strong> ' + esc(String(mienne).replace(/<[^>]+>/g, '')) + '</p>' +
         '<p><strong>Bonne réponse :</strong> ' + esc(String(q.options[q.answer]).replace(/<[^>]+>/g, '')) + '</p>' +
@@ -1039,6 +1223,7 @@
       }
       if (e.key === 'Escape' && !$('#levelupModal').hidden) $('#levelupModal').hidden = true;
     });
+    window.addEventListener('pagehide', sauverPartieActive);
     window.addEventListener('beforeunload', arreterChrono);
   }
 
@@ -1076,6 +1261,15 @@
       peindreStart();
       brancherEvenements();
       afficherEcran('start');
+      proposerReprise();
+      window.addEventListener('online', function () { if (S.ecran === 'start') proposerReprise(); });
+      window.addEventListener('storage', function () { if (S.ecran === 'start') proposerReprise(); });
+      window.addEventListener('sti-cloud-restored', function () {
+        if (S.ecran !== 'start' || !comptePret(false)) return;
+        if (CFG.ancienneCle) P.migrerAncienQuiz(ID, CFG.ancienneCle);
+        peindreHero();
+        proposerReprise();
+      });
 
       /* Lien direct depuis « Mes erreurs » (?revision=erreurs). */
       if (/[?&]revision=erreurs/.test(location.search || '')) {
