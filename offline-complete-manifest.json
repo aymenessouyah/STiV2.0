@@ -1,9 +1,9 @@
 {
-  "version": "v528-sti-atelier-v380",
-  "generatedAt": "2026-10-29T11:12:00Z",
+  "version": "v529-sti-atelier-v380",
+  "generatedAt": "2026-10-29T15:37:07Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 733,
-  "totalBytes": 816751534,
+  "totalFiles": 734,
+  "totalBytes": 816776389,
   "files": [
     {
       "path": "404.html",
@@ -67,8 +67,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 341478,
-      "gitSha": "11b711bfbdf0ef772dc154acd94d360aaeeafc14"
+      "bytes": 344838,
+      "gitSha": "854761a3748f6d409ed10a4535c801652edfc691"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -671,6 +671,11 @@
       "gitSha": "dd497f5420179dcd403b3c1f5e1ebe2154089dd3"
     },
     {
+      "path": "assets/js/admin-vues-videos.js",
+      "bytes": 17416,
+      "gitSha": "522ca45cb07d7c49c33d49bd9e9d00764ffc46f5"
+    },
+    {
       "path": "assets/js/admin.js",
       "bytes": 701593,
       "gitSha": "11dbc8d04446d489289210d2ebd6f36f7be20e5b"
@@ -817,8 +822,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 217901,
-      "gitSha": "a71aaa78235b32b509017bfc056c00de043f71ec"
+      "bytes": 220361,
+      "gitSha": "ca99534e585a07969d018bf86aa9c6b8d3b6b890"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -857,13 +862,13 @@
     },
     {
       "path": "assets/js/reconnexion-profil.js",
-      "bytes": 17777,
-      "gitSha": "9e04e998343af66cd80b66879c8c99d4ab9e5a7d"
+      "bytes": 18421,
+      "gitSha": "5337e49e66696ac3e673f9bd3a2dc780135d0d88"
     },
     {
       "path": "assets/js/reprendre.js",
-      "bytes": 8830,
-      "gitSha": "f5251af81ac8341aea582cc19c785c9b85bb47af"
+      "bytes": 9045,
+      "gitSha": "fc14b1a2b1747f96359be043630955a8c73604d8"
     },
     {
       "path": "assets/js/retour-livre-smart.js",
@@ -947,8 +952,8 @@
     },
     {
       "path": "assets/js/sync-progressions.js",
-      "bytes": 36950,
-      "gitSha": "1168f7cf587fc208e4bcbb8417a585a9bb9a72b5"
+      "bytes": 37707,
+      "gitSha": "4978691b03c8968a40ea8f2817c10175edcc805e"
     },
     {
       "path": "assets/js/vendor/chart.umd.min.js",
@@ -3667,8 +3672,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97340,
-      "gitSha": "5e93b443bcb525175178806f8cc8199779c726a4"
+      "bytes": 97343,
+      "gitSha": "79568cc306159c81aa7410cdeee1089fcb11a063"
     }
   ]
 }

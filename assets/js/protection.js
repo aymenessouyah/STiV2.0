@@ -1517,6 +1517,44 @@
       }
       window.resoudreCleMediaDepuisUrlSTI = resoudreCleMediaDepuisUrlSTI;
 
+      /* ── v529 : compteur de VUES par vidéo (petit coin du tableau de bord admin) ──
+         Une lecture réelle (≥ 2 s) vaut +1 pour l'appareil courant, une seule fois
+         par média et par chargement de page. Le compteur vit DANS l'entrée de
+         progression (« vues » = { appareil: n }) : sync-progressions.js le fusionne
+         sans perte d'un appareil à l'autre (maximum par appareil). */
+      var CLE_APPAREIL_VUES = "stiMediaAppareilV1";
+      var vuesCompteesSession = {};
+
+      function identifiantAppareilVues() {
+        try {
+          var deja = localStorage.getItem(CLE_APPAREIL_VUES);
+          if (deja && typeof deja === "string") return deja;
+          var neuf = "app" + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36);
+          localStorage.setItem(CLE_APPAREIL_VUES, neuf);
+          return neuf;
+        } catch (e) {
+          return "app-local";
+        }
+      }
+
+      function compterVueMedia(prev) {
+        var vues = {};
+        try {
+          var avait = Boolean(prev && prev.vues && typeof prev.vues === "object");
+          if (avait) {
+            Object.keys(prev.vues).forEach(function (app) {
+              var n = Math.round(Number(prev.vues[app]));
+              if (isFinite(n) && n > 0) vues[app] = n;
+            });
+          }
+          var appCourant = identifiantAppareilVues();
+          /* +1 pour cette lecture ; une entrée antérieure à la v529 n'avait aucun
+             compteur : elle part donc d'une seule lecture, jamais de zéro. */
+          vues[appCourant] = (vues[appCourant] || 0) + 1;
+        } catch (e) {}
+        return vues;
+      }
+
       function enregistrerProgressionMediaSTI(cle, sec, dur, forceDone) {
         if (!cle) return;
         var s = Math.max(0, Number(sec) || 0);
@@ -1525,6 +1563,22 @@
         var map = lireProgressionMediaSTI();
         var dejaPresent = Boolean(map[cle]);
         var prev = map[cle] || { pct: 0, maxPct: 0, sec: 0, done: false };
+        /* v529 : seules les vidéos comptent, et seule la page principale écrit le
+           compteur (une vidéo jouée dans une iframe est comptée par son parent). */
+        var vueComptable = cle.indexOf("video:") === 0;
+        try {
+          if (vueComptable && window.self !== window.top) vueComptable = false;
+        } catch (eIframe) {
+          vueComptable = false;
+        }
+        var vues = null, nouvelleVue = false;
+        if (vueComptable && !vuesCompteesSession[cle]) {
+          vuesCompteesSession[cle] = true;
+          vues = compterVueMedia(prev);
+          nouvelleVue = true;
+        } else if (prev && prev.vues && typeof prev.vues === "object") {
+          vues = prev.vues;
+        }
         var pct = forceDone
           ? 100
           : ((d > 2) ? Math.min(100, Math.max(1, Math.round((s / d) * 100))) : Math.max(1, prev.pct || 5));
@@ -1535,7 +1589,7 @@
         var premiereFois = !dejaPresent || prevMax < 1;
         var secSauv = isDone ? 0 : ((s < 0.5 && (prev.sec || 0) > 2) ? prev.sec : Math.round(s));
         var changed = premiereFois || (prev.done !== isDone) || (maxPct !== prevMax) || (Math.abs((prev.sec || 0) - secSauv) >= 3);
-        map[cle] = {
+        var entree = {
           pct: pct,
           maxPct: maxPct,
           sec: secSauv,
@@ -1543,7 +1597,9 @@
           done: isDone,
           ts: Date.now()
         };
-        if (changed || forceDone) {
+        if (vues) entree.vues = vues;
+        map[cle] = entree;
+        if (changed || forceDone || nouvelleVue) {
           try {
             localStorage.setItem(CLE_PROG_MEDIA, JSON.stringify(map));
           } catch (e) {}
