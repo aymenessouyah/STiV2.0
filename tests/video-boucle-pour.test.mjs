@@ -54,13 +54,13 @@ test('la capsule est livrée à côté des autres vidéos du site', () => {
   assert.match(entete, /isom|mp42|avc1/, 'marque MP4');
 });
 
-test('la vidéo dure environ trois minutes vingt et ses sous-titres la couvrent', () => {
+test('la vidéo dure environ quatre minutes et ses sous-titres la couvrent', () => {
   const duree = dureeMp4(VIDEO);
-  assert.ok(duree > 195 && duree < 215, `durée inattendue : ${duree.toFixed(1)} s`);
+  assert.ok(duree > 235 && duree < 260, `durée inattendue : ${duree.toFixed(1)} s`);
   const vtt = lire(VTT);
   assert.ok(vtt.startsWith('WEBVTT'), 'entête WEBVTT');
   const entrees = entreesVtt(vtt);
-  assert.ok(entrees.length >= 50, `trop peu de répliques : ${entrees.length}`);
+  assert.ok(entrees.length >= 65, `trop peu de répliques : ${entrees.length}`);
   assert.ok(entrees[0].debut < 4, 'les sous-titres démarrent avec la voix');
   assert.ok(Math.abs(entrees[entrees.length - 1].fin - duree) < 25,
     'les sous-titres couvrent la fin de la vidéo');
@@ -76,6 +76,9 @@ test('les sous-titres disent le récit dicté, du sac à la boucle Pour', () => 
     .replace(/^\d+:\d{2}:\d{2}\.\d{3} --> .*$/gm, '')
     .replace(/\s+/g, ' ');
   for (const phrase of [
+    'la somme de',
+    'quatre, sept, deux, neuf',
+    "ça s'appelle un tableau",
     'je prends un sac',
     'une variable',
     'je le nomme s',
@@ -140,6 +143,13 @@ test('le début est détaillé : sac vide, contenu qui change, nom S justifié',
 
   const scenes = lire('outils/bouclepour/scenes.py');
   assert.match(scenes, /contenu : \{valeur\}/, 'le contenu du sac est écrit sous le sac');
+  const dessin = lire('outils/bouclepour/dessin.py');
+  assert.match(dessin, /VALEURS = \(4, 7, 2, 9\)/, 'les étages valent 4, 7, 2 et 9');
+  assert.match(dessin, /SOMME_TOTALE = sum\(VALEURS\)/, 'la somme 22 est calculée');
+  assert.match(dessin, /def bandeau_etat\(/, 'le bandeau du bas suit tableau + somme');
+  assert.match(dessin, /def personnage\(/, 'le passager de l\'ascenseur est dessiné');
+  assert.match(scenes, /def scene_intro\(/, 'la scène d\'introduction existe');
+  assert.match(scenes, /TOTAL = 10/, 'la capsule compte dix étapes');
   assert.match(scenes, /_boite_variable/, 'le schéma « une variable = un nom + une valeur »');
   assert.match(scenes, /le sac de l'étage 0/, 'les sacs sont légendés');
   assert.ok(scenes.includes('lequel ?'), 'la question « lequel ? »');
@@ -177,8 +187,8 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes('BouclePour.mp4'), 'les médias restent hors du delta léger');
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucle-pour-v538"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucle-pour-v538"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucle-pour-v539"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucle-pour-v539"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {
