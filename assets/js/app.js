@@ -863,6 +863,13 @@
     if (pastilleToutes) pastilleToutes.textContent = "Toutes (" + accessibles + ")";
     var totalTexte = document.getElementById("videosTotalNombre");
     if (totalTexte) totalTexte.textContent = String(accessibles);
+    /* v515 : la tuile « Vidéos du catalogue » annonce le catalogue entier,
+       elle n'est plus un chiffre figé qui vieillit à chaque capsule ajoutée. */
+    var statVideos = document.getElementById("videosStatNombre");
+    if (statVideos) {
+      statVideos.setAttribute("data-count", String(CATALOGUE_VIDEOS.length));
+      statVideos.textContent = String(CATALOGUE_VIDEOS.length);
+    }
     document.querySelectorAll("[data-video-filter]").forEach(function (btnF) {
       var cleF = btnF.getAttribute("data-video-filter") || "";
       if (!libellesFiltres[cleF]) return;
