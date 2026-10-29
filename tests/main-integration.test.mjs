@@ -16,7 +16,7 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v380"/);
-  assert.match(sw, /var UPDATE_ID = "v524-serie6-exercices-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v525-grille-exercices-20261029"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
@@ -73,7 +73,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
     assert.equal(revisions.get('./' + chemin), 'retrait-fond-cours-v508', chemin);
   }
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
-  assert.equal(revisions.get('./cours/javascript.html'), 'serie6-exercices-v524');
+  assert.equal(revisions.get('./cours/javascript.html'), 'grille-exercices-v525');
   assert.equal(revisions.get('./cours/html5.html'), 'tp-display-v510');
   assert.equal(revisions.get('./cours/css3.html'), 'tp-transitions-v512');
   assert.equal(revisions.get('./assets/js/cours-onglets-mobile.js'), 'onglets-mobile-v493');
@@ -118,7 +118,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v524-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v525-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'), 'le garde-fou XP est livré hors ligne');
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));

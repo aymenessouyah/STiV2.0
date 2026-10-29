@@ -135,7 +135,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'tp-display-v510'
-      : chemin === 'cours/javascript.html' ? 'serie6-exercices-v524'
+      : chemin === 'cours/javascript.html' ? 'grille-exercices-v525'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
