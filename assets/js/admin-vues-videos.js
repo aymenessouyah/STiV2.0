@@ -1,6 +1,6 @@
-/* ══════════ STI v529 — VUES DES VIDÉOS (petit coin du tableau de bord) ══════════
+/* ══════════ STI v529/v530 — VUES DES VIDÉOS (petit coin du tableau de bord) ══════════
    Consigne professeur : « un petit coin qui affiche le nombre de vues total de
-   chaque vidéo » dans le tableau de bord admin.
+   chaque vidéo » dans le tableau de bord admin, avec filtre par classe et export.
 
    D'où viennent les chiffres (aucune table nouvelle, aucune écriture ici) :
    • chaque lecture réelle (≥ 2 s) d'une vidéo laisse une entrée
@@ -11,11 +11,13 @@
      fusionné sans perte d'un appareil à l'autre (maximum par appareil) ;
    • une entrée ancienne (avant la v529) n'a pas ce champ : on la compte pour une
      lecture au moins — le passé n'a jamais été chiffré, on ne l'invente pas.
+   • v530 : le sélecteur de classe recalcule le bloc SANS relire le nuage, et le
+     bouton « 📥 CSV » exporte exactement ce qui est affiché.
 
    Le module est ADDITIF et LECTURE SEULE : il ne s'affiche que si la section
    #vues-videos-admin existe dans la page (donc jamais sur une autre page) et il
    ne modifie aucune progression d'élève. Testable seul : window.STI_VUES_VIDEOS
-   ({catalogue, analyser, pourcentageMedia, vuesDeLEntree, charger, rendre}). */
+   ({catalogue, analyser, pourcentageMedia, vuesDeLEntree, versCsv, charger, rendre}). */
 (function () {
   "use strict";
   if (window.__STI_VUES_VIDEOS_ADMIN) return;
@@ -24,6 +26,8 @@
   var doc = document;
   var cfg = window.STI_AUTH || { URL: "https://vywujxmepvcbgedgmger.supabase.co", CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn" };
   var CLE_MEDIA = "sti-media-prog-v1";
+  var CLASSE_TOUTES = "*";
+  var RE_CLASSE_TECHNIQUE = /^(prof|professeur|enseignant|admin|elevelabo3|labo3)$/i;
 
   /* Catalogue affiché : les 20 capsules publiques de l'accueil (mêmes identifiants
      que CATALOGUE_VIDEOS de app.js) puis les médias vidéo des pages de cours.
@@ -58,9 +62,11 @@
     { id: "explore-tunisie-float", titre: "Explore Tunisie — Float", matiere: "css3", icone: "🎨", horsCatalogue: true }
   ];
 
-  var racine = null, elListe = null, elEtat = null, elResume = null, btn = null;
+  var racine = null, elListe = null, elEtat = null, elResume = null, elClasse = null, btn = null, btnCsv = null;
   var client = null;
   var dernier = null;
+  var donneesBrutes = null; /* { lignes: [], profils: [] } : lu une fois, refiltré localement */
+  var classeActive = CLASSE_TOUTES;
   var chargementEnCours = false;
 
   function ech(s) {
@@ -144,30 +150,49 @@
     return 1;
   }
 
-  function estComptePedagogique(r, profParId, profParMail) {
+  function profilDeLEleve(r, profParId, profParMail) {
     var em = String((r && r.email) || "").trim().toLowerCase();
-    var pr = (r && r.user_id && profParId[r.user_id]) || (em && profParMail[em]) || null;
+    return (r && r.user_id && profParId[r.user_id]) || (em && profParMail[em]) || null;
+  }
+
+  function classeDeLEleve(r, profParId, profParMail) {
+    var pr = profilDeLEleve(r, profParId, profParMail);
+    var c = pr && pr.classe ? String(pr.classe).trim() : "";
+    return c || "—";
+  }
+
+  function estComptePedagogique(r, profParId, profParMail) {
+    var pr = profilDeLEleve(r, profParId, profParMail);
+    var em = String((r && r.email) || "").trim().toLowerCase();
     var email = pr && pr.email ? String(pr.email).trim().toLowerCase() : em;
     if (email === "elevelabo3@exemple.tn" || email === "aymenessouyah@gmail.com") return false;
     var classe = pr && pr.classe ? String(pr.classe).trim() : "";
-    if (classe && /^(prof|professeur|enseignant|admin|elevelabo3|labo3)$/i.test(classe)) return false;
+    if (classe && RE_CLASSE_TECHNIQUE.test(classe)) return false;
     return true;
   }
 
   /* Fonction PURE (testée) : agrège les progressions cloud en vues par vidéo.
      vues   = lectures cumulées (tous élèves, tous appareils)
-     eleves = élèves distincts ayant lancé la vidéo (au moins 2 s) */
-  function analyser(progRows, profils) {
-    var profParId = {}, profParMail = {};
+     eleves = élèves distincts ayant lancé la vidéo (au moins 2 s)
+     classe : "*" (toutes) ou nom exact d'une classe — filtre côté élève. */
+  function analyser(progRows, profils, classe) {
+    var filtre = classe == null || String(classe).trim() === "" ? CLASSE_TOUTES : String(classe).trim();
+    var profParId = {}, profParMail = {}, classes = {};
     (profils || []).forEach(function (p) {
       if (!p) return;
       if (p.id) profParId[p.id] = p;
       if (p.email) profParMail[String(p.email).trim().toLowerCase()] = p;
+      var c = String(p.classe || "").trim();
+      var mail = String(p.email || "").trim().toLowerCase();
+      if (!c || RE_CLASSE_TECHNIQUE.test(c)) return;
+      if (mail === "elevelabo3@exemple.tn" || mail === "aymenessouyah@gmail.com") return;
+      classes[c] = 1;
     });
     var compteurs = {};
     var elevesComptes = 0, elevesAyantVu = 0;
     (progRows || []).forEach(function (r) {
       if (!r || !estComptePedagogique(r, profParId, profParMail)) return;
+      if (filtre !== CLASSE_TOUTES && classeDeLEleve(r, profParId, profParMail) !== filtre) return;
       var d = parseSouple(r.donnees) || {};
       var mp = parseSouple(d[CLE_MEDIA]) || {};
       if (!mp || typeof mp !== "object") return;
@@ -210,7 +235,9 @@
       eleves: totEleves,
       elevesAyantVu: elevesAyantVu,
       elevesAnalyses: elevesComptes,
-      maxVues: maxVuesLignes(lignes)
+      maxVues: maxVuesLignes(lignes),
+      classe: filtre,
+      classes: Object.keys(classes).sort(function (a, b) { return a.localeCompare(b, "fr"); })
     };
   }
 
@@ -220,19 +247,22 @@
     return max;
   }
 
-  function rendre(res) {
-    if (!elListe) return;
-    var lignes = (res && res.lignes ? res.lignes : []).slice();
-    lignes.sort(function (a, b) {
+  function trierLignes(lignes) {
+    return (lignes || []).slice().sort(function (a, b) {
       return (b.vues - a.vues) || (b.eleves - a.eleves) || String(a.titre).localeCompare(String(b.titre), "fr");
     });
+  }
+
+  function rendre(res) {
+    if (!elListe) return;
+    var lignes = trierLignes(res && res.lignes ? res.lignes : []);
     var max = maxVuesLignes(lignes);
     var html = "";
     lignes.forEach(function (l) {
       var pct = Math.max(0, Math.min(100, Math.round((l.vues / max) * 100)));
       var vide = !l.vues && !l.eleves;
       html += '<div class="vues-video' + (vide ? " vues-video-vide" : "") + (l.horsCatalogue ? " vues-video-hors-catalogue" : "") +
-        '" data-video="' + ech(l.id) + '" data-vues="' + l.vues + '" title="' + ech(l.titre) + " — " + l.vues +
+        '" data-video="' + ech(l.id) + '" data-vues="' + l.vues + '" data-eleves="' + l.eleves + '" title="' + ech(l.titre) + " — " + l.vues +
         " lecture(s) cumulée(s) · " + l.eleves + ' élève(s) ayant regardé">' +
         '<span class="vues-video-nom"><i aria-hidden="true">' + l.icone + "</i><span>" + ech(l.titre) + "</span></span>" +
         '<span class="vues-video-nb"><b>' + l.vues + "</b> vue" + (l.vues > 1 ? "s" : "") + "</span>" +
@@ -244,9 +274,73 @@
     if (elResume) {
       elResume.textContent = lignes.length + " capsule" + (lignes.length > 1 ? "s" : "") + " · " +
         res.vues + " vue" + (res.vues > 1 ? "s" : "") + " au total · " +
-        res.elevesAyantVu + " élève" + (res.elevesAyantVu > 1 ? "s" : "") + " devant au moins une vidéo";
+        res.elevesAyantVu + " élève" + (res.elevesAyantVu > 1 ? "s" : "") + " devant au moins une vidéo" +
+        (res.classe && res.classe !== CLASSE_TOUTES ? " (" + res.classe + ")" : "");
       elResume.title = res.elevesAnalyses + " progression(s) d'élève lue(s) dans le nuage · " +
         res.eleves + " couple(s) élève-vidéo";
+    }
+    if (btnCsv) btnCsv.disabled = !res;
+  }
+
+  /* Export CSV de ce qui est affiché (même filtre de classe, même tri). */
+  function versCsv(res) {
+    var cellule = function (v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; };
+    var lignes = ["Vidéo;Matière;Vues cumulées;Élèves;Hors catalogue;Classe"];
+    trierLignes(res && res.lignes ? res.lignes : []).forEach(function (l) {
+      lignes.push([
+        l.titre, l.matiere || "—", l.vues, l.eleves, l.horsCatalogue ? "oui" : "non",
+        res && res.classe && res.classe !== CLASSE_TOUTES ? res.classe : "Toutes les classes"
+      ].map(cellule).join(";"));
+    });
+    if (res) {
+      lignes.push(["TOTAL", "", res.vues, res.elevesAyantVu, "", res.classe && res.classe !== CLASSE_TOUTES ? res.classe : "Toutes les classes"].map(cellule).join(";"));
+    }
+    return lignes.join("\r\n");
+  }
+
+  function exporterCsv() {
+    if (!dernier) return;
+    try {
+      var contenu = "\ufeff" + versCsv(dernier);
+      var nom = "STI_V2_vues_videos_" +
+        (dernier.classe && dernier.classe !== CLASSE_TOUTES ? String(dernier.classe).replace(/[^\w-]+/g, "_") : "toutes_classes") +
+        "_" + new Date().toISOString().slice(0, 10) + ".csv";
+      var blob = new Blob([contenu], { type: "text/csv;charset=utf-8;" });
+      var a = doc.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = nom;
+      doc.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); if (a.parentNode) a.remove(); }, 1500);
+      etat("📥 Export CSV : " + nom, "#16a34a");
+    } catch (e) {
+      etat("⚠️ Export impossible : " + (e && e.message ? e.message : "navigateur"), "#b91c1c");
+    }
+  }
+
+  /* Liste déroulante des classes : reconstruite à chaque lecture, sélection gardée. */
+  function remplirClasses(classes) {
+    if (!elClasse) return;
+    var garde = classeActive;
+    var liste = (classes || []).slice();
+    if (garde !== CLASSE_TOUTES && liste.indexOf(garde) < 0) liste.push(garde);
+    var html = '<option value="*">🏫 Toutes les classes</option>';
+    liste.forEach(function (c) { html += '<option value="' + ech(c) + '">' + ech(c) + "</option>"; });
+    elClasse.innerHTML = html;
+    elClasse.value = liste.indexOf(garde) >= 0 || garde === CLASSE_TOUTES ? garde : CLASSE_TOUTES;
+    classeActive = elClasse.value;
+  }
+
+  /* Refiltre les données déjà lues : aucune requête réseau au changement de classe. */
+  function rafraichirAffichage() {
+    if (!donneesBrutes) return;
+    dernier = analyser(donneesBrutes.lignes, donneesBrutes.profils, classeActive);
+    rendre(dernier);
+    remplirClasses(dernier.classes);
+    if (!dernier.elevesAnalyses) {
+      etat("ℹ️ Aucune progression pour " + (classeActive === CLASSE_TOUTES ? "les élèves" : "la classe " + classeActive) + ".", "#b45309");
+    } else if (classeActive !== CLASSE_TOUTES) {
+      etat("🏫 Classe " + classeActive + " : " + dernier.elevesAnalyses + " élève(s) lu(s).", "#0f766e");
     }
   }
 
@@ -289,16 +383,19 @@
       if (btn) btn.disabled = false;
       var lignes = (res[0] && res[0].data) || [];
       var erreur = res[0] && res[0].error;
+      var profils = (res[1] && res[1].data) || [];
+      donneesBrutes = { lignes: lignes, profils: profils };
       if (!lignes.length) {
         etat(erreur ? "⚠️ Lecture refusée : " + (erreur.message || "session admin ?") : "ℹ️ Aucune progression vidéo synchronisée pour le moment.", erreur ? "#b91c1c" : "");
-        dernier = analyser([], (res[1] && res[1].data) || []);
+        dernier = analyser([], profils, classeActive);
         rendre(dernier);
+        remplirClasses(dernier.classes);
         return dernier;
       }
-      dernier = analyser(lignes, (res[1] && res[1].data) || []);
-      rendre(dernier);
+      rafraichirAffichage();
       var h = new Date();
-      etat("✅ À jour à " + String(h.getHours()).padStart(2, "0") + ":" + String(h.getMinutes()).padStart(2, "0"), "#16a34a");
+      etat("✅ À jour à " + String(h.getHours()).padStart(2, "0") + ":" + String(h.getMinutes()).padStart(2, "0") +
+        (classeActive !== CLASSE_TOUTES ? " · classe " + classeActive : ""), "#16a34a");
       return dernier;
     }).catch(function (e) {
       chargementEnCours = false;
@@ -315,9 +412,18 @@
     elListe = doc.getElementById("vues-videos-liste");
     elEtat = doc.getElementById("vues-videos-etat");
     elResume = doc.getElementById("vues-videos-resume");
+    elClasse = doc.getElementById("vues-videos-classe");
     btn = doc.getElementById("btn-vues-videos");
+    btnCsv = doc.getElementById("btn-vues-videos-csv");
     if (!elListe) return;
     if (btn) btn.addEventListener("click", function () { charger(3); });
+    if (btnCsv) btnCsv.addEventListener("click", exporterCsv);
+    if (elClasse) {
+      elClasse.addEventListener("change", function () {
+        classeActive = elClasse.value || CLASSE_TOUTES;
+        rafraichirAffichage();
+      });
+    }
     var vue = false;
     function lancerUneFois() { if (vue) return; vue = true; charger(0); }
     /* Le tableau de bord charge déjà ses propres compteurs : on laisse passer
@@ -341,6 +447,8 @@
       analyser: analyser,
       pourcentageMedia: pourcentageMedia,
       vuesDeLEntree: vuesDeLEntree,
+      versCsv: versCsv,
+      exporterCsv: exporterCsv,
       charger: charger,
       rendre: rendre,
       monter: monter,

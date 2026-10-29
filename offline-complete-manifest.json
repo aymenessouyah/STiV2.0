@@ -1,9 +1,9 @@
 {
-  "version": "v529-sti-atelier-v380",
-  "generatedAt": "2026-10-29T15:37:07Z",
+  "version": "v530-sti-atelier-v380",
+  "generatedAt": "2026-10-29T15:55:56Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 734,
-  "totalBytes": 816776389,
+  "totalBytes": 816782508,
   "files": [
     {
       "path": "404.html",
@@ -67,8 +67,8 @@
     },
     {
       "path": "admin.html",
-      "bytes": 344838,
-      "gitSha": "854761a3748f6d409ed10a4535c801652edfc691"
+      "bytes": 345612,
+      "gitSha": "a6107b7cd9b4ca7e1d45131fd82307122383c503"
     },
     {
       "path": "assets/audio/css-animee.mp3",
@@ -672,8 +672,8 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 17416,
-      "gitSha": "522ca45cb07d7c49c33d49bd9e9d00764ffc46f5"
+      "bytes": 22720,
+      "gitSha": "14a19d4aa9463715f5f7cc0485f5f7cc00efb184"
     },
     {
       "path": "assets/js/admin.js",
@@ -3672,8 +3672,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97343,
-      "gitSha": "79568cc306159c81aa7410cdeee1089fcb11a063"
+      "bytes": 97384,
+      "gitSha": "8f6b36b2780380ce09eb04afa66c06557e1f4a8f"
     }
   ]
 }

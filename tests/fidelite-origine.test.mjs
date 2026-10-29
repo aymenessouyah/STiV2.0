@@ -34,7 +34,7 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/sync-progressions.js': 'adfe40748c4608e132b5e6acfaa8fcf3904b0a9d11c425ec0c0140032fe121c3',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
-    'admin.html': '4608a90d3eb1a2c573369722f1ba1607d541a0f57ea9171a44b2c1a59bac8a85',
+    'admin.html': '25213113045eb471cd87f1dbbbab5df8b2c6e9a321cd358ab21fddb85f178143',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
