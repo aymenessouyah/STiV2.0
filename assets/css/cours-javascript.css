@@ -6,7 +6,7 @@
 .course-page--javascript .skip-link { color: var(--text) !important; background: var(--surface-solid); border: 2px solid var(--course-accent); }
 .course-page--javascript .toc-number, .course-page--javascript .toc-link[data-state] .toc-link__status { color: var(--text); }
 .course-page--javascript .toc-link[data-state] .toc-link__status { background: var(--surface-solid); }
-.course-page--javascript #sti-bnav a, .course-page--javascript #sti-bnav a span, .course-page--javascript #sti-bnav button, .course-page--javascript #sti-bnav button span { color: var(--text) !important; }
+/* v532 : la barre mobile est désormais sombre et flottante ; elle porte ses propres couleurs (plus de couleur forcée par le thème du cours). */
 .course-page--javascript .badge-js { color: var(--text); }
 .course-page--javascript .course-panel, .js-exercise-group, .js-playground, .js-doc-preview { scroll-margin-top: calc(var(--header-height) + 74px); }
 .course-page--javascript .course-main, .js-source, .js-source > *, .js-exercise-group, .js-playground { min-width: 0; }

@@ -26,9 +26,11 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      v520 : sync-progressions.js compare son empreinte au contenu cloud réel et
      ne retient la sienne qu'après un envoi réussi ; l'empreinte est réactualisée.
      v529 : sync-progressions.js fusionne aussi les compteurs de vues vidéo par
-     appareil, et admin.html accueille le petit coin « Vues des vidéos ». */
+     appareil, et admin.html accueille le petit coin « Vues des vidéos ».
+     v532 : config.js charge la barre mobile modernisée (chargeur ?v=532) et peint
+     son gabarit flottant ; empreinte réactualisée. */
   const originaux = {
-    'assets/js/config.js': '07f7ef9330b1c259989eb34ea9dc459aa4b4f58411c49c7c68c427266c638396',
+    'assets/js/config.js': '4936f1efc5fde33dc2432dd3a9aa4fc33df77f90b842fe2091a2a5ba2f872a7f',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
     'assets/js/acces.js': '60e52add1f7dd60a12ee1102f2f181719076e209e0d05211f5e6f58935d985a4',
     'assets/js/sync-progressions.js': '19d2505e0e056e418a4d002557503e8a5e29da8dd135564cb3f6236c87de827b',

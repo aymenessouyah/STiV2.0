@@ -46,7 +46,8 @@ window.STI_AUTH = {
   } catch (e) {}
 })();
 
-/* v413 — barre de navigation mobile en bas d'écran (Accueil · Exercices · Quiz · Autres).
+/* v532 — barre de navigation mobile flottante (Accueil · Cours · Vidéos · Quiz + bouton « + »).
+   v413 — barre de navigation mobile en bas d'écran (Accueil · Exercices · Quiz · Autres).
    Le chargeur vit ici car config.js est le seul script présent sur TOUTES les pages du site :
    rien à toucher dans les 33 fichiers HTML. Toute la logique est dans assets/js/mobile-nav.js
    (chargé seulement en http/https ; la barre ne s'affiche qu'en dessous de 700 px). */
@@ -61,7 +62,7 @@ window.STI_AUTH = {
       var m = pn.match(/^(.*?)\/(?:cours|exercices|projets|documents|annexes|quiz|cssanimee|Positionnement-animee|tests)\//);
       base = m ? location.origin + m[1] + "/" : location.origin + pn.slice(0, pn.lastIndexOf("/") + 1);
     } catch (e) {}
-    s.src = base + "assets/js/mobile-nav.js?v=464";
+    s.src = base + "assets/js/mobile-nav.js?v=532";
     s.async = true;
     (document.head || document.documentElement).appendChild(s);
   } catch (e) {}
@@ -91,7 +92,12 @@ window.STI_AUTH = {
     var head = document.head || document.documentElement;
     var style = document.createElement("style");
     style.id = "sti-bnav-skel-css";
-    style.textContent = "@media (max-width:700px){html:not(.sti-bnav-on) #sti-bnav-skel{display:block;position:fixed;left:0;right:0;bottom:0;height:" + d.h + "px;background:" + d.f + ";border-top:" + (d.brd || "1.5px") + " solid " + (d.b || "#e7d9bd") + ";z-index:2147483000;pointer-events:none}}";
+    /* v532 : le gabarit imite la barre flottante (marges de 10 px, 60 px de haut, coins
+       arrondis) et son bouton central « + » surélevé, pour que la substitution par la vraie
+       barre ne déplace rien. L'ancienne hauteur mémorisée incluait déjà les 22 px du bouton. */
+    var hb = Math.max(48, Math.min(96, (parseInt(d.h, 10) || 82) - 22));
+    style.textContent = "@media (max-width:700px){html:not(.sti-bnav-on) #sti-bnav-skel{display:block;position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));height:" + hb + "px;background:" + d.f + ";border:" + (d.brd || "1px") + " solid " + (d.b || "#2a3346") + ";border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.28);z-index:2147483000;pointer-events:none}"
+      + "html:not(.sti-bnav-on) #sti-bnav-skel::after{content:'';position:absolute;left:50%;top:-19px;width:52px;height:52px;margin-left:-26px;border-radius:50%;background:linear-gradient(135deg,#5b8cff,#a855f7,#fb7185);box-shadow:0 8px 18px rgba(91,140,255,.35)}}";
     var sk = document.createElement("div");
     sk.id = "sti-bnav-skel";
     sk.setAttribute("aria-hidden", "true");

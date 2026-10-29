@@ -16,7 +16,7 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v380"/);
-  assert.match(sw, /var UPDATE_ID = "v531-vues-videos-periode-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v532-barre-mobile-moderne-20261029"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
@@ -58,7 +58,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'defis37-lecteur-v528');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'vues-videos-v531');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'barre-mobile-v532');
   assert.equal(revisions.get('./README.md'), 'xp-jamais-en-recul-v520');
   for (const chemin of ['dashboard.html', 'assets/images/drapeau-tunisie.svg']) {
     assert.equal(revisions.get('./' + chemin), 'accueil-lycee-v503', chemin);
@@ -88,7 +88,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }
-  assert.equal(revisions.get('./assets/js/mobile-nav.js'), 'xp-pwa-v490');
+  assert.equal(revisions.get('./assets/js/mobile-nav.js'), 'barre-mobile-v532');
   for (const chemin of ['assets/css/badge-compte.css', 'assets/js/roue-initiales.js', 'assets/images/badge-compte-vierge.png']) {
     assert.equal(revisions.get('./' + chemin), 'badge-image-v488', chemin);
   }
@@ -98,7 +98,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/acces.js'), 'compteur-media-v479');
   /* v529 : masquer la reprise ne doit pas effacer le compteur de vues vidéo. */
   assert.equal(revisions.get('./assets/js/reprendre.js'), 'vues-videos-v531');
-  assert.equal(revisions.get('./assets/js/config.js'), 'tirage-xp-rapide-v519');
+  assert.equal(revisions.get('./assets/js/config.js'), 'barre-mobile-v532');
   assert.equal(revisions.get('./assets/js/sync-progressions.js'), 'vues-videos-v531');
   for (const chemin of ['assets/css/cours-matieres.css', 'assets/js/cours-matieres.js', 'assets/js/cours-sql-worker.js', 'assets/js/profil.js', 'assets/js/app.js']) {
     assert.ok(revisions.has('./' + chemin), chemin);
@@ -122,7 +122,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v531-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v532-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'), 'le garde-fou XP est livré hors ligne');
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));
