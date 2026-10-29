@@ -102,6 +102,10 @@ def main():
     total = duree(sortie)
     with open(os.path.join(DOSSIER, "durees.json"), "w", encoding="utf-8") as f:
         json.dump(durees, f, indent=2, ensure_ascii=False)
+    # calage exact : instant de départ de chaque section dans la piste finale
+    with open(os.path.join(DOSSIER, "calage.json"), "w", encoding="utf-8") as f:
+        json.dump({"durees": durees, "debuts": decalages, "total": total},
+                  f, indent=2, ensure_ascii=False)
 
     # sous-titres
     vtt = narration.vtt(narration.sous_titres(durees, decalages))

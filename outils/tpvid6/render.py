@@ -59,7 +59,7 @@ def _duree_ligne(ligne: str) -> float:
 SECTIONS_PARTIES = ["outils", "identite", "voyage", "prix", "captcha", "envoi"]
 
 
-def construire_plan(cibles: dict | None = None) -> dict:
+def construire_plan(cibles: dict | None = None, debuts: dict | None = None) -> dict:
     """Calcule tous les instants de la vidéo (indépendant du rendu).
 
     cibles : durées audio par section ; chaque partie est alors étirée ou
@@ -67,6 +67,8 @@ def construire_plan(cibles: dict | None = None) -> dict:
     """
     parties = []
     t = (cibles or {}).get("intro", D_INTRO)
+    if debuts:
+        t = debuts["intro"]
     for i, p in enumerate(PARTIES):
         n_noeuds = len(p["noeuds"])
         d_enonce = max(D_ENONCE_MIN, len(p["enonce"]) * D_ENONCE_PAR_CAR + 3.0)
@@ -79,7 +81,14 @@ def construire_plan(cibles: dict | None = None) -> dict:
             section = SECTIONS_PARTIES[i]
             naturelle = (d_enonce + n_noeuds * D_NOEUD + 0.4 + D_TRANSITION
                          + sum(_duree_ligne(l) for l in p["code"]) + D_PARTIE_FIN)
-            f = max(0.55, min(2.4, cibles[section] / max(1.0, naturelle)))
+            cible = cibles[section]
+            if debuts:
+                # la partie doit tenir exactement jusqu'au début de la suivante
+                suivante = (debuts[SECTIONS_PARTIES[i + 1]] if i + 1 < len(SECTIONS_PARTIES)
+                            else debuts["outro"])
+                cible = suivante - debuts[section] - D_ENTRACTE
+                t = debuts[section]
+            f = max(0.55, min(2.4, cible / max(1.0, naturelle)))
             d_enonce *= f
             pas_noeud *= f
             facteur_ligne = f
@@ -118,6 +127,9 @@ def construire_plan(cibles: dict | None = None) -> dict:
     fin_parties = t
     d_outro = (cibles or {}).get("outro", D_OUTRO)
     total = fin_parties + d_outro
+    if debuts:
+        fin_parties = debuts["outro"]
+        t = fin_parties
     return {"parties": parties, "fin_parties": fin_parties, "total": total, "d_outro": d_outro}
 
 
@@ -599,10 +611,15 @@ def main():
     a = ap.parse_args()
 
     cibles = None
+    debuts = None
     if a.durees:
         with open(a.durees, encoding="utf-8") as f:
-            cibles = json.load(f)
-    plan = construire_plan(cibles)
+            charge = json.load(f)
+        if "durees" in charge:
+            cibles, debuts = charge["durees"], charge["debuts"]
+        else:
+            cibles = charge
+    plan = construire_plan(cibles, debuts)
     if a.plan:
         print(json.dumps({
             "total": round(plan["total"], 1),
