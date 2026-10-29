@@ -78,7 +78,9 @@ test('depuis un cours et les exercices, Vidéos ouvre le catalogue ; les séries
   await expect(autres).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#sti-bnav-sheet')).toBeVisible();
   /* Le volet contient bien les cours et les familles de vidéos (v532). */
-  await expect(page.locator('#sti-bnav-sheet h4')).toHaveText([/Tous les cours/, /Familles de vidéos/, /Fiches/, /Outils/]);
+  /* v535 : les fiches & annexes ont quitté le volet — trois sections seulement. */
+  await expect(page.locator('#sti-bnav-sheet h4')).toHaveText([/Tous les cours/, /Familles de vidéos/, /Outils/]);
+  await expect(page.locator('#sti-bnav-sheet')).not.toContainText('Fiche de révision');
   await expect(page.locator('#sti-bnav-sheet .sti-sheet-carte')).toHaveCount(5);
   /* v533 : le compte ouvre le tableau de bord de l'abonné, pas la page d'accès. */
   await expect(page.locator('#sti-bnav-sheet').getByRole('link', { name: /Mon tableau de bord/ }))

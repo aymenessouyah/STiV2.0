@@ -1,9 +1,9 @@
 {
-  "version": "v534-sti-atelier-v380",
-  "generatedAt": "2026-10-29T17:22:08Z",
+  "version": "v535-sti-atelier-v380",
+  "generatedAt": "2026-10-29T18:28:36Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 734,
-  "totalBytes": 816809090,
+  "totalBytes": 816808514,
   "files": [
     {
       "path": "404.html",
@@ -767,8 +767,8 @@
     },
     {
       "path": "assets/js/mobile-nav.js",
-      "bytes": 37413,
-      "gitSha": "44fc72b76c4df754ca0e387867b987365ad7e469"
+      "bytes": 36801,
+      "gitSha": "5b70a231d89e0bc83335a219d226de8097b44352"
     },
     {
       "path": "assets/js/modules/admin-labo-devices.js",
@@ -3672,8 +3672,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97745,
-      "gitSha": "e7cd44350783bcbf451b99ec9d466ec76e962013"
+      "bytes": 97781,
+      "gitSha": "1cc0975357bce25029bf19375f0f96fad60ee96f"
     }
   ]
 }
