@@ -139,7 +139,10 @@ test('v498/v499 : ruban à plat, bleu 3e SI, vert 4e SI, or pour l’admin et le
   assert.match(app, /STINewsPerso\.appliquerRuban\(\)/, 'le ruban suit l’arrivée du prénom');
   assert.match(news, /if \(n === "admin"\) return "Enseignant";/);
   /* v499 : orangé pour tout compte qui n'est ni 3e/4e SI ni enseignant. */
-  assert.match(news, /var n = niveauDepuisClasse\(classeCourante\(\)\);\s*return n \|\| "autre";/);
+  /* v517 : classe illisible → repli sur le privilège 4e SI, puis « autre ». */
+  assert.match(news, /var n = niveauDepuisClasse\(classeCourante\(\)\);\s*if \(n\) return n;/);
+  assert.match(news, /classList\.contains\("sti-4si-autorise"\)\) return "4si";/);
+  assert.match(news, /return "autre";/);
 });
 
 test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', () => {
@@ -164,12 +167,12 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 });
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
-  assert.match(sw, /var CACHE = "sti-atelier-v377"/);
-  assert.match(sw, /var UPDATE_ID = "v516-outils-animes-20261029"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v378"/);
+  assert.match(sw, /var UPDATE_ID = "v517-ruban-vert-20261029"/);
   assert.match(sw, /url: "\.\/index\.html", revision: "outils-animes-v516"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "outils-animes-v516"/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "outils-animes-v516"/);
-  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-lycee-v503"/);
+  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);
   assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-lycee-v503"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
   assert.ok(shell.includes('"./assets/images/drapeau-tunisie.svg"'), 'le drapeau est pré-caché');
@@ -186,5 +189,5 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v516-sti-atelier-v377');
+  assert.equal(manifeste.version, 'v517-sti-atelier-v378');
 });
