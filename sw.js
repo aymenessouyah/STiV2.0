@@ -6,7 +6,7 @@
 var CACHE = "sti-atelier-v380";
 /* À chaque publication, ne placer ici QUE les chemins réellement modifiés (1 seule entrée par URL).
    Ne jamais y ajouter automatiquement les vidéos, audios, PDF ou archives lourdes. */
-var UPDATE_ID = "v519-tirage-xp-rapide-20261029";
+var UPDATE_ID = "v520-xp-jamais-en-recul-20261029";
 /* Historique caches : sti-atelier-v379, sti-atelier-v373, sti-atelier-v372, sti-atelier-v371, sti-atelier-v370, sti-atelier-v369, sti-atelier-v368, sti-atelier-v367, sti-atelier-v366, sti-atelier-v365, sti-atelier-v364, sti-atelier-v363, sti-atelier-v362, sti-atelier-v361, sti-atelier-v360, sti-atelier-v359, sti-atelier-v358, sti-atelier-v357, sti-atelier-v356, sti-atelier-v355, sti-atelier-v354, sti-atelier-v353, sti-atelier-v352, sti-atelier-v351, sti-atelier-v350, sti-atelier-v349, sti-atelier-v348, sti-atelier-v347, sti-atelier-v346, sti-atelier-v345, sti-atelier-v344, sti-atelier-v343, sti-atelier-v342, sti-atelier-v341, sti-atelier-v340, sti-atelier-v339, sti-atelier-v338, sti-atelier-v337, sti-atelier-v336, sti-atelier-v335, sti-atelier-v334, sti-atelier-v333, sti-atelier-v332, sti-atelier-v331, sti-atelier-v330, sti-atelier-v329, sti-atelier-v328, sti-atelier-v327, sti-atelier-v326 | Historique lots : v519-tirage-xp-rapide-20261029, v513-compteurs-videos-20261029, v512-tp-transitions-20261028, v511-tp-display-lecteur-20261028, v510-tp-display-20261028, v509-drapeau-vent-20261028, v508-retrait-fond-cours-20261028, v507-accueil-video-fond-20261028, v506-fond-cours-20261028, v505-tp-formulaire-long-20261028, v504-tp-capsules-longues-20261028, v503-accueil-lycee-20261028, v502-tp-formulaire-20261028, v501-tp-voix-20261028, v500-tp-evenements-liens-20261028, v499-ruban-orange-20261028, v498-accueil-drapeau-ruban-20261028, v497-news-niveaux-20261028, v496-news-perso-20261028, v495-video-alea-xp-20261028, v494-retour-quiz-intelligent-20261028, v493-onglets-mobile-20261028, v492-progression-chapitres-20261028, v491-suivi-contextes-20261028, v490-xp-parties-pwa-20261028, v489-reconnexion-delta-20261028, v488-badge-image-20261028, v486-cours-retour-xp-20261027, v485-video-js-validation-20261027, v484-navigation-videos-mobile-20261027, v479-compteur-media-monotone, v478-refonte-sql-php-20261027, v478-xp-quiz-monotone, xp-quiz-monotone-v478, v477-maj-version-cache-direct, maj-version-v477, v476-retour-accueil-quiz-exo, retour-quiz-v476, v476-retour-exercices-accueil, retour-exo-v476, v475-nav-fluide-instant, nav-fluide-v475, v474-perf-quiz-php, perf-quiz-php-v474, v473-perf-fluide, perf-fluide-v473, v472-test-plateforme-complet, v471-tester-tout-e2e, v470-audit-fonctionnel-readme, v469-pagination-integrale, v468-audit-integral, v467-sauvegarde-readme, v466-dbsupbase, v465-nav-fluide, v464-verif-e2e, v463-audit-complet, v462-carte-boutons, compteurs-media-v461, v461-compteurs-media, v460-quiz-supabase-ordre, v459-carte-quiz-eval, v458-quiz-revision-2, v457-quiz-lot-d, v456-quiz-lots-abc, quiz-lots-abc-v456, revision-quiz-v455, retrait-nav-conseils-v454, unif-acces-themes-v453, conseil-classe-nouveautes-marque-v451, messenger-roue-admin-only-v450, rayonsx-surligneur-v449, trombi-carte-recadrage-v448, zoom-photo-v447, ruban-modes-v446, student-photos-v445, v358-quiz-sync
    Manifeste cumulatif dédupliqué : une révision déjà appliquée est ignorée localement,
    et aucun fichier non présent dans le cache local n'est pré-téléchargé inutilement à l'installation. */
@@ -142,12 +142,12 @@ var UPDATE_FILES = [
   { url: "./assets/js/app.js", revision: "outils-attirants-v518" },
   { url: "./assets/js/news-perso.js", revision: "ruban-vert-v517" },
   { url: "./assets/images/drapeau-tunisie.svg", revision: "accueil-lycee-v503" },
-  { url: "./assets/js/profil.js", revision: "suivi-contextes-v491" },
+  { url: "./assets/js/profil.js", revision: "xp-jamais-en-recul-v520" },
   { url: "./assets/js/cours-html5.js", revision: "tp-display-v510", refreshIfCached: true },
   { url: "./index.html", revision: "outils-animes-v516" },
   { url: "./dashboard.html", revision: "accueil-lycee-v503", refreshIfCached: true },
   { url: "./admin.html", revision: "tp-transitions-v512" },
-  { url: "./README.md", revision: "tp-formulaire-v502" },
+  { url: "./README.md", revision: "xp-jamais-en-recul-v520" },
   { url: "./package.json", revision: "xp-operations-v487" },
   { url: "./package-lock.json", revision: "xp-operations-v487" },
   { url: "./assets/data/nouveautes.json", revision: "compteur-media-v479" },
@@ -169,9 +169,9 @@ var UPDATE_FILES = [
   { url: "./assets/fonts/nunito-var.woff2", revision: "nav-fluide-v475" },
   { url: "./assets/fonts/inter-var.woff2", revision: "nav-fluide-v475" },
   { url: "./assets/fonts/jetbrains-mono-var.woff2", revision: "nav-fluide-v475" },
-  { url: "./quiz/php.html", revision: "tirage-xp-rapide-v519" },
-  { url: "./quiz/sql.html", revision: "tirage-xp-rapide-v519" },
-  { url: "./quiz/javascript.html", revision: "tirage-xp-rapide-v519" },
+  { url: "./quiz/php.html", revision: "xp-jamais-en-recul-v520" },
+  { url: "./quiz/sql.html", revision: "xp-jamais-en-recul-v520" },
+  { url: "./quiz/javascript.html", revision: "xp-jamais-en-recul-v520" },
   { url: "./cours/sql.html", revision: "retrait-fond-cours-v508", refreshIfCached: true },
   { url: "./cours/sql-contraintes.html", revision: "fidelite-origine-v481" },
   { url: "./exercices/php/debogage-php-bac.html", revision: "fidelite-origine-v481" },
@@ -194,7 +194,8 @@ var UPDATE_FILES = [
   { url: "./assets/js/roue-couverture.js", revision: "badge-dependances-v483", bootstrapBySize: true, bytes: 12067, sha256: "cd2945426f4dee9bd8bf6c6c51afa100c79a9fbf6d1de2fbd61fff5420ee29b0" },
   { url: "./assets/js/roue-revision.js", revision: "perf-fluide-v473" },
   { url: "./assets/js/roue-plan.js", revision: "perf-fluide-v473" },
-  { url: "./assets/js/sync-progressions.js", revision: "tirage-xp-rapide-v519" },
+  { url: "./assets/js/sync-progressions.js", revision: "xp-jamais-en-recul-v520" },
+  { url: "./assets/js/xp-plancher.js", revision: "xp-jamais-en-recul-v520" },
   { url: "./assets/js/admin.js", revision: "news-niveaux-v497" },
   { url: "./assets/js/quiz-admin.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/sauvegarde.js", revision: "perf-fluide-v473" },
@@ -209,10 +210,10 @@ var UPDATE_FILES = [
   { url: "./cours/php.html", revision: "retrait-fond-cours-v508", refreshIfCached: true },
   { url: "./cours/javascript.html", revision: "retrait-fond-cours-v508", refreshIfCached: true },
   { url: "./cours/fiche-revision-html5.html", revision: "suivi-contextes-v491", refreshIfCached: true },
-  { url: "./quiz/html-css.html", revision: "tirage-xp-rapide-v519" },
+  { url: "./quiz/html-css.html", revision: "xp-jamais-en-recul-v520" },
   { url: "./assets/js/quiz-alea.js", revision: "tirage-xp-rapide-v519" },
   { url: "./assets/js/portail.js", revision: "audit-fonctionnel-v470" },
-  { url: "./assets/js/quiz-sync.js", revision: "tirage-xp-rapide-v519" },
+  { url: "./assets/js/quiz-sync.js", revision: "xp-jamais-en-recul-v520" },
   { url: "./assets/js/quiz-tableaux.js", revision: "tirage-xp-rapide-v519" },
   { url: "./documents/sql/sauvegarde-auto-drive.gs", revision: "audit-fonctionnel-v470" },
   { url: "./documents/annexes/annexe-html5.pdf.html", revision: "fidelite-origine-v481" },
@@ -221,7 +222,7 @@ var UPDATE_FILES = [
   { url: "./assets/js/graphiques-activite.js", revision: "nav-fluide-v475" },
   { url: "./assets/js/analytique.js", revision: "compteur-media-v479" },
   { url: "./quiz/pp.html", revision: "fidelite-origine-v481" },
-  { url: "./quiz/tableaux.html", revision: "tirage-xp-rapide-v519", refreshIfCached: true },
+  { url: "./quiz/tableaux.html", revision: "xp-jamais-en-recul-v520", refreshIfCached: true },
   { url: "./manifest.webmanifest", revision: "dbsupbase-v466" },
   { url: "./assets/js/admin-dbsupbase.js", revision: "dbsupbase-v466" },
   { url: "./assets/js/cote-ticker.js", revision: "nav-fluide-v465" },
@@ -591,6 +592,7 @@ var SHELL = [
   "./assets/css/dialogues-compat.css",
   "./assets/js/dialogues-compat.js",
   "./assets/js/sync-progressions.js",
+  "./assets/js/xp-plancher.js",
 ];
 
 var OFFLINE_LIST = [
@@ -627,6 +629,7 @@ var OFFLINE_LIST = [
   "./assets/js/quiz-tableaux-boot.js",
   "./assets/js/quiz-sync.js",
   "./assets/js/quiz-alea.js",
+  "./assets/js/xp-plancher.js",
   "./assets/data/quiz-banque.json",
   "./assets/audio/sql-cours.mp3",
   "./assets/css/atelier-pages.css",

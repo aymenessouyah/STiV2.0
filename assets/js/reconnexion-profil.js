@@ -12,7 +12,7 @@
   var lecture = null, postEnAttente = null, timer = 0, delai = 1500;
   var attenteLecture = !global.navigator.onLine;
   // Même périmètre que le synchroniseur protégé : ne jamais renvoyer les clés de session.
-  var exclues = 'sti-session-cache sti-admin-gold sti-gold sti-cred sti-offline sti-bio-nav-ts sti-bio-lease-ts sti-bio-click-nav-ts sti-bio-session-ok sti-sec-config sti-admin-theme sti-admin-palette sti-admin-badge-mob-repli sti-quiz-sync-file-v1 sti-quiz-sync-vus-v1 sti-quiz-sync-vus-purge-v1 sti-quiz-sync-rep-v1 sti-quiz-sessions-actives-v1 sti-quiz-sessions-purge-v1 sti-sync-maj sti-sync-uid'.split(' ');
+  var exclues = 'sti-session-cache sti-admin-gold sti-gold sti-cred sti-offline sti-bio-nav-ts sti-bio-lease-ts sti-bio-click-nav-ts sti-bio-session-ok sti-sec-config sti-admin-theme sti-admin-palette sti-admin-badge-mob-repli sti-quiz-sync-file-v1 sti-quiz-sync-vus-v1 sti-quiz-sync-vus-purge-v1 sti-quiz-sync-rep-v1 sti-quiz-sessions-actives-v1 sti-quiz-sessions-purge-v1 sti-xp-plancher-v520 sti-sync-maj sti-sync-uid'.split(' ');
   var quiz = 'js_quiz_high_score js_quiz_total_answered sqlQuestV3 quizphp_v1_user quizphp_v1_hist quizphp_v1_board quizzora_xp_v1 sti-quiz-xp-js-v1'.split(' ');
   function admise(k) { return k && exclues.indexOf(k) < 0 && (k.indexOf('sti-') === 0 || quiz.indexOf(k) >= 0); }
   function instantane() { return api.projectionSynchronisation(admise); }

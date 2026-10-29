@@ -1,9 +1,9 @@
 {
-  "version": "v519-sti-atelier-v380",
-  "generatedAt": "2026-10-29T05:45:55Z",
+  "version": "v520-sti-atelier-v380",
+  "generatedAt": "2026-10-29T06:12:59Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 716,
-  "totalBytes": 748123072,
+  "totalFiles": 718,
+  "totalBytes": 748149887,
   "files": [
     {
       "path": "404.html",
@@ -757,8 +757,8 @@
     },
     {
       "path": "assets/js/profil.js",
-      "bytes": 40574,
-      "gitSha": "3565ea05893749df8892afa152ebe8e175c9b5dc"
+      "bytes": 41963,
+      "gitSha": "30d6e902cc0ecd59e01b449f37f3364d21af39dc"
     },
     {
       "path": "assets/js/protection.js",
@@ -777,8 +777,8 @@
     },
     {
       "path": "assets/js/quiz-sync.js",
-      "bytes": 67484,
-      "gitSha": "8241ec2dc5c6f158ee00b1b58ba85c6c52758651"
+      "bytes": 67644,
+      "gitSha": "8cca23a1bb6f299846e1c3f5804598e36ed54761"
     },
     {
       "path": "assets/js/quiz-tableaux-boot.js",
@@ -802,8 +802,8 @@
     },
     {
       "path": "assets/js/reconnexion-profil.js",
-      "bytes": 17756,
-      "gitSha": "21eca42ba8dd2c496b5f5861ed57ec6627c349b2"
+      "bytes": 17777,
+      "gitSha": "9e04e998343af66cd80b66879c8c99d4ab9e5a7d"
     },
     {
       "path": "assets/js/reprendre.js",
@@ -892,8 +892,8 @@
     },
     {
       "path": "assets/js/sync-progressions.js",
-      "bytes": 34058,
-      "gitSha": "e00b88887370c5e3ab3a3ea3a1de385455dcf18c"
+      "bytes": 36950,
+      "gitSha": "1168f7cf587fc208e4bcbb8417a585a9bb9a72b5"
     },
     {
       "path": "assets/js/vendor/chart.umd.min.js",
@@ -914,6 +914,11 @@
       "path": "assets/js/visionneuse-exercices.js",
       "bytes": 22513,
       "gitSha": "65fff76d59bc0ca51cf6fd510e2eeb4fc39550c1"
+    },
+    {
+      "path": "assets/js/xp-plancher.js",
+      "bytes": 7878,
+      "gitSha": "d7f1723baa2dc1b38e1eaaee2b87073be6c3e1f4"
     },
     {
       "path": "assets/pages-couverture.json",
@@ -3502,18 +3507,18 @@
     },
     {
       "path": "quiz/html-css.html",
-      "bytes": 238814,
-      "gitSha": "58ec988e9c9c8bdff60c4042ac0f43927c7dcf54"
+      "bytes": 238872,
+      "gitSha": "5ffc41f2ba90a9516bab002a6b39aa2a83e87b99"
     },
     {
       "path": "quiz/javascript.html",
-      "bytes": 166338,
-      "gitSha": "57deaa35e446fe3df31162c9aebe8aef73911b38"
+      "bytes": 166396,
+      "gitSha": "c4b11cc00d394f4d6aa9c81ee123c5fbe76a0bde"
     },
     {
       "path": "quiz/php.html",
-      "bytes": 329968,
-      "gitSha": "311f55f6ad9b6eafb4bc640d24b1baeb972b7f9d"
+      "bytes": 330026,
+      "gitSha": "57630abd1e853be3225139c0da9421458638ec29"
     },
     {
       "path": "quiz/pp.html",
@@ -3522,18 +3527,18 @@
     },
     {
       "path": "quiz/sql.html",
-      "bytes": 311873,
-      "gitSha": "31a9fdc592eadff1493b583e0598ae9cbcf3ce84"
+      "bytes": 311931,
+      "gitSha": "2f1cc798abe88d3b0845beda0703be8572641ecd"
     },
     {
       "path": "quiz/tableaux.html",
-      "bytes": 9896,
-      "gitSha": "faedcac3f33cbc8f8df7e9541f51ef4f4cbbc5ed"
+      "bytes": 9954,
+      "gitSha": "03ca4c8d3f8b063680a30846d61d0815f44dcfed"
     },
     {
       "path": "README.md",
-      "bytes": 49633,
-      "gitSha": "923ebf4b20e9f03fc4e0b0bbeced1be33a2439f2"
+      "bytes": 50877,
+      "gitSha": "21439479a4bd94bb2d97ab22cb6c2543030554c1"
     },
     {
       "path": "revision-erreurs.html",
@@ -3581,9 +3586,14 @@
       "gitSha": "0925bdc09e0566f73e9111ef3d538abdf72879ca"
     },
     {
+      "path": "supabase/migrations/20261029_xp_jamais_en_recul_v520.sql",
+      "bytes": 12775,
+      "gitSha": "0f677df6c7df2301534a167a5e09c4d13f2b5634"
+    },
+    {
       "path": "sw.js",
-      "bytes": 97602,
-      "gitSha": "72af5129f5be4a2ac7308d5d324be541a9766d1b"
+      "bytes": 97768,
+      "gitSha": "83c8210eb816cf324d6922a5e143f426d6e4269b"
     }
   ]
 }

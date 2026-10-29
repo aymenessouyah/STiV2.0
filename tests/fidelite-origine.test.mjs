@@ -12,12 +12,14 @@ const sha = p => createHash('sha256').update(readFileSync(resolve(root, p))).dig
 /* Empreintes du socle de référence 478c912 : aucune dépendance à FETCH_HEAD en CI. */
 test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservés', () => {
   /* v519 : config.js (pré-rendu au survol) et sync-progressions.js (rafraîchissement
-     des XP depuis tous les appareils) évoluent — empreintes réactualisées. */
+     des XP depuis tous les appareils) évoluent — empreintes réactualisées.
+     v520 : sync-progressions.js compare son empreinte au contenu cloud réel et
+     ne retient la sienne qu'après un envoi réussi ; l'empreinte est réactualisée. */
   const originaux = {
     'assets/js/config.js': '07f7ef9330b1c259989eb34ea9dc459aa4b4f58411c49c7c68c427266c638396',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
     'assets/js/acces.js': '60e52add1f7dd60a12ee1102f2f181719076e209e0d05211f5e6f58935d985a4',
-    'assets/js/sync-progressions.js': 'cef098213729fe65d2c0dee950ea708bec787cd49d941826b44a06ce734a5de2',
+    'assets/js/sync-progressions.js': '95931b17acfe19a6123628d240185bc5b66f5449b7bcaeba5e209828d5744308',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
     'admin.html': '329b962713ebd1fd72794f42f6fb8b392e19783f174c591379e9548273cdbf56',
@@ -235,6 +237,15 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
       '<script src="../assets/js/quiz-alea.js?v=519"></script>\n'
     ]
   };
+  /* v520 : le garde-fou « le compteur XP ne recule jamais » est chargé avant le
+     module de tirage, sur les cinq pages de quiz. */
+  const additionsV520 = {
+    'quiz/html-css.html': ['<script src="../assets/js/xp-plancher.js?v=520"></script>\n'],
+    'quiz/javascript.html': ['<script src="../assets/js/xp-plancher.js?v=520"></script>\n'],
+    'quiz/sql.html': ['<script src="../assets/js/xp-plancher.js?v=520"></script>\n'],
+    'quiz/php.html': ['<script src="../assets/js/xp-plancher.js?v=520"></script>\n'],
+    'quiz/tableaux.html': ['<script src="../assets/js/xp-plancher.js?v=520"></script>\n']
+  };
   const adaptationsV490 = JSON.parse(lire('tests/fixtures/quiz-transformations-v490.json'));
   for (const [chemin, empreinte] of Object.entries(quiz)) {
     let courant = lire(chemin);
@@ -244,6 +255,10 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     }
     for (const ligne of additionsV519[chemin] || []) {
       assert.equal(courant.split(ligne).length - 1, 1, chemin + ' : ajout v519 attendu');
+      courant = courant.replace(ligne, '');
+    }
+    for (const ligne of additionsV520[chemin] || []) {
+      assert.equal(courant.split(ligne).length - 1, 1, chemin + ' : plancher XP attendu');
       courant = courant.replace(ligne, '');
     }
     for (const [actuel, ancien, nombre = 1] of adaptationsV487[chemin] || []) {

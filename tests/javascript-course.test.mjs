@@ -103,7 +103,7 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
     const revision = path === 'assets/js/app.js' ? 'outils-attirants-v518' :
       path === 'cours/javascript.html' ? 'retrait-fond-cours-v508' :
       path === 'assets/js/cours-javascript.js' ? 'progression-chapitres-v492' :
-      path === 'assets/js/profil.js' ? 'suivi-contextes-v491' :
+      path === 'assets/js/profil.js' ? 'xp-jamais-en-recul-v520' :
       actualises.includes(path) ? 'fidelite-origine-v481' : 'correctif-ressources-js-20261027';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
