@@ -14,3 +14,8 @@ playwright-report/
 
 # Rendus intermédiaires des vidéos générées (outils/drapeau-vent)
 build/
+
+# TP Train Série 6 : rendus intermédiaires et cache Python
+/outils/tpvid6/__pycache__/
+/outils/tpvid6/sortie_*.mp4
+/outils/tpvid6/voix-off.mp3
