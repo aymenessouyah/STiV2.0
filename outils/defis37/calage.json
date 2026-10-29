@@ -1,0 +1,33 @@
+{
+  "durees": {
+    "intro": 29.580000000000002,
+    "tableau": 75.94,
+    "tableau2": 34.62,
+    "rappel_tableau": 49.26,
+    "rappel_math": 55.54,
+    "aleas": 64.38,
+    "aleas2": 73.89999999999999,
+    "rappel_chaine": 76.45,
+    "captchas": 39.489999999999995,
+    "captchas_b": 36.419999999999995,
+    "captchas2": 44.98,
+    "media": 34.209999999999994,
+    "outro": 39.77
+  },
+  "debuts": {
+    "intro": 0.0,
+    "tableau": 29.580000000000002,
+    "tableau2": 105.52,
+    "rappel_tableau": 140.14,
+    "rappel_math": 189.39999999999998,
+    "aleas": 244.93999999999997,
+    "aleas2": 309.31999999999994,
+    "rappel_chaine": 383.2199999999999,
+    "captchas": 459.6699999999999,
+    "captchas_b": 499.1599999999999,
+    "captchas2": 535.5799999999999,
+    "media": 580.56,
+    "outro": 614.77
+  },
+  "total": 654.63
+}

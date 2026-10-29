@@ -1,0 +1,457 @@
+WEBVTT
+
+00:00.000 --> 00:10.018
+Bienvenue dans cette vidéo consacrée aux
+37 Défis de JavaScript, et plus
+particulièrement à trois familles :
+Tableau, Aléas et Captchas, puis Média.
+
+00:10.018 --> 00:13.064
+Onze défis, du plus simple au plus
+difficile.
+
+00:13.064 --> 00:19.968
+Pour chacun, l'écran est toujours le même
+: à gauche l'énoncé, à droite le code qui
+s'écrit pas à pas.
+
+00:19.968 --> 00:27.076
+Et entre les familles, trois fiches de
+rappel : les tableaux, l'objet Math, et
+les chaînes de caractères.
+
+00:27.076 --> 00:29.309
+C'est parti pour le premier défi.
+
+00:29.580 --> 00:33.083
+Premier défi, le numéro vingt-six : créer
+un tableau.
+
+00:33.083 --> 00:42.997
+Un tableau, c'est une liste de valeurs
+rangées dans des cases numérotées. On
+l'écrit avec des crochets, et les valeurs
+sont séparées par des virgules.
+
+00:42.997 --> 00:48.152
+Ici, cinq fruits : une pomme, une banane,
+un raisin, une orange et une fraise.
+
+00:48.152 --> 00:59.123
+Attention au piège numéro un : la première
+case porte l'indice zéro, pas un. Le
+premier fruit est donc fruits crochet
+zéro, et le cinquième est fruits crochet
+quatre.
+
+00:59.123 --> 01:02.560
+La propriété length donne le nombre de
+cases : cinq.
+
+01:02.560 --> 01:08.971
+Un tableau peut aussi partir vide : deux
+crochets, length vaut zéro, et on le
+remplira plus tard.
+
+01:08.971 --> 01:11.549
+Défi vingt-sept : accéder aux éléments.
+
+01:11.549 --> 01:18.158
+Pour lire une case, on met son indice
+entre crochets : fruits crochet deux donne
+le troisième fruit.
+
+01:18.158 --> 01:29.526
+Pour la dernière case, on n'écrit pas
+trois en dur : on écrit fruits crochet
+fruits point length moins un. Ainsi le
+code continue de fonctionner même si le
+tableau grandit.
+
+01:29.526 --> 01:37.919
+Et si l'indice dépasse la taille ? Pas
+d'erreur : JavaScript renvoie undefined.
+C'est une valeur spéciale qui veut dire :
+rien.
+
+01:37.919 --> 01:44.925
+Pour parcourir tout le tableau, une boucle
+for classique : i démarre à zéro et
+s'arrête à length moins un.
+
+01:45.520 --> 01:48.062
+Défi vingt-huit : ajouter et retirer.
+
+01:48.062 --> 02:01.388
+On ajoute à la fin en écrivant dans la
+case qui suit la dernière : fruits crochet
+fruits point length. Puisque length vaut
+trois, on écrit dans la case trois, et le
+tableau passe à quatre cases.
+
+02:01.388 --> 02:09.081
+Pour retirer, on réduit tout simplement
+length de un. La dernière case disparaît,
+et le tableau repasse à trois.
+
+02:09.081 --> 02:19.934
+push et pop font exactement la même chose,
+mais en une seule instruction. Le TP
+demande la version avec length, parce
+qu'elle montre ce qui se passe vraiment.
+
+02:20.140 --> 02:26.234
+Petit arrêt sur les tableaux, parce que
+c'est la brique de base de tout ce qui
+suit.
+
+02:26.234 --> 02:33.779
+Retenez le schéma : des cases, un indice
+qui commence à zéro, une longueur qui
+donne le nombre de cases.
+
+02:33.779 --> 02:43.573
+Pour lire : tab crochet zéro pour la
+première, tab crochet tab point length
+moins un pour la dernière, tab point
+length pour la taille.
+
+02:43.573 --> 02:53.875
+Pour modifier : tab crochet tab point
+length égal valeur ajoute à la fin ; tab
+point length égal tab point length moins
+un retire la dernière.
+
+02:53.875 --> 03:05.120
+Et le piège : un indice hors limites ne
+plante pas, il renvoie undefined. C'est
+souvent la cause d'un affichage vide alors
+qu'on croyait le tableau rempli.
+
+03:05.120 --> 03:09.037
+Maintenant, on passe aux choses sérieuses
+: le hasard.
+
+03:09.400 --> 03:14.947
+Deuxième rappel, indispensable pour toute
+la famille Aléas : l'objet Math.
+
+03:14.947 --> 03:22.517
+Math point random renvoie un nombre
+décimal entre zéro inclus et un exclu.
+Jamais un, jamais au-delà.
+
+03:22.517 --> 03:29.937
+Math point floor arrondit vers le bas :
+quatre virgule sept donne quatre. Floor,
+c'est le plancher.
+
+03:29.937 --> 03:36.908
+Math point ceil arrondit vers le haut :
+quatre virgule un donne cinq. Ceil, c'est
+le plafond.
+
+03:36.908 --> 03:42.454
+Math point round arrondit au plus proche :
+quatre virgule cinq donne cinq.
+
+03:42.454 --> 03:57.295
+Et voici la formule à connaître par cœur
+pour tirer un entier entre un minimum et
+un maximum : Math point floor de Math
+point random fois, entre parenthèses, max
+moins min plus un, le tout plus min.
+
+03:57.295 --> 04:04.490
+Pourquoi plus un ? Pour que le maximum
+soit possible. Pourquoi plus min ? Pour
+décaler la plage.
+
+04:04.940 --> 04:09.121
+Défi vingt-neuf : tirer un caractère au
+hasard dans une chaîne.
+
+04:09.121 --> 04:16.157
+Une chaîne, c'est un tableau de caractères
+déguisé : elle a une longueur, et chaque
+caractère a un indice.
+
+04:16.157 --> 04:27.373
+On tire donc un indice au hasard : Math
+point random fois la longueur, puis Math
+point floor. Pour Bonjour Tunisie, quinze
+caractères, donc un indice de zéro à
+quatorze.
+
+04:27.373 --> 04:31.621
+Puis substring de i à i plus un découpe
+exactement un caractère.
+
+04:31.621 --> 04:36.665
+Au passage : charAt fait la même chose, et
+la notation entre crochets aussi.
+
+04:36.665 --> 04:39.121
+Défi trente : les entiers aléatoires.
+
+04:39.121 --> 04:43.634
+On applique la formule du rappel, avec min
+égal un et max égal cent.
+
+04:43.634 --> 04:58.236
+Vérifions les bornes : Math point random
+donne zéro à un exclu. Multiplié par cent,
+on obtient zéro à cent exclu. Math point
+floor donne zéro à quatre-vingt-dix-neuf.
+Plus un : un à cent. Le maximum est bien
+atteignable.
+
+04:58.236 --> 05:08.855
+Attention : si vous oubliez le plus un, le
+maximum ne sortira jamais. Et si vous
+remplacez floor par round, les extrémités
+deviennent deux fois moins probables.
+
+05:09.320 --> 05:12.041
+Défi trente et un : cinq lettres au
+hasard.
+
+05:12.041 --> 05:23.303
+Il faut une autre brique : String point
+fromCharCode. Cette fonction transforme un
+code numérique en caractère.
+Soixante-cinq, c'est le A majuscule.
+Quatre-vingt-dix, c'est le Z.
+
+05:23.303 --> 05:32.034
+Donc un tirage entre zéro et vingt-cinq,
+plus soixante-cinq, donne un code entre
+soixante-cinq et quatre-vingt-dix : une
+lettre majuscule.
+
+05:32.034 --> 05:38.551
+On recommence cinq fois, et on ajoute au
+fur et à mesure dans la variable code. Le
+plus égal concatène.
+
+05:38.551 --> 05:41.145
+Défi trente-deux : une couleur au hasard.
+
+05:41.145 --> 05:49.370
+Une couleur en HTML s'écrit avec un dièse
+et six chiffres hexadécimaux : deux pour
+le rouge, deux pour le vert, deux pour le
+bleu.
+
+05:49.370 --> 06:00.190
+Chaque composante va de zéro à deux cent
+cinquante-cinq. Math point random fois
+deux cent cinquante-six, puis Math point
+floor, donne bien zéro à deux cent
+cinquante-cinq.
+
+06:00.190 --> 06:06.010
+toString de seize convertit ce nombre en
+hexadécimal : deux cent cinquante-cinq
+devient f f.
+
+06:06.010 --> 06:16.956
+Piège : un petit nombre donne un seul
+chiffre. Dix devient a. Il faut donc
+ajouter un zéro devant : zéro a. Sinon la
+couleur n'a plus six chiffres et le
+navigateur l'ignore.
+
+06:16.956 --> 06:22.714
+On assemble les trois composantes, et on
+obtient par exemple dièse trois F, B zéro,
+E sept.
+
+06:23.220 --> 06:30.170
+Troisième rappel : les chaînes de
+caractères. C'est là que les confusions
+coûtent le plus de points.
+
+06:30.170 --> 06:39.900
+String point fromCharCode : nombre vers
+caractère. Soixante-cinq donne A,
+quatre-vingt-dix donne Z,
+quatre-vingt-dix-sept donne a minuscule.
+
+06:39.900 --> 06:47.823
+toString : conversion de base. toString de
+seize transforme un nombre en hexadécimal,
+toString de deux en binaire.
+
+06:47.823 --> 06:50.950
+toUpperCase et toLowerCase changent la
+casse.
+
+06:50.950 --> 06:54.634
+Et maintenant le point crucial : substring
+et substr.
+
+06:54.634 --> 07:05.337
+substring de début, fin, prend deux
+indices. Le caractère de fin n'est pas
+inclus. Sur Bonjour, substring de un à
+quatre donne o, n, j : trois caractères.
+
+07:05.337 --> 07:16.387
+substr de début, longueur, prend un indice
+de départ, puis un nombre de caractères.
+Sur le même mot, substr de un, quatre
+donne o, n, j, o : quatre caractères.
+
+07:16.387 --> 07:24.310
+Même appel, deux résultats différents.
+Retenez : substring compte jusqu'à un
+indice, substr compte des caractères.
+
+07:24.310 --> 07:32.372
+Deuxième différence : si le début dépasse
+la fin, substring échange les deux bornes,
+substr renvoie une chaîne vide.
+
+07:32.372 --> 07:39.044
+Enfin, substr est une ancienne fonction,
+considérée comme obsolète. Préférez
+substring ou slice.
+
+07:39.670 --> 07:42.688
+Défi trente-trois : le code visuel
+multicolore.
+
+07:42.688 --> 07:52.512
+Le principe : six caractères tirés au
+hasard dans une réserve de lettres et de
+chiffres. On a retiré les caractères
+ambigus : ni I, ni O, ni zéro, ni un.
+
+07:52.512 --> 08:03.749
+On construit d'abord le vrai code,
+caractère par caractère, avec l'indice
+aléatoire dans la chaîne. On le garde dans
+une variable : c'est lui qui servira à
+vérifier la saisie.
+
+08:03.749 --> 08:12.739
+Ensuite, deuxième boucle : pour chaque
+caractère, on tire une couleur, et on
+fabrique un span avec cette couleur.
+innerHTML affiche le tout.
+
+08:12.739 --> 08:18.903
+Résultat : six caractères, six couleurs,
+et un code gardé en mémoire que seul le
+script connaît.
+
+08:19.160 --> 08:21.547
+Défi trente-quatre : le code barré.
+
+08:21.547 --> 08:29.868
+Même génération de code. La différence
+tient en deux lignes : on calcule un
+angle, et on applique une rotation à la
+barre.
+
+08:29.868 --> 08:38.734
+Math point floor de Math point random fois
+quarante et un donne zéro à quarante.
+Moins vingt : de moins vingt à plus vingt
+degrés.
+
+08:38.734 --> 08:47.396
+transform, rotate, et l'angle en degrés.
+La barre traverse le code, ce qui rend la
+lecture automatique beaucoup plus
+difficile.
+
+08:47.396 --> 08:55.307
+Pour vérifier, on compare la saisie au
+code caché, en majuscules et sans espaces
+superflus : trim, puis toUpperCase.
+
+08:55.580 --> 08:59.021
+Défi trente-cinq : la grille de vélos, le
+plus difficile.
+
+08:59.021 --> 09:03.248
+Il faut placer quatre vélos parmi neuf
+cases, mais de façon aléatoire.
+
+09:03.248 --> 09:14.961
+On utilise le mélange de Fisher-Yates : on
+parcourt le tableau du dernier indice vers
+le premier, et pour chaque case on tire un
+indice au hasard entre zéro et i, puis on
+échange les deux cases.
+
+09:14.961 --> 09:21.300
+L'échange tient en une ligne grâce à la
+déstructuration : crochet i, crochet j
+égal crochet j, crochet i.
+
+09:21.300 --> 09:28.364
+Pourquoi partir de la fin ? Parce que
+chaque case est tirée une seule fois, et
+le mélange est parfaitement équitable.
+
+09:28.364 --> 09:40.258
+Ensuite on relève les indices des vélos :
+une boucle forEach avec la valeur et
+l'indice. Ces indices serviront à vérifier
+que l'utilisateur a bien cliqué sur les
+quatre vélos, et seulement sur eux.
+
+09:40.560 --> 09:44.818
+Dernier défi, la famille Média : piloter
+un lecteur audio.
+
+09:44.818 --> 09:51.352
+On récupère la balise audio avec
+getElementById, comme n'importe quel
+élément de la page.
+
+09:51.352 --> 09:56.050
+audio point play démarre la lecture, audio
+point pause l'arrête.
+
+09:56.050 --> 10:03.465
+Et la propriété paused dit si la lecture
+est arrêtée : vrai quand c'est en pause,
+faux quand ça joue.
+
+10:03.465 --> 10:11.026
+Deux autres propriétés bien utiles :
+volume, entre zéro et un, et currentTime,
+la position en secondes.
+
+10:11.026 --> 10:14.403
+Le même code fonctionne avec une balise
+vidéo.
+
+10:14.770 --> 10:19.031
+Récapitulons. Trois familles, onze défis,
+et trois réflexes.
+
+10:19.031 --> 10:24.570
+Les tableaux : des cases, des indices à
+partir de zéro, length pour la taille.
+
+10:24.570 --> 10:35.791
+Le hasard : Math point random pour tirer,
+Math point floor pour arrondir vers le
+bas, et la formule avec plus un et plus
+min pour un entier entre deux bornes.
+
+10:35.791 --> 10:46.657
+Les chaînes : fromCharCode pour
+transformer un nombre en lettre, toString
+pour changer de base, substring pour
+découper par indices, substr par longueur.
+
+10:46.657 --> 10:54.256
+À vous de jouer : ouvrez la page des
+trente-sept défis, et tapez les onze défis
+dans l'ordre. Bon courage !

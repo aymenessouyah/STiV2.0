@@ -1,9 +1,9 @@
 {
-  "version": "v526-sti-atelier-v380",
-  "generatedAt": "2026-10-29T11:02:00Z",
+  "version": "v527-sti-atelier-v380",
+  "generatedAt": "2026-10-29T11:12:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 731,
-  "totalBytes": 782499777,
+  "totalFiles": 733,
+  "totalBytes": 816750899,
   "files": [
     {
       "path": "404.html",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 116605,
-      "gitSha": "9a7b585196a9732c193146765cf4387a25fdd1f0"
+      "bytes": 117287,
+      "gitSha": "0567b2e761760b6fa92893399ffc690c77792e12"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -757,8 +757,8 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 13708,
-      "gitSha": "b8a13b92320a003a17778fedbbcf36d08c1522d9"
+      "bytes": 13814,
+      "gitSha": "15a03742331852aa626a27d05a2a19b9079d8e04"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -817,8 +817,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 215540,
-      "gitSha": "6098e88d9714cabc75a8e0761a038817a8a37289"
+      "bytes": 217886,
+      "gitSha": "50e722c3d8368377ccb29a2fbf98897e66e1e222"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1021,6 +1021,11 @@
       "gitSha": "f7e40b42612b1dabb22876cc2f5be2a1bfa61c21"
     },
     {
+      "path": "assets/subtitles/defis37-tableau-aleas-media-fr.vtt",
+      "bytes": 12170,
+      "gitSha": "5b17440ba302eb8adf8ef893382beef8b7cf44eb"
+    },
+    {
       "path": "assets/subtitles/sql-construire-requete-guide-texte-fr.srt",
       "bytes": 3868,
       "gitSha": "c44d1f80c468cd1e31fc123b4c6001df552453c9"
@@ -1094,6 +1099,11 @@
       "path": "assets/videos/css3-cours-v9-sync.mp4",
       "bytes": 25572438,
       "gitSha": "e37c891547718ee19c6c8596e25cc74919868e41"
+    },
+    {
+      "path": "assets/videos/defis37-tableau-aleas-media.mp4",
+      "bytes": 34234179,
+      "gitSha": "8d09afa5ffe52526224112366e28b90e2931f5a5"
     },
     {
       "path": "assets/videos/displayanim.mp4",
@@ -1262,8 +1272,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 129619,
-      "gitSha": "22ca110728ae2ebd3aa9896a7fb0a6022c9dbdd2"
+      "bytes": 131153,
+      "gitSha": "41558c4ef618fc17696c237ecc9802800ed2c112"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -3068,7 +3078,7 @@
     {
       "path": "index.html",
       "bytes": 57703,
-      "gitSha": "633ea7a9891c590641d91f45bb868e01817f7828"
+      "gitSha": "3da88e60cadd530ffcabd0af8c3aa79f489007db"
     },
     {
       "path": "livre-smart.html",
@@ -3657,8 +3667,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97214,
-      "gitSha": "7a22b12cf05e97010ac214463a857183a6780082"
+      "bytes": 97319,
+      "gitSha": "33d131d446764bb36f79ea567bc32131a59e6cf6"
     }
   ]
 }
