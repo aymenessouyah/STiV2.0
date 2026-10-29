@@ -131,11 +131,11 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'tp-train-v523'
+    const revision = chemin === 'assets/js/app.js' ? 'serie6-exercices-v524'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'tp-display-v510'
-      : chemin === 'cours/javascript.html' ? 'tp-train-v523'
+      : chemin === 'cours/javascript.html' ? 'serie6-exercices-v524'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }

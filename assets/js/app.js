@@ -135,7 +135,7 @@
         { titre: "Série 3 — Objets Date, String, Array et Math", niveau: "Avancé", enonce: "exercices/javascript/Tp3-js.html", corrige: "exercices/javascript/Tp3-Correction-js.html" },
         { titre: "Série 4 — Objets, propriétés et fonctions prédéfinies", niveau: "Avancé", enonce: "exercices/javascript/Tp4-js.html", corrige: "exercices/javascript/Tp4-Correction-js.html" },
         { titre: "Série 5 — Objet String", niveau: "Avancé", enonce: "exercices/javascript/Tp5-js.html", corrige: "exercices/javascript/Tp5-Correction-js.html" },
-        { titre: "Série 5 — TP Train : réserver un billet", niveau: "Projet complet", enonce: "exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html", corrige: "exercices/javascript/TP Train/TP_Train_JavaScript_cORRECTION.html", ressources: "exercices/javascript/TP Train/Ressource_eleve_TrainTN.html", dossier: "exercices/javascript/TP Train/index.html" },
+        { titre: "Série 6 — TP Train : réserver un billet", niveau: "Projet complet", enonce: "exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html", corrige: "exercices/javascript/TP Train/TP_Train_JavaScript_cORRECTION.html", ressources: "exercices/javascript/TP Train/Ressource_eleve_TrainTN.html", dossier: "exercices/javascript/TP Train/index.html" },
         { titre: "Les 37 Défis JavaScript interactifs", niveau: "Défis Bac", enonce: "exercices/javascript/js-37-defis-tt.html", corrige: "exercices/javascript/js-37-defis-tt.html" }
       ]
     },

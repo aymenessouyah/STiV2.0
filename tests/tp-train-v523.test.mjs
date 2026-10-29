@@ -59,28 +59,33 @@ test('v523 : la page d’accueil du TP respecte le socle commun du site', () => 
   assert.ok(!/href="https?:/.test(hub), 'aucune dépendance réseau dans la page du TP');
 });
 
-test('v523 : le TP Train est rattaché à la Série 5 partout dans le site', () => {
-  /* 1) Cours JavaScript — la carte Série 5 existante gagne les trois parties. */
-  const cours = lire('cours/javascript.html');
-  const carteSerie5 = cours.slice(cours.indexOf('Série 5 — Objet String'));
-  const finCarte = carteSerie5.indexOf('</article>');
-  const bloc = carteSerie5.slice(0, finCarte);
-  for (const doc of ['index.html', 'Ressource_eleve_TrainTN.html', 'Enonce_TP_TrainTN_JavaScript.html', 'TP_Train_JavaScript_cORRECTION.html']) {
-    assert.ok(bloc.includes('TP%20Train/' + doc), 'cours : ' + doc);
-  }
-  assert.ok(bloc.includes("ouvrirVideoPasAPasSTI('validation-nom-prenom-js'"), 'la vidéo de la Série 5 reste en place');
+test('v523/v524 : le TP Train est rattaché à sa propre Série 6 partout dans le site', () => {
+  const DOCS = ['index.html', 'Ressource_eleve_TrainTN.html', 'Enonce_TP_TrainTN_JavaScript.html', 'TP_Train_JavaScript_cORRECTION.html'];
 
-  /* 2) Séries d’exercices — même carte Série 5. */
+  /* 1) Cours JavaScript — la Série 6 porte les quatre liens. */
+  const cours = lire('cours/javascript.html');
+  const carte6 = cours.slice(cours.indexOf('Série 6 — TP Train'));
+  const bloc6 = carte6.slice(0, carte6.indexOf('</article>'));
+  for (const doc of DOCS) assert.ok(bloc6.includes('TP%20Train/' + doc), 'cours Série 6 : ' + doc);
+
+  /* La Série 5 reste celle du programme (Objet String), sans lien TP Train. */
+  const carte5 = cours.slice(cours.indexOf('Série 5 — Objet String'));
+  const bloc5 = carte5.slice(0, carte5.indexOf('</article>'));
+  assert.ok(!bloc5.includes('TP%20Train/'), 'la Série 5 ne doit plus porter le TP Train');
+  assert.ok(bloc5.includes("ouvrirVideoPasAPasSTI('validation-nom-prenom-js'"), 'la vidéo de la Série 5 reste en place');
+
+  /* 2) Séries d’exercices — même découpage. */
   const series = lire('exercices/series-exercices.html');
-  const carteSeries = series.slice(series.indexOf('Série 5 — Objet String'));
-  const finSeries = carteSeries.indexOf('</div>\n          </div>');
-  const blocSeries = carteSeries.slice(0, finSeries === -1 ? 4000 : finSeries);
-  for (const doc of ['index.html', 'Ressource_eleve_TrainTN.html', 'Enonce_TP_TrainTN_JavaScript.html', 'TP_Train_JavaScript_cORRECTION.html']) {
-    assert.ok(blocSeries.includes('TP%20Train/' + doc), 'séries : ' + doc);
-  }
+  const serie6 = series.slice(series.indexOf('Série 6 — TP Train'));
+  const blocSerie6 = serie6.slice(0, serie6.indexOf('</div>\n          </div>'));
+  for (const doc of DOCS) assert.ok(blocSerie6.includes('TP%20Train/' + doc), 'séries Série 6 : ' + doc);
+  const serie5 = series.slice(series.indexOf('Série 5 — Objet String'));
+  const blocSerie5 = serie5.slice(0, serie5.indexOf('</div>\n          </div>'));
+  assert.ok(!blocSerie5.includes('TP%20Train/'), 'la carte Série 5 des séries ne doit plus porter le TP Train');
 
   /* 3) Catalogue de l’accueil. */
   const app = lire('assets/js/app.js');
+  assert.match(app, /titre: "Série 6 — TP Train : réserver un billet"/);
   assert.ok(app.includes('exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html'));
   assert.ok(app.includes('exercices/javascript/TP Train/TP_Train_JavaScript_cORRECTION.html'));
   assert.ok(app.includes('exercices/javascript/TP Train/Ressource_eleve_TrainTN.html'));
@@ -88,13 +93,31 @@ test('v523 : le TP Train est rattaché à la Série 5 partout dans le site', () 
 
   /* 4) Roue de révision — les quatre pages sont résolues. */
   const roue = lire('assets/js/roue-revision.js');
-  for (const doc of ['index.html', 'Enonce_TP_TrainTN_JavaScript.html', 'Ressource_eleve_TrainTN.html', 'TP_Train_JavaScript_cORRECTION.html']) {
+  for (const doc of DOCS) {
     assert.ok(roue.toLowerCase().includes(('exercices/javascript/tp train/' + doc).toLowerCase()), 'roue : ' + doc);
   }
+
+  /* 5) La page d’accueil du TP affiche « Série 6 · TP Train ». */
+  const hub = lire(HUB);
+  assert.match(hub, /<div class="nb">Série 6 · TP Train/);
+  assert.match(hub, /<title>[^<]*Série 6 · TP Train/);
+});
+
+test('v524 : les six groupes d’exercices du cours s’appellent EXERCICE 01 à 06', () => {
+  const cours = lire('cours/javascript.html');
+  const etiquettes = [...cours.matchAll(/<span class="source-accent">EXERCICE (0[1-9])<\/span><h2[^>]*>([^<]+)<\/h2>/g)];
+  assert.equal(etiquettes.length, 6, 'six groupes attendus');
+  assert.deepEqual(etiquettes.map(m => m[1]), ['01', '02', '03', '04', '05', '06']);
+  const titres = etiquettes.map(m => m[2]);
+  for (const attendu of ['Opérateurs &amp; conditions', 'Boucles', 'Chaînes de caractères', 'Tableaux', 'Math &amp; Date', 'DOM']) {
+    assert.ok(titres.includes(attendu), 'groupe attendu : ' + attendu);
+  }
+  /* Plus aucune étiquette « SÉRIE 0x » dans le cours. */
+  assert.doesNotMatch(cours, /SÉRIE 0[1-6]/);
 });
 
 test('v523 : le TP Train est livré hors ligne et son empreinte est exacte', () => {
-  assert.match(sw, /var UPDATE_ID = "v523-tp-train-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v524-serie6-exercices-20261029"/);
   for (const page of PAGES) {
     /* Choix assumé : les trois documents pèsent 2,5 Mo. Ils entrent dans
        l'installation hors-ligne complète mais pas dans le delta automatique,
@@ -107,7 +130,7 @@ test('v523 : le TP Train est livré hors ligne et son empreinte est exacte', () 
     assert.match(lire(page), /<meta name="description"/, page);
   }
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v523-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v524-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   for (const page of PAGES) {

@@ -44,7 +44,7 @@ test('récapitulatif original, documents et neuf ressources conservés', () => {
   assert.ok(/id="jsRecapModal"[^>]*>\s*<div[^>]*role="dialog"[^>]*aria-modal="true"/.test(html));
   assert.ok(/<button[^>]*id="jsRecapResize"[^>]*aria-label="Redimensionner/.test(html));
   for (const path of ['cours/Recap-JavaScript-STI.html', 'documents/annexes/annexe-javascript.pdf.html', 'documents/annexes/annexe-javascript.pdf', 'livre-smart.html', 'assets/videos/javascript-cours.mp4', 'assets/audio/javascript-cours.mp3', 'quiz/javascript.html']) assert.ok(existsSync(join(root, path)), path);
-  assert.equal(count(html, /class="js-series-card"/g), 9);
+  assert.equal(count(html, /class="js-series-card"/g), 10); /* v524 : la Série 6 (TP Train) s’ajoute */
   for (let i = 1; i <= 5; i++) for (const name of [`Tp${i}-js.html`, `Tp${i}-Correction-js.html`]) {
     const path = `exercices/javascript/${name}`;
     assert.ok(html.includes(`../${path}`), path); assert.ok(existsSync(join(root, path)), path);
@@ -102,8 +102,8 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
     const actualises = ['assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'projets/fleurs/controle.js', 'projets/carte-bancaire/controle.js'];
     /* v521 : ces pages ont reçu leur meta description après le lot de fidélité v481. */
     const pagesMetaV521 = ['exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html'];
-    const revision = path === 'assets/js/app.js' ? 'tp-train-v523' :
-      path === 'cours/javascript.html' ? 'tp-train-v523' :
+    const revision = path === 'assets/js/app.js' ? 'serie6-exercices-v524' :
+      path === 'cours/javascript.html' ? 'serie6-exercices-v524' :
       path === 'assets/js/cours-javascript.js' ? 'progression-chapitres-v492' :
       path === 'assets/js/profil.js' ? 'xp-jamais-en-recul-v520' :
       pagesMetaV521.includes(path) ? 'meta-seo-v521' :
