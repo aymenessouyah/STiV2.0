@@ -27,6 +27,8 @@
     "sti-quiz-sync-rep-v1",
     "sti-quiz-sessions-actives-v1",
     "sti-quiz-sessions-purge-v1",
+    /* v520 : le plancher anti-recul des XP reste propre à chaque appareil. */
+    "sti-xp-plancher-v520",
     CLE_SYNC_MAJ,
     CLE_SYNC_UID
   ];
@@ -41,6 +43,31 @@
     "sti-quiz-xp-js-v1"
   ];
   var cfg = window.STI_AUTH || { URL: "https://vywujxmepvcbgedgmger.supabase.co", CLE: "sb_publishable_FI5FimytONd5VdWK6GfXLA_I6vPTrvn" };
+  /* v520 : garantie « le compteur XP ne recule jamais » sur toutes les pages. */
+  var URL_SCRIPT_SYNC = "";
+  try { URL_SCRIPT_SYNC = (document.currentScript && document.currentScript.src) || ""; } catch (eUrl) {}
+  var chargementPlancher = false, timerPushPlancher = 0;
+  function chargerPlancherXP() {
+    try {
+      if (window.STIXPPlancher || chargementPlancher) return;
+      if (typeof document === "undefined" || typeof document.createElement !== "function") return;
+      var src = URL_SCRIPT_SYNC;
+      if (!src && typeof document.getElementsByTagName === "function") {
+        var scripts = document.getElementsByTagName("script") || [];
+        for (var i = 0; i < scripts.length; i++) {
+          if (/sync-progressions\.js/i.test(scripts[i].src || "")) { src = scripts[i].src; break; }
+        }
+      }
+      if (!src) return;
+      chargementPlancher = true;
+      var sc = document.createElement("script");
+      sc.src = new URL("xp-plancher.js?v=520", src).href;
+      sc.async = true;
+      var cible = document.head || document.documentElement || document.body;
+      if (!cible || typeof cible.appendChild !== "function") { chargementPlancher = false; return; }
+      cible.appendChild(sc);
+    } catch (eChargement) { chargementPlancher = false; }
+  }
   var session = null, dernierHash = "", minuteur = null;
   var enVolTirer = false, pullInitialTermine = false, pushDiffere = false;
 
@@ -72,6 +99,17 @@
       if (estCleSynchronisable(k)) { try { d[k] = localStorage.getItem(k); } catch (e) {} }
     }
     return d;
+  }
+  /* v520 : même forme que « collecter » (valeurs brutes texte) pour comparer
+     honnêtement le contenu du cloud et le contenu local. */
+  function normaliserDonneesCloud(d) {
+    var out = {};
+    Object.keys(d || {}).forEach(function (k) {
+      var v = d[k];
+      if (v == null) return;
+      out[k] = typeof v === "string" ? v : JSON.stringify(v);
+    });
+    return out;
   }
   function hash(d) {
     try {
@@ -445,11 +483,17 @@
             appliquer(lignes[0].donnees);
             localStorage.setItem(CLE_SYNC_MAJ, String(distant));
             var apresHash = hash(collecter());
-            dernierHash = apresHash;
-            try { if (typeof sessionStorage !== "undefined") sessionStorage.setItem("sti-sync-last-hash", apresHash); } catch (eH1) {}
+            /* v520 : la référence est le contenu réellement présent dans le cloud.
+               Si l'appareil possède en plus des gains hors ligne (XP plus élevé),
+               les deux empreintes diffèrent et la poussée ci-dessous les envoie.
+               Avant, on mémorisait l'empreinte LOCALE : le PC croyait être déjà
+               synchronisé et le cloud restait bloqué sur l'ancien total. */
+            var hashCloud = hash(normaliserDonneesCloud(lignes[0].donnees));
+            dernierHash = hashCloud;
+            try { if (typeof sessionStorage !== "undefined") sessionStorage.setItem("sti-sync-last-hash", hashCloud); } catch (eH1) {}
             pastille("☁️ Progression restaurée depuis le cloud", "#e8f5e9");
-            if ((avantHash && avantHash !== apresHash) || avaitPushDiffere) {
-              /* Si la fusion monotone a conservé des avancées locales plus récentes, les pousser aussi au cloud */
+            if (apresHash !== hashCloud || (avantHash && avantHash !== apresHash) || avaitPushDiffere) {
+              /* La fusion monotone garde les gains locaux plus récents : on les pousse tout de suite. */
               setTimeout(function () { pousser(true); }, 600);
             }
             /* Consigne auteur v422 : l'annonce de restauration ne reste affichée QUE deux
@@ -521,7 +565,6 @@
     }
     var d = collecter(), h = hash(d);
     if (!force && h === dernierHash) return;
-    dernierHash = h;
     try { if (typeof sessionStorage !== "undefined") sessionStorage.setItem("sti-sync-last-hash", h); } catch (eHs) {}
     var maj = new Date().toISOString();
     var bodyStr = JSON.stringify({ user_id: session.id, email: session.email, donnees: d, maj: maj });
@@ -532,8 +575,13 @@
     };
     if ((force || enFermeture) && bodyStr.length < 60000) optsFetch.keepalive = true;
     fetch(cfg.URL + "/rest/v1/sti_progressions", optsFetch).then(function (r) {
-      if (r.ok) { localStorage.setItem(CLE_SYNC_MAJ, String(new Date(maj).getTime())); pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9"); }
-      else pastille("💾 Progression : cet appareil seulement", "#fff3e0");
+      if (r.ok) {
+        /* v520 : l'empreinte « cloud == local » n'est retenue qu'après succès ;
+           un POST raté ne doit pas faire croire à une synchronisation acquise. */
+        dernierHash = h;
+        localStorage.setItem(CLE_SYNC_MAJ, String(new Date(maj).getTime()));
+        pastille("☁️ Progression synchronisée (cloud)", "#e8f5e9");
+      } else pastille("💾 Progression : cet appareil seulement", "#fff3e0");
     }).catch(function () { pastille("💾 Progression : cet appareil seulement", "#fff3e0"); });
   }
   var timerPushMedia = null;
@@ -574,6 +622,7 @@
   function demarrer() {
     if (estSousIframeInterneSTI()) return;
     if (!document.body) { setTimeout(demarrer, 300); return; }
+    chargerPlancherXP();
     session = lireSession();
     tirer();
     minuteur = setInterval(function () {
@@ -613,6 +662,12 @@
     }
     window.STIProgressionCloud = window.STIProgressionCloud || {};
     window.STIProgressionCloud.rafraichir = rafraichirDepuisCloud;
+    /* Un compteur XP relevé par le plancher est renvoyé au cloud aussitôt :
+       l'autre appareil le recevra à sa prochaine relecture. */
+    window.addEventListener("sti-xp-plancher-releve", function () {
+      if (timerPushPlancher) clearTimeout(timerPushPlancher);
+      timerPushPlancher = setTimeout(function () { timerPushPlancher = 0; pousser(true, false); }, 800);
+    });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer); else demarrer();
 })();

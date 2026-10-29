@@ -116,7 +116,8 @@ test('CSS3 : fichiers révisés disponibles pour le hors-ligne', () => {
       path === 'cours/css3.html' ? 'tp-transitions-v512' :
       path === 'assets/js/app.js' ? 'outils-attirants-v518' :
       path === 'assets/css/cours.css' ? 'tp-evenements-v500' :
-      path === 'assets/js/cours-css3.js' ? 'tp-transitions-v512' : 'suivi-contextes-v491';
+      path === 'assets/js/cours-css3.js' ? 'tp-transitions-v512' :
+      path === 'assets/js/profil.js' ? 'xp-jamais-en-recul-v520' : 'suivi-contextes-v491';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
   }

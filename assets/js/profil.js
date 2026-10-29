@@ -794,8 +794,34 @@
       return valeur && typeof valeur === "object" && !Array.isArray(valeur) ? valeur : null;
     } catch (e) { return null; }
   }
+  /* v520 : un compteur XP ne recule jamais. Avant chaque écriture, les champs
+     cumulés (xp, records, parties…) sont relevés au maximum déjà stocké : une
+     réponse cloud retardataire ou une correction de doublon ne peut plus faire
+     descendre le total affiché sur l'appareil. */
+  var CHAMPS_XP_MONOTONES = {
+    "quizzora_xp_v1": ["xp", "best", "parties", "bonnes", "total"],
+    "sti-quiz-xp-js-v1": ["xp", "best", "parties", "bonnes", "total"],
+    "sqlQuestV3": ["xp", "level", "totalAnswered", "totalCorrect", "bestCombo", "playgroundCount"],
+    "quizphp_v1_user": ["xp", "best"]
+  };
+  function releverAcquisQuiz(cle, valeur) {
+    var champs = CHAMPS_XP_MONOTONES[cle];
+    if (!champs) return valeur;
+    var avant = null;
+    try { avant = JSON.parse(global.localStorage.getItem(cle) || "null"); } catch (e) { avant = null; }
+    if (!avant || typeof avant !== "object" || Array.isArray(avant)) return valeur;
+    var sortie = Object.assign({}, valeur), change = false;
+    champs.forEach(function (champ) {
+      if (avant[champ] === undefined && sortie[champ] === undefined) return;
+      var a = Number(avant[champ]) || 0;
+      var b = Number(sortie[champ]) || 0;
+      if (a > b) { sortie[champ] = a; change = true; }
+    });
+    return change ? sortie : valeur;
+  }
   function ecrireAcquisQuiz(cle, uid, valeur, notifier) {
     if (!lireAcquisQuiz(cle, uid) || !valeur || typeof valeur !== "object" || Array.isArray(valeur)) return false;
+    valeur = releverAcquisQuiz(cle, valeur);
     try {
       var texte = JSON.stringify(valeur);
       if (texte === global.localStorage.getItem(cle)) return true;
@@ -956,6 +982,7 @@
     preparerVerificationServiceWorker: preparerVerificationServiceWorker,
     compteQuizIsole: compteQuizIsole,
     lireAcquisQuiz: lireAcquisQuiz,
+    releverAcquisQuiz: releverAcquisQuiz,
     ecrireAcquisQuiz: ecrireAcquisQuiz,
     lireGainPartieQuiz: lireGainPartieQuiz,
     memoriserGainPartieQuiz: memoriserGainPartieQuiz,

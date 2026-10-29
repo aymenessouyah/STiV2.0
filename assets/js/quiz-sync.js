@@ -1444,6 +1444,8 @@
         var supplement = actuelle ? Math.max(0, actuelle.gain - reponse.gain_confirme) : 0;
         fusion.xp = Math.max((Number(reponse.valeur.xp) || 0) + supplement, (Number(etatLocal.xp) || 0) - doublon);
       }
+      /* v520 : quel que soit l'appareil, le total affiché ne recule jamais. */
+      fusion.xp = Math.max(Number(fusion.xp) || 0, Number(etatLocal.xp) || 0);
       profil.confirmerOperationsQuiz(u.id, lot.map(function (o) { return o.id; }), lot);
       if (!activerProtocoleXP(profil, u.id)) throw new Error("stockage XP indisponible");
       profil.ecrireAcquisQuiz(cle, u.id, marquerOperationsXP(profil, cle, u.id, fusion));
