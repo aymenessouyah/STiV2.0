@@ -28,12 +28,14 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      v529 : sync-progressions.js fusionne aussi les compteurs de vues vidéo par
      appareil, et admin.html accueille le petit coin « Vues des vidéos ».
      v532 : config.js charge la barre mobile modernisée (chargeur ?v=532) et peint
-     son gabarit flottant ; empreinte réactualisée. */
+     son gabarit flottant ; empreinte réactualisée.
+     v534 : sync-progressions.js n'affiche plus la pastille de synchro à vie : deux
+     secondes à chaque changement d'état ; empreinte réactualisée. */
   const originaux = {
     'assets/js/config.js': '4936f1efc5fde33dc2432dd3a9aa4fc33df77f90b842fe2091a2a5ba2f872a7f',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
     'assets/js/acces.js': '60e52add1f7dd60a12ee1102f2f181719076e209e0d05211f5e6f58935d985a4',
-    'assets/js/sync-progressions.js': '19d2505e0e056e418a4d002557503e8a5e29da8dd135564cb3f6236c87de827b',
+    'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
     'admin.html': '0a91be4c96370a9b08904016bd9b3fc98118704baf9c7c8b356c3d57fe5bed1c',

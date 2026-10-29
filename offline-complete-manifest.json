@@ -1,9 +1,9 @@
 {
-  "version": "v533-sti-atelier-v380",
-  "generatedAt": "2026-10-29T16:55:00Z",
+  "version": "v534-sti-atelier-v380",
+  "generatedAt": "2026-10-29T17:22:08Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 734,
-  "totalBytes": 816806764,
+  "totalBytes": 816809090,
   "files": [
     {
       "path": "404.html",
@@ -897,8 +897,8 @@
     },
     {
       "path": "assets/js/roue-nuage.js",
-      "bytes": 7249,
-      "gitSha": "07c19f1ec54683ee8e694a18dbe5a90dce919c9a"
+      "bytes": 7588,
+      "gitSha": "2847ffae6003acffa8b4ecd89f44472a63902d60"
     },
     {
       "path": "assets/js/roue-plan.js",
@@ -952,8 +952,8 @@
     },
     {
       "path": "assets/js/sync-progressions.js",
-      "bytes": 38828,
-      "gitSha": "13b0dfd3797f0759cb80b2d2491ed42d9ed7a080"
+      "bytes": 40793,
+      "gitSha": "01a08572c45f7f6273373082bc8e98ede6cb9fcb"
     },
     {
       "path": "assets/js/vendor/chart.umd.min.js",
@@ -3672,8 +3672,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97723,
-      "gitSha": "d5511600cd18c8d4e24dedcad5ba83874bcd128f"
+      "bytes": 97745,
+      "gitSha": "e7cd44350783bcbf451b99ec9d466ec76e962013"
     }
   ]
 }
