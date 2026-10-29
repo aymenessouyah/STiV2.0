@@ -114,16 +114,20 @@ test('v498/v499 : ruban à plat, bleu 3e SI, vert 4e SI, or pour l’admin et le
   assert.match(couleurs, /data-ruban="autre"[\s\S]*?--ruban-lettre: #fb923c;/, 'orangé pour les autres comptes');
   const defaut = css.slice(css.indexOf('.welcome-return__title {'), css.indexOf('.welcome-return__title[data-ruban="4si"]'));
   assert.match(defaut, /--ruban-lettre: #7dd3fc;/, 'bleu 3e SI par défaut');
-  /* L'initiale elle-même prend la couleur du ruban. */
-  assert.match(css, /\.ruban-lettre \{ color: var\(--ruban-lettre\); \}/);
-  assert.match(css, /\.ruban-mot #welcomePrenom::first-letter \{ color: var\(--ruban-lettre\); \}/);
+  /* v514 : les initiales ne sont plus colorées, elles sont soulignées. */
+  assert.doesNotMatch(css, /\.ruban-lettre \{ color: var\(--ruban-lettre\); \}/, 'plus de lettre colorée');
+  const accent = css.slice(css.indexOf('.ruban-lettre,'), css.indexOf('.ruban-mot #welcomePrenom { display: inline-block; }'));
+  assert.match(accent, /color: inherit;/, 'la lettre garde la couleur du titre');
+  assert.match(accent, /text-decoration-line: underline;/, 'un trait passe sous la lettre');
+  assert.match(accent, /text-decoration-color: var\(--ruban-lettre\);/, 'trait de la couleur de la classe');
+  assert.match(accent, /text-underline-offset: 0\.16em;/, 'trait détaché de la lettre');
+  assert.match(accent, /text-decoration-skip-ink: none;/, 'trait continu sous le B');
 
-  /* v499 : plus de « pas » — bande droite, ni rotation ni découpe en biseau. */
-  const bande = css.slice(css.indexOf('.ruban-initiale {'), css.indexOf('.ruban-lettre {'));
-  assert.doesNotMatch(bande, /rotate\(/, 'le ruban n’est plus incliné');
-  assert.doesNotMatch(bande, /clip-path/, 'le ruban n’a plus de découpe en biseau');
-  assert.match(bande, /border-radius: 0\.08em;/, 'coins réguliers');
-  assert.match(bande, /transform: translateY\(-50%\);/, 'alignement vertical exact, sans décalage');
+  /* v499/v514 : plus de bande derrière la lettre, donc plus de « pas » ni de biseau. */
+  const bande = css.slice(css.indexOf('.ruban-initiale {'), css.indexOf('.ruban-lettre,'));
+  assert.match(bande, /display: none;/, 'la bande colorée est retirée');
+  assert.doesNotMatch(bande, /rotate\(/, 'aucune inclinaison');
+  assert.doesNotMatch(bande, /clip-path/, 'aucune découpe en biseau');
 
   /* Le niveau est posé par le moteur de news, sur la classe réelle de la session. */
   assert.match(news, /function appliquerRuban\(\)/);
@@ -160,10 +164,10 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 });
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
-  assert.match(sw, /var CACHE = "sti-atelier-v374"/);
-  assert.match(sw, /var UPDATE_ID = "v513-compteurs-videos-20261029"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v375"/);
+  assert.match(sw, /var UPDATE_ID = "v514-initiales-soulignees-20261029"/);
   assert.match(sw, /url: "\.\/index\.html", revision: "compteurs-videos-v513"/);
-  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "accueil-video-fond-v507"/);
+  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "initiales-soulignees-v514"/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "compteurs-videos-v513"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-lycee-v503"/);
   assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-lycee-v503"/);
@@ -182,5 +186,5 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v513-sti-atelier-v374');
+  assert.equal(manifeste.version, 'v514-sti-atelier-v375');
 });

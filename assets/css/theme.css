@@ -908,7 +908,9 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
    Bleu 3e SI · vert 4e SI · or pour l'admin, les comptes GOLD et les profs ·
    orangé pour tous les autres comptes. Plus d'inclinaison ni de découpe en biseau :
    le ruban est une bande droite et régulière et l'initiale colorée se détache
-   dessus (v507 : plus aucun logo dans le ruban). */
+   dessus (v507 : plus aucun logo dans le ruban).
+   v514 : on ne colore plus les initiales — un trait de la couleur de la classe
+   est tracé SOUS le « B » de Bonjour et SOUS la première lettre du prénom. */
 .welcome-return__title {
   --ruban-clair: #7dd3fc;
   --ruban-base: #0284c7;
@@ -935,31 +937,23 @@ html[dir="rtl"] .sub-drawer.is-open { transform: translateX(0); }
   --ruban-fonce: #7c2d12;
   --ruban-lettre: #fb923c;
 }
-.ruban-mot { position: relative; display: inline-block; isolation: isolate; }
+.ruban-mot { position: relative; display: inline-block; }
 .ruban-mot[hidden] { display: none; }
-/* Le ruban passe derrière l'initiale : bande droite, coins légèrement arrondis. */
-.ruban-initiale {
-  position: absolute;
-  z-index: -1;
-  left: -0.46em;
-  top: 50%;
-  width: 1.12em;
-  height: 0.64em;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-inline-start: 0.05em;
-  transform: translateY(-50%);
-  border-radius: 0.08em;
-  background: linear-gradient(90deg, var(--ruban-fonce), var(--ruban-base) 58%, var(--ruban-fonce));
-  box-shadow: 0 0.05em 0.14em rgba(3, 8, 20, .38), inset 0 0.03em 0.06em rgba(255, 255, 255, .32);
-  pointer-events: none;
+/* v514 : la bande colorée derrière la lettre disparaît, l'accent passe sous la lettre. */
+.ruban-initiale { display: none; }
+/* v514 : les initiales ne sont plus colorées. Le « B » de Bonjour et la première
+   lettre du prénom gardent la couleur du titre ; c'est un soulignement de la
+   couleur de la classe (bleu 3e SI, vert 4e SI, or, orangé) qui marque l'accent. */
+.ruban-lettre,
+.ruban-mot #welcomePrenom::first-letter {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: var(--ruban-lettre);
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.16em;
+  text-decoration-skip-ink: none;
 }
-/* v507 : plus aucun logo dans le ruban — seule la lettre est colorée. */
-/* Couleur de l'initiale elle-même : le « B » de Bonjour, la première lettre du prénom. */
-.ruban-lettre { color: var(--ruban-lettre); }
 .ruban-mot #welcomePrenom { display: inline-block; }
-.ruban-mot #welcomePrenom::first-letter { color: var(--ruban-lettre); }
 body.sti-v2 .welcome-return__title {
   font-size: clamp(1.8rem, 3.5vw, 2.7rem);
   overflow-wrap: anywhere;
