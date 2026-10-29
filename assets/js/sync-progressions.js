@@ -555,6 +555,22 @@
     }
     return false;
   }
+  /* v519 — le total XP et la progression suivent l'élève d'un terminal à
+     l'autre : on relit le cloud à la reconnexion, au retour sur l'onglet et
+     toutes les 45 s. Sans cela, un PC resté ouvert ne voyait jamais les gains
+     marqués sur le téléphone avant un rechargement complet. */
+  var dernierPullCloud = 0;
+  var timerPullCloud = 0;
+  function rafraichirDepuisCloud(forcer) {
+    if (!session || enVolTirer) return;
+    if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+    if (typeof document !== "undefined" && document.hidden) return;
+    var maintenant = Date.now();
+    if (!forcer && maintenant - dernierPullCloud < 15000) return;
+    dernierPullCloud = maintenant;
+    tirer(true);
+  }
+
   function demarrer() {
     if (estSousIframeInterneSTI()) return;
     if (!document.body) { setTimeout(demarrer, 300); return; }
@@ -579,8 +595,24 @@
       pousserFermetureDeduplique();
     });
     document.addEventListener("visibilitychange", function () {
-      if (document.hidden) pousserFermetureDeduplique();
+      if (document.hidden) { pousserFermetureDeduplique(); return; }
+      /* Retour sur l'onglet : les gains faits ailleurs arrivent tout de suite. */
+      rafraichirDepuisCloud(false);
     });
+    /* Reconnexion internet : on relit le cloud immédiatement. */
+    window.addEventListener("online", function () { rafraichirDepuisCloud(true); });
+    /* Appareil resté ouvert : rafraîchissement discret toutes les 45 s. */
+    if (!timerPullCloud && typeof setInterval === "function") {
+      timerPullCloud = setInterval(function () {
+        if (document.hidden) return;
+        var nvSess = lireSession();
+        if (!nvSess) return;
+        session = nvSess;
+        rafraichirDepuisCloud(false);
+      }, 45000);
+    }
+    window.STIProgressionCloud = window.STIProgressionCloud || {};
+    window.STIProgressionCloud.rafraichir = rafraichirDepuisCloud;
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", demarrer); else demarrer();
 })();

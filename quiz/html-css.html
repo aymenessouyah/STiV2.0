@@ -3293,6 +3293,7 @@
 
     <script src="../assets/js/config.js?v=476"></script>
     <script src="../assets/js/supabase-umd.js"></script>
+<script src="../assets/js/quiz-alea.js?v=519"></script>
     <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <script>
@@ -5628,6 +5629,8 @@ background-repeat: repeat;</pre>
       }
 
       function nouvellePartie() {
+        /* v519 : chaque partie repart d'un tirage neuf (questions + place de la bonne réponse). */
+        if (window.STIQuizAlea) STIQuizAlea.nouveauTirage("partie");
         var revHcActif =
           window.STIQuizSync && STIQuizSync.revisionIds
             ? STIQuizSync.revisionIds("html-css")
