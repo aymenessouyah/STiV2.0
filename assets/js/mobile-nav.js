@@ -342,7 +342,7 @@
     ["Glossaire", "glossaire.html", "📖"],
     ["Révision des erreurs", "revision-erreurs.html", "🔁"],
     ["Mémo veille", "memo-veille-bac.html", "🌙"],
-    ["Portail / compte", "portail.html", "👤"]
+    ["Mon tableau de bord", "dashboard.html", "📊"]
   ];
 
   function construire() {
