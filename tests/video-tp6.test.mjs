@@ -149,7 +149,7 @@ test('l’accueil compte la nouvelle capsule dans son catalogue', () => {
 
 test('le cache hors-ligne embarque la vidéo sans téléchargement automatique', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v532-barre-mobile-moderne-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v533-tableau-de-bord-mobile-20261029"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);

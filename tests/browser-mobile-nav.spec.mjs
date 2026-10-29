@@ -80,6 +80,9 @@ test('depuis un cours et les exercices, Vidéos ouvre le catalogue ; les séries
   /* Le volet contient bien les cours et les familles de vidéos (v532). */
   await expect(page.locator('#sti-bnav-sheet h4')).toHaveText([/Tous les cours/, /Familles de vidéos/, /Fiches/, /Outils/]);
   await expect(page.locator('#sti-bnav-sheet .sti-sheet-carte')).toHaveCount(5);
+  /* v533 : le compte ouvre le tableau de bord de l'abonné, pas la page d'accès. */
+  await expect(page.locator('#sti-bnav-sheet').getByRole('link', { name: /Mon tableau de bord/ }))
+    .toHaveAttribute('href', /\/dashboard\.html$/);
   const series = page.locator('#sti-bnav-sheet').getByRole('link', { name: /Exercices/ });
   await expect(series).toHaveAttribute('href', /\/exercices\/series-exercices\.html$/);
   await series.click();
