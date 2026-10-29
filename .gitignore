@@ -19,3 +19,9 @@ build/
 /outils/tpvid6/__pycache__/
 /outils/tpvid6/sortie_*.mp4
 /outils/tpvid6/voix-off.mp3
+
+# Les 37 Défis : rendus intermédiaires, piste audio et cache Python
+/outils/defis37/__pycache__/
+/outils/defis37/sortie_*.mp4
+/outils/defis37/voix-off.mp3
+/outils/defis37/voix/_silence.mp3

@@ -122,7 +122,7 @@
       icone: "⚡",
       badgeClasse: "badge-js",
       couleur: "#facc15",
-      nbVideos: 3,
+      nbVideos: 4,
       urlCours: "cours/javascript.html",
       urlQuiz: "quiz/javascript.html",
       urlAudio: "assets/audio/javascript-cours.mp3",
@@ -236,6 +236,21 @@
       srcSecours: "assets/videos/tp-train-serie6.mp4",
       urlCours: "cours/javascript.html#videos",
       codeApercu: "function prix() { let t = parseFloat(lire(\"trajet\")); }"
+    },
+    {
+      /* v527 : capsule « Les 37 Défis » — Tableau, Aléas & Captchas, Média. */
+      id: "defis37-tableau-aleas-media",
+      matiere: "javascript",
+      nomMatiere: "JavaScript",
+      badgeClasse: "badge-js",
+      couleur: "#f7df1e",
+      titre: "Les 37 Défis — Tableau, Aléas & Captchas, Média",
+      dureeTexte: "10:55",
+      srcPrincipal: "assets/videos/defis37-tableau-aleas-media.mp4",
+      srcSecours: "assets/videos/defis37-tableau-aleas-media.mp4",
+      sousTitres: "assets/subtitles/defis37-tableau-aleas-media-fr.vtt",
+      urlCours: "cours/javascript.html#videos",
+      codeApercu: "Math.floor(Math.random() * (max - min + 1)) + min"
     },
     {
       id: "css-positionnement",
