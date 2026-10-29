@@ -5,9 +5,8 @@ immeuble et un ascenseur, exactement dans l'ordre du récit dicté par l'auteur.
 
 | Étape | Ce que raconte la voix off | Ce qu'on voit |
 | --- | --- | --- |
-| 1 | « comme j'ai besoin de ramasser, je prends un sac » | un sac se dessine, il reçoit des jetons `T[k]` |
-| 2 | le contenu du sac est **changeable** → une variable | le contenu change sous les yeux, mot « variable » |
-| 3 | plusieurs sacs ⇒ il faut les distinguer : « je le nomme **S** » | trois sacs `?`, puis l'étiquette `S` |
+| 1 | « comme j'ai besoin de ramasser, je prends un sac » ; il est **vide** ; son contenu est **changeable** → une variable | le sac se dessine, la mention « contenu : rien », puis `T[0]` → `T[1]` → `T[2]` ; pastille « VARIABLE » et schéma *une boîte · un nom · une valeur* |
+| 2 | plusieurs sacs, « trois contenus différents », « « le sac »… lequel ? », l'étiquette, « je le nomme **S** » | trois sacs légendés (`étage 0`, `étage 1`, `client`) avec une plaque `?`, la question « lequel ? », l'étiquette `S` qui vient se poser, puis « quand j'écris S, c'est ce sac-là » |
 | 4 | « oh c'est un immeuble donc je dois utiliser l'ascenseur » | immeuble 4 étages, bulles « Que dois-je faire ? » |
 | 5 | ascenseur, étage 0, porte ouverte ⇒ « `S = S + T[0]` » | ramassage animé du jeton, ligne validée + coche |
 | 6 | « c'est moi qui avance ou c'est l'ascenseur ? » ⇒ **compteur** | la cage monte, l'écran compte `0 → 1` |
@@ -21,7 +20,9 @@ immeuble et un ascenseur, exactement dans l'ordre du récit dicté par l'auteur.
 
 À gauche **l'histoire** (sac `S`, immeuble, ascenseur, compteur), à droite **ce
 que j'écris** (le cahier : phrases puis code tapé caractère par caractère), et
-en bas le bandeau de rappel permanent `S` · `T[k]` · `compteur`. La dernière
+en bas le bandeau de rappel permanent `S` · `T[k]` · `compteur`. Les sous-titres
+suivent les phrases entières (repliées sur deux lignes au plus, jamais coupées
+au milieu d'un mot). La dernière
 scène remplace le bandeau par les quatre parties de la boucle : départ,
 condition, corps, incrément. 1920 × 1080, 30 i/s, H.264 + AAC mono.
 

@@ -1,151 +1,215 @@
 WEBVTT
 
-00:00:01.200 --> 00:00:04.636
-Comme j'ai besoin de ramasser, je prends un sac.
+00:00:01.200 --> 00:00:04.500
+Comme j'ai besoin de ramasser, je prends
+un sac.
 
-00:00:04.636 --> 00:00:05.638
+00:00:04.500 --> 00:00:05.462
 Voilà mon sac.
 
-00:00:05.638 --> 00:00:09.431
-Mais attention : le contenu de ce sac est changeable.
+00:00:05.462 --> 00:00:09.381
+Pour l'instant il est vide : je n'ai
+encore rien ramassé.
 
-00:00:09.431 --> 00:00:11.579
+00:00:09.381 --> 00:00:13.024
+Mais attention : le contenu de ce sac est
+changeable.
+
+00:00:13.024 --> 00:00:18.661
+Je peux y mettre une chose, puis une autre
+à la place, autant de fois que je veux.
+
+00:00:18.661 --> 00:00:20.723
 Changeable… ah, une variable !
 
-00:00:11.579 --> 00:00:16.804
-Un sac, c'est une variable : il a un contenu, et ce contenu peut changer.
+00:00:20.723 --> 00:00:26.154
+Car en programmation, une variable c'est
+exactement ça : une boîte avec un nom,
 
-00:00:17.354 --> 00:00:20.968
-Seulement voilà : je possède plusieurs sacs.
+00:00:26.154 --> 00:00:31.929
+dans laquelle je range une valeur, et dont
+je peux changer le contenu quand je veux.
 
-00:00:20.968 --> 00:00:24.664
-Alors je dois les distinguer. Comment faire ?
+00:00:31.929 --> 00:00:36.947
+Un sac, c'est une variable : il a un
+contenu, et ce contenu peut changer.
 
-00:00:24.664 --> 00:00:28.278
-Mmmm… ah, voilà : je vais lui donner un nom.
+00:00:37.497 --> 00:00:40.505
+Seulement voilà : je possède plusieurs
+sacs.
 
-00:00:28.278 --> 00:00:30.578
+00:00:40.505 --> 00:00:45.565
+Un sac pour chaque étage, un sac pour
+chaque client : trois sacs, et trois
+
+00:00:45.565 --> 00:00:46.933
+contenus différents.
+
+00:00:46.933 --> 00:00:52.403
+Si je dis simplement « le sac », personne
+ne sait duquel je parle. L'ordinateur,
+
+00:00:52.403 --> 00:00:53.292
+encore moins.
+
+00:00:53.292 --> 00:00:56.368
+Alors je dois les distinguer. Comment
+faire ?
+
+00:00:56.368 --> 00:00:59.377
+Mmmm… ah, voilà : je vais lui donner un
+nom.
+
+00:00:59.377 --> 00:01:04.232
+Une étiquette sur le sac : un seul nom, le
+même dans tout le programme.
+
+00:01:04.232 --> 00:01:06.146
 Je le nomme S. S, comme sac.
 
-00:00:31.128 --> 00:00:33.724
+00:01:06.146 --> 00:01:11.684
+Et maintenant, quand j'écris S, c'est de
+ce sac-là que je parle. Je m'en servirai
+
+00:01:11.684 --> 00:01:12.710
+jusqu'à la fin.
+
+00:01:13.260 --> 00:01:15.871
 Je commence. Oh, c'est un immeuble !
 
-00:00:33.724 --> 00:00:36.176
+00:01:15.871 --> 00:01:18.337
 Donc je dois utiliser l'ascenseur.
 
-00:00:36.176 --> 00:00:38.988
+00:01:18.337 --> 00:01:21.166
 Mais attends, je dois réfléchir un peu.
 
-00:00:38.988 --> 00:00:40.359
+00:01:21.166 --> 00:01:22.544
 Que dois-je faire ?
 
-00:00:40.359 --> 00:00:43.748
-Et que dois-je faire avec chaque client ? Mmmm.
+00:01:22.544 --> 00:01:25.517
+Et que dois-je faire avec chaque client ?
 
-00:00:44.298 --> 00:00:47.449
-Je prends l'ascenseur, et je mets étage un.
+00:01:25.517 --> 00:01:25.880
+Mmmm.
 
-00:00:47.449 --> 00:00:51.552
-La porte est ouverte : donc je ramasse ce qu'il y a dans
+00:01:26.430 --> 00:01:29.572
+Je prends l'ascenseur, et je mets étage
+un.
 
-00:00:51.552 --> 00:00:52.138
-l'étage,
+00:01:29.572 --> 00:01:34.322
+La porte est ouverte : donc je ramasse ce
+qu'il y a dans l'étage,
 
-00:00:52.138 --> 00:00:54.116
+00:01:34.322 --> 00:01:36.295
 et je l'ajoute à mon sac S.
 
-00:00:54.116 --> 00:00:58.586
-Le nouveau contenu du sac, c'est l'ancien contenu plus ce que
+00:01:36.295 --> 00:01:41.995
+Le nouveau contenu du sac, c'est l'ancien
+contenu plus ce que j'ai trouvé dans
 
-00:00:58.586 --> 00:01:01.297
-j'ai trouvé dans l'étage numéro zéro.
+00:01:41.995 --> 00:01:43.457
+l'étage numéro zéro.
 
-00:01:01.297 --> 00:01:04.814
-Mmmm… mais pourquoi j'écris toute cette phrase ?
+00:01:43.457 --> 00:01:46.965
+Mmmm… mais pourquoi j'écris toute cette
+phrase ?
 
-00:01:04.814 --> 00:01:08.404
-Donc je vais dire : S égal S plus T crochet zéro.
+00:01:46.965 --> 00:01:50.545
+Donc je vais dire : S égal S plus T
+crochet zéro.
 
-00:01:08.404 --> 00:01:11.848
-Et oui, ça marche ! Donc je passe à l'étage un.
+00:01:50.545 --> 00:01:53.980
+Et oui, ça marche ! Donc je passe à
+l'étage un.
 
-00:01:12.398 --> 00:01:14.797
+00:01:54.531 --> 00:01:56.930
 Je prends l'ascenseur et j'avance.
 
-00:01:14.797 --> 00:01:18.960
-Ah… c'est moi qui avance, ou c'est l'ascenseur qui avance ?
+00:01:56.930 --> 00:02:01.093
+Ah… c'est moi qui avance, ou c'est
+l'ascenseur qui avance ?
 
-00:01:18.960 --> 00:01:20.794
+00:02:01.093 --> 00:02:02.927
 Et oui, c'est l'ascenseur.
 
-00:01:20.794 --> 00:01:23.828
-Mais il est en train de compter les étages.
+00:02:02.927 --> 00:02:05.961
+Mais il est en train de compter les
+étages.
 
-00:01:23.828 --> 00:01:26.086
+00:02:05.961 --> 00:02:08.219
 Donc on va utiliser un compteur.
 
-00:01:26.636 --> 00:01:27.757
+00:02:08.769 --> 00:02:09.890
 Et ça marche.
 
-00:01:27.757 --> 00:01:32.153
-Je répète la même opération dans l'étage numéro un.
+00:02:09.890 --> 00:02:14.286
+Je répète la même opération dans l'étage
+numéro un.
 
-00:01:32.153 --> 00:01:34.739
+00:02:14.286 --> 00:02:16.872
 Attends… j'ai dit : je répète.
 
-00:01:34.739 --> 00:01:39.653
-La première fois j'ai écrit S égal S plus T crochet zéro.
+00:02:16.872 --> 00:02:21.786
+La première fois j'ai écrit S égal S plus
+T crochet zéro.
 
-00:01:39.653 --> 00:01:43.273
+00:02:21.786 --> 00:02:25.406
 Et maintenant, S égal S plus T crochet un.
 
-00:01:43.823 --> 00:01:45.458
+00:02:25.956 --> 00:02:27.591
 Attends, ça se répète !
 
-00:01:45.458 --> 00:01:49.226
-Donc j'écris : S égal S plus T crochet quelque chose.
+00:02:27.591 --> 00:02:31.359
+Donc j'écris : S égal S plus T crochet
+quelque chose.
 
-00:01:49.226 --> 00:01:52.283
-Mmmm… c'est quoi, alors, ce quelque chose ?
+00:02:31.359 --> 00:02:34.416
+Mmmm… c'est quoi, alors, ce quelque chose
+?
 
-00:01:52.283 --> 00:01:55.340
-Quand le compteur est à zéro, j'écris zéro.
+00:02:34.416 --> 00:02:37.473
+Quand le compteur est à zéro, j'écris
+zéro.
 
-00:01:55.340 --> 00:01:57.686
+00:02:37.473 --> 00:02:39.819
 Et quand il est à un, je mets un.
 
-00:01:57.686 --> 00:02:02.236
-Et bien voilà : ce quelque chose, c'est bel et bien le compteur.
+00:02:39.819 --> 00:02:44.369
+Et bien voilà : ce quelque chose, c'est
+bel et bien le compteur.
 
-00:02:02.787 --> 00:02:05.136
+00:02:44.919 --> 00:02:47.268
 Attends, j'écris le bloc.
 
-00:02:05.136 --> 00:02:09.459
-Donc c'est : S égal S plus T crochet compteur.
+00:02:47.268 --> 00:02:51.591
+Donc c'est : S égal S plus T crochet
+compteur.
 
-00:02:09.459 --> 00:02:13.875
-Voilà le bloc, tout seul, entre deux accolades.
+00:02:51.591 --> 00:02:56.007
+Voilà le bloc, tout seul, entre deux
+accolades.
 
-00:02:14.424 --> 00:02:18.710
-Et bien c'est vrai. Mais combien de fois je vais répéter ça ?
+00:02:56.557 --> 00:03:00.831
+Et bien c'est vrai. Mais combien de fois
+je vais répéter ça ?
 
-00:02:18.710 --> 00:02:22.364
-Et est-ce qu'il y a un risque d'arrêt avant la fin ?
+00:03:00.831 --> 00:03:04.474
+Et est-ce qu'il y a un risque d'arrêt
+avant la fin ?
 
-00:02:22.364 --> 00:02:23.980
+00:03:04.474 --> 00:03:06.086
 Donc je dois compléter.
 
-00:02:23.980 --> 00:02:27.986
-Il me faut une structure répétitive, itérative, complète.
+00:03:06.086 --> 00:03:10.079
+Il me faut une structure répétitive,
+itérative, complète.
 
-00:02:27.986 --> 00:02:30.515
+00:03:10.079 --> 00:03:12.602
 C'est-à-dire : je complète à la fin.
 
-00:02:30.515 --> 00:02:34.731
-Et bien, je l'ai trouvée : c'est la boucle Pour, que je vais
+00:03:12.602 --> 00:03:18.137
+Et bien, je l'ai trouvée : c'est la boucle
+Pour, que je vais engendrer au bloc.
 
-00:02:34.731 --> 00:02:35.996
-engendrer au bloc.
-
-00:02:35.996 --> 00:02:38.596
+00:03:18.137 --> 00:03:20.729
 OUI, c'est ça ! Et voilà le résultat.
