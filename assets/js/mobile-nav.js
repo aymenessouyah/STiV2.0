@@ -324,14 +324,6 @@
     { cle: "sql", nom: "SQL", ico: "🗃️" },
     { cle: "php", nom: "PHP", ico: "🐘" }
   ];
-  var FICHES = [
-    ["Fiche de révision HTML5", "cours/fiche-revision-html5.html"],
-    ["Datalist HTML5", "cours/datalist.html"],
-    ["SQL Playground", "cours/sql-playground.html"],
-    ["SQL — LDD / LMD / LCD", "cours/sql-bases-ldd-lmd-lcd.html"],
-    ["PHP & MySQLi", "cours/php-mysqli.html"],
-    ["Récap JavaScript", "cours/Recap-JavaScript-STI.html"]
-  ];
   var OUTILS = [
     ["Exercices", "exercices/series-exercices.html", "📝"],
     ["Bac pratique", "bac-pratique.html", "🧪"],
@@ -416,12 +408,6 @@
       var href = f.cle === "all" ? R + "index.html#videos" : R + "index.html?vf=" + f.cle + "#videos";
       corps += '<a class="sti-sheet-puce' + (f.cle === "php" ? " sti-4si-only" : "") + '" href="' + href + '">' +
         '<span aria-hidden="true">' + f.ico + "</span>" + f.nom + "</a>";
-    });
-    corps += "</div>";
-
-    corps += '<h4>📄 Fiches &amp; annexes</h4><div class="sti-sheet-liens">';
-    FICHES.forEach(function (f) {
-      corps += '<a class="sti-sheet-lien" href="' + R + f[1] + '"><span>' + f[0] + "</span></a>";
     });
     corps += "</div>";
 
