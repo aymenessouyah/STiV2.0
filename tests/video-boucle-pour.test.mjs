@@ -54,13 +54,13 @@ test('la capsule est livrée à côté des autres vidéos du site', () => {
   assert.match(entete, /isom|mp42|avc1/, 'marque MP4');
 });
 
-test('la vidéo dure environ deux minutes quarante et ses sous-titres la couvrent', () => {
+test('la vidéo dure environ trois minutes vingt et ses sous-titres la couvrent', () => {
   const duree = dureeMp4(VIDEO);
-  assert.ok(duree > 150 && duree < 175, `durée inattendue : ${duree.toFixed(1)} s`);
+  assert.ok(duree > 195 && duree < 215, `durée inattendue : ${duree.toFixed(1)} s`);
   const vtt = lire(VTT);
   assert.ok(vtt.startsWith('WEBVTT'), 'entête WEBVTT');
   const entrees = entreesVtt(vtt);
-  assert.ok(entrees.length >= 35, `trop peu de répliques : ${entrees.length}`);
+  assert.ok(entrees.length >= 50, `trop peu de répliques : ${entrees.length}`);
   assert.ok(entrees[0].debut < 4, 'les sous-titres démarrent avec la voix');
   assert.ok(Math.abs(entrees[entrees.length - 1].fin - duree) < 25,
     'les sous-titres couvrent la fin de la vidéo');
@@ -71,7 +71,10 @@ test('la vidéo dure environ deux minutes quarante et ses sous-titres la couvren
 });
 
 test('les sous-titres disent le récit dicté, du sac à la boucle Pour', () => {
-  const vtt = lire(VTT).toLowerCase();
+  /* on retire les minutages et on recolle les lignes repliées */
+  const vtt = lire(VTT).toLowerCase()
+    .replace(/^\d+:\d{2}:\d{2}\.\d{3} --> .*$/gm, '')
+    .replace(/\s+/g, ' ');
   for (const phrase of [
     'je prends un sac',
     'une variable',
@@ -89,6 +92,57 @@ test('les sous-titres disent le récit dicté, du sac à la boucle Pour', () => 
     assert.ok(vtt.includes(phrase), `le récit contient « ${phrase} »`);
   }
   assert.match(vtt, /mmm/, 'les hésitations dictées sont conservées');
+});
+
+test('les sous-titres se lisent : une phrase par réplique, deux lignes au plus', () => {
+  const vtt = lire(VTT);
+  const blocs = vtt.replace(/^WEBVTT\s*/, '').split(/\n{2,}/)
+    .map((b) => b.replace(/\s+$/, ''))
+    .filter((b) => b.includes(' --> '));
+  assert.ok(blocs.length >= 50, `trop peu de répliques : ${blocs.length}`);
+  for (const bloc of blocs) {
+    const lignes = bloc.split('\n');
+    const texte = lignes.slice(1).join('\n');
+    assert.ok(lignes.length - 1 <= 2, 'deux lignes au plus : ' + JSON.stringify(bloc));
+    assert.ok(lignes[0].includes(' --> '), 'minutage en tête');
+    for (const ligne of lignes.slice(1)) {
+      assert.ok(ligne.length <= 46, `ligne trop longue (${ligne.length}) : ${ligne}`);
+      assert.ok(ligne.trim(), 'aucune ligne vide dans une réplique');
+    }
+    if (/[.!?…]$/.test(texte.trim()) === false) {
+      /* une réplique peut finir sans ponctuation finale seulement si la phrase continue */
+      assert.ok(texte.length > 0);
+    }
+  }
+  /* aucune réplique ne commence par un mot en minuscules issu d'une coupure */
+  for (const bloc of blocs) {
+    const texte = bloc.split('\n').slice(1).join(' ').trim();
+    assert.ok(texte.length > 2, 'réplique non vide');
+  }
+});
+
+test('le début est détaillé : sac vide, contenu qui change, nom S justifié', () => {
+  /* les répliques sont repliées : on retire les minutages puis on aplatit */
+  const vtt = lire(VTT).toLowerCase()
+    .replace(/^\d+:\d{2}:\d{2}\.\d{3} --> .*$/gm, '')
+    .replace(/\s+/g, ' ');
+  /* étape 1 : le sac est vide, son contenu change plusieurs fois, puis la définition */
+  assert.match(vtt, /pour l'instant il est vide/);
+  assert.match(vtt, /une chose, puis une autre à la place/);
+  assert.match(vtt, /une boîte avec un nom, dans laquelle je range une valeur/);
+  assert.match(vtt, /ce contenu peut changer/);
+  /* étape 2 : plusieurs sacs, l'ambiguïté, l'étiquette, le nom S qui vaut partout */
+  assert.match(vtt, /un sac pour chaque étage, un sac pour chaque client/);
+  assert.match(vtt, /l'ordinateur, encore moins/);
+  assert.match(vtt, /une étiquette sur le sac/);
+  assert.match(vtt, /s, comme sac/);
+  assert.match(vtt, /quand j'écris s, c'est de ce sac-là/);
+
+  const scenes = lire('outils/bouclepour/scenes.py');
+  assert.match(scenes, /contenu : \{valeur\}/, 'le contenu du sac est écrit sous le sac');
+  assert.match(scenes, /_boite_variable/, 'le schéma « une variable = un nom + une valeur »');
+  assert.match(scenes, /le sac de l'étage 0/, 'les sacs sont légendés');
+  assert.ok(scenes.includes('lequel ?'), 'la question « lequel ? »');
 });
 
 test('la carte vidéo est dans l\'onglet Vidéos de JavaScript', () => {
@@ -123,8 +177,8 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes('BouclePour.mp4'), 'les médias restent hors du delta léger');
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucle-pour-v537"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucle-pour-v537"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucle-pour-v538"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucle-pour-v538"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {

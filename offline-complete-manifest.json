@@ -1,9 +1,9 @@
 {
-  "version": "v537-sti-atelier-v380",
-  "generatedAt": "2026-10-29T20:22:34Z",
+  "version": "v538-sti-atelier-v380",
+  "generatedAt": "2026-10-29T20:41:27Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 736,
-  "totalBytes": 824901444,
+  "totalBytes": 827253779,
   "files": [
     {
       "path": "404.html",
@@ -688,7 +688,7 @@
     {
       "path": "assets/js/app.js",
       "bytes": 117886,
-      "gitSha": "741475054801e2f666e4351997812c478c2bc0c1"
+      "gitSha": "e830f6835eb6014a032c090d144076d828d713a7"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1022,8 +1022,8 @@
     },
     {
       "path": "assets/subtitles/BouclePour-fr.vtt",
-      "bytes": 3721,
-      "gitSha": "3c4d3887d5a7507a005ccaa1c1b98a33b7792b62"
+      "bytes": 4711,
+      "gitSha": "15a5429d57f5647e0834f38f28c7dce72898652d"
     },
     {
       "path": "assets/subtitles/css3-cours-v9-sync-fr.vtt",
@@ -1092,8 +1092,8 @@
     },
     {
       "path": "assets/videos/BouclePour.mp4",
-      "bytes": 8076720,
-      "gitSha": "0751446aee3650589d6b2645806c529961ef5c9a"
+      "bytes": 10427992,
+      "gitSha": "658f9b49da1707261773bfe7e5fd838f34a4fd38"
     },
     {
       "path": "assets/videos/css-animee.mp4",
@@ -1287,8 +1287,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 132792,
-      "gitSha": "48773d0551e71e6cfe58eb8424ab8918f24bea58"
+      "bytes": 132826,
+      "gitSha": "8569a7413a951cfe9db754a520e0b9ecf15c7ad9"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -3682,8 +3682,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97883,
-      "gitSha": "9068ef469636172b08caae0849172449b2c1b499"
+      "bytes": 97922,
+      "gitSha": "6a3dbb11a56c7210c179419a812e32a51465805e"
     }
   ]
 }

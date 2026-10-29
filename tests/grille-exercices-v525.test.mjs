@@ -54,17 +54,17 @@ test('v525 : la grille est responsive et les cartes restent lisibles', () => {
 });
 
 test('v525 : la grille est livrée hors ligne et son empreinte est exacte', () => {
-  assert.match(sw, /var UPDATE_ID = "v537-boucle-pour-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v538-boucle-pour-debut-20261029"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   assert.match(delta, /url: "\.\/assets\/css\/cours-javascript\.css", revision: "barre-mobile-v532"/);
-  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "boucle-pour-v537", refreshIfCached: true/);
+  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "boucle-pour-v538", refreshIfCached: true/);
   for (const bloc of ['SHELL', 'OFFLINE_LIST']) {
     const contenu = sw.split('var ' + bloc + ' = [')[1].split('];')[0];
     assert.ok(contenu.includes('"./assets/css/cours-javascript.css"'), bloc + ' : feuille de style');
     assert.ok(contenu.includes('"./cours/javascript.html"'), bloc + ' : page du cours');
   }
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v537-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v538-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   for (const chemin of ['cours/javascript.html', 'assets/css/cours-javascript.css', 'sw.js']) {

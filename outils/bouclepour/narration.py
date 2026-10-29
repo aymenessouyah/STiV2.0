@@ -31,8 +31,12 @@ SECTIONS = {
             ("sac", [
                 "Comme j'ai besoin de ramasser, je prends un sac.",
                 "Voilà mon sac.",
+                "Pour l'instant il est vide : je n'ai encore rien ramassé.",
                 "Mais attention : le contenu de ce sac est changeable.",
+                "Je peux y mettre une chose, puis une autre à la place, autant de fois que je veux.",
                 "Changeable… ah, une variable !",
+                "Car en programmation, une variable c'est exactement ça : une boîte avec un nom,"
+                " dans laquelle je range une valeur, et dont je peux changer le contenu quand je veux.",
                 "Un sac, c'est une variable : il a un contenu, et ce contenu peut changer.",
             ]),
         ],
@@ -42,9 +46,16 @@ SECTIONS = {
         "segments": [
             ("nom", [
                 "Seulement voilà : je possède plusieurs sacs.",
+                "Un sac pour chaque étage, un sac pour chaque client :"
+                " trois sacs, et trois contenus différents.",
+                "Si je dis simplement « le sac », personne ne sait duquel je parle."
+                " L'ordinateur, encore moins.",
                 "Alors je dois les distinguer. Comment faire ?",
                 "Mmmm… ah, voilà : je vais lui donner un nom.",
+                "Une étiquette sur le sac : un seul nom, le même dans tout le programme.",
                 "Je le nomme S. S, comme sac.",
+                "Et maintenant, quand j'écris S, c'est de ce sac-là que je parle."
+                " Je m'en servirai jusqu'à la fin.",
             ]),
         ],
     },
@@ -155,25 +166,33 @@ def nombre_caracteres() -> int:
 
 
 # ── Sous-titres ────────────────────────────────────────────────────────────
-def _decouper(phrases, maxi=64):
-    """Découpe les phrases en répliques courtes pour le VTT."""
+def _replier(phrase, maxi=42):
+    """Replie une phrase en lignes courtes, sans jamais couper un mot."""
+    lignes, courant = [], ""
+    for mot in phrase.split():
+        essai = (courant + " " + mot).strip()
+        if len(essai) <= maxi or not courant:
+            courant = essai
+        else:
+            lignes.append(courant)
+            courant = mot
+    if courant:
+        lignes.append(courant)
+    return lignes
+
+
+def _decouper(phrases, lignes_max=2):
+    """Une réplique = une phrase entière, repliée sur deux lignes au plus.
+
+    On ne coupe jamais une phrase au milieu : si elle tient en deux lignes, elle
+    forme une seule réplique ; sinon on la répartit sur plusieurs répliques en
+    respectant les groupes de deux lignes.
+    """
     cues = []
     for phrase in phrases:
-        mots = phrase.split()
-        courant = ""
-        for mot in mots:
-            essai = (courant + " " + mot).strip()
-            if len(essai) <= maxi or not courant:
-                courant = essai
-            else:
-                cues.append(courant)
-                courant = mot
-        if courant:
-            cues.append(courant)
-    # pas de miette orpheline en fin de section
-    if len(cues) > 1 and len(cues[-1].split()) < 3:
-        cues[-2] = cues[-2] + " " + cues[-1]
-        cues.pop()
+        lignes = _replier(phrase)
+        for i in range(0, len(lignes), lignes_max):
+            cues.append("\n".join(lignes[i:i + lignes_max]))
     return cues
 
 
@@ -188,7 +207,7 @@ def sous_titres(durees: dict, debuts: dict):
         cues = []
         for cle, phrases in SECTIONS[section]["segments"]:
             cues.extend(_decouper(phrases))
-        poids = [max(1, len(c)) for c in cues]
+        poids = [max(1, len(c.replace("\n", " "))) for c in cues]
         total = sum(poids)
         curseur = debut
         for cue, p in zip(cues, poids):

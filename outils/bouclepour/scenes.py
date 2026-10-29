@@ -50,49 +50,110 @@ def _carte_etage(box, k, n):
 
 
 # ══════════════════════════════════════════════════════════════════════════
+#  Le schéma « une variable = une boîte avec un nom et une valeur »
+# ══════════════════════════════════════════════════════════════════════════
+def _boite_variable(d, box, nom: str, valeur: str, a: float, t: float):
+    """« une variable = une boîte, un nom, une valeur qui peut changer »."""
+    if a <= 0.01:
+        return
+    x0, y0, x1, y1 = box
+    cx = (x0 + x1) / 2
+    boite_arrondie(d, box, rayon=22, fond=melange(FOND_PANNEAU_2, VIOLET, 0.12 * a),
+                   bord=melange(BORDURE, VIOLET, a), largeur_bord=3)
+    d.text((cx, y0 + 34), "une VARIABLE", font=police(24, True),
+           fill=melange(FOND, VIOLET, a), anchor="mm")
+
+    # le nom
+    d.text((cx, y0 + 92), "un nom", font=police(20, True),
+           fill=melange(FOND, TEXTE_3, a), anchor="mm")
+    jeton(d, cx, y0 + 138, nom, couleur=VIOLET, echelle=0.94)
+
+    d.line([(x0 + 40, y0 + 178), (x1 - 40, y0 + 178)], fill=melange(FOND, BORDURE, a), width=2)
+
+    # la valeur, qui change
+    d.text((cx, y0 + 208), "une valeur", font=police(20, True),
+           fill=melange(FOND, TEXTE_3, a), anchor="mm")
+    halo = 0.5 + 0.5 * G._pulse(t, 1.6)
+    jeton(d, cx, y0 + 254, valeur, couleur=melange(AMBRE, ORANGE, 0.4 * halo), echelle=0.94)
+
+    d.text((cx, y1 - 26), "… et son contenu peut changer", font=police(19),
+           fill=melange(FOND, TEXTE_2, a), anchor="mm")
+
+
+# ══════════════════════════════════════════════════════════════════════════
 #  1 · Le sac, c'est une variable
 # ══════════════════════════════════════════════════════════════════════════
 def scene_sac(d, p, t):
     # carton d'ouverture : plein cadre, puis on entre dans l'histoire
-    if p < 0.085:
+    if p < 0.045:
         d.rectangle([0, 0, LARGEUR, HAUTEUR], fill=FOND)
         titre_carte(d, "ALGORITHMIQUE · BOUCLES", "La boucle Pour",
                     "Le sac, l'ascenseur et le compteur",
-                    min(1.0, 0.45 + p / 0.02))
+                    min(1.0, 0.45 + p / 0.012))
         return
 
     _entete(d, "La boucle Pour — le sac et l'ascenseur", 1, "1 · Un sac, c'est une variable")
     _panneaux(d, "l'histoire")
-    cx, cy = 560, 560
-    k = _ease_out(min(1.0, (p - 0.085) / 0.18))
+
+    cx, cy = 352, 566
+    k = _ease_out(min(1.0, (p - 0.045) / 0.16))
+
     # le contenu change au fil du récit : c'est ça, une variable
-    if p < 0.24:
-        contenu = ()
-    elif p < 0.46:
-        contenu = ("T[0]",)
-    elif p < 0.66:
-        contenu = ("T[0]", "T[1]")
+    if p < 0.235:
+        contenu, valeur = (), "rien"
+    elif p < 0.325:
+        contenu, valeur = ("T[0]",), "T[0]"
+    elif p < 0.405:
+        contenu, valeur = ("T[1]",), "T[1]"
+    elif p < 0.50:
+        contenu, valeur = ("T[2]",), "T[2]"
+    elif p < 0.78:
+        contenu, valeur = ("T[0]", "T[1]"), "T[0], T[1]"
     else:
-        contenu = ("T[0]", "T[1]", "T[2]")
-    secousse = max(0.0, 1 - abs(p - 0.62) * 9) if 0.42 < p < 0.8 else 0.0
-    sac(d, cx, cy - (1 - k) * 70, contenu=contenu, nom="S" if p > 0.9 else None,
-        echelle=1.12, halo=0.55 + 0.35 * G._pulse(t, 2.4), secousse=secousse)
+        contenu, valeur = ("T[0]", "T[1]"), "T[0], T[1]"
+
+    secousse = 0.0
+    for bascule in (0.235, 0.325, 0.405, 0.50):
+        if bascule <= p < bascule + 0.05:
+            secousse = max(secousse, 1 - (p - bascule) / 0.05)
+
+    sac(d, cx, cy - (1 - k) * 70, contenu=contenu, nom=None,
+        echelle=0.95, halo=0.5 + 0.3 * G._pulse(t, 2.4), secousse=secousse)
+
+    # ce que contient le sac, écrit dessous
+    if p > 0.115:
+        a = _ease_out(min(1.0, (p - 0.115) / 0.10))
+        vide = p < 0.235
+        d.text((cx, 712), f"contenu : {valeur}", font=police(26, True),
+               fill=melange(FOND, TEXTE_3 if vide else VERT, a), anchor="mm")
 
     # étiquette « VARIABLE » au-dessus du sac
-    if p > 0.46:
-        a = _ease_out(min(1.0, (p - 0.46) / 0.14))
-        y = cy - 250 - 12 * G._pulse(t, 1.8)
-        larg = 260
+    if p > 0.45:
+        a = _ease_out(min(1.0, (p - 0.45) / 0.10))
+        y = 320 - 10 * G._pulse(t, 1.8)
+        larg = 264
         boite_arrondie(d, [cx - larg / 2, y - 30, cx + larg / 2, y + 30], rayon=14,
-                       fond=melange(FOND_PANNEAU, VIOLET, 0.3 * a), bord=VIOLET, largeur_bord=3)
+                       fond=melange(FOND_PANNEAU, VIOLET, 0.3 * a), bord=melange(FOND, VIOLET, a),
+                       largeur_bord=3)
         d.text((cx, y), "VARIABLE", font=police(30, True), fill=melange(FOND, TEXTE, a), anchor="mm")
 
+    # le schéma : une boîte, un nom, une valeur qui change
+    if p > 0.515:
+        a = _ease_out(min(1.0, (p - 0.515) / 0.09))
+        _boite_variable(d, [648, 360, 1048, 724], "?", valeur, a, t)
+
     lignes = [
-        Ligne("Un sac = un conteneur", TEXTE, 34, a_partir_de=0.12),
-        Ligne("son contenu change", TEXTE_2, 30, a_partir_de=0.40),
-        Ligne("→ c'est une VARIABLE", VIOLET, 34, gras=True, a_partir_de=0.62),
-        Ligne("", a_partir_de=0.86),
-        Ligne("(et j'ai plusieurs sacs…)", TEXTE_3, 26, gras=False, mono=False, a_partir_de=0.80),
+        Ligne("Un sac = un conteneur", TEXTE, 33, a_partir_de=0.045),
+        Ligne("vide, pour l'instant", TEXTE_2, 27, a_partir_de=0.145),
+        Ligne("son contenu change", TEXTE_2, 29, a_partir_de=0.315),
+        Ligne("puis change encore,", TEXTE_2, 28, a_partir_de=0.385),
+        Ligne("autant de fois que je veux", TEXTE_3, 25, mono=False, a_partir_de=0.445),
+        Ligne("→ c'est une VARIABLE", VIOLET, 32, gras=True, a_partir_de=0.548),
+        Ligne("", a_partir_de=0.58),
+        Ligne("une boîte, avec un nom", VIOLET, 26, mono=False, a_partir_de=0.612),
+        Ligne("et une valeur qui change", VIOLET, 26, mono=False, a_partir_de=0.668),
+        Ligne("", a_partir_de=0.72),
+        Ligne("(et j'ai plusieurs sacs…)", TEXTE_3, 25, gras=False, mono=False, a_partir_de=0.80),
     ]
     cahier(d, PANEL_D, lignes, p)
     bandeau_rappel(d, RAPPEL, t)
@@ -105,31 +166,74 @@ def scene_nom(d, p, t):
     _entete(d, "La boucle Pour — le sac et l'ascenseur", 2,
             "2 · Plusieurs sacs : il faut leur donner un nom")
     _panneaux(d, "l'histoire")
-    positions = [(300, 560), (560, 560), (820, 560)]
-    noms = [None, None, None]
-    if p > 0.36:
-        noms[2] = "S"
-    for i, ((cx, cy), nom) in enumerate(zip(positions, noms)):
-        apparait = _ease_out(min(1.0, max(0.0, (p - 0.05 * i) / 0.25)))
+
+    positions = [(286, 590), (556, 590), (826, 590)]
+    legendes = ["le sac de l'étage 0", "le sac de l'étage 1", "le sac du client"]
+    nomme = p > 0.655
+    for i, ((cx, cy), legende) in enumerate(zip(positions, legendes)):
+        apparait = _ease_out(min(1.0, max(0.0, (p - (0.045 + 0.05 * i)) / 0.18)))
         if apparait <= 0:
             continue
-        actif = nom is not None
-        sac(d, cx, cy - (1 - apparait) * 60, contenu=(f"T[{i}]",), nom=nom,
-            echelle=0.74 if not actif else 0.84,
-            halo=(0.7 + 0.3 * G._pulse(t, 1.7)) if actif else 0.0)
-        if not actif and p > 0.2:
-            d.text((cx, cy + 132), "?", font=police(46, True), fill=TEXTE_3, anchor="mm")
-    if p > 0.5:
-        a = _ease_out(min(1.0, (p - 0.5) / 0.2))
-        fleche(d, (820, 690), (700, 720), couleur=melange(FOND, AMBRE, a), epaisseur=4, progression=a)
-        d.text((600, 742), "un nom : S", font=police(30, True), fill=melange(FOND, AMBRE, a), anchor="mm")
+        actif = nomme and i == 2
+        sac(d, cx, cy - (1 - apparait) * 60, contenu=(f"T[{i}]",),
+            nom="S" if actif else None,
+            echelle=0.86 if actif else 0.74,
+            halo=(0.42 + 0.22 * G._pulse(t, 1.7)) if actif else 0.0)
+        # la plaque de nom : « ? » tant que le sac n'a pas de nom
+        if not actif and p > 0.12 + 0.05 * i:
+            jeton(d, cx + 0.86 * 150 * 0.74 - 12 * 0.74, cy - 0.86 * 118 * 0.74 - 6 * 0.74,
+                  "?", couleur=TEXTE_3, echelle=0.72)
+        if p > 0.135:
+            a = _ease_out(min(1.0, (p - 0.135 - 0.05 * i) / 0.12))
+            d.text((cx, 748), legende, font=police(21, True),
+                   fill=melange(FOND, TEXTE if actif else TEXTE_3, a), anchor="mm")
+
+    # l'ambiguïté : « le sac », mais lequel ?
+    if 0.25 < p < 0.46:
+        a = _ease_out(min(1.0, (p - 0.25) / 0.08))
+        d.text((556, 296), "« le sac » … lequel ?", font=police(30, True),
+               fill=melange(FOND, AMBRE, a), anchor="mm")
+        for cx, _ in positions:
+            fleche(d, (556 + (cx - 556) * 0.22, 322), (cx, 452),
+                   couleur=melange(FOND, melange(AMBRE, TEXTE_2, 0.45), a), epaisseur=3,
+                   progression=a)
+
+    # l'étiquette qui vient se poser sur le sac
+    if 0.50 < p < 0.66:
+        a = _ease_out(min(1.0, (p - 0.50) / 0.11))
+        depart = (1010, 330)
+        arrivee = (positions[2][0] + 0.86 * 150 * 0.86 - 12 * 0.86,
+                   positions[2][1] - 0.86 * 118 * 0.86 - 6 * 0.86)
+        x = depart[0] + (arrivee[0] - depart[0]) * a
+        y = depart[1] + (arrivee[1] - depart[1]) * a - math.sin(a * math.pi) * 40
+        jeton(d, x, y, "S", couleur=AMBRE, echelle=1.0)
+
+    if p > 0.69:
+        a = _ease_out(min(1.0, (p - 0.69) / 0.10))
+        d.text((556, 296), "un nom : S", font=police(32, True),
+               fill=melange(FOND, AMBRE, a), anchor="mm")
+        extremite = (positions[2][0] + 0.86 * 150 * 0.86 - 24,
+                     positions[2][1] - 0.86 * 118 * 0.86 + 10)
+        fleche(d, (556, 322), extremite, couleur=melange(FOND, AMBRE, a),
+               epaisseur=4, progression=a)
+
+    if p > 0.855:
+        a = _ease_out(min(1.0, (p - 0.855) / 0.09))
+        d.text((556, 806), "quand j'écris S, c'est ce sac-là", font=police(24, True),
+               fill=melange(FOND, VERT, a), anchor="mm")
 
     lignes = [
-        Ligne("3 sacs, 3 contenus", TEXTE, 32, a_partir_de=0.10),
-        Ligne("comment les distinguer ?", TEXTE_2, 28, a_partir_de=0.30),
-        Ligne("→ un NOM pour chacun", VIOLET, 32, gras=True, a_partir_de=0.48),
-        Ligne("", a_partir_de=0.62),
-        Ligne("je le nomme :  S", ORANGE, 40, gras=True, a_partir_de=0.66, souligne=True),
+        Ligne("3 sacs, 3 contenus", TEXTE, 32, a_partir_de=0.045),
+        Ligne("un sac par étage, un par client", TEXTE_3, 24, mono=False, a_partir_de=0.115),
+        Ligne("« le sac » ? lequel ?", TEXTE_2, 28, a_partir_de=0.255),
+        Ligne("personne ne sait…", TEXTE_3, 25, mono=False, a_partir_de=0.345),
+        Ligne("→ un NOM pour chacun", VIOLET, 31, gras=True, a_partir_de=0.445),
+        Ligne("", a_partir_de=0.50),
+        Ligne("une étiquette sur le sac", ORANGE, 26, gras=False, mono=False, a_partir_de=0.556),
+        Ligne("un seul nom, partout", TEXTE_3, 24, mono=False, a_partir_de=0.605),
+        Ligne("je le nomme :  S", ORANGE, 38, gras=True, a_partir_de=0.648, souligne=True),
+        Ligne("", a_partir_de=0.78),
+        Ligne("S → ce sac-là, jusqu'à la fin", VERT, 26, gras=True, mono=False, a_partir_de=0.795),
     ]
     cahier(d, PANEL_D, lignes, p)
     bandeau_rappel(d, RAPPEL, t)
