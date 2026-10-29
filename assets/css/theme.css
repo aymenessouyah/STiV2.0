@@ -1547,50 +1547,84 @@ body.sti-v2 .welcome-return__empty { font-size: .9rem; }
 }
 .lab-chip:hover { border-style: solid; border-color: var(--brand); transform: translateY(-1px); }
 
-/* ── v516 : les logos des dix outils s'animent de temps en temps ──────────
-   Chaque pastille porte son emoji dans .lab-chip__ico ; app.js tire au sort
-   une pastille et une des animations ci-dessous, une fois de temps en temps,
-   pour attirer l'œil sans jamais gêner la lecture. */
+/* ── v516/v518 : les logos des dix outils attirent l'œil de temps en temps ──
+   Chaque pastille porte son emoji dans .lab-chip__ico. app.js déclenche un
+   salut groupé à l'arrivée sur la section, puis tire au sort un logo (parfois
+   une vague de 2-3 voisins) et lui applique une des sept animations.
+   Le halo de la pastille reprend la couleur de la classe : bleu en 3e SI,
+   vert en 4e SI. */
+.section--ateliers { --outil-halo: #38bdf8; }
+html.sti-4si-autorise .section--ateliers { --outil-halo: #34d399; }
 .lab-chip__ico {
   display: inline-block;
   transform-origin: 50% 70%;
   backface-visibility: hidden;
+  will-change: transform, filter;
 }
-.lab-chip__ico.sti-outil-anim-1 { animation: sti-outil-salut 0.8s ease-in-out; }
-.lab-chip__ico.sti-outil-anim-2 { animation: sti-outil-rebond 0.85s cubic-bezier(0.3, 1.4, 0.5, 1); }
-.lab-chip__ico.sti-outil-anim-3 { animation: sti-outil-pulse 0.9s ease-in-out; }
-.lab-chip__ico.sti-outil-anim-4 { animation: sti-outil-tangage 0.85s ease-in-out; }
-.lab-chip__ico.sti-outil-anim-5 { animation: sti-outil-eclat 0.7s ease-out; }
+/* Halo bref sur la pastille elle-même : c'est ce qui rend l'animation visible
+   même du coin de l'œil, sans agrandir la pastille. */
+.lab-chip.sti-outil-halo { animation: sti-outil-halo 1.15s ease-out; }
+@keyframes sti-outil-halo {
+  0% { box-shadow: 0 0 0 0 var(--outil-halo); border-color: var(--outil-halo); }
+  55% { box-shadow: 0 0 14px 4px var(--outil-halo); border-color: var(--outil-halo); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.lab-chip__ico.sti-outil-anim-1 { animation: sti-outil-salut 0.95s ease-in-out; }
+.lab-chip__ico.sti-outil-anim-2 { animation: sti-outil-rebond 1s cubic-bezier(0.3, 1.4, 0.5, 1); }
+.lab-chip__ico.sti-outil-anim-3 { animation: sti-outil-pulse 1s ease-in-out; }
+.lab-chip__ico.sti-outil-anim-4 { animation: sti-outil-tangage 0.95s ease-in-out; }
+.lab-chip__ico.sti-outil-anim-5 { animation: sti-outil-eclat 0.85s ease-out; }
+.lab-chip__ico.sti-outil-anim-6 { animation: sti-outil-culbute 1s cubic-bezier(0.34, 1.3, 0.5, 1); }
+.lab-chip__ico.sti-outil-anim-7 { animation: sti-outil-scintille 1.05s ease-in-out; }
 @keyframes sti-outil-salut {
   0%, 100% { transform: rotate(0deg); }
-  20% { transform: rotate(-14deg) scale(1.06); }
-  45% { transform: rotate(11deg) scale(1.06); }
-  70% { transform: rotate(-5deg); }
+  18% { transform: rotate(-20deg) scale(1.14); }
+  42% { transform: rotate(16deg) scale(1.14); }
+  64% { transform: rotate(-9deg) scale(1.06); }
+  82% { transform: rotate(4deg); }
 }
 @keyframes sti-outil-rebond {
-  0%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-6px); }
-  55% { transform: translateY(0); }
-  72% { transform: translateY(-3px); }
+  0%, 100% { transform: translateY(0) scale(1); }
+  22% { transform: translateY(-9px) scale(1.1); }
+  44% { transform: translateY(0) scale(0.94); }
+  64% { transform: translateY(-5px) scale(1.05); }
+  82% { transform: translateY(0) scale(0.98); }
 }
 @keyframes sti-outil-pulse {
   0%, 100% { transform: scale(1); }
-  45% { transform: scale(1.22); }
-  70% { transform: scale(0.96); }
+  35% { transform: scale(1.35); }
+  55% { transform: scale(0.92); }
+  75% { transform: scale(1.12); }
 }
 @keyframes sti-outil-tangage {
   0%, 100% { transform: translateX(0) rotate(0deg); }
-  25% { transform: translateX(-4px) rotate(-8deg); }
-  55% { transform: translateX(4px) rotate(8deg); }
-  80% { transform: translateX(-2px) rotate(-3deg); }
+  20% { transform: translateX(-7px) rotate(-14deg); }
+  45% { transform: translateX(7px) rotate(14deg); }
+  68% { transform: translateX(-4px) rotate(-7deg); }
+  85% { transform: translateX(2px) rotate(3deg); }
 }
 @keyframes sti-outil-eclat {
   0% { transform: scale(1) rotate(0deg); }
-  35% { transform: scale(1.3) rotate(16deg); }
+  30% { transform: scale(1.45) rotate(20deg); }
+  60% { transform: scale(0.95) rotate(-8deg); }
   100% { transform: scale(1) rotate(0deg); }
 }
+/* Tour complet sur lui-même : l'animation la plus repérable. */
+@keyframes sti-outil-culbute {
+  0% { transform: perspective(340px) rotateY(0deg) scale(1); }
+  45% { transform: perspective(340px) rotateY(180deg) scale(1.22); }
+  100% { transform: perspective(340px) rotateY(360deg) scale(1); }
+}
+/* Scintillement : l'emoji s'illumine de la couleur de la classe. */
+@keyframes sti-outil-scintille {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: none; }
+  22% { transform: scale(1.32) rotate(-10deg); filter: drop-shadow(0 0 6px var(--outil-halo)) brightness(1.35); }
+  48% { transform: scale(0.92) rotate(8deg); filter: drop-shadow(0 0 11px var(--outil-halo)) brightness(1.55); }
+  74% { transform: scale(1.16) rotate(-4deg); filter: drop-shadow(0 0 5px var(--outil-halo)) brightness(1.2); }
+}
 @media (prefers-reduced-motion: reduce) {
-  .lab-chip__ico { animation: none !important; }
+  .lab-chip__ico { animation: none !important; filter: none !important; }
+  .lab-chip.sti-outil-halo { animation: none !important; box-shadow: none !important; }
 }
 
 /* ── 18. Onglets, Barres & Anneaux de progression, Code, Alertes, Modales ── */

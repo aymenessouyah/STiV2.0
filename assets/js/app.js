@@ -1033,10 +1033,18 @@
     }
   }
 
-  /* v516 : les logos des dix outils interactifs s'animent au hasard, par petites
-     touches, pour attirer l'attention de l'abonné sans distraire la lecture. */
-  var CLASSES_OUTIL_ANIM = ["sti-outil-anim-1", "sti-outil-anim-2", "sti-outil-anim-3", "sti-outil-anim-4", "sti-outil-anim-5"];
+  /* v516/v518 : les logos des dix outils interactifs attirent l'attention.
+     À l'arrivée sur la section, les dix logos font un petit salut en cascade ;
+     ensuite, toutes les 1,2 à 2,8 s, un logo tiré au sort (ou une vague de 2 à
+     3 voisins) exécute une des sept animations, avec un halo de la couleur de
+     la classe sur la pastille. Pause de 6 s tous les dix passages pour ne pas
+     devenir agaçant. */
+  var CLASSES_OUTIL_ANIM = [
+    "sti-outil-anim-1", "sti-outil-anim-2", "sti-outil-anim-3", "sti-outil-anim-4",
+    "sti-outil-anim-5", "sti-outil-anim-6", "sti-outil-anim-7"
+  ];
   var minuteurOutils = null;
+  var dernierReveilOutils = 0;
 
   function pastilleOutilsVisible(pastille) {
     if (!pastille || pastille.hidden) return false;
@@ -1044,39 +1052,113 @@
     return global.getComputedStyle(pastille).display !== "none";
   }
 
-  function animerUnOutilAuHasard() {
+  function iconesOutilsVisibles() {
     var icones = Array.prototype.slice.call(
       document.querySelectorAll("#ateliers-rapides .lab-chip__ico")
     );
-    if (!icones.length) return;
-    var visibles = icones.filter(function (ico) {
+    return icones.filter(function (ico) {
       return pastilleOutilsVisible(ico.closest ? ico.closest(".lab-chip") : null);
     });
-    var cibles = visibles.length ? visibles : icones;
-    var ico = cibles[Math.floor(Math.random() * cibles.length)];
+  }
+
+  /* Une icône : animation tirée au sort + halo sur sa pastille, après un délai
+     qui permet les cascades. */
+  function animerIconeOutil(ico, classe, delai) {
     if (!ico) return;
-    var classe = CLASSES_OUTIL_ANIM[Math.floor(Math.random() * CLASSES_OUTIL_ANIM.length)];
-    CLASSES_OUTIL_ANIM.forEach(function (c) { ico.classList.remove(c); });
-    /* force le recalcul : la même animation doit pouvoir repartir aussitôt. */
-    void ico.offsetWidth;
-    ico.classList.add(classe);
-    global.setTimeout(function () { ico.classList.remove(classe); }, 1100);
+    global.setTimeout(function () {
+      CLASSES_OUTIL_ANIM.forEach(function (c) { ico.classList.remove(c); });
+      /* force le recalcul : la même animation doit pouvoir repartir aussitôt. */
+      void ico.offsetWidth;
+      ico.classList.add(classe);
+      var pastille = ico.closest ? ico.closest(".lab-chip") : null;
+      if (pastille && pastille.classList) {
+        pastille.classList.remove("sti-outil-halo");
+        void pastille.offsetWidth;
+        pastille.classList.add("sti-outil-halo");
+        global.setTimeout(function () { pastille.classList.remove("sti-outil-halo"); }, 1250);
+      }
+      global.setTimeout(function () { ico.classList.remove(classe); }, 1350);
+    }, delai || 0);
+  }
+
+  function tirerClasseOutil() {
+    return CLASSES_OUTIL_ANIM[Math.floor(Math.random() * CLASSES_OUTIL_ANIM.length)];
+  }
+
+  function animerUnOutilAuHasard() {
+    var cibles = iconesOutilsVisibles();
+    if (!cibles.length) return;
+    animerIconeOutil(cibles[Math.floor(Math.random() * cibles.length)], tirerClasseOutil(), 0);
+  }
+
+  /* Deux ou trois logos voisins partent en cascade : l'œil suit la vague. */
+  function animerVagueOutils() {
+    var cibles = iconesOutilsVisibles();
+    if (!cibles.length) return;
+    var depart = Math.floor(Math.random() * cibles.length);
+    var taille = Math.min(cibles.length, 2 + Math.floor(Math.random() * 2));
+    var classe = tirerClasseOutil();
+    for (var i = 0; i < taille; i += 1) {
+      animerIconeOutil(cibles[(depart + i) % cibles.length], classe, i * 150);
+    }
+  }
+
+  /* Le salut d'arrivée : les dix logos, en cascade, une seule fois. */
+  function saluerLesOutils() {
+    iconesOutilsVisibles().forEach(function (ico, i) {
+      animerIconeOutil(ico, i % 2 ? "sti-outil-anim-2" : "sti-outil-anim-1", i * 110);
+    });
   }
 
   function initialiserAnimationsOutils() {
-    if (!document.getElementById("ateliers-rapides")) return;
+    var section = document.getElementById("ateliers-rapides");
+    if (!section) return;
     var reduire = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduire) return;
-    function planifier() {
-      var attente = 1500 + Math.round(Math.random() * 2300);
+
+    var passages = 0;
+    function planifier(attenteForcee) {
+      var attente = attenteForcee || 1200 + Math.round(Math.random() * 1600);
       minuteurOutils = global.setTimeout(function () {
-        if (!document.hidden) animerUnOutilAuHasard();
-        planifier();
+        if (document.hidden) { planifier(); return; }
+        passages += 1;
+        if (Math.random() < 0.35) animerVagueOutils();
+        else animerUnOutilAuHasard();
+        /* Anti-agitation : respiration de 6 s après dix animations. */
+        planifier(passages % 10 === 0 ? 6000 : 0);
       }, attente);
     }
-    /* Premier clin d'œil dès l'arrivée sur la section, puis au hasard. */
-    global.setTimeout(animerUnOutilAuHasard, 900);
-    planifier();
+
+    /* Premier clin d'œil groupé dès que la section entre à l'écran. */
+    var demarre = false;
+    function demarrerSalut() {
+      if (demarre) return;
+      demarre = true;
+      global.setTimeout(saluerLesOutils, 150);
+      planifier(900);
+    }
+    if (global.IntersectionObserver && section.getBoundingClientRect) {
+      try {
+        var observateur = new global.IntersectionObserver(function (entrees) {
+          entrees.forEach(function (e) { if (e.isIntersecting) { demarrerSalut(); observateur.disconnect(); } });
+        }, { threshold: 0.35 });
+        observateur.observe(section);
+      } catch (e) { demarrerSalut(); }
+      /* Filet de sécurité : si l'observateur ne dit rien, on salue quand même. */
+      global.setTimeout(demarrerSalut, 6000);
+    } else {
+      demarrerSalut();
+    }
+
+    /* Un survol relance un clin d'œil, au plus une fois toutes les 2,5 s. */
+    try {
+      section.addEventListener("pointerenter", function () {
+        var maintenant = Date.now();
+        if (maintenant - dernierReveilOutils < 2500) return;
+        dernierReveilOutils = maintenant;
+        animerUnOutilAuHasard();
+      });
+    } catch (e) {}
   }
 
   function rafraichirUIRevisionAccueil() {
