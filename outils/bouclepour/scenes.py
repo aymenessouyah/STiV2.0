@@ -20,17 +20,27 @@ import dessin as G
 from dessin import (
     LARGEUR, HAUTEUR, MARGE, PANEL_G, PANEL_D, BANDE,
     sac, immeuble, ascenseur, compteur, jeton, cahier, cadre_code,
-    bandeau_rappel, bulle, coche, titre_carte, Ligne, panneau, entete, _ease, _ease_out,
+    bandeau_rappel, bandeau_etat, bulle, coche, titre_carte, Ligne, panneau, entete,
+    _ease, _ease_out, VALEURS, SOMME_TOTALE,
 )
 
-TOTAL = 9
+TOTAL = 10
 
-# Le rappel permanent, en bas de l'écran.
+# Le rappel permanent (dernière scène) et le tableau de bord du bas.
 RAPPEL = [
     ("S", "le sac qui accumule", ORANGE),
     ("T[k]", "l'étage numéro k", AMBRE),
     ("compteur", "l'ascenseur qui compte", BLEU),
 ]
+
+
+def _somme(jusqua: int) -> int:
+    """La somme des étages déjà ramassés (0 → aucun)."""
+    return sum(VALEURS[:max(0, jusqua)])
+
+
+def _etat(d, indice=None, somme=0, compteur=None, connue=True, t=0.0):
+    bandeau_etat(d, indice=indice, somme=somme, compteur=compteur, t=t, somme_connue=connue)
 
 
 def _entete(d, titre, etape, chapitre):
@@ -81,6 +91,91 @@ def _boite_variable(d, box, nom: str, valeur: str, a: float, t: float):
 
 
 # ══════════════════════════════════════════════════════════════════════════
+#  1 · Le but : la somme des étages d'un immeuble (un tableau)
+# ══════════════════════════════════════════════════════════════════════════
+def _carte_tableau(d, box, a: float = 1.0, t: float = 0.0, formulaire: bool = True):
+    """Le tableau T posé à plat : quatre cases, et la somme à trouver."""
+    x0, y0, x1, y1 = box
+    boite_arrondie(d, box, rayon=20, fond=melange(FOND_PANNEAU_2, AMBRE, 0.10 * a),
+                   bord=melange(BORDURE, AMBRE, 0.55 * a), largeur_bord=2)
+    d.text(((x0 + x1) / 2, y0 + 30), "le tableau T", font=police(20, True),
+           fill=melange(FOND, AMBRE, a), anchor="mm")
+    cx = x0 + 56
+    for k, valeur in enumerate(VALEURS):
+        puce = max(0.0, min(1.0, (a - 0.15 * k) / 0.55))
+        if puce > 0:
+            bandeau_etat_puce(d, cx, y0 + 92, valeur, couleur=melange(FOND, TEXTE, puce))
+            jeton(d, cx, y0 + 136, f"T[{k}]", couleur=melange(FOND, AMBRE, puce), echelle=0.6)
+        cx += 100
+    if formulaire:
+        d.text(((x0 + x1) / 2, y0 + 196), "S = T[0] + T[1] + T[2] + T[3]", font=police(20, True, mono=True),
+               fill=melange(FOND, TEXTE, a), anchor="mm")
+        d.text(((x0 + x1) / 2, y0 + 254), "S = ?", font=police(40, True, mono=True),
+               fill=melange(FOND, ORANGE, a), anchor="mm")
+
+
+def bandeau_etat_puce(d, cx, cy, valeur, couleur=TEXTE):
+    """Une petite case carrée du tableau, réutilisée dans les cartes."""
+    boite_arrondie(d, [cx - 38, cy - 26, cx + 38, cy + 26], rayon=12,
+                   fond=melange((24, 34, 52), AMBRE, 0.14), bord=melange(BORDURE, AMBRE, 0.6),
+                   largeur_bord=2)
+    d.text((cx, cy + 1), str(valeur), font=police(26, True, mono=True), fill=couleur, anchor="mm")
+
+
+def scene_intro(d, p, t):
+    # carton d'ouverture
+    if p < 0.055:
+        d.rectangle([0, 0, LARGEUR, HAUTEUR], fill=FOND)
+        titre_carte(d, "JAVASCRIPT · LES BOUCLES", "La somme des étages",
+                    "Un immeuble, un tableau, une boucle",
+                    min(1.0, 0.45 + p / 0.015))
+        return
+
+    _entete(d, "La boucle Pour — le sac et l'ascenseur", 1,
+            "1 · Le but : calculer la somme des étages d'un immeuble")
+    _panneaux(d, "le problème")
+
+    # l'immeuble, avec ses valeurs
+    boite = [104, 404, 560, 820]
+    immeuble(d, boite, 4, etage_actif=None, t=t, fenetres_allumees=4)
+
+    # à côté, le tableau T et la somme à trouver
+    a = _ease_out(min(1.0, (p - 0.24) / 0.16))
+    if a > 0:
+        _carte_tableau(d, [640, 404, 1044, 726], a, t)
+
+    if p > 0.72:
+        a = _ease_out(min(1.0, (p - 0.72) / 0.12))
+        d.text((842, 786), "un immeuble = un tableau", font=police(24, True),
+               fill=melange(FOND, TEXTE_2, a), anchor="mm")
+    if p > 0.86:
+        a = _ease_out(min(1.0, (p - 0.86) / 0.10))
+        boite_arrondie(d, [612, 818, 1050, 868], rayon=14,
+                       fond=melange(FOND_PANNEAU_2, ORANGE, 0.18 * a),
+                       bord=melange(FOND, ORANGE, a), largeur_bord=2)
+        d.text((831, 843), "→ pour ramasser, il me faut un sac", font=police(20, True),
+               fill=melange(FOND, ORANGE, a), anchor="mm")
+
+    lignes = [
+        Ligne("LE BUT", ORANGE, 26, gras=True, mono=False, a_partir_de=0.06),
+        Ligne("calculer la somme", TEXTE, 34, a_partir_de=0.10),
+        Ligne("des 4 étages", TEXTE, 34, a_partir_de=0.14),
+        Ligne("", a_partir_de=0.22),
+        Ligne("l'immeuble = un tableau T", TEXTE_2, 25, mono=False, a_partir_de=0.26),
+        Ligne("T = [4, 7, 2, 9]", AMBRE, 30, a_partir_de=0.36),
+        Ligne("", a_partir_de=0.46),
+        Ligne("chaque case : un étage", TEXTE_3, 24, mono=False, a_partir_de=0.50),
+        Ligne("", a_partir_de=0.58),
+        Ligne("S = T[0] + T[1] + T[2] + T[3]", TEXTE, 25, a_partir_de=0.62),
+        Ligne("S = ?", ORANGE, 40, gras=True, a_partir_de=0.70, souligne=True),
+        Ligne("", a_partir_de=0.84),
+        Ligne("comment m'y prendre ?", TEXTE_2, 27, mono=False, a_partir_de=0.86),
+    ]
+    cahier(d, PANEL_D, lignes, p)
+    _etat(d, connue=False, t=t)
+
+
+# ══════════════════════════════════════════════════════════════════════════
 #  1 · Le sac, c'est une variable
 # ══════════════════════════════════════════════════════════════════════════
 def scene_sac(d, p, t):
@@ -92,7 +187,7 @@ def scene_sac(d, p, t):
                     min(1.0, 0.45 + p / 0.012))
         return
 
-    _entete(d, "La boucle Pour — le sac et l'ascenseur", 1, "1 · Un sac, c'est une variable")
+    _entete(d, "La boucle Pour — le sac et l'ascenseur", 2, "2 · Un sac, c'est une variable")
     _panneaux(d, "l'histoire")
 
     cx, cy = 352, 566
@@ -102,15 +197,13 @@ def scene_sac(d, p, t):
     if p < 0.235:
         contenu, valeur = (), "rien"
     elif p < 0.325:
-        contenu, valeur = ("T[0]",), "T[0]"
+        contenu, valeur = (str(VALEURS[0]),), str(VALEURS[0])
     elif p < 0.405:
-        contenu, valeur = ("T[1]",), "T[1]"
+        contenu, valeur = (str(VALEURS[1]),), str(VALEURS[1])
     elif p < 0.50:
-        contenu, valeur = ("T[2]",), "T[2]"
-    elif p < 0.78:
-        contenu, valeur = ("T[0]", "T[1]"), "T[0], T[1]"
+        contenu, valeur = (str(VALEURS[2]),), str(VALEURS[2])
     else:
-        contenu, valeur = ("T[0]", "T[1]"), "T[0], T[1]"
+        contenu, valeur = (str(VALEURS[0]), str(VALEURS[1])), f"{VALEURS[0]}, {VALEURS[1]}"
 
     secousse = 0.0
     for bascule in (0.235, 0.325, 0.405, 0.50):
@@ -156,15 +249,15 @@ def scene_sac(d, p, t):
         Ligne("(et j'ai plusieurs sacs…)", TEXTE_3, 25, gras=False, mono=False, a_partir_de=0.80),
     ]
     cahier(d, PANEL_D, lignes, p)
-    bandeau_rappel(d, RAPPEL, t)
+    _etat(d, connue=False, t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
 #  2 · Plusieurs sacs : il faut un nom
 # ══════════════════════════════════════════════════════════════════════════
 def scene_nom(d, p, t):
-    _entete(d, "La boucle Pour — le sac et l'ascenseur", 2,
-            "2 · Plusieurs sacs : il faut leur donner un nom")
+    _entete(d, "La boucle Pour — le sac et l'ascenseur", 3,
+            "3 · Plusieurs sacs : il faut leur donner un nom")
     _panneaux(d, "l'histoire")
 
     positions = [(286, 590), (556, 590), (826, 590)]
@@ -175,7 +268,7 @@ def scene_nom(d, p, t):
         if apparait <= 0:
             continue
         actif = nomme and i == 2
-        sac(d, cx, cy - (1 - apparait) * 60, contenu=(f"T[{i}]",),
+        sac(d, cx, cy - (1 - apparait) * 60, contenu=(str(VALEURS[i]),),
             nom="S" if actif else None,
             echelle=0.86 if actif else 0.74,
             halo=(0.42 + 0.22 * G._pulse(t, 1.7)) if actif else 0.0)
@@ -236,15 +329,15 @@ def scene_nom(d, p, t):
         Ligne("S → ce sac-là, jusqu'à la fin", VERT, 26, gras=True, mono=False, a_partir_de=0.795),
     ]
     cahier(d, PANEL_D, lignes, p)
-    bandeau_rappel(d, RAPPEL, t)
+    _etat(d, connue=False, t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
 #  3 · L'immeuble, l'ascenseur, et la question
 # ══════════════════════════════════════════════════════════════════════════
 def scene_immeuble(d, p, t):
-    _entete(d, "La boucle Pour — le sac et l'ascenseur", 3,
-            "3 · Un immeuble : je prends l'ascenseur")
+    _entete(d, "La boucle Pour — le sac et l'ascenseur", 4,
+            "4 · Un immeuble : je prends l'ascenseur")
     _panneaux(d, "l'histoire")
     boite = [140, 372, 584, 836]
     etages = 4
@@ -272,7 +365,7 @@ def scene_immeuble(d, p, t):
         Ligne("mais avec chaque client ?", TEXTE_3, 26, mono=False, a_partir_de=0.80),
     ]
     cahier(d, PANEL_D, lignes, p)
-    bandeau_rappel(d, RAPPEL, t)
+    _etat(d, connue=False, t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -285,22 +378,30 @@ def _ramassage(d, p, t, etage, titre, etape, chapitre, lignes, indice, montre_av
     etages = 4
     ouverture = _ease_out(max(0.0, min(1.0, (p - 0.18) / 0.14)))
     ramasse = max(0.0, min(1.0, (p - 0.36) / 0.22))
-    immeuble(d, boite, etages, etage_actif=etage,
-             ouvert=ouverture, remplis=tuple(range(0, etage + 1)) if ramasse > 0.9 else tuple(range(0, etage)),
-             ramasse_en_cours=ramasse if ramasse < 1 else 0.0)
+    pris = tuple(range(0, etage + 1)) if ramasse > 0.9 else tuple(range(0, etage))
+    immeuble(d, boite, etages, etage_actif=etage, ouvert=ouverture, remplis=pris,
+             ramasse_en_cours=ramasse if ramasse < 1 else 0.0, t=t)
     position = (etage + 0.0)
     if p < 0.16:
         position = max(0.0, etage - 1) + (p / 0.16)
     ascenseur(d, [540, 352, 656, 830], etages, position, etage,
               compteur_actif=1.0 if p > 0.1 else 0.0)
 
-    # le sac, à droite, reçoit le jeton
-    sac_cx, sac_cy = 868, 586
-    contenu = tuple(f"T[{k}]" for k in range(etage + 1)) if ramasse > 0.95 else \
-        tuple(f"T[{k}]" for k in range(etage))
+    # le sac, à droite : il contient les valeurs, pas les indices
+    sac_cx, sac_cy = 866, 560
+    dedans = tuple(str(VALEURS[k]) for k in range(etage + 1)) if ramasse > 0.95 else \
+        tuple(str(VALEURS[k]) for k in range(etage))
     secousse = max(0.0, 1 - abs(ramasse - 0.75) * 6) if 0.35 < ramasse < 1 else 0.0
-    sac(d, sac_cx, sac_cy, contenu=contenu, nom="S", echelle=0.86,
+    sac(d, sac_cx, sac_cy, contenu=dedans, nom="S", echelle=0.84,
         halo=0.5 + 0.3 * G._pulse(t, 2.2), secousse=secousse)
+
+    # la somme du sac, écrite dessous : elle grandit à chaque étage
+    somme = _somme(etage + 1) if ramasse > 0.95 else _somme(etage)
+    boite_arrondie(d, [sac_cx - 108, 690, sac_cx + 108, 748], rayon=16,
+                   fond=melange(FOND_PANNEAU_2, VERT if ramasse > 0.95 else ORANGE, 0.22),
+                   bord=melange(BORDURE, VERT if ramasse > 0.95 else ORANGE, 0.8), largeur_bord=2)
+    d.text((sac_cx, 719), f"S = {somme}", font=police(30, True, mono=True),
+           fill=melange(FOND, TEXTE, 1.0 if ramasse > 0.95 else 0.75), anchor="mm")
 
     if 0.3 < ramasse < 1.0:
         a = ramasse
@@ -308,16 +409,16 @@ def _ramassage(d, p, t, etage, titre, etape, chapitre, lignes, indice, montre_av
         arrivee = (sac_cx - 40, sac_cy - 20)
         x = depart[0] + (arrivee[0] - depart[0]) * _ease(a)
         y = depart[1] + (arrivee[1] - depart[1]) * _ease(a) - math.sin(a * math.pi) * 90
-        jeton(d, x, y, f"T[{etage}]", couleur=AMBRE, echelle=0.9)
+        jeton(d, x, y, str(VALEURS[etage]), couleur=AMBRE, echelle=1.0)
 
     if p > 0.72:
         a = _ease_out(min(1.0, (p - 0.72) / 0.15))
-        d.text((940, 776), "ça marche", font=police(30, True),
+        d.text((940, 776), "ça marche", font=police(28, True),
                fill=melange(FOND, VERT, a), anchor="rm")
-        coche(d, 962, 774, 40, progression=a)
+        coche(d, 962, 772, 38, progression=a)
 
     cahier(d, PANEL_D, lignes, p)
-    bandeau_rappel(d, RAPPEL, t)
+    _etat(d, indice=etage, somme=somme, compteur=etage, t=t)
 
 
 def scene_etage0(d, p, t):
@@ -330,19 +431,19 @@ def scene_etage0(d, p, t):
         Ligne("", a_partir_de=0.72),
         Ligne("→ ça marche !", VERT, 30, gras=True, mono=False, a_partir_de=0.78),
     ]
-    _ramassage(d, p, t, 0, "étage 0", 4, "4 · Étage 0 : S reçoit T[0]", lignes, 0)
+    _ramassage(d, p, t, 0, "étage 0", 5, "5 · Étage 0 : S reçoit la valeur de T[0]", lignes, 0)
 
 
 def scene_compteur(d, p, t):
-    _entete(d, "La boucle Pour — le sac et l'ascenseur", 5,
-            "5 · L'ascenseur avance… et il compte")
+    _entete(d, "La boucle Pour — le sac et l'ascenseur", 6,
+            "6 · L'ascenseur avance… et il compte")
     _panneaux(d, "l'histoire")
     boite = [140, 372, 560, 836]
     etages = 4
     montee = _ease_out(max(0.0, min(1.0, (p - 0.18) / 0.34)))
     position = montee
     etage = 0 if p < 0.5 else 1
-    immeuble(d, boite, etages, etage_actif=etage, remplis=(0,))
+    immeuble(d, boite, etages, etage_actif=etage, remplis=(0,), t=t)
     ascenseur(d, [604, 372, 724, 836], etages, position, etage,
               compteur_actif=1.0 if p > 0.2 else 0.0)
 
@@ -363,7 +464,7 @@ def scene_compteur(d, p, t):
         Ligne("→ un COMPTEUR", BLEU, 30, gras=True, mono=False, a_partir_de=0.88),
     ]
     cahier(d, PANEL_D, lignes, p)
-    bandeau_rappel(d, RAPPEL, t)
+    _etat(d, indice=etage, somme=_somme(1), compteur=0 if p < 0.55 else 1, t=t)
 
 
 def scene_repetition(d, p, t):
@@ -377,18 +478,20 @@ def scene_repetition(d, p, t):
         Ligne("c'est la même chose…", TEXTE_2, 27, mono=False, a_partir_de=0.70),
         Ligne("… qui se répète", ORANGE, 30, gras=True, mono=False, a_partir_de=0.82),
     ]
-    _ramassage(d, p, t, 1, "étage 1", 6, "6 · Étage 1 : je répète", lignes, 1, montre_avant=True)
+    _ramassage(d, p, t, 1, "étage 1", 7, "7 · Étage 1 : je répète", lignes, 1, montre_avant=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════
 #  7 · Ce « quelque chose », c'est le compteur
 # ══════════════════════════════════════════════════════════════════════════
 def scene_quelquechose(d, p, t):
-    _entete(d, "La boucle Pour — le sac et l'ascenseur", 7,
-            "7 · Le « quelque chose » qui change, c'est le compteur")
+    _entete(d, "La boucle Pour — le sac et l'ascenseur", 8,
+            "8 · Le « quelque chose » qui change, c'est le compteur")
     _panneaux(d, "l'histoire")
-    sac(d, 360, 560, contenu=("T[0]", "T[1]"), nom="S", echelle=0.9,
+    sac(d, 356, 556, contenu=(str(VALEURS[0]), str(VALEURS[1])), nom="S", echelle=0.88,
         halo=0.4 + 0.25 * G._pulse(t, 2.6))
+    d.text((356, 700), f"S = {_somme(2)}", font=police(28, True, mono=True),
+           fill=VERT, anchor="mm")
     valeur = 0 if p < 0.52 else 1
     compteur(d, 830, 520, valeur, actif=1.0)
     if p > 0.3:
@@ -414,15 +517,15 @@ def scene_quelquechose(d, p, t):
         Ligne("S = S + T[compteur]", AMBRE, 36, gras=True, a_partir_de=0.80, souligne=True),
     ]
     cahier(d, PANEL_D, lignes, p)
-    bandeau_rappel(d, RAPPEL, t)
+    _etat(d, indice=valeur, somme=_somme(2), compteur=valeur, t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
 #  8 · Le bloc
 # ══════════════════════════════════════════════════════════════════════════
 def scene_bloc(d, p, t):
-    _entete(d, "La boucle Pour — le sac et l'ascenseur", 8,
-            "8 · J'écris le bloc à répéter")
+    _entete(d, "La boucle Pour — le sac et l'ascenseur", 9,
+            "9 · J'écris le bloc à répéter")
     _panneaux(d, "l'histoire")
     # la tour des étages, qui défile : le bloc reçoit les jetons un à un
     boite = [130, 352, 520, 830]
@@ -430,13 +533,14 @@ def scene_bloc(d, p, t):
     cycle = (p * 3.2) % 1.0
     etage = min(etages - 1, int(p * 3.2))
     immeuble(d, boite, etages, etage_actif=etage, ouvert=0.9,
-             remplis=tuple(range(0, etage + 1)))
+             remplis=tuple(range(0, etage + 1)), t=t)
     ascenseur(d, [564, 352, 684, 830], etages, float(etage), etage, compteur_actif=1.0)
-    recus = tuple(f"T[{k}]" for k in range(0, etage + 1))
-    sac(d, 880, 580, contenu=recus, nom="S", echelle=0.82,
+    recus = tuple(str(VALEURS[k]) for k in range(0, etage + 1))
+    sac(d, 880, 556, contenu=recus, nom="S", echelle=0.82,
         halo=0.5 + 0.3 * G._pulse(t, 1.4), secousse=0.35 * (1 - cycle))
-
-    d.text((884, 760), "il reçoit tous les étages", font=police(23), fill=TEXTE_2, anchor="mm")
+    d.text((880, 690), f"S = {_somme(etage + 1)}", font=police(28, True, mono=True),
+           fill=VERT, anchor="mm")
+    d.text((880, 736), "il reçoit tous les étages", font=police(22), fill=TEXTE_2, anchor="mm")
 
     lignes = [
         Ligne("{", TEXTE_2, 38, a_partir_de=0.06),
@@ -448,15 +552,15 @@ def scene_bloc(d, p, t):
         Ligne("et si ça s'arrête trop tôt ?", TEXTE_3, 25, mono=False, a_partir_de=0.78),
     ]
     cahier(d, PANEL_D, lignes, p)
-    bandeau_rappel(d, RAPPEL, t)
+    _etat(d, indice=etage, somme=_somme(etage + 1), compteur=etage, t=t)
 
 
 # ══════════════════════════════════════════════════════════════════════════
 #  9 · La boucle Pour, complète
 # ══════════════════════════════════════════════════════════════════════════
 def scene_boucle(d, p, t):
-    _entete(d, "La boucle Pour — le sac et l'ascenseur", 9,
-            "9 · La boucle Pour : la structure complète")
+    _entete(d, "La boucle Pour — le sac et l'ascenseur", 10,
+            "10 · La boucle Pour : la structure complète")
     panneau(d, PANEL_G, "le résultat", accent=melange(BORDURE, VERT, 0.35))
     cadre_code(d, PANEL_D, "la boucle Pour", accent=VERT)
 
@@ -464,17 +568,26 @@ def scene_boucle(d, p, t):
     boite = [130, 352, 520, 830]
     parcourus = min(4, 1 + int(p * 6))
     immeuble(d, boite, 4, etage_actif=parcourus - 1, ouvert=0.85,
-             remplis=tuple(range(0, parcourus)))
+             remplis=tuple(range(0, parcourus)), t=t)
     ascenseur(d, [564, 352, 684, 830], 4, float(parcourus - 1), parcourus - 1, compteur_actif=1.0)
-    recus = tuple(f"T[{k}]" for k in range(0, parcourus))
-    sac(d, 880, 580, contenu=recus, nom="S", echelle=0.82,
+    recus = tuple(str(VALEURS[k]) for k in range(0, parcourus))
+    sac(d, 880, 560, contenu=recus, nom="S", echelle=0.82,
         halo=0.5 + 0.3 * G._pulse(t, 1.9))
 
-    if p > 0.62:
-        a = _ease_out(min(1.0, (p - 0.62) / 0.14))
-        d.text((884, 700), "tous les étages sont passés", font=police(24), fill=melange(FOND, TEXTE_2, a), anchor="mm")
-        coche(d, 806, 762, 44, progression=a)
-        d.text((842, 762), "S contient tout", font=police(26, True), fill=melange(FOND, VERT, a), anchor="lm")
+    # la somme finale, mise en avant
+    somme = _somme(parcourus)
+    fini = parcourus >= 4
+    boite_arrondie(d, [746, 660, 1014, 726], rayon=18,
+                   fond=melange(FOND_PANNEAU_2, VERT if fini else ORANGE, 0.24),
+                   bord=melange(BORDURE, VERT if fini else ORANGE, 0.85), largeur_bord=3)
+    d.text((880, 693), f"S = {somme}", font=police(34, True, mono=True), fill=TEXTE, anchor="mm")
+
+    if fini:
+        a = _ease_out(min(1.0, (p - 0.60) / 0.14))
+        d.text((880, 754), "la somme est complète", font=police(22, True),
+               fill=melange(FOND, VERT, a), anchor="mm")
+        d.text((880, 784), "4 + 7 + 2 + 9 = 22", font=police(20),
+               fill=melange(FOND, TEXTE_2, a), anchor="mm")
 
     lignes = [
         Ligne("Pour compteur de 0 à n-1 faire", TEXTE, 30, a_partir_de=0.06),
@@ -496,6 +609,7 @@ def scene_boucle(d, p, t):
 
 
 SCENES = {
+    "intro": scene_intro,
     "sac": scene_sac,
     "nom": scene_nom,
     "immeuble": scene_immeuble,

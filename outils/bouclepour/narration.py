@@ -4,7 +4,8 @@ Chaque section correspond à un fichier audio de `voix/` produit par l'outil de
 synthèse. La vidéo est calée sur la durée réelle de ces fichiers : c'est la voix
 qui mène, l'image suit (`calage.json`).
 
-Le récit suit exactement les onze étapes dictées par l'auteur :
+La capsule commence par le but (calculer la somme des éléments d'un immeuble,
+c'est-à-dire d'un tableau), puis suit exactement les onze étapes dictées :
 
  1. j'ai besoin de ramasser, je prends un sac ;
  2. le contenu du sac est changeable → une variable ;
@@ -21,10 +22,25 @@ Le récit suit exactement les onze étapes dictées par l'auteur :
 from __future__ import annotations
 
 # L'ordre de lecture et le découpage des sous-titres.
-ORDRE = ["sac", "nom", "immeuble", "etage0", "compteur", "repetition",
+ORDRE = ["intro", "sac", "nom", "immeuble", "etage0", "compteur", "repetition",
          "quelquechose", "bloc", "boucle"]
 
 SECTIONS = {
+    "intro": {
+        "titre": "Le but : la somme des étages",
+        "segments": [
+            ("intro", [
+                "Voilà mon problème.",
+                "Cet immeuble a quatre étages, et sur chaque étage il y a un nombre : quatre, sept, deux, neuf.",
+                "Tous ces nombres, rangés ensemble, ça s'appelle un tableau."
+                " Et dans mon carnet, ce tableau s'appelle T.",
+                "Ce que je dois calculer, c'est la somme de tous ces nombres."
+                " Cette somme, je vais la mettre dans S.",
+                "S égal T crochet zéro, plus T crochet un, plus T crochet deux, plus T crochet trois.",
+                "Alors, comment je vais m'y prendre ?",
+            ]),
+        ],
+    },
     "sac": {
         "titre": "Un sac, c'est une variable",
         "segments": [
@@ -143,6 +159,8 @@ SECTIONS = {
                 "Il me faut une structure répétitive, itérative, complète.",
                 "C'est-à-dire : je complète à la fin.",
                 "Et bien, je l'ai trouvée : c'est la boucle Pour, que je vais engendrer au bloc.",
+                "Et voilà : le sac S contient vingt-deux.",
+                "Quatre, plus sept, plus deux, plus neuf : c'est bien la somme des quatre étages.",
                 "OUI, c'est ça ! Et voilà le résultat.",
             ]),
         ],

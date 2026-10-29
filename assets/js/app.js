@@ -260,7 +260,7 @@
       badgeClasse: "badge-js",
       couleur: "#f7df1e",
       titre: "La boucle Pour — le sac et l'ascenseur",
-      dureeTexte: "3:23",
+      dureeTexte: "4:06",
       srcPrincipal: "assets/videos/BouclePour.mp4",
       srcSecours: "assets/videos/BouclePour.mp4",
       sousTitres: "assets/subtitles/BouclePour-fr.vtt",

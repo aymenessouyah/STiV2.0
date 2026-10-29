@@ -33,6 +33,10 @@ ETAGE_VIDE = (44, 62, 92)
 CABINE = (74, 130, 214)
 CODE_FOND = (11, 17, 30)
 
+# ── Les valeurs de l'immeuble : T = [4, 7, 2, 9], la somme vaut 22 ────────
+VALEURS = (4, 7, 2, 9)
+SOMME_TOTALE = sum(VALEURS)
+
 
 def _ease(x: float) -> float:
     x = max(0.0, min(1.0, x))
@@ -69,16 +73,23 @@ def entete(d: ImageDraw.ImageDraw, titre: str, etape: int, total: int, chapitre:
     d.text((MARGE, 78), titre, font=police(50, True), fill=TEXTE)
     if chapitre:
         d.text((MARGE, 136), chapitre, font=police(23), fill=TEXTE_2)
-    # pastille d'étape
+    # la frise des étapes : un point par étape, le courant brille
     x1 = LARGEUR - MARGE
     d.text((x1, 58), f"ÉTAPE {etape} / {total}", font=police(22, True), fill=TEXTE_2, anchor="ra")
-    pas, larg, y = 16, 34, 96
+    pas, larg, y = 14, 30, 96
     depart = x1 - (total * (larg + pas) - pas)
     for i in range(total):
         x = depart + i * (larg + pas)
-        actif = i < etape
+        fait = i < etape - 1
         courant = i == etape - 1
-        couleur = ORANGE if courant else (BORDURE if actif else (26, 38, 58))
+        if courant:
+            d.rounded_rectangle([x - 3, y - 3, x + larg + 3, y + 11], radius=7,
+                                fill=melange(FOND, ORANGE, 0.22))
+            couleur = ORANGE
+        elif fait:
+            couleur = melange(BORDURE, VERT, 0.55)
+        else:
+            couleur = (26, 38, 58)
         d.rounded_rectangle([x, y, x + larg, y + 8], radius=4, fill=couleur)
 
 
@@ -172,35 +183,111 @@ def _porte(d: ImageDraw.ImageDraw, box, ouverture: float):
                 fill=(58, 84, 124), outline=(96, 124, 166), width=2)
 
 
+def _carte_valeur(d: ImageDraw.ImageDraw, cx: float, cy: float, k: int, valeur: int,
+                  pris: bool = False, actif: bool = False):
+    """La valeur d'un étage : une carte lisible, avec son étiquette T[k]."""
+    larg, haut = 88, 80
+    bord = melange(BORDURE, VERT, 0.55) if pris else (AMBRE if actif else melange(BORDURE, AMBRE, 0.5))
+    fond = (26, 36, 50) if pris else melange((26, 36, 54), AMBRE, 0.14)
+    boite_arrondie(d, [cx - larg / 2, cy - haut / 2, cx + larg / 2, cy + haut / 2],
+                   rayon=15, fond=fond, bord=bord, largeur_bord=3 if actif else 2)
+    d.text((cx, cy + 6), str(valeur), font=police(38, True, mono=True),
+           fill=melange(TEXTE_3, FOND, 0.35) if pris else TEXTE, anchor="mm")
+    jeton(d, cx, cy - haut / 2 - 1, f"T[{k}]",
+          couleur=TEXTE_3 if pris else AMBRE, echelle=0.6)
+    if pris:
+        coche(d, cx + larg / 2 - 6, cy + haut / 2 - 4, 24, progression=1.0)
+
+
 def immeuble(d: ImageDraw.ImageDraw, box, nb_etages: int = 4, etage_actif: int | None = None,
-             ouvert: float = 0.0, remplis=(), ramasse_en_cours: float = 0.0, t: float = 0.0):
-    """L'immeuble : l'étage 0 en bas, l'étage n-1 en haut. Chaque étage a sa porte."""
+             ouvert: float = 0.0, remplis=(), ramasse_en_cours: float = 0.0, t: float = 0.0,
+             valeurs=None, montrer_valeurs: bool = True,
+             fenetres_allumees: int | None = None):
+    """L'immeuble : l'étage 0 en bas, l'étage n-1 en haut, une porte par étage.
+
+    Chaque étage montre sa **valeur** (la case du tableau T) sur une carte, et
+    des fenêtres chaleureuses : on voit tout de suite quel étage on a ramassé.
+    """
     x0, y0, x1, y1 = box
+    valeurs = VALEURS if valeurs is None else valeurs
     hauteur = (y1 - y0) / nb_etages
+    if fenetres_allumees is None:
+        fenetres_allumees = nb_etages
+
+    # le sol, et une petite plante pour faire vivant
+    d.line([(x0 - 26, y1 + 4), (x1 + 26, y1 + 4)], fill=melange(BORDURE, VERT, 0.25), width=4)
+    d.line([(x1 + 16, y1 + 4), (x1 + 16, y1 - 34)], fill=melange(BORDURE, VERT, 0.5), width=3)
+    d.ellipse([x1 + 2, y1 - 52, x1 + 30, y1 - 26], fill=melange((20, 30, 46), VERT, 0.55))
+
     for k in range(nb_etages):
         haut = y1 - (k + 1) * hauteur
         bas = y1 - k * hauteur
         actif = etage_actif == k
-        fond_etage = melange(ETAGE, (52, 74, 110), 0.55 if actif else 0.0)
-        d.rectangle([x0, haut + 3, x1 - 96, bas - 3], fill=fond_etage,
-                    outline=BORDURE if not actif else BLEU, width=2 if not actif else 3)
-        d.text((x0 + 18, bas - 16), f"étage {k}", font=police(20, True),
+        pris = k in remplis
+        boite_arrondie(d, [x0, haut + 4, x1 - 96, bas - 4], rayon=18,
+                       fond=melange(ETAGE, (58, 82, 120), 0.5 if actif else 0.0),
+                       bord=BLEU if actif else BORDURE, largeur_bord=3 if actif else 2)
+        d.text((x0 + 20, bas - 16), f"étage {k}", font=police(19, True),
                fill=TEXTE if actif else TEXTE_3, anchor="ls")
-        # contenu de l'étage : il disparaît quand on le ramasse
-        if k not in remplis:
-            cx, cy = x1 - 190, (haut + bas) / 2
-            if actif and ramasse_en_cours > 0:
-                cx -= 150 * _ease(ramasse_en_cours)
-                cy -= 40 * _ease(ramasse_en_cours)
-            jeton(d, cx, cy, f"T[{k}]", couleur=AMBRE, echelle=0.95)
-        # porte (à droite, côté ascenseur)
-        _porte(d, [x1 - 92, haut + 16, x1 - 10, bas - 16],
-               ouvert if actif else 0.0)
+
+        # fenêtres : allumées tant que l'étage n'est pas ramassé
+        for col in range(2):
+            for lig in range(2):
+                fx = x0 + 100 + col * 34
+                fy = haut + 18 + lig * 32
+                allumee = (k < fenetres_allumees) and not pris
+                coul = melange((24, 36, 56), (250, 206, 122), 0.85 if allumee else 0.12)
+                d.rounded_rectangle([fx, fy, fx + 25, fy + 21], radius=5, fill=coul,
+                                    outline=melange(BORDURE, TEXTE_3, 0.15), width=1)
+
+        vx = x1 - 200
+        vy = (haut + bas) / 2
+        if actif and ramasse_en_cours > 0:
+            vx -= 150 * _ease(ramasse_en_cours)
+            vy -= 40 * _ease(ramasse_en_cours)
+        if montrer_valeurs:
+            _carte_valeur(d, vx, vy, k, valeurs[k] if k < len(valeurs) else 0,
+                          pris=pris, actif=actif)
+        elif k not in remplis:
+            jeton(d, vx, vy, f"T[{k}]", couleur=AMBRE, echelle=0.95)
+        _porte(d, [x1 - 92, haut + 16, x1 - 10, bas - 16], ouvert if actif else 0.0)
+
+
+def personnage(d: ImageDraw.ImageDraw, cx: float, cy: float, echelle: float = 1.0,
+               sac_a_la_main: bool = True):
+    """Le passager de l'ascenseur : c'est moi, avec mon sac."""
+    s = echelle
+    # jambes
+    d.line([(cx - 6 * s, cy + 20 * s), (cx - 8 * s, cy + 36 * s)],
+           fill=(58, 76, 108), width=int(7 * s))
+    d.line([(cx + 6 * s, cy + 20 * s), (cx + 8 * s, cy + 36 * s)],
+           fill=(58, 76, 108), width=int(7 * s))
+    # corps
+    boite_arrondie(d, [cx - 15 * s, cy - 6 * s, cx + 15 * s, cy + 24 * s], rayon=9 * s,
+                   fond=(96, 146, 230), bord=(150, 188, 246), largeur_bord=2)
+    # tête
+    d.ellipse([cx - 14 * s, cy - 36 * s, cx + 14 * s, cy - 8 * s],
+              fill=(246, 210, 178), outline=(196, 150, 116), width=2)
+    # cheveux
+    d.chord([cx - 15 * s, cy - 38 * s, cx + 15 * s, cy - 12 * s], start=180, end=360,
+            fill=(64, 48, 36))
+    # yeux et sourire
+    d.ellipse([cx - 7 * s, cy - 26 * s, cx - 2 * s, cy - 21 * s], fill=(44, 38, 34))
+    d.ellipse([cx + 2 * s, cy - 26 * s, cx + 7 * s, cy - 21 * s], fill=(44, 38, 34))
+    d.arc([cx - 7 * s, cy - 22 * s, cx + 7 * s, cy - 13 * s], start=20, end=160,
+          fill=(160, 96, 76), width=2)
+    # le sac à la main
+    if sac_a_la_main:
+        d.arc([cx + 15 * s, cy + 4 * s, cx + 31 * s, cy + 16 * s], start=180, end=360,
+              fill=SAC_CLAIR, width=int(3 * s))
+        boite_arrondie(d, [cx + 16 * s, cy + 8 * s, cx + 34 * s, cy + 28 * s], rayon=5 * s,
+                       fond=melange(FOND_PANNEAU_2, SAC, 0.3), bord=SAC, largeur_bord=2)
 
 
 def ascenseur(d: ImageDraw.ImageDraw, box, nb_etages: int, position: float,
-              etage_affiche: int, compteur_actif: float = 0.0, ecran: bool = True):
-    """La cage d'ascenseur : un rail, une cabine, et l'écran qui compte les étages."""
+              etage_affiche: int, compteur_actif: float = 0.0, ecran: bool = True,
+              passager: bool = True, echelle_passager: float = 0.82):
+    """La cage d'ascenseur : un rail, la cabine avec son passager, l'écran qui compte."""
     x0, y0, x1, y1 = box
     hauteur = (y1 - y0) / nb_etages
     d.rounded_rectangle([x0, y0, x1, y1], radius=16, fill=(16, 24, 39), outline=BORDURE, width=2)
@@ -209,11 +296,16 @@ def ascenseur(d: ImageDraw.ImageDraw, box, nb_etages: int, position: float,
 
     # cabine : position 0 = étage 0 (en bas)
     haut_cabine = y1 - (position + 1) * hauteur
-    marge = 12
-    boite_arrondie(d, [x0 + 20, haut_cabine + marge, x1 - 20, haut_cabine + hauteur - marge],
-                   rayon=12, fond=melange(FOND_PANNEAU_2, CABINE, 0.35), bord=CABINE, largeur_bord=3)
-    d.text(((x0 + x1) / 2, haut_cabine + hauteur / 2), "▲\n▼", font=police(20, True),
-           fill=melange(CABINE, TEXTE, 0.5), anchor="mm")
+    marge = 10
+    cabine = [x0 + 18, haut_cabine + marge, x1 - 18, haut_cabine + hauteur - marge]
+    boite_arrondie(d, cabine, rayon=14, fond=melange(FOND_PANNEAU_2, CABINE, 0.3),
+                   bord=CABINE, largeur_bord=3)
+    cy = (cabine[1] + cabine[3]) / 2
+    if passager and (cabine[3] - cabine[1]) > 80:
+        personnage(d, (cabine[0] + cabine[2]) / 2, cy + 6, echelle=echelle_passager)
+    else:
+        d.text(((x0 + x1) / 2, cy), "▲\n▼", font=police(20, True),
+               fill=melange(CABINE, TEXTE, 0.5), anchor="mm")
 
     # écran du compteur, en haut de la cage
     if not ecran:
@@ -315,6 +407,80 @@ def bandeau_rappel(d: ImageDraw.ImageDraw, items, t: float = 0.0):
         d.text((cx + 6, (y0 + y1) / 2), detail, font=police(21), fill=TEXTE_2, anchor="lm")
         if i:
             d.line([(x0 + pas * i, y0 + 18), (x0 + pas * i, y1 - 18)], fill=(28, 40, 60), width=2)
+
+
+def _puce_tableau(d: ImageDraw.ImageDraw, cx: float, cy: float, valeur: int, *,
+                   actif: bool, pris: bool, t: float = 0.0):
+    """Une case du tableau T, dans le bandeau du bas."""
+    larg, haut = 86, 52
+    if actif:
+        halo = 3 + 2 * _pulse(t, 1.2)
+        boite_arrondie(d, [cx - larg / 2 - halo, cy - haut / 2 - halo,
+                           cx + larg / 2 + halo, cy + haut / 2 + halo],
+                       rayon=16, fond=melange(FOND, AMBRE, 0.22), bord=melange(FOND, AMBRE, 0.6),
+                       largeur_bord=2)
+    fond = melange((24, 34, 52), AMBRE, 0.16) if actif else (24, 34, 52)
+    bord = AMBRE if actif else (melange(BORDURE, VERT, 0.5) if pris else BORDURE)
+    boite_arrondie(d, [cx - larg / 2, cy - haut / 2, cx + larg / 2, cy + haut / 2],
+                   rayon=12, fond=fond, bord=bord, largeur_bord=2)
+    d.text((cx, cy + 1), str(valeur), font=police(26, True, mono=True),
+           fill=TEXTE if actif or not pris else melange(TEXTE_3, FOND, 0.3), anchor="mm")
+    if pris:
+        coche(d, cx + larg / 2 - 4, cy + haut / 2 - 2, 18, progression=1.0)
+
+
+def bandeau_etat(d: ImageDraw.ImageDraw, indice: int | None = None, somme: int = 0,
+                 compteur: int | None = None, valeurs=VALEURS, t: float = 0.0,
+                 somme_connue: bool = True):
+    """Le fil rouge du bas : le tableau T, le compteur, et la somme en cours."""
+    x0, y0, x1, y1 = BANDE
+    boite_arrondie(d, [x0, y0, x1, y1], rayon=20, fond=(15, 22, 37), bord=BORDURE, largeur_bord=2)
+
+    # ── le tableau T
+    d.text((x0 + 26, y0 + 16), "le tableau T  (les étages)", font=police(17, True), fill=TEXTE_3)
+    cx = x0 + 62
+    for k, v in enumerate(valeurs):
+        _puce_tableau(d, cx, y0 + 68, v,
+                      actif=(indice == k),
+                      pris=(indice is not None and k < indice), t=t)
+        cx += 98
+    d.line([(x0 + 470, y0 + 20), (x0 + 470, y1 - 20)], fill=BORDURE, width=2)
+
+    # ── le compteur
+    cx_compteur = x0 + 606
+    d.text((cx_compteur, y0 + 26), "compteur", font=police(17, True), fill=TEXTE_3, anchor="mm")
+    valeur_c = "—" if compteur is None else str(compteur)
+    boite_arrondie(d, [cx_compteur - 44, y0 + 44, cx_compteur + 44, y1 - 16], rayon=12,
+                   fond=(10, 16, 28), bord=melange(BORDURE, BLEU, 0.55), largeur_bord=2)
+    d.text((cx_compteur, y0 + 70), valeur_c, font=police(30, True, mono=True),
+           fill=BLEU if compteur is not None else TEXTE_3, anchor="mm")
+    d.text((cx_compteur + 60, y0 + 70), "étage", font=police(17, True), fill=TEXTE_3, anchor="lm")
+    d.line([(x0 + 724, y0 + 20), (x0 + 724, y1 - 20)], fill=BORDURE, width=2)
+
+    # ── la somme, le but de toute la capsule
+    d.text((x0 + 838, y0 + 26), "S  (la somme des étages)", font=police(17, True),
+           fill=TEXTE_3, anchor="lm")
+    d.text((x0 + 838, y0 + 70), "=", font=police(30, True), fill=TEXTE_3, anchor="lm")
+    valeur_s = str(somme) if somme_connue else "…"
+    boite_arrondie(d, [x0 + 876, y0 + 46, x0 + 1000, y1 - 14], rayon=14,
+                   fond=melange((16, 24, 38), VERT if somme_connue else BLEU, 0.20),
+                   bord=melange(BORDURE, VERT if somme_connue else BLEU, 0.65), largeur_bord=3)
+    d.text((x0 + 938, y0 + 70), valeur_s, font=police(34, True, mono=True),
+           fill=VERT if somme_connue else TEXTE_2, anchor="mm")
+
+    # ── la promesse de la capsule, à droite
+    if somme_connue and somme == SOMME_TOTALE:
+        texte_fin = "la somme est complète : c'est gagné !"
+        coul = VERT
+    elif somme_connue:
+        texte_fin = f"il reste {SOMME_TOTALE - somme} à ramasser"
+        coul = TEXTE_2
+    else:
+        texte_fin = f"à trouver : la somme des {len(valeurs)} étages"
+        coul = TEXTE_2
+    d.text((x1 - 34, y0 + 30), texte_fin, font=police(20, True), fill=coul, anchor="ra")
+    d.text((x1 - 34, y0 + 66), "S = T[0] + T[1] + T[2] + T[3]", font=police(19, True, mono=True),
+           fill=melange(TEXTE_3, AMBRE, 0.35), anchor="ra")
 
 
 def bulle(d: ImageDraw.ImageDraw, box, phrases, p: float, accent=AMBRE, taille=26,
