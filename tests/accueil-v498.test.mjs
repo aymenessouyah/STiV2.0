@@ -164,11 +164,11 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 });
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
-  assert.match(sw, /var CACHE = "sti-atelier-v376"/);
-  assert.match(sw, /var UPDATE_ID = "v515-stat-videos-20261029"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "stat-videos-v515"/);
-  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "initiales-soulignees-v514"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "stat-videos-v515"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v377"/);
+  assert.match(sw, /var UPDATE_ID = "v516-outils-animes-20261029"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "outils-animes-v516"/);
+  assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "outils-animes-v516"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "outils-animes-v516"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-lycee-v503"/);
   assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-lycee-v503"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
@@ -186,5 +186,5 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v515-sti-atelier-v376');
+  assert.equal(manifeste.version, 'v516-sti-atelier-v377');
 });
