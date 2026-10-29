@@ -226,9 +226,9 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
 
   /* Le bandeau du site est bien invalidé par le service worker. */
   const sw = lire('sw.js');
-  assert.match(sw, /var CACHE = "sti-atelier-v377"/);
-  assert.match(sw, /var UPDATE_ID = "v516-outils-animes-20261029"/);
-  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "accueil-lycee-v503"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v378"/);
+  assert.match(sw, /var UPDATE_ID = "v517-ruban-vert-20261029"/);
+  assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "outils-animes-v516"/);
   assert.match(sw, /url: "\.\/admin\.html", revision: "tp-transitions-v512"/);
   assert.match(sw, /url: "\.\/assets\/js\/admin\.js", revision: "news-niveaux-v497"/);
@@ -239,4 +239,30 @@ test('v496 : le tableau de bord admin choisit la classe et saisit texte 1, texte
   const entree = manifeste.files.find(f => f.path === 'assets/js/news-perso.js');
   assert.ok(entree, 'le moteur du bandeau est dans le cache complet');
   assert.equal(entree.bytes, Buffer.byteLength(lire('assets/js/news-perso.js')));
+});
+
+test('v517 : la 4e SI passe bien au vert, quel que soit le libellé de la classe', async () => {
+  /* Les libellés réels de la base sont « 4eme SI1 », « 4eme SI2 »… L'ancienne
+     lecture ne reconnaissait que « 4SI » / « 4e SI » : le ruban de « Bonjour »
+     restait alors orangé (« autre ») au lieu du vert de la 4e SI. */
+  for (const classe of ['4eme SI1', '4eme SI2', '4e SI', '4ème SI', '4ème année SI1', '4SI', 'Quatrième SI']) {
+    const page = await executer({ classe });
+    assert.equal(page.ctx.STINewsPerso.niveauRuban(), '4si', classe);
+  }
+  for (const classe of ['3eme SI1', '3eme SI2', '3e SI', '3ème année SI2', '3SI']) {
+    const page = await executer({ classe });
+    assert.equal(page.ctx.STINewsPerso.niveauRuban(), '3si', classe);
+  }
+  /* Le privilège 4e SI posé par acces.js sert de repli quand le libellé est illisible. */
+  const sansLibelle = await executer({ session: { classe: '' }, classesHtml: ['sti-4si-autorise'] });
+  assert.equal(sansLibelle.ctx.STINewsPerso.niveauRuban(), '4si');
+  /* Les profs, l'admin et les comptes GOLD restent en or, jamais en vert. */
+  for (const classe of ['Prof', 'Admin', 'GOLD', 'elevelabo3']) {
+    const page = await executer({ classe, classesHtml: ['sti-4si-autorise'] });
+    assert.equal(page.ctx.STINewsPerso.niveauRuban(), 'admin', classe);
+  }
+  /* Le vert du ruban est celui de la 4e SI dans le thème. */
+  const css = lire('assets/css/theme.css');
+  const bloc = css.slice(css.indexOf('.welcome-return__title[data-ruban="4si"]'), css.indexOf('/* Admin, professeurs, labo'));
+  assert.match(bloc, /--ruban-lettre: #6ee7b7;/, 'tiret vert pour la 4e SI');
 });

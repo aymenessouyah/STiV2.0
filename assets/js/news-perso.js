@@ -44,10 +44,20 @@
     var o = sessionLocale();
     return String(o.classe || o.classeLabel || "");
   }
+  /* v517 : les libellés réels de la base sont « 4eme SI1 », « 3eme SI2 »,
+     « 4e SI », « Quatrième SI »… L'ancienne lecture n'acceptait que « 4SI » ou
+     « 4e SI » : un élève de 4e SI recevait donc la couleur « autre » (orangé)
+     au lieu du vert. On débarasse le libellé des accents, des espaces et du mot
+     « année », puis on accepte 3/4 + E/EME/IEME + SI + numéro de groupe. */
   function niveauDepuisClasse(classe) {
-    var c = String(classe || "").toUpperCase().replace(/[\s._-]+/g, "");
-    if (/^4(E|ÈME)?SI/.test(c) || c.indexOf("4SI") === 0) return "4si";
-    if (/^3(E|ÈME)?SI/.test(c) || c.indexOf("3SI") === 0) return "3si";
+    var c = String(classe || "");
+    try { c = c.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
+    c = c.toUpperCase().replace(/[._-]+/g, " ").replace(/\s+/g, " ").trim();
+    /* « 4e année SI » : le mot « année » ne doit pas manger le S de « SI ». */
+    c = c.replace(/\b(AN|ANS|ANNEE|ANNEES)\b/g, " ").replace(/\s+/g, "");
+    var m = /^(3|4)(?:I?EME|E)?(?:SI)?(\d*)$/.exec(c);
+    if (m) return m[1] === "4" ? "4si" : "3si";
+    if (/^(QUATRIEME|TROISIEME)/.test(c)) return c.indexOf("QUATRIEME") === 0 ? "4si" : "3si";
     return "";
   }
   /* Prof, admin, labo ou compte GOLD : aucun niveau élève à afficher. */
@@ -77,7 +87,14 @@
   function niveauRuban() {
     if (estCompteEnseignant()) return "admin";
     var n = niveauDepuisClasse(classeCourante());
-    return n || "autre";
+    if (n) return n;
+    /* v517 : libellé de classe illisible — le privilège 4e SI posé par acces.js
+       reste le bon indice pour un élève, comme pour les news de la classe.
+       Les profs, l'admin et le labo sont déjà sortis juste au-dessus. */
+    try {
+      if (document.documentElement && document.documentElement.classList.contains("sti-4si-autorise")) return "4si";
+    } catch (e) {}
+    return "autre";
   }
   function libelleNiveau(n) {
     if (n === "admin") return "Enseignant";
