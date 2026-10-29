@@ -5051,7 +5051,7 @@ test('v471 (structure) : 124/124 chemins Git exacts dans roue-revision.js (zéro
   const mMap = roueRevJs.match(/var CHEMINS_REELS = (\{[\s\S]*?\});/);
   assert.ok(mMap, 'CHEMINS_REELS doit être défini dans roue-revision.js');
   const cheminsReels = JSON.parse(mMap[1]);
-  assert.equal(Object.keys(cheminsReels).length, 48, 'Les 48 pages à casse mixte doivent être référencées');
+  assert.equal(Object.keys(cheminsReels).length, 52, 'Les 52 pages à casse mixte doivent être référencées (48 + les 4 du TP Train)');
   for (const p of couvPages) {
     const resolved = cheminsReels[p] || p;
     assert.ok(gitTracked.has(resolved), `Chemin de révision introuvable avec casse exacte Git : ${p} -> ${resolved}`);

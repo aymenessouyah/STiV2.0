@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html data-sti-heritage="interface" data-sti-tp-train lang="fr">
+<head>
+<script id="sti-early-boot">
+/* v425 (consigne auteur) : « quand on appelle la page index depuis une autre page, la barre du
+   bas disparaît quelques millisecondes ; idem exercices qui s'affiche en clair avant de se
+   rattraper ». Cause : la barre et le thème étaient peints par les scripts de FIN de page.
+   Ces quelques lignes, placées tout en tête (avant la moindre CSS), peignent dès le premier
+   instant 1°) le thème mémorisé (html.dark + [data-theme], les deux écritures du site) et
+   2°) le gabarit de la barre mémorisé à la visite précédente (mêmes ids que le gabarit v421 :
+   si config.js le trouve déjà, il passe). Non cliquable, effacé par mobile-nav.js à
+   l'installation de la vraie barre. Zéro régression si rien n'est mémorisé ou si une CSP stricte
+   bloque l'inline : on reste exactement au comportement v424. */
+(function () {
+  try {
+    var r = document.documentElement;
+    var t = "";
+    try { t = localStorage.getItem("sti-theme") || localStorage.getItem("theme") || ""; } catch (eT) {}
+    if (t !== "dark" && t !== "light") {
+      try { t = localStorage.getItem("sti-roue-theme") === "sombre" ? "dark" : ""; } catch (eT2) {}
+    }
+    var dark = t === "dark";
+    if (t === "dark") { r.setAttribute("data-theme", "dark"); r.classList.add("dark", "dark-mode"); }
+    else if (t === "light") { r.removeAttribute("data-theme"); r.classList.remove("dark", "dark-mode"); }
+    if (!/^https?:$/.test(location.protocol)) return;
+    if (!window.matchMedia || !window.matchMedia("(max-width: 700px)").matches) return;
+    if (window.__STI_BNAV || document.getElementById("sti-bnav")) return;
+    var pn = location.pathname;
+    if (pn.indexOf("/tests/") !== -1) return;
+    if (/(^|\/)admin(\.html)?$/i.test(pn.replace(/\/$/, ""))) return;
+    var d = JSON.parse(localStorage.getItem("sti-bnav-skel") || "null");
+    if (!d || !d.h || typeof d.f !== "string" || !/^#[0-9a-f]{3,8}$|^rgba?\([\d.,\s]+\)$/i.test(d.f)) return;
+    if (Date.now() - (d.t || 0) > 45 * 24 * 3600 * 1000) return;
+    var b = /^#[0-9a-f]{3,8}$|^rgba?\([\d.,\s]+\)$/i.test(d.b || "") ? d.b : "#e7d9bd";
+    var brd = /^[\d.]+px$/.test(d.brd || "") ? d.brd : "1.5px";
+    /* le gabarit a été mesiné dans un thème, la page s'ouvre dans l'autre : couleurs de repli
+       littérales du module (jamais le fond du thème inverse). */
+    if ((d.th === "dark") !== dark) {
+      b = dark ? "#26314c" : "#e7d9bd";
+      d.f = dark ? "#121a2b" : "#fffcf3";
+    }
+    var st = document.createElement("style");
+    st.id = "sti-bnav-skel-css";
+    st.textContent = "@media (max-width:700px){html:not(.sti-bnav-on) #sti-bnav-skel{display:block;position:fixed;left:0;right:0;bottom:0;height:" + d.h + "px;background:" + d.f + ";border-top:" + brd + " solid " + b + ";z-index:2147483000;pointer-events:none}}";
+    var sk = document.createElement("div");
+    sk.id = "sti-bnav-skel";
+    sk.setAttribute("aria-hidden", "true");
+    r.appendChild(st);
+    r.appendChild(sk);
+    /* filet de sécurité : si la vraie barre ne vient jamais (module absent, réseau en panne),
+       le gabarit ne doit pas traîner une éternité. */
+    setTimeout(function () {
+      try {
+        if (!document.getElementById("sti-bnav")) {
+          var a = document.getElementById("sti-bnav-skel"); if (a) a.remove();
+          var c = document.getElementById("sti-bnav-skel-css"); if (c) c.remove();
+        }
+      } catch (eS) {}
+    }, 5000);
+  } catch (e) {}
+})();
+</script>
+<meta charset="utf-8" />
+<meta name="description" content="TP Train JavaScript (Série 5) : réserver un billet SNCFT en cinq scènes — ressources élève, énoncé détaillé et corrigé commenté.">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noai, noimageai" />
+<meta name="theme-color" content="#1f4e79" />
+<link rel="icon" href="../../../assets/icons/STI_by_AE.ico" />
+<link rel="manifest" href="../../../manifest.webmanifest" />
+<link rel="stylesheet" href="../../../assets/css/theme-patrimoine.css" />
+<title>🚆 TP Train — Réserver un billet (Série 5) — STI V2.0</title>
+<style>
+  :root { --train-bleu: #1f4e79; --train-orange: #e67e22; --train-fond: #eaf2fb; }
+  body { background: var(--train-fond); color: var(--ink, #16233a); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 18px 16px 60px; line-height: 1.55; }
+  .barre { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; background: #fff; border: 2px solid var(--train-bleu); border-radius: 14px; padding: 12px 16px; box-shadow: 5px 5px 0 rgba(16,23,40,.14); }
+  .barre-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .barre-logo { width: 44px; height: 44px; border-radius: 10px; }
+  .barre h1 { font-size: 1.16rem; margin: 0; color: var(--train-bleu); }
+  .barre .nb { font-size: .82rem; color: #4a5b73; font-weight: 600; }
+  .barre-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 999px; border: 2px solid var(--train-bleu); background: #fff; color: var(--train-bleu); font: 800 13px/1 inherit; text-decoration: none; cursor: pointer; }
+  .btn:hover { background: var(--train-bleu); color: #fff; }
+  main { max-width: 1060px; margin: 18px auto 0; }
+  .intro { background: #fff; border: 2px solid #cfdcec; border-left: 8px solid var(--train-orange); border-radius: 14px; padding: 14px 18px; box-shadow: 4px 4px 0 rgba(16,23,40,.10); }
+  .intro h2 { margin: 0 0 6px; font-size: 1.02rem; color: var(--train-bleu); }
+  .intro p { margin: 0; font-size: .93rem; }
+  .scenes { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+  .scenes li { background: var(--train-fond); border: 1.5px solid #b9cde4; border-radius: 999px; padding: 5px 11px; font-size: .8rem; font-weight: 700; color: var(--train-bleu); }
+  .grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 16px; margin-top: 18px; }
+  .carte { display: flex; flex-direction: column; background: #fff; border: 2px solid var(--train-bleu); border-radius: 16px; padding: 16px 18px; box-shadow: 6px 6px 0 rgba(16,23,40,.14); }
+  .carte.ressources { border-color: #177245; }
+  .carte.enonce { border-color: var(--train-bleu); }
+  .carte.corrige { border-color: var(--train-orange); }
+  .carte .etape { font: 800 11px/1 inherit; letter-spacing: .08em; text-transform: uppercase; color: #6b7f99; }
+  .carte h2 { margin: 6px 0 8px; font-size: 1.05rem; color: var(--train-bleu); }
+  .carte p { margin: 0 0 14px; font-size: .9rem; color: #33445c; flex: 1 1 auto; }
+  .carte .ouvrir { align-self: flex-start; background: var(--train-bleu); color: #fff; border-color: var(--train-bleu); }
+  .carte .ouvrir:hover { background: #15395a; }
+  .carte.ressources .ouvrir { background: #177245; border-color: #177245; }
+  .carte.corrige .ouvrir { background: var(--train-orange); border-color: var(--train-orange); }
+  .methode { margin-top: 20px; background: #fff; border: 2px dashed #9fb6d1; border-radius: 14px; padding: 14px 18px; }
+  .methode h2 { margin: 0 0 8px; font-size: .98rem; color: var(--train-bleu); }
+  .methode ol { margin: 0; padding-left: 20px; font-size: .9rem; }
+  .methode li { margin-bottom: 4px; }
+  .pied { text-align: center; margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  @media print { .barre-actions, .pied { display: none !important; } body { background: #fff !important; } .carte { box-shadow: none; break-inside: avoid; } }
+</style>
+</head>
+<body>
+<header class="barre">
+  <div class="barre-id">
+    <img class="barre-logo" src="../../../assets/icons/sti-icon-512.png" alt="Logo officiel STI V2.0" width="44" height="44" />
+    <div>
+      <h1>🚆 TP Train — Réserver un billet de train (SNCFT)</h1>
+      <div class="nb">Série 5 · JavaScript — lycée Raféha · 3<sup>e</sup> &amp; 4<sup>e</sup> SI</div>
+    </div>
+  </div>
+  <div class="barre-actions">
+    <a class="btn" href="../../../cours/javascript.html">📚 Cours JavaScript</a>
+    <a class="btn" href="../series-exercices.html#javascript">≡ Séries d’exercices</a>
+    <a class="btn" href="../../../index.html">← Accueil</a>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <h2>Le projet en une phrase</h2>
+    <p>
+      Sami veut réserver un billet de train : on l’accueille, on lui demande son
+      identité, on compose le voyage (dates, horaires, gare), on calcule le prix,
+      on écarte les robots avec un captcha, puis on envoie la réservation.
+      Cinq scènes, un seul fichier JavaScript.
+    </p>
+    <ul class="scenes">
+      <li>1 · Identité</li>
+      <li>2 · Voyage et dates</li>
+      <li>3 · Prix</li>
+      <li>4 · Captcha</li>
+      <li>5 · Validation finale</li>
+    </ul>
+  </section>
+
+  <div class="grille">
+    <article class="carte ressources">
+      <span class="etape">Partie 1</span>
+      <h2>🧰 Ressources</h2>
+      <p>
+        Le scénario détaillé des cinq scènes, les dialogues de Sami, le squelette
+        de départ et les rappels « Bon à savoir » à garder sous les yeux.
+      </p>
+      <a class="btn ouvrir" href="Ressource_eleve_TrainTN.html">Ouvrir les ressources</a>
+    </article>
+
+    <article class="carte enonce">
+      <span class="etape">Partie 2</span>
+      <h2>📘 Énoncé</h2>
+      <p>
+        Les consignes en cinq parties, les contraintes techniques, les fonctions
+        à écrire et les tests à passer avant de rendre le TP.
+      </p>
+      <a class="btn ouvrir" href="Enonce_TP_TrainTN_JavaScript.html">Ouvrir l’énoncé</a>
+    </article>
+
+    <article class="carte corrige">
+      <span class="etape">Partie 3</span>
+      <h2>✅ Corrigé</h2>
+      <p>
+        Le corrigé commenté fonction par fonction : <code>identite()</code>,
+        <code>voyage()</code>, <code>prix()</code>, <code>genererCaptcha()</code>,
+        <code>verifierCaptcha()</code>…
+      </p>
+      <a class="btn ouvrir" href="TP_Train_JavaScript_cORRECTION.html">Ouvrir le corrigé</a>
+    </article>
+  </div>
+
+  <section class="methode">
+    <h2>Comment travailler ce TP</h2>
+    <ol>
+      <li>Lire les <strong>ressources</strong> : le scénario et le squelette du fichier.</li>
+      <li>Faire l’<strong>énoncé</strong> scène par scène, en testant à chaque étape.</li>
+      <li>Comparer seulement ensuite avec le <strong>corrigé</strong>, fonction par fonction.</li>
+      <li>Reprendre les questions ratées dans le quiz JavaScript et le « Retravailler mes erreurs ».</li>
+    </ol>
+  </section>
+
+  <div class="pied">
+    <a class="btn" href="../../../cours/javascript.html">📚 Retour au cours JavaScript</a>
+    <a class="btn" href="../../../quiz/javascript.html">🎯 Quiz JavaScript</a>
+    <a class="btn" href="../../../index.html#cours">🏠 Accueil</a>
+  </div>
+</main>
+
+<script src="../../../assets/js/config.js?v=479" defer></script>
+<script src="../../../assets/js/supabase-umd.js" defer></script>
+<script src="../../../assets/js/acces.js?v=479" defer></script>
+<script src="../../../assets/js/sync-progressions.js?v=479" defer></script>
+<script src="../../../assets/js/profil.js" defer></script>
+</body>
+</html>

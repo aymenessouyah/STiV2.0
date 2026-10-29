@@ -1,9 +1,9 @@
 {
-  "version": "v522-sti-atelier-v380",
-  "generatedAt": "2026-10-29T07:27:06Z",
+  "version": "v523-sti-atelier-v380",
+  "generatedAt": "2026-10-29T09:27:14Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 718,
-  "totalBytes": 748170006,
+  "totalFiles": 729,
+  "totalBytes": 750902369,
   "files": [
     {
       "path": "404.html",
@@ -627,8 +627,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 115436,
-      "gitSha": "f11da52999c86ca1bd1150c5f792ddf62f2efb4e"
+      "bytes": 116047,
+      "gitSha": "b67cc78a978401524744b8371bb17d3bdd37893e"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -847,8 +847,8 @@
     },
     {
       "path": "assets/js/roue-revision.js",
-      "bytes": 19992,
-      "gitSha": "6e7f5e5c4190ac3a7191f56d8b32f263942403d3"
+      "bytes": 20492,
+      "gitSha": "4e73091f95e4ff819240f1d3e12a091d20917006"
     },
     {
       "path": "assets/js/sante.js",
@@ -1187,8 +1187,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 127128,
-      "gitSha": "a17111925d79540d0467f87f9823babc00ef83a3"
+      "bytes": 127575,
+      "gitSha": "9196d36b0ab889a33abb17a9caf381d612b10324"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -2671,6 +2671,61 @@
       "gitSha": "48ce7ef45cc4c514a5b6d2b8c4284bfbf0250ef5"
     },
     {
+      "path": "exercices/javascript/TP Train/captcha.jpg",
+      "bytes": 36168,
+      "gitSha": "b5fdb1019863bdf520f6579b1faa6b17c7b3dc16"
+    },
+    {
+      "path": "exercices/javascript/TP Train/Enonce_TP_TrainTN_JavaScript.html",
+      "bytes": 712013,
+      "gitSha": "9ff1cd457399668bffc910328d8f13305f11253b"
+    },
+    {
+      "path": "exercices/javascript/TP Train/envoi.jpg",
+      "bytes": 9184,
+      "gitSha": "1f7648249f1b31521e5c8c6d427b88b3f9072d70"
+    },
+    {
+      "path": "exercices/javascript/TP Train/horaires.jpg",
+      "bytes": 90961,
+      "gitSha": "d5fcaff4869508715082c98646ccf03631098360"
+    },
+    {
+      "path": "exercices/javascript/TP Train/image1.jpg",
+      "bytes": 28054,
+      "gitSha": "73b24cee4bc0b8b691e638b71a4d4430514e98ff"
+    },
+    {
+      "path": "exercices/javascript/TP Train/image2.jpg",
+      "bytes": 31122,
+      "gitSha": "8edd3aea5033521b80dfc7a751dbb90240898277"
+    },
+    {
+      "path": "exercices/javascript/TP Train/index.html",
+      "bytes": 11389,
+      "gitSha": "f7ef3e15ee2b945d3cadb54cd95fa1d2a0544c40"
+    },
+    {
+      "path": "exercices/javascript/TP Train/logo.png",
+      "bytes": 12169,
+      "gitSha": "3a6068595156f9a5bb400a5a19da9fe49cda7476"
+    },
+    {
+      "path": "exercices/javascript/TP Train/prix.jpg",
+      "bytes": 32666,
+      "gitSha": "9c765dc11276dc99dc9623cee0950e07e9a284ca"
+    },
+    {
+      "path": "exercices/javascript/TP Train/Ressource_eleve_TrainTN.html",
+      "bytes": 438967,
+      "gitSha": "89d3386e4329d13e9f66d1b60e61776c25ccb091"
+    },
+    {
+      "path": "exercices/javascript/TP Train/TP_Train_JavaScript_cORRECTION.html",
+      "bytes": 1326727,
+      "gitSha": "51d346630de3325fbb51bff3850491f320213b4b"
+    },
+    {
       "path": "exercices/javascript/Tp1-Correction-js.html",
       "bytes": 16743,
       "gitSha": "d52118b00caf4c9ef2708a71f427376542ab1404"
@@ -2842,8 +2897,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 99709,
-      "gitSha": "d283c098093b0174b25fa06588d3fcb59ed9f908"
+      "bytes": 100874,
+      "gitSha": "0927ae68eca04fb5355c6515ffd9b4d64fc12a6b"
     },
     {
       "path": "exercices/sql/atelier_sql_3_fenetres.html",
@@ -3592,8 +3647,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 96897,
-      "gitSha": "d9c4bd8792580fabbfd3e95deceea33cfe51241d"
+      "bytes": 97117,
+      "gitSha": "20bc808c23166a8cb13b187f27b0d9493cb75a26"
     }
   ]
 }
