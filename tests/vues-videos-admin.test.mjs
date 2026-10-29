@@ -452,13 +452,15 @@ test('reconnexion-profil fusionne aussi les compteurs de vues', () => {
 
 test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v531-vues-videos-periode-20261029"/);
-  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 7, 'sept fichiers du lot v531');
+  assert.match(sw, /var UPDATE_ID = "v532-barre-mobile-moderne-20261029"/);
+  /* Le manifeste a suivi la v532 (barre mobile) : il porte sa propre révision. */
+  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 6, 'six fichiers du lot v531');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/protection.js', 'assets/js/sync-progressions.js', 'assets/js/reconnexion-profil.js',
-    'assets/js/reprendre.js', 'assets/js/admin-vues-videos.js', 'admin.html', 'offline-complete-manifest.json']) {
+    'assets/js/reprendre.js', 'assets/js/admin-vues-videos.js', 'admin.html']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
+  assert.match(delta, /url: "\.\/offline-complete-manifest\.json", revision: "barre-mobile-v532"/);
   /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');
@@ -471,7 +473,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
 
 test('le manifeste hors ligne contient le nouveau module avec son empreinte', () => {
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v531-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v532-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   const entree = manifeste.files.find((f) => f.path === MODULE);

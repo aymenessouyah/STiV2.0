@@ -7,7 +7,9 @@
   var doc = document;
   var root = doc.documentElement;
   if (!/^https?:$/.test(location.protocol)) return;
-  if (location.pathname.indexOf("/tests/") !== -1) return; /* harnais internes : rien ne doit bouger */
+  /* Harnais internes : rien ne doit bouger — sauf tests/apercu-barre-mobile.html, qui
+     demande explicitement la barre (v532) pour la montrer. */
+  if (location.pathname.indexOf("/tests/") !== -1 && !window.__STI_BNAV_HARNAIS) return;
   /* Le tableau de bord reste inchangé. */
   var pnNet = location.pathname.replace(/\/$/, "");
   if (/(^|\/)admin(\.html)?$/i.test(pnNet)) return;
@@ -102,50 +104,94 @@
   });
 
   /* ---------- styles ---------- */
+  /* v532 : barre flottante sombre, bouton « + » central en dégradé (modèle fourni). */
+  /* v532 : le thème clair garde la barre flottante mais avec les surfaces du site clair
+     (fond laiteux, texte encre, cartes blanches). Le thème sombre reste le défaut. */
+  var reglesClair = [];
+  ["html[data-theme='light']", "html[data-theme='clair']", "html.light-mode", "body.light-mode"].forEach(function (h) {
+    [
+      ["#sti-bnav", "background-color:#f4f7ff;background-image:linear-gradient(180deg,rgba(255,255,255,.94),rgba(238,243,252,.9));border-color:rgba(15,23,42,.12);box-shadow:0 12px 30px rgba(15,23,42,.18),inset 0 1px 0 #fff;--sti-bnav-ring:#f4f7ff"],
+      ["#sti-bnav .sti-bnav-i", "color:rgba(38,49,76,.60)"],
+      ["#sti-bnav .sti-bnav-i.on", "color:#152039"],
+      ["#sti-bnav-sheet", "background:linear-gradient(180deg,#ffffff,#eef3fb);border-color:rgba(15,23,42,.12);color:#1b2437;box-shadow:0 22px 48px rgba(15,23,42,.22)"],
+      ["#sti-bnav-sheet .sti-sheet-grip", "background:rgba(15,23,42,.18)"],
+      ["#sti-bnav-sheet .sti-sheet-tete b", "color:#101a2e"],
+      ["#sti-bnav-sheet .sti-sheet-tete button", "border-color:rgba(15,23,42,.16);background:rgba(15,23,42,.06);color:#101a2e"],
+      ["#sti-bnav-sheet h4", "color:rgba(38,49,76,.55)"],
+      ["#sti-bnav-sheet .sti-sheet-carte", "background:#fff;border-color:rgba(15,23,42,.10);color:#101a2e"],
+      ["#sti-bnav-sheet .sti-sheet-carte small", "color:rgba(38,49,76,.62)"],
+      ["#sti-bnav-sheet .sti-sheet-puce", "background:#fff;border-color:rgba(15,23,42,.12);color:#101a2e"],
+      ["#sti-bnav-sheet .sti-sheet-puce.on", "color:#fff"],
+      ["#sti-bnav-sheet .sti-sheet-lien", "background:#fff;border-color:rgba(15,23,42,.10);color:#1b2437"]
+    ].forEach(function (r) { reglesClair.push(h + " " + r[0] + "{" + r[1] + "}"); });
+  });
+
   var css = [
-    ":root{--sti-bnav-h:calc(56px + env(safe-area-inset-bottom,0px))}",
+    ":root{--sti-bnav-h:calc(88px + env(safe-area-inset-bottom,0px));--sti-bnav-fond:#0d1424;--sti-bnav-ring:#0d1424;--sti-bnav-acc1:#5b8cff;--sti-bnav-acc2:#a855f7;--sti-bnav-acc3:#fb7185}",
     "#sti-bnav{display:none}",
     "@media (max-width:700px){",
-    "html.sti-bnav-on body{padding-bottom:calc(var(--sti-bnav-h) + 10px + var(--sti-bnav-bas,0px))}",
-    "#sti-bnav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch;position:fixed;left:0;right:0;bottom:var(--sti-bnav-bas,0px);z-index:2147483000;background:var(--surface,#fffcf3);border-top:1.5px solid var(--border,#e7d9bd);padding-bottom:env(safe-area-inset-bottom,0px);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;box-shadow:0 -6px 18px rgba(15,23,38,.10)}",
-    "html[data-theme='dark'] #sti-bnav{background:var(--surface,#121a2b);border-top-color:var(--border,#26314c)}",
+    "html.sti-bnav-on body{padding-bottom:calc(var(--sti-bnav-h) + 14px + var(--sti-bnav-bas,0px))}",
+    "#sti-bnav{display:grid;grid-template-columns:1fr 1fr 66px 1fr 1fr;align-items:center;position:fixed;left:10px;right:10px;bottom:calc(10px + var(--sti-bnav-bas,0px) + env(safe-area-inset-bottom,0px));z-index:2147483000;height:60px;border-radius:22px;background-color:var(--sti-bnav-fond);background-image:linear-gradient(180deg,rgba(46,60,92,.55),rgba(7,11,20,.72));border:1px solid rgba(255,255,255,.14);box-shadow:0 12px 30px rgba(4,8,18,.42),inset 0 1px 0 rgba(255,255,255,.10);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;overflow:visible}",
     "#sti-bnav *{box-sizing:border-box}",
-    "html[data-theme='dark'] #sti-bnav .sti-bnav-i{color:var(--muted,#9aa7c4)}",
-    "#sti-bnav .sti-bnav-i{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;padding:7px 4px 6px;margin:0;color:var(--muted,#6b6250);text-decoration:none;text-transform:none;font:800 10.5px/1 system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.02em;white-space:nowrap;-webkit-tap-highlight-color:transparent;background:none;border:0;box-shadow:none;transform:none;cursor:pointer;width:100%;transition:none}",
-    "#sti-bnav .sti-bnav-i svg{display:block;width:21px;height:21px;margin:0;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}",
+    "#sti-bnav .sti-bnav-i{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;height:100%;padding:0 2px;margin:0;color:rgba(233,238,250,.62);text-decoration:none;text-transform:none;font:800 9.5px/1 system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.03em;white-space:nowrap;-webkit-tap-highlight-color:transparent;background:none;border:0;box-shadow:none;transform:none;cursor:pointer}",
+    "#sti-bnav .sti-bnav-i svg{display:block;width:22px;height:22px;margin:0;stroke:currentColor;fill:none;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round}",
     "#sti-bnav .sti-bnav-i span{display:block}",
-    "@media (max-width:400px){#sti-bnav .sti-bnav-i{font-size:9px;gap:2px}}",
+    "#sti-bnav .sti-bnav-i.on{color:#fff}",
+    "#sti-bnav .sti-bnav-i.on svg{filter:drop-shadow(0 4px 10px rgba(91,140,255,.6))}",
+    "#sti-bnav .sti-bnav-i.on::after{content:'';position:absolute;left:50%;bottom:5px;width:16px;height:3px;margin-left:-8px;border-radius:999px;background:linear-gradient(90deg,var(--sti-bnav-acc1),var(--sti-bnav-acc2))}",
+    "@media (max-width:360px){#sti-bnav .sti-bnav-i{font-size:9px;gap:3px}#sti-bnav .sti-bnav-i svg{width:20px;height:20px}}",
+    /* Puits central : le bouton rond dépasse au-dessus de la barre, cerclé de sa couleur. */
+    "#sti-bnav .sti-bnav-puits{position:relative;display:flex;align-items:center;justify-content:center;height:100%}",
+    "#sti-bnav .sti-bnav-fab{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;padding:0;border:0;border-radius:50%;cursor:pointer;display:grid;place-items:center;background:linear-gradient(140deg,var(--sti-bnav-acc1) 0%,var(--sti-bnav-acc2) 52%,var(--sti-bnav-acc3) 100%);box-shadow:0 0 0 7px var(--sti-bnav-ring),0 12px 24px rgba(91,140,255,.42),inset 0 1px 0 rgba(255,255,255,.35);transform:translateY(-19px);transition:transform .22s ease,box-shadow .22s ease;-webkit-tap-highlight-color:transparent}",
+    "#sti-bnav .sti-bnav-fab::before,#sti-bnav .sti-bnav-fab::after{content:'';position:absolute;left:50%;top:50%;border-radius:2px;background:#fff}",
+    "#sti-bnav .sti-bnav-fab::before{width:20px;height:2.6px;margin:-1.3px 0 0 -10px}",
+    "#sti-bnav .sti-bnav-fab::after{width:2.6px;height:20px;margin:-10px 0 0 -1.3px}",
+    "#sti-bnav .sti-bnav-fab:active{transform:translateY(-19px) scale(.93)}",
+    "html.sti-bnav-sheet-open #sti-bnav .sti-bnav-fab{transform:translateY(-19px) rotate(135deg)}",
+    "#sti-bnav .sti-bnav-fab:focus-visible{outline:3px solid #fff;outline-offset:4px}",
+    "#sti-bnav .sti-bnav-fab-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}",
+    "#sti-bnav .sti-bnav-fab.on{box-shadow:0 0 0 7px var(--sti-bnav-ring),0 0 0 10px rgba(91,140,255,.35),0 12px 24px rgba(91,140,255,.42),inset 0 1px 0 rgba(255,255,255,.35)}",
     "html.sti-modal-open #sti-bnav,html.sti-msn-mob-open #sti-bnav{display:none!important}",
     /* Garder les flotteurs au-dessus de la barre. */
     "html.sti-bnav-on #sti-btn-messenger-global{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 10px)!important}",
     "html.sti-bnav-on #sti-msn-bulle-attention{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 64px)!important}",
     "html.sti-bnav-on #sti-auto-to-top{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 118px)!important}",
-    /* Les boutons de retour en haut restent au-dessus du diagnostic. */
     "html.sti-bnav-on #to-top,html.sti-bnav-on #backToTop,html.sti-bnav-on #backToTopBtn,html.sti-bnav-on .to-top,html.sti-bnav-on .back-to-top-btn{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 118px)!important}",
-    /* Le thème reste accessible dans la roue et la barre du haut. */
     "#sti-universal-theme-btn{display:none!important}",
     "html.sti-bnav-on #sti-sync-pastille{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 14px)!important}",
     "html.sti-bnav-on #sti-diagnostic-donnees,html.sti-bnav-on #sti-labo-offline-diagnostic-button{bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 14px)!important}",
     "}",
-    /* tiroir « Autres » */
-    "#sti-bnav-voile{display:none;position:fixed;inset:0;z-index:2147482990;background:rgba(13,18,30,.45)}",
-    "#sti-bnav-sheet{display:none;position:fixed;left:0;right:0;bottom:calc(var(--sti-bnav-h,56px) + var(--sti-bnav-bas,0px));z-index:2147482995;max-height:62vh;overflow-y:auto;padding:14px 12px calc(14px + env(safe-area-inset-bottom,0px));gap:8px;grid-template-columns:1fr 1fr;background:var(--surface,#fffcf3);border-top:1.5px solid var(--border,#e7d9bd);border-radius:16px 16px 0 0;box-shadow:0 -10px 24px rgba(15,23,38,.20);font-family:system-ui,-apple-system,'Segoe UI',sans-serif}",
-    "html[data-theme='dark'] #sti-bnav-sheet{background:var(--surface,#121a2b);border-top-color:var(--border,#26314c)}",
+    /* Volet « Cours & vidéos » ouvert par le bouton + */
+    "#sti-bnav-voile{display:none;position:fixed;inset:0;z-index:2147482990;background:rgba(6,10,20,.55)}",
+    "#sti-bnav-sheet{display:none;position:fixed;left:10px;right:10px;bottom:calc(var(--sti-bnav-h) + var(--sti-bnav-bas,0px) + 2px);z-index:2147482995;max-height:70vh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:10px 12px calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#151e33,#0c1322);border:1px solid rgba(255,255,255,.15);border-radius:22px;box-shadow:0 22px 48px rgba(4,8,18,.6);color:#eef2ff;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}",
     "html.sti-bnav-sheet-open #sti-bnav-voile{display:block}",
-    "html.sti-bnav-sheet-open #sti-bnav-sheet{display:grid}",
-    "#sti-bnav .sti-bnav-i.on{color:var(--accent,#f4511e)}",
-    "html[data-theme='dark'] #sti-bnav-sheet .sti-bnav-l{color:var(--ink,#eef2ff);background:#1a2338;border-color:#26314c}",
-    "#sti-bnav .sti-bnav-i.on::before{content:'';position:absolute;top:-1.5px;left:22%;right:22%;height:2.5px;border-radius:0 0 3px 3px;background:var(--accent,#f4511e)}",
-    "#sti-bnav-sheet .sti-bnav-l{display:flex;align-items:center;gap:9px;padding:12px 12px;border:1.5px solid var(--border,#e7d9bd);border-radius:12px;text-decoration:none;font:800 12.5px/1.2 system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink,#0f1726);background:var(--surface-2,#f6eedc);margin:0;box-shadow:none;text-align:left}",
-    "#sti-bnav-sheet .sti-bnav-l b{font-weight:800}",
-    "@media (max-width:700px){html.sti-bnav-on #sti-bnav{}}",
-    "@media (max-width:700px){#stix-nav a[href$=\"index.html#cours\"]{display:none!important}}", /* v420→421 (consigne n°4) : « cours du site » masqué sur mobile */
+    "html.sti-bnav-sheet-open #sti-bnav-sheet{display:block;animation:sti-bnav-up .22s ease-out}",
+    "@keyframes sti-bnav-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}",
+    "#sti-bnav-sheet .sti-sheet-grip{width:42px;height:4px;margin:2px auto 8px;border-radius:999px;background:rgba(255,255,255,.22)}",
+    "#sti-bnav-sheet .sti-sheet-tete{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 4px}",
+    "#sti-bnav-sheet .sti-sheet-tete b{font:900 13.5px/1.1 system-ui,-apple-system,'Segoe UI',sans-serif}",
+    "#sti-bnav-sheet .sti-sheet-tete button{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;font:900 14px/1 system-ui,-apple-system,'Segoe UI',sans-serif;cursor:pointer}",
+    "#sti-bnav-sheet h4{margin:12px 2px 7px;font:900 10.5px/1 system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.10em;text-transform:uppercase;color:rgba(226,232,246,.60)}",
+    "#sti-bnav-sheet .sti-sheet-cours{display:grid;gap:7px}",
+    "#sti-bnav-sheet .sti-sheet-carte{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);text-decoration:none;color:#fff;box-shadow:none;margin:0}",
+    "#sti-bnav-sheet .sti-sheet-carte i{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;font-style:normal;font-size:16px;flex:none}",
+    "#sti-bnav-sheet .sti-sheet-carte strong{display:block;font:900 12.5px/1.15 system-ui,-apple-system,'Segoe UI',sans-serif}",
+    "#sti-bnav-sheet .sti-sheet-carte small{display:block;margin-top:2px;font:700 10.5px/1.2 system-ui,-apple-system,'Segoe UI',sans-serif;color:rgba(226,232,246,.62)}",
+    "#sti-bnav-sheet .sti-sheet-puces{display:flex;flex-wrap:wrap;gap:7px}",
+    "#sti-bnav-sheet .sti-sheet-puce{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;text-decoration:none;font:800 11.5px/1 system-ui,-apple-system,'Segoe UI',sans-serif}",
+    "#sti-bnav-sheet .sti-sheet-puce.on{background:linear-gradient(135deg,rgba(91,140,255,.9),rgba(168,85,247,.9));border-color:transparent}",
+    "#sti-bnav-sheet .sti-sheet-liens{display:grid;grid-template-columns:1fr 1fr;gap:7px}",
+    "#sti-bnav-sheet .sti-sheet-lien{display:flex;align-items:center;gap:7px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);color:#e8eefc;text-decoration:none;font:800 11px/1.2 system-ui,-apple-system,'Segoe UI',sans-serif}",
+    "#sti-bnav-sheet .sti-sheet-lien span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+    "@media (max-width:360px){#sti-bnav-sheet .sti-sheet-liens{grid-template-columns:1fr}#sti-bnav-sheet{padding-left:9px;padding-right:9px}}",
+    "@media (prefers-reduced-motion:reduce){#sti-bnav,#sti-bnav .sti-bnav-fab,#sti-bnav-sheet{transition:none!important;animation:none!important}}",
+    "@media (max-width:700px){#stix-nav a[href$=\"index.html#cours\"]{display:none!important}}", /* v420→421 : « cours du site » masqué sur mobile */
     "@media (max-width:700px){#sti-bnav{transition:transform .28s ease}}",
     "@media (max-width:700px){html.sti-barres-cachees #sti-bnav{transform:translateY(150%)}}",
     "@media (max-width:700px){.sti-barre-suivie{transition:transform .28s ease}}",
     "@media (max-width:700px){html.sti-barres-cachees .sti-barre-suivie.sti-barre-roulee{transform:translateY(-105%)}}",
     "@media print{#sti-bnav,#sti-bnav-sheet,#sti-bnav-voile{display:none!important}html.sti-bnav-on body{padding-bottom:0!important}html.sti-barres-cachees .sti-barre-suivie{transform:none!important}}"
-  ].join("");
+  ].concat(reglesClair).join("");
   var st = doc.createElement("style");
   st.id = "sti-bnav-css";
   st.textContent = css;
@@ -187,6 +233,8 @@
     if (!nav) return;
     var els = nav.querySelectorAll(".sti-bnav-i");
     for (var i = 0; i < els.length; i++) els[i].classList.toggle("on", els[i].getAttribute("data-cle") === a);
+    var fab = nav.querySelector(".sti-bnav-fab");
+    if (fab) fab.classList.toggle("on", a === "autres");
   }
 
   /* ---------- construction ---------- */
@@ -260,6 +308,43 @@
     window.addEventListener("resize", function () { choisirBarreHaut(); }, { passive: true });
   }
 
+  /* ---------- contenu du volet « + » : cours, familles de vidéos, outils ---------- */
+  var MATIERES = [
+    { cle: "html5", nom: "HTML5", ico: "🧱", teinte: "linear-gradient(135deg,#ff9d5c,#f4511e)", sous: "Structure, formulaires, tableaux" },
+    { cle: "css3", nom: "CSS3", ico: "🎨", teinte: "linear-gradient(135deg,#5ec8ff,#0284c7)", sous: "Sélecteurs, Flexbox, animations" },
+    { cle: "javascript", nom: "JavaScript", ico: "⚡", teinte: "linear-gradient(135deg,#f7df1e,#d99b00)", sous: "DOM, événements, fonctions" },
+    { cle: "sql", nom: "SQL", ico: "🗃️", teinte: "linear-gradient(135deg,#7ddc95,#177245)", sous: "Requêtes, jointures, séries" },
+    { cle: "php", nom: "PHP", ico: "🐘", teinte: "linear-gradient(135deg,#a78bfa,#6d28d9)", sous: "Formulaires, MySQLi (4e SI)" }
+  ];
+  var FAMILLES_VIDEOS = [
+    { cle: "all", nom: "Toutes les vidéos", ico: "🎬" },
+    { cle: "html5", nom: "HTML5", ico: "🧱" },
+    { cle: "css3", nom: "CSS3", ico: "🎨" },
+    { cle: "javascript", nom: "JavaScript", ico: "⚡" },
+    { cle: "sql", nom: "SQL", ico: "🗃️" },
+    { cle: "php", nom: "PHP", ico: "🐘" }
+  ];
+  var FICHES = [
+    ["Fiche de révision HTML5", "cours/fiche-revision-html5.html"],
+    ["Datalist HTML5", "cours/datalist.html"],
+    ["SQL Playground", "cours/sql-playground.html"],
+    ["SQL — LDD / LMD / LCD", "cours/sql-bases-ldd-lmd-lcd.html"],
+    ["PHP & MySQLi", "cours/php-mysqli.html"],
+    ["Récap JavaScript", "cours/Recap-JavaScript-STI.html"]
+  ];
+  var OUTILS = [
+    ["Exercices", "exercices/series-exercices.html", "📝"],
+    ["Bac pratique", "bac-pratique.html", "🧪"],
+    ["Les 25 pièges du Bac", "pieges-bac.html", "⚠️"],
+    ["10 fonctions JavaScript", "outils-js-bac.html", "🧩"],
+    ["Scanner mon livre", "livre-smart.html", "📷"],
+    ["Nouveautés", "nouveautes.html", "✨"],
+    ["Glossaire", "glossaire.html", "📖"],
+    ["Révision des erreurs", "revision-erreurs.html", "🔁"],
+    ["Mémo veille", "memo-veille-bac.html", "🌙"],
+    ["Portail / compte", "portail.html", "👤"]
+  ];
+
   function construire() {
     if (doc.getElementById("sti-bnav")) return;
     var actif = sectionActive();
@@ -268,29 +353,36 @@
     nav.setAttribute("role", "navigation");
     nav.setAttribute("aria-label", "Navigation mobile");
 
-    var items = [
-      { cle: "accueil", lib: "Accueil", href: R + "index.html", ico: "accueil" },
-      { cle: "cours", lib: "Cours", href: R + "index.html#cours", ico: "cours" },
-      { cle: "videos", lib: "Vidéos", href: R + "index.html#videos", ico: "videos" },
-      { cle: "quiz", lib: "Quiz", href: R + "index.html#modules", ico: "quiz" }
-    ];
-    items.forEach(function (it) {
+    function item(cle, lib, href, icone) {
       var a = doc.createElement("a");
-      a.className = "sti-bnav-i" + (actif === it.cle ? " on" : "");
-      a.setAttribute("data-cle", it.cle);
-      a.href = it.href;
-      a.innerHTML = ico(it.ico) + "<span>" + it.lib + "</span>";
-      nav.appendChild(a);
-    });
+      a.className = "sti-bnav-i" + (actif === cle ? " on" : "");
+      a.setAttribute("data-cle", cle);
+      a.href = href;
+      a.innerHTML = ico(icone) + "<span>" + lib + "</span>";
+      return a;
+    }
+    nav.appendChild(item("accueil", "Accueil", R + "index.html", "accueil"));
+    nav.appendChild(item("cours", "Cours", R + "index.html#cours", "cours"));
+
+    /* Bouton central : ouvre le volet des cours et des familles de vidéos. */
+    var puits = doc.createElement("div");
+    puits.className = "sti-bnav-puits";
     var b = doc.createElement("button");
     b.type = "button";
-    b.id = "sti-bnav-autres";
-    b.className = "sti-bnav-i" + (actif === "autres" ? " on" : "");
+    b.id = "sti-bnav-plus";
+    b.className = "sti-bnav-fab" + (actif === "autres" ? " on" : "");
     b.setAttribute("data-cle", "autres");
     b.setAttribute("aria-haspopup", "dialog");
     b.setAttribute("aria-expanded", "false");
-    b.innerHTML = ico("autres") + "<span>Autres</span>";
-    nav.appendChild(b);
+    b.setAttribute("aria-controls", "sti-bnav-sheet");
+    b.setAttribute("aria-label", "Ouvrir le menu : cours, vidéos et outils");
+    b.title = "Cours, vidéos et outils";
+    b.innerHTML = "<span class=\"sti-bnav-fab-sr\">+</span>";
+    puits.appendChild(b);
+    nav.appendChild(puits);
+
+    nav.appendChild(item("videos", "Vidéos", R + "index.html#videos", "videos"));
+    nav.appendChild(item("quiz", "Quiz", R + "index.html#modules", "quiz"));
     doc.body.appendChild(nav);
 
     var voile = doc.createElement("div");
@@ -304,34 +396,55 @@
     var sheet = doc.createElement("div");
     sheet.id = "sti-bnav-sheet";
     sheet.setAttribute("role", "dialog");
-    sheet.setAttribute("aria-label", "Autres sections du site");
-    var liens = [
-      ["Exercices", "exercices/series-exercices.html", "séries et corrigés"],
-      ["Les 25 pièges du Bac", "pieges-bac.html", "à lire avant l'épreuve"],
-      ["Atelier épreuve pratique", "bac-pratique.html", "🧪 BAC STI · TP noté"],
-      ["Les 10 fonctions JavaScript", "outils-js-bac.html", "atelier & générateur"],
-      ["Scanner mon livre", "livre-smart.html", "3SI + 4SI"],
-      ["Progression", "#progress", "sur l'accueil"],
-      ["Conseils", "#conseils", "sur l'accueil"],
-      ["Nouveautés", "nouveautes.html", ""],
-      ["Glossaire", "glossaire.html", ""],
-      ["Révision des erreurs", "revision-erreurs.html", ""],
-      ["Mémo veille", "memo-veille-bac.html", ""],
-      ["Portail / compte", "portail.html", ""]
-    ];
-    liens.forEach(function (l) {
-      var a = doc.createElement("a");
-      a.className = "sti-bnav-l";
-      a.href = /^#/.test(l[1]) ? R + "index.html" + l[1] : R + l[1];
-      a.innerHTML = "<span><b>" + l[0] + "</b>" + (l[2] ? "<br><em>" + l[2] + "</em>" : "") + "</span>";
-      sheet.appendChild(a);
+    sheet.setAttribute("aria-label", "Cours, vidéos et outils");
+
+    var corps = "";
+    corps += '<div class="sti-sheet-grip" aria-hidden="true"></div>';
+    corps += '<div class="sti-sheet-tete"><b>Ouvrir…</b>';
+    corps += '<button type="button" id="sti-bnav-fermer" aria-label="Fermer le menu">✕</button></div>';
+
+    corps += '<h4>📚 Tous les cours</h4><div class="sti-sheet-cours">';
+    MATIERES.forEach(function (m) {
+      corps += '<a class="sti-sheet-carte' + (m.cle === "php" ? " sti-4si-only" : "") + '" href="' + R + 'cours/' + m.cle + '.html">' +
+        '<i aria-hidden="true" style="background:' + m.teinte + '">' + m.ico + '</i>' +
+        '<span><strong>' + m.nom + '</strong><small>' + m.sous + '</small></span></a>';
     });
+    corps += "</div>";
+
+    corps += '<h4>🎬 Familles de vidéos</h4><div class="sti-sheet-puces">';
+    FAMILLES_VIDEOS.forEach(function (f) {
+      var href = f.cle === "all" ? R + "index.html#videos" : R + "index.html?vf=" + f.cle + "#videos";
+      corps += '<a class="sti-sheet-puce' + (f.cle === "php" ? " sti-4si-only" : "") + '" href="' + href + '">' +
+        '<span aria-hidden="true">' + f.ico + "</span>" + f.nom + "</a>";
+    });
+    corps += "</div>";
+
+    corps += '<h4>📄 Fiches &amp; annexes</h4><div class="sti-sheet-liens">';
+    FICHES.forEach(function (f) {
+      corps += '<a class="sti-sheet-lien" href="' + R + f[1] + '"><span>' + f[0] + "</span></a>";
+    });
+    corps += "</div>";
+
+    corps += '<h4>🧰 Outils &amp; révisions</h4><div class="sti-sheet-liens">';
+    OUTILS.forEach(function (o) {
+      corps += '<a class="sti-sheet-lien' + (o[1] === "bac-pratique.html" ? " sti-4si-only" : "") + '" href="' + R + o[1] + '">' +
+        '<span aria-hidden="true">' + o[2] + "</span><span>" + o[0] + "</span></a>";
+    });
+    corps += "</div>";
+    sheet.innerHTML = corps;
     doc.body.appendChild(sheet);
 
     function ouvrirSheet(o) {
+      var etait = root.classList.contains("sti-bnav-sheet-open");
       root.classList.toggle("sti-bnav-sheet-open", o);
       b.setAttribute("aria-expanded", o ? "true" : "false");
+      b.setAttribute("aria-label", o ? "Fermer le menu" : "Ouvrir le menu : cours, vidéos et outils");
+      if (o && !etait) {
+        try { var fermer = sheet.querySelector("#sti-bnav-fermer"); if (fermer && fermer.focus) fermer.focus({ preventScroll: true }); } catch (eF) {}
+      }
     }
+    var btnFermer = sheet.querySelector("#sti-bnav-fermer");
+    if (btnFermer) btnFermer.addEventListener("click", function () { ouvrirSheet(false); if (b.focus) b.focus({ preventScroll: true }); });
     b.addEventListener("click", function () { ouvrirSheet(!root.classList.contains("sti-bnav-sheet-open")); });
     voile.addEventListener("click", function () { ouvrirSheet(false); });
     doc.addEventListener("keydown", function (e) { if (e.key === "Escape") ouvrirSheet(false); });
@@ -348,6 +461,13 @@
       if (u.origin !== location.origin || u.pathname !== location.pathname) return; /* vrai changement de page : navigation normale */
       e.preventDefault();
       var hash = (u.hash || "").replace(/^#/, "");
+      /* v532 : un raccourci du volet (« ?vf=css3#videos ») filtre la galerie sur place. */
+      var vf = "";
+      try { vf = (u.searchParams.get("vf") || "").toLowerCase(); } catch (eVF) {}
+      if (vf) {
+        var puce = doc.querySelector('[data-video-filter="' + vf + '"]');
+        if (puce && typeof puce.click === "function") puce.click();
+      }
       if (hash) {
         var el = doc.getElementById(hash) || doc.querySelector('[name="' + hash + '"]');
         if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -366,9 +486,12 @@
     try {
       var cs = getComputedStyle(nav);
       var r = nav.getBoundingClientRect();
-      var h = Math.max(48, Math.min(96, Math.round(r.height)));
+      /* v532 : + 22 px, car le bouton « + » dépasse au-dessus de la barre. */
+      var h = Math.max(48, Math.min(118, Math.round(r.height) + 22));
       if (cs.backgroundColor && cs.backgroundColor !== "rgba(0, 0, 0, 0)") {
-        localStorage.setItem("sti-bnav-skel", JSON.stringify({ t: Date.now(), h: h, f: cs.backgroundColor, b: cs.borderTopColor, brd: cs.borderTopWidth || "1.5px", th: root.getAttribute("data-theme") === "dark" || root.classList.contains("dark") ? "dark" : "light" }));
+        var th = (root.getAttribute("data-theme") === "light" || root.getAttribute("data-theme") === "clair" ||
+          root.classList.contains("light-mode")) ? "light" : "dark";
+        localStorage.setItem("sti-bnav-skel", JSON.stringify({ t: Date.now(), h: h, f: cs.backgroundColor, b: cs.borderTopColor, brd: cs.borderTopWidth || "1px", th: th }));
       }
     } catch (e) {}
 
@@ -395,7 +518,7 @@
   window.addEventListener("hashchange", majActif);
   window.addEventListener("pageshow", function () {
     root.classList.remove("sti-bnav-sheet-open");
-    var bAut = doc.getElementById("sti-bnav-autres");
+    var bAut = doc.getElementById("sti-bnav-plus");
     if (bAut) bAut.setAttribute("aria-expanded", "false");
     majActif();
   });
@@ -451,6 +574,24 @@
     window.addEventListener("resize", caler, { passive: true });
     window.addEventListener("orientationchange", function () { setTimeout(caler, 120); });
     caler();
+  })();
+
+  /* v532 : arrivée depuis le volet (« index.html?vf=css3#videos ») — la galerie de
+     l'accueil est filtrée dès que ses pastilles répondent, sans modifier app.js. */
+  (function appliquerFamilleVideos() {
+    var vf = "";
+    try { vf = (new URLSearchParams(location.search).get("vf") || "").toLowerCase(); } catch (e) { return; }
+    if (!vf || vf === "all") return;
+    var essais = 0;
+    function tenter() {
+      var puce = doc.querySelector('[data-video-filter="' + vf + '"]');
+      if (!puce) { if (essais++ < 20) setTimeout(tenter, 150); return; }
+      if (puce.classList && puce.classList.contains("is-active")) return;
+      try { puce.click(); } catch (e) { return; }
+      if (essais++ < 20 && !(puce.classList && puce.classList.contains("is-active"))) setTimeout(tenter, 150);
+    }
+    if (doc.readyState === "complete") setTimeout(tenter, 60);
+    else window.addEventListener("load", function () { setTimeout(tenter, 60); }, { once: true });
   })();
 
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", appliquer);

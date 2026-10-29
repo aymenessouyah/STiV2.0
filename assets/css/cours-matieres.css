@@ -155,7 +155,7 @@ html.sti-modal-open .course-page #sti-sync-pastille { visibility: hidden !import
 .course-page .legacy-php .chapitre-btn, .course-page .legacy-php .sol-tab,
 .course-page .legacy-php .sol2-tab, .course-page .legacy-php .anim-modal a.anim-open { color: var(--text-inverse) !important; }
 .course-page .legacy-php #s10c-video { background: var(--success-soft) !important; color: var(--text) !important; }
-.course-page #sti-bnav .sti-bnav-i:not(.on) { color: var(--text-secondary) !important; }
+/* v532 : la barre mobile sombre gère seule le contraste de ses libellés. */
 .course-page .anim-modal a[href$=".sql"] { color: var(--text-inverse) !important; }
 /* Ne pas recouvrir le bouton de retour par la pastille de synchronisation. */
 .course-page .back-to-top-fab { bottom: calc(var(--space-5) + 52px); }

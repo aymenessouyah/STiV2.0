@@ -3038,9 +3038,9 @@ test('v464 : correctifs issus du test fonctionnel E2E (purges quota sans Referen
   assert.match(adminJs, /d\["sti-reading-bookmarks"\]/);
   assert.match(admCouvJs, /d\["sti-reading-bookmarks"\]/);
 
-  // 4) config.js protège contre les URLs se terminant par .html/ et charge mobile-nav.js?v=464
+  // 4) config.js protège contre les URLs se terminant par .html/ et charge mobile-nav.js?v=532
   assert.match(configJs, /replace\(\/\(\\\.html\?\)\\\/\+\$\/i,\s*"\$1"\)/);
-  assert.match(configJs, /mobile-nav\.js\?v=464/);
+  assert.match(configJs, /mobile-nav\.js\?v=532/);
 
   // 5) sauvegarde.js : fallback RPC admin_labo_devices_list + mobile-diagnostics.js window.confirm
   assert.match(sauvJs, /admin_labo_devices_list/);
@@ -5433,9 +5433,10 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   }
   /* v494 : le retour contextuel des quiz ajoute ~3,5 Ko au noyau (libellés,
      reprise de position et bouton mobile). v499 ajoute le ruban d'identité et la
-     boucle garantie de la vidéo de fond (~11 Ko). La borne reste un garde-fou de
-     poids, relevée à 545 Ko pour laisser la place à ces correctifs fonctionnels. */
-  assert.ok(coreBytes > 0 && coreBytes < 545 * 1024, `Le noyau de rechargement SW doit peser < 545 Ko (observé: ${coreBytes} octets)`);
+     boucle garantie de la vidéo de fond (~11 Ko). v532 modernise la barre mobile :
+     le volet (cours, vidéos, fiches, outils) ajoute ~9,3 Ko à mobile-nav.js. La
+     borne reste un garde-fou de poids, relevée à 560 Ko. */
+  assert.ok(coreBytes > 0 && coreBytes < 560 * 1024, `Le noyau de rechargement SW doit peser < 560 Ko (observé: ${coreBytes} octets)`);
   assert.match(swJs, /appareilSansCachePrealable/);
   assert.match(swJs, /_lruTouchRecents/);
   assert.match(swJs, /_timerHitDebounce/);

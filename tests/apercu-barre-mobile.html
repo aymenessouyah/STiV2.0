@@ -1,0 +1,117 @@
+<!doctype html><html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Page de test STI V2.0 — aperçu de la barre de navigation mobile (v532) : barre flottante sombre, bouton « + » central et volet cours / familles de vidéos. Page technique réservée aux tests et à la démonstration.">
+<title>Aperçu — Barre mobile (v532)</title>
+<!--
+  Harnais visuel de assets/js/mobile-nav.js (v532).
+  Il monte la VRAIE barre (même module, mêmes styles) dans un cadre de téléphone :
+  aucune donnée réelle, aucune requête réseau, rien n'est écrit sur le poste.
+  Le « + » central ouvre le volet : tous les cours, les familles de vidéos, les
+  fiches et les outils. Les liens pointent vers le site réel.
+-->
+<style>
+  :root { color-scheme: light; }
+  body {
+    margin: 0; padding: 26px 18px 40px;
+    background: radial-gradient(120% 90% at 50% 0%, #f7f1e4 0%, #e9f1fb 55%, #dfe9f6 100%);
+    color: #1b2333;
+    font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", "Chalkboard SE", cursive, sans-serif;
+  }
+  .titre { max-width: 900px; margin: 0 auto 16px; }
+  .titre h1 { margin: 0 0 6px; font-size: 21px; }
+  .titre p { margin: 0; font-size: 13px; color: #5a5244; font-weight: 700; }
+  .titre .astuce {
+    display: inline-block; margin-top: 10px; padding: 8px 12px; border-radius: 999px;
+    background: #101728; color: #fff; font-weight: 800; font-size: 12.5px;
+  }
+  .scene { display: flex; flex-wrap: wrap; gap: 26px; justify-content: center; align-items: flex-start; margin-top: 18px; }
+  /* Cadre de téléphone : transform → les éléments position:fixed se calent dedans. */
+  .tel {
+    position: relative; width: 390px; height: 720px;
+    border: 11px solid #10161f; border-radius: 42px;
+    background: #fbf7ee; overflow: hidden;
+    box-shadow: 0 26px 50px rgba(16, 22, 31, .28), inset 0 0 0 2px #2b3444;
+    transform: translateZ(0);
+  }
+  .tel-encoche {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    width: 104px; height: 22px; border-radius: 999px; background: #10161f; z-index: 3;
+  }
+  .tel-page { height: 100%; overflow-y: auto; padding: 42px 14px 128px; box-sizing: border-box; }
+  .tel-page h2 { margin: 0 0 4px; font-size: 17px; }
+  .tel-page .sous { margin: 0 0 14px; font-size: 11.5px; color: #6b6250; font-weight: 700; }
+  .carte {
+    display: flex; align-items: center; gap: 10px; padding: 11px 12px; margin-bottom: 9px;
+    border-radius: 14px; background: #fff; border: 1.5px solid rgba(35,32,26,.16);
+    box-shadow: 0 2px 0 rgba(35,32,26,.08);
+  }
+  .carte i { font-style: normal; font-size: 19px; }
+  .carte b { display: block; font-size: 12.5px; }
+  .carte small { display: block; color: #7a6f5d; font-size: 10.5px; font-weight: 700; }
+  .legende {
+    max-width: 340px; font-size: 12.5px; line-height: 1.55; color: #3d4b60;
+    background: #fff; border: 1.5px solid rgba(35,32,26,.14); border-radius: 16px; padding: 14px 16px;
+  }
+  .legende h3 { margin: 0 0 8px; font-size: 14px; }
+  .legende ul { margin: 0; padding-left: 18px; }
+  .legende li { margin-bottom: 6px; }
+  .legende code { background: #f1f5fb; border-radius: 5px; padding: 1px 5px; font-size: 11.5px; }
+</style>
+</head>
+<body>
+<div class="titre">
+  <h1>Barre de navigation mobile — v532</h1>
+  <p>Barre flottante sombre, bouton « + » central en dégradé. Le module réel <code>assets/js/mobile-nav.js</code> est monté dans le cadre ci-dessous.</p>
+  <span class="astuce">👉 Cliquez sur le « + » central</span>
+</div>
+
+<div class="scene">
+  <div class="tel" aria-label="Aperçu téléphone">
+    <div class="tel-encoche" aria-hidden="true"></div>
+    <div class="tel-page">
+      <h2>Cours HTML5</h2>
+      <p class="sous">Aperçu — le contenu défile sous la barre</p>
+      <div class="carte"><i>🧱</i><div><b>Chapitre 1 — Structure</b><small>balises, sémantique</small></div></div>
+      <div class="carte"><i>🧱</i><div><b>Chapitre 2 — Formulaires</b><small>input, label, required</small></div></div>
+      <div class="carte"><i>🧱</i><div><b>Chapitre 3 — Tableaux</b><small>thead, tbody, colspan</small></div></div>
+      <div class="carte"><i>🎨</i><div><b>Chapitre 4 — Flexbox</b><small>display, gap, align-items</small></div></div>
+      <div class="carte"><i>⚡</i><div><b>Chapitre 5 — DOM</b><small>querySelector, events</small></div></div>
+      <div class="carte"><i>🗃️</i><div><b>Chapitre 6 — SELECT</b><small>WHERE, ORDER BY, jointures</small></div></div>
+      <div class="carte"><i>🐘</i><div><b>Chapitre 7 — PHP</b><small>$_POST, MySQLi</small></div></div>
+    </div>
+  </div>
+
+  <div class="legende">
+    <h3>Ce que contient le volet</h3>
+    <ul>
+      <li><b>📚 Tous les cours</b> — les 5 matières (HTML5, CSS3, JavaScript, SQL, PHP)</li>
+      <li><b>🎬 Familles de vidéos</b> — Toutes, HTML5, CSS3, JavaScript, SQL, PHP ; chaque puce ouvre l'accueil sur la galerie déjà filtrée (<code>index.html?vf=css3#videos</code>)</li>
+      <li><b>📄 Fiches &amp; annexes</b> — fiche de révision, datalist, SQL Playground, PHP &amp; MySQLi…</li>
+      <li><b>🧰 Outils &amp; révisions</b> — exercices, Bac pratique, pièges du Bac, glossaire, portail…</li>
+    </ul>
+    <p style="margin:10px 0 0;font-size:11.5px;color:#7a6f5d;font-weight:700">
+      Le bouton tourne en « × » à l'ouverture ; Échap, le voile ou « ✕ » referment.
+      Les entrées PHP restent réservées aux 4e SI.
+    </p>
+  </div>
+</div>
+
+<script>
+  /* Autorise la barre sur une page de tests et force le mode mobile. */
+  window.__STI_BNAV_HARNAIS = true;
+  window.requestIdleCallback = function () { return 0; }; /* pas de modules annexes ici */
+  (function () {
+    var original = window.matchMedia ? window.matchMedia.bind(window) : null;
+    window.matchMedia = function (q) {
+      if (String(q).replace(/\s+/g, "").indexOf("max-width:700px") !== -1) {
+        return { matches: true, media: q, addEventListener: function () {}, removeEventListener: function () {}, addListener: function () {}, removeListener: function () {} };
+      }
+      return original ? original(q) : { matches: false, media: q, addEventListener: function () {}, removeEventListener: function () {}, addListener: function () {}, removeListener: function () {} };
+    };
+  })();
+</script>
+<script src="../assets/js/mobile-nav.js"></script>
+</body>
+</html>

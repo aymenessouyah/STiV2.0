@@ -24,7 +24,10 @@ test('sur mobile, Vidéos remplace Exercices et rejoint le catalogue sans rechar
   const nav = page.locator('#sti-bnav');
   const lien = nav.getByRole('link', { name: 'Vidéos', exact: true });
   await expect(nav).toBeVisible();
-  await expect(nav.locator('.sti-bnav-i span')).toHaveText(['Accueil', 'Cours', 'Vidéos', 'Quiz', 'Autres']);
+  await expect(nav.locator('.sti-bnav-i span')).toHaveText(['Accueil', 'Cours', 'Vidéos', 'Quiz']);
+  /* v532 : le 5e onglet devient le bouton rond « + » qui ouvre le volet. */
+  await expect(nav.locator('.sti-bnav-fab')).toBeVisible();
+  await expect(nav.locator('#sti-bnav-plus')).toHaveAttribute('aria-controls', 'sti-bnav-sheet');
   await expect(nav.locator('[data-cle="exercices"]')).toHaveCount(0);
   await expect(lien).toHaveAttribute('href', /\/index\.html#videos$/);
   await expect(lien.locator('svg')).toHaveAttribute('aria-hidden', 'true');
@@ -36,7 +39,7 @@ test('sur mobile, Vidéos remplace Exercices et rejoint le catalogue sans rechar
     const boites = await nav.locator('.sti-bnav-i').evaluateAll(els => els.map(e => {
       const r = e.getBoundingClientRect(); return { left: r.left, right: r.right, width: r.width };
     }));
-    expect(boites).toHaveLength(5);
+    expect(boites).toHaveLength(4);
     expect(boites.every(b => b.left >= 0 && b.right <= largeur && b.width > 0)).toBe(true);
   }
   await page.setViewportSize({ width: 701, height: 844 });
@@ -70,16 +73,20 @@ test('depuis un cours et les exercices, Vidéos ouvre le catalogue ; les séries
   await expect(page.locator('#videosGrid [data-play-video="validation-nom-prenom-js"]').first()).toBeVisible();
   nav = page.locator('#sti-bnav');
   await expect(nav.locator('[data-cle="videos"]')).toHaveClass(/\bon\b/);
-  const autres = nav.getByRole('button', { name: 'Autres', exact: true });
+  const autres = nav.locator('#sti-bnav-plus');
   await autres.click();
   await expect(autres).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#sti-bnav-sheet')).toBeVisible();
+  /* Le volet contient bien les cours et les familles de vidéos (v532). */
+  await expect(page.locator('#sti-bnav-sheet h4')).toHaveText([/Tous les cours/, /Familles de vidéos/, /Fiches/, /Outils/]);
+  await expect(page.locator('#sti-bnav-sheet .sti-sheet-carte')).toHaveCount(5);
   const series = page.locator('#sti-bnav-sheet').getByRole('link', { name: /Exercices/ });
   await expect(series).toHaveAttribute('href', /\/exercices\/series-exercices\.html$/);
   await series.click();
   await expect(page).toHaveURL(/\/exercices\/series-exercices\.html$/);
   nav = page.locator('#sti-bnav');
   await expect(nav).toBeVisible();
-  await expect(nav.locator('[data-cle="autres"]')).toHaveClass(/\bon\b/);
+  await expect(nav.locator('#sti-bnav-plus')).toHaveClass(/\bon\b/);
   await nav.getByRole('link', { name: 'Vidéos', exact: true }).click();
   await expect(page).toHaveURL(/\/index\.html#videos$/);
   await expect(page.locator('#sti-bnav [data-cle="videos"]')).toHaveClass(/\bon\b/);
