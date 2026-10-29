@@ -489,6 +489,134 @@
     /* Pas de préchargement des pages complètes en arrière-plan. */
   }
 
+  /* ---------- v536 : rubrique active soulignée de la couleur de l'abonné ----------
+     Bleu 3e SI · vert 4e SI · or enseignant / administration / GOLD · orangé sinon.
+     La couleur de la classe part sur <html data-sti-classe="…"> : theme.css en tire le
+     trait et son halo, donc les thèmes clair et sombre suivent sans style en dur ici.
+     La rubrique courante est celle de la section visible dans l'accueil ; sur une page
+     de cours, c'est « Cours » qui porte le trait (« page de cours » = matière). */
+  (function soulignerRubriqueActive() {
+    function normaliser(v) {
+      var t = String(v || "").trim().toLowerCase();
+      try { t = t.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (eN) {}
+      return t.replace(/[\s._-]+/g, "");
+    }
+    function couleurCompte() {
+      var c = {};
+      try { c = JSON.parse(localStorage.getItem("sti-session-cache") || "null") || {}; } catch (eC) {}
+      var etat = null;
+      try { if (window.STIProfil && window.STIProfil.lireEtatSession) etat = window.STIProfil.lireEtatSession(); } catch (eE) {}
+      var classe = normaliser((etat && etat.classe) || c.classe);
+      var role = normaliser(c.role || (etat && etat.role));
+      var prof = /^(prof|professeur|professeure|enseignant|enseignante|teacher)$/.test(classe) ||
+        /^(prof|professeur|professeure|enseignant|enseignante|teacher)$/.test(role);
+      var gold = /^(true|1|gold)$/i.test(String(c.isGold || c.gold || "")) ||
+        /\bgold\b/i.test(String(c.classe || "") + " " + String(c.lycee || "")) ||
+        Boolean(etat && etat.estGold === true) ||
+        root.classList.contains("sti-gold") ||
+        Boolean(doc.body && doc.body.classList.contains("sti-gold"));
+      if (gold || prof) return "gold";
+      if (/^3(?:e|eme)?(?:si)?\d*$/.test(classe)) return "bleu";
+      if (/^4(?:e|eme)?(?:si)?\d*$/.test(classe)) return "vert";
+      return "orange";
+    }
+    function appliquerCouleur() {
+      var couleur = couleurCompte();
+      if (root.getAttribute("data-sti-classe") !== couleur) root.setAttribute("data-sti-classe", couleur);
+    }
+
+    var liens = [];
+    function collecter() {
+      liens = [].slice.call(doc.querySelectorAll(".site-nav .site-nav__link"));
+      return liens.length;
+    }
+    function chemin(u) {
+      var p = String(u || "").replace(/\/+$/, "").replace(/\/(index)\.html?$/i, "");
+      return p || "/";
+    }
+    function eteindre(a) {
+      a.classList.remove("is-actif");
+      a.removeAttribute("aria-current");
+    }
+    function allumer(a) {
+      if (!a) return;
+      a.classList.add("is-actif");
+      if (a.getAttribute("aria-current") !== "true") a.setAttribute("aria-current", "true");
+    }
+    function majSouligne() {
+      if (!liens.length && !collecter()) return;
+      var ici = chemin(location.pathname);
+      var sections = [];
+      var pageCourante = null;
+      var parAncre = {};
+      for (var i = 0; i < liens.length; i++) {
+        var a = liens[i];
+        eteindre(a);
+        var u;
+        try { u = new URL(a.href, location.href); } catch (eU) { continue; }
+        var h = (u.hash || "").replace(/^#/, "");
+        /* L'ancre est notée pour toutes les pages : depuis un cours, « Cours » reste
+           la rubrique courant même si le lien pointe vers index.html#cours. */
+        if (h && !parAncre["#" + h]) parAncre["#" + h] = a;
+        if (chemin(u.pathname) !== ici) continue;
+        if (h) {
+          var el = doc.getElementById(h);
+          if (el) sections.push({ lien: a, el: el });
+        } else if (!pageCourante) {
+          pageCourante = a;
+        }
+      }
+      var choisi = null;
+      if (sections.length) {
+        var entete = doc.querySelector(".site-header");
+        var seuil = (entete ? entete.getBoundingClientRect().height : 0) + 48;
+        /* L'ordre de l'accueil n'est pas celui de la barre : on trie par position réelle. */
+        var mesures = sections.map(function (s2) {
+          var r = s2.el.getBoundingClientRect();
+          return { lien: s2.lien, top: r.top, bas: r.bottom };
+        }).sort(function (x, y) { return x.top - y.top; });
+        /* Aucune mesure (page sans mise en page) : on ne souligne pas au hasard. */
+        if (mesures.some(function (m) { return m.bas > 0; })) {
+          for (var j = 0; j < mesures.length; j++) {
+            if (mesures[j].top - seuil <= 0) choisi = mesures[j].lien;
+            else break;
+          }
+        }
+        /* Ancrage explicite (#quiz dans l'URL) : il prime tant qu'on est au-dessus. */
+        if (!choisi && parAncre[location.hash]) choisi = parAncre[location.hash];
+      } else if (pageCourante) {
+        choisi = pageCourante;
+      } else if (/\/cours\/[^/]+\.html?$/i.test(location.pathname)) {
+        choisi = parAncre["#cours"] || null;
+      }
+      allumer(choisi);
+    }
+
+    var enAttente = false;
+    function planifier() {
+      if (enAttente) return;
+      enAttente = true;
+      var lancer = function () { enAttente = false; majSouligne(); };
+      if (typeof window.requestAnimationFrame === "function") window.requestAnimationFrame(lancer);
+      else setTimeout(lancer, 60);
+    }
+    function demarrer() {
+      appliquerCouleur();
+      majSouligne();
+      window.addEventListener("scroll", planifier, { passive: true });
+      window.addEventListener("resize", planifier, { passive: true });
+      window.addEventListener("hashchange", function () { appliquerCouleur(); planifier(); });
+      window.addEventListener("pageshow", function () { appliquerCouleur(); planifier(); });
+      window.addEventListener("sti:session-maj", function () { appliquerCouleur(); });
+      window.addEventListener("sti:profil-maj", function () { appliquerCouleur(); });
+      /* Les scripts suivants (app.js) peuvent encore poser le thème ou la session. */
+      setTimeout(appliquerCouleur, 900);
+      setTimeout(appliquerCouleur, 2600);
+    }
+    if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", demarrer, { once: true });
+    else demarrer();
+  })();
+
   /* ---------- activation selon la largeur ---------- */
   var mq = window.matchMedia ? window.matchMedia("(max-width: 700px)") : null;
   function appliquer() {

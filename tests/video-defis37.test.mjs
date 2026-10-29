@@ -132,7 +132,7 @@ test('l’accueil compte la nouvelle capsule dans son catalogue', () => {
 
 test('le cache hors-ligne embarque la vidéo sans téléchargement automatique', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v535-volet-sans-fiches-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v536-classe-nav-active-20261029"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
@@ -157,7 +157,7 @@ test('le manifeste complet décrit la vidéo et ses sous-titres', () => {
     const sha = createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${blob.length}\0`), blob])).digest('hex');
     assert.equal(entree.gitSha, sha, `sha1 de ${chemin}`);
   }
-  assert.match(manifeste.version, /^v535/);
+  assert.match(manifeste.version, /^v536/);
 });
 
 test('le moteur de rendu couvre les onze défis et les trois rappels', () => {
