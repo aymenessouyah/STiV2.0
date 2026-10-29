@@ -9,6 +9,16 @@ const root = resolve(new URL('..', import.meta.url).pathname);
 const lire = p => readFileSync(resolve(root, p), 'utf8');
 const sha = p => createHash('sha256').update(readFileSync(resolve(root, p))).digest('hex');
 
+/* v521 : chaque page gagne une meta description (référencement). La balise ne fait
+   pas partie du socle historique : on la retire, en vérifiant qu'elle est présente
+   exactement une fois, avant de comparer l'empreinte d'origine. */
+const DESCRIPTION_V521 = /[ \t]*<meta name="description" content="[^"]*"[ \t]*\/?>\n?/;
+const sansDescription = (texte, chemin) => {
+  assert.equal((texte.match(DESCRIPTION_V521) || []).length, 1, chemin + ' : meta description attendue une seule fois');
+  return texte.replace(DESCRIPTION_V521, '');
+};
+const shaSansDescription = chemin => createHash('sha256').update(sansDescription(lire(chemin), chemin)).digest('hex');
+
 /* Empreintes du socle de référence 478c912 : aucune dépendance à FETCH_HEAD en CI. */
 test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservés', () => {
   /* v519 : config.js (pré-rendu au survol) et sync-progressions.js (rafraîchissement
@@ -26,7 +36,11 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
-  for (const [path, attendu] of Object.entries(originaux)) assert.equal(sha(path), attendu, path);
+  for (const [path, attendu] of Object.entries(originaux)) {
+    /* v521 : portail et admin ont reçu leur meta description. */
+    const empreinte = path === 'portail.html' || path === 'admin.html' ? shaSansDescription(path) : sha(path);
+    assert.equal(empreinte, attendu, path);
+  }
   /* v496 : « La Cote » quitte l'accueil au profit des news personnalisées de la classe. */
   const html = lire('index.html');
   assert.doesNotMatch(html, /id="cote-sti"/);
@@ -285,6 +299,8 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
         courant = courant.replace(ligneComplete, '\n');
       }
     }
+    /* v521 : la meta description ajoutée à chaque page est retirée avant le contrôle. */
+    courant = sansDescription(courant, chemin);
     assert.equal(createHash('sha256').update(courant).digest('hex'), empreinte, chemin);
   }
 });
