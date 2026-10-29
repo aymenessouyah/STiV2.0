@@ -15,7 +15,8 @@ const racine = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const lire = (chemin) => readFileSync(join(racine, chemin), 'utf8');
 
 const MODULE = 'assets/js/admin-vues-videos.js';
-const REV = 'vues-videos-v529';
+const REV = 'vues-videos-v529';        /* compteur, fusion, reprise */
+const REV_PAGE = 'vues-videos-v530';   /* admin.html + manifeste (v530 : filtre et CSV) */
 
 /** Évalue un module navigateur dans un bac à sable minimal (aucun DOM réel). */
 function chargerModule(source, options = {}) {
@@ -48,12 +49,13 @@ test('le petit coin « Vues des vidéos » est monté dans la vue d’ensemble d
   assert.ok(debutSection > 0 && finSection > debutSection, 'section #vue-ensemble-admin');
   const section = html.slice(debutSection, finSection);
   assert.match(section, /<div class="vues-videos" id="vues-videos-admin"/, 'bloc présent dans la vue d’ensemble');
-  for (const id of ['vues-videos-liste', 'vues-videos-etat', 'vues-videos-resume', 'btn-vues-videos']) {
+  for (const id of ['vues-videos-liste', 'vues-videos-etat', 'vues-videos-resume', 'vues-videos-classe', 'btn-vues-videos', 'btn-vues-videos-csv']) {
     assert.ok(section.includes(`id="${id}"`), 'élément ' + id);
   }
+  assert.match(section, /<select id="vues-videos-classe"[^>]*><option value="\*">/, 'sélecteur de classe amorcé sur « toutes »');
   /* Le bloc reste discret : après la grille afficheur + compteurs, avant le bandeau Labo 3. */
   assert.ok(section.indexOf('class="vue-ensemble-corps"') < section.indexOf('id="vues-videos-admin"'));
-  assert.match(html, /<script src="assets\/js\/admin-vues-videos\.js\?v=529" defer><\/script>/);
+  assert.match(html, /<script src="assets\/js\/admin-vues-videos\.js\?v=530" defer><\/script>/);
   /* Styles dédiés (liste compacte et défilante). */
   assert.match(html, /\.vues-videos-liste\s*\{[^}]*max-height/);
   assert.match(html, /\.vues-video-jauge/);
@@ -142,6 +144,61 @@ test('un slug vidéo inconnu du catalogue apparaît quand même dans le coin', (
   assert.ok(ligne, 'le média vu reste visible');
   assert.equal(ligne.vues, 4);
   assert.equal(ligne.horsCatalogue, true);
+});
+
+/* ───────────────────────── 3 bis. filtre de classe et export CSV ───────────────────────── */
+
+function jeuTroisEleves() {
+  const lignes = [
+    { user_id: 'u1', email: 'lea@lycee.tn', donnees: JSON.stringify({ 'sti-media-prog-v1': { 'video:html5-cours': { maxPct: 40, vues: { p: 2 } } } }) },
+    { user_id: 'u2', email: 'sami@lycee.tn', donnees: JSON.stringify({ 'sti-media-prog-v1': { 'video:html5-cours': { maxPct: 90, vues: { t: 1 } } } }) },
+    { user_id: 'u3', email: 'nora@lycee.tn', donnees: JSON.stringify({ 'sti-media-prog-v1': { 'video:html5-cours': { maxPct: 70, vues: { p: 5 } }, 'video:css3-cours': { maxPct: 50, vues: { p: 1 } } } }) }
+  ];
+  const profils = [
+    { id: 'u1', email: 'lea@lycee.tn', classe: '3SI' },
+    { id: 'u2', email: 'sami@lycee.tn', classe: '3SI' },
+    { id: 'u3', email: 'nora@lycee.tn', classe: '4SI' },
+    { id: 'prof1', email: 'prof@lycee.tn', classe: 'prof' }
+  ];
+  return { lignes, profils };
+}
+
+test('le filtre de classe ne compte que les élèves de la classe choisie', () => {
+  const api = chargerModule(lire(MODULE)).STI_VUES_VIDEOS;
+  const { lignes, profils } = jeuTroisEleves();
+  const parId = (res) => Object.fromEntries(res.lignes.map((l) => [l.id, l]));
+
+  const toutes = api.analyser(lignes, profils, '*');
+  assert.deepEqual({ vues: parId(toutes)['html5-cours'].vues, eleves: parId(toutes)['html5-cours'].eleves }, { vues: 8, eleves: 3 });
+  assert.deepEqual(toutes.classes, ['3SI', '4SI'], 'classes proposées (le compte prof est écarté)');
+  assert.equal(toutes.classe, '*');
+
+  const trois = api.analyser(lignes, profils, '3SI');
+  assert.deepEqual({ vues: parId(trois)['html5-cours'].vues, eleves: parId(trois)['html5-cours'].eleves }, { vues: 3, eleves: 2 });
+  assert.equal(parId(trois)['css3-cours'].vues, 0, 'la vidéo vue en 4SI disparaît pour la 3SI');
+  assert.equal(trois.elevesAnalyses, 2);
+  assert.equal(trois.classe, '3SI');
+
+  const quatre = api.analyser(lignes, profils, '4SI');
+  assert.deepEqual({ vues: parId(quatre)['html5-cours'].vues, vuesCss: parId(quatre)['css3-cours'].vues }, { vues: 5, vuesCss: 1 });
+
+  const inconnue = api.analyser(lignes, profils, '5SI');
+  assert.equal(inconnue.vues, 0);
+  assert.equal(inconnue.elevesAnalyses, 0, 'classe sans élève : aucun compteur inventé');
+});
+
+test('l’export CSV reprend exactement le filtre affiché', () => {
+  const api = chargerModule(lire(MODULE)).STI_VUES_VIDEOS;
+  const { lignes, profils } = jeuTroisEleves();
+  const res = api.analyser(lignes, profils, '3SI');
+  const csv = api.versCsv(res).split('\r\n');
+  assert.equal(csv[0], 'Vidéo;Matière;Vues cumulées;Élèves;Hors catalogue;Classe');
+  assert.equal(csv[1], '"HTML5 — Structure & formulaires";"html5";"3";"2";"non";"3SI"');
+  assert.equal(csv[csv.length - 1], '"TOTAL";"";"3";"2";"";"3SI"');
+  assert.equal(csv.length, res.lignes.length + 2, 'une ligne par capsule + en-tête + total');
+  /* Toutes classes : la colonne le dit explicitement. */
+  const csvToutes = api.versCsv(api.analyser(lignes, profils, '*')).split('\r\n');
+  assert.match(csvToutes[1], /"Toutes les classes"$/);
 });
 
 /* ───────────────────────── 4. le compteur côté lecteur ───────────────────────── */
@@ -272,11 +329,15 @@ test('reconnexion-profil fusionne aussi les compteurs de vues', () => {
 
 test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v529-vues-videos-20261029"/);
-  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 6, 'six fichiers révisés');
+  assert.match(sw, /var UPDATE_ID = "v530-vues-videos-classe-20261029"/);
+  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 4, 'quatre fichiers du compteur');
+  assert.equal((sw.match(new RegExp('revision: "' + REV_PAGE + '"', 'g')) || []).length, 2, 'page et manifeste');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
-  for (const chemin of ['assets/js/protection.js', 'assets/js/sync-progressions.js', 'assets/js/reconnexion-profil.js', 'assets/js/reprendre.js', 'admin.html', 'offline-complete-manifest.json']) {
+  for (const chemin of ['assets/js/protection.js', 'assets/js/sync-progressions.js', 'assets/js/reconnexion-profil.js', 'assets/js/reprendre.js']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
+  }
+  for (const chemin of ['admin.html', 'offline-complete-manifest.json']) {
+    assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV_PAGE}"`), chemin);
   }
   /* Budget du delta préservé : le nouveau module arrive par le réseau puis reste en cache. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
@@ -287,7 +348,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
 
 test('le manifeste hors ligne contient le nouveau module avec son empreinte', () => {
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v529-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v530-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   const entree = manifeste.files.find((f) => f.path === MODULE);

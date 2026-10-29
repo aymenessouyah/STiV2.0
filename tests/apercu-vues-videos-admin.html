@@ -1,9 +1,9 @@
 <!doctype html><html lang="fr"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Page de test STI V2.0 — aperçu du petit coin « Vues des vidéos » du tableau de bord (v529). Page technique réservée aux tests et à la démonstration.">
-<title>Aperçu — Vues des vidéos (v529)</title>
+<title>Aperçu — Vues des vidéos (v529/v530)</title>
 <!--
-  Harnais visuel du module assets/js/admin-vues-videos.js (v529).
+  Harnais visuel du module assets/js/admin-vues-videos.js (v529/v530) : filtre de classe et export CSV compris.
   Il rejoue le bloc du tableau de bord avec un faux client Supabase et des
   progressions d'élèves fictives : aucune lecture réelle, aucun compte touché.
   Ouvrir cette page directement pour vérifier le rendu, les tris et les jauges.
@@ -41,6 +41,11 @@
   .vues-videos-entete { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
   .vues-videos-entete b { font-size: 13px; color: #23201a; }
   .vues-videos-entete small { font-size: 11px; font-weight: 800; color: #7a6f5d; }
+  .vues-videos-entete select {
+    border: 2px solid #23201a; border-radius: 999px; padding: 5px 10px;
+    background: #f3ead9; color: #23201a; font-weight: 800; font-size: 11.5px; cursor: pointer;
+  }
+  .vues-videos-entete .btn-outil[disabled] { opacity: .45; cursor: progress; }
   #vues-videos-etat { margin-left: auto; }
   .vues-videos-liste {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
@@ -74,7 +79,9 @@
     <div class="vues-videos-entete">
       <b id="titre-vues-videos">🎬 Vues des vidéos</b>
       <small id="vues-videos-resume">Chargement…</small>
+      <select id="vues-videos-classe" title="Filtrer les vues par classe"><option value="*">🏫 Toutes les classes</option></select>
       <small id="vues-videos-etat"></small>
+      <button type="button" class="btn-outil" id="btn-vues-videos-csv" title="Exporter les vues affichées au format Excel (CSV)" disabled>📥 CSV</button>
       <button type="button" class="btn-outil" id="btn-vues-videos" title="Relire les progressions vidéo enregistrées dans le nuage">↻ Actualiser</button>
     </div>
     <div class="vues-videos-liste" id="vues-videos-liste" aria-live="polite">
