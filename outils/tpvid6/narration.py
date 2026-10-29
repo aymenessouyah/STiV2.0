@@ -50,7 +50,7 @@ SECTIONS = {
         "La fonction voyage récupère ensuite la date de l'aller. Si elle est vide, une alerte "
         "et un return : on ne continue pas avec une date absente.",
         "Sinon, on transforme le texte du champ en vraie date. Attention, une date au format "
-        "année-mois-jour se lit directement, alors qu'une date au format jour barre mois barre année "
+        "année, mois, jour se lit directement, alors qu'une date au format jour, mois, année "
         "demande de remettre les morceaux dans l'ordre : c'est exactement le travail de la fonction dateDe.",
         "On affiche alors le jour de la semaine et la date en français, puis le nombre de jours "
         "qui restent avant le départ, calculé par une simple différence de dates divisée par "
@@ -62,17 +62,18 @@ SECTIONS = {
         "Partie trois : le prix du billet. C'est le calcul le plus complet du TP.",
         "On commence par convertir les deux champs : le tarif en nombre décimal, "
         "le nombre de billets en nombre entier.",
-        "Dès qu'une valeur n'est pas un nombre, ou que le nombre de billets est inférieur à un, "
+        "Dès qu'une valeur n'est pas un nombre, ou que la quantité de billets est invalide, "
         "on prévient et on arrête tout : inutile de calculer sur des valeurs fausses.",
         "Première règle : la première classe coûte une fois et demie le tarif de base. "
-        "On parcourt les boutons radio, et si celui de la première classe est coché, le tarif est multiplié par 1,5.",
+        "On parcourt les boutons radio, et si celui de la première classe est coché, "
+        "le tarif est multiplié par un virgule cinq.",
         "Deuxième règle : chaque option cochée s'ajoute au prix. Une boucle sur les cases à cocher, "
         "et on additionne la valeur de chacune, convertie en nombre.",
-        "Troisième règle : la réduction selon l'âge. On calcule l'âge à partir de la date de naissance, "
-        "en retirant une année si l'anniversaire n'est pas encore passé. Moins de douze ans : moitié prix. "
-        "Vingt-cinq ans ou moins : un quart de réduction.",
+        "Troisième règle : la réduction selon la date de naissance. On calcule l'âge, "
+        "en retirant une année si l'anniversaire n'est pas encore passé. "
+        "La réduction est de moitié pour un enfant, et d'un quart pour un jeune.",
         "Le total se compose ainsi : le tarif réduit, plus les options, le tout multiplié "
-        "par le nombre de billets. Et pour un aller-retour, on multiplie encore par deux.",
+        "par la quantité de billets. Et pour un aller-retour, on multiplie encore par deux.",
         "Reste à afficher proprement : trois chiffres après la virgule pour les dinars, "
         "et le total en millimes en multipliant par mille puis en arrondissant.",
     ],

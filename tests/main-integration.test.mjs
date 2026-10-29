@@ -16,7 +16,7 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v380"/);
-  assert.match(sw, /var UPDATE_ID = "v525-grille-exercices-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v526-video-tp-train-20261029"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
@@ -53,7 +53,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
     assert.equal(revisions.get('./' + chemin), 'meta-seo-v521', chemin);
   }
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
-  assert.equal(revisions.get('./assets/js/app.js'), 'serie6-exercices-v524');
+  assert.equal(revisions.get('./assets/js/app.js'), 'video-tp-train-v526');
   assert.equal(revisions.get('./offline-complete-manifest.json'), 'outils-attirants-v518');
   assert.equal(revisions.get('./README.md'), 'xp-jamais-en-recul-v520');
   for (const chemin of ['dashboard.html', 'assets/images/drapeau-tunisie.svg']) {
@@ -66,21 +66,21 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./admin.html'), 'meta-seo-v521');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
-  assert.equal(revisions.get('./index.html'), 'outils-animes-v516');
+  assert.equal(revisions.get('./index.html'), 'video-tp-train-v526');
   assert.equal(revisions.get('./assets/js/admin.js'), 'news-niveaux-v497');
   assert.equal(revisions.get('./assets/css/cours.css'), 'retrait-fond-cours-v508');
   for (const chemin of ['cours/sql.html', 'cours/php.html']) {
     assert.equal(revisions.get('./' + chemin), 'retrait-fond-cours-v508', chemin);
   }
   /* v523 : le cours JavaScript reçoit les liens du TP Train. */
-  assert.equal(revisions.get('./cours/javascript.html'), 'grille-exercices-v525');
+  assert.equal(revisions.get('./cours/javascript.html'), 'video-tp-train-v526');
   assert.equal(revisions.get('./cours/html5.html'), 'tp-display-v510');
   assert.equal(revisions.get('./cours/css3.html'), 'tp-transitions-v512');
   assert.equal(revisions.get('./assets/js/cours-onglets-mobile.js'), 'onglets-mobile-v493');
-  for (const chemin of ['assets/js/lecteur-commun.js', 'assets/subtitles/validation-nom-prenom-js-fr.vtt']) {
-    assert.equal(revisions.get('./' + chemin), 'video-js-validation-v485', chemin);
-  }
-  assert.equal(revisions.get('./assets/js/protection.js'), 'tp-transitions-v512');
+  /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
+  assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'video-tp-train-v526');
+  assert.equal(revisions.get('./assets/subtitles/validation-nom-prenom-js-fr.vtt'), 'video-js-validation-v485');
+  assert.equal(revisions.get('./assets/js/protection.js'), 'video-tp-train-v526');
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }
@@ -118,7 +118,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v525-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v526-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'), 'le garde-fou XP est livré hors ligne');
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));

@@ -43,6 +43,21 @@ mêmes algorithmes.
     pip install --break-system-packages pillow          # PIL
     npm install --no-save @ffmpeg-installer/ffmpeg      # ffmpeg local
 
+## Intégration au site
+
+    cd outils/tpvid6
+    python3 montage.py            # voix off → voix-off.mp3, calage.json, VTT
+    python3 render.py --durees calage.json --sortie sortie_tp6.mp4 --audio voix-off.mp3
+    python3 integrer.py           # copie MP4 + VTT, met à jour les durées affichées
+
+La capsule est ensuite proposée :
+
+- dans l'onglet **Vidéos** de `cours/javascript.html` (carte dédiée + sous-titres) ;
+- sur la carte de la **Série 6** du cours (bouton « 🎥 Vidéo de correction ») ;
+- en 4ᵉ carte de la page d'accueil du TP (`exercices/javascript/TP Train/index.html`) ;
+- au **catalogue de l'accueil** (`assets/js/app.js`) et dans le **lecteur partagé**
+  (`assets/js/protection.js`, huit repères de chapitres).
+
 ## Rendu
 
     cd outils/tpvid6
@@ -51,7 +66,7 @@ mêmes algorithmes.
     python3 render.py --durees durees.json --sortie sortie_tp6.mp4
     python3 render.py --durees durees.json --sortie apercu.mp4 --fin 69 --audio extrait.mp3
 
-Format : 1920×1080, 30 images par seconde, H.264 + AAC mono 44,1 kHz.
+Durée : 7 min 08. Format : 1920×1080, 30 images par seconde, H.264 + AAC mono 44,1 kHz.
 Vitesse mesurée ≈ 21 ms/image, soit ~5 min pour les 7 minutes de la capsule.
 
 `--debut` / `--fin` permettent de ne rendre qu'un extrait ; `--audio` muxe une

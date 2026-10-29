@@ -102,9 +102,9 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
     const actualises = ['assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'projets/fleurs/controle.js', 'projets/carte-bancaire/controle.js'];
     /* v521 : ces pages ont reçu leur meta description après le lot de fidélité v481. */
     const pagesMetaV521 = ['exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html'];
-    const revision = path === 'assets/js/app.js' ? 'serie6-exercices-v524' :
-      path === 'cours/javascript.html' ? 'grille-exercices-v525' :
-      path === 'assets/css/cours-javascript.css' ? 'grille-exercices-v525' :
+    const revision = path === 'assets/js/app.js' ? 'video-tp-train-v526' :
+      path === 'cours/javascript.html' ? 'video-tp-train-v526' :
+      path === 'assets/css/cours-javascript.css' ? 'video-tp-train-v526' :
       path === 'assets/js/cours-javascript.js' ? 'progression-chapitres-v492' :
       path === 'assets/js/profil.js' ? 'xp-jamais-en-recul-v520' :
       pagesMetaV521.includes(path) ? 'meta-seo-v521' :
@@ -161,13 +161,13 @@ test('vidéo Validation Nom & Prénom : déplacée dans assets/videos et intégr
   assert.match(coursJsHtml, /\.\.\/assets\/videos\/validation-nom-prenom-js\.mp4/);
 
   const indexHtml = read('index.html');
-  assert.match(indexHtml, /data-video-filter="javascript">JS \(2\)</);
-  assert.match(indexHtml, /🎥 2 vidéos &amp; 🔊 audio/);
-  assert.match(indexHtml, /href="cours\/javascript\.html#videos">🎥 2 Vidéos</);
+  assert.match(indexHtml, /data-video-filter="javascript">JS [(]3[)]</);
+  assert.match(indexHtml, /🎥 3 vidéos &amp; 🔊 audio/);
+  assert.match(indexHtml, /href="cours\/javascript\.html#videos">🎥 3 Vidéos</);
 
   const appJs = read('assets/js/app.js');
   assert.match(appJs, /id:\s*"validation-nom-prenom-js"[\s\S]*?dureeTexte:\s*"12:11"[\s\S]*?srcPrincipal:\s*"assets\/videos\/validation-nom-prenom-js\.mp4"/);
-  assert.match(appJs, /javascript:\s*\{[\s\S]*?nbVideos:\s*2,/);
+  assert.match(appJs, /javascript:\s*{[\s\S]*?nbVideos:\s*3,/);
 
   const lecteurJs = read('assets/js/lecteur-commun.js');
   assert.match(lecteurJs, /'validation-nom-prenom-js':\s*\['javascript',\s*'Validation du champ Nom & Prénom'\]/);

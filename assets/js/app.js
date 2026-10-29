@@ -122,7 +122,7 @@
       icone: "⚡",
       badgeClasse: "badge-js",
       couleur: "#facc15",
-      nbVideos: 2,
+      nbVideos: 3,
       urlCours: "cours/javascript.html",
       urlQuiz: "quiz/javascript.html",
       urlAudio: "assets/audio/javascript-cours.mp3",
@@ -222,6 +222,20 @@
       titre: "CSS3 — Display : la démo animée", dureeTexte: "00:05",
       srcPrincipal: "assets/videos/displayanim.mp4", urlCours: "cours/css3.html#videos",
       codeApercu: "display: inline-block;"
+    },
+    {
+      /* v526 : correction vidéo du TP Train, Série 6 JavaScript. */
+      id: "tp-train-serie6",
+      matiere: "javascript",
+      nomMatiere: "JavaScript",
+      badgeClasse: "badge-js",
+      couleur: "#f7df1e",
+      titre: "TP Train — correction détaillée (Série 6)",
+      dureeTexte: "7:08",
+      srcPrincipal: "assets/videos/tp-train-serie6.mp4",
+      srcSecours: "assets/videos/tp-train-serie6.mp4",
+      urlCours: "cours/javascript.html#videos",
+      codeApercu: "function prix() { let t = parseFloat(lire(\"trajet\")); }"
     },
     {
       id: "css-positionnement",

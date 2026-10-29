@@ -168,10 +168,10 @@ test('v498 : les boîtes « en cours » tiennent sur une seule ligne compacte', 
 
 test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la vidéo', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v380"/);
-  assert.match(sw, /var UPDATE_ID = "v525-grille-exercices-20261029"/);
-  assert.match(sw, /url: "\.\/index\.html", revision: "outils-animes-v516"/);
+  assert.match(sw, /var UPDATE_ID = "v526-video-tp-train-20261029"/);
+  assert.match(sw, /url: "\.\/index\.html", revision: "video-tp-train-v526"/);
   assert.match(sw, /url: "\.\/assets\/css\/theme\.css", revision: "logo-titre-visible-v522"/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "serie6-exercices-v524"/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "video-tp-train-v526"/);
   assert.match(sw, /url: "\.\/assets\/js\/news-perso\.js", revision: "ruban-vert-v517"/);
   assert.match(sw, /url: "\.\/assets\/images\/drapeau-tunisie\.svg", revision: "accueil-lycee-v503"/);
   const shell = sw.split('var SHELL = [')[1].split('];')[0];
@@ -189,5 +189,5 @@ test('v498 : service worker et manifeste hors ligne connaissent le drapeau et la
     assert.equal(entree.bytes, data.length, chemin);
     assert.equal(entree.gitSha, createHash('sha1').update(`blob ${data.length}\0`).update(data).digest('hex'), chemin);
   }
-  assert.equal(manifeste.version, 'v525-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v526-sti-atelier-v380');
 });

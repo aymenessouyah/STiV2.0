@@ -1,0 +1,378 @@
+WEBVTT
+
+00:00.000 --> 00:05.270
+Bienvenue dans cette correction détaillée
+du TP Train, Série 6 de JavaScript.
+
+00:05.270 --> 00:11.225
+Sami réserve un billet : son identité, son
+voyage, le prix, puis un captcha
+anti-robot.
+
+00:11.225 --> 00:18.514
+Chaque partie se déroule en deux temps.
+D'abord le diagramme se construit sur
+toute la largeur de l'écran. Ensuite
+
+00:18.514 --> 00:25.803
+il se replie à gauche, et le code s'écrit
+à droite, pas à pas, en suivant exactement
+le diagramme.
+
+00:25.803 --> 00:30.320
+Cinq parties, et un train qui entre en
+gare à la fin. C'est parti.
+
+00:30.320 --> 00:36.320
+Avant les cinq scènes, trois petites
+fonctions d'outillage, que tout le reste
+va réutiliser.
+
+00:36.320 --> 00:42.451
+lire récupère la valeur d'un champ : une
+ligne suffit, un getElementById suivi de
+point value.
+
+00:42.451 --> 00:47.147
+ecrire affiche plusieurs lignes de
+résultat : on assemble le texte avec
+
+00:47.147 --> 00:51.843
+des balises br, puis on l'injecte dans la
+zone de sortie avec innerHTML.
+
+00:51.843 --> 00:56.767
+colorer borde un champ en vert quand la
+saisie est correcte, en rouge
+
+00:56.767 --> 01:01.692
+sinon : c'est le troisième argument, un
+simple booléen, qui décide de la couleur.
+
+01:01.692 --> 01:05.866
+Ces trois fonctions ne font rien de
+visible pour l'utilisateur, mais
+
+01:05.866 --> 01:10.040
+elles évitent de répéter le même code dans
+les cinq scènes.
+
+01:10.040 --> 01:11.450
+Partie une : l'identité.
+
+01:11.450 --> 01:15.416
+Le diagramme commence par un début, puis
+un appel à demanderNom :
+
+01:15.416 --> 01:19.381
+un prompt pose la question, et la réponse
+atterrit dans le champ nom.
+
+01:19.381 --> 01:24.668
+Attention au cas où l'utilisateur clique
+sur Annuler : le prompt renvoie alors
+null, et il ne
+
+01:24.668 --> 01:29.956
+faut surtout pas écrire ce null dans le
+champ. D'où le test : ni null, ni chaîne
+vide.
+
+01:29.956 --> 01:34.920
+Vient ensuite le contrôle du nom avec la
+fonction identite : si le champ est vide,
+
+01:34.920 --> 01:39.884
+on prévient avec une alerte, on colore en
+rouge et on sort de la fonction avec
+return.
+
+01:39.884 --> 01:44.202
+Pour l'e-mail, une petite boucle parcourt
+la chaîne caractère par caractère.
+
+01:44.202 --> 01:48.520
+Elle retient la position du premier
+arobase et celle du dernier point.
+
+01:48.520 --> 01:54.513
+La condition finale est courte mais
+précise : l'arobase ne doit pas être au
+tout début, il doit rester
+
+01:54.513 --> 02:00.505
+au moins un caractère entre l'arobase et
+le point, et le point ne doit pas être le
+dernier caractère.
+
+02:00.505 --> 02:04.148
+Si tout est bon, la fonction renvoie vrai,
+et le message
+
+02:04.148 --> 02:07.790
+de bienvenue s'affiche avec la première
+lettre du nom en majuscule.
+
+02:07.790 --> 02:10.125
+Partie deux : le voyage et les dates.
+
+02:10.125 --> 02:14.417
+Premier réflexe : savoir ce que
+l'utilisateur a coché. typeChoisi
+
+02:14.417 --> 02:18.708
+parcourt les boutons radio et renvoie la
+valeur du bouton sélectionné.
+
+02:18.708 --> 02:24.736
+Selon la réponse, typeVoyage active ou
+désactive le champ de la date de retour.
+Un aller simple n'a
+
+02:24.736 --> 02:30.763
+pas de retour : on désactive le champ, et
+on le vide, pour ne pas garder une
+ancienne date.
+
+02:30.763 --> 02:35.212
+La fonction voyage récupère ensuite la
+date de l'aller. Si elle est vide,
+
+02:35.212 --> 02:39.662
+une alerte et un return : on ne continue
+pas avec une date absente.
+
+02:39.662 --> 02:48.055
+Sinon, on transforme le texte du champ en
+vraie date. Attention, une date au format
+année, mois, jour se lit directement,
+alors
+
+02:48.055 --> 02:56.449
+qu'une date au format jour, mois, année
+demande de remettre les morceaux dans
+l'ordre : c'est exactement le travail de
+la fonction dateDe.
+
+02:56.449 --> 03:03.139
+On affiche alors le jour de la semaine et
+la date en français, puis le nombre de
+jours qui
+
+03:03.139 --> 03:09.829
+restent avant le départ, calculé par une
+simple différence de dates divisée par le
+nombre de millisecondes d'une journée.
+
+03:09.829 --> 03:13.490
+Et s'il s'agit d'un aller-retour, on
+recommence pour la date
+
+03:13.490 --> 03:17.150
+de retour, et on compte les nuits entre
+les deux dates.
+
+03:17.150 --> 03:21.677
+Partie trois : le prix du billet. C'est le
+calcul le plus complet du TP.
+
+03:21.677 --> 03:25.136
+On commence par convertir les deux champs
+: le tarif
+
+03:25.136 --> 03:28.594
+en nombre décimal, le nombre de billets en
+nombre entier.
+
+03:28.594 --> 03:33.593
+Dès qu'une valeur n'est pas un nombre, ou
+que la quantité de billets est
+
+03:33.593 --> 03:38.592
+invalide, on prévient et on arrête tout :
+inutile de calculer sur des valeurs
+fausses.
+
+03:38.592 --> 03:44.786
+Première règle : la première classe coûte
+une fois et demie le tarif de base. On
+parcourt les
+
+03:44.786 --> 03:50.979
+boutons radio, et si celui de la première
+classe est coché, le tarif est multiplié
+par un virgule cinq.
+
+03:50.979 --> 03:55.695
+Deuxième règle : chaque option cochée
+s'ajoute au prix. Une boucle sur les
+
+03:55.695 --> 04:00.411
+cases à cocher, et on additionne la valeur
+de chacune, convertie en nombre.
+
+04:00.411 --> 04:07.076
+Troisième règle : la réduction selon la
+date de naissance. On calcule l'âge, en
+retirant une année si
+
+04:07.076 --> 04:13.742
+l'anniversaire n'est pas encore passé. La
+réduction est de moitié pour un enfant, et
+d'un quart pour un jeune.
+
+04:13.742 --> 04:18.866
+Le total se compose ainsi : le tarif
+réduit, plus les options, le tout
+
+04:18.866 --> 04:23.991
+multiplié par la quantité de billets. Et
+pour un aller-retour, on multiplie encore
+par deux.
+
+04:23.991 --> 04:28.675
+Reste à afficher proprement : trois
+chiffres après la virgule pour les
+
+04:28.675 --> 04:33.360
+dinars, et le total en millimes en
+multipliant par mille puis en
+arrondissant.
+
+04:33.360 --> 04:37.289
+Partie quatre : le captcha, la preuve
+qu'on est bien un humain.
+
+04:37.289 --> 04:42.278
+La fonction nouveauCode tire cinq
+caractères au hasard dans une chaîne de
+lettres et
+
+04:42.278 --> 04:47.267
+de chiffres, et leur donne à chacun une
+couleur tirée au hasard elle aussi.
+
+04:47.267 --> 04:53.098
+Deux choses sont fabriquées en même temps
+: le texte visible, coloré, écrit dans la
+page, et
+
+04:53.098 --> 04:58.929
+le vrai code, caché dans un champ
+invisible. C'est ce code caché qui servira
+à la comparaison.
+
+04:58.929 --> 05:03.918
+On pense aussi à vider la zone de saisie :
+un nouveau code, une nouvelle chance.
+
+05:03.918 --> 05:08.814
+Quand l'utilisateur valide,
+verifierCaptcha compare les deux chaînes
+caractère par
+
+05:08.814 --> 05:13.709
+caractère, et compte combien de caractères
+sont identiques et bien placés.
+
+05:13.709 --> 05:20.757
+Cinq bons caractères : c'est gagné. Sinon,
+on incrémente le compteur d'essais. Au
+troisième échec, on arrête et on
+
+05:20.757 --> 05:27.804
+affiche que les essais sont épuisés.
+Sinon, on redonne un nouveau code : la
+boucle est bouclée, au sens propre.
+
+05:27.804 --> 05:33.822
+Petit bonus : la fonction aide affiche ou
+cache le panneau d'aide. Ici, pas de if et
+pas
+
+05:33.822 --> 05:39.840
+de else, une seule ligne suffit : on
+inverse la valeur de l'attribut hidden
+avec un point d'exclamation.
+
+05:39.840 --> 05:42.209
+Partie cinq : la validation et l'envoi.
+
+05:42.209 --> 05:48.314
+La fonction verif est le contrôle final.
+Elle construit une liste d'erreurs, et y
+ajoute un message
+
+05:48.314 --> 05:54.419
+pour chaque champ manquant ou incorrect :
+le nom vide, l'e-mail mal formé, la date
+de départ absente.
+
+05:54.419 --> 05:58.307
+Si la liste n'est pas vide, on l'affiche
+et on renvoie faux
+
+05:58.307 --> 06:02.194
+: la réservation est refusée. Si la liste
+est vide, on renvoie vrai.
+
+06:02.194 --> 06:07.449
+reserver s'appuie sur ce résultat : un
+appel à verif, et si la réponse est
+fausse, un
+
+06:07.449 --> 06:12.703
+return immédiat. C'est ce qu'on appelle
+une garde : on ne continue que si tout va
+bien.
+
+06:12.703 --> 06:17.320
+Quand tout est bon, la réservation est
+confirmée, et le train entre en gare.
+
+06:17.320 --> 06:22.574
+positionnerTrain remet le train au départ,
+puis deplacerTrain lance un minuteur :
+toutes
+
+06:22.574 --> 06:27.829
+les vingt millisecondes, le décalage
+augmente de deux pixels, et l'image se
+déplace.
+
+06:27.829 --> 06:31.352
+Et quand le décalage atteint cinq cent
+vingt pixels, on
+
+06:31.352 --> 06:34.875
+arrête le minuteur avec clearInterval : le
+train est à quai.
+
+06:34.875 --> 06:40.160
+Voilà le TP terminé. Un diagramme, puis du
+code fidèle au diagramme, scène après
+scène.
+
+06:40.160 --> 06:45.723
+Pour résumer : un diagramme avant le code,
+des fonctions courtes et réutilisables,
+
+06:45.723 --> 06:51.286
+des boucles pour vérifier, des conditions
+pour décider, et une animation en prime.
+
+06:51.286 --> 06:55.872
+Le réflexe à garder : quand un exercice
+paraît long, dessinez-le
+
+06:55.872 --> 07:00.457
+d'abord. Un organigramme clair, et le code
+se déduit presque tout seul.
+
+07:00.457 --> 07:04.099
+À toi de jouer maintenant : ouvre la page
+JavaScript, va
+
+07:04.099 --> 07:07.740
+dans la Série 6, et tape le TP Train. Bon
+courage !
