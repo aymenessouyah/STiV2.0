@@ -51,6 +51,7 @@
     { id: "validation-nom-prenom-js", titre: "JS — Validation Nom & Prénom", matiere: "javascript", icone: "⚡" },
     { id: "tp-train-serie6", titre: "TP Train — Série 6", matiere: "javascript", icone: "⚡" },
     { id: "defis37-tableau-aleas-media", titre: "Les 37 Défis — Tableau & Média", matiere: "javascript", icone: "⚡" },
+    { id: "boucle-pour", titre: "La boucle Pour — le sac", matiere: "javascript", icone: "🔁" },
     { id: "tp-evenements-liens", titre: "TP — Événements & liens", matiere: "javascript", icone: "⚡" },
     { id: "tp-formulaire-tableau-autre", titre: "TP — Formulaire & tableau", matiere: "javascript", icone: "⚡" },
     { id: "tp-display-float-position", titre: "TP — display, float, position", matiere: "javascript", icone: "⚡" },

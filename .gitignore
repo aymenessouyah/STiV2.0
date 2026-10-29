@@ -25,3 +25,9 @@ build/
 /outils/defis37/sortie_*.mp4
 /outils/defis37/voix-off.mp3
 /outils/defis37/voix/_silence.mp3
+
+# La boucle Pour : rendus intermédiaires, piste audio de montage et cache Python
+/outils/bouclepour/__pycache__/
+/outils/bouclepour/sortie_*.mp4
+/outils/bouclepour/voix-off.wav
+/outils/bouclepour/voix/*.wav

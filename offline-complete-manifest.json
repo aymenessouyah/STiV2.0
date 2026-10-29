@@ -1,9 +1,9 @@
 {
-  "version": "v536-sti-atelier-v380",
-  "generatedAt": "2026-10-29T19:32:36Z",
+  "version": "v537-sti-atelier-v380",
+  "generatedAt": "2026-10-29T20:22:34Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
-  "totalFiles": 734,
-  "totalBytes": 816818825,
+  "totalFiles": 736,
+  "totalBytes": 824901444,
   "files": [
     {
       "path": "404.html",
@@ -672,8 +672,8 @@
     },
     {
       "path": "assets/js/admin-vues-videos.js",
-      "bytes": 29236,
-      "gitSha": "009bd28f3cbd763c1e0e2ff811e020494a0fd6e7"
+      "bytes": 29337,
+      "gitSha": "b810e34b6ec64a4f08d023d1ce90d4f8ea841f0f"
     },
     {
       "path": "assets/js/admin.js",
@@ -687,8 +687,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 117287,
-      "gitSha": "0567b2e761760b6fa92893399ffc690c77792e12"
+      "bytes": 117886,
+      "gitSha": "741475054801e2f666e4351997812c478c2bc0c1"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1021,6 +1021,11 @@
       "gitSha": "e0353283900aad5750d7763aa3e38c3d3fb3020a"
     },
     {
+      "path": "assets/subtitles/BouclePour-fr.vtt",
+      "bytes": 3721,
+      "gitSha": "3c4d3887d5a7507a005ccaa1c1b98a33b7792b62"
+    },
+    {
       "path": "assets/subtitles/css3-cours-v9-sync-fr.vtt",
       "bytes": 16293,
       "gitSha": "f7e40b42612b1dabb22876cc2f5be2a1bfa61c21"
@@ -1084,6 +1089,11 @@
       "path": "assets/video/stivideoofficiel.mp4",
       "bytes": 3347697,
       "gitSha": "5158f5ee77d84f230345e39f7fa5313bf3f87a4e"
+    },
+    {
+      "path": "assets/videos/BouclePour.mp4",
+      "bytes": 8076720,
+      "gitSha": "0751446aee3650589d6b2645806c529961ef5c9a"
     },
     {
       "path": "assets/videos/css-animee.mp4",
@@ -1277,8 +1287,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 131405,
-      "gitSha": "149702e59e160bf9cc2a94788bbc7771e2886193"
+      "bytes": 132792,
+      "gitSha": "48773d0551e71e6cfe58eb8424ab8918f24bea58"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -3083,7 +3093,7 @@
     {
       "path": "index.html",
       "bytes": 57703,
-      "gitSha": "3da88e60cadd530ffcabd0af8c3aa79f489007db"
+      "gitSha": "52e6a720ef517a827452ee1e151e8b4b6ddb84a5"
     },
     {
       "path": "livre-smart.html",
@@ -3672,8 +3682,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97792,
-      "gitSha": "d017b480978863e538bfe27b58a282d3fc5b471a"
+      "bytes": 97883,
+      "gitSha": "9068ef469636172b08caae0849172449b2c1b499"
     }
   ]
 }
