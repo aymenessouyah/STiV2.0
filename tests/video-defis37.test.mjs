@@ -132,15 +132,15 @@ test('l’accueil compte la nouvelle capsule dans son catalogue', () => {
 
 test('le cache hors-ligne embarque la vidéo sans téléchargement automatique', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v527-video-defis37-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v528-defis37-lecteur-20261029"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
   assert.ok(!delta.includes(`"./${VIDEO}"`), 'la vidéo n’entre jamais dans le delta mobile');
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
-  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "video-defis37-v527"/);
-  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "video-defis37-v527"/);
-  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "video-defis37-v527"/);
+  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "defis37-lecteur-v528"/);
+  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "defis37-lecteur-v528"/);
+  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "defis37-lecteur-v528"/);
   const nbDelta = delta.split('{ url:').length - 1;
   assert.ok(nbDelta <= 262, `delta trop long : ${nbDelta}`);
 });
@@ -157,7 +157,7 @@ test('le manifeste complet décrit la vidéo et ses sous-titres', () => {
     const sha = createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${blob.length}\0`), blob])).digest('hex');
     assert.equal(entree.gitSha, sha, `sha1 de ${chemin}`);
   }
-  assert.match(manifeste.version, /^v527/);
+  assert.match(manifeste.version, /^v528/);
 });
 
 test('le moteur de rendu couvre les onze défis et les trois rappels', () => {
@@ -198,4 +198,43 @@ test('le moteur de rendu couvre les onze défis et les trois rappels', () => {
     assert.ok(calage.debuts[cle] > precedent, `départ croissant : ${cle}`);
     precedent = calage.debuts[cle];
   }
+});
+
+test('le lecteur commun accepte réellement le slug et lance la capsule', () => {
+  const js = lire('assets/js/protection.js');
+  /* 1. la garde qui filtre les slugs inconnus doit connaître les 37 Défis,
+        sinon `ouvrirVideoPasAPasSTI` sort sans rien afficher : le clic sur Play
+        met la vidéo en pause et aucune modale n'apparaît (régression v528). */
+  const debut = js.indexOf('        var estTpEvenements =');
+  const fin = js.indexOf('        /* Couper immédiatement toute voix', debut);
+  assert.ok(debut > 0 && fin > debut, 'bloc des slugs repérable');
+  const bloc = js.slice(debut, fin);
+  assert.match(bloc, /!estTpTrain && !estDefis37\) \{/, 'estDefis37 présent dans la garde');
+
+  /* 2. exécution réelle du bloc : le slug de la capsule traverse la garde. */
+  const fonction = new Function(
+    'sSlug', 'estPageHtml5', 'estPageCss3', 'estPageJs', 'estPagePhpCours',
+    'estPageSql', 'estPageCssDeco', 'estPageCssPos', 'estPageGuichet',
+    bloc.replace('return;', 'return true;') + '\nreturn false;');
+  const traverse = (slug) => fonction(slug, false, false, false, false, false, false, false, false);
+  assert.equal(traverse('defis37-tableau-aleas-media'), false, 'la capsule ouvre le lecteur');
+  assert.equal(traverse('tp-train-serie6'), false, 'le TP Train continue de fonctionner');
+  assert.equal(traverse('slug-inconnu'), true, 'un slug inconnu reste refusé');
+
+  /* 3. source, sous-titres et titre choisis pour ce slug. */
+  assert.match(js, /estDefis37 \? prefixeAssetsSTI\(\) \+ "videos\/defis37-tableau-aleas-media\.mp4" :/);
+  assert.match(js, /slugCible === "defis37-tableau-aleas-media"|defis37-tableau-aleas-media-fr\.vtt/);
+});
+
+test('un bouton vidéo mène aux 37 Défis depuis la série et depuis la page des défis', () => {
+  const html = lire('cours/javascript.html');
+  const carte = html.slice(html.indexOf('<h3>Les 37 Défis</h3>'));
+  assert.ok(carte.slice(0, 1200).includes("ouvrirVideoPasAPasSTI('defis37-tableau-aleas-media'"),
+    'bouton vidéo sur la carte de la série');
+  assert.match(carte.slice(0, 1200), /🎥 Vidéo des 37 défis \(\d+:\d{2}\)/);
+
+  const page = lire('exercices/javascript/js-37-defis-tt.html');
+  const entete = page.slice(page.indexOf('<header class="header">'), page.indexOf('</header>'));
+  assert.ok(entete.includes('cours/javascript.html#videos'), 'lien vers l’onglet Vidéos depuis les défis');
+  assert.match(entete, /🎥/);
 });
