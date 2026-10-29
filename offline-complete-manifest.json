@@ -1,9 +1,9 @@
 {
-  "version": "v527-sti-atelier-v380",
+  "version": "v528-sti-atelier-v380",
   "generatedAt": "2026-10-29T11:12:00Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 733,
-  "totalBytes": 816750899,
+  "totalBytes": 816751534,
   "files": [
     {
       "path": "404.html",
@@ -817,8 +817,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 217886,
-      "gitSha": "50e722c3d8368377ccb29a2fbf98897e66e1e222"
+      "bytes": 217901,
+      "gitSha": "a71aaa78235b32b509017bfc056c00de043f71ec"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1272,8 +1272,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 131153,
-      "gitSha": "41558c4ef618fc17696c237ecc9802800ed2c112"
+      "bytes": 131405,
+      "gitSha": "149702e59e160bf9cc2a94788bbc7771e2886193"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -2847,8 +2847,8 @@
     },
     {
       "path": "exercices/javascript/js-37-defis-tt.html",
-      "bytes": 96262,
-      "gitSha": "48ce7ef45cc4c514a5b6d2b8c4284bfbf0250ef5"
+      "bytes": 96609,
+      "gitSha": "0dd1d87235372b8d4cce6a7886bc1192bd0494e8"
     },
     {
       "path": "exercices/javascript/validation-nom-prenom-js.srt",
@@ -3667,8 +3667,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97319,
-      "gitSha": "33d131d446764bb36f79ea567bc32131a59e6cf6"
+      "bytes": 97340,
+      "gitSha": "5e93b443bcb525175178806f8cc8199779c726a4"
     }
   ]
 }
