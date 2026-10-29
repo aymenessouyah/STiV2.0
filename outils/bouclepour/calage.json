@@ -1,0 +1,26 @@
+{
+  "durees": {
+    "sac": 15.604,
+    "nom": 13.224,
+    "immeuble": 12.62,
+    "etage0": 27.55,
+    "compteur": 13.688,
+    "repetition": 16.637,
+    "quelquechose": 18.413,
+    "bloc": 11.088,
+    "boucle": 24.172
+  },
+  "debuts": {
+    "sac": 1.2,
+    "nom": 17.354,
+    "immeuble": 31.128,
+    "etage0": 44.298,
+    "compteur": 72.398,
+    "repetition": 86.636,
+    "quelquechose": 103.823,
+    "bloc": 122.787,
+    "boucle": 134.424
+  },
+  "total": 160.396,
+  "debit": 13.59
+}
