@@ -1,9 +1,9 @@
 {
-  "version": "v523-sti-atelier-v380",
-  "generatedAt": "2026-10-29T09:27:14Z",
+  "version": "v524-sti-atelier-v380",
+  "generatedAt": "2026-10-29T09:41:58Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 729,
-  "totalBytes": 750902369,
+  "totalBytes": 750903165,
   "files": [
     {
       "path": "404.html",
@@ -628,7 +628,7 @@
     {
       "path": "assets/js/app.js",
       "bytes": 116047,
-      "gitSha": "b67cc78a978401524744b8371bb17d3bdd37893e"
+      "gitSha": "70b36f7a5c9d2b9b53b15ae0bad4a39fb3da8ccd"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -1187,8 +1187,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 127575,
-      "gitSha": "9196d36b0ab889a33abb17a9caf381d612b10324"
+      "bytes": 127943,
+      "gitSha": "c79091b181f321d232f01fdcb7928ca11ca447e2"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -2702,8 +2702,8 @@
     },
     {
       "path": "exercices/javascript/TP Train/index.html",
-      "bytes": 11389,
-      "gitSha": "f7ef3e15ee2b945d3cadb54cd95fa1d2a0544c40"
+      "bytes": 11403,
+      "gitSha": "a0e781002b2e4e705e7c485bd09c4b05531174d4"
     },
     {
       "path": "exercices/javascript/TP Train/logo.png",
@@ -2897,8 +2897,8 @@
     },
     {
       "path": "exercices/series-exercices.html",
-      "bytes": 100874,
-      "gitSha": "0927ae68eca04fb5355c6515ffd9b4d64fc12a6b"
+      "bytes": 101256,
+      "gitSha": "e23768610aeb8a86f6b57f7759b857d07ccda3d3"
     },
     {
       "path": "exercices/sql/atelier_sql_3_fenetres.html",
@@ -3647,8 +3647,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97117,
-      "gitSha": "20bc808c23166a8cb13b187f27b0d9493cb75a26"
+      "bytes": 97149,
+      "gitSha": "2df78b8619aeee8025e56aa66ab7eecd656510df"
     }
   ]
 }
