@@ -19,7 +19,10 @@
    (opacité/visibilité, pointer-events:none — on peut cliquer à travers). Le boîtier
    diagnostic « 📶 Normal » reste, lui, durable dans la carte comme en v418 : seul le
    message de synchro est temporaire. Les couleurs d'état de sync-progressions.js sont
-   conservées (le module les pose en dur sur el.style.background, on ne les écrase pas). */
+   conservées (le module les pose en dur sur el.style.background, on ne les écrase pas).
+   v534 : la règle des 2 s vit désormais AUSSI dans sync-progressions.js (hors roue, la pastille
+   restait à vie). Ici on ne réarme plus l'annonce à chaque ouverture du panneau : on ne montre
+   que les CHANGEMENTS d'état, comme demandé. */
 (function () {
   "use strict";
   if (window.__STI_ROUE_NUAGE) return;
@@ -119,7 +122,8 @@
     var btn = doc.getElementById("sti-roue-btn");
     if (btn) {
       btn.addEventListener("click", function () {
-        dernierTexte = null; /* v430 : réarme l'annonce de 2 s à chaque ouverture */
+        /* v534 : ne pas réarmer (dernierTexte = null) — l'annonce ne doit apparaître que
+           lorsqu'un état CHANGE réellement, pas à chaque ouverture de la roue. */
         setTimeout(verser, 40);
         setTimeout(verser, 400);
       });

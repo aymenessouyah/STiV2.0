@@ -469,6 +469,27 @@
       }
     } catch (e) {}
   }
+  /* v534 (consigne auteur : « la barre cloud/local doit s'afficher 2 s seulement lors du
+     changement de son état »). Hors de la roue ⚙️, la pastille n'avait aucun minuteur : elle
+     restait ancrée en bas de l'écran à vie. Elle s'annonce désormais DEUX SECONDES à chaque
+     changement d'état (restaurée → synchronisée → cet appareil seulement…), puis s'efface en
+     fondu (opacité/visibilité + pointer-events:none : elle laisse passer les clics et ne
+     masque plus le contenu). Un même texte répété ne relance rien : sans changement, pas de
+     nouvelle annonce. Dans la roue, les règles de roue-nuage.js (v430, plus spécifiques)
+     gardent la main — comportement inchangé. */
+  var dernierTextePastille = null, minuteurPastille = null;
+  (function feuillePastille() {
+    try {
+      if (document.getElementById("sti-pastille-css")) return;
+      var st = document.createElement("style");
+      st.id = "sti-pastille-css";
+      st.textContent =
+        "#sti-sync-pastille{transition:opacity .28s ease,transform .28s ease,visibility .28s}" +
+        "#sti-sync-pastille.sti-pastille-cache{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(8px)}" +
+        "@media (prefers-reduced-motion:reduce){#sti-sync-pastille{transition:none!important}}";
+      (document.head || document.documentElement).appendChild(st);
+    } catch (eP) {}
+  })();
   function pastille(texte, couleur) {
     var el = document.getElementById("sti-sync-pastille");
     if (!el) {
@@ -476,7 +497,17 @@
       el.setAttribute("style", "position:fixed;right:14px;bottom:14px;z-index:99999;padding:8px 14px;border-radius:999px;border:2px solid #1a1a2e;background:#fff;color:#1a1a2e;font:700 13px system-ui,sans-serif;box-shadow:3px 3px 0 #1a1a2e;");
       document.body.appendChild(el);
     }
+    /* Même état qu'avant : rien à annoncer (et surtout, on ne relance pas le compte à rebours
+       ni on ne rallume une pastille déjà effacée). */
+    if (texte === dernierTextePastille && el.textContent === texte) return;
+    dernierTextePastille = texte;
     el.textContent = texte; el.style.background = couleur || "#fff";
+    try { el.classList.remove("sti-pastille-cache"); } catch (eP2) {}
+    if (minuteurPastille) clearTimeout(minuteurPastille);
+    minuteurPastille = setTimeout(function () {
+      minuteurPastille = null;
+      try { el.classList.add("sti-pastille-cache"); } catch (eC) {}
+    }, 2000);
   }
   function entetes() { return { "apikey": cfg.CLE, "Authorization": "Bearer " + session.token, "Content-Type": "application/json" }; }
   function tirer(forcerPull) {
