@@ -1537,8 +1537,35 @@
         }
       }
 
+      /* v531 : journal daté des lectures, { appareil: { "AAAA-MM-JJ": n } }.
+         C'est lui qui rend possible le filtre « 7 derniers jours » du tableau de
+         bord (les « vues » cumulées, seules, ne disent pas QUAND on a regardé). */
+      function jourVueMedia() {
+        var d = new Date();
+        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+      }
+
+      /* On ne garde que 60 jours : au-delà, le filtre 30 jours n'en a plus besoin
+         et le document synchronisé de l'élève doit rester petit. */
+      function purgerHistVues(hist) {
+        try {
+          var limite = new Date();
+          limite.setDate(limite.getDate() - 60);
+          var isoLimite = limite.getFullYear() + "-" + String(limite.getMonth() + 1).padStart(2, "0") + "-" + String(limite.getDate()).padStart(2, "0");
+          Object.keys(hist).forEach(function (app) {
+            var jours = hist[app];
+            if (!jours || typeof jours !== "object") { delete hist[app]; return; }
+            Object.keys(jours).forEach(function (j) {
+              if (!/^\d{4}-\d{2}-\d{2}$/.test(j) || j < isoLimite) delete jours[j];
+            });
+            if (!Object.keys(jours).length) delete hist[app];
+          });
+        } catch (e) {}
+        return hist;
+      }
+
       function compterVueMedia(prev) {
-        var vues = {};
+        var vues = {}, hist = {};
         try {
           var avait = Boolean(prev && prev.vues && typeof prev.vues === "object");
           if (avait) {
@@ -1547,12 +1574,28 @@
               if (isFinite(n) && n > 0) vues[app] = n;
             });
           }
+          if (prev && prev.hist && typeof prev.hist === "object") {
+            Object.keys(prev.hist).forEach(function (app) {
+              var jours = prev.hist[app];
+              if (!jours || typeof jours !== "object") return;
+              var copie = hist[app] = {};
+              Object.keys(jours).forEach(function (j) {
+                var n = Math.round(Number(jours[j]));
+                if (/^\d{4}-\d{2}-\d{2}$/.test(j) && isFinite(n) && n > 0) copie[j] = n;
+              });
+            });
+          }
           var appCourant = identifiantAppareilVues();
           /* +1 pour cette lecture ; une entrée antérieure à la v529 n'avait aucun
              compteur : elle part donc d'une seule lecture, jamais de zéro. */
           vues[appCourant] = (vues[appCourant] || 0) + 1;
+          /* Une seule lecture datée par média et par chargement de page. */
+          var jour = jourVueMedia();
+          var joursApp = hist[appCourant] || (hist[appCourant] = {});
+          joursApp[jour] = (joursApp[jour] || 0) + 1;
+          purgerHistVues(hist);
         } catch (e) {}
-        return vues;
+        return { vues: vues, hist: hist };
       }
 
       function enregistrerProgressionMediaSTI(cle, sec, dur, forceDone) {
@@ -1571,13 +1614,16 @@
         } catch (eIframe) {
           vueComptable = false;
         }
-        var vues = null, nouvelleVue = false;
+        var vues = null, hist = null, nouvelleVue = false;
         if (vueComptable && !vuesCompteesSession[cle]) {
           vuesCompteesSession[cle] = true;
-          vues = compterVueMedia(prev);
+          var compteur = compterVueMedia(prev);
+          vues = compteur.vues;
+          hist = compteur.hist;
           nouvelleVue = true;
-        } else if (prev && prev.vues && typeof prev.vues === "object") {
-          vues = prev.vues;
+        } else {
+          if (prev && prev.vues && typeof prev.vues === "object") vues = prev.vues;
+          if (prev && prev.hist && typeof prev.hist === "object") hist = prev.hist;
         }
         var pct = forceDone
           ? 100
@@ -1598,6 +1644,7 @@
           ts: Date.now()
         };
         if (vues) entree.vues = vues;
+        if (hist && Object.keys(hist).length) entree.hist = hist;
         map[cle] = entree;
         if (changed || forceDone || nouvelleVue) {
           try {

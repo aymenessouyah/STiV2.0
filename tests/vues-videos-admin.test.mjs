@@ -1,9 +1,10 @@
-/* v529 — « Vues des vidéos » : petit coin du tableau de bord admin.
+/* v529 → v531 — « Vues des vidéos » : petit coin du tableau de bord admin.
    Couvre les trois étages de la fonctionnalité :
    1. le bloc HTML/CSS monté dans #vue-ensemble-admin et son script ;
    2. le module admin-vues-videos.js (catalogue, agrégation vues/élèves) ;
-   3. le compteur de lectures (protection.js) et sa fusion sans perte
-      (sync-progressions.js, reconnexion-profil.js), plus le cache hors-ligne. */
+   3. le compteur de lectures (protection.js), son journal daté et sa fusion sans
+      perte (sync-progressions.js, reconnexion-profil.js), plus le cache hors-ligne ;
+   4. le filtre de période (« 7 derniers jours »), qui lit ce journal daté. */
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -15,8 +16,7 @@ const racine = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const lire = (chemin) => readFileSync(join(racine, chemin), 'utf8');
 
 const MODULE = 'assets/js/admin-vues-videos.js';
-const REV = 'vues-videos-v529';        /* compteur, fusion, reprise */
-const REV_PAGE = 'vues-videos-v530';   /* admin.html + manifeste (v530 : filtre et CSV) */
+const REV = 'vues-videos-v531';   /* lot v531 : compteur, fusion, reprise, page, manifeste, module */
 
 /** Évalue un module navigateur dans un bac à sable minimal (aucun DOM réel). */
 function chargerModule(source, options = {}) {
@@ -49,13 +49,13 @@ test('le petit coin « Vues des vidéos » est monté dans la vue d’ensemble d
   assert.ok(debutSection > 0 && finSection > debutSection, 'section #vue-ensemble-admin');
   const section = html.slice(debutSection, finSection);
   assert.match(section, /<div class="vues-videos" id="vues-videos-admin"/, 'bloc présent dans la vue d’ensemble');
-  for (const id of ['vues-videos-liste', 'vues-videos-etat', 'vues-videos-resume', 'vues-videos-classe', 'btn-vues-videos', 'btn-vues-videos-csv']) {
+  for (const id of ['vues-videos-liste', 'vues-videos-etat', 'vues-videos-resume', 'vues-videos-classe', 'vues-videos-periode', 'btn-vues-videos', 'btn-vues-videos-csv']) {
     assert.ok(section.includes(`id="${id}"`), 'élément ' + id);
   }
   assert.match(section, /<select id="vues-videos-classe"[^>]*><option value="\*">/, 'sélecteur de classe amorcé sur « toutes »');
   /* Le bloc reste discret : après la grille afficheur + compteurs, avant le bandeau Labo 3. */
   assert.ok(section.indexOf('class="vue-ensemble-corps"') < section.indexOf('id="vues-videos-admin"'));
-  assert.match(html, /<script src="assets\/js\/admin-vues-videos\.js\?v=530" defer><\/script>/);
+  assert.match(html, /<script src="assets\/js\/admin-vues-videos\.js\?v=531" defer><\/script>/);
   /* Styles dédiés (liste compacte et défilante). */
   assert.match(html, /\.vues-videos-liste\s*\{[^}]*max-height/);
   assert.match(html, /\.vues-video-jauge/);
@@ -201,6 +201,105 @@ test('l’export CSV reprend exactement le filtre affiché', () => {
   assert.match(csvToutes[1], /"Toutes les classes"$/);
 });
 
+/* ───────────────────────── 3 ter. le filtre de période (v531) ───────────────────────── */
+
+/** Jour local reculé de n jours, au format des clés « hist ». */
+function jourRecule(n) {
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);
+  d.setDate(d.getDate() - n);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function jeuAvecDates() {
+  const media = (o) => JSON.stringify({ 'sti-media-prog-v1': o });
+  const lignes = [
+    /* 3SI — deux lectures récentes. */
+    { user_id: 'u1', email: 'lea@lycee.tn', donnees: media({ 'video:html5-cours': { maxPct: 40, vues: { p: 2 }, hist: { p: { [jourRecule(1)]: 2 } } } }) },
+    /* 3SI — une lecture ancienne (20 jours). */
+    { user_id: 'u2', email: 'sami@lycee.tn', donnees: media({ 'video:html5-cours': { maxPct: 90, vues: { t: 1 }, hist: { t: { [jourRecule(20)]: 1 } } } }) },
+    /* 4SI — 3 lectures récentes + 2 plus vieilles, et une entrée d'AVANT la v531
+       (aucun journal daté) dont la dernière lecture date de 3 jours. */
+    { user_id: 'u3', email: 'nora@lycee.tn', donnees: media({
+      'video:html5-cours': { maxPct: 70, vues: { p: 5 }, hist: { p: { [jourRecule(2)]: 3, [jourRecule(10)]: 2 } } },
+      'video:css3-cours': { maxPct: 50, vues: { p: 4 }, ts: Date.now() - 3 * 86400000 }
+    }) }
+  ];
+  const profils = [
+    { id: 'u1', email: 'lea@lycee.tn', classe: '3SI' },
+    { id: 'u2', email: 'sami@lycee.tn', classe: '3SI' },
+    { id: 'u3', email: 'nora@lycee.tn', classe: '4SI' }
+  ];
+  return { lignes, profils };
+}
+
+test('le filtre de période ne garde que les lectures datées dans la fenêtre', () => {
+  const api = chargerModule(lire(MODULE)).STI_VUES_VIDEOS;
+  const { lignes, profils } = jeuAvecDates();
+  const parId = (res) => Object.fromEntries(res.lignes.map((l) => [l.id, l]));
+
+  /* Sans période : le cumul ne change pas d'un iota. */
+  const cumul = api.analyser(lignes, profils, '*');
+  assert.equal(parId(cumul)['html5-cours'].vues, 8);
+  assert.equal(parId(cumul)['css3-cours'].vues, 4);
+  assert.equal(cumul.jours, 0);
+
+  /* 7 jours : 2 (u1) + 3 (u3) pour HTML5, 0 pour la lecture de 20 jours. */
+  const sept = api.analyser(lignes, profils, { classe: '*', jours: 7 });
+  assert.equal(sept.jours, 7);
+  assert.equal(sept.depuis, api.debutPeriode(7));
+  assert.equal(sept.depuis.length, 10);
+  assert.deepEqual(
+    { vues: parId(sept)['html5-cours'].vues, eleves: parId(sept)['html5-cours'].eleves, cumul: parId(sept)['html5-cours'].cumulVues },
+    { vues: 5, eleves: 2, cumul: 8 },
+    'la fenêtre de 7 jours garde 5 lectures sur 8'
+  );
+  assert.equal(sept.vues, 9, 'HTML5 (5) + CSS3 estimé (4)');
+  assert.equal(sept.cumulVues, 12, 'le cumul reste disponible');
+
+  /* 30 jours : la lecture de 20 jours rentre dans la fenêtre. */
+  const trente = api.analyser(lignes, profils, { classe: '*', jours: 30 });
+  assert.equal(parId(trente)['html5-cours'].vues, 8);
+  assert.equal(parId(trente)['html5-cours'].vues, parId(trente)['html5-cours'].cumulVues);
+
+  /* Filtre de classe et période se composent. */
+  const trois = api.analyser(lignes, profils, { classe: '3SI', jours: 7 });
+  assert.equal(parId(trois)['html5-cours'].vues, 2);
+  assert.equal(trois.elevesAyantVu, 1);
+
+  /* Période inconnue : on retombe proprement sur « toutes les périodes ». */
+  assert.equal(api.analyser(lignes, profils, { classe: '*', jours: 12 }).jours, 0);
+  /* Compatibilité v530 : une chaîne reste un filtre de classe. */
+  assert.equal(api.analyser(lignes, profils, '4SI').lignes.find((l) => l.id === 'html5-cours').vues, 5);
+});
+
+test('une entrée d’avant la v531 est datée par sa dernière lecture, et signalée', () => {
+  const api = chargerModule(lire(MODULE)).STI_VUES_VIDEOS;
+  const { lignes, profils } = jeuAvecDates();
+  const res = api.analyser(lignes, profils, { classe: '*', jours: 7 });
+  const css3 = res.lignes.find((l) => l.id === 'css3-cours');
+  assert.equal(css3.vues, 4, 'les 4 lectures connues sont rattachées à la dernière lecture');
+  assert.equal(css3.estime, true, 'la ligne est marquée « ≈ »');
+  assert.equal(res.estimees, 1);
+
+  /* Entrée ancienne sans date du tout : elle ne compte pas dans la fenêtre. */
+  const sansDate = [{ user_id: 'z', email: 'z@lycee.tn', donnees: JSON.stringify({ 'sti-media-prog-v1': { 'video:sql-cours': { maxPct: 60 } } }) }];
+  const res2 = api.analyser(sansDate, [], { classe: '*', jours: 7 });
+  assert.equal(res2.lignes.find((l) => l.id === 'sql-cours').vues, 0);
+  assert.equal(res2.lignes.find((l) => l.id === 'sql-cours').cumulVues, 1, 'le cumul la compte toujours');
+});
+
+test('l’export CSV distingue la période du cumul', () => {
+  const api = chargerModule(lire(MODULE)).STI_VUES_VIDEOS;
+  const { lignes, profils } = jeuAvecDates();
+  const csv = api.versCsv(api.analyser(lignes, profils, { classe: '4SI', jours: 7 })).split('\r\n');
+  assert.equal(csv[0], 'Vidéo;Matière;Vues 7 j;Élèves 7 j;Vues cumulées;Élèves cumulés;Hors catalogue;Classe');
+  /* Tri par vues de la période : CSS3 (4) passe devant HTML5 (3). */
+  assert.equal(csv[1], '"CSS3 — Sélecteurs, Flexbox";"css3";"4";"1";"4";"1";"non";"4SI"');
+  assert.equal(csv[2], '"HTML5 — Structure & formulaires";"html5";"3";"1";"5";"1";"non";"4SI"');
+  assert.equal(csv[csv.length - 1], '"TOTAL";"";"7";"1";"9";"";"";"4SI"');
+});
+
 /* ───────────────────────── 4. le compteur côté lecteur ───────────────────────── */
 
 function lecteurIsole(source) {
@@ -247,11 +346,15 @@ test('une vidéo jouée compte une vue, une seule par chargement de page', () =>
   const appareil = stockage.getItem('stiMediaAppareilV1');
   assert.ok(appareil, 'identifiant d’appareil créé');
   assert.deepEqual(carte['video:html5-cours'].vues, { [appareil]: 1 });
+  const aujourdhui = new Date();
+  const jourAujourdhui = aujourdhui.getFullYear() + '-' + String(aujourdhui.getMonth() + 1).padStart(2, '0') + '-' + String(aujourdhui.getDate()).padStart(2, '0');
+  assert.deepEqual(carte['video:html5-cours'].hist, { [appareil]: { [jourAujourdhui]: 1 } }, 'v531 : lecture datée du jour');
 
   /* Même page, même vidéo : le compteur ne bouge plus, la progression si. */
   lecteur.enregistrerProgressionMediaSTI('video:html5-cours', 40, 200, false);
   carte = JSON.parse(stockage.getItem('sti-media-prog-v1'));
   assert.deepEqual(carte['video:html5-cours'].vues, { [appareil]: 1 }, 'pas de double comptage');
+  assert.deepEqual(carte['video:html5-cours'].hist, { [appareil]: { [jourAujourdhui]: 1 } }, 'une seule lecture datée par chargement');
   assert.ok(carte['video:html5-cours'].pct >= 20, 'la progression continue');
 
   /* Nouveau chargement de page (nouveau module) : deuxième lecture. */
@@ -259,6 +362,7 @@ test('une vidéo jouée compte une vue, une seule par chargement de page', () =>
   seconde.enregistrerProgressionMediaSTI('video:html5-cours', 12, 200, false);
   carte = JSON.parse(stockage.getItem('sti-media-prog-v1'));
   assert.deepEqual(carte['video:html5-cours'].vues, { [appareil]: 2 });
+  assert.deepEqual(carte['video:html5-cours'].hist, { [appareil]: { [jourAujourdhui]: 2 } }, 'deuxième lecture datée du même jour');
 });
 
 test('les audios, les lectures trop courtes et les iframes ne gonflent pas le compteur', () => {
@@ -299,7 +403,7 @@ test('sync-progressions conserve et fusionne les compteurs de vues', () => {
   const code = extraire(source,
     'function fusionnerMediaProgMonotone(rawLoc, rawDist) {',
     '\n  function isolerComptePartageSiBesoin');
-  const fusion = new Function('return (' + code + '\n)')();
+  const fusion = new Function(code + '\nreturn fusionnerMediaProgMonotone;')();
   const loc = JSON.stringify({ 'video:html5-cours': { maxPct: 30, sec: 60, ts: 1000, vues: { appA: 2 } } });
   const dist = JSON.stringify({ 'video:html5-cours': { maxPct: 10, sec: 20, ts: 500, vues: { appA: 1, appB: 3 } } });
   const sortie = JSON.parse(fusion(loc, dist));
@@ -311,44 +415,63 @@ test('sync-progressions conserve et fusionne les compteurs de vues', () => {
   assert.deepEqual(seulLocal['video:html5-cours'].vues, { appA: 2 });
   const sansVues = JSON.parse(fusion(JSON.stringify({ 'video:sql-cours': { maxPct: 50, ts: 2 } }), JSON.stringify({})));
   assert.equal(sansVues['video:sql-cours'].vues, undefined, 'pas de champ vide ajouté');
+
+  /* v531 : le journal daté se fusionne par appareil ET par jour (maximum). */
+  const avecHist = JSON.parse(fusion(
+    JSON.stringify({ 'video:html5-cours': { maxPct: 30, ts: 1000, hist: { appA: { '2026-10-20': 2, '2026-10-21': 1 } } } }),
+    JSON.stringify({ 'video:html5-cours': { maxPct: 10, ts: 500, hist: { appA: { '2026-10-21': 3 }, appB: { '2026-10-22': 1 } } } })
+  ));
+  assert.deepEqual(avecHist['video:html5-cours'].hist, {
+    appA: { '2026-10-20': 2, '2026-10-21': 3 },
+    appB: { '2026-10-22': 1 }
+  }, 'union des appareils, maximum par jour');
 });
 
 test('reconnexion-profil fusionne aussi les compteurs de vues', () => {
   const source = lire('assets/js/reconnexion-profil.js');
-  const code = extraire(source, 'function fusionMedias(loc, dist) {', '\n  function fusionnerDonnees');
-  const fusion = new Function('return (' + code + '\n)')();
+  const code = extraire(source, 'function fusionnerHistVues(a, b) {', '\n  function fusionnerDonnees');
+  const fusion = new Function(code + '\nreturn fusionMedias;')();
   const cote = fusion(
     { 'video:css3-cours': { maxPct: 20, sec: 30, ts: 10, vues: { appTel: 4 } } },
     { 'video:css3-cours': { maxPct: 60, sec: 90, ts: 20, vues: { appPc: 2 } } }
   );
   assert.deepEqual(cote['video:css3-cours'].vues, { appTel: 4, appPc: 2 }, 'les deux appareils sont conservés');
   assert.equal(cote['video:css3-cours'].maxPct, 60, 'la progression reste monotone');
+
+  const avecHist = fusion(
+    { 'video:css3-cours': { maxPct: 20, ts: 10, hist: { appTel: { '2026-10-19': 1, '2026-10-20': 2 } } } },
+    { 'video:css3-cours': { maxPct: 60, ts: 20, hist: { appTel: { '2026-10-20': 4 }, appPc: { '2026-10-25': 1 } } } }
+  );
+  assert.deepEqual(avecHist['video:css3-cours'].hist, {
+    appTel: { '2026-10-19': 1, '2026-10-20': 4 },
+    appPc: { '2026-10-25': 1 }
+  }, 'journal daté fusionné sans perte');
 });
 
 /* ───────────────────────── 6. cache et manifeste hors ligne ───────────────────────── */
 
 test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v530-vues-videos-classe-20261029"/);
-  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 4, 'quatre fichiers du compteur');
-  assert.equal((sw.match(new RegExp('revision: "' + REV_PAGE + '"', 'g')) || []).length, 2, 'page et manifeste');
+  assert.match(sw, /var UPDATE_ID = "v531-vues-videos-periode-20261029"/);
+  assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 7, 'sept fichiers du lot v531');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
-  for (const chemin of ['assets/js/protection.js', 'assets/js/sync-progressions.js', 'assets/js/reconnexion-profil.js', 'assets/js/reprendre.js']) {
+  for (const chemin of ['assets/js/protection.js', 'assets/js/sync-progressions.js', 'assets/js/reconnexion-profil.js',
+    'assets/js/reprendre.js', 'assets/js/admin-vues-videos.js', 'admin.html', 'offline-complete-manifest.json']) {
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV}"`), chemin);
   }
-  for (const chemin of ['admin.html', 'offline-complete-manifest.json']) {
-    assert.ok(delta.includes(`url: "./${chemin}", revision: "${REV_PAGE}"`), chemin);
-  }
-  /* Budget du delta préservé : le nouveau module arrive par le réseau puis reste en cache. */
+  /* Budget du delta préservé : le module entre dans la liste, une annexe figée en sort. */
   const urls = [...delta.matchAll(/url:\s*"([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(urls).size, urls.length, 'aucun doublon');
   assert.ok(urls.length <= 262, 'delta léger (≤ 262 entrées)');
-  assert.ok(!delta.includes('admin-vues-videos.js'), 'pas de nouvelle entrée : le delta reste sous le plafond');
+  assert.ok(!urls.includes('./documents/annexes/annexe-sql.pdf.html'), 'place libérée par une annexe figée');
+  /* Préchargement hors ligne : le module doit y être pour que le coin marche sans réseau. */
+  const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
+  assert.ok(offline.includes('./assets/js/admin-vues-videos.js'), 'module préchargé hors ligne');
 });
 
 test('le manifeste hors ligne contient le nouveau module avec son empreinte', () => {
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v530-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v531-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   const entree = manifeste.files.find((f) => f.path === MODULE);

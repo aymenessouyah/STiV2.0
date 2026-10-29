@@ -1,9 +1,9 @@
 <!doctype html><html lang="fr"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Page de test STI V2.0 — aperçu du petit coin « Vues des vidéos » du tableau de bord (v529). Page technique réservée aux tests et à la démonstration.">
-<title>Aperçu — Vues des vidéos (v529/v530)</title>
+<meta name="description" content="Page de test STI V2.0 — aperçu du petit coin « Vues des vidéos » du tableau de bord (v531). Page technique réservée aux tests et à la démonstration.">
+<title>Aperçu — Vues des vidéos (v531)</title>
 <!--
-  Harnais visuel du module assets/js/admin-vues-videos.js (v529/v530) : filtre de classe et export CSV compris.
+  Harnais visuel du module assets/js/admin-vues-videos.js (v531) : filtres classe + période et export CSV compris.
   Il rejoue le bloc du tableau de bord avec un faux client Supabase et des
   progressions d'élèves fictives : aucune lecture réelle, aucun compte touché.
   Ouvrir cette page directement pour vérifier le rendu, les tris et les jauges.
@@ -62,6 +62,7 @@
   .vues-video-nb { white-space: nowrap; }
   .vues-video-nb b { font: 1000 14px/1 Consolas, "Courier New", monospace; font-variant-numeric: tabular-nums; }
   .vues-video-detail { color: #7a6f5d; font-weight: 700; font-size: 10.5px; white-space: nowrap; }
+  .vues-video[data-estime="1"] .vues-video-nb b { color: #b45309; }
   .vues-video-jauge { grid-column: 1 / -1; height: 4px; border-radius: 999px; background: rgba(35,32,26,.12); overflow: hidden; }
   .vues-video-jauge i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f4511e, #f7b731); }
   .vues-video-vide { opacity: .55; }
@@ -80,6 +81,11 @@
       <b id="titre-vues-videos">🎬 Vues des vidéos</b>
       <small id="vues-videos-resume">Chargement…</small>
       <select id="vues-videos-classe" title="Filtrer les vues par classe"><option value="*">🏫 Toutes les classes</option></select>
+      <select id="vues-videos-periode" title="Filtrer les vues sur une période (comptage daté depuis la v531)">
+        <option value="0">🗓️ Toutes les périodes</option>
+        <option value="7">7 derniers jours</option>
+        <option value="30">30 derniers jours</option>
+      </select>
       <small id="vues-videos-etat"></small>
       <button type="button" class="btn-outil" id="btn-vues-videos-csv" title="Exporter les vues affichées au format Excel (CSV)" disabled>📥 CSV</button>
       <button type="button" class="btn-outil" id="btn-vues-videos" title="Relire les progressions vidéo enregistrées dans le nuage">↻ Actualiser</button>
@@ -109,6 +115,34 @@ Aucune requête réseau, aucune donnée réelle.</p>
       ['Farah Ouali', '3SI', { 'video:css-animee': { maxPct: 15 } }],
       ['Walid Dridi', '4SI', { 'video:php-synthese': { maxPct: 65, vues: { pc: 1 } } }]
     ];
+    /* v531 : journal daté fictif — un tiers des lectures est récent (1 à 5 jours),
+       le reste date de 16 jours : le filtre « 7 derniers jours » montre donc un
+       sous-ensemble. Les entrées sans « vues » restent à l'ancien format (estimées
+       d'après leur dernière lecture « ts », signalées par « ≈ »). */
+    function jourRecule(n) {
+      var d = new Date(); d.setDate(d.getDate() - n);
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    eleves.forEach(function (e, i) {
+      Object.keys(e[2]).forEach(function (k) {
+        var entree = e[2][k];
+        if (!entree.vues) { entree.ts = Date.now() - (i % 2 ? 2 : 20) * 86400000; return; }
+        var h = {};
+        Object.keys(entree.vues).forEach(function (app) {
+          var total = Math.max(1, Math.round(Number(entree.vues[app]) || 1));
+          var jours = {};
+          if (i % 3 === 0) {
+            if (total > 1) { jours[1] = total - 1; jours[5] = 1; } else { jours[1] = total; }
+          } else {
+            jours[16] = total;
+          }
+          h[app] = {};
+          Object.keys(jours).forEach(function (n) { h[app][jourRecule(Number(n))] = jours[n]; });
+        });
+        entree.hist = h;
+      });
+    });
+
     var progressions = eleves.map(function (e, i) {
       return { user_id: 'u' + (i + 1), email: 'eleve' + (i + 1) + '@lycee.tn', donnees: JSON.stringify({ 'sti-media-prog-v1': e[2] }) };
     });

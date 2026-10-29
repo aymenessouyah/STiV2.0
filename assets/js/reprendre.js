@@ -115,8 +115,10 @@
             repriseMasquee: true,
             ts: Date.now()
           };
-          /* v529 : masquer la reprise ne doit pas effacer le compteur de vues. */
+          /* v529 : masquer la reprise ne doit pas effacer le compteur de vues.
+             v531 : ni le journal daté qui alimente le filtre « 7 derniers jours ». */
           if (cur.vues && typeof cur.vues === "object") entreeReprise.vues = cur.vues;
+          if (cur.hist && typeof cur.hist === "object") entreeReprise.hist = cur.hist;
           prog[meilleure.cle] = entreeReprise;
         } else {
           prog[meilleure.cle] = { pct: 1, maxPct: 1, sec: 0, dur: 0, done: false, repriseMasquee: true, ts: Date.now() };
