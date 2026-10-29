@@ -1962,9 +1962,17 @@ body.sti-v2 #pwaInvitationInstaller {
   /* Conserver toutes les actions sans recouvrir le logo ni élargir la page. */
   body.sti-v2 .site-header__inner, body.sti-v2 .header-actions { gap: var(--space-1); }
   /* v503 : sur mobile, le drapeau et le logo STI font exactement la même taille
-     et restent sur une seule ligne ; seul le titre est masqué. */
-  body.sti-v2 .site-header .brand-logo { flex: 0 0 auto; column-gap: 6px; }
-  body.sti-v2 .site-header .brand-logo__title { display: none; }
+     et restent sur une seule ligne.
+     v522 : le titre « STI V2.0 » reste TOUJOURS visible à côté du logo ; il se
+     resserre (puis s'ellipse en dernier recours) au lieu de disparaître. */
+  body.sti-v2 .site-header .brand-logo { flex: 0 1 auto; column-gap: 6px; min-width: 0; }
+  body.sti-v2 .site-header .brand-logo__title {
+    display: block;
+    font-size: 0.78rem;
+    letter-spacing: -0.015em;
+    max-width: 84px;
+    min-width: 0;
+  }
   body.sti-v2 .site-header .brand-logo__drapeau,
   body.sti-v2 .site-header .brand-logo__mark {
     width: 30px;
@@ -1982,6 +1990,20 @@ body.sti-v2 #pwaInvitationInstaller {
   body.sti-v2 .theme-switcher__btn { width: 26px; }
   .sti-v2 [data-subscriber-slot] #sti-roue-anneau { width: 50px !important; height: 50px !important; padding: 3px !important; }
   .sti-v2 [data-subscriber-slot] #sti-roue-btn { width: 44px !important; height: 44px !important; font-size: 20px !important; }
+}
+/* v522 : téléphones très étroits (320–370 px). Les deux vignettes perdent 4 px
+   pour que « STI V2.0 » garde toute sa place et que l'en-tête reste sur une
+   seule ligne, sans recouvrement avec les actions. */
+@media (max-width: 370px) {
+  body.sti-v2 .site-header .brand-logo__drapeau,
+  body.sti-v2 .site-header .brand-logo__mark {
+    width: 26px;
+    height: 26px;
+  }
+  body.sti-v2 .site-header .brand-logo__mark img { width: 26px; height: 26px; }
+  body.sti-v2 .site-header .brand-logo__title { font-size: 0.72rem; max-width: 68px; }
+  body.sti-v2 .site-header .brand-logo__sub { max-width: 82px; }
+  body.sti-v2 .theme-switcher__btn { width: 24px; }
 }
 @media (min-width: 1060px) and (max-width: 1200px) {
   body.sti-v2 .site-nav__link { padding-inline: 6px; }

@@ -16,7 +16,7 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v380"/);
-  assert.match(sw, /var UPDATE_ID = "v521-meta-seo-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v522-logo-titre-visible-20261029"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
@@ -61,7 +61,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v517 : le ruban lit mieux la classe — la 4e SI passe au vert. */
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
-  assert.equal(revisions.get('./assets/css/theme.css'), 'outils-attirants-v518');
+  assert.equal(revisions.get('./assets/css/theme.css'), 'logo-titre-visible-v522');
   assert.equal(revisions.get('./admin.html'), 'meta-seo-v521');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
@@ -115,7 +115,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v521-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v522-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'), 'le garde-fou XP est livré hors ligne');
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));
