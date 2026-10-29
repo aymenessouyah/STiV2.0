@@ -1033,6 +1033,52 @@
     }
   }
 
+  /* v516 : les logos des dix outils interactifs s'animent au hasard, par petites
+     touches, pour attirer l'attention de l'abonné sans distraire la lecture. */
+  var CLASSES_OUTIL_ANIM = ["sti-outil-anim-1", "sti-outil-anim-2", "sti-outil-anim-3", "sti-outil-anim-4", "sti-outil-anim-5"];
+  var minuteurOutils = null;
+
+  function pastilleOutilsVisible(pastille) {
+    if (!pastille || pastille.hidden) return false;
+    if (!global.getComputedStyle) return true;
+    return global.getComputedStyle(pastille).display !== "none";
+  }
+
+  function animerUnOutilAuHasard() {
+    var icones = Array.prototype.slice.call(
+      document.querySelectorAll("#ateliers-rapides .lab-chip__ico")
+    );
+    if (!icones.length) return;
+    var visibles = icones.filter(function (ico) {
+      return pastilleOutilsVisible(ico.closest ? ico.closest(".lab-chip") : null);
+    });
+    var cibles = visibles.length ? visibles : icones;
+    var ico = cibles[Math.floor(Math.random() * cibles.length)];
+    if (!ico) return;
+    var classe = CLASSES_OUTIL_ANIM[Math.floor(Math.random() * CLASSES_OUTIL_ANIM.length)];
+    CLASSES_OUTIL_ANIM.forEach(function (c) { ico.classList.remove(c); });
+    /* force le recalcul : la même animation doit pouvoir repartir aussitôt. */
+    void ico.offsetWidth;
+    ico.classList.add(classe);
+    global.setTimeout(function () { ico.classList.remove(classe); }, 1100);
+  }
+
+  function initialiserAnimationsOutils() {
+    if (!document.getElementById("ateliers-rapides")) return;
+    var reduire = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduire) return;
+    function planifier() {
+      var attente = 1500 + Math.round(Math.random() * 2300);
+      minuteurOutils = global.setTimeout(function () {
+        if (!document.hidden) animerUnOutilAuHasard();
+        planifier();
+      }, attente);
+    }
+    /* Premier clin d'œil dès l'arrivée sur la section, puis au hasard. */
+    global.setTimeout(animerUnOutilAuHasard, 900);
+    planifier();
+  }
+
   function rafraichirUIRevisionAccueil() {
     if (!global.STIProfil) return;
     var profil = global.STIProfil.chargerProfil();
@@ -2258,6 +2304,7 @@
     initialiserSectionVideos();
     initialiserTerminalHero();
     initialiserCompteursStats();
+    initialiserAnimationsOutils();
     rafraichirUIRevisionAccueil();
     rafraichirBandeauRepriseAccueil();
     initialiserRechercheEtFiltres();

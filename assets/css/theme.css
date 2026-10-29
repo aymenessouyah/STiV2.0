@@ -1547,6 +1547,52 @@ body.sti-v2 .welcome-return__empty { font-size: .9rem; }
 }
 .lab-chip:hover { border-style: solid; border-color: var(--brand); transform: translateY(-1px); }
 
+/* ── v516 : les logos des dix outils s'animent de temps en temps ──────────
+   Chaque pastille porte son emoji dans .lab-chip__ico ; app.js tire au sort
+   une pastille et une des animations ci-dessous, une fois de temps en temps,
+   pour attirer l'œil sans jamais gêner la lecture. */
+.lab-chip__ico {
+  display: inline-block;
+  transform-origin: 50% 70%;
+  backface-visibility: hidden;
+}
+.lab-chip__ico.sti-outil-anim-1 { animation: sti-outil-salut 0.8s ease-in-out; }
+.lab-chip__ico.sti-outil-anim-2 { animation: sti-outil-rebond 0.85s cubic-bezier(0.3, 1.4, 0.5, 1); }
+.lab-chip__ico.sti-outil-anim-3 { animation: sti-outil-pulse 0.9s ease-in-out; }
+.lab-chip__ico.sti-outil-anim-4 { animation: sti-outil-tangage 0.85s ease-in-out; }
+.lab-chip__ico.sti-outil-anim-5 { animation: sti-outil-eclat 0.7s ease-out; }
+@keyframes sti-outil-salut {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-14deg) scale(1.06); }
+  45% { transform: rotate(11deg) scale(1.06); }
+  70% { transform: rotate(-5deg); }
+}
+@keyframes sti-outil-rebond {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+  55% { transform: translateY(0); }
+  72% { transform: translateY(-3px); }
+}
+@keyframes sti-outil-pulse {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(1.22); }
+  70% { transform: scale(0.96); }
+}
+@keyframes sti-outil-tangage {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-4px) rotate(-8deg); }
+  55% { transform: translateX(4px) rotate(8deg); }
+  80% { transform: translateX(-2px) rotate(-3deg); }
+}
+@keyframes sti-outil-eclat {
+  0% { transform: scale(1) rotate(0deg); }
+  35% { transform: scale(1.3) rotate(16deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lab-chip__ico { animation: none !important; }
+}
+
 /* ── 18. Onglets, Barres & Anneaux de progression, Code, Alertes, Modales ── */
 .sti-tabs {
   display: flex;

@@ -100,7 +100,7 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
   const ressources = ['exercices/javascript/js-37-defis-tt.html', 'assets/css/dialogues-compat.css', 'assets/js/dialogues-compat.js', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/fleurs/styles.css', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js', 'projets/carte-bancaire/style.css'];
   for (const path of [...paths, ...ressources]) {
     const actualises = ['assets/js/cours-javascript.js', 'assets/js/dialogues-compat.js', 'exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/fleurs/controle.js', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html', 'projets/carte-bancaire/controle.js'];
-    const revision = path === 'assets/js/app.js' ? 'stat-videos-v515' :
+    const revision = path === 'assets/js/app.js' ? 'outils-animes-v516' :
       path === 'cours/javascript.html' ? 'retrait-fond-cours-v508' :
       path === 'assets/js/cours-javascript.js' ? 'progression-chapitres-v492' :
       path === 'assets/js/profil.js' ? 'suivi-contextes-v491' :

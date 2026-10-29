@@ -1,9 +1,9 @@
 {
-  "version": "v515-sti-atelier-v376",
-  "generatedAt": "2026-10-29T00:03:28Z",
+  "version": "v516-sti-atelier-v377",
+  "generatedAt": "2026-10-29T00:11:55Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 715,
-  "totalBytes": 748100400,
+  "totalBytes": 748104873,
   "files": [
     {
       "path": "404.html",
@@ -297,8 +297,8 @@
     },
     {
       "path": "assets/css/theme.css",
-      "bytes": 71353,
-      "gitSha": "65c8ed5c7a1417edf1147d5e6fc6a3344b44ff61"
+      "bytes": 73226,
+      "gitSha": "4c79fe1c9ff585c0b845b0ad726fa4146b342068"
     },
     {
       "path": "assets/css/visionneuse-exercices.css",
@@ -682,8 +682,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 110287,
-      "gitSha": "2f99c633e78581f68ee509a64febe5a1dc023368"
+      "bytes": 112344,
+      "gitSha": "8ef9d6a90d49482a56d3a4ef2537de0080be4baf"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -2992,8 +2992,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 57163,
-      "gitSha": "f403124187848592816347baadcbbdd72100a87d"
+      "bytes": 57703,
+      "gitSha": "51744113efd581f28683598a4aabe4358ee4c41e"
     },
     {
       "path": "livre-smart.html",
@@ -3577,8 +3577,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97435,
-      "gitSha": "318a25b08f5b7af43dc7ab0d43866e2dd5e61377"
+      "bytes": 97438,
+      "gitSha": "c64816575a2737b10b759c3e3bac13b90473301c"
     }
   ]
 }
