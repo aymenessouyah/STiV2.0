@@ -179,6 +179,27 @@
         ts: Math.max(tsA, tsB)
       };
       if (vuesOut && Object.keys(vuesOut).length) entree.vues = vuesOut;
+      /* v531 : journal daté des lectures « hist » = { appareil: { "AAAA-MM-JJ": n } }.
+         Fusion sans perte : union des appareils et des jours, maximum par case (deux
+         lectures du même jour sur le même appareil ne se cumulent pas). */
+      var histA = (a.hist && typeof a.hist === "object") ? a.hist : null;
+      var histB = (b.hist && typeof b.hist === "object") ? b.hist : null;
+      if (histA || histB) {
+        var histOut = {};
+        [histA || {}, histB || {}].forEach(function (src) {
+          Object.keys(src).forEach(function (app) {
+            var jours = (src[app] && typeof src[app] === "object") ? src[app] : null;
+            if (!jours) return;
+            var cible = histOut[app] || (histOut[app] = {});
+            Object.keys(jours).forEach(function (j) {
+              if (!/^\d{4}-\d{2}-\d{2}$/.test(j)) return;
+              var nHist = Math.round(Number(jours[j]));
+              if (isFinite(nHist) && nHist > 0) cible[j] = Math.max(cible[j] || 0, nHist);
+            });
+          });
+        });
+        if (Object.keys(histOut).length) entree.hist = histOut;
+      }
       if (masque) entree.repriseMasquee = true;
       out[c] = entree;
     });

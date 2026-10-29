@@ -317,6 +317,7 @@
   .vues-video-nb { white-space: nowrap; }
   .vues-video-nb b { font: 1000 14px/1 Consolas, "Courier New", monospace; font-variant-numeric: tabular-nums; }
   .vues-video-detail { color: #7a6f5d; font-weight: 700; font-size: 10.5px; white-space: nowrap; }
+  .vues-video[data-estime="1"] .vues-video-nb b { color: #b45309; }
   .vues-video-jauge { grid-column: 1 / -1; height: 4px; border-radius: 999px; background: rgba(35,32,26,.12); overflow: hidden; }
   .vues-video-jauge i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f4511e, #f7b731); }
   .vues-video-vide { opacity: .55; }
@@ -2216,12 +2217,18 @@
     </aside>
   </div>
 
-  <!-- v529/v530 : petit coin « Vues des vidéos » — lectures cumulées, élèves par capsule, filtre de classe et export CSV -->
+  <!-- v529 → v531 : petit coin « Vues des vidéos » — lectures cumulées, élèves par capsule,
+       filtres classe + période (7 / 30 derniers jours) et export CSV -->
   <div class="vues-videos" id="vues-videos-admin" aria-labelledby="titre-vues-videos">
     <div class="vues-videos-entete">
       <b id="titre-vues-videos">🎬 Vues des vidéos</b>
       <small id="vues-videos-resume">Chargement…</small>
       <select id="vues-videos-classe" title="Filtrer les vues par classe"><option value="*">🏫 Toutes les classes</option></select>
+      <select id="vues-videos-periode" title="Filtrer les vues sur une période (comptage daté depuis la v531)">
+        <option value="0">🗓️ Toutes les périodes</option>
+        <option value="7">7 derniers jours</option>
+        <option value="30">30 derniers jours</option>
+      </select>
       <small id="vues-videos-etat"></small>
       <button type="button" class="btn-outil" id="btn-vues-videos-csv" title="Exporter les vues affichées au format Excel (CSV)" disabled>📥 CSV</button>
       <button type="button" class="btn-outil" id="btn-vues-videos" title="Relire les progressions vidéo enregistrées dans le nuage">↻ Actualiser</button>
@@ -5001,7 +5008,7 @@
   <script src="assets/js/graphiques-activite.js?v=469" defer></script>
   <script src="assets/js/quiz-admin.js?v=479" defer></script>
   <script src="assets/js/analytique.js?v=469" defer></script>
-  <script src="assets/js/admin-vues-videos.js?v=530" defer></script>
+  <script src="assets/js/admin-vues-videos.js?v=531" defer></script>
   <script src="assets/js/sauvegarde.js?v=473" defer></script>
 <script src="assets/js/sante.js?v=471" defer></script>
 <script>

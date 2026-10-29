@@ -118,6 +118,28 @@
     } catch (e) { return resultat; }
   }
 
+  /* v531 : journal daté des lectures « hist » = { appareil: { "AAAA-MM-JJ": n } }.
+     Fusion sans perte : union des appareils et des jours, maximum par case. */
+  function fusionnerHistVues(a, b) {
+    var A = (a && typeof a === 'object') ? a : null;
+    var B = (b && typeof b === 'object') ? b : null;
+    if (!A && !B) return null;
+    var out = {};
+    [A || {}, B || {}].forEach(function (src) {
+      Object.keys(src).forEach(function (app) {
+        var jours = (src[app] && typeof src[app] === 'object') ? src[app] : null;
+        if (!jours) return;
+        var cible = out[app] || (out[app] = {});
+        Object.keys(jours).forEach(function (j) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(j)) return;
+          var n = Math.round(Number(jours[j]));
+          if (isFinite(n) && n > 0) cible[j] = Math.max(cible[j] || 0, n);
+        });
+      });
+    });
+    return Object.keys(out).length ? out : null;
+  }
+
   function fusionMedias(loc, dist) {
     var sortie = {}, cles = new Set(Object.keys(loc).concat(Object.keys(dist)));
     cles.forEach(function (k) {
@@ -147,6 +169,8 @@
         });
         if (Object.keys(vuesOut).length) sortie[k].vues = vuesOut;
       }
+      var histOut = fusionnerHistVues(a.hist, b.hist);
+      if (histOut) sortie[k].hist = histOut;
       if (masque) sortie[k].repriseMasquee = true;
     });
     return sortie;

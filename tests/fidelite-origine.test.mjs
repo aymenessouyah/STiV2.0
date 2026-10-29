@@ -31,10 +31,10 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
     'assets/js/config.js': '07f7ef9330b1c259989eb34ea9dc459aa4b4f58411c49c7c68c427266c638396',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
     'assets/js/acces.js': '60e52add1f7dd60a12ee1102f2f181719076e209e0d05211f5e6f58935d985a4',
-    'assets/js/sync-progressions.js': 'adfe40748c4608e132b5e6acfaa8fcf3904b0a9d11c425ec0c0140032fe121c3',
+    'assets/js/sync-progressions.js': '19d2505e0e056e418a4d002557503e8a5e29da8dd135564cb3f6236c87de827b',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
     'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
-    'admin.html': '25213113045eb471cd87f1dbbbab5df8b2c6e9a321cd358ab21fddb85f178143',
+    'admin.html': '0a91be4c96370a9b08904016bd9b3fc98118704baf9c7c8b356c3d57fe5bed1c',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
   };
