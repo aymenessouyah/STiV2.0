@@ -106,7 +106,7 @@
         if (cur && typeof cur === "object") {
           var prevMax = Math.max(Number(cur.maxPct) || 0, Number(cur.pct) || 0, meilleure.sec >= 2 ? 1 : 0);
           var done = Boolean(cur.done || prevMax >= 88);
-          prog[meilleure.cle] = {
+          var entreeReprise = {
             pct: done ? 100 : Math.max(1, Number(cur.pct) || prevMax),
             maxPct: done ? 100 : prevMax,
             sec: 0,
@@ -115,6 +115,9 @@
             repriseMasquee: true,
             ts: Date.now()
           };
+          /* v529 : masquer la reprise ne doit pas effacer le compteur de vues. */
+          if (cur.vues && typeof cur.vues === "object") entreeReprise.vues = cur.vues;
+          prog[meilleure.cle] = entreeReprise;
         } else {
           prog[meilleure.cle] = { pct: 1, maxPct: 1, sec: 0, dur: 0, done: false, repriseMasquee: true, ts: Date.now() };
         }

@@ -16,16 +16,18 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v380"/);
-  assert.match(sw, /var UPDATE_ID = "v528-defis37-lecteur-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v529-vues-videos-20261029"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
   for (const chemin of [
     'assets/icons/matieres.svg',
-    'assets/js/suivi-profil.js', 'assets/js/reconnexion-profil.js'
+    'assets/js/suivi-profil.js'
   ]) {
     assert.equal(revisions.get('./' + chemin), 'suivi-contextes-v491', chemin);
   }
+  /* v529 : reconnexion-profil.js fusionne les compteurs de vues par appareil. */
+  assert.equal(revisions.get('./assets/js/reconnexion-profil.js'), 'vues-videos-v529');
   /* v523 : la page des séries gagne les liens du TP Train (Série 5). */
   assert.equal(revisions.get('./exercices/series-exercices.html'), 'serie6-exercices-v524');
   assert.equal(revisions.get('./assets/js/cours-html5.js'), 'tp-display-v510');
@@ -45,16 +47,18 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   }
   /* v520 : les cinq pages de quiz, le synchroniseur et le moteur XP invalident
      leur ancienne copie pour que le compteur ne recule plus. */
-  for (const chemin of ['assets/js/quiz-sync.js', 'assets/js/sync-progressions.js', 'assets/js/xp-plancher.js']) {
+  for (const chemin of ['assets/js/quiz-sync.js', 'assets/js/xp-plancher.js']) {
     assert.equal(revisions.get('./' + chemin), 'xp-jamais-en-recul-v520', chemin);
   }
+  /* v529 : le synchroniseur fusionne aussi les compteurs de vues vidéo. */
+  assert.equal(revisions.get('./assets/js/sync-progressions.js'), 'vues-videos-v529');
   /* v521 : les cinq pages de quiz gardent le garde-fou XP et gagnent leur meta description. */
   for (const chemin of ['quiz/html-css.html', 'quiz/javascript.html', 'quiz/sql.html', 'quiz/php.html', 'quiz/tableaux.html']) {
     assert.equal(revisions.get('./' + chemin), 'meta-seo-v521', chemin);
   }
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'defis37-lecteur-v528');
-  assert.equal(revisions.get('./offline-complete-manifest.json'), 'outils-attirants-v518');
+  assert.equal(revisions.get('./offline-complete-manifest.json'), 'vues-videos-v529');
   assert.equal(revisions.get('./README.md'), 'xp-jamais-en-recul-v520');
   for (const chemin of ['dashboard.html', 'assets/images/drapeau-tunisie.svg']) {
     assert.equal(revisions.get('./' + chemin), 'accueil-lycee-v503', chemin);
@@ -63,7 +67,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
   assert.equal(revisions.get('./assets/css/theme.css'), 'logo-titre-visible-v522');
-  assert.equal(revisions.get('./admin.html'), 'meta-seo-v521');
+  assert.equal(revisions.get('./admin.html'), 'vues-videos-v529');
   assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'defis37-lecteur-v528');
@@ -80,7 +84,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v526 : le lecteur commun suit la nouvelle capsule ; les sous-titres restent sur leur lot. */
   assert.equal(revisions.get('./assets/js/lecteur-commun.js'), 'defis37-lecteur-v528');
   assert.equal(revisions.get('./assets/subtitles/validation-nom-prenom-js-fr.vtt'), 'video-js-validation-v485');
-  assert.equal(revisions.get('./assets/js/protection.js'), 'defis37-lecteur-v528');
+  assert.equal(revisions.get('./assets/js/protection.js'), 'vues-videos-v529');
   for (const chemin of ['package.json', 'package-lock.json']) {
     assert.equal(revisions.get('./' + chemin), 'xp-operations-v487', chemin);
   }
@@ -91,11 +95,11 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   for (const chemin of ['assets/css/theme-patrimoine.css']) {
     assert.equal(revisions.get('./' + chemin), 'fidelite-origine-v481', chemin);
   }
-  for (const chemin of ['assets/js/acces.js', 'assets/js/reprendre.js']) {
-    assert.equal(revisions.get('./' + chemin), 'compteur-media-v479', chemin);
-  }
+  assert.equal(revisions.get('./assets/js/acces.js'), 'compteur-media-v479');
+  /* v529 : masquer la reprise ne doit pas effacer le compteur de vues vidéo. */
+  assert.equal(revisions.get('./assets/js/reprendre.js'), 'vues-videos-v529');
   assert.equal(revisions.get('./assets/js/config.js'), 'tirage-xp-rapide-v519');
-  assert.equal(revisions.get('./assets/js/sync-progressions.js'), 'xp-jamais-en-recul-v520');
+  assert.equal(revisions.get('./assets/js/sync-progressions.js'), 'vues-videos-v529');
   for (const chemin of ['assets/css/cours-matieres.css', 'assets/js/cours-matieres.js', 'assets/js/cours-sql-worker.js', 'assets/js/profil.js', 'assets/js/app.js']) {
     assert.ok(revisions.has('./' + chemin), chemin);
   }
@@ -118,7 +122,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v528-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v529-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'), 'le garde-fou XP est livré hors ligne');
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));
@@ -232,7 +236,7 @@ async function simulerMigration(nomAncien, marqueurs, ressourcesExistantes = [],
 
 test('migration du cache main v340 : pas de retour à l’ancien accueil ni de perte des fichiers inchangés', async () => {
   const result = await simulerMigration('sti-atelier-v340', [
-    ['./assets/js/sync-progressions.js', 'xp-jamais-en-recul-v520'], ['./quiz/sql.html', 'xp-quiz-monotone-v478']
+    ['./assets/js/sync-progressions.js', 'vues-videos-v529'], ['./quiz/sql.html', 'xp-quiz-monotone-v478']
   ]);
   assert.equal(result.magasins.has('sti-atelier-v340'), false);
   const cache = await result.api.open('sti-atelier-v380');
@@ -253,7 +257,7 @@ test('migration du cache main v340 : pas de retour à l’ancien accueil ni de p
 
 test('migration du cache v341 : les ressources modifiées sont invalidées et les données restent en cache', async () => {
   const result = await simulerMigration('sti-atelier-v341', [
-    ['./assets/js/sync-progressions.js', 'xp-jamais-en-recul-v520'], ['./quiz/sql.html', 'xp-quiz-monotone-v478']
+    ['./assets/js/sync-progressions.js', 'vues-videos-v529'], ['./quiz/sql.html', 'xp-quiz-monotone-v478']
   ]);
   assert.equal(result.magasins.has('sti-atelier-v341'), false);
   const cache = await result.api.open('sti-atelier-v380');
@@ -270,7 +274,7 @@ test('migration du cache v342 : accueil, cours et séries actualisés, médias c
     ['./index.html', 'fidelite-origine-v481'], ['./assets/js/app.js', 'fidelite-origine-v481'],
     ['./assets/js/profil.js', 'fidelite-origine-v481'], ['./assets/css/theme.css', 'fidelite-origine-v481'],
     ['./cours/sql.html', 'fidelite-origine-v481'], ['./exercices/series-exercices.html', 'fidelite-origine-v481'],
-    ['./assets/js/sync-progressions.js', 'xp-jamais-en-recul-v520']
+    ['./assets/js/sync-progressions.js', 'vues-videos-v529']
   ]);
   assert.equal(result.magasins.has('sti-atelier-v342'), false);
   const cache = await result.api.open('sti-atelier-v380');
@@ -287,7 +291,7 @@ test('migration v343 : reprise, badge et profil mis à jour, médias conservés'
   const result = await simulerMigration('sti-atelier-v343', [
     ['./index.html', 'accueil-personnalise-v482'], ['./assets/js/app.js', 'accueil-personnalise-v482'],
     ['./assets/css/theme.css', 'accueil-personnalise-v482'], ['./assets/js/profil.js', 'accueil-personnalise-v482'],
-    ['./assets/js/roue-initiales.js', 'perf-quiz-php-v474'], ['./assets/js/sync-progressions.js', 'xp-jamais-en-recul-v520']
+    ['./assets/js/roue-initiales.js', 'perf-quiz-php-v474'], ['./assets/js/sync-progressions.js', 'vues-videos-v529']
   ]);
   assert.equal(result.magasins.has('sti-atelier-v343'), false);
   const cache = await result.api.open('sti-atelier-v380');
@@ -331,7 +335,7 @@ test('migration v344 : la barre mobile est actualisée même si son ancienne tai
 test('migration v345 : les ressources de cours et quiz changées ne restent pas périmées', async () => {
   const result = await simulerMigration('sti-atelier-v345', [
     ['./assets/js/profil.js', 'accueil-personnalise-v482'], ['./quiz/sql.html', 'fidelite-origine-v481'],
-    ['./cours/sql.html', 'fidelite-origine-v481'], ['./assets/js/sync-progressions.js', 'xp-jamais-en-recul-v520']
+    ['./cours/sql.html', 'fidelite-origine-v481'], ['./assets/js/sync-progressions.js', 'vues-videos-v529']
   ]);
   assert.equal(result.magasins.has('sti-atelier-v345'), false);
   const cache = await result.api.open('sti-atelier-v380');
@@ -349,7 +353,7 @@ test('migration v346 : les corrections XP remplacent les anciennes ressources sa
     ['./exercices/series-exercices.html', 'video-js-validation-v485'],
     ['./assets/subtitles/validation-nom-prenom-js-fr.vtt', 'video-js-validation-v485'],
     ['./assets/js/profil.js', 'accueil-personnalise-v482'], ['./quiz/sql.html', 'fidelite-origine-v481'],
-    ['./cours/sql.html', 'fidelite-origine-v481'], ['./assets/js/sync-progressions.js', 'xp-jamais-en-recul-v520']
+    ['./cours/sql.html', 'fidelite-origine-v481'], ['./assets/js/sync-progressions.js', 'vues-videos-v529']
   ], [[sousTitres, 1024]]);
   assert.equal(result.magasins.has('sti-atelier-v346'), false);
   const cache = await result.api.open('sti-atelier-v380');

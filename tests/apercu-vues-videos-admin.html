@@ -1,0 +1,137 @@
+<!doctype html><html lang="fr"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Page de test STI V2.0 — aperçu du petit coin « Vues des vidéos » du tableau de bord (v529). Page technique réservée aux tests et à la démonstration.">
+<title>Aperçu — Vues des vidéos (v529)</title>
+<!--
+  Harnais visuel du module assets/js/admin-vues-videos.js (v529).
+  Il rejoue le bloc du tableau de bord avec un faux client Supabase et des
+  progressions d'élèves fictives : aucune lecture réelle, aucun compte touché.
+  Ouvrir cette page directement pour vérifier le rendu, les tris et les jauges.
+-->
+<style>
+  :root { color-scheme: light; }
+  body {
+    margin: 0; padding: 18px;
+    font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", "Chalkboard SE", cursive, sans-serif;
+    background: linear-gradient(135deg, #f6f1e6, #eaf3fb); color: #23201a;
+  }
+  .tableau-apercu {
+    max-width: 1180px; margin: 0 auto;
+    background: linear-gradient(135deg, #fff9ec, #eef7ff);
+    border: 2.5px solid #23201a; border-radius: 18px;
+    padding: 13px 15px 16px; box-shadow: 4px 4px 0 rgba(35,32,26,.85);
+  }
+  .tableau-apercu-entete { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tableau-apercu-entete h2 { margin: 0; color: #23201a; font-size: 16px; }
+  .tableau-apercu-entete span { color: #7a6f5d; font-size: 11.5px; font-weight: 800; }
+  .rappels { max-width: 1180px; margin: 10px auto 0; font-size: 11.5px; color: #6b6152; font-weight: 700; }
+  .btn-outil {
+    border: 2px solid #23201a; border-radius: 999px; padding: 7px 14px;
+    font-size: 12px; font-weight: 900; cursor: pointer; background: #f3ead9; color: #23201a;
+    box-shadow: 2px 2px 0 #23201a; transition: transform .1s ease;
+  }
+  .btn-outil:hover { transform: translate(-1px, -1px); border-color: #f4511e; color: #f4511e; background: #fffdf7; }
+
+  /* Styles copiés du tableau de bord (v529) — le bloc doit rester identique en production. */
+  .vues-videos {
+    margin-top: 14px; padding: 9px 12px 11px;
+    background: #fffdf7; border: 2px solid #23201a; border-radius: 14px;
+    box-shadow: 3px 3px 0 rgba(35,32,26,.35);
+  }
+  .vues-videos-entete { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .vues-videos-entete b { font-size: 13px; color: #23201a; }
+  .vues-videos-entete small { font-size: 11px; font-weight: 800; color: #7a6f5d; }
+  #vues-videos-etat { margin-left: auto; }
+  .vues-videos-liste {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+    gap: 6px 12px; max-height: 172px; overflow-y: auto; padding-right: 4px;
+  }
+  .vues-video {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center;
+    gap: 3px 8px; padding: 5px 9px 6px; border-radius: 10px; background: #fff;
+    border: 1.5px solid rgba(35,32,26,.22); font-size: 11.5px; color: #23201a;
+  }
+  .vues-video-nom { display: flex; align-items: center; gap: 5px; min-width: 0; font-weight: 700; }
+  .vues-video-nom i { font-style: normal; flex: none; }
+  .vues-video-nom > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .vues-video-nb { white-space: nowrap; }
+  .vues-video-nb b { font: 1000 14px/1 Consolas, "Courier New", monospace; font-variant-numeric: tabular-nums; }
+  .vues-video-detail { color: #7a6f5d; font-weight: 700; font-size: 10.5px; white-space: nowrap; }
+  .vues-video-jauge { grid-column: 1 / -1; height: 4px; border-radius: 999px; background: rgba(35,32,26,.12); overflow: hidden; }
+  .vues-video-jauge i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f4511e, #f7b731); }
+  .vues-video-vide { opacity: .55; }
+  .vues-video-hors-catalogue { border-style: dashed; }
+  .vues-vide { margin: 0; font-size: 11.5px; color: #7a6f5d; font-weight: 700; }
+</style>
+<body>
+<section class="tableau-apercu" id="vue-ensemble-admin" aria-labelledby="titre-vue-ensemble-admin">
+  <div class="tableau-apercu-entete">
+    <h2 id="titre-vue-ensemble-admin">📊 Vue d’ensemble en temps réel</h2>
+    <span>Alertes et indicateurs essentiels en temps réel</span>
+  </div>
+
+  <div class="vues-videos" id="vues-videos-admin" aria-labelledby="titre-vues-videos">
+    <div class="vues-videos-entete">
+      <b id="titre-vues-videos">🎬 Vues des vidéos</b>
+      <small id="vues-videos-resume">Chargement…</small>
+      <small id="vues-videos-etat"></small>
+      <button type="button" class="btn-outil" id="btn-vues-videos" title="Relire les progressions vidéo enregistrées dans le nuage">↻ Actualiser</button>
+    </div>
+    <div class="vues-videos-liste" id="vues-videos-liste" aria-live="polite">
+      <p class="vues-vide">Chargement des vues…</p>
+    </div>
+  </div>
+</section>
+<p class="rappels">Harnais de test : 12 élèves fictifs, un compte professeur écarté, un média hors catalogue.
+Aucune requête réseau, aucune donnée réelle.</p>
+
+<script>
+  /* Faux client Supabase : deux tables paginées, comme le vrai module les interroge. */
+  (function () {
+    var eleves = [
+      ['Léa Ben Salah', '3SI', { 'video:html5-cours': { maxPct: 100, done: true, vues: { pc: 3 } }, 'video:css3-cours': { maxPct: 80, vues: { pc: 2 } }, 'video:defis37-tableau-aleas-media': { maxPct: 45, vues: { pc: 1 } } }],
+      ['Sami Trabelsi', '3SI', { 'video:javascript-cours': { maxPct: 100, done: true, vues: { tel: 2 } }, 'video:tp-train-serie6': { maxPct: 60, vues: { tel: 1 } } }],
+      ['Nora Jlassi', '4SI', { 'video:sql-cours': { maxPct: 92, vues: { pc: 4, tablette: 1 } }, 'video:sql-serie4': { maxPct: 35, vues: { pc: 1 } } }],
+      ['Youssef Amri', '4SI', { 'video:php-cours': { maxPct: 70, vues: { pc: 2 } }, 'video:php-guichet': { maxPct: 25, vues: { pc: 1 } } }],
+      ['Ines Chaabane', '3SI', { 'video:css-positionnement': { maxPct: 55, vues: { pc: 1 } } }],
+      ['Mohamed Aziz', '4SI', { 'video:tp-formulaire-tableau-autre': { maxPct: 40, vues: { pc: 1 } } }],
+      ['Rania Ferchichi', '3SI', { 'video:html5-cours': { maxPct: 20 } }],
+      ['Bilel Guesmi', '4SI', { 'video:defis37-tableau-aleas-media': { maxPct: 100, done: true, vues: { pc: 2 } } }],
+      ['Amira Ben Hmida', '3SI', { 'video:validation-nom-prenom-js': { maxPct: 75, vues: { tel: 1 } } }],
+      ['Karim Sellami', '4SI', { 'video:sql-serie5': { maxPct: 30, vues: { pc: 1 } }, 'video:ancien-slug-demo': { maxPct: 50, vues: { pc: 2 } } }],
+      ['Farah Ouali', '3SI', { 'video:css-animee': { maxPct: 15 } }],
+      ['Walid Dridi', '4SI', { 'video:php-synthese': { maxPct: 65, vues: { pc: 1 } } }]
+    ];
+    var progressions = eleves.map(function (e, i) {
+      return { user_id: 'u' + (i + 1), email: 'eleve' + (i + 1) + '@lycee.tn', donnees: JSON.stringify({ 'sti-media-prog-v1': e[2] }) };
+    });
+    progressions.push({ user_id: 'prof1', email: 'aymenessouyah@gmail.com', donnees: JSON.stringify({ 'sti-media-prog-v1': { 'video:html5-cours': { maxPct: 100, vues: { pcProf: 40 } } } }) });
+    var profils = eleves.map(function (e, i) { return { id: 'u' + (i + 1), email: 'eleve' + (i + 1) + '@lycee.tn', classe: e[1], statut: 'actif' }; });
+    profils.push({ id: 'prof1', email: 'aymenessouyah@gmail.com', classe: 'prof', statut: 'actif' });
+
+    function requete(lignes) {
+      var etat = { de: 0, fin: 999 };
+      var q = {
+        select: function () { return q; },
+        order: function () { return q; },
+        range: function (a, b) { etat.de = a; etat.fin = b; return q; },
+        then: function (ok, ko) {
+          return Promise.resolve({ data: lignes.slice(etat.de, etat.fin + 1), error: null }).then(ok, ko);
+        }
+      };
+      return q;
+    }
+    window.STI_AUTH = { URL: 'https://exemple.supabase.co', CLE: 'cle-publique-de-demonstration' };
+    window.supabase = {
+      createClient: function () {
+        return {
+          from: function (table) { return requete(table === 'profiles' ? profils : progressions); }
+        };
+      }
+    };
+    try { localStorage.setItem('sb-demo-auth-token', JSON.stringify({ access_token: 'jeton-de-demonstration' })); } catch (e) {}
+  })();
+</script>
+<script src="../assets/js/admin-vues-videos.js"></script>
+</body>
+</html>

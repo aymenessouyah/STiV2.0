@@ -156,6 +156,20 @@
       var recent = !bExiste ? a : (!aExiste ? b : (tsA >= tsB ? a : b));
       var masque = Boolean(!done && recent && recent.repriseMasquee && Number(recent.sec || 0) === 0);
       var secOut = (done || masque) ? 0 : (Number(recent.sec != null ? recent.sec : (recent.t || recent.time || 0)) || secA || secB || 0);
+      /* v529 : compteur de vues par appareil — union des deux côtés, maximum par
+         appareil (aucune lecture perdue, aucune lecture comptée deux fois). */
+      var vuesA = (a.vues && typeof a.vues === "object") ? a.vues : null;
+      var vuesB = (b.vues && typeof b.vues === "object") ? b.vues : null;
+      var vuesOut = null;
+      if (vuesA || vuesB) {
+        vuesOut = {};
+        [vuesA || {}, vuesB || {}].forEach(function (src) {
+          Object.keys(src).forEach(function (app) {
+            var nVue = Math.round(Number(src[app]));
+            if (isFinite(nVue) && nVue > 0) vuesOut[app] = Math.max(vuesOut[app] || 0, nVue);
+          });
+        });
+      }
       var entree = {
         pct: done ? 100 : Math.max(Number(recent.pct) || 0, maxPct > 0 ? 1 : 0),
         maxPct: maxPct,
@@ -164,6 +178,7 @@
         done: done,
         ts: Math.max(tsA, tsB)
       };
+      if (vuesOut && Object.keys(vuesOut).length) entree.vues = vuesOut;
       if (masque) entree.repriseMasquee = true;
       out[c] = entree;
     });

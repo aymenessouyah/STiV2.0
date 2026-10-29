@@ -134,6 +134,19 @@
       sortie[k] = { pct: fini ? 100 : Math.max(Number(recent.pct) || 0, max > 0 ? 1 : 0), maxPct: fini ? 100 : max,
         sec: fini || masque ? 0 : (Number(recent.sec) || Number(a.sec) || Number(b.sec) || 0),
         dur: Math.max(Number(a.dur) || 0, Number(b.dur) || 0), done: fini, ts: Math.max(Number(a.ts || a.maj) || 0, Number(b.ts || b.maj) || 0) };
+      /* v529 : compteur de vues par appareil — union, maximum par appareil. */
+      var vuesA = (a.vues && typeof a.vues === 'object') ? a.vues : null;
+      var vuesB = (b.vues && typeof b.vues === 'object') ? b.vues : null;
+      if (vuesA || vuesB) {
+        var vuesOut = {};
+        [vuesA || {}, vuesB || {}].forEach(function (src) {
+          Object.keys(src).forEach(function (app) {
+            var nVue = Math.round(Number(src[app]));
+            if (isFinite(nVue) && nVue > 0) vuesOut[app] = Math.max(vuesOut[app] || 0, nVue);
+          });
+        });
+        if (Object.keys(vuesOut).length) sortie[k].vues = vuesOut;
+      }
       if (masque) sortie[k].repriseMasquee = true;
     });
     return sortie;
