@@ -16,7 +16,7 @@ const revisions = new Map(entrees.map(m => [m[1], m[2]]));
 /* Le résolveur conserve à la fois les correctifs de main et les ressources de la refonte. */
 test('fusion du service worker : cache inédit, révisions XP/médias et refonte conservées', () => {
   assert.match(sw, /var CACHE = "sti-atelier-v380"/);
-  assert.match(sw, /var UPDATE_ID = "v520-xp-jamais-en-recul-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v521-meta-seo-20261029"/);
   assert.equal(entrees.length, revisions.size, 'aucune URL de mise à jour en double');
   /* v520 : profil.js porte le plancher anti-recul des XP. */
   assert.equal(revisions.get('./assets/js/profil.js'), 'xp-jamais-en-recul-v520');
@@ -32,18 +32,24 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   for (const chemin of ['assets/js/cours-javascript.js', 'assets/js/cours-matieres.js']) {
     assert.equal(revisions.get('./' + chemin), 'progression-chapitres-v492', chemin);
   }
-  for (const chemin of ['assets/js/retour-quiz.js', 'assets/js/appel-quiz.js', 'revision-erreurs.html']) {
+  for (const chemin of ['assets/js/retour-quiz.js', 'assets/js/appel-quiz.js']) {
     assert.equal(revisions.get('./' + chemin), 'retour-quiz-intelligent-v494', chemin);
   }
+  /* v521 : les pages HTML gagnent leur meta description ; seules les pages
+     réellement modifiées changent de révision, les modules restent sur leur lot. */
+  assert.equal(revisions.get('./revision-erreurs.html'), 'meta-seo-v521');
   /* v519 : le tirage aléatoire des quiz. */
   for (const chemin of ['assets/js/quiz-tableaux.js', 'assets/js/quiz-alea.js']) {
     assert.equal(revisions.get('./' + chemin), 'tirage-xp-rapide-v519', chemin);
   }
   /* v520 : les cinq pages de quiz, le synchroniseur et le moteur XP invalident
      leur ancienne copie pour que le compteur ne recule plus. */
-  for (const chemin of ['quiz/html-css.html', 'quiz/javascript.html', 'quiz/sql.html', 'quiz/php.html', 'quiz/tableaux.html',
-    'assets/js/quiz-sync.js', 'assets/js/sync-progressions.js', 'assets/js/xp-plancher.js']) {
+  for (const chemin of ['assets/js/quiz-sync.js', 'assets/js/sync-progressions.js', 'assets/js/xp-plancher.js']) {
     assert.equal(revisions.get('./' + chemin), 'xp-jamais-en-recul-v520', chemin);
+  }
+  /* v521 : les cinq pages de quiz gardent le garde-fou XP et gagnent leur meta description. */
+  for (const chemin of ['quiz/html-css.html', 'quiz/javascript.html', 'quiz/sql.html', 'quiz/php.html', 'quiz/tableaux.html']) {
+    assert.equal(revisions.get('./' + chemin), 'meta-seo-v521', chemin);
   }
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'outils-attirants-v518');
@@ -56,9 +62,8 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./assets/js/news-perso.js'), 'ruban-vert-v517');
   /* v507 : ruban sans logo et compteurs de vidéos. */
   assert.equal(revisions.get('./assets/css/theme.css'), 'outils-attirants-v518');
-  for (const chemin of ['admin.html', 'assets/js/sante.js']) {
-    assert.equal(revisions.get('./' + chemin), 'tp-transitions-v512', chemin);
-  }
+  assert.equal(revisions.get('./admin.html'), 'meta-seo-v521');
+  assert.equal(revisions.get('./assets/js/sante.js'), 'tp-transitions-v512');
   /* v509 : drapeau STI animé par le vent en fond de « Bonjour ». */
   assert.equal(revisions.get('./index.html'), 'outils-animes-v516');
   assert.equal(revisions.get('./assets/js/admin.js'), 'news-niveaux-v497');
@@ -110,7 +115,7 @@ test('les scripts historiques sont chargés une seule fois et dans l’ordre req
 });
 
 test('manifeste hors ligne fusionné : toutes les empreintes et les deux migrations sont exactes', () => {
-  assert.equal(manifeste.version, 'v520-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v521-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'), 'le garde-fou XP est livré hors ligne');
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((total, f) => total + f.bytes, 0));
