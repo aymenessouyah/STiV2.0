@@ -1,9 +1,9 @@
 {
-  "version": "v524-sti-atelier-v380",
-  "generatedAt": "2026-10-29T09:41:58Z",
+  "version": "v525-sti-atelier-v380",
+  "generatedAt": "2026-10-29T09:51:50Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 729,
-  "totalBytes": 750903165,
+  "totalBytes": 750904678,
   "files": [
     {
       "path": "404.html",
@@ -137,8 +137,8 @@
     },
     {
       "path": "assets/css/cours-javascript.css",
-      "bytes": 13222,
-      "gitSha": "800aedd5beb29041219993d9900ba283d6985e81"
+      "bytes": 14620,
+      "gitSha": "00a0d879a5809e789d36f1198e9b7bd212f3b5f2"
     },
     {
       "path": "assets/css/cours-matieres.css",
@@ -1187,8 +1187,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 127943,
-      "gitSha": "c79091b181f321d232f01fdcb7928ca11ca447e2"
+      "bytes": 128069,
+      "gitSha": "5ff9a621fc41768f708b42a23bfc40386ed2ee6c"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -3647,8 +3647,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97149,
-      "gitSha": "2df78b8619aeee8025e56aa66ab7eecd656510df"
+      "bytes": 97138,
+      "gitSha": "1e4a1ddd469820e077a5ed0944f560fc731dac0d"
     }
   ]
 }

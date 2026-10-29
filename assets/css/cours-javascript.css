@@ -74,6 +74,42 @@
 .js-exercise__reveal { margin-inline-start: auto; color: var(--course-accent); font-size: .78rem; white-space: nowrap; }
 .js-exercise__solution { margin-top: var(--space-4); }
 .js-exercise .exo-done-label { justify-self: start; }
+
+/* ── v525 : les six groupes EXERCICE 01…06 forment une grille de cartes ──
+   Une seule colonne sur téléphone, deux colonnes dès qu'un exercice garde
+   assez de largeur pour ses blocs de code (900 px). */
+.js-exercise-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+@media (min-width: 900px) {
+  .js-exercise-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.js-exercise-grid .js-exercise-group {
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+.js-exercise-grid .js-exercise-group__head {
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+/* Le numéro devient une pastille lisible en tête de carte. */
+.js-exercise-grid .js-exercise-group__head .source-accent {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--course-accent-soft);
+  color: var(--course-accent);
+  font: 800 .72rem/1 var(--font-mono);
+  letter-spacing: .04em;
+}
+.js-exercise-grid .js-exercise-group__head h2 { font-size: 1.02rem; }
+/* L'exercice garde son cadre mais sans ombre : la carte du groupe porte le relief. */
+.js-exercise-grid .js-exercise { background: var(--bg-alt); box-shadow: none; }
+
 .js-series-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--space-4); }
 @media (min-width: 700px) { .js-series-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 .js-series-card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }

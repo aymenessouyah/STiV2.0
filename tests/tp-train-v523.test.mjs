@@ -117,7 +117,7 @@ test('v524 : les six groupes d’exercices du cours s’appellent EXERCICE 01 à
 });
 
 test('v523 : le TP Train est livré hors ligne et son empreinte est exacte', () => {
-  assert.match(sw, /var UPDATE_ID = "v524-serie6-exercices-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v525-grille-exercices-20261029"/);
   for (const page of PAGES) {
     /* Choix assumé : les trois documents pèsent 2,5 Mo. Ils entrent dans
        l'installation hors-ligne complète mais pas dans le delta automatique,
@@ -130,7 +130,7 @@ test('v523 : le TP Train est livré hors ligne et son empreinte est exacte', () 
     assert.match(lire(page), /<meta name="description"/, page);
   }
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v524-sti-atelier-v380');
+  assert.equal(manifeste.version, 'v525-sti-atelier-v380');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   for (const page of PAGES) {

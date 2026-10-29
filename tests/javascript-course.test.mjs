@@ -103,7 +103,8 @@ test('hors ligne : révisions, médias et empreintes des ressources JavaScript',
     /* v521 : ces pages ont reçu leur meta description après le lot de fidélité v481. */
     const pagesMetaV521 = ['exercices/javascript/js-37-defis-tt.html', 'projets/fleurs/index.html', 'projets/fleurs/inscription.html', 'projets/formulaire-inscription/cvFleurs.html', 'projets/carte-bancaire/cb.html'];
     const revision = path === 'assets/js/app.js' ? 'serie6-exercices-v524' :
-      path === 'cours/javascript.html' ? 'serie6-exercices-v524' :
+      path === 'cours/javascript.html' ? 'grille-exercices-v525' :
+      path === 'assets/css/cours-javascript.css' ? 'grille-exercices-v525' :
       path === 'assets/js/cours-javascript.js' ? 'progression-chapitres-v492' :
       path === 'assets/js/profil.js' ? 'xp-jamais-en-recul-v520' :
       pagesMetaV521.includes(path) ? 'meta-seo-v521' :
