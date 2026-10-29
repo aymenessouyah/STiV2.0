@@ -113,7 +113,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
   }
   assert.doesNotMatch(delta, /"\.\/[^"\n]+\.(?:mp4|mp3|pdf|wasm)"/i);
   for (const chemin of ['assets/css/cours.css','assets/js/app.js','assets/js/cours-matieres.js','cours/html5.html','cours/css3.html','cours/javascript.html','cours/sql.html','cours/php.html']) {
-    const revision = chemin === 'assets/js/app.js' ? 'compteurs-videos-v513'
+    const revision = chemin === 'assets/js/app.js' ? 'stat-videos-v515'
       : chemin === 'assets/css/cours.css' ? 'retrait-fond-cours-v508'
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'tp-display-v510'
@@ -274,5 +274,17 @@ test('v513 : les totaux de vidéos de l’accueil suivent le catalogue', () => {
   assert.ok(index.includes(`🐘 PHP (4e SI) · ${compter('php')} vidéos`));
   /* Le total est recalculé dans app.js : aucune pastille figée dans le temps. */
   assert.ok(js.includes('pastilleToutes.textContent = "Toutes (" + accessibles + ")"'));
-  assert.ok(js.includes('totalTexte.textContent = String(accessibles)'));
+});
+
+test('v515 : la tuile « Vidéos du catalogue » compte tout le catalogue', () => {
+  const js = lire('assets/js/app.js');
+  const index = lire('index.html');
+  const texte = js.split('var CATALOGUE_VIDEOS = ')[1].split('\n  ];')[0] + '\n  ]';
+  const total = vm.runInNewContext('(' + texte + ')').length;
+  /* La tuile de l'accueil n'est plus un chiffre figé : elle valait 14 alors que
+     le catalogue en compte davantage. */
+  assert.match(index, new RegExp(`id="videosStatNombre" data-count="${total}">${total}</span>`));
+  assert.ok(js.includes('var statVideos = document.getElementById("videosStatNombre")'));
+  assert.ok(js.includes('statVideos.setAttribute("data-count", String(CATALOGUE_VIDEOS.length))'));
+  assert.ok(js.includes('statVideos.textContent = String(CATALOGUE_VIDEOS.length)'));
 });
