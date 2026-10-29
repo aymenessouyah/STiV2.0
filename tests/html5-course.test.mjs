@@ -79,7 +79,7 @@ test('hors ligne : nouvelles ressources présentes et anciennes révisions inval
       path === 'assets/css/cours.css' ? 'retrait-fond-cours-v508' :
       path === 'dashboard.html' ? 'accueil-lycee-v503' :
       path === 'assets/js/cours-html5.js' ? 'tp-display-v510' :
-      path === 'assets/css/theme.css' ? 'outils-attirants-v518' :
+      path === 'assets/css/theme.css' ? 'logo-titre-visible-v522' :
       path === 'assets/js/profil.js' ? 'xp-jamais-en-recul-v520' : 'suivi-contextes-v491';
     assert.ok(delta.includes(`url: "./${path}", revision: "${revision}"`), path);
     assert.ok(offline.includes(`"./${path}"`), path);
