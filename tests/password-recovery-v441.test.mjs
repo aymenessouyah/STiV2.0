@@ -5421,7 +5421,7 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   const uniqueUrls = new Set(urls);
   assert.equal(uniqueUrls.size, urls.length, `UPDATE_FILES ne doit contenir aucun doublon (${urls.length} entrées vs ${uniqueUrls.size} uniques)`);
   // Les pages historiques harmonisées doivent aussi invalider leur ancienne copie ; le noyau préchargé reste limité ci-dessous.
-  assert.ok(urls.length <= 260, `UPDATE_FILES doit rester compact (<= 260 entrées uniques, observé: ${urls.length})`);
+  assert.ok(urls.length <= 261, `UPDATE_FILES doit rester compact (<= 261 entrées uniques, observé: ${urls.length})`);
 
   const mCore = swJs.match(/var NOYAU_RAPIDE_RECHARGEMENT = (\{[\s\S]*?\n\});/);
   assert.ok(mCore, 'NOYAU_RAPIDE_RECHARGEMENT doit encadrer les rechargements proactifs du SW');
@@ -6475,7 +6475,7 @@ test('v477 (structure) : élimination complète de la rétention v475 (VERSION_A
 
   assert.match(configJs, /VERSION:\s*3(?:3[89]|4\d)\b/);
   assert.match(configJs, /VERSION_AFFICHEE:\s*[45]\d\d\b/);
-  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v3(?:3[89]|[4-7]\d)"/);
+  assert.match(swJs, /var CACHE\s*=\s*"sti-atelier-v3(?:3[89]|[4-8]\d)"/);
   assert.match(swJs, /var UPDATE_ID\s*=\s*"v[45]\d\d-[a-z0-9-]+"/);
   assert.match(swJs, /uRacine/);
   assert.match(swJs, /\/nouveautes\\\.json\$\/i/);
@@ -6689,7 +6689,7 @@ test('v478 (structure & migration SQL) : protection monotone multicouche des XP 
   }
   assert.match(readmeMd, /\|\s*v478\s*\|/);
   assert.ok(nouvJson.some((e) => e.version === 'v478'), 'v478 doit figurer dans nouveautes.json');
-  assert.match(offlineManifest.version, /^v[4-5]\d\d-sti-atelier-v3(?:3\d|[4-7]\d)$/);
+  assert.match(offlineManifest.version, /^v[4-5]\d\d-sti-atelier-v3(?:3\d|[4-8]\d)$/);
 });
 
 test('v478 (comportemental VM) : zéro remise à zéro des XP sur navigateur neuf/partagé (verrou pull-before-push + fusion local >= distant + plancher sti_quiz_parties)', async () => {

@@ -374,6 +374,7 @@
   /* ---------- Session de quiz ---------- */
   var sessionQuiz = null;
   function demarrer(module) {
+    if (typeof window !== "undefined" && window.STIQuizAlea) window.STIQuizAlea.nouveauTirage("partie");
     var revTab = window.STIQuizSync && STIQuizSync.revisionIds ? STIQuizSync.revisionIds("tableaux") : null;
     var pool;
     if (revTab) {

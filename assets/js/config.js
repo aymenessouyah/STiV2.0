@@ -628,7 +628,9 @@ window.STI_AUTH = {
       try {
         var lnk = document.createElement("link");
         lnk.rel = "prefetch";
-        lnk.as = "document";
+        /* v519 : « as » n'est pas valide sur rel=prefetch (le hint était ignoré
+           par certains navigateurs) ; fetchpriority basse garde le réseau libre. */
+        if ("fetchPriority" in lnk) lnk.fetchPriority = "low";
         lnk.href = href;
         (document.head || document.documentElement).appendChild(lnk);
       } catch (eL) {}
@@ -669,4 +671,68 @@ window.STI_AUTH = {
   } catch (e) {}
 })();
 
+/* v519 — Ouvrir la connexion TLS vers Supabase avant le premier appel :
+   la progression et les XP arrivent plus vite au chargement, sur tous les
+   navigateurs (aucune API récente requise). */
+(function () {
+  try {
+    if (typeof document === "undefined") return;
+    var cfgApi = window.STI_AUTH || {};
+    if (!cfgApi.URL) return;
+    ["preconnect", "dns-prefetch"].forEach(function (rel) {
+      var l = document.createElement("link");
+      l.rel = rel;
+      l.href = cfgApi.URL;
+      l.crossOrigin = "anonymous";
+      (document.head || document.documentElement).appendChild(l);
+    });
+  } catch (e) {}
+})();
+
+/* v519 — Navigation instantanée : règles de préchargement spéculatif.
+   Sur les navigateurs qui les comprennent (Chrome / Edge / Android), la page
+   de cours ou de quiz survolée est pré-rendue avant le clic : l'ouverture
+   paraît immédiate. Ailleurs, le préchargement au survol de la v475 continue
+   de s'appliquer, et rien ne change si le réseau est lent ou économisé. */
+(function () {
+  try {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
+    if (window.__STI_PRERENDER_NAV_V519) return;
+    window.__STI_PRERENDER_NAV_V519 = true;
+    if (!window.HTMLScriptElement || typeof window.HTMLScriptElement.supports !== "function") return;
+    if (!window.HTMLScriptElement.supports("speculationrules")) return;
+    if (String(location.pathname || "").indexOf("/tests/") !== -1) return;
+    var conn = navigator && (navigator.connection || navigator.mozConnection || navigator.webkitConnection);
+    if (conn && conn.saveData) return;
+    if (conn && /(^|-)2g$/i.test(String(conn.effectiveType || ""))) return;
+    if (navigator && Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) < 2) return;
+
+    var regles = {
+      prerender: [
+        {
+          source: "document",
+          where: {
+            and: [
+              { href_matches: "/*" },
+              { not: { href_matches: "/*\?*(^|&)revision=*" } },
+              { not: { href_matches: "/admin*" } },
+              { not: { href_matches: "/portail*" } },
+              { not: { href_matches: "/tests/*" } },
+              { not: { href_matches: "/assets/*" } },
+              { not: { href_matches: "/*.pdf" } },
+              { not: { href_matches: "/*.mp4" } },
+              { not: { selector_matches: "[target=_blank]" } },
+              { not: { selector_matches: "[download]" } }
+            ]
+          },
+          eagerness: "moderate"
+        }
+      ]
+    };
+    var script = document.createElement("script");
+    script.type = "speculationrules";
+    script.textContent = JSON.stringify(regles);
+    (document.head || document.documentElement).appendChild(script);
+  } catch (e) {}
+})();
 
