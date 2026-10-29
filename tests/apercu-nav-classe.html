@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr" data-sti-classe="bleu">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Harnais · rubrique active aux couleurs de l'abonné (v536)</title>
+<link rel="stylesheet" href="../assets/css/theme.css" />
+<style>
+  body { padding: 0; margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .banc { padding: 18px 20px 40px; }
+  .banc h1 { font-size: 1.05rem; margin: 0 0 4px; }
+  .banc p { margin: 0 0 16px; color: var(--text-muted); font-size: .82rem; max-width: 78ch; }
+  .banc__barre { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .banc__barre button {
+    border: 1px solid var(--border-strong); background: var(--surface); color: var(--text);
+    border-radius: 999px; padding: 7px 14px; font: 700 .8rem/1 system-ui, sans-serif; cursor: pointer;
+  }
+  .banc__barre button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+  /* Cadre d'observation : l'en-tête réel n'a pas besoin d'être collé ici. */
+  .banc__cadre { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 22px; }
+  .banc__cadre .site-header { position: static; }
+  .banc__legende { font-size: .78rem; color: var(--text-muted); margin: 0 0 10px; font-weight: 700; }
+  .banc__trait { display: inline-block; width: 46px; height: 3px; border-radius: 999px; vertical-align: middle; margin-right: 8px; }
+  .banc__note { font-size: .78rem; line-height: 1.5; color: var(--text-muted); border-left: 3px solid var(--brand); padding-left: 12px; }
+</style>
+</head>
+<body class="sti-v2">
+<div class="banc">
+  <h1>Rubrique active soulignée aux couleurs de l'abonné — v536</h1>
+  <p>
+    Harnais visuel : l'en-tête ci-dessous est le vrai balisage (brand + <code>.site-nav</code>).
+    La rubrique « Cours » est marquée <code>is-actif</code> / <code>aria-current="true"</code> ;
+    son trait prend la couleur posée sur <code>&lt;html data-sti-classe="…"&gt;</code>.
+    Le titre « STI V2.0 » ne doit jamais être coupé.
+  </p>
+
+  <div class="banc__barre" role="group" aria-label="Couleur de la classe">
+    <button type="button" data-classe="bleu" aria-pressed="true">3e SI · bleu</button>
+    <button type="button" data-classe="vert" aria-pressed="false">4e SI · vert</button>
+    <button type="button" data-classe="gold" aria-pressed="false">Prof / admin / GOLD</button>
+    <button type="button" data-classe="orange" aria-pressed="false">Autre compte · orangé</button>
+    <button type="button" id="basculerTheme" aria-pressed="false">Thème clair / sombre</button>
+  </div>
+
+  <p class="banc__legende">Aperçu à la largeur réelle de l'écran</p>
+  <div class="banc__cadre">
+    <header class="site-header" role="banner">
+      <div class="container site-header__inner">
+        <a class="brand-logo" href="#" aria-label="STI V2.0 Lycée Raféha">
+          <img class="brand-logo__drapeau" src="../assets/images/drapeau-tunisie.svg" alt="" width="40" height="40" />
+          <span class="brand-logo__mark" aria-hidden="true"><img src="../assets/icons/sti-icon-192.png" alt="" width="40" height="40" /></span>
+          <span class="brand-logo__text">
+            <span class="brand-logo__title">STI V2.0</span>
+            <span class="brand-logo__sub">Lycée Raféha · 3e &amp; 4e SI</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Navigation principale">
+          <a class="site-nav__link" href="#">Vidéos</a>
+          <a class="site-nav__link is-actif" href="#" aria-current="true">Cours</a>
+          <a class="site-nav__link" href="#">Scanner mon livre</a>
+          <a class="site-nav__link" href="#">Outils Bac</a>
+          <a class="site-nav__link" href="#">Quiz</a>
+          <a class="site-nav__link" href="#">Glossaire</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="search-trigger" aria-label="Rechercher">
+            <span aria-hidden="true">🔎</span>
+            <span class="search-trigger__label">Rechercher…</span>
+            <kbd>Ctrl K</kbd>
+          </button>
+          <div class="theme-switcher" role="group" aria-label="Thème">
+            <button type="button" class="theme-switcher__btn" title="Clair">☀️</button>
+            <button type="button" class="theme-switcher__btn" title="Intermédiaire">🌗</button>
+            <button type="button" class="theme-switcher__btn" title="Sombre">🌙</button>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm">🎛 Mon compte</button>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <p class="banc__legende">Les quatre couleurs</p>
+  <p><span class="banc__trait" style="background:#2563eb"></span>3e SI — bleu #2563eb</p>
+  <p><span class="banc__trait" style="background:#16a34a"></span>4e SI — vert #16a34a</p>
+  <p><span class="banc__trait" style="background:#d3a62c"></span>Prof, administration, compte GOLD — or #d3a62c</p>
+  <p><span class="banc__trait" style="background:#f97316"></span>Autres comptes — orangé #f97316</p>
+
+  <p class="banc__note">
+    Le trait est le même sous les thèmes clair, intermédiaire et sombre ; en thème clair,
+    l'or et l'orangé se foncent (respectivement #a16207 et #c2410c) pour rester lisibles.
+    Sur une page de cours (<code>cours/html5.html</code>, …), c'est « Cours » qui porte le trait.
+  </p>
+</div>
+<script>
+  (function () {
+    var boutons = document.querySelectorAll('[data-classe]');
+    Array.prototype.forEach.call(boutons, function (b) {
+      b.addEventListener('click', function () {
+        document.documentElement.setAttribute('data-sti-classe', b.getAttribute('data-classe'));
+        Array.prototype.forEach.call(boutons, function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      });
+    });
+    var theme = document.getElementById('basculerTheme');
+    theme.addEventListener('click', function () {
+      var clair = document.documentElement.getAttribute('data-theme') === 'clair';
+      document.documentElement.setAttribute('data-theme', clair ? 'sombre' : 'clair');
+      theme.setAttribute('aria-pressed', String(!clair));
+    });
+  })();
+</script>
+</body>
+</html>

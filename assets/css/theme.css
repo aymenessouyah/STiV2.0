@@ -2194,3 +2194,67 @@ body.sti-v2 #sti-reprendre-x {
 
 /* La pastille historique conserve ses fonds pastel en mode sombre. */
 #sti-sync-pastille { color: var(--sti-compte-orange-ink) !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v536 — Rubrique active soulignée de la couleur de l'abonné
+   Bleu pour la 3e SI · vert pour la 4e SI · or pour l'enseignant, l'administration,
+   les comptes GOLD · orangé pour tous les autres comptes.
+   La couleur est posée sur <html data-sti-classe="…"> par mobile-nav.js ; ici, seuls
+   le trait et son halo en dépendent, donc le thème clair comme le thème sombre suivent.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --sti-trait-classe: #f97316;
+  --sti-trait-classe-halo: rgba(249, 115, 22, 0.34);
+}
+html[data-sti-classe="bleu"] { --sti-trait-classe: #2563eb; --sti-trait-classe-halo: rgba(37, 99, 235, 0.34); }
+html[data-sti-classe="vert"] { --sti-trait-classe: #16a34a; --sti-trait-classe-halo: rgba(22, 163, 74, 0.34); }
+html[data-sti-classe="gold"] { --sti-trait-classe: #d3a62c; --sti-trait-classe-halo: rgba(211, 166, 44, 0.40); }
+html[data-sti-classe="orange"] { --sti-trait-classe: #f97316; --sti-trait-classe-halo: rgba(249, 115, 22, 0.34); }
+/* Sur fond clair, l'or et l'orangé se foncent pour rester lisibles. */
+html[data-theme="light"][data-sti-classe="gold"],
+html[data-theme="clair"][data-sti-classe="gold"] { --sti-trait-classe: #a16207; --sti-trait-classe-halo: rgba(161, 98, 7, 0.28); }
+html[data-theme="light"][data-sti-classe="orange"],
+html[data-theme="clair"][data-sti-classe="orange"] { --sti-trait-classe: #c2410c; --sti-trait-classe-halo: rgba(194, 65, 12, 0.26); }
+
+/* Le trait remplace la pastille de survol : la rubrique courante reste lisible d'un coup d'œil. */
+.site-nav .site-nav__link { position: relative; }
+.site-nav .site-nav__link.is-actif,
+.site-nav .site-nav__link[aria-current="true"] { color: var(--text); background: transparent; }
+.site-nav .site-nav__link.is-actif::after,
+.site-nav .site-nav__link[aria-current="true"]::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--sti-trait-classe, #f97316);
+  box-shadow: 0 0 9px var(--sti-trait-classe-halo, rgba(249, 115, 22, 0.34));
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-nav .site-nav__link.is-actif::after { box-shadow: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v536 — « STI V2.0 » n'est plus coupé dans l'en-tête
+   L'identité ne rétrécit plus : c'est la barre de navigation qui cède de la place
+   (padding réduit puis défilement interne), et l'étiquette de recherche abandonne
+   son raccourci clavier avant que le titre ne s'ellipse.
+   ═══════════════════════════════════════════════════════════════════════════ */
+/* À partir de 1060 px la barre de navigation est affichée : c'est là que le titre
+   était écrasé. En dessous, les règles mobiles v522 (titre plafonné, ellipse en
+   dernier recours) restent seules en vigueur. */
+@media (min-width: 1060px) {
+  body.sti-v2 .site-header .brand-logo { flex: 0 0 auto; min-width: max-content; }
+  body.sti-v2 .site-header .brand-logo__title { max-width: none; overflow: visible; text-overflow: clip; }
+  body.sti-v2 .site-header .brand-logo__sub { max-width: none; }
+  body.sti-v2 .site-header .site-nav { min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  body.sti-v2 .site-header .site-nav::-webkit-scrollbar { display: none; }
+}
+@media (min-width: 1060px) and (max-width: 1300px) {
+  body.sti-v2 .site-nav__link { padding-inline: 6px; }
+  body.sti-v2 .search-trigger { padding-inline: 9px; gap: 6px; }
+  body.sti-v2 .search-trigger kbd { display: none; }
+}

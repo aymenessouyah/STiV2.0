@@ -5434,9 +5434,10 @@ test('v473 (structure & budgets performance) : 0 doublon dans UPDATE_FILES (-85,
   /* v494 : le retour contextuel des quiz ajoute ~3,5 Ko au noyau (libellés,
      reprise de position et bouton mobile). v499 ajoute le ruban d'identité et la
      boucle garantie de la vidéo de fond (~11 Ko). v532 modernise la barre mobile :
-     le volet (cours, vidéos, fiches, outils) ajoute ~9,3 Ko à mobile-nav.js. La
-     borne reste un garde-fou de poids, relevée à 560 Ko. */
-  assert.ok(coreBytes > 0 && coreBytes < 560 * 1024, `Le noyau de rechargement SW doit peser < 560 Ko (observé: ${coreBytes} octets)`);
+     le volet (cours, vidéos, fiches, outils) ajoute ~9,3 Ko à mobile-nav.js. v536
+     ajoute le soulignement de la rubrique active (~7 Ko de JS et ~4 Ko de CSS).
+     La borne reste un garde-fou de poids, relevée à 600 Ko. */
+  assert.ok(coreBytes > 0 && coreBytes < 600 * 1024, `Le noyau de rechargement SW doit peser < 600 Ko (observé: ${coreBytes} octets)`);
   assert.match(swJs, /appareilSansCachePrealable/);
   assert.match(swJs, /_lruTouchRecents/);
   assert.match(swJs, /_timerHitDebounce/);
