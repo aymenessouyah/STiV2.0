@@ -34,7 +34,9 @@ MARGE = 64
 PANEL_G = (64, 186, 644, 884)            # l'histoire : l'immeuble et son ascenseur
 PANEL_M = (670, 186, 1250, 884)          # le brouillon : ce que je note à la main
 PANEL_D = (1276, 186, 1856, 884)         # l'algo · le code : ce que j'écris vraiment
-BANDE = (MARGE, 906, 1856, 1012)         # le fil rouge : T · compteur · S
+ALGO_BOX = (1276, 186, 1856, 566)        # l'algorithme, en haut
+JS_BOX = (1276, 576, 1856, 884)          # le JavaScript, en bas
+BANDE = (MARGE, 906, 1856, 1012)         # le fil rouge : les trois boucles
 
 # Le papier du brouillon et le stylo rouge
 PAPIER = (29, 36, 53)
@@ -204,7 +206,7 @@ def _croix(d: ImageDraw.ImageDraw, cx: float, cy: float, taille: float = 40,
 # ── Le sac : la variable du récit ─────────────────────────────────────────
 def sac(d: ImageDraw.ImageDraw, cx: float, cy: float, contenu=(), nom: str | None = None,
         echelle: float = 1.0, halo: float = 0.0, secousse: float = 0.0, alpha: float = 1.0,
-        legende: str | None = None):
+        legende: str | None = None, vide: str = "?"):
     """Le sac : une boîte souple avec un nom, un contenu qu'on peut remplacer."""
     larg, haut = 268 * echelle, 212 * echelle
     cx += math.sin(secousse * 42) * 7 * secousse
@@ -251,7 +253,7 @@ def sac(d: ImageDraw.ImageDraw, cx: float, cy: float, contenu=(), nom: str | Non
             jeton(d, x0 + 11 * echelle + pas_x * (col + 0.5), depart_y + lig * pas_y,
                   str(item), couleur=VERT, echelle=max(0.5, 0.72 * echelle))
     else:
-        d.text((cx, cy + 10 * echelle), "?", font=police(max(20, int(64 * echelle)), True),
+        d.text((cx, cy + 10 * echelle), vide, font=police(max(20, int(64 * echelle)), True),
                fill=melange(TEXTE_3, TEXTE, 0.22), anchor="mm")
 
     if legende:
@@ -902,3 +904,256 @@ def bandeau_etat(d: ImageDraw.ImageDraw, indice: int | None = None, somme: int =
     d.text((x1 - 32, y0 + 24), texte_fin, font=police(19, True), fill=coul, anchor="ra")
     d.text((x1 - 32, y0 + 62), "S = T[0] + T[1] + T[2] + T[3]", font=police(18, True, mono=True),
            fill=melange(TEXTE_3, AMBRE, 0.35), anchor="ra")
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  Le schéma de décision : « face à une répétition, je pose des questions »
+# ══════════════════════════════════════════════════════════════════════════
+ACCENTS_BOUCLES = {"pour": AMBRE, "repeter": VIOLET, "tantque": VERT}
+
+
+def _question(d, box, numero, texte_, couleur, allumee, a, t):
+    """Une des trois questions du schéma : pastille numérotée + libellé."""
+    x0, y0, x1, y1 = box
+    if a <= 0.01:
+        return
+    fond = melange(FOND_PANNEAU_2, couleur, 0.16 * a if allumee else 0.05 * a)
+    bord = melange(BORDURE, couleur, (0.95 if allumee else 0.35) * a)
+    boite_arrondie(d, box, rayon=14, fond=fond, bord=bord,
+                   largeur_bord=3 if allumee else 2)
+    if allumee:
+        halo = 3 + 2 * _pulse(t, 1.6)
+        boite_arrondie(d, [x0 - halo, y0 - halo, x1 + halo, y1 + halo], rayon=16,
+                       fond=None, bord=melange(FOND, couleur, 0.35), largeur_bord=2)
+    d.ellipse([x0 + 14, (y0 + y1) / 2 - 14, x0 + 42, (y0 + y1) / 2 + 14],
+              fill=melange(FOND_PANNEAU_2, couleur, 0.55 * a if allumee else 0.2 * a))
+    d.text((x0 + 28, (y0 + y1) / 2), str(numero), font=police(18, True),
+           fill=TEXTE if allumee else TEXTE_3, anchor="mm")
+    d.text((x0 + 50, (y0 + y1) / 2), texte_, font=police(14, allumee),
+           fill=TEXTE if allumee else TEXTE_2, anchor="lm")
+
+
+def _reponse(d, box, texte_, couleur, allumee, a, t, sens="droite"):
+    """La réponse d'une branche : non / oui / au moins une fois / risque zéro."""
+    x0, y0, x1, y1 = box
+    if a <= 0.01:
+        return
+    boite_arrondie(d, box, rayon=12,
+                   fond=melange(FOND_PANNEAU_2, couleur, (0.20 if allumee else 0.06) * a),
+                   bord=melange(BORDURE, couleur, (0.9 if allumee else 0.3) * a),
+                   largeur_bord=3 if allumee else 2)
+    lignes = texte_.split("\n")
+    f = police(15, allumee)
+    h = 19
+    y = (y0 + y1) / 2 - (len(lignes) - 1) * h / 2
+    for ligne in lignes:
+        d.text(((x0 + x1) / 2, y), ligne, font=f,
+               fill=TEXTE if allumee else TEXTE_2, anchor="mm")
+        y += h
+
+
+def schema_arbre(d: ImageDraw.ImageDraw, box, etape: int = 0, actif: str | None = None,
+                 a: float = 1.0, t: float = 0.0, compact: bool = False):
+    """Le schéma de décision, révélé question par question.
+
+    `etape` : 0 rien, 1 la première question, 2 la deuxième, 3 la troisième.
+    `actif` : la boucle mise en avant (« pour », « repeter », « tantque »).
+    """
+    x0, y0, x1, y1 = box
+    if a <= 0.01:
+        return
+    gauche, largeur = x0 + 22, (x1 - x0) - 44
+    y_q = [y0 + 26, y0 + 176, y0 + 326]
+    h_q = 64
+    largeur_q = largeur - 220
+
+    # les trois questions
+    for i, (num, texte_) in enumerate([
+        (1, "Est-ce que je connais le\nnombre de répétitions ?"),
+        (2, "Est-ce qu'une condition\nd'arrêt peut m'arrêter ?"),
+        (3, "Combien de fois, au moins,\nje répète ?"),
+    ], start=1):
+        allumee = etape >= i
+        _question(d, [gauche, y_q[i - 1], gauche + largeur_q, y_q[i - 1] + h_q],
+                  num, texte_, (ORANGE, AMBRE, BLEU)[i - 1], allumee, a, t)
+
+    # les réponses, à droite de chaque question
+    xr = gauche + largeur_q + 36
+    rep = [
+        ("non\nboucle conditionnelle", BLEU, [xr, y_q[0] + 8, x1 - 22, y_q[0] + h_q - 8]),
+        ("non\nPOUR  (I → F)", AMBRE, [xr, y_q[1] + 8, x1 - 22, y_q[1] + h_q - 8]),
+        ("au moins 1\nRÉPÉTER…JUSQU'À", VIOLET, [xr, y_q[2] + 2, x1 - 22, y_q[2] + 34]),
+        ("risque 0\nTANT QUE", VERT, [xr, y_q[2] + 38, x1 - 22, y_q[2] + h_q + 8]),
+    ]
+    seuils = [
+        (1, etape >= 1 and actif in (None, "cond")),
+        (2, etape >= 2 and actif in (None, "pour")),
+        (3, etape >= 3 and actif in (None, "repeter")),
+        (3, etape >= 3 and actif in (None, "tantque")),
+    ]
+    for (texte_, couleur, rbox), (seuil, allumee) in zip(rep, seuils):
+        if etape >= seuil:
+            _reponse(d, rbox, texte_, couleur, allumee, a, t)
+
+    # les flèches : verticale entre les questions, horizontale vers les réponses
+    ep = _ease_out(min(1.0, max(0.0, a)))
+    for i in range(2):
+        if etape >= i + 2:
+            d.line([(gauche + 40, y_q[i] + h_q + 4), (gauche + 40, y_q[i + 1] - 4)],
+                   fill=melange(BORDURE, AMBRE, 0.6 * ep), width=3)
+            d.polygon([(gauche + 40, y_q[i + 1] - 2), (gauche + 34, y_q[i + 1] - 12),
+                       (gauche + 46, y_q[i + 1] - 12)], fill=melange(FOND, AMBRE, ep))
+    for i in range(3):
+        if etape >= i + 1:
+            couleur = (ORANGE, AMBRE, BLEU)[i]
+            d.line([(gauche + largeur_q + 2, y_q[i] + h_q / 2), (xr - 4, y_q[i] + h_q / 2)],
+                   fill=melange(BORDURE, couleur, 0.7 * ep), width=3)
+            d.polygon([(xr - 2, y_q[i] + h_q / 2), (xr - 12, y_q[i] + h_q / 2 - 6),
+                       (xr - 12, y_q[i] + h_q / 2 + 6)], fill=melange(FOND, couleur, ep))
+    # les « oui » de la descente
+    for i, y in enumerate((y_q[0] + h_q + 18, y_q[1] + h_q + 18)):
+        if etape >= i + 2:
+            d.text((gauche + 56, y), "oui", font=police(14, True),
+                   fill=melange(FOND, AMBRE, ep), anchor="lm")
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  Le tableau des trois boucles
+# ══════════════════════════════════════════════════════════════════════════
+def tableau_boucles(d: ImageDraw.ImageDraw, box, actif: str | None = None, a: float = 1.0):
+    """Le tableau de synthèse : POUR · RÉPÉTER…JUSQU'À · TANT QUE.
+
+    Les colonnes se partagent la largeur de `box` : il tient aussi bien dans
+    la colonne du milieu (580 px) que sur toute la largeur (1186 px).
+    """
+    if a <= 0.01:
+        return
+    x0, y0, x1, y1 = box
+    largeur = x1 - x0
+    compact = largeur < 900
+    marge = 10
+    larg_libelle = largeur * (0.20 if compact else 0.24)
+    larg_col = (largeur - larg_libelle - 2 * marge) / 3
+    cols = [x0 + marge + larg_libelle + larg_col * j for j in range(3)]
+    h_entete = 44 if compact else 66
+    h_ligne = 40 if compact else 62
+    f_entete = 13 if compact else 24
+    f_libelle = 12 if compact else 19
+    f_valeur = 13 if compact else 21
+
+    entetes = [("POUR", AMBRE, "pour"),
+               ("RÉPÉTER…JUSQU'À", VIOLET, "repeter"),
+               ("TANT QUE", VERT, "tantque")]
+    lignes = [
+        ("nombre de tours", ["connu", "inconnu", "inconnu"]),
+        ("condition d'arrêt", ["non", "oui", "oui"]),
+        ("le test", ["avant le bloc", "après le bloc", "avant le bloc"]),
+        ("au moins un tour", ["non", "oui", "non"]),
+    ]
+
+    for j, (nom, couleur, cle) in enumerate(entetes):
+        allumee = actif == cle
+        boite_arrondie(d, [cols[j], y0, cols[j] + larg_col, y0 + h_entete], rayon=10,
+                       fond=melange(FOND_PANNEAU_2, couleur, (0.30 if allumee else 0.10) * a),
+                       bord=melange(BORDURE, couleur, (0.95 if allumee else 0.40) * a),
+                       largeur_bord=3 if allumee else 2)
+        d.text((cols[j] + larg_col / 2, y0 + h_entete / 2), nom,
+               font=police(f_entete, allumee),
+               fill=TEXTE if allumee else TEXTE_2, anchor="mm")
+
+    for i, (libelle, valeurs) in enumerate(lignes):
+        y = y0 + h_entete + 6 + i * h_ligne
+        d.text((x0 + marge + 4, y + h_ligne / 2), libelle, font=police(f_libelle),
+               fill=melange(FOND, TEXTE_3, a), anchor="lm")
+        for j, valeur in enumerate(valeurs):
+            allumee = actif == entetes[j][2]
+            d.text((cols[j] + larg_col / 2, y + h_ligne / 2), valeur,
+                   font=police(f_valeur, allumee),
+                   fill=melange(FOND, entetes[j][1] if allumee else TEXTE_2, a),
+                   anchor="mm")
+            d.line([(cols[j] + 4, y + h_ligne - 3), (cols[j] + larg_col - 4, y + h_ligne - 3)],
+                   fill=melange(FOND_PANNEAU, BORDURE, 0.75), width=1)
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  Le bandeau du bas : les trois boucles, et où j'en suis
+# ══════════════════════════════════════════════════════════════════════════
+def bandeau_boucles(d: ImageDraw.ImageDraw, actif: str | None = None, info: str = "",
+                    info_couleur=TEXTE_2, t: float = 0.0):
+    x0, y0, x1, y1 = BANDE
+    boite_arrondie(d, [x0, y0, x1, y1], rayon=20, fond=(15, 22, 37), bord=BORDURE,
+                   largeur_bord=2)
+    d.text((x0 + 26, y0 + 20), "les trois boucles", font=police(16, True), fill=TEXTE_3)
+    x = x0 + 26
+    for nom, couleur, cle in [("POUR", AMBRE, "pour"), ("RÉPÉTER…JUSQU'À", VIOLET, "repeter"),
+                              ("TANT QUE", VERT, "tantque")]:
+        largeur = largeur_texte(nom, 19, gras=True) + 44
+        allumee = actif == cle
+        boite_arrondie(d, [x, y0 + 44, x + largeur, y0 + 92], rayon=12,
+                       fond=melange((16, 24, 38), couleur, 0.26 if allumee else 0.06),
+                       bord=melange(BORDURE, couleur, 0.9 if allumee else 0.3),
+                       largeur_bord=3 if allumee else 2)
+        d.text((x + largeur / 2, y0 + 68), nom, font=police(19, allumee),
+               fill=TEXTE if allumee else TEXTE_3, anchor="mm")
+        x += largeur + 14
+    if info:
+        d.text((x1 - 32, y0 + 68), info, font=police(20, True), fill=info_couleur,
+               anchor="rm")
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  Les cases du tableau T, et la boîte de jetons
+# ══════════════════════════════════════════════════════════════════════════
+def cases_tableau(d: ImageDraw.ImageDraw, box, valeurs=(4, 7, 2, 9), courant: int | None = None,
+                  trouve: int | None = None, absente: bool = False, retourne: bool = False,
+                  a: float = 1.0):
+    """Les quatre cases de T, avec l'indice au-dessus et la valeur dedans."""
+    x0, y0, x1, y1 = box
+    n = len(valeurs)
+    pas = (x1 - x0) / n
+    for k, v in enumerate(valeurs):
+        cx = x0 + pas * (k + 0.5)
+        largeur = min(96, pas - 16)
+        haut, bas = y0 + 26, y1 - 10
+        actif = courant == k
+        gagne = trouve == k
+        couleur = VERT if gagne else (AMBRE if actif else BORDURE)
+        boite_arrondie(d, [cx - largeur / 2, haut, cx + largeur / 2, bas], rayon=12,
+                       fond=melange(FOND_PANNEAU_2, couleur, (0.24 if (actif or gagne) else 0.06) * a),
+                       bord=melange(BORDURE, couleur, (0.95 if (actif or gagne) else 0.45) * a),
+                       largeur_bord=3 if (actif or gagne) else 2)
+        d.text((cx, haut - 12), f"T[{k}]", font=police(15, True),
+               fill=melange(FOND, TEXTE_3, a), anchor="mm")
+        d.text((cx, (haut + bas) / 2), str(v), font=police(30, True, mono=True),
+               fill=TEXTE if (actif or gagne) else melange(FOND, TEXTE_2, a), anchor="mm")
+        if gagne:
+            d.ellipse([cx - largeur / 2 - 8, haut - 8, cx + largeur / 2 + 8, bas + 8],
+                      outline=melange(FOND, VERT, 0.9), width=3)
+        if retourne and k < n - 1:
+            d.line([(x0 + pas * (k + 1), (haut + bas) / 2), (x0 + pas * (k + 1), (haut + bas) / 2)],
+                   fill=BORDURE, width=1)
+    if retourne:
+        d.text(((x0 + x1) / 2, y1 + 14), "→ on avance d'une case",
+               font=police(15), fill=melange(FOND, TEXTE_3, a), anchor="mm")
+
+
+def boite_jetons(d: ImageDraw.ImageDraw, cx: float, cy: float, n: int, echelle: float = 1.0,
+                 t: float = 0.0, secousse: float = 0.0):
+    """La boîte de jetons : n jetons ronds à l'intérieur (0 → vide)."""
+    larg, haut = 190 * echelle, 130 * echelle
+    cx += math.sin(secousse * 40) * 6 * secousse
+    boite_arrondie(d, [cx - larg / 2, cy - haut / 2, cx + larg / 2, cy + haut / 2],
+                   rayon=16, fond=melange(FOND_PANNEAU_2, SAC, 0.20),
+                   bord=melange(SAC, TEXTE, 0.10), largeur_bord=3)
+    d.text((cx, cy - haut / 2 + 18), "JETONS", font=police(14, True),
+           fill=melange(SAC_CLAIR, TEXTE, 0.35), anchor="ma")
+    if n <= 0:
+        d.text((cx, cy + 8), "vide", font=police(22, True), fill=TEXTE_3, anchor="mm")
+        return
+    colonnes = min(4, n)
+    for i in range(n):
+        col, lig = i % colonnes, i // colonnes
+        jx = cx + (col - (colonnes - 1) / 2) * 38 * echelle
+        jy = cy + 12 * echelle + lig * 34 * echelle
+        d.ellipse([jx - 14 * echelle, jy - 14 * echelle, jx + 14 * echelle, jy + 14 * echelle],
+                  fill=melange(AMBRE, SAC, 0.25), outline=AMBRE, width=2)
