@@ -56,7 +56,10 @@ test('CSS3 : fenêtres originales, laboratoires, exemples, diagramme et sandbox'
   assert.match(controller, /ev\.key==='Escape'/);
   assert.match(controller, /enregistrerLaboratoire\(MATIERE,nom\)/);
   assert.doesNotMatch(html + controller, /\blocalStorage\s*\./);
-  assert.doesNotMatch(html + controller, /supabase\.co|sb_publishable_|vywujxm/i);
+  /* v559 : la directive img-src autorise les photos du Storage. Ce n'est pas
+     une configuration : on la retire avant de contrôler qu'aucune clé ni
+     initialisation Supabase n'est intégrée à la page. */
+  assert.doesNotMatch((html + controller).replace(/img-src[^;]*;/gi, ""), /supabase\.co|sb_publishable_|vywujxm/i);
   assert.doesNotMatch(css, /#[0-9a-f]{3,8}\b|\brgba?\(/i);
   assert.match(css, /var\(--course-accent\)/);
 });
