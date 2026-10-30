@@ -1,4 +1,5 @@
 /* STI by AE — v519 : tirage aléatoire garanti des quiz.
+   v555 : plafond de 20 % de bonnes réponses en position A (planReponses).
    ─────────────────────────────────────────────────────────────────────────
    Objectif : les questions ET la place de la bonne réponse sont tirées au
    hasard à CHAQUE ouverture d'un quiz, à CHAQUE reconnexion internet, à
@@ -10,6 +11,8 @@
      • STIQuizAlea.entier(n)            → entier sûr dans [0, n[
      • STIQuizAlea.melanger(liste)      → copie mélangée (Fisher-Yates crypto)
      • STIQuizAlea.melangerReponses(o)  → options mélangées + index de la bonne
+     • STIQuizAlea.planReponses(t, o)   → positions équilibrées (A ≤ 20 %)
+     • STIQuizAlea.placerReponse(o, i, c) → bonne réponse placée à la position c
      • STIQuizAlea.nouveauTirage(motif) → compte un tirage neuf, prévient la page
      • STIQuizAlea.surNouveauTirage(fn) → abonnement au tirage neuf
      • STIQuizAlea.compteur()           → nombre de tirages de cet onglet
@@ -79,6 +82,100 @@
       options: ordre.map(function (k) { return brut[k]; }),
       index: ordre.indexOf(index)
     };
+  }
+
+  /* ── v555 · plafond de bonnes réponses en position A ────────────────
+     Un mélange uniforme place la bonne réponse en A une fois sur quatre
+     (25 %). La consigne pédagogique est plus stricte : sur une partie, la
+     bonne réponse ne doit JAMAIS être en A plus de 20 % du temps.
+
+     planReponses() construit donc le plan des positions à l'avance :
+       • budget A = floor(n × maxA)  (2 positions A pour 10 questions) ;
+       • quelles questions reçoivent ce budget : tirage cryptographique ;
+       • les autres se répartissent B / C / D à parts égales, dans un ordre
+         lui aussi tiré au hasard ;
+       • aucune suite de trois positions identiques (règle historique),
+         correction qui ne peut que RETIRER des A, jamais en ajouter.
+
+     Le plan est ensuite appliqué par placerReponse(), qui échange la bonne
+     réponse avec la proposition déjà présente à la position visée. La
+     proposition est donc aussi aléatoire qu'avant, seule sa position est
+     pilotée. */
+
+  function indexCorrectDe(listeOptions, indexCorrect) {
+    var brut = Array.isArray(listeOptions) ? listeOptions : [];
+    if (typeof indexCorrect === "number" && indexCorrect >= 0 && indexCorrect < brut.length) return indexCorrect;
+    for (var i = 0; i < brut.length; i++) {
+      var o = brut[i];
+      if (o && typeof o === "object" && o.ok === true) return i;
+    }
+    return -1;
+  }
+
+  function placerReponse(listeOptions, indexCorrect, cible) {
+    var brut = Array.isArray(listeOptions) ? listeOptions.slice() : [];
+    var index = indexCorrectDe(brut, indexCorrect);
+    var c = Math.floor(Number(cible));
+    if (index < 0 || !isFinite(c) || c < 0 || c >= brut.length || c === index) {
+      return { options: brut, index: index };
+    }
+    var garde = brut[index];
+    brut[index] = brut[c];
+    brut[c] = garde;
+    return { options: brut, index: c };
+  }
+
+  function planReponses(tailles, options) {
+    var maxA = options && options.maxA !== undefined ? Number(options.maxA) : 0.2;
+    if (!isFinite(maxA) || maxA < 0) maxA = 0.2;
+    if (maxA > 1) maxA = 1;
+    var liste = Array.isArray(tailles) ? tailles : [];
+    var n = liste.length;
+    var plan = new Array(n);
+    var flexibles = [];
+    var budget = Math.floor(n * maxA + 1e-9);
+    var i, t;
+    for (i = 0; i < n; i++) {
+      t = Math.floor(Number(liste[i]) || 0);
+      if (t < 2) { plan[i] = 0; budget -= 1; continue; }
+      flexibles.push(i);
+    }
+    if (budget < 0) budget = 0;
+    if (!flexibles.length) return plan;
+
+    /* 1. Les questions qui reçoivent la bonne réponse en A. */
+    var ordreA = melanger(flexibles);
+    var placesA = Math.min(budget, ordreA.length);
+    for (i = 0; i < placesA; i++) plan[ordreA[i]] = 0;
+
+    /* 2. Les autres : B, C, D à parts égales, dans un ordre tiré au hasard.
+          La rotation de départ est elle aussi aléatoire, pour qu'aucune lettre
+          ne soit systématiquement la « petite part ». */
+    var reste = ordreA.slice(placesA);
+    if (reste.length) {
+      var baseTiers = [1, 2, 3];
+      var decalage = entier(3);
+      var sac = [];
+      for (i = 0; i < reste.length; i++) sac.push(baseTiers[(decalage + i) % 3]);
+      sac = melanger(sac);
+      for (i = 0; i < reste.length; i++) {
+        var idx = reste[i];
+        var maxi = Math.max(1, Math.floor(Number(liste[idx]) || 0) - 1);
+        plan[idx] = 1 + ((sac[i] - 1) % maxi);
+      }
+    }
+
+    /* 3. Jamais trois positions identiques de suite : on déplace la troisième,
+          et uniquement vers une autre position — jamais vers A. */
+    for (i = 2; i < n; i++) {
+      if (plan[i] !== plan[i - 1] || plan[i] !== plan[i - 2]) continue;
+      var dernier = Math.max(1, Math.floor(Number(liste[i]) || 0) - 1);
+      for (var essai = 1; essai <= dernier; essai++) {
+        var candidat = 1 + ((plan[i] + essai - 1) % dernier);
+        if (candidat !== plan[i]) { plan[i] = candidat; break; }
+      }
+    }
+    return plan;
   }
 
   function enregistrerSession() {
@@ -161,6 +258,8 @@
     entier: entier,
     melanger: melanger,
     melangerReponses: melangerReponses,
+    placerReponse: placerReponse,
+    planReponses: planReponses,
     nouveauTirage: nouveauTirage,
     surNouveauTirage: surNouveauTirage,
     compteur: compteurActuel,

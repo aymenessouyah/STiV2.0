@@ -2133,7 +2133,7 @@ LIMIT 5;</textarea
     <script src="../assets/js/config.js?v=476"></script>
     <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/xp-plancher.js?v=520"></script>
-<script src="../assets/js/quiz-alea.js?v=519"></script>
+<script src="../assets/js/quiz-alea.js?v=555"></script>
     <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <script>
@@ -5105,6 +5105,19 @@ LIMIT 5;</textarea
             tirage[i].answers = ans;
             tirage[i].correct = alt;
           }
+        }
+        /* v555 : plafond de 20 % de bonnes réponses en A (mélange uniforme = 25 %). */
+        return appliquerPlanReponsesSql(tirage);
+      }
+      function appliquerPlanReponsesSql(tirage) {
+        const alea = window.STIQuizAlea;
+        if (!alea || typeof alea.planReponses !== "function" || typeof alea.placerReponse !== "function") return tirage;
+        const tailles = tirage.map((q) => (q.answers ? q.answers.length : 0));
+        const plan = alea.planReponses(tailles, { maxA: 0.2 });
+        for (let i = 0; i < tirage.length; i++) {
+          const place = alea.placerReponse(tirage[i].answers, tirage[i].correct, plan[i]);
+          tirage[i].answers = place.options;
+          tirage[i].correct = place.index;
         }
         return tirage;
       }

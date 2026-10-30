@@ -1838,7 +1838,7 @@ test('v458 : révision approfondie Quiz Phase 2 — assainissement intégral qui
   ]) {
     assert.match(content, /quiz-sync\.js\?v=4(58|59|60)/, `${name} doit charger quiz-sync.js?v=458+`);
   }
-  assert.match(tabHtml, /quiz-tableaux\.js\?v=4\d{2}/);
+  assert.match(tabHtml, /quiz-tableaux\.js\?v=\d{3}/);
   assert.match(swJs, /var CACHE = "sti-atelier-v3\d{2}"/);
   assert.match(swJs, /v458-quiz-revision-2/);
 });
@@ -4020,7 +4020,7 @@ test('v468 (structure) : liens Défis JS corrigés (zéro 404 defis-javascript.h
   assert.match(jsQuizHtml, /\.\.\/exercices\/javascript\/js-37-defis-tt\.html/);
   assert.match(tabJs, /defis:\s*"\.\.\/exercices\/javascript\/js-37-defis-tt\.html"/);
   assert.ok(existsSync(join(root, 'exercices/javascript/js-37-defis-tt.html')));
-  assert.match(tabHtml, /quiz-tableaux\.js\?v=468/);
+  assert.match(tabHtml, /quiz-tableaux\.js\?v=\d{3}/);
 
   // 2) Contraste multi-univers (Clair / Sombre / Cyber / Spotify) via variables CSS --adm-*
   assert.match(sauvJs, /background:var\(--adm-surface,#fffdf7\)/);

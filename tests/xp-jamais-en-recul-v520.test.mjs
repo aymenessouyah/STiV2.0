@@ -112,7 +112,7 @@ test('v520 : le garde-fou est livré, préchargé et hors ligne sur toutes les p
     const html = lire(page);
     assert.equal((html.match(/xp-plancher\.js\?v=520/g) || []).length, 1, page + ' : garde-fou chargé une fois');
     const iPlancher = html.indexOf('xp-plancher.js?v=520');
-    const iAlea = html.indexOf('quiz-alea.js?v=519');
+    const iAlea = html.indexOf('quiz-alea.js');
     assert.ok(iPlancher >= 0 && (iAlea < 0 || iPlancher < iAlea), page + ' : le garde-fou précède le tirage aléatoire');
   }
   /* Chargé aussi par le synchroniseur : profil, tableau de bord et accueil en profitent. */
