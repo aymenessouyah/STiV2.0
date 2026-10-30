@@ -122,7 +122,7 @@
       icone: "⚡",
       badgeClasse: "badge-js",
       couleur: "#facc15",
-      nbVideos: 4,
+      nbVideos: 5,
       urlCours: "cours/javascript.html",
       urlQuiz: "quiz/javascript.html",
       urlAudio: "assets/audio/javascript-cours.mp3",
@@ -266,6 +266,21 @@
       sousTitres: "assets/subtitles/BouclePour-fr-v547.vtt",
       urlCours: "cours/javascript.html#videos",
       codeApercu: "for (let i = 0; i <= 3; i++) { S = S + T[i]; }"
+    },
+    {
+      /* v548 : capsule « La console, les variables et les types ». */
+      id: "console-variables",
+      matiere: "javascript",
+      nomMatiere: "JavaScript",
+      badgeClasse: "badge-js",
+      couleur: "#f7df1e",
+      titre: "La console, les variables et les types",
+      dureeTexte: "11:31",
+      srcPrincipal: "assets/videos/ConsoleVariables-v548.mp4",
+      srcSecours: "assets/videos/ConsoleVariables-v548.mp4",
+      sousTitres: "assets/subtitles/ConsoleVariables-fr-v548.vtt",
+      urlCours: "cours/javascript.html#videos",
+      codeApercu: "const notes = [12, 15, 9]; console.log(notes[0]);"
     },
     {
       id: "css-positionnement",

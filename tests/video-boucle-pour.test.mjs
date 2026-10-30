@@ -496,7 +496,7 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le lecteur de la modale doit reconnaître la capsule, sinon il sort sans rien ouvrir */
   assert.match(protection, /var estBouclePour = \(sSlug === "boucle-pour"/);
-  assert.ok(protection.includes('!estDefis37 && !estBouclePour) {'),
+  assert.ok(protection.includes('!estDefis37 && !estBouclePour && !estConsoleVariables) {'),
     'le garde-fou du lecteur laisse passer la capsule');
   assert.ok(protection.includes('var slugCible = estBouclePour ? "boucle-pour"'),
     'le slug de la capsule est transmis');
@@ -511,7 +511,7 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* un repère de chapitre par section, calé sur la voix off */
   const chapitres = protection.slice(protection.indexOf('STI_CHAPITRES_MEDIA["boucle-pour"]'),
-    protection.indexOf('STI_CHAPITRES_MEDIA["validation-nom-prenom-js"]'));
+    protection.indexOf('STI_CHAPITRES_MEDIA["console-variables"]'));
   assert.equal((chapitres.match(/\{ t:/g) || []).length, 36, 'trente-six chapitres');
   assert.ok(chapitres.includes('1 · Bienvenue — les boucles'), 'premier repère');
   assert.ok(chapitres.includes('2 · Ce qu\'est une boucle'), 'le repère de l\'introduction');
@@ -519,7 +519,7 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
   assert.ok(chapitres.includes('34 · Les trois blocs côte à côte'), 'le bilan');
 
   /* la reprise de lecture sait à quelle matière et quel titre rattacher la capsule */
-  assert.ok(lecteur.includes("'boucle-pour': ['javascript','Les boucles — Pour, Répéter…jusqu'à, Tant que']"),
+  assert.ok(lecteur.includes("'boucle-pour': ['javascript','Les boucles — Pour, Répéter…jusqu\u2019à, Tant que']"),
     'la capsule est connue du lecteur commun');
 
   /* exécution réelle : le slug de la capsule traverse la garde du lecteur */
@@ -540,9 +540,9 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v547"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "console-variables-v548"/);
   /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
-  assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "boucles-v543"/);
+  assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "console-variables-v548"/);
 });
 
 test('la carte vidéo est dans l\'onglet Vidéos de JavaScript', () => {
@@ -580,9 +580,9 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes(`BouclePour-${VERSION_MEDIA}.mp4`), 'les médias restent hors du delta léger');
-  assert.match(sw, /var UPDATE_ID = "v547-boucles-php-20261030";/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v547"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucles-v547"/);
+  assert.match(sw, /var UPDATE_ID = "v548-console-variables-20261030";/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "console-variables-v548"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "console-variables-v548"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {
@@ -594,7 +594,7 @@ test('la fabrique de la capsule reste dans le dépôt', () => {
   assert.match(integrer, /def bloc_chapitres\(/, 'les chapitres sont recalculés');
   assert.match(integrer, /def ecrire_chapitres\(/, 'et réécrits dans protection.js');
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.match(manifeste.version, /^v547/, 'manifeste du lot');
+  assert.match(manifeste.version, /^v548/, 'manifeste du lot');
   assert.ok(manifeste.files.some((f) => f.path === VIDEO), 'MP4 dans le manifeste');
   assert.ok(manifeste.files.some((f) => f.path === VTT), 'VTT dans le manifeste');
 });

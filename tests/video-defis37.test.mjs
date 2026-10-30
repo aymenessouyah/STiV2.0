@@ -127,20 +127,20 @@ test('l’accueil compte la nouvelle capsule dans son catalogue', () => {
   assert.ok(index.includes(`id="videosStatNombre" data-count="${total}">${total}</span>`),
     `la tuile d’accueil doit annoncer ${total} vidéos`);
   const javascript = js.split('javascript: {')[1].slice(0, 400);
-  assert.match(javascript, /nbVideos: 4/, 'quatre vidéos JavaScript');
+  assert.match(javascript, /nbVideos: 5/, 'cinq vidéos JavaScript');
 });
 
 test('le cache hors-ligne embarque la vidéo sans téléchargement automatique', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v547-boucles-php-20261030"/);
+  assert.match(sw, /var UPDATE_ID = "v548-console-variables-20261030"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
   assert.ok(!delta.includes(`"./${VIDEO}"`), 'la vidéo n’entre jamais dans le delta mobile');
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
-  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "boucles-v547"/);
-  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v547"/);
-  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v547"/);
+  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "console-variables-v548"/);
+  assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "console-variables-v548"/);
+  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "console-variables-v548"/);
   const nbDelta = delta.split('{ url:').length - 1;
   assert.ok(nbDelta <= 262, `delta trop long : ${nbDelta}`);
 });
@@ -157,7 +157,7 @@ test('le manifeste complet décrit la vidéo et ses sous-titres', () => {
     const sha = createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${blob.length}\0`), blob])).digest('hex');
     assert.equal(entree.gitSha, sha, `sha1 de ${chemin}`);
   }
-  assert.match(manifeste.version, /^v547/);
+  assert.match(manifeste.version, /^v548/);
 });
 
 test('le moteur de rendu couvre les onze défis et les trois rappels', () => {
@@ -209,7 +209,7 @@ test('le lecteur commun accepte réellement le slug et lance la capsule', () => 
   const fin = js.indexOf('        /* Couper immédiatement toute voix', debut);
   assert.ok(debut > 0 && fin > debut, 'bloc des slugs repérable');
   const bloc = js.slice(debut, fin);
-  assert.match(bloc, /!estTpTrain && !estDefis37 && !estBouclePour\) \{/, 'estDefis37 présent dans la garde');
+  assert.match(bloc, /!estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables\) \{/, 'estDefis37 présent dans la garde');
 
   /* 2. exécution réelle du bloc : le slug de la capsule traverse la garde. */
   const fonction = new Function(

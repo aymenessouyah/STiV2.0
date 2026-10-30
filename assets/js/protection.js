@@ -1452,6 +1452,19 @@
         { t: 928.973, short: "35 · La méthode, en trois questions", label: "15:29 · 35 · La méthode, en trois questions" },
         { t: 947.437, short: "36 · À vous de jouer", label: "15:47 · 36 · À vous de jouer" }
       ];
+      /* Repères de la capsule « La console, les variables et les types » (v548). */
+      STI_CHAPITRES_MEDIA["console-variables"] = [
+        { t: 1.200, short: "1 · Bienvenue — la console et les variables", label: "0:01 · 1 · Bienvenue — la console et les variables" },
+        { t: 26.561, short: "2 · La console : à quoi ça sert ?", label: "0:27 · 2 · La console : à quoi ça sert ?" },
+        { t: 88.086, short: "3 · Déclarer une variable", label: "1:28 · 3 · Déclarer une variable" },
+        { t: 147.069, short: "4 · La portée : l'analogie du lycée", label: "2:27 · 4 · La portée : l'analogie du lycée" },
+        { t: 205.226, short: "5 · let et const en détail", label: "3:25 · 5 · let et const en détail" },
+        { t: 277.549, short: "6 · Le hoisting, ou la remontée", label: "4:38 · 6 · Le hoisting, ou la remontée" },
+        { t: 329.612, short: "7 · Les types, et typeof", label: "5:30 · 7 · Les types, et typeof" },
+        { t: 439.320, short: "8 · Hors programme : falsy, truthy, et == / ===", label: "7:19 · 8 · Hors programme : falsy, truthy, et == / ===" },
+        { t: 491.569, short: "9 · Exercice — que s'affiche-t-il ?", label: "8:12 · 9 · Exercice — que s'affiche-t-il ?" },
+        { t: 585.062, short: "10 · Exercice — la fonction moyenne", label: "9:45 · 10 · Exercice — la fonction moyenne" }
+      ];
       STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
         { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },
         { t: 6.00, short: "1. Besoin réel", label: "00:06 · 1. Besoin réel — Valider Nom & Prénom (2 à 5 mots)" },
@@ -2075,6 +2088,8 @@
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/defis37-tableau-aleas-media-fr.vtt" srclang="fr" label="Français" default />';
         } else if (slugVideo === "boucle-pour") {
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/BouclePour-fr-v547.vtt" srclang="fr" label="Français" default />';
+        } else if (slugVideo === "console-variables") {
+          contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/ConsoleVariables-fr-v548.vtt" srclang="fr" label="Français" default />';
         }
         return contenu;
       }
@@ -2439,6 +2454,8 @@
         var estDefis37 = (sSlug === "defis37-tableau-aleas-media" || sSlug.indexOf("defis37") !== -1);
         /* Capsule « Les boucles » : Pour, Répéter…jusqu'à, Tant que. */
         var estBouclePour = (sSlug === "boucle-pour" || sSlug.indexOf("boucle-pour") !== -1 || sSlug.indexOf("BouclePour") !== -1);
+        /* Capsule « La console, les variables et les types ». */
+        var estConsoleVariables = (sSlug === "console-variables" || sSlug.indexOf("console-variables") !== -1 || sSlug.indexOf("ConsoleVariables") !== -1);
         var estCssDisplay = (!estJsValidation && !estTpTrain && (sSlug === "css3-display" || sSlug.indexOf("displayanim.mp4") !== -1));
         var estPhpSynthese = (!estJsValidation && !estTpTrain && (sSlug === "php-synthese" || sSlug.indexOf("php-synthese.mp4") !== -1));
         var estSqlInit = (!estTpTrain && sSlug === "sql-initiation" || sSlug.indexOf("sql-initiation") !== -1);
@@ -2459,7 +2476,7 @@
         var estCssDeco = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && (sSlug === "css-animee" || sSlug.indexOf("css-animee") !== -1 || (!sSlug && estPageCssDeco)));
         var estCssPos = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && (sSlug === "css-positionnement" || sSlug.indexOf("css-positionnement") !== -1 || (!sSlug && estPageCssPos)));
         var estGuichet = (!estJsValidation && !estTpTrain && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && (sSlug === "php-guichet" || sSlug.indexOf("php-guichet") !== -1 || sSlug === "guichet" || (!sSlug && estPageGuichet)));
-        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour) {
+        if (!estTpEvenements && !estTpFormulaire && !estTpDisplay && !estTpTransitions && !estSqlSerieAny && !estHtml5 && !estCss3 && !estJs && !estPhpC && !estSql && !estCssDeco && !estCssPos && !estGuichet && !estCssDisplay && !estPhpSynthese && !estJsValidation && !estTpTrain && !estDefis37 && !estBouclePour && !estConsoleVariables) {
           return;
         }
         /* Couper immédiatement toute voix de l'animation interactive pour éviter que 2 voix ne parlent en même temps */
@@ -2491,7 +2508,7 @@
             fAnim.contentWindow.postMessage({ type: "STI_STOP_GUICHET" }, "*");
           }
         } catch (e) {}
-        var slugCible = estBouclePour ? "boucle-pour" : estDefis37 ? "defis37-tableau-aleas-media" : estTpTrain ? "tp-train-serie6" : estTpEvenements ? "tp-evenements-liens" : estTpFormulaire ? "tp-formulaire-tableau-autre" : estTpDisplay ? "tp-display-float-position" : estTpTransitions ? "tp-transitions-animations" : estJsValidation ? "validation-nom-prenom-js" : estCssDisplay ? "css3-display" : estPhpSynthese ? "php-synthese" : estSqlInit ? "sql-initiation" : (estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))))))))))));
+        var slugCible = estBouclePour ? "boucle-pour" : estConsoleVariables ? "console-variables" : estDefis37 ? "defis37-tableau-aleas-media" : estTpTrain ? "tp-train-serie6" : estTpEvenements ? "tp-evenements-liens" : estTpFormulaire ? "tp-formulaire-tableau-autre" : estTpDisplay ? "tp-display-float-position" : estTpTransitions ? "tp-transitions-animations" : estJsValidation ? "validation-nom-prenom-js" : estCssDisplay ? "css3-display" : estPhpSynthese ? "php-synthese" : estSqlInit ? "sql-initiation" : (estExploreFloat ? "explore-tunisie-float" : (estExploreFlex ? "explore-tunisie-flex" : (estSqlSerie6 ? "sql-serie6" : (estSqlSerie5 ? "sql-serie5" : (estSqlSerie4 ? "sql-serie4" : (estSqlSerie3 ? "sql-serie3" : (estSqlSerie2 ? "sql-serie2" : (estSqlSerie1 ? "sql-serie1" : (estHtml5 ? "html5-cours" : (estCss3 ? "css3-cours" : (estJs ? "javascript-cours" : (estPhpC ? "php-cours" : (estSql ? "sql-cours" : (estCssDeco ? "css-animee" : (estCssPos ? "css-positionnement" : "php-guichet")))))))))))))));
         try {
           if (
             window.top &&
@@ -2502,7 +2519,7 @@
             return;
           }
         } catch (e) {}
-        var url = estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
+        var url = estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v547.mp4" : estConsoleVariables ? prefixeAssetsSTI() + "videos/ConsoleVariables-v548.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
@@ -2512,7 +2529,7 @@
           else if (window.matchMedia && window.matchMedia("(max-width: 820px)").matches) css3Qualite = "720";
           url = (css3Qualite === "480" || css3Qualite === "720") ? resoudreUrlVideoCss3Mobile() : resoudreUrlVideoCss3();
         }
-        var titre = titreOpt || (estBouclePour ? "🎥 Les boucles — Pour, Répéter…jusqu'à, Tant que" : estDefis37 ? "🎥 Les 37 Défis — Tableau, Aléas & Captchas, Média" : estTpTrain ? "🎥 TP Train — correction détaillée (Série 6 JavaScript)" : estTpEvenements ? "🎥 TP — Événements, liens et arrière-plans (HTML5 & CSS3)" : estTpFormulaire ? "🎥 TP — Formulaire, tableau et autres balises (HTML5 & CSS3)" : estTpDisplay ? "🎥 TP — display, float et position (HTML5 & CSS3)" : estTpTransitions ? "🎥 TP — transitions et animations (CSS3)" : estJsValidation ? "🎥 JavaScript — Validation du champ Nom & Prénom (pas à pas)" : estCssDisplay ? "🎥 CSS3 — Display : la démo animée" : estPhpSynthese ? "🎥 PHP — Synthèse : gestion des élèves" : estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
+        var titre = titreOpt || (estBouclePour ? "🎥 Les boucles — Pour, Répéter…jusqu'à, Tant que" : estConsoleVariables ? "🎥 La console, les variables et les types" : estDefis37 ? "🎥 Les 37 Défis — Tableau, Aléas & Captchas, Média" : estTpTrain ? "🎥 TP Train — correction détaillée (Série 6 JavaScript)" : estTpEvenements ? "🎥 TP — Événements, liens et arrière-plans (HTML5 & CSS3)" : estTpFormulaire ? "🎥 TP — Formulaire, tableau et autres balises (HTML5 & CSS3)" : estTpDisplay ? "🎥 TP — display, float et position (HTML5 & CSS3)" : estTpTransitions ? "🎥 TP — transitions et animations (CSS3)" : estJsValidation ? "🎥 JavaScript — Validation du champ Nom & Prénom (pas à pas)" : estCssDisplay ? "🎥 CSS3 — Display : la démo animée" : estPhpSynthese ? "🎥 PHP — Synthèse : gestion des élèves" : estSqlInit ? VIDEO_SQL_INIT_INFO.title : (estExploreFloat ? VIDEO_EXPLORE_FLOAT_INFO.title : (estExploreFlex ? VIDEO_EXPLORE_FLEX_INFO.title : (estSqlSerie6 ? VIDEO_SQL_SERIE6_INFO.title : (estSqlSerie5 ? VIDEO_SQL_SERIE5_INFO.title : (estSqlSerie4 ? VIDEO_SQL_SERIE4_INFO.title : (estSqlSerie3 ? VIDEO_SQL_SERIE3_INFO.title : (estSqlSerie2 ? VIDEO_SQL_SERIE2_INFO.title : (estSqlSerie1 ? VIDEO_SQL_SERIE1_INFO.title : (estHtml5 ? VIDEO_HTML5_INFO.title : (estCss3 ? VIDEO_CSS3_INFO.title : (estJs ? VIDEO_JS_INFO.title : (estPhpC ? VIDEO_PHP_COURS_INFO.title : (estSql ? VIDEO_SQL_INFO.title : (estCssDeco ? VIDEO_CSS_DECO_INFO.title : (estCssPos ? VIDEO_CSS_POS_INFO.title : VIDEO_GUICHET_INFO.title))))))))))))))));
 
         var overlay = document.getElementById("sti-video-modal-overlay");
         if (!overlay) {

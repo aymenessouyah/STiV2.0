@@ -31,3 +31,9 @@ build/
 /outils/bouclepour/sortie_*.mp4
 /outils/bouclepour/voix-off.wav
 /outils/bouclepour/voix/*.wav
+
+# La console et les variables : rendus intermédiaires, piste audio de montage et cache Python
+/outils/variables/__pycache__/
+/outils/variables/sortie_*.mp4
+/outils/variables/voix-off.wav
+/outils/variables/voix/*.wav
