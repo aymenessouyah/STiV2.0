@@ -61,6 +61,23 @@
         tirees[i].choix[alt] = tmp;
       }
     }
+    /* v555 : plafond de 20 % de bonnes réponses en A (mélange uniforme = 25 %). */
+    return appliquerPlanReponsesTab(tirees);
+  }
+  function appliquerPlanReponsesTab(tirees) {
+    var alea = typeof window !== "undefined" ? window.STIQuizAlea : null;
+    if (!alea || typeof alea.planReponses !== "function" || typeof alea.placerReponse !== "function") return tirees;
+    var tailles = tirees.map(function (it) { return it.choix ? it.choix.length : 0; });
+    var plan = alea.planReponses(tailles, { maxA: 0.2 });
+    for (var i = 0; i < tirees.length; i++) {
+      var idx = -1;
+      for (var k = 0; k < tirees[i].choix.length; k++) {
+        if (tirees[i].choix[k] === tirees[i].ref.bonne) { idx = k; break; }
+      }
+      if (idx < 0) continue;
+      var place = alea.placerReponse(tirees[i].choix, idx, plan[i]);
+      tirees[i].choix = place.options;
+    }
     return tirees;
   }
   function conseilParFauteTab(it) {

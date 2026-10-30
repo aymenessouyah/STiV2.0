@@ -2209,7 +2209,7 @@
     <script src="../assets/js/config.js?v=476"></script>
     <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/xp-plancher.js?v=520"></script>
-<script src="../assets/js/quiz-alea.js?v=519"></script>
+<script src="../assets/js/quiz-alea.js?v=555"></script>
     <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <script>
@@ -5421,6 +5421,19 @@
             q._ans = alt;
           }
         });
+        /* v555 : plafond de 20 % de bonnes réponses en A (mélange uniforme = 25 %). */
+        return appliquerPlanReponsesPhp(copies);
+      }
+      function appliquerPlanReponsesPhp(copies) {
+        const alea = window.STIQuizAlea;
+        if (!alea || typeof alea.planReponses !== "function" || typeof alea.placerReponse !== "function") return copies;
+        const tailles = copies.map((q) => (q._opts ? q._opts.length : 0));
+        const plan = alea.planReponses(tailles, { maxA: 0.2 });
+        for (let i = 0; i < copies.length; i++) {
+          const place = alea.placerReponse(copies[i]._opts, copies[i]._ans, plan[i]);
+          copies[i]._opts = place.options;
+          copies[i]._ans = place.index;
+        }
         return copies;
       }
       function startQuiz(customListRaw = null) {

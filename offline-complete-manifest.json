@@ -3,7 +3,7 @@
   "generatedAt": "2026-10-30T14:12:25Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 740,
-  "totalBytes": 942195093,
+  "totalBytes": 942204967,
   "files": [
     {
       "path": "404.html",
@@ -62,8 +62,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 50714,
-      "gitSha": "21ce18ad60145a8bf69f3d541b2f14d197908a81"
+      "bytes": 51780,
+      "gitSha": "0b717bda9a2f74884e2a1022415a7acd98b6a8e3"
     },
     {
       "path": "admin.html",
@@ -832,8 +832,8 @@
     },
     {
       "path": "assets/js/quiz-alea.js",
-      "bytes": 6439,
-      "gitSha": "822ce8e2125a44f7fe970b294123cd04896d28fe"
+      "bytes": 10768,
+      "gitSha": "3760a18209a49f1f65127588c7ecc0ad9fed3fe9"
     },
     {
       "path": "assets/js/quiz-sync.js",
@@ -847,8 +847,8 @@
     },
     {
       "path": "assets/js/quiz-tableaux.js",
-      "bytes": 31120,
-      "gitSha": "ed1287bc7b9930686a4a7abd0fd20b8cfd2b5904"
+      "bytes": 31988,
+      "gitSha": "a71c7c8e42000c9f03fc201bb0c47e929357d2e3"
     },
     {
       "path": "assets/js/rappels-locaux.js",
@@ -3622,18 +3622,18 @@
     },
     {
       "path": "quiz/html-css.html",
-      "bytes": 239030,
-      "gitSha": "868d315f45ba8431b9bde1e5487e9a9ed1f34147"
+      "bytes": 240260,
+      "gitSha": "d1be6090e7498a441c8d3a000bdf254b285047b7"
     },
     {
       "path": "quiz/javascript.html",
-      "bytes": 166587,
-      "gitSha": "876701b08d58c662743ad5d6b12ed41ef551333d"
+      "bytes": 167517,
+      "gitSha": "eb9dd58786b29c0d6890f75b49127ccc3f2b5a59"
     },
     {
       "path": "quiz/php.html",
-      "bytes": 330262,
-      "gitSha": "2f6fd2d6c012491713b02c1578f3e4b986108f27"
+      "bytes": 330989,
+      "gitSha": "0de16bc675e8ddb4f8c29175136a79b1b3e9dbae"
     },
     {
       "path": "quiz/pp.html",
@@ -3642,13 +3642,13 @@
     },
     {
       "path": "quiz/sql.html",
-      "bytes": 312099,
-      "gitSha": "33b8ae3680a9d00553b6ed36161ee1910754c62b"
+      "bytes": 312840,
+      "gitSha": "0c8f3a72a7910626b1e4087f57f8623fe29ed08e"
     },
     {
       "path": "quiz/tableaux.html",
       "bytes": 10112,
-      "gitSha": "15f7105f9d1dd465384e5d22e12d39bd1ceaf451"
+      "gitSha": "99bd2cf583d4e4fa5c92e1012c1492cb3ee23797"
     },
     {
       "path": "revision-erreurs.html",
@@ -3702,8 +3702,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 98404,
-      "gitSha": "4ff75969ffe3cd8264be7fa906cef8fcf0001bc7"
+      "bytes": 98387,
+      "gitSha": "57df4417651f06ff3b8f4c49ff7fee37ae6b3eeb"
     }
   ]
 }

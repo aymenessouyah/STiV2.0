@@ -43,7 +43,7 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   assert.equal(revisions.get('./revision-erreurs.html'), 'meta-seo-v521');
   /* v519 : le tirage aléatoire des quiz. */
   for (const chemin of ['assets/js/quiz-tableaux.js', 'assets/js/quiz-alea.js']) {
-    assert.equal(revisions.get('./' + chemin), 'tirage-xp-rapide-v519', chemin);
+    assert.equal(revisions.get('./' + chemin), 'plafond-a-v555', chemin);
   }
   /* v520 : les cinq pages de quiz, le synchroniseur et le moteur XP invalident
      leur ancienne copie pour que le compteur ne recule plus. */
@@ -55,9 +55,9 @@ test('fusion du service worker : cache inédit, révisions XP/médias et refonte
   /* v521 : les cinq pages de quiz gardent le garde-fou XP et gagnent leur meta description.
      v552 : quiz/php.html reçoit deux aria-label sur ses boutons icône (audit d’accessibilité). */
   for (const chemin of ['quiz/html-css.html', 'quiz/javascript.html', 'quiz/sql.html', 'quiz/tableaux.html']) {
-    assert.equal(revisions.get('./' + chemin), 'meta-seo-v521', chemin);
+    assert.equal(revisions.get('./' + chemin), 'plafond-a-v555', chemin);
   }
-  assert.equal(revisions.get('./quiz/php.html'), 'audit-plateforme-v552');
+  assert.equal(revisions.get('./quiz/php.html'), 'plafond-a-v555');
   /* v498 : accueil (drapeau, fond vidéo, ruban) — app.js, index, dashboard, thème. */
   assert.equal(revisions.get('./assets/js/app.js'), 'boucles-et-effets-v550');
   assert.equal(revisions.get('./index.html'), 'boucles-et-effets-v550');

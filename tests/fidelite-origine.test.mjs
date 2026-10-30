@@ -246,23 +246,23 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
      avant de comparer les moteurs et banques d'origine. */
   const additionsV519 = {
     'quiz/html-css.html': [
-      '<script src="../assets/js/quiz-alea.js?v=519"></script>\n',
+      '<script src="../assets/js/quiz-alea.js?v=555"></script>\n',
       '        /* v519 : chaque partie repart d\'un tirage neuf (questions + place de la bonne réponse). */\n        if (window.STIQuizAlea) STIQuizAlea.nouveauTirage("partie");\n'
     ],
     'quiz/javascript.html': [
-      '<script src="../assets/js/quiz-alea.js?v=519"></script>\n',
+      '<script src="../assets/js/quiz-alea.js?v=555"></script>\n',
       '          if (window.STIQuizAlea) STIQuizAlea.nouveauTirage("partie");\n'
     ],
     'quiz/sql.html': [
-      '<script src="../assets/js/quiz-alea.js?v=519"></script>\n',
+      '<script src="../assets/js/quiz-alea.js?v=555"></script>\n',
       '        if (window.STIQuizAlea) STIQuizAlea.nouveauTirage("partie");\n'
     ],
     'quiz/php.html': [
-      '<script src="../assets/js/quiz-alea.js?v=519"></script>\n',
+      '<script src="../assets/js/quiz-alea.js?v=555"></script>\n',
       '        if (window.STIQuizAlea) STIQuizAlea.nouveauTirage("partie");\n'
     ],
     'quiz/tableaux.html': [
-      '<script src="../assets/js/quiz-alea.js?v=519"></script>\n'
+      '<script src="../assets/js/quiz-alea.js?v=555"></script>\n'
     ]
   };
   /* v520 : le garde-fou « le compteur XP ne recule jamais » est chargé avant le
@@ -275,8 +275,15 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     'quiz/tableaux.html': ['<script src="../assets/js/xp-plancher.js?v=520"></script>\n']
   };
   const adaptationsV490 = JSON.parse(lire('tests/fixtures/quiz-transformations-v490.json'));
+  /* v555 : le plan des positions (bonne réponse en A ≤ 20 %) est retiré, puis les
+     appels sont remis sous leur forme d'origine avant la comparaison historique. */
+  const transformationsV555 = JSON.parse(lire('tests/fixtures/quiz-transformations-v555.json'));
   for (const [chemin, empreinte] of Object.entries(quiz)) {
     let courant = lire(chemin);
+    for (const [actuel, ancien] of transformationsV555[chemin] || []) {
+      assert.equal(courant.split(actuel).length - 1, 1, chemin + ' : transformation v555 attendue');
+      courant = courant.replace(actuel, ancien);
+    }
     for (const [actuel, ancien] of adaptationsV490[chemin] || []) {
       assert.equal(courant.split(actuel).length - 1, 1, chemin + ' : adaptation v490 attendue');
       courant = courant.replace(actuel, ancien);

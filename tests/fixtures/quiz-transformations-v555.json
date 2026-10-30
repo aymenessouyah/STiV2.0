@@ -1,0 +1,56 @@
+{
+  "quiz/html-css.html": [
+    [
+      "\n      /* v555 : la position de la bonne réponse suit un plan équilibré — jamais plus\n         de 20 % en A sur une partie — au lieu d'un simple mélange uniforme (25 %).\n         Les propositions elles-mêmes restent tirées au hasard ; seule leur place\n         est pilotée. Sans STIQuizAlea, on garde exactement le comportement v519. */\n      function appliquerPlanReponsesHc(sessionCalc) {\n        var alea = window.STIQuizAlea;\n        if (!alea || typeof alea.planReponses !== \"function\" || typeof alea.placerReponse !== \"function\") return sessionCalc;\n        var tailles = sessionCalc.map(function (q) { return q.options ? q.options.length : 0; });\n        var plan = alea.planReponses(tailles, { maxA: 0.2 });\n        for (var i = 0; i < sessionCalc.length; i++) {\n          var options = sessionCalc[i].options || [];\n          var idx = -1;\n          for (var k = 0; k < options.length; k++) {\n            if (options[k] && options[k].ok) { idx = k; break; }\n          }\n          if (idx < 0) continue;\n          sessionCalc[i].options = alea.placerReponse(options, idx, plan[i]).options;\n        }\n        return sessionCalc;\n      }\n",
+      ""
+    ],
+    [
+      "appliquerPlanReponsesHc(preparerSessionDepuisListeHc(tirees))",
+      "preparerSessionDepuisListeHc(tirees)"
+    ],
+    [
+      "appliquerPlanReponsesHc(preparerSessionDepuisListeHc(fautes))",
+      "preparerSessionDepuisListeHc(fautes)"
+    ],
+    [
+      "appliquerPlanReponsesHc(preparerSessionDepuisListeHc(state.session))",
+      "preparerSessionDepuisListeHc(state.session)"
+    ]
+  ],
+  "quiz/javascript.html": [
+    [
+      "\n        /* v555 : la bonne réponse ne doit jamais dépasser 20 % des positions A\n           sur une partie (un mélange uniforme en donne 25 %). Les propositions\n           restent tirées au hasard ; seule leur place est pilotée. */\n        appliquerPlanReponsesJs(tirage) {\n          const alea = window.STIQuizAlea;\n          if (!alea || typeof alea.planReponses !== \"function\" || typeof alea.placerReponse !== \"function\") {\n            return tirage;\n          }\n          const tailles = tirage.map((q) => (q.options ? q.options.length : 0));\n          const plan = alea.planReponses(tailles, { maxA: 0.2 });\n          for (let i = 0; i < tirage.length; i++) {\n            const place = alea.placerReponse(tirage[i].options, tirage[i].answer, plan[i]);\n            tirage[i].options = place.options;\n            tirage[i].answer = place.index;\n          }\n          return tirage;\n        }\n",
+      ""
+    ],
+    [
+      "return this.appliquerPlanReponsesJs(tirage);",
+      "return tirage;"
+    ]
+  ],
+  "quiz/sql.html": [
+    [
+      "        /* v555 : plafond de 20 % de bonnes réponses en A (mélange uniforme = 25 %). */\n        return appliquerPlanReponsesSql(tirage);",
+      "        return tirage;"
+    ],
+    [
+      "      function appliquerPlanReponsesSql(tirage) {\n        const alea = window.STIQuizAlea;\n        if (!alea || typeof alea.planReponses !== \"function\" || typeof alea.placerReponse !== \"function\") return tirage;\n        const tailles = tirage.map((q) => (q.answers ? q.answers.length : 0));\n        const plan = alea.planReponses(tailles, { maxA: 0.2 });\n        for (let i = 0; i < tirage.length; i++) {\n          const place = alea.placerReponse(tirage[i].answers, tirage[i].correct, plan[i]);\n          tirage[i].answers = place.options;\n          tirage[i].correct = place.index;\n        }\n        return tirage;\n      }\n",
+      ""
+    ]
+  ],
+  "quiz/php.html": [
+    [
+      "        /* v555 : plafond de 20 % de bonnes réponses en A (mélange uniforme = 25 %). */\n        return appliquerPlanReponsesPhp(copies);",
+      "        return copies;"
+    ],
+    [
+      "      function appliquerPlanReponsesPhp(copies) {\n        const alea = window.STIQuizAlea;\n        if (!alea || typeof alea.planReponses !== \"function\" || typeof alea.placerReponse !== \"function\") return copies;\n        const tailles = copies.map((q) => (q._opts ? q._opts.length : 0));\n        const plan = alea.planReponses(tailles, { maxA: 0.2 });\n        for (let i = 0; i < copies.length; i++) {\n          const place = alea.placerReponse(copies[i]._opts, copies[i]._ans, plan[i]);\n          copies[i]._opts = place.options;\n          copies[i]._ans = place.index;\n        }\n        return copies;\n      }\n",
+      ""
+    ]
+  ],
+  "quiz/tableaux.html": [
+    [
+      "quiz-tableaux.js?v=555",
+      "quiz-tableaux.js?v=468"
+    ]
+  ]
+}

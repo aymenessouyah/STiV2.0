@@ -3295,7 +3295,7 @@
     <script src="../assets/js/config.js?v=476"></script>
     <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/xp-plancher.js?v=520"></script>
-<script src="../assets/js/quiz-alea.js?v=519"></script>
+<script src="../assets/js/quiz-alea.js?v=555"></script>
     <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <script>
@@ -5630,6 +5630,27 @@ background-repeat: repeat;</pre>
         return sessionCalc;
       }
 
+      /* v555 : la position de la bonne réponse suit un plan équilibré — jamais plus
+         de 20 % en A sur une partie — au lieu d'un simple mélange uniforme (25 %).
+         Les propositions elles-mêmes restent tirées au hasard ; seule leur place
+         est pilotée. Sans STIQuizAlea, on garde exactement le comportement v519. */
+      function appliquerPlanReponsesHc(sessionCalc) {
+        var alea = window.STIQuizAlea;
+        if (!alea || typeof alea.planReponses !== "function" || typeof alea.placerReponse !== "function") return sessionCalc;
+        var tailles = sessionCalc.map(function (q) { return q.options ? q.options.length : 0; });
+        var plan = alea.planReponses(tailles, { maxA: 0.2 });
+        for (var i = 0; i < sessionCalc.length; i++) {
+          var options = sessionCalc[i].options || [];
+          var idx = -1;
+          for (var k = 0; k < options.length; k++) {
+            if (options[k] && options[k].ok) { idx = k; break; }
+          }
+          if (idx < 0) continue;
+          sessionCalc[i].options = alea.placerReponse(options, idx, plan[i]).options;
+        }
+        return sessionCalc;
+      }
+
       function nouvellePartie() {
         /* v519 : chaque partie repart d'un tirage neuf (questions + place de la bonne réponse). */
         if (window.STIQuizAlea) STIQuizAlea.nouveauTirage("partie");
@@ -5653,7 +5674,7 @@ background-repeat: repeat;</pre>
                 limite
               )
             : melangees.slice(0, limite);
-        state.session = preparerSessionDepuisListeHc(tirees);
+        state.session = appliquerPlanReponsesHc(preparerSessionDepuisListeHc(tirees));
         state.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;
         state.index = 0;
         state.partySynced = false;
@@ -6658,7 +6679,7 @@ background-repeat: repeat;</pre>
           return !(q.answer !== null && q.answer !== undefined && q.options[q.answer] && q.options[q.answer].ok);
         });
         if (!fautes.length) return;
-        state.session = preparerSessionDepuisListeHc(fautes);
+        state.session = appliquerPlanReponsesHc(preparerSessionDepuisListeHc(fautes));
         state.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;
         state.index = 0;
         state.partySynced = false;
@@ -6676,7 +6697,7 @@ background-repeat: repeat;</pre>
           return;
         }
         /* Conserve exactement l'ordre des questions de la série avec choix remélangés */
-        state.session = preparerSessionDepuisListeHc(state.session);
+        state.session = appliquerPlanReponsesHc(preparerSessionDepuisListeHc(state.session));
         state.partieId = window.STIQuizSync && STIQuizSync.creerIdentifiantPartie ? STIQuizSync.creerIdentifiantPartie() : null;
         state.index = 0;
         state.partySynced = false;

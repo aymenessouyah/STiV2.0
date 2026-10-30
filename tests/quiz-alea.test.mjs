@@ -70,7 +70,7 @@ function chargerModule(options) {
 test('v519 : chaque page de quiz charge le tirage aléatoire et le demande à chaque partie', () => {
   for (const page of PAGES_QUIZ) {
     const html = lire(page);
-    assert.match(html, /assets\/js\/quiz-alea\.js\?v=519/, page + ' charge le module');
+    assert.match(html, /assets\/js\/quiz-alea\.js\?v=\d+/, page + ' charge le module');
     /* Le quiz « tableaux » appelle le tirage depuis quiz-tableaux.js, vérifié plus bas. */
     if (page !== 'quiz/tableaux.html') {
       assert.match(html, /STIQuizAlea\.nouveauTirage\("partie"\)/, page + ' demande un tirage neuf par partie');

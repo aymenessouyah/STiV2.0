@@ -2768,7 +2768,7 @@
     <script src="../assets/js/config.js?v=476"></script>
     <script src="../assets/js/supabase-umd.js"></script>
 <script src="../assets/js/xp-plancher.js?v=520"></script>
-<script src="../assets/js/quiz-alea.js?v=519"></script>
+<script src="../assets/js/quiz-alea.js?v=555"></script>
     <script src="../assets/js/quiz-sync.js?v=460"></script>
 
     <!-- ==== MOTEUR DU JEU ==== -->
@@ -3245,6 +3245,24 @@
           this.hydrateCloudJs();
         }
 
+        /* v555 : la bonne réponse ne doit jamais dépasser 20 % des positions A
+           sur une partie (un mélange uniforme en donne 25 %). Les propositions
+           restent tirées au hasard ; seule leur place est pilotée. */
+        appliquerPlanReponsesJs(tirage) {
+          const alea = window.STIQuizAlea;
+          if (!alea || typeof alea.planReponses !== "function" || typeof alea.placerReponse !== "function") {
+            return tirage;
+          }
+          const tailles = tirage.map((q) => (q.options ? q.options.length : 0));
+          const plan = alea.planReponses(tailles, { maxA: 0.2 });
+          for (let i = 0; i < tirage.length; i++) {
+            const place = alea.placerReponse(tirage[i].options, tirage[i].answer, plan[i]);
+            tirage[i].options = place.options;
+            tirage[i].answer = place.index;
+          }
+          return tirage;
+        }
+
         prepareQuestionsFromBaseJs(baseList) {
           if (window.STIQuizAlea) STIQuizAlea.nouveauTirage("partie");
           const tirage = baseList.map((q) => {
@@ -3271,7 +3289,7 @@
               tirage[i].answer = altIdx;
             }
           }
-          return tirage;
+          return this.appliquerPlanReponsesJs(tirage);
         }
 
         shuffleQuestions() {
