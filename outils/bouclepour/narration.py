@@ -1,52 +1,87 @@
 """Texte de la voix off de « Les boucles — Pour, Répéter…jusqu'à, Tant que ».
 
-Capsule de la Série 6 (JavaScript). Elle ne montre plus une seule boucle mais
-les **trois**, et surtout **comment choisir**. Le fil conducteur est un
-**schéma de décision** affiché en permanence à partir de la quatrième section :
+Capsule de la Série 6 (JavaScript). Elle montre les **trois** boucles et,
+surtout, **comment choisir**. Le fil conducteur est un **schéma de décision** :
 
     une répétition
-      ├─ est-ce que je connais le nombre de répétitions à l'avance ?
-      │    non → boucles conditionnelles (0 à n fois)
-      │    oui → est-ce qu'une condition d'arrêt peut me stopper avant la fin ?
-      │             non → POUR          (compteur de I à F, FAIRE Bloc)
-      │             oui → combien de fois au moins je répète ?
+      ├─ Q1 : est-ce que je connais le nombre de répétitions à l'avance ?
+      │    non → boucle conditionnelle (0 à n fois)
+      │    oui → Q2 : est-ce qu'une condition d'arrêt peut m'arrêter avant la fin ?
+      │             non → POUR            compteur de I à F, FAIRE le bloc
+      │             oui → Q3 : combien de fois, au moins, je répète ?
       │                     au moins une fois → RÉPÉTER…JUSQU'À
       │                     risque zéro      → TANT QUE
 
-Les trois exemples, dans le même décor (l'immeuble et le sac) :
+La capsule a une vraie entrée et une vraie sortie :
 
-* **Pour** : la somme des quatre étages, T = [4, 7, 2, 9] → S = 22 ;
-* **Répéter…jusqu'à** : chercher X dans T — X = 7 (trouvé au 2e tour) et
+* `ouverture` et `introduction` expliquent **ce qu'est une boucle** et
+  **pourquoi** il en faut une — c'est le sujet annoncé par le titre ;
+* `bilan`, `conclusion` et `generique` referment la capsule : les trois blocs
+  côte à côte, la méthode, puis la carte de fin.
+
+Les noms sont fixés une fois pour toutes et ne changent plus d'une partie à
+l'autre :
+
+* **S** = la **somme** des étages, et rien d'autre (partie POUR) ;
+* **compteur** en algorithme / **i** en JavaScript = l'indice de tour (POUR) ;
+* **i** et **trouvé** = l'indice et le drapeau de la recherche (RÉPÉTER) ;
+* **jetons** = ce qui reste dans la boîte, **n** = ce qui est déjà dans le sac
+  (TANT QUE). Le sac ne s'appelle jamais S.
+
+Les trois exemples, dans le même décor (l'immeuble, l'ascenseur, le sac) :
+
+* **POUR** : la somme des quatre étages, T = [4, 7, 2, 9] → S = 22 ;
+* **RÉPÉTER…JUSQU'À** : chercher X dans T — X = 7 (trouvé au 2e tour) et
   X = 5 (absent, quatre tours, on sort sur `i > 3`) ;
-* **Tant que** : vider la boîte de jetons dans le sac — trois jetons (trois
+* **TANT QUE** : vider la boîte de jetons dans le sac — trois jetons (trois
   tours) et zéro jeton (aucun tour : c'est là que répéter…jusqu'à serait faux).
 
 À droite, **l'algorithme et le JavaScript sont deux cadres séparés** : on écrit
-toujours l'algorithme d'abord, on le traduit ensuite. À chaque changement de
-boucle, le tableau des trois boucles est rappelé et la branche courante du
-schéma est surlignée.
+toujours l'algorithme d'abord, on le traduit ensuite.
 """
 from __future__ import annotations
 
-# L'ordre de lecture et le découpage des sous-titres.
+# L'ordre de lecture ; il sert aussi à numéroter les chapitres.
 ORDRE = [
-    "bienvenue", "probleme", "repetition", "q1", "q2", "q3",
+    "ouverture", "introduction", "probleme", "repetition",
+    "q1", "q2", "q3",
     "pour_algo", "pour_js", "pour_trace", "rappel1",
     "chercher_quoi", "chercher_q", "repet_algo", "repet_js",
     "repet_trouve", "repet_absent", "rappel2",
     "tantque_quoi", "tantque_algo", "tantque_js", "tantque_trace", "rappel3",
-    "tableau3", "choisir", "algo_js", "fin",
+    "tableau3", "choisir", "algo_js",
+    "bilan", "conclusion", "generique",
 ]
 
 SECTIONS = {
-    "bienvenue": {
-        "titre": "Bienvenue — l'histoire des boucles",
+    "ouverture": {
+        "titre": "Bienvenue — les boucles",
         "segments": [
-            ("bienvenue", [
+            ("ouverture", [
                 "Bienvenue dans STI Version 2.0.",
                 "Aujourd'hui, on va détailler encore une autre fois l'histoire des boucles.",
-                "On va d'abord poser les bonnes questions, puis voir les trois boucles,"
-                " une par une, et surtout apprendre à choisir la bonne.",
+                "Une boucle, c'est une instruction qui fait répéter un bloc d'instructions.",
+                "Et en JavaScript, il n'y a pas une boucle : il y en a trois.",
+                "La boucle Pour, la boucle Répéter jusqu'à, et la boucle Tant que.",
+                "Trois boucles, trois façons de répéter, et une seule question à se poser",
+                " pour choisir la bonne.",
+            ]),
+        ],
+    },
+    "introduction": {
+        "titre": "Ce qu'est une boucle, et pourquoi",
+        "segments": [
+            ("introduction", [
+                "Prenons le temps de la définir, cette boucle.",
+                "Imaginez que je doive additionner quatre nombres : j'écris quatre lignes.",
+                "Quatre. Mais s'il y en avait cent ? Cent lignes, recopiées à la main,",
+                " avec une faute au bout du troisième.",
+                "Une boucle, c'est exactement l'inverse : j'écris le bloc une seule fois,",
+                " et je dis au programme : répète-le.",
+                "Le bloc ne change pas. Ce qui change, c'est le nombre de tours,",
+                " et la condition qui décide de continuer ou de s'arrêter.",
+                "Une boucle, c'est donc trois choses : un bloc, des tours, une condition.",
+                " Et le schéma de décision, c'est ce qui me dit laquelle des trois choisir.",
             ]),
         ],
     },
@@ -82,7 +117,7 @@ SECTIONS = {
         ],
     },
     "q1": {
-        "titre": "Question 1 : connais-je le nombre de répétitions ?",
+        "titre": "Question 1 : le nombre de répétitions",
         "segments": [
             ("q1", [
                 "Première question : est-ce que je connais le nombre de répétitions"
@@ -95,7 +130,7 @@ SECTIONS = {
         ],
     },
     "q2": {
-        "titre": "Question 2 : une condition d'arrêt ?",
+        "titre": "Question 2 : une condition d'arrêt",
         "segments": [
             ("q2", [
                 "Deuxième question : est-ce qu'il y a une condition d'arrêt,"
@@ -108,7 +143,7 @@ SECTIONS = {
         ],
     },
     "q3": {
-        "titre": "Question 3 : au moins une fois ?",
+        "titre": "Question 3 : au moins une fois",
         "segments": [
             ("q3", [
                 "Et si, au contraire, il y avait une condition d'arrêt ?",
@@ -160,7 +195,7 @@ SECTIONS = {
         ],
     },
     "rappel1": {
-        "titre": "Rappel : le tableau des trois boucles",
+        "titre": "Rappel : où se place Pour",
         "segments": [
             ("rappel1", [
                 "Rappel : trois boucles, un seul schéma.",
@@ -253,7 +288,7 @@ SECTIONS = {
         ],
     },
     "rappel2": {
-        "titre": "Rappel : répéter…jusqu'à",
+        "titre": "Rappel : où se place Répéter…jusqu'à",
         "segments": [
             ("rappel2", [
                 "Rappel. Répéter jusqu'à : le nombre de tours n'est pas connu,"
@@ -282,11 +317,12 @@ SECTIONS = {
         "segments": [
             ("tantque_algo", [
                 "Donc : tant que la boîte n'est pas vide, faire.",
-                "Prendre un jeton. Le mettre dans le sac. Fin tant que.",
-                "Le test est avant le bloc : si la boîte est vide dès le départ,"
+                "Prendre un jeton. Le mettre dans le sac, et ajouter un au compteur n,",
+                " le nombre de jetons qui sont dans le sac. Fin tant que.",
+                "Le test est avant le bloc : si la boîte est vide dès le départ,",
                 " on ne rentre pas dans la boucle.",
                 "C'est exactement ce que je veux ici : aucun jeton à prendre,"
-                " aucun tour.",
+                " aucun tour, et n reste à zéro.",
             ]),
         ],
     },
@@ -295,8 +331,8 @@ SECTIONS = {
         "segments": [
             ("tantque_js", [
                 "En JavaScript : while, entre parenthèses, jetons supérieur à zéro.",
-                "Entre accolades : prendre un jeton, le mettre dans le sac,"
-                " et décrémenter le compteur de jetons.",
+                "Entre accolades : jetons moins moins, pour en sortir un de la boîte,",
+                " et n plus plus, pour en compter un de plus dans le sac.",
                 "Tant que la condition est vraie, on répète.",
                 "Dès qu'elle est fausse, on sort.",
             ]),
@@ -306,19 +342,20 @@ SECTIONS = {
         "titre": "Tant que — trois jetons, puis zéro",
         "segments": [
             ("tantque_trace", [
-                "Avec trois jetons : trois tours, la boîte se vide, le sac se remplit,"
-                " et on sort quand jetons vaut zéro.",
-                "Avec zéro jeton : la condition est fausse tout de suite, zéro tour.",
-                "Comparez avec répéter jusqu'à : là, on serait entré au moins une fois,"
+                "Avec trois jetons : trois tours, la boîte se vide, le sac se remplit,",
+                " n vaut trois, et on sort quand jetons vaut zéro.",
+                "Avec zéro jeton : la condition est fausse tout de suite,",
+                " zéro tour, et le sac reste vide : n vaut zéro.",
+                "Comparez avec répéter jusqu'à : là, on serait entré au moins une fois,",
                 " et on aurait pris un jeton qui n'existe pas.",
             ]),
         ],
     },
     "rappel3": {
-        "titre": "Rappel : tant que",
+        "titre": "Rappel : où se place Tant que",
         "segments": [
             ("rappel3", [
-                "Rappel. Tant que : nombre de tours inconnu, condition d'arrêt,"
+                "Rappel. Tant que : nombre de tours inconnu, condition d'arrêt,",
                 " et risque de zéro tour.",
                 "Le test se fait avant le bloc.",
                 "C'est la boucle la plus prudente : elle peut ne rien faire du tout.",
@@ -344,7 +381,7 @@ SECTIONS = {
         "titre": "Comment choisir",
         "segments": [
             ("choisir", [
-                "Et pour choisir, une seule chose à faire : poser les questions,"
+                "Et pour choisir, une seule chose à faire : poser les questions,",
                 " dans l'ordre.",
                 "Est-ce que je connais le nombre de répétitions ?",
                 "Oui, et rien ne m'arrête : Pour.",
@@ -368,16 +405,41 @@ SECTIONS = {
             ]),
         ],
     },
-    "fin": {
+    "bilan": {
+        "titre": "Les trois blocs côte à côte",
+        "segments": [
+            ("bilan", [
+                "Voilà les trois blocs côte à côte.",
+                "À gauche, Pour : je connais le nombre de tours, rien ne m'arrête,",
+                " le compteur va de la position initiale à la position finale.",
+                "Au milieu, Répéter jusqu'à : le nombre est inconnu, une condition m'arrête,",
+                " et je répète au moins une fois.",
+                "À droite, Tant que : le nombre est inconnu, une condition m'arrête,",
+                " mais je peux ne pas répéter du tout.",
+                "Trois boucles, trois situations, et le même schéma pour choisir.",
+            ]),
+        ],
+    },
+    "conclusion": {
+        "titre": "La méthode, en trois questions",
+        "segments": [
+            ("conclusion", [
+                "La méthode tient en trois questions, et elles se posent toujours dans cet ordre.",
+                "Un : est-ce que je connais le nombre de répétitions à l'avance ?",
+                "Deux : est-ce qu'une condition peut m'arrêter avant la fin ?",
+                "Trois : combien de fois, au moins, est-ce que je répète ?",
+                "Avec ces trois réponses, vous ne vous tromperez plus de boucle.",
+            ]),
+        ],
+    },
+    "generique": {
         "titre": "À vous de jouer",
         "segments": [
-            ("fin", [
-                "Voilà. Trois boucles, un schéma, et une question à se poser"
-                " à chaque fois : est-ce que je connais le nombre de répétitions"
-                " à l'avance ?",
-                "Si oui, est-ce qu'une condition m'arrête ? Et au moins une fois ?",
-                "Vous avez maintenant la méthode.",
+            ("generique", [
+                "Voilà. Trois boucles, un schéma, et cette question à se poser"
+                " à chaque fois.",
                 "À vous de jouer, dans STI Version 2.0.",
+                "Série 6, les boucles. À bientôt.",
             ]),
         ],
     },
@@ -399,11 +461,27 @@ def nombre_caracteres() -> int:
     return sum(len(texte_section(s)) for s in ORDRE)
 
 
+def numero(section: str) -> int:
+    """Le numéro d'étape (1 → n) d'une section."""
+    return ORDRE.index(section) + 1
+
+
 # ── Sous-titres ────────────────────────────────────────────────────────────
+_INSECABLE = "\u00a0"
+
+
+def _typo(phrase: str) -> str:
+    """Espace insécable avant les ponctuations doubles : elles ne passent
+    jamais seules en début de ligne."""
+    for signe in (":", ";", "?", "!", "»"):
+        phrase = phrase.replace(f" {signe}", f"{_INSECABLE}{signe}")
+    return phrase.replace("« ", f"«{_INSECABLE}")
+
+
 def _replier(phrase, maxi=42):
     """Replie une phrase en lignes courtes, sans jamais couper un mot."""
     lignes, courant = [], ""
-    for mot in phrase.split():
+    for mot in _typo(phrase).split(" "):
         essai = (courant + " " + mot).strip()
         if len(essai) <= maxi or not courant:
             courant = essai
