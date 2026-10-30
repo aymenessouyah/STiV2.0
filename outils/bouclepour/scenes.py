@@ -62,7 +62,7 @@ ALGO_POUR = [
 ]
 JS_POUR = [
     "let S = 0;",
-    "for (let i = 0; i <= 3; i++) {",
+    "for (let i = 0; i < T.length; i++) {",
     "    S = S + T[i];",
     "}",
 ]
@@ -362,6 +362,188 @@ def scene_probleme(d, p, t):
 # ══════════════════════════════════════════════════════════════════════════
 #  4 · Quatre fois le même geste
 # ══════════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════════════
+#  4 · L'immeuble a un nom : T
+# ══════════════════════════════════════════════════════════════════════════
+def scene_immeuble(d, p, t):
+    _entete(d, "immeuble")
+    _panneaux(d, "l'immeuble T", "le brouillon")
+    _immeuble_statique(d, cabine=0.0, t=t)
+
+    # le nom, posé sur le toit
+    k = _apparait(p, 0.42, 0.16)
+    if k > 0:
+        boite_arrondie(d, [328, 206, 442, 264], rayon=14,
+                       fond=melange(FOND_PANNEAU_2, AMBRE, 0.30 * k),
+                       bord=melange(BORDURE, AMBRE, 0.95 * k), largeur_bord=3)
+        d.text((385, 235), "T", font=police(32, True, mono=True),
+               fill=melange(FOND, AMBRE, k), anchor="mm")
+        d.text((330, 278), "le nom de l'immeuble", font=police(15),
+               fill=melange(FOND, TEXTE_2, k), anchor="la")
+
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "pourquoi un nom ?", 25, melange(ENCRE, TEXTE_3, 0.4), 0.04, p)
+    _ligne(d, 2, "l'immeuble contient des éléments", 22, ENCRE, 0.12, p)
+    _ligne(d, 3, "et son contenu peut varier", 22, ENCRE, 0.24, p)
+    _ligne(d, 5, "aujourd'hui :  [4, 7, 2, 9]", 22, AMBRE, 0.36, p)
+    _ligne(d, 6, "demain :       [8, 15, 3, 6]", 22, melange(ENCRE, TEXTE_3, 0.35),
+           0.50, p)
+    if p > 0.62:
+        stylo_note(d, X_CRAYON, _regle(8) - 6, "je ne nomme pas le contenu,", 23,
+                   a_partir_de=0.62, p=p)
+    if p > 0.74:
+        stylo_note(d, X_CRAYON, _regle(9) - 6, "je nomme l'immeuble : T", 25,
+                   a_partir_de=0.74, p=p)
+    if p > 0.86:
+        d.text((X_CRAYON, _regle(11) - 10), "T[0]  T[1]  T[2]  T[3]",
+               font=police(23, True, mono=True), fill=melange(FOND, VERT, 1.0),
+               anchor="lm")
+
+    _ecritures(d, p, vide_algo="① l'algorithme, plus tard",
+               vide_js="② le JavaScript, plus tard")
+    _etat(d, None, "l'immeuble s'appelle T")
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  5 · L'ascenseur : la cabine carrée, les portes, T[i]
+# ══════════════════════════════════════════════════════════════════════════
+def _cabine_crochets(d, cx, cy, indice, ouverture=1.0, echelle=1.0):
+    """Le crochet, dessiné comme une cabine : [ i ]."""
+    k = _ease(ouverture)
+    larg, haut = 66 * echelle, 58 * echelle
+    boite_arrondie(d, [cx - larg, cy - haut / 2, cx + larg, cy + haut / 2], rayon=10,
+                   fond=melange(FOND_PANNEAU_2, BLEU, 0.16 * k),
+                   bord=melange(BORDURE, BLEU, 0.9 * k), largeur_bord=3)
+    # les deux battants
+    reste = max(0.0, 1.0 - k)
+    if reste > 0.02:
+        demi = larg * reste / 2
+        d.rectangle([cx - demi, cy - haut / 2 + 4, cx + demi, cy + haut / 2 - 4],
+                    fill=melange(FOND_PANNEAU_2, BLEU, 0.35))
+    d.text((cx, cy), str(indice), font=police(int(26 * echelle), True, mono=True),
+           fill=melange(FOND, AMBRE, k), anchor="mm")
+    # les crochets eux-mêmes
+    b = 14 * echelle
+    d.line([(cx - larg - b, cy - haut / 2), (cx - larg, cy - haut / 2),
+            (cx - larg, cy + haut / 2), (cx - larg - b, cy + haut / 2)],
+           fill=melange(FOND, TEXTE, k), width=max(2, int(4 * echelle)))
+    d.line([(cx + larg, cy - haut / 2), (cx + larg + b, cy - haut / 2),
+            (cx + larg + b, cy + haut / 2), (cx + larg, cy + haut / 2)],
+           fill=melange(FOND, TEXTE, k), width=max(2, int(4 * echelle)))
+
+
+def scene_ascenseur(d, p, t):
+    _entete(d, "ascenseur")
+    _panneaux(d, "l'ascenseur", "le brouillon")
+    # l'ascenseur part du dernier étage et s'arrête à l'étage 0, comme T[0]
+    montee = min(1.0, max(0.0, (p - 0.10) / 0.46))
+    cabine = 3.0 - 3.0 * _ease(montee)
+    ouvert = 1.0 if p > 0.62 else 0.0
+    _immeuble_statique(d, actif=int(round(cabine)), cabine=cabine, ouvert=ouvert, t=t)
+
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "T[0]", 32, AMBRE, 0.06, p, gras=True)
+    _ligne(d, 2, "je suis dans l'immeuble T", 22, ENCRE, 0.18, p)
+    _ligne(d, 3, "j'ai pris l'ascenseur", 22, ENCRE, 0.30, p)
+    _ligne(d, 4, "il s'arrête à l'étage 0", 22, ENCRE, 0.42, p)
+    if p > 0.56:
+        stylo_note(d, X_CRAYON, _regle(6) - 6, "portes fermées : rien", 22,
+                   a_partir_de=0.56, p=p)
+    if p > 0.68:
+        stylo_note(d, X_CRAYON, _regle(7) - 6, "portes ouvertes : 4", 24,
+                   a_partir_de=0.68, p=p)
+    if p > 0.80:
+        d.text((X_CRAYON, _regle(9) - 10), "les crochets = la cabine",
+               font=police(21, True), fill=melange(FOND, BLEU, 1.0), anchor="lm")
+        d.text((X_CRAYON, _regle(10) - 10), "l'indice = l'étage",
+               font=police(21, True), fill=melange(FOND, AMBRE, 1.0), anchor="lm")
+        _cabine_crochets(d, 960, 812, "i", ouverture=1.0, echelle=0.86)
+
+    _ecritures(d, p, vide_algo="① l'algorithme, plus tard",
+               vide_js="② le JavaScript, plus tard")
+    _etat(d, None, "T[i] : l'étage i, portes ouvertes")
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  6 · Le compteur de l'ascenseur : un type scalaire
+# ══════════════════════════════════════════════════════════════════════════
+def scene_scalaire(d, p, t):
+    _entete(d, "scalaire")
+    _panneaux(d, "le compteur de l'ascenseur", "le brouillon")
+    etage = min(3.0, max(0.0, (p - 0.06) / 0.20))
+    _immeuble_statique(d, actif=int(round(etage)), cabine=etage, ouvert=0.5, t=t)
+
+    # la suite des étages, avec les successeurs
+    if p > 0.16:
+        d.text((354, 856), "0 → 1 → 2 → 3  …", font=police(22, True, mono=True),
+               fill=melange(FOND, BLEU, _apparait(p, 0.16, 0.14)), anchor="mm")
+
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "un type scalaire, c'est un type", 21, melange(ENCRE, TEXTE_3, 0.4),
+           0.04, p)
+    _ligne(d, 1, "avec un successeur", 24, ENCRE, 0.12, p)
+    _ligne(d, 2, "et un prédécesseur", 24, ENCRE, 0.22, p)
+    _ligne(d, 4, "l'entier   ·   le caractère", 23, AMBRE, 0.36, p)
+    _ligne(d, 6, "3  →  successeur : 4", 24, VERT, 0.50, p)
+    _ligne(d, 7, "3  →  prédécesseur : 2", 24, ROUGE_BORD, 0.62, p)
+    if p > 0.74:
+        stylo_note(d, X_CRAYON, _regle(9) - 6, "d'où  i + 1  : je monte d'un étage", 23,
+                   a_partir_de=0.74, p=p)
+    if p > 0.86:
+        d.text((X_CRAYON, _regle(11) - 10), "l'ascenseur compte tout seul",
+               font=police(22, True), fill=melange(FOND, AMBRE, 1.0), anchor="lm")
+
+    _ecritures(d, p, vide_algo="① l'algorithme, plus tard",
+               vide_js="② le JavaScript, plus tard")
+    _etat(d, None, "scalaire : successeur et prédécesseur")
+
+
+# ══════════════════════════════════════════════════════════════════════════
+#  11 · Engendrer : d'une ligne, la boucle en fabrique quatre
+# ══════════════════════════════════════════════════════════════════════════
+def scene_engendrer(d, p, t):
+    _entete(d, "engendrer")
+    _panneaux(d, "l'immeuble", "le brouillon")
+    _immeuble_statique(d, actif=None, cabine=None, t=t)
+
+    papier_brouillon(d, PAPIER_BOX)
+    _ligne(d, 0, "mes quatre lignes :", 22, melange(ENCRE, TEXTE_3, 0.4), 0.04, p)
+    for k in range(4):
+        kk = _apparait(p, 0.10 + 0.05 * k, 0.06)
+        if kk <= 0:
+            continue
+        d.text((X_CRAYON, _regle(1 + k) - 10), f"S = S + T[{k}]",
+               font=police(21, True, mono=True),
+               fill=melange(PAPIER, ENCRE, kk), anchor="lm")
+
+    if p > 0.34:
+        d.line([(X_CRAYON, _regle(5) - 4), (X_CRAYON + 400, _regle(5) - 4)],
+               fill=melange(PAPIER, ENCRE, 0.45), width=2)
+    if p > 0.40:
+        sty = _apparait(p, 0.40, 0.12)
+        d.text((X_CRAYON, _regle(6) - 10), "une seule chose change :",
+               font=police(20), fill=melange(PAPIER, TEXTE_3, sty), anchor="lm")
+    if p > 0.50:
+        st = _apparait(p, 0.50, 0.12)
+        d.text((X_CRAYON, _regle(7) - 10), "le chiffre entre les crochets",
+               font=police(20), fill=melange(PAPIER, ROUGE_STYLO, st), anchor="lm")
+    if p > 0.62:
+        st = _apparait(p, 0.62, 0.12)
+        d.text((X_CRAYON, _regle(9) - 10), "S = S + T[quelque chose]",
+               font=police(24, True, mono=True), fill=melange(PAPIER, AMBRE, st),
+               anchor="lm")
+    if p > 0.76:
+        stylo_note(d, X_CRAYON, _regle(10) - 6, "la boucle Pour l'engendre × 4", 23,
+                   a_partir_de=0.76, p=p)
+    if p > 0.88:
+        d.text((X_CRAYON, _regle(12) - 10), "une ligne écrite → quatre étages",
+               font=police(21, True), fill=melange(FOND, VERT, 1.0), anchor="lm")
+
+    _ecritures(d, p, vide_algo="① l'algorithme arrive",
+               vide_js="② le JavaScript suivra")
+    _etat(d, "pour", "engendrer : 1 → 4", C_POUR)
+
+
 def scene_repetition(d, p, t):
     _entete(d, "repetition")
     _panneaux(d, "l'immeuble", "le brouillon")
@@ -446,6 +628,9 @@ def scene_pour_algo(d, p, t):
     _ligne(d, 5, "où je m'arrête ?  →  3", 24, ENCRE, 0.38, p)
     _ligne(d, 7, "→ POUR compteur DE 0 À 3", 24, AMBRE, 0.58, p, gras=True)
     _ligne(d, 8, "→ et FAIRE le bloc", 22, VERT, 0.74, p)
+    if p > 0.86:
+        d.text((X_CRAYON, _regle(10) - 10), "le trou est rempli par le compteur",
+               font=police(20, True), fill=melange(FOND, AMBRE, 1.0), anchor="lm")
 
     _ecritures(d, p, ALGO_POUR, None, algo_on=True, seuil_algo=0.14,
                vide_js="② le JavaScript : à la scène suivante")
@@ -458,12 +643,34 @@ def scene_pour_js(d, p, t):
     _immeuble_statique(d, actif=0, cabine=0.0, t=t)
 
     papier_brouillon(d, PAPIER_BOX)
-    _ligne(d, 0, "l'algorithme est écrit ;", 24, ENCRE, 0.04, p)
-    _ligne(d, 1, "je le traduis maintenant", 24, VERT, 0.12, p)
-    _ligne(d, 3, "POUR  →  for", 26, AMBRE, 0.38, p, gras=True)
-    _ligne(d, 4, "compteur  →  i", 24, VERT, 0.54, p)
-    _ligne(d, 6, "même logique,", 22, melange(ENCRE, TEXTE_3, 0.4), 0.70, p)
-    _ligne(d, 7, "deux langages", 22, melange(ENCRE, TEXTE_3, 0.4), 0.76, p)
+    _ligne(d, 0, "trois morceaux, trois rôles", 22, melange(ENCRE, TEXTE_3, 0.4), 0.04, p)
+    morceaux = [
+        (0.12, "1", "i = 0", BLEU, "condition de départ"),
+        (0.26, "2", "i < T.length", VERT, "condition de continuité"),
+        (0.40, "3", "i++", AMBRE, "avancement du pas"),
+    ]
+    for seuil, numero, code, couleur, role in morceaux:
+        if p <= seuil:
+            continue
+        k = _apparait(p, seuil, 0.10)
+        y = _regle(2 + morceaux.index((seuil, numero, code, couleur, role))) - 10
+        d.ellipse([X_CRAYON, y - 12, X_CRAYON + 24, y + 12],
+                  fill=melange(PAPIER, couleur, 0.85 * k))
+        d.text((X_CRAYON + 12, y), numero, font=police(16, True),
+               fill=melange(PAPIER, FOND, k), anchor="mm")
+        d.text((X_CRAYON + 36, y), code, font=police(23, True, mono=True),
+               fill=melange(PAPIER, couleur, k), anchor="lm")
+        d.text((X_CRAYON + 474, y), role, font=police(16),
+               fill=melange(PAPIER, TEXTE_3, k), anchor="rm")
+    if p > 0.56:
+        stylo_note(d, X_CRAYON, _regle(6) - 6, "T.length = la hauteur : 4 étages", 21,
+                   a_partir_de=0.56, p=p)
+    if p > 0.70:
+        stylo_note(d, X_CRAYON, _regle(7) - 6, "i++  c'est  i = i + 1", 23,
+                   a_partir_de=0.70, p=p)
+    if p > 0.84:
+        d.text((X_CRAYON, _regle(9) - 10), "départ · continuité · pas",
+               font=police(21, True), fill=melange(FOND, VERT, 1.0), anchor="lm")
 
     _ecritures(d, p, ALGO_POUR, JS_POUR, algo_on=False, js_on=True, seuil_js=0.16)
     _etat(d, "pour", "traduction en JavaScript", VERT)
@@ -490,9 +697,12 @@ def scene_pour_trace(d, p, t):
         d.text((X_CRAYON + 220, y), f"→ S = {sum(VALEURS[:k + 1])}",
                font=police(24, True, mono=True),
                fill=melange(PAPIER, VERT, kk), anchor="lm")
-    if p > 0.80:
-        stylo_note(d, X_CRAYON, _regle(7) - 6, "i vaut 4 : la condition est fausse",
-                   22, a_partir_de=0.80, p=p)
+    if p > 0.76:
+        stylo_note(d, X_CRAYON, _regle(7) - 6, "i vaut 4 :  4 < 4 est faux", 23,
+                   a_partir_de=0.76, p=p)
+    if p > 0.88:
+        d.text((X_CRAYON, _regle(9) - 10), "la condition de continuité s'arrête",
+               font=police(20, True), fill=melange(FOND, VERT, 1.0), anchor="lm")
 
     _ecritures(d, p, ALGO_POUR, JS_POUR, algo_on=False, js_on=False)
     _etat(d, "pour", "S = 22", VERT)
@@ -828,7 +1038,7 @@ def scene_algo_js(d, p, t):
     _cadre_ecriture(d, JS_BOX, 2, "le JAVASCRIPT", VERT, True)
     _code(d, ALGO_BOX, ["POUR i DE 0 À 3 FAIRE", "RÉPÉTER … JUSQU'À", "TANT QUE jetons > 0 FAIRE"],
           C_POUR, True, p, seuil=0.10, pas=0.14, taille=17)
-    _code(d, JS_BOX, ["for (let i = 0; i <= 3; i++)", "do { … } while (…)",
+    _code(d, JS_BOX, ["for (let i = 0; i < T.length; i++)", "do { … } while (…)",
                       "while (jetons > 0)"],
           VERT, True, p, seuil=0.30, pas=0.14, taille=17)
     _etat(d, None, "deux langages, une logique")
@@ -967,10 +1177,14 @@ SCENES = {
     "ouverture": scene_ouverture,
     "introduction": scene_introduction,
     "probleme": scene_probleme,
+    "immeuble": scene_immeuble,
+    "ascenseur": scene_ascenseur,
+    "scalaire": scene_scalaire,
     "repetition": scene_repetition,
     "q1": scene_q1,
     "q2": scene_q2,
     "q3": scene_q3,
+    "engendrer": scene_engendrer,
     "pour_algo": scene_pour_algo,
     "pour_js": scene_pour_js,
     "pour_trace": scene_pour_trace,

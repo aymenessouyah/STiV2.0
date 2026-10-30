@@ -1418,32 +1418,36 @@
         { t: 1.200, short: "1 · Bienvenue — les boucles", label: "0:01 · 1 · Bienvenue — les boucles" },
         { t: 27.582, short: "2 · Ce qu'est une boucle, et pourquoi", label: "0:28 · 2 · Ce qu'est une boucle, et pourquoi" },
         { t: 65.737, short: "3 · Le décor et le problème", label: "1:06 · 3 · Le décor et le problème" },
-        { t: 94.859, short: "4 · Quatre fois le même geste", label: "1:35 · 4 · Quatre fois le même geste" },
-        { t: 119.929, short: "5 · Question 1 : le nombre de répétitions", label: "2:00 · 5 · Question 1 : le nombre de répétitions" },
-        { t: 140.646, short: "6 · Question 2 : une condition d'arrêt", label: "2:21 · 6 · Question 2 : une condition d'arrêt" },
-        { t: 158.379, short: "7 · Question 3 : au moins une fois", label: "2:38 · 7 · Question 3 : au moins une fois" },
-        { t: 179.014, short: "8 · La boucle Pour — algorithme", label: "2:59 · 8 · La boucle Pour — algorithme" },
-        { t: 202.273, short: "9 · La boucle Pour — JavaScript", label: "3:22 · 9 · La boucle Pour — JavaScript" },
-        { t: 225.683, short: "10 · La boucle Pour — les quatre tours", label: "3:46 · 10 · La boucle Pour — les quatre tours" },
-        { t: 249.081, short: "11 · Rappel : où se place Pour", label: "4:09 · 11 · Rappel : où se place Pour" },
-        { t: 266.094, short: "12 · Chercher X : un nombre de tours inconnu", label: "4:26 · 12 · Chercher X : un nombre de tours inconnu" },
-        { t: 285.708, short: "13 · Chercher X : au moins une fois", label: "4:46 · 13 · Chercher X : au moins une fois" },
-        { t: 304.811, short: "14 · Répéter…jusqu'à — algorithme", label: "5:05 · 14 · Répéter…jusqu'à — algorithme" },
-        { t: 325.539, short: "15 · Répéter…jusqu'à — JavaScript", label: "5:26 · 15 · Répéter…jusqu'à — JavaScript" },
-        { t: 346.000, short: "16 · X = 7 : trouvé au deuxième tour", label: "5:46 · 16 · X = 7 : trouvé au deuxième tour" },
-        { t: 364.754, short: "17 · X = 5 : absent, quatre tours", label: "6:05 · 17 · X = 5 : absent, quatre tours" },
-        { t: 386.829, short: "18 · Rappel : où se place Répéter…jusqu'à", label: "6:27 · 18 · Rappel : où se place Répéter…jusqu'à" },
-        { t: 401.915, short: "19 · Tant que : le risque de zéro tour", label: "6:42 · 19 · Tant que : le risque de zéro tour" },
-        { t: 425.372, short: "20 · Tant que — algorithme", label: "7:05 · 20 · Tant que — algorithme" },
-        { t: 448.770, short: "21 · Tant que — JavaScript", label: "7:29 · 21 · Tant que — JavaScript" },
-        { t: 464.622, short: "22 · Tant que — trois jetons, puis zéro", label: "7:45 · 22 · Tant que — trois jetons, puis zéro" },
-        { t: 486.314, short: "23 · Rappel : où se place Tant que", label: "8:06 · 23 · Rappel : où se place Tant que" },
-        { t: 499.356, short: "24 · Le tableau des trois boucles", label: "8:19 · 24 · Le tableau des trois boucles" },
-        { t: 521.477, short: "25 · Comment choisir", label: "8:41 · 25 · Comment choisir" },
-        { t: 541.172, short: "26 · Algorithme et JavaScript : ne pas mélanger", label: "9:01 · 26 · Algorithme et JavaScript : ne pas mélanger" },
-        { t: 562.225, short: "27 · Les trois blocs côte à côte", label: "9:22 · 27 · Les trois blocs côte à côte" },
-        { t: 592.207, short: "28 · La méthode, en trois questions", label: "9:52 · 28 · La méthode, en trois questions" },
-        { t: 610.671, short: "29 · À vous de jouer", label: "10:11 · 29 · À vous de jouer" }
+        { t: 94.859, short: "4 · L'immeuble a un nom : T", label: "1:35 · 4 · L'immeuble a un nom : T" },
+        { t: 127.929, short: "5 · L'ascenseur, et les crochets", label: "2:08 · 5 · L'ascenseur, et les crochets" },
+        { t: 178.018, short: "6 · L'ascenseur compte tout seul", label: "2:58 · 6 · L'ascenseur compte tout seul" },
+        { t: 212.168, short: "7 · Quatre fois le même geste", label: "3:32 · 7 · Quatre fois le même geste" },
+        { t: 237.238, short: "8 · Question 1 : le nombre de répétitions", label: "3:57 · 8 · Question 1 : le nombre de répétitions" },
+        { t: 257.954, short: "9 · Question 2 : une condition d'arrêt", label: "4:18 · 9 · Question 2 : une condition d'arrêt" },
+        { t: 275.687, short: "10 · Question 3 : au moins une fois", label: "4:36 · 10 · Question 3 : au moins une fois" },
+        { t: 296.322, short: "11 · Du brouillon à la boucle : engendrer", label: "4:56 · 11 · Du brouillon à la boucle : engendrer" },
+        { t: 341.292, short: "12 · La boucle Pour — algorithme", label: "5:41 · 12 · La boucle Pour — algorithme" },
+        { t: 378.727, short: "13 · La boucle Pour — JavaScript", label: "6:19 · 13 · La boucle Pour — JavaScript" },
+        { t: 440.334, short: "14 · La boucle Pour — les quatre tours", label: "7:20 · 14 · La boucle Pour — les quatre tours" },
+        { t: 479.383, short: "15 · Rappel : où se place Pour", label: "7:59 · 15 · Rappel : où se place Pour" },
+        { t: 496.396, short: "16 · Chercher X : un nombre de tours inconnu", label: "8:16 · 16 · Chercher X : un nombre de tours inconnu" },
+        { t: 516.009, short: "17 · Chercher X : au moins une fois", label: "8:36 · 17 · Chercher X : au moins une fois" },
+        { t: 535.112, short: "18 · Répéter…jusqu'à — algorithme", label: "8:55 · 18 · Répéter…jusqu'à — algorithme" },
+        { t: 555.840, short: "19 · Répéter…jusqu'à — JavaScript", label: "9:16 · 19 · Répéter…jusqu'à — JavaScript" },
+        { t: 576.301, short: "20 · X = 7 : trouvé au deuxième tour", label: "9:36 · 20 · X = 7 : trouvé au deuxième tour" },
+        { t: 595.056, short: "21 · X = 5 : absent, quatre tours", label: "9:55 · 21 · X = 5 : absent, quatre tours" },
+        { t: 617.131, short: "22 · Rappel : où se place Répéter…jusqu'à", label: "10:17 · 22 · Rappel : où se place Répéter…jusqu'à" },
+        { t: 632.216, short: "23 · Tant que : le risque de zéro tour", label: "10:32 · 23 · Tant que : le risque de zéro tour" },
+        { t: 655.673, short: "24 · Tant que — algorithme", label: "10:56 · 24 · Tant que — algorithme" },
+        { t: 679.071, short: "25 · Tant que — JavaScript", label: "11:19 · 25 · Tant que — JavaScript" },
+        { t: 694.923, short: "26 · Tant que — trois jetons, puis zéro", label: "11:35 · 26 · Tant que — trois jetons, puis zéro" },
+        { t: 716.615, short: "27 · Rappel : où se place Tant que", label: "11:57 · 27 · Rappel : où se place Tant que" },
+        { t: 729.657, short: "28 · Le tableau des trois boucles", label: "12:10 · 28 · Le tableau des trois boucles" },
+        { t: 751.779, short: "29 · Comment choisir", label: "12:32 · 29 · Comment choisir" },
+        { t: 771.473, short: "30 · Algorithme et JavaScript : ne pas mélanger", label: "12:51 · 30 · Algorithme et JavaScript : ne pas mélanger" },
+        { t: 792.527, short: "31 · Les trois blocs côte à côte", label: "13:13 · 31 · Les trois blocs côte à côte" },
+        { t: 822.508, short: "32 · La méthode, en trois questions", label: "13:43 · 32 · La méthode, en trois questions" },
+        { t: 840.972, short: "33 · À vous de jouer", label: "14:01 · 33 · À vous de jouer" }
       ];
       STI_CHAPITRES_MEDIA["validation-nom-prenom-js"] = [
         { t: 0, short: "Générique", label: "00:00 · Générique — Projet secrétariat du lycée" },
@@ -2049,7 +2053,7 @@
         } else if (slugVideo === "defis37-tableau-aleas-media") {
           contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/defis37-tableau-aleas-media-fr.vtt" srclang="fr" label="Français" default />';
         } else if (slugVideo === "boucle-pour") {
-          contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/BouclePour-fr-v544.vtt" srclang="fr" label="Français" default />';
+          contenu += '<track kind="subtitles" src="' + prefixeAssetsSTI() + 'subtitles/BouclePour-fr-v546.vtt" srclang="fr" label="Français" default />';
         }
         return contenu;
       }
@@ -2477,7 +2481,7 @@
             return;
           }
         } catch (e) {}
-        var url = estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v544.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
+        var url = estBouclePour ? prefixeAssetsSTI() + "videos/BouclePour-v546.mp4" : estDefis37 ? prefixeAssetsSTI() + "videos/defis37-tableau-aleas-media.mp4" : estTpTrain ? prefixeAssetsSTI() + "videos/tp-train-serie6.mp4" : estTpEvenements ? prefixeAssetsSTI() + "videos/tp-evenements-liens-v2.mp4" : estTpFormulaire ? prefixeAssetsSTI() + "videos/tp-formulaire-tableau-autre.mp4" : estTpDisplay ? prefixeAssetsSTI() + "videos/tp-display-float-position.mp4" : estTpTransitions ? prefixeAssetsSTI() + "videos/tp-transitions-animations.mp4" : estJsValidation ? prefixeAssetsSTI() + "videos/validation-nom-prenom-js.mp4" : estCssDisplay ? prefixeAssetsSTI() + "videos/displayanim.mp4" : estPhpSynthese ? prefixeAssetsSTI() + "videos/php-synthese.mp4" : estSqlInit ? resoudreUrlVideoSqlInit() : (estExploreFloat ? resoudreUrlVideoExploreFloat() : (estExploreFlex ? resoudreUrlVideoExploreFlex() : (estSqlSerie6 ? resoudreUrlVideoSqlSerie6() : (estSqlSerie5 ? resoudreUrlVideoSqlSerie5() : (estSqlSerie4 ? resoudreUrlVideoSqlSerie4() : (estSqlSerie3 ? resoudreUrlVideoSqlSerie3() : (estSqlSerie2 ? resoudreUrlVideoSqlSerie2() : (estSqlSerie1 ? resoudreUrlVideoSqlSerie1() : (estHtml5 ? resoudreUrlVideoHtml5() : (estCss3 ? resoudreUrlVideoCss3() : (estJs ? resoudreUrlVideoJs() : (estPhpC ? resoudreUrlVideoPhpCours() : (estSql ? resoudreUrlVideoSql() : (estCssDeco ? resoudreUrlVideoCssDeco() : (estCssPos ? resoudreUrlVideoCssPos() : resoudreUrlVideoGuichet())))))))))))))));
         var css3Qualite = "auto";
         if (estCss3) {
           var prefCss3 = "";
