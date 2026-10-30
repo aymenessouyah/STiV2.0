@@ -44,14 +44,16 @@ test('fichiers d’accès, roue, moteur Cote et fonctions historiques préservé
      (audit de fluidité) ; empreinte réactualisée.
      v557 : admin.html recharge admin.js en ?v=557-perf (quota mesuré en base) ;
      v558 : le même chargeur passe en ?v=558-perf (Storage mesuré aussi) ;
-     empreintes réactualisées. */
+     v560 : la declaration d'encodage est remontee dans les 1024 premiers octets
+     (exigence HTML), comme sur tout le site ; portail.html reflete ce
+     deplacement, le contenu ne change pas. Empreintes réactualisées. */
   const originaux = {
     'assets/js/config.js': '4936f1efc5fde33dc2432dd3a9aa4fc33df77f90b842fe2091a2a5ba2f872a7f',
     'assets/js/supabase-umd.js': '2eebfe06b1b5309985dc1526e8981ea3a18b71beeef83e7f38e04c303e142d6d',
     'assets/js/acces.js': 'f5818327fa1b5fdeb7e33286c406da90d7e476f201d60488ee7b076b7b8a7c56',
     'assets/js/sync-progressions.js': 'c6e36a6f0ebea5e481cfb1b16afb9c0cfefc595ed4de21a1becff5a096d327b6',
     'assets/js/cote-ticker.js': '3c336c6c99466d4222da3db69d5dfb2149fbb2b03fdc02d332026247309d705f',
-    'portail.html': 'f95c5b3422cfda3d5fa75a7b8e20fc41f2d63ab58f24468bd830d187cd722b68',
+    'portail.html': 'cde7e9572be7ff369cc3a810c84f68a479b4f1bd8781d22e123b87dd12df37f7',
     'admin.html': '1590fc89999d6604ab79a8ef462bb522c9b452f78d0163140f31703ee7f7631b',
     'projets/fleurs/controle.js': 'b47f2b11f2b2b0822e0e3afe3a163891f6ef54a7b1d36d46156229cae079ed0c',
     'projets/carte-bancaire/controle.js': '914913cc4fd1671b84cf921eb1c71462950677d00505bf599735d8dda7ae1666'
@@ -204,14 +206,17 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
     assert.equal(sha(chemin), empreinte, chemin);
     assert.doesNotThrow(() => JSON.parse(lire(chemin)), chemin);
   }
+  /* v560 : la declaration d'encodage est remontee dans les 1024 premiers octets
+     sur html-css, javascript, php et sql (exigence HTML) ; aucune question,
+     réponse ni barème n'a été modifié. Empreintes réactualisées. */
   const quiz = {
-    'quiz/html-css.html': '7c27d3fac3ce4e70ca95f8a90a9b97e946b55e3485a02af728e09b3545150acd',
-    'quiz/javascript.html': 'f4219a0a33bd62490ca012036df94434cd1aa18bb3bfed90948132af3bc3f255',
+    'quiz/html-css.html': '1ab5be87f975e95ac0e7806a5702d3940c5755d170b14616b2426a30efd95e4e',
+    'quiz/javascript.html': 'a73c39243eb06c1d96444066e4684e2ecebb092388beff14d2663bec2f8a37a1',
     /* v552 : deux aria-label ajoutés aux boutons icône (lecture à voix haute, fermeture du code) ;
        le contenu des questions n’a pas changé. */
-    'quiz/php.html': 'dea6cf7a48a1ccb404edfa1bef079eb68e3fb62fcf95c5af60aae92fd33a0be3',
+    'quiz/php.html': 'ac52130ad6a6294f44b3b56e67c922caffdc452510427ec55fbc5977e533c3f3',
     'quiz/pp.html': '24afc3a220239461b50b3d4def47180fd8051de5de649a825beb518b0adc89ef',
-    'quiz/sql.html': '624d98bf69cd262d830891f56286cd9e739b3cc6a09ec69d4aec066f4aa0d69b',
+    'quiz/sql.html': 'bdb04edcc0f08b1bf30976757048e90825cef62780a5873d910f01799e199676',
     'quiz/tableaux.html': 'd225e600a925199d472b5386c6fed3d9399d19107bf6ba3343c1c526ad583f8c'
   };
   // Retirer uniquement les passerelles XP explicitement ajoutées : le hash
