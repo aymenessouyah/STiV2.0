@@ -342,9 +342,9 @@ test('le catalogue du site compte la nouvelle capsule', () => {
   const reelle = Math.round(dureeMp4(VIDEO));
   assert.ok(Math.abs(13 * 60 + 34 - reelle) <= 2, `durée annoncée 13:34 vs réelle ${reelle}`);
 
-  assert.ok(index.includes('data-video-filter="all">Toutes (24)</button>'), 'pastille « Toutes »');
+  assert.ok(index.includes('data-video-filter="all">Toutes (25)</button>'), 'pastille « Toutes »');
   assert.ok(index.includes('data-video-filter="php">PHP (5)</button>'), 'pastille PHP');
-  assert.ok(index.includes('id="videosTotalNombre">24<'), 'compteur des capsules');
+  assert.ok(index.includes('id="videosTotalNombre">25<'), 'compteur des capsules');
 
   const admin = lire('assets/js/admin-vues-videos.js');
   assert.ok(admin.includes(`{ id: "${ID}"`), 'le catalogue du tableau de bord suit');

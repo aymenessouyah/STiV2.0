@@ -303,6 +303,22 @@
       codeApercu: 'ch.substring(0, 3) // "Lyc"'
     },
     {
+      /* v565 : capsule « L'objet Date » — new Date, getDate, getMonth (le
+         piège du zéro), getFullYear, toString et l'exemple complet. */
+      id: "date-js",
+      matiere: "javascript",
+      nomMatiere: "JavaScript",
+      badgeClasse: "badge-js",
+      couleur: "#f7df1e",
+      titre: "L'objet Date — le jour, le mois, l'année",
+      dureeTexte: "9:11",
+      srcPrincipal: "assets/videos/DateJS-v565.mp4",
+      srcSecours: "assets/videos/DateJS-v565.mp4",
+      sousTitres: "assets/subtitles/DateJS-fr-v565.vtt",
+      urlCours: "cours/javascript.html#videos",
+      codeApercu: "d.getMonth() + 1 // 9"
+    },
+    {
       /* v549 : capsule « PHP — les variables, la portée et les types ». */
       id: "php-variables",
       matiere: "php",
@@ -948,7 +964,7 @@
      et chaque carte de la grille reçoit un effet de survol différent. L'indice
      est tiré de l'identifiant : stable d'un chargement à l'autre, et deux cartes
      voisines ne retombent pas sur le même effet. */
-  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true };
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true, "fonctions-chaine": true, "date-js": true };
   function estCapsuleVideo(v) {
     var cle = String((v && v.id) || "");
     if (CAPSULES_VIDEO[cle]) return true;
