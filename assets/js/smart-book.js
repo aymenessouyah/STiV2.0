@@ -132,7 +132,11 @@
         + (book.coursPages ? ' + ' + book.coursPages + ' pages de cours' : '')
         + ' + ' + book.recapPages + ' pages de tableaux';
       $('book-boundary').textContent = book.boundary;
+      let nomPdf = 'STI-Smart-Book-' + (id === '3si-2026' ? '3SI' : '4SI') + '-2026.pdf';
+      /* Le nom du fichier est explicite : sans lui, le navigateur fabrique le nom
+         à partir de l'URL et le « ?v=… » du cache finit dans le fichier téléchargé. */
       $('download-book').href = book.pdf + '?v=' + REVUE_LIVRE;
+      $('download-book').setAttribute('download', nomPdf);
       $('preview-3si').setAttribute('aria-pressed', String(id === '3si-2026'));
       $('preview-4si').setAttribute('aria-pressed', String(id === '4si-2026'));
       ready = true; setControls(true); renderCatalog();

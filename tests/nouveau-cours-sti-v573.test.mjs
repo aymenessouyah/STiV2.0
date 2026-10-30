@@ -70,7 +70,7 @@ test('le cours est relié au site : accueil, cours HTML5, plan du site et hors-l
   assert.ok(delta.includes('"./' + PAGE + '"'), 'mise à jour incrémentale');
   assert.ok(complet.includes('"./' + PAGE + '"'), 'paquet hors-ligne complet');
   assert.ok(sw.includes('"./assets/css/cours-sti.css"'), 'feuille de style du cours');
-  assert.match(sw, /url: "\.\/livre-smart\.html", revision: "livre-smart-v575"/);
+  assert.match(sw, /url: "\.\/livre-smart\.html", revision: "livre-smart-v576"/);
   assert.match(sw, /url: "\.\/assets\/data\/smart-book-3si-2026\.json", revision: "livre-smart-v575"/);
 
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
