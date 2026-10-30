@@ -195,7 +195,7 @@
         </nav>
 
         <!-- Mobile Menu Button -->
-        <button onclick="toggleMobileMenu()" class="md:hidden text-gray-600 hover:text-sage-600 focus:outline-none p-2">
+        <button onclick="toggleMobileMenu()" aria-label="Ouvrir le menu" class="md:hidden text-gray-600 hover:text-sage-600 focus:outline-none p-2">
           <i class="fa-solid fa-bars text-xl"></i>
         </button>
       </div>
@@ -326,7 +326,7 @@
             <figure class="bg-warmbg p-4 rounded-xl border border-sage-100 flex flex-col justify-between">
               <div class="relative rounded-lg overflow-hidden bg-black/90 aspect-video flex items-center justify-center">
                 <!-- Video tag as specified in document -->
-                <video id="flowerVideo" controls width="100%" class="w-full h-full object-cover" onplay="notifyMedia('Vidéo en cours de lecture')" onpause="notifyMedia('Vidéo mise en pause')">
+                <video id="flowerVideo" controls preload="metadata" width="100%" class="w-full h-full object-cover" onplay="notifyMedia('Vidéo en cours de lecture')" onpause="notifyMedia('Vidéo mise en pause')">
                   <source src="../assets/video/flower.webm" type="video/webm" />
                   Votre navigateur ne prend pas en charge les vidéos HTML5. Voici le lien de téléchargement 
                   <a href="../assets/video/flower.webm" class="underline text-rosepetal-500">WEBM</a>.
@@ -527,7 +527,7 @@
             <i class="fa-solid fa-bell"></i>
             <span id="toastText">Événement détecté</span>
           </div>
-          <button onclick="closeToast()" class="text-white hover:text-gray-200">
+          <button onclick="closeToast()" aria-label="Fermer la notification" class="text-white hover:text-gray-200">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>

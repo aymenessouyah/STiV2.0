@@ -142,7 +142,7 @@ test('logos, visionneuse et Cote disponibles dans le cache complet sans médias 
       : chemin === 'cours/css3.html' ? 'tp-transitions-v512'
       : chemin === 'cours/html5.html' ? 'tp-display-v510'
       : chemin === 'cours/javascript.html' ? 'console-variables-v548'
-      : chemin === 'cours/php.html' ? 'boucles-et-effets-v550'
+      : chemin === 'cours/php.html' ? 'audit-plateforme-v552'
       : chemin.startsWith('cours/') ? 'retrait-fond-cours-v508' : 'progression-chapitres-v492';
     assert.ok(delta.includes(`url: "./${chemin}", revision: "${revision}"`), `révision de ${chemin}`);
   }
@@ -187,7 +187,9 @@ test('banques et données JSON d’origine conservées ; retour de quiz ajouté 
   const quiz = {
     'quiz/html-css.html': '7c27d3fac3ce4e70ca95f8a90a9b97e946b55e3485a02af728e09b3545150acd',
     'quiz/javascript.html': 'f4219a0a33bd62490ca012036df94434cd1aa18bb3bfed90948132af3bc3f255',
-    'quiz/php.html': '741e190c6f7f9270a5bcf9b6c2ecf72cee5585521b49c3f71edef1617f71cad0',
+    /* v552 : deux aria-label ajoutés aux boutons icône (lecture à voix haute, fermeture du code) ;
+       le contenu des questions n’a pas changé. */
+    'quiz/php.html': 'dea6cf7a48a1ccb404edfa1bef079eb68e3fb62fcf95c5af60aae92fd33a0be3',
     'quiz/pp.html': '24afc3a220239461b50b3d4def47180fd8051de5de649a825beb518b0adc89ef',
     'quiz/sql.html': '624d98bf69cd262d830891f56286cd9e739b3cc6a09ec69d4aec066f4aa0d69b',
     'quiz/tableaux.html': 'd225e600a925199d472b5386c6fed3d9399d19107bf6ba3343c1c526ad583f8c'

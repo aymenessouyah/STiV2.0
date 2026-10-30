@@ -24,7 +24,7 @@ ICI = os.path.dirname(os.path.abspath(__file__))
 RACINE = os.path.normpath(os.path.join(ICI, "..", ".."))
 MANIFESTE = os.path.join(RACINE, "offline-complete-manifest.json")
 
-VERSION = "v551-sti-atelier-v384"
+VERSION = "v552-sti-atelier-v385"
 PORTEE = "installation-complete-windows-sans-doublons-de-casse"
 
 
