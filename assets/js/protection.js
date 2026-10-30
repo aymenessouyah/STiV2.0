@@ -1196,19 +1196,19 @@
           { t: 613.95, short: "10. Transition & animation", label: "10:14 · 10. Passons aux transitions, @keyframes, animations, synthèse et conclusion", sel: "#point-8" }
         ],
         "javascript-cours": [
-          { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#intro" },
-          { t: 62.62, short: "2. Où écrire JS", label: "01:02 · 2. Où écrire le code JS (interne, externe, inline)", sel: "#insertion" },
-          { t: 112.35, short: "3. Variables & Types", label: "01:52 · 3. Variables (let, const, var) & Types (typeof)", sel: "#variables" },
-          { t: 188.60, short: "4. Opérateurs", label: "03:08 · 4. Opérateurs arithmétiques, comparaison (!=) et logiques", sel: "#operateurs" },
-          { t: 232.75, short: "5. Entrées / sorties", label: "03:52 · 5. Entrées / sorties & Comparaison document.write / innerHTML / textContent", sel: "#es" },
-          { t: 319.64, short: "6. Conditions", label: "05:19 · 6. Structures conditionnelles (if/else, switch & démo moyenne)", sel: "#conditions" },
-          { t: 372.28, short: "7. Boucles", label: "06:12 · 7. Les boucles (for, while, do...while & table de multiplication)", sel: "#boucles" },
-          { t: 425.51, short: "8. Chaînes (String)", label: "07:05 · 8. Chaînes : substring détaillé, String.fromCharCode(), indexOf, trim", sel: "#chaines" },
-          { t: 574.70, short: "9. Tableaux & Fonctions", label: "09:34 · 9. Tableaux (Array : length, push, pop) et Fonctions (function, return)", sel: "#tableaux" },
-          { t: 609.66, short: "10. Objet Date", label: "10:09 · 10. L'objet Date (9 constructeurs new Date et les 3 formats ISO / Short / Long)", sel: "#date" },
-          { t: 667.01, short: "11. DOM & Multimédia", label: "11:07 · 11. DOM (getElementById, getElementsByName), style / bgColor / borderColor & play() / pause()", sel: "#dom" },
-          { t: 731.58, short: "12. Événements", label: "12:11 · 12. Les événements HTML (onclick, oninput, onchange, onsubmit, onfocus, onblur)", sel: "#evenements" },
-          { t: 765.55, short: "13. Validation STI", label: "12:45 · 13. Exemple complet : validation d'un formulaire STI (estChiffres, verifier, borderColor)", sel: "#formulaire" }
+          { t: 0.00, short: "1. Rôle de JS", label: "00:00 · 1. Rôle de JavaScript (HTML, CSS, JS)", sel: "#sec1" },
+          { t: 62.62, short: "2. Où écrire JS", label: "01:02 · 2. Où écrire le code JS (interne, externe, inline)", sel: "#sec2" },
+          { t: 112.35, short: "3. Variables & Types", label: "01:52 · 3. Variables (let, const, var) & Types (typeof)", sel: "#sec3" },
+          { t: 188.60, short: "4. Opérateurs", label: "03:08 · 4. Opérateurs arithmétiques, comparaison (!=) et logiques", sel: "#sec4" },
+          { t: 232.75, short: "5. Entrées / sorties", label: "03:52 · 5. Entrées / sorties & Comparaison document.write / innerHTML / textContent", sel: "#sec5" },
+          { t: 319.64, short: "6. Conditions", label: "05:19 · 6. Structures conditionnelles (if/else, switch & démo moyenne)", sel: "#sec12" },
+          { t: 372.28, short: "7. Boucles", label: "06:12 · 7. Les boucles (for, while, do...while & table de multiplication)", sel: "#sec13" },
+          { t: 425.51, short: "8. Chaînes (String)", label: "07:05 · 8. Chaînes : substring détaillé, String.fromCharCode(), indexOf, trim", sel: "#sec9" },
+          { t: 574.70, short: "9. Tableaux & Fonctions", label: "09:34 · 9. Tableaux (Array : length, push, pop) et Fonctions (function, return)", sel: "#sec10" },
+          { t: 609.66, short: "10. Objet Date", label: "10:09 · 10. L'objet Date (9 constructeurs new Date et les 3 formats ISO / Short / Long)", sel: "#sec11" },
+          { t: 667.01, short: "11. DOM & Multimédia", label: "11:07 · 11. DOM (getElementById, getElementsByName), style / bgColor / borderColor & play() / pause()", sel: "#sec15" },
+          { t: 731.58, short: "12. Événements", label: "12:11 · 12. Les événements HTML (onclick, oninput, onchange, onsubmit, onfocus, onblur)", sel: "#sec15" },
+          { t: 765.55, short: "13. Validation STI", label: "12:45 · 13. Exemple complet : validation d'un formulaire STI (estChiffres, verifier, borderColor)", sel: "#exercices" }
         ],
         "php-cours": [
           { t: 0.00, short: "I. Définition", label: "00:00 · I. Définition de PHP & Client-Serveur", sel: "#s1" },
@@ -1518,6 +1518,135 @@
         }
         return idx;
       }
+
+      /* ── v551 · le défilement suit la vidéo, pour chaque vidéo ──
+         1. Une vidéo sans repères reçoit un découpage calculé sur sa durée réelle :
+            le bandeau du lecteur avance donc avec la lecture, comme les autres.
+         2. Sur une page de cours, la page défile vers la section expliquée quand la
+            vidéo avance : jamais dans la fenêtre du lecteur, jamais pendant que
+            l’élève fait défiler lui-même, et sans mouvement s’il l’a demandé. */
+      var SLUGS_VIDEO_STI = Object.keys(STI_CHAPITRES_MEDIA).concat([
+        "tp-evenements-liens", "tp-formulaire-tableau-autre",
+        "tp-display-float-position", "tp-transitions-animations"
+      ]);
+
+      function mmssSTI(sec) {
+        var t = Math.max(0, Math.round(Number(sec) || 0));
+        var m = Math.floor(t / 60), r = t % 60;
+        return (m < 10 ? "0" + m : String(m)) + ":" + (r < 10 ? "0" + r : String(r));
+      }
+
+      function chapitresAutoSTI(duree) {
+        var total = Number(duree) || 0, liste = [];
+        if (!isFinite(total) || !(total >= 45)) return liste;
+        var parts = Math.max(2, Math.min(12, Math.round(total / 90)));
+        var pas = total / parts;
+        for (var i = 0; i < parts; i++) {
+          var t = Math.round(i * pas * 10) / 10;
+          liste.push({
+            t: t,
+            short: "Partie " + (i + 1),
+            label: mmssSTI(t) + " · Partie " + (i + 1) + " sur " + parts
+          });
+        }
+        return liste;
+      }
+
+      function poserChapitresAutoSTI(slug, duree) {
+        var actuels = (slug && STI_CHAPITRES_MEDIA[slug]) || [];
+        if (actuels.length) return actuels;
+        var crees = chapitresAutoSTI(duree);
+        if (!slug || !crees.length) return actuels;
+        STI_CHAPITRES_MEDIA[slug] = crees;
+        return crees;
+      }
+
+      function slugVideoSTI(video) {
+        if (!video) return "";
+        var direct = String(video.getAttribute("data-video-id") || "").trim().toLowerCase();
+        if (direct && SLUGS_VIDEO_STI.indexOf(direct) !== -1) return direct;
+        var source = String(video.currentSrc || video.getAttribute("src") || video.src || "");
+        source = source.split("?")[0].split("#")[0];
+        var fichier = source.split("/").pop().toLowerCase().replace(/\.(mp4|webm|ogg|m3u8)$/i, "");
+        if (!fichier) return "";
+        var i;
+        for (i = 0; i < SLUGS_VIDEO_STI.length; i++) {
+          if (fichier === SLUGS_VIDEO_STI[i] || fichier.indexOf(SLUGS_VIDEO_STI[i] + "-") === 0) return SLUGS_VIDEO_STI[i];
+        }
+        var compact = fichier.replace(/-fr\b/g, "").replace(/-v\d+.*$/, "").replace(/-/g, "");
+        for (i = 0; i < SLUGS_VIDEO_STI.length; i++) {
+          if (compact && compact === SLUGS_VIDEO_STI[i].replace(/-/g, "")) return SLUGS_VIDEO_STI[i];
+        }
+        return "";
+      }
+
+      var SUIVI_PAGE_STI = { suspendu: 0 };
+
+      function suspendreSuiviPageSTI() {
+        SUIVI_PAGE_STI.suspendu = Date.now();
+      }
+
+      function suivreSectionVideoSTI(video, chap) {
+        if (!chap || !chap.sel || !video) return;
+        if (video.closest && video.closest("#sti-video-modal-overlay, .sti-video-pas-a-pas-box")) return;
+        if (document.fullscreenElement || document.webkitFullscreenElement) return;
+        if (document.visibilityState && document.visibilityState !== "visible") return;
+        if (Date.now() - SUIVI_PAGE_STI.suspendu < 9000) return;
+        var cible = document.querySelector(chap.sel);
+        if (!cible) return;
+        var position = cible.getBoundingClientRect();
+        if (Math.abs(position.top) < 140) return;
+        var doux = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+        try {
+          cible.scrollIntoView({ behavior: doux ? "smooth" : "auto", block: "start" });
+        } catch (eDefile) {
+          try { cible.scrollIntoView(); } catch (eDefile2) {}
+        }
+      }
+
+      function poserSuiviPageSTI(video) {
+        if (!video || video.__stiSuiviPage) return;
+        video.__stiSuiviPage = true;
+        var dernier = -1;
+        function avancer() {
+          if (video.paused || video.seeking || !video.__stiSlug) return;
+          var chaps = STI_CHAPITRES_MEDIA[video.__stiSlug] || [];
+          if (!chaps.length) return;
+          var idx = trouverIndexChapitreActif(chaps, video.currentTime);
+          if (idx === dernier) return;
+          dernier = idx;
+          suivreSectionVideoSTI(video, chaps[idx]);
+        }
+        video.addEventListener("loadedmetadata", function () {
+          video.__stiSlug = slugVideoSTI(video);
+          poserChapitresAutoSTI(video.__stiSlug, video.duration || 0);
+        });
+        video.addEventListener("play", function () {
+          if (!video.__stiSlug) video.__stiSlug = slugVideoSTI(video);
+          var chaps = STI_CHAPITRES_MEDIA[video.__stiSlug] || [];
+          dernier = trouverIndexChapitreActif(chaps, video.currentTime);
+        });
+        video.addEventListener("timeupdate", avancer);
+      }
+
+      function brancherSuiviVideoSTI() {
+        var videos = document.querySelectorAll("video"), i;
+        for (i = 0; i < videos.length; i++) {
+          if (videos[i].id === "sti-video-modal-player") continue;
+          poserSuiviPageSTI(videos[i]);
+        }
+      }
+
+      (function () {
+        var noter = function () { suspendreSuiviPageSTI(); };
+        window.addEventListener("wheel", noter, { passive: true });
+        window.addEventListener("touchmove", noter, { passive: true });
+        window.addEventListener("keydown", function (ev) {
+          var k = ev.key || "";
+          if (k === "PageDown" || k === "PageUp" || k === "ArrowDown" || k === "ArrowUp" ||
+              k === "Home" || k === "End" || k === " " || k === "Spacebar") noter();
+        }, true);
+      })();
 
       /* ── Suivi de progression des vidéos (.mp4) et cours vocaux (.mp3) : ✅ Vu / ⏳ En cours ── */
       var CLE_PROG_MEDIA = "sti-media-prog-v1";
@@ -2592,6 +2721,54 @@
           var mChapNext = document.getElementById("sti-video-modal-chap-next");
           var mChapPills = document.getElementById("sti-video-modal-chap-pills");
           var mDernierChapitre = -1;
+
+          /* v551 : une vidéo qui n’a pas de repères en reçoit, calculés sur sa durée
+             réelle dès que les métadonnées arrivent. Le bandeau existe alors pour
+             chaque vidéo et avance avec la lecture comme les capsules découpées. */
+          function remplirBandeauChapitresModale(chaps) {
+            if (mChapSel) {
+              mChapSel.innerHTML = chaps.map(function (c, i) {
+                return '<option value="' + i + '">📑 ' + echapperHtmlMediaSTI(c.label) + '</option>';
+              }).join("");
+              mChapSel.style.display = chaps.length ? "" : "none";
+            }
+            if (mChapPills) {
+              mChapPills.innerHTML = chaps.map(function (c, i) {
+                return '<button type="button" data-chap-idx="' + i + '"' + (i === 0 ? ' aria-current="true"' : '') +
+                  ' title="' + echapperHtmlMediaSTI(c.label) + '" style="flex-shrink:0;padding:4px 10px;border-radius:999px;border:1.5px solid ' +
+                  (i === 0 ? '#86efac' : '#334155') + ';background:' + (i === 0 ? '#177245' : '#1e293b') + ';color:' +
+                  (i === 0 ? '#ffffff' : '#cbd5e1') + ';font:800 11px/1.1 system-ui,sans-serif;cursor:pointer;white-space:nowrap;">' +
+                  echapperHtmlMediaSTI(c.short || c.label) + '</button>';
+              }).join("");
+              mChapPills.style.display = chaps.length ? "flex" : "none";
+              var boutons = mChapPills.querySelectorAll("button[data-chap-idx]");
+              for (var bc = 0; bc < boutons.length; bc++) {
+                (function (btn) {
+                  btn.addEventListener("click", function (ev) {
+                    ev.stopPropagation();
+                    sauterChapitreModale(parseInt(btn.getAttribute("data-chap-idx"), 10) || 0);
+                    faireDefilerChapitreActifSTI(mChapPills, btn);
+                  });
+                })(boutons[bc]);
+              }
+            }
+            mDernierChapitre = -1;
+          }
+
+          if (mVid) {
+            mVid.addEventListener("loadedmetadata", function () {
+              var slugBandeau = overlay.getAttribute("data-slug") || "";
+              if (!slugBandeau) return;
+              var avant = (STI_CHAPITRES_MEDIA[slugBandeau] || []).length;
+              var chapsBandeau = poserChapitresAutoSTI(slugBandeau, mVid.duration || 0);
+              if (!avant && chapsBandeau.length) {
+                remplirBandeauChapitresModale(chapsBandeau);
+                var idxBandeau = trouverIndexChapitreActif(chapsBandeau, mVid.currentTime || 0);
+                var premier = mChapPills && mChapPills.querySelector('button[data-chap-idx="' + idxBandeau + '"]');
+                if (premier) faireDefilerChapitreActifSTI(mChapPills, premier);
+              }
+            });
+          }
 
           function sauterChapitreModale(idxCible) {
             var chapsAct = STI_CHAPITRES_MEDIA[overlay.getAttribute("data-slug") || ""] || [];
@@ -4020,6 +4197,7 @@
     installerMasquageAdressePC();
     installerPauseQRVideosPageSTI();
     installerVideosPasAPasSTI();
+    brancherSuiviVideoSTI();
     installerGuideVocalEnParlant();
   }
 

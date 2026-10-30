@@ -363,5 +363,5 @@ test('le manifeste hors ligne contient la vidéo, ses sous-titres et ses emprein
     const sha = createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${blob.length}\0`), blob])).digest('hex');
     assert.equal(entree.gitSha, sha, `sha1 de ${chemin}`);
   }
-  assert.match(manifeste.version, /^v550/);
+  assert.match(manifeste.version, /^v551/);
 });
