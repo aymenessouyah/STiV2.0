@@ -253,14 +253,14 @@
       codeApercu: "Math.floor(Math.random() * (max - min + 1)) + min"
     },
     {
-      /* v537 : capsule « La boucle Pour » — le sac, l'ascenseur et le compteur. */
+      /* v540 : capsule « La boucle Pour » — de la variable à la boucle. */
       id: "boucle-pour",
       matiere: "javascript",
       nomMatiere: "JavaScript",
       badgeClasse: "badge-js",
       couleur: "#f7df1e",
-      titre: "La boucle Pour — le sac et l'ascenseur",
-      dureeTexte: "4:06",
+      titre: "La boucle Pour — de la variable à la boucle",
+      dureeTexte: "5:09",
       srcPrincipal: "assets/videos/BouclePour.mp4",
       srcSecours: "assets/videos/BouclePour.mp4",
       sousTitres: "assets/subtitles/BouclePour-fr.vtt",

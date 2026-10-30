@@ -1,253 +1,317 @@
 WEBVTT
 
-00:00:01.200 --> 00:00:02.578
-Voilà mon problème.
+00:00:01.200 --> 00:00:03.428
+Voici mon immeuble : quatre étages.
 
-00:00:02.578 --> 00:00:08.091
-Cet immeuble a quatre étages, et sur
-chaque étage il y a un nombre : quatre,
+00:00:03.428 --> 00:00:08.330
+Au rez-de-chaussée, il y a quatre. Au
+premier, sept. Au deuxième, deux. Et au
 
-00:00:08.091 --> 00:00:09.324
-sept, deux, neuf.
+00:00:08.330 --> 00:00:09.348
+troisième, neuf.
 
-00:00:09.324 --> 00:00:15.054
-Tous ces nombres, rangés ensemble, ça
-s'appelle un tableau. Et dans mon carnet,
+00:00:09.348 --> 00:00:14.123
+Quatre nombres, rangés dans cet ordre :
+c'est un tableau. Et ce tableau, je
 
-00:00:15.054 --> 00:00:16.722
-ce tableau s'appelle T.
+00:00:14.123 --> 00:00:14.886
+l'appelle T.
 
-00:00:16.722 --> 00:00:22.815
-Ce que je dois calculer, c'est la somme de
-tous ces nombres. Cette somme, je vais la
+00:00:14.886 --> 00:00:19.852
+Ce que je veux, c'est la somme de ces
+quatre nombres : quatre, plus sept, plus
 
-00:00:22.815 --> 00:00:23.831
-mettre dans S.
+00:00:19.852 --> 00:00:20.870
+deux, plus neuf.
 
-00:00:23.831 --> 00:00:29.924
+00:00:20.870 --> 00:00:24.690
+Et je veux ranger le résultat dans une
+case que j'appelle S.
+
+00:00:24.690 --> 00:00:30.037
 S égal T crochet zéro, plus T crochet un,
 plus T crochet deux, plus T crochet trois.
 
-00:00:29.924 --> 00:00:32.535
-Alors, comment je vais m'y prendre ?
+00:00:30.037 --> 00:00:33.220
+La question, c'est : comment je vais m'y
+prendre ?
 
-00:00:33.085 --> 00:00:36.385
-Comme j'ai besoin de ramasser, je prends
-un sac.
+00:00:33.770 --> 00:00:36.808
+Première idée : il me faut une case
+mémoire.
 
-00:00:36.385 --> 00:00:37.347
-Voilà mon sac.
+00:00:36.808 --> 00:00:38.396
+Un sac, si vous voulez.
 
-00:00:37.347 --> 00:00:41.266
-Pour l'instant il est vide : je n'ai
+00:00:38.396 --> 00:00:41.503
+Une boîte, avec un nom, et une valeur
+dedans.
+
+00:00:41.503 --> 00:00:45.438
+Au début, mon sac est vide : je n'ai
 encore rien ramassé.
 
-00:00:41.266 --> 00:00:44.909
-Mais attention : le contenu de ce sac est
-changeable.
+00:00:45.438 --> 00:00:51.306
+Maintenant, j'y mets quatre. Regardez : le
+sac n'a pas changé, mais son contenu, oui.
 
-00:00:44.909 --> 00:00:50.546
-Je peux y mettre une chose, puis une autre
-à la place, autant de fois que je veux.
+00:00:51.306 --> 00:00:56.554
+Je change d'avis : je retire quatre, je
+mets sept. Même sac, même nom, autre
 
-00:00:50.546 --> 00:00:52.608
-Changeable… ah, une variable !
+00:00:56.554 --> 00:00:57.037
+valeur.
 
-00:00:52.608 --> 00:00:58.039
-Car en programmation, une variable c'est
-exactement ça : une boîte avec un nom,
+00:00:57.037 --> 00:01:02.560
+C'est exactement ça, une variable : une
+boîte avec un nom, un contenu qu'on peut
 
-00:00:58.039 --> 00:01:03.814
-dans laquelle je range une valeur, et dont
-je peux changer le contenu quand je veux.
+00:01:02.560 --> 00:01:05.391
+lire, et un contenu qu'on peut remplacer.
 
-00:01:03.814 --> 00:01:08.832
-Un sac, c'est une variable : il a un
-contenu, et ce contenu peut changer.
+00:01:05.391 --> 00:01:07.462
+Le nom reste, la valeur bouge.
 
-00:01:09.382 --> 00:01:12.390
-Seulement voilà : je possède plusieurs
-sacs.
+00:01:08.012 --> 00:01:11.964
+Mais attention : dans un immeuble, il y a
+beaucoup de sacs.
 
-00:01:12.390 --> 00:01:17.450
-Un sac pour chaque étage, un sac pour
-chaque client : trois sacs, et trois
+00:01:11.964 --> 00:01:13.974
+Un par étage, un par habitant.
 
-00:01:17.450 --> 00:01:18.818
-contenus différents.
-
-00:01:18.818 --> 00:01:24.288
+00:01:13.974 --> 00:01:18.395
 Si je dis simplement « le sac », personne
-ne sait duquel je parle. L'ordinateur,
+ne sait duquel je parle.
 
-00:01:24.288 --> 00:01:25.177
-encore moins.
+00:01:18.395 --> 00:01:20.740
+L'ordinateur, encore moins que moi.
 
-00:01:25.177 --> 00:01:28.253
-Alors je dois les distinguer. Comment
-faire ?
+00:01:20.740 --> 00:01:26.367
+Alors je donne un nom à celui que je vais
+utiliser : une étiquette, et je m'y tiens.
 
-00:01:28.253 --> 00:01:31.262
-Mmmm… ah, voilà : je vais lui donner un
-nom.
+00:01:26.367 --> 00:01:28.377
+Il s'appelle S. S comme somme.
 
-00:01:31.262 --> 00:01:36.117
-Une étiquette sur le sac : un seul nom, le
-même dans tout le programme.
+00:01:28.377 --> 00:01:33.535
+Et maintenant, quand j'écris S dans mon
+programme, c'est ce sac-là, et pas un
 
-00:01:36.117 --> 00:01:38.031
-Je le nomme S. S, comme sac.
+00:01:33.535 --> 00:01:33.937
+autre.
 
-00:01:38.031 --> 00:01:43.569
-Et maintenant, quand j'écris S, c'est de
-ce sac-là que je parle. Je m'en servirai
+00:01:34.488 --> 00:01:37.285
+Passons à l'idée la plus importante.
 
-00:01:43.569 --> 00:01:44.595
-jusqu'à la fin.
+00:01:37.285 --> 00:01:43.268
+S, je peux le lire. S, je peux aussi
+l'écrire. Et je peux faire les deux dans
 
-00:01:45.146 --> 00:01:47.757
-Je commence. Oh, c'est un immeuble !
+00:01:43.268 --> 00:01:44.356
+la même ligne.
 
-00:01:47.757 --> 00:01:50.223
-Donc je dois utiliser l'ascenseur.
+00:01:44.356 --> 00:01:50.650
+Mon sac vaut zéro. Je lis : zéro. J'ajoute
+quatre : quatre. J'écris dans le sac :
 
-00:01:50.223 --> 00:01:53.052
-Mais attends, je dois réfléchir un peu.
+00:01:50.650 --> 00:01:51.194
+quatre.
 
-00:01:53.052 --> 00:01:54.430
-Que dois-je faire ?
+00:01:51.194 --> 00:01:57.799
+Je recommence : je lis S, qui vaut quatre.
+J'ajoute sept : onze. J'écris onze dans S.
 
-00:01:54.430 --> 00:01:57.403
-Et que dois-je faire avec chaque client ?
+00:01:57.799 --> 00:02:02.849
+Le nouveau contenu, c'est l'ancien
+contenu, plus ce que j'ajoute.
 
-00:01:57.403 --> 00:01:57.766
-Mmmm.
+00:02:02.849 --> 00:02:06.035
+Ça s'écrit : S égal S plus quelque chose.
 
-00:01:58.316 --> 00:02:01.458
-Je prends l'ascenseur, et je mets étage
-un.
+00:02:06.035 --> 00:02:12.174
+Et ça ne tourne pas en rond : le S de
+droite, c'est l'ancienne valeur ; le S de
 
-00:02:01.458 --> 00:02:06.208
-La porte est ouverte : donc je ramasse ce
-qu'il y a dans l'étage,
+00:02:12.174 --> 00:02:14.194
+gauche, c'est la nouvelle.
 
-00:02:06.208 --> 00:02:08.181
-et je l'ajoute à mon sac S.
+00:02:14.744 --> 00:02:18.070
+J'ai mon sac, j'ai mon tableau. Il reste à
+monter.
 
-00:02:08.181 --> 00:02:13.881
-Le nouveau contenu du sac, c'est l'ancien
-contenu plus ce que j'ai trouvé dans
+00:02:18.070 --> 00:02:23.524
+Quatre étages, quatre cases : je vais les
+visiter un par un, et l'ascenseur va m'y
 
-00:02:13.881 --> 00:02:15.343
-l'étage numéro zéro.
+00:02:23.524 --> 00:02:23.923
+aider.
 
-00:02:15.343 --> 00:02:18.851
-Mmmm… mais pourquoi j'écris toute cette
-phrase ?
+00:02:23.923 --> 00:02:28.979
+Mais avant de partir, une question : à
+chaque étage, qu'est-ce que je fais ?
 
-00:02:18.851 --> 00:02:22.431
-Donc je vais dire : S égal S plus T
+00:02:28.979 --> 00:02:31.174
+Réponse : toujours la même chose.
+
+00:02:31.174 --> 00:02:36.362
+J'ouvre la porte, je prends la valeur de
+l'étage, et je l'ajoute dans mon sac.
+
+00:02:36.911 --> 00:02:38.630
+Allons-y. Étage zéro.
+
+00:02:38.630 --> 00:02:43.376
+La porte s'ouvre : la case T crochet zéro
+contient quatre.
+
+00:02:43.376 --> 00:02:48.859
+Je lis mon sac : zéro. J'ajoute quatre.
+J'écris quatre dans le sac.
+
+00:02:48.859 --> 00:02:52.950
+En une seule ligne : S égal S plus T
 crochet zéro.
 
-00:02:22.431 --> 00:02:25.866
-Et oui, ça marche ! Donc je passe à
-l'étage un.
+00:02:52.950 --> 00:02:57.124
+Et voilà : mon sac contient quatre. Je
+peux monter.
 
-00:02:26.416 --> 00:02:28.815
-Je prends l'ascenseur et j'avance.
+00:02:57.674 --> 00:03:00.333
+Étage un. La porte s'ouvre : sept.
 
-00:02:28.815 --> 00:02:32.978
-Ah… c'est moi qui avance, ou c'est
-l'ascenseur qui avance ?
+00:03:00.333 --> 00:03:04.244
+S égal S plus T crochet un. Mon sac
+contient onze.
 
-00:02:32.978 --> 00:02:34.812
-Et oui, c'est l'ascenseur.
+00:03:04.244 --> 00:03:08.624
+Étage deux : deux. S égal S plus T crochet
+deux. Treize.
 
-00:02:34.812 --> 00:02:37.846
-Mais il est en train de compter les
+00:03:08.624 --> 00:03:11.049
+Étage trois : neuf. Vingt-deux.
+
+00:03:11.049 --> 00:03:15.038
+Et là, je m'arrête et je regarde ce que
+j'ai écrit.
+
+00:03:15.038 --> 00:03:21.061
+Quatre lignes. Quatre fois la même ligne,
+avec juste le numéro de l'étage qui
+
+00:03:21.061 --> 00:03:21.608
+change.
+
+00:03:21.608 --> 00:03:25.050
+Ça marche… mais ça se voit que je me
+répète.
+
+00:03:25.601 --> 00:03:28.313
+Imaginons maintenant un immeuble de cent
 étages.
 
-00:02:37.846 --> 00:02:40.104
-Donc on va utiliser un compteur.
+00:03:28.313 --> 00:03:31.815
+Sans boucle, je dois écrire une ligne par
+étage : cent lignes.
 
-00:02:40.654 --> 00:02:41.775
-Et ça marche.
+00:03:31.815 --> 00:03:33.397
+Mille étages ? Mille lignes.
 
-00:02:41.775 --> 00:02:46.171
-Je répète la même opération dans l'étage
-numéro un.
+00:03:33.397 --> 00:03:37.408
+Et le jour où l'immeuble gagne un étage,
+il faut encore en ajouter une.
 
-00:02:46.171 --> 00:02:48.757
-Attends… j'ai dit : je répète.
+00:03:37.408 --> 00:03:41.136
+Et si je me trompe sur une seule ligne,
+tout le résultat est faux.
 
-00:02:48.757 --> 00:02:53.671
-La première fois j'ai écrit S égal S plus
-T crochet zéro.
+00:03:41.136 --> 00:03:44.752
+Recopier, ce n'est pas programmer : c'est
+du travail d'escargot.
 
-00:02:53.671 --> 00:02:57.291
-Et maintenant, S égal S plus T crochet un.
+00:03:44.752 --> 00:03:49.441
+Ce que je veux, c'est écrire le geste une
+seule fois, et demander à l'ordinateur de
 
-00:02:57.841 --> 00:02:59.476
-Attends, ça se répète !
+00:03:49.441 --> 00:03:51.079
+le répéter pour chaque étage.
 
-00:02:59.476 --> 00:03:03.244
-Donc j'écris : S égal S plus T crochet
-quelque chose.
+00:03:51.079 --> 00:03:53.395
+C'est exactement le travail d'une boucle.
 
-00:03:03.244 --> 00:03:06.301
-Mmmm… c'est quoi, alors, ce quelque chose
-?
+00:03:53.945 --> 00:03:56.535
+Alors, quel est le geste, exactement ?
 
-00:03:06.301 --> 00:03:09.358
-Quand le compteur est à zéro, j'écris
-zéro.
+00:03:56.535 --> 00:04:00.283
+Prendre la valeur de l'étage, et l'ajouter
+dans le sac.
 
-00:03:09.358 --> 00:03:11.704
-Et quand il est à un, je mets un.
+00:04:00.283 --> 00:04:04.850
+Une seule chose change d'un étage à
+l'autre : le numéro de la case.
 
-00:03:11.704 --> 00:03:16.254
-Et bien voilà : ce quelque chose, c'est
-bel et bien le compteur.
+00:04:04.850 --> 00:04:07.372
+Zéro, puis un, puis deux, puis trois.
 
-00:03:16.805 --> 00:03:19.154
-Attends, j'écris le bloc.
+00:04:07.372 --> 00:04:11.665
+Et ce numéro, l'ascenseur le connaît déjà
+: c'est son compteur.
 
-00:03:19.154 --> 00:03:23.477
-Donc c'est : S égal S plus T crochet
-compteur.
+00:04:11.665 --> 00:04:15.550
+Donc le geste s'écrit : S égal S plus T
+crochet compteur.
 
-00:03:23.477 --> 00:03:27.893
-Voilà le bloc, tout seul, entre deux
-accolades.
+00:04:15.550 --> 00:04:18.413
+Voilà le bloc, seul, entre deux accolades.
 
-00:03:28.442 --> 00:03:33.101
-Et bien c'est vrai. Mais combien de fois
-je vais répéter ça ?
+00:04:18.413 --> 00:04:20.253
+C'est lui qu'on va répéter.
 
-00:03:33.101 --> 00:03:37.073
-Et est-ce qu'il y a un risque d'arrêt
-avant la fin ?
+00:04:20.803 --> 00:04:22.726
+Il ne reste qu'à l'entourer.
 
-00:03:37.073 --> 00:03:38.829
-Donc je dois compléter.
+00:04:22.726 --> 00:04:26.848
+Pour compteur de zéro à n moins un, faire
+le bloc. Fin Pour.
 
-00:03:38.829 --> 00:03:43.183
-Il me faut une structure répétitive,
-itérative, complète.
+00:04:26.848 --> 00:04:30.076
+Trois choses sont dites, et les trois
+comptent.
 
-00:03:43.183 --> 00:03:45.932
-C'est-à-dire : je complète à la fin.
+00:04:30.076 --> 00:04:32.412
+Le départ : le compteur vaut zéro.
 
-00:03:45.932 --> 00:03:51.966
-Et bien, je l'ai trouvée : c'est la boucle
-Pour, que je vais engendrer au bloc.
+00:04:32.412 --> 00:04:37.358
+La condition : tant que le compteur reste
+plus petit que n, on continue.
 
-00:03:51.966 --> 00:03:55.021
-Et voilà : le sac S contient vingt-deux.
+00:04:37.358 --> 00:04:40.861
+Le pas : à chaque tour, le compteur
+augmente de un.
 
-00:03:55.021 --> 00:04:01.131
-Quatre, plus sept, plus deux, plus neuf :
-c'est bien la somme des quatre étages.
+00:04:40.861 --> 00:04:46.081
+L'ordinateur fait alors tout seul ce que
+je faisais à la main : il monte, il
 
-00:04:01.131 --> 00:04:03.957
-OUI, c'est ça ! Et voilà le résultat.
+00:04:46.081 --> 00:04:47.318
+ajoute, il compte.
+
+00:04:47.318 --> 00:04:52.470
+Quatre étages : le compteur passe par
+zéro, un, deux, trois, puis s'arrête.
+
+00:04:52.470 --> 00:04:55.080
+Et dans le sac, à la fin : vingt-deux.
+
+00:04:55.080 --> 00:04:58.995
+Quatre plus sept plus deux plus neuf. La
+somme est juste.
+
+00:04:58.995 --> 00:05:04.422
+Une variable pour garder le résultat. Un
+bloc pour le geste. Une boucle pour le
+
+00:05:04.422 --> 00:05:04.972
+répéter.
+
+00:05:04.972 --> 00:05:06.895
+Voilà tout ce qu'il fallait.

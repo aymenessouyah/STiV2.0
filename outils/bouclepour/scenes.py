@@ -529,7 +529,7 @@ def scene_pourquoi(d, p, t):
     immeuble(d, [628, 330, 846, 800],
              valeurs=tuple(VALEURS[i % 4] for i in range(min(n, 100))),
              compact=(n >= 100), actif=None, montrer_valeurs=False, etiquettes=(n < 6),
-             fenetres=(n < 6), toit=True, cabine=None)
+             fenetres=(n < 100), toit=True, cabine=None)
     d.text((737, 830), f"{n} étages", font=police(20, True), fill=TEXTE_2, anchor="mm")
 
     # la conclusion : écrire une fois

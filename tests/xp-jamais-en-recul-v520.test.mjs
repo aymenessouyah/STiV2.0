@@ -126,7 +126,7 @@ test('v520 : le garde-fou est livré, préchargé et hors ligne sur toutes les p
   }
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
   assert.ok(manifeste.files.some(f => f.path === 'assets/js/xp-plancher.js'));
-  assert.match(sw, /var UPDATE_ID = "v539-boucle-pour-intro-20261029"/); /* lot v521 : meta descriptions */
+  assert.match(sw, /var UPDATE_ID = "v540-boucle-pour-variable-20261030"/); /* lot v521 : meta descriptions */
 });
 
 test('v520 : profil.js et quiz-sync.js refusent aussi une baisse avant écriture', () => {

@@ -344,7 +344,8 @@ def immeuble(d: ImageDraw.ImageDraw, box, valeurs=VALEURS, actif: int | None = N
             haut_f = max(8.0, min(20.0, hauteur_etage * 0.32))
             larg_f = max(10.0, min(24.0, hauteur_etage * 0.38))
             ecart = larg_f + max(6.0, hauteur_etage * 0.08)
-            for col in range(2):
+            colonnes = 2 if (bord_facade - x0) > 150 else 1
+            for col in range(colonnes):
                 fx = x0 + 24 + col * ecart
                 fy = centre_y - haut_f / 2 - 2
                 allumee = not fait
@@ -357,8 +358,8 @@ def immeuble(d: ImageDraw.ImageDraw, box, valeurs=VALEURS, actif: int | None = N
             d.text((x0 + 20, bas - 12), f"étage {k}", font=police(18, True),
                    fill=TEXTE if est_actif else TEXTE_3, anchor="ls")
 
-        # ── la carte de valeur, juste avant la porte
-        if montrer_valeurs:
+        # ── la carte de valeur, juste avant la porte (si l'étage est assez haut)
+        if montrer_valeurs and hauteur_etage >= 96:
             cx = bord_facade - (108 if hauteur_etage > 110 else 78)
             cy = centre_y - (8 if etiquettes else 0)
             if est_actif and ramassage:
@@ -367,9 +368,11 @@ def immeuble(d: ImageDraw.ImageDraw, box, valeurs=VALEURS, actif: int | None = N
             _carte_valeur(d, cx, cy, k, valeurs[k], pris=fait, actif=est_actif,
                           compacte=hauteur_etage < 150, etiquette=etiquettes_valeurs)
 
-        # ── la porte, collée à la cage
-        _porte(d, [bord_facade - 52, haut + 18, bord_facade - 6, bas - 14],
-               ouvert if est_actif else 0.0)
+        # ── la porte, collée à la cage (jamais plus haute que son étage)
+        marge_p = min(18.0, hauteur_etage * 0.18)
+        if bas - haut - 2 * marge_p >= 12:
+            _porte(d, [bord_facade - 52, haut + marge_p, bord_facade - 6, bas - marge_p],
+                   ouvert if est_actif else 0.0)
 
     # ── la cage d'ascenseur
     cage = [x1 - largeur_cage, haut_corps + 4, x1, y1 + 2]
@@ -576,11 +579,11 @@ def boucle_schema(d: ImageDraw.ImageDraw, box, n: int = 4, compteur: int = 0,
         d.ellipse([px - 9, py - 9, px + 9, py + 9], fill=ORANGE)
 
     # le cadran central : le texte reste lisible, le curseur passe derrière
-    d.ellipse([cx - 54, cy - 40, cx + 54, cy + 40], fill=FOND_PANNEAU_2,
+    d.ellipse([cx - 60, cy - 44, cx + 60, cy + 44], fill=FOND_PANNEAU_2,
               outline=melange(BORDURE, ORANGE, 0.25), width=1)
-    d.text((cx, cy - 18), f"tour {min(compteur + 1, n)} / {n}", font=police(16, True),
+    d.text((cx, cy - 20), f"tour {min(compteur + 1, n)} / {n}", font=police(15, True),
            fill=TEXTE_3, anchor="mm")
-    d.text((cx, cy + 12), f"compteur = {compteur}", font=police(20, True, mono=True),
+    d.text((cx, cy + 12), f"compteur = {compteur}", font=police(17, True, mono=True),
            fill=BLEU, anchor="mm")
 
     # ── le bloc, sous l'anneau

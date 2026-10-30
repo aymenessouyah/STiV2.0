@@ -132,15 +132,15 @@ test('l’accueil compte la nouvelle capsule dans son catalogue', () => {
 
 test('le cache hors-ligne embarque la vidéo sans téléchargement automatique', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v539-boucle-pour-intro-20261029"/);
+  assert.match(sw, /var UPDATE_ID = "v540-boucle-pour-variable-20261030"/);
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   const offline = sw.split('var OFFLINE_LIST = [')[1].split('];')[0];
   for (const chemin of [VIDEO, VTT]) assert.ok(offline.includes(`"./${chemin}"`), chemin);
   assert.ok(!delta.includes(`"./${VIDEO}"`), 'la vidéo n’entre jamais dans le delta mobile');
   assert.ok(!delta.includes(`"./${VTT}"`), 'ni ses sous-titres');
-  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "boucle-pour-v539"/);
+  assert.match(delta, /url: "\.\/cours\/javascript\.html", revision: "boucle-pour-v540"/);
   assert.match(delta, /url: "\.\/assets\/js\/protection\.js", revision: "vues-videos-v531"/);
-  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "boucle-pour-v539"/);
+  assert.match(delta, /url: "\.\/assets\/js\/app\.js", revision: "boucle-pour-v540"/);
   const nbDelta = delta.split('{ url:').length - 1;
   assert.ok(nbDelta <= 262, `delta trop long : ${nbDelta}`);
 });
@@ -157,7 +157,7 @@ test('le manifeste complet décrit la vidéo et ses sous-titres', () => {
     const sha = createHash('sha1').update(Buffer.concat([Buffer.from(`blob ${blob.length}\0`), blob])).digest('hex');
     assert.equal(entree.gitSha, sha, `sha1 de ${chemin}`);
   }
-  assert.match(manifeste.version, /^v539/);
+  assert.match(manifeste.version, /^v540/);
 });
 
 test('le moteur de rendu couvre les onze défis et les trois rappels', () => {

@@ -1,28 +1,28 @@
 {
   "durees": {
-    "intro": 31.335,
-    "sac": 35.747,
-    "nom": 35.213,
-    "immeuble": 12.62,
-    "etage0": 27.55,
-    "compteur": 13.688,
-    "repetition": 16.637,
-    "quelquechose": 18.413,
-    "bloc": 11.088,
-    "boucle": 35.515
+    "probleme": 32.02,
+    "variable": 33.692,
+    "nom": 25.925,
+    "accumuler": 39.706,
+    "immeuble": 21.618,
+    "etage0": 20.213,
+    "repetition": 27.376,
+    "pourquoi": 27.794,
+    "bloc": 26.308,
+    "boucle": 46.092
   },
   "debuts": {
-    "intro": 1.2,
-    "sac": 33.085,
-    "nom": 69.382,
-    "immeuble": 105.146,
-    "etage0": 118.316,
-    "compteur": 146.416,
-    "repetition": 160.654,
-    "quelquechose": 177.841,
-    "bloc": 196.805,
-    "boucle": 208.442
+    "probleme": 1.2,
+    "variable": 33.77,
+    "nom": 68.012,
+    "accumuler": 94.488,
+    "immeuble": 134.744,
+    "etage0": 156.911,
+    "repetition": 177.674,
+    "pourquoi": 205.601,
+    "bloc": 233.945,
+    "boucle": 260.803
   },
-  "total": 245.757,
-  "debit": 13.91
+  "total": 308.695,
+  "debit": 14.76
 }
