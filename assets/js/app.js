@@ -253,10 +253,13 @@
       codeApercu: "Math.floor(Math.random() * (max - min + 1)) + min"
     },
     {
-      /* v543 : capsule « Les boucles » — les trois boucles et comment choisir. */
+      /* v543 : capsule « Les boucles » — les trois boucles et comment choisir.
+         v550 : elle écrit chaque boucle en algorithme, en JavaScript ET en PHP :
+         elle appartient donc aux deux matières. */
       id: "boucle-pour",
       matiere: "javascript",
-      nomMatiere: "JavaScript",
+      matieres: ["javascript", "php"],
+      nomMatiere: "JavaScript & PHP",
       badgeClasse: "badge-js",
       couleur: "#f7df1e",
       titre: "Les boucles — Pour, Répéter…jusqu'à, Tant que",
@@ -924,6 +927,22 @@
     return matieresVideo(v).indexOf(idMat) !== -1;
   }
 
+  /* v550 : les trois capsules (boucles, console, PHP) portent un liseré propre,
+     et chaque carte de la grille reçoit un effet de survol différent. L'indice
+     est tiré de l'identifiant : stable d'un chargement à l'autre, et deux cartes
+     voisines ne retombent pas sur le même effet. */
+  var CAPSULES_VIDEO = { "boucle-pour": true, "console-variables": true, "php-variables": true };
+  function estCapsuleVideo(v) {
+    var cle = String((v && v.id) || "");
+    if (CAPSULES_VIDEO[cle]) return true;
+    return /^capsule/i.test(String((v && v.titre) || "")) || /capsule/i.test(String((v && v.codeApercu) || ""));
+  }
+  function effetVideo(v) {
+    var s = String((v && v.id) || ""), h = 0;
+    for (var i = 0; i < s.length; i += 1) h = (h * 31 + s.charCodeAt(i)) % 9973;
+    return h % 4;
+  }
+
   function rendreGrilleVideosAccueil() {
     var grille = document.getElementById("videosGrid");
     if (!grille) return;
@@ -970,7 +989,11 @@
       var dejaVue = vues.indexOf(v.id) !== -1;
       var poster = creerPosterSvgDataUri(v.titre, v.nomMatiere, v.couleur, v.codeApercu);
       return (
-        '<article class="video-card' + (v.reserve4si ? " sti-4si-only" : "") + '" data-matiere="' + echapperHtml(v.matiere) + '">' +
+        '<article class="video-card' + (v.reserve4si ? " sti-4si-only" : "") +
+          (estCapsuleVideo(v) ? " video-card--capsule" : "") +
+          '" data-matiere="' + echapperHtml(v.matiere) +
+          '" data-effet="' + effetVideo(v) +
+          '" style="--accent:' + echapperHtml(v.couleur || "#38bdf8") + '">' +
           '<button type="button" class="video-card__thumb" data-play-video="' + echapperHtml(v.id) + '" aria-label="▶ ' + (dejaVue ? '✓ Vue ' : '') + echapperHtml(v.dureeTexte) + ' — Lire la vidéo ' + echapperHtml(v.titre) + '">' +
             '<img src="' + echapperHtml(poster) + '" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" />' +
             '<span class="video-card__play"><span class="video-play-btn" aria-hidden="true">▶</span></span>' +
