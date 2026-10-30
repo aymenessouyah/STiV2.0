@@ -1,4 +1,4 @@
-/* v543 — capsule « Les boucles — Pour, Répéter…jusqu'à, Tant que » (JavaScript).
+/* v544 — capsule « Les boucles — Pour, Répéter…jusqu'à, Tant que » (JavaScript).
    Contrôle la vidéo livrée, ses sous-titres français, les vingt-six étapes du
    récit (décor · brouillon · schéma de décision · tableau des trois boucles)
    avec l'algorithme et le JavaScript dans deux cadres séparés, l'intégration
@@ -21,12 +21,13 @@ const TITRE = "Les boucles — Pour, Répéter…jusqu'à, Tant que";
 
 /** Les vingt-six sections de la capsule, dans l'ordre de la voix off. */
 const ORDRE = [
-  'bienvenue', 'probleme', 'repetition', 'q1', 'q2', 'q3',
+  'ouverture', 'introduction', 'probleme', 'repetition', 'q1', 'q2', 'q3',
   'pour_algo', 'pour_js', 'pour_trace', 'rappel1',
   'chercher_quoi', 'chercher_q', 'repet_algo', 'repet_js',
   'repet_trouve', 'repet_absent', 'rappel2',
   'tantque_quoi', 'tantque_algo', 'tantque_js', 'tantque_trace', 'rappel3',
-  'tableau3', 'choisir', 'algo_js', 'fin',
+  'tableau3', 'choisir', 'algo_js',
+  'bilan', 'conclusion', 'generique',
 ];
 
 /** Le texte des sous-titres, minutages retirés et lignes repliées. */
@@ -76,15 +77,15 @@ test('la capsule est livrée à côté des autres vidéos du site', () => {
   assert.match(entete, /isom|mp42|avc1/, 'marque MP4');
 });
 
-test('la vidéo dure environ neuf minutes et ses sous-titres la couvrent', () => {
+test('la vidéo dure environ dix minutes et ses sous-titres la couvrent', () => {
   const duree = dureeMp4(VIDEO);
-  assert.ok(duree > 470 && duree < 600, `durée inattendue : ${duree.toFixed(1)} s`);
+  assert.ok(duree > 600 && duree < 680, `durée inattendue : ${duree.toFixed(1)} s`);
   const vtt = lire(VTT);
   assert.ok(vtt.startsWith('WEBVTT'), 'entête WEBVTT');
   const entrees = entreesVtt(vtt);
-  assert.ok(entrees.length >= 140, `trop peu de répliques : ${entrees.length}`);
+  assert.ok(entrees.length >= 160, `trop peu de répliques : ${entrees.length}`);
   assert.ok(entrees[0].debut < 4, 'les sous-titres démarrent avec la voix');
-  assert.ok(Math.abs(entrees[entrees.length - 1].fin - duree) < 30,
+  assert.ok(Math.abs(entrees[entrees.length - 1].fin - duree) < 20,
     'les sous-titres couvrent la fin de la vidéo');
   for (let i = 1; i < entrees.length; i += 1) {
     assert.ok(entrees[i].debut >= entrees[i - 1].debut - 0.01, 'répliques ordonnées');
@@ -99,6 +100,94 @@ test("l'ouverture reprend la phrase imposée, mot pour mot", () => {
   assert.ok(vtt.includes("aujourd'hui, on va détailler encore une autre fois l'histoire des boucles"),
     "la deuxième phrase est celle de la demande");
   assert.ok(vtt.trimStart().startsWith('bienvenue'), "l'ouverture arrive en premier");
+});
+
+test("la capsule a une vraie introduction qui explique ce qu'est une boucle", () => {
+  const vtt = textePlat();
+
+  /* la définition, dite avant tout exemple */
+  const def = vtt.indexOf("une boucle, c'est une instruction qui fait répéter un bloc");
+  assert.ok(def > 0, 'la définition est énoncée');
+  assert.ok(def < vtt.indexOf('quatre étages, avec quatre nombres'),
+    'elle arrive avant le premier exemple');
+
+  /* le pourquoi : sans boucle, on recopie */
+  assert.ok(vtt.includes("imaginez que je doive additionner quatre nombres"), 'le constat');
+  assert.ok(vtt.includes("j'écris le bloc une seule fois"), 'le geste de la boucle');
+  assert.ok(vtt.includes("le bloc ne change pas"), 'ce qui ne change pas');
+  assert.ok(vtt.includes("c'est donc trois choses : un bloc, des tours, une condition"),
+    'les trois ingrédients');
+
+  /* les trois boucles sont annoncées dès l'ouverture */
+  const ouverture = vtt.slice(0, vtt.indexOf('quatre étages, avec quatre nombres'));
+  for (const nom of ['boucle pour', 'répéter jusqu', 'boucle tant que']) {
+    assert.ok(ouverture.includes(nom), `« ${nom} » annoncée dès l'ouverture`);
+  }
+
+  /* et l'écran le montre : la définition et les trois blocs, dès la scène 1 */
+  const scenes = lire('outils/bouclepour/scenes.py');
+  const ouverture_scene = scenes.slice(scenes.indexOf('def scene_ouverture('),
+    scenes.indexOf('def scene_introduction('));
+  assert.match(ouverture_scene, /une instruction qui/, 'la définition à l\'écran');
+  assert.match(ouverture_scene, /_trois_blocs\(/, 'les trois boucles à l\'écran');
+  const intro_scene = scenes.slice(scenes.indexOf('def scene_introduction('),
+    scenes.indexOf('def scene_probleme('));
+  for (const cle of ['un bloc', 'des tours', 'une condition']) {
+    assert.ok(intro_scene.includes(`"${cle}"`), `« ${cle} » écrit à l'écran`);
+  }
+});
+
+test("la capsule se referme : bilan, méthode, carte de fin et fondu", () => {
+  const vtt = textePlat();
+
+  /* le bilan : les trois blocs côte à côte, chacun résumé */
+  const bilan = vtt.indexOf('voilà les trois blocs côte à côte');
+  assert.ok(bilan > 0, 'le bilan est annoncé');
+  assert.ok(vtt.includes('trois boucles, trois situations, et le même schéma'),
+    'la conclusion intermédiaire');
+
+  /* la méthode, puis le générique : la carte de fin */
+  assert.ok(vtt.indexOf('la méthode tient en trois questions') > bilan, 'la méthode après le bilan');
+  assert.ok(vtt.includes('à vous de jouer, dans sti version 2.0'), 'la formule de fin');
+  assert.ok(vtt.trimEnd().endsWith('série 6, les boucles. à bientôt.'),
+    'la capsule se termine par une vraie sortie');
+
+  /* l'image s'éteint : le rendu applique un fondu de sortie */
+  const render = lire('outils/bouclepour/render.py');
+  assert.match(render, /FONDU_SORTIE = \d/, 'un fondu de sortie est défini');
+  assert.match(render, /FONDU_ENTREE = \d/, 'et un fondu d\'entrée');
+  assert.match(render, /def _fondu\(/, 'la fonction de fondu existe');
+
+  /* et le dernier plan est un carton de fin, pas une liste qui s'arrête */
+  const scenes = lire('outils/bouclepour/scenes.py');
+  const generique = scenes.slice(scenes.indexOf('def scene_generique('),
+    scenes.indexOf('#  Le répartiteur'));
+  assert.ok(generique.includes('STI Version 2.0'), 'la marque');
+  assert.ok(generique.includes('À VOUS DE JOUER'), 'l\'appel final');
+  assert.ok(generique.includes('Les boucles'), 'le titre de la capsule');
+});
+
+test('les noms ne changent pas d\'une partie à l\'autre', () => {
+  /* S reste la somme des étages ; le sac compte des jetons dans n */
+  const scenes = lire('outils/bouclepour/scenes.py');
+  const jetons = scenes.slice(scenes.indexOf('def _jetons('),
+    scenes.indexOf('def scene_tantque_quoi('));
+  assert.ok(!/f"S = \{n_sac\}/.test(jetons), 'le sac ne s\'appelle plus S');
+  assert.ok(jetons.includes('f"n = {n_sac}'), 'le sac compte des jetons dans n');
+
+  /* et le JavaScript de tant que incrémente n, pas sac */
+  assert.ok(scenes.includes('"    n++;",'), 'le code incrémente n');
+  assert.ok(!scenes.includes('sac++;'), 'plus de sac++ dans le code');
+
+  /* la même écriture de TANT QUE partout où elle apparaît */
+  const algo = [...scenes.matchAll(/"TANT QUE jetons > 0 FAIRE"/g)].length;
+  assert.ok(algo >= 1, 'l\'algorithme de tant que est écrit une fois pour toutes');
+
+  /* les chapitres affichés viennent de narration.py : pas de divergence possible */
+  assert.match(scenes, /N\.SECTIONS\[cle\]\['titre'\]/, 'le sous-titre est lu dans narration');
+  assert.match(scenes, /N\.numero\(cle\)/, 'le numéro d\'étape aussi');
+  assert.match(scenes, /assert list\(SCENES\) == N\.ORDRE/,
+    'les scènes et les sections sont dans le même ordre');
 });
 
 test('le schéma de décision pose les trois questions, dans l\'ordre', () => {
@@ -189,22 +278,23 @@ test("l'algorithme et le JavaScript ne sont jamais mélangés", () => {
 test('les trois blocs finissent côte à côte, chacun avec ses deux écritures', () => {
   const scenes = lire('outils/bouclepour/scenes.py');
   assert.match(scenes, /def _colonne_fin\(/, 'une colonne par boucle');
-  const fin = scenes.slice(scenes.indexOf('def scene_fin('));
+  const fin = scenes.slice(scenes.indexOf('def scene_bilan('),
+    scenes.indexOf('def scene_conclusion('));
   for (const cle of ['"POUR"', '"RÉPÉTER…JUSQU\'À"', '"TANT QUE"']) {
     assert.ok(fin.includes(cle), `la colonne ${cle}`);
   }
   assert.equal((fin.match(/_colonne_fin\(d, /g) || []).length, 3, 'trois colonnes');
   const vtt = textePlat();
-  assert.ok(vtt.includes('trois boucles, un schéma'), 'la conclusion');
+  assert.ok(vtt.includes('trois boucles, trois situations'), 'la conclusion du bilan');
 });
 
-test('la fabrication compte vingt-six sections, de la voix aux scènes', () => {
+test('la fabrication compte vingt-neuf sections, de la voix aux scènes', () => {
   const narration = lire('outils/bouclepour/narration.py');
   const trouve = [...narration.matchAll(/"([a-z0-9_]+)": \{/g)].map((m) => m[1]);
-  assert.deepEqual(trouve, ORDRE, 'l\'ordre des vingt-six sections');
+  assert.deepEqual(trouve, ORDRE, 'l\'ordre des vingt-neuf sections');
 
   const scenes = lire('outils/bouclepour/scenes.py');
-  assert.match(scenes, /TOTAL = 26/, 'la capsule compte vingt-six étapes');
+  assert.match(scenes, /TOTAL = len\(N\.ORDRE\)/, 'la capsule compte autant d\'étapes que de sections');
   const dispatch = [...scenes.matchAll(/^    "([a-z0-9_]+)": scene_/gm)].map((m) => m[1]);
   assert.deepEqual(dispatch, ORDRE, 'une scène par section, dans l\'ordre');
 
@@ -214,7 +304,7 @@ test('la fabrication compte vingt-six sections, de la voix aux scènes', () => {
   const calage = JSON.parse(lire('outils/bouclepour/calage.json'));
   assert.deepEqual(Object.keys(calage.debuts), ORDRE, 'calage de la voix');
   assert.deepEqual(Object.keys(calage.durees), ORDRE, 'durées de la voix');
-  assert.ok(calage.total > 470 && calage.total < 600, `total inattendu : ${calage.total}`);
+  assert.ok(calage.total > 600 && calage.total < 680, `total inattendu : ${calage.total}`);
   for (let i = 1; i < ORDRE.length; i += 1) {
     const precedente = calage.debuts[ORDRE[i - 1]] + calage.durees[ORDRE[i - 1]];
     assert.ok(calage.debuts[ORDRE[i]] > precedente, `section ${ORDRE[i]} après la précédente`);
@@ -249,9 +339,11 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
   /* un repère de chapitre par section, calé sur la voix off */
   const chapitres = protection.slice(protection.indexOf('STI_CHAPITRES_MEDIA["boucle-pour"]'),
     protection.indexOf('STI_CHAPITRES_MEDIA["validation-nom-prenom-js"]'));
-  assert.equal((chapitres.match(/\{ t:/g) || []).length, 26, 'vingt-six chapitres');
-  assert.ok(chapitres.includes('1 · Bienvenue'), 'premier repère');
-  assert.ok(chapitres.includes('26 · À vous de jouer'), 'dernier repère');
+  assert.equal((chapitres.match(/\{ t:/g) || []).length, 29, 'vingt-neuf chapitres');
+  assert.ok(chapitres.includes('1 · Bienvenue — les boucles'), 'premier repère');
+  assert.ok(chapitres.includes('2 · Ce qu\'est une boucle'), 'le repère de l\'introduction');
+  assert.ok(chapitres.includes('29 · À vous de jouer'), 'dernier repère');
+  assert.ok(chapitres.includes('27 · Les trois blocs côte à côte'), 'le bilan');
 
   /* la reprise de lecture sait à quelle matière et quel titre rattacher la capsule */
   assert.ok(lecteur.includes("'boucle-pour': ['javascript','Les boucles — Pour, Répéter…jusqu'à, Tant que']"),
@@ -275,7 +367,8 @@ test('la capsule se lance depuis la grille de l\'accueil', () => {
 
   /* le service worker sert la nouvelle version du lecteur */
   const sw = lire('sw.js');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v543"/);
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "boucles-v544"/);
+  /* le lecteur commun n'a pas bougé depuis la v543 : il garde sa révision */
   assert.match(sw, /url: "\.\/assets\/js\/lecteur-commun\.js", revision: "boucles-v543"/);
 });
 
@@ -313,9 +406,9 @@ test('la capsule est dans le paquet hors-ligne complet', () => {
   assert.ok(complet.includes(`"./${VIDEO}"`), 'MP4 hors-ligne');
   assert.ok(complet.includes(`"./${VTT}"`), 'VTT hors-ligne');
   assert.ok(!delta.includes('BouclePour.mp4'), 'les médias restent hors du delta léger');
-  assert.match(sw, /var UPDATE_ID = "v543-boucles-trois-20261030";/);
-  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v543"/);
-  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucles-v543"/);
+  assert.match(sw, /var UPDATE_ID = "v544-boucles-intro-fin-20261030";/);
+  assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-v544"/);
+  assert.match(sw, /url: "\.\/cours\/javascript\.html", revision: "boucles-v544"/);
 });
 
 test('la fabrique de la capsule reste dans le dépôt', () => {
@@ -327,7 +420,7 @@ test('la fabrique de la capsule reste dans le dépôt', () => {
   assert.match(integrer, /def bloc_chapitres\(/, 'les chapitres sont recalculés');
   assert.match(integrer, /def ecrire_chapitres\(/, 'et réécrits dans protection.js');
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.match(manifeste.version, /^v543/, 'manifeste du lot');
+  assert.match(manifeste.version, /^v544/, 'manifeste du lot');
   assert.ok(manifeste.files.some((f) => f.path === VIDEO), 'MP4 dans le manifeste');
   assert.ok(manifeste.files.some((f) => f.path === VTT), 'VTT dans le manifeste');
 });

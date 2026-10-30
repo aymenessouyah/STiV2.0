@@ -66,13 +66,31 @@ def segment_a(t, plan):
     return plan["segments"][-1]
 
 
+FONDU_ENTREE = 1.0     # s : la capsule s'allume en douceur
+FONDU_SORTIE = 2.4     # s : elle s'éteint, au lieu de couper net
+
+
+def _fondu(img: Image.Image, t: float, plan) -> Image.Image:
+    """Voile noir en entrée et en sortie : la vidéo ne coupe plus abruptement."""
+    noir = Image.new("RGB", img.size, (0, 0, 0))
+    k = 0.0
+    if t < FONDU_ENTREE:
+        k = 1.0 - max(0.0, t) / FONDU_ENTREE
+    reste = plan["total"] - t
+    if 0.0 <= reste < FONDU_SORTIE:
+        k = max(k, 1.0 - reste / FONDU_SORTIE)
+    if k <= 0.004:
+        return img
+    return Image.blend(img, noir, min(1.0, k))
+
+
 def image(t: float, plan) -> Image.Image:
     seg = segment_a(t, plan)
     p = max(0.0, min(1.0, (t - seg["debut"]) / max(0.1, seg["duree"])))
     img = Image.new("RGB", (LARGEUR, HAUTEUR), (13, 20, 36))
     d = ImageDraw.Draw(img)
     scenes.dessiner(d, seg["cle"], p, t)
-    return img
+    return _fondu(img, t, plan)
 
 
 def encoder(plan, sortie, fps, audio=None):

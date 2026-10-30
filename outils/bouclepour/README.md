@@ -36,36 +36,59 @@ On écrit **l'algorithme d'abord**, on le traduit ensuite : les deux cadres ne
 sont jamais mélangés, et le cadre qui n'est pas encore écrit affiche ce qu'il
 attendra.
 
-## Les 26 étapes
+## Les 29 étapes
 
 | # | Section | Ce que l'on voit |
 | --- | --- | --- |
-| 1 | bienvenue | la phrase d'ouverture, les trois boucles listées au brouillon |
-| 2 | probleme | l'immeuble, `T = [4, 7, 2, 9]`, `S = ?` |
-| 3 | repetition | quatre lignes identiques : « seul le chiffre change » |
-| 4 | q1 | le schéma s'ouvre : « je connais le nombre ? » → oui (4 étages) |
-| 5 | q2 | « une condition d'arrêt ? » → non (sinon la somme est fausse) |
-| 6 | q3 | « au moins une fois ? » → le schéma est complet |
-| 7 | pour_algo | le bloc écrit une fois, `POUR compteur DE 0 À 3 FAIRE` |
-| 8 | pour_js | traduction : `for (let i = 0; i <= 3; i++)` |
-| 9 | pour_trace | les quatre tours, `S = 22`, `i = 4` arrête la boucle |
-| 10 | rappel1 | schéma + tableau des trois boucles, branche POUR allumée |
-| 11 | chercher_quoi | nouveau problème : chercher `X`, tours inconnus |
-| 12 | chercher_q | condition d'arrêt, au moins un tour → RÉPÉTER…JUSQU'À |
-| 13 | repet_algo | `i ← 0`, `RÉPÉTER … JUSQU'À trouvé OU i > 3` |
-| 14 | repet_js | `do { … } while (!trouve && i < 4);` |
-| 15 | repet_trouve | `X = 7` : trouvé au deuxième tour, on sort |
-| 16 | repet_absent | `X = 5` : quatre tours, `i = 4`, « absent » |
-| 17 | rappel2 | branche RÉPÉTER…JUSQU'À allumée dans le schéma et le tableau |
-| 18 | tantque_quoi | la boîte de jetons : il peut y avoir **zéro** tour |
-| 19 | tantque_algo | `TANT QUE jetons > 0 FAIRE`, test **avant** le bloc |
-| 20 | tantque_js | `while (jetons > 0) { jetons--; sac++; }` |
-| 21 | tantque_trace | trois jetons → trois tours ; zéro jeton → zéro tour |
-| 22 | rappel3 | branche TANT QUE allumée |
-| 23 | tableau3 | le tableau des trois boucles en grand |
-| 24 | choisir | le schéma complet et les trois exemples en regard |
-| 25 | algo_js | les correspondances : POUR↔for, RÉPÉTER↔do…while, TANT QUE↔while |
-| 26 | fin | les **trois blocs côte à côte**, algorithme au-dessus, code en dessous |
+| 1 | ouverture | la phrase d'ouverture, **la définition** et les trois boucles nommées |
+| 2 | introduction | sans boucle / avec boucle, et les **trois ingrédients** : un bloc, des tours, une condition |
+| 3 | probleme | l'immeuble, `T = [4, 7, 2, 9]`, `S = ?` |
+| 4 | repetition | quatre lignes identiques : « seul le chiffre change » |
+| 5 | q1 | le schéma s'ouvre : « je connais le nombre ? » → oui (4 étages) |
+| 6 | q2 | « une condition d'arrêt ? » → non (sinon la somme est fausse) |
+| 7 | q3 | « au moins une fois ? » → le schéma est complet |
+| 8 | pour_algo | le bloc écrit une fois, `POUR compteur DE 0 À 3 FAIRE` |
+| 9 | pour_js | traduction : `for (let i = 0; i <= 3; i++)` |
+| 10 | pour_trace | les quatre tours, `S = 22`, `i = 4` arrête la boucle |
+| 11 | rappel1 | schéma + tableau des trois boucles, branche POUR allumée |
+| 12 | chercher_quoi | nouveau problème : chercher `X`, tours inconnus |
+| 13 | chercher_q | condition d'arrêt, au moins un tour → RÉPÉTER…JUSQU'À |
+| 14 | repet_algo | `i ← 0`, `RÉPÉTER … JUSQU'À trouvé OU i > 3` |
+| 15 | repet_js | `do { … } while (!trouve && i < 4);` |
+| 16 | repet_trouve | `X = 7` : trouvé au deuxième tour, on sort |
+| 17 | repet_absent | `X = 5` : quatre tours, `i = 4`, « absent » |
+| 18 | rappel2 | branche RÉPÉTER…JUSQU'À allumée dans le schéma et le tableau |
+| 19 | tantque_quoi | la boîte de jetons : il peut y avoir **zéro** tour |
+| 20 | tantque_algo | `TANT QUE jetons > 0 FAIRE`, test **avant** le bloc |
+| 21 | tantque_js | `while (jetons > 0) { jetons--; n++; }` |
+| 22 | tantque_trace | trois jetons → trois tours ; zéro jeton → zéro tour |
+| 23 | rappel3 | branche TANT QUE allumée |
+| 24 | tableau3 | le tableau des trois boucles en grand |
+| 25 | choisir | le schéma complet et les trois exemples en regard |
+| 26 | algo_js | les correspondances : POUR↔for, RÉPÉTER↔do…while, TANT QUE↔while |
+| 27 | bilan | les **trois blocs côte à côte**, algorithme au-dessus, code en dessous |
+| 28 | conclusion | la **méthode en trois questions**, dans l'ordre |
+| 29 | generique | la carte de fin : STI Version 2.0, Série 6, « à vous de jouer » |
+
+La capsule **s'ouvre** par la définition et **se ferme** par la méthode et le
+générique : le rendu applique un fondu d'entrée (1 s) et de sortie (2,4 s), donc
+l'image ne coupe jamais net.
+
+## Le vocabulaire, une fois pour toutes
+
+| Nom | Ce qu'il désigne | Où |
+| --- | --- | --- |
+| `T` | les nombres des étages : `[4, 7, 2, 9]` | scènes 3 à 11 |
+| `S` | **la somme** des étages (`22`), jamais autre chose | scènes 3 à 11 |
+| `compteur` / `i` | l'indice du tour (algorithme / JavaScript) | Pour et Répéter |
+| `trouvé` | le drapeau de la recherche | Répéter…jusqu'à |
+| `jetons` | ce qui **reste dans la boîte** | Tant que |
+| `n` | ce qui est **dans le sac** | Tant que |
+
+Le sac ne s'appelle jamais `S` : `S` est pris, et le sac compte des jetons
+dans `n`. Les titres de chapitre affichés à l'écran sont lus dans
+`narration.SECTIONS[cle]["titre"]`, et `scenes.py` vérifie que l'ordre des
+scènes est exactement celui des sections.
 
 ## Mise en page
 
@@ -74,7 +97,7 @@ les deux cadres `ALGORITHME` (1276 → 1856, 186 → 566) et `JAVASCRIPT`
 (1276 → 1856, 576 → 884). En bas, le **fil rouge** : les trois boucles, la
 boucle courante allumée et l'information du moment. Le titre reste le même
 dans toutes les scènes, seul le sous-titre change, et le décompte affiche
-« ÉTAPE n / 26 » avec une barre de progression.
+« ÉTAPE n / 29 » avec une barre de progression.
 
 1920 × 1080, 30 i/s, H.264 + AAC mono, sous-titres `WebVTT` calés sur la voix.
 
@@ -106,10 +129,10 @@ PY
 
 | Fichier | Rôle |
 | --- | --- |
-| `narration.py` | texte de la voix off (26 sections) et sous-titres |
+| `narration.py` | texte de la voix off (29 sections) et sous-titres |
 | `theme.py` | accès au thème commun (`outils/tpvid6/theme.py`, chargé par chemin) |
 | `dessin.py` | primitives : les trois colonnes, l'immeuble + cage, le sac, la boîte de jetons, le papier du brouillon, le crayon, le stylo rouge, le schéma de décision, le tableau des trois boucles |
-| `scenes.py` | les 26 scènes et le bandeau d'état |
+| `scenes.py` | les 29 scènes et le bandeau d'état |
 | `montage.py` | concaténation des clips de `voix/`, `calage.json`, VTT |
 | `render.py` | chronologie calée sur la voix, images, encodage ffmpeg |
 | `integrer.py` | installation dans le site (MP4, VTT, durées, hors-ligne) |
