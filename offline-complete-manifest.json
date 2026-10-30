@@ -1,9 +1,9 @@
 {
-  "version": "v542-sti-atelier-v380",
-  "generatedAt": "2026-10-30T06:54:16Z",
+  "version": "v543-sti-atelier-v380",
+  "generatedAt": "2026-10-30T08:43:05Z",
   "scope": "installation-complete-windows-sans-doublons-de-casse",
   "totalFiles": 736,
-  "totalBytes": 836027292,
+  "totalBytes": 845380702,
   "files": [
     {
       "path": "404.html",
@@ -687,8 +687,8 @@
     },
     {
       "path": "assets/js/app.js",
-      "bytes": 117885,
-      "gitSha": "d92d0a1c01861f4c00479c7ae351bdabe0771c44"
+      "bytes": 117898,
+      "gitSha": "e26c59de9bb97db0b892c8af47ced06b77bfc78d"
     },
     {
       "path": "assets/js/appel-quiz.js",
@@ -762,8 +762,8 @@
     },
     {
       "path": "assets/js/lecteur-commun.js",
-      "bytes": 13898,
-      "gitSha": "307c589bb459ea19f3ec65626cea75f81d71eb4d"
+      "bytes": 13904,
+      "gitSha": "11b4038ee87136ed6bd228b31ea6b55fb2b80ed9"
     },
     {
       "path": "assets/js/mobile-nav.js",
@@ -822,8 +822,8 @@
     },
     {
       "path": "assets/js/protection.js",
-      "bytes": 224894,
-      "gitSha": "a12b5faf13d8355b397408fd9221048fee03c24f"
+      "bytes": 226801,
+      "gitSha": "de02fb869ed092ee6321f4fec7b8121119391f3b"
     },
     {
       "path": "assets/js/quiz-admin.js",
@@ -1022,8 +1022,8 @@
     },
     {
       "path": "assets/subtitles/BouclePour-fr.vtt",
-      "bytes": 8044,
-      "gitSha": "6a7c00439e1d269bccf4b936b1e26d8751bb8759"
+      "bytes": 12593,
+      "gitSha": "a425381439a448fb8f5f60d5b93d6ab9af88fb23"
     },
     {
       "path": "assets/subtitles/css3-cours-v9-sync-fr.vtt",
@@ -1092,8 +1092,8 @@
     },
     {
       "path": "assets/videos/BouclePour.mp4",
-      "bytes": 19195451,
-      "gitSha": "76f0d04b672bf61ac5f128767b059f383c1b27e3"
+      "bytes": 28542149,
+      "gitSha": "a6c92b38c5bfe2c802b58c8ad3250f7a5a313aca"
     },
     {
       "path": "assets/videos/css-animee.mp4",
@@ -1287,8 +1287,8 @@
     },
     {
       "path": "cours/javascript.html",
-      "bytes": 133262,
-      "gitSha": "d16405b4a5c988b491c77561dfe66d21ef38fe19"
+      "bytes": 133495,
+      "gitSha": "95915866e6c190433184410100d743e66b126993"
     },
     {
       "path": "cours/php-mysqli.html",
@@ -3682,8 +3682,8 @@
     },
     {
       "path": "sw.js",
-      "bytes": 97997,
-      "gitSha": "d254aac9f63edd5c13ac0803b7bd43a761cc6577"
+      "bytes": 98001,
+      "gitSha": "c25535d4f5768cf06afb73ad09cb2b1c5528a0d9"
     }
   ]
 }

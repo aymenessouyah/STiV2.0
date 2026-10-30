@@ -253,19 +253,19 @@
       codeApercu: "Math.floor(Math.random() * (max - min + 1)) + min"
     },
     {
-      /* v540 : capsule « La boucle Pour » — de la variable à la boucle. */
+      /* v543 : capsule « Les boucles » — les trois boucles et comment choisir. */
       id: "boucle-pour",
       matiere: "javascript",
       nomMatiere: "JavaScript",
       badgeClasse: "badge-js",
       couleur: "#f7df1e",
-      titre: "La boucle Pour — de la variable à la boucle",
-      dureeTexte: "5:41",
+      titre: "Les boucles — Pour, Répéter…jusqu'à, Tant que",
+      dureeTexte: "8:43",
       srcPrincipal: "assets/videos/BouclePour.mp4",
       srcSecours: "assets/videos/BouclePour.mp4",
       sousTitres: "assets/subtitles/BouclePour-fr.vtt",
       urlCours: "cours/javascript.html#videos",
-      codeApercu: "for (let i = 0; i < n; i++) { S = S + T[i]; }"
+      codeApercu: "for (let i = 0; i <= 3; i++) { S = S + T[i]; }"
     },
     {
       id: "css-positionnement",

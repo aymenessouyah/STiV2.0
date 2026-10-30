@@ -1,6 +1,6 @@
 """Régénère `offline-complete-manifest.json` (paquet hors-ligne complet).
 
-    python3 manifeste.py            # réécrit le manifeste, version v542
+    python3 manifeste.py            # réécrit le manifeste, version v543
     python3 manifeste.py --verifier # contrôle des empreintes seulement
 
 Le manifeste recense les fichiers du paquet hors-ligne avec leur taille et leur
@@ -24,7 +24,7 @@ ICI = os.path.dirname(os.path.abspath(__file__))
 RACINE = os.path.normpath(os.path.join(ICI, "..", ".."))
 MANIFESTE = os.path.join(RACINE, "offline-complete-manifest.json")
 
-VERSION = "v542-sti-atelier-v380"
+VERSION = "v543-sti-atelier-v380"
 PORTEE = "installation-complete-windows-sans-doublons-de-casse"
 
 
