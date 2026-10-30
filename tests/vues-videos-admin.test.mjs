@@ -452,12 +452,12 @@ test('reconnexion-profil fusionne aussi les compteurs de vues', () => {
 
 test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var UPDATE_ID = "v550-boucles-php-20261030"/);
+  assert.match(sw, /var UPDATE_ID = "v551-suivi-video-20261030"/);
   /* Le manifeste a suivi la v533 : il porte sa propre révision. */
   /* sync-progressions.js est reparti au lot v534 (pastille de synchro) : cinq fichiers restent. */
   /* admin-vues-videos.js repart au lot v549 (capsule PHP au catalogue du coin). */
   assert.equal((sw.match(new RegExp('revision: "' + REV + '"', 'g')) || []).length, 3, 'trois fichiers restent au lot v531');
-  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "php-variables-v549"/, 'le lecteur repart au lot v545');
+  assert.match(sw, /url: "\.\/assets\/js\/protection\.js", revision: "suivi-video-v551"/, 'le lecteur repart au lot v545');
   const delta = sw.split('var UPDATE_FILES = [')[1].split('];')[0];
   for (const chemin of ['assets/js/reconnexion-profil.js',
     'assets/js/reprendre.js', 'admin.html']) {
@@ -479,7 +479,7 @@ test('sw.js invalide les fichiers du compteur et du coin « Vues des vidéos »'
 
 test('le manifeste hors ligne contient le nouveau module avec son empreinte', () => {
   const manifeste = JSON.parse(lire('offline-complete-manifest.json'));
-  assert.equal(manifeste.version, 'v550-sti-atelier-v383');
+  assert.equal(manifeste.version, 'v551-sti-atelier-v384');
   assert.equal(manifeste.totalFiles, manifeste.files.length);
   assert.equal(manifeste.totalBytes, manifeste.files.reduce((n, f) => n + f.bytes, 0));
   const entree = manifeste.files.find((f) => f.path === MODULE);

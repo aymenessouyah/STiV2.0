@@ -103,8 +103,8 @@ test('la capsule des boucles appartient à JavaScript et à PHP', () => {
 
 test('le lot v550 est publié et versionné', () => {
   const sw = lire('sw.js');
-  assert.match(sw, /var CACHE = "sti-atelier-v383"/);
-  assert.match(sw, /var UPDATE_ID = "v550-boucles-php-20261030"/);
+  assert.match(sw, /var CACHE = "sti-atelier-v384"/);
+  assert.match(sw, /var UPDATE_ID = "v551-suivi-video-20261030"/);
   assert.match(sw, /url: "\.\/assets\/js\/app\.js", revision: "boucles-et-effets-v550"/);
   assert.match(sw, /url: "\.\/index\.html", revision: "boucles-et-effets-v550"/);
   assert.match(sw, /url: "\.\/cours\/php\.html", revision: "boucles-et-effets-v550"/);
